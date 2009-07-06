@@ -415,6 +415,17 @@ time_t purple_str_to_time(const char *timestamp, gboolean utc,
 /*@{*/
 
 /**
+ * Escapes special characters in a plain-text string so they display
+ * correctly as HTML.  For example, & is replaced with &amp; and < is
+ * replaced with &lt;
+ *
+ * This is exactly the same as g_markup_escape_text(), except that it
+ * does not change ' to &apos; because &apos; is not a valid HTML 4 entity,
+ * and is displayed literally in IE7.
+ */
+gchar *purple_markup_escape_text(const gchar *text, gssize length);
+
+/**
  * Finds an HTML tag matching the given name.
  *
  * This locates an HTML tag's start and end, and stores its attributes

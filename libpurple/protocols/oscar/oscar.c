@@ -2222,7 +2222,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		message = oscar_encoding_to_utf8(account, info->status_encoding,
 										 info->status, info->status_len);
 
-	tmp2 = tmp = (message ? g_markup_escape_text(message, -1) : NULL);
+	tmp2 = tmp = (message ? purple_markup_escape_text(message, -1) : NULL);
 
 	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
 		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
