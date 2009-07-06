@@ -3977,7 +3977,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 		message = NULL;
 	tmp = purple_markup_strip_html(message);
 	itmsurl = purple_status_get_attr_string(status, "itmsurl");
-	aim_srv_setextrainfo(od, FALSE, 0, TRUE, tmp, itmsurl);
+	aim_srv_setextrainfo(od, FALSE, 0, tmp != NULL, tmp, itmsurl);
 	g_free(tmp);
 
 	presence = purple_status_get_presence(status);
