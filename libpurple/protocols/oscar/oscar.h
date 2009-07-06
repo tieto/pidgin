@@ -469,6 +469,9 @@ struct _IcbmCookie
  */
 struct _OscarData
 {
+	/** Only used when connecting with clientLogin */
+	PurpleUtilFetchUrlData *url_data;
+
 	gboolean iconconnecting;
 	gboolean set_icon;
 
@@ -522,6 +525,8 @@ struct _OscarData
 
 	IcbmCookie *msgcookies;
 	struct aim_icq_info *icq_info;
+
+	/** Only used when connecting with the old-style BUCP login. */
 	struct aim_authresp_info *authinfo;
 	struct aim_emailinfo *emailinfo;
 
@@ -547,6 +552,7 @@ struct _OscarData
 
 	/** A linked list containing FlapConnections. */
 	GSList *oscar_connections;
+	guint16 default_port;
 
 	/** A linked list containing PeerConnections. */
 	GSList *peer_connections;
@@ -568,10 +574,9 @@ struct _OscarData
 #define AIM_ICQ_STATE_DIRECTREQUIREAUTH 0x10000000
 #define AIM_ICQ_STATE_DIRECTCONTACTLIST 0x20000000
 
-typedef int (*aim_rxcallback_t)(OscarData *od, FlapConnection *conn, FlapFrame *frame, ...);
-
-
-/* family_auth.c */
+/**
+ * Only used when connecting with the old-style BUCP login.
+ */
 struct aim_clientrelease
 {
 	char *name;
@@ -580,6 +585,9 @@ struct aim_clientrelease
 	char *info;
 };
 
+/**
+ * Only used when connecting with the old-style BUCP login.
+ */
 struct aim_authresp_info
 {
 	char *bn;
@@ -611,12 +619,29 @@ struct aim_redirect_data
 	} chat;
 };
 
+int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, guint16 port, guint8 *cookie, guint16 cookielen);
+
+/* family_auth.c */
+
+/**
+ * Only used when connecting with the old-style BUCP login.
+ */
 int aim_request_login(OscarData *od, FlapConnection *conn, const char *bn);
+
+/**
+ * Only used when connecting with the old-style BUCP login.
+ */
 int aim_send_login(OscarData *od, FlapConnection *conn, const char *bn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key, gboolean allow_multiple_logins);
+
+/**
+ * Only used when connecting with the old-style BUCP login.
+ */
 /* 0x000b */ int aim_auth_securid_send(OscarData *od, const char *securid);
 
-void oscar_data_addhandler(OscarData *od, guint16 family, guint16 subtype, aim_rxcallback_t newhandler, guint16 flags);
-aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 subtype);
+/**
+ * Only used when connecting with clientLogin.
+ */
+void send_client_login(OscarData *od, const char *username);
 
 /* flap_connection.c */
 FlapConnection *flap_connection_new(OscarData *, int type);
@@ -632,13 +657,19 @@ void flap_connection_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc, Purple
 void flap_connection_send(FlapConnection *conn, FlapFrame *frame);
 void flap_connection_send_version(OscarData *od, FlapConnection *conn);
 void flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy);
+void flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci);
 void flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data);
 void flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data, gboolean high_priority);
 void flap_connection_send_keepalive(OscarData *od, FlapConnection *conn);
 FlapFrame *flap_frame_new(OscarData *od, guint16 channel, int datalen);
 
+/* oscar_data.c */
+typedef int (*aim_rxcallback_t)(OscarData *od, FlapConnection *conn, FlapFrame *frame, ...);
+
 OscarData *oscar_data_new(void);
 void oscar_data_destroy(OscarData *);
+void oscar_data_addhandler(OscarData *od, guint16 family, guint16 subtype, aim_rxcallback_t newhandler, guint16 flags);
+aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 subtype);
 
 /* misc.c */
 #define AIM_VISIBILITYCHANGE_PERMITADD    0x05

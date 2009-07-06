@@ -807,7 +807,7 @@ looked_up_internal_ip_cb(gpointer data, gint source, const gchar *error_message)
 				control_info.internalip);
 		close(source);
 	} else
-		purple_debug_info("upnp", "Unable to look up local IP\n");
+		purple_debug_error("upnp", "Unable to look up local IP\n");
 
 }
 

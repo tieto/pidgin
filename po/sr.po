@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:40-0400\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2007-09-09 11:54+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -1755,6 +1755,8 @@ msgstr "+++ %s се пријавио(ла)"
 msgid "+++ %s signed off"
 msgstr "+++ %s се одјавио(ла)"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "Непозната грешка"
 
@@ -2146,6 +2148,10 @@ msgstr "<font color=\"red\"><b>Не могу да читам датотеку: %
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <САМО-ОДГОВОР>: %s\n"
+
+#, fuzzy
+msgid "Error creating conference."
+msgstr "Грешка при успостављању везе"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -3113,6 +3119,11 @@ msgstr "Додај у ћаскање"
 msgid "Chat _name:"
 msgstr "_Име ћаскања:"
 
+#. should this be a settings error?
+#, fuzzy
+msgid "Unable to resolve server"
+msgstr "Не могу да се повежем на сервер."
+
 msgid "Chat error"
 msgstr "Грешка у ћаскању"
 
@@ -3161,6 +3172,10 @@ msgstr "Популарни пољски ИМ"
 msgid "Gadu-Gadu User"
 msgstr "Гаду-Гаду корисник"
 
+#, fuzzy
+msgid "GG server"
+msgstr "Добављам сервер"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Непозната наредба: %s"
@@ -3203,7 +3218,8 @@ msgstr "_Канал:"
 msgid "_Password:"
 msgstr "_Лозинка:"
 
-msgid "IRC nicks may not contain whitespace"
+#, fuzzy
+msgid "IRC nick and server may not contain whitespace"
 msgstr "IRC надимци не могу садржати белине"
 
 #. 1. connect to server
@@ -3677,6 +3693,9 @@ msgstr "Неисправан одговор сервера."
 msgid "Server does not use any supported authentication method"
 msgstr "Сервер не користи ниједан од подржаних начина идентификовања"
 
+msgid "You require encryption, but it is not available on this server."
+msgstr "Захтевате шифровање, али оно није доступно на овом серверу."
+
 msgid "Invalid challenge from server"
 msgstr "Неисправан изазов сервера"
 
@@ -3948,6 +3967,14 @@ msgstr "Приоритет"
 msgid "Resource"
 msgstr "Ресурс"
 
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged off"
+msgstr "Пријављен"
+
 # Овде је некада стајало 'име оца'. Код нас је средње име углавном име
 # оца, али то дефинитивно не мора да буде случај на другим местима. Нпр
 # у Холандији је врло уобичајено да људи имају по 4-5 имена; увек се зна
@@ -4120,8 +4147,19 @@ msgstr "Изаберите сервер за конференције који �
 msgid "Find Rooms"
 msgstr "Пронађи собе"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr "Захтевате шифровање, али оно није доступно на овом серверу."
+#, fuzzy
+msgid "Affiliations:"
+msgstr "Надимак:"
+
+#, fuzzy
+msgid "No users found"
+msgstr "Нема нађених корисника"
+
+# „радно место‟ у организацији?
+# Улога је званични термин и у УМЛ-у, прим. прев.
+#, fuzzy
+msgid "Roles:"
+msgstr "Улога"
 
 msgid "Ping timeout"
 msgstr ""
@@ -4142,7 +4180,7 @@ msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Неисправна Џабер адреса. Морате унети домен."
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr "Не могу да се повежем на сервер."
 
 #, c-format
@@ -4169,9 +4207,6 @@ msgstr "Одјава регистрације успела"
 msgid "Unregistration Failed"
 msgstr "Одјава регистрације неуспела"
 
-msgid "Already Registered"
-msgstr "Већ је регистрован"
-
 msgid "State"
 msgstr "Област"
 
@@ -4183,6 +4218,9 @@ msgstr "Телефон"
 
 msgid "Date"
 msgstr "Датум"
+
+msgid "Already Registered"
+msgstr "Већ је регистрован"
 
 msgid "Unregister"
 msgstr "Одјави регистрацију"
@@ -4210,6 +4248,10 @@ msgstr "Региструј нови налог на %s"
 
 msgid "Change Registration"
 msgstr "Измени регистрацију"
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "Не могу да се повежем на сервер."
 
 msgid "Error unregistering account"
 msgstr "Грешка при одјави регистрације"
@@ -4574,16 +4616,18 @@ msgstr "topic [нова тема]:  Прегледај или промени т�
 msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr "ban &lt;корисник&gt; [разлог]:  Брани приступ кориснику у причаоници."
 
+#, fuzzy
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "affiliate &lt;корисник&gt; &lt;owner|admin|member|outcast|none&gt;: Поставља "
 "повезаност корисника са причаоницом."
 
+#, fuzzy
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 "правило &lt;корисник&gt; &lt;owner|admin|member|outcast|none&gt;: Поставља "
 "корисничко правило у причаоници."
@@ -4646,6 +4690,9 @@ msgstr "Повезивање са сервером"
 
 msgid "File transfer proxies"
 msgstr "Посредници за пренос датотека"
+
+msgid "BOSH URL"
+msgstr ""
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
@@ -5045,6 +5092,12 @@ msgstr "Остали контакти"
 msgid "Non-IM Contacts"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr ""
+"%s Вам је послао(ла) позив за разговор преко камере, који још увек није "
+"подржан."
+
 msgid "Nudge"
 msgstr "Потапшај"
 
@@ -5390,62 +5443,25 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr ""
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s није дозвољена група."
-
-msgid "Unknown error."
-msgstr "Непозната грешка."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s на %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "%s вас гурка!"
 
-#. char *adl = g_strndup(payload, len);
-#, c-format
-msgid "Unknown error (%d)"
+#, fuzzy, c-format
+msgid "Unknown error (%d): %s"
 msgstr "Непозната грешка (%d)"
 
 msgid "Unable to add user"
 msgstr "Не могу да забраним корисника"
 
+#, c-format
+msgid "Unknown error (%d)"
+msgstr "Непозната грешка (%d)"
+
 msgid "The following users are missing from your addressbook"
 msgstr "Следећи корисници недостају у вашем адресару"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Не могу да додам корисника на %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Не могу да одстраним корисника на %s (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Не могу да дозволим корисника на %s (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s се не може додати пошто вам је списак другара попуњен."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s није исправан налог пасоша."
-
-msgid "Service Temporarily Unavailable."
-msgstr "Услуге тренутно нису доступне."
-
 msgid "Mobile message was not sent because it was too long."
 msgstr "Порука за мобилни није послата јер је предугачка."
-
-msgid "Unable to rename group"
-msgstr "Не могу да преименујем групу"
-
-msgid "Unable to delete group"
-msgstr "Не могу да уклоним групу"
 
 #, c-format
 msgid ""
@@ -5542,6 +5558,9 @@ msgstr ""
 "Ваш списак МСН другара је привремено недоступан. Сачекајте мало па покушајте "
 "поново."
 
+msgid "Unknown error."
+msgstr "Непозната грешка."
+
 msgid "Handshaking"
 msgstr "Руковање"
 
@@ -5559,6 +5578,18 @@ msgstr "Шаљем колачић"
 
 msgid "Retrieving buddy list"
 msgstr "Преузимам списак другара"
+
+#, fuzzy, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr ""
+"%s Вам је послао(ла) позив за разговор преко камере, који још увек није "
+"подржан."
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
+"%s Вам је послао(ла) позив за разговор преко камере, који још увек није "
+"подржан."
 
 msgid "Away From Computer"
 msgstr "Одсутан од рачунара"
@@ -5598,14 +5629,6 @@ msgstr "Порука се не може послати због грешке с�
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "Порука можда није послата зато што је дошло до непознате грешке:"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s вас је додао у свој списак другара."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s вас је уклонио са његове или њене листе другара."
-
 msgid "Delete Buddy from Address Book?"
 msgstr "Да обришем другара из адресара?"
 
@@ -5633,6 +5656,51 @@ msgstr "Профил"
 #. *  description
 msgid "MSN Protocol Plugin"
 msgstr "Додатак за МСН протокол"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s није дозвољена група."
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%s на %s (%s)"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "Не могу да додам корисника на %s (%s)"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "Не могу да одстраним корисника на %s (%s)"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "Не могу да дозволим корисника на %s (%s)"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "%s се не може додати пошто вам је списак другара попуњен."
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s није исправан налог пасоша."
+
+msgid "Service Temporarily Unavailable."
+msgstr "Услуге тренутно нису доступне."
+
+msgid "Unable to rename group"
+msgstr "Не могу да преименујем групу"
+
+msgid "Unable to delete group"
+msgstr "Не могу да уклоним групу"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "%s вас је додао у свој списак другара."
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "%s вас је уклонио са његове или њене листе другара."
 
 #, c-format
 msgid "No such user: %s"
@@ -5664,6 +5732,8 @@ msgid "Lost connection with server"
 msgstr "Веза са сервером је прекинута"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr "Нова е-пошта"
 
@@ -5720,11 +5790,13 @@ msgstr "Грешка у протоколу, код %d: %s"
 
 #, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
+
+msgid "Incorrect username or password"
+msgstr "Неисправно корисничко име или лозинка"
 
 msgid "MySpaceIM Error"
 msgstr "Грешка у Мом свемиру"
@@ -6042,9 +6114,6 @@ msgstr "Не можете додати сами себе"
 msgid "Master archive is misconfigured"
 msgstr "Главна архива није добро подешена"
 
-msgid "Incorrect username or password"
-msgstr "Неисправно корисничко име или лозинка"
-
 msgid "Could not recognize the host of the username you entered"
 msgstr "Не могу да препознам домаћина за унесено корисничко име"
 
@@ -6258,6 +6327,28 @@ msgstr "Адреса сервера"
 
 msgid "Server port"
 msgstr "Порт сервера"
+
+#, fuzzy
+msgid "Received unexpected response from "
+msgstr "Добијен је неочекиван одговор HTTP сервера."
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Успостављали сте и прекидали везу сувише често. Сачекајте десет минута па "
+"покушајте поново. Ако наставите да покушавате, мораћете да сачекате још дуже."
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "Грешка у захтеву токена за пријаву"
+
+msgid "Incorrect password."
+msgstr "Неисправна лозинка."
+
+msgid "AOL does not allow your screen name to authenticate via this site."
+msgstr ""
 
 msgid "Could not join chat room"
 msgstr "Не могу да се повежем на причаоницу"
@@ -6559,56 +6650,6 @@ msgstr ""
 "корисничко име. Корисничка имена морају бити исправне адресе е-поште, почети "
 "словом и садржати само слова, бројеве и размаке, или садржати само бројеве."
 
-#. Unregistered username
-#. uid is not exist
-msgid "Invalid username."
-msgstr "Неисправно корисничко име."
-
-msgid "Incorrect password."
-msgstr "Неисправна лозинка."
-
-#. Suspended account
-msgid "Your account is currently suspended."
-msgstr "Ваш налог је тренутно недоступан."
-
-#. service temporarily unavailable
-msgid "The AOL Instant Messenger service is temporarily unavailable."
-msgstr "Услуга АОЛ брзих порука је привремено недоступна."
-
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"Успостављали сте и прекидали везу сувише често. Сачекајте десет минута па "
-"покушајте поново. Ако наставите да покушавате, мораћете да сачекате још дуже."
-
-#, c-format
-msgid "The client version you are using is too old. Please upgrade at %s"
-msgstr "Програм који користите је застарео. Освежите га са %s"
-
-msgid "Could Not Connect"
-msgstr "Не могу да се повежем"
-
-msgid "Received authorization"
-msgstr "Примио овлашћење"
-
-msgid "The SecurID key entered is invalid."
-msgstr "Унети SecurID кључ је неисправан."
-
-msgid "Enter SecurID"
-msgstr "Унесите SecurID"
-
-msgid "Enter the 6 digit number from the digital display."
-msgstr "Унесите шестоцифрени број са дигиталног екрана."
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_У реду"
-
 # Da li je "shortly" ovde "uskoro", ili "na kratko"? Pravilno je "uskoro", ali ostalo mi se ne slaze sa time!
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -6624,6 +6665,53 @@ msgstr "Веза се ускоро може прекинути. Погледај
 
 msgid "Unable to get a valid login hash."
 msgstr "Не могу да прими исправан хеш за пријаву."
+
+msgid "Could Not Connect"
+msgstr "Не могу да се повежем"
+
+msgid "Received authorization"
+msgstr "Примио овлашћење"
+
+#. Unregistered username
+#. uid is not exist
+msgid "Invalid username."
+msgstr "Неисправно корисничко име."
+
+#. Suspended account
+msgid "Your account is currently suspended."
+msgstr "Ваш налог је тренутно недоступан."
+
+#. service temporarily unavailable
+msgid "The AOL Instant Messenger service is temporarily unavailable."
+msgstr "Услуга АОЛ брзих порука је привремено недоступна."
+
+#, c-format
+msgid "The client version you are using is too old. Please upgrade at %s"
+msgstr "Програм који користите је застарео. Освежите га са %s"
+
+#. IP address connecting too frequently
+#, fuzzy
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Успостављали сте и прекидали везу сувише често. Сачекајте десет минута па "
+"покушајте поново. Ако наставите да покушавате, мораћете да сачекате још дуже."
+
+msgid "The SecurID key entered is invalid."
+msgstr "Унети SecurID кључ је неисправан."
+
+msgid "Enter SecurID"
+msgstr "Унесите SecurID"
+
+msgid "Enter the 6 digit number from the digital display."
+msgstr "Унесите шестоцифрени број са дигиталног екрана."
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_У реду"
 
 msgid "Password sent"
 msgstr "Лозинка послата"
@@ -7150,6 +7238,7 @@ msgstr "_Тражи"
 msgid "Set User Info (web)..."
 msgstr "Постави податке (преко веба)..."
 
+#. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
 msgstr "Промени лозинку (преко веба)"
 
@@ -7178,6 +7267,10 @@ msgstr "Пронађи другара према адреси е-поште..."
 
 msgid "Search for Buddy by Information"
 msgstr "Пронађи другара према подацима"
+
+#, fuzzy
+msgid "Use clientLogin"
+msgstr "Корисник није пријављен"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -9439,12 +9532,6 @@ msgstr "Овласти корисника"
 msgid "Auth Domain"
 msgstr "Овласти домен"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr ""
-"%s Вам је послао(ла) позив за разговор преко камере, који још увек није "
-"подржан."
-
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9470,6 +9557,40 @@ msgstr ""
 
 msgid "Add buddy rejected"
 msgstr "Одбијено додавање другара"
+
+#. Some error in the received stream
+#, fuzzy
+msgid "Received invalid data"
+msgstr "Добијени су погрешни подаци од сервера."
+
+#. Password incorrect
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Неисправна лозинка"
+
+#. security lock from too many failed login attempts
+#, fuzzy
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr "Непознат број грешке: %d. Пријава на Јаху можда може да то отклони."
+
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "Корисник не постоји."
+
+#. indicates a lock of some description
+#, fuzzy
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr "Непознат број грешке: %d. Пријава на Јаху можда може да то отклони."
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "Неисправно корисничко име или лозинка"
 
 #, c-format
 msgid ""
@@ -9579,8 +9700,8 @@ msgstr "Поставке присуства"
 msgid "Start Doodling"
 msgstr "Почни цртати"
 
-msgid "Activate which ID?"
-msgstr "Који ИД да активирам?"
+msgid "Select the ID you want to activate"
+msgstr ""
 
 msgid "Join whom in chat?"
 msgstr "Прикључи ћаскању са ким?"
@@ -10376,16 +10497,17 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr "Ажурирајте неопходна поља."
 
-msgid "Room _List"
-msgstr "_Списак соба"
+#, fuzzy
+msgid "A_ccount"
+msgstr "Налог"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr "Унесите податке о ћаскању којем желите да се прикључите.\n"
 
-msgid "_Account:"
-msgstr "_Налог:"
+msgid "Room _List"
+msgstr "_Списак соба"
 
 msgid "_Block"
 msgstr "_Забрани"
@@ -10823,6 +10945,112 @@ msgstr "/Алати"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Другари/Поређај другаре"
+
+#. Buddy List
+msgid "Background Color"
+msgstr "Боја позадине"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "Ова група је додата у вашу листу другара"
+
+#, fuzzy
+msgid "Layout"
+msgstr "лао"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Боја позадине"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#, fuzzy
+msgid "Expanded Text"
+msgstr "_Разгранај"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Изаберите боју позадине"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_Скупи"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "Изаберите боју позадине"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "Стање"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "На вези"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#, fuzzy
+msgid "Away Text"
+msgstr "Одсутан"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "Неповезан"
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "Текст о расположењу"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#, fuzzy
+msgid "Message Text"
+msgstr "Порука послата"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "Измени податке о кориснику за %s"
 
 #. Widget creation function
 msgid "SSL Servers"
@@ -11326,6 +11554,10 @@ msgstr "хинду"
 msgid "Hungarian"
 msgstr "мађарски"
 
+#, fuzzy
+msgid "Armenian"
+msgstr "румунски"
+
 msgid "Indonesian"
 msgstr "индонезијски"
 
@@ -11422,6 +11654,9 @@ msgstr ""
 
 msgid "Swedish"
 msgstr "шведски"
+
+msgid "Swahili"
+msgstr ""
 
 msgid "Tamil"
 msgstr "тамилски"
@@ -11856,11 +12091,9 @@ msgstr ""
 msgid "Save Image"
 msgstr "Сачувај слику"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "_Сачувај слику..."
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr "_Додај произвољне смешке..."
 
@@ -11946,9 +12179,6 @@ msgstr "Умањи слова"
 
 msgid "Font Face"
 msgstr "Изглед фонта"
-
-msgid "Background Color"
-msgstr "Боја позадине"
 
 msgid "Foreground Color"
 msgstr "Боја текста"
@@ -12280,6 +12510,9 @@ msgstr "Уреди заседу другару"
 msgid "Pounce on Whom"
 msgstr "Заседа на кога"
 
+msgid "_Account:"
+msgstr "_Налог:"
+
 msgid "_Buddy name:"
 msgstr "_Име другара:"
 
@@ -12390,7 +12623,16 @@ msgstr "Пошаљи поруку"
 msgid "Unknown.... Please report this!"
 msgstr "Непозната заседа. Молимо Вас да ово пријавите!"
 
-msgid "Smiley theme failed to unpack."
+#, fuzzy
+msgid "Theme failed to unpack."
+msgstr "Скуп смешка не може да се распакује."
+
+#, fuzzy
+msgid "Theme failed to load."
+msgstr "Скуп смешка не може да се распакује."
+
+#, fuzzy
+msgid "Theme failed to copy."
 msgstr "Скуп смешка не може да се распакује."
 
 msgid "Install Theme"
@@ -12947,6 +13189,10 @@ msgstr "Стање"
 msgid "Custom Smiley Manager"
 msgstr "Уређивање произвољних смешака"
 
+#, fuzzy
+msgid "Select Buddy Icon"
+msgstr "Изабери другара"
+
 msgid "Click to change your buddyicon for this account."
 msgstr "Кликните за измену ваше иконице за овај налог."
 
@@ -13168,6 +13414,79 @@ msgstr "Додатак за предвиђање доступности конт
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
+
+#, fuzzy
+msgid "Server name request"
+msgstr "Адреса сервера"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Сервер за разговоре"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "Изаберите сервер за конференције који се упитује"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "Мрежне услуге"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "Пошаљи списак другара"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "Постаде одсутан"
+
+#, fuzzy
+msgid "Directory"
+msgstr "Директоријум за дневник"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "Избор звука"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "PubSub сервис"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "Опис"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "Подаци откривања сервиса"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_Веб прегледник:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "Корисник не постоји."
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "Сервер не користи ниједан од подржаних начина идентификовања"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Подаци откривања сервиса"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"Овај додатак је користан за уклањање грешака Џабер сервера или програма"
 
 msgid "Buddy is idle"
 msgstr "Другар је неактиван"
@@ -13669,12 +13988,6 @@ msgstr ""
 "— Изврће сав приспели текст\n"
 "— Шаље поруку људима из вашег списка чим се они пријаве"
 
-msgid "Cursor Color"
-msgstr "Боја курсора"
-
-msgid "Secondary Cursor Color"
-msgstr "Секундарна боја курсора"
-
 msgid "Hyperlink Color"
 msgstr "Боја над-везе"
 
@@ -13683,6 +13996,10 @@ msgstr "Боја посећене над-везе"
 
 msgid "Highlighted Message Name Color"
 msgstr ""
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "Боја обавештења о куцању"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "GtkTreeView хоризонтални раздвојник"
@@ -13713,34 +14030,23 @@ msgstr "Фонт Гтк+ сучеља"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "Пречице за текст"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "Боја сучеља"
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "Омогући обавештење о куцању"
 
-msgid "Widget Sizes"
-msgstr "Величина елемента"
+#, fuzzy
+msgid "GTK+ Theme Control Settings"
+msgstr "Контрола Пиџинове ГТК+ теме"
+
+#, fuzzy
+msgid "Colors"
+msgstr "Затвори"
 
 msgid "Fonts"
 msgstr "Фонтови"
+
+msgid "Miscellaneous"
+msgstr ""
 
 msgid "Gtkrc File Tools"
 msgstr "Алати gtkrc датотеке"
@@ -13877,6 +14183,113 @@ msgstr "Замена текста"
 
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr "Замењује текст у одлазећим порукама према корисничким правилима."
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "Непријављен"
+
+#, fuzzy
+msgid "Just logged out"
+msgstr "Непријављен"
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "Прикључи се ћаскању"
+
+#, fuzzy
+msgid "Ignored"
+msgstr "Игнориши"
+
+#, fuzzy
+msgid "Founder"
+msgstr "Гласније"
+
+#, fuzzy
+msgid "Operator"
+msgstr "Опера"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "Овлашћење је дато"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "Грешка"
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "Подаци"
+
+msgid "Mail dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Question dialog"
+msgstr "Прозор захтева"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "_Нивои упозорења"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "Стање за %s"
+
+#, fuzzy
+msgid "Chatroom Emblems"
+msgstr "Локализација причаонице"
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "Сачувај иконицу"
+
+#, fuzzy
+msgid "Pidgin Icon Theme Editor"
+msgstr "Контрола Пиџинове ГТК+ теме"
+
+#, fuzzy
+msgid "Contact"
+msgstr "Контакт подаци"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "Списак другара"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "Списак другара"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "Контрола Пиџинове ГТК+ теме"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Pidgin Theme Editor."
+msgstr "Контрола Пиџинове ГТК+ теме"
 
 #. *< type
 #. *< ui_requirement
@@ -14088,6 +14501,21 @@ msgstr "Пошаљи и прими изворне Џабер одељке"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Овај додатак је користан за уклањање грешака Џабер сервера или програма"
+
+#~ msgid "Activate which ID?"
+#~ msgstr "Који ИД да активирам?"
+
+#~ msgid "Cursor Color"
+#~ msgstr "Боја курсора"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "Секундарна боја курсора"
+
+#~ msgid "Interface colors"
+#~ msgstr "Боја сучеља"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "Величина елемента"
 
 #~ msgid "Invite message"
 #~ msgstr "Позивна порука"
@@ -14514,9 +14942,6 @@ msgstr ""
 #~ msgid "Please enter external group ID"
 #~ msgstr "Унесите идентификацију спољне групе"
 
-#~ msgid "This group has been added to your buddy list"
-#~ msgstr "Ова група је додата у вашу листу другара"
-
 #~ msgid "I am applying to join"
 #~ msgstr "Молим да се придружим"
 
@@ -14543,9 +14968,6 @@ msgstr ""
 
 #~ msgid "You have successfully modified Qun information"
 #~ msgstr "Успешно сте изменили Qun податке"
-
-#~ msgid "Error requesting login token"
-#~ msgstr "Грешка у захтеву токена за пријаву"
 
 #~ msgid "Unable to login, check debug log"
 #~ msgstr "Не могу да се повежем, провери дневник грешака"

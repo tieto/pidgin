@@ -240,7 +240,7 @@ purple_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
 	/* listen_data->pnp_data = NULL; */
 
 	if (!success) {
-		purple_debug_info("network", "Couldn't create UPnP mapping\n");
+		purple_debug_warning("network", "Couldn't create UPnP mapping\n");
 		if (listen_data->retry) {
 			listen_data->retry = FALSE;
 			listen_data->adding = FALSE;

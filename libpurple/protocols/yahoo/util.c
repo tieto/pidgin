@@ -28,7 +28,7 @@
 #include "internal.h"
 #include "prpl.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 
 #include <string.h>
 
@@ -354,7 +354,7 @@ char *yahoo_codes_to_html(const char *x)
 					else if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
 						g_string_append(s, match);
 					else {
-						purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
+						purple_debug_error("yahoo",
 							"Unknown ansi code 'ESC[%sm'.\n", tmp->str);
 						g_string_free(tmp, TRUE);
 						break;
@@ -423,7 +423,7 @@ char *yahoo_codes_to_html(const char *x)
 
 	ret = s->str;
 	g_string_free(s, FALSE);
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", ret);
+	purple_debug_misc("yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", ret);
 	return ret;
 }
 
@@ -822,7 +822,7 @@ char *yahoo_html_to_codes(const char *src)
 	g_string_free(dest, FALSE);
 
 	esc = g_strescape(ret, NULL);
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
+	purple_debug_misc("yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
 	g_free(esc);
 
 	yahoo_htc_queue_cleanup(colors);

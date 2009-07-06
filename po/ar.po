@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:36-0400\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2008-11-01 17:41+0200\n"
 "Last-Translator: Khaled Hosny <khaledhosny@eglug.org>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
@@ -1753,6 +1753,8 @@ msgstr "+++ %s ولج"
 msgid "+++ %s signed off"
 msgstr "+++ %s خرج"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "عُطل مجهول"
 
@@ -2150,6 +2152,10 @@ msgstr "<font color=\"red\"><b>تعذَّرت قراءة الملف: %s</b></fon
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <رد-تلقائي>: %s\n"
+
+#, fuzzy
+msgid "Error creating conference."
+msgstr "خطأ في إنشاء الاتصال"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -3108,6 +3114,11 @@ msgstr "أضف إلى الدردشة"
 msgid "Chat _name:"
 msgstr "ا_سم الدردشة:"
 
+#. should this be a settings error?
+#, fuzzy
+msgid "Unable to resolve server"
+msgstr "تعذّر الاتصال بالخادوم."
+
 msgid "Chat error"
 msgstr "عُطل في الدردشة"
 
@@ -3156,6 +3167,10 @@ msgstr "مرسال فوري بولندي شهير"
 msgid "Gadu-Gadu User"
 msgstr "مستخدم Gadu-Gadu "
 
+#, fuzzy
+msgid "GG server"
+msgstr "اجلب الخادوم ..."
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "أمر مجهول: %s"
@@ -3198,7 +3213,8 @@ msgstr "ال_قناة:"
 msgid "_Password:"
 msgstr "كلمة ال_سر:"
 
-msgid "IRC nicks may not contain whitespace"
+#, fuzzy
+msgid "IRC nick and server may not contain whitespace"
 msgstr "لا يمكن للاسم المستعار في IRC أن يحوي مسافة خاوية"
 
 #. 1. connect to server
@@ -3700,6 +3716,9 @@ msgstr "استجابة غير صحيحة من الخادوم."
 msgid "Server does not use any supported authentication method"
 msgstr "لا يستخدم الخادوم أي طريقة استيثاق مدعومة"
 
+msgid "You require encryption, but it is not available on this server."
+msgstr "أنت تتطلب استخدام التعمية لكنها غير متاحة على الخادوم."
+
 msgid "Invalid challenge from server"
 msgstr "تحدٍ غير صحيح من الخادوم"
 
@@ -3969,6 +3988,14 @@ msgstr "الأولويّة"
 msgid "Resource"
 msgstr "مورد"
 
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged off"
+msgstr "والِج بالفعل"
+
 msgid "Middle Name"
 msgstr "الاسم الأوسط"
 
@@ -4135,8 +4162,17 @@ msgstr "اختر خادوم اجتماع للاستعلام"
 msgid "Find Rooms"
 msgstr "ابحث عن الغرف"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr "أنت تتطلب استخدام التعمية لكنها غير متاحة على الخادوم."
+#, fuzzy
+msgid "Affiliations:"
+msgstr "الكنية:"
+
+#, fuzzy
+msgid "No users found"
+msgstr "لا يوجد مستخدمون مطابقون"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "الدّور"
 
 msgid "Ping timeout"
 msgstr "مهلة بِنْج"
@@ -4157,7 +4193,7 @@ msgid "Invalid XMPP ID. Domain must be set."
 msgstr "هوية XMPP غير صحيحة. يجب تحديد النطاق."
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr "فشل الاتصال بالخادوم."
 
 #, c-format
@@ -4184,9 +4220,6 @@ msgstr "نجح إلغاء التسجيل"
 msgid "Unregistration Failed"
 msgstr "فشل إلغاء التسجيل"
 
-msgid "Already Registered"
-msgstr "مسجل بالفعل"
-
 msgid "State"
 msgstr "الإقليم"
 
@@ -4198,6 +4231,9 @@ msgstr "هاتف"
 
 msgid "Date"
 msgstr "التاريخ"
+
+msgid "Already Registered"
+msgstr "مسجل بالفعل"
 
 msgid "Unregister"
 msgstr "ألغ التسجيل"
@@ -4225,6 +4261,10 @@ msgstr "سجّل حسابا جديد في %s"
 
 msgid "Change Registration"
 msgstr "غيّر التسجيل"
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "فشل الاتصال بالخادوم."
 
 msgid "Error unregistering account"
 msgstr "عطل في إلغاء تسجيل الحساب"
@@ -4600,16 +4640,18 @@ msgstr ""
 "ban &lt;user&gt; [reason]:\n"
 "اطرد مستخدما من الغرفة."
 
+#, fuzzy
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;:\n"
 "حدّد علاقة المُستخدم بالغرفة."
 
+#, fuzzy
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;:\n"
 "حدد دور مستخدم في غرفة."
@@ -4680,6 +4722,9 @@ msgstr "اتصل بالخادوم"
 
 msgid "File transfer proxies"
 msgstr "وسطاء نقل الملفات"
+
+msgid "BOSH URL"
+msgstr ""
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
@@ -5074,6 +5119,10 @@ msgstr "مراسلون آخرون"
 msgid "Non-IM Contacts"
 msgstr "مراسلين غير التراسل الفوري"
 
+#, fuzzy, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr "أرسل إليك %s دعوة كاميرا وب، لكنها ليست مدعومة بعد."
+
 msgid "Nudge"
 msgstr "لكزة"
 
@@ -5420,62 +5469,25 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "استيثاق هويّة Windows Live: رد غير سليم"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s ليست مجموعة صالحة."
-
-msgid "Unknown error."
-msgstr "خطأ مجهول."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s على %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "%s أرسل لك لكزة"
 
-#. char *adl = g_strndup(payload, len);
-#, c-format
-msgid "Unknown error (%d)"
+#, fuzzy, c-format
+msgid "Unknown error (%d): %s"
 msgstr "عُطل مجهول (%d)"
 
 msgid "Unable to add user"
 msgstr "تعذّرت إضافة مستخدم"
 
+#, c-format
+msgid "Unknown error (%d)"
+msgstr "عُطل مجهول (%d)"
+
 msgid "The following users are missing from your addressbook"
 msgstr "المستخدمين التاليين ناقصين في دفتر عناوينك"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "تعذّرت إضافة مستخدم على %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "تعذّر حظر مستخدم على %s (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "تعذّر السماح لمستخدم على %s (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "لا يمكن إضافة %s لأن قائمة اصدقائك ممتلئة."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s ليس حساب جواز مرور صالح."
-
-msgid "Service Temporarily Unavailable."
-msgstr "الخدمة غير متاحة مؤقتًا."
-
 msgid "Mobile message was not sent because it was too long."
 msgstr "لم تُرسل رسالة المحمول لأنها طويلة جدا."
-
-msgid "Unable to rename group"
-msgstr "تعذّر تغيير اسم المجموعة"
-
-msgid "Unable to delete group"
-msgstr "تعذّر حذف المجموعة"
 
 #, c-format
 msgid ""
@@ -5579,6 +5591,9 @@ msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr "قائمة أصدقائك في MSN غير متاحة مؤقتًا. من فضلك انتظر و حاول مرة ثانية."
 
+msgid "Unknown error."
+msgstr "خطأ مجهول."
+
 msgid "Handshaking"
 msgstr "المصافحة"
 
@@ -5596,6 +5611,14 @@ msgstr "يجري إرسال الكوكي"
 
 msgid "Retrieving buddy list"
 msgstr "يجري جلب قائمة الأصدقاء"
+
+#, fuzzy, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr "أرسل إليك %s دعوة كاميرا وب، لكنها ليست مدعومة بعد."
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "أرسل إليك %s دعوة كاميرا وب، لكنها ليست مدعومة بعد."
 
 msgid "Away From Computer"
 msgstr "بعيد عن الحاسوب"
@@ -5635,14 +5658,6 @@ msgstr "تعذّر إرسال الرسالة لحدوث عطل في لوحة ا�
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "الرسالة ربما تكون لم ترسل لحدوث عطل مجهول:"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s أضافك إلى قائمة أصدقائه."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s حذفك من قائمة أصدقائه."
-
 msgid "Delete Buddy from Address Book?"
 msgstr "أأحذف الصديق من دفتر العناوين؟"
 
@@ -5670,6 +5685,51 @@ msgstr "مسار اللاحة"
 #. *  description
 msgid "MSN Protocol Plugin"
 msgstr "ملحقة بروتوكول MSN"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s ليست مجموعة صالحة."
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%s على %s (%s)"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "تعذّرت إضافة مستخدم على %s (%s)"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "تعذّر حظر مستخدم على %s (%s)"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "تعذّر السماح لمستخدم على %s (%s)"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "لا يمكن إضافة %s لأن قائمة اصدقائك ممتلئة."
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s ليس حساب جواز مرور صالح."
+
+msgid "Service Temporarily Unavailable."
+msgstr "الخدمة غير متاحة مؤقتًا."
+
+msgid "Unable to rename group"
+msgstr "تعذّر تغيير اسم المجموعة"
+
+msgid "Unable to delete group"
+msgstr "تعذّر حذف المجموعة"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "%s أضافك إلى قائمة أصدقائه."
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "%s حذفك من قائمة أصدقائه."
 
 #, c-format
 msgid "No such user: %s"
@@ -5703,6 +5763,8 @@ msgstr ""
 "%s"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr "رسالة بريد جديدة"
 
@@ -5763,16 +5825,18 @@ msgstr "متَّصل"
 msgid "Protocol error, code %d: %s"
 msgstr "عطل بروتوكول، رمز %d: %s"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
 "‏%s كلمة السر مكونة من %d حرف، أطول من %d وهو الطول المُتوقّع ل MySpaceIM. من "
 "فضلك قصّر كلمة سرّك مِن http://profileedit.myspace.com/index.cfm?"
 "fuseaction=accountSettings.changePassword ثم أعِد المحاولة."
+
+msgid "Incorrect username or password"
+msgstr "اسم شاشة أو كلمة سر غير صحيحة"
 
 msgid "MySpaceIM Error"
 msgstr "عطل في MySpaceIM"
@@ -6087,9 +6151,6 @@ msgstr "لا يمكنك إضافة نفسك"
 msgid "Master archive is misconfigured"
 msgstr "الأرشيف الرئيسي غير مضبوط"
 
-msgid "Incorrect username or password"
-msgstr "اسم شاشة أو كلمة سر غير صحيحة"
-
 msgid "Could not recognize the host of the username you entered"
 msgstr " لا يمكن تعرُّف خادوم اسم المستخدم المدخل"
 
@@ -6294,6 +6355,28 @@ msgstr "عنوان الخادوم"
 
 msgid "Server port"
 msgstr "منفذ الخادوم"
+
+#, fuzzy
+msgid "Received unexpected response from "
+msgstr "تلقيت استجابة غير متوقّعة من خادوم HTTP."
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"قمت بالاتصال و قطعته مرات عديدة في وقت قصير جدا. انتظر عشر دقائق وحاول "
+"مجددا. إذا استمريت في المحاولة الآن فسينبغي لك الانتظار مدة أطول."
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "خطأ أثناء استجلاء %s"
+
+msgid "Incorrect password."
+msgstr "كلمة سر خطأ."
+
+msgid "AOL does not allow your screen name to authenticate via this site."
+msgstr ""
 
 msgid "Could not join chat room"
 msgstr "تعذّر الانضمام لقناة الدردشة"
@@ -6595,13 +6678,30 @@ msgstr ""
 "عنوان بريد صحيح، أو أن يبدأ بحرف و يحوي فقط أحرفا و أرقاما و مسافات، أو "
 "أرقاما فقط."
 
+#, fuzzy, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr "قد ينقطع اتصالك قريبا. طالع %s للتحديثات."
+
+msgid "Unable to get a valid AIM login hash."
+msgstr "تعذّر جلب تلبيدة ولوج صحيحة إلى AIM."
+
+#, c-format
+msgid "You may be disconnected shortly.  Check %s for updates."
+msgstr "قد ينقطع اتصالك قريبا. طالع %s للتحديثات."
+
+msgid "Unable to get a valid login hash."
+msgstr "تعذّر جلب تلبيدة ولوج صحيحة."
+
+msgid "Could Not Connect"
+msgstr "تعذّر الاتصال"
+
+msgid "Received authorization"
+msgstr "استُقبِل الاستيثاق"
+
 #. Unregistered username
 #. uid is not exist
 msgid "Invalid username."
 msgstr "اسم مستخدم غير صالح"
-
-msgid "Incorrect password."
-msgstr "كلمة سر خطأ."
 
 #. Suspended account
 msgid "Your account is currently suspended."
@@ -6611,24 +6711,18 @@ msgstr "حسابك مُعَلّق حاليا."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "خدمة مِرسال AOL الفوري غير متاحة مؤقتًا."
 
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"قمت بالاتصال و قطعته مرات عديدة في وقت قصير جدا. انتظر عشر دقائق وحاول "
-"مجددا. إذا استمريت في المحاولة الآن فسينبغي لك الانتظار مدة أطول."
-
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "إصدارة العميل التي تستخدمها قديمة جدًا. من فضلك رقها من %s"
 
-msgid "Could Not Connect"
-msgstr "تعذّر الاتصال"
-
-msgid "Received authorization"
-msgstr "استُقبِل الاستيثاق"
+#. IP address connecting too frequently
+#, fuzzy
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"قمت بالاتصال و قطعته مرات عديدة في وقت قصير جدا. انتظر عشر دقائق وحاول "
+"مجددا. إذا استمريت في المحاولة الآن فسينبغي لك الانتظار مدة أطول."
 
 msgid "The SecurID key entered is invalid."
 msgstr "مفتاح SecurID المدخل غير صالح."
@@ -6644,20 +6738,6 @@ msgstr "أدخل الرقم الذي يتألف من 6 أرقام من العر�
 #.
 msgid "_OK"
 msgstr "_موافق"
-
-#, fuzzy, c-format
-msgid "You may be disconnected shortly.  If so, check %s for updates."
-msgstr "قد ينقطع اتصالك قريبا. طالع %s للتحديثات."
-
-msgid "Unable to get a valid AIM login hash."
-msgstr "تعذّر جلب تلبيدة ولوج صحيحة إلى AIM."
-
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "قد ينقطع اتصالك قريبا. طالع %s للتحديثات."
-
-msgid "Unable to get a valid login hash."
-msgstr "تعذّر جلب تلبيدة ولوج صحيحة."
 
 msgid "Password sent"
 msgstr "أُرسِلت كلمة السر"
@@ -7174,6 +7254,7 @@ msgstr "ا_بحث"
 msgid "Set User Info (web)..."
 msgstr "ضع معلومات المستخدم (وِب)..."
 
+#. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
 msgstr "غيّر كلمة السر (وِب)"
 
@@ -7202,6 +7283,10 @@ msgstr "ابحث عن صديق بواسطة عنوان البريد الإلكت
 
 msgid "Search for Buddy by Information"
 msgstr "ابحث عن صديق بواسطة المعلومات"
+
+#, fuzzy
+msgid "Use clientLogin"
+msgstr "لم يلِج المستخدم"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -9517,10 +9602,6 @@ msgstr "استوثق من المستخدم"
 msgid "Auth Domain"
 msgstr "استوثق من النطاق"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "أرسل إليك %s دعوة كاميرا وب، لكنها ليست مدعومة بعد."
-
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9543,6 +9624,40 @@ msgstr "رفض %s (بأثر رجعي) طلبك إضافته إلى قائمتك.
 
 msgid "Add buddy rejected"
 msgstr "رفضت إضافة صديق"
+
+#. Some error in the received stream
+#, fuzzy
+msgid "Received invalid data"
+msgstr "استقبلت بيانات غير صالحة عند الاتصال بالخادوم."
+
+#. Password incorrect
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "كلمة السر غير صحيحة"
+
+#. security lock from too many failed login attempts
+#, fuzzy
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr "خطأ مجهول رقم %d. الولوج في موقع ياهوو! على الوب قد يصحح هذه المشكلة."
+
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "المستخدم غير موجود"
+
+#. indicates a lock of some description
+#, fuzzy
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr "خطأ مجهول رقم %d. الولوج في موقع ياهوو! على الوب قد يصحح هذه المشكلة."
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "اسم شاشة أو كلمة سر غير صحيحة"
 
 #, c-format
 msgid ""
@@ -9652,8 +9767,8 @@ msgstr "خصائص التواجد"
 msgid "Start Doodling"
 msgstr "إبدأ Doodling"
 
-msgid "Activate which ID?"
-msgstr "أي هوية أُنشّط؟"
+msgid "Select the ID you want to activate"
+msgstr ""
 
 msgid "Join whom in chat?"
 msgstr "من أضم إلى الدردشة؟"
@@ -10468,16 +10583,17 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr "من فضلك حدِّث الحقول الضروريّة."
 
-msgid "Room _List"
-msgstr "قائمة ال_غرف"
+#, fuzzy
+msgid "A_ccount"
+msgstr "الحساب"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr "من فضلك أدخل المعلومات المناسبة حول الدردشة التي تود الانضمام لها.\n"
 
-msgid "_Account:"
-msgstr "_حساب:"
+msgid "Room _List"
+msgstr "قائمة ال_غرف"
 
 msgid "_Block"
 msgstr "اح_ظر"
@@ -10916,6 +11032,111 @@ msgstr "/أدوات"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/الأصدقاء/رتّب الأصدقاء"
+
+#. Buddy List
+msgid "Background Color"
+msgstr "لون الخلفية"
+
+msgid "The background color for the buddy list"
+msgstr ""
+
+#, fuzzy
+msgid "Layout"
+msgstr "لاو"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "لون الخلفية"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#, fuzzy
+msgid "Expanded Text"
+msgstr "_مدّد"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "اختر لون الخلفية"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "قلّ_ص"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "اختر لون الخلفية"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "اختصار"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "متصل"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#, fuzzy
+msgid "Away Text"
+msgstr "غائب"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "غير متصل"
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "نص المزاج"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#, fuzzy
+msgid "Message Text"
+msgstr "أُرسِلت الرسالة"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "غيّر معلومات المستخدم لأجل %s"
 
 #. Widget creation function
 msgid "SSL Servers"
@@ -11423,6 +11644,10 @@ msgstr "هندية"
 msgid "Hungarian"
 msgstr "مجرية"
 
+#, fuzzy
+msgid "Armenian"
+msgstr "رومانية"
+
 msgid "Indonesian"
 msgstr "إندونيسية"
 
@@ -11520,6 +11745,9 @@ msgstr "صنهالا"
 
 msgid "Swedish"
 msgstr "سويدية"
+
+msgid "Swahili"
+msgstr ""
 
 msgid "Tamil"
 msgstr "تاميلية"
@@ -11956,11 +12184,9 @@ msgstr ""
 msgid "Save Image"
 msgstr "احفظ الصورة"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "ا_حفظ الصورة..."
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr "أ_ضف بسمة مخصصة..."
 
@@ -12044,9 +12270,6 @@ msgstr "صغّر الخط"
 
 msgid "Font Face"
 msgstr "نوع الخط"
-
-msgid "Background Color"
-msgstr "لون الخلفية"
 
 msgid "Foreground Color"
 msgstr "لون المقدمة"
@@ -12380,6 +12603,9 @@ msgstr "حرِّر إشعار الصديق"
 msgid "Pounce on Whom"
 msgstr "إشعار على من"
 
+msgid "_Account:"
+msgstr "_حساب:"
+
 msgid "_Buddy name:"
 msgstr "ا_سم الصديق:"
 
@@ -12490,7 +12716,16 @@ msgstr "أرسل رسالة"
 msgid "Unknown.... Please report this!"
 msgstr "حدث إشعار مجهول. من فضلك أبلغ عن هذا!"
 
-msgid "Smiley theme failed to unpack."
+#, fuzzy
+msgid "Theme failed to unpack."
+msgstr "فشل فك ضغط تيمة البسمات."
+
+#, fuzzy
+msgid "Theme failed to load."
+msgstr "فشل فك ضغط تيمة البسمات."
+
+#, fuzzy
+msgid "Theme failed to copy."
 msgstr "فشل فك ضغط تيمة البسمات."
 
 msgid "Install Theme"
@@ -13053,6 +13288,10 @@ msgid "Custom Smiley Manager"
 msgstr "مدير الشّهادات"
 
 #, fuzzy
+msgid "Select Buddy Icon"
+msgstr "اختر صديقا"
+
+#, fuzzy
 msgid "Click to change your buddyicon for this account."
 msgstr "استخدم هذه الأ_يقونة لهذا الحساب:"
 
@@ -13271,6 +13510,78 @@ msgstr "ملحقة توقع تواجد المراسل."
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr "تعرض معلومات إحصائية عن تواجد أصدقائك"
+
+#, fuzzy
+msgid "Server name request"
+msgstr "عنوان الخادوم"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "أدخل اسم خادوم اجتماع"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "اختر خادوم اجتماع للاستعلام"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "الخدمات على الخط"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "أرسل قائمة الأصدقاء"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "يذهب بعيدا"
+
+#, fuzzy
+msgid "Directory"
+msgstr "دليل السجل"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "اختيار الصّوت"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "خدمة PubSub"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "الوصف"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "معلومات اكتشاف الخدمة"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "ال_متصفح:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "المستخدم غير موجود"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "لا يستخدم الخادوم أي طريقة استيثاق مدعومة"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "معلومات اكتشاف الخدمة"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "تفيد هذه الملحقة في تنقيح خواديم و عملاء XMPXMPPP."
 
 msgid "Buddy is idle"
 msgstr "الصديق ساكن"
@@ -13767,12 +14078,6 @@ msgstr ""
 "- تعكس كل النص الوارد.\n"
 "- ترسل رسالة إلى اصدقائك في لحظة ولوجهم."
 
-msgid "Cursor Color"
-msgstr "لون المؤشّر"
-
-msgid "Secondary Cursor Color"
-msgstr "لون المؤشر الثانوي"
-
 msgid "Hyperlink Color"
 msgstr "لون الروابط الفائقة"
 
@@ -13781,6 +14086,10 @@ msgstr "لون الروابط الفائقة المزارة"
 
 msgid "Highlighted Message Name Color"
 msgstr "لون اسم الرسائل المُبرزة"
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "إزالة التنبيه"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "فصْل GtkTreeView الأفقي"
@@ -13811,34 +14120,23 @@ msgstr "خط واجهة جتك+"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "تيمة اختصارات جتك+"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "ألوان الواجهة"
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "تنبيهات بريديّة جديدة"
 
-msgid "Widget Sizes"
-msgstr "أحجام الوِدج"
+#, fuzzy
+msgid "GTK+ Theme Control Settings"
+msgstr "تحكمات تيمات جتك+ لبِدْجِن"
+
+#, fuzzy
+msgid "Colors"
+msgstr "أغلق"
 
 msgid "Fonts"
 msgstr "الخطوط"
+
+msgid "Miscellaneous"
+msgstr ""
 
 msgid "Gtkrc File Tools"
 msgstr "أدوات ملف Gtkrc"
@@ -13975,6 +14273,113 @@ msgstr "استبدال نص"
 
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr "يستبدل النص في الرسائل الصادرة تبعا لقواعد المستخدم المحددة."
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "لم يلج"
+
+#, fuzzy
+msgid "Just logged out"
+msgstr "لم يلج"
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "انضم لدردشة"
+
+#, fuzzy
+msgid "Ignored"
+msgstr "تجاهل"
+
+#, fuzzy
+msgid "Founder"
+msgstr "أعلى"
+
+#, fuzzy
+msgid "Operator"
+msgstr "أوبرا"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "منح التصريح"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "عطل"
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "معلومات"
+
+msgid "Mail dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Question dialog"
+msgstr "حوار الطلب"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "مستوى التحذير"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "حالة %s"
+
+#, fuzzy
+msgid "Chatroom Emblems"
+msgstr "محليّة غرفة الدردشة"
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "غيّر الأيقونة"
+
+#, fuzzy
+msgid "Pidgin Icon Theme Editor"
+msgstr "تحكمات تيمات جتك+ لبِدْجِن"
+
+#, fuzzy
+msgid "Contact"
+msgstr "معلومات الاتصال"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "قائمة الأصدقاء"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "قائمة الأصدقاء"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "تحكمات تيمات جتك+ لبِدْجِن"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Pidgin Theme Editor."
+msgstr "تحكمات تيمات جتك+ لبِدْجِن"
 
 #. *< type
 #. *< ui_requirement
@@ -14183,6 +14588,21 @@ msgstr "أرسِل و استقبل أبيات XMPP خام."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "تفيد هذه الملحقة في تنقيح خواديم و عملاء XMPXMPPP."
+
+#~ msgid "Activate which ID?"
+#~ msgstr "أي هوية أُنشّط؟"
+
+#~ msgid "Cursor Color"
+#~ msgstr "لون المؤشّر"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "لون المؤشر الثانوي"
+
+#~ msgid "Interface colors"
+#~ msgstr "ألوان الواجهة"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "أحجام الوِدج"
 
 #~ msgid "Invite message"
 #~ msgstr "رسالة الدعوة"

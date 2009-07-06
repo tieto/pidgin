@@ -500,6 +500,10 @@ server_info_cb(PurpleConnection *pc, const char *type, const char *id,
 			++list->fetch_count;
 			pidgin_disco_list_ref(list);
 		}
+		else {
+			pidgin_disco_list_set_in_progress(list, FALSE);
+			g_free(cb_data);
+		}
 	}
 	else {
 		error = xmlnode_get_child(iq, "error");

@@ -288,7 +288,7 @@ init_plugin(PurplePlugin *plugin)
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", FALSE);
+	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
@@ -316,6 +316,11 @@ init_plugin(PurplePlugin *plugin)
 						/* TODO: Is this an acceptable default?
 						 * Also, keep this in sync as they add more servers */
 						  "proxy.eu.jabber.org");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+						  option);
+
+	option = purple_account_option_string_new(_("BOSH URL"),
+						  "bosh_url", NULL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
 

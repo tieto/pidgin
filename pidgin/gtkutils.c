@@ -1677,9 +1677,11 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 				 * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
 				 * Probably not.  I'll just give an error and return. */
 				/* The original patch sent the icon used by the launcher.  That's probably wrong */
-				purple_notify_error(NULL, NULL, _("Cannot send launcher"), _("You dragged a desktop launcher. "
-											   "Most likely you wanted to send whatever this launcher points to instead of this launcher"
-											   " itself."));
+				purple_notify_error(NULL, NULL, _("Cannot send launcher"),
+				                    _("You dragged a desktop launcher. Most "
+				                      "likely you wanted to send the target "
+				                      "of this launcher instead of this "
+				                      "launcher itself."));
 				break;
 			}
 			purple_desktop_item_unref(item);

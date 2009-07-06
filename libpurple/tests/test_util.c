@@ -14,7 +14,7 @@ START_TEST(test_util_base16_decode)
 	gsize sz = 0;
 	guchar *out = purple_base16_decode("21646c726f77202c6f6c6c656800", &sz);
 	fail_unless(sz == 14, NULL);
-	fail_unless(strcmp("!dlrow ,olleh", (const char *)out) == 0, NULL);
+	assert_string_equal("!dlrow ,olleh", (const char *)out);
 	g_free(out);
 }
 END_TEST
@@ -30,7 +30,7 @@ START_TEST(test_util_base64_decode)
 	gsize sz;
 	guchar *out = purple_base64_decode("b3d0LXl0cm9mAA==", &sz);
 	fail_unless(sz == 10, NULL);
-	fail_unless(strcmp("owt-ytrof", (const char *)out) == 0, NULL);
+	assert_string_equal("owt-ytrof", (const char *)out);
 	g_free(out);
 }
 END_TEST
@@ -94,10 +94,18 @@ START_TEST(test_markup_html_to_xhtml)
 	gchar *xhtml = NULL;
 	gchar *plaintext = NULL;
 	purple_markup_html_to_xhtml("<a>", &xhtml, &plaintext);
-	fail_unless(strcmp("<a href=''></a>", xhtml) == 0, NULL);
+	assert_string_equal("<a href=\"\"></a>", xhtml);
 	g_free(xhtml);
-	fail_unless(strcmp("", plaintext) == 0, NULL);
+	assert_string_equal("", plaintext);
 	g_free(plaintext);
+}
+END_TEST
+
+START_TEST(test_mime_decode_field)
+{
+	gchar *result = purple_mime_decode_field("=?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?=");
+	assert_string_equal("Keld Jørn Simonsen", result);
+	g_free(result);
 }
 END_TEST
 
@@ -135,6 +143,10 @@ util_suite(void)
 
 	tc = tcase_create("Markup");
 	tcase_add_test(tc, test_markup_html_to_xhtml);
+	suite_add_tcase(s, tc);
+
+	tc = tcase_create("MIME");
+	tcase_add_test(tc, test_mime_decode_field);
 	suite_add_tcase(s, tc);
 
 	return s;

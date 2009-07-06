@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:39-0400\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2009-02-26 22:23+0530\n"
 "Last-Translator: Amanpreet Singh Alam <aalam@users.sf.net>\n"
 "Language-Team: Punjabi <punjabi-users@lists.sf.net>\n"
@@ -1749,6 +1749,8 @@ msgstr "+++ %s ਦਾਖਲ ਹੋਇਆ/ਹੋਈ"
 msgid "+++ %s signed off"
 msgstr "+++ %s ਬੰਦ ਕਰ ਗਿਆ/ਗਈ"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "ਅਣਜਾਣੀ ਗਲਤੀ"
 
@@ -2129,6 +2131,10 @@ msgstr "<font color=\"red\"><b>ਫਾਇਲ ਪੜੀ ਨਹੀਂ ਜਾ ਸਕ
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
+
+#, fuzzy
+msgid "Error creating conference."
+msgstr "ਕੁਨੈਕਸ਼ਨ ਬਣਾਉਣ ਦੌਰਾਨ ਗਲਤੀ"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -3086,6 +3092,11 @@ msgstr "ਗੱਲਾਂ 'ਚ ਸ਼ਾਮਿਲ"
 msgid "Chat _name:"
 msgstr "ਗੱਲ ਨਾਂ(_n):"
 
+#. should this be a settings error?
+#, fuzzy
+msgid "Unable to resolve server"
+msgstr "ਸਰਵਰ ਨਾਲ ਜੁੜਨ ਲਈ ਅਸਫਲ ਹੈ।"
+
 msgid "Chat error"
 msgstr "ਗੱਲ ਗਲਤੀ"
 
@@ -3134,6 +3145,10 @@ msgstr "ਪੋਲੈਂਡ ਹਰਮਨਪਿਆਰਾ IM"
 msgid "Gadu-Gadu User"
 msgstr "ਗਡੂ-ਗਡੂ ਯੂਜ਼ਰ"
 
+#, fuzzy
+msgid "GG server"
+msgstr "ਸਰਵਰ ਜਾਣਕਾਰੀ ਲਈ ਜਾ ਰਹੀ ਹੈ"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "ਅਣਜਾਣ ਕਮਾਂਡ: %s"
@@ -3176,7 +3191,8 @@ msgstr "ਚੈਨਲ(_C):"
 msgid "_Password:"
 msgstr "ਪਾਸਵਰਡ(_P):"
 
-msgid "IRC nicks may not contain whitespace"
+#, fuzzy
+msgid "IRC nick and server may not contain whitespace"
 msgstr "IRC ਨਾਂਵਾਂ 'ਚ ਖਾਲੀ ਥਾਂ ਨਹੀਂ ਹੋ ਸਕਦੀ ਹੈ"
 
 #. 1. connect to server
@@ -3643,6 +3659,9 @@ msgstr "ਸਰਵਰ ਵਲੋਂ ਗਲਤ ਜਵਾਬ ਹੈ।"
 msgid "Server does not use any supported authentication method"
 msgstr "ਸਰਵਰ ਕਿਸੇ ਸਹਿਯੋਗੀ ਪਰਮਾਣਕਿਤਾ ਢੰਗ ਸਹਾਇਕ ਨਹੀਂ ਹੈ।"
 
+msgid "You require encryption, but it is not available on this server."
+msgstr "ਤੁਹਾਨੂੰ ਇੰਕ੍ਰਿਪਸ਼ਨ ਦੀ ਲੋੜ ਹੈ, ਪਰ ਇਹ ਸਰਵਰ ਲਈ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ।"
+
 msgid "Invalid challenge from server"
 msgstr "ਸਰਵਰ ਤੋਂ ਗਲਤ ਚੈਲੰਜ਼"
 
@@ -3911,6 +3930,14 @@ msgstr "ਤਰਜੀਹ"
 msgid "Resource"
 msgstr "ਸਰੋਤ"
 
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged off"
+msgstr "ਲਾਗਇਨ ਹੈ"
+
 msgid "Middle Name"
 msgstr "ਮੱਧ ਨਾਂ"
 
@@ -4077,8 +4104,17 @@ msgstr "ਕਿਊਰੀ ਲਈ ਇੱਕ ਕਾਨਫਰੰਸ ਸਰਵਰ ਚ�
 msgid "Find Rooms"
 msgstr "ਰੂਮ ਖੋਜ"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr "ਤੁਹਾਨੂੰ ਇੰਕ੍ਰਿਪਸ਼ਨ ਦੀ ਲੋੜ ਹੈ, ਪਰ ਇਹ ਸਰਵਰ ਲਈ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ।"
+#, fuzzy
+msgid "Affiliations:"
+msgstr "ਏਲੀਆਸ:"
+
+#, fuzzy
+msgid "No users found"
+msgstr "ਕੋਈ ਮਿਲਦਾ ਯੂਜ਼ਰ ਨਹੀਂ ਮਿਲਿਆ"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "ਕੰਮ"
 
 msgid "Ping timeout"
 msgstr "ਪਿੰਗ ਟਾਈਮ-ਆਉਟ"
@@ -4099,7 +4135,7 @@ msgid "Invalid XMPP ID. Domain must be set."
 msgstr "ਗਲਤ XMPP ID ਹੈ। ਡੋਮੇਨ ਸੈੱਟ ਕਰਨੀ ਲਾਜ਼ਮੀ ਹੈ।"
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr "ਸਰਵਰ ਨਾਲ ਕੁਨੈਕਸ਼ਨ ਦੌਰਨ ਗਲਤੀ"
 
 #, c-format
@@ -4126,9 +4162,6 @@ msgstr "ਅਣ-ਰਜਿਸਟਰੇਸ਼ਨ ਸਫਲ"
 msgid "Unregistration Failed"
 msgstr "ਅਣ-ਰਜਿਸਟਰੇਸ਼ਨ ਫੇਲ੍ਹ"
 
-msgid "Already Registered"
-msgstr "ਪਹਿਲਾਂ ਹੀ ਰਜਿਸਟਰ"
-
 msgid "State"
 msgstr "ਸਥਿਤੀ"
 
@@ -4140,6 +4173,9 @@ msgstr "ਫੋਨ"
 
 msgid "Date"
 msgstr "ਮਿਤੀ"
+
+msgid "Already Registered"
+msgstr "ਪਹਿਲਾਂ ਹੀ ਰਜਿਸਟਰ"
 
 msgid "Unregister"
 msgstr "ਅਣ-ਰਜਿਸਟਰ"
@@ -4167,6 +4203,10 @@ msgstr "%s ਉੱਤੇ ਨਵਾਂ ਅਕਾਊਂਟ ਰਜਿਸਟਰ ਕ�
 
 msgid "Change Registration"
 msgstr "ਰਜਿਸਟਰੇਸ਼ਨ ਬਦਲੋ"
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "ਸਰਵਰ ਨਾਲ ਕੁਨੈਕਸ਼ਨ ਦੌਰਨ ਗਲਤੀ"
 
 msgid "Error unregistering account"
 msgstr "ਅਕਾਊਂਟ ਅਣ-ਰਜਿਸਟਰੇਸ਼ਨ ਗਲਤੀ"
@@ -4531,16 +4571,18 @@ msgstr "topic [new topic]:  View or change the topic."
 msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr "ban &lt;user&gt; [reason]:  Ban a user from the room."
 
+#, fuzzy
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: ਰੂਮ ਨਾਲ ਯੂਜ਼ਰ "
 "ਦਾ ਸਬੰਧ ਸੈੱਟ ਕਰੋ"
 
+#, fuzzy
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: ਰੂਮ ਵਿੱਚ ਯੂਜ਼ਰ ਦਾ "
 "ਰੋਲ ਸੈੱਟ ਕਰੋ।"
@@ -4602,6 +4644,9 @@ msgstr "ਸਰਵਰ ਨਾਲ ਜੋੜੋ"
 
 msgid "File transfer proxies"
 msgstr "ਫਾਇਲ ਟਰਾਂਸਫਰ ਪਰਾਕਸੀ"
+
+msgid "BOSH URL"
+msgstr ""
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
@@ -4999,6 +5044,10 @@ msgstr "ਹੋਰ ਸੰਪਰਕ"
 msgid "Non-IM Contacts"
 msgstr "ਗ਼ੈਰ-IM ਸੰਪਰਕ"
 
+#, fuzzy, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr "%s ਨੇ ਇੱਕ ਵੈੱਬ-ਕੈਮ ਸੱਦਾ ਭੇਜਿਆ ਹੈ, ਜੋ ਕਿ ਹਾਲੇ ਸਹਿਯੋਗੀ ਨਹੀਂ ਹੈ।"
+
 msgid "Nudge"
 msgstr "ਸੈਨਤ"
 
@@ -5338,62 +5387,25 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "ਵਿੰਡੋ ਲਾਇਵ ID ਪਰਮਾਣਕਿਤਾ: ਗਲਤ ਜਵਾਬ"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s ਠੀਕ ਗਰੁੱਪ ਨਹੀਂ ਹੈ।"
-
-msgid "Unknown error."
-msgstr "ਅਣਜਾਣ ਗਲਤੀ"
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s 'ਤੇ %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "%s ਨੇ ਤੁਹਾਨੂੰ ਸੈਨਲ (ਨੱਜ) ਮਾਰੀ ਹੈ!"
 
-#. char *adl = g_strndup(payload, len);
-#, c-format
-msgid "Unknown error (%d)"
+#, fuzzy, c-format
+msgid "Unknown error (%d): %s"
 msgstr "ਅਣਜਾਣੀ ਗਲਤੀ (%d)"
 
 msgid "Unable to add user"
 msgstr "ਯੂਜ਼ਰ ਸ਼ਾਮਲ ਕਰਨ ਲਈ ਅਸਮਰੱਥ"
 
+#, c-format
+msgid "Unknown error (%d)"
+msgstr "ਅਣਜਾਣੀ ਗਲਤੀ (%d)"
+
 msgid "The following users are missing from your addressbook"
 msgstr "ਤੁਹਾਡੀ ਐਡਰੈੱਸਬੁੱਕ ਵਿੱਚੋਂ ਹੇਠ ਦਿੱਤੇ ਯੂਜ਼ਰ ਗੁੰਮ ਹਨ"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "%s (%s) ਉੱਤੇ ਯੂਜ਼ਰ ਜੋੜਨ ਲਈ ਅਸਫ਼ਲ"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "%s (%s) ਉੱਤੇ ਯੂਜ਼ਰ ਬਲਾਕ ਕਰਨ ਲਈ ਅਸਮਰੱਥ"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "%s (%s) ਉੱਤੇ ਯੂਜ਼ਰ ਨੂੰ ਮਨਜ਼ੂਰ ਕਰਨ ਲਈ ਅਸਮਰੱਥ"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s ਨੂੰ ਜੋੜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ, ਕਿਉਂਕਿ ਤੁਹਾਡੀ ਬੱਡੀ ਲਿਸਟ ਭਰ ਗਈ ਹੈ।"
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s ਲਈ ਗਲਤ ਪਾਸਪੋਰਟ ਅਕਾਊਂਟ ਹੈ"
-
-msgid "Service Temporarily Unavailable."
-msgstr "ਸਰਵਿਸ ਆਰਜ਼ੀ ਰੂਪ 'ਚ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ।"
-
 msgid "Mobile message was not sent because it was too long."
 msgstr "ਮੋਬਾਇਲ ਸੁਨੇਹਾ ਭੇਜਿਆ ਨਹੀਂ ਗਿਆ, ਕਿਉਂਕਿ ਇਹ ਬਹੁਤ ਲੰਮਾ ਸੀ।"
-
-msgid "Unable to rename group"
-msgstr "ਗਰੁੱਪ ਨਾਂ-ਤਬਦੀਲੀ ਲਈ ਅਸਫਲ"
-
-msgid "Unable to delete group"
-msgstr "ਗਰੁੱਪ ਹਟਾਉਣ ਲਈ ਅਸਫਲ"
 
 #, c-format
 msgid ""
@@ -5477,6 +5489,9 @@ msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr "ਤੁਹਾਡਾ MSN ਬੱਡੀ ਆਰਜ਼ੀ ਤੌਰ ਉੱਤੇ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ। ਉਡੀਕ ਕਰਕੇ ਮੁੜ ਕੋਸ਼ਿਸ ਕਰੋ ਜੀ।"
 
+msgid "Unknown error."
+msgstr "ਅਣਜਾਣ ਗਲਤੀ"
+
 msgid "Handshaking"
 msgstr "ਹੈਂਡਸੇਕ"
 
@@ -5494,6 +5509,14 @@ msgstr "ਕੂਕੀਜ਼ ਭੇਜੇ ਜਾ ਰਹੇ ਹਨ"
 
 msgid "Retrieving buddy list"
 msgstr "ਬੱਡੀ ਲਿਸਟ ਪ੍ਰਾਪਤ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
+
+#, fuzzy, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr "%s ਨੇ ਇੱਕ ਵੈੱਬ-ਕੈਮ ਸੱਦਾ ਭੇਜਿਆ ਹੈ, ਜੋ ਕਿ ਹਾਲੇ ਸਹਿਯੋਗੀ ਨਹੀਂ ਹੈ।"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s ਨੇ ਇੱਕ ਵੈੱਬ-ਕੈਮ ਸੱਦਾ ਭੇਜਿਆ ਹੈ, ਜੋ ਕਿ ਹਾਲੇ ਸਹਿਯੋਗੀ ਨਹੀਂ ਹੈ।"
 
 msgid "Away From Computer"
 msgstr "ਕੰਪਿਊਟਰ ਤੋਂ ਦੂਰ"
@@ -5533,14 +5556,6 @@ msgstr "ਸਵਿੱਚਬੋਰਡ ਗਲਤੀ ਆਉਣ ਕਰਕੇ ਸੁ�
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "ਇੱਕ ਅਣਜਾਣੀ ਗਲਤੀ ਆਉਣ ਕਰਕੇ ਸੁਨੇਹਾ ਭੇਜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ ਹੈ:"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s ਨੇ ਤੁਹਾਨੂੰ ਆਪਣੀ ਬੱਡੀ ਲਿਸਟ 'ਚ ਜੋੜਿਆ ਹੈ।"
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s ਨੇ ਤੁਹਾਨੂੰ ਆਪਣੀ ਬੱਡੀ ਲਿਸਟ 'ਚੋਂ ਹਟਾ ਦਿੱਤਾ ਹੈ।"
-
 msgid "Delete Buddy from Address Book?"
 msgstr "ਕੀ ਐਡਰੈੱਸਬੁੱਕ ਵਿੱਚੋਂ ਬੱਡੀ ਹਟਾਉਣਾ ਹੈ?"
 
@@ -5568,6 +5583,51 @@ msgstr "ਪ੍ਰੋਫਾਇਲ URL"
 #. *  description
 msgid "MSN Protocol Plugin"
 msgstr "MSN ਪਰੋਟੋਕਾਲ ਪਲੱਗਇਨ"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s ਠੀਕ ਗਰੁੱਪ ਨਹੀਂ ਹੈ।"
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%s 'ਤੇ %s (%s)"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "%s (%s) ਉੱਤੇ ਯੂਜ਼ਰ ਜੋੜਨ ਲਈ ਅਸਫ਼ਲ"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "%s (%s) ਉੱਤੇ ਯੂਜ਼ਰ ਬਲਾਕ ਕਰਨ ਲਈ ਅਸਮਰੱਥ"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "%s (%s) ਉੱਤੇ ਯੂਜ਼ਰ ਨੂੰ ਮਨਜ਼ੂਰ ਕਰਨ ਲਈ ਅਸਮਰੱਥ"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "%s ਨੂੰ ਜੋੜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ, ਕਿਉਂਕਿ ਤੁਹਾਡੀ ਬੱਡੀ ਲਿਸਟ ਭਰ ਗਈ ਹੈ।"
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s ਲਈ ਗਲਤ ਪਾਸਪੋਰਟ ਅਕਾਊਂਟ ਹੈ"
+
+msgid "Service Temporarily Unavailable."
+msgstr "ਸਰਵਿਸ ਆਰਜ਼ੀ ਰੂਪ 'ਚ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ।"
+
+msgid "Unable to rename group"
+msgstr "ਗਰੁੱਪ ਨਾਂ-ਤਬਦੀਲੀ ਲਈ ਅਸਫਲ"
+
+msgid "Unable to delete group"
+msgstr "ਗਰੁੱਪ ਹਟਾਉਣ ਲਈ ਅਸਫਲ"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "%s ਨੇ ਤੁਹਾਨੂੰ ਆਪਣੀ ਬੱਡੀ ਲਿਸਟ 'ਚ ਜੋੜਿਆ ਹੈ।"
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "%s ਨੇ ਤੁਹਾਨੂੰ ਆਪਣੀ ਬੱਡੀ ਲਿਸਟ 'ਚੋਂ ਹਟਾ ਦਿੱਤਾ ਹੈ।"
 
 #, c-format
 msgid "No such user: %s"
@@ -5598,6 +5658,8 @@ msgid "Lost connection with server"
 msgstr "ਸਰਵਰ ਨਾਲ ਕੁਨੈਕਸ਼ਨ ਖਤਮ"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr "ਨਵੇਂ ਮੇਲ ਸੁਨੇਹੇ"
 
@@ -5646,16 +5708,18 @@ msgstr "ਜੁੜਿਆ"
 msgid "Protocol error, code %d: %s"
 msgstr "ਪਰੋਟੋਕਾਲ ਗਲਤੀ, ਕੋਡ %d: %s"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
 "%s ਤੁਹਾਡਾ ਪਾਸਵਰਡ %d ਅੱਖਰਾਂ ਦਾ ਹੈ, ਜੋ ਕਿ MySpaceIM ਲਈ %d ਦੀ ਲੰਬਾਈ ਤੋਂ ਵੱਧ ਗਿਆ ਹੈ। ਆਪਣਾ "
 "ਪਾਸਵਰਡ http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings."
 "changePassword ਉੱਤੇ ਛੋਟਾ ਕਰਕੇ ਮੁੜ-ਟਰਾਈ ਕਰੋ ਜੀ।"
+
+msgid "Incorrect username or password"
+msgstr "ਗਲਤ ਯੂਜ਼ਰ ਨਾਂ ਜਾਂ ਪਾਸਵਰਡ"
 
 msgid "MySpaceIM Error"
 msgstr "MySpaceIM ਗਲਤੀ"
@@ -5972,9 +6036,6 @@ msgstr "ਆਪਣੇ ਆਪ ਨੂੰ ਸ਼ਾਮਿਲ ਨਹੀਂ ਕਰ ਸ
 msgid "Master archive is misconfigured"
 msgstr "ਮਾਸਟਰ ਭੰਡਾਰ ਗਲਤ ਸੰਰਚਿਤ ਹੈ"
 
-msgid "Incorrect username or password"
-msgstr "ਗਲਤ ਯੂਜ਼ਰ ਨਾਂ ਜਾਂ ਪਾਸਵਰਡ"
-
 msgid "Could not recognize the host of the username you entered"
 msgstr "ਤੁਹਾਡੇ ਰਾਹੀਂ ਦਿੱਤੇ ਯੂਜ਼ਰ ਨਾਂ ਲਈ ਹੋਸਟ ਖੋਜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ ਹੈ"
 
@@ -6180,6 +6241,28 @@ msgstr "ਸਰਵਰ ਐਡਰੈੱਸ"
 
 msgid "Server port"
 msgstr "ਸਰਵਰ ਪੋਰਟ"
+
+#, fuzzy
+msgid "Received unexpected response from "
+msgstr "ਸਰਵਰ ਤੋਂ ਅਚਾਨਕ HTTP ਜਵਾਬ ਮਿਲਿਆ ਹੈ।"
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"ਤੁਹਾਡਾ ਕੁਨੈਕਸ਼ਨ ਬੜੀ ਛੇਤੀ ਨਾਲ ਜੁੜ ਅਤੇ ਟੁੱਟ ਰਿਹਾ ਹੈ। 10 ਮਿੰਟ ਲਈ ਉਡੀਕ ਕਰਕੇ ਮੁੜ ਕੋਸ਼ਿਸ ਕਰੋ। ਜੇਕਰ "
+"ਤੁਸੀਂ ਕੋਸ਼ਿਸ ਜਾਰੀ ਰੱਖੀ ਤਾਂ ਤੁਹਾਨੂੰ ਹੋਰ ਵੀ ਉਡੀਕ ਕਰਨੀ ਪਵੇਗੀ।"
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "%s ਹੱਲ ਕਰਨ ਦੌਰਾਨ ਗਲਤੀ"
+
+msgid "Incorrect password."
+msgstr "ਗਲਤ ਪਾਸਵਰਡ ਹੈ।"
+
+msgid "AOL does not allow your screen name to authenticate via this site."
+msgstr ""
 
 msgid "Could not join chat room"
 msgstr "ਚੈਟ ਰੂਮ ਵਿੱਚ ਦਾਖਲ ਨਹੀਂ ਹੋਇਆ ਜਾ ਸਕਿਆ"
@@ -6481,13 +6564,30 @@ msgstr ""
 "ਨਾਂ ਇੱਕ ਵੈਧ ਈਮੇਲ ਐਡਰੈੱਸ ਚਾਹੀਦਾ ਹੈ, ਜਾਂ ਇੱਕ ਅੱਖਰ ਨਾਲ ਸ਼ੁਰੂ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ, ਜਿਸ ਵਿੱਚ ਕੇਵਲ ਅੱਖਰ, "
 "ਨੰਬਰ, ਖਾਲੀ ਥਾਂ ਜਾਂ ਕੁਝ ਨੰਬਰ ਹੀ ਹੋ ਸਕਦੇ ਹਨ।"
 
+#, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr "ਤੁਹਾਡਾ ਕੁਨੈਕਸ਼ਨ ਛੇਤੀ ਹੀ ਬੰਦ ਹੋ ਸਕਦਾ ਹੈ। ਇਸਕਰਕੇ ਅੱਪਡੇਟ ਲਈ %s ਵੇਖੋ।"
+
+msgid "Unable to get a valid AIM login hash."
+msgstr "ਇੱਕ ਠੀਕ AIM ਲਾਗਇਨ ਹੈਂਸ਼ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਅਸਫ਼ਲ।"
+
+#, c-format
+msgid "You may be disconnected shortly.  Check %s for updates."
+msgstr "ਤੁਹਾਡਾ ਕੁਨੈਕਸ਼ਨ ਛੇਤੀ ਹੀ ਬੰਦ ਹੋ ਸਕਦਾ ਹੈ। ਅੱਪਡੇਟ ਲਈ %s ਵੇਖੋ।"
+
+msgid "Unable to get a valid login hash."
+msgstr "ਇੱਕ ਠੀਕ ਲਾਗਇਨ ਹੈਂਸ਼ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਅਸਫ਼ਲ।"
+
+msgid "Could Not Connect"
+msgstr "ਜੁੜਿਆ ਨਹਾਂ ਜਾ ਸਕਦਾ ਹੈ।"
+
+msgid "Received authorization"
+msgstr "ਪ੍ਰਮਾਣਿਕਤਾ ਪ੍ਰਾਪਤ ਹੋਈ"
+
 #. Unregistered username
 #. uid is not exist
 msgid "Invalid username."
 msgstr "ਗਲਤ ਯੂਜ਼ਰ-ਨਾਂ ਹੈ।"
-
-msgid "Incorrect password."
-msgstr "ਗਲਤ ਪਾਸਵਰਡ ਹੈ।"
 
 #. Suspended account
 msgid "Your account is currently suspended."
@@ -6497,24 +6597,18 @@ msgstr "ਤੁਹਾਡਾ ਅਕਾਊਂਟ ਇਸ ਸਮੇਂ ਮੁਅੱ�
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL Instant Messenger ਸਰਵਿਸ ਆਰਜ਼ੀ ਤੌਰ ਉੱਤੇ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ।"
 
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"ਤੁਹਾਡਾ ਕੁਨੈਕਸ਼ਨ ਬੜੀ ਛੇਤੀ ਨਾਲ ਜੁੜ ਅਤੇ ਟੁੱਟ ਰਿਹਾ ਹੈ। 10 ਮਿੰਟ ਲਈ ਉਡੀਕ ਕਰਕੇ ਮੁੜ ਕੋਸ਼ਿਸ ਕਰੋ। ਜੇਕਰ "
-"ਤੁਸੀਂ ਕੋਸ਼ਿਸ ਜਾਰੀ ਰੱਖੀ ਤਾਂ ਤੁਹਾਨੂੰ ਹੋਰ ਵੀ ਉਡੀਕ ਕਰਨੀ ਪਵੇਗੀ।"
-
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "ਤੁਹਾਡੇ ਰਾਹੀਂ ਵਰਤੇ ਜਾਣ ਵਾਲੇ ਕਲਾਇਟ ਦਾ ਵਰਜਨ ਬਹੁਤ ਪੁਰਾਣਾ ਹੈ। %s ਤੋਂ ਨਵਾਂ ਲਵੋ ਜੀ।"
 
-msgid "Could Not Connect"
-msgstr "ਜੁੜਿਆ ਨਹਾਂ ਜਾ ਸਕਦਾ ਹੈ।"
-
-msgid "Received authorization"
-msgstr "ਪ੍ਰਮਾਣਿਕਤਾ ਪ੍ਰਾਪਤ ਹੋਈ"
+#. IP address connecting too frequently
+#, fuzzy
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"ਤੁਹਾਡਾ ਕੁਨੈਕਸ਼ਨ ਬੜੀ ਛੇਤੀ ਨਾਲ ਜੁੜ ਅਤੇ ਟੁੱਟ ਰਿਹਾ ਹੈ। 10 ਮਿੰਟ ਲਈ ਉਡੀਕ ਕਰਕੇ ਮੁੜ ਕੋਸ਼ਿਸ ਕਰੋ। ਜੇਕਰ "
+"ਤੁਸੀਂ ਕੋਸ਼ਿਸ ਜਾਰੀ ਰੱਖੀ ਤਾਂ ਤੁਹਾਨੂੰ ਹੋਰ ਵੀ ਉਡੀਕ ਕਰਨੀ ਪਵੇਗੀ।"
 
 msgid "The SecurID key entered is invalid."
 msgstr "ਦਿੱਤੀ SecurID ਕੁੰਜੀ ਗਲਤ ਹੈ।"
@@ -6530,20 +6624,6 @@ msgstr "ਡਿਜ਼ੀਟਲ ਦਿੱਖ ਲਈ 6 ਡਿਜ਼ੀਟਲ ਅੰ
 #.
 msgid "_OK"
 msgstr "ਠੀਕ ਹੈ(_O)"
-
-#, c-format
-msgid "You may be disconnected shortly.  If so, check %s for updates."
-msgstr "ਤੁਹਾਡਾ ਕੁਨੈਕਸ਼ਨ ਛੇਤੀ ਹੀ ਬੰਦ ਹੋ ਸਕਦਾ ਹੈ। ਇਸਕਰਕੇ ਅੱਪਡੇਟ ਲਈ %s ਵੇਖੋ।"
-
-msgid "Unable to get a valid AIM login hash."
-msgstr "ਇੱਕ ਠੀਕ AIM ਲਾਗਇਨ ਹੈਂਸ਼ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਅਸਫ਼ਲ।"
-
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "ਤੁਹਾਡਾ ਕੁਨੈਕਸ਼ਨ ਛੇਤੀ ਹੀ ਬੰਦ ਹੋ ਸਕਦਾ ਹੈ। ਅੱਪਡੇਟ ਲਈ %s ਵੇਖੋ।"
-
-msgid "Unable to get a valid login hash."
-msgstr "ਇੱਕ ਠੀਕ ਲਾਗਇਨ ਹੈਂਸ਼ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਅਸਫ਼ਲ।"
 
 msgid "Password sent"
 msgstr "ਪਾਸਵਰਡ ਭੇਜਿਆ"
@@ -7029,6 +7109,7 @@ msgstr "ਖੋਜ(_S)"
 msgid "Set User Info (web)..."
 msgstr "ਯੂਜ਼ਰ ਜਾਣਕਾਰੀ ਦਿਓ (ਵੈੱਬ)..."
 
+#. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
 msgstr "ਪਾਸਵਰਡ ਬਦਲੋ (ਵੈੱਬ)"
 
@@ -7057,6 +7138,10 @@ msgstr "ਈ-ਮੇਲ ਰਾਹੀਂ ਬੱਡੀ ਖੋਜ..."
 
 msgid "Search for Buddy by Information"
 msgstr "ਜਾਣਕਾਰੀ ਰਾਹੀਂ ਬੱਡੀ ਖੋਜ"
+
+#, fuzzy
+msgid "Use clientLogin"
+msgstr "ਯੂਜ਼ਰ ਲਾਗਇਨ ਨਹੀਂ ਹੈ"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -9292,10 +9377,6 @@ msgstr "ਪਰਮਾਣਿਤ ਯੂਜ਼ਰ"
 msgid "Auth Domain"
 msgstr "ਪਰਮਾਣਿਤ ਡੋਮੇਨ"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s ਨੇ ਇੱਕ ਵੈੱਬ-ਕੈਮ ਸੱਦਾ ਭੇਜਿਆ ਹੈ, ਜੋ ਕਿ ਹਾਲੇ ਸਹਿਯੋਗੀ ਨਹੀਂ ਹੈ।"
-
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9320,6 +9401,42 @@ msgstr "%s ਨੇ ਤੁਹਾਨੂੰ ਉਸ ਦੀ ਬੱਡੀ ਲਿਸਟ 
 
 msgid "Add buddy rejected"
 msgstr "ਬੱਡੀ ਸ਼ਾਮਿਲ ਕਰਨਾ ਠੁਕਰਾਇਆ"
+
+#. Some error in the received stream
+#, fuzzy
+msgid "Received invalid data"
+msgstr "ਸਰਵਰ ਨਾਲ ਕੁਨੈਕਸ਼ਨ ਉੱਤੇ ਗਲਤ ਡਾਟਾ ਮਿਲਿਆ ਹੈ।"
+
+#. Password incorrect
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "ਗਲਤ ਪਾਸਵਰਡ"
+
+#. security lock from too many failed login attempts
+#, fuzzy
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"ਅਣਜਾਣੀ ਗਲਤੀ ਨੰਬਰ %d ਹੈ। Yahoo! ਵੈਬਸਾਇਟ ਉੱਤੇ ਲਾਗਇਨ ਕਰਨ ਨਾਲ ਸਮੱਸਿਆ ਹੱਲ ਹੋ ਸਕਦੀ ਹੈ।"
+
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "ਯੂਜ਼ਰ ਮੌਜੂਦ ਨਹੀਂ ਹੈ"
+
+#. indicates a lock of some description
+#, fuzzy
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"ਅਣਜਾਣੀ ਗਲਤੀ ਨੰਬਰ %d ਹੈ। Yahoo! ਵੈਬਸਾਇਟ ਉੱਤੇ ਲਾਗਇਨ ਕਰਨ ਨਾਲ ਸਮੱਸਿਆ ਹੱਲ ਹੋ ਸਕਦੀ ਹੈ।"
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "ਗਲਤ ਯੂਜ਼ਰ ਨਾਂ ਜਾਂ ਪਾਸਵਰਡ"
 
 #, c-format
 msgid ""
@@ -9431,8 +9548,8 @@ msgstr "ਮੌਜੂਦਗੀ ਸੈਟਿੰਗ"
 msgid "Start Doodling"
 msgstr "ਘੁੱਗੂ ਘਾਂਘੜੇ (ਡੂਡਲ) ਸਟਾਰਟ"
 
-msgid "Activate which ID?"
-msgstr "ਕਿਹੜਾ ID ਐਕਟੀਵੇਟ ਕਰਨਾ ਹੈ?"
+msgid "Select the ID you want to activate"
+msgstr ""
 
 msgid "Join whom in chat?"
 msgstr "ਗੱਲਬਾਤ ਵਿੱਚ ਕਿਸ ਨਾਲ ਜੁਆਇੰਨ?"
@@ -10206,16 +10323,17 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr "ਲੋੜੀਦੇ ਖੇਤਰ ਅੱਪਡੇਟ ਕਰੋ ਜੀ।"
 
-msgid "Room _List"
-msgstr "ਰੂਮ ਲਿਸਟ(_L)"
+#, fuzzy
+msgid "A_ccount"
+msgstr "ਅਕਾਊਂਟ"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr "ਉਸ ਗੱਲਬਾਤ ਬਾਰੇ ਲੋੜੀਦੀ ਜਾਣਕਾਰੀ ਦਿਓ ਜੀ, ਜਿਸ ਵਿੱਚ ਤੁਸੀਂ ਸ਼ਾਮਿਲ ਹੋਣਾ ਚਾਹੁੰਦੇ ਹੋ।\n"
 
-msgid "_Account:"
-msgstr "ਅਕਾਊਂਟ(_A):"
+msgid "Room _List"
+msgstr "ਰੂਮ ਲਿਸਟ(_L)"
 
 msgid "_Block"
 msgstr "ਪਾਬੰਦੀ(_B)"
@@ -10646,6 +10764,111 @@ msgstr "/ਟੂਲ"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/ਬੱਡੀ/ਬੱਡੀ ਕ੍ਰਮਬੱਧ"
+
+#. Buddy List
+msgid "Background Color"
+msgstr "ਬੈਕਗਰਾਊਂਡ ਰੰਗ"
+
+msgid "The background color for the buddy list"
+msgstr ""
+
+#, fuzzy
+msgid "Layout"
+msgstr "ਲਾਓ"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "ਬੈਕਗਰਾਊਂਡ ਰੰਗ"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#, fuzzy
+msgid "Expanded Text"
+msgstr "ਫੈਲਾਓ(_E)"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "ਬੈਕਗਰਾਊਂਡ ਰੰਗ ਚੁਣੋ"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "ਸਮੇਟੋ(_C)"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "ਬੈਕਗਰਾਊਂਡ ਰੰਗ ਚੁਣੋ"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "ਸ਼ਾਰਟਕੱਟ"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "ਆਨਲਾਈਨ"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#, fuzzy
+msgid "Away Text"
+msgstr "ਦੂਰ"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "ਆਫਲਾਈਨ"
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "ਮੂਡ ਟੈਕਸਟ"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#, fuzzy
+msgid "Message Text"
+msgstr "ਸੁਨੇਹਾ ਭੇਜਿਆ"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "%s ਲਈ ਯੂਜ਼ਰ ਸੁਨੇਹਾ ਤਬਦੀਲ"
 
 #. Widget creation function
 msgid "SSL Servers"
@@ -11147,6 +11370,10 @@ msgstr "ਹਿੰਦੀ"
 msgid "Hungarian"
 msgstr "ਹੰਗਰੀਆਈ"
 
+#, fuzzy
+msgid "Armenian"
+msgstr "ਰੋਮਾਨੀਆਈ"
+
 msgid "Indonesian"
 msgstr "ਇੰਡੋਨੇਸ਼ੀਆਈ"
 
@@ -11243,6 +11470,9 @@ msgstr "ਸਿੰਹਾਲਾ"
 
 msgid "Swedish"
 msgstr "ਸਵੀਡਸ਼"
+
+msgid "Swahili"
+msgstr ""
 
 msgid "Tamil"
 msgstr "ਤਾਮਿਲ"
@@ -11664,11 +11894,9 @@ msgstr ""
 msgid "Save Image"
 msgstr "ਚਿੱਤਰ ਸੰਭਾਲੋ"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "ਚਿੱਤਰ ਸੰਭਾਲੋ(_S)..."
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr "ਕਸਟਮ ਸਮਾਇਲੀ ਸ਼ਾਮਲ(_A)..."
 
@@ -11754,9 +11982,6 @@ msgstr "ਫੋਂਟ ਸਾਈਜ਼ ਘਟਾਓ"
 
 msgid "Font Face"
 msgstr "ਫੋਂਟ ਫੇਸ"
-
-msgid "Background Color"
-msgstr "ਬੈਕਗਰਾਊਂਡ ਰੰਗ"
 
 msgid "Foreground Color"
 msgstr "ਫਾਰਗਰਾਊਂਡ ਰੰਗ"
@@ -12079,6 +12304,9 @@ msgstr "ਬੱਡੀ ਪਉਨਸ ਸੋਧ"
 msgid "Pounce on Whom"
 msgstr "ਕਿਸ ਉੱਤੇ ਝੱਪਟਣਾ ਹੈ"
 
+msgid "_Account:"
+msgstr "ਅਕਾਊਂਟ(_A):"
+
 msgid "_Buddy name:"
 msgstr "ਬੱਡੀ ਨਾਂ(_B):"
 
@@ -12189,7 +12417,16 @@ msgstr "ਇੱਕ ਸੁਨੇਹਾ ਭੇਜੋ"
 msgid "Unknown.... Please report this!"
 msgstr "ਅਣਜਾਣ ਪਉਨਸ ਘਟਨਾ ਹੈ। ਸੂਚਨਾ ਦਿਓ ਜੀ!"
 
-msgid "Smiley theme failed to unpack."
+#, fuzzy
+msgid "Theme failed to unpack."
+msgstr "ਸਮਾਇਲੀ ਥੀਮ ਅਣ-ਪੈਕ ਕਰਨ ਲਈ ਫੇਲ੍ਹ ਹੈ।"
+
+#, fuzzy
+msgid "Theme failed to load."
+msgstr "ਸਮਾਇਲੀ ਥੀਮ ਅਣ-ਪੈਕ ਕਰਨ ਲਈ ਫੇਲ੍ਹ ਹੈ।"
+
+#, fuzzy
+msgid "Theme failed to copy."
 msgstr "ਸਮਾਇਲੀ ਥੀਮ ਅਣ-ਪੈਕ ਕਰਨ ਲਈ ਫੇਲ੍ਹ ਹੈ।"
 
 msgid "Install Theme"
@@ -12749,6 +12986,10 @@ msgstr "ਸ਼ਾਰਟਕੱਟ"
 msgid "Custom Smiley Manager"
 msgstr "ਪਸੰਦੀਦਾ ਸਮਾਈਲੀ ਮੈਨੇਜਰ"
 
+#, fuzzy
+msgid "Select Buddy Icon"
+msgstr "ਬੱਡੀ ਚੁਣੋ"
+
 msgid "Click to change your buddyicon for this account."
 msgstr "ਇਸ ਅਕਾਊਂਟ ਲਈ ਆਪਣਾ ਬੱਡੀ-ਆਈਕਾਨ ਬਦਲਣ ਲਈ ਕਲਿੱਕ ਕਰੋ।"
 
@@ -12966,6 +13207,78 @@ msgstr "ਸੰਪਰਕ ਉਪਲਬਧਤਾ ਅਨੁਮਾਨ ਪਲੱਗਇ
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr "ਆਪਣੀ ਬੱਡੀ ਦੀ ਉਪਲੱਬਧਤਾ ਲਈ ਅੰਕੜੇ ਵੇਖੋ।"
+
+#, fuzzy
+msgid "Server name request"
+msgstr "ਸਰਵਰ ਐਡਰੈੱਸ"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "ਇੱਕ ਕਾਨਫਰੰਸ ਸਰਵਰ 'ਚ ਦਾਖਲ ਹੋਵੇ"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "ਕਿਊਰੀ ਲਈ ਇੱਕ ਕਾਨਫਰੰਸ ਸਰਵਰ ਚੁਣੋ"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "ਆਨਲਾਈਨ ਸਰਵਿਸਾਂ"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "ਬੱਡੀ ਲਿਸਟ ਭੇਜੋ"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "ਦੂਰ ਗਏ"
+
+#, fuzzy
+msgid "Directory"
+msgstr "ਲਾਗ ਡਾਇਰੈਕਟਰੀ"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "ਆਵਾਜ਼ ਚੋਣ"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "PubSub ਸਰਵਿਸ"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "ਵੇਰਵਾ"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "ਸਰਵਿਸ ਡਾਇਰੈਕਟਰੀ ਜਾਣਕਾਰੀ"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "ਝਲਕਾਰਾ(_B):"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "ਯੂਜ਼ਰ ਮੌਜੂਦ ਨਹੀਂ ਹੈ"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "ਸਰਵਰ ਪਾਬੰਦੀ ਲਈ ਸਹਾਇਕ ਨਹੀਂ ਹੈ"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "ਸਰਵਿਸ ਡਾਇਰੈਕਟਰੀ ਜਾਣਕਾਰੀ"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "ਇਹ ਪਲੱਗਇਨ XMPP ਸਰਵਰ ਜਾਂ ਕਲਾਇਟ ਡੀਬੱਗ ਲਈ ਫਾਇਦੇਮੰਦ ਹੈ।"
 
 msgid "Buddy is idle"
 msgstr "ਬੱਡੀ ਵੇਹਲਾ ਹੈ"
@@ -13456,12 +13769,6 @@ msgstr ""
 "- ਇਹ ਸਭ ਆ ਰਹੇ ਟੈਕਸਟ ਨੂੰ ਉਲਟ ਸਕਦੀ ਹੈ\n"
 "- ਇਹ ਇੱਕ ਸੁਨੇਹਾ ਤੁਹਾਡੀ ਲਿਸਟ ਉੱਤੇ ਮੌਜੂਦ ਲੋਕਾਂ ਨੂੰ ਤੁਰੰਤ ਭੇਜ ਸਕਦੀ ਹੈ, ਜਦੋਂ ਵੀ ਉਹ ਲਾਗਇਨ ਕਰਨ।"
 
-msgid "Cursor Color"
-msgstr "ਕਰਸਰ ਰੰਗ"
-
-msgid "Secondary Cursor Color"
-msgstr "ਸੈਕੰਡਰੀ ਕਰਸਰ ਰੰਗ"
-
 msgid "Hyperlink Color"
 msgstr "ਹਾਈਪਰਲਿੰਕ ਰੰਗ"
 
@@ -13470,6 +13777,10 @@ msgstr "ਖੋਲ੍ਹੇ ਗਏ ਹਾਈਪਰਲਿੰਕ ਰੰਗ"
 
 msgid "Highlighted Message Name Color"
 msgstr "ਹਾਈਲਾਈਟ ਕੀਤਾ ਸੁਨੇਹਾ ਨਾਂ ਰੰਗ"
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "ਟਾਈਪ ਕਰਨ ਸੂਚਨਾ ਰੰਗ"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "GtkTreeView ਹਰੀਜ਼ਟਲ ਵੱਖਰੇਵਾ"
@@ -13500,34 +13811,23 @@ msgstr "GTK+ ਇੰਟਰਫੇਸ ਫੋਂਟ"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "GTK+ ਪਾਠ ਸ਼ਾਰਟਕੱਟ ਥੀਮ"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "ਇੰਟਰਫੇਸ ਰੰਗ"
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "ਟਾਈਪ ਕਰਨ ਦੀ ਸੂਚਨਾ ਚਾਲੂ"
 
-msgid "Widget Sizes"
-msgstr "ਵਿਦਗਿਟ ਆਕਾਰ"
+#, fuzzy
+msgid "GTK+ Theme Control Settings"
+msgstr "ਪਿਡਗਿਨ GTK+ ਸਰੂਪ ਕੰਟਰੋਲ"
+
+#, fuzzy
+msgid "Colors"
+msgstr "ਬੰਦ ਕਰੋ"
 
 msgid "Fonts"
 msgstr "ਫੋਂਟ"
+
+msgid "Miscellaneous"
+msgstr ""
 
 msgid "Gtkrc File Tools"
 msgstr "Gtkrc ਫਾਇਲ ਟੂਲ"
@@ -13663,6 +13963,113 @@ msgstr "ਪਾਠ ਤਬਦੀਲ"
 
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr "ਯੂਜ਼ਰ ਰਾਹੀਂ ਪ੍ਰਭਾਸ਼ਿਤ ਨਿਯਮਾਂ ਮੁਤਾਬਕ ਭੇਜੇ ਜਾਣ ਵਾਲੇ ਸੁਨੇਹੇ ਤਬਦੀਲ ਕਰੋ।"
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "ਲਾਗਇਨ ਨਹੀਂ ਹੈ"
+
+#, fuzzy
+msgid "Just logged out"
+msgstr "ਲਾਗਇਨ ਨਹੀਂ ਹੈ"
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "ਗੱਲਬਾਤ ਵਿੱਚ ਸ਼ਾਮਿਲ"
+
+#, fuzzy
+msgid "Ignored"
+msgstr "ਅਣਡਿੱਠਾ"
+
+#, fuzzy
+msgid "Founder"
+msgstr "ਹੋਰ ਉੱਚੀ"
+
+#, fuzzy
+msgid "Operator"
+msgstr "Opera"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "ਪ੍ਰਮਾਣਿਕਤਾ ਦਿੱਤੀ"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "ਗਲਤੀ "
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "ਜਾਣਕਾਰੀ"
+
+msgid "Mail dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Question dialog"
+msgstr "ਮੰਗ ਡਾਈਲਾਗ"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "ਚੇਤਾਵਨੀ ਪੱਧਰ"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "%s ਲਈ ਹਾਲਤ"
+
+#, fuzzy
+msgid "Chatroom Emblems"
+msgstr "ਚੈਟ ਰੂਮ ਭਾਸ਼ਾ"
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "ਆਈਕਾਨ ਬਦਲੋ"
+
+#, fuzzy
+msgid "Pidgin Icon Theme Editor"
+msgstr "ਪਿਡਗਿਨ GTK+ ਸਰੂਪ ਕੰਟਰੋਲ"
+
+#, fuzzy
+msgid "Contact"
+msgstr "ਸੰਪਰਕ ਜਾਣਕਾਰੀ"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "ਬੱਡੀ ਲਿਸਟ"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "ਬੱਡੀ ਲਿਸਟ"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "ਪਿਡਗਿਨ GTK+ ਸਰੂਪ ਕੰਟਰੋਲ"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Pidgin Theme Editor."
+msgstr "ਪਿਡਗਿਨ GTK+ ਸਰੂਪ ਕੰਟਰੋਲ"
 
 #. *< type
 #. *< ui_requirement
@@ -13868,6 +14275,21 @@ msgstr "ਰਾਅ XMPP ਪ੍ਹੈਰਾ ਭੇਜੋ ਅਤੇ ਲਵੋ"
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "ਇਹ ਪਲੱਗਇਨ XMPP ਸਰਵਰ ਜਾਂ ਕਲਾਇਟ ਡੀਬੱਗ ਲਈ ਫਾਇਦੇਮੰਦ ਹੈ।"
+
+#~ msgid "Activate which ID?"
+#~ msgstr "ਕਿਹੜਾ ID ਐਕਟੀਵੇਟ ਕਰਨਾ ਹੈ?"
+
+#~ msgid "Cursor Color"
+#~ msgstr "ਕਰਸਰ ਰੰਗ"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "ਸੈਕੰਡਰੀ ਕਰਸਰ ਰੰਗ"
+
+#~ msgid "Interface colors"
+#~ msgstr "ਇੰਟਰਫੇਸ ਰੰਗ"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "ਵਿਦਗਿਟ ਆਕਾਰ"
 
 #~ msgid "Invite message"
 #~ msgstr "ਸੱਦਾ ਸੁਨੇਹਾ"

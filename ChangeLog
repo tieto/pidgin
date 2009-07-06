@@ -1,7 +1,7 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.0 (??/??/2009):
-	General:
+	libpurple:
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
 	  project.  With some minor additions and clean ups from Paul Aurich.
 	* Voice & Video framework in libpurple, thanks to Mike Ruprecht's summer
@@ -10,16 +10,32 @@ version 2.6.0 (??/??/2009):
 	  in a group on the buddy list. (Paul Aurich)
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
-
-	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
 	* Report idle time 'From last message sent' should work properly.
 	* Show the invite message for buddies that requested authorization
 	  from you on MSN.
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
-	* Gadu-Gadu accounts can specify a server to which to connect.
+	* DNS SRV records with equal priority are sorted with respect to their
+	  weight as specified in RFC 2782.  (Vijay Raghunathan)
+	* GnuTLS logging (disabled by default) can be controlled through the
+	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
+	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
+	  information.
+	* PURPLE_VERBOSE_DEBUG environment variable.  Currently this is an "on" or
+	  "off" variable.  Set it to any value to turn it on and unset it to turn
+	  it off.  This will optionally be used to only show less useful debug
+	  information on an as-needed basis.
+	* Add support for receiving handwritten (ink) messages on MSN.
+
+	Gadu-Gadu:
+	* Accounts can specify a server to which to connect.
 	  (Krzysztof "kreez" Tobola)
+	* Correctly show tooltip status for contacts with status messages.
+	  (Krzysztof "kkszysiu" Klinikowski)
+	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
+	* Support connection progress steps in Gadu-Gadu (Krzysztof "kkszysiu"
+	  Klinikowski)
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
@@ -59,13 +75,22 @@ version 2.6.0 (??/??/2009):
 	  characters.
 	* Show emblem for mobile, handheld, and web clients and bots (if the other
 	  client supports it).
+	* Google Talk mail notifications should now work for people for whom they
+	  inexplicably did not.  (Thanks to yukam for determining the reason)
+	* New XMPP and Google Talk accounts require SSL by default.
+	* Display kicks (and the reasons given) in chat rooms when an occupant is
+	  kicked.
 
-	Yahoo:
+	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)
 	* Sending text messages (address to +<countrycode><phone number>).
 	  (Sulabh Mahajan)
 	* Addition of MSN buddies to Yahoo accounts by adding them as
 	  'msn/buddy@somedomain.com' is now supported.  (Sulabh Mahajan)
+	* Further fixes for buddy pictures, aliases etc.
+	* Yahoo! and Yahoo! JAPAN are now two separate protocol plugins that share
+	  common protocol code.  You can now have the same account on both
+	  networks.
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
@@ -111,6 +136,33 @@ version 2.6.0 (??/??/2009):
 	* Added "Disable Typing Notification Text" preference.
 	* Preferences have been reorganized into three tabs for Colors, Fonts, and
 	  Miscellaneous categories.
+
+version 2.5.8 (06/27/2009):
+	ICQ:
+	* Fix misparsing a web message as an SMS message. (Yuriy Kaminskiy)
+
+	MSN:
+	* Increase NS command history size to prevent crashes on buddy lists that
+	  have a lot of buddies on other networks like Yahoo!.
+
+	MySpace:
+	* Accounts with empty buddy lists are now properly marked as connected.
+	* Fix receiving messages from users of MySpace's web IM client.
+
+	Yahoo:
+	* Fixed phantom online buddies.  They should now properly disappear when
+	  signing out.
+	* Fixed the crashes some users were seeing with cn.scs.msg.yahoo.com in
+	  2.5.7.
+	* Fixed compiling on systems with glib 2.4.x or older.
+	* Fixed an issue with file transfers.  This may not resolve all issues,
+	  but it should resolve at least some of the most common ones.
+	* The pager server will automatically update to scsa.msg.yahoo.com if the
+	  user empties the field or if it is scs.msg.yahoo.com.  This should ease
+	  the pain of transition to the new login method.
+
+	XMPP:
+	* Fix an incompatibility betweeen Prosody and libpurple clients.
 
 version 2.5.7 (06/20/2009):
 	* Yahoo Protocol 16 support, including new HTTPS login method; this should

@@ -1909,7 +1909,6 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node)
 {
 	PurpleBlistNode *sourcenode = (PurpleBlistNode*)source;
-	PurpleBlistNode *targetnode;
 	PurpleBlistNode *prev, *cur, *next;
 	PurpleContact *target;
 
@@ -1929,7 +1928,6 @@ void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node)
 	if (source == target || !target)
 		return;
 
-	targetnode = (PurpleBlistNode *)target;
 	next = sourcenode->child;
 
 	while (next) {

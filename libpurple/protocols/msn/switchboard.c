@@ -905,6 +905,47 @@ clientcaps_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 #endif
 }
 
+void
+msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
+                         const char *data)
+{
+	PurpleConnection *gc;
+	guchar *image_data;
+	size_t image_len;
+	int imgid;
+	char *image_msg;
+
+	if (!purple_str_has_prefix(data, "base64:"))
+	{
+		purple_debug_error("msn", "Ignoring Ink not in Base64 format.\n");
+		return;
+	}
+
+	gc = purple_account_get_connection(swboard->session->account);
+
+	data += sizeof("base64:") - 1;
+	image_data = purple_base64_decode(data, &image_len);
+	if (!image_data || !image_len) 
+	{
+		purple_debug_error("msn", "Unable to decode Ink from Base64 format.\n");
+		return;
+	}
+
+	imgid = purple_imgstore_add_with_id(image_data, image_len, NULL);
+	image_msg = g_strdup_printf("<IMG ID=%d/>", imgid);
+
+	if (swboard->current_users > 1 ||
+		((swboard->conv != NULL) &&
+		 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+		serv_got_chat_in(gc, swboard->chat_id, passport, 0, image_msg,
+						 time(NULL));
+	else
+		serv_got_im(gc, passport, image_msg, 0, time(NULL));
+
+	purple_imgstore_unref_by_id(imgid);
+	g_free(image_msg);
+}
+
 /**************************************************************************
  * Connect stuff
  **************************************************************************/
@@ -1239,6 +1280,8 @@ msn_switchboard_init(void)
 						   msn_datacast_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msmsgsinvite",
 						   msn_invite_msg);
+	msn_table_add_msg_type(cbs_table, "image/gif",
+						   msn_handwritten_msg);
 }
 
 void

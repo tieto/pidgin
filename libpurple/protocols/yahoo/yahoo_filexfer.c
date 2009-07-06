@@ -30,7 +30,7 @@
 #include "notify.h"
 #include "proxy.h"
 #include "ft.h"
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_packet.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_doodle.h"
@@ -156,8 +156,8 @@ static void yahoo_receivefile_connected(gpointer data, gint source, const gchar 
 	PurpleXfer *xfer;
 	struct yahoo_xfer_data *xd;
 
-	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
-			   "AAA - in yahoo_receivefile_connected\n");
+	purple_debug_info("yahoo", "in yahoo_receivefile_connected\n");
+
 	if (!(xfer = data))
 		return;
 	if (!(xd = xfer->data))
@@ -235,8 +235,8 @@ static void yahoo_sendfile_connected(gpointer data, gint source, const gchar *er
 	PurpleAccount *account;
 	struct yahoo_data *yd;
 
-	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
-			   "AAA - in yahoo_sendfile_connected\n");
+	purple_debug_info("yahoo", "in yahoo_sendfile_connected\n");
+
 	if (!(xfer = data))
 		return;
 	if (!(xd = xfer->data))
@@ -1831,14 +1831,13 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 
 		pkt_to_send = yahoo_packet_new(YAHOO_SERVICE_FILETRANS_ACC_15,
 			YAHOO_STATUS_AVAILABLE, yd->session_id);
-		yahoo_packet_hash(pkt_to_send, "ssssisi",
+		yahoo_packet_hash(pkt_to_send, "ssssis",
 			1, purple_normalize(account, purple_account_get_username(account)),
 			5, xfer->who,
 			265, xfer_data->xfer_peer_idstring,
 			27, xfer->filename,
 			249, xfer_data->info_val_249,
-			251, xfer_data->xfer_idstring_for_relay,
-			222, 3);
+			251, xfer_data->xfer_idstring_for_relay);
 
 		yahoo_packet_send_and_free(pkt_to_send, yd);
 

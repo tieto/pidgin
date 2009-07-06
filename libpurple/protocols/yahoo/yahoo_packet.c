@@ -24,7 +24,7 @@
 #include "internal.h"
 #include "debug.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_packet.h"
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
@@ -187,15 +187,12 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 			pos = x;
 			pkt->hash = g_slist_prepend(pkt->hash, pair);
 
-#ifdef DEBUG
-			{
+			if (purple_debug_is_verbose()) {
 				char *esc;
 				esc = g_strescape(pair->value, NULL);
-				purple_debug(PURPLE_DEBUG_MISC, "yahoo",
-						   "Key: %d  \tValue: %s\n", pair->key, esc);
+				purple_debug_misc("yahoo", "Key: %d  \tValue: %s\n", pair->key, esc);
 				g_free(esc);
 			}
-#endif /* DEBUG */
 		} else {
 			g_free(pair);
 		}
@@ -253,35 +250,35 @@ void yahoo_packet_dump(guchar *data, int len)
 #ifdef YAHOO_DEBUG
 	int i;
 
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+	purple_debug_misc("yahoo", "");
 
 	for (i = 0; i + 1 < len; i += 2) {
 		if ((i % 16 == 0) && i) {
-			purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-			purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+			purple_debug_misc(NULL, "\n");
+			purple_debug_misc("yahoo", "");
 		}
 
-		purple_debug(PURPLE_DEBUG_MISC, NULL, "%02x%02x ", data[i], data[i + 1]);
+		purple_debug_misc(NULL, "%02x%02x ", data[i], data[i + 1]);
 	}
 	if (i < len)
-		purple_debug(PURPLE_DEBUG_MISC, NULL, "%02x", data[i]);
+		purple_debug_misc(NULL, "%02x", data[i]);
 
-	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+	purple_debug_misc(NULL, "\n");
+	purple_debug_misc("yahoo", "");
 
 	for (i = 0; i < len; i++) {
 		if ((i % 16 == 0) && i) {
-			purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-			purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+			purple_debug_misc(NULL, "\n");
+			purple_debug_misc("yahoo", "");
 		}
 
 		if (g_ascii_isprint(data[i]))
-			purple_debug(PURPLE_DEBUG_MISC, NULL, "%c ", data[i]);
+			purple_debug_misc(NULL, "%c ", data[i]);
 		else
-			purple_debug(PURPLE_DEBUG_MISC, NULL, ". ");
+			purple_debug_misc(NULL, ". ");
 	}
 
-	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
+	purple_debug_misc(NULL, "\n");
 #endif /* YAHOO_DEBUG */
 }
 

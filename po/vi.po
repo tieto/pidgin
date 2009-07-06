@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CVS Version of Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:40-0400\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2008-06-22 21:58+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -1775,6 +1775,8 @@ msgstr "+++ %s đã đăng nhập"
 msgid "+++ %s signed off"
 msgstr "+++ %s đã đăng xuất"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "Lỗi không rõ"
 
@@ -2174,6 +2176,10 @@ msgstr "<font color=\"red\"><b>Không thể đọc tập tin: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <Trả Lời-Tự Động>: %s\n"
+
+#, fuzzy
+msgid "Error creating conference."
+msgstr "Lỗi khi tạo kết nối"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -3156,6 +3162,11 @@ msgstr "Thêm vào chát"
 msgid "Chat _name:"
 msgstr "Tê_n chát:"
 
+#. should this be a settings error?
+#, fuzzy
+msgid "Unable to resolve server"
+msgstr "Không thể kết nối đến máy phục vụ."
+
 msgid "Chat error"
 msgstr "Lỗi chát"
 
@@ -3205,6 +3216,10 @@ msgstr "Hệ tin nhắn nhanh phổ biến ở Phần Lan"
 msgid "Gadu-Gadu User"
 msgstr "Người dùng Gadu-Gadu"
 
+#, fuzzy
+msgid "GG server"
+msgstr "Lập thông tin người dùng..."
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Lệnh không rõ : %s"
@@ -3248,7 +3263,8 @@ msgstr "_Kênh:"
 msgid "_Password:"
 msgstr "_Mật khẩu :"
 
-msgid "IRC nicks may not contain whitespace"
+#, fuzzy
+msgid "IRC nick and server may not contain whitespace"
 msgstr "Tên hiệu cho IRC không được chứa dấu cách"
 
 #. 1. connect to server
@@ -3726,6 +3742,9 @@ msgstr "Máy phục vụ trả lời không hợp lệ."
 msgid "Server does not use any supported authentication method"
 msgstr "Máy phục vụ không sử dụng bất kỳ phương thức xác thực được hỗ trợ nào"
 
+msgid "You require encryption, but it is not available on this server."
+msgstr "Bạn cần mật mã, nhưng máy phục vụ này không cung cấp."
+
 msgid "Invalid challenge from server"
 msgstr "Kiểm tra từ máy phục vụ không hợp lệ"
 
@@ -3996,6 +4015,14 @@ msgstr "Ưu tiên"
 msgid "Resource"
 msgstr "Tài nguyên"
 
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged off"
+msgstr "Đã đăng xuất"
+
 msgid "Middle Name"
 msgstr "Tên đệm"
 
@@ -4164,8 +4191,17 @@ msgstr "Chọn một máy phục vụ hội thảo để hỏi"
 msgid "Find Rooms"
 msgstr "Tìm phòng"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr "Bạn cần mật mã, nhưng máy phục vụ này không cung cấp."
+#, fuzzy
+msgid "Affiliations:"
+msgstr "Bí danh:"
+
+#, fuzzy
+msgid "No users found"
+msgstr "Không tìm thấy người dùng tương ứng"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "Vị trí"
 
 msgid "Ping timeout"
 msgstr "Quá hạn ping"
@@ -4186,7 +4222,7 @@ msgid "Invalid XMPP ID. Domain must be set."
 msgstr "ID XMPP không hợp lệ. Phải đặt miền (domain)."
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr "Không kết nối được với máy phục vụ."
 
 #, c-format
@@ -4213,9 +4249,6 @@ msgstr "Hủy đăng ký thành công"
 msgid "Unregistration Failed"
 msgstr "Lỗi hủy đăng ký"
 
-msgid "Already Registered"
-msgstr "Đã đăng ký"
-
 msgid "State"
 msgstr "Bang"
 
@@ -4227,6 +4260,9 @@ msgstr "Điện thoại"
 
 msgid "Date"
 msgstr "Ngày tháng"
+
+msgid "Already Registered"
+msgstr "Đã đăng ký"
 
 msgid "Unregister"
 msgstr "Hủy đăng ký"
@@ -4254,6 +4290,10 @@ msgstr "Đăng ký tài khoản mới ở %s"
 
 msgid "Change Registration"
 msgstr "Đổi sự đăng ký"
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "Không kết nối được với máy phục vụ."
 
 msgid "Error unregistering account"
 msgstr "Lỗi hủy đăng ký tài khoản"
@@ -4620,9 +4660,10 @@ msgstr "topic [chủ đề mới]:  Xem hay thay đổi chủ đề."
 msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr "ban &lt;người_dùng&gt; [lý_do]:  Cấm một người dùng ra khỏi phòng."
 
+#, fuzzy
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "affiliate &lt;người_dùng&gt; &lt;owner|admin|member|outcast|none&gt;: Đặt tư "
 "cách người dùng trong phòng\n"
@@ -4632,9 +4673,10 @@ msgstr ""
 " • outcast\tngười bị ruồng bỏ\n"
 " • none\t\tkhông có."
 
+#, fuzzy
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 "role &lt;người_dùng&gt; &lt;moderator|participant|visitor|none&gt;: Đặt "
 "nghiệm vụ của người dùng trong phòng\n"
@@ -4703,6 +4745,9 @@ msgstr "Máy phục vụ kết nối"
 
 msgid "File transfer proxies"
 msgstr "Ủy nhiệm truyền tập tin"
+
+msgid "BOSH URL"
+msgstr ""
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
@@ -5107,6 +5152,10 @@ msgstr "Liên lạc đã thích"
 msgid "Non-IM Contacts"
 msgstr "Bỏ liên lạc"
 
+#, fuzzy, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr "%s mời bạn xem máy ảnh Web, mà chưa được hỗ trợ."
+
 msgid "Nudge"
 msgstr "Làm nổi bật"
 
@@ -5457,64 +5506,27 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "Xác thực ID Windows Live: không thể kết nối"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s không phải là nhóm hợp lệ."
-
-msgid "Unknown error."
-msgstr "Lỗi không rõ."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s trên %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "%s vừa gửi cho bạn một lời kêu gọi."
 
-#. char *adl = g_strndup(payload, len);
-#, c-format
-msgid "Unknown error (%d)"
+#, fuzzy, c-format
+msgid "Unknown error (%d): %s"
 msgstr "Lỗi không rõ (%d)"
 
 msgid "Unable to add user"
 msgstr "Không thể thêm người dùng"
 
+#, c-format
+msgid "Unknown error (%d)"
+msgstr "Lỗi không rõ (%d)"
+
 #, fuzzy
 msgid "The following users are missing from your addressbook"
 msgstr "Dưới đây là kết quả tìm kiếm"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Không thể thêm người dùng trên %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Không thể chận người dùng trên %s (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Không thể cho phép người dùng trên %s (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s không thể được thêm vào vì danh sách bạn bè của bạn đã đầy"
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s không phải tài khoản Passport hợp lệ."
-
-msgid "Service Temporarily Unavailable."
-msgstr "Tạm thời không có dịch vụ."
-
 #, fuzzy
 msgid "Mobile message was not sent because it was too long."
 msgstr "Tin nhẳn chưa gửi đi được vì bạn chưa đăng nhập."
-
-msgid "Unable to rename group"
-msgstr "Không thể thay đổi tên của nhóm"
-
-msgid "Unable to delete group"
-msgstr "Không thể xoá nhóm"
 
 #, c-format
 msgid ""
@@ -5597,6 +5609,9 @@ msgstr ""
 "Danh sách bạn bè MSN của bạn tạm thời không dùng được. Vui lòng chờ và thử "
 "lại lần nữa."
 
+msgid "Unknown error."
+msgstr "Lỗi không rõ."
+
 msgid "Handshaking"
 msgstr "Đang thiết lập quan hệ"
 
@@ -5614,6 +5629,14 @@ msgstr "Đang gửi cookie"
 
 msgid "Retrieving buddy list"
 msgstr "Đang lấy danh sách bạn bè"
+
+#, fuzzy, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr "%s mời bạn xem máy ảnh Web, mà chưa được hỗ trợ."
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s mời bạn xem máy ảnh Web, mà chưa được hỗ trợ."
 
 msgid "Away From Computer"
 msgstr "Rời khỏi máy tính"
@@ -5653,14 +5676,6 @@ msgstr "Thông điệp không gửi đi được vì có lỗi trong hệ thốn
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "Thông điệp không gửi đi được vì có lỗi không rõ :"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s đã thêm bạn vào danh sách bạn bè."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s đã loại bỏ bạn ra khỏi danh sách bạn bè."
-
 #, fuzzy
 msgid "Delete Buddy from Address Book?"
 msgstr "Thêm vào sổ địa chỉ"
@@ -5690,6 +5705,51 @@ msgstr "URL lý lịch"
 #. *  description
 msgid "MSN Protocol Plugin"
 msgstr "Phần bổ sung giao thức MSN"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s không phải là nhóm hợp lệ."
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%s trên %s (%s)"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "Không thể thêm người dùng trên %s (%s)"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "Không thể chận người dùng trên %s (%s)"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "Không thể cho phép người dùng trên %s (%s)"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "%s không thể được thêm vào vì danh sách bạn bè của bạn đã đầy"
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s không phải tài khoản Passport hợp lệ."
+
+msgid "Service Temporarily Unavailable."
+msgstr "Tạm thời không có dịch vụ."
+
+msgid "Unable to rename group"
+msgstr "Không thể thay đổi tên của nhóm"
+
+msgid "Unable to delete group"
+msgstr "Không thể xoá nhóm"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "%s đã thêm bạn vào danh sách bạn bè."
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "%s đã loại bỏ bạn ra khỏi danh sách bạn bè."
 
 #, c-format
 msgid "No such user: %s"
@@ -5725,6 +5785,8 @@ msgstr ""
 "%s"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr "Thư tín mới"
 
@@ -5771,16 +5833,18 @@ msgstr "Đã kết nối"
 msgid "Protocol error, code %d: %s"
 msgstr "Lỗi giao thức, mã %d: %s"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
 "%s Bạn đã đặt một mật khẩu chứa %d ký tự, vượt quá chiều dài tối đa mong đợi "
 "%d ở MySpaceIM. Hãy cắt ngắn mật khẩu ở địa chỉ « http://profileedit.myspace."
 "com/index.cfm?fuseaction=accountSettings.changePassword », rồi thử lại."
+
+msgid "Incorrect username or password"
+msgstr "Tên người dùng hoặc mật khẩu sai"
 
 msgid "MySpaceIM Error"
 msgstr "Lỗi MySpaceIM"
@@ -6098,9 +6162,6 @@ msgstr "Không thể tự thêm mình"
 msgid "Master archive is misconfigured"
 msgstr "Kho lưu chủ sai cấu hình"
 
-msgid "Incorrect username or password"
-msgstr "Tên người dùng hoặc mật khẩu sai"
-
 msgid "Could not recognize the host of the username you entered"
 msgstr "Không thể nhận ra máy của tên người dùng bạn vừa nhập vào"
 
@@ -6313,6 +6374,28 @@ msgstr "Địa chỉ máy phục vụ"
 
 msgid "Server port"
 msgstr "Cổng máy phục vụ"
+
+#, fuzzy
+msgid "Received unexpected response from "
+msgstr "Nhận được đáp ứng HTTP bất thường từ máy phục vụ."
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Bạn đã liên tục kết nối và ngắt kết nối quá nhiều. Xin chờ 10 phút rồi thử "
+"lại. Nếu bạn tiếp tục kết nối, bạn sẽ phải đợi lâu hơn."
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "Lỗi yêu cầu hiệu bài đăng nhập"
+
+msgid "Incorrect password."
+msgstr "Mật khẩu sai."
+
+msgid "AOL does not allow your screen name to authenticate via this site."
+msgstr ""
 
 msgid "Could not join chat room"
 msgstr "Không thể tham gia phòng trò chuyện"
@@ -6620,13 +6703,32 @@ msgstr ""
 "một chữ cái và chỉ chứa chữ cái, chữ số và khoảng trống, hoặc chỉ chứa chữ "
 "số."
 
+#, fuzzy, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr ""
+"Bạn có thể bị ngắt kết nối một thời gian ngắn. Hãy kiểm tra %s để cập nhật."
+
+msgid "Unable to get a valid AIM login hash."
+msgstr "Không thể lấy mã đăng nhập AIM hợp lệ."
+
+#, c-format
+msgid "You may be disconnected shortly.  Check %s for updates."
+msgstr ""
+"Bạn có thể bị ngắt kết nối một thời gian ngắn. Hãy kiểm tra %s để cập nhật."
+
+msgid "Unable to get a valid login hash."
+msgstr "Không thể lấy mã đăng nhập hợp lệ."
+
+msgid "Could Not Connect"
+msgstr "Không thể kết nối"
+
+msgid "Received authorization"
+msgstr "Nhận được sự cho phép"
+
 #. Unregistered username
 #. uid is not exist
 msgid "Invalid username."
 msgstr "Tên người dùng sai."
-
-msgid "Incorrect password."
-msgstr "Mật khẩu sai."
 
 #. Suspended account
 msgid "Your account is currently suspended."
@@ -6636,24 +6738,18 @@ msgstr "Tài khoản của bạn tạm thời bị đình chỉ."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Tạm thời không dùng được Dịch Vụ Nhắn Tin Nhanh AOL."
 
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"Bạn đã liên tục kết nối và ngắt kết nối quá nhiều. Xin chờ 10 phút rồi thử "
-"lại. Nếu bạn tiếp tục kết nối, bạn sẽ phải đợi lâu hơn."
-
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Bạn đang dùng phiên bản trình khách quá cũ. Hãy nâng cấp tại %s"
 
-msgid "Could Not Connect"
-msgstr "Không thể kết nối"
-
-msgid "Received authorization"
-msgstr "Nhận được sự cho phép"
+#. IP address connecting too frequently
+#, fuzzy
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Bạn đã liên tục kết nối và ngắt kết nối quá nhiều. Xin chờ 10 phút rồi thử "
+"lại. Nếu bạn tiếp tục kết nối, bạn sẽ phải đợi lâu hơn."
 
 # SecurID là tên: đừng dịch
 msgid "The SecurID key entered is invalid."
@@ -6670,22 +6766,6 @@ msgstr "Nhập vào 6 chữ số hiển thị trên màn hình."
 #.
 msgid "_OK"
 msgstr "_OK"
-
-#, fuzzy, c-format
-msgid "You may be disconnected shortly.  If so, check %s for updates."
-msgstr ""
-"Bạn có thể bị ngắt kết nối một thời gian ngắn. Hãy kiểm tra %s để cập nhật."
-
-msgid "Unable to get a valid AIM login hash."
-msgstr "Không thể lấy mã đăng nhập AIM hợp lệ."
-
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr ""
-"Bạn có thể bị ngắt kết nối một thời gian ngắn. Hãy kiểm tra %s để cập nhật."
-
-msgid "Unable to get a valid login hash."
-msgstr "Không thể lấy mã đăng nhập hợp lệ."
 
 msgid "Password sent"
 msgstr "Đã gửi mật khẩu"
@@ -7172,6 +7252,7 @@ msgstr "_Tìm kiếm"
 msgid "Set User Info (web)..."
 msgstr "Đặt thông tin người dùng (Web)..."
 
+#. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
 msgstr "Đổi mật khẩu (Web)"
 
@@ -7200,6 +7281,10 @@ msgstr "Tìm kiếm bạn chát theo địa chỉ thư..."
 
 msgid "Search for Buddy by Information"
 msgstr "Tìm kiếm bạn chát theo thông tin"
+
+#, fuzzy
+msgid "Use clientLogin"
+msgstr "Người dùng chưa đăng nhập"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -9558,10 +9643,6 @@ msgstr "Xác thực người dùng"
 msgid "Auth Domain"
 msgstr "Xác thực miền"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s mời bạn xem máy ảnh Web, mà chưa được hỗ trợ."
-
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9588,6 +9669,44 @@ msgstr ""
 
 msgid "Add buddy rejected"
 msgstr "Thêm bạn chát bị từ chối"
+
+#. Some error in the received stream
+#, fuzzy
+msgid "Received invalid data"
+msgstr "Nhận dữ liệu không hợp lệ khi kết nối tới máy phục vụ."
+
+#. Password incorrect
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Mật khẩu sai"
+
+#. security lock from too many failed login attempts
+#, fuzzy
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"Mã lỗi không rõ %d. Đăng nhập vào địa chỉ Web của Yahoo có thể giúp khắc "
+"phục."
+
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "Người dùng đó không tồn tại."
+
+#. indicates a lock of some description
+#, fuzzy
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"Mã lỗi không rõ %d. Đăng nhập vào địa chỉ Web của Yahoo có thể giúp khắc "
+"phục."
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "Tên người dùng hoặc mật khẩu sai"
 
 #, c-format
 msgid ""
@@ -9702,8 +9821,8 @@ msgstr "Thiết lập có mặt"
 msgid "Start Doodling"
 msgstr "Bắt đầu vẽ"
 
-msgid "Activate which ID?"
-msgstr "Kích hoạt ID nào ?"
+msgid "Select the ID you want to activate"
+msgstr ""
 
 msgid "Join whom in chat?"
 msgstr "Tham gia với ai trong chat?"
@@ -10483,16 +10602,17 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr "Hãy cập nhật các trường cần thiết."
 
-msgid "Room _List"
-msgstr "Danh sách _phòng"
+#, fuzzy
+msgid "A_ccount"
+msgstr "Tài khoản"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr "Hãy nhập thông tin thích hợp về cuộc chat mà bạn muốn tham gia.\n"
 
-msgid "_Account:"
-msgstr "Tài _khoản:"
+msgid "Room _List"
+msgstr "Danh sách _phòng"
 
 msgid "_Block"
 msgstr "_Chặn"
@@ -10927,6 +11047,112 @@ msgstr "/Công cụ"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Bạn chát/Sắp xếp bạn chát"
+
+#. Buddy List
+msgid "Background Color"
+msgstr "Màu nền"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "Nhóm này đã được thêm vào danh sách bạn bè của bạn"
+
+#, fuzzy
+msgid "Layout"
+msgstr "Tiếng Lào"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Màu nền"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#, fuzzy
+msgid "Expanded Text"
+msgstr "Giãn _ra"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Chọn màu nền"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_Co lại"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "Chọn màu nền"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "Lối tắt"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "Trực tuyến"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#, fuzzy
+msgid "Away Text"
+msgstr "Vắng mặt"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "Ngoại tuyến"
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "Kiểm tra tâm trạng"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#, fuzzy
+msgid "Message Text"
+msgstr "Gửi tin nhẳn"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "Đổi thông tin người dùng cho %s"
 
 #. Widget creation function
 msgid "SSL Servers"
@@ -11432,6 +11658,10 @@ msgstr "Tiếng Hin-đi"
 msgid "Hungarian"
 msgstr "Tiếng Hung-ga-ri"
 
+#, fuzzy
+msgid "Armenian"
+msgstr "Tiếng Ru-ma-ni"
+
 msgid "Indonesian"
 msgstr "Tiếng Nam Dương"
 
@@ -11529,6 +11759,9 @@ msgstr "Tiếng Xin-ha-la"
 
 msgid "Swedish"
 msgstr "Tiếng Thụy Điển"
+
+msgid "Swahili"
+msgstr ""
 
 msgid "Tamil"
 msgstr "Tiếng Ta-min"
@@ -11950,11 +12183,9 @@ msgstr ""
 msgid "Save Image"
 msgstr "Lưu ảnh"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "_Lưu ảnh..."
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr "Thê_m hình cười tự chọn..."
 
@@ -12042,9 +12273,6 @@ msgstr "Giảm kích cỡ phông"
 
 msgid "Font Face"
 msgstr "Mặt chữ"
-
-msgid "Background Color"
-msgstr "Màu nền"
 
 msgid "Foreground Color"
 msgstr "Màu cảnh gần"
@@ -12377,6 +12605,9 @@ msgstr "Sửa thông báo bạn thân"
 msgid "Pounce on Whom"
 msgstr "Thông báo cho ai"
 
+msgid "_Account:"
+msgstr "Tài _khoản:"
+
 msgid "_Buddy name:"
 msgstr "Tên _bạn chát:"
 
@@ -12487,7 +12718,16 @@ msgstr "Gửi tin nhẳn"
 msgid "Unknown.... Please report this!"
 msgstr "Dữ kiện thông báo không rõ. Hãy ghi báo cáo việc này!"
 
-msgid "Smiley theme failed to unpack."
+#, fuzzy
+msgid "Theme failed to unpack."
+msgstr "Sắc thái hình cười không giải nén được."
+
+#, fuzzy
+msgid "Theme failed to load."
+msgstr "Sắc thái hình cười không giải nén được."
+
+#, fuzzy
+msgid "Theme failed to copy."
 msgstr "Sắc thái hình cười không giải nén được."
 
 msgid "Install Theme"
@@ -13061,6 +13301,10 @@ msgid "Custom Smiley Manager"
 msgstr "Bộ Quản lý Hình cười Tự chọn"
 
 #, fuzzy
+msgid "Select Buddy Icon"
+msgstr "Chọn bạn chát"
+
+#, fuzzy
 msgid "Click to change your buddyicon for this account."
 msgstr "Dùng biểu tượng bạn chát cho tài khoản này:"
 
@@ -13287,6 +13531,79 @@ msgstr "Phần bổ sung để dự đoán nếu liên lạc sẵn sàng chưa."
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr "Hiển thị thông tin thống kê về tình trạng có mặt của bạn bè"
+
+#, fuzzy
+msgid "Server name request"
+msgstr "Địa chỉ máy phục vụ"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Nhập máy phục vụ hội thảo"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "Chọn một máy phục vụ hội thảo để hỏi"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "Dịch vụ trực tuyến"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "Gửi danh sách bạn bè"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "Đi vắng"
+
+#, fuzzy
+msgid "Directory"
+msgstr "Thư mục chứa sổ theo dõi"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "Chọn âm thanh"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "Dịch vụ PubSub"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "Mô tả"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "Thông tin phát hiện dịch vụ"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "Trình _duyệt:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "Người dùng đó không tồn tại."
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "Máy phục vụ không sử dụng bất kỳ phương thức xác thực được hỗ trợ nào"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Thông tin phát hiện dịch vụ"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"Phần bổ sung này có ích để gỡ lỗi máy phục vụ hay trình khách kiểu XMPP."
 
 msgid "Buddy is idle"
 msgstr "Bạn chát đang nghỉ"
@@ -13793,12 +14110,6 @@ msgstr ""
 " • Đảo ngược mọi câu viết được gửi đến\n"
 " • Gửi tin cho thành viên có trong danh sách của bạn ngay khi họ kết nối"
 
-msgid "Cursor Color"
-msgstr "Màu con trỏ"
-
-msgid "Secondary Cursor Color"
-msgstr "Màu con trỏ phụ"
-
 msgid "Hyperlink Color"
 msgstr "Màu siêu liên kết"
 
@@ -13808,6 +14119,10 @@ msgstr "Màu siêu liên kết"
 
 msgid "Highlighted Message Name Color"
 msgstr "Màu tên tin nhẳn tô sáng"
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "Màu thông báo đang gõ"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "Phân cách ngang GtkTreeView"
@@ -13838,34 +14153,23 @@ msgstr "Phông giao diện GTK+"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "Sắc thái lối tắt văn bản GTK+"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "Màu sắc giao diện"
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "Bật thông báo đang gõ"
 
-msgid "Widget Sizes"
-msgstr "Kích cỡ ô điều khiển"
+#, fuzzy
+msgid "GTK+ Theme Control Settings"
+msgstr "Điều khiển sắc thái GTK+ Pidgin"
+
+#, fuzzy
+msgid "Colors"
+msgstr "Đóng"
 
 msgid "Fonts"
 msgstr "Phông"
+
+msgid "Miscellaneous"
+msgstr ""
 
 msgid "Gtkrc File Tools"
 msgstr "Công cụ tập tin Gtkrc"
@@ -14009,6 +14313,114 @@ msgstr "Thay thế văn bản"
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
 "Thay thế văn bản trong tin nhẳn gửi đi theo qui tắc người dùng định ra."
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "Chưa đăng nhập"
+
+#, fuzzy
+msgid "Just logged out"
+msgstr "Chưa đăng nhập"
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "Tham gia Chat"
+
+#, fuzzy
+msgid "Ignored"
+msgstr "Lờ"
+
+#, fuzzy
+msgid "Founder"
+msgstr "To hơn"
+
+# Tên trình duyệt Web
+#, fuzzy
+msgid "Operator"
+msgstr "Opera"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "Cho phép"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "Lỗi "
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "Thông tin"
+
+msgid "Mail dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Question dialog"
+msgstr "Hộp thoại yêu cầu"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "Mức cảnh báo"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "Trạng thái cho %s"
+
+#, fuzzy
+msgid "Chatroom Emblems"
+msgstr "Miền địa phương phòng chát"
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "Lưu biểu tượng"
+
+#, fuzzy
+msgid "Pidgin Icon Theme Editor"
+msgstr "Điều khiển sắc thái GTK+ Pidgin"
+
+#, fuzzy
+msgid "Contact"
+msgstr "Thông tin liên lạc"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "Danh sách bạn bè"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "Danh sách bạn bè"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "Điều khiển sắc thái GTK+ Pidgin"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Pidgin Theme Editor."
+msgstr "Điều khiển sắc thái GTK+ Pidgin"
 
 #. *< type
 #. *< ui_requirement
@@ -14220,6 +14632,21 @@ msgstr "Gửi và nhận các đoạn dòng XMPP thô."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Phần bổ sung này có ích để gỡ lỗi máy phục vụ hay trình khách kiểu XMPP."
+
+#~ msgid "Activate which ID?"
+#~ msgstr "Kích hoạt ID nào ?"
+
+#~ msgid "Cursor Color"
+#~ msgstr "Màu con trỏ"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "Màu con trỏ phụ"
+
+#~ msgid "Interface colors"
+#~ msgstr "Màu sắc giao diện"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "Kích cỡ ô điều khiển"
 
 #~ msgid "Invite message"
 #~ msgstr "Lời mời"
@@ -14664,9 +15091,6 @@ msgstr ""
 #~ msgid "Your request to join group %d has been approved by admin %d"
 #~ msgstr "Quản trị %2$d đã tán thành yêu cầu tham gia nhóm %1$d của bạn"
 
-#~ msgid "This group has been added to your buddy list"
-#~ msgstr "Nhóm này đã được thêm vào danh sách bạn bè của bạn"
-
 #~ msgid "I am applying to join"
 #~ msgstr "Tôi muốn tham gia"
 
@@ -14732,9 +15156,6 @@ msgstr ""
 
 #~ msgid "Group Operation Error"
 #~ msgstr "Lỗi thao tác nhóm"
-
-#~ msgid "Error requesting login token"
-#~ msgstr "Lỗi yêu cầu hiệu bài đăng nhập"
 
 #~ msgid "TCP Address"
 #~ msgstr "Địa chỉ TCP"

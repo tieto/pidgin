@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:38-0400\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2007-10-28 02:39+0800\n"
 "Last-Translator: Rai S. Regawa <raireg@yahoo.com>\n"
 "Language-Team: Rai S. Regawa <raireg@yahoo.com>\n"
@@ -1806,6 +1806,8 @@ msgstr "+++ %s tergabung"
 msgid "+++ %s signed off"
 msgstr "+++ %s keluar"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "Kesalahan Tidak Dikenal"
 
@@ -2209,6 +2211,10 @@ msgstr "<font color=\"red\"><b>Tidak dapat membaca file: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
+
+#, fuzzy
+msgid "Error creating conference."
+msgstr "Kesalahan membuat sambungan"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -3184,6 +3190,11 @@ msgstr "Tambahkan ke percakapan"
 msgid "Chat _name:"
 msgstr "_Nama percakapan:"
 
+#. should this be a settings error?
+#, fuzzy
+msgid "Unable to resolve server"
+msgstr "Tidak dapat menyambung ke server."
+
 msgid "Chat error"
 msgstr "Kesalahan percakapan"
 
@@ -3232,6 +3243,10 @@ msgstr "Sistem PI orang Polandia populer"
 msgid "Gadu-Gadu User"
 msgstr "Pengguna Gadu-Gadu"
 
+#, fuzzy
+msgid "GG server"
+msgstr "Atur Info Pengguna..."
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Perintah tidak dikenal: %s"
@@ -3274,7 +3289,8 @@ msgstr "_Saluran:"
 msgid "_Password:"
 msgstr "_Kata sandi:"
 
-msgid "IRC nicks may not contain whitespace"
+#, fuzzy
+msgid "IRC nick and server may not contain whitespace"
 msgstr "Nama panggilan IRC tidak dapat mengandung sepasi"
 
 #. 1. connect to server
@@ -3759,6 +3775,9 @@ msgstr "Respon tidak valid dari server"
 msgid "Server does not use any supported authentication method"
 msgstr "Server tidak menggunakan metode otentifikasi yang didukung"
 
+msgid "You require encryption, but it is not available on this server."
+msgstr "Anda memerlukan enkripsi, tetapi tidak tersedia pada server ini."
+
 msgid "Invalid challenge from server"
 msgstr "Tantangan tidak valid dari server"
 
@@ -4029,6 +4048,14 @@ msgstr "Prioritas"
 msgid "Resource"
 msgstr "Sumber Daya"
 
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged off"
+msgstr "Terlogin"
+
 msgid "Middle Name"
 msgstr "Nama Tengah"
 
@@ -4197,8 +4224,17 @@ msgstr "Pilih server konferensi untuk dicari"
 msgid "Find Rooms"
 msgstr "Cari Kamar"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr "Anda memerlukan enkripsi, tetapi tidak tersedia pada server ini."
+#, fuzzy
+msgid "Affiliations:"
+msgstr "Nama Alias:"
+
+#, fuzzy
+msgid "No users found"
+msgstr "Pengguna yang sesuai tidak ditemukan"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "Peranan"
 
 #, fuzzy
 msgid "Ping timeout"
@@ -4220,7 +4256,7 @@ msgid "Invalid XMPP ID. Domain must be set."
 msgstr "ID XMPP Tidak Valid. Domain harus diset."
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr "Gagal tersambung ke server."
 
 #, c-format
@@ -4247,9 +4283,6 @@ msgstr "Daftar Keluar Sukses"
 msgid "Unregistration Failed"
 msgstr "Daftar Keluar Gagal"
 
-msgid "Already Registered"
-msgstr "Sudah Terdaftar"
-
 msgid "State"
 msgstr "Negara"
 
@@ -4261,6 +4294,9 @@ msgstr "Telepon"
 
 msgid "Date"
 msgstr "Tanggal"
+
+msgid "Already Registered"
+msgstr "Sudah Terdaftar"
 
 msgid "Unregister"
 msgstr "Daftar Keluar"
@@ -4290,6 +4326,10 @@ msgstr "Daftarkan Akun Baru pada %s"
 
 msgid "Change Registration"
 msgstr "Rubah Registrasi"
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "Gagal tersambung ke server."
 
 msgid "Error unregistering account"
 msgstr "Kesalahan dalam membatalkan registrasi akun"
@@ -4655,16 +4695,18 @@ msgstr "topik [topik baru]:  Lihat atau ganti topik."
 msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr "ban &lt;user&gt; [kamar]:  Ban pengguna dari kamar."
 
+#, fuzzy
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "afiliasi &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Atur afiliasi "
 "pengguna dengan kamar."
 
+#, fuzzy
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 "peranan &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Atur "
 "peranan pengguna dalam kamar."
@@ -4729,6 +4771,9 @@ msgstr "Sambungkan server"
 #, fuzzy
 msgid "File transfer proxies"
 msgstr "Port Transfer File"
+
+msgid "BOSH URL"
+msgstr ""
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
@@ -5133,6 +5178,10 @@ msgstr "Kontak Pilihan"
 msgid "Non-IM Contacts"
 msgstr "Hilangkan Kontak"
 
+#, fuzzy, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr "%s telah mengirimkan anda undangan webcam yang belum didukung."
+
 msgid "Nudge"
 msgstr "Senggol"
 
@@ -5489,64 +5538,27 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "Otentikasi Windows Live ID:Tidak dapat tersambung"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s bukan kelompok yang valid."
-
-msgid "Unknown error."
-msgstr "Kesalahan tidak dikenal."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s pada %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "%s barusan mengirim anda Sikutan!"
 
-#. char *adl = g_strndup(payload, len);
-#, c-format
-msgid "Unknown error (%d)"
+#, fuzzy, c-format
+msgid "Unknown error (%d): %s"
 msgstr "Kesalahan Tidak Dikenal (%d)"
 
 msgid "Unable to add user"
 msgstr "Tidak dapat menambahkan pengguna"
 
+#, c-format
+msgid "Unknown error (%d)"
+msgstr "Kesalahan Tidak Dikenal (%d)"
+
 #, fuzzy
 msgid "The following users are missing from your addressbook"
 msgstr "Berikut ini adalah hasil pencarian anda"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Tidak dapat menambahkan pengguna pada %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Tidak dapat memblokir pengguna pada %s (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Tidak dapat mengijinkan pengguna pada %s (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s tidak dapat ditambahkan karena daftar teman anda penuh."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s adalah kata sandi akun yang tidak valid."
-
-msgid "Service Temporarily Unavailable."
-msgstr "Layanan Sementara Tidak Tersedia."
-
 #, fuzzy
 msgid "Mobile message was not sent because it was too long."
 msgstr "Pesan tidak dapat dikirim, karena anda tidak tersambung."
-
-msgid "Unable to rename group"
-msgstr "Tidak dapan mengubah nama kelompok"
-
-msgid "Unable to delete group"
-msgstr "TIdak dapat menghapus kelompok"
 
 #, c-format
 msgid ""
@@ -5635,6 +5647,9 @@ msgid ""
 msgstr ""
 "Daftar teman MSN anda sementara tidak tersedia. Mohon tunggu dan coba lagi."
 
+msgid "Unknown error."
+msgstr "Kesalahan tidak dikenal."
+
 msgid "Handshaking"
 msgstr "Jabat Tangan"
 
@@ -5652,6 +5667,14 @@ msgstr "Mengirim cookie"
 
 msgid "Retrieving buddy list"
 msgstr "Mengambil daftar teman"
+
+#, fuzzy, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr "%s telah mengirimkan anda undangan webcam yang belum didukung."
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s telah mengirimkan anda undangan webcam yang belum didukung."
 
 msgid "Away From Computer"
 msgstr "Menjauh Dari Komputer"
@@ -5691,14 +5714,6 @@ msgstr "Pesan tidak dapat dikirim karena kesalahan dengan switchboard terjadi:"
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "Pesan mungkin tidak terkirim karena kesalahan tidak dikenal terjadi:"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s telah menambahkan anda pada daftar temannya."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s menghilangkan anda dari daftar temannya."
-
 #, fuzzy
 msgid "Delete Buddy from Address Book?"
 msgstr "Tambahkan ke Buku Alamat"
@@ -5730,6 +5745,51 @@ msgstr "URL Profil"
 #, fuzzy
 msgid "MSN Protocol Plugin"
 msgstr "Plugin Protokol AIM"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s bukan kelompok yang valid."
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%s pada %s (%s)"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "Tidak dapat menambahkan pengguna pada %s (%s)"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "Tidak dapat memblokir pengguna pada %s (%s)"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "Tidak dapat mengijinkan pengguna pada %s (%s)"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "%s tidak dapat ditambahkan karena daftar teman anda penuh."
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s adalah kata sandi akun yang tidak valid."
+
+msgid "Service Temporarily Unavailable."
+msgstr "Layanan Sementara Tidak Tersedia."
+
+msgid "Unable to rename group"
+msgstr "Tidak dapan mengubah nama kelompok"
+
+msgid "Unable to delete group"
+msgstr "TIdak dapat menghapus kelompok"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "%s telah menambahkan anda pada daftar temannya."
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "%s menghilangkan anda dari daftar temannya."
 
 #, c-format
 msgid "No such user: %s"
@@ -5764,6 +5824,8 @@ msgstr ""
 "%s"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr "Pesan surat baru"
 
@@ -5814,11 +5876,14 @@ msgstr "Kesalahan protokol, kode %d: %s"
 
 #, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
+
+#, fuzzy
+msgid "Incorrect username or password"
+msgstr "Nama layar atau kata sandi salah."
 
 msgid "MySpaceIM Error"
 msgstr "Kesalahan MySpaceIM"
@@ -6141,10 +6206,6 @@ msgid "Master archive is misconfigured"
 msgstr "Arsip utama salah konfigurasi"
 
 #, fuzzy
-msgid "Incorrect username or password"
-msgstr "Nama layar atau kata sandi salah."
-
-#, fuzzy
 msgid "Could not recognize the host of the username you entered"
 msgstr "Tidak dapat mengenali host dari nama layar yang anda masukkan"
 
@@ -6361,6 +6422,29 @@ msgstr "Alamat Server"
 
 msgid "Server port"
 msgstr "Port Server"
+
+#, fuzzy
+msgid "Received unexpected response from "
+msgstr "Menerima respon HTTP tidak terduga dari server."
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Anda telah menyambung dan memutuskan terlalu sering. Tunggu sepuluh menit "
+"dan coba lagi. Apabila anda meneruskan mencoba, anda akan harus menuggu "
+"lebih lama"
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "Kesalahan dalam memohon token login"
+
+msgid "Incorrect password."
+msgstr "Kata sandi salah."
+
+msgid "AOL does not allow your screen name to authenticate via this site."
+msgstr ""
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -6666,14 +6750,31 @@ msgstr ""
 "huruf dan mengandung hanya huruf, angka dan sepasi, atau mengandung hanya "
 "nomor."
 
+#, fuzzy, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr "Anda dapat terputus sebentar lagi.  Periksa %s untuk pembaharuan."
+
+msgid "Unable to get a valid AIM login hash."
+msgstr "Tidak berhasil mendapatkan hash login AIM yang valid."
+
+#, c-format
+msgid "You may be disconnected shortly.  Check %s for updates."
+msgstr "Anda dapat terputus sebentar lagi.  Periksa %s untuk pembaharuan."
+
+msgid "Unable to get a valid login hash."
+msgstr "Tidak berhasil mendapatkan hash login yang valid."
+
+msgid "Could Not Connect"
+msgstr "Tidak Dapat Menyambung"
+
+msgid "Received authorization"
+msgstr "Menerima Otorisasi"
+
 #. Unregistered username
 #. uid is not exist
 #, fuzzy
 msgid "Invalid username."
 msgstr "Nama tidak valid"
-
-msgid "Incorrect password."
-msgstr "Kata sandi salah."
 
 #. Suspended account
 msgid "Your account is currently suspended."
@@ -6683,26 +6784,20 @@ msgstr "Akun anda sementara ditahan."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Layanan AOL Instant Messenger sementara tidak tersedia."
 
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"Anda telah menyambung dan memutuskan terlalu sering. Tunggu sepuluh menit "
-"dan coba lagi. Apabila anda meneruskan mencoba, anda akan harus menuggu "
-"lebih lama"
-
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
 "Versi klien yang anda gunakan adalah terlalu lama. Mohon perbaharui di %s"
 
-msgid "Could Not Connect"
-msgstr "Tidak Dapat Menyambung"
-
-msgid "Received authorization"
-msgstr "Menerima Otorisasi"
+#. IP address connecting too frequently
+#, fuzzy
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Anda telah menyambung dan memutuskan terlalu sering. Tunggu sepuluh menit "
+"dan coba lagi. Apabila anda meneruskan mencoba, anda akan harus menuggu "
+"lebih lama"
 
 msgid "The SecurID key entered is invalid."
 msgstr "Kunci SecurID yang dimasukkan tidak valid."
@@ -6718,20 +6813,6 @@ msgstr "Masukkan nomor 6 digit dari tampilan digital."
 #.
 msgid "_OK"
 msgstr "_OK"
-
-#, fuzzy, c-format
-msgid "You may be disconnected shortly.  If so, check %s for updates."
-msgstr "Anda dapat terputus sebentar lagi.  Periksa %s untuk pembaharuan."
-
-msgid "Unable to get a valid AIM login hash."
-msgstr "Tidak berhasil mendapatkan hash login AIM yang valid."
-
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "Anda dapat terputus sebentar lagi.  Periksa %s untuk pembaharuan."
-
-msgid "Unable to get a valid login hash."
-msgstr "Tidak berhasil mendapatkan hash login yang valid."
 
 msgid "Password sent"
 msgstr "Kata sandi terkirim"
@@ -7246,6 +7327,7 @@ msgstr "_Cari"
 msgid "Set User Info (web)..."
 msgstr "Atur Info Pengguna (URL)..."
 
+#. This only happens when connecting with the old-style BUCP login
 #, fuzzy
 msgid "Change Password (web)"
 msgstr "Rubah Kata Sandi (URL)"
@@ -7276,6 +7358,10 @@ msgstr "Cari Teman berdasarkan Alamat Email..."
 
 msgid "Search for Buddy by Information"
 msgstr "Cari Teman berdasarkan Informasi"
+
+#, fuzzy
+msgid "Use clientLogin"
+msgstr "Pengguna tidak sedang login"
 
 #, fuzzy
 msgid ""
@@ -9619,10 +9705,6 @@ msgstr "Otorisasi Pengguna"
 msgid "Auth Domain"
 msgstr "Otorisasi Domain"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s telah mengirimkan anda undangan webcam yang belum didukung."
-
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9649,6 +9731,44 @@ msgstr ""
 
 msgid "Add buddy rejected"
 msgstr "Penambahan teman ditolak"
+
+#. Some error in the received stream
+#, fuzzy
+msgid "Received invalid data"
+msgstr "Menerima data tidak valid pada sambungan dengan server."
+
+#. Password incorrect
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Kata sandi salah"
+
+#. security lock from too many failed login attempts
+#, fuzzy
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"Kesalahan nomor tidak dikenal %d. Login ke situs Yahoo! dapat memperbaiki "
+"ini."
+
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "Pengguna tidak pernah ada"
+
+#. indicates a lock of some description
+#, fuzzy
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"Kesalahan nomor tidak dikenal %d. Login ke situs Yahoo! dapat memperbaiki "
+"ini."
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "Nama layar atau kata sandi salah."
 
 #, c-format
 msgid ""
@@ -9763,8 +9883,8 @@ msgstr "Pengaturan Kehadiran"
 msgid "Start Doodling"
 msgstr "Mulai Doodling"
 
-msgid "Activate which ID?"
-msgstr "Aktifkan ID yang mana?"
+msgid "Select the ID you want to activate"
+msgstr ""
 
 msgid "Join whom in chat?"
 msgstr "Gabung siapa dalam percakapan?"
@@ -10558,8 +10678,8 @@ msgid "Please update the necessary fields."
 msgstr "Mohon perbaharui bagian yang diperlukan."
 
 #, fuzzy
-msgid "Room _List"
-msgstr "Daftar Kamar"
+msgid "A_ccount"
+msgstr "A_kun:"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -10568,8 +10688,9 @@ msgstr ""
 "Mohon masukkan informasi yang sesuai mengenai percakapan ke mana anda ingin "
 "bergabung.\n"
 
-msgid "_Account:"
-msgstr "_Akun:"
+#, fuzzy
+msgid "Room _List"
+msgstr "Daftar Kamar"
 
 msgid "_Block"
 msgstr "_Blokir"
@@ -11022,6 +11143,112 @@ msgstr "/Piranti"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Teman-teman/Atur Teman-teman"
+
+#. Buddy List
+msgid "Background Color"
+msgstr "Warna Latar Belakang"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "Kelompok ini telah ditambahkan ke daftar teman anda"
+
+#, fuzzy
+msgid "Layout"
+msgstr "Lao"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Warna Latar Belakang"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#, fuzzy
+msgid "Expanded Text"
+msgstr "_Lebarkan"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Pilih Warna Latar Belakanga"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_Ringkas"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "Pilih Warna Latar Belakanga"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "Urut"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "Online"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#, fuzzy
+msgid "Away Text"
+msgstr "Menjauh"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "Offline"
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "Teks Mood"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#, fuzzy
+msgid "Message Text"
+msgstr "Pesan terkirim"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "Rubah informasi pengguna untuk %s"
 
 #. Widget creation function
 msgid "SSL Servers"
@@ -11529,6 +11756,10 @@ msgstr "Hindi"
 msgid "Hungarian"
 msgstr "Hongaria"
 
+#, fuzzy
+msgid "Armenian"
+msgstr "Rumania"
+
 msgid "Indonesian"
 msgstr "Indonesia"
 
@@ -11627,6 +11858,9 @@ msgstr "Sosial"
 
 msgid "Swedish"
 msgstr "Swedia"
+
+msgid "Swahili"
+msgstr ""
 
 msgid "Tamil"
 msgstr "Tamil"
@@ -12071,11 +12305,10 @@ msgstr ""
 msgid "Save Image"
 msgstr "Simpan Gambar"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "_Simpan Gambar..."
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "_Add Custom Smiley..."
 msgstr "Tampilkan senyuman kustom"
 
@@ -12162,9 +12395,6 @@ msgstr "Kecilkan Ukuran Huruf"
 
 msgid "Font Face"
 msgstr "Muka Huruf"
-
-msgid "Background Color"
-msgstr "Warna Latar Belakang"
 
 msgid "Foreground Color"
 msgstr "Warna Latar Depan"
@@ -12504,6 +12734,9 @@ msgstr "Ubah Tos Teman"
 msgid "Pounce on Whom"
 msgstr "Tos pada Siapa"
 
+msgid "_Account:"
+msgstr "_Akun:"
+
 msgid "_Buddy name:"
 msgstr "_Nama Teman:"
 
@@ -12614,7 +12847,16 @@ msgstr "Kirim sebuah pesan"
 msgid "Unknown.... Please report this!"
 msgstr "Peristiwa tos tak dikenal. Mohon laporkan ini!"
 
-msgid "Smiley theme failed to unpack."
+#, fuzzy
+msgid "Theme failed to unpack."
+msgstr "Tema senyuman gagal dibuka."
+
+#, fuzzy
+msgid "Theme failed to load."
+msgstr "Tema senyuman gagal dibuka."
+
+#, fuzzy
+msgid "Theme failed to copy."
 msgstr "Tema senyuman gagal dibuka."
 
 msgid "Install Theme"
@@ -13192,6 +13434,10 @@ msgid "Custom Smiley Manager"
 msgstr "Manajer Sertifikat"
 
 #, fuzzy
+msgid "Select Buddy Icon"
+msgstr "Pilih Teman"
+
+#, fuzzy
 msgid "Click to change your buddyicon for this account."
 msgstr "Gunakan _ikon teman ini untuk akun ini:"
 
@@ -13423,6 +13669,78 @@ msgstr "Plugin Prediksi Ketersediaan Kontak."
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
+
+#, fuzzy
+msgid "Server name request"
+msgstr "Alamat Server"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Masukkan Server Konferensi"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "Pilih server konferensi untuk dicari"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "Layanan Online"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "Kirim Daftar Teman"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "Pergi menjauh"
+
+#, fuzzy
+msgid "Directory"
+msgstr "Direktori Log"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "Pilihan Suara"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "Layanan PubSub"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "Deskripsi"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "Layani Info Temuan"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_Browser:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "Pengguna tidak pernah ada"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "Server tidak menggunakan metode otentifikasi yang didukung"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Layani Info Temuan"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
 msgid "Buddy is idle"
 msgstr "Teman sedang diam"
@@ -13938,12 +14256,6 @@ msgstr ""
 "- Membalikkan semua teks masuk\n"
 "- Mengirim pesan kepada orang-orang di daftar anda begitu mereka bergabung"
 
-msgid "Cursor Color"
-msgstr "Warna Kursor"
-
-msgid "Secondary Cursor Color"
-msgstr "Warna Kedua Kursor"
-
 msgid "Hyperlink Color"
 msgstr "Warna Hyperlink"
 
@@ -13954,6 +14266,10 @@ msgstr "Warna Hyperlink"
 #, fuzzy
 msgid "Highlighted Message Name Color"
 msgstr "Pesan-pesan yang Ditandai"
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "Penghilangan Pemberitahuan"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "Pemisah Horisontal GtkTreeView"
@@ -13984,34 +14300,23 @@ msgstr "Huruf Antarmuka GTK+"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "Tema Tekx Shortcut GTK+"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "Warna antarmuka"
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "Pemberitahuan email baru"
 
-msgid "Widget Sizes"
-msgstr "Ukuran Widget"
+#, fuzzy
+msgid "GTK+ Theme Control Settings"
+msgstr "Kontrol Tema GTK+ Pidgin"
+
+#, fuzzy
+msgid "Colors"
+msgstr "Tutup"
 
 msgid "Fonts"
 msgstr "Huruf"
+
+msgid "Miscellaneous"
+msgstr ""
 
 msgid "Gtkrc File Tools"
 msgstr "Piranti Arsip Gtkrc"
@@ -14155,6 +14460,113 @@ msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
 "Mengganti teks dalam pesan yang dikirim menurut aturan yang didefinisikan "
 "pengguna."
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "Tidak ter-login"
+
+#, fuzzy
+msgid "Just logged out"
+msgstr "Tidak ter-login"
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "Gabung Percakapan"
+
+#, fuzzy
+msgid "Ignored"
+msgstr "Acuhkan"
+
+#, fuzzy
+msgid "Founder"
+msgstr "Lebih Keras"
+
+#, fuzzy
+msgid "Operator"
+msgstr "Opera"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "Otorisasi Diberikan"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "Kesalahan "
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "Informasi"
+
+msgid "Mail dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Question dialog"
+msgstr "Dialog Pengajuan"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "Tingkat Peringatan"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "Status untuk %s"
+
+#, fuzzy
+msgid "Chatroom Emblems"
+msgstr "Kamar Pengguna Lokal"
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "Simpan Ikon"
+
+#, fuzzy
+msgid "Pidgin Icon Theme Editor"
+msgstr "Kontrol Tema GTK+ Pidgin"
+
+#, fuzzy
+msgid "Contact"
+msgstr "Info Kontak"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "Daftar Teman"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "Daftar Teman"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "Kontrol Tema GTK+ Pidgin"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Pidgin Theme Editor."
+msgstr "Kontrol Tema GTK+ Pidgin"
 
 #. *< type
 #. *< ui_requirement
@@ -14365,6 +14777,21 @@ msgstr "Kirim dan terima bait-bait XMPP mentah."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
+
+#~ msgid "Activate which ID?"
+#~ msgstr "Aktifkan ID yang mana?"
+
+#~ msgid "Cursor Color"
+#~ msgstr "Warna Kursor"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "Warna Kedua Kursor"
+
+#~ msgid "Interface colors"
+#~ msgstr "Warna antarmuka"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "Ukuran Widget"
 
 #, fuzzy
 #~ msgid "Invite message"
@@ -14910,9 +15337,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ msgstr ""
 #~ "Permohonan anda untuk gabung kelompok %d telah diterima oleh admin %d"
 
-#~ msgid "This group has been added to your buddy list"
-#~ msgstr "Kelompok ini telah ditambahkan ke daftar teman anda"
-
 #~ msgid "I am applying to join"
 #~ msgstr "Saya mengajukan untuk bergabung"
 
@@ -14933,9 +15357,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
 #~ msgid "Enter your reason:"
 #~ msgstr "Masukkan alasan anda:"
-
-#~ msgid "Error requesting login token"
-#~ msgstr "Kesalahan dalam memohon token login"
 
 #~ msgid "Unable to login, check debug log"
 #~ msgstr "Tidak dapat login, periksa log debug"
@@ -14989,9 +15410,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ "daftar teman anda. Anda dapat memasukkan nama alias, atau nama "
 #~ "panggilan,  untuk teman ini. Nama alias akan ditampilkan pada tempat nama "
 #~ "layar asal memungkinkan.\n"
-
-#~ msgid "A_ccount:"
-#~ msgstr "A_kun:"
 
 #~ msgid "_Screen name:"
 #~ msgstr "_Nama layar:"
