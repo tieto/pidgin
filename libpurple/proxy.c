@@ -688,7 +688,7 @@ proxy_connect_udp_none(PurpleProxyConnectData *connect_data, struct sockaddr *ad
 	if (connect_data->fd < 0)
 	{
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Unable to create socket:\n%s"), g_strerror(errno));
+				_("Unable to create socket: %s"), g_strerror(errno));
 		return;
 	}
 
@@ -750,7 +750,7 @@ proxy_connect_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 	if (connect_data->fd < 0)
 	{
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Unable to create socket:\n%s"), g_strerror(errno));
+				_("Unable to create socket: %s"), g_strerror(errno));
 		return;
 	}
 
@@ -871,7 +871,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 	if (len == 0) {
 		purple_proxy_connect_data_disconnect(connect_data,
-				_("Server closed the connection."));
+				_("Server closed the connection"));
 		return;
 	}
 
@@ -882,7 +882,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 		/* Error! */
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Lost connection with server:\n%s"), g_strerror(errno));
+				_("Lost connection with server: %s"), g_strerror(errno));
 		return;
 	}
 
@@ -945,7 +945,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 	if (error) {
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Unable to parse response from HTTP proxy: %s\n"),
+				_("Unable to parse response from HTTP proxy: %s"),
 				connect_data->read_buffer);
 		return;
 	}
@@ -1065,7 +1065,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 		if (status == 403) {
 			/* Forbidden */
 			purple_proxy_connect_data_disconnect_formatted(connect_data,
-					_("Access denied: HTTP proxy server forbids port %d tunneling."),
+					_("Access denied: HTTP proxy server forbids port %d tunneling"),
 					connect_data->port);
 		} else {
 			purple_proxy_connect_data_disconnect_formatted(connect_data,
@@ -1191,7 +1191,7 @@ proxy_connect_http(PurpleProxyConnectData *connect_data, struct sockaddr *addr, 
 	if (connect_data->fd < 0)
 	{
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Unable to create socket:\n%s"), g_strerror(errno));
+				_("Unable to create socket: %s"), g_strerror(errno));
 		return;
 	}
 
@@ -1384,7 +1384,7 @@ proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 	if (connect_data->fd < 0)
 	{
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Unable to create socket:\n%s"), g_strerror(errno));
+				_("Unable to create socket: %s"), g_strerror(errno));
 		return;
 	}
 
@@ -1453,7 +1453,7 @@ s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 	if (len == 0)
 	{
 		purple_proxy_connect_data_disconnect(connect_data,
-				_("Server closed the connection."));
+				_("Server closed the connection"));
 		return;
 	}
 
@@ -1465,7 +1465,7 @@ s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 
 		/* Error! */
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Lost connection with server:\n%s"), g_strerror(errno));
+				_("Lost connection with server: %s"), g_strerror(errno));
 		return;
 	}
 
@@ -1482,7 +1482,7 @@ s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 		} else {
 			purple_debug_error("socks5 proxy", "Bad data.\n");
 			purple_proxy_connect_data_disconnect(connect_data,
-					_("Received invalid data on connection with server."));
+					_("Received invalid data on connection with server"));
 		}
 		return;
 	}
@@ -1512,7 +1512,7 @@ s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 		default:
 			purple_debug_error("socks5 proxy", "Invalid ATYP received (0x%X)\n", buf[3]);
 			purple_proxy_connect_data_disconnect(connect_data,
-					_("Received invalid data on connection with server."));
+					_("Received invalid data on connection with server"));
 			return;
 	}
 
@@ -1567,7 +1567,7 @@ s5_readauth(gpointer data, gint source, PurpleInputCondition cond)
 	if (len == 0)
 	{
 		purple_proxy_connect_data_disconnect(connect_data,
-				_("Server closed the connection."));
+				_("Server closed the connection"));
 		return;
 	}
 
@@ -1579,7 +1579,7 @@ s5_readauth(gpointer data, gint source, PurpleInputCondition cond)
 
 		/* Error! */
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Lost connection with server:\n%s"), g_strerror(errno));
+				_("Lost connection with server: %s"), g_strerror(errno));
 		return;
 	}
 
@@ -1592,7 +1592,7 @@ s5_readauth(gpointer data, gint source, PurpleInputCondition cond)
 
 	if ((connect_data->read_buffer[0] != 0x01) || (connect_data->read_buffer[1] != 0x00)) {
 		purple_proxy_connect_data_disconnect(connect_data,
-				_("Received invalid data on connection with server."));
+				_("Received invalid data on connection with server"));
 		return;
 	}
 
@@ -1663,7 +1663,7 @@ s5_parse_chap_msg(PurpleProxyConnectData *connect_data)
 
 	if (*cmdbuf != 0x01) {
 		purple_proxy_connect_data_disconnect(connect_data,
-				_("Received invalid data on connection with server."));
+				_("Received invalid data on connection with server"));
 		return -1;
 	}
 	cmdbuf++;
@@ -1764,7 +1764,7 @@ s5_parse_chap_msg(PurpleProxyConnectData *connect_data)
 						"of the socks5 CHAP specification.  "
 						"Disconnecting...");
 					purple_proxy_connect_data_disconnect(connect_data,
-							_("Received invalid data on connection with server."));
+							_("Received invalid data on connection with server"));
 					return -1;
 				}
 				break;
@@ -1803,7 +1803,7 @@ s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 
 	if (len == 0) {
 		purple_proxy_connect_data_disconnect(connect_data,
-				_("Server closed the connection."));
+				_("Server closed the connection"));
 		return;
 	}
 
@@ -1814,7 +1814,7 @@ s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 
 		/* Error! */
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Lost connection with server:\n%s"), g_strerror(errno));
+				_("Lost connection with server: %s"), g_strerror(errno));
 		return;
 	}
 
@@ -1878,7 +1878,7 @@ s5_canread(gpointer data, gint source, PurpleInputCondition cond)
 	if (len == 0)
 	{
 		purple_proxy_connect_data_disconnect(connect_data,
-				_("Server closed the connection."));
+				_("Server closed the connection"));
 		return;
 	}
 
@@ -1890,7 +1890,7 @@ s5_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 		/* Error! */
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Lost connection with server:\n%s"), g_strerror(errno));
+				_("Lost connection with server: %s"), g_strerror(errno));
 		return;
 	}
 
@@ -1903,7 +1903,7 @@ s5_canread(gpointer data, gint source, PurpleInputCondition cond)
 
 	if ((connect_data->read_buffer[0] != 0x05) || (connect_data->read_buffer[1] == 0xff)) {
 		purple_proxy_connect_data_disconnect(connect_data,
-				_("Received invalid data on connection with server."));
+				_("Received invalid data on connection with server"));
 		return;
 	}
 
@@ -2044,7 +2044,7 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 	if (connect_data->fd < 0)
 	{
 		purple_proxy_connect_data_disconnect_formatted(connect_data,
-				_("Unable to create socket:\n%s"), g_strerror(errno));
+				_("Unable to create socket: %s"), g_strerror(errno));
 		return;
 	}
 
