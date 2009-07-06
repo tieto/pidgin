@@ -1717,7 +1717,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	if (source < 0) {
 		GHashTable *ui_info = purple_core_get_ui_info();
 		buf = g_strdup_printf(_("You may be disconnected shortly.  "
-				"Check %s for updates."),
+				"If so, check %s for updates."),
 				((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid AIM login hash."),
@@ -1819,7 +1819,7 @@ static int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 		g_free(pos);
 
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
-			"Check %s for updates."),
+			"If so, check %s for updates."),
 			((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid login hash."),
