@@ -3796,8 +3796,7 @@ process_chunked_data(char *data, gsize *len)
 
 	while (*s) {
 		/* Read the size of this chunk */
-		if (sscanf(s, "%" G_GSIZE_MODIFIER "x\r\n", &sz) != 1 &&
-			sscanf(s, "%" G_GSIZE_MODIFIER "x;", &sz) != 1)
+		if (sscanf(s, "%" G_GSIZE_MODIFIER "x", &sz) != 1)
 		{
 			purple_debug_error("util", "Error processing chunked data: "
 					"Expected data length, found: %s\n", s);
