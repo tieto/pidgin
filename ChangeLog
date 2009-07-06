@@ -10,8 +10,6 @@ version 2.6.0 (??/??/2009):
 	  in a group on the buddy list. (Paul Aurich)
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
-	* Use GLib's implementations of SHA1, SHA256, and MD5 when available.
-	  (GLib 2.14 or higher)
 
 	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
@@ -30,6 +28,7 @@ version 2.6.0 (??/??/2009):
 	  "off" variable.  Set it to any value to turn it on and unset it to turn
 	  it off.  This will optionally be used to only show less useful debug
 	  information on an as-needed basis.
+	* Add support for receiving handwritten (ink) messages on MSN.
 
 	Gadu-Gadu:
 	* Accounts can specify a server to which to connect.
@@ -78,6 +77,9 @@ version 2.6.0 (??/??/2009):
 	  client supports it).
 	* Google Talk mail notifications should now work for people for whom they
 	  inexplicably did not.  (Thanks to yukam for determining the reason)
+	* New XMPP and Google Talk accounts require SSL by default.
+	* Display kicks (and the reasons given) in chat rooms when an occupant is
+	  kicked.
 
 	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)

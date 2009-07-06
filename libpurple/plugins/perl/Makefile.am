@@ -99,7 +99,7 @@ common/Makefile: common/Makefile.PL
 			${LN_S} -f $$srcloc/$$f $$f; \
 		done; \
 	fi
-	@cd common && $(perlpath) Makefile.PL $(PERL_MM_PARAMS)
+	@cd common && $(perlpath) Makefile.PL
 
 common/Makefile.PL: common/Makefile.PL.in $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
@@ -108,7 +108,7 @@ all-local: common/Makefile
 	@for dir in $(perl_dirs); do \
 		cd $$dir && \
 		if [ ! -f Makefile ]; then \
-			$(perlpath) Makefile.PL $(PERL_MM_PARAMS); \
+			$(perlpath) Makefile.PL; \
 		fi && \
 		($(MAKE) CC="$(CC)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS) || \
 		 $(MAKE) CC="$(CC)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS)) && \
@@ -164,6 +164,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
+	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)\" \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS) \

@@ -210,8 +210,51 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	{
 		char *body_str;
 
-		body_str = g_strndup((const char *)body, body_len);
-		slpcall = msn_slp_sip_recv(slplink, body_str);
+		if (slpmsg->session_id == 64)
+		{
+			/* This is for handwritten messages (Ink) */
+			GError *error;
+			glong items_read, items_written;
+
+			body_str = g_utf16_to_utf8((gunichar2 *)body, body_len / 2,
+			                           &items_read, &items_written, &error);
+			body_len -= items_read * 2 + 2;
+			body += items_read * 2 + 2;
+			if (body_str == NULL
+			 || body_len <= 0
+			 || strstr(body_str, "image/gif") == NULL)
+			{
+				if (error != NULL)
+					purple_debug_error("msn",
+					                   "Unable to convert Ink header from UTF-16 to UTF-8: %s\n",
+					                   error->message);
+				else
+					purple_debug_error("msn",
+					                   "Received Ink in unknown format\n");
+				g_free(body_str);
+				return NULL;
+			}
+			g_free(body_str);
+
+			body_str = g_utf16_to_utf8((gunichar2 *)body, body_len / 2,
+			                           &items_read, &items_written, &error);
+			if (!body_str)
+			{
+				purple_debug_error("msn",
+				                   "Unable to convert Ink body from UTF-16 to UTF-8: %s\n",
+				                   error->message);
+				return NULL;
+			}
+
+			msn_switchboard_show_ink(slpmsg->slplink->swboard,
+			                         slplink->remote_user,
+			                         body_str);
+		}
+		else
+		{
+			body_str = g_strndup((const char *)body, body_len);
+			slpcall = msn_slp_sip_recv(slplink, body_str);
+		}
 		g_free(body_str);
 	}
 	else if (slpmsg->flags == 0x20 ||

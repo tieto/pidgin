@@ -74,6 +74,7 @@ static GSList *gtk_smileys = NULL;
 static void
 pidgin_smiley_destroy(PidginSmiley *smiley)
 {
+	g_object_set_data(G_OBJECT(smiley->smiley), "edit-dialog", NULL);
 	gtk_widget_destroy(smiley->parent);
 	g_free(smiley->filename);
 	if (smiley->custom_pixbuf)
@@ -402,6 +403,7 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 			smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
 			NULL);
 	s->parent = window;
+	g_object_set_data(G_OBJECT(smiley), "edit-dialog", window);
 
 	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
@@ -650,8 +652,12 @@ static void
 smiley_edit_iter(SmileyManager *dialog, GtkTreeIter *iter)
 {
 	PurpleSmiley *smiley = NULL;
+	GtkWidget *window = NULL;
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), iter, SMILEY, &smiley, -1);
-	pidgin_smiley_edit(gtk_widget_get_toplevel(GTK_WIDGET(dialog->treeview)), smiley);
+	if ((window = g_object_get_data(G_OBJECT(smiley), "edit-dialog")) != NULL)
+		gtk_window_present(GTK_WINDOW(window));
+	else
+		pidgin_smiley_edit(gtk_widget_get_toplevel(GTK_WIDGET(dialog->treeview)), smiley);
 	g_object_unref(G_OBJECT(smiley));
 }
 

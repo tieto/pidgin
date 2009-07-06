@@ -421,6 +421,7 @@ purple_dbus_get_connection(void)
 }
 
 #include "dbus-bindings.c"
+#include "dbus-signals.c"
 
 static gboolean
 purple_dbus_dispatch_cb(DBusConnection *connection,
@@ -489,6 +490,9 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 	DBusMessage *reply;
 	GString *str;
 	GList *bindings_list, *node;
+	const char *signals;
+	const char *type;
+	const char *pointer_type;
 
 	str = g_string_sized_new(0x1000); /* TODO: why this size? */
 
@@ -528,6 +532,19 @@ static DBusMessage *purple_dbus_introspect(DBusMessage *message)
 			g_string_append(str, "</method>\n");
 		}
 	}
+
+	if (sizeof(int) == sizeof(dbus_int32_t))
+		pointer_type = "type='i'";
+	else
+		pointer_type = "type='x'";
+
+	signals = dbus_signals;
+	while ((type = strstr(signals, "type='p'")) != NULL) {
+		g_string_append_len(str, signals, type - signals);
+		g_string_append(str, pointer_type);
+		signals = type + sizeof("type='p'") - 1;
+	}
+	g_string_append(str, signals);
 
 	g_string_append(str, "</interface>\n</node>\n");
 

@@ -52,10 +52,10 @@ typedef void (*PurpleSrvCallback)(PurpleSrvResponse *resp, int results, gpointer
 /**
  * Callback that returns the data retrieved from a DNS TXT lookup.
  *
- * @param responses   A GSList of PurpleTxtResponse objects.
+ * @param responses   A GList of PurpleTxtResponse objects.
  * @param data        The extra data passed to purple_txt_resolve.
  */
-typedef void (*PurpleTxtCallback)(GSList *responses, gpointer data);
+typedef void (*PurpleTxtCallback)(GList *responses, gpointer data);
 
 /**
  * Queries an SRV record.
