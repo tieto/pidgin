@@ -469,18 +469,18 @@ flap_connection_destroy_cb(gpointer data)
 
 		if (conn->disconnect_code == 0x0001) {
 			reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
-			tmp = g_strdup(_("You have signed on from another location."));
+			tmp = g_strdup(_("You have signed on from another location"));
 			if (!purple_account_get_remember_password(account))
 				purple_account_set_password(account, NULL);
 		} else if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
-			tmp = g_strdup(_("Server closed the connection."));
+			tmp = g_strdup(_("Server closed the connection"));
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_LOST_CONNECTION)
-			tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
+			tmp = g_strdup_printf(_("Lost connection with server: %s"),
 					conn->error_message);
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_INVALID_DATA)
-			tmp = g_strdup(_("Received invalid data on connection with server."));
+			tmp = g_strdup(_("Received invalid data on connection with server"));
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_COULD_NOT_CONNECT)
-			tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+			tmp = g_strdup_printf(_("Could not establish a connection with the server: %s"),
 					conn->error_message);
 		else
 			/*
@@ -1053,7 +1053,7 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		ret = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
 	if (ret <= 0)
 	{
-		if (ret < 0 && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
+		if (ret < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
 			/* No worries */
 			return;
 
