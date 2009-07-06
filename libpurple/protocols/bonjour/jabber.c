@@ -686,11 +686,13 @@ bonjour_jabber_start(BonjourJabber *jdata)
 	struct sockaddr_in my_addr;
 
 	/* Open a listening socket for incoming conversations */
-	if ((jdata->socket = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
-		purple_debug_error("bonjour", "Cannot open socket: %s\n", g_strerror(errno));
+	jdata->socket = socket(PF_INET, SOCK_STREAM, 0);
+	if (jdata->socket < 0) {
+		gchar *buf = g_strdup_printf(_("Unable to create socket: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason(jdata->account->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Cannot open socket"));
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, buf);
+		g_free(buf);
 		return -1;
 	}
 
@@ -699,25 +701,31 @@ bonjour_jabber_start(BonjourJabber *jdata)
 
 	/* Try to use the specified port - if it isn't available, use a random port */
 	my_addr.sin_port = htons(jdata->port);
-	if (bind(jdata->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0) {
-		purple_debug_info("bonjour", "Unable to bind to specified port %u (%s).\n", jdata->port, g_strerror(errno));
+	if (bind(jdata->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0)
+	{
+		purple_debug_info("bonjour", "Unable to bind to specified "
+				"port %i: %s\n", jdata->port, g_strerror(errno));
 		my_addr.sin_port = 0;
-		if (bind(jdata->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0) {
-			purple_debug_error("bonjour", "Unable to bind to system assigned port (%s).\n", g_strerror(errno));
+		if (bind(jdata->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0)
+		{
+			gchar *buf = g_strdup_printf(_("Unable to bind socket "
+					"to port: %s"), g_strerror(errno));
 			purple_connection_error_reason(jdata->account->gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Could not bind socket to port"));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, buf);
+			g_free(buf);
 			return -1;
 		}
 		jdata->port = purple_network_get_port_from_fd(jdata->socket);
 	}
 
 	/* Attempt to listen on the bound socket */
-	if (listen(jdata->socket, 10) != 0) {
-		purple_debug_error("bonjour", "Cannot listen on socket: %s\n", g_strerror(errno));
+	if (listen(jdata->socket, 10) != 0)
+	{
+		gchar *buf = g_strdup_printf(_("Unable to listen on socket: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason(jdata->account->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Could not listen on socket"));
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, buf);
+		g_free(buf);
 		return -1;
 	}
 

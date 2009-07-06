@@ -377,11 +377,11 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 		if (status_code == 330 && status_detail_code == 3011) {
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
-					_("Incorrect password."));
+					_("Incorrect password"));
 		} else if (status_code == 401 && status_detail_code == 3019) {
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-					_("AOL does not allow your screen name to authenticate via this site."));
+					_("AOL does not allow your screen name to authenticate here"));
 		} else
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR,

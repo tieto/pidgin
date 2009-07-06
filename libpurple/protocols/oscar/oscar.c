@@ -1111,7 +1111,7 @@ connection_common_error_cb(FlapConnection *conn, const gchar *error_message)
 	{
 		/* This only happens when connecting with the old-style BUCP login */
 		gchar *msg;
-		msg = g_strdup_printf(_("Could not connect to authentication server:\n%s"),
+		msg = g_strdup_printf(_("Unable to connect to authentication server: %s"),
 				error_message);
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
@@ -1119,7 +1119,7 @@ connection_common_error_cb(FlapConnection *conn, const gchar *error_message)
 	else if (conn->type == SNAC_FAMILY_LOCATE)
 	{
 		gchar *msg;
-		msg = g_strdup_printf(_("Could not connect to BOS server:\n%s"),
+		msg = g_strdup_printf(_("Unable to connect to BOS server: %s"),
 				error_message);
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 		g_free(msg);
@@ -1521,7 +1521,7 @@ oscar_login(PurpleAccount *account)
 
 	if (!oscar_util_valid_name(purple_account_get_username(account))) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
+		buf = g_strdup_printf(_("Unable to sign on as %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_SETTINGS, buf);
 		g_free(buf);
 		return;
@@ -1605,7 +1605,7 @@ oscar_login(PurpleAccount *account)
 
 		if (newconn->gsc == NULL && newconn->connect_data == NULL) {
 			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-					_("Couldn't connect to host"));
+					_("Unable to connect"));
 			return;
 		}
 	}
@@ -1717,7 +1717,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	if (source < 0) {
 		GHashTable *ui_info = purple_core_get_ui_info();
 		buf = g_strdup_printf(_("You may be disconnected shortly.  "
-				"Check %s for updates."),
+				"If so, check %s for updates."),
 				((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid AIM login hash."),
@@ -1819,7 +1819,7 @@ static int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 		g_free(pos);
 
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
-			"Check %s for updates."),
+			"If so, check %s for updates."),
 			((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid login hash."),
@@ -1841,7 +1841,7 @@ int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, 
 			connection_established_cb, conn);
 	if (conn->connect_data == NULL)
 	{
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Could Not Connect"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
 		return 0;
 	}
 
@@ -1887,11 +1887,11 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			/* Incorrect password */
 			if (!purple_account_get_remember_password(account))
 				purple_account_set_password(account, NULL);
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password."));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password"));
 			break;
 		case 0x11:
 			/* Suspended account */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Your account is currently suspended."));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Your account is currently suspended"));
 			break;
 		case 0x02:
 		case 0x14:
@@ -1963,7 +1963,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	g_free(host);
 	if (newconn->connect_data == NULL)
 	{
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Could Not Connect"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
 		return 0;
 	}
 
@@ -1996,7 +1996,7 @@ purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
 	/* Disconnect */
 	purple_connection_error_reason(gc,
 		PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
-		_("The SecurID key entered is invalid."));
+		_("The SecurID key entered is invalid"));
 }
 
 /**
@@ -4976,7 +4976,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 
 	if (!oscar_util_valid_name(bname)) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Could not add the buddy %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), bname);
+		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), bname);
 		if (!purple_conv_present_error(bname, account, buf))
 			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 		g_free(buf);
@@ -5461,7 +5461,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 			case 0x000c: { /* you are over the limit, the cheat is to the limit, come on fhqwhgads */
 				gchar *buf;
-				buf = g_strdup_printf(_("Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
+				buf = g_strdup_printf(_("Unable to add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
 					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 				g_free(buf);
@@ -5475,7 +5475,7 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 			default: { /* La la la */
 				gchar *buf;
 				purple_debug_error("oscar", "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
-				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason."),
+				buf = g_strdup_printf(_("Unable to add the buddy %s for an unknown reason."),
 						(retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
 					purple_notify_error(gc, NULL, _("Unable to Add"), buf);
