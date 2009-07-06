@@ -4184,8 +4184,9 @@ purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
 	if (purple_strcasestr(url, "https://") != NULL) {
 		if (!purple_ssl_is_supported()) {
 			purple_util_fetch_url_error(gfud,
-					_("Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was found."),
-					gfud->website.address);
+					_("Unable to connect to %s: %s"),
+					gfud->website.address,
+					_("Server requires TLS/SSL, but no TLS/SSL support was found."));
 			return NULL;
 		}
 
