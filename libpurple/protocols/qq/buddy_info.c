@@ -530,6 +530,15 @@ gchar *qq_get_icon_name(gint face)
 	return icon_name;
 }
 
+/*
+ * Hmm, this function is a bit weird.
+ * 1. The pref "/plugins/prpl/qq/icon_dir" doesn't exist
+ * 2. QQ_BUDDY_ICON_DIR is set in Makefile.am, but it's set to a
+ *    directory that doesn't exist
+ * 3. Why would the icon path be different for Windows and Linux?
+ * 4. Why do we use this in the first place?  Setting your icon
+ *    should go through the account editor.
+ */
 gchar *qq_get_icon_path(gchar *icon_name)
 {
 	gchar *icon_path;
