@@ -1820,45 +1820,45 @@ JabberBuddyState jabber_buddy_status_id_get_state(const char *id) {
 	return JABBER_BUDDY_STATE_UNKNOWN;
 }
 
-JabberBuddyState jabber_buddy_show_get_state(const char *id) {
-	if(!id)
-		return JABBER_BUDDY_STATE_UNKNOWN;
-	if(!strcmp(id, "available"))
-		return JABBER_BUDDY_STATE_ONLINE;
-	if(!strcmp(id, "chat"))
-		return JABBER_BUDDY_STATE_CHAT;
-	if(!strcmp(id, "away"))
-		return JABBER_BUDDY_STATE_AWAY;
-	if(!strcmp(id, "xa"))
-		return JABBER_BUDDY_STATE_XA;
-	if(!strcmp(id, "dnd"))
-		return JABBER_BUDDY_STATE_DND;
-	if(!strcmp(id, "offline"))
-		return JABBER_BUDDY_STATE_UNAVAILABLE;
-	if(!strcmp(id, "error"))
-		return JABBER_BUDDY_STATE_ERROR;
+const struct {
+	const char *name;
+	JabberBuddyState state;
+} show_state_pairs[] = {
+	{ "available", JABBER_BUDDY_STATE_ONLINE },
+	{ "chat",      JABBER_BUDDY_STATE_CHAT },
+	{ "away",      JABBER_BUDDY_STATE_AWAY },
+	{ "xa",        JABBER_BUDDY_STATE_XA },
+	{ "dnd",       JABBER_BUDDY_STATE_DND },
+	{ "offline",   JABBER_BUDDY_STATE_UNAVAILABLE },
+	{ "error",     JABBER_BUDDY_STATE_ERROR },
+	{ NULL,        JABBER_BUDDY_STATE_UNKNOWN }
+};
 
+JabberBuddyState jabber_buddy_show_get_state(const char *id)
+{
+	int i;
+
+	g_return_val_if_fail(id != NULL, JABBER_BUDDY_STATE_UNKNOWN);
+
+	for (i = 0; show_state_pairs[i].name; ++i)
+		if (g_str_equal(id, show_state_pairs[i].name))
+			return show_state_pairs[i].state;
+
+	purple_debug_warning("jabber", "Invalid value of presence <show/> "
+	                     "attribute: %s\n", id);
 	return JABBER_BUDDY_STATE_UNKNOWN;
 }
 
-const char *jabber_buddy_state_get_show(JabberBuddyState state) {
-	switch(state) {
-		case JABBER_BUDDY_STATE_CHAT:
-			return "chat";
-		case JABBER_BUDDY_STATE_AWAY:
-			return "away";
-		case JABBER_BUDDY_STATE_XA:
-			return "xa";
-		case JABBER_BUDDY_STATE_DND:
-			return "dnd";
-		case JABBER_BUDDY_STATE_ONLINE:
-			return "available";
-		case JABBER_BUDDY_STATE_UNKNOWN:
-		case JABBER_BUDDY_STATE_ERROR:
-			return NULL;
-		case JABBER_BUDDY_STATE_UNAVAILABLE:
-			return "offline";
-	}
+const char *
+jabber_buddy_state_get_show(JabberBuddyState state)
+{
+	int i;
+
+	for (i = 0; show_state_pairs[i].name; ++i)
+		if (state == show_state_pairs[i].state)
+			return show_state_pairs[i].name;
+
+/*	purple_debug_warning("jabber", "Unknown buddy state: %d\n", state); */
 	return NULL;
 }
 

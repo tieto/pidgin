@@ -486,34 +486,57 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	from = xmlnode_get_attrib(packet, "from");
 	type = xmlnode_get_attrib(packet, "type");
 
-	if(!(jb = jabber_buddy_find(js, from, TRUE)))
-		return;
+	jb = jabber_buddy_find(js, from, TRUE);
+	g_return_if_fail(jb != NULL);
 
 	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
 			"jabber-receiving-presence", js->gc, type, from, packet));
 	if (signal_return)
 		return;
 
-	if(!(jid = jabber_id_new(from)))
+	jid = jabber_id_new(from);
+	if (jid == NULL) {
+		purple_debug_error("jabber", "Ignoring presence with malformed 'from' "
+		                   "JID: %s\n", from);
 		return;
+	}
 
 	if(jb->error_msg) {
 		g_free(jb->error_msg);
 		jb->error_msg = NULL;
 	}
 
-	if(type && !strcmp(type, "error")) {
+	if (type == NULL) {
+		xmlnode *show;
+		char *show_data = NULL;
+
+		state = JABBER_BUDDY_STATE_ONLINE;
+
+		show = xmlnode_get_child(packet, "show");
+		if (show) {
+			show_data = xmlnode_get_data(show);
+			if (show_data) {
+				state = jabber_buddy_show_get_state(show_data);
+				g_free(show_data);
+			} else
+				purple_debug_warning("jabber", "<show/> present on presence, "
+				                     "but no contents!\n");
+		}
+	} else if (g_str_equal(type, "error")) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		state = JABBER_BUDDY_STATE_ERROR;
 		jb->error_msg = msg ? msg : g_strdup(_("Unknown Error in presence"));
-	} else if(type && !strcmp(type, "subscribe")) {
+	} else if (g_str_equal(type, "subscribe")) {
 		struct _jabber_add_permit *jap = g_new0(struct _jabber_add_permit, 1);
 		gboolean onlist = FALSE;
-		PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(js->gc), from);
+		PurpleAccount *account;
+		PurpleBuddy *buddy;
 		JabberBuddy *jb = NULL;
 		xmlnode *nick;
 
+		account = purple_connection_get_account(js->gc);
+		buddy = purple_find_buddy(account, from);
 		nick = xmlnode_get_child_with_namespace(packet, "nick", "http://jabber.org/protocol/nick");
 		if (nick)
 			nickname = xmlnode_get_data(nick);
@@ -528,16 +551,17 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jap->who = g_strdup(from);
 		jap->js = js;
 
-		purple_account_request_authorization(purple_connection_get_account(js->gc), from, NULL, nickname, NULL, onlist,
-				authorize_add_cb, deny_add_cb, jap);
+		purple_account_request_authorization(account, from, NULL, nickname,
+				NULL, onlist, authorize_add_cb, deny_add_cb, jap);
+
 		g_free(nickname);
 		jabber_id_free(jid);
 		return;
-	} else if(type && !strcmp(type, "subscribed")) {
+	} else if (g_str_equal(type, "subscribed")) {
 		/* we've been allowed to see their presence, but we don't care */
 		jabber_id_free(jid);
 		return;
-	} else if(type && !strcmp(type, "unsubscribe")) {
+	} else if (g_str_equal(type, "unsubscribe")) {
 		/* XXX I'm not sure this is the right way to handle this, it
 		 * might be better to add "unsubscribe" to the presence status
 		 * if lower down, but I'm not sure. */
@@ -547,13 +571,10 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jabber_id_free(jid);
 		return;
 	} else {
-		if((y = xmlnode_get_child(packet, "show"))) {
-			char *show = xmlnode_get_data(y);
-			state = jabber_buddy_show_get_state(show);
-			g_free(show);
-		} else {
-			state = JABBER_BUDDY_STATE_ONLINE;
-		}
+		purple_debug_warning("jabber", "Ignoring presence with invalid type "
+		                     "'%s'\n", type);
+		jabber_id_free(jid);
+		return;
 	}
 
 
@@ -688,7 +709,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 
-		if(type && !strcmp(type, "unavailable")) {
+		if (type && g_str_equal(type, "unavailable")) {
 			gboolean nick_change = FALSE;
 			gboolean kick = FALSE;
 			gboolean is_our_resource = FALSE; /* Is the presence about us? */
@@ -887,8 +908,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if(state == JABBER_BUDDY_STATE_ERROR ||
-				(type && (!strcmp(type, "unavailable") ||
-						  !strcmp(type, "unsubscribed")))) {
+				(type && (g_str_equal(type, "unavailable") ||
+				          g_str_equal(type, "unsubscribed")))) {
 			PurpleConversation *conv;
 
 			jabber_buddy_remove_resource(jb, jid->resource);
@@ -917,7 +938,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		g_free(buddy_name);
 	}
 
-	if (caps && (!type || g_str_equal(type, "available"))) {
+	if (caps && !type) {
 		/* handle Entity Capabilities (XEP-0115) */
 		const char *node = xmlnode_get_attrib(caps, "node");
 		const char *ver  = xmlnode_get_attrib(caps, "ver");
