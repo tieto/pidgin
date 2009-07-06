@@ -2087,15 +2087,6 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	if (n + session->rxoff > session->rxsize) {
-		purple_debug_info("msim_input_cb", "received %d bytes, pushing rxoff to %d, over buffer size of %d\n",
-				n, n + session->rxoff, session->rxsize);
-		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Read buffer full (2)"));
-		return;
-	}
-
 	/* Null terminate */
 	purple_debug_info("msim", "msim_input_cb: going to null terminate "
 			"at n=%d\n", n);
