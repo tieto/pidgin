@@ -708,8 +708,43 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			return;
 		}
 
+		if (type == NULL) {
+			/*
+			 * XEP-0045 mandates the presence to include a resource (which is
+			 * treated as the chat nick). Some non-compliant servers allow
+			 * joining without a nick.
+			 */
+			if (!jid->resource) {
+				jabber_id_free(jid);
+				g_free(avatar_hash);
+				g_free(nickname);
+				g_free(status);
+				return;
+			}
 
-		if (type && g_str_equal(type, "unavailable")) {
+			if(!chat->conv) {
+				char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
+				chat->id = i++;
+				chat->muc = muc;
+				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
+				purple_conv_chat_set_nick(PURPLE_CONV_CHAT(chat->conv), chat->handle);
+
+				jabber_chat_disco_traffic(chat);
+				g_free(room_jid);
+			}
+
+			jabber_buddy_track_resource(jb, jid->resource, priority, state,
+					status);
+
+			jabber_chat_track_handle(chat, jid->resource, real_jid, affiliation, role);
+
+			if(!jabber_chat_find_buddy(chat->conv, jid->resource))
+				purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat->conv), jid->resource,
+						real_jid, flags, !delayed);
+			else
+				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(chat->conv), jid->resource,
+						flags);
+		} else if (g_str_equal(type, "unavailable")) {
 			gboolean nick_change = FALSE;
 			gboolean kick = FALSE;
 			gboolean is_our_resource = FALSE; /* Is the presence about us? */
@@ -827,41 +862,15 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				}
 			}
 		} else {
-			/*
-			 * XEP-0045 mandates the presence to include a resource (which is
-			 * treated as the chat nick). Some non-compliant servers allow
-			 * joining without a nick.
-			 */
-			if (!jid->resource) {
-				jabber_id_free(jid);
-				g_free(avatar_hash);
-				g_free(nickname);
-				g_free(status);
-				return;
-			}
+			/* A type that isn't available or unavailable */
+			purple_debug_error("jabber", "MUC presence with bad type: %s\n",
+			                   type);
 
-			if(!chat->conv) {
-				char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
-				chat->id = i++;
-				chat->muc = muc;
-				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
-				purple_conv_chat_set_nick(PURPLE_CONV_CHAT(chat->conv), chat->handle);
-
-				jabber_chat_disco_traffic(chat);
-				g_free(room_jid);
-			}
-
-			jabber_buddy_track_resource(jb, jid->resource, priority, state,
-					status);
-
-			jabber_chat_track_handle(chat, jid->resource, real_jid, affiliation, role);
-
-			if(!jabber_chat_find_buddy(chat->conv, jid->resource))
-				purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat->conv), jid->resource,
-						real_jid, flags, !delayed);
-			else
-				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(chat->conv), jid->resource,
-						flags);
+			jabber_id_free(jid);
+			g_free(avatar_hash);
+			g_free(status);
+			g_free(nickname);
+			g_return_if_reached();
 		}
 	} else {
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
