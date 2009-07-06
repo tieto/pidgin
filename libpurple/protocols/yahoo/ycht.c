@@ -196,36 +196,36 @@ static void ycht_packet_dump(const guchar *data, int len)
 #ifdef YAHOO_YCHT_DEBUG
 	int i;
 
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+	purple_debug_misc("yahoo", "");
 
 	for (i = 0; i + 1 < len; i += 2) {
 		if ((i % 16 == 0) && i) {
-			purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-			purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+			purple_debug_misc(NULL, "\n");
+			purple_debug_misc("yahoo", "");
 		}
 
-		purple_debug(PURPLE_DEBUG_MISC, NULL, "%02hhx%02hhx ", data[i], data[i + 1]);
+		purple_debug_misc(NULL, "%02hhx%02hhx ", data[i], data[i + 1]);
 	}
 	if (i < len)
-		purple_debug(PURPLE_DEBUG_MISC, NULL, "%02hhx", data[i]);
+		purple_debug_misc(NULL, "%02hhx", data[i]);
 
-	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+	purple_debug_misc(NULL, "\n");
+	purple_debug_misc("yahoo", "");
 
 	for (i = 0; i < len; i++) {
 		if ((i % 16 == 0) && i) {
-			purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-			purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
+			purple_debug_misc(NULL, "\n");
+			purple_debug_misc("yahoo", "");
 		}
 
 		if (g_ascii_isprint(data[i]))
-			purple_debug(PURPLE_DEBUG_MISC, NULL, "%c ", data[i]);
+			purple_debug_misc(NULL, "%c ", data[i]);
 		else
-			purple_debug(PURPLE_DEBUG_MISC, NULL, ". ");
+			purple_debug_misc(NULL, ". ");
 	}
 
-	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
-#endif
+	purple_debug_misc(NULL, "\n");
+#endif /* YAHOO_YCHT_DEBUG */
 }
 
 static YchtPkt *ycht_packet_new(guint version, guint service, int status)
@@ -507,16 +507,15 @@ static void ycht_pending(gpointer data, gint source, PurpleInputCondition cond)
 		service = yahoo_get32(ycht->rxqueue + pos); pos += 4;
 		status = yahoo_get16(ycht->rxqueue + pos); pos += 2;
 		pktlen  = yahoo_get16(ycht->rxqueue + pos); pos += 2;
-		purple_debug(PURPLE_DEBUG_MISC, "yahoo",
-				   "ycht: %d bytes to read, rxlen is %d\n", pktlen, ycht->rxlen);
+		purple_debug_misc("yahoo", "ycht: %d bytes to read, rxlen is %d\n",
+				pktlen, ycht->rxlen);
 
 		if (ycht->rxlen < (YCHT_HEADER_LEN + pktlen))
 			return;
 
 		purple_debug_misc("yahoo", "--==Incoming YCHT packet==--\n");
-		purple_debug(PURPLE_DEBUG_MISC, "yahoo",
-			   "YCHT Service: 0x%02x Version: 0x%02x Status: 0x%02x\n",
-			   service, version, status);
+		purple_debug_misc("yahoo", "YCHT Service: 0x%02x Version: 0x%02x Status: 0x%02x\n",
+				service, version, status);
 		ycht_packet_dump(ycht->rxqueue, YCHT_HEADER_LEN + pktlen);
 
 		pkt = ycht_packet_new(version, service, status);
@@ -578,7 +577,7 @@ void ycht_connection_open(PurpleConnection *gc)
 
 	yd->ycht = ycht;
 
-	if (purple_proxy_connect(NULL, account,
+	if (purple_proxy_connect(gc, account,
 	                       purple_account_get_string(account, "ycht-server",  YAHOO_YCHT_HOST),
 	                       purple_account_get_int(account, "ycht-port", YAHOO_YCHT_PORT),
 	                       ycht_got_connected, ycht) == NULL)

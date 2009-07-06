@@ -40,22 +40,22 @@ extern PurplePlugin *my_plugin;
  */
 typedef enum
 {
-    XMPP_DISCO_SERVICE_TYPE_UNSET,
-    /**
-     * A registerable gateway to another protocol. An example would be
-     * XMPP legacy transports.
-     */
-    XMPP_DISCO_SERVICE_TYPE_GATEWAY,
+	XMPP_DISCO_SERVICE_TYPE_UNSET,
+	/**
+	 * A registerable gateway to another protocol. An example would be
+	 * XMPP legacy transports.
+	 */
+	XMPP_DISCO_SERVICE_TYPE_GATEWAY,
 
-    /**
-     * A directory (e.g. allows the user to search for other users).
-     */
-    XMPP_DISCO_SERVICE_TYPE_DIRECTORY,
+	/**
+	 * A directory (e.g. allows the user to search for other users).
+	 */
+	XMPP_DISCO_SERVICE_TYPE_DIRECTORY,
 
-    /**
-     * A chat (multi-user conversation).
-     */
-    XMPP_DISCO_SERVICE_TYPE_CHAT,
+	/**
+	 * A chat (multi-user conversation).
+	 */
+	XMPP_DISCO_SERVICE_TYPE_CHAT,
 
 	/**
 	 * A pubsub collection (contains nodes)
@@ -68,9 +68,9 @@ typedef enum
 	XMPP_DISCO_SERVICE_TYPE_PUBSUB_LEAF,
 
 	/**
-     * Something else. Do we need more categories?
-     */
-    XMPP_DISCO_SERVICE_TYPE_OTHER
+	 * Something else. Do we need more categories?
+	 */
+	XMPP_DISCO_SERVICE_TYPE_OTHER
 } XmppDiscoServiceType;
 
 /**
@@ -78,10 +78,10 @@ typedef enum
  */
 typedef enum
 {
-    XMPP_DISCO_NONE          = 0x0000,
-    XMPP_DISCO_ADD           = 0x0001, /**< Supports an 'add' operation */
-    XMPP_DISCO_BROWSE        = 0x0002, /**< Supports browsing */
-    XMPP_DISCO_REGISTER      = 0x0004  /**< Supports a 'register' operation */
+	XMPP_DISCO_NONE          = 0x0000,
+	XMPP_DISCO_ADD           = 0x0001, /**< Supports an 'add' operation */
+	XMPP_DISCO_BROWSE        = 0x0002, /**< Supports browsing */
+	XMPP_DISCO_REGISTER      = 0x0004  /**< Supports a 'register' operation */
 } XmppDiscoServiceFlags;
 
 struct _XmppDiscoService {

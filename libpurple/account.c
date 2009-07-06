@@ -1132,28 +1132,31 @@ void
 purple_account_connect(PurpleAccount *account)
 {
 	PurplePlugin *prpl;
+	const char *password, *username;
 	PurplePluginProtocolInfo *prpl_info;
-	const char *password;
 
 	g_return_if_fail(account != NULL);
 
-	purple_debug_info("account", "Connecting to account %s\n",
-					purple_account_get_username(account));
+	username = purple_account_get_username(account);
 
-	if (!purple_account_get_enabled(account, purple_core_get_ui()))
+	if (!purple_account_get_enabled(account, purple_core_get_ui())) {
+		purple_debug_info("account",
+				  "Account %s not enabled, not connecting.\n",
+				  username);
 		return;
+	}
 
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
-	if (prpl == NULL)
-	{
+	if (prpl == NULL) {
 		gchar *message;
 
-		message = g_strdup_printf(_("Missing protocol plugin for %s"),
-			purple_account_get_username(account));
+		message = g_strdup_printf(_("Missing protocol plugin for %s"), username);
 		purple_notify_error(account, _("Connection Error"), message, NULL);
 		g_free(message);
 		return;
 	}
+
+	purple_debug_info("account", "Connecting to account %s.\n", username);
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	password = purple_account_get_password(account);
@@ -2660,7 +2663,7 @@ purple_accounts_restore_current_statuses()
 	/* If we're not connected to the Internet right now, we bail on this */
 	if (!purple_network_is_available())
 	{
-		purple_debug_info("account", "Network not connected; skipping reconnect\n");
+		purple_debug_warning("account", "Network not connected; skipping reconnect\n");
 		return;
 	}
 
@@ -2810,9 +2813,9 @@ purple_accounts_uninit(void)
 		sync_accounts();
 	}
 
-	purple_signals_disconnect_by_handle(handle);
-	purple_signals_unregister_by_instance(handle);
-
 	for (; accounts; accounts = g_list_delete_link(accounts, accounts))
 		purple_account_destroy(accounts->data);
+
+	purple_signals_disconnect_by_handle(handle);
+	purple_signals_unregister_by_instance(handle);
 }

@@ -23,6 +23,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
+#include "core.h"
 #include "cmds.h"
 #include "connection.h"
 #include "conversation.h"
@@ -473,7 +474,7 @@ static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
 	JabberStream *js = gc->proto_data;
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Ping timeout"));
-	js->keepalive_timeout = -1;
+	js->keepalive_timeout = 0;
 	return FALSE;
 }
 
@@ -481,7 +482,7 @@ void jabber_keepalive(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
-	if (js->keepalive_timeout == -1) {
+	if (js->keepalive_timeout == 0) {
 		jabber_keepalive_ping(js);
 		js->keepalive_timeout = purple_timeout_add_seconds(120,
 				(GSourceFunc)(jabber_keepalive_timeout), gc);
@@ -595,7 +596,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 }
 
 static void
-txt_resolved_cb(GSList *responses, gpointer data)
+txt_resolved_cb(GList *responses, gpointer data)
 {
 	JabberStream *js = data;
 
@@ -623,7 +624,7 @@ txt_resolved_cb(GSList *responses, gpointer data)
 		}
 		g_strfreev(token);
 		purple_txt_response_destroy(resp);
-		responses = g_slist_delete_link(responses, responses);
+		responses = g_list_delete_link(responses, responses);
 	}
 
 	if (js->bosh) {
@@ -633,8 +634,8 @@ txt_resolved_cb(GSList *responses, gpointer data)
 	}
 
 	if (responses) {
-		g_slist_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
-		g_slist_free(responses);
+		g_list_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
+		g_list_free(responses);
 	}
 }
 
@@ -757,6 +758,8 @@ jabber_login(PurpleAccount *account)
 	PurpleConnection *gc = purple_account_get_connection(account);
 	const char *connect_server = purple_account_get_string(account,
 			"connect_server", "");
+	const char *bosh_url = purple_account_get_string(account,
+			"bosh_url", "");
 	JabberStream *js;
 	PurplePresence *presence;
 	PurpleStoredImage *image;
@@ -777,7 +780,7 @@ jabber_login(PurpleAccount *account)
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
 	js->old_length = 0;
-	js->keepalive_timeout = -1;
+	js->keepalive_timeout = 0;
 	/* Set the default protocol version to 1.0. Overridden in parser.c. */
 	js->protocol_version = JABBER_PROTO_1_0;
 	js->sessions = NULL;
@@ -823,20 +826,24 @@ jabber_login(PurpleAccount *account)
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
 	/* TODO: Just use purple_url_parse? */
-	if (!g_ascii_strncasecmp(connect_server, "http://", 7) || !g_ascii_strncasecmp(connect_server, "https://", 8)) {
+	/* If both BOSH and a Connect Server are specified, we prefer BOSH. I'm not
+	 * attached to that choice, though.
+	 */
+	if (*bosh_url) {
 		js->use_bosh = TRUE;
-		js->bosh = jabber_bosh_connection_init(js, connect_server);
-		if (!js->bosh) {
+		js->bosh = jabber_bosh_connection_init(js, bosh_url);
+		if (js->bosh)
+			jabber_bosh_connection_connect(js->bosh);
+		else {
 			purple_connection_error_reason (js->gc,
 				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-				_("Malformed BOSH Connect Server"));
-			return;
+				_("Malformed BOSH URL"));
 		}
-		jabber_bosh_connection_connect(js->bosh);
+
 		return;
-	} else {
-		js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 	}
+
+	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
 	if(purple_account_get_bool(js->gc->account, "old_ssl", FALSE)) {
@@ -900,8 +907,8 @@ jabber_registration_result_cb(JabberStream *js, const char *from,
 
 	if (type == JABBER_IQ_RESULT) {
 		if(js->registration) {
-		buf = g_strdup_printf(_("Registration of %s@%s successful"),
-				js->user->node, js->user->domain);
+			buf = g_strdup_printf(_("Registration of %s@%s successful"),
+					js->user->node, js->user->domain);
 			if(account->registration_cb)
 				(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
 		} else {
@@ -1294,7 +1301,7 @@ void jabber_register_account(PurpleAccount *account)
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->old_length = 0;
-	js->keepalive_timeout = -1;
+	js->keepalive_timeout = 0;
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -1547,7 +1554,7 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_track);
 	g_free(js->expected_rspauth);
 
-	if (js->keepalive_timeout != -1)
+	if (js->keepalive_timeout != 0)
 		purple_timeout_remove(js->keepalive_timeout);
 
 	g_free(js->srv_rec);
@@ -1920,6 +1927,28 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 					!(jb->subscription & JABBER_SUB_TO)))
 			return "not-authorized";
 	}
+
+	if (jb) {
+		JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, NULL);
+		if (jbr) {
+			const gchar *client_type = 
+				jabber_resource_get_identity_category_type(jbr, "client");
+		
+			if (client_type) {
+				if (strcmp(client_type, "phone") == 0) {
+					return "mobile";
+				} else if (strcmp(client_type, "web") == 0) {
+					return "external";
+				} else if (strcmp(client_type, "handheld") == 0) {
+					return "hiptop";
+				} else if (strcmp(client_type, "bot") == 0) {
+					return "bot";
+				}
+				/* the default value "pc" falls through and has no emblem */
+			}
+		}
+	}
+		
 	return NULL;
 }
 
@@ -3397,9 +3426,26 @@ jabber_ipc_add_feature(const gchar *feature)
 void
 jabber_init_plugin(PurplePlugin *plugin)
 {
+	GHashTable *ui_info = purple_core_get_ui_info();
+	const gchar *ui_type;
+	const gchar *type = "pc"; /* default client type, if unknown or 
+								unspecified */
+
 	jabber_plugin = plugin;
 
-	jabber_add_identity("client", "pc", NULL, PACKAGE);
+	ui_type = ui_info ? g_hash_table_lookup(ui_info, "client_type") : NULL;
+	if (ui_type) {
+		if (strcmp(ui_type, "pc") == 0 ||
+			strcmp(ui_type, "console") == 0 ||
+			strcmp(ui_type, "phone") == 0 ||
+			strcmp(ui_type, "handheld") == 0 ||
+			strcmp(ui_type, "web") == 0 ||
+			strcmp(ui_type, "bot") == 0) {
+			type = ui_type;
+		}
+	}
+
+	jabber_add_identity("client", type, NULL, PACKAGE);
 
 	/* initialize jabber_features list */
 	jabber_add_feature("jabber:iq:last", 0);

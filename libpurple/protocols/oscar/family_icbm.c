@@ -1566,7 +1566,7 @@ static int incomingim_ch1_parsemsgs(OscarData *od, aim_userinfo_t *userinfo, gui
 
 static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, guint16 channel, aim_userinfo_t *userinfo, ByteStream *bs, guint8 *cookie)
 {
-	guint16 type, length, magic1, msglen;
+	guint16 type, length, magic1, msglen = 0;
 	aim_rxcallback_t userfunc;
 	int ret = 0;
 	int rev = 0;

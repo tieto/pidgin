@@ -22,7 +22,7 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+#endif /* HAVE_CONFIG_H */
 
 #include "debug.h"
 #include "internal.h"
@@ -42,7 +42,7 @@ yahoo_account_use_http_proxy(PurpleConnection *conn)
 /*
  * Returns cookies formatted as a null terminated string for the given connection.
  * Must g_free return value.
- * 
+ *
  * TODO:will work, but must test for strict correctness
  */
 gchar* yahoo_get_cookies(PurpleConnection *gc)
@@ -191,7 +191,7 @@ char *yahoo_convert_to_numeric(const char *str)
 /*
  * I found these on some website but i don't know that they actually
  * work (or are supposed to work). I didn't implement them yet.
- * 
+ *
      * [0;30m ---black
      * [1;37m ---white
      * [0;37m ---tan
@@ -354,7 +354,7 @@ char *yahoo_codes_to_html(const char *x)
 					else if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
 						g_string_append(s, match);
 					else {
-						purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
+						purple_debug_error("yahoo",
 							"Unknown ansi code 'ESC[%sm'.\n", tmp->str);
 						g_string_free(tmp, TRUE);
 						break;
@@ -423,7 +423,7 @@ char *yahoo_codes_to_html(const char *x)
 
 	ret = s->str;
 	g_string_free(s, FALSE);
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", ret);
+	purple_debug_misc("yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", ret);
 	return ret;
 }
 
@@ -822,7 +822,7 @@ char *yahoo_html_to_codes(const char *src)
 	g_string_free(dest, FALSE);
 
 	esc = g_strescape(ret, NULL);
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
+	purple_debug_misc("yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
 	g_free(esc);
 
 	yahoo_htc_queue_cleanup(colors);

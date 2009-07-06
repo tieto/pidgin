@@ -50,7 +50,7 @@ static void irc_dccsend_recv_destroy(PurpleXfer *xfer)
  * unsigned 4 byte integer in network byte order)
  */
 static void irc_dccsend_recv_ack(PurpleXfer *xfer, const guchar *data, size_t size) {
-	unsigned long l;
+	guint32 l;
 	size_t result;
 
 	l = htonl(xfer->bytes_sent);

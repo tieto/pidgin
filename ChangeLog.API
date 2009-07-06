@@ -30,6 +30,10 @@ version 2.6.0 (??/??/2009):
 		* purple_connection_set_protocol_data
 		* purple_contact_destroy
 		* purple_conv_chat_invite_user
+		* purple_debug_is_unsafe
+		* purple_debug_is_verbose
+		* purple_debug_set_unsafe
+		* purple_debug_set_verbose
 		* purple_global_proxy_set_info
 		* purple_group_destroy
 		* purple_log_get_activity_score
@@ -39,6 +43,8 @@ version 2.6.0 (??/??/2009):
 		* purple_network_set_turn_server
 		* purple_network_get_stun_ip
 		* purple_network_get_turn_ip
+		* purple_network_remove_port_mapping
+		* purple_plugins_get_search_paths
 		* purple_proxy_connect_udp
 		* purple_prpl_get_media_caps
 		* purple_prpl_got_account_actions
@@ -66,6 +72,8 @@ version 2.6.0 (??/??/2009):
 		  update type is emitted when receiving an IM.  Previously, the
 		  typing state was modified (and the buddy-typing-stopped signal
 		  emitted), but this signal was not emitted.
+		* Added a client_type field in the get_ui_info core UI op. See
+		  core.h for details.
 
 		Deprecated:
 		* buddy-added and buddy-removed blist signals
@@ -124,6 +132,15 @@ version 2.6.0 (??/??/2009):
 			* Purple::Request::Field::list_new
 			* Purple::Request::Field::string_new
 			* Purple::Request::Field::group_new
+
+version 2.5.8 (06/27/2009):
+	No changes
+
+version 2.5.7 (06/20/2009):
+	No changes
+
+version 2.5.6 (05/19/2009):
+	No changes
 
 version 2.5.5 (03/01/2009):
 	libpurple:

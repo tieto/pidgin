@@ -161,7 +161,6 @@ def execute(uri):
                 purple.PurpleSavedstatusSetSubstatus(current, account, type, message)
                 purple.PurpleSavedstatusActivateForAccount(current, account)
         else:
-            accounts = purple.PurpleAccountsGetAllActive()
             saved = purple.PurpleSavedstatusNew("", status_type)
             purple.PurpleSavedstatusSetMessage(saved, message)
             purple.PurpleSavedstatusActivate(saved)

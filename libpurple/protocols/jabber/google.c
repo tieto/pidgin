@@ -787,7 +787,7 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 {
 	xmlnode *child;
 	xmlnode *message;
-	const char *to, *url;
+	const char *to, *default_url;
 	const char *in_str;
 	char *to_name;
 
@@ -837,15 +837,19 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 
 	to = xmlnode_get_attrib(packet, "to");
 	to_name = jabber_get_bare_jid(to);
-	url = xmlnode_get_attrib(child, "url");
-	if (!url || !*url)
-		url = "http://www.gmail.com";
+	default_url = xmlnode_get_attrib(child, "url");
+	if (default_url == NULL || *default_url == '\0')
+		default_url = "http://mail.google.com/mail";
 
 	message= xmlnode_get_child(child, "mail-thread-info");
 	for (i=0; message; message = xmlnode_get_next_twin(message), i++) {
 		xmlnode *sender_node, *subject_node;
-		const char *from, *tid;
+		const char *from, *tid, *url;
 		char *subject;
+
+		url = xmlnode_get_attrib(message, "url");
+		if (url == NULL || *url == '\0')
+			url = default_url;
 
 		subject_node = xmlnode_get_child(message, "subject");
 		sender_node  = xmlnode_get_child(message, "senders");
@@ -939,9 +943,24 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 
 void jabber_gmail_init(JabberStream *js) {
 	JabberIq *iq;
+	xmlnode *usersetting, *mailnotifications;
 
-	if (!purple_account_get_check_mail(js->gc->account))
+	if (!purple_account_get_check_mail(purple_connection_get_account(js->gc)))
 		return;
+
+	/*
+	 * Quoting http://code.google.com/apis/talk/jep_extensions/usersettings.html:
+	 * To ensure better compatibility with other clients, rather than
+	 * setting this value to "false" to turn off notifications, it is
+	 * recommended that a client set this to "true" and filter incoming
+	 * email notifications itself.
+	 */
+	iq = jabber_iq_new(js, JABBER_IQ_SET);
+	usersetting = xmlnode_new_child(iq->node, "usersetting");
+	xmlnode_set_namespace(usersetting, "google:setting");
+	mailnotifications = xmlnode_new_child(usersetting, "mailnotifications");
+	xmlnode_set_attrib(mailnotifications, "value", "true");
+	jabber_iq_send(iq);
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "google:mail:notify");
 	jabber_iq_set_callback(iq, jabber_gmail_parse, NULL);

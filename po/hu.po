@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:38-0400\n"
+"POT-Creation-Date: 2009-07-02 01:34-0700\n"
 "PO-Revision-Date: 2009-02-25 03:21+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@fsf.hu>\n"
@@ -1776,6 +1776,8 @@ msgstr "+++ %s belépett"
 msgid "+++ %s signed off"
 msgstr "+++ %s kilépett"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "Ismeretlen hiba"
 
@@ -2177,6 +2179,10 @@ msgstr "<font color=\"red\"><b>A fájl olvasása sikertelen: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTOMATIKUS VÁLASZ>: %s\n"
+
+#, fuzzy
+msgid "Error creating conference."
+msgstr "Hiba a kapcsolat létrehozásakor"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -3155,6 +3161,11 @@ msgstr "Felvétel csevegéshez"
 msgid "Chat _name:"
 msgstr "Csevegés _neve:"
 
+#. should this be a settings error?
+#, fuzzy
+msgid "Unable to resolve server"
+msgstr "Nem lehet a kiszolgálóhoz kapcsolódni."
+
 msgid "Chat error"
 msgstr "Csevegéshiba"
 
@@ -3203,6 +3214,10 @@ msgstr "Népszerű lengyel azonnali üzenő"
 msgid "Gadu-Gadu User"
 msgstr "Gadu-Gadu felhasználó"
 
+#, fuzzy
+msgid "GG server"
+msgstr "Kiszolgáló lekérdezése"
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Ismeretlen parancs: %s"
@@ -3245,7 +3260,8 @@ msgstr "Cs_atorna:"
 msgid "_Password:"
 msgstr "_Jelszó:"
 
-msgid "IRC nicks may not contain whitespace"
+#, fuzzy
+msgid "IRC nick and server may not contain whitespace"
 msgstr "Az IRC becenevek nem tartalmazhatnak szóközt"
 
 #. 1. connect to server
@@ -3728,6 +3744,9 @@ msgstr "Érvénytelen válasz a kiszolgálótól."
 msgid "Server does not use any supported authentication method"
 msgstr "A kiszolgáló nem használ egyetlen támogatott hitelesítési eljárást sem"
 
+msgid "You require encryption, but it is not available on this server."
+msgstr "Titkosítást igényel, de az nem áll rendelkezésre ezen a kiszolgálón."
+
 msgid "Invalid challenge from server"
 msgstr "Érvénytelen hívás a kiszolgálótól"
 
@@ -4001,6 +4020,14 @@ msgstr "Prioritás"
 msgid "Resource"
 msgstr "Erőforrás"
 
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged off"
+msgstr "Bejelentkezve"
+
 msgid "Middle Name"
 msgstr "Középső név"
 
@@ -4168,8 +4195,17 @@ msgstr "Válassza ki a lekérdezendő konferenciakiszolgálót"
 msgid "Find Rooms"
 msgstr "Szobák keresése"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr "Titkosítást igényel, de az nem áll rendelkezésre ezen a kiszolgálón."
+#, fuzzy
+msgid "Affiliations:"
+msgstr "Álnév:"
+
+#, fuzzy
+msgid "No users found"
+msgstr "Nem találhatók megfelelő felhasználók"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "Funkció"
 
 msgid "Ping timeout"
 msgstr "Ping időtúllépése"
@@ -4190,7 +4226,7 @@ msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Érvénytelen XMPP azonosító. A tartományt be kell állítani."
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr "Nem sikerült a kiszolgálóhoz kapcsolódni."
 
 #, c-format
@@ -4217,9 +4253,6 @@ msgstr "A regisztráció megszüntetése sikeres"
 msgid "Unregistration Failed"
 msgstr "A regisztráció megszüntetése sikertelen"
 
-msgid "Already Registered"
-msgstr "Már regisztrálva van"
-
 msgid "State"
 msgstr "Állam"
 
@@ -4231,6 +4264,9 @@ msgstr "Telefon"
 
 msgid "Date"
 msgstr "Dátum"
+
+msgid "Already Registered"
+msgstr "Már regisztrálva van"
 
 msgid "Unregister"
 msgstr "Regisztráció megszüntetése"
@@ -4258,6 +4294,10 @@ msgstr "Új fiók regisztrálása a következőn: %s"
 
 msgid "Change Registration"
 msgstr "Regisztráció módosítása"
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "Nem sikerült a kiszolgálóhoz kapcsolódni."
 
 msgid "Error unregistering account"
 msgstr "Hiba a fiók regisztrációjának megszüntetése közben"
@@ -4623,16 +4663,18 @@ msgstr "topic [új téma]:  A téma megtekintése vagy módosítása."
 msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr "ban &lt;felhasználó&gt; [ok]:  Felhasználó kitiltása a szobából."
 
+#, fuzzy
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "affiliate &lt;felhasználó&gt; &lt;owner|admin|member|outcast|none&gt;: Egy "
 "felhasználó a szobával fennálló kapcsolatának beállítása."
 
+#, fuzzy
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 "role &lt;felhasználó&gt; &lt;moderator|participant|visitor|none&gt;: "
 "Beállítja a felhasználó szerepét a szobában."
@@ -4695,6 +4737,9 @@ msgstr "Kapcsolatkiszolgáló"
 
 msgid "File transfer proxies"
 msgstr "Fájlátviteli proxy-k"
+
+msgid "BOSH URL"
+msgstr ""
 
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
@@ -5096,6 +5141,10 @@ msgstr "Egyéb partnerek"
 msgid "Non-IM Contacts"
 msgstr "Nem azonnali üzenetváltási partnerek"
 
+#, fuzzy, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr "%s webkamera-meghívást küldött, ami még nem támogatott."
+
 msgid "Nudge"
 msgstr "Bökés"
 
@@ -5443,62 +5492,25 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "Windows Live azonosító hitelesítése: érvénytelen válasz"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s érvénytelen csoport."
-
-msgid "Unknown error."
-msgstr "Ismeretlen hiba."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s ezen: %s (%s)"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "%s megbökte!"
 
-#. char *adl = g_strndup(payload, len);
-#, c-format
-msgid "Unknown error (%d)"
+#, fuzzy, c-format
+msgid "Unknown error (%d): %s"
 msgstr "Ismeretlen hiba (%d)"
 
 msgid "Unable to add user"
 msgstr "Nem vehető fel a felhasználó"
 
+#, c-format
+msgid "Unknown error (%d)"
+msgstr "Ismeretlen hiba (%d)"
+
 msgid "The following users are missing from your addressbook"
 msgstr "A következő felhasználók hiányoznak a címjegyzékéből"
 
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Nem lehet felhasználót felvenni ehhez: %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Nem lehet letiltani a felhasználót ezen: %s (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Nem lehet engedélyezni a felhasználót ezen: %s (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s nem adható hozzá, mert a partnerlista tele van."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s érvénytelen passport fiók."
-
-msgid "Service Temporarily Unavailable."
-msgstr "A szolgáltatás átmenetileg nem érhető el."
-
 msgid "Mobile message was not sent because it was too long."
 msgstr "A mobilüzenet nem küldhető el, mert túl hosszú."
-
-msgid "Unable to rename group"
-msgstr "Nem lehet átnevezni a csoportot"
-
-msgid "Unable to delete group"
-msgstr "Nem lehet törölni a csoportot"
 
 #, c-format
 msgid ""
@@ -5588,6 +5600,9 @@ msgstr ""
 "Az Ön MSN partnerlistája átmenetileg nem érhető el. Kérem várjon és próbálja "
 "újra később."
 
+msgid "Unknown error."
+msgstr "Ismeretlen hiba."
+
 msgid "Handshaking"
 msgstr "Kézfogás"
 
@@ -5605,6 +5620,14 @@ msgstr "Süti küldése"
 
 msgid "Retrieving buddy list"
 msgstr "Partnerlista fogadása"
+
+#, fuzzy, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr "%s webkamera-meghívást küldött, ami még nem támogatott."
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s webkamera-meghívást küldött, ami még nem támogatott."
 
 msgid "Away From Computer"
 msgstr "Nem vagyok a gépnél"
@@ -5646,14 +5669,6 @@ msgstr "Az üzenet nem küldhető el, mivel hiba lépett fel a közvetítés kö
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "Az üzenet ismeretlen hiba miatt lehet, hogy nem lett elküldve:"
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s felvette Önt a partnerlistájára."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s eltávolította Önt a partnerlistájáról."
-
 msgid "Delete Buddy from Address Book?"
 msgstr "Törli a partnert a címjegyzékből?"
 
@@ -5681,6 +5696,51 @@ msgstr "Profil URL-je"
 #. *  description
 msgid "MSN Protocol Plugin"
 msgstr "MSN protokollbővítmény"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s érvénytelen csoport."
+
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%s ezen: %s (%s)"
+
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "Nem lehet felhasználót felvenni ehhez: %s (%s)"
+
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "Nem lehet letiltani a felhasználót ezen: %s (%s)"
+
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "Nem lehet engedélyezni a felhasználót ezen: %s (%s)"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "%s nem adható hozzá, mert a partnerlista tele van."
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s érvénytelen passport fiók."
+
+msgid "Service Temporarily Unavailable."
+msgstr "A szolgáltatás átmenetileg nem érhető el."
+
+msgid "Unable to rename group"
+msgstr "Nem lehet átnevezni a csoportot"
+
+msgid "Unable to delete group"
+msgstr "Nem lehet törölni a csoportot"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "%s felvette Önt a partnerlistájára."
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "%s eltávolította Önt a partnerlistájáról."
 
 #, c-format
 msgid "No such user: %s"
@@ -5711,6 +5771,8 @@ msgid "Lost connection with server"
 msgstr "A kapcsolat elveszett a kiszolgálóval"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr "Új levelek"
 
@@ -5759,16 +5821,18 @@ msgstr "Kapcsolódva"
 msgid "Protocol error, code %d: %s"
 msgstr "Protokollhiba, %d. kód: %s"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
 "%s A jelszava %d karakter hosszú, ami nagyobb a MySpaceIM esetén várt %d "
 "értéknél. Rövidítse jelszavát a következő címen: http://profileedit.myspace."
 "com/index.cfm?fuseaction=accountSettings.changePassword és próbálkozzon újra."
+
+msgid "Incorrect username or password"
+msgstr "Hibás felhasználónév vagy jelszó"
 
 msgid "MySpaceIM Error"
 msgstr "MySpaceIM hiba"
@@ -6090,9 +6154,6 @@ msgstr "Önmagát nem adhatja hozzá"
 msgid "Master archive is misconfigured"
 msgstr "A főarchívum hibásan van beállítva"
 
-msgid "Incorrect username or password"
-msgstr "Hibás felhasználónév vagy jelszó"
-
 msgid "Could not recognize the host of the username you entered"
 msgstr "A megadott felhasználónévhez tartozó kiszolgáló nem ismerhető fel"
 
@@ -6308,6 +6369,28 @@ msgstr "Kiszolgáló címe"
 
 msgid "Server port"
 msgstr "Kiszolgáló portja"
+
+#, fuzzy
+msgid "Received unexpected response from "
+msgstr "Váratlan HTTP válasz érkezett a kiszolgálótól."
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Ön túl gyakran jelentkezik ki/be. Várjon tíz percet és próbálja meg újra. Ha "
+"tovább folytatja, még többet kell majd várnia."
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "Hiba %s feloldásakor"
+
+msgid "Incorrect password."
+msgstr "Helytelen jelszó."
+
+msgid "AOL does not allow your screen name to authenticate via this site."
+msgstr ""
 
 msgid "Could not join chat room"
 msgstr "Nem sikerült kapcsolódni a csevegőszobához"
@@ -6611,58 +6694,6 @@ msgstr ""
 "betűvel kell kezdődniük és betűket, számokat, szóközöket, vagy csak számokat "
 "tartalmazhatnak."
 
-#. Unregistered username
-#. uid is not exist
-msgid "Invalid username."
-msgstr "Érvénytelen felhasználónév."
-
-msgid "Incorrect password."
-msgstr "Helytelen jelszó."
-
-#. Suspended account
-msgid "Your account is currently suspended."
-msgstr "A fiókja jelenleg fel van függesztve."
-
-#. service temporarily unavailable
-msgid "The AOL Instant Messenger service is temporarily unavailable."
-msgstr "Az AOL azonnali üzenő szolgáltatás átmenetileg nem érhető el."
-
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"Ön túl gyakran jelentkezik ki/be. Várjon tíz percet és próbálja meg újra. Ha "
-"tovább folytatja, még többet kell majd várnia."
-
-#, c-format
-msgid "The client version you are using is too old. Please upgrade at %s"
-msgstr ""
-"A használt kliensprogram verziója túl régi. Kérem töltse le a frissítést a "
-"következő helyről: %s"
-
-msgid "Could Not Connect"
-msgstr "Nem sikerült kapcsolódni"
-
-msgid "Received authorization"
-msgstr "A hitelesítés fogadva"
-
-msgid "The SecurID key entered is invalid."
-msgstr "A megadott SecurID kulcs érvénytelen."
-
-msgid "Enter SecurID"
-msgstr "Adja meg a SecurID-t"
-
-msgid "Enter the 6 digit number from the digital display."
-msgstr "Írja be a hatjegyű számot a digitális képernyőről."
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_OK"
-
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -6680,6 +6711,55 @@ msgstr ""
 
 msgid "Unable to get a valid login hash."
 msgstr "Nem kérhető le érvényes belépő hash."
+
+msgid "Could Not Connect"
+msgstr "Nem sikerült kapcsolódni"
+
+msgid "Received authorization"
+msgstr "A hitelesítés fogadva"
+
+#. Unregistered username
+#. uid is not exist
+msgid "Invalid username."
+msgstr "Érvénytelen felhasználónév."
+
+#. Suspended account
+msgid "Your account is currently suspended."
+msgstr "A fiókja jelenleg fel van függesztve."
+
+#. service temporarily unavailable
+msgid "The AOL Instant Messenger service is temporarily unavailable."
+msgstr "Az AOL azonnali üzenő szolgáltatás átmenetileg nem érhető el."
+
+#, c-format
+msgid "The client version you are using is too old. Please upgrade at %s"
+msgstr ""
+"A használt kliensprogram verziója túl régi. Kérem töltse le a frissítést a "
+"következő helyről: %s"
+
+#. IP address connecting too frequently
+#, fuzzy
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"Ön túl gyakran jelentkezik ki/be. Várjon tíz percet és próbálja meg újra. Ha "
+"tovább folytatja, még többet kell majd várnia."
+
+msgid "The SecurID key entered is invalid."
+msgstr "A megadott SecurID kulcs érvénytelen."
+
+msgid "Enter SecurID"
+msgstr "Adja meg a SecurID-t"
+
+msgid "Enter the 6 digit number from the digital display."
+msgstr "Írja be a hatjegyű számot a digitális képernyőről."
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_OK"
 
 msgid "Password sent"
 msgstr "Jelszó elküldve"
@@ -7204,6 +7284,7 @@ msgstr "_Keresés"
 msgid "Set User Info (web)..."
 msgstr "Felhasználói információk beállítása (web)…"
 
+#. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
 msgstr "Jelszó módosítása (web)"
 
@@ -7232,6 +7313,10 @@ msgstr "Partner keresése e-mail cím szerint…"
 
 msgid "Search for Buddy by Information"
 msgstr "Partner keresése információ alapján"
+
+#, fuzzy
+msgid "Use clientLogin"
+msgstr "A felhasználó nincs bejelentkezve"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -9520,10 +9605,6 @@ msgstr "Felhasználó hitelesítése"
 msgid "Auth Domain"
 msgstr "Tartomány hitelesítése"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s webkamera-meghívást küldött, ami még nem támogatott."
-
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9550,6 +9631,44 @@ msgstr ""
 
 msgid "Add buddy rejected"
 msgstr "Partner felvétele megtagadva"
+
+#. Some error in the received stream
+#, fuzzy
+msgid "Received invalid data"
+msgstr "Érvénytelen adatok érkeztek a kapcsolaton a kiszolgálótól."
+
+#. Password incorrect
+#, fuzzy
+msgid "Incorrect Password"
+msgstr "Hibás jelszó"
+
+#. security lock from too many failed login attempts
+#, fuzzy
+msgid ""
+"Account locked: Too many failed login attempts.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"Ismeretlen hibaszám: %d. A Yahoo! weboldalára bejelentkezve talán "
+"megoldhatja ezt a problémát."
+
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "A felhasználó nem létezik"
+
+#. indicates a lock of some description
+#, fuzzy
+msgid ""
+"Account locked: Unknown reason.\n"
+"Logging into the Yahoo! website may fix this."
+msgstr ""
+"Ismeretlen hibaszám: %d. A Yahoo! weboldalára bejelentkezve talán "
+"megoldhatja ezt a problémát."
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "Hibás felhasználónév vagy jelszó"
 
 #, c-format
 msgid ""
@@ -9665,8 +9784,8 @@ msgstr "Jelenlét beállításai"
 msgid "Start Doodling"
 msgstr "Firkálás megkezdése"
 
-msgid "Activate which ID?"
-msgstr "Melyik azonosítót aktiválja?"
+msgid "Select the ID you want to activate"
+msgstr ""
 
 msgid "Join whom in chat?"
 msgstr "Kihez csatlakozik a csevegésben?"
@@ -10458,8 +10577,9 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr "Frissítse a szükséges mezőket."
 
-msgid "Room _List"
-msgstr "Sz_obalista"
+#, fuzzy
+msgid "A_ccount"
+msgstr "Fiók"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -10468,8 +10588,8 @@ msgstr ""
 "Adja meg a megfelelő információt arról a csevegésről, amelyhez csatlakozni "
 "kíván.\n"
 
-msgid "_Account:"
-msgstr "F_iók:"
+msgid "Room _List"
+msgstr "Sz_obalista"
 
 msgid "_Block"
 msgstr "_Tiltás"
@@ -10906,6 +11026,111 @@ msgstr "/Eszközök"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Partnerek/Partnerek rendezése"
+
+#. Buddy List
+msgid "Background Color"
+msgstr "Háttérszín"
+
+msgid "The background color for the buddy list"
+msgstr ""
+
+#, fuzzy
+msgid "Layout"
+msgstr "lao"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Háttérszín"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#, fuzzy
+msgid "Expanded Text"
+msgstr "_Kibontás"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Háttérszín kiválasztása"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "Összecs_ukás"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "Háttérszín kiválasztása"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "Billentyűparancs"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "Elérhető"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#, fuzzy
+msgid "Away Text"
+msgstr "Távol"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "Kilépett"
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+#, fuzzy
+msgid "Idle Text"
+msgstr "Hangulatszöveg"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#, fuzzy
+msgid "Message Text"
+msgstr "Üzenet elküldve"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "%s felhasználóinformációinak módosítása"
 
 #. Widget creation function
 msgid "SSL Servers"
@@ -11410,6 +11635,10 @@ msgstr "hindi"
 msgid "Hungarian"
 msgstr "magyar"
 
+#, fuzzy
+msgid "Armenian"
+msgstr "román"
+
 msgid "Indonesian"
 msgstr "indonéz"
 
@@ -11506,6 +11735,9 @@ msgstr "Szimhala"
 
 msgid "Swedish"
 msgstr "svéd"
+
+msgid "Swahili"
+msgstr ""
 
 msgid "Tamil"
 msgstr "tamil"
@@ -11937,11 +12169,9 @@ msgstr ""
 msgid "Save Image"
 msgstr "Kép mentése"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "Kép menté_se…"
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr "_Egyéni hangulatjel hozzáadása…"
 
@@ -12029,9 +12259,6 @@ msgstr "Betűméret csökkentése"
 
 msgid "Font Face"
 msgstr "Betűkészlet"
-
-msgid "Background Color"
-msgstr "Háttérszín"
 
 msgid "Foreground Color"
 msgstr "Előtérszín"
@@ -12359,6 +12586,9 @@ msgstr "Partnerfigyelmeztetés szerkesztése"
 msgid "Pounce on Whom"
 msgstr "Kinél figyelmeztet"
 
+msgid "_Account:"
+msgstr "F_iók:"
+
 msgid "_Buddy name:"
 msgstr "_Partner neve:"
 
@@ -12469,7 +12699,16 @@ msgstr "Üzenet küldése"
 msgid "Unknown.... Please report this!"
 msgstr "Ismeretlen figyelmeztetési esemény. Kérjük jelentse ezt!"
 
-msgid "Smiley theme failed to unpack."
+#, fuzzy
+msgid "Theme failed to unpack."
+msgstr "A hangulatjel-téma kicsomagolása meghiúsult."
+
+#, fuzzy
+msgid "Theme failed to load."
+msgstr "A hangulatjel-téma kicsomagolása meghiúsult."
+
+#, fuzzy
+msgid "Theme failed to copy."
 msgstr "A hangulatjel-téma kicsomagolása meghiúsult."
 
 msgid "Install Theme"
@@ -13033,6 +13272,10 @@ msgstr "Billentyűparancs"
 msgid "Custom Smiley Manager"
 msgstr "Egyénihangulatjel-kezelő"
 
+#, fuzzy
+msgid "Select Buddy Icon"
+msgstr "Partner kiválasztása"
+
 msgid "Click to change your buddyicon for this account."
 msgstr "Kattintson a fiók partnerikonjának módosításához."
 
@@ -13255,6 +13498,80 @@ msgstr "Partnerelérhetőség-előrejelző bővítmény."
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr "Statisztikai információk megjelenítése a partnerek elérhetőségéről"
+
+#, fuzzy
+msgid "Server name request"
+msgstr "Kiszolgáló címe"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Adjon meg egy konferenciakiszolgálót"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "Válassza ki a lekérdezendő konferenciakiszolgálót"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "Elérhető szolgáltatások"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "Partnerlista küldése"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "A partner elmegy"
+
+#, fuzzy
+msgid "Directory"
+msgstr "Naplókönyvtár"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "Hang kiválasztása"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "PubSub szolgáltatás"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "Leírás"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "Szolgáltatásfeltérképezési információk"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_Böngésző:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "A felhasználó nem létezik"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "A kiszolgáló nem támogatja a blokkolást"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Szolgáltatásfeltérképezési információk"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"Ez a bővítmény XMPP kiszolgálókban vagy kliensekben végzett hibakereséshez "
+"hasznos."
 
 msgid "Buddy is idle"
 msgstr "A partner inaktív"
@@ -13766,12 +14083,6 @@ msgstr ""
 "– Visszafordít minden bejövő szöveget\n"
 "– Üzenetet küld a partnerlistán lévő partnereinek, amikor belépnek"
 
-msgid "Cursor Color"
-msgstr "Kurzor színe"
-
-msgid "Secondary Cursor Color"
-msgstr "Másodlagos kurzor színe"
-
 msgid "Hyperlink Color"
 msgstr "Hiperhivatkozás színe"
 
@@ -13780,6 +14091,10 @@ msgstr "Meglátogatott hiperhivatkozás színe"
 
 msgid "Highlighted Message Name Color"
 msgstr "Kiemelt üzenet névszíne"
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "Gépelésértesítés színe"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "GtkTreeView vízszintes elválasztás"
@@ -13810,34 +14125,23 @@ msgstr "GTK+ felület betűkészlete"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "GTK+ szöveges gyorsbillentyű téma"
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "Felület színei"
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "Gépelésértesítés engedélyezése"
 
-msgid "Widget Sizes"
-msgstr "Felületi elemek méretei"
+#, fuzzy
+msgid "GTK+ Theme Control Settings"
+msgstr "Pidgin GTK+ témavezérlés"
+
+#, fuzzy
+msgid "Colors"
+msgstr "Bezárás"
 
 msgid "Fonts"
 msgstr "Betűkészletek"
+
+msgid "Miscellaneous"
+msgstr ""
 
 msgid "Gtkrc File Tools"
 msgstr "Gtkrc fájleszközök"
@@ -13981,6 +14285,113 @@ msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
 "A felhasználó által megadott szabályoknak megfelelően cseréli a szöveget a "
 "kimenő üzenetekben."
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "Nincs bejelentkezve"
+
+#, fuzzy
+msgid "Just logged out"
+msgstr "Nincs bejelentkezve"
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "Csatlakozás egy csevegéshez"
+
+#, fuzzy
+msgid "Ignored"
+msgstr "Mellőzés"
+
+#, fuzzy
+msgid "Founder"
+msgstr "Hangosabb"
+
+#, fuzzy
+msgid "Operator"
+msgstr "Opera"
+
+msgid "Half Operator"
+msgstr ""
+
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "Engedély megadva"
+
+#, fuzzy
+msgid "Error dialog"
+msgstr "Hiba "
+
+#, fuzzy
+msgid "Information dialog"
+msgstr "Információk"
+
+msgid "Mail dialog"
+msgstr ""
+
+#, fuzzy
+msgid "Question dialog"
+msgstr "Kérdés párbeszédablak"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "Figyelmeztetési szint"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "%s állapota"
+
+#, fuzzy
+msgid "Chatroom Emblems"
+msgstr "Csevegőszoba nyelve"
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "Ikon módosítása"
+
+#, fuzzy
+msgid "Pidgin Icon Theme Editor"
+msgstr "Pidgin GTK+ témavezérlés"
+
+#, fuzzy
+msgid "Contact"
+msgstr "Kapcsolatinformációk"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "Partnerlista"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "Partnerlista"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "Pidgin GTK+ témavezérlés"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Pidgin Theme Editor."
+msgstr "Pidgin GTK+ témavezérlés"
 
 #. *< type
 #. *< ui_requirement
@@ -14193,6 +14604,21 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ez a bővítmény XMPP kiszolgálókban vagy kliensekben végzett hibakereséshez "
 "hasznos."
+
+#~ msgid "Activate which ID?"
+#~ msgstr "Melyik azonosítót aktiválja?"
+
+#~ msgid "Cursor Color"
+#~ msgstr "Kurzor színe"
+
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "Másodlagos kurzor színe"
+
+#~ msgid "Interface colors"
+#~ msgstr "Felület színei"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "Felületi elemek méretei"
 
 #~ msgid "Invite message"
 #~ msgstr "Meghívóüzenet"

@@ -237,6 +237,8 @@ change_stock_image(GtkWidget *widget, GdkEventButton *event, GtkWidget *image)
 {
 	GtkWidget *win = pidgin_buddy_icon_chooser_new(GTK_WINDOW(gtk_widget_get_toplevel(widget)),
 			stock_icon_selected, image);
+	gtk_window_set_title(GTK_WINDOW(win),
+	                     g_object_get_data(G_OBJECT(image), "localized-name"));
 	gtk_widget_show_all(win);
 
 	return TRUE;
@@ -279,6 +281,7 @@ void pidgin_icon_theme_edit(PurplePluginAction *unused)
 
 			g_signal_connect(G_OBJECT(ebox), "button-press-event", G_CALLBACK(change_stock_image), image);
 			g_object_set_data(G_OBJECT(image), "property-name", (gpointer)id);
+			g_object_set_data(G_OBJECT(image), "localized-name", (gpointer)text);
 
 			gtk_size_group_add_widget(sizegroup, label);
 			gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);

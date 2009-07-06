@@ -46,7 +46,7 @@ flap_connection_send_version(OscarData *od, FlapConnection *conn)
 	FlapFrame *frame;
 
 	frame = flap_frame_new(od, 0x01, 4);
-	byte_stream_put32(&frame->data, 0x00000001);
+	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	flap_connection_send(conn, frame);
 }
 
@@ -64,9 +64,35 @@ flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, gu
 	GSList *tlvlist = NULL;
 
 	frame = flap_frame_new(od, 0x01, 4 + 2 + 2 + length);
-	byte_stream_put32(&frame->data, 0x00000001);
+	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	aim_tlvlist_add_raw(&tlvlist, 0x0006, length, chipsahoy);
 	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
+
+	flap_connection_send(conn, frame);
+}
+
+void
+flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci)
+{
+	FlapFrame *frame;
+	GSList *tlvlist = NULL;
+
+	frame = flap_frame_new(od, 0x01, 1152 + length);
+
+	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
+	aim_tlvlist_add_raw(&tlvlist, 0x0006, length, chipsahoy);
+
+	if (ci->clientstring)
+		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
+	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
+	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
+	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
+	aim_tlvlist_add_8(&tlvlist, 0x004a, 0x01);
+
+	aim_tlvlist_write(&frame->data, &tlvlist);
+
 	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
@@ -355,23 +381,9 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 		}
 	}
 
-	if (conn->fd >= 0)
-	{
-		if (conn->type == SNAC_FAMILY_LOCATE)
-			flap_connection_send_close(od, conn);
-
-		close(conn->fd);
-		conn->fd = -1;
-	}
-
-	if (conn->gsc != NULL)
-	{
-		if (conn->type == SNAC_FAMILY_LOCATE)
-			flap_connection_send_close(od, conn);
-
-		purple_ssl_close(conn->gsc);
-		conn->gsc = NULL;
-	}
+	if ((conn->fd >= 0 || conn->gsc != NULL)
+			&& conn->type == SNAC_FAMILY_LOCATE)
+		flap_connection_send_close(od, conn);
 
 	if (conn->watcher_incoming != 0)
 	{
@@ -383,6 +395,18 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 	{
 		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
+	}
+
+	if (conn->fd >= 0)
+	{
+		close(conn->fd);
+		conn->fd = -1;
+	}
+
+	if (conn->gsc != NULL)
+	{
+		purple_ssl_close(conn->gsc);
+		conn->gsc = NULL;
 	}
 
 	g_free(conn->buffer_incoming.data.data);
