@@ -59,19 +59,26 @@ typedef void (*XmppIqCallback)(PurpleConnection *pc, const char *type,
                                const char *id, const char *from, xmlnode *iq,
                                gpointer data);
 
-struct xmpp_iq_cb_data
-{
-	gpointer context;
-	PurpleConnection *pc;
-	XmppIqCallback cb;
-};
-
 struct item_data {
 	PidginDiscoList *list;
 	XmppDiscoService *parent;
 	char *name;
 	char *node; /* disco#info replies don't always include the node */
 };
+
+struct xmpp_iq_cb_data
+{
+	/*
+	 * Every IQ callback in this plugin uses the same structure for the
+	 * callback data. It's a hack (it wouldn't scale), but it's used so that
+	 * it's easy to clean up all the callbacks when the account disconnects
+	 * (see remove_iq_callbacks_by_pc below).
+	 */
+	struct item_data *context;
+	PurpleConnection *pc;
+	XmppIqCallback cb;
+};
+
 
 static char*
 generate_next_id()
@@ -93,11 +100,6 @@ remove_iq_callbacks_by_pc(gpointer key, gpointer value, gpointer user_data)
 	struct xmpp_iq_cb_data *cb_data = value;
 
 	if (cb_data && cb_data->pc == user_data) {
-		/*
-		 * This is a hack. All the IQ callback datas in this code are
-		 * the same structure so that we can free them here. Ideally they'd
-		 * be objects and this would be polymorphic. That's overkill, here.
-		 */
 		struct item_data *item_data = cb_data->context;
 
 		if (item_data) {
