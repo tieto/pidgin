@@ -124,6 +124,8 @@ version 2.6.0 (??/??/2009):
 	* Draw the user's buddy icon at the bottom of the Buddy List with rounded
 	  corners for visual consistency with the actual icons in the Buddy List.
 	  (Kosta Arvanitis)
+	* When file transfers are complete, the received file name written to the
+	  conversation window is now linked to the file.
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
