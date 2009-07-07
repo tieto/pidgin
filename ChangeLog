@@ -27,6 +27,16 @@ version 2.6.0 (??/??/2009):
 	  it off.  This will optionally be used to only show less useful debug
 	  information on an as-needed basis.
 	* Add support for receiving handwritten (ink) messages on MSN.
+	* Don't do IPv6 address lookups if the computer does not have an IPv6
+	  address configured.
+
+	AIM and ICQ:
+	* Preliminary support for a new authentication scheme called
+	  "clientLogin."
+	* Fixed a bug where your away message sometimes would not get set when
+	  you first sign on.
+	* Make sure links in your away messages show up as links to other people.
+	* For ICQ, Never change the privacy setting specified by the user.
 
 	Gadu-Gadu:
 	* Accounts can specify a server to which to connect.
