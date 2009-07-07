@@ -422,6 +422,8 @@ time_t purple_str_to_time(const char *timestamp, gboolean utc,
  * This is exactly the same as g_markup_escape_text(), except that it
  * does not change ' to &apos; because &apos; is not a valid HTML 4 entity,
  * and is displayed literally in IE7.
+ *
+ * @since 2.6.0
  */
 gchar *purple_markup_escape_text(const gchar *text, gssize length);
 
