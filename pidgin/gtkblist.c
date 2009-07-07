@@ -1505,7 +1505,6 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	PurpleContact *contact;
 	PurpleBlistNode *node;
 	gboolean contact_expanded = FALSE;
-	gboolean show_offline = FALSE;
 
 	g_return_if_fail(menu);
 	g_return_if_fail(buddy);
@@ -1573,8 +1572,8 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 				G_CALLBACK(gtk_blist_menu_showlog_cb), buddy, 0, 0, NULL);
 	}
 
-	if (!(purple_blist_node_get_flags(node) & PURPLE_BLIST_NODE_FLAG_NO_SAVE)) {
-		show_offline = purple_blist_node_get_bool(node, "show_offline");
+	if (!PURPLE_BLIST_NODE_HAS_FLAG(node, PURPLE_BLIST_NODE_FLAG_NO_SAVE)) {
+		gboolean show_offline = purple_blist_node_get_bool(node, "show_offline");
 		pidgin_new_item_from_stock(menu, show_offline ? _("Hide When Offline") : _("Show When Offline"),
 				NULL, G_CALLBACK(gtk_blist_menu_showoffline_cb), node, 0, 0, NULL);
 	}

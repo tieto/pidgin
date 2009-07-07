@@ -696,14 +696,34 @@ purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed)
 
 	if (completed == TRUE) {
 		char *msg = NULL;
+		PurpleConversation *conv;
+
 		purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_DONE);
 
 		if (purple_xfer_get_filename(xfer) != NULL)
-			msg = g_strdup_printf(_("Transfer of file %s complete"),
-								purple_xfer_get_filename(xfer));
+		{
+			char *filename = g_markup_escape_text(purple_xfer_get_filename(xfer), -1);
+			if (purple_xfer_get_local_filename(xfer)
+			 && purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE)
+			{
+				char *local = g_markup_escape_text(purple_xfer_get_local_filename(xfer), -1);
+				msg = g_strdup_printf(_("Transfer of file <A HREF=\"file://%s\">%s</A> complete"),
+				                      local, filename);
+				g_free(local);
+			}
+			else
+				msg = g_strdup_printf(_("Transfer of file %s complete"),
+				                      filename);
+			g_free(filename);
+		}
 		else
 			msg = g_strdup(_("File transfer complete"));
-		purple_xfer_conversation_write(xfer, msg, FALSE);
+
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, xfer->who,
+		                                             purple_xfer_get_account(xfer));
+
+		if (conv != NULL)
+			purple_conversation_write(conv, NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	}
 
