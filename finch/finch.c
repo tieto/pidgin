@@ -77,6 +77,14 @@ static GHashTable *finch_ui_get_info(void)
 		 */
 		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma19sqWV9ymU6UYc");
 		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma19sqWV9ymU6UYc");
+
+		/*
+		 * This is the distid for Finch, given to us by AOL.  Please
+		 * don't use this for other applications.  You can just not
+		 * specify a distid and libpurple will use a default.
+		 */
+		g_hash_table_insert(ui_info, "prpl-aim-distid", GINT_TO_POINTER(1552));
+		g_hash_table_insert(ui_info, "prpl-icq-distid", GINT_TO_POINTER(1552));
 	}
 
 	return ui_info;

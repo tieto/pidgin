@@ -129,7 +129,6 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 	GSList *tlvlist = NULL;
 	int passwdlen;
 	guint8 *password_encoded;
-	const char *clientstring;
 	guint32 distrib;
 
 	passwdlen = strlen(password);
@@ -141,9 +140,6 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 
 	aim_encode_password(password, password_encoded);
 
-	clientstring = oscar_get_ui_info_string(
-			od->icq ? "prpl-icq-clientstring" : "prpl-aim-clientstring",
-			ci->clientstring);
 	distrib = oscar_get_ui_info_int(
 			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
 			ci->distrib);
@@ -152,8 +148,13 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 	aim_tlvlist_add_raw(&tlvlist, 0x0002, passwdlen, password_encoded);
 
-	if (clientstring)
+	if (ci->clientstring != NULL)
+		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	else {
+		gchar *clientstring = oscar_get_clientstring();
 		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
+		g_free(clientstring);
+	}
 	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
 	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
@@ -219,7 +220,6 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	guint8 digest[16];
 	aim_snacid_t snacid;
 	size_t password_len;
-	const char *clientstring;
 	guint32 distrib;
 
 	if (!ci || !sn || !password)
@@ -247,9 +247,6 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 
 	aim_encode_password_md5(password, password_len, key, digest);
 
-	clientstring = oscar_get_ui_info_string(
-			od->icq ? "prpl-icq-clientstring" : "prpl-aim-clientstring",
-			ci->clientstring);
 	distrib = oscar_get_ui_info_int(
 			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
 			ci->distrib);
@@ -260,8 +257,13 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	aim_tlvlist_add_noval(&tlvlist, 0x004c);
 #endif
 
-	if (clientstring)
+	if (ci->clientstring != NULL)
+		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	else {
+		gchar *clientstring = oscar_get_clientstring();
 		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
+		g_free(clientstring);
+	}
 	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
 	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);

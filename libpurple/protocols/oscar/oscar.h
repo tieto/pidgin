@@ -307,23 +307,25 @@ struct _ClientInfo
 /*
  * We need to use the major-minor-micro versions from the official
  * AIM and ICQ programs here or AOL won't let us use certain features.
+ *
+ * 0x00000611 is the distid given to us by AOL for use as the default
+ * libpurple distid.
  */
-
 #define CLIENTINFO_PURPLE_AIM { \
-	"Purple/" VERSION, \
+	NULL, \
 	0x0109, \
 	0x0005, 0x0001, \
 	0x0000, 0x0bdc, \
-	0x000000d2, \
+	0x00000611, \
 	"us", "en", \
 }
 
 #define CLIENTINFO_PURPLE_ICQ { \
-	"Purple/" VERSION, \
+	NULL, \
 	0x010a, \
 	0x0014, 0x0034, \
 	0x0000, 0x0c18, \
-	0x0000043d, \
+	0x00000611, \
 	"us", "en", \
 }
 
@@ -1529,6 +1531,7 @@ void aim_tlvlist_remove(GSList **list, const guint16 type);
 
 int oscar_get_ui_info_int(const char *str, int default_value);
 const char *oscar_get_ui_info_string(const char *str, const char *default_value);
+gchar *oscar_get_clientstring(void);
 
 guint16 aimutil_iconsum(const guint8 *buf, int buflen);
 int aimutil_tokslen(char *toSearch, int theindex, char dl);

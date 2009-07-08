@@ -42,7 +42,7 @@ int oscar_get_ui_info_int(const char *str, int default_value)
 	ui_info = purple_core_get_ui_info();
 	if (ui_info != NULL) {
 		gpointer value;
-		if (g_hash_table_lookup_extended(ui_info, str, NULL, value))
+		if (g_hash_table_lookup_extended(ui_info, str, NULL, &value))
 			return GPOINTER_TO_INT(value);
 	}
 
@@ -61,6 +61,16 @@ const char *oscar_get_ui_info_string(const char *str, const char *default_value)
 		value = default_value;
 
 	return value;
+}
+
+gchar *oscar_get_clientstring(void)
+{
+	const char *name, *version;
+
+	name = oscar_get_ui_info_string("name", "Purple");
+	version = oscar_get_ui_info_string("version", VERSION);
+
+	return g_strdup_printf("%s/%s", name, version);;
 }
 
 /*
