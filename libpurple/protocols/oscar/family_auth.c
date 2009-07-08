@@ -141,12 +141,12 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 
 	aim_encode_password(password, password_encoded);
 
-	clientstring = purple_prefs_get_string("/plugins/prpl/oscar/clientstring");
-	if (clientstring == NULL)
-		clientstring = ci->clientstring;
-	distrib = purple_prefs_get_int("/plugins/prpl/oscar/distid");
-	if ((gint32)distrib == -1)
-		distrib = ci->distrib;
+	clientstring = oscar_get_ui_info_string(
+			od->icq ? "prpl-icq-clientstring" : "prpl-aim-clientstring",
+			ci->clientstring);
+	distrib = oscar_get_ui_info_int(
+			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
+			ci->distrib);
 
 	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
@@ -247,12 +247,12 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 
 	aim_encode_password_md5(password, password_len, key, digest);
 
-	clientstring = purple_prefs_get_string("/plugins/prpl/oscar/clientstring");
-	if (clientstring == NULL)
-		clientstring = ci->clientstring;
-	distrib = purple_prefs_get_int("/plugins/prpl/oscar/distid");
-	if ((gint32)distrib == -1)
-		distrib = ci->distrib;
+	clientstring = oscar_get_ui_info_string(
+			od->icq ? "prpl-icq-clientstring" : "prpl-aim-clientstring",
+			ci->clientstring);
+	distrib = oscar_get_ui_info_int(
+			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
+			ci->distrib);
 
 	aim_tlvlist_add_raw(&tlvlist, 0x0025, 16, digest);
 

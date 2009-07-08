@@ -35,6 +35,20 @@
 #include "win32dep.h"
 #endif
 
+int oscar_get_ui_info_int(const char *str, int default_value)
+{
+	GHashTable *ui_info;
+
+	ui_info = purple_core_get_ui_info();
+	if (ui_info != NULL) {
+		gpointer value;
+		if (g_hash_table_lookup_extended(ui_info, str, NULL, value))
+			return GPOINTER_TO_INT(value);
+	}
+
+	return default_value;
+}
+
 const char *oscar_get_ui_info_string(const char *str, const char *default_value)
 {
 	GHashTable *ui_info;
