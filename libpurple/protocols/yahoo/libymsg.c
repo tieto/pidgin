@@ -2239,7 +2239,8 @@ static void yahoo_p2p_disconnect_destroy_data(gpointer data)
 
 	if(p2p_data->source >= 0)
 		close(p2p_data->source);
-	purple_input_remove(p2p_data->input_event);
+	if (p2p_data->input_event > 0)
+		purple_input_remove(p2p_data->input_event);
 	g_free(p2p_data->host_ip);
 	g_free(p2p_data->host_username);
 	g_free(p2p_data);
@@ -2459,7 +2460,7 @@ static gboolean yahoo_cancel_p2p_server_listen_cb(gpointer data)
 
 	yd = p2p_data->gc->proto_data;
 
-	purple_debug_warning("yahoo","yahoo p2p server timeout, peer failed to connect");
+	purple_debug_warning("yahoo","yahoo p2p server timeout, peer failed to connect\n");
 	yahoo_p2p_disconnect_destroy_data(data);
 	purple_input_remove(yd->yahoo_p2p_server_watcher);
 	yd->yahoo_p2p_server_watcher = 0;
