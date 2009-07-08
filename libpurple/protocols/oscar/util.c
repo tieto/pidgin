@@ -26,11 +26,28 @@
  */
 
 #include "oscar.h"
+
+#include "core.h"
+
 #include <ctype.h>
 
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
+
+const char *oscar_get_ui_info_string(const char *str, const char *default_value)
+{
+	GHashTable *ui_info;
+	const char *value = NULL;
+
+	ui_info = purple_core_get_ui_info();
+	if (ui_info != NULL)
+		value = g_hash_table_lookup(ui_info, str);
+	if (value == NULL)
+		value = default_value;
+
+	return value;
+}
 
 /*
  * Tokenizing functions.  Used to portably replace strtok/sep.

@@ -56,17 +56,9 @@
 
 static const char *get_client_key(OscarData *od)
 {
-	GHashTable *ui_info;
-	const char *client_key = NULL;
-
-	ui_info = purple_core_get_ui_info();
-	if (ui_info != NULL)
-		client_key = g_hash_table_lookup(ui_info,
-				od->icq ? "prpl-icq-clientkey" : "prpl-aim-clientkey");
-	if (client_key == NULL)
-		client_key = DEFAULT_CLIENT_KEY;
-
-	return client_key;
+	return oscar_get_ui_info_string(
+			od->icq ? "prpl-icq-clientkey" : "prpl-aim-clientkey",
+			DEFAULT_CLIENT_KEY);
 }
 
 /**

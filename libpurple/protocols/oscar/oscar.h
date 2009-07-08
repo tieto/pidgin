@@ -1527,6 +1527,8 @@ void aim_tlvlist_remove(GSList **list, const guint16 type);
 		(((*((buf)+2)) << 16) & 0x00ff0000) + \
 		(((*((buf)+3)) << 24) & 0xff000000))
 
+const char *oscar_get_ui_info_string(const char *str, const char *default_value);
+
 guint16 aimutil_iconsum(const guint8 *buf, int buflen);
 int aimutil_tokslen(char *toSearch, int theindex, char dl);
 int aimutil_itemcnt(char *toSearch, char dl);
