@@ -92,6 +92,9 @@ purple_coresources = \
 	xmlnode.c \
 	whiteboard.c
 
+purple_builtsources = \
+	marshallers.c
+
 purple_coreheaders = \
 	account.h \
 	accountopt.h \
@@ -248,18 +251,17 @@ purple-client-example.$(OBJEXT): purple-client-bindings.h
 bin_SCRIPTS = purple-remote purple-send purple-send-async purple-url-handler
 
 BUILT_SOURCES = $(purple_builtheaders) \
+	$(purple_builtsources) \
 	dbus-bindings.c \
 	dbus-signals.c \
 	dbus-types.c \
 	dbus-types.h \
-	marshallers.c \
-	marshallers.h \
 	purple-client-bindings.c \
 	purple-client-bindings.h
 
 else
 
-BUILT_SOURCES = $(purple_builtheaders)
+BUILT_SOURCES = $(purple_builtheaders) $(purple_builtsources)
 
 endif
 
@@ -267,6 +269,7 @@ lib_LTLIBRARIES = libpurple.la $(libpurple_client_lib)
 
 libpurple_la_SOURCES = \
 	$(purple_coresources) \
+	$(purple_builtsources) \
 	$(dbus_sources)
 
 noinst_HEADERS= \
