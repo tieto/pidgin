@@ -3698,7 +3698,7 @@ file_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	/* Open Containing Directory */
-	img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
+	img = gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("Open _Containing Directory"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
 	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(open_containing_cb), (gpointer)url);
@@ -3840,6 +3840,7 @@ void pidgin_utils_uninit(void)
 		gnome_url_handlers = NULL;
 		return;
 	}
+	gtk_imhtml_class_register_protocol("file://", NULL, NULL);
 
 	gtk_imhtml_class_register_protocol("http://", NULL, NULL);
 	gtk_imhtml_class_register_protocol("https://", NULL, NULL);
