@@ -45,10 +45,29 @@
 #define URL_START_OSCAR_SESSION "http://api.oscar.aol.com/aim/startOSCARSession"
 
 /*
- * Using clientLogin requires a developer ID.  This dev ID is owned by
- * the AIM account "markdoliner"
+ * Using clientLogin requires a developer ID.  This key is for libpurple.
+ * It is the default key for all libpurple-based clients.  AOL encourages
+ * UIs (especially ones with lots of users) to override this with their
+ * own key.  This key is owned by the AIM account "markdoliner"
+ *
+ * Keys can be managed at http://developer.aim.com/manageKeys.jsp
  */
-#define CLIENT_KEY "ma15d7JTxbmVG-RP"
+#define DEFAULT_CLIENT_KEY "ma15d7JTxbmVG-RP"
+
+static const char *get_client_key(OscarData *od)
+{
+	GHashTable *ui_info;
+	const char *client_key = NULL;
+
+	ui_info = purple_core_get_ui_info();
+	if (ui_info != NULL)
+		client_key = g_hash_table_lookup(ui_info,
+				od->icq ? "prpl-icq-clientkey" : "prpl-aim-clientkey");
+	if (client_key == NULL)
+		client_key = DEFAULT_CLIENT_KEY;
+
+	return client_key;
+}
 
 /**
  * This is similar to purple_url_encode() except that it follows
@@ -276,10 +295,10 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 	/* Construct the GET parameters */
 	query_string = g_strdup_printf("a=%s"
 			"&f=xml"
-			"&k=" CLIENT_KEY
+			"&k=%s"
 			"&ts=%zu"
 			"&useTLS=0",
-			oscar_auth_url_encode(token), hosttime);
+			oscar_auth_url_encode(token), get_client_key(od), hosttime);
 	signature = generate_signature("GET", URL_START_OSCAR_SESSION,
 			query_string, session_key);
 	url = g_strdup_printf(URL_START_OSCAR_SESSION "?%s&sig_sha256=%s",
@@ -505,7 +524,7 @@ void send_client_login(OscarData *od, const char *username)
 
 	/* Construct the body of the HTTP POST request */
 	body = g_string_new("");
-	g_string_append_printf(body, "devId=" CLIENT_KEY);
+	g_string_append_printf(body, "devId=%s", get_client_key(od));
 	g_string_append_printf(body, "&f=xml");
 	g_string_append_printf(body, "&pwd=%s", oscar_auth_url_encode(password));
 	g_string_append_printf(body, "&s=%s", oscar_auth_url_encode(username));
