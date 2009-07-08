@@ -6321,15 +6321,15 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 		mark = g_strdup_printf("<span foreground='%s' font_desc='%s'><b>%s</b>%s%s%s</span>",
 		                       text_color, text_font,
 		                       esc ? esc : "",
-		                       !expanded ? " <span font_weight='light'>(</span>" : "",
+		                       !expanded ? " <span weight='light'>(</span>" : "",
 		                       group_count,
-		                       !expanded ? "<span font_weight='light'>)</span>" : "");
+		                       !expanded ? "<span weight='light'>)</span>" : "");
 	} else {
 		mark = g_strdup_printf("<span font_desc='%s'><b>%s</b>%s%s%s</span>",
 		                       text_font, esc ? esc : "",
-		                       !expanded ? " <span font_weight='light'>(</span>" : "",
+		                       !expanded ? " <span weight='light'>(</span>" : "",
 		                       group_count,
-		                       !expanded ? "<span font_weight='light'>)</span>" : "");
+		                       !expanded ? "<span weight='light'>)</span>" : "");
 	}
 
 	g_free(esc);
