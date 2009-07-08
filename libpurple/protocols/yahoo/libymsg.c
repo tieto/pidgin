@@ -3686,9 +3686,14 @@ char *yahoo_status_text(PurpleBuddy *b)
 	const char *msg;
 	char *msg2;
 	PurpleAccount *account;
+	PurpleConnection *gc;
 
 	account = purple_buddy_get_account(b);
-	f = yahoo_friend_find(purple_account_get_connection(account), purple_buddy_get_name(b));
+	gc = purple_account_get_connection(account);
+	if (!gc || !purple_connection_get_protocol_data(gc))
+		return NULL;
+
+	f = yahoo_friend_find(gc, purple_buddy_get_name(b));
 	if (!f)
 		return g_strdup(_("Not on server list"));
 
