@@ -787,7 +787,7 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 {
 	xmlnode *child;
 	xmlnode *message;
-	const char *to, *default_url;
+	const char *to, *url;
 	const char *in_str;
 	char *to_name;
 
@@ -837,19 +837,15 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 
 	to = xmlnode_get_attrib(packet, "to");
 	to_name = jabber_get_bare_jid(to);
-	default_url = xmlnode_get_attrib(child, "url");
-	if (default_url == NULL || *default_url == '\0')
-		default_url = "https://mail.google.com/mail";
+	url = xmlnode_get_attrib(child, "url");
+	if (!url || !*url)
+		url = "http://www.gmail.com";
 
 	message= xmlnode_get_child(child, "mail-thread-info");
 	for (i=0; message; message = xmlnode_get_next_twin(message), i++) {
 		xmlnode *sender_node, *subject_node;
-		const char *from, *tid, *url;
+		const char *from, *tid;
 		char *subject;
-
-		url = xmlnode_get_attrib(message, "url");
-		if (url == NULL || *url == '\0')
-			url = default_url;
 
 		subject_node = xmlnode_get_child(message, "subject");
 		sender_node  = xmlnode_get_child(message, "senders");
