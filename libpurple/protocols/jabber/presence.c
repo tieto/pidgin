@@ -762,6 +762,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(chat->conv), jid->resource,
 						flags);
 		} else if (g_str_equal(type, "unavailable")) {
+			xmlnode *x;
 			gboolean nick_change = FALSE;
 			gboolean kick = FALSE;
 			gboolean is_our_resource = FALSE; /* Is the presence about us? */
@@ -784,28 +785,31 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			is_our_resource = (0 == g_utf8_collate(jid->resource, chat->handle));
 
 			jabber_buddy_remove_resource(jb, jid->resource);
-			if(chat->muc) {
-				xmlnode *x;
-				for(x = xmlnode_get_child(packet, "x"); x; x = xmlnode_get_next_twin(x)) {
-					const char *xmlns, *nick, *code;
-					xmlnode *stat, *item;
-					if(!(xmlns = xmlnode_get_namespace(x)) ||
-							strcmp(xmlns, "http://jabber.org/protocol/muc#user"))
-						continue;
-					if(!(stat = xmlnode_get_child(x, "status")))
-						continue;
-					if(!(code = xmlnode_get_attrib(stat, "code")))
-						continue;
 
-					item = xmlnode_get_child(x, "item");
+			x = xmlnode_get_child_with_namespace(packet, "x",
+					"http://jabber.org/protocol/muc#user");
+			if (chat->muc && x) {
+				const char *nick;
+				const char *code = NULL;
+				const char *item_jid = NULL;
+				xmlnode *stat;
+				xmlnode *item;
 
+				item = xmlnode_get_child(x, "item");
+				if (item)
+					item_jid = xmlnode_get_attrib(item, "jid");
+
+
+				stat = xmlnode_get_child(x, "status");
+
+				if (stat)
+					code = xmlnode_get_attrib(stat, "code");
+
+				if (code) {
 					if(!strcmp(code, "301")) {
 						/* XXX: we got banned */
-					} else if(!strcmp(code, "303")) {
-						if (!item)
-							continue;
-						if(!(nick = xmlnode_get_attrib(item, "nick")))
-							continue;
+					} else if(!strcmp(code, "303") && item &&
+							(nick = xmlnode_get_attrib(item, "nick"))) {
 						nick_change = TRUE;
 						if(!strcmp(jid->resource, chat->handle)) {
 							g_free(chat->handle);
@@ -813,7 +817,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 						}
 						purple_conv_chat_rename_user(PURPLE_CONV_CHAT(chat->conv), jid->resource, nick);
 						jabber_chat_remove_handle(chat, jid->resource);
-						break;
+						/* TODO: Enable this when this is in a for-loop...
+						break; */
 					} else if(!strcmp(code, "307")) {
 						/* Someone was kicked from the room */
 						xmlnode *reason = NULL, *actor = NULL;
@@ -862,6 +867,21 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					} else if(!strcmp(code, "332")) {
 						/* XXX: removed due to system shutdown */
 					}
+				}
+
+				/*
+				 * Possibly another connected resource of our JID (see XEP-0045
+				 * v1.24 section 7.1.10) being disconnected. Should be
+				 * distinguished by the item_jid.
+				 * Also possibly works around bits of an Openfire bug. See
+				 * #8319.
+				 */
+				if (is_our_resource && !purple_strequal(from, item_jid)) {
+					/* TODO: When the above is a loop, this needs to still act
+					 * sanely for all cases (this code is a little fragile). */
+					if (!kick && !nick_change)
+						/* Presumably, kicks and nick changes also affect us. */
+						is_our_resource = FALSE;
 				}
 			}
 			if(!nick_change) {
