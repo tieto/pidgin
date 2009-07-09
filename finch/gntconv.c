@@ -191,10 +191,7 @@ entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 	}
 	else
 	{
-		char *escape = g_markup_escape_text((*text == '/' ? text + 1 : text), -1);
-		char *apos = purple_strreplace(escape, "&apos;", "'");
-		g_free(escape);
-		escape = apos;
+		char *escape = purple_markup_escape_text((*text == '/' ? text + 1 : text), -1);
 		switch (purple_conversation_get_type(ggconv->active_conv))
 		{
 			case PURPLE_CONV_TYPE_IM:
