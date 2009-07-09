@@ -937,6 +937,91 @@ msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	}
 }
 
+static void
+datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
+                     const char *msg, const char *filename)
+{
+	char *username, *str;
+	PurpleAccount *account;
+	PurpleBuddy *b;
+
+	account = swboard->session->account;
+
+	if ((b = purple_find_buddy(account, who)) != NULL)
+		username = g_markup_escape_text(purple_buddy_get_alias(b), -1);
+	else
+		username = g_markup_escape_text(who, -1);
+	str = g_strdup_printf(msg, username, filename);
+	g_free(username);
+
+	if (swboard->conv == NULL) {
+		if (swboard->current_users > 1) 
+			swboard->conv = purple_find_chat(account->gc, swboard->chat_id);
+		else {
+			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+									who, account);
+			if (swboard->conv == NULL)
+				swboard->conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
+		}
+	}
+	swboard->flag |= MSN_SB_FLAG_IM;
+
+	purple_conversation_write(swboard->conv, NULL, str, PURPLE_MESSAGE_SYSTEM, time(NULL));
+	g_free(str);
+
+}
+
+/* TODO: Make these not be such duplicates of each other */
+static void 
+got_wink_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
+{
+	FILE *f;
+	char *path = NULL;
+	const char *who = slpcall->slplink->remote_user;
+	purple_debug_info("msn", "Received wink from %s\n", who);
+
+	if ((f = purple_mkstemp(&path, TRUE))) {
+		fwrite(data, size, 1, f);
+		fclose(f);
+		datacast_inform_user(slpcall->slplink->swboard,
+		                     who,
+		                     _("%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"),
+		                     path);
+	} else {
+		purple_debug_error("msn", "Couldn\'t create temp file to store wink\n");
+		datacast_inform_user(slpcall->slplink->swboard,
+		                     who,
+		                     _("%s sent a wink, but it could not be saved"),
+		                     NULL);
+	} 
+	g_free(path);
+}
+
+static void 
+got_voiceclip_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
+{
+	FILE *f;
+	char *path = NULL;
+	const char *who = slpcall->slplink->remote_user;
+	purple_debug_info("msn", "Received voice clip from %s\n", who);
+
+	if ((f = purple_mkstemp(&path, TRUE))) {
+		fwrite(data, size, 1, f);
+		fclose(f);
+		datacast_inform_user(slpcall->slplink->swboard,
+		                     who,
+		                     _("%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"),
+		                     path);
+	} else {
+		purple_debug_error("msn", "Couldn\'t create temp file to store sound\n");
+		datacast_inform_user(slpcall->slplink->swboard,
+		                     who,
+		                     _("%s sent a voice clip, but it could not be saved"),
+		                     NULL);
+	} 
+	g_free(path);
+}
+
 void
 msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
@@ -970,9 +1055,42 @@ msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	} else if (!strcmp(id, "2")) {
 		/* Wink */
+		MsnSession *session;
+		MsnSlpLink *slplink;
+		MsnObject *obj;
+		const char *who;
+		const char *data;
+
+		session = cmdproc->session;
+
+		data = g_hash_table_lookup(body, "Data");
+		obj = msn_object_new_from_string(data);
+		who = msn_object_get_creator(obj);
+
+		slplink = msn_session_get_slplink(session, who);
+		msn_slplink_request_object(slplink, data, got_wink_cb, NULL, obj);
+
+		msn_object_destroy(obj);
+
 
 	} else if (!strcmp(id, "3")) {
 		/* Voiceclip */
+		MsnSession *session;
+		MsnSlpLink *slplink;
+		MsnObject *obj;
+		const char *who;
+		const char *data;
+
+		session = cmdproc->session;
+
+		data = g_hash_table_lookup(body, "Data");
+		obj = msn_object_new_from_string(data);
+		who = msn_object_get_creator(obj);
+
+		slplink = msn_session_get_slplink(session, who);
+		msn_slplink_request_object(slplink, data, got_voiceclip_cb, NULL, obj);
+
+		msn_object_destroy(obj);
 
 	} else if (!strcmp(id, "4")) {
 		/* Action */
