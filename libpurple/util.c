@@ -65,7 +65,7 @@ struct _PurpleUtilFetchUrlData
 	gboolean got_headers;
 	gboolean has_explicit_data_len;
 	char *webdata;
-	unsigned long len;
+	gsize len;
 	unsigned long data_len;
 	gssize max_len;
 	gboolean chunked;
