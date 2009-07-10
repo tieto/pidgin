@@ -33,9 +33,8 @@ msn_message_new(MsnMsgType type)
 	msg = g_new0(MsnMessage, 1);
 	msg->type = type;
 
-#ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message new (%p)(%d)\n", msg, type);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "message new (%p)(%d)\n", msg, type);
 
 	msg->attr_table = g_hash_table_new_full(g_str_hash, g_str_equal,
 											g_free, g_free);
@@ -57,9 +56,8 @@ msn_message_destroy(MsnMessage *msg)
 		return;
 	}
 
-#ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message destroy (%p)\n", msg);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "message destroy (%p)\n", msg);
 
 	g_free(msg->remote_user);
 	g_free(msg->body);
@@ -79,9 +77,8 @@ msn_message_ref(MsnMessage *msg)
 
 	msg->ref_count++;
 
-#ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message ref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "message ref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
 
 	return msg;
 }
@@ -94,9 +91,8 @@ msn_message_unref(MsnMessage *msg)
 
 	msg->ref_count--;
 
-#ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message unref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "message unref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
 
 	if (msg->ref_count == 0)
 	{
