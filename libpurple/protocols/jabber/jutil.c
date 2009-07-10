@@ -154,9 +154,9 @@ jabber_id_new(const char *str)
 
 			default:
 				/* characters allowed everywhere */
-				if ((*c > 'a' && *c < 'z')
-						|| (*c > '0' && *c < '9')
-						|| (*c > 'A' && *c < 'Z')
+				if ((*c >= 'a' && *c <= 'z')
+						|| (*c >= '0' && *c <= '9')
+						|| (*c >= 'A' && *c <= 'Z')
 						|| *c == '.' || *c == '-')
 					/* We're good */
 					break;
