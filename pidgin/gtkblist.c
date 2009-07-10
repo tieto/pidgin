@@ -6967,12 +6967,9 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 static void
 add_chat_cb(GtkWidget *w, PidginAddChatData *data)
 {
-	GHashTable *components;
 	GList *tmp;
 	PurpleChat *chat;
-	PurpleGroup *group;
-	const char *group_name;
-	const char *value;
+	GHashTable *components;
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal,
 									   g_free, g_free);
@@ -6988,7 +6985,8 @@ add_chat_cb(GtkWidget *w, PidginAddChatData *data)
 		}
 		else
 		{
-			value = gtk_entry_get_text(tmp->data);
+			const char *value = gtk_entry_get_text(tmp->data);
+
 			if (*value != '\0')
 				g_hash_table_replace(components,
 						g_strdup(g_object_get_data(tmp->data, "identifier")),
@@ -6997,28 +6995,31 @@ add_chat_cb(GtkWidget *w, PidginAddChatData *data)
 	}
 
 	chat = purple_chat_new(data->chat_data.rq_data.account,
-							   gtk_entry_get_text(GTK_ENTRY(data->alias_entry)),
-							   components);
+	                       gtk_entry_get_text(GTK_ENTRY(data->alias_entry)),
+	                       components);
 
-	group_name = pidgin_text_combo_box_entry_get_text(data->group_combo);
+	if (chat != NULL) {
+		PurpleGroup *group;
+		const char *group_name;
 
-	group = NULL;
-	if ((group_name != NULL) && (*group_name != '\0') && ((group = purple_find_group(group_name)) == NULL))
-	{
-		group = purple_group_new(group_name);
-		purple_blist_add_group(group, NULL);
-	}
+		group_name = pidgin_text_combo_box_entry_get_text(data->group_combo);
 
-	if (chat != NULL)
-	{
+		group = NULL;
+		if ((group_name != NULL) && (*group_name != '\0') &&
+		    ((group = purple_find_group(group_name)) == NULL))
+		{
+			group = purple_group_new(group_name);
+			purple_blist_add_group(group, NULL);
+		}
+
 		purple_blist_add_chat(chat, group, NULL);
+
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->autojoin)))
+			purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-autojoin", TRUE);
+
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->persistent)))
+			purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-persistent", TRUE);
 	}
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->autojoin)))
-		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-autojoin", TRUE);
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->persistent)))
-		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-persistent", TRUE);
 
 	gtk_widget_destroy(data->chat_data.rq_data.window);
 	g_free(data->chat_data.default_chat_name);
