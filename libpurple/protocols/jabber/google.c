@@ -1062,7 +1062,7 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 
 	js = (JabberStream*)(gc->proto_data);
 
-	if (!js || !js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
+	if (!js || !(js->server_caps & JABBER_CAP_GOOGLE_ROSTER))
 		return;
 
 	jb = jabber_buddy_find(js, who, TRUE);
@@ -1132,7 +1132,7 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 
 	js = (JabberStream*)(gc->proto_data);
 
-	if (!js || !js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
+	if (!js || !(js->server_caps & JABBER_CAP_GOOGLE_ROSTER))
 		return;
 
 	buddies = purple_find_buddies(purple_connection_get_account(js->gc), who);
