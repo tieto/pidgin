@@ -97,6 +97,7 @@ START_TEST(test_jabber_id_new)
 	assert_invalid_jid("@gmail.com/Test@12345");
 	assert_invalid_jid("/Test@12345");
 	assert_invalid_jid("mark.doliner@");
+	assert_invalid_jid("mark.doliner/");
 }
 END_TEST
 
