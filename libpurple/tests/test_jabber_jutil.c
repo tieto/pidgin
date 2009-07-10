@@ -85,12 +85,14 @@ START_TEST(test_jabber_id_new)
 	assert_valid_jid("gmail.com");
 	assert_valid_jid("gmail.com/Test");
 	assert_valid_jid("gmail.com/Test@");
+	assert_valid_jid("gmail.com/@");
 	assert_valid_jid("gmail.com/Test@alkjaweflkj");
 	assert_valid_jid("mark.doliner@gmail.com");
 	assert_valid_jid("mark.doliner@gmail.com/Test12345");
 	assert_valid_jid("mark.doliner@gmail.com/Test@12345");
 	assert_valid_jid("mark.doliner@gmail.com/Te/st@12@//345");
 
+	assert_invalid_jid("@gmail.com");
 	assert_invalid_jid("@@gmail.com");
 	assert_invalid_jid("mark.doliner@@gmail.com/Test12345");
 	assert_invalid_jid("mark@doliner@gmail.com/Test12345");
