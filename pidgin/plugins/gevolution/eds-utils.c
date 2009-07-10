@@ -119,11 +119,13 @@ gevo_run_query_in_uri(const gchar *uri, EBookQuery *query)
 	EBook *book;
 	gboolean status;
 	GList *cards;
+	GError *err = NULL;
 
-	if (!gevo_load_addressbook(uri, &book, NULL))
+	if (!gevo_load_addressbook(uri, &book, &err))
 	{
 		purple_debug_error("evolution",
-						 "Error retrieving addressbook\n");
+						 "Error retrieving addressbook: %s\n", err->message);
+		g_error_free(err);
 		return NULL;
 	}
 
