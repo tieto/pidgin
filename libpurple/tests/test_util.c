@@ -14,8 +14,7 @@ START_TEST(test_util_base16_decode)
 	gsize sz = 0;
 	guchar *out = purple_base16_decode("21646c726f77202c6f6c6c656800", &sz);
 	fail_unless(sz == 14, NULL);
-	assert_string_equal("!dlrow ,olleh", (const char *)out);
-	g_free(out);
+	assert_string_equal_free("!dlrow ,olleh", (char *)out);
 }
 END_TEST
 
@@ -30,8 +29,7 @@ START_TEST(test_util_base64_decode)
 	gsize sz;
 	guchar *out = purple_base64_decode("b3d0LXl0cm9mAA==", &sz);
 	fail_unless(sz == 10, NULL);
-	assert_string_equal("owt-ytrof", (const char *)out);
-	g_free(out);
+	assert_string_equal_free("owt-ytrof", (char *)out);
 }
 END_TEST
 
@@ -94,18 +92,15 @@ START_TEST(test_markup_html_to_xhtml)
 	gchar *xhtml = NULL;
 	gchar *plaintext = NULL;
 	purple_markup_html_to_xhtml("<a>", &xhtml, &plaintext);
-	assert_string_equal("<a href=\"\"></a>", xhtml);
-	g_free(xhtml);
-	assert_string_equal("", plaintext);
-	g_free(plaintext);
+	assert_string_equal_free("<a href=\"\"></a>", xhtml);
+	assert_string_equal_free("", plaintext);
 }
 END_TEST
 
 START_TEST(test_mime_decode_field)
 {
 	gchar *result = purple_mime_decode_field("=?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?=");
-	assert_string_equal("Keld Jørn Simonsen", result);
-	g_free(result);
+	assert_string_equal_free("Keld Jørn Simonsen", result);
 }
 END_TEST
 
