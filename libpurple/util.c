@@ -3099,13 +3099,15 @@ purple_fd_get_ip(int fd)
 {
 	struct sockaddr addr;
 	socklen_t namelen = sizeof(addr);
+	struct in_addr in;
 
 	g_return_val_if_fail(fd != 0, NULL);
 
 	if (getsockname(fd, &addr, &namelen))
 		return NULL;
 
-	return g_strdup(inet_ntoa(((struct sockaddr_in *)&addr)->sin_addr));
+	in = ((struct sockaddr_in *)&addr)->sin_addr;
+	return g_strdup(inet_ntoa(in));
 }
 
 
