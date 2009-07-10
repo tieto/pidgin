@@ -3538,6 +3538,8 @@ void yahoo_close(PurpleConnection *gc) {
 	g_free(yd->pending_chat_goto);
 	g_strfreev(yd->profiles);
 
+	yahoo_personal_details_reset(&yd->ypd);
+
 	g_free(yd->current_list15_grp);
 
 	g_free(yd);
@@ -4012,9 +4014,13 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 				   "Unable to request mail login token; forwarding to login screen.");
 		purple_notify_uri(gc, yahoo_mail_url);
 	}
-
 }
 
+static void
+yahoo_set_userinfo_fn(PurplePluginAction *action)
+{
+	yahoo_set_userinfo(action->context);
+}
 
 static void yahoo_show_act_id(PurplePluginAction *action)
 {
@@ -4060,6 +4066,10 @@ static void yahoo_show_chat_goto(PurplePluginAction *action)
 GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 	GList *m = NULL;
 	PurplePluginAction *act;
+
+	act = purple_plugin_action_new(_("Set User Info..."),
+			yahoo_set_userinfo_fn);
+	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Activate ID..."),
 			yahoo_show_act_id);

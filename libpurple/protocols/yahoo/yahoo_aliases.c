@@ -29,6 +29,7 @@
 #include "blist.h"
 #include "debug.h"
 #include "util.h"
+#include "request.h"
 #include "version.h"
 #include "libymsg.h"
 #include "yahoo_aliases.h"
@@ -52,6 +53,17 @@ struct callback_data {
 	gchar *who;
 };
 
+void yahoo_personal_details_reset(YahooPersonalDetails *ypd)
+{
+	g_free(ypd->id);
+	g_free(ypd->names.first);
+	g_free(ypd->names.last);
+	g_free(ypd->names.middle);
+	g_free(ypd->names.nick);
+	g_free(ypd->phone.work);
+	g_free(ypd->phone.home);
+	g_free(ypd->phone.mobile);
+}
 
 /**************************************************************************
  * Alias Fetch Functions
@@ -60,8 +72,7 @@ struct callback_data {
 static void
 yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message)
 {
-	struct callback_data *cb = user_data;
-	PurpleConnection *gc = cb->gc;
+	PurpleConnection *gc = user_data;
 	struct yahoo_data *yd = gc->proto_data;
 
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
@@ -71,19 +82,19 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 						  error_message ? " Error:" : "", error_message ? error_message : "");
 	} else {
 		gchar *full_name, *nick_name;
-		const char *yid, *id, *fn, *ln, *nn, *alias;
+		const char *yid, *id, *fn, *ln, *nn, *alias, *mn;
+		const char *hp, *wp, *mo;
 		YahooFriend *f;
 		PurpleBuddy *b;
 		xmlnode *item, *contacts;
+		PurpleAccount *account;
 
+		account = purple_connection_get_account(gc);
 		/* Put our web response into a xmlnode for easy management */
 		contacts = xmlnode_from_str(url_text, -1);
 
 		if (contacts == NULL) {
 			purple_debug_error("yahoo", "Badly formed Alias XML\n");
-			g_free(cb->who);
-			g_free(cb->id);
-			g_free(cb);
 			return;
 		}
 		purple_debug_info("yahoo", "Fetched %" G_GSIZE_FORMAT
@@ -97,7 +108,12 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 				fn = xmlnode_get_attrib(item, "fn");
 				ln = xmlnode_get_attrib(item, "ln");
 				nn = xmlnode_get_attrib(item, "nn");
+				mn = xmlnode_get_attrib(item, "mn");
 				id = xmlnode_get_attrib(item, "id");
+
+				hp = xmlnode_get_attrib(item, "hp");
+				wp = xmlnode_get_attrib(item, "wp");
+				mo = xmlnode_get_attrib(item, "mo");
 
 				full_name = nick_name = NULL;
 				alias = NULL;
@@ -115,8 +131,8 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 					alias = full_name;  /* If no Yahoo nickname, we can use the full_name created above */
 
 				/*  Find the local buddy that matches */
-				f = yahoo_friend_find(cb->gc, yid);
-				b = purple_find_buddy(cb->gc->account, yid);
+				f = yahoo_friend_find(gc, yid);
+				b = purple_find_buddy(account, yid);
 
 				/*  If we don't find a matching buddy, ignore the alias !!  */
 				if (f != NULL && b != NULL) {
@@ -125,12 +141,29 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 
 					/* Finally, if we received an alias, we better update the buddy list */
 					if (alias != NULL) {
-						serv_got_alias(cb->gc, yid, alias);
+						serv_got_alias(gc, yid, alias);
 						purple_debug_info("yahoo", "Fetched alias '%s' (%s)\n", alias, id);
 					} else if (buddy_alias != NULL && strcmp(buddy_alias, "") != 0) {
 					/* Or if we have an alias that Yahoo doesn't, send it up */
-						yahoo_update_alias(cb->gc, yid, buddy_alias);
+						yahoo_update_alias(gc, yid, buddy_alias);
 						purple_debug_info("yahoo", "Sent updated alias '%s'\n", buddy_alias);
+					}
+				} else {
+					/* May be the alias is for the account? */
+					const char *yidn = purple_normalize(account, yid);
+					if (purple_strequal(yidn, purple_connection_get_display_name(gc))) {
+						yahoo_personal_details_reset(&yd->ypd);
+
+						yd->ypd.id = g_strdup(id);
+
+						yd->ypd.names.first = g_strdup(fn);
+						yd->ypd.names.middle = g_strdup(mn);
+						yd->ypd.names.last = g_strdup(ln);
+						yd->ypd.names.nick = g_strdup(nn);
+
+						yd->ypd.phone.work = g_strdup(wp);
+						yd->ypd.phone.home = g_strdup(hp);
+						yd->ypd.phone.mobile = g_strdup(mo);
 					}
 				}
 
@@ -140,27 +173,18 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 		}
 		xmlnode_free(contacts);
 	}
-
-	g_free(cb->who);
-	g_free(cb->id);
-	g_free(cb);
 }
 
 void
 yahoo_fetch_aliases(PurpleConnection *gc)
 {
 	struct yahoo_data *yd = gc->proto_data;
-	struct callback_data *cb;
 	const char *url;
 	gchar *request, *webpage, *webaddress;
 	PurpleUtilFetchUrlData *url_data;
 
 	/* use whole URL if using HTTP Proxy */
 	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
-
-	/* Using callback_data so I have access to gc in the callback function */
-	cb = g_new0(struct callback_data, 1);
-	cb->gc = gc;
 
 	/*  Build all the info to make the web request */
 	url = yd->jp ? YAHOOJP_ALIAS_FETCH_URL : YAHOO_ALIAS_FETCH_URL;
@@ -177,7 +201,7 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	/* We have a URL and some header information, let's connect and get some aliases  */
 	url_data = purple_util_fetch_url_request_len_with_account(purple_connection_get_account(gc),
 				url, use_whole_url, NULL, TRUE, request, FALSE, -1,
-				yahoo_fetch_aliases_cb, cb);
+				yahoo_fetch_aliases_cb, gc);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 
@@ -357,5 +381,106 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	g_free(webaddress);
 	g_free(content);
 	g_free(request);
+}
+
+
+/**************************************************************************
+ * User Info Update Functions
+ **************************************************************************/
+
+static void
+yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
+{
+	xmlnode *node = xmlnode_new("ab");
+	xmlnode *ct = xmlnode_new_child(node, "ct");
+	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	PurpleAccount *account;
+	PurpleUtilFetchUrlData *url_data;
+	char *webaddress, *webpage;
+	char *request, *content;
+	int len;
+	int i;
+	char * yfields[] = { "fn", "ln", "nn", "mn", "hp", "wp", "mo", NULL };
+
+	account = purple_connection_get_account(gc);
+
+	xmlnode_set_attrib(node, "k", purple_connection_get_display_name(gc));
+	xmlnode_set_attrib(node, "cc", "1");		/* XXX: ? */
+
+	xmlnode_set_attrib(ct, "e", "1");
+	xmlnode_set_attrib(ct, "yi", purple_connection_get_display_name(gc));
+	xmlnode_set_attrib(ct, "id", yd->ypd.id);
+	xmlnode_set_attrib(ct, "pr", "0");
+
+	for (i = 0; yfields[i]; i++) {
+		const char *v = purple_request_fields_get_string(fields, yfields[i]);
+		xmlnode_set_attrib(ct, yfields[i], v ? v : "");
+	}
+
+	content = xmlnode_to_formatted_str(node, &len);
+	purple_url_parse(yd->jp ? YAHOOJP_USERINFO_URL : YAHOO_USERINFO_URL, &webaddress, NULL, &webpage, NULL, NULL);
+
+	request = g_strdup_printf("POST %s HTTP/1.1\r\n"
+				  "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
+				  "Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s;\r\n"
+				  "Host: %s\r\n"
+				  "Content-Length: %" G_GSIZE_FORMAT "\r\n"
+				  "Cache-Control: no-cache\r\n\r\n"
+				  "%s\r\n\r\n",
+				  webpage,
+				  yd->cookie_t, yd->cookie_y,
+				  webaddress,
+				  len + 4,
+				  content);
+
+	url_data = purple_util_fetch_url_request_len_with_account(account, webaddress, FALSE,
+			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE, -1,
+			yahoo_fetch_aliases_cb, gc);
+	if (url_data != NULL)
+		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+
+	g_free(webaddress);
+	g_free(webpage);
+	g_free(content);
+	g_free(request);
+	xmlnode_free(node);
+}
+
+void yahoo_set_userinfo(PurpleConnection *gc)
+{
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	int i;
+	struct {
+		char *id;
+		char *text;
+		char *value;
+	} yfields[] = {
+		{"fn", N_("First Name"), yd->ypd.names.first},
+		{"ln", N_("Last Name"), yd->ypd.names.last},
+		{"nn", N_("Nickname"), yd->ypd.names.nick},
+		{"mn", N_("Middle Name"), yd->ypd.names.middle},
+		{"hp", N_("Home Phone Number"), yd->ypd.phone.home},
+		{"wp", N_("Work Phone Number"), yd->ypd.phone.work},
+		{"mo", N_("Mobile Phone Number"), yd->ypd.phone.mobile},
+		{NULL, NULL, NULL}
+	};
+
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+
+	for (i = 0; yfields[i].id; i++) {
+		field = purple_request_field_string_new(yfields[i].id, _(yfields[i].text),
+				yfields[i].value, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+
+	purple_request_fields(gc, NULL, _("Set User Info"), NULL, fields,
+			_("OK"), G_CALLBACK(yahoo_set_userinfo_cb),
+			_("Cancel"), NULL,
+			purple_connection_get_account(gc), NULL, NULL, gc);
 }
 
