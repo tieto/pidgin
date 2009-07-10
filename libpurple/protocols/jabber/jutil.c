@@ -105,8 +105,7 @@ jabber_id_new(const char *str)
 {
 	const char *at = NULL;
 	const char *slash = NULL;
-	const char *cur;
-	gunichar c;
+	const char *c;
 	gboolean needs_validation = FALSE;
 #if 0
 	gboolean node_is_required = FALSE;
@@ -118,48 +117,47 @@ jabber_id_new(const char *str)
 	if (!str)
 		return NULL;
 
-	for (cur = str; *cur != '\0'; cur = g_utf8_next_char(cur))
+	for (c = str; *c != '\0'; c++)
 	{
-		c = g_utf8_get_char(cur);
-		switch (c) {
+		switch (*c) {
 			case '@':
 				if (!slash) {
 					if (at) {
 						/* Multiple @'s in the node/domain portion, not a valid JID! */
 						return NULL;
 					}
-					if (cur == str) {
+					if (c == str) {
 						/* JIDs cannot start with @ */
 						return NULL;
 					}
-					if ((g_utf8_next_char(cur))[0] == '\0') {
+					if (c[1] == '\0') {
 						/* JIDs cannot end with @ */
 						return NULL;
 					}
-					at = cur;
+					at = c;
 				}
 				break;
 
 			case '/':
 				if (!slash) {
-					if (cur == str) {
+					if (c == str) {
 						/* JIDs cannot start with / */
 						return NULL;
 					}
-					if ((g_utf8_next_char(cur))[0] == '\0') {
+					if (c[1] == '\0') {
 						/* JIDs cannot end with / */
 						return NULL;
 					}
-					slash = cur;
+					slash = c;
 				}
 				break;
 
 			default:
 				/* characters allowed everywhere */
-				if ((c > 'a' && c < 'z')
-						|| (c > '0' && c < '9')
-						|| (c > 'A' && c < 'Z')
-						|| c == '.' || c == '-')
+				if ((*c > 'a' && *c < 'z')
+						|| (*c > '0' && *c < '9')
+						|| (*c > 'A' && *c < 'Z')
+						|| *c == '.' || *c == '-')
 					/* We're good */
 					break;
 
