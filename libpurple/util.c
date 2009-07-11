@@ -4446,9 +4446,8 @@ purple_email_is_valid(const char *address)
 	return ((c - domain) > 3 ? TRUE : FALSE);
 }
 
-/* TODO 3.0.0: Rename this to purple_ipv4_address_is_valid */
 gboolean
-purple_ip_address_is_valid(const char *ip)
+purple_ipv4_address_is_valid(const char *ip)
 {
 	int c, o1, o2, o3, o4;
 	char end;
@@ -4504,6 +4503,13 @@ purple_ipv6_address_is_valid(const gchar *ip)
 	 * we didn't see a '::' and saw exactly 8 chunks.
 	 */
 	return (double_colon && chunks < 8) || (!double_colon && chunks == 8);
+}
+
+/* TODO 3.0.0: Add ipv6 check, too */
+gboolean
+purple_ip_address_is_valid(const char *ip)
+{
+	return purple_ipv4_address_is_valid(ip);
 }
 
 /* Stolen from gnome_uri_list_extract_uris */
