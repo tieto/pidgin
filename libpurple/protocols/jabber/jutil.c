@@ -65,19 +65,18 @@ gboolean jabber_nameprep_validate(const char *str)
 		return FALSE;
 
 	/*
-	 * This should be more similar to purple_email_is_valid().  Maybe
-	 * that function should even be split up and we should call the part
-	 * that validates the domain name.
+	 * TODO: An IPv6 address of the form [2001:470:1f05:d58::2] is also
+	 * a valid XMPP domain portion.
 	 */
 	c = str;
 	while(c && *c) {
 		gunichar ch = g_utf8_get_char(c);
 		/* The list of characters allowed in domain names is pretty small */
-		if (!( (ch >= 'a' && ch <= 'z')
+		if ((ch <= 0x7F && !( (ch >= 'a' && ch <= 'z')
 				|| (ch >= '0' && ch <= '9')
 				|| (ch >= 'A' && ch <= 'Z')
 				|| ch == '.'
-				|| ch == '-' ))
+				|| ch == '-' )) || (ch >= 0x80 && !g_unichar_isgraph(ch)))
 			return FALSE;
 
 		c = g_utf8_next_char(c);
