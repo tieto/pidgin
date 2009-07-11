@@ -27,8 +27,6 @@
 
 #include "slp.h"
 
-/* #define MSN_DEBUG_SLPCALL */
-
 /**************************************************************************
  * Main
  **************************************************************************/
@@ -40,9 +38,8 @@ msn_slpcall_timeout(gpointer data)
 
 	slpcall = data;
 
-#ifdef MSN_DEBUG_SLPCALL
-	purple_debug_info("msn", "slpcall_timeout: slpcall(%p)\n", slpcall);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slpcall_timeout: slpcall(%p)\n", slpcall);
 
 	if (!slpcall->pending && !slpcall->progress)
 	{
@@ -64,9 +61,8 @@ msn_slpcall_new(MsnSlpLink *slplink)
 
 	slpcall = g_new0(MsnSlpCall, 1);
 
-#ifdef MSN_DEBUG_SLPCALL
-	purple_debug_info("msn", "slpcall_new: slpcall(%p)\n", slpcall);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slpcall_new: slpcall(%p)\n", slpcall);
 
 	slpcall->slplink = slplink;
 
@@ -82,9 +78,8 @@ msn_slpcall_destroy(MsnSlpCall *slpcall)
 {
 	GList *e;
 
-#ifdef MSN_DEBUG_SLPCALL
-	purple_debug_info("msn", "slpcall_destroy: slpcall(%p)\n", slpcall);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slpcall_destroy: slpcall(%p)\n", slpcall);
 
 	g_return_if_fail(slpcall != NULL);
 
@@ -96,10 +91,9 @@ msn_slpcall_destroy(MsnSlpCall *slpcall)
 		MsnSlpMessage *slpmsg = e->data;
 		e = e->next;
 
-#ifdef MSN_DEBUG_SLPCALL_VERBOSE
-		purple_debug_info("msn", "slpcall_destroy: trying slpmsg(%p)\n",
-						slpmsg);
-#endif
+		if (purple_debug_is_verbose())
+			purple_debug_info("msn", "slpcall_destroy: trying slpmsg(%p)\n",
+			                  slpmsg);
 
 		if (slpmsg->slpcall == slpcall)
 		{
@@ -173,10 +167,8 @@ msn_slpcall_invite(MsnSlpCall *slpcall, const char *euf_guid,
 	slpmsg = msn_slpmsg_sip_new(slpcall, 0, header, slpcall->branch,
 								"application/x-msnmsgr-sessionreqbody", content);
 
-#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP INVITE";
 	slpmsg->text_body = TRUE;
-#endif
 
 	msn_slplink_send_slpmsg(slplink, slpmsg);
 

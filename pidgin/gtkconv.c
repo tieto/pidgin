@@ -4939,6 +4939,7 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	gtk_widget_set_name(gtkconv->imhtml, "pidgin_conv_imhtml");
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),TRUE);
+	g_object_set_data(gtkconv->imhtml, "gtkconv", gtkconv);
 
 	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
 	                               &imhtml_sw_hscroll, NULL);

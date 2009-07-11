@@ -152,6 +152,12 @@ ssl_nss_init_nss(void)
 	SSL_CipherPrefSetDefault(SSL_DHE_RSA_WITH_DES_CBC_SHA, 1);
 	SSL_CipherPrefSetDefault(SSL_DHE_DSS_WITH_DES_CBC_SHA, 1);
 
+#ifdef NEED_NSS_WEAK_ALGORITHMS
+	/* Enable some weaker algorithms for XMPP and MSN */
+	NSS_SetAlgorithmPolicy(SEC_OID_PKCS1_MD2_WITH_RSA_ENCRYPTION, NSS_USE_ALG_IN_CERT_SIGNATURE, 0);
+	NSS_SetAlgorithmPolicy(SEC_OID_PKCS1_MD4_WITH_RSA_ENCRYPTION, NSS_USE_ALG_IN_CERT_SIGNATURE, 0);
+#endif
+
 	_identity = PR_GetUniqueIdentity("Purple");
 	_nss_methods = PR_GetDefaultIOMethods();
 }
