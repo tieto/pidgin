@@ -424,7 +424,7 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 				  "User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 				  "Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s;\r\n"
 				  "Host: %s\r\n"
-				  "Content-Length: %" G_GSIZE_FORMAT "\r\n"
+				  "Content-Length: %d\r\n"
 				  "Cache-Control: no-cache\r\n\r\n"
 				  "%s\r\n\r\n",
 				  webpage,
