@@ -57,27 +57,28 @@ gboolean jabber_nodeprep_validate(const char *str)
 gboolean jabber_domain_validate(const char *str)
 {
 	const char *c;
+	size_t len;
 
 	if(!str)
 		return TRUE;
 
-	if(strlen(str) > 1023)
+	len = strlen(str);
+	if (len > 1023)
 		return FALSE;
 
 	c = str;
 
 	if (*c == '[') {
 		/* Check if str is a valid IPv6 identifier */
-		const gchar *end_bracket = strstr(c, "]");
 		gboolean valid = FALSE;
 
-		if (!end_bracket || *(end_bracket + 1) != '\0')
+		if (*(c + len - 1) != ']')
 			return FALSE;
 
 		/* Ugly, but in-place */
-		*(gchar *)end_bracket = '\0';
+		*(gchar *)(c + len - 1) = '\0';
 		valid = purple_ipv6_address_is_valid(c + 1);
-		*(gchar *)end_bracket = ']';
+		*(gchar *)(c + len - 1) = ']';
 
 		return valid;
 	}
