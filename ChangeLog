@@ -29,6 +29,7 @@ version 2.6.0 (??/??/2009):
 	* Add support for receiving handwritten (ink) messages on MSN.
 	* Don't do IPv6 address lookups if the computer does not have an IPv6
 	  address configured.
+	* Add support for receiving audio clips on MSN.
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
