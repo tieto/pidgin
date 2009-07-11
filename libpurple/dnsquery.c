@@ -118,8 +118,11 @@ purple_dnsquery_resolved(PurpleDnsQueryData *query_data, GSList *hosts)
 	 * Add the resolver to the list of available resolvers, and set it
 	 * to NULL so that it doesn't get destroyed along with the query_data
 	 */
-	free_dns_children = g_slist_prepend(free_dns_children, query_data->resolver);
-	query_data->resolver = NULL;
+	if (query_data->resolver)
+	{
+		free_dns_children = g_slist_prepend(free_dns_children, query_data->resolver);
+		query_data->resolver = NULL;
+	}
 #endif /* PURPLE_DNSQUERY_USE_FORK */
 
 	purple_dnsquery_destroy(query_data);
