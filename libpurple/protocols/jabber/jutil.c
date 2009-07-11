@@ -73,11 +73,11 @@ gboolean jabber_nameprep_validate(const char *str)
 	while(c && *c) {
 		gunichar ch = g_utf8_get_char(c);
 		/* The list of characters allowed in domain names is pretty small */
-		if (!( (ch >= 'a' && ch <= 'z')
+		if ((ch <= 0x7F && !( (ch >= 'a' && ch <= 'z')
 				|| (ch >= '0' && ch <= '9')
 				|| (ch >= 'A' && ch <= 'Z')
 				|| ch == '.'
-				|| ch == '-' ))
+				|| ch == '-' )) || (ch >= 0x80 && !g_unichar_isgraph(ch)))
 			return FALSE;
 
 		c = g_utf8_next_char(c);

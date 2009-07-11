@@ -95,6 +95,10 @@ START_TEST(test_jabber_id_new)
 	assert_valid_jid("まりるーむ@conference.jabber.org");
 	assert_valid_jid("mark.doliner@gmail.com/まりるーむ");
 	assert_valid_jid("mark.doliner@gmail/stuff.org");
+	assert_valid_jid("stuart@nödåtXäYZ.se");
+	assert_valid_jid("stuart@nödåtXäYZ.se/まりるーむ");
+	assert_valid_jid("mark.doliner@わいど.org");
+	assert_valid_jid("nick@まつ.おおかみ.net");
 
 	assert_invalid_jid("@gmail.com");
 	assert_invalid_jid("@@gmail.com");
@@ -107,7 +111,6 @@ START_TEST(test_jabber_id_new)
 	assert_invalid_jid("mark.doliner@gmail_stuff.org");
 	assert_invalid_jid("mark.doliner@gmail[stuff.org");
 	assert_invalid_jid("mark.doliner@gmail\\stuff.org");
-	assert_invalid_jid("mark.doliner@わいど.org");
 }
 END_TEST
 
