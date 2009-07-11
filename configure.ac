@@ -1731,8 +1731,8 @@ if test "x$enable_gnutls" = "xyes"; then
 	LIBS="$LIBS $GNUTLS_LIBS"
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <gnutls/gnutls.h>],
-                                        [gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);])],
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
+                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);]])],
 	               [AC_DEFINE([HAVE_GNUTLS_PRIORITY_FUNCS], 1,
                                   [Define if your gnutls has gnutls_priority_set_direct and friends])
 	                AC_MSG_RESULT(yes)],
@@ -2027,9 +2027,9 @@ if test "x$enable_nss" = "xyes"; then
 	LIBS="$LIBS $NSS_LIBS"
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $NSS_CFLAGS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <nss.h>
-#include <secmod.h>],
-                                        [NSS_SetAlgorithmPolicy(SEC_OID_MD2, 0, 0);])],
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <nss.h>
+#include <secmod.h>]],
+                                        [[NSS_SetAlgorithmPolicy(SEC_OID_MD2, 0, 0);]])],
 	               [AC_DEFINE([NEED_NSS_WEAK_ALGORITHMS], 1,
                                   [Define if your NSS needs weak algorithms activated with NSS_SetAlgorithmPolicy])
 	                AC_MSG_RESULT(yes)],
