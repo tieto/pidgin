@@ -32,6 +32,7 @@ version 2.6.0 (??/??/2009):
 	* Add support for receiving audio clips on MSN.
 	* Fix a leak when the UI provides its own DNS resolving UI op.
 	  (Aman Gupta)
+	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called

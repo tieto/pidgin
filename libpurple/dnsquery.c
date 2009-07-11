@@ -145,6 +145,29 @@ purple_dnsquery_ui_resolve(PurpleDnsQueryData *query_data)
 	return FALSE;
 }
 
+static gboolean
+resolve_ip(PurpleDnsQueryData *query_data)
+{
+	struct sockaddr_in sin;
+	if (inet_aton(query_data->hostname, &sin.sin_addr))
+	{
+		/*
+		 * The given "hostname" is actually an IP address, so we
+		 * don't need to do anything.
+		 */
+		GSList *hosts = NULL;
+		sin.sin_family = AF_INET;
+		sin.sin_port = htons(query_data->port);
+		hosts = g_slist_append(hosts, GINT_TO_POINTER(sizeof(sin)));
+		hosts = g_slist_append(hosts, g_memdup(&sin, sizeof(sin)));
+		purple_dnsquery_resolved(query_data, hosts);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 #if defined(PURPLE_DNSQUERY_USE_FORK)
 
 /*
@@ -616,6 +639,12 @@ resolve_host(gpointer data)
 	query_data = data;
 	query_data->timeout = 0;
 
+	if (resolve_ip(query_data))
+	{
+		/* resolve_ip calls purple_dnsquery_resolved */
+		return FALSE;
+	}
+
 	if (purple_dnsquery_ui_resolve(query_data))
 	{
 		/* The UI is handling the resolve; we're done */
@@ -758,7 +787,6 @@ static gboolean
 resolve_host(gpointer data)
 {
 	PurpleDnsQueryData *query_data;
-	struct sockaddr_in sin;
 	GError *err = NULL;
 
 	query_data = data;
@@ -770,20 +798,7 @@ resolve_host(gpointer data)
 		return FALSE;
 	}
 
-	if (inet_aton(query_data->hostname, &sin.sin_addr))
-	{
-		/*
-		 * The given "hostname" is actually an IP address, so we
-		 * don't need to do anything.
-		 */
-		GSList *hosts = NULL;
-		sin.sin_family = AF_INET;
-		sin.sin_port = htons(query_data->port);
-		hosts = g_slist_append(hosts, GINT_TO_POINTER(sizeof(sin)));
-		hosts = g_slist_append(hosts, g_memdup(&sin, sizeof(sin)));
-		purple_dnsquery_resolved(query_data, hosts);
-	}
-	else
+	if (!resolve_ip(query_data))
 	{
 		/*
 		 * Spin off a separate thread to perform the DNS lookup so
