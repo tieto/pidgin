@@ -99,6 +99,12 @@ START_TEST(test_jabber_id_new)
 	assert_valid_jid("stuart@nödåtXäYZ.se/まりるーむ");
 	assert_valid_jid("mark.doliner@わいど.org");
 	assert_valid_jid("nick@まつ.おおかみ.net");
+	assert_valid_jid("paul@10.0.42.230/s");
+#if 0
+/* Uncomment these when jabber_domain_validate supports IPv6 addresses */
+	assert_valid_jid("paul@[::1]"); /* IPv6 */
+	assert_valid_jid("paul@[2001:470:1f05:d58::2]");
+#endif
 
 	assert_invalid_jid("@gmail.com");
 	assert_invalid_jid("@@gmail.com");
