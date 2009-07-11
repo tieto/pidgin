@@ -37,6 +37,8 @@ version 2.6.0 (??/??/2009):
 		* purple_debug_set_verbose
 		* purple_global_proxy_set_info
 		* purple_group_destroy
+		* purple_ipv4_address_is_valid
+		* purple_ipv6_address_is_valid
 		* purple_log_get_activity_score
 		* purple_markup_is_rtl
 		* purple_markup_escape_text
@@ -82,6 +84,7 @@ version 2.6.0 (??/??/2009):
 		* buddy-added and buddy-removed blist signals
 		* purple_buddy_get_local_alias
 		* purple_notify_user_info_remove_entry
+		* purple_ip_address_is_valid
 		* purple_status_type_set_primary_attr
 		* purple_status_type_add_attr
 		* purple_status_type_add_attrs

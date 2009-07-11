@@ -54,7 +54,7 @@ gboolean jabber_nodeprep_validate(const char *str)
 	return TRUE;
 }
 
-gboolean jabber_nameprep_validate(const char *str)
+gboolean jabber_domain_validate(const char *str)
 {
 	const char *c;
 
@@ -64,11 +64,24 @@ gboolean jabber_nameprep_validate(const char *str)
 	if(strlen(str) > 1023)
 		return FALSE;
 
-	/*
-	 * TODO: An IPv6 address of the form [2001:470:1f05:d58::2] is also
-	 * a valid XMPP domain portion.
-	 */
 	c = str;
+
+	if (*c == '[') {
+		/* Check if str is a valid IPv6 identifier */
+		const gchar *end_bracket = strstr(c, "]");
+		gboolean valid = FALSE;
+
+		if (!end_bracket || *(end_bracket + 1) != '\0')
+			return FALSE;
+
+		/* Ugly, but in-place */
+		*(gchar *)end_bracket = '\0';
+		valid = purple_ipv6_address_is_valid(c + 1);
+		*(gchar *)end_bracket = ']';
+
+		return valid;
+	}
+
 	while(c && *c) {
 		gunichar ch = g_utf8_get_char(c);
 		/* The list of characters allowed in domain names is pretty small */
@@ -271,7 +284,7 @@ jabber_id_new(const char *str)
 
 	/* and finally the jabber nodeprep */
 	if(!jabber_nodeprep_validate(jid->node) ||
-			!jabber_nameprep_validate(jid->domain) ||
+			!jabber_domain_validate(jid->domain) ||
 			!jabber_resourceprep_validate(jid->resource)) {
 		jabber_id_free(jid);
 		return NULL;

@@ -4446,6 +4446,7 @@ purple_email_is_valid(const char *address)
 	return ((c - domain) > 3 ? TRUE : FALSE);
 }
 
+/* TODO 3.0.0: Rename this to purple_ipv4_address_is_valid */
 gboolean
 purple_ip_address_is_valid(const char *ip)
 {
@@ -4458,6 +4459,51 @@ purple_ip_address_is_valid(const char *ip)
 	if (c != 4 || o1 < 0 || o1 > 255 || o2 < 0 || o2 > 255 || o3 < 0 || o3 > 255 || o4 < 0 || o4 > 255)
 		return FALSE;
 	return TRUE;
+}
+
+gboolean
+purple_ipv6_address_is_valid(const gchar *ip)
+{
+	const gchar *c;
+	gboolean double_colon = FALSE;
+	gint chunks = 1;
+	gint in = 0;
+
+	g_return_val_if_fail(ip != NULL, FALSE);
+
+	if (*ip == '\0')
+		return FALSE;
+
+	for (c = ip; *c; ++c) {
+		if ((*c >= '0' && *c <= '9') ||
+		        (*c >= 'a' && *c <= 'f') ||
+		        (*c >= 'A' && *c <= 'F')) {
+			if (++in > 4)
+				/* Only four hex digits per chunk */
+				return FALSE;
+			continue;
+		} else if (*c == ':') {
+			/* The start of a new chunk */
+			++chunks;
+			in = 0;
+			if (*(c + 1) == ':') {
+				/*
+				 * '::' indicates a consecutive series of chunks full
+				 * of zeroes. There can be only one of these per address.
+				 */
+				if (double_colon)
+					return FALSE;
+				double_colon = TRUE;
+			}
+		} else
+			return FALSE;
+	}
+
+	/*
+	 * Either we saw a '::' and there were fewer than 8 chunks -or-
+	 * we didn't see a '::' and saw exactly 8 chunks.
+	 */
+	return (double_colon && chunks < 8) || (!double_colon && chunks == 8);
 }
 
 /* Stolen from gnome_uri_list_extract_uris */
