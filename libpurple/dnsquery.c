@@ -77,6 +77,7 @@ struct _PurpleDnsQueryResolverProcess {
 };
 
 static GSList *free_dns_children = NULL;
+/* TODO: Make me a GQueue when we require >= glib 2.4 */
 static GSList *queued_requests = NULL;
 
 static int number_of_dns_children = 0;
@@ -621,6 +622,8 @@ resolve_host(gpointer data)
 		return FALSE;
 	}
 
+	queued_requests = g_slist_append(queued_requests, query_data);
+
 	handle_next_queued_request();
 
 	return FALSE;
@@ -649,8 +652,6 @@ purple_dnsquery_a(const char *hostname, int port,
 		purple_dnsquery_destroy(query_data);
 		g_return_val_if_reached(NULL);
 	}
-
-	queued_requests = g_slist_append(queued_requests, query_data);
 
 	purple_debug_info("dns", "DNS query for '%s' queued\n", query_data->hostname);
 

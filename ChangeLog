@@ -30,6 +30,8 @@ version 2.6.0 (??/??/2009):
 	* Don't do IPv6 address lookups if the computer does not have an IPv6
 	  address configured.
 	* Add support for receiving audio clips on MSN.
+	* Fix a leak when the UI provides its own DNS resolving UI op.
+	  (Aman Gupta)
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
@@ -45,7 +47,7 @@ version 2.6.0 (??/??/2009):
 	* Correctly show tooltip status for contacts with status messages.
 	  (Krzysztof "kkszysiu" Klinikowski)
 	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
-	* Support connection progress steps in Gadu-Gadu (Krzysztof "kkszysiu"
+	* Support connection progress steps in Gadu-Gadu.  (Krzysztof "kkszysiu"
 	  Klinikowski)
 
 	XMPP:
