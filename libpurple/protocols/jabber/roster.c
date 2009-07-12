@@ -118,10 +118,18 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 	}
 
 	if (pool) {
-		char *tmp = roster_groups_join(pool);
+		GString *tmp = g_string_new(NULL);
+		GSList *list = pool;
+		for ( ; list; list = list->next) {
+			tmp = g_string_append(tmp,
+					purple_group_get_name(purple_buddy_get_group(list->data)));
+			if (list->next)
+				tmp = g_string_append(tmp, ", ");
+		}
+
 		purple_debug_info("jabber", "jabber_roster_parse(): Removing %s from "
-		                  "groups: %s\n", jid, tmp);
-		g_free(tmp);
+		                  "groups: %s\n", jid, tmp->str);
+		g_string_free(tmp, TRUE);
 	}
 
 	if (groups) {
