@@ -107,9 +107,6 @@ void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
 	if (!purple_account_is_connected(account))
 		return;
 
-	if (!purple_status_is_active(status))
-		return;
-
 	if (purple_status_is_exclusive(status) && !purple_status_is_active(status)) {
 		/* An exclusive status can't be deactivated. You should just
 		 * activate some other exclusive status. */
