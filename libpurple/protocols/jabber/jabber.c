@@ -3439,8 +3439,9 @@ jabber_init_plugin(PurplePlugin *plugin)
 {
 	GHashTable *ui_info = purple_core_get_ui_info();
 	const gchar *ui_type;
-	const gchar *type = "pc"; /* default client type, if unknown or 
+	const gchar *type = "pc"; /* default client type, if unknown or
 								unspecified */
+	const gchar *ui_name = NULL;
 
 	jabber_plugin = plugin;
 
@@ -3456,7 +3457,12 @@ jabber_init_plugin(PurplePlugin *plugin)
 		}
 	}
 
-	jabber_add_identity("client", type, NULL, PACKAGE);
+	if (ui_info)
+		ui_name = g_hash_table_lookup(ui_info, "name");
+	if (ui_name == NULL)
+		ui_name = PACKAGE;
+
+	jabber_add_identity("client", type, NULL, ui_name);
 
 	/* initialize jabber_features list */
 	jabber_add_feature("jabber:iq:last", 0);
