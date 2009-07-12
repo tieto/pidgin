@@ -2226,7 +2226,7 @@ jabber_resource_has_capability(const JabberBuddyResource *jbr, const gchar *cap)
 	const JabberCapsNodeExts *exts;
 
 	if (!jbr->caps.info) {
-		purple_debug_error("jabber",
+		purple_debug_info("jabber",
 			"Unable to find caps: nothing known about buddy\n");
 		return FALSE;
 	}

@@ -45,10 +45,21 @@
 #define URL_START_OSCAR_SESSION "http://api.oscar.aol.com/aim/startOSCARSession"
 
 /*
- * Using clientLogin requires a developer ID.  This dev ID is owned by
- * the AIM account "markdoliner"
+ * Using clientLogin requires a developer ID.  This key is for libpurple.
+ * It is the default key for all libpurple-based clients.  AOL encourages
+ * UIs (especially ones with lots of users) to override this with their
+ * own key.  This key is owned by the AIM account "markdoliner"
+ *
+ * Keys can be managed at http://developer.aim.com/manageKeys.jsp
  */
-#define CLIENT_KEY "ma15d7JTxbmVG-RP"
+#define DEFAULT_CLIENT_KEY "ma15d7JTxbmVG-RP"
+
+static const char *get_client_key(OscarData *od)
+{
+	return oscar_get_ui_info_string(
+			od->icq ? "prpl-icq-clientkey" : "prpl-aim-clientkey",
+			DEFAULT_CLIENT_KEY);
+}
 
 /**
  * This is similar to purple_url_encode() except that it follows
@@ -276,10 +287,10 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 	/* Construct the GET parameters */
 	query_string = g_strdup_printf("a=%s"
 			"&f=xml"
-			"&k=" CLIENT_KEY
-			"&ts=%zu"
+			"&k=%s"
+			"&ts=%" PURPLE_TIME_T_MODIFIER
 			"&useTLS=0",
-			oscar_auth_url_encode(token), hosttime);
+			oscar_auth_url_encode(token), get_client_key(od), hosttime);
 	signature = generate_signature("GET", URL_START_OSCAR_SESSION,
 			query_string, session_key);
 	url = g_strdup_printf(URL_START_OSCAR_SESSION "?%s&sig_sha256=%s",
@@ -377,11 +388,11 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 		if (status_code == 330 && status_detail_code == 3011) {
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
-					_("Incorrect password."));
+					_("Incorrect password"));
 		} else if (status_code == 401 && status_detail_code == 3019) {
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-					_("AOL does not allow your screen name to authenticate via this site."));
+					_("AOL does not allow your screen name to authenticate here"));
 		} else
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR,
@@ -505,7 +516,7 @@ void send_client_login(OscarData *od, const char *username)
 
 	/* Construct the body of the HTTP POST request */
 	body = g_string_new("");
-	g_string_append_printf(body, "devId=" CLIENT_KEY);
+	g_string_append_printf(body, "devId=%s", get_client_key(od));
 	g_string_append_printf(body, "&f=xml");
 	g_string_append_printf(body, "&pwd=%s", oscar_auth_url_encode(password));
 	g_string_append_printf(body, "&s=%s", oscar_auth_url_encode(username));

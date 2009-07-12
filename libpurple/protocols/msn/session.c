@@ -334,15 +334,15 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 		case MSN_ERROR_UNSUPPORTED_PROTOCOL:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("Our protocol is not supported by the "
-							 "server."));
+							 "server"));
 			break;
 		case MSN_ERROR_HTTP_MALFORMED:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
-			msg = g_strdup(_("Error parsing HTTP."));
+			msg = g_strdup(_("Error parsing HTTP"));
 			break;
 		case MSN_ERROR_SIGN_OTHER:
 			reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
-			msg = g_strdup(_("You have signed on from another location."));
+			msg = g_strdup(_("You have signed on from another location"));
 			if (!purple_account_get_remember_password(session->account))
 				purple_account_set_password(session->account, NULL);
 			break;
@@ -355,7 +355,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 		case MSN_ERROR_SERV_DOWN:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("The MSN servers are going down "
-							 "temporarily."));
+							 "temporarily"));
 			break;
 		case MSN_ERROR_AUTH:
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
@@ -371,13 +371,13 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 			break;
 		default:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
-			msg = g_strdup(_("Unknown error."));
+			msg = g_strdup(_("Unknown error"));
 			break;
 	}
 
 	msn_session_disconnect(session);
 
-	purple_connection_error_reason (gc, reason, msg);
+	purple_connection_error_reason(gc, reason, msg);
 
 	g_free(msg);
 }

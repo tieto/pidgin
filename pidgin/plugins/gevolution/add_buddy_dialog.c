@@ -234,6 +234,7 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 	EBook *book;
 	gboolean status;
 	GList *cards, *c;
+	GError *err = NULL;
 
 	if (dialog->book != NULL)
 	{
@@ -250,10 +251,11 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 
 	gtk_list_store_clear(dialog->model);
 
-	if (!gevo_load_addressbook(uri, &book, NULL))
+	if (!gevo_load_addressbook(uri, &book, &err))
 	{
 		purple_debug_error("evolution",
-						 "Error retrieving default addressbook\n");
+						 "Error retrieving default addressbook: %s\n", err->message);
+		g_error_free(err);
 
 		return;
 	}

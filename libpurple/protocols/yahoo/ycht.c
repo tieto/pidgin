@@ -36,7 +36,7 @@
 #include "conversation.h"
 #include "util.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_packet.h"
 #include "ycht.h"
 #include "yahoochat.h"
@@ -285,9 +285,11 @@ static void ycht_packet_send_write_cb(gpointer data, gint source, PurpleInputCon
 	else if (ret <= 0) {
 		/* TODO: error handling */
 /*
+		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason(purple_account_get_connection(irc->account),
-			      PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			      _("Server has disconnected"));
+			      PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		g_free(tmp);
 */
 		return;
 	}
@@ -454,7 +456,7 @@ void ycht_connection_close(YchtConn *ycht)
 static void ycht_connection_error(YchtConn *ycht, const gchar *error)
 {
 
-	purple_notify_info(ycht->gc, NULL, _("Connection problem with the YCHT server."), error);
+	purple_notify_info(ycht->gc, NULL, _("Connection problem with the YCHT server"), error);
 	ycht_connection_close(ycht);
 }
 
@@ -473,13 +475,13 @@ static void ycht_pending(gpointer data, gint source, PurpleInputCondition cond)
 			/* No worries */
 			return;
 
-		tmp = g_strdup_printf(_("Lost connection with server\n%s"),
+		tmp = g_strdup_printf(_("Lost connection with server: %s"),
 				g_strerror(errno));
 		ycht_connection_error(ycht, tmp);
 		g_free(tmp);
 		return;
 	} else if (len == 0) {
-		ycht_connection_error(ycht, _("Server closed the connection."));
+		ycht_connection_error(ycht, _("Server closed the connection"));
 		return;
 	}
 
@@ -546,7 +548,7 @@ static void ycht_got_connected(gpointer data, gint source, const gchar *error_me
 	char *buf;
 
 	if (source < 0) {
-		ycht_connection_error(ycht, _("Unable to connect."));
+		ycht_connection_error(ycht, _("Unable to connect"));
 		return;
 	}
 
@@ -582,7 +584,7 @@ void ycht_connection_open(PurpleConnection *gc)
 	                       purple_account_get_int(account, "ycht-port", YAHOO_YCHT_PORT),
 	                       ycht_got_connected, ycht) == NULL)
 	{
-		ycht_connection_error(ycht, _("Connection problem"));
+		ycht_connection_error(ycht, _("Unable to connect"));
 		return;
 	}
 }

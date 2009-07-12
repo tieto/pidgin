@@ -28,7 +28,7 @@
 #include "internal.h"
 #include "prpl.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 
 #include <string.h>
 
@@ -214,8 +214,12 @@ static GHashTable *ht = NULL;
 
 void yahoo_init_colorht()
 {
+	if (ht != NULL)
+		/* Hash table has already been initialized */
+		return;
+
 	ht = g_hash_table_new(g_str_hash, g_str_equal);
-/* the numbers in comments are what gyach uses, but i think they're incorrect */
+	/* the numbers in comments are what gyach uses, but i think they're incorrect */
 	g_hash_table_insert(ht, "30", "<FONT COLOR=\"#000000\">"); /* black */
 	g_hash_table_insert(ht, "31", "<FONT COLOR=\"#0000FF\">"); /* blue */
 	g_hash_table_insert(ht, "32", "<FONT COLOR=\"#008080\">"); /* cyan */      /* 00b2b2 */
@@ -284,7 +288,12 @@ void yahoo_init_colorht()
 
 void yahoo_dest_colorht()
 {
+	if (ht == NULL)
+		/* Hash table has already been destroyed */
+		return;
+
 	g_hash_table_destroy(ht);
+	ht = NULL;
 }
 
 static int point_to_html(int x)

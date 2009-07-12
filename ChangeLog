@@ -1,7 +1,7 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.0 (??/??/2009):
-	General:
+	libpurple:
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
 	  project.  With some minor additions and clean ups from Paul Aurich.
 	* Voice & Video framework in libpurple, thanks to Mike Ruprecht's summer
@@ -10,12 +10,6 @@ version 2.6.0 (??/??/2009):
 	  in a group on the buddy list. (Paul Aurich)
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
-	* The Pidgin and Purple perl modules are no longer installed into @INC,
-	  this should hopefully prevent some minor confusion.
-	* Use GLib's implementations of SHA1, SHA256, and MD5 when available.
-	  (GLib 2.14 or higher)
-
-	libpurple:
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
 	* Report idle time 'From last message sent' should work properly.
 	* Show the invite message for buddies that requested authorization
@@ -32,6 +26,21 @@ version 2.6.0 (??/??/2009):
 	  "off" variable.  Set it to any value to turn it on and unset it to turn
 	  it off.  This will optionally be used to only show less useful debug
 	  information on an as-needed basis.
+	* Add support for receiving handwritten (ink) messages on MSN.
+	* Don't do IPv6 address lookups if the computer does not have an IPv6
+	  address configured.
+	* Add support for receiving audio clips on MSN.
+	* Fix a leak when the UI provides its own DNS resolving UI op.
+	  (Aman Gupta)
+	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
+
+	AIM and ICQ:
+	* Preliminary support for a new authentication scheme called
+	  "clientLogin."
+	* Fixed a bug where your away message sometimes would not get set when
+	  you first sign on.
+	* Make sure links in your away messages show up as links to other people.
+	* For ICQ, Never change the privacy setting specified by the user.
 
 	Gadu-Gadu:
 	* Accounts can specify a server to which to connect.
@@ -39,6 +48,8 @@ version 2.6.0 (??/??/2009):
 	* Correctly show tooltip status for contacts with status messages.
 	  (Krzysztof "kkszysiu" Klinikowski)
 	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
+	* Support connection progress steps in Gadu-Gadu.  (Krzysztof "kkszysiu"
+	  Klinikowski)
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
@@ -84,13 +95,16 @@ version 2.6.0 (??/??/2009):
 	* Display kicks (and the reasons given) in chat rooms when an occupant is
 	  kicked.
 
-	Yahoo:
+	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)
 	* Sending text messages (address to +<countrycode><phone number>).
 	  (Sulabh Mahajan)
 	* Addition of MSN buddies to Yahoo accounts by adding them as
 	  'msn/buddy@somedomain.com' is now supported.  (Sulabh Mahajan)
 	* Further fixes for buddy pictures, aliases etc.
+	* Yahoo! and Yahoo! JAPAN are now two separate protocol plugins that share
+	  common protocol code.  You can now have the same account on both
+	  networks.
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
@@ -124,6 +138,8 @@ version 2.6.0 (??/??/2009):
 	* Draw the user's buddy icon at the bottom of the Buddy List with rounded
 	  corners for visual consistency with the actual icons in the Buddy List.
 	  (Kosta Arvanitis)
+	* When file transfers are complete, the received file name written to the
+	  conversation window is now linked to the file.
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful

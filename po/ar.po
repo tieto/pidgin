@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-02 01:34-0700\n"
+"POT-Creation-Date: 2009-07-06 15:04-0700\n"
 "PO-Revision-Date: 2008-11-01 17:41+0200\n"
 "Last-Translator: Khaled Hosny <khaledhosny@eglug.org>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
@@ -2546,9 +2546,10 @@ msgid "Includes other IM clients' logs in the log viewer."
 msgstr "يُضمِّن سجلات عملاء التراسل الأخرى في عارض السجلات."
 
 #. * description
+#, fuzzy
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
@@ -2602,8 +2603,9 @@ msgstr "محاكاة الرسائل بلا اتصال"
 msgid "Save messages sent to an offline user as pounce."
 msgstr "احفظ الرسائل المرسلة إلى مستخدم غير متصل كإشعار."
 
+#, fuzzy
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 "المتبقي من الرسائل سيحفظ كإشعار. يمكنك تحرير/حذف الإشعار من مربع حوار `إشعار "
@@ -2851,14 +2853,16 @@ msgstr ""
 "تعذّر اكتشاف تثبيت ActiveTCL. إذا كنت ترغب في استخدام ملحقات TCL، ثبِّت "
 "ActiveTCL من   http://www.activestate.com\n"
 
+#, fuzzy
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
 "لم يُعثر على عدة أدوات أبل بونجور لويندوز، راجع الأسئلة الشائعة في: http://d."
 "pidgin.im/BonjourWindows لمزيد من المعلومات."
 
-msgid "Unable to listen for incoming IM connections\n"
+#, fuzzy
+msgid "Unable to listen for incoming IM connections"
 msgstr "تعذّر الاستماع إلى اتصالات التراسل الفوري الواردة\n"
 
 msgid ""
@@ -2911,14 +2915,21 @@ msgstr "%s أغلق المحادثة."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "تعذّر إرسال الرسالة، لا يمكن أن تبدأ المحادثة."
 
-msgid "Cannot open socket"
-msgstr "لا يمكن فتح المقبس"
+#, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"تعذّر إنشاء مقبس:\n"
+"%s"
 
-msgid "Could not bind socket to port"
+#, fuzzy, c-format
+msgid "Unable to bind socket to port: %s"
 msgstr "لا يمكن ربط المقبس بالمنفذ"
 
-msgid "Could not listen on socket"
-msgstr "لا يمكن الاستماع إلى المقبس"
+#, fuzzy, c-format
+msgid "Unable to listen on socket: %s"
+msgstr ""
+"تعذّر إنشاء مقبس:\n"
+"%s"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr "عطل أثناء التواصل مع mDNSResponder."
@@ -2965,13 +2976,16 @@ msgstr "احفظ قائمة الأصدقاء..."
 msgid "Load buddylist from file..."
 msgstr "حمّل قائمة الأصدقاء من ملف..."
 
-msgid "Fill in the registration fields."
+#, fuzzy
+msgid "You must fill in all registration fields"
 msgstr "املأ حقول التسجيل."
 
-msgid "Passwords do not match."
+#, fuzzy
+msgid "Passwords do not match"
 msgstr "كلمة السر غير متطابقة."
 
-msgid "Unable to register new account. Error occurred.\n"
+#, fuzzy
+msgid "Unable to register new account.  An unknown error occurred."
 msgstr "تعذّر تسجيل حساب جديد. حدث خطأ.\n"
 
 msgid "New Gadu-Gadu Account Registered"
@@ -2983,14 +2997,15 @@ msgstr "اكتمل التسجيل بنجاح!"
 msgid "Password"
 msgstr "كلمة السّر"
 
-msgid "Password (retype)"
-msgstr "أعد كتابة كلمة السر"
+msgid "Password (again)"
+msgstr "كلمة السر (مجددًا)"
 
-msgid "Enter current token"
-msgstr "أدخل الرمز الحالي"
+msgid "Enter captcha text"
+msgstr ""
 
-msgid "Current token"
-msgstr "الرمز الحالي"
+#, fuzzy
+msgid "Captcha"
+msgstr "صورة كابتشا"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "سجّل حساب Gadu-Gadu جديد"
@@ -3043,6 +3058,15 @@ msgstr "غيّرت كلمة السر بنجاح"
 msgid "Current password"
 msgstr "كلمة السر الحالية"
 
+msgid "Password (retype)"
+msgstr "أعد كتابة كلمة السر"
+
+msgid "Enter current token"
+msgstr "أدخل الرمز الحالي"
+
+msgid "Current token"
+msgstr "الرمز الحالي"
+
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr "من فضلك، أدخل كلمة السر الحالية وكلمة السر الجديدة لـ UIN: "
 
@@ -3090,8 +3114,8 @@ msgstr "لا يوجد مستخدمون مطابقون"
 msgid "There are no users matching your search criteria."
 msgstr "لا يوجد مستخدمون يطابقون معيار البحث."
 
-msgid "Unable to read socket"
-msgstr "تعذّرت قراءة المقبس"
+msgid "Unable to read from socket"
+msgstr "تعذّرت القراءة من المقبس"
 
 msgid "Buddy list downloaded"
 msgstr "جُلِبَت قائمة الأصدقاء"
@@ -3105,8 +3129,14 @@ msgstr "حُفِظت قائمة الأصدقاء"
 msgid "Your buddy list was stored on the server."
 msgstr "تم حفظ قائمة أصدقائك على الخادوم."
 
-msgid "Connection failed."
-msgstr "فشل الاتصال."
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
+msgid "Connected"
+msgstr "متَّصل"
+
+msgid "Connection failed"
+msgstr "فشل الاتصال"
 
 msgid "Add to chat"
 msgstr "أضف إلى الدردشة"
@@ -3114,10 +3144,14 @@ msgstr "أضف إلى الدردشة"
 msgid "Chat _name:"
 msgstr "ا_سم الدردشة:"
 
-#. should this be a settings error?
-#, fuzzy
-msgid "Unable to resolve server"
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
 msgstr "تعذّر الاتصال بالخادوم."
+
+#. 1. connect to server
+#. connect to the server
+msgid "Connecting"
+msgstr "يتّصل"
 
 msgid "Chat error"
 msgstr "عُطل في الدردشة"
@@ -3125,7 +3159,8 @@ msgstr "عُطل في الدردشة"
 msgid "This chat name is already in use"
 msgstr "اسم الدردشة هذا مستخدم بالفعلً"
 
-msgid "Not connected to the server."
+#, fuzzy
+msgid "Not connected to the server"
 msgstr "غير متصل بالخادوم."
 
 msgid "Find buddies..."
@@ -3185,7 +3220,8 @@ msgstr "لم يُحدد أي موضوع"
 msgid "File Transfer Failed"
 msgstr "فشل إرسال الملف"
 
-msgid "Could not open a listening port."
+#, fuzzy
+msgid "Unable to open a listening port."
 msgstr "لا يمكن فتح منفذ استماع."
 
 msgid "Error displaying MOTD"
@@ -3201,8 +3237,18 @@ msgstr "لا توجد \"رسالة يوم\" مرتبطة بهذا الاتصال
 msgid "MOTD for %s"
 msgstr "\"رسالة اليوم\" لأجل %s "
 
-msgid "Server has disconnected"
-msgstr "قطع الخادومُ الاتصال"
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, fuzzy, c-format
+msgid "Lost connection with server: %s"
+msgstr ""
+"فُقد الاتصال بالخادوم:\n"
+"%s"
 
 msgid "View MOTD"
 msgstr "اعرض \"رسالة اليوم\""
@@ -3217,22 +3263,20 @@ msgstr "كلمة ال_سر:"
 msgid "IRC nick and server may not contain whitespace"
 msgstr "لا يمكن للاسم المستعار في IRC أن يحوي مسافة خاوية"
 
-#. 1. connect to server
-#. connect to the server
-msgid "Connecting"
-msgstr "يتّصل"
-
 msgid "SSL support unavailable"
 msgstr "لا يتوفر دعم SSL"
 
-msgid "Couldn't create socket"
-msgstr "تعذَّر إنشاء مقبس"
+msgid "Unable to connect"
+msgstr "تعذّر الاتصال"
 
-msgid "Couldn't connect to host"
-msgstr "لا يمكن الاتصال بالخادوم"
+#. this is a regular connect, error out
+#, fuzzy, c-format
+msgid "Unable to connect: %s"
+msgstr "تعذّر الاتصال ب%s"
 
-msgid "Read error"
-msgstr "خطأ في القراءة"
+#, fuzzy, c-format
+msgid "Server closed the connection"
+msgstr "أَغلقَ الخادومُ الاتصال"
 
 msgid "Users"
 msgstr "المستخدمون"
@@ -3690,10 +3734,12 @@ msgstr "فشل الأمر اللحظي"
 msgid "execute"
 msgstr "نفِّذ"
 
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
+#, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
 msgstr "يتطلب الخادوم TLS/SSL للولوج. لا يوجد دعم TLS/SSL."
 
-msgid "You require encryption, but no TLS/SSL support found."
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
 msgstr "تطلب تعمية، لكن لا يوجد دعم TLS/SSL."
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
@@ -3710,7 +3756,12 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "استيثاق بالنص الصريح"
 
-msgid "Invalid response from server."
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "فشل الاستيثاق"
+
+#, fuzzy
+msgid "Invalid response from server"
 msgstr "استجابة غير صحيحة من الخادوم."
 
 msgid "Server does not use any supported authentication method"
@@ -3722,7 +3773,8 @@ msgstr "أنت تتطلب استخدام التعمية لكنها غير متا
 msgid "Invalid challenge from server"
 msgstr "تحدٍ غير صحيح من الخادوم"
 
-msgid "SASL error"
+#, fuzzy, c-format
+msgid "SASL error: %s"
 msgstr "عطل في SASL"
 
 msgid "The BOSH connection manager terminated your session."
@@ -3742,10 +3794,8 @@ msgstr ""
 "تعذَّر الاتصال بالخادوم:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with the server: %s"
 msgstr ""
 "تعذَّر الاتصال بالخادوم:\n"
 "%s"
@@ -3753,12 +3803,6 @@ msgstr ""
 #, fuzzy
 msgid "Unable to establish SSL connection"
 msgstr "تعذّر استبداء الاتصال"
-
-msgid "Unable to create socket"
-msgstr "تعذّر إنشاء مقبس"
-
-msgid "Write error"
-msgstr "عطل في الكتابة"
 
 msgid "Full Name"
 msgstr "الاسم الكامل"
@@ -3829,159 +3873,6 @@ msgstr "نظام التشغيل"
 msgid "Local Time"
 msgstr "الملف المحلي:"
 
-msgid "Last Activity"
-msgstr "آخر نشاط"
-
-msgid "Service Discovery Info"
-msgstr "معلومات اكتشاف الخدمة"
-
-msgid "Service Discovery Items"
-msgstr "عناصر اكتشاف الخدمة"
-
-msgid "Extended Stanza Addressing"
-msgstr "عنونة الأبيات الممتدّة"
-
-msgid "Multi-User Chat"
-msgstr "دردشة متعددة المستخدمين"
-
-msgid "Multi-User Chat Extended Presence Information"
-msgstr "معلومات التواجد الممتدة للدردشة متعددة المستخدمين"
-
-msgid "In-Band Bytestreams"
-msgstr "تيار بايتات داخل الحزمة"
-
-msgid "Ad-Hoc Commands"
-msgstr "أوامر لحظية"
-
-msgid "PubSub Service"
-msgstr "خدمة PubSub"
-
-msgid "SOCKS5 Bytestreams"
-msgstr "تيار بايتات SOCKS5"
-
-msgid "Out of Band Data"
-msgstr "بيانات خارج الحزمة"
-
-msgid "XHTML-IM"
-msgstr "XHTML-IM"
-
-msgid "In-Band Registration"
-msgstr "التسجيل داخل الحزمة"
-
-msgid "User Location"
-msgstr "موضع المستخدم"
-
-msgid "User Avatar"
-msgstr "أيقونة المستخدم"
-
-msgid "Chat State Notifications"
-msgstr "تنويه حالة الدردشة"
-
-msgid "Software Version"
-msgstr "إصدارة البرمجية"
-
-msgid "Stream Initiation"
-msgstr "بدأ التيار"
-
-msgid "File Transfer"
-msgstr "نقل الملفّات "
-
-msgid "User Mood"
-msgstr "مزاج المستخدم"
-
-msgid "User Activity"
-msgstr "نشاط المستخدم"
-
-msgid "Entity Capabilities"
-msgstr "إمكانات الكيان"
-
-msgid "Encrypted Session Negotiations"
-msgstr "مفاوضات الجلسات المعمّاة"
-
-msgid "User Tune"
-msgstr "نغمة المستخدم"
-
-msgid "Roster Item Exchange"
-msgstr "تبادل دوراني للعناصر"
-
-msgid "Reachability Address"
-msgstr "عنوان الوصولية"
-
-msgid "User Profile"
-msgstr "لاحة المستخدم"
-
-msgid "Jingle"
-msgstr "Jingle"
-
-msgid "Jingle Audio"
-msgstr "Jingle Audio"
-
-msgid "User Nickname"
-msgstr "كنية المستخدم"
-
-msgid "Jingle ICE UDP"
-msgstr "Jingle ICE UDP"
-
-msgid "Jingle ICE TCP"
-msgstr "Jingle ICE TCP"
-
-msgid "Jingle Raw UDP"
-msgstr "Jingle Raw UDP"
-
-msgid "Jingle Video"
-msgstr "فيديو Jingle"
-
-msgid "Jingle DTMF"
-msgstr "Jingle DTMF"
-
-msgid "Message Receipts"
-msgstr "إيصالات الرسائل"
-
-msgid "Public Key Publishing"
-msgstr "نشر المفتاح العلني"
-
-msgid "User Chatting"
-msgstr "المستخدم يدردش"
-
-msgid "User Browsing"
-msgstr "المستخدم يتصفّح"
-
-msgid "User Gaming"
-msgstr "المستخدم يلعب"
-
-msgid "User Viewing"
-msgstr "المستخدم يطالع"
-
-msgid "Ping"
-msgstr "بِنْج"
-
-msgid "Stanza Encryption"
-msgstr "تعمية الأبيات"
-
-msgid "Entity Time"
-msgstr "وقت الكيان"
-
-msgid "Delayed Delivery"
-msgstr "تسليم متأخر"
-
-msgid "Collaborative Data Objects"
-msgstr "عناصر البيانات التشاركيّة"
-
-msgid "File Repository and Sharing"
-msgstr "مستودع الملفات والمشاركة"
-
-msgid "STUN Service Discovery for Jingle"
-msgstr "اكتشاف خدمة STUN لـ Jingle"
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr "التفاوض المبسط لجلسة معمّاة"
-
-msgid "Hop Check"
-msgstr "تدقيق القفزات"
-
-msgid "Capabilities"
-msgstr "الإمكانات"
-
 msgid "Priority"
 msgstr "الأولويّة"
 
@@ -3993,7 +3884,7 @@ msgid "%s ago"
 msgstr ""
 
 #, fuzzy
-msgid "Logged off"
+msgid "Logged Off"
 msgstr "والِج بالفعل"
 
 msgid "Middle Name"
@@ -4174,16 +4065,13 @@ msgstr "لا يوجد مستخدمون مطابقون"
 msgid "Roles:"
 msgstr "الدّور"
 
-msgid "Ping timeout"
+#, fuzzy
+msgid "Ping timed out"
 msgstr "مهلة بِنْج"
 
-msgid "Read Error"
-msgstr "عطل في القراءة"
-
-#, c-format
 msgid ""
-"Could not find alternative XMPP connection methods after failing to connect "
-"directly.\n"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
 
 msgid "Invalid XMPP ID"
@@ -4358,9 +4246,6 @@ msgstr "تم تغيير كلمة السرّ."
 
 msgid "Error changing password"
 msgstr "عطل أثناء تغيير كلمة السر"
-
-msgid "Password (again)"
-msgstr "كلمة السر (مجددًا)"
 
 msgid "Change XMPP Password"
 msgstr "غيّر كلمة سر XMPP"
@@ -4764,6 +4649,14 @@ msgstr "خطأ في تحليل XML"
 msgid "Unknown Error in presence"
 msgstr "خطأ مجهول في التواجد"
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr "عطل أثناء الانضمام للدردشة %s"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "عطل في دردشة %s"
+
 msgid "Create New Room"
 msgstr "أنشئ غرفة جديدة"
 
@@ -4778,16 +4671,20 @@ msgstr "ا_عدّ الغرفة"
 msgid "_Accept Defaults"
 msgstr "ا_قبل المبدئية"
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr "عطل أثناء الانضمام للدردشة %s"
+#, fuzzy
+msgid "No reason"
+msgstr "لا سبب معطى"
 
-#, c-format
-msgid "Error in chat %s"
-msgstr "عطل في دردشة %s"
+#, fuzzy, c-format
+msgid "You have been kicked: (%s)"
+msgstr "لقد طردك %s: (%s)"
+
+#, fuzzy, c-format
+msgid "Kicked (%s)"
+msgstr "طردك %s (%s)"
 
 #, fuzzy
-msgid "An error occured on the in-band bytestream transfer\n"
+msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "حدث عطل أثناء فتح الملف."
 
 #, fuzzy
@@ -5276,9 +5173,6 @@ msgstr "ابدأ _دردشة"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr "MSN تتطلب دعم SSL. رجاءً ثبت مكتبة SSL مدعومة."
 
-msgid "Failed to connect to server."
-msgstr "فشل الاتصال بالخادوم."
-
 msgid "Error retrieving profile"
 msgstr "عطل في جلب اللاحة"
 
@@ -5551,9 +5445,6 @@ msgstr "الرسالة ربما تكون لم ترسل لحدوث عطل ترم�
 msgid "Message was not sent because an unknown error occurred."
 msgstr "الرسالة ربما تكون لم ترسل لحدوث عطل مجهول."
 
-msgid "Unable to connect"
-msgstr "تعذّر الاتصال"
-
 msgid "Writing error"
 msgstr "عطل في الكتابة"
 
@@ -5568,19 +5459,23 @@ msgstr ""
 "خطأ اتصال من خادوم %s:\n"
 "%s"
 
-msgid "Our protocol is not supported by the server."
+#, fuzzy
+msgid "Our protocol is not supported by the server"
 msgstr "لا يدعم الخادوم هذا البروتوكول."
 
-msgid "Error parsing HTTP."
+#, fuzzy
+msgid "Error parsing HTTP"
 msgstr "خطأ في تحليل HTTP."
 
-msgid "You have signed on from another location."
+#, fuzzy
+msgid "You have signed on from another location"
 msgstr "قمت بالدخول من موقع آخر."
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr "خواديم MSN غير متاحة مؤقتًا. من فضلك انتظر و حاول مرة ثانية."
 
-msgid "The MSN servers are going down temporarily."
+#, fuzzy
+msgid "The MSN servers are going down temporarily"
 msgstr "خادوم MSN سيطفأ مؤقتا."
 
 #, c-format
@@ -5590,9 +5485,6 @@ msgstr "تعذّر الاستيثاق: %s"
 msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr "قائمة أصدقائك في MSN غير متاحة مؤقتًا. من فضلك انتظر و حاول مرة ثانية."
-
-msgid "Unknown error."
-msgstr "خطأ مجهول."
 
 msgid "Handshaking"
 msgstr "المصافحة"
@@ -5689,6 +5581,9 @@ msgstr "ملحقة بروتوكول MSN"
 #, c-format
 msgid "%s is not a valid group."
 msgstr "%s ليست مجموعة صالحة."
+
+msgid "Unknown error."
+msgstr "خطأ مجهول."
 
 #, c-format
 msgid "%s on %s (%s)"
@@ -5815,12 +5710,6 @@ msgstr[5] ""
 msgid "Add contacts from server"
 msgstr "أضف معارف من الخادوم"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-msgid "Connected"
-msgstr "متَّصل"
-
 #, c-format
 msgid "Protocol error, code %d: %s"
 msgstr "عطل بروتوكول، رمز %d: %s"
@@ -5843,16 +5732,6 @@ msgstr "عطل في MySpaceIM"
 
 msgid "Invalid input condition"
 msgstr "حالة دخل غير صحيحة"
-
-msgid "Read buffer full (2)"
-msgstr "براح القراءة ممتليء (2)"
-
-msgid "Unparseable message"
-msgstr "رسالة يتعذّر تحليلها"
-
-#, c-format
-msgid "Couldn't connect to host: %s (%d)"
-msgstr "تعذّر الاتصال بالخادوم: %s (%d)"
 
 msgid "Failed to add buddy"
 msgstr "فشلت إضافة صديق"
@@ -5934,6 +5813,12 @@ msgstr "مجموع الأصدقاء"
 
 msgid "Client Version"
 msgstr "إصدارة العميل"
+
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
+msgstr ""
 
 msgid "MySpaceIM - Username Available"
 msgstr "‏MySpaceIM - الاسم غير مُتاح"
@@ -6189,9 +6074,9 @@ msgstr "المستخدم إما أن يكون غير متصل أو أنك قد �
 msgid "Unknown error: 0x%X"
 msgstr "خطأ مجهول: 0x%X"
 
-#, c-format
-msgid "Login failed (%s)."
-msgstr "فشل الولوج (%s)."
+#, fuzzy, c-format
+msgid "Unable to login: %s"
+msgstr "تعذّر إرسال ping للمستخدم %s"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6292,9 +6177,6 @@ msgstr "اجتماع GroupWise %d"
 msgid "Authenticating..."
 msgstr "يجري الاستيثاق..."
 
-msgid "Unable to connect to server."
-msgstr "تعذّر الاتصال بالخادوم."
-
 msgid "Waiting for response..."
 msgstr "في انتظار رد..."
 
@@ -6318,21 +6200,16 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "هل تود الانضمام للمحادثة؟"
 
-msgid "You have been logged out because you logged in at another workstation."
-msgstr "أولجت خارجا لأنك ولجت من حاسوب آخر."
-
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
 msgstr "يبدو أن %s غير متصل و لم يتسلم الرسالة التي أرسلتها توا.."
 
+#, fuzzy
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr "تعذّر الاتصال بالخادوم. من فضلك أدخل عنوان الخادوم الذي تود الاتصال به."
-
-msgid "Error. SSL support is not installed."
-msgstr "عطل. دعم SSL غير مثبت."
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "لقد فُضَّ هذا الاجتماع. لا يمكن إرسال المزيد من الرسائل."
@@ -6372,10 +6249,7 @@ msgstr ""
 msgid "Error requesting "
 msgstr "خطأ أثناء استجلاء %s"
 
-msgid "Incorrect password."
-msgstr "كلمة سر خطأ."
-
-msgid "AOL does not allow your screen name to authenticate via this site."
+msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
 msgid "Could not join chat room"
@@ -6384,18 +6258,8 @@ msgstr "تعذّر الانضمام لقناة الدردشة"
 msgid "Invalid chat room name"
 msgstr "اسم غرفة دردشة غير صالح"
 
-msgid "Server closed the connection."
-msgstr "أَغلقَ الخادومُ الاتصال"
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr ""
-"فُقد الاتصال بالخادوم:\n"
-"%s"
-
-msgid "Received invalid data on connection with server."
+#, fuzzy
+msgid "Received invalid data on connection with server"
 msgstr "استقبلت بيانات غير صالحة عند الاتصال بالخادوم."
 
 #. *< type
@@ -6443,7 +6307,8 @@ msgstr "فقد الاتصال مع المستخدم البعيد:<br>%s"
 msgid "Received invalid data on connection with remote user."
 msgstr "استقبلت بيانات غير صالحة عند الاتصال بمستخدم بعيد."
 
-msgid "Could not establish a connection with the remote user."
+#, fuzzy
+msgid "Unable to establish a connection with the remote user."
 msgstr "لا يمكن عمل اتصال بالمستخدم البعيد"
 
 msgid "Direct IM established"
@@ -6642,21 +6507,15 @@ msgstr "مستوى التحذير"
 msgid "Buddy Comment"
 msgstr "تعليق الصديق"
 
-#, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to authentication server: %s"
 msgstr ""
 "تعذّر الاتصال بخادوم الاستيثاق:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr ""
-"تعذّر الاتصال بخادوم BOS:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to BOS server: %s"
+msgstr "تعذّر الاتصال بالخادوم."
 
 msgid "Username sent"
 msgstr "حُدِّد اسم المُستخدم"
@@ -6668,11 +6527,11 @@ msgstr "أُنشئ الاتصال، أرسلت الكوكي"
 msgid "Finalizing connection"
 msgstr "يُنهي الاتصال"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
 "تعذّر الولوج: لم يمكن الولوج باسم %s لأنه اسم غير صحيح. يجب أن يكون الاسم "
 "عنوان بريد صحيح، أو أن يبدأ بحرف و يحوي فقط أحرفا و أرقاما و مسافات، أو "
@@ -6685,26 +6544,22 @@ msgstr "قد ينقطع اتصالك قريبا. طالع %s للتحديثات.
 msgid "Unable to get a valid AIM login hash."
 msgstr "تعذّر جلب تلبيدة ولوج صحيحة إلى AIM."
 
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "قد ينقطع اتصالك قريبا. طالع %s للتحديثات."
-
 msgid "Unable to get a valid login hash."
 msgstr "تعذّر جلب تلبيدة ولوج صحيحة."
-
-msgid "Could Not Connect"
-msgstr "تعذّر الاتصال"
 
 msgid "Received authorization"
 msgstr "استُقبِل الاستيثاق"
 
 #. Unregistered username
 #. uid is not exist
-msgid "Invalid username."
-msgstr "اسم مستخدم غير صالح"
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "المستخدم غير موجود"
 
 #. Suspended account
-msgid "Your account is currently suspended."
+#, fuzzy
+msgid "Your account is currently suspended"
 msgstr "حسابك مُعَلّق حاليا."
 
 #. service temporarily unavailable
@@ -6724,7 +6579,8 @@ msgstr ""
 "قمت بالاتصال و قطعته مرات عديدة في وقت قصير جدا. انتظر عشر دقائق وحاول "
 "مجددا. إذا استمريت في المحاولة الآن فسينبغي لك الانتظار مدة أطول."
 
-msgid "The SecurID key entered is invalid."
+#, fuzzy
+msgid "The SecurID key entered is invalid"
 msgstr "مفتاح SecurID المدخل غير صالح."
 
 msgid "Enter SecurID"
@@ -6913,6 +6769,9 @@ msgstr "متصل منذ"
 msgid "Member Since"
 msgstr "عضو منذ"
 
+msgid "Capabilities"
+msgstr "الإمكانات"
+
 msgid "Profile"
 msgstr "لاحة"
 
@@ -7090,9 +6949,9 @@ msgstr[5] "لقد تجاوز طول رسالة الغياب الحد الأقص�
 msgid "Away message too long."
 msgstr "رسالة \"غياب\" أطول من المسموح."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -7118,9 +6977,9 @@ msgstr ""
 msgid "Orphans"
 msgstr "أيتام"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 "تعذّرت إضافة الصديق %s لأن لديك أصدقاء أكثر من المسموح به في قائمة أصدقائك. "
@@ -7129,8 +6988,8 @@ msgstr ""
 msgid "(no name)"
 msgstr "(بلا اسم)"
 
-#, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+#, fuzzy, c-format
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr "تعذّرت إضافة الصديق %s لسبب مجهول."
 
 #, c-format
@@ -7921,7 +7780,7 @@ msgid "Update interval (seconds)"
 msgstr "فترات التحديث"
 
 #, fuzzy
-msgid "Cannot decrypt server reply"
+msgid "Unable to decrypt server reply"
 msgstr "تعذّر تظهير رد الخادوم المُستَلَم"
 
 #, c-format
@@ -7946,10 +7805,6 @@ msgstr "تتطلب التسجيل"
 #, fuzzy, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
 msgstr "رمز رد غير معروف أثناء الولوج (0x%02X)"
-
-#, fuzzy
-msgid "Could not decrypt server reply"
-msgstr "تعذّر تظهير رد الخادوم المُستَلَم"
 
 #, fuzzy
 msgid "Requesting captcha"
@@ -7989,20 +7844,8 @@ msgstr ""
 "رمز رد غير معروف أثناء الولوج (0x%02X):\n"
 "%s"
 
-msgid "Unable to connect."
-msgstr "تعذّر الاتصال."
-
 msgid "Socket error"
 msgstr "عطل في المقبس"
-
-msgid "Unable to read from socket"
-msgstr "تعذّرت القراءة من المقبس"
-
-msgid "Write Error"
-msgstr "عطل في الكتابة"
-
-msgid "Connection lost"
-msgstr "قُطع الاتصال"
 
 #, fuzzy
 msgid "Getting server"
@@ -8012,8 +7855,9 @@ msgstr "اجلب الخادوم ..."
 msgid "Requesting token"
 msgstr "مُنِع الطلب"
 
-msgid "Couldn't resolve host"
-msgstr "لا يمكن استجلاء المضيف"
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "تعذّر الاتصال بالخادوم."
 
 msgid "Invalid server or port"
 msgstr "خادوم أو منفذ غير صحيح"
@@ -8066,7 +7910,7 @@ msgid "QQ Qun Command"
 msgstr ""
 
 #, fuzzy
-msgid "Could not decrypt login reply"
+msgid "Unable to decrypt login reply"
 msgstr "تعذر تظهير رد الولوج"
 
 msgid "Unknown LOGIN CMD"
@@ -8085,9 +7929,6 @@ msgstr "أُرسِل الملف"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "ألغى %d نقل %s"
-
-msgid "Connection closed (writing)"
-msgstr "أُغلِق الاتصال (تدري الكتابة)"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8142,17 +7983,6 @@ msgstr "وضع مدير Sametime الإعلان التالي على الخادو
 msgid "Sametime Administrator Announcement"
 msgstr "إعلان من مدير Sametime"
 
-msgid "Connection reset"
-msgstr "صُفِّر الاتصال"
-
-#, c-format
-msgid "Error reading from socket: %s"
-msgstr "عطل في القراءة من المقبس: %s"
-
-#. this is a regular connect, error out
-msgid "Unable to connect to host"
-msgstr "تعذّر الاتصال بالخادوم"
-
 #, c-format
 msgid "Announcement from %s"
 msgstr "إعلان من %s"
@@ -8174,6 +8004,9 @@ msgstr "سماعات"
 
 msgid "Video Camera"
 msgstr "كاميرا فيديو"
+
+msgid "File Transfer"
+msgstr "نقل الملفّات "
 
 msgid "Supports"
 msgstr "الدعم"
@@ -8980,6 +8813,9 @@ msgstr ""
 msgid "Network Statistics"
 msgstr "إحصائيات الشبكة"
 
+msgid "Ping"
+msgstr "بِنْج"
+
 msgid "Ping failed"
 msgstr "فشل بِنْج"
 
@@ -9039,7 +8875,8 @@ msgstr "نوع مفتاح علني غير مدعوم"
 msgid "Disconnected by server"
 msgstr "قطع الخادوم الاتصال"
 
-msgid "Error during connecting to SILC Server"
+#, fuzzy
+msgid "Error connecting to SILC Server"
 msgstr "خطأ أثناء الاتصال بخادوم SILC"
 
 msgid "Key Exchange failed"
@@ -9049,26 +8886,26 @@ msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr "فشلت متابعة الجلسة المفصولة. اضغط \"أعِد الاتصال\" لتُنشئ اتصالا جديدا."
 
-msgid "Connection failed"
-msgstr "فشل الاتصال"
-
 msgid "Performing key exchange"
 msgstr "يجري تبادل المفاتيح"
 
-msgid "Unable to create connection"
-msgstr "تعذّر إنشاء اتصال"
-
-msgid "Could not load SILC key pair"
+#, fuzzy
+msgid "Unable to load SILC key pair"
 msgstr "تعذّر تحميل زوج مفاتيح SILC"
 
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "يجري الاتصال بخادوم SILC"
 
+#, fuzzy
+msgid "Unable to not load SILC key pair"
+msgstr "تعذّر تحميل زوج مفاتيح SILC"
+
 msgid "Out of memory"
 msgstr "نفدت الذّاكرة"
 
-msgid "Cannot initialize SILC protocol"
+#, fuzzy
+msgid "Unable to initialize SILC protocol"
 msgstr "لا يمكن استبداء بروتوكول SILC"
 
 msgid "Error loading SILC key pair"
@@ -9405,7 +9242,8 @@ msgstr "وقع و تحقق من كل الرسائل"
 msgid "Creating SILC key pair..."
 msgstr "يجري توليد زوج مفاتيح SILC..."
 
-msgid "Cannot create SILC key pair\n"
+#, fuzzy
+msgid "Unable to create SILC key pair"
 msgstr "تعذّر توليد زوج مفاتيح SILC\n"
 
 #. Hint for translators: Please check the tabulator width here and in
@@ -9497,6 +9335,9 @@ msgstr "السبورة"
 msgid "No server statistics available"
 msgstr "لا تتوفر إحصائيات للخادوم"
 
+msgid "Error during connecting to SILC Server"
+msgstr "خطأ أثناء الاتصال بخادوم SILC"
+
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "فشل: إصدارة قديمة. رقّ العميل."
@@ -9537,30 +9378,27 @@ msgstr "فشل: كوكي غير صالحة"
 msgid "Failure: Authentication failed"
 msgstr "فشل: فشل الاستيثاق"
 
-msgid "Cannot initialize SILC Client connection"
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
 msgstr "تعذّر استبداء اتصال عميل SILC"
 
 msgid "John Noname"
 msgstr "اللهو الخفي"
 
-#, c-format
-msgid "Could not load SILC key pair: %s"
+#, fuzzy, c-format
+msgid "Unable to load SILC key pair: %s"
 msgstr "تعذّر تحميل زوج مفاتيح SILC: %s"
 
-msgid "Could not write"
-msgstr "تعذّرت الكتابة"
+msgid "Unable to create connection"
+msgstr "تعذّر إنشاء اتصال"
 
-msgid "Could not connect"
-msgstr "تعذّر الاتصال"
-
-msgid "Unknown server response."
+#, fuzzy
+msgid "Unknown server response"
 msgstr "استجابة خادوم مجهولة."
 
-msgid "Could not create listen socket"
-msgstr "لايمكن إنشاء مقبس استماع"
-
-msgid "Could not resolve hostname"
-msgstr "لا يمكن استجلاء اسم المضيف"
+#, fuzzy
+msgid "Unable to create listen socket"
+msgstr "تعذّر إنشاء مقبس"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "لا يمكن أن تحوي أسماء مستخدمي SIP فراغات أو رمز @"
@@ -9602,6 +9440,83 @@ msgstr "استوثق من المستخدم"
 msgid "Auth Domain"
 msgstr "استوثق من النطاق"
 
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr ""
+"join &lt;room&gt;: \n"
+"انضم إلي غرفة دردشة في شبكة ياهو"
+
+msgid "list: List rooms on the Yahoo network"
+msgstr ""
+"list: \n"
+"اسرد الغرف في شبكة ياهو"
+
+msgid "doodle: Request user to start a Doodle session"
+msgstr ""
+"doodle: \n"
+"اطلب من المستخدم أن يبدأ جلسة Doodle"
+
+msgid "Yahoo ID..."
+msgstr "هويّة ياهو..."
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! Protocol Plugin"
+msgstr "ملحقة بروتوكول ياهو"
+
+msgid "Pager server"
+msgstr "خادوم الاستدعاء"
+
+msgid "Pager port"
+msgstr "منفذ الاستدعاء"
+
+msgid "File transfer server"
+msgstr "خادوم نقل الملفات"
+
+msgid "File transfer port"
+msgstr "منفذ نقل الملفات"
+
+msgid "Chat room locale"
+msgstr "محليّة غرفة الدردشة"
+
+msgid "Ignore conference and chatroom invitations"
+msgstr "تجاهل دعوات الاجتماعات و غرف الدردشة"
+
+msgid "Chat room list URL"
+msgstr "مسار قائمة غرفة المحادثة."
+
+msgid "Yahoo Chat server"
+msgstr "خادوم دردشة ياهو"
+
+msgid "Yahoo Chat port"
+msgstr "منفذ دردشة ياهو"
+
+#, fuzzy
+msgid "Yahoo JAPAN ID..."
+msgstr "هويّة ياهو..."
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr "ملحقة بروتوكول ياهو"
+
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9630,28 +9545,18 @@ msgstr "رفضت إضافة صديق"
 msgid "Received invalid data"
 msgstr "استقبلت بيانات غير صالحة عند الاتصال بالخادوم."
 
-#. Password incorrect
-#, fuzzy
-msgid "Incorrect Password"
-msgstr "كلمة السر غير صحيحة"
-
 #. security lock from too many failed login attempts
 #, fuzzy
 msgid ""
-"Account locked: Too many failed login attempts.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
 msgstr "خطأ مجهول رقم %d. الولوج في موقع ياهوو! على الوب قد يصحح هذه المشكلة."
-
-#. the username does not exist
-#, fuzzy
-msgid "Username does not exist"
-msgstr "المستخدم غير موجود"
 
 #. indicates a lock of some description
 #, fuzzy
 msgid ""
-"Account locked: Unknown reason.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
 msgstr "خطأ مجهول رقم %d. الولوج في موقع ياهوو! على الوب قد يصحح هذه المشكلة."
 
 #. username or password missing
@@ -9689,37 +9594,32 @@ msgstr "حسابك مقفل، من فضلك لُج في موقع ياهوو! ع�
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr "خطأ مجهول رقم %d. الولوج في موقع ياهوو! على الوب قد يصحح هذه المشكلة."
 
-#, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
+#, fuzzy, c-format
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr "تعذرت إضافة الصديق %s إلى المجموعة %s على قائمة الخادوم للحساب %s."
 
-msgid "Could not add buddy to server list"
+#, fuzzy
+msgid "Unable to add buddy to server list"
 msgstr "تعذرت إضافة الصديق إلى قائمة الخادوم."
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr "[ %s/%s/%s.swf مسموع] %s"
 
-msgid "Received unexpected HTTP response from server."
+#, fuzzy
+msgid "Received unexpected HTTP response from server"
 msgstr "تلقيت استجابة غير متوقّعة من خادوم HTTP."
 
-msgid "Connection problem"
-msgstr "مشكلة في الاتصال"
-
-#, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Lost connection with %s: %s"
 msgstr ""
 "انقطع الاتصال مع %s:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with %s: %s"
 msgstr ""
-"تعذّر إقامة اتصال مع %s:\n"
+"تعذَّر الاتصال بالخادوم:\n"
 "%s"
 
 msgid "Not at Home"
@@ -9782,78 +9682,14 @@ msgstr "ضمّ مستخدما إلى الدردشة..."
 msgid "Open Inbox"
 msgstr "افتح صندوق الوارد"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr ""
-"join &lt;room&gt;: \n"
-"انضم إلي غرفة دردشة في شبكة ياهو"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr ""
-"list: \n"
-"اسرد الغرف في شبكة ياهو"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr ""
-"doodle: \n"
-"اطلب من المستخدم أن يبدأ جلسة Doodle"
-
-msgid "Yahoo ID..."
-msgstr "هويّة ياهو..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr "ملحقة بروتوكول ياهو"
-
-msgid "Yahoo Japan"
-msgstr "ياهو اليابان"
-
-msgid "Pager server"
-msgstr "خادوم الاستدعاء"
-
-msgid "Japan Pager server"
-msgstr "خادوم استدعاء اليابان"
-
-msgid "Pager port"
-msgstr "منفذ الاستدعاء"
-
-msgid "File transfer server"
-msgstr "خادوم نقل الملفات"
-
-msgid "Japan file transfer server"
-msgstr "خادوم نقل ملفّات ياباني"
-
-msgid "File transfer port"
-msgstr "منفذ نقل الملفات"
-
-msgid "Chat room locale"
-msgstr "محليّة غرفة الدردشة"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "تجاهل دعوات الاجتماعات و غرف الدردشة"
-
-msgid "Chat room list URL"
-msgstr "مسار قائمة غرفة المحادثة."
-
-msgid "Yahoo Chat server"
-msgstr "خادوم دردشة ياهو"
-
-msgid "Yahoo Chat port"
-msgstr "منفذ دردشة ياهو"
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr "أُرسِل طلب Doodle."
+
+msgid "Unable to connect."
+msgstr "تعذّر الاتصال."
 
 msgid "Unable to establish file descriptor."
 msgstr "تعذّر إنشاء موصّف ملف."
@@ -9861,6 +9697,9 @@ msgstr "تعذّر إنشاء موصّف ملف."
 #, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "‏%s يحاول أن يرسل لك مجموعة من %d ملفات.\n"
+
+msgid "Write Error"
+msgstr "عطل في الكتابة"
 
 msgid "Yahoo! Japan Profile"
 msgstr "لاحة ياهو! اليابان"
@@ -9975,22 +9814,18 @@ msgstr "الأصوات"
 msgid "Webcams"
 msgstr "كاميرا وِب"
 
+msgid "Connection problem"
+msgstr "مشكلة في الاتصال"
+
 msgid "Unable to fetch room list."
 msgstr "تعذّر احضار قائمة الغرف."
 
 msgid "User Rooms"
 msgstr "غرف المستخدمين"
 
-msgid "Connection problem with the YCHT server."
+#, fuzzy
+msgid "Connection problem with the YCHT server"
 msgstr "مشكلة اتصال مع خادوم YCHT."
-
-#, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
-msgstr ""
-"انقطع الاتصال بالخادوم\n"
-"%s"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -10124,32 +9959,21 @@ msgstr "عالم"
 msgid "Exposure"
 msgstr "التعرّض"
 
-#, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr ""
-"تعذّر إنشاء مقبس:\n"
-"%s"
-
-#, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
+#, fuzzy, c-format
+msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "تعذّر تحليل استجابة من خادوم وسيط HTTP: %s \n"
 
 #, c-format
 msgid "HTTP proxy connection error %d"
 msgstr "خطأ في اتصال وسيط HTTP %d"
 
-#, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+#, fuzzy, c-format
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr "الوصول ممنوع: لا يسمح خادوم وسيط HTTP بأنفقة المنفذ %d."
 
 #, c-format
 msgid "Error resolving %s"
 msgstr "خطأ أثناء استجلاء %s"
-
-msgid "Could not resolve host name"
-msgstr "لايمكن استجلاء اسم المضيف"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -10375,12 +10199,6 @@ msgstr "عطل في الكتابة إلى %s: %s"
 #, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "تعذّر الاتصال بـ %s: %s"
-
-#, fuzzy, c-format
-msgid ""
-"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
-"found."
-msgstr "يتطلب الخادوم TLS/SSL للولوج. لا يوجد دعم TLS/SSL."
 
 #, c-format
 msgid " - %s"
@@ -10630,8 +10448,13 @@ msgstr "أضف إ_شعار صديق..."
 msgid "View _Log"
 msgstr "اعرض ال_سجل"
 
-msgid "Hide when offline"
+#, fuzzy
+msgid "Hide When Offline"
 msgstr "اخفِ عندما لا تكون متصلا"
+
+#, fuzzy
+msgid "Show When Offline"
+msgstr "أظهر عندما لا تكون متصلا"
 
 msgid "_Alias..."
 msgstr "_كنية..."
@@ -11138,6 +10961,10 @@ msgstr ""
 msgid "The text information for a buddy's status"
 msgstr "غيّر معلومات المستخدم لأجل %s"
 
+#, fuzzy
+msgid "Type the host name for this certificate."
+msgstr "أدخل اسم المضيف صاحب هذه الشهادة."
+
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "خادوم SSL"
@@ -11183,7 +11010,8 @@ msgstr "تجاهل"
 msgid "Get Away Message"
 msgstr "اجلب رسالة \"الغياب\""
 
-msgid "Last said"
+#, fuzzy
+msgid "Last Said"
 msgstr "آخر ماقيل"
 
 msgid "Unable to save icon file to disk."
@@ -12084,7 +11912,7 @@ msgid "Hyperlink visited color"
 msgstr "لون الرابط الفائق المزار"
 
 #, fuzzy
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr "لون لرسم الروابط الفائقة عندما تكون الفأرة فوقها."
 
 msgid "Hyperlink prelight color"
@@ -12122,15 +11950,24 @@ msgid "Action Message Name Color for Whispered Message"
 msgstr "لون اسم رسالة الإجراء"
 
 #, fuzzy
+msgid "Color to draw the name of a whispered action message."
+msgstr "لون رسم اسم رسالة إجراء."
+
+#, fuzzy
 msgid "Whisper Message Name Color"
 msgstr "أرسل لون اسم الرسالة"
+
+#, fuzzy
+msgid "Color to draw the name of a whispered message."
+msgstr "لون رسم اسم رسالة إجراء."
 
 #, fuzzy
 msgid "Typing notification color"
 msgstr "إزالة التنبيه"
 
-msgid "The color to use for the typing notification font"
-msgstr ""
+#, fuzzy
+msgid "The color to use for the typing notification"
+msgstr "تنبيهات بريديّة جديدة"
 
 #, fuzzy
 msgid "Typing notification font"
@@ -12528,6 +12365,10 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "أمر المتصفح \"اليدوي\" تم اختياره، ولكن لم يُحدد أي أمر."
 
+#, fuzzy
+msgid "No message"
+msgstr "رسالة مجهولة"
+
 msgid "Open All Messages"
 msgstr "افتح جميع الرسائل"
 
@@ -12544,10 +12385,6 @@ msgstr ""
 #, fuzzy
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">لديك رسالة!</span>"
-
-#, fuzzy
-msgid "No message"
-msgstr "رسالة مجهولة"
 
 msgid "The following plugins will be unloaded."
 msgstr "الملحقات التالية ستفرغ."
@@ -12762,14 +12599,18 @@ msgstr "ا_عرض أيقونة لوحة النظام:"
 msgid "On unread messages"
 msgstr "عند الرسائل غير المقروءة"
 
-msgid "Conversation Window Hiding"
-msgstr "إخفاء نافذة المحادثة"
+#, fuzzy
+msgid "Conversation Window"
+msgstr "نوافذ المحادثة الفورية"
 
 msgid "_Hide new IM conversations:"
 msgstr "ا_خفِ محادثات التراسل الفوري الجديدة"
 
 msgid "When away"
 msgstr "عند الغياب"
+
+msgid "Minimi_ze new conversation windows"
+msgstr "_صغّر نوافذ المحادثات الجديدة"
 
 #. All the tab options!
 msgid "Tabs"
@@ -12829,9 +12670,6 @@ msgstr "استخدم التدحرج السلس"
 msgid "F_lash window when IMs are received"
 msgstr "أ_ومض النافذة عند استقبال الرسائل الفورية"
 
-msgid "Minimi_ze new conversation windows"
-msgstr "_صغّر نوافذ المحادثات الجديدة"
-
 msgid "Minimum input area height in lines:"
 msgstr "أقل ارتفاع لمنطقة الإدخال بالسطور:"
 
@@ -12864,7 +12702,8 @@ msgstr "تعذّر بدأ برنامج إعداد المتصفح."
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">مثال: stunserver.org</span>"
 
-msgid "_Autodetect IP address"
+#, fuzzy, c-format
+msgid "Use _automatically detected IP address: %s"
 msgstr "_تحرّى عنوان IP تلقائيا"
 
 msgid "Public _IP:"
@@ -13232,34 +13071,18 @@ msgstr "احف_ظ و استخدم"
 msgid "Status for %s"
 msgstr "حالة %s"
 
-#.
-#. * TODO: We should enable/disable the add button based on
-#. *       whether the user has entered all required data.  That
-#. *       would eliminate the need for this check and provide a
-#. *       better user experience.
-#.
-#, fuzzy
-msgid "Custom Smiley"
-msgstr "أدرِج بسمة"
-
-msgid "More Data needed"
-msgstr ""
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr ""
-
 #, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr ""
 
 #, fuzzy
-msgid "Duplicate Shortcut"
-msgstr "تصوِيب مكرر"
+msgid "Custom Smiley"
+msgstr "أدرِج بسمة"
 
 #, fuzzy
-msgid "Please select an image for the smiley."
-msgstr "من فضلك اختر مزاجك من القائمة."
+msgid "Duplicate Shortcut"
+msgstr "تصوِيب مكرر"
 
 msgid "Edit Smiley"
 msgstr "حرّرجال بسمة"
@@ -13372,9 +13195,10 @@ msgstr "يمكنك إدراج هذه الصورة داخل الرسالة، أو
 msgid "Cannot send launcher"
 msgstr "تعذّر إرسال المشغل"
 
+#, fuzzy
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr ""
 "قمت بسحب مشغل سطح مكتب. على الأغلب قصدت أن ترسل الشيء الذي يشير اليه هذا "
 "المشغل و ليس المشغل ذاته."
@@ -13962,9 +13786,10 @@ msgid "Music Messaging Plugin for collaborative composition."
 msgstr "ملحقة تراسل موسيقي للتأليف الجماعي."
 
 #. *  summary
+#, fuzzy
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 "تتيح ملحقة التراسل الموسيقي لمجموعة من المستخدمين العمل معا على مقطوعة "
 "موسيقية بتحرير نوتة مشتركة في الوقت الحقيقي."
@@ -14222,7 +14047,7 @@ msgstr "زر إرسال نافذة المحادثة."
 #. *< summary
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr ""
 
 msgid "Duplicate Correction"
@@ -14548,8 +14373,9 @@ msgstr "خيارات بِدْجِن لويندوز"
 msgid "Options specific to Pidgin for Windows."
 msgstr "خيارات خاصة لبِدْجِن من أجل ويندوز"
 
+#, fuzzy
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr "يتيح خيارات خاصة بويندوز، مثل إرساء قائمة الأصدقاء."
 
 msgid "<font color='#777777'>Logged out.</font>"
@@ -14588,6 +14414,305 @@ msgstr "أرسِل و استقبل أبيات XMPP خام."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "تفيد هذه الملحقة في تنقيح خواديم و عملاء XMPXMPPP."
+
+#~ msgid "Cannot open socket"
+#~ msgstr "لا يمكن فتح المقبس"
+
+#~ msgid "Could not listen on socket"
+#~ msgstr "لا يمكن الاستماع إلى المقبس"
+
+#~ msgid "Unable to read socket"
+#~ msgstr "تعذّرت قراءة المقبس"
+
+#~ msgid "Connection failed."
+#~ msgstr "فشل الاتصال."
+
+#~ msgid "Server has disconnected"
+#~ msgstr "قطع الخادومُ الاتصال"
+
+#~ msgid "Couldn't create socket"
+#~ msgstr "تعذَّر إنشاء مقبس"
+
+#~ msgid "Couldn't connect to host"
+#~ msgstr "لا يمكن الاتصال بالخادوم"
+
+#~ msgid "Read error"
+#~ msgstr "خطأ في القراءة"
+
+#~ msgid ""
+#~ "Could not establish a connection with the server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "تعذَّر الاتصال بالخادوم:\n"
+#~ "%s"
+
+#~ msgid "Write error"
+#~ msgstr "عطل في الكتابة"
+
+#~ msgid "Last Activity"
+#~ msgstr "آخر نشاط"
+
+#~ msgid "Service Discovery Info"
+#~ msgstr "معلومات اكتشاف الخدمة"
+
+#~ msgid "Service Discovery Items"
+#~ msgstr "عناصر اكتشاف الخدمة"
+
+#~ msgid "Extended Stanza Addressing"
+#~ msgstr "عنونة الأبيات الممتدّة"
+
+#~ msgid "Multi-User Chat"
+#~ msgstr "دردشة متعددة المستخدمين"
+
+#~ msgid "Multi-User Chat Extended Presence Information"
+#~ msgstr "معلومات التواجد الممتدة للدردشة متعددة المستخدمين"
+
+#~ msgid "In-Band Bytestreams"
+#~ msgstr "تيار بايتات داخل الحزمة"
+
+#~ msgid "Ad-Hoc Commands"
+#~ msgstr "أوامر لحظية"
+
+#~ msgid "PubSub Service"
+#~ msgstr "خدمة PubSub"
+
+#~ msgid "SOCKS5 Bytestreams"
+#~ msgstr "تيار بايتات SOCKS5"
+
+#~ msgid "Out of Band Data"
+#~ msgstr "بيانات خارج الحزمة"
+
+#~ msgid "XHTML-IM"
+#~ msgstr "XHTML-IM"
+
+#~ msgid "In-Band Registration"
+#~ msgstr "التسجيل داخل الحزمة"
+
+#~ msgid "User Location"
+#~ msgstr "موضع المستخدم"
+
+#~ msgid "User Avatar"
+#~ msgstr "أيقونة المستخدم"
+
+#~ msgid "Chat State Notifications"
+#~ msgstr "تنويه حالة الدردشة"
+
+#~ msgid "Software Version"
+#~ msgstr "إصدارة البرمجية"
+
+#~ msgid "Stream Initiation"
+#~ msgstr "بدأ التيار"
+
+#~ msgid "User Mood"
+#~ msgstr "مزاج المستخدم"
+
+#~ msgid "User Activity"
+#~ msgstr "نشاط المستخدم"
+
+#~ msgid "Entity Capabilities"
+#~ msgstr "إمكانات الكيان"
+
+#~ msgid "Encrypted Session Negotiations"
+#~ msgstr "مفاوضات الجلسات المعمّاة"
+
+#~ msgid "User Tune"
+#~ msgstr "نغمة المستخدم"
+
+#~ msgid "Roster Item Exchange"
+#~ msgstr "تبادل دوراني للعناصر"
+
+#~ msgid "Reachability Address"
+#~ msgstr "عنوان الوصولية"
+
+#~ msgid "User Profile"
+#~ msgstr "لاحة المستخدم"
+
+#~ msgid "Jingle"
+#~ msgstr "Jingle"
+
+#~ msgid "Jingle Audio"
+#~ msgstr "Jingle Audio"
+
+#~ msgid "User Nickname"
+#~ msgstr "كنية المستخدم"
+
+#~ msgid "Jingle ICE UDP"
+#~ msgstr "Jingle ICE UDP"
+
+#~ msgid "Jingle ICE TCP"
+#~ msgstr "Jingle ICE TCP"
+
+#~ msgid "Jingle Raw UDP"
+#~ msgstr "Jingle Raw UDP"
+
+#~ msgid "Jingle Video"
+#~ msgstr "فيديو Jingle"
+
+#~ msgid "Jingle DTMF"
+#~ msgstr "Jingle DTMF"
+
+#~ msgid "Message Receipts"
+#~ msgstr "إيصالات الرسائل"
+
+#~ msgid "Public Key Publishing"
+#~ msgstr "نشر المفتاح العلني"
+
+#~ msgid "User Chatting"
+#~ msgstr "المستخدم يدردش"
+
+#~ msgid "User Browsing"
+#~ msgstr "المستخدم يتصفّح"
+
+#~ msgid "User Gaming"
+#~ msgstr "المستخدم يلعب"
+
+#~ msgid "User Viewing"
+#~ msgstr "المستخدم يطالع"
+
+#~ msgid "Stanza Encryption"
+#~ msgstr "تعمية الأبيات"
+
+#~ msgid "Entity Time"
+#~ msgstr "وقت الكيان"
+
+#~ msgid "Delayed Delivery"
+#~ msgstr "تسليم متأخر"
+
+#~ msgid "Collaborative Data Objects"
+#~ msgstr "عناصر البيانات التشاركيّة"
+
+#~ msgid "File Repository and Sharing"
+#~ msgstr "مستودع الملفات والمشاركة"
+
+#~ msgid "STUN Service Discovery for Jingle"
+#~ msgstr "اكتشاف خدمة STUN لـ Jingle"
+
+#~ msgid "Simplified Encrypted Session Negotiation"
+#~ msgstr "التفاوض المبسط لجلسة معمّاة"
+
+#~ msgid "Hop Check"
+#~ msgstr "تدقيق القفزات"
+
+#~ msgid "Read Error"
+#~ msgstr "عطل في القراءة"
+
+#~ msgid "Failed to connect to server."
+#~ msgstr "فشل الاتصال بالخادوم."
+
+#~ msgid "Read buffer full (2)"
+#~ msgstr "براح القراءة ممتليء (2)"
+
+#~ msgid "Unparseable message"
+#~ msgstr "رسالة يتعذّر تحليلها"
+
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "تعذّر الاتصال بالخادوم: %s (%d)"
+
+#~ msgid "Login failed (%s)."
+#~ msgstr "فشل الولوج (%s)."
+
+#~ msgid ""
+#~ "You have been logged out because you logged in at another workstation."
+#~ msgstr "أولجت خارجا لأنك ولجت من حاسوب آخر."
+
+#~ msgid "Error. SSL support is not installed."
+#~ msgstr "عطل. دعم SSL غير مثبت."
+
+#~ msgid "Incorrect password."
+#~ msgstr "كلمة سر خطأ."
+
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "تعذّر الاتصال بخادوم BOS:\n"
+#~ "%s"
+
+#~ msgid "You may be disconnected shortly.  Check %s for updates."
+#~ msgstr "قد ينقطع اتصالك قريبا. طالع %s للتحديثات."
+
+#~ msgid "Could Not Connect"
+#~ msgstr "تعذّر الاتصال"
+
+#~ msgid "Invalid username."
+#~ msgstr "اسم مستخدم غير صالح"
+
+#, fuzzy
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "تعذّر تظهير رد الخادوم المُستَلَم"
+
+#~ msgid "Connection lost"
+#~ msgstr "قُطع الاتصال"
+
+#~ msgid "Couldn't resolve host"
+#~ msgstr "لا يمكن استجلاء المضيف"
+
+#~ msgid "Connection closed (writing)"
+#~ msgstr "أُغلِق الاتصال (تدري الكتابة)"
+
+#~ msgid "Connection reset"
+#~ msgstr "صُفِّر الاتصال"
+
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "عطل في القراءة من المقبس: %s"
+
+#~ msgid "Unable to connect to host"
+#~ msgstr "تعذّر الاتصال بالخادوم"
+
+#~ msgid "Could not write"
+#~ msgstr "تعذّرت الكتابة"
+
+#~ msgid "Could not connect"
+#~ msgstr "تعذّر الاتصال"
+
+#~ msgid "Could not create listen socket"
+#~ msgstr "لايمكن إنشاء مقبس استماع"
+
+#~ msgid "Could not resolve hostname"
+#~ msgstr "لا يمكن استجلاء اسم المضيف"
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "كلمة السر غير صحيحة"
+
+#~ msgid ""
+#~ "Could not establish a connection with %s:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "تعذّر إقامة اتصال مع %s:\n"
+#~ "%s"
+
+#~ msgid "Yahoo Japan"
+#~ msgstr "ياهو اليابان"
+
+#~ msgid "Japan Pager server"
+#~ msgstr "خادوم استدعاء اليابان"
+
+#~ msgid "Japan file transfer server"
+#~ msgstr "خادوم نقل ملفّات ياباني"
+
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr ""
+#~ "انقطع الاتصال بالخادوم\n"
+#~ "%s"
+
+#~ msgid "Could not resolve host name"
+#~ msgstr "لايمكن استجلاء اسم المضيف"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support "
+#~ "was found."
+#~ msgstr "يتطلب الخادوم TLS/SSL للولوج. لا يوجد دعم TLS/SSL."
+
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "إخفاء نافذة المحادثة"
+
+#, fuzzy
+#~ msgid "Please select an image for the smiley."
+#~ msgstr "من فضلك اختر مزاجك من القائمة."
 
 #~ msgid "Activate which ID?"
 #~ msgstr "أي هوية أُنشّط؟"

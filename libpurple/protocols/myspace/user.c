@@ -637,8 +637,7 @@ static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *use
 	uid = msim_msg_get_integer(userinfo, "uid");
 	lid = msim_msg_get_integer(userinfo, "lid");
 	body = msim_msg_get_dictionary(userinfo, "body");
-	/* XXX: Mark for translation */
-	errmsg = ("An error occurred while trying to set the username.\n"
+	errmsg = _("An error occurred while trying to set the username.  "
 			"Please try again, or visit http://editprofile.myspace.com/index.cfm?"
 			"fuseaction=profile.username to set your username.");
 
@@ -797,9 +796,9 @@ static void msim_username_is_available_cb(MsimSession *session, const MsimMessag
 	if (!body) {
 		purple_debug_info("msim_username_is_available_cb", "No body for %s?!\n", username);
 		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-				"An error occurred while trying to set the username.\n"
+				_("An error occurred while trying to set the username.  "
 				"Please try again, or visit http://editprofile.myspace.com/index.cfm?"
-				"fuseaction=profile.username to set your username.");
+				"fuseaction=profile.username to set your username."));
 		return;
 	}
 

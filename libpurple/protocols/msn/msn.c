@@ -1028,7 +1028,7 @@ msn_login(PurpleAccount *account)
 	if (!msn_session_connect(session, host, port, http_method))
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Failed to connect to server."));
+			_("Unable to connect"));
 }
 
 static void
@@ -1389,40 +1389,70 @@ add_pending_buddy(MsnSession *session,
                   MsnNetwork network,
                   MsnUser *user)
 {
-	MsnUserList *userlist = session->userlist;
-	MsnUser *user2;
 	char *group;
 
 	g_return_if_fail(user != NULL);
 
 	group = msn_user_remove_pending_group(user);
 
-	user2 = msn_userlist_find_user(userlist, who);
-	if (user2 != NULL) {
-		/* User already in userlist, so just update it. */
-		msn_user_destroy(user);
-		user = user2;
-	} else {
-		msn_userlist_add_user(userlist, user);
-	}
+	if (network != MSN_NETWORK_UNKNOWN) {
+		MsnUserList *userlist = session->userlist;
+		MsnUser *user2 = msn_userlist_find_user(userlist, who);
+		if (user2 != NULL) {
+			/* User already in userlist, so just update it. */
+			msn_user_destroy(user);
+			user = user2;
+		} else {
+			msn_userlist_add_user(userlist, user);
+		}
 
-	msn_user_set_network(user, network);
-	msn_userlist_add_buddy(userlist, who, group);
+		msn_user_set_network(user, network);
+		msn_userlist_add_buddy(userlist, who, group);
+	}
+	else
+	{
+		PurpleBuddy * buddy = purple_find_buddy(session->account, who);
+		gchar *buf;
+		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be a valid email address."), who);
+		if (!purple_conv_present_error(who, session->account, buf))
+			purple_notify_error(purple_account_get_connection(session->account), NULL, _("Unable to Add"), buf);
+		g_free(buf);
+
+		/* Remove from local list */
+		purple_blist_remove_buddy(buddy);
+		msn_user_destroy(user);
+	}
 	g_free(group);
 }
 
 static void
 msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
+	PurpleAccount *account;
 	MsnSession *session;
 	MsnUserList *userlist;
-	const char *who, *gname;
+	const char *bname, *who, *gname;
 	MsnUser *user;
 
+	account = purple_connection_get_account(gc);
 	session = gc->proto_data;
 	userlist = session->userlist;
-	who = msn_normalize(purple_connection_get_account(gc), purple_buddy_get_name(buddy));
+	bname = purple_buddy_get_name(buddy);
 
+	if (!purple_email_is_valid(bname)) {
+		gchar *buf;
+		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be a valid email address."), bname);
+		if (!purple_conv_present_error(bname, account, buf))
+			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
+		g_free(buf);
+
+		/* Remove from local list */
+		purple_blist_remove_buddy(buddy);
+
+		return;
+	}
+
+	who = msn_normalize(account, bname);
 	gname = group ? purple_group_get_name(group) : NULL;
 	purple_debug_info("msn", "Add user:%s to group:%s\n", who, gname ? gname : "(null)");
 	if (!session->logged_in)
