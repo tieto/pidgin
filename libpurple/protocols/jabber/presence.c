@@ -59,38 +59,44 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 	g_free(chat_full_jid);
 }
 
-void jabber_presence_fake_to_self(JabberStream *js, const PurpleStatus *gstatus) {
-	char *my_base_jid;
+void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
+{
+	PurpleAccount *account;
+	const char *username;
 
-	if(!js->user)
-		return;
+	g_return_if_fail(js->user != NULL);
 
-	my_base_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-	if(purple_find_buddy(js->gc->account, my_base_jid)) {
-		JabberBuddy *jb;
+	account = purple_connection_get_account(js->gc);
+	username = purple_account_get_username(account);
+	if (status == NULL)
+		status = purple_account_get_active_status(account);
+
+	if (purple_find_buddy(account, username)) {
+		JabberBuddy *jb = jabber_buddy_find(js, username, TRUE);
 		JabberBuddyResource *jbr;
-		if((jb = jabber_buddy_find(js, my_base_jid, TRUE))) {
-			JabberBuddyState state;
-			char *msg;
-			int priority;
+		JabberBuddyState state;
+		char *msg;
+		int priority;
 
-			purple_status_to_jabber(gstatus, &state, &msg, &priority);
+		g_return_if_fail(jb != NULL);
 
-			if (state == JABBER_BUDDY_STATE_UNAVAILABLE || state == JABBER_BUDDY_STATE_UNKNOWN) {
-				jabber_buddy_remove_resource(jb, js->user->resource);
-			} else {
-				jabber_buddy_track_resource(jb, js->user->resource, priority, state, msg);
-			}
-			if((jbr = jabber_buddy_find_resource(jb, NULL))) {
-				purple_prpl_got_user_status(js->gc->account, my_base_jid, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
-			} else {
-				purple_prpl_got_user_status(js->gc->account, my_base_jid, "offline", msg ? "message" : NULL, msg, NULL);
-			}
+		purple_status_to_jabber(status, &state, &msg, &priority);
 
-			g_free(msg);
+		if (state == JABBER_BUDDY_STATE_UNAVAILABLE ||
+				state == JABBER_BUDDY_STATE_UNKNOWN) {
+			jabber_buddy_remove_resource(jb, js->user->resource);
+		} else {
+			jabber_buddy_track_resource(jb, js->user->resource, priority,
+			                            state, msg);
 		}
+
+		if ((jbr = jabber_buddy_find_resource(jb, NULL))) {
+			purple_prpl_got_user_status(js->gc->account, username, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
+		} else {
+			purple_prpl_got_user_status(js->gc->account, username, "offline", msg ? "message" : NULL, msg, NULL);
+		}
+		g_free(msg);
 	}
-	g_free(my_base_jid);
 }
 
 void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
@@ -133,7 +139,7 @@ void jabber_presence_send(JabberStream *js, gboolean force)
 	status = purple_presence_get_active_status(p);
 
 	/* we don't want to send presence before we've gotten our roster */
-	if(!js->roster_parsed) {
+	if (js->state != JABBER_STREAM_CONNECTED) {
 		purple_debug_info("jabber", "attempt to send presence before roster retrieved\n");
 		return;
 	}
@@ -759,6 +765,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(chat->conv), jid->resource,
 						flags);
 		} else if (g_str_equal(type, "unavailable")) {
+			xmlnode *x;
 			gboolean nick_change = FALSE;
 			gboolean kick = FALSE;
 			gboolean is_our_resource = FALSE; /* Is the presence about us? */
@@ -781,28 +788,31 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			is_our_resource = (0 == g_utf8_collate(jid->resource, chat->handle));
 
 			jabber_buddy_remove_resource(jb, jid->resource);
-			if(chat->muc) {
-				xmlnode *x;
-				for(x = xmlnode_get_child(packet, "x"); x; x = xmlnode_get_next_twin(x)) {
-					const char *xmlns, *nick, *code;
-					xmlnode *stat, *item;
-					if(!(xmlns = xmlnode_get_namespace(x)) ||
-							strcmp(xmlns, "http://jabber.org/protocol/muc#user"))
-						continue;
-					if(!(stat = xmlnode_get_child(x, "status")))
-						continue;
-					if(!(code = xmlnode_get_attrib(stat, "code")))
-						continue;
 
-					item = xmlnode_get_child(x, "item");
+			x = xmlnode_get_child_with_namespace(packet, "x",
+					"http://jabber.org/protocol/muc#user");
+			if (chat->muc && x) {
+				const char *nick;
+				const char *code = NULL;
+				const char *item_jid = NULL;
+				xmlnode *stat;
+				xmlnode *item;
 
+				item = xmlnode_get_child(x, "item");
+				if (item)
+					item_jid = xmlnode_get_attrib(item, "jid");
+
+
+				stat = xmlnode_get_child(x, "status");
+
+				if (stat)
+					code = xmlnode_get_attrib(stat, "code");
+
+				if (code) {
 					if(!strcmp(code, "301")) {
 						/* XXX: we got banned */
-					} else if(!strcmp(code, "303")) {
-						if (!item)
-							continue;
-						if(!(nick = xmlnode_get_attrib(item, "nick")))
-							continue;
+					} else if(!strcmp(code, "303") && item &&
+							(nick = xmlnode_get_attrib(item, "nick"))) {
 						nick_change = TRUE;
 						if(!strcmp(jid->resource, chat->handle)) {
 							g_free(chat->handle);
@@ -810,7 +820,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 						}
 						purple_conv_chat_rename_user(PURPLE_CONV_CHAT(chat->conv), jid->resource, nick);
 						jabber_chat_remove_handle(chat, jid->resource);
-						break;
+						/* TODO: Enable this when this is in a for-loop...
+						break; */
 					} else if(!strcmp(code, "307")) {
 						/* Someone was kicked from the room */
 						xmlnode *reason = NULL, *actor = NULL;
@@ -859,6 +870,21 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					} else if(!strcmp(code, "332")) {
 						/* XXX: removed due to system shutdown */
 					}
+				}
+
+				/*
+				 * Possibly another connected resource of our JID (see XEP-0045
+				 * v1.24 section 7.1.10) being disconnected. Should be
+				 * distinguished by the item_jid.
+				 * Also possibly works around bits of an Openfire bug. See
+				 * #8319.
+				 */
+				if (is_our_resource && !purple_strequal(from, item_jid)) {
+					/* TODO: When the above is a loop, this needs to still act
+					 * sanely for all cases (this code is a little fragile). */
+					if (!kick && !nick_change)
+						/* Presumably, kicks and nick changes also affect us. */
+						is_our_resource = FALSE;
 				}
 			}
 			if(!nick_change) {

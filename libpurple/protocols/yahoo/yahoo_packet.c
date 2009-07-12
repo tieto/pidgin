@@ -24,7 +24,7 @@
 #include "internal.h"
 #include "debug.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_packet.h"
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
@@ -187,7 +187,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 			pos = x;
 			pkt->hash = g_slist_prepend(pkt->hash, pair);
 
-			if (purple_debug_is_verbose()) {
+			if (purple_debug_is_verbose() || g_getenv("PURPLE_YAHOO_DEBUG")) {
 				char *esc;
 				esc = g_strescape(pair->value, NULL);
 				purple_debug_misc("yahoo", "Key: %d  \tValue: %s\n", pair->key, esc);

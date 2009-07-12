@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-02 01:34-0700\n"
+"POT-Creation-Date: 2009-07-06 15:04-0700\n"
 "PO-Revision-Date: 2007-09-09 11:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -2553,9 +2553,10 @@ msgid "Includes other IM clients' logs in the log viewer."
 msgstr "Prikaži i beleške o ostalim programima pri pregledu dnevnika."
 
 #. * description
+#, fuzzy
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
@@ -2610,8 +2611,9 @@ msgstr "Emulator poruka van mreže"
 msgid "Save messages sent to an offline user as pounce."
 msgstr "Sačuvaj poruke poslate korisniku van mreže kao zasedu."
 
+#, fuzzy
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 "Ostatak poruke će biti sačuvan kao zaseda. Možete urediti/ukloniti zasedu iz "
@@ -2862,11 +2864,12 @@ msgstr ""
 "instalirajte ActiveTCL sa http://www.activestate.com\n"
 
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
 
-msgid "Unable to listen for incoming IM connections\n"
+#, fuzzy
+msgid "Unable to listen for incoming IM connections"
 msgstr "Ne mogu da pratim dolazeća povezivanja na brze poruke\n"
 
 msgid ""
@@ -2919,14 +2922,21 @@ msgstr "%s je zatvorio razgovor."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Ne mogu da pošaljem poruku. Razgovor ne može da otpočne."
 
-msgid "Cannot open socket"
-msgstr "Ne mogu da otvorim utičnicu"
+#, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"Ne mogu da napravim utičnicu:\n"
+"%s"
 
-msgid "Could not bind socket to port"
+#, fuzzy, c-format
+msgid "Unable to bind socket to port: %s"
 msgstr "Ne mogu da vežem utičnicu na port"
 
-msgid "Could not listen on socket"
-msgstr "Ne mogu da slušam utičnicu"
+#, fuzzy, c-format
+msgid "Unable to listen on socket: %s"
+msgstr ""
+"Ne mogu da napravim utičnicu:\n"
+"%s"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr "Greška pri sporazumevanju sa lokalnim mDNSResponder-om."
@@ -2975,13 +2985,16 @@ msgstr "Sačuvaj spisak drugara..."
 msgid "Load buddylist from file..."
 msgstr "Učitaj spisak drugara iz datoteke..."
 
-msgid "Fill in the registration fields."
+#, fuzzy
+msgid "You must fill in all registration fields"
 msgstr "Popuni polja za registraciju."
 
-msgid "Passwords do not match."
+#, fuzzy
+msgid "Passwords do not match"
 msgstr "Lozinke nisu iste."
 
-msgid "Unable to register new account. Error occurred.\n"
+#, fuzzy
+msgid "Unable to register new account.  An unknown error occurred."
 msgstr "Ne mogu da registrujem novi nalog. Desila se greška.\n"
 
 msgid "New Gadu-Gadu Account Registered"
@@ -2993,14 +3006,14 @@ msgstr "Registracija završena uspešno!"
 msgid "Password"
 msgstr "Lozinka"
 
-msgid "Password (retype)"
-msgstr "Lozinka (ponovo otkucajte)"
+msgid "Password (again)"
+msgstr "Lozinka (ponovite)"
 
-msgid "Enter current token"
-msgstr "Unesite trenutni token"
+msgid "Enter captcha text"
+msgstr ""
 
-msgid "Current token"
-msgstr "Trenutni token"
+msgid "Captcha"
+msgstr ""
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "Registruj novi Gadu-Gadu nalog"
@@ -3053,6 +3066,15 @@ msgstr "Lozinka je uspešno izmenjena!"
 msgid "Current password"
 msgstr "Trenutna lozinka"
 
+msgid "Password (retype)"
+msgstr "Lozinka (ponovo otkucajte)"
+
+msgid "Enter current token"
+msgstr "Unesite trenutni token"
+
+msgid "Current token"
+msgstr "Trenutni token"
+
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr "Molim vas unesite tekuću lozinku i novu lozinku: "
 
@@ -3100,7 +3122,7 @@ msgstr "Nema nađenih korisnika"
 msgid "There are no users matching your search criteria."
 msgstr "Nema nađenih korisnika po vašem kriterijumu pretrage."
 
-msgid "Unable to read socket"
+msgid "Unable to read from socket"
 msgstr "Ne mogu da čitam utičnicu"
 
 msgid "Buddy list downloaded"
@@ -3115,8 +3137,14 @@ msgstr "Lista drugova poslata"
 msgid "Your buddy list was stored on the server."
 msgstr "Vaša lista drugova je poslana na server."
 
-msgid "Connection failed."
-msgstr "Povezivanje propalo."
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
+msgid "Connected"
+msgstr "Povezan"
+
+msgid "Connection failed"
+msgstr "Veza neuspešna"
 
 msgid "Add to chat"
 msgstr "Dodaj u ćaskanje"
@@ -3124,10 +3152,14 @@ msgstr "Dodaj u ćaskanje"
 msgid "Chat _name:"
 msgstr "_Ime ćaskanja:"
 
-#. should this be a settings error?
-#, fuzzy
-msgid "Unable to resolve server"
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
 msgstr "Ne mogu da se povežem na server."
+
+#. 1. connect to server
+#. connect to the server
+msgid "Connecting"
+msgstr "Uspostavljanje veze"
 
 msgid "Chat error"
 msgstr "Greška u ćaskanju"
@@ -3135,7 +3167,8 @@ msgstr "Greška u ćaskanju"
 msgid "This chat name is already in use"
 msgstr "Ovo ime ćaskanja je već zauzeto"
 
-msgid "Not connected to the server."
+#, fuzzy
+msgid "Not connected to the server"
 msgstr "Niste u vezi sa serverom."
 
 msgid "Find buddies..."
@@ -3195,7 +3228,8 @@ msgstr "Tema nije postavljena"
 msgid "File Transfer Failed"
 msgstr "Propao prenos datoteke"
 
-msgid "Could not open a listening port."
+#, fuzzy
+msgid "Unable to open a listening port."
 msgstr "Ne mogu da otvorim port za slušanje."
 
 msgid "Error displaying MOTD"
@@ -3211,8 +3245,18 @@ msgstr "Nema poruke dana za ovu vezu."
 msgid "MOTD for %s"
 msgstr "Poruka dana za %s"
 
-msgid "Server has disconnected"
-msgstr "Server se isključio"
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, fuzzy, c-format
+msgid "Lost connection with server: %s"
+msgstr ""
+"Veza sa serverom je prekinuta:\n"
+"%s"
 
 msgid "View MOTD"
 msgstr "Pogledajte poruku dana"
@@ -3227,22 +3271,20 @@ msgstr "_Lozinka:"
 msgid "IRC nick and server may not contain whitespace"
 msgstr "IRC nadimci ne mogu sadržati beline"
 
-#. 1. connect to server
-#. connect to the server
-msgid "Connecting"
-msgstr "Uspostavljanje veze"
-
 msgid "SSL support unavailable"
 msgstr "SSL podrška je nedostupna"
 
-msgid "Couldn't create socket"
-msgstr "Ne mogu da načinim utičnicu"
+msgid "Unable to connect"
+msgstr "Nemoguće povezivanje"
 
-msgid "Couldn't connect to host"
-msgstr "Ne mogu da se povežem sa domaćinom"
+#. this is a regular connect, error out
+#, fuzzy, c-format
+msgid "Unable to connect: %s"
+msgstr "Ne mogu da se povežem na %s"
 
-msgid "Read error"
-msgstr "Greška pri čitanju"
+#, fuzzy, c-format
+msgid "Server closed the connection"
+msgstr "Server je prekinuo vezu"
 
 msgid "Users"
 msgstr "Korisnici"
@@ -3671,10 +3713,12 @@ msgstr ""
 msgid "execute"
 msgstr "izvrši"
 
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
+#, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
 msgstr "Server zahteva TLS/SSL za prijavu. Nije nađena podrška za TLS/SSL."
 
-msgid "You require encryption, but no TLS/SSL support found."
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
 msgstr "Zahtevate šifrovanu vezu, ali nije nađena podrška za TLS/SSL."
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
@@ -3693,7 +3737,12 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Identifikacija običnim tekstom"
 
-msgid "Invalid response from server."
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "Neuspešna identifikacija"
+
+#, fuzzy
+msgid "Invalid response from server"
 msgstr "Neispravan odgovor servera."
 
 msgid "Server does not use any supported authentication method"
@@ -3705,7 +3754,8 @@ msgstr "Zahtevate šifrovanje, ali ono nije dostupno na ovom serveru."
 msgid "Invalid challenge from server"
 msgstr "Neispravan izazov servera"
 
-msgid "SASL error"
+#, fuzzy, c-format
+msgid "SASL error: %s"
 msgstr "SASL greška"
 
 msgid "The BOSH connection manager terminated your session."
@@ -3725,10 +3775,8 @@ msgstr ""
 "Ne mogu da uspostavim vezu sa serverom:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with the server: %s"
 msgstr ""
 "Ne mogu da uspostavim vezu sa serverom:\n"
 "%s"
@@ -3736,12 +3784,6 @@ msgstr ""
 #, fuzzy
 msgid "Unable to establish SSL connection"
 msgstr "Ne mogu da uspostavim vezu."
-
-msgid "Unable to create socket"
-msgstr "Ne mogu načiniti utičnicu"
-
-msgid "Write error"
-msgstr "Greška pri pisanju"
 
 msgid "Full Name"
 msgstr "Puno ime"
@@ -3814,159 +3856,6 @@ msgstr "Operativni sistem"
 msgid "Local Time"
 msgstr "Lokalna datoteka:"
 
-msgid "Last Activity"
-msgstr "Poslednja aktivnost"
-
-msgid "Service Discovery Info"
-msgstr "Podaci otkrivanja servisa"
-
-msgid "Service Discovery Items"
-msgstr "Stavke otkrivanja servisa"
-
-msgid "Extended Stanza Addressing"
-msgstr "Prošireno adresiranje odeljka"
-
-msgid "Multi-User Chat"
-msgstr "Višekorisničko ćaskanje"
-
-msgid "Multi-User Chat Extended Presence Information"
-msgstr "Podaci o proširenom ćaskanju sa više korisnika"
-
-msgid "In-Band Bytestreams"
-msgstr ""
-
-msgid "Ad-Hoc Commands"
-msgstr ""
-
-msgid "PubSub Service"
-msgstr "PubSub servis"
-
-msgid "SOCKS5 Bytestreams"
-msgstr "SOCKS5 protoci"
-
-msgid "Out of Band Data"
-msgstr ""
-
-msgid "XHTML-IM"
-msgstr "HHTML — brze poruke"
-
-msgid "In-Band Registration"
-msgstr ""
-
-msgid "User Location"
-msgstr "Korisnikova lokacija"
-
-msgid "User Avatar"
-msgstr "Korisnikova sličica"
-
-msgid "Chat State Notifications"
-msgstr "Obaveštenja o stanju ćaskanja"
-
-msgid "Software Version"
-msgstr "Verzija programa"
-
-msgid "Stream Initiation"
-msgstr "Pokretanje protoka"
-
-msgid "File Transfer"
-msgstr "Prenosi datoteka"
-
-msgid "User Mood"
-msgstr "Raspoloženje korisnika"
-
-msgid "User Activity"
-msgstr "Aktivnost korisnika"
-
-msgid "Entity Capabilities"
-msgstr "Sposobnosti"
-
-msgid "Encrypted Session Negotiations"
-msgstr "Pregovori o šifrovanoj sesiji"
-
-msgid "User Tune"
-msgstr "Korisnikova melodija"
-
-msgid "Roster Item Exchange"
-msgstr ""
-
-msgid "Reachability Address"
-msgstr "Adresa za kontakt"
-
-msgid "User Profile"
-msgstr "Korisnikov profil"
-
-msgid "Jingle"
-msgstr "Džingl"
-
-msgid "Jingle Audio"
-msgstr "Džingl zvuk"
-
-msgid "User Nickname"
-msgstr "Nadimak"
-
-msgid "Jingle ICE UDP"
-msgstr "Džingl ICE UDP"
-
-msgid "Jingle ICE TCP"
-msgstr "Džingl ICE TCP"
-
-msgid "Jingle Raw UDP"
-msgstr "Izvorni džingl UDP"
-
-msgid "Jingle Video"
-msgstr "Džingl video"
-
-msgid "Jingle DTMF"
-msgstr "Džingl DTMF"
-
-msgid "Message Receipts"
-msgstr "Prijem poruka"
-
-msgid "Public Key Publishing"
-msgstr "Izdavanje javnog ključa"
-
-msgid "User Chatting"
-msgstr "Korisnik ćaska"
-
-msgid "User Browsing"
-msgstr "Korisnik razgleda"
-
-msgid "User Gaming"
-msgstr "Korisnik se igra"
-
-msgid "User Viewing"
-msgstr "Korisnik gleda"
-
-msgid "Ping"
-msgstr "Ping"
-
-msgid "Stanza Encryption"
-msgstr "Šifrovanje odeljka"
-
-msgid "Entity Time"
-msgstr "Vreme važnosti"
-
-msgid "Delayed Delivery"
-msgstr "Odložena dostava"
-
-msgid "Collaborative Data Objects"
-msgstr "Saradnički podaci objekata"
-
-msgid "File Repository and Sharing"
-msgstr "Skladištenje i deljenje datoteka"
-
-msgid "STUN Service Discovery for Jingle"
-msgstr ""
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr "Pojednostavljeni pregovori i šifrovanoj sesiji"
-
-msgid "Hop Check"
-msgstr "Provera skoka"
-
-msgid "Capabilities"
-msgstr "Mogućnosti"
-
 msgid "Priority"
 msgstr "Prioritet"
 
@@ -3978,7 +3867,7 @@ msgid "%s ago"
 msgstr ""
 
 #, fuzzy
-msgid "Logged off"
+msgid "Logged Off"
 msgstr "Prijavljen"
 
 # Ovde je nekada stajalo 'ime oca'. Kod nas je srednje ime uglavnom ime
@@ -4167,16 +4056,13 @@ msgstr "Nema nađenih korisnika"
 msgid "Roles:"
 msgstr "Uloga"
 
-msgid "Ping timeout"
-msgstr ""
+#, fuzzy
+msgid "Ping timed out"
+msgstr "Vreme veze ne isteklo"
 
-msgid "Read Error"
-msgstr "Greška pri čitanju"
-
-#, c-format
 msgid ""
-"Could not find alternative XMPP connection methods after failing to connect "
-"directly.\n"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
 
 msgid "Invalid XMPP ID"
@@ -4351,9 +4237,6 @@ msgstr "Vaša lozinka je izmenjena."
 
 msgid "Error changing password"
 msgstr "Greška pri izmeni lozinke"
-
-msgid "Password (again)"
-msgstr "Lozinka (ponovite)"
 
 msgid "Change XMPP Password"
 msgstr "Promeni Džaber lozinku"
@@ -4739,6 +4622,14 @@ msgstr "Greška pri XML obradi"
 msgid "Unknown Error in presence"
 msgstr "Nepoznata greška u prisustvu"
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr "Greška pri uključenju u ćaskanje: %s"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "Greška pri ćaskanju: %s"
+
 msgid "Create New Room"
 msgstr "Napravi novu sobu"
 
@@ -4755,16 +4646,20 @@ msgstr "P_ostavke za sobu"
 msgid "_Accept Defaults"
 msgstr "P_rihvati podrazumevano"
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr "Greška pri uključenju u ćaskanje: %s"
+#, fuzzy
+msgid "No reason"
+msgstr "Nije naveden razlog"
 
-#, c-format
-msgid "Error in chat %s"
-msgstr "Greška pri ćaskanju: %s"
+#, fuzzy, c-format
+msgid "You have been kicked: (%s)"
+msgstr "Izbacio Vas je %s: (%s)"
+
+#, fuzzy, c-format
+msgid "Kicked (%s)"
+msgstr "Izbačeni od strane %s: (%s)"
 
 #, fuzzy
-msgid "An error occured on the in-band bytestream transfer\n"
+msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "Došlo je do greške pri otvaranju datoteke."
 
 #, fuzzy
@@ -5259,9 +5154,6 @@ msgstr ""
 "Za povezivanje sa MSN potrebna je podrška za SSL. Instalirajte podržanu SSL "
 "biblioteku."
 
-msgid "Failed to connect to server."
-msgstr "Ne mogu da se povežem na server."
-
 msgid "Error retrieving profile"
 msgstr "Greška pri čitanju sa servera"
 
@@ -5523,9 +5415,6 @@ msgstr "Poruka nije poslata zato što je došlo do nepoznate greške u kodiranju
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Poruka nije poslata zato što je došlo do nepoznate greške:"
 
-msgid "Unable to connect"
-msgstr "Nemoguće povezivanje"
-
 msgid "Writing error"
 msgstr "Greška pri pisanju"
 
@@ -5540,20 +5429,24 @@ msgstr ""
 "Greška pri povezivanju sa servera %s:\n"
 "%s"
 
-msgid "Our protocol is not supported by the server."
+#, fuzzy
+msgid "Our protocol is not supported by the server"
 msgstr "Naš protokol nije podržan na serveru."
 
-msgid "Error parsing HTTP."
+#, fuzzy
+msgid "Error parsing HTTP"
 msgstr "Greška pri obradi HTTP-a."
 
-msgid "You have signed on from another location."
+#, fuzzy
+msgid "You have signed on from another location"
 msgstr "Prijavili ste se sa nekog drugog mesta."
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
 "MSN serveri su privremeno nedostupni. Sačekajte malo pa pokušajte ponovo."
 
-msgid "The MSN servers are going down temporarily."
+#, fuzzy
+msgid "The MSN servers are going down temporarily"
 msgstr "Veza Vam je prekinuta. Privremeno se gase MSN serveri."
 
 #, c-format
@@ -5565,9 +5458,6 @@ msgid ""
 msgstr ""
 "Vaš spisak MSN drugara je privremeno nedostupan. Sačekajte malo pa pokušajte "
 "ponovo."
-
-msgid "Unknown error."
-msgstr "Nepoznata greška."
 
 msgid "Handshaking"
 msgstr "Rukovanje"
@@ -5668,6 +5558,9 @@ msgstr "Dodatak za MSN protokol"
 #, c-format
 msgid "%s is not a valid group."
 msgstr "%s nije dozvoljena grupa."
+
+msgid "Unknown error."
+msgstr "Nepoznata greška."
 
 #, c-format
 msgid "%s on %s (%s)"
@@ -5786,12 +5679,6 @@ msgstr[3] ""
 msgid "Add contacts from server"
 msgstr "Dodaj kontakt sa servera"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-msgid "Connected"
-msgstr "Povezan"
-
 #, c-format
 msgid "Protocol error, code %d: %s"
 msgstr "Greška u protokolu, kod %d: %s"
@@ -5811,17 +5698,6 @@ msgstr "Greška u Mom svemiru"
 
 msgid "Invalid input condition"
 msgstr "Pogrešan ulazni uslov"
-
-msgid "Read buffer full (2)"
-msgstr "Bafer za čitanje je pun (2)"
-
-# Mozda "razume poruku"
-msgid "Unparseable message"
-msgstr "Poruka se ne može proslediti"
-
-#, c-format
-msgid "Couldn't connect to host: %s (%d)"
-msgstr "Ne mogu da se povežem sa domaćinom: %s (%d)"
 
 msgid "Failed to add buddy"
 msgstr "Neuspešno dodavanje drugara razgovoru"
@@ -5905,6 +5781,15 @@ msgstr "Ukupno drugova"
 
 msgid "Client Version"
 msgstr "Verzija programa"
+
+#, fuzzy
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
+msgstr ""
+"Idite na http://editprofile.myspace.com/index.cfm?fuseaction=profile."
+"username i odaberite korisničko ime kako bi pokušali ponovo."
 
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM - Korisničko ime je dostupno"
@@ -6162,9 +6047,9 @@ msgstr "Korisnik ili nije na vezi ili imate zabranu"
 msgid "Unknown error: 0x%X"
 msgstr "Nepoznata greška: 0x%X"
 
-#, c-format
-msgid "Login failed (%s)."
-msgstr "Prijava nije uspela (%s)."
+#, fuzzy, c-format
+msgid "Unable to login: %s"
+msgstr "Ne mogu da pingujem korisnika %s"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6269,9 +6154,6 @@ msgstr "GroupWise konferencija %d"
 msgid "Authenticating..."
 msgstr "Identifikacija"
 
-msgid "Unable to connect to server."
-msgstr "Ne mogu da se povežem na server."
-
 msgid "Waiting for response..."
 msgstr "Čekam na odgovor..."
 
@@ -6295,25 +6177,18 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "Da li želite da se priključite razgovoru?"
 
-msgid "You have been logged out because you logged in at another workstation."
-msgstr ""
-"Veza je prekinuta zato što ste se prijavili pod ovim imenom sa nekog drugog "
-"mesta."
-
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
 msgstr "Izgleda da %s nije prisutan i da nije primio poslatu poruku."
 
+#, fuzzy
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr ""
 "Ne mogu da se povežem na seerver. Unesite adresu servera na kog želite da se "
 "povežem."
-
-msgid "Error. SSL support is not installed."
-msgstr "SSL podrška je neophodna. Instalirajte je."
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Ova konferencija je zatvorena. Poruke se više ne mogu slati."
@@ -6353,10 +6228,7 @@ msgstr ""
 msgid "Error requesting "
 msgstr "Greška u zahtevu tokena za prijavu"
 
-msgid "Incorrect password."
-msgstr "Neispravna lozinka."
-
-msgid "AOL does not allow your screen name to authenticate via this site."
+msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
 msgid "Could not join chat room"
@@ -6365,18 +6237,8 @@ msgstr "Ne mogu da se povežem na pričaonicu"
 msgid "Invalid chat room name"
 msgstr "Neispravno ime pričaonice"
 
-msgid "Server closed the connection."
-msgstr "Server je prekinuo vezu"
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr ""
-"Veza sa serverom je prekinuta:\n"
-"%s"
-
-msgid "Received invalid data on connection with server."
+#, fuzzy
+msgid "Received invalid data on connection with server"
 msgstr "Dobijeni su pogrešni podaci od servera."
 
 #. *< type
@@ -6424,7 +6286,8 @@ msgstr "Prekinuta je veza sa udaljenim korisnikom:<br>%s"
 msgid "Received invalid data on connection with remote user."
 msgstr "Primljeni pogrešni podaci od udaljenog korisnika."
 
-msgid "Could not establish a connection with the remote user."
+#, fuzzy
+msgid "Unable to establish a connection with the remote user."
 msgstr "Ne mogu da uspostavim vezu sa udaljenim korisnikom."
 
 msgid "Direct IM established"
@@ -6623,21 +6486,15 @@ msgstr "_Nivoi upozorenja"
 msgid "Buddy Comment"
 msgstr "Primedba za drugara:"
 
-#, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to authentication server: %s"
 msgstr ""
 "Ne mogu se povežem na server za potvrdu:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr ""
-"Ne mogu da se povežem na BOS server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to BOS server: %s"
+msgstr "Ne mogu da se povežem na server."
 
 msgid "Username sent"
 msgstr "Korisničko ime je poslato"
@@ -6649,11 +6506,11 @@ msgstr "Veza je uspostavljena, kolačić je poslat"
 msgid "Finalizing connection"
 msgstr "Dovršava povezivanje"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
 "Prijava nije uspela: Ne mogu da se prijavim kao %s jer je to neispravno "
 "korisničko ime. Korisnička imena moraju biti ispravne adrese e-pošte, početi "
@@ -6667,27 +6524,22 @@ msgstr "Veza se uskoro može prekinuti.  Pogledajte %s za dopune."
 msgid "Unable to get a valid AIM login hash."
 msgstr "Neuspelo dobavljanje ispravnog heša za prijavu na AIM."
 
-# Da li je "shortly" ovde "uskoro", ili "na kratko"? Pravilno je "uskoro", ali ostalo mi se ne slaze sa time!
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "Veza se uskoro može prekinuti. Pogledajte %s za dopune."
-
 msgid "Unable to get a valid login hash."
 msgstr "Ne mogu da primi ispravan heš za prijavu."
-
-msgid "Could Not Connect"
-msgstr "Ne mogu da se povežem"
 
 msgid "Received authorization"
 msgstr "Primio ovlašćenje"
 
 #. Unregistered username
 #. uid is not exist
-msgid "Invalid username."
-msgstr "Neispravno korisničko ime."
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "Korisnik ne postoji."
 
 #. Suspended account
-msgid "Your account is currently suspended."
+#, fuzzy
+msgid "Your account is currently suspended"
 msgstr "Vaš nalog je trenutno nedostupan."
 
 #. service temporarily unavailable
@@ -6707,7 +6559,8 @@ msgstr ""
 "Uspostavljali ste i prekidali vezu suviše često. Sačekajte deset minuta pa "
 "pokušajte ponovo. Ako nastavite da pokušavate, moraćete da sačekate još duže."
 
-msgid "The SecurID key entered is invalid."
+#, fuzzy
+msgid "The SecurID key entered is invalid"
 msgstr "Uneti SecurID ključ je neispravan."
 
 msgid "Enter SecurID"
@@ -6888,6 +6741,9 @@ msgstr "Na vezi od"
 
 msgid "Member Since"
 msgstr "Član od"
+
+msgid "Capabilities"
+msgstr "Mogućnosti"
 
 msgid "Profile"
 msgstr "Profil"
@@ -7083,9 +6939,9 @@ msgstr[3] ""
 msgid "Away message too long."
 msgstr "Poruka za odsustvo je predugačka."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -7109,9 +6965,9 @@ msgstr ""
 msgid "Orphans"
 msgstr "Siročići"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 "Ne mogu da dodam drugara %s zato što imate previše drugara u spisku. "
@@ -7120,8 +6976,8 @@ msgstr ""
 msgid "(no name)"
 msgstr "(bez imena)"
 
-#, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+#, fuzzy, c-format
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr "Ne mogu da dodam drugara %s iz nepoznatih razloga."
 
 # Is it "them"? Or "him/her"?
@@ -7899,7 +7755,8 @@ msgstr "Interval održavanja veze (u sekundama)"
 msgid "Update interval (seconds)"
 msgstr "Interval ažuriranja (u sekundama)"
 
-msgid "Cannot decrypt server reply"
+#, fuzzy
+msgid "Unable to decrypt server reply"
 msgstr "Ne mogu da dešifrujem odgovor sa servera"
 
 #, c-format
@@ -7923,9 +7780,6 @@ msgstr "Potrebna je aktivacija"
 #, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
 msgstr "Nepoznat odgovor pri prijavi (0x%02X)"
-
-msgid "Could not decrypt server reply"
-msgstr "Ne mogu da dešifrujem odgovor sa servera"
 
 msgid "Requesting captcha"
 msgstr ""
@@ -7960,20 +7814,8 @@ msgstr ""
 "Nepoznat odgovor pri projavi (0x%02X):\n"
 "%s"
 
-msgid "Unable to connect."
-msgstr "Ne mogu da se povežem."
-
 msgid "Socket error"
 msgstr "Greška u utičnici"
-
-msgid "Unable to read from socket"
-msgstr "Ne mogu da čitam utičnicu"
-
-msgid "Write Error"
-msgstr "Greška pri pisanju"
-
-msgid "Connection lost"
-msgstr "Veza prekinuta"
 
 msgid "Getting server"
 msgstr "Dobavljam server"
@@ -7981,8 +7823,9 @@ msgstr "Dobavljam server"
 msgid "Requesting token"
 msgstr ""
 
-msgid "Couldn't resolve host"
-msgstr "Ne mogu da dobijem domaćina"
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "Ne mogu da se povežem na server."
 
 msgid "Invalid server or port"
 msgstr "Neispravan server ili port"
@@ -8033,7 +7876,8 @@ msgstr ""
 msgid "QQ Qun Command"
 msgstr "QQ Qun naredba"
 
-msgid "Could not decrypt login reply"
+#, fuzzy
+msgid "Unable to decrypt login reply"
 msgstr "Ne mogu da dešifrujem odgovor prilikom prijave"
 
 msgid "Unknown LOGIN CMD"
@@ -8052,9 +7896,6 @@ msgstr "Datoteka poslata"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d je prekinuo prenos datoteke %s"
-
-msgid "Connection closed (writing)"
-msgstr "Veza prekinuta (pišem)"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8109,17 +7950,6 @@ msgstr "Sametime administrator je dao sledeću izjavu na serveru %s"
 msgid "Sametime Administrator Announcement"
 msgstr "Izjava Sametime administratora"
 
-msgid "Connection reset"
-msgstr "Ponavljanje veze"
-
-#, c-format
-msgid "Error reading from socket: %s"
-msgstr "Greška pri čitanju iz utičnice: %s"
-
-#. this is a regular connect, error out
-msgid "Unable to connect to host"
-msgstr "Ne mogu da se povežem na domaćina"
-
 #, c-format
 msgid "Announcement from %s"
 msgstr "Najava od %s"
@@ -8141,6 +7971,9 @@ msgstr "Zvučnici"
 
 msgid "Video Camera"
 msgstr "Video kamera"
+
+msgid "File Transfer"
+msgstr "Prenosi datoteka"
 
 msgid "Supports"
 msgstr "Podrška"
@@ -8958,6 +8791,9 @@ msgstr ""
 msgid "Network Statistics"
 msgstr "Mrežne statistike"
 
+msgid "Ping"
+msgstr "Ping"
+
 msgid "Ping failed"
 msgstr "Ping nije uspeo"
 
@@ -9023,7 +8859,8 @@ msgstr "Nepodržana vrsta javnog ključa"
 msgid "Disconnected by server"
 msgstr "Server Vas je isključio"
 
-msgid "Error during connecting to SILC Server"
+#, fuzzy
+msgid "Error connecting to SILC Server"
 msgstr "Greška pri povezivanju na SILC server"
 
 msgid "Key Exchange failed"
@@ -9035,26 +8872,26 @@ msgstr ""
 "Nastavljam prekinutu sesiju. Pritisnite Ponovno povezivanje da napravite "
 "novu vezu."
 
-msgid "Connection failed"
-msgstr "Veza neuspešna"
-
 msgid "Performing key exchange"
 msgstr "Razmena ključeva je u toku"
 
-msgid "Unable to create connection"
-msgstr "Ne mogu da uspostavim novu vezu."
-
-msgid "Could not load SILC key pair"
+#, fuzzy
+msgid "Unable to load SILC key pair"
 msgstr "Ne mogu da učitam SILC par ključeva"
 
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "Povezivanje sa SILC serverom"
 
+#, fuzzy
+msgid "Unable to not load SILC key pair"
+msgstr "Ne mogu da učitam SILC par ključeva"
+
 msgid "Out of memory"
 msgstr "Nema dovoljno memorije"
 
-msgid "Cannot initialize SILC protocol"
+#, fuzzy
+msgid "Unable to initialize SILC protocol"
 msgstr "Ne mogu da pokrenem SILC protokol"
 
 msgid "Error loading SILC key pair"
@@ -9347,7 +9184,8 @@ msgstr "Digitalno potpiši i proveri sve poruke"
 msgid "Creating SILC key pair..."
 msgstr "Izrada SILC para ključeva je u toku..."
 
-msgid "Cannot create SILC key pair\n"
+#, fuzzy
+msgid "Unable to create SILC key pair"
 msgstr "Ne mogu da napravim SILC par ključeva\n"
 
 #. Hint for translators: Please check the tabulator width here and in
@@ -9443,6 +9281,9 @@ msgstr "Tabla"
 msgid "No server statistics available"
 msgstr "Nema dostupnih statistika"
 
+msgid "Error during connecting to SILC Server"
+msgstr "Greška pri povezivanju na SILC server"
+
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "Greška: izdanja se ne slažu, obnovite vašeg programa"
@@ -9483,30 +9324,27 @@ msgstr "Greška: kolačić je neispravan."
 msgid "Failure: Authentication failed"
 msgstr "Neuspešna identifikacija"
 
-msgid "Cannot initialize SILC Client connection"
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
 msgstr "Ne može se pokrenuti SILC programska veza"
 
 msgid "John Noname"
 msgstr "Bezimeni balon"
 
-#, c-format
-msgid "Could not load SILC key pair: %s"
+#, fuzzy, c-format
+msgid "Unable to load SILC key pair: %s"
 msgstr "Ne mogu da učitam SILC par ključeva: %s"
 
-msgid "Could not write"
-msgstr "Ne mogu da upišem"
+msgid "Unable to create connection"
+msgstr "Ne mogu da uspostavim novu vezu."
 
-msgid "Could not connect"
-msgstr "Ne mogu da se povežem"
-
-msgid "Unknown server response."
+#, fuzzy
+msgid "Unknown server response"
 msgstr "Nepoznat odgovor servera."
 
-msgid "Could not create listen socket"
-msgstr " e mogu da načinim utičnicu za slušanje"
-
-msgid "Could not resolve hostname"
-msgstr "Ne mogu da dobijem ime domaćina"
+#, fuzzy
+msgid "Unable to create listen socket"
+msgstr "Ne mogu načiniti utičnicu"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP korisnička imena nesmeju sadržati razmak ili @ simbole"
@@ -9547,6 +9385,77 @@ msgstr "Ovlasti korisnika"
 msgid "Auth Domain"
 msgstr "Ovlasti domen"
 
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr "join &lt;soba&gt;:  Priključi se pričaonici na Jahu mreži"
+
+msgid "list: List rooms on the Yahoo network"
+msgstr "list: Ispisuje sobe na Jahu mreži"
+
+msgid "doodle: Request user to start a Doodle session"
+msgstr "crtanje: zahtevaj od korisnika da počne sesiju crtanja"
+
+msgid "Yahoo ID..."
+msgstr "Jahu IB..."
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! Protocol Plugin"
+msgstr "Dodatak za Jahu protokol"
+
+msgid "Pager server"
+msgstr "Pejdžer server"
+
+msgid "Pager port"
+msgstr "Port za pejdžer"
+
+msgid "File transfer server"
+msgstr "Server za prenos datoteka"
+
+msgid "File transfer port"
+msgstr "Port za prenos datoteka"
+
+msgid "Chat room locale"
+msgstr "Lokalizacija pričaonice"
+
+msgid "Ignore conference and chatroom invitations"
+msgstr "Zanemari pozive pričaonice i konferencije"
+
+msgid "Chat room list URL"
+msgstr "URL za spisak pričaonica"
+
+msgid "Yahoo Chat server"
+msgstr "Jahu pričaonica"
+
+msgid "Yahoo Chat port"
+msgstr "Jahu port za razgovor"
+
+#, fuzzy
+msgid "Yahoo JAPAN ID..."
+msgstr "Jahu IB..."
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr "Dodatak za Jahu protokol"
+
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9578,28 +9487,18 @@ msgstr "Odbijeno dodavanje drugara"
 msgid "Received invalid data"
 msgstr "Dobijeni su pogrešni podaci od servera."
 
-#. Password incorrect
-#, fuzzy
-msgid "Incorrect Password"
-msgstr "Neispravna lozinka"
-
 #. security lock from too many failed login attempts
 #, fuzzy
 msgid ""
-"Account locked: Too many failed login attempts.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
 msgstr "Nepoznat broj greške: %d. Prijava na Jahu možda može da to otkloni."
-
-#. the username does not exist
-#, fuzzy
-msgid "Username does not exist"
-msgstr "Korisnik ne postoji."
 
 #. indicates a lock of some description
 #, fuzzy
 msgid ""
-"Account locked: Unknown reason.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
 msgstr "Nepoznat broj greške: %d. Prijava na Jahu možda može da to otkloni."
 
 #. username or password missing
@@ -9637,37 +9536,32 @@ msgstr "Vaš nalog je zaključan, prijavite se na Jahu! veb stranicu."
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr "Nepoznat broj greške: %d. Prijava na Jahu možda može da to otkloni."
 
-#, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
+#, fuzzy, c-format
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr "Ne mogu da dodam drugara %s u grupu %s u spisak servera za nalog %s."
 
-msgid "Could not add buddy to server list"
+#, fuzzy
+msgid "Unable to add buddy to server list"
 msgstr "Ne mogu da dodam drugara u spisak servera"
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr "[ Razgovetan %s/%s/%s.swf ] %s"
 
-msgid "Received unexpected HTTP response from server."
+#, fuzzy
+msgid "Received unexpected HTTP response from server"
 msgstr "Dobijen je neočekivan odgovor HTTP servera."
 
-msgid "Connection problem"
-msgstr "Greška pri povezivanju"
-
-#, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Lost connection with %s: %s"
 msgstr ""
 "Prekinuta je veza sa %s:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with %s: %s"
 msgstr ""
-"Ne mogu da uspostavim vezu sa %s:\n"
+"Ne mogu da uspostavim vezu sa serverom:\n"
 "%s"
 
 msgid "Not at Home"
@@ -9730,72 +9624,14 @@ msgstr "Priključi korisnika ćaskanju..."
 msgid "Open Inbox"
 msgstr "Otvori sanduče"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join &lt;soba&gt;:  Priključi se pričaonici na Jahu mreži"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "list: Ispisuje sobe na Jahu mreži"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr "crtanje: zahtevaj od korisnika da počne sesiju crtanja"
-
-msgid "Yahoo ID..."
-msgstr "Jahu IB..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr "Dodatak za Jahu protokol"
-
-msgid "Yahoo Japan"
-msgstr "Jahu Japan"
-
-msgid "Pager server"
-msgstr "Pejdžer server"
-
-msgid "Japan Pager server"
-msgstr "Japanov pejdžer server"
-
-msgid "Pager port"
-msgstr "Port za pejdžer"
-
-msgid "File transfer server"
-msgstr "Server za prenos datoteka"
-
-msgid "Japan file transfer server"
-msgstr "Japanov server za prenos datoteka"
-
-msgid "File transfer port"
-msgstr "Port za prenos datoteka"
-
-msgid "Chat room locale"
-msgstr "Lokalizacija pričaonice"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "Zanemari pozive pričaonice i konferencije"
-
-msgid "Chat room list URL"
-msgstr "URL za spisak pričaonica"
-
-msgid "Yahoo Chat server"
-msgstr "Jahu pričaonica"
-
-msgid "Yahoo Chat port"
-msgstr "Jahu port za razgovor"
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr "Pošalji zahtev za žvrljanje"
+
+msgid "Unable to connect."
+msgstr "Ne mogu da se povežem."
 
 # Ovo je FD kao broj koji je ekvivalentan "file handle"-u, odnosno, to je jedinstvena oznaka otvorenog fajla za pristup; sta znaci "establish" u ovom kontekstu mi nije jasno
 msgid "Unable to establish file descriptor."
@@ -9804,6 +9640,9 @@ msgstr "Ne mogu da uspostavim opisnik datoteke."
 #, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s pokušava da vam pošalje grupu od %d datoteka.\n"
+
+msgid "Write Error"
+msgstr "Greška pri pisanju"
 
 msgid "Yahoo! Japan Profile"
 msgstr "Profil za Jahu Japan"
@@ -9919,22 +9758,18 @@ msgstr "Glas"
 msgid "Webcams"
 msgstr "Kamere"
 
+msgid "Connection problem"
+msgstr "Greška pri povezivanju"
+
 msgid "Unable to fetch room list."
 msgstr "Ne mogu da dobavim spisak soba."
 
 msgid "User Rooms"
 msgstr "Korisničke sobe"
 
-msgid "Connection problem with the YCHT server."
+#, fuzzy
+msgid "Connection problem with the YCHT server"
 msgstr "Problem pri povezivanju na YCHT server."
-
-#, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
-msgstr ""
-"Veza sa serverom je prekinuta\n"
-"%s"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -10064,32 +9899,21 @@ msgstr "Područje"
 msgid "Exposure"
 msgstr "Izlaganje"
 
-#, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr ""
-"Ne mogu da napravim utičnicu:\n"
-"%s"
-
-#, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
+#, fuzzy, c-format
+msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "Ne mogu da obradim odgovor sa HTTP mrežnog posrednika: %s\n"
 
 #, c-format
 msgid "HTTP proxy connection error %d"
 msgstr "Greška pri povezivanju posrednika %d"
 
-#, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+#, fuzzy, c-format
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr "Pristup odbijen: posrednik odbija tunel na portu %d."
 
 #, c-format
 msgid "Error resolving %s"
 msgstr "Greška pri dobijanju %s"
-
-msgid "Could not resolve host name"
-msgstr "Ne mogu da dobijem ime domaćina"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -10304,12 +10128,6 @@ msgstr "Greška pri upisu u %s: %s"
 #, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "Ne mogu da se povežem na %s: %s"
-
-#, fuzzy, c-format
-msgid ""
-"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
-"found."
-msgstr "Server zahteva TLS/SSL za prijavu. Nije nađena podrška za TLS/SSL."
 
 #, c-format
 msgid " - %s"
@@ -10560,8 +10378,13 @@ msgstr "D_odaj zasedu drugaru..."
 msgid "View _Log"
 msgstr "Pregled dnevni_ka"
 
-msgid "Hide when offline"
+#, fuzzy
+msgid "Hide When Offline"
 msgstr "Sakrij kada nisam na mreži"
+
+#, fuzzy
+msgid "Show When Offline"
+msgstr "Prikaži i van mreže"
 
 msgid "_Alias..."
 msgstr "N_adeni ime..."
@@ -11068,6 +10891,10 @@ msgstr ""
 msgid "The text information for a buddy's status"
 msgstr "Izmeni podatke o korisniku za %s"
 
+#, fuzzy
+msgid "Type the host name for this certificate."
+msgstr "Odredi ime domaćina za koje važi ovaj sertifikat."
+
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL serveri"
@@ -11113,7 +10940,8 @@ msgstr "Ignoriši"
 msgid "Get Away Message"
 msgstr "Pribavi poruku za odsustvo"
 
-msgid "Last said"
+#, fuzzy
+msgid "Last Said"
 msgstr "Poslednje reči"
 
 msgid "Unable to save icon file to disk."
@@ -12012,7 +11840,8 @@ msgstr "Boja za iscrtavanje nad-veza."
 msgid "Hyperlink visited color"
 msgstr "Boja posećene nad-veze"
 
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+#, fuzzy
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr "Boja za iscrtavanje nad-veza nakon njihove posete."
 
 msgid "Hyperlink prelight color"
@@ -12048,14 +11877,23 @@ msgstr ""
 msgid "Action Message Name Color for Whispered Message"
 msgstr ""
 
+#, fuzzy
+msgid "Color to draw the name of a whispered action message."
+msgstr "Boja za ispis imena poruke koju šaljete."
+
 msgid "Whisper Message Name Color"
 msgstr ""
+
+#, fuzzy
+msgid "Color to draw the name of a whispered message."
+msgstr "Boja za ispis imena poruke koju šaljete."
 
 msgid "Typing notification color"
 msgstr "Boja obaveštenja o kucanju"
 
-msgid "The color to use for the typing notification font"
-msgstr ""
+#, fuzzy
+msgid "The color to use for the typing notification"
+msgstr "Omogući obaveštenje o kucanju"
 
 msgid "Typing notification font"
 msgstr "Font obaveštenja o kucanju"
@@ -12449,6 +12287,10 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Izabrana je „ručna“ naredba za veb čitač, a naredba nije postavljena."
 
+#, fuzzy
+msgid "No message"
+msgstr "Nepoznata greška"
+
 msgid "Open All Messages"
 msgstr "Otvori sve poruke"
 
@@ -12465,10 +12307,6 @@ msgstr ""
 #, fuzzy
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Imate e-poštu!</span>"
-
-#, fuzzy
-msgid "No message"
-msgstr "Nepoznata greška"
 
 msgid "The following plugins will be unloaded."
 msgstr "Sledeći dodaci će biti isključeni."
@@ -12685,14 +12523,18 @@ msgstr "Prika_ži ikonica na panelu:"
 msgid "On unread messages"
 msgstr "Na nepročitane poruke"
 
-msgid "Conversation Window Hiding"
-msgstr "Skrivanje prozora za razgovor"
+#, fuzzy
+msgid "Conversation Window"
+msgstr "Prozor razgovora"
 
 msgid "_Hide new IM conversations:"
 msgstr "_Sakrij nove razgovore:"
 
 msgid "When away"
 msgstr "Pri odsustvu"
+
+msgid "Minimi_ze new conversation windows"
+msgstr "Uma_nji noci prozor razgovora"
 
 #. All the tab options!
 msgid "Tabs"
@@ -12752,9 +12594,6 @@ msgstr "Koristi glatko klizanje"
 msgid "F_lash window when IMs are received"
 msgstr "_Zasijaj prozor kada pristigne nova poruka"
 
-msgid "Minimi_ze new conversation windows"
-msgstr "Uma_nji noci prozor razgovora"
-
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -12789,7 +12628,8 @@ msgstr "Ne mogu da pokrenem program za podešavanje veb preglednika."
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Primer: stunserver.org</span>"
 
-msgid "_Autodetect IP address"
+#, fuzzy, c-format
+msgid "Use _automatically detected IP address: %s"
 msgstr "Sam o_dredi IP adresu"
 
 msgid "Public _IP:"
@@ -13155,31 +12995,16 @@ msgstr "Sa_čuvaj i primeni"
 msgid "Status for %s"
 msgstr "Stanje za %s"
 
-#.
-#. * TODO: We should enable/disable the add button based on
-#. *       whether the user has entered all required data.  That
-#. *       would eliminate the need for this check and provide a
-#. *       better user experience.
-#.
-msgid "Custom Smiley"
-msgstr "Proizvoljni smešci"
-
-msgid "More Data needed"
-msgstr "Potrebno je više podataka"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr ""
-
 #, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr ""
 
+msgid "Custom Smiley"
+msgstr "Proizvoljni smešci"
+
 msgid "Duplicate Shortcut"
 msgstr "Udvostruči prečicu"
-
-msgid "Please select an image for the smiley."
-msgstr "Izaberite sliku za smešak."
 
 msgid "Edit Smiley"
 msgstr "Uredi smešak"
@@ -13293,9 +13118,10 @@ msgstr ""
 msgid "Cannot send launcher"
 msgstr "Ne mogu da pošaljem izvršivač"
 
+#, fuzzy
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr ""
 "Dovukli ste pokretač. Verovatno želite da pošaljete ono na šta on pokazuje "
 "nego pokretača samog."
@@ -13890,9 +13716,10 @@ msgid "Music Messaging Plugin for collaborative composition."
 msgstr "Dodatak muzičkih poruka za saradnički sastav."
 
 #. *  summary
+#, fuzzy
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 "Dodatak za poruke muzičkim porukama dozvoljava korisnicima da istovremeno "
 "rade na delu muzike menjajući prost rezultat u realnom vremenu."
@@ -14149,7 +13976,7 @@ msgstr "Dugme za slanje u prozoru razgovora."
 #. *< summary
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr ""
 
 msgid "Duplicate Correction"
@@ -14476,8 +14303,9 @@ msgstr "Pidžinove Vindous opcije"
 msgid "Options specific to Pidgin for Windows."
 msgstr "Postavke svojstvene Pidžinu za Vindous."
 
+#, fuzzy
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr ""
 "Pruža opcije specifične Pidžinu za Vindous, kao što je spuštanje liste "
 "drugara."
@@ -14519,6 +14347,292 @@ msgstr "Pošalji i primi izvorne Džaber odeljke"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ovaj dodatak je koristan za uklanjanje grešaka Džaber servera ili programa"
+
+#~ msgid "Cannot open socket"
+#~ msgstr "Ne mogu da otvorim utičnicu"
+
+#~ msgid "Could not listen on socket"
+#~ msgstr "Ne mogu da slušam utičnicu"
+
+#~ msgid "Unable to read socket"
+#~ msgstr "Ne mogu da čitam utičnicu"
+
+#~ msgid "Connection failed."
+#~ msgstr "Povezivanje propalo."
+
+#~ msgid "Server has disconnected"
+#~ msgstr "Server se isključio"
+
+#~ msgid "Couldn't create socket"
+#~ msgstr "Ne mogu da načinim utičnicu"
+
+#~ msgid "Couldn't connect to host"
+#~ msgstr "Ne mogu da se povežem sa domaćinom"
+
+#~ msgid "Read error"
+#~ msgstr "Greška pri čitanju"
+
+#~ msgid ""
+#~ "Could not establish a connection with the server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Ne mogu da uspostavim vezu sa serverom:\n"
+#~ "%s"
+
+#~ msgid "Write error"
+#~ msgstr "Greška pri pisanju"
+
+#~ msgid "Last Activity"
+#~ msgstr "Poslednja aktivnost"
+
+#~ msgid "Service Discovery Info"
+#~ msgstr "Podaci otkrivanja servisa"
+
+#~ msgid "Service Discovery Items"
+#~ msgstr "Stavke otkrivanja servisa"
+
+#~ msgid "Extended Stanza Addressing"
+#~ msgstr "Prošireno adresiranje odeljka"
+
+#~ msgid "Multi-User Chat"
+#~ msgstr "Višekorisničko ćaskanje"
+
+#~ msgid "Multi-User Chat Extended Presence Information"
+#~ msgstr "Podaci o proširenom ćaskanju sa više korisnika"
+
+#~ msgid "PubSub Service"
+#~ msgstr "PubSub servis"
+
+#~ msgid "SOCKS5 Bytestreams"
+#~ msgstr "SOCKS5 protoci"
+
+#~ msgid "XHTML-IM"
+#~ msgstr "HHTML — brze poruke"
+
+#~ msgid "User Location"
+#~ msgstr "Korisnikova lokacija"
+
+#~ msgid "User Avatar"
+#~ msgstr "Korisnikova sličica"
+
+#~ msgid "Chat State Notifications"
+#~ msgstr "Obaveštenja o stanju ćaskanja"
+
+#~ msgid "Software Version"
+#~ msgstr "Verzija programa"
+
+#~ msgid "Stream Initiation"
+#~ msgstr "Pokretanje protoka"
+
+#~ msgid "User Mood"
+#~ msgstr "Raspoloženje korisnika"
+
+#~ msgid "User Activity"
+#~ msgstr "Aktivnost korisnika"
+
+#~ msgid "Entity Capabilities"
+#~ msgstr "Sposobnosti"
+
+#~ msgid "Encrypted Session Negotiations"
+#~ msgstr "Pregovori o šifrovanoj sesiji"
+
+#~ msgid "User Tune"
+#~ msgstr "Korisnikova melodija"
+
+#~ msgid "Reachability Address"
+#~ msgstr "Adresa za kontakt"
+
+#~ msgid "User Profile"
+#~ msgstr "Korisnikov profil"
+
+#~ msgid "Jingle"
+#~ msgstr "Džingl"
+
+#~ msgid "Jingle Audio"
+#~ msgstr "Džingl zvuk"
+
+#~ msgid "User Nickname"
+#~ msgstr "Nadimak"
+
+#~ msgid "Jingle ICE UDP"
+#~ msgstr "Džingl ICE UDP"
+
+#~ msgid "Jingle ICE TCP"
+#~ msgstr "Džingl ICE TCP"
+
+#~ msgid "Jingle Raw UDP"
+#~ msgstr "Izvorni džingl UDP"
+
+#~ msgid "Jingle Video"
+#~ msgstr "Džingl video"
+
+#~ msgid "Jingle DTMF"
+#~ msgstr "Džingl DTMF"
+
+#~ msgid "Message Receipts"
+#~ msgstr "Prijem poruka"
+
+#~ msgid "Public Key Publishing"
+#~ msgstr "Izdavanje javnog ključa"
+
+#~ msgid "User Chatting"
+#~ msgstr "Korisnik ćaska"
+
+#~ msgid "User Browsing"
+#~ msgstr "Korisnik razgleda"
+
+#~ msgid "User Gaming"
+#~ msgstr "Korisnik se igra"
+
+#~ msgid "User Viewing"
+#~ msgstr "Korisnik gleda"
+
+#~ msgid "Stanza Encryption"
+#~ msgstr "Šifrovanje odeljka"
+
+#~ msgid "Entity Time"
+#~ msgstr "Vreme važnosti"
+
+#~ msgid "Delayed Delivery"
+#~ msgstr "Odložena dostava"
+
+#~ msgid "Collaborative Data Objects"
+#~ msgstr "Saradnički podaci objekata"
+
+#~ msgid "File Repository and Sharing"
+#~ msgstr "Skladištenje i deljenje datoteka"
+
+#~ msgid "Simplified Encrypted Session Negotiation"
+#~ msgstr "Pojednostavljeni pregovori i šifrovanoj sesiji"
+
+#~ msgid "Hop Check"
+#~ msgstr "Provera skoka"
+
+#~ msgid "Read Error"
+#~ msgstr "Greška pri čitanju"
+
+#~ msgid "Failed to connect to server."
+#~ msgstr "Ne mogu da se povežem na server."
+
+#~ msgid "Read buffer full (2)"
+#~ msgstr "Bafer za čitanje je pun (2)"
+
+# Mozda "razume poruku"
+#~ msgid "Unparseable message"
+#~ msgstr "Poruka se ne može proslediti"
+
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "Ne mogu da se povežem sa domaćinom: %s (%d)"
+
+#~ msgid "Login failed (%s)."
+#~ msgstr "Prijava nije uspela (%s)."
+
+#~ msgid ""
+#~ "You have been logged out because you logged in at another workstation."
+#~ msgstr ""
+#~ "Veza je prekinuta zato što ste se prijavili pod ovim imenom sa nekog "
+#~ "drugog mesta."
+
+#~ msgid "Error. SSL support is not installed."
+#~ msgstr "SSL podrška je neophodna. Instalirajte je."
+
+#~ msgid "Incorrect password."
+#~ msgstr "Neispravna lozinka."
+
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Ne mogu da se povežem na BOS server:\n"
+#~ "%s"
+
+# Da li je "shortly" ovde "uskoro", ili "na kratko"? Pravilno je "uskoro", ali ostalo mi se ne slaze sa time!
+#~ msgid "You may be disconnected shortly.  Check %s for updates."
+#~ msgstr "Veza se uskoro može prekinuti. Pogledajte %s za dopune."
+
+#~ msgid "Could Not Connect"
+#~ msgstr "Ne mogu da se povežem"
+
+#~ msgid "Invalid username."
+#~ msgstr "Neispravno korisničko ime."
+
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "Ne mogu da dešifrujem odgovor sa servera"
+
+#~ msgid "Connection lost"
+#~ msgstr "Veza prekinuta"
+
+#~ msgid "Couldn't resolve host"
+#~ msgstr "Ne mogu da dobijem domaćina"
+
+#~ msgid "Connection closed (writing)"
+#~ msgstr "Veza prekinuta (pišem)"
+
+#~ msgid "Connection reset"
+#~ msgstr "Ponavljanje veze"
+
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "Greška pri čitanju iz utičnice: %s"
+
+#~ msgid "Unable to connect to host"
+#~ msgstr "Ne mogu da se povežem na domaćina"
+
+#~ msgid "Could not write"
+#~ msgstr "Ne mogu da upišem"
+
+#~ msgid "Could not connect"
+#~ msgstr "Ne mogu da se povežem"
+
+#~ msgid "Could not create listen socket"
+#~ msgstr " e mogu da načinim utičnicu za slušanje"
+
+#~ msgid "Could not resolve hostname"
+#~ msgstr "Ne mogu da dobijem ime domaćina"
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "Neispravna lozinka"
+
+#~ msgid ""
+#~ "Could not establish a connection with %s:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Ne mogu da uspostavim vezu sa %s:\n"
+#~ "%s"
+
+#~ msgid "Yahoo Japan"
+#~ msgstr "Jahu Japan"
+
+#~ msgid "Japan Pager server"
+#~ msgstr "Japanov pejdžer server"
+
+#~ msgid "Japan file transfer server"
+#~ msgstr "Japanov server za prenos datoteka"
+
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Veza sa serverom je prekinuta\n"
+#~ "%s"
+
+#~ msgid "Could not resolve host name"
+#~ msgstr "Ne mogu da dobijem ime domaćina"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support "
+#~ "was found."
+#~ msgstr "Server zahteva TLS/SSL za prijavu. Nije nađena podrška za TLS/SSL."
+
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "Skrivanje prozora za razgovor"
+
+#~ msgid "More Data needed"
+#~ msgstr "Potrebno je više podataka"
+
+#~ msgid "Please select an image for the smiley."
+#~ msgstr "Izaberite sliku za smešak."
 
 #~ msgid "Activate which ID?"
 #~ msgstr "Koji ID da aktiviram?"
@@ -14895,13 +15009,6 @@ msgstr ""
 #~ "supported by MySpace."
 #~ msgstr ""
 #~ "Lozinke preko %d karaktera (vaša je %d) nisu podržane u Mom svemiru."
-
-#~ msgid ""
-#~ "Please go to http://editprofile.myspace.com/index.cfm?fuseaction=profile."
-#~ "username and choose a username and try to login again."
-#~ msgstr ""
-#~ "Idite na http://editprofile.myspace.com/index.cfm?fuseaction=profile."
-#~ "username i odaberite korisničko ime kako bi pokušali ponovo."
 
 #~ msgid "Unable to make SSL connection to server."
 #~ msgstr "Ne mogu da se povežem na SSL server."

@@ -419,8 +419,6 @@ char *wpurple_read_reg_string(HKEY rootkey, const char *subkey, const char *valn
 void wpurple_init(void) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
-	const char *perlenv;
-	char *newenv;
 
 	if (!g_thread_supported())
 		g_thread_init(NULL);
@@ -443,17 +441,6 @@ void wpurple_init(void) {
 		purple_debug_error("wpurple", "Could not find a usable WinSock DLL.  Oh well.\n");
 		WSACleanup();
 	}
-
-	/* Set Environmental Variables */
-	/* Tell perl where to find Purple's perl modules */
-	perlenv = g_getenv("PERL5LIB");
-	newenv = g_strdup_printf("%s%s%s" G_DIR_SEPARATOR_S "perlmod;",
-		perlenv ? perlenv : "",
-		perlenv ? ";" : "",
-		wpurple_install_dir());
-	if (!g_setenv("PERL5LIB", newenv, TRUE))
-		purple_debug_warning("wpurple", "putenv failed for PERL5LIB\n");
-	g_free(newenv);
 
 	purple_debug_info("wpurple", "wpurple_init end\n");
 }

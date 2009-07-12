@@ -143,11 +143,16 @@ gevo_load_addressbook(const gchar* uri, EBook **book, GError **error)
 	g_return_val_if_fail(book != NULL, FALSE);
 
 	if (uri == NULL)
-		*book = e_book_new_system_addressbook(NULL);
+		*book = e_book_new_system_addressbook(error);
 	else
 		*book = e_book_new_from_uri(uri, error);
 
-	result = e_book_open(*book, FALSE, NULL);
+	if (*book == NULL)
+		return FALSE;
+
+	*error = NULL;
+
+	result = e_book_open(*book, FALSE, error);
 
 	if (!result && *book != NULL)
 	{

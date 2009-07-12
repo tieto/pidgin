@@ -3293,7 +3293,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 				purple_blist_node_set_flags((PurpleBlistNode *)buddy,
 						PURPLE_BLIST_NODE_FLAG_NO_SAVE);
 				g_object_set_data_full(G_OBJECT(gtkconv->imhtml), "transient_buddy",
-						buddy, (GDestroyNotify)purple_blist_remove_buddy);
+						buddy, (GDestroyNotify)purple_buddy_destroy);
 			}
 		}
 	}
@@ -4939,6 +4939,7 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	gtk_widget_set_name(gtkconv->imhtml, "pidgin_conv_imhtml");
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),TRUE);
+	g_object_set_data(G_OBJECT(gtkconv->imhtml), "gtkconv", gtkconv);
 
 	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
 	                               &imhtml_sw_hscroll, NULL);

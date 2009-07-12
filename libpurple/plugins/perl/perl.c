@@ -146,8 +146,8 @@ xs_init(pTHX)
 		const gchar *search_path = search_paths->data;
 		search_paths = g_list_next(search_paths);
 
-		uselib = g_strdup_printf("unshift @INC, \"%s%cperl\";",
-		                         search_path, G_DIR_SEPARATOR);
+		uselib = g_strdup_printf("unshift @INC, q(%s%sperl);",
+		                         search_path, G_DIR_SEPARATOR_S);
 		eval_pv(uselib, TRUE);
 		g_free(uselib);
 	}
