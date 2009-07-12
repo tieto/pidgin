@@ -447,6 +447,9 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 	jbr->caps.info = info;
 	jbr->caps.exts = exts;
 
+	if (info == NULL)
+		goto out;
+
 	if (!jbr->commands_fetched && jabber_resource_has_capability(jbr, "http://jabber.org/protocol/commands")) {
 		JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
 		xmlnode *query = xmlnode_get_child_with_namespace(iq->node, "query", "http://jabber.org/protocol/disco#items");
@@ -458,6 +461,12 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 		jbr->commands_fetched = TRUE;
 	}
 
+	if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/chatstates"))
+		jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+	else
+		jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
+
+out:
 	g_free(userdata->from);
 	g_free(userdata);
 }
