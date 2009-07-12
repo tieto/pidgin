@@ -83,11 +83,13 @@ struct _purple_hbuddy {
 	PurpleBlistNode *group;
 };
 
+/* This function must not use purple_normalize */
 static guint _purple_blist_hbuddy_hash(struct _purple_hbuddy *hb)
 {
 	return g_str_hash(hb->name);
 }
 
+/* This function must not use purple_normalize */
 static guint _purple_blist_hbuddy_equal(struct _purple_hbuddy *hb1, struct _purple_hbuddy *hb2)
 {
 	return (purple_strequal(hb1->name, hb2->name) && hb1->account == hb2->account && hb1->group == hb2->group);
@@ -2352,7 +2354,7 @@ PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name)
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
 	hb.account = account;
-	hb.name = purple_normalize(account, name);
+	hb.name = (gchar *)purple_normalize(account, name);
 
 	for (group = purplebuddylist->root; group; group = group->next) {
 		hb.group = group;
