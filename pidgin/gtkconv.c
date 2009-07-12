@@ -3293,7 +3293,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 				purple_blist_node_set_flags((PurpleBlistNode *)buddy,
 						PURPLE_BLIST_NODE_FLAG_NO_SAVE);
 				g_object_set_data_full(G_OBJECT(gtkconv->imhtml), "transient_buddy",
-						buddy, (GDestroyNotify)purple_blist_remove_buddy);
+						buddy, (GDestroyNotify)purple_buddy_destroy);
 			}
 		}
 	}
