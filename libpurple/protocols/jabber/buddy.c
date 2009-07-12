@@ -161,7 +161,7 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 		jbr = g_new0(JabberBuddyResource, 1);
 		jbr->jb = jb;
 		jbr->name = g_strdup(resource);
-		jbr->capabilities = JABBER_CAP_XHTML;
+		jbr->capabilities = JABBER_CAP_NONE;
 		jbr->tz_off = PURPLE_NO_TZ_OFF;
 		jb->resources = g_list_append(jb->resources, jbr);
 	}
@@ -2243,12 +2243,6 @@ jabber_resource_has_capability(const JabberBuddyResource *jbr, const gchar *cap)
 				node = g_list_find_custom(features, cap, (GCompareFunc)strcmp);
 		}
 	}
-
-	/* TODO: Are these messages actually useful? */
-	if (node)
-		purple_debug_info("jabber", "Found cap: %s\n", cap);
-	else
-		purple_debug_info("jabber", "Cap %s not found\n", cap);
 
 	return (node != NULL);
 }

@@ -1199,9 +1199,15 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 		xhtml = tmp;
 	}
 
-	if ((!jbr || jbr->capabilities & JABBER_CAP_XHTML) &&
-			!jabber_xhtml_plain_equal(xhtml, jm->body))
-		jm->xhtml = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", xhtml);
+	/*
+	 * For backward compatibility with user expectations or for those not on
+	 * the user's roster, allow sending XHTML-IM markup.
+	 */
+	if (!jbr || !jbr->caps.info ||
+			jabber_resource_has_capability(jbr, "http://jabber.org/protocol/xhtml-im")) {
+		if (!jabber_xhtml_plain_equal(xhtml, jm->body))
+			jm->xhtml = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", xhtml);
+	}
 
 	g_free(xhtml);
 

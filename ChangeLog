@@ -96,6 +96,8 @@ version 2.6.0 (??/??/2009):
 	  kicked.
 	* Fix issues with case-sensitivity of XMPP roster and case-insensitive
 	  Purple groups.
+	* For contacts who advertise Entity Capabilities, only send rich text
+	  markup if they support it.
 
 	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)
