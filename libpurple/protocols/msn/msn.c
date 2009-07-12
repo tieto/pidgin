@@ -672,12 +672,7 @@ msn_status_text(PurpleBuddy *buddy)
 		if (title && *title) {
 			const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
 			const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
-			media = g_strdup_printf("%s%s%s%s%s%s", title,
-			                        (artist && *artist) ? " - " : "",
-			                        (artist && *artist) ? artist : "",
-			                        (album && *album) ? " (" : "",
-			                        (album && *album) ? album : "",
-			                        (album && *album) ? ")" : "");
+			media = purple_util_format_song_info(title, artist, album, NULL);
 		}
 		else if (game && *game)
 			media = g_strdup_printf("Playing %s", game);

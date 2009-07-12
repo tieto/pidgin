@@ -1975,13 +1975,16 @@ char *jabber_status_text(PurpleBuddy *b)
 		ret = g_strdup(jb->error_msg);
 	} else {
 		PurplePresence *presence = purple_buddy_get_presence(b);
-		PurpleStatus *status =purple_presence_get_active_status(presence);
+		PurpleStatus *status = purple_presence_get_active_status(presence);
 		char *stripped;
 
 		if(!(stripped = purple_markup_strip_html(purple_status_get_attr_string(status, "message")))) {
 			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 				PurpleStatus *status = purple_presence_get_status(presence, "tune");
-				stripped = g_strdup(purple_status_get_attr_string(status, PURPLE_TUNE_TITLE));
+				const char *title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
+				const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+				const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
+				stripped = purple_util_format_song_info(title, artist, album, NULL);
 			}
 		}
 
