@@ -94,6 +94,8 @@ version 2.6.0 (??/??/2009):
 	* New XMPP and Google Talk accounts require SSL by default.
 	* Display kicks (and the reasons given) in chat rooms when an occupant is
 	  kicked.
+	* Fix issues with case-sensitivity of XMPP roster and case-insensitive
+	  Purple groups.
 
 	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)
