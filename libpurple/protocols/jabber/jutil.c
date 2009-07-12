@@ -54,25 +54,47 @@ gboolean jabber_nodeprep_validate(const char *str)
 	return TRUE;
 }
 
-gboolean jabber_nameprep_validate(const char *str)
+gboolean jabber_domain_validate(const char *str)
 {
 	const char *c;
+	size_t len;
 
 	if(!str)
 		return TRUE;
 
-	if(strlen(str) > 1023)
+	len = strlen(str);
+	if (len > 1023)
 		return FALSE;
 
 	c = str;
+
+	if (*c == '[') {
+		/* Check if str is a valid IPv6 identifier */
+		gboolean valid = FALSE;
+
+		if (*(c + len - 1) != ']')
+			return FALSE;
+
+		/* Ugly, but in-place */
+		*(gchar *)(c + len - 1) = '\0';
+		valid = purple_ipv6_address_is_valid(c + 1);
+		*(gchar *)(c + len - 1) = ']';
+
+		return valid;
+	}
+
 	while(c && *c) {
 		gunichar ch = g_utf8_get_char(c);
-		if(!g_unichar_isgraph(ch))
+		/* The list of characters allowed in domain names is pretty small */
+		if ((ch <= 0x7F && !( (ch >= 'a' && ch <= 'z')
+				|| (ch >= '0' && ch <= '9')
+				|| (ch >= 'A' && ch <= 'Z')
+				|| ch == '.'
+				|| ch == '-' )) || (ch >= 0x80 && !g_unichar_isgraph(ch)))
 			return FALSE;
 
 		c = g_utf8_next_char(c);
 	}
-
 
 	return TRUE;
 }
@@ -103,20 +125,137 @@ gboolean jabber_resourceprep_validate(const char *str)
 JabberID*
 jabber_id_new(const char *str)
 {
-	char *at;
-	char *slash;
+	const char *at = NULL;
+	const char *slash = NULL;
+	const char *c;
+	gboolean needs_validation = FALSE;
+#if 0
+	gboolean node_is_required = FALSE;
+#endif
 	char *node = NULL;
 	char *domain;
 	JabberID *jid;
 
-	if(!str || !g_utf8_validate(str, -1, NULL))
+	if (!str)
+		return NULL;
+
+	for (c = str; *c != '\0'; c++)
+	{
+		switch (*c) {
+			case '@':
+				if (!slash) {
+					if (at) {
+						/* Multiple @'s in the node/domain portion, not a valid JID! */
+						return NULL;
+					}
+					if (c == str) {
+						/* JIDs cannot start with @ */
+						return NULL;
+					}
+					if (c[1] == '\0') {
+						/* JIDs cannot end with @ */
+						return NULL;
+					}
+					at = c;
+				}
+				break;
+
+			case '/':
+				if (!slash) {
+					if (c == str) {
+						/* JIDs cannot start with / */
+						return NULL;
+					}
+					if (c[1] == '\0') {
+						/* JIDs cannot end with / */
+						return NULL;
+					}
+					slash = c;
+				}
+				break;
+
+			default:
+				/* characters allowed everywhere */
+				if ((*c >= 'a' && *c <= 'z')
+						|| (*c >= '0' && *c <= '9')
+						|| (*c >= 'A' && *c <= 'Z')
+						|| *c == '.' || *c == '-')
+					/* We're good */
+					break;
+
+#if 0
+				if (slash != NULL) {
+					/* characters allowed only in the resource */
+					if (implement_me)
+						/* We're good */
+						break;
+				}
+
+				/* characters allowed only in the node */
+				if (implement_me) {
+					/*
+					 * Ok, this character is valid, but only if it's a part
+					 * of the node and not the domain.  But we don't know
+					 * if "c" is a part of the node or the domain until after
+					 * we've found the @.  So set a flag for now and check
+					 * that we found an @ later.
+					 */
+					node_is_required = TRUE;
+					break;
+				}
+#endif
+
+				/*
+				 * Hmm, this character is a bit more exotic.  Better fall
+				 * back to using the more expensive UTF-8 compliant
+				 * stringprep functions.
+				 */
+				needs_validation = TRUE;
+				break;
+		}
+	}
+
+#if 0
+	if (node_is_required && at == NULL)
+		/* Found invalid characters in the domain */
+		return NULL;
+#endif
+
+	if (!needs_validation) {
+		/* JID is made of only ASCII characters--just lowercase and return */
+		jid = g_new0(JabberID, 1);
+
+		if (at) {
+			jid->node = g_ascii_strdown(str, at - str);
+			if (slash) {
+				jid->domain = g_ascii_strdown(at + 1, slash - (at + 1));
+				jid->resource = g_strdup(slash + 1);
+			} else {
+				jid->domain = g_ascii_strdown(at + 1, -1);
+			}
+		} else {
+			if (slash) {
+				jid->domain = g_ascii_strdown(str, slash - str);
+				jid->resource = g_strdup(slash + 1);
+			} else {
+				jid->domain = g_ascii_strdown(str, -1);
+			}
+		}
+		return jid;
+	}
+
+	/*
+	 * If we get here, there are some non-ASCII chars in the string, so
+	 * we'll need to validate it, normalize, and finally do a full jabber
+	 * nodeprep on the jid.
+	 */
+
+	if (!g_utf8_validate(str, -1, NULL))
 		return NULL;
 
 	jid = g_new0(JabberID, 1);
 
-	at = g_utf8_strchr(str, -1, '@');
-	slash = g_utf8_strchr(str, -1, '/');
-
+	/* normalization */
 	if(at) {
 		node = g_utf8_normalize(str, at-str, G_NORMALIZE_NFKC);
 		if(slash) {
@@ -144,8 +283,9 @@ jabber_id_new(const char *str)
 		g_free(domain);
 	}
 
+	/* and finally the jabber nodeprep */
 	if(!jabber_nodeprep_validate(jid->node) ||
-			!jabber_nameprep_validate(jid->domain) ||
+			!jabber_domain_validate(jid->domain) ||
 			!jabber_resourceprep_validate(jid->resource)) {
 		jabber_id_free(jid);
 		return NULL;

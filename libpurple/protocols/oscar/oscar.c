@@ -1673,10 +1673,9 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 	}
 	if (in != '\n') {
 		char buf[256];
-		GHashTable *ui_info = purple_core_get_ui_info();
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
 				"If so, check %s for updates."),
-				((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
+				oscar_get_ui_info_string("website", PURPLE_WEBSITE));
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid AIM login hash."),
 							buf);
@@ -1715,10 +1714,9 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	pos->fd = source;
 
 	if (source < 0) {
-		GHashTable *ui_info = purple_core_get_ui_info();
 		buf = g_strdup_printf(_("You may be disconnected shortly.  "
 				"If so, check %s for updates."),
-				((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
+				oscar_get_ui_info_string("website", PURPLE_WEBSITE));
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid AIM login hash."),
 							buf);
@@ -1814,13 +1812,12 @@ static int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];
-		GHashTable *ui_info = purple_core_get_ui_info();
 		g_free(pos->modname);
 		g_free(pos);
 
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
 			"If so, check %s for updates."),
-			((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
+			oscar_get_ui_info_string("website", PURPLE_WEBSITE));
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid login hash."),
 							buf);
@@ -1905,9 +1902,8 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		case 0x1c:
 		{
 			/* client too old */
-			GHashTable *ui_info = purple_core_get_ui_info();
 			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"),
-					   ((ui_info && g_hash_table_lookup(ui_info, "website")) ? (char *)g_hash_table_lookup(ui_info, "website") : PURPLE_WEBSITE));
+					oscar_get_ui_info_string("website", PURPLE_WEBSITE));
 			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, buf);
 			break;
 		}
@@ -2222,7 +2218,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		message = oscar_encoding_to_utf8(account, info->status_encoding,
 										 info->status, info->status_len);
 
-	tmp2 = tmp = (message ? g_markup_escape_text(message, -1) : NULL);
+	tmp2 = tmp = (message ? purple_markup_escape_text(message, -1) : NULL);
 
 	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
 		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
@@ -7105,15 +7101,6 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	/* Preferences */
 	purple_prefs_add_none("/plugins/prpl/oscar");
 	purple_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
-
-	/*
-	 * These two preferences will normally not be changed.  UIs can optionally
-	 * use them to override these two version fields which are sent to the
-	 * server when logging in.  AOL requested this change to allow clients to
-	 * use custom values.
-	 */
-	purple_prefs_add_string("/plugins/prpl/oscar/clientstring", NULL);
-	purple_prefs_add_int("/plugins/prpl/oscar/distid", -1);
 
 	purple_prefs_remove("/plugins/prpl/oscar/show_idle");
 	purple_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");

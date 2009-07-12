@@ -1163,7 +1163,10 @@ yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg)
 	struct yahoo_data *yd = add_req->gc->proto_data;
 	struct yahoo_packet *pkt;
 	char *encoded_msg = NULL;
-	PurpleAccount *account = purple_connection_get_account(add_req->gc);
+	const char *who = add_req->who;
+
+	if (add_req->protocol == 2)
+		who += 4; /* Skip 'msn/' */
 
 	if (msg && *msg)
 		encoded_msg = yahoo_string_encode(add_req->gc, msg, NULL);
@@ -1171,9 +1174,10 @@ yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg)
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15,
 			YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, "ssiiis",
-			1, purple_normalize(account, purple_account_get_username(account)),
-			5, add_req->who,
+	yahoo_packet_hash(pkt, "ssiiiis",
+			1, add_req->id,
+			5, who,
+			241, add_req->protocol,
 			13, 2,
 			334, 0,
 			97, 1,
@@ -1291,7 +1295,6 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 			switch (pair->key) {
 			case 4:
 				temp = pair->value;
-				add_req->who = g_strdup(pair->value);
 				break;
 			case 5:
 				add_req->id = g_strdup(pair->value);
@@ -1721,8 +1724,8 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 					break;
 			}
 			if(error_reason) {
-				purple_debug_error("yahoo", "Authentication error: %s\n",
-				                   error_reason);
+				purple_debug_error("yahoo", "Authentication error: %s. "
+				                   "Code %d\n", error_reason, response_no);
 				purple_connection_error_reason(gc, error, error_reason);
 				g_free(error_reason);
 				g_free(auth_data->seed);
@@ -1826,8 +1829,8 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 					break;
 			}
-			purple_debug_error("yahoo", "Authentication error: %s\n",
-			                   error_reason);
+			purple_debug_error("yahoo", "Authentication error: %s. Code %d\n",
+			                   error_reason, response_no);
 			purple_connection_error_reason(gc, error, error_reason);
 			g_free(error_reason);
 			g_free(auth_data->seed);
@@ -2239,7 +2242,8 @@ static void yahoo_p2p_disconnect_destroy_data(gpointer data)
 
 	if(p2p_data->source >= 0)
 		close(p2p_data->source);
-	purple_input_remove(p2p_data->input_event);
+	if (p2p_data->input_event > 0)
+		purple_input_remove(p2p_data->input_event);
 	g_free(p2p_data->host_ip);
 	g_free(p2p_data->host_username);
 	g_free(p2p_data);
@@ -2459,7 +2463,7 @@ static gboolean yahoo_cancel_p2p_server_listen_cb(gpointer data)
 
 	yd = p2p_data->gc->proto_data;
 
-	purple_debug_warning("yahoo","yahoo p2p server timeout, peer failed to connect");
+	purple_debug_warning("yahoo","yahoo p2p server timeout, peer failed to connect\n");
 	yahoo_p2p_disconnect_destroy_data(data);
 	purple_input_remove(yd->yahoo_p2p_server_watcher);
 	yd->yahoo_p2p_server_watcher = 0;
@@ -3534,6 +3538,8 @@ void yahoo_close(PurpleConnection *gc) {
 	g_free(yd->pending_chat_goto);
 	g_strfreev(yd->profiles);
 
+	yahoo_personal_details_reset(&yd->ypd);
+
 	g_free(yd->current_list15_grp);
 
 	g_free(yd);
@@ -3685,9 +3691,14 @@ char *yahoo_status_text(PurpleBuddy *b)
 	const char *msg;
 	char *msg2;
 	PurpleAccount *account;
+	PurpleConnection *gc;
 
 	account = purple_buddy_get_account(b);
-	f = yahoo_friend_find(purple_account_get_connection(account), purple_buddy_get_name(b));
+	gc = purple_account_get_connection(account);
+	if (!gc || !purple_connection_get_protocol_data(gc))
+		return NULL;
+
+	f = yahoo_friend_find(gc, purple_buddy_get_name(b));
 	if (!f)
 		return g_strdup(_("Not on server list"));
 
@@ -4003,9 +4014,13 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 				   "Unable to request mail login token; forwarding to login screen.");
 		purple_notify_uri(gc, yahoo_mail_url);
 	}
-
 }
 
+static void
+yahoo_set_userinfo_fn(PurplePluginAction *action)
+{
+	yahoo_set_userinfo(action->context);
+}
 
 static void yahoo_show_act_id(PurplePluginAction *action)
 {
@@ -4051,6 +4066,10 @@ static void yahoo_show_chat_goto(PurplePluginAction *action)
 GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 	GList *m = NULL;
 	PurplePluginAction *act;
+
+	act = purple_plugin_action_new(_("Set User Info..."),
+			yahoo_set_userinfo_fn);
+	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Activate ID..."),
 			yahoo_show_act_id);

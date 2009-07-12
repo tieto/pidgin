@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-02 01:34-0700\n"
+"POT-Creation-Date: 2009-07-06 15:04-0700\n"
 "PO-Revision-Date: 2009-01-06 17:27+0100\n"
 "Last-Translator: Daniël Heres <danielheres@gmail.com>\n"
 "Language-Team: Dutch <nl@li.org>\n"
@@ -2630,9 +2630,10 @@ msgstr "Logboeken van andere clients tonen in ons logboek."
 
 #  * description
 #. * description
+#, fuzzy
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
@@ -2687,8 +2688,9 @@ msgstr "Offline berichten emulatie"
 msgid "Save messages sent to an offline user as pounce."
 msgstr "Berichten aan een offline gebruiker opslaan in alarm"
 
+#, fuzzy
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr "De rest van de berichten zal in het alarm worden opgeslagen. Je kan"
 
@@ -2939,14 +2941,16 @@ msgstr ""
 "te maken van TCL-plug-ins, installeer ActiveTCL vanaf http://www.activestate."
 "com\n"
 
+#, fuzzy
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
 "De Apple Bonjour For Windows toolkit is niet geconden, bekijk de FAQ op "
 "http://d.pidgin.im/BonjourWindow voor meer informatie."
 
-msgid "Unable to listen for incoming IM connections\n"
+#, fuzzy
+msgid "Unable to listen for incoming IM connections"
 msgstr "Kan niet luisteren naar binnenkomende gespreksverzoeken\n"
 
 msgid ""
@@ -3000,14 +3004,21 @@ msgstr "%s heeft het gesprek gesloten."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Kan het bericht niet verzenden. Kan geen gesprek starten."
 
-msgid "Cannot open socket"
-msgstr "Kan socket niet openen"
+#, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"Kan geen socket aanmaken:\n"
+"%s"
 
-msgid "Could not bind socket to port"
+#, fuzzy, c-format
+msgid "Unable to bind socket to port: %s"
 msgstr "Kan socket niet koppelen aan poort"
 
-msgid "Could not listen on socket"
-msgstr "Kan niet luisteren naar socket"
+#, fuzzy, c-format
+msgid "Unable to listen on socket: %s"
+msgstr ""
+"Kan geen socket aanmaken:\n"
+"%s"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr "Fout bij het communiceren met lokale mDNSResponder"
@@ -3054,13 +3065,16 @@ msgstr "Contactenlijst opslaan..."
 msgid "Load buddylist from file..."
 msgstr "Contactenlijst laden uit bestand..."
 
-msgid "Fill in the registration fields."
+#, fuzzy
+msgid "You must fill in all registration fields"
 msgstr "Registratievelden invullen."
 
-msgid "Passwords do not match."
+#, fuzzy
+msgid "Passwords do not match"
 msgstr "Wachtwoorden komen niet overeen."
 
-msgid "Unable to register new account. Error occurred.\n"
+#, fuzzy
+msgid "Unable to register new account.  An unknown error occurred."
 msgstr "Kan geen nieuw account registreren. Er is een fout opgetreden.\n"
 
 msgid "New Gadu-Gadu Account Registered"
@@ -3072,14 +3086,15 @@ msgstr "Registratie voltooid."
 msgid "Password"
 msgstr "Wachtwoord"
 
-msgid "Password (retype)"
-msgstr "Wachtwoord (nogmaals)"
+msgid "Password (again)"
+msgstr "Nieuw wachtwoord (herhalen)"
 
-msgid "Enter current token"
-msgstr "Geef huidige teken"
+msgid "Enter captcha text"
+msgstr ""
 
-msgid "Current token"
-msgstr "Huidige teken"
+#, fuzzy
+msgid "Captcha"
+msgstr "Captcha afbeelding"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "Nieuw Gadu-gadu-account registreren"
@@ -3132,6 +3147,15 @@ msgstr "Wachtwoord gewijzigd."
 msgid "Current password"
 msgstr "Huidige wachtwoord"
 
+msgid "Password (retype)"
+msgstr "Wachtwoord (nogmaals)"
+
+msgid "Enter current token"
+msgstr "Geef huidige teken"
+
+msgid "Current token"
+msgstr "Huidige teken"
+
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr "Geef je huidige wachtwoord en nieuwe wachtwoord voor UIN: "
 
@@ -3179,8 +3203,8 @@ msgstr "Niet overeenkomende gebruikers gevonden"
 msgid "There are no users matching your search criteria."
 msgstr "Er zijn geen overeenkomende gebruikers voor uw zoekcriteria"
 
-msgid "Unable to read socket"
-msgstr "Kan niet lezen van socket."
+msgid "Unable to read from socket"
+msgstr "Kan niet lezen van socket"
 
 msgid "Buddy list downloaded"
 msgstr "Contactenlijst gedownload"
@@ -3194,8 +3218,14 @@ msgstr "Contactenlijst verzonden"
 msgid "Your buddy list was stored on the server."
 msgstr "Uw contactenlijst is opgeslagen op de server."
 
-msgid "Connection failed."
-msgstr "Verbinding mislukt."
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
+msgid "Connected"
+msgstr "Verbonden"
+
+msgid "Connection failed"
+msgstr "Verbinding mislukt"
 
 msgid "Add to chat"
 msgstr "Toevoegen aan chatgesprek"
@@ -3203,10 +3233,14 @@ msgstr "Toevoegen aan chatgesprek"
 msgid "Chat _name:"
 msgstr "_Naam chatgesprek:"
 
-#. should this be a settings error?
-#, fuzzy
-msgid "Unable to resolve server"
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
 msgstr "Kan geen verbinding maken met de computer."
+
+#. 1. connect to server
+#. connect to the server
+msgid "Connecting"
+msgstr "Verbinding wordt gemaakt"
 
 msgid "Chat error"
 msgstr "Chatfout"
@@ -3214,7 +3248,8 @@ msgstr "Chatfout"
 msgid "This chat name is already in use"
 msgstr "De naam bestaat reeds"
 
-msgid "Not connected to the server."
+#, fuzzy
+msgid "Not connected to the server"
 msgstr "Niet verbonden met de server."
 
 msgid "Find buddies..."
@@ -3275,7 +3310,8 @@ msgstr "Geen onderwerp ingesteld"
 msgid "File Transfer Failed"
 msgstr "Bestandsoverdracht mislukt"
 
-msgid "Could not open a listening port."
+#, fuzzy
+msgid "Unable to open a listening port."
 msgstr "Kon geen poort openen om te luisteren."
 
 msgid "Error displaying MOTD"
@@ -3291,8 +3327,18 @@ msgstr "Er is geen MOTD geassocieerd met deze verbinding."
 msgid "MOTD for %s"
 msgstr "MOTD voor %s"
 
-msgid "Server has disconnected"
-msgstr "Server heeft verbinding verbroken"
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, fuzzy, c-format
+msgid "Lost connection with server: %s"
+msgstr ""
+"Verbinding verloren met server:\n"
+"%s"
 
 msgid "View MOTD"
 msgstr "MOTD weergeven"
@@ -3307,22 +3353,20 @@ msgstr "_Wachtwoord:"
 msgid "IRC nick and server may not contain whitespace"
 msgstr "IRC-bijnamen mogen geen spaties bevatten"
 
-#. 1. connect to server
-#. connect to the server
-msgid "Connecting"
-msgstr "Verbinding wordt gemaakt"
-
 msgid "SSL support unavailable"
 msgstr "SSL niet beschikbaar"
 
-msgid "Couldn't create socket"
-msgstr "Kan geen socket aanmaken"
+msgid "Unable to connect"
+msgstr "Kan geen verbinding maken"
 
-msgid "Couldn't connect to host"
-msgstr "Kan geen verbinding maken met host"
+#. this is a regular connect, error out
+#, fuzzy, c-format
+msgid "Unable to connect: %s"
+msgstr "Kan geen verbinding maken met %s"
 
-msgid "Read error"
-msgstr "Leesfout"
+#, fuzzy, c-format
+msgid "Server closed the connection"
+msgstr "Server heeft de verbinding verbroken."
 
 msgid "Users"
 msgstr "Gebruikers"
@@ -3755,12 +3799,14 @@ msgstr "Ad-Hoc opdracht mislukt"
 msgid "execute"
 msgstr "uitvoeren"
 
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
+#, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
 msgstr ""
 "Server vereist TLS/SSL voor aanmelding. Geen ondersteuning voor TLS/SSL "
 "gevonden."
 
-msgid "You require encryption, but no TLS/SSL support found."
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
 msgstr ""
 "Server vereist versleuteling, maar er is geen ondersteuning voor TLS/SSL "
 "gevonden."
@@ -3781,7 +3827,12 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Tekstaanmelding"
 
-msgid "Invalid response from server."
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "Identificatie mislukt"
+
+#, fuzzy
+msgid "Invalid response from server"
 msgstr "Ongeldig antwoord van server"
 
 msgid "Server does not use any supported authentication method"
@@ -3793,7 +3844,8 @@ msgstr "Je hebt encryptie nodig, maar het is niet mogelijk op deze server."
 msgid "Invalid challenge from server"
 msgstr "Ongeldige vraag van server"
 
-msgid "SASL error"
+#, fuzzy, c-format
+msgid "SASL error: %s"
 msgstr "SASL-fout"
 
 msgid "The BOSH connection manager terminated your session."
@@ -3813,10 +3865,8 @@ msgstr ""
 "Kan geen verbinding maken met de server:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with the server: %s"
 msgstr ""
 "Kan geen verbinding maken met de server:\n"
 "%s"
@@ -3824,12 +3874,6 @@ msgstr ""
 #, fuzzy
 msgid "Unable to establish SSL connection"
 msgstr "Kan verbinding niet initialiseren"
-
-msgid "Unable to create socket"
-msgstr "Kan geen socket aanmaken"
-
-msgid "Write error"
-msgstr "Schrijffout"
 
 msgid "Full Name"
 msgstr "Volledige naam"
@@ -3901,163 +3945,6 @@ msgstr "Besturingssysteem"
 msgid "Local Time"
 msgstr "Lokaal bestand:"
 
-msgid "Last Activity"
-msgstr "Laatste activiteit"
-
-msgid "Service Discovery Info"
-msgstr "Directory info instellen"
-
-msgid "Service Discovery Items"
-msgstr ""
-
-msgid "Extended Stanza Addressing"
-msgstr "Stanza adresbijvoeging"
-
-msgid "Multi-User Chat"
-msgstr "Groepsgesprek"
-
-#, fuzzy
-msgid "Multi-User Chat Extended Presence Information"
-msgstr "Deze gebruiker heeft geen profiel."
-
-msgid "In-Band Bytestreams"
-msgstr ""
-
-msgid "Ad-Hoc Commands"
-msgstr "Ad-Hoc opdrachten"
-
-msgid "PubSub Service"
-msgstr "PubSub dienst"
-
-msgid "SOCKS5 Bytestreams"
-msgstr ""
-
-msgid "Out of Band Data"
-msgstr ""
-
-msgid "XHTML-IM"
-msgstr "XHTML-IM"
-
-#, fuzzy
-msgid "In-Band Registration"
-msgstr "Registratiefout"
-
-msgid "User Location"
-msgstr "Gebruikerslocatie"
-
-msgid "User Avatar"
-msgstr "Avatar"
-
-msgid "Chat State Notifications"
-msgstr "Contactstatusmelding"
-
-msgid "Software Version"
-msgstr "Software versie"
-
-#, fuzzy
-msgid "Stream Initiation"
-msgstr "Oriëntatie"
-
-msgid "File Transfer"
-msgstr "Bestandsoverdracht"
-
-msgid "User Mood"
-msgstr "Humeur gebruiker"
-
-msgid "User Activity"
-msgstr "Activiteit gebruiker"
-
-msgid "Entity Capabilities"
-msgstr "Entiteit mogelijkheden"
-
-msgid "Encrypted Session Negotiations"
-msgstr "Gecodeerde sessie onderhandelingen"
-
-msgid "User Tune"
-msgstr "Gebruikers tune"
-
-#, fuzzy
-msgid "Roster Item Exchange"
-msgstr "IM met sleuteluitwisseling"
-
-msgid "Reachability Address"
-msgstr "Beschikbaarheid adres"
-
-msgid "User Profile"
-msgstr "Profiel"
-
-msgid "Jingle"
-msgstr "Jingle"
-
-msgid "Jingle Audio"
-msgstr "Geluid jingle"
-
-msgid "User Nickname"
-msgstr "Gebruikersnaam"
-
-msgid "Jingle ICE UDP"
-msgstr "ICE UDP Jingle"
-
-msgid "Jingle ICE TCP"
-msgstr "ICE TCP Jingle"
-
-msgid "Jingle Raw UDP"
-msgstr "Raw UDP Raw UDP"
-
-msgid "Jingle Video"
-msgstr "Jingle Video"
-
-msgid "Jingle DTMF"
-msgstr "DTMF DTMF"
-
-msgid "Message Receipts"
-msgstr "Bericht ontvangen"
-
-msgid "Public Key Publishing"
-msgstr "Openbare sleutel openbaren"
-
-msgid "User Chatting"
-msgstr "Chattende gebruiker"
-
-msgid "User Browsing"
-msgstr "Browsende gebruiker"
-
-msgid "User Gaming"
-msgstr "Gamende gebruiker"
-
-msgid "User Viewing"
-msgstr "Kijkende gebruiker"
-
-msgid "Ping"
-msgstr "Ping"
-
-msgid "Stanza Encryption"
-msgstr "Stanza codering"
-
-msgid "Entity Time"
-msgstr ""
-
-msgid "Delayed Delivery"
-msgstr "Vertraagde afgifte"
-
-msgid "Collaborative Data Objects"
-msgstr "Samenwerkende data-objecten"
-
-msgid "File Repository and Sharing"
-msgstr "Bestandsbronnen en delen"
-
-msgid "STUN Service Discovery for Jingle"
-msgstr ""
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr ""
-
-msgid "Hop Check"
-msgstr "Hop-controle"
-
-msgid "Capabilities"
-msgstr "Mogelijkheden"
-
 msgid "Priority"
 msgstr "Prioriteit"
 
@@ -4069,7 +3956,7 @@ msgid "%s ago"
 msgstr ""
 
 #, fuzzy
-msgid "Logged off"
+msgid "Logged Off"
 msgstr "Ingelogd"
 
 msgid "Middle Name"
@@ -4250,16 +4137,13 @@ msgstr "Niet overeenkomende gebruikers gevonden"
 msgid "Roles:"
 msgstr "Rol"
 
-msgid "Ping timeout"
+#, fuzzy
+msgid "Ping timed out"
 msgstr "Ping Verlopen"
 
-msgid "Read Error"
-msgstr "Leesfout"
-
-#, c-format
 msgid ""
-"Could not find alternative XMPP connection methods after failing to connect "
-"directly.\n"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
 
 msgid "Invalid XMPP ID"
@@ -4434,9 +4318,6 @@ msgstr "Wachtwoord is veranderd"
 
 msgid "Error changing password"
 msgstr "Fout bij veranderen van wachtwoord"
-
-msgid "Password (again)"
-msgstr "Nieuw wachtwoord (herhalen)"
 
 msgid "Change XMPP Password"
 msgstr "Veranderen XMPP-wachtwoord"
@@ -4826,6 +4707,14 @@ msgstr "XML analysefout"
 msgid "Unknown Error in presence"
 msgstr "Onbekende fout in aanwezigheid"
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr "Fout bij meedoen aan chat: %s"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "Fout in chat: %s"
+
 msgid "Create New Room"
 msgstr "Nieuwe ruimte maken"
 
@@ -4842,16 +4731,20 @@ msgstr "Ruimte _instellen"
 msgid "_Accept Defaults"
 msgstr "_Standaardinstellingen gebruiken"
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr "Fout bij meedoen aan chat: %s"
+#, fuzzy
+msgid "No reason"
+msgstr "Geen reden gegeven"
 
-#, c-format
-msgid "Error in chat %s"
-msgstr "Fout in chat: %s"
+#, fuzzy, c-format
+msgid "You have been kicked: (%s)"
+msgstr "Je bent weggeschopt door %s: (%s)"
+
+#, fuzzy, c-format
+msgid "Kicked (%s)"
+msgstr "Weggeschopt door %s (%s)"
 
 #, fuzzy
-msgid "An error occured on the in-band bytestream transfer\n"
+msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "Er is een fout opgetreden bij het openen van het bestand."
 
 #, fuzzy
@@ -5344,9 +5237,6 @@ msgstr "_Chat starten"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr "SSL-ondersteuning is vereist voor MSN. Installeer een SSL-bibliotheek."
 
-msgid "Failed to connect to server."
-msgstr "Kan geen verbinding maken met de server."
-
 msgid "Error retrieving profile"
 msgstr "Fout bij ophalen van profiel"
 
@@ -5600,9 +5490,6 @@ msgstr "Bericht is niet verstuurd wegens een onbekende coderingsfout:"
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Bericht is niet verstuurd wegens een onbekende fout:"
 
-msgid "Unable to connect"
-msgstr "Kan geen verbinding maken"
-
 msgid "Writing error"
 msgstr "Schrijffout"
 
@@ -5617,13 +5504,16 @@ msgstr ""
 "Verbindingsfout van %s-server: \n"
 "%s"
 
-msgid "Our protocol is not supported by the server."
+#, fuzzy
+msgid "Our protocol is not supported by the server"
 msgstr "Ons protocol wordt niet ondersteund door de server."
 
-msgid "Error parsing HTTP."
+#, fuzzy
+msgid "Error parsing HTTP"
 msgstr "Fout bij analyseren HTTP."
 
-msgid "You have signed on from another location."
+#, fuzzy
+msgid "You have signed on from another location"
 msgstr "Je hebt jezelf aangemeld vanaf een andere locatie."
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
@@ -5631,7 +5521,8 @@ msgstr ""
 "De MSN-servers zijn op dit moment niet beschikbaar. Probeer het later nog "
 "eens."
 
-msgid "The MSN servers are going down temporarily."
+#, fuzzy
+msgid "The MSN servers are going down temporarily"
 msgstr "De MSN-servers worden tijdelijk uitgeschakeld."
 
 #, c-format
@@ -5643,9 +5534,6 @@ msgid ""
 msgstr ""
 "Uw MSN contactenlijst is op dit moment niet beschikbaar. Probeer het later "
 "nog eens."
-
-msgid "Unknown error."
-msgstr "Onbekende fout."
 
 msgid "Handshaking"
 msgstr "Verbinding opzetten"
@@ -5752,6 +5640,9 @@ msgstr "MSN-protocol-plug-in"
 #, c-format
 msgid "%s is not a valid group."
 msgstr "%s is geen geldige groep."
+
+msgid "Unknown error."
+msgstr "Onbekende fout."
 
 #, c-format
 msgid "%s on %s (%s)"
@@ -5866,12 +5757,6 @@ msgstr[1] ""
 msgid "Add contacts from server"
 msgstr "Contacten toevoegen van de server"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-msgid "Connected"
-msgstr "Verbonden"
-
 #, c-format
 msgid "Protocol error, code %d: %s"
 msgstr "Protocol fout, code %d: %s"
@@ -5895,16 +5780,6 @@ msgstr "MySpaceIM-fout"
 
 msgid "Invalid input condition"
 msgstr "Ongeldige invoer voorwaarde"
-
-msgid "Read buffer full (2)"
-msgstr "Wachtrij vol (2)"
-
-msgid "Unparseable message"
-msgstr "Kan het bericht niet analyseren"
-
-#, c-format
-msgid "Couldn't connect to host: %s (%d)"
-msgstr "Kan geen verbinding maken met host: %s (%d)"
 
 msgid "Failed to add buddy"
 msgstr "Contact toevoegen mislukt"
@@ -5991,6 +5866,12 @@ msgstr "Totaal aantal vrienden"
 
 msgid "Client Version"
 msgstr "Client-versie"
+
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
+msgstr ""
 
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM - Gebruikersnaam Beschikbaar"
@@ -6251,9 +6132,9 @@ msgstr "De gebruiker is off-line of heeft u geblokkeerd"
 msgid "Unknown error: 0x%X"
 msgstr "Onbekende fout: 0x%X"
 
-#, c-format
-msgid "Login failed (%s)."
-msgstr "Aanmelden mislukt (%s)."
+#, fuzzy, c-format
+msgid "Unable to login: %s"
+msgstr "Kan gebruiker %s niet pingen"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6359,9 +6240,6 @@ msgstr "Groupwise bijeenkomst %d"
 msgid "Authenticating..."
 msgstr "Identificatie..."
 
-msgid "Unable to connect to server."
-msgstr "Kan geen verbinding maken met de computer."
-
 msgid "Waiting for response..."
 msgstr "Wacht op antwoord..."
 
@@ -6385,25 +6263,18 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "Wilt u het gesprek bijwonen?"
 
-msgid "You have been logged out because you logged in at another workstation."
-msgstr ""
-"De verbinding is verbroken omdat u zich heeft aangemeld op een andere "
-"computer."
-
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
 msgstr "%s lijkt niet aangemeld te zijn en heeft uw bericht niet ontvangen."
 
+#, fuzzy
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr ""
 "Kan geen verbinding makenmet server. Geef de naam op van de server waarmee u "
 "contact wilt maken."
-
-msgid "Error. SSL support is not installed."
-msgstr "Fout! Geen SSL-ondersteuning geïnstalleerd."
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr ""
@@ -6445,10 +6316,7 @@ msgstr ""
 msgid "Error requesting "
 msgstr "Fout oplossing %s"
 
-msgid "Incorrect password."
-msgstr "Ongeldig wachtwoord."
-
-msgid "AOL does not allow your screen name to authenticate via this site."
+msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
 msgid "Could not join chat room"
@@ -6457,18 +6325,8 @@ msgstr "Kon gesprek-ruimte niet binnenkomen"
 msgid "Invalid chat room name"
 msgstr "Ongeldige naam voor ruimte"
 
-msgid "Server closed the connection."
-msgstr "Server heeft de verbinding verbroken."
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr ""
-"Verbinding verloren met server:\n"
-"%s"
-
-msgid "Received invalid data on connection with server."
+#, fuzzy
+msgid "Received invalid data on connection with server"
 msgstr "Ongeldige data ontvangen van server."
 
 #. *< type
@@ -6516,7 +6374,8 @@ msgstr "De verbinding is verbroken met de volgende gebruiker:<br>%s"
 msgid "Received invalid data on connection with remote user."
 msgstr "Ongeldige data ontvangen via directe verbinding."
 
-msgid "Could not establish a connection with the remote user."
+#, fuzzy
+msgid "Unable to establish a connection with the remote user."
 msgstr "Kan geen verbinding maken met de andere gebruiker."
 
 msgid "Direct IM established"
@@ -6721,21 +6580,15 @@ msgstr "Waarschuwingsniveau"
 msgid "Buddy Comment"
 msgstr "Contactopmerking"
 
-#, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to authentication server: %s"
 msgstr ""
 "Kan niet verbinden met identificatieserver:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr ""
-"Kan niet verbinden met BOS-server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to BOS server: %s"
+msgstr "Kan geen verbinding maken met de computer."
 
 msgid "Username sent"
 msgstr "Gebruikersnaam verzonden"
@@ -6747,11 +6600,11 @@ msgstr "Verbinding hersteld, Cookie verzonden"
 msgid "Finalizing connection"
 msgstr "Afronden van verbinding"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
 "Kan niet aanmelden: Kan niet aanmelden als %s omdat de gebruikersnaam "
 "ongeldig is. Gebruikersnamen moeten een geldig e-mailadres zijn, of beginnen "
@@ -6766,27 +6619,22 @@ msgstr ""
 msgid "Unable to get a valid AIM login hash."
 msgstr "Kon geen geldige AIM aanmeld-hash krijgen."
 
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr ""
-"U wordt waarschijnlijk binnenkort afgemeld. Kijk op %s voor nieuwe versies."
-
 msgid "Unable to get a valid login hash."
 msgstr "Kon geen geldige aanmeld-hash krijgen."
-
-msgid "Could Not Connect"
-msgstr "Kan geen verbinding maken"
 
 msgid "Received authorization"
 msgstr "Toestemming gekregen"
 
 #. Unregistered username
 #. uid is not exist
-msgid "Invalid username."
-msgstr "Ongeldige gebruikersnaam."
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "Gebruiker bestaat niet"
 
 #. Suspended account
-msgid "Your account is currently suspended."
+#, fuzzy
+msgid "Your account is currently suspended"
 msgstr "Uw Account is momenteel afgesloten"
 
 #. service temporarily unavailable
@@ -6807,7 +6655,8 @@ msgstr ""
 "Je hebt je te snel aan en afgemeld. Wacht 10 minuten en probeer het nog een "
 "keer. Als je verdergaat moet je nog langer wachten "
 
-msgid "The SecurID key entered is invalid."
+#, fuzzy
+msgid "The SecurID key entered is invalid"
 msgstr "Ingevoerde SecurID sleutel is ongeldig."
 
 msgid "Enter SecurID"
@@ -6986,6 +6835,9 @@ msgstr "Online sinds"
 
 msgid "Member Since"
 msgstr "Lid sinds"
+
+msgid "Capabilities"
+msgstr "Mogelijkheden"
 
 msgid "Profile"
 msgstr "Profiel"
@@ -7166,9 +7018,9 @@ msgstr[1] ""
 msgid "Away message too long."
 msgstr "Afwezigheidsbericht te lang."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -7193,9 +7045,9 @@ msgstr ""
 msgid "Orphans"
 msgstr "Wezen"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 "Kon %s niet als contact toevoegen omdat u te veel contacten in uw lijst "
@@ -7204,8 +7056,8 @@ msgstr ""
 msgid "(no name)"
 msgstr "(naamloos)"
 
-#, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+#, fuzzy, c-format
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr "Kan contact %s niet toevoegen voor een onbekende reden."
 
 #, c-format
@@ -8002,7 +7854,7 @@ msgid "Update interval (seconds)"
 msgstr "Vernieuw-interval (in seconden)"
 
 #, fuzzy
-msgid "Cannot decrypt server reply"
+msgid "Unable to decrypt server reply"
 msgstr "Kan login-antwoord niet decoderen"
 
 #, c-format
@@ -8026,10 +7878,6 @@ msgstr "Activatie vereist"
 #, fuzzy, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
 msgstr "Ongeldig antwoord-code, 0x%02X"
-
-#, fuzzy
-msgid "Could not decrypt server reply"
-msgstr "Kan login-antwoord niet decoderen"
 
 msgid "Requesting captcha"
 msgstr "Captcha aanvragen"
@@ -8063,20 +7911,8 @@ msgid ""
 "%s"
 msgstr "Ongeldig antwoord-code, 0x%02X"
 
-msgid "Unable to connect."
-msgstr "Kan geen verbinding maken."
-
 msgid "Socket error"
 msgstr "Socketfout"
-
-msgid "Unable to read from socket"
-msgstr "Kan niet lezen van socket"
-
-msgid "Write Error"
-msgstr "Schrijffout"
-
-msgid "Connection lost"
-msgstr "Verbinding verbroken"
 
 msgid "Getting server"
 msgstr "Server verkrijgen"
@@ -8084,8 +7920,9 @@ msgstr "Server verkrijgen"
 msgid "Requesting token"
 msgstr "Tekenreeks aanvragen"
 
-msgid "Couldn't resolve host"
-msgstr "Kan host niet vinden"
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "Kan geen verbinding maken met de computer."
 
 msgid "Invalid server or port"
 msgstr "Ongeldige server of poort"
@@ -8137,7 +7974,7 @@ msgid "QQ Qun Command"
 msgstr "QQ Qun-opdracht"
 
 #, fuzzy
-msgid "Could not decrypt login reply"
+msgid "Unable to decrypt login reply"
 msgstr "Kan login-antwoord niet decoderen"
 
 #, fuzzy
@@ -8158,9 +7995,6 @@ msgstr "Bestanden sturen"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d heeft de overdracht van %s afgebroken"
-
-msgid "Connection closed (writing)"
-msgstr "Verbinding verbroken (schrijven)"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8216,17 +8050,6 @@ msgstr ""
 msgid "Sametime Administrator Announcement"
 msgstr "Aankondiging sametime-beheerder"
 
-msgid "Connection reset"
-msgstr "Verbindingsfout"
-
-#, c-format
-msgid "Error reading from socket: %s"
-msgstr "Er is een fout opgetreden bij het lezen van de socket: %s"
-
-#. this is a regular connect, error out
-msgid "Unable to connect to host"
-msgstr "Kan geen verbinding maken met de computer"
-
 #, c-format
 msgid "Announcement from %s"
 msgstr "Aankondiging van %s"
@@ -8248,6 +8071,9 @@ msgstr "Speakers"
 
 msgid "Video Camera"
 msgstr "Videocamera"
+
+msgid "File Transfer"
+msgstr "Bestandsoverdracht"
 
 msgid "Supports"
 msgstr "Ondersteuning"
@@ -9066,6 +8892,9 @@ msgstr ""
 msgid "Network Statistics"
 msgstr "Netwerkstatistieken"
 
+msgid "Ping"
+msgstr "Ping"
+
 msgid "Ping failed"
 msgstr "Ping mislukt"
 
@@ -9130,7 +8959,8 @@ msgstr "Type openbare sleutel niet ondersteund"
 msgid "Disconnected by server"
 msgstr "Verbinding verbroken door server"
 
-msgid "Error during connecting to SILC Server"
+#, fuzzy
+msgid "Error connecting to SILC Server"
 msgstr "Fout bij verbinden met SILC-server"
 
 msgid "Key Exchange failed"
@@ -9142,26 +8972,26 @@ msgstr ""
 "Hervatten van losgekoppelde sessie mislukt. Klik op \"Opnieuw verbinden\" om "
 "een nieuwe verbinding te maken."
 
-msgid "Connection failed"
-msgstr "Verbinding mislukt"
-
 msgid "Performing key exchange"
 msgstr "Bezig met sleuteluitwisseling"
 
-msgid "Unable to create connection"
-msgstr "Kan geen nieuwe verbinding maken"
-
-msgid "Could not load SILC key pair"
+#, fuzzy
+msgid "Unable to load SILC key pair"
 msgstr "Kan SILC sleutelpaar niet laden"
 
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "Verbinden met SILC-server"
 
+#, fuzzy
+msgid "Unable to not load SILC key pair"
+msgstr "Kan SILC sleutelpaar niet laden"
+
 msgid "Out of memory"
 msgstr "Te weinig geheugen"
 
-msgid "Cannot initialize SILC protocol"
+#, fuzzy
+msgid "Unable to initialize SILC protocol"
 msgstr "Kan SILC-protocol niet starten"
 
 msgid "Error loading SILC key pair"
@@ -9466,7 +9296,8 @@ msgstr "Alle berichten ondertekenen en controleren"
 msgid "Creating SILC key pair..."
 msgstr "Aanmaken van SILC sleutelpaar..."
 
-msgid "Cannot create SILC key pair\n"
+#, fuzzy
+msgid "Unable to create SILC key pair"
 msgstr "Kan geen SILC sleutelpaar aanmaken\n"
 
 #. Hint for translators: Please check the tabulator width here and in
@@ -9563,6 +9394,9 @@ msgstr "Whiteboard"
 msgid "No server statistics available"
 msgstr "Geen serverstatistieken beschikbaar"
 
+msgid "Error during connecting to SILC Server"
+msgstr "Fout bij verbinden met SILC-server"
+
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr ""
@@ -9605,30 +9439,27 @@ msgstr "Mislukt: Ongeldig cookie"
 msgid "Failure: Authentication failed"
 msgstr "Mislukt: Certificering mislukt"
 
-msgid "Cannot initialize SILC Client connection"
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
 msgstr "Kan SILC-verbinding niet starten"
 
 msgid "John Noname"
 msgstr "John Zondernaam"
 
-#, c-format
-msgid "Could not load SILC key pair: %s"
+#, fuzzy, c-format
+msgid "Unable to load SILC key pair: %s"
 msgstr "kan SILC sleutelpaar niet laden: %s"
 
-msgid "Could not write"
-msgstr "Kan niet schrijven"
+msgid "Unable to create connection"
+msgstr "Kan geen nieuwe verbinding maken"
 
-msgid "Could not connect"
-msgstr "Kon geen verbinding maken"
-
-msgid "Unknown server response."
+#, fuzzy
+msgid "Unknown server response"
 msgstr "Onbekend server-antwoord."
 
-msgid "Could not create listen socket"
-msgstr "Kan geen socket aanmaken om te luisteren"
-
-msgid "Could not resolve hostname"
-msgstr "Kan hostnaam niet vinden"
+#, fuzzy
+msgid "Unable to create listen socket"
+msgstr "Kan geen socket aanmaken"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-bijnamen mogen geen spaties of @-tekens bevatten"
@@ -9670,6 +9501,78 @@ msgstr "Gebruiker"
 msgid "Auth Domain"
 msgstr "Domein"
 
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr ""
+"join: &lt;ruimte&gt;:  Meedoen aan een chatruimte op het Yahoo-netwerk."
+
+msgid "list: List rooms on the Yahoo network"
+msgstr "list:  Lijst van kanalen op dit netwerk"
+
+msgid "doodle: Request user to start a Doodle session"
+msgstr ""
+
+msgid "Yahoo ID..."
+msgstr "Yahoo! ID..."
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! Protocol Plugin"
+msgstr "Yahoo-protocol-plug-in"
+
+msgid "Pager server"
+msgstr "Semafoonserver"
+
+msgid "Pager port"
+msgstr "Semafoon-poort"
+
+msgid "File transfer server"
+msgstr "Server voor bestandsoverdrachten"
+
+msgid "File transfer port"
+msgstr "Bestandsoverdracht poortnummer"
+
+msgid "Chat room locale"
+msgstr "Taal van chatruimte"
+
+msgid "Ignore conference and chatroom invitations"
+msgstr "Conferentie- en chatruimteverzoeken negeren"
+
+msgid "Chat room list URL"
+msgstr "URL voor lijst van ruimtes"
+
+msgid "Yahoo Chat server"
+msgstr "Yahoo chatserver"
+
+msgid "Yahoo Chat port"
+msgstr "Chatpoort Yahoo"
+
+#, fuzzy
+msgid "Yahoo JAPAN ID..."
+msgstr "Yahoo! ID..."
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr "Yahoo-protocol-plug-in"
+
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9702,30 +9605,20 @@ msgstr "Contact toevoegen geweigerd"
 msgid "Received invalid data"
 msgstr "Ongeldige data ontvangen van server."
 
-#. Password incorrect
-#, fuzzy
-msgid "Incorrect Password"
-msgstr "Ongeldig wachtwoord"
-
 #. security lock from too many failed login attempts
 #, fuzzy
 msgid ""
-"Account locked: Too many failed login attempts.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
 msgstr ""
 "Onbekende fout %d. Aanmelden via de Yahoo! website zou dit probleem op "
 "kunnen lossen."
 
-#. the username does not exist
-#, fuzzy
-msgid "Username does not exist"
-msgstr "Gebruiker bestaat niet"
-
 #. indicates a lock of some description
 #, fuzzy
 msgid ""
-"Account locked: Unknown reason.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
 msgstr ""
 "Onbekende fout %d. Aanmelden via de Yahoo! website zou dit probleem op "
 "kunnen lossen."
@@ -9769,39 +9662,34 @@ msgstr ""
 "Onbekende fout %d. Aanmelden via de Yahoo! website zou dit probleem op "
 "kunnen lossen."
 
-#, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
+#, fuzzy, c-format
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr ""
 "Kan contact %s niet toevoegen aan de groep %s in de server-lijst van account "
 "%s."
 
-msgid "Could not add buddy to server list"
+#, fuzzy
+msgid "Unable to add buddy to server list"
 msgstr "Kan contact niet toevoegen aan serverlijst"
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr "[ Hoorbaar %s/%s/%s.swf ] %s"
 
-msgid "Received unexpected HTTP response from server."
+#, fuzzy
+msgid "Received unexpected HTTP response from server"
 msgstr "Onverwacht HTTP-antwoord van de server ontvangen"
 
-msgid "Connection problem"
-msgstr "Verbindingprobleem"
-
-#, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Lost connection with %s: %s"
 msgstr ""
 "Verbinding met %s:\n"
 "%s verloren"
 
-#, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with %s: %s"
 msgstr ""
-"Kan geen verbinding maken met %s:\n"
+"Kan geen verbinding maken met de server:\n"
 "%s"
 
 msgid "Not at Home"
@@ -9864,73 +9752,14 @@ msgstr "Deelnemen aan chat van gebruiker..."
 msgid "Open Inbox"
 msgstr "Iinbox Openen"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr ""
-"join: &lt;ruimte&gt;:  Meedoen aan een chatruimte op het Yahoo-netwerk."
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "list:  Lijst van kanalen op dit netwerk"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr ""
-
-msgid "Yahoo ID..."
-msgstr "Yahoo! ID..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr "Yahoo-protocol-plug-in"
-
-msgid "Yahoo Japan"
-msgstr "Yahoo Japan"
-
-msgid "Pager server"
-msgstr "Semafoonserver"
-
-msgid "Japan Pager server"
-msgstr "Japanse semafoonserver"
-
-msgid "Pager port"
-msgstr "Semafoon-poort"
-
-msgid "File transfer server"
-msgstr "Server voor bestandsoverdrachten"
-
-msgid "Japan file transfer server"
-msgstr "Japanse server voor bestandsoverdrachten"
-
-msgid "File transfer port"
-msgstr "Bestandsoverdracht poortnummer"
-
-msgid "Chat room locale"
-msgstr "Taal van chatruimte"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "Conferentie- en chatruimteverzoeken negeren"
-
-msgid "Chat room list URL"
-msgstr "URL voor lijst van ruimtes"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo chatserver"
-
-msgid "Yahoo Chat port"
-msgstr "Chatpoort Yahoo"
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr ""
+
+msgid "Unable to connect."
+msgstr "Kan geen verbinding maken."
 
 msgid "Unable to establish file descriptor."
 msgstr "Kan geen bestandsbeschrijving aanmaken."
@@ -9938,6 +9767,9 @@ msgstr "Kan geen bestandsbeschrijving aanmaken."
 #, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s biedt u een collectie van %d bestanden aan.\n"
+
+msgid "Write Error"
+msgstr "Schrijffout"
 
 msgid "Yahoo! Japan Profile"
 msgstr "Profiel van Yahoo! Japan"
@@ -10058,22 +9890,18 @@ msgstr "Stemmen"
 msgid "Webcams"
 msgstr "Webcams"
 
+msgid "Connection problem"
+msgstr "Verbindingprobleem"
+
 msgid "Unable to fetch room list."
 msgstr "Kan lijst van ruimtes niet opvragen."
 
 msgid "User Rooms"
 msgstr "Ruimtes van gebruiker"
 
-msgid "Connection problem with the YCHT server."
+#, fuzzy
+msgid "Connection problem with the YCHT server"
 msgstr "Verbindingprobleem met de YCHT-server."
-
-#, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
-msgstr ""
-"Verbinding met de server \n"
-"%s verloren"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -10200,32 +10028,21 @@ msgstr ""
 msgid "Exposure"
 msgstr "Ontmaskering"
 
-#, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr ""
-"Kan geen socket aanmaken:\n"
-"%s"
-
-#, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
+#, fuzzy, c-format
+msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "Kan antwoord van HTTP-proxy niet parsen: %s\n"
 
 #, c-format
 msgid "HTTP proxy connection error %d"
 msgstr "HTTP-proxy verbindingsfout %d"
 
-#, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+#, fuzzy, c-format
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr "Toegang geweigerd: HTTP-proxy-server verbied tunnelen op poort %d."
 
 #, c-format
 msgid "Error resolving %s"
 msgstr "Fout oplossing %s"
-
-msgid "Could not resolve host name"
-msgstr "Kan host niet vinden"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -10427,14 +10244,6 @@ msgstr "Fout bij schrijven naar %s: %s"
 #, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "Kan geen verbinding maken met %s: %s"
-
-#, fuzzy, c-format
-msgid ""
-"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
-"found."
-msgstr ""
-"Server vereist TLS/SSL voor aanmelding. Geen ondersteuning voor TLS/SSL "
-"gevonden."
 
 #, c-format
 msgid " - %s"
@@ -10685,8 +10494,13 @@ msgstr "_Contactalarm toevoegen"
 msgid "View _Log"
 msgstr "_Logboek"
 
-msgid "Hide when offline"
+#, fuzzy
+msgid "Hide When Offline"
 msgstr "Verberg tijdens offline zijn"
+
+#, fuzzy
+msgid "Show When Offline"
+msgstr "Weergeven tijdens offline zijn"
 
 msgid "_Alias..."
 msgstr "_Alias..."
@@ -11194,6 +11008,10 @@ msgstr ""
 msgid "The text information for a buddy's status"
 msgstr "Gebruikersinformatie aanpassen voor %s"
 
+#, fuzzy
+msgid "Type the host name for this certificate."
+msgstr "Geef de computernaam waar dit certificaat voor is."
+
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL Servers"
@@ -11242,7 +11060,8 @@ msgstr "Negeren"
 msgid "Get Away Message"
 msgstr "Afwezigheidsbericht"
 
-msgid "Last said"
+#, fuzzy
+msgid "Last Said"
 msgstr "Laatst gezegd"
 
 msgid "Unable to save icon file to disk."
@@ -12141,7 +11960,7 @@ msgid "Hyperlink visited color"
 msgstr "Kleur van reeds bezochte verwijzing"
 
 #, fuzzy
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr "Kleur van de verwijzingen wanneer muis erboven hangt"
 
 msgid "Hyperlink prelight color"
@@ -12178,13 +11997,22 @@ msgstr "De kleur van een naam van een melding."
 msgid "Action Message Name Color for Whispered Message"
 msgstr ""
 
+#, fuzzy
+msgid "Color to draw the name of a whispered action message."
+msgstr "De kleur van een naam van een melding."
+
 msgid "Whisper Message Name Color"
 msgstr "Fluisterend berichtkleur"
+
+#, fuzzy
+msgid "Color to draw the name of a whispered message."
+msgstr "De kleur van een naam van een melding."
 
 msgid "Typing notification color"
 msgstr "Kleur van melding van typen"
 
-msgid "The color to use for the typing notification font"
+#, fuzzy
+msgid "The color to use for the typing notification"
 msgstr "De kleur die gebruikt wordt voor het lettertype van de typmelding"
 
 msgid "Typing notification font"
@@ -12584,6 +12412,10 @@ msgstr ""
 "Kan handmatige browser niet starten omdat er geen correcte opdracht is "
 "ingesteld."
 
+#, fuzzy
+msgid "No message"
+msgstr "Onbekend bericht"
+
 msgid "Open All Messages"
 msgstr "Alle berichten openen"
 
@@ -12600,10 +12432,6 @@ msgstr ""
 #, fuzzy
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Je hebt postl!</span>"
-
-#, fuzzy
-msgid "No message"
-msgstr "Onbekend bericht"
 
 msgid "The following plugins will be unloaded."
 msgstr "De volgende plug-ins zullen uitgeschakeld worden"
@@ -12820,14 +12648,18 @@ msgstr "_Systeemvakpictogram weergeven:"
 msgid "On unread messages"
 msgstr "Bij ongelezen berichten"
 
-msgid "Conversation Window Hiding"
-msgstr "Gespreksvenster verbergen"
+#, fuzzy
+msgid "Conversation Window"
+msgstr "IM gespreksvensters"
 
 msgid "_Hide new IM conversations:"
 msgstr "_Nieuwe gesprekken verbergen:"
 
 msgid "When away"
 msgstr "Bij afwezigheid"
+
+msgid "Minimi_ze new conversation windows"
+msgstr "Minimalizeer nieuwe gespreksvensters "
 
 #. All the tab options!
 msgid "Tabs"
@@ -12887,9 +12719,6 @@ msgstr "Vloeiend schuiven"
 msgid "F_lash window when IMs are received"
 msgstr "Venster laten _knipperen wanneer gespreksberichten worden ontvangen"
 
-msgid "Minimi_ze new conversation windows"
-msgstr "Minimalizeer nieuwe gespreksvensters "
-
 msgid "Minimum input area height in lines:"
 msgstr "Minimale invoerhoogte in regels:"
 
@@ -12924,7 +12753,8 @@ msgstr "Kan het programma voor browser-instellingen niet starten."
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Bijvoorbeeld: stunserver.org</span>"
 
-msgid "_Autodetect IP address"
+#, fuzzy, c-format
+msgid "Use _automatically detected IP address: %s"
 msgstr "IP-adres _automatisch bepalen"
 
 msgid "Public _IP:"
@@ -13294,21 +13124,6 @@ msgstr "Op_slaan & gebruiken"
 msgid "Status for %s"
 msgstr "Status van %s"
 
-#.
-#. * TODO: We should enable/disable the add button based on
-#. *       whether the user has entered all required data.  That
-#. *       would eliminate the need for this check and provide a
-#. *       better user experience.
-#.
-msgid "Custom Smiley"
-msgstr "Eigen smiley"
-
-msgid "More Data needed"
-msgstr "Meer gegevens vereist"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "Geef een snelkoppeling om te associëren met de smiley."
-
 #, fuzzy, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
@@ -13316,11 +13131,11 @@ msgstr ""
 "Een eigen smiley voor de geselecteerde snelkoppeling bestaat al reeds. Geef "
 "alsjeblieft een andere snelkoppeling."
 
+msgid "Custom Smiley"
+msgstr "Eigen smiley"
+
 msgid "Duplicate Shortcut"
 msgstr "Dubbele snelkoppeling"
-
-msgid "Please select an image for the smiley."
-msgstr "Selecteer een afbeelding uit de lijst voor de smiley"
 
 msgid "Edit Smiley"
 msgstr "Smiley bewerken"
@@ -13435,9 +13250,10 @@ msgstr ""
 msgid "Cannot send launcher"
 msgstr "Kan starter niet sturen"
 
+#, fuzzy
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr ""
 "Je hebt een starter hierheen gesleept. Waarschijnlijk wil je het waar deze "
 "starter naar verwijst sturen."
@@ -14054,9 +13870,10 @@ msgstr "Muzieksessie-plug-in voor gezamenlijk componeren."
 
 #  *  summary
 #. *  summary
+#, fuzzy
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 "De muzieksessie-plug-in geeft enkele gebruikers de mogelijkheid om "
 "tegelijkertijd gezamenlijk aan een muziekstuk te werken."
@@ -14315,9 +14132,10 @@ msgid "Conversation Window Send Button."
 msgstr "Gespreksvenser verzendknop"
 
 #. *< summary
+#, fuzzy
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr ""
 "Voegt een verzendknop toe bij de invoerruimte van het gespreksvenster. Dit "
 "is bedoeld wanneer er geen fysiek keyboard aanwezig is."
@@ -14657,8 +14475,9 @@ msgstr "Windows pidgin opties"
 msgid "Options specific to Pidgin for Windows."
 msgstr "Opties van Pidgin voor Windows."
 
+#, fuzzy
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr "Specifieke Windows-opties voor Pidgin, zoals contactenlijst."
 
 msgid "<font color='#777777'>Logged out.</font>"
@@ -14697,6 +14516,299 @@ msgstr "Verstuur en ontvang ruwe XMPP stanza's."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Deze plug-in is handig voor het debuggen van XMPP servers of clienten."
+
+#~ msgid "Cannot open socket"
+#~ msgstr "Kan socket niet openen"
+
+#~ msgid "Could not listen on socket"
+#~ msgstr "Kan niet luisteren naar socket"
+
+#~ msgid "Unable to read socket"
+#~ msgstr "Kan niet lezen van socket."
+
+#~ msgid "Connection failed."
+#~ msgstr "Verbinding mislukt."
+
+#~ msgid "Server has disconnected"
+#~ msgstr "Server heeft verbinding verbroken"
+
+#~ msgid "Couldn't create socket"
+#~ msgstr "Kan geen socket aanmaken"
+
+#~ msgid "Couldn't connect to host"
+#~ msgstr "Kan geen verbinding maken met host"
+
+#~ msgid "Read error"
+#~ msgstr "Leesfout"
+
+#~ msgid ""
+#~ "Could not establish a connection with the server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Kan geen verbinding maken met de server:\n"
+#~ "%s"
+
+#~ msgid "Write error"
+#~ msgstr "Schrijffout"
+
+#~ msgid "Last Activity"
+#~ msgstr "Laatste activiteit"
+
+#~ msgid "Service Discovery Info"
+#~ msgstr "Directory info instellen"
+
+#~ msgid "Extended Stanza Addressing"
+#~ msgstr "Stanza adresbijvoeging"
+
+#~ msgid "Multi-User Chat"
+#~ msgstr "Groepsgesprek"
+
+#, fuzzy
+#~ msgid "Multi-User Chat Extended Presence Information"
+#~ msgstr "Deze gebruiker heeft geen profiel."
+
+#~ msgid "Ad-Hoc Commands"
+#~ msgstr "Ad-Hoc opdrachten"
+
+#~ msgid "PubSub Service"
+#~ msgstr "PubSub dienst"
+
+#~ msgid "XHTML-IM"
+#~ msgstr "XHTML-IM"
+
+#, fuzzy
+#~ msgid "In-Band Registration"
+#~ msgstr "Registratiefout"
+
+#~ msgid "User Location"
+#~ msgstr "Gebruikerslocatie"
+
+#~ msgid "User Avatar"
+#~ msgstr "Avatar"
+
+#~ msgid "Chat State Notifications"
+#~ msgstr "Contactstatusmelding"
+
+#~ msgid "Software Version"
+#~ msgstr "Software versie"
+
+#, fuzzy
+#~ msgid "Stream Initiation"
+#~ msgstr "Oriëntatie"
+
+#~ msgid "User Mood"
+#~ msgstr "Humeur gebruiker"
+
+#~ msgid "User Activity"
+#~ msgstr "Activiteit gebruiker"
+
+#~ msgid "Entity Capabilities"
+#~ msgstr "Entiteit mogelijkheden"
+
+#~ msgid "Encrypted Session Negotiations"
+#~ msgstr "Gecodeerde sessie onderhandelingen"
+
+#~ msgid "User Tune"
+#~ msgstr "Gebruikers tune"
+
+#, fuzzy
+#~ msgid "Roster Item Exchange"
+#~ msgstr "IM met sleuteluitwisseling"
+
+#~ msgid "Reachability Address"
+#~ msgstr "Beschikbaarheid adres"
+
+#~ msgid "User Profile"
+#~ msgstr "Profiel"
+
+#~ msgid "Jingle"
+#~ msgstr "Jingle"
+
+#~ msgid "Jingle Audio"
+#~ msgstr "Geluid jingle"
+
+#~ msgid "User Nickname"
+#~ msgstr "Gebruikersnaam"
+
+#~ msgid "Jingle ICE UDP"
+#~ msgstr "ICE UDP Jingle"
+
+#~ msgid "Jingle ICE TCP"
+#~ msgstr "ICE TCP Jingle"
+
+#~ msgid "Jingle Raw UDP"
+#~ msgstr "Raw UDP Raw UDP"
+
+#~ msgid "Jingle Video"
+#~ msgstr "Jingle Video"
+
+#~ msgid "Jingle DTMF"
+#~ msgstr "DTMF DTMF"
+
+#~ msgid "Message Receipts"
+#~ msgstr "Bericht ontvangen"
+
+#~ msgid "Public Key Publishing"
+#~ msgstr "Openbare sleutel openbaren"
+
+#~ msgid "User Chatting"
+#~ msgstr "Chattende gebruiker"
+
+#~ msgid "User Browsing"
+#~ msgstr "Browsende gebruiker"
+
+#~ msgid "User Gaming"
+#~ msgstr "Gamende gebruiker"
+
+#~ msgid "User Viewing"
+#~ msgstr "Kijkende gebruiker"
+
+#~ msgid "Stanza Encryption"
+#~ msgstr "Stanza codering"
+
+#~ msgid "Delayed Delivery"
+#~ msgstr "Vertraagde afgifte"
+
+#~ msgid "Collaborative Data Objects"
+#~ msgstr "Samenwerkende data-objecten"
+
+#~ msgid "File Repository and Sharing"
+#~ msgstr "Bestandsbronnen en delen"
+
+#~ msgid "Hop Check"
+#~ msgstr "Hop-controle"
+
+#~ msgid "Read Error"
+#~ msgstr "Leesfout"
+
+#~ msgid "Failed to connect to server."
+#~ msgstr "Kan geen verbinding maken met de server."
+
+#~ msgid "Read buffer full (2)"
+#~ msgstr "Wachtrij vol (2)"
+
+#~ msgid "Unparseable message"
+#~ msgstr "Kan het bericht niet analyseren"
+
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "Kan geen verbinding maken met host: %s (%d)"
+
+#~ msgid "Login failed (%s)."
+#~ msgstr "Aanmelden mislukt (%s)."
+
+#~ msgid ""
+#~ "You have been logged out because you logged in at another workstation."
+#~ msgstr ""
+#~ "De verbinding is verbroken omdat u zich heeft aangemeld op een andere "
+#~ "computer."
+
+#~ msgid "Error. SSL support is not installed."
+#~ msgstr "Fout! Geen SSL-ondersteuning geïnstalleerd."
+
+#~ msgid "Incorrect password."
+#~ msgstr "Ongeldig wachtwoord."
+
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Kan niet verbinden met BOS-server:\n"
+#~ "%s"
+
+#~ msgid "You may be disconnected shortly.  Check %s for updates."
+#~ msgstr ""
+#~ "U wordt waarschijnlijk binnenkort afgemeld. Kijk op %s voor nieuwe "
+#~ "versies."
+
+#~ msgid "Could Not Connect"
+#~ msgstr "Kan geen verbinding maken"
+
+#~ msgid "Invalid username."
+#~ msgstr "Ongeldige gebruikersnaam."
+
+#, fuzzy
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "Kan login-antwoord niet decoderen"
+
+#~ msgid "Connection lost"
+#~ msgstr "Verbinding verbroken"
+
+#~ msgid "Couldn't resolve host"
+#~ msgstr "Kan host niet vinden"
+
+#~ msgid "Connection closed (writing)"
+#~ msgstr "Verbinding verbroken (schrijven)"
+
+#~ msgid "Connection reset"
+#~ msgstr "Verbindingsfout"
+
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "Er is een fout opgetreden bij het lezen van de socket: %s"
+
+#~ msgid "Unable to connect to host"
+#~ msgstr "Kan geen verbinding maken met de computer"
+
+#~ msgid "Could not write"
+#~ msgstr "Kan niet schrijven"
+
+#~ msgid "Could not connect"
+#~ msgstr "Kon geen verbinding maken"
+
+#~ msgid "Could not create listen socket"
+#~ msgstr "Kan geen socket aanmaken om te luisteren"
+
+#~ msgid "Could not resolve hostname"
+#~ msgstr "Kan hostnaam niet vinden"
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "Ongeldig wachtwoord"
+
+#~ msgid ""
+#~ "Could not establish a connection with %s:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Kan geen verbinding maken met %s:\n"
+#~ "%s"
+
+#~ msgid "Yahoo Japan"
+#~ msgstr "Yahoo Japan"
+
+#~ msgid "Japan Pager server"
+#~ msgstr "Japanse semafoonserver"
+
+#~ msgid "Japan file transfer server"
+#~ msgstr "Japanse server voor bestandsoverdrachten"
+
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Verbinding met de server \n"
+#~ "%s verloren"
+
+#~ msgid "Could not resolve host name"
+#~ msgstr "Kan host niet vinden"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support "
+#~ "was found."
+#~ msgstr ""
+#~ "Server vereist TLS/SSL voor aanmelding. Geen ondersteuning voor TLS/SSL "
+#~ "gevonden."
+
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "Gespreksvenster verbergen"
+
+#~ msgid "More Data needed"
+#~ msgstr "Meer gegevens vereist"
+
+#~ msgid "Please provide a shortcut to associate with the smiley."
+#~ msgstr "Geef een snelkoppeling om te associëren met de smiley."
+
+#~ msgid "Please select an image for the smiley."
+#~ msgstr "Selecteer een afbeelding uit de lijst voor de smiley"
 
 #~ msgid "Activate which ID?"
 #~ msgstr "Welk ID activeren?"

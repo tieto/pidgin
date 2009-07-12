@@ -784,7 +784,7 @@ add_protocol_options(AccountPrefsDialog *dialog)
 	dialog->protocol_frame = vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BORDER);
 	gtk_notebook_insert_page(GTK_NOTEBOOK(dialog->notebook), vbox,
-			gtk_label_new_with_mnemonic(_("_Advanced")), 1);
+			gtk_label_new_with_mnemonic(_("Ad_vanced")), 1);
 	gtk_widget_show(vbox);
 
 	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next)
@@ -1533,7 +1533,7 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	dbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(dbox), PIDGIN_HIG_BORDER);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), dbox,
-			gtk_label_new_with_mnemonic(_("_Proxy")));
+			gtk_label_new_with_mnemonic(_("P_roxy")));
 	gtk_widget_show(dbox);
 	add_proxy_options(dialog, dbox);
 

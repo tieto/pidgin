@@ -27,6 +27,20 @@ version 2.6.0 (??/??/2009):
 	  it off.  This will optionally be used to only show less useful debug
 	  information on an as-needed basis.
 	* Add support for receiving handwritten (ink) messages on MSN.
+	* Don't do IPv6 address lookups if the computer does not have an IPv6
+	  address configured.
+	* Add support for receiving audio clips on MSN.
+	* Fix a leak when the UI provides its own DNS resolving UI op.
+	  (Aman Gupta)
+	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
+
+	AIM and ICQ:
+	* Preliminary support for a new authentication scheme called
+	  "clientLogin."
+	* Fixed a bug where your away message sometimes would not get set when
+	  you first sign on.
+	* Make sure links in your away messages show up as links to other people.
+	* For ICQ, Never change the privacy setting specified by the user.
 
 	Gadu-Gadu:
 	* Accounts can specify a server to which to connect.
@@ -34,7 +48,7 @@ version 2.6.0 (??/??/2009):
 	* Correctly show tooltip status for contacts with status messages.
 	  (Krzysztof "kkszysiu" Klinikowski)
 	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
-	* Support connection progress steps in Gadu-Gadu (Krzysztof "kkszysiu"
+	* Support connection progress steps in Gadu-Gadu.  (Krzysztof "kkszysiu"
 	  Klinikowski)
 
 	XMPP:
@@ -80,6 +94,12 @@ version 2.6.0 (??/??/2009):
 	* New XMPP and Google Talk accounts require SSL by default.
 	* Display kicks (and the reasons given) in chat rooms when an occupant is
 	  kicked.
+	* Fix issues with case-sensitivity of XMPP roster and case-insensitive
+	  Purple groups.
+	* For contacts who advertise Entity Capabilities, only send rich text
+	  markup if they support it.
+	* Removed support for obsoleted XEP-0022 (Message Events) and XEP-0091
+	  (Legacy Entity Time).
 
 	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)
@@ -124,6 +144,8 @@ version 2.6.0 (??/??/2009):
 	* Draw the user's buddy icon at the bottom of the Buddy List with rounded
 	  corners for visual consistency with the actual icons in the Buddy List.
 	  (Kosta Arvanitis)
+	* When file transfers are complete, the received file name written to the
+	  conversation window is now linked to the file.
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful

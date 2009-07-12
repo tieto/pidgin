@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-02 01:34-0700\n"
+"POT-Creation-Date: 2009-07-06 15:04-0700\n"
 "PO-Revision-Date: 2005-05-29 20:43+0530\n"
 "Last-Translator: Akash <akash@ncb.ernet.in>\n"
 "Language-Team: Akash <matrubhasha@ncb.ernet.in>\n"
@@ -2784,7 +2784,7 @@ msgstr ""
 #. * description
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
@@ -2836,7 +2836,7 @@ msgid "Save messages sent to an offline user as pounce."
 msgstr ""
 
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 
@@ -3113,12 +3113,12 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
 
 #, fuzzy
-msgid "Unable to listen for incoming IM connections\n"
+msgid "Unable to listen for incoming IM connections"
 msgstr "नया कनेक्शन बनाने में असमर्थ।"
 
 msgid ""
@@ -3181,17 +3181,17 @@ msgstr "%s इस वार्तालाप के लिए आमंत्�
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "संदेश भेजने में असफल: संदेश बहुत बढ़ा है।"
 
-#, fuzzy
-msgid "Cannot open socket"
-msgstr "सोकेट खोलने में असमर्थ"
+#, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr "सोकेट बनाने में असमर्थ"
 
-#, fuzzy
-msgid "Could not bind socket to port"
+#, fuzzy, c-format
+msgid "Unable to bind socket to port: %s"
 msgstr "सॉकट नहीं बना सका"
 
-#, fuzzy
-msgid "Could not listen on socket"
-msgstr "सॉकट नहीं बना सका"
+#, fuzzy, c-format
+msgid "Unable to listen on socket: %s"
+msgstr "सोकेट बनाने में असमर्थ"
 
 #, fuzzy
 msgid "Error communicating with local mDNSResponder."
@@ -3254,15 +3254,15 @@ msgstr "बड्डी सूची भेजें"
 msgid "Load buddylist from file..."
 msgstr "सर्वर से बड्डी सूची का आयात करें"
 
-msgid "Fill in the registration fields."
+msgid "You must fill in all registration fields"
 msgstr ""
 
 #, fuzzy
-msgid "Passwords do not match."
+msgid "Passwords do not match"
 msgstr "नया पासवर्ड मेल नहीं खाता."
 
 #, fuzzy
-msgid "Unable to register new account. Error occurred.\n"
+msgid "Unable to register new account.  An unknown error occurred."
 msgstr "नया कनेक्शन बनाने में असमर्थ।"
 
 msgid "New Gadu-Gadu Account Registered"
@@ -3275,17 +3275,15 @@ msgstr "रजिस्ट्रेशन सफल रहा"
 msgid "Password"
 msgstr "पासवर्ड "
 
-#, fuzzy
-msgid "Password (retype)"
-msgstr "पासवर्ड भेजा दिया"
+msgid "Password (again)"
+msgstr "पासवर्ड (फिर से)"
+
+msgid "Enter captcha text"
+msgstr ""
 
 #, fuzzy
-msgid "Enter current token"
-msgstr "%s ने अभी लॉग-इन किया है"
-
-#, fuzzy
-msgid "Current token"
-msgstr "अभी है"
+msgid "Captcha"
+msgstr "चित्र संचित करें"
 
 #, fuzzy
 msgid "Register New Gadu-Gadu Account"
@@ -3347,6 +3345,18 @@ msgid "Current password"
 msgstr "गलत पासवर्ड "
 
 #, fuzzy
+msgid "Password (retype)"
+msgstr "पासवर्ड भेजा दिया"
+
+#, fuzzy
+msgid "Enter current token"
+msgstr "%s ने अभी लॉग-इन किया है"
+
+#, fuzzy
+msgid "Current token"
+msgstr "अभी है"
+
+#, fuzzy
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr "कृपया अपना वर्तमान पासवर्ड भरें तथा आपका नया  पासवर्ड भरें."
 
@@ -3400,7 +3410,8 @@ msgstr "कोइ मिलता हुआ होस्ट नहीं"
 msgid "There are no users matching your search criteria."
 msgstr "कृपया आपका नया पासवर्ड डालें।"
 
-msgid "Unable to read socket"
+#, fuzzy
+msgid "Unable to read from socket"
 msgstr "सोकेट पढ़ने में असमर्थ"
 
 #, fuzzy
@@ -3419,8 +3430,14 @@ msgstr "बड्डी द्रश्य"
 msgid "Your buddy list was stored on the server."
 msgstr "गाडू-गाडू सवर्र पर कोइ भी बड्डी सूची नहीं है।"
 
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
 #, fuzzy
-msgid "Connection failed."
+msgid "Connected"
+msgstr "कनेक्ट"
+
+msgid "Connection failed"
 msgstr "कनेक्शन असफल हुआ"
 
 #, fuzzy
@@ -3431,10 +3448,14 @@ msgstr "चैट जोड़ें"
 msgid "Chat _name:"
 msgstr "अंतिम नाम"
 
-#. should this be a settings error?
-#, fuzzy
-msgid "Unable to resolve server"
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
 msgstr "सर्वर को पींग नहीं कर पाया"
+
+#. 1. connect to server
+#. connect to the server
+msgid "Connecting"
+msgstr "कनेक्ट कर रहा है"
 
 #, fuzzy
 msgid "Chat error"
@@ -3445,7 +3466,7 @@ msgid "This chat name is already in use"
 msgstr "फ़ाइल पहले से है"
 
 #, fuzzy
-msgid "Not connected to the server."
+msgid "Not connected to the server"
 msgstr "आपको सवर्र से डिसकनेक्ट्ड कर दिया गया।"
 
 #, fuzzy
@@ -3515,7 +3536,7 @@ msgid "File Transfer Failed"
 msgstr "फ़ाइल हस्तांतरण रद्द"
 
 #, fuzzy
-msgid "Could not open a listening port."
+msgid "Unable to open a listening port."
 msgstr "गेम सुनने के लिए पोर्ट नहीं खोल सका।"
 
 msgid "Error displaying MOTD"
@@ -3531,8 +3552,16 @@ msgstr "इस कनेक्शन के साथ कोइ ऐम औ ट�
 msgid "MOTD for %s"
 msgstr "%s के लिए ऐम औ टी डी"
 
-msgid "Server has disconnected"
-msgstr "सर्वर ने कनेक्शन तोड़ा"
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, fuzzy, c-format
+msgid "Lost connection with server: %s"
+msgstr "आपको सवर्र से डिसकनेक्ट्ड कर दिया गया।"
 
 msgid "View MOTD"
 msgstr "ऐमऔटीडी(MOTD) देखें"
@@ -3551,22 +3580,20 @@ msgstr "पासवर्ड:(_P)"
 msgid "IRC nick and server may not contain whitespace"
 msgstr "आइ आर सी उपनामों में वाइटस्पेस नहीं हो सकती"
 
-#. 1. connect to server
-#. connect to the server
-msgid "Connecting"
-msgstr "कनेक्ट कर रहा है"
-
 msgid "SSL support unavailable"
 msgstr "एस एस एल समर्थन उपलब्ध नहीं है"
 
-msgid "Couldn't create socket"
-msgstr "सॉकट नहीं बना सका"
+msgid "Unable to connect"
+msgstr "कनेक्ट करने में असमर्थ"
 
-msgid "Couldn't connect to host"
-msgstr "होस्ट से कनेक्टेड नहीं कर पाया"
+#. this is a regular connect, error out
+#, fuzzy, c-format
+msgid "Unable to connect: %s"
+msgstr "सर्वर से कनेक्ट नहीं कर पाया।"
 
-msgid "Read error"
-msgstr "पढ़ने में त्रुटि"
+#, fuzzy, c-format
+msgid "Server closed the connection"
+msgstr "कनेक्शन बनाने में त्रुटि"
 
 msgid "Users"
 msgstr "उपयोगकर्ता"
@@ -4009,13 +4036,14 @@ msgstr "कमांड असमर्थ"
 msgid "execute"
 msgstr "अपेक्षित नहीं"
 
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
+#, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
 msgstr ""
 "सवर्र पर लॉग इन करने के लिए टी एल एस / एस एस एल चाहिए. टी एल एस / एस एस एल "
 "समर्थन नहीं मिला।"
 
 #, fuzzy
-msgid "You require encryption, but no TLS/SSL support found."
+msgid "You require encryption, but no TLS/SSL support was found."
 msgstr ""
 "सवर्र पर लॉग इन करने के लिए टी एल एस / एस एस एल चाहिए. टी एल एस / एस एस एल "
 "समर्थन नहीं मिला।"
@@ -4034,7 +4062,12 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "साधारण टेक्सट प्रमाणीकरण"
 
-msgid "Invalid response from server."
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "प्रमाणीकरण असफल"
+
+#, fuzzy
+msgid "Invalid response from server"
 msgstr "सवर्र ने अवैध उत्तर दिया।"
 
 msgid "Server does not use any supported authentication method"
@@ -4046,8 +4079,8 @@ msgstr ""
 msgid "Invalid challenge from server"
 msgstr "सवर्र द्वारा अवैध चुनौती"
 
-#, fuzzy
-msgid "SASL error"
+#, fuzzy, c-format
+msgid "SASL error: %s"
 msgstr "पढ़ने में त्रुटि"
 
 msgid "The BOSH connection manager terminated your session."
@@ -4065,21 +4098,13 @@ msgstr "असमर्थित आवर्तन"
 msgid "Unable to establish a connection with the server"
 msgstr "सवर्र से एस एस एल कनेक्शन बनाने में त्रुटी।"
 
-#, c-format
-msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to establish a connection with the server: %s"
+msgstr "सवर्र से एस एस एल कनेक्शन बनाने में त्रुटी।"
 
 #, fuzzy
 msgid "Unable to establish SSL connection"
 msgstr "नया कनेक्शन बनाने में असमर्थ।"
-
-msgid "Unable to create socket"
-msgstr "सोकेट बनाने में असमर्थ"
-
-msgid "Write error"
-msgstr "लिखने में त्रुटी"
 
 msgid "Full Name"
 msgstr "पूरा नाम"
@@ -4152,188 +4177,6 @@ msgstr "ऑपरेटिंग सिस्टम छिपायें"
 msgid "Local Time"
 msgstr "स्थानिय फा़इल"
 
-msgid "Last Activity"
-msgstr ""
-
-#, fuzzy
-msgid "Service Discovery Info"
-msgstr "डिर जानकारी दृढ़ करें..."
-
-msgid "Service Discovery Items"
-msgstr ""
-
-#, fuzzy
-msgid "Extended Stanza Addressing"
-msgstr "विस्तृत पता"
-
-#, fuzzy
-msgid "Multi-User Chat"
-msgstr "चैट का उपनाम"
-
-#, fuzzy
-msgid "Multi-User Chat Extended Presence Information"
-msgstr "उपयोगकर्ता के पास कोइ डायरक्ट्री की जानकारी नहीं है।"
-
-msgid "In-Band Bytestreams"
-msgstr ""
-
-#, fuzzy
-msgid "Ad-Hoc Commands"
-msgstr "कमांड"
-
-msgid "PubSub Service"
-msgstr ""
-
-msgid "SOCKS5 Bytestreams"
-msgstr ""
-
-msgid "Out of Band Data"
-msgstr ""
-
-#, fuzzy
-msgid "XHTML-IM"
-msgstr "ऐचटीऐमऐल(HTML)"
-
-#, fuzzy
-msgid "In-Band Registration"
-msgstr "रजिस्ट्रेशन त्रुटि"
-
-#, fuzzy
-msgid "User Location"
-msgstr "स्थान निरूप"
-
-msgid "User Avatar"
-msgstr ""
-
-#, fuzzy
-msgid "Chat State Notifications"
-msgstr "बड्डी स्थिति सूचना"
-
-#, fuzzy
-msgid "Software Version"
-msgstr "असमर्थित आवर्तन"
-
-#, fuzzy
-msgid "Stream Initiation"
-msgstr "दिशा"
-
-#, fuzzy
-msgid "File Transfer"
-msgstr "फ़ाइल हस्तांतरण"
-
-#, fuzzy
-msgid "User Mood"
-msgstr "उपयोगकर्ता ढंग"
-
-#, fuzzy
-msgid "User Activity"
-msgstr "उपयोगकर्ता सीमा"
-
-#, fuzzy
-msgid "Entity Capabilities"
-msgstr "योग्यताऐं"
-
-msgid "Encrypted Session Negotiations"
-msgstr ""
-
-#, fuzzy
-msgid "User Tune"
-msgstr "उपयोगकर्ता-नाम"
-
-#, fuzzy
-msgid "Roster Item Exchange"
-msgstr "आई एम कुंजी विनिमय"
-
-#, fuzzy
-msgid "Reachability Address"
-msgstr "इमेल पता"
-
-#, fuzzy
-msgid "User Profile"
-msgstr "प्रोफ़ाइल द्रद्द करें"
-
-#, fuzzy
-msgid "Jingle"
-msgstr "पिंग"
-
-msgid "Jingle Audio"
-msgstr ""
-
-#, fuzzy
-msgid "User Nickname"
-msgstr "उपनाम"
-
-msgid "Jingle ICE UDP"
-msgstr ""
-
-msgid "Jingle ICE TCP"
-msgstr ""
-
-msgid "Jingle Raw UDP"
-msgstr ""
-
-#, fuzzy
-msgid "Jingle Video"
-msgstr "प्रत्यक्ष विडीयो"
-
-msgid "Jingle DTMF"
-msgstr ""
-
-#, fuzzy
-msgid "Message Receipts"
-msgstr "प्राप्त सन्देश"
-
-#, fuzzy
-msgid "Public Key Publishing"
-msgstr "सार्वजनिक कुंजी बैबलप्रिंट"
-
-#, fuzzy
-msgid "User Chatting"
-msgstr "उपयोगकर्ता विकल्प"
-
-#, fuzzy
-msgid "User Browsing"
-msgstr "उपयोगकर्ता ढंग"
-
-#, fuzzy
-msgid "User Gaming"
-msgstr "उपयोगकर्ता सीमा"
-
-#, fuzzy
-msgid "User Viewing"
-msgstr "उपयोगकर्ता सीमा"
-
-msgid "Ping"
-msgstr "पिंग"
-
-#, fuzzy
-msgid "Stanza Encryption"
-msgstr "ट्रिलियन एनक्रिपशन"
-
-msgid "Entity Time"
-msgstr ""
-
-msgid "Delayed Delivery"
-msgstr ""
-
-msgid "Collaborative Data Objects"
-msgstr ""
-
-msgid "File Repository and Sharing"
-msgstr ""
-
-msgid "STUN Service Discovery for Jingle"
-msgstr ""
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr ""
-
-msgid "Hop Check"
-msgstr ""
-
-msgid "Capabilities"
-msgstr "योग्यताऐं"
-
 #, fuzzy
 msgid "Priority"
 msgstr "पोर्ट"
@@ -4346,7 +4189,7 @@ msgid "%s ago"
 msgstr ""
 
 #, fuzzy
-msgid "Logged off"
+msgid "Logged Off"
 msgstr "लौग आउट हो चुका है"
 
 msgid "Middle Name"
@@ -4543,16 +4386,12 @@ msgid "Roles:"
 msgstr "कार्य भाग"
 
 #, fuzzy
-msgid "Ping timeout"
+msgid "Ping timed out"
 msgstr "सादा टेक्स्ट्"
 
-msgid "Read Error"
-msgstr "पढ़ने में त्रुटि"
-
-#, c-format
 msgid ""
-"Could not find alternative XMPP connection methods after failing to connect "
-"directly.\n"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
 
 #, fuzzy
@@ -4742,9 +4581,6 @@ msgstr "आपका पासवर्ड बदल दिया गया ह�
 
 msgid "Error changing password"
 msgstr "पासवर्ड बदलते समय त्रुटि"
-
-msgid "Password (again)"
-msgstr "पासवर्ड (फिर से)"
 
 #, fuzzy
 msgid "Change XMPP Password"
@@ -5157,6 +4993,14 @@ msgstr "एक्सएमएल पदभंजन त्रुटी"
 msgid "Unknown Error in presence"
 msgstr "उपस्थिति में अज्ञात त्रुटी"
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr "चैट में शामिल होने में त्रुटि %s"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "चैट में त्रुटि %s"
+
 msgid "Create New Room"
 msgstr "नया कक्ष बनायें"
 
@@ -5174,16 +5018,20 @@ msgstr "कमरे की संरचना"
 msgid "_Accept Defaults"
 msgstr "डिफाल्ट स्वीकारें"
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr "चैट में शामिल होने में त्रुटि %s"
+#, fuzzy
+msgid "No reason"
+msgstr "कोई कारण नहीं दिया"
 
-#, c-format
-msgid "Error in chat %s"
-msgstr "चैट में त्रुटि %s"
+#, fuzzy, c-format
+msgid "You have been kicked: (%s)"
+msgstr "आपको %s: (%s) ने लात मारी"
+
+#, fuzzy, c-format
+msgid "Kicked (%s)"
+msgstr "%s (%s) से लात पड़ी"
 
 #, fuzzy
-msgid "An error occured on the in-band bytestream transfer\n"
+msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "फ़ाइल को खोलने में त्रुटि '"
 
 #, fuzzy
@@ -5719,9 +5567,6 @@ msgstr ""
 "वाचनालय की स्थापना करें। अधिक जानकारी के लिए पर http://Pidgin.sf.net/faq-ssl.php "
 "जाएँ।"
 
-msgid "Failed to connect to server."
-msgstr "सर्वर से कनेक्ट करने में असफल।"
-
 msgid "Error retrieving profile"
 msgstr "प्रोफ़ाइल लाने में त्रुटी"
 
@@ -6013,9 +5858,6 @@ msgstr "संदेश भेजा नहीं जा सका क्यो�
 msgid "Message was not sent because an unknown error occurred."
 msgstr "संदेश भेजा नहीं जा सका क्योंकि अज्ञात त्रुटी हुई"
 
-msgid "Unable to connect"
-msgstr "कनेक्ट करने में असमर्थ"
-
 msgid "Writing error"
 msgstr "लिखने में त्रुटी"
 
@@ -6034,20 +5876,24 @@ msgstr ""
 "%s सवर्र से कनेक्शन त्रुटी (%s):\n"
 "%s"
 
-msgid "Our protocol is not supported by the server."
+#, fuzzy
+msgid "Our protocol is not supported by the server"
 msgstr "हमारे प्रोटॅकॉल का इस सवर्र में समर्थन नहीं है।"
 
-msgid "Error parsing HTTP."
+#, fuzzy
+msgid "Error parsing HTTP"
 msgstr "ऐच टी टी पी पढ़ने में त्रुटी"
 
-msgid "You have signed on from another location."
+#, fuzzy
+msgid "You have signed on from another location"
 msgstr "आपने किसी दूसरी जगह से साइन-इन किया है।"
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
 "एम एस एन सवर्र अस्थाई रुप से उपलब्ध नहीं है। कृपया कुछ देर प्रतीक्षा कर फिर प्रयास करें।"
 
-msgid "The MSN servers are going down temporarily."
+#, fuzzy
+msgid "The MSN servers are going down temporarily"
 msgstr "एम एस एन के सवर्र कुछ देर के लिए बंद हो रहे हैं।"
 
 #, c-format
@@ -6059,13 +5905,6 @@ msgid ""
 msgstr ""
 "आपकी एम एस एन बड्डी सूची अस्थाई रुप से उपलब्ध नहीं है। कृपया कुछ देर प्रतीक्षा कर फिर "
 "प्रयास करें।"
-
-# #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
-# gnome-session/gsm-client-row.c:43
-# #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
-# gnome-session/gsm-client-row.c:43
-msgid "Unknown error."
-msgstr "अज्ञात त्रुटि।"
 
 msgid "Handshaking"
 msgstr "हेन्डशेकिंग"
@@ -6165,6 +6004,13 @@ msgstr "ऐ आई एम/आई सी क्यू प्रोटॅकोल
 #, c-format
 msgid "%s is not a valid group."
 msgstr "%s वैध समूह नाम नहीं है"
+
+# #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
+# gnome-session/gsm-client-row.c:43
+# #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
+# gnome-session/gsm-client-row.c:43
+msgid "Unknown error."
+msgstr "अज्ञात त्रुटि।"
 
 #, c-format
 msgid "%s on %s (%s)"
@@ -6282,13 +6128,6 @@ msgstr[1] ""
 msgid "Add contacts from server"
 msgstr "सवर्र ने अवैध उत्तर दिया।"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-#, fuzzy
-msgid "Connected"
-msgstr "कनेक्ट"
-
 #, c-format
 msgid "Protocol error, code %d: %s"
 msgstr ""
@@ -6310,18 +6149,6 @@ msgstr ""
 #, fuzzy
 msgid "Invalid input condition"
 msgstr "कनेक्शन को निर्णायक कर रहा है"
-
-#, fuzzy
-msgid "Read buffer full (2)"
-msgstr "कतार पूरी"
-
-#, fuzzy
-msgid "Unparseable message"
-msgstr "संदेश पदभंजन में असमर्थ"
-
-#, fuzzy, c-format
-msgid "Couldn't connect to host: %s (%d)"
-msgstr "होस्ट से कनेक्टेड नहीं कर पाया"
 
 #, fuzzy
 msgid "Failed to add buddy"
@@ -6418,6 +6245,12 @@ msgstr ""
 #, fuzzy
 msgid "Client Version"
 msgstr "वार्तालाप बंद करें"
+
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
+msgstr ""
 
 #, fuzzy
 msgid "MySpaceIM - Username Available"
@@ -6689,9 +6522,9 @@ msgstr "उपयोगकर्ता या तो औफ-लाइन है 
 msgid "Unknown error: 0x%X"
 msgstr "अज्ञात त्रुटि: 0x%X"
 
-#, c-format
-msgid "Login failed (%s)."
-msgstr "लॉग-इन असफल (%s)। "
+#, fuzzy, c-format
+msgid "Unable to login: %s"
+msgstr "%s उपयोगकर्ता को निषेध करने में असमर्थ"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6791,9 +6624,6 @@ msgstr "ग्रुपवाइज़ सम्मेलन %d"
 msgid "Authenticating..."
 msgstr "प्रमाणित कर रहा है"
 
-msgid "Unable to connect to server."
-msgstr "सर्वर से कनेक्ट नहीं कर पाया।"
-
 msgid "Waiting for response..."
 msgstr "उत्तर कि प्रतीक्षा कर रहें हैं"
 
@@ -6819,22 +6649,17 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "क्या आप संवाद में शामिल होना चाहेंगे?"
 
-msgid "You have been logged out because you logged in at another workstation."
-msgstr "आपको लॉग-आउट कर दिया गया है क्योंकि आपने दूसरे कार्य स्थल से लॉग-इन किया।"
-
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
 msgstr "%s अनुपस्थित लग रहा है और उसको आपका अभी भेजा गया संदेश नहीं मिला।"
 
+#, fuzzy
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr ""
 "सवर्र से कनेक्ट करने में असमर्थ। कृपया सवर्र का पता डालें जिससे आप कनेक्ट करना चाहतें हैं।"
-
-msgid "Error. SSL support is not installed."
-msgstr "त्रुटी । एस एस एल समर्थन स्थापित नहीं है।"
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "यह सम्मेलन बंद कर दिया गया है। और संदेश नहीं भेजे जा सकते।"
@@ -6874,10 +6699,7 @@ msgstr ""
 msgid "Error requesting "
 msgstr "कनेक्शन बनाने में त्रुटि"
 
-msgid "Incorrect password."
-msgstr "गलत पासवर्ड "
-
-msgid "AOL does not allow your screen name to authenticate via this site."
+msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
 #, fuzzy
@@ -6889,17 +6711,7 @@ msgid "Invalid chat room name"
 msgstr "गलत कक्ष नाम"
 
 #, fuzzy
-msgid "Server closed the connection."
-msgstr "कनेक्शन बनाने में त्रुटि"
-
-#, fuzzy, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr "आपको सवर्र से डिसकनेक्ट्ड कर दिया गया।"
-
-#, fuzzy
-msgid "Received invalid data on connection with server."
+msgid "Received invalid data on connection with server"
 msgstr "सवर्र से एस एस एल कनेक्शन बनाने में त्रुटी।"
 
 #. *< type
@@ -6952,8 +6764,9 @@ msgstr ""
 msgid "Received invalid data on connection with remote user."
 msgstr ""
 
-msgid "Could not establish a connection with the remote user."
-msgstr ""
+#, fuzzy
+msgid "Unable to establish a connection with the remote user."
+msgstr "सवर्र से एस एस एल कनेक्शन बनाने में त्रुटी।"
 
 #, fuzzy
 msgid "Direct IM established"
@@ -7151,16 +6964,12 @@ msgid "Buddy Comment"
 msgstr "बड्डी टिप्पणी"
 
 #, fuzzy, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
+msgid "Unable to connect to authentication server: %s"
 msgstr "हसतांतरण करने के लिए कनेक्ट नहीं कर पाया।"
 
 #, fuzzy, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr "सर्वर से कनेक्ट करने में असफल।"
+msgid "Unable to connect to BOS server: %s"
+msgstr "सर्वर से कनेक्ट नहीं कर पाया।"
 
 #, fuzzy
 msgid "Username sent"
@@ -7175,9 +6984,9 @@ msgstr "कनेक्शन को निर्णायक कर रहा �
 
 #, fuzzy, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
 "लॉगिन करने में असमर्थ: %s को साइन औन न कर सका क्योंकि स्क्रीन-नाम अवैध है। स्क्रीन-नाम "
 "किसी अक्षर से शुरु होना चाहीए और उसमें केवल अक्षर, अंक और खाली जगह होने चाहीए, नहीं तो "
@@ -7193,30 +7002,23 @@ msgstr ""
 msgid "Unable to get a valid AIM login hash."
 msgstr "गेम वैध ऐ आई एम लॉगिन हैश लाने में असमर्थ रहा।"
 
-#, fuzzy, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr ""
-"आप जल्दी डिसकनेक्ट हो जाएंगे। जब तक यह ठीक होगा आप टी औ सी का प्रयोग करना चाहेंगे। "
-"अपडेट्स के लिए %s देखें।"
-
 #, fuzzy
 msgid "Unable to get a valid login hash."
 msgstr "गेम वैध लॉगिन हैश लाने में असमर्थ रहा।"
-
-msgid "Could Not Connect"
-msgstr "कनेक्ट नहीं कर पाया"
 
 msgid "Received authorization"
 msgstr "प्रमानिकरण मिला"
 
 #. Unregistered username
 #. uid is not exist
+#. the username does not exist
 #, fuzzy
-msgid "Invalid username."
-msgstr "अवैध उपयोगकर्ता-नाम"
+msgid "Username does not exist"
+msgstr "उपयोगकर्ता नहीं है"
 
 #. Suspended account
-msgid "Your account is currently suspended."
+#, fuzzy
+msgid "Your account is currently suspended"
 msgstr "आपका खाता अभी निलंबित है।"
 
 #. service temporarily unavailable
@@ -7236,7 +7038,8 @@ msgstr ""
 "आप बार-बार कनेक्ट और डिसकनेक्ट हों रहें हैं। दस मिनट प्रतीक्षा करें फिर प्रयास करें। अगर आप "
 "बिना रुके प्रयास करते रहे तब आपको ज़्यादा प्रतीक्षा करनी पड़ेगी।"
 
-msgid "The SecurID key entered is invalid."
+#, fuzzy
+msgid "The SecurID key entered is invalid"
 msgstr "डाली गयी सेक्योर आई डी कुंजी अवैध है।"
 
 msgid "Enter SecurID"
@@ -7412,6 +7215,9 @@ msgstr "से औनलाइन"
 msgid "Member Since"
 msgstr "से सदस्य"
 
+msgid "Capabilities"
+msgstr "योग्यताऐं"
+
 msgid "Profile"
 msgstr "प्रोफ़ाइल"
 
@@ -7585,7 +7391,7 @@ msgstr "अनुपस्थिति संदेश बहुत लम्ब
 
 #, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -7611,9 +7417,9 @@ msgstr ""
 msgid "Orphans"
 msgstr "लावारिस"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 "बड्डी %s को जोड़ नहीं पाया क्योंकि आपकी सूची में बहुत ज्यादा बड्डी हैं। किसी एक को हटा कर "
@@ -7623,7 +7429,7 @@ msgid "(no name)"
 msgstr "(कोई नाम नहीं)"
 
 #, fuzzy, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr "आपका निर्देष अज्ञात कारण से असफल हो गया।"
 
 #, fuzzy, c-format
@@ -8506,7 +8312,7 @@ msgid "Update interval (seconds)"
 msgstr "पढ़ने में त्रुटि"
 
 #, fuzzy
-msgid "Cannot decrypt server reply"
+msgid "Unable to decrypt server reply"
 msgstr "सर्वर की जानकारी नहीं मिली"
 
 #, c-format
@@ -8531,10 +8337,6 @@ msgstr "रजिस्ट्रेशन आवशयक"
 #, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
 msgstr ""
-
-#, fuzzy
-msgid "Could not decrypt server reply"
-msgstr "सर्वर की जानकारी नहीं मिली"
 
 #, fuzzy
 msgid "Requesting captcha"
@@ -8572,9 +8374,6 @@ msgid ""
 "%s"
 msgstr ""
 
-msgid "Unable to connect."
-msgstr "कनेक्ट करने में असमर्थ"
-
 # #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
@@ -8582,18 +8381,6 @@ msgstr "कनेक्ट करने में असमर्थ"
 #, fuzzy
 msgid "Socket error"
 msgstr "अज्ञात त्रुटि"
-
-#, fuzzy
-msgid "Unable to read from socket"
-msgstr "सोकेट पढ़ने में असमर्थ"
-
-#, fuzzy
-msgid "Write Error"
-msgstr "लिखने में त्रुटी"
-
-#, fuzzy
-msgid "Connection lost"
-msgstr "कनेक्शन बंद हो गया"
 
 #, fuzzy
 msgid "Getting server"
@@ -8604,8 +8391,8 @@ msgid "Requesting token"
 msgstr "अनुरोध निषेध"
 
 #, fuzzy
-msgid "Couldn't resolve host"
-msgstr "होस्ट से कनेक्टेड नहीं कर पाया"
+msgid "Unable to resolve hostname"
+msgstr "सर्वर को पींग नहीं कर पाया"
 
 #, fuzzy
 msgid "Invalid server or port"
@@ -8660,7 +8447,7 @@ msgid "QQ Qun Command"
 msgstr "कमांड"
 
 #, fuzzy
-msgid "Could not decrypt login reply"
+msgid "Unable to decrypt login reply"
 msgstr "सर्वर की जानकारी नहीं मिली"
 
 # #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
@@ -8690,10 +8477,6 @@ msgstr "फ़ाइल भेजना असफल"
 #, fuzzy, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%s ने %s के स्थानांतर को रद्द किया"
-
-#, fuzzy
-msgid "Connection closed (writing)"
-msgstr "कनेक्शन बंद हो गया"
 
 #, fuzzy, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8756,19 +8539,6 @@ msgstr ""
 msgid "Sametime Administrator Announcement"
 msgstr ""
 
-#, fuzzy
-msgid "Connection reset"
-msgstr "कनेक्शन बंद हो गया"
-
-#, fuzzy, c-format
-msgid "Error reading from socket: %s"
-msgstr "सॉकेट से पढ़ने में त्रुटि।"
-
-#. this is a regular connect, error out
-#, fuzzy
-msgid "Unable to connect to host"
-msgstr "सर्वर से कनेक्ट नहीं कर पाया।"
-
 #, c-format
 msgid "Announcement from %s"
 msgstr ""
@@ -8798,6 +8568,10 @@ msgstr ""
 #, fuzzy
 msgid "Video Camera"
 msgstr "विडीयो चैट"
+
+#, fuzzy
+msgid "File Transfer"
+msgstr "फ़ाइल हस्तांतरण"
 
 #, fuzzy
 msgid "Supports"
@@ -9655,6 +9429,9 @@ msgstr ""
 msgid "Network Statistics"
 msgstr "नेटवर्क के आंकड़े"
 
+msgid "Ping"
+msgstr "पिंग"
+
 msgid "Ping failed"
 msgstr "पिंग असफल"
 
@@ -9720,7 +9497,8 @@ msgstr "असमर्थित सार्वजनिक कुंजी प
 msgid "Disconnected by server"
 msgstr "सर्वर ने कनेक्शन तोड़ा"
 
-msgid "Error during connecting to SILC Server"
+#, fuzzy
+msgid "Error connecting to SILC Server"
 msgstr "एस आई एल सी कनेक्शन के दोरान त्रुटी"
 
 msgid "Key Exchange failed"
@@ -9730,29 +9508,26 @@ msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr "प्रथक काल का पुनः आरम्भ विफल"
 
-msgid "Connection failed"
-msgstr "कनेक्शन असफल हुआ"
-
 msgid "Performing key exchange"
 msgstr "कुंजी विनियम निभा रहा है"
 
 #, fuzzy
-msgid "Unable to create connection"
-msgstr "नया कनेक्शन बनाने में असमर्थ।"
-
-#, fuzzy
-msgid "Could not load SILC key pair"
+msgid "Unable to load SILC key pair"
 msgstr "सार्वजनिक कुंजी नहीं लोड कर पा रहा"
 
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "एस एल आइ सी  सर्वर से कनेक्शन कर रहा है"
 
+#, fuzzy
+msgid "Unable to not load SILC key pair"
+msgstr "सार्वजनिक कुंजी नहीं लोड कर पा रहा"
+
 msgid "Out of memory"
 msgstr "अपर्याप्त मेमरी"
 
 #, fuzzy
-msgid "Cannot initialize SILC protocol"
+msgid "Unable to initialize SILC protocol"
 msgstr "एस आई एल सी कनेक्शन नहीं शुरु कर पाया"
 
 #, fuzzy
@@ -10054,7 +9829,7 @@ msgid "Creating SILC key pair..."
 msgstr "एस आइ एल सी कुंजी जोड़ा बना रहा है..."
 
 #, fuzzy
-msgid "Cannot create SILC key pair\n"
+msgid "Unable to create SILC key pair"
 msgstr "एस आइ एल सी कुंजी जोड़ा बना रहा है..."
 
 #. Hint for translators: Please check the tabulator width here and in
@@ -10148,6 +9923,9 @@ msgstr ""
 msgid "No server statistics available"
 msgstr "सवर्र के आंकड़े उपलब्ध नहीं हैं"
 
+msgid "Error during connecting to SILC Server"
+msgstr "एस आई एल सी कनेक्शन के दोरान त्रुटी"
+
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "असफलता: अनुवाद असमानता, क्लायंट को अपग्रेड करें"
@@ -10188,7 +9966,8 @@ msgstr "असफलता: अवैध कुकी"
 msgid "Failure: Authentication failed"
 msgstr "असफलता: प्रमाणीकरण असफल"
 
-msgid "Cannot initialize SILC Client connection"
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
 msgstr "एस आई एल सी कनेक्शन नहीं शुरु कर पाया"
 
 #, fuzzy
@@ -10196,31 +9975,24 @@ msgid "John Noname"
 msgstr "अंतिम नाम"
 
 #, fuzzy, c-format
-msgid "Could not load SILC key pair: %s"
+msgid "Unable to load SILC key pair: %s"
 msgstr "सार्वजनिक कुंजी नहीं लोड कर पा रहा"
 
 #, fuzzy
-msgid "Could not write"
-msgstr "भेज नहीं सका"
-
-msgid "Could not connect"
-msgstr "कनेक्ट नहीं कर पाया"
+msgid "Unable to create connection"
+msgstr "नया कनेक्शन बनाने में असमर्थ।"
 
 # #-#-#-#-#  gnome-applets.gnome-2-2.hi.po (gnome-applets 2.x)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
 #, fuzzy
-msgid "Unknown server response."
+msgid "Unknown server response"
 msgstr "अज्ञात त्रुटि।"
 
 #, fuzzy
-msgid "Could not create listen socket"
-msgstr "सॉकट नहीं बना सका"
-
-#, fuzzy
-msgid "Could not resolve hostname"
-msgstr "होस्ट का नाम ढूंड नहीं पाया।"
+msgid "Unable to create listen socket"
+msgstr "सोकेट बनाने में असमर्थ"
 
 #, fuzzy
 msgid "SIP usernames may not contain whitespaces or @ symbols"
@@ -10270,6 +10042,84 @@ msgstr "ऐ पी उपयोगकर्ता"
 msgid "Auth Domain"
 msgstr "स्वचालित"
 
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr "join &lt;कक्ष&gt;:  याहू नेटवर्क पर किसी चैट कक्ष में जाएं"
+
+#, fuzzy
+msgid "list: List rooms on the Yahoo network"
+msgstr "सूची: इस नेटवर्क पर चैनलों कि सूची दिखायें"
+
+msgid "doodle: Request user to start a Doodle session"
+msgstr ""
+
+#, fuzzy
+msgid "Yahoo ID..."
+msgstr "याहू! आइ डी"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! Protocol Plugin"
+msgstr "याहू प्रोटोकाल प्लगइन"
+
+#, fuzzy
+msgid "Pager server"
+msgstr "प्रोक्सी सर्वर"
+
+msgid "Pager port"
+msgstr "पैजर पोर्ट"
+
+#, fuzzy
+msgid "File transfer server"
+msgstr "फ़ाइल हस्तांतरण होस्ट"
+
+msgid "File transfer port"
+msgstr "फ़ाइल हस्तांतरण पोर्ट"
+
+#, fuzzy
+msgid "Chat room locale"
+msgstr "चैट कक्ष सूची की कड़ी"
+
+msgid "Ignore conference and chatroom invitations"
+msgstr ""
+
+#, fuzzy
+msgid "Chat room list URL"
+msgstr "चैट कक्ष सूची की कड़ी"
+
+msgid "Yahoo Chat server"
+msgstr ""
+
+#, fuzzy
+msgid "Yahoo Chat port"
+msgstr "याहू जापान"
+
+#, fuzzy
+msgid "Yahoo JAPAN ID..."
+msgstr "याहू! आइ डी"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr "याहू प्रोटोकाल प्लगइन"
+
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -10298,28 +10148,18 @@ msgstr "बड्डी को जोड़ना मना हो गया "
 msgid "Received invalid data"
 msgstr "सवर्र से एस एस एल कनेक्शन बनाने में त्रुटी।"
 
-#. Password incorrect
-#, fuzzy
-msgid "Incorrect Password"
-msgstr "गलत पासवर्ड "
-
 #. security lock from too many failed login attempts
 #, fuzzy
 msgid ""
-"Account locked: Too many failed login attempts.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
 msgstr "अज्ञात त्रुटी संखया %d। याहू में लॉग-इन करने से शायद ठीक हो जाय।"
-
-#. the username does not exist
-#, fuzzy
-msgid "Username does not exist"
-msgstr "उपयोगकर्ता नहीं है"
 
 #. indicates a lock of some description
 #, fuzzy
 msgid ""
-"Account locked: Unknown reason.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
 msgstr "अज्ञात त्रुटी संखया %d। याहू में लॉग-इन करने से शायद ठीक हो जाय।"
 
 #. username or password missing
@@ -10357,11 +10197,12 @@ msgstr "आपके खाते पर ताला लगा है, कृ�
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr "अज्ञात त्रुटी संखया %d। याहू में लॉग-इन करने से शायद ठीक हो जाय।"
 
-#, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
+#, fuzzy, c-format
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr "इस खाते %s पर बड्डी %s को %s समुह में जोड़ नहीं पाया।"
 
-msgid "Could not add buddy to server list"
+#, fuzzy
+msgid "Unable to add buddy to server list"
 msgstr "बड्डी को सवर्र सूची में नहीं डाल सका।"
 
 #, c-format
@@ -10369,24 +10210,17 @@ msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr ""
 
 #, fuzzy
-msgid "Received unexpected HTTP response from server."
+msgid "Received unexpected HTTP response from server"
 msgstr "सवर्र ने अवैध उत्तर दिया।"
-
-msgid "Connection problem"
-msgstr "कनेक्शन में कठिनाई"
 
 #  Conversations
 #, fuzzy, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
+msgid "Lost connection with %s: %s"
 msgstr "%s के साथ वार्तालाप"
 
-#, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to establish a connection with %s: %s"
+msgstr "सवर्र से एस एस एल कनेक्शन बनाने में त्रुटी।"
 
 #, fuzzy
 msgid "Not at Home"
@@ -10457,81 +10291,14 @@ msgstr "उपयोगकर्ता से संवाद में जु�
 msgid "Open Inbox"
 msgstr ""
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join &lt;कक्ष&gt;:  याहू नेटवर्क पर किसी चैट कक्ष में जाएं"
-
-#, fuzzy
-msgid "list: List rooms on the Yahoo network"
-msgstr "सूची: इस नेटवर्क पर चैनलों कि सूची दिखायें"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr ""
-
-#, fuzzy
-msgid "Yahoo ID..."
-msgstr "याहू! आइ डी"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr "याहू प्रोटोकाल प्लगइन"
-
-msgid "Yahoo Japan"
-msgstr "याहू जापान"
-
-#, fuzzy
-msgid "Pager server"
-msgstr "प्रोक्सी सर्वर"
-
-#, fuzzy
-msgid "Japan Pager server"
-msgstr "जापान पैजर होस्ट"
-
-msgid "Pager port"
-msgstr "पैजर पोर्ट"
-
-#, fuzzy
-msgid "File transfer server"
-msgstr "फ़ाइल हस्तांतरण होस्ट"
-
-#, fuzzy
-msgid "Japan file transfer server"
-msgstr "जापान फ़ाइल हस्तांतरण होस्ट"
-
-msgid "File transfer port"
-msgstr "फ़ाइल हस्तांतरण पोर्ट"
-
-#, fuzzy
-msgid "Chat room locale"
-msgstr "चैट कक्ष सूची की कड़ी"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr ""
-
-#, fuzzy
-msgid "Chat room list URL"
-msgstr "चैट कक्ष सूची की कड़ी"
-
-msgid "Yahoo Chat server"
-msgstr ""
-
-#, fuzzy
-msgid "Yahoo Chat port"
-msgstr "याहू जापान"
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr ""
+
+msgid "Unable to connect."
+msgstr "कनेक्ट करने में असमर्थ"
 
 msgid "Unable to establish file descriptor."
 msgstr "फाइल डिसक्रिपट्र स्थापित करनें में असमर्थ।"
@@ -10539,6 +10306,10 @@ msgstr "फाइल डिसक्रिपट्र स्थापित क
 #, fuzzy, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s को %s भेजने का प्रस्ताव"
+
+#, fuzzy
+msgid "Write Error"
+msgstr "लिखने में त्रुटी"
 
 msgid "Yahoo! Japan Profile"
 msgstr "याहू जापान प्रोफ़ाइल"
@@ -10660,20 +10431,18 @@ msgstr "आवाज़ें"
 msgid "Webcams"
 msgstr "वेब केमरे"
 
+msgid "Connection problem"
+msgstr "कनेक्शन में कठिनाई"
+
 msgid "Unable to fetch room list."
 msgstr "कक्ष सूची नहीं ला पाया"
 
 msgid "User Rooms"
 msgstr "उपभोक्ता कक्ष"
 
-msgid "Connection problem with the YCHT server."
+#, fuzzy
+msgid "Connection problem with the YCHT server"
 msgstr "वाय सी एच टी YCHT सर्वर से कनेक्शन में कठिनाई"
-
-#, fuzzy, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
-msgstr "आपको सवर्र से डिसकनेक्ट्ड कर दिया गया।"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -10804,13 +10573,7 @@ msgid "Exposure"
 msgstr "दिखावा"
 
 #, fuzzy, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr "सोकेट बनाने में असमर्थ"
-
-#, fuzzy, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
+msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "%s को संदेश भेजने में असमर्थ"
 
 #, fuzzy, c-format
@@ -10818,16 +10581,12 @@ msgid "HTTP proxy connection error %d"
 msgstr "प्रोक्सी कनेक्शन में त्रुटि %d"
 
 #, fuzzy, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr "प्रवेश निषेध: प्रोक्सी सर्वर पोर्ट %d टनलिंग वर्जित करता है।"
 
 #, fuzzy, c-format
 msgid "Error resolving %s"
 msgstr "चैट में शामिल होने में त्रुटि %s"
-
-#, fuzzy
-msgid "Could not resolve host name"
-msgstr "होस्ट का नाम ढूंड नहीं पाया।"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -11053,14 +10812,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "सर्वर से कनेक्ट नहीं कर पाया।"
-
-#, fuzzy, c-format
-msgid ""
-"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
-"found."
-msgstr ""
-"सवर्र पर लॉग इन करने के लिए टी एल एस / एस एस एल चाहिए. टी एल एस / एस एस एल "
-"समर्थन नहीं मिला।"
 
 #, c-format
 msgid " - %s"
@@ -11323,7 +11074,11 @@ msgid "View _Log"
 msgstr "लॉग देखें(_L)"
 
 #, fuzzy
-msgid "Hide when offline"
+msgid "Hide When Offline"
+msgstr "जब आप ऑफलाइन हैं तब आज्ञा नहीं"
+
+#, fuzzy
+msgid "Show When Offline"
 msgstr "जब आप ऑफलाइन हैं तब आज्ञा नहीं"
 
 msgid "_Alias..."
@@ -11903,6 +11658,9 @@ msgstr ""
 msgid "The text information for a buddy's status"
 msgstr "उपयोगकर्ता %s हेतु जानकारी बदलें"
 
+msgid "Type the host name for this certificate."
+msgstr ""
+
 #. Widget creation function
 #, fuzzy
 msgid "SSL Servers"
@@ -11959,7 +11717,7 @@ msgid "Get Away Message"
 msgstr "नया अनुपस्थिति संदेश"
 
 #, fuzzy
-msgid "Last said"
+msgid "Last Said"
 msgstr "अंतिम नाम"
 
 msgid "Unable to save icon file to disk."
@@ -13007,7 +12765,7 @@ msgid "Hyperlink visited color"
 msgstr "हाइपरलिंक रंग"
 
 #, fuzzy
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr "हाइपरलिंक खींचना का रंग।"
 
 #, fuzzy
@@ -13047,7 +12805,13 @@ msgstr ""
 msgid "Action Message Name Color for Whispered Message"
 msgstr ""
 
+msgid "Color to draw the name of a whispered action message."
+msgstr ""
+
 msgid "Whisper Message Name Color"
+msgstr ""
+
+msgid "Color to draw the name of a whispered message."
 msgstr ""
 
 #  ---------- "Notification Removals" ----------
@@ -13055,8 +12819,9 @@ msgstr ""
 msgid "Typing notification color"
 msgstr "सूचक हटाना"
 
-msgid "The color to use for the typing notification font"
-msgstr ""
+#, fuzzy
+msgid "The color to use for the typing notification"
+msgstr "नयी डाक की सूचनाऐँ"
 
 #, fuzzy
 msgid "Typing notification font"
@@ -13427,6 +13192,10 @@ msgid ""
 msgstr "'स्वयं' ब्राउज़र कमांड चुनी गयी है, परंतु कोइ कमांड को दृढ़ नहीं किया गया है।"
 
 #, fuzzy
+msgid "No message"
+msgstr "(1 सन्देश)"
+
+#, fuzzy
 msgid "Open All Messages"
 msgstr "संदेश भेजें"
 
@@ -13450,10 +13219,6 @@ msgstr ""
 "<span weight=\"bold\" size=\"larger\">आपके लिए मेल है!</span>\n"
 "\n"
 "%s"
-
-#, fuzzy
-msgid "No message"
-msgstr "(1 सन्देश)"
 
 msgid "The following plugins will be unloaded."
 msgstr ""
@@ -13712,7 +13477,7 @@ msgstr "सन्देश भेजो(_m)"
 
 #  IM Convo trans options
 #, fuzzy
-msgid "Conversation Window Hiding"
+msgid "Conversation Window"
 msgstr "आईएम वार्तालाप विंडो"
 
 #  Conversations
@@ -13722,6 +13487,11 @@ msgstr "वार्तालाप बंद करें"
 
 msgid "When away"
 msgstr "जब अनुपस्थित"
+
+#  IM Convo trans options
+#, fuzzy
+msgid "Minimi_ze new conversation windows"
+msgstr "आईएम वार्तालाप विंडो"
 
 #. All the tab options!
 msgid "Tabs"
@@ -13788,11 +13558,6 @@ msgstr ""
 msgid "F_lash window when IMs are received"
 msgstr "जब संदेश मिलें तो विंडो चमकाएँ (_F)"
 
-#  IM Convo trans options
-#, fuzzy
-msgid "Minimi_ze new conversation windows"
-msgstr "आईएम वार्तालाप विंडो"
-
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -13832,8 +13597,8 @@ msgstr "उपयोगकर्ता की जानकारी नहीं
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr ""
 
-#, fuzzy
-msgid "_Autodetect IP address"
+#, fuzzy, c-format
+msgid "Use _automatically detected IP address: %s"
 msgstr "स्वतः जाने आइ पी पता(_A)"
 
 msgid "Public _IP:"
@@ -14237,34 +14002,18 @@ msgstr "संचय करें और प्रयोग करें(_v)"
 msgid "Status for %s"
 msgstr "वस्तुस्थिति: %s"
 
-#.
-#. * TODO: We should enable/disable the add button based on
-#. *       whether the user has entered all required data.  That
-#. *       would eliminate the need for this check and provide a
-#. *       better user experience.
-#.
-#, fuzzy
-msgid "Custom Smiley"
-msgstr "स्माइली डालें"
-
-msgid "More Data needed"
-msgstr ""
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr ""
-
 #, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr ""
 
 #, fuzzy
-msgid "Duplicate Shortcut"
-msgstr "सार्वजनिक कुंजी फा़इल"
+msgid "Custom Smiley"
+msgstr "स्माइली डालें"
 
 #, fuzzy
-msgid "Please select an image for the smiley."
-msgstr "कृपया चुने हुए समूह के लिए नया नाम भरें।"
+msgid "Duplicate Shortcut"
+msgstr "सार्वजनिक कुंजी फा़इल"
 
 #, fuzzy
 msgid "Edit Smiley"
@@ -14388,8 +14137,8 @@ msgid "Cannot send launcher"
 msgstr "फ़ाइल नहीं भेज पाया"
 
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr ""
 
 #, c-format
@@ -15067,7 +14816,7 @@ msgstr ""
 #. *  summary
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 
 #  ---------- "Notify For" ----------
@@ -15396,7 +15145,7 @@ msgstr "आईएम वार्तालाप विंडो"
 #. *< summary
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr ""
 
 msgid "Duplicate Correction"
@@ -15772,9 +15521,10 @@ msgstr "लॉगइन विकल्प"
 msgid "Options specific to Pidgin for Windows."
 msgstr "विंडोस गेम हेतु विशेष विकल्प"
 
+#, fuzzy
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
-msgstr ""
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
+msgstr "विंडोस गेम हेतु विशेष विकल्प"
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr ""
@@ -15815,6 +15565,286 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Cannot open socket"
+#~ msgstr "सोकेट खोलने में असमर्थ"
+
+#, fuzzy
+#~ msgid "Could not listen on socket"
+#~ msgstr "सॉकट नहीं बना सका"
+
+#~ msgid "Unable to read socket"
+#~ msgstr "सोकेट पढ़ने में असमर्थ"
+
+#, fuzzy
+#~ msgid "Connection failed."
+#~ msgstr "कनेक्शन असफल हुआ"
+
+#~ msgid "Server has disconnected"
+#~ msgstr "सर्वर ने कनेक्शन तोड़ा"
+
+#~ msgid "Couldn't create socket"
+#~ msgstr "सॉकट नहीं बना सका"
+
+#~ msgid "Couldn't connect to host"
+#~ msgstr "होस्ट से कनेक्टेड नहीं कर पाया"
+
+#~ msgid "Read error"
+#~ msgstr "पढ़ने में त्रुटि"
+
+#~ msgid "Write error"
+#~ msgstr "लिखने में त्रुटी"
+
+#, fuzzy
+#~ msgid "Service Discovery Info"
+#~ msgstr "डिर जानकारी दृढ़ करें..."
+
+#, fuzzy
+#~ msgid "Extended Stanza Addressing"
+#~ msgstr "विस्तृत पता"
+
+#, fuzzy
+#~ msgid "Multi-User Chat"
+#~ msgstr "चैट का उपनाम"
+
+#, fuzzy
+#~ msgid "Multi-User Chat Extended Presence Information"
+#~ msgstr "उपयोगकर्ता के पास कोइ डायरक्ट्री की जानकारी नहीं है।"
+
+#, fuzzy
+#~ msgid "Ad-Hoc Commands"
+#~ msgstr "कमांड"
+
+#, fuzzy
+#~ msgid "XHTML-IM"
+#~ msgstr "ऐचटीऐमऐल(HTML)"
+
+#, fuzzy
+#~ msgid "In-Band Registration"
+#~ msgstr "रजिस्ट्रेशन त्रुटि"
+
+#, fuzzy
+#~ msgid "User Location"
+#~ msgstr "स्थान निरूप"
+
+#, fuzzy
+#~ msgid "Chat State Notifications"
+#~ msgstr "बड्डी स्थिति सूचना"
+
+#, fuzzy
+#~ msgid "Software Version"
+#~ msgstr "असमर्थित आवर्तन"
+
+#, fuzzy
+#~ msgid "Stream Initiation"
+#~ msgstr "दिशा"
+
+#, fuzzy
+#~ msgid "User Mood"
+#~ msgstr "उपयोगकर्ता ढंग"
+
+#, fuzzy
+#~ msgid "User Activity"
+#~ msgstr "उपयोगकर्ता सीमा"
+
+#, fuzzy
+#~ msgid "Entity Capabilities"
+#~ msgstr "योग्यताऐं"
+
+#, fuzzy
+#~ msgid "User Tune"
+#~ msgstr "उपयोगकर्ता-नाम"
+
+#, fuzzy
+#~ msgid "Roster Item Exchange"
+#~ msgstr "आई एम कुंजी विनिमय"
+
+#, fuzzy
+#~ msgid "Reachability Address"
+#~ msgstr "इमेल पता"
+
+#, fuzzy
+#~ msgid "User Profile"
+#~ msgstr "प्रोफ़ाइल द्रद्द करें"
+
+#, fuzzy
+#~ msgid "Jingle"
+#~ msgstr "पिंग"
+
+#, fuzzy
+#~ msgid "User Nickname"
+#~ msgstr "उपनाम"
+
+#, fuzzy
+#~ msgid "Jingle Video"
+#~ msgstr "प्रत्यक्ष विडीयो"
+
+#, fuzzy
+#~ msgid "Message Receipts"
+#~ msgstr "प्राप्त सन्देश"
+
+#, fuzzy
+#~ msgid "Public Key Publishing"
+#~ msgstr "सार्वजनिक कुंजी बैबलप्रिंट"
+
+#, fuzzy
+#~ msgid "User Chatting"
+#~ msgstr "उपयोगकर्ता विकल्प"
+
+#, fuzzy
+#~ msgid "User Browsing"
+#~ msgstr "उपयोगकर्ता ढंग"
+
+#, fuzzy
+#~ msgid "User Gaming"
+#~ msgstr "उपयोगकर्ता सीमा"
+
+#, fuzzy
+#~ msgid "User Viewing"
+#~ msgstr "उपयोगकर्ता सीमा"
+
+#, fuzzy
+#~ msgid "Stanza Encryption"
+#~ msgstr "ट्रिलियन एनक्रिपशन"
+
+#~ msgid "Read Error"
+#~ msgstr "पढ़ने में त्रुटि"
+
+#~ msgid "Failed to connect to server."
+#~ msgstr "सर्वर से कनेक्ट करने में असफल।"
+
+#, fuzzy
+#~ msgid "Read buffer full (2)"
+#~ msgstr "कतार पूरी"
+
+#, fuzzy
+#~ msgid "Unparseable message"
+#~ msgstr "संदेश पदभंजन में असमर्थ"
+
+#, fuzzy
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "होस्ट से कनेक्टेड नहीं कर पाया"
+
+#~ msgid "Login failed (%s)."
+#~ msgstr "लॉग-इन असफल (%s)। "
+
+#~ msgid "Unable to connect to server."
+#~ msgstr "सर्वर से कनेक्ट नहीं कर पाया।"
+
+#~ msgid ""
+#~ "You have been logged out because you logged in at another workstation."
+#~ msgstr "आपको लॉग-आउट कर दिया गया है क्योंकि आपने दूसरे कार्य स्थल से लॉग-इन किया।"
+
+#~ msgid "Error. SSL support is not installed."
+#~ msgstr "त्रुटी । एस एस एल समर्थन स्थापित नहीं है।"
+
+#~ msgid "Incorrect password."
+#~ msgstr "गलत पासवर्ड "
+
+#, fuzzy
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr "सर्वर से कनेक्ट करने में असफल।"
+
+#, fuzzy
+#~ msgid "You may be disconnected shortly.  Check %s for updates."
+#~ msgstr ""
+#~ "आप जल्दी डिसकनेक्ट हो जाएंगे। जब तक यह ठीक होगा आप टी औ सी का प्रयोग करना चाहेंगे। "
+#~ "अपडेट्स के लिए %s देखें।"
+
+#~ msgid "Could Not Connect"
+#~ msgstr "कनेक्ट नहीं कर पाया"
+
+#, fuzzy
+#~ msgid "Invalid username."
+#~ msgstr "अवैध उपयोगकर्ता-नाम"
+
+#, fuzzy
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "सर्वर की जानकारी नहीं मिली"
+
+#, fuzzy
+#~ msgid "Connection lost"
+#~ msgstr "कनेक्शन बंद हो गया"
+
+#, fuzzy
+#~ msgid "Couldn't resolve host"
+#~ msgstr "होस्ट से कनेक्टेड नहीं कर पाया"
+
+#, fuzzy
+#~ msgid "Connection closed (writing)"
+#~ msgstr "कनेक्शन बंद हो गया"
+
+#, fuzzy
+#~ msgid "Connection reset"
+#~ msgstr "कनेक्शन बंद हो गया"
+
+#, fuzzy
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "सॉकेट से पढ़ने में त्रुटि।"
+
+#, fuzzy
+#~ msgid "Unable to connect to host"
+#~ msgstr "सर्वर से कनेक्ट नहीं कर पाया।"
+
+#, fuzzy
+#~ msgid "Could not write"
+#~ msgstr "भेज नहीं सका"
+
+#~ msgid "Could not connect"
+#~ msgstr "कनेक्ट नहीं कर पाया"
+
+#, fuzzy
+#~ msgid "Could not create listen socket"
+#~ msgstr "सॉकट नहीं बना सका"
+
+#, fuzzy
+#~ msgid "Could not resolve hostname"
+#~ msgstr "होस्ट का नाम ढूंड नहीं पाया।"
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "गलत पासवर्ड "
+
+#~ msgid "Yahoo Japan"
+#~ msgstr "याहू जापान"
+
+#, fuzzy
+#~ msgid "Japan Pager server"
+#~ msgstr "जापान पैजर होस्ट"
+
+#, fuzzy
+#~ msgid "Japan file transfer server"
+#~ msgstr "जापान फ़ाइल हस्तांतरण होस्ट"
+
+#, fuzzy
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr "आपको सवर्र से डिसकनेक्ट्ड कर दिया गया।"
+
+#, fuzzy
+#~ msgid "Could not resolve host name"
+#~ msgstr "होस्ट का नाम ढूंड नहीं पाया।"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support "
+#~ "was found."
+#~ msgstr ""
+#~ "सवर्र पर लॉग इन करने के लिए टी एल एस / एस एस एल चाहिए. टी एल एस / एस एस एल "
+#~ "समर्थन नहीं मिला।"
+
+#  IM Convo trans options
+#, fuzzy
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "आईएम वार्तालाप विंडो"
+
+#, fuzzy
+#~ msgid "Please select an image for the smiley."
+#~ msgstr "कृपया चुने हुए समूह के लिए नया नाम भरें।"
 
 #, fuzzy
 #~ msgid "Activate which ID?"
@@ -16454,10 +16484,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Current media"
 #~ msgstr "अभी है"
-
-#, fuzzy
-#~ msgid "Unable to connect to OIM server"
-#~ msgstr "सर्वर से कनेक्ट नहीं कर पाया।"
 
 #, fuzzy
 #~ msgid "_Merge"

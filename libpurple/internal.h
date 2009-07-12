@@ -230,6 +230,16 @@
 #	endif
 #endif
 
+#ifdef HAVE_CONFIG_H
+#if SIZEOF_TIME_T == 4
+#	define PURPLE_TIME_T_MODIFIER "lu"
+#elif SIZEOF_TIME_T == 8
+#	define PURPLE_TIME_T_MODIFIER "zu"
+#else
+#error Unknown size of time_t
+#endif
+#endif
+
 #include <glib-object.h>
 
 #ifndef G_DEFINE_TYPE

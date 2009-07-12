@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-02 01:34-0700\n"
+"POT-Creation-Date: 2009-07-06 15:04-0700\n"
 "PO-Revision-Date: 2007-11-09 00:33+0200\n"
 "Last-Translator: Serdar Soytetir <tulliana@gmail.com>\n"
 "Language-Team:  <tr@li.org>\n"
@@ -2574,7 +2574,7 @@ msgstr ""
 #. * description
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
@@ -2623,7 +2623,7 @@ msgid "Save messages sent to an offline user as pounce."
 msgstr ""
 
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 
@@ -2866,12 +2866,13 @@ msgid ""
 msgstr ""
 
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
 
-msgid "Unable to listen for incoming IM connections\n"
-msgstr ""
+#, fuzzy
+msgid "Unable to listen for incoming IM connections"
+msgstr "Bağlantı başlatılamadı"
 
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
@@ -2923,14 +2924,21 @@ msgstr "%s yazışmayı kapattı."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "İletiniz gönderilemedi, yazışma başlatılamadı."
 
-msgid "Cannot open socket"
-msgstr "Soket açılamıyor"
+#, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"Soket oluşturulamadı:\n"
+"%s"
 
-msgid "Could not bind socket to port"
+#, fuzzy, c-format
+msgid "Unable to bind socket to port: %s"
 msgstr "Soket porta yönlendirilemedi"
 
-msgid "Could not listen on socket"
-msgstr "Soketten okunamıyor"
+#, fuzzy, c-format
+msgid "Unable to listen on socket: %s"
+msgstr ""
+"Soket oluşturulamadı:\n"
+"%s"
 
 #, fuzzy
 msgid "Error communicating with local mDNSResponder."
@@ -2980,13 +2988,16 @@ msgstr "Kişi listesi Kaydet..."
 msgid "Load buddylist from file..."
 msgstr "Kişi listesini dosyadan yükle..."
 
-msgid "Fill in the registration fields."
+#, fuzzy
+msgid "You must fill in all registration fields"
 msgstr "Kayıt alanlarını doldurun."
 
-msgid "Passwords do not match."
+#, fuzzy
+msgid "Passwords do not match"
 msgstr "Parolalar çelişiyor."
 
-msgid "Unable to register new account. Error occurred.\n"
+#, fuzzy
+msgid "Unable to register new account.  An unknown error occurred."
 msgstr "Yeni hesap kaydedilemedi. Bir hata oluştu.\n"
 
 msgid "New Gadu-Gadu Account Registered"
@@ -2998,14 +3009,15 @@ msgstr "Kayıt başarıyla tamamlandı!"
 msgid "Password"
 msgstr "Parola"
 
-msgid "Password (retype)"
-msgstr "Parola (tekrar)"
+msgid "Password (again)"
+msgstr "Yeni parola (tekrar)"
 
-msgid "Enter current token"
-msgstr "Geçerli ifadeyi girin"
+msgid "Enter captcha text"
+msgstr ""
 
-msgid "Current token"
-msgstr "Geçerli ifade"
+#, fuzzy
+msgid "Captcha"
+msgstr "Resmi Kaydet"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "Yeni Gadu-Gadu Hesabı Oluştur"
@@ -3058,6 +3070,15 @@ msgstr "Parola başarıyla değiştirildi!"
 msgid "Current password"
 msgstr "Şimdiki parola"
 
+msgid "Password (retype)"
+msgstr "Parola (tekrar)"
+
+msgid "Enter current token"
+msgstr "Geçerli ifadeyi girin"
+
+msgid "Current token"
+msgstr "Geçerli ifade"
+
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr "Lütfen UIN için şimdiki parolanızı ve yeni parolanızı girin:"
 
@@ -3105,8 +3126,8 @@ msgstr "Uygun kullanıcı bulunamadı"
 msgid "There are no users matching your search criteria."
 msgstr "Arama kirterlerinize uyan bir kullanıcı bulunamadı."
 
-msgid "Unable to read socket"
-msgstr "Soket okunamıyor"
+msgid "Unable to read from socket"
+msgstr "Soketten okunamıyor"
 
 msgid "Buddy list downloaded"
 msgstr "Kişi listesi indirildi"
@@ -3120,8 +3141,14 @@ msgstr "Kişi listesi gönderildi"
 msgid "Your buddy list was stored on the server."
 msgstr "Kişi listeniz sunucuya gönderildi."
 
-msgid "Connection failed."
-msgstr "Bağlantı kurulamadı."
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
+msgid "Connected"
+msgstr "Bağlandı"
+
+msgid "Connection failed"
+msgstr "Bağlantı Kurulamıyor"
 
 msgid "Add to chat"
 msgstr "Sohbete ekle"
@@ -3129,10 +3156,14 @@ msgstr "Sohbete ekle"
 msgid "Chat _name:"
 msgstr "Sohbet _adı:"
 
-#. should this be a settings error?
-#, fuzzy
-msgid "Unable to resolve server"
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
 msgstr "Sunucuya bağlanılamadı."
+
+#. 1. connect to server
+#. connect to the server
+msgid "Connecting"
+msgstr "Bağlanılıyor"
 
 msgid "Chat error"
 msgstr "Sohbet hatası"
@@ -3140,7 +3171,8 @@ msgstr "Sohbet hatası"
 msgid "This chat name is already in use"
 msgstr "Bu sohbet adı zaten kullanımda"
 
-msgid "Not connected to the server."
+#, fuzzy
+msgid "Not connected to the server"
 msgstr "Sunucuya bağlı değilsiniz."
 
 msgid "Find buddies..."
@@ -3200,7 +3232,8 @@ msgstr "Konu ayarlanmamış"
 msgid "File Transfer Failed"
 msgstr "Dosya aktarımı başarısız oldu"
 
-msgid "Could not open a listening port."
+#, fuzzy
+msgid "Unable to open a listening port."
 msgstr "Bir dinleme portu açılamadı."
 
 msgid "Error displaying MOTD"
@@ -3216,8 +3249,18 @@ msgstr "Bu bağlantıyla ilgilişkilendirilmiş bir MOTD yok."
 msgid "MOTD for %s"
 msgstr "%s için MOTD"
 
-msgid "Server has disconnected"
-msgstr "Sunucu bağlantısı kesildi"
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, fuzzy, c-format
+msgid "Lost connection with server: %s"
+msgstr ""
+"Sunucu ile bağlantı kesildi:\n"
+"%s"
 
 msgid "View MOTD"
 msgstr "MOTD'yi göster"
@@ -3232,22 +3275,20 @@ msgstr "Ş_ifre"
 msgid "IRC nick and server may not contain whitespace"
 msgstr "IRC isimler boşluk karakteri içeremez"
 
-#. 1. connect to server
-#. connect to the server
-msgid "Connecting"
-msgstr "Bağlanılıyor"
-
 msgid "SSL support unavailable"
 msgstr "SSL desteği mevcut değil"
 
-msgid "Couldn't create socket"
-msgstr "Soket yaratılamadı"
+msgid "Unable to connect"
+msgstr "Bağlanılamıyor"
 
-msgid "Couldn't connect to host"
-msgstr "Ana bilgisayara bağlanılamadı"
+#. this is a regular connect, error out
+#, fuzzy, c-format
+msgid "Unable to connect: %s"
+msgstr "%s konumuna bağlanılamadı"
 
-msgid "Read error"
-msgstr "Okuma hatası"
+#, fuzzy, c-format
+msgid "Server closed the connection"
+msgstr "Sunucu bağlantıyı kapattı."
 
 msgid "Users"
 msgstr "Kullanıcılar"
@@ -3671,12 +3712,13 @@ msgstr "Ad-Hoc Komutu Başarısız"
 msgid "execute"
 msgstr "çalıştır"
 
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
+#, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
 msgstr ""
 "Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği bulunamadı."
 
 #, fuzzy
-msgid "You require encryption, but no TLS/SSL support found."
+msgid "You require encryption, but no TLS/SSL support was found."
 msgstr ""
 "Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği bulunamadı."
 
@@ -3694,7 +3736,12 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Şifresiz Metin Yetkilendirmesi"
 
-msgid "Invalid response from server."
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "Kimlik denetimi başarısız"
+
+#, fuzzy
+msgid "Invalid response from server"
 msgstr "Hata: sunucudan geçersiz cevap"
 
 msgid "Server does not use any supported authentication method"
@@ -3706,7 +3753,8 @@ msgstr ""
 msgid "Invalid challenge from server"
 msgstr "Sunucudan geçersiz yanıt"
 
-msgid "SASL error"
+#, fuzzy, c-format
+msgid "SASL error: %s"
 msgstr "SASL hatası"
 
 msgid "The BOSH connection manager terminated your session."
@@ -3726,10 +3774,8 @@ msgstr ""
 "Sunucu ile bağlantı sağlanamadı:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with the server: %s"
 msgstr ""
 "Sunucu ile bağlantı sağlanamadı:\n"
 "%s"
@@ -3737,12 +3783,6 @@ msgstr ""
 #, fuzzy
 msgid "Unable to establish SSL connection"
 msgstr "Bağlantı başlatılamadı"
-
-msgid "Unable to create socket"
-msgstr "Soket oluşturulamadı"
-
-msgid "Write error"
-msgstr "Yazma hatası"
 
 msgid "Full Name"
 msgstr "Tam İsim"
@@ -3814,159 +3854,6 @@ msgstr "İşletim Sistemi"
 msgid "Local Time"
 msgstr "Yerel Dosya:"
 
-msgid "Last Activity"
-msgstr "Son Etkinlik"
-
-msgid "Service Discovery Info"
-msgstr "Servis Bulma Bilgileri"
-
-msgid "Service Discovery Items"
-msgstr "Servis Bulma Ögeleri"
-
-msgid "Extended Stanza Addressing"
-msgstr "Genişletilmiş Stanza Adreslemesi"
-
-msgid "Multi-User Chat"
-msgstr "Çok Kullanıcılı Sohbet"
-
-msgid "Multi-User Chat Extended Presence Information"
-msgstr ""
-
-msgid "In-Band Bytestreams"
-msgstr ""
-
-msgid "Ad-Hoc Commands"
-msgstr "Ad-Hoc Komutları"
-
-msgid "PubSub Service"
-msgstr ""
-
-msgid "SOCKS5 Bytestreams"
-msgstr ""
-
-msgid "Out of Band Data"
-msgstr ""
-
-msgid "XHTML-IM"
-msgstr "XHTML-IM"
-
-msgid "In-Band Registration"
-msgstr ""
-
-msgid "User Location"
-msgstr "Kullanıcı Konumu"
-
-msgid "User Avatar"
-msgstr "Kullanıcı Resmi"
-
-msgid "Chat State Notifications"
-msgstr "Sohbet Durum Uyarısı"
-
-msgid "Software Version"
-msgstr "Yazılım Sürümü"
-
-msgid "Stream Initiation"
-msgstr ""
-
-msgid "File Transfer"
-msgstr "Dosya Aktarımı"
-
-msgid "User Mood"
-msgstr "Kullanıcı Modu"
-
-msgid "User Activity"
-msgstr "Kullanıcı Etkinliği"
-
-msgid "Entity Capabilities"
-msgstr ""
-
-msgid "Encrypted Session Negotiations"
-msgstr ""
-
-msgid "User Tune"
-msgstr ""
-
-msgid "Roster Item Exchange"
-msgstr ""
-
-msgid "Reachability Address"
-msgstr "Erişebilirlik Adresi"
-
-msgid "User Profile"
-msgstr "Kullanıcı Profili"
-
-msgid "Jingle"
-msgstr ""
-
-msgid "Jingle Audio"
-msgstr ""
-
-msgid "User Nickname"
-msgstr "Kullanıcı Takma Adı"
-
-msgid "Jingle ICE UDP"
-msgstr ""
-
-msgid "Jingle ICE TCP"
-msgstr ""
-
-msgid "Jingle Raw UDP"
-msgstr ""
-
-msgid "Jingle Video"
-msgstr ""
-
-msgid "Jingle DTMF"
-msgstr ""
-
-msgid "Message Receipts"
-msgstr "İleti Alındığında"
-
-msgid "Public Key Publishing"
-msgstr "Genel Anahtar Yayınlama"
-
-msgid "User Chatting"
-msgstr ""
-
-msgid "User Browsing"
-msgstr ""
-
-msgid "User Gaming"
-msgstr ""
-
-msgid "User Viewing"
-msgstr ""
-
-msgid "Ping"
-msgstr "Ping"
-
-msgid "Stanza Encryption"
-msgstr "Stanza Şifrelemesi"
-
-msgid "Entity Time"
-msgstr ""
-
-msgid "Delayed Delivery"
-msgstr ""
-
-msgid "Collaborative Data Objects"
-msgstr ""
-
-msgid "File Repository and Sharing"
-msgstr ""
-
-msgid "STUN Service Discovery for Jingle"
-msgstr ""
-
-msgid "Simplified Encrypted Session Negotiation"
-msgstr ""
-
-msgid "Hop Check"
-msgstr ""
-
-msgid "Capabilities"
-msgstr "Yetenekler"
-
 msgid "Priority"
 msgstr "Öncelik"
 
@@ -3978,7 +3865,7 @@ msgid "%s ago"
 msgstr ""
 
 #, fuzzy
-msgid "Logged off"
+msgid "Logged Off"
 msgstr "Çevrimiçi"
 
 msgid "Middle Name"
@@ -4158,16 +4045,12 @@ msgid "Roles:"
 msgstr "Rol"
 
 #, fuzzy
-msgid "Ping timeout"
+msgid "Ping timed out"
 msgstr "Düz metin"
 
-msgid "Read Error"
-msgstr "Okuma hatası"
-
-#, c-format
 msgid ""
-"Could not find alternative XMPP connection methods after failing to connect "
-"directly.\n"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
 
 msgid "Invalid XMPP ID"
@@ -4342,9 +4225,6 @@ msgstr "Parolanız değiştirildi."
 
 msgid "Error changing password"
 msgstr "Parola değiştirilirken hata"
-
-msgid "Password (again)"
-msgstr "Yeni parola (tekrar)"
 
 msgid "Change XMPP Password"
 msgstr "XMPP Parolası Değiştir"
@@ -4735,6 +4615,14 @@ msgstr "XML ayrıştırma hatası"
 msgid "Unknown Error in presence"
 msgstr "Bilinmeyen Hata"
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr "%s sohbetine katılırken hata"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "%s sohbetinde hata"
+
 msgid "Create New Room"
 msgstr "Yeni Oda Oluştur"
 
@@ -4751,16 +4639,20 @@ msgstr "_Odayı Düzenle"
 msgid "_Accept Defaults"
 msgstr "Varsayılanları _Kabul Et"
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr "%s sohbetine katılırken hata"
+#, fuzzy
+msgid "No reason"
+msgstr "Sebep yazılmamış."
 
-#, c-format
-msgid "Error in chat %s"
-msgstr "%s sohbetinde hata"
+#, fuzzy, c-format
+msgid "You have been kicked: (%s)"
+msgstr "%s tarafından atıldınız: (%s)"
+
+#, fuzzy, c-format
+msgid "Kicked (%s)"
+msgstr "%s tarafından atıldınız (%s)"
 
 #, fuzzy
-msgid "An error occured on the in-band bytestream transfer\n"
+msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "Dosyayı açarken bir hata oluştu."
 
 #, fuzzy
@@ -5256,9 +5148,6 @@ msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "MSN için SSL desteği gereklidir. Lütfen geçerli bir SSL kütüphanesi yükleyin."
 
-msgid "Failed to connect to server."
-msgstr "Sunucuya bağlanılamadı"
-
 msgid "Error retrieving profile"
 msgstr "Profil alınırken hata"
 
@@ -5507,9 +5396,6 @@ msgstr "İleti gönderilmemiş olabilir çünkü bilinmeyen bir hata meydana gel
 msgid "Message was not sent because an unknown error occurred."
 msgstr "İleti gönderilmemiş olabilir çünkü bilinmeyen bir hata meydana geldi:"
 
-msgid "Unable to connect"
-msgstr "Bağlanılamıyor"
-
 msgid "Writing error"
 msgstr "Yazma hatası"
 
@@ -5524,13 +5410,16 @@ msgstr ""
 "%s sunucusuna bağlanma hatası:\n"
 "%s"
 
-msgid "Our protocol is not supported by the server."
+#, fuzzy
+msgid "Our protocol is not supported by the server"
 msgstr "Bu protokol sunucu tarafından desteklenmiyor."
 
-msgid "Error parsing HTTP."
+#, fuzzy
+msgid "Error parsing HTTP"
 msgstr "HTTP ayrıştırma hatası"
 
-msgid "You have signed on from another location."
+#, fuzzy
+msgid "You have signed on from another location"
 msgstr "Başka bir programla oturum açtınız."
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
@@ -5538,7 +5427,8 @@ msgstr ""
 "MSN sunucular geçici olarak servis dışıdır. Lütfen bekleyin ve tekrar "
 "deneyin."
 
-msgid "The MSN servers are going down temporarily."
+#, fuzzy
+msgid "The MSN servers are going down temporarily"
 msgstr "MSN sunucusu geçici olarak kapatılıyor"
 
 #, c-format
@@ -5549,9 +5439,6 @@ msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr ""
 "MSN listenize geçici olarak bağlanılamıyor. Lütfen daha sonra tekrar deneyin."
-
-msgid "Unknown error."
-msgstr "Bilinmeyen Hata"
 
 msgid "Handshaking"
 msgstr "El Sıkışma"
@@ -5651,6 +5538,9 @@ msgstr "AIM Protokolü Eklentisi"
 #, c-format
 msgid "%s is not a valid group."
 msgstr "%s geçerli bir grup değil."
+
+msgid "Unknown error."
+msgstr "Bilinmeyen Hata"
 
 #, c-format
 msgid "%s on %s (%s)"
@@ -5761,12 +5651,6 @@ msgstr[0] ""
 msgid "Add contacts from server"
 msgstr "Sunucudan kişileri ekle"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-msgid "Connected"
-msgstr "Bağlandı"
-
 #, c-format
 msgid "Protocol error, code %d: %s"
 msgstr "Protokol hatası, kod: %d: %s"
@@ -5787,17 +5671,6 @@ msgstr "MySpaceIM Hatası"
 
 msgid "Invalid input condition"
 msgstr "Geçersiz girdi durumu"
-
-#, fuzzy
-msgid "Read buffer full (2)"
-msgstr "Okuma ara belleği dolu"
-
-msgid "Unparseable message"
-msgstr "Ayrıştırılamayan ileti"
-
-#, c-format
-msgid "Couldn't connect to host: %s (%d)"
-msgstr "Bilgisayara bağlanılamadı: %s (%d)"
 
 msgid "Failed to add buddy"
 msgstr "Kişi eklenemedi"
@@ -5879,6 +5752,12 @@ msgstr "Toplam Arkadaşlar"
 
 msgid "Client Version"
 msgstr "İstemci Sürümü"
+
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
+msgstr ""
 
 #, fuzzy
 msgid "MySpaceIM - Username Available"
@@ -6142,9 +6021,9 @@ msgstr "Kullanıcı çevrimdışı ya da sizi engellemiş"
 msgid "Unknown error: 0x%X"
 msgstr "Bilinmeyen hata: 0x%X"
 
-#, c-format
-msgid "Login failed (%s)."
-msgstr "Oturum açma işlemi başarısız (%s)."
+#, fuzzy, c-format
+msgid "Unable to login: %s"
+msgstr "%s kullanıcısına ping atılamadı"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6246,9 +6125,6 @@ msgstr "GroupWise Konferansı %d"
 msgid "Authenticating..."
 msgstr "Kimlik doğrulaması yapılıyor..."
 
-msgid "Unable to connect to server."
-msgstr "Sunucuya bağlanılamadı."
-
 msgid "Waiting for response..."
 msgstr "Sunucudan yanıt bekleniyor..."
 
@@ -6272,21 +6148,16 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "Yazışmaya katılmak istiyor musunuz?"
 
-msgid "You have been logged out because you logged in at another workstation."
-msgstr "Oturumunuz kapandı, çünkü başka bir yerden oturum açtınız."
-
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
 msgstr "%s çevrimdışı gözüküyor ve henüz gönderdiğiniz iletileri alamıyor."
 
+#, fuzzy
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr "Sunucuya bağlanılamadı. Lütfen bağlanmak istediğiniz adresi giriniz."
-
-msgid "Error. SSL support is not installed."
-msgstr "Hata. SSL desteği kurulmamış."
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Bu konferans kapandı. Artık iletiler gönderilmeyecek."
@@ -6327,10 +6198,7 @@ msgstr ""
 msgid "Error requesting "
 msgstr "%s çözümleme hatası"
 
-msgid "Incorrect password."
-msgstr "Yanlış parola."
-
-msgid "AOL does not allow your screen name to authenticate via this site."
+msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
 #, fuzzy
@@ -6341,18 +6209,8 @@ msgstr "Bağlanılamadı"
 msgid "Invalid chat room name"
 msgstr "Geçersiz Oda İsmi"
 
-msgid "Server closed the connection."
-msgstr "Sunucu bağlantıyı kapattı."
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr ""
-"Sunucu ile bağlantı kesildi:\n"
-"%s"
-
-msgid "Received invalid data on connection with server."
+#, fuzzy
+msgid "Received invalid data on connection with server"
 msgstr "Sunucu bağlantısından geçersiz veri alındı."
 
 #. *< type
@@ -6400,7 +6258,8 @@ msgstr "Uzak kullanıcı ile bağlantı koptu:<br>%s"
 msgid "Received invalid data on connection with remote user."
 msgstr "Uzak kullanıcı ile yapılan bağlantı üzerinden geçersiz veri alındı."
 
-msgid "Could not establish a connection with the remote user."
+#, fuzzy
+msgid "Unable to establish a connection with the remote user."
 msgstr "Uzak kullanıcı ile bağlantı kurulamıyor."
 
 msgid "Direct IM established"
@@ -6594,21 +6453,15 @@ msgstr "Uyarı Seviyesi"
 msgid "Buddy Comment"
 msgstr "Kişi Hakkında Yorum"
 
-#, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to authentication server: %s"
 msgstr ""
 "Kimlik doğrulaması için sunucuya bağlanılamıyor:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr ""
-"BOS sunucuya bağlanılamadı:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to BOS server: %s"
+msgstr "Sunucuya bağlanılamadı."
 
 #, fuzzy
 msgid "Username sent"
@@ -6623,9 +6476,9 @@ msgstr "Bağlantı sonlandırılıyor"
 
 #, fuzzy, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
 "Oturum açılamadı: %s olarak bağlanılamadı, çünkü görünen adınız geçerli "
 "değil. Takma adlar bir harfle başlamalı ve harfler, rakamlar, boşluk ile "
@@ -6639,28 +6492,22 @@ msgstr ""
 msgid "Unable to get a valid AIM login hash."
 msgstr "Geçerli AIM giriş hash'i alınamadı."
 
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr ""
-"Kısa bir süreliğine bağlantı koptu.  Güncellemeler için %s adresine bakın."
-
 msgid "Unable to get a valid login hash."
 msgstr "Geçerli bir giriş hash'i alınamadı."
-
-msgid "Could Not Connect"
-msgstr "Bağlanılamadı"
 
 msgid "Received authorization"
 msgstr "İzin alındı."
 
 #. Unregistered username
 #. uid is not exist
+#. the username does not exist
 #, fuzzy
-msgid "Invalid username."
-msgstr "Geçersiz ad"
+msgid "Username does not exist"
+msgstr "Kullanıcı mevcut değil"
 
 #. Suspended account
-msgid "Your account is currently suspended."
+#, fuzzy
+msgid "Your account is currently suspended"
 msgstr "Hesabınız şuan için durdurulmuştur."
 
 #. service temporarily unavailable
@@ -6681,7 +6528,8 @@ msgstr ""
 "deneyin. Eğer denemeye devam ederseniz daha uzun beklemek zorunda "
 "kalacaksınız."
 
-msgid "The SecurID key entered is invalid."
+#, fuzzy
+msgid "The SecurID key entered is invalid"
 msgstr "Girilen SecurID anahtarı geçersiz."
 
 msgid "Enter SecurID"
@@ -6841,6 +6689,9 @@ msgstr "Bağlı olduğu süre:"
 
 msgid "Member Since"
 msgstr "Üye olduğu süre:"
+
+msgid "Capabilities"
+msgstr "Yetenekler"
 
 msgid "Profile"
 msgstr "Profil"
@@ -7013,7 +6864,7 @@ msgstr "Uzakta iletiniz çok uzun."
 
 #, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -7039,9 +6890,9 @@ msgstr ""
 msgid "Orphans"
 msgstr "Kimsesizler"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 "%s kişisi eklenemedi çünkü kişi listenizde çok kişi var. Bir tanesini silin "
@@ -7050,8 +6901,8 @@ msgstr ""
 msgid "(no name)"
 msgstr "(isimsiz)"
 
-#, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+#, fuzzy, c-format
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr "Bilinmeyen bir sebepten dolayı %s kişisi eklenemedi."
 
 #, fuzzy, c-format
@@ -7888,7 +7739,7 @@ msgid "Update interval (seconds)"
 msgstr "Bilgilerimi güncelle"
 
 #, fuzzy
-msgid "Cannot decrypt server reply"
+msgid "Unable to decrypt server reply"
 msgstr "Sunucu bilgileri alınamıyor"
 
 #, c-format
@@ -7913,10 +7764,6 @@ msgstr "Kayıt Gerekli"
 #, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
 msgstr ""
-
-#, fuzzy
-msgid "Could not decrypt server reply"
-msgstr "Sunucu bilgileri alınamıyor"
 
 #, fuzzy
 msgid "Requesting captcha"
@@ -7954,20 +7801,8 @@ msgid ""
 "%s"
 msgstr ""
 
-msgid "Unable to connect."
-msgstr "Bağlanılamıyor."
-
 msgid "Socket error"
 msgstr "Soket hatası"
-
-msgid "Unable to read from socket"
-msgstr "Soketten okunamıyor"
-
-msgid "Write Error"
-msgstr "Yazma Hatası"
-
-msgid "Connection lost"
-msgstr "Bağlantı kapandı"
 
 #, fuzzy
 msgid "Getting server"
@@ -7977,8 +7812,9 @@ msgstr "Kullanıcı Bilgisi Ayarla..."
 msgid "Requesting token"
 msgstr "İstek reddedildi"
 
-msgid "Couldn't resolve host"
-msgstr "Ana bilgisayar çözümlenemedi"
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "Sunucuya bağlanılamadı."
 
 #, fuzzy
 msgid "Invalid server or port"
@@ -8029,7 +7865,7 @@ msgid "QQ Qun Command"
 msgstr "Komut"
 
 #, fuzzy
-msgid "Could not decrypt login reply"
+msgid "Unable to decrypt login reply"
 msgstr "Sunucu bilgileri alınamıyor"
 
 #, fuzzy
@@ -8050,9 +7886,6 @@ msgstr "Dosya Gönder"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d şu dosyayı göndermekten vazgeçti %s"
-
-msgid "Connection closed (writing)"
-msgstr "Bağlantı kapandı (yazılıyor)"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8107,17 +7940,6 @@ msgstr ""
 msgid "Sametime Administrator Announcement"
 msgstr "Eşzamanlı Yönetici  Duyurusu"
 
-msgid "Connection reset"
-msgstr "Bağlantı kesildi"
-
-#, c-format
-msgid "Error reading from socket: %s"
-msgstr "Soket okuma hatası: %s"
-
-#. this is a regular connect, error out
-msgid "Unable to connect to host"
-msgstr "Ana bilgisayara bağlanılamadı"
-
 #, c-format
 msgid "Announcement from %s"
 msgstr "%s kişisinden Anons"
@@ -8139,6 +7961,9 @@ msgstr "Hoparlör"
 
 msgid "Video Camera"
 msgstr "Video Kamera"
+
+msgid "File Transfer"
+msgstr "Dosya Aktarımı"
 
 msgid "Supports"
 msgstr "Destekler"
@@ -8921,6 +8746,9 @@ msgstr ""
 msgid "Network Statistics"
 msgstr "Ağ istatistikleri"
 
+msgid "Ping"
+msgstr "Ping"
+
 msgid "Ping failed"
 msgstr "Ping başarısız oldu"
 
@@ -8985,7 +8813,8 @@ msgstr "Desteklenmeyen anahtar değeri"
 msgid "Disconnected by server"
 msgstr "Sunucu bağlantısı kesildi"
 
-msgid "Error during connecting to SILC Server"
+#, fuzzy
+msgid "Error connecting to SILC Server"
 msgstr "SILC Sunucusuna bağlanırken hata"
 
 msgid "Key Exchange failed"
@@ -8997,26 +8826,26 @@ msgstr ""
 "Ayrılmış oturuma devam edilemedi. Yeni bir bağlantı oluşturmak için Yeniden "
 "Bağlan'a basınız."
 
-msgid "Connection failed"
-msgstr "Bağlantı Kurulamıyor"
-
 msgid "Performing key exchange"
 msgstr "Anahtar değişimi yapılıyor"
 
-msgid "Unable to create connection"
-msgstr "Bağlantı oluşturulamadı"
-
-msgid "Could not load SILC key pair"
+#, fuzzy
+msgid "Unable to load SILC key pair"
 msgstr "SILC anahtar çifti yüklenemedi"
 
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "SILC sunucusuna bağlanılıyor"
 
+#, fuzzy
+msgid "Unable to not load SILC key pair"
+msgstr "SILC anahtar çifti yüklenemedi"
+
 msgid "Out of memory"
 msgstr "Bellek Aşımı"
 
-msgid "Cannot initialize SILC protocol"
+#, fuzzy
+msgid "Unable to initialize SILC protocol"
 msgstr "SILC protokolü başlatılamadı"
 
 msgid "Error loading SILC key pair"
@@ -9309,7 +9138,8 @@ msgstr "Tüm anlık iletileri dijital olarak imzala"
 msgid "Creating SILC key pair..."
 msgstr "SILC anahtar çifti oluşturuluyor..."
 
-msgid "Cannot create SILC key pair\n"
+#, fuzzy
+msgid "Unable to create SILC key pair"
 msgstr "SILC anahtar çifti oluşturulamadı\n"
 
 #. Hint for translators: Please check the tabulator width here and in
@@ -9403,6 +9233,9 @@ msgstr "Beyaz Tahta"
 msgid "No server statistics available"
 msgstr "Sunucu istatistikleri mevcut değil"
 
+msgid "Error during connecting to SILC Server"
+msgstr "SILC Sunucusuna bağlanırken hata"
+
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "Başarısız: Sürüm uyuşmazlığı, programı güncelleştirin"
@@ -9443,30 +9276,27 @@ msgstr "Hata: Geçersiz çerez"
 msgid "Failure: Authentication failed"
 msgstr "Hata: Kimlik denetimi başarısız"
 
-msgid "Cannot initialize SILC Client connection"
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
 msgstr "SILC Client bağlantısı başlatılamadı"
 
 msgid "John Noname"
 msgstr "Serdar İsimsiz"
 
-#, c-format
-msgid "Could not load SILC key pair: %s"
+#, fuzzy, c-format
+msgid "Unable to load SILC key pair: %s"
 msgstr "SILC anahtar çifti yüklenemedi: %s"
 
-msgid "Could not write"
-msgstr "Yazılamadı"
+msgid "Unable to create connection"
+msgstr "Bağlantı oluşturulamadı"
 
-msgid "Could not connect"
-msgstr "Bağlanılamadı"
-
-msgid "Unknown server response."
+#, fuzzy
+msgid "Unknown server response"
 msgstr "Bilinmeyen sunucu yanıtı."
 
-msgid "Could not create listen socket"
-msgstr "Dinleme soketi yaratılamadı"
-
-msgid "Could not resolve hostname"
-msgstr "Makine adı çözümlenemedi"
+#, fuzzy
+msgid "Unable to create listen socket"
+msgstr "Soket oluşturulamadı"
 
 #, fuzzy
 msgid "SIP usernames may not contain whitespaces or @ symbols"
@@ -9509,6 +9339,78 @@ msgstr "Kullanıcı Kimliğini Doğrula"
 msgid "Auth Domain"
 msgstr "Makine Kimliğini Doğrula"
 
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr "join &lt;oda&gt;:  Yahoo'daki bir sohbet odasına katıl"
+
+msgid "list: List rooms on the Yahoo network"
+msgstr "list:  Yahoo ağındaki kanalları listele"
+
+msgid "doodle: Request user to start a Doodle session"
+msgstr ""
+
+#, fuzzy
+msgid "Yahoo ID..."
+msgstr "Yahoo! ID"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! Protocol Plugin"
+msgstr "Yahoo Protokol Eklentisi"
+
+msgid "Pager server"
+msgstr "Çağrı cihazı sunucusu"
+
+msgid "Pager port"
+msgstr "Çağrı cihazı portu"
+
+msgid "File transfer server"
+msgstr "Dosya aktarım sunucusu"
+
+msgid "File transfer port"
+msgstr "Dosya aktarım portu"
+
+msgid "Chat room locale"
+msgstr "Sohbet Odası Yereli"
+
+msgid "Ignore conference and chatroom invitations"
+msgstr "Konferans ve sohbet odası davetlerini yok say"
+
+msgid "Chat room list URL"
+msgstr "Sohbet Odası Listesi URL"
+
+msgid "Yahoo Chat server"
+msgstr "Yahoo Sohbet sunucusu"
+
+msgid "Yahoo Chat port"
+msgstr "Yahoo Sohbet portu"
+
+#, fuzzy
+msgid "Yahoo JAPAN ID..."
+msgstr "Yahoo! ID"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr "Yahoo Protokol Eklentisi"
+
 msgid "Your SMS was not delivered"
 msgstr ""
 
@@ -9537,28 +9439,18 @@ msgstr "Kişi ekleme reddedildi"
 msgid "Received invalid data"
 msgstr "Sunucu bağlantısından geçersiz veri alındı."
 
-#. Password incorrect
-#, fuzzy
-msgid "Incorrect Password"
-msgstr "Yanlış parola"
-
 #. security lock from too many failed login attempts
 #, fuzzy
 msgid ""
-"Account locked: Too many failed login attempts.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
 msgstr "Kullanıcı hesabınız kilitlendi, lütfen Yahoo! sitesine giriş yapın."
-
-#. the username does not exist
-#, fuzzy
-msgid "Username does not exist"
-msgstr "Kullanıcı mevcut değil"
 
 #. indicates a lock of some description
 #, fuzzy
 msgid ""
-"Account locked: Unknown reason.\n"
-"Logging into the Yahoo! website may fix this."
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
 msgstr "Kullanıcı hesabınız kilitlendi, lütfen Yahoo! sitesine giriş yapın."
 
 #. username or password missing
@@ -9595,37 +9487,32 @@ msgstr "Kullanıcı hesabınız kilitlendi, lütfen Yahoo! sitesine giriş yapı
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr ""
 
-#, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
+msgstr "%s izin verilenler listesine eklenemedi (%s)."
 
-msgid "Could not add buddy to server list"
+#, fuzzy
+msgid "Unable to add buddy to server list"
 msgstr "Arkadaşınız sunucu listesine eklenemedi"
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr "[ Sesli %s/%s/%s.swf ] %s"
 
-msgid "Received unexpected HTTP response from server."
+#, fuzzy
+msgid "Received unexpected HTTP response from server"
 msgstr "Sunucudan beklenmeyen bir HTTP yanıtı alındı."
 
-msgid "Connection problem"
-msgstr "Bağlantı sorunu"
-
-#, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Lost connection with %s: %s"
 msgstr ""
 "%s sunucusu ile bağlantı kesildi:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with %s: %s"
 msgstr ""
-"%s sunucusu ile bağlantı sağlanamadı:\n"
+"Sunucu ile bağlantı sağlanamadı:\n"
 "%s"
 
 msgid "Not at Home"
@@ -9688,73 +9575,14 @@ msgstr "Kullanıcıyla Sohbet Et..."
 msgid "Open Inbox"
 msgstr "Gelen Kutusunu Aç"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join &lt;oda&gt;:  Yahoo'daki bir sohbet odasına katıl"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "list:  Yahoo ağındaki kanalları listele"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr ""
-
-#, fuzzy
-msgid "Yahoo ID..."
-msgstr "Yahoo! ID"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr "Yahoo Protokol Eklentisi"
-
-msgid "Yahoo Japan"
-msgstr "Yahoo Japon"
-
-msgid "Pager server"
-msgstr "Çağrı cihazı sunucusu"
-
-msgid "Japan Pager server"
-msgstr "Japon Çağrı cihazı sunucusu"
-
-msgid "Pager port"
-msgstr "Çağrı cihazı portu"
-
-msgid "File transfer server"
-msgstr "Dosya aktarım sunucusu"
-
-msgid "Japan file transfer server"
-msgstr "Japon dosya aktarım sunucusu"
-
-msgid "File transfer port"
-msgstr "Dosya aktarım portu"
-
-msgid "Chat room locale"
-msgstr "Sohbet Odası Yereli"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "Konferans ve sohbet odası davetlerini yok say"
-
-msgid "Chat room list URL"
-msgstr "Sohbet Odası Listesi URL"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo Sohbet sunucusu"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo Sohbet portu"
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr ""
+
+msgid "Unable to connect."
+msgstr "Bağlanılamıyor."
 
 msgid "Unable to establish file descriptor."
 msgstr "Dosya açıklayıcısı (tanımlayıcısı) kurulamadı."
@@ -9762,6 +9590,9 @@ msgstr "Dosya açıklayıcısı (tanımlayıcısı) kurulamadı."
 #, fuzzy, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s %s dosyasını göndermek istiyor"
+
+msgid "Write Error"
+msgstr "Yazma Hatası"
 
 msgid "Yahoo! Japan Profile"
 msgstr "Yahoo! Japon Profili"
@@ -9876,22 +9707,18 @@ msgstr "Sesler"
 msgid "Webcams"
 msgstr "Web Kameralar"
 
+msgid "Connection problem"
+msgstr "Bağlantı sorunu"
+
 msgid "Unable to fetch room list."
 msgstr "Oda listesi alınamıyor."
 
 msgid "User Rooms"
 msgstr "Kullanıcı Odaları"
 
-msgid "Connection problem with the YCHT server."
+#, fuzzy
+msgid "Connection problem with the YCHT server"
 msgstr "YCHT sunucusuna bağlantı hatası."
-
-#, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
-msgstr ""
-"Sunucuyla yapılan bağlantı kesildi\n"
-"%s"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -10014,24 +9841,16 @@ msgstr "Memleket"
 msgid "Exposure"
 msgstr "Açıklık"
 
-#, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr ""
-"Soket oluşturulamadı:\n"
-"%s"
-
-#, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
+#, fuzzy, c-format
+msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "HTTP proxy yanıtı ayrıştırılamadı: %s\n"
 
 #, c-format
 msgid "HTTP proxy connection error %d"
 msgstr "HTTP Proxy bağlantı hatası %d"
 
-#, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+#, fuzzy, c-format
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr ""
 "Erişim engellendi : HTTP proxy sunucusu %d portunda tünellemeye izin "
 "vermiyor."
@@ -10039,9 +9858,6 @@ msgstr ""
 #, c-format
 msgid "Error resolving %s"
 msgstr "%s çözümleme hatası"
-
-msgid "Could not resolve host name"
-msgstr "Ana makina ismi çözümlenemedi"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -10240,13 +10056,6 @@ msgstr "%s konumundan yazma hatası: %s"
 #, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "%s konumuna bağlanılamadı: %s"
-
-#, fuzzy, c-format
-msgid ""
-"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
-"found."
-msgstr ""
-"Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği bulunamadı."
 
 #, c-format
 msgid " - %s"
@@ -10498,8 +10307,13 @@ msgstr "Kişi için Uyarıcı E_kle..."
 msgid "View _Log"
 msgstr "_Geçmiş Sohbetleri Göster"
 
-msgid "Hide when offline"
+#, fuzzy
+msgid "Hide When Offline"
 msgstr "Çevrimdışıyken gizle"
+
+#, fuzzy
+msgid "Show When Offline"
+msgstr "Çevrimdışıyken göster"
 
 msgid "_Alias..."
 msgstr "Kişi İçin _Görünen İsim Ayarla"
@@ -11017,6 +10831,9 @@ msgstr ""
 msgid "The text information for a buddy's status"
 msgstr "%s için kullanıcı bilgilerini değiştir"
 
+msgid "Type the host name for this certificate."
+msgstr ""
+
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL Sunucuları"
@@ -11063,7 +10880,8 @@ msgstr "Yoksay"
 msgid "Get Away Message"
 msgstr "Uzakta İletisi Al"
 
-msgid "Last said"
+#, fuzzy
+msgid "Last Said"
 msgstr "Son söylenen"
 
 msgid "Unable to save icon file to disk."
@@ -11965,7 +11783,7 @@ msgid "Hyperlink visited color"
 msgstr "Bağlantı rengi"
 
 #, fuzzy
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr "Bağlantıları fare üzerine geldiğinde renklendir."
 
 msgid "Hyperlink prelight color"
@@ -12003,15 +11821,22 @@ msgstr ""
 msgid "Action Message Name Color for Whispered Message"
 msgstr ""
 
+msgid "Color to draw the name of a whispered action message."
+msgstr ""
+
 msgid "Whisper Message Name Color"
+msgstr ""
+
+msgid "Color to draw the name of a whispered message."
 msgstr ""
 
 #, fuzzy
 msgid "Typing notification color"
 msgstr "Uyarıyı Kaldırma"
 
-msgid "The color to use for the typing notification font"
-msgstr ""
+#, fuzzy
+msgid "The color to use for the typing notification"
+msgstr "Yeni e-posta bildirimleri"
 
 #, fuzzy
 msgid "Typing notification font"
@@ -12400,6 +12225,10 @@ msgstr ""
 "Tarayıcı yapılandırmasında 'El ile ayarla' seçili, ancak bu seçenek için "
 "komut belirtilmemiş."
 
+#, fuzzy
+msgid "No message"
+msgstr "Bilinmeyen ileti"
+
 msgid "Open All Messages"
 msgstr "Tüm E-postaları Aç"
 
@@ -12416,10 +12245,6 @@ msgstr ""
 #, fuzzy
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Yeni E-postanız var !</span>"
-
-#, fuzzy
-msgid "No message"
-msgstr "Bilinmeyen ileti"
 
 msgid "The following plugins will be unloaded."
 msgstr "Bu eklentiler kaldırılacak."
@@ -12641,14 +12466,18 @@ msgstr "_Sistem çekmecesi simgesini göster:"
 msgid "On unread messages"
 msgstr "Okunmayan iletiler olunca"
 
-msgid "Conversation Window Hiding"
-msgstr "Yazışma Penceresi Gizleme"
+#, fuzzy
+msgid "Conversation Window"
+msgstr "Yazışma Penceresi"
 
 msgid "_Hide new IM conversations:"
 msgstr "_Yeni Anında Mesajlaşma yazışmalarını gizle:"
 
 msgid "When away"
 msgstr "Uzaktayken"
+
+msgid "Minimi_ze new conversation windows"
+msgstr "Yeni yazışma pencerelerini _küçült"
 
 #. All the tab options!
 msgid "Tabs"
@@ -12708,9 +12537,6 @@ msgstr "Yumuşak geçiş kullan"
 msgid "F_lash window when IMs are received"
 msgstr "_Yeni ileti geldiğinde pencereyi canlandır"
 
-msgid "Minimi_ze new conversation windows"
-msgstr "Yeni yazışma pencerelerini _küçült"
-
 msgid "Minimum input area height in lines:"
 msgstr ""
 
@@ -12745,7 +12571,8 @@ msgstr "Tarayıcı yapılandırma uygulaması başlatılamıyor."
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Örnek: stunserver.org</span>"
 
-msgid "_Autodetect IP address"
+#, fuzzy, c-format
+msgid "Use _automatically detected IP address: %s"
 msgstr "_IP Adresini Otomatik Bul"
 
 msgid "Public _IP:"
@@ -13119,34 +12946,18 @@ msgstr "Kayde_t & Kullan"
 msgid "Status for %s"
 msgstr "%s için durum"
 
-#.
-#. * TODO: We should enable/disable the add button based on
-#. *       whether the user has entered all required data.  That
-#. *       would eliminate the need for this check and provide a
-#. *       better user experience.
-#.
-#, fuzzy
-msgid "Custom Smiley"
-msgstr "Gülenyüz Ekle"
-
-msgid "More Data needed"
-msgstr ""
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr ""
-
 #, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr ""
 
 #, fuzzy
-msgid "Duplicate Shortcut"
-msgstr "Çift Doğrulama"
+msgid "Custom Smiley"
+msgstr "Gülenyüz Ekle"
 
 #, fuzzy
-msgid "Please select an image for the smiley."
-msgstr "Lütfen kendiniz için yeni bir takma ad belirtin."
+msgid "Duplicate Shortcut"
+msgstr "Çift Doğrulama"
 
 #, fuzzy
 msgid "Edit Smiley"
@@ -13268,9 +13079,10 @@ msgstr ""
 msgid "Cannot send launcher"
 msgstr "Çalıştırıcı gönderilemiyor"
 
+#, fuzzy
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr ""
 "You dragged a desktop launcher. Most likely you wanted to send whatever this "
 "launcher points to instead of this launcher itself."
@@ -13872,7 +13684,7 @@ msgstr "Birlikte beste yapmak için Müzik Mesajlaşma Eklentisi"
 #. *  summary
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 
 #. ---------- "Notify For" ----------
@@ -14136,7 +13948,7 @@ msgstr "Yazışma Penceresi Gizleme"
 #. *< summary
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr ""
 
 msgid "Duplicate Correction"
@@ -14462,9 +14274,10 @@ msgstr "Windows Pidgin Seçenekleri"
 msgid "Options specific to Pidgin for Windows."
 msgstr "Windows için Pidgin'e Özel Seçenekler."
 
+#, fuzzy
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
-msgstr ""
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
+msgstr "Windows için Pidgin'e Özel Seçenekler."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>Oturum kapatıldı.</font>"
@@ -14504,6 +14317,223 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Bu eklenti XMPP sunucularının ve istemcilerinin hatalarını ayıklamak için "
 "kullanışlıdır."
+
+#~ msgid "Cannot open socket"
+#~ msgstr "Soket açılamıyor"
+
+#~ msgid "Could not listen on socket"
+#~ msgstr "Soketten okunamıyor"
+
+#~ msgid "Unable to read socket"
+#~ msgstr "Soket okunamıyor"
+
+#~ msgid "Connection failed."
+#~ msgstr "Bağlantı kurulamadı."
+
+#~ msgid "Server has disconnected"
+#~ msgstr "Sunucu bağlantısı kesildi"
+
+#~ msgid "Couldn't create socket"
+#~ msgstr "Soket yaratılamadı"
+
+#~ msgid "Couldn't connect to host"
+#~ msgstr "Ana bilgisayara bağlanılamadı"
+
+#~ msgid "Read error"
+#~ msgstr "Okuma hatası"
+
+#~ msgid ""
+#~ "Could not establish a connection with the server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Sunucu ile bağlantı sağlanamadı:\n"
+#~ "%s"
+
+#~ msgid "Write error"
+#~ msgstr "Yazma hatası"
+
+#~ msgid "Last Activity"
+#~ msgstr "Son Etkinlik"
+
+#~ msgid "Service Discovery Info"
+#~ msgstr "Servis Bulma Bilgileri"
+
+#~ msgid "Service Discovery Items"
+#~ msgstr "Servis Bulma Ögeleri"
+
+#~ msgid "Extended Stanza Addressing"
+#~ msgstr "Genişletilmiş Stanza Adreslemesi"
+
+#~ msgid "Multi-User Chat"
+#~ msgstr "Çok Kullanıcılı Sohbet"
+
+#~ msgid "Ad-Hoc Commands"
+#~ msgstr "Ad-Hoc Komutları"
+
+#~ msgid "XHTML-IM"
+#~ msgstr "XHTML-IM"
+
+#~ msgid "User Location"
+#~ msgstr "Kullanıcı Konumu"
+
+#~ msgid "User Avatar"
+#~ msgstr "Kullanıcı Resmi"
+
+#~ msgid "Chat State Notifications"
+#~ msgstr "Sohbet Durum Uyarısı"
+
+#~ msgid "Software Version"
+#~ msgstr "Yazılım Sürümü"
+
+#~ msgid "User Mood"
+#~ msgstr "Kullanıcı Modu"
+
+#~ msgid "User Activity"
+#~ msgstr "Kullanıcı Etkinliği"
+
+#~ msgid "Reachability Address"
+#~ msgstr "Erişebilirlik Adresi"
+
+#~ msgid "User Profile"
+#~ msgstr "Kullanıcı Profili"
+
+#~ msgid "User Nickname"
+#~ msgstr "Kullanıcı Takma Adı"
+
+#~ msgid "Message Receipts"
+#~ msgstr "İleti Alındığında"
+
+#~ msgid "Public Key Publishing"
+#~ msgstr "Genel Anahtar Yayınlama"
+
+#~ msgid "Stanza Encryption"
+#~ msgstr "Stanza Şifrelemesi"
+
+#~ msgid "Read Error"
+#~ msgstr "Okuma hatası"
+
+#~ msgid "Failed to connect to server."
+#~ msgstr "Sunucuya bağlanılamadı"
+
+#, fuzzy
+#~ msgid "Read buffer full (2)"
+#~ msgstr "Okuma ara belleği dolu"
+
+#~ msgid "Unparseable message"
+#~ msgstr "Ayrıştırılamayan ileti"
+
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "Bilgisayara bağlanılamadı: %s (%d)"
+
+#~ msgid "Login failed (%s)."
+#~ msgstr "Oturum açma işlemi başarısız (%s)."
+
+#~ msgid ""
+#~ "You have been logged out because you logged in at another workstation."
+#~ msgstr "Oturumunuz kapandı, çünkü başka bir yerden oturum açtınız."
+
+#~ msgid "Error. SSL support is not installed."
+#~ msgstr "Hata. SSL desteği kurulmamış."
+
+#~ msgid "Incorrect password."
+#~ msgstr "Yanlış parola."
+
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "BOS sunucuya bağlanılamadı:\n"
+#~ "%s"
+
+#~ msgid "You may be disconnected shortly.  Check %s for updates."
+#~ msgstr ""
+#~ "Kısa bir süreliğine bağlantı koptu.  Güncellemeler için %s adresine bakın."
+
+#~ msgid "Could Not Connect"
+#~ msgstr "Bağlanılamadı"
+
+#, fuzzy
+#~ msgid "Invalid username."
+#~ msgstr "Geçersiz ad"
+
+#, fuzzy
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "Sunucu bilgileri alınamıyor"
+
+#~ msgid "Connection lost"
+#~ msgstr "Bağlantı kapandı"
+
+#~ msgid "Couldn't resolve host"
+#~ msgstr "Ana bilgisayar çözümlenemedi"
+
+#~ msgid "Connection closed (writing)"
+#~ msgstr "Bağlantı kapandı (yazılıyor)"
+
+#~ msgid "Connection reset"
+#~ msgstr "Bağlantı kesildi"
+
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "Soket okuma hatası: %s"
+
+#~ msgid "Unable to connect to host"
+#~ msgstr "Ana bilgisayara bağlanılamadı"
+
+#~ msgid "Could not write"
+#~ msgstr "Yazılamadı"
+
+#~ msgid "Could not connect"
+#~ msgstr "Bağlanılamadı"
+
+#~ msgid "Could not create listen socket"
+#~ msgstr "Dinleme soketi yaratılamadı"
+
+#~ msgid "Could not resolve hostname"
+#~ msgstr "Makine adı çözümlenemedi"
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "Yanlış parola"
+
+#~ msgid ""
+#~ "Could not establish a connection with %s:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "%s sunucusu ile bağlantı sağlanamadı:\n"
+#~ "%s"
+
+#~ msgid "Yahoo Japan"
+#~ msgstr "Yahoo Japon"
+
+#~ msgid "Japan Pager server"
+#~ msgstr "Japon Çağrı cihazı sunucusu"
+
+#~ msgid "Japan file transfer server"
+#~ msgstr "Japon dosya aktarım sunucusu"
+
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Sunucuyla yapılan bağlantı kesildi\n"
+#~ "%s"
+
+#~ msgid "Could not resolve host name"
+#~ msgstr "Ana makina ismi çözümlenemedi"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support "
+#~ "was found."
+#~ msgstr ""
+#~ "Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği "
+#~ "bulunamadı."
+
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "Yazışma Penceresi Gizleme"
+
+#, fuzzy
+#~ msgid "Please select an image for the smiley."
+#~ msgstr "Lütfen kendiniz için yeni bir takma ad belirtin."
 
 #~ msgid "Activate which ID?"
 #~ msgstr "Hangi Kimlik etkinleştirilsin?"

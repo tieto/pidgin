@@ -35,4 +35,6 @@
 
 void yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias);
 void yahoo_fetch_aliases(PurpleConnection *gc);
+void yahoo_set_userinfo(PurpleConnection *gc);
+void yahoo_personal_details_reset(YahooPersonalDetails *ypd);
 

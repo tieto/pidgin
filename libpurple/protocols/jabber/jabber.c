@@ -1627,7 +1627,8 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 
 			break;
 		case JABBER_STREAM_CONNECTED:
-			/* now we can alert the core that we're ready to send status */
+			/* Send initial presence */
+			jabber_presence_send(js, TRUE);
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 			break;
 	}
@@ -3371,6 +3372,7 @@ void jabber_register_commands(void)
 					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
 					  "prpl-jabber", jabber_cmd_buzz,
 					  _("buzz: Buzz a user to get their attention"), NULL);
+	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
 }
 
 void jabber_unregister_commands(void)
@@ -3456,7 +3458,6 @@ jabber_init_plugin(PurplePlugin *plugin)
 	/* initialize jabber_features list */
 	jabber_add_feature("jabber:iq:last", 0);
 	jabber_add_feature("jabber:iq:oob", 0);
-	jabber_add_feature("jabber:iq:time", 0);
 	jabber_add_feature("urn:xmpp:time", 0);
 	jabber_add_feature("jabber:iq:version", 0);
 	jabber_add_feature("jabber:x:conference", 0);

@@ -310,9 +310,8 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
 	msn_message_parse_payload(msg, payload, len, MSG_LINE_DEM, MSG_BODY_DEM);
-#ifdef MSN_DEBUG_NS
-	msn_message_show_readable(msg, "Notification", TRUE);
-#endif
+	if (purple_debug_is_verbose())
+		msn_message_show_readable(msg, "Notification", TRUE);
 
 	msn_cmdproc_process_msg(cmdproc, msg);
 
@@ -376,9 +375,8 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
 	msn_message_parse_payload(msg, payload, len,MSG_LINE_DEM,MSG_BODY_DEM);
-#ifdef MSN_DEBUG_NS
-	msn_message_show_readable(msg, "Notification", TRUE);
-#endif
+	if (purple_debug_is_verbose())
+		msn_message_show_readable(msg, "Notification", TRUE);
 
 	gc = cmdproc->session->account->gc;
 	passport = msg->remote_user;

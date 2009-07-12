@@ -161,10 +161,9 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	memcpy(body, body_start, body_len);
 	body[body_len] = '\0';
 
-#ifdef MSN_DEBUG_HTTP
-	purple_debug_misc("msn", "Incoming HTTP buffer (header): {%s}\n",
-					header);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_misc("msn", "Incoming HTTP buffer (header): {%s}\n",
+		                  header);
 
 	/* Now we should be able to process the data. */
 	if ((s = purple_strcasestr(header, "X-MSN-Messenger: ")) != NULL)

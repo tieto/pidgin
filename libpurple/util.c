@@ -65,7 +65,7 @@ struct _PurpleUtilFetchUrlData
 	gboolean got_headers;
 	gboolean has_explicit_data_len;
 	char *webdata;
-	unsigned long len;
+	gsize len;
 	unsigned long data_len;
 	gssize max_len;
 	gboolean chunked;
@@ -941,6 +941,77 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 /**************************************************************************
  * Markup Functions
  **************************************************************************/
+
+/*
+ * This function is stolen from glib's gmarkup.c and modified to not
+ * replace ' with &apos;
+ */
+static void append_escaped_text(GString *str,
+		const gchar *text, gssize length)
+{
+	const gchar *p;
+	const gchar *end;
+	gunichar c;
+
+	p = text;
+	end = text + length;
+
+	while (p != end)
+	{
+		const gchar *next;
+		next = g_utf8_next_char (p);
+
+		switch (*p)
+		{
+			case '&':
+				g_string_append (str, "&amp;");
+				break;
+
+			case '<':
+				g_string_append (str, "&lt;");
+				break;
+
+			case '>':
+				g_string_append (str, "&gt;");
+				break;
+
+			case '"':
+				g_string_append (str, "&quot;");
+				break;
+
+			default:
+				c = g_utf8_get_char (p);
+				if ((0x1 <= c && c <= 0x8) ||
+						(0xb <= c && c <= 0xc) ||
+						(0xe <= c && c <= 0x1f) ||
+						(0x7f <= c && c <= 0x84) ||
+						(0x86 <= c && c <= 0x9f))
+					g_string_append_printf (str, "&#x%x;", c);
+				else
+					g_string_append_len (str, p, next - p);
+				break;
+		}
+
+		p = next;
+	}
+}
+
+/* This function is stolen from glib's gmarkup.c */
+gchar *purple_markup_escape_text(const gchar *text, gssize length)
+{
+	GString *str;
+
+	g_return_val_if_fail(text != NULL, NULL);
+
+	if (length < 0)
+		length = strlen(text);
+
+	/* prealloc at least as long as original text */
+	str = g_string_sized_new(length);
+	append_escaped_text(str, text, length);
+
+	return g_string_free(str, FALSE);
+}
 
 const char *
 purple_markup_unescape_entity(const char *text, int *length)
@@ -2896,10 +2967,10 @@ purple_util_get_image_extension(gconstpointer data, size_t len)
 }
 
 /*
- * TODO: Consider using something faster than SHA-1, such as MD5, MD4
- *       or CRC32.  Are there security implications to that?  Would
- *       probably be a good idea to benchmark some algorithms with
- *       3KB-10KB chunks of data (typical buddy icon sizes).
+ * We thought about using non-cryptographic hashes like CRC32 here.
+ * They would be faster, but we think using something more secure is
+ * important, so that it is more difficult for someone to maliciously
+ * replace one buddy's icon with something else.
  */
 char *
 purple_util_get_image_checksum(gconstpointer image_data, size_t image_len)
@@ -3028,13 +3099,15 @@ purple_fd_get_ip(int fd)
 {
 	struct sockaddr addr;
 	socklen_t namelen = sizeof(addr);
+	struct in_addr in;
 
 	g_return_val_if_fail(fd != 0, NULL);
 
 	if (getsockname(fd, &addr, &namelen))
 		return NULL;
 
-	return g_strdup(inet_ntoa(((struct sockaddr_in *)&addr)->sin_addr));
+	in = ((struct sockaddr_in *)&addr)->sin_addr;
+	return g_strdup(inet_ntoa(in));
 }
 
 
@@ -4374,7 +4447,7 @@ purple_email_is_valid(const char *address)
 }
 
 gboolean
-purple_ip_address_is_valid(const char *ip)
+purple_ipv4_address_is_valid(const char *ip)
 {
 	int c, o1, o2, o3, o4;
 	char end;
@@ -4385,6 +4458,58 @@ purple_ip_address_is_valid(const char *ip)
 	if (c != 4 || o1 < 0 || o1 > 255 || o2 < 0 || o2 > 255 || o3 < 0 || o3 > 255 || o4 < 0 || o4 > 255)
 		return FALSE;
 	return TRUE;
+}
+
+gboolean
+purple_ipv6_address_is_valid(const gchar *ip)
+{
+	const gchar *c;
+	gboolean double_colon = FALSE;
+	gint chunks = 1;
+	gint in = 0;
+
+	g_return_val_if_fail(ip != NULL, FALSE);
+
+	if (*ip == '\0')
+		return FALSE;
+
+	for (c = ip; *c; ++c) {
+		if ((*c >= '0' && *c <= '9') ||
+		        (*c >= 'a' && *c <= 'f') ||
+		        (*c >= 'A' && *c <= 'F')) {
+			if (++in > 4)
+				/* Only four hex digits per chunk */
+				return FALSE;
+			continue;
+		} else if (*c == ':') {
+			/* The start of a new chunk */
+			++chunks;
+			in = 0;
+			if (*(c + 1) == ':') {
+				/*
+				 * '::' indicates a consecutive series of chunks full
+				 * of zeroes. There can be only one of these per address.
+				 */
+				if (double_colon)
+					return FALSE;
+				double_colon = TRUE;
+			}
+		} else
+			return FALSE;
+	}
+
+	/*
+	 * Either we saw a '::' and there were fewer than 8 chunks -or-
+	 * we didn't see a '::' and saw exactly 8 chunks.
+	 */
+	return (double_colon && chunks < 8) || (!double_colon && chunks == 8);
+}
+
+/* TODO 3.0.0: Add ipv6 check, too */
+gboolean
+purple_ip_address_is_valid(const char *ip)
+{
+	return purple_ipv4_address_is_valid(ip);
 }
 
 /* Stolen from gnome_uri_list_extract_uris */
