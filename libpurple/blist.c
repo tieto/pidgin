@@ -3105,6 +3105,8 @@ purple_blist_uninit(void)
 		purple_blist_sync();
 	}
 
+	purple_blist_destroy();
+
 	node = purple_blist_get_root();
 	while (node) {
 		next_node = node->next;
@@ -3112,9 +3114,13 @@ purple_blist_uninit(void)
 		node = next_node;
 	}
 	purplebuddylist->root = NULL;
-	
+
 	g_hash_table_destroy(purplebuddylist->buddies);
 	g_hash_table_destroy(buddies_cache);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(purplebuddylist);
+	g_free(purplebuddylist);
+	purplebuddylist = NULL;
 
 	purple_signals_disconnect_by_handle(purple_blist_get_handle());
 	purple_signals_unregister_by_instance(purple_blist_get_handle());
