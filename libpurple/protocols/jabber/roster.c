@@ -94,8 +94,9 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 
 		/* XMPP groups are case-sensitive, but libpurple groups are
 		 * case-insensitive. We treat a buddy in both "Friends" and "friends"
-		 * as only being in one group, so if we push changes about the buddy
+		 * as only being in one group, but if we push changes about the buddy
 		 * to the server, the buddy will be dropped from one of the groups.
+		 * Not optimal, but better than the alternative, I think.
 		 */
 		if((l = g_slist_find_custom(groups, purple_group_get_name(g), (GCompareFunc)purple_utf8_strcasecmp))) {
 			/* The buddy is already on the local list. Update info. */
