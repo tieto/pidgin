@@ -6721,7 +6721,7 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	if (!list || !list->ui_data)
 		return;
 
-	g_return_if_fail(list->ui_data != gtkblist);
+	g_return_if_fail(list->ui_data == gtkblist);
 
 	purple_signals_disconnect_by_handle(gtkblist);
 
