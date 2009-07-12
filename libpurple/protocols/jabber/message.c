@@ -740,7 +740,12 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			if(timestamp)
 				jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
 		} else if(!strcmp(child->name, "x")) {
-			if(!strcmp(xmlns, "jabber:x:conference") &&
+			if(!strcmp(xmlns, "jabber:x:delay")) {
+				const char *timestamp = xmlnode_get_attrib(child, "stamp");
+				jm->delayed = TRUE;
+				if(timestamp)
+					jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
+			} else if(!strcmp(xmlns, "jabber:x:conference") &&
 					jm->type != JABBER_MESSAGE_GROUPCHAT_INVITE &&
 					jm->type != JABBER_MESSAGE_ERROR) {
 				const char *jid = xmlnode_get_attrib(child, "jid");
