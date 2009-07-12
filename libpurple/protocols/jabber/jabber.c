@@ -1974,19 +1974,18 @@ char *jabber_status_text(PurpleBuddy *b)
 		ret = g_strdup(jb->error_msg);
 	} else {
 		PurplePresence *presence = purple_buddy_get_presence(b);
-		PurpleStatus *status =purple_presence_get_active_status(presence);
-		char *stripped;
+		PurpleStatus *status = purple_presence_get_active_status(presence);
+		const char *stripped;
 
-		if(!(stripped = purple_markup_strip_html(purple_status_get_attr_string(status, "message")))) {
+		if(!(stripped = purple_status_get_attr_string(status, "message"))) {
 			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 				PurpleStatus *status = purple_presence_get_status(presence, "tune");
-				stripped = g_strdup(purple_status_get_attr_string(status, PURPLE_TUNE_TITLE));
+				stripped = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
 			}
 		}
 
 		if(stripped) {
 			ret = g_markup_escape_text(stripped, -1);
-			g_free(stripped);
 		}
 	}
 
@@ -2003,12 +2002,7 @@ jabber_tooltip_add_resource_text(JabberBuddyResource *jbr,
 	const char *state;
 
 	if(jbr->status) {
-		char *tmp;
-		text = purple_strreplace(jbr->status, "\n", "<br />\n");
-		tmp = purple_markup_strip_html(text);
-		g_free(text);
-		text = g_markup_escape_text(tmp, -1);
-		g_free(tmp);
+		text = g_markup_escape_text(jbr->status, -1);
 	}
 
 	if(jbr->name)

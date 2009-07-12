@@ -1055,11 +1055,8 @@ void purple_status_to_jabber(const PurpleStatus *status, JabberBuddyState *state
 			formatted_msg = purple_status_get_attr_string(status, "message");
 
 			/* if the message is blank, then there really isn't a message */
-			if(formatted_msg && !*formatted_msg)
-				formatted_msg = NULL;
-
-			if(formatted_msg)
-				*msg = purple_markup_strip_html(formatted_msg);
+			if(formatted_msg && *formatted_msg)
+				*msg = g_strdup(formatted_msg);
 		}
 
 		if(priority)
