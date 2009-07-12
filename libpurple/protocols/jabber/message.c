@@ -622,7 +622,6 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				char *c;
 
 				const PurpleConnection *gc = js->gc;
-				const gchar *who = xmlnode_get_attrib(packet, "from");
 				PurpleAccount *account = purple_connection_get_account(gc);
 				PurpleConversation *conv = NULL;
 				GList *smiley_refs = NULL;
@@ -650,12 +649,12 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						           jm->type == JABBER_MESSAGE_CHAT) {
 							conv =
 								purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
-									who, account);
+									from, account);
 							if (!conv) {
 								/* we need to create the conversation here */
 								conv =
 									purple_conversation_new(PURPLE_CONV_TYPE_IM,
-									account, who);
+									account, from);
 							}
 						}
 					}
@@ -700,7 +699,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 							/* we need to request the smiley (data) */
 							purple_debug_info("jabber",
 								"data is unknown, need to request it\n");
-							jabber_message_send_data_request(js, conv, cid, who,
+							jabber_message_send_data_request(js, conv, cid, from,
 								alt);
 						}
 					}
