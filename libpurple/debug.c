@@ -36,11 +36,19 @@ static PurpleDebugUiOps *debug_ui_ops = NULL;
  *
  * It doesn't make sense to make this a normal Purple preference
  * because it's a command line option.  This will always be FALSE,
- * unless the user explicitly started Purple with the -d flag.
+ * unless the user explicitly started the UI with the -d flag.
  * It doesn't matter what this value was the last time Purple was
  * started, so it doesn't make sense to save it in prefs.
  */
 static gboolean debug_enabled = FALSE;
+
+/*
+ * These determine whether verbose or unsafe debugging are desired.  I
+ * don't want to make these purple preferences because their values should
+ * not be remembered across instances of the UI.
+ */
+static gboolean debug_verbose = FALSE;
+static gboolean debug_unsafe = FALSE;
 
 static void
 purple_debug_vargs(PurpleDebugLevel level, const char *category,
@@ -175,6 +183,30 @@ purple_debug_set_ui_ops(PurpleDebugUiOps *ops)
 	debug_ui_ops = ops;
 }
 
+gboolean
+purple_debug_is_verbose()
+{
+	return debug_verbose;
+}
+
+void
+purple_debug_set_verbose(gboolean verbose)
+{
+	debug_verbose = verbose;
+}
+
+gboolean
+purple_debug_is_unsafe()
+{
+	return debug_unsafe;
+}
+
+void
+purple_debug_set_unsafe(gboolean unsafe)
+{
+	debug_unsafe = unsafe;
+}
+
 PurpleDebugUiOps *
 purple_debug_get_ui_ops(void)
 {
@@ -184,6 +216,13 @@ purple_debug_get_ui_ops(void)
 void
 purple_debug_init(void)
 {
+	/* Read environment variables once per init */
+	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
+		purple_debug_set_unsafe(TRUE);
+
+	if(g_getenv("PURPLE_VERBOSE_DEBUG"))
+		purple_debug_set_verbose(TRUE);
+
 	purple_prefs_add_none("/purple/debug");
 
 	/*
@@ -193,3 +232,4 @@ purple_debug_init(void)
 	 */
 	purple_prefs_add_bool("/purple/debug/timestamps", TRUE);
 }
+

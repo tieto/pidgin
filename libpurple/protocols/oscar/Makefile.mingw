@@ -42,6 +42,7 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 C_SRC = \
 	bstream.c		\
+	clientlogin.c		\
 	family_admin.c		\
 	family_advert.c		\
 	family_alert.c		\

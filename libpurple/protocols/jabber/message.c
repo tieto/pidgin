@@ -87,6 +87,9 @@ static void handle_chat(JabberMessage *jm)
 	}
 
 	if(!jm->xhtml && !jm->body) {
+		if (jbr)
+			jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+
 		if(JM_STATE_COMPOSING == jm->chat_state) {
 			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPING);
 		} else if(JM_STATE_PAUSED == jm->chat_state) {
@@ -622,7 +625,6 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				char *c;
 
 				const PurpleConnection *gc = js->gc;
-				const gchar *who = xmlnode_get_attrib(packet, "from");
 				PurpleAccount *account = purple_connection_get_account(gc);
 				PurpleConversation *conv = NULL;
 				GList *smiley_refs = NULL;
@@ -650,12 +652,12 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						           jm->type == JABBER_MESSAGE_CHAT) {
 							conv =
 								purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
-									who, account);
+									from, account);
 							if (!conv) {
 								/* we need to create the conversation here */
 								conv =
 									purple_conversation_new(PURPLE_CONV_TYPE_IM,
-									account, who);
+									account, from);
 							}
 						}
 					}
@@ -700,7 +702,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 							/* we need to request the smiley (data) */
 							purple_debug_info("jabber",
 								"data is unknown, need to request it\n");
-							jabber_message_send_data_request(js, conv, cid, who,
+							jabber_message_send_data_request(js, conv, cid, from,
 								alt);
 						}
 					}
@@ -1041,29 +1043,30 @@ void jabber_message_send(JabberMessage *jm)
 		xmlnode_insert_data(child, jm->thread_id, -1);
 	}
 
-	if (jm->chat_state != JM_STATE_NONE) {
-		child = NULL;
-		switch(jm->chat_state)
-		{
-			case JM_STATE_ACTIVE:
-				child = xmlnode_new_child(message, "active");
-				break;
-			case JM_STATE_COMPOSING:
-				child = xmlnode_new_child(message, "composing");
-				break;
-			case JM_STATE_PAUSED:
-				child = xmlnode_new_child(message, "paused");
-				break;
-			case JM_STATE_INACTIVE:
-				child = xmlnode_new_child(message, "inactive");
-				break;
-			case JM_STATE_GONE:
-				child = xmlnode_new_child(message, "gone");
-				break;
-		}
-		if(child)
-			xmlnode_set_namespace(child, "http://jabber.org/protocol/chatstates");
+	child = NULL;
+	switch(jm->chat_state)
+	{
+		case JM_STATE_ACTIVE:
+			child = xmlnode_new_child(message, "active");
+			break;
+		case JM_STATE_COMPOSING:
+			child = xmlnode_new_child(message, "composing");
+			break;
+		case JM_STATE_PAUSED:
+			child = xmlnode_new_child(message, "paused");
+			break;
+		case JM_STATE_INACTIVE:
+			child = xmlnode_new_child(message, "inactive");
+			break;
+		case JM_STATE_GONE:
+			child = xmlnode_new_child(message, "gone");
+			break;
+		case JM_STATE_NONE:
+			/* yep, nothing */
+			break;
 	}
+	if(child)
+		xmlnode_set_namespace(child, "http://jabber.org/protocol/chatstates");
 
 	if(jm->subject) {
 		child = xmlnode_new_child(message, "subject");
@@ -1175,9 +1178,15 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 		xhtml = tmp;
 	}
 
-	if ((!jbr || jbr->capabilities & JABBER_CAP_XHTML) &&
-			!jabber_xhtml_plain_equal(xhtml, jm->body))
-		jm->xhtml = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", xhtml);
+	/*
+	 * For backward compatibility with user expectations or for those not on
+	 * the user's roster, allow sending XHTML-IM markup.
+	 */
+	if (!jbr || !jbr->caps.info ||
+			jabber_resource_has_capability(jbr, "http://jabber.org/protocol/xhtml-im")) {
+		if (!jabber_xhtml_plain_equal(xhtml, jm->body))
+			jm->xhtml = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", xhtml);
+	}
 
 	g_free(xhtml);
 
@@ -1241,7 +1250,7 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 
 	g_free(resource);
 
-	if (!jbr || (jbr->chat_states != JABBER_CHAT_STATES_UNSUPPORTED))
+	if (!jbr || (jbr->chat_states == JABBER_CHAT_STATES_UNSUPPORTED))
 		return 0;
 
 	/* TODO: figure out threading */

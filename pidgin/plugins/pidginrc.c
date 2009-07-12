@@ -1,7 +1,13 @@
 /**
- * @file purplerc.c Purple gtk resource control plugin.
+ * @file pidginrc.c Pidgin GTK+ resource control plugin.
+ * @ingroup pidgin
+ */
+
+/* pidgin
  *
- * Copyright (C) 2005 Etan Reisner <deryni@eden.rutgers.edu>
+ * Pidgin is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -612,7 +618,7 @@ static PurplePluginInfo purplerc_info =
 	DISPLAY_VERSION,
 	N_("Provides access to commonly used gtkrc settings."),
 	N_("Provides access to commonly used gtkrc settings."),
-	"Etan Reisner <deryni@eden.rutgers.edu>",
+	"Etan Reisner <deryni@pidgin.im>",
 	PURPLE_WEBSITE,
 	purplerc_plugin_load,
 	purplerc_plugin_unload,

@@ -717,12 +717,16 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 			GtkWidget *optmenu = NULL;
 			PurpleRequestFieldGroup *group = purple_request_field_get_group(field);
 			GList *fields = group->fields;
+
+			/* Ensure the account option menu is created (if the widget hasn't
+			 * been initialized already) for username auto-completion. */
 			while (fields)
 			{
 				PurpleRequestField *fld = fields->data;
 				fields = fields->next;
 
-				if (purple_request_field_get_type(fld) == PURPLE_REQUEST_FIELD_ACCOUNT)
+				if (purple_request_field_get_type(fld) == PURPLE_REQUEST_FIELD_ACCOUNT &&
+						purple_request_field_is_visible(fld))
 				{
 					const char *type_hint = purple_request_field_get_type_hint(fld);
 					if (type_hint != NULL && strcmp(type_hint, "account") == 0)
@@ -730,7 +734,7 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 						optmenu = GTK_WIDGET(purple_request_field_get_ui_data(fld));
 						if (optmenu == NULL) {
 							optmenu = GTK_WIDGET(create_account_field(fld));
-							purple_request_field_set_ui_data(field, optmenu);
+							purple_request_field_set_ui_data(fld, optmenu);
 						}
 						break;
 					}

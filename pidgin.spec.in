@@ -234,8 +234,6 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_without_nm:--disable-nm} \
                                     %{!?_without_gevolution:--enable-gevolution} \
                                     %{?_with_mono:--enable-mono} \
-                                    %{?_with_perlmakehack:--with-perl-lib=%{buildroot}%{_prefix}} \
-                                    %{!?_with_perlmakehack:--with-perl-lib=%{_prefix}} \
                                     %{?_with_sasl:--enable-cyrus-sasl} \
                                     %{?_without_tcl:--disable-tcl} \
                                     %{?_without_text:--disable-consoleui}
@@ -244,15 +242,7 @@ make %{?_smp_mflags} LIBTOOL=/usr/bin/libtool
 
 %install
 rm -rf %{buildroot}
-%if 0%{?_with_perlmakehack:1}
-make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
-     datadir=%{buildroot}%{_datadir} includedir=%{buildroot}%{_includedir} \
-     libdir=%{buildroot}%{_libdir} mandir=%{buildroot}%{_mandir} \
-     sysconfdir=%{buildroot}%{_sysconfdir} \
-     install
-%else
 make DESTDIR=$RPM_BUILD_ROOT LIBTOOL=/usr/bin/libtool install
-%endif
 
 # Delete files that we don't want to put in any of the RPMs
 rm -f $RPM_BUILD_ROOT%{_libdir}/finch/*.la
@@ -374,9 +364,9 @@ fi
 %doc %{_mandir}/man3*/*
 
 %dir %{_libdir}/pidgin
-%attr(755, root, root) %{perl_vendorarch}/Pidgin.pm
-%attr(755, root, root) %{perl_vendorarch}/auto/Pidgin
-
+%dir %{_libdir}/pidgin/perl
+%dir %{_libdir}/pidgin/perl/auto
+%dir %{_libdir}/pidgin/perl/auto/Pidgin
 %{_bindir}/pidgin
 %{_datadir}/pixmaps/pidgin
 %{_datadir}/icons/hicolor/*/apps/pidgin.*
@@ -389,10 +379,11 @@ fi
 
 %{_libdir}/libpurple.so.*
 %dir %{_libdir}/purple-2
+%dir %{_libdir}/purple-2/perl
+%dir %{_libdir}/purple-2/perl/auto
+%dir %{_libdir}/purple-2/perl/auto/Purple
 %{_datadir}/purple
 %{_datadir}/sounds/purple
-%attr(755, root, root) %{perl_vendorarch}/Purple.pm
-%attr(755, root, root) %{perl_vendorarch}/auto/Purple
 
 %if 0%{?_with_dbus:1}
 %{_bindir}/purple-client-example
@@ -473,6 +464,9 @@ fi
 %endif
 
 %changelog
+* Sat Jul 11 2009 Stu Tomlinson <stu@nosnilmot.com>
+- Update to reflect changes in perl module installation directories
+
 * Mon May 19 2008 Stu Tomlinson <stu@nosnilmot.com>
 - Fix building without meanwhile support
 

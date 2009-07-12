@@ -68,6 +68,58 @@ START_TEST(test_nodeprep_validate_too_long)
 }
 END_TEST
 
+#define assert_valid_jid(str) { \
+	JabberID *jid = jabber_id_new(str); \
+	fail_if(jid == NULL, "JID '%s' is valid but jabber_id_new() rejected it", str); \
+	jabber_id_free(jid); \
+}
+
+#define assert_invalid_jid(str) { \
+	JabberID *jid = jabber_id_new(str); \
+	fail_if(jid != NULL, "JID '%s' is invalid but jabber_id_new() allowed it", str); \
+	jabber_id_free(jid); \
+}
+
+START_TEST(test_jabber_id_new)
+{
+	assert_valid_jid("gmail.com");
+	assert_valid_jid("gmail.com/Test");
+	assert_valid_jid("gmail.com/Test@");
+	assert_valid_jid("gmail.com/@");
+	assert_valid_jid("gmail.com/Test@alkjaweflkj");
+	assert_valid_jid("mark.doliner@gmail.com");
+	assert_valid_jid("mark.doliner@gmail.com/Test12345");
+	assert_valid_jid("mark.doliner@gmail.com/Test@12345");
+	assert_valid_jid("mark.doliner@gmail.com/Te/st@12@//345");
+	assert_valid_jid("わいど@conference.jabber.org");
+	assert_valid_jid("まりるーむ@conference.jabber.org");
+	assert_valid_jid("mark.doliner@gmail.com/まりるーむ");
+	assert_valid_jid("mark.doliner@gmail/stuff.org");
+	assert_valid_jid("stuart@nödåtXäYZ.se");
+	assert_valid_jid("stuart@nödåtXäYZ.se/まりるーむ");
+	assert_valid_jid("mark.doliner@わいど.org");
+	assert_valid_jid("nick@まつ.おおかみ.net");
+	assert_valid_jid("paul@10.0.42.230/s");
+	assert_valid_jid("paul@[::1]"); /* IPv6 */
+	assert_valid_jid("paul@[2001:470:1f05:d58::2]");
+	assert_valid_jid("paul@[2001:470:1f05:d58::2]/foo");
+
+	assert_invalid_jid("@gmail.com");
+	assert_invalid_jid("@@gmail.com");
+	assert_invalid_jid("mark.doliner@@gmail.com/Test12345");
+	assert_invalid_jid("mark@doliner@gmail.com/Test12345");
+	assert_invalid_jid("@gmail.com/Test@12345");
+	assert_invalid_jid("/Test@12345");
+	assert_invalid_jid("mark.doliner@");
+	assert_invalid_jid("mark.doliner/");
+	assert_invalid_jid("mark.doliner@gmail_stuff.org");
+	assert_invalid_jid("mark.doliner@gmail[stuff.org");
+	assert_invalid_jid("mark.doliner@gmail\\stuff.org");
+	assert_invalid_jid("paul@[::1]124");
+	assert_invalid_jid("paul@2[::1]124/as");
+}
+END_TEST
+
 Suite *
 jabber_jutil_suite(void)
 {
@@ -82,10 +134,11 @@ jabber_jutil_suite(void)
 	tcase_add_test(tc, test_get_bare_jid);
 	suite_add_tcase(s, tc);
 
-	tc = tcase_create("Nodeprep validate");
+	tc = tcase_create("JID validate");
 	tcase_add_test(tc, test_nodeprep_validate);
 	tcase_add_test(tc, test_nodeprep_validate_illegal_chars);
 	tcase_add_test(tc, test_nodeprep_validate_too_long);
+	tcase_add_test(tc, test_jabber_id_new);
 	suite_add_tcase(s, tc);
 
 	return s;

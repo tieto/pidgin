@@ -36,9 +36,8 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 
 	slpmsg = g_new0(MsnSlpMessage, 1);
 
-#ifdef MSN_DEBUG_SLPMSG
-	purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
 
 	slpmsg->slplink = slplink;
 
@@ -56,9 +55,8 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 
 	g_return_if_fail(slpmsg != NULL);
 
-#ifdef MSN_DEBUG_SLPMSG
-	purple_debug_info("msn", "slpmsg destroy (%p)\n", slpmsg);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slpmsg destroy (%p)\n", slpmsg);
 
 	slplink = slpmsg->slplink;
 
@@ -72,13 +70,6 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	if (slpmsg->img == NULL)
 		g_free(slpmsg->buffer);
 
-#ifdef MSN_DEBUG_SLP
-	/*
-	if (slpmsg->info != NULL)
-		g_free(slpmsg->info);
-	*/
-#endif
-
 	for (cur = slpmsg->msgs; cur != NULL; cur = cur->next)
 	{
 		/* Something is pointing to this slpmsg, so we should remove that
@@ -86,10 +77,6 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 		/* Ex: a user goes offline and after that we receive an ACK */
 
 		MsnMessage *msg = cur->data;
-
-#ifdef MSN_DEBUG_SLPMSG
-		purple_debug_info("msn", "Unlink slpmsg callbacks.\n");
-#endif
 
 		msg->ack_cb = NULL;
 		msg->nak_cb = NULL;
@@ -132,7 +119,6 @@ msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img)
 	slpmsg->size = purple_imgstore_get_size(img);
 }
 
-#ifdef MSN_DEBUG_SLP
 void
 msn_slpmsg_show(MsnMessage *msg)
 {
@@ -161,7 +147,6 @@ msn_slpmsg_show(MsnMessage *msg)
 
 	msn_message_show_readable(msg, info, text);
 }
-#endif
 
 MsnSlpMessage *
 msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,

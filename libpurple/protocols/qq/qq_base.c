@@ -72,7 +72,7 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 		qq_show_packet("Login reply OK, but length < 139", data, len);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Cannot decrypt server reply"));
+				_("Unable to decrypt server reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -160,7 +160,7 @@ static gint8 process_login_redirect(PurpleConnection *gc, guint8 *data, gint len
 	if (len < 11) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Cannot decrypt server reply"));
+				_("Unable to decrypt server reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -412,7 +412,7 @@ guint8 qq_process_login( PurpleConnection *gc, guint8 *data, gint data_len)
 			if (!purple_account_get_remember_password(gc->account)) {
 				purple_account_set_password(gc->account, NULL);
 			}
-			error = g_strdup( _("Incorrect password."));
+			error = g_strdup( _("Incorrect password"));
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			break;
 		case 0x06:		/* need activation */
@@ -655,7 +655,7 @@ guint16 qq_process_get_server(PurpleConnection *gc, guint8 *data, gint data_len)
 	if (data_len < 15) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Could not decrypt server reply"));
+				_("Unable to decrypt server reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 
@@ -1097,7 +1097,7 @@ guint8 qq_process_check_pwd( PurpleConnection *gc, guint8 *data, gint data_len)
 			if (!purple_account_get_remember_password(gc->account)) {
 				purple_account_set_password(gc->account, NULL);
 			}
-			error = g_strdup(_("Incorrect password."));
+			error = g_strdup(_("Incorrect password"));
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			break;
 		case 0x33:		/* need activation */
@@ -1106,7 +1106,7 @@ guint8 qq_process_check_pwd( PurpleConnection *gc, guint8 *data, gint data_len)
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			break;
 		case 0xBF:		/* uid is not exist */
-			error = g_strdup(_("Invalid username."));
+			error = g_strdup(_("Username does not exist"));
 			reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 			break;
 		default:

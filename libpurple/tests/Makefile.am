@@ -18,6 +18,7 @@ check_libpurple_CFLAGS=\
         @CHECK_CFLAGS@ \
 		$(GLIB_CFLAGS) \
 		$(DEBUG_CFLAGS) \
+		$(LIBXML_CFLAGS) \
 		-I.. \
 		-I$(top_srcdir)/libpurple \
 		-DBUILDDIR=\"$(top_builddir)\"

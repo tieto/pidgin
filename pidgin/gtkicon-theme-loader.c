@@ -24,6 +24,7 @@
 #include "gtkstatus-icon-theme.h"
 
 #include "xmlnode.h"
+#include "debug.h"
 
 /*****************************************************************************
  * Icon Theme Builder
@@ -33,8 +34,9 @@ static PurpleTheme *
 pidgin_icon_loader_build(const gchar *dir)
 {
 	xmlnode *root_node = NULL, *sub_node;
-	gchar *filename_full, *data;
+	gchar *filename_full, *data = NULL;
 	PidginIconTheme *theme = NULL;
+	const gchar *name;
 
 	/* Find the theme file */
 	g_return_val_if_fail(dir != NULL, NULL);
@@ -44,28 +46,33 @@ pidgin_icon_loader_build(const gchar *dir)
 		root_node = xmlnode_from_file(dir, "theme.xml", "icon themes", "icon-theme-loader");
 
 	g_free(filename_full);
-	g_return_val_if_fail(root_node != NULL, NULL);
+	if (root_node == NULL)
+		return NULL;
 
-	/* Parse the tree */
-	sub_node = xmlnode_get_child(root_node, "description");
-	data = xmlnode_get_data(sub_node);
+	name = xmlnode_get_attrib(root_node, "name");
 
-	if (xmlnode_get_attrib(root_node, "name") != NULL) {
-		theme = g_object_new(PIDGIN_TYPE_STATUS_ICON_THEME,
-				"type", "status-icon",
-				"name", xmlnode_get_attrib(root_node, "name"),
-				"author", xmlnode_get_attrib(root_node, "author"),
-				"image", xmlnode_get_attrib(root_node, "image"),
-				"directory", dir,
-				"description", data, NULL);
+	if (name) {
+		/* Parse the tree */
+		sub_node = xmlnode_get_child(root_node, "description");
+		data = xmlnode_get_data(sub_node);
 
-		sub_node = xmlnode_get_child(root_node, "icon");
+		if (xmlnode_get_attrib(root_node, "name") != NULL) {
+			theme = g_object_new(PIDGIN_TYPE_STATUS_ICON_THEME,
+					"type", "status-icon",
+					"name", name,
+					"author", xmlnode_get_attrib(root_node, "author"),
+					"image", xmlnode_get_attrib(root_node, "image"),
+					"directory", dir,
+					"description", data, NULL);
 
-		while (sub_node) {
-			pidgin_icon_theme_set_icon(theme,
-					xmlnode_get_attrib(sub_node, "id"),
-					xmlnode_get_attrib(sub_node, "file"));
-			sub_node = xmlnode_get_next_twin(sub_node);
+			sub_node = xmlnode_get_child(root_node, "icon");
+
+			while (sub_node) {
+				pidgin_icon_theme_set_icon(theme,
+						xmlnode_get_attrib(sub_node, "id"),
+						xmlnode_get_attrib(sub_node, "file"));
+				sub_node = xmlnode_get_next_twin(sub_node);
+			}
 		}
 	}
 

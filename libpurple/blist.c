@@ -83,11 +83,13 @@ struct _purple_hbuddy {
 	PurpleBlistNode *group;
 };
 
+/* This function must not use purple_normalize */
 static guint _purple_blist_hbuddy_hash(struct _purple_hbuddy *hb)
 {
 	return g_str_hash(hb->name);
 }
 
+/* This function must not use purple_normalize */
 static guint _purple_blist_hbuddy_equal(struct _purple_hbuddy *hb1, struct _purple_hbuddy *hb2)
 {
 	return (purple_strequal(hb1->name, hb2->name) && hb1->account == hb2->account && hb1->group == hb2->group);
@@ -1909,7 +1911,6 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node)
 {
 	PurpleBlistNode *sourcenode = (PurpleBlistNode*)source;
-	PurpleBlistNode *targetnode;
 	PurpleBlistNode *prev, *cur, *next;
 	PurpleContact *target;
 
@@ -1929,7 +1930,6 @@ void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node)
 	if (source == target || !target)
 		return;
 
-	targetnode = (PurpleBlistNode *)target;
 	next = sourcenode->child;
 
 	while (next) {
@@ -2354,16 +2354,14 @@ PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name)
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
 	hb.account = account;
-	hb.name = g_strdup(purple_normalize(account, name));
+	hb.name = (gchar *)purple_normalize(account, name);
 
 	for (group = purplebuddylist->root; group; group = group->next) {
 		hb.group = group;
 		if ((buddy = g_hash_table_lookup(purplebuddylist->buddies, &hb))) {
-			g_free(hb.name);
 			return buddy;
 		}
 	}
-	g_free(hb.name);
 
 	return NULL;
 }
@@ -3107,6 +3105,8 @@ purple_blist_uninit(void)
 		purple_blist_sync();
 	}
 
+	purple_blist_destroy();
+
 	node = purple_blist_get_root();
 	while (node) {
 		next_node = node->next;
@@ -3114,9 +3114,13 @@ purple_blist_uninit(void)
 		node = next_node;
 	}
 	purplebuddylist->root = NULL;
-	
+
 	g_hash_table_destroy(purplebuddylist->buddies);
 	g_hash_table_destroy(buddies_cache);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(purplebuddylist);
+	g_free(purplebuddylist);
+	purplebuddylist = NULL;
 
 	purple_signals_disconnect_by_handle(purple_blist_get_handle());
 	purple_signals_unregister_by_instance(purple_blist_get_handle());

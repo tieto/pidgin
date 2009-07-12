@@ -382,7 +382,7 @@ xmlnode_get_child_with_namespace(const xmlnode *parent, const char *name, const 
 }
 
 char *
-xmlnode_get_data(xmlnode *node)
+xmlnode_get_data(const xmlnode *node)
 {
 	GString *str = NULL;
 	xmlnode *c;
@@ -405,7 +405,7 @@ xmlnode_get_data(xmlnode *node)
 }
 
 char *
-xmlnode_get_data_unescaped(xmlnode *node)
+xmlnode_get_data_unescaped(const xmlnode *node)
 {
 	char *escaped = xmlnode_get_data(node);
 

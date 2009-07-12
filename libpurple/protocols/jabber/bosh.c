@@ -243,7 +243,7 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 	/* Easy solution: Does everyone involved support pipelining? Hooray! Just use
 	 * one TCP connection! */
 	if (conn->pipelining)
-		return conn->connections[0];
+		return conn->connections[0]->ready ? conn->connections[0] : NULL;
 
 	/* First loop, look for a connection that's ready */
 	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
@@ -267,8 +267,8 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 }
 
 static void
-jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType type,
-                            const char *data)
+jabber_bosh_connection_send(PurpleBOSHConnection *conn,
+                            PurpleBOSHPacketType type, const char *data)
 {
 	PurpleHTTPConnection *chosen;
 	GString *packet = NULL;
@@ -277,14 +277,16 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType typ
 
 	if (type != PACKET_NORMAL && !chosen) {
 		/*
-		 * For non-ordinary traffic, we don't want to 'buffer' it, so use the first
-		 * connection.
+		 * For non-ordinary traffic, we don't want to 'buffer' it, so use the
+		 * first connection.
 		 */
 		chosen = conn->connections[0];
 
-		if (!chosen->ready)
-			purple_debug_warning("jabber", "First BOSH connection wasn't ready. Bad "
-					"things may happen.\n");
+		if (!chosen->ready) {
+			purple_debug_info("jabber", "Unable to find a ready BOSH "
+					"connection. Ignoring send of type 0x%02x.\n", type);
+			return;
+		}
 	}
 
 	if (type == PACKET_NORMAL && (!chosen ||
@@ -352,7 +354,7 @@ static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, x
 
 	if (type != NULL && !strcmp(type, "terminate")) {
 		conn->ready = FALSE;
-		purple_connection_error_reason (conn->js->gc,
+		purple_connection_error_reason(conn->js->gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("The BOSH connection manager terminated your session."));
 		return TRUE;
@@ -781,7 +783,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error)
 
 	if (source < 0) {
 		gchar *tmp;
-		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+		tmp = g_strdup_printf(_("Unable to establish a connection with the server: %s"),
 		        error);
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
@@ -820,7 +822,7 @@ static void http_connection_connect(PurpleHTTPConnection *conn)
 	                                 connection_established_cb, conn) == NULL) {
 		purple_connection_error_reason(gc,
 		    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		    _("Unable to create socket"));
+		    _("Unable to connect"));
 	}
 }
 
@@ -860,9 +862,12 @@ http_connection_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		 * buffer that stores what is "being sent" until the
 		 * PurpleHTTPConnection reports it is fully sent.
 		 */
+		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason(conn->bosh->js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Write error"));
+				tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -903,9 +908,12 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 		 * buffer that stores what is "being sent" until the
 		 * PurpleHTTPConnection reports it is fully sent.
 		 */
+		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason(conn->bosh->js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Write error"));
+				tmp);
+		g_free(tmp);
 		return;
 	} else if (ret < len) {
 		if (ret < 0)

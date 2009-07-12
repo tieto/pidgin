@@ -26,11 +26,11 @@
  *
  */
 
-#include "oscar.h"
+#include <ctype.h>
 
 #include "cipher.h"
 
-#include <ctype.h>
+#include "oscar.h"
 
 /* #define USE_XOR_FOR_ICQ */
 
@@ -129,7 +129,6 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 	GSList *tlvlist = NULL;
 	int passwdlen;
 	guint8 *password_encoded;
-	const char *clientstring;
 	guint32 distrib;
 
 	passwdlen = strlen(password);
@@ -141,19 +140,21 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 
 	aim_encode_password(password, password_encoded);
 
-	clientstring = purple_prefs_get_string("/plugins/prpl/oscar/clientstring");
-	if (clientstring == NULL)
-		clientstring = ci->clientstring;
-	distrib = purple_prefs_get_int("/plugins/prpl/oscar/distid");
-	if ((gint32)distrib == -1)
-		distrib = ci->distrib;
+	distrib = oscar_get_ui_info_int(
+			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
+			ci->distrib);
 
 	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 	aim_tlvlist_add_raw(&tlvlist, 0x0002, passwdlen, password_encoded);
 
-	if (clientstring)
+	if (ci->clientstring != NULL)
+		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	else {
+		gchar *clientstring = oscar_get_clientstring();
 		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
+		g_free(clientstring);
+	}
 	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
 	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
@@ -219,7 +220,6 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	guint8 digest[16];
 	aim_snacid_t snacid;
 	size_t password_len;
-	const char *clientstring;
 	guint32 distrib;
 
 	if (!ci || !sn || !password)
@@ -247,12 +247,9 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 
 	aim_encode_password_md5(password, password_len, key, digest);
 
-	clientstring = purple_prefs_get_string("/plugins/prpl/oscar/clientstring");
-	if (clientstring == NULL)
-		clientstring = ci->clientstring;
-	distrib = purple_prefs_get_int("/plugins/prpl/oscar/distid");
-	if ((gint32)distrib == -1)
-		distrib = ci->distrib;
+	distrib = oscar_get_ui_info_int(
+			od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
+			ci->distrib);
 
 	aim_tlvlist_add_raw(&tlvlist, 0x0025, 16, digest);
 
@@ -260,8 +257,13 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	aim_tlvlist_add_noval(&tlvlist, 0x004c);
 #endif
 
-	if (clientstring)
+	if (ci->clientstring != NULL)
+		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	else {
+		gchar *clientstring = oscar_get_clientstring();
 		aim_tlvlist_add_str(&tlvlist, 0x0003, clientstring);
+		g_free(clientstring);
+	}
 	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
 	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);

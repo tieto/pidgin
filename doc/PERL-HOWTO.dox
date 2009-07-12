@@ -323,9 +323,10 @@ in the @c plugin_load subroutine, as follows.
 sub plugin_load {
 	my $plugin = shift;
 
+	# This is necessary to create each level in the preferences tree.
+	Purple::Prefs::add_none("/plugins/core/perl_test");
 	# Here we are adding a set of preferences
 	#  The second argument is the default value for the preference.
-	Purple::Prefs::add_none("/plugins/core/perl_test");
 	Purple::Prefs::add_bool("/plugins/core/perl_test/bool", 1);
 	Purple::Prefs::add_string("/plugins/core/perl_test/choice_str", "ch1");
 	Purple::Prefs::add_int("/plugins/core/perl_test/choice_int", 1);

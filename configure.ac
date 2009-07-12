@@ -1563,30 +1563,6 @@ if test "$enable_perl" = yes ; then
 			AC_MSG_RESULT(no)
 		fi
 
-		if test "x$prefix" != "xNONE"; then
-			prefix=`eval echo $prefix`
-			PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$prefix"
-		fi
-
-		AC_ARG_WITH(perl-lib,
-		[AC_HELP_STRING([--with-perl-lib=[site|vendor|DIR]],
-			[specify where to install the Perl libraries for pidgin. Default is site.])],
-		[
-			if test "x$withval" = xsite; then
-				PERL_MM_PARAMS=""
-			elif test "x$withval" = xvendor; then
-				if test -z "`$perlpath -v | grep '5\.0'`"; then
-					PERL_MM_PARAMS="INSTALLDIRS=vendor"
-				else
-					PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=`perl -e 'use Config; print $Config{prefix}'`"
-				fi
-			else
-				PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$withval"
-			fi
-		])
-
-		AC_SUBST(PERL_MM_PARAMS)
-
 		AC_MSG_CHECKING(for DynaLoader.a)
 		DYNALOADER_A=`echo $PERL_LDFLAGS | $perlpath -pe 's/^(.* )*([[^ ]]*DynaLoader\.a).*/\2/'`
 
@@ -1663,7 +1639,7 @@ AC_ARG_ENABLE(nss,
 	[enable_nss="$enableval"],
 	[enable_nss="yes"])
 
-msg_ssl="None. MSN, Novell Groupwise, Yahoo! and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
+msg_ssl="None. MSN, Yahoo!, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
 looked_for_gnutls="no"
 dnl #
 dnl # Check for GnuTLS if it's specified.
@@ -1755,8 +1731,8 @@ if test "x$enable_gnutls" = "xyes"; then
 	LIBS="$LIBS $GNUTLS_LIBS"
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <gnutls/gnutls.h>],
-                                        [gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);])],
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
+                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);]])],
 	               [AC_DEFINE([HAVE_GNUTLS_PRIORITY_FUNCS], 1,
                                   [Define if your gnutls has gnutls_priority_set_direct and friends])
 	                AC_MSG_RESULT(yes)],
@@ -2044,6 +2020,23 @@ if test "x$enable_nss" != "xno"; then
 	AC_SUBST(NSS_CFLAGS)
 	AC_SUBST(NSS_LIBS)
 fi
+ 
+if test "x$enable_nss" = "xyes"; then
+	AC_MSG_CHECKING(for NSS_SetAlgorithmPolicy)
+	LIBS_save="$LIBS"
+	LIBS="$LIBS $NSS_LIBS"
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $NSS_CFLAGS"
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <nss.h>
+#include <secmod.h>]],
+                                        [[NSS_SetAlgorithmPolicy(SEC_OID_MD2, 0, 0);]])],
+	               [AC_DEFINE([NEED_NSS_WEAK_ALGORITHMS], 1,
+                                  [Define if your NSS needs weak algorithms activated with NSS_SetAlgorithmPolicy])
+	                AC_MSG_RESULT(yes)],
+	               [AC_MSG_RESULT(no)])
+	CPPFLAGS="$CPPFLAGS_save"
+        LIBS="$LIBS_save"
+fi
 
 AM_CONDITIONAL(USE_NSS, test "x$enable_nss" = "xyes")
 
@@ -2057,19 +2050,19 @@ elif test "x$looked_for_gnutls" = "xyes" -a "x$looked_for_nss" = "xyes" -a "x$fo
 	AC_MSG_ERROR([
 Neither GnuTLS or NSS SSL development headers found.
 Use --disable-nss --disable-gnutls if you do not need SSL support.
-MSN, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
+MSN, Yahoo!, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
 ])
 elif test "x$looked_for_gnutls" = "xyes" -a "x$force_deps" = "xyes" ; then
 	AC_MSG_ERROR([
 GnuTLS SSL development headers not found.
 Use --disable-gnutls if you do not need SSL support.
-MSN, Novell Groupwise and Google Talk will not work without SSL support.
+MSN, Yahoo!, Novell Groupwise and Google Talk will not work without SSL support.
 ])
 elif test "x$looked_for_nss" = "xyes" -a "x$force_deps" = "xyes" ; then
 	AC_MSG_ERROR([
 NSS SSL development headers not found.
 Use --disable-nss if you do not need SSL support.
-MSN, Novell Groupwise and Google Talk will not work without SSL support.
+MSN, Yahoo!, Novell Groupwise and Google Talk will not work without SSL support.
 ])
 fi
 

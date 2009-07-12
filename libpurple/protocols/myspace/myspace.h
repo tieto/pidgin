@@ -127,9 +127,9 @@
 #define MSIM_FINAL_STRING           "\\final\\" /**< Message end marker */
 
 /* Messages */
-#define MSIM_BM_DELAYABLE_ACTION_OR_IM  1
+#define MSIM_BM_ACTION_OR_IM_DELAYABLE  1
 #define MSIM_BM_STATUS                  100
-#define MSIM_BM_INSTANT_ACTION_OR_IM    121
+#define MSIM_BM_ACTION_OR_IM_INSTANT    121
 #define MSIM_BM_MEDIA                   122
 #define MSIM_BM_PROFILE                 124
 #define MSIM_BM_UNOFFICIAL_CLIENT       200
@@ -140,6 +140,7 @@
 /* Recognized challenge length */
 #define MSIM_AUTH_CHALLENGE_LENGTH  0x40
 
+#ifdef SEND_OUR_IP_ADDRESSES
 /* TODO: obtain IPs of network interfaces from user's machine, instead of
  * hardcoding these values below (used in msim_compute_login_response).
  * This is not immediately
@@ -152,6 +153,7 @@
 
 #define MSIM_LOGIN_IP_LIST  "\x00\x00\x00\x00\x05\x7f\x00\x00\x01\x00\x00\x00\x00\x0a\x00\x00\x40\xc0\xa8\x58\x01\xc0\xa8\x3c\x01"
 #define MSIM_LOGIN_IP_LIST_LEN         25
+#endif /* SEND_OUR_IP_ADDRESSES */
 
 /* Indexes into status string (0|1|2|3|..., but 0 always empty) */
 #define MSIM_STATUS_ORDINAL_EMPTY       0

@@ -7,6 +7,7 @@ pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 OSCARSOURCES = \
 	bstream.c           \
+	clientlogin.c       \
 	family_admin.c      \
 	family_advert.c     \
 	family_alert.c      \

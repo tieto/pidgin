@@ -1505,7 +1505,6 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	PurpleContact *contact;
 	PurpleBlistNode *node;
 	gboolean contact_expanded = FALSE;
-	gboolean show_offline = FALSE;
 
 	g_return_if_fail(menu);
 	g_return_if_fail(buddy);
@@ -1573,9 +1572,9 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 				G_CALLBACK(gtk_blist_menu_showlog_cb), buddy, 0, 0, NULL);
 	}
 
-	if (!(purple_blist_node_get_flags(node) & PURPLE_BLIST_NODE_FLAG_NO_SAVE)) {
-		show_offline = purple_blist_node_get_bool(node, "show_offline");
-		pidgin_new_item_from_stock(menu, show_offline ? _("Hide when offline") : _("Show when offline"),
+	if (!PURPLE_BLIST_NODE_HAS_FLAG(node, PURPLE_BLIST_NODE_FLAG_NO_SAVE)) {
+		gboolean show_offline = purple_blist_node_get_bool(node, "show_offline");
+		pidgin_new_item_from_stock(menu, show_offline ? _("Hide When Offline") : _("Show When Offline"),
 				NULL, G_CALLBACK(gtk_blist_menu_showoffline_cb), node, 0, 0, NULL);
 	}
 
@@ -1759,7 +1758,7 @@ create_group_menu (PurpleBlistNode *node, PurpleGroup *g)
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
 	if (!(purple_blist_node_get_flags(node) & PURPLE_BLIST_NODE_FLAG_NO_SAVE)) {
 		gboolean show_offline = purple_blist_node_get_bool(node, "show_offline");
-		pidgin_new_item_from_stock(menu, show_offline ? _("Hide when offline") : _("Show when offline"),
+		pidgin_new_item_from_stock(menu, show_offline ? _("Hide When Offline") : _("Show When Offline"),
 				NULL, G_CALLBACK(gtk_blist_menu_showoffline_cb), node, 0, 0, NULL);
 	}
 
@@ -6300,7 +6299,7 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 	selected = (gnode == selected_node);
 
 	if (!expanded) {
-		g_snprintf(group_count, sizeof(group_count), " (%d/%d)",
+		g_snprintf(group_count, sizeof(group_count), "%d/%d",
 		           purple_blist_get_group_online_count(group),
 		           purple_blist_get_group_size(group, FALSE));
 	}
@@ -6319,11 +6318,18 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 
 	esc = g_markup_escape_text(group->name, -1);
 	if (text_color) {
-		mark = g_strdup_printf("<span foreground='%s' font_desc='%s'><b>%s</b>%s</span>",
-							text_color, text_font, esc ? esc : "", group_count);
+		mark = g_strdup_printf("<span foreground='%s' font_desc='%s'><b>%s</b>%s%s%s</span>",
+		                       text_color, text_font,
+		                       esc ? esc : "",
+		                       !expanded ? " <span weight='light'>(</span>" : "",
+		                       group_count,
+		                       !expanded ? "<span weight='light'>)</span>" : "");
 	} else {
-		mark = g_strdup_printf("<span font_desc='%s'><b>%s</b>%s</span>",
-							text_font, esc ? esc : "", group_count);
+		mark = g_strdup_printf("<span font_desc='%s'><b>%s</b>%s%s%s</span>",
+		                       text_font, esc ? esc : "",
+		                       !expanded ? " <span weight='light'>(</span>" : "",
+		                       group_count,
+		                       !expanded ? "<span weight='light'>)</span>" : "");
 	}
 
 	g_free(esc);
@@ -6708,13 +6714,14 @@ static void pidgin_blist_update(PurpleBuddyList *list, PurpleBlistNode *node)
 #endif
 }
 
-
 static void pidgin_blist_destroy(PurpleBuddyList *list)
 {
 	PidginBuddyListPrivate *priv;
 
-	if (!gtkblist)
+	if (!list || !list->ui_data)
 		return;
+
+	g_return_if_fail(list->ui_data != gtkblist);
 
 	purple_signals_disconnect_by_handle(gtkblist);
 
@@ -7868,8 +7875,10 @@ pidgin_blist_update_accounts_menu(void)
 		}
 	}
 
-	if (!enabled_accounts)
+	if (!enabled_accounts) {
+		gtk_widget_show_all(accountmenu);
 		return;
+	}
 
 	pidgin_separator(accountmenu);
 	accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));

@@ -77,6 +77,7 @@ struct _PurpleDnsQueryResolverProcess {
 };
 
 static GSList *free_dns_children = NULL;
+/* TODO: Make me a GQueue when we require >= glib 2.4 */
 static GSList *queued_requests = NULL;
 
 static int number_of_dns_children = 0;
@@ -117,8 +118,11 @@ purple_dnsquery_resolved(PurpleDnsQueryData *query_data, GSList *hosts)
 	 * Add the resolver to the list of available resolvers, and set it
 	 * to NULL so that it doesn't get destroyed along with the query_data
 	 */
-	free_dns_children = g_slist_prepend(free_dns_children, query_data->resolver);
-	query_data->resolver = NULL;
+	if (query_data->resolver)
+	{
+		free_dns_children = g_slist_prepend(free_dns_children, query_data->resolver);
+		query_data->resolver = NULL;
+	}
 #endif /* PURPLE_DNSQUERY_USE_FORK */
 
 	purple_dnsquery_destroy(query_data);
@@ -127,7 +131,7 @@ purple_dnsquery_resolved(PurpleDnsQueryData *query_data, GSList *hosts)
 static void
 purple_dnsquery_failed(PurpleDnsQueryData *query_data, const gchar *error_message)
 {
-	purple_debug_info("dnsquery", "%s\n", error_message);
+	purple_debug_error("dnsquery", "%s\n", error_message);
 	if (query_data->callback != NULL)
 		query_data->callback(NULL, query_data->data, error_message);
 	purple_dnsquery_destroy(query_data);
@@ -140,6 +144,29 @@ purple_dnsquery_ui_resolve(PurpleDnsQueryData *query_data)
 
 	if (ops && ops->resolve_host)
 		return ops->resolve_host(query_data, purple_dnsquery_resolved, purple_dnsquery_failed);
+
+	return FALSE;
+}
+
+static gboolean
+resolve_ip(PurpleDnsQueryData *query_data)
+{
+	struct sockaddr_in sin;
+	if (inet_aton(query_data->hostname, &sin.sin_addr))
+	{
+		/*
+		 * The given "hostname" is actually an IP address, so we
+		 * don't need to do anything.
+		 */
+		GSList *hosts = NULL;
+		sin.sin_family = AF_INET;
+		sin.sin_port = htons(query_data->port);
+		hosts = g_slist_append(hosts, GINT_TO_POINTER(sizeof(sin)));
+		hosts = g_slist_append(hosts, g_memdup(&sin, sizeof(sin)));
+		purple_dnsquery_resolved(query_data, hosts);
+
+		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -615,11 +642,19 @@ resolve_host(gpointer data)
 	query_data = data;
 	query_data->timeout = 0;
 
+	if (resolve_ip(query_data))
+	{
+		/* resolve_ip calls purple_dnsquery_resolved */
+		return FALSE;
+	}
+
 	if (purple_dnsquery_ui_resolve(query_data))
 	{
 		/* The UI is handling the resolve; we're done */
 		return FALSE;
 	}
+
+	queued_requests = g_slist_append(queued_requests, query_data);
 
 	handle_next_queued_request();
 
@@ -649,8 +684,6 @@ purple_dnsquery_a(const char *hostname, int port,
 		purple_dnsquery_destroy(query_data);
 		g_return_val_if_reached(NULL);
 	}
-
-	queued_requests = g_slist_append(queued_requests, query_data);
 
 	purple_debug_info("dns", "DNS query for '%s' queued\n", query_data->hostname);
 
@@ -757,7 +790,6 @@ static gboolean
 resolve_host(gpointer data)
 {
 	PurpleDnsQueryData *query_data;
-	struct sockaddr_in sin;
 	GError *err = NULL;
 
 	query_data = data;
@@ -769,20 +801,7 @@ resolve_host(gpointer data)
 		return FALSE;
 	}
 
-	if (inet_aton(query_data->hostname, &sin.sin_addr))
-	{
-		/*
-		 * The given "hostname" is actually an IP address, so we
-		 * don't need to do anything.
-		 */
-		GSList *hosts = NULL;
-		sin.sin_family = AF_INET;
-		sin.sin_port = htons(query_data->port);
-		hosts = g_slist_append(hosts, GINT_TO_POINTER(sizeof(sin)));
-		hosts = g_slist_append(hosts, g_memdup(&sin, sizeof(sin)));
-		purple_dnsquery_resolved(query_data, hosts);
-	}
-	else
+	if (!resolve_ip(query_data))
 	{
 		/*
 		 * Spin off a separate thread to perform the DNS lookup so

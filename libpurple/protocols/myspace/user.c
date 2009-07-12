@@ -58,6 +58,7 @@ msim_get_user_from_buddy(PurpleBuddy *buddy, gboolean create)
 
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
+		user->id = purple_blist_node_get_int(&buddy->node, "UserID");
 		purple_buddy_set_protocol_data(buddy, user);
 	}
 
@@ -109,7 +110,6 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 {
 	PurplePresence *presence;
 	gchar *str;
-	guint uid;
 	guint cv;
 
 	/* Useful to identify the account the tooltip refers to.
@@ -117,8 +117,6 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 	if (user->username) {
 		purple_notify_user_info_add_pair(user_info, _("User"), user->username);
 	}
-
-	uid = purple_blist_node_get_int((PurpleBlistNode *)user->buddy, "UserID");
 
 	/* a/s/l...the vitals */
 	if (user->age) {
@@ -639,8 +637,7 @@ static void msim_username_is_set_cb(MsimSession *session, const MsimMessage *use
 	uid = msim_msg_get_integer(userinfo, "uid");
 	lid = msim_msg_get_integer(userinfo, "lid");
 	body = msim_msg_get_dictionary(userinfo, "body");
-	/* XXX: Mark for translation */
-	errmsg = ("An error occurred while trying to set the username.\n"
+	errmsg = _("An error occurred while trying to set the username.  "
 			"Please try again, or visit http://editprofile.myspace.com/index.cfm?"
 			"fuseaction=profile.username to set your username.");
 
@@ -799,9 +796,9 @@ static void msim_username_is_available_cb(MsimSession *session, const MsimMessag
 	if (!body) {
 		purple_debug_info("msim_username_is_available_cb", "No body for %s?!\n", username);
 		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-				"An error occurred while trying to set the username.\n"
+				_("An error occurred while trying to set the username.  "
 				"Please try again, or visit http://editprofile.myspace.com/index.cfm?"
-				"fuseaction=profile.username to set your username.");
+				"fuseaction=profile.username to set your username."));
 		return;
 	}
 
