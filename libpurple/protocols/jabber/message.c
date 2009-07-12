@@ -1243,7 +1243,7 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 
 	g_free(resource);
 
-	if (!jbr || (jbr->chat_states != JABBER_CHAT_STATES_UNSUPPORTED))
+	if (!jbr || (jbr->chat_states == JABBER_CHAT_STATES_UNSUPPORTED))
 		return 0;
 
 	/* TODO: figure out threading */
