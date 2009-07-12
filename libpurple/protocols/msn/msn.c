@@ -178,8 +178,12 @@ msn_act_id(PurpleConnection *gc, const char *entry)
 	cmdproc = session->notification->cmdproc;
 	account = purple_connection_get_account(gc);
 
-	if(entry && strlen(entry))
-		alias = purple_url_encode(entry);
+	if (entry && *entry)
+	{
+		char *tmp = g_strdup(entry);
+		alias = purple_url_encode(g_strstrip(tmp));
+		g_free(tmp);
+	}
 	else
 		alias = "";
 
@@ -195,7 +199,6 @@ msn_act_id(PurpleConnection *gc, const char *entry)
 	}
 
 	msn_cmdproc_send(cmdproc, "PRP", "MFN %s", alias);
-
 }
 
 static void
