@@ -12,8 +12,6 @@ version 2.6.0 (??/??/2009):
 	* Fixed NTLM authentication on big-endian systems.
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
 	* Report idle time 'From last message sent' should work properly.
-	* Show the invite message for buddies that requested authorization
-	  from you on MSN.
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
 	* DNS SRV records with equal priority are sorted with respect to their
@@ -33,6 +31,10 @@ version 2.6.0 (??/??/2009):
 	* Fix a leak when the UI provides its own DNS resolving UI op.
 	  (Aman Gupta)
 	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
+	* Show the invite message for buddies that requested authorization
+	  from you on MSN.
+	* Support sending an invite message to buddies when requesting authorization
+	  from them on MSN.
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
