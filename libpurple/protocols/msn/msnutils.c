@@ -222,7 +222,7 @@ msn_import_html(const char *html, char **attributes, char **message)
 	const char *c;
 	char *msg;
 	char *fontface = NULL;
-	char fonteffect[4];
+	char fonteffect[5];
 	char fontcolor[7];
 	char direction = '0';
 

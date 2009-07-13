@@ -1976,21 +1976,16 @@ char *jabber_status_text(PurpleBuddy *b)
 	} else {
 		PurplePresence *presence = purple_buddy_get_presence(b);
 		PurpleStatus *status = purple_presence_get_active_status(presence);
-		char *stripped;
+		const char *message;
 
-		if(!(stripped = purple_markup_strip_html(purple_status_get_attr_string(status, "message")))) {
-			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
-				PurpleStatus *status = purple_presence_get_status(presence, "tune");
-				const char *title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
-				const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
-				const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
-				stripped = purple_util_format_song_info(title, artist, album, NULL);
-			}
-		}
-
-		if(stripped) {
-			ret = g_markup_escape_text(stripped, -1);
-			g_free(stripped);
+		if((message = purple_status_get_attr_string(status, "message"))) {
+			ret = g_markup_escape_text(message, -1);
+		} else if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+			PurpleStatus *status = purple_presence_get_status(presence, "tune");
+			const char *title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
+			const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+			const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
+			ret = purple_util_format_song_info(title, artist, album, NULL);
 		}
 	}
 
@@ -2007,12 +2002,7 @@ jabber_tooltip_add_resource_text(JabberBuddyResource *jbr,
 	const char *state;
 
 	if(jbr->status) {
-		char *tmp;
-		text = purple_strreplace(jbr->status, "\n", "<br />\n");
-		tmp = purple_markup_strip_html(text);
-		g_free(text);
-		text = g_markup_escape_text(tmp, -1);
-		g_free(tmp);
+		text = g_markup_escape_text(jbr->status, -1);
 	}
 
 	if(jbr->name)

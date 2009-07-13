@@ -6985,12 +6985,20 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 		icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
 
 		if (icon == NULL)
+		{
+			gtk_widget_set_size_request(gtkconv->u.im->icon_container,
+			                            -1, BUDDYICON_SIZE_MIN);
 			return;
+		}
 
 		data = purple_buddy_icon_get_data(icon, &len);
 
 		if (data == NULL)
+		{
+			gtk_widget_set_size_request(gtkconv->u.im->icon_container,
+			                            -1, BUDDYICON_SIZE_MIN);
 			return;
+		}
 	}
 
 	loader = gdk_pixbuf_loader_new();
