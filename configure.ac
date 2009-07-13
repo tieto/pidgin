@@ -1075,13 +1075,19 @@ extern_init=
 load_proto=
 for i in $STATIC_PRPLS ; do
 	dnl Ugly special case for "libsilcpurple.la":
-	dnl ... and Ugly special case for multi-protocol oscar
+	dnl ... and Ugly special case for multi-protocol oscar and yahoo
 	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
 		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.la"
 		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
 		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
 		load_proto="$load_proto purple_init_aim_plugin();"
 		load_proto="$load_proto purple_init_icq_plugin();"
+	elif test "x$i" = "xyahoo"; then
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/yahoo/libymsg.la"
+		extern_init="$extern_init extern gboolean purple_init_yahoo_plugin();"
+		extern_init="$extern_init extern gboolean purple_init_yahoojp_plugin();"
+		load_proto="$load_proto purple_init_yahoo_plugin();"
+		load_proto="$load_proto purple_init_yahoojp_plugin();"
 	else
 		if test "x$i" = "xsilc"; then
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
