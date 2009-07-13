@@ -644,10 +644,10 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 							if (jid) {
 								chat = jabber_chat_find(js, jid->node, jid->domain);
-								if (chat) conv = chat->conv;
+								if (chat)
+									conv = chat->conv;
+								jabber_id_free(jid);
 							}
-
-							jabber_id_free(jid);
 						} else if (jm->type == JABBER_MESSAGE_NORMAL ||
 						           jm->type == JABBER_MESSAGE_CHAT) {
 							conv =
