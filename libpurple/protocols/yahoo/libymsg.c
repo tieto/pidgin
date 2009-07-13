@@ -1825,7 +1825,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 					break;
 				default:
 					/* Unknown error! */
-					error_reason = g_strdup_printf(_("Unknown error: %d"), response_no);
+					error_reason = g_strdup_printf(_("Unknown error (%d)"), response_no);
 					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 					break;
 			}
