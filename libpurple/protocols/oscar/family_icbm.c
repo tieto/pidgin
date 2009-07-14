@@ -221,7 +221,11 @@ static int aim_im_paraminfo(OscarData *od, FlapConnection *conn, aim_module_t *m
 	params.maxrecverwarn = byte_stream_get16(bs);
 	params.minmsginterval = byte_stream_get32(bs);
 
-	params.flags = 0x0000000b | AIM_IMPARAM_FLAG_SUPPORT_OFFLINEMSGS;
+	params.flags = AIM_IMPARAM_FLAG_CHANNEL_MSGS_ALLOWED
+			| AIM_IMPARAM_FLAG_MISSED_CALLS_ENABLED
+			| AIM_IMPARAM_FLAG_EVENTS_ALLOWED
+			| AIM_IMPARAM_FLAG_SMS_SUPPORTED
+			| AIM_IMPARAM_FLAG_OFFLINE_MSGS_ALLOWED;
 	params.maxmsglen = 8000;
 	params.minmsginterval = 0;
 
