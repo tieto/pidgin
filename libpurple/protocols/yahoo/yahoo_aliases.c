@@ -53,9 +53,10 @@ struct callback_data {
 	gchar *who;
 };
 
-void yahoo_personal_details_reset(YahooPersonalDetails *ypd)
+void yahoo_personal_details_reset(YahooPersonalDetails *ypd, gboolean all)
 {
-	g_free(ypd->id);
+	if (all)
+		g_free(ypd->id);
 	g_free(ypd->names.first);
 	g_free(ypd->names.last);
 	g_free(ypd->names.middle);
@@ -104,6 +105,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 		for(item = xmlnode_get_child(contacts, "ct"); item; item = xmlnode_get_next_twin(item)) {
 			/* Yahoo replies with two types of contact (ct) record, we are only interested in the alias ones */
 			if ((yid = xmlnode_get_attrib(item, "yi"))) {
+				YahooPersonalDetails *ypd = NULL;
 				/* Grab all the bits of information we can */
 				fn = xmlnode_get_attrib(item, "fn");
 				ln = xmlnode_get_attrib(item, "ln");
@@ -148,23 +150,29 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 						yahoo_update_alias(gc, yid, buddy_alias);
 						purple_debug_info("yahoo", "Sent updated alias '%s'\n", buddy_alias);
 					}
-				} else {
+				}
+				
+				if (f != NULL)
+					ypd = &f->ypd;
+				else {
 					/* May be the alias is for the account? */
 					const char *yidn = purple_normalize(account, yid);
 					if (purple_strequal(yidn, purple_connection_get_display_name(gc))) {
-						yahoo_personal_details_reset(&yd->ypd);
-
-						yd->ypd.id = g_strdup(id);
-
-						yd->ypd.names.first = g_strdup(fn);
-						yd->ypd.names.middle = g_strdup(mn);
-						yd->ypd.names.last = g_strdup(ln);
-						yd->ypd.names.nick = g_strdup(nn);
-
-						yd->ypd.phone.work = g_strdup(wp);
-						yd->ypd.phone.home = g_strdup(hp);
-						yd->ypd.phone.mobile = g_strdup(mo);
+						ypd = &yd->ypd;
 					}
+				}
+
+				if (ypd) {
+					yahoo_personal_details_reset(ypd, TRUE);
+					ypd->id = g_strdup(id);
+					ypd->names.first = g_strdup(fn);
+					ypd->names.middle = g_strdup(mn);
+					ypd->names.last = g_strdup(ln);
+					ypd->names.nick = g_strdup(nn);
+
+					ypd->phone.work = g_strdup(wp);
+					ypd->phone.home = g_strdup(hp);
+					ypd->phone.mobile = g_strdup(mo);
 				}
 
 				g_free(full_name);
@@ -388,6 +396,57 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
  * User Info Update Functions
  **************************************************************************/
 
+#if 0
+/* This block of code can be used to send our contact details to
+ * everyone in the buddylist. But with the official messenger,
+ * doing this pops a conversation window at the receiver's end,
+ * which is stupid, and thus not really surprising. */
+
+struct yahoo_userinfo {
+	struct yahoo_data *yd;
+	char *xml;
+};
+
+static void
+yahoo_send_userinfo_to_user(struct yahoo_userinfo *yui, const char *who)
+{
+	struct yahoo_packet *pkt;
+	PurpleConnection *gc;
+
+	gc = yui->yd->gc;
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CONTACT_DETAILS, 0, 0);
+	yahoo_packet_hash(pkt, "siisis",
+			1, purple_connection_get_display_name(gc),
+			13, 1,    /* This creates a conversation window in the official client */
+			302, 5,
+			5, who,
+			303, 5,
+			280, yui->xml);
+	yahoo_packet_send_and_free(pkt, yui->yd);
+}
+
+static void
+yahoo_send_userinfo_foreach(gpointer key, gpointer value, gpointer data)
+{
+	const char *who = key;
+	YahooFriend *f = value;
+
+	if (f->status != YAHOO_STATUS_OFFLINE) {
+		yahoo_send_userinfo_to_user(data, who);
+	}
+}
+
+static void
+yahoo_sent_userinfo_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message)
+{
+	struct yahoo_userinfo *yui = user_data;
+	yahoo_fetch_aliases_cb(url_data, yui->yd->gc, url_text, len, error_message);
+	g_hash_table_foreach(yui->yd->friends, yahoo_send_userinfo_foreach, yui);
+	g_free(yui->xml);
+	g_free(yui);
+}
+#endif
+
 static void
 yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
@@ -418,6 +477,7 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	}
 
 	content = xmlnode_to_formatted_str(node, &len);
+	xmlnode_free(node);
 	purple_url_parse(yd->jp ? YAHOOJP_USERINFO_URL : YAHOO_USERINFO_URL, &webaddress, NULL, &webpage, NULL, NULL);
 
 	request = g_strdup_printf("POST %s HTTP/1.1\r\n"
@@ -433,6 +493,30 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 				  len + 4,
 				  content);
 
+#if 0
+	{
+		/* This is if we wanted to send our contact details to everyone
+		 * in the buddylist. But this cannot be done now, because in the
+		 * official messenger, doing this pops a conversation window at
+		 * the receiver's end, which is stupid, and thus not really
+		 * surprising. */
+		struct yahoo_userinfo *ui = g_new(struct yahoo_userinfo, 1);
+		node = xmlnode_new("contact");
+
+		for (i = 0; yfields[i]; i++) {
+			const char *v = purple_request_fields_get_string(fields, yfields[i]);
+			if (v) {
+				xmlnode *nd = xmlnode_new_child(node, yfields[i]);
+				xmlnode_insert_data(nd, v, -1);
+			}
+		}
+
+		ui->yd = yd;
+		ui->xml = xmlnode_to_str(node, NULL);
+		xmlnode_free(node);
+	}
+#endif
+
 	url_data = purple_util_fetch_url_request_len_with_account(account, webaddress, FALSE,
 			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE, -1,
 			yahoo_fetch_aliases_cb, gc);
@@ -443,7 +527,6 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	g_free(webpage);
 	g_free(content);
 	g_free(request);
-	xmlnode_free(node);
 }
 
 void yahoo_set_userinfo(PurpleConnection *gc)
@@ -482,5 +565,120 @@ void yahoo_set_userinfo(PurpleConnection *gc)
 			_("OK"), G_CALLBACK(yahoo_set_userinfo_cb),
 			_("Cancel"), NULL,
 			purple_connection_get_account(gc), NULL, NULL, gc);
+}
+
+static gboolean
+parse_contact_details(struct yahoo_data *yd, const char *who, const char *xml)
+{
+	xmlnode *node, *nd;
+	YahooFriend *f;
+	char *yid;
+
+	node = xmlnode_from_str(xml, -1);
+	if (!node) {
+		purple_debug_info("yahoo", "Received malformed XML for contact details from '%s':\n%s\n",
+				who, xml);
+		return FALSE;
+	}
+
+	nd = xmlnode_get_child(node, "yi");
+	if (!nd || !(yid = xmlnode_get_data(nd))) {
+		xmlnode_free(node);
+		return FALSE;
+	}
+
+	if (!purple_strequal(yid, who)) {
+		/* The user may not want to set the contact details about folks in the buddylist
+		   to what some random dude might have sent. So it would be good if we popped
+		   up a prompt requiring the user to confirm the details before we set them.
+		   However, someone could send details about hundreds of users at the same time,
+		   which would make things really bad. So for now, until we have a better way of
+		   dealing with this, ignore this details. */
+		purple_debug_info("yahoo", "Ignoring contact details sent by %s about %s\n",
+				who, yid);
+		g_free(yid);
+		xmlnode_free(node);
+		return FALSE;
+	}
+
+	f = yahoo_friend_find(yd->gc, yid);
+	if (!f) {
+		g_free(yid);
+		xmlnode_free(node);
+		return FALSE;
+	} else {
+		int i;
+		YahooPersonalDetails *ypd = &f->ypd;
+		char *alias = NULL;
+		struct {
+			char *id;
+			char **field;
+		} details[] = {
+			{"fn", &ypd->names.first},
+			{"mn", &ypd->names.middle},
+			{"ln", &ypd->names.last},
+			{"nn", &ypd->names.nick},
+			{"wp", &ypd->phone.work},
+			{"hp", &ypd->phone.home},
+			{"mo", &ypd->phone.mobile},
+			{NULL, NULL}
+		};
+
+		yahoo_personal_details_reset(ypd, FALSE);
+
+		for (i = 0; details[i].id; i++) {
+			nd = xmlnode_get_child(node, details[i].id);
+			*details[i].field = nd ? xmlnode_get_data(nd) : NULL;
+		}
+
+		if (ypd->names.nick)
+			alias = ypd->names.nick;
+		else if (ypd->names.first || ypd->names.last) {
+			alias = g_strstrip(g_strdup_printf("%s %s",
+						ypd->names.first ? ypd->names.first : "",
+						ypd->names.last ? ypd->names.last : ""));
+		}
+
+		if (alias) {
+			serv_got_alias(yd->gc, yid, alias);
+			if (alias != ypd->names.nick)
+				g_free(alias);
+		}
+	}
+
+	xmlnode_free(node);
+	g_free(yid);
+	return TRUE;
+}
+
+/* I don't think this happens for MSN buddies. -- sad */
+void yahoo_process_contact_details(PurpleConnection *gc, struct yahoo_packet *pkt)
+{
+	GSList *l = pkt->hash;
+	const char *who = NULL, *xml = NULL;
+	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+
+	for (; l; l = l->next) {
+		struct yahoo_pair *pair = l->data;
+		switch (pair->key) {
+			case 4:
+				who = pair->value;	/* This is the person who sent us the details.
+									   But not necessarily about himself. */
+				break;
+			case 5:
+				break;
+			case 13:
+				/* This is '1' if 'who' is sending the contact details about herself,
+				   '0' if 'who' is sending the contact details she has about buddies
+				   in her list. However, in all cases, the xml in key 280 always seems
+				   to contain the yid of the person, so we may as well ignore this field
+				   and look into the xml instead to see who the information is about. */
+				break;
+			case 280:
+				xml = pair->value;
+				parse_contact_details(yd, who, xml);
+				break;
+		}
+	}
 }
 
