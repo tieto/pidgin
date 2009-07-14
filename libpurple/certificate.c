@@ -923,9 +923,13 @@ x509_tls_peers_init(void)
 	poolpath = purple_certificate_pool_mkpath(&x509_tls_peers, NULL);
 	ret = purple_build_dir(poolpath, 0700); /* Make it this user only */
 
+	if (ret != 0)
+		purple_debug_info("certificate/tls_peers",
+				"Could not create %s.  Certificates will not be cached.\n",
+				poolpath);
+
 	g_free(poolpath);
 
-	g_return_val_if_fail(ret == 0, FALSE);
 	return TRUE;
 }
 
