@@ -113,6 +113,8 @@ version 2.6.0 (??/??/2009):
 	* Yahoo! and Yahoo! JAPAN are now two separate protocol plugins that share
 	  common protocol code.  You can now have the same account on both
 	  networks.
+	* Ability to set personal details for an account and for buddies in the
+	  buddylist.
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
