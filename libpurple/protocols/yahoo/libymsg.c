@@ -3871,6 +3871,16 @@ static void yahoo_doodle_blist_node(PurpleBlistNode *node, gpointer data)
 	yahoo_doodle_initiate(gc, purple_buddy_get_name(b));
 }
 
+static void
+yahoo_userinfo_blist_node(PurpleBlistNode *node, gpointer data)
+{
+	PurpleBuddy *b = (PurpleBuddy *)node;
+	PurpleAccount *account = purple_buddy_get_account(b);
+	PurpleConnection *gc = purple_account_get_connection(account);
+
+	yahoo_set_userinfo_for_buddy(gc, b);
+}
+
 static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
 {
 	GList *m = NULL;
@@ -3932,11 +3942,14 @@ static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
 		act = purple_menu_action_new(_("Presence Settings"), NULL, NULL,
 		                           build_presence_submenu(f, gc));
 		m = g_list_append(m, act);
-	}
 
-	if (f) {
 		act = purple_menu_action_new(_("Start Doodling"),
 		                           PURPLE_CALLBACK(yahoo_doodle_blist_node),
+		                           NULL, NULL);
+		m = g_list_append(m, act);
+
+		act = purple_menu_action_new(_("Set User Info..."),
+		                           PURPLE_CALLBACK(yahoo_userinfo_blist_node),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}

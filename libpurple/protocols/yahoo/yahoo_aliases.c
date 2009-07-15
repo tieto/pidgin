@@ -467,8 +467,8 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	xmlnode_set_attrib(node, "cc", "1");		/* XXX: ? */
 
 	xmlnode_set_attrib(ct, "e", "1");
-	xmlnode_set_attrib(ct, "yi", purple_connection_get_display_name(gc));
-	xmlnode_set_attrib(ct, "id", yd->ypd.id);
+	xmlnode_set_attrib(ct, "yi", purple_request_fields_get_string(fields, "yname"));
+	xmlnode_set_attrib(ct, "id", purple_request_fields_get_string(fields, "yid"));
 	xmlnode_set_attrib(ct, "pr", "0");
 
 	for (i = 0; yfields[i]; i++) {
@@ -529,25 +529,25 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	g_free(request);
 }
 
-void yahoo_set_userinfo(PurpleConnection *gc)
+static PurpleRequestFields *
+request_fields_from_personal_details(YahooPersonalDetails *ypd, const char *id)
 {
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
 	int i;
 	struct {
 		char *id;
 		char *text;
 		char *value;
 	} yfields[] = {
-		{"fn", N_("First Name"), yd->ypd.names.first},
-		{"ln", N_("Last Name"), yd->ypd.names.last},
-		{"nn", N_("Nickname"), yd->ypd.names.nick},
-		{"mn", N_("Middle Name"), yd->ypd.names.middle},
-		{"hp", N_("Home Phone Number"), yd->ypd.phone.home},
-		{"wp", N_("Work Phone Number"), yd->ypd.phone.work},
-		{"mo", N_("Mobile Phone Number"), yd->ypd.phone.mobile},
+		{"fn", N_("First Name"), ypd->names.first},
+		{"ln", N_("Last Name"), ypd->names.last},
+		{"nn", N_("Nickname"), ypd->names.nick},
+		{"mn", N_("Middle Name"), ypd->names.middle},
+		{"hp", N_("Home Phone Number"), ypd->phone.home},
+		{"wp", N_("Work Phone Number"), ypd->phone.work},
+		{"mo", N_("Mobile Phone Number"), ypd->phone.mobile},
 		{NULL, NULL, NULL}
 	};
 
@@ -555,12 +555,46 @@ void yahoo_set_userinfo(PurpleConnection *gc)
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
 
+	field = purple_request_field_string_new("yname", "", id, FALSE);
+	purple_request_field_set_visible(field, FALSE);
+	purple_request_field_group_add_field(group, field);
+
+	field = purple_request_field_string_new("yid", "", ypd->id, FALSE);
+	purple_request_field_set_visible(field, FALSE);
+	purple_request_field_group_add_field(group, field);
+
 	for (i = 0; yfields[i].id; i++) {
 		field = purple_request_field_string_new(yfields[i].id, _(yfields[i].text),
 				yfields[i].value, FALSE);
 		purple_request_field_group_add_field(group, field);
 	}
 
+	return fields;
+}
+
+void yahoo_set_userinfo_for_buddy(PurpleConnection *gc, PurpleBuddy *buddy)
+{
+	PurpleRequestFields *fields;
+	YahooFriend *f;
+	const char *name;
+
+	name = purple_buddy_get_name(buddy);
+	f = yahoo_friend_find(gc, name);
+	if (!f)
+		return;
+
+	fields = request_fields_from_personal_details(&f->ypd, name);
+	purple_request_fields(gc, NULL, _("Set User Info"), NULL, fields,
+			_("OK"), G_CALLBACK(yahoo_set_userinfo_cb),
+			_("Cancel"), NULL,
+			purple_connection_get_account(gc), NULL, NULL, gc);
+}
+
+void yahoo_set_userinfo(PurpleConnection *gc)
+{
+	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	PurpleRequestFields *fields = request_fields_from_personal_details(&yd->ypd,
+					purple_connection_get_display_name(gc));
 	purple_request_fields(gc, NULL, _("Set User Info"), NULL, fields,
 			_("OK"), G_CALLBACK(yahoo_set_userinfo_cb),
 			_("Cancel"), NULL,
