@@ -51,9 +51,9 @@ typedef struct _JabberSIXfer {
 	char *iq_id;
 
 	enum {
-		STREAM_METHOD_UNKNOWN = 0,
+		STREAM_METHOD_UNKNOWN     = 0,
 		STREAM_METHOD_BYTESTREAMS = 2 << 1,
-		STREAM_METHOD_IBB = 2 << 2,
+		STREAM_METHOD_IBB         = 2 << 2,
 		STREAM_METHOD_UNSUPPORTED = 2 << 31
 	} stream_method;
 
@@ -1421,6 +1421,7 @@ static void jabber_si_xfer_send_disco_cb(JabberStream *js, const char *who,
 		purple_notify_error(js->gc, _("File Send Failed"),
 				_("File Send Failed"), msg);
 		g_free(msg);
+		purple_xfer_cancel_local(xfer);
 	}
 }
 
@@ -1434,13 +1435,38 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 	JabberSIXfer *jsx = xfer->data;
 	char **who_v = g_strsplit(xfer->who, "/", 2);
 	char *who;
+	JabberBuddy *jb;
+	JabberBuddyResource *jbr = NULL;
+
+	jb = jabber_buddy_find(jsx->js, who_v[0], FALSE);
+	if (jb) {
+		jbr = jabber_buddy_find_resource(jb, resource);
+	}
 
 	who = g_strdup_printf("%s/%s", who_v[0], resource);
 	g_strfreev(who_v);
 	g_free(xfer->who);
 	xfer->who = who;
-	jabber_disco_info_do(jsx->js, who,
-			jabber_si_xfer_send_disco_cb, xfer);
+
+	if (jbr) {
+		char *msg;
+
+		if (jabber_resource_has_capability(jbr, XEP_0047_NAMESPACE))
+			jsx->stream_method |= STREAM_METHOD_IBB;
+		if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/si/profile/file-transfer")) {
+			jabber_si_xfer_send_request(xfer);
+			return;
+		}
+
+		msg = g_strdup_printf(_("Unable to send file to %s, user does not support file transfers"), who);
+		purple_notify_error(jsx->js->gc, _("File Send Failed"),
+				_("File Send Failed"), msg);
+		g_free(msg);
+		purple_xfer_cancel_local(xfer);
+	} else {
+		jabber_disco_info_do(jsx->js, who,
+				jabber_si_xfer_send_disco_cb, xfer);
+	}
 }
 
 static void resource_select_ok_cb(PurpleXfer *xfer, PurpleRequestFields *fields)
