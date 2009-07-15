@@ -1246,32 +1246,6 @@ ssl_connection_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error,
 }
 
 static void
-ssl_proxy_conn_established_cb(gpointer data, gint source, const gchar *error_message)
-{
-	OscarData *od;
-	PurpleConnection *gc;
-	PurpleAccount *account;
-	FlapConnection *conn;
-
-	conn = data;
-	od = conn->od;
-	gc = od->gc;
-	account = purple_connection_get_account(gc);
-
-	conn->connect_data = NULL;
-
-	if (source < 0)
-	{
-		connection_common_error_cb(conn, error_message);
-		return;
-	}
-
-	conn->gsc = purple_ssl_connect_with_host_fd(account, source,
-			ssl_connection_established_cb, ssl_connection_error_cb,
-			conn->ssl_cert_cn, conn);
-}
-
-static void
 flap_connection_established_bos(OscarData *od, FlapConnection *conn)
 {
 	PurpleConnection *gc = od->gc;
@@ -1943,12 +1917,13 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	if (od->use_ssl)
 	{
 		/*
-		 * This shouldn't be hardcoded except that the server isn't sending
-		 * us a name to use for comparing the certificate common name.
+		 * This shouldn't be hardcoded to "bos.oscar.aol.com" except that
+		 * the server isn't sending us a name to use for comparing the
+		 * certificate common name.
 		 */
-		newconn->ssl_cert_cn = g_strdup("bos.oscar.aol.com");
-		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
-				ssl_proxy_conn_established_cb, newconn);
+		newconn->gsc = purple_ssl_connect_with_ssl_cn(account, host, port,
+				ssl_connection_established_cb, ssl_connection_error_cb,
+				"bos.oscar.aol.com", newconn);
 	}
 	else
 	{
@@ -1957,7 +1932,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	}
 
 	g_free(host);
-	if (newconn->connect_data == NULL)
+	if (newconn->gsc == NULL && newconn->connect_data == NULL)
 	{
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
 		return 0;
@@ -2114,15 +2089,9 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	if (redir->use_ssl)
 	{
-		/*
-		 * TODO: It should be possible to specify a certificate common name
-		 * distinct from the host we're passing to purple_ssl_connect. The
-		 * way to work around that is to use purple_proxy_connect +
-		 * purple_ssl_connect_with_host_fd
-		 */
-		newconn->ssl_cert_cn = g_strdup(redir->ssl_cert_cn);
-		newconn->connect_data = purple_proxy_connect(NULL, account, host, port,
-				ssl_proxy_conn_established_cb, newconn);
+		newconn->gsc = purple_ssl_connect_with_ssl_cn(account, host, port,
+				ssl_connection_established_cb, ssl_connection_error_cb,
+				redir->ssl_cert_cn, newconn);
 	}
 	else
 	{
