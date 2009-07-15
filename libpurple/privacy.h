@@ -29,14 +29,16 @@
 /**
  * Privacy data types.
  */
-typedef enum
+typedef enum _PurplePrivacyType PurplePrivacyType;
+
+enum _PurplePrivacyType
 {
 	PURPLE_PRIVACY_ALLOW_ALL = 1,
 	PURPLE_PRIVACY_DENY_ALL,
 	PURPLE_PRIVACY_ALLOW_USERS,
 	PURPLE_PRIVACY_DENY_USERS,
 	PURPLE_PRIVACY_ALLOW_BUDDYLIST
-} PurplePrivacyType;
+};
 
 #include "account.h"
 
