@@ -203,6 +203,7 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
  * @param data       User-defined data.
  *
  * @return The SSL connection handle.
+ * @since 2.6.0
  */
 PurpleSslConnection *purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host,
 									int port, PurpleSslInputFunction func,
