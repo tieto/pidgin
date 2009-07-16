@@ -702,7 +702,7 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 		const char *status_name = jabber_buddy_state_get_name(jbr->state);
 
 		if (jbr->status) {
-			purdy = purple_strreplace(jbr->status, "\n", "<br />\n");
+			purdy = purple_strdup_withhtml(jbr->status);
 
 			if (purple_strequal(status_name, purdy))
 				status_name = NULL;
