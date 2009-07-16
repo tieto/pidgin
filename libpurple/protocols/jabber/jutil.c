@@ -257,29 +257,29 @@ jabber_id_new(const char *str)
 
 	/* normalization */
 	if(at) {
-		node = g_utf8_normalize(str, at-str, G_NORMALIZE_NFKC);
+		node = g_utf8_strdown(str, at-str);
 		if(slash) {
-			domain = g_utf8_normalize(at+1, slash-(at+1), G_NORMALIZE_NFKC);
+			domain = g_utf8_strdown(at+1, slash-(at+1));
 			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
-			domain = g_utf8_normalize(at+1, -1, G_NORMALIZE_NFKC);
+			domain = g_utf8_strdown(at+1, -1);
 		}
 	} else {
 		if(slash) {
-			domain = g_utf8_normalize(str, slash-str, G_NORMALIZE_NFKC);
+			domain = g_utf8_strdown(str, slash-str);
 			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
-			domain = g_utf8_normalize(str, -1, G_NORMALIZE_NFKC);
+			domain = g_utf8_strdown(str, -1);
 		}
 	}
 
 	if (node) {
-		jid->node = g_utf8_strdown(node, -1);
+		jid->node = g_utf8_normalize(node, -1, G_NORMALIZE_NFKC);
 		g_free(node);
 	}
 
 	if (domain) {
-		jid->domain = g_utf8_strdown(domain, -1);
+		jid->domain = g_utf8_normalize(domain, -1, G_NORMALIZE_NFKC);
 		g_free(domain);
 	}
 

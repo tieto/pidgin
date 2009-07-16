@@ -3736,10 +3736,9 @@ savefile_write_cb(gpointer user_data, char *file)
 		return;
 	}
 
-	if (!g_file_set_contents(file, contents, length, &error)) {
-		purple_debug_error("gtkutils", "Unable to write contents to %s: %s\n",
-		                   file, error->message);
-		g_error_free(error);
+	if (!purple_util_write_data_to_file_absolute(file, contents, length)) {
+		purple_debug_error("gtkutils", "Unable to write contents to %s\n",
+		                   file);
 	}
 }
 
