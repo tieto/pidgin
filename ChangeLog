@@ -35,6 +35,7 @@ version 2.6.0 (??/??/2009):
 	  from you on MSN.
 	* Support sending an invite message to buddies when requesting authorization
 	  from them on MSN.
+	* Better handle corrupt certificates in the TLS Peers cache.
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
