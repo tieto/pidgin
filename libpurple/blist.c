@@ -92,7 +92,7 @@ struct _purple_hbuddy {
 /* This function must not use purple_normalize */
 static guint _purple_blist_hbuddy_hash(struct _purple_hbuddy *hb)
 {
-	return g_str_hash(hb->name);
+	return g_str_hash(hb->name) ^ g_direct_hash(hb->group) ^ g_direct_hash(hb->account);
 }
 
 /* This function must not use purple_normalize */
