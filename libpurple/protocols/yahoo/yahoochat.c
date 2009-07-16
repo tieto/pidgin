@@ -160,8 +160,11 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 			who = pair->value;
 			g_string_append_printf(members, "%s\n", who);
 			break;
-		case 52: /* invitee (me) */
-		case 53: /* members */
+		case 51: /* This user is being invited to the conference. Comes with status = 11, so we wont reach here */
+			break;
+		case 52: /* Invited users. Assuming us invited, since we got this packet */
+			break; /* break needed, or else we add the users to the conference before they accept the invitation */
+		case 53: /* members who have already joined the conference */
 			g_string_append_printf(members, "%s\n", pair->value);
 			break;
 		case 58:
