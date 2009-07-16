@@ -48,6 +48,12 @@ static PurpleBuddyList *purplebuddylist = NULL;
  */
 static GHashTable *buddies_cache = NULL;
 
+/**
+ * A hash table used for efficient lookups of groups by name.
+ * UTF-8 collate-key => PurpleGroup*.
+ */
+static GHashTable *groups_cache = NULL;
+
 static guint          save_timer = 0;
 static gboolean       blist_loaded = FALSE;
 
@@ -704,6 +710,10 @@ PurpleBuddyList *purple_blist_new()
 	buddies_cache = g_hash_table_new_full(g_direct_hash, g_direct_equal,
 					 NULL, (GDestroyNotify)g_hash_table_destroy);
 
+	groups_cache = g_hash_table_new_full((GHashFunc)g_str_hash,
+					 (GEqualFunc)g_str_equal,
+					 (GDestroyNotify)g_free, NULL);
+
 	for (account = purple_accounts_get_all(); account != NULL; account = account->next)
 	{
 		purple_blist_buddies_cache_add_account(account->data);
@@ -1203,6 +1213,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 	} else {
 		/* A simple rename */
 		PurpleBlistNode *cnode, *bnode;
+		gchar* key;
 
 		/* Build a GList of all buddies in this group */
 		for (cnode = ((PurpleBlistNode *)source)->child; cnode != NULL; cnode = cnode->next) {
@@ -1213,6 +1224,13 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 
 		old_name = source->name;
 		source->name = new_name;
+
+		key = g_utf8_collate_key(old_name, -1);
+		g_hash_table_remove(groups_cache, key);
+		g_free(key);
+
+		key = g_utf8_collate_key(new_name, -1);
+		g_hash_table_insert(groups_cache, key, source);
 	}
 
 	/* Save our changes */
@@ -1946,6 +1964,7 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 {
 	PurpleBlistUiOps *ops;
 	PurpleBlistNode *gnode = (PurpleBlistNode*)group;
+	gchar* key;
 
 	g_return_if_fail(group != NULL);
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_GROUP((PurpleBlistNode *)group));
@@ -1988,6 +2007,9 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 		gnode->prev = NULL;
 		purplebuddylist->root = gnode;
 	}
+
+	key = g_utf8_collate_key(group->name, -1);
+	g_hash_table_insert(groups_cache, key, group);
 
 	purple_blist_schedule_save();
 
@@ -2174,6 +2196,7 @@ void purple_blist_remove_group(PurpleGroup *group)
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBlistNode *node;
 	GList *l;
+	gchar* key;
 
 	g_return_if_fail(group != NULL);
 
@@ -2190,6 +2213,10 @@ void purple_blist_remove_group(PurpleGroup *group)
 		node->prev->next = node->next;
 	if (node->next)
 		node->next->prev = node->prev;
+
+	key = g_utf8_collate_key(group->name, -1);
+	g_hash_table_remove(groups_cache, key);
+	g_free(key);
 
 	purple_blist_schedule_save();
 
@@ -2427,17 +2454,17 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name)
 
 PurpleGroup *purple_find_group(const char *name)
 {
-	PurpleBlistNode *node;
+	gchar* key;
+	PurpleGroup *group;
 
 	g_return_val_if_fail(purplebuddylist != NULL, NULL);
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
-	for (node = purplebuddylist->root; node != NULL; node = node->next) {
-		if (!purple_utf8_strcasecmp(((PurpleGroup *)node)->name, name))
-			return (PurpleGroup *)node;
-	}
+	key = g_utf8_collate_key(name, -1);
+	group = g_hash_table_lookup(groups_cache, key);
+	g_free(key);
 
-	return NULL;
+	return group;
 }
 
 PurpleChat *
@@ -3117,6 +3144,10 @@ purple_blist_uninit(void)
 
 	g_hash_table_destroy(purplebuddylist->buddies);
 	g_hash_table_destroy(buddies_cache);
+	g_hash_table_destroy(groups_cache);
+
+	buddies_cache = NULL;
+	groups_cache = NULL;
 
 	PURPLE_DBUS_UNREGISTER_POINTER(purplebuddylist);
 	g_free(purplebuddylist);

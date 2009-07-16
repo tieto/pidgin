@@ -7,7 +7,7 @@ version 2.6.0 (??/??/2009):
 	* Voice & Video framework in libpurple, thanks to Mike Ruprecht's summer
 	  of code project in 2008.
 	* It should no longer be possible to end up with duplicates of buddies
-	  in a group on the buddy list. (Paul Aurich)
+	  in a group on the buddy list.
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
@@ -35,7 +35,9 @@ version 2.6.0 (??/??/2009):
 	  from you on MSN.
 	* Support sending an invite message to buddies when requesting authorization
 	  from them on MSN.
-	* Better handle corrupt certificates in the TLS Peers cache.
+	* Better handling of corrupt certificates in the TLS Peers cache.
+	* More efficient purple_find_buddies() and purple_find_group() functions.
+	  (Jan Kaluza and Aman Gupta)
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
