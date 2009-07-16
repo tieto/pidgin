@@ -805,13 +805,13 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				const char *nick;
 				const char *code = NULL;
 				const char *item_jid = NULL;
+				const char *to;
 				xmlnode *stat;
 				xmlnode *item;
 
 				item = xmlnode_get_child(x, "item");
 				if (item)
 					item_jid = xmlnode_get_attrib(item, "jid");
-
 
 				stat = xmlnode_get_child(x, "status");
 
@@ -889,7 +889,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				 * Also possibly works around bits of an Openfire bug. See
 				 * #8319.
 				 */
-				if (is_our_resource && !purple_strequal(from, item_jid)) {
+				to = xmlnode_get_attrib(packet, "to");
+				if (is_our_resource && item_jid && !purple_strequal(to, item_jid)) {
 					/* TODO: When the above is a loop, this needs to still act
 					 * sanely for all cases (this code is a little fragile). */
 					if (!kick && !nick_change)
