@@ -613,7 +613,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			/* The rest of the cases used to check xmlns individually. */
 			continue;
 		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, "urn:xmpp:delay")) {
-			/* XXX: compare the time.  urn:xmpp:delay can happen on presence packets that aren't really and truly delayed */
+			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 			delayed = TRUE;
 			stamp = xmlnode_get_attrib(y, "stamp");
 		} else if(!strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
@@ -621,7 +621,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if (g_str_equal(y->name, "nick") && g_str_equal(xmlns, "http://jabber.org/protocol/nick")) {
 			nickname = xmlnode_get_data(y);
 		} else if(!strcmp(y->name, "x")) {
-			if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
+			if(!strcmp(xmlns, "jabber:x:delay")) {
+				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
+				delayed = TRUE;
+				stamp = xmlnode_get_attrib(y, "stamp");
+			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
 			} else if(!strcmp(xmlns, "vcard-temp:x:update")) {
 				xmlnode *photo = xmlnode_get_child(y, "photo");
 				if(photo) {
