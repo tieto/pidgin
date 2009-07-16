@@ -3,6 +3,7 @@ CERTIFICATES = \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \
 		Equifax_Secure_CA.pem \
+		Equifax_Secure_Global_eBusiness_CA-1.pem \
 		GTE_CyberTrust_Global_Root.pem \
 		StartCom_Certification_Authority.pem \
 		StartCom_Free_SSL_CA.pem \
