@@ -91,9 +91,9 @@ void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
 		}
 
 		if ((jbr = jabber_buddy_find_resource(jb, NULL))) {
-			purple_prpl_got_user_status(js->gc->account, username, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
+			purple_prpl_got_user_status(account, username, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
 		} else {
-			purple_prpl_got_user_status(js->gc->account, username, "offline", msg ? "message" : NULL, msg, NULL);
+			purple_prpl_got_user_status(account, username, "offline", msg ? "message" : NULL, msg, NULL);
 		}
 		g_free(msg);
 	}
