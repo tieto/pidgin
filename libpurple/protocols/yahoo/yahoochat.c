@@ -122,8 +122,8 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 	GString *members = NULL;
 	GHashTable *components;
 
-	if (pkt->status == 2)
-		return; /* XXX */
+	if ( (pkt->status == 2) || (pkt->status == 11) )
+		return; /* Status is 11 when we are being notified about invitation being sent to someone else */
 
 	account = purple_connection_get_account(gc);
 
