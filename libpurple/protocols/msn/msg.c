@@ -349,7 +349,8 @@ msn_message_parse_payload(MsnMessage *msg,
 			msg->body[msg->body_len] = '\0';
 		}
 		
-		if (msg->charset == NULL) {
+		if ((!content_type || !strcmp(content_type, "text/plain"))
+			&& msg->charset == NULL) {
 			char *body = g_convert(msg->body, msg->body_len, "UTF-8",
 			                       "ISO-8859-1", NULL, &msg->body_len, NULL);
 			g_free(msg->body);
