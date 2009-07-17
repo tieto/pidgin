@@ -2087,6 +2087,10 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 		msg = g_strdup(_("Your account is locked, please log in to the Yahoo! website."));
 		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 		break;
+	case 1013:
+		msg = g_strdup(_("Invalid username"));
+		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
+		break;
 	default:
 		msg = g_strdup_printf(_("Unknown error number %d. Logging into the Yahoo! website may fix this."), err);
 	}
