@@ -44,6 +44,10 @@ START_TEST(test_nodeprep_validate)
 	longnode = g_strnfill(1023, 'a');
 	fail_unless(jabber_nodeprep_validate(longnode));
 	g_free(longnode);
+
+	longnode = g_strnfill(1024, 'a');
+	fail_if(jabber_nodeprep_validate(longnode));
+	g_free(longnode);
 }
 END_TEST
 
@@ -132,7 +136,19 @@ START_TEST(test_jabber_id_new)
 	/* Ensure that jabber_id_new is properly lowercasing node and domains */
 	assert_jid_parts("paul", "darkrain42.org", "PaUL@darkrain42.org");
 	assert_jid_parts("paul", "darkrain42.org", "paul@DaRkRaIn42.org");
-	assert_jid_parts("ꙥ", "darkrain42.org", "Ꙥ@darkrain42.org");
+
+	/* These case-mapping tests culled from examining RFC3454 B.2 */
+
+	/* Cyrillic capital EF (U+0424) maps to lowercase EF (U+0444) */
+	assert_jid_parts("ф", "darkrain42.org", "Ф@darkrain42.org");
+	/*
+	 * These character (U+A664 and U+A665) are not mapped to anything in
+	 * RFC3454 B.2. This first test *fails* when not using IDN because glib's
+	 * case-folding/utf8_strdown improperly lowercases the character.
+	 */
+	assert_jid_parts("Ꙥ", "darkrain42.org", "Ꙥ@darkrain42.org");
+	assert_jid_parts("ꙥ", "darkrain42.org", "ꙥ@darkrain42.org");
+	/* U+04E9 to U+04E9 */
 	assert_jid_parts("paul", "өarkrain42.org", "paul@Өarkrain42.org");
 }
 END_TEST
