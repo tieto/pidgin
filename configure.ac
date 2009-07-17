@@ -604,7 +604,7 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 ])
 			fi])
 	fi
-        
+
 
 else # GTK
 	enable_cap=no
@@ -1984,7 +1984,7 @@ if test "x$enable_nss" != "xno"; then
 
 				if test "x$ac_cv_moz_nss_libs" = "xno"; then
 					nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
-					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs" 
+					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
 					LIBS="$LIBS $nsslibs"
 					AC_TRY_LINK_FUNC(NSS_Init,
 						[ac_cv_moz_nss_libs="yes"],
@@ -2026,7 +2026,7 @@ if test "x$enable_nss" != "xno"; then
 	AC_SUBST(NSS_CFLAGS)
 	AC_SUBST(NSS_LIBS)
 fi
- 
+
 if test "x$enable_nss" = "xyes"; then
 	AC_MSG_CHECKING(for NSS_SetAlgorithmPolicy)
 	LIBS_save="$LIBS"
