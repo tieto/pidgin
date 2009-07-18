@@ -1143,7 +1143,7 @@ yahoo_buddy_add_authorize_cb(gpointer data)
 	if (add_req->protocol == 2)
 		who += 4;
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "ssiii",
 					  1, add_req->id,
 					  5, who,
@@ -1172,7 +1172,7 @@ yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg)
 		encoded_msg = yahoo_string_encode(add_req->gc, msg, NULL);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15,
-			YAHOO_STATUS_AVAILABLE, 0);
+			YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	yahoo_packet_hash(pkt, "ssiiiis",
 			1, add_req->id,
@@ -3028,7 +3028,7 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 	yd = gc->proto_data;
 	yd->fd = source;
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, yd->current_status, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, yd->current_status, yd->session_id);
 
 	yahoo_packet_hash_str(pkt, 1, purple_normalize(gc->account, purple_account_get_username(purple_connection_get_account(gc))));
 	yahoo_packet_send_and_free(pkt, yd);
@@ -3054,7 +3054,7 @@ static void yahoo_got_web_connected(gpointer data, gint source, const gchar *err
 	yd = gc->proto_data;
 	yd->fd = source;
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_WEBLOGIN, YAHOO_STATUS_WEBLOGIN, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_WEBLOGIN, YAHOO_STATUS_WEBLOGIN, yd->session_id);
 
 	yahoo_packet_hash(pkt, "sss", 0,
 	                  purple_normalize(gc->account, purple_account_get_username(purple_connection_get_account(gc))),
@@ -3957,7 +3957,7 @@ static void yahoo_act_id(PurpleConnection *gc, PurpleRequestFields *fields)
 	struct yahoo_data *yd = gc->proto_data;
 	const char *name = yd->profiles[purple_request_fields_get_choice(fields, "id")];
 
-	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_IDACT, YAHOO_STATUS_AVAILABLE, 0);
+	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_IDACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash_str(pkt, 3, name);
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -4293,7 +4293,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 		}
 
 		alias = purple_account_get_alias(account);
-		pkt = yahoo_packet_new(YAHOO_SERVICE_SMS_MSG, YAHOO_STATUS_AVAILABLE, 0);
+		pkt = yahoo_packet_new(YAHOO_SERVICE_SMS_MSG, YAHOO_STATUS_AVAILABLE, yd->session_id);
 		yahoo_packet_hash(pkt, "sssss",
 			1, purple_connection_get_display_name(gc),
 			69, alias,
@@ -4308,7 +4308,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 		return ret;
 	}
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, yd->session_id);
 	if(msn) {
 		yahoo_packet_hash(pkt, "ss", 1, purple_connection_get_display_name(gc), 5, who+4);
 		yahoo_packet_hash_int(pkt, 241, 2);
@@ -4390,7 +4390,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypi
 	if( strncmp(who, "+", 1) == 0 )
 		return 0;
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_NOTIFY, YAHOO_STATUS_TYPING, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_NOTIFY, YAHOO_STATUS_TYPING, yd->session_id);
 
 	/* check to see if p2p link exists, send through it */
 	if( (p2p_data = g_hash_table_lookup(yd->peers, who)) && !msn ) {
@@ -4462,14 +4462,14 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 	}
 
 	if (yd->current_status == YAHOO_STATUS_INVISIBLE) {
-		pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_VISIBLE_TOGGLE, YAHOO_STATUS_AVAILABLE, 0);
+		pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_VISIBLE_TOGGLE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 		yahoo_packet_hash_str(pkt, 13, "2");
 		yahoo_packet_send_and_free(pkt, yd);
 
 		return;
 	}
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash_int(pkt, 10, yd->current_status);
 
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
@@ -4489,7 +4489,7 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 	yahoo_packet_send_and_free(pkt, yd);
 
 	if (old_status == YAHOO_STATUS_INVISIBLE) {
-		pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_VISIBLE_TOGGLE, YAHOO_STATUS_AVAILABLE, 0);
+		pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_VISIBLE_TOGGLE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 		yahoo_packet_hash_str(pkt, 13, "1");
 		yahoo_packet_send_and_free(pkt, yd);
 
@@ -4513,7 +4513,7 @@ void yahoo_set_idle(PurpleConnection *gc, int idle)
 		yd->current_status = get_yahoo_status_from_purple_status(status);
 	}
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	yahoo_packet_hash_int(pkt, 10, yd->current_status);
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
@@ -4619,19 +4619,19 @@ void yahoo_keepalive(PurpleConnection *gc)
 			if (yd->wm) {
 				ycht_chat_send_keepalive(yd->ycht);
 			} else {
-				pkt = yahoo_packet_new(YAHOO_SERVICE_CHATPING, YAHOO_STATUS_AVAILABLE, 0);
+				pkt = yahoo_packet_new(YAHOO_SERVICE_CHATPING, YAHOO_STATUS_AVAILABLE, yd->session_id);
 				yahoo_packet_hash_str(pkt, 109, purple_connection_get_display_name(gc));
 				yahoo_packet_send_and_free(pkt, yd);
 			}
 		} else {
-			pkt = yahoo_packet_new(YAHOO_SERVICE_PING, YAHOO_STATUS_AVAILABLE, 0);
+			pkt = yahoo_packet_new(YAHOO_SERVICE_PING, YAHOO_STATUS_AVAILABLE, yd->session_id);
 			yahoo_packet_send_and_free(pkt, yd);
 		}
 	}
 
 	if ((now - yd->last_keepalive) >= KEEPALIVE_TIMEOUT) {
 		yd->last_keepalive = now;
-		pkt = yahoo_packet_new(YAHOO_SERVICE_KEEPALIVE, YAHOO_STATUS_AVAILABLE, 0);
+		pkt = yahoo_packet_new(YAHOO_SERVICE_KEEPALIVE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 		yahoo_packet_hash_str(pkt, 0, purple_connection_get_display_name(gc));
 		yahoo_packet_send_and_free(pkt, yd);
 	}
@@ -4665,7 +4665,7 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
 		group = "Buddies";
 
 	group2 = yahoo_string_encode(gc, group, NULL);
-	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	if(msn) {
 		yahoo_packet_hash(pkt, "sssssssssss",
 			14, "",
@@ -4737,7 +4737,7 @@ void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g
 		g_hash_table_remove(yd->friends, bname);
 
 	cg = yahoo_string_encode(gc, gname, NULL);
-	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	if(msn)
 		yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
@@ -4761,7 +4761,7 @@ void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 	if (!who || who[0] == '\0')
 		return;
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
 	                  7, who, 13, "1");
 	yahoo_packet_send_and_free(pkt, yd);
@@ -4777,7 +4777,7 @@ void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	if (!who || who[0] == '\0')
 		return;
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 13, "2");
 	yahoo_packet_send_and_free(pkt, yd);
 }
@@ -4840,7 +4840,7 @@ void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 		return;
 	}
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CHGRP_15, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CHGRP_15, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	if(f->protocol)
 		yahoo_packet_hash(pkt, "ssssissss", 1, purple_connection_get_display_name(gc),
 	                  302, "240", 300, "240", 7, temp, 241, f->protocol, 224, gpo, 264, gpn, 301,
@@ -4870,7 +4870,7 @@ void yahoo_rename_group(PurpleConnection *gc, const char *old_name,
 		return;
 	}
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_GROUPRENAME, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_GROUPRENAME, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
 	                  65, gpo, 67, gpn);
 	yahoo_packet_send_and_free(pkt, yd);
