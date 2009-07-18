@@ -1161,7 +1161,7 @@ purple_xfer_cancel_local(PurpleXfer *xfer)
 
 	if (purple_xfer_get_filename(xfer) != NULL)
 	{
-		msg = g_strdup_printf(_("You canceled the transfer of %s"),
+		msg = g_strdup_printf(_("You cancelled the transfer of %s"),
 							  purple_xfer_get_filename(xfer));
 	}
 	else
@@ -1224,12 +1224,12 @@ purple_xfer_cancel_remote(PurpleXfer *xfer)
 
 	if (purple_xfer_get_filename(xfer) != NULL)
 	{
-		msg = g_strdup_printf(_("%s canceled the transfer of %s"),
+		msg = g_strdup_printf(_("%s cancelled the transfer of %s"),
 				buddy ? purple_buddy_get_alias(buddy) : xfer->who, purple_xfer_get_filename(xfer));
 	}
 	else
 	{
-		msg = g_strdup_printf(_("%s canceled the file transfer"),
+		msg = g_strdup_printf(_("%s cancelled the file transfer"),
 				buddy ? purple_buddy_get_alias(buddy) : xfer->who);
 	}
 	purple_xfer_conversation_write(xfer, msg, TRUE);

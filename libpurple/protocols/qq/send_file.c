@@ -730,7 +730,7 @@ void qq_process_recv_file_cancel (guint8 *data, gint data_len,
 	*/
 	filename = g_path_get_basename(purple_xfer_get_local_filename(qd->xfer));
 	msg = g_strdup_printf
-		(_("%d canceled the transfer of %s"),
+		(_("%d cancelled the transfer of %s"),
 		 sender_uid, filename);
 
 	purple_notify_warning (gc, _("File Send"), msg, NULL);
