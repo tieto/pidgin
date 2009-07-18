@@ -72,7 +72,7 @@ static void yahoo_chat_online(PurpleConnection *gc)
 					  6, "abcde",
 					/* I'm not sure this is the correct way to set this. */
 					  98, rll,
-					  135, YAHOO_CLIENT_VERSION);
+					  135, yd->jp ? YAHOO_CLIENT_VERSION : YAHOOJP_CLIENT_VERSION);
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
