@@ -1971,6 +1971,9 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 
 	if (!purplebuddylist->root) {
 		purplebuddylist->root = gnode;
+
+		key = g_utf8_collate_key(group->name, -1);
+		g_hash_table_insert(groups_cache, key, group);
 		return;
 	}
 
@@ -1990,6 +1993,9 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 			gnode->prev->next = gnode->next;
 		if (gnode->next)
 			gnode->next->prev = gnode->prev;
+	} else {
+		key = g_utf8_collate_key(group->name, -1);
+		g_hash_table_insert(groups_cache, key, group);
 	}
 
 	if (node && PURPLE_BLIST_NODE_IS_GROUP(node)) {
@@ -2005,9 +2011,6 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 		gnode->prev = NULL;
 		purplebuddylist->root = gnode;
 	}
-
-	key = g_utf8_collate_key(group->name, -1);
-	g_hash_table_insert(groups_cache, key, group);
 
 	purple_blist_schedule_save();
 
