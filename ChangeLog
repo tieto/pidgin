@@ -112,8 +112,9 @@ version 2.6.0 (??/??/2009):
 	* Removed support for obsoleted XEP-0022 (Message Events) and XEP-0091
 	  (Legacy Entity Time).
 	* When the GNU IDN library (libidn) is available, it is used for
-	  normalization of Jabber IDs. When unavailable, internal routines are
-	  used (as in previous versions).
+	  normalization of Jabber IDs and support for internationalized domain
+	  names (IDNA).  When unavailable, internal routines are used (as in
+	  previous versions) for normalization and IDNA is unavailable.
 
 	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)

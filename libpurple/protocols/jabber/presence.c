@@ -67,7 +67,7 @@ void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
 	g_return_if_fail(js->user != NULL);
 
 	account = purple_connection_get_account(js->gc);
-	username = purple_account_get_username(account);
+	username = purple_connection_get_display_name(js->gc);
 	if (status == NULL)
 		status = purple_account_get_active_status(account);
 
