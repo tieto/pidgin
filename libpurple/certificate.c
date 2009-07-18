@@ -93,13 +93,10 @@ purple_certificate_verify_complete(PurpleCertificateVerificationRequest *vrq,
 				  "Successfully verified certificate for %s\n",
 				  vrq->subject_name);
 	} else {
-		purple_debug_info("certificate",
+		purple_debug_error("certificate",
 				  "Failed to verify certificate for %s\n",
 				  vrq->subject_name);
 	}
-
-
-
 
 	/* Pass the results on to the request's callback */
 	(vrq->cb)(st, vrq->cb_data);
@@ -224,7 +221,7 @@ purple_certificate_check_signature_chain(GList *chain)
 		/* Check the signature for this link */
 		if (! purple_certificate_signed_by(crt, issuer) ) {
 			uid = purple_certificate_get_unique_id(issuer);
-			purple_debug_info("certificate",
+			purple_debug_error("certificate",
 					  "...Bad or missing signature by %s\nChain is INVALID\n",
 					  uid);
 			g_free(uid);
@@ -681,7 +678,7 @@ x509_ca_lazy_init(void)
 	/* Check that X.509 is registered */
 	x509 = purple_certificate_find_scheme(x509_ca.scheme_name);
 	if ( !x509 ) {
-		purple_debug_info("certificate/x509/ca",
+		purple_debug_warning("certificate/x509/ca",
 				  "Lazy init failed because an X.509 Scheme "
 				  "is not yet registered. Maybe it will be "
 				  "better later.\n");
@@ -926,9 +923,13 @@ x509_tls_peers_init(void)
 	poolpath = purple_certificate_pool_mkpath(&x509_tls_peers, NULL);
 	ret = purple_build_dir(poolpath, 0700); /* Make it this user only */
 
+	if (ret != 0)
+		purple_debug_info("certificate/tls_peers",
+				"Could not create %s.  Certificates will not be cached.\n",
+				poolpath);
+
 	g_free(poolpath);
 
-	g_return_val_if_fail(ret == 0, FALSE);
 	return TRUE;
 }
 
@@ -1162,7 +1163,7 @@ x509_tls_cached_user_auth_cb (x509_tls_cached_ua_ctx *c, gint id)
 		purple_certificate_verify_complete(vrq,
 						   PURPLE_CERTIFICATE_VALID);
 	} else {
-		purple_debug_info("certificate/x509/tls_cached",
+		purple_debug_warning("certificate/x509/tls_cached",
 				  "User REJECTED cert\n");
 		purple_certificate_verify_complete(vrq,
 						   PURPLE_CERTIFICATE_INVALID);
@@ -1217,20 +1218,6 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 }
 
 static void
-x509_tls_cached_peer_cert_changed(PurpleCertificateVerificationRequest *vrq)
-{
-	/* TODO: Prompt the user, etc. */
-
-	purple_debug_info("certificate/x509/tls_cached",
-			  "Certificate for %s does not match cached. "
-			  "Auto-rejecting!\n",
-			  vrq->subject_name);
-
-	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_INVALID);
-	return;
-}
-
-static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq);
 
 static void
@@ -1253,12 +1240,11 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 	cached_crt = purple_certificate_pool_retrieve(
 		tls_peers, vrq->subject_name);
 	if ( !cached_crt ) {
-		purple_debug_error("certificate/x509/tls_cached",
+		purple_debug_warning("certificate/x509/tls_cached",
 				   "Lookup failed on cached certificate!\n"
-				   "It was here just a second ago. Forwarding "
-				   "to cert_changed.\n");
-		/* vrq now becomes the problem of cert_changed */
-		x509_tls_cached_peer_cert_changed(vrq);
+				   "Falling back to full verification.\n");
+		/* vrq now becomes the problem of unknown_peer */
+		x509_tls_cached_unknown_peer(vrq);
 		return;
 	}
 
@@ -1273,7 +1259,7 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 		purple_certificate_verify_complete(vrq,
 						   PURPLE_CERTIFICATE_VALID);
 	} else {
-		purple_debug_info("certificate/x509/tls_cached",
+		purple_debug_error("certificate/x509/tls_cached",
 				  "Peer cert did NOT match cached\n");
 		/* vrq now becomes the problem of the user */
 		x509_tls_cached_unknown_peer(vrq);
@@ -1377,7 +1363,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 			  ca_id);
 	ca_crt = purple_certificate_pool_retrieve(ca, ca_id);
 	if ( NULL == ca_crt ) {
-		purple_debug_info("certificate/x509/tls_cached",
+		purple_debug_warning("certificate/x509/tls_cached",
 				  "Certificate Authority with DN='%s' not "
 				  "found. I'll prompt the user, I guess.\n",
 				  ca_id);
@@ -1426,7 +1412,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		gchar *sn = purple_certificate_get_subject_name(peer_crt);
 		gchar *msg;
 
-		purple_debug_info("certificate/x509/tls_cached",
+		purple_debug_error("certificate/x509/tls_cached",
 				  "Name mismatch: Certificate given for %s "
 				  "has a name of %s\n",
 				  vrq->subject_name, sn);
@@ -1504,7 +1490,7 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 		/* vrq is now the responsibility of cert_in_cache */
 		x509_tls_cached_cert_in_cache(vrq);
 	} else {
-		purple_debug_info("certificate/x509/tls_cached",
+		purple_debug_warning("certificate/x509/tls_cached",
 				  "...Not in cache\n");
 		/* vrq now becomes the problem of unknown_peer */
 		x509_tls_cached_unknown_peer(vrq);

@@ -27,6 +27,7 @@
 #include "debug.h"
 
 #include "yahoo_friend.h"
+#include "yahoo_aliases.h"
 
 static YahooFriend *yahoo_friend_new(void)
 {
@@ -124,13 +125,13 @@ gboolean yahoo_friend_get_buddy_icon_need_request(YahooFriend *f)
 
 void yahoo_friend_set_alias_id(YahooFriend *f, const char *alias_id)
 {
-	g_free(f->alias_id);
-	f->alias_id = g_strdup(alias_id);
+	g_free(f->ypd.id);
+	f->ypd.id = g_strdup(alias_id);
 }
 
 const char *yahoo_friend_get_alias_id(YahooFriend *f)
 {
-	return f->alias_id;
+	return f->ypd.id;
 }
 
 void yahoo_friend_free(gpointer p)
@@ -139,7 +140,7 @@ void yahoo_friend_free(gpointer p)
 	g_free(f->msg);
 	g_free(f->game);
 	g_free(f->ip);
-	g_free(f->alias_id);
+	yahoo_personal_details_reset(&f->ypd, TRUE);
 	g_free(f);
 }
 
@@ -172,15 +173,15 @@ void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
-	if(msn)
-		who = g_strconcat("msn/", temp, NULL);
-	else
-		who = g_strdup(temp);
-
 	if (value != 1 && value != 2) {
 		purple_debug_error("yahoo", "Received unknown value for presence key: %d\n", value);
 		return;
 	}
+
+	if(msn)
+		who = g_strconcat("msn/", temp, NULL);
+	else
+		who = g_strdup(temp);
 
 	g_return_if_fail(who != NULL);
 

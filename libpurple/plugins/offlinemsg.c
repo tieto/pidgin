@@ -93,7 +93,7 @@ record_pounce(OfflineMsg *offline)
 	conv = offline->conv;
 	if (!purple_conversation_get_data(conv, "plugin_pack:offlinemsg"))
 		purple_conversation_write(conv, NULL, _("The rest of the messages will be saved "
-							"as pounce. You can edit/delete the pounce from the `Buddy "
+							"as pounces. You can edit/delete the pounce from the `Buddy "
 							"Pounce' dialog."),
 							PURPLE_MESSAGE_SYSTEM, time(NULL));
 	purple_conversation_set_data(conv, "plugin_pack:offlinemsg",

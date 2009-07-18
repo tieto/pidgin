@@ -47,6 +47,9 @@ struct _PidginSmiley
 	GtkWidget *smiley_image;
 	gchar *filename;
 	GdkPixbuf *custom_pixbuf;
+	gpointer data; /** @since 2.6.0 */
+	gsize datasize; /** @since 2.6.0 */
+	gint entry_len; /** @since 2.6.0 */
 };
 
 typedef struct
@@ -71,6 +74,7 @@ static GSList *gtk_smileys = NULL;
 static void
 pidgin_smiley_destroy(PidginSmiley *smiley)
 {
+	g_object_set_data(G_OBJECT(smiley->smiley), "edit-dialog", NULL);
 	gtk_widget_destroy(smiley->parent);
 	g_free(smiley->filename);
 	if (smiley->custom_pixbuf)
@@ -224,18 +228,6 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 	PurpleSmiley *emoticon;
 
 	entry = gtk_entry_get_text(GTK_ENTRY(s->smile));
-	if (!entry || !*entry) {
-		/*
-		 * TODO: We should enable/disable the add button based on
-		 *       whether the user has entered all required data.  That
-		 *       would eliminate the need for this check and provide a
-		 *       better user experience.
-		 */
-		purple_notify_error(s->parent, _("Custom Smiley"),
-				_("More Data needed"),
-				_("Please provide a shortcut to associate with the smiley."));
-		return;
-	}
 
 	emoticon = purple_smileys_find_by_shortcut(entry);
 	if (emoticon && emoticon != s->smiley) {
@@ -265,19 +257,9 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 		}
 		purple_smiley_set_shortcut(s->smiley, entry);
 	} else {
-		if ((s->filename == NULL && s->custom_pixbuf == NULL)
-				|| *entry == 0) {
-			purple_notify_error(s->parent, _("Custom Smiley"),
-					_("More Data needed"),
-					s->filename ? _("Please provide a shortcut to associate with the smiley.")
-					: _("Please select an image for the smiley."));
-			return;
-		}
-
 		purple_debug_info("gtksmiley", "adding a new smiley\n");
 
 		if (s->filename == NULL) {
-			/* Get the smiley from the custom pixbuf */
 			gchar *buffer = NULL;
 			gsize size = 0;
 			gchar *filename;
@@ -296,8 +278,16 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 				}
 			}
 
-			gdk_pixbuf_save_to_buffer(s->custom_pixbuf, &buffer, &size,
-				"png", NULL, "compression", "9", NULL, NULL);
+			if (s->data && s->datasize) {
+				/* Cached data & size in memory */
+				buffer = s->data;
+				size = s->datasize;
+			}
+			else {
+				/* Get the smiley from the custom pixbuf */
+				gdk_pixbuf_save_to_buffer(s->custom_pixbuf, &buffer, &size,
+					"png", NULL, "compression", "9", NULL, NULL);
+			}
 			filename = purple_util_get_image_filename(buffer, size);
 			s->filename = g_build_filename(dirname, filename, NULL);
 			purple_util_write_data_to_file_absolute(s->filename, buffer, size);
@@ -346,6 +336,9 @@ static void do_add_file_cb(const char *filename, gpointer data)
 	if (pixbuf)
 		g_object_unref(G_OBJECT(pixbuf));
 	gtk_widget_grab_focus(s->smile);
+
+	if (s->entry_len > 0)
+		gtk_dialog_set_response_sensitive(GTK_DIALOG(s->parent), GTK_RESPONSE_ACCEPT, TRUE);
 }
 
 static void
@@ -357,6 +350,36 @@ open_image_selector(GtkWidget *widget, PidginSmiley *psmiley)
 	gtk_window_set_title(GTK_WINDOW(file_chooser), _("Custom Smiley"));
 	gtk_window_set_role(GTK_WINDOW(file_chooser), "file-selector-custom-smiley");
 	gtk_widget_show_all(file_chooser);
+}
+
+static void
+smiley_name_insert_cb(GtkEditable *editable,
+                      gchar       *new_text,
+                      gint         new_text_length,
+                      gint        *position,
+                      gpointer     user_data)
+{
+	PidginSmiley *s = user_data;
+	if (new_text_length != -1)
+		s->entry_len += new_text_length;
+	else
+		s->entry_len += strlen(new_text);
+
+	if (s->filename != NULL || s->custom_pixbuf != NULL || s->smiley != NULL)
+		gtk_dialog_set_response_sensitive(GTK_DIALOG(s->parent), GTK_RESPONSE_ACCEPT, TRUE);
+}
+
+static void
+smiley_name_delete_cb(GtkEditable *editable,
+                      gint         start_pos,
+                      gint         end_pos,
+                      gpointer     user_data)
+{
+	PidginSmiley *s = user_data;
+	s->entry_len -= end_pos - start_pos;
+
+	if (s->entry_len <= 0)
+		gtk_dialog_set_response_sensitive(GTK_DIALOG(s->parent), GTK_RESPONSE_ACCEPT, FALSE);
 }
 
 PidginSmiley *
@@ -380,9 +403,11 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 			smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
 			NULL);
 	s->parent = window;
+	g_object_set_data(G_OBJECT(smiley), "edit-dialog", window);
 
 	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
+	gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_ACCEPT);
 	g_signal_connect(window, "response", G_CALLBACK(do_add_select_cb), s);
 
 	/* The vbox */
@@ -432,10 +457,17 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	s->smile = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(s->smile), TRUE);
 	pidgin_set_accessible_label(s->smile, label);
-	if (smiley)
-		gtk_entry_set_text(GTK_ENTRY(s->smile), purple_smiley_get_shortcut(smiley));
+	if (smiley) {
+		const char *shortcut = purple_smiley_get_shortcut(smiley);
+		gtk_entry_set_text(GTK_ENTRY(s->smile), shortcut);
+		s->entry_len = strlen(shortcut);
+	}
+	else
+		gtk_dialog_set_response_sensitive(GTK_DIALOG(window), GTK_RESPONSE_ACCEPT, FALSE);
 
-	g_signal_connect(s->smile, "activate", G_CALLBACK(do_add), s);
+	/* gtk_entry_get_text_length is 2.14+, so we'll just keep track ourselves */
+	g_signal_connect(G_OBJECT(s->smile), "insert-text", G_CALLBACK(smiley_name_insert_cb), s);
+	g_signal_connect(G_OBJECT(s->smile), "delete-text", G_CALLBACK(smiley_name_delete_cb), s);
 
 	gtk_box_pack_end(GTK_BOX(hbox), s->smile, FALSE, FALSE, 0);
 	gtk_widget_show(s->smile);
@@ -461,8 +493,22 @@ pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image)
 	if (editor->custom_pixbuf)
 		g_object_unref(G_OBJECT(editor->custom_pixbuf));
 	editor->custom_pixbuf = image ? g_object_ref(G_OBJECT(image)) : NULL;
-	if (image)
+	if (image) {
 		gtk_image_set_from_pixbuf(GTK_IMAGE(editor->smiley_image), image);
+		if (editor->entry_len > 0)
+			gtk_dialog_set_response_sensitive(GTK_DIALOG(editor->parent),
+			                                  GTK_RESPONSE_ACCEPT, TRUE);
+	}
+	else
+		gtk_dialog_set_response_sensitive(GTK_DIALOG(editor->parent),
+		                                  GTK_RESPONSE_ACCEPT, FALSE);
+}
+
+void
+pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer *data, gsize datasize)
+{
+	editor->data = data;
+	editor->datasize = datasize;
 }
 
 /******************************************************************************
@@ -606,8 +652,12 @@ static void
 smiley_edit_iter(SmileyManager *dialog, GtkTreeIter *iter)
 {
 	PurpleSmiley *smiley = NULL;
+	GtkWidget *window = NULL;
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), iter, SMILEY, &smiley, -1);
-	pidgin_smiley_edit(gtk_widget_get_toplevel(GTK_WIDGET(dialog->treeview)), smiley);
+	if ((window = g_object_get_data(G_OBJECT(smiley), "edit-dialog")) != NULL)
+		gtk_window_present(GTK_WINDOW(window));
+	else
+		pidgin_smiley_edit(gtk_widget_get_toplevel(GTK_WIDGET(dialog->treeview)), smiley);
 	g_object_unref(G_OBJECT(smiley));
 }
 

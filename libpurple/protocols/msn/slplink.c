@@ -65,9 +65,8 @@ msn_slplink_new(MsnSession *session, const char *username)
 
 	slplink = g_new0(MsnSlpLink, 1);
 
-#ifdef MSN_DEBUG_SLPLINK
-	purple_debug_info("msn", "slplink_new: slplink(%p)\n", slplink);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slplink_new: slplink(%p)\n", slplink);
 
 	slplink->session = session;
 	slplink->slp_seq_id = rand() % 0xFFFFFF00 + 4;
@@ -87,9 +86,8 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 {
 	MsnSession *session;
 
-#ifdef MSN_DEBUG_SLPLINK
-	purple_debug_info("msn", "slplink_destroy: slplink(%p)\n", slplink);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slplink_destroy: slplink(%p)\n", slplink);
 
 	g_return_if_fail(slplink != NULL);
 
@@ -269,9 +267,8 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		msg->msnslp_header.length = len;
 	}
 
-#ifdef MSN_DEBUG_SLP
-	msn_message_show_readable(msg, slpmsg->info, slpmsg->text_body);
-#endif
+	if (purple_debug_is_verbose())
+		msn_message_show_readable(msg, slpmsg->info, slpmsg->text_body);
 
 #ifdef MSN_DEBUG_SLP_FILES
 	debug_msg_to_file(msg, TRUE);
@@ -441,10 +438,7 @@ msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg)
 	slpmsg->ack_id     = msg->msnslp_header.id;
 	slpmsg->ack_sub_id = msg->msnslp_header.ack_id;
 	slpmsg->ack_size   = msg->msnslp_header.total_size;
-
-#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP ACK";
-#endif
 
 	msn_slplink_send_slpmsg(slplink, slpmsg);
 }
@@ -459,9 +453,8 @@ send_file_cb(MsnSlpCall *slpcall)
 	slpmsg = msn_slpmsg_new(slpcall->slplink);
 	slpmsg->slpcall = slpcall;
 	slpmsg->flags = 0x1000030;
-#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP FILE";
-#endif
+
 	xfer = (PurpleXfer *)slpcall->xfer;
 	purple_xfer_start(slpcall->xfer, 0, NULL, 0);
 	slpmsg->fp = xfer->dest_fp;
@@ -496,9 +489,8 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	guint64 offset;
 	gsize len;
 
-#ifdef MSN_DEBUG_SLP
-	msn_slpmsg_show(msg);
-#endif
+	if (purple_debug_is_verbose())
+		msn_slpmsg_show(msg);
 
 #ifdef MSN_DEBUG_SLP_FILES
 	debug_msg_to_file(msg, FALSE);
@@ -592,7 +584,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size)
 		{
 			purple_debug_error("msn",
-				"Oversized slpmsg - msgsize=%lld offset=%" G_GSIZE_FORMAT " len=%" G_GSIZE_FORMAT "\n",
+				"Oversized slpmsg - msgsize=%lld offset=%" G_GUINT64_FORMAT " len=%" G_GSIZE_FORMAT "\n",
 				slpmsg->size, offset, len);
 			g_return_if_reached();
 		}

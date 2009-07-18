@@ -122,9 +122,11 @@ irc_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	else if (ret <= 0) {
 		PurpleConnection *gc = purple_account_get_connection(irc->account);
+		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+			g_strerror(errno));
 		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Server has disconnected"));
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -162,9 +164,11 @@ int irc_send(struct irc_conn *irc, const char *buf)
 		irc->gsc ? " (ssl)" : "", tosend); */
 	if (ret <= 0 && errno != EAGAIN) {
 		PurpleConnection *gc = purple_account_get_connection(irc->account);
+		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+			g_strerror(errno));
 		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Server has disconnected"));
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		g_free(tmp);
 	} else if (ret < buflen) {
 		if (ret < 0)
 			ret = 0;
@@ -306,7 +310,7 @@ static void irc_login(PurpleAccount *account)
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-			_("IRC nicks may not contain whitespace"));
+			_("IRC nick and server may not contain whitespace"));
 		return;
 	}
 
@@ -350,7 +354,7 @@ static void irc_login(PurpleAccount *account)
 		{
 			purple_connection_error_reason (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Couldn't create socket"));
+				_("Unable to connect"));
 			return;
 		}
 	}
@@ -446,9 +450,11 @@ static void irc_login_cb(gpointer data, gint source, const gchar *error_message)
 	struct irc_conn *irc = gc->proto_data;
 
 	if (source < 0) {
+		gchar *tmp = g_strdup_printf(_("Unable to connect: %s"),
+			error_message);
 		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Couldn't connect to host"));
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -635,14 +641,16 @@ static void irc_input_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 		/* Try again later */
 		return;
 	} else if (len < 0) {
+		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Read error"));
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		g_free(tmp);
 		return;
 	} else if (len == 0) {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Server has disconnected"));
+			_("Server closed the connection"));
 		return;
 	}
 
@@ -664,14 +672,16 @@ static void irc_input_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if (len < 0 && errno == EAGAIN) {
 		return;
 	} else if (len < 0) {
+		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Read error"));
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		g_free(tmp);
 		return;
 	} else if (len == 0) {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Server has disconnected"));
+			_("Server closed the connection"));
 		return;
 	}
 

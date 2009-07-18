@@ -51,13 +51,18 @@ struct _PurpleBOSHConnection {
 	PurpleHTTPConnection *connections[MAX_HTTP_CONNECTIONS];
 	unsigned short failed_connections;
 
-	gboolean ready;
+	enum {
+		BOSH_CONN_OFFLINE,
+		BOSH_CONN_BOOTING,
+		BOSH_CONN_ONLINE
+	} state;
 	gboolean ssl;
+	gboolean needs_restart;
 
 	/* decoded URL */
 	char *host;
 	int port;
-	char *path; 
+	char *path;
 
 	/* Must be big enough to hold 2^53 - 1 */
 	guint64 rid;
@@ -84,7 +89,11 @@ struct _PurpleHTTPConnection {
 
 	PurpleCircBuffer *write_buffer;
 
-	gboolean ready;
+	enum {
+		HTTP_CONN_OFFLINE,
+		HTTP_CONN_CONNECTING,
+		HTTP_CONN_CONNECTED
+	} state;
 	int requests; /* number of outstanding HTTP requests */
 
 	GString *buf;
@@ -129,7 +138,7 @@ jabber_bosh_http_connection_init(PurpleBOSHConnection *bosh)
 	PurpleHTTPConnection *conn = g_new0(PurpleHTTPConnection, 1);
 	conn->bosh = bosh;
 	conn->fd = -1;
-	conn->ready = FALSE;
+	conn->state = HTTP_CONN_OFFLINE;
 
 	conn->write_buffer = purple_circ_buffer_new(0 /* default grow size */);
 
@@ -176,6 +185,7 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 	conn->path = g_strdup_printf("/%s", path);
 	g_free(path);
 	conn->pipelining = TRUE;
+	conn->needs_restart = FALSE;
 
 	if ((user && user[0] != '\0') || (passwd && passwd[0] != '\0')) {
 		purple_debug_info("jabber", "Ignoring unexpected username and password "
@@ -198,7 +208,7 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 
 	conn->pending = purple_circ_buffer_new(0 /* default grow size */);
 
-	conn->ready = FALSE;
+	conn->state = BOSH_CONN_OFFLINE;
 	if (purple_strcasestr(url, "https://") != NULL)
 		conn->ssl = TRUE;
 	else
@@ -243,18 +253,28 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 	/* Easy solution: Does everyone involved support pipelining? Hooray! Just use
 	 * one TCP connection! */
 	if (conn->pipelining)
-		return conn->connections[0];
+		return conn->connections[0]->state == HTTP_CONN_CONNECTED ?
+				conn->connections[0] : NULL;
 
 	/* First loop, look for a connection that's ready */
 	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
-		if (conn->connections[i] && conn->connections[i]->ready &&
-		                            conn->connections[i]->requests == 0)
+		if (conn->connections[i] &&
+				conn->connections[i]->state == HTTP_CONN_CONNECTED &&
+				conn->connections[i]->requests == 0)
 			return conn->connections[i];
 	}
 
-	/* Second loop, look for one that's NULL and create a new connection */
+	/* Second loop, is something currently connecting? If so, just queue up. */
+	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+		if (conn->connections[i] &&
+				conn->connections[i]->state == HTTP_CONN_CONNECTING)
+			return NULL;
+	}
+
+	/* Third loop, look for one that's NULL and create a new connection */
 	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
 		if (!conn->connections[i]) {
+			purple_debug_info("jabber", "bosh: Creating and connecting new httpconn\n");
 			conn->connections[i] = jabber_bosh_http_connection_init(conn);
 
 			http_connection_connect(conn->connections[i]);
@@ -267,8 +287,8 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 }
 
 static void
-jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType type,
-                            const char *data)
+jabber_bosh_connection_send(PurpleBOSHConnection *conn,
+                            const PurpleBOSHPacketType type, const char *data)
 {
 	PurpleHTTPConnection *chosen;
 	GString *packet = NULL;
@@ -277,14 +297,16 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType typ
 
 	if (type != PACKET_NORMAL && !chosen) {
 		/*
-		 * For non-ordinary traffic, we don't want to 'buffer' it, so use the first
-		 * connection.
+		 * For non-ordinary traffic, we can't 'buffer' it, so use the
+		 * first connection.
 		 */
 		chosen = conn->connections[0];
-	
-		if (!chosen->ready)
-			purple_debug_warning("jabber", "First BOSH connection wasn't ready. Bad "
-					"things may happen.\n");
+
+		if (chosen->state != HTTP_CONN_CONNECTED) {
+			purple_debug_info("jabber", "Unable to find a ready BOSH "
+					"connection. Ignoring send of type 0x%02x.\n", type);
+			return;
+		}
 	}
 
 	if (type == PACKET_NORMAL && (!chosen ||
@@ -296,12 +318,13 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType typ
 		 */
 		if (data) {
 			int len = data ? strlen(data) : 0;
-			purple_circ_buffer_append(conn->pending, data, len); 
+			purple_circ_buffer_append(conn->pending, data, len);
 		}
+
 		return;
 	}
 
-	packet = g_string_new("");
+	packet = g_string_new(NULL);
 
 	g_string_printf(packet, "<body "
 	                "rid='%" G_GUINT64_FORMAT "' "
@@ -314,9 +337,11 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn, PurpleBOSHPacketType typ
 	                conn->sid,
 	                conn->js->user->domain);
 
-	if (type == PACKET_STREAM_RESTART)
+	if (type == PACKET_STREAM_RESTART) {
 		packet = g_string_append(packet, " xmpp:restart='true'/>");
-	else {
+		/* TODO: Do we need to wait for a response? */
+		conn->needs_restart = FALSE;
+	} else {
 		gsize read_amt;
 		if (type == PACKET_TERMINATE)
 			packet = g_string_append(packet, " type='terminate'");
@@ -341,7 +366,9 @@ void jabber_bosh_connection_close(PurpleBOSHConnection *conn)
 	jabber_bosh_connection_send(conn, PACKET_TERMINATE, NULL);
 }
 
-static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn) {
+static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn)
+{
+	conn->needs_restart = TRUE;
 	jabber_bosh_connection_send(conn, PACKET_STREAM_RESTART, NULL);
 }
 
@@ -349,10 +376,10 @@ static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, x
 	const char *type;
 
 	type = xmlnode_get_attrib(node, "type");
-	
+
 	if (type != NULL && !strcmp(type, "terminate")) {
-		conn->ready = FALSE;
-		purple_connection_error_reason (conn->js->gc,
+		conn->state = BOSH_CONN_OFFLINE;
+		purple_connection_error_reason(conn->js->gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("The BOSH connection manager terminated your session."));
 		return TRUE;
@@ -382,11 +409,6 @@ static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode 
 		/* jabber_process_packet might free child */
 		xmlnode *next = child->next;
 		if (child->type == XMLNODE_TYPE_TAG) {
-			if (!strcmp(child->name, "iq")) {
-				if (xmlnode_get_child(child, "session"))
-					conn->ready = TRUE;
-			}
-
 			jabber_process_packet(js, &child);
 		}
 
@@ -418,7 +440,7 @@ static void auth_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 			jabber_process_packet(js, &child);
 		}
 	} else {
-		purple_debug_warning("jabber", "Received unexepcted empty BOSH packet.\n");	
+		purple_debug_warning("jabber", "Received unexepcted empty BOSH packet.\n");
 	}
 }
 
@@ -448,10 +470,13 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 
 	if (version) {
 		const char *dot = strstr(version, ".");
-		int major = atoi(version);
-		int minor = atoi(dot + 1);
+		int major, minor = 0;
 
 		purple_debug_info("jabber", "BOSH connection manager version %s\n", version);
+
+		major = atoi(version);
+		if (dot)
+			minor = atoi(dot + 1);
 
 		if (major != 1 || minor < 6) {
 			purple_connection_error_reason(conn->js->gc,
@@ -471,9 +496,13 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 			conn->max_inactivity = 0;
 		} else {
 			/* TODO: Integrate this with jabber.c keepalive checks... */
-			conn->inactivity_timer = purple_timeout_add_seconds(
-					conn->max_inactivity - 2 /* rounding */, bosh_inactivity_cb,
-					conn);
+			if (conn->inactivity_timer == 0) {
+				purple_debug_misc("jabber", "Starting BOSH inactivity timer for %d secs (compensating for rounding)\n",
+						conn->max_inactivity - 5);
+				conn->inactivity_timer = purple_timeout_add_seconds(
+						conn->max_inactivity - 5 /* rounding */,
+						bosh_inactivity_cb, conn);
+			}
 		}
 	}
 
@@ -482,13 +511,14 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 
 	/* FIXME: Depending on receiving features might break with some hosts */
 	packet = xmlnode_get_child(node, "features");
+	conn->state = BOSH_CONN_ONLINE;
 	conn->js->use_bosh = TRUE;
 	conn->receive_cb = auth_response_cb;
-	jabber_stream_features_parse(conn->js, packet);		
+	jabber_stream_features_parse(conn->js, packet);
 }
 
 static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
-	GString *buf = g_string_new("");
+	GString *buf = g_string_new(NULL);
 
 	g_string_printf(buf, "<body content='text/xml; charset=utf-8' "
 	                "secure='true' "
@@ -506,6 +536,8 @@ static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 	                conn->js->user->domain,
 	                ++conn->rid);
 
+	purple_debug_misc("jabber", "SendBOSH Boot %s(%" G_GSIZE_FORMAT "): %s\n",
+	                  conn->ssl ? "(ssl)" : "", buf->len, buf->str);
 	conn->receive_cb = boot_response_cb;
 	http_connection_send_request(conn->connections[0], buf);
 	g_string_free(buf, TRUE);
@@ -545,7 +577,7 @@ static void
 connection_common_established_cb(PurpleHTTPConnection *conn)
 {
 	/* Indicate we're ready and reset some variables */
-	conn->ready = TRUE;
+	conn->state = HTTP_CONN_CONNECTED;
 	conn->requests = 0;
 	if (conn->buf) {
 		g_string_free(conn->buf, TRUE);
@@ -554,9 +586,11 @@ connection_common_established_cb(PurpleHTTPConnection *conn)
 	conn->headers_done = FALSE;
 	conn->handled_len = conn->body_len = 0;
 
-	if (conn->bosh->ready) {
+	if (conn->bosh->needs_restart)
+		jabber_bosh_connection_stream_restart(conn->bosh);
+	else if (conn->bosh->state == BOSH_CONN_ONLINE) {
 		purple_debug_info("jabber", "BOSH session already exists. Trying to reuse it.\n");
-		if (conn->bosh->pending->bufused > 0) {
+		if (conn->bosh->requests == 0 || conn->bosh->pending->bufused > 0) {
 			/* Send the pending data */
 			jabber_bosh_connection_send(conn->bosh, PACKET_NORMAL, NULL);
 		}
@@ -580,7 +614,7 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 	 * Well, then. Fine! I never liked you anyway, server! I was cheating on you
 	 * with AIM!
 	 */
-	conn->ready = FALSE;
+	conn->state = HTTP_CONN_OFFLINE;
 	if (conn->psc) {
 		purple_ssl_close(conn->psc);
 		conn->psc = NULL;
@@ -615,6 +649,10 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 
 void jabber_bosh_connection_connect(PurpleBOSHConnection *bosh) {
 	PurpleHTTPConnection *conn = bosh->connections[0];
+
+	g_return_if_fail(bosh->state == BOSH_CONN_OFFLINE);
+	bosh->state = BOSH_CONN_BOOTING;
+
 	http_connection_connect(conn);
 }
 
@@ -627,13 +665,24 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 
 	if (!conn->headers_done) {
 		const char *content_length = purple_strcasestr(cursor, "\r\nContent-Length");
-		const char *end_of_headers = purple_strcasestr(cursor, "\r\n\r\n");
+		const char *end_of_headers = strstr(cursor, "\r\n\r\n");
 
 		/* Make sure Content-Length is in headers, not body */
-		if (content_length && content_length < end_of_headers) {
-			char *sep = strstr(content_length, ": ");
-			int len = atoi(sep + 2);
-			if (len == 0) 
+		if (content_length && (!end_of_headers || content_length < end_of_headers)) {
+			const char *sep;
+			const char *eol;
+			int len;
+
+			if ((sep = strstr(content_length, ": ")) == NULL ||
+					(eol = strstr(sep, "\r\n")) == NULL)
+				/*
+				 * The packet ends in the middle of the Content-Length line.
+				 * We'll try again later when we have more.
+				 */
+				return;
+
+			len = atoi(sep + 2);
+			if (len == 0)
 				purple_debug_warning("jabber", "Found mangled Content-Length header.\n");
 
 			conn->body_len = len;
@@ -663,10 +712,10 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 	http_received_cb(conn->buf->str + conn->handled_len, conn->body_len,
 	                 conn->bosh);
 
-	if (conn->bosh->ready &&
+	if (conn->bosh->state == BOSH_CONN_ONLINE &&
 			(conn->bosh->requests == 0 || conn->bosh->pending->bufused > 0)) {
-		jabber_bosh_connection_send(conn->bosh, PACKET_NORMAL, NULL);
 		purple_debug_misc("jabber", "BOSH: Sending an empty request\n");
+		jabber_bosh_connection_send(conn->bosh, PACKET_NORMAL, NULL);
 	}
 
 	g_string_free(conn->buf, TRUE);
@@ -686,26 +735,24 @@ http_connection_read(PurpleHTTPConnection *conn)
 	int cnt, count = 0;
 
 	if (!conn->buf)
-		conn->buf = g_string_new("");
+		conn->buf = g_string_new(NULL);
 
-	/* Read once to prime cnt before the loop */
-	if (conn->psc)
-		cnt = purple_ssl_read(conn->psc, buffer, sizeof(buffer));
-	else
-		cnt = read(conn->fd, buffer, sizeof(buffer));
-	while (cnt > 0) {
-		count += cnt;
-		g_string_append_len(conn->buf, buffer, cnt);
-
+	do {
 		if (conn->psc)
 			cnt = purple_ssl_read(conn->psc, buffer, sizeof(buffer));
 		else
 			cnt = read(conn->fd, buffer, sizeof(buffer));
-	}
+
+		if (cnt > 0) {
+			count += cnt;
+			g_string_append_len(conn->buf, buffer, cnt);
+		}
+	} while (cnt > 0);
 
 	if (cnt == 0 || (cnt < 0 && errno != EAGAIN)) {
 		if (cnt < 0)
-			purple_debug_info("jabber", "bosh read=%d, errno=%d\n", cnt, errno);
+			purple_debug_info("jabber", "bosh read=%d, errno=%d, error=%s\n",
+			                  cnt, errno, g_strerror(errno));
 		else
 			purple_debug_info("jabber", "bosh server closed the connection\n");
 
@@ -718,8 +765,8 @@ http_connection_read(PurpleHTTPConnection *conn)
 		/* Process what we do have */
 	}
 
-
-	jabber_bosh_http_connection_process(conn);
+	if (conn->buf->len > 0)
+		jabber_bosh_http_connection_process(conn);
 }
 
 static void
@@ -769,7 +816,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error)
 
 	if (source < 0) {
 		gchar *tmp;
-		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+		tmp = g_strdup_printf(_("Unable to establish a connection with the server: %s"),
 		        error);
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
@@ -787,6 +834,8 @@ static void http_connection_connect(PurpleHTTPConnection *conn)
 	PurpleBOSHConnection *bosh = conn->bosh;
 	PurpleConnection *gc = bosh->js->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
+
+	conn->state = HTTP_CONN_CONNECTING;
 
 	if (bosh->ssl) {
 		if (purple_ssl_is_supported()) {
@@ -808,7 +857,7 @@ static void http_connection_connect(PurpleHTTPConnection *conn)
 	                                 connection_established_cb, conn) == NULL) {
 		purple_connection_error_reason(gc,
 		    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		    _("Unable to create socket"));
+		    _("Unable to connect"));
 	}
 }
 
@@ -848,9 +897,12 @@ http_connection_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		 * buffer that stores what is "being sent" until the
 		 * PurpleHTTPConnection reports it is fully sent.
 		 */
+		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason(conn->bosh->js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Write error"));
+				tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -891,9 +943,12 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 		 * buffer that stores what is "being sent" until the
 		 * PurpleHTTPConnection reports it is fully sent.
 		 */
+		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason(conn->bosh->js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Write error"));
+				tmp);
+		g_free(tmp);
 		return;
 	} else if (ret < len) {
 		if (ret < 0)

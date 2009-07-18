@@ -1,4 +1,4 @@
-DIST_SUBDIRS = cap gestures gevolution musicmessaging perl ticker
+DIST_SUBDIRS = cap disco gestures gevolution musicmessaging perl ticker
 
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution
@@ -26,6 +26,7 @@ SUBDIRS = \
 	$(GEVOLUTION_DIR) \
 	$(MUSICMESSAGING_DIR) \
 	$(PERL_DIR) \
+	disco \
 	ticker
 
 plugindir = $(libdir)/pidgin
@@ -139,5 +140,5 @@ SUFFIXES = .c .so
 	$(LIBTOOL) --mode=compile $(CC) -DHAVE_CONFIG_H -I$(top_builddir) $(AM_CPPFLAGS) $(CFLAGS) -c $< -o tmp$@.lo $(PLUGIN_CFLAGS)
 	$(LIBTOOL) --mode=link    $(CC) $(CFLAGS) -o libtmp$@.la -rpath $(plugindir) tmp$@.lo $(LIBS) $(LDFLAGS) -module -avoid-version $(PLUGIN_LIBS)
 	@rm -f tmp$@.lo tmp$@.o libtmp$@.la
-	@cp .libs/libtmp$@.so* $@
-	@rm -f .libs/libtmp$@.*
+	@cp .libs/libtmp$@.so.so $@
+	@rm -rf .libs/libtmp$@.*

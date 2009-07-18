@@ -1549,7 +1549,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-visited-color",
 	                                        _("Hyperlink visited color"),
-	                                        _("Color to draw hyperlinks after it has been visited (or activated)."),
+	                                        _("Color to draw hyperlink after it has been visited (or activated)."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-prelight-color",
 	                                        _("Hyperlink prelight color"),
@@ -1573,11 +1573,11 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-action-name-color",
 	                                        _("Action Message Name Color for Whispered Message"),
-	                                        _("Color to draw the name of an action message."),
+	                                        _("Color to draw the name of a whispered action message."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-name-color",
 	                                        _("Whisper Message Name Color"),
-	                                        _("Color to draw the name of an action message."),
+	                                        _("Color to draw the name of a whispered message."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 
 	/* Customizable typing notification ... sort of. Example:
@@ -1587,7 +1587,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	 */
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("typing-notification-color",
 	                                        _("Typing notification color"),
-	                                        _("The color to use for the typing notification font"),
+	                                        _("The color to use for the typing notification"),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_string("typing-notification-font",
 	                                        _("Typing notification font"),
@@ -2996,10 +2996,21 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							break;
 
 						id = gtk_imhtml_get_html_opt(tag, "ID=");
-						if (!id)
-							break;
-						gtk_imhtml_insert_image_at_iter(imhtml, atoi(id), iter);
-						g_free(id);
+						if (id) {
+							gtk_imhtml_insert_image_at_iter(imhtml, atoi(id), iter);
+							g_free(id);
+						} else {
+							char *src, *alt;
+							src = gtk_imhtml_get_html_opt(tag, "SRC=");
+							alt = gtk_imhtml_get_html_opt(tag, "ALT=");
+							if (src) {
+								gtk_imhtml_toggle_link(imhtml, src);
+								gtk_text_buffer_insert(imhtml->text_buffer, iter, alt ? alt : src, -1);
+								gtk_imhtml_toggle_link(imhtml, NULL);
+							}
+							g_free (src);
+							g_free (alt);
+						}
 						break;
 					}
 				case 47:	/* P (opt) */
@@ -3867,12 +3878,15 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 }
 
 static void
-gtk_imhtml_custom_smiley_save(GtkWidget *w, GtkIMHtmlImage *image)
+gtk_imhtml_custom_smiley_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 {
+	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
+	
 	/* Create an add dialog */
 	PidginSmiley *editor = pidgin_smiley_edit(NULL, NULL);
 	pidgin_smiley_editor_set_shortcut(editor, image->filename);
 	pidgin_smiley_editor_set_image(editor, image->pixbuf);
+	pidgin_smiley_editor_set_data(editor, save->data, save->datasize);
 }
 
 /*
@@ -3907,7 +3921,7 @@ static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtm
 				item = gtk_image_menu_item_new_with_mnemonic(_("_Add Custom Smiley..."));
 				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
 				g_signal_connect(G_OBJECT(item), "activate",
-								 G_CALLBACK(gtk_imhtml_custom_smiley_save), image);
+								 G_CALLBACK(gtk_imhtml_custom_smiley_save), save);
 				gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 			}
 
@@ -5062,6 +5076,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 			gtk_widget_show(img);
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", text, g_free);
 			g_object_set_data(G_OBJECT(anchor), "gtkimhtml_tiptext", text);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley), g_free);
 			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox, anchor);
 		}
 	} else {

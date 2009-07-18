@@ -1102,7 +1102,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 				PurpleAccount *account = purple_buddy_get_account((PurpleBuddy *)node);
 				const char *prpl_id = purple_account_get_protocol_id(account);
 
-				if (purple_strequal(prpl_id, "prpl-yahoo"))
+				if (g_str_equal(prpl_id, "prpl-yahoo") || g_str_equal(prpl_id, "prpl-yahoojp"))
 				{
 					int checksum = purple_blist_node_get_int(node, "icon_checksum");
 					if (checksum != 0)

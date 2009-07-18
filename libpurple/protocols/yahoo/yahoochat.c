@@ -30,7 +30,7 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+#endif /* HAVE_CONFIG_H */
 
 #include "debug.h"
 #include "privacy.h"
@@ -40,7 +40,7 @@
 #include "notify.h"
 #include "util.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_packet.h"
 #include "yahoochat.h"
 #include "ycht.h"
@@ -121,11 +121,28 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 	char *msg = NULL;
 	GString *members = NULL;
 	GHashTable *components;
+	PurpleConversation *c = NULL;
 
-	if (pkt->status == 2)
-		return; /* XXX */
+	if ( (pkt->status == 2) || (pkt->status == 11) )
+		return; /* Status is 11 when we are being notified about invitation being sent to someone else */
 
 	account = purple_connection_get_account(gc);
+
+	for (l = pkt->hash; l; l = l->next) {
+		struct yahoo_pair *pair = l->data;
+		if (pair->key == 57)
+		{
+			room = yahoo_string_decode(gc, pair->value, FALSE);
+			if((c = yahoo_find_conference(gc, room)))
+			{
+				/* Looks like we got invited to an already open conference. */
+				/* Laters: Should we accept this conference rather than ignoring the invitation ? */
+				purple_debug_info("yahoo","Ignoring invitation for an already existing chat, room:%s\n",room);
+				g_free(room);
+				return;
+			}
+		}
+	}
 
 	members = g_string_sized_new(512);
 
@@ -143,8 +160,11 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 			who = pair->value;
 			g_string_append_printf(members, "%s\n", who);
 			break;
-		case 52: /* invitee (me) */
-		case 53: /* members */
+		case 51: /* This user is being invited to the conference. Comes with status = 11, so we wont reach here */
+			break;
+		case 52: /* Invited users. Assuming us invited, since we got this packet */
+			break; /* break needed, or else we add the users to the conference before they accept the invitation */
+		case 53: /* members who have already joined the conference */
 			g_string_append_printf(members, "%s\n", pair->value);
 			break;
 		case 58:
@@ -254,7 +274,10 @@ void yahoo_process_conference_logon(PurpleConnection *gc, struct yahoo_packet *p
 	if (who && room) {
 		c = yahoo_find_conference(gc, room);
 		if (c)
-			yahoo_chat_add_user(PURPLE_CONV_CHAT(c), who, NULL);
+		{	/* Prevent duplicate users in the chat */
+			if( !purple_conv_chat_find_user(PURPLE_CONV_CHAT(c), who) )
+				yahoo_chat_add_user(PURPLE_CONV_CHAT(c), who, NULL);
+		}
 		g_free(room);
 	}
 }
@@ -648,7 +671,7 @@ void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (!msg) {
-		purple_debug(PURPLE_DEBUG_MISC, "yahoo", "Got a message packet with no message.\nThis probably means something important, but we're ignoring it.\n");
+		purple_debug_misc("yahoo", "Got a message packet with no message.\nThis probably means something important, but we're ignoring it.\n");
 		return;
 	}
 	msg2 = yahoo_string_decode(gc, msg, utf8);
@@ -1519,7 +1542,7 @@ PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 
 	purple_roomlist_set_fields(rl, fields);
 
-	if (purple_proxy_connect(NULL, account, yrl->host, 80,
+	if (purple_proxy_connect(gc, account, yrl->host, 80,
 	                       yahoo_roomlist_got_connected, yrl) == NULL)
 	{
 		purple_notify_error(gc, NULL, _("Connection problem"), _("Unable to fetch room list."));
@@ -1588,8 +1611,9 @@ void yahoo_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *ca
 	yrl->ucat = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_CATEGORY, _("User Rooms"), yrl->cat);
 	purple_roomlist_room_add(list, yrl->ucat);
 
-	if (purple_proxy_connect(NULL, list->account, yrl->host, 80,
-	                       yahoo_roomlist_got_connected, yrl) == NULL)
+	if (purple_proxy_connect(purple_account_get_connection(list->account),
+			list->account, yrl->host, 80,
+			yahoo_roomlist_got_connected, yrl) == NULL)
 	{
 		purple_notify_error(purple_account_get_connection(list->account),
 		                  NULL, _("Connection problem"), _("Unable to fetch room list."));

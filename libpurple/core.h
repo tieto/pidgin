@@ -186,6 +186,12 @@ gboolean purple_core_ensure_single_instance(void);
  *
  *   <dt><tt>dev_website</tt></dt>
  *   <dd>the UI's development/support website, such as http://developer.pidgin.im.</dd>
+ *
+ *   <dt><tt>client_type</tt></dt>
+ *   <dd>the type of UI. Possible values include 'pc', 'console', 'phone',
+ *       'handheld', 'web', and 'bot'. These values are compared
+ *       programmatically and should not be localized.</dd>
+ *   
  * </dl>
  *
  * @return A GHashTable with strings for keys and values.  This

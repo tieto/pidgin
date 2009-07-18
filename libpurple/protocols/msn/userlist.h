@@ -47,7 +47,6 @@ struct _MsnUserList
 
 	GList *users; /* Contains MsnUsers */
 	GList *groups; /* Contains MsnGroups */
-	GList *pending; /* MsnUsers pending addition (waiting for FQY response) */
 
 	GQueue *buddy_icon_requests;
 	int buddy_icon_window;
@@ -57,12 +56,7 @@ struct _MsnUserList
 
 gboolean msn_userlist_user_is_in_group(MsnUser *user, const char * group_id);
 gboolean msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id);
-MsnListId msn_get_list_id(const char *list);
 
-void msn_got_add_user(MsnSession *session, MsnUser *user,
-					  MsnListId list_id, const char *group_id);
-void msn_got_rem_user(MsnSession *session, MsnUser *user,
-					  MsnListId list_id, const char *group_id);
 void msn_got_lst_user(MsnSession *session, MsnUser *user,
 					  int list_op, GSList *group_ids);
 
@@ -92,12 +86,6 @@ void msn_userlist_remove_group_id(MsnUserList *userlist, const char *group_id);
 void msn_userlist_rem_buddy(MsnUserList *userlist, const char *who);
 void msn_userlist_add_buddy(MsnUserList *userlist,
 			    const char *who, const char *group_name);
-void msn_userlist_save_pending_buddy(MsnUserList *userlist,
-                                     const char *who,
-                                     const char *group_name);
-void msn_userlist_add_pending_buddy(MsnSession *session,
-                                    const char *who,
-                                    /*MsnNetwork*/ int network);
 void msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 						    const char *old_group_name,
 						    const char *new_group_name);

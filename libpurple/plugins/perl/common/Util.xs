@@ -69,7 +69,7 @@ purple_message_meify(SV *msg)
 	PREINIT:
 		char *message = NULL;
 		gboolean ret;
-		gssize len;
+		gsize len;
 	CODE:
 		message = SvPV(msg, len);
 		message = g_strndup(message, len);
@@ -239,7 +239,7 @@ purple_base16_decode(str)
 	CODE:
 		ret = purple_base16_decode(str, &len);
 		if(len) {
-			RETVAL = newSVpv(ret, len);
+			RETVAL = newSVpv((gchar *)ret, len);
 		} else {
 			g_free(ret);
 			XSRETURN_UNDEF;
@@ -257,7 +257,7 @@ purple_base64_decode(str)
 	CODE:
 		ret = purple_base64_decode(str, &len);
 		if(len) {
-			RETVAL = newSVpv(ret, len);
+			RETVAL = newSVpv((gchar *)ret, len);
 		} else {
 			g_free(ret);
 			XSRETURN_UNDEF;
@@ -275,7 +275,7 @@ purple_quotedp_decode(str)
 	CODE:
 		ret = purple_quotedp_decode(str, &len);
 		if(len) {
-			RETVAL = newSVpv(ret, len);
+			RETVAL = newSVpv((gchar *)ret, len);
 		} else {
 			g_free(ret);
 			XSRETURN_UNDEF;
@@ -499,11 +499,11 @@ purple_util_format_song_info(title, artist, album, unused)
 	gpointer unused
 
 const char*
-purple_util_get_image_extension(gconstpointer data, size_t length(data))
+purple_util_get_image_extension(const char *data, size_t length(data))
 	PROTOTYPE: $
 
 gchar_own*
-purple_util_get_image_filename(gconstpointer image_data, size_t length(image_data))
+purple_util_get_image_filename(const char *image_data, size_t length(image_data))
 	PROTOTYPE: $
 
 Purple::XMLNode

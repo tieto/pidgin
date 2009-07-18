@@ -74,9 +74,9 @@ struct artist {
 static const struct developer developers[] = {
 	{"Daniel 'datallah' Atallah",	NULL, NULL},
 	{"Paul 'darkrain42' Aurich",	NULL, NULL },
-	{"John 'rekkanoryo' Bailey",	N_("bug master"), "rekkanoryo@pidgin.im"},
+	{"John 'rekkanoryo' Bailey",	N_("bug master"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	NULL, NULL},
-	{"Hylke Bons",			N_("artist"), "h.bons@student.rug.nl"},
+	{"Hylke Bons",			N_("artist"), "hylkebons@gmail.com"},
 	{"Thomas Butter",				NULL, NULL},
 	/* feel free to not translate this */
 	{N_("Ka-Hing Cheung"),			NULL, NULL},
@@ -186,6 +186,7 @@ static const struct translator translators[] = {
 	{N_("Hebrew"),              "he", "Shalom Craimer", "scraimer@gmail.com"},
 	{N_("Hindi"),               "hi", "Ravishankar Shrivastava", "raviratlami@yahoo.com"},
 	{N_("Hungarian"),           "hu", "Kelemen Gábor", "kelemeng@gnome.hu"},
+	{N_("Armenian"),            "hy", "David Avsharyan", "avsharyan@gmail.com"},
 	{N_("Indonesian"),          "id", "Rai S. Regawa", "raireg@yahoo.com"},
 	{N_("Italian"),             "it", "Claudio Satriano", "satriano@na.infn.it"},
 	{N_("Japanese"),            "ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
@@ -223,13 +224,14 @@ static const struct translator translators[] = {
 	{N_("Sinhala"),             "si", "Danishka Navin", "snavin@redhat.com"},
 	{N_("Sinhala"),             "si", "Yajith Ajantha Dayarathna", "yajith@gmail.com"},
 	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
+	{N_("Swahili"),             "sw", "Paul Msegeya", "msegeya@gmail.com"},
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
 	{N_("Thai"),                "th", "Isriya Paireepairit", "markpeak@gmail.com"},
 	{N_("Turkish"),             "tr", "Serdar Soytetir", "tulliana@gmail.com"},
 	{N_("Urdu"),                "ur", "RKVS Raman", "rkvsraman@gmail.com"},
 	{N_("Vietnamese"),          "vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
-	{N_("Simplified Chinese"),  "zh_CN", "Funda Wang", "fundawang@linux.net.cn"},
+	{N_("Simplified Chinese"),  "zh_CN", "Aron Xu", "aronmalache@163.com"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Abel Cheung", "abelindsay@gmail.com"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Ambrose C. Li", "acli@ada.dhs.org"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Paladin R. Liu", "paladin@ms1.hinet.net"},
@@ -292,6 +294,7 @@ static const struct translator past_translators[] = {
 	{N_("Swedish"),             "sv", "Christian Rose", NULL},
 	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", NULL},
 	{N_("Simplified Chinese"),  "zh_CN", "Hashao, Rocky S. Lee", NULL},
+	{N_("Simplified Chinese"),  "zh_CN", "Funda Wang", "fundawang@linux.net.cn"},
 	{N_("Traditional Chinese"), "zh_TW", "Hashao, Rocky S. Lee", NULL},
 	{NULL, NULL, NULL, NULL}
 };

@@ -531,6 +531,13 @@ gchar *qq_get_icon_name(gint face)
 	return icon_name;
 }
 
+/*
+ * This function seems to let people set their buddy icon, but it restricts
+ * them to using a small list of stock icons.  Wouldn't it make more sense
+ * to use libpurple's normal icon setting stuff?
+ *
+ * Also it would be nice to unify the icon_dir code for Windows and Linux.
+ */
 gchar *qq_get_icon_path(gchar *icon_name)
 {
 	gchar *icon_path;
@@ -543,6 +550,13 @@ gchar *qq_get_icon_path(gchar *icon_name)
 	}
 #endif
 
+	/*
+	 * TODO: The QQ protocol plugin should probably call
+	 *       purple_prefs_add_string() at startup to initialize this
+	 *       preference.  It is used to allow users or distributions
+	 *       to specify this directory.  We don't include these icons
+	 *       with libpurple because of possible copyright concerns.
+	 */
 	icon_dir = purple_prefs_get_string("/plugins/prpl/qq/icon_dir");
 	if ( icon_dir == NULL || strlen(icon_dir) == 0) {
 #ifdef _WIN32

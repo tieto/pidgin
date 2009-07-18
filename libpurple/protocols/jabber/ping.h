@@ -29,5 +29,6 @@
 void jabber_ping_parse(JabberStream *js, const char *from,
                        JabberIqType, const char *id, xmlnode *child);
 gboolean jabber_ping_jid(JabberStream *js, const char *jid);
+void jabber_keepalive_ping(JabberStream *js);
 
 #endif /* PURPLE_JABBER_PING_H_ */

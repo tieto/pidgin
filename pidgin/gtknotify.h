@@ -49,4 +49,14 @@ void pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
  */
 PurpleNotifyUiOps *pidgin_notify_get_ui_ops(void);
 
+/**
+ * Initializes the GTK+ notifications subsystem.
+ */
+void pidgin_notify_init(void);
+
+/**
+ * Uninitialized the GTK+ notifications subsystem.
+ */
+void pidgin_notify_uninit(void);
+
 #endif /* _PIDGINNOTIFY_H_ */

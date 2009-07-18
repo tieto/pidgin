@@ -481,6 +481,36 @@ schedule_accounts_save(void)
 /*********************************************************************
  * Reading from disk                                                 *
  *********************************************************************/
+static void
+migrate_yahoo_japan(PurpleAccount *account)
+{
+	/* detect a Yahoo! JAPAN account that existed prior to 2.6.0 and convert it
+	 * to use the new prpl-yahoojp.  Also remove the account-specific settings
+	 * we no longer need */
+
+	if(purple_strequal(purple_account_get_protocol_id(account), "prpl-yahoo")) {
+		if(purple_account_get_bool(account, "yahoojp", FALSE)) {
+			const char *serverjp = purple_account_get_string(account, "serverjp", NULL);
+			const char *xferjp_host = purple_account_get_string(account, "xferjp_host", NULL);
+
+			g_return_if_fail(serverjp != NULL);
+			g_return_if_fail(xferjp_host != NULL);
+
+			purple_account_set_string(account, "server", serverjp);
+			purple_account_set_string(account, "xfer_host", xferjp_host);
+
+			purple_account_set_protocol_id(account, "prpl-yahoojp");
+		}
+
+		/* these should always be nuked */
+		purple_account_remove_setting(account, "yahoojp");
+		purple_account_remove_setting(account, "serverjp");
+		purple_account_remove_setting(account, "xferjp_host");
+
+	}
+
+	return;
+}
 
 static void
 parse_settings(xmlnode *node, PurpleAccount *account)
@@ -545,6 +575,10 @@ parse_settings(xmlnode *node, PurpleAccount *account)
 
 		g_free(data);
 	}
+
+	/* we do this here because we need access to account settings to determine
+	 * if we can/should migrate an old Yahoo! JAPAN account */
+	migrate_yahoo_japan(account);
 }
 
 static GList *
@@ -1132,28 +1166,31 @@ void
 purple_account_connect(PurpleAccount *account)
 {
 	PurplePlugin *prpl;
+	const char *password, *username;
 	PurplePluginProtocolInfo *prpl_info;
-	const char *password;
 
 	g_return_if_fail(account != NULL);
 
-	purple_debug_info("account", "Connecting to account %s\n",
-					purple_account_get_username(account));
+	username = purple_account_get_username(account);
 
-	if (!purple_account_get_enabled(account, purple_core_get_ui()))
+	if (!purple_account_get_enabled(account, purple_core_get_ui())) {
+		purple_debug_info("account",
+				  "Account %s not enabled, not connecting.\n",
+				  username);
 		return;
+	}
 
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
-	if (prpl == NULL)
-	{
+	if (prpl == NULL) {
 		gchar *message;
 
-		message = g_strdup_printf(_("Missing protocol plugin for %s"),
-			purple_account_get_username(account));
+		message = g_strdup_printf(_("Missing protocol plugin for %s"), username);
 		purple_notify_error(account, _("Connection Error"), message, NULL);
 		g_free(message);
 		return;
 	}
+
+	purple_debug_info("account", "Connecting to account %s.\n", username);
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	password = purple_account_get_password(account);
@@ -1722,6 +1759,15 @@ purple_account_clear_settings(PurpleAccount *account)
 
 	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 											  g_free, delete_setting);
+}
+
+void
+purple_account_remove_setting(PurpleAccount *account, const char *setting)
+{
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(setting != NULL);
+
+	g_hash_table_remove(account->settings, setting);
 }
 
 void
@@ -2660,7 +2706,7 @@ purple_accounts_restore_current_statuses()
 	/* If we're not connected to the Internet right now, we bail on this */
 	if (!purple_network_is_available())
 	{
-		purple_debug_info("account", "Network not connected; skipping reconnect\n");
+		purple_debug_warning("account", "Network not connected; skipping reconnect\n");
 		return;
 	}
 
@@ -2810,9 +2856,9 @@ purple_accounts_uninit(void)
 		sync_accounts();
 	}
 
-	purple_signals_disconnect_by_handle(handle);
-	purple_signals_unregister_by_instance(handle);
-
 	for (; accounts; accounts = g_list_delete_link(accounts, accounts))
 		purple_account_destroy(accounts->data);
+
+	purple_signals_disconnect_by_handle(handle);
+	purple_signals_unregister_by_instance(handle);
 }

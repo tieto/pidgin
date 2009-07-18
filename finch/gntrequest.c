@@ -317,6 +317,8 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 		{
 			PurpleRequestField *field = fields->data;
 			PurpleRequestFieldType type = purple_request_field_get_type(field);
+			if (!purple_request_field_is_visible(field))
+				continue;
 			if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 			{
 				GntWidget *check = FINCH_GET_DATA(field);
@@ -598,10 +600,12 @@ finch_request_fields(const char *title, const char *primary,
 
 		for (; fields ; fields = fields->next)
 		{
-			/* XXX: Break each of the fields into a separate function? */
 			PurpleRequestField *field = fields->data;
 			PurpleRequestFieldType type = purple_request_field_get_type(field);
 			const char *label = purple_request_field_get_label(field);
+
+			if (!purple_request_field_is_visible(field))
+				continue;
 
 			hbox = gnt_hbox_new(TRUE);   /* hrm */
 			gnt_box_add_widget(GNT_BOX(box), hbox);

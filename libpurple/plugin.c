@@ -222,7 +222,7 @@ purple_plugin_probe(const char *filename)
 			return plugin;
 		else if (!purple_plugin_is_unloadable(plugin))
 		{
-			purple_debug_info("plugins", "Not loading %s. "
+			purple_debug_warning("plugins", "Not loading %s. "
 							"Another plugin with the same name (%s) has already been loaded.\n",
 							filename, plugin->path);
 			return plugin;
@@ -861,6 +861,7 @@ purple_plugin_destroy(PurplePlugin *plugin)
 				}
 
 				g_list_free(loader_info->exts);
+				loader_info->exts = NULL;
 			}
 
 			plugin_loaders = g_list_remove(plugin_loaders, plugin);
@@ -869,8 +870,16 @@ purple_plugin_destroy(PurplePlugin *plugin)
 		if (plugin->info != NULL && plugin->info->destroy != NULL)
 			plugin->info->destroy(plugin);
 
-		if (plugin->handle != NULL)
-			g_module_close(plugin->handle);
+		/*
+		 * I find it extremely useful to do this when using valgrind, as
+		 * it keeps all the plugins open, meaning that valgrind is able to
+		 * resolve symbol names in leak traces from plugins.
+		 */
+		if (!g_getenv("PURPLE_LEAKCHECK_HELP"))
+		{
+			if (plugin->handle != NULL)
+				g_module_close(plugin->handle);
+		}
 	}
 	else
 	{
@@ -1220,6 +1229,12 @@ purple_plugins_add_search_path(const char *path)
 		return;
 
 	search_paths = g_list_append(search_paths, g_strdup(path));
+}
+
+GList *
+purple_plugins_get_search_paths()
+{
+	return search_paths;
 }
 
 void

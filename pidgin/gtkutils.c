@@ -54,6 +54,7 @@
 #include "prpl.h"
 #include "request.h"
 #include "signals.h"
+#include "sound.h"
 #include "util.h"
 
 #include "gtkaccount.h"
@@ -525,7 +526,7 @@ aop_option_menu_get_selected(GtkWidget *optmenu, GtkWidget **p_item)
 	GtkWidget *item = gtk_menu_get_active(GTK_MENU(menu));
 	if (p_item)
 		(*p_item) = item;
-	return g_object_get_data(G_OBJECT(item), "aop_per_item_data");
+	return item ? g_object_get_data(G_OBJECT(item), "aop_per_item_data") : NULL;
 }
 
 static void
@@ -1677,9 +1678,11 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 				 * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
 				 * Probably not.  I'll just give an error and return. */
 				/* The original patch sent the icon used by the launcher.  That's probably wrong */
-				purple_notify_error(NULL, NULL, _("Cannot send launcher"), _("You dragged a desktop launcher. "
-											   "Most likely you wanted to send whatever this launcher points to instead of this launcher"
-											   " itself."));
+				purple_notify_error(NULL, NULL, _("Cannot send launcher"),
+				                    _("You dragged a desktop launcher. Most "
+				                      "likely you wanted to send the target "
+				                      "of this launcher instead of this "
+				                      "launcher itself."));
 				break;
 			}
 			purple_desktop_item_unref(item);
@@ -3576,6 +3579,211 @@ copy_email_address(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 	return TRUE;
 }
 
+static void
+file_open_uri(GtkIMHtml *imhtml, const char *uri)
+{
+	/* Copied from gtkft.c:open_button_cb */
+#ifdef _WIN32
+	/* If using Win32... */
+	int code;
+	if (G_WIN32_HAVE_WIDECHAR_API()) {
+		wchar_t *wc_filename = g_utf8_to_utf16(
+				uri, -1, NULL, NULL, NULL);
+
+		code = (int)ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
+				SW_SHOW);
+
+		g_free(wc_filename);
+	} else {
+		char *l_filename = g_locale_from_utf8(
+				uri, -1, NULL, NULL, NULL);
+
+		code = (int)ShellExecuteA(NULL, NULL, l_filename, NULL, NULL,
+				SW_SHOW);
+
+		g_free(l_filename);
+	}
+
+	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
+	{
+		purple_notify_error(imhtml, NULL,
+				_("There is no application configured to open this type of file."), NULL);
+	}
+	else if (code < 32)
+	{
+		purple_notify_error(imhtml, NULL,
+				_("An error occurred while opening the file."), NULL);
+		purple_debug_warning("gtkutils", "filename: %s; code: %d\n", uri, code);
+	}
+#else
+	char *command = NULL;
+	char *tmp = NULL;
+	GError *error = NULL;
+
+	if (purple_running_gnome())
+	{
+		char *escaped = g_shell_quote(uri);
+		command = g_strdup_printf("gnome-open %s", escaped);
+		g_free(escaped);
+	}
+	else if (purple_running_kde())
+	{
+		char *escaped = g_shell_quote(uri);
+
+		if (purple_str_has_suffix(uri, ".desktop"))
+			command = g_strdup_printf("kfmclient openURL %s 'text/plain'", escaped);
+		else
+			command = g_strdup_printf("kfmclient openURL %s", escaped);
+		g_free(escaped);
+	}
+	else
+	{
+		purple_notify_uri(NULL, uri);
+		return;
+	}
+
+	if (purple_program_is_valid(command))
+	{
+		gint exit_status;
+		if (!g_spawn_command_line_sync(command, NULL, NULL, &exit_status, &error))
+		{
+			tmp = g_strdup_printf(_("Error launching %s: %s"),
+							uri, error->message);
+			purple_notify_error(imhtml, NULL, _("Unable to open file."), tmp);
+			g_free(tmp);
+			g_error_free(error);
+		}
+		if (exit_status != 0)
+		{
+			char *primary = g_strdup_printf(_("Error running %s"), command);
+			char *secondary = g_strdup_printf(_("Process returned error code %d"),
+									exit_status);
+			purple_notify_error(imhtml, NULL, primary, secondary);
+			g_free(tmp);
+		}
+	}
+#endif
+}
+
+#define FILELINKSIZE  (sizeof("file://") - 1)
+static gboolean
+file_clicked_cb(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
+{
+	const char *uri = gtk_imhtml_link_get_url(link) + FILELINKSIZE;
+	file_open_uri(imhtml, uri);
+	return TRUE;
+}
+
+static gboolean
+open_containing_cb(GtkIMHtml *imhtml, const char *url)
+{
+	char *dir = g_path_get_dirname(url + FILELINKSIZE);
+	file_open_uri(imhtml, dir);
+	g_free(dir);
+	return TRUE;
+}
+
+static gboolean
+file_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+{
+	GtkWidget *img, *item;
+	const char *url;
+
+	url = gtk_imhtml_link_get_url(link);
+
+	/* Open File */
+	img = gtk_image_new_from_stock(GTK_STOCK_JUMP_TO, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Open File"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_link_activate), link);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	/* Open Containing Directory */
+	img = gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("Open _Containing Directory"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(open_containing_cb), (gpointer)url);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	return TRUE;
+}
+
+#define AUDIOLINKSIZE  (sizeof("audio://") - 1)
+static gboolean
+audio_clicked_cb(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
+{
+	const char *uri;
+	PidginConversation *conv = g_object_get_data(G_OBJECT(imhtml), "gtkconv");
+	if (!conv) /* no playback in debug window */
+		return TRUE;
+	uri = gtk_imhtml_link_get_url(link) + AUDIOLINKSIZE;
+	purple_sound_play_file(uri, NULL);
+	return TRUE;
+}
+
+static void
+savefile_write_cb(gpointer user_data, char *file)
+{
+	char *temp_file = user_data;
+	gchar *contents;
+	gsize length;
+	GError *error;
+
+	if (!g_file_get_contents(temp_file, &contents, &length, &error)) {
+		purple_debug_error("gtkutils", "Unable to read contents of %s: %s\n",
+		                   temp_file, error->message);
+		g_error_free(error);
+		return;
+	}
+
+	if (!purple_util_write_data_to_file_absolute(file, contents, length)) {
+		purple_debug_error("gtkutils", "Unable to write contents to %s\n",
+		                   file);
+	}
+}
+
+static gboolean
+save_file_cb(GtkWidget *item, const char *url)
+{
+	PidginConversation *conv = g_object_get_data(G_OBJECT(item), "gtkconv");
+	if (!conv)
+		return TRUE;
+	purple_request_file(conv->active_conv, _("Save File"), NULL, TRUE,
+	                    G_CALLBACK(savefile_write_cb), NULL,
+	                    conv->active_conv->account, NULL, conv->active_conv,
+	                    (void *)url);
+	return TRUE;
+}
+
+static gboolean
+audio_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
+{
+	GtkWidget *img, *item;
+	const char *url;
+	PidginConversation *conv = g_object_get_data(G_OBJECT(imhtml), "gtkconv");
+	if (!conv) /* No menu in debug window */
+		return TRUE;
+
+	url = gtk_imhtml_link_get_url(link);
+
+	/* Play Sound */
+	img = gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Play Sound"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_link_activate), link);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	/* Save File */
+	img = gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU);
+	item = gtk_image_menu_item_new_with_mnemonic(_("_Save File"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(save_file_cb), (gpointer)(url+AUDIOLINKSIZE));
+	g_object_set_data(G_OBJECT(item), "gtkconv", conv);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+	return TRUE;
+}
+
 /* XXX: The following two functions are for demonstration purposes only! */
 static gboolean
 open_dialog(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
@@ -3682,6 +3890,9 @@ void pidgin_utils_init(void)
 	gtk_imhtml_class_register_protocol("gopher://", url_clicked_cb, link_context_menu);
 	gtk_imhtml_class_register_protocol("mailto:", url_clicked_cb, copy_email_address);
 
+	gtk_imhtml_class_register_protocol("file://", file_clicked_cb, file_context_menu);
+	gtk_imhtml_class_register_protocol("audio://", audio_clicked_cb, audio_context_menu);
+
 	/* Example custom URL handler. */
 	gtk_imhtml_class_register_protocol("open://", open_dialog, dummy);
 
@@ -3707,6 +3918,9 @@ void pidgin_utils_uninit(void)
 		gnome_url_handlers = NULL;
 		return;
 	}
+
+	gtk_imhtml_class_register_protocol("audio://", NULL, NULL);
+	gtk_imhtml_class_register_protocol("file://", NULL, NULL);
 
 	gtk_imhtml_class_register_protocol("http://", NULL, NULL);
 	gtk_imhtml_class_register_protocol("https://", NULL, NULL);

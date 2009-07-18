@@ -88,7 +88,7 @@ else
 st =
 pkg_LTLIBRARIES      = libjabber.la libxmpp.la
 libjabber_la_SOURCES = $(JABBERSOURCES)
-libjabber_la_LIBADD  = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS)
+libjabber_la_LIBADD  = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS) $(IDN_LIBS)
 
 libxmpp_la_SOURCES = libxmpp.c
 libxmpp_la_LIBADD = libjabber.la
@@ -100,4 +100,5 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(IDN_CFLAGS) \
 	$(LIBXML_CFLAGS)

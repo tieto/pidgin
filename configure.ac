@@ -144,7 +144,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu id it ja ka km kn ko ku lo lt mk mn my_MM nb ne nl nn oc pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
+ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mk mn my_MM nb ne nl nn oc pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -604,7 +604,7 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 ])
 			fi])
 	fi
-        
+
 
 else # GTK
 	enable_cap=no
@@ -806,6 +806,25 @@ Or use --disable-vv if you do not need voice/video support.
 			])
 		fi
 	fi
+fi
+
+AC_ARG_ENABLE(idn,
+	[AC_HELP_STRING([--disable-idn], [compile without IDN support])],
+	[enable_idn="$enableval" force_idn=$enableval], [enable_idn="yes" force_idn=no])
+if test "x$enable_idn" != "xno"; then
+	PKG_CHECK_MODULES(IDN, libidn >= 0.0.0, [
+		AC_DEFINE(USE_IDN, 1, [Use GNU Libidn for stringprep and IDN])
+		AC_SUBST(IDN_CFLAGS)
+		AC_SUBST(IDN_LIBS)
+	], [
+		AC_MSG_RESULT(no)
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
+GNU Libidn development headers not found.
+Use --disable-idn if you do not need it.
+])
+		fi
+	])
 fi
 
 dnl #######################################################################
@@ -1075,13 +1094,19 @@ extern_init=
 load_proto=
 for i in $STATIC_PRPLS ; do
 	dnl Ugly special case for "libsilcpurple.la":
-	dnl ... and Ugly special case for multi-protocol oscar
+	dnl ... and Ugly special case for multi-protocol oscar and yahoo
 	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
 		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.la"
 		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
 		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
 		load_proto="$load_proto purple_init_aim_plugin();"
 		load_proto="$load_proto purple_init_icq_plugin();"
+	elif test "x$i" = "xyahoo"; then
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/yahoo/libymsg.la"
+		extern_init="$extern_init extern gboolean purple_init_yahoo_plugin();"
+		extern_init="$extern_init extern gboolean purple_init_yahoojp_plugin();"
+		load_proto="$load_proto purple_init_yahoo_plugin();"
+		load_proto="$load_proto purple_init_yahoojp_plugin();"
 	else
 		if test "x$i" = "xsilc"; then
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
@@ -1563,30 +1588,6 @@ if test "$enable_perl" = yes ; then
 			AC_MSG_RESULT(no)
 		fi
 
-		if test "x$prefix" != "xNONE"; then
-			prefix=`eval echo $prefix`
-			PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$prefix"
-		fi
-
-		AC_ARG_WITH(perl-lib,
-		[AC_HELP_STRING([--with-perl-lib=[site|vendor|DIR]],
-			[specify where to install the Perl libraries for pidgin. Default is site.])],
-		[
-			if test "x$withval" = xsite; then
-				PERL_MM_PARAMS=""
-			elif test "x$withval" = xvendor; then
-				if test -z "`$perlpath -v | grep '5\.0'`"; then
-					PERL_MM_PARAMS="INSTALLDIRS=vendor"
-				else
-					PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=`perl -e 'use Config; print $Config{prefix}'`"
-				fi
-			else
-				PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$withval"
-			fi
-		])
-
-		AC_SUBST(PERL_MM_PARAMS)
-
 		AC_MSG_CHECKING(for DynaLoader.a)
 		DYNALOADER_A=`echo $PERL_LDFLAGS | $perlpath -pe 's/^(.* )*([[^ ]]*DynaLoader\.a).*/\2/'`
 
@@ -1663,7 +1664,7 @@ AC_ARG_ENABLE(nss,
 	[enable_nss="$enableval"],
 	[enable_nss="yes"])
 
-msg_ssl="None. MSN, Novell Groupwise, Yahoo! and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
+msg_ssl="None. MSN, Yahoo!, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
 looked_for_gnutls="no"
 dnl #
 dnl # Check for GnuTLS if it's specified.
@@ -1755,8 +1756,8 @@ if test "x$enable_gnutls" = "xyes"; then
 	LIBS="$LIBS $GNUTLS_LIBS"
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <gnutls/gnutls.h>],
-                                        [gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);])],
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
+                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);]])],
 	               [AC_DEFINE([HAVE_GNUTLS_PRIORITY_FUNCS], 1,
                                   [Define if your gnutls has gnutls_priority_set_direct and friends])
 	                AC_MSG_RESULT(yes)],
@@ -2002,7 +2003,7 @@ if test "x$enable_nss" != "xno"; then
 
 				if test "x$ac_cv_moz_nss_libs" = "xno"; then
 					nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
-					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs" 
+					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
 					LIBS="$LIBS $nsslibs"
 					AC_TRY_LINK_FUNC(NSS_Init,
 						[ac_cv_moz_nss_libs="yes"],
@@ -2045,6 +2046,23 @@ if test "x$enable_nss" != "xno"; then
 	AC_SUBST(NSS_LIBS)
 fi
 
+if test "x$enable_nss" = "xyes"; then
+	AC_MSG_CHECKING(for NSS_SetAlgorithmPolicy)
+	LIBS_save="$LIBS"
+	LIBS="$LIBS $NSS_LIBS"
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $NSS_CFLAGS"
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <nss.h>
+#include <secmod.h>]],
+                                        [[NSS_SetAlgorithmPolicy(SEC_OID_MD2, 0, 0);]])],
+	               [AC_DEFINE([NEED_NSS_WEAK_ALGORITHMS], 1,
+                                  [Define if your NSS needs weak algorithms activated with NSS_SetAlgorithmPolicy])
+	                AC_MSG_RESULT(yes)],
+	               [AC_MSG_RESULT(no)])
+	CPPFLAGS="$CPPFLAGS_save"
+        LIBS="$LIBS_save"
+fi
+
 AM_CONDITIONAL(USE_NSS, test "x$enable_nss" = "xyes")
 
 if test "x$msg_nss" != "x" -a "x$msg_gnutls" != "x"; then
@@ -2057,19 +2075,19 @@ elif test "x$looked_for_gnutls" = "xyes" -a "x$looked_for_nss" = "xyes" -a "x$fo
 	AC_MSG_ERROR([
 Neither GnuTLS or NSS SSL development headers found.
 Use --disable-nss --disable-gnutls if you do not need SSL support.
-MSN, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
+MSN, Yahoo!, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
 ])
 elif test "x$looked_for_gnutls" = "xyes" -a "x$force_deps" = "xyes" ; then
 	AC_MSG_ERROR([
 GnuTLS SSL development headers not found.
 Use --disable-gnutls if you do not need SSL support.
-MSN, Novell Groupwise and Google Talk will not work without SSL support.
+MSN, Yahoo!, Novell Groupwise and Google Talk will not work without SSL support.
 ])
 elif test "x$looked_for_nss" = "xyes" -a "x$force_deps" = "xyes" ; then
 	AC_MSG_ERROR([
 NSS SSL development headers not found.
 Use --disable-nss if you do not need SSL support.
-MSN, Novell Groupwise and Google Talk will not work without SSL support.
+MSN, Yahoo!, Novell Groupwise and Google Talk will not work without SSL support.
 ])
 fi
 
@@ -2476,6 +2494,7 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/emotes/small/16/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
+		   pidgin/plugins/disco/Makefile
 		   pidgin/plugins/gestures/Makefile
 		   pidgin/plugins/gevolution/Makefile
 		   pidgin/plugins/musicmessaging/Makefile
@@ -2546,6 +2565,7 @@ echo Build with voice and video.... : $enable_vv
 if test "x$enable_dbus" = "xyes" ; then
 	eval eval echo D-Bus services directory...... : $DBUS_SERVICES_DIR
 fi
+echo Build with GNU Libidn......... : $enable_idn
 echo Build with NetworkManager..... : $enable_nm
 echo SSL Library/Libraries......... : $msg_ssl
 if test "x$SSL_CERTIFICATES_DIR" != "x" ; then

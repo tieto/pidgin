@@ -131,6 +131,7 @@ xs_init(pTHX)
 #endif
 {
 	char *file = __FILE__;
+	GList *search_paths = purple_plugins_get_search_paths();
 	dXSUB_SYS;
 
 	/* This one allows dynamic loading of perl modules in perl scripts by
@@ -139,6 +140,17 @@ xs_init(pTHX)
 #ifdef _WIN32
 	newXS("Win32CORE::bootstrap", boot_Win32CORE, file);
 #endif
+
+	while (search_paths != NULL) {
+		gchar *uselib;
+		const gchar *search_path = search_paths->data;
+		search_paths = g_list_next(search_paths);
+
+		uselib = g_strdup_printf("unshift @INC, q(%s%sperl);",
+		                         search_path, G_DIR_SEPARATOR_S);
+		eval_pv(uselib, TRUE);
+		g_free(uselib);
+	}
 }
 
 static void

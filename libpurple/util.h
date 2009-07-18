@@ -415,6 +415,19 @@ time_t purple_str_to_time(const char *timestamp, gboolean utc,
 /*@{*/
 
 /**
+ * Escapes special characters in a plain-text string so they display
+ * correctly as HTML.  For example, & is replaced with &amp; and < is
+ * replaced with &lt;
+ *
+ * This is exactly the same as g_markup_escape_text(), except that it
+ * does not change ' to &apos; because &apos; is not a valid HTML 4 entity,
+ * and is displayed literally in IE7.
+ *
+ * @since 2.6.0
+ */
+gchar *purple_markup_escape_text(const gchar *text, gssize length);
+
+/**
  * Finds an HTML tag matching the given name.
  *
  * This locates an HTML tag's start and end, and stores its attributes
@@ -506,8 +519,6 @@ char *purple_markup_linkify(const char *str);
  *
  * @return The text with HTML entities literalized.  You must g_free
  *         this string when finished with it.
- *
- * @see purple_escape_html
  */
 char *purple_unescape_html(const char *html);
 
@@ -581,6 +592,16 @@ const char * purple_markup_unescape_entity(const char *text, int *length);
  */
 char * purple_markup_get_css_property(const gchar *style, const gchar *opt);
 
+/**
+ * Check if the given HTML contains RTL text.
+ *
+ * @param html  The HTML text.
+ *
+ * @return  TRUE if the text contains RTL text, FALSE otherwise.
+ *
+ * @since 2.6.0
+ */
+gboolean purple_markup_is_rtl(const char *html);
 
 /*@}*/
 
@@ -1106,9 +1127,33 @@ PurpleUtilFetchUrlData *purple_util_fetch_url_request(const gchar *url,
  * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
  * @param callback   The callback function.
  * @param data       The user data to pass to the callback function.
- * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url_request" and get rid of the old one
+ * @deprecated       In 3.0.0, this will go away.
  */
 PurpleUtilFetchUrlData *purple_util_fetch_url_request_len(const gchar *url,
+		gboolean full, const gchar *user_agent, gboolean http11,
+		const gchar *request, gboolean include_headers, gssize max_len,
+		PurpleUtilFetchUrlCallback callback, gpointer data);
+
+/**
+ * Fetches the data from a URL, and passes it to a callback function.
+ *
+ * @param account    The account for which the request is needed, or NULL.
+ * @param url        The URL.
+ * @param full       TRUE if this is the full URL, or FALSE if it's a
+ *                   partial URL.
+ * @param user_agent The user agent field to use, or NULL.
+ * @param http11     TRUE if HTTP/1.1 should be used to download the file.
+ * @param request    A HTTP request to send to the server instead of the
+ *                   standard GET
+ * @param include_headers
+ *                   If TRUE, include the HTTP headers in the response.
+ * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
+ * @param callback   The callback function.
+ * @param data       The user data to pass to the callback function.
+ * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url_request" and get rid of the old one
+ */
+PurpleUtilFetchUrlData *purple_util_fetch_url_request_len_with_account(
+		PurpleAccount *account, const gchar *url,
 		gboolean full, const gchar *user_agent, gboolean http11,
 		const gchar *request, gboolean include_headers, gssize max_len,
 		PurpleUtilFetchUrlCallback callback, gpointer data);
@@ -1158,8 +1203,31 @@ gboolean purple_email_is_valid(const char *address);
  * @param ip The IP address to validate.
  *
  * @return True if the IP address is syntactically correct.
+ * @deprecated This function will be replaced with one that validates
+ *             as either IPv4 or IPv6 in 3.0.0. If you don't want this,
+ *             behavior, use one of the more specific functions.
  */
 gboolean purple_ip_address_is_valid(const char *ip);
+
+/**
+ * Checks if the given IP address is a syntactically valid IPv4 address.
+ *
+ * @param ip The IP address to validate.
+ *
+ * @return True if the IP address is syntactically correct.
+ * @since 2.6.0
+ */
+gboolean purple_ipv4_address_is_valid(const char *ip);
+
+/**
+ * Checks if the given IP address is a syntactically valid IPv6 address.
+ *
+ * @param ip The IP address to validate.
+ *
+ * @return True if the IP address is syntactically correct.
+ * @since 2.6.0
+ */
+gboolean purple_ipv6_address_is_valid(const char *ip);
 
 /**
  * This function extracts a list of URIs from the a "text/uri-list"
@@ -1214,6 +1282,22 @@ gchar *purple_utf8_try_convert(const char *str);
  * @return A valid UTF-8 string.
  */
 gchar *purple_utf8_salvage(const char *str);
+
+/**
+ * Removes unprintable characters from a UTF-8 string. These characters
+ * (in particular low-ASCII characters) are invalid in XML 1.0 and thus
+ * are not allowed in XMPP and are rejected by libxml2 by default. This
+ * function uses g_unichar_isprint to determine what characters should
+ * be stripped. The returned string must be freed by the caller.
+ *
+ * @param str A valid UTF-8 string.
+ *
+ * @return A newly allocated UTF-8 string without the unprintable characters.
+ * @since 2.6.0
+ *
+ * @see g_unichar_isprint
+ */
+gchar *purple_utf8_strip_unprintables(const gchar *str);
 
 /**
  * Return the UTF-8 version of gai_strerror().  It calls gai_strerror()

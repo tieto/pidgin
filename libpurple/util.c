@@ -65,9 +65,10 @@ struct _PurpleUtilFetchUrlData
 	gboolean got_headers;
 	gboolean has_explicit_data_len;
 	char *webdata;
-	unsigned long len;
+	gsize len;
 	unsigned long data_len;
 	gssize max_len;
+	gboolean chunked;
 };
 
 static char *custom_user_dir = NULL;
@@ -219,6 +220,9 @@ static const char xdigits[] =
 gchar *
 purple_base64_encode(const guchar *data, gsize len)
 {
+#if GLIB_CHECK_VERSION(2,12,0)
+	return g_base64_encode(data, len);
+#else
 	char *out, *rv;
 
 	g_return_val_if_fail(data != NULL, NULL);
@@ -253,11 +257,21 @@ purple_base64_encode(const guchar *data, gsize len)
 	*out = '\0';
 
 	return rv;
+#endif /* GLIB < 2.12.0 */
 }
 
 guchar *
 purple_base64_decode(const char *str, gsize *ret_len)
 {
+#if GLIB_CHECK_VERSION(2,12,0)
+	/*
+	 * We want to allow ret_len to be NULL for backward compatibility,
+	 * but g_base64_decode() requires a valid length variable.  So if
+	 * ret_len is NULL then pass in a dummy variable.
+	 */
+	gsize unused;
+	return g_base64_decode(str, ret_len != NULL ? ret_len : &unused);
+#else
 	guchar *out = NULL;
 	char tmp = 0;
 	const char *c;
@@ -319,6 +333,7 @@ purple_base64_decode(const char *str, gsize *ret_len)
 		*ret_len = len;
 
 	return out;
+#endif /* GLIB < 2.12.0 */
 }
 
 /**************************************************************************
@@ -927,6 +942,77 @@ purple_str_to_time(const char *timestamp, gboolean utc,
  * Markup Functions
  **************************************************************************/
 
+/*
+ * This function is stolen from glib's gmarkup.c and modified to not
+ * replace ' with &apos;
+ */
+static void append_escaped_text(GString *str,
+		const gchar *text, gssize length)
+{
+	const gchar *p;
+	const gchar *end;
+	gunichar c;
+
+	p = text;
+	end = text + length;
+
+	while (p != end)
+	{
+		const gchar *next;
+		next = g_utf8_next_char (p);
+
+		switch (*p)
+		{
+			case '&':
+				g_string_append (str, "&amp;");
+				break;
+
+			case '<':
+				g_string_append (str, "&lt;");
+				break;
+
+			case '>':
+				g_string_append (str, "&gt;");
+				break;
+
+			case '"':
+				g_string_append (str, "&quot;");
+				break;
+
+			default:
+				c = g_utf8_get_char (p);
+				if ((0x1 <= c && c <= 0x8) ||
+						(0xb <= c && c <= 0xc) ||
+						(0xe <= c && c <= 0x1f) ||
+						(0x7f <= c && c <= 0x84) ||
+						(0x86 <= c && c <= 0x9f))
+					g_string_append_printf (str, "&#x%x;", c);
+				else
+					g_string_append_len (str, p, next - p);
+				break;
+		}
+
+		p = next;
+	}
+}
+
+/* This function is stolen from glib's gmarkup.c */
+gchar *purple_markup_escape_text(const gchar *text, gssize length)
+{
+	GString *str;
+
+	g_return_val_if_fail(text != NULL, NULL);
+
+	if (length < 0)
+		length = strlen(text);
+
+	/* prealloc at least as long as original text */
+	str = g_string_sized_new(length);
+	append_escaped_text(str, text, length);
+
+	return g_string_free(str, FALSE);
+}
+
 const char *
 purple_markup_unescape_entity(const char *text, int *length)
 {
@@ -964,8 +1050,8 @@ purple_markup_unescape_entity(const char *text, int *length)
 		buf[buflen] = '\0';
 		pln = buf;
 
-		len = 2;
-		while(isdigit((gint) text[len])) len++;
+		len = (*(text+2) == 'x' ? 3 : 2);
+		while(isxdigit((gint) text[len])) len++;
 		if(text[len] == ';') len++;
 	}
 	else
@@ -1039,6 +1125,35 @@ purple_markup_get_css_property(const gchar *style,
 	g_free(tmp);
 
 	return ret;
+}
+
+gboolean purple_markup_is_rtl(const char *html)
+{
+	GData *attributes;
+	const gchar *start, *end;
+	gboolean res = FALSE;
+
+	if (purple_markup_find_tag("span", html, &start, &end, &attributes))
+	{
+		/* tmp is a member of attributes and is free with g_datalist_clear call */
+		const char *tmp = g_datalist_get_data(&attributes, "dir");
+		if (tmp && !g_ascii_strcasecmp(tmp, "RTL"))
+			res = TRUE;
+		if (!res)
+		{
+			tmp = g_datalist_get_data(&attributes, "style");
+			if (tmp)
+			{
+				char *tmp2 = purple_markup_get_css_property(tmp, "direction");
+				if (tmp2 && !g_ascii_strcasecmp(tmp2, "RTL"))
+					res = TRUE;
+				g_free(tmp2);
+			}
+
+		}
+		g_datalist_clear(&attributes);
+	}
+	return res;
 }
 
 gboolean
@@ -2355,30 +2470,32 @@ purple_markup_linkify(const char *text)
 	return g_string_free(ret, FALSE);
 }
 
-char *
-purple_unescape_html(const char *html) {
-	if (html != NULL) {
-		const char *c = html;
-		GString *ret = g_string_new("");
-		while (*c) {
-			int len;
-			const char *ent;
+char *purple_unescape_html(const char *html)
+{
+	GString *ret;
+	const char *c = html;
 
-			if ((ent = purple_markup_unescape_entity(c, &len)) != NULL) {
-				ret = g_string_append(ret, ent);
-				c += len;
-			} else if (!strncmp(c, "<br>", 4)) {
-				ret = g_string_append_c(ret, '\n');
-				c += 4;
-			} else {
-				ret = g_string_append_c(ret, *c);
-				c++;
-			}
+	if (html == NULL)
+		return NULL;
+
+	ret = g_string_new("");
+	while (*c) {
+		int len;
+		const char *ent;
+
+		if ((ent = purple_markup_unescape_entity(c, &len)) != NULL) {
+			g_string_append(ret, ent);
+			c += len;
+		} else if (!strncmp(c, "<br>", 4)) {
+			g_string_append_c(ret, '\n');
+			c += 4;
+		} else {
+			g_string_append_c(ret, *c);
+			c++;
 		}
-		return g_string_free(ret, FALSE);
 	}
 
-	return NULL;
+	return g_string_free(ret, FALSE);
 }
 
 char *
@@ -2850,10 +2967,10 @@ purple_util_get_image_extension(gconstpointer data, size_t len)
 }
 
 /*
- * TODO: Consider using something faster than SHA-1, such as MD5, MD4
- *       or CRC32.  Are there security implications to that?  Would
- *       probably be a good idea to benchmark some algorithms with
- *       3KB-10KB chunks of data (typical buddy icon sizes).
+ * We thought about using non-cryptographic hashes like CRC32 here.
+ * They would be faster, but we think using something more secure is
+ * important, so that it is more difficult for someone to maliciously
+ * replace one buddy's icon with something else.
  */
 char *
 purple_util_get_image_checksum(gconstpointer image_data, size_t image_len)
@@ -2982,13 +3099,15 @@ purple_fd_get_ip(int fd)
 {
 	struct sockaddr addr;
 	socklen_t namelen = sizeof(addr);
+	struct in_addr in;
 
 	g_return_val_if_fail(fd != 0, NULL);
 
 	if (getsockname(fd, &addr, &namelen))
 		return NULL;
 
-	return g_strdup(inet_ntoa(((struct sockaddr_in *)&addr)->sin_addr));
+	in = ((struct sockaddr_in *)&addr)->sin_addr;
+	return g_strdup(inet_ntoa(in));
 }
 
 
@@ -3685,41 +3804,43 @@ parse_redirect(const char *data, size_t data_len,
 	return TRUE;
 }
 
+static const char *
+find_header_content(const char *data, size_t data_len, const char *header, size_t header_len)
+{
+	const char *p = NULL;
+
+	if (header_len <= 0)
+		header_len = strlen(header);
+
+	/* Note: data is _not_ nul-terminated.  */
+	if (data_len > header_len) {
+		if (header[0] == '\n')
+			p = (g_strncasecmp(data, header + 1, header_len - 1) == 0) ? data : NULL;
+		if (!p)
+			p = purple_strcasestr(data, header);
+		if (p)
+			p += header_len;
+	}
+
+	/* If we can find the header at all, try to sscanf it.
+	 * Response headers should end with at least \r\n, so sscanf is safe,
+	 * if we make sure that there is indeed a \n in our header.
+	 */
+	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
+		return p;
+	}
+
+	return NULL;
+}
+
 static size_t
 parse_content_len(const char *data, size_t data_len)
 {
 	size_t content_len = 0;
 	const char *p = NULL;
 
-	/* This is still technically wrong, since headers are case-insensitive
-	 * [RFC 2616, section 4.2], though this ought to catch the normal case.
-	 * Note: data is _not_ nul-terminated.
-	 */
-	if(data_len > 16) {
-		p = (strncmp(data, "Content-Length: ", 16) == 0) ? data : NULL;
-		if(!p)
-			p = (strncmp(data, "CONTENT-LENGTH: ", 16) == 0)
-				? data : NULL;
-		if(!p) {
-			p = g_strstr_len(data, data_len, "\nContent-Length: ");
-			if (p)
-				p++;
-		}
-		if(!p) {
-			p = g_strstr_len(data, data_len, "\nCONTENT-LENGTH: ");
-			if (p)
-				p++;
-		}
-
-		if(p)
-			p += 16;
-	}
-
-	/* If we can find a Content-Length header at all, try to sscanf it.
-	 * Response headers should end with at least \r\n, so sscanf is safe,
-	 * if we make sure that there is indeed a \n in our header.
-	 */
-	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
+	p = find_header_content(data, data_len, "\nContent-Length: ", sizeof("\nContent-Length: ") - 1);
+	if (p) {
 		sscanf(p, "%" G_GSIZE_FORMAT, &content_len);
 		purple_debug_misc("util", "parsed %" G_GSIZE_FORMAT "\n", content_len);
 	}
@@ -3727,6 +3848,74 @@ parse_content_len(const char *data, size_t data_len)
 	return content_len;
 }
 
+static gboolean
+content_is_chunked(const char *data, size_t data_len)
+{
+	const char *p = find_header_content(data, data_len, "\nTransfer-Encoding: ", sizeof("\nTransfer-Encoding: ") - 1);
+	if (p && g_strncasecmp(p, "chunked", 7) == 0)
+		return TRUE;
+
+	return FALSE;
+}
+
+/* Process in-place */
+static void
+process_chunked_data(char *data, gsize *len)
+{
+	gsize sz;
+	gsize newlen = 0;
+	char *p = data;
+	char *s = data;
+
+	while (*s) {
+		/* Read the size of this chunk */
+		if (sscanf(s, "%" G_GSIZE_MODIFIER "x", &sz) != 1)
+		{
+			purple_debug_error("util", "Error processing chunked data: "
+					"Expected data length, found: %s\n", s);
+			break;
+		}
+		if (sz == 0) {
+			/* We've reached the last chunk */
+			/*
+			 * TODO: The spec allows "footers" to follow the last chunk.
+			 *       If there is more data after this line then we should
+			 *       treat it like a header.
+			 */
+			break;
+		}
+
+		/* Advance to the start of the data */
+		s = strstr(s, "\r\n");
+		if (s == NULL)
+			break;
+		s += 2;
+
+		if (s + sz > data + *len) {
+			purple_debug_error("util", "Error processing chunked data: "
+					"Chunk size %" G_GSIZE_FORMAT " bytes was longer "
+					"than the data remaining in the buffer (%"
+					G_GSIZE_FORMAT " bytes)\n", sz, data + *len - s);
+		}
+
+		/* Move all data overtop of the chunk length that we read in earlier */
+		g_memmove(p, s, sz);
+		p += sz;
+		s += sz;
+		newlen += sz;
+		if (*s != '\r' && *(s + 1) != '\n') {
+			purple_debug_error("util", "Error processing chunked data: "
+					"Expected \\r\\n, found: %s\n", s);
+			break;
+		}
+		s += 2;
+	}
+
+	/* NULL terminate the data */
+	*p = 0;
+
+	*len = newlen;
+}
 
 static void
 url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
@@ -3787,6 +3976,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 
 				/* No redirect. See if we can find a content length. */
 				content_len = parse_content_len(gfud->webdata, header_len);
+				gfud->chunked = content_is_chunked(gfud->webdata, header_len);
 
 				if(content_len == 0) {
 					/* We'll stick with an initial 8192 */
@@ -3859,6 +4049,11 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 		gfud->webdata = g_realloc(gfud->webdata, gfud->len + 1);
 		gfud->webdata[gfud->len] = '\0';
 
+		if (!gfud->include_headers && gfud->chunked) {
+			/* Process only if we don't want the headers. */
+			process_chunked_data(gfud->webdata, &gfud->len);
+		}
+
 		gfud->callback(gfud, gfud->user_data, gfud->webdata, gfud->len, NULL);
 		purple_util_fetch_url_cancel(gfud);
 	}
@@ -3869,7 +4064,7 @@ static void ssl_url_fetch_recv_cb(gpointer data, PurpleSslConnection *ssl_connec
 	url_fetch_recv_cb(data, -1, cond);
 }
 
-/*
+/**
  * This function is called when the socket is available to be written
  * to.
  *
@@ -3919,7 +4114,7 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		}
 	}
 
-	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
+	if(purple_debug_is_unsafe())
 		purple_debug_misc("util", "Request: '%s'\n", gfud->request);
 	else
 		purple_debug_misc("util", "request constructed\n");
@@ -4008,7 +4203,7 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 		const char *request, gboolean include_headers,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
-	return purple_util_fetch_url_request_len(url, full,
+	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
 					     user_agent, http11,
 					     request, include_headers, -1,
 					     callback, user_data);
@@ -4020,12 +4215,23 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 		const char *request, gboolean include_headers, gssize max_len,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
+	return purple_util_fetch_url_request_len_with_account(NULL, url, full,
+			user_agent, http11, request, include_headers, max_len, callback,
+			user_data);
+}
+
+PurpleUtilFetchUrlData *
+purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
+		const char *url, gboolean full,	const char *user_agent, gboolean http11,
+		const char *request, gboolean include_headers, gssize max_len,
+		PurpleUtilFetchUrlCallback callback, void *user_data)
+{
 	PurpleUtilFetchUrlData *gfud;
 
 	g_return_val_if_fail(url      != NULL, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
-	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
+	if(purple_debug_is_unsafe())
 		purple_debug_info("util",
 				 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
 				 url, full, user_agent?user_agent:"(null)", http11);
@@ -4051,17 +4257,18 @@ purple_util_fetch_url_request_len(const char *url, gboolean full,
 	if (purple_strcasestr(url, "https://") != NULL) {
 		if (!purple_ssl_is_supported()) {
 			purple_util_fetch_url_error(gfud,
-					_("Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was found."),
-					gfud->website.address);
+					_("Unable to connect to %s: %s"),
+					gfud->website.address,
+					_("Server requires TLS/SSL, but no TLS/SSL support was found."));
 			return NULL;
 		}
 
 		gfud->is_ssl = TRUE;
-		gfud->ssl_connection = purple_ssl_connect(NULL,
+		gfud->ssl_connection = purple_ssl_connect(account,
 				gfud->website.address, gfud->website.port,
 				ssl_url_fetch_connect_cb, ssl_url_fetch_error_cb, gfud);
 	} else {
-		gfud->connect_data = purple_proxy_connect(NULL, NULL,
+		gfud->connect_data = purple_proxy_connect(NULL, account,
 				gfud->website.address, gfud->website.port,
 				url_fetch_connect_cb, gfud);
 	}
@@ -4240,7 +4447,7 @@ purple_email_is_valid(const char *address)
 }
 
 gboolean
-purple_ip_address_is_valid(const char *ip)
+purple_ipv4_address_is_valid(const char *ip)
 {
 	int c, o1, o2, o3, o4;
 	char end;
@@ -4251,6 +4458,58 @@ purple_ip_address_is_valid(const char *ip)
 	if (c != 4 || o1 < 0 || o1 > 255 || o2 < 0 || o2 > 255 || o3 < 0 || o3 > 255 || o4 < 0 || o4 > 255)
 		return FALSE;
 	return TRUE;
+}
+
+gboolean
+purple_ipv6_address_is_valid(const gchar *ip)
+{
+	const gchar *c;
+	gboolean double_colon = FALSE;
+	gint chunks = 1;
+	gint in = 0;
+
+	g_return_val_if_fail(ip != NULL, FALSE);
+
+	if (*ip == '\0')
+		return FALSE;
+
+	for (c = ip; *c; ++c) {
+		if ((*c >= '0' && *c <= '9') ||
+		        (*c >= 'a' && *c <= 'f') ||
+		        (*c >= 'A' && *c <= 'F')) {
+			if (++in > 4)
+				/* Only four hex digits per chunk */
+				return FALSE;
+			continue;
+		} else if (*c == ':') {
+			/* The start of a new chunk */
+			++chunks;
+			in = 0;
+			if (*(c + 1) == ':') {
+				/*
+				 * '::' indicates a consecutive series of chunks full
+				 * of zeroes. There can be only one of these per address.
+				 */
+				if (double_colon)
+					return FALSE;
+				double_colon = TRUE;
+			}
+		} else
+			return FALSE;
+	}
+
+	/*
+	 * Either we saw a '::' and there were fewer than 8 chunks -or-
+	 * we didn't see a '::' and saw exactly 8 chunks.
+	 */
+	return (double_colon && chunks < 8) || (!double_colon && chunks == 8);
+}
+
+/* TODO 3.0.0: Add ipv6 check, too */
+gboolean
+purple_ip_address_is_valid(const char *ip)
+{
+	return purple_ipv4_address_is_valid(ip);
 }
 
 /* Stolen from gnome_uri_list_extract_uris */
@@ -4382,6 +4641,37 @@ purple_utf8_salvage(const char *str)
 	} while (*str != '\0');
 
 	return g_string_free(workstr, FALSE);
+}
+
+gchar *
+purple_utf8_strip_unprintables(const gchar *str)
+{
+	gchar *workstr, *iter;
+
+	if (str == NULL)
+		/* Act like g_strdup */
+		return NULL;
+
+	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
+
+	workstr = iter = g_new(gchar, strlen(str) + 1);
+	while (*str) {
+		gunichar c = g_utf8_get_char(str);
+		const gchar *next = g_utf8_next_char(str);
+		size_t len = next - str;
+
+		if (g_unichar_isprint(c)) {
+			memcpy(iter, str, len);
+			iter += len;
+		}
+
+		str = next;
+	}
+
+	/* nul-terminate the new string */
+	*iter = '\0';
+
+	return workstr;
 }
 
 /*

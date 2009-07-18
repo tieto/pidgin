@@ -191,10 +191,7 @@ entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 	}
 	else
 	{
-		char *escape = g_markup_escape_text((*text == '/' ? text + 1 : text), -1);
-		char *apos = purple_strreplace(escape, "&apos;", "'");
-		g_free(escape);
-		escape = apos;
+		char *escape = purple_markup_escape_text((*text == '/' ? text + 1 : text), -1);
 		switch (purple_conversation_get_type(ggconv->active_conv))
 		{
 			case PURPLE_CONV_TYPE_IM:
@@ -884,9 +881,12 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), "\n", GNT_TEXT_FLAG_NORMAL);
 
 	/* Unnecessary to print the timestamp for delayed message */
-	if (purple_prefs_get_bool("/finch/conversations/timestamps"))
+	if (purple_prefs_get_bool("/finch/conversations/timestamps")) {
+		if (!mtime)
+			time(&mtime);
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					purple_utf8_strftime("(%H:%M:%S)", localtime(&mtime)), gnt_color_pair(color_timestamp));
+	}
 
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), " ", GNT_TEXT_FLAG_NORMAL);
 

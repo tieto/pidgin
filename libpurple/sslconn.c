@@ -100,6 +100,15 @@ purple_ssl_connect(PurpleAccount *account, const char *host, int port,
 				 PurpleSslInputFunction func, PurpleSslErrorFunction error_func,
 				 void *data)
 {
+	return purple_ssl_connect_with_ssl_cn(account, host, port, func, error_func,
+	                                  NULL, data);
+}
+
+PurpleSslConnection *
+purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host, int port,
+				 PurpleSslInputFunction func, PurpleSslErrorFunction error_func,
+				 const char *ssl_cn, void *data)
+{
 	PurpleSslConnection *gsc;
 
 	g_return_val_if_fail(host != NULL,            NULL);
@@ -116,7 +125,7 @@ purple_ssl_connect(PurpleAccount *account, const char *host, int port,
 	gsc = g_new0(PurpleSslConnection, 1);
 
 	gsc->fd              = -1;
-	gsc->host            = g_strdup(host);
+	gsc->host            = ssl_cn ? g_strdup(ssl_cn) : g_strdup(host);
 	gsc->port            = port;
 	gsc->connect_cb_data = data;
 	gsc->connect_cb      = func;

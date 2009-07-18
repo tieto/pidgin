@@ -728,7 +728,6 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 		im = PURPLE_CONV_IM(conv);
 
 		purple_conv_im_set_typing_state(im, state);
-		purple_conv_im_update_typing(im);
 	} else {
 		switch (state)
 		{
@@ -766,7 +765,6 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 
 		purple_conv_im_stop_typing_timeout(im);
 		purple_conv_im_set_typing_state(im, PURPLE_NOT_TYPING);
-		purple_conv_im_update_typing(im);
 	}
 	else
 	{
@@ -864,7 +862,12 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 
 	account = purple_connection_get_account(gc);
 
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
 	conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+	g_return_val_if_fail(conv != NULL, NULL);
+
 	chat = PURPLE_CONV_CHAT(conv);
 
 	if (!g_slist_find(gc->buddy_chats, conv))

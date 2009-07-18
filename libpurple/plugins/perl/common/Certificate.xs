@@ -214,7 +214,7 @@ purple_certificate_get_fingerprint_sha1(crt)
 		GByteArray *gba = NULL;
 	CODE:
 		gba = purple_certificate_get_fingerprint_sha1(crt);
-		RETVAL = newSVpv(gba->data, gba->len);
+		RETVAL = newSVpv((gchar *)gba->data, gba->len);
 		g_byte_array_free(gba, TRUE);
 	OUTPUT:
 		RETVAL

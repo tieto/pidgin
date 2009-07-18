@@ -59,38 +59,44 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 	g_free(chat_full_jid);
 }
 
-void jabber_presence_fake_to_self(JabberStream *js, const PurpleStatus *gstatus) {
-	char *my_base_jid;
+void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
+{
+	PurpleAccount *account;
+	const char *username;
 
-	if(!js->user)
-		return;
+	g_return_if_fail(js->user != NULL);
 
-	my_base_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-	if(purple_find_buddy(js->gc->account, my_base_jid)) {
-		JabberBuddy *jb;
+	account = purple_connection_get_account(js->gc);
+	username = purple_connection_get_display_name(js->gc);
+	if (status == NULL)
+		status = purple_account_get_active_status(account);
+
+	if (purple_find_buddy(account, username)) {
+		JabberBuddy *jb = jabber_buddy_find(js, username, TRUE);
 		JabberBuddyResource *jbr;
-		if((jb = jabber_buddy_find(js, my_base_jid, TRUE))) {
-			JabberBuddyState state;
-			char *msg;
-			int priority;
+		JabberBuddyState state;
+		char *msg;
+		int priority;
 
-			purple_status_to_jabber(gstatus, &state, &msg, &priority);
+		g_return_if_fail(jb != NULL);
 
-			if (state == JABBER_BUDDY_STATE_UNAVAILABLE || state == JABBER_BUDDY_STATE_UNKNOWN) {
-				jabber_buddy_remove_resource(jb, js->user->resource);
-			} else {
-				jabber_buddy_track_resource(jb, js->user->resource, priority, state, msg);
-			}
-			if((jbr = jabber_buddy_find_resource(jb, NULL))) {
-				purple_prpl_got_user_status(js->gc->account, my_base_jid, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
-			} else {
-				purple_prpl_got_user_status(js->gc->account, my_base_jid, "offline", msg ? "message" : NULL, msg, NULL);
-			}
+		purple_status_to_jabber(status, &state, &msg, &priority);
 
-			g_free(msg);
+		if (state == JABBER_BUDDY_STATE_UNAVAILABLE ||
+				state == JABBER_BUDDY_STATE_UNKNOWN) {
+			jabber_buddy_remove_resource(jb, js->user->resource);
+		} else {
+			jabber_buddy_track_resource(jb, js->user->resource, priority,
+			                            state, msg);
 		}
+
+		if ((jbr = jabber_buddy_find_resource(jb, NULL))) {
+			purple_prpl_got_user_status(account, username, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
+		} else {
+			purple_prpl_got_user_status(account, username, "offline", msg ? "message" : NULL, msg, NULL);
+		}
+		g_free(msg);
 	}
-	g_free(my_base_jid);
 }
 
 void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
@@ -99,9 +105,6 @@ void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
 	JabberStream *js;
 
 	if (!purple_account_is_connected(account))
-		return;
-	
-	if (!purple_status_is_active(status))
 		return;
 
 	if (purple_status_is_exclusive(status) && !purple_status_is_active(status)) {
@@ -133,7 +136,7 @@ void jabber_presence_send(JabberStream *js, gboolean force)
 	status = purple_presence_get_active_status(p);
 
 	/* we don't want to send presence before we've gotten our roster */
-	if(!js->roster_parsed) {
+	if (js->state != JABBER_STREAM_CONNECTED) {
 		purple_debug_info("jabber", "attempt to send presence before roster retrieved\n");
 		return;
 	}
@@ -245,6 +248,9 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 {
 	xmlnode *show, *status, *presence, *pri, *c;
 	const char *show_string = NULL;
+#ifdef USE_VV
+	gboolean audio_enabled, video_enabled;
+#endif
 
 	presence = xmlnode_new("presence");
 
@@ -277,7 +283,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 		xmlnode *query = xmlnode_new_child(presence, "query");
 		gchar seconds[10];
 		g_snprintf(seconds, 10, "%d", (int) (time(NULL) - js->idle));
-		
+
 		xmlnode_set_namespace(query, "jabber:iq:last");
 		xmlnode_set_attrib(query, "seconds", seconds);
 	}
@@ -300,9 +306,18 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	 * just assume that if we specify a 'voice-v1' ext (ignoring that
 	 * these are to be assigned no semantic value), we support receiving voice
 	 * calls.
+	 *
+	 * Ditto for 'video-v1'.
 	 */
-	if (jabber_audio_enabled(js, NULL /* unused */))
+	audio_enabled = jabber_audio_enabled(js, NULL /* unused */);
+	video_enabled = jabber_video_enabled(js, NULL /* unused */);
+
+	if (audio_enabled && video_enabled)
+		xmlnode_set_attrib(c, "ext", "voice-v1 video-v1");
+	else if (audio_enabled)
 		xmlnode_set_attrib(c, "ext", "voice-v1");
+	else if (video_enabled)
+		xmlnode_set_attrib(c, "ext", "video-v1");
 #endif
 
 	return presence;
@@ -361,10 +376,10 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 		if ((nick = xmlnode_get_child(vcard, "NICKNAME"))) {
 			char *tmp = xmlnode_get_data(nick);
 			char *bare_jid = jabber_get_bare_jid(from);
-			if (strstr(bare_jid, tmp) == NULL) {
+			if (tmp && strstr(bare_jid, tmp) == NULL) {
 				g_free(nickname);
 				nickname = tmp;
-			} else
+			} else if (tmp)
 				g_free(tmp);
 
 			g_free(bare_jid);
@@ -429,6 +444,9 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 	jbr->caps.info = info;
 	jbr->caps.exts = exts;
 
+	if (info == NULL)
+		goto out;
+
 	if (!jbr->commands_fetched && jabber_resource_has_capability(jbr, "http://jabber.org/protocol/commands")) {
 		JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
 		xmlnode *query = xmlnode_get_child_with_namespace(iq->node, "query", "http://jabber.org/protocol/disco#items");
@@ -440,6 +458,12 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 		jbr->commands_fetched = TRUE;
 	}
 
+	if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/chatstates"))
+		jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+	else
+		jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
+
+out:
 	g_free(userdata->from);
 	g_free(userdata);
 }
@@ -448,9 +472,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *from;
 	const char *type;
-	const char *real_jid = NULL;
-	const char *affiliation = NULL;
-	const char *role = NULL;
 	char *status = NULL;
 	int priority = 0;
 	JabberID *jid;
@@ -464,7 +485,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	char *buddy_name;
 	JabberBuddyState state = JABBER_BUDDY_STATE_UNKNOWN;
 	xmlnode *y;
-	gboolean muc = FALSE;
 	char *avatar_hash = NULL;
 	xmlnode *caps = NULL;
 	int idle = 0;
@@ -474,34 +494,57 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	from = xmlnode_get_attrib(packet, "from");
 	type = xmlnode_get_attrib(packet, "type");
 
-	if(!(jb = jabber_buddy_find(js, from, TRUE)))
-		return;
+	jb = jabber_buddy_find(js, from, TRUE);
+	g_return_if_fail(jb != NULL);
 
 	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
 			"jabber-receiving-presence", js->gc, type, from, packet));
 	if (signal_return)
 		return;
 
-	if(!(jid = jabber_id_new(from)))
+	jid = jabber_id_new(from);
+	if (jid == NULL) {
+		purple_debug_error("jabber", "Ignoring presence with malformed 'from' "
+		                   "JID: %s\n", from);
 		return;
+	}
 
 	if(jb->error_msg) {
 		g_free(jb->error_msg);
 		jb->error_msg = NULL;
 	}
 
-	if(type && !strcmp(type, "error")) {
+	if (type == NULL) {
+		xmlnode *show;
+		char *show_data = NULL;
+
+		state = JABBER_BUDDY_STATE_ONLINE;
+
+		show = xmlnode_get_child(packet, "show");
+		if (show) {
+			show_data = xmlnode_get_data(show);
+			if (show_data) {
+				state = jabber_buddy_show_get_state(show_data);
+				g_free(show_data);
+			} else
+				purple_debug_warning("jabber", "<show/> present on presence, "
+				                     "but no contents!\n");
+		}
+	} else if (g_str_equal(type, "error")) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 
 		state = JABBER_BUDDY_STATE_ERROR;
 		jb->error_msg = msg ? msg : g_strdup(_("Unknown Error in presence"));
-	} else if(type && !strcmp(type, "subscribe")) {
+	} else if (g_str_equal(type, "subscribe")) {
 		struct _jabber_add_permit *jap = g_new0(struct _jabber_add_permit, 1);
 		gboolean onlist = FALSE;
-		PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(js->gc), from);
+		PurpleAccount *account;
+		PurpleBuddy *buddy;
 		JabberBuddy *jb = NULL;
 		xmlnode *nick;
 
+		account = purple_connection_get_account(js->gc);
+		buddy = purple_find_buddy(account, from);
 		nick = xmlnode_get_child_with_namespace(packet, "nick", "http://jabber.org/protocol/nick");
 		if (nick)
 			nickname = xmlnode_get_data(nick);
@@ -516,16 +559,17 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jap->who = g_strdup(from);
 		jap->js = js;
 
-		purple_account_request_authorization(purple_connection_get_account(js->gc), from, NULL, nickname, NULL, onlist,
-				authorize_add_cb, deny_add_cb, jap);
+		purple_account_request_authorization(account, from, NULL, nickname,
+				NULL, onlist, authorize_add_cb, deny_add_cb, jap);
+
 		g_free(nickname);
 		jabber_id_free(jid);
 		return;
-	} else if(type && !strcmp(type, "subscribed")) {
+	} else if (g_str_equal(type, "subscribed")) {
 		/* we've been allowed to see their presence, but we don't care */
 		jabber_id_free(jid);
 		return;
-	} else if(type && !strcmp(type, "unsubscribe")) {
+	} else if (g_str_equal(type, "unsubscribe")) {
 		/* XXX I'm not sure this is the right way to handle this, it
 		 * might be better to add "unsubscribe" to the presence status
 		 * if lower down, but I'm not sure. */
@@ -534,14 +578,19 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		 * acknowledging this (and the others) at some point. */
 		jabber_id_free(jid);
 		return;
+	} else if (g_str_equal(type, "probe")) {
+		purple_debug_warning("jabber", "Ignoring presence probe\n");
+		jabber_id_free(jid);
+		return;
+	} else if (g_str_equal(type, "unavailable")) {
+		state = JABBER_BUDDY_STATE_UNAVAILABLE;
+	} else if (g_str_equal(type, "unsubscribed")) {
+		state = JABBER_BUDDY_STATE_UNKNOWN;
 	} else {
-		if((y = xmlnode_get_child(packet, "show"))) {
-			char *show = xmlnode_get_data(y);
-			state = jabber_buddy_show_get_state(show);
-			g_free(show);
-		} else {
-			state = JABBER_BUDDY_STATE_ONLINE;
-		}
+		purple_debug_warning("jabber", "Ignoring presence with invalid type "
+		                     "'%s'\n", type);
+		jabber_id_free(jid);
+		return;
 	}
 
 
@@ -577,48 +626,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				delayed = TRUE;
 				stamp = xmlnode_get_attrib(y, "stamp");
 			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
-				xmlnode *z;
-
-				muc = TRUE;
-				if((z = xmlnode_get_child(y, "status"))) {
-					const char *code = xmlnode_get_attrib(z, "code");
-					if(code && !strcmp(code, "201")) {
-						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
-							chat->config_dialog_type = PURPLE_REQUEST_ACTION;
-							chat->config_dialog_handle =
-								purple_request_action(js->gc,
-										_("Create New Room"),
-										_("Create New Room"),
-										_("You are creating a new room.  Would"
-											" you like to configure it, or"
-											" accept the default settings?"),
-										/* Default Action */ 1,
-										purple_connection_get_account(js->gc), NULL, chat->conv,
-										chat, 2,
-										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
-										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
-						}
-					} else if(code && !strcmp(code, "210")) {
-						/*  server rewrote room-nick */
-						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
-							g_free(chat->handle);
-							chat->handle = g_strdup(jid->resource);
-						}
-					}
-				}
-				if((z = xmlnode_get_child(y, "item"))) {
-					real_jid = xmlnode_get_attrib(z, "jid");
-					affiliation = xmlnode_get_attrib(z, "affiliation");
-					role = xmlnode_get_attrib(z, "role");
-					if(affiliation != NULL && !strcmp(affiliation, "owner"))
-						flags |= PURPLE_CBFLAGS_FOUNDER;
-					if (role != NULL) {
-						if (!strcmp(role, "moderator"))
-							flags |= PURPLE_CBFLAGS_OP;
-						else if (!strcmp(role, "participant"))
-							flags |= PURPLE_CBFLAGS_VOICE;
-					}
-				}
 			} else if(!strcmp(xmlns, "vcard-temp:x:update")) {
 				xmlnode *photo = xmlnode_get_child(y, "photo");
 				if(photo) {
@@ -626,7 +633,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					avatar_hash = xmlnode_get_data(photo);
 				}
 			}
-		} else if (!strcmp(y->name, "query") && 
+		} else if (!strcmp(y->name, "query") &&
 			!strcmp(xmlnode_get_namespace(y), "jabber:iq:last")) {
 			/* resource has specified idle */
 			const gchar *seconds = xmlnode_get_attrib(y, "seconds");
@@ -644,7 +651,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			NULL);
 		purple_debug_info("jabber", "got delay %s yielding %ld s offset\n",
 			stamp, offset);
-		idle += offset; 
+		idle += offset;
 	}
 
 	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {
@@ -675,75 +682,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			return;
 		}
 
+		if (type == NULL) {
+			xmlnode *x;
+			const char *real_jid = NULL;
+			const char *affiliation = NULL;
+			const char *role = NULL;
 
-		if(type && !strcmp(type, "unavailable")) {
-			gboolean nick_change = FALSE;
-
-			/* If the chat nick is invalid, we haven't yet joined, or we've
-			 * already left (it was probably us leaving after we closed the
-			 * chat), we don't care.
-			 */
-			if (!jid->resource || !chat->conv || chat->left) {
-				if (chat->left &&
-						jid->resource && chat->handle && !strcmp(jid->resource, chat->handle))
-					jabber_chat_destroy(chat);
-				jabber_id_free(jid);
-				g_free(status);
-				g_free(avatar_hash);
-				g_free(nickname);
-				return;
-			}
-
-			jabber_buddy_remove_resource(jb, jid->resource);
-			if(chat->muc) {
-				xmlnode *x;
-				for(x = xmlnode_get_child(packet, "x"); x; x = xmlnode_get_next_twin(x)) {
-					const char *xmlns, *nick, *code;
-					xmlnode *stat, *item;
-					if(!(xmlns = xmlnode_get_namespace(x)) ||
-							strcmp(xmlns, "http://jabber.org/protocol/muc#user"))
-						continue;
-					if(!(stat = xmlnode_get_child(x, "status")))
-						continue;
-					if(!(code = xmlnode_get_attrib(stat, "code")))
-						continue;
-					if(!strcmp(code, "301")) {
-						/* XXX: we got banned */
-					} else if(!strcmp(code, "303")) {
-						if(!(item = xmlnode_get_child(x, "item")))
-							continue;
-						if(!(nick = xmlnode_get_attrib(item, "nick")))
-							continue;
-						nick_change = TRUE;
-						if(!strcmp(jid->resource, chat->handle)) {
-							g_free(chat->handle);
-							chat->handle = g_strdup(nick);
-						}
-						purple_conv_chat_rename_user(PURPLE_CONV_CHAT(chat->conv), jid->resource, nick);
-						jabber_chat_remove_handle(chat, jid->resource);
-						break;
-					} else if(!strcmp(code, "307")) {
-						/* XXX: we got kicked */
-					} else if(!strcmp(code, "321")) {
-						/* XXX: removed due to an affiliation change */
-					} else if(!strcmp(code, "322")) {
-						/* XXX: removed because room is now members-only */
-					} else if(!strcmp(code, "332")) {
-						/* XXX: removed due to system shutdown */
-					}
-				}
-			}
-			if(!nick_change) {
-				if(!g_utf8_collate(jid->resource, chat->handle)) {
-					serv_got_chat_left(js->gc, chat->id);
-					jabber_chat_destroy(chat);
-				} else {
-					purple_conv_chat_remove_user(PURPLE_CONV_CHAT(chat->conv), jid->resource,
-							status);
-					jabber_chat_remove_handle(chat, jid->resource);
-				}
-			}
-		} else {
 			/*
 			 * XEP-0045 mandates the presence to include a resource (which is
 			 * treated as the chat nick). Some non-compliant servers allow
@@ -757,10 +701,61 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				return;
 			}
 
+			x = xmlnode_get_child_with_namespace(packet, "x",
+					"http://jabber.org/protocol/muc#user");
+			if (x) {
+				xmlnode *status_node;
+				xmlnode *item_node;
+
+				status_node = xmlnode_get_child(x, "status");
+				if (status_node) {
+					const char *code = xmlnode_get_attrib(status_node, "code");
+					if (purple_strequal(code, "201")) {
+						if ((chat = jabber_chat_find(js, jid->node, jid->domain))) {
+							chat->config_dialog_type = PURPLE_REQUEST_ACTION;
+							chat->config_dialog_handle =
+								purple_request_action(js->gc,
+										_("Create New Room"),
+										_("Create New Room"),
+										_("You are creating a new room.  Would"
+											" you like to configure it, or"
+											" accept the default settings?"),
+										/* Default Action */ 1,
+										purple_connection_get_account(js->gc), NULL, chat->conv,
+										chat, 2,
+										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
+										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
+						}
+					} else if (purple_strequal(code, "210")) {
+						/* server rewrote room-nick */
+						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
+							g_free(chat->handle);
+							chat->handle = g_strdup(jid->resource);
+						}
+					}
+				}
+
+				item_node = xmlnode_get_child(x, "item");
+				if (item_node) {
+					real_jid    = xmlnode_get_attrib(item_node, "jid");
+					affiliation = xmlnode_get_attrib(item_node, "affiliation");
+					role        = xmlnode_get_attrib(item_node, "role");
+
+					if (purple_strequal(affiliation, "owner"))
+						flags |= PURPLE_CBFLAGS_FOUNDER;
+					if (role) {
+						if (g_str_equal(role, "moderator"))
+							flags |= PURPLE_CBFLAGS_OP;
+						else if (g_str_equal(role, "participant"))
+							flags |= PURPLE_CBFLAGS_VOICE;
+					}
+				}
+			}
+
 			if(!chat->conv) {
 				char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 				chat->id = i++;
-				chat->muc = muc;
+				chat->muc = (x != NULL);
 				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
 				purple_conv_chat_set_nick(PURPLE_CONV_CHAT(chat->conv), chat->handle);
 
@@ -779,6 +774,154 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			else
 				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(chat->conv), jid->resource,
 						flags);
+		} else if (g_str_equal(type, "unavailable")) {
+			xmlnode *x;
+			gboolean nick_change = FALSE;
+			gboolean kick = FALSE;
+			gboolean is_our_resource = FALSE; /* Is the presence about us? */
+
+			/* If the chat nick is invalid, we haven't yet joined, or we've
+			 * already left (it was probably us leaving after we closed the
+			 * chat), we don't care.
+			 */
+			if (!jid->resource || !chat->conv || chat->left) {
+				if (chat->left &&
+						jid->resource && chat->handle && !strcmp(jid->resource, chat->handle))
+					jabber_chat_destroy(chat);
+				jabber_id_free(jid);
+				g_free(status);
+				g_free(avatar_hash);
+				g_free(nickname);
+				return;
+			}
+
+			is_our_resource = (0 == g_utf8_collate(jid->resource, chat->handle));
+
+			jabber_buddy_remove_resource(jb, jid->resource);
+
+			x = xmlnode_get_child_with_namespace(packet, "x",
+					"http://jabber.org/protocol/muc#user");
+			if (chat->muc && x) {
+				const char *nick;
+				const char *code = NULL;
+				const char *item_jid = NULL;
+				const char *to;
+				xmlnode *stat;
+				xmlnode *item;
+
+				item = xmlnode_get_child(x, "item");
+				if (item)
+					item_jid = xmlnode_get_attrib(item, "jid");
+
+				stat = xmlnode_get_child(x, "status");
+
+				if (stat)
+					code = xmlnode_get_attrib(stat, "code");
+
+				if (code) {
+					if(!strcmp(code, "301")) {
+						/* XXX: we got banned */
+					} else if(!strcmp(code, "303") && item &&
+							(nick = xmlnode_get_attrib(item, "nick"))) {
+						nick_change = TRUE;
+						if(!strcmp(jid->resource, chat->handle)) {
+							g_free(chat->handle);
+							chat->handle = g_strdup(nick);
+						}
+						purple_conv_chat_rename_user(PURPLE_CONV_CHAT(chat->conv), jid->resource, nick);
+						jabber_chat_remove_handle(chat, jid->resource);
+						/* TODO: Enable this when this is in a for-loop...
+						break; */
+					} else if(!strcmp(code, "307")) {
+						/* Someone was kicked from the room */
+						xmlnode *reason = NULL, *actor = NULL;
+						const char *actor_name = NULL;
+						char *reason_text = NULL;
+						char *tmp;
+
+						kick = TRUE;
+
+						if (item) {
+							reason = xmlnode_get_child(item, "reason");
+							actor = xmlnode_get_child(item, "actor");
+
+							if (reason != NULL)
+								reason_text = xmlnode_get_data(reason);
+							if (actor != NULL)
+								actor_name = xmlnode_get_attrib(actor, "jid");
+						}
+
+						if (reason_text == NULL)
+							reason_text = g_strdup(_("No reason"));
+
+						if (is_our_resource) {
+							if (actor_name != NULL)
+								tmp = g_strdup_printf(_("You have been kicked by %s: (%s)"),
+										actor_name, reason_text);
+							else
+								tmp = g_strdup_printf(_("You have been kicked: (%s)"),
+										reason_text);
+						} else {
+							if (actor_name != NULL)
+								tmp = g_strdup_printf(_("Kicked by %s (%s)"),
+										actor_name, reason_text);
+							else
+								tmp = g_strdup_printf(_("Kicked (%s)"),
+										reason_text);
+						}
+
+						g_free(reason_text);
+						g_free(status);
+						status = tmp;
+					} else if(!strcmp(code, "321")) {
+						/* XXX: removed due to an affiliation change */
+					} else if(!strcmp(code, "322")) {
+						/* XXX: removed because room is now members-only */
+					} else if(!strcmp(code, "332")) {
+						/* XXX: removed due to system shutdown */
+					}
+				}
+
+				/*
+				 * Possibly another connected resource of our JID (see XEP-0045
+				 * v1.24 section 7.1.10) being disconnected. Should be
+				 * distinguished by the item_jid.
+				 * Also possibly works around bits of an Openfire bug. See
+				 * #8319.
+				 */
+				to = xmlnode_get_attrib(packet, "to");
+				if (is_our_resource && item_jid && !purple_strequal(to, item_jid)) {
+					/* TODO: When the above is a loop, this needs to still act
+					 * sanely for all cases (this code is a little fragile). */
+					if (!kick && !nick_change)
+						/* Presumably, kicks and nick changes also affect us. */
+						is_our_resource = FALSE;
+				}
+			}
+			if(!nick_change) {
+				if (is_our_resource) {
+					if (kick)
+						purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), jid->resource,
+								status, PURPLE_MESSAGE_SYSTEM, time(NULL));
+
+					serv_got_chat_left(js->gc, chat->id);
+					jabber_chat_destroy(chat);
+				} else {
+					purple_conv_chat_remove_user(PURPLE_CONV_CHAT(chat->conv), jid->resource,
+							status);
+					jabber_chat_remove_handle(chat, jid->resource);
+				}
+			}
+		} else {
+			/* A type that isn't available or unavailable */
+			purple_debug_error("jabber", "MUC presence with bad type: %s\n",
+			                   type);
+
+			jabber_id_free(jid);
+			g_free(avatar_hash);
+			g_free(status);
+			g_free(nickname);
+			g_return_if_reached();
 		}
 	} else {
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
@@ -825,8 +968,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if(state == JABBER_BUDDY_STATE_ERROR ||
-				(type && (!strcmp(type, "unavailable") ||
-						  !strcmp(type, "unsubscribed")))) {
+				(type && (g_str_equal(type, "unavailable") ||
+				          g_str_equal(type, "unsubscribed")))) {
 			PurpleConversation *conv;
 
 			jabber_buddy_remove_resource(jb, jid->resource);
@@ -855,7 +998,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		g_free(buddy_name);
 	}
 
-	if (caps && (!type || g_str_equal(type, "available"))) {
+	if (caps && !type) {
 		/* handle Entity Capabilities (XEP-0115) */
 		const char *node = xmlnode_get_attrib(caps, "node");
 		const char *ver  = xmlnode_get_attrib(caps, "ver");
@@ -926,10 +1069,7 @@ void purple_status_to_jabber(const PurpleStatus *status, JabberBuddyState *state
 			formatted_msg = purple_status_get_attr_string(status, "message");
 
 			/* if the message is blank, then there really isn't a message */
-			if(formatted_msg && !*formatted_msg)
-				formatted_msg = NULL;
-
-			if(formatted_msg)
+			if(formatted_msg && *formatted_msg)
 				*msg = purple_markup_strip_html(formatted_msg);
 		}
 

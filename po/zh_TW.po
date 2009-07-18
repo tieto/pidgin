@@ -49,7 +49,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.5.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-30 10:41-0400\n"
+"POT-Creation-Date: 2009-07-06 15:04-0700\n"
 "PO-Revision-Date: 2009-02-25 09:57-0500\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -1844,6 +1844,8 @@ msgstr "+++ %s 登入"
 msgid "+++ %s signed off"
 msgstr "+++ %s 登出"
 
+#. Unknown error
+#. Unknown error!
 msgid "Unknown error"
 msgstr "未知錯誤"
 
@@ -2231,6 +2233,10 @@ msgstr "<font color=\"red\"><b>無法讀取檔案：%s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <自動回覆>：%s\n"
+
+#, fuzzy
+msgid "Error creating conference."
+msgstr "連線開啟錯誤"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -2655,9 +2661,10 @@ msgstr "在日誌瀏覽器中包含其他即時訊息用戶端日誌。"
 
 # XXX 譯文有待改進（第二段） - 20061025
 #. * description
+#, fuzzy
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
 "\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
@@ -2708,8 +2715,9 @@ msgstr "離線訊息模擬模組"
 msgid "Save messages sent to an offline user as pounce."
 msgstr "好友離線時，利用「好友狀態捕捉」功能儲存送出的訊息。"
 
+#, fuzzy
 msgid ""
-"The rest of the messages will be saved as pounce. You can edit/delete the "
+"The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 "未能送出的訊息將會儲存成「好友狀態捕捉」。如有需要，訊息可在「好友狀態捕捉」"
@@ -2959,14 +2967,16 @@ msgstr ""
 "com 下載及安裝 ActiveTCL。\n"
 
 # FIXME 沒有譯「toolkit」- 20071023 acli
+#, fuzzy
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
-"pidgin.im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
+"im/BonjourWindows for more information."
 msgstr ""
 "找不到 Apple 的 Bonjour For Windows toolkit，詳情請到網址 http://d.pidgin.im/"
 "BonjourWindows 查閱 FAQ 部分。"
 
-msgid "Unable to listen for incoming IM connections\n"
+#, fuzzy
+msgid "Unable to listen for incoming IM connections"
 msgstr "無法接收連入的即時訊息連線\n"
 
 msgid ""
@@ -3021,14 +3031,21 @@ msgstr "%s 已經關閉這個交談。"
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "無法送出訊息，交談無法開始。"
 
-msgid "Cannot open socket"
-msgstr "無法開啟Socket"
+#, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"無法建立 Socket：\n"
+"%s"
 
-msgid "Could not bind socket to port"
+#, fuzzy, c-format
+msgid "Unable to bind socket to port: %s"
 msgstr "無法聯結 Socket 到通訊埠"
 
-msgid "Could not listen on socket"
-msgstr "無法監聽 Socket"
+#, fuzzy, c-format
+msgid "Unable to listen on socket: %s"
+msgstr ""
+"無法建立 Socket：\n"
+"%s"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr "和本地端的mDNSResponder溝通時發生錯誤"
@@ -3076,13 +3093,16 @@ msgstr "儲存好友清單..."
 msgid "Load buddylist from file..."
 msgstr "自檔案讀取好友清單..."
 
-msgid "Fill in the registration fields."
+#, fuzzy
+msgid "You must fill in all registration fields"
 msgstr "填寫註冊資料欄位。"
 
-msgid "Passwords do not match."
+#, fuzzy
+msgid "Passwords do not match"
 msgstr "新密碼並不相符。"
 
-msgid "Unable to register new account. Error occurred.\n"
+#, fuzzy
+msgid "Unable to register new account.  An unknown error occurred."
 msgstr "無法註冊新帳號。錯誤發生。\n"
 
 msgid "New Gadu-Gadu Account Registered"
@@ -3094,14 +3114,15 @@ msgstr "註冊成功！"
 msgid "Password"
 msgstr "密碼"
 
-msgid "Password (retype)"
-msgstr "密碼（再次輸入）"
+msgid "Password (again)"
+msgstr "舊密碼（再次確認）"
 
-msgid "Enter current token"
-msgstr "輸入目前的密碼"
+msgid "Enter captcha text"
+msgstr ""
 
-msgid "Current token"
-msgstr "目前密碼"
+#, fuzzy
+msgid "Captcha"
+msgstr "驗證圖片"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "註冊新的 Gadu-Gadu 帳號"
@@ -3154,6 +3175,15 @@ msgstr "密碼修改成功！"
 msgid "Current password"
 msgstr "舊密碼"
 
+msgid "Password (retype)"
+msgstr "密碼（再次輸入）"
+
+msgid "Enter current token"
+msgstr "輸入目前的密碼"
+
+msgid "Current token"
+msgstr "目前密碼"
+
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr "請輸入您的舊密碼及你的新密碼："
 
@@ -3202,7 +3232,7 @@ msgstr "找不到符合的使用者"
 msgid "There are no users matching your search criteria."
 msgstr "無法依照搜尋條件找到相符的使用者。"
 
-msgid "Unable to read socket"
+msgid "Unable to read from socket"
 msgstr "無法讀取 Socket"
 
 msgid "Buddy list downloaded"
@@ -3217,8 +3247,15 @@ msgstr "上傳好友清單"
 msgid "Your buddy list was stored on the server."
 msgstr "您的好友清單已被存放於伺服器上。"
 
-msgid "Connection failed."
-msgstr "連線失敗。"
+# TODO 要覆查 - 20061027
+#. The session is now set up, ready to be connected. This emits the
+#. * signedOn signal, so clients can now do anything with msimprpl, and
+#. * we're ready for it (session key, userid, username all setup).
+msgid "Connected"
+msgstr "已連結"
+
+msgid "Connection failed"
+msgstr "連線失敗"
 
 msgid "Add to chat"
 msgstr "新增到聊天室"
@@ -3226,13 +3263,23 @@ msgstr "新增到聊天室"
 msgid "Chat _name:"
 msgstr "聊天室名稱(_N)："
 
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "無法連線到伺服器。"
+
+#. 1. connect to server
+#. connect to the server
+msgid "Connecting"
+msgstr "連線中"
+
 msgid "Chat error"
 msgstr "聊天錯誤"
 
 msgid "This chat name is already in use"
 msgstr "聊天室名稱正在使用中"
 
-msgid "Not connected to the server."
+#, fuzzy
+msgid "Not connected to the server"
 msgstr "尚未連線到伺服器。"
 
 msgid "Find buddies..."
@@ -3274,6 +3321,10 @@ msgstr "波蘭廣受歡迎的即時通訊程式"
 msgid "Gadu-Gadu User"
 msgstr "Gadu-Gadu 使用者"
 
+#, fuzzy
+msgid "GG server"
+msgstr "設定使用者資訊..."
+
 #, c-format
 msgid "Unknown command: %s"
 msgstr "未知的指令：%s"
@@ -3288,7 +3339,8 @@ msgstr "沒有設定主題"
 msgid "File Transfer Failed"
 msgstr "檔案傳輸失敗"
 
-msgid "Could not open a listening port."
+#, fuzzy
+msgid "Unable to open a listening port."
 msgstr "無法開啟監聽埠。"
 
 msgid "Error displaying MOTD"
@@ -3304,8 +3356,18 @@ msgstr "這個連結沒有相關的是日訊息。"
 msgid "MOTD for %s"
 msgstr "%s 的是日訊息"
 
-msgid "Server has disconnected"
-msgstr "伺服器已停止連線"
+#.
+#. * TODO: Handle this better. Probably requires a PurpleBOSHConnection
+#. * buffer that stores what is "being sent" until the
+#. * PurpleHTTPConnection reports it is fully sent.
+#.
+#. TODO: what to do here - do we really have to disconnect?
+#. TODO: do we really want to disconnect on a failure to write?
+#, fuzzy, c-format
+msgid "Lost connection with server: %s"
+msgstr ""
+"與伺服器之間的連線突然中斷:\n"
+"%s"
 
 msgid "View MOTD"
 msgstr "顯示是日訊息 (MOTD)"
@@ -3316,27 +3378,25 @@ msgstr "頻道(_C)："
 msgid "_Password:"
 msgstr "密碼(_P)："
 
-msgid "IRC nicks may not contain whitespace"
+#, fuzzy
+msgid "IRC nick and server may not contain whitespace"
 msgstr "IRC 暱稱不可含有空白字元"
-
-#. 1. connect to server
-#. connect to the server
-msgid "Connecting"
-msgstr "連線中"
 
 # XXX 暫譯
 msgid "SSL support unavailable"
 msgstr "沒有 SSL 支援"
 
-msgid "Couldn't create socket"
-msgstr "無法建立 Socket"
+msgid "Unable to connect"
+msgstr "無法連線"
 
-msgid "Couldn't connect to host"
-msgstr "無法連到伺服器"
+#. this is a regular connect, error out
+#, fuzzy, c-format
+msgid "Unable to connect: %s"
+msgstr "無法連線到「%s」"
 
-# NOTE OSCAR 錯誤訊息應可參閱 http://aimdoc.sourceforge.net/OSCARdoc/，但在該站很難找東西
-msgid "Read error"
-msgstr "讀取錯誤"
+#, fuzzy, c-format
+msgid "Server closed the connection"
+msgstr "伺服器關閉連線。"
 
 msgid "Users"
 msgstr "使用者"
@@ -3771,10 +3831,12 @@ msgstr "臨時指令失敗"
 msgid "execute"
 msgstr "執行"
 
-msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
+#, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
 msgstr "登入這個伺服器需要使用 TLS/SSL，但找不到 TLS/SSL 支援。"
 
-msgid "You require encryption, but no TLS/SSL support found."
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
 msgstr "您指定必須加密，但找不到 TLS/SSL 支援。"
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
@@ -3789,18 +3851,27 @@ msgstr "%s 需要經由未經加密的串流進行明文認證。允許並繼續
 msgid "Plaintext Authentication"
 msgstr "明文認證"
 
-msgid "Invalid response from server."
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "認證失敗"
+
+#, fuzzy
+msgid "Invalid response from server"
 msgstr "伺服器送來了無效的回應。"
 
 msgid "Server does not use any supported authentication method"
 msgstr "伺服器並不提供任何一種被支援的認證方式"
+
+msgid "You require encryption, but it is not available on this server."
+msgstr "您指定必須加密，但這伺服器沒有加密功能。"
 
 # XXX 好像有些怪，譯文有待改進
 msgid "Invalid challenge from server"
 msgstr "伺服器送來了無效的驗證挑戰"
 
 # NOTE OSCAR 錯誤訊息應可參閱 http://aimdoc.sourceforge.net/OSCARdoc/，但在該站很難找東西
-msgid "SASL error"
+#, fuzzy, c-format
+msgid "SASL error: %s"
 msgstr "SASL 錯誤"
 
 msgid "The BOSH connection manager terminated your session."
@@ -3822,10 +3893,8 @@ msgstr ""
 "無法與伺服器建立連線:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with the server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with the server: %s"
 msgstr ""
 "無法與伺服器建立連線:\n"
 "%s"
@@ -3833,12 +3902,6 @@ msgstr ""
 #, fuzzy
 msgid "Unable to establish SSL connection"
 msgstr "無法初始化連結"
-
-msgid "Unable to create socket"
-msgstr "無法建立 Socket"
-
-msgid "Write error"
-msgstr "寫入錯誤"
 
 msgid "Full Name"
 msgstr "全名"
@@ -3911,186 +3974,6 @@ msgstr "作業系統"
 msgid "Local Time"
 msgstr "本地端檔案："
 
-# NOTE 這是功能名稱（直譯）
-msgid "Last Activity"
-msgstr "最近活動"
-
-msgid "Service Discovery Info"
-msgstr "服務探尋資訊"
-
-#  FIXME acli 2070914
-msgid "Service Discovery Items"
-msgstr "服務探尋項目"
-
-# NOTE 這是功能名稱（直譯）
-msgid "Extended Stanza Addressing"
-msgstr "延伸段落定址"
-
-# NOTE 這是功能名稱
-msgid "Multi-User Chat"
-msgstr "多用戶聊天"
-
-# NOTE 這是功能名稱（直譯）
-msgid "Multi-User Chat Extended Presence Information"
-msgstr "多用戶聊天延伸上線狀態資訊"
-
-# NOTE Cf http://host.cc.ntu.edu.tw/iicm/term/termb_I.htm
-msgid "In-Band Bytestreams"
-msgstr "帶內位元組串流"
-
-msgid "Ad-Hoc Commands"
-msgstr "臨時指令"
-
-msgid "PubSub Service"
-msgstr "PubSub 服務"
-
-msgid "SOCKS5 Bytestreams"
-msgstr "SOCKS5 位元組串流"
-
-msgid "Out of Band Data"
-msgstr "帶外數據"
-
-#  NOTE Untranslated
-msgid "XHTML-IM"
-msgstr "XHTML-IM"
-
-msgid "In-Band Registration"
-msgstr "帶內註冊"
-
-msgid "User Location"
-msgstr "使用者所在位置"
-
-msgid "User Avatar"
-msgstr "使用者化身"
-
-msgid "Chat State Notifications"
-msgstr "聊天狀態通知"
-
-# NOTE Jabber 協定中 Stream Error 的一種，即 <unsupported-version/>
-# NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-March/000752.html
-msgid "Software Version"
-msgstr "軟體版本"
-
-msgid "Stream Initiation"
-msgstr "開始串流"
-
-msgid "File Transfer"
-msgstr "檔案傳輸"
-
-msgid "User Mood"
-msgstr "使用者情緒"
-
-# XXX may be wrong
-msgid "User Activity"
-msgstr "使用者活動狀態"
-
-#  NOTE 直譯：個體能力
-#  FIXME 譯文有待改進 - acli 20070918
-msgid "Entity Capabilities"
-msgstr "個體能力"
-
-#  FIXME 這聽來不對 - acli 20070913
-msgid "Encrypted Session Negotiations"
-msgstr "加密工作階段協商"
-
-msgid "User Tune"
-msgstr "使用者樂曲"
-
-#  NOTE「Roster」指「名冊」，但Open Source software似乎一般譯「好友清單」、「成員列表」等
-#  FIXME 譯文有待改進 - acli 20070918
-msgid "Roster Item Exchange"
-msgstr "好友清單項目交換"
-
-#  NOTE 參見 http://jabber.org/protocol/reach
-#  NOTE「Reachability Address」指即時通訊以外的通訊方式所用的「位址」（例如電話號碼）
-#  NOTE 直譯：可抵達性位址
-#  XXX 是否譯「其他通訊方法」較好？但要先看上下文 - acli 20070918
-msgid "Reachability Address"
-msgstr "可抵達性位址"
-
-msgid "User Profile"
-msgstr "使用者資料"
-
-msgid "Jingle"
-msgstr "Jingle"
-
-msgid "Jingle Audio"
-msgstr "Jingle 音訊"
-
-msgid "User Nickname"
-msgstr "使用者暱稱"
-
-msgid "Jingle ICE UDP"
-msgstr "Jingle ICE UDP"
-
-msgid "Jingle ICE TCP"
-msgstr "Jingle ICE TCP"
-
-msgid "Jingle Raw UDP"
-msgstr ""
-
-msgid "Jingle Video"
-msgstr "Jingle 視訊"
-
-msgid "Jingle DTMF"
-msgstr "Jingle DTMF"
-
-msgid "Message Receipts"
-msgstr "收到的訊息"
-
-msgid "Public Key Publishing"
-msgstr "發佈公鑰"
-
-# NOTE Jabber 新功能規格
-msgid "User Chatting"
-msgstr ""
-
-# NOTE Jabber 新功能規格
-msgid "User Browsing"
-msgstr "使用者瀏覽"
-
-# NOTE Jabber 新功能規格
-msgid "User Gaming"
-msgstr ""
-
-# NOTE Jabber 新功能規格
-msgid "User Viewing"
-msgstr ""
-
-msgid "Ping"
-msgstr "Ping"
-
-msgid "Stanza Encryption"
-msgstr "段落加密"
-
-# NOTE http://www.xmpp.org/extensions/xep-0202.html
-msgid "Entity Time"
-msgstr ""
-
-#  XXX 暫譯- acli 20070913
-msgid "Delayed Delivery"
-msgstr "延遲送出"
-
-# NOTE http://www.xmpp.org/extensions/xep-0204.html
-msgid "Collaborative Data Objects"
-msgstr ""
-
-msgid "File Repository and Sharing"
-msgstr ""
-
-msgid "STUN Service Discovery for Jingle"
-msgstr "Jingle 用的 STUN 服務偵測"
-
-# FIXME 這聽來不對
-msgid "Simplified Encrypted Session Negotiation"
-msgstr "簡化加密工作階段協商"
-
-msgid "Hop Check"
-msgstr "中繼段檢查"
-
-msgid "Capabilities"
-msgstr "相容性"
-
 msgid "Priority"
 msgstr "優先次序"
 
@@ -4101,6 +3984,14 @@ msgstr "優先次序"
 # NOTE 見 http://www.jabber.org/user/userguide.html
 msgid "Resource"
 msgstr ""
+
+#, c-format
+msgid "%s ago"
+msgstr ""
+
+#, fuzzy
+msgid "Logged Off"
+msgstr "已登入"
 
 # NOTE: 法、德文均譯「第二個名」，芬蘭文譯「其他名」，日文音譯了事
 # NOTE: 在網上幾間台灣大學寫「英文別名」，現套用，也跟芬蘭文PO檔處理手法相同
@@ -4282,19 +4173,25 @@ msgstr "選擇查詢的會議伺服器"
 msgid "Find Rooms"
 msgstr "尋找聊天室"
 
-msgid "You require encryption, but it is not available on this server."
-msgstr "您指定必須加密，但這伺服器沒有加密功能。"
+#, fuzzy
+msgid "Affiliations:"
+msgstr "別名："
 
-msgid "Ping timeout"
+#, fuzzy
+msgid "No users found"
+msgstr "找不到符合的使用者"
+
+#, fuzzy
+msgid "Roles:"
+msgstr "職責"
+
+#, fuzzy
+msgid "Ping timed out"
 msgstr "Ping逾時"
 
-msgid "Read Error"
-msgstr "讀取錯誤"
-
-#, c-format
 msgid ""
-"Could not find alternative XMPP connection methods after failing to connect "
-"directly.\n"
+"Unable to find alternative XMPP connection methods after failing to connect "
+"directly."
 msgstr ""
 
 msgid "Invalid XMPP ID"
@@ -4304,7 +4201,7 @@ msgid "Invalid XMPP ID. Domain must be set."
 msgstr "XMPP 帳號無效，域名是必須設定的。"
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
+msgid "Malformed BOSH URL"
 msgstr "無法連線到伺服器。"
 
 #, c-format
@@ -4331,9 +4228,6 @@ msgstr "移除註冊成功"
 msgid "Unregistration Failed"
 msgstr "移除註冊失敗"
 
-msgid "Already Registered"
-msgstr "已經註冊"
-
 msgid "State"
 msgstr "省／州"
 
@@ -4345,6 +4239,9 @@ msgstr "電話"
 
 msgid "Date"
 msgstr "日期"
+
+msgid "Already Registered"
+msgstr "已經註冊"
 
 msgid "Unregister"
 msgstr "移除註冊"
@@ -4372,6 +4269,10 @@ msgstr "註冊在 %s 的新帳號"
 
 msgid "Change Registration"
 msgstr "變更註冊資訊"
+
+#, fuzzy
+msgid "Malformed BOSH Connect Server"
+msgstr "無法連線到伺服器。"
 
 msgid "Error unregistering account"
 msgstr "移除帳號註冊錯誤"
@@ -4482,9 +4383,6 @@ msgstr "成功修改了您的密碼。"
 
 msgid "Error changing password"
 msgstr "修改密碼期間出現錯誤"
-
-msgid "Password (again)"
-msgstr "舊密碼（再次確認）"
 
 msgid "Change XMPP Password"
 msgstr "修改 XMPP 密碼"
@@ -4822,17 +4720,19 @@ msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr "ban &lt;使用者&gt; [理由]：禁止某使用者進入聊天室"
 
 #  XXX 暫譯「（會員）等級」 - ambrose 20070415
+#, fuzzy
 msgid ""
-"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
-"affiliation with the room."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
+"the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 "affiliate &lt;使用者&gt; &lt;owner|admin|member|outcast|none&gt;: 設定使用者"
 "在這聊天室內的等級"
 
 #  NOTE 譯文改動 by ambrose
+#, fuzzy
 msgid ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
-"role in the room."
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
+"users with an role or set users' role with the room."
 msgstr ""
 "role &lt;使用者&gt; &lt;moderator|participant|visitor|none&gt;: 設定使用者在"
 "這聊天室內的身份。"
@@ -4895,6 +4795,9 @@ msgstr "連結伺服器"
 msgid "File transfer proxies"
 msgstr "檔案傳輸代理伺服器"
 
+msgid "BOSH URL"
+msgstr ""
+
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
 msgid "Show Custom Smileys"
@@ -4933,6 +4836,14 @@ msgstr "XML 分析錯誤"
 msgid "Unknown Error in presence"
 msgstr "不明的上線狀態錯誤"
 
+#, c-format
+msgid "Error joining chat %s"
+msgstr "加入聊天室 %s 時發生錯誤"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "聊天室 %s 發生錯誤"
+
 msgid "Create New Room"
 msgstr "建立新聊天室"
 
@@ -4947,16 +4858,20 @@ msgstr "設定聊天室(_C)"
 msgid "_Accept Defaults"
 msgstr "使用預設值(_A)"
 
-#, c-format
-msgid "Error joining chat %s"
-msgstr "加入聊天室 %s 時發生錯誤"
+#, fuzzy
+msgid "No reason"
+msgstr "沒有給予原因"
 
-#, c-format
-msgid "Error in chat %s"
-msgstr "聊天室 %s 發生錯誤"
+#, fuzzy, c-format
+msgid "You have been kicked: (%s)"
+msgstr "您被 %s 踢出：(%s)"
+
+#, fuzzy, c-format
+msgid "Kicked (%s)"
+msgstr "被 %s 踢出 (%s)"
 
 #, fuzzy
-msgid "An error occured on the in-band bytestream transfer\n"
+msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "開啟檔案途中發生錯誤。"
 
 #, fuzzy
@@ -5311,6 +5226,10 @@ msgstr "沒有群組的好友"
 msgid "Non-IM Contacts"
 msgstr "非即時訊息的好友"
 
+#, fuzzy, c-format
+msgid "%s sent you a voice chat invite, which is not yet supported."
+msgstr "%s 送來了一個視像聊天的邀請，但目前還沒有視像聊天的支援。"
+
 msgid "Nudge"
 msgstr "呼叫"
 
@@ -5465,9 +5384,6 @@ msgstr "開啟聊天室(_C)"
 # XXX 暫譯
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr "MSN 需要 SSL 程式庫的支援，請安裝一個受支援的 SSL 程式庫。"
-
-msgid "Failed to connect to server."
-msgstr "無法連線到伺服器。"
 
 msgid "Error retrieving profile"
 msgstr "取得個人資訊時發生錯誤"
@@ -5658,70 +5574,26 @@ msgid "Windows Live ID authentication:Invalid response"
 msgstr "Windows Live ID 認證：回應無效"
 
 #, c-format
-msgid "%s is not a valid group."
-msgstr "%s 不是一個有效的群組。"
-
-msgid "Unknown error."
-msgstr "未知錯誤。"
-
-# NOTE: 第二個 %s 為使用者名稱，第三個 %s 為通訊協定名稱
-# NOTE: 第一個 %s 似乎係錯誤訊息摘要（整個字串為視窗標題）
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%2$s (%3$s)：%1$s"
-
-#, c-format
 msgid "%s just sent you a Nudge!"
 msgstr "%s 在呼叫您！"
 
-#. char *adl = g_strndup(payload, len);
-#, c-format
-msgid "Unknown error (%d)"
+#, fuzzy, c-format
+msgid "Unknown error (%d): %s"
 msgstr "不明錯誤（代碼 %d）"
 
 msgid "Unable to add user"
 msgstr "無法新增使用者"
 
+#, c-format
+msgid "Unknown error (%d)"
+msgstr "不明錯誤（代碼 %d）"
+
 # XXX 暫譯 - 20090226
 msgid "The following users are missing from your addressbook"
 msgstr "以下使用者不在通訊錄內"
 
-#  TODO 請覆查，譯文有待改進
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "%s (%s) 新增使用者失敗"
-
-#  TODO 請覆查，譯文有待改進
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "%s (%s) 拒絕使用者失敗"
-
-#  TODO 請覆查，譯文有待改進
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "%s (%s) 允許使用者失敗"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "因為好友清單已滿，以致無法新增 %s"
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s 不是一個有效的護照帳號"
-
-#  NOTE「暫時無法使用」應該比「暫時不存在」通順
-#  NOTE 譯文更動 by Ambrose
-msgid "Service Temporarily Unavailable."
-msgstr "暫時無法提供服務"
-
 msgid "Mobile message was not sent because it was too long."
 msgstr "因為行動訊息過長，所以無法送出："
-
-msgid "Unable to rename group"
-msgstr "無法更改群組名稱"
-
-msgid "Unable to delete group"
-msgstr "無法移除群組"
 
 # NOTE "in %d minutes" 意為「在 %d 分鐘之內」的意思
 # NOTE 譯文更動 by Ambrose
@@ -5767,9 +5639,6 @@ msgstr "因為發生不明的編碼錯誤，訊息無法送出："
 msgid "Message was not sent because an unknown error occurred."
 msgstr "因為發生不明的錯誤，訊息無法送出。"
 
-msgid "Unable to connect"
-msgstr "無法連線"
-
 msgid "Writing error"
 msgstr "寫入錯誤"
 
@@ -5786,20 +5655,24 @@ msgstr ""
 "%s 伺服器傳來一個連線錯誤：\n"
 "%s"
 
-msgid "Our protocol is not supported by the server."
+#, fuzzy
+msgid "Our protocol is not supported by the server"
 msgstr "這個伺服器不支援我們使用的通訊協定。"
 
-msgid "Error parsing HTTP."
+#, fuzzy
+msgid "Error parsing HTTP"
 msgstr "解析 HTTP 途中發生錯誤。"
 
-msgid "You have signed on from another location."
+#, fuzzy
+msgid "You have signed on from another location"
 msgstr "您由其他的地方登入。"
 
 #  XXX
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr "暫時無法使用 MSN 使服器，請過一會後重試。"
 
-msgid "The MSN servers are going down temporarily."
+#, fuzzy
+msgid "The MSN servers are going down temporarily"
 msgstr "MSN 伺服器將暫時關閉。"
 
 #, c-format
@@ -5828,6 +5701,14 @@ msgstr "傳送 Cookie 中"
 
 msgid "Retrieving buddy list"
 msgstr "讀取好友清單中"
+
+#, fuzzy, c-format
+msgid "%s requests to view your webcam, but this request is not yet supported."
+msgstr "%s 送來了一個視像聊天的邀請，但目前還沒有視像聊天的支援。"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s 送來了一個視像聊天的邀請，但目前還沒有視像聊天的支援。"
 
 msgid "Away From Computer"
 msgstr "不在電腦前"
@@ -5867,14 +5748,6 @@ msgstr "因為 Switchboard 發生錯誤，所以訊息無法送出"
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "因為發生不明的錯誤，訊息可能沒有送出："
 
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s 將您加入他（她）的好友清單。"
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s 將您從他（她）的好友清單中移除。"
-
 #  NOTE 注意！evolution 本身的譯法是「目錄服務」而非「通訊錄」
 msgid "Delete Buddy from Address Book?"
 msgstr "將好友自通訊錄刪除？"
@@ -5903,6 +5776,61 @@ msgstr "個人資料網址"
 #. *  description
 msgid "MSN Protocol Plugin"
 msgstr "MSN 協定模組"
+
+#, c-format
+msgid "%s is not a valid group."
+msgstr "%s 不是一個有效的群組。"
+
+msgid "Unknown error."
+msgstr "未知錯誤。"
+
+# NOTE: 第二個 %s 為使用者名稱，第三個 %s 為通訊協定名稱
+# NOTE: 第一個 %s 似乎係錯誤訊息摘要（整個字串為視窗標題）
+#, c-format
+msgid "%s on %s (%s)"
+msgstr "%2$s (%3$s)：%1$s"
+
+#  TODO 請覆查，譯文有待改進
+#, c-format
+msgid "Unable to add user on %s (%s)"
+msgstr "%s (%s) 新增使用者失敗"
+
+#  TODO 請覆查，譯文有待改進
+#, c-format
+msgid "Unable to block user on %s (%s)"
+msgstr "%s (%s) 拒絕使用者失敗"
+
+#  TODO 請覆查，譯文有待改進
+#, c-format
+msgid "Unable to permit user on %s (%s)"
+msgstr "%s (%s) 允許使用者失敗"
+
+#, c-format
+msgid "%s could not be added because your buddy list is full."
+msgstr "因為好友清單已滿，以致無法新增 %s"
+
+#, c-format
+msgid "%s is not a valid passport account."
+msgstr "%s 不是一個有效的護照帳號"
+
+#  NOTE「暫時無法使用」應該比「暫時不存在」通順
+#  NOTE 譯文更動 by Ambrose
+msgid "Service Temporarily Unavailable."
+msgstr "暫時無法提供服務"
+
+msgid "Unable to rename group"
+msgstr "無法更改群組名稱"
+
+msgid "Unable to delete group"
+msgstr "無法移除群組"
+
+#, c-format
+msgid "%s has added you to his or her buddy list."
+msgstr "%s 將您加入他（她）的好友清單。"
+
+#, c-format
+msgid "%s has removed you from his or her buddy list."
+msgstr "%s 將您從他（她）的好友清單中移除。"
 
 #, c-format
 msgid "No such user: %s"
@@ -5935,6 +5863,8 @@ msgid "Lost connection with server"
 msgstr "與伺服器之間的連線中斷"
 
 #. Can't write _()'d strings in array initializers. Workaround.
+#. khc: then use N_() in the array initializer and use _() when they are
+#. used
 msgid "New mail messages"
 msgstr "有新郵件"
 
@@ -5971,28 +5901,23 @@ msgstr[1] "從伺服器新增或更新了 %d 個好友（包括伺服器上已�
 msgid "Add contacts from server"
 msgstr "從伺服器加入聯絡人"
 
-# TODO 要覆查 - 20061027
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
-msgid "Connected"
-msgstr "已連結"
-
 #, c-format
 msgid "Protocol error, code %d: %s"
 msgstr "通訊協定錯誤，代碼 %d：%s"
 
 # NOTE 第一個 %s 是錯誤訊息
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s Your password is %d characters, greater than the expected maximum length "
-"of %d for MySpaceIM. Please shorten your password at http://profileedit."
-"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
-"again."
+"%s Your password is %zu characters, which is longer than the maximum length "
+"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
+"cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
 "%s 您的密碼的長度為 %d 個字元，超出了估計中 MySpaceIM 所設 %d 字元的上限。請"
 "透過 http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings."
 "changePassword 選擇一個較短的密碼，然後重試。"
+
+msgid "Incorrect username or password"
+msgstr "錯誤的帳號或密碼"
 
 msgid "MySpaceIM Error"
 msgstr "MySpaceIM 錯誤"
@@ -6002,16 +5927,6 @@ msgstr "MySpaceIM 錯誤"
 #  NOTE 所以應是「狀況」而非「條件」
 msgid "Invalid input condition"
 msgstr "輸入狀況無效"
-
-msgid "Read buffer full (2)"
-msgstr "讀取用的暫存區滿了（代號2）"
-
-msgid "Unparseable message"
-msgstr "無法解析訊息"
-
-#, c-format
-msgid "Couldn't connect to host: %s (%d)"
-msgstr "無法連到伺服器：%s (%d)"
 
 msgid "Failed to add buddy"
 msgstr "無法新增好友"
@@ -6098,6 +6013,12 @@ msgstr "好友總數"
 
 msgid "Client Version"
 msgstr "客戶端版本"
+
+msgid ""
+"An error occurred while trying to set the username.  Please try again, or "
+"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"to set your username."
+msgstr ""
 
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM：可取得此使用者名稱"
@@ -6324,9 +6245,6 @@ msgstr "無法新增您自己至好友清單"
 msgid "Master archive is misconfigured"
 msgstr "Master archive 設定錯誤"
 
-msgid "Incorrect username or password"
-msgstr "錯誤的帳號或密碼"
-
 msgid "Could not recognize the host of the username you entered"
 msgstr "無法辦識您所輸入的帳號內的主機名稱"
 
@@ -6365,9 +6283,9 @@ msgstr "該使用者可能是離線，或者您已被他（她）拒絕"
 msgid "Unknown error: 0x%X"
 msgstr "未知錯誤：0x%X"
 
-#, c-format
-msgid "Login failed (%s)."
-msgstr "登入失敗 (%s)。"
+#, fuzzy, c-format
+msgid "Unable to login: %s"
+msgstr "無法 Ping 使用者 %s"
 
 #  XXX 暫譯
 #, c-format
@@ -6469,9 +6387,6 @@ msgstr "GroupWise 會議 %d"
 msgid "Authenticating..."
 msgstr "認證中..."
 
-msgid "Unable to connect to server."
-msgstr "無法連線到伺服器。"
-
 msgid "Waiting for response..."
 msgstr "等待回覆中..."
 
@@ -6496,22 +6411,16 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "您要加入個這交談嗎？"
 
-# XXX 暫譯
-msgid "You have been logged out because you logged in at another workstation."
-msgstr "您已經被登出，因為您已在其他電腦上登入。"
-
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
 msgstr "%s 目前似乎離線，所以不會收到您剛才送出的訊息。"
 
+#, fuzzy
 msgid ""
-"Unable to connect to server. Please enter the address of the server you wish "
-"to connect to."
+"Unable to connect to server. Please enter the address of the server to which "
+"you wish to connect."
 msgstr "無法連線至伺服器。請輸入您希望連線至的伺服器的位址。"
-
-msgid "Error. SSL support is not installed."
-msgstr "錯誤：沒有安裝 SSL 支援。"
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "這個會議已經關閉。無法繼續送出任何訊息。"
@@ -6535,24 +6444,34 @@ msgstr "伺服器位址"
 msgid "Server port"
 msgstr "伺服器通訊埠"
 
+# XXX 暫譯 - 20061025
+#, fuzzy
+msgid "Received unexpected response from "
+msgstr "伺服器發出了奇怪的 HTTP 回應。"
+
+#. username connecting too frequently
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"您的連線／斷線動作太過頻繁。請等待十分鐘後再行重試。如果您依然繼續嘗試著連"
+"線，那麼您的等待時間將會更加的延長。"
+
+#, fuzzy, c-format
+msgid "Error requesting "
+msgstr "解析 %s 途中發生了錯誤"
+
+msgid "AOL does not allow your screen name to authenticate here"
+msgstr ""
+
 msgid "Could not join chat room"
 msgstr "無法加入聊天室"
 
 msgid "Invalid chat room name"
 msgstr "聊天室名稱無效"
 
-msgid "Server closed the connection."
-msgstr "伺服器關閉連線。"
-
-#, c-format
-msgid ""
-"Lost connection with server:\n"
-"%s"
-msgstr ""
-"與伺服器之間的連線突然中斷:\n"
-"%s"
-
-msgid "Received invalid data on connection with server."
+#, fuzzy
+msgid "Received invalid data on connection with server"
 msgstr "連線至伺服器時收到無效的資料。"
 
 #. *< type
@@ -6600,7 +6519,8 @@ msgstr "與遠端使用者的連線突然中斷：<br>%s"
 msgid "Received invalid data on connection with remote user."
 msgstr "在與遠端使用者的連線上收到無交的資料。"
 
-msgid "Could not establish a connection with the remote user."
+#, fuzzy
+msgid "Unable to establish a connection with the remote user."
 msgstr "無法與遠端使用者建立連線。"
 
 msgid "Direct IM established"
@@ -6820,21 +6740,15 @@ msgstr "警告等級"
 msgid "Buddy Comment"
 msgstr "好友說明"
 
-#, c-format
-msgid ""
-"Could not connect to authentication server:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to authentication server: %s"
 msgstr ""
 "無法連線至認證伺服器：\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not connect to BOS server:\n"
-"%s"
-msgstr ""
-"無法連線到 BOS 伺服器：\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to connect to BOS server: %s"
+msgstr "無法連線到伺服器。"
 
 msgid "Username sent"
 msgstr "已送出使用者名稱"
@@ -6846,25 +6760,38 @@ msgstr "成功建立連線，並已送出 Cookie"
 msgid "Finalizing connection"
 msgstr "完成連線中"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the username is invalid.  "
-"Usernames must be a valid email address, or start with a letter and contain "
-"only letters, numbers and spaces, or contain only numbers."
+"Unable to sign on as %s because the username is invalid.  Usernames must be "
+"a valid email address, or start with a letter and contain only letters, "
+"numbers and spaces, or contain only numbers."
 msgstr ""
 "無法登入：無法以 %s 身份登入，因為這個帳號是無效的。帳號必須為有效電郵地址；"
 "或者以英文字母起始，並只含英文字母、數字及空白；或者只由數字組成。"
 
+#, c-format
+msgid "You may be disconnected shortly.  If so, check %s for updates."
+msgstr "您可能會在短時間內中斷連線。如果屬實，請到 %s 看看有沒有更新。"
+
+msgid "Unable to get a valid AIM login hash."
+msgstr "無法取得有效的 AIM 登入碼。"
+
+msgid "Unable to get a valid login hash."
+msgstr "無法取得有效的登入雜湊。"
+
+msgid "Received authorization"
+msgstr "收到認證"
+
 #. Unregistered username
 #. uid is not exist
-msgid "Invalid username."
-msgstr "使用者名稱無效。"
-
-msgid "Incorrect password."
-msgstr "密碼錯誤。"
+#. the username does not exist
+#, fuzzy
+msgid "Username does not exist"
+msgstr "使用者不存在"
 
 #. Suspended account
-msgid "Your account is currently suspended."
+#, fuzzy
+msgid "Your account is currently suspended"
 msgstr "您的帳號目前停用中。"
 
 #  NOTE「暫時無法使用」應該比「暫時不存在」通順
@@ -6874,26 +6801,21 @@ msgstr "您的帳號目前停用中。"
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "暫時無法使用 AOL 即時訊息服務。"
 
-#. username connecting too frequently
-#. IP address connecting too frequently
-msgid ""
-"You have been connecting and disconnecting too frequently. Wait ten minutes "
-"and try again. If you continue to try, you will need to wait even longer."
-msgstr ""
-"您的連線／斷線動作太過頻繁。請等待十分鐘後再行重試。如果您依然繼續嘗試著連"
-"線，那麼您的等待時間將會更加的延長。"
-
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "您所使用的用戶端程式太過老舊。請到 %s 更新"
 
-msgid "Could Not Connect"
-msgstr "無法連線"
+#. IP address connecting too frequently
+#, fuzzy
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait a minute and "
+"try again. If you continue to try, you will need to wait even longer."
+msgstr ""
+"您的連線／斷線動作太過頻繁。請等待十分鐘後再行重試。如果您依然繼續嘗試著連"
+"線，那麼您的等待時間將會更加的延長。"
 
-msgid "Received authorization"
-msgstr "收到認證"
-
-msgid "The SecurID key entered is invalid."
+#, fuzzy
+msgid "The SecurID key entered is invalid"
 msgstr "您所輸入的 SecurID 碼無效。"
 
 msgid "Enter SecurID"
@@ -6907,20 +6829,6 @@ msgstr "請輸入數碼顯示器所顯示的六位數字。"
 #.
 msgid "_OK"
 msgstr "確定(_O)"
-
-#, c-format
-msgid "You may be disconnected shortly.  If so, check %s for updates."
-msgstr "您可能會在短時間內中斷連線。如果屬實，請到 %s 看看有沒有更新。"
-
-msgid "Unable to get a valid AIM login hash."
-msgstr "無法取得有效的 AIM 登入碼。"
-
-#, c-format
-msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "您可能會在短時間內中斷連線。請到 %s 看看有沒有更新。"
-
-msgid "Unable to get a valid login hash."
-msgstr "無法取得有效的登入雜湊。"
 
 msgid "Password sent"
 msgstr "成功送出密碼"
@@ -7073,6 +6981,9 @@ msgstr "上線自"
 # XXX 改譯「註冊日期」會否比較通順？
 msgid "Member Since"
 msgstr "成為成員的時間"
+
+msgid "Capabilities"
+msgstr "相容性"
 
 msgid "Profile"
 msgstr "個人資料"
@@ -7236,9 +7147,9 @@ msgstr[1] "離開訊息的長度超出了 %d 個位元組的上限，過長部�
 msgid "Away message too long."
 msgstr "離開訊息過長。"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because the username is invalid.  Usernames must "
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
@@ -7261,9 +7172,9 @@ msgstr ""
 msgid "Orphans"
 msgstr "孤兒們"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Could not add the buddy %s because you have too many buddies in your buddy "
+"Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
 "因為您的好友法單中有太多的好友，所以沒有辦法加入好友 %s。請在移除部份好友後重"
@@ -7272,8 +7183,8 @@ msgstr ""
 msgid "(no name)"
 msgstr "(沒有名字)"
 
-#, c-format
-msgid "Could not add the buddy %s for an unknown reason."
+#, fuzzy, c-format
+msgid "Unable to add the buddy %s for an unknown reason."
 msgstr "無法把 %s 加入好友清單，原因不明。"
 
 # XXX 好像有些不順 - acli 20080508
@@ -7410,6 +7321,7 @@ msgstr "搜尋(_S)"
 msgid "Set User Info (web)..."
 msgstr "設定使用者資訊 (透過網頁)..."
 
+#. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
 msgstr "修改密碼 (透過網頁)"
 
@@ -7439,6 +7351,10 @@ msgstr "使用電子郵件地址搜尋好友..."
 
 msgid "Search for Buddy by Information"
 msgstr "依照資訊尋找好友"
+
+#, fuzzy
+msgid "Use clientLogin"
+msgstr "使用者沒有登入"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -8092,7 +8008,8 @@ msgstr "每隔多少秒送出 Keep Alive"
 msgid "Update interval (seconds)"
 msgstr "每隔多少秒更新"
 
-msgid "Cannot decrypt server reply"
+#, fuzzy
+msgid "Unable to decrypt server reply"
 msgstr "無法解密伺服器回應"
 
 #, c-format
@@ -8116,9 +8033,6 @@ msgstr "必須啟動帳號"
 #, c-format
 msgid "Unknown reply code when logging in (0x%02X)"
 msgstr "無法登入，不明回應碼「0x%02X」"
-
-msgid "Could not decrypt server reply"
-msgstr "無法解密伺服器回應"
 
 msgid "Requesting captcha"
 msgstr "要求驗證圖片中"
@@ -8154,20 +8068,8 @@ msgstr ""
 "登入時，傳回未知的回覆碼「0x%02X」：\n"
 "%s"
 
-msgid "Unable to connect."
-msgstr "無法連線。"
-
 msgid "Socket error"
 msgstr "Socket 錯誤"
-
-msgid "Unable to read from socket"
-msgstr "無法讀取 Socket"
-
-msgid "Write Error"
-msgstr "寫入錯誤"
-
-msgid "Connection lost"
-msgstr "連線中斷"
 
 #, fuzzy
 msgid "Getting server"
@@ -8177,8 +8079,9 @@ msgstr "設定使用者資訊..."
 msgid "Requesting token"
 msgstr "請求符記中"
 
-msgid "Couldn't resolve host"
-msgstr "無法解析主機"
+#, fuzzy
+msgid "Unable to resolve hostname"
+msgstr "無法連線到伺服器。"
 
 msgid "Invalid server or port"
 msgstr "伺服器或通訊埠無效"
@@ -8233,7 +8136,8 @@ msgstr ""
 msgid "QQ Qun Command"
 msgstr "QQ 群組指令"
 
-msgid "Could not decrypt login reply"
+#, fuzzy
+msgid "Unable to decrypt login reply"
 msgstr "無法解密伺服器回應"
 
 msgid "Unknown LOGIN CMD"
@@ -8252,9 +8156,6 @@ msgstr "傳送檔案"
 #, c-format
 msgid "%d canceled the transfer of %s"
 msgstr "%d 取消了「%s」的傳送"
-
-msgid "Connection closed (writing)"
-msgstr "連線關閉（寫入）"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8315,17 +8216,6 @@ msgstr "在伺服器「%s」上，有 Sametime 管理人發出了下列通告"
 msgid "Sametime Administrator Announcement"
 msgstr "Sametime 管理人通告"
 
-msgid "Connection reset"
-msgstr "連線重置"
-
-#, c-format
-msgid "Error reading from socket: %s"
-msgstr "讀取 Socket 時發生錯誤；%s"
-
-#. this is a regular connect, error out
-msgid "Unable to connect to host"
-msgstr "無法連線到主機"
-
 #, c-format
 msgid "Announcement from %s"
 msgstr "自 %s 發佈"
@@ -8348,6 +8238,9 @@ msgstr "喇叭"
 # XXX 暫譯
 msgid "Video Camera"
 msgstr "視訊"
+
+msgid "File Transfer"
+msgstr "檔案傳輸"
 
 msgid "Supports"
 msgstr "支援"
@@ -9167,6 +9060,9 @@ msgstr ""
 msgid "Network Statistics"
 msgstr "網路統計資料"
 
+msgid "Ping"
+msgstr "Ping"
+
 msgid "Ping failed"
 msgstr "Ping 失敗"
 
@@ -9229,7 +9125,8 @@ msgstr "不支援的公鑰類型"
 msgid "Disconnected by server"
 msgstr "伺服器中斷了連線"
 
-msgid "Error during connecting to SILC Server"
+#, fuzzy
+msgid "Error connecting to SILC Server"
 msgstr "連線至 SILC 伺服器時發生錯誤"
 
 msgid "Key Exchange failed"
@@ -9239,26 +9136,26 @@ msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr "恢復連線失敗，請按「重新連線」建立新的連線。"
 
-msgid "Connection failed"
-msgstr "連線失敗"
-
 msgid "Performing key exchange"
 msgstr "交換密鑰中"
 
-msgid "Unable to create connection"
-msgstr "無法建立連結"
-
-msgid "Could not load SILC key pair"
+#, fuzzy
+msgid "Unable to load SILC key pair"
 msgstr "無法讀取 SILC 密鑰對"
 
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "連線至 SILC 伺服器中"
 
+#, fuzzy
+msgid "Unable to not load SILC key pair"
+msgstr "無法讀取 SILC 密鑰對"
+
 msgid "Out of memory"
 msgstr "記憶體不夠"
 
-msgid "Cannot initialize SILC protocol"
+#, fuzzy
+msgid "Unable to initialize SILC protocol"
 msgstr "無法初始化 SILC 協定"
 
 msgid "Error loading SILC key pair"
@@ -9558,7 +9455,8 @@ msgstr "數位簽署所有即時訊息"
 msgid "Creating SILC key pair..."
 msgstr "產生 SILC 密鑰對中..."
 
-msgid "Cannot create SILC key pair\n"
+#, fuzzy
+msgid "Unable to create SILC key pair"
 msgstr "無法產生 SILC 密鑰對\n"
 
 #. Hint for translators: Please check the tabulator width here and in
@@ -9652,6 +9550,9 @@ msgstr "白板"
 msgid "No server statistics available"
 msgstr "伺服器沒有統計資料"
 
+msgid "Error during connecting to SILC Server"
+msgstr "連線至 SILC 伺服器時發生錯誤"
+
 #, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "失敗：版本不符，請更新您的用戶端程式"
@@ -9694,31 +9595,28 @@ msgstr "失敗：無效的 Cookie"
 msgid "Failure: Authentication failed"
 msgstr "失敗：認證失敗"
 
-msgid "Cannot initialize SILC Client connection"
+#, fuzzy
+msgid "Unable to initialize SILC Client connection"
 msgstr "無法初始化 SILC 的用戶端連線"
 
 # NOTE 香港會寫「陳大文」，台灣人會看不明（寫「老張」一類，港人看見會覺得很怪），頭痛 :P
 msgid "John Noname"
 msgstr "無名氏"
 
-#, c-format
-msgid "Could not load SILC key pair: %s"
+#, fuzzy, c-format
+msgid "Unable to load SILC key pair: %s"
 msgstr "無法讀取 SILC 密鑰對：%s"
 
-msgid "Could not write"
-msgstr "無法寫入"
+msgid "Unable to create connection"
+msgstr "無法建立連結"
 
-msgid "Could not connect"
-msgstr "無法連結"
-
-msgid "Unknown server response."
+#, fuzzy
+msgid "Unknown server response"
 msgstr "不明的伺服器回應。"
 
-msgid "Could not create listen socket"
-msgstr "無法建立 Socket 監聽"
-
-msgid "Could not resolve hostname"
-msgstr "無法解析主機"
+#, fuzzy
+msgid "Unable to create listen socket"
+msgstr "無法建立 Socket"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP 的帳號不可含有空白字元或「@」符號"
@@ -9759,9 +9657,77 @@ msgstr "認證使用者"
 msgid "Auth Domain"
 msgstr "認證域名"
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s 送來了一個視像聊天的邀請，但目前還沒有視像聊天的支援。"
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr "join: &lt聊天室&gt;：加入位於 Yahoo! 網路的一個聊天室"
+
+msgid "list: List rooms on the Yahoo network"
+msgstr "list：列出Yahoo網路上的聊天室清單"
+
+msgid "doodle: Request user to start a Doodle session"
+msgstr "doodle: 要求使用者開始 Doodle Session"
+
+msgid "Yahoo ID..."
+msgstr "Yahoo 帳號"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! Protocol Plugin"
+msgstr "Yahoo 協定模組"
+
+msgid "Pager server"
+msgstr "傳呼伺服器"
+
+msgid "Pager port"
+msgstr "傳呼系統通訊埠"
+
+msgid "File transfer server"
+msgstr "檔案傳輸伺服器"
+
+msgid "File transfer port"
+msgstr "檔案傳輸通訊埠"
+
+#  XXX 無劃一譯法，有譯「地區」、「區域」甚至「場所」(?!)
+msgid "Chat room locale"
+msgstr "聊天室區域 (Locale)"
+
+msgid "Ignore conference and chatroom invitations"
+msgstr "忽略會議室與聊天室邀請"
+
+msgid "Chat room list URL"
+msgstr "聊天室清單所在網址"
+
+msgid "Yahoo Chat server"
+msgstr "Yahoo 聊天伺服器"
+
+msgid "Yahoo Chat port"
+msgstr "Yahoo 聊天室通訊埠"
+
+#, fuzzy
+msgid "Yahoo JAPAN ID..."
+msgstr "Yahoo 帳號"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#, fuzzy
+msgid "Yahoo! JAPAN Protocol Plugin"
+msgstr "Yahoo 協定模組"
 
 msgid "Your SMS was not delivered"
 msgstr ""
@@ -9789,6 +9755,30 @@ msgstr "使用者 %s 剛剛拒絕了您先前將他（她）新增至您的好�
 
 msgid "Add buddy rejected"
 msgstr "新增好友被拒"
+
+#. Some error in the received stream
+#, fuzzy
+msgid "Received invalid data"
+msgstr "連線至伺服器時收到無效的資料。"
+
+#. security lock from too many failed login attempts
+#, fuzzy
+msgid ""
+"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
+"website may fix this."
+msgstr "未知的錯誤代碼 %d。已經登入到 Yahoo!，官方網站上可能已經修正這個錯誤。"
+
+#. indicates a lock of some description
+#, fuzzy
+msgid ""
+"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
+"this."
+msgstr "未知的錯誤代碼 %d。已經登入到 Yahoo!，官方網站上可能已經修正這個錯誤。"
+
+#. username or password missing
+#, fuzzy
+msgid "Username or password missing"
+msgstr "錯誤的帳號或密碼"
 
 #, c-format
 msgid ""
@@ -9820,11 +9810,12 @@ msgstr "你的帳戶目前被暫時關閉。請您登入 Yahoo! 網站。"
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr "未知的錯誤代碼 %d。已經登入到 Yahoo!，官方網站上可能已經修正這個錯誤。"
 
-#, c-format
-msgid "Could not add buddy %s to group %s to the server list on account %s."
+#, fuzzy, c-format
+msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr "無法將好友「%1$s」新增至帳號「%3$s」在伺服器上的清單內的群組「%2$s」。"
 
-msgid "Could not add buddy to server list"
+#, fuzzy
+msgid "Unable to add buddy to server list"
 msgstr "無法將好友新增至伺服器上的清單內"
 
 #, c-format
@@ -9832,26 +9823,20 @@ msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr "[ 音效檔 %s/%s/%s.swf ] %s"
 
 # XXX 暫譯 - 20061025
-msgid "Received unexpected HTTP response from server."
+#, fuzzy
+msgid "Received unexpected HTTP response from server"
 msgstr "伺服器發出了奇怪的 HTTP 回應。"
 
-msgid "Connection problem"
-msgstr "連線錯誤"
-
-#, c-format
-msgid ""
-"Lost connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Lost connection with %s: %s"
 msgstr ""
 "與 %s 之間的連線突然中斷:\n"
 "%s"
 
-#, c-format
-msgid ""
-"Could not establish a connection with %s:\n"
-"%s"
+#, fuzzy, c-format
+msgid "Unable to establish a connection with %s: %s"
 msgstr ""
-"無法與 %s 建立連線:\n"
+"無法與伺服器建立連線:\n"
 "%s"
 
 msgid "Not at Home"
@@ -9909,8 +9894,8 @@ msgstr "上線狀態設定"
 msgid "Start Doodling"
 msgstr "開始 Doodle"
 
-msgid "Activate which ID?"
-msgstr "啟用哪一個 ID？"
+msgid "Select the ID you want to activate"
+msgstr ""
 
 # NOTE #Pidgin 的 Vann 及 LSchiere 解：如果選取了的好友目前處於一個聊天，便加入該個聊天
 # NOTE Yahoo 的「Chat」正式譯文為「聯誼園地」
@@ -9926,73 +9911,14 @@ msgstr "加入好友目前所在的聊天室..."
 msgid "Open Inbox"
 msgstr "開啟收件匣"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join: &lt聊天室&gt;：加入位於 Yahoo! 網路的一個聊天室"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "list：列出Yahoo網路上的聊天室清單"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr "doodle: 要求使用者開始 Doodle Session"
-
-msgid "Yahoo ID..."
-msgstr "Yahoo 帳號"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo Protocol Plugin"
-msgstr "Yahoo 協定模組"
-
-msgid "Yahoo Japan"
-msgstr "Yahoo Japan"
-
-msgid "Pager server"
-msgstr "傳呼伺服器"
-
-msgid "Japan Pager server"
-msgstr "傳呼伺服器（日本地區）"
-
-msgid "Pager port"
-msgstr "傳呼系統通訊埠"
-
-msgid "File transfer server"
-msgstr "檔案傳輸伺服器"
-
-msgid "Japan file transfer server"
-msgstr "檔案傳輸伺服器（日本地區）"
-
-msgid "File transfer port"
-msgstr "檔案傳輸通訊埠"
-
-#  XXX 無劃一譯法，有譯「地區」、「區域」甚至「場所」(?!)
-msgid "Chat room locale"
-msgstr "聊天室區域 (Locale)"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "忽略會議室與聊天室邀請"
-
-msgid "Chat room list URL"
-msgstr "聊天室清單所在網址"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo 聊天伺服器"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo 聊天室通訊埠"
-
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 msgid "Sent Doodle request."
 msgstr "送出 Doodle 要求。"
+
+msgid "Unable to connect."
+msgstr "無法連線。"
 
 # TODO - 覆查譯文 - 20061028
 msgid "Unable to establish file descriptor."
@@ -10001,6 +9927,9 @@ msgstr "無法建立檔案介紹。"
 #, c-format
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr "%s 提出一次過傳送 %d 個檔案。\n"
+
+msgid "Write Error"
+msgstr "寫入錯誤"
 
 msgid "Yahoo! Japan Profile"
 msgstr "Yahoo! Japan 個人資料"
@@ -10112,6 +10041,9 @@ msgstr "可語音聊天"
 msgid "Webcams"
 msgstr "可視像聊天"
 
+msgid "Connection problem"
+msgstr "連線錯誤"
+
 msgid "Unable to fetch room list."
 msgstr "無法取得聊天室清單。"
 
@@ -10121,16 +10053,9 @@ msgstr "無法取得聊天室清單。"
 msgid "User Rooms"
 msgstr "使用者建立之聊天室"
 
-msgid "Connection problem with the YCHT server."
+#, fuzzy
+msgid "Connection problem with the YCHT server"
 msgstr "與 YCHT 伺服器出現連線錯誤"
-
-#, c-format
-msgid ""
-"Lost connection with server\n"
-"%s"
-msgstr ""
-"與伺服器之間的連線突然中斷\n"
-"%s"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -10282,32 +10207,21 @@ msgstr "域名"
 msgid "Exposure"
 msgstr "現身程度"
 
-#, c-format
-msgid ""
-"Unable to create socket:\n"
-"%s"
-msgstr ""
-"無法建立 Socket：\n"
-"%s"
-
-#, c-format
-msgid "Unable to parse response from HTTP proxy: %s\n"
+#, fuzzy, c-format
+msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "無法解析 HTTP 代理伺服應的回應：%s\n"
 
 #, c-format
 msgid "HTTP proxy connection error %d"
 msgstr "HTTP 代理伺服器連線錯誤 %d"
 
-#, c-format
-msgid "Access denied: HTTP proxy server forbids port %d tunneling."
+#, fuzzy, c-format
+msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr "拒絕存取：HTTP 代理伺服器禁止通訊埠 %d 的資料傳送。"
 
 #, c-format
 msgid "Error resolving %s"
 msgstr "解析 %s 途中發生了錯誤"
-
-msgid "Could not resolve host name"
-msgstr "無法解析主機"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -10514,12 +10428,6 @@ msgstr "寫入 %s 途中發生了錯誤：%s"
 msgid "Unable to connect to %s: %s"
 msgstr "無法連線到 %s：%s"
 
-#, fuzzy, c-format
-msgid ""
-"Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was "
-"found."
-msgstr "登入這個伺服器需要使用 TLS/SSL，但找不到 TLS/SSL 支援。"
-
 #, c-format
 msgid " - %s"
 msgstr " - %s"
@@ -10725,16 +10633,17 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr "請按需要更新欄位內的資訊。"
 
-msgid "Room _List"
-msgstr "聊天室清單(_L)"
+#, fuzzy
+msgid "A_ccount"
+msgstr "帳號"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr "請輸入關於您所想加入好友清單的聊天室的適當資訊。\n"
 
-msgid "_Account:"
-msgstr "帳號(_A)："
+msgid "Room _List"
+msgstr "聊天室清單(_L)"
 
 msgid "_Block"
 msgstr "封鎖(_B)"
@@ -10772,8 +10681,13 @@ msgstr "加入好友狀態捕捉(_P)..."
 msgid "View _Log"
 msgstr "觀看日誌(_L)"
 
-msgid "Hide when offline"
+#, fuzzy
+msgid "Hide When Offline"
 msgstr "離線時隱藏"
+
+#, fuzzy
+msgid "Show When Offline"
+msgstr "離線時顯示"
 
 msgid "_Alias..."
 msgstr "別名(_A)..."
@@ -11180,6 +11094,117 @@ msgstr "/工具"
 msgid "/Buddies/Sort Buddies"
 msgstr "/好友/好友清單排序"
 
+#. Buddy List
+msgid "Background Color"
+msgstr "背景顏色"
+
+msgid "The background color for the buddy list"
+msgstr ""
+
+#, fuzzy
+msgid "Layout"
+msgstr "寮國文"
+
+msgid "The layout of icons, name, and status of the blist"
+msgstr ""
+
+#. Group
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "背景顏色"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#, fuzzy
+msgid "Expanded Text"
+msgstr "展開(_E)"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "設定背景顏色"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "收起(_C)"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "設定背景顏色"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Text"
+msgstr "捷徑"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#, fuzzy
+msgid "On-line Text"
+msgstr "上線"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#, fuzzy
+msgid "Away Text"
+msgstr "離開"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#, fuzzy
+msgid "Off-line Text"
+msgstr "離線"
+
+msgid "The text information for when a buddy is off-line"
+msgstr ""
+
+# XXX 要覆查 - acli 20070914
+#, fuzzy
+msgid "Idle Text"
+msgstr "情緒描述"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#, fuzzy
+msgid "Message Text"
+msgstr "訊息送出"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nick"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "更改 %s 的個人資訊"
+
+# XXX 譯文有待改進 - acli 20070913
+#, fuzzy
+msgid "Type the host name for this certificate."
+msgstr "請輸入這張憑證所屬的主機名稱。"
+
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL 伺服器"
@@ -11228,7 +11253,8 @@ msgstr "忽略"
 msgid "Get Away Message"
 msgstr "取得離開訊息"
 
-msgid "Last said"
+#, fuzzy
+msgid "Last Said"
 msgstr "上次提到"
 
 msgid "Unable to save icon file to disk."
@@ -11712,6 +11738,10 @@ msgstr "印度文"
 msgid "Hungarian"
 msgstr "匈牙利文"
 
+#, fuzzy
+msgid "Armenian"
+msgstr "羅馬尼亞文"
+
 msgid "Indonesian"
 msgstr "印尼文"
 
@@ -11834,6 +11864,9 @@ msgstr "僧伽羅文"
 
 msgid "Swedish"
 msgstr "瑞典文"
+
+msgid "Swahili"
+msgstr ""
 
 # NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=T
 # NOTE 港一般譯「泰米爾」，台一般譯「塔米爾」（看來較常見）或「泰米爾」
@@ -12187,7 +12220,8 @@ msgstr "顯示連結時所用的顏色。"
 msgid "Hyperlink visited color"
 msgstr "瀏覽過的連結顏色"
 
-msgid "Color to draw hyperlinks after it has been visited (or activated)."
+#, fuzzy
+msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr "當滑鼠經過瀏覽過（或已啟動）的連結時的連結顏色。"
 
 msgid "Hyperlink prelight color"
@@ -12224,13 +12258,22 @@ msgid "Action Message Name Color for Whispered Message"
 msgstr ""
 "收到的訊息是對方以「輕聲的說」這種動作發出的訊息時，用來顯示對方帳號的顏色"
 
+#, fuzzy
+msgid "Color to draw the name of a whispered action message."
+msgstr "收到的訊息是代表對方發出的一個動作時，用來顯示對帳號的顏色。"
+
 msgid "Whisper Message Name Color"
 msgstr "輕聲訊息帳號顏色"
+
+#, fuzzy
+msgid "Color to draw the name of a whispered message."
+msgstr "收到的訊息是代表對方發出的一個動作時，用來顯示對帳號的顏色。"
 
 msgid "Typing notification color"
 msgstr "輸入通知顏色"
 
-msgid "The color to use for the typing notification font"
+#, fuzzy
+msgid "The color to use for the typing notification"
 msgstr "用來顯示輸入通知的顏色"
 
 msgid "Typing notification font"
@@ -12286,11 +12329,9 @@ msgstr ""
 msgid "Save Image"
 msgstr "儲存影像"
 
-#, c-format
 msgid "_Save Image..."
 msgstr "儲存影像(_S)..."
 
-#, c-format
 msgid "_Add Custom Smiley..."
 msgstr "插入自訂表情(_A)..."
 
@@ -12379,9 +12420,6 @@ msgstr "縮小字體"
 
 msgid "Font Face"
 msgstr "字型"
-
-msgid "Background Color"
-msgstr "背景顏色"
 
 #  XXX 譯「文字顏色」會否較好？ - acli 20070614
 msgid "Foreground Color"
@@ -12627,6 +12665,10 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "您選用了「使用者自定瀏覽器」，卻未有設定指令。"
 
+#, fuzzy
+msgid "No message"
+msgstr "不明的訊息"
+
 msgid "Open All Messages"
 msgstr "開啟所有訊息"
 
@@ -12643,10 +12685,6 @@ msgstr ""
 #, fuzzy
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">您有郵件！</span>"
-
-#, fuzzy
-msgid "No message"
-msgstr "不明的訊息"
 
 msgid "The following plugins will be unloaded."
 msgstr "以下的模組將會被卸載。"
@@ -12701,6 +12739,9 @@ msgstr "編輯好友狀態捕捉"
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
 msgstr "捕捉誰的狀態"
+
+msgid "_Account:"
+msgstr "帳號(_A)："
 
 msgid "_Buddy name:"
 msgstr "好友名稱(_B)："
@@ -12813,7 +12854,18 @@ msgid "Unknown.... Please report this!"
 msgstr "未知的捕捉事件。請回報這個問題！"
 
 # XXX 要覆查 - 20061025
-msgid "Smiley theme failed to unpack."
+#, fuzzy
+msgid "Theme failed to unpack."
+msgstr "無法打開表情主題。"
+
+# XXX 要覆查 - 20061025
+#, fuzzy
+msgid "Theme failed to load."
+msgstr "無法打開表情主題。"
+
+# XXX 要覆查 - 20061025
+#, fuzzy
+msgid "Theme failed to copy."
 msgstr "無法打開表情主題。"
 
 #  NOTE 直譯「安裝主題」好像很無棱兩可，加個「檔」字好像較好
@@ -12851,14 +12903,18 @@ msgstr "顯示系統工作匣圖示(_S)："
 msgid "On unread messages"
 msgstr "有未讀訊息時"
 
-msgid "Conversation Window Hiding"
-msgstr "隱藏即時訊息交談視窗"
+#, fuzzy
+msgid "Conversation Window"
+msgstr "即時訊息交談視窗"
 
 msgid "_Hide new IM conversations:"
 msgstr "隱藏新的即時訊息交談(_H)："
 
 msgid "When away"
 msgstr "離開期間"
+
+msgid "Minimi_ze new conversation windows"
+msgstr "最小化所有新交談視窗(_Z)"
 
 #. All the tab options!
 msgid "Tabs"
@@ -12920,9 +12976,6 @@ msgstr "使用平滑捲軸"
 msgid "F_lash window when IMs are received"
 msgstr "收到即時訊息後閃動視窗(_F)"
 
-msgid "Minimi_ze new conversation windows"
-msgstr "最小化所有新交談視窗(_Z)"
-
 msgid "Minimum input area height in lines:"
 msgstr "文字輸入區的最少行數："
 
@@ -12958,7 +13011,8 @@ msgstr "無法啟動瀏覽器設定程式。"
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">例：stunserver.org</span>"
 
-msgid "_Autodetect IP address"
+#, fuzzy, c-format
+msgid "Use _automatically detected IP address: %s"
 msgstr "自動偵測 IP 位址(_A)"
 
 msgid "Public _IP:"
@@ -13328,32 +13382,17 @@ msgstr "儲存並使用(_V)"
 msgid "Status for %s"
 msgstr "狀態：%s"
 
-#.
-#. * TODO: We should enable/disable the add button based on
-#. *       whether the user has entered all required data.  That
-#. *       would eliminate the need for this check and provide a
-#. *       better user experience.
-#.
-msgid "Custom Smiley"
-msgstr "自訂表情"
-
-msgid "More Data needed"
-msgstr "需要進一步的資料"
-
-msgid "Please provide a shortcut to associate with the smiley."
-msgstr "請給這個表情給定一個相關的捷徑。"
-
 # XXX 20080810 acli - 暫譯
 #, fuzzy, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr "給定的捷徑已有相關的自訂表情，請指定另一個捷徑。"
 
+msgid "Custom Smiley"
+msgstr "自訂表情"
+
 msgid "Duplicate Shortcut"
 msgstr "重覆的表情定義"
-
-msgid "Please select an image for the smiley."
-msgstr "請給這個表情選擇一個圖像。"
 
 msgid "Edit Smiley"
 msgstr "修改表情"
@@ -13379,6 +13418,10 @@ msgstr "捷徑"
 
 msgid "Custom Smiley Manager"
 msgstr "自訂表情管理"
+
+#, fuzzy
+msgid "Select Buddy Icon"
+msgstr "選擇好友"
 
 msgid "Click to change your buddyicon for this account."
 msgstr "點選以更改這個帳號的圖示。"
@@ -13463,9 +13506,10 @@ msgstr ""
 msgid "Cannot send launcher"
 msgstr "無法傳送啟動器"
 
+#, fuzzy
 msgid ""
-"You dragged a desktop launcher. Most likely you wanted to send whatever this "
-"launcher points to instead of this launcher itself."
+"You dragged a desktop launcher. Most likely you wanted to send the target of "
+"this launcher instead of this launcher itself."
 msgstr "您拖曳了一個啟動器；您大概想傳送啟動器要啟動的檔案，而不是啟動器本身。"
 
 #, c-format
@@ -13604,6 +13648,81 @@ msgstr "好友在線狀態預測模組"
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr "顯示一些有關好友的在線狀態的統計"
+
+#, fuzzy
+msgid "Server name request"
+msgstr "伺服器位址"
+
+# NOTE「會議室」是暫時的意譯。Yahoo! 好像沒有為「Conference」提供正式中譯名。
+# XXX
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "登入會議伺服器"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "選擇查詢的會議伺服器"
+
+#  XXX 暫譯
+#, fuzzy
+msgid "Find Services"
+msgstr "所用之線上服務"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "送出好友清單"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "離開"
+
+#, fuzzy
+msgid "Directory"
+msgstr "日誌目錄"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "選取音效"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "PubSub 服務"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "描述"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "服務探尋資訊"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "瀏覽器(_B)："
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "使用者不存在"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "伺服器並不提供任何一種被支援的認證方式"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "服務探尋資訊"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
 msgid "Buddy is idle"
 msgstr "好友閒置"
@@ -14012,9 +14131,10 @@ msgid "Music Messaging Plugin for collaborative composition."
 msgstr "集體作曲用的音樂訊息模組"
 
 #. *  summary
+#, fuzzy
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
-"on a piece of music by editting a common score in real-time."
+"on a piece of music by editing a common score in real-time."
 msgstr ""
 "音樂訊息模組為音樂編寫提供即時傳訊功能，讓多個使用者能同時編輯同一份樂譜。"
 
@@ -14130,13 +14250,6 @@ msgstr ""
 "- 它會將所有收到的訊息左右掉轉\n"
 "- 它會在您的好友登入時，立刻送出一個訊息給他們"
 
-msgid "Cursor Color"
-msgstr "游標顏色"
-
-#  XXX 只有一個軟件這樣譯，在無更好的譯文可供參考下暫且借用
-msgid "Secondary Cursor Color"
-msgstr "第二游標顏色"
-
 msgid "Hyperlink Color"
 msgstr "超連結顏色"
 
@@ -14147,6 +14260,10 @@ msgstr "瀏覽過的超連結顏色"
 # NOTE 譯文改動 by c9s (http://developer.pidgin.im/ticket/7917) 20081227 - 20090226 acli
 msgid "Highlighted Message Name Color"
 msgstr "已標示訊息名稱顏"
+
+#, fuzzy
+msgid "Typing Notification Color"
+msgstr "輸入通知顏色"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "GtkTreeView 水平間隔距離"
@@ -14178,34 +14295,24 @@ msgstr "GTK+介面字型"
 msgid "GTK+ Text Shortcut Theme"
 msgstr ""
 
-#.
-#. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-#. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-#. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
-#. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-#. widget_bool_prefs_set[i], hbox);
-#. gtk_size_group_add_widget(labelsg, check);
-#.
-#. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-#. *
-#. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-#. *
-#. gtk_widget_set_sensitive(widget_bool_widgets[i],
-#. purple_prefs_get_bool(widget_bool_prefs_set[i]));
-#. g_signal_connect(G_OBJECT(check), "toggled",
-#. G_CALLBACK(pidgin_toggle_sensitive),
-#. widget_bool_widgets[i]);
-#. }
-#.
-msgid "Interface colors"
-msgstr "介面顏色"
+# XXX 這是我譯的，但我認為這是很差的譯文，看了也不知是什麼 - acli 20080511
+#, fuzzy
+msgid "Disable Typing Notification Text"
+msgstr "啟用輸入通知"
 
-msgid "Widget Sizes"
-msgstr "Widget 大小"
+#, fuzzy
+msgid "GTK+ Theme Control Settings"
+msgstr "Pidgin GTK+ 佈景主題設定"
+
+#, fuzzy
+msgid "Colors"
+msgstr "關閉"
 
 msgid "Fonts"
 msgstr "字型"
+
+msgid "Miscellaneous"
+msgstr ""
 
 msgid "Gtkrc File Tools"
 msgstr "Gtkrc檔專用工具"
@@ -14293,9 +14400,10 @@ msgstr "交談視窗的「傳送」按紐"
 
 # XXX 譯文有待改進 - acli 20080508
 #. *< summary
+#, fuzzy
 msgid ""
 "Adds a Send button to the entry area of the conversation window. Intended "
-"for when no physical keyboard is present."
+"for use when no physical keyboard is present."
 msgstr "在交談視窗的輸入欄位加添一個「傳送」按紐，適用於沒有連接鍵盤時使用。"
 
 # FIXME 譯文有譯改進 - 20061027
@@ -14350,6 +14458,122 @@ msgstr "文字取代"
 
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr "依照使用者所定義的規則來取代送出訊息中的文字。"
+
+#, fuzzy
+msgid "Just logged in"
+msgstr "尚未登入"
+
+#, fuzzy
+msgid "Just logged out"
+msgstr "尚未登入"
+
+msgid ""
+"Icon for Contact/\n"
+"Icon for Unknown person"
+msgstr ""
+
+# TODO 看起來應該為加一個新的聊天室，並把聊天室歸類到某個群組。
+# NOTE 譯文更動 by Paladin
+#, fuzzy
+msgid "Icon for Chat"
+msgstr "加入聊天室"
+
+#  NOTE「Ignore」原譯「忽略使用者」，但 gtkprefs.c 中的「Ignore」
+#  NOTE 乃「忽略格式」的意思，故只能譯成「忽略」
+#, fuzzy
+msgid "Ignored"
+msgstr "忽略"
+
+#, fuzzy
+msgid "Founder"
+msgstr "再大聲"
+
+#, fuzzy
+msgid "Operator"
+msgstr "Opera"
+
+msgid "Half Operator"
+msgstr ""
+
+# NOTE 這是我們允許別人發出的認證要求後顯示給我們自己看的
+#, fuzzy
+msgid "Authorization dialog"
+msgstr "給予認證"
+
+# TODO 要覆查 - 20061025
+#, fuzzy
+msgid "Error dialog"
+msgstr "錯誤訊息"
+
+# XXX 20070518
+#, fuzzy
+msgid "Information dialog"
+msgstr "資訊"
+
+msgid "Mail dialog"
+msgstr ""
+
+#  XXX 這譯文絶對有問題，但想不到怎樣譯較好 - ambrose 20070415
+#, fuzzy
+msgid "Question dialog"
+msgstr "對話視窗 (Request Dialog)"
+
+#, fuzzy
+msgid "Warning dialog"
+msgstr "警告等級"
+
+msgid "What kind of dialog is this?"
+msgstr ""
+
+#, fuzzy
+msgid "Status Icons"
+msgstr "狀態：%s"
+
+#  XXX 無劃一譯法，有譯「地區」、「區域」甚至「場所」(?!)
+#, fuzzy
+msgid "Chatroom Emblems"
+msgstr "聊天室區域 (Locale)"
+
+#, fuzzy
+msgid "Dialog Icons"
+msgstr "變更圖示"
+
+#, fuzzy
+msgid "Pidgin Icon Theme Editor"
+msgstr "Pidgin GTK+ 佈景主題設定"
+
+#, fuzzy
+msgid "Contact"
+msgstr "聯絡資訊"
+
+#, fuzzy
+msgid "Pidgin Buddylist Theme Editor"
+msgstr "好友清單"
+
+#, fuzzy
+msgid "Edit Buddylist Theme"
+msgstr "好友清單"
+
+msgid "Edit Icon Theme"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *  description
+#, fuzzy
+msgid "Pidgin Theme Editor"
+msgstr "Pidgin GTK+ 佈景主題設定"
+
+#. *< name
+#. *< version
+#. *  summary
+#, fuzzy
+msgid "Pidgin Theme Editor."
+msgstr "Pidgin GTK+ 佈景主題設定"
 
 #. *< type
 #. *< ui_requirement
@@ -14517,8 +14741,9 @@ msgstr "Windows 版 Pidgin 選項"
 msgid "Options specific to Pidgin for Windows."
 msgstr "Windows 版 Pidgin 的相關選項。"
 
+#, fuzzy
 msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
+"Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr "提供 Windows 版 Pidgin 的相關選項，例如好友清單的停駐功能。"
 
 msgid "<font color='#777777'>Logged out.</font>"
@@ -14559,6 +14784,328 @@ msgstr "送出、讀取未加工的 XMPP 段落。"
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
+
+#~ msgid "Cannot open socket"
+#~ msgstr "無法開啟Socket"
+
+#~ msgid "Could not listen on socket"
+#~ msgstr "無法監聽 Socket"
+
+#~ msgid "Unable to read socket"
+#~ msgstr "無法讀取 Socket"
+
+#~ msgid "Connection failed."
+#~ msgstr "連線失敗。"
+
+#~ msgid "Server has disconnected"
+#~ msgstr "伺服器已停止連線"
+
+#~ msgid "Couldn't create socket"
+#~ msgstr "無法建立 Socket"
+
+#~ msgid "Couldn't connect to host"
+#~ msgstr "無法連到伺服器"
+
+# NOTE OSCAR 錯誤訊息應可參閱 http://aimdoc.sourceforge.net/OSCARdoc/，但在該站很難找東西
+#~ msgid "Read error"
+#~ msgstr "讀取錯誤"
+
+#~ msgid ""
+#~ "Could not establish a connection with the server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "無法與伺服器建立連線:\n"
+#~ "%s"
+
+#~ msgid "Write error"
+#~ msgstr "寫入錯誤"
+
+# NOTE 這是功能名稱（直譯）
+#~ msgid "Last Activity"
+#~ msgstr "最近活動"
+
+#~ msgid "Service Discovery Info"
+#~ msgstr "服務探尋資訊"
+
+#  FIXME acli 2070914
+#~ msgid "Service Discovery Items"
+#~ msgstr "服務探尋項目"
+
+# NOTE 這是功能名稱（直譯）
+#~ msgid "Extended Stanza Addressing"
+#~ msgstr "延伸段落定址"
+
+# NOTE 這是功能名稱
+#~ msgid "Multi-User Chat"
+#~ msgstr "多用戶聊天"
+
+# NOTE 這是功能名稱（直譯）
+#~ msgid "Multi-User Chat Extended Presence Information"
+#~ msgstr "多用戶聊天延伸上線狀態資訊"
+
+# NOTE Cf http://host.cc.ntu.edu.tw/iicm/term/termb_I.htm
+#~ msgid "In-Band Bytestreams"
+#~ msgstr "帶內位元組串流"
+
+#~ msgid "Ad-Hoc Commands"
+#~ msgstr "臨時指令"
+
+#~ msgid "PubSub Service"
+#~ msgstr "PubSub 服務"
+
+#~ msgid "SOCKS5 Bytestreams"
+#~ msgstr "SOCKS5 位元組串流"
+
+#~ msgid "Out of Band Data"
+#~ msgstr "帶外數據"
+
+#  NOTE Untranslated
+#~ msgid "XHTML-IM"
+#~ msgstr "XHTML-IM"
+
+#~ msgid "In-Band Registration"
+#~ msgstr "帶內註冊"
+
+#~ msgid "User Location"
+#~ msgstr "使用者所在位置"
+
+#~ msgid "User Avatar"
+#~ msgstr "使用者化身"
+
+#~ msgid "Chat State Notifications"
+#~ msgstr "聊天狀態通知"
+
+# NOTE Jabber 協定中 Stream Error 的一種，即 <unsupported-version/>
+# NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-March/000752.html
+#~ msgid "Software Version"
+#~ msgstr "軟體版本"
+
+#~ msgid "Stream Initiation"
+#~ msgstr "開始串流"
+
+#~ msgid "User Mood"
+#~ msgstr "使用者情緒"
+
+# XXX may be wrong
+#~ msgid "User Activity"
+#~ msgstr "使用者活動狀態"
+
+#  NOTE 直譯：個體能力
+#  FIXME 譯文有待改進 - acli 20070918
+#~ msgid "Entity Capabilities"
+#~ msgstr "個體能力"
+
+#  FIXME 這聽來不對 - acli 20070913
+#~ msgid "Encrypted Session Negotiations"
+#~ msgstr "加密工作階段協商"
+
+#~ msgid "User Tune"
+#~ msgstr "使用者樂曲"
+
+#  NOTE「Roster」指「名冊」，但Open Source software似乎一般譯「好友清單」、「成員列表」等
+#  FIXME 譯文有待改進 - acli 20070918
+#~ msgid "Roster Item Exchange"
+#~ msgstr "好友清單項目交換"
+
+#  NOTE 參見 http://jabber.org/protocol/reach
+#  NOTE「Reachability Address」指即時通訊以外的通訊方式所用的「位址」（例如電話號碼）
+#  NOTE 直譯：可抵達性位址
+#  XXX 是否譯「其他通訊方法」較好？但要先看上下文 - acli 20070918
+#~ msgid "Reachability Address"
+#~ msgstr "可抵達性位址"
+
+#~ msgid "User Profile"
+#~ msgstr "使用者資料"
+
+#~ msgid "Jingle"
+#~ msgstr "Jingle"
+
+#~ msgid "Jingle Audio"
+#~ msgstr "Jingle 音訊"
+
+#~ msgid "User Nickname"
+#~ msgstr "使用者暱稱"
+
+#~ msgid "Jingle ICE UDP"
+#~ msgstr "Jingle ICE UDP"
+
+#~ msgid "Jingle ICE TCP"
+#~ msgstr "Jingle ICE TCP"
+
+#~ msgid "Jingle Video"
+#~ msgstr "Jingle 視訊"
+
+#~ msgid "Jingle DTMF"
+#~ msgstr "Jingle DTMF"
+
+#~ msgid "Message Receipts"
+#~ msgstr "收到的訊息"
+
+#~ msgid "Public Key Publishing"
+#~ msgstr "發佈公鑰"
+
+# NOTE Jabber 新功能規格
+#~ msgid "User Browsing"
+#~ msgstr "使用者瀏覽"
+
+#~ msgid "Stanza Encryption"
+#~ msgstr "段落加密"
+
+#  XXX 暫譯- acli 20070913
+#~ msgid "Delayed Delivery"
+#~ msgstr "延遲送出"
+
+#~ msgid "STUN Service Discovery for Jingle"
+#~ msgstr "Jingle 用的 STUN 服務偵測"
+
+# FIXME 這聽來不對
+#~ msgid "Simplified Encrypted Session Negotiation"
+#~ msgstr "簡化加密工作階段協商"
+
+#~ msgid "Hop Check"
+#~ msgstr "中繼段檢查"
+
+#~ msgid "Read Error"
+#~ msgstr "讀取錯誤"
+
+#~ msgid "Failed to connect to server."
+#~ msgstr "無法連線到伺服器。"
+
+#~ msgid "Read buffer full (2)"
+#~ msgstr "讀取用的暫存區滿了（代號2）"
+
+#~ msgid "Unparseable message"
+#~ msgstr "無法解析訊息"
+
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "無法連到伺服器：%s (%d)"
+
+#~ msgid "Login failed (%s)."
+#~ msgstr "登入失敗 (%s)。"
+
+# XXX 暫譯
+#~ msgid ""
+#~ "You have been logged out because you logged in at another workstation."
+#~ msgstr "您已經被登出，因為您已在其他電腦上登入。"
+
+#~ msgid "Error. SSL support is not installed."
+#~ msgstr "錯誤：沒有安裝 SSL 支援。"
+
+#~ msgid "Incorrect password."
+#~ msgstr "密碼錯誤。"
+
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "無法連線到 BOS 伺服器：\n"
+#~ "%s"
+
+#~ msgid "You may be disconnected shortly.  Check %s for updates."
+#~ msgstr "您可能會在短時間內中斷連線。請到 %s 看看有沒有更新。"
+
+#~ msgid "Could Not Connect"
+#~ msgstr "無法連線"
+
+#~ msgid "Invalid username."
+#~ msgstr "使用者名稱無效。"
+
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "無法解密伺服器回應"
+
+#~ msgid "Connection lost"
+#~ msgstr "連線中斷"
+
+#~ msgid "Couldn't resolve host"
+#~ msgstr "無法解析主機"
+
+#~ msgid "Connection closed (writing)"
+#~ msgstr "連線關閉（寫入）"
+
+#~ msgid "Connection reset"
+#~ msgstr "連線重置"
+
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "讀取 Socket 時發生錯誤；%s"
+
+#~ msgid "Unable to connect to host"
+#~ msgstr "無法連線到主機"
+
+#~ msgid "Could not write"
+#~ msgstr "無法寫入"
+
+#~ msgid "Could not connect"
+#~ msgstr "無法連結"
+
+#~ msgid "Could not create listen socket"
+#~ msgstr "無法建立 Socket 監聽"
+
+#~ msgid "Could not resolve hostname"
+#~ msgstr "無法解析主機"
+
+#, fuzzy
+#~ msgid "Incorrect Password"
+#~ msgstr "密碼錯誤"
+
+#~ msgid ""
+#~ "Could not establish a connection with %s:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "無法與 %s 建立連線:\n"
+#~ "%s"
+
+#~ msgid "Yahoo Japan"
+#~ msgstr "Yahoo Japan"
+
+#~ msgid "Japan Pager server"
+#~ msgstr "傳呼伺服器（日本地區）"
+
+#~ msgid "Japan file transfer server"
+#~ msgstr "檔案傳輸伺服器（日本地區）"
+
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr ""
+#~ "與伺服器之間的連線突然中斷\n"
+#~ "%s"
+
+#~ msgid "Could not resolve host name"
+#~ msgstr "無法解析主機"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support "
+#~ "was found."
+#~ msgstr "登入這個伺服器需要使用 TLS/SSL，但找不到 TLS/SSL 支援。"
+
+#~ msgid "Conversation Window Hiding"
+#~ msgstr "隱藏即時訊息交談視窗"
+
+#~ msgid "More Data needed"
+#~ msgstr "需要進一步的資料"
+
+#~ msgid "Please provide a shortcut to associate with the smiley."
+#~ msgstr "請給這個表情給定一個相關的捷徑。"
+
+#~ msgid "Please select an image for the smiley."
+#~ msgstr "請給這個表情選擇一個圖像。"
+
+#~ msgid "Activate which ID?"
+#~ msgstr "啟用哪一個 ID？"
+
+#~ msgid "Cursor Color"
+#~ msgstr "游標顏色"
+
+#  XXX 只有一個軟件這樣譯，在無更好的譯文可供參考下暫且借用
+#~ msgid "Secondary Cursor Color"
+#~ msgstr "第二游標顏色"
+
+#~ msgid "Interface colors"
+#~ msgstr "介面顏色"
+
+#~ msgid "Widget Sizes"
+#~ msgstr "Widget 大小"
 
 #~ msgid "Invite message"
 #~ msgstr "邀請訊息"
