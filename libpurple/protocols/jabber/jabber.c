@@ -719,8 +719,8 @@ static gboolean jabber_login_connect(JabberStream *js, const char *domain, const
 	else
 		js->serverFQDN = g_strdup(host);
 
-	if (purple_proxy_connect(js->gc, js->gc->account, host,
-			port, jabber_login_callback, js->gc) == NULL) {
+	if (purple_proxy_connect(js->gc, purple_connection_get_account(js->gc),
+			host, port, jabber_login_callback, js->gc) == NULL) {
 		if (fatal_failure) {
 			purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -749,7 +749,7 @@ static void try_srv_connect(JabberStream *js)
 	ascii_domain = jabber_try_idna_to_ascii(js->user->domain);
 	/* Fall back to the defaults (I'm not sure if we should actually do this) */
 	jabber_login_connect(js, js->user->domain, ascii_domain,
-			purple_account_get_int(js->gc->account, "port", 5222),
+			purple_account_get_int(purple_connection_get_account(js->gc), "port", 5222),
 			TRUE, TRUE);
 	g_free(ascii_domain);
 }
@@ -767,7 +767,7 @@ static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
 	} else {
 		char *ascii_domain = jabber_try_idna_to_ascii(js->user->domain);
 		jabber_login_connect(js, js->user->domain, ascii_domain,
-				purple_account_get_int(js->gc->account, "port", 5222),
+				purple_account_get_int(purple_connection_get_account(js->gc), "port", 5222),
 				TRUE, TRUE);
 		g_free(ascii_domain);
 	}
