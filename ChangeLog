@@ -20,10 +20,16 @@ version 2.6.0 (??/??/2009):
 	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
 	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
 	  information.
-	* PURPLE_VERBOSE_DEBUG environment variable.  Currently this is an "on" or
+	* PURPLE_VERBOSE_DEBUG environment variable.  Currently, this is an "on" or
 	  "off" variable.  Set it to any value to turn it on and unset it to turn
 	  it off.  This will optionally be used to only show less useful debug
 	  information on an as-needed basis.
+	* PURPLE_LEAKCHECK_HELP environment variable.  Currently, this is an "on"
+	  or "off" variable.  Set it to any value to turn it on and unset it to
+	  turn it off.  This will be used to perform various actions that are
+	  useful when running libpurple inside of Valgrind or similar programs.
+	  Currently, it keeps plugins in memory, allowing Valgrind to perform
+	  symbol resolution of leak traces at shutdown.
 	* Add support for receiving handwritten (ink) messages on MSN.
 	* Don't do IPv6 address lookups if the computer does not have an IPv6
 	  address configured.
