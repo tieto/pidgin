@@ -1623,28 +1623,18 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 
 	purple_debug_info("yahoo", "yahoo status: %d\n", yd->current_status);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP, yd->current_status, yd->session_id);
-	if(yd->jp) {
-		yahoo_packet_hash(pkt, "ssssssss",
-					1, name,
-					0, name,
-					277, yd->cookie_y,
-					278, yd->cookie_t,
-					307, base64_string,
-					2, name,
-					2, "1",
-					135, YAHOOJP_CLIENT_VERSION);
-	} else	{
-		yahoo_packet_hash(pkt, "sssssssss",
-					1, name,
-					0, name,
-					277, yd->cookie_y,
-					278, yd->cookie_t,
-					307, base64_string,
-					244, YAHOO_CLIENT_VERSION_ID,
-					2, name,
-					2, "1",
-					135, YAHOO_CLIENT_VERSION);
-	}
+	
+	yahoo_packet_hash(pkt, "sssssssss",
+				1, name,
+				0, name,
+				277, yd->cookie_y,
+				278, yd->cookie_t,
+				307, base64_string,
+				244, yd->jp ? YAHOOJP_CLIENT_VERSION_ID : YAHOO_CLIENT_VERSION_ID,
+				2, name,
+				2, "1",
+				135, yd->jp ? YAHOOJP_CLIENT_VERSION : YAHOO_CLIENT_VERSION);
+
 	if (yd->picture_checksum)
 		yahoo_packet_hash_int(pkt, 192, yd->picture_checksum);
 	yahoo_packet_send_and_free(pkt, yd);
@@ -2086,6 +2076,10 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	case 14:
 		msg = g_strdup(_("Your account is locked, please log in to the Yahoo! website."));
 		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
+		break;
+	case 1013:
+		msg = g_strdup(_("Invalid username"));
+		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 		break;
 	default:
 		msg = g_strdup_printf(_("Unknown error number %d. Logging into the Yahoo! website may fix this."), err);
