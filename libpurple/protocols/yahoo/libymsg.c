@@ -2075,7 +2075,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 		break;
 	case 14:
 		msg = g_strdup(_("Your account has been locked due to too many failed login attempts."
-					"Please try logging into the Yahoo! website."));
+					"  Please try logging into the Yahoo! website."));
 		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 		break;
 	case 1013:
