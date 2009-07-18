@@ -882,10 +882,9 @@ jabber_stream_connect(JabberStream *js)
 
 	ascii_domain = jabber_try_idna_to_ascii(js->certificate_CN);
 	if (ascii_domain == NULL) {
-		/* TODO: Change this for 2.6.1 */
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-				_("Invalid XMPP ID"));
+				_("Invalid XMPP ID. Domain is not properly internationalized."));
 		return;
 	}
 
