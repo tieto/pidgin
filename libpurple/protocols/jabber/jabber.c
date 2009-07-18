@@ -657,8 +657,11 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 			purple_debug_error("jabber", "Unable to connect to server: %s.  Trying next SRV record.\n", error);
 			try_srv_connect(js);
 		} else {
+			char *ascii_domain = jabber_try_idna_to_ascii(js->user->domain);
 			purple_debug_info("jabber","Couldn't connect directly to %s. Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
-			js->srv_query_data = purple_txt_resolve("_xmppconnect", js->user->domain, txt_resolved_cb, js);
+			js->srv_query_data = purple_txt_resolve("_xmppconnect",
+					ascii_domain, txt_resolved_cb, js);
+			g_free(ascii_domain);
 		}
 		return;
 	}
@@ -882,7 +885,6 @@ jabber_stream_connect(JabberStream *js)
 
 	ascii_domain = jabber_try_idna_to_ascii(js->certificate_CN);
 	if (ascii_domain == NULL) {
-		/* TODO: Change this for 2.6.1 */
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 				_("Invalid XMPP ID"));
