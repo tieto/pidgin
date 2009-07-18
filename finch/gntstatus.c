@@ -34,6 +34,7 @@
 #include <gntutils.h>
 
 #include "finch.h"
+#include <internal.h>
 
 #include <notify.h>
 #include <request.h>
