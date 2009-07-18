@@ -65,14 +65,14 @@ static void yahoo_chat_online(PurpleConnection *gc)
 	rll = purple_account_get_string(purple_connection_get_account(gc),
 								  "room_list_locale", YAHOO_ROOMLIST_LOCALE);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATONLINE, YAHOO_STATUS_AVAILABLE,0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATONLINE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "sssss",
 					  109, purple_connection_get_display_name(gc),
 					  1, purple_connection_get_display_name(gc),
 					  6, "abcde",
 					/* I'm not sure this is the correct way to set this. */
 					  98, rll,
-					  135, "ym8.1.0.415");
+					  135, YAHOO_CLIENT_VERSION);
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
@@ -376,7 +376,7 @@ static void yahoo_chat_join(PurpleConnection *gc, const char *dn, const char *ro
 	 * so we don't have to actually pass the flag in the packet. Or something. */
 	room2 = yahoo_string_encode(gc, room, &utf8);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATJOIN, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATJOIN, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "ssss",
 						1, purple_connection_get_display_name(gc),
 						104, room2,
@@ -396,7 +396,7 @@ void yahoo_process_chat_online(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 		/* We need to goto a user in chat */
 		if (yd->pending_chat_goto) {
-			struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_CHATGOTO, YAHOO_STATUS_AVAILABLE, 0);
+			struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_CHATGOTO, YAHOO_STATUS_AVAILABLE, yd->session_id);
 			yahoo_packet_hash(pkt, "sss",
 				109, yd->pending_chat_goto,
 				1, purple_connection_get_display_name(gc),
@@ -764,7 +764,7 @@ void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, G
 
 	purple_debug_misc("yahoo", "leaving conference %s\n", room);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFLOGOFF, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFLOGOFF, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	yahoo_packet_hash_str(pkt, 1, dn);
 	for (w = who; w; w = w->next) {
@@ -788,7 +788,7 @@ static int yahoo_conf_send(PurpleConnection *gc, const char *dn, const char *roo
 	msg = yahoo_html_to_codes(what);
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFMSG, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFMSG, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	yahoo_packet_hash_str(pkt, 1, dn);
 	for (who = members; who; who = who->next) {
@@ -816,7 +816,7 @@ static void yahoo_conf_join(struct yahoo_data *yd, PurpleConversation *c, const 
 	if (members)
 		memarr = g_strsplit(members, "\n", 0);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFLOGON, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFLOGON, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	yahoo_packet_hash(pkt, "sss", 1, dn, 3, dn, 57, room);
 	if (memarr) {
@@ -846,7 +846,7 @@ static void yahoo_conf_invite(PurpleConnection *gc, PurpleConversation *c,
 
 	members = purple_conv_chat_get_users(PURPLE_CONV_CHAT(c));
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFADDINVITE, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFADDINVITE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	yahoo_packet_hash(pkt, "sssss", 1, dn, 51, buddy, 57, room, 58, msg?msg2:"", 13, "0");
 	for(; members; members = members->next) {
@@ -882,7 +882,7 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 
 	eroom = yahoo_string_encode(gc, room, &utf8);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATEXIT, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATEXIT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "sss", 104, eroom, 109, dn, 108, "1");
 	yahoo_packet_hash_str(pkt, 112, "0"); /* what does this one mean? */
 	yahoo_packet_send_and_free(pkt, yd);
@@ -900,7 +900,7 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 		return;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATLOGOUT,
-			YAHOO_STATUS_AVAILABLE, 0);
+			YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash_str(pkt, 1, dn);
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -941,7 +941,7 @@ static int yahoo_chat_send(PurpleConnection *gc, const char *dn, const char *roo
 	g_free(msg2);
 	room2 = yahoo_string_encode(gc, room, NULL);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_COMMENT, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_COMMENT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	yahoo_packet_hash(pkt, "sss", 1, dn, 104, room2, 117, msg1);
 	if (me)
@@ -978,7 +978,7 @@ static void yahoo_chat_invite(PurpleConnection *gc, const char *dn, const char *
 	if (msg)
 		msg2 = yahoo_string_encode(gc, msg, NULL);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATADDINVITE, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATADDINVITE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "sssss", 1, dn, 118, buddy, 104, room2, 117, (msg2?msg2:""), 129, "0");
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -1012,7 +1012,7 @@ void yahoo_chat_goto(PurpleConnection *gc, const char *name)
 		return;
 	}
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATGOTO, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATGOTO, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "sss", 109, name, 1, purple_connection_get_display_name(gc), 62, "2");
 	yahoo_packet_send_and_free(pkt, yd);
 }
