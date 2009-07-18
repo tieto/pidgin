@@ -6335,6 +6335,44 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 }
 
 static void
+oscar_close_directim(gpointer object, gpointer ignored)
+{
+	PurpleBlistNode *node;
+	PurpleBuddy *buddy;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	PurpleConversation *conv;
+	OscarData *od;
+	PeerConnection *conn;
+	const char *name;
+
+	node = object;
+
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (PurpleBuddy*)node;
+	name = purple_buddy_get_name(buddy);
+	account = purple_buddy_get_account(buddy);
+	gc = purple_account_get_connection(account);
+	od = gc->proto_data;
+	conn = peer_connection_find_by_type(od, name, OSCAR_CAPABILITY_DIRECTIM);
+
+	if (conn != NULL)
+	{
+		if (!conn->ready)
+			aim_im_sendch2_cancel(conn);
+
+		peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
+
+		/* OSCAR_DISCONNECT_LOCAL_CLOSED doesn't write anything to the convo
+		 * window. Let the user know that we canceled the Direct IM. */
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+		purple_conversation_write(conv, NULL, _("You closed the connection."),
+		                          PURPLE_MESSAGE_SYSTEM, time(NULL));
+	}
+}
+
+static void
 oscar_get_aim_info_cb(PurpleBlistNode *node, gpointer ignore)
 {
 	PurpleBuddy *buddy;
@@ -6397,11 +6435,23 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 		oscar_util_name_compare(purple_account_get_username(account), bname) &&
 		PURPLE_BUDDY_IS_ONLINE(buddy))
 	{
+		PeerConnection *conn;
+		conn = peer_connection_find_by_type(od, bname, OSCAR_CAPABILITY_DIRECTIM);
+
 		if (userinfo->capabilities & OSCAR_CAPABILITY_DIRECTIM)
 		{
-			act = purple_menu_action_new(_("Direct IM"),
-			                           PURPLE_CALLBACK(oscar_ask_directim),
-			                           NULL, NULL);
+			if (conn)
+			{
+				act = purple_menu_action_new(_("Cancel Direct IM"),
+				                          PURPLE_CALLBACK(oscar_close_directim),
+				                          NULL, NULL);
+			}
+			else
+			{
+				act = purple_menu_action_new(_("Direct IM"),
+				                          PURPLE_CALLBACK(oscar_ask_directim),
+				                          NULL, NULL);
+			}
 			menu = g_list_prepend(menu, act);
 		}
 #if 0
