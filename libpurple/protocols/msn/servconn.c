@@ -26,6 +26,7 @@
 #include "error.h"
 
 static void read_cb(gpointer data, gint source, PurpleInputCondition cond);
+static void servconn_timeout_renew(MsnServConn *servconn);
 
 /**************************************************************************
  * Main
@@ -52,6 +53,8 @@ msn_servconn_new(MsnSession *session, MsnServConnType type)
 
 	servconn->tx_buf = purple_circ_buffer_new(MSN_BUF_LEN);
 	servconn->tx_handler = 0;
+	servconn->timeout_sec = 0;
+	servconn->timeout_handle = 0;
 
 	servconn->fd = -1;
 
@@ -82,6 +85,8 @@ msn_servconn_destroy(MsnServConn *servconn)
 	purple_circ_buffer_destroy(servconn->tx_buf);
 	if (servconn->tx_handler > 0)
 		purple_input_remove(servconn->tx_handler);
+	if (servconn->timeout_handle > 0)
+		purple_input_remove(servconn->timeout_handle);
 
 	msn_cmdproc_destroy(servconn->cmdproc);
 	g_free(servconn);
@@ -184,6 +189,7 @@ connect_cb(gpointer data, gint source, const char *error_message)
 		servconn->connect_cb(servconn);
 		servconn->inpa = purple_input_add(servconn->fd, PURPLE_INPUT_READ,
 			read_cb, data);
+		servconn_timeout_renew(servconn);
 	}
 	else
 	{
@@ -219,6 +225,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port, gboolean
 
 		servconn->connected = TRUE;
 		servconn->httpconn->virgin = TRUE;
+		servconn_timeout_renew(servconn);
 
 		/* Someone wants to know we connected. */
 		servconn->connect_cb(servconn);
@@ -267,6 +274,12 @@ msn_servconn_disconnect(MsnServConn *servconn)
 		servconn->inpa = 0;
 	}
 
+	if (servconn->timeout_handle > 0)
+	{
+		purple_input_remove(servconn->timeout_handle);
+		servconn->timeout_handle = 0;
+	}
+
 	close(servconn->fd);
 
 	servconn->rx_buf = NULL;
@@ -277,6 +290,35 @@ msn_servconn_disconnect(MsnServConn *servconn)
 
 	if (servconn->disconnect_cb != NULL)
 		servconn->disconnect_cb(servconn);
+}
+
+static gboolean
+servconn_idle_timeout_cb(MsnServConn *servconn)
+{
+	msn_servconn_disconnect(servconn);
+	return FALSE;
+}
+
+static void
+servconn_timeout_renew(MsnServConn *servconn)
+{
+	if (servconn->timeout_handle) {
+		purple_input_remove(servconn->timeout_handle);
+		servconn->timeout_handle = 0;
+	}
+
+	if (servconn->connected && servconn->timeout_sec) {
+		servconn->timeout_handle = purple_timeout_add_seconds(
+			servconn->timeout_sec, servconn_idle_timeout_cb, servconn);
+	}
+}
+
+void
+msn_servconn_set_idle_timeout(MsnServConn *servconn, guint seconds)
+{
+	servconn->timeout_sec = seconds;
+	if (servconn->connected)
+		servconn_timeout_renew(servconn);
 }
 
 static void
@@ -304,6 +346,7 @@ servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 	}
 
 	purple_circ_buffer_mark_read(servconn->tx_buf, ret);
+	servconn_timeout_renew(servconn);
 }
 
 gssize
@@ -358,6 +401,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_WRITE);
 	}
 
+	servconn_timeout_renew(servconn);
 	return ret;
 }
 
@@ -392,6 +436,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	servconn->rx_len += len;
 
 	msn_servconn_process_data(servconn);
+	servconn_timeout_renew(servconn);
 }
 
 void msn_servconn_process_data(MsnServConn *servconn)

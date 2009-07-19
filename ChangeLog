@@ -130,6 +130,7 @@ version 2.6.0 (??/??/2009):
 	  from you on MSN.
 	* Support sending an invite message to buddies when requesting authorization
 	  from them on MSN.
+	* Timeout switchboard connections aggressively
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
