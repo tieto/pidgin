@@ -615,10 +615,24 @@ notify_email_cb(char *subject, char *from, char *to, char *url) {
 static void
 notify_emails_cb(char **subjects, char **froms, char **tos, char **urls, guint count) {
 	int i;
+	int subjects_len = 0, froms_len = 0, tos_len = 0, urls_len = 0;
 	purple_debug_misc("signals test", "notify emails: count=%d\n", count);
-	for(i=0; i<count && i<5; i++) {
+
+	if (!(subjects && froms && tos && urls)) return;
+
+	subjects_len = g_strv_length(subjects);
+	froms_len = g_strv_length(froms);
+	tos_len = g_strv_length(tos);
+	urls_len = g_strv_length(urls);
+
+	/* make sure all the arrays' lengths are equal, and that if they are
+	   the same as count, probably should move this check to the core */
+	g_return_if_fail((subjects_len & froms_len & tos_len & urls_len) != count);
+
+	for(i = 0; i < count; i++) {
 		if(subjects[i]==NULL || froms[i]==NULL || tos[i]==NULL || urls[i]==NULL) continue;
-		purple_debug_misc("signals test", "notify emails[%d]: subject=%s, from=%s, to=%s, url=%s\n",
+		purple_debug_misc("signals test",
+			"notify emails[%d]: subject=%s, from=%s, to=%s, url=%s\n",
 			i, subjects[i], froms[i], tos[i], urls[i]);
 	}
 }
