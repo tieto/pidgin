@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-15 09:51+0200\n"
-"PO-Revision-Date: 2009-07-16 13:07+0200\n"
+"POT-Creation-Date: 2009-07-19 22:15+0200\n"
+"PO-Revision-Date: 2009-07-19 22:15+0200\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -4184,9 +4184,6 @@ msgstr "Enregistrer un nouveau compte sur %s"
 
 msgid "Change Registration"
 msgstr "Changer l'enregistrement"
-
-msgid "Malformed BOSH Connect Server"
-msgstr "Serveur de connexion BOSH non valide"
 
 msgid "Error unregistering account"
 msgstr "Erreur à la désinscription du compte"
@@ -8930,9 +8927,6 @@ msgstr "Impossible de charger la paire de clés SILC"
 msgid "Connecting to SILC Server"
 msgstr "Connexion au serveur SILC"
 
-msgid "Unable to not load SILC key pair"
-msgstr "Impossible de ne pas charger la paire de clés SILC"
-
 msgid "Out of memory"
 msgstr "Pas assez de mémoire"
 
@@ -9767,12 +9761,8 @@ msgid "The user's profile is empty."
 msgstr "Le profil de l'utilisateur est vide"
 
 #, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr ""
-"%s a décliné votre invitation à la conférence « %s » pour la raison : %s"
-
-msgid "Invitation Rejected"
-msgstr "Invitation refusée"
+msgid "%s has declined to join."
+msgstr "%s a décliné l'invitation."
 
 msgid "Failed to join chat"
 msgstr "Impossible de rejoindre la discussion."
@@ -11293,7 +11283,7 @@ msgstr "artiste"
 
 #. feel free to not translate this
 msgid "Ka-Hing Cheung"
-msgstr ""
+msgstr "Ka-Hing Cheung"
 
 msgid "voice and video"
 msgstr "voix et vidéo"
@@ -14368,6 +14358,9 @@ msgstr "Envoyer et recevoir des blocs XMPP."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
+#~ msgid "Invitation Rejected"
+#~ msgstr "Invitation refusée"
+
 #~ msgid "Cannot open socket"
 #~ msgstr "Impossible d'ouvrir la connexion."
 
@@ -14391,13 +14384,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "Read error"
 #~ msgstr "Erreur de lecture"
-
-#~ msgid ""
-#~ "Could not establish a connection with the server:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Impossible de se connecter au serveur :\n"
-#~ "%s"
 
 #~ msgid "Write error"
 #~ msgstr "Erreur d'écriture"
@@ -14428,9 +14414,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "Out of Band Data"
 #~ msgstr "Données hors de la bande passante"
-
-#~ msgid "XHTML-IM"
-#~ msgstr "XHTML-IM"
 
 #~ msgid "In-Band Registration"
 #~ msgstr "Enregistrement intrabande"
@@ -14528,9 +14511,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 #~ msgid "Failed to connect to server."
 #~ msgstr "Impossible de se connecter au serveur."
 
-#~ msgid "Read buffer full (2)"
-#~ msgstr "Buffer de lecture plein (2)"
-
 #~ msgid "Unparseable message"
 #~ msgstr "Impossible d'interpréter le message."
 
@@ -14548,13 +14528,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "Error. SSL support is not installed."
 #~ msgstr "Support SSL non installé"
-
-#~ msgid ""
-#~ "Could not connect to BOS server:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Impossible de se connecter au serveur BOS :\n"
-#~ "%s"
 
 #~ msgid "Invalid username."
 #~ msgstr "Nom d'utilisateur non valide."
@@ -14609,31 +14582,8 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 #~ msgid "Account locked: See the debug log"
 #~ msgstr "Compte bloqué : regarder le journal de debug"
 
-#~ msgid ""
-#~ "Could not establish a connection with %s:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Impossible de se connecter avec %s :\n"
-#~ "%s"
-
 #~ msgid "Activate which ID?"
 #~ msgstr "Activer quelle identité ?"
-
-#~ msgid "Yahoo Japan"
-#~ msgstr "Yahoo Japon"
-
-#~ msgid "Japan Pager server"
-#~ msgstr "Serveur japonais de texto"
-
-#~ msgid "Japan file transfer server"
-#~ msgstr "Server japonais de transfert de fichiers"
-
-#~ msgid ""
-#~ "Lost connection with server\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Connexion perdue avec le serveur :\n"
-#~ "%s"
 
 #~ msgid "Could not resolve host name"
 #~ msgstr "Impossible de résoudre le nom de l'hôte."
@@ -14826,9 +14776,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "%s requests you to send them a file"
 #~ msgstr "%s vous demande de leur envoyer un fichier"
-
-#~ msgid "TOC Protocol Plugin"
-#~ msgstr "Plugin pour le protocole TOC"
 
 #~ msgid "%s Options"
 #~ msgstr "Options de %s"
