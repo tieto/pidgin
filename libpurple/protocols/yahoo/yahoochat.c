@@ -209,6 +209,8 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 	char *room = NULL;
 	char *who = NULL;
 	char *msg = NULL;
+	PurpleConversation *c = NULL;
+	int utf8 = 0;
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -225,6 +227,9 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 			g_free(msg);
 			msg = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
+		case 97:
+			utf8 = strtol(pair->value, NULL, 10);
+			break;
 		}
 	}
 	if (!purple_privacy_check(purple_connection_get_account(gc), who))
@@ -236,17 +241,24 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 
 	if (who && room) {
 		/* make sure we're in the room before we process a decline message for it */
-		if(yahoo_find_conference(gc, room)) {
-			char *tmp;
+		if((c = yahoo_find_conference(gc, room))) {
+			char *tmp = NULL, *msg_tmp = NULL;
+			if(msg)
+			{
+				msg_tmp = yahoo_string_decode(gc, msg, utf8);
+				msg = yahoo_codes_to_html(msg_tmp);
+				serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(c)), who, 0, msg, time(NULL));
+				g_free(msg_tmp);
+				g_free(msg);
+			}
 
-			tmp = g_strdup_printf(_("%s declined your conference invitation to room \"%s\" because \"%s\"."),
-							who, room, msg?msg:"");
-			purple_notify_info(gc, NULL, _("Invitation Rejected"), tmp);
+			tmp = g_strdup_printf(_("%s has declined to join."), who);
+			purple_conversation_write(c, NULL, tmp, PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY, time(NULL));
+			
 			g_free(tmp);
 		}
 
 		g_free(room);
-		g_free(msg);
 	}
 }
 
