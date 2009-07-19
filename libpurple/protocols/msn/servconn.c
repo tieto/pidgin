@@ -296,6 +296,7 @@ static gboolean
 servconn_idle_timeout_cb(MsnServConn *servconn)
 {
 	msn_servconn_disconnect(servconn);
+	servconn->timeout_handle = 0;
 	return FALSE;
 }
 
