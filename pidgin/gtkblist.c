@@ -1168,6 +1168,8 @@ pidgin_blist_joinchat_show(void)
 		_("Room _List"), 1,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		PIDGIN_STOCK_CHAT, GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(data->rq_data.window),
+		GTK_RESPONSE_OK);
 	data->default_chat_name = NULL;
 	data->rq_data.account = pidgin_account_option_menu_get_selected(data->rq_data.account_menu);
 
@@ -6925,6 +6927,8 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_ADD, GTK_RESPONSE_OK,
 			NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(data->rq_data.window),
+			GTK_RESPONSE_OK);
 
 	g_signal_connect(G_OBJECT(data->rq_data.window), "destroy",
 	                 G_CALLBACK(destroy_add_buddy_dialog_cb), data);
@@ -7094,6 +7098,8 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_ADD, GTK_RESPONSE_OK,
 		NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(data->chat_data.rq_data.window),
+			GTK_RESPONSE_OK);
 
 	data->chat_data.default_chat_name = g_strdup(name);
 
