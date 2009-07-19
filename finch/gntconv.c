@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "finch.h"
+#include <internal.h>
 
 #include <cmds.h>
 #include <idle.h>

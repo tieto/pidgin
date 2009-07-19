@@ -36,6 +36,7 @@
 #include <gntwindow.h>
 
 #include "finch.h"
+#include <internal.h>
 
 #include <account.h>
 #include <accountopt.h>

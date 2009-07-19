@@ -1572,8 +1572,9 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				ALLOW_TAG("h5");
 				ALLOW_TAG("h6");
 				/* we only allow html to start the message */
-				if(c == html)
+				if(c == html) {
 					ALLOW_TAG("html");
+				}
 				ALLOW_TAG_ALT("i", "em");
 				ALLOW_TAG_ALT("italic", "em");
 				ALLOW_TAG("li");

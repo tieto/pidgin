@@ -35,6 +35,7 @@
 #include <gnttree.h>
 
 #include "finch.h"
+#include <internal.h>
 #include "gntrequest.h"
 #include "debug.h"
 #include "util.h"
