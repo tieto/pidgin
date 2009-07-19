@@ -7216,7 +7216,7 @@ pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callbac
 static void
 set_urgent(void)
 {
-	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+	if (gtkblist->window && !GTK_WIDGET_HAS_FOCUS(gtkblist->window))
 		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
 }
 
