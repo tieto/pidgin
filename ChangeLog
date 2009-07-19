@@ -30,17 +30,11 @@ version 2.6.0 (??/??/2009):
 	  useful when running libpurple inside of Valgrind or similar programs.
 	  Currently, it keeps plugins in memory, allowing Valgrind to perform
 	  symbol resolution of leak traces at shutdown.
-	* Add support for receiving handwritten (ink) messages on MSN.
 	* Don't do IPv6 address lookups if the computer does not have an IPv6
 	  address configured.
-	* Add support for receiving audio clips on MSN.
 	* Fix a leak when the UI provides its own DNS resolving UI op.
 	  (Aman Gupta)
 	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
-	* Show the invite message for buddies that requested authorization
-	  from you on MSN.
-	* Support sending an invite message to buddies when requesting authorization
-	  from them on MSN.
 	* Better handling of corrupt certificates in the TLS Peers cache.
 	* More efficient purple_find_buddies() and purple_find_group() functions.
 	  (Jan Kaluza and Aman Gupta)
@@ -128,6 +122,14 @@ version 2.6.0 (??/??/2009):
 	  networks.
 	* Ability to set personal details for an account and for buddies in the
 	  buddylist.
+
+	MSN:
+	* Add support for receiving handwritten (ink) messages on MSN.
+	* Add support for receiving audio clips on MSN.
+	* Show the invite message for buddies that requested authorization
+	  from you on MSN.
+	* Support sending an invite message to buddies when requesting authorization
+	  from them on MSN.
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
