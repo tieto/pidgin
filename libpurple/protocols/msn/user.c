@@ -114,13 +114,11 @@ msn_user_update(MsnUser *user)
 			                            PURPLE_TUNE_ALBUM, user->media.album,
 			                            PURPLE_TUNE_TITLE, user->media.title,
 			                            NULL);
-		} else if (user->media.type == CURRENT_MEDIA_GAMES &&
-			user->media.title && *user->media.title) {
+		} else if (user->media.type == CURRENT_MEDIA_GAMES) {
 			purple_prpl_got_user_status(account, user->passport, "tune",
 			                            "game", user->media.title,
 			                            NULL);
-		} else if (user->media.type == CURRENT_MEDIA_OFFICE &&
-			user->media.title && *user->media.title) {
+		} else if (user->media.type == CURRENT_MEDIA_OFFICE) {
 			purple_prpl_got_user_status(account, user->passport, "tune",
 			                            "office", user->media.title,
 			                            NULL);

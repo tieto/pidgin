@@ -616,7 +616,6 @@ read_icon_file(const char *path, guchar **data, size_t *len)
 {
 	GError *err = NULL;
 
-	/* maybe mmap the file instead? On my blist, it's about 150K total */
 	if (!g_file_get_contents(path, (gchar **)data, len, &err))
 	{
 		purple_debug_error("buddyicon", "Error reading %s: %s\n",

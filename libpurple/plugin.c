@@ -35,8 +35,6 @@
 #include "util.h"
 #include "version.h"
 
-#define g_module_close ((void)0);
-
 typedef struct
 {
 	GHashTable *commands;

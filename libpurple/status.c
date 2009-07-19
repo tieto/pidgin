@@ -101,8 +101,6 @@ struct _PurplePresence
 	} u;
 };
 
-#define VALUES_USE_LIST
-
 /**
  * An active status.
  */
@@ -113,7 +111,6 @@ struct _PurpleStatus
 
 	gboolean active;
 
-#ifndef VALUES_USE_LIST
 	/*
 	 * The current values of the attributes for this status.  The
 	 * key is a string containing the name of the attribute.  It is
@@ -121,18 +118,7 @@ struct _PurpleStatus
 	 * PurpleStatusType.  The value is a PurpleValue.
 	 */
 	GHashTable *attr_values;
-#else
-	GSList *attr_values;
-#endif
 };
-
-#ifdef VALUES_USE_LIST
-typedef struct
-{
-	GQuark id;
-	PurpleValue *value;
-} PurpleStatusAttrValue;
-#endif
 
 typedef struct
 {
@@ -582,11 +568,9 @@ purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 	status->type     = status_type;
 	status->presence = presence;
 
-#ifndef VALUES_USE_LIST
 	status->attr_values =
 		g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
 		(GDestroyNotify)purple_value_destroy);
-#endif
 
 	for (l = purple_status_type_get_attrs(status_type); l != NULL; l = l->next)
 	{
@@ -594,28 +578,12 @@ purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 		PurpleValue *value = purple_status_attr_get_value(attr);
 		PurpleValue *new_value = purple_value_dup(value);
 
-#ifndef VALUES_USE_LIST
 		g_hash_table_insert(status->attr_values,
 							(char *)purple_status_attr_get_id(attr),
 							new_value);
-#else
-		PurpleStatusAttrValue *val = g_new0(PurpleStatusAttrValue, 1);
-
-		val->id = g_quark_from_string(purple_status_attr_get_id(attr));
-		val->value = new_value;
-
-		status->attr_values = g_slist_prepend(status->attr_values, val);
-#endif
 	}
 
 	return status;
-}
-
-static void
-purple_status_attr_value_free(PurpleStatusAttrValue *value)
-{
-	purple_value_destroy(value->value);
-	g_free(value);
 }
 
 /*
@@ -627,12 +595,7 @@ purple_status_destroy(PurpleStatus *status)
 {
 	g_return_if_fail(status != NULL);
 
-#ifndef VALUES_USE_LIST
 	g_hash_table_destroy(status->attr_values);
-#else
-	g_slist_foreach(status->attr_values, (GFunc)purple_status_attr_value_free, NULL);
-	g_slist_free(status->attr_values);
-#endif
 
 	PURPLE_DBUS_UNREGISTER_POINTER(status);
 	g_free(status);
@@ -1037,35 +1000,13 @@ purple_status_is_online(const PurpleStatus *status)
 			primitive != PURPLE_STATUS_OFFLINE);
 }
 
-static gint
-purple_status_attr_value_compare(const PurpleStatusAttrValue *v,
-	GQuark id)
-{
-	return v->id - id;
-}
-
 PurpleValue *
 purple_status_get_attr_value(const PurpleStatus *status, const char *id)
 {
-#ifdef VALUES_USE_LIST
-	GSList *tmp;
-#endif
-
 	g_return_val_if_fail(status != NULL, NULL);
 	g_return_val_if_fail(id     != NULL, NULL);
 
-#ifndef VALUES_USE_LIST
 	return (PurpleValue *)g_hash_table_lookup(status->attr_values, id);
-#else
-
-	if ((tmp = g_slist_find_custom(status->attr_values,
-				GSIZE_TO_POINTER(g_quark_from_string(id)),
-				(GCompareFunc)purple_status_attr_value_compare))) {
-		PurpleStatusAttrValue *v = tmp->data;
-		return v->value;
-	}
-	return NULL;
-#endif
 }
 
 gboolean
@@ -1597,10 +1538,9 @@ purple_presence_is_status_primitive_active(const PurplePresence *presence,
 		PurpleStatus *temp_status = l->data;
 		PurpleStatusType *type = purple_status_get_type(temp_status);
 
-		if (purple_status_type_get_primitive(type) == primitive) {
-		    if (purple_status_is_active(temp_status)) return TRUE;
-			break;
-		}
+		if (purple_status_type_get_primitive(type) == primitive &&
+		    purple_status_is_active(temp_status))
+			return TRUE;
 	}
 	return FALSE;
 }

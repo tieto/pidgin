@@ -1479,7 +1479,7 @@ struct purple_parse_tag {
 						} \
 						c = strchr(c, '>') + 1; \
 						continue; \
-					}
+					} \
 #define ALLOW_TAG(x) ALLOW_TAG_ALT(x, x)
 void
 purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
