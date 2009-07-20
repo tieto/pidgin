@@ -657,11 +657,9 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 			purple_debug_error("jabber", "Unable to connect to server: %s.  Trying next SRV record.\n", error);
 			try_srv_connect(js);
 		} else {
-			char *ascii_domain = jabber_try_idna_to_ascii(js->user->domain);
 			purple_debug_info("jabber","Couldn't connect directly to %s. Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
 			js->srv_query_data = purple_txt_resolve("_xmppconnect",
-					ascii_domain, txt_resolved_cb, js);
-			g_free(ascii_domain);
+					js->user->domain, txt_resolved_cb, js);
 		}
 		return;
 	}
@@ -704,17 +702,14 @@ static void tls_init(JabberStream *js)
 }
 
 static gboolean jabber_login_connect(JabberStream *js, const char *domain, const char *host, int port,
-				 gboolean fatal_failure, gboolean use_domain)
+				 gboolean fatal_failure)
 {
 	/* host should be used in preference to domain to
 	 * allow SASL authentication to work with FQDN of the server,
 	 * but we use domain as fallback for when users enter IP address
-	 * in connect server.
-	 * We also want to use the domain if the hostname is the result of the
-	 * IDNA ToASCII operation.
-	 */
+	 * in connect server */
 	g_free(js->serverFQDN);
-	if (use_domain || purple_ip_address_is_valid(host))
+	if (purple_ip_address_is_valid(host))
 		js->serverFQDN = g_strdup(domain);
 	else
 		js->serverFQDN = g_strdup(host);
@@ -735,23 +730,19 @@ static gboolean jabber_login_connect(JabberStream *js, const char *domain, const
 
 static void try_srv_connect(JabberStream *js)
 {
-	char *ascii_domain;
-
 	while (js->srv_rec != NULL && js->srv_rec_idx < js->max_srv_rec_idx) {
 		PurpleSrvResponse *tmp_resp = js->srv_rec + (js->srv_rec_idx++);
-		if (jabber_login_connect(js, tmp_resp->hostname, tmp_resp->hostname, tmp_resp->port, FALSE, FALSE))
+		if (jabber_login_connect(js, tmp_resp->hostname, tmp_resp->hostname, tmp_resp->port, FALSE))
 			return;
 	}
 
 	g_free(js->srv_rec);
 	js->srv_rec = NULL;
 
-	ascii_domain = jabber_try_idna_to_ascii(js->user->domain);
 	/* Fall back to the defaults (I'm not sure if we should actually do this) */
-	jabber_login_connect(js, js->user->domain, ascii_domain,
+	jabber_login_connect(js, js->user->domain, js->user->domain,
 			purple_account_get_int(purple_connection_get_account(js->gc), "port", 5222),
-			TRUE, TRUE);
-	g_free(ascii_domain);
+			TRUE);
 }
 
 static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
@@ -765,11 +756,9 @@ static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
 		js->max_srv_rec_idx = results;
 		try_srv_connect(js);
 	} else {
-		char *ascii_domain = jabber_try_idna_to_ascii(js->user->domain);
-		jabber_login_connect(js, js->user->domain, ascii_domain,
+		jabber_login_connect(js, js->user->domain, js->user->domain,
 				purple_account_get_int(purple_connection_get_account(js->gc), "port", 5222),
-				TRUE, TRUE);
-		g_free(ascii_domain);
+				TRUE);
 	}
 }
 
@@ -860,7 +849,6 @@ jabber_stream_connect(JabberStream *js)
 			"connect_server", "");
 	const char *bosh_url = purple_account_get_string(account,
 			"bosh_url", "");
-	char *ascii_domain;
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
@@ -883,22 +871,12 @@ jabber_stream_connect(JabberStream *js)
 
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
-	ascii_domain = jabber_try_idna_to_ascii(js->certificate_CN);
-	if (ascii_domain == NULL) {
-		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-				_("Invalid XMPP ID"));
-		return;
-	}
-
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
 	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
 		if(purple_ssl_is_supported()) {
-			js->gsc = purple_ssl_connect_with_ssl_cn(account, ascii_domain,
+			js->gsc = purple_ssl_connect(account, js->certificate_CN,
 					purple_account_get_int(account, "port", 5223),
-					jabber_login_callback_ssl, jabber_ssl_connect_failure,
-					js->certificate_CN, gc);
-			g_free(ascii_domain);
+					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
 			if (!js->gsc) {
 				purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
@@ -910,22 +888,18 @@ jabber_stream_connect(JabberStream *js)
 				_("SSL support unavailable"));
 		}
 
-		g_free(ascii_domain);
 		return;
 	}
 
 	/* no old-ssl, so if they've specified a connect server, we'll use that, otherwise we'll
 	 * invoke the magic of SRV lookups, to figure out host and port */
 	if(connect_server[0]) {
-		jabber_login_connect(js, js->user->domain, ascii_domain,
-				purple_account_get_int(account, "port", 5222),
-				TRUE, TRUE);
+		jabber_login_connect(js, js->user->domain, connect_server,
+				purple_account_get_int(account, "port", 5222), TRUE);
 	} else {
 		js->srv_query_data = purple_srv_resolve("xmpp-client",
-				"tcp", ascii_domain, srv_resolved_cb, js);
+				"tcp", js->user->domain, srv_resolved_cb, js);
 	}
-
-	g_free(ascii_domain);
 }
 
 void

@@ -38,6 +38,8 @@ version 2.6.0 (??/??/2009):
 	* Better handling of corrupt certificates in the TLS Peers cache.
 	* More efficient purple_find_buddies() and purple_find_group() functions.
 	  (Jan Kaluza and Aman Gupta)
+	* Internationalized Domain Names are supported when libpurple is compiled
+	  against the GNU IDN library.
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
@@ -106,9 +108,8 @@ version 2.6.0 (??/??/2009):
 	* Removed support for obsoleted XEP-0022 (Message Events) and XEP-0091
 	  (Legacy Entity Time).
 	* When the GNU IDN library (libidn) is available, it is used for
-	  normalization of Jabber IDs and support for internationalized domain
-	  names (IDNA).  When unavailable, internal routines are used (as in
-	  previous versions) for normalization and IDNA is unavailable.
+	  normalization of Jabber IDs.  When unavailable, internal routines are
+	  used (as in previous versions).
 
 	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)

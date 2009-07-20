@@ -37,28 +37,6 @@
 static char idn_buffer[1024];
 #endif
 
-gchar *jabber_try_idna_to_ascii(const char *input)
-{
-#ifndef USE_IDN
-	return g_strdup(input);
-#else
-	gchar *out;
-	char *tmp;
-
-	g_return_val_if_fail(input != NULL, NULL);
-	g_return_val_if_fail(*input != '\0', NULL);
-
-	if (idna_to_ascii_8z(input, &tmp, IDNA_USE_STD3_ASCII_RULES) != IDNA_SUCCESS) {
-		return NULL;
-	}
-
-	out = g_strdup(tmp);
-	/* This *MUST* be freed with free, not g_free */
-	free(tmp);
-	return out;
-#endif
-}
-
 #ifdef USE_IDN
 static gboolean jabber_nodeprep(char *str, size_t buflen)
 {
