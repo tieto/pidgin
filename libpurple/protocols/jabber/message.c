@@ -790,6 +790,10 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		handle_buzz(jm);
 
 	switch(jm->type) {
+		case JABBER_MESSAGE_OTHER:
+			purple_debug(PURPLE_DEBUG_INFO, "jabber",
+					"Received message of unknown type: %s\n", type);
+			/* Fall-through is intentional */
 		case JABBER_MESSAGE_NORMAL:
 		case JABBER_MESSAGE_CHAT:
 			handle_chat(jm);
@@ -808,10 +812,6 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			break;
 		case JABBER_MESSAGE_ERROR:
 			handle_error(jm);
-			break;
-		case JABBER_MESSAGE_OTHER:
-			purple_debug(PURPLE_DEBUG_INFO, "jabber",
-					"Received message of unknown type: %s\n", type);
 			break;
 	}
 	jabber_message_free(jm);
