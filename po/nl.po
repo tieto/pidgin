@@ -10874,7 +10874,7 @@ msgstr "Automatisch deelnemen wanneer account online komt."
 
 #, fuzzy
 msgid "_Remain in chat after window is closed."
-msgstr "Verberg c_hat wanneer de verbinding verbroken wordt."
+msgstr "Verberg c_hat wanneer het venster gesloten is."
 
 msgid "Please enter the name of the group to be added."
 msgstr "Geef de naam van de toe te voegen groep."
