@@ -771,8 +771,8 @@ dns_thread(gpointer data)
 	query_data = data;
 
 #ifdef USE_IDN
-	if (!dns_str_is_ascii(dns_params.hostname)) {
-		rc = purple_network_convert_idn_to_ascii(dns_params.hostname, &hostname);
+	if (!dns_str_is_ascii(query_data->hostname)) {
+		rc = purple_network_convert_idn_to_ascii(query_data->hostname, &hostname);
 		if (rc != 0) {
 			/* FIXME: Dirty 2.6.0 string freeze hack */
 			char tmp[8];
@@ -785,7 +785,7 @@ dns_thread(gpointer data)
 		}
 	} else /* intentional fallthru */
 #endif
-	hostname = g_strdup(dns_params.hostname);
+	hostname = g_strdup(query_data->hostname);
 
 #ifdef HAVE_GETADDRINFO
 	g_snprintf(servname, sizeof(servname), "%d", query_data->port);
