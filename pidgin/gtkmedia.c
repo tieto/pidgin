@@ -537,7 +537,7 @@ pidgin_request_timeout_cb(PidginMedia *gtkmedia)
 
 	gtkmedia->priv->request_type = PURPLE_MEDIA_NONE;
 
-	purple_request_accept_cancel(gtkmedia, "Media invitation",
+	purple_request_accept_cancel(gtkmedia, _("Media invitation"),
 			message, NULL, PURPLE_DEFAULT_ACTION_NONE,
 			(void*)account, gtkmedia->priv->screenname, NULL,
 			gtkmedia->priv->media,
