@@ -153,6 +153,8 @@ jabber_idn_validate(const char *str, const char *at, const char *slash,
 			jid = NULL;
 			/* goto out; */
 		}
+
+		jid->resource = g_strdup(idn_buffer);
 	}
 
 out:

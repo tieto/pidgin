@@ -1,14 +1,14 @@
-# translation of pidgin.po to Khmer
+# translation of km_new_update.po to Khmer
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Khoem Sokhem <khoemsokhem@khmeros.info>, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: pidgin\n"
+"Project-Id-Version: km_new_update\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-06 15:04-0700\n"
-"PO-Revision-Date: 2009-02-25 11:49+0700\n"
+"POT-Creation-Date: 2009-07-20 21:11-0700\n"
+"PO-Revision-Date: 2009-07-21 08:40+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer <support@khmeros.info>\n"
 "MIME-Version: 1.0\n"
@@ -207,7 +207,7 @@ msgid "Add Buddy"
 msgstr "បន្ថែម​មិត្តភក្ដិ"
 
 msgid "Please enter buddy information."
-msgstr "សូម​បញ្ចូល​ព័ត៌មាន​របស់មិត្តភក្ដិ ។"
+msgstr "សូម​បញ្ចូល​ព័ត៌មាន​​មិត្តភក្ដិ ។"
 
 msgid "Chats"
 msgstr "ជជែក"
@@ -364,7 +364,7 @@ msgid "New Instant Message"
 msgstr "សារ​បន្ទាន់​ថ្មី"
 
 msgid "Please enter the username or alias of the person you would like to IM."
-msgstr "សូម​បញ្ចូល​ឈ្មោះ​អ្នកប្រើ ឬ​ឈ្មោះ​ក្លែងក្លាយ​របស់​មនុស្ស​ ដែលអ្នក​ចង់​ IM ។"
+msgstr "សូម​បញ្ចូល​ឈ្មោះ​អ្នកប្រើ ឬ​ឈ្មោះ​ក្លែងក្លាយ​របស់​មនុស្ស​ ដែលអ្នក​ចង់​ជជែក ។"
 
 msgid "Channel"
 msgstr "ឆានែល"
@@ -840,12 +840,11 @@ msgstr "កា​រសន្ទនា​ទាំង​អស់"
 msgid "System Log"
 msgstr "​កំណត់ហេតុ​ប្រព័ន្ធ"
 
-#, fuzzy
 msgid "Calling ... "
-msgstr "កំពុង​គណនា..."
+msgstr "កំពុង​ហៅ... "
 
 msgid "Hangup"
-msgstr ""
+msgstr "រង់ចាំ"
 
 #. Number of actions
 msgid "Accept"
@@ -855,25 +854,24 @@ msgid "Reject"
 msgstr "ច្រានចោលល"
 
 msgid "Call in progress."
-msgstr ""
+msgstr "កា​រហៅ​កំពុង​ដំណើរការ ។"
 
 msgid "The call has been terminated."
-msgstr ""
+msgstr "ការ​ហៅ​ត្រូវ​បានបញ្ចប់ ។"
 
 #, c-format
 msgid "%s wishes to start an audio session with you."
-msgstr ""
+msgstr "%s មាន​បំណង​ចាប់ផ្ដើម​សម័យ​អូឌីយ៉ូ​ជា​មួយ​អ្នក ។"
 
 #, c-format
 msgid "%s is trying to start an unsupported media session type with you."
-msgstr ""
+msgstr "%s កំពុង​ព្យាយាម​ចាប់ផ្ដើម​​ប្រភេទ​សម័យ​មេឌៀ​ដែល​មិនបានគាំទ្រ​ជាមួយ​អ្នក ។"
 
-#, fuzzy
 msgid "You have rejected the call."
-msgstr "អ្នកបាន​បោះបង់​ឆានែល %s%s"
+msgstr "អ្នក​បានបដិសេធ​ការ​ហៅ ។"
 
 msgid "call: Make an audio call."
-msgstr ""
+msgstr "ហៅ ៖ បង្កើត​ការ​ហៅ​អូឌីយ៉ូ ។"
 
 msgid "Emails"
 msgstr "អ៊ីមែល"
@@ -1523,22 +1521,23 @@ msgid ""
 "\n"
 "Fetching TinyURL..."
 msgstr ""
+"\n"
+"កំពុង​ទៅយក​ TinyURL..."
 
 msgid "Only create TinyURL for urls of this length or greater"
-msgstr ""
+msgstr "បង្កើត​តែ TinyURL សម្រាប់ urls របស់​ប្រវែង​នេះ ឬ​ធំជាង​នេះ"
 
 msgid "TinyURL (or other) address prefix"
-msgstr ""
+msgstr "បុព្វបទ​អាសយដ្ឋាន TinyURL (ឬ​ផ្សេងៗ)"
 
-#, fuzzy
 msgid "TinyURL"
-msgstr "URL Tune"
+msgstr "TinyURL"
 
 msgid "TinyURL plugin"
-msgstr ""
+msgstr "កម្មវិធី​ជំនួយ TinyURL"
 
 msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
+msgstr "នៅពេល​ទទួល​សារ​ដែល​មាន URL(s), TinyURL សម្រាប់​ចម្លង​កាន់តែ​ងាយ"
 
 msgid "accounts"
 msgstr "គណនី"
@@ -1741,7 +1740,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s បានបិទ"
 
 #. Unknown error
-#. Unknown error!
 msgid "Unknown error"
 msgstr "មិនស្គាល់​កំហុស"
 
@@ -1788,9 +1786,8 @@ msgstr "%s បាន​ចេញ​ពី​បន្ទប់ ។"
 msgid "%s left the room (%s)."
 msgstr "%s បាន​ចេញ​ពី​បន្ទប់ (%s) ។"
 
-#, fuzzy
 msgid "Invite to chat"
-msgstr "អញ្ជើញ​ឲ្យ​ចូលរួម​ក្នុង​សន្និសីទ"
+msgstr "អញ្ជើញ​ឲ្យ​ចូលរួម​ក្នុងការ​ជជែក"
 
 #. Put our happy label in it.
 msgid ""
@@ -1927,6 +1924,10 @@ msgstr "ផ្ដល់​ដើម្បី​ផ្ញើ %s ទៅឲ្យ %
 #, c-format
 msgid "Starting transfer of %s from %s"
 msgstr "ចាប់ផ្ដើម​ផ្ទេរ %s ពី %s"
+
+#, fuzzy, c-format
+msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
+msgstr "ផ្ទេរ​ឯកសារ %s ចប់​ហើយ"
 
 #, c-format
 msgid "Transfer of file %s complete"
@@ -2609,9 +2610,8 @@ msgstr "រក្សាទុក​សារ​ក្រៅ​បណ្ដាញ
 msgid "Do not ask. Always save in pounce."
 msgstr "កុំសួរ ។ រក្សាទុក​ជា​ក្រុម​ជា​និច្ច ។"
 
-#, fuzzy
 msgid "One Time Password"
-msgstr "បញ្ចូល​ពាក្យ​សម្ងាត់"
+msgstr "បញ្ចូល​ពាក្យ​សម្ងាត់​តែ​ម្ដង"
 
 #. *< type
 #. *< ui_requirement
@@ -2620,13 +2620,13 @@ msgstr "បញ្ចូល​ពាក្យ​សម្ងាត់"
 #. *< priority
 #. *< id
 msgid "One Time Password Support"
-msgstr ""
+msgstr "គាំទ្រ​តែ​កា​របញ្ចូលពាក្យ​សម្ងាត់​តែ​ម្ដង​"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Enforce that passwords are used only once."
-msgstr ""
+msgstr "បង្ខំ​ពាក្យ​សម្ងាត់​នោះ​ឲ្យ​ប្រើ​តែ​ម្ដង​ប៉ុណ្ណោះ ។"
 
 #. *  description
 msgid ""
@@ -2634,6 +2634,9 @@ msgid ""
 "are only used in a single successful connection.\n"
 "Note: The account password must not be saved for this to work."
 msgstr ""
+"អនុញ្ញាត​ឲ្យ​អ្នក​បង្ខំ​នៅ​លើ​មូលដ្ឋាន​ក្នុង​មួយ​គណនី ដែល​ពាក្យ​សម្ងាត់​មិន​កំពុង​ត្រូវ​បាន​រក្សាទុក​ទេ គឺ​ត្រូវ​បាន​"
+"រក្សាទុក​តែ​ការ​តភ្ជាប់​ដោយ​ជោគជ័យ​តែ​មួយ​ប៉ុណ្ណោះ ។\n"
+"ចំណាំ​ ៖ ពាក្យ​សម្ងាត់​គណនី​មិន​ត្រូវ​បាន​រក្សាទុក​​វា​សម្រាប់​ការ​ងារ​នោះទេ ។"
 
 #. *< type
 #. *< ui_requirement
@@ -3053,7 +3056,7 @@ msgstr "បន្ថែម​ទៅ​កា​រជជែក..."
 
 #. Global
 msgid "Available"
-msgstr "ដែល​អាច​ប្រើបាន"
+msgstr "លើ​បណ្ដាញ"
 
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
@@ -3117,7 +3120,7 @@ msgstr "ឈ្មោះការ​ជជែក ៖"
 
 #, fuzzy, c-format
 msgid "Unable to resolve hostname '%s': %s"
-msgstr "មិនអាច​តភ្ជាប់​ទៅ​កាន់​ម៉ាស៊ីន​បម្រើ​បានទេ ។"
+msgstr "មិនអាច​ដោះស្រាយ​ម៉ាស៊ីន​បម្រើ​បានទេ"
 
 #. 1. connect to server
 #. connect to the server
@@ -3173,9 +3176,8 @@ msgstr "សម្អាត​ប្រជាប្រិយភាព​របស
 msgid "Gadu-Gadu User"
 msgstr "អ្នក​ប្រើ Gadu-Gadu"
 
-#, fuzzy
 msgid "GG server"
-msgstr "យក​ម៉ាស៊ីនបម្រើ"
+msgstr "ម៉ាស៊ីន​បម្រើ GG"
 
 #, c-format
 msgid "Unknown command: %s"
@@ -3230,9 +3232,8 @@ msgstr "ឆានែល ៖"
 msgid "_Password:"
 msgstr "ពាក្យ​​​សម្ងាត់ ៖"
 
-#, fuzzy
 msgid "IRC nick and server may not contain whitespace"
-msgstr "សម្មតិនាម IRC អាច​​​​​​មិនមាន​ចន្លោះ"
+msgstr "សម្មតិនាម IRC និង​ម៉ាស៊ីន​បម្រើ​មិនអាច​មាន​ចន្លោះ​មិនឃើញទេ"
 
 msgid "SSL support unavailable"
 msgstr "មិនមានការគាំទ្រ SSL"
@@ -3429,13 +3430,12 @@ msgstr ""
 #. We only want to do the following dance if the connection
 #. has not been successfully completed.  If it has, just
 #. notify the user that their /nick command didn't go.
-#, fuzzy, c-format
+#, c-format
 msgid "The nickname \"%s\" is already being used."
-msgstr "ឈ្មោះការ​ជជែក​នេះ​កំពុង​ប្រើ​រួច​ហើយ"
+msgstr "សម្មតិនាម \"%s\" កំពុង​ប្រើ​រួច​ហើយ ។"
 
-#, fuzzy
 msgid "Nickname in use"
-msgstr "សម្មតិនាម"
+msgstr "សម្មតិនាម​កំពុង​ប្រើ"
 
 msgid "Cannot change nick"
 msgstr "មិនអាច​ផ្លាស់ប្ដូរ​សម្មតិនាម​បានទេ"
@@ -3711,31 +3711,23 @@ msgid "SASL error: %s"
 msgstr "កំហុស SASL"
 
 msgid "The BOSH connection manager terminated your session."
-msgstr ""
+msgstr "កម្មវិធី​គ្រប់គ្រង​កា​រតភ្ជាប់ BOSH បាន​បញ្ចប់​សម័យ​របស់​អ្នក ។"
 
-#, fuzzy
 msgid "No session ID given"
-msgstr "គ្មាន​ហេតុផល​បាន​ផ្ដល់"
+msgstr "គ្មាន​លេខសម្គាល់​សម័យ​ត្រូវ​បានផ្ដល់​ទេ"
 
-#, fuzzy
 msgid "Unsupported version of BOSH protocol"
-msgstr "កំណែ​ដែល​មិនបានគាំទ្រ"
+msgstr "កំណែ​មិន​បានគាំទ្រ​ពិធីការ BOSH"
 
-#, fuzzy
 msgid "Unable to establish a connection with the server"
-msgstr ""
-"មិនអាច​បង្កើត​ការ​តភ្ជាប់​ជា​មួយ​ម៉ាស៊ីនបម្រើ ៖\n"
-"%s"
+msgstr "មិនអាច​បង្កើត​ការ​តភ្ជាប់​ជា​មួយ​ម៉ាស៊ីម​បម្រើ​ទេ"
 
 #, fuzzy, c-format
 msgid "Unable to establish a connection with the server: %s"
-msgstr ""
-"មិនអាច​បង្កើត​ការ​តភ្ជាប់​ជា​មួយ​ម៉ាស៊ីនបម្រើ ៖\n"
-"%s"
+msgstr "មិនអាច​បង្កើត​ការ​តភ្ជាប់​ជា​មួយ​ម៉ាស៊ីម​បម្រើ​ទេ"
 
-#, fuzzy
 msgid "Unable to establish SSL connection"
-msgstr "មិនអាច​ចាប់ផ្ដើម​កា​រតភ្ជាប់​បានទេ"
+msgstr "មិន​អាច​បង្កើត​ការ​តភ្ជាប់ SSL"
 
 msgid "Full Name"
 msgstr "ឈ្មោះ​ពេញ"
@@ -3801,23 +3793,22 @@ msgstr "ម៉ាស៊ីន​ភ្ញៀវ"
 msgid "Operating System"
 msgstr "ប្រព័ន្ធ​ប្រតិបត្តិការ"
 
-#, fuzzy
 msgid "Local Time"
-msgstr "ឯកសារ​មូលដ្ឋាន ៖"
+msgstr "ពេលវេលា​ក្នុង​ស្រុក"
 
 msgid "Priority"
 msgstr "អាទិភាព"
 
 msgid "Resource"
-msgstr "ធមធាម"
+msgstr "ធនធាន"
 
 #, c-format
 msgid "%s ago"
-msgstr ""
+msgstr "%s កន្លង​ទៅ"
 
 #, fuzzy
 msgid "Logged Off"
-msgstr "បាន​ចូល"
+msgstr "បាន​ចេញ"
 
 msgid "Middle Name"
 msgstr "ឈ្មោះ​កណ្ដាល"
@@ -3985,26 +3976,25 @@ msgstr "ជ្រើស​ម៉ាស៊ីនបម្រើ​សន្និ
 msgid "Find Rooms"
 msgstr "រក​បន្ទប់"
 
-#, fuzzy
 msgid "Affiliations:"
 msgstr "ឈ្មោះ​ក្លែងក្លាយ ៖"
 
-#, fuzzy
 msgid "No users found"
-msgstr "រក​មិនឃើញ​អ្នក​ប្រើ​ដែលផ្គូផ្គង​ទេ"
+msgstr "រក​មិនឃើញ​អ្នក​ប្រើ"
 
-#, fuzzy
 msgid "Roles:"
-msgstr "តួនាទី"
+msgstr "តួនាទី ៖"
 
 #, fuzzy
 msgid "Ping timed out"
 msgstr "Ping អស់ពេល"
 
+#, fuzzy
 msgid ""
 "Unable to find alternative XMPP connection methods after failing to connect "
 "directly."
 msgstr ""
+"មិនអាច​រក​វិធីសាស្ត្រ​តភ្ជាប់ XMPP ជា​ជម្រើស​បានទេ បន្ទាប់​ពី​បរាជ័យ​ក្នុងការតភ្ជាប់​ដោយ​ផ្ទាល់ ។\n"
 
 msgid "Invalid XMPP ID"
 msgstr "លេខសម្គាល់ XMPP មិន​ត្រឹមត្រូវ"
@@ -4014,7 +4004,7 @@ msgstr "លេខសម្គាល់ XMPP មិនត្រឹមត្រូ
 
 #, fuzzy
 msgid "Malformed BOSH URL"
-msgstr "បាន​បរាជ័យ​ក្នុងការ​តភ្ជាប់​ទៅ​ម៉ាស៊ីន​បម្រើ ។"
+msgstr "កា​រតភ្ជាប់​ម៉ាស៊ីន​បម្រើ BOSH មិន​ត្រឹមត្រូវ"
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4081,10 +4071,6 @@ msgstr "ចុះឈ្មោះ​គណនីថ្មី​នៅ %s"
 
 msgid "Change Registration"
 msgstr "ផ្លាស់​ប្តូរ​ការ​ចុះ​ឈ្មោះ"
-
-#, fuzzy
-msgid "Malformed BOSH Connect Server"
-msgstr "បាន​បរាជ័យ​ក្នុងការ​តភ្ជាប់​ទៅ​ម៉ាស៊ីន​បម្រើ ។"
 
 msgid "Error unregistering account"
 msgstr "កំហុស​ក្នុងកា​រលុប​ការ​ចុះឈ្មោះ​គណនី"
@@ -4371,19 +4357,19 @@ msgstr "មិនអាច​ធាក់​អ្នកប្រើ %s បា�
 msgid "Unable to ping user %s"
 msgstr "មិនអាច ping អ្នក​ប្រើ %s បានទេ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to buzz, because there is nothing known about %s."
-msgstr "មិនអាច​កេះកៀវ​បានទេ ពីព្រោះ​មិន​ស្គាល់​អំពី​អ្នកប្រើ %s ។"
+msgstr "មិនអាច​កេះកៀវ​បានទេ ពីព្រោះ​មិន​ស្គាល់​​អ្វី​ទាំង​អស់​​ពី​អ្នកប្រើ %s ។"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to buzz, because %s might be offline."
-msgstr "មិនអាចកេះកៀង​បានទេ ពីព្រើ​អ្នកប្រើ %s នៅ​ក្រៅ​បណ្ដាញ ។"
+msgstr "មិន​អាច​កេះកៀវ​បានទេ ពីព្រោះ %s នៅ​ក្រៅ​បណ្ដាញ ។"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to buzz, because %s does not support it or does not wish to receive "
 "buzzes now."
-msgstr "មិនអាច​កេះកៀវ​បានទេ ពីព្រោះ​អ្នក​ប្រើ %s មិន​គាំទ្រ​វា​ទេ ។"
+msgstr "មិនអាច​កេះកៀវ​បានទេ ពីព្រោះ %s មិន​គាំទ្រ​វា​ទេ ឬ​មិនមាន​បំណង​​ទទួល​ការ​កេះកៀវ​​ឥឡូវ​នោះ​ទេ ។"
 
 #, c-format
 msgid "Buzzing %s..."
@@ -4398,34 +4384,32 @@ msgstr "កេះកៀវ"
 msgid "%s has buzzed you!"
 msgstr "%s បានកេះកៀវ​អ្នក !"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to initiate media with %s: invalid JID"
-msgstr "មិនអាច​ផ្ញើ​ឯកសារ​ទៅ​កាន់ %s បានទេ ដោយសារ​តែ JID មិន​ត្រឹមត្រូវ"
+msgstr "មិន​អាច​ចាប់ផ្ដើម​មេឌៀជា​មួយ​ %s បានទេ ៖ JID មិន​ត្រឹមត្រូវ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to initiate media with %s: user is not online"
-msgstr "មិនអាច​ផ្ញើ​ឯកសារ %s បានទេ អ្នកប្រើ​មិន​នៅ​លើ​បណ្ដាញ​ទេ"
+msgstr "មិនអាច​ចាប់ផ្ដើម​មេឌៀ​ជា​មួយ %s ៖ អ្នក​ប្រើ​មិន​នៅ​លើ​បណ្ដាញ​ទេ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
-msgstr "មិនអាច​ផ្ញើ​ឯកសារ %s បានទេ មិនបានជាវ​ទៅ​វត្តមាន​របស់​អ្នកប្រើ"
+msgstr "មិន​អាច​ចាប់ផ្ដើម​មេឌៀ​ជា​មួយ %s បានទេ ៖ មិន​បានជាវ​ទៅ​វត្តមាន​អ្នក​ប្រើ​បានទេ"
 
-#, fuzzy
 msgid "Media Initiation Failed"
-msgstr "បានបរាជ័យ​ក្នុងកា​រចុះឈ្មោះ"
+msgstr "បានបរាជ័យ​ក្នុងកា​រចាប់ផ្ដើម​មេឌៀ"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please select the resource of %s with which you would like to start a media "
 "session."
-msgstr "សូម​ជ្រើស​ធនធាន​របស់ %s ដែល​អ្នក​ចង់​ផ្ញើ​ឯកសារ"
+msgstr "សូម​ជ្រើស​ធនធាន %s ដែល​អ្នក​ចង់​ចាប់ផ្ដើម​សម័យ​មេឌៀ ។"
 
 msgid "Select a Resource"
 msgstr "ជ្រើស​ធនធាន"
 
-#, fuzzy
 msgid "Initiate Media"
-msgstr "ចាប់ផ្ដើមជជែក"
+msgstr "ចាប់ផ្ដើម​មេឌៀ"
 
 msgid "config:  Configure a chat room."
 msgstr "config ៖  កំណត់​រចនាសម្ព័ន្ធ​បន្ទប់​ជជែក ។"
@@ -4445,21 +4429,19 @@ msgstr "ប្រធានបទ [ប្រធាន​បទ​ថ្មី] �
 msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
 msgstr "ហាមឃាត់ &lt;អ្នក​ប្រើ&gt; [ហេតុផល] ៖  ហាមឃាត់​អ្នកប្រើ​ពី​បន្ទប់ ។"
 
-#, fuzzy
 msgid ""
 "affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
 "the users with an affiliation or set users' affiliation with the room."
 msgstr ""
-"ទាក់ទង &lt;អ្នក​ប្រើ&gt; &lt;ម្ចាស់|អ្នកគ្រប់គ្រង|សមាជិក|outcast|គ្មាន&gt; ៖ កំណត់​ទំនាក់ទំនង​"
-"របស់​អ្នក​ប្រើ​ជា​មួយ​នឹង​បន្ទប់ ។"
+"affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: យក​អ្នក​"
+"ប្រើ​ជា​មួយទំនាក់ទំនង ឬ​កំណត់​ទំនាក់ទំនង​របស់​អ្នកប្រើ​​ក្នុង​បន្ទប់នេះ ។"
 
-#, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
 "users with an role or set users' role with the room."
 msgstr ""
-"តួនាទី &lt;អ្នក​ប្រើ&gt; &lt;អ្នកអន្តរការី|អ្នក​ចូលរួម|អ្នក​ទស្សនា|គ្មាន&gt; ៖ កំណត់​តួនាទី​របស់​អ្នក​"
-"ប្រើ​នៅ​ក្នុង​បន្ទប់ ។"
+"តួនាទី &lt;អន្តរការី|អ្នក​ចូលរួម|អ្នក​ទស្សនា|គ្មាន&gt; [nick1] [nick2] ...: យក​អ្នក​ប្រើ​"
+"ដែលមានតួនាទី ឬ​កំណត់​តួនាទី​របស់​អ្នក​ក្នុង​បន្ទប់ ។"
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "អញ្ជើញ &lt;អ្នក​ប្រើ&gt; [សារ] ៖  អញ្ជើញ​អ្នក​ប្រើ​ឲ្យ​ចូល​បន្ទប់ ។"
@@ -4595,18 +4577,16 @@ msgstr "បាន​ធាក់ចេញ​ដោយ %s (%s)"
 
 #, fuzzy
 msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "កំហុស​មួយ​បានកើត​ឡើង​ខណៈពេល​បើក​ឯកសារ ។"
+msgstr "កំហុស​មួយ​បានកើតឡើង​នៅ​លើ​កា​រផ្ទេរ​ស្ទ្រីមបៃ​ក្នុង​ក្រុម\n"
 
-#, fuzzy
 msgid "Transfer was closed."
-msgstr "បាន​បរាជ័យ​ក្នុងកា​រផ្ទេរ​ឯកសារ"
+msgstr "កា​រផ្ទេរ​ត្រូវ​បាន​បិទ ។"
 
-#, fuzzy
 msgid "Failed to open the file"
-msgstr "បានបរាជ័យ​ក្នុងការ​បើក​ឯកសារ '%s' ៖ %s"
+msgstr "បានបរាជ័យ​ក្នុងការ​បើក​ឯកសារ"
 
 msgid "Failed to open in-band bytestream"
-msgstr ""
+msgstr "បាន​បរាជ័យ​ក្នុង​ការ​បើក​នៅ​ក្នុង​ស្ទ្រីម​បៃ​ក្នុងក្រុម"
 
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
@@ -4925,6 +4905,22 @@ msgstr "ទំនាក់ទំនង​ផ្សេងៗ"
 msgid "Non-IM Contacts"
 msgstr "ទំនាក់ទំនង​ដែល​មិនមាន​ជា IM"
 
+#, c-format
+msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a wink, but it could not be saved"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip, but it could not be saved"
+msgstr ""
+
 #, fuzzy, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
 msgstr "%s បានផ្ញើ​ការ​អញ្ជើញ​អ្នក​ឲ្យ​បើក​ម៉ាស៊ីន​ថត​តាមបណ្ដាញ ដែល​មិន​ត្រូវ​បាន​គាំទ្រ​នៅ​ឡើយទេ ។"
@@ -5078,6 +5074,29 @@ msgstr "ចាប់ផ្ដើមជជែក"
 
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr "ការ​គាំទ្រ SSL ត្រូវ​បានទាមទារ​សម្រាប់ MSN ។ សូម​ដំឡើង​បណ្ណាល័យ SSL ដែល​បានគាំទ្រ ។"
+
+#, fuzzy, c-format
+msgid ""
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
+"be a valid email address."
+msgstr ""
+"មិនអាច​បន្ថែម​មិត្តភក្ដិ %s បាន​ទេ ពីព្រោះ​ឈ្មោះ​អ្នក​ប្រើ​មិន​ត្រឹមត្រូវ ។ ឈ្មោះ​អ្នកប្រើ​ត្រូវ​តែ​ជា​"
+"អាសយដ្ឋានអ៊ីមែល​ត្រឹមត្រូវ ឬ​ចាប់ផ្ដើម​ដោយ​អក្សរ ហើយមាន​តែ​អក្សរ លេខ និង​ចន្លោះ ឬ​មាន​តែ​លេខ ។"
+
+msgid "Unable to Add"
+msgstr "មិនអាច​បន្ថែម"
+
+msgid "Authorization Request Message:"
+msgstr "សារ​សំណើ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ ៖"
+
+msgid "Please authorize me!"
+msgstr "សូម​អនុញ្ញាត​ខ្ញុំ !"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "យល់ព្រម"
 
 msgid "Error retrieving profile"
 msgstr "កំហុសក្នុងការ​ទៅ​ទទួល​យក​ទម្រង់"
@@ -5268,13 +5287,14 @@ msgstr "កា​រផ្ទៀងផ្ទាត់​​ភាព​ត្រ
 msgid "%s just sent you a Nudge!"
 msgstr "%s គ្រាន់​តែ​​បានផ្ញើ​ឲ្យ​អ្នក​នូវ​កា​រច្រានចេញ !"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown error (%d): %s"
-msgstr "មិន​ស្គាល់​កំហុស (%d)"
+msgstr "មិន​ស្គាល់​កំហុស (%d) ៖ %s"
 
 msgid "Unable to add user"
 msgstr "មិនអាច​បន្ថែម​អ្នក​ប្រើ​បានទេ"
 
+#. Unknown error!
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "មិន​ស្គាល់​កំហុស (%d)"
@@ -6413,9 +6433,8 @@ msgstr "បានទទួល​ការ​ផ្ទៀងផ្ទាត់​
 #. Unregistered username
 #. uid is not exist
 #. the username does not exist
-#, fuzzy
 msgid "Username does not exist"
-msgstr "មិន​មាន​​អ្នក​ប្រើ​ទេ"
+msgstr "មិនមាន​​ឈ្មោះ​អ្នក​ប្រើ"
 
 #. Suspended account
 #, fuzzy
@@ -6426,6 +6445,7 @@ msgstr "គណនី​របស់​អ្នក​បច្ចុប្បន
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "សេវា​កម្មវិធី​ផ្ញើសារបន្ទាន់ AOL បច្ចុប្បន្ន​ប្រើ​មិនបានទេ ។"
 
+#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "កំណែ​ម៉ាស៊ីន​ភ្ញៀវ​ដែល​អ្នក​កំពុង​ប្រើ​ចាស់​ពេក ។ សូម​ធ្វើ​ឲ្យ​ប្រសើរ​នៅ %s"
@@ -6449,12 +6469,6 @@ msgstr "បញ្ចូល SecurID"
 msgid "Enter the 6 digit number from the digital display."
 msgstr "បញ្ចូលលេខ ៦ តួលេខ​ពី​ការ​បង្ហាញឌីជីថល ។"
 
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "យល់ព្រម"
-
 msgid "Password sent"
 msgstr "បានផ្ញើ​ពាក្យ​​​សម្ងាត់"
 
@@ -6463,12 +6477,6 @@ msgstr "មិនអាច​ចាប់ផ្ដើម​កា​រតភ្
 
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "សូម​អនុញ្ញាត​ខ្ញុំ ដូច្នេះ​ខ្ញុំ​អាច​បន្ថែម​អ្នក​នៅកាន់​បញ្ជី​មិត្តភក្ដិ​របស់​​ខ្ញុំ ។"
-
-msgid "Authorization Request Message:"
-msgstr "សារ​សំណើ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ ៖"
-
-msgid "Please authorize me!"
-msgstr "សូម​អនុញ្ញាត​ខ្ញុំ !"
 
 msgid "No reason given."
 msgstr "គ្មាន​ហេតុផល​បានផ្ដល់ ។"
@@ -6772,9 +6780,6 @@ msgid ""
 msgstr ""
 "មិនអាច​បន្ថែម​មិត្តភក្ដិ %s បាន​ទេ ពីព្រោះ​ឈ្មោះ​អ្នក​ប្រើ​មិន​ត្រឹមត្រូវ ។ ឈ្មោះ​អ្នកប្រើ​ត្រូវ​តែ​ជា​"
 "អាសយដ្ឋានអ៊ីមែល​ត្រឹមត្រូវ ឬ​ចាប់ផ្ដើម​ដោយ​អក្សរ ហើយមាន​តែ​អក្សរ លេខ និង​ចន្លោះ ឬ​មាន​តែ​លេខ ។"
-
-msgid "Unable to Add"
-msgstr "មិនអាច​បន្ថែម"
 
 msgid "Unable to Retrieve Buddy List"
 msgstr "មិនអាច​ទៅ​យក​បញ្ជីមិត្តភ្ដិ​បានទេ"
@@ -7159,30 +7164,26 @@ msgid "Note"
 msgstr "ចំណាំ"
 
 #. callback
-#, fuzzy
 msgid "Buddy Memo"
-msgstr "កែប្រែ មិត្តភក្ដិ"
+msgstr "អនុស្សារណ​មិត្តភក្ដិ"
 
 msgid "Change his/her memo as you like"
-msgstr ""
+msgstr "ផ្លាស់ប្ដូរ​កំណត់​ហេតុ​រំលឹក​របស​គាត់​តាម​ដែល​អ្នក​ពេញ​ចិត្ត"
 
-#, fuzzy
 msgid "_Modify"
-msgstr "កែប្រែ"
+msgstr "កែប្រែ "
 
-#, fuzzy
 msgid "Memo Modify"
-msgstr "កែប្រែ"
+msgstr "កែប្រែ​កំណត់​ហេតុ​រំលឹក"
 
-#, fuzzy
 msgid "Server says:"
-msgstr "ម៉ាស៊ីនបម្រើ​រវល់"
+msgstr "ម៉ាស៊ីនបម្រើ​​និយាយ ៖"
 
 msgid "Your request was accepted."
-msgstr ""
+msgstr "សំណើ​របស់​អ្នក​ត្រូវបាន​ទទួល​យក ។"
 
 msgid "Your request was rejected."
-msgstr ""
+msgstr "សំណើ​របស់​អ្នក​ត្រូវ​បាន​ច្រានចោល ។"
 
 #, c-format
 msgid "%u requires verification"
@@ -7494,7 +7495,7 @@ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
 msgstr "<p><b>អ្នក​សាកល្បង​ហ្មតចត់</b> ៖<br>\n"
 
 msgid "and more, please let me know... thank you!))"
-msgstr ""
+msgstr "និង​ផ្សេងៗ​ទៀត សូម​ឲ្យ​ខ្ញុំ​ដឹង... អរគុណ !))"
 
 msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr "<p><i>ប្រុសៗ​ទាំង​អស់​នៅ​ក្នុង​បន្ទប់...</i><br>\n"
@@ -7640,7 +7641,7 @@ msgstr "ស្នើ​ថូខឹន"
 
 #, fuzzy
 msgid "Unable to resolve hostname"
-msgstr "មិនអាច​តភ្ជាប់​ទៅ​កាន់​ម៉ាស៊ីន​បម្រើ​បានទេ ។"
+msgstr "មិនអាច​ដោះស្រាយ​ម៉ាស៊ីន​បម្រើ​បានទេ"
 
 msgid "Invalid server or port"
 msgstr "ម៉ាស៊ីន​បម្រើ ឬ​ច្រក​មិន​ត្រឹមត្រូវ"
@@ -8684,10 +8685,6 @@ msgstr "មិនអាច​ផ្ទុក​ការ​​ផ្គូផ្
 msgid "Connecting to SILC Server"
 msgstr "តភ្ជាប់​ទៅ​កាន់​ម៉ាស៊ីន​បម្រើ SILC"
 
-#, fuzzy
-msgid "Unable to not load SILC key pair"
-msgstr "មិនអាច​ផ្ទុក​ការ​​ផ្គូផ្គង​សោ SILC បានទេ"
-
 msgid "Out of memory"
 msgstr "អស់​សតិOut of memory"
 
@@ -9252,7 +9249,7 @@ msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "កម្មវិធី​ជំនួយ​ពិធីការ​របស់យ៉ាហ៊ូ"
 
 msgid "Your SMS was not delivered"
-msgstr ""
+msgstr "SMS របស់​អ្នក​មិន​ត្រូវ​បាន​បញ្ជូន​ទេ"
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "យ៉ាហ៊ូ​របស់​អ្នក ! សារ​មិន​ត្រូវ​បានផ្ញើ​ទេ ។"
@@ -9277,28 +9274,30 @@ msgid "Add buddy rejected"
 msgstr "បន្ថែម​មិត្តភក្ដិ​ដែល​បាន​ច្រានចេញ"
 
 #. Some error in the received stream
-#, fuzzy
 msgid "Received invalid data"
-msgstr "បាន​ទទួល​ទិន្នន័យ​មិនត្រឹមត្រូវ​នៅ​លើ​កា​រតភ្ជាប់​ជា​មួយ​ម៉ាស៊ីន​បម្រើ ។ "
+msgstr "បាន​ទទួល​ទិន្នន័យ​មិន​ត្រឹមត្រូវ"
 
 #. security lock from too many failed login attempts
 #, fuzzy
 msgid ""
 "Account locked: Too many failed login attempts.  Logging into the Yahoo! "
 "website may fix this."
-msgstr "មិន​ស្គាល់លេខ​កំហុស %d ។ ចូល​ក្នុង​តំបន់យ៉ាហ៊ូ ! អាចជួសជុល​វា​បាន ។"
+msgstr ""
+"គណនី​ជាប់សោ ៖ ប៉ុនប៉ង​ចូល​ច្រើន​​ដង​ពេក ។\n"
+"ចូល​ក្នុង Yahoo! តំបន់​បណ្ដាញ​អាច​ជួសជុល​វា ។"
 
 #. indicates a lock of some description
 #, fuzzy
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
-msgstr "មិន​ស្គាល់លេខ​កំហុស %d ។ ចូល​ក្នុង​តំបន់យ៉ាហ៊ូ ! អាចជួសជុល​វា​បាន ។"
+msgstr ""
+"គណនី​ជាប់សោ ៖ មិនស្គាល់​ហេតុផល​ទេ ។\n"
+"ចូល​ក្នុង Yahoo! តំបន់​បណ្ដាញ​អាចជួសជុល​វា ។"
 
 #. username or password missing
-#, fuzzy
 msgid "Username or password missing"
-msgstr "ឈ្មោះ​អ្នក​ប្រើ ឬ​ពាក្យ​សម្ងាត់​មិន​ត្រឹមត្រូវ"
+msgstr "បាត់​ឈ្មោះ​អ្នក​ប្រើ ឬ​ពាក្យ​សម្ងាត់"
 
 #, c-format
 msgid ""
@@ -9354,9 +9353,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "Unable to establish a connection with %s: %s"
-msgstr ""
-"មិនអាច​បង្កើត​ការ​តភ្ជាប់​ជា​មួយ​ម៉ាស៊ីនបម្រើ ៖\n"
-"%s"
+msgstr "មិនអាច​បង្កើត​ការ​តភ្ជាប់​ជា​មួយ​ម៉ាស៊ីម​បម្រើ​ទេ"
 
 msgid "Not at Home"
 msgstr "មិននៅ​ផ្ទះ​ទេ"
@@ -9500,12 +9497,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "ទម្រង់​របស់​អ្នកប្រើ​ទទេរ ។"
 
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s បានបដិសេធ​ការ​អញ្ជើញ​សន្និសីទ​របស់​អ្នក​​ក្នុង​បន្ទប់ \"%s\" ដោយ​សារតែ \"%s\" ។"
-
-msgid "Invitation Rejected"
-msgstr "បានបដិសេធ​ការ​អញ្ជើញ"
+#, fuzzy, c-format
+msgid "%s has declined to join."
+msgstr "%s បានចូល ។"
 
 msgid "Failed to join chat"
 msgstr "បានបរាជ័យ​ក្នុងការ​ចូលរួម​ក្នុងការ​ជជែក"
@@ -9929,13 +9923,13 @@ msgstr "អាសយដ្ឋាន​កំពុង​ប្រើ​ហើយ
 msgid "Error Reading %s"
 msgstr "កំហុស​ក្នុងការ​អាន %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "An error was encountered reading your %s.  The file has not been loaded, and "
 "the old file has been renamed to %s~."
 msgstr ""
-"មាន​កំហុស​ក្នុងការ​អាន​ %s របស់​​អ្នក ។ ពួកវា​មិន​ត្រូវ​បានផ្ទុក​ទេ ហើយ​ឯកសារ​ចាស់​ត្រូវ​បាន​ប្ដូរ​ឈ្មោះ​ទៅជា %"
-"s~."
+"មានកំហុស​មួយ​ក្នុងការ​អាន​ %s របស់​អ្នក ។ ឯកសារ​មិន​ត្រូវ​បានផ្ទុក​ទេ ហើយ​ឯកសារ​ចាស់​ត្រូវ​បាន​ប្ដូរ​ឈ្មោះ​ទៅ​"
+"ជា %s~ ។"
 
 msgid "Internet Messenger"
 msgstr "កម្មវិធី​ផ្ញើសារ​អ៊ីនធឺណិត"
@@ -9979,7 +9973,8 @@ msgstr "ការ​ជូនដំណឹង​សំបុត្រ​ថ្ម
 msgid "Use this buddy _icon for this account:"
 msgstr "ប្រើ​រូបតំណាង​មិត្តភក្ដិ​នេះ​សម្រាប់គណនី​នេះ ៖"
 
-msgid "_Advanced"
+#, fuzzy
+msgid "Ad_vanced"
 msgstr "កម្រិត​ខ្ពស់"
 
 msgid "Use GNOME Proxy Settings"
@@ -10043,7 +10038,7 @@ msgid "Create _this new account on the server"
 msgstr "បង្កើត​គណនី​ថ្មី​នៅ​លើ​ម៉ាស៊ីនបម្រើ"
 
 #, fuzzy
-msgid "_Proxy"
+msgid "P_roxy"
 msgstr "ប្រូកស៊ី"
 
 msgid "Enabled"
@@ -10090,9 +10085,8 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr "សូម​ធ្វើ​ឲ្យ​វាល​ដែល​ចាំបាច់ទាន់សម័យ ។"
 
-#, fuzzy
 msgid "A_ccount"
-msgstr "គណនី"
+msgstr "គណនី "
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -10117,16 +10111,14 @@ msgstr "យក​ព័ត៌មាន"
 msgid "I_M"
 msgstr "IM"
 
-#, fuzzy
 msgid "_Audio Call"
-msgstr "បន្ថែម​ការជជែក"
+msgstr "ការហៅ​អូឌីយ៉ូ"
 
 msgid "Audio/_Video Call"
-msgstr ""
+msgstr "អូឌីយ៉ូ/ការ​ហៅ​វីដេអូ"
 
-#, fuzzy
 msgid "_Video Call"
-msgstr "ជជែក​តាម​វីដេអូ"
+msgstr "ការ​ហៅ​វីដេអូ "
 
 msgid "_Send File..."
 msgstr "ផ្ញើ​ឯកសារ..."
@@ -10267,9 +10259,8 @@ msgstr "/ឧបករណ៍/ក្រុមមិត្តភក្ដិ"
 msgid "/Tools/_Certificates"
 msgstr "/ឧបករណ៍/វិញ្ញាបនបត្រ"
 
-#, fuzzy
 msgid "/Tools/Custom Smile_ys"
-msgstr "/ឧបករណ៍/សញ្ញាណ​អារម្មណ៍"
+msgstr "/ឧបករណ៍/សញ្ញាណ​អារម្មណ៍​ផ្ទាល់ខ្លួន"
 
 msgid "/Tools/Plu_gins"
 msgstr "/ឧបករណ៍/កម្មវិធី​ជំនួយ"
@@ -10397,7 +10388,7 @@ msgid "By status"
 msgstr "តាម​ស្ថានភាព"
 
 msgid "By recent log activity"
-msgstr ""
+msgstr "តាម​សកម្មភាព​កំណត់ហេតុ​ថ្មីៗ"
 
 #, c-format
 msgid "%s disconnected"
@@ -10414,7 +10405,7 @@ msgid "Re-enable"
 msgstr "បើក​ឡើង​វិញ"
 
 msgid "SSL FAQs"
-msgstr ""
+msgstr "SSL FAQs"
 
 msgid "Welcome back!"
 msgstr "សូម​ស្វាគមន៍ការ​​ត្រឡប់​មក​វិញ !"
@@ -10509,7 +10500,7 @@ msgid "_Remain in chat after window is closed."
 msgstr "នៅ​ក្នុង​ការជជែក​បន្ទាប់​ពី​បង្អួច​ត្រូវ​បានបិទ ។"
 
 msgid "Please enter the name of the group to be added."
-msgstr "សូម​បញ្ចូល​ឈ្មោះ​របស​ក្រុម​ដែល​ត្រូ​វ​បន្ថែម ។"
+msgstr "សូម​បញ្ចូល​ឈ្មោះ​​​ក្រុម​ដែល​ត្រូ​វ​បន្ថែម ។"
 
 msgid "Enable Account"
 msgstr "បើក​គណនី"
@@ -10588,7 +10579,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Contact Text"
-msgstr "ផ្លូវ​កាត់"
+msgstr "អត្ថបទ​ផ្លូវកាត់"
 
 msgid "The text information for when a contact is expanded"
 msgstr ""
@@ -10736,21 +10727,17 @@ msgstr "/សន្ទនា/រក្សាទុកជា..."
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/សន្ទនា/ជំម្រះ"
 
-#, fuzzy
 msgid "/Conversation/M_edia"
-msgstr "/សន្ទនា/ផ្សេងៗ​ទៀត"
+msgstr "/សន្ទនា/មេឌៀ"
 
-#, fuzzy
 msgid "/Conversation/Media/_Audio Call"
-msgstr "/សន្ទនា/ផ្សេងៗ​ទៀត"
+msgstr "/សន្ទនា/មេឌៀ/ការ​ហៅ​អូឌីយ៉ូ"
 
-#, fuzzy
 msgid "/Conversation/Media/_Video Call"
-msgstr "/សន្ទនា/ផ្សេងៗ​ទៀត"
+msgstr "/សន្ទនា/មេឌៀ/ការ​ហៅ​វីដេអូ"
 
-#, fuzzy
 msgid "/Conversation/Media/Audio\\/Video _Call"
-msgstr "/សន្ទនា/មើល​កំណត់​ហេតុ"
+msgstr "/សន្ទនា/មេឌៀ/អូឌីយ៉ូ/ការ​ហៅ​វីដេអូ"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/សន្ទនា/ផ្ញើ​ឯកសារ..."
@@ -10824,17 +10811,14 @@ msgstr "/សន្ទនា"
 msgid "/Conversation/View Log"
 msgstr "/សន្ទនា/មើល​កំណត់​ហេតុ"
 
-#, fuzzy
 msgid "/Conversation/Media/Audio Call"
-msgstr "/សន្ទនា/ផ្សេងៗ​ទៀត"
+msgstr "/សន្ទនា/មេឌៀ/ការហៅ​អូឌីយ៉ូ"
 
-#, fuzzy
 msgid "/Conversation/Media/Video Call"
-msgstr "/សន្ទនា/មើល​កំណត់​ហេតុ"
+msgstr "/សន្ទនា/មេឌៀ/ការ​ហៅ​វីដេអូ"
 
-#, fuzzy
 msgid "/Conversation/Media/Audio\\/Video Call"
-msgstr "/សន្ទនា/ផ្សេងៗ​ទៀត"
+msgstr "/សន្ទនា/មេឌៀ/អូឌីយ៉ូ\\/ការ​ហៅ​វីដេអូ"
 
 msgid "/Conversation/Send File..."
 msgstr "/សន្ទនា/ផ្ញើ​ឯកសារ..."
@@ -11018,7 +11002,7 @@ msgid "Ka-Hing Cheung"
 msgstr "Ka-Hing Cheung"
 
 msgid "voice and video"
-msgstr ""
+msgstr "សំឡេង និង​វីដេអូ"
 
 msgid "support"
 msgstr "គាំទ្រ"
@@ -11144,9 +11128,8 @@ msgstr "ហិណ្ឌូ"
 msgid "Hungarian"
 msgstr "ហុងគ្រី"
 
-#, fuzzy
 msgid "Armenian"
-msgstr "រូម៉ានី"
+msgstr "អាម៉ីនៀន"
 
 msgid "Indonesian"
 msgstr "ឥណ្ឌូនេស៊ី"
@@ -11163,9 +11146,8 @@ msgstr "ហ្សកហ្ស៊ី"
 msgid "Ubuntu Georgian Translators"
 msgstr "អ្នកប្រើ​ប្រែ​​ហ្សកហ្ស៊ី​របស់​អូប៊ុនទូ"
 
-#, fuzzy
 msgid "Khmer"
-msgstr "ផ្សេងៗទៀត"
+msgstr "ខ្មែរ"
 
 msgid "Kannada"
 msgstr "កិណាដា"
@@ -11246,7 +11228,7 @@ msgid "Swedish"
 msgstr "ស៊ុយអែដ"
 
 msgid "Swahili"
-msgstr ""
+msgstr "ស្វាហ៊ីលី"
 
 msgid "Tamil"
 msgstr "តាមីល"
@@ -11866,7 +11848,7 @@ msgstr "រកមើល​ថត​កំណត់​ហេតុ"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s ។ ព្យាយាម `%s -h' សម្រាប់​ព័ត៌មាន​បន្ថែម ។\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s %s\n"
 "Usage: %s [OPTION]...\n"
@@ -11884,20 +11866,21 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 msgstr ""
 "%s %s\n"
-"ការ​ប្រើប្រាស់ ៖ %s [ជម្រើស]...\n"
+"ការប្រើប្រាស់ ៖ %s [ជម្រើស]...\n"
 "\n"
 "  -c, --config=DIR    ប្រើ DIR សម្រាប់​ឯកសារ​កំណត់​រចនាសម្ព័ន្ធ\n"
-"  -d, --debug         បោះពុម្ព​សារ​បំបាត់​កំហុស​ទៅ stdout\n"
+"  -d, --debug         បោះពុម្ព​សារ​បំបាត់កំហុស​ទៅ​កាន់ stdout\n"
+"  -f, --force-online  បង្ខំ​លើបណ្ដាញ ទាក់ទង​នឹង​ស្ថានភាព​បណ្ដាញ\n"
 "  -h, --help          បង្ហាញ​ជំនួយ​នេះ ហើយ​ចេញ\n"
-"  -m, --multiple      មិនប្រាកដ​ធាតុ​តែ​មួយ\n"
+"  -m, --multiple      កុំ​ប្រាកដ​លើធាតុ​តែ​មួយ\n"
 "  -n, --nologin       កុំ​ចូល​ដោយ​ស្វ័យ​ប្រវត្តិ\n"
-"  -l, --login[=NAME]  បើក​គណនី​ដែល​បានបញ្ជាក់ (អាគុយម៉ង​ជម្រើស NAME\n"
-"                      បញ្ជាក់​គណនី​ត្រូវ​ប្រើ បំបែក​ដោយ​សញ្ញា (,) ។\n"
-"                      ដោយ​គ្មាន​គណនី​ដំបូង​នេះ​នឹង​ត្រូវ​បានបើក) ។\n"
+"  -l, --login[=NAME]  បើក​គណនី​ដែលបាន​បញ្ជាក់ (អាគុយម៉ង់​ជម្រើស NAME\n"
+"                      បញ្ជាក់គណនី​ត្រូវ​ប្រើ បំបែក​ដោយ​សញ្ញា(,) ។\n"
+"                      ដោយ​មិនមាន​តែ​គណនី​ដំបូង​នឹង​ត្រូវ​បាន​បើក) ។\n"
 "  --display=DISPLAY   ការ​បង្ហាញ X ត្រូវ​ប្រើ\n"
 "  -v, --version       បង្ហាញ​កំណែ​បច្ចុប្បន្ន ហើយ​ចេញ\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s %s\n"
 "Usage: %s [OPTION]...\n"
@@ -11964,22 +11947,21 @@ msgid "Exiting because another libpurple client is already running.\n"
 msgstr "ចេញ ដោយ​សារ​តែ​ម៉ាស៊ីន​ភ្ញើ libpurple ផ្សេង​ទៀត​កំពុង​រត់​រួច​ហើយ ។\n"
 
 msgid "/_Media"
-msgstr ""
+msgstr "/មេឌៀ"
 
 msgid "/Media/_Hangup"
-msgstr ""
+msgstr "/មេឌៀ/រង់ចាំ"
 
-#, fuzzy
 msgid "Calling..."
-msgstr "កំពុង​គណនា..."
+msgstr "កំពុង​ហៅ..."
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
-msgstr ""
+msgstr "%s មាន​បំណង​ចាប់ផ្ដើម​សម័យ​អូឌីយ៉ូ/វីដេអូ​ជា​មួយ​អ្នក ។"
 
 #, c-format
 msgid "%s wishes to start a video session with you."
-msgstr ""
+msgstr "%s មាន​បំណង​ចាប់ផ្ដើម​សម័យ​វីដេអូ​ជាមួយ​អ្នក ។"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12006,9 +11988,8 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "ពាក្យ​បញ្ជា​កម្មវិធី​រុករក 'ដោយដៃ' ត្រូវ​បាន​ជ្រើស ប៉ុន្តែ​គ្មាន​ពាក្យ​បញ្ជា​ត្រូវ​បាន​ជ្រើស​ទេ ។"
 
-#, fuzzy
 msgid "No message"
-msgstr "មិន​ស្គាល់​សារ"
+msgstr "គ្មាន​សារ"
 
 msgid "Open All Messages"
 msgstr "បើក​សារ​ទាំងអស់"
@@ -12016,16 +11997,14 @@ msgstr "បើក​សារ​ទាំងអស់"
 msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">អ្នក​មាន​សំបុត្រ !</span>"
 
-#, fuzzy
 msgid "New Pounces"
-msgstr "ក្រុមមិត្តភក្ដិ​ថ្មី"
+msgstr "ក្រុម​មិត្តភក្ដិ​ថ្មី"
 
 msgid "Dismiss"
-msgstr ""
+msgstr "បណ្ដេញ​ចេញ"
 
-#, fuzzy
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">អ្នក​មាន​សំបុត្រ !</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">អ្នក​​បាន​ដាក់​ជា​ក្រុម​មិត្តភក្ដិ !</span>"
 
 msgid "The following plugins will be unloaded."
 msgstr "កម្មវិធី​ជំនួយ​ដូច​ខាងក្រោម​នឹង​ត្រូវ​បានផ្ទុក​ឡើង ។"
@@ -12073,7 +12052,6 @@ msgstr "<b>សេចក្ដី​លម្អិត​កម្មវិធី
 msgid "Select a file"
 msgstr "ជ្រើស​ឯកសារ"
 
-#, fuzzy
 msgid "Modify Buddy Pounce"
 msgstr "កែសម្រួល​ក្រុម​មិត្តភក្ដិ"
 
@@ -12150,49 +12128,49 @@ msgstr "កើតឡើង​វិញ"
 msgid "Pounce Target"
 msgstr "ក្រុម​គោល​ដៅ​"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Started typing"
-msgstr "ចាប់ផ្ដើម​វាយ"
+msgstr "បាន​ចាប់ផ្ដើម​វាយ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Paused while typing"
-msgstr "ផ្អាក​ខណៈពេល​វាយ"
+msgstr "បានផ្អាក​ខណៈពេល​វាយ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Signed on"
-msgstr "ចូល"
+msgstr "បាន​ចូល"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Returned from being idle"
-msgstr "%s បាន​ត្រឡប់​ពី​ស្ថានភាព​ទំនេរ (%s)"
+msgstr "បាន​ត្រឡប់​ពី​ស្ថានភាព​ទំនេរ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Returned from being away"
-msgstr "ត្រឡប់​ពី​ការ​ចាកឆ្ងាយ"
+msgstr "បាន​ត្រឡប់​ពី​ស្ថានភាព​ចាកឆ្ងាយ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Stopped typing"
-msgstr "ឈប់​វាយ"
+msgstr "បញ្ឈប់​ការ​វាយ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Signed off"
-msgstr "ចេញទ"
+msgstr "បាន​ចេញ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Became idle"
 msgstr "ក្លាយ​ជា​ទំនេរ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Went away"
-msgstr "នៅពេល​ចាកឆ្ងាយ"
+msgstr "នៅ​ពេល​ចាកឆ្ងាយ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Sent a message"
-msgstr "ផ្ញើសារ"
+msgstr "បាន​ផ្ញើសារ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown.... Please report this!"
-msgstr "មិនស្គាល់​ព្រឹត្តិការណ៍​ក្រុម ។ សូម​រាយការណ៍​វា !"
+msgstr "មិនស្គាល់.... សូម​រាយការណ៍​អំពី​បញ្ហា​នេះ !"
 
 #, fuzzy
 msgid "Theme failed to unpack."
@@ -12226,9 +12204,8 @@ msgid "Cl_ose conversations with the Escape key"
 msgstr "បិទ​ការ​សន្ទនា​ដោយ​ប្រើ​គ្រាប់ចុច​គេច (Escape)"
 
 #. Buddy List Themes
-#, fuzzy
 msgid "Buddy List Theme"
-msgstr "បញ្ជី​មិត្តភក្ដិ"
+msgstr "ស្បែក​បញ្ជី​មិត្តភក្ដិ"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -12368,7 +12345,7 @@ msgstr "ច្រក​បញ្ចប់ ៖"
 
 #. TURN server
 msgid "Relay Server (TURN)"
-msgstr ""
+msgstr "បញ្ជូន​ម៉ាស៊ីន​បម្រើ​ត (TURN)"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "ម៉ាស៊ីនបម្រើ​ប្រូកស៊ី &amp; កម្មវិធី​រុករក​"
@@ -12711,10 +12688,10 @@ msgstr "រក្សាទុក​ការ​ប្រើ"
 msgid "Status for %s"
 msgstr "ស្ថានភាព​សម្រាប់ %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
-msgstr "សញ្ញា​អារម្មណ៍​ផ្ទាល់ខ្លួន​សម្រាប់​ផ្លូវកាត់​ដែល​បាន​ជ្រើស​មាន​រួច​ហើយ ។ សូម​បញ្ជី​ផ្លូវកាត់​ផ្សេង ។"
+msgstr "មាន​សញ្ញាណអារម្មណ៍​ផ្ទាល់ខ្លួន​សម្រាប់ '%s' រួច​ហើយ ។ សូម​ប្រើ​ផ្លូវកាត់​ផ្សេង ​។"
 
 msgid "Custom Smiley"
 msgstr "សញ្ញា​អារម្មណ៍​ផ្ទាល់ខ្លួន"
@@ -12728,28 +12705,24 @@ msgstr "កែ​សម្រួល​សញ្ញាអារម្មណ៍"
 msgid "Add Smiley"
 msgstr "បន្ថែម​សញ្ញាអារម្មណ៍"
 
-#, fuzzy
 msgid "_Image:"
-msgstr "រូបភាព"
+msgstr "រូបភាព ៖"
 
 #. Shortcut text
-#, fuzzy
 msgid "S_hortcut text:"
-msgstr "ផ្លូវ​កាត់"
+msgstr "អត្ថបទ​ផ្លូវកាត់ ៖"
 
 msgid "Smiley"
 msgstr "សញ្ញាអារម្មណ៍"
 
-#, fuzzy
 msgid "Shortcut Text"
-msgstr "ផ្លូវ​កាត់"
+msgstr "អត្ថបទ​ផ្លូវកាត់"
 
 msgid "Custom Smiley Manager"
 msgstr "កម្មវិធី​គ្រប់គ្រង​សញ្ញាអារម្មណ៍​ផ្ទាល់ខ្លួន"
 
-#, fuzzy
 msgid "Select Buddy Icon"
-msgstr "ជ្រើស​មិត្តភក្ដិ"
+msgstr "ជ្រើស​រូបតំណាង​មិត្តភក្ដិ"
 
 msgid "Click to change your buddyicon for this account."
 msgstr "ចុច​ដើម្បី​ផ្លាស់ប្ដូរ​រូបតំណាង​មិត្តភក្ដិ​របស់​អ្នកសម្រាប់គណនី​នេះ ។"
@@ -12866,9 +12839,8 @@ msgid ""
 "Failed to load image '%s': reason not known, probably a corrupt image file"
 msgstr "បានបរាជ័យ​ក្នុងការ​ផ្ទុក​រូបភាព '%s' ៖ មិនស្គាល់ហេតុផល ប្រហែលជា​ឯកសារ​រូបភាព​តូច"
 
-#, fuzzy
 msgid "_Open Link"
-msgstr "បើក​តំណ​នៅ​ក្នុង ៖"
+msgstr "បើក​តំណ "
 
 msgid "_Copy Link Location"
 msgstr "ចម្លង​ទីតាំង​តំណ"
@@ -12876,7 +12848,23 @@ msgstr "ចម្លង​ទីតាំង​តំណ"
 msgid "_Copy Email Address"
 msgstr "ចម្លង​អាសយដ្ឋាន​អ៊ីមែល"
 
+#, fuzzy
+msgid "_Open File"
+msgstr "បើក​ឯកសារ..."
+
+#, fuzzy
+msgid "Open _Containing Directory"
+msgstr "ថត​កំណត់ហេតុ"
+
 msgid "Save File"
+msgstr "រក្សា​​ទុក​​​ឯកសារ"
+
+#, fuzzy
+msgid "_Play Sound"
+msgstr "ចាក់​សំឡេង"
+
+#, fuzzy
+msgid "_Save File"
 msgstr "រក្សា​​ទុក​​​ឯកសារ"
 
 msgid "Select color"
@@ -13537,9 +13525,8 @@ msgstr "ពណ៌​តំណខ្ពស់​ដែលបានទស្សន
 msgid "Highlighted Message Name Color"
 msgstr "ពណ៌​ឈ្មោះសារ​ដែល​បាន​បន្លិច"
 
-#, fuzzy
 msgid "Typing Notification Color"
-msgstr "វាយ​ពណ៌​ជូនដំណឹង"
+msgstr "វាយ​ពណ៌​ជូន​ដំណឹង"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "ការ​បំបែក​ផ្ដេក​របស់ GtkTreeView"
@@ -13570,23 +13557,20 @@ msgstr "GTK+ ពុម្ពអក្សរ​ចំណុច​ប្រទា�
 msgid "GTK+ Text Shortcut Theme"
 msgstr "GTK+ ស្បែក​ផ្លូវកាត់អត្ថបទ"
 
-#, fuzzy
 msgid "Disable Typing Notification Text"
-msgstr "អនុញ្ញាត​វាយ​ការជូនដំណឹង"
+msgstr "បិទ​ការ​វាយ​អត្ថបទ​ជូន​ដំណឹង"
 
-#, fuzzy
 msgid "GTK+ Theme Control Settings"
-msgstr "កម្មវិធី​ជំនួយ GTK+ ការ​ត្រួតពិនិត្យ​ស្បែក"
+msgstr "GTK+ កា​រកំណត់​វត្ថុ​បញ្ជា​ស្បែក"
 
-#, fuzzy
 msgid "Colors"
-msgstr "បិទ​"
+msgstr "ពណ៌​"
 
 msgid "Fonts"
 msgstr "ពុម្ព​​អក្សរ"
 
 msgid "Miscellaneous"
-msgstr ""
+msgstr "ផ្សេងៗ"
 
 msgid "Gtkrc File Tools"
 msgstr "ឧបករណ៍​ឯកសារ Gtkrc"
@@ -13803,11 +13787,11 @@ msgstr "ព័ត៌មាន​​ទំនាក់ទំនង"
 
 #, fuzzy
 msgid "Pidgin Buddylist Theme Editor"
-msgstr "បញ្ជី​មិត្តភក្ដិ"
+msgstr "ស្បែក​បញ្ជី​មិត្តភក្ដិ"
 
 #, fuzzy
 msgid "Edit Buddylist Theme"
-msgstr "បញ្ជី​មិត្តភក្ដិ"
+msgstr "ស្បែក​បញ្ជី​មិត្តភក្ដិ"
 
 msgid "Edit Icon Theme"
 msgstr ""
@@ -14075,9 +14059,6 @@ msgstr "កម្មវិធី​ជំនួយ​នេះ​មានប្
 #~ msgid "Last Activity"
 #~ msgstr "សកម្មភាព​ចុងក្រោយ"
 
-#~ msgid "Service Discovery Info"
-#~ msgstr "ព័ត៌មាន​រកឃើញ​សេវា"
-
 #~ msgid "Service Discovery Items"
 #~ msgstr "ធាតុ​រក​ឃើញ​ព័ត៌មាន"
 
@@ -14095,9 +14076,6 @@ msgstr "កម្មវិធី​ជំនួយ​នេះ​មានប្
 
 #~ msgid "Ad-Hoc Commands"
 #~ msgstr "ពាក្យ​បញ្ជា Ad-Hoc"
-
-#~ msgid "PubSub Service"
-#~ msgstr "សេវា PubSub"
 
 #~ msgid "SOCKS5 Bytestreams"
 #~ msgstr "ស្ទ្រីម​បៃ SOCKS5"
@@ -14241,9 +14219,6 @@ msgstr "កម្មវិធី​ជំនួយ​នេះ​មានប្
 #~ msgid "Error. SSL support is not installed."
 #~ msgstr "កំហុស ។ ការ​គាំទ្រ SSL មិន​ត្រូវ​បាន​ដំឡើង​ទេ ។"
 
-#~ msgid "Incorrect password."
-#~ msgstr "ពាក្យ​សម្ងាត់​មិន​ត្រឹមត្រូវ ។"
-
 #~ msgid ""
 #~ "Could not connect to BOS server:\n"
 #~ "%s"
@@ -14251,14 +14226,17 @@ msgstr "កម្មវិធី​ជំនួយ​នេះ​មានប្
 #~ "មិនអាច​តភ្ជាប់​ទៅ​កាន់​ម៉ាស៊ីន​បម្រើ BOS ៖\n"
 #~ "%s"
 
-#~ msgid "You may be disconnected shortly.  Check %s for updates."
-#~ msgstr "អ្នក​អាច​ត្រូវ​បានផ្ដាច់​ក្នុង​រយៈពេល​បន្តិចទៀត​នេះ ។ ពិនិត្យ​មើលភាព​ទាន់សម័យ %s ។"
+#~ msgid "Invalid username."
+#~ msgstr "ឈ្មោះ​អ្នកប្រើ​មិន​ត្រឹមត្រូវ ។"
+
+#~ msgid "Incorrect password."
+#~ msgstr "ពាក្យ​សម្ងាត់​មិន​ត្រឹមត្រូវ ។"
 
 #~ msgid "Could Not Connect"
 #~ msgstr "មិនអាច​តភ្ជាប់​បានទេ"
 
-#~ msgid "Invalid username."
-#~ msgstr "ឈ្មោះ​អ្នកប្រើ​មិន​ត្រឹមត្រូវ ។"
+#~ msgid "You may be disconnected shortly.  Check %s for updates."
+#~ msgstr "អ្នក​អាច​ត្រូវ​បានផ្ដាច់​ក្នុង​រយៈពេល​បន្តិចទៀត​នេះ ។ ពិនិត្យ​មើលភាព​ទាន់សម័យ %s ។"
 
 #~ msgid "Could not decrypt server reply"
 #~ msgstr "មិនអាច​ឌិគ្រីប​ការ​​ឆ្លើយតប​របស់​ម៉ាស៊ីន​បម្រើ​បាន​ទេ"
@@ -14293,7 +14271,6 @@ msgstr "កម្មវិធី​ជំនួយ​នេះ​មានប្
 #~ msgid "Could not resolve hostname"
 #~ msgstr "មិនអាច​ដោះស្រាយ​ឈ្មោះ​ម៉ាស៊ីនបានទេ"
 
-#, fuzzy
 #~ msgid "Incorrect Password"
 #~ msgstr "ពាក្យ​សម្ងាត់​មិន​ត្រឹមត្រូវ"
 
@@ -14303,6 +14280,9 @@ msgstr "កម្មវិធី​ជំនួយ​នេះ​មានប្
 #~ msgstr ""
 #~ "មិនអាច​បង្កើត​ការ​តភ្ជាប់​ជា​មួយ %s បានទេ ៖\n"
 #~ "%s"
+
+#~ msgid "Activate which ID?"
+#~ msgstr "ធ្វើ​ឲ្យ​សកម្ម​នូវ​លេខសម្គាល់​ណា​មួយ ?"
 
 #~ msgid "Yahoo Japan"
 #~ msgstr "យ៉ាហ៊ូ​ ជប៉ុន"
@@ -14314,6 +14294,13 @@ msgstr "កម្មវិធី​ជំនួយ​នេះ​មានប្
 #~ msgstr "ម៉ាស៊ីនបម្រើ​ផ្ទេរ​ឯកសារ​ជប៉ុន"
 
 #~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr "%s បានបដិសេធ​ការ​អញ្ជើញ​សន្និសីទ​របស់​អ្នក​​ក្នុង​បន្ទប់ \"%s\" ដោយ​សារតែ \"%s\" ។"
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "បានបដិសេធ​ការ​អញ្ជើញ"
+
+#~ msgid ""
 #~ "Lost connection with server\n"
 #~ "%s"
 #~ msgstr ""
@@ -14323,11 +14310,15 @@ msgstr "កម្មវិធី​ជំនួយ​នេះ​មានប្
 #~ msgid "Could not resolve host name"
 #~ msgstr "មិនអាច​ដោះស្រាយ​ឈ្មោះម៉ាស៊ីនបានទេ"
 
-#, fuzzy
 #~ msgid ""
 #~ "Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support "
 #~ "was found."
-#~ msgstr "ម៉ាស៊ីន​បម្រើ​ត្រូវការ TLS/SSL ដើម្បី​ចូល ។ រក​មិនឃើញការគាំទ្រ TLS/SSL នោះ​ទេ ។"
+#~ msgstr ""
+#~ "មិន​អាច​តភ្ជាប់​ទៅ​កាន់ %s បានទេ ៖ ម៉ាស៊ីន​បម្រើ​ត្រូវការ TLS/SSL ប៉ុន្តែ​រក​មិនឃើញ​​ការ​គាំទ្រ TLS/"
+#~ "SSL នោះ​ទេ ។"
+
+#~ msgid "_Proxy"
+#~ msgstr "ប្រូកស៊ី "
 
 #~ msgid "Conversation Window Hiding"
 #~ msgstr "លាក់​បង្អួច​សន្ទនា"
@@ -14340,188 +14331,3 @@ msgstr "កម្មវិធី​ជំនួយ​នេះ​មានប្
 
 #~ msgid "Please select an image for the smiley."
 #~ msgstr "សូម​ជ្រើស​រូបភាព​សម្រាប់​សញ្ញាអារម្មណ៍ ។"
-
-#~ msgid "Activate which ID?"
-#~ msgstr "ធ្វើ​ឲ្យ​សកម្ម​នូវ​លេខសម្គាល់​ណា​មួយ ?"
-
-#~ msgid "Cursor Color"
-#~ msgstr "ពណ៌​ទស្សន៍ទ្រនិច"
-
-#~ msgid "Secondary Cursor Color"
-#~ msgstr "ពណ៌​ទស្សន៍​ទ្រនិចទីពីរ"
-
-#~ msgid "Interface colors"
-#~ msgstr "ពណ៌​ចំណុច​ប្រទាក់"
-
-#~ msgid "Widget Sizes"
-#~ msgstr "ទំហំ​ធាតុក្រាហ្វិក"
-
-#~ msgid "Invite message"
-#~ msgstr "សារ​អញ្ជើញ"
-
-#~ msgid ""
-#~ "Please enter the name of the user you wish to invite,\n"
-#~ "along with an optional invite message."
-#~ msgstr ""
-#~ "សូម​បញ្ចូល​ឈ្មោះ​អ្នកប្រើ​ដែល​អ្នកចង់​អញ្ជើញ\n"
-#~ "រួម​ជា​មួយ​នឹង​សារ​អញ្ជើញ​ជា​ជម្រើស ។"
-
-#~ msgid "Looking up %s"
-#~ msgstr "រកមើល %s"
-
-#~ msgid "Connect to %s failed"
-#~ msgstr "បាន​បរាជ័យ​ក្នុងការ​តភ្ជាប់ %s"
-
-#~ msgid "Signon: %s"
-#~ msgstr "ចូល ៖ %s"
-
-#~ msgid "Unable to write file %s."
-#~ msgstr "មិនអាច​សរសេរ​ឯកសារ %s បាននោះទេ ។"
-
-#~ msgid "Unable to read file %s."
-#~ msgstr "មិន​អាច​អាន​ឯកសារ %s បានទេ ។"
-
-#~ msgid "Message too long, last %s bytes truncated."
-#~ msgstr "សារ​វែងពេក បានកាត់​ឲ្យ​ខ្លីចុងក្រោយ​ត្រឹម %s បៃ ។"
-
-#~ msgid "%s not currently logged in."
-#~ msgstr "%s បច្ចុប្បន្នមិន​បានចូល​ទេ ។"
-
-#~ msgid "Warning of %s not allowed."
-#~ msgstr "មិន​បានអនុញ្ញាត​ការ​ព្រមានរបស់ %s ទេ ។"
-
-#~ msgid ""
-#~ "A message has been dropped, you are exceeding the server speed limit."
-#~ msgstr "សារ​ត្រូវ​បានទម្លាក់ អ្នកបានលើស​ដែន​កំណត់ល្បឿន​របស់​ម៉ាស៊ីនបម្រើ ។"
-
-#~ msgid "Chat in %s is not available."
-#~ msgstr "មិនមានការ​​ជជែក​នៅ​ក្នុង %s ទេ ។"
-
-#~ msgid "You are sending messages too fast to %s."
-#~ msgstr "អ្នកកំពុង​ផ្ញើសារ​យ៉ាង​លឿន​ទៅ %s ។"
-
-#~ msgid "You missed an IM from %s because it was too big."
-#~ msgstr "អ្នកបាត់ IM ពី %s ពីព្រោះ​វា​ធំពេក ។"
-
-#~ msgid "You missed an IM from %s because it was sent too fast."
-#~ msgstr "អ្នកបានបាត់ IM ពី %s ពីព្រោះ​វា​លឿន​ពេក ។"
-
-#~ msgid "Failure."
-#~ msgstr "បរាជ័យ ។"
-
-#~ msgid "Too many matches."
-#~ msgstr "មានការ​ផ្គូផ្គង​ច្រើនពេក ។"
-
-#~ msgid "Need more qualifiers."
-#~ msgstr "ត្រូវការ​ឧបករណ៍​បញ្ជាក់​បន្ថែមទៀត ។"
-
-#~ msgid "Dir service temporarily unavailable."
-#~ msgstr "សេវា Dir មិន​អាច​ប្រើបាន​ជា​បណ្ដោះអាសន្ន ។"
-
-#~ msgid "Email lookup restricted."
-#~ msgstr "បានដាក់កម្ងិរ​ការ​រកមើល​អ៊ីមែល ។"
-
-#~ msgid "Keyword ignored."
-#~ msgstr "បានមិនអើពើ​ពាក្យគន្លឹះ ។"
-
-#~ msgid "No keywords."
-#~ msgstr "គ្មាន​ពាក្យ​គន្លឹះ ។"
-
-#~ msgid "User has no directory information."
-#~ msgstr "អ្នកប្រើ​មិនមាន​​ព័ត៌មាន​ថត​ទៀតទេ ។"
-
-#~ msgid "Country not supported."
-#~ msgstr "មិន​បានគាំទ្រ​ប្រទេស​ទេ ។"
-
-#~ msgid "Failure unknown: %s."
-#~ msgstr "មិនស្គាល់​ភាព​បរាជ័យ ៖ %s ។"
-
-#~ msgid "Incorrect username or password."
-#~ msgstr "ឈ្មោះ​អ្នកប្រើ ឬ​ពាក្យសម្ងាត់​មិន​ត្រឹមត្រូវ ។"
-
-#~ msgid "The service is temporarily unavailable."
-#~ msgstr "សេវា​មិន​អាច​ប្រើបាន​ជា​បណ្ដោះអាសន្ន ។"
-
-#~ msgid "Your warning level is currently too high to log in."
-#~ msgstr "កម្រិត​ព្រមាន​របស់​អ្នកបច្ចុប្បន្ន​ខ្ពស់​ពេក​ត្រូវ​ចូល ។"
-
-#~ msgid ""
-#~ "You have been connecting and disconnecting too frequently.  Wait ten "
-#~ "minutes and try again.  If you continue to try, you will need to wait "
-#~ "even longer."
-#~ msgstr ""
-#~ "អ្នក​បានតភ្ជាប់​ និង​ផ្ដាច់​ញឹកញាប់ពេក ។ រង់ចាំ​រយៈពេល​ ១០ នាទី ហើយ​ព្យាយាម​ម្ដង​ទៀត ។ ប្រសិន​បើ​"
-#~ "អ្នកបន្ត​ព្យាយាម អ្នក​នឹង​ត្រូវ​រង់ចាំ​យូរ​ជាង​នេះ ។"
-
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "មិនស្គាល់​កំហុស​ក្នុងការ​ចូល​បានកើតឡើង ៖ %s ។"
-
-#~ msgid "An unknown error, %d, has occurred.  Info: %s"
-#~ msgstr "មិនស្គាល់​កំហុស %d ដែល​បានកើត​ឡើង ។ ព័ត៌មាន ៖ %s"
-
-#~ msgid "Invalid Groupname"
-#~ msgstr "ឈ្មោះក្រុម​មិនត្រឹមត្រូវ"
-
-#~ msgid "Connection Closed"
-#~ msgstr "បានបិទ​ការ​តភ្ជាប់"
-
-#~ msgid "Waiting for reply..."
-#~ msgstr "កំពុង​រង់ចាំ​ការ​ឆ្លើយតប..."
-
-#~ msgid "TOC has come back from its pause. You may now send messages again."
-#~ msgstr "TOC បាន​ត្រឡប់​ពី​ការ​ផ្អាក​របស់​វា ។ ឥឡូវ​អ្នក​ផ្ញើសារ​ម្ដង​ទៀត ។"
-
-#~ msgid "Password Change Successful"
-#~ msgstr "ផ្លាស់ប្ដូរ​ពាក្យ​សម្ងាត់​ដោយ​ជោគជ័យ"
-
-#~ msgid "Get Dir Info"
-#~ msgstr "យក​ព័ត៌មាន Dir"
-
-#~ msgid "Set Dir Info"
-#~ msgstr "កំណត់​ព័ត៌មាន Dir"
-
-#~ msgid "Could not open %s for writing!"
-#~ msgstr "មិន​អាច​បើក %s ដើម្បីសរសេរ​បានទេ !"
-
-#~ msgid "File transfer failed; other side probably canceled."
-#~ msgstr "បានបរាជ័យ​ក្នុងការ​ផ្ទេរ​ឯកសារ ផ្នែកផ្សេង​ប្រហែលជា​បានបោះបង់​ហើយ "
-
-#~ msgid "Could not connect for transfer."
-#~ msgstr "មិនអាច​តភ្ជាប់​ដើម្បី​ផ្ទេរ​បានទេ ។"
-
-#~ msgid "Could not write file header.  The file will not be transferred."
-#~ msgstr "មិនអាច​សរសេរ​បឋមកថា​ឯកសារ​បានទេ ។ ឯកសារ​នឹង​មិន​ត្រូវ​បានផ្ទេរ​ទេ ។"
-
-#~ msgid "Save As..."
-#~ msgstr "រក្សាទុកជា..."
-
-#~ msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-#~ msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-#~ msgstr[0] "%s ស្នើ %s ឲ្យ​ទទួលឯកសារ %d ៖ %s (%.2f %s)%s%s"
-
-#~ msgid "%s requests you to send them a file"
-#~ msgstr "%s ស្នើ​អ្នក​ឲ្យ​ផ្ញើ​ឯកសារ​ឲ្យ​ពួកវា"
-
-#~ msgid "TOC Protocol Plugin"
-#~ msgstr "កម្មវិធី​ពិធីការ TOC"
-
-#~ msgid "%s Options"
-#~ msgstr "ជម្រើស %s"
-
-#~ msgid "Proxy Options"
-#~ msgstr "ជម្រើសប្រូកស៊ី"
-
-#~ msgid "By log size"
-#~ msgstr "តាម​ទំហំ​កំណត់ហេតុ"
-
-#~ msgid "_Open Link in Browser"
-#~ msgstr "បើក​តំណ​នៅ​ក្នុង​កម្មវិធីរុករក"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "ម៉ាស៊ីនបម្រើ STUN ៖"
-
-#~ msgid "Smiley _Image"
-#~ msgstr "រូបភាព​សញ្ញាអារម្មណ៍"
-
-#~ msgid "Smiley S_hortcut"
-#~ msgstr "ផ្លូវ​កាត់​សញ្ញាអារម្មណ៍"

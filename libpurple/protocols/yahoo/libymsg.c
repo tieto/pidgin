@@ -579,14 +579,14 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 
 	/* Now that we have processed the buddy list, we can say yahoo has connected */
 	purple_connection_set_display_name(gc, purple_normalize(account, purple_account_get_username(account)));
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
 	yd->logged_in = TRUE;
+	purple_debug_info("yahoo","Authentication: Connection established\n");
+	purple_connection_set_state(gc, PURPLE_CONNECTED);
 	if (yd->picture_upload_todo) {
 		yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);
 		yd->picture_upload_todo = NULL;
 	}
 	yahoo_set_status(account, purple_account_get_active_status(account));
-	purple_debug_info("yahoo","Authentication: Connection established\n");
 
 	g_hash_table_destroy(ht);
 	g_free(norm_bud);

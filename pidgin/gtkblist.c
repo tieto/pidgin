@@ -4642,13 +4642,21 @@ item_factory_translate_func (const char *path, gpointer func_data)
 
 void pidgin_blist_setup_sort_methods()
 {
+	const char *id;
+
 	pidgin_blist_sort_method_reg("none", _("Manually"), sort_method_none);
 #if GTK_CHECK_VERSION(2,2,1)
 	pidgin_blist_sort_method_reg("alphabetical", _("Alphabetically"), sort_method_alphabetical);
 	pidgin_blist_sort_method_reg("status", _("By status"), sort_method_status);
 	pidgin_blist_sort_method_reg("log_size", _("By recent log activity"), sort_method_log_activity);
 #endif
-	pidgin_blist_sort_method_set(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/sort_type"));
+
+	id = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/sort_type");
+	if (id == NULL) {
+		purple_debug_warning("gtkblist", "Sort method was NULL, resetting to alphabetical\n");
+		id = "alphabetical";
+	}
+	pidgin_blist_sort_method_set(id);
 }
 
 static void _prefs_change_redo_list(const char *name, PurplePrefType type,
@@ -7432,7 +7440,13 @@ GList *pidgin_blist_get_sort_methods()
 
 void pidgin_blist_sort_method_reg(const char *id, const char *name, pidgin_blist_sort_function func)
 {
-	struct pidgin_blist_sort_method *method = g_new0(struct pidgin_blist_sort_method, 1);
+	struct pidgin_blist_sort_method *method;
+
+	g_return_if_fail(id != NULL);
+	g_return_if_fail(name != NULL);
+	g_return_if_fail(func != NULL);
+
+	method = g_new0(struct pidgin_blist_sort_method, 1);
 	method->id = g_strdup(id);
 	method->name = g_strdup(name);
 	method->func = func;
@@ -7443,6 +7457,8 @@ void pidgin_blist_sort_method_reg(const char *id, const char *name, pidgin_blist
 void pidgin_blist_sort_method_unreg(const char *id)
 {
 	GList *l = pidgin_blist_sort_methods;
+
+	g_return_if_fail(id != NULL);
 
 	while(l) {
 		struct pidgin_blist_sort_method *method = l->data;
@@ -8033,6 +8049,8 @@ pidgin_blist_update_sort_methods(void)
 	if ((gtkblist == NULL) || (gtkblist->ift == NULL))
 		return;
 
+	g_return_if_fail(m != NULL);
+
 	sortmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Sort Buddies"));
 
 	if (sortmenu == NULL)
@@ -8047,7 +8065,7 @@ pidgin_blist_update_sort_methods(void)
 	for (l = pidgin_blist_sort_methods; l; l = l->next) {
 		method = (PidginBlistSortMethod *) l->data;
 		menuitem = gtk_radio_menu_item_new_with_label(sl, _(method->name));
-		if (!strcmp(m, method->id))
+		if (g_str_equal(m, method->id))
 			activeitem = menuitem;
 		sl = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
 		gtk_menu_shell_append(GTK_MENU_SHELL(sortmenu), menuitem);
