@@ -123,27 +123,29 @@ msn_servconn_set_destroy_cb(MsnServConn *servconn,
  **************************************************************************/
 
 void
-msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
+msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error,
+                       const char *reason)
 {
 	MsnSession *session = servconn->session;
 	MsnServConnType type = servconn->type;
-	const char *reason;
 
 	const char *names[] = { "Notification", "Switchboard" };
 	const char *name;
 
 	name = names[type];
 
-	switch (error)
-	{
-		case MSN_SERVCONN_ERROR_CONNECT:
-			reason = _("Unable to connect"); break;
-		case MSN_SERVCONN_ERROR_WRITE:
-			reason = _("Writing error"); break;
-		case MSN_SERVCONN_ERROR_READ:
-			reason = _("Reading error"); break;
-		default:
-			reason = _("Unknown error"); break;
+	if (reason == NULL) {
+		switch (error)
+		{
+			case MSN_SERVCONN_ERROR_CONNECT:
+				reason = _("Unable to connect"); break;
+			case MSN_SERVCONN_ERROR_WRITE:
+				reason = _("Writing error"); break;
+			case MSN_SERVCONN_ERROR_READ:
+				reason = _("Reading error"); break;
+			default:
+				reason = _("Unknown error"); break;
+		}
 	}
 
 	purple_debug_error("msn", "Connection error from %s server (%s): %s\n",
@@ -196,7 +198,7 @@ connect_cb(gpointer data, gint source, const char *error_message)
 	else
 	{
 		purple_debug_error("msn", "Connection error: %s\n", error_message);
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_CONNECT);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_CONNECT, error_message);
 	}
 }
 
@@ -344,7 +346,7 @@ servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if (ret < 0 && errno == EAGAIN)
 		return;
 	else if (ret <= 0) {
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_WRITE);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_WRITE, NULL);
 		return;
 	}
 
@@ -401,7 +403,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 
 	if (ret == -1)
 	{
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_WRITE);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_WRITE, NULL);
 	}
 
 	servconn_timeout_renew(servconn);
@@ -427,7 +429,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		purple_debug_error("msn", "servconn %03d read error, "
 			"len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
 			servconn->num, len, errno, g_strerror(errno));
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ, NULL);
 
 		return;
 	}

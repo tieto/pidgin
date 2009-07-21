@@ -293,7 +293,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		purple_debug_error("msn", "HTTP: servconn %03d read error, "
 			"len: %" G_GSSIZE_FORMAT ", errno: %d, error: %s\n",
 			servconn->num, len, error, g_strerror(errno));
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ, NULL);
 
 		return;
 	}
@@ -309,7 +309,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	{
 		/* Either we must wait for more input, or something went wrong */
 		if (error)
-			msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
+			msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ, NULL);
 
 		return;
 	}
@@ -317,7 +317,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if (error)
 	{
 		purple_debug_error("msn", "HTTP: Special error\n");
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
+		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ, NULL);
 
 		return;
 	}
@@ -368,7 +368,7 @@ httpconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 			return;
 
 		/* Error! */
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE);
+		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE, NULL);
 		return;
 	}
 
@@ -394,7 +394,7 @@ write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
 
 	if ((res <= 0) && ((errno != EAGAIN) && (errno != EWOULDBLOCK)))
 	{
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE);
+		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE, NULL);
 		return FALSE;
 	}
 
@@ -672,7 +672,7 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 	{
 		purple_debug_error("msn", "HTTP: Connection error: %s\n",
 		                   error_message ? error_message : "(null)");
-		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_CONNECT);
+		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_CONNECT, error_message);
 	}
 }
 
