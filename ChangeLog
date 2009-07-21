@@ -40,6 +40,8 @@ version 2.6.0 (??/??/2009):
 	  (Jan Kaluza and Aman Gupta)
 	* Internationalized Domain Names are supported when libpurple is compiled
 	  against the GNU IDN library.
+	* Install scalable versions of the main Pidgin icon, the protocol icons,
+	  the dialog icons, and the Buddy List emblems.
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
