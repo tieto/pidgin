@@ -125,13 +125,14 @@ msn_servconn_set_destroy_cb(MsnServConn *servconn,
 void
 msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
 {
-	char *tmp;
+	MsnSession *session = servconn->session;
+	MsnServConnType type = servconn->type;
 	const char *reason;
 
 	const char *names[] = { "Notification", "Switchboard" };
 	const char *name;
 
-	name = names[servconn->type];
+	name = names[type];
 
 	switch (error)
 	{
@@ -147,14 +148,8 @@ msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
 
 	purple_debug_error("msn", "Connection error from %s server (%s): %s\n",
 					 name, servconn->host, reason);
-	tmp = g_strdup_printf(_("Connection error from %s server:\n%s"),
-						  name, reason);
 
-	if (servconn->type == MSN_SERVCONN_NS)
-	{
-		msn_session_set_error(servconn->session, MSN_ERROR_SERVCONN, tmp);
-	}
-	else if (servconn->type == MSN_SERVCONN_SB)
+	if (type == MSN_SERVCONN_SB)
 	{
 		MsnSwitchBoard *swboard;
 		swboard = servconn->cmdproc->data;
@@ -162,9 +157,16 @@ msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
 			swboard->error = MSN_SB_ERROR_CONNECTION;
 	}
 
+	/* servconn->disconnect_cb may destroy servconn, so don't use it again */
 	msn_servconn_disconnect(servconn);
 
-	g_free(tmp);
+	if (type == MSN_SERVCONN_NS)
+	{
+		char *tmp = g_strdup_printf(_("Connection error from %s server:\n%s"),
+		                            name, reason);
+		msn_session_set_error(session, MSN_ERROR_SERVCONN, tmp);
+		g_free(tmp);
+	}
 }
 
 /**************************************************************************
