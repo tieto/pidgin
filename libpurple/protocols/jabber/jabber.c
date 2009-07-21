@@ -699,6 +699,8 @@ static void tls_init(JabberStream *js)
 	js->gc->inpa = 0;
 	js->gsc = purple_ssl_connect_with_host_fd(js->gc->account, js->fd,
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->certificate_CN, js->gc);
+	/* The fd is no longer our concern */
+	js->fd = -1;
 }
 
 static gboolean jabber_login_connect(JabberStream *js, const char *domain, const char *host, int port,
