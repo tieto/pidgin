@@ -312,7 +312,7 @@ servconn_timeout_renew(MsnServConn *servconn)
 
 	if (servconn->connected && servconn->timeout_sec) {
 		servconn->timeout_handle = purple_timeout_add_seconds(
-			servconn->timeout_sec, servconn_idle_timeout_cb, servconn);
+			servconn->timeout_sec, (GSourceFunc)servconn_idle_timeout_cb, servconn);
 	}
 }
 
