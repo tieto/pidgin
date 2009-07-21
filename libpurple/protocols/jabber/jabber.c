@@ -457,14 +457,21 @@ int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
 void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
                            gpointer unused)
 {
+	JabberStream *js;
 	char *txt;
 	int len;
 
 	if (NULL == packet)
 		return;
 
+	js = purple_connection_get_protocol_data(pc);
+	if (js->use_bosh)
+		if (g_str_equal((*packet)->name, "message") ||
+				g_str_equal((*packet)->name, "iq") ||
+				g_str_equal((*packet)->name, "presence"))
+			xmlnode_set_namespace(*packet, "jabber:client");
 	txt = xmlnode_to_str(*packet, &len);
-	jabber_send_raw(purple_connection_get_protocol_data(pc), txt, len);
+	jabber_send_raw(js, txt, len);
 	g_free(txt);
 }
 
