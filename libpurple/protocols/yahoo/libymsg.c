@@ -577,6 +577,11 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 
 	g_hash_table_foreach(ht, yahoo_do_group_cleanup, NULL);
 
+	/* The reporter of ticket #9745 determined that we weren't retrieving the
+	 * aliases during buddy list retrieval, so we never updated aliases that
+	 * changed while we were signed off. */
+	yahoo_fetch_aliases(gc);
+
 	/* Now that we have processed the buddy list, we can say yahoo has connected */
 	purple_connection_set_display_name(gc, purple_normalize(account, purple_account_get_username(account)));
 	yd->logged_in = TRUE;
