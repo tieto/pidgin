@@ -170,7 +170,8 @@ gssize msn_servconn_write(MsnServConn *servconn, const char *buf,
  * @param servconn The servconn.
  * @param error The error that happened.
  */
-void msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error);
+void msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error,
+                            const char *reason);
 
 /**
  * Process the data in servconn->rx_buf.  This is called after reading

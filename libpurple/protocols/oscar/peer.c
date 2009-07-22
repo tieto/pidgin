@@ -712,10 +712,10 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	{
 		const guchar *ip_atoi = purple_network_ip_atoi(listener_ip);
 		if (ip_atoi == NULL) {
-			purple_debug_error("oscar", "Cannot send file. IP %s failed atoi.\n"
+			purple_debug_error("oscar", "Cannot send file. atoi(%s) failed.\n"
 					"Other possibly useful information: fd = %d, port = %d\n",
-			                   listener_ip ? listener_ip : "(null!)", conn->listenerfd,
-							   listener_port);
+					listener_ip ? listener_ip : "(null!)", conn->listenerfd,
+					listener_port);
 			purple_xfer_cancel_local(conn->xfer);
 			return;
 		}
