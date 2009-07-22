@@ -37,9 +37,12 @@ version 2.6.0 (??/??/2009):
 		* purple_debug_set_verbose
 		* purple_global_proxy_set_info
 		* purple_group_destroy
+		* purple_ipv4_address_is_valid
+		* purple_ipv6_address_is_valid
 		* purple_log_get_activity_score
 		* purple_markup_is_rtl
 		* purple_markup_escape_text
+		* purple_network_convert_idn_to_ascii
 		* purple_network_force_online
 		* purple_network_set_stun_server
 		* purple_network_set_turn_server
@@ -54,6 +57,7 @@ version 2.6.0 (??/??/2009):
 		* purple_request_field_get_group
 		* purple_request_field_get_ui_data
 		* purple_request_field_set_ui_data
+		* purple_ssl_connect_with_ssl_cn
 		* purple_strequal
 		* purple_utf8_strip_unprintables
 		* purple_util_fetch_url_request_len_with_account
@@ -77,11 +81,20 @@ version 2.6.0 (??/??/2009):
 		* Added a client_type field in the get_ui_info core UI op. See
 		  core.h for details.
 		* Added introspection of signals exposed via the D-Bus API.
+		* purple_find_buddies is now more efficient in the case where
+		  it is enumerating all the buddies for an account.
+		* purple_find_group is now more efficient for large numbers of groups.
+		* All DNS routines support internationalized domain names (IDNs) when
+		  libpurple is compiled with GNU libidn.
 
 		Deprecated:
 		* buddy-added and buddy-removed blist signals
+		* purple_blist_destroy
+		* purple_blist_new
 		* purple_buddy_get_local_alias
+		* purple_ip_address_is_valid
 		* purple_notify_user_info_remove_entry
+		* purple_set_blist
 		* purple_status_type_set_primary_attr
 		* purple_status_type_add_attr
 		* purple_status_type_add_attrs

@@ -658,7 +658,8 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 			try_srv_connect(js);
 		} else {
 			purple_debug_info("jabber","Couldn't connect directly to %s. Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
-			js->srv_query_data = purple_txt_resolve("_xmppconnect", js->user->domain, txt_resolved_cb, js);
+			js->srv_query_data = purple_txt_resolve("_xmppconnect",
+					js->user->domain, txt_resolved_cb, js);
 		}
 		return;
 	}
@@ -698,6 +699,8 @@ static void tls_init(JabberStream *js)
 	js->gc->inpa = 0;
 	js->gsc = purple_ssl_connect_with_host_fd(js->gc->account, js->fd,
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->certificate_CN, js->gc);
+	/* The fd is no longer our concern */
+	js->fd = -1;
 }
 
 static gboolean jabber_login_connect(JabberStream *js, const char *domain, const char *host, int port,
@@ -713,8 +716,8 @@ static gboolean jabber_login_connect(JabberStream *js, const char *domain, const
 	else
 		js->serverFQDN = g_strdup(host);
 
-	if (purple_proxy_connect(js->gc, js->gc->account, host,
-			port, jabber_login_callback, js->gc) == NULL) {
+	if (purple_proxy_connect(js->gc, purple_connection_get_account(js->gc),
+			host, port, jabber_login_callback, js->gc) == NULL) {
 		if (fatal_failure) {
 			purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -740,7 +743,8 @@ static void try_srv_connect(JabberStream *js)
 
 	/* Fall back to the defaults (I'm not sure if we should actually do this) */
 	jabber_login_connect(js, js->user->domain, js->user->domain,
-		purple_account_get_int(js->gc->account, "port", 5222), TRUE);
+			purple_account_get_int(purple_connection_get_account(js->gc), "port", 5222),
+			TRUE);
 }
 
 static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
@@ -755,35 +759,68 @@ static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
 		try_srv_connect(js);
 	} else {
 		jabber_login_connect(js, js->user->domain, js->user->domain,
-			purple_account_get_int(js->gc->account, "port", 5222), TRUE);
+				purple_account_get_int(purple_connection_get_account(js->gc), "port", 5222),
+				TRUE);
 	}
 }
 
-void
-jabber_login(PurpleAccount *account)
+static JabberStream *
+jabber_stream_new(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	const char *connect_server = purple_account_get_string(account,
-			"connect_server", "");
-	const char *bosh_url = purple_account_get_string(account,
-			"bosh_url", "");
 	JabberStream *js;
+	JabberBuddy *my_jb;
 	PurplePresence *presence;
-	PurpleStoredImage *image;
-	JabberBuddy *my_jb = NULL;
+	gchar *user;
+	gchar *slash;
 
-	gc->flags |= PURPLE_CONNECTION_HTML |
-		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->fd = -1;
-	js->iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, g_free);
+
+	user = g_strdup(purple_account_get_username(account));
+	/* jabber_id_new doesn't accept "user@domain/" as valid */
+	slash = strchr(user, '/');
+	if (slash && *(slash + 1) == '\0')
+		*slash = '\0';
+	js->user = jabber_id_new(user);
+
+	if (!js->user) {
+		purple_connection_error_reason(gc,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+			_("Invalid XMPP ID"));
+		/* Destroying the connection will free the JabberStream */
+		return NULL;
+	}
+
+	if (!js->user->domain || *(js->user->domain) == '\0') {
+		purple_connection_error_reason(gc,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+			_("Invalid XMPP ID. Domain must be set."));
+		/* Destroying the connection will free the JabberStream */
+		return NULL;
+	}
+
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_buddy_free);
+
+	my_jb = jabber_buddy_find(js, user, TRUE);
+	g_free(user);
+	if (!my_jb) {
+		/* This basically *can't* fail, but for good measure... */
+		purple_connection_error_reason(gc,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+			_("Invalid XMPP ID"));
+		/* Destroying the connection will free the JabberStream */
+		g_return_val_if_reached(NULL);
+	}
+
+	my_jb->subscription |= JABBER_SUB_BOTH;
+
+	js->iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, g_free);
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_chat_free);
-	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
 	js->old_length = 0;
@@ -802,37 +839,21 @@ jabber_login(PurpleAccount *account)
 	if (purple_presence_is_idle(presence))
 		js->idle = purple_presence_get_idle_time(presence);
 
-	if(!js->user) {
-		purple_connection_error_reason(gc,
-			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-			_("Invalid XMPP ID"));
-		return;
-	}
+	return js;
+}
 
-	if (!js->user->domain || *(js->user->domain) == '\0') {
-		purple_connection_error_reason(gc,
-			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-			_("Invalid XMPP ID. Domain must be set."));
-		return;
-	}
-
-	/*
-	 * Calculate the avatar hash for our current image so we know (when we
-	 * fetch our vCard and PEP avatar) if we should send our avatar to the
-	 * server.
-	 */
-	if ((image = purple_buddy_icons_find_account_icon(account))) {
-		js->initial_avatar_hash = jabber_calculate_data_sha1sum(purple_imgstore_get_data(image),
-					purple_imgstore_get_size(image));
-		purple_imgstore_unref(image);
-	}
-
-	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
-		my_jb->subscription |= JABBER_SUB_BOTH;
+static void
+jabber_stream_connect(JabberStream *js)
+{
+	PurpleConnection *gc = js->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	const char *connect_server = purple_account_get_string(account,
+			"connect_server", "");
+	const char *bosh_url = purple_account_get_string(account,
+			"bosh_url", "");
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
-	/* TODO: Just use purple_url_parse? */
 	/* If both BOSH and a Connect Server are specified, we prefer BOSH. I'm not
 	 * attached to that choice, though.
 	 */
@@ -842,7 +863,7 @@ jabber_login(PurpleAccount *account)
 		if (js->bosh)
 			jabber_bosh_connection_connect(js->bosh);
 		else {
-			purple_connection_error_reason(js->gc,
+			purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 				_("Malformed BOSH URL"));
 		}
@@ -853,19 +874,18 @@ jabber_login(PurpleAccount *account)
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
-	if(purple_account_get_bool(js->gc->account, "old_ssl", FALSE)) {
+	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
 		if(purple_ssl_is_supported()) {
-			js->gsc = purple_ssl_connect(js->gc->account,
-					js->certificate_CN,
-					purple_account_get_int(account, "port", 5223), jabber_login_callback_ssl,
-					jabber_ssl_connect_failure, js->gc);
+			js->gsc = purple_ssl_connect(account, js->certificate_CN,
+					purple_account_get_int(account, "port", 5223),
+					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
 			if (!js->gsc) {
-				purple_connection_error_reason(js->gc,
+				purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 					_("Unable to establish SSL connection"));
 			}
 		} else {
-			purple_connection_error_reason(js->gc,
+			purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 		}
@@ -876,11 +896,41 @@ jabber_login(PurpleAccount *account)
 	/* no old-ssl, so if they've specified a connect server, we'll use that, otherwise we'll
 	 * invoke the magic of SRV lookups, to figure out host and port */
 	if(connect_server[0]) {
-		jabber_login_connect(js, js->user->domain, connect_server, purple_account_get_int(account, "port", 5222), TRUE);
+		jabber_login_connect(js, js->user->domain, connect_server,
+				purple_account_get_int(account, "port", 5222), TRUE);
 	} else {
 		js->srv_query_data = purple_srv_resolve("xmpp-client",
 				"tcp", js->user->domain, srv_resolved_cb, js);
 	}
+}
+
+void
+jabber_login(PurpleAccount *account)
+{
+	PurpleConnection *gc = purple_account_get_connection(account);
+	JabberStream *js;
+	PurpleStoredImage *image;
+
+	gc->flags |= PURPLE_CONNECTION_HTML |
+		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
+	js = jabber_stream_new(account);
+	if (js == NULL)
+		return;
+
+	/*
+	 * Calculate the avatar hash for our current image so we know (when we
+	 * fetch our vCard and PEP avatar) if we should send our avatar to the
+	 * server.
+	 */
+	image = purple_buddy_icons_find_account_icon(account);
+	if (image != NULL) {
+		js->initial_avatar_hash =
+			jabber_calculate_data_sha1sum(purple_imgstore_get_data(image),
+					purple_imgstore_get_size(image));
+		purple_imgstore_unref(image);
+	}
+
+	jabber_stream_connect(js);
 }
 
 
@@ -1293,90 +1343,14 @@ void jabber_register_gateway(JabberStream *js, const char *gateway) {
 
 void jabber_register_account(PurpleAccount *account)
 {
-	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js;
-	JabberBuddy *my_jb = NULL;
-	const char *connect_server = purple_account_get_string(account,
-			"connect_server", "");
-	const char *server;
 
-	js = gc->proto_data = g_new0(JabberStream, 1);
-	js->gc = gc;
+	js = jabber_stream_new(account);
+	if (js == NULL)
+		return;
+
 	js->registration = TRUE;
-	js->iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, g_free);
-	js->user = jabber_id_new(purple_account_get_username(account));
-	js->next_id = g_random_int();
-	js->old_length = 0;
-	js->keepalive_timeout = 0;
-
-	if(!js->user) {
-		purple_connection_error_reason(gc,
-			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-			_("Invalid XMPP ID"));
-		return;
-	}
-
-	js->write_buffer = purple_circ_buffer_new(512);
-
-	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
-		my_jb->subscription |= JABBER_SUB_BOTH;
-
-	server = connect_server[0] ? connect_server : js->user->domain;
-	js->certificate_CN = g_strdup(server);
-
-	js->stun_ip = NULL;
-	js->stun_port = 0;
-	js->stun_query = NULL;
-
-	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
-
-	/* TODO: Just use purple_url_parse? */
-	if (!g_ascii_strncasecmp(connect_server, "http://", 7) || !g_ascii_strncasecmp(connect_server, "https://", 8)) {
-		js->use_bosh = TRUE;
-		js->bosh = jabber_bosh_connection_init(js, connect_server);
-		if (!js->bosh) {
-			purple_connection_error_reason(js->gc,
-				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-				_("Malformed BOSH Connect Server"));
-			return;
-		}
-		jabber_bosh_connection_connect(js->bosh);
-		return;
-	} else {
-		js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
-	}
-
-	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
-		if(purple_ssl_is_supported()) {
-			js->gsc = purple_ssl_connect(account, server,
-					purple_account_get_int(account, "port", 5222),
-					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
-			if (!js->gsc) {
-				purple_connection_error_reason(js->gc,
-					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-					_("Unable to establish SSL connection"));
-			}
-		} else {
-			purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("SSL support unavailable"));
-		}
-
-		return;
-	}
-
-	if (connect_server[0]) {
-		jabber_login_connect(js, js->user->domain, server,
-		                     purple_account_get_int(account,
-		                                            "port", 5222), TRUE);
-	} else {
-		js->srv_query_data = purple_srv_resolve("xmpp-client",
-		                                        "tcp",
-		                                        js->user->domain,
-		                                        srv_resolved_cb,
-		                                        js);
-	}
+	jabber_stream_connect(js);
 }
 
 static void
@@ -1466,7 +1440,7 @@ void jabber_close(PurpleConnection *gc)
 	if (!gc->disconnect_timeout) {
 		if (js->use_bosh)
 			jabber_bosh_connection_close(js->bosh);
-		else
+		else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
 			jabber_send_raw(js, "</stream:stream>", -1);
 	}
 
@@ -1627,7 +1601,8 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 
 			break;
 		case JABBER_STREAM_CONNECTED:
-			/* now we can alert the core that we're ready to send status */
+			/* Send initial presence */
+			jabber_presence_send(js, TRUE);
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 			break;
 	}
@@ -1974,19 +1949,17 @@ char *jabber_status_text(PurpleBuddy *b)
 		ret = g_strdup(jb->error_msg);
 	} else {
 		PurplePresence *presence = purple_buddy_get_presence(b);
-		PurpleStatus *status =purple_presence_get_active_status(presence);
-		char *stripped;
+		PurpleStatus *status = purple_presence_get_active_status(presence);
+		const char *message;
 
-		if(!(stripped = purple_markup_strip_html(purple_status_get_attr_string(status, "message")))) {
-			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
-				PurpleStatus *status = purple_presence_get_status(presence, "tune");
-				stripped = g_strdup(purple_status_get_attr_string(status, PURPLE_TUNE_TITLE));
-			}
-		}
-
-		if(stripped) {
-			ret = g_markup_escape_text(stripped, -1);
-			g_free(stripped);
+		if((message = purple_status_get_attr_string(status, "message"))) {
+			ret = g_markup_escape_text(message, -1);
+		} else if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+			PurpleStatus *status = purple_presence_get_status(presence, "tune");
+			const char *title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
+			const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+			const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
+			ret = purple_util_format_song_info(title, artist, album, NULL);
 		}
 	}
 
@@ -2003,12 +1976,7 @@ jabber_tooltip_add_resource_text(JabberBuddyResource *jbr,
 	const char *state;
 
 	if(jbr->status) {
-		char *tmp;
-		text = purple_strreplace(jbr->status, "\n", "<br />\n");
-		tmp = purple_markup_strip_html(text);
-		g_free(text);
-		text = g_markup_escape_text(tmp, -1);
-		g_free(tmp);
+		text = g_markup_escape_text(jbr->status, -1);
 	}
 
 	if(jbr->name)
@@ -3371,6 +3339,7 @@ void jabber_register_commands(void)
 					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
 					  "prpl-jabber", jabber_cmd_buzz,
 					  _("buzz: Buzz a user to get their attention"), NULL);
+	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
 }
 
 void jabber_unregister_commands(void)
@@ -3434,8 +3403,9 @@ jabber_init_plugin(PurplePlugin *plugin)
 {
 	GHashTable *ui_info = purple_core_get_ui_info();
 	const gchar *ui_type;
-	const gchar *type = "pc"; /* default client type, if unknown or 
+	const gchar *type = "pc"; /* default client type, if unknown or
 								unspecified */
+	const gchar *ui_name = NULL;
 
 	jabber_plugin = plugin;
 
@@ -3451,12 +3421,16 @@ jabber_init_plugin(PurplePlugin *plugin)
 		}
 	}
 
-	jabber_add_identity("client", type, NULL, PACKAGE);
+	if (ui_info)
+		ui_name = g_hash_table_lookup(ui_info, "name");
+	if (ui_name == NULL)
+		ui_name = PACKAGE;
+
+	jabber_add_identity("client", type, NULL, ui_name);
 
 	/* initialize jabber_features list */
 	jabber_add_feature("jabber:iq:last", 0);
 	jabber_add_feature("jabber:iq:oob", 0);
-	jabber_add_feature("jabber:iq:time", 0);
 	jabber_add_feature("urn:xmpp:time", 0);
 	jabber_add_feature("jabber:iq:version", 0);
 	jabber_add_feature("jabber:x:conference", 0);

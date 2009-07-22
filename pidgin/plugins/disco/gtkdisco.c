@@ -112,7 +112,7 @@ static GdkPixbuf *
 pidgin_disco_load_icon(XmppDiscoService *service, const char *size)
 {
 	GdkPixbuf *pixbuf = NULL;
-	char *filename;
+	char *filename = NULL;
 
 	g_return_val_if_fail(service != NULL, NULL);
 	g_return_val_if_fail(size != NULL, NULL);

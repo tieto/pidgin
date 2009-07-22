@@ -235,7 +235,7 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
-	} else if(!jabber_nameprep_validate(server)) {
+	} else if(!jabber_domain_validate(server)) {
 		char *buf = g_strdup_printf(_("%s is not a valid server name"), server);
 		purple_notify_error(gc, _("Invalid Server Name"),
 				_("Invalid Server Name"), buf);

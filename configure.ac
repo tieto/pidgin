@@ -604,7 +604,7 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 ])
 			fi])
 	fi
-        
+
 
 else # GTK
 	enable_cap=no
@@ -806,6 +806,25 @@ Or use --disable-vv if you do not need voice/video support.
 			])
 		fi
 	fi
+fi
+
+AC_ARG_ENABLE(idn,
+	[AC_HELP_STRING([--disable-idn], [compile without IDN support])],
+	[enable_idn="$enableval" force_idn=$enableval], [enable_idn="yes" force_idn=no])
+if test "x$enable_idn" != "xno"; then
+	PKG_CHECK_MODULES(IDN, libidn >= 0.0.0, [
+		AC_DEFINE(USE_IDN, 1, [Use GNU Libidn for stringprep and IDN])
+		AC_SUBST(IDN_CFLAGS)
+		AC_SUBST(IDN_LIBS)
+	], [
+		AC_MSG_RESULT(no)
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
+GNU Libidn development headers not found.
+Use --disable-idn if you do not need it.
+])
+		fi
+	])
 fi
 
 dnl #######################################################################
@@ -1075,13 +1094,19 @@ extern_init=
 load_proto=
 for i in $STATIC_PRPLS ; do
 	dnl Ugly special case for "libsilcpurple.la":
-	dnl ... and Ugly special case for multi-protocol oscar
+	dnl ... and Ugly special case for multi-protocol oscar and yahoo
 	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
 		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.la"
 		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
 		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
 		load_proto="$load_proto purple_init_aim_plugin();"
 		load_proto="$load_proto purple_init_icq_plugin();"
+	elif test "x$i" = "xyahoo"; then
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/yahoo/libymsg.la"
+		extern_init="$extern_init extern gboolean purple_init_yahoo_plugin();"
+		extern_init="$extern_init extern gboolean purple_init_yahoojp_plugin();"
+		load_proto="$load_proto purple_init_yahoo_plugin();"
+		load_proto="$load_proto purple_init_yahoojp_plugin();"
 	else
 		if test "x$i" = "xsilc"; then
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
@@ -1731,8 +1756,8 @@ if test "x$enable_gnutls" = "xyes"; then
 	LIBS="$LIBS $GNUTLS_LIBS"
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <gnutls/gnutls.h>],
-                                        [gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);])],
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
+                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);]])],
 	               [AC_DEFINE([HAVE_GNUTLS_PRIORITY_FUNCS], 1,
                                   [Define if your gnutls has gnutls_priority_set_direct and friends])
 	                AC_MSG_RESULT(yes)],
@@ -1978,7 +2003,7 @@ if test "x$enable_nss" != "xno"; then
 
 				if test "x$ac_cv_moz_nss_libs" = "xno"; then
 					nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
-					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs" 
+					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
 					LIBS="$LIBS $nsslibs"
 					AC_TRY_LINK_FUNC(NSS_Init,
 						[ac_cv_moz_nss_libs="yes"],
@@ -2019,6 +2044,23 @@ if test "x$enable_nss" != "xno"; then
 
 	AC_SUBST(NSS_CFLAGS)
 	AC_SUBST(NSS_LIBS)
+fi
+
+if test "x$enable_nss" = "xyes"; then
+	AC_MSG_CHECKING(for NSS_SetAlgorithmPolicy)
+	LIBS_save="$LIBS"
+	LIBS="$LIBS $NSS_LIBS"
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $NSS_CFLAGS"
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <nss.h>
+#include <secmod.h>]],
+                                        [[NSS_SetAlgorithmPolicy(SEC_OID_MD2, 0, 0);]])],
+	               [AC_DEFINE([NEED_NSS_WEAK_ALGORITHMS], 1,
+                                  [Define if your NSS needs weak algorithms activated with NSS_SetAlgorithmPolicy])
+	                AC_MSG_RESULT(yes)],
+	               [AC_MSG_RESULT(no)])
+	CPPFLAGS="$CPPFLAGS_save"
+        LIBS="$LIBS_save"
 fi
 
 AM_CONDITIONAL(USE_NSS, test "x$enable_nss" = "xyes")
@@ -2523,6 +2565,7 @@ echo Build with voice and video.... : $enable_vv
 if test "x$enable_dbus" = "xyes" ; then
 	eval eval echo D-Bus services directory...... : $DBUS_SERVICES_DIR
 fi
+echo Build with GNU Libidn......... : $enable_idn
 echo Build with NetworkManager..... : $enable_nm
 echo SSL Library/Libraries......... : $msg_ssl
 if test "x$SSL_CERTIFICATES_DIR" != "x" ; then

@@ -42,15 +42,15 @@ MsnSwitchBoard *
 msn_switchboard_new(MsnSession *session)
 {
 	MsnSwitchBoard *swboard;
-	MsnServConn *servconn;
 
 	g_return_val_if_fail(session != NULL, NULL);
 
 	swboard = g_new0(MsnSwitchBoard, 1);
 
 	swboard->session = session;
-	swboard->servconn = servconn = msn_servconn_new(session, MSN_SERVCONN_SB);
-	swboard->cmdproc = servconn->cmdproc;
+	swboard->servconn = msn_servconn_new(session, MSN_SERVCONN_SB);
+	msn_servconn_set_idle_timeout(swboard->servconn, 60);
+	swboard->cmdproc = swboard->servconn->cmdproc;
 
 	swboard->msg_queue = g_queue_new();
 	swboard->empty = TRUE;
@@ -59,6 +59,9 @@ msn_switchboard_new(MsnSession *session)
 	swboard->cmdproc->cbs_table = cbs_table;
 
 	session->switches = g_list_prepend(session->switches, swboard);
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "switchboard new: swboard(%p)\n", swboard);
 
 	return swboard;
 }
@@ -70,9 +73,8 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	MsnMessage *msg;
 	GList *l;
 
-#ifdef MSN_DEBUG_SB
-	purple_debug_info("msn", "switchboard_destroy: swboard(%p)\n", swboard);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "switchboard destroy: swboard(%p)\n", swboard);
 
 	g_return_if_fail(swboard != NULL);
 
@@ -230,10 +232,9 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	swboard->current_users++;
 	swboard->empty = FALSE;
 
-#ifdef MSN_DEBUG_CHAT
-	purple_debug_info("msn", "user=[%s], total=%d\n", user,
-					swboard->current_users);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "user=[%s], total=%d\n",
+		                  user, swboard->current_users);
 
 	if (!(swboard->flag & MSN_SB_FLAG_IM) && (swboard->conv != NULL))
 	{
@@ -255,10 +256,6 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 		{
 			GList *l;
 
-#ifdef MSN_DEBUG_CHAT
-			purple_debug_info("msn", "[chat] Switching to chat.\n");
-#endif
-
 #if 0
 			/* this is bad - it causes msn_switchboard_close to be called on the
 			 * switchboard we're in the middle of using :( */
@@ -278,17 +275,9 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 				tmp_user = l->data;
 
-#ifdef MSN_DEBUG_CHAT
-				purple_debug_info("msn", "[chat] Adding [%s].\n", tmp_user);
-#endif
-
 				purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
 										tmp_user, NULL, PURPLE_CBFLAGS_NONE, TRUE);
 			}
-
-#ifdef MSN_DEBUG_CHAT
-			purple_debug_info("msn", "[chat] We add ourselves.\n");
-#endif
 
 			purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
 									purple_account_get_username(account),
@@ -589,10 +578,10 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 
 	payload = msn_message_gen_payload(msg, &payload_len);
 
-#ifdef MSN_DEBUG_SB
-	purple_debug_info("msn", "SB length:{%" G_GSIZE_FORMAT "}\n", payload_len);
-	msn_message_show_readable(msg, "SB SEND", FALSE);
-#endif
+	if (purple_debug_is_verbose()) {
+		purple_debug_info("msn", "SB length:{%" G_GSIZE_FORMAT "}\n", payload_len);
+		msn_message_show_readable(msg, "SB SEND", FALSE);
+	}
 
 	flag = msn_message_get_flag(msg);
 	trans = msn_transaction_new(cmdproc, "MSG", "%c %" G_GSIZE_FORMAT,
@@ -790,9 +779,8 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 	msn_message_parse_payload(msg, payload, len,
 					MSG_LINE_DEM,MSG_BODY_DEM);
-#ifdef MSN_DEBUG_SB
-	msn_message_show_readable(msg, "SB RECV", FALSE);
-#endif
+	if (purple_debug_is_verbose())
+		msn_message_show_readable(msg, "SB RECV", FALSE);
 
 	g_free (msg->remote_user);
 	msg->remote_user = g_strdup(cmd->params[0]);

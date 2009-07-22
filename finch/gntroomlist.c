@@ -25,6 +25,7 @@
  */
 
 #include "finch.h"
+#include <internal.h>
 
 #include "gntrequest.h"
 #include "gntroomlist.h"

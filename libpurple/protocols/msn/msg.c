@@ -33,9 +33,8 @@ msn_message_new(MsnMsgType type)
 	msg = g_new0(MsnMessage, 1);
 	msg->type = type;
 
-#ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message new (%p)(%d)\n", msg, type);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "message new (%p)(%d)\n", msg, type);
 
 	msg->attr_table = g_hash_table_new_full(g_str_hash, g_str_equal,
 											g_free, g_free);
@@ -57,9 +56,8 @@ msn_message_destroy(MsnMessage *msg)
 		return;
 	}
 
-#ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message destroy (%p)\n", msg);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "message destroy (%p)\n", msg);
 
 	g_free(msg->remote_user);
 	g_free(msg->body);
@@ -79,9 +77,8 @@ msn_message_ref(MsnMessage *msg)
 
 	msg->ref_count++;
 
-#ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message ref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "message ref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
 
 	return msg;
 }
@@ -94,9 +91,8 @@ msn_message_unref(MsnMessage *msg)
 
 	msg->ref_count--;
 
-#ifdef MSN_DEBUG_MSG
-	purple_debug_info("msn", "message unref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "message unref (%p)[%" G_GSIZE_FORMAT "]\n", msg, msg->ref_count);
 
 	if (msg->ref_count == 0)
 	{
@@ -353,7 +349,8 @@ msn_message_parse_payload(MsnMessage *msg,
 			msg->body[msg->body_len] = '\0';
 		}
 		
-		if (msg->charset == NULL) {
+		if ((!content_type || !strcmp(content_type, "text/plain"))
+			&& msg->charset == NULL) {
 			char *body = g_convert(msg->body, msg->body_len, "UTF-8",
 			                       "ISO-8859-1", NULL, &msg->body_len, NULL);
 			g_free(msg->body);
@@ -771,8 +768,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 		g_string_append_printf(str, "SUB ID:     %u\r\n", msg->msnslp_header.ack_sub_id);
 		g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", msg->msnslp_header.ack_size);
 
-#ifdef MSN_DEBUG_SLP_VERBOSE
-		if (body != NULL)
+		if (purple_debug_is_verbose() && body != NULL)
 		{
 			if (text_body)
 			{
@@ -796,7 +792,6 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 				g_string_append(str, "\r\n");
 			}
 		}
-#endif
 
 		g_string_append_printf(str, "Footer:     %u\r\n", msg->msnslp_footer.value);
 	}
@@ -937,6 +932,91 @@ msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	}
 }
 
+static void
+datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
+                     const char *msg, const char *filename)
+{
+	char *username, *str;
+	PurpleAccount *account;
+	PurpleBuddy *b;
+
+	account = swboard->session->account;
+
+	if ((b = purple_find_buddy(account, who)) != NULL)
+		username = g_markup_escape_text(purple_buddy_get_alias(b), -1);
+	else
+		username = g_markup_escape_text(who, -1);
+	str = g_strdup_printf(msg, username, filename);
+	g_free(username);
+
+	if (swboard->conv == NULL) {
+		if (swboard->current_users > 1) 
+			swboard->conv = purple_find_chat(account->gc, swboard->chat_id);
+		else {
+			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+									who, account);
+			if (swboard->conv == NULL)
+				swboard->conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
+		}
+	}
+	swboard->flag |= MSN_SB_FLAG_IM;
+
+	purple_conversation_write(swboard->conv, NULL, str, PURPLE_MESSAGE_SYSTEM, time(NULL));
+	g_free(str);
+
+}
+
+/* TODO: Make these not be such duplicates of each other */
+static void 
+got_wink_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
+{
+	FILE *f;
+	char *path = NULL;
+	const char *who = slpcall->slplink->remote_user;
+	purple_debug_info("msn", "Received wink from %s\n", who);
+
+	if ((f = purple_mkstemp(&path, TRUE))) {
+		fwrite(data, size, 1, f);
+		fclose(f);
+		datacast_inform_user(slpcall->slplink->swboard,
+		                     who,
+		                     _("%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"),
+		                     path);
+	} else {
+		purple_debug_error("msn", "Couldn\'t create temp file to store wink\n");
+		datacast_inform_user(slpcall->slplink->swboard,
+		                     who,
+		                     _("%s sent a wink, but it could not be saved"),
+		                     NULL);
+	} 
+	g_free(path);
+}
+
+static void 
+got_voiceclip_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
+{
+	FILE *f;
+	char *path = NULL;
+	const char *who = slpcall->slplink->remote_user;
+	purple_debug_info("msn", "Received voice clip from %s\n", who);
+
+	if ((f = purple_mkstemp(&path, TRUE))) {
+		fwrite(data, size, 1, f);
+		fclose(f);
+		datacast_inform_user(slpcall->slplink->swboard,
+		                     who,
+		                     _("%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"),
+		                     path);
+	} else {
+		purple_debug_error("msn", "Couldn\'t create temp file to store sound\n");
+		datacast_inform_user(slpcall->slplink->swboard,
+		                     who,
+		                     _("%s sent a voice clip, but it could not be saved"),
+		                     NULL);
+	} 
+	g_free(path);
+}
+
 void
 msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
@@ -970,9 +1050,42 @@ msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	} else if (!strcmp(id, "2")) {
 		/* Wink */
+		MsnSession *session;
+		MsnSlpLink *slplink;
+		MsnObject *obj;
+		const char *who;
+		const char *data;
+
+		session = cmdproc->session;
+
+		data = g_hash_table_lookup(body, "Data");
+		obj = msn_object_new_from_string(data);
+		who = msn_object_get_creator(obj);
+
+		slplink = msn_session_get_slplink(session, who);
+		msn_slplink_request_object(slplink, data, got_wink_cb, NULL, obj);
+
+		msn_object_destroy(obj);
+
 
 	} else if (!strcmp(id, "3")) {
 		/* Voiceclip */
+		MsnSession *session;
+		MsnSlpLink *slplink;
+		MsnObject *obj;
+		const char *who;
+		const char *data;
+
+		session = cmdproc->session;
+
+		data = g_hash_table_lookup(body, "Data");
+		obj = msn_object_new_from_string(data);
+		who = msn_object_get_creator(obj);
+
+		slplink = msn_session_get_slplink(session, who);
+		msn_slplink_request_object(slplink, data, got_voiceclip_cb, NULL, obj);
+
+		msn_object_destroy(obj);
 
 	} else if (!strcmp(id, "4")) {
 		/* Action */

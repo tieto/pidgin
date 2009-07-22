@@ -1159,7 +1159,7 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 {
 	MsnUserList *userlist;
 	MsnUser *user;
-	gchar *body = NULL, *contact_xml;
+	gchar *body = NULL, *contact_xml, *invite;
 
 	g_return_if_fail(passport != NULL);
 	g_return_if_fail(groupId != NULL);
@@ -1207,7 +1207,23 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 		contact_xml = g_strdup_printf(MSN_CONTACT_XML, passport);
 	}
 
-	body = g_strdup_printf(MSN_ADD_CONTACT_GROUP_TEMPLATE, groupId, contact_xml);
+	if (user->invite_message) {
+		char *tmp;
+		body = g_markup_escape_text(user->invite_message, -1);
+		tmp = g_markup_escape_text(purple_connection_get_display_name(session->account->gc), -1);
+		invite = g_strdup_printf(MSN_CONTACT_INVITE_MESSAGE_XML, body, tmp);
+		g_free(body);
+		g_free(tmp);
+
+		/* We can free this now */
+		g_free(user->invite_message);
+		user->invite_message = NULL;
+
+	} else {
+		invite = g_strdup("");
+	}
+
+	body = g_strdup_printf(MSN_ADD_CONTACT_GROUP_TEMPLATE, groupId, contact_xml, invite);
 
 	state->body = xmlnode_from_str(body, -1);
 	state->post_action = MSN_ADD_CONTACT_GROUP_SOAP_ACTION;
@@ -1215,6 +1231,7 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 	state->cb = msn_add_contact_to_group_read_cb;
 	msn_contact_request(state);
 
+	g_free(invite);
 	g_free(contact_xml);
 	g_free(body);
 }

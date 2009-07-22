@@ -53,11 +53,7 @@ typedef struct _JabberMessage {
 	char *error;
 	char *thread_id;
 	enum {
-		JM_TS_NONE = 0,
-		JM_TS_JEP_0022 = 0x1,
-		JM_TS_JEP_0085 = 0x2
-	} typing_style;
-	enum {
+		JM_STATE_NONE,
 		JM_STATE_ACTIVE,
 		JM_STATE_COMPOSING,
 		JM_STATE_PAUSED,

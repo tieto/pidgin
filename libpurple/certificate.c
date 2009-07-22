@@ -923,9 +923,13 @@ x509_tls_peers_init(void)
 	poolpath = purple_certificate_pool_mkpath(&x509_tls_peers, NULL);
 	ret = purple_build_dir(poolpath, 0700); /* Make it this user only */
 
+	if (ret != 0)
+		purple_debug_info("certificate/tls_peers",
+				"Could not create %s.  Certificates will not be cached.\n",
+				poolpath);
+
 	g_free(poolpath);
 
-	g_return_val_if_fail(ret == 0, FALSE);
 	return TRUE;
 }
 
@@ -1214,20 +1218,6 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 }
 
 static void
-x509_tls_cached_peer_cert_changed(PurpleCertificateVerificationRequest *vrq)
-{
-	/* TODO: Prompt the user, etc. */
-
-	purple_debug_info("certificate/x509/tls_cached",
-			  "Certificate for %s does not match cached. "
-			  "Auto-rejecting!\n",
-			  vrq->subject_name);
-
-	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_INVALID);
-	return;
-}
-
-static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq);
 
 static void
@@ -1250,12 +1240,11 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 	cached_crt = purple_certificate_pool_retrieve(
 		tls_peers, vrq->subject_name);
 	if ( !cached_crt ) {
-		purple_debug_error("certificate/x509/tls_cached",
+		purple_debug_warning("certificate/x509/tls_cached",
 				   "Lookup failed on cached certificate!\n"
-				   "It was here just a second ago. Forwarding "
-				   "to cert_changed.\n");
-		/* vrq now becomes the problem of cert_changed */
-		x509_tls_cached_peer_cert_changed(vrq);
+				   "Falling back to full verification.\n");
+		/* vrq now becomes the problem of unknown_peer */
+		x509_tls_cached_unknown_peer(vrq);
 		return;
 	}
 

@@ -92,6 +92,9 @@ purple_coresources = \
 	xmlnode.c \
 	whiteboard.c
 
+purple_builtsources = \
+	marshallers.c
+
 purple_coreheaders = \
 	account.h \
 	accountopt.h \
@@ -248,18 +251,17 @@ purple-client-example.$(OBJEXT): purple-client-bindings.h
 bin_SCRIPTS = purple-remote purple-send purple-send-async purple-url-handler
 
 BUILT_SOURCES = $(purple_builtheaders) \
+	$(purple_builtsources) \
 	dbus-bindings.c \
 	dbus-signals.c \
 	dbus-types.c \
 	dbus-types.h \
-	marshallers.c \
-	marshallers.h \
 	purple-client-bindings.c \
 	purple-client-bindings.h
 
 else
 
-BUILT_SOURCES = $(purple_builtheaders)
+BUILT_SOURCES = $(purple_builtheaders) $(purple_builtsources)
 
 endif
 
@@ -267,6 +269,7 @@ lib_LTLIBRARIES = libpurple.la $(libpurple_client_lib)
 
 libpurple_la_SOURCES = \
 	$(purple_coresources) \
+	$(purple_builtsources) \
 	$(dbus_sources)
 
 noinst_HEADERS= \
@@ -290,6 +293,7 @@ libpurple_la_LIBADD = \
 	$(FARSIGHT_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(GSTINTERFACES_LIBS) \
+	$(IDN_LIBS) \
 	-lm
 
 AM_CPPFLAGS = \
@@ -305,6 +309,7 @@ AM_CPPFLAGS = \
 	$(FARSIGHT_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GSTINTERFACES_CFLAGS) \
+	$(IDN_CFLAGS) \
 	$(NETWORKMANAGER_CFLAGS)
 
 # INSTALL_SSL_CERTIFICATES is true when SSL_CERTIFICATES_DIR is empty.

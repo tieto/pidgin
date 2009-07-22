@@ -7,13 +7,11 @@ version 2.6.0 (??/??/2009):
 	* Voice & Video framework in libpurple, thanks to Mike Ruprecht's summer
 	  of code project in 2008.
 	* It should no longer be possible to end up with duplicates of buddies
-	  in a group on the buddy list. (Paul Aurich)
+	  in a group on the buddy list.
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
 	* Various memory cleanups when unloading libpurple. (Nick Hebner)
 	* Report idle time 'From last message sent' should work properly.
-	* Show the invite message for buddies that requested authorization
-	  from you on MSN.
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
 	* DNS SRV records with equal priority are sorted with respect to their
@@ -22,13 +20,28 @@ version 2.6.0 (??/??/2009):
 	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
 	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
 	  information.
-	* PURPLE_VERBOSE_DEBUG environment variable.  Currently this is an "on" or
+	* PURPLE_VERBOSE_DEBUG environment variable.  Currently, this is an "on" or
 	  "off" variable.  Set it to any value to turn it on and unset it to turn
 	  it off.  This will optionally be used to only show less useful debug
 	  information on an as-needed basis.
-	* Add support for receiving handwritten (ink) messages on MSN.
+	* PURPLE_LEAKCHECK_HELP environment variable.  Currently, this is an "on"
+	  or "off" variable.  Set it to any value to turn it on and unset it to
+	  turn it off.  This will be used to perform various actions that are
+	  useful when running libpurple inside of Valgrind or similar programs.
+	  Currently, it keeps plugins in memory, allowing Valgrind to perform
+	  symbol resolution of leak traces at shutdown.
 	* Don't do IPv6 address lookups if the computer does not have an IPv6
 	  address configured.
+	* Fix a leak when the UI provides its own DNS resolving UI op.
+	  (Aman Gupta)
+	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
+	* Better handling of corrupt certificates in the TLS Peers cache.
+	* More efficient purple_find_buddies() and purple_find_group() functions.
+	  (Jan Kaluza and Aman Gupta)
+	* Internationalized Domain Names are supported when libpurple is compiled
+	  against the GNU IDN library.
+	* Install scalable versions of the main Pidgin icon, the protocol icons,
+	  the dialog icons, and the Buddy List emblems.
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
@@ -44,7 +57,7 @@ version 2.6.0 (??/??/2009):
 	* Correctly show tooltip status for contacts with status messages.
 	  (Krzysztof "kkszysiu" Klinikowski)
 	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
-	* Support connection progress steps in Gadu-Gadu (Krzysztof "kkszysiu"
+	* Support connection progress steps in Gadu-Gadu.  (Krzysztof "kkszysiu"
 	  Klinikowski)
 
 	XMPP:
@@ -90,6 +103,15 @@ version 2.6.0 (??/??/2009):
 	* New XMPP and Google Talk accounts require SSL by default.
 	* Display kicks (and the reasons given) in chat rooms when an occupant is
 	  kicked.
+	* Fix issues with case-sensitivity of XMPP roster and case-insensitive
+	  Purple groups.
+	* For contacts who advertise Entity Capabilities, only send rich text
+	  markup if they support it.
+	* Removed support for obsoleted XEP-0022 (Message Events) and XEP-0091
+	  (Legacy Entity Time).
+	* When the GNU IDN library (libidn) is available, it is used for
+	  normalization of Jabber IDs.  When unavailable, internal routines are
+	  used (as in previous versions).
 
 	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)
@@ -101,6 +123,17 @@ version 2.6.0 (??/??/2009):
 	* Yahoo! and Yahoo! JAPAN are now two separate protocol plugins that share
 	  common protocol code.  You can now have the same account on both
 	  networks.
+	* Ability to set personal details for an account and for buddies in the
+	  buddylist.
+
+	MSN:
+	* Add support for receiving handwritten (ink) messages on MSN.
+	* Add support for receiving audio clips on MSN.
+	* Show the invite message for buddies that requested authorization
+	  from you on MSN.
+	* Support sending an invite message to buddies when requesting authorization
+	  from them on MSN.
+	* Timeout switchboard connections aggressively
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
@@ -136,6 +169,8 @@ version 2.6.0 (??/??/2009):
 	  (Kosta Arvanitis)
 	* When file transfers are complete, the received file name written to the
 	  conversation window is now linked to the file.
+	* Fix a crash when closing a conversation tab that has unread messages
+	  when the Message Notification plugin is loaded.
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful

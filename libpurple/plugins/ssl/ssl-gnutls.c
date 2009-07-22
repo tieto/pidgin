@@ -668,6 +668,8 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 	gnutls_x509_crt issuer_dat;
 	unsigned int verify; /* used to store result from GnuTLS verifier */
 	int ret;
+	gchar *crt_id = NULL;
+	gchar *issuer_id = NULL;
 
 	g_return_val_if_fail(crt, FALSE);
 	g_return_val_if_fail(issuer, FALSE);
@@ -728,13 +730,29 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 		return FALSE;
 	}
 
+	if (verify & GNUTLS_CERT_INSECURE_ALGORITHM) {
+		/*
+		 * A certificate in the chain is signed with an insecure
+		 * algorithm. Put a warning into the log to make this error
+		 * perfectly clear as soon as someone looks at the debug log is
+		 * generated.
+		 */
+		crt_id = purple_certificate_get_unique_id(crt);
+		issuer_id = purple_certificate_get_issuer_unique_id(crt);
+		purple_debug_warning("gnutls/x509",
+				"Insecure hash algorithm used by %s to sign %s\n",
+				issuer_id, crt_id);
+	}
+
 	if (verify & GNUTLS_CERT_INVALID) {
 		/* Signature didn't check out, but at least
 		   there were no errors*/
-		gchar *crt_id = purple_certificate_get_unique_id(crt);
-		gchar *issuer_id = purple_certificate_get_issuer_unique_id(crt);
-		purple_debug_info("gnutls/x509",
-				  "Bad signature for %s on %s\n",
+		if (!crt_id)
+			crt_id = purple_certificate_get_unique_id(crt);
+		if (!issuer_id)
+			issuer_id = purple_certificate_get_issuer_unique_id(crt);
+		purple_debug_error("gnutls/x509",
+				  "Bad signature from %s on %s\n",
 				  issuer_id, crt_id);
 		g_free(crt_id);
 		g_free(issuer_id);
