@@ -1502,33 +1502,35 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 	if (!ret || now > expiration || now < activation) {
 		gchar *secondary;
 
-		if (!ret)
+		if (!ret) {
 			purple_debug_error("certificate/x509/tls_cached",
 					"Failed to get validity times for certificate %s\n",
 					vrq->subject_name);
-		else if (now > expiration)
+			secondary = g_strdup_printf(_("Failed to validate expiration time "
+					"for %s"), vrq->subject_name);
+		} else if (now > expiration) {
 			purple_debug_error("certificate/x509/tls_cached",
 					"Certificate %s expired at %s\n",
 					vrq->subject_name, ctime(&expiration));
-		else
+			secondary = g_strdup_printf(_("The certificate for %s is expired."),
+					vrq->subject_name);
+		} else {
 			purple_debug_error("certificate/x509/tls_cached",
 					"Certificate %s is not yet valid, will be at %s\n",
 					vrq->subject_name, ctime(&activation));
-
-		/* FIXME 2.6.1 */
-		secondary = g_strdup_printf(_("The certificate chain presented"
-					" for %s is not valid."),
-					vrq->subject_name);
+			secondary = g_strdup_printf(_("The certificate for %s should not "
+					"yet be in use."), vrq->subject_name);
+		}
 
 		purple_notify_error(NULL, /* TODO: Probably wrong. */
-					_("SSL Certificate Error"),
-					_("Invalid certificate chain"),
-					secondary );
+				_("SSL Certificate Error"),
+				_("Invalid certificate chain"),
+				secondary );
 		g_free(secondary);
 
 		/* Okay, we're done here */
 		purple_certificate_verify_complete(vrq,
-						    PURPLE_CERTIFICATE_INVALID);
+				PURPLE_CERTIFICATE_INVALID);
 		return;
 	}
 
