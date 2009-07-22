@@ -293,6 +293,16 @@ purple_certificate_export(const gchar *filename, PurpleCertificate *crt)
 	return (scheme->export_certificate)(filename, crt);
 }
 
+static gboolean
+byte_arrays_equal(const GByteArray *array1, const GByteArray *array2)
+{
+	g_return_val_if_fail(array1 != NULL, FALSE);
+	g_return_val_if_fail(array2 != NULL, FALSE);
+
+	return (array1->len == array2->len) &&
+		(0 == memcmp(array1->data, array2->data, array1->len));
+}
+	
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 {
@@ -1306,6 +1316,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	GList *chain = vrq->cert_chain;
 	GList *last;
 	gchar *ca_id;
+	GByteArray *last_fingerprint, *ca_fingerprint;
 
 	peer_crt = (PurpleCertificate *) chain->data;
 
@@ -1399,8 +1410,26 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 
 	g_free(ca_id);
 
-	/* Check the signature */
-	if ( !purple_certificate_signed_by(end_crt, ca_crt) ) {
+	/*
+	 * Check the fingerprints; if they match, then this certificate *is* one
+	 * of the designated "trusted roots", and we don't need to verify the
+	 * signature. This is good because some of the older roots are self-signed
+	 * with bad hash algorithms that we don't want to allow in any other
+	 * circumstances (one of Verisign's root CAs is self-signed with MD2).
+	 *
+	 * If the fingerprints don't match, we'll fall back to checking the
+	 * signature.
+	 *
+	 * GnuTLS doesn't seem to include the final root in the verification
+	 * list, so this check will never succeed.  NSS *does* include it in
+	 * the list, so here we are.
+	 */
+	last_fingerprint = purple_certificate_get_fingerprint_sha1(end_crt);
+	ca_fingerprint   = purple_certificate_get_fingerprint_sha1(ca_crt);
+
+	if ( !byte_arrays_equal(last_fingerprint, ca_fingerprint) &&
+			!purple_certificate_signed_by(end_crt, ca_crt) )
+	{
 		/* TODO: If signed_by ever returns a reason, maybe mention
 		   that, too. */
 		/* TODO: Also mention the CA involved. While I could do this
@@ -1425,8 +1454,14 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		/* Signal "bad cert" */
 		purple_certificate_verify_complete(vrq,
 						   PURPLE_CERTIFICATE_INVALID);
+
+		g_byte_array_free(ca_fingerprint, TRUE);
+		g_byte_array_free(last_fingerprint, TRUE);
 		return;
 	} /* if (CA signature not good) */
+
+	g_byte_array_free(ca_fingerprint, TRUE);
+	g_byte_array_free(last_fingerprint, TRUE);
 
 	/* Last, check that the hostname matches */
 	if ( ! purple_certificate_check_subject_name(peer_crt,
