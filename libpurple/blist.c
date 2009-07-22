@@ -1299,8 +1299,8 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleChat *chat;
 
-	g_return_val_if_fail(account != NULL, FALSE);
-	g_return_val_if_fail(components != NULL, FALSE);
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(components != NULL, NULL);
 
 	chat = g_new0(PurpleChat, 1);
 	chat->account = account;
