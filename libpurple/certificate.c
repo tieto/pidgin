@@ -195,6 +195,8 @@ purple_certificate_check_signature_chain(GList *chain)
 	GList *cur;
 	PurpleCertificate *crt, *issuer;
 	gchar *uid;
+	time_t now, activation, expiration;
+	gboolean ret;
 
 	g_return_val_if_fail(chain, FALSE);
 
@@ -211,6 +213,8 @@ purple_certificate_check_signature_chain(GList *chain)
 		return TRUE;
 	}
 
+	now = time(NULL);
+
 	/* Load crt with the first certificate */
 	crt = (PurpleCertificate *)(chain->data);
 	/* And start with the second certificate in the chain */
@@ -218,9 +222,29 @@ purple_certificate_check_signature_chain(GList *chain)
 
 		issuer = (PurpleCertificate *)(cur->data);
 
+		uid = purple_certificate_get_unique_id(issuer);
+
+		ret = purple_certificate_get_times(issuer, &activation, &expiration);
+		if (!ret || now < activation || now > expiration) { 
+			if (!ret)
+				purple_debug_error("certificate",
+						"...Failed to get validity times for certificate %s\n"
+						"Chain is INVALID\n", uid);
+			else if (now > expiration)
+				purple_debug_error("certificate",
+						"...Issuer %s expired at %s\nChain is INVALID\n",
+						uid, ctime(&expiration));
+			else
+				purple_debug_error("certificate",
+						"...Not-yet-activated issuer %s will be valid at %s\n"
+						"Chain is INVALID\n", uid, ctime(&activation));
+
+			g_free(uid);
+			return FALSE;
+		}
+
 		/* Check the signature for this link */
 		if (! purple_certificate_signed_by(crt, issuer) ) {
-			uid = purple_certificate_get_unique_id(issuer);
 			purple_debug_error("certificate",
 					  "...Bad or missing signature by %s\nChain is INVALID\n",
 					  uid);
@@ -229,7 +253,6 @@ purple_certificate_check_signature_chain(GList *chain)
 			return FALSE;
 		}
 
-		uid = purple_certificate_get_unique_id(issuer);
 		purple_debug_info("certificate",
 				  "...Good signature by %s\n",
 				  uid);
@@ -270,6 +293,16 @@ purple_certificate_export(const gchar *filename, PurpleCertificate *crt)
 	return (scheme->export_certificate)(filename, crt);
 }
 
+static gboolean
+byte_arrays_equal(const GByteArray *array1, const GByteArray *array2)
+{
+	g_return_val_if_fail(array1 != NULL, FALSE);
+	g_return_val_if_fail(array2 != NULL, FALSE);
+
+	return (array1->len == array2->len) &&
+		(0 == memcmp(array1->data, array2->data, array1->len));
+}
+	
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 {
@@ -361,7 +394,6 @@ purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t 
 	/* Throw the request on down to the certscheme */
 	return (scheme->get_times)(crt, activation, expiration);
 }
-
 
 gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
@@ -923,9 +955,13 @@ x509_tls_peers_init(void)
 	poolpath = purple_certificate_pool_mkpath(&x509_tls_peers, NULL);
 	ret = purple_build_dir(poolpath, 0700); /* Make it this user only */
 
+	if (ret != 0)
+		purple_debug_info("certificate/tls_peers",
+				"Could not create %s.  Certificates will not be cached.\n",
+				poolpath);
+
 	g_free(poolpath);
 
-	g_return_val_if_fail(ret == 0, FALSE);
 	return TRUE;
 }
 
@@ -1214,20 +1250,6 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 }
 
 static void
-x509_tls_cached_peer_cert_changed(PurpleCertificateVerificationRequest *vrq)
-{
-	/* TODO: Prompt the user, etc. */
-
-	purple_debug_info("certificate/x509/tls_cached",
-			  "Certificate for %s does not match cached. "
-			  "Auto-rejecting!\n",
-			  vrq->subject_name);
-
-	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_INVALID);
-	return;
-}
-
-static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq);
 
 static void
@@ -1250,12 +1272,11 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 	cached_crt = purple_certificate_pool_retrieve(
 		tls_peers, vrq->subject_name);
 	if ( !cached_crt ) {
-		purple_debug_error("certificate/x509/tls_cached",
+		purple_debug_warning("certificate/x509/tls_cached",
 				   "Lookup failed on cached certificate!\n"
-				   "It was here just a second ago. Forwarding "
-				   "to cert_changed.\n");
-		/* vrq now becomes the problem of cert_changed */
-		x509_tls_cached_peer_cert_changed(vrq);
+				   "Falling back to full verification.\n");
+		/* vrq now becomes the problem of unknown_peer */
+		x509_tls_cached_unknown_peer(vrq);
 		return;
 	}
 
@@ -1295,6 +1316,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	GList *chain = vrq->cert_chain;
 	GList *last;
 	gchar *ca_id;
+	GByteArray *last_fingerprint, *ca_fingerprint;
 
 	peer_crt = (PurpleCertificate *) chain->data;
 
@@ -1388,8 +1410,26 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 
 	g_free(ca_id);
 
-	/* Check the signature */
-	if ( !purple_certificate_signed_by(end_crt, ca_crt) ) {
+	/*
+	 * Check the fingerprints; if they match, then this certificate *is* one
+	 * of the designated "trusted roots", and we don't need to verify the
+	 * signature. This is good because some of the older roots are self-signed
+	 * with bad hash algorithms that we don't want to allow in any other
+	 * circumstances (one of Verisign's root CAs is self-signed with MD2).
+	 *
+	 * If the fingerprints don't match, we'll fall back to checking the
+	 * signature.
+	 *
+	 * GnuTLS doesn't seem to include the final root in the verification
+	 * list, so this check will never succeed.  NSS *does* include it in
+	 * the list, so here we are.
+	 */
+	last_fingerprint = purple_certificate_get_fingerprint_sha1(end_crt);
+	ca_fingerprint   = purple_certificate_get_fingerprint_sha1(ca_crt);
+
+	if ( !byte_arrays_equal(last_fingerprint, ca_fingerprint) &&
+			!purple_certificate_signed_by(end_crt, ca_crt) )
+	{
 		/* TODO: If signed_by ever returns a reason, maybe mention
 		   that, too. */
 		/* TODO: Also mention the CA involved. While I could do this
@@ -1414,8 +1454,14 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		/* Signal "bad cert" */
 		purple_certificate_verify_complete(vrq,
 						   PURPLE_CERTIFICATE_INVALID);
+
+		g_byte_array_free(ca_fingerprint, TRUE);
+		g_byte_array_free(last_fingerprint, TRUE);
 		return;
 	} /* if (CA signature not good) */
+
+	g_byte_array_free(ca_fingerprint, TRUE);
+	g_byte_array_free(last_fingerprint, TRUE);
 
 	/* Last, check that the hostname matches */
 	if ( ! purple_certificate_check_subject_name(peer_crt,
@@ -1472,12 +1518,54 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 {
 	const gchar *tls_peers_name = "tls_peers"; /* Name of local cache */
 	PurpleCertificatePool *tls_peers;
+	time_t now, activation, expiration;
+	gboolean ret;
 
 	g_return_if_fail(vrq);
 
 	purple_debug_info("certificate/x509/tls_cached",
 			  "Starting verify for %s\n",
 			  vrq->subject_name);
+
+	/*
+	 * Verify the first certificate (the main one) has been activated and
+	 * isn't expired, i.e. activation < now < expiration.
+	 */
+	now = time(NULL);
+	ret = purple_certificate_get_times(vrq->cert_chain->data, &activation,
+	                                   &expiration);
+	if (!ret || now > expiration || now < activation) {
+		gchar *secondary;
+
+		if (!ret)
+			purple_debug_error("certificate/x509/tls_cached",
+					"Failed to get validity times for certificate %s\n",
+					vrq->subject_name);
+		else if (now > expiration)
+			purple_debug_error("certificate/x509/tls_cached",
+					"Certificate %s expired at %s\n",
+					vrq->subject_name, ctime(&expiration));
+		else
+			purple_debug_error("certificate/x509/tls_cached",
+					"Certificate %s is not yet valid, will be at %s\n",
+					vrq->subject_name, ctime(&activation));
+
+		/* FIXME 2.6.1 */
+		secondary = g_strdup_printf(_("The certificate chain presented"
+					" for %s is not valid."),
+					vrq->subject_name);
+
+		purple_notify_error(NULL, /* TODO: Probably wrong. */
+					_("SSL Certificate Error"),
+					_("Invalid certificate chain"),
+					secondary );
+		g_free(secondary);
+
+		/* Okay, we're done here */
+		purple_certificate_verify_complete(vrq,
+						    PURPLE_CERTIFICATE_INVALID);
+		return;
+	}
 
 	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,tls_peers_name);
 

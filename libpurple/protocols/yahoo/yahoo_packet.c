@@ -187,7 +187,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 			pos = x;
 			pkt->hash = g_slist_prepend(pkt->hash, pair);
 
-			if (purple_debug_is_verbose()) {
+			if (purple_debug_is_verbose() || g_getenv("PURPLE_YAHOO_DEBUG")) {
 				char *esc;
 				esc = g_strescape(pair->value, NULL);
 				purple_debug_misc("yahoo", "Key: %d  \tValue: %s\n", pair->key, esc);

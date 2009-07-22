@@ -92,6 +92,13 @@ typedef struct
 	MsnObject *obj;
 } MsnEmoticon;
 
+typedef struct
+{
+	PurpleConnection *pc;
+	PurpleBuddy *buddy;
+	PurpleGroup *group;
+} MsnAddReqData;
+
 static const char *
 msn_normalize(const PurpleAccount *account, const char *str)
 {
@@ -178,8 +185,12 @@ msn_act_id(PurpleConnection *gc, const char *entry)
 	cmdproc = session->notification->cmdproc;
 	account = purple_connection_get_account(gc);
 
-	if(entry && strlen(entry))
-		alias = purple_url_encode(entry);
+	if (entry && *entry)
+	{
+		char *tmp = g_strdup(entry);
+		alias = purple_url_encode(g_strstrip(tmp));
+		g_free(tmp);
+	}
 	else
 		alias = "";
 
@@ -195,7 +206,6 @@ msn_act_id(PurpleConnection *gc, const char *entry)
 	}
 
 	msn_cmdproc_send(cmdproc, "PRP", "MFN %s", alias);
-
 }
 
 static void
@@ -672,12 +682,8 @@ msn_status_text(PurpleBuddy *buddy)
 		if (title && *title) {
 			const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
 			const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
-			media = g_strdup_printf("%s%s%s%s%s%s", title,
-			                        (artist && *artist) ? " - " : "",
-			                        (artist && *artist) ? artist : "",
-			                        (album && *album) ? " (" : "",
-			                        (album && *album) ? album : "",
-			                        (album && *album) ? ")" : "");
+			media = purple_util_format_song_info(title, artist, album, NULL);
+			return media;
 		}
 		else if (game && *game)
 			media = g_strdup_printf("Playing %s", game);
@@ -1426,33 +1432,27 @@ add_pending_buddy(MsnSession *session,
 }
 
 static void
-msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+finish_auth_request(MsnAddReqData *data, char *msg)
 {
+	PurpleConnection *pc;
+	PurpleBuddy *buddy;
+	PurpleGroup *group;
 	PurpleAccount *account;
 	MsnSession *session;
 	MsnUserList *userlist;
-	const char *bname, *who, *gname;
+	const char *who, *gname;
 	MsnUser *user;
 
-	account = purple_connection_get_account(gc);
-	session = gc->proto_data;
+	pc = data->pc;
+	buddy = data->buddy;
+	group = data->group;
+	g_free(data);
+
+	account = purple_connection_get_account(pc);
+	session = pc->proto_data;
 	userlist = session->userlist;
-	bname = purple_buddy_get_name(buddy);
 
-	if (!purple_email_is_valid(bname)) {
-		gchar *buf;
-		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be a valid email address."), bname);
-		if (!purple_conv_present_error(bname, account, buf))
-			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
-		g_free(buf);
-
-		/* Remove from local list */
-		purple_blist_remove_buddy(buddy);
-
-		return;
-	}
-
-	who = msn_normalize(account, bname);
+	who = msn_normalize(account, purple_buddy_get_name(buddy));
 	gname = group ? purple_group_get_name(group) : NULL;
 	purple_debug_info("msn", "Add user:%s to group:%s\n", who, gname ? gname : "(null)");
 	if (!session->logged_in)
@@ -1469,12 +1469,14 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	if ((user != NULL) && (user->networkid != MSN_NETWORK_UNKNOWN)) {
 		/* We already know this buddy and their network. This function knows
 		   what to do with users already in the list and stuff... */
+		msn_user_set_invite_message(user, msg);
 		msn_userlist_add_buddy(userlist, who, gname);
 	} else {
 		char **tokens;
 		char *fqy;
 		/* We need to check the network for this buddy first */
 		user = msn_user_new(userlist, who, NULL);
+		msn_user_set_invite_message(user, msg);
 		msn_user_set_pending_group(user, gname);
 		msn_user_set_network(user, MSN_NETWORK_UNKNOWN);
 		tokens = g_strsplit(who, "@", 2);
@@ -1486,6 +1488,49 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		g_free(fqy);
 		g_strfreev(tokens);
 	}
+}
+
+static void
+cancel_auth_request(MsnAddReqData *data, char *msg)
+{
+	/* Remove from local list */
+	purple_blist_remove_buddy(data->buddy);
+	
+	g_free(data);
+}
+
+static void
+msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+{
+	const char *bname;
+	MsnAddReqData *data;
+
+	bname = purple_buddy_get_name(buddy);
+
+	if (!purple_email_is_valid(bname)) {
+		gchar *buf;
+		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be a valid email address."), bname);
+		if (!purple_conv_present_error(bname, purple_connection_get_account(gc), buf))
+			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
+		g_free(buf);
+
+		/* Remove from local list */
+		purple_blist_remove_buddy(buddy);
+
+		return;
+	}
+
+	data = g_new0(MsnAddReqData, 1);
+	data->pc = gc;
+	data->buddy = buddy;
+	data->group = group;
+
+	purple_request_input(gc, NULL, _("Authorization Request Message:"),
+	                     NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
+	                     _("_OK"), G_CALLBACK(finish_auth_request),
+	                     _("_Cancel"), G_CALLBACK(cancel_auth_request),
+	                     purple_connection_get_account(gc), bname, NULL,
+	                     data);
 }
 
 static void

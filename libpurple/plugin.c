@@ -870,8 +870,16 @@ purple_plugin_destroy(PurplePlugin *plugin)
 		if (plugin->info != NULL && plugin->info->destroy != NULL)
 			plugin->info->destroy(plugin);
 
-		if (plugin->handle != NULL)
-			g_module_close(plugin->handle);
+		/*
+		 * I find it extremely useful to do this when using valgrind, as
+		 * it keeps all the plugins open, meaning that valgrind is able to
+		 * resolve symbol names in leak traces from plugins.
+		 */
+		if (!g_getenv("PURPLE_LEAKCHECK_HELP"))
+		{
+			if (plugin->handle != NULL)
+				g_module_close(plugin->handle);
+		}
 	}
 	else
 	{

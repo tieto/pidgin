@@ -33,7 +33,7 @@ libyahoojp_la_LDFLAGS = -module -avoid-version
 if STATIC_YAHOO
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LTLIBRARIES  = libyahoo.la
+noinst_LTLIBRARIES  = libymsg.la
 libymsg_la_SOURCES = $(YAHOOSOURCES) libyahoo.c libyahoojp.c
 libymsg_la_CFLAGS  = $(AM_CFLAGS)
 

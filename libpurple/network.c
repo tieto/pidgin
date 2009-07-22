@@ -50,6 +50,10 @@
 #include "upnp.h"
 #include "dnsquery.h"
 
+#ifdef USE_IDN
+#include <idna.h>
+#endif
+
 /*
  * Calling sizeof(struct ifreq) isn't always correct on
  * Mac OS X (and maybe others).
@@ -966,7 +970,33 @@ purple_network_remove_port_mapping(gint fd)
 		}
 	}
 }
-	
+
+int purple_network_convert_idn_to_ascii(const gchar *in, gchar **out)
+{
+#ifdef USE_IDN
+	char *tmp;
+	int ret;
+
+	g_return_val_if_fail(out != NULL, -1);
+
+	ret = idna_to_ascii_8z(in, &tmp, IDNA_USE_STD3_ASCII_RULES);
+	if (ret != IDNA_SUCCESS) {
+		*out = NULL;
+		return ret;
+	}
+
+	*out = g_strdup(tmp);
+	/* This *MUST* be freed with free, not g_free */
+	free(tmp);
+	return 0;
+#else
+	g_return_val_if_fail(out != NULL, -1);
+
+	*out = g_strdup(in);
+	return 0;
+#endif
+}
+
 void
 purple_network_init(void)
 {

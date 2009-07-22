@@ -47,9 +47,10 @@
 #endif
 #endif
 
+#include "debug.h"
 #include "dnssrv.h"
 #include "eventloop.h"
-#include "debug.h"
+#include "network.h"
 
 #ifndef _WIN32
 typedef union {
@@ -245,6 +246,18 @@ purple_srv_sort(GList *list)
 	}
 
 	return list;
+}
+
+static gboolean
+dns_str_is_ascii(const char *name)
+{
+	guchar *c;
+	for (c = (guchar *)name; c && *c; ++c) {
+		if (*c > 0x7f)
+			return FALSE;
+	}
+
+	return TRUE;
 }
 
 #ifndef _WIN32
@@ -588,6 +601,7 @@ PurpleSrvQueryData *
 purple_srv_resolve(const char *protocol, const char *transport, const char *domain, PurpleSrvCallback cb, gpointer extradata)
 {
 	char *query;
+	char *hostname;
 	PurpleSrvQueryData *query_data;
 #ifndef _WIN32
 	PurpleSrvInternalQuery internal_query;
@@ -604,8 +618,22 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 		g_return_val_if_reached(NULL);
 	}
 
-	query = g_strdup_printf("_%s._%s.%s", protocol, transport, domain);
-	purple_debug_info("dnssrv","querying SRV record for %s\n", query);
+#ifdef USE_IDN
+	if (!dns_str_is_ascii(domain)) {
+		int ret = purple_network_convert_idn_to_ascii(domain, &hostname);
+		if (ret != 0) {
+			purple_debug_error("dnssrv", "IDNA ToASCII failed\n");
+			cb(NULL, 0, extradata);
+			return NULL;
+		}
+	} else /* Fallthru is intentional */
+#endif
+	hostname = g_strdup(domain);
+
+	query = g_strdup_printf("_%s._%s.%s", protocol, transport, hostname);
+	purple_debug_info("dnssrv","querying SRV record for %s: %s\n", domain,
+			query);
+	g_free(hostname);
 
 #ifndef _WIN32
 	if(pipe(in) || pipe(out)) {
@@ -692,6 +720,7 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, PurpleTxtCallback cb, gpointer extradata)
 {
 	char *query;
+	char *hostname;
 	PurpleSrvQueryData *query_data;
 #ifndef _WIN32
 	PurpleSrvInternalQuery internal_query;
@@ -702,8 +731,22 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 	static gboolean initialized = FALSE;
 #endif
 
-	query = g_strdup_printf("%s.%s", owner, domain);
-	purple_debug_info("dnssrv","querying TXT record for %s\n", query);
+#ifdef USE_IDN
+	if (!dns_str_is_ascii(domain)) {
+		int ret = purple_network_convert_idn_to_ascii(domain, &hostname);
+		if (ret != 0) {
+			purple_debug_error("dnssrv", "IDNA ToASCII failed\n");
+			cb(NULL, extradata);
+			return NULL;
+		}
+	} else /* fallthru is intentional */
+#endif
+	hostname = g_strdup(domain);
+
+	query = g_strdup_printf("%s.%s", owner, hostname);
+	purple_debug_info("dnssrv","querying TXT record for %s: %s\n", domain,
+			query);
+	g_free(hostname);
 
 #ifndef _WIN32
 	if(pipe(in) || pipe(out)) {

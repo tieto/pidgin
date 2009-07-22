@@ -65,6 +65,9 @@
 
 #define YAHOO_SMS_CARRIER_URL "http://lookup.msg.vip.mud.yahoo.com"
 
+#define YAHOO_USERINFO_URL "http://address.yahoo.com/yab/us?v=XM&sync=1&tags=short&useutf8=1&noclear=1&legenc=codepage-1252"
+#define YAHOOJP_USERINFO_URL "http://address.yahoo.co.jp/yab/jp?v=XM&sync=1&tags=short&useutf8=1&noclear=1&legenc=codepage-1252"
+
 #define YAHOO_PICURL_SETTING "picture_url"
 #define YAHOO_PICCKSUM_SETTING "picture_checksum"
 #define YAHOO_PICEXPIRE_SETTING "picture_expire"
@@ -85,10 +88,10 @@
 #define YAHOO_STATUS_TYPE_MOBILE "mobile"
 
 #define YAHOO_CLIENT_VERSION_ID "4194239"
-#define YAHOO_CLIENT_VERSION "9.0.0.2152"
+#define YAHOO_CLIENT_VERSION "9.0.0.2162"
 
 #define YAHOOJP_CLIENT_VERSION_ID "4194239"
-#define YAHOOJP_CLIENT_VERSION "9.0.0.2152"
+#define YAHOOJP_CLIENT_VERSION "9.0.0.2162"
 
 #define YAHOO_CLIENT_USERAGENT "Mozilla/5.0"
 
@@ -147,6 +150,23 @@ struct yahoo_p2p_data	{
 
 struct _YchtConn;
 
+typedef struct _YahooPersonalDetails {
+	char *id;
+
+	struct {
+		char *first;
+		char *last;
+		char *middle;
+		char *nick;
+	} names;
+
+	struct {
+		char *work;
+		char *home;
+		char *mobile;
+	} phone;
+} YahooPersonalDetails;
+
 struct yahoo_data {
 	PurpleConnection *gc;
 	int fd;
@@ -157,6 +177,7 @@ struct yahoo_data {
 	GHashTable *friends;
 
 	char **profiles;  /* Multiple profiles can be associated with an account */
+	YahooPersonalDetails ypd;
 
 	/**
 	 * This is used to keep track of the IMVironment chosen

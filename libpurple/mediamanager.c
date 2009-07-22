@@ -780,7 +780,8 @@ purple_media_manager_remove_output_window(PurpleMediaManager *manager,
 		pad = gst_element_get_static_pad(queue, "sink");
 		peer = gst_pad_get_peer(pad);
 		gst_object_unref(pad);
-		gst_element_release_request_pad(GST_ELEMENT_PARENT(peer), peer);
+		if (peer != NULL)
+			gst_element_release_request_pad(GST_ELEMENT_PARENT(peer), peer);
 		gst_element_set_locked_state(queue, TRUE);
 		gst_element_set_state(queue, GST_STATE_NULL);
 		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(queue)), queue);

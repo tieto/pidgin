@@ -32,6 +32,7 @@
 #include <gntwindow.h>
 
 #include "finch.h"
+#include <internal.h>
 
 #include <util.h>
 

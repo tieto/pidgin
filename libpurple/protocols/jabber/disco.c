@@ -297,7 +297,8 @@ static void jabber_disco_info_cb(JabberStream *js, const char *from,
 		if(jbr)
 			jbr->capabilities = capabilities;
 
-		jdicd->callback(js, from, capabilities, jdicd->data);
+		if (jdicd && jdicd->callback)
+			jdicd->callback(js, from, capabilities, jdicd->data);
 	} else { /* type == JABBER_IQ_ERROR or query == NULL */
 		JabberID *jid;
 		JabberBuddy *jb;
@@ -313,8 +314,11 @@ static void jabber_disco_info_cb(JabberStream *js, const char *from,
 		if(jbr)
 			capabilities = jbr->capabilities;
 
-		jdicd->callback(js, from, capabilities, jdicd->data);
+		if (jdicd && jdicd->callback)
+			jdicd->callback(js, from, capabilities, jdicd->data);
 	}
+
+	g_free(jdicd);
 }
 
 void jabber_disco_items_parse(JabberStream *js, const char *from,
@@ -515,6 +519,7 @@ jabber_disco_server_items_result_cb(JabberStream *js, const char *from,
 
 		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
 		xmlnode_set_attrib(iq->node, "to", jid);
+		jabber_iq_set_callback(iq, jabber_disco_info_cb, NULL);
 		jabber_iq_send(iq);
 	}
 }

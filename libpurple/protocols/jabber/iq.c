@@ -168,28 +168,19 @@ static void jabber_iq_last_parse(JabberStream *js, const char *from,
 	}
 }
 
-static void jabber_iq_time_parse(JabberStream *js, const char *from,
-                                 JabberIqType type, const char *id,
-                                 xmlnode *child)
+static void jabber_time_parse(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id,
+                              xmlnode *child)
 {
-	const char *xmlns;
 	JabberIq *iq;
 	time_t now_t;
-	struct tm now_local;
-	struct tm now_utc;
-	struct tm *now;
+	struct tm *tm;
 
 	time(&now_t);
-	now = localtime(&now_t);
-	memcpy(&now_local, now, sizeof(struct tm));
-	now = gmtime(&now_t);
-	memcpy(&now_utc, now, sizeof(struct tm));
-
-	xmlns = xmlnode_get_namespace(child);
 
 	if(type == JABBER_IQ_GET) {
-		xmlnode *utc;
-		const char *date, *tz, *display;
+		xmlnode *tzo, *utc;
+		const char *date, *tz;
 
 		iq = jabber_iq_new(js, JABBER_IQ_RESULT);
 		jabber_iq_set_id(iq, id);
@@ -197,27 +188,23 @@ static void jabber_iq_time_parse(JabberStream *js, const char *from,
 			xmlnode_set_attrib(iq->node, "to", from);
 
 		child = xmlnode_new_child(iq->node, child->name);
-		xmlnode_set_namespace(child, xmlns);
+		xmlnode_set_namespace(child, "urn:xmpp:time");
+
+		/* <tzo>-06:00</tzo> */
+		tm = localtime(&now_t);
+		tz = purple_get_tzoff_str(tm, TRUE);
+		tzo = xmlnode_new_child(child, "tzo");
+		xmlnode_insert_data(tzo, tz, -1);
+
+		/* <utc>2006-12-19T17:58:35Z</utc> */
+		tm = gmtime(&now_t);
+		date = purple_utf8_strftime("%FT%TZ", tm);
 		utc = xmlnode_new_child(child, "utc");
-
-		if(!strcmp("urn:xmpp:time", xmlns)) {
-			tz = purple_get_tzoff_str(&now_local, TRUE);
-			xmlnode_insert_data(xmlnode_new_child(child, "tzo"), tz, -1);
-
-			date = purple_utf8_strftime("%FT%TZ", &now_utc);
-			xmlnode_insert_data(utc, date, -1);
-		} else { /* jabber:iq:time */
-			tz = purple_utf8_strftime("%Z", &now_local);
-			xmlnode_insert_data(xmlnode_new_child(child, "tz"), tz, -1);
-
-			date = purple_utf8_strftime("%Y%m%dT%T", &now_utc);
-			xmlnode_insert_data(utc, date, -1);
-
-			display = purple_utf8_strftime("%d %b %Y %T", &now_local);
-			xmlnode_insert_data(xmlnode_new_child(child, "display"), display, -1);
-		}
+		xmlnode_insert_data(utc, date, -1);
 
 		jabber_iq_send(iq);
+	} else {
+		/* TODO: Errors */
 	}
 }
 
@@ -488,7 +475,6 @@ void jabber_iq_init(void)
 			jabber_register_parse);
 	jabber_iq_register_handler("query", "jabber:iq:roster",
 			jabber_roster_parse);
-	jabber_iq_register_handler("query", "jabber:iq:time", jabber_iq_time_parse);
 	jabber_iq_register_handler("query", "jabber:iq:version",
 			jabber_iq_version_parse);
 #ifdef USE_VV
@@ -497,7 +483,7 @@ void jabber_iq_init(void)
 #endif
 	jabber_iq_register_handler("block", "urn:xmpp:blocking", jabber_blocklist_parse_push);
 	jabber_iq_register_handler("unblock", "urn:xmpp:blocking", jabber_blocklist_parse_push);
-	jabber_iq_register_handler("time", "urn:xmpp:time", jabber_iq_time_parse);
+	jabber_iq_register_handler("time", "urn:xmpp:time", jabber_time_parse);
 
 }
 

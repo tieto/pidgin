@@ -65,7 +65,7 @@ struct _PurpleUtilFetchUrlData
 	gboolean got_headers;
 	gboolean has_explicit_data_len;
 	char *webdata;
-	unsigned long len;
+	gsize len;
 	unsigned long data_len;
 	gssize max_len;
 	gboolean chunked;
@@ -1409,6 +1409,12 @@ struct purple_parse_tag {
 	gboolean ignore;
 };
 
+/* NOTE: Do not put `do {} while(0)` around this macro (as this is the method
+         recommended in the GCC docs). It contains 'continue's that should
+         affect the while-loop in purple_markup_html_to_xhtml and doing the
+         above would break that.
+         Also, remember to put braces in constructs that require them for
+         multiple statements when using this macro. */
 #define ALLOW_TAG_ALT(x, y) if(!g_ascii_strncasecmp(c, "<" x " ", strlen("<" x " "))) { \
 						const char *o = c + strlen("<" x); \
 						const char *p = NULL, *q = NULL, *r = NULL; \
@@ -1460,26 +1466,27 @@ struct purple_parse_tag {
 						g_string_free(innards, TRUE); \
 						continue; \
 					} \
-						if(!g_ascii_strncasecmp(c, "<" x, strlen("<" x)) && \
-								(*(c+strlen("<" x)) == '>' || \
-								 !g_ascii_strncasecmp(c+strlen("<" x), "/>", 2))) { \
+					if(!g_ascii_strncasecmp(c, "<" x, strlen("<" x)) && \
+							(*(c+strlen("<" x)) == '>' || \
+							 !g_ascii_strncasecmp(c+strlen("<" x), "/>", 2))) { \
+						if(xhtml) \
+							xhtml = g_string_append(xhtml, "<" y); \
+						c += strlen("<" x); \
+						if(*c != '/') { \
+							struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1); \
+							pt->src_tag = x; \
+							pt->dest_tag = y; \
+							tags = g_list_prepend(tags, pt); \
 							if(xhtml) \
-								xhtml = g_string_append(xhtml, "<" y); \
-							c += strlen("<" x); \
-							if(*c != '/') { \
-								struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1); \
-								pt->src_tag = x; \
-								pt->dest_tag = y; \
-								tags = g_list_prepend(tags, pt); \
-								if(xhtml) \
-									xhtml = g_string_append_c(xhtml, '>'); \
-							} else { \
-								if(xhtml) \
-									xhtml = g_string_append(xhtml, "/>");\
-							} \
-							c = strchr(c, '>') + 1; \
-							continue; \
-						}
+								xhtml = g_string_append_c(xhtml, '>'); \
+						} else { \
+							if(xhtml) \
+								xhtml = g_string_append(xhtml, "/>");\
+						} \
+						c = strchr(c, '>') + 1; \
+						continue; \
+					}
+/* Don't forget to check the note above for ALLOW_TAG_ALT. */
 #define ALLOW_TAG(x) ALLOW_TAG_ALT(x, x)
 void
 purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
@@ -1572,8 +1579,9 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				ALLOW_TAG("h5");
 				ALLOW_TAG("h6");
 				/* we only allow html to start the message */
-				if(c == html)
+				if(c == html) {
 					ALLOW_TAG("html");
+				}
 				ALLOW_TAG_ALT("i", "em");
 				ALLOW_TAG_ALT("italic", "em");
 				ALLOW_TAG("li");
@@ -3099,13 +3107,15 @@ purple_fd_get_ip(int fd)
 {
 	struct sockaddr addr;
 	socklen_t namelen = sizeof(addr);
+	struct in_addr in;
 
 	g_return_val_if_fail(fd != 0, NULL);
 
 	if (getsockname(fd, &addr, &namelen))
 		return NULL;
 
-	return g_strdup(inet_ntoa(((struct sockaddr_in *)&addr)->sin_addr));
+	in = ((struct sockaddr_in *)&addr)->sin_addr;
+	return g_strdup(inet_ntoa(in));
 }
 
 
@@ -4445,7 +4455,7 @@ purple_email_is_valid(const char *address)
 }
 
 gboolean
-purple_ip_address_is_valid(const char *ip)
+purple_ipv4_address_is_valid(const char *ip)
 {
 	int c, o1, o2, o3, o4;
 	char end;
@@ -4456,6 +4466,58 @@ purple_ip_address_is_valid(const char *ip)
 	if (c != 4 || o1 < 0 || o1 > 255 || o2 < 0 || o2 > 255 || o3 < 0 || o3 > 255 || o4 < 0 || o4 > 255)
 		return FALSE;
 	return TRUE;
+}
+
+gboolean
+purple_ipv6_address_is_valid(const gchar *ip)
+{
+	const gchar *c;
+	gboolean double_colon = FALSE;
+	gint chunks = 1;
+	gint in = 0;
+
+	g_return_val_if_fail(ip != NULL, FALSE);
+
+	if (*ip == '\0')
+		return FALSE;
+
+	for (c = ip; *c; ++c) {
+		if ((*c >= '0' && *c <= '9') ||
+		        (*c >= 'a' && *c <= 'f') ||
+		        (*c >= 'A' && *c <= 'F')) {
+			if (++in > 4)
+				/* Only four hex digits per chunk */
+				return FALSE;
+			continue;
+		} else if (*c == ':') {
+			/* The start of a new chunk */
+			++chunks;
+			in = 0;
+			if (*(c + 1) == ':') {
+				/*
+				 * '::' indicates a consecutive series of chunks full
+				 * of zeroes. There can be only one of these per address.
+				 */
+				if (double_colon)
+					return FALSE;
+				double_colon = TRUE;
+			}
+		} else
+			return FALSE;
+	}
+
+	/*
+	 * Either we saw a '::' and there were fewer than 8 chunks -or-
+	 * we didn't see a '::' and saw exactly 8 chunks.
+	 */
+	return (double_colon && chunks < 8) || (!double_colon && chunks == 8);
+}
+
+/* TODO 3.0.0: Add ipv6 check, too */
+gboolean
+purple_ip_address_is_valid(const char *ip)
+{
+	return purple_ipv4_address_is_valid(ip);
 }
 
 /* Stolen from gnome_uri_list_extract_uris */

@@ -349,7 +349,8 @@ msn_message_parse_payload(MsnMessage *msg,
 			msg->body[msg->body_len] = '\0';
 		}
 		
-		if (msg->charset == NULL) {
+		if ((!content_type || !strcmp(content_type, "text/plain"))
+			&& msg->charset == NULL) {
 			char *body = g_convert(msg->body, msg->body_len, "UTF-8",
 			                       "ISO-8859-1", NULL, &msg->body_len, NULL);
 			g_free(msg->body);
@@ -767,8 +768,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 		g_string_append_printf(str, "SUB ID:     %u\r\n", msg->msnslp_header.ack_sub_id);
 		g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", msg->msnslp_header.ack_size);
 
-#ifdef MSN_DEBUG_SLP_VERBOSE
-		if (body != NULL)
+		if (purple_debug_is_verbose() && body != NULL)
 		{
 			if (text_body)
 			{
@@ -792,7 +792,6 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 				g_string_append(str, "\r\n");
 			}
 		}
-#endif
 
 		g_string_append_printf(str, "Footer:     %u\r\n", msg->msnslp_footer.value);
 	}

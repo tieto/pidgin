@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-06 15:04-0700\n"
+"POT-Creation-Date: 2009-07-12 21:00-0700\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
@@ -880,10 +880,10 @@ msgstr "Системный журнал"
 
 #, fuzzy
 msgid "Calling ... "
-msgstr "Подсчёт..."
+msgstr "Вызов..."
 
 msgid "Hangup"
-msgstr ""
+msgstr "Приостановить разговор"
 
 #. Number of actions
 msgid "Accept"
@@ -893,25 +893,25 @@ msgid "Reject"
 msgstr "Отвергнуть"
 
 msgid "Call in progress."
-msgstr ""
+msgstr "Идёт разговор."
 
 msgid "The call has been terminated."
-msgstr ""
+msgstr "Звонок был прерван."
 
 #, c-format
 msgid "%s wishes to start an audio session with you."
-msgstr ""
+msgstr "%s хочет начать звуковой сеанс с вами."
 
 #, c-format
 msgid "%s is trying to start an unsupported media session type with you."
-msgstr ""
+msgstr "%s пытается начать с вами медиа сеанс неподдерживаемого типа."
 
 #, fuzzy
 msgid "You have rejected the call."
 msgstr "Вы покинули канал%s%s"
 
 msgid "call: Make an audio call."
-msgstr ""
+msgstr "звонок: Совершите звуковой звонок."
 
 msgid "Emails"
 msgstr "Адреса e-mail"
@@ -1106,7 +1106,8 @@ msgstr "У вас нет ни одной учётной записи."
 
 #, fuzzy
 msgid "You must create an account first before you can create a pounce."
-msgstr "Вы должны сперва создать учётную запись, а уж потом создавать правило."
+msgstr ""
+"Перед тем, как создавать правило, вы должны сперва создать учётную запись."
 
 #, c-format
 msgid "Are you sure you want to delete the pounce on %s for %s?"
@@ -1569,22 +1570,25 @@ msgid ""
 "\n"
 "Fetching TinyURL..."
 msgstr ""
+"\n"
+"Получение TinyURL..."
 
 msgid "Only create TinyURL for urls of this length or greater"
-msgstr ""
+msgstr "Только создайте TinyURL для адресов такой длины или большей"
 
 msgid "TinyURL (or other) address prefix"
-msgstr ""
+msgstr "Приставка адреса TinyURL (или другого)"
 
 #, fuzzy
 msgid "TinyURL"
-msgstr "Настроить интернет-адрес"
+msgstr "TinyURL"
 
 msgid "TinyURL plugin"
-msgstr ""
+msgstr "Модуль TinyURL"
 
 msgid "When receiving a message with URL(s), TinyURL for easier copying"
 msgstr ""
+"При получении сообщения с адресами URL, TinyURL для облегчённого копирования"
 
 msgid "accounts"
 msgstr "учётные записи"
@@ -1977,6 +1981,10 @@ msgstr "Предложение отправки %s для %s"
 #, c-format
 msgid "Starting transfer of %s from %s"
 msgstr "Запуск передачи %s от %s"
+
+#, fuzzy, c-format
+msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
+msgstr "Передача файла %s завершена"
 
 #, c-format
 msgid "Transfer of file %s complete"
@@ -2611,11 +2619,12 @@ msgid ""
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
 msgstr ""
-"При просмотре журналов этот модуль вставит журналы других IM клиентов. На "
-"текущий момент это включает Адиум, MSN Messenger и Триллиан.\n"
+"При просмотре журналов этот модуль вставит журналы из других клиентов "
+"мгновенных сообщений. На текущий момент это включает Адиум, MSN Messenger, "
+"aMSN и Триллиан.\n"
 "\n"
 "ПРЕДУПРЕЖДЕНИЕ: Этот модуль пока на стадии разработки и может часто "
-"вылетать.  Используйте его на свой собственных страх и риск!"
+"вылетать.  Используйте его на свой собственный страх и риск!"
 
 msgid "Mono Plugin Loader"
 msgstr "Загрузчик модулей Mono"
@@ -2707,13 +2716,13 @@ msgstr "Введите пароль"
 #. *< priority
 #. *< id
 msgid "One Time Password Support"
-msgstr ""
+msgstr "Одноразовая поддержка паспорта"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Enforce that passwords are used only once."
-msgstr ""
+msgstr "Заставить использовать пароли только один раз."
 
 #. *  description
 msgid ""
@@ -2721,6 +2730,9 @@ msgid ""
 "are only used in a single successful connection.\n"
 "Note: The account password must not be saved for this to work."
 msgstr ""
+"Позволяет вам поставить за основу для учётных записей, чьи пароли не были "
+"сохранены, использоваться только в одном успешном подключении.\n"
+"Примечание: Пароль учётной записи не должен быть сохранён для этого."
 
 #. *< type
 #. *< ui_requirement
@@ -5053,6 +5065,22 @@ msgstr "Другие контакты"
 msgid "Non-IM Contacts"
 msgstr "Не IM-контакты"
 
+#, c-format
+msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a wink, but it could not be saved"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%s sent a voice clip, but it could not be saved"
+msgstr "%s послал вам приглашение к веб-камере, которое ещё не поддерживается."
+
 #, fuzzy, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
 msgstr "%s послал вам приглашение к веб-камере, которое ещё не поддерживается."
@@ -5212,6 +5240,19 @@ msgstr "Создать _чат"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Поддержка SSL необходима для MSN. Установите поддерживаемую библиотеку SSL."
+
+#, fuzzy, c-format
+msgid ""
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
+"be a valid email address."
+msgstr ""
+"Не могу добавить приятеля %s, потому что имя пользователя неверное.  Имена "
+"пользователей должны быть правильными адресами эл.почты или начинаться с "
+"буквы и содержать только буквы, цифры и пробелы, или содержать только цифры."
+
+#, fuzzy
+msgid "Unable to Add"
+msgstr "Не могу Добавить"
 
 msgid "Error retrieving profile"
 msgstr "Ошибка загрузки профиля"
@@ -6629,6 +6670,7 @@ msgstr "Ваша учётная запись сейчас заблокирова
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Служба AOL Instant Messenger временно недоступна."
 
+#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Версия клиента, которой вы пользуетесь, слишком стара. Обновите до %s"
@@ -7035,10 +7077,6 @@ msgstr ""
 "Не могу добавить приятеля %s, потому что имя пользователя неверное.  Имена "
 "пользователей должны быть правильными адресами эл.почты или начинаться с "
 "буквы и содержать только буквы, цифры и пробелы, или содержать только цифры."
-
-#, fuzzy
-msgid "Unable to Add"
-msgstr "Не могу Добавить"
 
 #, fuzzy
 msgid "Unable to Retrieve Buddy List"
@@ -10404,7 +10442,8 @@ msgstr "Уведомления о новой по_чте"
 msgid "Use this buddy _icon for this account:"
 msgstr "Использовать этот _значок собеседника для этой учётной записи:"
 
-msgid "_Advanced"
+#, fuzzy
+msgid "Ad_vanced"
 msgstr "_Дополнительно"
 
 msgid "Use GNOME Proxy Settings"
@@ -10469,7 +10508,7 @@ msgid "Create _this new account on the server"
 msgstr "Создать _эту новую учётную запись на сервере"
 
 #, fuzzy
-msgid "_Proxy"
+msgid "P_roxy"
 msgstr "Прокси"
 
 msgid "Enabled"
@@ -12450,7 +12489,7 @@ msgstr ""
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
 msgid "Pidgin"
-msgstr "Пиджин"
+msgstr "Pidgin"
 
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
@@ -13405,7 +13444,23 @@ msgstr "_Скопировать ссылку"
 msgid "_Copy Email Address"
 msgstr "_Скопировать адрес email"
 
+#, fuzzy
+msgid "_Open File"
+msgstr "Открыть файл..."
+
+#, fuzzy
+msgid "Open _Containing Directory"
+msgstr "Каталог журнала"
+
 msgid "Save File"
+msgstr "Сохранить файл"
+
+#, fuzzy
+msgid "_Play Sound"
+msgstr "Воспроизвести звук"
+
+#, fuzzy
+msgid "_Save File"
 msgstr "Сохранить файл"
 
 msgid "Select color"
@@ -14609,6 +14664,10 @@ msgstr "Отправлять и получать прямые XMPP строфы.
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Этот модуль полезен для отладки XMPP серверов или клиентов."
+
+#, fuzzy
+#~ msgid "_Proxy"
+#~ msgstr "Прокси"
 
 #~ msgid "Cannot open socket"
 #~ msgstr "Не удаётся открыть сокет"

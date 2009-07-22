@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-06 15:04-0700\n"
-"PO-Revision-Date: 2009-07-05 01:14+0300\n"
+"POT-Creation-Date: 2009-07-16 21:37+0300\n"
+"PO-Revision-Date: 2009-07-16 21:36+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1776,7 +1776,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s kirjautui ulos"
 
 #. Unknown error
-#. Unknown error!
 msgid "Unknown error"
 msgstr "Tuntematon virhe"
 
@@ -1962,6 +1961,10 @@ msgstr "Tarjotaan tiedostoa %s lähetettäväksi käyttäjälle %s."
 #, c-format
 msgid "Starting transfer of %s from %s"
 msgstr "Aloitetaan tiedoston %s siirto käyttäjältä %s"
+
+#, c-format
+msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
+msgstr "Tiedoston <A HREF=\"file://%s\">%s</A> siirto valmis"
 
 #, c-format
 msgid "Transfer of file %s complete"
@@ -2893,18 +2896,15 @@ msgstr ""
 "ActiveTCL-asennusta ei havaittu. Jos haluat käyttää TCL-liitännäisiä, asenna "
 "ActiveTCL osoitteesta http://www.activestate.com\n"
 
-#, fuzzy
 msgid ""
 "Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
 "im/BonjourWindows for more information."
 msgstr ""
-"Apple Bonjour for Windows -työkalupakettia ei löytynyt, tarkista usein "
-"kysytyt kysymykset osoitteessa http://developer.pidgin.im/wiki/Using%"
-"20Pidgin#CanIusePidginforBonjourLink-LocalMessaging ."
+"Applen ”Bonjour for Windows” -työkalupakettia ei löytynyt, katso lisätietoja "
+"osoitteesta http://d.pidgin.im/BonjourWindows."
 
-#, fuzzy
 msgid "Unable to listen for incoming IM connections"
-msgstr "Sisääntulevia pikaviestintäyhteyksiä ei voi kuunnella\n"
+msgstr "Sisääntulevia pikaviestintäyhteyksiä ei voi kuunnella"
 
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
@@ -2956,21 +2956,17 @@ msgstr "%s on sulkenut keskustelun."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Viestiä ei voi lähettää, keskustelua ei voi aloittaa."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to create socket: %s"
-msgstr ""
-"Pistokkeen luonti epäonnistui:\n"
-"%s"
+msgstr "Pistokkeen luonti epäonnistui: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to bind socket to port: %s"
-msgstr "Pistoketta ei voi liittää porttiin"
+msgstr "Pistoketta ei voi liittää porttiin: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to listen on socket: %s"
-msgstr ""
-"Pistokkeen luonti epäonnistui:\n"
-"%s"
+msgstr "Pistokkeen kuuntelu epäonnistui: %s"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr "Virhe viestittäessä paikallisen mDNSResponderin kanssa."
@@ -3018,17 +3014,15 @@ msgstr "Tallenna tuttavat..."
 msgid "Load buddylist from file..."
 msgstr "Tuo tuttavat tiedostosta..."
 
-#, fuzzy
 msgid "You must fill in all registration fields"
-msgstr "Täytä rekisteröitymiskentät."
+msgstr "Täytä kaikki rekisteröitymiskentät"
 
-#, fuzzy
 msgid "Passwords do not match"
-msgstr "Salasanat eivät täsmää."
+msgstr "Salasanat eivät täsmää"
 
-#, fuzzy
 msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Uuden käyttäjätilin rekisteröinti epäonnistui virheen takia.\n"
+msgstr ""
+"Uuden käyttäjätilin rekisteröinti epäonnistui tuntemattoman virheen takia."
 
 msgid "New Gadu-Gadu Account Registered"
 msgstr "Uusi Gadu-Gadu-käyttäjätili rekisteröity"
@@ -3043,11 +3037,10 @@ msgid "Password (again)"
 msgstr "Salasana (uudelleen)"
 
 msgid "Enter captcha text"
-msgstr ""
+msgstr "Syötä captcha-teksti"
 
-#, fuzzy
 msgid "Captcha"
-msgstr "Captcha-kuva"
+msgstr "Captcha"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "Rekisteröi uusi Gadu-Gadu-käyttäjätili"
@@ -3186,9 +3179,9 @@ msgstr "Lisää ryhmäkeskusteluun"
 msgid "Chat _name:"
 msgstr "Keskustelunimi:"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to resolve hostname '%s': %s"
-msgstr "Ei kyetty selvittämään palvelimen nimeä."
+msgstr "Ei kyetty selvittämään palvelimen nimeä ”%s”: %s"
 
 #. 1. connect to server
 #. connect to the server
@@ -3201,9 +3194,8 @@ msgstr "Keskusteluvirhe"
 msgid "This chat name is already in use"
 msgstr "Tämä keskustelunimi on jo käytössä"
 
-#, fuzzy
 msgid "Not connected to the server"
-msgstr "Ei yhdistettynä palvelimeen."
+msgstr "Ei yhdistettynä palvelimeen"
 
 msgid "Find buddies..."
 msgstr "Etsi tuttavia..."
@@ -3261,7 +3253,6 @@ msgstr "Aihetta ei ole asetettu"
 msgid "File Transfer Failed"
 msgstr "Tiedostonsiirto epäonnistui"
 
-#, fuzzy
 msgid "Unable to open a listening port."
 msgstr "Kuuntelevaa porttia ei voi avata."
 
@@ -3285,11 +3276,9 @@ msgstr "MOTD %s:lle"
 #.
 #. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
-#, fuzzy, c-format
+#, c-format
 msgid "Lost connection with server: %s"
-msgstr ""
-"Yhteys palvelimeen katkesi:\n"
-"%s"
+msgstr "Yhteys palvelimeen katkesi: %s"
 
 msgid "View MOTD"
 msgstr "Näytä MOTD"
@@ -3310,13 +3299,13 @@ msgid "Unable to connect"
 msgstr "Yhteyden muodostaminen epäonnistui"
 
 #. this is a regular connect, error out
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to connect: %s"
-msgstr "Kohteeseen %s ei kyetty muodostamaan yhteyttä"
+msgstr "Ei voi yhdistää: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Server closed the connection"
-msgstr "Palvelin on katkaissut yhteyden."
+msgstr "Palvelin on katkaissut yhteyden"
 
 msgid "Users"
 msgstr "Käyttäjät"
@@ -3743,11 +3732,9 @@ msgstr "Ad-Hoc-komento epäonnistui"
 msgid "execute"
 msgstr "suorita"
 
-#, fuzzy
 msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Palvelin vaatii TSL/SSL-tuen kirjautumiseen. TLS/SSL-tukea ei löydy."
+msgstr "Palvelin vaatii TSL/SSL-tuen, mutta TLS/SSL-tukea ei löydy."
 
-#, fuzzy
 msgid "You require encryption, but no TLS/SSL support was found."
 msgstr "Salausta vaadittu, mutta TLS/SSL-tukea ei löydy."
 
@@ -3766,13 +3753,11 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Tekstipohjainen tunnistus"
 
-#, fuzzy
 msgid "SASL authentication failed"
-msgstr "Todennus epäonnistui"
+msgstr "SASL-todennus epäonnistui"
 
-#, fuzzy
 msgid "Invalid response from server"
-msgstr "Kelvoton vastaus palvelimelta."
+msgstr "Kelvoton vastaus palvelimelta"
 
 msgid "Server does not use any supported authentication method"
 msgstr "Palvelin ei käytä mitään tuetuista tunnistautumismenetelmistä"
@@ -3783,9 +3768,9 @@ msgstr "Salausta vaadittu, mutta sitä ei tueta tällä palvelimella."
 msgid "Invalid challenge from server"
 msgstr "Virheellinen tunnistushaaste palvelimelta"
 
-#, fuzzy, c-format
+#, c-format
 msgid "SASL error: %s"
-msgstr "SASL-virhe"
+msgstr "SASL-virhe: %s"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "BOSH-yhteyshallinta lopetti istunnon."
@@ -3799,9 +3784,9 @@ msgstr "Tukematon versio BOSH-yhteyskäytännöstä"
 msgid "Unable to establish a connection with the server"
 msgstr "Yhteyttä palvelimeen ei voi muodostaa"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to establish a connection with the server: %s"
-msgstr "Yhteyttä palvelimeen ei voi muodostaa"
+msgstr "Yhteyttä palvelimeen ei voi muodostaa: %s"
 
 msgid "Unable to establish SSL connection"
 msgstr "SSL-yhteyden muodostaminen ei onnistu"
@@ -3885,7 +3870,6 @@ msgstr "Sijainti"
 msgid "%s ago"
 msgstr "%s sitten"
 
-#, fuzzy
 msgid "Logged Off"
 msgstr "Kirjautunut ulos"
 
@@ -4064,17 +4048,15 @@ msgstr "Käyttäjiä ei löytynyt"
 msgid "Roles:"
 msgstr "Roolit:"
 
-#, fuzzy
 msgid "Ping timed out"
 msgstr "Pingin aikakatkaisu"
 
-#, fuzzy
 msgid ""
 "Unable to find alternative XMPP connection methods after failing to connect "
 "directly."
 msgstr ""
 "Vaihtoehtoisia XMPP-yhteystapoja ei löytynyt suoran yhdistämisen "
-"epäonnistumisen jälkeen.\n"
+"epäonnistumisen jälkeen."
 
 msgid "Invalid XMPP ID"
 msgstr "Epäkelpo XMPP-ID"
@@ -4654,17 +4636,16 @@ msgstr "_Aseta huoneen asetuksia"
 msgid "_Accept Defaults"
 msgstr "_Hyväksy oletusasetukset"
 
-#, fuzzy
 msgid "No reason"
 msgstr "Syytä ei annettu"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You have been kicked: (%s)"
-msgstr "%s on poistanut sinut kanavalta: (%s)"
+msgstr "Sinut on potkaistu kanavalta: (%s)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Kicked (%s)"
-msgstr "%s potkaisi (%s)"
+msgstr "Potkaisi (%s)"
 
 msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "Kaistansisäisessä tavuvirtasiirrossa tapahtui virhe\n"
@@ -5000,6 +4981,26 @@ msgid "Non-IM Contacts"
 msgstr "Pikaviestittömät yhteystiedot"
 
 #, c-format
+msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
+msgstr ""
+"%s lähetti animoidun hymiön. <a href='msn-wink://%s'>Napsauta tästä "
+"toistaaksesi sen</a>"
+
+#, c-format
+msgid "%s sent a wink, but it could not be saved"
+msgstr "%s lähetti animoidun hymiön, mutta sitä ei voi tallentaa"
+
+#, c-format
+msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
+msgstr ""
+"%s lähetti äänipätkän. <a href='audio://%s'>Napsauta tässä toistaaksesi sen</"
+"a>"
+
+#, c-format
+msgid "%s sent a voice clip, but it could not be saved"
+msgstr "%s on lähettänyt äänipätkän, mutta sitä ei voi tallentaa"
+
+#, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
 msgstr "%s on lähettänyt puhekeskustelukutsun, mitä ei vielä tueta."
 
@@ -5154,6 +5155,29 @@ msgstr "Aloita _ryhmäkeskustelu"
 
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr "MSN vaatii SSL-tuen. Asenna tuettu SSL-kirjasto."
+
+#, c-format
+msgid ""
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
+"be a valid email address."
+msgstr ""
+"Tuttavaa %s ei voi lisätä koska käyttäjänimi on virheellinen. Käyttäjänimen "
+"tulee olla oikea sähköpostiosoite."
+
+msgid "Unable to Add"
+msgstr "Lisääminen epäonnistui"
+
+msgid "Authorization Request Message:"
+msgstr "Valtuutuksen pyyntöviesti:"
+
+msgid "Please authorize me!"
+msgstr "Voisitko valtuuttaa minut?"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_OK"
 
 msgid "Error retrieving profile"
 msgstr "Virhe haettaessa profiilia"
@@ -5353,6 +5377,7 @@ msgstr "Tuntematon virhe (%d): %s"
 msgid "Unable to add user"
 msgstr "Käyttäjää ei voi lisätä"
 
+#. Unknown error!
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "Tuntematon virhe (%d)"
@@ -5421,26 +5446,22 @@ msgstr ""
 "Yhteysvirhe palvelimelta %s:\n"
 "%s"
 
-#, fuzzy
 msgid "Our protocol is not supported by the server"
-msgstr "Palvelin ei tue yhteyskäytäntöä."
+msgstr "Palvelin ei tue tämän ohjelman yhteyskäytäntöä."
 
-#, fuzzy
 msgid "Error parsing HTTP"
-msgstr "Virhe jäsennettäessä HTTP:tä."
+msgstr "Virhe jäsennettäessä HTTP:tä"
 
-#, fuzzy
 msgid "You have signed on from another location"
-msgstr "Olet kirjautunut sisään toisesta paikasta."
+msgstr "Olet kirjautunut sisään toisesta paikasta"
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
 "MSN-palvelimet ovat väliaikaisesti tavoittamattomissa. Odota ja yritä "
 "uudelleen."
 
-#, fuzzy
 msgid "The MSN servers are going down temporarily"
-msgstr "MSN-palvelimet ajetaan alas väliaikaisesti."
+msgstr "MSN-palvelimet ajetaan alas väliaikaisesti"
 
 #, c-format
 msgid "Unable to authenticate: %s"
@@ -5767,15 +5788,14 @@ msgstr "Kavereita yhteensä"
 msgid "Client Version"
 msgstr "Asiakasohjelman versio"
 
-#, fuzzy
 msgid ""
 "An error occurred while trying to set the username.  Please try again, or "
 "visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
 "to set your username."
 msgstr ""
-"Mene osoitteeseen http://editprofile.myspace.com/index.cfm?"
-"fuseaction=profile.username ja valitse käyttäjänimesi. Kirjaudu sitten "
-"uudestaan."
+"Virhe asetettaessa käyttäjänimeä. Yritä uudelleen tai mene osoitteeseen "
+"http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
+"valitaksesi käyttäjänimen."
 
 msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM - Käyttäjänimi saatavilla"
@@ -6035,9 +6055,9 @@ msgstr "Käyttäjä on joko poissa linjoilta tai sinut on estetty"
 msgid "Unknown error: 0x%X"
 msgstr "Tuntematon virhe: 0x%X"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to login: %s"
-msgstr "Ei voi kirjautua"
+msgstr "Kirjautuminen ei onnistu: %s"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6214,9 +6234,8 @@ msgstr ""
 msgid "Error requesting "
 msgstr "Virhe pyydettäessä "
 
-#, fuzzy
 msgid "AOL does not allow your screen name to authenticate here"
-msgstr "AOL ei salli näyttönimen todentamista tämän sivuston kautta."
+msgstr "AOL ei salli näyttönimen todentamista tätä kautta"
 
 msgid "Could not join chat room"
 msgstr "Keskusteluhuoneeseen ei voi liittyä"
@@ -6224,9 +6243,8 @@ msgstr "Keskusteluhuoneeseen ei voi liittyä"
 msgid "Invalid chat room name"
 msgstr "Epäkelpo keskusteluhuoneen nimi"
 
-#, fuzzy
 msgid "Received invalid data on connection with server"
-msgstr "Palvelimeen yhdistettäessä vastaanotettiin virheellisiä tietoja."
+msgstr "Palvelimeen yhdistettäessä vastaanotettiin virheellisiä tietoja"
 
 #. *< type
 #. *< ui_requirement
@@ -6273,9 +6291,8 @@ msgstr "Yhteys käyttäjään katkesi:<br>%s"
 msgid "Received invalid data on connection with remote user."
 msgstr "Vastaanotettiin virheellisiä tietoja luotaessa yhteyttä käyttäjään."
 
-#, fuzzy
 msgid "Unable to establish a connection with the remote user."
-msgstr "Yhteyttä käyttäjän kanssa ei voi muodostaa."
+msgstr "Yhteyttä etäkäyttäjän kanssa ei voi muodostaa."
 
 msgid "Direct IM established"
 msgstr "Suora pikaviestiyhteys muodostettu"
@@ -6476,15 +6493,13 @@ msgstr "Varoitustaso"
 msgid "Buddy Comment"
 msgstr "Tuttavakommentti"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to connect to authentication server: %s"
-msgstr ""
-"Ei saatu yhteyttä todentamispalvelimeen:\n"
-"%s"
+msgstr "Ei saatu yhteyttä todentamispalvelimeen: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to connect to BOS server: %s"
-msgstr "Palvelimeen ei kyetty muodostamaan yhteyttä."
+msgstr "BOS-palvelimeen ei kyetty muodostamaan yhteyttä: %s"
 
 msgid "Username sent"
 msgstr "Käyttäjänimi lähetetty"
@@ -6496,16 +6511,16 @@ msgstr "Yhteys muodostettu, eväste lähetetty"
 msgid "Finalizing connection"
 msgstr "Viimeistellään yhteyttä"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to sign on as %s because the username is invalid.  Usernames must be "
 "a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
-"Kirjautuminen epäonnistui: käyttäjänä %s ei voi kirjautua koska käyttäjänimi "
-"on virheellinen. Käyttäjänimen tulee olla oikea sähköpostiosoite, tai alkaa "
-"kirjaimella ja sisältää vain kirjaimia, numeroita ja välilyöntejä, tai "
-"sisältää vain numeroita."
+"Kirjautuminen epäonnistui käyttäjänä %s, koska käyttäjänimi on virheellinen. "
+"Käyttäjänimen tulee olla oikea sähköpostiosoite, tai alkaa kirjaimella ja "
+"sisältää vain kirjaimia, numeroita ja välilyöntejä, tai sisältää vain "
+"numeroita."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -6528,14 +6543,14 @@ msgid "Username does not exist"
 msgstr "Käyttäjänimeä ei ole"
 
 #. Suspended account
-#, fuzzy
 msgid "Your account is currently suspended"
-msgstr "Käyttäjätilisi palvelu on parhaillaan keskeytetty."
+msgstr "Käyttäjätilisi palvelu on parhaillaan keskeytetty"
 
 #. service temporarily unavailable
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL-pikaviestipalvelu ei tilapäisesti ole käytössä."
 
+#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Asiakasohjelmasi versio on liian vanha. Päivitä osoitteessa %s"
@@ -6548,21 +6563,14 @@ msgstr ""
 "Olet ottanut ja katkaissut yhteyden liian tiheästi. Odota jonkin aikaa ja "
 "yritä uudelleen. Jos jatkat yrittämistä, joudut odottamaan vielä pidempään."
 
-#, fuzzy
 msgid "The SecurID key entered is invalid"
-msgstr "Syötetty SecurID-avain on virheellinen."
+msgstr "Syötetty SecurID-avain on virheellinen"
 
 msgid "Enter SecurID"
 msgstr "Syötä SecurID"
 
 msgid "Enter the 6 digit number from the digital display."
 msgstr "Syötä 6 numeroinen luku digitaaliselta näytöltä."
-
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_OK"
 
 msgid "Password sent"
 msgstr "Salasana lähetetty"
@@ -6572,12 +6580,6 @@ msgstr "Yhteyden luominen epäonnistui"
 
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "Valtuuttaisitko minut, jotta voin lisätä sinut tuttaviini?"
-
-msgid "Authorization Request Message:"
-msgstr "Valtuutuksen pyyntöviesti:"
-
-msgid "Please authorize me!"
-msgstr "Voisitko valtuuttaa minut?"
 
 msgid "No reason given."
 msgstr "Syytä ei annettu."
@@ -6900,7 +6902,7 @@ msgstr[1] ""
 msgid "Away message too long."
 msgstr "Poissaoloviesti on liian pitkä."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be a valid email address, or start with a letter and contain only letters, "
@@ -6909,9 +6911,6 @@ msgstr ""
 "Tuttavaa %s ei voi lisätä koska käyttäjänimi on virheellinen. Käyttäjänimen "
 "tulee olla oikea sähköpostiosoite, tai alkaa kirjaimella ja sisältää vain "
 "kirjaimia, numeroita ja välilyöntejä, tai sisältää vain numeroita."
-
-msgid "Unable to Add"
-msgstr "Lisääminen epäonnistui"
 
 msgid "Unable to Retrieve Buddy List"
 msgstr "Tuttavien noutaminen ei onnistunut"
@@ -6927,18 +6926,18 @@ msgstr ""
 msgid "Orphans"
 msgstr "Orvot"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
-"Tuttavaa %s ei voi lisätä koska tuttaviasi on liian monta. Ole hyvä ja "
-"poista joku ja yritä uudelleen."
+"Tuttavaa %s ei voi lisätä koska tuttavia on liian monta. Ole hyvä ja poista "
+"joku ja yritä uudelleen."
 
 msgid "(no name)"
 msgstr "(nimetön)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add the buddy %s for an unknown reason."
 msgstr "Tuttavaa %s ei voi lisätä tuntemattomasta syystä."
 
@@ -7710,7 +7709,6 @@ msgstr "Jatkuvan yhteydenpidon aikaväli (sekunneissa)"
 msgid "Update interval (seconds)"
 msgstr "Päivitysten aikaväli (sekunneissa)"
 
-#, fuzzy
 msgid "Unable to decrypt server reply"
 msgstr "Palvelinvastauksen salausta ei voi purkaa"
 
@@ -7778,9 +7776,8 @@ msgstr "Haetaan palvelinta"
 msgid "Requesting token"
 msgstr "Pyydetään polettia"
 
-#, fuzzy
 msgid "Unable to resolve hostname"
-msgstr "Ei kyetty selvittämään palvelimen nimeä."
+msgstr "Ei kyetty selvittämään palvelimen nimeä"
 
 msgid "Invalid server or port"
 msgstr "Epäkelpo palvelin tai portti"
@@ -7833,7 +7830,6 @@ msgstr ""
 msgid "QQ Qun Command"
 msgstr "QQ-Qun-komento"
 
-#, fuzzy
 msgid "Unable to decrypt login reply"
 msgstr "Kirjautumisvastauksen salausta ei voi purkaa"
 
@@ -8814,7 +8810,6 @@ msgstr "Julkisen avaimen tyyppiä ei tuettu"
 msgid "Disconnected by server"
 msgstr "Palvelin katkaisi yhteyden"
 
-#, fuzzy
 msgid "Error connecting to SILC Server"
 msgstr "Virhe luotaessa yhteyttä SILC-palvelimelle"
 
@@ -8830,7 +8825,6 @@ msgstr ""
 msgid "Performing key exchange"
 msgstr "Suoritetaan avaintenvaihto"
 
-#, fuzzy
 msgid "Unable to load SILC key pair"
 msgstr "SILC-avainparia ei voi ladata"
 
@@ -8838,14 +8832,12 @@ msgstr "SILC-avainparia ei voi ladata"
 msgid "Connecting to SILC Server"
 msgstr "Yhdistetään SILC-palvelimelle"
 
-#, fuzzy
 msgid "Unable to not load SILC key pair"
-msgstr "SILC-avainparia ei voi ladata"
+msgstr "SILC-avainparin lataamatta jättäminen ei onnistu"
 
 msgid "Out of memory"
 msgstr "Muisti loppu"
 
-#, fuzzy
 msgid "Unable to initialize SILC protocol"
 msgstr "SILC-yhteyskäytäntöä ei voi alustaa"
 
@@ -9138,9 +9130,8 @@ msgstr "Allekirjoita ja tarkista kaikki viestit digitaalisesti"
 msgid "Creating SILC key pair..."
 msgstr "Luodaan SILC-avainpari..."
 
-#, fuzzy
 msgid "Unable to create SILC key pair"
-msgstr "SILC-avainparia ei voi luoda\n"
+msgstr "SILC-avainparia ei voi luoda"
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
@@ -9279,27 +9270,24 @@ msgstr "Virhe: Virheellinen eväste"
 msgid "Failure: Authentication failed"
 msgstr "Virhe: Todennus epäonnistui"
 
-#, fuzzy
 msgid "Unable to initialize SILC Client connection"
 msgstr "SILC-asiakasyhteyttä ei voi alustaa"
 
 msgid "John Noname"
 msgstr "Pertti Perusnimi"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to load SILC key pair: %s"
 msgstr "SILC-avainparia ei voi ladata: %s"
 
 msgid "Unable to create connection"
 msgstr "Yhteyden luominen epäonnistui"
 
-#, fuzzy
 msgid "Unknown server response"
-msgstr "Tuntematon palvelinvastaus."
+msgstr "Tuntematon palvelinvastaus"
 
-#, fuzzy
 msgid "Unable to create listen socket"
-msgstr "Pistokkeen luonti epäonnistui"
+msgstr "Kuuntelupistokkeen luonti epäonnistui"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-käyttäjänimissä ei tule olla välilyöntejä tai @-merkkejä"
@@ -9362,9 +9350,8 @@ msgstr "Yahoo ID..."
 #. *< version
 #. *  summary
 #. *  description
-#, fuzzy
 msgid "Yahoo! Protocol Plugin"
-msgstr "Yahoo-yhteyskäytäntöliitännäinen"
+msgstr "Yahoo!-yhteyskäytäntöliitännäinen"
 
 msgid "Pager server"
 msgstr "Hakulaitepalvelin"
@@ -9393,9 +9380,8 @@ msgstr "Yahoo-ryhmäkeskustelupalvelin"
 msgid "Yahoo Chat port"
 msgstr "Yahoo-ryhmäkeskustelupalvelimen portti"
 
-#, fuzzy
 msgid "Yahoo JAPAN ID..."
-msgstr "Yahoo ID..."
+msgstr "Yahoo JAPAN ID..."
 
 #. *< type
 #. *< ui_requirement
@@ -9407,9 +9393,8 @@ msgstr "Yahoo ID..."
 #. *< version
 #. *  summary
 #. *  description
-#, fuzzy
 msgid "Yahoo! JAPAN Protocol Plugin"
-msgstr "Yahoo-yhteyskäytäntöliitännäinen"
+msgstr "Yahoo! JAPAN -yhteyskäytäntöliitännäinen"
 
 msgid "Your SMS was not delivered"
 msgstr "Tekstiviestiä (SMS) ei välitetty"
@@ -9442,22 +9427,20 @@ msgid "Received invalid data"
 msgstr "Vastaanotettiin virheellisiä tietoja"
 
 #. security lock from too many failed login attempts
-#, fuzzy
 msgid ""
 "Account locked: Too many failed login attempts.  Logging into the Yahoo! "
 "website may fix this."
 msgstr ""
-"Käyttäjätili lukittu: liian monta epäonnistuttu kirjautumisyritystä.\n"
-"Yahoo!-WWW-sivustolle kirjautuminen saatta korjata tämän."
+"Käyttäjätili lukittu: liian monta epäonnistuttu kirjautumisyritystä. Yahoo!-"
+"WWW-sivustolle kirjautuminen saatta korjata tämän."
 
 #. indicates a lock of some description
-#, fuzzy
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
 msgstr ""
-"Käyttäjätili lukittu: tuntematon syy.\n"
-"Yahoo!-WWW-sivustolle kirjautuminen saatta korjata tämän."
+"Käyttäjätili lukittu: tuntematon syy. Yahoo!-WWW-sivustolle kirjautuminen "
+"saatta korjata tämän."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -9497,12 +9480,11 @@ msgstr ""
 "Tuntematon viesti numero %d. Kirjautumalla Yahoo! verkkosivuille saattaa "
 "korjata tämän."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr ""
 "Tuttavaa %s ei voi lisätä ryhmään %s palvelimen tuttavissa, tilillä %s."
 
-#, fuzzy
 msgid "Unable to add buddy to server list"
 msgstr "Tuttavaa ei voi lisätä palvelimen tuttaviin"
 
@@ -9510,19 +9492,16 @@ msgstr "Tuttavaa ei voi lisätä palvelimen tuttaviin"
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr "[ Ääniäinen %s/%s/%s.swf ] %s"
 
-#, fuzzy
 msgid "Received unexpected HTTP response from server"
-msgstr "Odottamaton HTTP-vastaus palvelimelta."
+msgstr "Odottamaton HTTP-vastaus palvelimelta"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Lost connection with %s: %s"
-msgstr ""
-"Yhteys palvelimeen %s katkesi:\n"
-"%s"
+msgstr "Yhteys palvelimeen %s katkesi: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to establish a connection with %s: %s"
-msgstr "Yhteyttä palvelimeen ei voi muodostaa"
+msgstr "Yhteyttä palvelimeen %s ei voi muodostaa: %s"
 
 msgid "Not at Home"
 msgstr "Poissa kotoa"
@@ -9730,7 +9709,6 @@ msgstr "Huoneluetteloa ei voi hakea."
 msgid "User Rooms"
 msgstr "Käyttäjän huoneet"
 
-#, fuzzy
 msgid "Connection problem with the YCHT server"
 msgstr "Yhteysvirhe YCHT-palvelimen kanssa"
 
@@ -9860,17 +9838,17 @@ msgstr "Alue (realm)"
 msgid "Exposure"
 msgstr "Altistus"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
-msgstr "Vastausta HTTP-välipalvelimelta ei voi jäsentää: %s\n"
+msgstr "Vastausta HTTP-välipalvelimelta ei voi jäsentää: %s"
 
 #, c-format
 msgid "HTTP proxy connection error %d"
 msgstr "HTTP-välipalvelimen yhteysvirhe %d"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Access denied: HTTP proxy server forbids port %d tunneling"
-msgstr "Pääsy evätty: HTTP-välipalvelin estää portin %d tunneloinnin."
+msgstr "Pääsy evätty: HTTP-välipalvelin estää portin %d tunneloinnin"
 
 #, c-format
 msgid "Error resolving %s"
@@ -10164,7 +10142,7 @@ msgstr "Il_moita uudesta sähköpostista"
 msgid "Use this buddy _icon for this account:"
 msgstr "Käytä tätä tuttavakuvaketta tälle käyttäjät_ilille:"
 
-msgid "_Advanced"
+msgid "Ad_vanced"
 msgstr "_Lisäasetukset"
 
 msgid "Use GNOME Proxy Settings"
@@ -10227,8 +10205,8 @@ msgstr "_Perus"
 msgid "Create _this new account on the server"
 msgstr "Luo _tämä uusi käyttäjätili palvelimelle"
 
-msgid "_Proxy"
-msgstr "_Välipalvelin"
+msgid "P_roxy"
+msgstr "Vä_lipalvelin"
 
 msgid "Enabled"
 msgstr "Käytössä"
@@ -10321,11 +10299,9 @@ msgstr "Lisää tuttava_ilmoitin..."
 msgid "View _Log"
 msgstr "Näytä _loki"
 
-#, fuzzy
 msgid "Hide When Offline"
 msgstr "Piilota kun poissa linjoilta"
 
-#, fuzzy
 msgid "Show When Offline"
 msgstr "Näytä kun poissa linjoilta"
 
@@ -10872,7 +10848,6 @@ msgstr "Jätä huomiotta"
 msgid "Get Away Message"
 msgstr "Hae poissaoloviesti"
 
-#, fuzzy
 msgid "Last Said"
 msgstr "Viimeksi sanottu"
 
@@ -12426,9 +12401,8 @@ msgstr "_Näytä ilmoitusalueen kuvake:"
 msgid "On unread messages"
 msgstr "Kun lukemattomia viestejä"
 
-#, fuzzy
 msgid "Conversation Window"
-msgstr "Pikaviesti-ikkunat"
+msgstr "Keskusteluikkuna"
 
 msgid "_Hide new IM conversations:"
 msgstr "_Piilota uudet pikaviestikeskustelut:"
@@ -13067,8 +13041,20 @@ msgstr "_Kopioi linkin osoite"
 msgid "_Copy Email Address"
 msgstr "_Kopioi sähköpostiosoite"
 
+msgid "_Open File"
+msgstr "_Avaa tiedosto..."
+
+msgid "Open _Containing Directory"
+msgstr "Avaa kansio joka _sisältää tämän"
+
 msgid "Save File"
 msgstr "Tallenna tiedosto"
+
+msgid "_Play Sound"
+msgstr "_Toista ääni"
+
+msgid "_Save File"
+msgstr "_Tallenna tiedosto"
 
 msgid "Select color"
 msgstr "Valitse väri"
@@ -14223,6 +14209,9 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
+
+#~ msgid "_Proxy"
+#~ msgstr "_Välipalvelin"
 
 #~ msgid "Cannot open socket"
 #~ msgstr "Pistoketta ei voi avata"

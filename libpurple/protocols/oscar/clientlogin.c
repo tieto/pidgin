@@ -288,7 +288,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 	query_string = g_strdup_printf("a=%s"
 			"&f=xml"
 			"&k=%s"
-			"&ts=%zu"
+			"&ts=%" PURPLE_TIME_T_MODIFIER
 			"&useTLS=0",
 			oscar_auth_url_encode(token), get_client_key(od), hosttime);
 	signature = generate_signature("GET", URL_START_OSCAR_SESSION,
