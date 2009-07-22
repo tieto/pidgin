@@ -195,6 +195,8 @@ purple_certificate_check_signature_chain(GList *chain)
 	GList *cur;
 	PurpleCertificate *crt, *issuer;
 	gchar *uid;
+	time_t now, activation, expiration;
+	gboolean ret;
 
 	g_return_val_if_fail(chain, FALSE);
 
@@ -211,6 +213,8 @@ purple_certificate_check_signature_chain(GList *chain)
 		return TRUE;
 	}
 
+	now = time(NULL);
+
 	/* Load crt with the first certificate */
 	crt = (PurpleCertificate *)(chain->data);
 	/* And start with the second certificate in the chain */
@@ -218,9 +222,29 @@ purple_certificate_check_signature_chain(GList *chain)
 
 		issuer = (PurpleCertificate *)(cur->data);
 
+		uid = purple_certificate_get_unique_id(issuer);
+
+		ret = purple_certificate_get_times(issuer, &activation, &expiration);
+		if (!ret || now < activation || now > expiration) { 
+			if (!ret)
+				purple_debug_error("certificate",
+						"...Failed to get validity times for certificate %s\n"
+						"Chain is INVALID\n", uid);
+			else if (now > expiration)
+				purple_debug_error("certificate",
+						"...Issuer %s expired at %s\nChain is INVALID\n",
+						uid, ctime(&expiration));
+			else
+				purple_debug_error("certificate",
+						"...Not-yet-activated issuer %s will be valid at %s\n"
+						"Chain is INVALID\n", uid, ctime(&activation));
+
+			g_free(uid);
+			return FALSE;
+		}
+
 		/* Check the signature for this link */
 		if (! purple_certificate_signed_by(crt, issuer) ) {
-			uid = purple_certificate_get_unique_id(issuer);
 			purple_debug_error("certificate",
 					  "...Bad or missing signature by %s\nChain is INVALID\n",
 					  uid);
@@ -229,7 +253,6 @@ purple_certificate_check_signature_chain(GList *chain)
 			return FALSE;
 		}
 
-		uid = purple_certificate_get_unique_id(issuer);
 		purple_debug_info("certificate",
 				  "...Good signature by %s\n",
 				  uid);
@@ -361,7 +384,6 @@ purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t 
 	/* Throw the request on down to the certscheme */
 	return (scheme->get_times)(crt, activation, expiration);
 }
-
 
 gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
@@ -1461,12 +1483,54 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 {
 	const gchar *tls_peers_name = "tls_peers"; /* Name of local cache */
 	PurpleCertificatePool *tls_peers;
+	time_t now, activation, expiration;
+	gboolean ret;
 
 	g_return_if_fail(vrq);
 
 	purple_debug_info("certificate/x509/tls_cached",
 			  "Starting verify for %s\n",
 			  vrq->subject_name);
+
+	/*
+	 * Verify the first certificate (the main one) has been activated and
+	 * isn't expired, i.e. activation < now < expiration.
+	 */
+	now = time(NULL);
+	ret = purple_certificate_get_times(vrq->cert_chain->data, &activation,
+	                                   &expiration);
+	if (!ret || now > expiration || now < activation) {
+		gchar *secondary;
+
+		if (!ret)
+			purple_debug_error("certificate/x509/tls_cached",
+					"Failed to get validity times for certificate %s\n",
+					vrq->subject_name);
+		else if (now > expiration)
+			purple_debug_error("certificate/x509/tls_cached",
+					"Certificate %s expired at %s\n",
+					vrq->subject_name, ctime(&expiration));
+		else
+			purple_debug_error("certificate/x509/tls_cached",
+					"Certificate %s is not yet valid, will be at %s\n",
+					vrq->subject_name, ctime(&activation));
+
+		/* FIXME 2.6.1 */
+		secondary = g_strdup_printf(_("The certificate chain presented"
+					" for %s is not valid."),
+					vrq->subject_name);
+
+		purple_notify_error(NULL, /* TODO: Probably wrong. */
+					_("SSL Certificate Error"),
+					_("Invalid certificate chain"),
+					secondary );
+		g_free(secondary);
+
+		/* Okay, we're done here */
+		purple_certificate_verify_complete(vrq,
+						    PURPLE_CERTIFICATE_INVALID);
+		return;
+	}
 
 	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,tls_peers_name);
 
