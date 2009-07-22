@@ -982,21 +982,17 @@ void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *it
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	GSList *list = account->deny;
 	const char *jid = xmlnode_get_attrib(item, "jid");
-	char *jid_norm = g_strdup(jabber_normalize(account, jid));
+	char *jid_norm = jabber_normalize(account, jid);
 
 	while (list) {
 		if (!strcmp(jid_norm, (char*)list->data)) {
 			xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
-			xmlnode_set_attrib(item, "gr:t", "B");
-			xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
 			xmlnode_set_attrib(query, "gr:ext", "2");
+			xmlnode_set_attrib(item, "gr:t", "B");
 			return;
 		}
 		list = list->next;
 	}
-
-	g_free(jid_norm);
-
 }
 
 gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
