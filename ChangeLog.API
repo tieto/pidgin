@@ -87,6 +87,7 @@ version 2.6.0 (??/??/2009):
 		* purple_find_group is now more efficient for large numbers of groups.
 		* All DNS routines support internationalized domain names (IDNs) when
 		  libpurple is compiled with GNU libidn.
+		* status is set before emitting signals in purple_xfer_set_status.
 
 		Deprecated:
 		* buddy-added and buddy-removed blist signals

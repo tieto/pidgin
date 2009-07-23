@@ -132,6 +132,8 @@ purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 {
 	g_return_if_fail(xfer != NULL);
 
+	xfer->status = status;
+
 	if(xfer->type == PURPLE_XFER_SEND) {
 		switch(status) {
 			case PURPLE_XFER_STATUS_ACCEPTED:
@@ -169,8 +171,6 @@ purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 				break;
 		}
 	}
-
-	xfer->status = status;
 }
 
 void purple_xfer_conversation_write(PurpleXfer *xfer, char *message, gboolean is_error)
