@@ -949,7 +949,7 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 			const size_t wc = fwrite(buffer, 1, r, xfer->dest_fp);
 			if (wc != r) {
 				purple_debug_error("filetransfer", "Unable to write whole buffer.\n");
-				purple_xfer_cancel_remote(xfer);
+				purple_xfer_cancel_local(xfer);
 				return;
 			}
 		} else if(r < 0) {
