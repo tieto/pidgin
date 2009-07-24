@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-21 19:08+0200\n"
-"PO-Revision-Date: 2009-07-21 19:06+0200\n"
+"POT-Creation-Date: 2009-07-24 18:05+0200\n"
+"PO-Revision-Date: 2009-07-24 18:05+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1700,6 +1700,7 @@ msgstr ""
 "Das Zertifikat von „%s“ ist selbstsigniert. Es kann nicht automatisch "
 "geprüft werden."
 
+#. FIXME 2.6.1
 #, c-format
 msgid "The certificate chain presented for %s is not valid."
 msgstr "Die Zertifizierungskette, die für %s präsentiert wird, ist ungültig."
@@ -1709,6 +1710,7 @@ msgstr "Die Zertifizierungskette, die für %s präsentiert wird, ist ungültig."
 #. stifle it.
 #. TODO: Probably wrong.
 #. TODO: Probably wrong
+#. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "SSL-Zertifikatfehler"
 
@@ -10871,7 +10873,7 @@ msgid "The text information for when a buddy has an unread message"
 msgstr "Die Textinformation für einen Buddy mit ungelesenen Nachrichten"
 
 msgid "Message (Nick Said) Text"
-msgstr ""
+msgstr "Nachrichtentext (mit enthaltenem Spitznamen)"
 
 msgid ""
 "The text information for when a chat has an unread message that mentions "
@@ -13239,9 +13241,8 @@ msgstr "Kontakt-Verfügbarkeits-Vorhersage-Plugin."
 msgid "Displays statistical information about your buddies' availability"
 msgstr "Statistische Informationen über die Verfügbarkeit Ihrer Buddys zeigen"
 
-#, fuzzy
 msgid "Server name request"
-msgstr "Server-Adresse"
+msgstr "Servernamen-Anfrage"
 
 msgid "Enter an XMPP Server"
 msgstr "Geben Sie einen XMPP-Server ein"
@@ -13293,12 +13294,12 @@ msgstr "XMPP-Dienstsuche"
 msgid "Allows browsing and registering services."
 msgstr "Erlaubt das Durchsuchen und Registrieren von Diensten"
 
-#, fuzzy
 msgid ""
 "This plugin is useful for registering with legacy transports or other XMPP "
 "services."
 msgstr ""
-"Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
+"Dieses Plugin ist nützlich zum Registrieren bei veralteten Transports oder "
+"anderen XMPP-Diensten."
 
 msgid "Buddy is idle"
 msgstr "Buddy ist untätig"
