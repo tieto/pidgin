@@ -125,9 +125,11 @@ pidgin_SOURCES = \
 	gtkstatusbox.c \
 	gtkthemes.c \
 	gtkutils.c \
+	gtkwebview.c \
 	gtkwhiteboard.c \
 	minidialog.c \
-	pidgintooltip.c
+	pidgintooltip.c \
+	smileyparser.c
 
 pidgin_headers = \
 	eggtrayicon.h \
@@ -183,10 +185,12 @@ pidgin_headers = \
 	pidginstock.h \
 	gtkthemes.h \
 	gtkutils.h \
+	gtkwebview.h \
 	gtkwhiteboard.h \
 	minidialog.h \
 	pidgintooltip.h \
-	pidgin.h
+	pidgin.h \
+	smileyparser.h
 
 pidginincludedir=$(includedir)/pidgin
 pidgininclude_HEADERS = \
@@ -206,6 +210,7 @@ pidgin_LDADD = \
 	$(GTKSPELL_LIBS) \
 	$(STARTUP_NOTIFICATION_LIBS) \
 	$(LIBXML_LIBS) \
+	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
@@ -231,5 +236,6 @@ AM_CPPFLAGS = \
 	$(GTKSPELL_CFLAGS) \
 	$(STARTUP_NOTIFICATION_CFLAGS) \
 	$(LIBXML_CFLAGS) \
+	$(WEBKIT_CFLAGS) \
 	$(INTGG_CFLAGS)
 endif  # ENABLE_GTK
