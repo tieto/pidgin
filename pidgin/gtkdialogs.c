@@ -27,6 +27,7 @@
 
 #include "internal.h"
 #include "pidgin.h"
+#include "package_revision.h"
 
 #include "debug.h"
 #include "notify.h"
@@ -446,7 +447,7 @@ void pidgin_dialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR>(libpurple %s)<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version());
+		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR>(libpurple %s)<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
 
 	g_string_append_printf(str,
 		_("%s is a graphical modular messaging client based on "
