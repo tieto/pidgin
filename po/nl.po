@@ -4637,7 +4637,7 @@ msgid "Connect server"
 msgstr "Verbinden met server"
 
 msgid "File transfer proxies"
-msgstr "Bestandsoverdracht poortnummer"
+msgstr "Bestandsoverdracht proxy"
 
 msgid "BOSH URL"
 msgstr "BOSH koppeling"
