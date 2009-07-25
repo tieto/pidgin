@@ -31,6 +31,8 @@ depcomp
 doc/finch.1$
 doc/pidgin.1$
 doc/html
+package_revision.h
+package_revision_raw.txt
 pidgin.apspec$
 pidgin.desktop$
 pidgin.spec$
@@ -48,6 +50,7 @@ pidgin/win32/pidgin_dll_rc.rc$
 pidgin/win32/pidgin_exe_rc.rc$
 install-sh
 libpurple/dbus-bindings.c
+libpurple/dbus-signals.c
 libpurple/dbus-types.c
 libpurple/dbus-types.h
 libpurple/example/nullclient
