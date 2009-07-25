@@ -982,7 +982,7 @@ void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *it
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	GSList *list = account->deny;
 	const char *jid = xmlnode_get_attrib(item, "jid");
-	char *jid_norm = jabber_normalize(account, jid);
+	char *jid_norm = (char *)jabber_normalize(account, jid);
 
 	while (list) {
 		if (!strcmp(jid_norm, (char*)list->data)) {
