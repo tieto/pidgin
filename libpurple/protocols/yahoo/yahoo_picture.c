@@ -461,7 +461,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 
 	/* header + packet + "29" + 0xc0 + 0x80) + pictureblob */
 
-	host = purple_account_get_string(account, "xfer_host", YAHOO_XFER_HOST);
+	host = purple_account_get_string(account, "xfer_host", yd->jp? YAHOOJP_XFER_HOST : YAHOO_XFER_HOST);
 	port = purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT);
 	tmp = g_strdup_printf("%s:%d", host, port);
 	header = g_strdup_printf("POST %s%s/notifyft HTTP/1.1\r\n"
@@ -506,8 +506,8 @@ void yahoo_buddy_icon_upload(PurpleConnection *gc, struct yahoo_buddy_icon_uploa
 	}
 
 	yd->buddy_icon_connect_data = purple_proxy_connect(NULL, account,
-			yd->jp ? purple_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST)
-			       : purple_account_get_string(account, "xfer_host",  YAHOO_XFER_HOST),
+			purple_account_get_string(account, "xfer_host",
+				yd->jp? YAHOOJP_XFER_HOST : YAHOO_XFER_HOST),
 			purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
 			yahoo_buddy_icon_upload_connected, d);
 
