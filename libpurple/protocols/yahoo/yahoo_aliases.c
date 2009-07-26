@@ -74,7 +74,7 @@ static void
 yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message)
 {
 	PurpleConnection *gc = user_data;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
@@ -186,7 +186,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 void
 yahoo_fetch_aliases(PurpleConnection *gc)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	const char *url;
 	gchar *request, *webpage, *webaddress;
 	PurpleUtilFetchUrlData *url_data;
@@ -228,7 +228,7 @@ yahoo_update_alias_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, cons
 	xmlnode *node, *result;
 	struct callback_data *cb = user_data;
 	PurpleConnection *gc = cb->gc;
-	struct yahoo_data *yd;
+	YahooData *yd;
 
 	yd = gc->proto_data;
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
@@ -289,7 +289,7 @@ yahoo_update_alias_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, cons
 void
 yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 {
-	struct yahoo_data *yd;
+	YahooData *yd;
 	const char *url;
 	gchar *content, *request, *webpage, *webaddress;
 	struct callback_data *cb;
@@ -403,7 +403,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
  * which is stupid, and thus not really surprising. */
 
 struct yahoo_userinfo {
-	struct yahoo_data *yd;
+	YahooData *yd;
 	char *xml;
 };
 
@@ -452,7 +452,7 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	xmlnode *node = xmlnode_new("ab");
 	xmlnode *ct = xmlnode_new_child(node, "ct");
-	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account;
 	PurpleUtilFetchUrlData *url_data;
 	char *webaddress, *webpage;
@@ -592,7 +592,7 @@ void yahoo_set_userinfo_for_buddy(PurpleConnection *gc, PurpleBuddy *buddy)
 
 void yahoo_set_userinfo(PurpleConnection *gc)
 {
-	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleRequestFields *fields = request_fields_from_personal_details(&yd->ypd,
 					purple_connection_get_display_name(gc));
 	purple_request_fields(gc, NULL, _("Set User Info"), NULL, fields,
@@ -602,7 +602,7 @@ void yahoo_set_userinfo(PurpleConnection *gc)
 }
 
 static gboolean
-parse_contact_details(struct yahoo_data *yd, const char *who, const char *xml)
+parse_contact_details(YahooData *yd, const char *who, const char *xml)
 {
 	xmlnode *node, *nd;
 	YahooFriend *f;
@@ -690,7 +690,7 @@ void yahoo_process_contact_details(PurpleConnection *gc, struct yahoo_packet *pk
 {
 	GSList *l = pkt->hash;
 	const char *who = NULL, *xml = NULL;
-	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	for (; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
