@@ -88,6 +88,83 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 	return jb;
 }
 
+static gint resource_compare_cb(gconstpointer a, gconstpointer b)
+{
+	const JabberBuddyResource *jbra = a;
+	const JabberBuddyResource *jbrb = b;
+	JabberBuddyState state_a, state_b;
+
+	if (jbra->priority != jbrb->priority)
+		return jbra->priority > jbrb->priority ? 1 : -1;
+
+	/* Fold the states for easier comparison */
+	switch (jbra->state) {
+		case JABBER_BUDDY_STATE_ONLINE:
+		case JABBER_BUDDY_STATE_CHAT:
+			state_a = JABBER_BUDDY_STATE_ONLINE;
+			break;
+		case JABBER_BUDDY_STATE_AWAY:
+		case JABBER_BUDDY_STATE_DND:
+			state_a = JABBER_BUDDY_STATE_AWAY;
+			break;
+		case JABBER_BUDDY_STATE_XA:
+			state_a = JABBER_BUDDY_STATE_XA;
+			break;
+		case JABBER_BUDDY_STATE_UNAVAILABLE:
+			state_a = JABBER_BUDDY_STATE_UNAVAILABLE;
+			break;
+		default:
+			state_a = JABBER_BUDDY_STATE_UNKNOWN;
+			break;
+	}
+
+	switch (jbrb->state) {
+		case JABBER_BUDDY_STATE_ONLINE:
+		case JABBER_BUDDY_STATE_CHAT:
+			state_b = JABBER_BUDDY_STATE_ONLINE;
+			break;
+		case JABBER_BUDDY_STATE_AWAY:
+		case JABBER_BUDDY_STATE_DND:
+			state_b = JABBER_BUDDY_STATE_AWAY;
+			break;
+		case JABBER_BUDDY_STATE_XA:
+			state_b = JABBER_BUDDY_STATE_XA;
+			break;
+		case JABBER_BUDDY_STATE_UNAVAILABLE:
+			state_b = JABBER_BUDDY_STATE_UNAVAILABLE;
+			break;
+		default:
+			state_b = JABBER_BUDDY_STATE_UNKNOWN;
+			break;
+	}
+
+	if (state_a == state_b) {
+		if (jbra->idle == jbrb->idle)
+			return 0;
+		else if ((jbra->idle && !jbrb->idle) ||
+				(jbra->idle && jbrb->idle && jbra->idle < jbrb->idle))
+			return -1;
+		else
+			return 1;
+	}
+
+	if (state_a == JABBER_BUDDY_STATE_ONLINE)
+		return 1;
+	else if (state_a == JABBER_BUDDY_STATE_AWAY &&
+				(state_b == JABBER_BUDDY_STATE_XA ||
+				 state_b == JABBER_BUDDY_STATE_UNAVAILABLE ||
+				 state_b == JABBER_BUDDY_STATE_UNKNOWN))
+		return 1;
+	else if (state_a == JABBER_BUDDY_STATE_XA &&
+				(state_b == JABBER_BUDDY_STATE_UNAVAILABLE ||
+				 state_b == JABBER_BUDDY_STATE_UNKNOWN))
+		return 1;
+	else if (state_a == JABBER_BUDDY_STATE_UNAVAILABLE &&
+				state_b == JABBER_BUDDY_STATE_UNKNOWN)
+		return 1;
+
+	return -1;
+}
 
 JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		const char *resource)
@@ -104,44 +181,8 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		if (!jbr && !resource) {
 			jbr = tmp;
 		} else if (!resource) {
-			if (tmp->priority > jbr->priority)
+			if (resource_compare_cb(tmp, jbr) > 0)
 				jbr = tmp;
-			else if (tmp->priority == jbr->priority) {
-				/* Determine if this resource is more available than the one we've currently chosen */
-				switch(tmp->state) {
-					case JABBER_BUDDY_STATE_ONLINE:
-					case JABBER_BUDDY_STATE_CHAT:
-						/* This resource is online/chatty. Prefer to one which isn't either. */
-						if (((jbr->state != JABBER_BUDDY_STATE_ONLINE) && (jbr->state != JABBER_BUDDY_STATE_CHAT))
-							|| (jbr->idle && !tmp->idle)
-							|| (jbr->idle && tmp->idle && tmp->idle > jbr->idle))
-							jbr = tmp;
-						break;
-					case JABBER_BUDDY_STATE_AWAY:
-					case JABBER_BUDDY_STATE_DND:
-						/* This resource is away/dnd. Prefer to one which is extended away, unavailable, or unknown. */
-						if (((jbr->state == JABBER_BUDDY_STATE_XA) || (jbr->state == JABBER_BUDDY_STATE_UNAVAILABLE) ||
-							(jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
-							|| (jbr->idle && !tmp->idle)
-							|| (jbr->idle && tmp->idle && tmp->idle > jbr->idle))
-							jbr = tmp;
-						break;
-					case JABBER_BUDDY_STATE_XA:
-						/* This resource is extended away. That's better than unavailable or unknown. */
-						if ((jbr->state == JABBER_BUDDY_STATE_UNAVAILABLE) || (jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
-							jbr = tmp;
-						break;
-					case JABBER_BUDDY_STATE_UNAVAILABLE:
-						/* This resource is unavailable. That's better than unknown. */
-						if ((jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
-							jbr = tmp;
-						break;
-					case JABBER_BUDDY_STATE_UNKNOWN:
-					case JABBER_BUDDY_STATE_ERROR:
-						/* These are never preferable. */
-						break;
-				}
-			}
 		} else if(tmp->name) {
 			if(!strcmp(tmp->name, resource)) {
 				jbr = tmp;
