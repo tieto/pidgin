@@ -295,6 +295,21 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 	/* Check if this conversation already exists. */
 	if ((conv = purple_find_conversation_with_account(type, name, account)) != NULL)
 	{
+		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
+				!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
+			purple_debug_warning("conversation", "Trying to create multiple "
+					"chats (%s) with the same name is deprecated and will be "
+					"removed in libpurple 3.0.0", name);
+		}
+
+		/*
+		 * This hack is necessary because some prpls (MSN) have unnamed chats
+		 * that all use the same name.  A PurpleConversation for one of those
+		 * is only ever re-used if the user has left, so calls to
+		 * purple_conversation_new need to fall-through to creating a new
+		 * chat.
+		 * TODO 3.0.0: Remove this workaround and mandate unique names.
+		 */
 		if (purple_conversation_get_type(conv) != PURPLE_CONV_TYPE_CHAT ||
 				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
 		{

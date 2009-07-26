@@ -88,6 +88,8 @@ version 2.6.0 (??/??/2009):
 		* All DNS routines support internationalized domain names (IDNs) when
 		  libpurple is compiled with GNU libidn.
 		* status is set before emitting signals in purple_xfer_set_status.
+		* Creating multiple distinct chats with the same name (i.e. "MSN Chat")
+		  is deprecated and will be removed in libpurple 3.0.0.
 
 		Deprecated:
 		* buddy-added and buddy-removed blist signals
