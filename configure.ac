@@ -1640,7 +1640,7 @@ dnl #
 dnl # Thanks go to Evolution for the checks.
 dnl #######################################################################
 
-AC_ARG_WITH(with-system-ssl-certs, [AC_HELP_STRING([--with-system-ssl-certs=<dir>], [directory containing system-wide SSL CA certificates])])
+AC_ARG_WITH(system-ssl-certs, [AC_HELP_STRING([--with-system-ssl-certs=<dir>], [directory containing system-wide SSL CA certificates])])
 
 SSL_CERTIFICATES_DIR=""
 if ! test -z "$with_system_ssl_certs" ; then
