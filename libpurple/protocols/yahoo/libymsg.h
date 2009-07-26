@@ -167,7 +167,7 @@ typedef struct _YahooPersonalDetails {
 	} phone;
 } YahooPersonalDetails;
 
-struct yahoo_data {
+typedef struct {
 	PurpleConnection *gc;
 	int fd;
 	guchar *rxqueue;
@@ -239,7 +239,7 @@ struct yahoo_data {
 	int yahoo_p2p_server_watcher;
 	GHashTable *sms_carrier;	/* sms carrier data */
 	guint yahoo_p2p_server_timeout_handle;
-};
+} YahooData;
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)
 

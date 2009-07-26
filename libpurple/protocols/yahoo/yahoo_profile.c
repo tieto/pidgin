@@ -784,7 +784,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	char *tmp;
 	char *profile_url_text = NULL;
 	int lang, strid;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	const profile_strings_node_t *strings = NULL;
 	const char *title;
 	profile_state_t profile_state = PROFILE_STATE_DEFAULT;
@@ -956,7 +956,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 		const gchar *url_text, size_t len, const gchar *error_message)
 {
 	YahooGetInfoStepTwoData *info2_data = (YahooGetInfoStepTwoData *)data;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	gboolean found = FALSE;
 	int id = -1;
 
@@ -1264,7 +1264,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 void yahoo_get_info(PurpleConnection *gc, const char *name)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	YahooGetInfoData *data;
 	char *url;
 	PurpleUtilFetchUrlData *url_data;

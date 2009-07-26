@@ -456,7 +456,7 @@ static char *_getcookie(char *rawcookie)
 	return cookie;
 }
 
-static void yahoo_process_cookie(struct yahoo_data *yd, char *c)
+static void yahoo_process_cookie(YahooData *yd, char *c)
 {
 	if (c[0] == 'Y') {
 		if (yd->cookie_y)
@@ -476,7 +476,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	GSList *l = pkt->hash;
 
 	PurpleAccount *account = purple_connection_get_account(gc);
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	GHashTable *ht;
 	char *norm_bud = NULL;
 	char *temp = NULL;
@@ -607,7 +607,7 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 	PurpleGroup *g;
 	YahooFriend *f = NULL;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	GHashTable *ht;
 
 	char **lines;
@@ -754,7 +754,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 	YahooFriend *f = NULL;
 	GSList *l = pkt->hash;
 	gint val_11 = 0;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	gboolean msn = FALSE;
 
 	account = purple_connection_get_account(gc);
@@ -849,7 +849,7 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 	PurpleAccount *account;
 	GSList *l = pkt->hash;
 	struct _yahoo_im *sms = NULL;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	char *server_msg = NULL;
 	char *m;
 
@@ -909,7 +909,7 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt, yahoo_pkt_type pkt_type)
 {
 	PurpleAccount *account;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 	GSList *list = NULL;
 	struct _yahoo_im *im = NULL;
@@ -1142,7 +1142,7 @@ yahoo_buddy_add_authorize_cb(gpointer data)
 {
 	struct yahoo_add_request *add_req = data;
 	struct yahoo_packet *pkt;
-	struct yahoo_data *yd = add_req->gc->proto_data;
+	YahooData *yd = add_req->gc->proto_data;
 	const char *who = add_req->who;
 
 	if (add_req->protocol == 2)
@@ -1165,7 +1165,7 @@ yahoo_buddy_add_authorize_cb(gpointer data)
 static void
 yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg)
 {
-	struct yahoo_data *yd = add_req->gc->proto_data;
+	YahooData *yd = add_req->gc->proto_data;
 	struct yahoo_packet *pkt;
 	char *encoded_msg = NULL;
 	const char *who = add_req->who;
@@ -1217,7 +1217,7 @@ yahoo_buddy_add_deny_reason_cb(gpointer data) {
 static void yahoo_buddy_denied_our_add(PurpleConnection *gc, const char *who, const char *reason)
 {
 	char *notify_msg;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 
 	if (who == NULL)
 		return;
@@ -1524,7 +1524,7 @@ static char *yahoo_decode(const char *text)
 static void yahoo_process_mail(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	const char *who = NULL;
 	const char *email = NULL;
 	const char *subj = NULL;
@@ -1608,7 +1608,7 @@ static void to_y64(char *out, const unsigned char *in, gsize inlen)
 
 static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	const char *name = purple_normalize(account, purple_account_get_username(account));
 	PurpleCipher *md5_cipher;
@@ -1651,7 +1651,7 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 {
 	struct yahoo_auth_data *auth_data = user_data;
 	PurpleConnection *gc = auth_data->gc;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	gboolean try_login_on_error = FALSE;
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage2\n");
@@ -1662,7 +1662,7 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 		g_return_if_reached();
 	}
 
-	yd = (struct yahoo_data *)gc->proto_data;
+	yd = (YahooData *)gc->proto_data;
 
 	if (error_message != NULL) {
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve stage 2 url: %s\n", error_message);
@@ -2026,7 +2026,7 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 #ifdef TRY_WEBMESSENGER_LOGIN
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 #endif /* TRY_WEBMESSENGER_LOGIN */
 	GSList *l = pkt->hash;
 	int err = 0;
@@ -2110,7 +2110,7 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 	char *buf;
 	YahooFriend *f;
 	GSList *l = pkt->hash;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	int protocol = 0;
 	gboolean msn = FALSE;
 
@@ -2197,7 +2197,7 @@ static void yahoo_p2p_keepalive_cb(gpointer key, gpointer value, gpointer user_d
 	PurpleConnection *gc = user_data;
 	struct yahoo_packet *pkt_to_send;
 	PurpleAccount *account;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 
 	account = purple_connection_get_account(gc);
 
@@ -2216,7 +2216,7 @@ static void yahoo_p2p_keepalive_cb(gpointer key, gpointer value, gpointer user_d
 static gboolean yahoo_p2p_keepalive(gpointer data)
 {
 	PurpleConnection *gc = data;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 
 	g_hash_table_foreach(yd->peers, yahoo_p2p_keepalive_cb, gc);
 
@@ -2257,7 +2257,7 @@ static void yahoo_p2p_process_p2pfilexfer(gpointer data, gint source, struct yah
 	struct yahoo_packet *pkt_to_send;
 	PurpleAccount *account;
 	int val_13_to_send = 0;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	YahooFriend *f;
 
 	if(!(p2p_data = data))
@@ -2344,7 +2344,7 @@ static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputConditi
 	struct yahoo_packet *pkt;
 	guchar *start = NULL;
 	struct yahoo_p2p_data *p2p_data;
-	struct yahoo_data *yd;
+	YahooData *yd;
 
 	if(!(p2p_data = data))
 		return ;
@@ -2416,7 +2416,7 @@ static void yahoo_p2p_server_send_connected_cb(gpointer data, gint source, Purpl
 {
 	int acceptfd;
 	struct yahoo_p2p_data *p2p_data;
-	struct yahoo_data *yd;
+	YahooData *yd;
 
 	if(!(p2p_data = data))
 		return ;
@@ -2455,7 +2455,7 @@ static void yahoo_p2p_server_send_connected_cb(gpointer data, gint source, Purpl
 static gboolean yahoo_cancel_p2p_server_listen_cb(gpointer data)
 {
 	struct yahoo_p2p_data *p2p_data;
-	struct yahoo_data *yd;
+	YahooData *yd;
 
 	if(!(p2p_data = data))
 		return FALSE;
@@ -2476,7 +2476,7 @@ static gboolean yahoo_cancel_p2p_server_listen_cb(gpointer data)
 static void yahoo_p2p_server_listen_cb(int listenfd, gpointer data)
 {
 	struct yahoo_p2p_data *p2p_data;
-	struct yahoo_data *yd;
+	YahooData *yd;
 
 	if(!(p2p_data = data))
 		return ;
@@ -2508,7 +2508,7 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	YahooFriend *f;
 	struct yahoo_packet *pkt;
 	PurpleAccount *account;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	struct yahoo_p2p_data *p2p_data;
 
 	f = yahoo_friend_find(gc, who);
@@ -2576,7 +2576,7 @@ static void yahoo_p2p_init_cb(gpointer data, gint source, const gchar *error_mes
 	struct yahoo_p2p_data *p2p_data;
 	struct yahoo_packet *pkt_to_send;
 	PurpleAccount *account;
-	struct yahoo_data *yd;
+	YahooData *yd;
 
 	if(!(p2p_data = data))
 		return ;
@@ -2922,7 +2922,7 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 static void yahoo_pending(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = data;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	char buf[1024];
 	int len;
 
@@ -3019,7 +3019,7 @@ static void yahoo_pending(gpointer data, gint source, PurpleInputCondition cond)
 static void yahoo_got_connected(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleConnection *gc = data;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	struct yahoo_packet *pkt;
 
 	if (source < 0) {
@@ -3045,7 +3045,7 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 static void yahoo_got_web_connected(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleConnection *gc = data;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	struct yahoo_packet *pkt;
 
 	if (source < 0) {
@@ -3075,7 +3075,7 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 {
 	PurpleConnection *gc = data;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	char bufread[2048], *i = bufread, *buf = bufread;
 	int len;
 	GString *s;
@@ -3150,7 +3150,7 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 static void yahoo_got_cookies_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PurpleConnection *gc;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	int written, remaining;
 
 	gc = data;
@@ -3264,7 +3264,7 @@ yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 {
 	PurpleConnection *gc = (PurpleConnection *)user_data;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	const char *sn = purple_account_get_username(account);
 	const char *pass = purple_connection_get_password(gc);
 	GHashTable *hash = yahoo_login_page_hash(url_text, len);
@@ -3405,7 +3405,7 @@ static int get_yahoo_status_from_purple_status(PurpleStatus *status)
 
 void yahoo_login(PurpleAccount *account) {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
+	YahooData *yd = gc->proto_data = g_new0(YahooData, 1);
 	PurpleStatus *status = purple_account_get_active_status(account);
 	const char *server = NULL;
 	int pager_port = 0;
@@ -3452,7 +3452,7 @@ void yahoo_login(PurpleAccount *account) {
 }
 
 void yahoo_close(PurpleConnection *gc) {
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	YahooData *yd = (YahooData *)gc->proto_data;
 	GSList *l;
 
 	if (gc->inpa)
@@ -3550,7 +3550,7 @@ const char *yahoo_list_emblem(PurpleBuddy *b)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	YahooFriend *f;
 	PurplePresence *presence;
 
@@ -3613,7 +3613,7 @@ static void yahoo_initiate_conference(PurpleBlistNode *node, gpointer data) {
 	PurpleConnection *gc;
 
 	GHashTable *components;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	int id;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
@@ -3650,7 +3650,7 @@ static void yahoo_game(PurpleBlistNode *node, gpointer data) {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	struct yahoo_data *yd;
+	YahooData *yd;
 	const char *game;
 	char *game2;
 	char *t;
@@ -3661,7 +3661,7 @@ static void yahoo_game(PurpleBlistNode *node, gpointer data) {
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	yd = (struct yahoo_data *) gc->proto_data;
+	yd = (YahooData *) gc->proto_data;
 
 	f = yahoo_friend_find(gc, purple_buddy_get_name(buddy));
 	if (!f)
@@ -3818,7 +3818,7 @@ static void yahoo_chat_goto_menu(PurpleBlistNode *node, gpointer data)
 static GList *build_presence_submenu(YahooFriend *f, PurpleConnection *gc) {
 	GList *m = NULL;
 	PurpleMenuAction *act;
-	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
+	YahooData *yd = (YahooData *) gc->proto_data;
 
 	if (yd->current_status == YAHOO_STATUS_INVISIBLE) {
 		if (f->presence != YAHOO_PRESENCE_ONLINE) {
@@ -3878,7 +3878,7 @@ static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
 	PurpleMenuAction *act;
 
 	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	static char buf2[1024];
 	YahooFriend *f;
 
@@ -3959,7 +3959,7 @@ GList *yahoo_blist_node_menu(PurpleBlistNode *node)
 
 static void yahoo_act_id(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	const char *name = yd->profiles[purple_request_fields_get_choice(fields, "id")];
 
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_IDACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
@@ -3976,7 +3976,7 @@ yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	PurpleConnection *gc = user_data;
 	gboolean set_cookie = FALSE;
 	gchar *url;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
@@ -4012,7 +4012,7 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 	/* XXX I have no idea how this will work with Yahoo! Japan. */
 
 	PurpleConnection *gc = action->context;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 
 	PurpleUtilFetchUrlData *url_data;
 	const char* base_url = "http://login.yahoo.com";
@@ -4056,7 +4056,7 @@ static void yahoo_show_act_id(PurplePluginAction *action)
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	const char *name = purple_connection_get_display_name(gc);
 	int iter;
 
@@ -4126,7 +4126,7 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 {
 	struct yahoo_sms_carrier_cb_data *sms_cb_data = user_data;
 	PurpleConnection *gc = sms_cb_data->gc;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	char *mobile_no = NULL;
 	char *status = NULL;
 	char *carrier = NULL;
@@ -4177,7 +4177,7 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 
 static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	PurpleUtilFetchUrlData *url_data;
 	struct yahoo_sms_carrier_cb_data *sms_cb_data;
 	char *validate_request_str = NULL;
@@ -4235,7 +4235,7 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 
 int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
 	char *msg = yahoo_html_to_codes(what);
 	char *msg2;
@@ -4386,7 +4386,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 
 unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	struct yahoo_p2p_data *p2p_data;
 	gboolean msn = !g_strncasecmp(who, "msn/", 4);
 	struct yahoo_packet *pkt = NULL;
@@ -4431,7 +4431,7 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc;
 	PurplePresence *presence;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	struct yahoo_packet *pkt;
 	int old_status;
 	const char *msg = NULL;
@@ -4444,7 +4444,7 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	gc = purple_account_get_connection(account);
 	presence = purple_status_get_presence(status);
-	yd = (struct yahoo_data *)gc->proto_data;
+	yd = (YahooData *)gc->proto_data;
 	old_status = yd->current_status;
 
 	yd->current_status = get_yahoo_status_from_purple_status(status);
@@ -4506,7 +4506,7 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 
 void yahoo_set_idle(PurpleConnection *gc, int idle)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
 	char *msg = NULL, *msg2 = NULL;
 	PurpleStatus *status = NULL;
@@ -4612,7 +4612,7 @@ GList *yahoo_status_types(PurpleAccount *account)
 void yahoo_keepalive(PurpleConnection *gc)
 {
 	struct yahoo_packet *pkt;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	time_t now = time(NULL);
 
 	/* We're only allowed to send a ping once an hour or the servers will boot us */
@@ -4645,7 +4645,7 @@ void yahoo_keepalive(PurpleConnection *gc)
 
 void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
 {
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	YahooData *yd = (YahooData *)gc->proto_data;
 	struct yahoo_packet *pkt;
 	const char *group = NULL;
 	char *group2;
@@ -4709,7 +4709,7 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
 
 void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	YahooData *yd = (YahooData *)gc->proto_data;
 	struct yahoo_packet *pkt;
 	GSList *buddies, *l;
 	PurpleGroup *g;
@@ -4757,7 +4757,7 @@ void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g
 }
 
 void yahoo_add_deny(PurpleConnection *gc, const char *who) {
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	YahooData *yd = (YahooData *)gc->proto_data;
 	struct yahoo_packet *pkt;
 
 	if (!yd->logged_in)
@@ -4773,7 +4773,7 @@ void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 }
 
 void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	YahooData *yd = (YahooData *)gc->proto_data;
 	struct yahoo_packet *pkt;
 
 	if (!yd->logged_in)
@@ -4814,7 +4814,7 @@ void yahoo_set_permit_deny(PurpleConnection *gc)
 void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 				   const char *old_group, const char *new_group)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
 	char *gpn, *gpo;
 	YahooFriend *f = yahoo_friend_find(gc, who);
@@ -4863,7 +4863,7 @@ void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 void yahoo_rename_group(PurpleConnection *gc, const char *old_name,
 							   PurpleGroup *group, GList *moved_buddies)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
 	char *gpn, *gpo;
 
@@ -4903,7 +4903,7 @@ yahoopurple_cmd_chat_join(PurpleConversation *conv, const char *cmd,
 {
 	GHashTable *comp;
 	PurpleConnection *gc;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	int id;
 
 	if (!args || !args[0])

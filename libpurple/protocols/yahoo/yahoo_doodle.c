@@ -384,7 +384,7 @@ static void yahoo_doodle_command_send_generic(const char *type,
 											  const char *imv,
 											  const char *sixtyfour)
 {
-	struct yahoo_data *yd;
+	YahooData *yd;
 	struct yahoo_packet *pkt;
 
 	purple_debug_info("yahoo", "doodle: Sent %s (%s)\n", type, to);
