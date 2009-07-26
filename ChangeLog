@@ -3,7 +3,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.6.0 (??/??/2009):
 	libpurple:
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
-	  project.  With some minor additions and clean ups from Paul Aurich.
+	  project, with some minor additions and cleanups from Paul Aurich.
 	* Voice & Video framework in libpurple, thanks to Mike Ruprecht's summer
 	  of code project in 2008.
 	* It should no longer be possible to end up with duplicates of buddies
@@ -119,10 +119,11 @@ version 2.6.0 (??/??/2009):
 	  (Sulabh Mahajan)
 	* Addition of MSN buddies to Yahoo accounts by adding them as
 	  'msn/buddy@somedomain.com' is now supported.  (Sulabh Mahajan)
-	* Further fixes for buddy pictures, aliases etc.
+	* Further fixes for buddy pictures, aliases, etc.
 	* Yahoo! and Yahoo! JAPAN are now two separate protocol plugins that share
 	  common protocol code.  You can now have the same account on both
-	  networks.
+	  networks.  Accounts should be seamlessly migrated to the new
+	  arrangement.
 	* Ability to set personal details for an account and for buddies in the
 	  buddylist.
 
