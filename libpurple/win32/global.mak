@@ -47,6 +47,8 @@ PURPLE_PROTOS_TOP := $(PURPLE_TOP)/protocols
 # Locations of important (in-tree) build targets
 PIDGIN_CONFIG_H := $(PIDGIN_TREE_TOP)/config.h
 PURPLE_CONFIG_H := $(PIDGIN_TREE_TOP)/config.h
+PIDGIN_REVISION_H := $(PIDGIN_TREE_TOP)/package_revision.h
+PIDGIN_REVISION_RAW_TXT := $(PIDGIN_TREE_TOP)/package_revision_raw.txt
 PIDGIN_IDLETRACK_DLL := $(PIDGIN_IDLETRACK_TOP)/idletrack.dll
 PURPLE_PURPLE_H := $(PURPLE_TOP)/purple.h
 PURPLE_VERSION_H := $(PURPLE_TOP)/version.h
