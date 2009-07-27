@@ -10,7 +10,8 @@ version 2.6.0 (??/??/2009):
 	  in a group on the buddy list.
 	* Removed the unmaintained and unneeded toc protocol plugin.
 	* Fixed NTLM authentication on big-endian systems.
-	* Various memory cleanups when unloading libpurple. (Nick Hebner)
+	* Various memory cleanups when unloading libpurple. (Nick Hebner and
+	  Stefan Becker)
 	* Report idle time 'From last message sent' should work properly.
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
