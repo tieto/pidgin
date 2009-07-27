@@ -29,6 +29,7 @@
 struct smiley_list {
 	char *sml;
 	GSList *smileys;
+	GHashTable *files; /**< map from smiley shortcut to filename */
 	struct smiley_list *next;
 };
 

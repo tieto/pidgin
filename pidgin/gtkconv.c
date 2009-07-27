@@ -69,6 +69,7 @@
 #include "gtkprivacy.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
+#include "gtkwebview.h"
 #include "pidginstock.h"
 #include "pidgintooltip.h"
 
@@ -164,7 +165,6 @@ static const char *item_factory_translate_func (const char *path, gpointer func_
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
 static GdkColor* generate_nick_colors(guint *numcolors, GdkColor background);
 static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
-static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, PurpleMessageFlags flag, gboolean create);
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
@@ -178,7 +178,7 @@ static gboolean pidgin_conv_xy_to_right_infopane(PidginWindow *win, int x, int y
 static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name)
 {
 	static GdkColor col;
-	GtkStyle *style = gtk_widget_get_style(gtkconv->imhtml);
+	GtkStyle *style = gtk_widget_get_style(gtkconv->webview);
 	float scale;
 
 	col = nick_colors[g_str_hash(name) % nbr_nick_colors];
@@ -353,7 +353,7 @@ static void clear_conversation_scrollback(PurpleConversation *conv)
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
-	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
+	webkit_web_view_load_html_string (WEBKIT_WEB_VIEW (gtkconv->webview), "", "");
 	for (iter = gtkconv->convs; iter; iter = iter->next)
 		purple_conversation_clear_message_history(iter->data);
 }
@@ -961,32 +961,7 @@ menu_new_conv_cb(gpointer data, guint action, GtkWidget *widget)
 static void
 savelog_writefile_cb(void *user_data, const char *filename)
 {
-	PurpleConversation *conv = (PurpleConversation *)user_data;
-	FILE *fp;
-	const char *name;
-	char **lines;
-	gchar *text;
-
-	if ((fp = g_fopen(filename, "w+")) == NULL) {
-		purple_notify_error(PIDGIN_CONVERSATION(conv), NULL, _("Unable to open file."), NULL);
-		return;
-	}
-
-	name = purple_conversation_get_name(conv);
-	fprintf(fp, "<html>\n<head>\n");
-	fprintf(fp, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n");
-	fprintf(fp, "<title>%s</title>\n</head>\n<body>\n", name);
-	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
-
-	lines = gtk_imhtml_get_markup_lines(
-		GTK_IMHTML(PIDGIN_CONVERSATION(conv)->imhtml));
-	text = g_strjoinv("<br>\n", lines);
-	fprintf(fp, "%s", text);
-	g_free(text);
-	g_strfreev(lines);
-
-	fprintf(fp, "\n</body>\n</html>\n");
-	fclose(fp);
+	/* TODO: I don't know how to support this using webkit yet. */
 }
 
 /*
@@ -1116,12 +1091,16 @@ static void do_search_cb(GtkWidget *widget, gint resp, struct _search *s)
 
 				if (gtkconv != gtk_active_conv)
 				{
-					gtk_imhtml_search_clear(GTK_IMHTML(gtkconv->imhtml));
+					webkit_web_view_unmark_text_matches (WEBKIT_WEB_VIEW (gtkconv->webview));
 				}
 				else
 				{
-					gtk_imhtml_search_find(GTK_IMHTML(gtk_active_conv->imhtml),
-					                       gtk_entry_get_text(GTK_ENTRY(s->entry)));
+					webkit_web_view_mark_text_matches (WEBKIT_WEB_VIEW (gtkconv->webview), 
+									   gtk_entry_get_text (GTK_ENTRY(s->entry)), TRUE, 0);
+					webkit_web_view_set_highlight_text_matches (WEBKIT_WEB_VIEW (gtkconv->webview),
+										    true);
+					webkit_web_view_search_text (WEBKIT_WEB_VIEW (gtkconv->webview),
+								     gtk_entry_get_text (GTK_ENTRY(s->entry)), FALSE, TRUE, FALSE);
 				}
 			}
 			break;
@@ -1132,7 +1111,7 @@ static void do_search_cb(GtkWidget *widget, gint resp, struct _search *s)
 			for (iter = pidgin_conv_window_get_gtkconvs(s->gtkwin); iter; iter=iter->next)
 			{
 				PidginConversation *gconv = iter->data;
-				gtk_imhtml_search_clear(GTK_IMHTML(gconv->imhtml));
+				webkit_web_view_unmark_text_matches (WEBKIT_WEB_VIEW(gconv->webview));
 			}
 
 			gtk_widget_destroy(s->gtkwin->dialogs.search);
@@ -1635,30 +1614,11 @@ menu_chat_add_remove_cb(GtkWidget *w, PidginConversation *gtkconv)
 	gtk_widget_grab_focus(PIDGIN_CONVERSATION(conv)->entry);
 }
 
-static GtkTextMark *
-get_mark_for_user(PidginConversation *gtkconv, const char *who)
-{
-	GtkTextBuffer *buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml));
-	char *tmp = g_strconcat("user:", who, NULL);
-	GtkTextMark *mark = gtk_text_buffer_get_mark(buf, tmp);
-
-	g_free(tmp);
-	return mark;
-}
-
 static void
 menu_last_said_cb(GtkWidget *w, PidginConversation *gtkconv)
 {
-	GtkTextMark *mark;
-	const char *who;
-
-	who = g_object_get_data(G_OBJECT(w), "user_data");
-	mark = get_mark_for_user(gtkconv, who);
-
-	if (mark != NULL)
-		gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
-	else
-		g_return_if_reached();
+	/* I don't know what this is! */
+	return;
 }
 
 static GtkWidget *
@@ -1773,8 +1733,6 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 	button = pidgin_new_item_from_stock(menu, _("Last Said"), GTK_STOCK_INDEX,
 						G_CALLBACK(menu_last_said_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 	g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
-	if (!get_mark_for_user(PIDGIN_CONVERSATION(conv), who))
-		gtk_widget_set_sensitive(button, FALSE);
 
 	if (buddy != NULL)
 	{
@@ -1864,10 +1822,10 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 		chat_do_im(gtkconv, who);
 	} else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
 		/* Move to user's anchor */
-		GtkTextMark *mark = get_mark_for_user(gtkconv, who);
+		//GtkTextMark *mark = get_mark_for_user(gtkconv, who);
 
-		if(mark != NULL)
-			gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
+		//if(mark != NULL)
+		//	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		GtkWidget *menu = create_chat_menu (conv, who, gc);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
@@ -1943,8 +1901,8 @@ gtkconv_cycle_focus(PidginConversation *gtkconv, GtkDirectionType dir)
 		GtkWidget *from;
 		GtkWidget *to;
 	} transitions[] = {
-		{gtkconv->entry, gtkconv->imhtml},
-		{gtkconv->imhtml, chat ? gtkconv->u.chat->list : gtkconv->entry},
+		{gtkconv->entry, gtkconv->webview},
+		{gtkconv->webview, chat ? gtkconv->u.chat->list : gtkconv->entry},
 		{chat ? gtkconv->u.chat->list : NULL, gtkconv->entry},
 		{NULL, NULL}
 	}, *ptr;
@@ -2200,12 +2158,12 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			break;
 
 		case GDK_Page_Up:
-			gtk_imhtml_page_up(GTK_IMHTML(gtkconv->imhtml));
+			//gtk_imhtml_page_up(GTK_IMHTML(gtkconv->imhtml));
 			return TRUE;
 			break;
 
 		case GDK_Page_Down:
-			gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
+			//gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
 			return TRUE;
 			break;
 
@@ -2308,7 +2266,7 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	entry = GTK_IMHTML(gtkconv->entry);
 	protocol_name = purple_account_get_protocol_name(conv->account);
 	gtk_imhtml_set_protocol_name(entry, protocol_name);
-	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol_name);
+	//gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol_name);
 
 	if (!(conv->features & PURPLE_CONNECTION_HTML))
 		gtk_imhtml_clear_formatting(GTK_IMHTML(gtkconv->entry));
@@ -3250,11 +3208,11 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		chat = purple_blist_find_chat(conv->account, conv->name);
 
-		if ((chat == NULL) && (gtkconv->imhtml != NULL)) {
-			chat = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_chat");
+		if ((chat == NULL) && (gtkconv->webview != NULL)) {
+			chat = g_object_get_data(G_OBJECT(gtkconv->webview), "transient_chat");
 		}
 
-		if ((chat == NULL) && (gtkconv->imhtml != NULL)) {
+		if ((chat == NULL) && (gtkconv->webview != NULL)) {
 			GHashTable *components;
 			PurpleAccount *account = purple_conversation_get_account(conv);
 			PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
@@ -3272,7 +3230,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 			chat = purple_chat_new(conv->account, NULL, components);
 			purple_blist_node_set_flags((PurpleBlistNode *)chat,
 					PURPLE_BLIST_NODE_FLAG_NO_SAVE);
-			g_object_set_data_full(G_OBJECT(gtkconv->imhtml), "transient_chat",
+			g_object_set_data_full(G_OBJECT(gtkconv->webview), "transient_chat",
 					chat, (GDestroyNotify)purple_blist_remove_chat);
 		}
 	} else {
@@ -3284,15 +3242,15 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 		/* gotta remain bug-compatible :( libpurple < 2.0.2 didn't handle
 		 * removing "isolated" buddy nodes well */
 		if (purple_version_check(2, 0, 2) == NULL) {
-			if ((buddy == NULL) && (gtkconv->imhtml != NULL)) {
-				buddy = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_buddy");
+			if ((buddy == NULL) && (gtkconv->webview != NULL)) {
+				buddy = g_object_get_data(G_OBJECT(gtkconv->webview), "transient_buddy");
 			}
 
-			if ((buddy == NULL) && (gtkconv->imhtml != NULL)) {
+			if ((buddy == NULL) && (gtkconv->webview != NULL)) {
 				buddy = purple_buddy_new(conv->account, conv->name, NULL);
 				purple_blist_node_set_flags((PurpleBlistNode *)buddy,
 						PURPLE_BLIST_NODE_FLAG_NO_SAVE);
-				g_object_set_data_full(G_OBJECT(gtkconv->imhtml), "transient_buddy",
+				g_object_set_data_full(G_OBJECT(gtkconv->webview), "transient_buddy",
 						buddy, (GDestroyNotify)purple_buddy_destroy);
 			}
 		}
@@ -3643,38 +3601,7 @@ typing_animation(gpointer data) {
 static void
 update_typing_message(PidginConversation *gtkconv, const char *message)
 {
-	GtkTextBuffer *buffer;
-	GtkTextMark *stmark, *enmark;
-
-	if (g_object_get_data(G_OBJECT(gtkconv->imhtml), "disable-typing-notification"))
-		return;
-
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml));
-	stmark = gtk_text_buffer_get_mark(buffer, "typing-notification-start");
-	enmark = gtk_text_buffer_get_mark(buffer, "typing-notification-end");
-	if (stmark && enmark) {
-		GtkTextIter start, end;
-		gtk_text_buffer_get_iter_at_mark(buffer, &start, stmark);
-		gtk_text_buffer_get_iter_at_mark(buffer, &end, enmark);
-		gtk_text_buffer_delete_mark(buffer, stmark);
-		gtk_text_buffer_delete_mark(buffer, enmark);
-		gtk_text_buffer_delete(buffer, &start, &end);
-	} else if (message && *message == '\n' && message[1] == ' ' && message[2] == '\0')
-		message = NULL;
-
-#ifdef RESERVE_LINE
-	if (!message)
-		message = "\n ";   /* The blank space is required to avoid a GTK+/Pango bug */
-#endif
-
-	if (message) {
-		GtkTextIter iter;
-		gtk_text_buffer_get_end_iter(buffer, &iter);
-		gtk_text_buffer_create_mark(buffer, "typing-notification-start", &iter, TRUE);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, message, -1, "TYPING-NOTIFICATION", NULL);
-		gtk_text_buffer_get_end_iter(buffer, &iter);
-		gtk_text_buffer_create_mark(buffer, "typing-notification-end", &iter, TRUE);
-	}
+	/* this is not handled at all */
 }
 
 static void
@@ -3991,7 +3918,6 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	gboolean is_buddy;
 	gchar *tmp, *alias_key, *name, *alias;
 	int flags;
-	GdkColor *color = NULL;
 
 	alias = cb->alias;
 	name  = cb->name;
@@ -4018,20 +3944,6 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	alias_key = g_utf8_collate_key(tmp, -1);
 	g_free(tmp);
 
-	if (is_me) {
-		GtkTextTag *tag = gtk_text_tag_table_lookup(
-				gtk_text_buffer_get_tag_table(GTK_IMHTML(gtkconv->imhtml)->text_buffer),
-				"send-name");
-		g_object_get(tag, "foreground-gdk", &color, NULL);
-	} else {
-		GtkTextTag *tag;
-		if ((tag = get_buddy_tag(conv, name, 0, FALSE)))
-			g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_NORMAL, NULL);
-		if ((tag = get_buddy_tag(conv, name, PURPLE_MESSAGE_NICK, FALSE)))
-			g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_NORMAL, NULL);
-		color = (GdkColor*)get_nick_color(gtkconv, name);
-	}
-
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_list_store_insert_with_values(ls, &iter,
 /*
@@ -4047,7 +3959,6 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 			CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
 			CHAT_USERS_NAME_COLUMN,  name,
 			CHAT_USERS_FLAGS_COLUMN, flags,
-			CHAT_USERS_COLOR_COLUMN, color,
 			CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
 			-1);
 #else
@@ -4058,13 +3969,10 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 			CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
 			CHAT_USERS_NAME_COLUMN,  name,
 			CHAT_USERS_FLAGS_COLUMN, flags,
-			CHAT_USERS_COLOR_COLUMN, color,
 			CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
 			-1);
 #endif
 
-	if (is_me && color)
-		gdk_color_free(color);
 	g_free(alias_key);
 }
 
@@ -4458,7 +4366,6 @@ buddy_cb_common(PurpleBuddy *buddy, PurpleConversation *conv, gboolean is_buddy)
 	GtkTreeModel *model;
 	char *normalized_name;
 	GtkTreeIter iter;
-	GtkTextTag *texttag;
 	int f;
 
 	g_return_if_fail(buddy != NULL);
@@ -4497,10 +4404,6 @@ buddy_cb_common(PurpleBuddy *buddy, PurpleConversation *conv, gboolean is_buddy)
 
 	blist_node_aliased_cb((PurpleBlistNode *)buddy, NULL, conv);
 
-	texttag = get_buddy_tag(conv, purple_buddy_get_name(buddy), 0, FALSE); /* XXX: do we want the normalized name? */
-	if (texttag) {
-		g_object_set(texttag, "weight", is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL, NULL);
-	}
 }
 
 static void
@@ -4532,7 +4435,7 @@ static void send_menu_cb(GtkWidget *widget, PidginConversation *gtkconv)
 }
 
 static void
-entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
+entry_popup_menu_cb(GtkIMHtml *imhtml /* this is for ->entry, fine! */, GtkMenu *menu, gpointer data)
 {
 	GtkWidget *menuitem;
 	PidginConversation *gtkconv = data;
@@ -4560,7 +4463,7 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	GdkRectangle oneline;
 	int height, diff;
 	int pad_top, pad_inside, pad_bottom;
-	int total_height = (gtkconv->imhtml->allocation.height + gtkconv->entry->allocation.height);
+	int total_height = (gtkconv->webview->allocation.height + gtkconv->entry->allocation.height);
 	int max_height = total_height / 2;
 	int min_lines = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines");
 	int min_height;
@@ -4796,13 +4699,13 @@ pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
 		if (!node)
-			node = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_chat");
+			node = g_object_get_data(G_OBJECT(gtkconv->webview), "transient_chat");
 	} else {
 		node = (PurpleBlistNode*)(purple_find_buddy(conv->account, conv->name));
 #if 0
 		/* Using the transient blist nodes to show the tooltip doesn't quite work yet. */
 		if (!node)
-			node = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_buddy");
+			node = g_object_get_data(G_OBJECT(gtkconv->webview), "transient_buddy");
 #endif
 	}
 
@@ -4814,13 +4717,13 @@ pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int 
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
-	GtkWidget *vbox, *frame, *imhtml_sw, *event_box;
+	GtkWidget *vbox, *frame, *webview_sw, *event_box;
 	GtkCellRenderer *rend;
 	GtkTreePath *path;
 	PurpleConversation *conv = gtkconv->active_conv;
 	PurpleBuddy *buddy;
 	gboolean chat = (conv->type == PURPLE_CONV_TYPE_CHAT);
-	GtkPolicyType imhtml_sw_hscroll;
+	GtkPolicyType webview_sw_hscroll;
 	int buddyicon_size = 0;
 
 	/* Setup the top part of the pane */
@@ -4916,8 +4819,15 @@ setup_common_pane(PidginConversation *gtkconv)
 	g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
 
 	/* Setup the gtkimhtml widget */
-	frame = pidgin_create_imhtml(FALSE, &gtkconv->imhtml, NULL, &imhtml_sw);
-	gtk_widget_set_size_request(gtkconv->imhtml, -1, 0);
+	webview_sw = gtk_scrolled_window_new (NULL, NULL);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(webview_sw), GTK_SHADOW_IN);
+        gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (webview_sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+	gtkconv->webview = gtk_webview_new ();
+	gtk_container_add (GTK_CONTAINER (webview_sw), gtkconv->webview);
+	
+	gtk_widget_set_size_request(gtkconv->webview, -1, 0);
+
 	if (chat) {
 		GtkWidget *hpaned;
 
@@ -4928,29 +4838,28 @@ setup_common_pane(PidginConversation *gtkconv)
 		hpaned = gtk_hpaned_new();
 		gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
 		gtk_widget_show(hpaned);
-		gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
+		gtk_paned_pack1(GTK_PANED(hpaned), webview_sw, TRUE, TRUE);
 
 		/* Now add the userlist */
 		setup_chat_userlist(gtkconv, hpaned);
 	} else {
-		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), webview_sw, TRUE, TRUE, 0);
 	}
-	gtk_widget_show(frame);
+	gtk_widget_show_all(webview_sw);
 
-	gtk_widget_set_name(gtkconv->imhtml, "pidgin_conv_imhtml");
-	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),TRUE);
-	g_object_set_data(G_OBJECT(gtkconv->imhtml), "gtkconv", gtkconv);
+	gtk_widget_set_name(gtkconv->webview, "pidgin_conv_webview");
+	g_object_set_data(G_OBJECT(gtkconv->webview), "gtkconv", gtkconv);
 
-	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
-	                               &imhtml_sw_hscroll, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
-	                               imhtml_sw_hscroll, GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(webview_sw),
+	                               &webview_sw_hscroll, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(webview_sw),
+	                               webview_sw_hscroll, GTK_POLICY_ALWAYS);
 
-	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
+	g_signal_connect_after(G_OBJECT(gtkconv->webview), "button_press_event",
 	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_press_event",
+	g_signal_connect(G_OBJECT(gtkconv->webview), "key_press_event",
 	                 G_CALLBACK(refocus_entry_cb), gtkconv);
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_release_event",
+	g_signal_connect(G_OBJECT(gtkconv->webview), "key_release_event",
 	                 G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	gtkconv->lower_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -5189,36 +5098,6 @@ ignore_middle_click(GtkWidget *widget, GdkEventButton *e, gpointer null)
 
 static void set_typing_font(GtkWidget *widget, GtkStyle *style, PidginConversation *gtkconv)
 {
-	static PangoFontDescription *font_desc = NULL;
-	static GdkColor *color = NULL;
-	static gboolean enable = TRUE;
-
-	if (font_desc == NULL) {
-		char *string = NULL;
-		gtk_widget_style_get(widget,
-				"typing-notification-font", &string,
-				"typing-notification-color", &color,
-				"typing-notification-enable", &enable,
-				NULL);
-		font_desc = pango_font_description_from_string(string);
-		g_free(string);
-		if (color == NULL) {
-			GdkColor def = {0, 0x8888, 0x8888, 0x8888};
-			color = gdk_color_copy(&def);
-		}
-	}
-
-	gtk_text_buffer_create_tag(GTK_IMHTML(widget)->text_buffer, "TYPING-NOTIFICATION",
-			"foreground-gdk", color,
-			"font-desc", font_desc,
-			NULL);
-
-	if (!enable) {
-		g_object_set_data(G_OBJECT(widget), "disable-typing-notification", GINT_TO_POINTER(TRUE));
-		/* or may be 'gtkconv->disable_typing = TRUE;' instead? */
-	}
-
-	g_signal_handlers_disconnect_by_func(G_OBJECT(widget), set_typing_font, gtkconv);
 }
 
 /**************************************************************************
@@ -5260,9 +5139,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	}
 	pane = setup_common_pane(gtkconv);
 
-	gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->imhtml),
-			gtk_imhtml_get_format_functions(GTK_IMHTML(gtkconv->imhtml)) | GTK_IMHTML_IMAGE);
-
 	if (pane == NULL) {
 		if (conv_type == PURPLE_CONV_TYPE_CHAT)
 			g_free(gtkconv->u.chat);
@@ -5285,7 +5161,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	                  GTK_DEST_DEFAULT_DROP,
 	                  te, sizeof(te) / sizeof(GtkTargetEntry),
 	                  GDK_ACTION_COPY);
-	gtk_drag_dest_set(gtkconv->imhtml, 0,
+	gtk_drag_dest_set(gtkconv->webview, 0,
 	                  te, sizeof(te) / sizeof(GtkTargetEntry),
 	                  GDK_ACTION_COPY);
 
@@ -5297,12 +5173,12 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	                 G_CALLBACK(ignore_middle_click), NULL);
 	g_signal_connect(G_OBJECT(pane), "drag_data_received",
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
+	g_signal_connect(G_OBJECT(gtkconv->webview), "drag_data_received",
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
 
-	g_signal_connect(gtkconv->imhtml, "style-set", G_CALLBACK(set_typing_font), gtkconv);
+	g_signal_connect(gtkconv->webview, "style-set", G_CALLBACK(set_typing_font), gtkconv);
 
 	/* Setup the container for the tab. */
 	gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -5332,10 +5208,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	else
 		gtk_widget_hide(gtkconv->infopane_hbox);
 
-	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
-		purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps"));
-	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
-								 purple_account_get_protocol_name(conv->account));
 
 	g_signal_connect_swapped(G_OBJECT(pane), "focus",
 	                         G_CALLBACK(gtk_widget_grab_focus),
@@ -5348,7 +5220,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 
 	if (nick_colors == NULL) {
 		nbr_nick_colors = NUM_NICK_COLORS;
-		nick_colors = generate_nick_colors(&nbr_nick_colors, gtk_widget_get_style(gtkconv->imhtml)->base[GTK_STATE_NORMAL]);
+		nick_colors = generate_nick_colors(&nbr_nick_colors, gtk_widget_get_style(gtkconv->webview)->base[GTK_STATE_NORMAL]);
 	}
 
 	if (conv->features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
@@ -5547,43 +5419,6 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 	return FALSE;
 }
 
-static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, PurpleMessageFlags flag,
-		gboolean create)
-{
-	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-	GtkTextTag *buddytag;
-	gchar *str;
-	gboolean highlight = (flag & PURPLE_MESSAGE_NICK);
-	GtkTextBuffer *buffer = GTK_IMHTML(gtkconv->imhtml)->text_buffer;
-
-	str = g_strdup_printf(highlight ? "HILIT %s" : "BUDDY %s", who);
-
-	buddytag = gtk_text_tag_table_lookup(
-			gtk_text_buffer_get_tag_table(buffer), str);
-
-	if (buddytag == NULL && create) {
-		if (highlight)
-			buddytag = gtk_text_buffer_create_tag(buffer, str,
-					"foreground", get_text_tag_color(gtk_text_tag_table_lookup(
-							gtk_text_buffer_get_tag_table(buffer), "highlight-name")),
-					"weight", PANGO_WEIGHT_BOLD,
-					NULL);
-		else
-			buddytag = gtk_text_buffer_create_tag(
-					buffer, str,
-					"foreground-gdk", get_nick_color(gtkconv, who),
-					"weight", purple_find_buddy(purple_conversation_get_account(conv), who) ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
-					NULL);
-
-		g_signal_connect(G_OBJECT(buddytag), "event",
-				G_CALLBACK(buddytag_event), conv);
-	}
-
-	g_free(str);
-
-	return buddytag;
-}
-
 static void pidgin_conv_calculate_newday(PidginConversation *gtkconv, time_t mtime)
 {
 	struct tm *tm = localtime(&mtime);
@@ -5640,10 +5475,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	PurplePluginProtocolInfo *prpl_info;
-	int gtk_font_options = 0;
-	int gtk_font_options_all = 0;
-	int max_scrollback_lines;
-	int line_count;
 	char buf2[BUF_LONG];
 	gboolean show_date;
 	char *mdate;
@@ -5654,8 +5485,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	PurpleConversationType type;
 	char *displaying;
 	gboolean plugin_return;
-	char *bracket;
-	int tag_count = 0;
 	gboolean is_rtl_message = FALSE;
 
 	g_return_if_fail(conv != NULL);
@@ -5713,59 +5542,13 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	}
 	length = strlen(displaying) + 1;
 
-	/* Awful hack to work around GtkIMHtml's inefficient rendering of messages with lots of formatting changes.
-	 * If a message has over 100 '<' characters, strip formatting before appending it. Hopefully nobody actually
-	 * needs that much formatting, anyway.
-	 */
-	for (bracket = strchr(displaying, '<'); bracket && *(bracket + 1); bracket = strchr(bracket + 1, '<'))
-		tag_count++;
-
-	if (tag_count > 100) {
-		char *tmp = displaying;
-		displaying = purple_markup_strip_html(tmp);
-		g_free(tmp);
-	}
 
 	win = gtkconv->win;
 	prpl_info = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
 
-	line_count = gtk_text_buffer_get_line_count(
-			gtk_text_view_get_buffer(GTK_TEXT_VIEW(
-				gtkconv->imhtml)));
-
-	max_scrollback_lines = purple_prefs_get_int(
-		PIDGIN_PREFS_ROOT "/conversations/scrollback_lines");
-	/* If we're sitting at more than 100 lines more than the
-	   max scrollback, trim down to max scrollback */
-	if (max_scrollback_lines > 0
-			&& line_count > (max_scrollback_lines + 100)) {
-		GtkTextBuffer *text_buffer = gtk_text_view_get_buffer(
-			GTK_TEXT_VIEW(gtkconv->imhtml));
-		GtkTextIter start, end;
-
-		gtk_text_buffer_get_start_iter(text_buffer, &start);
-		gtk_text_buffer_get_iter_at_line(text_buffer, &end,
-			(line_count - max_scrollback_lines));
-		gtk_imhtml_delete(GTK_IMHTML(gtkconv->imhtml), &start, &end);
-	}
-
-	if (type == PURPLE_CONV_TYPE_CHAT)
-	{
-		/* Create anchor for user */
-		GtkTextIter iter;
-		char *tmp = g_strconcat("user:", name, NULL);
-
-		gtk_text_buffer_get_end_iter(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml)), &iter);
-		gtk_text_buffer_create_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml)),
-								tmp, &iter, TRUE);
-		g_free(tmp);
-	}
-
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_smooth_scrolling"))
-		gtk_font_options_all |= GTK_IMHTML_USE_SMOOTHSCROLLING;
-
-	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
+	/* if the buffer is not empty add a <br> */
+	if (!gtk_webview_is_empty (GTK_WEBVIEW(gtkconv->webview)))
+		gtk_webview_append_html (GTK_WEBVIEW(gtkconv->webview), "<br />");
 
 	/* First message in a conversation. */
 	if (gtkconv->newday == 0)
@@ -5801,47 +5584,29 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 	sml_attrib = g_strdup_printf("sml=\"%s\"", purple_account_get_protocol_name(account));
 
-	gtk_font_options |= GTK_IMHTML_NO_COMMENTS;
-
-	if ((flags & PURPLE_MESSAGE_RECV) &&
-			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting"))
-		gtk_font_options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES | GTK_IMHTML_NO_FORMATTING;
-
-	/* this is gonna crash one day, I can feel it. */
-	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(conv->account)))->options &
-	    OPT_PROTO_USE_POINTSIZE) {
-		gtk_font_options |= GTK_IMHTML_USE_POINTSIZE;
-	}
-
-	if (!(flags & PURPLE_MESSAGE_RECV) && (conv->features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY))
-	{
-		/* We want to see our own smileys. Need to revert it after send*/
-		pidgin_themes_smiley_themeize_custom(gtkconv->imhtml);
-	}
-
 	/* TODO: These colors should not be hardcoded so log.c can use them */
 	if (flags & PURPLE_MESSAGE_RAW) {
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), message, gtk_font_options_all);
+		gtk_webview_append_html (GTK_WEBVIEW(gtkconv->webview), message);
 	} else if (flags & PURPLE_MESSAGE_SYSTEM) {
 		g_snprintf(buf2, sizeof(buf2),
-			   "<FONT %s><FONT SIZE=\"2\"><!--%s --></FONT><B>%s</B></FONT>",
+			   "<font %s><font size=\"2\"><span class='timestamp'>%s</span></font><b>%s</b></font>",
 			   sml_attrib ? sml_attrib : "", mdate, displaying);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
+		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
 
 	} else if (flags & PURPLE_MESSAGE_ERROR) {
 		g_snprintf(buf2, sizeof(buf2),
-			   "<FONT COLOR=\"#ff0000\"><FONT %s><FONT SIZE=\"2\"><!--%s --></FONT><B>%s</B></FONT></FONT>",
+			   "<font color=\"#ff0000\"><font %s><font size=\"2\"><span class='timestamp'>%s</span> </font><b>%s</b></font></font>",
 			   sml_attrib ? sml_attrib : "", mdate, displaying);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
+		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
 
 	} else if (flags & PURPLE_MESSAGE_NO_LOG) {
 		g_snprintf(buf2, BUF_LONG,
-			   "<B><FONT %s COLOR=\"#777777\">%s</FONT></B>",
+			   "<b><font %s color=\"#777777\">%s</font></b>",
 			   sml_attrib ? sml_attrib : "", displaying);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
+		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
 	} else {
 		char *new_message = g_memdup(displaying, length);
 		char *alias_escaped = (alias ? g_markup_escape_text(alias, strlen(alias)) : g_strdup(""));
@@ -5850,11 +5615,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		int tag_start_offset = 0;
 		int tag_end_offset = 0;
 		const char *tagname = NULL;
-
-		GtkTextIter start, end;
-		GtkTextMark *mark;
-		GtkTextTag *tag;
-		GtkTextBuffer *buffer = GTK_IMHTML(gtkconv->imhtml)->text_buffer;
 
 		/* Enforce direction on alias */
 		if (is_rtl_message)
@@ -5916,55 +5676,27 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 		g_free(alias_escaped);
 
-		if (tagname)
-			tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(buffer), tagname);
-		else
-			tag = get_buddy_tag(conv, name, flags, TRUE);
+		/* timestamp */ 
+		{
+			g_snprintf (buf2, BUF_LONG, "<font size='2'>%s </font>", mdate);
 
-		if (GTK_IMHTML(gtkconv->imhtml)->show_comments) {
-			/* The color for the timestamp has to be set in the font-tags, unfortunately.
-			 * Applying the nick-tag to timestamps would work, but that can make it
-			 * bold. I thought applying the "comment" tag again, which has "weight" set
-			 * to PANGO_WEIGHT_NORMAL, would remove the boldness. But it doesn't. So
-			 * this will have to do. I don't terribly like it.  -- sadrul */
-			const char *color = get_text_tag_color(tag);
-			g_snprintf(buf2, BUF_LONG, "<FONT %s%s%s SIZE=\"2\"><!--%s --></FONT>",
-					color ? "COLOR=\"" : "", color ? color : "", color ? "\"" : "", mdate);
-			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
+			gtk_webview_append_html (GTK_WEBVIEW(gtkconv->webview), buf2);
 		}
-
-		gtk_text_buffer_get_end_iter(buffer, &end);
-		mark = gtk_text_buffer_create_mark(buffer, NULL, &end, TRUE);
-
-		g_snprintf(buf2, BUF_LONG, "<FONT %s>%s</FONT> ", sml_attrib ? sml_attrib : "", str);
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
-
-		gtk_text_buffer_get_end_iter(buffer, &end);
-		gtk_text_buffer_get_iter_at_mark(buffer, &start, mark);
-		gtk_text_buffer_apply_tag(buffer, tag, &start, &end);
-		gtk_text_buffer_delete_mark(buffer, mark);
+		g_snprintf(buf2, BUF_LONG, "<font %s>%s</font> ", sml_attrib ? sml_attrib : "", str);
+		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
 
 		g_free(str);
 
 		if(gc){
 			char *pre = g_strdup_printf("<font %s>", sml_attrib ? sml_attrib : "");
 			char *post = "</font>";
-			int pre_len = strlen(pre);
-			int post_len = strlen(post);
-
-			with_font_tag = g_malloc(length + pre_len + post_len + 1);
-
-			strcpy(with_font_tag, pre);
-			memcpy(with_font_tag + pre_len, new_message, length);
-			strcpy(with_font_tag + pre_len + length, post);
-
-			length += pre_len + post_len;
+			with_font_tag = g_strdup_printf ("%s%s%s", pre, new_message, post);
 			g_free(pre);
 		} else
 			with_font_tag = g_memdup(new_message, length);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
-							 with_font_tag, gtk_font_options | gtk_font_options_all);
+		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview),
+							 with_font_tag);
 
 		g_free(with_font_tag);
 		g_free(new_message);
@@ -5989,12 +5721,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			unseen = PIDGIN_UNSEEN_TEXT;
 
 		gtkconv_set_unseen(gtkconv, unseen);
-	}
-
-	if (!(flags & PURPLE_MESSAGE_RECV) && (conv->features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY))
-	{
-		/* Restore the smiley-data */
-		pidgin_themes_smiley_themeize(gtkconv->imhtml);
 	}
 
 	purple_signal_emit(pidgin_conversations_get_handle(),
@@ -6088,10 +5814,6 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 		g_free(val);
 	}
 
-	if ((tag = get_buddy_tag(conv, old_name, 0, FALSE)))
-		g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
-	if ((tag = get_buddy_tag(conv, old_name, PURPLE_MESSAGE_NICK, FALSE)))
-		g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
 
 	if (!purple_conv_chat_find_user(chat, old_name))
 		return;
@@ -6149,10 +5871,7 @@ pidgin_conv_chat_remove_users(PurpleConversation *conv, GList *users)
 			g_free(val);
 		} while (f);
 
-		if ((tag = get_buddy_tag(conv, l->data, 0, FALSE)))
-			g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
-		if ((tag = get_buddy_tag(conv, l->data, PURPLE_MESSAGE_NICK, FALSE)))
-			g_object_set(G_OBJECT(tag), "style", PANGO_STYLE_ITALIC, NULL);
+
 	}
 
 	g_snprintf(tmp, sizeof(tmp),
@@ -6256,99 +5975,17 @@ add_custom_smiley_for_imhtml(GtkIMHtml *imhtml, const char *sml, const char *smi
 	return TRUE;
 }
 
-static gboolean
-pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gboolean remote)
-{
-	PidginConversation *gtkconv;
-	struct smiley_list *list;
-	const char *sml = NULL, *conv_sml;
-
-	if (!conv || !smile || !*smile) {
-		return FALSE;
-	}
-
-	/* If smileys are off, return false */
-	if (pidgin_themes_smileys_disabled())
-		return FALSE;
-
-	/* If possible add this smiley to the current theme.
-	 * The addition is only temporary: custom smilies aren't saved to disk. */
-	conv_sml = purple_account_get_protocol_name(conv->account);
-	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	for (list = (struct smiley_list *)current_smiley_theme->list; list; list = list->next) {
-		if (!strcmp(list->sml, conv_sml)) {
-			sml = list->sml;
-			break;
-		}
-	}
-
-	if (!add_custom_smiley_for_imhtml(GTK_IMHTML(gtkconv->imhtml), sml, smile))
-		return FALSE;
-
-	if (!remote)	/* If it's a local custom smiley, then add it for the entry */
-		if (!add_custom_smiley_for_imhtml(GTK_IMHTML(gtkconv->entry), sml, smile))
-			return FALSE;
-
-	return TRUE;
-}
-
 static void
 pidgin_conv_custom_smiley_write(PurpleConversation *conv, const char *smile,
                                       const guchar *data, gsize size)
 {
-	PidginConversation *gtkconv;
-	GtkIMHtmlSmiley *smiley;
-	GdkPixbufLoader *loader;
-	const char *sml;
-
-	sml = purple_account_get_protocol_name(conv->account);
-	gtkconv = PIDGIN_CONVERSATION(conv);
-	smiley = gtk_imhtml_smiley_get(GTK_IMHTML(gtkconv->imhtml), sml, smile);
-
-	if (!smiley)
-		return;
-
-	smiley->data = g_realloc(smiley->data, smiley->datasize + size);
-	g_memmove((guchar *)smiley->data + smiley->datasize, data, size);
-	smiley->datasize += size;
-
-	loader = smiley->loader;
-	if (!loader)
-		return;
-
-	gdk_pixbuf_loader_write(loader, data, size, NULL);
+	return;
 }
 
 static void
 pidgin_conv_custom_smiley_close(PurpleConversation *conv, const char *smile)
 {
-	PidginConversation *gtkconv;
-	GtkIMHtmlSmiley *smiley;
-	GdkPixbufLoader *loader;
-	const char *sml;
-
-	g_return_if_fail(conv  != NULL);
-	g_return_if_fail(smile != NULL);
-
-	sml = purple_account_get_protocol_name(conv->account);
-	gtkconv = PIDGIN_CONVERSATION(conv);
-	smiley = gtk_imhtml_smiley_get(GTK_IMHTML(gtkconv->imhtml), sml, smile);
-
-	if (!smiley)
-		return;
-
-	loader = smiley->loader;
-
-	if (!loader)
-		return;
-
-
-
-	purple_debug_info("gtkconv", "About to close the smiley pixbuf\n");
-
-	gdk_pixbuf_loader_close(loader, NULL);
-
+	return;
 }
 
 static void
@@ -6646,8 +6283,6 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		}
 	}
 
-	if (fields & PIDGIN_CONV_SMILEY_THEME)
-		pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
 
 	if ((fields & PIDGIN_CONV_COLORIZE_TITLE) ||
 			(fields & PIDGIN_CONV_SET_TITLE) ||
@@ -6872,7 +6507,7 @@ static PurpleConversationUiOps conversation_ui_ops =
 	pidgin_conv_chat_update_user,     /* chat_update_user     */
 	pidgin_conv_present_conversation, /* present              */
 	pidgin_conv_has_focus,            /* has_focus            */
-	pidgin_conv_custom_smiley_add,    /* custom_smiley_add    */
+	NULL,    /* custom_smiley_add    */
 	pidgin_conv_custom_smiley_write,  /* custom_smiley_write  */
 	pidgin_conv_custom_smiley_close,  /* custom_smiley_close  */
 	pidgin_conv_send_confirm,         /* send_confirm         */
@@ -7278,8 +6913,6 @@ show_timestamps_pref_cb(const char *name, PurplePrefType type,
 		        GTK_CHECK_MENU_ITEM(win->menu.show_timestamps),
 		        (gboolean)GPOINTER_TO_INT(value));
 
-		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
-			(gboolean)GPOINTER_TO_INT(value));
 	}
 }
 
@@ -7674,7 +7307,7 @@ add_message_history_to_gtkconv(gpointer data)
 	while (gtkconv->attach.current && count < 100) {  /* XXX: 100 is a random value here */
 		PurpleConvMessage *msg = gtkconv->attach.current->data;
 		if (!im && when && when < msg->when) {
-			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR><HR>", 0);
+			gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<BR><HR>");
 			g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 		}
 		pidgin_conv_write_conv(msg->conv, msg->who, msg->alias, msg->what, msg->flags, msg->when);
@@ -7709,7 +7342,7 @@ add_message_history_to_gtkconv(gpointer data)
 			PurpleConvMessage *msg = msgs->data;
 			pidgin_conv_write_conv(msg->conv, msg->who, msg->alias, msg->what, msg->flags, msg->when);
 		}
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR><HR>", 0);
+		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), "<BR><HR>");
 		g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 	}
 
