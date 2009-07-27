@@ -85,6 +85,8 @@ version 2.6.0 (??/??/2009):
 		* purple_find_buddies is now more efficient in the case where
 		  it is enumerating all the buddies for an account.
 		* purple_find_group is now more efficient for large numbers of groups.
+		* purple_find_conversation_with_account is more efficient for large
+		  numbers of concurrent conversations.
 		* All DNS routines support internationalized domain names (IDNs) when
 		  libpurple is compiled with GNU libidn.
 		* status is set before emitting signals in purple_xfer_set_status.

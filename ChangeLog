@@ -36,7 +36,7 @@ version 2.6.0 (??/??/2009):
 	  (Aman Gupta)
 	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
 	* Better handling of corrupt certificates in the TLS Peers cache.
-	* More efficient purple_find_buddies() and purple_find_group() functions.
+	* More efficient buddy list and conversation search functions.
 	  (Jan Kaluza and Aman Gupta)
 	* Internationalized Domain Names are supported when libpurple is compiled
 	  against the GNU IDN library.
