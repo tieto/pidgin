@@ -15,6 +15,9 @@ version 2.6.0 (??/??/2009):
 			* account-destroying
 		* blist-node-added and blist-node-removed signals (see
 		  blist-signals.dox)
+		* Three Blist UI ops used to overload libpurple's built-in saving
+		  of the buddy list to blist.xml. If a UI implements these, it probably
+		  wants to add the buddies itself and not call purple_blist_load.
 		* Jabber plugin signals (see jabber-signals.dox)
 		* purple_account_remove_setting
 		* purple_buddy_destroy
