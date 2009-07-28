@@ -3573,7 +3573,7 @@ static const char *blist_menu =
 				"<menuitem action='ShowIdleTimes'/>"
 				"<menuitem action='ShowProtocolIcons'/>"
 			"</menu>"
-			"<placeholder name='SortMethods'/>"
+			"<menu action='SortMenu'/>"
 			"<separator/>"
 			"<menuitem action='AddBuddy'/>"
 			"<menuitem action='AddChat'/>"
@@ -8345,6 +8345,21 @@ pidgin_blist_update_plugin_actions(void)
 #endif
 }
 
+#if GTK_CHECK_VERSION(2,4,0)
+static void
+sortmethod_act(GtkRadioAction *action, GtkRadioAction *current, char *id)
+{
+	if (action == current)
+	{
+		pidgin_set_cursor(gtkblist->window, GDK_WATCH);
+		/* This is redundant. I think. */
+		/* pidgin_blist_sort_method_set(id); */
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/blist/sort_type", id);
+
+		pidgin_clear_cursor(gtkblist->window);
+	}
+}
+#else
 static void
 sortmethod_act(GtkCheckMenuItem *checkmenuitem, char *id)
 {
@@ -8358,21 +8373,18 @@ sortmethod_act(GtkCheckMenuItem *checkmenuitem, char *id)
 		pidgin_clear_cursor(gtkblist->window);
 	}
 }
+#endif
 
 void
 pidgin_blist_update_sort_methods(void)
 {
-	GtkWidget *menuitem = NULL, *activeitem = NULL;
 	PidginBlistSortMethod *method = NULL;
 	GList *l;
 	GSList *sl = NULL;
-	GtkWidget *sortmenu;
 	const char *m = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/sort_type");
 
 #if GTK_CHECK_VERSION(2,4,0)
-	GtkActionGroup *sort_group;
-	GtkAction *activeaction = NULL;
-	GtkAction *action;
+	GtkRadioAction *action;
 	GString *ui_string;
 
 	if ((gtkblist == NULL) || (gtkblist->ui == NULL))
@@ -8380,30 +8392,47 @@ pidgin_blist_update_sort_methods(void)
 
 	/* Clear the old menu */
 	gtk_ui_manager_remove_ui(gtkblist->ui, sort_merge_id);
+	gtk_ui_manager_remove_action_group(gtkblist->ui, sort_action_group);
 
-	sort_group = gtk_action_group_new("SortMethods");
-	ui_string = g_string_new("<ui><menu name='SortMenu'>");
+	sort_action_group = gtk_action_group_new("SortMethods");
+#ifdef ENABLE_NLS
+	gtk_action_group_set_translation_domain(sort_action_group, PACKAGE);
+#endif
+	ui_string = g_string_new("<ui><menubar name='BList'>"
+	                         "<menu action='BuddiesMenu'><menu action='SortMenu'>");
+
 	for (l = pidgin_blist_sort_methods; l; l = l->next) {
 		method = (PidginBlistSortMethod *)l->data;
+
+		g_string_append_printf(ui_string, "<menuitem action='%s'/>", method->id);
 		action = gtk_radio_action_new(method->id,
-		                              _(method->name),
+		                              method->name,
 		                              NULL,
 		                              NULL,
 		                              0);
-		gtk_action_group_add_action_with_accel(sort_group, action, NULL);
+		gtk_action_group_add_action_with_accel(sort_action_group, GTK_ACTION(action), NULL);
+
+		gtk_radio_action_set_group(action, sl);
+		sl = gtk_radio_action_get_group(action);
+
 		if (!strcmp(m, method->id))
-			activeaction = action;
-		g_signal_connect(G_OBJECT(action), "activate",
-				 G_CALLBACK(sortmethod_act), method->id);
-		g_string_append_printf(ui_string, "<menuitem action='%s'/>", method->id);
+			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), TRUE);
+		else
+			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), FALSE);
+
+		g_signal_connect(G_OBJECT(action), "changed",
+		                 G_CALLBACK(sortmethod_act), method->id);
 	}
-	g_string_append(ui_string, "</menu></ui>");
-	purple_debug_info("BList", "BList sort is %s\n", ui_string->str);
+
+	g_string_append(ui_string, "</menu></menu></menubar></ui>");
+	gtk_ui_manager_insert_action_group(gtkblist->ui, sort_action_group, 1);
 	sort_merge_id = gtk_ui_manager_add_ui_from_string(gtkblist->ui, ui_string->str, -1, NULL);
-	gtk_ui_manager_insert_action_group(gtkblist->ui, sort_group, 1);
-	if (activeaction)
-		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(activeaction), TRUE);
+
+	g_string_free(ui_string, TRUE);
 #else
+	GtkWidget *menuitem = NULL, *activeitem = NULL;
+	GtkWidget *sortmenu;
+
 	if ((gtkblist == NULL) || (gtkblist->ift == NULL))
 		return;
 
