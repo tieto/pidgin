@@ -38,6 +38,10 @@
 #ifdef USE_VV
 #include "media-gst.h"
 
+#ifdef _WIN32
+#include <gdk/gdkwin32.h>
+#endif
+
 #include <gst/interfaces/xoverlay.h>
 
 #define PIDGIN_TYPE_MEDIA            (pidgin_media_get_type())
@@ -213,6 +217,7 @@ pidgin_media_delete_event_cb(GtkWidget *widget,
 	return FALSE;
 }
 
+#ifdef HAVE_X11
 static int
 pidgin_x_error_handler(Display *display, XErrorEvent *event)
 {
@@ -246,6 +251,7 @@ pidgin_x_error_handler(Display *display, XErrorEvent *event)
 			error_type);
 	return 0;
 }
+#endif
 
 static void
 menu_hangup(gpointer data, guint action, GtkWidget *item)
@@ -303,7 +309,9 @@ pidgin_media_init (PidginMedia *media)
 	GtkWidget *vbox;
 	media->priv = PIDGIN_MEDIA_GET_PRIVATE(media);
 
+#ifdef HAVE_X11
 	XSetErrorHandler(pidgin_x_error_handler);
+#endif
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(media), vbox);
@@ -450,10 +458,19 @@ realize_cb_cb(PidginMediaRealizeData *data)
 	PidginMediaPrivate *priv = data->gtkmedia->priv;
 	gulong window_id;
 
+#ifdef _WIN32
+	if (data->participant == NULL)
+		window_id = GDK_WINDOW_HWND(priv->local_video->window);
+	else
+		window_id = GDK_WINDOW_HWND(priv->remote_video->window);
+#elif defined(HAVE_X11)
 	if (data->participant == NULL)
 		window_id = GDK_WINDOW_XWINDOW(priv->local_video->window);
 	else
 		window_id = GDK_WINDOW_XWINDOW(priv->remote_video->window);
+#else
+#	error "Unsupported windowing system"
+#endif
 
 	purple_media_set_output_window(priv->media, data->session_id,
 			data->participant, window_id);
