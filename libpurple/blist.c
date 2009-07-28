@@ -2432,6 +2432,9 @@ PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name)
 	hb.name = (gchar *)purple_normalize(account, name);
 
 	for (group = purplebuddylist->root; group; group = group->next) {
+		if (!group->child)
+			continue;
+
 		hb.group = group;
 		if ((buddy = g_hash_table_lookup(purplebuddylist->buddies, &hb))) {
 			return buddy;
@@ -2481,6 +2484,9 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name)
 		hb.account = account;
 
 		for (node = purplebuddylist->root; node != NULL; node = node->next) {
+			if (!node->child)
+				continue;
+
 			hb.group = node;
 			if ((buddy = g_hash_table_lookup(purplebuddylist->buddies, &hb)) != NULL)
 				ret = g_slist_prepend(ret, buddy);
