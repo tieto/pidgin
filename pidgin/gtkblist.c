@@ -8204,9 +8204,11 @@ pidgin_blist_update_accounts_menu(void)
 		return;
 
 	/* Clear the old menu */
-	gtk_ui_manager_remove_ui(gtkblist->ui, accounts_merge_id);
-	gtk_ui_manager_remove_action_group(gtkblist->ui, accounts_action_group);
-	g_object_unref(G_OBJECT(accounts_action_group));
+	if (accounts_action_group) {
+		gtk_ui_manager_remove_ui(gtkblist->ui, accounts_merge_id);
+		gtk_ui_manager_remove_action_group(gtkblist->ui, accounts_action_group);
+		g_object_unref(G_OBJECT(accounts_action_group));
+	}
 
 	accounts_action_group = gtk_action_group_new("Accounts");
 #ifdef ENABLE_NLS
@@ -8449,9 +8451,11 @@ pidgin_blist_update_plugin_actions(void)
 		return;
 
 	/* Clear the old menu */
-	gtk_ui_manager_remove_ui(gtkblist->ui, plugins_merge_id);
-	gtk_ui_manager_remove_action_group(gtkblist->ui, plugins_action_group);
-	g_object_unref(G_OBJECT(plugins_action_group));
+	if (plugins_action_group) {
+		gtk_ui_manager_remove_ui(gtkblist->ui, plugins_merge_id);
+		gtk_ui_manager_remove_action_group(gtkblist->ui, plugins_action_group);
+		g_object_unref(G_OBJECT(plugins_action_group));
+	}
 
 	plugins_action_group = gtk_action_group_new("Accounts");
 #ifdef ENABLE_NLS
@@ -8585,8 +8589,11 @@ pidgin_blist_update_sort_methods(void)
 		return;
 
 	/* Clear the old menu */
-	gtk_ui_manager_remove_ui(gtkblist->ui, sort_merge_id);
-	gtk_ui_manager_remove_action_group(gtkblist->ui, sort_action_group);
+	if (sort_action_group) {
+		gtk_ui_manager_remove_ui(gtkblist->ui, sort_merge_id);
+		gtk_ui_manager_remove_action_group(gtkblist->ui, sort_action_group);
+		g_object_unref(G_OBJECT(sort_action_group));
+	}
 
 	sort_action_group = gtk_action_group_new("SortMethods");
 #ifdef ENABLE_NLS
