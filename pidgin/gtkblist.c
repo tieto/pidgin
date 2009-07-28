@@ -8091,7 +8091,7 @@ plugin_act(GtkObject *obj, PurplePluginAction *pam)
 
 #if GTK_CHECK_VERSION(2,4,0)
 static void
-build_plugin_actions(GtkActionGroup *action_group, GString *ui, int parent,
+build_plugin_actions(GtkActionGroup *action_group, GString *ui, char *parent,
 		PurplePlugin *plugin, gpointer context)
 {
 	GtkAction *menuaction;
@@ -8108,7 +8108,7 @@ build_plugin_actions(GtkActionGroup *action_group, GString *ui, int parent,
 			action->plugin = plugin;
 			action->context = context;
 
-			name = g_strdup_printf("plugin-%d-action-%d", parent, count++);
+			name = g_strdup_printf("%s-action-%d", parent, count++);
 			menuaction = gtk_action_new(name, action->label, NULL, NULL);
 			gtk_action_group_add_action(action_group, menuaction);
 			g_string_append_printf(ui, "<menuitem action='%s'/>", name);
@@ -8263,7 +8263,9 @@ pidgin_blist_update_accounts_menu(void)
 			gc = purple_account_get_connection(account);
 			plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
 			if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
-				build_plugin_actions(accounts_action_group, accounts_ui, count, plugin, gc);
+				name = g_strdup_printf("account%d", count);
+				build_plugin_actions(accounts_action_group, accounts_ui, name, plugin, gc);
+				g_free(name);
 			} else {
 				g_string_append(accounts_ui, "<menuitem action='none-available'/>");
 			}
@@ -8481,12 +8483,13 @@ pidgin_blist_update_plugin_actions(void)
 		action = gtk_action_new(name, plugin->info->name, NULL, NULL);
 		gtk_action_group_add_action(plugins_action_group, action);
 		g_string_append_printf(plugins_ui, "<menu action='%s'>", name);
-		g_free(name);
 
-		build_plugin_actions(plugins_action_group, plugins_ui, count, plugin, NULL);
+		build_plugin_actions(plugins_action_group, plugins_ui, name, plugin, NULL);
 
 		g_string_append(plugins_ui, "</menu>");
 		count++;
+
+		g_free(name);
 	}
 
 	ui_string = g_strconcat("<ui><menubar action='BList'><menu action='ToolsMenu'><placeholder name='PluginActions'>",
