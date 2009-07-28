@@ -110,6 +110,9 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
+	if (!who)
+		return;
+
 	if (!purple_privacy_check(purple_connection_get_account(gc), who)) {
 		purple_debug_info("yahoo", "Picture packet from %s dropped.\n", who);
 		return;
@@ -136,7 +139,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		data->checksum = checksum;
 		/* TODO: Does this need to be MSIE 5.0? */
 		url_data = purple_util_fetch_url(url, use_whole_url,
-				"Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
+				"Mozilla/4.0 (compatible; MSIE 5.5)", FALSE,
 				yahoo_fetch_picture_cb, data);
 		if (url_data != NULL) {
 			yd = gc->proto_data;
@@ -312,8 +315,8 @@ void yahoo_send_picture_info(PurpleConnection *gc, const char *who)
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "sssssi", 1, purple_connection_get_display_name(gc),
-	                  4, purple_connection_get_display_name(gc), 5, who,
+	yahoo_packet_hash(pkt, "ssssi", 1, purple_connection_get_display_name(gc),
+	                  5, who,
 	                  13, "2", 20, yd->picture_url, 192, yd->picture_checksum);
 	yahoo_packet_send_and_free(pkt, yd);
 }
@@ -324,7 +327,7 @@ void yahoo_send_picture_request(PurpleConnection *gc, const char *who)
 	struct yahoo_packet *pkt;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash_str(pkt, 4, purple_connection_get_display_name(gc)); /* me */
+	yahoo_packet_hash_str(pkt, 1, purple_connection_get_display_name(gc)); /* me */
 	yahoo_packet_hash_str(pkt, 5, who); /* the other guy */
 	yahoo_packet_hash_str(pkt, 13, "1"); /* 1 = request, 2 = reply */
 	yahoo_packet_send_and_free(pkt, yd);
@@ -570,7 +573,7 @@ static int yahoo_buddy_icon_calculate_checksum(const guchar *data, gsize len)
 		checksum &= ~g;
 	}
 
-	purple_debug_misc("yahoo", "Calculated buddy icon checksum: %d", checksum);
+	purple_debug_misc("yahoo", "Calculated buddy icon checksum: %d\n", checksum);
 
 	return checksum;
 } 

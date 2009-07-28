@@ -1,3 +1,19 @@
+pidgin (2.5.8-1~bpo50+1) lenny-backports; urgency=low
+
+  * Security related rebuild for lenny-backports fixing CVE-2009-1373 (buffer
+    overflow), CVE-2009-1374 (buffer overflow), CVE-2009-1375 (memory
+    corruption), CVE-2009-1376 (integer overflows), CVE-2009-1889 (application
+    crash)
+
+ -- Gerfried Fuchs <rhonda@debian.at>  Tue, 28 Jul 2009 12:43:45 +0200
+
+pidgin (2.5.8-1) unstable; urgency=high
+
+  * New upstream version
+    - Fixes a remote crash in ICQ (CVE-2009-1889)
+
+ -- Ari Pollak <ari@debian.org>  Mon, 29 Jun 2009 20:26:35 -0400
+
 pidgin (2.5.7-1) unstable; urgency=low
 
   * New upstream version

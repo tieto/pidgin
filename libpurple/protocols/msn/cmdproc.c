@@ -208,6 +208,7 @@ msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
 
 	trans = g_new0(MsnTransaction, 1);
 
+	trans->cmdproc = cmdproc;
 	trans->command = g_strdup(command);
 
 	if (format != NULL)

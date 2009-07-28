@@ -2,6 +2,7 @@ Source: pidgin
 Section: net
 Priority: optional
 Maintainer: Ari Pollak <ari@debian.org>
+Uploaders: Gerfried Fuchs <rhonda@debian.at>
 Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0), intltool,
  libgtk2.0-dev, libxss-dev, libmeanwhile-dev, libgadu-dev (>= 1:1.6+20060215-1),
  libnss3-dev (>= 3.11.7-1), tcl8.4-dev, tk8.4-dev, libgstreamer0.10-dev,
