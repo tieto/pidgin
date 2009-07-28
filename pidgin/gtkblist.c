@@ -8225,12 +8225,13 @@ pidgin_blist_update_accounts_menu(void)
 
 	for (accounts = purple_accounts_get_all(); accounts; accounts = accounts->next) {
 		char *label;
+		char *base;
 		char *name;
 		PurpleAccount *account = NULL;
 
 		account = accounts->data;
 
-		name = g_strdup_printf("account%d", count);
+		base = name = g_strdup_printf("account%d", count);
 		label = g_strconcat(purple_account_get_username(account), " (",
 				purple_account_get_protocol_name(account), ")", NULL);
 		action = gtk_action_new(name, label, NULL, NULL);
@@ -8241,16 +8242,14 @@ pidgin_blist_update_accounts_menu(void)
 			g_string_append_printf(enable_ui, "<menuitem action='%s'/>", name);
 			g_signal_connect(G_OBJECT(action), "activate",
 			                 G_CALLBACK(enable_account_cb), account);
-			g_free(name);
 
 		} else {
 			PurpleConnection *gc = NULL;
 			PurplePlugin *plugin = NULL;
 
 			g_string_append_printf(accounts_ui, "<menu action='%s'>", name);
-			g_free(name);
 
-			name = g_strdup_printf("account%d-edit", count);
+			name = g_strconcat(base, "-edit", NULL);
 			action = gtk_action_new(name, N_("_Edit Account"), NULL, NULL);
 			gtk_action_group_add_action(accounts_action_group, action);
 			g_signal_connect(G_OBJECT(action), "activate",
@@ -8263,16 +8262,14 @@ pidgin_blist_update_accounts_menu(void)
 			gc = purple_account_get_connection(account);
 			plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
 			if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
-				name = g_strdup_printf("account%d", count);
-				build_plugin_actions(accounts_action_group, accounts_ui, name, plugin, gc);
-				g_free(name);
+				build_plugin_actions(accounts_action_group, accounts_ui, base, plugin, gc);
 			} else {
 				g_string_append(accounts_ui, "<menuitem action='none-available'/>");
 			}
 
 			g_string_append(accounts_ui, "<separator/>");
 
-			name = g_strdup_printf("account%d-disable", count);
+			name = g_strconcat(base, "-disable", NULL);
 			action = gtk_action_new(name, N_("_Disable"), NULL, NULL);
 			gtk_action_group_add_action(accounts_action_group, action);
 			g_signal_connect(G_OBJECT(action), "activate",
@@ -8282,6 +8279,8 @@ pidgin_blist_update_accounts_menu(void)
 
 			g_string_append(accounts_ui, "</menu>");
 		}
+
+		g_free(base);
 		count++;
 	}
 
@@ -8294,6 +8293,7 @@ pidgin_blist_update_accounts_menu(void)
 	gtk_ui_manager_insert_action_group(gtkblist->ui, accounts_action_group, 1);
 	accounts_merge_id = gtk_ui_manager_add_ui_from_string(gtkblist->ui, ui_string, -1, NULL);
 purple_debug_info("blist", "The account menu is {%s}\n", ui_string);
+
 	g_string_free(enable_ui, TRUE);
 	g_string_free(accounts_ui, TRUE);
 	g_free(ui_string);
