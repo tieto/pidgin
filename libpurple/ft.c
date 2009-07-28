@@ -132,6 +132,9 @@ purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 {
 	g_return_if_fail(xfer != NULL);
 
+	if (xfer->status == status)
+		return;
+
 	xfer->status = status;
 
 	if(xfer->type == PURPLE_XFER_SEND) {
