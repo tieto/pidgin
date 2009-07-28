@@ -3241,32 +3241,32 @@ static GtkActionEntry menu_entries[] =
 {
 	/* Conversation menu */
 	{ "ConversationMenu", NULL, N_("_Conversation"), NULL, NULL, NULL },
-	{ "NewInstantMessage", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, N_("New Instant _Message..."), "<control>M", NULL, menu_new_conv_cb },
-	{ "Find", GTK_STOCK_FIND, N_("_Find..."), NULL, NULL, menu_find_cb },
-	{ "ViewLog", NULL, N_("View _Log"), NULL, NULL, menu_view_log_cb },
-	{ "SaveAs", GTK_STOCK_SAVE_AS, N_("_Save As..."), NULL, NULL, menu_save_as_cb },
-	{ "ClearScrollback", GTK_STOCK_CLEAR, N_("Clea_r Scrollback"), "<control>L", NULL, menu_clear_cb },
+	{ "NewInstantMessage", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, N_("New Instant _Message..."), "<control>M", NULL, G_CALLBACK(menu_new_conv_cb) },
+	{ "Find", GTK_STOCK_FIND, N_("_Find..."), NULL, NULL, G_CALLBACK(menu_find_cb) },
+	{ "ViewLog", NULL, N_("View _Log"), NULL, NULL, G_CALLBACK(menu_view_log_cb) },
+	{ "SaveAs", GTK_STOCK_SAVE_AS, N_("_Save As..."), NULL, NULL, G_CALLBACK(menu_save_as_cb) },
+	{ "ClearScrollback", GTK_STOCK_CLEAR, N_("Clea_r Scrollback"), "<control>L", NULL, G_CALLBACK(menu_clear_cb) },
 
 #ifdef USE_VV
 	{ "MediaMenu", NULL, N_("M_edia"), NULL, NULL, NULL },
-	{ "AudioCall", PIDGIN_STOCK_TOOLBAR_AUDIO_CALL, N_("_Audio Call"), NULL, NULL, menu_initiate_media_call_cb },
-	{ "VideoCall", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, N_("_Video Call"), NULL, NULL, menu_initiate_media_call_cb },
-	{ "AudioVideoCall", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, N_("Audio\\/Video _Call"), NULL, NULL, menu_initiate_media_call_cb },
+	{ "AudioCall", PIDGIN_STOCK_TOOLBAR_AUDIO_CALL, N_("_Audio Call"), NULL, NULL, G_CALLBACK(menu_initiate_media_call_cb) },
+	{ "VideoCall", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, N_("_Video Call"), NULL, NULL, G_CALLBACK(menu_initiate_media_call_cb) },
+	{ "AudioVideoCall", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, N_("Audio\\/Video _Call"), NULL, NULL, G_CALLBACK(menu_initiate_media_call_cb) },
 #endif
 
-	{ "SendFile", PIDGIN_STOCK_TOOLBAR_SEND_FILE, N_("Se_nd File..."), NULL, NULL, menu_send_file_cb },
-	{ "AddBuddyPounce", NULL, N_("Add Buddy _Pounce..."), NULL, NULL, menu_add_pounce_cb },
-	{ "GetInfo", PIDGIN_STOCK_TOOLBAR_USER_INFO, N_("_Get Info"), "<control>O", NULL, menu_get_info_cb },
-	{ "Invite", NULL, N_("In_vite..."), NULL, NULL, menu_invite_cb },
+	{ "SendFile", PIDGIN_STOCK_TOOLBAR_SEND_FILE, N_("Se_nd File..."), NULL, NULL, G_CALLBACK(menu_send_file_cb) },
+	{ "AddBuddyPounce", NULL, N_("Add Buddy _Pounce..."), NULL, NULL, G_CALLBACK(menu_add_pounce_cb) },
+	{ "GetInfo", PIDGIN_STOCK_TOOLBAR_USER_INFO, N_("_Get Info"), "<control>O", NULL, G_CALLBACK(menu_get_info_cb) },
+	{ "Invite", NULL, N_("In_vite..."), NULL, NULL, G_CALLBACK(menu_invite_cb) },
 	{ "MoreMenu", NULL, N_("M_ore"), NULL, NULL, NULL },
-	{ "Alias", NULL, N_("Al_ias..."), NULL, NULL, menu_alias_cb },
-	{ "Block", PIDGIN_STOCK_TOOLBAR_BLOCK, N_("_Block..."), NULL, NULL, menu_block_cb },
-	{ "Unblock", PIDGIN_STOCK_TOOLBAR_UNBLOCK, N_("_Unblock..."), NULL, NULL, menu_unblock_cb },
-	{ "Add", GTK_STOCK_ADD, N_("_Add..."), NULL, NULL, menu_add_remove_cb },
-	{ "Remove", GTK_STOCK_REMOVE, N_("_Remove..."), NULL, NULL, menu_add_remove_cb },
-	{ "InsertLink", PIDGIN_STOCK_TOOLBAR_INSERT_LINK, N_("Insert Lin_k..."), NULL, NULL, menu_insert_link_cb },
-	{ "InsertImage", PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, N_("Insert Imag_e..."), NULL, NULL, menu_insert_image_cb },
-	{ "Close", GTK_STOCK_CLOSE, N_("_Close"), NULL, NULL, menu_close_conv_cb },
+	{ "Alias", NULL, N_("Al_ias..."), NULL, NULL, G_CALLBACK(menu_alias_cb) },
+	{ "Block", PIDGIN_STOCK_TOOLBAR_BLOCK, N_("_Block..."), NULL, NULL, G_CALLBACK(menu_block_cb) },
+	{ "Unblock", PIDGIN_STOCK_TOOLBAR_UNBLOCK, N_("_Unblock..."), NULL, NULL, G_CALLBACK(menu_unblock_cb) },
+	{ "Add", GTK_STOCK_ADD, N_("_Add..."), NULL, NULL, G_CALLBACK(menu_add_remove_cb) },
+	{ "Remove", GTK_STOCK_REMOVE, N_("_Remove..."), NULL, NULL, G_CALLBACK(menu_add_remove_cb) },
+	{ "InsertLink", PIDGIN_STOCK_TOOLBAR_INSERT_LINK, N_("Insert Lin_k..."), NULL, NULL, G_CALLBACK(menu_insert_link_cb) },
+	{ "InsertImage", PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, N_("Insert Imag_e..."), NULL, NULL, G_CALLBACK(menu_insert_image_cb) },
+	{ "Close", GTK_STOCK_CLOSE, N_("_Close"), NULL, NULL, G_CALLBACK(menu_close_conv_cb) },
 
 	/* Options */
 	{ "OptionsMenu", NULL, N_("_Options"), NULL, NULL, NULL },
@@ -3274,10 +3274,10 @@ static GtkActionEntry menu_entries[] =
 
 /* Toggle items */
 static const GtkToggleActionEntry menu_toggle_entries[] = {
-	{ "EnableLogging", NULL, N_("Enable _Logging"), NULL, NULL, menu_logging_cb, FALSE },
-	{ "EnableSounds", NULL, N_("Enable _Sounds"), NULL, NULL, menu_sounds_cb, FALSE },
-	{ "ShowFormattingToolbars", NULL, N_("Show Formatting _Toolbars"), NULL, NULL, menu_toolbar_cb, FALSE },
-	{ "ShowTimestamps", NULL, N_("Show Ti_mestamps"), NULL, NULL, menu_timestamps_cb, FALSE },
+	{ "EnableLogging", NULL, N_("Enable _Logging"), NULL, NULL, G_CALLBACK(menu_logging_cb), FALSE },
+	{ "EnableSounds", NULL, N_("Enable _Sounds"), NULL, NULL, G_CALLBACK(menu_sounds_cb), FALSE },
+	{ "ShowFormattingToolbars", NULL, N_("Show Formatting _Toolbars"), NULL, NULL, G_CALLBACK(menu_toolbar_cb), FALSE },
+	{ "ShowTimestamps", NULL, N_("Show Ti_mestamps"), NULL, NULL, G_CALLBACK(menu_timestamps_cb), FALSE },
 };
 
 static const char *conversation_menu =
