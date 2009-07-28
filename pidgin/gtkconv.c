@@ -1227,15 +1227,25 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 static void 
 #if GTK_CHECK_VERSION(2,6,0)
 menu_initiate_media_call_cb(GtkAction *action, gpointer data)
-#else
-menu_initiate_media_call_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = (PidginWindow *)data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
 	PurpleAccount *account = purple_conversation_get_account(conv);
 
-	/* FIXME: action is not an int... */
+	purple_prpl_initiate_media(account,
+			purple_conversation_get_name(conv),
+			action == win->audio_call ? PURPLE_MEDIA_AUDIO :
+			action == win->video_call ? PURPLE_MEDIA_VIDEO :
+			action == win->audio_video_call ? PURPLE_MEDIA_AUDIO |
+			PURPLE_MEDIA_VIDEO : PURPLE_MEDIA_NONE);
+}
+#else
+menu_initiate_media_call_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	PidginWindow *win = (PidginWindow *)data;
+	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+	PurpleAccount *account = purple_conversation_get_account(conv);
+
 	purple_prpl_initiate_media(account,
 			purple_conversation_get_name(conv),
 			action == 0 ? PURPLE_MEDIA_AUDIO :
@@ -1243,6 +1253,7 @@ menu_initiate_media_call_cb(gpointer data, guint action, GtkWidget *widget)
 			action == 2 ? PURPLE_MEDIA_AUDIO |
 			PURPLE_MEDIA_VIDEO : PURPLE_MEDIA_NONE);
 }
+#endif
 #endif
 
 static void
