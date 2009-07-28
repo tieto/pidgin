@@ -803,7 +803,7 @@ pidgin_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *sid, gchar *name, PidginMedia *gtkmedia)
 {
 	purple_debug_info("gtkmedia", "state: %d sid: %s name: %s\n",
-			state, sid, name);
+			state, sid ? sid : "(null)", name ? name : "(null)");
 	if (sid == NULL && name == NULL) {
 		if (state == PURPLE_MEDIA_STATE_END) {
 			pidgin_media_emit_message(gtkmedia,

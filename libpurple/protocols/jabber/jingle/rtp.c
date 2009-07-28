@@ -457,7 +457,8 @@ jingle_rtp_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *sid, gchar *name, JingleSession *session)
 {
 	purple_debug_info("jingle-rtp", "state-changed: state %d "
-			"id: %s name: %s\n", state, sid, name);
+			"id: %s name: %s\n", state, sid ? sid : "(null)",
+			name ? name : "(null)");
 }
 
 static void
@@ -466,7 +467,8 @@ jingle_rtp_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		JingleSession *session)
 {
 	purple_debug_info("jingle-rtp", "stream-info: type %d "
-			"id: %s name: %s\n", type, sid, name);
+			"id: %s name: %s\n", type, sid ? sid : "(null)",
+			name ? name : "(null)");
 
 	g_return_if_fail(JINGLE_IS_SESSION(session));
 

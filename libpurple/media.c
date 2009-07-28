@@ -2729,7 +2729,8 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 		purple_debug_error("media",
 				"purple_media_add_remote_candidates: "
 				"couldn't find stream %s %s.\n",
-				sess_id, participant);
+				sess_id ? sess_id : "(null)",
+				participant ? participant : "(null)");
 		return;
 	}
 
