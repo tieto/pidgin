@@ -818,7 +818,7 @@ debug_window_new(void)
 
 		/* Pause */
 #if GTK_CHECK_VERSION(2,4,0)
-		item = gtk_tool_button_new_from_stock(PIDGIN_STOCK_PAUSE);
+		item = gtk_toggle_tool_button_new_from_stock(PIDGIN_STOCK_PAUSE);
 #if GTK_CHECK_VERSION(2,12,0)
 		gtk_tool_item_set_tooltip_text(item, _("Pause"));
 #else
