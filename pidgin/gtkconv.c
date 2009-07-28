@@ -2405,8 +2405,13 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	purple_conversation_close_logs(old_conv);
 	gtkconv->active_conv = conv;
 
+#if GTK_CHECK_VERSION(2,6,0)
+	purple_conversation_set_logging(conv,
+		gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(gtkconv->win->menu.logging)));
+#else
 	purple_conversation_set_logging(conv,
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging)));
+#endif
 
 	entry = GTK_IMHTML(gtkconv->entry);
 	protocol_name = purple_account_get_protocol_name(conv->account);
@@ -3416,19 +3421,31 @@ sound_method_pref_changed_cb(const char *name, PurplePrefType type,
 
 	if (!strcmp(method, "none"))
 	{
+#if GTK_CHECK_VERSION(2,6,0)
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(win->menu.sounds),
+		                             FALSE);
+		gtk_action_set_sensitive(win->menu.sounds, FALSE);
+#else
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
 		                               FALSE);
 		gtk_widget_set_sensitive(win->menu.sounds, FALSE);
+#endif
 	}
 	else
 	{
 		PidginConversation *gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 
+#if GTK_CHECK_VERSION(2,6,0)
+		if (gtkconv != NULL)
+			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(win->menu.sounds),
+			                             gtkconv->make_sound);
+		gtk_action_set_sensitive(win->menu.sounds, TRUE);
+#else
 		if (gtkconv != NULL)
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
 			                               gtkconv->make_sound);
 		gtk_widget_set_sensitive(win->menu.sounds, TRUE);
-
+#endif
 	}
 }
 
@@ -3680,96 +3697,96 @@ setup_menubar(PidginWindow *win)
 		gtk_ui_manager_get_widget(win->menu.ui, "/Conversation");
 
 	win->menu.view_log =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/ViewLog");
 
 #ifdef USE_VV
 	win->audio_call =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 					    "/Conversation/ConversationMenu/MediaMenu/AudioCall");
 	win->video_call =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 					    "/Conversation/ConversationMenu/MediaMenu/VideoCall");
 	win->audio_video_call =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 					    "/Conversation/ConversationMenu/MediaMenu/AudioVideoCall");
 #endif
 	
 	/* --- */
 
 	win->menu.send_file =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/SendFile");
 
 	win->menu.add_pounce =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/AddBuddyPounce");
 
 	/* --- */
 
 	win->menu.get_info =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/GetInfo");
 
 	win->menu.invite =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/Invite");
 
 	/* --- */
 
 	win->menu.alias =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/Alias");
 
 	win->menu.block =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/Block");
 
 	win->menu.unblock =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 					    "/Conversation/ConversationMenu/Unblock");
 
 	win->menu.add =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/Add");
 
 	win->menu.remove =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/ConversationMenu/Remove");
 
 	/* --- */
 
 	win->menu.insert_link =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 				"/Conversation/ConversationMenu/InsertLink");
 
 	win->menu.insert_image =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 				"/Conversation/ConversationMenu/InsertImage");
 
 	/* --- */
 
 	win->menu.logging =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/OptionsMenu/EnableLogging");
 	win->menu.sounds =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/OptionsMenu/EnableSounds");
 	method = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method");
 	if (method != NULL && !strcmp(method, "none"))
 	{
 		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(win->menu.sounds),
 		                               FALSE);
-		gtk_widget_set_sensitive(win->menu.sounds, FALSE);
+		gtk_action_set_sensitive(win->menu.sounds, FALSE);
 	}
 	purple_prefs_connect_callback(win, PIDGIN_PREFS_ROOT "/sound/method",
 				    sound_method_pref_changed_cb, win);
 
 	win->menu.show_formatting_toolbar =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/OptionsMenu/ShowFormattingToolbars");
 	win->menu.show_timestamps =
-		gtk_ui_manager_get_widget(win->menu.ui,
+		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/OptionsMenu/ShowTimestamps");
 	win->menu.show_icon = NULL;
 
@@ -4078,7 +4095,8 @@ update_send_to_selection(PidginWindow *win)
 	if (!(b = purple_find_buddy(account, conv->name)))
 		return FALSE;
 
-
+#if GTK_CHECK_VERSION(2,4,0)
+#else
 	gtk_widget_show(win->menu.send_to);
 
 	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(win->menu.send_to));
@@ -4100,6 +4118,7 @@ update_send_to_selection(PidginWindow *win)
 			break;
 		}
 	}
+#endif
 
 	return FALSE;
 }
@@ -6707,6 +6726,16 @@ pidgin_conv_send_confirm(PurpleConversation *conv, const char *message)
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->entry), message, 0);
 }
 
+/* Mask functions with ones from newer GTK+ */
+#if GTK_CHECK_VERSION(2,6,0)
+#define gtk_widget_set_sensitive_ gtk_widget_set_sensitive
+#define gtk_widget_show_ gtk_widget_show
+#define gtk_widget_hide_ gtk_widget_hide
+#define gtk_widget_set_sensitive gtk_action_set_sensitive
+#define gtk_widget_show(x) gtk_action_set_visible((x), TRUE)
+#define gtk_widget_hide(x) gtk_action_set_visible((x), FALSE)
+#endif
+
 /*
  * Makes sure all the menu items and all the buttons are hidden/shown and
  * sensitive/insensitive.  This is called after changing tabs and when an
@@ -6940,6 +6969,17 @@ gray_stuff_out(PidginConversation *gtkconv)
 		}
 	}
 }
+
+/* Restore the functions */
+#if GTK_CHECK_VERSION(2,6,0)
+#undef gtk_widget_set_sensitive
+#undef gtk_widget_show
+#undef gtk_widget_hide
+
+#define gtk_widget_set_sensitive gtk_widget_set_sensitive_
+#define gtk_widget_show gtk_widget_show_
+#define gtk_widget_hide gtk_widget_hide_
+#endif
 
 static void
 pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
@@ -7627,9 +7667,15 @@ show_timestamps_pref_cb(const char *name, PurplePrefType type,
 		gtkconv = PIDGIN_CONVERSATION(conv);
 		win     = gtkconv->win;
 
+#if GTK_CHECK_VERSION(2,6,0)
+		gtk_toggle_action_set_active(
+		        GTK_TOGGLE_ACTION(win->menu.show_timestamps),
+		        (gboolean)GPOINTER_TO_INT(value));
+#else
 		gtk_check_menu_item_set_active(
 		        GTK_CHECK_MENU_ITEM(win->menu.show_timestamps),
 		        (gboolean)GPOINTER_TO_INT(value));
+#endif
 
 		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
 			(gboolean)GPOINTER_TO_INT(value));
@@ -7655,9 +7701,15 @@ show_formatting_toolbar_pref_cb(const char *name, PurplePrefType type,
 		gtkconv = PIDGIN_CONVERSATION(conv);
 		win     = gtkconv->win;
 
+#if GTK_CHECK_VERSION(2,6,0)
+		gtk_toggle_action_set_active(
+		        GTK_TOGGLE_ACTION(win->menu.show_formatting_toolbar),
+		        (gboolean)GPOINTER_TO_INT(value));
+#else
 		gtk_check_menu_item_set_active(
 		        GTK_CHECK_MENU_ITEM(win->menu.show_formatting_toolbar),
 		        (gboolean)GPOINTER_TO_INT(value));
+#endif
 
 		if ((gboolean)GPOINTER_TO_INT(value))
 			gtk_widget_show(gtkconv->toolbar);
@@ -8886,6 +8938,8 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 		/* Right click was pressed. Popup the context menu. */
 		GtkWidget *menu = gtk_menu_new(), *sub;
 		gboolean populated = populate_menu_with_options(menu, gtkconv, TRUE);
+#if GTK_CHECK_VERSION(2,4,0)
+#else
 		sub = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
 
 		if (sub && GTK_WIDGET_IS_SENSITIVE(gtkconv->win->menu.send_to)) {
@@ -8900,7 +8954,7 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 			gtk_widget_destroy(menu);
 			return FALSE;
 		}
-
+#endif
 		gtk_widget_show_all(menu);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
 		return TRUE;
@@ -9410,8 +9464,13 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	/* Update the menubar */
 
+#if GTK_CHECK_VERSION(2,6,0)
+	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtkconv->win->menu.logging),
+	                             purple_conversation_is_logging(conv));
+#else
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging),
 	                               purple_conversation_is_logging(conv));
+#endif
 
 	generate_send_to_items(win);
 	regenerate_options_items(win);
@@ -9420,6 +9479,17 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	pidgin_conv_switch_active_conversation(conv);
 
 	sound_method = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method");
+#if GTK_CHECK_VERSION(2,6,0)
+	if (strcmp(sound_method, "none") != 0)
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(win->menu.sounds),
+		                             gtkconv->make_sound);
+
+	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(win->menu.show_formatting_toolbar),
+	                             purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar"));
+
+	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(win->menu.show_timestamps),
+	                             purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps"));
+#else
 	if (strcmp(sound_method, "none") != 0)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
 		                               gtkconv->make_sound);
@@ -9429,6 +9499,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_timestamps),
 	                               purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps"));
+#endif
 
 	/*
 	 * We pause icons when they are not visible.  If this icon should
