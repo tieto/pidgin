@@ -10930,7 +10930,7 @@ msgid "/Conversation/Media/_Video Call"
 msgstr "/Konversation/Media/_Videosamtal"
 
 msgid "/Conversation/Media/Audio\\/Video _Call"
-msgstr "/Konversation/Media/Ljud\\/Video _Samtal"
+msgstr "/Konversation/Media/Ljud\\/Video_Samtal"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Konversation/S_kicka fil..."
