@@ -126,6 +126,10 @@ typedef struct
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
 	((PidginBuddyListPrivate *)((list)->priv))
 
+#if GTK_CHECK_VERSION(2,4,0)
+static guint accounts_merge_id;
+static GtkActionGroup *accounts_action_group = NULL;
+#endif
 static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;
@@ -136,7 +140,6 @@ static gboolean editing_blist = FALSE;
 static GList *pidgin_blist_sort_methods = NULL;
 static struct pidgin_blist_sort_method *current_sort_method = NULL;
 static void sort_method_none(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
-
 /* The functions we use for sorting aren't available in gtk 2.0.x, and
  * segfault in 2.2.0.  2.2.1 is known to work, so I'll require that */
 #if GTK_CHECK_VERSION(2,2,1)
@@ -144,6 +147,11 @@ static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *bli
 static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 #endif
+#if GTK_CHECK_VERSION(2,4,0)
+static guint sort_merge_id;
+static GtkActionGroup *sort_action_group = NULL;
+#endif
+
 static PidginBuddyList *gtkblist = NULL;
 
 static GList *groups_tree(void);
@@ -8276,7 +8284,12 @@ pidgin_blist_update_accounts_menu(void)
 #endif
 }
 
+#if GTK_CHECK_VERSION(2,4,0)
+static guint plugins_merge_id;
+static GtkActionGroup *plugins_action_group = NULL;
+#else
 static GList *plugin_submenus = NULL;
+#endif
 
 void
 pidgin_blist_update_plugin_actions(void)
@@ -8366,7 +8379,7 @@ pidgin_blist_update_sort_methods(void)
 		return;
 
 	/* Clear the old menu */
-	gtk_ui_manager_remove_ui(gtkblist->ui, gtkblist->sort_methods_merge_id);
+	gtk_ui_manager_remove_ui(gtkblist->ui, sort_merge_id);
 
 	sort_group = gtk_action_group_new("SortMethods");
 	ui_string = g_string_new("<ui><menu name='SortMenu'>");
@@ -8386,7 +8399,7 @@ pidgin_blist_update_sort_methods(void)
 	}
 	g_string_append(ui_string, "</menu></ui>");
 	purple_debug_info("BList", "BList sort is %s\n", ui_string->str);
-	gtkblist->sort_methods_merge_id = gtk_ui_manager_add_ui_from_string(gtkblist->ui, ui_string->str, -1, NULL);
+	sort_merge_id = gtk_ui_manager_add_ui_from_string(gtkblist->ui, ui_string->str, -1, NULL);
 	gtk_ui_manager_insert_action_group(gtkblist->ui, sort_group, 1);
 	if (activeaction)
 		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(activeaction), TRUE);

@@ -84,10 +84,6 @@ struct _PidginBuddyList {
 
 #if GTK_CHECK_VERSION(2,4,0)
 	GtkUIManager *ui;
-	/* Hmm, can I put these here? */
-	guint plugins_merge_id;
-	guint accounts_merge_id;
-	guint sort_methods_merge_id;
 #else
 	GtkItemFactory *ift;
 #endif
