@@ -80,7 +80,7 @@ struct yahoo_xfer_data {
 static void yahoo_xfer_data_free(struct yahoo_xfer_data *xd)
 {
 	PurpleConnection *gc;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	PurpleXfer *xfer;
 	GSList *l;
 
@@ -233,7 +233,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, const gchar *er
 	size_t content_length, header_len, pkt_buf_len;
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	struct yahoo_data *yd;
+	YahooData *yd;
 
 	purple_debug_info("yahoo", "in yahoo_sendfile_connected\n");
 
@@ -311,7 +311,7 @@ static void yahoo_xfer_init(PurpleXfer *xfer)
 	struct yahoo_xfer_data *xfer_data;
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	struct yahoo_data *yd;
+	YahooData *yd;
 
 	xfer_data = xfer->data;
 	gc = xfer_data->gc;
@@ -354,7 +354,7 @@ static void yahoo_xfer_init_15(PurpleXfer *xfer)
 	struct yahoo_xfer_data *xfer_data;
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	struct yahoo_packet *pkt;
 
 	xfer_data = xfer->data;
@@ -525,7 +525,7 @@ static void yahoo_xfer_cancel_send(PurpleXfer *xfer)
 	{
 		PurpleConnection *gc;
 		PurpleAccount *account;
-		struct yahoo_data *yd;
+		YahooData *yd;
 		struct yahoo_packet *pkt;
 
 		gc = xfer_data->gc;
@@ -573,7 +573,7 @@ static void yahoo_xfer_cancel_recv(PurpleXfer *xfer)
 
 		PurpleConnection *gc;
 		PurpleAccount *account;
-		struct yahoo_data *yd;
+		YahooData *yd;
 		struct yahoo_packet *pkt;
 
 		gc = xfer_data->gc;
@@ -634,7 +634,7 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 	struct yahoo_xfer_data *xfer_data;
 	PurpleXfer *xfer = NULL;
 	PurpleConnection *gc;
-	struct yahoo_data *yd;
+	YahooData *yd;
 
 	xfer_data = xfer_old->data;
 	if(xfer_data && xfer_data->version == 15
@@ -802,7 +802,7 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *imv = NULL;
 	long expires = 0;
 	PurpleXfer *xfer;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	struct yahoo_xfer_data *xfer_data;
 	char *service = NULL;
 	char *filename = NULL;
@@ -985,7 +985,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 	long a,b,c,d;
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	gchar *url;
 	gchar *filename;
 
@@ -1068,7 +1068,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 void yahoo_send_file(PurpleConnection *gc, const char *who, const char *file)
 {
 	struct yahoo_xfer_data *xfer_data;
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	PurpleXfer *xfer = yahoo_new_xfer(gc, who);
 
 	g_return_if_fail(xfer != NULL);
@@ -1226,7 +1226,7 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 	PurpleXfer *xfer;
 	struct yahoo_xfer_data *xd;
 	PurpleAccount *account;
-	struct yahoo_data* yd;
+	YahooData* yd;
 
 	if (!(xfer = data))
 		return;
@@ -1479,7 +1479,7 @@ static void yahoo_p2p_ft_server_listen_cb(int listenfd, gpointer data)
 	struct yahoo_xfer_data *xd;
 	struct yahoo_packet *pkt;
 	PurpleAccount *account;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	gchar *filename;
 	const char *local_ip;
 	gchar *url_to_send = NULL;
@@ -1546,7 +1546,7 @@ static void yahoo_p2p_client_send_ft_info(PurpleConnection *gc, PurpleXfer *xfer
 	struct yahoo_xfer_data *xd;
 	struct yahoo_packet *pkt;
 	PurpleAccount *account;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	gchar *filename;
 	struct yahoo_p2p_data *p2p_data;
 
@@ -1583,7 +1583,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *imv = NULL;
 	long val_222 = 0L;
 	PurpleXfer *xfer;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	struct yahoo_xfer_data *xfer_data;
 	char *service = NULL;
 	char *filename = NULL;
@@ -1760,7 +1760,7 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 	long val_249 = 0;
 	long val_66 = 0;
 	PurpleXfer *xfer;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	struct yahoo_xfer_data *xfer_data;
 	char *filename = NULL;
 	char *xfer_peer_idstring = NULL;
@@ -1867,7 +1867,7 @@ void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *p
 	gchar *xfer_peer_idstring = NULL;
 	gchar *xfer_idstring_for_relay = NULL;
 	PurpleXfer *xfer;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	struct yahoo_xfer_data *xfer_data;
 	GSList *l;
 	PurpleAccount *account;

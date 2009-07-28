@@ -15,6 +15,9 @@ version 2.6.0 (??/??/2009):
 			* account-destroying
 		* blist-node-added and blist-node-removed signals (see
 		  blist-signals.dox)
+		* Three Blist UI ops used to overload libpurple's built-in saving
+		  of the buddy list to blist.xml. If a UI implements these, it probably
+		  wants to add the buddies itself and not call purple_blist_load.
 		* Jabber plugin signals (see jabber-signals.dox)
 		* purple_account_remove_setting
 		* purple_buddy_destroy
@@ -85,9 +88,13 @@ version 2.6.0 (??/??/2009):
 		* purple_find_buddies is now more efficient in the case where
 		  it is enumerating all the buddies for an account.
 		* purple_find_group is now more efficient for large numbers of groups.
+		* purple_find_conversation_with_account is more efficient for large
+		  numbers of concurrent conversations.
 		* All DNS routines support internationalized domain names (IDNs) when
 		  libpurple is compiled with GNU libidn.
 		* status is set before emitting signals in purple_xfer_set_status.
+		* Creating multiple distinct chats with the same name (i.e. "MSN Chat")
+		  is deprecated and will be removed in libpurple 3.0.0.
 
 		Deprecated:
 		* buddy-added and buddy-removed blist signals

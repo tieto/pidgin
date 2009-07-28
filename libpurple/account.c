@@ -1534,6 +1534,8 @@ purple_account_request_change_user_info(PurpleAccount *account)
 void
 purple_account_set_username(PurpleAccount *account, const char *username)
 {
+	PurpleBlistUiOps *blist_ops;
+
 	g_return_if_fail(account != NULL);
 
 	g_free(account->username);
@@ -1543,7 +1545,9 @@ purple_account_set_username(PurpleAccount *account, const char *username)
 
 	/* if the name changes, we should re-write the buddy list
 	 * to disk with the new name */
-	purple_blist_schedule_save();
+	blist_ops = purple_blist_get_ui_ops();
+	if (blist_ops != NULL && blist_ops->save_account != NULL)
+		blist_ops->save_account(account);
 }
 
 void

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-20 11:50-0700\n"
+"POT-Creation-Date: 2009-07-25 09:57-0400\n"
 "PO-Revision-Date: 2009-02-24 22:11-0300\n"
 "Last-Translator: Rodrigo Luiz Marques Flores <mail@rodrigoflores.org>\n"
 "Language-Team: Rodrigo Luiz Marques Flores <mail@rodrigoflores.org>\n"
@@ -1691,6 +1691,7 @@ msgstr ""
 "O certificado enviado por \"%s\" é auto-assinado. Ele não pode ser "
 "verificado automaticamente."
 
+#. FIXME 2.6.1
 #, c-format
 msgid "The certificate chain presented for %s is not valid."
 msgstr "A cadeia de certificados enviada para %s não é válida."
@@ -1700,6 +1701,7 @@ msgstr "A cadeia de certificados enviada para %s não é válida."
 #. stifle it.
 #. TODO: Probably wrong.
 #. TODO: Probably wrong
+#. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "Erro no certificado SSL"
 
@@ -9728,9 +9730,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "O perfil do usuário está vazio."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s has declined to join."
-msgstr "%s conectou."
+msgstr "%s rejeitou o convite."
 
 msgid "Failed to join chat"
 msgstr "Falha ao entrar no bate-papo"
