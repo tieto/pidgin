@@ -8436,14 +8436,66 @@ static GList *plugin_submenus = NULL;
 void
 pidgin_blist_update_plugin_actions(void)
 {
-	GtkWidget *menuitem, *submenu;
 	PurplePlugin *plugin = NULL;
 	GList *l;
-	GtkAccelGroup *accel_group;
 
 #if GTK_CHECK_VERSION(2,4,0)
-/* TODO: Update Plugin */
+	GtkAction *action;
+	GString *plugins_ui;
+	gchar *ui_string;
+	int count = 0;
+
+	if ((gtkblist == NULL) || (gtkblist->ui == NULL))
+		return;
+
+	/* Clear the old menu */
+	gtk_ui_manager_remove_ui(gtkblist->ui, plugins_merge_id);
+	gtk_ui_manager_remove_action_group(gtkblist->ui, plugins_action_group);
+	g_object_unref(G_OBJECT(plugins_action_group));
+
+	plugins_action_group = gtk_action_group_new("Accounts");
+#ifdef ENABLE_NLS
+	gtk_action_group_set_translation_domain(plugins_action_group, PACKAGE);
+#endif
+	plugins_ui = g_string_new(NULL);
+
+	/* Add a submenu for each plugin with custom actions */
+	for (l = purple_plugins_get_loaded(); l; l = l->next) {
+		char *name;
+
+		plugin = (PurplePlugin *)l->data;
+
+		if (PURPLE_IS_PROTOCOL_PLUGIN(plugin))
+			continue;
+
+		if (!PURPLE_PLUGIN_HAS_ACTIONS(plugin))
+			continue;
+
+		name = g_strdup_printf("plugin%d", count);
+		action = gtk_action_new(name, plugin->info->name, NULL, NULL);
+		gtk_action_group_add_action(plugins_action_group, action);
+		g_string_append_printf(plugins_ui, "<menu action='%s'>", name);
+		g_free(name);
+
+		build_plugin_actions(plugins_action_group, plugins_ui, count, plugin, NULL);
+
+		g_string_append(plugins_ui, "</menu>");
+		count++;
+	}
+
+	ui_string = g_strconcat("<ui><menubar action='BList'><menu action='ToolsMenu'><placeholder name='PluginActions'>",
+	                        plugins_ui->str,
+	                        "</placeholder></menu></menubar></ui>",
+	                        NULL);
+	gtk_ui_manager_insert_action_group(gtkblist->ui, plugins_action_group, 1);
+	plugins_merge_id = gtk_ui_manager_add_ui_from_string(gtkblist->ui, ui_string, -1, NULL);
+purple_debug_info("blist", "The plugins menu is {%s}\n", ui_string);
+
+	g_string_free(plugins_ui, TRUE);
+	g_free(ui_string);
 #else
+	GtkWidget *menuitem, *submenu;
+	GtkAccelGroup *accel_group;
 	GtkWidget *pluginmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools"));
 
 	g_return_if_fail(pluginmenu != NULL);
