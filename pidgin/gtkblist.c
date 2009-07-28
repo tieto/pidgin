@@ -163,7 +163,9 @@ static void pidgin_blist_update(PurpleBuddyList *list, PurpleBlistNode *node);
 static void pidgin_blist_update_group(PurpleBuddyList *list, PurpleBlistNode *node);
 static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *node);
 static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full);
+#if !GTK_CHECK_VERSION(2,4,0)
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
+#endif
 static gboolean get_iter_from_node(PurpleBlistNode *node, GtkTreeIter *iter);
 static gboolean buddy_is_displayable(PurpleBuddy *buddy);
 static void redo_buddy_list(PurpleBuddyList *list, gboolean remove, gboolean rerender);
@@ -3535,7 +3537,7 @@ static const GtkActionEntry blist_menu_entries[] = {
 	{ "Plugins", PIDGIN_STOCK_TOOLBAR_PLUGINS, N_("Plu_gins"), "<control>U", NULL, pidgin_plugin_dialog_show },
 	{ "Preferences", GTK_STOCK_PREFERENCES, N_("Pr_eferences"), "<control>P", NULL, pidgin_prefs_show },
 	{ "Privacy", NULL, N_("Pr_ivacy"), NULL, NULL, pidgin_privacy_dialog_show },
-	{ "FileTransfers", PIDGIN_STOCK_TOOLBAR_TRANSFER, N_("_File Transfers"), "<control>T", NULL, gtk_blist_show_xfer_dialog_cb },
+	{ "FileTransfers", PIDGIN_STOCK_TOOLBAR_TRANSFER, N_("_File Transfers"), "<control>T", NULL, G_CALLBACK(gtk_blist_show_xfer_dialog_cb) },
 	{ "RoomList", NULL, N_("R_oom List"), NULL, NULL, pidgin_roomlist_dialog_show },
 	{ "SystemLog", NULL, N_("System _Log"), NULL, NULL, gtk_blist_show_systemlog_cb },
 
@@ -3549,14 +3551,14 @@ static const GtkActionEntry blist_menu_entries[] = {
 /* Toggle items */
 static const GtkToggleActionEntry blist_menu_toggle_entries[] = {
 	/* Buddies->Show menu */
-	{ "ShowOffline", NULL, N_("_Offline Buddies"), NULL, NULL, pidgin_blist_edit_mode_cb, FALSE },
-	{ "ShowEmptyGroups", NULL, N_("_Empty Groups"), NULL, NULL, pidgin_blist_show_empty_groups_cb, FALSE },
-	{ "ShowBuddyDetails", NULL, N_("Buddy _Details"), NULL, NULL, pidgin_blist_buddy_details_cb, FALSE },
-	{ "ShowIdleTimes", NULL, N_("Idle _Times"), NULL, NULL, pidgin_blist_show_idle_time_cb, FALSE },
-	{ "ShowProtocolIcons", NULL, N_("_Protocol Icons"), NULL, NULL, pidgin_blist_show_protocol_icons_cb, FALSE },
+	{ "ShowOffline", NULL, N_("_Offline Buddies"), NULL, NULL, G_CALLBACK(pidgin_blist_edit_mode_cb), FALSE },
+	{ "ShowEmptyGroups", NULL, N_("_Empty Groups"), NULL, NULL, G_CALLBACK(pidgin_blist_show_empty_groups_cb), FALSE },
+	{ "ShowBuddyDetails", NULL, N_("Buddy _Details"), NULL, NULL, G_CALLBACK(pidgin_blist_buddy_details_cb), FALSE },
+	{ "ShowIdleTimes", NULL, N_("Idle _Times"), NULL, NULL, G_CALLBACK(pidgin_blist_show_idle_time_cb), FALSE },
+	{ "ShowProtocolIcons", NULL, N_("_Protocol Icons"), NULL, NULL, G_CALLBACK(pidgin_blist_show_protocol_icons_cb), FALSE },
 
 	/* Tools menu */
-	{ "MuteSounds", NULL, N_("Mute _Sounds"), NULL, NULL, pidgin_blist_mute_sounds_cb, FALSE },
+	{ "MuteSounds", NULL, N_("Mute _Sounds"), NULL, NULL, G_CALLBACK(pidgin_blist_mute_sounds_cb), FALSE },
 };
 
 static const char *blist_menu =
