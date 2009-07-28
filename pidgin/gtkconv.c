@@ -160,7 +160,7 @@ static void conv_set_unseen(PurpleConversation *gtkconv, PidginUnseenState state
 static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state);
 static void update_typing_icon(PidginConversation *gtkconv);
 static void update_typing_message(PidginConversation *gtkconv, const char *message);
-#if !GTK_CHECK_VERSION(2,4,0)
+#if !GTK_CHECK_VERSION(2,6,0)
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
 #endif
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
@@ -955,7 +955,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_new_conv_cb(GtkAction *action, gpointer data)
 #else
 menu_new_conv_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1000,7 +1000,7 @@ savelog_writefile_cb(void *user_data, const char *filename)
  * plaintext v. HTML file.
  */
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_save_as_cb(GtkAction *action, gpointer data)
 #else
 menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1034,7 +1034,7 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_view_log_cb(GtkAction *action, gpointer data)
 #else
 menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1065,8 +1065,8 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	gdk_window_set_cursor(gtkblist->window->window, cursor);
 	gdk_window_set_cursor(win->window->window, cursor);
 	gdk_cursor_unref(cursor);
-#if GTK_CHECK_VERSION(2,4,0)
-//FIXME:	gdk_display_flush(gdk_drawable_get_display(GDK_DRAWABLE(widget->window)));
+#if GTK_CHECK_VERSION(2,4,0) && !GTK_CHECK_VERSION(2,6,0) //FIXME: What?
+	gdk_display_flush(gdk_drawable_get_display(GDK_DRAWABLE(widget->window)));
 #else
 	gdk_flush();
 #endif
@@ -1096,7 +1096,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_clear_cb(GtkAction *action, gpointer data)
 #else
 menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1161,7 +1161,7 @@ static void do_search_cb(GtkWidget *widget, gint resp, struct _search *s)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_find_cb(GtkAction *action, gpointer data)
 #else
 menu_find_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1225,7 +1225,7 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 
 #ifdef USE_VV
 static void 
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_initiate_media_call_cb(GtkAction *action, gpointer data)
 #else
 menu_initiate_media_call_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1246,7 +1246,7 @@ menu_initiate_media_call_cb(gpointer data, guint action, GtkWidget *widget)
 #endif
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_send_file_cb(GtkAction *action, gpointer data)
 #else
 menu_send_file_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1262,7 +1262,7 @@ menu_send_file_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_add_pounce_cb(GtkAction *action, gpointer data)
 #else
 menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1278,7 +1278,7 @@ menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_insert_link_cb(GtkAction *action, gpointer data)
 #else
 menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1296,7 +1296,7 @@ menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_insert_image_cb(GtkAction *action, gpointer data)
 #else
 menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1317,7 +1317,7 @@ menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
 
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_alias_cb(GtkAction *action, gpointer data)
 #else
 menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1348,7 +1348,7 @@ menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_get_info_cb(GtkAction *action, gpointer data)
 #else
 menu_get_info_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1363,7 +1363,7 @@ menu_get_info_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_invite_cb(GtkAction *action, gpointer data)
 #else
 menu_invite_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1378,7 +1378,7 @@ menu_invite_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_block_cb(GtkAction *action, gpointer data)
 #else
 menu_block_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1393,7 +1393,7 @@ menu_block_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_unblock_cb(GtkAction *action, gpointer data)
 #else
 menu_unblock_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1408,7 +1408,7 @@ menu_unblock_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_add_remove_cb(GtkAction *action, gpointer data)
 #else
 menu_add_remove_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1457,7 +1457,7 @@ hide_conv(PidginConversation *gtkconv, gboolean closetimer)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_close_conv_cb(GtkAction *action, gpointer data)
 #else
 menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1469,7 +1469,7 @@ menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_logging_cb(GtkAction *action, gpointer data)
 #else
 menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1485,7 +1485,7 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 	if (conv == NULL)
 		return;
 
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 	logging = gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
 #else
 	logging = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
@@ -1542,7 +1542,7 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_toolbar_cb(GtkAction *action, gpointer data)
 {
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar",
@@ -1557,7 +1557,7 @@ menu_toolbar_cb(gpointer data, guint action, GtkWidget *widget)
 #endif
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_sounds_cb(GtkAction *action, gpointer data)
 #else
 menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
@@ -1576,7 +1576,7 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	gtkconv->make_sound =
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 		gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
 #else
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
@@ -1587,7 +1587,7 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 menu_timestamps_cb(GtkAction *action, gpointer data)
 {
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps",
@@ -3234,7 +3234,7 @@ pidgin_conv_get_window(PidginConversation *gtkconv)
 	return gtkconv->win;
 }
 
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 
 static GtkActionEntry menu_entries[] =
 /* TODO: fill out tooltips... */
@@ -3543,7 +3543,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 static void
 regenerate_options_items(PidginWindow *win)
 {
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 #else
 	GtkWidget *menu;
 	PidginConversation *gtkconv;
@@ -3582,7 +3582,7 @@ remove_from_list(GtkWidget *widget, PidginWindow *win)
 static void
 regenerate_plugins_items(PidginWindow *win)
 {
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 #else
 	GList *action_items;
 	GtkWidget *menu;
@@ -3628,7 +3628,7 @@ regenerate_plugins_items(PidginWindow *win)
 #endif
 }
 
-#if !GTK_CHECK_VERSION(2,4,0)
+#if !GTK_CHECK_VERSION(2,6,0)
 static void menubar_activated(GtkWidget *item, gpointer data)
 {
 	PidginWindow *win = data;
@@ -3659,7 +3659,7 @@ setup_menubar(PidginWindow *win)
 	GtkAccelGroup *accel_group;
 	const char *method;
 
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 	GtkActionGroup *action_group;
 	GError *error;
 
@@ -4095,7 +4095,7 @@ update_send_to_selection(PidginWindow *win)
 	if (!(b = purple_find_buddy(account, conv->name)))
 		return FALSE;
 
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 #else
 	gtk_widget_show(win->menu.send_to);
 
@@ -4229,7 +4229,7 @@ compare_buddy_presence(PurplePresence *p1, PurplePresence *p2)
 static void
 generate_send_to_items(PidginWindow *win)
 {
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 #else
 	GtkWidget *menu;
 	GSList *group = NULL;
@@ -8938,7 +8938,7 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 		/* Right click was pressed. Popup the context menu. */
 		GtkWidget *menu = gtk_menu_new(), *sub;
 		gboolean populated = populate_menu_with_options(menu, gtkconv, TRUE);
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 #else
 		sub = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
 
@@ -9752,7 +9752,7 @@ pidgin_conv_window_destroy(PidginWindow *win)
 	}
 	gtk_widget_destroy(win->window);
 
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 	g_object_unref(G_OBJECT(win->menu.ui));
 #else
 	g_object_unref(G_OBJECT(win->menu.item_factory));

@@ -100,7 +100,7 @@ struct _PidginWindow
 
 		GtkWidget *typing_icon;
 
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 		GtkUIManager *ui;
 #else
 		GtkItemFactory *item_factory;
@@ -126,7 +126,7 @@ struct _PidginWindow
 	gint drag_leave_signal;
 
 	/* Media menu options. */
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,6,0)
 	GtkAction *audio_call;
 	GtkAction *video_call;
 	GtkAction *audio_video_call;
