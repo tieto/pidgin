@@ -76,7 +76,11 @@ struct _PidginWindow
 
 		GtkWidget *typing_icon;
 
+#if GTK_CHECK_VERSION(2,4,0)
+		GtkUIManager *ui;
+#else
 		GtkItemFactory *item_factory;
+#endif
 
 	} menu;
 

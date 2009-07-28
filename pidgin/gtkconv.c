@@ -160,7 +160,9 @@ static void conv_set_unseen(PurpleConversation *gtkconv, PidginUnseenState state
 static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state);
 static void update_typing_icon(PidginConversation *gtkconv);
 static void update_typing_message(PidginConversation *gtkconv, const char *message);
+#if !GTK_CHECK_VERSION(2,4,0)
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
+#endif
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
 static GdkColor* generate_nick_colors(guint *numcolors, GdkColor background);
 static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
@@ -953,7 +955,11 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_new_conv_cb(GtkAction *action, gpointer data)
+#else
 menu_new_conv_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	pidgin_dialogs_im();
 }
@@ -994,7 +1000,11 @@ savelog_writefile_cb(void *user_data, const char *filename)
  * plaintext v. HTML file.
  */
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_save_as_cb(GtkAction *action, gpointer data)
+#else
 menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
@@ -1024,7 +1034,11 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_view_log_cb(GtkAction *action, gpointer data)
+#else
 menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1052,7 +1066,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	gdk_window_set_cursor(win->window->window, cursor);
 	gdk_cursor_unref(cursor);
 #if GTK_CHECK_VERSION(2,4,0)
-	gdk_display_flush(gdk_drawable_get_display(GDK_DRAWABLE(widget->window)));
+//FIXME:	gdk_display_flush(gdk_drawable_get_display(GDK_DRAWABLE(widget->window)));
 #else
 	gdk_flush();
 #endif
@@ -1082,7 +1096,11 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_clear_cb(GtkAction *action, gpointer data)
+#else
 menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1143,7 +1161,11 @@ static void do_search_cb(GtkWidget *widget, gint resp, struct _search *s)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_find_cb(GtkAction *action, gpointer data)
+#else
 menu_find_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *gtkwin = data;
 	GtkWidget *hbox;
@@ -1203,12 +1225,17 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 
 #ifdef USE_VV
 static void 
+#if GTK_CHECK_VERSION(2,4,0)
+menu_initiate_media_call_cb(GtkAction *action, gpointer data)
+#else
 menu_initiate_media_call_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = (PidginWindow *)data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
 	PurpleAccount *account = purple_conversation_get_account(conv);
 
+	/* FIXME: action is not an int... */
 	purple_prpl_initiate_media(account,
 			purple_conversation_get_name(conv),
 			action == 0 ? PURPLE_MEDIA_AUDIO :
@@ -1219,7 +1246,11 @@ menu_initiate_media_call_cb(gpointer data, guint action, GtkWidget *widget)
 #endif
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_send_file_cb(GtkAction *action, gpointer data)
+#else
 menu_send_file_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
@@ -1231,7 +1262,11 @@ menu_send_file_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_add_pounce_cb(GtkAction *action, gpointer data)
+#else
 menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1243,7 +1278,11 @@ menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_insert_link_cb(GtkAction *action, gpointer data)
+#else
 menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PidginConversation *gtkconv;
@@ -1257,7 +1296,11 @@ menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_insert_image_cb(GtkAction *action, gpointer data)
+#else
 menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1274,7 +1317,11 @@ menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
 
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_alias_cb(GtkAction *action, gpointer data)
+#else
 menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1301,7 +1348,11 @@ menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_get_info_cb(GtkAction *action, gpointer data)
+#else
 menu_get_info_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1312,7 +1363,11 @@ menu_get_info_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_invite_cb(GtkAction *action, gpointer data)
+#else
 menu_invite_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1323,7 +1378,11 @@ menu_invite_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_block_cb(GtkAction *action, gpointer data)
+#else
 menu_block_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1334,7 +1393,11 @@ menu_block_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_unblock_cb(GtkAction *action, gpointer data)
+#else
 menu_unblock_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1345,7 +1408,11 @@ menu_unblock_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_add_remove_cb(GtkAction *action, gpointer data)
+#else
 menu_add_remove_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1390,7 +1457,11 @@ hide_conv(PidginConversation *gtkconv, gboolean closetimer)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_close_conv_cb(GtkAction *action, gpointer data)
+#else
 menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 
@@ -1398,7 +1469,11 @@ menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_logging_cb(GtkAction *action, gpointer data)
+#else
 menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1410,7 +1485,11 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 	if (conv == NULL)
 		return;
 
+#if GTK_CHECK_VERSION(2,4,0)
+	logging = gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
+#else
 	logging = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
+#endif
 
 	if (logging == purple_conversation_is_logging(conv))
 		return;
@@ -1463,14 +1542,26 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_toolbar_cb(GtkAction *action, gpointer data)
+{
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar",
+	                    gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
+}
+#else
 menu_toolbar_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar",
 	                    gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
 }
+#endif
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_sounds_cb(GtkAction *action, gpointer data)
+#else
 menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
+#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1485,18 +1576,30 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	gtkconv->make_sound =
+#if GTK_CHECK_VERSION(2,4,0)
+		gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
+#else
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
+#endif
 	node = get_conversation_blist_node(conv);
 	if (node)
 		purple_blist_node_set_bool(node, "gtk-mute-sound", !gtkconv->make_sound);
 }
 
 static void
+#if GTK_CHECK_VERSION(2,4,0)
+menu_timestamps_cb(GtkAction *action, gpointer data)
+{
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps",
+		gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
+}
+#else
 menu_timestamps_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps",
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
 }
+#endif
 
 static void
 chat_do_im(PidginConversation *gtkconv, const char *who)
@@ -3126,6 +3229,99 @@ pidgin_conv_get_window(PidginConversation *gtkconv)
 	return gtkconv->win;
 }
 
+#if GTK_CHECK_VERSION(2,4,0)
+
+static GtkActionEntry menu_entries[] =
+/* TODO: fill out tooltips... */
+{
+	/* Conversation menu */
+	{ "ConversationMenu", NULL, N_("_Conversation"), NULL, NULL, NULL },
+	{ "NewInstantMessage", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, N_("New Instant _Message..."), "<control>M", NULL, menu_new_conv_cb },
+	{ "Find", GTK_STOCK_FIND, N_("_Find..."), NULL, NULL, menu_find_cb },
+	{ "ViewLog", NULL, N_("View _Log"), NULL, NULL, menu_view_log_cb },
+	{ "SaveAs", GTK_STOCK_SAVE_AS, N_("_Save As..."), NULL, NULL, menu_save_as_cb },
+	{ "ClearScrollback", GTK_STOCK_CLEAR, N_("Clea_r Scrollback"), "<control>L", NULL, menu_clear_cb },
+
+#ifdef USE_VV
+	{ "MediaMenu", NULL, N_("M_edia"), NULL, NULL, NULL },
+	{ "AudioCall", PIDGIN_STOCK_TOOLBAR_AUDIO_CALL, N_("_Audio Call"), NULL, NULL, menu_initiate_media_call_cb },
+	{ "VideoCall", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, N_("_Video Call"), NULL, NULL, menu_initiate_media_call_cb },
+	{ "AudioVideoCall", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL, N_("Audio\\/Video _Call"), NULL, NULL, menu_initiate_media_call_cb },
+#endif
+
+	{ "SendFile", PIDGIN_STOCK_TOOLBAR_SEND_FILE, N_("Se_nd File..."), NULL, NULL, menu_send_file_cb },
+	{ "AddBuddyPounce", NULL, N_("Add Buddy _Pounce..."), NULL, NULL, menu_add_pounce_cb },
+	{ "GetInfo", PIDGIN_STOCK_TOOLBAR_USER_INFO, N_("_Get Info"), "<control>O", NULL, menu_get_info_cb },
+	{ "Invite", NULL, N_("In_vite..."), NULL, NULL, menu_invite_cb },
+	{ "MoreMenu", NULL, N_("M_ore"), NULL, NULL, NULL },
+	{ "Alias", NULL, N_("Al_ias..."), NULL, NULL, menu_alias_cb },
+	{ "Block", PIDGIN_STOCK_TOOLBAR_BLOCK, N_("_Block..."), NULL, NULL, menu_block_cb },
+	{ "Unblock", PIDGIN_STOCK_TOOLBAR_UNBLOCK, N_("_Unblock..."), NULL, NULL, menu_unblock_cb },
+	{ "Add", GTK_STOCK_ADD, N_("_Add..."), NULL, NULL, menu_add_remove_cb },
+	{ "Remove", GTK_STOCK_REMOVE, N_("_Remove..."), NULL, NULL, menu_add_remove_cb },
+	{ "InsertLink", PIDGIN_STOCK_TOOLBAR_INSERT_LINK, N_("Insert Lin_k..."), NULL, NULL, menu_insert_link_cb },
+	{ "InsertImage", PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, N_("Insert Imag_e..."), NULL, NULL, menu_insert_image_cb },
+	{ "Close", GTK_STOCK_CLOSE, N_("_Close"), NULL, NULL, menu_close_conv_cb },
+
+	/* Options */
+	{ "OptionsMenu", NULL, N_("_Options"), NULL, NULL, NULL },
+};
+
+/* Toggle items */
+static const GtkToggleActionEntry menu_toggle_entries[] = {
+	{ "EnableLogging", NULL, N_("Enable _Logging"), NULL, NULL, menu_logging_cb, FALSE },
+	{ "EnableSounds", NULL, N_("Enable _Sounds"), NULL, NULL, menu_sounds_cb, FALSE },
+	{ "ShowFormattingToolbars", NULL, N_("Show Formatting _Toolbars"), NULL, NULL, menu_toolbar_cb, FALSE },
+	{ "ShowTimestamps", NULL, N_("Show Ti_mestamps"), NULL, NULL, menu_timestamps_cb, FALSE },
+};
+
+static const char *conversation_menu =
+"<ui>"
+	"<menubar name='Conversation'>"
+		"<menu action='ConversationMenu'>"
+			"<menuitem action='NewInstantMessage'/>"
+			"<separator/>"
+			"<menuitem action='Find'/>"
+			"<menuitem action='ViewLog'/>"
+			"<menuitem action='SaveAs'/>"
+			"<menuitem action='ClearScrollback'/>"
+			"<separator/>"
+#ifdef USE_VV
+			"<menu action='MediaMenu'>"
+				"<menuitem action='AudioCall'/>"
+				"<menuitem action='VideoCall'/>"
+				"<menuitem action='AudioVideoCall'/>"
+			"</menu>"
+#endif
+			"<menuitem action='SendFile'/>"
+			"<menuitem action='AddBuddyPounce'/>"
+			"<menuitem action='GetInfo'/>"
+			"<menuitem action='Invite'/>"
+			"<menu action='MoreMenu'/>"
+			"<separator/>"
+			"<menuitem action='Alias'/>"
+			"<menuitem action='Block'/>"
+			"<menuitem action='Unblock'/>"
+			"<menuitem action='Add'/>"
+			"<menuitem action='Remove'/>"
+			"<separator/>"
+			"<menuitem action='InsertLink'/>"
+			"<menuitem action='InsertImage'/>"
+			"<separator/>"
+			"<menuitem action='Close'/>"
+		"</menu>"
+		"<menu action='OptionsMenu'>"
+			"<menuitem action='EnableLogging'/>"
+			"<menuitem action='EnableSounds'/>"
+			"<separator/>"
+			"<menuitem action='ShowFormattingToolbars'/>"
+			"<menuitem action='ShowTimestamps'/>"
+		"</menu>"
+	"</menubar>"
+"</ui>";
+
+#else
+
 static GtkItemFactoryEntry menu_items[] =
 {
 	/* Conversation menu */
@@ -3208,6 +3404,8 @@ item_factory_translate_func (const char *path, gpointer func_data)
 {
 	return _(path);
 }
+
+#endif
 
 static void
 sound_method_pref_changed_cb(const char *name, PurplePrefType type,
@@ -3328,6 +3526,8 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 static void
 regenerate_options_items(PidginWindow *win)
 {
+#if GTK_CHECK_VERSION(2,4,0)
+#else
 	GtkWidget *menu;
 	PidginConversation *gtkconv;
 	GList *list;
@@ -3351,6 +3551,7 @@ regenerate_options_items(PidginWindow *win)
 	}
 
 	gtk_widget_show_all(menu);
+#endif
 }
 
 static void
@@ -3364,6 +3565,8 @@ remove_from_list(GtkWidget *widget, PidginWindow *win)
 static void
 regenerate_plugins_items(PidginWindow *win)
 {
+#if GTK_CHECK_VERSION(2,4,0)
+#else
 	GList *action_items;
 	GtkWidget *menu;
 	GList *list;
@@ -3405,8 +3608,10 @@ regenerate_plugins_items(PidginWindow *win)
 		g_signal_connect(G_OBJECT(item), "destroy", G_CALLBACK(remove_from_list), win);
 	}
 	g_object_set_data(G_OBJECT(win->window), "plugin-actions", action_items);
+#endif
 }
 
+#if !GTK_CHECK_VERSION(2,4,0)
 static void menubar_activated(GtkWidget *item, gpointer data)
 {
 	PidginWindow *win = data;
@@ -3429,12 +3634,146 @@ focus_out_from_menubar(GtkWidget *wid, PidginWindow *win)
 	g_signal_handlers_disconnect_by_func(G_OBJECT(win->menu.menubar),
 				G_CALLBACK(focus_out_from_menubar), win);
 }
+#endif
 
 static GtkWidget *
 setup_menubar(PidginWindow *win)
 {
 	GtkAccelGroup *accel_group;
 	const char *method;
+
+#if GTK_CHECK_VERSION(2,4,0)
+	GtkActionGroup *action_group;
+	GError *error;
+
+	action_group = gtk_action_group_new("ConversationActions");
+	gtk_action_group_add_actions(action_group,
+	                             menu_entries,
+	                             G_N_ELEMENTS(menu_entries),
+	                             win);
+	gtk_action_group_add_toggle_actions(action_group,
+	                                    menu_toggle_entries,
+	                                    G_N_ELEMENTS(menu_toggle_entries),
+	                                    win);
+#ifdef ENABLE_NLS
+	gtk_action_group_set_translation_domain(action_group,
+	                                        PACKAGE);
+#endif
+
+	win->menu.ui = gtk_ui_manager_new();
+	gtk_ui_manager_insert_action_group(win->menu.ui, action_group, 0);
+
+	accel_group = gtk_ui_manager_get_accel_group(win->menu.ui);
+	gtk_window_add_accel_group(GTK_WINDOW(win->window), accel_group);
+	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
+	                 G_CALLBACK(pidgin_save_accels_cb), NULL);
+
+	error = NULL;
+	if (!gtk_ui_manager_add_ui_from_string(win->menu.ui, conversation_menu, -1, &error))
+	{
+		g_message("building menus failed: %s", error->message);
+		g_error_free(error);
+		exit(EXIT_FAILURE);
+	}
+
+	win->menu.menubar =
+		gtk_ui_manager_get_widget(win->menu.ui, "/Conversation");
+
+	win->menu.view_log =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/ConversationMenu/ViewLog");
+
+#ifdef USE_VV
+	win->audio_call =
+		gtk_ui_manager_get_widget(win->menu.ui,
+					    "/Conversation/ConversationMenu/MediaMenu/AudioCall");
+	win->video_call =
+		gtk_ui_manager_get_widget(win->menu.ui,
+					    "/Conversation/ConversationMenu/MediaMenu/VideoCall");
+	win->audio_video_call =
+		gtk_ui_manager_get_widget(win->menu.ui,
+					    "/Conversation/ConversationMenu/MediaMenu/AudioVideoCall");
+#endif
+	
+	/* --- */
+
+	win->menu.send_file =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/ConversationMenu/SendFile");
+
+	win->menu.add_pounce =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/ConversationMenu/AddBuddyPounce");
+
+	/* --- */
+
+	win->menu.get_info =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/ConversationMenu/GetInfo");
+
+	win->menu.invite =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/ConversationMenu/Invite");
+
+	/* --- */
+
+	win->menu.alias =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/ConversationMenu/Alias");
+
+	win->menu.block =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/ConversationMenu/Block");
+
+	win->menu.unblock =
+		gtk_ui_manager_get_widget(win->menu.ui,
+					    "/Conversation/ConversationMenu/Unblock");
+
+	win->menu.add =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/ConversationMenu/Add");
+
+	win->menu.remove =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/ConversationMenu/Remove");
+
+	/* --- */
+
+	win->menu.insert_link =
+		gtk_ui_manager_get_widget(win->menu.ui,
+				"/Conversation/ConversationMenu/InsertLink");
+
+	win->menu.insert_image =
+		gtk_ui_manager_get_widget(win->menu.ui,
+				"/Conversation/ConversationMenu/InsertImage");
+
+	/* --- */
+
+	win->menu.logging =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/OptionsMenu/EnableLogging");
+	win->menu.sounds =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/OptionsMenu/EnableSounds");
+	method = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method");
+	if (method != NULL && !strcmp(method, "none"))
+	{
+		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(win->menu.sounds),
+		                               FALSE);
+		gtk_widget_set_sensitive(win->menu.sounds, FALSE);
+	}
+	purple_prefs_connect_callback(win, PIDGIN_PREFS_ROOT "/sound/method",
+				    sound_method_pref_changed_cb, win);
+
+	win->menu.show_formatting_toolbar =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/OptionsMenu/ShowFormattingToolbars");
+	win->menu.show_timestamps =
+		gtk_ui_manager_get_widget(win->menu.ui,
+		                          "/Conversation/OptionsMenu/ShowTimestamps");
+	win->menu.show_icon = NULL;
+
+#else
 	GtkWidget *menuitem;
 
 	accel_group = gtk_accel_group_new ();
@@ -3555,6 +3894,8 @@ setup_menubar(PidginWindow *win)
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Options/Show Timestamps"));
 	win->menu.show_icon = NULL;
+
+#endif
 
 	win->menu.tray = pidgin_menu_tray_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(win->menu.menubar),
@@ -3869,6 +4210,8 @@ compare_buddy_presence(PurplePresence *p1, PurplePresence *p2)
 static void
 generate_send_to_items(PidginWindow *win)
 {
+#if GTK_CHECK_VERSION(2,4,0)
+#else
 	GtkWidget *menu;
 	GSList *group = NULL;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -3953,6 +4296,7 @@ generate_send_to_items(PidginWindow *win)
 	if (!group)
 		gtk_widget_set_sensitive(win->menu.send_to, FALSE);
 	update_send_to_selection(win);
+#endif
 }
 
 static const char *
@@ -9337,7 +9681,11 @@ pidgin_conv_window_destroy(PidginWindow *win)
 	}
 	gtk_widget_destroy(win->window);
 
+#if GTK_CHECK_VERSION(2,4,0)
+	g_object_unref(G_OBJECT(win->menu.ui));
+#else
 	g_object_unref(G_OBJECT(win->menu.item_factory));
+#endif
 
 	purple_notify_close_with_handle(win);
 	purple_signals_disconnect_by_handle(win);
