@@ -27,6 +27,7 @@
 #include "debug.h"
 
 #include "yahoo_friend.h"
+#include "yahoo_aliases.h"
 
 static YahooFriend *yahoo_friend_new(void)
 {
@@ -41,7 +42,7 @@ static YahooFriend *yahoo_friend_new(void)
 
 YahooFriend *yahoo_friend_find(PurpleConnection *gc, const char *name)
 {
-	struct yahoo_data *yd;
+	YahooData *yd;
 	const char *norm;
 
 	g_return_val_if_fail(gc != NULL, NULL);
@@ -56,7 +57,7 @@ YahooFriend *yahoo_friend_find(PurpleConnection *gc, const char *name)
 YahooFriend *yahoo_friend_find_or_new(PurpleConnection *gc, const char *name)
 {
 	YahooFriend *f;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	const char *norm;
 
 	g_return_val_if_fail(gc != NULL, NULL);
@@ -124,13 +125,13 @@ gboolean yahoo_friend_get_buddy_icon_need_request(YahooFriend *f)
 
 void yahoo_friend_set_alias_id(YahooFriend *f, const char *alias_id)
 {
-	g_free(f->alias_id);
-	f->alias_id = g_strdup(alias_id);
+	g_free(f->ypd.id);
+	f->ypd.id = g_strdup(alias_id);
 }
 
 const char *yahoo_friend_get_alias_id(YahooFriend *f)
 {
-	return f->alias_id;
+	return f->ypd.id;
 }
 
 void yahoo_friend_free(gpointer p)
@@ -139,7 +140,7 @@ void yahoo_friend_free(gpointer p)
 	g_free(f->msg);
 	g_free(f->game);
 	g_free(f->ip);
-	g_free(f->alias_id);
+	yahoo_personal_details_reset(&f->ypd, TRUE);
 	g_free(f);
 }
 
@@ -214,7 +215,7 @@ void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt)
 void yahoo_friend_update_presence(PurpleConnection *gc, const char *name,
 		YahooPresenceVisibility presence)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
 	YahooFriend *f;
 	const char *thirtyone, *thirteen;

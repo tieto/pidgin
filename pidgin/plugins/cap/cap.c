@@ -373,6 +373,9 @@ received_im_msg(PurpleAccount *account, char *sender, char *message, PurpleConve
 	CapStatistics *stats;
 	/* guint words = word_count(message); */
 
+	if (flags & PURPLE_MESSAGE_AUTO_RESP)
+		return;
+
 	buddy = purple_find_buddy(account, sender);
 
 	if (buddy == NULL)

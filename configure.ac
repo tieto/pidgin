@@ -808,6 +808,25 @@ Or use --disable-vv if you do not need voice/video support.
 	fi
 fi
 
+AC_ARG_ENABLE(idn,
+	[AC_HELP_STRING([--disable-idn], [compile without IDN support])],
+	[enable_idn="$enableval" force_idn=$enableval], [enable_idn="yes" force_idn=no])
+if test "x$enable_idn" != "xno"; then
+	PKG_CHECK_MODULES(IDN, libidn >= 0.0.0, [
+		AC_DEFINE(USE_IDN, 1, [Use GNU Libidn for stringprep and IDN])
+		AC_SUBST(IDN_CFLAGS)
+		AC_SUBST(IDN_LIBS)
+	], [
+		AC_MSG_RESULT(no)
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
+GNU Libidn development headers not found.
+Use --disable-idn if you do not need it.
+])
+		fi
+	])
+fi
+
 dnl #######################################################################
 dnl # Check for Meanwhile headers (for Sametime)
 dnl #######################################################################
@@ -1075,13 +1094,19 @@ extern_init=
 load_proto=
 for i in $STATIC_PRPLS ; do
 	dnl Ugly special case for "libsilcpurple.la":
-	dnl ... and Ugly special case for multi-protocol oscar
+	dnl ... and Ugly special case for multi-protocol oscar and yahoo
 	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
 		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.la"
 		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
 		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
 		load_proto="$load_proto purple_init_aim_plugin();"
 		load_proto="$load_proto purple_init_icq_plugin();"
+	elif test "x$i" = "xyahoo"; then
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/yahoo/libymsg.la"
+		extern_init="$extern_init extern gboolean purple_init_yahoo_plugin();"
+		extern_init="$extern_init extern gboolean purple_init_yahoojp_plugin();"
+		load_proto="$load_proto purple_init_yahoo_plugin();"
+		load_proto="$load_proto purple_init_yahoojp_plugin();"
 	else
 		if test "x$i" = "xsilc"; then
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
@@ -1615,14 +1640,14 @@ dnl #
 dnl # Thanks go to Evolution for the checks.
 dnl #######################################################################
 
-AC_ARG_WITH(with-system-ssl-certs, [AC_HELP_STRING([--with-system-ssl-certs=<dir>], [directory containing system-wide SSL CA certificates])])
+AC_ARG_WITH(system-ssl-certs, [AC_HELP_STRING([--with-system-ssl-certs=<dir>], [directory containing system-wide SSL CA certificates])], [ssl_certificates_dir=$withval])
 
 SSL_CERTIFICATES_DIR=""
-if ! test -z "$with_system_ssl_certs" ; then
-	if ! test -d "$with_system_ssl_certs" ; then
-		AC_MSG_ERROR([$with_system_ssl_certs does not exist, if this is the correct location please make sure that it exists.])
+if ! test -z "$ssl_certificates_dir" ; then
+	if ! test -d "$ssl_certificates_dir" ; then
+		AC_MSG_ERROR([$ssl_certificates_dir does not exist, if this is the correct location please make sure that it exists.])
 	fi
-	SSL_CERTIFICATES_DIR="$with_system_ssl_certs"
+	SSL_CERTIFICATES_DIR="$ssl_certificates_dir"
 fi
 AC_SUBST(SSL_CERTIFICATES_DIR)
 AM_CONDITIONAL(INSTALL_SSL_CERTIFICATES, test "x$SSL_CERTIFICATES_DIR" = "x")
@@ -1978,7 +2003,7 @@ if test "x$enable_nss" != "xno"; then
 
 				if test "x$ac_cv_moz_nss_libs" = "xno"; then
 					nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
-					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs" 
+					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
 					LIBS="$LIBS $nsslibs"
 					AC_TRY_LINK_FUNC(NSS_Init,
 						[ac_cv_moz_nss_libs="yes"],
@@ -2019,23 +2044,6 @@ if test "x$enable_nss" != "xno"; then
 
 	AC_SUBST(NSS_CFLAGS)
 	AC_SUBST(NSS_LIBS)
-fi
- 
-if test "x$enable_nss" = "xyes"; then
-	AC_MSG_CHECKING(for NSS_SetAlgorithmPolicy)
-	LIBS_save="$LIBS"
-	LIBS="$LIBS $NSS_LIBS"
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $NSS_CFLAGS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <nss.h>
-#include <secmod.h>]],
-                                        [[NSS_SetAlgorithmPolicy(SEC_OID_MD2, 0, 0);]])],
-	               [AC_DEFINE([NEED_NSS_WEAK_ALGORITHMS], 1,
-                                  [Define if your NSS needs weak algorithms activated with NSS_SetAlgorithmPolicy])
-	                AC_MSG_RESULT(yes)],
-	               [AC_MSG_RESULT(no)])
-	CPPFLAGS="$CPPFLAGS_save"
-        LIBS="$LIBS_save"
 fi
 
 AM_CONDITIONAL(USE_NSS, test "x$enable_nss" = "xyes")
@@ -2540,6 +2548,7 @@ echo Build with voice and video.... : $enable_vv
 if test "x$enable_dbus" = "xyes" ; then
 	eval eval echo D-Bus services directory...... : $DBUS_SERVICES_DIR
 fi
+echo Build with GNU Libidn......... : $enable_idn
 echo Build with NetworkManager..... : $enable_nm
 echo SSL Library/Libraries......... : $msg_ssl
 if test "x$SSL_CERTIFICATES_DIR" != "x" ; then

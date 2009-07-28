@@ -531,13 +531,11 @@ gchar *qq_get_icon_name(gint face)
 }
 
 /*
- * Hmm, this function is a bit weird.
- * 1. The pref "/plugins/prpl/qq/icon_dir" doesn't exist
- * 2. QQ_BUDDY_ICON_DIR is set in Makefile.am, but it's set to a
- *    directory that doesn't exist
- * 3. Why would the icon path be different for Windows and Linux?
- * 4. Why do we use this in the first place?  Setting your icon
- *    should go through the account editor.
+ * This function seems to let people set their buddy icon, but it restricts
+ * them to using a small list of stock icons.  Wouldn't it make more sense
+ * to use libpurple's normal icon setting stuff?
+ *
+ * Also it would be nice to unify the icon_dir code for Windows and Linux.
  */
 gchar *qq_get_icon_path(gchar *icon_name)
 {
@@ -551,6 +549,13 @@ gchar *qq_get_icon_path(gchar *icon_name)
 	}
 #endif
 
+	/*
+	 * TODO: The QQ protocol plugin should probably call
+	 *       purple_prefs_add_string() at startup to initialize this
+	 *       preference.  It is used to allow users or distributions
+	 *       to specify this directory.  We don't include these icons
+	 *       with libpurple because of possible copyright concerns.
+	 */
 	icon_dir = purple_prefs_get_string("/plugins/prpl/qq/icon_dir");
 	if ( icon_dir == NULL || strlen(icon_dir) == 0) {
 #ifdef _WIN32

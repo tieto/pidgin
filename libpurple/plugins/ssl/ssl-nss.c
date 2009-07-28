@@ -152,12 +152,6 @@ ssl_nss_init_nss(void)
 	SSL_CipherPrefSetDefault(SSL_DHE_RSA_WITH_DES_CBC_SHA, 1);
 	SSL_CipherPrefSetDefault(SSL_DHE_DSS_WITH_DES_CBC_SHA, 1);
 
-#ifdef NEED_NSS_WEAK_ALGORITHMS
-	/* Enable some weaker algorithms for XMPP and MSN */
-	NSS_SetAlgorithmPolicy(SEC_OID_PKCS1_MD2_WITH_RSA_ENCRYPTION, NSS_USE_ALG_IN_CERT_SIGNATURE, 0);
-	NSS_SetAlgorithmPolicy(SEC_OID_PKCS1_MD4_WITH_RSA_ENCRYPTION, NSS_USE_ALG_IN_CERT_SIGNATURE, 0);
-#endif
-
 	_identity = PR_GetUniqueIdentity("Purple");
 	_nss_methods = PR_GetDefaultIOMethods();
 }
@@ -546,12 +540,12 @@ x509_import_from_file(const gchar *filename)
 	CERTCertificate *crt_dat;
 	PurpleCertificate *crt;
 
-	g_return_val_if_fail(filename, NULL);
+	g_return_val_if_fail(filename != NULL, NULL);
 
 	purple_debug_info("nss/x509",
 			  "Loading certificate from %s\n",
 			  filename);
-	
+
 	/* Load the raw data up */
 	if (!g_file_get_contents(filename,
 				 &rawcert, &len,
@@ -560,12 +554,20 @@ x509_import_from_file(const gchar *filename)
 		return NULL;
 	}
 
+	if (len == 0) {
+		purple_debug_error("nss/x509",
+				"Certificate file has no contents!\n");
+		if (rawcert)
+			g_free(rawcert);
+		return NULL;
+	}
+
 	/* Decode the certificate */
 	crt_dat = CERT_DecodeCertFromPackage(rawcert, len);
 	g_free(rawcert);
 
-	g_return_val_if_fail(crt_dat, NULL);
-	
+	g_return_val_if_fail(crt_dat != NULL, NULL);
+
 	crt = g_new0(PurpleCertificate, 1);
 	crt->scheme = &x509_nss;
 	crt->data = crt_dat;

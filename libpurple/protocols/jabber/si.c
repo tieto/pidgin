@@ -51,9 +51,9 @@ typedef struct _JabberSIXfer {
 	char *iq_id;
 
 	enum {
-		STREAM_METHOD_UNKNOWN = 0,
+		STREAM_METHOD_UNKNOWN     = 0,
 		STREAM_METHOD_BYTESTREAMS = 2 << 1,
-		STREAM_METHOD_IBB = 2 << 2,
+		STREAM_METHOD_IBB         = 2 << 2,
 		STREAM_METHOD_UNSUPPORTED = 2 << 31
 	} stream_method;
 
@@ -1379,6 +1379,31 @@ static void jabber_si_xfer_cancel_send(PurpleXfer *xfer)
 
 static void jabber_si_xfer_request_denied(PurpleXfer *xfer)
 {
+	JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
+	JabberStream *js = jsx->js;
+
+	/*
+	 * TODO: It's probably an error if jsx->iq_id == NULL. g_return_if_fail
+	 * might be warranted.
+	 */
+	if (jsx->iq_id && !jsx->accepted) {
+		JabberIq *iq;
+		xmlnode *error, *child;
+		iq = jabber_iq_new(js, JABBER_IQ_ERROR);
+		xmlnode_set_attrib(iq->node, "to", xfer->who);
+		jabber_iq_set_id(iq, jsx->iq_id);
+
+		error = xmlnode_new_child(iq->node, "error");
+		xmlnode_set_attrib(error, "type", "cancel");
+		child = xmlnode_new_child(error, "forbidden");
+		xmlnode_set_namespace(child, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		child = xmlnode_new_child(error, "text");
+		xmlnode_set_namespace(child, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_insert_data(child, "Offer Declined", -1);
+
+		jabber_iq_send(iq);
+	}
+
 	jabber_si_xfer_free(xfer);
 	purple_debug(PURPLE_DEBUG_INFO, "jabber", "in jabber_si_xfer_request_denied\n");
 }
@@ -1421,6 +1446,7 @@ static void jabber_si_xfer_send_disco_cb(JabberStream *js, const char *who,
 		purple_notify_error(js->gc, _("File Send Failed"),
 				_("File Send Failed"), msg);
 		g_free(msg);
+		purple_xfer_cancel_local(xfer);
 	}
 }
 
@@ -1434,13 +1460,38 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 	JabberSIXfer *jsx = xfer->data;
 	char **who_v = g_strsplit(xfer->who, "/", 2);
 	char *who;
+	JabberBuddy *jb;
+	JabberBuddyResource *jbr = NULL;
+
+	jb = jabber_buddy_find(jsx->js, who_v[0], FALSE);
+	if (jb) {
+		jbr = jabber_buddy_find_resource(jb, resource);
+	}
 
 	who = g_strdup_printf("%s/%s", who_v[0], resource);
 	g_strfreev(who_v);
 	g_free(xfer->who);
 	xfer->who = who;
-	jabber_disco_info_do(jsx->js, who,
-			jabber_si_xfer_send_disco_cb, xfer);
+
+	if (jbr) {
+		char *msg;
+
+		if (jabber_resource_has_capability(jbr, XEP_0047_NAMESPACE))
+			jsx->stream_method |= STREAM_METHOD_IBB;
+		if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/si/profile/file-transfer")) {
+			jabber_si_xfer_send_request(xfer);
+			return;
+		}
+
+		msg = g_strdup_printf(_("Unable to send file to %s, user does not support file transfers"), who);
+		purple_notify_error(jsx->js->gc, _("File Send Failed"),
+				_("File Send Failed"), msg);
+		g_free(msg);
+		purple_xfer_cancel_local(xfer);
+	} else {
+		jabber_disco_info_do(jsx->js, who,
+				jabber_si_xfer_send_disco_cb, xfer);
+	}
 }
 
 static void resource_select_ok_cb(PurpleXfer *xfer, PurpleRequestFields *fields)
@@ -1529,6 +1580,8 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 		xmlnode_set_attrib(iq->node, "to", xfer->who);
 		if(jsx->iq_id)
 			jabber_iq_set_id(iq, jsx->iq_id);
+		else
+			purple_debug_error("jabber", "Sending SI result with new IQ id.\n");
 
 		jsx->accepted = TRUE;
 

@@ -200,8 +200,8 @@ const SizedStockIcon sized_stock_icons [] = {
 	{ PIDGIN_STOCK_TOOLBAR_SEND_FILE,       "toolbar", "send-file.png",      FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, NULL },
 	{ PIDGIN_STOCK_TOOLBAR_TRANSFER,        "toolbar", "transfer.png",       FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, NULL },
 #ifdef USE_VV
-	{ PIDGIN_STOCK_TOOLBAR_AUDIO_CALL,       "toolbar", "audio-call.png",       FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, NULL },
-	{ PIDGIN_STOCK_TOOLBAR_VIDEO_CALL,       "toolbar", "video-call.png",       FALSE, TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, NULL },
+	{ PIDGIN_STOCK_TOOLBAR_AUDIO_CALL,       "toolbar", "audio-call.png",       FALSE, TRUE,  TRUE,  TRUE,  TRUE,  FALSE, FALSE, NULL },
+	{ PIDGIN_STOCK_TOOLBAR_VIDEO_CALL,       "toolbar", "video-call.png",       FALSE, TRUE,  TRUE,  TRUE,  TRUE,  FALSE, FALSE, NULL },
 	{ PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL, "toolbar", "audio-video-call.png", FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL },
 #endif
 	{ PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, "toolbar", "get-attention.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  }

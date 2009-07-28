@@ -31,9 +31,145 @@
 #include "presence.h"
 #include "jutil.h"
 
+#ifdef USE_IDN
+#include <idna.h>
+#include <stringprep.h>
+static char idn_buffer[1024];
+#endif
+
+#ifdef USE_IDN
+static gboolean jabber_nodeprep(char *str, size_t buflen)
+{
+	return stringprep_xmpp_nodeprep(str, buflen) == STRINGPREP_OK;
+}
+
+static gboolean jabber_resourceprep(char *str, size_t buflen)
+{
+	return stringprep_xmpp_resourceprep(str, buflen) == STRINGPREP_OK;
+}
+
+static JabberID*
+jabber_idn_validate(const char *str, const char *at, const char *slash,
+                    const char *null)
+{
+	const char *node = NULL;
+	const char *domain = NULL;
+	const char *resource = NULL;
+	int node_len = 0;
+	int domain_len = 0;
+	int resource_len = 0;
+	char *out;
+	JabberID *jid;
+
+	/* Ensure no parts are > 1023 bytes */
+	if (at) {
+		node = str;
+		node_len = at - str;
+
+		domain = at + 1;
+		if (slash) {
+			domain_len = slash - (at + 1);
+			resource = slash + 1;
+			resource_len = null - (slash + 1);
+		} else {
+			domain_len = null - (at + 1);
+		}
+	} else {
+		domain = str;
+
+		if (slash) {
+			domain_len = slash - str;
+			resource = slash;
+			resource_len = null - (slash + 1);
+		} else {
+			domain_len = null - (str + 1);
+		}
+	}
+
+	if (node && node_len > 1023)
+		return NULL;
+	if (domain_len > 1023)
+		return NULL;
+	if (resource && resource_len > 1023)
+		return NULL;
+
+	jid = g_new0(JabberID, 1);
+
+	if (node) {
+		strncpy(idn_buffer, node, node_len);
+		idn_buffer[node_len] = '\0';
+
+		if (!jabber_nodeprep(idn_buffer, sizeof(idn_buffer))) {
+			jabber_id_free(jid);
+			jid = NULL;
+			goto out;
+		}
+
+		jid->node = g_strdup(idn_buffer);
+	}
+
+	/* domain *must* be here */
+	strncpy(idn_buffer, domain, domain_len);
+	idn_buffer[domain_len] = '\0';
+	if (domain[0] == '[') { /* IPv6 address */
+		gboolean valid = FALSE;
+
+		if (idn_buffer[domain_len - 1] == ']') {
+			idn_buffer[domain_len - 1] = '\0';
+			valid = purple_ipv6_address_is_valid(idn_buffer + 1);
+		}
+
+		if (!valid) {
+			jabber_id_free(jid);
+			jid = NULL;
+			goto out;
+		}
+	} else {
+		/* Apply nameprep */
+		if (stringprep_nameprep(idn_buffer, sizeof(idn_buffer)) != STRINGPREP_OK) {
+			jabber_id_free(jid);
+			jid = NULL;
+			goto out;
+		}
+
+		/* And now ToASCII */
+		if (idna_to_ascii_8z(idn_buffer, &out, IDNA_USE_STD3_ASCII_RULES) != IDNA_SUCCESS) {
+			jabber_id_free(jid);
+			jid = NULL;
+			goto out;
+		}
+
+		/* This *MUST* be freed using 'free', not 'g_free' */
+		free(out);
+		jid->domain = g_strdup(idn_buffer);
+	}
+
+	if (resource) {
+		strncpy(idn_buffer, resource, resource_len);
+		idn_buffer[resource_len] = '\0';
+
+		if (!jabber_resourceprep(idn_buffer, sizeof(idn_buffer))) {
+			jabber_id_free(jid);
+			jid = NULL;
+			/* goto out; */
+		}
+
+		jid->resource = g_strdup(idn_buffer);
+	}
+
+out:
+	return jid;
+}
+
+#endif /* USE_IDN */
+
 gboolean jabber_nodeprep_validate(const char *str)
 {
+#ifdef USE_IDN
+	gboolean result;
+#else
 	const char *c;
+#endif
 
 	if(!str)
 		return TRUE;
@@ -41,6 +177,12 @@ gboolean jabber_nodeprep_validate(const char *str)
 	if(strlen(str) > 1023)
 		return FALSE;
 
+#ifdef USE_IDN
+	strncpy(idn_buffer, str, sizeof(idn_buffer) - 1);
+	idn_buffer[sizeof(idn_buffer) - 1] = '\0';
+	result = jabber_nodeprep(idn_buffer, sizeof(idn_buffer));
+	return result;
+#else /* USE_IDN */
 	c = str;
 	while(c && *c) {
 		gunichar ch = g_utf8_get_char(c);
@@ -52,6 +194,7 @@ gboolean jabber_nodeprep_validate(const char *str)
 	}
 
 	return TRUE;
+#endif /* USE_IDN */
 }
 
 gboolean jabber_domain_validate(const char *str)
@@ -101,7 +244,11 @@ gboolean jabber_domain_validate(const char *str)
 
 gboolean jabber_resourceprep_validate(const char *str)
 {
+#ifdef USE_IDN
+	gboolean result;
+#else
 	const char *c;
+#endif
 
 	if(!str)
 		return TRUE;
@@ -109,6 +256,12 @@ gboolean jabber_resourceprep_validate(const char *str)
 	if(strlen(str) > 1023)
 		return FALSE;
 
+#ifdef USE_IDN
+	strncpy(idn_buffer, str, sizeof(idn_buffer) - 1);
+	idn_buffer[sizeof(idn_buffer) - 1] = '\0';
+	result = jabber_resourceprep(idn_buffer, sizeof(idn_buffer));
+	return result;
+#else /* USE_IDN */
 	c = str;
 	while(c && *c) {
 		gunichar ch = g_utf8_get_char(c);
@@ -119,8 +272,8 @@ gboolean jabber_resourceprep_validate(const char *str)
 	}
 
 	return TRUE;
+#endif /* USE_IDN */
 }
-
 
 JabberID*
 jabber_id_new(const char *str)
@@ -132,8 +285,10 @@ jabber_id_new(const char *str)
 #if 0
 	gboolean node_is_required = FALSE;
 #endif
+#ifndef USE_IDN
 	char *node = NULL;
 	char *domain;
+#endif
 	JabberID *jid;
 
 	if (!str)
@@ -253,33 +408,37 @@ jabber_id_new(const char *str)
 	if (!g_utf8_validate(str, -1, NULL))
 		return NULL;
 
+#ifdef USE_IDN
+	return jabber_idn_validate(str, at, slash, c /* points to the null */);
+#else /* USE_IDN */
+
 	jid = g_new0(JabberID, 1);
 
 	/* normalization */
 	if(at) {
-		node = g_utf8_normalize(str, at-str, G_NORMALIZE_NFKC);
+		node = g_utf8_casefold(str, at-str);
 		if(slash) {
-			domain = g_utf8_normalize(at+1, slash-(at+1), G_NORMALIZE_NFKC);
+			domain = g_utf8_casefold(at+1, slash-(at+1));
 			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
-			domain = g_utf8_normalize(at+1, -1, G_NORMALIZE_NFKC);
+			domain = g_utf8_casefold(at+1, -1);
 		}
 	} else {
 		if(slash) {
-			domain = g_utf8_normalize(str, slash-str, G_NORMALIZE_NFKC);
+			domain = g_utf8_casefold(str, slash-str);
 			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
-			domain = g_utf8_normalize(str, -1, G_NORMALIZE_NFKC);
+			domain = g_utf8_casefold(str, -1);
 		}
 	}
 
 	if (node) {
-		jid->node = g_utf8_strdown(node, -1);
+		jid->node = g_utf8_normalize(node, -1, G_NORMALIZE_NFKC);
 		g_free(node);
 	}
 
 	if (domain) {
-		jid->domain = g_utf8_strdown(domain, -1);
+		jid->domain = g_utf8_normalize(domain, -1, G_NORMALIZE_NFKC);
 		g_free(domain);
 	}
 
@@ -292,6 +451,7 @@ jabber_id_new(const char *str)
 	}
 
 	return jid;
+#endif /* USE_IDN */
 }
 
 void

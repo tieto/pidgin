@@ -44,6 +44,10 @@ START_TEST(test_nodeprep_validate)
 	longnode = g_strnfill(1023, 'a');
 	fail_unless(jabber_nodeprep_validate(longnode));
 	g_free(longnode);
+
+	longnode = g_strnfill(1024, 'a');
+	fail_if(jabber_nodeprep_validate(longnode));
+	g_free(longnode);
 }
 END_TEST
 
@@ -77,6 +81,17 @@ END_TEST
 #define assert_invalid_jid(str) { \
 	JabberID *jid = jabber_id_new(str); \
 	fail_if(jid != NULL, "JID '%s' is invalid but jabber_id_new() allowed it", str); \
+	jabber_id_free(jid); \
+}
+
+#define assert_jid_parts(expect_node, expect_domain, str) { \
+	JabberID *jid = jabber_id_new(str); \
+	fail_if(jid == NULL, "JID '%s' is valid but jabber_id_new() rejected it", str); \
+	fail_if(jid->node == NULL,     "JID '%s' is valid but jabber_id_new() didn't return a node", str); \
+	fail_if(jid->domain == NULL,   "JID '%s' is valid but jabber_id_new() didn't return a domain", str); \
+	fail_if(jid->resource != NULL, "JID '%s' doesn't contain a resource", str); \
+	assert_string_equal(expect_node, jid->node); \
+	assert_string_equal(expect_domain, jid->domain); \
 	jabber_id_free(jid); \
 }
 
@@ -117,6 +132,24 @@ START_TEST(test_jabber_id_new)
 	assert_invalid_jid("mark.doliner@gmail\\stuff.org");
 	assert_invalid_jid("paul@[::1]124");
 	assert_invalid_jid("paul@2[::1]124/as");
+
+	/* Ensure that jabber_id_new is properly lowercasing node and domains */
+	assert_jid_parts("paul", "darkrain42.org", "PaUL@darkrain42.org");
+	assert_jid_parts("paul", "darkrain42.org", "paul@DaRkRaIn42.org");
+
+	/* These case-mapping tests culled from examining RFC3454 B.2 */
+
+	/* Cyrillic capital EF (U+0424) maps to lowercase EF (U+0444) */
+	assert_jid_parts("ф", "darkrain42.org", "Ф@darkrain42.org");
+	/*
+	 * These character (U+A664 and U+A665) are not mapped to anything in
+	 * RFC3454 B.2. This first test *fails* when not using IDN because glib's
+	 * case-folding/utf8_strdown improperly lowercases the character.
+	 */
+	assert_jid_parts("Ꙥ", "darkrain42.org", "Ꙥ@darkrain42.org");
+	assert_jid_parts("ꙥ", "darkrain42.org", "ꙥ@darkrain42.org");
+	/* U+04E9 to U+04E9 */
+	assert_jid_parts("paul", "өarkrain42.org", "paul@Өarkrain42.org");
 }
 END_TEST
 

@@ -16,13 +16,14 @@ EXTRA_DIST = \
 		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in \
+		package_revision.h \
 		pidgin.apspec.in \
 		pidgin.spec.in \
 		pidgin.desktop.in \
 		po/Makefile.mingw \
 		valgrind-suppressions
 
-noinst_HEADERS = config.h
+noinst_HEADERS = config.h package_revision.h
 
 dist-hook: pidgin.spec
 	cp pidgin.spec $(distdir)
@@ -86,7 +87,42 @@ if INSTALL_I18N
 PO_DIR=po
 endif
 
-SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros $(PO_DIR) share/ca-certs share/sounds
+# This is phony, so that we always try to rebuild it.  If it succeeds
+# in calculating changes, it produces its target; otherwise, its
+# target does not exist.
+.PHONY: package_revision_raw.txt
+# if both attempts fail, then we need to remove the empty file that >
+# creates, and also make sure that the shell command exits
+# successfully; the rm -f ensures both
+package_revision_raw.txt:
+	REAL_BLDDIR=$$PWD/$(top_builddir); \
+	(cd $(srcdir) && $$REAL_BLDDIR/mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
+	|| (cd $(srcdir) && mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
+	|| rm -f $@
+package_revision.h: package_revision_raw.txt
+	if [ -f $< ]; then \
+	  sed 's/^\(.\+\)$$/#define REVISION "\1"/' $< > $@; \
+	fi
+	if [ ! -f $@ -a -f $(srcdir)/$@ ]; then \
+	  cp $(srcdir)/$@ $@; \
+	fi
+	[ -f $@ ] || echo "#define REVISION \"unknown\"" > $@
+
+# This is a magic directive copy-and-pasted, then modified, from the
+# automake 1.9 manual, section 13.4, "Checking the distribution".
+# Normally, 'distcheck' does a clean build, and then afterwards runs
+# 'distclean', and 'distclean' is supposed to remove everything that
+# the build created.  However, we have some targets (package_revision.txt)
+# that we distribute, but then always attempt to rebuild optimistically, and
+# then if that fails fall back on the distributed versions.  This
+# means that 'distclean' should _not_ remove those files, since they
+# are distributed, yet building the package will generate those files,
+# thus automake thinks that 'distclean' _should_ remove those files,
+# and 'distcheck' gets cranky if we don't.  So basically what this
+# line does is tell 'distcheck' to shut up and ignore those two files.
+distcleancheck_listfiles = find . -type f -a ! -name package_revision.h
+
+SUBDIRS = . libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros $(PO_DIR) share/ca-certs share/sounds
 
 docs: Doxyfile
 if HAVE_DOXYGEN

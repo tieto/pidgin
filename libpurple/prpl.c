@@ -269,6 +269,10 @@ purple_prpl_got_user_status(PurpleAccount *account, const char *name,
 		status   = purple_presence_get_status(presence, status_id);
 
 		if(NULL == status)
+			/*
+			 * TODO: This should never happen, right?  We should call
+			 *       g_warning() or something.
+			 */
 			continue;
 
 		old_status = purple_presence_get_active_status(presence);

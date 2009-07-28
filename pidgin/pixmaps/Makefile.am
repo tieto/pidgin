@@ -69,15 +69,6 @@ DIALOGS_16 = \
 		dialogs/16/mail.png \
 		dialogs/16/question.png
 
-DIALOGS_64_SCALABLE = \
-		dialogs/64/scalable/auth.svg \
-		dialogs/64/scalable/cool.svg \
-		dialogs/64/scalable/dialog.svg \
-		dialogs/64/scalable/error.svg \
-		dialogs/64/scalable/info.svg \
-		dialogs/64/scalable/question.svg \
-		dialogs/64/scalable/warning.svg
-
 DIALOGS_64 = \
 		dialogs/64/auth.png \
 		dialogs/64/cool.png \
@@ -88,23 +79,14 @@ DIALOGS_64 = \
 		dialogs/64/question.png \
 		dialogs/64/warning.png
 
-EMBLEMS_16_SCALABLE = \
-		emblems/16/scalable/aol-client.svg \
-		emblems/16/scalable/blocked.svg \
-		emblems/16/scalable/bot.svg \
-		emblems/16/scalable/external.svg \
-		emblems/16/scalable/female.svg \
-		emblems/16/scalable/free-for-chat.svg \
-		emblems/16/scalable/game.svg \
-		emblems/16/scalable/male.svg \
-		emblems/16/scalable/mobile.svg \
-		emblems/16/scalable/music.svg \
-		emblems/16/scalable/not-authorized.svg \
-		emblems/16/scalable/qq-member.svg \
-		emblems/16/scalable/secure.svg \
-		emblems/16/scalable/unavailable.svg \
-		emblems/16/scalable/video.svg \
-		emblems/16/scalable/voice.svg
+DIALOGS_SCALABLE = \
+		dialogs/scalable/auth.svg \
+		dialogs/scalable/cool.svg \
+		dialogs/scalable/dialog.svg \
+		dialogs/scalable/error.svg \
+		dialogs/scalable/info.svg \
+		dialogs/scalable/question.svg \
+		dialogs/scalable/warning.svg
 
 EMBLEMS_16 = \
 		emblems/16/aol-client.png \
@@ -128,6 +110,24 @@ EMBLEMS_16 = \
 		emblems/16/unavailable.png \
 		emblems/16/video.png \
 		emblems/16/voice.png
+
+EMBLEMS_SCALABLE = \
+		emblems/scalable/aol-client.svg \
+		emblems/scalable/blocked.svg \
+		emblems/scalable/bot.svg \
+		emblems/scalable/external.svg \
+		emblems/scalable/female.svg \
+		emblems/scalable/free-for-chat.svg \
+		emblems/scalable/game.svg \
+		emblems/scalable/male.svg \
+		emblems/scalable/mobile.svg \
+		emblems/scalable/music.svg \
+		emblems/scalable/not-authorized.svg \
+		emblems/scalable/qq-member.svg \
+		emblems/scalable/secure.svg \
+		emblems/scalable/unavailable.svg \
+		emblems/scalable/video.svg \
+		emblems/scalable/voice.svg
 
 EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/airplane.svg \
@@ -260,10 +260,9 @@ ICONS_32_SCALABLE = \
 
 ICONS_32 = icons/hicolor/32x32/apps/pidgin.png
 
-ICONS_48_SCALABLE = \
-		icons/hicolor/48x48/apps/scalable/pidgin.svg
-
 ICONS_48 = icons/hicolor/48x48/apps/pidgin.png
+
+ICONS_SCALABLE = icons/hicolor/scalable/apps/pidgin.svg
 
 PROTOCOLS_22_SCALABLE = \
 		protocols/22/scalable/aim.svg \
@@ -299,23 +298,6 @@ PROTOCOLS_22 = \
 		protocols/22/yahoo.png \
 		protocols/22/zephyr.png
 
-PROTOCOLS_48_SCALABLE = \
-		protocols/48/scalable/aim.svg \
-		protocols/48/scalable/bonjour.svg \
-		protocols/48/scalable/gadu-gadu.svg \
-		protocols/48/scalable/google-talk.svg \
-		protocols/48/scalable/novell.svg \
-		protocols/48/scalable/icq.svg \
-		protocols/48/scalable/irc.svg \
-		protocols/48/scalable/jabber.svg \
-		protocols/48/scalable/meanwhile.svg \
-		protocols/48/scalable/msn.svg \
-		protocols/48/scalable/qq.svg \
-		protocols/48/scalable/silc.svg \
-		protocols/48/scalable/simple.svg \
-		protocols/48/scalable/yahoo.svg \
-		protocols/48/scalable/zephyr.svg
-
 PROTOCOLS_48 = \
 		protocols/48/aim.png \
 		protocols/48/bonjour.png \
@@ -332,6 +314,23 @@ PROTOCOLS_48 = \
 		protocols/48/simple.png \
 		protocols/48/yahoo.png \
 		protocols/48/zephyr.png
+
+PROTOCOLS_SCALABLE = \
+		protocols/scalable/aim.svg \
+		protocols/scalable/bonjour.svg \
+		protocols/scalable/gadu-gadu.svg \
+		protocols/scalable/google-talk.svg \
+		protocols/scalable/novell.svg \
+		protocols/scalable/icq.svg \
+		protocols/scalable/irc.svg \
+		protocols/scalable/jabber.svg \
+		protocols/scalable/meanwhile.svg \
+		protocols/scalable/msn.svg \
+		protocols/scalable/qq.svg \
+		protocols/scalable/silc.svg \
+		protocols/scalable/simple.svg \
+		protocols/scalable/yahoo.svg \
+		protocols/scalable/zephyr.svg
 
 STATUS_11 = \
 		status/11/available.png \
@@ -449,10 +448,30 @@ TOOLBAR_16 = \
 		toolbar/16/get-attention.png
 
 TOOLBAR_22_SCALABLE = \
-		toolbar/22/scalable/select-avatar.svg
+		toolbar/22/scalable/select-avatar.svg \
+		toolbar/22/scalable/video-call.svg \
+		toolbar/22/scalable/voice-call.svg
 
 TOOLBAR_22 = \
-		toolbar/22/select-avatar.png
+		toolbar/22/select-avatar.png \
+		toolbar/22/video-call.png \
+		toolbar/22/voice-call.png
+
+TOOLBAR_32_SCALABLE = \
+		toolbar/32/scalable/video-call.svg \
+		toolbar/32/scalable/voice-call.svg
+
+TOOLBAR_32 = \
+		toolbar/32/video-call.png \
+		toolbar/32/voice-call.png
+
+TOOLBAR_48_SCALABLE = \
+		toolbar/48/scalable/video-call.svg \
+		toolbar/48/scalable/voice-call.svg
+
+TOOLBAR_48 = \
+		toolbar/48/video-call.png \
+		toolbar/48/voice-call.png
 
 TRAY_16_ICO = \
 		tray/16/available_4bit.ico \
@@ -512,6 +531,8 @@ EXTRA_DIST = \
 		edit.png			\
 		info.png			\
 		logo.png			\
+		logo.svg			\
+		logo-nonvv.png		\
 		pause.png			\
 		arrow-down.xpm		\
 		arrow-up.xpm		\
@@ -521,18 +542,16 @@ EXTRA_DIST = \
 		pidgin.ico		\
 		$(MAKEFILE_MINGW)	\
 		$(DIALOGS_16_SCALABLE)	\
-		$(DIALOGS_64_SCALABLE)	\
 		$(ICONS_16_SCALABLE)	\
 		$(ICONS_24_SCALABLE)	\
 		$(ICONS_32_SCALABLE)	\
-		$(ICONS_48_SCALABLE)	\
-		$(EMBLEMS_16_SCALABLE)	\
 		$(EMOTES_DEFAULT_24_SCALABLE)	\
 		$(PROTOCOLS_16_SCALABLE)	\
 		$(PROTOCOLS_22_SCALABLE)	\
-		$(PROTOCOLS_48_SCALABLE)	\
 		$(TOOLBAR_16_SCALABLE)	\
-		$(TOOLBAR_22_SCALABLE)
+		$(TOOLBAR_22_SCALABLE)	\
+		$(TOOLBAR_32_SCALABLE)	\
+		$(TOOLBAR_48_SCALABLE)
 
 pidginbuttonpixdir = $(datadir)/pixmaps/pidgin/buttons
 pidginbuttonpix_DATA = edit.png pause.png info.png
@@ -544,10 +563,13 @@ nobase_dist_pidginpixmap_DATA = \
 		$(ANIMATIONS_16) \
 		$(DIALOGS_16) \
 		$(DIALOGS_64) \
+		$(DIALOGS_SCALABLE)	\
 		$(EMBLEMS_16) \
+		$(EMBLEMS_SCALABLE)	\
 		$(PROTOCOLS_16) \
 		$(PROTOCOLS_22) \
 		$(PROTOCOLS_48) \
+		$(PROTOCOLS_SCALABLE)	\
 		$(STATUS_11) \
 		$(STATUS_11_RTL) \
 		$(STATUS_16) \
@@ -561,6 +583,8 @@ nobase_dist_pidginpixmap_DATA = \
 		$(TOOLBAR_11) \
 		$(TOOLBAR_16) \
 		$(TOOLBAR_22) \
+		$(TOOLBAR_32) \
+		$(TOOLBAR_48) \
 		$(TRAY_16) \
 		$(TRAY_16_ICO) \
 		$(TRAY_22) \
@@ -572,5 +596,6 @@ nobase_dist_pidginicons_DATA = \
 		$(ICONS_22) \
 		$(ICONS_24) \
 		$(ICONS_32) \
-		$(ICONS_48)
+		$(ICONS_48) \
+		$(ICONS_SCALABLE)
 endif

@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "finch.h"
+#include <internal.h>
 
 #include "account.h"
 #include "conversation.h"
@@ -47,6 +48,7 @@
 #include <getopt.h>
 
 #include "config.h"
+#include "package_revision.h"
 
 static void
 debug_init(void)
@@ -313,7 +315,7 @@ init_libpurple(int argc, char **argv)
 	if (opt_version) {
 		/* Translators may want to transliterate the name.
 		 It is not to be translated. */
-		printf("%s %s\n", _("Finch"), DISPLAY_VERSION);
+		printf("%s %s (%s)\n", _("Finch"), DISPLAY_VERSION, REVISION);
 		return 0;
 	}
 

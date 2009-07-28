@@ -62,14 +62,16 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
 {
 	PurpleAccount *account;
+	PurplePresence *presence;
 	const char *username;
 
 	g_return_if_fail(js->user != NULL);
 
 	account = purple_connection_get_account(js->gc);
-	username = purple_account_get_username(account);
+	username = purple_connection_get_display_name(js->gc);
+	presence = purple_account_get_presence(account);
 	if (status == NULL)
-		status = purple_account_get_active_status(account);
+		status = purple_presence_get_active_status(presence);
 
 	if (purple_find_buddy(account, username)) {
 		JabberBuddy *jb = jabber_buddy_find(js, username, TRUE);
@@ -86,14 +88,23 @@ void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
 				state == JABBER_BUDDY_STATE_UNKNOWN) {
 			jabber_buddy_remove_resource(jb, js->user->resource);
 		} else {
-			jabber_buddy_track_resource(jb, js->user->resource, priority,
-			                            state, msg);
+			jbr = jabber_buddy_track_resource(jb, js->user->resource, priority,
+					state, msg);
+			jbr->idle = purple_presence_is_idle(presence) ?
+					purple_presence_get_idle_time(presence) : 0;
 		}
 
 		if ((jbr = jabber_buddy_find_resource(jb, NULL))) {
-			purple_prpl_got_user_status(js->gc->account, username, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
+			purple_prpl_got_user_status(account, username,
+					jabber_buddy_state_get_status_id(jbr->state),
+					"priority", jbr->priority,
+					jbr->status ? "message" : NULL, jbr->status,
+					NULL);
+			purple_prpl_got_user_idle(account, username, jbr->idle, jbr->idle);
 		} else {
-			purple_prpl_got_user_status(js->gc->account, username, "offline", msg ? "message" : NULL, msg, NULL);
+			purple_prpl_got_user_status(account, username, "offline",
+					msg ? "message" : NULL, msg,
+					NULL);
 		}
 		g_free(msg);
 	}
@@ -105,9 +116,6 @@ void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
 	JabberStream *js;
 
 	if (!purple_account_is_connected(account))
-		return;
-
-	if (!purple_status_is_active(status))
 		return;
 
 	if (purple_status_is_exclusive(status) && !purple_status_is_active(status)) {
@@ -616,7 +624,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			/* The rest of the cases used to check xmlns individually. */
 			continue;
 		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, "urn:xmpp:delay")) {
-			/* XXX: compare the time.  urn:xmpp:delay can happen on presence packets that aren't really and truly delayed */
+			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 			delayed = TRUE;
 			stamp = xmlnode_get_attrib(y, "stamp");
 		} else if(!strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
@@ -624,7 +632,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if (g_str_equal(y->name, "nick") && g_str_equal(xmlns, "http://jabber.org/protocol/nick")) {
 			nickname = xmlnode_get_data(y);
 		} else if(!strcmp(y->name, "x")) {
-			if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
+			if(!strcmp(xmlns, "jabber:x:delay")) {
+				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
+				delayed = TRUE;
+				stamp = xmlnode_get_attrib(y, "stamp");
+			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
 			} else if(!strcmp(xmlns, "vcard-temp:x:update")) {
 				xmlnode *photo = xmlnode_get_child(y, "photo");
 				if(photo) {
@@ -804,13 +816,13 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				const char *nick;
 				const char *code = NULL;
 				const char *item_jid = NULL;
+				const char *to;
 				xmlnode *stat;
 				xmlnode *item;
 
 				item = xmlnode_get_child(x, "item");
 				if (item)
 					item_jid = xmlnode_get_attrib(item, "jid");
-
 
 				stat = xmlnode_get_child(x, "status");
 
@@ -888,7 +900,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				 * Also possibly works around bits of an Openfire bug. See
 				 * #8319.
 				 */
-				if (is_our_resource && !purple_strequal(from, item_jid)) {
+				to = xmlnode_get_attrib(packet, "to");
+				if (is_our_resource && item_jid && !purple_strequal(to, item_jid)) {
 					/* TODO: When the above is a loop, this needs to still act
 					 * sanely for all cases (this code is a little fragile). */
 					if (!kick && !nick_change)
@@ -1067,10 +1080,7 @@ void purple_status_to_jabber(const PurpleStatus *status, JabberBuddyState *state
 			formatted_msg = purple_status_get_attr_string(status, "message");
 
 			/* if the message is blank, then there really isn't a message */
-			if(formatted_msg && !*formatted_msg)
-				formatted_msg = NULL;
-
-			if(formatted_msg)
+			if(formatted_msg && *formatted_msg)
 				*msg = purple_markup_strip_html(formatted_msg);
 		}
 

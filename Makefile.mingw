@@ -73,7 +73,7 @@ EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))
 
 .PHONY: all docs install installer installer_nogtk installer_debug installers clean uninstall create_release_install_dir
 
-all: $(PIDGIN_CONFIG_H)
+all: $(PIDGIN_CONFIG_H) $(PIDGIN_REVISION_H)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE)
 ifndef DISABLE_NLS
@@ -125,7 +125,7 @@ clean:
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) clean
-	rm -f $(PIDGIN_CONFIG_H) ./VERSION pidgin-$(PIDGIN_VERSION)*.exe pidgin-$(PIDGIN_VERSION)-win32-bin.zip
+	rm -f $(PIDGIN_CONFIG_H) $(PIDGIN_REVISION_H) $(PIDGIN_REVISION_RAW_TXT) ./VERSION pidgin-$(PIDGIN_VERSION)*.exe pidgin-$(PIDGIN_VERSION)-win32-bin.zip
 	rm -rf doc/html Doxyfile.mingw
 
 uninstall:

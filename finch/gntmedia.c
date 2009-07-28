@@ -25,7 +25,7 @@
  */
 
 #include "finch.h"
-
+#include <internal.h>
 #include "gntconv.h"
 #include "gntmedia.h"
 

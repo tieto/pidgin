@@ -606,6 +606,9 @@ purple_proxy_connect_data_disconnect_formatted(PurpleProxyConnectData *connect_d
 static void
 purple_proxy_connect_data_connected(PurpleProxyConnectData *connect_data)
 {
+	purple_debug_info("proxy", "Connected to %s:%d.\n",
+	                  connect_data->host, connect_data->port);
+
 	connect_data->connect_cb(connect_data->data, connect_data->fd, NULL);
 
 	/*
