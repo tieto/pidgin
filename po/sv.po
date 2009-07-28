@@ -11930,7 +11930,7 @@ msgid "This theme has no available smileys."
 msgstr "Detta tema har inga tillgängliga smileys."
 
 msgid "_Font"
-msgstr "_Formateríng"
+msgstr "_Formatering"
 
 msgid "Group Items"
 msgstr "Gruppera föremål"
