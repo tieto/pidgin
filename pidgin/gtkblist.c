@@ -8461,7 +8461,7 @@ pidgin_blist_update_plugin_actions(void)
 		g_object_unref(G_OBJECT(plugins_action_group));
 	}
 
-	plugins_action_group = gtk_action_group_new("Accounts");
+	plugins_action_group = gtk_action_group_new("PluginActions");
 #ifdef ENABLE_NLS
 	gtk_action_group_set_translation_domain(plugins_action_group, PACKAGE);
 #endif
