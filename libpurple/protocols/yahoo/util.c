@@ -172,7 +172,6 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 char *yahoo_convert_to_numeric(const char *str)
 {
 	GString *gstr = NULL;
-	char *retstr;
 	const unsigned char *p;
 
 	gstr = g_string_sized_new(strlen(str) * 6 + 1);
@@ -181,11 +180,7 @@ char *yahoo_convert_to_numeric(const char *str)
 		g_string_append_printf(gstr, "&#%u;", *p);
 	}
 
-	retstr = gstr->str;
-
-	g_string_free(gstr, FALSE);
-
-	return retstr;
+	return g_string_free(gstr, FALSE);
 }
 
 /*
@@ -345,7 +340,7 @@ char *yahoo_codes_to_html(const char *x)
 {
 	GString *s, *tmp;
 	int i, j, xs, nomoreendtags = 0; /* s/endtags/closinganglebrackets */
-	char *match, *ret;
+	char *match;
 
 	s = g_string_sized_new(strlen(x));
 
@@ -430,10 +425,8 @@ char *yahoo_codes_to_html(const char *x)
 		}
 	}
 
-	ret = s->str;
-	g_string_free(s, FALSE);
-	purple_debug_misc("yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", ret);
-	return ret;
+	purple_debug_misc("yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", s->str);
+	return g_string_free(s, FALSE);
 }
 
 /* borrowed from gtkimhtml */
@@ -642,7 +635,7 @@ char *yahoo_html_to_codes(const char *src)
 {
 	int i, j, len;
 	GString *dest;
-	char *ret, *esc;
+	char *esc;
 	GQueue *colors, *tags;
 	GQueue *ftattr = NULL;
 	gboolean no_more_specials = FALSE;
@@ -827,15 +820,12 @@ char *yahoo_html_to_codes(const char *src)
 		}
 	}
 
-	ret = dest->str;
-	g_string_free(dest, FALSE);
-
-	esc = g_strescape(ret, NULL);
+	esc = g_strescape(dest->str, NULL);
 	purple_debug_misc("yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
 	g_free(esc);
 
 	yahoo_htc_queue_cleanup(colors);
 	yahoo_htc_queue_cleanup(tags);
 
-	return ret;
+	return g_string_free(dest, FALSE);
 }
