@@ -620,7 +620,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 					g_string_free(tmp, TRUE);
 				} else {
 					g_queue_push_tail(tags, tmp->str);
-					g_string_free(tmp, TRUE);
+					g_string_free(tmp, FALSE);
 				}
 			}
 
