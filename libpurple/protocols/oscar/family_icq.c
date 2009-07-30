@@ -246,7 +246,7 @@ int aim_icq_getalias(OscarData *od, const char *uin)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
-	purple_debug_info("oscar", "Requesting ICQ alias for %s", uin);
+	purple_debug_info("oscar", "Requesting ICQ alias for %s\n", uin);
 
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
