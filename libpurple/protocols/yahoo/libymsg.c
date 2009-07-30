@@ -3767,7 +3767,7 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	if (presence != NULL)
 		purple_notify_user_info_add_pair(user_info, _("Presence"), presence);
 
-	if (full) {
+	if (f && full) {
 		YahooPersonalDetails *ypd = &f->ypd;
 		int i;
 		struct {
