@@ -976,7 +976,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		return;
 	}
 
-	/** TODO: It seems that this check should be per IM, not global */
+	/* TODO: It seems that this check should be per IM, not global */
 	/* Check for the Doodle IMV */
 	if (im != NULL && imv!= NULL && im->from != NULL)
 	{
