@@ -1324,7 +1324,8 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
  * the subject name of the certificate.
  */
 static void
-x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq)
+x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq,
+                                   gboolean had_ca_pool)
 {
 	PurpleCertificatePool *tls_peers;
 	PurpleCertificate *peer_crt;
@@ -1336,30 +1337,58 @@ x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq)
 	if ( ! purple_certificate_check_subject_name(peer_crt,
 						     vrq->subject_name) ) {
 		gchar *sn = purple_certificate_get_subject_name(peer_crt);
-		gchar *msg;
 
 		purple_debug_error("certificate/x509/tls_cached",
 				  "Name mismatch: Certificate given for %s "
 				  "has a name of %s\n",
 				  vrq->subject_name, sn);
 
-		/* Prompt the user to authenticate the certificate */
-		/* TODO: Provide the user with more guidance about why he is
-		   being prompted */
-		/* vrq will be completed by user_auth */
-		msg = g_strdup_printf(_("The certificate presented by \"%s\" "
-					"claims to be from \"%s\" instead.  "
-					"This could mean that you are not "
-					"connecting to the service you "
-					"believe you are."),
-				      vrq->subject_name, sn);
+		if (had_ca_pool) {
+			/* Prompt the user to authenticate the certificate */
+			/* TODO: Provide the user with more guidance about why he is
+			   being prompted */
+			/* vrq will be completed by user_auth */
+			gchar *msg;
+			msg = g_strdup_printf(_("The certificate presented by \"%s\" "
+						"claims to be from \"%s\" instead.  "
+						"This could mean that you are not "
+						"connecting to the service you "
+						"believe you are."),
+					      vrq->subject_name, sn);
 
-		x509_tls_cached_user_auth(vrq,msg);
+			x509_tls_cached_user_auth(vrq, msg);
+			g_free(msg);
+		} else {
+			/* Had no CA pool, so couldn't verify the chain *and*
+			 * the subject name isn't valid.
+			 * I think this is bad enough to warrant a fatal error. It's
+			 * not likely anyway...
+			 */
+			/* FIXME: 2.6.1 */
+			purple_notify_error(NULL, /* TODO: Probably wrong. */
+						_("SSL Certificate Error"),
+						_("Invalid certificate chain"),
+						_("You have no database of root certificates, so "
+						"this certificate cannot be validated."));
+		}
 
 		g_free(sn);
-		g_free(msg);
 		return;
 	} /* if (name mismatch) */
+
+	if (had_ca_pool) {
+		/* The subject name is correct, but we weren't able to verify the
+		 * chain because there was no pool of root CAs found. Prompt the user
+		 * to validate it.
+		 */
+
+		/* vrq will be completed by user_auth */
+		x509_tls_cached_user_auth(vrq,_("You have no database of root "
+						"certificates, so this "
+						"certificate cannot be "
+						"validated."));
+		return;
+	}
 
 	/* If we reach this point, the certificate is good. */
 	/* Look up the local cache and store it there for future use */
@@ -1465,7 +1494,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		 * or it didn't, in which case we give up and complain to the user.
 		 */
 		if (chain_validated) {
-			x509_tls_cached_check_subject_name(vrq);
+			x509_tls_cached_check_subject_name(vrq, TRUE);
 		} else {
 			/* TODO: Tell the user where the chain broke? */
 			/* TODO: This error will hopelessly confuse any
@@ -1494,17 +1523,13 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	} /* if (signature chain not good) */
 
 	/* If, for whatever reason, there is no Certificate Authority pool
-	   loaded, we will simply present it to the user for checking. */
+	   loaded, we'll verify the subject name and then warn about thsi. */
 	if ( !ca ) {
 		purple_debug_error("certificate/x509/tls_cached",
 				   "No X.509 Certificate Authority pool "
 				   "could be found!\n");
 
-		/* vrq will be completed by user_auth */
-		x509_tls_cached_user_auth(vrq,_("You have no database of root "
-						"certificates, so this "
-						"certificate cannot be "
-						"validated."));
+		x509_tls_cached_check_subject_name(vrq, FALSE);
 		return;
 	}
 
@@ -1585,7 +1610,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	g_byte_array_free(ca_fpr, TRUE);
 	g_byte_array_free(last_fpr, TRUE);
 
-	x509_tls_cached_check_subject_name(vrq);
+	x509_tls_cached_check_subject_name(vrq, TRUE);
 }
 
 static void
