@@ -324,11 +324,11 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	video_enabled = jabber_video_enabled(js, NULL /* unused */);
 
 	if (audio_enabled && video_enabled)
-		xmlnode_set_attrib(c, "ext", "voice-v1 video-v1");
+		xmlnode_set_attrib(c, "ext", "voice-v1 camera-v1 video-v1");
 	else if (audio_enabled)
 		xmlnode_set_attrib(c, "ext", "voice-v1");
 	else if (video_enabled)
-		xmlnode_set_attrib(c, "ext", "video-v1");
+		xmlnode_set_attrib(c, "ext", "camera-v1 video-v1");
 #endif
 
 	return presence;
