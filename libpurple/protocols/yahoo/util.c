@@ -339,7 +339,8 @@ static void _font_tags_fix_size(GString *tag, GString *dest)
 char *yahoo_codes_to_html(const char *x)
 {
 	GString *s, *tmp;
-	int i, j, xs, nomoreendtags = 0; /* s/endtags/closinganglebrackets */
+	int i, j, xs;
+	gboolean no_more_end_tags = FALSE; /* s/endtags/closinganglebrackets */
 	char *match;
 
 	s = g_string_sized_new(strlen(x));
@@ -370,14 +371,14 @@ char *yahoo_codes_to_html(const char *x)
 				}
 			}
 
-		} else if (!nomoreendtags && (x[i] == '<')) {
+		} else if (!no_more_end_tags && (x[i] == '<')) {
 			j = i;
 
 			while (j++ < xs) {
 				if (x[j] != '>')
 					if (j == xs) {
 						g_string_append(s, "&lt;");
-						nomoreendtags = 1;
+						no_more_end_tags = TRUE;
 					}
 					else
 						continue;
