@@ -309,12 +309,12 @@ static int point_to_html(int x)
 }
 
 /* The Yahoo size tag is actually an absz tag; convert it to an HTML size, and include both tags */
-static void _font_tags_fix_size(GString *tag, GString *dest)
+static void _font_tags_fix_size(const char *tag, GString *dest)
 {
 	char *x, *end;
 	int size;
 
-	if (((x = strstr(tag->str, "size"))) && ((x = strchr(x, '=')))) {
+	if (((x = strstr(tag, "size"))) && ((x = strchr(x, '=')))) {
 		while (*x && !g_ascii_isdigit(*x))
 			x++;
 		if (*x) {
@@ -322,16 +322,16 @@ static void _font_tags_fix_size(GString *tag, GString *dest)
 
 			size = strtol(x, &end, 10);
 			htmlsize = point_to_html(size);
-			g_string_append_len(dest, tag->str, x - tag->str);
+			g_string_append_len(dest, tag, x - tag);
 			g_string_append_printf(dest, "%d", htmlsize);
 			g_string_append_printf(dest, "\" absz=\"%d", size);
 			g_string_append(dest, end);
 		} else {
-			g_string_append(dest, tag->str);
+			g_string_append(dest, tag);
 			return;
 		}
 	} else {
-		g_string_append(dest, tag->str);
+		g_string_append(dest, tag);
 		return;
 	}
 }
@@ -339,8 +339,9 @@ static void _font_tags_fix_size(GString *tag, GString *dest)
 char *yahoo_codes_to_html(const char *x)
 {
 	size_t x_len;
-	GString *s, *tmp;
+	GString *s;
 	int i, j;
+	gchar *tmp;
 	gboolean no_more_end_tags = FALSE; /* s/endtags/closinganglebrackets */
 	const char *match;
 
@@ -357,20 +358,21 @@ char *yahoo_codes_to_html(const char *x)
 				if (x[j] != 'm')
 					continue;
 				else {
-					tmp = g_string_new_len(x + i + 2, j - i - 2);
-					if (tmp->str[0] == '#')
-						g_string_append_printf(s, "<span style=\"color: %s\">", tmp->str);
-					else if ((match = g_hash_table_lookup(ht, tmp->str)))
+					/* We've reached the end of the formatting code, yay */
+					tmp = g_strndup(x + i + 2, j - i - 2);
+					if (tmp[0] == '#')
+						g_string_append_printf(s, "<span style=\"color: %s\">", tmp);
+					else if ((match = g_hash_table_lookup(ht, tmp)))
 						g_string_append(s, match);
 					else {
 						purple_debug_error("yahoo",
-							"Unknown ansi code 'ESC[%sm'.\n", tmp->str);
-						g_string_free(tmp, TRUE);
+							"Unknown ansi code 'ESC[%sm'.\n", tmp);
+						g_free(tmp);
 						break;
 					}
 
 					i = j;
-					g_string_free(tmp, TRUE);
+					g_free(tmp);
 					break;
 				}
 			}
@@ -387,30 +389,30 @@ char *yahoo_codes_to_html(const char *x)
 					else
 						continue;
 				else {
-					tmp = g_string_new_len(x + i, j - i + 1);
-					g_string_ascii_down(tmp);
+					tmp = g_strndup(x + i, j - i + 1);
+					g_ascii_strdown(tmp, -1);
 
-					if ((match = g_hash_table_lookup(ht, tmp->str)))
+					if ((match = g_hash_table_lookup(ht, tmp)))
 						g_string_append(s, match);
-					else if (!strncmp(tmp->str, "<fade ", 6) ||
-						!strncmp(tmp->str, "<alt ", 5) ||
-						!strncmp(tmp->str, "<snd ", 5)) {
+					else if (!strncmp(tmp, "<fade ", 6) ||
+						!strncmp(tmp, "<alt ", 5) ||
+						!strncmp(tmp, "<snd ", 5)) {
 
 						/* remove this if gtkimhtml ever supports any of these */
 						i = j;
-						g_string_free(tmp, TRUE);
+						g_free(tmp);
 						break;
 
-					} else if (!strncmp(tmp->str, "<font ", 6)) {
+					} else if (!strncmp(tmp, "<font ", 6)) {
 						_font_tags_fix_size(tmp, s);
 					} else {
 						g_string_append(s, "&lt;");
-						g_string_free(tmp, TRUE);
+						g_free(tmp);
 						break;
 					}
 
 					i = j;
-					g_string_free(tmp, TRUE);
+					g_free(tmp);
 					break;
 				}
 
