@@ -206,12 +206,12 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		{
 			/* This is for handwritten messages (Ink) */
 			GError *error;
-			glong items_read, items_written;
+			gsize bytes_read, bytes_written;
 
-			body_str = g_utf16_to_utf8((gunichar2 *)body, body_len / 2,
-			                           &items_read, &items_written, &error);
-			body_len -= items_read * 2 + 2;
-			body += items_read * 2 + 2;
+			body_str = g_convert(body, body_len / 2, "UTF16-LE", "UTF-8",
+			                     &bytes_read, &bytes_written, &error);
+			body_len -= bytes_read + 2;
+			body += bytes_read + 2;
 			if (body_str == NULL
 			 || body_len <= 0
 			 || strstr(body_str, "image/gif") == NULL)
@@ -228,8 +228,8 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			}
 			g_free(body_str);
 
-			body_str = g_utf16_to_utf8((gunichar2 *)body, body_len / 2,
-			                           &items_read, &items_written, &error);
+			body_str = g_convert(body, body_len / 2, "UTF16-LE", "UTF-8",
+			                     &bytes_read, &bytes_written, &error);
 			if (!body_str)
 			{
 				purple_debug_error("msn",
