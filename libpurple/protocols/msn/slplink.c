@@ -541,7 +541,8 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 						if (xfer->data == NULL) {
 							purple_xfer_unref(xfer);
-							return;
+							msn_slpmsg_destroy(slpmsg);
+							g_return_if_reached();
 						} else {
 							purple_xfer_unref(xfer);
 							slpmsg->fp = xfer->dest_fp;
