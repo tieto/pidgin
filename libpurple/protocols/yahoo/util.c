@@ -342,7 +342,7 @@ char *yahoo_codes_to_html(const char *x)
 	GString *s;
 	int i, j;
 	gchar *tmp;
-	gboolean no_more_end_tags = FALSE; /* s/endtags/closinganglebrackets */
+	gboolean no_more_lt_brackets = FALSE;
 	const char *match;
 
 	x_len = strlen(x);
@@ -350,8 +350,8 @@ char *yahoo_codes_to_html(const char *x)
 
 	for (i = 0; i < x_len; i++) {
 		if ((x[i] == 0x1b) && (x[i+1] == '[')) {
-			/* This is the beginning of an escape sequence, which
-			 * contains text formatting. */
+			/* This escape sequence signifies the beginning of some
+			 * text formatting code */
 			j = i + 1;
 
 			while (j++ < x_len) {
@@ -377,14 +377,15 @@ char *yahoo_codes_to_html(const char *x)
 				}
 			}
 
-		} else if (!no_more_end_tags && (x[i] == '<')) {
+		} else if (!no_more_lt_brackets && (x[i] == '<')) {
+			/* The start of an HTML tag */
 			j = i;
 
 			while (j++ < x_len) {
 				if (x[j] != '>')
 					if (j == x_len) {
 						g_string_append(s, "&lt;");
-						no_more_end_tags = TRUE;
+						no_more_lt_brackets = TRUE;
 					}
 					else
 						continue;
