@@ -209,7 +209,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			gsize bytes_read, bytes_written;
 
 			body_str = g_convert((const gchar *)body, body_len / 2,
-			                     "UTF16-LE", "UTF-8",
+			                     "UTF-8", "UTF16-LE",
 			                     &bytes_read, &bytes_written, &error);
 			body_len -= bytes_read + 2;
 			body += bytes_read + 2;
@@ -230,7 +230,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			g_free(body_str);
 
 			body_str = g_convert((const gchar *)body, body_len / 2,
-			                     "UTF16-LE", "UTF-8",
+			                     "UTF-8", "UTF16-LE",
 			                     &bytes_read, &bytes_written, &error);
 			if (!body_str)
 			{
