@@ -342,13 +342,15 @@ char *yahoo_codes_to_html(const char *x)
 	GString *s, *tmp;
 	int i, j;
 	gboolean no_more_end_tags = FALSE; /* s/endtags/closinganglebrackets */
-	char *match;
+	const char *match;
 
 	x_len = strlen(x);
 	s = g_string_sized_new(x_len);
 
 	for (i = 0; i < x_len; i++) {
 		if ((x[i] == 0x1b) && (x[i+1] == '[')) {
+			/* This is the beginning of an escape sequence, which
+			 * contains text formatting. */
 			j = i + 1;
 
 			while (j++ < x_len) {
@@ -358,7 +360,7 @@ char *yahoo_codes_to_html(const char *x)
 					tmp = g_string_new_len(x + i + 2, j - i - 2);
 					if (tmp->str[0] == '#')
 						g_string_append_printf(s, "<span style=\"color: %s\">", tmp->str);
-					else if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
+					else if ((match = g_hash_table_lookup(ht, tmp->str)))
 						g_string_append(s, match);
 					else {
 						purple_debug_error("yahoo",
@@ -388,7 +390,7 @@ char *yahoo_codes_to_html(const char *x)
 					tmp = g_string_new_len(x + i, j - i + 1);
 					g_string_ascii_down(tmp);
 
-					if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
+					if ((match = g_hash_table_lookup(ht, tmp->str)))
 						g_string_append(s, match);
 					else if (!strncmp(tmp->str, "<fade ", 6) ||
 						!strncmp(tmp->str, "<alt ", 5) ||
