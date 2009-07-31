@@ -5,15 +5,15 @@ this project.  If you have contributed to this project then you deserve
 to be on this list.  Contact us (see: AUTHORS) and we'll add you.
 
 Many open source projects list contributor names at the top of each
-source file that the contributor contributed to.  However, we've found
-that it is difficult to keep this list accurate.  Especially when old
+source file containing their contribution.  However, we've found
+that it is difficult to keep this list accurate, especially when old
 code is removed or existing code is moved to a different file.  So
 instead we chose to list a generic message at the top of each source
 file that points here.
 
 If concerns are raised as to the copyright holder of a particular
 piece of code, then that code should be traced through our version
-control system to see where it came from and who has modified it.
+control system to see from where it came and who has modified it.
 
 Copyright (C) 1998-2009 by the following:
 
