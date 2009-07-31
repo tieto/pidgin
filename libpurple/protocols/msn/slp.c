@@ -324,7 +324,6 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		gsize bin_len;
 		guint32 file_size;
 		char *file_name;
-		gunichar2 *uni_name;
 
 		account = slpcall->slplink->session->account;
 
@@ -342,14 +341,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			bin = (char *)purple_base64_decode(context, &bin_len);
 			file_size = GUINT32_FROM_LE(*(gsize *)(bin + 8));
 
-			uni_name = (gunichar2 *)(bin + 20);
-			while(*uni_name != 0 && ((char *)uni_name - (bin + 20)) < MAX_FILE_NAME_LEN) {
-				*uni_name = GUINT16_FROM_LE(*uni_name);
-				uni_name++;
-			}
-
-			file_name = g_utf16_to_utf8((const gunichar2 *)(bin + 20), -1,
-										NULL, NULL, NULL);
+			file_name = g_convert(bin + 20, -1, "UTF-16LE", "UTF-8",
+			                      NULL, NULL, NULL);
 
 			g_free(bin);
 
