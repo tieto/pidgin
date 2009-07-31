@@ -342,7 +342,7 @@ char *yahoo_codes_to_html(const char *x)
 	GString *s;
 	int i, j;
 	gchar *tmp;
-	gboolean no_more_lt_brackets = FALSE;
+	gboolean no_more_gt_brackets = FALSE;
 	const char *match;
 
 	x_len = strlen(x);
@@ -377,7 +377,7 @@ char *yahoo_codes_to_html(const char *x)
 				}
 			}
 
-		} else if (!no_more_lt_brackets && (x[i] == '<')) {
+		} else if (!no_more_gt_brackets && (x[i] == '<')) {
 			/* The start of an HTML tag */
 			j = i;
 
@@ -385,7 +385,7 @@ char *yahoo_codes_to_html(const char *x)
 				if (x[j] != '>')
 					if (j == x_len) {
 						g_string_append(s, "&lt;");
-						no_more_lt_brackets = TRUE;
+						no_more_gt_brackets = TRUE;
 					}
 					else
 						continue;
