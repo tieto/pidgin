@@ -338,18 +338,20 @@ static void _font_tags_fix_size(GString *tag, GString *dest)
 
 char *yahoo_codes_to_html(const char *x)
 {
+	size_t x_len;
 	GString *s, *tmp;
-	int i, j, xs;
+	int i, j;
 	gboolean no_more_end_tags = FALSE; /* s/endtags/closinganglebrackets */
 	char *match;
 
-	s = g_string_sized_new(strlen(x));
+	x_len = strlen(x);
+	s = g_string_sized_new(x_len);
 
-	for (i = 0, xs = strlen(x); i < xs; i++) {
+	for (i = 0; i < x_len; i++) {
 		if ((x[i] == 0x1b) && (x[i+1] == '[')) {
 			j = i + 1;
 
-			while (j++ < xs) {
+			while (j++ < x_len) {
 				if (x[j] != 'm')
 					continue;
 				else {
@@ -374,9 +376,9 @@ char *yahoo_codes_to_html(const char *x)
 		} else if (!no_more_end_tags && (x[i] == '<')) {
 			j = i;
 
-			while (j++ < xs) {
+			while (j++ < x_len) {
 				if (x[j] != '>')
-					if (j == xs) {
+					if (j == x_len) {
 						g_string_append(s, "&lt;");
 						no_more_end_tags = TRUE;
 					}
@@ -634,18 +636,20 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 
 char *yahoo_html_to_codes(const char *src)
 {
-	int i, j, len;
+	GQueue *colors, *tags;
+	size_t src_len;
+	int i, j;
 	GString *dest;
 	char *esc;
-	GQueue *colors, *tags;
 	GQueue *ftattr = NULL;
 	gboolean no_more_specials = FALSE;
 
 	colors = g_queue_new();
 	tags = g_queue_new();
-	dest = g_string_sized_new(strlen(src));
+	src_len = strlen(src);
+	dest = g_string_sized_new(src_len);
 
-	for (i = 0, len = strlen(src); i < len; i++) {
+	for (i = 0; i < src_len; i++) {
 
 		if (!no_more_specials && src[i] == '<') {
 			j = i;
@@ -653,7 +657,7 @@ char *yahoo_html_to_codes(const char *src)
 			while (1) {
 				j++;
 
-				if (j >= len) { /* no '>' */
+				if (j >= src_len) { /* no '>' */
 					g_string_append_c(dest, src[i]);
 					no_more_specials = TRUE;
 					break;
@@ -682,7 +686,7 @@ char *yahoo_html_to_codes(const char *src)
 						char *t = strchr(&src[j], '>');
 						if (!t) {
 							g_string_append(dest, &src[i]);
-							i = len;
+							i = src_len;
 							break;
 						} else {
 							i = t - src;
@@ -693,15 +697,15 @@ char *yahoo_html_to_codes(const char *src)
 						g_string_append(dest, "\033[lm");
 						while (1) {
 							g_string_append_c(dest, src[j]);
-							if (++j >= len) {
-								i = len;
+							if (++j >= src_len) {
+								i = src_len;
 								break;
 							}
 							if (src[j] == '"') {
 								g_string_append(dest, "\033[xlm");
 								while (1) {
-									if (++j >= len) {
-										i = len;
+									if (++j >= src_len) {
+										i = src_len;
 										break;
 									}
 									if (!g_ascii_strncasecmp(&src[j], "</A>", 4)) {
@@ -715,9 +719,9 @@ char *yahoo_html_to_codes(const char *src)
 						}
 					} else if (!g_ascii_strncasecmp(&src[i+1], "SPAN", j - i - 1)) { /* drop span tags */
 						while (1) {
-							if (++j >= len) {
+							if (++j >= src_len) {
 								g_string_append(dest, &src[i]);
-								i = len;
+								i = src_len;
 								break;
 							}
 							if (src[j] == '>') {
@@ -727,9 +731,9 @@ char *yahoo_html_to_codes(const char *src)
 						}
 					} else if (g_ascii_strncasecmp(&src[i+1], "FONT", j - i - 1)) { /* not interested! */
 						while (1) {
-							if (++j >= len) {
+							if (++j >= src_len) {
 								g_string_append(dest, &src[i]);
-								i = len;
+								i = src_len;
 								break;
 							}
 							if (src[j] == '>') {
@@ -739,7 +743,7 @@ char *yahoo_html_to_codes(const char *src)
 							}
 						}
 					} else { /* yay we have a font tag */
-						_parse_font_tag(src, dest, &i, &j, len, colors, tags, ftattr);
+						_parse_font_tag(src, dest, &i, &j, src_len, colors, tags, ftattr);
 					}
 
 					break;
@@ -800,19 +804,19 @@ char *yahoo_html_to_codes(const char *src)
 			}
 
 		} else {
-			if (((len - i) >= 4) && !strncmp(&src[i], "&lt;", 4)) {
+			if (((src_len - i) >= 4) && !strncmp(&src[i], "&lt;", 4)) {
 				g_string_append_c(dest, '<');
 				i += 3;
-			} else if (((len - i) >= 4) && !strncmp(&src[i], "&gt;", 4)) {
+			} else if (((src_len - i) >= 4) && !strncmp(&src[i], "&gt;", 4)) {
 				g_string_append_c(dest, '>');
 				i += 3;
-			} else if (((len - i) >= 5) && !strncmp(&src[i], "&amp;", 5)) {
+			} else if (((src_len - i) >= 5) && !strncmp(&src[i], "&amp;", 5)) {
 				g_string_append_c(dest, '&');
 				i += 4;
-			} else if (((len - i) >= 6) && !strncmp(&src[i], "&quot;", 6)) {
+			} else if (((src_len - i) >= 6) && !strncmp(&src[i], "&quot;", 6)) {
 				g_string_append_c(dest, '"');
 				i += 5;
-			} else if (((len - i) >= 6) && !strncmp(&src[i], "&apos;", 6)) {
+			} else if (((src_len - i) >= 6) && !strncmp(&src[i], "&apos;", 6)) {
 				g_string_append_c(dest, '\'');
 				i += 5;
 			} else {
