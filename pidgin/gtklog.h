@@ -43,7 +43,7 @@ struct _PidginLogViewer {
 	GtkWidget        *window;    /**< The viewer's window                      */
 	GtkTreeStore     *treestore; /**< The treestore containing said logs       */
 	GtkWidget        *treeview;  /**< The treeview representing said treestore */
-	GtkWidget        *imhtml;    /**< The imhtml to display said logs          */
+	GtkWidget        *web_view;  /**< The webkit web view to display said logs */
 	GtkWidget        *entry;     /**< The search entry, in which search terms
 	                              *   are entered                              */
 	PurpleLogReadFlags flags;      /**< The most recently used log flags         */
