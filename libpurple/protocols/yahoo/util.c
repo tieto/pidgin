@@ -215,16 +215,16 @@ void yahoo_init_colorht()
 
 	ht = g_hash_table_new(g_str_hash, g_str_equal);
 	/* the numbers in comments are what gyach uses, but i think they're incorrect */
-	g_hash_table_insert(ht, "30", "<font color=\"#000000\">"); /* black */
-	g_hash_table_insert(ht, "31", "<font color=\"#0000FF\">"); /* blue */
-	g_hash_table_insert(ht, "32", "<font color=\"#008080\">"); /* cyan */      /* 00b2b2 */
-	g_hash_table_insert(ht, "33", "<font color=\"#808080\">"); /* gray */      /* 808080 */
-	g_hash_table_insert(ht, "34", "<font color=\"#008000\">"); /* green */     /* 00c200 */
-	g_hash_table_insert(ht, "35", "<font color=\"#FF0080\">"); /* pink */      /* ffafaf */
-	g_hash_table_insert(ht, "36", "<font color=\"#800080\">"); /* purple */    /* b200b2 */
-	g_hash_table_insert(ht, "37", "<font color=\"#FF8000\">"); /* orange */    /* ffff00 */
-	g_hash_table_insert(ht, "38", "<font color=\"#FF0000\">"); /* red */
-	g_hash_table_insert(ht, "39", "<font color=\"#808000\">"); /* olive */     /* 546b50 */
+	g_hash_table_insert(ht, "30", "<span style=\"color: #000000\">"); /* black */
+	g_hash_table_insert(ht, "31", "<span style=\"color: #0000FF\">"); /* blue */
+	g_hash_table_insert(ht, "32", "<span style=\"color: #008080\">"); /* cyan */      /* 00b2b2 */
+	g_hash_table_insert(ht, "33", "<span style=\"color: #808080\">"); /* gray */      /* 808080 */
+	g_hash_table_insert(ht, "34", "<span style=\"color: #008000\">"); /* green */     /* 00c200 */
+	g_hash_table_insert(ht, "35", "<span style=\"color: #FF0080\">"); /* pink */      /* ffafaf */
+	g_hash_table_insert(ht, "36", "<span style=\"color: #800080\">"); /* purple */    /* b200b2 */
+	g_hash_table_insert(ht, "37", "<span style=\"color: #FF8000\">"); /* orange */    /* ffff00 */
+	g_hash_table_insert(ht, "38", "<span style=\"color: #FF0000\">"); /* red */
+	g_hash_table_insert(ht, "39", "<span style=\"color: #808000\">"); /* olive */     /* 546b50 */
 
 	g_hash_table_insert(ht,  "1",  "<b>");
 	g_hash_table_insert(ht, "x1", "</b>");
@@ -240,27 +240,27 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "l", ""); /* link start */
 	g_hash_table_insert(ht, "xl", ""); /* link end */
 
-	g_hash_table_insert(ht, "<black>",  "<font color=\"#000000\">");
-	g_hash_table_insert(ht, "<blue>",   "<font color=\"#0000FF\">");
-	g_hash_table_insert(ht, "<cyan>",   "<font color=\"#008284\">");
-	g_hash_table_insert(ht, "<gray>",   "<font color=\"#848284\">");
-	g_hash_table_insert(ht, "<green>",  "<font color=\"#008200\">");
-	g_hash_table_insert(ht, "<pink>",   "<font color=\"#FF0084\">");
-	g_hash_table_insert(ht, "<purple>", "<font color=\"#840084\">");
-	g_hash_table_insert(ht, "<orange>", "<font color=\"#FF8000\">");
-	g_hash_table_insert(ht, "<red>",    "<font color=\"#FF0000\">");
-	g_hash_table_insert(ht, "<yellow>", "<font color=\"#848200\">");
+	g_hash_table_insert(ht, "<black>",  "<span style=\"color: #000000\">");
+	g_hash_table_insert(ht, "<blue>",   "<span style=\"color: #0000FF\">");
+	g_hash_table_insert(ht, "<cyan>",   "<span style=\"color: #008284\">");
+	g_hash_table_insert(ht, "<gray>",   "<span style=\"color: #848284\">");
+	g_hash_table_insert(ht, "<green>",  "<span style=\"color: #008200\">");
+	g_hash_table_insert(ht, "<pink>",   "<span style=\"color: #FF0084\">");
+	g_hash_table_insert(ht, "<purple>", "<span style=\"color: #840084\">");
+	g_hash_table_insert(ht, "<orange>", "<span style=\"color: #FF8000\">");
+	g_hash_table_insert(ht, "<red>",    "<span style=\"color: #FF0000\">");
+	g_hash_table_insert(ht, "<yellow>", "<span style=\"color: #848200\">");
 
-	g_hash_table_insert(ht, "</black>",  "</font>");
-	g_hash_table_insert(ht, "</blue>",   "</font>");
-	g_hash_table_insert(ht, "</cyan>",   "</font>");
-	g_hash_table_insert(ht, "</gray>",   "</font>");
-	g_hash_table_insert(ht, "</green>",  "</font>");
-	g_hash_table_insert(ht, "</pink>",   "</font>");
-	g_hash_table_insert(ht, "</purple>", "</font>");
-	g_hash_table_insert(ht, "</orange>", "</font>");
-	g_hash_table_insert(ht, "</red>",    "</font>");
-	g_hash_table_insert(ht, "</yellow>", "</font>");
+	g_hash_table_insert(ht, "</black>",  "</span>");
+	g_hash_table_insert(ht, "</blue>",   "</span>");
+	g_hash_table_insert(ht, "</cyan>",   "</span>");
+	g_hash_table_insert(ht, "</gray>",   "</span>");
+	g_hash_table_insert(ht, "</green>",  "</span>");
+	g_hash_table_insert(ht, "</pink>",   "</span>");
+	g_hash_table_insert(ht, "</purple>", "</span>");
+	g_hash_table_insert(ht, "</orange>", "</span>");
+	g_hash_table_insert(ht, "</red>",    "</span>");
+	g_hash_table_insert(ht, "</yellow>", "</span>");
 
 	/* remove these once we have proper support for <FADE> and <ALT> */
 	g_hash_table_insert(ht, "</fade>", "");
@@ -354,7 +354,7 @@ char *yahoo_codes_to_html(const char *x)
 				else {
 					tmp = g_string_new_len(x + i + 2, j - i - 2);
 					if (tmp->str[0] == '#')
-						g_string_append_printf(s, "<font color=\"%s\">", tmp->str);
+						g_string_append_printf(s, "<span style=\"color: %s\">", tmp->str);
 					else if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
 						g_string_append(s, match);
 					else {

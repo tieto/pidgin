@@ -20,6 +20,7 @@ START_TEST(test_codes_to_html)
 	assert_string_equal_free("<i>italic", yahoo_codes_to_html("\x1B[2mitalic"));
 	assert_string_equal_free("<u>underline", yahoo_codes_to_html("\x1B[4munderline"));
 	assert_string_equal_free("<b>bold</b> <i>italic</i> <u>underline", yahoo_codes_to_html("\x1B[1mbold\x1B[x1m \x1B[2mitalic\x1B[x2m \x1B[4munderline"));
+	assert_string_equal_free("<span style=\"color: #0000FF\">blue", yahoo_codes_to_html("\x1B[31mblue"));
 }
 END_TEST
 
