@@ -215,6 +215,7 @@ void yahoo_init_colorht()
 
 	ht = g_hash_table_new(g_str_hash, g_str_equal);
 	/* the numbers in comments are what gyach uses, but i think they're incorrect */
+#ifdef USE_CSS_FORMATTING
 	g_hash_table_insert(ht, "30", "<span style=\"color: #000000\">"); /* black */
 	g_hash_table_insert(ht, "31", "<span style=\"color: #0000FF\">"); /* blue */
 	g_hash_table_insert(ht, "32", "<span style=\"color: #008080\">"); /* cyan */      /* 00b2b2 */
@@ -225,6 +226,18 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "37", "<span style=\"color: #FF8000\">"); /* orange */    /* ffff00 */
 	g_hash_table_insert(ht, "38", "<span style=\"color: #FF0000\">"); /* red */
 	g_hash_table_insert(ht, "39", "<span style=\"color: #808000\">"); /* olive */     /* 546b50 */
+#else
+	g_hash_table_insert(ht, "30", "<font color=\"#000000\">"); /* black */
+	g_hash_table_insert(ht, "31", "<font color=\"#0000FF\">"); /* blue */
+	g_hash_table_insert(ht, "32", "<font color=\"#008080\">"); /* cyan */      /* 00b2b2 */
+	g_hash_table_insert(ht, "33", "<font color=\"#808080\">"); /* gray */      /* 808080 */
+	g_hash_table_insert(ht, "34", "<font color=\"#008000\">"); /* green */     /* 00c200 */
+	g_hash_table_insert(ht, "35", "<font color=\"#FF0080\">"); /* pink */      /* ffafaf */
+	g_hash_table_insert(ht, "36", "<font color=\"#800080\">"); /* purple */    /* b200b2 */
+	g_hash_table_insert(ht, "37", "<font color=\"#FF8000\">"); /* orange */    /* ffff00 */
+	g_hash_table_insert(ht, "38", "<font color=\"#FF0000\">"); /* red */
+	g_hash_table_insert(ht, "39", "<font color=\"#808000\">"); /* olive */     /* 546b50 */
+#endif /* !USE_CSS_FORMATTING */
 
 	g_hash_table_insert(ht,  "1",  "<b>");
 	g_hash_table_insert(ht, "x1", "</b>");
@@ -240,6 +253,7 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "l", ""); /* link start */
 	g_hash_table_insert(ht, "xl", ""); /* link end */
 
+#ifdef USE_CSS_FORMATTING
 	g_hash_table_insert(ht, "<black>",  "<span style=\"color: #000000\">");
 	g_hash_table_insert(ht, "<blue>",   "<span style=\"color: #0000FF\">");
 	g_hash_table_insert(ht, "<cyan>",   "<span style=\"color: #008284\">");
@@ -261,6 +275,29 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "</orange>", "</span>");
 	g_hash_table_insert(ht, "</red>",    "</span>");
 	g_hash_table_insert(ht, "</yellow>", "</span>");
+#else
+	g_hash_table_insert(ht, "<black>",  "<font color=\"#000000\">");
+	g_hash_table_insert(ht, "<blue>",   "<font color=\"#0000FF\">");
+	g_hash_table_insert(ht, "<cyan>",   "<font color=\"#008284\">");
+	g_hash_table_insert(ht, "<gray>",   "<font color=\"#848284\">");
+	g_hash_table_insert(ht, "<green>",  "<font color=\"#008200\">");
+	g_hash_table_insert(ht, "<pink>",   "<font color=\"#FF0084\">");
+	g_hash_table_insert(ht, "<purple>", "<font color=\"#840084\">");
+	g_hash_table_insert(ht, "<orange>", "<font color=\"#FF8000\">");
+	g_hash_table_insert(ht, "<red>",    "<font color=\"#FF0000\">");
+	g_hash_table_insert(ht, "<yellow>", "<font color=\"#848200\">");
+
+	g_hash_table_insert(ht, "</black>",  "</font>");
+	g_hash_table_insert(ht, "</blue>",   "</font>");
+	g_hash_table_insert(ht, "</cyan>",   "</font>");
+	g_hash_table_insert(ht, "</gray>",   "</font>");
+	g_hash_table_insert(ht, "</green>",  "</font>");
+	g_hash_table_insert(ht, "</pink>",   "</font>");
+	g_hash_table_insert(ht, "</purple>", "</font>");
+	g_hash_table_insert(ht, "</orange>", "</font>");
+	g_hash_table_insert(ht, "</red>",    "</font>");
+	g_hash_table_insert(ht, "</yellow>", "</font>");
+#endif /* !USE_CSS_FORMATTING */
 
 	/* remove these once we have proper support for <FADE> and <ALT> */
 	g_hash_table_insert(ht, "</fade>", "");
@@ -291,6 +328,7 @@ void yahoo_dest_colorht()
 	ht = NULL;
 }
 
+#ifndef USE_CSS_FORMATTING
 static int point_to_html(int x)
 {
 	if (x < 9)
@@ -307,8 +345,14 @@ static int point_to_html(int x)
 		return 6;
 	return 7;
 }
+#endif /* !USE_CSS_FORMATTING */
 
-/* The Yahoo size tag is actually an absz tag; convert it to an HTML size, and include both tags */
+/*
+ * The Yahoo font size value is given in pt, even thougth the HTML
+ * standard for <font size="x"> treats the size as a number on a
+ * scale between 1 and 7.  Let's get rid of this shoddyness and
+ * convert it to CSS.
+ */
 static void _font_tags_fix_size(const char *tag, GString *dest)
 {
 	char *x, *end;
@@ -318,14 +362,23 @@ static void _font_tags_fix_size(const char *tag, GString *dest)
 		while (*x && !g_ascii_isdigit(*x))
 			x++;
 		if (*x) {
+#ifndef USE_CSS_FORMATTING
 			int htmlsize;
+#endif /* !USE_CSS_FORMATTING */
 
 			size = strtol(x, &end, 10);
+
+#ifdef USE_CSS_FORMATTING
+			g_string_append_len(dest, tag, x - tag - 7);
+			g_string_append(dest, end + 1);
+			g_string_append_printf(dest, "<span style=\"font-size: %dpt\">", size);
+#else
 			htmlsize = point_to_html(size);
 			g_string_append_len(dest, tag, x - tag);
 			g_string_append_printf(dest, "%d", htmlsize);
 			g_string_append_printf(dest, "\" absz=\"%d", size);
 			g_string_append(dest, end);
+#endif /* !USE_CSS_FORMATTING */
 		} else {
 			g_string_append(dest, tag);
 			return;
@@ -361,7 +414,11 @@ char *yahoo_codes_to_html(const char *x)
 					/* We've reached the end of the formatting code, yay */
 					tmp = g_strndup(x + i + 2, j - i - 2);
 					if (tmp[0] == '#')
+#ifdef USE_CSS_FORMATTING
 						g_string_append_printf(s, "<span style=\"color: %s\">", tmp);
+#else
+						g_string_append_printf(s, "<font color=\"%s\">", tmp);
+#endif /* !USE_CSS_FORMATTING */
 					else if ((match = g_hash_table_lookup(ht, tmp)))
 						g_string_append(s, match);
 					else {
