@@ -217,10 +217,12 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			 || body_len <= 0
 			 || strstr(body_str, "image/gif") == NULL)
 			{
-				if (error != NULL)
+				if (error != NULL) {
 					purple_debug_error("msn",
 					                   "Unable to convert Ink header from UTF-16 to UTF-8: %s\n",
 					                   error->message);
+					g_error_free(error);
+				}
 				else
 					purple_debug_error("msn",
 					                   "Received Ink in unknown format\n");
@@ -234,9 +236,15 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			                     &bytes_read, &bytes_written, &error);
 			if (!body_str)
 			{
-				purple_debug_error("msn",
-				                   "Unable to convert Ink body from UTF-16 to UTF-8: %s\n",
-				                   error->message);
+				if (error != NULL) {
+					purple_debug_error("msn",
+					                   "Unable to convert Ink body from UTF-16 to UTF-8: %s\n",
+					                   error->message);
+					g_error_free(error);
+				}
+				else
+					purple_debug_error("msn",
+					                   "Received Ink in unknown format\n");
 				return NULL;
 			}
 
