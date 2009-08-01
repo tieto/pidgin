@@ -132,7 +132,6 @@ static void jabber_bind_result_cb(JabberStream *js, const char *from,
 		xmlnode *jid;
 		char *full_jid;
 		if((jid = xmlnode_get_child(bind, "jid")) && (full_jid = xmlnode_get_data(jid))) {
-			JabberBuddy *my_jb;
 			jabber_id_free(js->user);
 
 			js->user = jabber_id_new(full_jid);
@@ -144,9 +143,8 @@ static void jabber_bind_result_cb(JabberStream *js, const char *from,
 				return;
 			}
 
-			my_jb = jabber_buddy_find(js, full_jid, TRUE);
-			if (my_jb)
-				my_jb->subscription |= JABBER_SUB_BOTH;
+			js->user_jb = jabber_buddy_find(js, full_jid, TRUE);
+			js->user_jb->subscription |= JABBER_SUB_BOTH;
 
 			purple_connection_set_display_name(js->gc, full_jid);
 
@@ -781,7 +779,6 @@ jabber_stream_new(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js;
-	JabberBuddy *my_jb;
 	PurplePresence *presence;
 	gchar *user;
 	gchar *slash;
@@ -816,9 +813,9 @@ jabber_stream_new(PurpleAccount *account)
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_buddy_free);
 
-	my_jb = jabber_buddy_find(js, user, TRUE);
+	js->user_jb = jabber_buddy_find(js, user, TRUE);
 	g_free(user);
-	if (!my_jb) {
+	if (!js->user_jb) {
 		/* This basically *can't* fail, but for good measure... */
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
@@ -827,7 +824,7 @@ jabber_stream_new(PurpleAccount *account)
 		g_return_val_if_reached(NULL);
 	}
 
-	my_jb->subscription |= JABBER_SUB_BOTH;
+	js->user_jb->subscription |= JABBER_SUB_BOTH;
 
 	js->iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);

@@ -1765,9 +1765,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 	if(!jb)
 		return m;
 
-	/* XXX: fix the NOT ME below */
-
-	if(js->protocol_version == JABBER_PROTO_0_9 /* && NOT ME */) {
+	if (js->protocol_version == JABBER_PROTO_0_9 && jb != js->user_jb) {
 		if(jb->invisible & JABBER_INVIS_BUDDY) {
 			act = purple_menu_action_new(_("Un-hide From"),
 			                           PURPLE_CALLBACK(jabber_buddy_make_visible),
@@ -1780,7 +1778,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 		m = g_list_append(m, act);
 	}
 
-	if(jb->subscription & JABBER_SUB_FROM /* && NOT ME */) {
+	if(jb->subscription & JABBER_SUB_FROM && jb != js->user_jb) {
 		act = purple_menu_action_new(_("Cancel Presence Notification"),
 		                           PURPLE_CALLBACK(jabber_buddy_cancel_presence_notification),
 		                           NULL, NULL);
@@ -1793,7 +1791,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 
-	} else /* if(NOT ME) */{
+	} else if (jb != js->user_jb) {
 
 		/* shouldn't this just happen automatically when the buddy is
 		   removed? */
