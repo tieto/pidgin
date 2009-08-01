@@ -1660,21 +1660,42 @@ static void jabber_buddy_make_visible(PurpleBlistNode *node, gpointer data)
 	jabber_buddy_set_invisibility(js, purple_buddy_get_name(buddy), FALSE);
 }
 
-static void jabber_buddy_cancel_presence_notification(PurpleBlistNode *node,
-		gpointer data)
+static void cancel_presence_notification(gpointer data)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 	JabberStream *js;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
-
-	buddy = (PurpleBuddy *) node;
+	buddy = data;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	js = purple_connection_get_protocol_data(gc);
 
-	/* I wonder if we should prompt the user before doing this */
 	jabber_presence_subscription_set(js, purple_buddy_get_name(buddy), "unsubscribed");
+}
+
+static void
+jabber_buddy_cancel_presence_notification(PurpleBlistNode *node,
+                                          gpointer data)
+{
+	PurpleBuddy *buddy;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	const gchar *name;
+	char *msg;
+
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (PurpleBuddy *) node;
+	name = purple_buddy_get_name(buddy);
+	account = purple_buddy_get_account(buddy);
+	gc = purple_account_get_connection(account);
+
+	msg = g_strdup_printf(_("%s will no longer be able to see your status "
+	                        "updates.  Do you want to continue?"), name);
+	purple_request_yes_no(gc, NULL, _("Cancel Presence Notification"),
+	                      msg, 0 /* Yes */, account, name, NULL, buddy,
+	                      cancel_presence_notification, NULL /* Do nothing */);
+	g_free(msg);
 }
 
 static void jabber_buddy_rerequest_auth(PurpleBlistNode *node, gpointer data)
