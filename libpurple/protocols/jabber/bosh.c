@@ -516,7 +516,6 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 	/* FIXME: Depending on receiving features might break with some hosts */
 	packet = xmlnode_get_child(node, "features");
 	conn->state = BOSH_CONN_ONLINE;
-	conn->js->use_bosh = TRUE;
 	conn->receive_cb = auth_response_cb;
 	jabber_stream_features_parse(conn->js, packet);
 }

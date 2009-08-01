@@ -441,7 +441,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	if (len == -1)
 		len = strlen(data);
 
-	if (js->use_bosh)
+	if (js->bosh)
 		jabber_bosh_connection_send_raw(js->bosh, data);
 	else
 		do_jabber_send_raw(js, data, len);
@@ -465,7 +465,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 		return;
 
 	js = purple_connection_get_protocol_data(pc);
-	if (js->use_bosh)
+	if (js->bosh)
 		if (g_str_equal((*packet)->name, "message") ||
 				g_str_equal((*packet)->name, "iq") ||
 				g_str_equal((*packet)->name, "presence"))
@@ -632,7 +632,6 @@ txt_resolved_cb(GList *responses, gpointer data)
 		if (!strcmp(token[0], "_xmpp-client-xbosh")) {
 			purple_debug_info("jabber","Found alternative connection method using %s at %s.\n", token[0], token[1]);
 			js->bosh = jabber_bosh_connection_init(js, token[1]);
-			js->use_bosh = TRUE;
 			g_strfreev(token);
 			break;
 		}
@@ -865,7 +864,6 @@ jabber_stream_connect(JabberStream *js)
 	 * attached to that choice, though.
 	 */
 	if (*bosh_url) {
-		js->use_bosh = TRUE;
 		js->bosh = jabber_bosh_connection_init(js, bosh_url);
 		if (js->bosh)
 			jabber_bosh_connection_connect(js->bosh);
@@ -1445,7 +1443,7 @@ void jabber_close(PurpleConnection *gc)
 	 * on some SSL backends.
 	 */
 	if (!gc->disconnect_timeout) {
-		if (js->use_bosh)
+		if (js->bosh)
 			jabber_bosh_connection_close(js->bosh);
 		else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
 			jabber_send_raw(js, "</stream:stream>", -1);
