@@ -214,6 +214,8 @@ struct _JabberStream
 	void *unregistration_user_data;
 
 	gboolean vcard_fetched;
+	/* Timer at login to push updated avatar */
+	guint vcard_timer;
 
 	/* Entity Capabilities hash */
 	char *caps_hash;

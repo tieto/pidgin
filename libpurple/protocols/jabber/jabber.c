@@ -1542,6 +1542,9 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_track);
 	g_free(js->expected_rspauth);
 
+	if (js->vcard_timer != 0)
+		purple_timeout_remove(js->vcard_timer);
+
 	if (js->keepalive_timeout != 0)
 		purple_timeout_remove(js->keepalive_timeout);
 
