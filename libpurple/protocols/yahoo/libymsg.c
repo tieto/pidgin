@@ -2035,7 +2035,6 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	char *fullmsg;
 	PurpleAccount *account = gc->account;
 	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
-	gboolean reconnect = FALSE;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -2086,8 +2085,8 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	case 52:
 		/* See #9660. As much as we know, reconnecting shouldn't hurt */
 		purple_debug_info("yahoo", "Got error 52, Set to autoreconnect\n");
-		reconnect = TRUE;
 		msg = g_strdup_printf(_("Unknown error"));
+		reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		break;
 	case 1013:
 		msg = g_strdup(_("Invalid username"));
@@ -2105,10 +2104,6 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	purple_connection_error_reason(gc, reason, fullmsg);
 	g_free(msg);
 	g_free(fullmsg);
-
-	/* In case of error 52, we reconnect */
-	if(reconnect)
-		purple_account_connect(account);
 }
 
 static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pkt)
