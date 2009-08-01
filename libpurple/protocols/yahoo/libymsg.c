@@ -2085,9 +2085,9 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 		break;
 	case 52:
 		/* See #9660. As much as we know, reconnecting shouldn't hurt */
-		purple_debug_info("yahoo","Got error 52, Set to autoreconnect\n");
+		purple_debug_info("yahoo", "Got error 52, Set to autoreconnect\n");
 		reconnect = TRUE;
-		msg = g_strdup_printf(_("Unknown error number 52. Reconnecting..."));
+		msg = g_strdup_printf(_("Unknown error"));
 		break;
 	case 1013:
 		msg = g_strdup(_("Invalid username"));
