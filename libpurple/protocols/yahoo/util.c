@@ -215,6 +215,7 @@ void yahoo_init_colorht()
 
 	ht = g_hash_table_new(g_str_hash, g_str_equal);
 	/* the numbers in comments are what gyach uses, but i think they're incorrect */
+#ifdef USE_CSS_FORMATTING
 	g_hash_table_insert(ht, "30", "<span style=\"color: #000000\">"); /* black */
 	g_hash_table_insert(ht, "31", "<span style=\"color: #0000FF\">"); /* blue */
 	g_hash_table_insert(ht, "32", "<span style=\"color: #008080\">"); /* cyan */      /* 00b2b2 */
@@ -225,6 +226,18 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "37", "<span style=\"color: #FF8000\">"); /* orange */    /* ffff00 */
 	g_hash_table_insert(ht, "38", "<span style=\"color: #FF0000\">"); /* red */
 	g_hash_table_insert(ht, "39", "<span style=\"color: #808000\">"); /* olive */     /* 546b50 */
+#else
+	g_hash_table_insert(ht, "30", "<font color=\"#000000\">"); /* black */
+	g_hash_table_insert(ht, "31", "<font color=\"#0000FF\">"); /* blue */
+	g_hash_table_insert(ht, "32", "<font color=\"#008080\">"); /* cyan */      /* 00b2b2 */
+	g_hash_table_insert(ht, "33", "<font color=\"#808080\">"); /* gray */      /* 808080 */
+	g_hash_table_insert(ht, "34", "<font color=\"#008000\">"); /* green */     /* 00c200 */
+	g_hash_table_insert(ht, "35", "<font color=\"#FF0080\">"); /* pink */      /* ffafaf */
+	g_hash_table_insert(ht, "36", "<font color=\"#800080\">"); /* purple */    /* b200b2 */
+	g_hash_table_insert(ht, "37", "<font color=\"#FF8000\">"); /* orange */    /* ffff00 */
+	g_hash_table_insert(ht, "38", "<font color=\"#FF0000\">"); /* red */
+	g_hash_table_insert(ht, "39", "<font color=\"#808000\">"); /* olive */     /* 546b50 */
+#endif /* !USE_CSS_FORMATTING */
 
 	g_hash_table_insert(ht,  "1",  "<b>");
 	g_hash_table_insert(ht, "x1", "</b>");
@@ -240,6 +253,7 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "l", ""); /* link start */
 	g_hash_table_insert(ht, "xl", ""); /* link end */
 
+#ifdef USE_CSS_FORMATTING
 	g_hash_table_insert(ht, "<black>",  "<span style=\"color: #000000\">");
 	g_hash_table_insert(ht, "<blue>",   "<span style=\"color: #0000FF\">");
 	g_hash_table_insert(ht, "<cyan>",   "<span style=\"color: #008284\">");
@@ -261,6 +275,29 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "</orange>", "</span>");
 	g_hash_table_insert(ht, "</red>",    "</span>");
 	g_hash_table_insert(ht, "</yellow>", "</span>");
+#else
+	g_hash_table_insert(ht, "<black>",  "<font color=\"#000000\">");
+	g_hash_table_insert(ht, "<blue>",   "<font color=\"#0000FF\">");
+	g_hash_table_insert(ht, "<cyan>",   "<font color=\"#008284\">");
+	g_hash_table_insert(ht, "<gray>",   "<font color=\"#848284\">");
+	g_hash_table_insert(ht, "<green>",  "<font color=\"#008200\">");
+	g_hash_table_insert(ht, "<pink>",   "<font color=\"#FF0084\">");
+	g_hash_table_insert(ht, "<purple>", "<font color=\"#840084\">");
+	g_hash_table_insert(ht, "<orange>", "<font color=\"#FF8000\">");
+	g_hash_table_insert(ht, "<red>",    "<font color=\"#FF0000\">");
+	g_hash_table_insert(ht, "<yellow>", "<font color=\"#848200\">");
+
+	g_hash_table_insert(ht, "</black>",  "</font>");
+	g_hash_table_insert(ht, "</blue>",   "</font>");
+	g_hash_table_insert(ht, "</cyan>",   "</font>");
+	g_hash_table_insert(ht, "</gray>",   "</font>");
+	g_hash_table_insert(ht, "</green>",  "</font>");
+	g_hash_table_insert(ht, "</pink>",   "</font>");
+	g_hash_table_insert(ht, "</purple>", "</font>");
+	g_hash_table_insert(ht, "</orange>", "</font>");
+	g_hash_table_insert(ht, "</red>",    "</font>");
+	g_hash_table_insert(ht, "</yellow>", "</font>");
+#endif /* !USE_CSS_FORMATTING */
 
 	/* remove these once we have proper support for <FADE> and <ALT> */
 	g_hash_table_insert(ht, "</fade>", "");
@@ -291,6 +328,7 @@ void yahoo_dest_colorht()
 	ht = NULL;
 }
 
+#ifndef USE_CSS_FORMATTING
 static int point_to_html(int x)
 {
 	if (x < 9)
@@ -307,105 +345,132 @@ static int point_to_html(int x)
 		return 6;
 	return 7;
 }
+#endif /* !USE_CSS_FORMATTING */
 
-/* The Yahoo size tag is actually an absz tag; convert it to an HTML size, and include both tags */
-static void _font_tags_fix_size(GString *tag, GString *dest)
+/*
+ * The Yahoo font size value is given in pt, even thougth the HTML
+ * standard for <font size="x"> treats the size as a number on a
+ * scale between 1 and 7.  Let's get rid of this shoddyness and
+ * convert it to CSS.
+ */
+static void _font_tags_fix_size(const char *tag, GString *dest)
 {
 	char *x, *end;
 	int size;
 
-	if (((x = strstr(tag->str, "size"))) && ((x = strchr(x, '=')))) {
+	if (((x = strstr(tag, "size"))) && ((x = strchr(x, '=')))) {
 		while (*x && !g_ascii_isdigit(*x))
 			x++;
 		if (*x) {
+#ifndef USE_CSS_FORMATTING
 			int htmlsize;
+#endif /* !USE_CSS_FORMATTING */
 
 			size = strtol(x, &end, 10);
+
+#ifdef USE_CSS_FORMATTING
+			g_string_append_len(dest, tag, x - tag - 7);
+			g_string_append(dest, end + 1);
+			g_string_append_printf(dest, "<span style=\"font-size: %dpt\">", size);
+#else
 			htmlsize = point_to_html(size);
-			g_string_append_len(dest, tag->str, x - tag->str);
+			g_string_append_len(dest, tag, x - tag);
 			g_string_append_printf(dest, "%d", htmlsize);
 			g_string_append_printf(dest, "\" absz=\"%d", size);
 			g_string_append(dest, end);
+#endif /* !USE_CSS_FORMATTING */
 		} else {
-			g_string_append(dest, tag->str);
+			g_string_append(dest, tag);
 			return;
 		}
 	} else {
-		g_string_append(dest, tag->str);
+		g_string_append(dest, tag);
 		return;
 	}
 }
 
 char *yahoo_codes_to_html(const char *x)
 {
-	GString *s, *tmp;
-	int i, j, xs, nomoreendtags = 0; /* s/endtags/closinganglebrackets */
-	char *match;
+	size_t x_len;
+	GString *s;
+	int i, j;
+	gchar *tmp;
+	gboolean no_more_gt_brackets = FALSE;
+	const char *match;
 
-	s = g_string_sized_new(strlen(x));
+	x_len = strlen(x);
+	s = g_string_sized_new(x_len);
 
-	for (i = 0, xs = strlen(x); i < xs; i++) {
+	for (i = 0; i < x_len; i++) {
 		if ((x[i] == 0x1b) && (x[i+1] == '[')) {
+			/* This escape sequence signifies the beginning of some
+			 * text formatting code */
 			j = i + 1;
 
-			while (j++ < xs) {
+			while (j++ < x_len) {
 				if (x[j] != 'm')
 					continue;
 				else {
-					tmp = g_string_new_len(x + i + 2, j - i - 2);
-					if (tmp->str[0] == '#')
-						g_string_append_printf(s, "<span style=\"color: %s\">", tmp->str);
-					else if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
+					/* We've reached the end of the formatting code, yay */
+					tmp = g_strndup(x + i + 2, j - i - 2);
+					if (tmp[0] == '#')
+#ifdef USE_CSS_FORMATTING
+						g_string_append_printf(s, "<span style=\"color: %s\">", tmp);
+#else
+						g_string_append_printf(s, "<font color=\"%s\">", tmp);
+#endif /* !USE_CSS_FORMATTING */
+					else if ((match = g_hash_table_lookup(ht, tmp)))
 						g_string_append(s, match);
 					else {
 						purple_debug_error("yahoo",
-							"Unknown ansi code 'ESC[%sm'.\n", tmp->str);
-						g_string_free(tmp, TRUE);
+							"Unknown ansi code 'ESC[%sm'.\n", tmp);
+						g_free(tmp);
 						break;
 					}
 
 					i = j;
-					g_string_free(tmp, TRUE);
+					g_free(tmp);
 					break;
 				}
 			}
 
-		} else if (!nomoreendtags && (x[i] == '<')) {
+		} else if (!no_more_gt_brackets && (x[i] == '<')) {
+			/* The start of an HTML tag */
 			j = i;
 
-			while (j++ < xs) {
+			while (j++ < x_len) {
 				if (x[j] != '>')
-					if (j == xs) {
+					if (j == x_len) {
 						g_string_append(s, "&lt;");
-						nomoreendtags = 1;
+						no_more_gt_brackets = TRUE;
 					}
 					else
 						continue;
 				else {
-					tmp = g_string_new_len(x + i, j - i + 1);
-					g_string_ascii_down(tmp);
+					tmp = g_strndup(x + i, j - i + 1);
+					g_ascii_strdown(tmp, -1);
 
-					if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
+					if ((match = g_hash_table_lookup(ht, tmp)))
 						g_string_append(s, match);
-					else if (!strncmp(tmp->str, "<fade ", 6) ||
-						!strncmp(tmp->str, "<alt ", 5) ||
-						!strncmp(tmp->str, "<snd ", 5)) {
+					else if (!strncmp(tmp, "<fade ", 6) ||
+						!strncmp(tmp, "<alt ", 5) ||
+						!strncmp(tmp, "<snd ", 5)) {
 
 						/* remove this if gtkimhtml ever supports any of these */
 						i = j;
-						g_string_free(tmp, TRUE);
+						g_free(tmp);
 						break;
 
-					} else if (!strncmp(tmp->str, "<font ", 6)) {
+					} else if (!strncmp(tmp, "<font ", 6)) {
 						_font_tags_fix_size(tmp, s);
 					} else {
 						g_string_append(s, "&lt;");
-						g_string_free(tmp, TRUE);
+						g_free(tmp);
 						break;
 					}
 
 					i = j;
-					g_string_free(tmp, TRUE);
+					g_free(tmp);
 					break;
 				}
 
@@ -633,18 +698,20 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 
 char *yahoo_html_to_codes(const char *src)
 {
-	int i, j, len;
+	GQueue *colors, *tags;
+	size_t src_len;
+	int i, j;
 	GString *dest;
 	char *esc;
-	GQueue *colors, *tags;
 	GQueue *ftattr = NULL;
 	gboolean no_more_specials = FALSE;
 
 	colors = g_queue_new();
 	tags = g_queue_new();
-	dest = g_string_sized_new(strlen(src));
+	src_len = strlen(src);
+	dest = g_string_sized_new(src_len);
 
-	for (i = 0, len = strlen(src); i < len; i++) {
+	for (i = 0; i < src_len; i++) {
 
 		if (!no_more_specials && src[i] == '<') {
 			j = i;
@@ -652,7 +719,7 @@ char *yahoo_html_to_codes(const char *src)
 			while (1) {
 				j++;
 
-				if (j >= len) { /* no '>' */
+				if (j >= src_len) { /* no '>' */
 					g_string_append_c(dest, src[i]);
 					no_more_specials = TRUE;
 					break;
@@ -681,7 +748,7 @@ char *yahoo_html_to_codes(const char *src)
 						char *t = strchr(&src[j], '>');
 						if (!t) {
 							g_string_append(dest, &src[i]);
-							i = len;
+							i = src_len;
 							break;
 						} else {
 							i = t - src;
@@ -690,17 +757,19 @@ char *yahoo_html_to_codes(const char *src)
 					} else if (!g_ascii_strncasecmp(&src[i+1], "A HREF=\"", j - i - 1)) {
 						j += 7;
 						g_string_append(dest, "\033[lm");
+						if (purple_str_has_prefix(src + j, "mailto:"))
+							j += sizeof("mailto:") - 1;
 						while (1) {
 							g_string_append_c(dest, src[j]);
-							if (++j >= len) {
-								i = len;
+							if (++j >= src_len) {
+								i = src_len;
 								break;
 							}
 							if (src[j] == '"') {
 								g_string_append(dest, "\033[xlm");
 								while (1) {
-									if (++j >= len) {
-										i = len;
+									if (++j >= src_len) {
+										i = src_len;
 										break;
 									}
 									if (!g_ascii_strncasecmp(&src[j], "</A>", 4)) {
@@ -714,9 +783,9 @@ char *yahoo_html_to_codes(const char *src)
 						}
 					} else if (!g_ascii_strncasecmp(&src[i+1], "SPAN", j - i - 1)) { /* drop span tags */
 						while (1) {
-							if (++j >= len) {
+							if (++j >= src_len) {
 								g_string_append(dest, &src[i]);
-								i = len;
+								i = src_len;
 								break;
 							}
 							if (src[j] == '>') {
@@ -726,9 +795,9 @@ char *yahoo_html_to_codes(const char *src)
 						}
 					} else if (g_ascii_strncasecmp(&src[i+1], "FONT", j - i - 1)) { /* not interested! */
 						while (1) {
-							if (++j >= len) {
+							if (++j >= src_len) {
 								g_string_append(dest, &src[i]);
-								i = len;
+								i = src_len;
 								break;
 							}
 							if (src[j] == '>') {
@@ -738,7 +807,7 @@ char *yahoo_html_to_codes(const char *src)
 							}
 						}
 					} else { /* yay we have a font tag */
-						_parse_font_tag(src, dest, &i, &j, len, colors, tags, ftattr);
+						_parse_font_tag(src, dest, &i, &j, src_len, colors, tags, ftattr);
 					}
 
 					break;
@@ -799,19 +868,19 @@ char *yahoo_html_to_codes(const char *src)
 			}
 
 		} else {
-			if (((len - i) >= 4) && !strncmp(&src[i], "&lt;", 4)) {
+			if (((src_len - i) >= 4) && !strncmp(&src[i], "&lt;", 4)) {
 				g_string_append_c(dest, '<');
 				i += 3;
-			} else if (((len - i) >= 4) && !strncmp(&src[i], "&gt;", 4)) {
+			} else if (((src_len - i) >= 4) && !strncmp(&src[i], "&gt;", 4)) {
 				g_string_append_c(dest, '>');
 				i += 3;
-			} else if (((len - i) >= 5) && !strncmp(&src[i], "&amp;", 5)) {
+			} else if (((src_len - i) >= 5) && !strncmp(&src[i], "&amp;", 5)) {
 				g_string_append_c(dest, '&');
 				i += 4;
-			} else if (((len - i) >= 6) && !strncmp(&src[i], "&quot;", 6)) {
+			} else if (((src_len - i) >= 6) && !strncmp(&src[i], "&quot;", 6)) {
 				g_string_append_c(dest, '"');
 				i += 5;
-			} else if (((len - i) >= 6) && !strncmp(&src[i], "&apos;", 6)) {
+			} else if (((src_len - i) >= 6) && !strncmp(&src[i], "&apos;", 6)) {
 				g_string_append_c(dest, '\'');
 				i += 5;
 			} else {

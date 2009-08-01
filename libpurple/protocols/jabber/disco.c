@@ -98,10 +98,6 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
                              JabberIqType type, const char *id,
                              xmlnode *in_query)
 {
-
-	if(!from)
-		return;
-
 	if(type == JABBER_IQ_GET) {
 		xmlnode *query, *identity, *feature;
 		JabberIq *iq;
@@ -116,7 +112,8 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 
 		jabber_iq_set_id(iq, id);
 
-		xmlnode_set_attrib(iq->node, "to", from);
+		if (from)
+			xmlnode_set_attrib(iq->node, "to", from);
 		query = xmlnode_get_child(iq->node, "query");
 
 		if(node)
@@ -208,7 +205,8 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		xmlnode_set_namespace(bad_request, "urn:ietf:params:xml:ns:xmpp-stanzas");
 
 		jabber_iq_set_id(iq, id);
-		xmlnode_set_attrib(iq->node, "to", from);
+		if (from)
+			xmlnode_set_attrib(iq->node, "to", from);
 
 		jabber_iq_send(iq);
 	}

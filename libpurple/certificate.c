@@ -1364,7 +1364,6 @@ x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq,
 			 * I think this is bad enough to warrant a fatal error. It's
 			 * not likely anyway...
 			 */
-			/* FIXME: 2.6.1 */
 			purple_notify_error(NULL, /* TODO: Probably wrong. */
 						_("SSL Certificate Error"),
 						_("Invalid certificate chain"),
