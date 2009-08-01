@@ -254,6 +254,19 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 {
 	int i;
 
+	if (purple_debug_is_verbose()) {
+		for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+			PurpleHTTPConnection *httpconn = conn->connections[i];
+			if (httpconn == NULL)
+				purple_debug_misc("jabber", "BOSH %p->connections[%d] = (nil)\n",
+				                  conn, i);
+			else
+				purple_debug_misc("jabber", "BOSH %p->connections[%d] = %p, state = %d"
+				                  ", requests = %d\n", conn, i, httpconn,
+				                  httpconn->state, httpconn->requests);
+		}
+	}
+
 	/* Easy solution: Does everyone involved support pipelining? Hooray! Just use
 	 * one TCP connection! */
 	if (conn->pipelining)
@@ -286,6 +299,8 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 		}
 	}
 
+	purple_debug_warning("jabber", "Could not find a HTTP connection!\n");
+
 	/* None available. */
 	return NULL;
 }
@@ -299,7 +314,7 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn,
 
 	chosen = find_available_http_connection(conn);
 
-	if (type != PACKET_NORMAL && !chosen) {
+	if ((type != PACKET_NORMAL) && !chosen) {
 		/*
 		 * For non-ordinary traffic, we can't 'buffer' it, so use the
 		 * first connection.
@@ -310,6 +325,14 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn,
 			purple_debug_info("jabber", "Unable to find a ready BOSH "
 					"connection. Ignoring send of type 0x%02x.\n", type);
 			return;
+		}
+	}
+
+	if (type == PACKET_NORMAL) {
+		if (conn->max_requests > 0 && conn->requests == conn->max_requests) {
+			purple_debug_warning("jabber", "BOSH connection %p has %d requests out\n", conn, conn->requests);
+		} else if (!chosen) {
+			purple_debug_warning("jabber", "No BOSH connection found!\n");
 		}
 	}
 
@@ -324,6 +347,10 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn,
 			int len = data ? strlen(data) : 0;
 			purple_circ_buffer_append(conn->pending, data, len);
 		}
+
+		if (purple_debug_is_verbose())
+			purple_debug_misc("jabber", "bosh: %p has %" G_GSIZE_FORMAT " bytes in "
+			                  "the buffer.\n", conn, conn->pending->buflen);
 
 		return;
 	}
@@ -596,6 +623,10 @@ connection_common_established_cb(PurpleHTTPConnection *conn)
 {
 	/* Indicate we're ready and reset some variables */
 	conn->state = HTTP_CONN_CONNECTED;
+	if (conn->requests != 0)
+		purple_debug_error("jabber", "bosh: httpconn %p has %d requests, != 0\n",
+		                   conn, conn->requests);
+
 	conn->requests = 0;
 	if (conn->read_buf) {
 		g_string_free(conn->read_buf, TRUE);
@@ -651,6 +682,12 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 		conn->writeh = 0;
 	}
 
+	if (conn->requests > 0 && conn->read_buf->len == 0) {
+		purple_debug_error("jabber", "bosh: Adjusting BOSHconn requests (%d) to %d\n",
+		                   conn->bosh->requests, conn->bosh->requests - conn->requests);
+		conn->bosh->requests -= conn->requests;
+		conn->requests = 0;
+	}
 	if (conn->bosh->pipelining)
 		/* Hmmmm, fall back to multiple connections */
 		conn->bosh->pipelining = FALSE;
@@ -950,6 +987,10 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 
 	++conn->requests;
 	++conn->bosh->requests;
+
+	if (purple_debug_is_unsafe() && purple_debug_is_verbose())
+		/* Will contain passwords for SASL PLAIN and is verbose */
+		purple_debug_misc("jabber", "BOSH: Sending %s\n", data);
 
 	if (conn->writeh == 0)
 		ret = http_connection_do_send(conn, data, len);
