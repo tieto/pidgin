@@ -229,7 +229,7 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 
 	frame = purple_plugin_pref_frame_new();
 
-	ppref = purple_plugin_pref_new_with_label(_("Hide Joins/Parts:"));
+	ppref = purple_plugin_pref_new_with_label(_("Hide Joins/Parts"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(THRESHOLD_PREF,
