@@ -1375,7 +1375,7 @@ x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq,
 		return;
 	} /* if (name mismatch) */
 
-	if (had_ca_pool) {
+	if (!had_ca_pool) {
 		/* The subject name is correct, but we weren't able to verify the
 		 * chain because there was no pool of root CAs found. Prompt the user
 		 * to validate it.
