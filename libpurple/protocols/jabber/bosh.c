@@ -494,7 +494,7 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 
 	if (inactivity) {
 		conn->max_inactivity = atoi(inactivity);
-		if (conn->max_inactivity <= 2) {
+		if (conn->max_inactivity <= 5) {
 			purple_debug_warning("jabber", "Ignoring bogusly small inactivity: %s\n",
 			                     inactivity);
 			conn->max_inactivity = 0;
