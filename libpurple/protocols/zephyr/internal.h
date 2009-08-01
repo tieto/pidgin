@@ -23,6 +23,12 @@
 
 #define ETIMEDOUT WSAETIMEDOUT
 #define EADDRINUSE WSAEADDRINUSE
+#else /* !WIN32 */
+
+#ifndef MAXHOSTNAMELEN
+#define MAXHOSTNAMELEN 4096
+#endif
+
 #endif
 
 #ifdef ZEPHYR_USES_HESIOD
