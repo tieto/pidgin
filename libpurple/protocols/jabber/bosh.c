@@ -400,6 +400,21 @@ bosh_inactivity_cb(gpointer data)
 	return TRUE;
 }
 
+static void
+restart_inactivity_timer(PurpleBOSHConnection *conn)
+{
+	if (conn->inactivity_timer != 0) {
+		purple_timeout_remove(conn->inactivity_timer);
+		conn->inactivity_timer = 0;
+	}
+
+	if (conn->max_inactivity != 0) {
+		conn->inactivity_timer =
+			purple_timeout_add_seconds(conn->max_inactivity - 5 /* rounding */,
+			                           bosh_inactivity_cb, conn);
+	}
+}
+
 static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode *node) {
 	xmlnode *child;
 	JabberStream *js = conn->js;
@@ -500,12 +515,12 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 			conn->max_inactivity = 0;
 		} else {
 			/* TODO: Integrate this with jabber.c keepalive checks... */
+			/* TODO: Can this check fail? It shouldn't */
 			if (conn->inactivity_timer == 0) {
-				purple_debug_misc("jabber", "Starting BOSH inactivity timer for %d secs (compensating for rounding)\n",
+				purple_debug_misc("jabber", "Starting BOSH inactivity timer "
+						"for %d secs (compensating for rounding)\n",
 						conn->max_inactivity - 5);
-				conn->inactivity_timer = purple_timeout_add_seconds(
-						conn->max_inactivity - 5 /* rounding */,
-						bosh_inactivity_cb, conn);
+				restart_inactivity_timer(conn);
 			}
 		}
 	}
@@ -918,6 +933,9 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 	char *data;
 	int ret;
 	size_t len;
+
+	/* Sending something to the server, restart the inactivity timer */
+	restart_inactivity_timer(conn->bosh);
 
 	data = g_strdup_printf("POST %s HTTP/1.1\r\n"
 	                       "Host: %s\r\n"
