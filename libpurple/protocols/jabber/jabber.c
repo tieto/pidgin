@@ -3470,6 +3470,8 @@ jabber_init_plugin(PurplePlugin *plugin)
 #ifdef USE_VV
 	jabber_add_feature("http://www.google.com/xmpp/protocol/session", jabber_audio_enabled);
 	jabber_add_feature("http://www.google.com/xmpp/protocol/voice/v1", jabber_audio_enabled);
+	jabber_add_feature("http://www.google.com/xmpp/protocol/video/v1", jabber_video_enabled);
+	jabber_add_feature("http://www.google.com/xmpp/protocol/camera/v1", jabber_video_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, jabber_audio_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, jabber_video_enabled);
 	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
