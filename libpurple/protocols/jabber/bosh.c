@@ -47,47 +47,54 @@ typedef enum {
 
 struct _PurpleBOSHConnection {
 	JabberStream *js;
-	gboolean pipelining;
 	PurpleHTTPConnection *connections[MAX_HTTP_CONNECTIONS];
-	unsigned short failed_connections;
+
+	PurpleCircBuffer *pending;
+	PurpleBOSHConnectionConnectFunction connect_cb;
+	PurpleBOSHConnectionReceiveFunction receive_cb;
+
+	/* Must be big enough to hold 2^53 - 1 */
+	char *sid;
+	guint64 rid;
+
+	/* decoded URL */
+	char *host;
+	char *path;
+	guint16 port;
+
+	gboolean pipelining;
+	gboolean ssl;
+	gboolean needs_restart;
 
 	enum {
 		BOSH_CONN_OFFLINE,
 		BOSH_CONN_BOOTING,
 		BOSH_CONN_ONLINE
 	} state;
-	gboolean ssl;
-	gboolean needs_restart;
+	guint8 failed_connections;
 
-	/* decoded URL */
-	char *host;
-	int port;
-	char *path;
-
-	/* Must be big enough to hold 2^53 - 1 */
-	guint64 rid;
-	char *sid;
-
-	unsigned int inactivity_timer;
 	int max_inactivity;
 	int wait;
 
-	PurpleCircBuffer *pending;
 	int max_requests;
 	int requests;
 
-	PurpleBOSHConnectionConnectFunction connect_cb;
-	PurpleBOSHConnectionReceiveFunction receive_cb;
+	guint inactivity_timer;
 };
 
 struct _PurpleHTTPConnection {
 	PurpleBOSHConnection *bosh;
 	PurpleSslConnection *psc;
+
+	PurpleCircBuffer *write_buf;
+	GString *read_buf;
+
+	gsize handled_len;
+	gsize body_len;
+
 	int fd;
 	guint readh;
 	guint writeh;
-
-	PurpleCircBuffer *write_buffer;
 
 	enum {
 		HTTP_CONN_OFFLINE,
@@ -96,10 +103,7 @@ struct _PurpleHTTPConnection {
 	} state;
 	int requests; /* number of outstanding HTTP requests */
 
-	GString *buf;
 	gboolean headers_done;
-	gsize handled_len;
-	gsize body_len;
 
 };
 
@@ -140,7 +144,7 @@ jabber_bosh_http_connection_init(PurpleBOSHConnection *bosh)
 	conn->fd = -1;
 	conn->state = HTTP_CONN_OFFLINE;
 
-	conn->write_buffer = purple_circ_buffer_new(0 /* default grow size */);
+	conn->write_buf = purple_circ_buffer_new(0 /* default grow size */);
 
 	return conn;
 }
@@ -148,11 +152,11 @@ jabber_bosh_http_connection_init(PurpleBOSHConnection *bosh)
 static void
 jabber_bosh_http_connection_destroy(PurpleHTTPConnection *conn)
 {
-	if (conn->buf)
-		g_string_free(conn->buf, TRUE);
+	if (conn->read_buf)
+		g_string_free(conn->read_buf, TRUE);
 
-	if (conn->write_buffer)
-		purple_circ_buffer_destroy(conn->write_buffer);
+	if (conn->write_buf)
+		purple_circ_buffer_destroy(conn->write_buf);
 	if (conn->readh)
 		purple_input_remove(conn->readh);
 	if (conn->writeh)
@@ -579,9 +583,9 @@ connection_common_established_cb(PurpleHTTPConnection *conn)
 	/* Indicate we're ready and reset some variables */
 	conn->state = HTTP_CONN_CONNECTED;
 	conn->requests = 0;
-	if (conn->buf) {
-		g_string_free(conn->buf, TRUE);
-		conn->buf = NULL;
+	if (conn->read_buf) {
+		g_string_free(conn->read_buf, TRUE);
+		conn->read_buf = NULL;
 	}
 	conn->headers_done = FALSE;
 	conn->handled_len = conn->body_len = 0;
@@ -661,7 +665,7 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 {
 	const char *cursor;
 
-	cursor = conn->buf->str + conn->handled_len;
+	cursor = conn->read_buf->str + conn->handled_len;
 
 	if (!conn->headers_done) {
 		const char *content_length = purple_strcasestr(cursor, "\r\nContent-Length");
@@ -690,26 +694,26 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 
 		if (end_of_headers) {
 			conn->headers_done = TRUE;
-			conn->handled_len = end_of_headers - conn->buf->str + 4;
+			conn->handled_len = end_of_headers - conn->read_buf->str + 4;
 			cursor = end_of_headers + 4;
 		} else {
-			conn->handled_len = conn->buf->len;
+			conn->handled_len = conn->read_buf->len;
 			return;
 		}
 	}
 
 	/* Have we handled everything in the buffer? */
-	if (conn->handled_len >= conn->buf->len)
+	if (conn->handled_len >= conn->read_buf->len)
 		return;
 
 	/* Have we read all that the Content-Length promised us? */
-	if (conn->buf->len - conn->handled_len < conn->body_len)
+	if (conn->read_buf->len - conn->handled_len < conn->body_len)
 		return;
 
 	--conn->requests;
 	--conn->bosh->requests;
 
-	http_received_cb(conn->buf->str + conn->handled_len, conn->body_len,
+	http_received_cb(conn->read_buf->str + conn->handled_len, conn->body_len,
 	                 conn->bosh);
 
 	if (conn->bosh->state == BOSH_CONN_ONLINE &&
@@ -718,8 +722,8 @@ jabber_bosh_http_connection_process(PurpleHTTPConnection *conn)
 		jabber_bosh_connection_send(conn->bosh, PACKET_NORMAL, NULL);
 	}
 
-	g_string_free(conn->buf, TRUE);
-	conn->buf = NULL;
+	g_string_free(conn->read_buf, TRUE);
+	conn->read_buf = NULL;
 	conn->headers_done = FALSE;
 	conn->handled_len = conn->body_len = 0;
 }
@@ -734,8 +738,8 @@ http_connection_read(PurpleHTTPConnection *conn)
 	char buffer[1025];
 	int cnt, count = 0;
 
-	if (!conn->buf)
-		conn->buf = g_string_new(NULL);
+	if (!conn->read_buf)
+		conn->read_buf = g_string_new(NULL);
 
 	do {
 		if (conn->psc)
@@ -745,7 +749,7 @@ http_connection_read(PurpleHTTPConnection *conn)
 
 		if (cnt > 0) {
 			count += cnt;
-			g_string_append_len(conn->buf, buffer, cnt);
+			g_string_append_len(conn->read_buf, buffer, cnt);
 		}
 	} while (cnt > 0);
 
@@ -765,7 +769,7 @@ http_connection_read(PurpleHTTPConnection *conn)
 		/* Process what we do have */
 	}
 
-	if (conn->buf->len > 0)
+	if (conn->read_buf->len > 0)
 		jabber_bosh_http_connection_process(conn);
 }
 
@@ -879,7 +883,7 @@ http_connection_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PurpleHTTPConnection *conn = data;
 	int ret;
-	int writelen = purple_circ_buffer_get_max_read(conn->write_buffer);
+	int writelen = purple_circ_buffer_get_max_read(conn->write_buf);
 
 	if (writelen == 0) {
 		purple_input_remove(conn->writeh);
@@ -887,7 +891,7 @@ http_connection_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	ret = http_connection_do_send(conn, conn->write_buffer->outptr, writelen);
+	ret = http_connection_do_send(conn, conn->write_buf->outptr, writelen);
 
 	if (ret < 0 && errno == EAGAIN)
 		return;
@@ -906,7 +910,7 @@ http_connection_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	purple_circ_buffer_mark_read(conn->write_buffer, ret);
+	purple_circ_buffer_mark_read(conn->write_buf, ret);
 }
 
 static void
@@ -956,7 +960,7 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 		if (conn->writeh == 0)
 			conn->writeh = purple_input_add(conn->psc ? conn->psc->fd : conn->fd,
 					PURPLE_INPUT_WRITE, http_connection_send_cb, conn);
-		purple_circ_buffer_append(conn->write_buffer, data + ret, len - ret);
+		purple_circ_buffer_append(conn->write_buf, data + ret, len - ret);
 	}
 }
 
