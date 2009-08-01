@@ -132,14 +132,20 @@ static void jabber_bind_result_cb(JabberStream *js, const char *from,
 		xmlnode *jid;
 		char *full_jid;
 		if((jid = xmlnode_get_child(bind, "jid")) && (full_jid = xmlnode_get_data(jid))) {
-			JabberBuddy *my_jb = NULL;
+			JabberBuddy *my_jb;
 			jabber_id_free(js->user);
-			if(!(js->user = jabber_id_new(full_jid))) {
+
+			js->user = jabber_id_new(full_jid);
+			if (js->user == NULL) {
 				purple_connection_error_reason(js->gc,
 					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Invalid response from server"));
+				g_free(full_jid);
+				return;
 			}
-			if((my_jb = jabber_buddy_find(js, full_jid, TRUE)))
+
+			my_jb = jabber_buddy_find(js, full_jid, TRUE);
+			if (my_jb)
 				my_jb->subscription |= JABBER_SUB_BOTH;
 
 			purple_connection_set_display_name(js->gc, full_jid);
