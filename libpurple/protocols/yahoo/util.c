@@ -757,6 +757,8 @@ char *yahoo_html_to_codes(const char *src)
 					} else if (!g_ascii_strncasecmp(&src[i+1], "A HREF=\"", j - i - 1)) {
 						j += 7;
 						g_string_append(dest, "\033[lm");
+						if (purple_str_has_prefix(src + j, "mailto:"))
+							j += sizeof("mailto:") - 1;
 						while (1) {
 							g_string_append_c(dest, src[j]);
 							if (++j >= src_len) {
