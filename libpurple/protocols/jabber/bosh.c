@@ -29,8 +29,11 @@
 
 #include "bosh.h"
 
-#define MAX_HTTP_CONNECTIONS      2
+/* The number of HTTP connections to use. This MUST be at least 2. */
+#define NUM_HTTP_CONNECTIONS      2
+/* How many failed connection attempts before it becomes a fatal error */
 #define MAX_FAILED_CONNECTIONS    3
+/* How long in seconds to queue up outgoing messages */
 #define BUFFER_SEND_IN_SECS       1
 
 typedef struct _PurpleHTTPConnection PurpleHTTPConnection;
@@ -48,7 +51,7 @@ typedef enum {
 
 struct _PurpleBOSHConnection {
 	JabberStream *js;
-	PurpleHTTPConnection *connections[MAX_HTTP_CONNECTIONS];
+	PurpleHTTPConnection *connections[NUM_HTTP_CONNECTIONS];
 
 	PurpleCircBuffer *pending;
 	PurpleBOSHConnectionConnectFunction connect_cb;
@@ -241,7 +244,7 @@ jabber_bosh_connection_destroy(PurpleBOSHConnection *conn)
 
 	purple_circ_buffer_destroy(conn->pending);
 
-	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+	for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
 		if (conn->connections[i])
 			jabber_bosh_http_connection_destroy(conn->connections[i]);
 	}
@@ -260,7 +263,7 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 	int i;
 
 	if (purple_debug_is_verbose()) {
-		for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+		for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
 			PurpleHTTPConnection *httpconn = conn->connections[i];
 			if (httpconn == NULL)
 				purple_debug_misc("jabber", "BOSH %p->connections[%d] = (nil)\n",
@@ -279,7 +282,7 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 				conn->connections[0] : NULL;
 
 	/* First loop, look for a connection that's ready */
-	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+	for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
 		if (conn->connections[i] &&
 				conn->connections[i]->state == HTTP_CONN_CONNECTED &&
 				conn->connections[i]->requests == 0)
@@ -287,14 +290,14 @@ find_available_http_connection(PurpleBOSHConnection *conn)
 	}
 
 	/* Second loop, is something currently connecting? If so, just queue up. */
-	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+	for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
 		if (conn->connections[i] &&
 				conn->connections[i]->state == HTTP_CONN_CONNECTING)
 			return NULL;
 	}
 
 	/* Third loop, look for one that's NULL and create a new connection */
-	for (i = 0; i < MAX_HTTP_CONNECTIONS; ++i) {
+	for (i = 0; i < NUM_HTTP_CONNECTIONS; ++i) {
 		if (!conn->connections[i]) {
 			purple_debug_info("jabber", "bosh: Creating and connecting new httpconn\n");
 			conn->connections[i] = jabber_bosh_http_connection_init(conn);
@@ -701,9 +704,15 @@ static void http_connection_disconnected(PurpleHTTPConnection *conn)
 		conn->bosh->requests -= conn->requests;
 		conn->requests = 0;
 	}
-	if (conn->bosh->pipelining)
+
+	if (conn->bosh->pipelining) {
 		/* Hmmmm, fall back to multiple connections */
 		conn->bosh->pipelining = FALSE;
+		if (conn->bosh->connections[1] == NULL) {
+			conn->bosh->connections[1] = jabber_bosh_http_connection_init(conn->bosh);
+			http_connection_connect(conn->bosh->connections[1]);
+		}
+	}
 
 	if (++conn->bosh->failed_connections == MAX_FAILED_CONNECTIONS) {
 		purple_connection_error_reason(conn->bosh->js->gc,
