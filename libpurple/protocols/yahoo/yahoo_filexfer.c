@@ -884,46 +884,48 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 	/* Build the file transfer handle. */
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_RECEIVE, from);
-	if (xfer)
-	{
-		xfer->data = xfer_data;
+	if (xfer == NULL) {
+		g_free(xfer_data);
+		g_return_if_reached();
+	}
 
-		/* Set the info about the incoming file. */
-		if (filename) {
-			char *utf8_filename = yahoo_string_decode(gc, filename, TRUE);
+	xfer->data = xfer_data;
+
+	/* Set the info about the incoming file. */
+	if (filename) {
+		char *utf8_filename = yahoo_string_decode(gc, filename, TRUE);
+		purple_xfer_set_filename(xfer, utf8_filename);
+		g_free(utf8_filename);
+	} else {
+		gchar *start, *end;
+		start = g_strrstr(xfer_data->path, "/");
+		if (start)
+			start++;
+		end = g_strrstr(xfer_data->path, "?");
+		if (start && *start && end) {
+			char *utf8_filename;
+			filename = g_strndup(start, end - start);
+			utf8_filename = yahoo_string_decode(gc, filename, TRUE);
+			g_free(filename);
 			purple_xfer_set_filename(xfer, utf8_filename);
 			g_free(utf8_filename);
-		} else {
-			gchar *start, *end;
-			start = g_strrstr(xfer_data->path, "/");
-			if (start)
-				start++;
-			end = g_strrstr(xfer_data->path, "?");
-			if (start && *start && end) {
-				char *utf8_filename;
-				filename = g_strndup(start, end - start);
-				utf8_filename = yahoo_string_decode(gc, filename, TRUE);
-				g_free(filename);
-				purple_xfer_set_filename(xfer, utf8_filename);
-				g_free(utf8_filename);
-				filename = NULL;
-			}
+			filename = NULL;
 		}
-
-		purple_xfer_set_size(xfer, filesize);
-
-		/* Setup our I/O op functions */
-		purple_xfer_set_init_fnc(xfer,        yahoo_xfer_init);
-		purple_xfer_set_start_fnc(xfer,       yahoo_xfer_start);
-		purple_xfer_set_end_fnc(xfer,         yahoo_xfer_end);
-		purple_xfer_set_cancel_send_fnc(xfer, yahoo_xfer_cancel_send);
-		purple_xfer_set_cancel_recv_fnc(xfer, yahoo_xfer_cancel_recv);
-		purple_xfer_set_read_fnc(xfer,        yahoo_xfer_read);
-		purple_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
-
-		/* Now perform the request */
-		purple_xfer_request(xfer);
 	}
+
+	purple_xfer_set_size(xfer, filesize);
+
+	/* Setup our I/O op functions */
+	purple_xfer_set_init_fnc(xfer,        yahoo_xfer_init);
+	purple_xfer_set_start_fnc(xfer,       yahoo_xfer_start);
+	purple_xfer_set_end_fnc(xfer,         yahoo_xfer_end);
+	purple_xfer_set_cancel_send_fnc(xfer, yahoo_xfer_cancel_send);
+	purple_xfer_set_cancel_recv_fnc(xfer, yahoo_xfer_cancel_recv);
+	purple_xfer_set_read_fnc(xfer,        yahoo_xfer_read);
+	purple_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
+
+	/* Now perform the request */
+	purple_xfer_request(xfer);
 }
 
 PurpleXfer *yahoo_new_xfer(PurpleConnection *gc, const char *who)
@@ -938,19 +940,22 @@ PurpleXfer *yahoo_new_xfer(PurpleConnection *gc, const char *who)
 
 	/* Build the file transfer handle. */
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
-	if (xfer)
+	if (xfer == NULL)
 	{
-		xfer->data = xfer_data;
-
-		/* Setup our I/O op functions */
-		purple_xfer_set_init_fnc(xfer,        yahoo_xfer_init);
-		purple_xfer_set_start_fnc(xfer,       yahoo_xfer_start);
-		purple_xfer_set_end_fnc(xfer,         yahoo_xfer_end);
-		purple_xfer_set_cancel_send_fnc(xfer, yahoo_xfer_cancel_send);
-		purple_xfer_set_cancel_recv_fnc(xfer, yahoo_xfer_cancel_recv);
-		purple_xfer_set_read_fnc(xfer,        yahoo_xfer_read);
-		purple_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
+		g_free(xfer_data);
+		g_return_val_if_reached(NULL);
 	}
+
+	xfer->data = xfer_data;
+
+	/* Setup our I/O op functions */
+	purple_xfer_set_init_fnc(xfer,        yahoo_xfer_init);
+	purple_xfer_set_start_fnc(xfer,       yahoo_xfer_start);
+	purple_xfer_set_end_fnc(xfer,         yahoo_xfer_end);
+	purple_xfer_set_cancel_send_fnc(xfer, yahoo_xfer_cancel_send);
+	purple_xfer_set_cancel_recv_fnc(xfer, yahoo_xfer_cancel_recv);
+	purple_xfer_set_read_fnc(xfer,        yahoo_xfer_read);
+	purple_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
 
 	return xfer;
 }
@@ -1588,6 +1593,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *service = NULL;
 	char *filename = NULL;
 	char *xfer_peer_idstring = NULL;
+	char *utf8_filename
 	unsigned long filesize = 0L;
 	GSList *l;
 	GSList *filename_list = NULL;
@@ -1714,42 +1720,44 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 	/* Build the file transfer handle. */
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_RECEIVE, from);
+	if (xfer == NULL)
+	{
+		g_free(xfer_data);
+		g_return_if_reached();
+	}
+
 	xfer->message = NULL;
 
-	if (xfer)
-	{
-		/* Set the info about the incoming file. */
-		char *utf8_filename = yahoo_string_decode(gc, filename, TRUE);
-		purple_xfer_set_filename(xfer, utf8_filename);
-		g_free(utf8_filename);
-		purple_xfer_set_size(xfer, filesize);
+	/* Set the info about the incoming file. */
+	utf8_filename = yahoo_string_decode(gc, filename, TRUE);
+	purple_xfer_set_filename(xfer, utf8_filename);
+	g_free(utf8_filename);
+	purple_xfer_set_size(xfer, filesize);
 
-		xfer->data = xfer_data;
+	xfer->data = xfer_data;
 
+	/* Setup our I/O op functions */
+	purple_xfer_set_init_fnc(xfer,        yahoo_xfer_init_15);
+	purple_xfer_set_start_fnc(xfer,       yahoo_xfer_start);
+	purple_xfer_set_end_fnc(xfer,         yahoo_xfer_end);
+	purple_xfer_set_cancel_send_fnc(xfer, yahoo_xfer_cancel_send);
+	purple_xfer_set_cancel_recv_fnc(xfer, yahoo_xfer_cancel_recv);
+	purple_xfer_set_read_fnc(xfer,        yahoo_xfer_read);
+	purple_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
+	purple_xfer_set_request_denied_fnc(xfer,yahoo_xfer_cancel_recv);
 
-		/* Setup our I/O op functions */
-		purple_xfer_set_init_fnc(xfer,        yahoo_xfer_init_15);
-		purple_xfer_set_start_fnc(xfer,       yahoo_xfer_start);
-		purple_xfer_set_end_fnc(xfer,         yahoo_xfer_end);
-		purple_xfer_set_cancel_send_fnc(xfer, yahoo_xfer_cancel_send);
-		purple_xfer_set_cancel_recv_fnc(xfer, yahoo_xfer_cancel_recv);
-		purple_xfer_set_read_fnc(xfer,        yahoo_xfer_read);
-		purple_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
-		purple_xfer_set_request_denied_fnc(xfer,yahoo_xfer_cancel_recv);
+	g_hash_table_insert(yd->xfer_peer_idstring_map,
+						xfer_data->xfer_peer_idstring,
+						xfer);
 
-		g_hash_table_insert(yd->xfer_peer_idstring_map,
-							xfer_data->xfer_peer_idstring,
-							xfer);
-
-		if(nooffiles > 1) {
-			gchar* message;
-			message = g_strdup_printf(_("%s is trying to send you a group of %d files.\n"), xfer->who, nooffiles);
-			purple_xfer_conversation_write(xfer, message, FALSE);
-			g_free(message);
-		}
-		/* Now perform the request */
-		purple_xfer_request(xfer);
+	if(nooffiles > 1) {
+		gchar* message;
+		message = g_strdup_printf(_("%s is trying to send you a group of %d files.\n"), xfer->who, nooffiles);
+		purple_xfer_conversation_write(xfer, message, FALSE);
+		g_free(message);
 	}
+	/* Now perform the request */
+	purple_xfer_request(xfer);
 }
 
 void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *pkt)
