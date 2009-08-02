@@ -3,14 +3,14 @@
 # Sergey Volozhanin <svo@asplinux.ru>, 2001.
 # Alexandre Prokoudine <avp@altlinux.ru>, 2003, 2004.
 # Dmitry Beloglazov <dmaa@users.sf.net>, 2004-2008.
-# Антон Самохвалов <samant.ua@mail.ru>, 2008.
+# Антон Самохвалов <samant.ua@mail.ru>, 2008-2009.
 #
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-12 21:00-0700\n"
+"POT-Creation-Date: 2009-08-02 15:45-0700\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
@@ -29,7 +29,7 @@ msgstr "Зяблик"
 msgid "%s. Try `%s -h' for more information.\n"
 msgstr "%s. Наберите `%s -h' для получения дополнительной информации.\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s\n"
 "Usage: %s [OPTION]...\n"
@@ -44,7 +44,7 @@ msgstr ""
 "Использование: %s [КЛЮЧ]...\n"
 "\n"
 "  -c, --config=КАТ    использовать каталог КАТ для файлов конфигурации\n"
-"  -d, --debug         выводить отладочную информацию в stderr\n"
+"  -d, --debug         вывести отладочную информацию в stderr\n"
 "  -h, --help          показать эту справку и выйти\n"
 "  -n, --nologin       не входить автоматически\n"
 "  -v, --version       показать текущую версию и выйти\n"
@@ -99,7 +99,6 @@ msgid "Alias:"
 msgstr "Псевдоним:"
 
 #. Register checkbox
-#, fuzzy
 msgid "Create this account on the server"
 msgstr "Создать эту учётную запись на сервере"
 
@@ -412,9 +411,8 @@ msgstr "Присоединиться к чату..."
 msgid "View Log..."
 msgstr "Просмотреть журнал..."
 
-#, fuzzy
 msgid "View All Logs"
-msgstr "Просмотреть все заметки журнала"
+msgstr "Просмотреть все журналы"
 
 msgid "Show"
 msgstr "Показывать"
@@ -469,9 +467,8 @@ msgstr "Ошибка внесения сертификата"
 msgid "X.509 certificate import failed"
 msgstr "Внесение сертификата X.509 провалилось"
 
-#, fuzzy
 msgid "Select a PEM certificate"
-msgstr "Выбрать \"PEM\"-сертификат"
+msgstr "Выбрать PEM-сертификат"
 
 #, c-format
 msgid ""
@@ -580,7 +577,6 @@ msgstr "Эта команда работает только в мгновенн�
 msgid "That command doesn't work on this protocol."
 msgstr "Эта команда не работает с этим протоколом."
 
-#, fuzzy
 msgid "Message was not sent, because you are not signed on."
 msgstr "Сообщение не было отправлено, потому что вы не подписались."
 
@@ -628,7 +624,6 @@ msgstr "Показывать время сообщений"
 msgid "Add Buddy Pounce..."
 msgstr "Добавить правило для собеседника..."
 
-#, fuzzy
 msgid "Invite..."
 msgstr "Пригласить..."
 
@@ -641,7 +636,7 @@ msgstr "Воспроизводить звуки"
 msgid "<AUTO-REPLY> "
 msgstr "<AUTO-REPLY> "
 
-#, fuzzy, c-format
+#, c-format
 msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
 msgstr[0] "Список %d пользователя:\n"
@@ -751,7 +746,7 @@ msgstr "Фильтр:"
 msgid "Pause"
 msgstr "Пауза"
 
-#, fuzzy, c-format
+#, c-format
 msgid "File Transfers - %d%% of %d file"
 msgid_plural "File Transfers - %d%% of %d files"
 msgstr[0] "Передача файлов - %d%% из %d файла"
@@ -871,16 +866,14 @@ msgstr "Беседы в %s"
 msgid "Conversations with %s"
 msgstr "Беседы с %s"
 
-#, fuzzy
 msgid "All Conversations"
 msgstr "Все беседы"
 
 msgid "System Log"
 msgstr "Системный журнал"
 
-#, fuzzy
 msgid "Calling ... "
-msgstr "Вызов..."
+msgstr "Идёт вызов ... "
 
 msgid "Hangup"
 msgstr "Приостановить разговор"
@@ -906,9 +899,8 @@ msgstr "%s хочет начать звуковой сеанс с вами."
 msgid "%s is trying to start an unsupported media session type with you."
 msgstr "%s пытается начать с вами медиа сеанс неподдерживаемого типа."
 
-#, fuzzy
 msgid "You have rejected the call."
-msgstr "Вы покинули канал%s%s"
+msgstr "Вы отклонили звонок."
 
 msgid "call: Make an audio call."
 msgstr "звонок: Совершите звуковой звонок."
@@ -1104,10 +1096,10 @@ msgstr "Не удаётся создать правило"
 msgid "You do not have any accounts."
 msgstr "У вас нет ни одной учётной записи."
 
-#, fuzzy
 msgid "You must create an account first before you can create a pounce."
 msgstr ""
-"Перед тем, как создавать правило, вы должны сперва создать учётную запись."
+"Вы должны сперва создать учётную запись, а потом уже сможете создавать "
+"правило."
 
 #, c-format
 msgid "Are you sure you want to delete the pounce on %s for %s?"
@@ -1669,7 +1661,7 @@ msgstr ""
 
 #. TODO: Find what the handle ought to be
 msgid "Single-use Certificate Verification"
-msgstr "Разовая проверка сертификата"
+msgstr "Проверка одноразового сертификата"
 
 #. Scheme name
 #. Pool name
@@ -1693,6 +1685,44 @@ msgstr "Проверка SSL-сертификата"
 msgid "_View Certificate..."
 msgstr "_Просмотреть сертификат..."
 
+#, c-format
+msgid ""
+"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
+"could mean that you are not connecting to the service you believe you are."
+msgstr ""
+"Этот сертификат представлен \"%s\", а должен быть от \"%s\".Это может "
+"означать, что вы полключены не туда куда вы думаете."
+
+#. Had no CA pool, so couldn't verify the chain *and*
+#. * the subject name isn't valid.
+#. * I think this is bad enough to warrant a fatal error. It's
+#. * not likely anyway...
+#.
+#. TODO: Probably wrong.
+#. TODO: Make this error either block the ensuing SSL
+#. connection error until the user dismisses this one, or
+#. stifle it.
+#. TODO: Probably wrong.
+#. TODO: Probably wrong
+#. TODO: Probably wrong.
+msgid "SSL Certificate Error"
+msgstr "Ошибка SSL-сертификата"
+
+msgid "Invalid certificate chain"
+msgstr "Неверная цепочка сертификатов"
+
+#. The subject name is correct, but we weren't able to verify the
+#. * chain because there was no pool of root CAs found. Prompt the user
+#. * to validate it.
+#.
+#. vrq will be completed by user_auth
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+"У вас нет базы данных корневых сертификатов, так что этот сертификат не "
+"может быть проверен на целостность."
+
 #. Prompt the user to authenticate the certificate
 #. vrq will be completed by user_auth
 #, c-format
@@ -1703,28 +1733,10 @@ msgstr ""
 "Сертификат, представленный \"%s\", является самоподписанным. Он не может "
 "быть автоматически проверен."
 
+#. FIXME 2.6.1
 #, c-format
 msgid "The certificate chain presented for %s is not valid."
 msgstr "Цепочка сертификатов, представленная для %s, некорректна."
-
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
-#. TODO: Probably wrong.
-#. TODO: Probably wrong
-msgid "SSL Certificate Error"
-msgstr "Ошибка SSL-сертификата"
-
-msgid "Invalid certificate chain"
-msgstr "Неверная цепочка сертификатов"
-
-#. vrq will be completed by user_auth
-msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-"У вас нет базы данных корневых сертификатов, так что этот сертификат не "
-"может быть проверен на целостность."
 
 #. vrq will be completed by user_auth
 msgid ""
@@ -1744,18 +1756,6 @@ msgstr ""
 
 msgid "Invalid certificate authority signature"
 msgstr "Неверная авторская подпись сертификата"
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
-msgstr ""
-"Этот сертификат представлен \"%s\", а должен быть от \"%s\".Это может "
-"означать, что вы полключены не туда куда вы думаете."
 
 #. Make messages
 #, c-format
@@ -1793,7 +1793,7 @@ msgid "+++ %s signed off"
 msgstr "+++ %s вышел"
 
 #. Unknown error
-#. Unknown error!
+#, c-format
 msgid "Unknown error"
 msgstr "Неизвестная ошибка"
 
@@ -1840,9 +1840,8 @@ msgstr "%s вышел из комнаты."
 msgid "%s left the room (%s)."
 msgstr "%s вышел из комнаты (%s)."
 
-#, fuzzy
 msgid "Invite to chat"
-msgstr "Пригласить в конференцию"
+msgstr "Пригласить к переписке"
 
 #. Put our happy label in it.
 msgid ""
@@ -1982,9 +1981,9 @@ msgstr "Предложение отправки %s для %s"
 msgid "Starting transfer of %s from %s"
 msgstr "Запуск передачи %s от %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
-msgstr "Передача файла %s завершена"
+msgstr "Передача файла <A HREF=\"file://%s\">%s</A> завершена"
 
 #, c-format
 msgid "Transfer of file %s complete"
@@ -2201,9 +2200,8 @@ msgstr "<font color=\"red\"><b>Не удалось прочитать файл: 
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
-#, fuzzy
 msgid "Error creating conference."
-msgstr "Ошибка создания соединения"
+msgstr "Ошибка создания конференции"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -2220,11 +2218,11 @@ msgstr "Магическое несоответствие модуля %d (ну�
 msgid "ABI version mismatch %d.%d.x (need %d.%d.x)"
 msgstr "Несоответствие версии ABI %d.%d.x (необходима %d.%d.x)"
 
-#, fuzzy
 msgid ""
 "Plugin does not implement all required functions (list_icon, login and close)"
 msgstr ""
-"Модуль не реализует всех требуемых функций (список _иконок, вход и закрытие)"
+"Модуль не осуществляет всех требуемых функций (список_значков, вход и "
+"закрытие)"
 
 #, c-format
 msgid ""
@@ -2244,7 +2242,7 @@ msgstr "Не удалось загрузить требуемый модуль %
 msgid "Unable to load your plugin."
 msgstr "Не удаётся загрузить ваш модуль."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s requires %s, but it failed to unload."
 msgstr "%s требует %s, но его не удалось выгрузить."
 
@@ -2307,9 +2305,8 @@ msgstr ""
 "файлов\n"
 "(только при отсутствии беседы с отправителем)"
 
-#, fuzzy
 msgid "Create a new directory for each user"
-msgstr "Выберите каталог пользователей для поиска"
+msgstr "Создайте для каждого пользователя новую папку"
 
 msgid "Notes"
 msgstr "Заметки"
@@ -2611,7 +2608,6 @@ msgstr ""
 "журналов."
 
 #. * description
-#, fuzzy
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
 "Currently, this includes Adium, MSN Messenger, aMSN, and Trillian.\n"
@@ -2619,7 +2615,7 @@ msgid ""
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
 msgstr ""
-"При просмотре журналов этот модуль вставит журналы из других клиентов "
+"При просмотре журналов этот модуль внедрит журналы из других клиентов "
 "мгновенных сообщений. На текущий момент это включает Адиум, MSN Messenger, "
 "aMSN и Триллиан.\n"
 "\n"
@@ -2670,13 +2666,12 @@ msgid "Save messages sent to an offline user as pounce."
 msgstr ""
 "Сохранить сообщения, отправленные пользователю \"не в сети\", как правило."
 
-#, fuzzy
 msgid ""
 "The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
-"Остальные сообщения будут сохранены как правила. Вы можете их изменять или "
-"удалять в окне `Правила для собеседников'"
+"Остальные сообщения будут сохранены как правила. Вы можете их изменить или "
+"удалить в диалоговом окне `Правила для собеседников'"
 
 #, c-format
 msgid ""
@@ -2705,9 +2700,8 @@ msgstr "Сохранить сообщения \"не в сети\" в прави
 msgid "Do not ask. Always save in pounce."
 msgstr "Не спрашивать. Всегда сохранять в правило."
 
-#, fuzzy
 msgid "One Time Password"
-msgstr "Введите пароль"
+msgstr "Одноразовый пароль"
 
 #. *< type
 #. *< ui_requirement
@@ -2926,17 +2920,15 @@ msgstr ""
 "Невозможно обнаружить установку ActiveTCL. Если вы хотите использвать модули "
 "TCL, установите ActiveTCL из http://www.activestate.com\n"
 
-#, fuzzy
 msgid ""
 "Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
 "im/BonjourWindows for more information."
 msgstr ""
-"Набор инструментов Apple Bonjour для Windows не был найден, смотрите ЧаВо на:"
+"Не могу найти набор инструментов Apple \"Bonjour для Windows\", смотрите "
 "http://d.pidgin.im/BonjourWindows для дополнительной информации."
 
-#, fuzzy
 msgid "Unable to listen for incoming IM connections"
-msgstr "Не удаётся прослушивать входящие соединения\n"
+msgstr "Не удаётся прослушивать входящие соединения мгновенных сообщений"
 
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
@@ -2975,9 +2967,8 @@ msgid "Purple Person"
 msgstr "Персона Purple"
 
 #. Creating the options for the protocol
-#, fuzzy
 msgid "Local Port"
-msgstr "Населённый пункт"
+msgstr "Локальный порт"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -2989,25 +2980,20 @@ msgstr "%s закрыл беседу."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Не удаётся отправить сообщение, не удалось начать беседу."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to create socket: %s"
-msgstr ""
-"Не удаётся создать сокет:\n"
-"%s"
+msgstr "Не удаётся создать сокет: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to bind socket to port: %s"
-msgstr "Не удалось связать сокет с портом"
+msgstr "Не удалось связать сокет с портом: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to listen on socket: %s"
-msgstr ""
-"Не удаётся создать сокет:\n"
-"%s"
+msgstr "Не удаётся прослушивать сокет: %s"
 
-#, fuzzy
 msgid "Error communicating with local mDNSResponder."
-msgstr "Ошибка связи с местным mDNSResponder."
+msgstr "Ошибка связи с местным mDNSResponder'ом."
 
 msgid "Invalid proxy settings"
 msgstr "Неверные настройки прокси"
@@ -3032,9 +3018,9 @@ msgstr "Список собеседников пуст, в файл ничего
 msgid "Buddylist saved successfully!"
 msgstr "Список собеседников сохранён успешно!"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't write buddy list for %s to %s"
-msgstr "Не удалось записать список собеседников для %s в %s"
+msgstr "Не могу записать список собеседников для %s в %s"
 
 msgid "Couldn't load buddylist"
 msgstr "Не удалось загрузить список собеседников"
@@ -3051,17 +3037,16 @@ msgstr "Сохранить список собеседников..."
 msgid "Load buddylist from file..."
 msgstr "Загрузить список собеседников из файла..."
 
-#, fuzzy
 msgid "You must fill in all registration fields"
-msgstr "Заполните поля регистрационной формы."
+msgstr "Вы должны заполнить все регистрационные поля"
 
-#, fuzzy
 msgid "Passwords do not match"
-msgstr "Пароли не совпадают."
+msgstr "Пароли не совпадают"
 
-#, fuzzy
 msgid "Unable to register new account.  An unknown error occurred."
-msgstr "Не удаётся зарегистрировать новую учётную запись. Произошла ошибка.\n"
+msgstr ""
+"Не удаётся зарегистрировать новую учётную запись.  Произошла неизвестная "
+"ошибка."
 
 msgid "New Gadu-Gadu Account Registered"
 msgstr "Новая учётная запись Gadu-Gadu зарегистрирована"
@@ -3076,11 +3061,10 @@ msgid "Password (again)"
 msgstr "Пароль (ещё раз)"
 
 msgid "Enter captcha text"
-msgstr ""
+msgstr "Введите анти-бот текст"
 
-#, fuzzy
 msgid "Captcha"
-msgstr "Захватить изображение"
+msgstr "Анти-бот"
 
 msgid "Register New Gadu-Gadu Account"
 msgstr "Зарегистрировать новую учётную запись Gadu-Gadu"
@@ -3221,7 +3205,7 @@ msgstr "_Имя чата:"
 
 #, fuzzy, c-format
 msgid "Unable to resolve hostname '%s': %s"
-msgstr "Не удаётся соединиться с сервером."
+msgstr "Не удаётся утвердить имя хоста '%s': %s"
 
 #. 1. connect to server
 #. connect to the server
@@ -3234,9 +3218,8 @@ msgstr "Ошибка чата"
 msgid "This chat name is already in use"
 msgstr "Это имя чата уже используется"
 
-#, fuzzy
 msgid "Not connected to the server"
-msgstr "Нет соединения с сервером."
+msgstr "Не подсоединён к серверу"
 
 msgid "Find buddies..."
 msgstr "Найти собеседников..."
@@ -3277,9 +3260,8 @@ msgstr "Популярный польский IM"
 msgid "Gadu-Gadu User"
 msgstr "Пользователь Gadu-Gadu"
 
-#, fuzzy
 msgid "GG server"
-msgstr "Получение сервера"
+msgstr "GG сервер"
 
 #, c-format
 msgid "Unknown command: %s"
@@ -3295,9 +3277,8 @@ msgstr "Тема не установлена"
 msgid "File Transfer Failed"
 msgstr "Не удалось произвести передачу файлов"
 
-#, fuzzy
 msgid "Unable to open a listening port."
-msgstr "Не удалось открыть порт для прослушивания."
+msgstr "Не удалось открыть прослушиваемый порт."
 
 msgid "Error displaying MOTD"
 msgstr "Ошибка отображения MOTD"
@@ -3319,11 +3300,9 @@ msgstr "MOTD для %s"
 #.
 #. TODO: what to do here - do we really have to disconnect?
 #. TODO: do we really want to disconnect on a failure to write?
-#, fuzzy, c-format
+#, c-format
 msgid "Lost connection with server: %s"
-msgstr ""
-"Соединение с сервером потеряно:\n"
-"%s"
+msgstr "Потеряно соединение с сервером: %s"
 
 msgid "View MOTD"
 msgstr "Просмотреть MOTD"
@@ -3345,13 +3324,13 @@ msgid "Unable to connect"
 msgstr "Не удаётся установить соединение"
 
 #. this is a regular connect, error out
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to connect: %s"
-msgstr "Не удаётся соединиться с %s"
+msgstr "Не удаётся соединиться с: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Server closed the connection"
-msgstr "Сервер разорвал соединение."
+msgstr "Сервер закрыл соединение"
 
 msgid "Users"
 msgstr "Пользователи"
@@ -3405,13 +3384,12 @@ msgstr "Неверный режим"
 msgid "Ban on %s by %s, set %s ago"
 msgstr "Запрет для %s от %s, установлен %s назад"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Ban on %s"
-msgstr "Запрет для %s"
+msgstr "Запрет на %s"
 
-#, fuzzy
 msgid "End of ban list"
-msgstr "Конец списке запретов"
+msgstr "Конец списка запретов"
 
 #, c-format
 msgid "You are banned from %s."
@@ -3536,13 +3514,12 @@ msgstr ""
 #. We only want to do the following dance if the connection
 #. has not been successfully completed.  If it has, just
 #. notify the user that their /nick command didn't go.
-#, fuzzy, c-format
+#, c-format
 msgid "The nickname \"%s\" is already being used."
-msgstr "Это имя чата уже используется"
+msgstr "Псевдоним \"%s\" уже используется."
 
-#, fuzzy
 msgid "Nickname in use"
-msgstr "Псевдоним"
+msgstr "Псевдоним используется"
 
 msgid "Cannot change nick"
 msgstr "Не удаётся изменить псевдоним"
@@ -3673,9 +3650,8 @@ msgstr "nick &lt;новый псевдоним&gt;:  Изменить свой �
 msgid "nickserv: Send a command to nickserv"
 msgstr "nickserv: Послать команду для nickserv"
 
-#, fuzzy
 msgid "notice &lt;target&lt;:  Send a notice to a user or channel."
-msgstr "отметьте &lt;target&lt;:  Отправить заметку пользователю или каналу."
+msgstr "заметка &lt;target&lt;:  Отправить заметку пользователю или каналу."
 
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
@@ -3786,13 +3762,11 @@ msgstr "Команда Ad-Hoc не удалась"
 msgid "execute"
 msgstr "выполнить"
 
-#, fuzzy
 msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Сервер требует TLS/SSL для входа. Поддержка TLS/SSL не найдена."
+msgstr "Сервер требует TLS/SSL, но поддержка TLS/SSL не была найдена."
 
-#, fuzzy
 msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Вы потребовали шифрование, но поддержка TLS/SSL не найдена."
+msgstr "Вы требуете шифрования, но поддержка TLS/SSL не найдена."
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
@@ -3809,13 +3783,11 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Аутентификация простым текстом"
 
-#, fuzzy
 msgid "SASL authentication failed"
-msgstr "Аутентификация завершилась неудачно"
+msgstr "Аутентификация SASL провалилась"
 
-#, fuzzy
 msgid "Invalid response from server"
-msgstr "Неверный отклик от сервера."
+msgstr "Неверный отклик от сервера"
 
 msgid "Server does not use any supported authentication method"
 msgstr "Сервер не использует ни одного поддерживаемого метода аутентификации"
@@ -3826,36 +3798,28 @@ msgstr "Вы запросили шифрование, но оно недосту
 msgid "Invalid challenge from server"
 msgstr "Неверный запрос с сервера"
 
-#, fuzzy, c-format
+#, c-format
 msgid "SASL error: %s"
-msgstr "Ошибка SASL"
+msgstr "Ошибка SASL: %s"
 
 msgid "The BOSH connection manager terminated your session."
-msgstr ""
+msgstr "Управление соединениями BOSH прервало ваш сеанс."
 
-#, fuzzy
 msgid "No session ID given"
-msgstr "Причина не указана"
+msgstr "Не предоставлен ID сеанса"
 
-#, fuzzy
 msgid "Unsupported version of BOSH protocol"
-msgstr "Неподдерживаемая версия"
+msgstr "Неподдерживаемая версия протокола BOSH"
 
-#, fuzzy
 msgid "Unable to establish a connection with the server"
-msgstr ""
-"Не удалось установить соединение с сервером:\n"
-"%s"
+msgstr "Не удалось установить соединение с сервером"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to establish a connection with the server: %s"
-msgstr ""
-"Не удалось установить соединение с сервером:\n"
-"%s"
+msgstr "Не удалось установить соединение с сервером: %s"
 
-#, fuzzy
 msgid "Unable to establish SSL connection"
-msgstr "Не удаётся инициализировать соединение"
+msgstr "Не удаётся установить SSL соединение"
 
 msgid "Full Name"
 msgstr "Полное имя"
@@ -3872,6 +3836,11 @@ msgstr "URL"
 msgid "Street Address"
 msgstr "Адрес"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "Дополнительный адрес"
 
@@ -3922,9 +3891,8 @@ msgstr "Клиент"
 msgid "Operating System"
 msgstr "Операционная система"
 
-#, fuzzy
 msgid "Local Time"
-msgstr "Локальный файл:"
+msgstr "Местное время"
 
 msgid "Priority"
 msgstr "Приоритет"
@@ -3936,9 +3904,8 @@ msgstr "Ресурс"
 msgid "%s ago"
 msgstr ""
 
-#, fuzzy
 msgid "Logged Off"
-msgstr "В сети"
+msgstr "Вышел из сети"
 
 msgid "Middle Name"
 msgstr "Отчество"
@@ -3961,14 +3928,12 @@ msgstr "Показаться для"
 msgid "Temporarily Hide From"
 msgstr "Временно скрыться от"
 
-#. && NOT ME
 msgid "Cancel Presence Notification"
 msgstr "Отменить уведомление о присутствии"
 
 msgid "(Re-)Request authorization"
 msgstr "(Повторно) Запросить авторизацию"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
@@ -4108,17 +4073,14 @@ msgstr "Выберите сервер конференций для опроса
 msgid "Find Rooms"
 msgstr "Искать комнаты"
 
-#, fuzzy
 msgid "Affiliations:"
-msgstr "Псевдоним:"
+msgstr "Членства:"
 
-#, fuzzy
 msgid "No users found"
-msgstr "Пользователи не найдены"
+msgstr "Пользователей не найдено"
 
-#, fuzzy
 msgid "Roles:"
-msgstr "Должность"
+msgstr "Роли:"
 
 #, fuzzy
 msgid "Ping timed out"
@@ -4205,10 +4167,6 @@ msgstr "Зарегистрировать новую учётную запись 
 
 msgid "Change Registration"
 msgstr "Изменить регистрацию"
-
-#, fuzzy
-msgid "Malformed BOSH Connect Server"
-msgstr "Не удалось соединиться с сервером."
 
 msgid "Error unregistering account"
 msgstr "Ошибка отмены регистрации учётной записи"
@@ -5254,6 +5212,18 @@ msgstr ""
 msgid "Unable to Add"
 msgstr "Не могу Добавить"
 
+msgid "Authorization Request Message:"
+msgstr "Сообщение запроса авторизации:"
+
+msgid "Please authorize me!"
+msgstr "Пожалуйста, авторизируйте меня!"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_OK"
+
 msgid "Error retrieving profile"
 msgstr "Ошибка загрузки профиля"
 
@@ -5456,6 +5426,7 @@ msgstr "Неизвестная ошибка (%d)"
 msgid "Unable to add user"
 msgstr "Не удаётся добавить пользователя"
 
+#. Unknown error!
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "Неизвестная ошибка (%d)"
@@ -6694,12 +6665,6 @@ msgstr "Введите SecurID"
 msgid "Enter the 6 digit number from the digital display."
 msgstr "Введите шестизначное число с цифрового экранчика."
 
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_OK"
-
 msgid "Password sent"
 msgstr "Пароль отправлен"
 
@@ -6710,12 +6675,6 @@ msgid "Please authorize me so I can add you to my buddy list."
 msgstr ""
 "Пожалуйста, авторизируйте меня, чтобы я мог добавить вас в свой список "
 "приятелей."
-
-msgid "Authorization Request Message:"
-msgstr "Сообщение запроса авторизации:"
-
-msgid "Please authorize me!"
-msgstr "Пожалуйста, авторизируйте меня!"
 
 msgid "No reason given."
 msgstr "Причина не указана."
@@ -9089,10 +9048,6 @@ msgstr "Не удалось загрузить пару ключей SILC"
 msgid "Connecting to SILC Server"
 msgstr "Соединение с сервером SILC"
 
-#, fuzzy
-msgid "Unable to not load SILC key pair"
-msgstr "Не удалось загрузить пару ключей SILC"
-
 msgid "Out of memory"
 msgstr "Недостаточно памяти"
 
@@ -9936,14 +9891,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "Профиль пользователя пуст."
 
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr ""
-"%s отклонил ваше приглашение к конференции в комнату \"%s\" потому что \"%s"
-"\"."
-
-msgid "Invitation Rejected"
-msgstr "Приглашение отвергнуто"
+#, fuzzy, c-format
+msgid "%s has declined to join."
+msgstr "%s в сети."
 
 msgid "Failed to join chat"
 msgstr "Не удалось присоединиться к чату"
@@ -12059,14 +12009,6 @@ msgstr "О_чищать завершённые передачи"
 msgid "File transfer _details"
 msgstr "_Подробности о передаче файлов"
 
-#. Pause button
-msgid "_Pause"
-msgstr "_Пауза"
-
-#. Resume button
-msgid "_Resume"
-msgstr "_Возобновить"
-
 msgid "Paste as Plain _Text"
 msgstr "Вставить как простой _текст"
 
@@ -13488,6 +13430,9 @@ msgstr "_Добавить..."
 msgid "_Open Mail"
 msgstr "Открыть _почту"
 
+msgid "_Pause"
+msgstr "_Пауза"
+
 #, fuzzy
 msgid "_Edit"
 msgstr "Р_едактировать"
@@ -14372,10 +14317,13 @@ msgstr "Игнорировать"
 msgid "Founder"
 msgstr "Громко"
 
+#. A user in a chat room who has special privileges.
 #, fuzzy
 msgid "Operator"
 msgstr "Opera"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
@@ -14664,6 +14612,26 @@ msgstr "Отправлять и получать прямые XMPP строфы.
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Этот модуль полезен для отладки XMPP серверов или клиентов."
+
+#, fuzzy
+#~ msgid "Malformed BOSH Connect Server"
+#~ msgstr "Не удалось соединиться с сервером."
+
+#, fuzzy
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "Не удалось загрузить пару ключей SILC"
+
+#~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr ""
+#~ "%s отклонил ваше приглашение к конференции в комнату \"%s\" потому что \"%"
+#~ "s\"."
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "Приглашение отвергнуто"
+
+#~ msgid "_Resume"
+#~ msgstr "_Возобновить"
 
 #, fuzzy
 #~ msgid "_Proxy"
