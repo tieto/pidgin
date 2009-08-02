@@ -953,15 +953,15 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 			if (wc != r) {
 				purple_debug_error("filetransfer", "Unable to write whole buffer.\n");
 				purple_xfer_cancel_local(xfer);
+				g_free(buffer);
 				return;
 			}
 		} else if(r < 0) {
 			purple_xfer_cancel_remote(xfer);
+			g_free(buffer);
 			return;
 		}
-	}
-
-	if (condition & PURPLE_INPUT_WRITE) {
+	} else if (condition & PURPLE_INPUT_WRITE) {
 		size_t result;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 

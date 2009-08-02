@@ -1593,7 +1593,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *service = NULL;
 	char *filename = NULL;
 	char *xfer_peer_idstring = NULL;
-	char *utf8_filename
+	char *utf8_filename;
 	unsigned long filesize = 0L;
 	GSList *l;
 	GSList *filename_list = NULL;

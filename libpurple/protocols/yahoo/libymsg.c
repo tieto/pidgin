@@ -1830,6 +1830,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 			g_free(error_reason);
 			g_free(auth_data->seed);
 			g_free(auth_data);
+			g_free(token);
 		}
 		else {
 			/* OK to login, correct information provided */
