@@ -242,7 +242,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		lst = lst->next;
 	}
 
-	if (theme == current_smiley_theme) {
+	if (theme != NULL && theme == current_smiley_theme) {
 		/* Don't reload the theme if it is already loaded */
 		fclose(f);
 		return;
