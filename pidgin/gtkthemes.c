@@ -183,7 +183,7 @@ pidgin_themes_destroy_smiley_theme_smileys(struct smiley_theme *theme)
 			}
 			g_free(uio->smile);
 			g_free(uio);
-			wer->smileys = g_slist_remove(wer->smileys, uio);
+			wer->smileys = g_slist_delete_link(wer->smileys, wer->smileys);
 		}
 		theme->list = wer->next;
 		g_free(wer->sml);
