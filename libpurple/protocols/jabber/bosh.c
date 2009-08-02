@@ -31,6 +31,7 @@
 
 #define MAX_HTTP_CONNECTIONS      2
 #define MAX_FAILED_CONNECTIONS    3
+#define BUFFER_SEND_IN_SECS       1
 
 typedef struct _PurpleHTTPConnection PurpleHTTPConnection;
 
@@ -40,9 +41,9 @@ typedef void (*PurpleBOSHConnectionReceiveFunction)(PurpleBOSHConnection *conn, 
 static char *bosh_useragent = NULL;
 
 typedef enum {
-	PACKET_TERMINATE,
-	PACKET_STREAM_RESTART,
 	PACKET_NORMAL,
+	PACKET_TERMINATE,
+	PACKET_FLUSH,
 } PurpleBOSHPacketType;
 
 struct _PurpleBOSHConnection {
@@ -80,6 +81,7 @@ struct _PurpleBOSHConnection {
 	int requests;
 
 	guint inactivity_timer;
+	guint send_timer;
 };
 
 struct _PurpleHTTPConnection {
@@ -110,6 +112,7 @@ struct _PurpleHTTPConnection {
 static void http_connection_connect(PurpleHTTPConnection *conn);
 static void http_connection_send_request(PurpleHTTPConnection *conn,
                                          const GString *req);
+static gboolean send_timer_cb(gpointer data);
 
 void jabber_bosh_init(void)
 {
@@ -231,6 +234,8 @@ jabber_bosh_connection_destroy(PurpleBOSHConnection *conn)
 	g_free(conn->host);
 	g_free(conn->path);
 
+	if (conn->send_timer)
+		purple_timeout_remove(conn->send_timer);
 	if (conn->inactivity_timer)
 		purple_timeout_remove(conn->inactivity_timer);
 
@@ -312,36 +317,11 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn,
 	PurpleHTTPConnection *chosen;
 	GString *packet = NULL;
 
-	chosen = find_available_http_connection(conn);
-
-	if ((type != PACKET_NORMAL) && !chosen) {
+	if (type != PACKET_FLUSH && type != PACKET_TERMINATE) {
 		/*
-		 * For non-ordinary traffic, we can't 'buffer' it, so use the
-		 * first connection.
-		 */
-		chosen = conn->connections[0];
-
-		if (chosen->state != HTTP_CONN_CONNECTED) {
-			purple_debug_info("jabber", "Unable to find a ready BOSH "
-					"connection. Ignoring send of type 0x%02x.\n", type);
-			return;
-		}
-	}
-
-	if (type == PACKET_NORMAL) {
-		if (conn->max_requests > 0 && conn->requests == conn->max_requests) {
-			purple_debug_warning("jabber", "BOSH connection %p has %d requests out\n", conn, conn->requests);
-		} else if (!chosen) {
-			purple_debug_warning("jabber", "No BOSH connection found!\n");
-		}
-	}
-
-	if (type == PACKET_NORMAL && (!chosen ||
-	        (conn->max_requests > 0 && conn->requests == conn->max_requests))) {
-		/*
-		 * For normal data, send up to max_requests requests at a time or there is no
-		 * connection ready (likely, we're currently opening a second connection and
-		 * will send these packets when connected).
+		 * Unless this is a flush (or session terminate, which needs to be
+		 * sent immediately), queue up the data and start a timer to flush
+		 * the buffer.
 		 */
 		if (data) {
 			int len = data ? strlen(data) : 0;
@@ -350,9 +330,33 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn,
 
 		if (purple_debug_is_verbose())
 			purple_debug_misc("jabber", "bosh: %p has %" G_GSIZE_FORMAT " bytes in "
-			                  "the buffer.\n", conn, conn->pending->buflen);
-
+			                  "the buffer.\n", conn, conn->pending->bufused);
+		if (conn->send_timer == 0)
+			conn->send_timer = purple_timeout_add_seconds(BUFFER_SEND_IN_SECS,
+					send_timer_cb, conn);
 		return;
+	}
+
+	chosen = find_available_http_connection(conn);
+
+	if (!chosen) {
+		/*
+		 * For non-ordinary traffic, we can't 'buffer' it, so use the
+		 * first connection.
+		 */
+		chosen = conn->connections[0];
+
+		if (chosen->state != HTTP_CONN_CONNECTED) {
+			purple_debug_warning("jabber", "Unable to find a ready BOSH "
+					"connection. Ignoring send of type 0x%02x.\n", type);
+			return;
+		}
+	}
+
+	/* We're flushing the send buffer, so remove the send timer */
+	if (conn->send_timer != 0) {
+		purple_timeout_remove(conn->send_timer);
+		conn->send_timer = 0;
 	}
 
 	packet = g_string_new(NULL);
@@ -368,7 +372,7 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn,
 	                conn->sid,
 	                conn->js->user->domain);
 
-	if (type == PACKET_STREAM_RESTART) {
+	if (conn->needs_restart) {
 		packet = g_string_append(packet, " xmpp:restart='true'/>");
 		/* TODO: Do we need to wait for a response? */
 		conn->needs_restart = FALSE;
@@ -400,7 +404,7 @@ void jabber_bosh_connection_close(PurpleBOSHConnection *conn)
 static void jabber_bosh_connection_stream_restart(PurpleBOSHConnection *conn)
 {
 	conn->needs_restart = TRUE;
-	jabber_bosh_connection_send(conn, PACKET_STREAM_RESTART, NULL);
+	jabber_bosh_connection_send(conn, PACKET_NORMAL, NULL);
 }
 
 static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node) {
@@ -419,12 +423,31 @@ static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, x
 }
 
 static gboolean
+send_timer_cb(gpointer data)
+{
+	PurpleBOSHConnection *bosh;
+
+	bosh = data;
+	bosh->send_timer = 0;
+
+	jabber_bosh_connection_send(bosh, PACKET_FLUSH, NULL);
+
+	return FALSE;
+}
+
+static gboolean
 bosh_inactivity_cb(gpointer data)
 {
 	PurpleBOSHConnection *bosh = data;
+	bosh->inactivity_timer = 0;
 
-	jabber_bosh_connection_send(bosh, PACKET_NORMAL, NULL);
-	return TRUE;
+	if (bosh->send_timer != 0)
+		purple_timeout_remove(bosh->send_timer);
+
+	/* clears bosh->send_timer */
+	send_timer_cb(bosh);
+
+	return FALSE;
 }
 
 static void
@@ -641,20 +664,10 @@ connection_common_established_cb(PurpleHTTPConnection *conn)
 		purple_debug_info("jabber", "BOSH session already exists. Trying to reuse it.\n");
 		if (conn->bosh->requests == 0 || conn->bosh->pending->bufused > 0) {
 			/* Send the pending data */
-			jabber_bosh_connection_send(conn->bosh, PACKET_NORMAL, NULL);
+			jabber_bosh_connection_send(conn->bosh, PACKET_FLUSH, NULL);
 		}
-#if 0
-		conn->bosh->receive_cb = jabber_bosh_connection_received;
-		if (conn->bosh->connect_cb)
-			conn->bosh->connect_cb(conn->bosh);
-#endif
 	} else
 		jabber_bosh_connection_boot(conn->bosh);
-}
-
-void jabber_bosh_connection_refresh(PurpleBOSHConnection *conn)
-{
-	jabber_bosh_connection_send(conn, PACKET_NORMAL, NULL);
 }
 
 static void http_connection_disconnected(PurpleHTTPConnection *conn)
