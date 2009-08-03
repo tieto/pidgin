@@ -466,7 +466,7 @@ setup_icon_box(PidginStatusBox *status_box)
 		const char *filename = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
 		PurpleStoredImage *img = NULL;
 
-		if (filename != NULL)
+		if (filename && *filename)
 			img = purple_imgstore_new_from_file(filename);
 
 		pidgin_status_box_set_buddy_icon(status_box, img);
