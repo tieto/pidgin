@@ -355,6 +355,8 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 		msn_directconn_destroy(directconn);
 	}
+
+	g_free(body);
 }
 
 static void

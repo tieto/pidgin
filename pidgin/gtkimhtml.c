@@ -5838,9 +5838,9 @@ gboolean gtk_imhtml_class_register_protocol(const char *name,
 		if (activate) {
 			return FALSE;
 		}
+		klass->protocols = g_list_remove(klass->protocols, proto);
 		g_free(proto->name);
 		g_free(proto);
-		klass->protocols = g_list_remove(klass->protocols, proto);
 		return TRUE;
 	} else if (!activate) {
 		return FALSE;

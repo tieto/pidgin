@@ -735,14 +735,6 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 				info = g_new0(struct aim_icq_info, 1);
 
-				if (info == NULL)
-				{
-					g_free(uin);
-					g_free(status_note_title);
-
-					break;
-				}
-
 				bslen = 13 + strlen(uin) + 30 + 6 + 4 + 55 + 85 + 4;
 				byte_stream_new(&bs, 4 + bslen);
 

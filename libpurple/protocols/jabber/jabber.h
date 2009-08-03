@@ -164,6 +164,8 @@ struct _JabberStream
 	time_t old_idle;
 
 	JabberID *user;
+	JabberBuddy *user_jb;
+
 	PurpleConnection *gc;
 	PurpleSslConnection *gsc;
 
@@ -253,7 +255,6 @@ struct _JabberStream
 	guint max_srv_rec_idx;
 
 	/* BOSH stuff */
-	gboolean use_bosh;
 	PurpleBOSHConnection *bosh;
 
 	/**

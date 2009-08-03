@@ -3560,7 +3560,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			}
 
 			g_free(pce);
-			cur = g_list_remove(cur, pce);
+			cur = g_list_delete_link(cur, cur);
 		}
 	}
 	else if (PURPLE_BLIST_NODE_IS_CONTACT(node) || PURPLE_BLIST_NODE_IS_BUDDY(node))
