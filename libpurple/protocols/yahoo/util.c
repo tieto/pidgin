@@ -699,7 +699,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 {
 
 	int m, n, vstart;
-	gboolean quote = 0, done = 0;
+	gboolean quote = FALSE, done = FALSE;
 
 	m = *j;
 
@@ -724,7 +724,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 
 				if (src[n] == '"') {
 					if (!quote) {
-						quote = 1;
+						quote = TRUE;
 						vstart = n;
 						continue;
 					} else {
@@ -733,7 +733,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 				}
 
 				if (!quote && ((src[n] == ' ') || (src[n] == '>')))
-					done = 1;
+					done = TRUE;
 
 				if (done) {
 					if (!g_ascii_strncasecmp(&src[*j+1], "FACE", m - *j - 1)) {
@@ -790,7 +790,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 			*j = m;
 
 		if (src[m] == '>') {
-			gboolean needendtag = 0;
+			gboolean needendtag = FALSE;
 			fontattr *f;
 			GString *tmp = g_string_new(NULL);
 
@@ -799,7 +799,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 					switch (f->type) {
 					case FATYPE_SIZE:
 						if (!needendtag) {
-							needendtag = 1;
+							needendtag = TRUE;
 							g_string_append(dest, "<font ");
 						}
 
@@ -808,7 +808,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						break;
 					case FATYPE_FACE:
 						if (!needendtag) {
-							needendtag = 1;
+							needendtag = TRUE;
 							g_string_append(dest, "<font ");
 						}
 
@@ -817,7 +817,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						break;
 					case FATYPE_JUNK:
 						if (!needendtag) {
-							needendtag = 1;
+							needendtag = TRUE;
 							g_string_append(dest, "<font ");
 						}
 
@@ -829,7 +829,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						if (needendtag) {
 							g_string_append(tmp, "</font>");
 							dest->str[dest->len-1] = '>';
-							needendtag = 0;
+							needendtag = TRUE;
 						}
 
 						g_string_append(tmp, *colors ? (*colors)->data : "\033[#000000m");
