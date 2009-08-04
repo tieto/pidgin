@@ -578,6 +578,9 @@ purple_connection_error_reason (PurpleConnection *gc,
 
 	gc->wants_to_die = purple_connection_error_is_fatal (reason);
 
+	purple_debug_info("connection", "Connection error on %p (reason: %u description: %s)\n",
+	                  gc, reason, description);
+
 	ops = purple_connections_get_ui_ops();
 
 	if (ops != NULL)

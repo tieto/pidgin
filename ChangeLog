@@ -175,6 +175,9 @@ version 2.6.0 (??/??/2009):
 	  conversation window is now linked to the file.
 	* Fix a crash when closing a conversation tab that has unread messages
 	  when the Message Notification plugin is loaded.
+	* Fix a crash when closing the New Mail dialog if an account with new
+	  mail was previously disconnected while the dialog was open.
+	* Fix incorrect unread message counts for the new mail notifications.
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful

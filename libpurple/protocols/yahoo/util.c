@@ -184,148 +184,165 @@ char *yahoo_convert_to_numeric(const char *str)
 }
 
 /*
+ * The values in this hash table should probably be lowercase, since that's
+ * what xhtml expects.  Also because yahoo_codes_to_html() does
+ * case-sensitive comparisons.
+ *
  * I found these on some website but i don't know that they actually
  * work (or are supposed to work). I didn't implement them yet.
  *
-     * [0;30m ---black
-     * [1;37m ---white
-     * [0;37m ---tan
-     * [0;38m ---light black
-     * [1;39m ---dark blue
-     * [0;32m ---green
-     * [0;33m ---yellow
-     * [0;35m ---pink
-     * [1;35m ---purple
-     * [1;30m ---light blue
-     * [0;31m ---red
-     * [0;34m ---blue
-     * [0;36m ---aqua
-         * (shift+comma)lyellow(shift+period) ---light yellow
-     * (shift+comma)lgreen(shift+period) ---light green
-[2;30m <--white out
-*/
+ * [0;30m ---black
+ * [1;37m ---white
+ * [0;37m ---tan
+ * [0;38m ---light black
+ * [1;39m ---dark blue
+ * [0;32m ---green
+ * [0;33m ---yellow
+ * [0;35m ---pink
+ * [1;35m ---purple
+ * [1;30m ---light blue
+ * [0;31m ---red
+ * [0;34m ---blue
+ * [0;36m ---aqua
+ * (shift+comma)lyellow(shift+period) ---light yellow
+ * (shift+comma)lgreen(shift+period) ---light green
+ * [2;30m <--white out
+ */
 
-static GHashTable *ht = NULL;
+static GHashTable *esc_codes_ht = NULL;
+static GHashTable *tags_ht = NULL;
 
 void yahoo_init_colorht()
 {
-	if (ht != NULL)
+	if (esc_codes_ht != NULL)
 		/* Hash table has already been initialized */
 		return;
 
-	ht = g_hash_table_new(g_str_hash, g_str_equal);
+	/* Key is the escape code string.  Value is the HTML that should be
+	 * inserted in place of the escape code. */
+	esc_codes_ht = g_hash_table_new(g_str_hash, g_str_equal);
+
+	/* Key is the name of the HTML tag, for example "font" or "/font"
+	 * value is the HTML that should be inserted in place of the old tag */
+	tags_ht = g_hash_table_new(g_str_hash, g_str_equal);
+
 	/* the numbers in comments are what gyach uses, but i think they're incorrect */
 #ifdef USE_CSS_FORMATTING
-	g_hash_table_insert(ht, "30", "<span style=\"color: #000000\">"); /* black */
-	g_hash_table_insert(ht, "31", "<span style=\"color: #0000FF\">"); /* blue */
-	g_hash_table_insert(ht, "32", "<span style=\"color: #008080\">"); /* cyan */      /* 00b2b2 */
-	g_hash_table_insert(ht, "33", "<span style=\"color: #808080\">"); /* gray */      /* 808080 */
-	g_hash_table_insert(ht, "34", "<span style=\"color: #008000\">"); /* green */     /* 00c200 */
-	g_hash_table_insert(ht, "35", "<span style=\"color: #FF0080\">"); /* pink */      /* ffafaf */
-	g_hash_table_insert(ht, "36", "<span style=\"color: #800080\">"); /* purple */    /* b200b2 */
-	g_hash_table_insert(ht, "37", "<span style=\"color: #FF8000\">"); /* orange */    /* ffff00 */
-	g_hash_table_insert(ht, "38", "<span style=\"color: #FF0000\">"); /* red */
-	g_hash_table_insert(ht, "39", "<span style=\"color: #808000\">"); /* olive */     /* 546b50 */
+	g_hash_table_insert(esc_codes_ht, "30", "<span style=\"color: #000000\">"); /* black */
+	g_hash_table_insert(esc_codes_ht, "31", "<span style=\"color: #0000FF\">"); /* blue */
+	g_hash_table_insert(esc_codes_ht, "32", "<span style=\"color: #008080\">"); /* cyan */      /* 00b2b2 */
+	g_hash_table_insert(esc_codes_ht, "33", "<span style=\"color: #808080\">"); /* gray */      /* 808080 */
+	g_hash_table_insert(esc_codes_ht, "34", "<span style=\"color: #008000\">"); /* green */     /* 00c200 */
+	g_hash_table_insert(esc_codes_ht, "35", "<span style=\"color: #FF0080\">"); /* pink */      /* ffafaf */
+	g_hash_table_insert(esc_codes_ht, "36", "<span style=\"color: #800080\">"); /* purple */    /* b200b2 */
+	g_hash_table_insert(esc_codes_ht, "37", "<span style=\"color: #FF8000\">"); /* orange */    /* ffff00 */
+	g_hash_table_insert(esc_codes_ht, "38", "<span style=\"color: #FF0000\">"); /* red */
+	g_hash_table_insert(esc_codes_ht, "39", "<span style=\"color: #808000\">"); /* olive */     /* 546b50 */
 #else
-	g_hash_table_insert(ht, "30", "<font color=\"#000000\">"); /* black */
-	g_hash_table_insert(ht, "31", "<font color=\"#0000FF\">"); /* blue */
-	g_hash_table_insert(ht, "32", "<font color=\"#008080\">"); /* cyan */      /* 00b2b2 */
-	g_hash_table_insert(ht, "33", "<font color=\"#808080\">"); /* gray */      /* 808080 */
-	g_hash_table_insert(ht, "34", "<font color=\"#008000\">"); /* green */     /* 00c200 */
-	g_hash_table_insert(ht, "35", "<font color=\"#FF0080\">"); /* pink */      /* ffafaf */
-	g_hash_table_insert(ht, "36", "<font color=\"#800080\">"); /* purple */    /* b200b2 */
-	g_hash_table_insert(ht, "37", "<font color=\"#FF8000\">"); /* orange */    /* ffff00 */
-	g_hash_table_insert(ht, "38", "<font color=\"#FF0000\">"); /* red */
-	g_hash_table_insert(ht, "39", "<font color=\"#808000\">"); /* olive */     /* 546b50 */
+	g_hash_table_insert(esc_codes_ht, "30", "<font color=\"#000000\">"); /* black */
+	g_hash_table_insert(esc_codes_ht, "31", "<font color=\"#0000FF\">"); /* blue */
+	g_hash_table_insert(esc_codes_ht, "32", "<font color=\"#008080\">"); /* cyan */      /* 00b2b2 */
+	g_hash_table_insert(esc_codes_ht, "33", "<font color=\"#808080\">"); /* gray */      /* 808080 */
+	g_hash_table_insert(esc_codes_ht, "34", "<font color=\"#008000\">"); /* green */     /* 00c200 */
+	g_hash_table_insert(esc_codes_ht, "35", "<font color=\"#FF0080\">"); /* pink */      /* ffafaf */
+	g_hash_table_insert(esc_codes_ht, "36", "<font color=\"#800080\">"); /* purple */    /* b200b2 */
+	g_hash_table_insert(esc_codes_ht, "37", "<font color=\"#FF8000\">"); /* orange */    /* ffff00 */
+	g_hash_table_insert(esc_codes_ht, "38", "<font color=\"#FF0000\">"); /* red */
+	g_hash_table_insert(esc_codes_ht, "39", "<font color=\"#808000\">"); /* olive */     /* 546b50 */
 #endif /* !USE_CSS_FORMATTING */
 
-	g_hash_table_insert(ht,  "1",  "<b>");
-	g_hash_table_insert(ht, "x1", "</b>");
-	g_hash_table_insert(ht,  "2",  "<i>");
-	g_hash_table_insert(ht, "x2", "</i>");
-	g_hash_table_insert(ht,  "4",  "<u>");
-	g_hash_table_insert(ht, "x4", "</u>");
+	g_hash_table_insert(esc_codes_ht,  "1",  "<b>");
+	g_hash_table_insert(esc_codes_ht, "x1", "</b>");
+	g_hash_table_insert(esc_codes_ht,  "2",  "<i>");
+	g_hash_table_insert(esc_codes_ht, "x2", "</i>");
+	g_hash_table_insert(esc_codes_ht,  "4",  "<u>");
+	g_hash_table_insert(esc_codes_ht, "x4", "</u>");
 
 	/* these just tell us the text they surround is supposed
 	 * to be a link. purple figures that out on its own so we
 	 * just ignore it.
 	 */
-	g_hash_table_insert(ht, "l", ""); /* link start */
-	g_hash_table_insert(ht, "xl", ""); /* link end */
+	g_hash_table_insert(esc_codes_ht, "l", ""); /* link start */
+	g_hash_table_insert(esc_codes_ht, "xl", ""); /* link end */
 
 #ifdef USE_CSS_FORMATTING
-	g_hash_table_insert(ht, "<black>",  "<span style=\"color: #000000\">");
-	g_hash_table_insert(ht, "<blue>",   "<span style=\"color: #0000FF\">");
-	g_hash_table_insert(ht, "<cyan>",   "<span style=\"color: #008284\">");
-	g_hash_table_insert(ht, "<gray>",   "<span style=\"color: #848284\">");
-	g_hash_table_insert(ht, "<green>",  "<span style=\"color: #008200\">");
-	g_hash_table_insert(ht, "<pink>",   "<span style=\"color: #FF0084\">");
-	g_hash_table_insert(ht, "<purple>", "<span style=\"color: #840084\">");
-	g_hash_table_insert(ht, "<orange>", "<span style=\"color: #FF8000\">");
-	g_hash_table_insert(ht, "<red>",    "<span style=\"color: #FF0000\">");
-	g_hash_table_insert(ht, "<yellow>", "<span style=\"color: #848200\">");
+	g_hash_table_insert(tags_ht, "black",  "<span style=\"color: #000000\">");
+	g_hash_table_insert(tags_ht, "blue",   "<span style=\"color: #0000FF\">");
+	g_hash_table_insert(tags_ht, "cyan",   "<span style=\"color: #008284\">");
+	g_hash_table_insert(tags_ht, "gray",   "<span style=\"color: #848284\">");
+	g_hash_table_insert(tags_ht, "green",  "<span style=\"color: #008200\">");
+	g_hash_table_insert(tags_ht, "pink",   "<span style=\"color: #FF0084\">");
+	g_hash_table_insert(tags_ht, "purple", "<span style=\"color: #840084\">");
+	g_hash_table_insert(tags_ht, "orange", "<span style=\"color: #FF8000\">");
+	g_hash_table_insert(tags_ht, "red",    "<span style=\"color: #FF0000\">");
+	g_hash_table_insert(tags_ht, "yellow", "<span style=\"color: #848200\">");
 
-	g_hash_table_insert(ht, "</black>",  "</span>");
-	g_hash_table_insert(ht, "</blue>",   "</span>");
-	g_hash_table_insert(ht, "</cyan>",   "</span>");
-	g_hash_table_insert(ht, "</gray>",   "</span>");
-	g_hash_table_insert(ht, "</green>",  "</span>");
-	g_hash_table_insert(ht, "</pink>",   "</span>");
-	g_hash_table_insert(ht, "</purple>", "</span>");
-	g_hash_table_insert(ht, "</orange>", "</span>");
-	g_hash_table_insert(ht, "</red>",    "</span>");
-	g_hash_table_insert(ht, "</yellow>", "</span>");
+	g_hash_table_insert(tags_ht, "/black",  "</span>");
+	g_hash_table_insert(tags_ht, "/blue",   "</span>");
+	g_hash_table_insert(tags_ht, "/cyan",   "</span>");
+	g_hash_table_insert(tags_ht, "/gray",   "</span>");
+	g_hash_table_insert(tags_ht, "/green",  "</span>");
+	g_hash_table_insert(tags_ht, "/pink",   "</span>");
+	g_hash_table_insert(tags_ht, "/purple", "</span>");
+	g_hash_table_insert(tags_ht, "/orange", "</span>");
+	g_hash_table_insert(tags_ht, "/red",    "</span>");
+	g_hash_table_insert(tags_ht, "/yellow", "</span>");
 #else
-	g_hash_table_insert(ht, "<black>",  "<font color=\"#000000\">");
-	g_hash_table_insert(ht, "<blue>",   "<font color=\"#0000FF\">");
-	g_hash_table_insert(ht, "<cyan>",   "<font color=\"#008284\">");
-	g_hash_table_insert(ht, "<gray>",   "<font color=\"#848284\">");
-	g_hash_table_insert(ht, "<green>",  "<font color=\"#008200\">");
-	g_hash_table_insert(ht, "<pink>",   "<font color=\"#FF0084\">");
-	g_hash_table_insert(ht, "<purple>", "<font color=\"#840084\">");
-	g_hash_table_insert(ht, "<orange>", "<font color=\"#FF8000\">");
-	g_hash_table_insert(ht, "<red>",    "<font color=\"#FF0000\">");
-	g_hash_table_insert(ht, "<yellow>", "<font color=\"#848200\">");
+	g_hash_table_insert(tags_ht, "black",  "<font color=\"#000000\">");
+	g_hash_table_insert(tags_ht, "blue",   "<font color=\"#0000FF\">");
+	g_hash_table_insert(tags_ht, "cyan",   "<font color=\"#008284\">");
+	g_hash_table_insert(tags_ht, "gray",   "<font color=\"#848284\">");
+	g_hash_table_insert(tags_ht, "green",  "<font color=\"#008200\">");
+	g_hash_table_insert(tags_ht, "pink",   "<font color=\"#FF0084\">");
+	g_hash_table_insert(tags_ht, "purple", "<font color=\"#840084\">");
+	g_hash_table_insert(tags_ht, "orange", "<font color=\"#FF8000\">");
+	g_hash_table_insert(tags_ht, "red",    "<font color=\"#FF0000\">");
+	g_hash_table_insert(tags_ht, "yellow", "<font color=\"#848200\">");
 
-	g_hash_table_insert(ht, "</black>",  "</font>");
-	g_hash_table_insert(ht, "</blue>",   "</font>");
-	g_hash_table_insert(ht, "</cyan>",   "</font>");
-	g_hash_table_insert(ht, "</gray>",   "</font>");
-	g_hash_table_insert(ht, "</green>",  "</font>");
-	g_hash_table_insert(ht, "</pink>",   "</font>");
-	g_hash_table_insert(ht, "</purple>", "</font>");
-	g_hash_table_insert(ht, "</orange>", "</font>");
-	g_hash_table_insert(ht, "</red>",    "</font>");
-	g_hash_table_insert(ht, "</yellow>", "</font>");
+	g_hash_table_insert(tags_ht, "/black",  "</font>");
+	g_hash_table_insert(tags_ht, "/blue",   "</font>");
+	g_hash_table_insert(tags_ht, "/cyan",   "</font>");
+	g_hash_table_insert(tags_ht, "/gray",   "</font>");
+	g_hash_table_insert(tags_ht, "/green",  "</font>");
+	g_hash_table_insert(tags_ht, "/pink",   "</font>");
+	g_hash_table_insert(tags_ht, "/purple", "</font>");
+	g_hash_table_insert(tags_ht, "/orange", "</font>");
+	g_hash_table_insert(tags_ht, "/red",    "</font>");
+	g_hash_table_insert(tags_ht, "/yellow", "</font>");
 #endif /* !USE_CSS_FORMATTING */
 
-	/* remove these once we have proper support for <FADE> and <ALT> */
-	g_hash_table_insert(ht, "</fade>", "");
-	g_hash_table_insert(ht, "</alt>", "");
+	/* We don't support these tags, so discard them */
+	g_hash_table_insert(tags_ht, "alt", "");
+	g_hash_table_insert(tags_ht, "fade", "");
+	g_hash_table_insert(tags_ht, "snd", "");
+	g_hash_table_insert(tags_ht, "/alt", "");
+	g_hash_table_insert(tags_ht, "/fade", "");
 
-	/* these are the normal html yahoo sends (besides <font>).
-	 * anything else will get turned into &lt;tag&gt;, so if I forgot
-	 * about something, please add it. Why Yahoo! has to send unescaped
-	 * <'s and >'s that aren't supposed to be html is beyond me.
-	 */
-	g_hash_table_insert(ht, "<b>", "<b>");
-	g_hash_table_insert(ht, "<i>", "<i>");
-	g_hash_table_insert(ht, "<u>", "<u>");
+	/* Official clients don't seem to send b, i or u tags.  They use
+	 * the escape codes listed above.  Official clients definitely send
+	 * font tags, though.  I wonder if we can remove the opening and
+	 * closing b, i and u tags from here? */
+	g_hash_table_insert(tags_ht, "b", "<b>");
+	g_hash_table_insert(tags_ht, "i", "<i>");
+	g_hash_table_insert(tags_ht, "u", "<u>");
+	g_hash_table_insert(tags_ht, "font", "<font>");
 
-	g_hash_table_insert(ht, "</b>", "</b>");
-	g_hash_table_insert(ht, "</i>", "</i>");
-	g_hash_table_insert(ht, "</u>", "</u>");
-	g_hash_table_insert(ht, "</font>", "</font>");
+	g_hash_table_insert(tags_ht, "/b", "</b>");
+	g_hash_table_insert(tags_ht, "/i", "</i>");
+	g_hash_table_insert(tags_ht, "/u", "</u>");
+	g_hash_table_insert(tags_ht, "/font", "</font>");
 }
 
 void yahoo_dest_colorht()
 {
-	if (ht == NULL)
+	if (esc_codes_ht == NULL)
 		/* Hash table has already been destroyed */
 		return;
 
-	g_hash_table_destroy(ht);
-	ht = NULL;
+	g_hash_table_destroy(esc_codes_ht);
+	esc_codes_ht = NULL;
+	g_hash_table_destroy(tags_ht);
+	tags_ht = NULL;
 }
 
 #ifndef USE_CSS_FORMATTING
@@ -347,60 +364,161 @@ static int point_to_html(int x)
 }
 #endif /* !USE_CSS_FORMATTING */
 
-/*
- * The Yahoo font size value is given in pt, even thougth the HTML
- * standard for <font size="x"> treats the size as a number on a
- * scale between 1 and 7.  Let's get rid of this shoddyness and
- * convert it to CSS.
- */
-static void _font_tags_fix_size(const char *tag, GString *dest)
+static void append_attrs_datalist_foreach_cb(GQuark key_id, gpointer data, gpointer user_data)
 {
-	char *x, *end;
-	int size;
+	const char *key;
+	const char *value;
+	xmlnode *cur;
 
-	if (((x = strstr(tag, "size"))) && ((x = strchr(x, '=')))) {
-		while (*x && !g_ascii_isdigit(*x))
-			x++;
-		if (*x) {
-#ifndef USE_CSS_FORMATTING
-			int htmlsize;
-#endif /* !USE_CSS_FORMATTING */
+	key = g_quark_to_string(key_id);
+	value = data;
+	cur = user_data;
 
-			size = strtol(x, &end, 10);
+	xmlnode_set_attrib(cur, key, value);
+}
 
-#ifdef USE_CSS_FORMATTING
-			g_string_append_len(dest, tag, x - tag - 7);
-			g_string_append(dest, end + 1);
-			g_string_append_printf(dest, "<span style=\"font-size: %dpt\">", size);
-#else
-			htmlsize = point_to_html(size);
-			g_string_append_len(dest, tag, x - tag);
-			g_string_append_printf(dest, "%d", htmlsize);
-			g_string_append_printf(dest, "\" absz=\"%d", size);
-			g_string_append(dest, end);
-#endif /* !USE_CSS_FORMATTING */
-		} else {
-			g_string_append(dest, tag);
+/**
+ * @param cur A pointer to the position in the XML tree that we're
+ *        currently building.  This will be modified when opening a tag
+ *        or closing an existing tag.
+ */
+static void yahoo_codes_to_html_add_tag(xmlnode **cur, const char *tag, gboolean is_closing_tag, const gchar *tag_name, gboolean is_font_tag)
+{
+	if (is_closing_tag) {
+		xmlnode *tmp;
+		GSList *dangling_tags = NULL;
+
+		/* Move up the DOM until we find the opening tag */
+		for (tmp = *cur; tmp != NULL; tmp = xmlnode_get_parent(tmp)) {
+			/* Add one to tag_name when doing this comparison because it starts with a / */
+			if (g_str_equal(tmp->name, tag_name + 1))
+				/* Found */
+				break;
+			dangling_tags = g_slist_prepend(dangling_tags, tmp);
+		}
+		if (tmp == NULL) {
+			/* This is a closing tag with no opening tag.  Useless. */
+			purple_debug_error("yahoo", "Ignoring unmatched tag %s", tag);
+			g_slist_free(dangling_tags);
 			return;
 		}
+
+		/* Move our current position up, now that we've closed a tag */
+		*cur = xmlnode_get_parent(tmp);
+
+		/* Re-open any tags that were nested below the tag we just closed */
+		while (dangling_tags != NULL) {
+			tmp = dangling_tags->data;
+			dangling_tags = g_slist_delete_link(dangling_tags, dangling_tags);
+
+			/* Create a copy of this tag+attributes (but not child tags or
+			 * data) at our new location */
+			*cur = xmlnode_new_child(*cur, tmp->name);
+			for (tmp = tmp->child; tmp != NULL; tmp = tmp->next)
+				if (tmp->type == XMLNODE_TYPE_ATTRIB)
+					xmlnode_set_attrib_full(*cur, tmp->name,
+							tmp->xmlns, tmp->prefix, tmp->data);
+		}
 	} else {
-		g_string_append(dest, tag);
-		return;
+		const char *start;
+		const char *end;
+		GData *attributes;
+		char *fontsize = NULL;
+
+		purple_markup_find_tag(tag_name, tag, &start, &end, &attributes);
+		*cur = xmlnode_new_child(*cur, tag_name);
+
+		if (is_font_tag) {
+			/* Special case for the font size attribute */
+			fontsize = g_strdup(g_datalist_get_data(&attributes, "size"));
+			if (fontsize != NULL)
+				g_datalist_remove_data(&attributes, "size");
+		}
+
+		/* Add all font tag attributes */
+		g_datalist_foreach(&attributes, append_attrs_datalist_foreach_cb, *cur);
+		g_datalist_clear(&attributes);
+
+		if (fontsize != NULL) {
+#ifdef USE_CSS_FORMATTING
+			/*
+			 * The Yahoo font size value is given in pt, even though the HTML
+			 * standard for <font size="x"> treats the size as a number on a
+			 * scale between 1 and 7.  So we insert the font size as a CSS
+			 * style on a span tag.
+			 */
+			gchar *tmp = g_strdup_printf("font-size: %spt", fontsize);
+			*cur = xmlnode_new_child(*cur, "span");
+			xmlnode_set_attrib(*cur, "style", tmp);
+			g_free(tmp);
+#else
+			/*
+			 * The Yahoo font size value is given in pt, even though the HTML
+			 * standard for <font size="x"> treats the size as a number on a
+			 * scale between 1 and 7.  So we convert it to an appropriate
+			 * value.  This loses precision, which is why CSS formatting is
+			 * preferred.  The "absz" attribute remains here for backward
+			 * compatibility with UIs that might use it, but it is totally
+			 * not standard at all.
+			 */
+			int size, htmlsize;
+			gchar tmp[11];
+			size = strtol(fontsize, NULL, 10);
+			htmlsize = point_to_html(size);
+			sprintf(tmp, "%u", htmlsize);
+			xmlnode_set_attrib(*cur, "size", tmp);
+			xmlnode_set_attrib(*cur, "absz", fontsize);
+#endif /* !USE_CSS_FORMATTING */
+			g_free(fontsize);
+		}
 	}
 }
 
+/**
+ * Similar to purple_markup_get_tag_name(), but works with closing tags.
+ *
+ * @return The lowercase name of the tag.  If this is a closing tag then
+ *         this value starts with a forward slash.  The caller must free
+ *         this string with g_free.
+ */
+static gchar *yahoo_markup_get_tag_name(const char *tag, gboolean *is_closing_tag)
+{
+	size_t len;
+
+	*is_closing_tag = (tag[1] == '/');
+	if (*is_closing_tag)
+		len = strcspn(tag + 1, "> ");
+	else
+		len = strcspn(tag + 1, "> /");
+
+	return g_utf8_strdown(tag + 1, len);
+}
+
+/*
+ * Yahoo! messages generally aren't well-formed.  Their markup is
+ * more of a flow from start to finish rather than a hierarchy from
+ * outer to inner.  They tend to open tags and close them only when
+ * necessary.
+ *
+ * Example: <font size="8">size 8 <font size="16">size 16 <font size="8">size 8 again
+ *
+ * But we want to send well-formed HTML to the core, so we step through
+ * the input string and build an xmlnode tree containing sanitized HTML.
+ */
 char *yahoo_codes_to_html(const char *x)
 {
 	size_t x_len;
-	GString *s;
+	xmlnode *html, *cur;
+	GString *cdata = g_string_new(NULL);
 	int i, j;
-	gchar *tmp;
 	gboolean no_more_gt_brackets = FALSE;
 	const char *match;
+	gchar *xmlstr1, *xmlstr2;
 
 	x_len = strlen(x);
-	s = g_string_sized_new(x_len);
+	html = xmlnode_new("html");
 
+	cur = html;
 	for (i = 0; i < x_len; i++) {
 		if ((x[i] == 0x1b) && (x[i+1] == '[')) {
 			/* This escape sequence signifies the beginning of some
@@ -408,90 +526,129 @@ char *yahoo_codes_to_html(const char *x)
 			j = i + 1;
 
 			while (j++ < x_len) {
-				if (x[j] != 'm')
-					continue;
-				else {
-					/* We've reached the end of the formatting code, yay */
-					tmp = g_strndup(x + i + 2, j - i - 2);
-					if (tmp[0] == '#')
-#ifdef USE_CSS_FORMATTING
-						g_string_append_printf(s, "<span style=\"color: %s\">", tmp);
-#else
-						g_string_append_printf(s, "<font color=\"%s\">", tmp);
-#endif /* !USE_CSS_FORMATTING */
-					else if ((match = g_hash_table_lookup(ht, tmp)))
-						g_string_append(s, match);
-					else {
-						purple_debug_error("yahoo",
-							"Unknown ansi code 'ESC[%sm'.\n", tmp);
-						g_free(tmp);
-						break;
-					}
+				gchar *code;
 
-					i = j;
-					g_free(tmp);
-					break;
+				if (x[j] != 'm')
+					/* Keep looking for the end of this sequence */
+					continue;
+
+				/* We've reached the end of the formatting sequence, yay */
+
+				/* Append any character data that belongs in the current node */
+				if (cdata->len > 0) {
+					xmlnode_insert_data(cur, cdata->str, cdata->len);
+					g_string_truncate(cdata, 0);
 				}
+
+				code = g_strndup(x + i + 2, j - i - 2);
+				if (code[0] == '#') {
+#ifdef USE_CSS_FORMATTING
+					gchar *tmp = g_strdup_printf("color: %s", code);
+					cur = xmlnode_new_child(cur, "span");
+					xmlnode_set_attrib(cur, "style", tmp);
+					g_free(tmp);
+#else
+					cur = xmlnode_new_child(cur, "font");
+					xmlnode_set_attrib(cur, "color", code);
+#endif /* !USE_CSS_FORMATTING */
+
+				} else if ((match = g_hash_table_lookup(esc_codes_ht, code))) {
+					gboolean is_closing_tag;
+					gchar *tag_name;
+
+					tag_name = yahoo_markup_get_tag_name(match, &is_closing_tag);
+					yahoo_codes_to_html_add_tag(&cur, match, is_closing_tag, tag_name, FALSE);
+					g_free(tag_name);
+
+				} else {
+					purple_debug_error("yahoo",
+						"Ignoring unknown ansi code 'ESC[%sm'.\n", code);
+				}
+
+				g_free(code);
+				i = j;
+				break;
 			}
 
-		} else if (!no_more_gt_brackets && (x[i] == '<')) {
+		} else if (x[i] == '<' && !no_more_gt_brackets) {
 			/* The start of an HTML tag */
 			j = i;
 
 			while (j++ < x_len) {
-				if (x[j] != '>')
-					if (j == x_len) {
-						g_string_append(s, "&lt;");
-						no_more_gt_brackets = TRUE;
-					}
-					else
+				gchar *tag;
+				gboolean is_closing_tag;
+				gchar *tag_name;
+
+				if (x[j] != '>') {
+					if (j != x_len)
+						/* Keep looking for the end of this tag */
+						/* TODO: Should maybe use purple_markup_find_tag()
+						 * for this... what happens if there is a > inside
+						 * a quoted attribute. */
 						continue;
-				else {
-					tmp = g_strndup(x + i, j - i + 1);
-					g_ascii_strdown(tmp, -1);
 
-					if ((match = g_hash_table_lookup(ht, tmp)))
-						g_string_append(s, match);
-					else if (!strncmp(tmp, "<fade ", 6) ||
-						!strncmp(tmp, "<alt ", 5) ||
-						!strncmp(tmp, "<snd ", 5)) {
-
-						/* remove this if gtkimhtml ever supports any of these */
-						i = j;
-						g_free(tmp);
-						break;
-
-					} else if (!strncmp(tmp, "<font ", 6)) {
-						_font_tags_fix_size(tmp, s);
-					} else {
-						g_string_append(s, "&lt;");
-						g_free(tmp);
-						break;
-					}
-
-					i = j;
-					g_free(tmp);
+					/* This < has no corresponding > */
+					g_string_append_c(cdata, x[i]);
+					no_more_gt_brackets = TRUE;
 					break;
 				}
 
+				tag = g_strndup(x + i, j - i + 1);
+				tag_name = yahoo_markup_get_tag_name(tag, &is_closing_tag);
+
+				match = g_hash_table_lookup(tags_ht, tag_name);
+				if (match == NULL) {
+					/* Unknown tag.  The user probably typed a less-than sign */
+					g_string_append_c(cdata, x[i]);
+					no_more_gt_brackets = TRUE;
+					g_free(tag);
+					g_free(tag_name);
+					break;
+				}
+
+				/* Some tags are in the hash table only because we
+				 * want to ignore them */
+				if (match[0] != '\0') {
+					/* Append any character data that belongs in the current node */
+					if (cdata->len > 0) {
+						xmlnode_insert_data(cur, cdata->str, cdata->len);
+						g_string_truncate(cdata, 0);
+					}
+					if (g_str_equal(tag_name, "font"))
+						/* Font tags are a special case.  We don't
+						 * necessarily want to replace the whole thing--
+						 * we just want to fix the size attribute. */
+						yahoo_codes_to_html_add_tag(&cur, tag, is_closing_tag, tag_name, TRUE);
+					else
+						yahoo_codes_to_html_add_tag(&cur, match, is_closing_tag, tag_name, FALSE);
+				}
+
+				i = j;
+				g_free(tag);
+				g_free(tag_name);
+				break;
 			}
 
 		} else {
-			if (x[i] == '<')
-				g_string_append(s, "&lt;");
-			else if (x[i] == '>')
-				g_string_append(s, "&gt;");
-			else if (x[i] == '&')
-				g_string_append(s, "&amp;");
-			else if (x[i] == '"')
-				g_string_append(s, "&quot;");
-			else
-				g_string_append_c(s, x[i]);
+			g_string_append_c(cdata, x[i]);
 		}
 	}
 
-	purple_debug_misc("yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", s->str);
-	return g_string_free(s, FALSE);
+	/* Append any remaining character data */
+	if (cdata->len > 0)
+		xmlnode_insert_data(cur, cdata->str, cdata->len);
+	g_string_free(cdata, TRUE);
+
+	/* Serialize our HTML */
+	xmlstr1 = xmlnode_to_str(html, NULL);
+	xmlnode_free(html);
+
+	/* Strip off the outter HTML node */
+	xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
+	g_free(xmlstr1);
+
+	purple_debug_misc("yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", xmlstr2);
+	return xmlstr2;
 }
 
 /* borrowed from gtkimhtml */
