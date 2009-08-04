@@ -478,7 +478,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	PurpleAccount *account = purple_connection_get_account(gc);
 	YahooData *yd = gc->proto_data;
 	GHashTable *ht;
-	char *norm_bud = NULL;
+	char *norm_bud;
 	char *temp = NULL;
 	YahooFriend *f = NULL; /* It's your friends. They're going to want you to share your StarBursts. */
 	                       /* But what if you had no friends? */
@@ -486,7 +486,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	PurpleGroup *g;
 	int protocol = 0;
 	int stealth = 0;
-
 
 	ht = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_slist_free);
 
@@ -546,9 +545,11 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 					purple_privacy_deny_add(account, norm_bud, 1);
 				}
 
+				g_free(norm_bud);
+
 				protocol = 0;
 				stealth = 0;
-				norm_bud = NULL;
+				g_free(temp);
 				temp = NULL;
 			}
 			break;
@@ -559,6 +560,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 			yd->current_list15_grp = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 7: /* buddy's s/n */
+			g_free(temp);
 			temp = g_strdup(purple_normalize(account, pair->value));
 			break;
 		case 241: /* another protocol user */
@@ -594,7 +596,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	yahoo_set_status(account, purple_account_get_active_status(account));
 
 	g_hash_table_destroy(ht);
-	g_free(norm_bud);
 	g_free(temp);
 }
 
