@@ -2586,8 +2586,7 @@ static void yahoo_p2p_init_cb(gpointer data, gint source, const gchar *error_mes
 	PurpleAccount *account;
 	YahooData *yd;
 
-	if(!(p2p_data = data))
-		return ;
+	p2p_data = data;
 	yd = p2p_data->gc->proto_data;
 
 	if(error_message != NULL) {
