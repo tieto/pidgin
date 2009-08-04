@@ -342,7 +342,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			file_size = GUINT32_FROM_LE(*(gsize *)(bin + 8));
 
 			file_name = g_convert(bin + 20, MAX_FILE_NAME_LEN, "UTF-8", "UTF-16LE",
-			                      NULL, NULL, &error);
+			                      NULL, NULL, NULL);
 
 			g_free(bin);
 
