@@ -686,17 +686,16 @@ static void fontattr_free(fontattr *f)
 	g_free(f);
 }
 
-static void yahoo_htc_queue_cleanup(GQueue *q)
+static void yahoo_htc_list_cleanup(GSList *l)
 {
-	char *tmp;
-
-	while ((tmp = g_queue_pop_tail(q)))
-		g_free(tmp);
-	g_queue_free(q);
+	while (l != NULL) {
+		g_free(l->data);
+		l = g_slist_delete_link(l, l);
+	}
 }
 
 static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
-				int len, GQueue *colors, GQueue *tags, GQueue *ftattr)
+				int len, GSList **colors, GSList **tags, GQueue *ftattr)
 {
 
 	int m, n, vstart;
@@ -794,7 +793,6 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 			gboolean needendtag = 0;
 			fontattr *f;
 			GString *tmp = g_string_new(NULL);
-			char *colorstr;
 
 			if (!g_queue_is_empty(ftattr)) {
 				while ((f = g_queue_pop_tail(ftattr))) {
@@ -834,10 +832,10 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 							needendtag = 0;
 						}
 
-						colorstr = g_queue_peek_tail(colors);
-						g_string_append(tmp, colorstr ? colorstr : "\033[#000000m");
+						g_string_append(tmp, *colors ? (*colors)->data : "\033[#000000m");
 						g_string_append_printf(dest, "\033[%sm", f->u.color);
-						g_queue_push_tail(colors, g_strdup_printf("\033[%sm", f->u.color));
+						*colors = g_slist_prepend(*colors,
+								g_strdup_printf("\033[%sm", f->u.color));
 						fontattr_free(f);
 						break;
 					}
@@ -848,10 +846,10 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 
 				if (needendtag) {
 					dest->str[dest->len-1] = '>';
-					g_queue_push_tail(tags, g_strdup("</font>"));
+					*tags = g_slist_prepend(*tags, g_strdup("</font>"));
 					g_string_free(tmp, TRUE);
 				} else {
-					g_queue_push_tail(tags, tmp->str);
+					*tags = g_slist_prepend(*tags, tmp->str);
 					g_string_free(tmp, FALSE);
 				}
 			}
@@ -864,7 +862,8 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 
 char *yahoo_html_to_codes(const char *src)
 {
-	GQueue *colors, *tags;
+	GSList *colors = NULL;
+	GSList *tags = NULL;
 	size_t src_len;
 	int i, j;
 	GString *dest;
@@ -872,8 +871,6 @@ char *yahoo_html_to_codes(const char *src)
 	GQueue *ftattr = NULL;
 	gboolean no_more_specials = FALSE;
 
-	colors = g_queue_new();
-	tags = g_queue_new();
 	src_len = strlen(src);
 	dest = g_string_sized_new(src_len);
 
@@ -973,7 +970,7 @@ char *yahoo_html_to_codes(const char *src)
 							}
 						}
 					} else { /* yay we have a font tag */
-						_parse_font_tag(src, dest, &i, &j, src_len, colors, tags, ftattr);
+						_parse_font_tag(src, dest, &i, &j, src_len, &colors, &tags, ftattr);
 					}
 
 					break;
@@ -1007,16 +1004,18 @@ char *yahoo_html_to_codes(const char *src)
 							/* mmm, </body> tags. *BURP* */
 						} else if (!g_ascii_strncasecmp(&src[i+1], "/SPAN", sublen)) {
 							/* </span> tags. dangerously close to </spam> */
-						} else if (!g_ascii_strncasecmp(&src[i+1], "/FONT", sublen) && g_queue_peek_tail(tags)) {
-							char *etag, *cl;
+						} else if (!g_ascii_strncasecmp(&src[i+1], "/FONT", sublen) && tags != NULL) {
+							char *etag;
 
-							etag = g_queue_pop_tail(tags);
+							etag = tags->data;
+							tags = g_slist_delete_link(tags, tags);
 							if (etag) {
 								g_string_append(dest, etag);
 								if (!strcmp(etag, "</font>")) {
-									cl = g_queue_pop_tail(colors);
-									if (cl)
-										g_free(cl);
+									if (colors != NULL) {
+										g_free(colors->data);
+										colors = g_slist_delete_link(colors, colors);
+									}
 								}
 								g_free(etag);
 							}
@@ -1059,8 +1058,8 @@ char *yahoo_html_to_codes(const char *src)
 	purple_debug_misc("yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
 	g_free(esc);
 
-	yahoo_htc_queue_cleanup(colors);
-	yahoo_htc_queue_cleanup(tags);
+	yahoo_htc_list_cleanup(colors);
+	yahoo_htc_list_cleanup(tags);
 
 	return g_string_free(dest, FALSE);
 }
