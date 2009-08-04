@@ -644,6 +644,8 @@ char *yahoo_codes_to_html(const char *x)
 	xmlnode_free(html);
 
 	/* Strip off the outter HTML node */
+	/* This probably isn't necessary, especially if we made the outter HTML
+	 * node an empty span.  But the HTML is simpler this way. */
 	xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
 	g_free(xmlstr1);
 
@@ -656,8 +658,16 @@ char *yahoo_codes_to_html(const char *x)
 #define POINT_SIZE(x) (_point_sizes [MIN ((x > 0 ? x : 1), MAX_FONT_SIZE) - 1])
 static const gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
 
-enum fatype { size, color, face, junk };
-typedef struct {
+enum fatype
+{
+	FATYPE_SIZE,
+	FATYPE_COLOR,
+	FATYPE_FACE,
+	FATYPE_JUNK
+};
+
+typedef struct
+{
 	enum fatype type;
 	union {
 		int size;
@@ -669,9 +679,9 @@ typedef struct {
 
 static void fontattr_free(fontattr *f)
 {
-	if (f->type == color)
+	if (f->type == FATYPE_COLOR)
 		g_free(f->u.color);
-	else if (f->type == face)
+	else if (f->type == FATYPE_FACE)
 		g_free(f->u.face);
 	g_free(f);
 }
@@ -731,7 +741,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						fontattr *f;
 
 						f = g_new(fontattr, 1);
-						f->type = face;
+						f->type = FATYPE_FACE;
 						f->u.face = g_strndup(&src[vstart+1], n-vstart-1);
 						if (!ftattr)
 							ftattr = g_queue_new();
@@ -742,7 +752,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						fontattr *f;
 
 						f = g_new(fontattr, 1);
-						f->type = size;
+						f->type = FATYPE_SIZE;
 						f->u.size = POINT_SIZE(strtol(&src[vstart+1], NULL, 10));
 						if (!ftattr)
 							ftattr = g_queue_new();
@@ -753,7 +763,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						fontattr *f;
 
 						f = g_new(fontattr, 1);
-						f->type = color;
+						f->type = FATYPE_COLOR;
 						f->u.color = g_strndup(&src[vstart+1], n-vstart-1);
 						if (!ftattr)
 							ftattr = g_queue_new();
@@ -764,7 +774,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						fontattr *f;
 
 						f = g_new(fontattr, 1);
-						f->type = junk;
+						f->type = FATYPE_JUNK;
 						f->u.junk = g_strndup(&src[*j+1], n-*j);
 						if (!ftattr)
 							ftattr = g_queue_new();
@@ -789,7 +799,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 			if (!g_queue_is_empty(ftattr)) {
 				while ((f = g_queue_pop_tail(ftattr))) {
 					switch (f->type) {
-					case size:
+					case FATYPE_SIZE:
 						if (!needendtag) {
 							needendtag = 1;
 							g_string_append(dest, "<font ");
@@ -798,7 +808,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						g_string_append_printf(dest, "size=\"%d\" ", f->u.size);
 						fontattr_free(f);
 						break;
-					case face:
+					case FATYPE_FACE:
 						if (!needendtag) {
 							needendtag = 1;
 							g_string_append(dest, "<font ");
@@ -807,7 +817,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						g_string_append_printf(dest, "face=\"%s\" ", f->u.face);
 						fontattr_free(f);
 						break;
-					case junk:
+					case FATYPE_JUNK:
 						if (!needendtag) {
 							needendtag = 1;
 							g_string_append(dest, "<font ");
@@ -817,7 +827,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						fontattr_free(f);
 						break;
 
-					case color:
+					case FATYPE_COLOR:
 						if (needendtag) {
 							g_string_append(tmp, "</font>");
 							dest->str[dest->len-1] = '>';
@@ -850,7 +860,6 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 			break;
 		}
 	}
-
 }
 
 char *yahoo_html_to_codes(const char *src)
