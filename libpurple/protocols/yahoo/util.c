@@ -876,7 +876,7 @@ char *yahoo_html_to_codes(const char *src)
 
 	for (i = 0; i < src_len; i++) {
 
-		if (!no_more_specials && src[i] == '<') {
+		if (src[i] == '<' && !no_more_specials) {
 			j = i;
 
 			while (1) {
@@ -1033,24 +1033,17 @@ char *yahoo_html_to_codes(const char *src)
 			}
 
 		} else {
-			if (((src_len - i) >= 4) && !strncmp(&src[i], "&lt;", 4)) {
-				g_string_append_c(dest, '<');
-				i += 3;
-			} else if (((src_len - i) >= 4) && !strncmp(&src[i], "&gt;", 4)) {
-				g_string_append_c(dest, '>');
-				i += 3;
-			} else if (((src_len - i) >= 5) && !strncmp(&src[i], "&amp;", 5)) {
-				g_string_append_c(dest, '&');
-				i += 4;
-			} else if (((src_len - i) >= 6) && !strncmp(&src[i], "&quot;", 6)) {
-				g_string_append_c(dest, '"');
-				i += 5;
-			} else if (((src_len - i) >= 6) && !strncmp(&src[i], "&apos;", 6)) {
-				g_string_append_c(dest, '\'');
-				i += 5;
-			} else {
+			const char *entity;
+			int length;
+
+			entity = purple_markup_unescape_entity(src + i, &length);
+			if (entity != NULL) {
+				/* src[i] is the start of an HTML entity */
+				g_string_append(dest, entity);
+				i += length - 1;
+			} else
+				/* src[i] is a normal character */
 				g_string_append_c(dest, src[i]);
-			}
 		}
 	}
 
