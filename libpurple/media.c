@@ -157,7 +157,6 @@ static GObjectClass *parent_class = NULL;
 
 enum {
 	S_ERROR,
-	ACCEPTED,
 	CANDIDATES_PREPARED,
 	CODECS_CHANGED,
 	NEW_CANDIDATE,
@@ -332,10 +331,6 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__STRING,
 					 G_TYPE_NONE, 1, G_TYPE_STRING);
-	purple_media_signals[ACCEPTED] = g_signal_new("accepted", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 purple_smarshal_VOID__STRING_STRING,
-					 G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 	purple_media_signals[CANDIDATES_PREPARED] = g_signal_new("candidates-prepared", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__STRING_STRING,
@@ -2155,9 +2150,6 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 					stream->session->type), NULL);
 			stream->accepted = TRUE;
 		}
-
-		g_signal_emit(media, purple_media_signals[ACCEPTED],
-				0, NULL, NULL);
 	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_MUTE ||
 			type == PURPLE_MEDIA_INFO_UNMUTE)) {
 		GList *sessions;

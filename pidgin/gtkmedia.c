@@ -501,17 +501,6 @@ pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmed
 }
 
 static void
-pidgin_media_accepted_cb(PurpleMedia *media, const gchar *session_id,
-		const gchar *participant, PidginMedia *gtkmedia)
-{
-	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
-	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
-	gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
-			0, _("Call in progress."));
-	gtk_widget_show(GTK_WIDGET(gtkmedia));
-}
-
-static void
 pidgin_media_accept_cb(PurpleMedia *media, int index)
 {
 	purple_media_stream_info(media, PURPLE_MEDIA_INFO_ACCEPT,
@@ -843,6 +832,12 @@ pidgin_media_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 	if (type == PURPLE_MEDIA_INFO_REJECT) {
 		pidgin_media_emit_message(gtkmedia,
 				_("You have rejected the call."));
+	} else if (type == PURPLE_MEDIA_INFO_ACCEPT) {
+		pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
+		pidgin_media_emit_message(gtkmedia, _("Call in progress."));
+		gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
+				0, _("Call in progress."));
+		gtk_widget_show(GTK_WIDGET(gtkmedia));
 	}
 }
 
@@ -869,8 +864,6 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 
 			g_signal_connect(G_OBJECT(media->priv->media), "error",
 				G_CALLBACK(pidgin_media_error_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "accepted",
-				G_CALLBACK(pidgin_media_accepted_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "state-changed",
 				G_CALLBACK(pidgin_media_state_changed_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "stream-info",
