@@ -230,6 +230,7 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
 
 	if (manager->priv->pipeline == NULL) {
+		FsElementAddedNotifier *notifier;
 		gchar *filename;
 		GError *err = NULL;
 		GKeyFile *keyfile;
@@ -248,15 +249,8 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 		filename = g_build_filename(purple_user_dir(),
 				"fs-element.conf", NULL);
 		keyfile = g_key_file_new();
-		if (g_key_file_load_from_file(keyfile, filename,
+		if (!g_key_file_load_from_file(keyfile, filename,
 				G_KEY_FILE_NONE, &err)) {
-			FsElementAddedNotifier *notifier =
-					fs_element_added_notifier_new();
-			fs_element_added_notifier_add(notifier,
-					GST_BIN(manager->priv->pipeline));
-			fs_element_added_notifier_set_properties_from_keyfile(
-					notifier, keyfile);
-		} else {
 			if (err->code == 4)
 				purple_debug_info("mediamanager",
 						"Couldn't read "
@@ -268,9 +262,21 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 						"fs-element.conf: %s\n",
 						err->message);
 			g_error_free(err);
-			g_key_file_free(keyfile);
 		}
 		g_free(filename);
+
+		/* Hack to make alsasrc stop messing up audio timestamps */
+		if (!g_key_file_has_key(keyfile,
+				"alsasrc", "slave-method", NULL)) {
+			g_key_file_set_integer(keyfile,
+					"alsasrc", "slave-method", 2);
+		}
+
+		notifier = fs_element_added_notifier_new();
+		fs_element_added_notifier_add(notifier,
+				GST_BIN(manager->priv->pipeline));
+		fs_element_added_notifier_set_properties_from_keyfile(
+				notifier, keyfile);
 
 		gst_element_set_state(manager->priv->pipeline,
 				GST_STATE_PLAYING);
