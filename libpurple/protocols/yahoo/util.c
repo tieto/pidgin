@@ -811,7 +811,6 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						}
 
 						g_string_append_printf(dest, "size=\"%d\" ", f->u.size);
-						fontattr_free(f);
 						break;
 					case FATYPE_FACE:
 						if (!needendtag) {
@@ -820,7 +819,6 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						}
 
 						g_string_append_printf(dest, "face=\"%s\" ", f->u.face);
-						fontattr_free(f);
 						break;
 					case FATYPE_JUNK:
 						if (!needendtag) {
@@ -829,7 +827,6 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						}
 
 						g_string_append(dest, f->u.junk);
-						fontattr_free(f);
 						break;
 
 					case FATYPE_COLOR:
@@ -843,9 +840,9 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						g_string_append_printf(dest, "\033[%sm", f->u.color);
 						*colors = g_slist_prepend(*colors,
 								g_strdup_printf("\033[%sm", f->u.color));
-						fontattr_free(f);
 						break;
 					}
+					fontattr_free(f);
 				}
 
 				g_queue_free(ftattr);
