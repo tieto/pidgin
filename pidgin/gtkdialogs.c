@@ -471,7 +471,11 @@ void pidgin_dialogs_about()
 				"http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"));
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">Help via e-mail:</FONT>"
 				" <A HREF=\"mailto:support@pidgin.im\">support@pidgin.im</A>"
-				"<BR/><BR/>"));
+				" (This is a"
+				" <A HREF=\"http://pidgin.im/cgi-bin/mailman/listinfo/support\">"
+				"mailing list</A>, and messages sent here are"
+				" <A HREF=\"http://pidgin.im/pipermail/support/\">publicly"
+				" archived!</A>)<BR/><BR/>"));
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC Channel:</FONT> "
 				"#pidgin on irc.freenode.net<BR><BR>"));
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">XMPP MUC:</FONT> "
