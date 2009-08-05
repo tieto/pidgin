@@ -39,6 +39,7 @@
 #ifdef USE_VV
 
 #include <gst/farsight/fs-conference-iface.h>
+#include <gst/farsight/fs-element-added-notifier.h>
 #include <gst/interfaces/xoverlay.h>
 
 /** @copydoc _PurpleMediaManagerPrivate */
@@ -229,6 +230,9 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
 
 	if (manager->priv->pipeline == NULL) {
+		gchar *filename;
+		GError *err = NULL;
+		GKeyFile *keyfile;
 		GstBus *bus;
 		manager->priv->pipeline = gst_pipeline_new(NULL);
 
@@ -240,6 +244,33 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 		gst_bus_set_sync_handler(bus,
 				gst_bus_sync_signal_handler, NULL);
 		gst_object_unref(bus);
+
+		filename = g_build_filename(purple_user_dir(),
+				"fs-element.conf", NULL);
+		keyfile = g_key_file_new();
+		if (g_key_file_load_from_file(keyfile, filename,
+				G_KEY_FILE_NONE, &err)) {
+			FsElementAddedNotifier *notifier =
+					fs_element_added_notifier_new();
+			fs_element_added_notifier_add(notifier,
+					GST_BIN(manager->priv->pipeline));
+			fs_element_added_notifier_set_properties_from_keyfile(
+					notifier, keyfile);
+		} else {
+			if (err->code == 4)
+				purple_debug_info("mediamanager",
+						"Couldn't read "
+						"fs-element.conf: %s\n",
+						err->message);
+			else
+				purple_debug_error("mediamanager",
+						"Error reading "
+						"fs-element.conf: %s\n",
+						err->message);
+			g_error_free(err);
+			g_key_file_free(keyfile);
+		}
+		g_free(filename);
 
 		gst_element_set_state(manager->priv->pipeline,
 				GST_STATE_PLAYING);
