@@ -580,11 +580,19 @@ char *yahoo_codes_to_html(const char *x)
 				gchar *tag_name;
 
 				if (x[j] != '>') {
+					if (x[j] == '"') {
+						/* We're inside a quoted attribute value. Skip to the end */
+						j++;
+						while (j != x_len && x[j] != '"')
+							j++;
+					} else if (x[j] == '\'') {
+						/* We're inside a quoted attribute value. Skip to the end */
+						j++;
+						while (j != x_len && x[j] != '\'')
+							j++;
+					}
 					if (j != x_len)
 						/* Keep looking for the end of this tag */
-						/* TODO: Should maybe use purple_markup_find_tag()
-						 * for this... what happens if there is a > inside
-						 * a quoted attribute. */
 						continue;
 
 					/* This < has no corresponding > */
@@ -697,7 +705,6 @@ static void yahoo_htc_list_cleanup(GSList *l)
 static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 				int len, GSList **colors, GSList **tags, GQueue *ftattr)
 {
-
 	int m, n, vstart;
 	gboolean quote = FALSE, done = FALSE;
 
