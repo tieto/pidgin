@@ -1193,6 +1193,22 @@ static void jabber_buddy_info_resource_free(gpointer data)
 	g_free(jbri);
 }
 
+static guint jbir_hash(gconstpointer v)
+{
+	if (v)
+		return g_str_hash(v);
+	else
+		return 0;
+}
+
+static gboolean jbir_equal(gconstpointer v1, gconstpointer v2)
+{
+	const gchar *resource_1 = v1;
+	const gchar *resource_2 = v2;
+
+	return purple_strequal(resource_1, resource_2);
+}
+
 static void jabber_version_parse(JabberStream *js, const char *from,
                                  JabberIqType type, const char *id,
                                  xmlnode *packet, gpointer data)
@@ -1464,9 +1480,7 @@ dispatch_queries_for_resource(JabberStream *js, JabberBuddyInfo *jbi,
 	char *full_jid = NULL;
 	const char *to;
 
-	g_return_if_fail(jbr->name != NULL);
-
-	if (is_bare_jid) {
+	if (is_bare_jid && jbr->name) {
 		full_jid = g_strdup_printf("%s/%s", jid, jbr->name);
 		to = full_jid;
 	} else
@@ -1535,7 +1549,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 	jbi->jid = g_strdup(jid);
 	jbi->js = js;
 	jbi->jb = jb;
-	jbi->resources = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, jabber_buddy_info_resource_free);
+	jbi->resources = g_hash_table_new_full(jbir_hash, jbir_equal, g_free, jabber_buddy_info_resource_free);
 	jbi->user_info = purple_notify_user_info_new();
 
 	iq = jabber_iq_new(js, JABBER_IQ_GET);
