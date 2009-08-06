@@ -351,13 +351,23 @@ static void
 msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	MsnListId list)
 {
-	char *passport = xmlnode_get_data(xmlnode_get_child(member, node));
-	char *type = xmlnode_get_data(xmlnode_get_child(member, "Type"));
-	char *member_id = xmlnode_get_data(xmlnode_get_child(member, "MembershipId"));
-	MsnUser *user = msn_userlist_find_add_user(session->userlist, passport, NULL);
+	char *passport;
+	char *type;
+	char *member_id;
+	MsnUser *user;
 	xmlnode *annotation;
 	guint nid = MSN_NETWORK_UNKNOWN;
 	char *invite = NULL;
+
+	passport = xmlnode_get_data(xmlnode_get_child(member, node));
+	if (!purple_email_is_valid(passport)) {
+		g_free(passport);
+		return;
+	}
+
+	type = xmlnode_get_data(xmlnode_get_child(member, "Type"));
+	member_id = xmlnode_get_data(xmlnode_get_child(member, "MembershipId"));
+	user = msn_userlist_find_add_user(session->userlist, passport, NULL);
 
 	for (annotation = xmlnode_get_child(member, "Annotations/Annotation");
 	     annotation;
@@ -744,6 +754,9 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 
 		/* Couldn't find anything */
 		if (passport == NULL)
+			continue;
+
+		if (!purple_email_is_valid(passport))
 			continue;
 
 		if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
