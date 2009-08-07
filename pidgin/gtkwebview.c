@@ -109,7 +109,7 @@ replace_img_id_with_src (GtkWebView *view, const char* html)
 		if (!cur)
 			cur = strstr (img, ">");
 
-		if (!cur) { /*oops, invalid html */
+		if (!cur) { /* invalid html? */
 			g_string_printf (buffer, "%s", html);
 			break;
 		}
@@ -119,8 +119,12 @@ replace_img_id_with_src (GtkWebView *view, const char* html)
 			break;
 		}
 
-		/* now I _kinda_ know that it has an id=, and does not have a src= */
-		/* todo: take care of src= and id= appearing in strings? */
+		/*
+		 * if this is valid HTML, then I can be sure that it
+		 * has an id= and does not have an src=, since
+		 * '=' cannot appear in parameters.
+		 */
+
 		id = strstr (img, "id=") + 3; 
 
 		/* *id can't be \0, since a ">" appears after this */
@@ -134,6 +138,7 @@ replace_img_id_with_src (GtkWebView *view, const char* html)
 
 		g_string_append_printf (buffer, " src='file://%s' ", get_image_filename_from_id (view, nid));
 	}
+
 	return g_string_free (buffer, FALSE);
 }
 
@@ -153,9 +158,9 @@ gtk_webview_class_init (GtkWebViewClass *klass, gpointer userdata)
 
 static gboolean
 webview_link_clicked (WebKitWebView *view,
-                     WebKitWebFrame *frame,
-                     WebKitNetworkRequest *request,
-                     WebKitWebNavigationAction *navigation_action,
+		      WebKitWebFrame *frame,
+		      WebKitNetworkRequest *request,
+		      WebKitWebNavigationAction *navigation_action,
 		      WebKitWebPolicyDecision *policy_decision)
 {
 	const gchar *uri;
@@ -209,7 +214,6 @@ gtk_webview_load_html_string_with_imgstore (GtkWebView* view, const char* html)
 	g_free (html_imged);
 }
 
-/* taken from sean's webkit plugin */
 char *gtk_webview_quote_js_string(const char *text)
 {
         GString *str = g_string_new("\"");
@@ -275,7 +279,7 @@ gboolean gtk_webview_is_empty (GtkWebView *view)
 GType gtk_webview_get_type ()
 {
 	static GType mview_type = 0;
-	if (!mview_type) {
+	if (G_UNLIKELY (mview_type == 0)) {
 		static const GTypeInfo mview_info = {
 			sizeof (GtkWebViewClass),
 			NULL,
