@@ -5437,6 +5437,7 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 {
 	PurpleConversationUiOps *ui_ops = pidgin_conversations_get_conv_ui_ops();
 	gboolean hide = FALSE;
+	guint timer;
 
 	/* create hidden conv if hide_new pref is always */
 	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always") == 0)
@@ -5459,6 +5460,13 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 		ui_ops->create_conversation = pidgin_conv_new_hidden;
 		purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
 		ui_ops->create_conversation = pidgin_conv_new;
+	}
+
+	/* Somebody wants to keep this conversation around, so don't time it out */
+	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
+	if (timer) {
+		purple_timeout_remove(timer);
+		purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(0));
 	}
 }
 

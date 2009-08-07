@@ -182,6 +182,9 @@ version 2.6.0 (??/??/2009):
 	* Fix a crash when closing the New Mail dialog if an account with new
 	  mail was previously disconnected while the dialog was open.
 	* Fix incorrect unread message counts for the new mail notifications.
+	* Do not lose unread messages with a hidden conversation window when
+	  new IM conversations are hidden and "Close IMs immediately when the tab
+	  is closed" is unset.
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
