@@ -3326,6 +3326,62 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 }
 
 static void
+regenerate_media_items(PidginWindow *win)
+{
+#ifdef USE_VV
+	PurpleAccount *account;
+	PurpleConversation *conv;
+
+	conv = pidgin_conv_window_get_active_conversation(win);
+
+	if (conv == NULL) {
+		purple_debug_error("gtkconv", "couldn't get active conversation"
+				" when regenerating media items\n");
+		return;
+	}
+
+	account = purple_conversation_get_account(conv);
+
+	if (account == NULL) {
+		purple_debug_error("gtkconv", "couldn't get account when"
+				" regenerating media items\n");
+		return;
+	}
+
+	/*
+	 * Check if account support voice and/or calls, and
+	 * if the current buddy	supports it.
+	 */
+	if (account != NULL && purple_conversation_get_type(conv)
+			== PURPLE_CONV_TYPE_IM) {
+		PurpleMediaCaps caps =
+				purple_prpl_get_media_caps(account,
+				purple_conversation_get_name(conv));
+
+		gtk_widget_set_sensitive(win->audio_call,
+				caps & PURPLE_MEDIA_CAPS_AUDIO
+				? TRUE : FALSE);
+		gtk_widget_set_sensitive(win->video_call,
+				caps & PURPLE_MEDIA_CAPS_VIDEO
+				? TRUE : FALSE);
+		gtk_widget_set_sensitive(win->audio_video_call, 
+				caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
+				? TRUE : FALSE);
+	} else if (purple_conversation_get_type(conv)
+			== PURPLE_CONV_TYPE_CHAT) {
+		/* for now, don't care about chats... */
+		gtk_widget_set_sensitive(win->audio_call, FALSE);
+		gtk_widget_set_sensitive(win->video_call, FALSE);
+		gtk_widget_set_sensitive(win->audio_video_call, FALSE);
+	} else {
+		gtk_widget_set_sensitive(win->audio_call, FALSE);
+		gtk_widget_set_sensitive(win->video_call, FALSE);
+		gtk_widget_set_sensitive(win->audio_video_call, FALSE);
+	}							
+#endif
+}
+
+static void
 regenerate_options_items(PidginWindow *win)
 {
 	GtkWidget *menu;
@@ -3410,6 +3466,7 @@ regenerate_plugins_items(PidginWindow *win)
 static void menubar_activated(GtkWidget *item, gpointer data)
 {
 	PidginWindow *win = data;
+	regenerate_media_items(win);
 	regenerate_options_items(win);
 	regenerate_plugins_items(win);
 
@@ -6484,36 +6541,6 @@ gray_stuff_out(PidginConversation *gtkconv)
 			buttons |= GTK_IMHTML_CUSTOM_SMILEY;
 		else
 			buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;
-
-#ifdef USE_VV
-		/* check if account support voice calls, and if the current buddy
-			supports it */
-		if (account != NULL && purple_conversation_get_type(conv)
-					== PURPLE_CONV_TYPE_IM) {
-			PurpleMediaCaps caps =
-					purple_prpl_get_media_caps(account,
-					purple_conversation_get_name(conv));
-
-			gtk_widget_set_sensitive(win->audio_call,
-					caps & PURPLE_MEDIA_CAPS_AUDIO
-					? TRUE : FALSE);
-			gtk_widget_set_sensitive(win->video_call,
-					caps & PURPLE_MEDIA_CAPS_VIDEO
-					? TRUE : FALSE);
-			gtk_widget_set_sensitive(win->audio_video_call, 
-					caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
-					? TRUE : FALSE);
-		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-			/* for now, don't care about chats... */
-			gtk_widget_set_sensitive(win->audio_call, FALSE);
-			gtk_widget_set_sensitive(win->video_call, FALSE);
-			gtk_widget_set_sensitive(win->audio_video_call, FALSE);
-		} else {
-			gtk_widget_set_sensitive(win->audio_call, FALSE);
-			gtk_widget_set_sensitive(win->video_call, FALSE);
-			gtk_widget_set_sensitive(win->audio_video_call, FALSE);
-		}							
-#endif
 		
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
 		if (account != NULL)
