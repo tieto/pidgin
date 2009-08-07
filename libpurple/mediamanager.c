@@ -399,15 +399,19 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 	GstElement *parent = GST_ELEMENT_PARENT(pad);
 	GstIterator *iter;
 	GstPad *remaining_pad;
+	GstIteratorResult result;
 
 	gst_element_release_request_pad(GST_ELEMENT_PARENT(pad), pad);
-	iter = gst_element_iterate_pads(parent);
+	iter = gst_element_iterate_src_pads(parent);
 
-	if (gst_iterator_next(iter, (gpointer)&remaining_pad)
-			== GST_ITERATOR_DONE) {
+	result = gst_iterator_next(iter, (gpointer)&remaining_pad);
+
+	if (result == GST_ITERATOR_DONE) {
 		gst_element_set_locked_state(parent, TRUE);
 		gst_element_set_state(parent, GST_STATE_NULL);
 		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(parent)), parent);
+	} else if (result == GST_ITERATOR_OK) {
+		gst_object_unref(remaining_pad);
 	}
 
 	gst_iterator_free(iter);
