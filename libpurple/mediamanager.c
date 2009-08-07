@@ -157,6 +157,12 @@ purple_media_manager_init (PurpleMediaManager *media)
 	media->priv = PURPLE_MEDIA_MANAGER_GET_PRIVATE(media);
 	media->priv->medias = NULL;
 	media->priv->next_output_window_id = 1;
+
+	purple_prefs_add_none("/purple/media");
+	purple_prefs_add_none("/purple/media/audio");
+	purple_prefs_add_none("/purple/media/audio/volume");
+	purple_prefs_add_int("/purple/media/audio/volume/input", 10);
+	purple_prefs_add_int("/purple/media/audio/volume/output", 10);
 }
 
 static void
