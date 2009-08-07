@@ -274,6 +274,10 @@ purple_media_info_type_get_type()
 					"PURPLE_MEDIA_INFO_MUTE", "mute" },
 			{ PURPLE_MEDIA_INFO_UNMUTE,
 					"PURPLE_MEDIA_INFO_UNMUTE", "unmute" },
+			{ PURPLE_MEDIA_INFO_PAUSE,
+					"PURPLE_MEDIA_INFO_PAUSE", "pause" },
+			{ PURPLE_MEDIA_INFO_UNPAUSE,
+					"PURPLE_MEDIA_INFO_UNPAUSE", "unpause" },
 			{ PURPLE_MEDIA_INFO_HOLD,
 					"PURPLE_MEDIA_INFO_HOLD", "hold" },
 			{ PURPLE_MEDIA_INFO_UNHOLD,
@@ -2256,6 +2260,21 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 						priv->confbin), name);
 				g_free(name);
 				g_object_set(volume, "mute", active, NULL);
+			}
+		}
+	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_PAUSE ||
+			type == PURPLE_MEDIA_INFO_UNPAUSE)) {
+		gboolean active = (type == PURPLE_MEDIA_INFO_PAUSE);
+		GList *streams = purple_media_get_streams(media,
+				session_id, participant);
+		for (; streams; streams = g_list_delete_link(streams, streams)) {
+			PurpleMediaStream *stream = streams->data;
+			if (stream->session->type & PURPLE_MEDIA_SEND_VIDEO) {
+				g_object_set(stream->stream, "direction",
+						purple_media_to_fs_stream_direction(
+						stream->session->type & ((active) ?
+						~PURPLE_MEDIA_SEND_VIDEO :
+						PURPLE_MEDIA_VIDEO)), NULL);
 			}
 		}
 	}

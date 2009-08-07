@@ -89,6 +89,7 @@ struct _PidginMediaPrivate
 	GtkWidget *statusbar;
 
 	GtkWidget *mute;
+	GtkWidget *pause;
 
 	GtkWidget *send_progress;
 	GtkWidget *recv_progress;
@@ -98,6 +99,7 @@ struct _PidginMediaPrivate
 	GtkWidget *display;
 	GtkWidget *send_widget;
 	GtkWidget *recv_widget;
+	GtkWidget *button_widget;
 	GtkWidget *local_video;
 	GtkWidget *remote_video;
 
@@ -189,6 +191,15 @@ pidgin_media_mute_toggled(GtkToggleButton *toggle, PidginMedia *media)
 	purple_media_stream_info(media->priv->media,
 			gtk_toggle_button_get_active(toggle) ?
 			PURPLE_MEDIA_INFO_MUTE : PURPLE_MEDIA_INFO_UNMUTE,
+			NULL, NULL, TRUE);
+}
+
+static void
+pidgin_media_pause_toggled(GtkToggleButton *toggle, PidginMedia *media)
+{
+	purple_media_stream_info(media->priv->media,
+			gtk_toggle_button_get_active(toggle) ?
+			PURPLE_MEDIA_INFO_PAUSE : PURPLE_MEDIA_INFO_UNPAUSE,
 			NULL, NULL, TRUE);
 }
 
@@ -595,7 +606,7 @@ pidgin_media_add_audio_widget(PidginMedia *gtkmedia,
 static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *sid)
 {
-	GtkWidget *send_widget = NULL, *recv_widget = NULL;
+	GtkWidget *send_widget = NULL, *recv_widget = NULL, *button_widget = NULL;
 	PurpleMediaSessionType type =
 			purple_media_get_session_type(media, sid);
 
@@ -614,9 +625,15 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		send_widget = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display),
 				send_widget, TRUE, TRUE, 0);
+		button_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_box_pack_end(GTK_BOX(send_widget), button_widget,
+				FALSE, FALSE, 0);
+		gtk_widget_show(GTK_WIDGET(button_widget));
 		gtk_widget_show(send_widget);
-	} else
+	} else {
 		send_widget = gtkmedia->priv->send_widget;
+		button_widget = gtkmedia->priv->button_widget;
+	}
 
 	if (type & PURPLE_MEDIA_RECV_VIDEO) {
 		PidginMediaRealizeData *data;
@@ -669,6 +686,15 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_widget_show(local_video);
 		gtk_widget_show(aspect);
 
+		gtkmedia->priv->pause =
+				gtk_toggle_button_new_with_mnemonic(_("_Pause"));
+		g_signal_connect(gtkmedia->priv->pause, "toggled",
+				G_CALLBACK(pidgin_media_pause_toggled),
+				gtkmedia);
+		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->pause,
+				FALSE, FALSE, 0);
+		gtk_widget_show(gtkmedia->priv->pause);
+
 		gtkmedia->priv->local_video = local_video;
 	}
 
@@ -678,25 +704,18 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 				PURPLE_MEDIA_RECV_AUDIO), FALSE, FALSE, 0);
 	}
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
-		GtkWidget *hbox;
-
-		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-		gtk_box_pack_end(GTK_BOX(send_widget), hbox, FALSE, FALSE, 0);
 		gtkmedia->priv->mute =
 				gtk_toggle_button_new_with_mnemonic("_Mute");
 		g_signal_connect(gtkmedia->priv->mute, "toggled",
 				G_CALLBACK(pidgin_media_mute_toggled),
 				gtkmedia);
-		gtk_box_pack_end(GTK_BOX(hbox), gtkmedia->priv->mute,
+		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->mute,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->mute);
-		gtk_widget_show(GTK_WIDGET(hbox));
 
 		gtk_box_pack_end(GTK_BOX(send_widget),
 				pidgin_media_add_audio_widget(gtkmedia,
 				PURPLE_MEDIA_SEND_AUDIO), FALSE, FALSE, 0);
-
-		gtk_widget_show(gtkmedia->priv->mute);
 	}
 
 
@@ -711,6 +730,8 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtkmedia->priv->send_widget = send_widget;
 	if (recv_widget != NULL)
 		gtkmedia->priv->recv_widget = recv_widget;
+	if (button_widget != NULL)
+		gtkmedia->priv->button_widget = button_widget;
 
 	if (purple_media_is_initiator(media, sid, NULL) == FALSE) {
 		if (gtkmedia->priv->timeout_id != 0)
