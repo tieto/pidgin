@@ -605,7 +605,7 @@ void jabber_chat_change_topic(JabberChat *chat, const char *topic)
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 
 	if (topic && *topic)
-		jm->subject = purple_markup_strip_html(topic);
+		jm->subject = g_strdup(topic);
 	else
 		jm->subject = g_strdup("");
 

@@ -4365,7 +4365,11 @@ static void topic_callback(GtkWidget *w, PidginConversation *gtkconv)
 		return;
 	}
 
-	gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), current_topic);
+	if (current_topic)
+		gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), current_topic);
+	else
+		gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), "");
+
 	prpl_info->set_chat_topic(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)),
 			new_topic);
 
