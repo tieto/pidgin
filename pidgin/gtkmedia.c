@@ -82,8 +82,6 @@ struct _PidginMediaPrivate
 {
 	PurpleMedia *media;
 	gchar *screenname;
-	GstElement *send_level;
-	GstElement *recv_level;
 	gulong level_handler_id;
 
 	GtkItemFactory *item_factory;
@@ -130,9 +128,7 @@ static guint pidgin_media_signals[LAST_SIGNAL] = {0};
 enum {
 	PROP_0,
 	PROP_MEDIA,
-	PROP_SCREENNAME,
-	PROP_SEND_LEVEL,
-	PROP_RECV_LEVEL
+	PROP_SCREENNAME
 };
 
 static GType
@@ -183,18 +179,6 @@ pidgin_media_class_init (PidginMediaClass *klass)
 			"The screenname of the user this session is with.",
 			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
-	g_object_class_install_property(gobject_class, PROP_SEND_LEVEL,
-			g_param_spec_object("send-level",
-			"Send level",
-			"The GstElement of this media's send 'level'",
-			GST_TYPE_ELEMENT,
-			G_PARAM_READWRITE));
-	g_object_class_install_property(gobject_class, PROP_RECV_LEVEL,
-			g_param_spec_object("recv-level",
-			"Receive level",
-			"The GstElement of this media's recv 'level'",
-			GST_TYPE_ELEMENT,
-			G_PARAM_READWRITE));
 
 	g_type_class_add_private(klass, sizeof(PidginMediaPrivate));
 }
@@ -382,16 +366,6 @@ pidgin_media_dispose(GObject *media)
 	if (gtkmedia->priv->item_factory) {
 		g_object_unref(gtkmedia->priv->item_factory);
 		gtkmedia->priv->item_factory = NULL;
-	}
-
-	if (gtkmedia->priv->send_level) {
-		gst_object_unref(gtkmedia->priv->send_level);
-		gtkmedia->priv->send_level = NULL;
-	}
-
-	if (gtkmedia->priv->recv_level) {
-		gst_object_unref(gtkmedia->priv->recv_level);
-		gtkmedia->priv->recv_level = NULL;
 	}
 
 	G_OBJECT_CLASS(parent_class)->dispose(media);
@@ -819,18 +793,6 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 				g_free(media->priv->screenname);
 			media->priv->screenname = g_value_dup_string(value);
 			break;
-		case PROP_SEND_LEVEL:
-			if (media->priv->send_level)
-				gst_object_unref(media->priv->send_level);
-			media->priv->send_level = g_value_get_object(value);
-			g_object_ref(media->priv->send_level);
-			break;
-		case PROP_RECV_LEVEL:
-			if (media->priv->recv_level)
-				gst_object_unref(media->priv->recv_level);
-			media->priv->recv_level = g_value_get_object(value);
-			g_object_ref(media->priv->recv_level);
-			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
@@ -851,12 +813,6 @@ pidgin_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 			break;
 		case PROP_SCREENNAME:
 			g_value_set_string(value, media->priv->screenname);
-			break;
-		case PROP_SEND_LEVEL:
-			g_value_set_object(value, media->priv->send_level);
-			break;
-		case PROP_RECV_LEVEL:
-			g_value_set_object(value, media->priv->recv_level);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
