@@ -117,6 +117,8 @@ version 2.6.0 (??/??/2009):
 	* When the GNU IDN library (libidn) is available, it is used for
 	  normalization of Jabber IDs.  When unavailable, internal routines are
 	  used (as in previous versions).
+	* Topics that contain '<' followed by a non-whitespace character can now
+	  be set properly.
 
 	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)
