@@ -65,7 +65,6 @@
 #include <idle.h>
 #include <imgstore.h>
 #include <log.h>
-#include <media-gst.h>
 #include <media.h>
 #include <mediamanager.h>
 #include <mime.h>
