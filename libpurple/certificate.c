@@ -190,13 +190,19 @@ purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer)
 }
 
 gboolean
-purple_certificate_check_signature_chain(GList *chain)
+purple_certificate_check_signature_chain_with_failing(GList *chain,
+                                                      PurpleCertificate **failing)
 {
 	GList *cur;
 	PurpleCertificate *crt, *issuer;
 	gchar *uid;
+	time_t now, activation, expiration;
+	gboolean ret;
 
 	g_return_val_if_fail(chain, FALSE);
+
+	if (failing)
+		*failing = NULL;
 
 	uid = purple_certificate_get_unique_id((PurpleCertificate *) chain->data);
 	purple_debug_info("certificate",
@@ -211,6 +217,8 @@ purple_certificate_check_signature_chain(GList *chain)
 		return TRUE;
 	}
 
+	now = time(NULL);
+
 	/* Load crt with the first certificate */
 	crt = (PurpleCertificate *)(chain->data);
 	/* And start with the second certificate in the chain */
@@ -218,18 +226,43 @@ purple_certificate_check_signature_chain(GList *chain)
 
 		issuer = (PurpleCertificate *)(cur->data);
 
+		uid = purple_certificate_get_unique_id(issuer);
+
+		ret = purple_certificate_get_times(issuer, &activation, &expiration);
+		if (!ret || now < activation || now > expiration) { 
+			if (!ret)
+				purple_debug_error("certificate",
+						"...Failed to get validity times for certificate %s\n"
+						"Chain is INVALID\n", uid);
+			else if (now > expiration)
+				purple_debug_error("certificate",
+						"...Issuer %s expired at %s\nChain is INVALID\n",
+						uid, ctime(&expiration));
+			else
+				purple_debug_error("certificate",
+						"...Not-yet-activated issuer %s will be valid at %s\n"
+						"Chain is INVALID\n", uid, ctime(&activation));
+
+			if (failing)
+				*failing = crt;
+
+			g_free(uid);
+			return FALSE;
+		}
+
 		/* Check the signature for this link */
 		if (! purple_certificate_signed_by(crt, issuer) ) {
-			uid = purple_certificate_get_unique_id(issuer);
 			purple_debug_error("certificate",
 					  "...Bad or missing signature by %s\nChain is INVALID\n",
 					  uid);
 			g_free(uid);
 
+			if (failing)
+				*failing = crt;
+
 			return FALSE;
 		}
 
-		uid = purple_certificate_get_unique_id(issuer);
 		purple_debug_info("certificate",
 				  "...Good signature by %s\n",
 				  uid);
@@ -243,6 +276,12 @@ purple_certificate_check_signature_chain(GList *chain)
 	/* If control reaches this point, the chain is valid */
 	purple_debug_info("certificate", "Chain is VALID\n");
 	return TRUE;
+}
+
+gboolean
+purple_certificate_check_signature_chain(GList *chain)
+{
+	return purple_certificate_check_signature_chain_with_failing(chain, NULL);
 }
 
 PurpleCertificate *
@@ -270,6 +309,16 @@ purple_certificate_export(const gchar *filename, PurpleCertificate *crt)
 	return (scheme->export_certificate)(filename, crt);
 }
 
+static gboolean
+byte_arrays_equal(const GByteArray *array1, const GByteArray *array2)
+{
+	g_return_val_if_fail(array1 != NULL, FALSE);
+	g_return_val_if_fail(array2 != NULL, FALSE);
+
+	return (array1->len == array2->len) &&
+		(0 == memcmp(array1->data, array2->data, array1->len));
+}
+	
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 {
@@ -337,7 +386,6 @@ purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name)
 
 	scheme = crt->scheme;
 
-	/* TODO: Instead of failing, maybe use get_subject_name and strcmp? */
 	g_return_val_if_fail(scheme->check_subject_name, FALSE);
 
 	return (scheme->check_subject_name)(crt, name);
@@ -361,7 +409,6 @@ purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t 
 	/* Throw the request on down to the certscheme */
 	return (scheme->get_times)(crt, activation, expiration);
 }
-
 
 gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
@@ -1270,19 +1317,112 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 	g_byte_array_free(cached_fpr, TRUE);
 }
 
+/*
+ * This is called from two points in x509_tls_cached_unknown_peer below
+ * once we've verified the signature chain is valid. Now we need to verify
+ * the subject name of the certificate.
+ */
+static void
+x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq,
+                                   gboolean had_ca_pool)
+{
+	PurpleCertificatePool *tls_peers;
+	PurpleCertificate *peer_crt;
+	GList *chain = vrq->cert_chain;
+
+	peer_crt = (PurpleCertificate *) chain->data;
+
+	/* Last, check that the hostname matches */
+	if ( ! purple_certificate_check_subject_name(peer_crt,
+						     vrq->subject_name) ) {
+		gchar *sn = purple_certificate_get_subject_name(peer_crt);
+
+		purple_debug_error("certificate/x509/tls_cached",
+				  "Name mismatch: Certificate given for %s "
+				  "has a name of %s\n",
+				  vrq->subject_name, sn);
+
+		if (had_ca_pool) {
+			/* Prompt the user to authenticate the certificate */
+			/* TODO: Provide the user with more guidance about why he is
+			   being prompted */
+			/* vrq will be completed by user_auth */
+			gchar *msg;
+			msg = g_strdup_printf(_("The certificate presented by \"%s\" "
+						"claims to be from \"%s\" instead.  "
+						"This could mean that you are not "
+						"connecting to the service you "
+						"believe you are."),
+					      vrq->subject_name, sn);
+
+			x509_tls_cached_user_auth(vrq, msg);
+			g_free(msg);
+		} else {
+			/* Had no CA pool, so couldn't verify the chain *and*
+			 * the subject name isn't valid.
+			 * I think this is bad enough to warrant a fatal error. It's
+			 * not likely anyway...
+			 */
+			purple_notify_error(NULL, /* TODO: Probably wrong. */
+						_("SSL Certificate Error"),
+						_("Invalid certificate chain"),
+						_("You have no database of root certificates, so "
+						"this certificate cannot be validated."));
+		}
+
+		g_free(sn);
+		return;
+	} /* if (name mismatch) */
+
+	if (!had_ca_pool) {
+		/* The subject name is correct, but we weren't able to verify the
+		 * chain because there was no pool of root CAs found. Prompt the user
+		 * to validate it.
+		 */
+
+		/* vrq will be completed by user_auth */
+		x509_tls_cached_user_auth(vrq,_("You have no database of root "
+						"certificates, so this "
+						"certificate cannot be "
+						"validated."));
+		return;
+	}
+
+	/* If we reach this point, the certificate is good. */
+	/* Look up the local cache and store it there for future use */
+	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,
+						 "tls_peers");
+
+	if (tls_peers) {
+		if (!purple_certificate_pool_store(tls_peers,vrq->subject_name,
+						   peer_crt) ) {
+			purple_debug_error("certificate/x509/tls_cached",
+					   "FAILED to cache peer certificate\n");
+		}
+	} else {
+		purple_debug_error("certificate/x509/tls_cached",
+				   "Unable to locate tls_peers certificate "
+				   "cache.\n");
+	}
+
+	/* Whew! Done! */
+	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_VALID);
+
+}
+
 /* For when we've never communicated with this party before */
 /* TODO: Need ways to specify possibly multiple problems with a cert, or at
-   least  reprioritize them. For example, maybe the signature ought to be
-   checked BEFORE the hostname checking?
-   Stu thinks we should check the signature before the name, so we do now.
-   The above TODO still stands. */
+   least  reprioritize them.
+ */
 static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 {
-	PurpleCertificatePool *ca, *tls_peers;
-	PurpleCertificate *end_crt, *ca_crt, *peer_crt;
+	PurpleCertificatePool *ca;
+	PurpleCertificate *peer_crt;
+	PurpleCertificate *ca_crt, *end_crt;
+	PurpleCertificate *failing_crt;
 	GList *chain = vrq->cert_chain;
-	GList *last;
+	GByteArray *last_fpr, *ca_fpr;
 	gchar *ca_id;
 
 	peer_crt = (PurpleCertificate *) chain->data;
@@ -1309,52 +1449,89 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		return;
 	} /* if (self signed) */
 
-	/* Next, check that the certificate chain is valid */
-	if ( ! purple_certificate_check_signature_chain(chain) ) {
-		/* TODO: Tell the user where the chain broke? */
-		/* TODO: This error will hopelessly confuse any
-		   non-elite user. */
-		gchar *secondary;
-
-		secondary = g_strdup_printf(_("The certificate chain presented"
-					      " for %s is not valid."),
-					    vrq->subject_name);
-
-		/* TODO: Make this error either block the ensuing SSL
-		   connection error until the user dismisses this one, or
-		   stifle it. */
-		purple_notify_error(NULL, /* TODO: Probably wrong. */
-				    _("SSL Certificate Error"),
-				    _("Invalid certificate chain"),
-				    secondary );
-		g_free(secondary);
-
-		/* Okay, we're done here */
-		purple_certificate_verify_complete(vrq,
-						   PURPLE_CERTIFICATE_INVALID);
-		return;
-	} /* if (signature chain not good) */
-
 	/* Next, attempt to verify the last certificate against a CA */
 	ca = purple_certificate_find_pool(x509_tls_cached.scheme_name, "ca");
 
+	/* Next, check that the certificate chain is valid */
+	if (!purple_certificate_check_signature_chain_with_failing(chain,
+				&failing_crt))
+	{
+		gboolean chain_validated = FALSE;
+		/*
+		 * Check if the failing certificate is in the CA store. If it is, then
+		 * consider this fully validated. This works around issues with some
+		 * prominent intermediate CAs whose signature is md5WithRSAEncryption.
+		 * I'm looking at CACert Class 3 here. See #4458 for details.
+		 */
+		if (ca) {
+			gchar *uid = purple_certificate_get_unique_id(failing_crt);
+			PurpleCertificate *ca_crt = purple_certificate_pool_retrieve(ca, uid);
+			if (ca_crt != NULL) {
+				GByteArray *failing_fpr;
+				GByteArray *ca_fpr;
+				failing_fpr = purple_certificate_get_fingerprint_sha1(failing_crt);
+				ca_fpr = purple_certificate_get_fingerprint_sha1(ca_crt);
+				if (byte_arrays_equal(failing_fpr, ca_fpr)) {
+					purple_debug_info("certificate/x509/tls_cached",
+							"Full chain verification failed (probably a bad "
+							"signature algorithm), but found the last "
+							"certificate %s in the CA pool.\n", uid);
+					chain_validated = TRUE;
+				}
+
+				g_byte_array_free(failing_fpr, TRUE);
+				g_byte_array_free(ca_fpr, TRUE);
+			}
+
+			purple_certificate_destroy(ca_crt);
+			g_free(uid);
+		}
+
+		/*
+		 * If we get here, either the cert matched the stuff right above
+		 * or it didn't, in which case we give up and complain to the user.
+		 */
+		if (chain_validated) {
+			x509_tls_cached_check_subject_name(vrq, TRUE);
+		} else {
+			/* TODO: Tell the user where the chain broke? */
+			/* TODO: This error will hopelessly confuse any
+			   non-elite user. */
+			gchar *secondary;
+
+			secondary = g_strdup_printf(_("The certificate chain presented"
+						      " for %s is not valid."),
+						    vrq->subject_name);
+
+			/* TODO: Make this error either block the ensuing SSL
+			   connection error until the user dismisses this one, or
+			   stifle it. */
+			purple_notify_error(NULL, /* TODO: Probably wrong. */
+					    _("SSL Certificate Error"),
+					    _("Invalid certificate chain"),
+					    secondary );
+			g_free(secondary);
+
+			/* Okay, we're done here */
+			purple_certificate_verify_complete(vrq,
+							   PURPLE_CERTIFICATE_INVALID);
+		}
+
+		return;
+	} /* if (signature chain not good) */
+
 	/* If, for whatever reason, there is no Certificate Authority pool
-	   loaded, we will simply present it to the user for checking. */
+	   loaded, we'll verify the subject name and then warn about thsi. */
 	if ( !ca ) {
 		purple_debug_error("certificate/x509/tls_cached",
 				   "No X.509 Certificate Authority pool "
 				   "could be found!\n");
 
-		/* vrq will be completed by user_auth */
-		x509_tls_cached_user_auth(vrq,_("You have no database of root "
-						"certificates, so this "
-						"certificate cannot be "
-						"validated."));
+		x509_tls_cached_check_subject_name(vrq, FALSE);
 		return;
 	}
 
-	last = g_list_last(chain);
-	end_crt = (PurpleCertificate *) last->data;
+	end_crt = g_list_last(chain)->data;
 
 	/* Attempt to look up the last certificate's issuer */
 	ca_id = purple_certificate_get_issuer_unique_id(end_crt);
@@ -1377,8 +1554,26 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 
 	g_free(ca_id);
 
-	/* Check the signature */
-	if ( !purple_certificate_signed_by(end_crt, ca_crt) ) {
+	/*
+	 * Check the fingerprints; if they match, then this certificate *is* one
+	 * of the designated "trusted roots", and we don't need to verify the
+	 * signature. This is good because some of the older roots are self-signed
+	 * with bad hash algorithms that we don't want to allow in any other
+	 * circumstances (one of Verisign's root CAs is self-signed with MD2).
+	 *
+	 * If the fingerprints don't match, we'll fall back to checking the
+	 * signature.
+	 *
+	 * GnuTLS doesn't seem to include the final root in the verification
+	 * list, so this check will never succeed.  NSS *does* include it in
+	 * the list, so here we are.
+	 */
+	last_fpr = purple_certificate_get_fingerprint_sha1(end_crt);
+	ca_fpr   = purple_certificate_get_fingerprint_sha1(ca_crt);
+
+	if ( !byte_arrays_equal(last_fpr, ca_fpr) &&
+			!purple_certificate_signed_by(end_crt, ca_crt) )
+	{
 		/* TODO: If signed_by ever returns a reason, maybe mention
 		   that, too. */
 		/* TODO: Also mention the CA involved. While I could do this
@@ -1403,57 +1598,17 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		/* Signal "bad cert" */
 		purple_certificate_verify_complete(vrq,
 						   PURPLE_CERTIFICATE_INVALID);
+
+		purple_certificate_destroy(ca_crt);
+		g_byte_array_free(ca_fpr, TRUE);
+		g_byte_array_free(last_fpr, TRUE);
 		return;
 	} /* if (CA signature not good) */
 
-	/* Last, check that the hostname matches */
-	if ( ! purple_certificate_check_subject_name(peer_crt,
-						     vrq->subject_name) ) {
-		gchar *sn = purple_certificate_get_subject_name(peer_crt);
-		gchar *msg;
+	g_byte_array_free(ca_fpr, TRUE);
+	g_byte_array_free(last_fpr, TRUE);
 
-		purple_debug_error("certificate/x509/tls_cached",
-				  "Name mismatch: Certificate given for %s "
-				  "has a name of %s\n",
-				  vrq->subject_name, sn);
-
-		/* Prompt the user to authenticate the certificate */
-		/* TODO: Provide the user with more guidance about why he is
-		   being prompted */
-		/* vrq will be completed by user_auth */
-		msg = g_strdup_printf(_("The certificate presented by \"%s\" "
-					"claims to be from \"%s\" instead.  "
-					"This could mean that you are not "
-					"connecting to the service you "
-					"believe you are."),
-				      vrq->subject_name, sn);
-
-		x509_tls_cached_user_auth(vrq,msg);
-
-		g_free(sn);
-		g_free(msg);
-		return;
-	} /* if (name mismatch) */
-
-	/* If we reach this point, the certificate is good. */
-	/* Look up the local cache and store it there for future use */
-	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,
-						 "tls_peers");
-
-	if (tls_peers) {
-		if (!purple_certificate_pool_store(tls_peers,vrq->subject_name,
-						   peer_crt) ) {
-			purple_debug_error("certificate/x509/tls_cached",
-					   "FAILED to cache peer certificate\n");
-		}
-	} else {
-		purple_debug_error("certificate/x509/tls_cached",
-				   "Unable to locate tls_peers certificate "
-				   "cache.\n");
-	}
-
-	/* Whew! Done! */
-	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_VALID);
+	x509_tls_cached_check_subject_name(vrq, TRUE);
 }
 
 static void
@@ -1461,12 +1616,54 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 {
 	const gchar *tls_peers_name = "tls_peers"; /* Name of local cache */
 	PurpleCertificatePool *tls_peers;
+	time_t now, activation, expiration;
+	gboolean ret;
 
 	g_return_if_fail(vrq);
 
 	purple_debug_info("certificate/x509/tls_cached",
 			  "Starting verify for %s\n",
 			  vrq->subject_name);
+
+	/*
+	 * Verify the first certificate (the main one) has been activated and
+	 * isn't expired, i.e. activation < now < expiration.
+	 */
+	now = time(NULL);
+	ret = purple_certificate_get_times(vrq->cert_chain->data, &activation,
+	                                   &expiration);
+	if (!ret || now > expiration || now < activation) {
+		gchar *secondary;
+
+		if (!ret)
+			purple_debug_error("certificate/x509/tls_cached",
+					"Failed to get validity times for certificate %s\n",
+					vrq->subject_name);
+		else if (now > expiration)
+			purple_debug_error("certificate/x509/tls_cached",
+					"Certificate %s expired at %s\n",
+					vrq->subject_name, ctime(&expiration));
+		else
+			purple_debug_error("certificate/x509/tls_cached",
+					"Certificate %s is not yet valid, will be at %s\n",
+					vrq->subject_name, ctime(&activation));
+
+		/* FIXME 2.6.1 */
+		secondary = g_strdup_printf(_("The certificate chain presented"
+					" for %s is not valid."),
+					vrq->subject_name);
+
+		purple_notify_error(NULL, /* TODO: Probably wrong. */
+					_("SSL Certificate Error"),
+					_("Invalid certificate chain"),
+					secondary );
+		g_free(secondary);
+
+		/* Okay, we're done here */
+		purple_certificate_verify_complete(vrq,
+						    PURPLE_CERTIFICATE_INVALID);
+		return;
+	}
 
 	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,tls_peers_name);
 

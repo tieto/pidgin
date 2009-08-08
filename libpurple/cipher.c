@@ -2727,8 +2727,6 @@ purple_ciphers_uninit() {
 
 		cipher = PURPLE_CIPHER(l->data);
 		purple_ciphers_unregister_cipher(cipher);
-
-		ciphers = g_list_remove(ciphers, cipher);
 	}
 
 	g_list_free(ciphers);

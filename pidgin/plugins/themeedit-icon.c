@@ -73,7 +73,10 @@ static const struct options {
 }, chatemblems[] = {
 	{PIDGIN_STOCK_STATUS_IGNORED, N_("Ignored")},
 	{PIDGIN_STOCK_STATUS_FOUNDER, N_("Founder")},
+	/* A user in a chat room who has special privileges. */
 	{PIDGIN_STOCK_STATUS_OPERATOR, N_("Operator")},
+	/* A half operator is someone who has a subset of the privileges
+	   that an operator has. */
 	{PIDGIN_STOCK_STATUS_HALFOP, N_("Half Operator")},
 	{PIDGIN_STOCK_STATUS_VOICE, N_("Voice")},
 	{NULL, NULL}

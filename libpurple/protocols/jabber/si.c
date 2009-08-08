@@ -1348,6 +1348,8 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 			fclose(jsx->fp);
 		}
 
+		purple_debug_info("jabber", "jabber_si_xfer_free(): freeing jsx %p\n", jsx);
+
 		g_free(jsx->stream_id);
 		g_free(jsx->iq_id);
 		/* XXX: free other stuff */
@@ -1355,7 +1357,6 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 		g_free(jsx);
 		xfer->data = NULL;
 
-		purple_debug_info("jabber", "jabber_si_xfer_free(): freeing jsx %p\n", jsx);
 	}
 }
 

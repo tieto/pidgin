@@ -42,15 +42,15 @@ MsnSwitchBoard *
 msn_switchboard_new(MsnSession *session)
 {
 	MsnSwitchBoard *swboard;
-	MsnServConn *servconn;
 
 	g_return_val_if_fail(session != NULL, NULL);
 
 	swboard = g_new0(MsnSwitchBoard, 1);
 
 	swboard->session = session;
-	swboard->servconn = servconn = msn_servconn_new(session, MSN_SERVCONN_SB);
-	swboard->cmdproc = servconn->cmdproc;
+	swboard->servconn = msn_servconn_new(session, MSN_SERVCONN_SB);
+	msn_servconn_set_idle_timeout(swboard->servconn, 60);
+	swboard->cmdproc = swboard->servconn->cmdproc;
 
 	swboard->msg_queue = g_queue_new();
 	swboard->empty = TRUE;

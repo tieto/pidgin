@@ -42,7 +42,7 @@ static YahooFriend *yahoo_friend_new(void)
 
 YahooFriend *yahoo_friend_find(PurpleConnection *gc, const char *name)
 {
-	struct yahoo_data *yd;
+	YahooData *yd;
 	const char *norm;
 
 	g_return_val_if_fail(gc != NULL, NULL);
@@ -57,7 +57,7 @@ YahooFriend *yahoo_friend_find(PurpleConnection *gc, const char *name)
 YahooFriend *yahoo_friend_find_or_new(PurpleConnection *gc, const char *name)
 {
 	YahooFriend *f;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	const char *norm;
 
 	g_return_val_if_fail(gc != NULL, NULL);
@@ -215,7 +215,7 @@ void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt)
 void yahoo_friend_update_presence(PurpleConnection *gc, const char *name,
 		YahooPresenceVisibility presence)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
 	YahooFriend *f;
 	const char *thirtyone, *thirteen;

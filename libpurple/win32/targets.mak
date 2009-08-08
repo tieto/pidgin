@@ -17,6 +17,16 @@ $(PURPLE_VERSION_H): $(PURPLE_VERSION_H).in $(PIDGIN_TREE_TOP)/configure.ac
 	  /^m4_define..purple_minor_version/ {system("sed -e s/@PURPLE_MINOR_VERSION@/"$$5"/ $@ > $@.tmp && mv $@.tmp $@");} \
 	  /^m4_define..purple_micro_version/ {system("sed -e s/@PURPLE_MICRO_VERSION@/"$$5"/ $@ > $@.tmp && mv $@.tmp $@"); exit}' $(PIDGIN_TREE_TOP)/configure.ac
 
+$(PIDGIN_REVISION_RAW_TXT):
+	(cd $(PIDGIN_TREE_TOP) && mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
+	|| rm -f $@
+
+$(PIDGIN_REVISION_H): $(PIDGIN_REVISION_RAW_TXT)
+	if [ -f $< ]; then \
+		sed 's/^\(.\+\)$$/#define REVISION "\1"/' $< > $@; \
+	fi
+	[ -f $@ ] || echo "#define REVISION \"unknown\"" > $@
+
 $(PURPLE_DLL) $(PURPLE_DLL).a: $(PURPLE_VERSION_H)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) libpurple.dll
 
@@ -36,7 +46,7 @@ $(PIDGIN_EXE):
 $(PIDGIN_INSTALL_DIR):
 	mkdir -p $(PIDGIN_INSTALL_DIR)
 
-$(PIDGIN_INSTALL_PERLMOD_DIR):
+$(PIDGIN_INSTALL_PERL_DIR):
 	mkdir -p $(PIDGIN_INSTALL_PERL_DIR)
 
 $(PIDGIN_INSTALL_PLUGINS_DIR):

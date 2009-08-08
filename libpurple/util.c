@@ -1409,6 +1409,12 @@ struct purple_parse_tag {
 	gboolean ignore;
 };
 
+/* NOTE: Do not put `do {} while(0)` around this macro (as this is the method
+         recommended in the GCC docs). It contains 'continue's that should
+         affect the while-loop in purple_markup_html_to_xhtml and doing the
+         above would break that.
+         Also, remember to put braces in constructs that require them for
+         multiple statements when using this macro. */
 #define ALLOW_TAG_ALT(x, y) if(!g_ascii_strncasecmp(c, "<" x " ", strlen("<" x " "))) { \
 						const char *o = c + strlen("<" x); \
 						const char *p = NULL, *q = NULL, *r = NULL; \
@@ -1460,26 +1466,27 @@ struct purple_parse_tag {
 						g_string_free(innards, TRUE); \
 						continue; \
 					} \
-						if(!g_ascii_strncasecmp(c, "<" x, strlen("<" x)) && \
-								(*(c+strlen("<" x)) == '>' || \
-								 !g_ascii_strncasecmp(c+strlen("<" x), "/>", 2))) { \
+					if(!g_ascii_strncasecmp(c, "<" x, strlen("<" x)) && \
+							(*(c+strlen("<" x)) == '>' || \
+							 !g_ascii_strncasecmp(c+strlen("<" x), "/>", 2))) { \
+						if(xhtml) \
+							xhtml = g_string_append(xhtml, "<" y); \
+						c += strlen("<" x); \
+						if(*c != '/') { \
+							struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1); \
+							pt->src_tag = x; \
+							pt->dest_tag = y; \
+							tags = g_list_prepend(tags, pt); \
 							if(xhtml) \
-								xhtml = g_string_append(xhtml, "<" y); \
-							c += strlen("<" x); \
-							if(*c != '/') { \
-								struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1); \
-								pt->src_tag = x; \
-								pt->dest_tag = y; \
-								tags = g_list_prepend(tags, pt); \
-								if(xhtml) \
-									xhtml = g_string_append_c(xhtml, '>'); \
-							} else { \
-								if(xhtml) \
-									xhtml = g_string_append(xhtml, "/>");\
-							} \
-							c = strchr(c, '>') + 1; \
-							continue; \
-						}
+								xhtml = g_string_append_c(xhtml, '>'); \
+						} else { \
+							if(xhtml) \
+								xhtml = g_string_append(xhtml, "/>");\
+						} \
+						c = strchr(c, '>') + 1; \
+						continue; \
+					}
+/* Don't forget to check the note above for ALLOW_TAG_ALT. */
 #define ALLOW_TAG(x) ALLOW_TAG_ALT(x, x)
 void
 purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
@@ -1572,8 +1579,9 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				ALLOW_TAG("h5");
 				ALLOW_TAG("h6");
 				/* we only allow html to start the message */
-				if(c == html)
+				if(c == html) {
 					ALLOW_TAG("html");
+				}
 				ALLOW_TAG_ALT("i", "em");
 				ALLOW_TAG_ALT("italic", "em");
 				ALLOW_TAG("li");

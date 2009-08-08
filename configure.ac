@@ -604,7 +604,7 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 ])
 			fi])
 	fi
-
+        
 
 else # GTK
 	enable_cap=no
@@ -1640,14 +1640,14 @@ dnl #
 dnl # Thanks go to Evolution for the checks.
 dnl #######################################################################
 
-AC_ARG_WITH(with-system-ssl-certs, [AC_HELP_STRING([--with-system-ssl-certs=<dir>], [directory containing system-wide SSL CA certificates])])
+AC_ARG_WITH(system-ssl-certs, [AC_HELP_STRING([--with-system-ssl-certs=<dir>], [directory containing system-wide SSL CA certificates])], [ssl_certificates_dir=$withval])
 
 SSL_CERTIFICATES_DIR=""
-if ! test -z "$with_system_ssl_certs" ; then
-	if ! test -d "$with_system_ssl_certs" ; then
-		AC_MSG_ERROR([$with_system_ssl_certs does not exist, if this is the correct location please make sure that it exists.])
+if ! test -z "$ssl_certificates_dir" ; then
+	if ! test -d "$ssl_certificates_dir" ; then
+		AC_MSG_ERROR([$ssl_certificates_dir does not exist, if this is the correct location please make sure that it exists.])
 	fi
-	SSL_CERTIFICATES_DIR="$with_system_ssl_certs"
+	SSL_CERTIFICATES_DIR="$ssl_certificates_dir"
 fi
 AC_SUBST(SSL_CERTIFICATES_DIR)
 AM_CONDITIONAL(INSTALL_SSL_CERTIFICATES, test "x$SSL_CERTIFICATES_DIR" = "x")
@@ -2044,23 +2044,6 @@ if test "x$enable_nss" != "xno"; then
 
 	AC_SUBST(NSS_CFLAGS)
 	AC_SUBST(NSS_LIBS)
-fi
-
-if test "x$enable_nss" = "xyes"; then
-	AC_MSG_CHECKING(for NSS_SetAlgorithmPolicy)
-	LIBS_save="$LIBS"
-	LIBS="$LIBS $NSS_LIBS"
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $NSS_CFLAGS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <nss.h>
-#include <secmod.h>]],
-                                        [[NSS_SetAlgorithmPolicy(SEC_OID_MD2, 0, 0);]])],
-	               [AC_DEFINE([NEED_NSS_WEAK_ALGORITHMS], 1,
-                                  [Define if your NSS needs weak algorithms activated with NSS_SetAlgorithmPolicy])
-	                AC_MSG_RESULT(yes)],
-	               [AC_MSG_RESULT(no)])
-	CPPFLAGS="$CPPFLAGS_save"
-        LIBS="$LIBS_save"
 fi
 
 AM_CONDITIONAL(USE_NSS, test "x$enable_nss" = "xyes")

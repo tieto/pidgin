@@ -132,6 +132,11 @@ purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 {
 	g_return_if_fail(xfer != NULL);
 
+	if (xfer->status == status)
+		return;
+
+	xfer->status = status;
+
 	if(xfer->type == PURPLE_XFER_SEND) {
 		switch(status) {
 			case PURPLE_XFER_STATUS_ACCEPTED:
@@ -169,8 +174,6 @@ purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 				break;
 		}
 	}
-
-	xfer->status = status;
 }
 
 void purple_xfer_conversation_write(PurpleXfer *xfer, char *message, gboolean is_error)
@@ -949,16 +952,16 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 			const size_t wc = fwrite(buffer, 1, r, xfer->dest_fp);
 			if (wc != r) {
 				purple_debug_error("filetransfer", "Unable to write whole buffer.\n");
-				purple_xfer_cancel_remote(xfer);
+				purple_xfer_cancel_local(xfer);
+				g_free(buffer);
 				return;
 			}
 		} else if(r < 0) {
 			purple_xfer_cancel_remote(xfer);
+			g_free(buffer);
 			return;
 		}
-	}
-
-	if (condition & PURPLE_INPUT_WRITE) {
+	} else if (condition & PURPLE_INPUT_WRITE) {
 		size_t result;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 

@@ -535,7 +535,7 @@ static void silcpurple_running(SilcClient client, void *context)
 			return;
 		}
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-		                             _("Unable to not load SILC key pair"));
+		                             _("Unable to load SILC key pair"));
 		gc->proto_data = NULL;
 		silc_free(sg);
 		return;

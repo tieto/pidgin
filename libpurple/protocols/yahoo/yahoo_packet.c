@@ -285,7 +285,7 @@ void yahoo_packet_dump(guchar *data, int len)
 static void
 yahoo_packet_send_can_write(gpointer data, gint source, PurpleInputCondition cond)
 {
-	struct yahoo_data *yd = data;
+	YahooData *yd = data;
 	int ret, writelen;
 
 	writelen = purple_circ_buffer_get_max_read(yd->txbuf);
@@ -342,7 +342,7 @@ size_t yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
 	return len;
 }
 
-int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
+int yahoo_packet_send(struct yahoo_packet *pkt, YahooData *yd)
 {
 	size_t len;
 	gssize ret;
@@ -382,7 +382,7 @@ int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 	return ret;
 }
 
-int yahoo_packet_send_and_free(struct yahoo_packet *pkt, struct yahoo_data *yd)
+int yahoo_packet_send_and_free(struct yahoo_packet *pkt, YahooData *yd)
 {
 	int ret;
 
@@ -397,7 +397,7 @@ void yahoo_packet_free(struct yahoo_packet *pkt)
 		struct yahoo_pair *pair = pkt->hash->data;
 		g_free(pair->value);
 		g_free(pair);
-		pkt->hash = g_slist_remove(pkt->hash, pair);
+		pkt->hash = g_slist_delete_link(pkt->hash, pkt->hash);
 	}
 	g_free(pkt);
 }

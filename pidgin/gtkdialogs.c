@@ -27,6 +27,7 @@
 
 #include "internal.h"
 #include "pidgin.h"
+#include "package_revision.h"
 
 #include "debug.h"
 #include "notify.h"
@@ -147,10 +148,8 @@ static const struct translator translators[] = {
 	{N_("Bulgarian"),           "bg", "Vladimira Girginova", "missing@here.is"},
 	{N_("Bulgarian"),           "bg", "Vladimir (Kaladan) Petkov", "vpetkov@i-space.org"},
 	{N_("Bengali"),             "bn", "Israt Jahan", "israt@ankur.org.bd"},
-	{N_("Bengali"),             "bn", "INDRANIL DAS GUPTA", "indradg@l2c2.org"},
 	{N_("Bengali"),             "bn", "Jamil Ahmed", "jamil@bengalinux.org"},
 	{N_("Bengali"),             "bn", "Samia Nimatullah", "mailsamia2001@yahoo.com"},
-	{N_("Bengali"),             "bn", "Tisa Nafisa", "tisa_nafisa@yahoo.com"},
 	{N_("Bosnian"),             "bs", "Lejla Hadzialic", "lejlah@gmail.com"},
 	{N_("Catalan"),             "ca", "Josep Puigdemont", "josep.puigdemont@gmail.com"},
 	{N_("Valencian-Catalan"),   "ca@valencia", "Toni Hermoso", "toniher@softcatala.org"},
@@ -171,8 +170,9 @@ static const struct translator translators[] = {
 	{N_("Esperanto"),           "eo", "Stéphane Fillod", "fillods@users.sourceforge.net"},
 	{N_("Spanish"),             "es", "Javier Fernández-Sanguino Peña", "jfs@debian.org"},
 	{N_("Estonian"),            "et", "Ivar Smolin", "okul@linux.ee"},
-	{N_("Euskera(Basque)"),     "eu", "Hizkuntza Politikarako Sailburuordetza", "hizkpol@ej-gv.es"},
+	{N_("Euskera(Basque)"),     "eu", "Mikel Pascual Aldabaldetreku", "mikel.paskual@gmail.com"},
 	{N_("Euskera(Basque)"),     "eu", "Iñaki Larrañaga Murgoitio", "dooteo@zundan.com"},
+	{N_("Euskera(Basque)"),     "eu", "Hizkuntza Politikarako Sailburuordetza", "hizkpol@ej-gv.es"},
 	{N_("Persian"),             "fa", "Elnaz Sarbar", "elnaz@farsiweb.info"},
 	{N_("Persian"),             "fa", "Meelad Zakaria", "meelad@farsiweb.info"},
 	{N_("Persian"),             "fa", "Roozbeh Pournader ", "roozbeh@farsiweb.info"},
@@ -245,6 +245,8 @@ static const struct translator past_translators[] = {
 	{N_("Amharic"),             "am", "Daniel Yacob", NULL},
 	{N_("Arabic"),              "ar", "Mohamed Magdy", "alnokta@yahoo.com"},
 	{N_("Bulgarian"),           "bg", "Hristo Todorov", NULL},
+	{N_("Bengali"),             "bn", "INDRANIL DAS GUPTA", "indradg@l2c2.org"},
+	{N_("Bengali"),             "bn", "Tisa Nafisa", "tisa_nafisa@yahoo.com"},
 	{N_("Catalan"),             "ca", "JM Pérez Cáncer", NULL},
 	{N_("Catalan"),             "ca", "Robert Millan", NULL},
 	{N_("Czech"),               "cs", "Honza Král", NULL},
@@ -446,7 +448,7 @@ void pidgin_dialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR>(libpurple %s)<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version());
+		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR>(libpurple %s)<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
 
 	g_string_append_printf(str,
 		_("%s is a graphical modular messaging client based on "

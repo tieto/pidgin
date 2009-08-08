@@ -157,5 +157,5 @@ SUFFIXES = .c .so
 	$(LIBTOOL) --mode=compile $(CC) -DHAVE_CONFIG_H -I$(top_builddir) $(AM_CPPFLAGS) $(CFLAGS) -c $< -o tmp$@.lo $(PLUGIN_CFLAGS)
 	$(LIBTOOL) --mode=link    $(CC) $(CFLAGS) -o libtmp$@.la -rpath $(plugindir) tmp$@.lo $(LIBS) $(LDFLAGS) -module -avoid-version $(PLUGIN_LIBS)
 	@rm -f tmp$@.lo tmp$@.o libtmp$@.la
-	@cp .libs/libtmp$@.so.so $@
+	@cp .libs/libtmp$@*.so $@
 	@rm -rf .libs/libtmp$@.*

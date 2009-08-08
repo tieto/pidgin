@@ -151,6 +151,7 @@ purple_coreheaders = \
 	theme-manager.h \
 	upnp.h \
 	util.h \
+	valgrind.h \
 	value.h \
 	xmlnode.h \
 	whiteboard.h
@@ -273,7 +274,8 @@ libpurple_la_SOURCES = \
 	$(dbus_sources)
 
 noinst_HEADERS= \
-	internal.h 
+	internal.h \
+	valgrind.h
 
 libpurpleincludedir=$(includedir)/libpurple
 libpurpleinclude_HEADERS = \
@@ -293,6 +295,7 @@ libpurple_la_LIBADD = \
 	$(FARSIGHT_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(GSTINTERFACES_LIBS) \
+	$(IDN_LIBS) \
 	-lm
 
 AM_CPPFLAGS = \
@@ -308,6 +311,7 @@ AM_CPPFLAGS = \
 	$(FARSIGHT_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GSTINTERFACES_CFLAGS) \
+	$(IDN_CFLAGS) \
 	$(NETWORKMANAGER_CFLAGS)
 
 # INSTALL_SSL_CERTIFICATES is true when SSL_CERTIFICATES_DIR is empty.

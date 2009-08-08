@@ -62,14 +62,16 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
 {
 	PurpleAccount *account;
+	PurplePresence *presence;
 	const char *username;
 
 	g_return_if_fail(js->user != NULL);
 
 	account = purple_connection_get_account(js->gc);
 	username = purple_connection_get_display_name(js->gc);
+	presence = purple_account_get_presence(account);
 	if (status == NULL)
-		status = purple_account_get_active_status(account);
+		status = purple_presence_get_active_status(presence);
 
 	if (purple_find_buddy(account, username)) {
 		JabberBuddy *jb = jabber_buddy_find(js, username, TRUE);
@@ -86,14 +88,23 @@ void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
 				state == JABBER_BUDDY_STATE_UNKNOWN) {
 			jabber_buddy_remove_resource(jb, js->user->resource);
 		} else {
-			jabber_buddy_track_resource(jb, js->user->resource, priority,
-			                            state, msg);
+			jbr = jabber_buddy_track_resource(jb, js->user->resource, priority,
+					state, msg);
+			jbr->idle = purple_presence_is_idle(presence) ?
+					purple_presence_get_idle_time(presence) : 0;
 		}
 
 		if ((jbr = jabber_buddy_find_resource(jb, NULL))) {
-			purple_prpl_got_user_status(account, username, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
+			purple_prpl_got_user_status(account, username,
+					jabber_buddy_state_get_status_id(jbr->state),
+					"priority", jbr->priority,
+					jbr->status ? "message" : NULL, jbr->status,
+					NULL);
+			purple_prpl_got_user_idle(account, username, jbr->idle, jbr->idle);
 		} else {
-			purple_prpl_got_user_status(account, username, "offline", msg ? "message" : NULL, msg, NULL);
+			purple_prpl_got_user_status(account, username, "offline",
+					msg ? "message" : NULL, msg,
+					NULL);
 		}
 		g_free(msg);
 	}
@@ -313,11 +324,11 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	video_enabled = jabber_video_enabled(js, NULL /* unused */);
 
 	if (audio_enabled && video_enabled)
-		xmlnode_set_attrib(c, "ext", "voice-v1 video-v1");
+		xmlnode_set_attrib(c, "ext", "voice-v1 camera-v1 video-v1");
 	else if (audio_enabled)
 		xmlnode_set_attrib(c, "ext", "voice-v1");
 	else if (video_enabled)
-		xmlnode_set_attrib(c, "ext", "video-v1");
+		xmlnode_set_attrib(c, "ext", "camera-v1 video-v1");
 #endif
 
 	return presence;

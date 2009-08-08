@@ -132,15 +132,19 @@ static void jabber_bind_result_cb(JabberStream *js, const char *from,
 		xmlnode *jid;
 		char *full_jid;
 		if((jid = xmlnode_get_child(bind, "jid")) && (full_jid = xmlnode_get_data(jid))) {
-			JabberBuddy *my_jb = NULL;
 			jabber_id_free(js->user);
-			if(!(js->user = jabber_id_new(full_jid))) {
+
+			js->user = jabber_id_new(full_jid);
+			if (js->user == NULL) {
 				purple_connection_error_reason(js->gc,
 					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Invalid response from server"));
+				g_free(full_jid);
+				return;
 			}
-			if((my_jb = jabber_buddy_find(js, full_jid, TRUE)))
-				my_jb->subscription |= JABBER_SUB_BOTH;
+
+			js->user_jb = jabber_buddy_find(js, full_jid, TRUE);
+			js->user_jb->subscription |= JABBER_SUB_BOTH;
 
 			purple_connection_set_display_name(js->gc, full_jid);
 
@@ -441,7 +445,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	if (len == -1)
 		len = strlen(data);
 
-	if (js->use_bosh)
+	if (js->bosh)
 		jabber_bosh_connection_send_raw(js->bosh, data);
 	else
 		do_jabber_send_raw(js, data, len);
@@ -457,14 +461,21 @@ int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
 void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
                            gpointer unused)
 {
+	JabberStream *js;
 	char *txt;
 	int len;
 
 	if (NULL == packet)
 		return;
 
+	js = purple_connection_get_protocol_data(pc);
+	if (js->bosh)
+		if (g_str_equal((*packet)->name, "message") ||
+				g_str_equal((*packet)->name, "iq") ||
+				g_str_equal((*packet)->name, "presence"))
+			xmlnode_set_namespace(*packet, "jabber:client");
 	txt = xmlnode_to_str(*packet, &len);
-	jabber_send_raw(purple_connection_get_protocol_data(pc), txt, len);
+	jabber_send_raw(js, txt, len);
 	g_free(txt);
 }
 
@@ -625,7 +636,6 @@ txt_resolved_cb(GList *responses, gpointer data)
 		if (!strcmp(token[0], "_xmpp-client-xbosh")) {
 			purple_debug_info("jabber","Found alternative connection method using %s at %s.\n", token[0], token[1]);
 			js->bosh = jabber_bosh_connection_init(js, token[1]);
-			js->use_bosh = TRUE;
 			g_strfreev(token);
 			break;
 		}
@@ -657,11 +667,9 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 			purple_debug_error("jabber", "Unable to connect to server: %s.  Trying next SRV record.\n", error);
 			try_srv_connect(js);
 		} else {
-			char *ascii_domain = jabber_try_idna_to_ascii(js->user->domain);
 			purple_debug_info("jabber","Couldn't connect directly to %s. Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
 			js->srv_query_data = purple_txt_resolve("_xmppconnect",
-					ascii_domain, txt_resolved_cb, js);
-			g_free(ascii_domain);
+					js->user->domain, txt_resolved_cb, js);
 		}
 		return;
 	}
@@ -701,26 +709,25 @@ static void tls_init(JabberStream *js)
 	js->gc->inpa = 0;
 	js->gsc = purple_ssl_connect_with_host_fd(js->gc->account, js->fd,
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->certificate_CN, js->gc);
+	/* The fd is no longer our concern */
+	js->fd = -1;
 }
 
 static gboolean jabber_login_connect(JabberStream *js, const char *domain, const char *host, int port,
-				 gboolean fatal_failure, gboolean use_domain)
+				 gboolean fatal_failure)
 {
 	/* host should be used in preference to domain to
 	 * allow SASL authentication to work with FQDN of the server,
 	 * but we use domain as fallback for when users enter IP address
-	 * in connect server.
-	 * We also want to use the domain if the hostname is the result of the
-	 * IDNA ToASCII operation.
-	 */
+	 * in connect server */
 	g_free(js->serverFQDN);
-	if (use_domain || purple_ip_address_is_valid(host))
+	if (purple_ip_address_is_valid(host))
 		js->serverFQDN = g_strdup(domain);
 	else
 		js->serverFQDN = g_strdup(host);
 
-	if (purple_proxy_connect(js->gc, js->gc->account, host,
-			port, jabber_login_callback, js->gc) == NULL) {
+	if (purple_proxy_connect(js->gc, purple_connection_get_account(js->gc),
+			host, port, jabber_login_callback, js->gc) == NULL) {
 		if (fatal_failure) {
 			purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -735,23 +742,19 @@ static gboolean jabber_login_connect(JabberStream *js, const char *domain, const
 
 static void try_srv_connect(JabberStream *js)
 {
-	char *ascii_domain;
-
 	while (js->srv_rec != NULL && js->srv_rec_idx < js->max_srv_rec_idx) {
 		PurpleSrvResponse *tmp_resp = js->srv_rec + (js->srv_rec_idx++);
-		if (jabber_login_connect(js, tmp_resp->hostname, tmp_resp->hostname, tmp_resp->port, FALSE, FALSE))
+		if (jabber_login_connect(js, tmp_resp->hostname, tmp_resp->hostname, tmp_resp->port, FALSE))
 			return;
 	}
 
 	g_free(js->srv_rec);
 	js->srv_rec = NULL;
 
-	ascii_domain = jabber_try_idna_to_ascii(js->user->domain);
 	/* Fall back to the defaults (I'm not sure if we should actually do this) */
-	jabber_login_connect(js, js->user->domain, ascii_domain,
-			purple_account_get_int(js->gc->account, "port", 5222),
-			TRUE, TRUE);
-	g_free(ascii_domain);
+	jabber_login_connect(js, js->user->domain, js->user->domain,
+			purple_account_get_int(purple_connection_get_account(js->gc), "port", 5222),
+			TRUE);
 }
 
 static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
@@ -765,11 +768,9 @@ static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
 		js->max_srv_rec_idx = results;
 		try_srv_connect(js);
 	} else {
-		char *ascii_domain = jabber_try_idna_to_ascii(js->user->domain);
-		jabber_login_connect(js, js->user->domain, ascii_domain,
-				purple_account_get_int(js->gc->account, "port", 5222),
-				TRUE, TRUE);
-		g_free(ascii_domain);
+		jabber_login_connect(js, js->user->domain, js->user->domain,
+				purple_account_get_int(purple_connection_get_account(js->gc), "port", 5222),
+				TRUE);
 	}
 }
 
@@ -778,7 +779,6 @@ jabber_stream_new(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js;
-	JabberBuddy *my_jb;
 	PurplePresence *presence;
 	gchar *user;
 	gchar *slash;
@@ -813,9 +813,9 @@ jabber_stream_new(PurpleAccount *account)
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_buddy_free);
 
-	my_jb = jabber_buddy_find(js, user, TRUE);
+	js->user_jb = jabber_buddy_find(js, user, TRUE);
 	g_free(user);
-	if (!my_jb) {
+	if (!js->user_jb) {
 		/* This basically *can't* fail, but for good measure... */
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
@@ -824,7 +824,7 @@ jabber_stream_new(PurpleAccount *account)
 		g_return_val_if_reached(NULL);
 	}
 
-	my_jb->subscription |= JABBER_SUB_BOTH;
+	js->user_jb->subscription |= JABBER_SUB_BOTH;
 
 	js->iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
@@ -860,7 +860,6 @@ jabber_stream_connect(JabberStream *js)
 			"connect_server", "");
 	const char *bosh_url = purple_account_get_string(account,
 			"bosh_url", "");
-	char *ascii_domain;
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
@@ -868,7 +867,6 @@ jabber_stream_connect(JabberStream *js)
 	 * attached to that choice, though.
 	 */
 	if (*bosh_url) {
-		js->use_bosh = TRUE;
 		js->bosh = jabber_bosh_connection_init(js, bosh_url);
 		if (js->bosh)
 			jabber_bosh_connection_connect(js->bosh);
@@ -883,22 +881,12 @@ jabber_stream_connect(JabberStream *js)
 
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
-	ascii_domain = jabber_try_idna_to_ascii(js->certificate_CN);
-	if (ascii_domain == NULL) {
-		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-				_("Invalid XMPP ID"));
-		return;
-	}
-
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
 	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
 		if(purple_ssl_is_supported()) {
-			js->gsc = purple_ssl_connect_with_ssl_cn(account, ascii_domain,
+			js->gsc = purple_ssl_connect(account, js->certificate_CN,
 					purple_account_get_int(account, "port", 5223),
-					jabber_login_callback_ssl, jabber_ssl_connect_failure,
-					js->certificate_CN, gc);
-			g_free(ascii_domain);
+					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
 			if (!js->gsc) {
 				purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
@@ -910,22 +898,18 @@ jabber_stream_connect(JabberStream *js)
 				_("SSL support unavailable"));
 		}
 
-		g_free(ascii_domain);
 		return;
 	}
 
 	/* no old-ssl, so if they've specified a connect server, we'll use that, otherwise we'll
 	 * invoke the magic of SRV lookups, to figure out host and port */
 	if(connect_server[0]) {
-		jabber_login_connect(js, js->user->domain, ascii_domain,
-				purple_account_get_int(account, "port", 5222),
-				TRUE, TRUE);
+		jabber_login_connect(js, js->user->domain, connect_server,
+				purple_account_get_int(account, "port", 5222), TRUE);
 	} else {
 		js->srv_query_data = purple_srv_resolve("xmpp-client",
-				"tcp", ascii_domain, srv_resolved_cb, js);
+				"tcp", js->user->domain, srv_resolved_cb, js);
 	}
-
-	g_free(ascii_domain);
 }
 
 void
@@ -1462,7 +1446,7 @@ void jabber_close(PurpleConnection *gc)
 	 * on some SSL backends.
 	 */
 	if (!gc->disconnect_timeout) {
-		if (js->use_bosh)
+		if (js->bosh)
 			jabber_bosh_connection_close(js->bosh);
 		else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
 			jabber_send_raw(js, "</stream:stream>", -1);
@@ -1558,6 +1542,9 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_uri);
 	g_free(js->old_track);
 	g_free(js->expected_rspauth);
+
+	if (js->vcard_timer != 0)
+		purple_timeout_remove(js->vcard_timer);
 
 	if (js->keepalive_timeout != 0)
 		purple_timeout_remove(js->keepalive_timeout);
@@ -3484,6 +3471,8 @@ jabber_init_plugin(PurplePlugin *plugin)
 #ifdef USE_VV
 	jabber_add_feature("http://www.google.com/xmpp/protocol/session", jabber_audio_enabled);
 	jabber_add_feature("http://www.google.com/xmpp/protocol/voice/v1", jabber_audio_enabled);
+	jabber_add_feature("http://www.google.com/xmpp/protocol/video/v1", jabber_video_enabled);
+	jabber_add_feature("http://www.google.com/xmpp/protocol/camera/v1", jabber_video_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, jabber_audio_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, jabber_video_enabled);
 	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);

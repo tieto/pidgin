@@ -1375,6 +1375,7 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 	char *image_corrected_msg;
 	char *date;
 	char *header;
+	char *escaped_from;
 	PurplePlugin *plugin = purple_find_prpl(purple_account_get_protocol_id(log->account));
 	PurpleLogCommonLoggerData *data = log->logger_data;
 	gsize written = 0;
@@ -1413,6 +1414,8 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 	if(!data->file)
 		return 0;
 
+	escaped_from = g_markup_escape_text(from, -1);
+
 	image_corrected_msg = convert_image_tags(log, message);
 	purple_markup_html_to_xhtml(image_corrected_msg, &msg_fixed, NULL);
 
@@ -1434,34 +1437,35 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 			written += fprintf(data->file, "<font color=\"#FF0000\"><font size=\"2\">(%s)</font><b> %s</b></font><br/>\n", date, msg_fixed);
 		else if (type & PURPLE_MESSAGE_WHISPER)
 			written += fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
-					date, from, msg_fixed);
+					date, escaped_from, msg_fixed);
 		else if (type & PURPLE_MESSAGE_AUTO_RESP) {
 			if (type & PURPLE_MESSAGE_SEND)
-				written += fprintf(data->file, _("<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
+				written += fprintf(data->file, _("<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, escaped_from, msg_fixed);
 			else if (type & PURPLE_MESSAGE_RECV)
-				written += fprintf(data->file, _("<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
+				written += fprintf(data->file, _("<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, escaped_from, msg_fixed);
 		} else if (type & PURPLE_MESSAGE_RECV) {
 			if(purple_message_meify(msg_fixed, -1))
 				written += fprintf(data->file, "<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
-						date, from, msg_fixed);
+						date, escaped_from, msg_fixed);
 			else
 				written += fprintf(data->file, "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
-						date, from, msg_fixed);
+						date, escaped_from, msg_fixed);
 		} else if (type & PURPLE_MESSAGE_SEND) {
 			if(purple_message_meify(msg_fixed, -1))
 				written += fprintf(data->file, "<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
-						date, from, msg_fixed);
+						date, escaped_from, msg_fixed);
 			else
 				written += fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
-						date, from, msg_fixed);
+						date, escaped_from, msg_fixed);
 		} else {
 			purple_debug_error("log", "Unhandled message type.\n");
 			written += fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
-						date, from, msg_fixed);
+						date, escaped_from, msg_fixed);
 		}
 	}
 	g_free(date);
 	g_free(msg_fixed);
+	g_free(escaped_from);
 	fflush(data->file);
 
 	return written;

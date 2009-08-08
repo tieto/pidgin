@@ -1168,6 +1168,8 @@ pidgin_blist_joinchat_show(void)
 		_("Room _List"), 1,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		PIDGIN_STOCK_CHAT, GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(data->rq_data.window),
+		GTK_RESPONSE_OK);
 	data->default_chat_name = NULL;
 	data->rq_data.account = pidgin_account_option_menu_get_selected(data->rq_data.account_menu);
 
@@ -3558,7 +3560,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			}
 
 			g_free(pce);
-			cur = g_list_remove(cur, pce);
+			cur = g_list_delete_link(cur, cur);
 		}
 	}
 	else if (PURPLE_BLIST_NODE_IS_CONTACT(node) || PURPLE_BLIST_NODE_IS_BUDDY(node))
@@ -4640,13 +4642,21 @@ item_factory_translate_func (const char *path, gpointer func_data)
 
 void pidgin_blist_setup_sort_methods()
 {
+	const char *id;
+
 	pidgin_blist_sort_method_reg("none", _("Manually"), sort_method_none);
 #if GTK_CHECK_VERSION(2,2,1)
 	pidgin_blist_sort_method_reg("alphabetical", _("Alphabetically"), sort_method_alphabetical);
 	pidgin_blist_sort_method_reg("status", _("By status"), sort_method_status);
 	pidgin_blist_sort_method_reg("log_size", _("By recent log activity"), sort_method_log_activity);
 #endif
-	pidgin_blist_sort_method_set(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/sort_type"));
+
+	id = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/sort_type");
+	if (id == NULL) {
+		purple_debug_warning("gtkblist", "Sort method was NULL, resetting to alphabetical\n");
+		id = "alphabetical";
+	}
+	pidgin_blist_sort_method_set(id);
 }
 
 static void _prefs_change_redo_list(const char *name, PurplePrefType type,
@@ -6925,6 +6935,8 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_ADD, GTK_RESPONSE_OK,
 			NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(data->rq_data.window),
+			GTK_RESPONSE_OK);
 
 	g_signal_connect(G_OBJECT(data->rq_data.window), "destroy",
 	                 G_CALLBACK(destroy_add_buddy_dialog_cb), data);
@@ -6968,12 +6980,9 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 static void
 add_chat_cb(GtkWidget *w, PidginAddChatData *data)
 {
-	GHashTable *components;
 	GList *tmp;
 	PurpleChat *chat;
-	PurpleGroup *group;
-	const char *group_name;
-	const char *value;
+	GHashTable *components;
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal,
 									   g_free, g_free);
@@ -6989,7 +6998,8 @@ add_chat_cb(GtkWidget *w, PidginAddChatData *data)
 		}
 		else
 		{
-			value = gtk_entry_get_text(tmp->data);
+			const char *value = gtk_entry_get_text(tmp->data);
+
 			if (*value != '\0')
 				g_hash_table_replace(components,
 						g_strdup(g_object_get_data(tmp->data, "identifier")),
@@ -6998,28 +7008,31 @@ add_chat_cb(GtkWidget *w, PidginAddChatData *data)
 	}
 
 	chat = purple_chat_new(data->chat_data.rq_data.account,
-							   gtk_entry_get_text(GTK_ENTRY(data->alias_entry)),
-							   components);
+	                       gtk_entry_get_text(GTK_ENTRY(data->alias_entry)),
+	                       components);
 
-	group_name = pidgin_text_combo_box_entry_get_text(data->group_combo);
+	if (chat != NULL) {
+		PurpleGroup *group;
+		const char *group_name;
 
-	group = NULL;
-	if ((group_name != NULL) && (*group_name != '\0') && ((group = purple_find_group(group_name)) == NULL))
-	{
-		group = purple_group_new(group_name);
-		purple_blist_add_group(group, NULL);
-	}
+		group_name = pidgin_text_combo_box_entry_get_text(data->group_combo);
 
-	if (chat != NULL)
-	{
+		group = NULL;
+		if ((group_name != NULL) && (*group_name != '\0') &&
+		    ((group = purple_find_group(group_name)) == NULL))
+		{
+			group = purple_group_new(group_name);
+			purple_blist_add_group(group, NULL);
+		}
+
 		purple_blist_add_chat(chat, group, NULL);
+
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->autojoin)))
+			purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-autojoin", TRUE);
+
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->persistent)))
+			purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-persistent", TRUE);
 	}
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->autojoin)))
-		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-autojoin", TRUE);
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->persistent)))
-		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-persistent", TRUE);
 
 	gtk_widget_destroy(data->chat_data.rq_data.window);
 	g_free(data->chat_data.default_chat_name);
@@ -7094,6 +7107,8 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_ADD, GTK_RESPONSE_OK,
 		NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(data->chat_data.rq_data.window),
+			GTK_RESPONSE_OK);
 
 	data->chat_data.default_chat_name = g_strdup(name);
 
@@ -7216,7 +7231,7 @@ pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callbac
 static void
 set_urgent(void)
 {
-	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+	if (gtkblist->window && !GTK_WIDGET_HAS_FOCUS(gtkblist->window))
 		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
 }
 
@@ -7426,7 +7441,13 @@ GList *pidgin_blist_get_sort_methods()
 
 void pidgin_blist_sort_method_reg(const char *id, const char *name, pidgin_blist_sort_function func)
 {
-	struct pidgin_blist_sort_method *method = g_new0(struct pidgin_blist_sort_method, 1);
+	struct pidgin_blist_sort_method *method;
+
+	g_return_if_fail(id != NULL);
+	g_return_if_fail(name != NULL);
+	g_return_if_fail(func != NULL);
+
+	method = g_new0(struct pidgin_blist_sort_method, 1);
 	method->id = g_strdup(id);
 	method->name = g_strdup(name);
 	method->func = func;
@@ -7437,6 +7458,8 @@ void pidgin_blist_sort_method_reg(const char *id, const char *name, pidgin_blist
 void pidgin_blist_sort_method_unreg(const char *id)
 {
 	GList *l = pidgin_blist_sort_methods;
+
+	g_return_if_fail(id != NULL);
 
 	while(l) {
 		struct pidgin_blist_sort_method *method = l->data;
@@ -8027,6 +8050,8 @@ pidgin_blist_update_sort_methods(void)
 	if ((gtkblist == NULL) || (gtkblist->ift == NULL))
 		return;
 
+	g_return_if_fail(m != NULL);
+
 	sortmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Sort Buddies"));
 
 	if (sortmenu == NULL)
@@ -8041,7 +8066,7 @@ pidgin_blist_update_sort_methods(void)
 	for (l = pidgin_blist_sort_methods; l; l = l->next) {
 		method = (PidginBlistSortMethod *) l->data;
 		menuitem = gtk_radio_menu_item_new_with_label(sl, _(method->name));
-		if (!strcmp(m, method->id))
+		if (g_str_equal(m, method->id))
 			activeitem = menuitem;
 		sl = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
 		gtk_menu_shell_append(GTK_MENU_SHELL(sortmenu), menuitem);

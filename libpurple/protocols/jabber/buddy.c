@@ -88,6 +88,83 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 	return jb;
 }
 
+static gint resource_compare_cb(gconstpointer a, gconstpointer b)
+{
+	const JabberBuddyResource *jbra = a;
+	const JabberBuddyResource *jbrb = b;
+	JabberBuddyState state_a, state_b;
+
+	if (jbra->priority != jbrb->priority)
+		return jbra->priority > jbrb->priority ? 1 : -1;
+
+	/* Fold the states for easier comparison */
+	switch (jbra->state) {
+		case JABBER_BUDDY_STATE_ONLINE:
+		case JABBER_BUDDY_STATE_CHAT:
+			state_a = JABBER_BUDDY_STATE_ONLINE;
+			break;
+		case JABBER_BUDDY_STATE_AWAY:
+		case JABBER_BUDDY_STATE_DND:
+			state_a = JABBER_BUDDY_STATE_AWAY;
+			break;
+		case JABBER_BUDDY_STATE_XA:
+			state_a = JABBER_BUDDY_STATE_XA;
+			break;
+		case JABBER_BUDDY_STATE_UNAVAILABLE:
+			state_a = JABBER_BUDDY_STATE_UNAVAILABLE;
+			break;
+		default:
+			state_a = JABBER_BUDDY_STATE_UNKNOWN;
+			break;
+	}
+
+	switch (jbrb->state) {
+		case JABBER_BUDDY_STATE_ONLINE:
+		case JABBER_BUDDY_STATE_CHAT:
+			state_b = JABBER_BUDDY_STATE_ONLINE;
+			break;
+		case JABBER_BUDDY_STATE_AWAY:
+		case JABBER_BUDDY_STATE_DND:
+			state_b = JABBER_BUDDY_STATE_AWAY;
+			break;
+		case JABBER_BUDDY_STATE_XA:
+			state_b = JABBER_BUDDY_STATE_XA;
+			break;
+		case JABBER_BUDDY_STATE_UNAVAILABLE:
+			state_b = JABBER_BUDDY_STATE_UNAVAILABLE;
+			break;
+		default:
+			state_b = JABBER_BUDDY_STATE_UNKNOWN;
+			break;
+	}
+
+	if (state_a == state_b) {
+		if (jbra->idle == jbrb->idle)
+			return 0;
+		else if ((jbra->idle && !jbrb->idle) ||
+				(jbra->idle && jbrb->idle && jbra->idle < jbrb->idle))
+			return -1;
+		else
+			return 1;
+	}
+
+	if (state_a == JABBER_BUDDY_STATE_ONLINE)
+		return 1;
+	else if (state_a == JABBER_BUDDY_STATE_AWAY &&
+				(state_b == JABBER_BUDDY_STATE_XA ||
+				 state_b == JABBER_BUDDY_STATE_UNAVAILABLE ||
+				 state_b == JABBER_BUDDY_STATE_UNKNOWN))
+		return 1;
+	else if (state_a == JABBER_BUDDY_STATE_XA &&
+				(state_b == JABBER_BUDDY_STATE_UNAVAILABLE ||
+				 state_b == JABBER_BUDDY_STATE_UNKNOWN))
+		return 1;
+	else if (state_a == JABBER_BUDDY_STATE_UNAVAILABLE &&
+				state_b == JABBER_BUDDY_STATE_UNKNOWN)
+		return 1;
+
+	return -1;
+}
 
 JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		const char *resource)
@@ -104,44 +181,8 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		if (!jbr && !resource) {
 			jbr = tmp;
 		} else if (!resource) {
-			if (tmp->priority > jbr->priority)
+			if (resource_compare_cb(tmp, jbr) > 0)
 				jbr = tmp;
-			else if (tmp->priority == jbr->priority) {
-				/* Determine if this resource is more available than the one we've currently chosen */
-				switch(tmp->state) {
-					case JABBER_BUDDY_STATE_ONLINE:
-					case JABBER_BUDDY_STATE_CHAT:
-						/* This resource is online/chatty. Prefer to one which isn't either. */
-						if (((jbr->state != JABBER_BUDDY_STATE_ONLINE) && (jbr->state != JABBER_BUDDY_STATE_CHAT))
-							|| (jbr->idle && !tmp->idle)
-							|| (jbr->idle && tmp->idle && tmp->idle > jbr->idle))
-							jbr = tmp;
-						break;
-					case JABBER_BUDDY_STATE_AWAY:
-					case JABBER_BUDDY_STATE_DND:
-						/* This resource is away/dnd. Prefer to one which is extended away, unavailable, or unknown. */
-						if (((jbr->state == JABBER_BUDDY_STATE_XA) || (jbr->state == JABBER_BUDDY_STATE_UNAVAILABLE) ||
-							(jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
-							|| (jbr->idle && !tmp->idle)
-							|| (jbr->idle && tmp->idle && tmp->idle > jbr->idle))
-							jbr = tmp;
-						break;
-					case JABBER_BUDDY_STATE_XA:
-						/* This resource is extended away. That's better than unavailable or unknown. */
-						if ((jbr->state == JABBER_BUDDY_STATE_UNAVAILABLE) || (jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
-							jbr = tmp;
-						break;
-					case JABBER_BUDDY_STATE_UNAVAILABLE:
-						/* This resource is unavailable. That's better than unknown. */
-						if ((jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
-							jbr = tmp;
-						break;
-					case JABBER_BUDDY_STATE_UNKNOWN:
-					case JABBER_BUDDY_STATE_ERROR:
-						/* These are never preferable. */
-						break;
-				}
-			}
 		} else if(tmp->name) {
 			if(!strcmp(tmp->name, resource)) {
 				jbr = tmp;
@@ -421,6 +462,11 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	 * assume that what we have here is correct */
 	if(!js->vcard_fetched)
 		return;
+
+	if (js->vcard_timer) {
+		purple_timeout_remove(js->vcard_timer);
+		js->vcard_timer = 0;
+	}
 
 	g_free(js->avatar_hash);
 	js->avatar_hash = NULL;
@@ -813,12 +859,26 @@ static void jabber_buddy_info_remove_id(JabberBuddyInfo *jbi, const char *id)
 	}
 }
 
+static gboolean
+set_own_vcard_cb(gpointer data)
+{
+	JabberStream *js = data;
+	PurpleAccount *account = purple_connection_get_account(js->gc);
+
+	js->vcard_timer = 0;
+
+	jabber_set_info(js->gc, purple_account_get_user_info(account));
+
+	return FALSE;
+}
+
 static void jabber_vcard_save_mine(JabberStream *js, const char *from,
                                    JabberIqType type, const char *id,
                                    xmlnode *packet, gpointer data)
 {
 	xmlnode *vcard, *photo, *binval;
 	char *txt, *vcard_hash = NULL;
+	PurpleAccount *account;
 
 	if (type == JABBER_IQ_ERROR) {
 		xmlnode *error;
@@ -829,12 +889,13 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 			return;
 	}
 
+	account = purple_connection_get_account(js->gc);
+
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp")))
 	{
 		txt = xmlnode_to_str(vcard, NULL);
-		purple_account_set_user_info(purple_connection_get_account(js->gc), txt);
-
+		purple_account_set_user_info(account, txt);
 		g_free(txt);
 	} else {
 		/* if we have no vCard, then lets not overwrite what we might have locally */
@@ -857,8 +918,17 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 
 	/* Republish our vcard if the photo is different than the server's */
 	if (!purple_strequal(vcard_hash, js->initial_avatar_hash)) {
-		PurpleAccount *account = purple_connection_get_account(js->gc);
-		jabber_set_info(js->gc, purple_account_get_user_info(account));
+		/*
+		 * Google Talk has developed the behavior that it will not accept
+		 * a vcard set in the first 10 seconds (or so) of the connection;
+		 * it returns an error (namespaces trimmed):
+		 * <error code="500" type="wait"><internal-server-error/></error>.
+		 */
+		if (js->googletalk)
+			js->vcard_timer = purple_timeout_add_seconds(10, set_own_vcard_cb,
+			                                             js);
+		else
+			jabber_set_info(js->gc, purple_account_get_user_info(account));
 	} else if (js->initial_avatar_hash) {
 		/* Our photo is in the vcard, so advertise vcard-temp updates */
 		js->avatar_hash = g_strdup(js->initial_avatar_hash);
@@ -977,7 +1047,12 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 
 					if(!strcmp(child2->name, "POBOX")) {
 						purple_notify_user_info_add_pair(user_info, _("P.O. Box"), text2);
-					} else if(!strcmp(child2->name, "EXTADR")) {
+					} else if (g_str_equal(child2->name, "EXTADD") || g_str_equal(child2->name, "EXTADR")) {
+						/*
+						 * EXTADD is correct, EXTADR is generated by other
+						 * clients. The next time someone reads this, remove
+						 * EXTADR.
+						 */
 						purple_notify_user_info_add_pair(user_info, _("Extended Address"), text2);
 					} else if(!strcmp(child2->name, "STREET")) {
 						purple_notify_user_info_add_pair(user_info, _("Street Address"), text2);
@@ -1116,6 +1191,22 @@ static void jabber_buddy_info_resource_free(gpointer data)
 {
 	JabberBuddyInfoResource *jbri = data;
 	g_free(jbri);
+}
+
+static guint jbir_hash(gconstpointer v)
+{
+	if (v)
+		return g_str_hash(v);
+	else
+		return 0;
+}
+
+static gboolean jbir_equal(gconstpointer v1, gconstpointer v2)
+{
+	const gchar *resource_1 = v1;
+	const gchar *resource_2 = v2;
+
+	return purple_strequal(resource_1, resource_2);
 }
 
 static void jabber_version_parse(JabberStream *js, const char *from,
@@ -1389,9 +1480,7 @@ dispatch_queries_for_resource(JabberStream *js, JabberBuddyInfo *jbi,
 	char *full_jid = NULL;
 	const char *to;
 
-	g_return_if_fail(jbr->name != NULL);
-
-	if (is_bare_jid) {
+	if (is_bare_jid && jbr->name) {
 		full_jid = g_strdup_printf("%s/%s", jid, jbr->name);
 		to = full_jid;
 	} else
@@ -1460,7 +1549,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 	jbi->jid = g_strdup(jid);
 	jbi->js = js;
 	jbi->jb = jb;
-	jbi->resources = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, jabber_buddy_info_resource_free);
+	jbi->resources = g_hash_table_new_full(jbir_hash, jbir_equal, g_free, jabber_buddy_info_resource_free);
 	jbi->user_info = purple_notify_user_info_new();
 
 	iq = jabber_iq_new(js, JABBER_IQ_GET);
@@ -1690,9 +1779,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 	if(!jb)
 		return m;
 
-	/* XXX: fix the NOT ME below */
-
-	if(js->protocol_version == JABBER_PROTO_0_9 /* && NOT ME */) {
+	if (js->protocol_version == JABBER_PROTO_0_9 && jb != js->user_jb) {
 		if(jb->invisible & JABBER_INVIS_BUDDY) {
 			act = purple_menu_action_new(_("Un-hide From"),
 			                           PURPLE_CALLBACK(jabber_buddy_make_visible),
@@ -1705,7 +1792,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 		m = g_list_append(m, act);
 	}
 
-	if(jb->subscription & JABBER_SUB_FROM /* && NOT ME */) {
+	if(jb->subscription & JABBER_SUB_FROM && jb != js->user_jb) {
 		act = purple_menu_action_new(_("Cancel Presence Notification"),
 		                           PURPLE_CALLBACK(jabber_buddy_cancel_presence_notification),
 		                           NULL, NULL);
@@ -1718,7 +1805,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 
-	} else /* if(NOT ME) */{
+	} else if (jb != js->user_jb) {
 
 		/* shouldn't this just happen automatically when the buddy is
 		   removed? */
