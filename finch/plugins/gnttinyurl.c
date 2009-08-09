@@ -354,7 +354,7 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
   frame = purple_plugin_pref_frame_new();
 
   pref = purple_plugin_pref_new_with_name(PREF_LENGTH);
-  purple_plugin_pref_set_label(pref, _("Only create TinyURL for urls"
+  purple_plugin_pref_set_label(pref, _("Only create TinyURL for URLs"
 				     " of this length or greater"));
   purple_plugin_pref_frame_add(frame, pref);
   pref = purple_plugin_pref_new_with_name(PREF_URL);
