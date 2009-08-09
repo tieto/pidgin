@@ -47,8 +47,6 @@
 
 static PurpleConversationUiOps *uiops = NULL;
 
-static void (*default_write_conv)(PurpleConversation *conv, const char *name, const char *alias,
-						   const char *message, PurpleMessageFlags flags, time_t mtime);
 static void (*default_create_conversation)(PurpleConversation *conv);
 
 static void (*default_destroy_conversation)(PurpleConversation *conv);
@@ -592,7 +590,6 @@ plugin_unload(PurplePlugin *plugin)
 	GList *list;
 
 	/* Restore the default ui-ops */
-	uiops->write_conv = default_write_conv;
 	uiops->create_conversation = default_create_conversation;
 	uiops->destroy_conversation = default_destroy_conversation;
 
