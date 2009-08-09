@@ -43,11 +43,11 @@
 /* Pidgin headers */
 #include <gtkconv.h>
 #include <gtkplugin.h>
+#include <gtkwebview.h>
 #include <smileyparser.h>
 
 static PurpleConversationUiOps *uiops = NULL;
 
-static void (*default_destroy_conversation)(PurpleConversation *conv);
 
 /* Cache the contents of the HTML files */
 char *template_html = NULL;                 /* This is the skeleton: some basic javascript mostly */
@@ -326,33 +326,6 @@ finalize_theme_for_webkit (PurpleConversation *conv)
 	g_object_set_data (G_OBJECT(webview), "adium-themed", NULL);
 }
 
-static char *
-escape_message(char *text)
-{
-	GString *str = g_string_new(NULL);
-	char *cur = text;
-
-	while (cur && *cur) {
-		switch (*cur) {
-		case '\\':
-			g_string_append(str, "\\\\");	
-			break;
-		case '\"':
-			g_string_append(str, "\\\"");
-			break;
-		case '\r':
-			g_string_append(str, "<br/>");
-			break;
-		case '\n':
-			break;
-		default:
-			g_string_append_c(str, *cur);
-		}
-		cur++;
-	}
-	return g_string_free(str, FALSE);
-}
-
 struct webkit_script {
 	GtkWidget *webkit;
 	char *script;
@@ -390,6 +363,7 @@ static gboolean purple_webkit_displaying_im_msg (PurpleAccount *account,
 	struct webkit_script *wk_script;
 	PurpleMessageFlags old_flags = GPOINTER_TO_INT(purple_conversation_get_data(conv, "webkit-lastflags")); 
 
+	fprintf (stderr, "hmm.. here %s %s\n", name, message);
 	webkit = get_webkit(conv);
 	stripped = g_strdup(message);
 
@@ -410,8 +384,8 @@ static gboolean purple_webkit_displaying_im_msg (PurpleAccount *account,
 
 	smileyed = smiley_parse_markup(stripped, conv->account->protocol_id);
 	msg = replace_message_tokens(message_html, 0, conv, name, alias, smileyed, flags, mtime);
-	escape = escape_message(msg);
-	script = g_strdup_printf("%s(\"%s\")", func, escape);
+	escape = gtk_webview_quote_js_string (msg);
+	script = g_strdup_printf("%s(%s)", func, escape);
 
 	wk_script = g_new0(struct webkit_script, 1);
 	wk_script->script = script;
@@ -441,9 +415,12 @@ webkit_on_conversation_switched (PurpleConversation *conv, gpointer data)
 }
 
 static void
-purple_webkit_destroy_conv(PurpleConversation *conv)
+webkit_on_conversation_hiding (PidginConversation *gtkconv, gpointer data)
 {
-	default_destroy_conversation(conv);
+	/* 
+	 * I'm not sure if I need to do anything here, but let's keep
+	 * this anyway
+	 */
 }
 
 static GList*
@@ -592,8 +569,11 @@ plugin_load(PurplePlugin *plugin)
 			       PURPLE_CALLBACK(webkit_on_conversation_switched),
 			       NULL);
 
-	default_destroy_conversation = uiops->destroy_conversation;
-	uiops->destroy_conversation = purple_webkit_destroy_conv;
+	purple_signal_connect (pidgin_conversations_get_handle (),
+			       "conversation-hiding",
+			       webkit_plugin_get_handle (),
+			       PURPLE_CALLBACK(webkit_on_conversation_hiding),
+			       NULL);
 
 	/* finally update each of the existing conversation windows */
 	{
@@ -609,9 +589,6 @@ static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
 	GList *list;
-
-	/* Restore the default ui-ops */
-	uiops->destroy_conversation = default_destroy_conversation;
 
 	webkit_plugin_free_handle ();
 
