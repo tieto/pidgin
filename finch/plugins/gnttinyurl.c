@@ -390,7 +390,7 @@ static PurplePluginInfo info =
 	N_("TinyURL"),
 	DISPLAY_VERSION,
 	N_("TinyURL plugin"),
-	N_("When receiving a message with URL(s), TinyURL for easier copying"),
+	N_("When receiving a message with URL(s), use TinyURL for easier copying"),
 	"Richard Nelson <wabz@whatsbeef.net>",
 	PURPLE_WEBSITE,
 	plugin_load,
