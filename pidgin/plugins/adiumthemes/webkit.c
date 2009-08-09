@@ -80,6 +80,19 @@ char *style_dir = NULL;
 char *template_path = NULL;
 char *css_path = NULL;
 
+static void *handle = NULL;
+static void* webkit_plugin_get_handle ()
+{
+	if (handle) return handle;
+	else return (handle = g_malloc (1));
+}
+
+static void webkit_plugin_free_handle ()
+{
+	purple_signals_disconnect_by_handle (handle);
+	g_free (handle);
+}
+
 static char *
 replace_message_tokens(char *text, gsize len, PurpleConversation *conv, const char *name, const char *alias, 
 			     const char *message, PurpleMessageFlags flags, time_t mtime)
@@ -349,11 +362,16 @@ static gboolean purple_webkit_execute_script(gpointer _script)
 	return FALSE;
 }
 
-static void purple_webkit_write_conv(PurpleConversation *conv, const char *name, const char *alias,
-						   const char *message, PurpleMessageFlags flags, time_t mtime)
+static gboolean purple_webkit_displaying_im_msg (PurpleAccount *account,
+						 const char* name,
+						 char **pmessage,
+						 PurpleConversation *conv,
+						 PurpleMessageFlags flags,
+						 gpointer data)
 {
-	PurpleConversationType type;
 	GtkWidget *webkit;
+	char *message = *pmessage;
+	const char *alias = name; /* FIXME: signal doesn't give me alias */
 	char *stripped;
 	char *message_html;
 	char *msg;
@@ -361,21 +379,13 @@ static void purple_webkit_write_conv(PurpleConversation *conv, const char *name,
 	char *script;
 	char *func = "appendMessage";
 	char *smileyed;
+	time_t mtime = time (NULL); /* FIXME: this should come from the write_conv calback, but the signal doesn't pass this to me */
+
 	struct webkit_script *wk_script;
 	PurpleMessageFlags old_flags = GPOINTER_TO_INT(purple_conversation_get_data(conv, "webkit-lastflags")); 
 
-	/* Don't call the usual stuff first. */
-	//default_write_conv(conv, name, alias, message, flags, mtime);
-	type = purple_conversation_get_type(conv);
-	if (type != PURPLE_CONV_TYPE_IM)
-	{
-		/* If it's chat, we have nothing to do. */
-		return;
-	}
-	/* So it's an IM. Let's play. */
-
 	webkit = get_webkit(conv);
-	stripped = g_strdup(message); //purple_markup_strip_html(message);
+	stripped = g_strdup(message);
 
 	if (flags & PURPLE_MESSAGE_SEND && old_flags & PURPLE_MESSAGE_SEND) {
 		message_html = outgoing_next_content_html;
@@ -407,6 +417,8 @@ static void purple_webkit_write_conv(PurpleConversation *conv, const char *name,
 	g_free(msg);
 	g_free(stripped);
 	g_free(escape);
+
+	return TRUE; /* GtkConv should not handle this guy */
 }
 
 
@@ -551,10 +563,13 @@ plugin_load(PurplePlugin *plugin)
 	if (uiops == NULL)
 		return FALSE;
 
-	/* Use the oh-so-useful uiops. Signals? bleh. */
-	default_write_conv = uiops->write_conv;
-	uiops->write_conv = purple_webkit_write_conv;
-
+	purple_signal_connect (pidgin_conversations_get_handle (),
+			       "displaying-im-msg",
+			       webkit_plugin_get_handle (),
+			       PURPLE_CALLBACK(purple_webkit_displaying_im_msg),
+			       NULL);
+			    
+			       
 	default_create_conversation = uiops->create_conversation;
 	uiops->create_conversation = purple_webkit_create_conv;
 
@@ -575,16 +590,20 @@ static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
 	GList *list;
+
 	/* Restore the default ui-ops */
 	uiops->write_conv = default_write_conv;
 	uiops->create_conversation = default_create_conversation;
 	uiops->destroy_conversation = default_destroy_conversation;
+
+	webkit_plugin_free_handle ();
 
 	list = purple_get_conversations ();
 	while (list) {
 		finalize_theme_for_webkit(list->data);
 		list = g_list_next(list);
 	}
+
 	return TRUE;
 }
 
