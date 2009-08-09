@@ -1154,9 +1154,11 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				g_free(buf);
 			}
 		}
-	} else
-		purple_debug_warning("msn",
-				"Unhandled invite msg with GUID %s.\n", guid);
+	} else {
+		const gchar *application = g_hash_table_lookup(body, "Application-Name");
+		purple_debug_warning("msn", "Unhandled invite msg with GUID %s: %s.\n",
+		                     guid, application ? application : "(null)");
+	}
 
 	g_hash_table_destroy(body);
 }
