@@ -47,8 +47,6 @@
 
 static PurpleConversationUiOps *uiops = NULL;
 
-static void (*default_create_conversation)(PurpleConversation *conv);
-
 static void (*default_destroy_conversation)(PurpleConversation *conv);
 
 /* Cache the contents of the HTML files */
@@ -283,6 +281,15 @@ get_webkit(PurpleConversation *conv)
 	else 
 		return gtkconv->webview;
 }
+
+/**
+ * Called when either a new PurpleConversation is created
+ * or when a PidginConversation changes its active PurpleConversation
+ *
+ * FIXME: it's not at all clear to me as to how
+ * Adium themes handle the case when the PurpleConversation
+ * changes.
+ */
 static void
 init_theme_for_webkit (PurpleConversation *conv)
 {
@@ -301,6 +308,7 @@ init_theme_for_webkit (PurpleConversation *conv)
 		webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
 
 	g_object_set_data (G_OBJECT(webkit), "adium-themed", GINT_TO_POINTER(1));
+
 	g_free (basedir);
 	g_free (baseuri);
 	g_free (header);
@@ -421,10 +429,15 @@ static gboolean purple_webkit_displaying_im_msg (PurpleAccount *account,
 
 
 static void
-purple_webkit_create_conv(PurpleConversation *conv)
+webkit_on_converstation_displayed (PidginConversation *gtkconv, gpointer data)
 {
-	default_create_conversation(conv);
-	init_theme_for_webkit(conv);
+	init_theme_for_webkit (gtkconv->active_conv);
+}
+
+static void
+webkit_on_conversation_switched (PurpleConversation *conv, gpointer data)
+{
+	init_theme_for_webkit (conv);
 }
 
 static void
@@ -567,9 +580,17 @@ plugin_load(PurplePlugin *plugin)
 			       PURPLE_CALLBACK(purple_webkit_displaying_im_msg),
 			       NULL);
 			    
-			       
-	default_create_conversation = uiops->create_conversation;
-	uiops->create_conversation = purple_webkit_create_conv;
+	purple_signal_connect (pidgin_conversations_get_handle (),
+			       "conversation-displayed",
+			       webkit_plugin_get_handle (),
+			       PURPLE_CALLBACK(webkit_on_converstation_displayed),
+			       NULL);
+
+	purple_signal_connect (pidgin_conversations_get_handle (),
+			       "conversation-switched",
+			       webkit_plugin_get_handle (),
+			       PURPLE_CALLBACK(webkit_on_conversation_switched),
+			       NULL);
 
 	default_destroy_conversation = uiops->destroy_conversation;
 	uiops->destroy_conversation = purple_webkit_destroy_conv;
@@ -578,7 +599,7 @@ plugin_load(PurplePlugin *plugin)
 	{
 		GList* list = purple_get_conversations ();
 		for (;list; list = g_list_next(list))
-			purple_webkit_create_conv (list->data);
+			init_theme_for_webkit (list->data);
 			
 	}
 	return TRUE;
@@ -590,7 +611,6 @@ plugin_unload(PurplePlugin *plugin)
 	GList *list;
 
 	/* Restore the default ui-ops */
-	uiops->create_conversation = default_create_conversation;
 	uiops->destroy_conversation = default_destroy_conversation;
 
 	webkit_plugin_free_handle ();
