@@ -38,6 +38,7 @@
 
 /* Purple headers */
 #include <conversation.h>
+#include <debug.h>
 #include <notify.h>
 #include <util.h>
 #include <version.h>
@@ -608,7 +609,7 @@ get_dir_dir_list (const char* dirname)
  * that they are in the directories for themes.
  */
 static GList*
-get_theme_directory_list ()
+get_style_directory_list ()
 {
 	char *user_dir, *user_style_dir, *global_style_dir;
 	GList *list1, *list2;
@@ -634,6 +635,36 @@ get_theme_directory_list ()
 	return g_list_concat (list1, list2);
 }
 
+/**
+ * use heuristics or previous user options to figure out what 
+ * theme to use as default in this Pidgin instance.
+ */
+static void
+style_set_default ()
+{
+	GList* styles = get_style_directory_list (), *iter;
+	const char *stylepath = purple_prefs_get_string ("/plugins/gtk/adiumthemes/stylepath");
+	g_assert (cur_style_dir == NULL);
+
+	if (stylepath) 
+		styles = g_list_prepend (styles, g_strdup (stylepath));
+
+	/* pick any one that works. Note that we have first preference
+	 * for the one in the userdir */
+	for (iter = styles; iter; iter = g_list_next (iter)) {
+		PidginMessageStyle *style = pidgin_message_style_load (iter->data);
+		if (style) {
+			cur_style_dir = (char*) g_strdup (iter->data);
+			pidgin_message_style_unref (style);
+			break;
+		}
+		purple_debug_info ("webkit", "Style %s is invalid\n", (char*) iter->data);
+	}
+
+	for (iter = styles; iter; iter = g_list_next (iter))
+		g_free (iter->data);
+	g_list_free (styles);
+}
 
 /**
  * Get each of the files corresponding to each variant.
@@ -701,28 +732,8 @@ variant_set_default (PidginMessageStyle* style)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	PidginMessageStyle *_style; /* temp */
-
-	if (g_path_is_absolute (purple_user_dir())) 
-		cur_style_dir = g_build_filename(purple_user_dir(), "style", NULL);
-	else {
-
-
-
-		char* cur = g_get_current_dir ();
-		cur_style_dir = g_build_filename (cur, purple_user_dir(), "style", NULL);
-		g_free (cur);
-	}
-	
-
-	_style = pidgin_message_style_load (cur_style_dir);
-	if (!_style) {
-		g_free (cur_style_dir);
-		cur_style_dir = NULL;
-		return FALSE;
-	}
-
-	pidgin_message_style_unref (_style);
+	style_set_default ();
+	if (!cur_style_dir) return FALSE; /* couldn't find a style */
 
 	purple_signal_connect (pidgin_conversations_get_handle (),
 			       "displaying-im-msg",
