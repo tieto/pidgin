@@ -341,7 +341,8 @@ static gboolean purple_webkit_execute_script(gpointer _script)
 	return FALSE;
 }
 
-static gboolean purple_webkit_displaying_im_msg (PurpleAccount *account,
+
+static gboolean webkit_on_displaying_im_msg (PurpleAccount *account,
 						 const char* name,
 						 char **pmessage,
 						 PurpleConversation *conv,
@@ -401,6 +402,16 @@ static gboolean purple_webkit_displaying_im_msg (PurpleAccount *account,
 	return TRUE; /* GtkConv should not handle this guy */
 }
 
+static gboolean webkit_on_displaying_chat_msg (PurpleAccount *account,
+					       const char *who,
+					       char **message,
+					       PurpleConversation *conv,
+					       PurpleMessageFlags flags,
+					       gpointer userdata)
+{
+	/* handle exactly like an IM message */
+	return webkit_on_displaying_im_msg (account, who, message, conv, flags, NULL);
+}
 
 static void
 webkit_on_converstation_displayed (PidginConversation *gtkconv, gpointer data)
@@ -554,9 +565,15 @@ plugin_load(PurplePlugin *plugin)
 	purple_signal_connect (pidgin_conversations_get_handle (),
 			       "displaying-im-msg",
 			       webkit_plugin_get_handle (),
-			       PURPLE_CALLBACK(purple_webkit_displaying_im_msg),
+			       PURPLE_CALLBACK(webkit_on_displaying_im_msg),
 			       NULL);
 			    
+	purple_signal_connect (pidgin_conversations_get_handle (),
+			       "displaying-chat-msg",
+			       webkit_plugin_get_handle (),
+			       PURPLE_CALLBACK(webkit_on_displaying_chat_msg),
+			       NULL);
+
 	purple_signal_connect (pidgin_conversations_get_handle (),
 			       "conversation-displayed",
 			       webkit_plugin_get_handle (),
