@@ -83,6 +83,17 @@ static GList *style_list; /**< List of PidginMessageStyles */
 static char  *cur_style_dir = NULL;
 static void  *handle = NULL;
 
+static inline char* get_absolute_path (const char *path)
+{
+	if (g_path_is_absolute (path)) return g_strdup (path);
+	else {
+		char* cwd = g_get_current_dir (), *ret;
+		ret = g_build_filename (cwd, path, NULL);
+		g_free (cwd);
+		return ret;
+	}
+}
+
 static PidginMessageStyle* pidgin_message_style_new (const char* styledir)
 {
 	PidginMessageStyle* ret = g_new0 (PidginMessageStyle, 1);
@@ -623,13 +634,7 @@ get_style_directory_list ()
 	char *user_dir, *user_style_dir, *global_style_dir;
 	GList *list1, *list2;
 
-	user_dir = g_strdup (purple_user_dir ());
-	if (!g_path_is_absolute (user_dir)) {
-		char* cur = g_get_current_dir ();
-		g_free (user_dir);
-		user_dir = g_build_filename (cur, purple_user_dir(), NULL);
-		g_free (cur);
-	}
+	user_dir = get_absolute_path (purple_user_dir ());
 
 	user_style_dir = g_build_filename (user_dir, "styles", NULL);
 	global_style_dir = g_build_filename (DATADIR, "pidgin", "styles", NULL);
