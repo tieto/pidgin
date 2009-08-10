@@ -587,6 +587,55 @@ webkit_on_conversation_hiding (PidginConversation *gtkconv, gpointer data)
 	 */
 }
 
+static GList*
+get_dir_dir_list (const char* dirname)
+{
+	GList *ret = NULL;
+	GDir  *dir = g_dir_open (dirname, 0, NULL);
+	const char* subdir;
+
+	if (!dir) return NULL;
+	while ((subdir = g_dir_read_name (dir))) {
+		ret = g_list_append (ret, g_build_filename (dirname, subdir, NULL));
+	}
+	
+	g_dir_close (dir);
+	return ret;
+}
+
+/**
+ * Get me a list of all the available themes specified by their
+ * directories. I don't guarrantee that these are valid themes, just
+ * that they are in the directories for themes.
+ */
+static GList*
+get_theme_directory_list ()
+{
+	char *user_dir, *user_style_dir, *global_style_dir;
+	GList *list1, *list2;
+
+	user_dir = g_strdup (purple_user_dir ());
+	if (!g_path_is_absolute (user_dir)) {
+		char* cur = g_get_current_dir ();
+		g_free (user_dir);
+		user_dir = g_build_filename (cur, purple_user_dir(), NULL);
+		g_free (cur);
+	}
+
+	user_style_dir = g_build_filename (user_dir, "styles", NULL);
+	global_style_dir = g_build_filename (DATADIR, "pidgin", "styles", NULL);
+
+	list1 = get_dir_dir_list (user_style_dir);
+	list2 = get_dir_dir_list (global_style_dir);
+	
+	g_free (global_style_dir);
+	g_free (user_style_dir);
+	g_free (user_dir);
+	
+	return g_list_concat (list1, list2);
+}
+
+
 /**
  * Get each of the files corresponding to each variant.
  */
@@ -658,6 +707,9 @@ plugin_load(PurplePlugin *plugin)
 	if (g_path_is_absolute (purple_user_dir())) 
 		cur_style_dir = g_build_filename(purple_user_dir(), "style", NULL);
 	else {
+
+
+
 		char* cur = g_get_current_dir ();
 		cur_style_dir = g_build_filename (cur, purple_user_dir(), "style", NULL);
 		g_free (cur);
@@ -786,7 +838,7 @@ cleanup:
 }
 
 static GtkWidget *
-get_config_frame(PurplePlugin *plugin) 
+get_variant_config_frame() 
 {
 	PidginMessageStyle *style = pidgin_message_style_load (cur_style_dir);
 	GList *variants = get_variant_files(style);
@@ -845,6 +897,15 @@ get_config_frame(PurplePlugin *plugin)
 
 	g_free (css_path);
 	return combobox;
+}
+
+static GtkWidget*
+get_config_frame(PurplePlugin* plugin)
+{
+	GtkWidget *vbox = gtk_vbox_new (TRUE, 0);
+
+	gtk_box_pack_end (GTK_BOX(vbox), get_variant_config_frame (), TRUE, TRUE, 0);
+	return vbox;
 }
 
 PidginPluginUiInfo ui_info =
