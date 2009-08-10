@@ -482,13 +482,16 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 	if (type == PURPLE_XFER_SEND) {
 		/* Sending a file */
 		/* Check the filename. */
+		PurpleXferUiOps *ui_ops;
+		ui_ops = purple_xfer_get_ui_ops(xfer);
+
 #ifdef _WIN32
 		if (g_strrstr(filename, "../") || g_strrstr(filename, "..\\"))
 #else
 		if (g_strrstr(filename, "../"))
 #endif
 		{
-			char *utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
+			utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
 
 			msg = g_strdup_printf(_("%s is not a valid filename.\n"), utf8);
 			purple_xfer_error(type, account, xfer->who, msg);
@@ -499,14 +502,19 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 			return;
 		}
 
-		if (g_stat(filename, &st) == -1) {
-			purple_xfer_show_file_error(xfer, filename);
-			purple_xfer_unref(xfer);
-			return;
-		}
+		if (ui_ops == NULL || (ui_ops->read == NULL && ui_ops->write == NULL)) {
+			if (g_stat(filename, &st) == -1) {
+				purple_xfer_show_file_error(xfer, filename);
+				purple_xfer_unref(xfer);
+				return;
+			}
 
-		purple_xfer_set_local_filename(xfer, filename);
-		purple_xfer_set_size(xfer, st.st_size);
+			purple_xfer_set_local_filename(xfer, filename);
+			purple_xfer_set_size(xfer, st.st_size);
+		} else {
+			utf8 = g_strdup(filename);
+			purple_xfer_set_local_filename(xfer, filename);
+		}
 
 		base = g_path_get_basename(filename);
 		utf8 = g_filename_to_utf8(base, -1, NULL, NULL, NULL);
@@ -516,7 +524,6 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 		msg = g_strdup_printf(_("Offering to send %s to %s"),
 				utf8, buddy ? purple_buddy_get_alias(buddy) : xfer->who);
 		g_free(utf8);
-
 		purple_xfer_conversation_write(xfer, msg, FALSE);
 		g_free(msg);
 	}
@@ -946,10 +953,17 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 	guchar *buffer = NULL;
 	gssize r = 0;
 
+	ui_ops = purple_xfer_get_ui_ops(xfer);
+	
 	if (condition & PURPLE_INPUT_READ) {
 		r = purple_xfer_read(xfer, &buffer);
 		if (r > 0) {
-			const size_t wc = fwrite(buffer, 1, r, xfer->dest_fp);
+			size_t wc;
+			if (ui_ops && ui_ops->write)
+				wc = ui_ops->write(xfer, buffer, r);
+			else
+				wc = fwrite(buffer, 1, r, xfer->dest_fp);
+
 			if (wc != r) {
 				purple_debug_error("filetransfer", "Unable to write whole buffer.\n");
 				purple_xfer_cancel_local(xfer);
@@ -975,26 +989,53 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 			return;
 		}
 
-		buffer = g_malloc0(s);
+		if (ui_ops && ui_ops->read) {
+			gssize tmp = ui_ops->read(xfer, &buffer, s);
+			if (tmp == 0) {
+				/*
+				 * UI isn't ready to send data. It will call
+				 * purple_xfer_ui_ready when ready, which sets back up this
+				 * watcher.
+				 */
+				if (xfer->watcher != 0) {
+					purple_timeout_remove(xfer->watcher);
+					xfer->watcher = 0;
+				}
 
-		result = fread(buffer, 1, s, xfer->dest_fp);
-		if (result != s) {
-			purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-			purple_xfer_cancel_remote(xfer);
-			g_free(buffer);
-			return;
+				return;
+			} else if (tmp < 0) {
+				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+				purple_xfer_cancel_local(xfer);
+				return;
+			}
+
+			result = tmp;
+		} else {
+			buffer = g_malloc0(s);
+			result = fread(buffer, 1, s, xfer->dest_fp);
+			if (result != s) {
+				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+				purple_xfer_cancel_local(xfer);
+				g_free(buffer);
+				return;
+			}
 		}
 
 		/* Write as much as we're allowed to. */
-		r = purple_xfer_write(xfer, buffer, s);
+		r = purple_xfer_write(xfer, buffer, result);
 
 		if (r == -1) {
 			purple_xfer_cancel_remote(xfer);
 			g_free(buffer);
 			return;
-		} else if (r < s) {
-			/* We have to seek back in the file now. */
-			fseek(xfer->dest_fp, r - s, SEEK_CUR);
+		} else if (r < result) {
+			if (ui_ops == NULL || (ui_ops->read == NULL && ui_ops->write == NULL)) {
+				/* We have to seek back in the file now. */
+				fseek(xfer->dest_fp, r - s, SEEK_CUR);
+			}
+			else {
+				ui_ops->data_not_sent(xfer, buffer + r, result - r);
+			}
 		} else {
 			/*
 			 * We managed to write the entire buffer.  This means our
@@ -1016,8 +1057,6 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 
 		g_free(buffer);
 
-		ui_ops = purple_xfer_get_ui_ops(xfer);
-
 		if (ui_ops != NULL && ui_ops->update_progress != NULL)
 			ui_ops->update_progress(xfer,
 				purple_xfer_get_progress(xfer));
@@ -1031,17 +1070,20 @@ static void
 begin_transfer(PurpleXfer *xfer, PurpleInputCondition cond)
 {
 	PurpleXferType type = purple_xfer_get_type(xfer);
+	PurpleXferUiOps *ui_ops = purple_xfer_get_ui_ops(xfer);
 
-	xfer->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer),
-						  type == PURPLE_XFER_RECEIVE ? "wb" : "rb");
+	if (ui_ops == NULL || (ui_ops->read == NULL && ui_ops->write == NULL)) {
+		xfer->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer),
+		                        type == PURPLE_XFER_RECEIVE ? "wb" : "rb");
 
-	if (xfer->dest_fp == NULL) {
-		purple_xfer_show_file_error(xfer, purple_xfer_get_local_filename(xfer));
-		purple_xfer_cancel_local(xfer);
-		return;
+		if (xfer->dest_fp == NULL) {
+			purple_xfer_show_file_error(xfer, purple_xfer_get_local_filename(xfer));
+			purple_xfer_cancel_local(xfer);
+			return;
+		}
+
+		fseek(xfer->dest_fp, xfer->bytes_sent, SEEK_SET);
 	}
-
-	fseek(xfer->dest_fp, xfer->bytes_sent, SEEK_SET);
 
 	if (xfer->fd)
 		xfer->watcher = purple_input_add(xfer->fd, cond, transfer_cb, xfer);
@@ -1065,6 +1107,26 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 	xfer->fd = source;
 
 	begin_transfer(xfer, PURPLE_INPUT_READ);
+}
+
+void
+purple_xfer_ui_ready(PurpleXfer *xfer)
+{
+	PurpleInputCondition cond;
+	PurpleXferType type;
+
+	g_return_if_fail(xfer != NULL);
+
+	type = purple_xfer_get_type(xfer);
+	if (type == PURPLE_XFER_SEND)
+		cond = PURPLE_INPUT_WRITE;
+	else /* if (type == PURPLE_XFER_RECEIVE) */
+		cond = PURPLE_INPUT_READ;
+
+	if (xfer->watcher == 0)
+		xfer->watcher = purple_input_add(xfer->fd, cond, transfer_cb, xfer);
+
+	transfer_cb(xfer, 0, cond);
 }
 
 void
