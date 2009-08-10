@@ -468,6 +468,7 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	footer = replace_header_tokens(style->footer_html, strlen(style->footer_html), conv);
 	template = replace_template_tokens(style, style->template_html, strlen(style->template_html) + strlen(style->header_html), header, footer);
 
+	g_assert(template);
 	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
 
 	g_object_set_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY, style);
