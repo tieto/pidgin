@@ -582,8 +582,7 @@ webkit_on_conversation_hiding (PidginConversation *gtkconv, gpointer data)
 {
 	/* 
 	 * I'm not sure if I need to do anything here, but let's keep
-	 * this anyway. (FIXME: have to catch a signal on the WebView
-	 * when the WebView closes.)
+	 * this anyway. 
 	 */
 }
 
