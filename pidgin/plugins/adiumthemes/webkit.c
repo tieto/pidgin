@@ -792,6 +792,27 @@ plugin_unload(PurplePlugin *plugin)
 }
 
 
+static GtkWidget*
+get_style_config_frame ()
+{
+	GtkWidget *combobox = gtk_combo_box_new_text ();
+	GList *styles = get_style_directory_list (), *iter;
+	int index = 0, selected = 0;
+
+	for (iter = styles; iter; iter = g_list_next (iter), index++) {
+		PidginMessageStyle *style = pidgin_message_style_load (iter->data);
+		
+		if (style) {
+			gtk_combo_box_append_text (GTK_COMBO_BOX(combobox), iter->data);
+			if (g_str_equal (iter->data, cur_style_dir))
+				selected = index;
+			pidgin_message_style_unref (style);
+		}
+	}
+	gtk_combo_box_set_active (GTK_COMBO_BOX(combobox), selected);
+	return combobox;
+}
+
 static void
 variant_update_conversation (PurpleConversation *conv)
 {
@@ -914,6 +935,7 @@ get_config_frame(PurplePlugin* plugin)
 {
 	GtkWidget *vbox = gtk_vbox_new (TRUE, 0);
 
+	gtk_box_pack_start (GTK_BOX(vbox), get_style_config_frame (), TRUE, TRUE, 0);
 	gtk_box_pack_end (GTK_BOX(vbox), get_variant_config_frame (), TRUE, TRUE, 0);
 	return vbox;
 }
