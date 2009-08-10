@@ -1,5 +1,6 @@
 /*
- * Adium Webkit views
+ * Adium Message Styles
+ * Copyright (C) 2009  Arnold Noronha <arnstein87@gmail.com>
  * Copyright (C) 2007
  *
  * This program is free software; you can redistribute it and/or
@@ -18,13 +19,14 @@
  * 02111-1307, USA.
  */
 
-/* This plugins is basically Sadrul's x-chat plugin, but with Webkit
- * instead of xtext.
- */
-
 #define PLUGIN_ID		"gtk-webview-adium-ims"
 #define PLUGIN_NAME		"webview-adium-ims"
-#define PLUGIN_AUTHOR		"Sean Egan <seanegan@gmail.com>"
+
+/*
+ * A lot of this was originally written by Sean Egan, but I think I've 
+ * rewrote enough to replace the author for now. 
+ */
+#define PLUGIN_AUTHOR		"Arnold Noronha <arnstein87@gmail.com>" 
 #define PURPLE_PLUGINS          "Hell yeah"
 
 /* System headers */
@@ -45,8 +47,6 @@
 #include <gtkplugin.h>
 #include <gtkwebview.h>
 #include <smileyparser.h>
-
-static PurpleConversationUiOps *uiops = NULL;
 
 
 /* Cache the contents of the HTML files */
