@@ -122,6 +122,7 @@ static void pidgin_message_style_unref (PidginMessageStyle *style)
 }
 
 static void variant_set_default (PidginMessageStyle* style);
+static void webkit_on_webview_destroy (GtkObject* obj, gpointer data);
 
 static PidginMessageStyle*
 pidgin_message_style_load (const char* styledir)
@@ -462,6 +463,8 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 
 	g_object_set_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY, style);
 	
+	/* I need to unref this style when the webkit object destroys */
+	g_signal_connect (G_OBJECT(webkit), "destroy", G_CALLBACK(webkit_on_webview_destroy), style);
 
 	g_free (basedir);
 	g_free (baseuri);
@@ -482,6 +485,13 @@ finalize_theme_for_webkit (PurpleConversation *conv)
 
 	g_object_set_data (G_OBJECT(webview), MESSAGE_STYLE_KEY, NULL);
 	pidgin_message_style_unref (style);
+}
+
+static void
+webkit_on_webview_destroy (GtkObject *object, gpointer data)
+{
+	pidgin_message_style_unref ((PidginMessageStyle*) data);
+	g_object_set_data (G_OBJECT(object), MESSAGE_STYLE_KEY, NULL);
 }
 
 struct webkit_script {
