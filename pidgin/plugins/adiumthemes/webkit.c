@@ -591,7 +591,7 @@ webkit_on_conversation_hiding (PidginConversation *gtkconv, gpointer data)
  * Get each of the files corresponding to each variant.
  */
 static GList*
-get_theme_files(PidginMessageStyle *style) 
+get_variant_files(PidginMessageStyle *style) 
 {
 	GList *ret = NULL;
         GDir *variants;
@@ -637,7 +637,7 @@ variant_set_default (PidginMessageStyle* style)
 		css_path = NULL;
 	}
 	
-	all = get_theme_files (style);
+	all = get_variant_files (style);
 
 	if (all) {
 		style->css_path = g_strdup (all->data);
@@ -789,7 +789,7 @@ static GtkWidget *
 get_config_frame(PurplePlugin *plugin) 
 {
 	PidginMessageStyle *style = pidgin_message_style_load (cur_style_dir);
-	GList *variants = get_theme_files(style);
+	GList *variants = get_variant_files(style);
 	GList *iter = variants;
 	char *curdir = NULL;
 	GtkWidget *combobox = gtk_combo_box_new_text();	
