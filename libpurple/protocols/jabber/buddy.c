@@ -513,6 +513,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 		xmlnode_insert_data(binval, enc, -1);
 		g_free(enc);
+		purple_imgstore_unref(img);
 	} else if (vc_node) {
 		xmlnode *photo;
 		/* TODO: Remove all PHOTO children? (see above note) */
