@@ -74,6 +74,7 @@ typedef struct _PidginMessageStyle {
 } PidginMessageStyle;
 
 static GList *style_list;
+static PidginMessageStyle *cur_style = NULL;
 static void *handle = NULL;
 
 static PidginMessageStyle* pidgin_message_style_new ()
@@ -105,12 +106,15 @@ static void pidgin_message_style_unref (PidginMessageStyle *style)
 	g_free (style);
 }
 
+static void variant_set_default (PidginMessageStyle* style);
 static PidginMessageStyle*
 pidgin_message_style_load (const char* styledir)
 {
 	/* is this style already loaded? */
-	GList* cur = style_list;
+	GList  *cur = style_list;
+	char   *file; /* temporary variable */
 	PidginMessageStyle *ret = NULL;
+
 	for (; cur; cur = g_list_next (cur)) {
 		if (g_str_equal (styldir, ((PidginMessageStyle*) cur->data)->styledir))
 			return (PidginMessageStyle*) cur->data;
@@ -118,7 +122,80 @@ pidgin_message_style_load (const char* styledir)
 
 	/* else we need to load it */
 	ret = pidgin_message_style_new ();
+	ret->style_dir = g_strdup (style);
 	
+	/* find some variant file (or load from user's settings) */
+	variant_set_default (style);
+
+	/* load all other files */
+
+	/* The template path can either come from the theme, or can
+	 * be stock Template.html that comes with the plugin */
+	style->template_path = g_build_filename(styledir, "Contents", "Resources", "Template.html", NULL);
+
+	if (!g_file_test(style->template_path, G_FILE_TEST_EXISTS)) {
+		g_free (style->template_path);
+		style->template_path = g_build_filename(DATADIR, "pidgin", "webkit", "Template.html", NULL);
+	}
+
+	if (!g_file_get_contents(style->template_path, &style->template_html, NULL, NULL)) {
+		pidgin_message_style_free (style);
+		return NULL;
+	}
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "Status.html", NULL);
+	if (!g_file_get_contents(file, &style->status_html, NULL, NULL)) {
+		pidgin_message_style_free (style);
+		g_free (file);
+		return NULL;
+	}
+	g_free (file);
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "main.css", NULL);
+	if (!g_file_get_contents(file, &basestyle_css, NULL, NULL)) {
+		pidgin_message_style_free (style);
+		g_free (file);
+		return NULL;
+	}
+	g_free (file);
+	
+	file = g_build_filename(style_dir, "Contents", "Resources", "Header.html", NULL);
+	g_file_get_contents(file, &style->header_html, NULL, NULL);
+	g_free (file);
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "Footer.html", NULL);
+	g_file_get_contents(file, &style->footer_html, NULL, NULL);
+	g_free (file);
+
+
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "Incoming", "Content.html", NULL);
+	if (!g_file_get_contents(file, &style->incoming_content_html, &NULL, NULL)) {
+		pidgin_message_style_free (style);
+		g_free (file);
+		return NULL;
+	}
+	g_free (file);
+
+
+	/* according to the spec, the following are not necessary files */
+	file = g_build_filename(styledir, "Contents", "Resources", "Incoming", "NextContent.html", NULL);
+	if (!g_file_get_contents(file, &style->incoming_next_content_html, NULL, NULL)) {
+		style->incoming_next_content_html = g_strdup (style->incoming_content_html);
+	}
+	g_free (file);
+
+	file = g_build_filename(styledir, "Contents", "Resources", "Outgoing", "Content.html", NULL);
+	if (!g_file_get_contents(file, &style->outgoing_content_html, NULL, NULL)) {
+		style->outgoing_content_html = g_strdup(style->incoming_content_html);
+	}
+	g_free (file);
+
+	file = g_build_filename(styledir, "Contents", "Resources", "Outgoing", "NextContent.html", NULL);
+	if (!g_file_get_contents(file, &style->outgoing_next_content_html, NULL, NULL)) {
+		outgoing_next_content_html = g_strdup (outgoing_content_html);
+	}
+
 }
 
 
@@ -541,15 +618,12 @@ variant_set_default (PidginMessageStyle* style)
 		g_free (iter->data);
 
 	g_list_free (all);
-
-	g_free (style->css_path);
-	style->css_path = css_path;
 }
 
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	char *file;
+	char *cur_style;
 
 	if (g_path_is_absolute (purple_user_dir())) 
 		style_dir = g_build_filename(purple_user_dir(), "style", NULL);
@@ -559,54 +633,9 @@ plugin_load(PurplePlugin *plugin)
 		g_free (cur);
 	}
 
-	variant_set_default ();
-	if (!css_path)
-		return FALSE;
-
-
-	template_path = g_build_filename(style_dir, "Contents", "Resources", "Template.html", NULL);
-	if (!g_file_test(template_path, G_FILE_TEST_EXISTS)) {
-		g_free(template_path);
-		template_path = g_build_filename(DATADIR, "pidgin", "webkit", "Template.html", NULL);
-	}
-	if (!g_file_get_contents(template_path, &template_html, &template_html_len, NULL))
-		return FALSE;
+	cur_style = pidgin_message_style_load (style_dir);
 	
-	file = g_build_filename(style_dir, "Contents", "Resources", "Header.html", NULL);
-	g_file_get_contents(file, &header_html, &header_html_len, NULL);
-
-	file = g_build_filename(style_dir, "Contents", "Resources", "Footer.html", NULL);
-	g_file_get_contents(file, &footer_html, &footer_html_len, NULL);
-
-	file = g_build_filename(style_dir, "Contents", "Resources", "Incoming", "Content.html", NULL);
-	if (!g_file_get_contents(file, &incoming_content_html, &incoming_content_html_len, NULL))
-		return FALSE;
-
-	file = g_build_filename(style_dir, "Contents", "Resources", "Incoming", "NextContent.html", NULL);
-	if (!g_file_get_contents(file, &incoming_next_content_html, &incoming_next_content_html_len, NULL)) {
-		incoming_next_content_html = incoming_content_html;
-		incoming_next_content_html_len = incoming_content_html_len;
-	}
-
-	file = g_build_filename(style_dir, "Contents", "Resources", "Outgoing", "Content.html", NULL);
-	if (!g_file_get_contents(file, &outgoing_content_html, &outgoing_content_html_len, NULL)) {
-		outgoing_content_html = incoming_content_html;
-		outgoing_content_html_len = incoming_content_html_len;
-	}
-
-	file = g_build_filename(style_dir, "Contents", "Resources", "Outgoing", "NextContent.html", NULL);
-	if (!g_file_get_contents(file, &outgoing_next_content_html, &outgoing_next_content_html_len, NULL)) {
-		outgoing_next_content_html = outgoing_content_html;
-		outgoing_next_content_html_len = outgoing_content_html_len;
-	}
-
-
-	file = g_build_filename(style_dir, "Contents", "Resources", "Status.html", NULL);
-	if (!g_file_get_contents(file, &status_html, &status_html_len, NULL))
-		return FALSE;
-
-	file = g_build_filename(style_dir, "Contents", "Resources", "main.css", NULL);
-	g_file_get_contents(file, &basestyle_css, &basestyle_css_len, NULL);
+	if (!cur_style) return;
 
 	uiops = pidgin_conversations_get_conv_ui_ops();
 
