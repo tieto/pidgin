@@ -810,9 +810,22 @@ style_changed (GtkWidget* combobox, gpointer null)
 {
 	char *name = gtk_combo_box_get_active_text (GTK_COMBO_BOX(combobox));
 	GtkWidget *dialog;
+	GList *styles = get_style_directory_list (), *iter;
 
+	/* find the full path for this name, I wish I could store this info in the combobox itself. :( */
+	for (iter = styles; iter; iter = g_list_next(iter)) {
+		char* basename = g_path_get_basename (iter->data);
+		if (g_str_equal (basename, name)) {
+			g_free (basename);
+			break;
+		}
+		g_free (basename);
+	}
+
+	g_assert (iter);
+	g_free (name);
 	g_free (cur_style_dir);
-	cur_style_dir = name;
+	cur_style_dir = g_strdup (iter->data);;
 
 	/* inform the user that existing conversations haven't changed */
 	dialog = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, "The style for existing conversations have not been changed. Please close and re-open the conversation for the changes to take effect.");
@@ -832,7 +845,10 @@ get_style_config_frame ()
 		PidginMessageStyle *style = pidgin_message_style_load (iter->data);
 		
 		if (style) {
-			gtk_combo_box_append_text (GTK_COMBO_BOX(combobox), iter->data);
+			char *text = g_path_get_basename (iter->data);
+			gtk_combo_box_append_text (GTK_COMBO_BOX(combobox), text);
+			g_free (text);
+
 			if (g_str_equal (iter->data, cur_style_dir))
 				selected = index;
 			index++;
