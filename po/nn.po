@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-02 23:34-0700\n"
-"PO-Revision-Date: 2009-08-01 13:29+0100\n"
+"POT-Creation-Date: 2009-08-09 19:06-0700\n"
+"PO-Revision-Date: 2009-08-09 02:41+0100\n"
 "Last-Translator: Yngve Spjeld Landro <nynorsk@landro.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -12132,6 +12132,9 @@ msgstr "%s ønskjer å starta ei lyd-/biletøkt med deg."
 msgid "%s wishes to start a video session with you."
 msgstr "%s ønskjer å starta ei biletøkt med deg."
 
+msgid "_Pause"
+msgstr "_Pause"
+
 #, c-format
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
@@ -12673,7 +12676,7 @@ msgstr ""
 "(%s for filnamn)"
 
 msgid "M_ute sounds"
-msgstr "&Demp lydar"
+msgstr "_Demp lydar"
 
 msgid "Sounds when conversation has _focus"
 msgstr "Lydar medan samtalevindauget har _fokus"
@@ -12688,7 +12691,7 @@ msgid "Play"
 msgstr "Spel"
 
 msgid "_Browse..."
-msgstr "Bla &gjennom…"
+msgstr "Bla _gjennom…"
 
 msgid "_Reset"
 msgstr "_Nullstill"
@@ -13067,9 +13070,6 @@ msgstr "_Legg til…"
 
 msgid "_Open Mail"
 msgstr "_Opna e-post"
-
-msgid "_Pause"
-msgstr "_Pause"
 
 msgid "_Edit"
 msgstr "_Endra"
