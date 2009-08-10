@@ -132,7 +132,7 @@ pidgin_message_style_load (const char* styledir)
 	GList  *cur = style_list;
 	char   *file; /* temporary variable */
 	PidginMessageStyle *style = NULL;
-	
+
 	g_assert (styledir);
 	for (cur = style_list; cur; cur = g_list_next (cur)) {
 		style = (PidginMessageStyle*) cur->data;
@@ -158,11 +158,13 @@ pidgin_message_style_load (const char* styledir)
 
 	if (!g_file_get_contents(style->template_path, &style->template_html, NULL, NULL)) {
 		pidgin_message_style_unref (style);
+		purple_debug_error ("webkit", "Could not locate a Template.html\n");
 		return NULL;
 	}
 
 	file = g_build_filename(styledir, "Contents", "Resources", "Status.html", NULL);
 	if (!g_file_get_contents(file, &style->status_html, NULL, NULL)) {
+		purple_debug_info ("webkit", "%s could not find Resources/Status.html", styledir);
 		pidgin_message_style_unref (style);
 		g_free (file);
 		return NULL;
@@ -186,6 +188,7 @@ pidgin_message_style_load (const char* styledir)
 
 	file = g_build_filename(styledir, "Contents", "Resources", "Incoming", "Content.html", NULL);
 	if (!g_file_get_contents(file, &style->incoming_content_html, NULL, NULL)) {
+		purple_debug_info ("webkit", "%s did not have a Incoming/Content.html\n", styledir);
 		pidgin_message_style_unref (style);
 		g_free (file);
 		return NULL;
@@ -454,7 +457,7 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	
 	if (oldStyle) return;
 
-	purple_debug_info ("webkit", "loading %s", style_dir);
+	purple_debug_info ("webkit", "loading %s\n", style_dir);
 	style = pidgin_message_style_load (style_dir);
 	g_assert (style);
 
