@@ -64,7 +64,8 @@ typedef struct _PidginMessageStyle {
 
 	/* caches */
 	char    *template_html;
-	char    *style_name;
+	char    *header_html;
+	char    *footer_html;
 	char    *incoming_content_html;
 	char    *outgoing_content_html;
 	char    *incoming_next_content_html;
@@ -73,9 +74,9 @@ typedef struct _PidginMessageStyle {
 	char    *basestyle_css;
 } PidginMessageStyle;
 
-static GList *style_list;
-static PidginMessageStyle *cur_style = NULL;
-static void *handle = NULL;
+static GList *style_list; /**< List of PidginMessageStyles */
+static char  *cur_style_dir = NULL;
+static void  *handle = NULL;
 
 static PidginMessageStyle* pidgin_message_style_new ()
 {
@@ -102,7 +103,7 @@ static void pidgin_message_style_unref (PidginMessageStyle *style)
 	g_free (style->status_html);
 	g_free (style->basestyle_css);
 
-	g_list_remove (style_list, style);
+	style_list = g_list_remove (style_list, style);
 	g_free (style);
 }
 
@@ -113,16 +114,18 @@ pidgin_message_style_load (const char* styledir)
 	/* is this style already loaded? */
 	GList  *cur = style_list;
 	char   *file; /* temporary variable */
-	PidginMessageStyle *ret = NULL;
+	PidginMessageStyle *style = NULL;
+	
+	g_assert (styledir);
 
 	for (; cur; cur = g_list_next (cur)) {
-		if (g_str_equal (styldir, ((PidginMessageStyle*) cur->data)->styledir))
+		if (g_str_equal (styledir, ((PidginMessageStyle*) cur->data)->style_dir))
 			return (PidginMessageStyle*) cur->data;
 	}
 
 	/* else we need to load it */
-	ret = pidgin_message_style_new ();
-	ret->style_dir = g_strdup (style);
+	style = pidgin_message_style_new ();
+	style->style_dir = g_strdup (styledir);
 	
 	/* find some variant file (or load from user's settings) */
 	variant_set_default (style);
@@ -139,39 +142,35 @@ pidgin_message_style_load (const char* styledir)
 	}
 
 	if (!g_file_get_contents(style->template_path, &style->template_html, NULL, NULL)) {
-		pidgin_message_style_free (style);
+		pidgin_message_style_unref (style);
 		return NULL;
 	}
 
-	file = g_build_filename(style_dir, "Contents", "Resources", "Status.html", NULL);
+	file = g_build_filename(styledir, "Contents", "Resources", "Status.html", NULL);
 	if (!g_file_get_contents(file, &style->status_html, NULL, NULL)) {
-		pidgin_message_style_free (style);
+		pidgin_message_style_unref (style);
 		g_free (file);
 		return NULL;
 	}
 	g_free (file);
 
-	file = g_build_filename(style_dir, "Contents", "Resources", "main.css", NULL);
-	if (!g_file_get_contents(file, &basestyle_css, NULL, NULL)) {
-		pidgin_message_style_free (style);
-		g_free (file);
-		return NULL;
-	}
+	file = g_build_filename(styledir, "Contents", "Resources", "main.css", NULL);
+	g_file_get_contents(file, &style->basestyle_css, NULL, NULL);
 	g_free (file);
 	
-	file = g_build_filename(style_dir, "Contents", "Resources", "Header.html", NULL);
+	file = g_build_filename(styledir, "Contents", "Resources", "Header.html", NULL);
 	g_file_get_contents(file, &style->header_html, NULL, NULL);
 	g_free (file);
 
-	file = g_build_filename(style_dir, "Contents", "Resources", "Footer.html", NULL);
+	file = g_build_filename(styledir, "Contents", "Resources", "Footer.html", NULL);
 	g_file_get_contents(file, &style->footer_html, NULL, NULL);
 	g_free (file);
 
 
 
-	file = g_build_filename(style_dir, "Contents", "Resources", "Incoming", "Content.html", NULL);
-	if (!g_file_get_contents(file, &style->incoming_content_html, &NULL, NULL)) {
-		pidgin_message_style_free (style);
+	file = g_build_filename(styledir, "Contents", "Resources", "Incoming", "Content.html", NULL);
+	if (!g_file_get_contents(file, &style->incoming_content_html, NULL, NULL)) {
+		pidgin_message_style_unref (style);
 		g_free (file);
 		return NULL;
 	}
@@ -193,9 +192,10 @@ pidgin_message_style_load (const char* styledir)
 
 	file = g_build_filename(styledir, "Contents", "Resources", "Outgoing", "NextContent.html", NULL);
 	if (!g_file_get_contents(file, &style->outgoing_next_content_html, NULL, NULL)) {
-		outgoing_next_content_html = g_strdup (outgoing_content_html);
+		style->outgoing_next_content_html = g_strdup (style->outgoing_content_html);
 	}
 
+	return style;
 }
 
 
@@ -212,8 +212,15 @@ static void webkit_plugin_free_handle ()
 }
 
 static char *
-replace_message_tokens(char *text, gsize len, PurpleConversation *conv, const char *name, const char *alias, 
-			     const char *message, PurpleMessageFlags flags, time_t mtime)
+replace_message_tokens(
+	char *text, 
+	gsize len, 
+	PurpleConversation *conv, 
+	const char *name, 
+	const char *alias, 
+	const char *message, 
+	PurpleMessageFlags flags, 
+	time_t mtime)
 {
 	GString *str = g_string_new_len(NULL, len);
 	char *cur = text;
@@ -332,7 +339,6 @@ replace_header_tokens(char *text, gsize len, PurpleConversation *conv)
 			replace = purple_utf8_strftime(format ? format : "%X", NULL);
 			g_free(format);
 		} else {
-		//	cur++;
 			continue;
 		}
 
@@ -354,7 +360,7 @@ replace_header_tokens(char *text, gsize len, PurpleConversation *conv)
 }
 
 static char *
-replace_template_tokens(char *text, int len, char *header, char *footer) {
+replace_template_tokens(PidginMessageStyle *style, char *text, int len, char *header, char *footer) {
 	GString *str = g_string_new_len(NULL, len);
 
 	char **ms = g_strsplit(text, "%@", 6);
@@ -368,17 +374,17 @@ replace_template_tokens(char *text, int len, char *header, char *footer) {
 
 	g_string_append(str, ms[0]);
 	g_string_append(str, "file://");
-	base = g_build_filename (style_dir, "Contents", "Resources", "Template.html", NULL);
+	base = g_build_filename (style->style_dir, "Contents", "Resources", "Template.html", NULL);
 	g_string_append(str, base);
 	g_free (base);
 
 	g_string_append(str, ms[1]);
-	if (basestyle_css)
-		g_string_append(str, basestyle_css);
+	if (style->basestyle_css)
+		g_string_append(str, style->basestyle_css);
 	g_string_append(str, ms[2]);
-	if (css_path) {
+	if (style->css_path) {
 		g_string_append(str, "file://");
-		g_string_append(str, css_path);
+		g_string_append(str, style->css_path);
 	}
 
 	g_string_append(str, ms[3]);
@@ -413,23 +419,28 @@ get_webkit(PurpleConversation *conv)
  * changes.
  */
 static void
-init_theme_for_webkit (PurpleConversation *conv)
+init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 {
 	GtkWidget *webkit = PIDGIN_CONVERSATION(conv)->webview;
 	char *header, *footer;
 	char *template;
 
-	char* basedir = g_build_filename (style_dir, "Contents", "Resources", "Template.html", NULL);
-	char* baseuri = g_strdup_printf ("file://%s", basedir);
+	char* basedir;
+	char* baseuri;
+	PidginMessageStyle *style;
+	style = pidgin_message_style_load (style_dir);
+	g_assert (style);
 
-	header = replace_header_tokens(header_html, header_html_len, conv);
-	footer = replace_header_tokens(footer_html, footer_html_len, conv);
-	template = replace_template_tokens(template_html, template_html_len + header_html_len, header, footer);
+	basedir = g_build_filename (style->style_dir, "Contents", "Resources", "Template.html", NULL);
+	baseuri = g_strdup_printf ("file://%s", basedir);
+	header = replace_header_tokens(style->header_html, strlen(style->header_html), conv);
+	footer = replace_header_tokens(style->footer_html, strlen(style->footer_html), conv);
+	template = replace_template_tokens(style, style->template_html, strlen(style->template_html) + strlen(style->header_html), header, footer);
 
 	if (!g_object_get_data (G_OBJECT(webkit), "adium-themed"))
 		webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
 
-	g_object_set_data (G_OBJECT(webkit), "adium-themed", GINT_TO_POINTER(1));
+	g_object_set_data (G_OBJECT(webkit), "adium-themed", style);
 
 	g_free (basedir);
 	g_free (baseuri);
@@ -444,8 +455,11 @@ static void
 finalize_theme_for_webkit (PurpleConversation *conv)
 {
 	GtkWidget *webview = PIDGIN_CONVERSATION(conv)->webview;
+	PidginMessageStyle *style = g_object_get_data (G_OBJECT(webview), "adium-themed");
+
 	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webview), "", "text/html", "UTF-8", "");
 	g_object_set_data (G_OBJECT(webview), "adium-themed", NULL);
+	pidgin_message_style_unref (style);
 }
 
 struct webkit_script {
@@ -485,23 +499,26 @@ static gboolean webkit_on_displaying_im_msg (PurpleAccount *account,
 
 	struct webkit_script *wk_script;
 	PurpleMessageFlags old_flags = GPOINTER_TO_INT(purple_conversation_get_data(conv, "webkit-lastflags")); 
+	PidginMessageStyle *style;
 
 	fprintf (stderr, "hmm.. here %s %s\n", name, message);
 	webkit = get_webkit(conv);
 	stripped = g_strdup(message);
 
+	style = g_object_get_data (G_OBJECT (webkit), "adium-themed");
+
 	if (flags & PURPLE_MESSAGE_SEND && old_flags & PURPLE_MESSAGE_SEND) {
-		message_html = outgoing_next_content_html;
+		message_html = style->outgoing_next_content_html;
 		func = "appendNextMessage";
 	} else if (flags & PURPLE_MESSAGE_SEND) {
-		message_html = outgoing_content_html;
+		message_html = style->outgoing_content_html;
 	} else if (flags & PURPLE_MESSAGE_RECV && old_flags & PURPLE_MESSAGE_RECV) {
-		message_html = incoming_next_content_html;
+		message_html = style->incoming_next_content_html;
 		func = "appendNextMessage";
 	} else if (flags & PURPLE_MESSAGE_RECV) {
-		message_html = incoming_content_html;
+		message_html = style->incoming_content_html;
 	} else {
-		message_html = status_html;
+		message_html = style->status_html;
 	}
 	purple_conversation_set_data(conv, "webkit-lastflags", GINT_TO_POINTER(flags));
 
@@ -538,13 +555,13 @@ static gboolean webkit_on_displaying_chat_msg (PurpleAccount *account,
 static void
 webkit_on_converstation_displayed (PidginConversation *gtkconv, gpointer data)
 {
-	init_theme_for_webkit (gtkconv->active_conv);
+	init_theme_for_webkit (gtkconv->active_conv, cur_style_dir);
 }
 
 static void
 webkit_on_conversation_switched (PurpleConversation *conv, gpointer data)
 {
-	init_theme_for_webkit (conv);
+	init_theme_for_webkit (conv, cur_style_dir);
 }
 
 static void
@@ -569,7 +586,7 @@ get_theme_files(PidginMessageStyle *style)
 	char *variant_dir;
 
 	g_assert (style->style_dir);
-	variant_dir = g_build_filename(style_dir, "Contents", "Resources", "Variants", NULL);
+	variant_dir = g_build_filename(style->style_dir, "Contents", "Resources", "Variants", NULL);
 
 	variants = g_dir_open(variant_dir, 0, NULL);
 	if (!variants) return NULL;
@@ -593,7 +610,7 @@ static void
 variant_set_default (PidginMessageStyle* style)
 {
 	GList *all, *iter;
-	char *css_path = purple_prefs_get_string ("/plugins/gtk/adiumthemes/csspath");
+	const char *css_path = purple_prefs_get_string ("/plugins/gtk/adiumthemes/csspath");
 
 	g_free (style->css_path);
 	if (g_str_has_prefix (css_path, style->style_dir) &&
@@ -603,11 +620,10 @@ variant_set_default (PidginMessageStyle* style)
 	}
 	else {
 		/* something about the theme has changed */
-		g_free (css_path);
 		css_path = NULL;
 	}
 	
-	all = get_theme_files (PidginMessageStyle* style);
+	all = get_theme_files (style);
 
 	if (all) {
 		style->css_path = g_strdup (all->data);
@@ -623,24 +639,25 @@ variant_set_default (PidginMessageStyle* style)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	char *cur_style;
+	PidginMessageStyle *_style; /* temp */
 
 	if (g_path_is_absolute (purple_user_dir())) 
-		style_dir = g_build_filename(purple_user_dir(), "style", NULL);
+		cur_style_dir = g_build_filename(purple_user_dir(), "style", NULL);
 	else {
 		char* cur = g_get_current_dir ();
-		style_dir = g_build_filename (cur, purple_user_dir(), "style", NULL);
+		cur_style_dir = g_build_filename (cur, purple_user_dir(), "style", NULL);
 		g_free (cur);
 	}
-
-	cur_style = pidgin_message_style_load (style_dir);
 	
-	if (!cur_style) return;
 
-	uiops = pidgin_conversations_get_conv_ui_ops();
-
-	if (uiops == NULL)
+	_style = pidgin_message_style_load (cur_style_dir);
+	if (!_style) {
+		g_free (cur_style_dir);
+		cur_style_dir = NULL;
 		return FALSE;
+	}
+
+	pidgin_message_style_unref (_style);
 
 	purple_signal_connect (pidgin_conversations_get_handle (),
 			       "displaying-im-msg",
@@ -676,7 +693,7 @@ plugin_load(PurplePlugin *plugin)
 	{
 		GList* list = purple_get_conversations ();
 		for (;list; list = g_list_next(list))
-			init_theme_for_webkit (list->data);
+			init_theme_for_webkit (list->data, cur_style_dir);
 			
 	}
 	return TRUE;
@@ -704,8 +721,9 @@ variant_update_conversation (PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION (conv);
 	WebKitWebView *webview = WEBKIT_WEB_VIEW (gtkconv->webview);
-	char* script = g_strdup_printf ("setStylesheet(\"mainStyle\",\"%s\")", css_path);
-	printf ("css_path: %s\n", css_path);
+	PidginMessageStyle *style = (PidginMessageStyle*) g_object_get_data (G_OBJECT(webview), "adium-themed");
+
+	char* script = g_strdup_printf ("setStylesheet(\"mainStyle\",\"%s\")", style->css_path);
 	webkit_web_view_execute_script (webview, script);
 	g_free (script);
 }
@@ -714,16 +732,28 @@ static void
 variant_changed (GtkWidget* combobox, gpointer null)
 {
 	char *name, *name_with_ext;
+	char *css_path;
 	GList *list;
+	PidginMessageStyle *style = pidgin_message_style_load (cur_style_dir);
 
-	g_free (css_path);
+	g_assert (style);
+
+	/* it is possible that the theme changed by this point, so we check
+	 * that first */
+
 	name = gtk_combo_box_get_active_text (GTK_COMBO_BOX(combobox));
 	name_with_ext = g_strdup_printf ("%s.css", name);
 	g_free (name);
 	
-	css_path = g_build_filename (style_dir, "Contents", "Resources", "Variants", name_with_ext, NULL);
+	css_path = g_build_filename (style->style_dir, "Contents", "Resources", "Variants", name_with_ext, NULL);
+
+	if (!g_file_test (css_path, G_FILE_TEST_EXISTS)) {
+		goto cleanup;
+	}
+
+	g_free (style->css_path);
+	style->css_path = g_strdup (css_path);
 	purple_prefs_set_string ("/plugins/gtk/adiumthemes/csspath", css_path);
-	g_free (name_with_ext);
 
 	/* update each conversation */
 	list = purple_get_conversations ();
@@ -731,15 +761,25 @@ variant_changed (GtkWidget* combobox, gpointer null)
 		variant_update_conversation (list->data);
 		list = g_list_next(list);
 	}
+
+cleanup:
+	g_free (css_path);
+	g_free (name_with_ext);
+	pidgin_message_style_unref (style);
 }
 
 static GtkWidget *
-get_config_frame(PurplePlugin *plugin) {
-	GList *themes = get_theme_files();
+get_config_frame(PurplePlugin *plugin) 
+{
+	PidginMessageStyle *style = pidgin_message_style_load (cur_style_dir);
+	GList *themes = get_theme_files(style);
 	GList *theme = themes;
 	char *curdir = NULL;
 	GtkWidget *combobox = gtk_combo_box_new_text();	
 	int def = -1, index = 0;
+	char* css_path = style->css_path;
+
+	pidgin_message_style_unref (style);
 
 	while (theme) {
 		char *basename = g_path_get_basename(theme->data);
