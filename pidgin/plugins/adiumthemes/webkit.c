@@ -964,11 +964,13 @@ get_variant_config_frame()
 static GtkWidget*
 get_config_frame(PurplePlugin* plugin)
 {
-	GtkWidget *vbox = gtk_vbox_new (TRUE, 0);
-
-	gtk_box_pack_start (GTK_BOX(vbox), get_style_config_frame (), TRUE, TRUE, 0);
-	gtk_box_pack_end (GTK_BOX(vbox), get_variant_config_frame (), TRUE, TRUE, 0);
-	return vbox;
+	GtkWidget *table = gtk_table_new (2, 2, FALSE);
+	
+	gtk_table_attach_defaults (GTK_TABLE(table), gtk_label_new ("Message Style"), 0, 1, 0, 1);
+	gtk_table_attach_defaults (GTK_TABLE(table), get_style_config_frame (), 1, 2, 0, 1);
+	gtk_table_attach_defaults (GTK_TABLE(table), gtk_label_new ("Style Variant"), 0, 1, 1, 2);
+	gtk_table_attach_defaults (GTK_TABLE(table), get_variant_config_frame (), 1, 2, 1, 2);
+	return table;
 }
 
 PidginPluginUiInfo ui_info =
