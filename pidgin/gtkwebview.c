@@ -223,25 +223,6 @@ webview_load_finished (WebKitWebView *view,
 	g_idle_add ((GSourceFunc) process_js_script_queue, view);
 }
 
-char*
-gtk_webview_execute_script (GtkWebView *view, const char *script)
-{
-	JSStringRef js_script = JSStringCreateWithUTF8CString (script);
-	JSContextRef ctxt = webkit_web_frame_get_global_context (
-		webkit_web_view_get_main_frame (WEBKIT_WEB_VIEW (view))
-		);
-	JSValueRef ret = JSEvaluateScript (ctxt, js_script, NULL, NULL, 0, NULL);
-	JSStringRef ret_as_str = JSValueToStringCopy (ctxt, ret, NULL);
-
-	size_t cstr_len = JSStringGetMaximumUTF8CStringSize (ret_as_str);
-	char   *cstr = g_new0(char, cstr_len + 1);
-
-	JSStringGetUTF8CString (ret_as_str, cstr, cstr_len);
-
-	/* TODO: I'm not sure what, if at all, I need to free here! */
-	return cstr;
-}
-
 void
 gtk_webview_safe_execute_script (GtkWebView *view, const char* script)
 {
@@ -325,18 +306,6 @@ gtk_webview_append_html (GtkWebView* view, const char* html)
 	view->priv->empty = FALSE;
 	g_free (script);
 	g_free (escaped);
-}
-
-char*
-gtk_webview_get_markup (GtkWebView *view)
-{
-	return gtk_webview_execute_script (view, "document.body.innerHTML");
-}
-
-char*
-gtk_webview_get_text (GtkWebView *view)
-{
-	return gtk_webview_execute_script (view, "document.body.textContent");
 }
 
 gboolean gtk_webview_is_empty (GtkWebView *view)

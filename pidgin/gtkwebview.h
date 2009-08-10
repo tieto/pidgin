@@ -103,20 +103,6 @@ void gtk_webview_load_html_string_with_imgstore (GtkWebView* webview, const char
 gboolean gtk_webview_is_empty (GtkWebView *webview);
 
 /**
- * Executes javascript and returns the answer of the script
- * formatted as string. The return value needs to be freed using
- * g_free. If the return values is not required you may instead
- * use webkit_web_view_execute_script, or even better
- * gtk_webview_safe_execute_script.
- *
- * @param webview The GtkWebView object
- * @param script  The JavaScript to execute
- *
- * @return the return value of the script.
- */
-char* gtk_webview_execute_script (GtkWebView *webview, const char *script);
-
-/**
  * Execute the JavaScript only after the webkit_webview_load_string
  * loads completely. We also guarantee that the scripts are executed
  * in the order they are called here.This is useful to avoid race
@@ -127,24 +113,6 @@ char* gtk_webview_execute_script (GtkWebView *webview, const char *script);
  * @param script   the script to execute
  */
 void gtk_webview_safe_execute_script (GtkWebView *webview, const char* script);
-
-/**
- * Get the current contents of the GtkWebView object.
- *
- * @param webview The GtkWebView object
- *
- * @return a string with the contents. Needs to be g_free'd after use.
- */
-char* gtk_webview_get_markup (GtkWebView *webview);
-
-/**
- * Returns the contents of the GtkWebView object, stripped of markups
- *
- * @param webview The GtkWebView object
- *
- * @return a string with the contents. Needs to be g_free'd after use.
- */
-char* gtk_webview_get_text (GtkWebView *view);
 
 /**
  * A convenience routine to quote a string for use as a JavaScript 
