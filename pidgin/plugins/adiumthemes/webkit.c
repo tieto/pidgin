@@ -48,35 +48,80 @@
 #include <gtkwebview.h>
 #include <smileyparser.h>
 
+/*
+ * I'm going to allow a different style for each PidginConversation.
+ * This way I can do two things: 1) change the theme on the fly and not
+ * change existing themes, and 2) Use a different theme for IMs and
+ * chats.
+ */
+typedef struct _PidginMessageStyle {
+	int     ref_counter;
 
-/* Cache the contents of the HTML files */
-char *template_html = NULL;                 /* This is the skeleton: some basic javascript mostly */
-char *header_html = NULL;                   /* This is the first thing to be appended to any conversation */
-char *footer_html = NULL;		    /* This is the last thing appended to the conversation */
-char *incoming_content_html = NULL;         /* This is a received message */
-char *outgoing_content_html = NULL;         /* And a sent one */
-char *incoming_next_content_html = NULL;    /* The same things, but used when someone sends multiple subsequent */
-char *outgoing_next_content_html = NULL;    /* messages in a row */
-char *status_html = NULL;                   /* Non-IM status messages */
-char *basestyle_css = NULL;		    /* Shared CSS attributes */
+	/* paths */
+	char    *style_dir;
+	char    *template_path;
+	char    *css_path;
 
-/* Cache their lenghts too, to pass into g_string_new_len, avoiding crazy allocation */
-gsize template_html_len = 0;
-gsize header_html_len = 0;
-gsize footer_html_len = 0;
-gsize incoming_content_html_len = 0;
-gsize outgoing_content_html_len = 0;
-gsize incoming_next_content_html_len = 0;
-gsize outgoing_next_content_html_len = 0;
-gsize status_html_len = 0;
-gsize basestyle_css_len = 0;
+	/* caches */
+	char    *template_html;
+	char    *style_name;
+	char    *incoming_content_html;
+	char    *outgoing_content_html;
+	char    *incoming_next_content_html;
+	char    *outgoing_next_content_html;
+	char    *status_html;
+	char    *basestyle_css;
+} PidginMessageStyle;
 
-/* And their paths */
-char *style_dir = NULL;
-char *template_path = NULL;
-char *css_path = NULL;
-
+static GList *style_list;
 static void *handle = NULL;
+
+static PidginMessageStyle* pidgin_message_style_new ()
+{
+	PidginMessageStyle* ret = g_new0 (PidginMessageStyle, 1);
+	ret->ref_counter ++;
+	
+	style_list = g_list_append (style_list, ret);
+	return ret;
+}
+
+static void pidgin_message_style_unref (PidginMessageStyle *style)
+{
+	style->ref_counter--;
+	if (style->ref_counter) return;
+
+	g_free (style->style_dir);
+	g_free (style->template_path);
+	g_free (style->css_path);
+	
+	g_free (style->template_html);
+	g_free (style->incoming_content_html);
+	g_free (style->outgoing_content_html);
+	g_free (style->outgoing_next_content_html);
+	g_free (style->status_html);
+	g_free (style->basestyle_css);
+
+	g_list_remove (style_list, style);
+	g_free (style);
+}
+
+static PidginMessageStyle*
+pidgin_message_style_load (const char* styledir)
+{
+	/* is this style already loaded? */
+	GList* cur = style_list;
+	PidginMessageStyle *ret = NULL;
+	for (; cur; cur = g_list_next (cur)) {
+		if (g_str_equal (styldir, ((PidginMessageStyle*) cur->data)->styledir))
+			return (PidginMessageStyle*) cur->data;
+	}
+
+	/* else we need to load it */
+	ret = pidgin_message_style_new ();
+	
+}
+
+
 static void* webkit_plugin_get_handle ()
 {
 	if (handle) return handle;
@@ -434,65 +479,71 @@ webkit_on_conversation_hiding (PidginConversation *gtkconv, gpointer data)
 	 */
 }
 
+/**
+ * Get each of the files corresponding to each variant.
+ */
 static GList*
-get_theme_files() 
+get_theme_files(PidginMessageStyle *style) 
 {
 	GList *ret = NULL;
         GDir *variants;
-	char *globe = g_build_filename(DATADIR, "pidgin", "webkit", "styles", NULL);
 	const char *css_file;
 	char *css;
+	char *variant_dir;
 
-	if (style_dir != NULL) {
-		char *variant_dir = g_build_filename(style_dir, "Contents", "Resources", "Variants", NULL);
-		variants = g_dir_open(variant_dir, 0, NULL);
-		while ((css_file = g_dir_read_name(variants)) != NULL) {
-			if (!strstr(css_file, ".css")) {
-				continue;
-			}
-			css = g_build_filename(variant_dir, css_file, NULL);
-			ret = g_list_append(ret,css);
-		}
-		g_dir_close(variants);
-		g_free(variant_dir);
+	g_assert (style->style_dir);
+	variant_dir = g_build_filename(style_dir, "Contents", "Resources", "Variants", NULL);
+
+	variants = g_dir_open(variant_dir, 0, NULL);
+	if (!variants) return NULL;
+
+	while ((css_file = g_dir_read_name(variants)) != NULL) {
+		if (!g_str_has_suffix (css_file, ".css"))
+			continue;
+
+		css = g_build_filename(variant_dir, css_file, NULL);
+		ret = g_list_append(ret, css);
 	}
-	g_free(globe);
+
+	g_dir_close(variants);
+	g_free(variant_dir);
 
 	ret = g_list_sort (ret, (GCompareFunc)g_strcmp0);
 	return ret;	
 }
 
 static void
-variant_set_default ()
+variant_set_default (PidginMessageStyle* style)
 {
+	GList *all, *iter;
+	char *css_path = purple_prefs_get_string ("/plugins/gtk/adiumthemes/csspath");
 
-	GList* all;
-	GList* copy;
-	css_path = g_strdup (purple_prefs_get_string ("/plugins/gtk/adiumthemes/csspath"));
-
-	if (g_file_test (css_path, G_FILE_TEST_EXISTS))
+	g_free (style->css_path);
+	if (g_str_has_prefix (css_path, style->style_dir) &&
+	    g_file_test (css_path, G_FILE_TEST_EXISTS)) {
+		style->css_path = g_strdup (css_path);
 		return;
+	}
 	else {
+		/* something about the theme has changed */
 		g_free (css_path);
 		css_path = NULL;
 	}
 	
-	all = get_theme_files ();
-	copy = all;
-	if (css_path) {
-		g_free (css_path);
-		css_path = NULL;
-	}
+	all = get_theme_files (PidginMessageStyle* style);
+
 	if (all) {
-		css_path = g_strdup (all->data);
+		style->css_path = g_strdup (all->data);
 		purple_prefs_set_string ("/plugins/gtk/adiumthemes/csspath", css_path);
 	}
 	
-	while (all) {
-		g_free (all->data);
-		all = g_list_next(all);
-	}
-	g_list_free (copy);
+	for (iter = all; iter; iter = g_list_next (iter))
+		g_free (iter->data);
+
+	g_list_free (all);
+
+	g_free (style->css_path);
+	style->css_path = css_path;
 }
 
 static gboolean
