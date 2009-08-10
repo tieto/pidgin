@@ -48,6 +48,10 @@
 #include <gtkwebview.h>
 #include <smileyparser.h>
 
+
+/* GObject data keys */
+#define MESSAGE_STYLE_KEY "message-style"
+
 /*
  * I'm going to allow a different style for each PidginConversation.
  * This way I can do two things: 1) change the theme on the fly and not
@@ -78,10 +82,17 @@ static GList *style_list; /**< List of PidginMessageStyles */
 static char  *cur_style_dir = NULL;
 static void  *handle = NULL;
 
-static PidginMessageStyle* pidgin_message_style_new ()
+static PidginMessageStyle* pidgin_message_style_new (const char* styledir)
 {
 	PidginMessageStyle* ret = g_new0 (PidginMessageStyle, 1);
+	GList *iter;
+
+	/* sanity check */
+	for (iter = style_list; iter; iter = g_list_next (iter))
+		g_assert (!g_str_equal (((PidginMessageStyle*)iter->data)->style_dir, styledir));
+
 	ret->ref_counter ++;
+	ret->style_dir = g_strdup (styledir);
 	
 	style_list = g_list_append (style_list, ret);
 	return ret;
@@ -89,6 +100,8 @@ static PidginMessageStyle* pidgin_message_style_new ()
 
 static void pidgin_message_style_unref (PidginMessageStyle *style)
 {
+	if (!style) return;
+
 	style->ref_counter--;
 	if (style->ref_counter) return;
 
@@ -124,8 +137,7 @@ pidgin_message_style_load (const char* styledir)
 	}
 
 	/* else we need to load it */
-	style = pidgin_message_style_new ();
-	style->style_dir = g_strdup (styledir);
+	style = pidgin_message_style_new (styledir);
 	
 	/* find some variant file (or load from user's settings) */
 	variant_set_default (style);
@@ -165,8 +177,6 @@ pidgin_message_style_load (const char* styledir)
 	file = g_build_filename(styledir, "Contents", "Resources", "Footer.html", NULL);
 	g_file_get_contents(file, &style->footer_html, NULL, NULL);
 	g_free (file);
-
-
 
 	file = g_build_filename(styledir, "Contents", "Resources", "Incoming", "Content.html", NULL);
 	if (!g_file_get_contents(file, &style->incoming_content_html, NULL, NULL)) {
@@ -427,7 +437,10 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 
 	char* basedir;
 	char* baseuri;
-	PidginMessageStyle *style;
+	PidginMessageStyle *style, *oldStyle;
+	oldStyle = g_object_get_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY);
+	if (oldStyle) return;
+
 	style = pidgin_message_style_load (style_dir);
 	g_assert (style);
 
@@ -437,10 +450,10 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	footer = replace_header_tokens(style->footer_html, strlen(style->footer_html), conv);
 	template = replace_template_tokens(style, style->template_html, strlen(style->template_html) + strlen(style->header_html), header, footer);
 
-	if (!g_object_get_data (G_OBJECT(webkit), "adium-themed"))
-		webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
-
-	g_object_set_data (G_OBJECT(webkit), "adium-themed", style);
+	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
+	pidgin_message_style_unref (oldStyle);
+	g_object_set_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY, style);
+	
 
 	g_free (basedir);
 	g_free (baseuri);
@@ -455,10 +468,11 @@ static void
 finalize_theme_for_webkit (PurpleConversation *conv)
 {
 	GtkWidget *webview = PIDGIN_CONVERSATION(conv)->webview;
-	PidginMessageStyle *style = g_object_get_data (G_OBJECT(webview), "adium-themed");
+	PidginMessageStyle *style = g_object_get_data (G_OBJECT(webview), MESSAGE_STYLE_KEY);
 
 	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webview), "", "text/html", "UTF-8", "");
-	g_object_set_data (G_OBJECT(webview), "adium-themed", NULL);
+
+	g_object_set_data (G_OBJECT(webview), MESSAGE_STYLE_KEY, NULL);
 	pidgin_message_style_unref (style);
 }
 
@@ -505,7 +519,7 @@ static gboolean webkit_on_displaying_im_msg (PurpleAccount *account,
 	webkit = get_webkit(conv);
 	stripped = g_strdup(message);
 
-	style = g_object_get_data (G_OBJECT (webkit), "adium-themed");
+	style = g_object_get_data (G_OBJECT (webkit), MESSAGE_STYLE_KEY);
 
 	if (flags & PURPLE_MESSAGE_SEND && old_flags & PURPLE_MESSAGE_SEND) {
 		message_html = style->outgoing_next_content_html;
@@ -721,9 +735,12 @@ variant_update_conversation (PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION (conv);
 	WebKitWebView *webview = WEBKIT_WEB_VIEW (gtkconv->webview);
-	PidginMessageStyle *style = (PidginMessageStyle*) g_object_get_data (G_OBJECT(webview), "adium-themed");
+	PidginMessageStyle *style = (PidginMessageStyle*) g_object_get_data (G_OBJECT(webview), MESSAGE_STYLE_KEY);
+	char *script;
 
-	char* script = g_strdup_printf ("setStylesheet(\"mainStyle\",\"%s\")", style->css_path);
+	g_assert (style && style->css_path);
+
+	script = g_strdup_printf ("setStylesheet(\"mainStyle\",\"%s\")", style->css_path);
 	webkit_web_view_execute_script (webview, script);
 	g_free (script);
 }
@@ -772,19 +789,19 @@ static GtkWidget *
 get_config_frame(PurplePlugin *plugin) 
 {
 	PidginMessageStyle *style = pidgin_message_style_load (cur_style_dir);
-	GList *themes = get_theme_files(style);
-	GList *theme = themes;
+	GList *variants = get_theme_files(style);
+	GList *iter = variants;
 	char *curdir = NULL;
 	GtkWidget *combobox = gtk_combo_box_new_text();	
 	int def = -1, index = 0;
-	char* css_path = style->css_path;
+	char* css_path = g_strdup (style->css_path);
 
 	pidgin_message_style_unref (style);
 
-	while (theme) {
-		char *basename = g_path_get_basename(theme->data);
-		char *dirname = g_path_get_dirname(theme->data);
-		if (!curdir || strcmp(curdir, dirname)) {
+	for (; iter; iter = g_list_next (iter)) {
+		char *basename = g_path_get_basename(iter->data);
+		char *dirname = g_path_get_dirname(iter->data);
+		if (!curdir || !g_str_equal (curdir, dirname)) {
 			char *plist, *plist_xml;
 			gsize plist_len;
 			xmlnode *node;
@@ -818,12 +835,15 @@ get_config_frame(PurplePlugin *plugin)
 		if (g_str_has_suffix (css_path, basename))
 			def = index;
 		index ++;
-		theme = theme->next;
+		
+		g_free (basename);
+		g_free (dirname);
 	}
 
 	gtk_combo_box_set_active (GTK_COMBO_BOX(combobox), def);
 	g_signal_connect (G_OBJECT(combobox), "changed", G_CALLBACK(variant_changed), NULL);
 
+	g_free (css_path);
 	return combobox;
 }
 
