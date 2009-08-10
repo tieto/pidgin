@@ -809,9 +809,16 @@ static void
 style_changed (GtkWidget* combobox, gpointer null)
 {
 	char *name = gtk_combo_box_get_active_text (GTK_COMBO_BOX(combobox));
+	GtkWidget *dialog;
 
 	g_free (cur_style_dir);
 	cur_style_dir = name;
+
+	/* inform the user that existing conversations haven't changed */
+	dialog = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, "The style for existing conversations have not been changed. Please close and re-open the conversation for the changes to take effect.");
+	g_assert (dialog);
+	gtk_widget_show (dialog);
+	g_signal_connect_swapped (dialog, "response", G_CALLBACK(gtk_widget_destroy), dialog);
 }
 
 static GtkWidget*
@@ -821,13 +828,14 @@ get_style_config_frame ()
 	GList *styles = get_style_directory_list (), *iter;
 	int index = 0, selected = 0;
 
-	for (iter = styles; iter; iter = g_list_next (iter), index++) {
+	for (iter = styles; iter; iter = g_list_next (iter)) {
 		PidginMessageStyle *style = pidgin_message_style_load (iter->data);
 		
 		if (style) {
 			gtk_combo_box_append_text (GTK_COMBO_BOX(combobox), iter->data);
 			if (g_str_equal (iter->data, cur_style_dir))
 				selected = index;
+			index++;
 			pidgin_message_style_unref (style);
 		}
 	}
