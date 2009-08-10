@@ -840,7 +840,7 @@ get_style_config_frame ()
 		}
 	}
 	gtk_combo_box_set_active (GTK_COMBO_BOX(combobox), selected);
-	g_signal_connect (G_OBJECT(combobox), "changed", G_CALLBACK(style_changed), NULL);
+	g_signal_connect_after (G_OBJECT(combobox), "changed", G_CALLBACK(style_changed), NULL);
 	return combobox;
 }
 
@@ -961,15 +961,36 @@ get_variant_config_frame()
 	return combobox;
 }
 
+static void
+style_changed_reset_variants (GtkWidget* combobox, gpointer table)
+{
+	/* I hate to do this, I swear. But I don't know how to cleanly clean an existing combobox */
+	GtkWidget* variants = g_object_get_data (G_OBJECT(table), "variants-cbox");
+	gtk_widget_destroy (variants);
+	variants = get_variant_config_frame ();
+	gtk_table_attach_defaults (GTK_TABLE (table), variants, 1, 2, 1, 2);
+	gtk_widget_show_all (GTK_WIDGET(table));
+
+	g_object_set_data (G_OBJECT(table), "variants-cbox", variants);
+}
+
 static GtkWidget*
 get_config_frame(PurplePlugin* plugin)
 {
 	GtkWidget *table = gtk_table_new (2, 2, FALSE);
-	
+	GtkWidget *style_config = get_style_config_frame ();
+	GtkWidget *variant_config = get_variant_config_frame ();
+
 	gtk_table_attach_defaults (GTK_TABLE(table), gtk_label_new ("Message Style"), 0, 1, 0, 1);
-	gtk_table_attach_defaults (GTK_TABLE(table), get_style_config_frame (), 1, 2, 0, 1);
+	gtk_table_attach_defaults (GTK_TABLE(table), style_config, 1, 2, 0, 1);
 	gtk_table_attach_defaults (GTK_TABLE(table), gtk_label_new ("Style Variant"), 0, 1, 1, 2);
-	gtk_table_attach_defaults (GTK_TABLE(table), get_variant_config_frame (), 1, 2, 1, 2);
+	gtk_table_attach_defaults (GTK_TABLE(table), variant_config, 1, 2, 1, 2);
+
+
+	g_object_set_data (G_OBJECT(table), "variants-cbox", variant_config);
+	/* to clarify, this is a second signal connected on style config */
+	g_signal_connect_after (G_OBJECT(style_config), "changed", G_CALLBACK(style_changed_reset_variants), table);
+
 	return table;
 }
 
