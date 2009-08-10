@@ -155,6 +155,12 @@ replace_img_id_with_src (GtkWebView *view, const char* html)
 static void
 gtk_webview_finalize (GObject *view)
 {
+	gpointer temp;
+	
+	while ((temp = g_queue_pop_head (GTK_WEBVIEW(view)->priv->js_queue)))
+		g_free (temp);
+	g_queue_free (GTK_WEBVIEW(view)->priv->js_queue);
+
 	clear_images (GTK_WEBVIEW (view));
 	g_free (GTK_WEBVIEW(view)->priv);
 	G_OBJECT_CLASS (parent_class)->finalize (G_OBJECT(view));
@@ -260,6 +266,7 @@ gtk_webview_init (GtkWebView *view, gpointer userdata)
 			  view);
 			  
 	view->priv->empty = TRUE;
+	view->priv->js_queue = g_queue_new ();
 }
 
 

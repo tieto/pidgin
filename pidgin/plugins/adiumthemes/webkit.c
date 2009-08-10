@@ -494,22 +494,6 @@ webkit_on_webview_destroy (GtkObject *object, gpointer data)
 	g_object_set_data (G_OBJECT(object), MESSAGE_STYLE_KEY, NULL);
 }
 
-struct webkit_script {
-	GtkWidget *webkit;
-	char *script;
-};
-
-static gboolean purple_webkit_execute_script(gpointer _script)
-{
-	struct webkit_script *script = (struct webkit_script*) _script;
-	printf ("%s\n", script->script);
-	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(script->webkit), script->script);
-	g_free(script->script);
-	g_free(script);
-	return FALSE;
-}
-
-
 static gboolean webkit_on_displaying_im_msg (PurpleAccount *account,
 						 const char* name,
 						 char **pmessage,
@@ -529,7 +513,6 @@ static gboolean webkit_on_displaying_im_msg (PurpleAccount *account,
 	char *smileyed;
 	time_t mtime = time (NULL); /* FIXME: this should come from the write_conv calback, but the signal doesn't pass this to me */
 
-	struct webkit_script *wk_script;
 	PurpleMessageFlags old_flags = GPOINTER_TO_INT(purple_conversation_get_data(conv, "webkit-lastflags")); 
 	PidginMessageStyle *style;
 
@@ -560,12 +543,9 @@ static gboolean webkit_on_displaying_im_msg (PurpleAccount *account,
 	escape = gtk_webview_quote_js_string (msg);
 	script = g_strdup_printf("%s(%s)", func, escape);
 
-	wk_script = g_new0(struct webkit_script, 1);
-	wk_script->script = script;
-	wk_script->webkit = webkit;
+	gtk_webview_safe_execute_script (GTK_WEBVIEW (webkit), script);
 
-	g_idle_add (purple_webkit_execute_script, wk_script);
-
+	g_free(script);
 	g_free(smileyed);
 	g_free(msg);
 	g_free(stripped);
@@ -761,7 +741,7 @@ variant_update_conversation (PurpleConversation *conv)
 	g_assert (style && style->css_path);
 
 	script = g_strdup_printf ("setStylesheet(\"mainStyle\",\"%s\")", style->css_path);
-	webkit_web_view_execute_script (webview, script);
+	gtk_webview_safe_execute_script (GTK_WEBVIEW(webview), script);
 	g_free (script);
 }
 
