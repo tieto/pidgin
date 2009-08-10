@@ -35,17 +35,17 @@
 #define GTK_WEBVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_WEBVIEW, GtkWebView))
 #define GTK_WEBVIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_WEBVIEW, GtkWebViewClass))
 #define GTK_IS_WEBVIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_TYPE_WEBVIEW))
-#define GTK_IS_IMHTML_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_WEBVIEW))
+#define GTK_IS_WEBVIEW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_WEBVIEW))
 
+
+struct GtkWebViewPriv;
 
 struct _GtkWebView
 {
 	WebKitWebView webkit_web_view;
 
 	/*< private >*/
-	GHashTable *images; /**< a map from id to temporary file for the image */
-	gboolean    empty;  /**< whether anything has been appended **/
-	char *script_return; /**< the last value returned from a script **/
+	struct GtkWebViewPriv* priv;
 };
 
 typedef struct _GtkWebView GtkWebView;
@@ -106,7 +106,8 @@ gboolean gtk_webview_is_empty (GtkWebView *webview);
  * Executes javascript and returns the answer of the script
  * formatted as string. The return value needs to be freed using
  * g_free. If the return values is not required you may instead
- * use webkit_web_view_execute_script.
+ * use webkit_web_view_execute_script, or even better
+ * gtk_webview_safe_execute_script.
  *
  * @param webview The GtkWebView object
  * @param script  The JavaScript to execute
@@ -114,6 +115,18 @@ gboolean gtk_webview_is_empty (GtkWebView *webview);
  * @return the return value of the script.
  */
 char* gtk_webview_execute_script (GtkWebView *webview, const char *script);
+
+/**
+ * Execute the JavaScript only after the webkit_webview_load_string
+ * loads completely. We also guarantee that the scripts are executed
+ * in the order they are called here.This is useful to avoid race
+ * conditions when calls JS functions immediately after opening the
+ * page.
+ *
+ * @param webview the GtkWebView object
+ * @param script   the script to execute
+ */
+void gtk_webview_safe_execute_script (GtkWebView *webview, const char* script);
 
 /**
  * Get the current contents of the GtkWebView object.

@@ -564,7 +564,7 @@ static gboolean webkit_on_displaying_im_msg (PurpleAccount *account,
 	wk_script->script = script;
 	wk_script->webkit = webkit;
 
-	purple_webkit_execute_script (wk_script);
+	g_idle_add (purple_webkit_execute_script, wk_script);
 
 	g_free(smileyed);
 	g_free(msg);

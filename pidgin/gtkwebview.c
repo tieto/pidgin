@@ -41,9 +41,19 @@
 
 static WebKitWebViewClass *parent_class = NULL;
 
+struct GtkWebViewPriv {
+	GHashTable *images; /**< a map from id to temporary file for the image */
+	gboolean    empty;  /**< whether anything has been appended **/
+
+	/* JS execute queue */
+	GQueue *js_queue;
+	gboolean is_loading;
+};
+
 GtkWidget* gtk_webview_new ()
 {
-	return GTK_WIDGET(g_object_new(gtk_webview_get_type(), NULL));
+	GtkWebView* ret = GTK_WEBVIEW (g_object_new(gtk_webview_get_type(), NULL));
+	return GTK_WIDGET (ret);
 }
 
 static char*
@@ -53,10 +63,10 @@ get_image_filename_from_id (GtkWebView* view, int id)
 	FILE *file;
 	PurpleStoredImage* img;
 
-	if (!view->images)
-		view->images = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_free);
+	if (!view->priv->images)
+		view->priv->images = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_free);
 	
-	filename = (char*) g_hash_table_lookup (view->images, GINT_TO_POINTER (id));
+	filename = (char*) g_hash_table_lookup (view->priv->images, GINT_TO_POINTER (id));
 	if (filename) return filename;
 			
 	/* else get from img store */
@@ -65,7 +75,7 @@ get_image_filename_from_id (GtkWebView* view, int id)
 	img = purple_imgstore_find_by_id (id);
 
 	fwrite (purple_imgstore_get_data (img), purple_imgstore_get_size (img), 1, file);
-	g_hash_table_insert (view->images, GINT_TO_POINTER (id), filename);
+	g_hash_table_insert (view->priv->images, GINT_TO_POINTER (id), filename);
 	fclose (file);
 	return filename;
 }
@@ -79,9 +89,9 @@ clear_single_image (gpointer key, gpointer value, gpointer userdata)
 static void
 clear_images (GtkWebView* view)
 {
-	if (!view->images) return;
-	g_hash_table_foreach (view->images, clear_single_image, NULL);
-	g_hash_table_unref (view->images);
+	if (!view->priv->images) return;
+	g_hash_table_foreach (view->priv->images, clear_single_image, NULL);
+	g_hash_table_unref (view->priv->images);
 }
 
 /*
@@ -146,6 +156,7 @@ static void
 gtk_webview_finalize (GObject *view)
 {
 	clear_images (GTK_WEBVIEW (view));
+	g_free (GTK_WEBVIEW(view)->priv);
 	G_OBJECT_CLASS (parent_class)->finalize (G_OBJECT(view));
 }
 
@@ -173,6 +184,39 @@ webview_link_clicked (WebKitWebView *view,
 	return TRUE;
 }
 
+static gboolean
+process_js_script_queue (GtkWebView *view)
+{
+	char *script;
+	if (view->priv->is_loading) return FALSE; /* we will be called when loaded */
+	if (!view->priv->js_queue || g_queue_is_empty (view->priv->js_queue))
+		return FALSE; /* nothing to do! */
+
+	script = g_queue_pop_head (view->priv->js_queue);
+	webkit_web_view_execute_script (WEBKIT_WEB_VIEW(view), script);
+	g_free (script);
+
+	return TRUE; /* there may be more for now */
+}
+
+static void 
+webview_load_started (WebKitWebView *view,
+		      WebKitWebFrame *frame,
+		      gpointer userdata)
+{
+	/* is there a better way to test for is_loading? */
+	GTK_WEBVIEW(view)->priv->is_loading = true;
+}
+
+static void
+webview_load_finished (WebKitWebView *view,
+		       WebKitWebFrame *frame,
+		       gpointer userdata)
+{
+	GTK_WEBVIEW(view)->priv->is_loading = false;
+	g_idle_add ((GSourceFunc) process_js_script_queue, view);
+}
+
 char*
 gtk_webview_execute_script (GtkWebView *view, const char *script)
 {
@@ -192,13 +236,30 @@ gtk_webview_execute_script (GtkWebView *view, const char *script)
 	return cstr;
 }
 
+void
+gtk_webview_safe_execute_script (GtkWebView *view, const char* script)
+{
+	g_queue_push_tail (view->priv->js_queue, g_strdup (script));
+	g_idle_add ((GSourceFunc)process_js_script_queue, view);
+}
+
 static void
 gtk_webview_init (GtkWebView *view, gpointer userdata)
 {
+	view->priv = g_new0 (struct GtkWebViewPriv, 1);
 	g_signal_connect (view, "navigation-policy-decision-requested",
 			  G_CALLBACK (webview_link_clicked),
 			  view);
-	view->empty = TRUE;
+
+	g_signal_connect (view, "load-started", 
+			  G_CALLBACK (webview_load_started),
+			  view);
+
+	g_signal_connect (view, "load-finished",
+			  G_CALLBACK (webview_load_finished),
+			  view);
+			  
+	view->priv->empty = TRUE;
 }
 
 
@@ -254,7 +315,7 @@ gtk_webview_append_html (GtkWebView* view, const char* html)
 	char* script = g_strdup_printf ("document.write(%s)", escaped);
 	printf ("script: %s\n", script);
 	webkit_web_view_execute_script (WEBKIT_WEB_VIEW (view), script);
-	view->empty = FALSE;
+	view->priv->empty = FALSE;
 	g_free (script);
 	g_free (escaped);
 }
@@ -273,7 +334,7 @@ gtk_webview_get_text (GtkWebView *view)
 
 gboolean gtk_webview_is_empty (GtkWebView *view)
 {
-	return view->empty;
+	return view->priv->empty;
 }
 
 GType gtk_webview_get_type ()
