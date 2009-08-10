@@ -89,9 +89,9 @@ static PidginMessageStyle* pidgin_message_style_new (const char* styledir)
 
 	/* sanity check */
 	for (iter = style_list; iter; iter = g_list_next (iter))
-		g_assert (!g_str_equal (((PidginMessageStyle*)iter->data)->style_dir, styledir));
+	  g_assert (!g_str_equal (((PidginMessageStyle*)iter->data)->style_dir, styledir));
 
-	ret->ref_counter ++;
+	ret->ref_counter = 1;
 	ret->style_dir = g_strdup (styledir);
 	
 	style_list = g_list_append (style_list, ret);
@@ -101,6 +101,7 @@ static PidginMessageStyle* pidgin_message_style_new (const char* styledir)
 static void pidgin_message_style_unref (PidginMessageStyle *style)
 {
 	if (!style) return;
+	g_assert (style->ref_counter > 0);
 
 	style->ref_counter--;
 	if (style->ref_counter) return;
@@ -121,6 +122,7 @@ static void pidgin_message_style_unref (PidginMessageStyle *style)
 }
 
 static void variant_set_default (PidginMessageStyle* style);
+
 static PidginMessageStyle*
 pidgin_message_style_load (const char* styledir)
 {
@@ -130,18 +132,17 @@ pidgin_message_style_load (const char* styledir)
 	PidginMessageStyle *style = NULL;
 	
 	g_assert (styledir);
-
-	for (; cur; cur = g_list_next (cur)) {
-		if (g_str_equal (styledir, ((PidginMessageStyle*) cur->data)->style_dir))
-			return (PidginMessageStyle*) cur->data;
+	for (cur = style_list; cur; cur = g_list_next (cur)) {
+		style = (PidginMessageStyle*) cur->data;
+		if (g_str_equal (styledir, style->style_dir)) {
+			style->ref_counter++;
+			return style;
+		}
 	}
 
 	/* else we need to load it */
 	style = pidgin_message_style_new (styledir);
 	
-	/* find some variant file (or load from user's settings) */
-	variant_set_default (style);
-
 	/* load all other files */
 
 	/* The template path can either come from the theme, or can
@@ -187,7 +188,7 @@ pidgin_message_style_load (const char* styledir)
 	g_free (file);
 
 
-	/* according to the spec, the following are not necessary files */
+	/* according to the spec, the following are optional files */
 	file = g_build_filename(styledir, "Contents", "Resources", "Incoming", "NextContent.html", NULL);
 	if (!g_file_get_contents(file, &style->incoming_next_content_html, NULL, NULL)) {
 		style->incoming_next_content_html = g_strdup (style->incoming_content_html);
@@ -204,6 +205,9 @@ pidgin_message_style_load (const char* styledir)
 	if (!g_file_get_contents(file, &style->outgoing_next_content_html, NULL, NULL)) {
 		style->outgoing_next_content_html = g_strdup (style->outgoing_content_html);
 	}
+
+	/* find some variant file (or load from user's settings) */
+	variant_set_default (style);
 
 	return style;
 }
@@ -423,6 +427,9 @@ get_webkit(PurpleConversation *conv)
 /**
  * Called when either a new PurpleConversation is created
  * or when a PidginConversation changes its active PurpleConversation
+ * This will not change the theme if the theme is already set.
+ * (This is to prevent accidental theme changes if a new 
+ * PurpleConversation gets added.
  *
  * FIXME: it's not at all clear to me as to how
  * Adium themes handle the case when the PurpleConversation
@@ -439,6 +446,7 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	char* baseuri;
 	PidginMessageStyle *style, *oldStyle;
 	oldStyle = g_object_get_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY);
+	
 	if (oldStyle) return;
 
 	style = pidgin_message_style_load (style_dir);
@@ -451,7 +459,7 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	template = replace_template_tokens(style, style->template_html, strlen(style->template_html) + strlen(style->header_html), header, footer);
 
 	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
-	pidgin_message_style_unref (oldStyle);
+
 	g_object_set_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY, style);
 	
 
@@ -520,6 +528,7 @@ static gboolean webkit_on_displaying_im_msg (PurpleAccount *account,
 	stripped = g_strdup(message);
 
 	style = g_object_get_data (G_OBJECT (webkit), MESSAGE_STYLE_KEY);
+	g_assert (style);
 
 	if (flags & PURPLE_MESSAGE_SEND && old_flags & PURPLE_MESSAGE_SEND) {
 		message_html = style->outgoing_next_content_html;
@@ -545,14 +554,14 @@ static gboolean webkit_on_displaying_im_msg (PurpleAccount *account,
 	wk_script->script = script;
 	wk_script->webkit = webkit;
 
-	g_idle_add(purple_webkit_execute_script, wk_script);
+	purple_webkit_execute_script (wk_script);
 
 	g_free(smileyed);
 	g_free(msg);
 	g_free(stripped);
 	g_free(escape);
 
-	return TRUE; /* GtkConv should not handle this guy */
+	return TRUE; /* GtkConv should not handle this IM */
 }
 
 static gboolean webkit_on_displaying_chat_msg (PurpleAccount *account,
@@ -562,12 +571,12 @@ static gboolean webkit_on_displaying_chat_msg (PurpleAccount *account,
 					       PurpleMessageFlags flags,
 					       gpointer userdata)
 {
-	/* handle exactly like an IM message */
+	/* handle exactly like an IM message for now */
 	return webkit_on_displaying_im_msg (account, who, message, conv, flags, NULL);
 }
 
 static void
-webkit_on_converstation_displayed (PidginConversation *gtkconv, gpointer data)
+webkit_on_conversation_displayed (PidginConversation *gtkconv, gpointer data)
 {
 	init_theme_for_webkit (gtkconv->active_conv, cur_style_dir);
 }
@@ -583,7 +592,8 @@ webkit_on_conversation_hiding (PidginConversation *gtkconv, gpointer data)
 {
 	/* 
 	 * I'm not sure if I need to do anything here, but let's keep
-	 * this anyway
+	 * this anyway. (FIXME: have to catch a signal on the WebView
+	 * when the WebView closes.)
 	 */
 }
 
@@ -688,7 +698,7 @@ plugin_load(PurplePlugin *plugin)
 	purple_signal_connect (pidgin_conversations_get_handle (),
 			       "conversation-displayed",
 			       webkit_plugin_get_handle (),
-			       PURPLE_CALLBACK(webkit_on_converstation_displayed),
+			       PURPLE_CALLBACK(webkit_on_conversation_displayed),
 			       NULL);
 
 	purple_signal_connect (pidgin_conversations_get_handle (),
