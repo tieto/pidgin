@@ -170,15 +170,18 @@ pidgin_message_style_load (const char* styledir)
 	g_free (file);
 
 	file = g_build_filename(styledir, "Contents", "Resources", "main.css", NULL);
-	g_file_get_contents(file, &style->basestyle_css, NULL, NULL);
+	if (!g_file_get_contents(file, &style->basestyle_css, NULL, NULL))
+		style->basestyle_css = g_strdup ("");
 	g_free (file);
 	
 	file = g_build_filename(styledir, "Contents", "Resources", "Header.html", NULL);
-	g_file_get_contents(file, &style->header_html, NULL, NULL);
+	if (!g_file_get_contents(file, &style->header_html, NULL, NULL))
+		style->header_html = g_strdup ("");
 	g_free (file);
 
 	file = g_build_filename(styledir, "Contents", "Resources", "Footer.html", NULL);
-	g_file_get_contents(file, &style->footer_html, NULL, NULL);
+	if (!g_file_get_contents(file, &style->footer_html, NULL, NULL))
+		style->footer_html = g_strdup ("");
 	g_free (file);
 
 	file = g_build_filename(styledir, "Contents", "Resources", "Incoming", "Content.html", NULL);
@@ -451,12 +454,14 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	
 	if (oldStyle) return;
 
+	purple_debug_info ("webkit", "loading %s", style_dir);
 	style = pidgin_message_style_load (style_dir);
 	g_assert (style);
 
 	basedir = g_build_filename (style->style_dir, "Contents", "Resources", "Template.html", NULL);
 	baseuri = g_strdup_printf ("file://%s", basedir);
 	header = replace_header_tokens(style->header_html, strlen(style->header_html), conv);
+	g_assert (style);
 	footer = replace_header_tokens(style->footer_html, strlen(style->footer_html), conv);
 	template = replace_template_tokens(style, style->template_html, strlen(style->template_html) + strlen(style->header_html), header, footer);
 
@@ -706,7 +711,7 @@ variant_set_default (PidginMessageStyle* style)
 	const char *css_path = purple_prefs_get_string ("/plugins/gtk/adiumthemes/csspath");
 
 	g_free (style->css_path);
-	if (g_str_has_prefix (css_path, style->style_dir) &&
+	if (css_path && g_str_has_prefix (css_path, style->style_dir) &&
 	    g_file_test (css_path, G_FILE_TEST_EXISTS)) {
 		style->css_path = g_strdup (css_path);
 		return;
@@ -791,6 +796,14 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
+static void
+style_changed (GtkWidget* combobox, gpointer null)
+{
+	char *name = gtk_combo_box_get_active_text (GTK_COMBO_BOX(combobox));
+
+	g_free (cur_style_dir);
+	cur_style_dir = name;
+}
 
 static GtkWidget*
 get_style_config_frame ()
@@ -810,6 +823,7 @@ get_style_config_frame ()
 		}
 	}
 	gtk_combo_box_set_active (GTK_COMBO_BOX(combobox), selected);
+	g_signal_connect (G_OBJECT(combobox), "changed", G_CALLBACK(style_changed), NULL);
 	return combobox;
 }
 
