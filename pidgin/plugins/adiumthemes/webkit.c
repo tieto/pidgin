@@ -786,7 +786,7 @@ plugin_unload(PurplePlugin *plugin)
 	GList *list;
 
 	webkit_plugin_free_handle ();
-
+	cur_style_dir = NULL;
 	list = purple_get_conversations ();
 	while (list) {
 		finalize_theme_for_webkit(list->data);
