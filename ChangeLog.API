@@ -99,6 +99,10 @@ version 2.6.0 (??/??/2009):
 		* status is set before emitting signals in purple_xfer_set_status.
 		* Creating multiple distinct chats with the same name (i.e. "MSN Chat")
 		  is deprecated and will be removed in libpurple 3.0.0.
+		* purple_xfer_start now accepts -1 as the fd parameter if the protocol
+		  plugin will administer the transfer itself. 0 is still accepted for
+		  backward compatibility since older versions of libpurple will not
+		  accept -1.
 
 		Deprecated:
 		* buddy-added and buddy-removed blist signals
