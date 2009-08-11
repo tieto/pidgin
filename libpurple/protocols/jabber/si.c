@@ -1070,7 +1070,7 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, const char *who, const char *id,
 			jsx->ibb_session = sess;
 
 			/* start the transfer */
-			purple_xfer_start(xfer, 0, NULL, 0);
+			purple_xfer_start(xfer, -1, NULL, 0);
 			return TRUE;
 		} else {
 			/* failed to create IBB session */
@@ -1153,7 +1153,7 @@ jabber_si_xfer_ibb_opened_cb(JabberIBBSession *sess)
 			return;
 		}
 
-		purple_xfer_start(xfer, 0, NULL, 0);
+		purple_xfer_start(xfer, -1, NULL, 0);
 		purple_xfer_set_bytes_sent(xfer, 0);
 		purple_xfer_update_progress(xfer);
 		jabber_si_xfer_ibb_send_data(sess);

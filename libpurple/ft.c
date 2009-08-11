@@ -1085,7 +1085,7 @@ begin_transfer(PurpleXfer *xfer, PurpleInputCondition cond)
 		fseek(xfer->dest_fp, xfer->bytes_sent, SEEK_SET);
 	}
 
-	if (xfer->fd)
+	if (xfer->fd != -1)
 		xfer->watcher = purple_input_add(xfer->fd, cond, transfer_cb, xfer);
 
 	xfer->start_time = time(NULL);
@@ -1143,6 +1143,13 @@ purple_xfer_start(PurpleXfer *xfer, int fd, const char *ip,
 
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_STARTED);
 
+	/*
+	 * FIXME 3.0.0 -- there's too much broken code depending on fd == 0
+	 * meaning "don't use a real fd"
+	 */
+	if (fd == 0)
+		fd = -1;
+
 	if (type == PURPLE_XFER_RECEIVE) {
 		cond = PURPLE_INPUT_READ;
 
@@ -1189,7 +1196,7 @@ purple_xfer_end(PurpleXfer *xfer)
 		xfer->watcher = 0;
 	}
 
-	if (xfer->fd != 0)
+	if (xfer->fd != -1)
 		close(xfer->fd);
 
 	if (xfer->dest_fp != NULL) {
@@ -1252,7 +1259,7 @@ purple_xfer_cancel_local(PurpleXfer *xfer)
 		xfer->watcher = 0;
 	}
 
-	if (xfer->fd != 0)
+	if (xfer->fd != -1)
 		close(xfer->fd);
 
 	if (xfer->dest_fp != NULL) {
@@ -1317,7 +1324,7 @@ purple_xfer_cancel_remote(PurpleXfer *xfer)
 		xfer->watcher = 0;
 	}
 
-	if (xfer->fd != 0)
+	if (xfer->fd != -1)
 		close(xfer->fd);
 
 	if (xfer->dest_fp != NULL) {
