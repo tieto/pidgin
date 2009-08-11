@@ -64,11 +64,12 @@ typedef struct _PidginMessageStyle {
 
 	/* current config options */
 	char     *variant;
+	char     *bg_color;
 
 	/* Info.plist keys */
 	int      message_view_version;
 	char     *cf_bundle_name;
-	char     *cf_bundle_identifier;
+	char     *cf_bundle_identifier; /* we're not using this */
 	char     *cf_bundle_get_info_string;
 	char     *default_font_family;
 	int      default_font_size;
@@ -198,7 +199,7 @@ parse_info_plist_key_value (xmlnode* key, gpointer destination, const char* expe
 
 	for (; val && val->type != XMLNODE_TYPE_TAG; val = val->next);
 	if (!val) return FALSE;
-
+	
 	if (expected == NULL || g_str_equal (expected, "string")) {
 		char** dest = (char**) destination;
 		if (!g_str_equal (val->name, BAD_CAST "string")) return FALSE;
@@ -229,6 +230,11 @@ gboolean str_for_key (const char *key, const char *found, const char *variant){
 		&& g_str_has_suffix (found, variant)
 		&& strlen (found) == strlen (key) + strlen (variant) + 1);
 }
+
+/**
+ * Info.plist should be re-read every time the variant changes, this is because
+ * the keys that take precedence depend on the value of the current variant.
+ */
 static void
 pidgin_message_style_read_info_plist (PidginMessageStyle *style, const char* variant)
 {
@@ -370,11 +376,24 @@ pidgin_message_style_load (const char* styledir)
 
 	pidgin_message_style_read_info_plist (style, NULL);
 
-	/* let's see if we did this well */
-	printf ("bundle name: %s\n", style->cf_bundle_name);
+	/* non variant dependent Info.plist checks */
+	if (style->message_view_version < 3) {
+		pidgin_message_style_unref (style);
+		return NULL;
+	}
+
 	return style;
 }
 
+static void
+pidgin_message_style_set_variant (PidginMessageStyle *style, const char *variant)
+{
+	/* I'm not going to test whether this variant is valid! */
+	g_free (style->variant);
+	style->variant = g_strdup (variant);
+
+	pidgin_message_style_read_info_plist (style, variant);
+}
 
 static void* webkit_plugin_get_handle ()
 {
