@@ -1123,7 +1123,7 @@ purple_xfer_ui_ready(PurpleXfer *xfer)
 	else /* if (type == PURPLE_XFER_RECEIVE) */
 		cond = PURPLE_INPUT_READ;
 
-	if (xfer->watcher == 0)
+	if (xfer->watcher == 0 && xfer->fd != -1)
 		xfer->watcher = purple_input_add(xfer->fd, cond, transfer_cb, xfer);
 
 	transfer_cb(xfer, 0, cond);
