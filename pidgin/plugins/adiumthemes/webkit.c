@@ -919,49 +919,20 @@ static GtkWidget *
 get_variant_config_frame() 
 {
 	PidginMessageStyle *style = pidgin_message_style_load (cur_style_dir);
-	GList *variants = get_variant_files(style);
-	GList *iter = variants;
-	char *curdir = NULL;
+	GList *variants = get_variant_files(style), *iter;
 	GtkWidget *combobox = gtk_combo_box_new_text();	
 	int def = -1, index = 0;
 	char* css_path = g_strdup (style->css_path);
 
 	pidgin_message_style_unref (style);
 
-	for (; iter; iter = g_list_next (iter)) {
+	for (iter = variants; iter; iter = g_list_next (iter)) {
 		char *basename = g_path_get_basename(iter->data);
 		char *dirname = g_path_get_dirname(iter->data);
-		if (!curdir || !g_str_equal (curdir, dirname)) {
-			char *plist, *plist_xml;
-			gsize plist_len;
-			xmlnode *node;
-			g_free(curdir);
-			curdir = strdup(dirname);
-			plist = g_build_filename(curdir, "..", "..", "Info.plist", NULL);
-		        if (!g_file_get_contents(plist, &plist_xml, &plist_len, NULL)) {
-				continue;
-			}
-	                node = xmlnode_from_str(plist_xml, plist_len);
-			if (!node) continue;
-			node = xmlnode_get_child(node, "dict");
-			if (!node) continue;
-			node = xmlnode_get_child(node, "key");
-			while (node && strcmp(xmlnode_get_data(node), "CFBundleName")) {
-				node = xmlnode_get_next_twin(node);
-			}
-			if (!node) continue;
-			node = node->next;
-			while (node && node->type != XMLNODE_TYPE_TAG) {
-				node = node->next;
-			}
+		char *temp = g_strndup (basename, strlen(basename)-4);
+		gtk_combo_box_append_text (GTK_COMBO_BOX(combobox), temp);
+		g_free (temp);
 
-		}
-		
-		{
-			char *temp = g_strndup (basename, strlen(basename)-4);
-			gtk_combo_box_append_text (GTK_COMBO_BOX(combobox), temp);
-			g_free (temp);
-		}
 		if (g_str_has_suffix (css_path, basename))
 			def = index;
 		index ++;
