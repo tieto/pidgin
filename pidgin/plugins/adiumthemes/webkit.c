@@ -49,7 +49,7 @@
 #include <gtkwebview.h>
 #include <smileyparser.h>
 
-
+#include <libxml/xmlreader.h>
 /* GObject data keys */
 #define MESSAGE_STYLE_KEY "message-style"
 
@@ -62,6 +62,24 @@
 typedef struct _PidginMessageStyle {
 	int     ref_counter;
 
+	/* current config options */
+	char     *variant;
+
+	/* Info.plist keys */
+	int      message_view_version;
+	char     *cf_bundle_name;
+	char     *cf_bundle_identifier;
+	char     *cf_bundle_get_info_string;
+	char     *default_font_family;
+	int      default_font_size;
+	gboolean shows_user_icons;
+	gboolean disable_combine_consecutive;
+	gboolean default_background_is_transparent;
+	gboolean disable_custom_background;
+	char     *default_background_color;
+	gboolean allow_text_colors;
+	char     *image_mask;
+	
 	/* paths */
 	char    *style_dir;
 	char    *template_path;
@@ -110,6 +128,41 @@ static PidginMessageStyle* pidgin_message_style_new (const char* styledir)
 	return ret;
 }
 
+/**
+ * deallocate any memory used for info.plist options 
+ */
+static void
+pidgin_message_style_unset_info_plist (PidginMessageStyle *style)
+{
+	style->message_view_version = 0;
+	g_free (style->cf_bundle_name);
+	style->cf_bundle_name = NULL;
+
+	g_free (style->cf_bundle_identifier);
+	style->cf_bundle_identifier = NULL;
+
+	g_free (style->cf_bundle_get_info_string);
+	style->cf_bundle_get_info_string = NULL;
+
+	g_free (style->default_font_family);
+	style->default_font_family = NULL;
+
+	style->default_font_size = 0;
+	style->shows_user_icons = TRUE;
+	style->disable_combine_consecutive = FALSE;
+	style->default_background_is_transparent = FALSE;
+	style->disable_custom_background = FALSE;
+
+	g_free (style->default_background_color);
+	style->default_background_color = NULL;
+	
+	style->allow_text_colors = TRUE;
+	
+	g_free (style->image_mask);
+	style->image_mask = NULL;
+}
+
+
 static void pidgin_message_style_unref (PidginMessageStyle *style)
 {
 	if (!style) return;
@@ -131,10 +184,97 @@ static void pidgin_message_style_unref (PidginMessageStyle *style)
 
 	style_list = g_list_remove (style_list, style);
 	g_free (style);
+
+	pidgin_message_style_unset_info_plist (style);
 }
 
 static void variant_set_default (PidginMessageStyle* style);
 static void webkit_on_webview_destroy (GtkObject* obj, gpointer data);
+
+static gboolean
+parse_info_plist_key_value (xmlnode* key, gpointer destination, const char* expected)
+{
+	xmlnode *val = key->next;
+
+	for (; val && val->type != XMLNODE_TYPE_TAG; val = val->next);
+	if (!val) return FALSE;
+
+	if (expected == NULL || g_str_equal (expected, "string")) {
+		char** dest = (char**) destination;
+		if (!g_str_equal (val->name, BAD_CAST "string")) return FALSE;
+		if (*dest) g_free (*dest);
+		*dest = xmlnode_get_data_unescaped (val);
+	} else if (g_str_equal (expected, "integer")) {
+		int* dest = (int*) destination;
+		char* value = xmlnode_get_data_unescaped (val);
+
+		if (!g_str_equal (val->name, "integer")) return FALSE;
+		*dest = atoi (value);
+		g_free (value);
+	} else if (g_str_equal (expected, "boolean")) {
+		gboolean *dest = (gboolean*) destination;
+		if (g_str_equal (val->name, BAD_CAST "true")) *dest = TRUE;
+		else if (g_str_equal (val->name, BAD_CAST "false")) *dest = FALSE;
+		else return FALSE;
+	} else return FALSE;
+	
+	return TRUE;
+}
+
+static
+gboolean str_for_key (const char *key, const char *found, const char *variant){
+	if (g_str_equal (key, found)) return TRUE;
+	if (!variant) return FALSE;
+	return (g_str_has_prefix (found, key) 
+		&& g_str_has_suffix (found, variant)
+		&& strlen (found) == strlen (key) + strlen (variant) + 1);
+}
+static void
+pidgin_message_style_read_info_plist (PidginMessageStyle *style, const char* variant)
+{
+	/* note that if a variant is used the option:VARIANTNAME takes precedence */
+	char *contents = g_build_filename (style->style_dir, "Contents", NULL);
+	xmlnode *plist = xmlnode_from_file (contents, "Info.plist", "Info.plist", "webkit"), *iter;
+	xmlnode *dict = xmlnode_get_child (plist, "dict");
+
+	g_assert (dict);
+	for (iter = xmlnode_get_child (dict, "key"); iter; iter = xmlnode_get_next_twin (iter)) {
+		char* key = xmlnode_get_data_unescaped (iter);
+		gboolean pr = TRUE;
+
+		if (g_str_equal ("MessageViewVersion", key)) 
+			pr = parse_info_plist_key_value (iter, &style->message_view_version, "integer");
+		else if (g_str_equal ("CFBundleName", key))
+			pr = parse_info_plist_key_value (iter, &style->cf_bundle_name, "string");
+		else if (g_str_equal ("CFBundleIdentifier", key))
+			pr = parse_info_plist_key_value (iter, &style->cf_bundle_identifier, "string");
+		else if (g_str_equal ("CFBundleGetInfoString", key))
+			pr = parse_info_plist_key_value (iter, &style->cf_bundle_get_info_string, "string");
+		else if (str_for_key ("DefaultFontFamily", key, variant))
+			pr = parse_info_plist_key_value (iter, &style->default_font_family, "string");
+		else if (str_for_key ("DefaultFontSize", key, variant))
+			pr = parse_info_plist_key_value (iter, &style->default_font_size, "integer");
+		else if (str_for_key ("ShowsUserIcons", key, variant))
+			pr = parse_info_plist_key_value (iter, &style->shows_user_icons, "boolean");
+		else if (str_for_key ("DisableCombineConsecutive", key, variant))
+			pr = parse_info_plist_key_value (iter, &style->disable_combine_consecutive, "boolean");
+		else if (str_for_key ("DefaultBackgroundIsTransparent", key, variant))
+			pr = parse_info_plist_key_value (iter, &style->default_background_is_transparent, "boolean");
+		else if (str_for_key ("DisableCustomBackground", key, variant))
+			pr = parse_info_plist_key_value (iter, &style->disable_custom_background, "boolean");
+		else if (str_for_key ("DefaultBackgroundColor", key, variant))
+			pr = parse_info_plist_key_value (iter, &style->default_background_color, "string");
+		else if (str_for_key ("AllowTextColors", key, variant))
+			pr = parse_info_plist_key_value (iter, &style->allow_text_colors, "string");
+		else if (str_for_key ("ImageMask", key, variant))
+			pr = parse_info_plist_key_value (iter, &style->image_mask, "string");
+
+		g_free (key);
+		if (!pr) break; /* does not make sense */
+	}
+
+	xmlnode_free (plist);
+}
 
 static PidginMessageStyle*
 pidgin_message_style_load (const char* styledir)
@@ -228,6 +368,10 @@ pidgin_message_style_load (const char* styledir)
 	/* find some variant file (or load from user's settings) */
 	variant_set_default (style);
 
+	pidgin_message_style_read_info_plist (style, NULL);
+
+	/* let's see if we did this well */
+	printf ("bundle name: %s\n", style->cf_bundle_name);
 	return style;
 }
 
