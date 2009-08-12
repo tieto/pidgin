@@ -502,7 +502,6 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		g_return_if_reached();
 	}
 
-	slpmsg = NULL;
 	data = msn_message_get_bin_data(msg, &len);
 
 	/*
@@ -566,13 +565,12 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	else
 	{
 		slpmsg = msn_slplink_message_find(slplink, msg->msnslp_header.session_id, msg->msnslp_header.id);
-	}
-
-	if (slpmsg == NULL)
-	{
-		/* Probably the transfer was canceled */
-		purple_debug_error("msn", "Couldn't find slpmsg\n");
-		return;
+		if (slpmsg == NULL)
+		{
+			/* Probably the transfer was canceled */
+			purple_debug_error("msn", "Couldn't find slpmsg\n");
+			return;
+		}
 	}
 
 	if (slpmsg->fp)
