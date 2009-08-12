@@ -63,13 +63,13 @@ typedef struct _PidginMessageStyle {
 	int     ref_counter;
 
 	/* current config options */
-	char     *variant;
+	char     *variant; /* allowed to be NULL if there are no variants */
 	char     *bg_color;
 
 	/* Info.plist keys */
 	int      message_view_version;
 	char     *cf_bundle_name;
-	char     *cf_bundle_identifier; /* we're not using this */
+	char     *cf_bundle_identifier;
 	char     *cf_bundle_get_info_string;
 	char     *default_font_family;
 	int      default_font_size;
@@ -84,7 +84,6 @@ typedef struct _PidginMessageStyle {
 	/* paths */
 	char    *style_dir;
 	char    *template_path;
-	char    *css_path;
 
 	/* caches */
 	char    *template_html;
@@ -101,6 +100,23 @@ typedef struct _PidginMessageStyle {
 static GList *style_list; /**< List of PidginMessageStyles */
 static char  *cur_style_dir = NULL;
 static void  *handle = NULL;
+
+static PidginMessageStyle* pidgin_message_style_new (const char* styledir);
+static PidginMessageStyle* pidgin_message_style_load (const char* styledir);
+static void pidgin_message_style_unref (PidginMessageStyle *style);
+static void pidgin_message_style_read_info_plist (PidginMessageStyle *style, const char* variant);
+static char* pidgin_message_style_get_variant (PidginMessageStyle *style);
+static GList* pidgin_message_style_get_variants (PidginMessageStyle *style);
+static void pidgin_message_style_set_variant (PidginMessageStyle *style, const char *variant);
+
+static void
+glist_free_all_string (GList *list)
+{
+	GList *first = list;
+	for (; list; list = g_list_next (list)) 
+		g_free (list->data);
+	g_list_free (first);
+}
 
 static inline char* get_absolute_path (const char *path)
 {
@@ -174,7 +190,6 @@ static void pidgin_message_style_unref (PidginMessageStyle *style)
 
 	g_free (style->style_dir);
 	g_free (style->template_path);
-	g_free (style->css_path);
 	
 	g_free (style->template_html);
 	g_free (style->incoming_content_html);
@@ -189,7 +204,38 @@ static void pidgin_message_style_unref (PidginMessageStyle *style)
 	pidgin_message_style_unset_info_plist (style);
 }
 
-static void variant_set_default (PidginMessageStyle* style);
+static void
+pidgin_message_style_save_state (PidginMessageStyle *style)
+{
+	char *prefname = g_strdup_printf ("/plugins/gtk/adiumthemes/%s", style->cf_bundle_identifier);
+	char *variant = g_strdup_printf ("%s/%s", prefname, style->variant);
+
+	purple_prefs_add_none (prefname);
+	purple_prefs_add_string (variant, "");
+	purple_prefs_set_string (variant, style->variant);
+	
+	g_free (prefname);
+	g_free (variant);
+}
+
+static void
+pidgin_message_style_load_state (PidginMessageStyle *style)
+{
+	char *prefname = g_strdup_printf ("/plugins/gtk/adiumthemes/%s", style->cf_bundle_identifier);
+	char *variant = g_strdup_printf ("%s/%s", prefname, style->variant);
+
+	const char* value = purple_prefs_get_string (variant);
+	gboolean changed = !style->variant || !g_str_equal (style->variant, value);
+
+	g_free (style->variant);
+	style->variant = g_strdup (value);
+
+	if (changed) pidgin_message_style_read_info_plist (style, style->variant);
+
+	g_free (prefname);
+	g_free(variant);
+}
+
 static void webkit_on_webview_destroy (GtkObject* obj, gpointer data);
 
 static gboolean
@@ -285,6 +331,19 @@ pidgin_message_style_read_info_plist (PidginMessageStyle *style, const char* var
 static PidginMessageStyle*
 pidgin_message_style_load (const char* styledir)
 {
+	/*
+	 * the loading process described:
+	 *
+	 * First we load all the style .html files, etc.
+	 * The we load any config options that have been stored for
+	 * this variant.
+	 * Then we load the Info.plist, for the currently decided variant.
+	 * At this point, if we find that variants exist, yet
+	 * we don't have a variant selected, we choose DefaultVariant
+	 * and if that does not exist, we choose the first one in the
+	 * directory.
+	 */
+	
 	/* is this style already loaded? */
 	GList  *cur = style_list;
 	char   *file; /* temporary variable */
@@ -371,15 +430,24 @@ pidgin_message_style_load (const char* styledir)
 		style->outgoing_next_content_html = g_strdup (style->outgoing_content_html);
 	}
 
-	/* find some variant file (or load from user's settings) */
-	variant_set_default (style);
-
-	pidgin_message_style_read_info_plist (style, NULL);
+	pidgin_message_style_load_state (style);
+	pidgin_message_style_read_info_plist (style, style->variant);
 
 	/* non variant dependent Info.plist checks */
 	if (style->message_view_version < 3) {
 		pidgin_message_style_unref (style);
 		return NULL;
+	}
+
+	if (!style->variant)
+	{
+		GList *variants = pidgin_message_style_get_variants (style);
+
+		if (variants)
+			pidgin_message_style_set_variant (style, variants->data);
+
+		glist_free_all_string (variants);
+		pidgin_message_style_save_state (style);
 	}
 
 	return style;
@@ -393,6 +461,59 @@ pidgin_message_style_set_variant (PidginMessageStyle *style, const char *variant
 	style->variant = g_strdup (variant);
 
 	pidgin_message_style_read_info_plist (style, variant);
+	pidgin_message_style_save_state (style);
+	
+	/* todo, the style has "changed". Ideally, I would like to use signals at this point. */
+}
+
+char* pidgin_message_style_get_variant (PidginMessageStyle *style)
+{
+	return g_strdup (style->variant);
+}
+
+/**
+ * Get a list of variants supported by the style.
+ */
+static GList*
+pidgin_message_style_get_variants (PidginMessageStyle *style) 
+{
+	GList *ret = NULL;
+        GDir *variants;
+	const char *css_file;
+	char *css;
+	char *variant_dir;
+
+	g_assert (style->style_dir);
+	variant_dir = g_build_filename(style->style_dir, "Contents", "Resources", "Variants", NULL);
+
+	variants = g_dir_open(variant_dir, 0, NULL);
+	if (!variants) return NULL;
+
+	while ((css_file = g_dir_read_name(variants)) != NULL) {
+		if (!g_str_has_suffix (css_file, ".css"))
+			continue;
+
+		css = g_strndup (css_file, strlen (css_file) - 4);
+		ret = g_list_append(ret, css);
+	}
+
+	g_dir_close(variants);
+	g_free(variant_dir);
+
+	ret = g_list_sort (ret, (GCompareFunc)g_strcmp0);
+	return ret;	
+}
+
+static char* pidgin_message_style_get_css (PidginMessageStyle *style)
+{
+	if (!style->variant) {
+		return g_build_filename (style->style_dir, "Contents", "Resources", "main.css", NULL);
+	} else {
+		char *file = g_strdup_printf ("%s.css", style->variant);
+		char *ret = g_build_filename (style->style_dir, "Contents", "Resources", "Variants",  file, NULL);
+		g_free (file);
+		return ret;
+	}
 }
 
 static void* webkit_plugin_get_handle ()
@@ -561,7 +682,7 @@ replace_template_tokens(PidginMessageStyle *style, char *text, int len, char *he
 
 	char **ms = g_strsplit(text, "%@", 6);
 	char *base = NULL;
-
+	char *csspath = pidgin_message_style_get_css (style);
 	if (ms[0] == NULL || ms[1] == NULL || ms[2] == NULL || ms[3] == NULL || ms[4] == NULL || ms[5] == NULL) {
 		g_strfreev(ms);
 		g_string_free(str, TRUE);
@@ -575,13 +696,15 @@ replace_template_tokens(PidginMessageStyle *style, char *text, int len, char *he
 	g_free (base);
 
 	g_string_append(str, ms[1]);
-	if (style->basestyle_css)
-		g_string_append(str, style->basestyle_css);
+
+	/* I'm just going to skip main.css at this point */
+
 	g_string_append(str, ms[2]);
-	if (style->css_path) {
-		g_string_append(str, "file://");
-		g_string_append(str, style->css_path);
-	}
+
+	g_string_append(str, "file://");
+	g_string_append(str, csspath);
+
+
 
 	g_string_append(str, ms[3]);
 	if (header)
@@ -592,6 +715,7 @@ replace_template_tokens(PidginMessageStyle *style, char *text, int len, char *he
 	g_string_append(str, ms[5]);
 	
 	g_strfreev(ms);
+	g_free (csspath);
 	return g_string_free (str, FALSE);
 }
 
@@ -843,69 +967,6 @@ style_set_default ()
 	g_list_free (styles);
 }
 
-/**
- * Get each of the files corresponding to each variant.
- */
-static GList*
-get_variant_files(PidginMessageStyle *style) 
-{
-	GList *ret = NULL;
-        GDir *variants;
-	const char *css_file;
-	char *css;
-	char *variant_dir;
-
-	g_assert (style->style_dir);
-	variant_dir = g_build_filename(style->style_dir, "Contents", "Resources", "Variants", NULL);
-
-	variants = g_dir_open(variant_dir, 0, NULL);
-	if (!variants) return NULL;
-
-	while ((css_file = g_dir_read_name(variants)) != NULL) {
-		if (!g_str_has_suffix (css_file, ".css"))
-			continue;
-
-		css = g_build_filename(variant_dir, css_file, NULL);
-		ret = g_list_append(ret, css);
-	}
-
-	g_dir_close(variants);
-	g_free(variant_dir);
-
-	ret = g_list_sort (ret, (GCompareFunc)g_strcmp0);
-	return ret;	
-}
-
-static void
-variant_set_default (PidginMessageStyle* style)
-{
-	GList *all, *iter;
-	const char *css_path = purple_prefs_get_string ("/plugins/gtk/adiumthemes/csspath");
-
-	g_free (style->css_path);
-	if (css_path && g_str_has_prefix (css_path, style->style_dir) &&
-	    g_file_test (css_path, G_FILE_TEST_EXISTS)) {
-		style->css_path = g_strdup (css_path);
-		return;
-	}
-	else {
-		/* something about the theme has changed */
-		css_path = NULL;
-	}
-	
-	all = get_variant_files (style);
-
-	if (all) {
-		style->css_path = g_strdup (all->data);
-		purple_prefs_set_string ("/plugins/gtk/adiumthemes/csspath", css_path);
-	}
-	
-	for (iter = all; iter; iter = g_list_next (iter))
-		g_free (iter->data);
-
-	g_list_free (all);
-}
-
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
@@ -967,6 +1028,10 @@ plugin_unload(PurplePlugin *plugin)
 
 	return TRUE;
 }
+
+/*
+ * UI config code
+ */
 
 static void
 style_changed (GtkWidget* combobox, gpointer null)
@@ -1031,9 +1096,9 @@ variant_update_conversation (PurpleConversation *conv)
 	PidginMessageStyle *style = (PidginMessageStyle*) g_object_get_data (G_OBJECT(webview), MESSAGE_STYLE_KEY);
 	char *script;
 
-	g_assert (style && style->css_path);
+	g_assert (style);
 
-	script = g_strdup_printf ("setStylesheet(\"mainStyle\",\"%s\")", style->css_path);
+	script = g_strdup_printf ("setStylesheet(\"mainStyle\",\"%s\")", pidgin_message_style_get_css (style));
 	gtk_webview_safe_execute_script (GTK_WEBVIEW(webview), script);
 	g_free (script);
 }
@@ -1041,40 +1106,22 @@ variant_update_conversation (PurpleConversation *conv)
 static void
 variant_changed (GtkWidget* combobox, gpointer null)
 {
-	char *name, *name_with_ext;
-	char *css_path;
+	char *name;
 	GList *list;
 	PidginMessageStyle *style = pidgin_message_style_load (cur_style_dir);
 
 	g_assert (style);
+	name = gtk_combo_box_get_active_text (GTK_COMBO_BOX (combobox));
+	pidgin_message_style_set_variant (style, name);
 
-	/* it is possible that the theme changed by this point, so we check
-	 * that first */
-
-	name = gtk_combo_box_get_active_text (GTK_COMBO_BOX(combobox));
-	name_with_ext = g_strdup_printf ("%s.css", name);
-	g_free (name);
-	
-	css_path = g_build_filename (style->style_dir, "Contents", "Resources", "Variants", name_with_ext, NULL);
-
-	if (!g_file_test (css_path, G_FILE_TEST_EXISTS)) {
-		goto cleanup;
-	}
-
-	g_free (style->css_path);
-	style->css_path = g_strdup (css_path);
-	purple_prefs_set_string ("/plugins/gtk/adiumthemes/csspath", css_path);
-
-	/* update each conversation */
+	/* update conversations */
 	list = purple_get_conversations ();
 	while (list) {
 		variant_update_conversation (list->data);
 		list = g_list_next(list);
 	}
 
-cleanup:
-	g_free (css_path);
-	g_free (name_with_ext);
+	g_free (name);
 	pidgin_message_style_unref (style);
 }
 
@@ -1082,32 +1129,25 @@ static GtkWidget *
 get_variant_config_frame() 
 {
 	PidginMessageStyle *style = pidgin_message_style_load (cur_style_dir);
-	GList *variants = get_variant_files(style), *iter;
+	GList *variants = pidgin_message_style_get_variants (style), *iter;
+	char *cur_variant = pidgin_message_style_get_variant (style);
 	GtkWidget *combobox = gtk_combo_box_new_text();	
 	int def = -1, index = 0;
-	char* css_path = g_strdup (style->css_path);
 
 	pidgin_message_style_unref (style);
 
 	for (iter = variants; iter; iter = g_list_next (iter)) {
-		char *basename = g_path_get_basename(iter->data);
-		char *dirname = g_path_get_dirname(iter->data);
-		char *temp = g_strndup (basename, strlen(basename)-4);
-		gtk_combo_box_append_text (GTK_COMBO_BOX(combobox), temp);
-		g_free (temp);
+		gtk_combo_box_append_text (GTK_COMBO_BOX(combobox), iter->data);
 
-		if (g_str_has_suffix (css_path, basename))
+		if (g_str_equal (cur_variant, iter->data))
 			def = index;
 		index ++;
 		
-		g_free (basename);
-		g_free (dirname);
 	}
 
 	gtk_combo_box_set_active (GTK_COMBO_BOX(combobox), def);
 	g_signal_connect (G_OBJECT(combobox), "changed", G_CALLBACK(variant_changed), NULL);
 
-	g_free (css_path);
 	return combobox;
 }
 
