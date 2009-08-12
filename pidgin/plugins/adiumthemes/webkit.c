@@ -767,6 +767,8 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	template = replace_template_tokens(style, style->template_html, strlen(style->template_html) + strlen(style->header_html), header, footer);
 
 	g_assert(template);
+	
+	purple_debug_info ("webkit", "template: %s\n", template);
 	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
 
 	g_object_set_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY, style);
@@ -851,6 +853,7 @@ static gboolean webkit_on_displaying_im_msg (PurpleAccount *account,
 	escape = gtk_webview_quote_js_string (msg);
 	script = g_strdup_printf("%s(%s)", func, escape);
 
+	purple_debug_info ("webkit", "JS: %s\n", script);
 	gtk_webview_safe_execute_script (GTK_WEBVIEW (webkit), script);
 
 	g_free(script);
