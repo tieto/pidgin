@@ -750,6 +750,7 @@ static void roomlist_ok_cb(JabberStream *js, const char *server)
 
 	if(!server || !*server) {
 		purple_notify_error(js->gc, _("Invalid Server"), _("Invalid Server"), NULL);
+		purple_roomlist_set_in_progress(js->roomlist, FALSE);
 		return;
 	}
 
