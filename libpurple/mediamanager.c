@@ -751,9 +751,9 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 					G_CALLBACK(window_id_cb), ow);
 			gst_object_unref(bus);
 
-			gst_element_sync_state_with_parent(ow->sink);
+			gst_element_set_state(ow->sink, GST_STATE_PLAYING);
+			gst_element_set_state(queue, GST_STATE_PLAYING);
 			gst_element_link(queue, ow->sink);
-			gst_element_sync_state_with_parent(queue);
 			gst_element_link(tee, queue);
 		}
 	}
