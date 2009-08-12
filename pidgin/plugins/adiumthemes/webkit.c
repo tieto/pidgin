@@ -730,6 +730,19 @@ get_webkit(PurpleConversation *conv)
 		return gtkconv->webview;
 }
 
+static void set_theme_font_settings (WebKitWebView *webview, PidginMessageStyle *style)
+{
+	WebKitWebSettings *settings;
+
+	g_object_get (G_OBJECT(webview), "settings", &settings, NULL);
+	if (style->default_font_family)
+		g_object_set (G_OBJECT (settings), "default-font-family", style->default_font_family, NULL);
+	
+	if (style->default_font_size)
+		g_object_set (G_OBJECT (settings), "default-font-size", GINT_TO_POINTER (style->default_font_size), NULL);
+}
+
+
 /**
  * Called when either a new PurpleConversation is created
  * or when a PidginConversation changes its active PurpleConversation
@@ -769,6 +782,8 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	g_assert(template);
 	
 	purple_debug_info ("webkit", "template: %s\n", template);
+
+	set_theme_font_settings (WEBKIT_WEB_VIEW(webkit), style);
 	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
 
 	g_object_set_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY, style);
@@ -1103,6 +1118,8 @@ variant_update_conversation (PurpleConversation *conv)
 
 	script = g_strdup_printf ("setStylesheet(\"mainStyle\",\"%s\")", pidgin_message_style_get_css (style));
 	gtk_webview_safe_execute_script (GTK_WEBVIEW(webview), script);
+
+	set_theme_font_settings (WEBKIT_WEB_VIEW (gtkconv->webview), style);
 	g_free (script);
 }
 
