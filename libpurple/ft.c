@@ -40,7 +40,34 @@
 static PurpleXferUiOps *xfer_ui_ops = NULL;
 static GList *xfers;
 
+/*
+ * A hack to store more data since we can't extend the size of PurpleXfer
+ * easily.
+ */
+static GHashTable *xfers_data = NULL;
+
+typedef struct _PurpleXferPrivData {
+	/*
+	 * Used to moderate the file transfer when either the read/write ui_ops are
+	 * set or fd is not set. In those cases, the UI/prpl call the respective
+	 * function, which is somewhat akin to a fd watch being triggered.
+	 */
+	enum {
+		PURPLE_XFER_READY_NONE = 0x0,
+		PURPLE_XFER_READY_UI   = 0x1,
+		PURPLE_XFER_READY_PRPL = 0x2,
+	} ready;
+} PurpleXferPrivData;
+
 static int purple_xfer_choose_file(PurpleXfer *xfer);
+
+static void
+purple_xfer_priv_data_destroy(gpointer data)
+{
+	PurpleXferPrivData *priv = data;
+
+	g_free(priv);
+}
 
 GList *
 purple_xfers_get_all()
@@ -53,6 +80,7 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 {
 	PurpleXfer *xfer;
 	PurpleXferUiOps *ui_ops;
+	PurpleXferPrivData *priv;
 
 	g_return_val_if_fail(type    != PURPLE_XFER_UNKNOWN, NULL);
 	g_return_val_if_fail(account != NULL,              NULL);
@@ -69,6 +97,11 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 	xfer->message = NULL;
 	xfer->current_buffer_size = FT_INITIAL_BUFFER_SIZE;
 	xfer->fd = -1;
+
+	priv = g_new0(PurpleXferPrivData, 1);
+	priv->ready = PURPLE_XFER_READY_NONE;
+
+	g_hash_table_insert(xfers_data, xfer, priv);
 
 	ui_ops = purple_xfer_get_ui_ops(xfer);
 
@@ -102,9 +135,11 @@ purple_xfer_destroy(PurpleXfer *xfer)
 	g_free(xfer->remote_ip);
 	g_free(xfer->local_filename);
 
+	g_hash_table_remove(xfers_data, xfer);
+
 	PURPLE_DBUS_UNREGISTER_POINTER(xfer);
-	g_free(xfer);
 	xfers = g_list_remove(xfers, xfer);
+	g_free(xfer);
 }
 
 void
@@ -946,16 +981,15 @@ purple_xfer_write(PurpleXfer *xfer, const guchar *buffer, gsize size)
 }
 
 static void
-transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
+do_transfer(PurpleXfer *xfer)
 {
 	PurpleXferUiOps *ui_ops;
-	PurpleXfer *xfer = (PurpleXfer *)data;
 	guchar *buffer = NULL;
 	gssize r = 0;
 
 	ui_ops = purple_xfer_get_ui_ops(xfer);
-	
-	if (condition & PURPLE_INPUT_READ) {
+
+	if (xfer->type == PURPLE_XFER_RECEIVE) {
 		r = purple_xfer_read(xfer, &buffer);
 		if (r > 0) {
 			size_t wc;
@@ -975,7 +1009,7 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 			g_free(buffer);
 			return;
 		}
-	} else if (condition & PURPLE_INPUT_WRITE) {
+	} else if (xfer->type == PURPLE_XFER_SEND) {
 		size_t result;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 
@@ -1067,6 +1101,26 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 }
 
 static void
+transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
+{
+	PurpleXfer *xfer = data;
+
+	if (xfer->dest_fp == NULL) {
+		/* The UI is moderating its side manually */
+		PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+		if (0 == (priv->ready & PURPLE_XFER_READY_UI)) {
+			priv->ready |= PURPLE_XFER_READY_PRPL;
+
+			purple_input_remove(xfer->watcher);
+			xfer->watcher = 0;
+			return;
+		}
+	}
+
+	do_transfer(xfer);
+}
+
+static void
 begin_transfer(PurpleXfer *xfer, PurpleInputCondition cond)
 {
 	PurpleXferType type = purple_xfer_get_type(xfer);
@@ -1114,8 +1168,15 @@ purple_xfer_ui_ready(PurpleXfer *xfer)
 {
 	PurpleInputCondition cond;
 	PurpleXferType type;
+	PurpleXferPrivData *priv;
 
 	g_return_if_fail(xfer != NULL);
+
+	priv = g_hash_table_lookup(xfers_data, xfer);
+	priv->ready |= PURPLE_XFER_READY_UI;
+
+	if (0 == (priv->ready & PURPLE_XFER_READY_PRPL))
+		return;
 
 	type = purple_xfer_get_type(xfer);
 	if (type == PURPLE_XFER_SEND)
@@ -1126,7 +1187,28 @@ purple_xfer_ui_ready(PurpleXfer *xfer)
 	if (xfer->watcher == 0 && xfer->fd != -1)
 		xfer->watcher = purple_input_add(xfer->fd, cond, transfer_cb, xfer);
 
-	transfer_cb(xfer, 0, cond);
+	priv->ready = PURPLE_XFER_READY_NONE;
+
+	do_transfer(xfer);
+}
+
+void
+purple_xfer_prpl_ready(PurpleXfer *xfer)
+{
+	PurpleXferPrivData *priv;
+
+	g_return_if_fail(xfer != NULL);
+
+	priv = g_hash_table_lookup(xfers_data, xfer);
+	priv->ready |= PURPLE_XFER_READY_PRPL;
+
+	/* I don't think fwrite/fread are ever *not* ready */
+	if (xfer->dest_fp == NULL && 0 == (priv->ready & PURPLE_XFER_READY_UI))
+		return;
+
+	priv->ready = PURPLE_XFER_READY_NONE;
+
+	do_transfer(xfer);
 }
 
 void
@@ -1394,6 +1476,9 @@ void
 purple_xfers_init(void) {
 	void *handle = purple_xfers_get_handle();
 
+	xfers_data = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+	                                   NULL, purple_xfer_priv_data_destroy);
+
 	/* register signals */
 	purple_signal_register(handle, "file-recv-accept",
 	                     purple_marshal_VOID__POINTER, NULL, 1,
@@ -1440,6 +1525,9 @@ purple_xfers_uninit(void)
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
+
+	g_hash_table_destroy(xfers_data);
+	xfers_data = NULL;
 }
 
 void

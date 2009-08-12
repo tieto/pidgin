@@ -68,6 +68,7 @@ version 2.6.0 (??/??/2009):
 		* purple_strequal
 		* purple_utf8_strip_unprintables
 		* purple_util_fetch_url_request_len_with_account
+		* purple_xfer_prpl_ready
 		* purple_xfer_ui_ready
 		* xmlnode_from_file
 		* xmlnode_get_parent

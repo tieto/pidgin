@@ -664,13 +664,25 @@ void purple_xfer_conversation_write(PurpleXfer *xfer, char *message, gboolean is
 
 /**
  * Allows the UI to signal it's ready to send/receive data (depending on
- * the direction of the file transfer.
+ * the direction of the file transfer. Used when the UI is providing
+ * read/write/data_not_sent UI ops.
  *
- * @param xfer The file transfer for which data is ready.
+ * @param xfer The file transfer which is ready.
  *
  * @since 2.6.0
  */
 void purple_xfer_ui_ready(PurpleXfer *xfer);
+
+/**
+ * Allows the prpl to signal it's readh to send/receive data (depending on
+ * the direction of the file transfer. Used when the prpl provides read/write
+ * ops and cannot/does not provide a raw fd to the core.
+ *
+ * @param xfer The file transfer which is ready.
+ *
+ * @since 2.6.0
+ */
+void purple_xfer_prpl_ready(PurpleXfer *xfer);
 
 /*@}*/
 
