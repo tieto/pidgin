@@ -47,6 +47,8 @@ version 2.6.0 (??/??/2009):
 	* Various memory leaks fixed as reported by Josh Mueller.
 	* Properly handle an IRC buddy appearing in multiple groups.
 	* Escape HTML entities in usernames when written with the HTML logger.
+	* Do not display MySpace status changes as incoming IMs.  (Mark Doliner and
+	  Justin Williams)
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called

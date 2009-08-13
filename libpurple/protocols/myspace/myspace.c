@@ -1341,6 +1341,27 @@ msim_send_unofficial_client(MsimSession *session, gchar *username)
 	return ret;
 }
 #endif
+/**
+ * Process incoming status mood messages.
+ *
+ * @param session
+ * @param msg Status mood update message. Caller frees.
+ *
+ * @return TRUE if successful.
+ */
+static gboolean
+msim_incoming_status_mood(MsimSession *session, MsimMessage *msg) {
+	/* TODO: I dont know too much about this yet,
+	 * so until I see how the official client handles
+	 * this and decide if libpurple should as well,
+	 * well just say we used it
+	 */
+	gchar *ss;
+	ss = msim_msg_get_string(msg, "msg");
+	purple_debug_info("msim", "Incoming Status Message: %s", ss ? ss : "(NULL)");
+	g_free(ss);
+	return TRUE;
+}
 
 /**
  * Process incoming status messages.
@@ -1692,6 +1713,8 @@ msim_incoming_bm(MsimSession *session, MsimMessage *msg)
 			return msim_incoming_media(session, msg);
 		case MSIM_BM_UNOFFICIAL_CLIENT:
 			return msim_incoming_unofficial_client(session, msg);
+		case MSIM_BM_STATUS_MOOD:
+			return msim_incoming_status_mood(session, msg);
 		default:
 			/*
 			 * Unknown message type!  We used to call
