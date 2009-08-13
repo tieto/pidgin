@@ -1157,4 +1157,7 @@ purple_pounces_uninit()
 	}
 
 	purple_signals_disconnect_by_handle(purple_pounces_get_handle());
+
+	g_hash_table_destroy(pounce_handlers);
+	pounce_handlers = NULL;
 }

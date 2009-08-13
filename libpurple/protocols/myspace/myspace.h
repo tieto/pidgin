@@ -132,6 +132,7 @@
 #define MSIM_BM_ACTION_OR_IM_INSTANT    121
 #define MSIM_BM_MEDIA                   122
 #define MSIM_BM_PROFILE                 124
+#define MSIM_BM_STATUS_MOOD             126
 #define MSIM_BM_UNOFFICIAL_CLIENT       200
 
 /* Authentication algorithm for login2 */

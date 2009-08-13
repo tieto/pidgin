@@ -103,7 +103,8 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 		PurpleBuddy *b = buddies->data;
 		struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
 		ib->name = g_strdup(purple_buddy_get_name(b));
-		g_hash_table_insert(irc->buddies, ib->name, ib);
+		ib->ref = 1;
+		g_hash_table_replace(irc->buddies, ib->name, ib);
 	}
 
 	irc_blist_timeout(irc);

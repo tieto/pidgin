@@ -386,7 +386,6 @@ purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name)
 
 	scheme = crt->scheme;
 
-	/* TODO: Instead of failing, maybe use get_subject_name and strcmp? */
 	g_return_val_if_fail(scheme->check_subject_name, FALSE);
 
 	return (scheme->check_subject_name)(crt, name);
@@ -1375,7 +1374,7 @@ x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq,
 		return;
 	} /* if (name mismatch) */
 
-	if (had_ca_pool) {
+	if (!had_ca_pool) {
 		/* The subject name is correct, but we weren't able to verify the
 		 * chain because there was no pool of root CAs found. Prompt the user
 		 * to validate it.

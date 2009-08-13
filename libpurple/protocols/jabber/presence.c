@@ -698,6 +698,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			const char *real_jid = NULL;
 			const char *affiliation = NULL;
 			const char *role = NULL;
+			gboolean is_our_resource = FALSE; /* Is the presence about us? */
 
 			/*
 			 * XEP-0045 mandates the presence to include a resource (which is
@@ -718,10 +719,15 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				xmlnode *status_node;
 				xmlnode *item_node;
 
-				status_node = xmlnode_get_child(x, "status");
-				if (status_node) {
+				for (status_node = xmlnode_get_child(x, "status"); status_node;
+						status_node = xmlnode_get_next_twin(status_node)) {
 					const char *code = xmlnode_get_attrib(status_node, "code");
-					if (purple_strequal(code, "201")) {
+					if (!code)
+						continue;
+
+					if (g_str_equal(code, "110")) {
+						is_our_resource = TRUE;
+					} else if (g_str_equal(code, "201")) {
 						if ((chat = jabber_chat_find(js, jid->node, jid->domain))) {
 							chat->config_dialog_type = PURPLE_REQUEST_ACTION;
 							chat->config_dialog_handle =
@@ -737,7 +743,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
 										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
 						}
-					} else if (purple_strequal(code, "210")) {
+					} else if (g_str_equal(code, "210")) {
 						/* server rewrote room-nick */
 						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
 							g_free(chat->handle);
@@ -814,7 +820,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					"http://jabber.org/protocol/muc#user");
 			if (chat->muc && x) {
 				const char *nick;
-				const char *code = NULL;
 				const char *item_jid = NULL;
 				const char *to;
 				xmlnode *stat;
@@ -824,13 +829,16 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				if (item)
 					item_jid = xmlnode_get_attrib(item, "jid");
 
-				stat = xmlnode_get_child(x, "status");
+				for (stat = xmlnode_get_child(x, "status"); stat;
+						stat = xmlnode_get_next_twin(stat)) {
+					const char *code = xmlnode_get_attrib(stat, "code");
 
-				if (stat)
-					code = xmlnode_get_attrib(stat, "code");
+					if (!code)
+						continue;
 
-				if (code) {
-					if(!strcmp(code, "301")) {
+					if (g_str_equal(code, "110")) {
+						is_our_resource = TRUE;
+					} else if(!strcmp(code, "301")) {
 						/* XXX: we got banned */
 					} else if(!strcmp(code, "303") && item &&
 							(nick = xmlnode_get_attrib(item, "nick"))) {
@@ -839,10 +847,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 							g_free(chat->handle);
 							chat->handle = g_strdup(nick);
 						}
+
+						/* TODO: This should probably be moved out of the loop */
 						purple_conv_chat_rename_user(PURPLE_CONV_CHAT(chat->conv), jid->resource, nick);
 						jabber_chat_remove_handle(chat, jid->resource);
-						/* TODO: Enable this when this is in a for-loop...
-						break; */
+						continue;
 					} else if(!strcmp(code, "307")) {
 						/* Someone was kicked from the room */
 						xmlnode *reason = NULL, *actor = NULL;

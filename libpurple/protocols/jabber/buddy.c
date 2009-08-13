@@ -463,6 +463,11 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	if(!js->vcard_fetched)
 		return;
 
+	if (js->vcard_timer) {
+		purple_timeout_remove(js->vcard_timer);
+		js->vcard_timer = 0;
+	}
+
 	g_free(js->avatar_hash);
 	js->avatar_hash = NULL;
 
@@ -508,6 +513,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 		xmlnode_insert_data(binval, enc, -1);
 		g_free(enc);
+		purple_imgstore_unref(img);
 	} else if (vc_node) {
 		xmlnode *photo;
 		/* TODO: Remove all PHOTO children? (see above note) */
@@ -854,12 +860,26 @@ static void jabber_buddy_info_remove_id(JabberBuddyInfo *jbi, const char *id)
 	}
 }
 
+static gboolean
+set_own_vcard_cb(gpointer data)
+{
+	JabberStream *js = data;
+	PurpleAccount *account = purple_connection_get_account(js->gc);
+
+	js->vcard_timer = 0;
+
+	jabber_set_info(js->gc, purple_account_get_user_info(account));
+
+	return FALSE;
+}
+
 static void jabber_vcard_save_mine(JabberStream *js, const char *from,
                                    JabberIqType type, const char *id,
                                    xmlnode *packet, gpointer data)
 {
 	xmlnode *vcard, *photo, *binval;
 	char *txt, *vcard_hash = NULL;
+	PurpleAccount *account;
 
 	if (type == JABBER_IQ_ERROR) {
 		xmlnode *error;
@@ -870,12 +890,13 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 			return;
 	}
 
+	account = purple_connection_get_account(js->gc);
+
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp")))
 	{
 		txt = xmlnode_to_str(vcard, NULL);
-		purple_account_set_user_info(purple_connection_get_account(js->gc), txt);
-
+		purple_account_set_user_info(account, txt);
 		g_free(txt);
 	} else {
 		/* if we have no vCard, then lets not overwrite what we might have locally */
@@ -898,8 +919,17 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 
 	/* Republish our vcard if the photo is different than the server's */
 	if (!purple_strequal(vcard_hash, js->initial_avatar_hash)) {
-		PurpleAccount *account = purple_connection_get_account(js->gc);
-		jabber_set_info(js->gc, purple_account_get_user_info(account));
+		/*
+		 * Google Talk has developed the behavior that it will not accept
+		 * a vcard set in the first 10 seconds (or so) of the connection;
+		 * it returns an error (namespaces trimmed):
+		 * <error code="500" type="wait"><internal-server-error/></error>.
+		 */
+		if (js->googletalk)
+			js->vcard_timer = purple_timeout_add_seconds(10, set_own_vcard_cb,
+			                                             js);
+		else
+			jabber_set_info(js->gc, purple_account_get_user_info(account));
 	} else if (js->initial_avatar_hash) {
 		/* Our photo is in the vcard, so advertise vcard-temp updates */
 		js->avatar_hash = g_strdup(js->initial_avatar_hash);
@@ -1162,6 +1192,22 @@ static void jabber_buddy_info_resource_free(gpointer data)
 {
 	JabberBuddyInfoResource *jbri = data;
 	g_free(jbri);
+}
+
+static guint jbir_hash(gconstpointer v)
+{
+	if (v)
+		return g_str_hash(v);
+	else
+		return 0;
+}
+
+static gboolean jbir_equal(gconstpointer v1, gconstpointer v2)
+{
+	const gchar *resource_1 = v1;
+	const gchar *resource_2 = v2;
+
+	return purple_strequal(resource_1, resource_2);
 }
 
 static void jabber_version_parse(JabberStream *js, const char *from,
@@ -1435,9 +1481,7 @@ dispatch_queries_for_resource(JabberStream *js, JabberBuddyInfo *jbi,
 	char *full_jid = NULL;
 	const char *to;
 
-	g_return_if_fail(jbr->name != NULL);
-
-	if (is_bare_jid) {
+	if (is_bare_jid && jbr->name) {
 		full_jid = g_strdup_printf("%s/%s", jid, jbr->name);
 		to = full_jid;
 	} else
@@ -1506,7 +1550,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 	jbi->jid = g_strdup(jid);
 	jbi->js = js;
 	jbi->jb = jb;
-	jbi->resources = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, jabber_buddy_info_resource_free);
+	jbi->resources = g_hash_table_new_full(jbir_hash, jbir_equal, g_free, jabber_buddy_info_resource_free);
 	jbi->user_info = purple_notify_user_info_new();
 
 	iq = jabber_iq_new(js, JABBER_IQ_GET);
@@ -1736,9 +1780,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 	if(!jb)
 		return m;
 
-	/* XXX: fix the NOT ME below */
-
-	if(js->protocol_version == JABBER_PROTO_0_9 /* && NOT ME */) {
+	if (js->protocol_version == JABBER_PROTO_0_9 && jb != js->user_jb) {
 		if(jb->invisible & JABBER_INVIS_BUDDY) {
 			act = purple_menu_action_new(_("Un-hide From"),
 			                           PURPLE_CALLBACK(jabber_buddy_make_visible),
@@ -1751,7 +1793,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 		m = g_list_append(m, act);
 	}
 
-	if(jb->subscription & JABBER_SUB_FROM /* && NOT ME */) {
+	if(jb->subscription & JABBER_SUB_FROM && jb != js->user_jb) {
 		act = purple_menu_action_new(_("Cancel Presence Notification"),
 		                           PURPLE_CALLBACK(jabber_buddy_cancel_presence_notification),
 		                           NULL, NULL);
@@ -1764,7 +1806,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 
-	} else /* if(NOT ME) */{
+	} else if (jb != js->user_jb) {
 
 		/* shouldn't this just happen automatically when the buddy is
 		   removed? */
