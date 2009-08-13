@@ -1906,8 +1906,8 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 		gst_element_add_pad(session->media->priv->confbin, ghost);
 	}
 
-	gst_element_link(session->src, session->media->priv->confbin);
 	gst_element_set_state(session->tee, GST_STATE_PLAYING);
+	gst_element_link(session->src, session->media->priv->confbin);
 
 	g_object_get(session->session, "sink-pad", &sinkpad, NULL);
 	if (session->type & PURPLE_MEDIA_SEND_AUDIO) {
@@ -1922,10 +1922,10 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 		g_free(name);
 		gst_bin_add(GST_BIN(session->media->priv->confbin), volume);
 		gst_bin_add(GST_BIN(session->media->priv->confbin), level);
-		gst_element_link(session->tee, volume);
-		gst_element_link(volume, level);
 		gst_element_set_state(level, GST_STATE_PLAYING);
 		gst_element_set_state(volume, GST_STATE_PLAYING);
+		gst_element_link(volume, level);
+		gst_element_link(session->tee, volume);
 		srcpad = gst_element_get_static_pad(level, "src");
 		g_object_set(volume, "volume", input_volume, NULL);
 	} else {
@@ -2466,6 +2466,7 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			gst_element_set_state(sink, GST_STATE_PLAYING);
 			gst_element_set_state(stream->level, GST_STATE_PLAYING);
 			gst_element_set_state(stream->volume, GST_STATE_PLAYING);
+			gst_element_set_state(queue, GST_STATE_PLAYING);
 			gst_element_link(stream->level, sink);
 			gst_element_link(stream->volume, stream->level);
 			gst_element_link(queue, stream->volume);
@@ -2477,11 +2478,11 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 					"fakesink", NULL);
 			g_object_set(G_OBJECT(sink), "async", FALSE, NULL);
 			gst_bin_add(GST_BIN(priv->confbin), sink);
+			gst_element_set_state(sink, GST_STATE_PLAYING);
 		}
 		stream->tee = gst_element_factory_make("tee", NULL);
 		gst_bin_add_many(GST_BIN(priv->confbin),
 				stream->src, stream->tee, NULL);
-		gst_element_set_state(sink, GST_STATE_PLAYING);
 		gst_element_set_state(stream->tee, GST_STATE_PLAYING);
 		gst_element_set_state(stream->src, GST_STATE_PLAYING);
 		gst_element_link_many(stream->src, stream->tee, sink, NULL);

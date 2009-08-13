@@ -473,7 +473,6 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 			gst_element_link(tee, fakesink);
 
 			ret = bin;
-			gst_element_set_locked_state(ret, TRUE);
 			gst_object_ref(ret);
 			gst_bin_add(GST_BIN(purple_media_manager_get_pipeline(
 					manager)), ret);
