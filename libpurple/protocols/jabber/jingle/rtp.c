@@ -589,8 +589,8 @@ jingle_rtp_init_media(JingleContent *content)
 	if (!strcmp(senders, "both"))
 		type = is_audio == TRUE ? PURPLE_MEDIA_AUDIO
 				: PURPLE_MEDIA_VIDEO;
-	else if (!strcmp(senders, "initiator")
-			&& jingle_session_is_initiator(session))
+	else if ((strcmp(senders, "initiator") == 0) ==
+			jingle_session_is_initiator(session))
 		type = is_audio == TRUE ? PURPLE_MEDIA_SEND_AUDIO
 				: PURPLE_MEDIA_SEND_VIDEO;
 	else
