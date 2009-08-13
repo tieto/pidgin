@@ -26,7 +26,6 @@
 
 typedef struct _MsnUserList MsnUserList;
 
-#include "cmdproc.h"
 #include "user.h"
 #include "group.h"
 

@@ -337,30 +337,19 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		if (trans != NULL)
 		{
-			MsnErrorCb error_cb = NULL;
+			MsnErrorCb error_cb;
 			int error;
 
 			error = atoi(cmd->command);
 
-			if (trans->error_cb != NULL)
-				error_cb = trans->error_cb;
-
-			if (error_cb == NULL && cmdproc->cbs_table->errors != NULL)
+			error_cb = trans->error_cb;
+			if (error_cb == NULL)
 				error_cb = g_hash_table_lookup(cmdproc->cbs_table->errors, trans->command);
 
 			if (error_cb != NULL)
-			{
 				error_cb(cmdproc, trans, error);
-			}
 			else
-			{
-#if 1
 				msn_error_handle(cmdproc->session, error);
-#else
-				purple_debug_warning("msn", "Unhandled error '%s'\n",
-								   cmd->command);
-#endif
-			}
 
 			return;
 		}
