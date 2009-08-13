@@ -247,14 +247,6 @@ msn_directconn_send_msg(MsnDirectConn *directconn, MsnMessage *msg)
 }
 
 static void
-msn_directconn_process_msg(MsnDirectConn *directconn, MsnMessage *msg)
-{
-	purple_debug_info("msn", "directconn: process_msg\n");
-
-	msn_slplink_process_msg(directconn->slplink, msg);
-}
-
-static void
 read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnDirectConn* directconn;
@@ -337,7 +329,8 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		msg = msn_message_new_msnslp();
 		msn_message_parse_slp_body(msg, body, body_len);
 
-		msn_directconn_process_msg(directconn, msg);
+		purple_debug_info("msn", "directconn: process_msg\n");
+		msn_slplink_process_msg(directconn->slplink, msg);
 	}
 	else
 	{
