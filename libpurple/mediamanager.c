@@ -473,7 +473,6 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 			gst_element_link(tee, fakesink);
 
 			ret = bin;
-			gst_element_set_locked_state(ret, TRUE);
 			gst_object_ref(ret);
 			gst_bin_add(GST_BIN(purple_media_manager_get_pipeline(
 					manager)), ret);
@@ -714,7 +713,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 				(participant == ow->participant)) &&
 				!strcmp(session_id, ow->session_id)) {
 			GstBus *bus;
-			GstElement *queue;
+			GstElement *queue, *colorspace;
 			GstElement *tee = purple_media_get_tee(media,
 					session_id, participant);
 
@@ -723,6 +722,8 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 
 			queue = gst_element_factory_make(
 					"queue", NULL);
+			colorspace = gst_element_factory_make(
+					"ffmpegcolorspace", NULL);
 			ow->sink = purple_media_manager_get_element(
 					manager, PURPLE_MEDIA_RECV_VIDEO,
 					ow->media, ow->session_id,
@@ -743,7 +744,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 			}
 
 			gst_bin_add_many(GST_BIN(GST_ELEMENT_PARENT(tee)),
-					queue, ow->sink, NULL);
+					queue, colorspace, ow->sink, NULL);
 
 			bus = gst_pipeline_get_bus(GST_PIPELINE(
 					manager->priv->pipeline));
@@ -752,8 +753,10 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 			gst_object_unref(bus);
 
 			gst_element_set_state(ow->sink, GST_STATE_PLAYING);
+			gst_element_set_state(colorspace, GST_STATE_PLAYING);
 			gst_element_set_state(queue, GST_STATE_PLAYING);
-			gst_element_link(queue, ow->sink);
+			gst_element_link(colorspace, ow->sink);
+			gst_element_link(queue, colorspace);
 			gst_element_link(tee, queue);
 		}
 	}
@@ -822,8 +825,14 @@ purple_media_manager_remove_output_window(PurpleMediaManager *manager,
 		GstPad *pad = gst_element_get_static_pad(
 				output_window->sink, "sink");
 		GstPad *peer = gst_pad_get_peer(pad);
-		GstElement *queue = GST_ELEMENT_PARENT(peer);
+		GstElement *colorspace = GST_ELEMENT_PARENT(peer), *queue;
 		gst_object_unref(pad);
+		gst_object_unref(peer);
+		pad = gst_element_get_static_pad(colorspace, "sink");
+		peer = gst_pad_get_peer(pad);
+		queue = GST_ELEMENT_PARENT(peer);
+		gst_object_unref(pad);
+		gst_object_unref(peer);
 		pad = gst_element_get_static_pad(queue, "sink");
 		peer = gst_pad_get_peer(pad);
 		gst_object_unref(pad);
@@ -832,6 +841,9 @@ purple_media_manager_remove_output_window(PurpleMediaManager *manager,
 		gst_element_set_locked_state(queue, TRUE);
 		gst_element_set_state(queue, GST_STATE_NULL);
 		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(queue)), queue);
+		gst_element_set_locked_state(colorspace, TRUE);
+		gst_element_set_state(colorspace, GST_STATE_NULL);
+		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(colorspace)), colorspace);
 		gst_element_set_locked_state(output_window->sink, TRUE);
 		gst_element_set_state(output_window->sink, GST_STATE_NULL);
 		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(output_window->sink)),
