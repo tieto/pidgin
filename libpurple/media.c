@@ -2617,26 +2617,27 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 				0, PURPLE_MEDIA_STATE_NEW,
 				session->id, NULL);
 
-		session_type = purple_media_from_fs(media_type,
-				FS_DIRECTION_SEND);
-		src = purple_media_manager_get_element(
-				media->priv->manager, session_type,
-				media, session->id, who);
-		if (!GST_IS_ELEMENT(src)) {
-			purple_debug_error("media",
-					"Error creating src for session %s\n",
-					session->id);
-			purple_media_end(media, session->id, NULL);
-			return FALSE;
+		if (type_direction & FS_DIRECTION_SEND) {
+			session_type = purple_media_from_fs(media_type,
+					FS_DIRECTION_SEND);
+			src = purple_media_manager_get_element(
+					media->priv->manager, session_type,
+					media, session->id, who);
+			if (!GST_IS_ELEMENT(src)) {
+				purple_debug_error("media",
+						"Error creating src for session %s\n",
+						session->id);
+				purple_media_end(media, session->id, NULL);
+				return FALSE;
+			}
+
+			purple_media_set_src(media, session->id, src);
+			gst_element_set_state(session->src, GST_STATE_PLAYING);
+			purple_media_manager_create_output_window(
+					media->priv->manager,
+					session->media,
+					session->id, NULL);
 		}
-
-		purple_media_set_src(media, session->id, src);
-		gst_element_set_state(session->src, GST_STATE_PLAYING);
-
-		purple_media_manager_create_output_window(
-				media->priv->manager,
-				session->media,
-				session->id, NULL);
 	}
 
 	if (!(participant = purple_media_add_participant(media, who))) {
@@ -3002,14 +3003,23 @@ purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id)
 
 		if (session == NULL)
 			return FALSE;
-
-		g_object_get(session->session, "codecs-ready", &ret, NULL);
+		if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
+				PURPLE_MEDIA_SEND_VIDEO))
+			g_object_get(session->session,
+					"codecs-ready", &ret, NULL);
+		else
+			ret = TRUE;
 	} else {
 		GList *values = g_hash_table_get_values(media->priv->sessions);
 		for (; values; values = g_list_delete_link(values, values)) {
 			PurpleMediaSession *session = values->data;
-			g_object_get(session->session,
-					"codecs-ready", &ret, NULL);
+			if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
+					PURPLE_MEDIA_SEND_VIDEO))
+				g_object_get(session->session,
+						"codecs-ready", &ret, NULL);
+			else
+				ret = TRUE;
+
 			if (ret == FALSE)
 				break;
 		}
