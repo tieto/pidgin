@@ -405,7 +405,7 @@ purple_mime_decode_field(const char *str)
 	encoded_word_state_t state = state_start;
 	const char *cur, *mark;
 	const char *charset0 = NULL, *encoding0 = NULL, *encoded_text0 = NULL;
-	char *n, *new;
+	GString *new;
 
 	/* token can be any CHAR (supposedly ISO8859-1/ISO2022), not just ASCII */
 	#define token_char_p(c) \
@@ -415,16 +415,9 @@ purple_mime_decode_field(const char *str)
 	#define encoded_text_char_p(c) \
 		((c & 0x80) == 0 && c != '?' && c != ' ' && isgraph(c))
 
-	#define RECOVER_MARKED_TEXT strncpy(n, mark, cur - mark + 1); \
-		n += cur - mark + 1
-
 	g_return_val_if_fail(str != NULL, NULL);
 
-	/* NOTE: Assuming that we need just strlen(str)+1 *may* be wrong.
-	 * It would be wrong if one byte (in some unknown encoding) could
-	 * expand to >=4 bytes of UTF-8; I don't know if there are such things.
-	 */
-	n = new = g_malloc(strlen(str) + 1);
+	new = g_string_new(NULL);
 
 	/* Here we will be looking for encoded words and if they seem to be
 	 * valid then decode them.
@@ -437,7 +430,7 @@ purple_mime_decode_field(const char *str)
 			if (*cur == '?') {
 				state = state_question1;
 			} else {
-				RECOVER_MARKED_TEXT;
+				g_string_append_len(new, mark, cur - mark + 1);
 				state = state_start;
 			}
 			break;
@@ -446,7 +439,7 @@ purple_mime_decode_field(const char *str)
 				charset0 = cur;
 				state = state_charset;
 			} else { /* This should never happen */
-				RECOVER_MARKED_TEXT;
+				g_string_append_len(new, mark, cur - mark + 1);
 				state = state_start;
 			}
 			break;
@@ -454,7 +447,7 @@ purple_mime_decode_field(const char *str)
 			if (*cur == '?') {
 				state = state_question2;
 			} else if (!token_char_p(*cur)) { /* This should never happen */
-				RECOVER_MARKED_TEXT;
+				g_string_append_len(new, mark, cur - mark + 1);
 				state = state_start;
 			}
 			break;
@@ -463,7 +456,7 @@ purple_mime_decode_field(const char *str)
 				encoding0 = cur;
 				state = state_encoding;
 			} else { /* This should never happen */
-				RECOVER_MARKED_TEXT;
+				g_string_append_len(new, mark, cur - mark + 1);
 				state = state_start;
 			}
 			break;
@@ -471,7 +464,7 @@ purple_mime_decode_field(const char *str)
 			if (*cur == '?') {
 				state = state_question3;
 			} else if (!token_char_p(*cur)) { /* This should never happen */
-				RECOVER_MARKED_TEXT;
+				g_string_append_len(new, mark, cur - mark + 1);
 				state = state_start;
 			}
 			break;
@@ -483,7 +476,7 @@ purple_mime_decode_field(const char *str)
 				encoded_text0 = cur;
 				state = state_question4;
 			} else { /* This should never happen */
-				RECOVER_MARKED_TEXT;
+				g_string_append_len(new, mark, cur - mark + 1);
 				state = state_start;
 			}
 			break;
@@ -491,7 +484,7 @@ purple_mime_decode_field(const char *str)
 			if (*cur == '?') {
 				state = state_question4;
 			} else if (!encoded_text_char_p(*cur)) {
-				RECOVER_MARKED_TEXT;
+				g_string_append_len(new, mark, cur - mark + 1);
 				state = state_start;
 			}
 			break;
@@ -513,7 +506,7 @@ purple_mime_decode_field(const char *str)
 					char *converted = g_convert((const gchar *)decoded, dec_len, "utf-8", charset, NULL, &len, NULL);
 
 					if (converted) {
-						n = strncpy(n, converted, len) + len;
+						g_string_append_len(new, converted, len);
 						g_free(converted);
 					}
 					g_free(decoded);
@@ -523,7 +516,7 @@ purple_mime_decode_field(const char *str)
 				g_free(encoded_text);
 				state = state_equal2; /* Restart the FSM */
 			} else { /* This should never happen */
-				RECOVER_MARKED_TEXT;
+				g_string_append_len(new, mark, cur - mark + 1);
 				state = state_start;
 			}
 			break;
@@ -533,19 +526,16 @@ purple_mime_decode_field(const char *str)
 				state = state_equal1;
 			} else {
 				/* Some unencoded text. */
-				*n = *cur;
-				n += 1;
+				g_string_append_c(new, *cur);
 			}
 			break;
 		} /* switch */
 	} /* for */
 
-	if (state != state_start) {
-		RECOVER_MARKED_TEXT;
-	}
-	*n = '\0';
+	if (state != state_start)
+		g_string_append_len(new, mark, cur - mark + 1);
 
-	return new;
+	return g_string_free(new, FALSE);;
 }
 
 
