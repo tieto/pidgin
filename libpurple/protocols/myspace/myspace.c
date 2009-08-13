@@ -1693,10 +1693,16 @@ msim_incoming_bm(MsimSession *session, MsimMessage *msg)
 		case MSIM_BM_UNOFFICIAL_CLIENT:
 			return msim_incoming_unofficial_client(session, msg);
 		default:
-			/* Not really an IM, but show it for informational
-			 * purposes during development. */
-			/* TODO: This is probably wrong */
-			return msim_incoming_action_or_im(session, msg);
+			/*
+			 * Unknown message type!  We used to call
+			 *   msim_incoming_action_or_im(session, msg);
+			 * for these, but that doesn't help anything, and it means
+			 * we'll show broken gibberish if MySpace starts sending us
+			 * other message types.
+			 */
+			purple_debug_warning("myspace", "Received unknown imcoming "
+					"message, bm=%u\n", bm);
+			return TRUE;
 	}
 }
 
