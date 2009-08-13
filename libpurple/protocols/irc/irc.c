@@ -569,9 +569,20 @@ static void irc_set_status(PurpleAccount *account, PurpleStatus *status)
 static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	struct irc_conn *irc = (struct irc_conn *)gc->proto_data;
-	struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
-	ib->name = g_strdup(purple_buddy_get_name(buddy));
-	g_hash_table_replace(irc->buddies, ib->name, ib);
+	struct irc_buddy *ib;
+	const char *bname = purple_buddy_get_name(buddy);
+
+	ib = g_hash_table_lookup(irc->buddies, bname);
+	if (ib != NULL) {
+		ib->ref++;
+		purple_prpl_got_user_status(irc->account, bname,
+				ib->online ? "available" : "offline", NULL);
+	} else {
+		ib = g_new0(struct irc_buddy, 1);
+		ib->name = g_strdup(bname);
+		ib->ref = 1;
+		g_hash_table_replace(irc->buddies, ib->name, ib);
+	}
 
 	/* if the timer isn't set, this is during signon, so we don't want to flood
 	 * ourself off with ISON's, so we don't, but after that we want to know when
@@ -583,7 +594,12 @@ static void irc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 static void irc_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	struct irc_conn *irc = (struct irc_conn *)gc->proto_data;
-	g_hash_table_remove(irc->buddies, purple_buddy_get_name(buddy));
+	struct irc_buddy *ib;
+
+	ib = g_hash_table_lookup(irc->buddies, purple_buddy_get_name(buddy));
+	if (ib && --ib->ref == 0) {
+		g_hash_table_remove(irc->buddies, purple_buddy_get_name(buddy));
+	}
 }
 
 static void read_input(struct irc_conn *irc, int len)

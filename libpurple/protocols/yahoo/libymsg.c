@@ -478,7 +478,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	PurpleAccount *account = purple_connection_get_account(gc);
 	YahooData *yd = gc->proto_data;
 	GHashTable *ht;
-	char *norm_bud = NULL;
+	char *norm_bud;
 	char *temp = NULL;
 	YahooFriend *f = NULL; /* It's your friends. They're going to want you to share your StarBursts. */
 	                       /* But what if you had no friends? */
@@ -486,7 +486,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	PurpleGroup *g;
 	int protocol = 0;
 	int stealth = 0;
-
 
 	ht = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_slist_free);
 
@@ -546,9 +545,11 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 					purple_privacy_deny_add(account, norm_bud, 1);
 				}
 
+				g_free(norm_bud);
+
 				protocol = 0;
 				stealth = 0;
-				norm_bud = NULL;
+				g_free(temp);
 				temp = NULL;
 			}
 			break;
@@ -559,6 +560,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 			yd->current_list15_grp = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 7: /* buddy's s/n */
+			g_free(temp);
 			temp = g_strdup(purple_normalize(account, pair->value));
 			break;
 		case 241: /* another protocol user */
@@ -594,7 +596,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	yahoo_set_status(account, purple_account_get_active_status(account));
 
 	g_hash_table_destroy(ht);
-	g_free(norm_bud);
 	g_free(temp);
 }
 
@@ -976,7 +977,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		return;
 	}
 
-	/** TODO: It seems that this check should be per IM, not global */
+	/* TODO: It seems that this check should be per IM, not global */
 	/* Check for the Doodle IMV */
 	if (im != NULL && imv!= NULL && im->from != NULL)
 	{
@@ -1830,6 +1831,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 			g_free(error_reason);
 			g_free(auth_data->seed);
 			g_free(auth_data);
+			g_free(token);
 		}
 		else {
 			/* OK to login, correct information provided */
@@ -2081,6 +2083,12 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	case 14:
 		msg = g_strdup(_("Your account is locked, please log in to the Yahoo! website."));
 		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
+		break;
+	case 52:
+		/* See #9660. As much as we know, reconnecting shouldn't hurt */
+		purple_debug_info("yahoo", "Got error 52, Set to autoreconnect\n");
+		msg = g_strdup_printf(_("Unknown error"));
+		reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		break;
 	case 1013:
 		msg = g_strdup(_("Invalid username"));
@@ -2578,8 +2586,7 @@ static void yahoo_p2p_init_cb(gpointer data, gint source, const gchar *error_mes
 	PurpleAccount *account;
 	YahooData *yd;
 
-	if(!(p2p_data = data))
-		return ;
+	p2p_data = data;
 	yd = p2p_data->gc->proto_data;
 
 	if(error_message != NULL) {
@@ -3767,7 +3774,7 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	if (presence != NULL)
 		purple_notify_user_info_add_pair(user_info, _("Presence"), presence);
 
-	if (full) {
+	if (f && full) {
 		YahooPersonalDetails *ypd = &f->ypd;
 		int i;
 		struct {

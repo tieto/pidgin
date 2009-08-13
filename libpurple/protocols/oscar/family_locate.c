@@ -615,13 +615,15 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			 * User flags
 			 *
 			 * Specified as any of the following ORed together:
-			 *      0x0001  Trial (user less than 60days)
+			 *      0x0001  Unconfirmed account
 			 *      0x0002  Unknown bit 2
 			 *      0x0004  AOL Main Service user
 			 *      0x0008  Unknown bit 4
 			 *      0x0010  Free (AIM) user
 			 *      0x0020  Away
-			 *      0x0400  ActiveBuddy
+			 *      0x0040  ICQ user (AIM bit also set)
+			 *      0x0080  Mobile device
+			 *      0x0400  Bot (like ActiveBuddy)
 			 */
 			outinfo->flags = byte_stream_get16(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_FLAGS;

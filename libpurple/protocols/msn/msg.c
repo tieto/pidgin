@@ -1102,6 +1102,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	GHashTable *body;
 	const gchar *guid;
+	gboolean accepted = FALSE;
 
 	g_return_if_fail(cmdproc != NULL);
 	g_return_if_fail(msg != NULL);
@@ -1129,6 +1130,9 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		} else
 			purple_debug_warning("msn", "Invite msg missing "
 					"Application-GUID.\n");
+
+		accepted = TRUE;
+
 	} else if (!strcmp(guid, "{02D3C01F-BF30-4825-A83A-DE7AF41648AA}")) {
 		purple_debug_info("msn", "Computer call\n");
 
@@ -1154,9 +1158,35 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				g_free(buf);
 			}
 		}
-	} else
-		purple_debug_warning("msn",
-				"Unhandled invite msg with GUID %s.\n", guid);
+	} else {
+		const gchar *application = g_hash_table_lookup(body, "Application-Name");
+		purple_debug_warning("msn", "Unhandled invite msg with GUID %s: %s.\n",
+		                     guid, application ? application : "(null)");
+	}
+
+	if (!accepted) {
+		const gchar *cookie = g_hash_table_lookup(body, "Invitation-Cookie");
+		if (cookie) {
+			MsnSwitchBoard *swboard = cmdproc->data;
+			char *text;
+			MsnMessage *cancel;
+
+			cancel = msn_message_new(MSN_MSG_TEXT);
+			msn_message_set_content_type(cancel, "text/x-msmsgsinvite");
+			msn_message_set_charset(cancel, "UTF-8");
+			msn_message_set_flag(cancel, 'U');
+
+			text = g_strdup_printf("Invitation-Command: CANCEL\r\n"
+			                       "Invitation-Cookie: %s\r\n"
+			                       "Cancel-Code: REJECT_NOT_INSTALLED\r\n",
+			                       cookie);
+			msn_message_set_bin_data(cancel, text, strlen(text));
+			g_free(text);
+
+			msn_switchboard_send_msg(swboard, cancel, TRUE);
+			msn_message_destroy(cancel);
+		}
+	}
 
 	g_hash_table_destroy(body);
 }

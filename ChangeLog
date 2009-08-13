@@ -43,6 +43,12 @@ version 2.6.0 (??/??/2009):
 	  against the GNU IDN library.
 	* Install scalable versions of the main Pidgin icon, the protocol icons,
 	  the dialog icons, and the Buddy List emblems.
+	* Build properly on Hurd.  (Marc Dequènes)
+	* Various memory leaks fixed as reported by Josh Mueller.
+	* Properly handle an IRC buddy appearing in multiple groups.
+	* Escape HTML entities in usernames when written with the HTML logger.
+	* Do not display MySpace status changes as incoming IMs.  (Mark Doliner and
+	  Justin Williams)
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
@@ -113,6 +119,8 @@ version 2.6.0 (??/??/2009):
 	* When the GNU IDN library (libidn) is available, it is used for
 	  normalization of Jabber IDs.  When unavailable, internal routines are
 	  used (as in previous versions).
+	* Topics that contain '<' followed by a non-whitespace character can now
+	  be set properly.
 
 	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)
@@ -173,6 +181,12 @@ version 2.6.0 (??/??/2009):
 	  conversation window is now linked to the file.
 	* Fix a crash when closing a conversation tab that has unread messages
 	  when the Message Notification plugin is loaded.
+	* Fix a crash when closing the New Mail dialog if an account with new
+	  mail was previously disconnected while the dialog was open.
+	* Fix incorrect unread message counts for the new mail notifications.
+	* Do not lose unread messages with a hidden conversation window when
+	  new IM conversations are hidden and "Close IMs immediately when the tab
+	  is closed" is unset.
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful

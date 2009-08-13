@@ -385,7 +385,7 @@ msn_soap_process(MsnSoapConnection *conn)
 					msn_soap_connection_handle_next(conn);
 					handled = TRUE;
 					break;
-				} else if (conn->response_code == 503) {
+				} else if (conn->response_code == 503 && conn->session->login_step < MSN_LOGIN_STEP_END) {
 					msn_soap_connection_sanitize(conn, TRUE);
 					msn_session_set_error(conn->session, MSN_ERROR_SERV_UNAVAILABLE, NULL);
 					return;

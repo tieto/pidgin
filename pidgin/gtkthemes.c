@@ -183,7 +183,7 @@ pidgin_themes_destroy_smiley_theme_smileys(struct smiley_theme *theme)
 			}
 			g_free(uio->smile);
 			g_free(uio);
-			wer->smileys = g_slist_remove(wer->smileys, uio);
+			wer->smileys = g_slist_delete_link(wer->smileys, wer->smileys);
 		}
 		theme->list = wer->next;
 		g_free(wer->sml);
@@ -229,7 +229,6 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 	struct smiley_list *list = NULL;
 	GSList *lst = smiley_themes;
 	char *dirname;
-	gboolean new_theme = FALSE;
 
 	if (!f)
 		return;
@@ -243,14 +242,16 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		lst = lst->next;
 	}
 
-	if (!theme) {
-		new_theme = TRUE;
-		theme = g_new0(struct smiley_theme, 1);
-		theme->path = g_strdup(file);
-	} else if (theme == current_smiley_theme) {
+	if (theme != NULL && theme == current_smiley_theme) {
 		/* Don't reload the theme if it is already loaded */
 		fclose(f);
 		return;
+	}
+
+	if (theme == NULL) {
+		theme = g_new0(struct smiley_theme, 1);
+		theme->path = g_strdup(file);
+		smiley_themes = g_slist_prepend(smiley_themes, theme);
 	}
 
 	dirname = g_path_get_dirname(file);
@@ -341,12 +342,9 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 	if (!theme->name || !theme->desc || !theme->author) {
 		purple_debug_error("gtkthemes", "Invalid file format, not loading smiley theme from '%s'\n", file);
 
+		smiley_themes = g_slist_remove(smiley_themes, theme);
 		pidgin_themes_destroy_smiley_theme(theme);
 		return;
-	}
-
-	if (new_theme) {
-		smiley_themes = g_slist_prepend(smiley_themes, theme);
 	}
 
 	if (load) {

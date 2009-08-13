@@ -10930,7 +10930,7 @@ msgid "/Conversation/Media/_Video Call"
 msgstr "/Konversation/Media/_Videosamtal"
 
 msgid "/Conversation/Media/Audio\\/Video _Call"
-msgstr "/Konversation/Media/Ljud\\/Video _Samtal"
+msgstr "/Konversation/Media/Ljud\\/Video_samtal"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Konversation/S_kicka fil..."
@@ -11930,7 +11930,7 @@ msgid "This theme has no available smileys."
 msgstr "Detta tema har inga tillgängliga smileys."
 
 msgid "_Font"
-msgstr "_Formateríng"
+msgstr "_Formatering"
 
 msgid "Group Items"
 msgstr "Gruppera föremål"

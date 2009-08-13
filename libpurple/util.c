@@ -3519,6 +3519,7 @@ purple_str_binary_to_ascii(const unsigned char *binary, guint len)
 void purple_got_protocol_handler_uri(const char *uri)
 {
 	char proto[11];
+	char delimiter;
 	const char *tmp, *param_string;
 	char *cmd;
 	GHashTable *params = NULL;
@@ -3534,7 +3535,13 @@ void purple_got_protocol_handler_uri(const char *uri)
 	proto[len] = '\0';
 
 	tmp++;
-	purple_debug_info("util", "Processing message '%s' for protocol '%s'.\n", tmp, proto);
+
+	if (g_str_equal(proto, "xmpp"))
+		delimiter = ';';
+	else
+		delimiter = '&';
+
+	purple_debug_info("util", "Processing message '%s' for protocol '%s' using delimiter '%c'.\n", tmp, proto, delimiter);
 
 	if ((param_string = strchr(tmp, '?'))) {
 		const char *keyend = NULL, *pairstart;
@@ -3547,7 +3554,7 @@ void purple_got_protocol_handler_uri(const char *uri)
 		pairstart = tmp = param_string;
 
 		while (*tmp || *pairstart) {
-			if (*tmp == '&' || !(*tmp)) {
+			if (*tmp == delimiter || !(*tmp)) {
 				/* If there is no explicit value */
 				if (keyend == NULL)
 					keyend = tmp;

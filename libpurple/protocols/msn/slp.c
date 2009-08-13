@@ -244,6 +244,8 @@ static void
 got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			   const char *euf_guid, const char *context)
 {
+	gboolean accepted = FALSE;
+
 	if (!strcmp(euf_guid, MSN_OBJ_GUID))
 	{
 		/* Emoticon or UserDisplay */
@@ -314,7 +316,10 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		msn_slpmsg_set_image(slpmsg, img);
 		msn_slplink_queue_slpmsg(slplink, slpmsg);
 		purple_imgstore_unref(img);
+
+		accepted = TRUE;
 	}
+
 	else if (!strcmp(euf_guid, MSN_FT_GUID))
 	{
 		/* File Transfer */
@@ -324,7 +329,6 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		gsize bin_len;
 		guint32 file_size;
 		char *file_name;
-		gunichar2 *uni_name;
 
 		account = slpcall->slplink->session->account;
 
@@ -342,14 +346,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			bin = (char *)purple_base64_decode(context, &bin_len);
 			file_size = GUINT32_FROM_LE(*(gsize *)(bin + 8));
 
-			uni_name = (gunichar2 *)(bin + 20);
-			while(*uni_name != 0 && ((char *)uni_name - (bin + 20)) < MAX_FILE_NAME_LEN) {
-				*uni_name = GUINT16_FROM_LE(*uni_name);
-				uni_name++;
-			}
-
-			file_name = g_utf16_to_utf8((const gunichar2 *)(bin + 20), -1,
-										NULL, NULL, NULL);
+			file_name = g_convert(bin + 20, MAX_FILE_NAME_LEN, "UTF-8", "UTF-16LE",
+			                      NULL, NULL, NULL);
 
 			g_free(bin);
 
@@ -367,6 +365,9 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			purple_xfer_request(xfer);
 		}
+
+		accepted = TRUE;
+
 	} else if (!strcmp(euf_guid, MSN_CAM_REQUEST_GUID)) {
 		purple_debug_info("msn", "Cam request.\n");
 		if (slpcall && slpcall->slplink &&
@@ -389,6 +390,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 				g_free(buf);
 			}
 		}
+
 	} else if (!strcmp(euf_guid, MSN_CAM_GUID)) {
 		purple_debug_info("msn", "Cam invite.\n");
 		if (slpcall && slpcall->slplink &&
@@ -411,8 +413,16 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 				g_free(buf);
 			}
 		}
+
 	} else
 		purple_debug_warning("msn", "SLP SessionReq with unknown EUF-GUID: %s\n", euf_guid);
+
+	if (!accepted) {
+		char *content = g_strdup_printf("SessionID: %lu\r\n\r\n",
+		                                slpcall->session_id);
+		send_decline(slpcall, branch, "application/x-msnmsgr-sessionreqbody", content);
+		g_free(content);
+	}
 }
 
 void

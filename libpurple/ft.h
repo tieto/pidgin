@@ -79,8 +79,6 @@ typedef struct
 	void (*add_thumbnail)(PurpleXfer *xfer);
 
 	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
 } PurpleXferUiOps;
 
 /**
@@ -132,7 +130,6 @@ struct _PurpleXfer
 		gssize (*read)(guchar **buffer, PurpleXfer *xfer);
 		gssize (*write)(const guchar *buffer, size_t size, PurpleXfer *xfer);
 		void (*ack)(PurpleXfer *xfer, const guchar *buffer, size_t size);
-
 	} ops;
 
 	PurpleXferUiOps *ui_ops;            /**< UI-specific operations. */
@@ -551,6 +548,12 @@ gssize purple_xfer_write(PurpleXfer *xfer, const guchar *buffer, gsize size);
  * file receive transfer. On send, @a fd must be specified, and
  * @a ip and @a port are ignored.
  *
+ * Prior to libpurple 2.6.0, passing '0' to @a fd was special-cased to
+ * allow the protocol plugin to facilitate the file transfer itself. As of
+ * 2.6.0, this is supported (for backward compatibility), but will be
+ * removed in libpurple 3.0.0. If a prpl detects that the running libpurple
+ * is running 2.6.0 or higher, it should use the invalid fd '-1'.
+ *
  * @param xfer The file transfer.
  * @param fd   The file descriptor for the socket.
  * @param ip   The IP address to connect to.
@@ -619,41 +622,6 @@ void purple_xfer_update_progress(PurpleXfer *xfer);
  * @param is_error Is this an error message?.
  */
 void purple_xfer_conversation_write(PurpleXfer *xfer, char *message, gboolean is_error);
-
-/**
- * Gets the thumbnail data for a transfer
- *
- * @param xfer The file transfer to get the thumbnail for
- * @return The thumbnail data, or NULL if there is no thumbnail
- */
-const void *purple_xfer_get_thumbnail_data(const PurpleXfer *xfer);
-
-/**
- * Gets the thumbnail size for a transfer
- *
- * @param xfer The file transfer to get the thumbnail size for
- * @return The size, in bytes of the file transfer's thumbnail
- */
-gsize purple_xfer_get_thumbnail_size(const PurpleXfer *xfer);
-
-
-/**
- * Sets the thumbnail data for a transfer
- *
- * @param xfer The file transfer to set the data for
- * @param thumbnail A pointer to the thumbnail data, this will be copied
- * @param size The size in bytes of the passed in thumbnail data
- */
-void purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
-	gsize size);
-
-/**
- * Prepare a thumbnail for a transfer (if the UI supports it)
- * will be no-op in case the UI doesn't implement thumbnail creation
- *
- * @param xfer The file transfer to create a thumbnail for
- */
-void purple_xfer_prepare_thumbnail(PurpleXfer *xfer);
 
 /*@}*/
 
