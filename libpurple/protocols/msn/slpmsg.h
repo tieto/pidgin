@@ -50,7 +50,6 @@ struct _MsnSlpMessage
 	long ack_id;
 	long ack_sub_id;
 	long long ack_size;
-	long app_id;
 
 	gboolean sip; /**< A flag that states if this is a SIP slp message. */
 	long flags;
