@@ -926,9 +926,6 @@ purple_xfer_read(PurpleXfer *xfer, guchar **buffer)
 
 	if (xfer->ops.read != NULL)	{
 		r = (xfer->ops.read)(buffer, xfer);
-		if ((purple_xfer_get_size(xfer) > 0) &&
-			((purple_xfer_get_bytes_sent(xfer)+r) >= purple_xfer_get_size(xfer)))
-			purple_xfer_set_completed(xfer, TRUE);
 	}
 	else {
 		*buffer = g_malloc0(s);
@@ -938,9 +935,6 @@ purple_xfer_read(PurpleXfer *xfer, guchar **buffer)
 			r = 0;
 		else if (r < 0)
 			r = -1;
-		else if ((purple_xfer_get_size(xfer) > 0) &&
-			((purple_xfer_get_bytes_sent(xfer)+r) >= purple_xfer_get_size(xfer)))
-			purple_xfer_set_completed(xfer, TRUE);
 		else if (r == 0)
 			r = -1;
 	}
@@ -1004,6 +998,10 @@ do_transfer(PurpleXfer *xfer)
 				g_free(buffer);
 				return;
 			}
+
+			if ((purple_xfer_get_size(xfer) > 0) &&
+				((purple_xfer_get_bytes_sent(xfer)+r) >= purple_xfer_get_size(xfer)))
+				purple_xfer_set_completed(xfer, TRUE);
 		} else if(r < 0) {
 			purple_xfer_cancel_remote(xfer);
 			g_free(buffer);
