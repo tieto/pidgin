@@ -200,8 +200,8 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			}
 
 			if (!bonjour_buddy_check(bb)) {
-				_cleanup_resolver_data(rd);
 				b_impl->resolvers = g_slist_remove(b_impl->resolvers, rd);
+				_cleanup_resolver_data(rd);
 				/* If this was the last resolver, remove the buddy */
 				if (b_impl->resolvers == NULL) {
 					if (pb != NULL)

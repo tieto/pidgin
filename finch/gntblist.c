@@ -589,6 +589,16 @@ new_list(PurpleBuddyList *list)
 		ggblist->manager = &default_manager;
 }
 
+static void destroy_list(PurpleBuddyList *list)
+{
+	if (ggblist == NULL)
+		return;
+
+	gnt_widget_destroy(ggblist->window);
+	g_free(ggblist);
+	ggblist = NULL;
+}
+
 static gboolean
 remove_new_empty_group(gpointer data)
 {
@@ -849,7 +859,7 @@ static PurpleBlistUiOps blist_ui_ops =
 	blist_show,
 	node_update,
 	node_remove,
-	NULL,
+	destroy_list,
 	NULL,
 	finch_request_add_buddy,
 	finch_request_add_chat,
@@ -3184,12 +3194,6 @@ blist_show(PurpleBuddyList *list)
 
 void finch_blist_uninit()
 {
-	if (ggblist == NULL)
-		return;
-
-	gnt_widget_destroy(ggblist->window);
-	g_free(ggblist);
-	ggblist = NULL;
 }
 
 gboolean finch_blist_get_position(int *x, int *y)

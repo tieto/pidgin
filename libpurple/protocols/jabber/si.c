@@ -67,7 +67,7 @@ typedef struct _JabberSIXfer {
 
 	JabberIBBSession *ibb_session;
 	guint ibb_timeout_handle;
-	FILE *fp;
+	PurpleCircBuffer *ibb_buffer;
 } JabberSIXfer;
 
 /* some forward declarations */
@@ -1012,18 +1012,8 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 	if (size <= purple_xfer_get_bytes_remaining(xfer)) {
 		purple_debug_info("jabber", "about to write %" G_GSIZE_FORMAT " bytes from IBB stream\n",
 			size);
-		if(!fwrite(data, size, 1, jsx->fp)) {
-			purple_debug_error("jabber", "error writing to file\n");
-			purple_xfer_cancel_remote(xfer);
-			return;
-		}
-		purple_xfer_set_bytes_sent(xfer, purple_xfer_get_bytes_sent(xfer) + size);
-		purple_xfer_update_progress(xfer);
-
-		if (purple_xfer_get_bytes_remaining(xfer) == 0) {
-			purple_xfer_set_completed(xfer, TRUE);
-			purple_xfer_end(xfer);
-		}
+		purple_circ_buffer_append(jsx->ibb_buffer, data, size);
+		purple_xfer_prpl_ready(xfer);
 	} else {
 		/* trying to write past size of file transfers negotiated size,
 		  reject transfer to protect against malicious behaviour */
@@ -1032,6 +1022,25 @@ jabber_si_xfer_ibb_recv_data_cb(JabberIBBSession *sess, gpointer data,
 		purple_xfer_cancel_remote(xfer);
 	}
 
+}
+
+static gssize
+jabber_si_xfer_ibb_read(guchar **out_buffer, PurpleXfer *xfer)
+{
+	JabberSIXfer *jsx = xfer->data;
+	guchar *buffer;
+	gsize size;
+	gsize tmp;
+
+	size = jsx->ibb_buffer->bufused;
+	*out_buffer = buffer = g_malloc(size);
+	while ((tmp = purple_circ_buffer_get_max_read(jsx->ibb_buffer))) {
+		memcpy(buffer, jsx->ibb_buffer->outptr, tmp);
+		buffer += tmp;
+		purple_circ_buffer_mark_read(jsx->ibb_buffer, tmp);
+	}
+
+	return size;
 }
 
 static gboolean
@@ -1044,21 +1053,10 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, const char *who, const char *id,
 		JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 		JabberIBBSession *sess =
 			jabber_ibb_session_create_from_xmlnode(js, who, id, open, xfer);
-		const char *filename;
 
 		jabber_si_bytestreams_ibb_timeout_remove(jsx);
 
 		if (sess) {
-			/* open the file to write to */
-			filename = purple_xfer_get_local_filename(xfer);
-			jsx->fp = g_fopen(filename, "wb");
-			if (jsx->fp == NULL) {
-				purple_debug_error("jabber", "failed to open file %s for writing: %s\n",
-					filename, g_strerror(errno));
-				purple_xfer_cancel_remote(xfer);
-				return FALSE;
-			}
-
 			/* setup callbacks here...*/
 			jabber_ibb_session_set_data_received_callback(sess,
 				jabber_si_xfer_ibb_recv_data_cb);
@@ -1068,9 +1066,14 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, const char *who, const char *id,
 				jabber_si_xfer_ibb_error_cb);
 
 			jsx->ibb_session = sess;
+			jsx->ibb_buffer =
+				purple_circ_buffer_new(jabber_ibb_session_get_block_size(sess));
+
+			/* set up read function */
+			purple_xfer_set_read_fnc(xfer, jabber_si_xfer_ibb_read);
 
 			/* start the transfer */
-			purple_xfer_start(xfer, 0, NULL, 0);
+			purple_xfer_start(xfer, -1, NULL, 0);
 			return TRUE;
 		} else {
 			/* failed to create IBB session */
@@ -1086,32 +1089,17 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, const char *who, const char *id,
 	}
 }
 
-static void
-jabber_si_xfer_ibb_send_data(JabberIBBSession *sess)
+static gssize
+jabber_si_xfer_ibb_write(const guchar *buffer, size_t len, PurpleXfer *xfer)
 {
-	PurpleXfer *xfer = (PurpleXfer *) jabber_ibb_session_get_user_data(sess);
 	JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
-	gsize remaining = purple_xfer_get_bytes_remaining(xfer);
-	gsize packet_size = remaining < jabber_ibb_session_get_block_size(sess) ?
-		remaining : jabber_ibb_session_get_block_size(sess);
-	gpointer data = g_malloc(packet_size);
-	int res;
+	JabberIBBSession *sess = jsx->ibb_session;
+	gsize packet_size = len < jabber_ibb_session_get_block_size(sess) ?
+		len : jabber_ibb_session_get_block_size(sess);
 
-	purple_debug_info("jabber", "IBB: about to read %" G_GSIZE_FORMAT " bytes from file %p\n",
-		packet_size, jsx->fp);
-	res = fread(data, packet_size, 1, jsx->fp);
+	jabber_ibb_session_send_data(sess, buffer, packet_size);
 
-	if (res == 1) {
-		jabber_ibb_session_send_data(sess, data, packet_size);
-		purple_xfer_set_bytes_sent(xfer,
-			purple_xfer_get_bytes_sent(xfer) + packet_size);
-		purple_xfer_update_progress(xfer);
-	} else {
-		purple_debug_error("jabber",
-			"jabber_si_xfer_ibb_send_data: error reading from file\n");
-		purple_xfer_cancel_local(xfer);
-	}
-	g_free(data);
+	return packet_size;
 }
 
 static void
@@ -1127,7 +1115,7 @@ jabber_si_xfer_ibb_sent_cb(JabberIBBSession *sess)
 		purple_xfer_end(xfer);
 	} else {
 		/* send more... */
-		jabber_si_xfer_ibb_send_data(sess);
+		purple_xfer_prpl_ready(xfer);
 	}
 }
 
@@ -1135,28 +1123,13 @@ static void
 jabber_si_xfer_ibb_opened_cb(JabberIBBSession *sess)
 {
 	PurpleXfer *xfer = (PurpleXfer *) jabber_ibb_session_get_user_data(sess);
-	JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 	JabberStream *js = jabber_ibb_session_get_js(sess);
 	PurpleConnection *gc = js->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	if (jabber_ibb_session_get_state(sess) == JABBER_IBB_SESSION_OPENED) {
-		const char *filename = purple_xfer_get_local_filename(xfer);
-		jsx->fp = g_fopen(filename, "rb");
-		if (jsx->fp == NULL) {
-			purple_debug_error("jabber", "Failed to open file %s for reading: %s\n",
-				filename, g_strerror(errno));
-			purple_xfer_error(purple_xfer_get_type(xfer), account,
-				jabber_ibb_session_get_who(sess),
-				_("Failed to open the file"));
-			purple_xfer_cancel_local(xfer);
-			return;
-		}
-
-		purple_xfer_start(xfer, 0, NULL, 0);
-		purple_xfer_set_bytes_sent(xfer, 0);
-		purple_xfer_update_progress(xfer);
-		jabber_si_xfer_ibb_send_data(sess);
+		purple_xfer_start(xfer, -1, NULL, 0);
+		purple_xfer_prpl_ready(xfer);
 	} else {
 		/* error */
 		purple_xfer_error(purple_xfer_get_type(xfer), account,
@@ -1171,8 +1144,6 @@ jabber_si_xfer_ibb_send_init(JabberStream *js, PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 
-	purple_xfer_ref(xfer);
-
 	jsx->ibb_session = jabber_ibb_session_create(js, jsx->stream_id,
 		purple_xfer_get_remote_user(xfer), xfer);
 
@@ -1186,6 +1157,11 @@ jabber_si_xfer_ibb_send_init(JabberStream *js, PurpleXfer *xfer)
 			jabber_si_xfer_ibb_closed_cb);
 		jabber_ibb_session_set_error_callback(jsx->ibb_session,
 			jabber_si_xfer_ibb_error_cb);
+
+		purple_xfer_set_write_fnc(xfer, jabber_si_xfer_ibb_write);
+
+		jsx->ibb_buffer =
+			purple_circ_buffer_new(jabber_ibb_session_get_block_size(jsx->ibb_session));
 
 		/* open the IBB session */
 		jabber_ibb_session_open(jsx->ibb_session);
@@ -1342,11 +1318,11 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 			jabber_ibb_session_destroy(jsx->ibb_session);
 		}
 
-		if (jsx->fp) {
-			purple_debug_info("jabber",
-				"jabber_si_xfer_free: closing file for IBB transfer\n");
-			fclose(jsx->fp);
+		if (jsx->ibb_buffer) {
+			purple_circ_buffer_destroy(jsx->ibb_buffer);
 		}
+
+		purple_debug_info("jabber", "jabber_si_xfer_free(): freeing jsx %p\n", jsx);
 
 		g_free(jsx->stream_id);
 		g_free(jsx->iq_id);
@@ -1354,8 +1330,6 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 		g_free(jsx->rxqueue);
 		g_free(jsx);
 		xfer->data = NULL;
-
-		purple_debug_info("jabber", "jabber_si_xfer_free(): freeing jsx %p\n", jsx);
 	}
 }
 
@@ -1631,7 +1605,6 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 		jsx->local_streamhost_fd = -1;
 
 		jsx->ibb_session = NULL;
-		jsx->fp = NULL;
 
 		purple_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
 		purple_xfer_set_cancel_send_fnc(xfer, jabber_si_xfer_cancel_send);

@@ -132,15 +132,19 @@ static void jabber_bind_result_cb(JabberStream *js, const char *from,
 		xmlnode *jid;
 		char *full_jid;
 		if((jid = xmlnode_get_child(bind, "jid")) && (full_jid = xmlnode_get_data(jid))) {
-			JabberBuddy *my_jb = NULL;
 			jabber_id_free(js->user);
-			if(!(js->user = jabber_id_new(full_jid))) {
+
+			js->user = jabber_id_new(full_jid);
+			if (js->user == NULL) {
 				purple_connection_error_reason(js->gc,
 					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Invalid response from server"));
+				g_free(full_jid);
+				return;
 			}
-			if((my_jb = jabber_buddy_find(js, full_jid, TRUE)))
-				my_jb->subscription |= JABBER_SUB_BOTH;
+
+			js->user_jb = jabber_buddy_find(js, full_jid, TRUE);
+			js->user_jb->subscription |= JABBER_SUB_BOTH;
 
 			purple_connection_set_display_name(js->gc, full_jid);
 
@@ -441,7 +445,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	if (len == -1)
 		len = strlen(data);
 
-	if (js->use_bosh)
+	if (js->bosh)
 		jabber_bosh_connection_send_raw(js->bosh, data);
 	else
 		do_jabber_send_raw(js, data, len);
@@ -465,7 +469,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 		return;
 
 	js = purple_connection_get_protocol_data(pc);
-	if (js->use_bosh)
+	if (js->bosh)
 		if (g_str_equal((*packet)->name, "message") ||
 				g_str_equal((*packet)->name, "iq") ||
 				g_str_equal((*packet)->name, "presence"))
@@ -632,7 +636,6 @@ txt_resolved_cb(GList *responses, gpointer data)
 		if (!strcmp(token[0], "_xmpp-client-xbosh")) {
 			purple_debug_info("jabber","Found alternative connection method using %s at %s.\n", token[0], token[1]);
 			js->bosh = jabber_bosh_connection_init(js, token[1]);
-			js->use_bosh = TRUE;
 			g_strfreev(token);
 			break;
 		}
@@ -776,7 +779,6 @@ jabber_stream_new(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js;
-	JabberBuddy *my_jb;
 	PurplePresence *presence;
 	gchar *user;
 	gchar *slash;
@@ -811,9 +813,9 @@ jabber_stream_new(PurpleAccount *account)
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_buddy_free);
 
-	my_jb = jabber_buddy_find(js, user, TRUE);
+	js->user_jb = jabber_buddy_find(js, user, TRUE);
 	g_free(user);
-	if (!my_jb) {
+	if (!js->user_jb) {
 		/* This basically *can't* fail, but for good measure... */
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
@@ -822,7 +824,7 @@ jabber_stream_new(PurpleAccount *account)
 		g_return_val_if_reached(NULL);
 	}
 
-	my_jb->subscription |= JABBER_SUB_BOTH;
+	js->user_jb->subscription |= JABBER_SUB_BOTH;
 
 	js->iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
@@ -865,7 +867,6 @@ jabber_stream_connect(JabberStream *js)
 	 * attached to that choice, though.
 	 */
 	if (*bosh_url) {
-		js->use_bosh = TRUE;
 		js->bosh = jabber_bosh_connection_init(js, bosh_url);
 		if (js->bosh)
 			jabber_bosh_connection_connect(js->bosh);
@@ -1445,7 +1446,7 @@ void jabber_close(PurpleConnection *gc)
 	 * on some SSL backends.
 	 */
 	if (!gc->disconnect_timeout) {
-		if (js->use_bosh)
+		if (js->bosh)
 			jabber_bosh_connection_close(js->bosh);
 		else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
 			jabber_send_raw(js, "</stream:stream>", -1);
@@ -1541,6 +1542,9 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_uri);
 	g_free(js->old_track);
 	g_free(js->expected_rspauth);
+
+	if (js->vcard_timer != 0)
+		purple_timeout_remove(js->vcard_timer);
 
 	if (js->keepalive_timeout != 0)
 		purple_timeout_remove(js->keepalive_timeout);
@@ -3464,6 +3468,8 @@ jabber_init_plugin(PurplePlugin *plugin)
 #ifdef USE_VV
 	jabber_add_feature("http://www.google.com/xmpp/protocol/session", jabber_audio_enabled);
 	jabber_add_feature("http://www.google.com/xmpp/protocol/voice/v1", jabber_audio_enabled);
+	jabber_add_feature("http://www.google.com/xmpp/protocol/video/v1", jabber_video_enabled);
+	jabber_add_feature("http://www.google.com/xmpp/protocol/camera/v1", jabber_video_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, jabber_audio_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, jabber_video_enabled);
 	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);

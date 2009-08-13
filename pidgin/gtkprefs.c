@@ -698,7 +698,8 @@ theme_install_theme(char *path, struct theme_info *info)
 		g_free(original_name);
 		g_free(info);
 		return;
-	} else g_free(info);
+	} else
+		g_free(info);
 
 	is_archive = !g_ascii_strcasecmp(tail, ".gz") || !g_ascii_strcasecmp(tail, ".tgz");
 
@@ -1032,8 +1033,6 @@ request_theme_file_name_cb(gpointer data, char *theme_file_name)
 	info->original_name = NULL;
 
 	theme_install_theme(theme_file_name, info);
-
-	g_free(info);
 }
 
 static void

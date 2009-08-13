@@ -10,6 +10,7 @@
 Suite * master_suite(void);
 Suite * cipher_suite(void);
 Suite * jabber_jutil_suite(void);
+Suite * yahoo_util_suite(void);
 Suite * util_suite(void);
 
 /* helper macros */

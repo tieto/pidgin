@@ -1660,7 +1660,7 @@ purple_status_get_handle(void) {
 void
 purple_status_init(void)
 {
-	void *handle = purple_status_get_handle;
+	void *handle = purple_status_get_handle();
 
 	purple_prefs_add_none("/purple/status");
 	purple_prefs_add_none("/purple/status/scores");
@@ -1714,4 +1714,5 @@ purple_status_init(void)
 void
 purple_status_uninit(void)
 {
+	purple_prefs_disconnect_by_handle(purple_prefs_get_handle());
 }

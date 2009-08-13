@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-24 18:05+0200\n"
-"PO-Revision-Date: 2009-07-24 18:05+0200\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2009-07-29 09:47+0200\n"
+"PO-Revision-Date: 2009-07-29 09:51+0200\n"
+"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2197,7 +2197,7 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
 msgid "Error creating conference."
-msgstr "Fehler beim Erstellen der Konferenz"
+msgstr "Fehler beim Erstellen der Konferenz."
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -4538,10 +4538,7 @@ msgstr "ban &lt;Benutzer&gt; [Grund]:  Verbanne einen Benutzer aus dem Raum."
 msgid ""
 "affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
 "the users with an affiliation or set users' affiliation with the room."
-msgstr ""
-"affiliate &lt;owner|admin|member|outcast|none&gt; [Benutzer1] "
-"[Benutzer2] ...: Benutzer mit einer Mitgliedschaft für den Raum erfragen "
-"oder setzen"
+msgstr "affiliate &lt;owner|admin|member|outcast|none&gt; [Benutzer1] [Benutzer2] ...: Benutzer mit einer Mitgliedschaft für den Raum erfragen oder setzen."
 
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
@@ -4549,7 +4546,7 @@ msgid ""
 msgstr ""
 "role &lt;owner|admin|member|outcast|none&gt; [Benutzer1] [Benutzer2] ...: "
 "Benutzer mit einer Rolle für den Raum erfragen oder Benutzern eine Rolle "
-"zuweisen"
+"zuweisen."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
@@ -11792,14 +11789,6 @@ msgstr "_Entferne komplette Übertragungen"
 msgid "File transfer _details"
 msgstr "Dateiübertragungs-_Details"
 
-#. Pause button
-msgid "_Pause"
-msgstr "_Pause"
-
-#. Resume button
-msgid "_Resume"
-msgstr "Fo_rtsetzen"
-
 msgid "Paste as Plain _Text"
 msgstr "Einfügen als normaler _Text"
 
@@ -11820,7 +11809,8 @@ msgstr "Farbe für besuchte Hyperlinks"
 
 msgid "Color to draw hyperlink after it has been visited (or activated)."
 msgstr ""
-"Farbe zum Darstellen von Hyperlinks, wenn sie besucht (oder aktiviert) wurden"
+"Farbe zum Darstellen von Hyperlinks, wenn sie besucht (oder aktiviert) "
+"wurden."
 
 msgid "Hyperlink prelight color"
 msgstr "Hyperlink-Farbe"
@@ -11863,14 +11853,14 @@ msgstr "Farbe des Absendernamens für geflüsterte Aktions-Nachrichten"
 msgid "Color to draw the name of a whispered action message."
 msgstr ""
 "Farbe, mit der der Name in einer geflüsterten Aktions-Nachricht dargestellt "
-"wird"
+"wird."
 
 msgid "Whisper Message Name Color"
 msgstr "Farbe des Absendernamens für Flüster-Nachrichten"
 
 msgid "Color to draw the name of a whispered message."
 msgstr ""
-"Farbe, mit der der Name in einer geflüsterten Nachricht dargestellt wird"
+"Farbe, mit der der Name in einer geflüsterten Nachricht dargestellt wird."
 
 msgid "Typing notification color"
 msgstr "Farbe der Tipp-Benachrichtigung"
@@ -13178,6 +13168,9 @@ msgstr "_Hinzufügen..."
 msgid "_Open Mail"
 msgstr "Mail ö_ffnen"
 
+msgid "_Pause"
+msgstr "_Pause"
+
 msgid "_Edit"
 msgstr "_Bearbeiten"
 
@@ -13292,7 +13285,7 @@ msgid "XMPP Service Discovery"
 msgstr "XMPP-Dienstsuche"
 
 msgid "Allows browsing and registering services."
-msgstr "Erlaubt das Durchsuchen und Registrieren von Diensten"
+msgstr "Erlaubt das Durchsuchen und Registrieren von Diensten."
 
 msgid ""
 "This plugin is useful for registering with legacy transports or other XMPP "
@@ -14100,7 +14093,7 @@ msgstr "Pidgin Themen-Editor"
 #. *< version
 #. *  summary
 msgid "Pidgin Theme Editor."
-msgstr "Pidgin Themen-Editor"
+msgstr "Pidgin Themen-Editor."
 
 #. *< type
 #. *< ui_requirement
