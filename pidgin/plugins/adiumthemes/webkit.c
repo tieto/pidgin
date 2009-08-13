@@ -730,7 +730,7 @@ get_webkit(PurpleConversation *conv)
 		return gtkconv->webview;
 }
 
-static void set_theme_font_settings (WebKitWebView *webview, PidginMessageStyle *style)
+static void set_theme_webkit_settings (WebKitWebView *webview, PidginMessageStyle *style)
 {
 	WebKitWebSettings *settings;
 
@@ -740,6 +740,9 @@ static void set_theme_font_settings (WebKitWebView *webview, PidginMessageStyle 
 	
 	if (style->default_font_size)
 		g_object_set (G_OBJECT (settings), "default-font-size", GINT_TO_POINTER (style->default_font_size), NULL);
+
+	/* this does not work :( */
+	webkit_web_view_set_transparent (webview, style->default_background_is_transparent);
 }
 
 
@@ -783,7 +786,7 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	
 	purple_debug_info ("webkit", "template: %s\n", template);
 
-	set_theme_font_settings (WEBKIT_WEB_VIEW(webkit), style);
+	set_theme_webkit_settings (WEBKIT_WEB_VIEW(webkit), style);
 	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
 
 	g_object_set_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY, style);
@@ -1119,7 +1122,7 @@ variant_update_conversation (PurpleConversation *conv)
 	script = g_strdup_printf ("setStylesheet(\"mainStyle\",\"%s\")", pidgin_message_style_get_css (style));
 	gtk_webview_safe_execute_script (GTK_WEBVIEW(webview), script);
 
-	set_theme_font_settings (WEBKIT_WEB_VIEW (gtkconv->webview), style);
+	set_theme_webkit_settings (WEBKIT_WEB_VIEW (gtkconv->webview), style);
 	g_free (script);
 }
 
