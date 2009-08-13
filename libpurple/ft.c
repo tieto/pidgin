@@ -537,7 +537,7 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 			return;
 		}
 
-		if (ui_ops == NULL || (ui_ops->read == NULL && ui_ops->write == NULL)) {
+		if (ui_ops == NULL || (ui_ops->ui_read == NULL && ui_ops->ui_write == NULL)) {
 			if (g_stat(filename, &st) == -1) {
 				purple_xfer_show_file_error(xfer, filename);
 				purple_xfer_unref(xfer);
@@ -993,8 +993,8 @@ do_transfer(PurpleXfer *xfer)
 		r = purple_xfer_read(xfer, &buffer);
 		if (r > 0) {
 			size_t wc;
-			if (ui_ops && ui_ops->write)
-				wc = ui_ops->write(xfer, buffer, r);
+			if (ui_ops && ui_ops->ui_write)
+				wc = ui_ops->ui_write(xfer, buffer, r);
 			else
 				wc = fwrite(buffer, 1, r, xfer->dest_fp);
 
@@ -1023,8 +1023,8 @@ do_transfer(PurpleXfer *xfer)
 			return;
 		}
 
-		if (ui_ops && ui_ops->read) {
-			gssize tmp = ui_ops->read(xfer, &buffer, s);
+		if (ui_ops && ui_ops->ui_read) {
+			gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
 			if (tmp == 0) {
 				/*
 				 * UI isn't ready to send data. It will call
@@ -1063,7 +1063,7 @@ do_transfer(PurpleXfer *xfer)
 			g_free(buffer);
 			return;
 		} else if (r < result) {
-			if (ui_ops == NULL || (ui_ops->read == NULL && ui_ops->write == NULL)) {
+			if (ui_ops == NULL || (ui_ops->ui_read == NULL && ui_ops->ui_write == NULL)) {
 				/* We have to seek back in the file now. */
 				fseek(xfer->dest_fp, r - s, SEEK_CUR);
 			}
@@ -1126,7 +1126,7 @@ begin_transfer(PurpleXfer *xfer, PurpleInputCondition cond)
 	PurpleXferType type = purple_xfer_get_type(xfer);
 	PurpleXferUiOps *ui_ops = purple_xfer_get_ui_ops(xfer);
 
-	if (ui_ops == NULL || (ui_ops->read == NULL && ui_ops->write == NULL)) {
+	if (ui_ops == NULL || (ui_ops->ui_read == NULL && ui_ops->ui_write == NULL)) {
 		xfer->dest_fp = g_fopen(purple_xfer_get_local_filename(xfer),
 		                        type == PURPLE_XFER_RECEIVE ? "wb" : "rb");
 

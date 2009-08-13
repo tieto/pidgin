@@ -247,14 +247,6 @@ msn_directconn_send_msg(MsnDirectConn *directconn, MsnMessage *msg)
 }
 
 static void
-msn_directconn_process_msg(MsnDirectConn *directconn, MsnMessage *msg)
-{
-	purple_debug_info("msn", "directconn: process_msg\n");
-
-	msn_slplink_process_msg(directconn->slplink, msg);
-}
-
-static void
 read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnDirectConn* directconn;
@@ -267,6 +259,19 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	directconn = data;
 
 	/* Let's read the length of the data. */
+#error This code is broken.  See the note below.
+	/*
+	 * TODO: This has problems!  First of all, sizeof(body_len) will be
+	 *       different on 32bit systems and on 64bit systems (4 bytes
+	 *       vs. 8 bytes).
+	 *       Secondly, we're reading from a TCP stream.  There is no
+	 *       guarantee that we have received the number of bytes we're
+	 *       trying to read.  We need to read into a buffer.  If read
+	 *       returns <0 then we need to check errno.  If errno is EAGAIN
+	 *       then don't destroy anything, just exit and wait for more
+	 *       data.  See every other function in libpurple that does this
+	 *       correctly for an example.
+	 */
 	len = read(directconn->fd, &body_len, sizeof(body_len));
 
 	if (len <= 0)
@@ -337,7 +342,8 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		msg = msn_message_new_msnslp();
 		msn_message_parse_slp_body(msg, body, body_len);
 
-		msn_directconn_process_msg(directconn, msg);
+		purple_debug_info("msn", "directconn: process_msg\n");
+		msn_slplink_process_msg(directconn->slplink, msg);
 	}
 	else
 	{

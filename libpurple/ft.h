@@ -89,7 +89,7 @@ typedef struct
 	 *         size on error.
 	 * @since 2.6.0
 	 */
-	gssize (*write)(PurpleXfer *xfer, const guchar *buffer, gssize size);
+	gssize (*ui_write)(PurpleXfer *xfer, const guchar *buffer, gssize size);
 
 	/**
 	 * UI op to read data to send to the prpl for a file transfer.
@@ -104,7 +104,7 @@ typedef struct
 	 *          should be cancelled (libpurple will cancel).
 	 * @since 2.6.0
 	 */
-	gssize (*read)(PurpleXfer *xfer, guchar **buffer, gssize size);
+	gssize (*ui_read)(PurpleXfer *xfer, guchar **buffer, gssize size);
 
 	/**
 	 * Op to notify the UI that not all the data read in was written. The UI

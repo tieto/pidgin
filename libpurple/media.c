@@ -2463,12 +2463,12 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			gst_bin_add(GST_BIN(priv->confbin), stream->volume);
 			gst_bin_add(GST_BIN(priv->confbin), stream->level);
 			gst_bin_add(GST_BIN(priv->confbin), sink);
+			gst_element_set_state(sink, GST_STATE_PLAYING);
+			gst_element_set_state(stream->level, GST_STATE_PLAYING);
+			gst_element_set_state(stream->volume, GST_STATE_PLAYING);
 			gst_element_link(stream->level, sink);
 			gst_element_link(stream->volume, stream->level);
 			gst_element_link(queue, stream->volume);
-			gst_element_sync_state_with_parent(sink);
-			gst_element_sync_state_with_parent(stream->level);
-			gst_element_sync_state_with_parent(stream->volume);
 			sink = queue;
 		} else if (codec->media_type == FS_MEDIA_TYPE_VIDEO) {
 			stream->src = gst_element_factory_make(
@@ -2481,9 +2481,9 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 		stream->tee = gst_element_factory_make("tee", NULL);
 		gst_bin_add_many(GST_BIN(priv->confbin),
 				stream->src, stream->tee, NULL);
-		gst_element_sync_state_with_parent(sink);
-		gst_element_sync_state_with_parent(stream->tee);
-		gst_element_sync_state_with_parent(stream->src);
+		gst_element_set_state(sink, GST_STATE_PLAYING);
+		gst_element_set_state(stream->tee, GST_STATE_PLAYING);
+		gst_element_set_state(stream->src, GST_STATE_PLAYING);
 		gst_element_link_many(stream->src, stream->tee, sink, NULL);
 	}
 
