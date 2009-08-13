@@ -259,6 +259,19 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	directconn = data;
 
 	/* Let's read the length of the data. */
+#error This code is broken.  See the note below.
+	/*
+	 * TODO: This has problems!  First of all, sizeof(body_len) will be
+	 *       different on 32bit systems and on 64bit systems (4 bytes
+	 *       vs. 8 bytes).
+	 *       Secondly, we're reading from a TCP stream.  There is no
+	 *       guarantee that we have received the number of bytes we're
+	 *       trying to read.  We need to read into a buffer.  If read
+	 *       returns <0 then we need to check errno.  If errno is EAGAIN
+	 *       then don't destroy anything, just exit and wait for more
+	 *       data.  See every other function in libpurple that does this
+	 *       correctly for an example.
+	 */
 	len = read(directconn->fd, &body_len, sizeof(body_len));
 
 	if (len <= 0)
