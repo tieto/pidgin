@@ -261,7 +261,7 @@ replace_template_tokens(PidginMessageStyle *style, char *text, int len, char *he
 
 	g_string_append(str, ms[1]);
 
-	/* I'm just going to skip main.css at this point */
+	g_string_append(str, style->basestyle_css);
 
 	g_string_append(str, ms[2]);
 

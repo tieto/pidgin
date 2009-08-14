@@ -29,7 +29,8 @@ typedef struct _PidginMessageStyle {
 	char     *default_background_color;
 	gboolean allow_text_colors;
 	char     *image_mask;
-	
+	char     *default_variant;
+
 	/* paths */
 	char    *style_dir;
 	char    *template_path;

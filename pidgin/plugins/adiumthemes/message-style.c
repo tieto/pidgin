@@ -87,6 +87,8 @@ pidgin_message_style_unset_info_plist (PidginMessageStyle *style)
 	
 	g_free (style->image_mask);
 	style->image_mask = NULL;
+	g_free (style->default_variant);
+	style->default_variant = NULL;
 }
 
 
