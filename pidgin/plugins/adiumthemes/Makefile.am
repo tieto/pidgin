@@ -12,7 +12,9 @@ if PLUGINS
 
 webkit_LTLIBRARIES = webkit.la
 
-webkit_la_SOURCES = webkit.c
+webkit_la_SOURCES = webkit.c \
+	message-style.h \
+	message-style.c
 
 endif
 
