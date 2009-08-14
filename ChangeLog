@@ -1,5 +1,8 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.9 (08/18/2009):
+	* Fix a crash via a specially crafted MSN message (CVE-2009-2694).
+
 version 2.5.8 (06/27/2009):
 	ICQ:
 	* Fix misparsing a web message as an SMS message. (Yuriy Kaminskiy)
