@@ -1232,13 +1232,14 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER, do_small, &toolbar->smaller_size, _("Decrease Font Size")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_FONT_FACE, toggle_font, &toolbar->font, _("Font Face")},
-		{PIDGIN_STOCK_TOOLBAR_BGCOLOR, toggle_bg_color, &toolbar->bgcolor, _("Background Color")},
 		{PIDGIN_STOCK_TOOLBAR_FGCOLOR, toggle_fg_color, &toolbar->fgcolor, _("Foreground Color")},
+		{PIDGIN_STOCK_TOOLBAR_BGCOLOR, toggle_bg_color, &toolbar->bgcolor, _("Background Color")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_CLEAR, clear_formatting_cb, &toolbar->clear, _("Reset Formatting")},
 		{"", NULL, NULL, NULL},
-		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
 		{PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, insert_image_cb, &toolbar->image, _("Insert IM Image")},
+		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
+		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
 		{NULL, NULL, NULL, NULL}
 	};
