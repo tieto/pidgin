@@ -622,7 +622,14 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 				struct _pidgin_blist_node *gtknode =
 					(struct _pidgin_blist_node *)purple_blist_node_get_ui_data(node);
 
-				if (purple_contact_get_alias(contact) || gtknode->contact_expanded) {
+				/*
+				 * XXX Using purple_contact_get_alias here breaks because we
+				 * specifically want to check the contact alias only (i.e. not
+				 * the priority buddy, which purple_contact_get_alias does).
+				 * Adding yet another get_alias is evil, so figure this out
+				 * later :-P
+				 */
+				if (contact->alias || gtknode->contact_expanded) {
 					purple_blist_alias_contact(contact, arg2);
 					gtk_blist_auto_personize(purple_blist_node_get_parent(node), arg2);
 				} else {
