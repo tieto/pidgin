@@ -882,6 +882,14 @@ create_default_video_src(PurpleMedia *media,
 	GstPad *ghost;
 	GstCaps *caps;
 
+#ifdef _WIN32
+	/* autovideosrc doesn't pick ksvideosrc for some reason */
+	src = gst_element_factory_make("ksvideosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("dshowvideosrc", NULL);
+	if (src == NULL)
+		src = gst_element_factory_make("autovideosrc", NULL);
+#else
 	src = gst_element_factory_make("gconfvideosrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("autovideosrc", NULL);
@@ -889,10 +897,7 @@ create_default_video_src(PurpleMedia *media,
 		src = gst_element_factory_make("v4l2src", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("v4lsrc", NULL);
-	if (src == NULL)
-		src = gst_element_factory_make("ksvideosrc", NULL);
-	if (src == NULL)
-		src = gst_element_factory_make("dshowvideosrc", NULL);
+#endif
 	if (src == NULL) {
 		purple_debug_error("gtkmedia", "Unable to find a suitable "
 				"element for the default video source.\n");

@@ -35,7 +35,6 @@ typedef struct _MsnSession MsnSession;
 #include "switchboard.h"
 #include "group.h"
 
-#include "cmdproc.h"
 #include "nexus.h"
 #include "httpconn.h"
 #include "oim.h"

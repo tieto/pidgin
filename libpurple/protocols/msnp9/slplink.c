@@ -496,7 +496,7 @@ send_file_cb(MsnSlpSession *slpsession)
 	slpmsg->info = "SLP FILE";
 #endif
 	xfer = (PurpleXfer *)slpcall->xfer;
-	purple_xfer_start(slpcall->xfer, 0, NULL, 0);
+	purple_xfer_start(slpcall->xfer, -1, NULL, 0);
 	slpmsg->fp = xfer->dest_fp;
 	if (g_stat(purple_xfer_get_local_filename(xfer), &st) == 0)
 		slpmsg->size = st.st_size;
@@ -561,7 +561,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 					if (xfer != NULL)
 					{
 						purple_xfer_ref(xfer);
-						purple_xfer_start(xfer,	0, NULL, 0);
+						purple_xfer_start(xfer,	-1, NULL, 0);
 
 						if (xfer->data == NULL) {
 							purple_xfer_unref(xfer);

@@ -971,7 +971,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 
 	/* disconnect the peer if connected through p2p and sends wrong value for session id */
 	if( (pkt_type == YAHOO_PKT_TYPE_P2P) && (val_11 != yd->session_id) ) {
-		purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im->from);
+		purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im ? im->from : "(im was null)");
 		/* remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data */
 		g_hash_table_remove(yd->peers, im->from);
 		return;

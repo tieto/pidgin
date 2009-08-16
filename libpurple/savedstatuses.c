@@ -1235,6 +1235,8 @@ purple_savedstatuses_init(void)
 void
 purple_savedstatuses_uninit(void)
 {
+	gpointer handle = purple_savedstatuses_get_handle();
+
 	remove_old_transient_statuses();
 
 	if (save_timer != 0)
@@ -1253,6 +1255,7 @@ purple_savedstatuses_uninit(void)
 	g_hash_table_destroy(creation_times);
 	creation_times = NULL;
 
-	purple_signals_unregister_by_instance(purple_savedstatuses_get_handle());
+	purple_signals_unregister_by_instance(handle);
+	purple_signals_disconnect_by_handle(handle);
 }
 
