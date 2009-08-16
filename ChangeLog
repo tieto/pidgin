@@ -192,6 +192,8 @@ version 2.6.0 (??/??/2009):
 	* The hardware cursor is updated correctly. This will be useful
 	  especially for users of braille terminals, screen readers etc.
 	* Added a TinyURL plugin, which aids copying longer URLs.
+	* Fixed UTF-8 compatibility problems which could cause exits or other
+	  unrequested behaviour.
 
 	Pidgin GTK+ Theme Control Plugin:
 	* Removed mouse cursor color preferences.
