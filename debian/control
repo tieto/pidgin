@@ -2,7 +2,6 @@ Source: pidgin
 Section: net
 Priority: optional
 Maintainer: Ari Pollak <ari@debian.org>
-Uploaders: Gerfried Fuchs <rhonda@debian.at>
 Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0), intltool,
  libgtk2.0-dev, libxss-dev, libmeanwhile-dev, libgadu-dev (>= 1:1.6+20060215-1),
  libnss3-dev (>= 3.11.7-1), tcl8.4-dev, tk8.4-dev, libgstreamer0.10-dev,
@@ -11,7 +10,7 @@ Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0), intltool,
  libebook1.2-dev, libedata-book1.2-dev, libcamel1.2-dev,
  libdbus-glib-1-dev, dbus, python (>= 2.4), libavahi-client-dev,
  libavahi-glib-dev, libxml-parser-perl, libncursesw5-dev, libsasl2-dev,
- xsltproc, doxygen, libsilc-1.1-2-dev,
+ xsltproc, doxygen, libsilc-dev (>= 1.1.1),
  libsqlite3-dev (>= 3.3), ca-certificates
 Standards-Version: 3.7.2
 XS-Vcs-Svn: svn://svn.debian.org/svn/collab-maint/deb-maint/pidgin/
