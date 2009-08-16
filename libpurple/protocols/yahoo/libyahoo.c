@@ -278,7 +278,7 @@ static PurplePluginInfo info =
 	NULL,                                             /**< dependencies   */
 	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 	"prpl-yahoo",                                     /**< id             */
-	"Yahoo!",	                                      /**< name           */
+	"Yahoo",	                                      /**< name           */
 	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Yahoo! Protocol Plugin"),
