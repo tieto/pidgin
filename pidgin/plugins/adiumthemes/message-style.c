@@ -27,8 +27,6 @@
 #include <debug.h>
 #include <util.h>
 
-static GList *style_list; /**< List of PidginMessageStyles */
-
 static void
 glist_free_all_string (GList *list)
 {
@@ -42,16 +40,10 @@ static
 PidginMessageStyle* pidgin_message_style_new (const char* styledir)
 {
 	PidginMessageStyle* ret = g_new0 (PidginMessageStyle, 1);
-	GList *iter;
-
-	/* sanity check */
-	for (iter = style_list; iter; iter = g_list_next (iter))
-	  g_assert (!g_str_equal (((PidginMessageStyle*)iter->data)->style_dir, styledir));
 
 	ret->ref_counter = 1;
 	ret->style_dir = g_strdup (styledir);
 	
-	style_list = g_list_append (style_list, ret);
 	return ret;
 }
 
@@ -110,7 +102,6 @@ void pidgin_message_style_unref (PidginMessageStyle *style)
 	g_free (style->status_html);
 	g_free (style->basestyle_css);
 
-	style_list = g_list_remove (style_list, style);
 	g_free (style);
 
 	pidgin_message_style_unset_info_plist (style);
@@ -256,18 +247,8 @@ pidgin_message_style_load (const char* styledir)
 	 */
 	
 	/* is this style already loaded? */
-	GList  *cur = style_list;
 	char   *file; /* temporary variable */
 	PidginMessageStyle *style = NULL;
-
-	g_assert (styledir);
-	for (cur = style_list; cur; cur = g_list_next (cur)) {
-		style = (PidginMessageStyle*) cur->data;
-		if (g_str_equal (styledir, style->style_dir)) {
-			style->ref_counter++;
-			return style;
-		}
-	}
 
 	/* else we need to load it */
 	style = pidgin_message_style_new (styledir);
@@ -284,8 +265,8 @@ pidgin_message_style_load (const char* styledir)
 	}
 
 	if (!g_file_get_contents(style->template_path, &style->template_html, NULL, NULL)) {
+		purple_debug_error ("webkit", "Could not locate a Template.html (%s)\n", style->template_path);
 		pidgin_message_style_unref (style);
-		purple_debug_error ("webkit", "Could not locate a Template.html\n");
 		return NULL;
 	}
 
@@ -362,6 +343,41 @@ pidgin_message_style_load (const char* styledir)
 	}
 
 	return style;
+}
+
+PidginMessageStyle*
+pidgin_message_style_copy (const PidginMessageStyle *style)
+{
+	/* it's at times like this that I miss C++ */
+	PidginMessageStyle *ret = pidgin_message_style_new (style->style_dir);
+
+	ret->variant = g_strdup (style->variant);
+	ret->message_view_version = style->message_view_version;
+	ret->cf_bundle_name = g_strdup (style->cf_bundle_name);
+	ret->cf_bundle_identifier = g_strdup (style->cf_bundle_identifier);
+	ret->cf_bundle_get_info_string = g_strdup (style->cf_bundle_get_info_string);
+	ret->default_font_family = g_strdup (style->default_font_family);
+	ret->default_font_size = style->default_font_size;
+	ret->shows_user_icons = style->shows_user_icons;
+	ret->disable_combine_consecutive = style->disable_combine_consecutive;
+	ret->default_background_is_transparent = style->default_background_is_transparent;
+	ret->disable_custom_background = style->disable_custom_background;
+	ret->default_background_color = g_strdup (style->default_background_color);
+	ret->allow_text_colors = style->allow_text_colors;
+	ret->image_mask = g_strdup (style->image_mask);
+	ret->default_variant = g_strdup (style->default_variant);
+	
+	ret->template_path = g_strdup (style->template_path);
+	ret->template_html = g_strdup (style->template_html);
+	ret->header_html = g_strdup (style->header_html);
+	ret->footer_html = g_strdup (style->footer_html);
+	ret->incoming_content_html = g_strdup (style->incoming_content_html);
+	ret->outgoing_content_html = g_strdup (style->outgoing_content_html);
+	ret->incoming_next_content_html = g_strdup (style->incoming_next_content_html);
+	ret->outgoing_next_content_html = g_strdup (style->outgoing_next_content_html);
+	ret->status_html = g_strdup (style->status_html);
+	ret->basestyle_css = g_strdup (style->basestyle_css);
+	return ret;
 }
 
 void

@@ -12,10 +12,10 @@ typedef struct _PidginMessageStyle {
 
 	/* current config options */
 	char     *variant; /* allowed to be NULL if there are no variants */
-	gboolean show_user_icons;
 
+	/* Info.plist keys that change with Variant */
 
-	/* Info.plist keys */
+	/* Static Info.plist keys */
 	int      message_view_version;
 	char     *cf_bundle_name;
 	char     *cf_bundle_identifier;
@@ -48,6 +48,7 @@ typedef struct _PidginMessageStyle {
 } PidginMessageStyle;
 
 PidginMessageStyle* pidgin_message_style_load (const char* styledir);
+PidginMessageStyle* pidgin_message_style_copy (const PidginMessageStyle *style);
 void pidgin_message_style_unref (PidginMessageStyle *style);
 void pidgin_message_style_read_info_plist (PidginMessageStyle *style, const char* variant);
 char* pidgin_message_style_get_variant (PidginMessageStyle *style);

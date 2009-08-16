@@ -94,7 +94,7 @@ static void webkit_plugin_free_handle ()
 
 static char *
 replace_message_tokens(
-	char *text, 
+	const char *text, 
 	gsize len, 
 	PurpleConversation *conv, 
 	const char *name, 
@@ -104,8 +104,8 @@ replace_message_tokens(
 	time_t mtime)
 {
 	GString *str = g_string_new_len(NULL, len);
-	char *cur = text;
-	char *prev = cur;
+	const char *cur = text;
+	const char *prev = cur;
 
 	while ((cur = strchr(cur, '%'))) {
 		const char *replace = NULL;
@@ -119,7 +119,7 @@ replace_message_tokens(
 		} else if (!strncmp(cur, "%time", strlen("%time"))) {
 			char *format = NULL;
 			if (*(cur + strlen("%time")) == '{') {
-				char *start = cur + strlen("%time") + 1;
+				const char *start = cur + strlen("%time") + 1;
 				char *end = strstr(start, "}%");
 				if (!end) /* Invalid string */
 					continue;
@@ -333,11 +333,12 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	PidginMessageStyle *style, *oldStyle;
 	oldStyle = g_object_get_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY);
 	
-	if (oldStyle) return;
+	g_return_if_fail (!oldStyle);
 
 	purple_debug_info ("webkit", "loading %s\n", style_dir);
 	style = pidgin_message_style_load (style_dir);
 	g_assert (style);
+	g_assert (style->template_html); /* debugging test? */
 
 	basedir = g_build_filename (style->style_dir, "Contents", "Resources", "Template.html", NULL);
 	baseuri = g_strdup_printf ("file://%s", basedir);
@@ -353,10 +354,12 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	set_theme_webkit_settings (WEBKIT_WEB_VIEW(webkit), style);
 	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
 
-	g_object_set_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY, style);
+	PidginMessageStyle *copy = pidgin_message_style_copy (style);
+	g_object_set_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY, copy);
 	
+	pidgin_message_style_unref (style);
 	/* I need to unref this style when the webkit object destroys */
-	g_signal_connect (G_OBJECT(webkit), "destroy", G_CALLBACK(webkit_on_webview_destroy), style);
+	g_signal_connect (G_OBJECT(webkit), "destroy", G_CALLBACK(webkit_on_webview_destroy), copy);
 
 	g_free (basedir);
 	g_free (baseuri);
