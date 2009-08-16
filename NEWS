@@ -4,7 +4,7 @@ Our development blog is available at: http://planet.pidgin.im
 
 2.5.9 (08/18/2009):
 	John:  This release is just a crash fix release to address a security
-	issue reported to us by CORE.
+	issue reported to us by CORE and a couple crashes Elliott found.
 
 2.5.8 (06/27/2009):
 	John:  This release is another somewhat rushed bugfix release to fix

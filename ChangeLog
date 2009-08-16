@@ -2,6 +2,8 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.9 (08/18/2009):
 	* Fix a crash via a specially crafted MSN message (CVE-2009-2694).
+	* Fix a crash in Bonjour, MSN, and XMPP when trying to transfer files with
+	  NULL names.
 
 version 2.5.8 (06/27/2009):
 	ICQ:
