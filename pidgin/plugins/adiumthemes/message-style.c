@@ -108,11 +108,12 @@ void pidgin_message_style_unref (PidginMessageStyle *style)
 }
 
 void
-pidgin_message_style_save_state (PidginMessageStyle *style)
+pidgin_message_style_save_state (const PidginMessageStyle *style)
 {
 	char *prefname = g_strdup_printf ("/plugins/gtk/adiumthemes/%s", style->cf_bundle_identifier);
-	char *variant = g_strdup_printf ("%s/%s", prefname, style->variant);
+	char *variant = g_strdup_printf ("%s/variant", prefname);
 
+	purple_debug_info ("webkit", "saving state with variant %s\n", style->variant);
 	purple_prefs_add_none (prefname);
 	purple_prefs_add_string (variant, "");
 	purple_prefs_set_string (variant, style->variant);
@@ -125,7 +126,7 @@ void
 pidgin_message_style_load_state (PidginMessageStyle *style)
 {
 	char *prefname = g_strdup_printf ("/plugins/gtk/adiumthemes/%s", style->cf_bundle_identifier);
-	char *variant = g_strdup_printf ("%s/%s", prefname, style->variant);
+	char *variant = g_strdup_printf ("%s/variant", prefname);
 
 	const char* value = purple_prefs_get_string (variant);
 	gboolean changed = !style->variant || !g_str_equal (style->variant, value);
@@ -322,8 +323,8 @@ pidgin_message_style_load (const char* styledir)
 		style->outgoing_next_content_html = g_strdup (style->outgoing_content_html);
 	}
 
+	pidgin_message_style_read_info_plist (style, NULL);
 	pidgin_message_style_load_state (style);
-	pidgin_message_style_read_info_plist (style, style->variant);
 
 	/* non variant dependent Info.plist checks */
 	if (style->message_view_version < 3) {
@@ -339,7 +340,6 @@ pidgin_message_style_load (const char* styledir)
 			pidgin_message_style_set_variant (style, variants->data);
 
 		glist_free_all_string (variants);
-		pidgin_message_style_save_state (style);
 	}
 
 	return style;
@@ -388,7 +388,6 @@ pidgin_message_style_set_variant (PidginMessageStyle *style, const char *variant
 	style->variant = g_strdup (variant);
 
 	pidgin_message_style_read_info_plist (style, variant);
-	pidgin_message_style_save_state (style);
 	
 	/* todo, the style has "changed". Ideally, I would like to use signals at this point. */
 }

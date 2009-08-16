@@ -49,6 +49,7 @@ typedef struct _PidginMessageStyle {
 
 PidginMessageStyle* pidgin_message_style_load (const char* styledir);
 PidginMessageStyle* pidgin_message_style_copy (const PidginMessageStyle *style);
+void pidgin_message_style_save_state (const PidginMessageStyle *style);
 void pidgin_message_style_unref (PidginMessageStyle *style);
 void pidgin_message_style_read_info_plist (PidginMessageStyle *style, const char* variant);
 char* pidgin_message_style_get_variant (PidginMessageStyle *style);

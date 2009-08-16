@@ -333,7 +333,7 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	PidginMessageStyle *style, *oldStyle;
 	oldStyle = g_object_get_data (G_OBJECT(webkit), MESSAGE_STYLE_KEY);
 	
-	g_return_if_fail (!oldStyle);
+	if (oldStyle) return;
 
 	purple_debug_info ("webkit", "loading %s\n", style_dir);
 	style = pidgin_message_style_load (style_dir);
@@ -703,7 +703,8 @@ variant_changed (GtkWidget* combobox, gpointer null)
 	g_assert (style);
 	name = gtk_combo_box_get_active_text (GTK_COMBO_BOX (combobox));
 	pidgin_message_style_set_variant (style, name);
-
+	pidgin_message_style_save_state (style);
+	
 	/* update conversations */
 	list = purple_get_conversations ();
 	while (list) {
