@@ -13,10 +13,32 @@ version 2.6.0 (??/??/2009):
 	* Various memory cleanups when unloading libpurple. (Nick Hebner and
 	  Stefan Becker)
 	* Report idle time 'From last message sent' should work properly.
+	* Better handling of corrupt certificates in the TLS Peers cache.
+	* More efficient buddy list and conversation search functions.
+	  (Jan Kaluza and Aman Gupta)
+	* Install scalable versions of the main Pidgin icon, the protocol icons,
+	  the dialog icons, and the Buddy List emblems.
+	* Build properly on Hurd.  (Marc Dequènes)
+	* Various memory leaks fixed as reported by Josh Mueller.
+	* Properly handle an IRC buddy appearing in multiple groups.
+	* Escape HTML entities in usernames when written with the HTML logger.
+	* Do not display MySpace status changes as incoming IMs.  (Mark Doliner and
+	  Justin Williams)
+
+	DNS:
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
 	* DNS SRV records with equal priority are sorted with respect to their
 	  weight as specified in RFC 2782.  (Vijay Raghunathan)
+	* Don't do IPv6 address lookups if the computer does not have an IPv6
+	  address configured.
+	* Fix a leak when the UI provides its own DNS resolving UI op.
+	  (Aman Gupta)
+	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
+	* Internationalized Domain Names are supported when libpurple is compiled
+	  against the GNU IDN library.
+
+	Environment Variables:
 	* GnuTLS logging (disabled by default) can be controlled through the
 	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
 	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
@@ -31,24 +53,6 @@ version 2.6.0 (??/??/2009):
 	  useful when running libpurple inside of Valgrind or similar programs.
 	  Currently, it keeps plugins in memory, allowing Valgrind to perform
 	  symbol resolution of leak traces at shutdown.
-	* Don't do IPv6 address lookups if the computer does not have an IPv6
-	  address configured.
-	* Fix a leak when the UI provides its own DNS resolving UI op.
-	  (Aman Gupta)
-	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
-	* Better handling of corrupt certificates in the TLS Peers cache.
-	* More efficient buddy list and conversation search functions.
-	  (Jan Kaluza and Aman Gupta)
-	* Internationalized Domain Names are supported when libpurple is compiled
-	  against the GNU IDN library.
-	* Install scalable versions of the main Pidgin icon, the protocol icons,
-	  the dialog icons, and the Buddy List emblems.
-	* Build properly on Hurd.  (Marc Dequènes)
-	* Various memory leaks fixed as reported by Josh Mueller.
-	* Properly handle an IRC buddy appearing in multiple groups.
-	* Escape HTML entities in usernames when written with the HTML logger.
-	* Do not display MySpace status changes as incoming IMs.  (Mark Doliner and
-	  Justin Williams)
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
@@ -66,6 +70,15 @@ version 2.6.0 (??/??/2009):
 	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
 	* Support connection progress steps in Gadu-Gadu.  (Krzysztof "kkszysiu"
 	  Klinikowski)
+
+	MSN:
+	* Add support for receiving handwritten (ink) messages on MSN.
+	* Add support for receiving audio clips on MSN.
+	* Show the invite message for buddies that requested authorization
+	  from you on MSN.
+	* Support sending an invite message to buddies when requesting authorization
+	  from them on MSN.
+	* Timeout switchboard connections aggressively (60 seconds).
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
@@ -135,15 +148,6 @@ version 2.6.0 (??/??/2009):
 	  arrangement.
 	* Ability to set personal details for an account and for buddies in the
 	  buddylist.
-
-	MSN:
-	* Add support for receiving handwritten (ink) messages on MSN.
-	* Add support for receiving audio clips on MSN.
-	* Show the invite message for buddies that requested authorization
-	  from you on MSN.
-	* Support sending an invite message to buddies when requesting authorization
-	  from them on MSN.
-	* Timeout switchboard connections aggressively
 
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
