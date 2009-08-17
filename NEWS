@@ -18,6 +18,12 @@ Our development blog is available at: http://planet.pidgin.im
 	Browser.  Also, thanks to Bernmeister for poking (at least) several
 	hundred old tickets!
 
+	Maiku: Ditto. This is my first news as well. I have a feeling this is
+	getting repetitive at this point, but voice and video support is
+	finally here! Thanks to the rest of the Pidgin team, Farsight 2, and
+	GStreamer developers for making this possible! (I finally finished my
+	Summer of Code project :D)
+
 2.5.8 (06/27/2009):
 	John:  This release is another somewhat rushed bugfix release to fix
 	a number of bugs that have come up since we released Pidgin 2.5.7.
