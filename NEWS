@@ -10,6 +10,14 @@ Our development blog is available at: http://planet.pidgin.im
 	in-band bytestream file transfers as a fallback on XMPP and idle time
 	reporting on XMPP. Enjoy!
 
+	Paul: This is my first news, too!  This release has definitely been a
+	long time coming; hopefully it won't disappoint since we've closed over
+	200 tickets.  Among other things, Tobias Markmann's GSoC project from
+	last year was merged, which means we now support BOSH (XMPP connections
+	over HTTP), and Andrei Mozzhuhin contributed an XMPP Service Discovery
+	Browser.  Also, thanks to Bernmeister for poking (at least) several
+	hundred old tickets!
+
 2.5.8 (06/27/2009):
 	John:  This release is another somewhat rushed bugfix release to fix
 	a number of bugs that have come up since we released Pidgin 2.5.7.
