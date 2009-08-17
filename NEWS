@@ -2,6 +2,14 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.6.0 (08/??/2009):
+	Marcus: This is my first news! It's been quite a few microreleases this
+	time, but now we're finally at 2.6.0. I suppose the most anticipated
+	new feature in this release is the voice and video support, thanks to
+	Mike's heroic work. I've managed to slip in a few features too, like
+	in-band bytestream file transfers as a fallback on XMPP and idle time
+	reporting on XMPP. Enjoy!
+
 2.5.8 (06/27/2009):
 	John:  This release is another somewhat rushed bugfix release to fix
 	a number of bugs that have come up since we released Pidgin 2.5.7.
