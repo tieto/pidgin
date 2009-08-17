@@ -2,6 +2,18 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.6.0 (08/18/2009):
+	John:  Wow, four straight releases that I'm the first to NEWS on.  This
+	is getting kinda scary!  I'm beginning to wonder who else actually does
+	anything around here! (Just kidding, of course.)  LOTS of new features
+	and a crapton of bugfixes this release.  There should pretty much be
+	something for everybody.  A great example of this is the ton of Yahoo
+	changes that have happened thanks to our SoC student from 2008, Sulabh
+	Mahajan.  Among his massive improvements are the ability to add MSN
+	buddies by adding them as "msn/user@domain.tld" and peer-to-peer file
+	transfers.  Of course, history shows we can't please everyine, so I'm
+	sure I'll see a complaint or five thousand in trac.  Enjoy, though!
+
 2.5.9 (08/18/2009):
 	John:  This release is just a crash fix release to address a security
 	issue reported to us by CORE and a couple crashes Elliott found.
