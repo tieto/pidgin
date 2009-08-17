@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.0 (??/??/2009):
+version 2.6.0 (08/18/2009):
 	libpurple:
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
 	  project, with some minor additions and cleanups from Paul Aurich.
@@ -205,6 +205,11 @@ version 2.6.0 (??/??/2009):
 	* Added "Disable Typing Notification Text" preference.
 	* Preferences have been reorganized into three tabs for Colors, Fonts, and
 	  Miscellaneous categories.
+
+version 2.5.9 (08/18/2009):
+	* Fix a crash via a specially crafted MSN message (CVE-2009-2694).
+	* Fix a crash in Bonjour, MSN, and XMPP when trying to transfer files with
+	  NULL names.
 
 version 2.5.8 (06/27/2009):
 	ICQ:
