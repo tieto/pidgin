@@ -16,6 +16,14 @@ xmlnode_from_str(const char *str, gssize length(str))
     PROTOTYPE: $
 
 const char *
+xmlnode_get_name(node)
+	Purple::XMLNode node
+	CODE:
+	RETVAL = node->name;
+	OUTPUT:
+	RETVAL
+
+const char *
 xmlnode_get_attrib(node, attr)
 	Purple::XMLNode node
 	const char *attr

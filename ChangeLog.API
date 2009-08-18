@@ -154,6 +154,9 @@ version 2.6.0 (??/??/2009):
 		* GntProgressBar and functions (Saleem Abdulrasool)
 
 	perl:
+		Added:
+		* Purple::XMLNode::get_name()
+
 		Changed:
 		* Made a bunch of functions act more perl-like. Call the new()
 		  functions as Class->new(...) instead of Class::new(...):
