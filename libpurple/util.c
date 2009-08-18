@@ -3820,7 +3820,7 @@ find_header_content(const char *data, size_t data_len, const char *header, size_
 	/* Note: data is _not_ nul-terminated.  */
 	if (data_len > header_len) {
 		if (header[0] == '\n')
-			p = (g_strncasecmp(data, header + 1, header_len - 1) == 0) ? data : NULL;
+			p = (g_ascii_strncasecmp(data, header + 1, header_len - 1) == 0) ? data : NULL;
 		if (!p)
 			p = purple_strcasestr(data, header);
 		if (p)
@@ -3857,7 +3857,7 @@ static gboolean
 content_is_chunked(const char *data, size_t data_len)
 {
 	const char *p = find_header_content(data, data_len, "\nTransfer-Encoding: ", sizeof("\nTransfer-Encoding: ") - 1);
-	if (p && g_strncasecmp(p, "chunked", 7) == 0)
+	if (p && g_ascii_strncasecmp(p, "chunked", 7) == 0)
 		return TRUE;
 
 	return FALSE;
