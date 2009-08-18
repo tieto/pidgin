@@ -25,6 +25,10 @@ START_TEST(test_codes_to_html)
 			yahoo_codes_to_html("plain <peanut"));
 	assert_string_equal_free("plain&gt; peanut",
 			yahoo_codes_to_html("plain> peanut"));
+	assert_string_equal_free("<font face='inva&gt;lid'>test</font>",
+			yahoo_codes_to_html("<font face='inva>lid'>test"));
+	assert_string_equal_free("&lt;font face=&apos;inva&gt;lid",
+			yahoo_codes_to_html("<font face='inva>lid"));
 
 	/* bold/italic/underline */
 	assert_string_equal_free("<b>bold</b>",
@@ -96,15 +100,68 @@ START_TEST(test_codes_to_html)
 }
 END_TEST
 
+#if 0
+START_TEST(test_html_to_codes)
+{
+	assert_string_equal_free("plain",
+			yahoo_html_to_codes("plain"));
+	assert_string_equal_free("plain <peanut>",
+			yahoo_html_to_codes("plain &lt;peanut&gt;"));
+	assert_string_equal_free("plain <peanut",
+			yahoo_html_to_codes("plain &lt;peanut"));
+	assert_string_equal_free("plain> peanut",
+			yahoo_html_to_codes("plain&gt; peanut"));
+	assert_string_equal_free("plain >",
+			yahoo_html_to_codes("plain &gt;"));
+	assert_string_equal_free("plain > ",
+			yahoo_html_to_codes("plain &gt; "));
+	assert_string_equal_free("plain <",
+			yahoo_html_to_codes("plain &lt;"));
+	assert_string_equal_free("plain < ",
+			yahoo_html_to_codes("plain &lt; "));
+	assert_string_equal_free("plain &lt",
+			yahoo_html_to_codes("plain &lt"));
+	assert_string_equal_free("plain &",
+			yahoo_html_to_codes("plain &amp;"));
+
+	/* bold/italic/underline */
+	// MARK: This isn't correct.  Should not have the closing bold escape code
+	assert_string_equal_free("\x1B[1mbold\x1B[x1m",
+			yahoo_html_to_codes("<b>bold</b>"));
+	assert_string_equal_free("\x1B[2mitalic\x1B[x2m",
+			yahoo_html_to_codes("<i>italic</i>"));
+	assert_string_equal_free("\x1B[4munderline\x1B[x4m",
+			yahoo_html_to_codes("<u>underline</u>"));
+	assert_string_equal_free("no markup",
+			yahoo_html_to_codes("no</u> markup"));
+	assert_string_equal_free("\x1B[1mbold\x1B[x1m \x1B[2mitalic\x1B[x2m \x1B[4munderline\x1B[x4m",
+			yahoo_html_to_codes("<b>bold</b> <i>italic</i> <u>underline</u>"));
+	assert_string_equal_free("\x1B[1mbold \x1B[2mbolditalic\x1B[x1m italic\x1B[x1m",
+			yahoo_html_to_codes("<b>bold <i>bolditalic</i></b><i> italic</i>"));
+	assert_string_equal_free("\x1B[1mbold \x1B[2mbolditalic\x1B[x1m \x1B[4mitalicunderline",
+			yahoo_html_to_codes("<b>bold <i>bolditalic</i></b><i> <u>italicunderline</u></i>"));
+}
+END_TEST
+#endif
+
 Suite *
 yahoo_util_suite(void)
 {
-	Suite *s = suite_create("Yahoo Utility Functions");
+	Suite *s;
+	TCase *tc;
 
-	TCase *tc = tcase_create("Convert to Numeric");
+	s = suite_create("Yahoo Utility Functions");
+
+	tc = tcase_create("Convert IM from network format to HTML");
 	tcase_add_unchecked_fixture(tc, setup_codes_to_html, teardown_codes_to_html);
 	tcase_add_test(tc, test_codes_to_html);
 	suite_add_tcase(s, tc);
+
+#if 0
+	tc = tcase_create("Convert IM from HTML to network format");
+	tcase_add_test(tc, test_html_to_codes);
+	suite_add_tcase(s, tc);
+#endif
 
 	return s;
 }
