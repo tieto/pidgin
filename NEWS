@@ -24,6 +24,14 @@ Our development blog is available at: http://planet.pidgin.im
 	GStreamer developers for making this possible! (I finally finished my
 	Summer of Code project :D)
 
+	Elliott: Hey, this is my firs... Wait, no it isn't.  Now I feel left
+	out.  So have you heard about this voice and video thing?
+	Unfortunately, not quite ready for all protocols, but it's getting
+	there.  MSN gained support for receiving voice clips at least, and
+	finally we have Ink receiving capabilities too.  Thanks to the guys
+	who wrote the original patch.  And finally, MSN no longer has over a
+	100 tickets open!
+
 2.5.8 (06/27/2009):
 	John:  This release is another somewhat rushed bugfix release to fix
 	a number of bugs that have come up since we released Pidgin 2.5.7.
