@@ -2,13 +2,24 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
-2.6.0 (08/??/2009):
-	Marcus: This is my first news!  It's been quite a few microreleases this
-	time, but now we're finally at 2.6.0.  I suppose the most anticipated
+2.6.0 (08/18/2009):
+	John:  Wow, four straight releases that I'm the first to NEWS on.  This
+	is getting kinda scary!  I'm beginning to wonder who else actually does
+	anything around here!  (Just kidding, of course.)  LOTS of new features
+	and a crapton of bugfixes this release.  There should pretty much be
+	something for everybody.  A great example of this is the ton of Yahoo
+	changes that have happened thanks to our SoC student from 2008, Sulabh
+	Mahajan.  Among his massive improvements are the ability to add MSN
+	buddies by adding them as "msn/user@domain.tld" and peer-to-peer file
+	transfers.  Of course, history shows we can't please everyine, so I'm
+	sure I'll see a complaint or five thousand in trac.  Enjoy, though!
+
+	Marcus: This is my first news! It's been quite a few microreleases this
+	time, but now we're finally at 2.6.0. I suppose the most anticipated
 	new feature in this release is the voice and video support, thanks to
-	Mike's heroic work.  I've managed to slip in a few features too, like
+	Mike's heroic work. I've managed to slip in a few features too, like
 	in-band bytestream file transfers as a fallback on XMPP and idle time
-	reporting on XMPP.  Enjoy!
+	reporting on XMPP. Enjoy!
 
 	Paul: This is my first news, too!  This release has definitely been a
 	long time coming; hopefully it won't disappoint since we've closed over
@@ -18,9 +29,9 @@ Our development blog is available at: http://planet.pidgin.im
 	Browser.  Also, thanks to Bernmeister for poking (at least) several
 	hundred old tickets!
 
-	Mike: Ditto.  This is my first news as well.  I have a feeling this is
+	Mike: Ditto. This is my first news as well. I have a feeling this is
 	getting repetitive at this point, but voice and video support is
-	finally here!  Thanks to the rest of the Pidgin team, Farsight 2, and
+	finally here! Thanks to the rest of the Pidgin team, Farsight 2, and
 	GStreamer developers for making this possible! (I finally finished my
 	Summer of Code project :D)
 
@@ -31,6 +42,10 @@ Our development blog is available at: http://planet.pidgin.im
 	finally we have Ink receiving capabilities too.  Thanks to the guys
 	who wrote the original patch.  And finally, MSN no longer has over a
 	100 tickets open!
+
+2.5.9 (08/18/2009):
+	John:  This release is just a crash fix release to address a security
+	issue reported to us by CORE and a couple crashes Elliott found.
 
 2.5.8 (06/27/2009):
 	John:  This release is another somewhat rushed bugfix release to fix
@@ -45,12 +60,12 @@ Our development blog is available at: http://planet.pidgin.im
 	people have been having.
 
 2.5.6 (05/19/2009):
-	Ka-Hing: Many much bugfixes.  Hooray.  (Paul told me to say that)
-	Oh, no one has met Paul yet?  He's awesome, he backported my fixes
+	Ka-Hing: Many much bugfixes. Hooray. (Paul told me to say that)
+	Oh, no one has met Paul yet? He's awesome, he backported my fixes
 	to the release branch so I didn't have to checkout a
 	workspace... except I just did to NEWS to tell you all about
-	that.  Oh and I actually did do something for this release, none of
-	which is user visible though.  This basically applies to the rest
+	that. Oh and I actually did do something for this release, none of
+	which is user visible though. This basically applies to the rest
 	of the release as well, nothing exciting, but you definitely want
 	it.
 
