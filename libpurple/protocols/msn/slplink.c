@@ -505,11 +505,6 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 	data = msn_message_get_bin_data(msg, &len);
 
-	/*
-		OVERHEAD!
-		if (msg->msnslp_header.length < msg->msnslp_header.total_size)
-	 */
-
 	offset = msg->msnslp_header.offset;
 
 	if (offset == 0)
