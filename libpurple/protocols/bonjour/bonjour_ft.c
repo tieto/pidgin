@@ -450,9 +450,11 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 				/* TODO: Make sure that it is advertising a bytestreams transfer */
 
-				bonjour_xfer_receive(pc, id, sid, name, filesize, filename, XEP_BYTESTREAMS);
+				if (filename) {
+					bonjour_xfer_receive(pc, id, sid, name, filesize, filename, XEP_BYTESTREAMS);
 
-				parsed_receive = TRUE;
+					parsed_receive = TRUE;
+				}
 			}
 
 			if (!parsed_receive) {
