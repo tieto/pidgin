@@ -2,6 +2,28 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.6.0 (08/??/2009):
+	Marcus: This is my first news! It's been quite a few microreleases this
+	time, but now we're finally at 2.6.0. I suppose the most anticipated
+	new feature in this release is the voice and video support, thanks to
+	Mike's heroic work. I've managed to slip in a few features too, like
+	in-band bytestream file transfers as a fallback on XMPP and idle time
+	reporting on XMPP. Enjoy!
+
+	Paul: This is my first news, too!  This release has definitely been a
+	long time coming; hopefully it won't disappoint since we've closed over
+	200 tickets.  Among other things, Tobias Markmann's GSoC project from
+	last year was merged, which means we now support BOSH (XMPP connections
+	over HTTP), and Andrei Mozzhuhin contributed an XMPP Service Discovery
+	Browser.  Also, thanks to Bernmeister for poking (at least) several
+	hundred old tickets!
+
+	Maiku: Ditto. This is my first news as well. I have a feeling this is
+	getting repetitive at this point, but voice and video support is
+	finally here! Thanks to the rest of the Pidgin team, Farsight 2, and
+	GStreamer developers for making this possible! (I finally finished my
+	Summer of Code project :D)
+
 2.5.8 (06/27/2009):
 	John:  This release is another somewhat rushed bugfix release to fix
 	a number of bugs that have come up since we released Pidgin 2.5.7.
