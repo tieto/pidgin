@@ -4097,7 +4097,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 				else
 					g_snprintf(buf, sizeof(buf), "%%s ");
 
-				statustext = g_strdup_printf(buf, tmp);purple_presence_is_idle(presence)
+				statustext = g_strdup_printf(buf, tmp);
 
 				g_free(tmp);
 			}
