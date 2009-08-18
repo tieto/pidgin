@@ -14,6 +14,7 @@ version 2.6.0
 	* Czech translation updated (David Vachulka)
 	* Dutch translation updated (Daniël Heres)
 	* English (British) translation updated (Luke Ross)
+	* Esperanto translation updated (Stéphane Fillod)
 	* Finnish translation updated (Timo Jyrinki)
 	* French translation updated (Éric Boumaour)
 	* Galician translation updated (Frco. Javier Rial Rodríguez)
@@ -35,6 +36,9 @@ version 2.6.0
 	* Spanish translation updated (Javier Fernández-Sanguino)
 	* Swahili translation added (Paul Msegeya)
 	* Swedish translation updated (Peter Hjalmarsson)
+
+version 2.5.9
+	* No changes
 
 version 2.5.8
 	* No changes

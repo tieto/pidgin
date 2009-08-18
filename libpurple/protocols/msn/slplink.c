@@ -441,6 +441,7 @@ msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg)
 	slpmsg->info = "SLP ACK";
 
 	msn_slplink_send_slpmsg(slplink, slpmsg);
+	msn_slpmsg_destroy(slpmsg);
 }
 
 static void
@@ -578,7 +579,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		/* fseek(slpmsg->fp, offset, SEEK_SET); */
 		len = fwrite(data, 1, len, slpmsg->fp);
 	}
-	else if (slpmsg->size)
+	else if (slpmsg->size && slpmsg->buffer)
 	{
 		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size)
 		{
