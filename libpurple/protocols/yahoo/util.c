@@ -553,12 +553,15 @@ char *yahoo_codes_to_html(const char *x)
 #endif /* !USE_CSS_FORMATTING */
 
 				} else if ((match = g_hash_table_lookup(esc_codes_ht, code))) {
-					gboolean is_closing_tag;
-					gchar *tag_name;
-
-					tag_name = yahoo_markup_get_tag_name(match, &is_closing_tag);
-					yahoo_codes_to_html_add_tag(&cur, match, is_closing_tag, tag_name, FALSE);
-					g_free(tag_name);
+					/* Some tags are in the hash table only because we
+					 * want to ignore them */
+					if (match[0] != '\0') {
+						gboolean is_closing_tag;
+						gchar *tag_name;
+						tag_name = yahoo_markup_get_tag_name(match, &is_closing_tag);
+						yahoo_codes_to_html_add_tag(&cur, match, is_closing_tag, tag_name, FALSE);
+						g_free(tag_name);
+					}
 
 				} else {
 					purple_debug_error("yahoo",
