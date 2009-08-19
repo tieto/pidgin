@@ -46,6 +46,10 @@ START_TEST(test_codes_to_html)
 	assert_string_equal_free("<b>bold <i>bolditalic <u>bolditalicunderline</u></i></b><i><u> italicunderline</u></i>",
 			yahoo_codes_to_html("\x1B[1mbold \x1B[2mbolditalic \x1B[4mbolditalicunderline\x1B[x1m italicunderline"));
 
+	/* link */
+	assert_string_equal_free("http://pidgin.im/",
+			yahoo_codes_to_html("\x1B[lmhttp://pidgin.im/\x1B[xlm"));
+
 #ifdef USE_CSS_FORMATTING
 	/* font color */
 	assert_string_equal_free("<span style='color: #0000FF'>blue</span>",
