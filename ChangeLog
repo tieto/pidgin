@@ -4,6 +4,8 @@ version 2.6.2 (??/??/2009):
 	XMPP:
 	* Prompt the user before cancelling a presence subscription.
 	* Escape status messages that have HTML entities in the Get Info dialog.
+	* Fix connecting to XMPP domains with no SRV records from Pidgin on
+	  Windows.
 
 version 2.6.1 (08/18/2009):
 	* Fix a crash when some users send you a link in a Yahoo IM
