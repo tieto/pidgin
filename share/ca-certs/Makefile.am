@@ -3,16 +3,21 @@ CERTIFICATES = \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \
 		Equifax_Secure_CA.pem \
+		Equifax_Secure_Global_eBusiness_CA-1.pem \
 		GTE_CyberTrust_Global_Root.pem \
+		StartCom_Certification_Authority.pem \
 		StartCom_Free_SSL_CA.pem \
+		Thawte_Premium_Server_CA.pem \
 		Verisign_RSA_Secure_Server_CA.pem \
 		Verisign_Class3_Primary_CA.pem \
-		VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem
+		VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem \
+		VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5_2.pem
 
 EXTRA_CERTS = \
 		AOL_Member_CA.pem \
 		Microsoft_Internet_Authority.pem \
 		Microsoft_Secure_Server_Authority.pem \
+		VeriSign_Class3_Extended_Validation_CA.pem \
 		VeriSign_International_Server_Class_3_CA.pem
 
 

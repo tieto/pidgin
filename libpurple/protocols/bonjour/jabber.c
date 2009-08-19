@@ -233,26 +233,22 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 struct _match_buddies_by_address_t {
 	const char *address;
 	GSList *matched_buddies;
-	BonjourJabber *jdata;
 };
 
 static void
-_match_buddies_by_address(gpointer key, gpointer value, gpointer data)
+_match_buddies_by_address(gpointer value, gpointer data)
 {
 	PurpleBuddy *pb = value;
-	PurpleAccount *account = NULL;
 	BonjourBuddy *bb = NULL;
 	struct _match_buddies_by_address_t *mbba = data;
 
-	account = purple_buddy_get_account(pb);
 	bb = purple_buddy_get_protocol_data(pb);
 
 	/*
-	 * If the current PurpleBuddy's data is not null and the PurpleBuddy's account
-	 * is the same as the account requesting the check then continue to determine
+	 * If the current PurpleBuddy's data is not null, then continue to determine
 	 * whether one of the buddies IPs matches the target IP.
 	 */
-	if (mbba->jdata->account == account && bb != NULL)
+	if (bb != NULL)
 	{
 		const char *ip;
 		GSList *tmp = bb->ips;
@@ -638,6 +634,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	char *address_text = NULL;
 	struct _match_buddies_by_address_t *mbba;
 	BonjourJabberConversation *bconv;
+	GSList *buddies;
 
 	/* Check that it is a read condition */
 	if (condition != PURPLE_INPUT_READ)
@@ -657,12 +654,13 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	purple_debug_info("bonjour", "Received incoming connection from %s.\n", address_text);
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
 	mbba->address = address_text;
-	mbba->jdata = jdata;
-	g_hash_table_foreach(purple_blist_get_buddies(), _match_buddies_by_address, mbba);
+
+	buddies = purple_find_buddies(jdata->account, NULL);
+	g_slist_foreach(buddies, _match_buddies_by_address, mbba);
+	g_slist_free(buddies);
 
 	if (mbba->matched_buddies == NULL) {
 		purple_debug_info("bonjour", "We don't like invisible buddies, this is not a superheros comic\n");
-		g_slist_free(mbba->matched_buddies);
 		g_free(mbba);
 		close(client_socket);
 		return;
@@ -688,11 +686,13 @@ bonjour_jabber_start(BonjourJabber *jdata)
 	struct sockaddr_in my_addr;
 
 	/* Open a listening socket for incoming conversations */
-	if ((jdata->socket = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
-		purple_debug_error("bonjour", "Cannot open socket: %s\n", g_strerror(errno));
+	jdata->socket = socket(PF_INET, SOCK_STREAM, 0);
+	if (jdata->socket < 0) {
+		gchar *buf = g_strdup_printf(_("Unable to create socket: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason(jdata->account->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Cannot open socket"));
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, buf);
+		g_free(buf);
 		return -1;
 	}
 
@@ -701,25 +701,31 @@ bonjour_jabber_start(BonjourJabber *jdata)
 
 	/* Try to use the specified port - if it isn't available, use a random port */
 	my_addr.sin_port = htons(jdata->port);
-	if (bind(jdata->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0) {
-		purple_debug_info("bonjour", "Unable to bind to specified port %u (%s).\n", jdata->port, g_strerror(errno));
+	if (bind(jdata->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0)
+	{
+		purple_debug_info("bonjour", "Unable to bind to specified "
+				"port %i: %s\n", jdata->port, g_strerror(errno));
 		my_addr.sin_port = 0;
-		if (bind(jdata->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0) {
-			purple_debug_error("bonjour", "Unable to bind to system assigned port (%s).\n", g_strerror(errno));
+		if (bind(jdata->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0)
+		{
+			gchar *buf = g_strdup_printf(_("Unable to bind socket "
+					"to port: %s"), g_strerror(errno));
 			purple_connection_error_reason(jdata->account->gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Could not bind socket to port"));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, buf);
+			g_free(buf);
 			return -1;
 		}
 		jdata->port = purple_network_get_port_from_fd(jdata->socket);
 	}
 
 	/* Attempt to listen on the bound socket */
-	if (listen(jdata->socket, 10) != 0) {
-		purple_debug_error("bonjour", "Cannot listen on socket: %s\n", g_strerror(errno));
+	if (listen(jdata->socket, 10) != 0)
+	{
+		gchar *buf = g_strdup_printf(_("Unable to listen on socket: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason(jdata->account->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Could not listen on socket"));
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, buf);
+		g_free(buf);
 		return -1;
 	}
 
@@ -850,11 +856,14 @@ void
 bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv) {
 	BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
 	struct _match_buddies_by_address_t *mbba;
+	GSList *buddies;
 
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
 	mbba->address = bconv->ip;
-	mbba->jdata = jdata;
-	g_hash_table_foreach(purple_blist_get_buddies(), _match_buddies_by_address, mbba);
+
+	buddies = purple_find_buddies(jdata->account, NULL);
+	g_slist_foreach(buddies, _match_buddies_by_address, mbba);
+	g_slist_free(buddies);
 
 	/* If there is exactly one match, use it */
 	if(mbba->matched_buddies != NULL) {
@@ -925,7 +934,9 @@ _find_or_start_conversation(BonjourJabber *jdata, const gchar *to)
 		}
 		purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_NONE);
 
-		connect_data = purple_proxy_connect(NULL, jdata->account,
+		connect_data = purple_proxy_connect(
+						    purple_account_get_connection(jdata->account),
+						    jdata->account,
 						    ip, bb->port_p2pj, _connected_to_buddy, pb);
 
 		if (connect_data == NULL) {

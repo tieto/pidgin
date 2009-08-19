@@ -120,10 +120,14 @@ struct ifconf
 # define ifc_req ifc_ifcu.ifcu_req /* Array of structures.  */
 
 /* sys/time.h */
+#if __MINGW32_MAJOR_VERSION < 3 || (__MINGW32_MAJOR_VERSION == 3 && __MINGW32_MINOR_VERSION < 10)
 struct timezone {
 	int tz_minuteswest;
 	int tz_dsttime;
 };
+#else
+#    include <sys/time.h>
+#endif
 int wpurple_gettimeofday(struct timeval *p, struct timezone *z);
 
 /* time.h */

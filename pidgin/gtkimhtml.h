@@ -26,9 +26,7 @@
 #define _PIDGINIMHTML_H_
 
 #include <gdk/gdk.h>
-#include <gtk/gtktextview.h>
-#include <gtk/gtktooltips.h>
-#include <gtk/gtkimage.h>
+#include <gtk/gtk.h>
 #include "gtksourceundomanager.h"
 
 #include "connection.h"
@@ -42,13 +40,13 @@ extern "C" {
  **************************************************************************/
 /*@{*/
 
-#define GTK_TYPE_IMHTML            (gtk_imhtml_get_type ())
-#define GTK_IMHTML(obj)            (GTK_CHECK_CAST ((obj), GTK_TYPE_IMHTML, GtkIMHtml))
-#define GTK_IMHTML_CLASS(klass)    (GTK_CHECK_CLASS_CAST ((klass), GTK_TYPE_IMHTML, GtkIMHtmlClass))
-#define GTK_IS_IMHTML(obj)         (GTK_CHECK_TYPE ((obj), GTK_TYPE_IMHTML))
-#define GTK_IS_IMHTML_CLASS(klass) (GTK_CHECK_CLASS_TYPE ((klass), GTK_TYPE_IMHTML))
+#define GTK_TYPE_IMHTML            (gtk_imhtml_get_type())
+#define GTK_IMHTML(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_IMHTML, GtkIMHtml))
+#define GTK_IMHTML_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_IMHTML, GtkIMHtmlClass))
+#define GTK_IS_IMHTML(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_TYPE_IMHTML))
+#define GTK_IS_IMHTML_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_IMHTML))
 #define GTK_IMHTML_SCALABLE(obj)   ((GtkIMHtmlScalable *)obj)
-#define GTK_IMHTML_ANIMATION(obj)   ((GtkIMHtmlAnimation *)obj)
+#define GTK_IMHTML_ANIMATION(obj)  ((GtkIMHtmlAnimation *)obj)
 
 typedef struct _GtkIMHtml			GtkIMHtml;
 typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;
@@ -190,6 +188,8 @@ struct _GtkIMHtmlSmiley {
 	GSList *anchors;
 	GtkIMHtmlSmileyFlags flags;
 	GtkIMHtml *imhtml;
+	gpointer data;       /** @Since 2.6.0 */
+	gsize datasize;      /** @Since 2.6.0 */
 };
 
 struct _GtkIMHtmlScalable {
@@ -958,6 +958,16 @@ gboolean gtk_imhtml_link_activate(GtkIMHtmlLink *link);
  *        newline and not emit the "message_send" signal.
  */
 void gtk_imhtml_set_return_inserts_newline(GtkIMHtml *imhtml);
+
+/**
+ * By default this widget populates the PRIMARY clipboard with any selected
+ * text (as you would expect).  For scenarios (e.g. select-on-focus) where this
+ * would be problematic, this function can disable the PRIMARY population.
+ *
+ * @param imhtml The GtkIMHtml to enable/disable populating PRIMARY
+ * @param populate enable/disable PRIMARY population
+ */
+void gtk_imhtml_set_populate_primary_clipboard(GtkIMHtml *imhtml, gboolean populate);
 
 /*@}*/
 

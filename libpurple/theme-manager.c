@@ -130,6 +130,7 @@ purple_theme_manager_build_dir(const gchar *root)
 				theme_dir = g_build_filename(purple_dir, type, NULL);
 
 				theme = purple_theme_loader_build(loader, theme_dir);
+				g_free(theme_dir);
 
 				if (PURPLE_IS_THEME(theme))
 					purple_theme_manager_add_theme(theme);
@@ -292,4 +293,17 @@ purple_theme_manager_for_each_theme(PTFunc func)
 
 	g_hash_table_foreach(theme_table,
 			(GHFunc) purple_theme_manager_function_wrapper, func);
+}
+
+PurpleTheme *
+purple_theme_manager_load_theme(const gchar *theme_dir, const gchar *type)
+{
+	PurpleThemeLoader *loader;	
+
+	g_return_val_if_fail(theme_dir != NULL && type != NULL, NULL);
+
+	loader = g_hash_table_lookup(theme_table, type);
+	g_return_val_if_fail(PURPLE_IS_THEME_LOADER(loader), NULL);
+
+	return purple_theme_loader_build(loader, theme_dir);
 }

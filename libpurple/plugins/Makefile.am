@@ -36,6 +36,7 @@ log_reader_la_LDFLAGS       = -module -avoid-version
 newline_la_LDFLAGS          = -module -avoid-version
 notify_example_la_LDFLAGS   = -module -avoid-version
 offlinemsg_la_LDFLAGS       = -module -avoid-version
+one_time_password_la_LDFLAGS	= -module -avoid-version
 pluginpref_example_la_LDFLAGS = -module -avoid-version
 psychic_la_LDFLAGS          = -module -avoid-version
 signals_test_la_LDFLAGS		= -module -avoid-version
@@ -65,6 +66,7 @@ noinst_LTLIBRARIES = \
 	debug_example.la \
 	helloworld.la \
 	notify_example.la \
+	one_time_password.la \
 	pluginpref_example.la \
 	signals_test.la \
 	simple.la
@@ -81,6 +83,7 @@ log_reader_la_SOURCES       = log_reader.c
 newline_la_SOURCES          = newline.c
 notify_example_la_SOURCES   = notify_example.c
 offlinemsg_la_SOURCES       = offlinemsg.c
+one_time_password_la_SOURCES	= one_time_password.c
 pluginpref_example_la_SOURCES = pluginpref_example.c
 psychic_la_SOURCES          = psychic.c
 signals_test_la_SOURCES		= signals-test.c
@@ -97,6 +100,7 @@ log_reader_la_LIBADD        = $(GLIB_LIBS)
 newline_la_LIBADD           = $(GLIB_LIBS)
 notify_example_la_LIBADD    = $(GLIB_LIBS)
 offlinemsg_la_LIBADD        = $(GLIB_LIBS)
+one_time_password_la_LIBADD = $(GLIB_LIBS)
 pluginpref_example_la_LIBADD = $(GLIB_LIBS)
 psychic_la_LIBADD           = $(GLIB_LIBS)
 signals_test_la_LIBADD		= $(GLIB_LIBS)
@@ -153,5 +157,5 @@ SUFFIXES = .c .so
 	$(LIBTOOL) --mode=compile $(CC) -DHAVE_CONFIG_H -I$(top_builddir) $(AM_CPPFLAGS) $(CFLAGS) -c $< -o tmp$@.lo $(PLUGIN_CFLAGS)
 	$(LIBTOOL) --mode=link    $(CC) $(CFLAGS) -o libtmp$@.la -rpath $(plugindir) tmp$@.lo $(LIBS) $(LDFLAGS) -module -avoid-version $(PLUGIN_LIBS)
 	@rm -f tmp$@.lo tmp$@.o libtmp$@.la
-	@cp .libs/libtmp$@.so* $@
-	@rm -f .libs/libtmp$@.*
+	@cp .libs/libtmp$@*.so $@
+	@rm -rf .libs/libtmp$@.*

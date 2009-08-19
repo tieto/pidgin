@@ -111,6 +111,16 @@ purple_account_option_list_new(const char *text, const char *pref_name,
 	return option;
 }
 
+static void
+purple_account_option_list_free(gpointer data, gpointer user_data)
+{
+	PurpleKeyValuePair *kvp = data;
+
+	g_free(kvp->value);
+	g_free(kvp->key);
+	g_free(kvp);
+}
+
 void
 purple_account_option_destroy(PurpleAccountOption *option)
 {
@@ -127,7 +137,7 @@ purple_account_option_destroy(PurpleAccountOption *option)
 	{
 		if (option->default_value.list != NULL)
 		{
-			g_list_foreach(option->default_value.list, (GFunc)g_free, NULL);
+			g_list_foreach(option->default_value.list, purple_account_option_list_free, NULL);
 			g_list_free(option->default_value.list);
 		}
 	}
@@ -183,7 +193,7 @@ purple_account_option_set_list(PurpleAccountOption *option, GList *values)
 
 	if (option->default_value.list != NULL)
 	{
-		g_list_foreach(option->default_value.list, (GFunc)g_free, NULL);
+		g_list_foreach(option->default_value.list, purple_account_option_list_free, NULL);
 		g_list_free(option->default_value.list);
 	}
 

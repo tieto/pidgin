@@ -351,35 +351,52 @@ static void
 msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	MsnListId list)
 {
-	char *passport = xmlnode_get_data(xmlnode_get_child(member, node));
-	char *type = xmlnode_get_data(xmlnode_get_child(member, "Type"));
-	char *member_id = xmlnode_get_data(xmlnode_get_child(member, "MembershipId"));
-	MsnUser *user = msn_userlist_find_add_user(session->userlist, passport, NULL);
+	char *passport;
+	char *type;
+	char *member_id;
+	MsnUser *user;
 	xmlnode *annotation;
 	guint nid = MSN_NETWORK_UNKNOWN;
+	char *invite = NULL;
 
-	/* For EmailMembers, the network must be found in the annotations. */
-	if (!strcmp(node, "PassportName")) {
-		nid = MSN_NETWORK_PASSPORT;
-	} else {
-		for (annotation = xmlnode_get_child(member, "Annotations/Annotation");
-		     annotation;
-		     annotation = xmlnode_get_next_twin(annotation)) {
-			char *name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
-			if (name && !strcmp(name, "MSN.IM.BuddyType")) {
-				char *value = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
-				if (value != NULL)
-					nid = strtoul(value, NULL, 10);
-				g_free(value);
-			}
-			g_free(name);
-		}
+	passport = xmlnode_get_data(xmlnode_get_child(member, node));
+	if (!purple_email_is_valid(passport)) {
+		g_free(passport);
+		return;
 	}
+
+	type = xmlnode_get_data(xmlnode_get_child(member, "Type"));
+	member_id = xmlnode_get_data(xmlnode_get_child(member, "MembershipId"));
+	user = msn_userlist_find_add_user(session->userlist, passport, NULL);
+
+	for (annotation = xmlnode_get_child(member, "Annotations/Annotation");
+	     annotation;
+	     annotation = xmlnode_get_next_twin(annotation)) {
+		char *name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
+		char *value = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
+		if (name && value) {
+			if (!strcmp(name, "MSN.IM.BuddyType")) {
+				nid = strtoul(value, NULL, 10);
+			}
+			else if (!strcmp(name, "MSN.IM.InviteMessage")) {
+				invite = value;
+				value = NULL;
+			}
+		}
+		g_free(name);
+		g_free(value);
+	}
+
+	/* For EmailMembers, the network must be found in the annotations, above.
+	   Otherwise, PassportMembers are on the Passport network. */
+	if (!strcmp(node, "PassportName"))
+		nid = MSN_NETWORK_PASSPORT;
 
 	purple_debug_info("msn", "CL: %s name: %s, Type: %s, MembershipID: %s, NetworkID: %u\n",
 		node, passport, type, member_id == NULL ? "(null)" : member_id, nid);
 
 	msn_user_set_network(user, nid);
+	msn_user_set_invite_message(user, invite);
 
 	if (member_id) {
 		user->membership_id[list] = atoi(member_id);
@@ -390,6 +407,7 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	g_free(passport);
 	g_free(type);
 	g_free(member_id);
+	g_free(invite);
 }
 
 static void
@@ -697,24 +715,25 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 				/*TODO:  need to support the Mobile type*/
 				continue;
 			}
-			for (contactEmailNode = xmlnode_get_child(emailsNode, "ContactEmail"); contactEmailNode;
-					contactEmailNode = xmlnode_get_next_twin(contactEmailNode)) {
-				if (!(messengerEnabledNode = xmlnode_get_child(contactEmailNode, "isMessengerEnabled")))
-					continue;
+			for (contactEmailNode = xmlnode_get_child(emailsNode, "ContactEmail");
+			     contactEmailNode;
+			     contactEmailNode = xmlnode_get_next_twin(contactEmailNode)) {
+				if ((messengerEnabledNode = xmlnode_get_child(contactEmailNode, "isMessengerEnabled"))) {
 
-				msnEnabled = xmlnode_get_data(messengerEnabledNode);
+					msnEnabled = xmlnode_get_data(messengerEnabledNode);
 
-				if (msnEnabled && !strcmp(msnEnabled, "true")) {
-					if ((emailNode = xmlnode_get_child(contactEmailNode, "email")))
-						passport = xmlnode_get_data(emailNode);
+					if (msnEnabled && !strcmp(msnEnabled, "true")) {
+						if ((emailNode = xmlnode_get_child(contactEmailNode, "email")))
+							passport = xmlnode_get_data(emailNode);
 
-					/*Messenger enabled, Get the Passport*/
-					purple_debug_info("msn", "AB Yahoo/Federated User %s\n", passport ? passport : "(null)");
+						/* Messenger enabled, Get the Passport*/
+						purple_debug_info("msn", "AB Yahoo/Federated User %s\n", passport ? passport : "(null)");
+						g_free(msnEnabled);
+						break;
+					}
+
 					g_free(msnEnabled);
-					break;
 				}
-
-				g_free(msnEnabled);
 			}
 		} else {
 			xmlnode *messenger_user;
@@ -733,7 +752,11 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			passport = xmlnode_get_data(passportName);
 		}
 
+		/* Couldn't find anything */
 		if (passport == NULL)
+			continue;
+
+		if (!purple_email_is_valid(passport))
 			continue;
 
 		if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
@@ -1149,7 +1172,7 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 {
 	MsnUserList *userlist;
 	MsnUser *user;
-	gchar *body = NULL, *contact_xml;
+	gchar *body = NULL, *contact_xml, *invite;
 
 	g_return_if_fail(passport != NULL);
 	g_return_if_fail(groupId != NULL);
@@ -1197,7 +1220,23 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 		contact_xml = g_strdup_printf(MSN_CONTACT_XML, passport);
 	}
 
-	body = g_strdup_printf(MSN_ADD_CONTACT_GROUP_TEMPLATE, groupId, contact_xml);
+	if (user->invite_message) {
+		char *tmp;
+		body = g_markup_escape_text(user->invite_message, -1);
+		tmp = g_markup_escape_text(purple_connection_get_display_name(session->account->gc), -1);
+		invite = g_strdup_printf(MSN_CONTACT_INVITE_MESSAGE_XML, body, tmp);
+		g_free(body);
+		g_free(tmp);
+
+		/* We can free this now */
+		g_free(user->invite_message);
+		user->invite_message = NULL;
+
+	} else {
+		invite = g_strdup("");
+	}
+
+	body = g_strdup_printf(MSN_ADD_CONTACT_GROUP_TEMPLATE, groupId, contact_xml, invite);
 
 	state->body = xmlnode_from_str(body, -1);
 	state->post_action = MSN_ADD_CONTACT_GROUP_SOAP_ACTION;
@@ -1205,6 +1244,7 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 	state->cb = msn_add_contact_to_group_read_cb;
 	msn_contact_request(state);
 
+	g_free(invite);
 	g_free(contact_xml);
 	g_free(body);
 }
@@ -1482,8 +1522,6 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 			  const gchar *passport, const MsnListId list)
 {
 	gchar *body = NULL, *member = NULL;
-	const char *type = "PassportMember";
-	gchar *federate = NULL;
 	MsnSoapPartnerScenario partner_scenario;
 	MsnUser *user;
 
@@ -1501,23 +1539,28 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	msn_callback_state_set_who(state, passport);
 
 	user = msn_userlist_find_user(session->userlist, passport);
-	if (user && user->networkid != MSN_NETWORK_PASSPORT) {
-		type = "EmailMember";
-		federate = g_strdup_printf(MSN_MEMBER_FEDERATED_ANNOTATION_XML,
-		                           user->networkid);
-	}
 	
 	if (list == MSN_LIST_PL) {
 		partner_scenario = MSN_PS_CONTACT_API;
-		member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
-		                         type, user->membership_id[MSN_LIST_PL],
-		                         federate ? federate : "");
+		if (user && user->networkid != MSN_NETWORK_PASSPORT)
+			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
+			                         "EmailMember", "Email",
+			                         user->membership_id[MSN_LIST_PL]);
+		else
+			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
+			                         "PassportMember", "Passport",
+			                         user->membership_id[MSN_LIST_PL]);
 	} else {
 		/* list == MSN_LIST_AL || list == MSN_LIST_BL */
 		partner_scenario = MSN_PS_BLOCK_UNBLOCK;
-		member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
-		                         type, passport,
-		                         federate ? federate : "");
+		if (user && user->networkid != MSN_NETWORK_PASSPORT)
+			member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
+			                         "EmailMember", "Email",
+			                         "Email", passport, "Email");
+		else
+			member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
+			                         "PassportMember", "Passport",
+			                         "PassportName", passport, "PassportName");
 	}
 
 	body = g_strdup_printf(MSN_CONTACT_DELETE_FROM_LIST_TEMPLATE,
@@ -1530,7 +1573,6 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 	state->cb = msn_del_contact_from_list_read_cb;
 	msn_contact_request(state);
 
-	g_free(federate);
 	g_free(member);
 	g_free(body);
 }
@@ -1578,8 +1620,6 @@ msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 			const gchar *passport, const MsnListId list)
 {
 	gchar *body = NULL, *member = NULL;
-	const char *type = "PassportMember";
-	gchar *federate = NULL;
 	MsnSoapPartnerScenario partner_scenario;
 	MsnUser *user;
 
@@ -1596,15 +1636,16 @@ msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 	msn_callback_state_set_who(state, passport);
 
 	user = msn_userlist_find_user(session->userlist, passport);
-	if (user && user->networkid != MSN_NETWORK_PASSPORT) {
-		type = "EmailMember";
-		federate = g_strdup_printf(MSN_MEMBER_FEDERATED_ANNOTATION_XML,
-		                           user->networkid);
-	}
 
 	partner_scenario = (list == MSN_LIST_RL) ? MSN_PS_CONTACT_API : MSN_PS_BLOCK_UNBLOCK;
-	member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
-	                         type, state->who, federate ? federate : "");
+	if (user && user->networkid != MSN_NETWORK_PASSPORT)
+		member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
+		                         "EmailMember", "Email",
+		                         "Email", state->who, "Email");
+	else
+		member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML,
+		                         "PassportMember", "Passport",
+		                         "PassportName", state->who, "PassportName");
 
 	body = g_strdup_printf(MSN_CONTACT_ADD_TO_LIST_TEMPLATE,
 		MsnSoapPartnerScenarioText[partner_scenario],
@@ -1616,7 +1657,6 @@ msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 	state->cb = msn_add_contact_to_list_read_cb;
 	msn_contact_request(state);
 
-	g_free(federate);
 	g_free(member);
 	g_free(body);
 }

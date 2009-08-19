@@ -1,4 +1,4 @@
-DIST_SUBDIRS = cap gestures gevolution musicmessaging perl ticker
+DIST_SUBDIRS = cap disco gestures gevolution musicmessaging perl ticker
 
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution
@@ -26,6 +26,7 @@ SUBDIRS = \
 	$(GEVOLUTION_DIR) \
 	$(MUSICMESSAGING_DIR) \
 	$(PERL_DIR) \
+	disco \
 	ticker
 
 plugindir = $(libdir)/pidgin
@@ -43,6 +44,7 @@ pidginrc_la_LDFLAGS         = -module -avoid-version
 relnot_la_LDFLAGS           = -module -avoid-version
 sendbutton_la_LDFLAGS       = -module -avoid-version
 spellchk_la_LDFLAGS         = -module -avoid-version
+themeedit_la_LDFLAGS        = -module -avoid-version
 timestamp_la_LDFLAGS        = -module -avoid-version
 timestamp_format_la_LDFLAGS = -module -avoid-version
 xmppconsole_la_LDFLAGS      = -module -avoid-version
@@ -61,6 +63,7 @@ plugin_LTLIBRARIES = \
 	relnot.la           \
 	sendbutton.la       \
 	spellchk.la         \
+	themeedit.la         \
 	timestamp.la        \
 	timestamp_format.la \
 	xmppconsole.la
@@ -82,6 +85,7 @@ pidginrc_la_SOURCES         = pidginrc.c
 relnot_la_SOURCES           = relnot.c
 sendbutton_la_SOURCES       = sendbutton.c
 spellchk_la_SOURCES         = spellchk.c
+themeedit_la_SOURCES        = themeedit.c themeedit-icon.c themeedit-icon.h
 timestamp_la_SOURCES        = timestamp.c
 timestamp_format_la_SOURCES = timestamp_format.c
 xmppconsole_la_SOURCES      = xmppconsole.c
@@ -99,6 +103,7 @@ pidginrc_la_LIBADD          = $(GTK_LIBS)
 relnot_la_LIBADD            = $(GLIB_LIBS)
 sendbutton_la_LIBADD        = $(GTK_LIBS)
 spellchk_la_LIBADD          = $(GTK_LIBS)
+themeedit_la_LIBADD         = $(GTK_LIBS)
 timestamp_la_LIBADD         = $(GTK_LIBS)
 timestamp_format_la_LIBADD  = $(GTK_LIBS)
 xmppconsole_la_LIBADD       = $(GTK_LIBS)
@@ -135,5 +140,5 @@ SUFFIXES = .c .so
 	$(LIBTOOL) --mode=compile $(CC) -DHAVE_CONFIG_H -I$(top_builddir) $(AM_CPPFLAGS) $(CFLAGS) -c $< -o tmp$@.lo $(PLUGIN_CFLAGS)
 	$(LIBTOOL) --mode=link    $(CC) $(CFLAGS) -o libtmp$@.la -rpath $(plugindir) tmp$@.lo $(LIBS) $(LDFLAGS) -module -avoid-version $(PLUGIN_LIBS)
 	@rm -f tmp$@.lo tmp$@.o libtmp$@.la
-	@cp .libs/libtmp$@.so* $@
-	@rm -f .libs/libtmp$@.*
+	@cp .libs/libtmp$@*.so $@
+	@rm -rf .libs/libtmp$@.*

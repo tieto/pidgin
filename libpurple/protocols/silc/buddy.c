@@ -1397,40 +1397,26 @@ silcpurple_add_buddy_i(PurpleConnection *gc, PurpleBuddy *b, gboolean init)
 
 void silcpurple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
-	silcpurple_add_buddy_i(gc, buddy, FALSE);
+	/* Don't add if the buddy is already on the list.
+	 *
+	 * SILC doesn't have groups, so we also don't need to do anything
+	 * for a move. */
+	if (purple_buddy_get_protocol_data(buddy) == NULL)
+		silcpurple_add_buddy_i(gc, buddy, FALSE);
 }
 
 void silcpurple_send_buddylist(PurpleConnection *gc)
 {
-	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleBuddy *buddy;
+	GSList *buddies;
 	PurpleAccount *account;
 
 	account = purple_connection_get_account(gc);
 
-	for (gnode = purple_blist_get_root();
-			gnode != NULL;
-			gnode = purple_blist_node_get_sibling_next(gnode))
+	for (buddies = purple_find_buddies(account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies))
 	{
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for (cnode = purple_blist_node_get_first_child(gnode);
-				cnode != NULL;
-				cnode = purple_blist_node_get_sibling_next(cnode))
-		{
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for (bnode = purple_blist_node_get_first_child(cnode);
-					bnode != NULL;
-					bnode = purple_blist_node_get_sibling_next(bnode))
-			{
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				buddy = (PurpleBuddy *)bnode;
-				if (purple_buddy_get_account(buddy) == account)
-					silcpurple_add_buddy_i(gc, buddy, TRUE);
-			}
-		}
+		PurpleBuddy *buddy = buddies->data;
+		silcpurple_add_buddy_i(gc, buddy, TRUE);
 	}
 }
 

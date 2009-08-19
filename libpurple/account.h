@@ -42,6 +42,7 @@ typedef void (*PurpleAccountUnregistrationCb)(PurpleAccount *account, gboolean s
 
 #include "connection.h"
 #include "log.h"
+#include "privacy.h"
 #include "proxy.h"
 #include "prpl.h"
 #include "status.h"
@@ -141,7 +142,7 @@ struct _PurpleAccount
 	 */
 	GSList *permit;             /**< Permit list.                           */
 	GSList *deny;               /**< Deny list.                             */
-	int perm_deny;              /**< The permit/deny setting.               */
+	PurplePrivacyType perm_deny;  /**< The permit/deny setting.               */
 
 	GList *status_types;        /**< Status types.                          */
 
@@ -456,6 +457,16 @@ void purple_account_set_status_list(PurpleAccount *account,
  * @param account The account.
  */
 void purple_account_clear_settings(PurpleAccount *account);
+
+/**
+ * Removes an account-specific setting by name.
+ *
+ * @param account The account.
+ * @param setting The setting to remove.
+ *
+ * @since 2.6.0
+ */
+void purple_account_remove_setting(PurpleAccount *account, const char *setting);
 
 /**
  * Sets a protocol-specific integer setting for an account.

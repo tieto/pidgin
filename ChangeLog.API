@@ -2,14 +2,30 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.0 (??/??/????):
 
-version 2.6.0 (??/??/2009):
+version 2.6.0 (08/18/2009):
 	libpurple:
 		Added:
+		* PurpleMedia and PurpleMediaManager API
 		* PURPLE_BLIST_NODE
 		* PURPLE_GROUP
 		* PURPLE_CONTACT
 		* PURPLE_BUDDY
 		* PURPLE_CHAT
+		* Account signals (see account-signals.dox)
+			* account-actions-changed
+			* account-created
+			* account-destroying
+		* blist-node-added and blist-node-removed signals (see
+		  blist-signals.dox)
+		* Three Blist UI ops used to overload libpurple's built-in saving
+		  of the buddy list to blist.xml. If a UI implements these, it probably
+		  wants to add the buddies itself and not call purple_blist_load.
+		* Three File Transfer UI ops used to overload libpurple's use of fread
+		  and fwrite for saving a file locally. These allow a UI to stream a
+		  file through a socket without buffering the file on the local disk.
+		* Jabber plugin signals (see jabber-signals.dox)
+		* purple_account_remove_setting
+		* purple_buddy_destroy
 		* purple_buddy_get_protocol_data
 		* purple_buddy_set_protocol_data
 		* purple_buddy_get_local_buddy_alias
@@ -18,20 +34,88 @@ version 2.6.0 (??/??/2009):
 		* purple_blist_set_ui_data
 		* purple_blist_node_get_ui_data
 		* purple_blist_node_set_ui_data
+		* purple_certificate_check_signature_chain_with_failing
+		* purple_chat_destroy
 		* purple_connection_get_protocol_data
 		* purple_connection_set_protocol_data
+		* purple_contact_destroy
+		* purple_conv_chat_invite_user
+		* purple_debug_is_unsafe
+		* purple_debug_is_verbose
+		* purple_debug_set_unsafe
+		* purple_debug_set_verbose
 		* purple_global_proxy_set_info
+		* purple_group_destroy
+		* purple_ipv4_address_is_valid
+		* purple_ipv6_address_is_valid
 		* purple_log_get_activity_score
+		* purple_markup_is_rtl
+		* purple_markup_escape_text
+		* purple_network_convert_idn_to_ascii
 		* purple_network_force_online
+		* purple_network_set_stun_server
+		* purple_network_set_turn_server
+		* purple_network_get_stun_ip
+		* purple_network_get_turn_ip
+		* purple_network_remove_port_mapping
+		* purple_plugins_get_search_paths
+		* purple_proxy_connect_udp
+		* purple_prpl_get_media_caps
+		* purple_prpl_got_account_actions
+		* purple_prpl_initiate_media
 		* purple_request_field_get_group
 		* purple_request_field_get_ui_data
 		* purple_request_field_set_ui_data
+		* purple_ssl_connect_with_ssl_cn
 		* purple_strequal
+		* purple_utf8_strip_unprintables
+		* purple_util_fetch_url_request_len_with_account
+		* purple_xfer_prpl_ready
+		* purple_xfer_ui_ready
 		* xmlnode_from_file
+		* xmlnode_get_parent
+		* xmlnode_set_attrib_full
+
+		Changed:
+		* xmlnode_remove_attrib now removes all attributes with the
+		  same name.  Previously, it would remove the first one found,
+		  which was completely non-deterministic.  If you want to remove
+		  the attribute with no namespace, then use NULL with
+		  xmlnode_remove_with_namespace.
+		* Plugins may now emit the jabber-sending-xmlnode signal in order
+		  to send stanzas; this method is preferred to the prpl send_raw
+		  function as other plugins listening to the signal see them.
+		* The conversation-updated signal with a PURPLE_CONV_UPDATE_TYPING
+		  update type is emitted when receiving an IM.  Previously, the
+		  typing state was modified (and the buddy-typing-stopped signal
+		  emitted), but this signal was not emitted.
+		* Added a client_type field in the get_ui_info core UI op. See
+		  core.h for details.
+		* Added introspection of signals exposed via the D-Bus API.
+		* purple_find_buddies is now more efficient in the case where
+		  it is enumerating all the buddies for an account.
+		* purple_find_group is now more efficient for large numbers of groups.
+		* purple_find_conversation_with_account is more efficient for large
+		  numbers of concurrent conversations.
+		* All DNS routines support internationalized domain names (IDNs) when
+		  libpurple is compiled with GNU libidn.
+		* status is set before emitting signals in purple_xfer_set_status.
+		* Creating multiple distinct chats with the same name (i.e. "MSN Chat")
+		  is deprecated and will be removed in libpurple 3.0.0.
+		* purple_xfer_start now accepts -1 as the fd parameter if the protocol
+		  plugin will administer the transfer itself. 0 is still accepted for
+		  backward compatibility since older versions of libpurple will not
+		  accept -1.
 
 		Deprecated:
+		* buddy-added and buddy-removed blist signals
+		* purple_blist_destroy
+		* purple_blist_new
 		* purple_buddy_get_local_alias
+		* purple_certificate_check_signature_chain
+		* purple_ip_address_is_valid
 		* purple_notify_user_info_remove_entry
+		* purple_set_blist
 		* purple_status_type_set_primary_attr
 		* purple_status_type_add_attr
 		* purple_status_type_add_attrs
@@ -42,6 +126,9 @@ version 2.6.0 (??/??/2009):
 		* purple_status_set_attr_string
 		* purple_presence_add_status
 		* purple_presence_add_list
+		* purple_util_fetch_url_request_len
+		* xmlnode_set_attrib_with_namespace
+		* xmlnode_set_attrib_with_prefix
 
 	pidgin:
 		Added:
@@ -50,12 +137,28 @@ version 2.6.0 (??/??/2009):
 		  gtk_imhtml_link_activate functions to process GtkIMHtmlLink
 		  objects from GtkIMHtml protocol callbacks.
 		* gtk_imhtml_set_return_inserts_newline
+		* gtk_imhtml_set_populate_primary_clipboard
 		* pidgin_blist_set_theme
 		* pidgin_blist_get_theme
+		* pidgin_prefs_labeled_password
+		* pidgin_smiley_editor_set_data
 		* pidgin_sound_is_customized
 		* pidgin_utils_init, pidgin_utils_uninit
+		* pidgin_notify_pounce_add
+		* PidginBlistTheme, PidginBlistThemeLoader API
+		* PidginIconTheme, PidginStatusIconTheme, PidginIconThemeLoader
+		  API
+		* pidgin_stock_id_from_status_primitive
+		* pidgin_stock_id_from_presence
+
+	libgnt:
+		Added:
+		* GntProgressBar and functions (Saleem Abdulrasool)
 
 	perl:
+		Added:
+		* Purple::XMLNode::get_name()
+
 		Changed:
 		* Made a bunch of functions act more perl-like. Call the new()
 		  functions as Class->new(...) instead of Class::new(...):
@@ -69,6 +172,23 @@ version 2.6.0 (??/??/2009):
 			* Purple::Request::Field::list_new
 			* Purple::Request::Field::string_new
 			* Purple::Request::Field::group_new
+		* Make the XMLNode API more perl-like. Don't pass len
+		  parameters and call them like:
+			* $xmlnode->copy()
+			* $xmlnode->to_str()
+			* $xmlnode->to_formatted_str()
+			* Purple::XMLNode::from_str(...)
+version 2.5.9 (08/18/2009):
+	No changes
+
+version 2.5.8 (06/27/2009):
+	No changes
+
+version 2.5.7 (06/20/2009):
+	No changes
+
+version 2.5.6 (05/19/2009):
+	No changes
 
 version 2.5.5 (03/01/2009):
 	libpurple:

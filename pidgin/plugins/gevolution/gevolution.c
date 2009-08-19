@@ -39,6 +39,7 @@
 #include <libedata-book/Evolution-DataServer-Addressbook.h>
 
 #include <libedata-book/e-data-book-factory.h>
+/* TODO: bonobo is going away eventually, we'll need to find an alternative */
 #include <bonobo/bonobo-main.h>
 
 #include <glib.h>
@@ -297,12 +298,18 @@ load_timeout(gpointer data)
 {
 	PurplePlugin *plugin = (PurplePlugin *)data;
 	EBookQuery *query;
+	GError *err = NULL;
 
 	timer = 0;
 
 	/* Maybe this is it? */
-	if (!gevo_load_addressbook(NULL, &book, NULL))
+	if (!gevo_load_addressbook(NULL, &book, &err))
+	{
+		purple_debug_error("evolution",
+						 "Error retrieving addressbook: %s\n", err->message);
+		g_error_free(err);
 		return FALSE;
+	}
 
 	query = e_book_query_any_field_contains("");
 

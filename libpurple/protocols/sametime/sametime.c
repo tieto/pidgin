@@ -28,8 +28,6 @@
 
 /* glib includes */
 #include <glib.h>
-#include <glib/ghash.h>
-#include <glib/glist.h>
 
 /* purple includes */
 #include "internal.h"
@@ -413,11 +411,14 @@ static int mw_session_io_write(struct mwSession *session,
     pd->outpa = purple_input_add(pd->socket, PURPLE_INPUT_WRITE, write_cb, pd);
 
   } else if(len > 0) {
+	gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+			g_strerror(errno));
     DEBUG_ERROR("write returned %" G_GSSIZE_FORMAT ", %" G_GSIZE_FORMAT
 			" bytes left unwritten\n", ret, len);
     purple_connection_error_reason(pd->gc,
                                    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-                                   _("Connection closed (writing)"));
+                                   tmp);
+	g_free(tmp);
 
 #if 0
     close(pd->socket);
@@ -810,7 +811,7 @@ static gboolean blist_save_cb(gpointer data) {
 static void blist_schedule(struct mwPurplePluginData *pd) {
   if(pd->save_event) return;
 
-  pd->save_event = purple_timeout_add(BLIST_SAVE_SECONDS * 1000,
+  pd->save_event = purple_timeout_add_seconds(BLIST_SAVE_SECONDS,
 				    blist_save_cb, pd);
 }
 
@@ -1468,7 +1469,7 @@ static void session_loginRedirect(struct mwSession *session,
 
   if(purple_account_get_bool(account, MW_KEY_FORCE, FALSE) ||
      !host || (! strcmp(current_host, host)) ||
-     (purple_proxy_connect(NULL, account, host, port, connect_cb, pd) == NULL)) {
+     (purple_proxy_connect(gc, account, host, port, connect_cb, pd) == NULL)) {
 
     /* if we're configured to force logins, or if we're being
        redirected to the already configured host, or if we couldn't
@@ -1757,11 +1758,10 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
   }
 
   if(! ret) {
-    const char *msg = _("Connection reset");
     DEBUG_INFO("connection reset\n");
     purple_connection_error_reason(pd->gc,
                                    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-                                   msg);
+                                   _("Server closed the connection"));
 
   } else if(ret < 0) {
     const gchar *err_str = g_strerror(err);
@@ -1769,7 +1769,7 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
 
     DEBUG_INFO("error in read callback: %s\n", err_str);
 
-    msg = g_strdup_printf(_("Error reading from socket: %s"), err_str);
+    msg = g_strdup_printf(_("Lost connection with server: %s"), err_str);
     purple_connection_error_reason(pd->gc,
                                    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                    msg);
@@ -1794,10 +1794,12 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message) {
 
     } else {
       /* this is a regular connect, error out */
-      const char *msg = _("Unable to connect to host");
+      gchar *tmp = g_strdup_printf(_("Unable to connect: %s"),
+          error_message);
       purple_connection_error_reason(pd->gc,
                                      PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-                                     msg);
+                                     tmp);
+      g_free(tmp);
     }
 
     return;
@@ -3802,7 +3804,7 @@ static void mw_prpl_login(PurpleAccount *account) {
 
   if (purple_proxy_connect(gc, account, host, port, connect_cb, pd) == NULL) {
     purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-                                   _("Unable to connect to host"));
+                                   _("Unable to connect"));
   }
 }
 
@@ -5209,7 +5211,8 @@ static PurplePluginProtocolInfo mw_prpl_info = {
   .new_xfer                  = mw_prpl_new_xfer,
   .offline_message           = NULL,
   .whiteboard_prpl_ops       = NULL,
-  .send_raw                  = NULL
+  .send_raw                  = NULL,
+  .struct_size               = sizeof(PurplePluginProtocolInfo)		
 };
 
 

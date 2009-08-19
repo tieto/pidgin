@@ -152,7 +152,7 @@ static void _qq_xfer_recv_packet(gpointer data, gint source, PurpleInputConditio
 	gint size;
 	/* FIXME: It seems that the transfer never use a packet
 	 * larger than 1500 bytes, so if it happened to be a
-	 * larger packet, either error occured or protocol should
+	 * larger packet, either error occurred or protocol should
 	 * be modified
 	 */
 	ft_info *info;
@@ -730,7 +730,7 @@ void qq_process_recv_file_cancel (guint8 *data, gint data_len,
 	*/
 	filename = g_path_get_basename(purple_xfer_get_local_filename(qd->xfer));
 	msg = g_strdup_printf
-		(_("%d canceled the transfer of %s"),
+		(_("%d cancelled the transfer of %s"),
 		 sender_uid, filename);
 
 	purple_notify_warning (gc, _("File Send"), msg, NULL);

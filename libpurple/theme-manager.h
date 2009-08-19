@@ -1,5 +1,5 @@
 /**
- * @file thememanager.h  Theme Manager API
+ * @file theme-manager.h  Theme Manager API
  */
 
 /*
@@ -126,6 +126,14 @@ void purple_theme_manager_unregister_type(PurpleThemeLoader *loader);
  * @param func The PTFunc to be applied to each theme.
  */
 void purple_theme_manager_for_each_theme(PTFunc func);
+
+/**
+ * Loads a theme of the given type without adding it to the manager
+ *
+ * @param theme_dir	the directory of the theme to load
+ * @param type		the type of theme to load
+ */
+PurpleTheme *purple_theme_manager_load_theme(const gchar *theme_dir, const gchar *type);
 
 G_END_DECLS
 #endif /* PURPLE_THEME_MANAGER_H */

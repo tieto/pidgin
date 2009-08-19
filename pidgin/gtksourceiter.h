@@ -28,7 +28,7 @@
 #ifndef _PIDGINSOURCEITER_H_
 #define _PIDGINSOURCEITER_H_
 
-#include <gtk/gtktextiter.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 

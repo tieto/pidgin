@@ -33,6 +33,7 @@
 #include "request.h"
 #include "signals.h"
 #include "util.h"
+#include "valgrind.h"
 #include "version.h"
 
 typedef struct
@@ -222,7 +223,7 @@ purple_plugin_probe(const char *filename)
 			return plugin;
 		else if (!purple_plugin_is_unloadable(plugin))
 		{
-			purple_debug_info("plugins", "Not loading %s. "
+			purple_debug_warning("plugins", "Not loading %s. "
 							"Another plugin with the same name (%s) has already been loaded.\n",
 							filename, plugin->path);
 			return plugin;
@@ -861,6 +862,7 @@ purple_plugin_destroy(PurplePlugin *plugin)
 				}
 
 				g_list_free(loader_info->exts);
+				loader_info->exts = NULL;
 			}
 
 			plugin_loaders = g_list_remove(plugin_loaders, plugin);
@@ -869,8 +871,16 @@ purple_plugin_destroy(PurplePlugin *plugin)
 		if (plugin->info != NULL && plugin->info->destroy != NULL)
 			plugin->info->destroy(plugin);
 
-		if (plugin->handle != NULL)
-			g_module_close(plugin->handle);
+		/*
+		 * I find it extremely useful to do this when using valgrind, as
+		 * it keeps all the plugins open, meaning that valgrind is able to
+		 * resolve symbol names in leak traces from plugins.
+		 */
+		if (!g_getenv("PURPLE_LEAKCHECK_HELP") && !RUNNING_ON_VALGRIND)
+		{
+			if (plugin->handle != NULL)
+				g_module_close(plugin->handle);
+		}
 	}
 	else
 	{
@@ -1201,6 +1211,11 @@ purple_plugins_uninit(void)
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
+
+	while (search_paths) {
+		g_free(search_paths->data);
+		search_paths = g_list_delete_link(search_paths, search_paths);
+	}
 }
 
 /**************************************************************************
@@ -1217,6 +1232,12 @@ purple_plugins_add_search_path(const char *path)
 	search_paths = g_list_append(search_paths, g_strdup(path));
 }
 
+GList *
+purple_plugins_get_search_paths()
+{
+	return search_paths;
+}
+
 void
 purple_plugins_unload_all(void)
 {
@@ -1224,6 +1245,21 @@ purple_plugins_unload_all(void)
 
 	while (loaded_plugins != NULL)
 		purple_plugin_unload(loaded_plugins->data);
+
+#endif /* PURPLE_PLUGINS */
+}
+
+void
+purple_plugins_unload(PurplePluginType type)
+{
+#ifdef PURPLE_PLUGINS
+	GList *l;
+
+	for (l = plugins; l; l = l->next) {
+		PurplePlugin *plugin = l->data;
+		if (plugin->info->type == type && purple_plugin_is_loaded(plugin))
+			purple_plugin_unload(plugin);
+	}
 
 #endif /* PURPLE_PLUGINS */
 }

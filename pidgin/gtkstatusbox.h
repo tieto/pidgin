@@ -34,8 +34,6 @@
 #include "imgstore.h"
 #include "savedstatuses.h"
 #include "status.h"
-#include <gtk/gtktreemodel.h>
-#include <gtk/gtktreeview.h>
 
 G_BEGIN_DECLS
 

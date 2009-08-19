@@ -71,7 +71,7 @@ void silc_say(SilcClient client, SilcClientConnection conn,
 		gc = client->application;
 
 	if (gc != NULL)
-		purple_connection_error_reason (gc, reason, tmp);
+		purple_connection_error_reason(gc, reason, tmp);
 	else
 		purple_notify_error(NULL, _("Error"), _("Error occurred"), tmp);
 }
@@ -839,7 +839,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 
 			b = NULL;
 			if (public_key) {
-				PurpleBlistNode *gnode, *cnode, *bnode;
+				GSList *buddies;
 				const char *f;
 
 				pk = silc_pkcs_public_key_encode(public_key, &pk_len);
@@ -857,29 +857,13 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				silc_free(pk);
 
 				/* Find buddy by associated public key */
-				for (gnode = purple_blist_get_root(); gnode;
-				     gnode = purple_blist_node_get_sibling_next(gnode)) {
-					if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-						continue;
-					for (cnode = purple_blist_node_get_first_child(gnode);
-							cnode;
-							cnode = purple_blist_node_get_sibling_next(cnode)) {
-						if( !PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-							continue;
-						for (bnode = purple_blist_node_get_first_child(cnode);
-								bnode;
-								bnode = purple_blist_node_get_sibling_next(bnode)) {
-							if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-								continue;
-							b = (PurpleBuddy *)bnode;
-							if (purple_buddy_get_account(b) != account)
-								continue;
-							f = purple_blist_node_get_string(bnode, "public-key");
-							if (f && !strcmp(f, buf))
-								goto cont;
-							b = NULL;
-						}
-					}
+				for (buddies = purple_find_buddies(account, NULL); buddies;
+						buddies = g_slist_delete_link(buddies, buddies)) {
+					b = buddies->data;
+					f = purple_blist_node_get_string(PURPLE_BLIST_NODE(b), "public-key");
+					if (purple_strequal(f, buf))
+						goto cont;
+					b = NULL;
 				}
 			}
 		cont:

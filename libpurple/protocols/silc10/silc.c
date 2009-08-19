@@ -183,7 +183,7 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 			  purple_account_get_int(account, "port", 706), sg);
 	if (!conn) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Cannot initialize SILC Client connection"));
+			_("Unable to initialize SILC Client connection"));
 		gc->proto_data = NULL;
 		return;
 	}
@@ -315,7 +315,7 @@ silcpurple_login(PurpleAccount *account)
 	/* Init SILC client */
 	if (!silc_client_init(client)) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-		                             _("Cannot initialize SILC protocol"));
+		                             _("Unable to initialize SILC protocol"));
 		return;
 	}
 
@@ -336,9 +336,9 @@ silcpurple_login(PurpleAccount *account)
 							(char *)purple_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password, &client->pkcs,
 				&client->public_key, &client->private_key)) {
-		g_snprintf(pkd, sizeof(pkd), _("Could not load SILC key pair: %s"), g_strerror(errno));
+		g_snprintf(pkd, sizeof(pkd), _("Unable to load SILC key pair: %s"), g_strerror(errno));
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-		                             _("Could not load SILC key pair"));
+		                             pkd);
 		return;
 	}
 
@@ -1836,12 +1836,13 @@ static PurplePluginProtocolInfo prpl_info =
 	&silcpurple_wb_ops,			/* whiteboard_prpl_ops */
 	NULL,                       /* send_raw */
 	NULL,                       /* roomlist_room_serialize */
-
-	NULL,
-	NULL,
-	NULL,
+	NULL,                       /* unregister_user */
+	NULL,                       /* send_attention */
+	NULL,                       /* get_attention_types */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	NULL,                       /* get_account_text_table */
+	NULL,                       /* initiate_media */
+	NULL                       /* can_do_media */
 };
 
 static PurplePluginInfo info =

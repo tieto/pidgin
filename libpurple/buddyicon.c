@@ -753,6 +753,8 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	}
 	unref_filename(old_icon);
 
+	old_img = g_hash_table_lookup(pointer_icon_cache, account);
+
 	if (img)
 		g_hash_table_insert(pointer_icon_cache, account, img);
 	else
@@ -770,7 +772,7 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 			prpl_info->set_buddy_icon(gc, img);
 	}
 
-	if ((old_img = g_hash_table_lookup(pointer_icon_cache, account)))
+	if (old_img)
 		purple_imgstore_unref(old_img);
 	else if (old_icon)
 	{
@@ -1100,7 +1102,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 				PurpleAccount *account = purple_buddy_get_account((PurpleBuddy *)node);
 				const char *prpl_id = purple_account_get_protocol_id(account);
 
-				if (purple_strequal(prpl_id, "prpl-yahoo"))
+				if (g_str_equal(prpl_id, "prpl-yahoo") || g_str_equal(prpl_id, "prpl-yahoojp"))
 				{
 					int checksum = purple_blist_node_get_int(node, "icon_checksum");
 					if (checksum != 0)
@@ -1299,6 +1301,7 @@ purple_buddy_icons_uninit()
 	g_hash_table_destroy(icon_file_cache);
 	g_hash_table_destroy(pointer_icon_cache);
 	g_free(old_icons_dir);
+	g_free(cache_dir);
 }
 
 void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int *height)

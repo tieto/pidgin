@@ -43,8 +43,17 @@ typedef struct
 static gnutls_certificate_client_credentials xcred;
 
 static void
+ssl_gnutls_log(int level, const char *str)
+{
+	/* GnuTLS log messages include the '\n' */
+	purple_debug_misc("gnutls", "lvl %d: %s", level, str);
+}
+
+static void
 ssl_gnutls_init_gnutls(void)
 {
+	const char *debug_level;
+
 	/* Configure GnuTLS to use glib memory management */
 	/* I expect that this isn't really necessary, but it may prevent
 	   some bugs */
@@ -58,6 +67,20 @@ ssl_gnutls_init_gnutls(void)
 		(gnutls_realloc_function) g_realloc, /* realloc */
 		(gnutls_free_function)    g_free     /* free */
 		);
+
+	debug_level = g_getenv("PURPLE_GNUTLS_DEBUG");
+	if (debug_level) {
+		int level = atoi(debug_level);
+		if (level < 0) {
+			purple_debug_warning("gnutls", "Assuming log level 0 instead of %d\n",
+			                     level);
+			level = 0;
+		}
+
+		/* "The level is an integer between 0 and 9. Higher values mean more verbosity." */
+		gnutls_global_set_log_level(level);
+		gnutls_global_set_log_function(ssl_gnutls_log);
+	}
 
 	gnutls_global_init();
 
@@ -576,7 +599,6 @@ x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
 							  out_buf, out_size);
 
 	g_free(out_buf);
-	g_return_val_if_fail(success, FALSE);
 	return success;
 }
 
@@ -646,6 +668,8 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 	gnutls_x509_crt issuer_dat;
 	unsigned int verify; /* used to store result from GnuTLS verifier */
 	int ret;
+	gchar *crt_id = NULL;
+	gchar *issuer_id = NULL;
 
 	g_return_val_if_fail(crt, FALSE);
 	g_return_val_if_fail(issuer, FALSE);
@@ -706,13 +730,29 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 		return FALSE;
 	}
 
+	if (verify & GNUTLS_CERT_INSECURE_ALGORITHM) {
+		/*
+		 * A certificate in the chain is signed with an insecure
+		 * algorithm. Put a warning into the log to make this error
+		 * perfectly clear as soon as someone looks at the debug log is
+		 * generated.
+		 */
+		crt_id = purple_certificate_get_unique_id(crt);
+		issuer_id = purple_certificate_get_issuer_unique_id(crt);
+		purple_debug_warning("gnutls/x509",
+				"Insecure hash algorithm used by %s to sign %s\n",
+				issuer_id, crt_id);
+	}
+
 	if (verify & GNUTLS_CERT_INVALID) {
 		/* Signature didn't check out, but at least
 		   there were no errors*/
-		gchar *crt_id = purple_certificate_get_unique_id(crt);
-		gchar *issuer_id = purple_certificate_get_issuer_unique_id(crt);
-		purple_debug_info("gnutls/x509",
-				  "Bad signature for %s on %s\n",
+		if (!crt_id)
+			crt_id = purple_certificate_get_unique_id(crt);
+		if (!issuer_id)
+			issuer_id = purple_certificate_get_issuer_unique_id(crt);
+		purple_debug_error("gnutls/x509",
+				  "Bad signature from %s on %s\n",
 				  issuer_id, crt_id);
 		g_free(crt_id);
 		g_free(issuer_id);

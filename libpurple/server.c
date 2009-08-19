@@ -587,13 +587,15 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	account  = purple_connection_get_account(gc);
 
-	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
-		/* protocol does not support privacy, handle it ourselves */
-		if (!purple_privacy_check(account, who)) {
-			purple_signal_emit(purple_conversations_get_handle(), "blocked-im-msg",
-					account, who, msg, flags, (unsigned int)mtime);
-			return;
-		}
+	/*
+	 * XXX: Should we be setting this here, or relying on prpls to set it?
+	 */
+	flags |= PURPLE_MESSAGE_RECV;
+
+	if (!purple_privacy_check(account, who)) {
+		purple_signal_emit(purple_conversations_get_handle(), "blocked-im-msg",
+				account, who, msg, flags, (unsigned int)mtime);
+		return;
 	}
 
 	/*
@@ -629,11 +631,6 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	/* search for conversation again in case it was created by received-im-msg handler */
 	if (conv == NULL)
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, gc->account);
-
-	/*
-	 * XXX: Should we be setting this here, or relying on prpls to set it?
-	 */
-	flags |= PURPLE_MESSAGE_RECV;
 
 	if (conv == NULL)
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
@@ -728,7 +725,6 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 		im = PURPLE_CONV_IM(conv);
 
 		purple_conv_im_set_typing_state(im, state);
-		purple_conv_im_update_typing(im);
 	} else {
 		switch (state)
 		{
@@ -766,7 +762,6 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 
 		purple_conv_im_stop_typing_timeout(im);
 		purple_conv_im_set_typing_state(im, PURPLE_NOT_TYPING);
-		purple_conv_im_update_typing(im);
 	}
 	else
 	{
@@ -864,7 +859,12 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 
 	account = purple_connection_get_account(gc);
 
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
 	conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+	g_return_val_if_fail(conv != NULL, NULL);
+
 	chat = PURPLE_CONV_CHAT(conv);
 
 	if (!g_slist_find(gc->buddy_chats, conv))
@@ -938,6 +938,15 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 
 	if (!conv)
 		return;
+
+	/* Did I send the message? */
+	if (purple_strequal(purple_conv_chat_get_nick(chat),
+				purple_normalize(purple_conversation_get_account(conv), who))) {
+		flags |= PURPLE_MESSAGE_SEND;
+		flags &= ~PURPLE_MESSAGE_RECV; /* Just in case some prpl sets it! */
+	} else {
+		flags |= PURPLE_MESSAGE_RECV;
+	}
 
 	/*
 	 * Make copies of the message and the sender in case plugins want

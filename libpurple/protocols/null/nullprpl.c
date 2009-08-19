@@ -909,7 +909,8 @@ static const char *nullprpl_normalize(const PurpleAccount *acct,
 static void nullprpl_set_buddy_icon(PurpleConnection *gc,
                                     PurpleStoredImage *img) {
  purple_debug_info("nullprpl", "setting %s's buddy icon to %s\n",
-                   gc->account->username, purple_imgstore_get_filename(img));
+                   gc->account->username,
+                   img ? purple_imgstore_get_filename(img) : "(null)");
 }
 
 static void nullprpl_remove_group(PurpleConnection *gc, PurpleGroup *group) {
@@ -1112,11 +1113,13 @@ static PurplePluginProtocolInfo prpl_info =
   NULL,                                /* whiteboard_prpl_ops */
   NULL,                                /* send_raw */
   NULL,                                /* roomlist_room_serialize */
-  NULL,	                               /* unregister_user */
+  NULL,                                /* unregister_user */
   NULL,                                /* send_attention */
-  NULL,                                /* attention_types */
+  NULL,                                /* get_attention_types */
   sizeof(PurplePluginProtocolInfo),    /* struct_size */
-  NULL,                                /* get_account_text_table */
+  NULL,
+  NULL,                                 /* initiate_media */
+  NULL                                  /* can_do_media */	
 };
 
 static void nullprpl_init(PurplePlugin *plugin)

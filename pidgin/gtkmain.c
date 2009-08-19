@@ -53,6 +53,7 @@
 #include "gtkft.h"
 #include "gtkidle.h"
 #include "gtklog.h"
+#include "gtkmedia.h"
 #include "gtknotify.h"
 #include "gtkplugin.h"
 #include "gtkpounce.h"
@@ -311,6 +312,8 @@ pidgin_ui_init(void)
 	pidgin_docklet_init();
 	pidgin_smileys_init();
 	pidgin_utils_init();
+	pidgin_medias_init();
+	pidgin_notify_init();
 }
 
 static GHashTable *ui_info = NULL;
@@ -325,6 +328,7 @@ pidgin_quit(void)
 
 	/* Uninit */
 	pidgin_utils_uninit();
+	pidgin_notify_uninit();
 	pidgin_smileys_uninit();
 	pidgin_conversations_uninit();
 	pidgin_status_uninit();
@@ -351,6 +355,26 @@ static GHashTable *pidgin_ui_get_info(void)
 		g_hash_table_insert(ui_info, "version", VERSION);
 		g_hash_table_insert(ui_info, "website", "http://pidgin.im");
 		g_hash_table_insert(ui_info, "dev_website", "http://developer.pidgin.im");
+		g_hash_table_insert(ui_info, "client_type", "pc");
+
+		/*
+		 * This is the client key for "Pidgin."  It is owned by the AIM
+		 * account "markdoliner."  Please don't use this key for other
+		 * applications.  You can either not specify a client key, in
+		 * which case the default "libpurple" key will be used, or you
+		 * can register for your own client key at
+		 * http://developer.aim.com/manageKeys.jsp
+		 */
+		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma1cSASNCKFtrdv9");
+		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma1cSASNCKFtrdv9");
+
+		/*
+		 * This is the distid for Pidgin, given to us by AOL.  Please
+		 * don't use this for other applications.  You can just not
+		 * specify a distid and libpurple will use a default.
+		 */
+		g_hash_table_insert(ui_info, "prpl-aim-distid", GINT_TO_POINTER(1550));
+		g_hash_table_insert(ui_info, "prpl-icq-distid", GINT_TO_POINTER(1550));
 	}
 
 	return ui_info;
@@ -382,34 +406,34 @@ show_usage(const char *name, gboolean terse)
 	if (terse) {
 		text = g_strdup_printf(_("%s %s. Try `%s -h' for more information.\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
 	} else {
+		GString *str = g_string_new(NULL);
+		g_string_append_printf(str, "%s %s\n", PIDGIN_NAME, DISPLAY_VERSION);
+		g_string_append_printf(str, _("Usage: %s [OPTION]...\n\n"), name);
+		g_string_append_printf(str, "  -c, --config=DIR    %s\n",
+				_("use DIR for config files"));
+		g_string_append_printf(str, "  -d, --debug         %s\n",
+				_("print debugging messages to stdout"));
+		g_string_append_printf(str, "  -f, --force-online  %s\n",
+				_("force online, regardless of network status"));
+		g_string_append_printf(str, "  -h, --help          %s\n",
+				_("display this help and exit"));
+		g_string_append_printf(str, "  -m, --multiple      %s\n",
+				_("allow multiple instances"));
+		g_string_append_printf(str, "  -n, --nologin       %s\n",
+				_("don't automatically login"));
+		g_string_append_printf(str, "  -l, --login[=NAME]  %s\n",
+				_("enable specified account(s) (optional argument NAME\n"
+				  "                      "
+				  "specifies account(s) to use, separated by commas."));
+		g_string_append_printf(str, "                      %s\n",
+				_("Without this only the first account will be enabled)."));
 #ifndef WIN32
-		text = g_strdup_printf(_("%s %s\n"
-		       "Usage: %s [OPTION]...\n\n"
-		       "  -c, --config=DIR    use DIR for config files\n"
-		       "  -d, --debug         print debugging messages to stdout\n"
-		       "  -f, --force-online  force online, regardless of network status\n"
-		       "  -h, --help          display this help and exit\n"
-		       "  -m, --multiple      do not ensure single instance\n"
-		       "  -n, --nologin       don't automatically login\n"
-		       "  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-		       "                      specifies account(s) to use, separated by commas.\n"
-		       "                      Without this only the first account will be enabled).\n"
-		       "  --display=DISPLAY   X display to use\n"
-		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
-#else
-		text = g_strdup_printf(_("%s %s\n"
-		       "Usage: %s [OPTION]...\n\n"
-		       "  -c, --config=DIR    use DIR for config files\n"
-		       "  -d, --debug         print debugging messages to stdout\n"
-		       "  -f, --force-online  force online, regardless of network status\n"
-		       "  -h, --help          display this help and exit\n"
-		       "  -m, --multiple      do not ensure single instance\n"
-		       "  -n, --nologin       don't automatically login\n"
-		       "  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-		       "                      specifies account(s) to use, separated by commas.\n"
-		       "                      Without this only the first account will be enabled).\n"
-		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
-#endif
+		g_string_append_printf(str, "  --display=DISPLAY   %s\n",
+				_("X display to use"));
+#endif /* !WIN32 */
+		g_string_append_printf(str, "  -v, --version       %s\n",
+				_("display the current version and exit"));
+		text = g_string_free(str, FALSE);
 	}
 
 	purple_print_utf8_to_console(stdout, text);
@@ -669,7 +693,8 @@ int main(int argc, char *argv[])
 	}
 	/* show version message */
 	if (opt_version) {
-		printf("%s %s\n", PIDGIN_NAME, DISPLAY_VERSION);
+		printf("%s %s (libpurple %s)\n", PIDGIN_NAME, DISPLAY_VERSION,
+		                                 purple_core_get_version());
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
 #endif
@@ -784,7 +809,7 @@ int main(int argc, char *argv[])
 		DBusMessage *message = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE,
 				DBUS_INTERFACE_PURPLE, "PurpleBlistSetVisible");
 		gboolean tr = TRUE;
-		dbus_message_append_args(message, DBUS_TYPE_UINT32, &tr, DBUS_TYPE_INVALID);
+		dbus_message_append_args(message, DBUS_TYPE_INT32, &tr, DBUS_TYPE_INVALID);
 		dbus_connection_send_with_reply_and_block(conn, message, -1, NULL);
 		dbus_message_unref(message);
 #endif

@@ -72,7 +72,7 @@ typedef enum
 	PURPLE_CONNECTION_ERROR_INVALID_USERNAME = 1,
 	/** The username, password or some other credential was incorrect.  Use
 	 *  #PURPLE_CONNECTION_ERROR_INVALID_USERNAME instead if the username
-         *  is known to be invalid.
+	 *  is known to be invalid.
 	 */
 	PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED = 2,
 	/** libpurple doesn't speak any of the authentication methods the
@@ -560,6 +560,9 @@ GList *purple_connections_get_connecting(void);
  * Checks if gc is still a valid pointer to a gc.
  *
  * @return @c TRUE if gc is valid.
+ *
+ * @deprecated Do not use this.  Instead, cancel your asynchronous request
+ *             when the PurpleConnection is destroyed.
  */
 /*
  * TODO: Eventually this bad boy will be removed, because it is

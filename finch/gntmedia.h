@@ -1,7 +1,11 @@
-/*
- * purple
+/**
+ * @file gntmedia.h GNT Media API
+ * @ingroup finch
+ */
+
+/* finch
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Finch is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -19,9 +23,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _YAHOO_CRYPT_H_
-#define _YAHOO_CRYPT_H_
 
-char *yahoo_crypt(const char *key, const char *salt);
+#ifndef GNT_MEDIA_H
+#define GNT_MEDIA_H
 
-#endif /* _YAHOO_CRYPT_H */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+G_BEGIN_DECLS
+
+void finch_media_manager_init(void);
+void finch_media_manager_uninit(void);
+
+G_END_DECLS
+
+#endif /* GNT_MEDIA_H */
+

@@ -46,7 +46,7 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
 	pload = msn_message_gen_payload(msg, &pload_size);
 	if (!purple_util_write_data_to_file_absolute(tmp, pload, pload_size))
 	{
-		purple_debug_error("msn", "could not save debug file");
+		purple_debug_error("msn", "could not save debug file\n");
 	}
 	g_free(tmp);
 }
@@ -65,9 +65,8 @@ msn_slplink_new(MsnSession *session, const char *username)
 
 	slplink = g_new0(MsnSlpLink, 1);
 
-#ifdef MSN_DEBUG_SLPLINK
-	purple_debug_info("msn", "slplink_new: slplink(%p)\n", slplink);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slplink_new: slplink(%p)\n", slplink);
 
 	slplink->session = session;
 	slplink->slp_seq_id = rand() % 0xFFFFFF00 + 4;
@@ -87,9 +86,8 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 {
 	MsnSession *session;
 
-#ifdef MSN_DEBUG_SLPLINK
-	purple_debug_info("msn", "slplink_destroy: slplink(%p)\n", slplink);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slplink_destroy: slplink(%p)\n", slplink);
 
 	g_return_if_fail(slplink != NULL);
 
@@ -269,9 +267,8 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		msg->msnslp_header.length = len;
 	}
 
-#ifdef MSN_DEBUG_SLP
-	msn_message_show_readable(msg, slpmsg->info, slpmsg->text_body);
-#endif
+	if (purple_debug_is_verbose())
+		msn_message_show_readable(msg, slpmsg->info, slpmsg->text_body);
 
 #ifdef MSN_DEBUG_SLP_FILES
 	debug_msg_to_file(msg, TRUE);
@@ -441,12 +438,10 @@ msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg)
 	slpmsg->ack_id     = msg->msnslp_header.id;
 	slpmsg->ack_sub_id = msg->msnslp_header.ack_id;
 	slpmsg->ack_size   = msg->msnslp_header.total_size;
-
-#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP ACK";
-#endif
 
 	msn_slplink_send_slpmsg(slplink, slpmsg);
+	msn_slpmsg_destroy(slpmsg);
 }
 
 static void
@@ -459,11 +454,10 @@ send_file_cb(MsnSlpCall *slpcall)
 	slpmsg = msn_slpmsg_new(slpcall->slplink);
 	slpmsg->slpcall = slpcall;
 	slpmsg->flags = 0x1000030;
-#ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP FILE";
-#endif
+
 	xfer = (PurpleXfer *)slpcall->xfer;
-	purple_xfer_start(slpcall->xfer, 0, NULL, 0);
+	purple_xfer_start(slpcall->xfer, -1, NULL, 0);
 	slpmsg->fp = xfer->dest_fp;
 	if (g_stat(purple_xfer_get_local_filename(xfer), &st) == 0)
 		slpmsg->size = st.st_size;
@@ -493,12 +487,11 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
 	MsnSlpMessage *slpmsg;
 	const char *data;
-	gsize offset;
+	guint64 offset;
 	gsize len;
 
-#ifdef MSN_DEBUG_SLP
-	msn_slpmsg_show(msg);
-#endif
+	if (purple_debug_is_verbose())
+		msn_slpmsg_show(msg);
 
 #ifdef MSN_DEBUG_SLP_FILES
 	debug_msg_to_file(msg, FALSE);
@@ -510,13 +503,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		g_return_if_reached();
 	}
 
-	slpmsg = NULL;
 	data = msn_message_get_bin_data(msg, &len);
-
-	/*
-		OVERHEAD!
-		if (msg->msnslp_header.length < msg->msnslp_header.total_size)
-	 */
 
 	offset = msg->msnslp_header.offset;
 
@@ -545,11 +532,12 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 					if (xfer != NULL)
 					{
 						purple_xfer_ref(xfer);
-						purple_xfer_start(xfer,	0, NULL, 0);
+						purple_xfer_start(xfer,	-1, NULL, 0);
 
 						if (xfer->data == NULL) {
 							purple_xfer_unref(xfer);
-							return;
+							msn_slpmsg_destroy(slpmsg);
+							g_return_if_reached();
 						} else {
 							purple_xfer_unref(xfer);
 							slpmsg->fp = xfer->dest_fp;
@@ -565,6 +553,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			if (slpmsg->buffer == NULL)
 			{
 				purple_debug_error("msn", "Failed to allocate buffer for slpmsg\n");
+				msn_slpmsg_destroy(slpmsg);
 				return;
 			}
 		}
@@ -572,13 +561,12 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	else
 	{
 		slpmsg = msn_slplink_message_find(slplink, msg->msnslp_header.session_id, msg->msnslp_header.id);
-	}
-
-	if (slpmsg == NULL)
-	{
-		/* Probably the transfer was canceled */
-		purple_debug_error("msn", "Couldn't find slpmsg\n");
-		return;
+		if (slpmsg == NULL)
+		{
+			/* Probably the transfer was canceled */
+			purple_debug_error("msn", "Couldn't find slpmsg\n");
+			return;
+		}
 	}
 
 	if (slpmsg->fp)
@@ -586,12 +574,12 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		/* fseek(slpmsg->fp, offset, SEEK_SET); */
 		len = fwrite(data, 1, len, slpmsg->fp);
 	}
-	else if (slpmsg->size)
+	else if (slpmsg->size && slpmsg->buffer)
 	{
 		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size)
 		{
 			purple_debug_error("msn",
-				"Oversized slpmsg - msgsize=%lld offset=%" G_GSIZE_FORMAT " len=%" G_GSIZE_FORMAT "\n",
+				"Oversized slpmsg - msgsize=%lld offset=%" G_GUINT64_FORMAT " len=%" G_GSIZE_FORMAT "\n",
 				slpmsg->size, offset, len);
 			g_return_if_reached();
 		}
@@ -682,7 +670,9 @@ gen_context(const char *file_name, const char *file_path)
 		size = st.st_size;
 
 	if(!file_name) {
-		u8 = purple_utf8_try_convert(g_basename(file_path));
+		gchar *basename = g_path_get_basename(file_path);
+		u8 = purple_utf8_try_convert(basename);
+		g_free(basename);
 		file_name = u8;
 	}
 

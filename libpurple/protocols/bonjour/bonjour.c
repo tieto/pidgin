@@ -89,13 +89,12 @@ bonjour_login(PurpleAccount *account)
 #ifdef _WIN32
 	if (!dns_sd_available()) {
 		purple_connection_error_reason(gc,
-			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-			_("The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: "
-			  "http://d.pidgin.im/BonjourWindows"
-			  " for more information."));
+				PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+				_("Unable to find Apple's \"Bonjour for Windows\" toolkit, see "
+				  "http://d.pidgin.im/BonjourWindows for more information."));
 		return;
 	}
-#endif
+#endif /* _WIN32 */
 
 	gc->flags |= PURPLE_CONNECTION_HTML;
 	gc->proto_data = bd = g_new0(BonjourData, 1);
@@ -108,8 +107,8 @@ bonjour_login(PurpleAccount *account)
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		/* Send a message about the connection error */
 		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Unable to listen for incoming IM connections\n"));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Unable to listen for incoming IM connections"));
 		return;
 	}
 
@@ -498,13 +497,13 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* whiteboard_prpl_ops */
 	NULL,                                                    /* send_raw */
 	NULL,                                                    /* roomlist_room_serialize */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	NULL,                                                    /* unregister_user */
+	NULL,                                                    /* send_attention */
+	NULL,                                                    /* get_attention_types */
+	sizeof(PurplePluginProtocolInfo),                        /* struct_size */
+	NULL,                                                    /* get_account_text_table */
+	NULL,                                                    /* initiate_media */
+	NULL                                                     /* can_do_media */
 };
 
 static PurplePluginInfo info =

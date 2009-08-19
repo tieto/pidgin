@@ -241,9 +241,12 @@ purple_theme_get_type(void)
 static gchar *
 theme_clean_text(const gchar *text)
 {
-	gchar *clean_text = g_markup_escape_text(text, -1);
-	g_strdelimit(clean_text, "\n", ' ');
-	purple_str_strip_char(clean_text, '\r');
+	gchar *clean_text = NULL;
+	if (text != NULL) {
+		clean_text = g_markup_escape_text(text, -1);
+		g_strdelimit(clean_text, "\n", ' ');
+		purple_str_strip_char(clean_text, '\r');
+	}
 	return clean_text;
 }
 
@@ -389,9 +392,10 @@ purple_theme_get_image_full(PurpleTheme *theme)
 {
 	const gchar *filename = purple_theme_get_image(theme);
 
-	g_return_val_if_fail(filename, NULL);
-
-	return g_build_filename(purple_theme_get_dir(PURPLE_THEME(theme)), filename, NULL);
+	if (filename)
+		return g_build_filename(purple_theme_get_dir(PURPLE_THEME(theme)), filename, NULL);
+	else
+		return NULL;
 }
 
 void

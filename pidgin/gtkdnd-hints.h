@@ -25,7 +25,7 @@
 #define _PIDGIN_DND_HINTS_H_
 
 #include <glib.h>
-#include <gtk/gtkwidget.h>
+#include <gtk/gtk.h>
 
 /**
  * Conversation drag-and-drop arrow types.

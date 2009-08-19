@@ -477,6 +477,7 @@ msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg)
 #endif
 
 	msn_slplink_send_slpmsg(slplink, slpmsg);
+	msn_slpmsg_destroy(slpmsg);
 }
 
 static void
@@ -496,7 +497,7 @@ send_file_cb(MsnSlpSession *slpsession)
 	slpmsg->info = "SLP FILE";
 #endif
 	xfer = (PurpleXfer *)slpcall->xfer;
-	purple_xfer_start(slpcall->xfer, 0, NULL, 0);
+	purple_xfer_start(slpcall->xfer, -1, NULL, 0);
 	slpmsg->fp = xfer->dest_fp;
 	if (g_stat(purple_xfer_get_local_filename(xfer), &st) == 0)
 		slpmsg->size = st.st_size;
@@ -510,7 +511,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
 	MsnSlpMessage *slpmsg;
 	const char *data;
-	gsize offset;
+	guint64 offset;
 	gsize len;
 
 #ifdef MSN_DEBUG_SLP
@@ -561,7 +562,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 					if (xfer != NULL)
 					{
 						purple_xfer_ref(xfer);
-						purple_xfer_start(xfer,	0, NULL, 0);
+						purple_xfer_start(xfer,	-1, NULL, 0);
 
 						if (xfer->data == NULL) {
 							purple_xfer_unref(xfer);
@@ -581,6 +582,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			if (slpmsg->buffer == NULL)
 			{
 				purple_debug_error("msn", "Failed to allocate buffer for slpmsg\n");
+				msn_slpmsg_destroy(slpmsg);
 				return;
 			}
 		}
@@ -602,7 +604,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		/* fseek(slpmsg->fp, offset, SEEK_SET); */
 		len = fwrite(data, 1, len, slpmsg->fp);
 	}
-	else if (slpmsg->size)
+	else if (slpmsg->size && slpmsg->buffer)
 	{
 		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size)
 		{

@@ -25,6 +25,7 @@
 #include "sound-theme.h"
 #include "util.h"
 #include "xmlnode.h"
+#include "debug.h"
 
 /*****************************************************************************
  * Sound Theme Builder
@@ -34,8 +35,9 @@ static PurpleTheme *
 purple_sound_loader_build(const gchar *dir)
 {
 	xmlnode *root_node = NULL, *sub_node;
-	gchar *filename_full, *data;
+	gchar *filename_full, *data = NULL;
 	PurpleSoundTheme *theme = NULL;
+	const gchar *name;
 
 	/* Find the theme file */
 	g_return_val_if_fail(dir != NULL, NULL);
@@ -45,30 +47,35 @@ purple_sound_loader_build(const gchar *dir)
 		root_node = xmlnode_from_file(dir, "theme.xml", "sound themes", "sound-theme-loader");
 
 	g_free(filename_full);
-	g_return_val_if_fail(root_node != NULL, NULL);
+	if (root_node == NULL)
+		return NULL;
 
-	/* Parse the tree */
-	sub_node = xmlnode_get_child(root_node, "description");
-	data = xmlnode_get_data(sub_node);
+	name = xmlnode_get_attrib(root_node, "name");
 
-	if (xmlnode_get_attrib(root_node, "name") != NULL) {
-		theme = g_object_new(PURPLE_TYPE_SOUND_THEME,
-				"type", "sound",
-				"name", xmlnode_get_attrib(root_node, "name"),
-				"author", xmlnode_get_attrib(root_node, "author"),
-				"image", xmlnode_get_attrib(root_node, "image"),
-				"directory", dir,
-				"description", data, NULL);
+	if (name && purple_strequal(xmlnode_get_attrib(root_node, "type"), "sound")) {
+		/* Parse the tree */
+		sub_node = xmlnode_get_child(root_node, "description");
+		data = xmlnode_get_data(sub_node);
 
-		sub_node = xmlnode_get_child(root_node, "event");
+		if (xmlnode_get_attrib(root_node, "name") != NULL) {
+			theme = g_object_new(PURPLE_TYPE_SOUND_THEME,
+					"type", "sound",
+					"name", name,
+					"author", xmlnode_get_attrib(root_node, "author"),
+					"image", xmlnode_get_attrib(root_node, "image"),
+					"directory", dir,
+					"description", data, NULL);
 
-		while (sub_node) {
-			purple_sound_theme_set_file(theme,
-					xmlnode_get_attrib(sub_node, "name"),
-					xmlnode_get_attrib(sub_node, "file"));
-			sub_node = xmlnode_get_next_twin(sub_node);
+			sub_node = xmlnode_get_child(root_node, "event");
+
+			while (sub_node) {
+				purple_sound_theme_set_file(theme,
+						xmlnode_get_attrib(sub_node, "name"),
+						xmlnode_get_attrib(sub_node, "file"));
+				sub_node = xmlnode_get_next_twin(sub_node);
+			}
 		}
-	}
+	} else purple_debug_warning("sound-theme-loader", "Missing attribute or problem with the root element\n");
 
 	xmlnode_free(root_node);
 	g_free(data);

@@ -32,6 +32,7 @@
 #include <gntutils.h>
 
 #include "finch.h"
+#include <internal.h>
 
 #include "debug.h"
 #include "notify.h"
@@ -484,10 +485,10 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 				char *value = NULL;
 				switch(type) {
 					case PURPLE_PREF_BOOLEAN:
-						value = g_strdup_printf("%d", (int)list->next->data);
+						value = g_strdup_printf("%d", GPOINTER_TO_INT(list->next->data));
 						break;
 					case PURPLE_PREF_INT:
-						value = g_strdup_printf("%d", (int)list->next->data);
+						value = g_strdup_printf("%d", GPOINTER_TO_INT(list->next->data));
 						break;
 					case PURPLE_PREF_STRING:
 						value = g_strdup(list->next->data);

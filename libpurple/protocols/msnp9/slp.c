@@ -33,8 +33,8 @@
 
 #include "smiley.h"
 
-/* ms to delay between sending buddy icon requests to the server. */
-#define BUDDY_ICON_DELAY 20000
+/* Seconds to delay between sending buddy icon requests to the server. */
+#define BUDDY_ICON_DELAY 20
 
 static void send_ok(MsnSlpCall *slpcall, const char *branch,
 					const char *type, const char *content);
@@ -338,7 +338,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		char *bin;
 		gsize bin_len;
 		guint32 file_size;
-		char *file_name;
+		gchar *file_name;
 		gunichar2 *uni_name;
 
 		account = slpcall->slplink->session->account;
@@ -368,7 +368,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			g_free(bin);
 
-			purple_xfer_set_filename(xfer, file_name);
+			purple_xfer_set_filename(xfer, file_name ? file_name : "");
+			g_free(file_name);
 			purple_xfer_set_size(xfer, file_size);
 			purple_xfer_set_init_fnc(xfer, msn_xfer_init);
 			purple_xfer_set_request_denied_fnc(xfer, msn_xfer_cancel);
@@ -1058,8 +1059,8 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 		purple_timeout_remove(userlist->buddy_icon_request_timer);
 	}
 
-	/* Wait BUDDY_ICON_DELAY ms before freeing our window slot and requesting the next icon. */
-	userlist->buddy_icon_request_timer = purple_timeout_add(BUDDY_ICON_DELAY, 
+	/* Wait BUDDY_ICON_DELAY_S seconds before freeing our window slot and requesting the next icon. */
+	userlist->buddy_icon_request_timer = purple_timeout_add_seconds(BUDDY_ICON_DELAY, 
 														  msn_release_buddy_icon_request_timeout, userlist);
 }
 

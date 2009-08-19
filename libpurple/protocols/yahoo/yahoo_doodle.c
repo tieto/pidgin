@@ -41,12 +41,11 @@
 #include "util.h"
 #include "version.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_packet.h"
 #include "yahoo_friend.h"
 #include "yahoochat.h"
 #include "ycht.h"
-#include "yahoo_auth.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_picture.h"
 
@@ -385,7 +384,7 @@ static void yahoo_doodle_command_send_generic(const char *type,
 											  const char *imv,
 											  const char *sixtyfour)
 {
-	struct yahoo_data *yd;
+	YahooData *yd;
 	struct yahoo_packet *pkt;
 
 	purple_debug_info("yahoo", "doodle: Sent %s (%s)\n", type, to);
@@ -393,7 +392,7 @@ static void yahoo_doodle_command_send_generic(const char *type,
 	yd = gc->proto_data;
 
 	/* Make and send an acknowledge (ready) Doodle packet */
-	pkt = yahoo_packet_new(YAHOO_SERVICE_P2PFILEXFER, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_P2PFILEXFER, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash_str(pkt, 49,  "IMVIRONMENT");
 	yahoo_packet_hash_str(pkt, 1,    purple_account_get_username(gc->account));
 	yahoo_packet_hash_str(pkt, 14,   message);

@@ -153,11 +153,12 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 	}
 	g_free(data);
 
-	if (hasActions) {
+	if (hasActions)
 		cb(js, result, actionhandle, user_data);
-		g_free(actionhandle);
-	} else
+	else
 		((jabber_x_data_cb)cb)(js, result, user_data);
+
+	g_free(actionhandle);
 }
 
 static void jabber_x_data_cancel_cb(struct jabber_x_data_data *data, PurpleRequestFields *fields) {

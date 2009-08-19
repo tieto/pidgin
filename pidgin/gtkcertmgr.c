@@ -144,12 +144,12 @@ static void
 tls_peers_mgmt_import_ok2_cb(gpointer data, const char *result)
 {
 	PurpleCertificate *crt = (PurpleCertificate *) data;
-	const char *id = result;
 
 	/* TODO: Perhaps prompt if you're overwriting a cert? */
 
 	/* Drop the certificate into the pool */
-	purple_certificate_pool_store(tpm_dat->tls_peers, id, crt);
+	if (result && *result)
+		purple_certificate_pool_store(tpm_dat->tls_peers, result, crt);
 
 	/* And this certificate is not needed any more */
 	purple_certificate_destroy(crt);
@@ -187,7 +187,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 		purple_request_input(tpm_dat,
 				     _("Certificate Import"),
 				     _("Specify a hostname"),
-				     _("Type the host name this certificate is for."),
+				     _("Type the host name for this certificate."),
 				     default_hostname,
 				     FALSE, /* Not multiline */
 				     FALSE, /* Not masked? */

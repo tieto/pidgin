@@ -117,8 +117,10 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 
 	servconn = cmdproc->servconn;
 
-	if (!servconn->connected)
+	if (!servconn->connected) {
+		/* TODO: Need to free trans */
 		return;
+	}
 
 	msn_history_add(cmdproc->history, trans);
 
@@ -208,6 +210,7 @@ msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
 
 	trans = g_new0(MsnTransaction, 1);
 
+	trans->cmdproc = cmdproc;
 	trans->command = g_strdup(command);
 
 	if (format != NULL)
@@ -330,60 +333,38 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			trans->timer = 0;
 		}
 
-	if (g_ascii_isdigit(cmd->command[0]))
+	if (g_ascii_isdigit(cmd->command[0]) && trans != NULL)
 	{
-		if (trans != NULL)
-		{
-			MsnErrorCb error_cb = NULL;
-			int error;
+		MsnErrorCb error_cb;
+		int error;
 
-			error = atoi(cmd->command);
+		error = atoi(cmd->command);
 
-			if (trans->error_cb != NULL)
-				error_cb = trans->error_cb;
+		error_cb = trans->error_cb;
+		if (error_cb == NULL)
+			error_cb = g_hash_table_lookup(cmdproc->cbs_table->errors, trans->command);
 
-			if (error_cb == NULL && cmdproc->cbs_table->errors != NULL)
-				error_cb = g_hash_table_lookup(cmdproc->cbs_table->errors, trans->command);
+		if (error_cb != NULL)
+			error_cb(cmdproc, trans, error);
+		else
+			msn_error_handle(cmdproc->session, error);
 
-			if (error_cb != NULL)
-			{
-				error_cb(cmdproc, trans, error);
-			}
-			else
-			{
-#if 1
-				msn_error_handle(cmdproc->session, error);
-#else
-				purple_debug_warning("msn", "Unhandled error '%s'\n",
-								   cmd->command);
-#endif
-			}
-
-			return;
-		}
+		return;
 	}
 
-	if (cmdproc->cbs_table->async != NULL)
-		cb = g_hash_table_lookup(cmdproc->cbs_table->async, cmd->command);
+	cb = g_hash_table_lookup(cmdproc->cbs_table->async, cmd->command);
 
-	if (cb == NULL && trans != NULL)
-	{
-		if (trans->callbacks != NULL)
-			cb = g_hash_table_lookup(trans->callbacks, cmd->command);
-	}
+	if (cb == NULL && trans != NULL && trans->callbacks != NULL)
+		cb = g_hash_table_lookup(trans->callbacks, cmd->command);
 
-	if (cb == NULL && cmdproc->cbs_table->fallback != NULL)
+	if (cb == NULL)
 		cb = g_hash_table_lookup(cmdproc->cbs_table->fallback, cmd->command);
 
 	if (cb != NULL)
-	{
 		cb(cmdproc, cmd);
-	}
 	else
-	{
 		purple_debug_warning("msn", "Unhandled command '%s'\n",
 						   cmd->command);
-	}
 
 	if (trans != NULL && trans->pendent_cmd != NULL)
 		msn_transaction_unqueue_cmd(trans, cmdproc);

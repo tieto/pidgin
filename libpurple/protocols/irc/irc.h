@@ -72,7 +72,7 @@ struct irc_conn {
 		char *name;
 		char *server;
 		char *serverinfo;
-		char *channels;
+		GString *channels;
 		int ircop;
 		int identified;
 		int idle;
@@ -97,6 +97,7 @@ struct irc_buddy {
 	char *name;
 	gboolean online;
 	gboolean flag;
+	int ref;
 };
 
 typedef int (*IRCCmdCallback) (struct irc_conn *irc, const char *cmd, const char *target, const char **args);

@@ -139,7 +139,34 @@ dont-know.png       :-L     :-l
 shame.png           [-X     [-x
 musical-note.png    :-"
 
-# Only available after activating the Yahoo! Fighter IMVironment
+# Following Yahoo! Messenger 8.1
+[Yahoo JAPAN]
+smile.png           :)      :-)
+question.png        :-/     :-\\
+shock.png           :-O     :O      :-o     :o 
+devil.png           >:)
+angel.png           O:-)    o:-)    0:-)
+sick.png            :-&
+yawn.png            (:|
+sad.png             :(      :-(
+angry.png           X-(     x-(     X(      x(
+crying.png          :((
+wink.png            ;)      ;-)
+thinking.png        :-?
+smile-big.png       :D      :-D     :d      :-d
+tongue.png          :-P     :P      :-p     :p
+neutral.png         :|      :-|
+sleepy.png          I-)     i-)     |-)
+kiss.png            :-*     :*
+confused.png        :-S     :-s
+hug-left.png        >:D<    >:d<
+party.png           <:-P    <:-p
+
+# Hidden Yahoo emotes
+coffee.png          ~o)     ~O)
+dont-know.png       :-L     :-l
+shame.png           [-X     [-x
+musical-note.png    :-"
 
 
 # Following MySpaceIM Beta 1.0.697.0
@@ -161,10 +188,10 @@ smile.png                 :)    :-)    =)
 smile-big.png             :D    :-D    =D
 wink.png                  ;)    ;-)    ;^)
 shock.png                 :-o
-tongue.png                :P    :-P
+tongue.png                :P    :-P    :-p
 glasses-cool.png          B-)
 angry.png                 X-(
-sad.png                   :(
+sad.png                   :(    :-(    =(
 crying.png                :'(
 neutral.png               :-|
 thinking.png              :-/

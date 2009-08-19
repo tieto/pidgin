@@ -187,18 +187,18 @@ static void jabber_oob_xfer_recv_canceled(PurpleXfer *xfer) {
 	jabber_oob_xfer_recv_error(xfer, "404");
 }
 
-void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
+void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
+                      const char *id, xmlnode *querynode) {
 	JabberOOBXfer *jox;
 	PurpleXfer *xfer;
 	char *filename;
 	char *url;
-	const char *type;
-	xmlnode *querynode, *urlnode;
+	xmlnode *urlnode;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "set"))
+	if(type != JABBER_IQ_SET)
 		return;
 
-	if(!(querynode = xmlnode_get_child(packet, "query")))
+	if(!from)
 		return;
 
 	if(!(urlnode = xmlnode_get_child(querynode, "url")))
@@ -207,14 +207,16 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 	url = xmlnode_get_data(urlnode);
 
 	jox = g_new0(JabberOOBXfer, 1);
-	purple_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL);
+	if (!purple_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL)) {
+		g_free(url);
+		return;
+	}
 	g_free(url);
 	jox->js = js;
 	jox->headers = g_string_new("");
-	jox->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
+	jox->iq_id = g_strdup(id);
 
-	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE,
-			xmlnode_get_attrib(packet, "from"));
+	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE, from);
 	if (xfer)
 	{
 		xfer->data = jox;

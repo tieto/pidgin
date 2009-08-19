@@ -24,16 +24,14 @@
 #ifndef PIDGIN_MENU_TRAY_H
 #define PIDGIN_MENU_TRAY_H
 
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkmenuitem.h>
-#include <gtk/gtktooltips.h>
+#include <gtk/gtk.h>
 
-#define PIDGIN_TYPE_MENU_TRAY				(pidgin_menu_tray_get_gtype())
-#define PIDGIN_MENU_TRAY(obj)				(GTK_CHECK_CAST((obj), PIDGIN_TYPE_MENU_TRAY, PidginMenuTray))
-#define PIDGIN_MENU_TRAY_CLASS(klass)		(GTK_CHECK_CLASS_CAST((klass), PIDGIN_TYPE_MENU_TRAY, PidginMenuTrayClass))
-#define PIDGIN_IS_MENU_TRAY(obj)			(GTK_CHECK_TYPE((obj), PIDGIN_TYPE_MENU_TRAY))
-#define PIDGIN_IS_MENU_TRAY_CLASS(klass)	(GTK_CHECK_CLASS_TYPE((klass), PIDGIN_TYPE_MENU_TRAY))
-#define PIDGIN_MENU_TRAY_GET_CLASS(obj)	(GTK_CHECK_GET_CLASS((obj), PIDGIN_TYPE_MENU_TRAY, PidginMenuTrayClass))
+#define PIDGIN_TYPE_MENU_TRAY            (pidgin_menu_tray_get_gtype())
+#define PIDGIN_MENU_TRAY(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PIDGIN_TYPE_MENU_TRAY, PidginMenuTray))
+#define PIDGIN_MENU_TRAY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PIDGIN_TYPE_MENU_TRAY, PidginMenuTrayClass))
+#define PIDGIN_IS_MENU_TRAY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PIDGIN_TYPE_MENU_TRAY))
+#define PIDGIN_IS_MENU_TRAY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PIDGIN_TYPE_MENU_TRAY))
+#define PIDGIN_MENU_TRAY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PIDGIN_TYPE_MENU_TRAY, PidginMenuTrayClass))
 
 typedef struct _PidginMenuTray				PidginMenuTray;
 typedef struct _PidginMenuTrayClass		PidginMenuTrayClass;

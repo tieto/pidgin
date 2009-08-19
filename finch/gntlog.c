@@ -24,6 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "finch.h"
+#include <internal.h>
 
 #include <gnt.h>
 #include <gntbox.h>
@@ -66,7 +67,7 @@ static guint log_viewer_hash(gconstpointer data)
 			g_str_hash(purple_account_get_username(viewer->account));
 	}
 
-	return (guint)viewer;
+	return g_direct_hash(viewer);
 }
 
 static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)

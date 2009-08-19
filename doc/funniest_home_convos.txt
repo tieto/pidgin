@@ -565,3 +565,49 @@ not :)
              for using pidgen
 22:36 <user> why do they think this is a bad client? does it have history?
 
+--
+
+15:45 <deryni> We've had a Grand Plugin Database Plan for approximately forever.
+15:45 <SimGuy> ah, the GPDP
+15:46 <khc> well, there was a Grand Smiley Theme Database
+15:47 <SimGuy> the GSTD sounds like a bad acronym
+15:47 <khc> I realized after typing that
+
+--
+
+(01:51:38 AM) user entered the room.
+(01:52:46 AM) user: .addKeyActionListener(new KeyActionListener() onKeyPress() {if (event.geyKeyPresss().equals(Key.UP_ARROW) { inputbox.text = history.pop() }}}}}}});
+(01:52:51 AM) user: THERE, FOR **** SAKE
+(01:52:53 AM) user: its 2009
+(01:53:06 AM) user: oh wait. ctrl up works
+(01:53:07 AM) user: lol
+(01:53:11 AM) user: yey me
+(01:53:16 AM) user left the room.
+(01:55:31 AM) darkrain42: Wow.
+(01:58:15 AM) QuLogic: I think he failed to realize we'd have to re-write pidgin in java to do that
+(01:59:44 AM) khc: history.pop() is clearly wrong too
+
+--
+
+Some time later:
+(02:41:55 AM) user entered the room.
+(02:42:24 AM) user: didn't I read some idiot post, about 2 years ago, before pidgin was renamed / forked, over one dev refusing to make minimize on close?
+(02:43:12 AM) QuLogic: I see you've learned to at least ask a question before jumping to random conclusions
+(02:44:01 AM) user: QuLogic: :-))))))))))))))))))))))
+(02:44:12 AM) user: hey, I submitted a code patch!
+(02:44:36 AM) user: now, anyway, what happened? why did I get the buddy list (empty) stealing focus, and why did it exit on close?
+(02:44:40 AM) QuLogic: it's not really a patch if it's in the wrong language
+(02:44:42 AM) user: I've had this argument before, in 2006
+(02:44:55 AM) user: QuLogic: simple, rewrite the rest ;-)
+(02:44:58 AM) khc: pidgin never steals focus
+(02:45:10 AM) khc: if it exit on close, it's because you didn't turn on the systray icon
+(02:47:17 AM) user: khc - and that isn't default... why? anyway. I recall something on the matter, and I think this was the project (pre-fork?) or is this the unforked, renamed? I forget.
+(02:47:42 AM) user: Whoever it was arguing about it (and font sizes I believe) was an idiot... not one of you I suppose, just making idle chit chat.
+(02:47:43 AM) user: thanks
+(02:47:48 AM) darkrain42: It is on by default. Some distros change that.
+(02:48:00 AM) darkrain42: And I don't even know what you're arguing about at this point.
+(02:48:11 AM) user: ... /leave - That command doesn't work on this protocol... /leave #pidgin ...That comm..... :-(((
+(02:48:18 AM) user: darkrain42: now arguing, just remembering something
+(02:48:27 AM) user left the room.
+(02:49:04 AM) darkrain42: Wow. (again)
+

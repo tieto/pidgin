@@ -39,29 +39,18 @@ typedef struct _JabberAdHocActionInfo {
 	GList *actionslist;
 } JabberAdHocActionInfo;
 
-void jabber_adhoc_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer data) {
-	const char *from = xmlnode_get_attrib(packet, "from");
-	const char *type = xmlnode_get_attrib(packet, "type");
-	const char *node;
-	xmlnode *query, *item;
-	JabberID *jabberid;
+static void
+jabber_adhoc_got_buddy_list(JabberStream *js, const char *from, xmlnode *query)
+{
+	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL;
+	xmlnode *item;
 
-	if(strcmp(type, "result"))
-		return;
-
-	query = xmlnode_get_child_with_namespace(packet,"query","http://jabber.org/protocol/disco#items");
-	if(!query)
-		return;
-	node = xmlnode_get_attrib(query,"node");
-	if(!node || strcmp(node, "http://jabber.org/protocol/commands"))
-		return;
-
-	if((jabberid = jabber_id_new(from))) {
-		if(jabberid->resource && (jb = jabber_buddy_find(js, from, TRUE)))
-			jbr = jabber_buddy_find_resource(jb, jabberid->resource);
-		jabber_id_free(jabberid);
+	if ((jid = jabber_id_new(from))) {
+		if (jid->resource && (jb = jabber_buddy_find(js, from, TRUE)))
+			jbr = jabber_buddy_find_resource(jb, jid->resource);
+		jabber_id_free(jid);
 	}
 
 	if(!jbr)
@@ -95,7 +84,30 @@ void jabber_adhoc_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 	}
 }
 
-static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data);
+void
+jabber_adhoc_disco_result_cb(JabberStream *js, const char *from,
+                             JabberIqType type, const char *id,
+                             xmlnode *packet, gpointer data)
+{
+	xmlnode *query;
+	const char *node;
+
+	if (type == JABBER_IQ_ERROR)
+		return;
+
+	query = xmlnode_get_child_with_namespace(packet, "query", "http://jabber.org/protocol/disco#items");
+	if (!query)
+		return;
+	node = xmlnode_get_attrib(query, "node");
+	if (!purple_strequal(node, "http://jabber.org/protocol/commands"))
+		return;
+
+	jabber_adhoc_got_buddy_list(js, from, query);
+}
+
+static void jabber_adhoc_parse(JabberStream *js, const char *from,
+                               JabberIqType type, const char *id,
+                               xmlnode *packet, gpointer data);
 
 static void do_adhoc_action_cb(JabberStream *js, xmlnode *result, const char *actionhandle, gpointer user_data) {
 	xmlnode *command;
@@ -131,13 +143,16 @@ static void do_adhoc_action_cb(JabberStream *js, xmlnode *result, const char *ac
 	jabber_iq_send(iq);
 }
 
-static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data) {
+static void
+jabber_adhoc_parse(JabberStream *js, const char *from,
+                   JabberIqType type, const char *id,
+                   xmlnode *packet, gpointer data)
+{
 	xmlnode *command = xmlnode_get_child_with_namespace(packet, "command", "http://jabber.org/protocol/commands");
 	const char *status = xmlnode_get_attrib(command,"status");
 	xmlnode *xdata = xmlnode_get_child_with_namespace(command,"x","jabber:x:data");
-	const char *type = xmlnode_get_attrib(packet,"type");
 
-	if(type && !strcmp(type,"error")) {
+	if (type == JABBER_IQ_ERROR) {
 		char *msg = jabber_parse_error(js, packet, NULL);
 		if(!msg)
 			msg = g_strdup(_("Unknown Error"));
@@ -147,8 +162,6 @@ static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data)
 		g_free(msg);
 		return;
 	}
-	if(!type || strcmp(type,"result"))
-		return;
 
 	if(!status)
 		return;
@@ -159,7 +172,7 @@ static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 		if(note) {
 			char *data = xmlnode_get_data(note);
-			purple_notify_info(NULL, xmlnode_get_attrib(packet, "from"), data, NULL);
+			purple_notify_info(NULL, from, data, NULL);
 			g_free(data);
 		}
 
@@ -199,7 +212,7 @@ static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 		actionInfo = g_new0(JabberAdHocActionInfo, 1);
 		actionInfo->sessionid = g_strdup(xmlnode_get_attrib(command,"sessionid"));
-		actionInfo->who = g_strdup(xmlnode_get_attrib(packet,"from"));
+		actionInfo->who = g_strdup(from);
 		actionInfo->node = g_strdup(xmlnode_get_attrib(command,"node"));
 		actionInfo->actionslist = actionslist;
 
@@ -218,8 +231,9 @@ void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data) {
 	}
 }
 
-static void jabber_adhoc_server_got_list_cb(JabberStream *js, xmlnode *packet, gpointer data) {
-	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query", "http://jabber.org/protocol/disco#items");
+static void
+jabber_adhoc_got_server_list(JabberStream *js, const char *from, xmlnode *query)
+{
 	xmlnode *item;
 
 	if(!query)
@@ -248,6 +262,29 @@ static void jabber_adhoc_server_got_list_cb(JabberStream *js, xmlnode *packet, g
 		cmd->name = g_strdup(xmlnode_get_attrib(item,"name"));
 
 		js->commands = g_list_append(js->commands,cmd);
+	}
+
+	if (js->state == JABBER_STREAM_CONNECTED)
+		purple_prpl_got_account_actions(purple_connection_get_account(js->gc));
+}
+
+static void
+jabber_adhoc_server_got_list_cb(JabberStream *js, const char *from,
+                                JabberIqType type, const char *id,
+                                xmlnode *packet, gpointer data)
+{
+	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query", "http://jabber.org/protocol/disco#items");
+
+	jabber_adhoc_got_server_list(js, from, query);
+
+}
+
+void jabber_adhoc_got_list(JabberStream *js, const char *from, xmlnode *query)
+{
+	if (purple_strequal(from, js->user->domain)) {
+		jabber_adhoc_got_server_list(js, from, query);
+	} else {
+		jabber_adhoc_got_buddy_list(js, from, query);
 	}
 }
 

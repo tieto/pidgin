@@ -121,7 +121,7 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 
 	} else {
 		PurpleConnectionError reason;
-		char *err = g_strdup_printf(_("Login failed (%s)."),
+		char *err = g_strdup_printf(_("Unable to login: %s"),
 					    nm_error_to_string (ret_code));
 
 		switch (ret_code) {
@@ -140,7 +140,7 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 				reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		}
 
-		purple_connection_error_reason (gc, reason, err);
+		purple_connection_error_reason(gc, reason, err);
 		g_free(err);
 	}
 }
@@ -1126,7 +1126,7 @@ _check_for_disconnect(NMUser * user, NMERR_T err)
 
 	if (_is_disconnect_error(err)) {
 
-		purple_connection_error_reason (gc,
+		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Error communicating with server. Closing connection."));
 		return TRUE;
@@ -1701,7 +1701,7 @@ novell_ssl_recv_cb(gpointer data, PurpleSslConnection * gsc,
 
 		if (_is_disconnect_error(rc)) {
 
-			purple_connection_error_reason (gc,
+			purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Error communicating with server. Closing connection."));
 		} else {
@@ -1742,9 +1742,9 @@ novell_ssl_connected_cb(gpointer data, PurpleSslConnection * gsc,
 		conn->connected = TRUE;
 		purple_ssl_input_add(gsc, novell_ssl_recv_cb, gc);
 	} else {
-		purple_connection_error_reason (gc,
+		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Unable to connect to server."));
+			_("Unable to connect"));
 	}
 
 	purple_connection_update_progress(gc, _("Waiting for response..."),
@@ -2027,10 +2027,9 @@ _evt_user_disconnect(NMUser * user, NMEvent * event)
 	{
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL);
-		purple_connection_error_reason (gc,
+		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NAME_IN_USE,
-			_("You have been logged out because you"
-			  " logged in at another workstation."));
+			_("You have signed on from another location"));
 	}
 }
 
@@ -2184,10 +2183,10 @@ novell_login(PurpleAccount * account)
 		 */
 
 		/* ...but for now just error out with a nice message. */
-		purple_connection_error_reason (gc,
+		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Unable to connect to server. Please enter the "
-			  "address of the server you wish to connect to."));
+			  "address of the server to which you wish to connect."));
 		return;
 	}
 
@@ -2213,9 +2212,9 @@ novell_login(PurpleAccount * account)
 													  user->conn->addr, user->conn->port,
 													  novell_ssl_connected_cb, novell_ssl_connect_error, gc);
 		if (user->conn->ssl_conn->data == NULL) {
-			purple_connection_error_reason (gc,
+			purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("Error. SSL support is not installed."));
+				_("SSL support unavailable"));
 		}
 	}
 }
@@ -2547,7 +2546,7 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 	if (gc == NULL || buddy == NULL || group == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = (NMUser *) purple_connection_get_protocol_data(gc);
 	if (user == NULL)
 		return;
 
@@ -2555,6 +2554,10 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 	 * the add_buddy calls. Server side list is the master.
 	 */
 	if (!user->clist_synched)
+		return;
+
+	/* Don't re-add a buddy that is already on our contact list */
+	if (nm_find_user_record(user, purple_buddy_get_name(buddy)) != NULL)
 		return;
 
 	contact = nm_create_contact();
@@ -3520,13 +3523,13 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,						/* whiteboard_prpl_ops */
 	NULL,						/* send_raw */
 	NULL,						/* roomlist_room_serialize */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
+	NULL,						/* unregister_user */
+	NULL,						/* send_attention */
+	NULL,						/* get_attention_types */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	NULL,						/* get_account_text_table */
+	NULL,						/* initiate_media */
+	NULL						/* can_do_media */
 };
 
 static PurplePluginInfo info = {

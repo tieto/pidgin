@@ -823,15 +823,18 @@ lookup_locale (const PurpleDesktopItem *item, const char *key, const char *local
 	}
 }
 
-/* fallback to find something suitable for C locale */
+/**
+ * Fallback to find something suitable for C locale.
+ *
+ * @return A newly allocated string which should be g_freed by the caller.
+ */
 static char *
 try_english_key (PurpleDesktopItem *item, const char *key)
 {
-	char *str;
+	char *str = NULL;
 	char *locales[] = { "en_US", "en_GB", "en_AU", "en", NULL };
 	int i;
 
-	str = NULL;
 	for (i = 0; locales[i] != NULL && str == NULL; i++) {
 		str = g_strdup (lookup_locale (item, key, locales[i]));
 	}
