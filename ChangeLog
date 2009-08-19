@@ -1,5 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.6.1 (08/18/2009):
+	* Fix a crash when some users send you a link in a Yahoo IM
+	* Fix compilation with GTK+ < 2.6.0
+	* Fix compilation on Windows
+
 version 2.6.0 (08/18/2009):
 	libpurple:
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
