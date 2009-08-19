@@ -373,7 +373,7 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 	g_object_class_install_property(obj_class, PROP_BACKGROUND_COLOR, pspec);
 
 	pspec = g_param_spec_pointer("layout", _("Layout"),
-			_("The layout of icons, name, and status of the blist"),
+			_("The layout of icons, name, and status of the buddy list"),
 			G_PARAM_READWRITE);
 
 	g_object_class_install_property(obj_class, PROP_LAYOUT, pspec);

@@ -2077,21 +2077,24 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL);
 
-		msg = g_strdup(_("Incorrect password"));
+		msg = g_strdup(_("Invalid username or password"));
 		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 		break;
 	case 14:
-		msg = g_strdup(_("Your account is locked, please log in to the Yahoo! website."));
+		msg = g_strdup(_("Your account has been locked due to too many failed login attempts."
+					"  Please try logging into the Yahoo! website."));
 		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 		break;
 	case 52:
 		/* See #9660. As much as we know, reconnecting shouldn't hurt */
 		purple_debug_info("yahoo", "Got error 52, Set to autoreconnect\n");
-		msg = g_strdup_printf(_("Unknown error"));
+		msg = g_strdup_printf(_("Unknown error 52.  Reconnecting should fix this."));
 		reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		break;
 	case 1013:
-		msg = g_strdup(_("Invalid username"));
+		msg = g_strdup(_("Error 1013: The username you have entered is invalid."
+					"  The most common cause of this error is entering your e-mail"
+					" address instead of your Yahoo! ID."));
 		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 		break;
 	default:
