@@ -63,14 +63,14 @@ typedef struct _GtkWebViewClass GtkWebViewClass;
  *
  * @return the GType for GtkWebView widget
  */
-GType gtk_webview_get_type ();
+GType gtk_webview_get_type (void);
 
 /**
  * Create a new GtkWebView object
  *
  * @return a GtkWidget corresponding to the GtkWebView object
  */
-GtkWidget* gtk_webview_new ();
+GtkWidget* gtk_webview_new (void);
 
 /**
  * A very basic routine to append html, which can be considered

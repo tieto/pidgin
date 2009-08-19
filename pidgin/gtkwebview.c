@@ -50,7 +50,7 @@ struct GtkWebViewPriv {
 	gboolean is_loading;
 };
 
-GtkWidget* gtk_webview_new ()
+GtkWidget* gtk_webview_new (void)
 {
 	GtkWebView* ret = GTK_WEBVIEW (g_object_new(gtk_webview_get_type(), NULL));
 	return GTK_WIDGET (ret);
@@ -313,7 +313,7 @@ gboolean gtk_webview_is_empty (GtkWebView *view)
 	return view->priv->empty;
 }
 
-GType gtk_webview_get_type ()
+GType gtk_webview_get_type (void)
 {
 	static GType mview_type = 0;
 	if (G_UNLIKELY (mview_type == 0)) {
