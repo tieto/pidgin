@@ -2,6 +2,9 @@ plugindir = $(libdir)/pidgin
 
 xmppdisco_la_LDFLAGS = -module -avoid-version
 
+EXTRA_DIST = \
+        Makefile.mingw
+
 if PLUGINS
 
 plugin_LTLIBRARIES = xmppdisco.la
