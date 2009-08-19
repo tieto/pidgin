@@ -1,0 +1,138 @@
+/** @page jabber-signals Jabber Signals
+
+ @signals
+  @signal jabber-receiving-iq
+  @signal jabber-receiving-message
+  @signal jabber-receiving-presence
+  @signal jabber-watched-iq
+  @signal jabber-register-namespace-watcher
+  @signal jabber-unregister-namespace-watcher
+  @signal jabber-sending-xmlnode
+  @signal jabber-receiving-xmlnode
+ @endsignals
+
+ <hr>
+
+ @signaldef jabber-receiving-iq
+  @signalproto
+gboolean (*iq_received)(PurpleConnection *gc, const char *type, const char *id,
+                     const char *from, xmlnode *iq);
+  @endsignalproto
+  @signaldesc
+   Emitted when an XMPP IQ stanza is received. Allows a plugin to process IQ
+   stanzas.
+  @param gc        The connection on which the stanza is received
+  @param type      The IQ type ('get', 'set', 'result', or 'error')
+  @param id        The ID attribute from the stanza. MUST NOT be NULL.
+  @param from      The originator of the stanza. MAY BE NULL if the stanza
+                   originated from the user's server.
+  @param iq        The full stanza received.
+  @return TRUE if the plugin processed this stanza and *nobody else* should
+          process it. FALSE otherwise.
+ @endsignaldef
+
+ @signaldef jabber-receiving-message
+  @signalproto
+gboolean (*message_received)(PurpleConnection *gc, const char *type,
+                              const char *id, const char *from, const char *to,
+                              xmlnode *message);
+  @endsignalproto
+  @signaldesc
+   Emitted when an XMPP message stanza is received. Allows a plugin to
+   process message stanzas.
+  @param gc        The connection on which the stanza is received
+  @param type      The message type (see rfc3921 or rfc3921bis)
+  @param id        The ID attribute from the stanza. MAY BE NULL.
+  @param from      The originator of the stanza. MAY BE NULL if the stanza
+                   originated from the user's server.
+  @param to        The destination of the stanza. This is probably either the
+                   full JID of the receiver or the receiver's bare JID.
+  @param message   The full stanza received.
+  @return TRUE if the plugin processed this stanza and *nobody else* should
+          process it. FALSE otherwise.
+ @endsignaldef
+
+ @signaldef jabber-receiving-presence
+  @signalproto
+gboolean (*presence_received)(PurpleConnection *gc, const char *type,
+                               const char *from, xmlnode *presence);
+  @endsignalproto
+  @signaldesc
+   Emitted when an XMPP presence stanza is received. Allows a plugin to process
+   presence stanzas.
+  @param gc        The connection on which the stanza is received
+  @param type      The presence type (see rfc3921 or rfc3921bis). NULL indicates
+                   this is an "available" (i.e. online) presence.
+  @param from      The originator of the stanza. MAY BE NULL if the stanza
+                   originated from the user's server.
+  @param presence  The full stanza received.
+  @return TRUE if the plugin processed this stanza and *nobody else* should
+          process it. FALSE otherwise.
+ @endsignaldef
+
+ @signaldef jabber-watched-iq
+  @signalproto
+gboolean (*watched_iq)(PurpleConnection *gc, const char *type, const char *id,
+                       const char *from, xmlnode *child);
+  @endsignalproto
+  @signaldesc
+   Emitted when an IQ with a watched (child, namespace) pair is received.  See
+   jabber-register-namespace-watcher and jabber-unregister-namespace-watcher.
+  @param gc        The connection on which the stanza is received
+  @param type      The IQ type ('get', 'set', 'result', or 'error')
+  @param id        The ID attribute from the stanza. MUST NOT be NULL.
+  @param from      The originator of the stanza. MAY BE NULL if the stanza
+                   originated from the user's server.
+  @param child     The child node with namespace.
+  @return TRUE if the plugin processed this stanza and *nobody else* should
+          process it. FALSE otherwise.
+ @endsignaldef
+
+ @signaldef jabber-register-namespace-watcher
+  @signalproto
+void (register_namespace_watcher)(const char *node, const char *namespace);
+  @endsignalproto
+  @signaldesc
+   Emit this signal to register your desire to have specific IQ stanzas to be
+   emitted via the jabber-watched-iq signal when received.
+  @param node      The IQ child name to longer watch.
+  @param namespace The IQ child namespace to longer watch.
+ @endsignaldef
+
+ @signaldef jabber-unregister-namespace-watcher
+  @signalproto
+void (unregister_namespace_watcher)(const char *node, const char *namespace);
+  @endsignalproto
+  @signaldesc
+   Emit this signal to unregister your desire to have specific IQ stanzas to be
+   emitted via the jabber-watched-iq signal when received.
+  @param node      The IQ child name to no longer watch.
+  @param namespace The IQ child namespace to no longer watch.
+ @endsignaldef
+
+ @signaldef jabber-sending-xmlnode
+  @signalproto
+void (sending_xmlnode)(PurpleConnection *gc, xmlnode **stanza);
+  @endsignalproto
+  @signaldesc
+   Emit this signal (@c purple_signal_emit) to send a stanza. It is preferred
+   to use this instead of prpl_info->send_raw.
+   @param gc      The connection on which to send the stanza.
+   @param stanza  The stanza to send. If stanza is not NULL after being sent,
+                  the emitter should free it.
+ @endsignaldef
+
+ @signaldef jabber-receiving-xmlnode
+  @signalproto
+void (receiving_xmlnode)(PurpleConnection *gc, xmlnode **stanza);
+  @endsignalproto
+  @signaldesc
+   Emitted when an XMPP stanza is received. Allows a plugin to process any
+   stanza.
+   @param gc     The connection on which the stanza was received.
+   @param stanza The received stanza. Set stanza to NULL (and free it) to
+                 stop processing the stanza.
+ @endsignaldef
+
+*/
+// vim: syntax=c.doxygen tw=75 et

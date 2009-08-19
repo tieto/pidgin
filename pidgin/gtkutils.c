@@ -3699,9 +3699,13 @@ file_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	/* Open Containing Directory */
+#if GTK_CHECK_VERSION(2,6,0)
 	img = gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("Open _Containing Directory"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+#else
+	item = gtk_menu_item_new_with_mnemonic(_("Open _Containing Directory"));
+#endif
 	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(open_containing_cb), (gpointer)url);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
@@ -3767,9 +3771,13 @@ audio_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 	url = gtk_imhtml_link_get_url(link);
 
 	/* Play Sound */
+#if GTK_CHECK_VERSION(2,6,0)
 	img = gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Play Sound"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+#else
+	item = gtk_menu_item_new_with_mnemonic(_("_Play Sound"));
+#endif
 	g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_link_activate), link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 

@@ -567,6 +567,7 @@ SectionGroup /e $(URI_HANDLERS_SECTION_TITLE) SecURIHandlers
   !insertmacro URI_SECTION "msnim"
   !insertmacro URI_SECTION "myim"
   !insertmacro URI_SECTION "ymsgr"
+  !insertmacro URI_SECTION "xmpp"
 SectionGroupEnd
 
 ;--------------------------------
@@ -708,6 +709,8 @@ Section Uninstall
     Call un.UnregisterURIHandler
     Push "ymsgr"
     Call un.UnregisterURIHandler
+    Push "xmpp"
+    Call un.UnregisterURIHandler
 
     Delete "$INSTDIR\ca-certs\America_Online_Root_Certification_Authority_1.pem"
     Delete "$INSTDIR\ca-certs\AOL_Member_CA.pem"
@@ -720,10 +723,11 @@ Section Uninstall
     Delete "$INSTDIR\ca-certs\Microsoft_Secure_Server_Authority.pem"
     Delete "$INSTDIR\ca-certs\StartCom_Certification_Authority.pem"
     Delete "$INSTDIR\ca-certs\StartCom_Free_SSL_CA.pem"
-	Delete "$INSTDIR\ca-certs\VeriSign_Class3_Extended_Validation_CA.pem"
+    Delete "$INSTDIR\ca-certs\Thawte_Premium_Server_CA.pem"
+    Delete "$INSTDIR\ca-certs\VeriSign_Class3_Extended_Validation_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_Class3_Primary_CA.pem"
     Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem"
-	Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5_2.pem"
+    Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5_2.pem"
     Delete "$INSTDIR\ca-certs\VeriSign_International_Server_Class_3_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_RSA_Secure_Server_CA.pem"
     RMDir "$INSTDIR\ca-certs"

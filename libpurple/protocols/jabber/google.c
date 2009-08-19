@@ -430,7 +430,7 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 	return (session->media != NULL) ? TRUE : FALSE;
 }
 
-static void
+static gboolean
 google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
 {
 	JabberIq *result;
@@ -443,7 +443,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 
 	if (session->state != UNINIT) {
 		purple_debug_error("jabber", "Received initiate for active session.\n");
-		return;
+		return FALSE;
 	}
 
 	desc_element = xmlnode_get_child(sess, "description");
@@ -456,7 +456,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	else {
 		purple_debug_error("jabber", "Received initiate with "
 				"invalid namespace %s.\n", xmlns);
-		return;
+		return FALSE;
 	}
 
 	session->media = purple_media_manager_create_media(
@@ -480,7 +480,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 				PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
 		google_session_send_terminate(session);
 		g_free(params);
-		return;
+		return FALSE;
 	}
 
 	g_free(params);
@@ -551,6 +551,8 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	jabber_iq_set_id(result, iq_id);
 	xmlnode_set_attrib(result->node, "to", session->remote_jid);
 	jabber_iq_send(result);
+
+	return TRUE;
 }
 
 static void
@@ -776,7 +778,8 @@ jabber_google_session_parse(JabberStream *js, const char *from,
 	session->js = js;
 	session->remote_jid = g_strdup(session->id.initiator);
 
-	google_session_parse_iq(js, session, session_node, iq_id);
+	if (!google_session_handle_initiate(js, session, session_node, iq_id))
+		google_session_destroy(session);
 }
 #endif /* USE_VV */
 

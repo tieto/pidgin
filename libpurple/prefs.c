@@ -1450,6 +1450,8 @@ purple_prefs_uninit()
 		sync_prefs();
 	}
 
+	purple_prefs_disconnect_by_handle(purple_prefs_get_handle());
+
 	prefs_loaded = FALSE;
 	purple_prefs_destroy();
 	g_hash_table_destroy(prefs_hash);

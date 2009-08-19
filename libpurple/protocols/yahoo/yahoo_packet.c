@@ -397,7 +397,7 @@ void yahoo_packet_free(struct yahoo_packet *pkt)
 		struct yahoo_pair *pair = pkt->hash->data;
 		g_free(pair->value);
 		g_free(pair);
-		pkt->hash = g_slist_remove(pkt->hash, pair);
+		pkt->hash = g_slist_delete_link(pkt->hash, pkt->hash);
 	}
 	g_free(pkt);
 }

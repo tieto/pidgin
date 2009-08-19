@@ -478,7 +478,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	PurpleAccount *account = purple_connection_get_account(gc);
 	YahooData *yd = gc->proto_data;
 	GHashTable *ht;
-	char *norm_bud = NULL;
+	char *norm_bud;
 	char *temp = NULL;
 	YahooFriend *f = NULL; /* It's your friends. They're going to want you to share your StarBursts. */
 	                       /* But what if you had no friends? */
@@ -486,7 +486,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	PurpleGroup *g;
 	int protocol = 0;
 	int stealth = 0;
-
 
 	ht = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_slist_free);
 
@@ -546,9 +545,11 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 					purple_privacy_deny_add(account, norm_bud, 1);
 				}
 
+				g_free(norm_bud);
+
 				protocol = 0;
 				stealth = 0;
-				norm_bud = NULL;
+				g_free(temp);
 				temp = NULL;
 			}
 			break;
@@ -559,6 +560,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 			yd->current_list15_grp = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 7: /* buddy's s/n */
+			g_free(temp);
 			temp = g_strdup(purple_normalize(account, pair->value));
 			break;
 		case 241: /* another protocol user */
@@ -594,7 +596,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	yahoo_set_status(account, purple_account_get_active_status(account));
 
 	g_hash_table_destroy(ht);
-	g_free(norm_bud);
 	g_free(temp);
 }
 
@@ -970,13 +971,13 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 
 	/* disconnect the peer if connected through p2p and sends wrong value for session id */
 	if( (pkt_type == YAHOO_PKT_TYPE_P2P) && (val_11 != yd->session_id) ) {
-		purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im->from);
+		purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im ? im->from : "(im was null)");
 		/* remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data */
 		g_hash_table_remove(yd->peers, im->from);
 		return;
 	}
 
-	/** TODO: It seems that this check should be per IM, not global */
+	/* TODO: It seems that this check should be per IM, not global */
 	/* Check for the Doodle IMV */
 	if (im != NULL && imv!= NULL && im->from != NULL)
 	{
@@ -1830,6 +1831,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 			g_free(error_reason);
 			g_free(auth_data->seed);
 			g_free(auth_data);
+			g_free(token);
 		}
 		else {
 			/* OK to login, correct information provided */
@@ -2075,15 +2077,24 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL);
 
-		msg = g_strdup(_("Incorrect password"));
+		msg = g_strdup(_("Invalid username or password"));
 		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 		break;
 	case 14:
-		msg = g_strdup(_("Your account is locked, please log in to the Yahoo! website."));
+		msg = g_strdup(_("Your account has been locked due to too many failed login attempts."
+					"  Please try logging into the Yahoo! website."));
 		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 		break;
+	case 52:
+		/* See #9660. As much as we know, reconnecting shouldn't hurt */
+		purple_debug_info("yahoo", "Got error 52, Set to autoreconnect\n");
+		msg = g_strdup_printf(_("Unknown error 52.  Reconnecting should fix this."));
+		reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
+		break;
 	case 1013:
-		msg = g_strdup(_("Invalid username"));
+		msg = g_strdup(_("Error 1013: The username you have entered is invalid."
+					"  The most common cause of this error is entering your e-mail"
+					" address instead of your Yahoo! ID."));
 		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 		break;
 	default:
@@ -2578,8 +2589,7 @@ static void yahoo_p2p_init_cb(gpointer data, gint source, const gchar *error_mes
 	PurpleAccount *account;
 	YahooData *yd;
 
-	if(!(p2p_data = data))
-		return ;
+	p2p_data = data;
 	yd = p2p_data->gc->proto_data;
 
 	if(error_message != NULL) {
@@ -3767,7 +3777,7 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	if (presence != NULL)
 		purple_notify_user_info_add_pair(user_info, _("Presence"), presence);
 
-	if (full) {
+	if (f && full) {
 		YahooPersonalDetails *ypd = &f->ypd;
 		int i;
 		struct {
@@ -4264,7 +4274,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 		}
 	}
 
-	msn = !g_strncasecmp(who, "msn/", 4);
+	msn = !g_ascii_strncasecmp(who, "msn/", 4);
 
 	if( strncmp(who, "+", 1) == 0 ) {
 		/* we have an sms to be sent */
@@ -4388,7 +4398,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypi
 {
 	YahooData *yd = gc->proto_data;
 	struct yahoo_p2p_data *p2p_data;
-	gboolean msn = !g_strncasecmp(who, "msn/", 4);
+	gboolean msn = !g_ascii_strncasecmp(who, "msn/", 4);
 	struct yahoo_packet *pkt = NULL;
 
 	/* Don't do anything if sms is being typed */
@@ -4661,7 +4671,7 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
 		return;
 
 	f = yahoo_friend_find(gc, bname);
-	msn = !g_strncasecmp(bname, "msn/", 4);
+	msn = !g_ascii_strncasecmp(bname, "msn/", 4);
 
 	g = purple_buddy_get_group(buddy);
 	if (g)

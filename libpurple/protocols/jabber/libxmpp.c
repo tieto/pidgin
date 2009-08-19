@@ -28,6 +28,7 @@
 #include "internal.h"
 
 #include "accountopt.h"
+#include "core.h"
 #include "debug.h"
 #include "version.h"
 
@@ -46,6 +47,8 @@
 #include "caps.h"
 #include "data.h"
 #include "ibb.h"
+
+static PurplePlugin *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info =
 {
@@ -266,6 +269,70 @@ static PurplePluginInfo info =
 	NULL
 };
 
+static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
+{
+	PurpleAccount *acct = NULL;
+
+	/* If we have a specific acct, use it */
+	if (acct_id) {
+		acct = purple_accounts_find(acct_id, prpl);
+		if (acct && !purple_account_is_connected(acct))
+			acct = NULL;
+	} else { /* Otherwise find an active account for the protocol */
+		GList *l = purple_accounts_get_all();
+		while (l) {
+			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
+					&& purple_account_is_connected(l->data)) {
+				acct = l->data;
+				break;
+			}
+			l = l->next;
+		}
+	}
+
+	return acct;
+}
+
+static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable *params)
+{
+	char *acct_id = g_hash_table_lookup(params, "account");
+	PurpleAccount *acct;
+
+	if (g_ascii_strcasecmp(proto, "xmpp"))
+		return FALSE;
+
+	acct = find_acct(purple_plugin_get_id(my_protocol), acct_id);
+
+	if (!acct)
+		return FALSE;
+
+	/* xmpp:romeo@montague.net?message;subject=Test%20Message;body=Here%27s%20a%20test%20message */
+	if (g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
+		char *body = g_hash_table_lookup(params, "body");
+		if (user && *user) {
+			PurpleConversation *conv =
+					purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, user);
+			purple_conversation_present(conv);
+			if (body && *body)
+				purple_conv_send_confirm(conv, body);
+		}
+	} else if (g_hash_table_lookup_extended(params, "roster", NULL, NULL)) {
+		char *name = g_hash_table_lookup(params, "name");
+		if (user && *user)
+			purple_blist_request_add_buddy(acct, user, NULL, name);
+	} else if (g_hash_table_lookup_extended(params, "join", NULL, NULL)) {
+		PurpleConnection *gc = purple_account_get_connection(acct);
+		if (user && *user) {
+			GHashTable *params = jabber_chat_info_defaults(gc, user);
+			jabber_chat_join(gc, params);
+		}
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+
 static void
 init_plugin(PurplePlugin *plugin)
 {
@@ -331,6 +398,7 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 		option);
 
+	my_protocol = plugin;
 	jabber_init_plugin(plugin);
 
 	purple_prefs_remove("/plugins/prpl/jabber");
@@ -366,6 +434,9 @@ init_plugin(PurplePlugin *plugin)
 
 	jabber_ibb_init();
 	jabber_si_init();
+
+	purple_signal_connect(purple_get_core(), "uri-handler", plugin,
+		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
 }
 
 

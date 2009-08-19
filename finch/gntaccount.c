@@ -489,6 +489,7 @@ edit_account(PurpleAccount *account)
 	GntWidget *combo, *button, *entry;
 	GList *list, *iter;
 	AccountEditDialog *dialog;
+	PurplePlugin *plugin;
 
 	if (account)
 	{
@@ -532,9 +533,10 @@ edit_account(PurpleAccount *account)
 				((PurplePlugin*)iter->data)->info->name);
 	}
 
-	if (account)
-		gnt_combo_box_set_selected(GNT_COMBO_BOX(combo),
-				purple_plugins_find_with_id(purple_account_get_protocol_id(account)));
+	plugin = purple_plugins_find_with_id(purple_account_get_protocol_id(account));
+
+	if (account && plugin)
+		gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), plugin);
 	else
 		gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), list->data);
 

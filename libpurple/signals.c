@@ -363,8 +363,8 @@ purple_signal_disconnect(void *instance, const char *signal,
 		{
 			g_free(handler_data);
 
-			signal_data->handlers = g_list_remove(signal_data->handlers,
-												  handler_data);
+			signal_data->handlers = g_list_delete_link(signal_data->handlers,
+												       l);
 			signal_data->handler_count--;
 
 			found = TRUE;
@@ -398,8 +398,8 @@ disconnect_handle_from_signals(const char *signal,
 			g_free(handler_data);
 
 			signal_data->handler_count--;
-			signal_data->handlers = g_list_remove(signal_data->handlers,
-												  handler_data);
+			signal_data->handlers = g_list_delete_link(signal_data->handlers,
+			                                           l);
 		}
 	}
 }

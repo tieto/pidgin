@@ -533,7 +533,6 @@ struct _OscarData
 
 	struct {
 		struct aim_userinfo_s *userinfo;
-		struct userinfo_node *requested;
 	} locate;
 
 	/* Server-stored information (ssi) */
@@ -1133,7 +1132,6 @@ void aim_locate_dorequest(OscarData *od);
 /* 0x000f */ int aim_locate_setinterests(OscarData *od, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy);
 /* 0x0015 */ int aim_locate_getinfoshort(OscarData *od, const char *bn, guint32 flags);
 
-void aim_locate_autofetch_away_message(OscarData *od, const char *bn);
 guint32 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len);
 guint32 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len);
 void aim_info_free(aim_userinfo_t *);

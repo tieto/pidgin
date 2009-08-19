@@ -206,20 +206,23 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		{
 			/* This is for handwritten messages (Ink) */
 			GError *error;
-			glong items_read, items_written;
+			gsize bytes_read, bytes_written;
 
-			body_str = g_utf16_to_utf8((gunichar2 *)body, body_len / 2,
-			                           &items_read, &items_written, &error);
-			body_len -= items_read * 2 + 2;
-			body += items_read * 2 + 2;
+			body_str = g_convert((const gchar *)body, body_len / 2,
+			                     "UTF-8", "UTF-16LE",
+			                     &bytes_read, &bytes_written, &error);
+			body_len -= bytes_read + 2;
+			body += bytes_read + 2;
 			if (body_str == NULL
 			 || body_len <= 0
 			 || strstr(body_str, "image/gif") == NULL)
 			{
-				if (error != NULL)
+				if (error != NULL) {
 					purple_debug_error("msn",
 					                   "Unable to convert Ink header from UTF-16 to UTF-8: %s\n",
 					                   error->message);
+					g_error_free(error);
+				}
 				else
 					purple_debug_error("msn",
 					                   "Received Ink in unknown format\n");
@@ -228,13 +231,20 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			}
 			g_free(body_str);
 
-			body_str = g_utf16_to_utf8((gunichar2 *)body, body_len / 2,
-			                           &items_read, &items_written, &error);
+			body_str = g_convert((const gchar *)body, body_len / 2,
+			                     "UTF-8", "UTF16-LE",
+			                     &bytes_read, &bytes_written, &error);
 			if (!body_str)
 			{
-				purple_debug_error("msn",
-				                   "Unable to convert Ink body from UTF-16 to UTF-8: %s\n",
-				                   error->message);
+				if (error != NULL) {
+					purple_debug_error("msn",
+					                   "Unable to convert Ink body from UTF-16 to UTF-8: %s\n",
+					                   error->message);
+					g_error_free(error);
+				}
+				else
+					purple_debug_error("msn",
+					                   "Received Ink in unknown format\n");
 				return NULL;
 			}
 

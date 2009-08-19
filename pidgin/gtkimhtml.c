@@ -2953,7 +2953,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							font->size = oldfont->size;
 						else
 							font->size = 3;
-						if ((imhtml->format_functions & (GTK_IMHTML_GROW|GTK_IMHTML_SHRINK)))
+						if ((imhtml->format_functions & (GTK_IMHTML_GROW|GTK_IMHTML_SHRINK)) && (font->size != 3 || (oldfont && oldfont->size == 3)))
 							gtk_imhtml_font_set_size(imhtml, font->size);
 						g_free(size);
 						fonts = g_slist_prepend (fonts, font);
@@ -5838,9 +5838,9 @@ gboolean gtk_imhtml_class_register_protocol(const char *name,
 		if (activate) {
 			return FALSE;
 		}
+		klass->protocols = g_list_remove(klass->protocols, proto);
 		g_free(proto->name);
 		g_free(proto);
-		klass->protocols = g_list_remove(klass->protocols, proto);
 		return TRUE;
 	} else if (!activate) {
 		return FALSE;
