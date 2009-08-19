@@ -312,11 +312,11 @@ int main()
 dnl #######################################################################
 dnl # Check for GLib 2.0 (required)
 dnl #######################################################################
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.4.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have the GLib 2.0 development headers installed to build.
+You must have GLib 2.4.0 or newer development headers installed to build.
 
 If you have these installed already you may need to install pkg-config so
 I can find them.
@@ -399,12 +399,13 @@ else
 fi
 
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.0.0], , [
+	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.4.0], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 
-You must have the GTK+ 2.0 development headers installed to compile Pidgin.
-If you want to build only Finch then specify --disable-gtkui when running configure.
+You must have GTK+ 2.4.0 or newer development headers installed to compile
+Pidgin.  If you want to build only Finch then specify --disable-gtkui when
+running configure.
 ])])
 
 	AC_SUBST(GTK_CFLAGS)
