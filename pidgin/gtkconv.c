@@ -3139,7 +3139,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ N_("/Conversation/New Instant _Message..."), "<CTL>M", menu_new_conv_cb,
 			0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW },
-	{ N_("/Conversation/Join a _Chat..."), "<CTL>C", menu_join_chat_cb,
+	{ N_("/Conversation/Join a _Chat..."), NULL, menu_join_chat_cb,
 			0, "<StockItem>", PIDGIN_STOCK_CHAT },
 
 	{ "/Conversation/sep0", NULL, NULL, 0, "<Separator>", NULL },
