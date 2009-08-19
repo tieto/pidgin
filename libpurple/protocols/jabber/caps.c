@@ -456,6 +456,11 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 	/* Only validate if these are v1.5 capabilities */
 	if (userdata->hash) {
 		gchar *hash = NULL;
+		/*
+		 * TODO: If you add *any* hash here, make sure the checksum buffer
+		 * size in jabber_caps_calculate_hash is large enough. The cipher API
+		 * doesn't seem to offer a "Get the hash size" function(?).
+		 */
 		if (!strcmp(userdata->hash, "sha-1")) {
 			hash = jabber_caps_calculate_hash(info, "sha1");
 		} else if (!strcmp(userdata->hash, "md5")) {

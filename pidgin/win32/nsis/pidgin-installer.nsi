@@ -567,6 +567,7 @@ SectionGroup /e $(URI_HANDLERS_SECTION_TITLE) SecURIHandlers
   !insertmacro URI_SECTION "msnim"
   !insertmacro URI_SECTION "myim"
   !insertmacro URI_SECTION "ymsgr"
+  !insertmacro URI_SECTION "xmpp"
 SectionGroupEnd
 
 ;--------------------------------
@@ -707,6 +708,8 @@ Section Uninstall
     Push "myim"
     Call un.UnregisterURIHandler
     Push "ymsgr"
+    Call un.UnregisterURIHandler
+    Push "xmpp"
     Call un.UnregisterURIHandler
 
     Delete "$INSTDIR\ca-certs\America_Online_Root_Certification_Authority_1.pem"

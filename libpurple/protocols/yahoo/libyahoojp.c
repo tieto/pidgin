@@ -174,7 +174,7 @@ static PurplePluginInfo info =
 	NULL,                                             /**< dependencies   */
 	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 	"prpl-yahoojp",                                     /**< id             */
-	"Yahoo! JAPAN",	                                      /**< name           */
+	"Yahoo JAPAN",	                                      /**< name           */
 	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Yahoo! JAPAN Protocol Plugin"),

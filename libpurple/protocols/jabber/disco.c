@@ -302,6 +302,8 @@ static void jabber_disco_info_cb(JabberStream *js, const char *from,
 			}
 		}
 
+		js->chat_servers = g_list_reverse(js->chat_servers);
+
 		capabilities |= JABBER_CAP_RETRIEVED;
 
 		if(jbr)

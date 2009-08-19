@@ -417,11 +417,7 @@ static GstElement *
 create_default_audio_src(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
-	GstElement *bin, *src, *volume;
-	GstPad *pad, *ghost;
-	double input_volume = purple_prefs_get_int(
-			"/finch/media/audio/volume/input")/10.0;
-
+	GstElement *src;
 	src = gst_element_factory_make("gconfaudiosrc", NULL);
 	if (src == NULL)
 		src = gst_element_factory_make("autoaudiosrc", NULL);
@@ -436,28 +432,15 @@ create_default_audio_src(PurpleMedia *media,
 				"element for the default audio source.\n");
 		return NULL;
 	}
-
-	bin = gst_bin_new("finchdefaultaudiosrc");
-	volume = gst_element_factory_make("volume", "purpleaudioinputvolume");
-	g_object_set(volume, "volume", input_volume, NULL);
-	gst_bin_add_many(GST_BIN(bin), src, volume, NULL);
-	gst_element_link(src, volume);
-	pad = gst_element_get_pad(volume, "src");
-	ghost = gst_ghost_pad_new("ghostsrc", pad);
-	gst_element_add_pad(bin, ghost);
-
-	return bin;
+	gst_element_set_name(src, "finchdefaultaudiosrc");
+	return src;
 }
 
 static GstElement *
 create_default_audio_sink(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
-	GstElement *bin, *sink, *volume, *queue;
-	GstPad *pad, *ghost;
-	double output_volume = purple_prefs_get_int(
-			"/finch/media/audio/volume/output")/10.0;
-
+	GstElement *sink;
 	sink = gst_element_factory_make("gconfaudiosink", NULL);
 	if (sink == NULL)
 		sink = gst_element_factory_make("autoaudiosink",NULL);
@@ -466,19 +449,7 @@ create_default_audio_sink(PurpleMedia *media,
 				"element for the default audio sink.\n");
 		return NULL;
 	}
-
-	bin = gst_bin_new("finchdefaultaudiosink");
-	volume = gst_element_factory_make("volume", "purpleaudiooutputvolume");
-	g_object_set(volume, "volume", output_volume, NULL);
-	queue = gst_element_factory_make("queue", NULL);
-	gst_bin_add_many(GST_BIN(bin), sink, volume, queue, NULL);
-	gst_element_link(volume, sink);
-	gst_element_link(queue, volume);
-	pad = gst_element_get_pad(queue, "sink");
-	ghost = gst_ghost_pad_new("ghostsink", pad);
-	gst_element_add_pad(bin, ghost);
-
-	return bin;
+	return sink;
 }
 #endif  /* USE_VV */
 
@@ -516,12 +487,6 @@ void finch_media_manager_init(void)
 	purple_debug_info("gntmedia", "Registering media element types\n");
 	purple_media_manager_set_active_element(manager, default_audio_src);
 	purple_media_manager_set_active_element(manager, default_audio_sink);
-
-	purple_prefs_add_none("/finch/media");
-	purple_prefs_add_none("/finch/media/audio");
-	purple_prefs_add_none("/finch/media/audio/volume");
-	purple_prefs_add_int("/finch/media/audio/volume/input", 10);
-	purple_prefs_add_int("/finch/media/audio/volume/output", 10);
 #endif
 }
 

@@ -2,6 +2,7 @@
 
  @signals
   @signal quitting
+  @signal uri-handler
  @endsignals
 
  @see core.h
@@ -14,6 +15,17 @@ void (*quitting)();
   @endsignalproto
   @signaldesc
    Emitted when libpurple is quitting.
+ @endsignaldef
+
+ @signaldef uri-handler
+  @signalproto
+gboolean (*uri_handler)(const gchar *proto, const gchar *cmd, GHashTable *params);
+  @endsignalproto
+  @signaldesc
+   Emitted when handling a registered URI.
+  @param proto The protocol of the URI.
+  @param cmd The 'command' of the URI.
+  @param params Any key/value parameters from the URI.
  @endsignaldef
 
  */

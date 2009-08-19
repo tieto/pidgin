@@ -2531,4 +2531,9 @@ purple_proxy_uninit(void)
 		purple_proxy_connect_data_disconnect(handles->data, NULL);
 		purple_proxy_connect_data_destroy(handles->data);
 	}
+
+	purple_prefs_disconnect_by_handle(purple_proxy_get_handle());
+
+	purple_proxy_info_destroy(global_proxy_info);
+	global_proxy_info = NULL;
 }

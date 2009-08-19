@@ -971,7 +971,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 
 	/* disconnect the peer if connected through p2p and sends wrong value for session id */
 	if( (pkt_type == YAHOO_PKT_TYPE_P2P) && (val_11 != yd->session_id) ) {
-		purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im->from);
+		purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im ? im->from : "(im was null)");
 		/* remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data */
 		g_hash_table_remove(yd->peers, im->from);
 		return;
@@ -4274,7 +4274,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 		}
 	}
 
-	msn = !g_strncasecmp(who, "msn/", 4);
+	msn = !g_ascii_strncasecmp(who, "msn/", 4);
 
 	if( strncmp(who, "+", 1) == 0 ) {
 		/* we have an sms to be sent */
@@ -4398,7 +4398,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypi
 {
 	YahooData *yd = gc->proto_data;
 	struct yahoo_p2p_data *p2p_data;
-	gboolean msn = !g_strncasecmp(who, "msn/", 4);
+	gboolean msn = !g_ascii_strncasecmp(who, "msn/", 4);
 	struct yahoo_packet *pkt = NULL;
 
 	/* Don't do anything if sms is being typed */
@@ -4671,7 +4671,7 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
 		return;
 
 	f = yahoo_friend_find(gc, bname);
-	msn = !g_strncasecmp(bname, "msn/", 4);
+	msn = !g_ascii_strncasecmp(bname, "msn/", 4);
 
 	g = purple_buddy_get_group(buddy);
 	if (g)
