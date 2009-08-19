@@ -6442,7 +6442,7 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 		{
 			if (conn)
 			{
-				act = purple_menu_action_new(_("Cancel Direct IM"),
+				act = purple_menu_action_new(_("End Direct IM Session"),
 				                          PURPLE_CALLBACK(oscar_close_directim),
 				                          NULL, NULL);
 			}
