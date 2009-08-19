@@ -309,6 +309,20 @@ static void set_theme_webkit_settings (WebKitWebView *webview, PidginMessageStyl
 	webkit_web_view_set_transparent (webview, style->default_background_is_transparent);
 }
 
+/*
+ * The style specification says that if the conversation is a group
+ * chat then the <div id="Chat"> element will be given a class 
+ * 'groupchat'. I can't add another '%@' in Template.html because 
+ * that breaks style-specific Template.html's. I have to either use libxml
+ * or conveniently play with WebKit's javascript engine. The javascript
+ * engine should work, but it's not an identical behavior.
+ */
+static void
+webkit_set_groupchat (GtkWebView *webview)
+{
+	gtk_webview_safe_execute_script (webview, "document.getElementById('Chat').className = 'groupchat'");
+}
+
 
 /**
  * Called when either a new PurpleConversation is created
@@ -361,6 +375,8 @@ init_theme_for_webkit (PurpleConversation *conv, char *style_dir)
 	/* I need to unref this style when the webkit object destroys */
 	g_signal_connect (G_OBJECT(webkit), "destroy", G_CALLBACK(webkit_on_webview_destroy), copy);
 
+	if (purple_conversation_get_type (conv) == PURPLE_CONV_TYPE_CHAT)
+		webkit_set_groupchat (GTK_WEBVIEW (webkit));
 	g_free (basedir);
 	g_free (baseuri);
 	g_free (header);
