@@ -104,7 +104,6 @@ START_TEST(test_codes_to_html)
 }
 END_TEST
 
-#if 0
 START_TEST(test_html_to_codes)
 {
 	assert_string_equal_free("plain",
@@ -129,7 +128,6 @@ START_TEST(test_html_to_codes)
 			yahoo_html_to_codes("plain &amp;"));
 
 	/* bold/italic/underline */
-	// MARK: This isn't correct.  Should not have the closing bold escape code
 	assert_string_equal_free("\x1B[1mbold\x1B[x1m",
 			yahoo_html_to_codes("<b>bold</b>"));
 	assert_string_equal_free("\x1B[2mitalic\x1B[x2m",
@@ -140,13 +138,12 @@ START_TEST(test_html_to_codes)
 			yahoo_html_to_codes("no</u> markup"));
 	assert_string_equal_free("\x1B[1mbold\x1B[x1m \x1B[2mitalic\x1B[x2m \x1B[4munderline\x1B[x4m",
 			yahoo_html_to_codes("<b>bold</b> <i>italic</i> <u>underline</u>"));
-	assert_string_equal_free("\x1B[1mbold \x1B[2mbolditalic\x1B[x1m italic\x1B[x1m",
+	assert_string_equal_free("\x1B[1mbold \x1B[2mbolditalic\x1B[x2m\x1B[x1m\x1B[2m italic\x1B[x2m",
 			yahoo_html_to_codes("<b>bold <i>bolditalic</i></b><i> italic</i>"));
-	assert_string_equal_free("\x1B[1mbold \x1B[2mbolditalic\x1B[x1m \x1B[4mitalicunderline",
+	assert_string_equal_free("\x1B[1mbold \x1B[2mbolditalic\x1B[x2m\x1B[x1m\x1B[2m \x1B[4mitalicunderline\x1B[x4m\x1B[x2m",
 			yahoo_html_to_codes("<b>bold <i>bolditalic</i></b><i> <u>italicunderline</u></i>"));
 }
 END_TEST
-#endif
 
 Suite *
 yahoo_util_suite(void)
@@ -161,11 +158,9 @@ yahoo_util_suite(void)
 	tcase_add_test(tc, test_codes_to_html);
 	suite_add_tcase(s, tc);
 
-#if 0
 	tc = tcase_create("Convert IM from HTML to network format");
 	tcase_add_test(tc, test_html_to_codes);
 	suite_add_tcase(s, tc);
-#endif
 
 	return s;
 }

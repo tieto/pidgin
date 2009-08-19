@@ -669,7 +669,7 @@ char *yahoo_codes_to_html(const char *x)
 #define POINT_SIZE(x) (_point_sizes [MIN ((x > 0 ? x : 1), MAX_FONT_SIZE) - 1])
 static const gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
 
-enum fatype
+enum fontattr_type
 {
 	FATYPE_SIZE,
 	FATYPE_COLOR,
@@ -679,7 +679,7 @@ enum fatype
 
 typedef struct
 {
-	enum fatype type;
+	enum fontattr_type type;
 	union {
 		int size;
 		char *color;
@@ -687,6 +687,17 @@ typedef struct
 		char *junk;
 	} u;
 } fontattr;
+
+typedef struct
+{
+	gboolean bold;
+	gboolean italic;
+	gboolean underline;
+	gboolean in_link;
+	int font_size;
+	char *font_face;
+	char *font_color;
+} CurrentMsgState;
 
 static void fontattr_free(fontattr *f)
 {
@@ -876,167 +887,124 @@ char *yahoo_html_to_codes(const char *src)
 	GString *dest;
 	char *esc;
 	GQueue *ftattr = NULL;
-	gboolean no_more_specials = FALSE;
+	gboolean no_more_gt_brackets = FALSE;
+	gchar *tag, *tag_name;
+	gboolean is_closing_tag;
+	CurrentMsgState current_state;
+
+	bzero(&current_state, sizeof(current_state));
 
 	src_len = strlen(src);
 	dest = g_string_sized_new(src_len);
 
 	for (i = 0; i < src_len; i++) {
-
-		if (src[i] == '<' && !no_more_specials) {
+		if (src[i] == '<' && !no_more_gt_brackets) {
+			/* The start of an HTML tag  */
 			j = i;
 
-			while (1) {
-				j++;
-
-				if (j >= src_len) { /* no '>' */
-					g_string_append_c(dest, src[i]);
-					no_more_specials = TRUE;
-					break;
-				}
-
-				if (src[j] == '<') {
-					/* FIXME: This doesn't convert outgoing entities.
-					 *        However, I suspect this case may never
-					 *        happen anymore because of the entities.
-					 */
-					g_string_append_len(dest, &src[i], j - i);
-					i = j - 1;
-					if (ftattr) {
-						fontattr *f;
-
-						while ((f = g_queue_pop_head(ftattr)))
-							fontattr_free(f);
-						g_queue_free(ftattr);
-						ftattr = NULL;
+			while (j++ < src_len) {
+				if (src[j] != '>') {
+					if (src[j] == '"') {
+						/* We're inside a quoted attribute value. Skip to the end */
+						j++;
+						while (j != src_len && src[j] != '"')
+							j++;
+					} else if (src[j] == '\'') {
+						/* We're inside a quoted attribute value. Skip to the end */
+						j++;
+						while (j != src_len && src[j] != '\'')
+							j++;
 					}
+					if (j != src_len)
+						/* Keep looking for the end of this tag */
+						continue;
+
+					/* This < has no corresponding > */
+					g_string_append_c(dest, src[i]);
+					no_more_gt_brackets = TRUE;
 					break;
 				}
 
-				if (src[j] == ' ') {
-					if (!g_ascii_strncasecmp(&src[i+1], "BODY", j - i - 1)) {
-						char *t = strchr(&src[j], '>');
-						if (!t) {
-							g_string_append(dest, &src[i]);
+				tag = g_strndup(src + i, j - i + 1);
+				tag_name = yahoo_markup_get_tag_name(tag, &is_closing_tag);
+
+				if (g_str_equal(tag_name, "a")) {
+					j += 7;
+					g_string_append(dest, "\033[lm");
+					if (purple_str_has_prefix(src + j, "mailto:"))
+						j += sizeof("mailto:") - 1;
+					while (1) {
+						g_string_append_c(dest, src[j]);
+						if (++j >= src_len) {
 							i = src_len;
 							break;
-						} else {
-							i = t - src;
+						}
+						if (src[j] == '"') {
+							g_string_append(dest, "\033[xlm");
+							while (1) {
+								if (++j >= src_len) {
+									i = src_len;
+									break;
+								}
+								if (!g_ascii_strncasecmp(&src[j], "</A>", 4)) {
+									j += 3;
+									break;
+								}
+							}
+							i = j;
 							break;
 						}
-					} else if (!g_ascii_strncasecmp(&src[i+1], "A HREF=\"", j - i - 1)) {
-						j += 7;
-						g_string_append(dest, "\033[lm");
-						if (purple_str_has_prefix(src + j, "mailto:"))
-							j += sizeof("mailto:") - 1;
-						while (1) {
-							g_string_append_c(dest, src[j]);
-							if (++j >= src_len) {
-								i = src_len;
-								break;
-							}
-							if (src[j] == '"') {
-								g_string_append(dest, "\033[xlm");
-								while (1) {
-									if (++j >= src_len) {
-										i = src_len;
-										break;
-									}
-									if (!g_ascii_strncasecmp(&src[j], "</A>", 4)) {
-										j += 3;
-										break;
-									}
-								}
-								i = j;
-								break;
-							}
-						}
-					} else if (!g_ascii_strncasecmp(&src[i+1], "SPAN", j - i - 1)) { /* drop span tags */
-						while (1) {
-							if (++j >= src_len) {
-								g_string_append(dest, &src[i]);
-								i = src_len;
-								break;
-							}
-							if (src[j] == '>') {
-								i = j;
-								break;
-							}
-						}
-					} else if (g_ascii_strncasecmp(&src[i+1], "FONT", j - i - 1)) { /* not interested! */
-						while (1) {
-							if (++j >= src_len) {
-								g_string_append(dest, &src[i]);
-								i = src_len;
-								break;
-							}
-							if (src[j] == '>') {
-								g_string_append_len(dest, &src[i], j - i + 1);
-								i = j;
-								break;
-							}
-						}
-					} else { /* yay we have a font tag */
-						_parse_font_tag(src, dest, &i, &j, src_len, &colors, &tags, ftattr);
 					}
 
-					break;
-				}
-
-				if (src[j] == '>') {
-					/* This has some problems like the FIXME for the
-					 * '<' case. and like that case, I suspect the case
-					 * that this has problems is won't happen anymore anyway.
-					 */
-					int sublen = j - i - 1;
-
-					if (sublen) {
-						if (!g_ascii_strncasecmp(&src[i+1], "B", sublen)) {
-							g_string_append(dest, "\033[1m");
-						} else if (!g_ascii_strncasecmp(&src[i+1], "/B", sublen)) {
-							g_string_append(dest, "\033[x1m");
-						} else if (!g_ascii_strncasecmp(&src[i+1], "I", sublen)) {
-							g_string_append(dest, "\033[2m");
-						} else if (!g_ascii_strncasecmp(&src[i+1], "/I", sublen)) {
-							g_string_append(dest, "\033[x2m");
-						} else if (!g_ascii_strncasecmp(&src[i+1], "U", sublen)) {
-							g_string_append(dest, "\033[4m");
-						} else if (!g_ascii_strncasecmp(&src[i+1], "/U", sublen)) {
-							g_string_append(dest, "\033[x4m");
-						} else if (!g_ascii_strncasecmp(&src[i+1], "/A", sublen)) {
-							g_string_append(dest, "\033[xlm");
-						} else if (!g_ascii_strncasecmp(&src[i+1], "BR", sublen)) {
-							g_string_append_c(dest, '\n');
-						} else if (!g_ascii_strncasecmp(&src[i+1], "/BODY", sublen)) {
-							/* mmm, </body> tags. *BURP* */
-						} else if (!g_ascii_strncasecmp(&src[i+1], "/SPAN", sublen)) {
-							/* </span> tags. dangerously close to </spam> */
-						} else if (!g_ascii_strncasecmp(&src[i+1], "/FONT", sublen) && tags != NULL) {
-							char *etag;
-
-							etag = tags->data;
-							tags = g_slist_delete_link(tags, tags);
-							if (etag) {
-								g_string_append(dest, etag);
-								if (!strcmp(etag, "</font>")) {
-									if (colors != NULL) {
-										g_free(colors->data);
-										colors = g_slist_delete_link(colors, colors);
-									}
-								}
-								g_free(etag);
-							}
-						} else {
-							g_string_append_len(dest, &src[i], j - i + 1);
-						}
-					} else {
-						g_string_append_len(dest, &src[i], j - i + 1);
+				} else if (g_str_equal(tag_name, "font")) {
+					_parse_font_tag(src, dest, &i, &j, src_len, &colors, &tags, ftattr);
+				} else if (g_str_equal(tag_name, "b")) {
+					g_string_append(dest, "\033[1m");
+					current_state.bold = TRUE;
+				} else if (g_str_equal(tag_name, "/b")) {
+					if (current_state.bold) {
+						g_string_append(dest, "\033[x1m");
+						current_state.bold = FALSE;
 					}
-
-					i = j;
-					break;
+				} else if (g_str_equal(tag_name, "i")) {
+					current_state.italic = TRUE;
+					g_string_append(dest, "\033[2m");
+				} else if (g_str_equal(tag_name, "/i")) {
+					if (current_state.italic) {
+						g_string_append(dest, "\033[x2m");
+						current_state.italic = FALSE;
+					}
+				} else if (g_str_equal(tag_name, "u")) {
+					current_state.underline = TRUE;
+					g_string_append(dest, "\033[4m");
+				} else if (g_str_equal(tag_name, "/u")) {
+					if (current_state.underline) {
+						g_string_append(dest, "\033[x4m");
+						current_state.underline = FALSE;
+					}
+				} else if (g_str_equal(tag_name, "/a")) {
+					g_string_append(dest, "\033[xlm");
+				} else if (g_str_equal(tag_name, "br")) {
+					g_string_append_c(dest, '\n');
+				} else if (g_str_equal(tag_name, "/font")) {
+					if (tags != NULL) {
+						char *etag = tags->data;
+						tags = g_slist_delete_link(tags, tags);
+						g_string_append(dest, etag);
+						if (g_str_equal(etag, "</font>")) {
+							if (colors != NULL) {
+								g_free(colors->data);
+								colors = g_slist_delete_link(colors, colors);
+							}
+						}
+						g_free(etag);
+					}
 				}
 
+				i = j;
+				g_free(tag);
+				g_free(tag_name);
+				break;
 			}
 
 		} else {
