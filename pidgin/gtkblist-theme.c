@@ -410,7 +410,7 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_CONTACT, pspec);
 
-	pspec = g_param_spec_pointer("online", _("On-line Text"),
+	pspec = g_param_spec_pointer("online", _("Online Text"),
 			_("The text information for when a buddy is online"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_ONLINE, pspec);
@@ -420,8 +420,8 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_AWAY, pspec);
 
-	pspec = g_param_spec_pointer("offline", _("Off-line Text"),
-			_("The text information for when a buddy is off-line"),
+	pspec = g_param_spec_pointer("offline", _("Offline Text"),
+			_("The text information for when a buddy is offline"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_OFFLINE, pspec);
 
@@ -436,7 +436,7 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 	g_object_class_install_property(obj_class, PROP_MESSAGE, pspec);
 
 	pspec = g_param_spec_pointer("message_nick_said", _("Message (Nick Said) Text"),
-			_("The text information for when a chat has an unread message that mentions your nick"),
+			_("The text information for when a chat has an unread message that mentions your nickname"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_MESSAGE_NICK_SAID, pspec);
 
