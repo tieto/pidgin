@@ -715,8 +715,9 @@ static void yahoo_htc_list_cleanup(GSList *l)
 }
 
 static void parse_font_tag(const char *src, GString *dest, const char *tag_name, const char *tag,
-				int src_len, GSList **colors, GSList **tags, GQueue *ftattr)
+				int src_len, GSList **colors, GSList **tags)
 {
+	GQueue *ftattr;
 	const char *start;
 	const char *end;
 	GData *attributes;
@@ -725,6 +726,8 @@ static void parse_font_tag(const char *src, GString *dest, const char *tag_name,
 	fontattr *f;
 	GString *tmp;
 
+	ftattr = g_queue_new();
+
 	purple_markup_find_tag(tag_name, tag, &start, &end, &attributes);
 
 	attribute = g_datalist_get_data(&attributes, "color");
@@ -732,8 +735,6 @@ static void parse_font_tag(const char *src, GString *dest, const char *tag_name,
 		f = g_new(fontattr, 1);
 		f->type = FATYPE_COLOR;
 		f->u.color = g_strdup(attribute);
-		if (!ftattr)
-			ftattr = g_queue_new();
 		g_queue_push_head(ftattr, f);
 	}
 
@@ -742,8 +743,6 @@ static void parse_font_tag(const char *src, GString *dest, const char *tag_name,
 		f = g_new(fontattr, 1);
 		f->type = FATYPE_FACE;
 		f->u.face = g_strdup(attribute);
-		if (!ftattr)
-			ftattr = g_queue_new();
 		g_queue_push_tail(ftattr, f);
 	}
 
@@ -752,8 +751,6 @@ static void parse_font_tag(const char *src, GString *dest, const char *tag_name,
 		f = g_new(fontattr, 1);
 		f->type = FATYPE_SIZE;
 		f->u.size = POINT_SIZE(strtol(attribute, NULL, 10));
-		if (!ftattr)
-			ftattr = g_queue_new();
 		g_queue_push_tail(ftattr, f);
 	}
 
@@ -762,7 +759,7 @@ static void parse_font_tag(const char *src, GString *dest, const char *tag_name,
 	needendtag = FALSE;
 	tmp = g_string_new(NULL);
 
-	if (ftattr != NULL && !g_queue_is_empty(ftattr)) {
+	if (!g_queue_is_empty(ftattr)) {
 		while ((f = g_queue_pop_tail(ftattr))) {
 			switch (f->type) {
 			case FATYPE_SIZE:
@@ -799,7 +796,6 @@ static void parse_font_tag(const char *src, GString *dest, const char *tag_name,
 		}
 
 		g_queue_free(ftattr);
-		ftattr = NULL;
 
 		if (needendtag) {
 			dest->str[dest->len-1] = '>';
@@ -820,7 +816,6 @@ char *yahoo_html_to_codes(const char *src)
 	int i, j;
 	GString *dest;
 	char *esc;
-	GQueue *ftattr = NULL;
 	gboolean no_more_gt_brackets = FALSE;
 	gchar *tag, *tag_name;
 	gboolean is_closing_tag;
@@ -896,7 +891,7 @@ char *yahoo_html_to_codes(const char *src)
 						j = end - src + 3;
 
 				} else if (g_str_equal(tag_name, "font")) {
-					parse_font_tag(src, dest, tag_name, tag, src_len, &colors, &tags, ftattr);
+					parse_font_tag(src, dest, tag_name, tag, src_len, &colors, &tags);
 				} else if (g_str_equal(tag_name, "b")) {
 					g_string_append(dest, "\033[1m");
 					current_state.bold = TRUE;
