@@ -127,16 +127,6 @@ START_TEST(test_html_to_codes)
 	assert_string_equal_free("plain &",
 			yahoo_html_to_codes("plain &amp;"));
 
-	/* link */
-	assert_string_equal_free("http://pidgin.im/",
-			yahoo_html_to_codes("<A HREF=\"http://pidgin.im/\">http://pidgin.im/</A>"));
-	assert_string_equal_free("mark@example.com",
-			yahoo_html_to_codes("<A HREF=\"mailto:mark@example.com\">mark@example.com</A>"));
-#if 0
-	assert_string_equal_free("http://pidgin.im/",
-			yahoo_html_to_codes("<A HREF=\"http://pidgin.im/\">Pidgin</A>"));
-#endif
-
 	/* bold/italic/underline */
 	assert_string_equal_free("\x1B[1mbold\x1B[x1m",
 			yahoo_html_to_codes("<b>bold</b>"));
@@ -152,6 +142,24 @@ START_TEST(test_html_to_codes)
 			yahoo_html_to_codes("<b>bold <i>bolditalic</i></b><i> italic</i>"));
 	assert_string_equal_free("\x1B[1mbold \x1B[2mbolditalic\x1B[x2m\x1B[x1m\x1B[2m \x1B[4mitalicunderline\x1B[x4m\x1B[x2m",
 			yahoo_html_to_codes("<b>bold <i>bolditalic</i></b><i> <u>italicunderline</u></i>"));
+
+	/* link */
+	assert_string_equal_free("http://pidgin.im/",
+			yahoo_html_to_codes("<A HREF=\"http://pidgin.im/\">http://pidgin.im/</A>"));
+	assert_string_equal_free("mark@example.com",
+			yahoo_html_to_codes("<A HREF=\"mailto:mark@example.com\">mark@example.com</A>"));
+#if 0
+	assert_string_equal_free("http://pidgin.im/",
+			yahoo_html_to_codes("<A HREF=\"http://pidgin.im/\">Pidgin</A>"));
+#endif
+
+	/* font nothing */
+	assert_string_equal_free("nothing",
+			yahoo_html_to_codes("<font>nothing</font>"));
+
+	/* font color */
+	assert_string_equal_free("\x1B[#E71414mred\x1B[#000000m",
+			yahoo_html_to_codes("<font color=\"#E71414\">red</font>"));
 
 	/* font size */
 	assert_string_equal_free("<font size=\"10\">test</font>",

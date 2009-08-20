@@ -669,23 +669,6 @@ char *yahoo_codes_to_html(const char *x)
 #define POINT_SIZE(x) (_point_sizes [MIN ((x > 0 ? x : 1), MAX_FONT_SIZE) - 1])
 static const gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
 
-enum fontattr_type
-{
-	FATYPE_SIZE,
-	FATYPE_COLOR,
-	FATYPE_FACE
-};
-
-typedef struct
-{
-	enum fontattr_type type;
-	union {
-		int size;
-		char *color;
-		char *face;
-	} u;
-} fontattr;
-
 typedef struct
 {
 	gboolean bold;
@@ -696,15 +679,6 @@ typedef struct
 	char *font_face;
 	char *font_color;
 } CurrentMsgState;
-
-static void fontattr_free(fontattr *f)
-{
-	if (f->type == FATYPE_COLOR)
-		g_free(f->u.color);
-	else if (f->type == FATYPE_FACE)
-		g_free(f->u.face);
-	g_free(f);
-}
 
 static void yahoo_htc_list_cleanup(GSList *l)
 {
@@ -721,80 +695,38 @@ static void parse_font_tag(const char *src, GString *dest, const char *tag_name,
 	const char *end;
 	GData *attributes;
 	const char *attribute;
-	GSList *fontattrs = NULL;
 	gboolean needendtag;
-	fontattr *f;
 	GString *tmp;
 
 	purple_markup_find_tag(tag_name, tag, &start, &end, &attributes);
 
+	needendtag = FALSE;
+	tmp = g_string_new(NULL);
+
+	attribute = g_datalist_get_data(&attributes, "color");
+	if (attribute != NULL) {
+		g_string_append(tmp, *colors ? (*colors)->data : "\033[#000000m");
+		g_string_append_printf(dest, "\033[%sm", attribute);
+		*colors = g_slist_prepend(*colors,
+				g_strdup_printf("\033[%sm", attribute));
+	}
+
 	attribute = g_datalist_get_data(&attributes, "face");
 	if (attribute != NULL) {
-		f = g_new(fontattr, 1);
-		f->type = FATYPE_FACE;
-		f->u.face = g_strdup(attribute);
-		fontattrs = g_slist_prepend(fontattrs, f);
+		needendtag = TRUE;
+		g_string_append(dest, "<font ");
+		g_string_append_printf(dest, "face=\"%s\" ", attribute);
 	}
 
 	attribute = g_datalist_get_data(&attributes, "size");
 	if (attribute != NULL) {
-		f = g_new(fontattr, 1);
-		f->type = FATYPE_SIZE;
-		f->u.size = POINT_SIZE(strtol(attribute, NULL, 10));
-		fontattrs = g_slist_prepend(fontattrs, f);
-	}
-
-	attribute = g_datalist_get_data(&attributes, "color");
-	if (attribute != NULL) {
-		f = g_new(fontattr, 1);
-		f->type = FATYPE_COLOR;
-		f->u.color = g_strdup(attribute);
-		fontattrs = g_slist_prepend(fontattrs, f);
-	}
-
-	g_datalist_clear(&attributes);
-
-	if (fontattrs == NULL)
-		/* No recognized attributes in the font tag.  Nothing to do. */
-		return;
-
-	needendtag = FALSE;
-	tmp = g_string_new(NULL);
-
-	while (fontattrs != NULL) {
-		f = fontattrs->data;
-		fontattrs = g_slist_delete_link(fontattrs, fontattrs);
-
-		switch (f->type) {
-		case FATYPE_COLOR:
-			if (needendtag) {
-				g_string_append(tmp, "</font>");
-				dest->str[dest->len-1] = '>';
-			}
-
-			g_string_append(tmp, *colors ? (*colors)->data : "\033[#000000m");
-			g_string_append_printf(dest, "\033[%sm", f->u.color);
-			*colors = g_slist_prepend(*colors,
-					g_strdup_printf("\033[%sm", f->u.color));
-			break;
-		case FATYPE_FACE:
-			if (!needendtag) {
-				needendtag = TRUE;
-				g_string_append(dest, "<font ");
-			}
-
-			g_string_append_printf(dest, "face=\"%s\" ", f->u.face);
-			break;
-		case FATYPE_SIZE:
-			if (!needendtag) {
-				needendtag = TRUE;
-				g_string_append(dest, "<font ");
-			}
-
-			g_string_append_printf(dest, "size=\"%d\" ", f->u.size);
-			break;
+		if (!needendtag) {
+			needendtag = TRUE;
+			g_string_append(dest, "<font ");
 		}
-		fontattr_free(f);
+
+		g_string_append_printf(dest, "size=\"%d\" ",
+				POINT_SIZE(strtol(attribute, NULL, 10)));
 	}
 
 	if (needendtag) {
@@ -805,12 +737,21 @@ static void parse_font_tag(const char *src, GString *dest, const char *tag_name,
 		*tags = g_slist_prepend(*tags, tmp->str);
 		g_string_free(tmp, FALSE);
 	}
+
+	g_datalist_clear(&attributes);
 }
 
 char *yahoo_html_to_codes(const char *src)
 {
 	GSList *colors = NULL;
+
+	/**
+	 * A stack of char*s where each char* is the string that should be
+	 * appended to dest in order to close all the tags that were opened
+	 * by a <font> tag.
+	 */
 	GSList *tags = NULL;
+
 	size_t src_len;
 	int i, j;
 	GString *dest;
