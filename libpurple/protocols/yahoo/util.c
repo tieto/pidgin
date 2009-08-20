@@ -712,6 +712,14 @@ static void parse_font_tag(GString *dest, const char *tag_name, const char *tag,
 		g_string_append_printf(dest, "\033[%sm", attribute);
 		*colors = g_slist_prepend(*colors,
 				g_strdup_printf("\033[%sm", attribute));
+	} else {
+		/* We need to add a value to the colors stack even if we're not
+		 * setting a color because we ALWAYS pop exactly 1 element from
+		 * this stack for every </font> tag.  If we don't add anything
+		 * then we'll pop something that we shouldn't when we hit this
+		 * corresponding </font>. */
+		*colors = g_slist_prepend(*colors,
+				*colors ? g_strdup((*colors)->data) : g_strdup("\033[#000000m"));
 	}
 
 	attribute = g_datalist_get_data(&attributes, "face");
@@ -868,11 +876,9 @@ char *yahoo_html_to_codes(const char *src)
 						char *etag = tags->data;
 						tags = g_slist_delete_link(tags, tags);
 						g_string_append(dest, etag);
-						if (g_str_equal(etag, "</font>")) {
-							if (colors != NULL) {
-								g_free(colors->data);
-								colors = g_slist_delete_link(colors, colors);
-							}
+						if (colors != NULL) {
+							g_free(colors->data);
+							colors = g_slist_delete_link(colors, colors);
 						}
 						g_free(etag);
 					}
