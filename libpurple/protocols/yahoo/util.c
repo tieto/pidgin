@@ -691,8 +691,8 @@ static void yahoo_htc_list_cleanup(GSList *l)
 	}
 }
 
-static void parse_font_tag(const char *src, GString *dest, const char *tag_name, const char *tag,
-				int src_len, GSList **colors, GSList **tags)
+static void parse_font_tag(GString *dest, const char *tag_name, const char *tag,
+				GSList **colors, GSList **tags)
 {
 	const char *start;
 	const char *end;
@@ -834,7 +834,7 @@ char *yahoo_html_to_codes(const char *src)
 						j = end - src + 3;
 
 				} else if (g_str_equal(tag_name, "font")) {
-					parse_font_tag(src, dest, tag_name, tag, src_len, &colors, &tags);
+					parse_font_tag(dest, tag_name, tag, &colors, &tags);
 				} else if (g_str_equal(tag_name, "b")) {
 					g_string_append(dest, "\033[1m");
 					current_state.bold = TRUE;
