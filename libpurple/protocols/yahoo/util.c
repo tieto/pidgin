@@ -513,7 +513,7 @@ char *yahoo_codes_to_html(const char *x)
 	int i, j;
 	gboolean no_more_gt_brackets = FALSE;
 	const char *match;
-	gchar *xmlstr1, *xmlstr2;
+	gchar *xmlstr1, *xmlstr2, *esc;
 
 	x_len = strlen(x);
 	html = xmlnode_new("html");
@@ -660,7 +660,10 @@ char *yahoo_codes_to_html(const char *x)
 	xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
 	g_free(xmlstr1);
 
-	purple_debug_misc("yahoo", "yahoo_codes_to_html(%s)=%s\n", x, xmlstr2);
+	esc = g_strescape(x, NULL);
+	purple_debug_misc("yahoo", "yahoo_codes_to_html(%s)=%s\n", esc, xmlstr2);
+	g_free(esc);
+
 	return xmlstr2;
 }
 
