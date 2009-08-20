@@ -859,36 +859,39 @@ AC_ARG_ENABLE(avahi,
 	[AC_HELP_STRING([--disable-avahi],
 		[compile without avahi (required for Bonjour support)])],
 	enable_avahi="$enableval", enable_avahi="yes")
-AC_ARG_WITH(avahi-client-includes, [AC_HELP_STRING([--with-avahi-client-includes=DIR], [compile the Bonjour plugin against the Avahi Client includes in DIR])], [ac_avahi_client_includes="$withval"], [ac_avahi_client_includes="no"])
-AC_ARG_WITH(avahi-client-libs, [AC_HELP_STRING([--with-avahi-client-libs=DIR], [compile the Bonjour plugin against the Avahi Client libs in DIR])], [ac_avahi_client_libs="$withval"], [ac_avahi_client_libs="no"])
-AVAHI_CFLAGS=""
-AVAHI_LIBS=""
 
-dnl Attempt to autodetect Avahi
-PKG_CHECK_MODULES(AVAHI, [avahi-client avahi-glib], [
-	avahiincludes="yes"
-	avahilibs="yes"
-], [
-	avahiincludes="no"
-	avahilibs="no"
-])
+if test "x$enable_avahi" = "xyes"; then
+	AC_ARG_WITH(avahi-client-includes, [AC_HELP_STRING([--with-avahi-client-includes=DIR], [compile the Bonjour plugin against the Avahi Client includes in DIR])], [ac_avahi_client_includes="$withval"], [ac_avahi_client_includes="no"])
+	AC_ARG_WITH(avahi-client-libs, [AC_HELP_STRING([--with-avahi-client-libs=DIR], [compile the Bonjour plugin against the Avahi Client libs in DIR])], [ac_avahi_client_libs="$withval"], [ac_avahi_client_libs="no"])
+	AVAHI_CFLAGS=""
+	AVAHI_LIBS=""
 
-dnl Override AVAHI_CFLAGS if the user specified an include dir
-if test "$ac_avahi_client_includes" != "no"; then
-	AVAHI_CFLAGS="-I$ac_avahi_client_includes"
+	dnl Attempt to autodetect Avahi
+	PKG_CHECK_MODULES(AVAHI, [avahi-client avahi-glib], [
+		avahiincludes="yes"
+		avahilibs="yes"
+	], [
+		avahiincludes="no"
+		avahilibs="no"
+	])
+
+	dnl Override AVAHI_CFLAGS if the user specified an include dir
+	if test "$ac_avahi_client_includes" != "no"; then
+		AVAHI_CFLAGS="-I$ac_avahi_client_includes"
+	fi
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $AVAHI_CFLAGS"
+	AC_CHECK_HEADER(avahi-client/client.h, [avahiincludes=yes], [avahiincludes=no])
+	CPPFLAGS="$CPPFLAGS $AVAHI_CFLAGS $GLIB_CFLAGS"
+	AC_CHECK_HEADER(avahi-glib/glib-malloc.h, [avahiincludes=yes], [avahiincludes=no])
+	CPPFLAGS="$CPPFLAGS_save"
+
+	dnl Override AVAHI_LIBS if the user specified a libs dir
+	if test "$ac_avahi_client_libs" != "no"; then
+		AVAHI_LIBS="-L$ac_avahi_client_libs -lavahi-common -lavahi-client -lavahi-glib "
+	fi
+	AC_CHECK_LIB(avahi-client, avahi_client_new, [avahilibs=yes], [avahilibs=no], $AVAHI_LIBS)
 fi
-CPPFLAGS_save="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $AVAHI_CFLAGS"
-AC_CHECK_HEADER(avahi-client/client.h, [avahiincludes=yes], [avahiincludes=no])
-CPPFLAGS="$CPPFLAGS $AVAHI_CFLAGS $GLIB_CFLAGS"
-AC_CHECK_HEADER(avahi-glib/glib-malloc.h, [avahiincludes=yes], [avahiincludes=no])
-CPPFLAGS="$CPPFLAGS_save"
-
-dnl Override AVAHI_LIBS if the user specified a libs dir
-if test "$ac_avahi_client_libs" != "no"; then
-	AVAHI_LIBS="-L$ac_avahi_client_libs -lavahi-common -lavahi-client -lavahi-glib "
-fi
-AC_CHECK_LIB(avahi-client, avahi_client_new, [avahilibs=yes], [avahilibs=no], $AVAHI_LIBS)
 
 if test "x$enable_avahi" = "xyes" -a "x$force_deps" = "xyes" -a \( "x$avahiincludes" = "xno" -o "x$avahilibs" = "xno" \); then
 	AC_MSG_ERROR([
