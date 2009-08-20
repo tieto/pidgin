@@ -7,6 +7,9 @@ version 2.6.2 (??/??/2009):
 	* Fix connecting to XMPP domains with no SRV records from Pidgin on
 	  Windows.
 
+	Finch:
+	* Properly detect libpanel on OpenBSD.  (Brad Smith)
+
 version 2.6.1 (08/18/2009):
 	* Fix a crash when some users send you a link in a Yahoo IM
 	* Fix compilation with GTK+ < 2.6.0

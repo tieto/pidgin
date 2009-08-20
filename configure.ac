@@ -632,7 +632,8 @@ AC_ARG_WITH(ncurses-headers, [AC_HELP_STRING([--with-ncurses-headers=DIR],
 		[ac_ncurses_includes="$withval"], [ac_ncurses_includes=""])
 if test "x$enable_consoleui" = "xyes"; then
 	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_consoleui=no])
-	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"], [enable_consoleui=no])
+	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"],
+	    [enable_consoleui=no], [$GNT_LIBS])
 
 	if test "x$enable_consoleui" = "xyes"; then
 		dnl # Some distros put the headers in ncursesw/, some don't
@@ -675,7 +676,8 @@ if test "x$enable_consoleui" = "xyes"; then
 		# ncursesw was not found. Look for plain old ncurses
 		enable_consoleui=yes
 		AC_CHECK_LIB(ncurses, initscr, [GNT_LIBS="-lncurses"], [enable_consoleui=no])
-		AC_CHECK_LIB(panel, update_panels, [GNT_LIBS="$GNT_LIBS -lpanel"], [enable_consoleui=no])
+		AC_CHECK_LIB(panel, update_panels, [GNT_LIBS="$GNT_LIBS -lpanel"],
+		    [enable_consoleui=no], [$GNT_LIBS])
 		AC_DEFINE(NO_WIDECHAR, 1, [Define to 1 if you don't have wide-character support.])
 		if test x"$ac_ncurses_includes" != "x"; then
 			GNT_CFLAGS="-I$ac_ncurses_includes"
