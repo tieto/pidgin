@@ -660,7 +660,7 @@ char *yahoo_codes_to_html(const char *x)
 	xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
 	g_free(xmlstr1);
 
-	purple_debug_misc("yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", xmlstr2);
+	purple_debug_misc("yahoo", "yahoo_codes_to_html(%s)=%s\n", x, xmlstr2);
 	return xmlstr2;
 }
 
@@ -673,8 +673,7 @@ enum fontattr_type
 {
 	FATYPE_SIZE,
 	FATYPE_COLOR,
-	FATYPE_FACE,
-	FATYPE_JUNK
+	FATYPE_FACE
 };
 
 typedef struct
@@ -684,7 +683,6 @@ typedef struct
 		int size;
 		char *color;
 		char *face;
-		char *junk;
 	} u;
 } fontattr;
 
@@ -716,164 +714,100 @@ static void yahoo_htc_list_cleanup(GSList *l)
 	}
 }
 
-static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
-				int len, GSList **colors, GSList **tags, GQueue *ftattr)
+static void parse_font_tag(const char *src, GString *dest, const char *tag_name, const char *tag,
+				int src_len, GSList **colors, GSList **tags, GQueue *ftattr)
 {
-	int m, n, vstart;
-	gboolean quote = FALSE, done = FALSE;
+	const char *start;
+	const char *end;
+	GData *attributes;
+	const char *attribute;
+	gboolean needendtag;
+	fontattr *f;
+	GString *tmp;
 
-	m = *j;
+	purple_markup_find_tag(tag_name, tag, &start, &end, &attributes);
 
-	while (1) {
-		m++;
+	attribute = g_datalist_get_data(&attributes, "color");
+	if (attribute != NULL) {
+		f = g_new(fontattr, 1);
+		f->type = FATYPE_COLOR;
+		f->u.color = g_strdup(attribute);
+		if (!ftattr)
+			ftattr = g_queue_new();
+		g_queue_push_head(ftattr, f);
+	}
 
-		if (m >= len) {
-			g_string_append(dest, &src[*i]);
-			*i = len;
-			break;
-		}
+	attribute = g_datalist_get_data(&attributes, "face");
+	if (attribute != NULL) {
+		f = g_new(fontattr, 1);
+		f->type = FATYPE_FACE;
+		f->u.face = g_strdup(attribute);
+		if (!ftattr)
+			ftattr = g_queue_new();
+		g_queue_push_tail(ftattr, f);
+	}
 
-		if (src[m] == '=') {
-			n = vstart = m;
-			while (1) {
-				n++;
+	attribute = g_datalist_get_data(&attributes, "size");
+	if (attribute != NULL) {
+		f = g_new(fontattr, 1);
+		f->type = FATYPE_SIZE;
+		f->u.size = POINT_SIZE(strtol(attribute, NULL, 10));
+		if (!ftattr)
+			ftattr = g_queue_new();
+		g_queue_push_tail(ftattr, f);
+	}
 
-				if (n >= len) {
-					m = n;
-					break;
+	g_datalist_clear(&attributes);
+
+	needendtag = FALSE;
+	tmp = g_string_new(NULL);
+
+	if (ftattr != NULL && !g_queue_is_empty(ftattr)) {
+		while ((f = g_queue_pop_tail(ftattr))) {
+			switch (f->type) {
+			case FATYPE_SIZE:
+				if (!needendtag) {
+					needendtag = TRUE;
+					g_string_append(dest, "<font ");
 				}
 
-				if (src[n] == '"') {
-					if (!quote) {
-						quote = TRUE;
-						vstart = n;
-						continue;
-					} else {
-						done = 1;
-					}
+				g_string_append_printf(dest, "size=\"%d\" ", f->u.size);
+				break;
+			case FATYPE_FACE:
+				if (!needendtag) {
+					needendtag = TRUE;
+					g_string_append(dest, "<font ");
 				}
 
-				if (!quote && ((src[n] == ' ') || (src[n] == '>')))
-					done = TRUE;
+				g_string_append_printf(dest, "face=\"%s\" ", f->u.face);
+				break;
 
-				if (done) {
-					if (!g_ascii_strncasecmp(&src[*j+1], "FACE", m - *j - 1)) {
-						fontattr *f;
-
-						f = g_new(fontattr, 1);
-						f->type = FATYPE_FACE;
-						f->u.face = g_strndup(&src[vstart+1], n-vstart-1);
-						if (!ftattr)
-							ftattr = g_queue_new();
-						g_queue_push_tail(ftattr, f);
-						m = n;
-						break;
-					} else if (!g_ascii_strncasecmp(&src[*j+1], "SIZE", m - *j - 1)) {
-						fontattr *f;
-
-						f = g_new(fontattr, 1);
-						f->type = FATYPE_SIZE;
-						f->u.size = POINT_SIZE(strtol(&src[vstart+1], NULL, 10));
-						if (!ftattr)
-							ftattr = g_queue_new();
-						g_queue_push_tail(ftattr, f);
-						m = n;
-						break;
-					} else if (!g_ascii_strncasecmp(&src[*j+1], "COLOR", m - *j - 1)) {
-						fontattr *f;
-
-						f = g_new(fontattr, 1);
-						f->type = FATYPE_COLOR;
-						f->u.color = g_strndup(&src[vstart+1], n-vstart-1);
-						if (!ftattr)
-							ftattr = g_queue_new();
-						g_queue_push_head(ftattr, f);
-						m = n;
-						break;
-					} else {
-						fontattr *f;
-
-						f = g_new(fontattr, 1);
-						f->type = FATYPE_JUNK;
-						f->u.junk = g_strndup(&src[*j+1], n-*j);
-						if (!ftattr)
-							ftattr = g_queue_new();
-						g_queue_push_tail(ftattr, f);
-						m = n;
-						break;
-					}
-
-				}
-			}
-		}
-
-		if (src[m] == ' ')
-			*j = m;
-
-		if (src[m] == '>') {
-			gboolean needendtag = FALSE;
-			fontattr *f;
-			GString *tmp = g_string_new(NULL);
-
-			if (!g_queue_is_empty(ftattr)) {
-				while ((f = g_queue_pop_tail(ftattr))) {
-					switch (f->type) {
-					case FATYPE_SIZE:
-						if (!needendtag) {
-							needendtag = TRUE;
-							g_string_append(dest, "<font ");
-						}
-
-						g_string_append_printf(dest, "size=\"%d\" ", f->u.size);
-						break;
-					case FATYPE_FACE:
-						if (!needendtag) {
-							needendtag = TRUE;
-							g_string_append(dest, "<font ");
-						}
-
-						g_string_append_printf(dest, "face=\"%s\" ", f->u.face);
-						break;
-					case FATYPE_JUNK:
-						if (!needendtag) {
-							needendtag = TRUE;
-							g_string_append(dest, "<font ");
-						}
-
-						g_string_append(dest, f->u.junk);
-						break;
-
-					case FATYPE_COLOR:
-						if (needendtag) {
-							g_string_append(tmp, "</font>");
-							dest->str[dest->len-1] = '>';
-							needendtag = TRUE;
-						}
-
-						g_string_append(tmp, *colors ? (*colors)->data : "\033[#000000m");
-						g_string_append_printf(dest, "\033[%sm", f->u.color);
-						*colors = g_slist_prepend(*colors,
-								g_strdup_printf("\033[%sm", f->u.color));
-						break;
-					}
-					fontattr_free(f);
-				}
-
-				g_queue_free(ftattr);
-				ftattr = NULL;
-
+			case FATYPE_COLOR:
 				if (needendtag) {
+					g_string_append(tmp, "</font>");
 					dest->str[dest->len-1] = '>';
-					*tags = g_slist_prepend(*tags, g_strdup("</font>"));
-					g_string_free(tmp, TRUE);
-				} else {
-					*tags = g_slist_prepend(*tags, tmp->str);
-					g_string_free(tmp, FALSE);
+					needendtag = TRUE;
 				}
-			}
 
-			*i = *j = m;
-			break;
+				g_string_append(tmp, *colors ? (*colors)->data : "\033[#000000m");
+				g_string_append_printf(dest, "\033[%sm", f->u.color);
+				*colors = g_slist_prepend(*colors,
+						g_strdup_printf("\033[%sm", f->u.color));
+				break;
+			}
+			fontattr_free(f);
+		}
+
+		g_queue_free(ftattr);
+		ftattr = NULL;
+
+		if (needendtag) {
+			dest->str[dest->len-1] = '>';
+			*tags = g_slist_prepend(*tags, g_strdup("</font>"));
+			g_string_free(tmp, TRUE);
+		} else {
+			*tags = g_slist_prepend(*tags, tmp->str);
+			g_string_free(tmp, FALSE);
 		}
 	}
 }
@@ -929,35 +863,40 @@ char *yahoo_html_to_codes(const char *src)
 				tag_name = yahoo_markup_get_tag_name(tag, &is_closing_tag);
 
 				if (g_str_equal(tag_name, "a")) {
-					j += 7;
-					g_string_append(dest, "\033[lm");
-					if (purple_str_has_prefix(src + j, "mailto:"))
-						j += sizeof("mailto:") - 1;
-					while (1) {
-						g_string_append_c(dest, src[j]);
-						if (++j >= src_len) {
-							i = src_len;
-							break;
-						}
-						if (src[j] == '"') {
-							g_string_append(dest, "\033[xlm");
-							while (1) {
-								if (++j >= src_len) {
-									i = src_len;
-									break;
-								}
-								if (!g_ascii_strncasecmp(&src[j], "</A>", 4)) {
-									j += 3;
-									break;
-								}
-							}
-							i = j;
-							break;
-						}
+					const char *start;
+					const char *end;
+					GData *attributes;
+					const char *attribute;
+
+					/*
+					 * TODO: Ideally we would replace this:
+					 * <a href="http://pidgin.im/">Pidgin</a>
+					 * with this:
+					 * Pidgin (http://pidgin.im/)
+					 *
+					 * Currently we drop the text within the <a> tag and
+					 * just show the URL.  Doing it the fancy way is
+					 * complicated when dealing with HTML tags within the
+					 * <a> tag.
+					 */
+
+					/* Append the URL */
+					purple_markup_find_tag(tag_name, tag, &start, &end, &attributes);
+					attribute = g_datalist_get_data(&attributes, "href");
+					if (attribute != NULL) {
+						if (purple_str_has_prefix(attribute, "mailto:"))
+							attribute += 7;
+						g_string_append(dest, attribute);
 					}
+					g_datalist_clear(&attributes);
+
+					/* Skip past the closing </a> tag */
+					end = purple_strcasestr(src + j, "</a>");
+					if (end != NULL)
+						j = end - src + 3;
 
 				} else if (g_str_equal(tag_name, "font")) {
-					_parse_font_tag(src, dest, &i, &j, src_len, &colors, &tags, ftattr);
+					parse_font_tag(src, dest, tag_name, tag, src_len, &colors, &tags, ftattr);
 				} else if (g_str_equal(tag_name, "b")) {
 					g_string_append(dest, "\033[1m");
 					current_state.bold = TRUE;
@@ -983,7 +922,7 @@ char *yahoo_html_to_codes(const char *src)
 						current_state.underline = FALSE;
 					}
 				} else if (g_str_equal(tag_name, "/a")) {
-					g_string_append(dest, "\033[xlm");
+					/* Do nothing */
 				} else if (g_str_equal(tag_name, "br")) {
 					g_string_append_c(dest, '\n');
 				} else if (g_str_equal(tag_name, "/font")) {
@@ -1023,7 +962,7 @@ char *yahoo_html_to_codes(const char *src)
 	}
 
 	esc = g_strescape(dest->str, NULL);
-	purple_debug_misc("yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
+	purple_debug_misc("yahoo", "yahoo_html_to_codes(%s)=%s\n", src, esc);
 	g_free(esc);
 
 	yahoo_htc_list_cleanup(colors);
