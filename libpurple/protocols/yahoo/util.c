@@ -764,7 +764,7 @@ char *yahoo_html_to_codes(const char *src)
 	gboolean is_closing_tag;
 	CurrentMsgState current_state;
 
-	bzero(&current_state, sizeof(current_state));
+	memset(&current_state, 0, sizeof(current_state));
 
 	src_len = strlen(src);
 	dest = g_string_sized_new(src_len);
