@@ -403,8 +403,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			if (conv) {
 				char *buf;
 				buf = g_strdup_printf(
-						_("%s invited you to view his/her webcam, but this"
-						"is not yet supported."), from);
+						_("%s invited you to view his/her webcam, but "
+						"this is not yet supported."), from);
 				purple_conversation_write(conv, NULL, buf,
 						PURPLE_MESSAGE_SYSTEM |
 						PURPLE_MESSAGE_NOTIFY,
