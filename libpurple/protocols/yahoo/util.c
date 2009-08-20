@@ -717,33 +717,23 @@ static void yahoo_htc_list_cleanup(GSList *l)
 static void parse_font_tag(const char *src, GString *dest, const char *tag_name, const char *tag,
 				int src_len, GSList **colors, GSList **tags)
 {
-	GQueue *ftattr;
 	const char *start;
 	const char *end;
 	GData *attributes;
 	const char *attribute;
+	GSList *fontattrs = NULL;
 	gboolean needendtag;
 	fontattr *f;
 	GString *tmp;
 
-	ftattr = g_queue_new();
-
 	purple_markup_find_tag(tag_name, tag, &start, &end, &attributes);
-
-	attribute = g_datalist_get_data(&attributes, "color");
-	if (attribute != NULL) {
-		f = g_new(fontattr, 1);
-		f->type = FATYPE_COLOR;
-		f->u.color = g_strdup(attribute);
-		g_queue_push_head(ftattr, f);
-	}
 
 	attribute = g_datalist_get_data(&attributes, "face");
 	if (attribute != NULL) {
 		f = g_new(fontattr, 1);
 		f->type = FATYPE_FACE;
 		f->u.face = g_strdup(attribute);
-		g_queue_push_tail(ftattr, f);
+		fontattrs = g_slist_prepend(fontattrs, f);
 	}
 
 	attribute = g_datalist_get_data(&attributes, "size");
@@ -751,60 +741,69 @@ static void parse_font_tag(const char *src, GString *dest, const char *tag_name,
 		f = g_new(fontattr, 1);
 		f->type = FATYPE_SIZE;
 		f->u.size = POINT_SIZE(strtol(attribute, NULL, 10));
-		g_queue_push_tail(ftattr, f);
+		fontattrs = g_slist_prepend(fontattrs, f);
+	}
+
+	attribute = g_datalist_get_data(&attributes, "color");
+	if (attribute != NULL) {
+		f = g_new(fontattr, 1);
+		f->type = FATYPE_COLOR;
+		f->u.color = g_strdup(attribute);
+		fontattrs = g_slist_prepend(fontattrs, f);
 	}
 
 	g_datalist_clear(&attributes);
 
+	if (fontattrs == NULL)
+		/* No recognized attributes in the font tag.  Nothing to do. */
+		return;
+
 	needendtag = FALSE;
 	tmp = g_string_new(NULL);
 
-	if (!g_queue_is_empty(ftattr)) {
-		while ((f = g_queue_pop_tail(ftattr))) {
-			switch (f->type) {
-			case FATYPE_SIZE:
-				if (!needendtag) {
-					needendtag = TRUE;
-					g_string_append(dest, "<font ");
-				}
+	while (fontattrs != NULL) {
+		f = fontattrs->data;
+		fontattrs = g_slist_delete_link(fontattrs, fontattrs);
 
-				g_string_append_printf(dest, "size=\"%d\" ", f->u.size);
-				break;
-			case FATYPE_FACE:
-				if (!needendtag) {
-					needendtag = TRUE;
-					g_string_append(dest, "<font ");
-				}
-
-				g_string_append_printf(dest, "face=\"%s\" ", f->u.face);
-				break;
-
-			case FATYPE_COLOR:
-				if (needendtag) {
-					g_string_append(tmp, "</font>");
-					dest->str[dest->len-1] = '>';
-					needendtag = TRUE;
-				}
-
-				g_string_append(tmp, *colors ? (*colors)->data : "\033[#000000m");
-				g_string_append_printf(dest, "\033[%sm", f->u.color);
-				*colors = g_slist_prepend(*colors,
-						g_strdup_printf("\033[%sm", f->u.color));
-				break;
+		switch (f->type) {
+		case FATYPE_COLOR:
+			if (needendtag) {
+				g_string_append(tmp, "</font>");
+				dest->str[dest->len-1] = '>';
 			}
-			fontattr_free(f);
-		}
 
-		g_queue_free(ftattr);
+			g_string_append(tmp, *colors ? (*colors)->data : "\033[#000000m");
+			g_string_append_printf(dest, "\033[%sm", f->u.color);
+			*colors = g_slist_prepend(*colors,
+					g_strdup_printf("\033[%sm", f->u.color));
+			break;
+		case FATYPE_FACE:
+			if (!needendtag) {
+				needendtag = TRUE;
+				g_string_append(dest, "<font ");
+			}
 
-		if (needendtag) {
-			dest->str[dest->len-1] = '>';
-			*tags = g_slist_prepend(*tags, g_strdup("</font>"));
-			g_string_free(tmp, TRUE);
-		} else {
-			*tags = g_slist_prepend(*tags, tmp->str);
-			g_string_free(tmp, FALSE);
+			g_string_append_printf(dest, "face=\"%s\" ", f->u.face);
+			break;
+		case FATYPE_SIZE:
+			if (!needendtag) {
+				needendtag = TRUE;
+				g_string_append(dest, "<font ");
+			}
+
+			g_string_append_printf(dest, "size=\"%d\" ", f->u.size);
+			break;
 		}
+		fontattr_free(f);
+	}
+
+	if (needendtag) {
+		dest->str[dest->len-1] = '>';
+		*tags = g_slist_prepend(*tags, g_strdup("</font>"));
+		g_string_free(tmp, TRUE);
+	} else {
+		*tags = g_slist_prepend(*tags, tmp->str);
+		g_string_free(tmp, FALSE);
 	}
 }
 
