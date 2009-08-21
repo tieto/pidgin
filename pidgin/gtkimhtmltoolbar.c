@@ -680,7 +680,7 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar,
 	  is custom smiley-enabled */
 	if (supports_custom && psmiley && !(smiley->flags & GTK_IMHTML_SMILEY_CUSTOM)) {
 		gchar tip[128];
-		g_snprintf(tip, sizeof(tip), 
+		g_snprintf(tip, sizeof(tip),
 			_("This smiley is disabled because a custom smiley exists for this shortcut:\n %s"),
 			face);
 		gtk_tooltips_set_tip(toolbar->tooltips, button, tip, NULL);
@@ -808,7 +808,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 			unique_smileys = g_slist_prepend(unique_smileys, smiley);
 		}
 	}
-	
+
 	/* we need to reverse the list to get the smileys in the correct order */
 	unique_smileys = g_slist_reverse(unique_smileys);
 
@@ -1198,7 +1198,7 @@ static void gtk_imhtmltoolbar_class_init (GtkIMHtmlToolbarClass *class)
 	GObjectClass   *gobject_class;
 	object_class = (GtkObjectClass*) class;
 	gobject_class = (GObjectClass*) class;
-	parent_class = gtk_type_class(GTK_TYPE_HBOX);
+	parent_class = g_type_class_ref(GTK_TYPE_HBOX);
 	gobject_class->finalize = gtk_imhtmltoolbar_finalize;
 
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/toolbar");
@@ -1413,13 +1413,13 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Horizontal rule"));
 	g_signal_connect(G_OBJECT(menuitem), "activate"	, G_CALLBACK(insert_hr_cb), toolbar);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
-	toolbar->insert_hr = menuitem;	
+	toolbar->insert_hr = menuitem;
 
 	g_signal_connect_swapped(G_OBJECT(insert_button), "button-press-event", G_CALLBACK(gtk_widget_activate), insert_button);
 	g_signal_connect(G_OBJECT(insert_button), "activate", G_CALLBACK(pidgin_menu_clicked), insert_menu);
 	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);
 	toolbar->sml = NULL;
-	
+
 	/* Sep */
 	sep = gtk_vseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);

@@ -27,10 +27,10 @@ GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10.13
 # Where we installing this stuff to?
 PIDGIN_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
 PURPLE_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
-PIDGIN_INSTALL_PERLMOD_DIR := $(PIDGIN_INSTALL_DIR)/perlmod
 PIDGIN_INSTALL_PLUGINS_DIR := $(PIDGIN_INSTALL_DIR)/plugins
-PURPLE_INSTALL_PERLMOD_DIR := $(PURPLE_INSTALL_DIR)/perlmod
+PIDGIN_INSTALL_PERL_DIR := $(PIDGIN_INSTALL_PLUGINS_DIR)/perl
 PURPLE_INSTALL_PLUGINS_DIR := $(PURPLE_INSTALL_DIR)/plugins
+PURPLE_INSTALL_PERL_DIR := $(PURPLE_INSTALL_PLUGINS_DIR)/perl
 PURPLE_INSTALL_PO_DIR := $(PURPLE_INSTALL_DIR)/locale
 
 # Important (enough) locations in our source code
@@ -47,6 +47,8 @@ PURPLE_PROTOS_TOP := $(PURPLE_TOP)/protocols
 # Locations of important (in-tree) build targets
 PIDGIN_CONFIG_H := $(PIDGIN_TREE_TOP)/config.h
 PURPLE_CONFIG_H := $(PIDGIN_TREE_TOP)/config.h
+PIDGIN_REVISION_H := $(PIDGIN_TREE_TOP)/package_revision.h
+PIDGIN_REVISION_RAW_TXT := $(PIDGIN_TREE_TOP)/package_revision_raw.txt
 PIDGIN_IDLETRACK_DLL := $(PIDGIN_IDLETRACK_TOP)/idletrack.dll
 PURPLE_PURPLE_H := $(PURPLE_TOP)/purple.h
 PURPLE_VERSION_H := $(PURPLE_TOP)/version.h
@@ -103,6 +105,7 @@ ifeq "$(origin CC)" "default"
 endif
 GMSGFMT ?= $(GTK_BIN)/msgfmt
 MAKENSIS ?= makensis.exe
+MAKENSISOPT ?= /
 PERL ?= /cygdrive/c/perl/bin/perl
 WINDRES ?= windres
 STRIP ?= strip

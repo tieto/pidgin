@@ -37,6 +37,7 @@
 #include "gtkblist.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
+#include "pidginstock.h"
 
 #include "gtkticker.h"
 
@@ -53,7 +54,7 @@ typedef struct {
 	guint timeout;
 } TickerData;
 
-GList *tickerbuds = NULL;
+static GList *tickerbuds = NULL;
 
 static void buddy_ticker_update_contact(PurpleContact *contact);
 
@@ -91,7 +92,10 @@ static gboolean buddy_click_cb(GtkWidget *widget, GdkEventButton *event, gpointe
 	PurpleContact *contact = user_data;
 	PurpleBuddy *b = purple_contact_get_priority_buddy(contact);
 
-	purple_conversation_new(PURPLE_CONV_TYPE_IM, b->account, b->name);
+	PurpleConversation *conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
+	                                purple_buddy_get_account(b),
+	                                purple_buddy_get_name(b));
+	purple_conversation_present(conv);
 	return TRUE;
 }
 
@@ -105,20 +109,27 @@ static TickerData *buddy_ticker_find_contact(PurpleContact *c) {
 	return NULL;
 }
 
-static void buddy_ticker_set_pixmap(PurpleContact *c) {
+static void buddy_ticker_set_pixmap(PurpleContact *c)
+{
 	TickerData *td = buddy_ticker_find_contact(c);
-	GdkPixbuf *pixbuf;
+	PurpleBuddy *buddy;
+	PurplePresence *presence;
+	const char *stock;
 
 	if(!td)
 		return;
 
-	if(!td->icon)
+	buddy = purple_contact_get_priority_buddy(c);
+	presence = purple_buddy_get_presence(buddy);
+	stock = pidgin_stock_id_from_presence(presence);
+	if(!td->icon) {
 		td->icon = gtk_image_new();
-
-	pixbuf = pidgin_blist_get_status_icon((PurpleBlistNode*)c,
-			PIDGIN_STATUS_ICON_SMALL);
-	gtk_image_set_from_pixbuf(GTK_IMAGE(td->icon), pixbuf);
-	g_object_unref(G_OBJECT(pixbuf));
+		g_object_set(G_OBJECT(td->icon), "stock", stock,
+				"icon-size", gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC),
+				NULL);
+	} else {
+		g_object_set(G_OBJECT(td->icon), "stock", stock, NULL);
+	}
 }
 
 static gboolean buddy_ticker_set_pixmap_cb(gpointer data) {
@@ -217,20 +228,25 @@ static void buddy_ticker_remove_buddy(PurpleBuddy *b) {
 
 static void buddy_ticker_show(void)
 {
-	PurpleBuddyList *list = purple_get_blist();
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleBuddy *b;
 
-	if(!list)
-		return;
-
-	for(gnode = list->root; gnode; gnode = gnode->next) {
+	for(gnode = purple_blist_get_root();
+	    gnode;
+	    gnode = purple_blist_node_get_sibling_next(gnode))
+	{
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+		for(cnode = purple_blist_node_get_first_child(gnode);
+		    cnode;
+		    cnode = purple_blist_node_get_sibling_next(cnode))
+		{
 			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+			for(bnode = purple_blist_node_get_first_child(cnode);
+			    bnode;
+			    bnode = purple_blist_node_get_sibling_next(bnode))
+			{
 				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				b = (PurpleBuddy *)bnode;

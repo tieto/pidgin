@@ -8,6 +8,7 @@ finch/gntconv.c
 finch/gntdebug.c
 finch/gntft.c
 finch/gntlog.c
+finch/gntmedia.c
 finch/gntnotify.c
 finch/gntplugin.c
 finch/gntpounce.c
@@ -34,6 +35,7 @@ finch/libgnt/gntwidget.c
 finch/plugins/gntclipboard.c
 finch/plugins/gntgf.c
 finch/plugins/gnthistory.c
+finch/plugins/gnttinyurl.c
 finch/plugins/grouping.c
 finch/plugins/lastlog.c
 libpurple/account.c
@@ -48,6 +50,7 @@ libpurple/dnsquery.c
 libpurple/ft.c
 libpurple/gconf/purple.schemas.in
 libpurple/log.c
+libpurple/mediamanager.c
 libpurple/plugin.c
 libpurple/plugins/autoaccept.c
 libpurple/plugins/buddynote.c
@@ -62,6 +65,7 @@ libpurple/plugins/log_reader.c
 libpurple/plugins/mono/loader/mono.c
 libpurple/plugins/newline.c
 libpurple/plugins/offlinemsg.c
+libpurple/plugins/one_time_password.c
 libpurple/plugins/perl/perl.c
 libpurple/plugins/psychic.c
 libpurple/plugins/signals-test.c
@@ -83,6 +87,7 @@ libpurple/protocols/irc/msgs.c
 libpurple/protocols/irc/parse.c
 libpurple/protocols/jabber/adhoccommands.c
 libpurple/protocols/jabber/auth.c
+libpurple/protocols/jabber/bosh.c
 libpurple/protocols/jabber/buddy.c
 libpurple/protocols/jabber/chat.c
 libpurple/protocols/jabber/jabber.c
@@ -99,12 +104,14 @@ libpurple/protocols/msn/contact.c
 libpurple/protocols/msn/dialog.c
 libpurple/protocols/msn/error.c
 libpurple/protocols/msn/group.h
+libpurple/protocols/msn/msg.c
 libpurple/protocols/msn/msn.c
 libpurple/protocols/msn/nexus.c
 libpurple/protocols/msn/notification.c
 libpurple/protocols/msn/oim.c
 libpurple/protocols/msn/servconn.c
 libpurple/protocols/msn/session.c
+libpurple/protocols/msn/slp.c
 libpurple/protocols/msn/state.c
 libpurple/protocols/msn/switchboard.c
 libpurple/protocols/msn/userlist.c
@@ -123,6 +130,7 @@ libpurple/protocols/myspace/user.c
 libpurple/protocols/myspace/zap.c
 libpurple/protocols/novell/nmuser.c
 libpurple/protocols/novell/novell.c
+libpurple/protocols/oscar/clientlogin.c
 libpurple/protocols/oscar/family_chatnav.c
 libpurple/protocols/oscar/flap_connection.c
 libpurple/protocols/oscar/libaim.c
@@ -165,8 +173,10 @@ libpurple/protocols/silc10/silc.c
 libpurple/protocols/silc10/util.c
 libpurple/protocols/silc10/wb.c
 libpurple/protocols/simple/simple.c
-libpurple/protocols/toc/toc.c
-libpurple/protocols/yahoo/yahoo.c
+libpurple/protocols/yahoo/libyahoo.c
+libpurple/protocols/yahoo/libyahoojp.c
+libpurple/protocols/yahoo/libymsg.c
+libpurple/protocols/yahoo/yahoo_aliases.c
 libpurple/protocols/yahoo/yahoo_doodle.c
 libpurple/protocols/yahoo/yahoo_filexfer.c
 libpurple/protocols/yahoo/yahoo_packet.c
@@ -184,9 +194,11 @@ libpurple/sslconn.c
 libpurple/status.c
 libpurple/util.c
 libpurple/win32/libc_interface.c
+libpurple/xmlnode.c
 pidgin.desktop.in
 pidgin/eggtrayicon.c
 pidgin/gtkaccount.c
+pidgin/gtkblist-theme.c
 pidgin/gtkblist.c
 pidgin/gtkcellview.c
 pidgin/gtkcertmgr.c
@@ -201,6 +213,7 @@ pidgin/gtkimhtml.c
 pidgin/gtkimhtmltoolbar.c
 pidgin/gtklog.c
 pidgin/gtkmain.c
+pidgin/gtkmedia.c
 pidgin/gtknotify.c
 pidgin/gtkplugin.c
 pidgin/gtkpounce.c
@@ -224,6 +237,8 @@ pidgin/pixmaps/emotes/small/16/small.theme.in
 pidgin/plugins/cap/cap.c
 pidgin/plugins/contact_priority.c
 pidgin/plugins/convcolors.c
+pidgin/plugins/disco/gtkdisco.c
+pidgin/plugins/disco/xmppdisco.c
 pidgin/plugins/extplacement.c
 pidgin/plugins/gestures/gestures.c
 pidgin/plugins/gevolution/add_buddy_dialog.c
@@ -246,6 +261,8 @@ pidgin/plugins/raw.c
 pidgin/plugins/relnot.c
 pidgin/plugins/sendbutton.c
 pidgin/plugins/spellchk.c
+pidgin/plugins/themeedit-icon.c
+pidgin/plugins/themeedit.c
 pidgin/plugins/ticker/ticker.c
 pidgin/plugins/timestamp.c
 pidgin/plugins/timestamp_format.c

@@ -11,6 +11,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  PURPLE_CONNECTION_IS_VALID@Base 2.2.0
  PURPLE_CONV_CHAT@Base 2.2.0
  PURPLE_CONV_IM@Base 2.2.0
+ _purple_oscar_convert@Base 2.6.0
  purple_account_add_buddies@Base 2.2.0
  purple_account_add_buddy@Base 2.2.0
  purple_account_change_password@Base 2.2.0
@@ -56,6 +57,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_account_remove_buddies@Base 2.2.0
  purple_account_remove_buddy@Base 2.2.0
  purple_account_remove_group@Base 2.2.0
+ purple_account_remove_setting@Base 2.6.0
  purple_account_request_add@Base 2.2.0
  purple_account_request_change_password@Base 2.2.0
  purple_account_request_change_user_info@Base 2.2.0
@@ -116,6 +118,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_blist_alias_contact@Base 2.2.0
  purple_blist_destroy@Base 2.2.0
  purple_blist_find_chat@Base 2.2.0
+ purple_blist_get_buddies@Base 2.6.0
  purple_blist_get_group_online_count@Base 2.2.0
  purple_blist_get_group_size@Base 2.2.0
  purple_blist_get_root@Base 2.2.0
@@ -159,6 +162,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_blist_update_buddy_icon@Base 2.2.0
  purple_blist_update_buddy_status@Base 2.2.0
  purple_blist_update_node_icon@Base 2.5.0
+ purple_buddy_destroy@Base 2.6.0
  purple_buddy_get_account@Base 2.2.0
  purple_buddy_get_alias@Base 2.2.0
  purple_buddy_get_alias_only@Base 2.2.0
@@ -167,6 +171,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_buddy_get_group@Base 2.2.0
  purple_buddy_get_icon@Base 2.2.0
  purple_buddy_get_local_alias@Base 2.2.0
+ purple_buddy_get_local_buddy_alias@Base 2.6.0
  purple_buddy_get_name@Base 2.2.0
  purple_buddy_get_presence@Base 2.2.0
  purple_buddy_get_server_alias@Base 2.2.0
@@ -202,6 +207,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_buddy_new@Base 2.2.0
  purple_buddy_set_icon@Base 2.2.0
  purple_build_dir@Base 2.2.0
+ purple_chat_destroy@Base 2.6.0
  purple_chat_get_account@Base 2.4.0
  purple_chat_get_group@Base 2.2.0
  purple_chat_get_name@Base 2.2.0
@@ -219,6 +225,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_connection_notice@Base 2.2.0
  purple_connection_set_account@Base 2.2.0
  purple_connection_set_display_name@Base 2.2.0
+ purple_connection_set_protocol_data@Base 2.6.0
  purple_connection_set_state@Base 2.2.0
  purple_connection_ssl_error@Base 2.5.0
  purple_connection_update_progress@Base 2.2.0
@@ -229,6 +236,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_connections_init@Base 2.2.0
  purple_connections_set_ui_ops@Base 2.2.0
  purple_connections_uninit@Base 2.2.0
+ purple_contact_destroy@Base 2.6.0
  purple_contact_get_alias@Base 2.2.0
  purple_contact_get_priority_buddy@Base 2.2.0
  purple_contact_invalidate_priority_buddy@Base 2.2.0
@@ -252,6 +260,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_conv_chat_get_users@Base 2.2.0
  purple_conv_chat_has_left@Base 2.2.0
  purple_conv_chat_ignore@Base 2.2.0
+ purple_conv_chat_invite_user@Base 2.6.0
  purple_conv_chat_is_user_ignored@Base 2.2.0
  purple_conv_chat_left@Base 2.2.0
  purple_conv_chat_remove_user@Base 2.2.0
@@ -351,6 +360,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_get_host_name@Base 2.5.0
  purple_get_ims@Base 2.2.0
  purple_got_protocol_handler_uri@Base 2.2.0
+ purple_group_destroy@Base 2.6.0
  purple_group_get_accounts@Base 2.2.0
  purple_group_get_name@Base 2.2.0
  purple_group_new@Base 2.2.0
@@ -358,6 +368,8 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_home_dir@Base 2.2.0
  purple_init@Base 2.2.0
  purple_ip_address_is_valid@Base 2.4.0
+ purple_ipv4_address_is_valid@Base 2.6.0
+ purple_ipv6_address_is_valid@Base 2.6.0
  purple_log_common_deleter@Base 2.2.0
  purple_log_common_is_deletable@Base 2.2.0
  purple_log_common_lister@Base 2.2.0
@@ -366,6 +378,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_log_common_writer@Base 2.2.0
  purple_log_delete@Base 2.2.0
  purple_log_free@Base 2.2.0
+ purple_log_get_activity_score@Base 2.6.0
  purple_log_get_log_dir@Base 2.2.0
  purple_log_get_logs@Base 2.2.0
  purple_log_get_size@Base 2.2.0
@@ -382,8 +395,10 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_log_set_free@Base 2.2.0
  purple_log_uninit@Base 2.2.0
  purple_log_write@Base 2.2.0
+ purple_markup_escape_text@Base 2.6.0
  purple_markup_get_css_property@Base 2.2.0
  purple_markup_get_tag_name@Base 2.2.0
+ purple_markup_is_rtl@Base 2.6.0
  purple_markup_linkify@Base 2.2.0
  purple_markup_slice@Base 2.2.0
  purple_markup_strip_html@Base 2.2.0
@@ -492,7 +507,9 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_primitive_get_type_from_id@Base 2.2.0
  purple_program_is_valid@Base 2.2.0
  purple_prpl_change_account_status@Base 2.3.0
+ purple_prpl_get_media_caps@Base 2.6.0
  purple_prpl_get_statuses@Base 2.3.0
+ purple_prpl_got_account_actions@Base 2.6.0
  purple_prpl_got_account_idle@Base 2.3.0
  purple_prpl_got_account_login_time@Base 2.3.0
  purple_prpl_got_attention@Base 2.5.0
@@ -500,6 +517,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_prpl_got_user_idle@Base 2.3.0
  purple_prpl_got_user_login_time@Base 2.3.0
  purple_prpl_got_user_status_deactive@Base 2.3.0
+ purple_prpl_initiate_media@Base 2.6.0
  purple_prpl_send_attention@Base 2.5.0
  purple_restore_default_signal_handlers@Base 2.2.0
  purple_roomlist_cancel_get_list@Base 2.2.0
@@ -634,6 +652,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_strcasereplace@Base 2.2.0
  purple_strcasestr@Base 2.2.0
  purple_strdup_withhtml@Base 2.2.0
+ purple_strequal@Base 2.6.0
  purple_strreplace@Base 2.2.0
  purple_text_strip_mnemonic@Base 2.2.0
  purple_time_build@Base 2.2.0
@@ -649,6 +668,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_utf8_ncr_encode@Base 2.2.0
  purple_utf8_salvage@Base 2.2.0
  purple_utf8_strcasecmp@Base 2.2.0
+ purple_utf8_strip_unprintables@Base 2.6.0
  purple_utf8_try_convert@Base 2.2.0
  purple_util_fetch_url_cancel@Base 2.2.0
  purple_util_format_song_info@Base 2.4.0
@@ -736,6 +756,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  xmlnode_remove_attrib@Base 2.2.0
  xmlnode_remove_attrib_with_namespace@Base 2.2.0
  xmlnode_set_attrib@Base 2.2.0
+ xmlnode_set_attrib_full@Base 2.6.0
  xmlnode_set_attrib_with_namespace@Base 2.2.0
  xmlnode_set_attrib_with_prefix@Base 2.3.0
  xmlnode_set_namespace@Base 2.2.0
@@ -789,6 +810,13 @@ libpurple.so.0 libpurple0 #MINVER#
  PURPLE_DBUS_TYPE_PurpleLogCommonLoggerData@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleLogLogger@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleLogSet@Base 2.2.0
+ PURPLE_DBUS_TYPE_PurpleMedia@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleMediaCandidate@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleMediaCodec@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleMediaElementInfo@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleMediaElementInfoClass@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleMediaManager@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleMediaManagerClass@Base 2.6.0
  PURPLE_DBUS_TYPE_PurpleMenuAction@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleMimeDocument@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleMimePart@Base 2.2.0
@@ -824,6 +852,10 @@ libpurple.so.0 libpurple0 #MINVER#
  PURPLE_DBUS_TYPE_PurpleSavedStatusSub@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleSmiley@Base 2.5.0
  PURPLE_DBUS_TYPE_PurpleSmileyClass@Base 2.5.0
+ PURPLE_DBUS_TYPE_PurpleSoundTheme@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleSoundThemeClass@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleSoundThemeLoader@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleSoundThemeLoaderClass@Base 2.6.0
  PURPLE_DBUS_TYPE_PurpleSoundUiOps@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleSrvQueryData@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleSrvResponse@Base 2.2.0
@@ -835,6 +867,13 @@ libpurple.so.0 libpurple0 #MINVER#
  PURPLE_DBUS_TYPE_PurpleStoredImage@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleStringref@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleStunNatDiscovery@Base 2.2.0
+ PURPLE_DBUS_TYPE_PurpleTheme@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleThemeClass@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleThemeLoader@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleThemeLoaderClass@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleThemeManager@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleThemeManagerClass@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleTxtResponse@Base 2.6.0
  PURPLE_DBUS_TYPE_PurpleUtilFetchUrlData@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleValue@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleWhiteboard@Base 2.2.0
@@ -844,6 +883,16 @@ libpurple.so.0 libpurple0 #MINVER#
  PURPLE_DBUS_TYPE_PurpleXferUiOps@Base 2.2.0
  PURPLE_DBUS_TYPE_UPnPMappingAddRemove@Base 2.2.0
  PURPLE_DBUS_TYPE_xmlnode@Base 2.2.0
+ _purple_buddy_icon_set_old_icons_dir@Base 2.6.0
+ _purple_buddy_icons_account_loaded_cb@Base 2.6.0
+ _purple_buddy_icons_blist_loaded_cb@Base 2.6.0
+ _purple_connection_destroy@Base 2.6.0
+ _purple_connection_new@Base 2.6.0
+ _purple_connection_new_unregister@Base 2.6.0
+ _purple_oscar_convert@Base 2.6.0
+ dbus_signals@Base 2.6.0
+ empty_to_null@Base 2.6.0
+ null_to_empty@Base 2.6.0
  purple_GList_to_array@Base 2.2.0
  purple_GSList_to_array@Base 2.2.0
  purple_account_add_buddies@Base 2.2.0
@@ -912,6 +961,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_account_remove_buddies@Base 2.2.0
  purple_account_remove_buddy@Base 2.2.0
  purple_account_remove_group@Base 2.2.0
+ purple_account_remove_setting@Base 2.6.0
  purple_account_request_add@Base 2.2.0
  purple_account_request_authorization@Base 2.2.0
  purple_account_request_change_password@Base 2.2.0
@@ -991,10 +1041,12 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_blist_alias_contact@Base 2.2.0
  purple_blist_destroy@Base 2.2.0
  purple_blist_find_chat@Base 2.2.0
+ purple_blist_get_buddies@Base 2.6.0
  purple_blist_get_group_online_count@Base 2.2.0
  purple_blist_get_group_size@Base 2.2.0
  purple_blist_get_handle@Base 2.2.0
  purple_blist_get_root@Base 2.2.0
+ purple_blist_get_ui_data@Base 2.6.0
  purple_blist_get_ui_ops@Base 2.2.0
  purple_blist_init@Base 2.2.0
  purple_blist_load@Base 2.2.0
@@ -1010,12 +1062,14 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_blist_node_get_sibling_prev@Base 2.4.0
  purple_blist_node_get_string@Base 2.2.0
  purple_blist_node_get_type@Base 2.2.0
+ purple_blist_node_get_ui_data@Base 2.6.0
  purple_blist_node_next@Base 2.2.0
  purple_blist_node_remove_setting@Base 2.2.0
  purple_blist_node_set_bool@Base 2.2.0
  purple_blist_node_set_flags@Base 2.2.0
  purple_blist_node_set_int@Base 2.2.0
  purple_blist_node_set_string@Base 2.2.0
+ purple_blist_node_set_ui_data@Base 2.6.0
  purple_blist_remove_account@Base 2.2.0
  purple_blist_remove_buddy@Base 2.2.0
  purple_blist_remove_chat@Base 2.2.0
@@ -1028,6 +1082,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_blist_request_add_group@Base 2.2.0
  purple_blist_schedule_save@Base 2.2.0
  purple_blist_server_alias_buddy@Base 2.2.0
+ purple_blist_set_ui_data@Base 2.6.0
  purple_blist_set_ui_ops@Base 2.2.0
  purple_blist_set_visible@Base 2.2.0
  purple_blist_show@Base 2.2.0
@@ -1035,6 +1090,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_blist_update_buddy_icon@Base 2.2.0
  purple_blist_update_buddy_status@Base 2.2.0
  purple_blist_update_node_icon@Base 2.5.0
+ purple_buddy_destroy@Base 2.6.0
  purple_buddy_get_account@Base 2.2.0
  purple_buddy_get_alias@Base 2.2.0
  purple_buddy_get_alias_only@Base 2.2.0
@@ -1043,8 +1099,10 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_buddy_get_group@Base 2.2.0
  purple_buddy_get_icon@Base 2.2.0
  purple_buddy_get_local_alias@Base 2.2.0
+ purple_buddy_get_local_buddy_alias@Base 2.6.0
  purple_buddy_get_name@Base 2.2.0
  purple_buddy_get_presence@Base 2.2.0
+ purple_buddy_get_protocol_data@Base 2.6.0
  purple_buddy_get_server_alias@Base 2.2.0
  purple_buddy_icon_get_account@Base 2.2.0
  purple_buddy_icon_get_checksum@Base 2.2.0
@@ -1080,9 +1138,11 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_buddy_icons_uninit@Base 2.2.0
  purple_buddy_new@Base 2.2.0
  purple_buddy_set_icon@Base 2.2.0
+ purple_buddy_set_protocol_data@Base 2.6.0
  purple_build_dir@Base 2.2.0
  purple_certificate_add_ca_search_path@Base 2.4.0
  purple_certificate_check_signature_chain@Base 2.2.0
+ purple_certificate_check_signature_chain_with_failing@Base 2.6.0
  purple_certificate_check_subject_name@Base 2.2.0
  purple_certificate_copy@Base 2.2.0
  purple_certificate_copy_list@Base 2.2.0
@@ -1123,6 +1183,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_certificate_unregister_verifier@Base 2.2.0
  purple_certificate_verify@Base 2.2.0
  purple_certificate_verify_complete@Base 2.2.0
+ purple_chat_destroy@Base 2.6.0
  purple_chat_get_account@Base 2.4.0
  purple_chat_get_components@Base 2.4.0
  purple_chat_get_group@Base 2.2.0
@@ -1182,6 +1243,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_connection_get_account@Base 2.2.0
  purple_connection_get_display_name@Base 2.2.0
  purple_connection_get_password@Base 2.2.0
+ purple_connection_get_protocol_data@Base 2.6.0
  purple_connection_get_prpl@Base 2.4.0
  purple_connection_get_state@Base 2.2.0
  purple_connection_new@Base 2.2.0
@@ -1189,6 +1251,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_connection_notice@Base 2.2.0
  purple_connection_set_account@Base 2.2.0
  purple_connection_set_display_name@Base 2.2.0
+ purple_connection_set_protocol_data@Base 2.6.0
  purple_connection_set_state@Base 2.2.0
  purple_connection_ssl_error@Base 2.3.0
  purple_connection_update_progress@Base 2.2.0
@@ -1200,6 +1263,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_connections_init@Base 2.2.0
  purple_connections_set_ui_ops@Base 2.2.0
  purple_connections_uninit@Base 2.2.0
+ purple_contact_destroy@Base 2.6.0
  purple_contact_get_alias@Base 2.2.0
  purple_contact_get_priority_buddy@Base 2.2.0
  purple_contact_invalidate_priority_buddy@Base 2.2.0
@@ -1223,6 +1287,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_conv_chat_get_users@Base 2.2.0
  purple_conv_chat_has_left@Base 2.2.0
  purple_conv_chat_ignore@Base 2.2.0
+ purple_conv_chat_invite_user@Base 2.6.0
  purple_conv_chat_is_user_ignored@Base 2.2.0
  purple_conv_chat_left@Base 2.2.0
  purple_conv_chat_remove_user@Base 2.2.0
@@ -1342,9 +1407,13 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_debug_info@Base 2.2.0
  purple_debug_init@Base 2.2.0
  purple_debug_is_enabled@Base 2.2.0
+ purple_debug_is_unsafe@Base 2.6.0
+ purple_debug_is_verbose@Base 2.6.0
  purple_debug_misc@Base 2.2.0
  purple_debug_set_enabled@Base 2.2.0
  purple_debug_set_ui_ops@Base 2.2.0
+ purple_debug_set_unsafe@Base 2.6.0
+ purple_debug_set_verbose@Base 2.6.0
  purple_debug_warning@Base 2.2.0
  purple_desktop_item_copy@Base 2.2.0
  purple_desktop_item_get_entry_type@Base 2.2.0
@@ -1383,7 +1452,9 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_get_ims@Base 2.2.0
  purple_get_tzoff_str@Base 2.2.0
  purple_global_proxy_get_info@Base 2.2.0
+ purple_global_proxy_set_info@Base 2.6.0
  purple_got_protocol_handler_uri@Base 2.2.0
+ purple_group_destroy@Base 2.6.0
  purple_group_get_accounts@Base 2.2.0
  purple_group_get_name@Base 2.2.0
  purple_group_new@Base 2.2.0
@@ -1414,6 +1485,8 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_input_get_error@Base 2.2.0
  purple_input_remove@Base 2.2.0
  purple_ip_address_is_valid@Base 2.4.0
+ purple_ipv4_address_is_valid@Base 2.6.0
+ purple_ipv6_address_is_valid@Base 2.6.0
  purple_log_common_deleter@Base 2.2.0
  purple_log_common_is_deletable@Base 2.2.0
  purple_log_common_lister@Base 2.2.0
@@ -1423,6 +1496,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_log_compare@Base 2.2.0
  purple_log_delete@Base 2.2.0
  purple_log_free@Base 2.2.0
+ purple_log_get_activity_score@Base 2.6.0
  purple_log_get_handle@Base 2.2.0
  purple_log_get_log_dir@Base 2.2.0
  purple_log_get_log_sets@Base 2.2.0
@@ -1446,11 +1520,13 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_log_uninit@Base 2.2.0
  purple_log_write@Base 2.2.0
  purple_major_version@Base 2.2.0
+ purple_markup_escape_text@Base 2.6.0
  purple_markup_extract_info_field@Base 2.2.0
  purple_markup_find_tag@Base 2.2.0
  purple_markup_get_css_property@Base 2.2.0
  purple_markup_get_tag_name@Base 2.2.0
  purple_markup_html_to_xhtml@Base 2.2.0
+ purple_markup_is_rtl@Base 2.6.0
  purple_markup_linkify@Base 2.2.0
  purple_markup_slice@Base 2.2.0
  purple_markup_strip_html@Base 2.2.0
@@ -1461,6 +1537,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_marshal_BOOLEAN__POINTER_POINTER_POINTER@Base 2.2.0
  purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER@Base 2.2.0
  purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER@Base 2.2.0
+ purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER_POINTER@Base 2.6.0
  purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT@Base 2.2.0
  purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT@Base 2.2.0
  purple_marshal_BOOLEAN__POINTER_POINTER_UINT@Base 2.2.0
@@ -1489,6 +1566,91 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_marshal_VOID__POINTER_POINTER_UINT@Base 2.2.0
  purple_marshal_VOID__POINTER_POINTER_UINT_UINT@Base 2.2.0
  purple_marshal_VOID__POINTER_UINT@Base 2.2.0
+ purple_media_accepted@Base 2.6.0
+ purple_media_add_remote_candidates@Base 2.6.0
+ purple_media_add_stream@Base 2.6.0
+ purple_media_candidate_get_base_ip@Base 2.6.0
+ purple_media_candidate_get_base_port@Base 2.6.0
+ purple_media_candidate_get_candidate_type@Base 2.6.0
+ purple_media_candidate_get_component_id@Base 2.6.0
+ purple_media_candidate_get_foundation@Base 2.6.0
+ purple_media_candidate_get_ip@Base 2.6.0
+ purple_media_candidate_get_password@Base 2.6.0
+ purple_media_candidate_get_port@Base 2.6.0
+ purple_media_candidate_get_priority@Base 2.6.0
+ purple_media_candidate_get_protocol@Base 2.6.0
+ purple_media_candidate_get_ttl@Base 2.6.0
+ purple_media_candidate_get_type@Base 2.6.0
+ purple_media_candidate_get_username@Base 2.6.0
+ purple_media_candidate_list_copy@Base 2.6.0
+ purple_media_candidate_list_free@Base 2.6.0
+ purple_media_candidate_new@Base 2.6.0
+ purple_media_candidate_type_get_type@Base 2.6.0
+ purple_media_candidates_prepared@Base 2.6.0
+ purple_media_codec_add_optional_parameter@Base 2.6.0
+ purple_media_codec_get_channels@Base 2.6.0
+ purple_media_codec_get_clock_rate@Base 2.6.0
+ purple_media_codec_get_encoding_name@Base 2.6.0
+ purple_media_codec_get_id@Base 2.6.0
+ purple_media_codec_get_optional_parameter@Base 2.6.0
+ purple_media_codec_get_optional_parameters@Base 2.6.0
+ purple_media_codec_get_type@Base 2.6.0
+ purple_media_codec_list_copy@Base 2.6.0
+ purple_media_codec_list_free@Base 2.6.0
+ purple_media_codec_new@Base 2.6.0
+ purple_media_codec_remove_optional_parameter@Base 2.6.0
+ purple_media_codec_to_string@Base 2.6.0
+ purple_media_codecs_ready@Base 2.6.0
+ purple_media_element_info_call_create@Base 2.6.0
+ purple_media_element_info_get_element_type@Base 2.6.0
+ purple_media_element_info_get_id@Base 2.6.0
+ purple_media_element_info_get_name@Base 2.6.0
+ purple_media_element_info_get_type@Base 2.6.0
+ purple_media_element_type_get_type@Base 2.6.0
+ purple_media_end@Base 2.6.0
+ purple_media_error@Base 2.6.0
+ purple_media_get_account@Base 2.6.0
+ purple_media_get_codecs@Base 2.6.0
+ purple_media_get_local_candidates@Base 2.6.0
+ purple_media_get_manager@Base 2.6.0
+ purple_media_get_prpl_data@Base 2.6.0
+ purple_media_get_session_ids@Base 2.6.0
+ purple_media_get_session_type@Base 2.6.0
+ purple_media_get_src@Base 2.6.0
+ purple_media_get_tee@Base 2.6.0
+ purple_media_get_type@Base 2.6.0
+ purple_media_info_type_get_type@Base 2.6.0
+ purple_media_is_initiator@Base 2.6.0
+ purple_media_manager_create_media@Base 2.6.0
+ purple_media_manager_create_output_window@Base 2.6.0
+ purple_media_manager_get@Base 2.6.0
+ purple_media_manager_get_active_element@Base 2.6.0
+ purple_media_manager_get_element@Base 2.6.0
+ purple_media_manager_get_element_info@Base 2.6.0
+ purple_media_manager_get_media@Base 2.6.0
+ purple_media_manager_get_media_by_account@Base 2.6.0
+ purple_media_manager_get_pipeline@Base 2.6.0
+ purple_media_manager_get_type@Base 2.6.0
+ purple_media_manager_get_ui_caps@Base 2.6.0
+ purple_media_manager_register_element@Base 2.6.0
+ purple_media_manager_remove_media@Base 2.6.0
+ purple_media_manager_remove_output_window@Base 2.6.0
+ purple_media_manager_remove_output_windows@Base 2.6.0
+ purple_media_manager_set_active_element@Base 2.6.0
+ purple_media_manager_set_output_window@Base 2.6.0
+ purple_media_manager_set_ui_caps@Base 2.6.0
+ purple_media_manager_unregister_element@Base 2.6.0
+ purple_media_network_protocol_get_type@Base 2.6.0
+ purple_media_remove_output_windows@Base 2.6.0
+ purple_media_session_type_get_type@Base 2.6.0
+ purple_media_set_input_volume@Base 2.6.0
+ purple_media_set_output_volume@Base 2.6.0
+ purple_media_set_output_window@Base 2.6.0
+ purple_media_set_prpl_data@Base 2.6.0
+ purple_media_set_remote_codecs@Base 2.6.0
+ purple_media_set_send_codec@Base 2.6.0
+ purple_media_state_changed_get_type@Base 2.6.0
+ purple_media_stream_info@Base 2.6.0
  purple_menu_action_free@Base 2.2.0
  purple_menu_action_new@Base 2.2.0
  purple_message_meify@Base 2.2.0
@@ -1514,11 +1676,15 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_mime_part_set_field@Base 2.2.0
  purple_minor_version@Base 2.2.0
  purple_mkstemp@Base 2.2.0
+ purple_network_convert_idn_to_ascii@Base 2.6.0
+ purple_network_force_online@Base 2.6.0
  purple_network_get_handle@Base 2.2.0
  purple_network_get_local_system_ip@Base 2.2.0
  purple_network_get_my_ip@Base 2.2.0
  purple_network_get_port_from_fd@Base 2.2.0
  purple_network_get_public_ip@Base 2.2.0
+ purple_network_get_stun_ip@Base 2.6.0
+ purple_network_get_turn_ip@Base 2.6.0
  purple_network_init@Base 2.2.0
  purple_network_ip_atoi@Base 2.2.0
  purple_network_is_available@Base 2.2.0
@@ -1526,7 +1692,10 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_network_listen_cancel@Base 2.2.0
  purple_network_listen_map_external@Base 2.3.0
  purple_network_listen_range@Base 2.2.0
+ purple_network_remove_port_mapping@Base 2.6.0
  purple_network_set_public_ip@Base 2.2.0
+ purple_network_set_stun_server@Base 2.6.0
+ purple_network_set_turn_server@Base 2.6.0
  purple_network_uninit@Base 2.2.0
  purple_normalize@Base 2.2.0
  purple_normalize_nocase@Base 2.2.0
@@ -1638,6 +1807,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_plugins_get_handle@Base 2.2.0
  purple_plugins_get_loaded@Base 2.2.0
  purple_plugins_get_protocols@Base 2.2.0
+ purple_plugins_get_search_paths@Base 2.6.0
  purple_plugins_init@Base 2.2.0
  purple_plugins_load_saved@Base 2.2.0
  purple_plugins_probe@Base 2.2.0
@@ -1646,6 +1816,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_plugins_register_unload_notify_cb@Base 2.2.0
  purple_plugins_save_loaded@Base 2.2.0
  purple_plugins_uninit@Base 2.2.0
+ purple_plugins_unload@Base 2.6.0
  purple_plugins_unload_all@Base 2.2.0
  purple_plugins_unregister_load_notify_cb@Base 2.2.0
  purple_plugins_unregister_probe_notify_cb@Base 2.2.0
@@ -1765,6 +1936,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_proxy_connect_cancel@Base 2.2.0
  purple_proxy_connect_cancel_with_handle@Base 2.2.0
  purple_proxy_connect_socks5@Base 2.2.0
+ purple_proxy_connect_udp@Base 2.6.0
  purple_proxy_get_handle@Base 2.2.0
  purple_proxy_get_setup@Base 2.2.0
  purple_proxy_info_destroy@Base 2.2.0
@@ -1782,7 +1954,9 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_proxy_init@Base 2.2.0
  purple_proxy_uninit@Base 2.2.0
  purple_prpl_change_account_status@Base 2.2.0
+ purple_prpl_get_media_caps@Base 2.6.0
  purple_prpl_get_statuses@Base 2.2.0
+ purple_prpl_got_account_actions@Base 2.6.0
  purple_prpl_got_account_idle@Base 2.2.0
  purple_prpl_got_account_login_time@Base 2.2.0
  purple_prpl_got_account_status@Base 2.2.0
@@ -1792,6 +1966,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_prpl_got_user_login_time@Base 2.2.0
  purple_prpl_got_user_status@Base 2.2.0
  purple_prpl_got_user_status_deactive@Base 2.2.0
+ purple_prpl_initiate_media@Base 2.6.0
  purple_prpl_send_attention@Base 2.5.0
  purple_quotedp_decode@Base 2.2.0
  purple_request_action@Base 2.2.0
@@ -1822,10 +1997,12 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_request_field_choice_set_default_value@Base 2.2.0
  purple_request_field_choice_set_value@Base 2.2.0
  purple_request_field_destroy@Base 2.2.0
+ purple_request_field_get_group@Base 2.6.0
  purple_request_field_get_id@Base 2.2.0
  purple_request_field_get_label@Base 2.2.0
  purple_request_field_get_type@Base 2.2.0
  purple_request_field_get_type_hint@Base 2.2.0
+ purple_request_field_get_ui_data@Base 2.6.0
  purple_request_field_group_add_field@Base 2.2.0
  purple_request_field_group_destroy@Base 2.2.0
  purple_request_field_group_get_fields@Base 2.2.0
@@ -1860,6 +2037,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_request_field_set_label@Base 2.2.0
  purple_request_field_set_required@Base 2.2.0
  purple_request_field_set_type_hint@Base 2.2.0
+ purple_request_field_set_ui_data@Base 2.6.0
  purple_request_field_set_visible@Base 2.2.0
  purple_request_field_string_get_default_value@Base 2.2.0
  purple_request_field_string_get_value@Base 2.2.0
@@ -1972,6 +2150,12 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_signals_init@Base 2.2.0
  purple_signals_uninit@Base 2.2.0
  purple_signals_unregister_by_instance@Base 2.2.0
+ purple_smarshal_BOOLEAN__OBJECT_POINTER_STRING@Base 2.6.0
+ purple_smarshal_VOID__ENUM_STRING_STRING@Base 2.6.0
+ purple_smarshal_VOID__ENUM_STRING_STRING_BOOLEAN@Base 2.6.0
+ purple_smarshal_VOID__POINTER_POINTER_OBJECT@Base 2.6.0
+ purple_smarshal_VOID__STRING_STRING@Base 2.6.0
+ purple_smarshal_VOID__STRING_STRING_DOUBLE@Base 2.6.0
  purple_smiley_delete@Base 2.5.0
  purple_smiley_get_checksum@Base 2.5.0
  purple_smiley_get_data@Base 2.5.0
@@ -1995,6 +2179,11 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_sound_play_event@Base 2.2.0
  purple_sound_play_file@Base 2.2.0
  purple_sound_set_ui_ops@Base 2.2.0
+ purple_sound_theme_get_file@Base 2.6.0
+ purple_sound_theme_get_file_full@Base 2.6.0
+ purple_sound_theme_get_type@Base 2.6.0
+ purple_sound_theme_loader_get_type@Base 2.6.0
+ purple_sound_theme_set_file@Base 2.6.0
  purple_sound_uninit@Base 2.2.0
  purple_sounds_get_handle@Base 2.2.0
  purple_srv_cancel@Base 2.2.0
@@ -2003,6 +2192,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_ssl_connect@Base 2.2.0
  purple_ssl_connect_fd@Base 2.2.0
  purple_ssl_connect_with_host_fd@Base 2.2.0
+ purple_ssl_connect_with_ssl_cn@Base 2.6.0
  purple_ssl_get_ops@Base 2.2.0
  purple_ssl_get_peer_certificates@Base 2.2.0
  purple_ssl_init@Base 2.2.0
@@ -2074,6 +2264,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_strcasereplace@Base 2.2.0
  purple_strcasestr@Base 2.2.0
  purple_strdup_withhtml@Base 2.2.0
+ purple_strequal@Base 2.6.0
  purple_stringref_cmp@Base 2.2.0
  purple_stringref_len@Base 2.2.0
  purple_stringref_new@Base 2.2.0
@@ -2086,11 +2277,44 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_stun_discover@Base 2.2.0
  purple_stun_init@Base 2.2.0
  purple_text_strip_mnemonic@Base 2.2.0
+ purple_theme_get_author@Base 2.6.0
+ purple_theme_get_description@Base 2.6.0
+ purple_theme_get_dir@Base 2.6.0
+ purple_theme_get_image@Base 2.6.0
+ purple_theme_get_image_full@Base 2.6.0
+ purple_theme_get_name@Base 2.6.0
+ purple_theme_get_type@Base 2.6.0
+ purple_theme_get_type_string@Base 2.6.0
+ purple_theme_loader_build@Base 2.6.0
+ purple_theme_loader_get_type@Base 2.6.0
+ purple_theme_loader_get_type_string@Base 2.6.0
+ purple_theme_loader_set_type_string@Base 2.6.0
+ purple_theme_manager_add_theme@Base 2.6.0
+ purple_theme_manager_find_theme@Base 2.6.0
+ purple_theme_manager_for_each_theme@Base 2.6.0
+ purple_theme_manager_get_type@Base 2.6.0
+ purple_theme_manager_init@Base 2.6.0
+ purple_theme_manager_load_theme@Base 2.6.0
+ purple_theme_manager_refresh@Base 2.6.0
+ purple_theme_manager_register_type@Base 2.6.0
+ purple_theme_manager_remove_theme@Base 2.6.0
+ purple_theme_manager_uninit@Base 2.6.0
+ purple_theme_manager_unregister_type@Base 2.6.0
+ purple_theme_set_author@Base 2.6.0
+ purple_theme_set_description@Base 2.6.0
+ purple_theme_set_dir@Base 2.6.0
+ purple_theme_set_image@Base 2.6.0
+ purple_theme_set_name@Base 2.6.0
+ purple_theme_set_type_string@Base 2.6.0
  purple_time_build@Base 2.2.0
  purple_time_format@Base 2.2.0
  purple_timeout_add@Base 2.2.0
  purple_timeout_add_seconds@Base 2.2.0
  purple_timeout_remove@Base 2.2.0
+ purple_txt_cancel@Base 2.6.0
+ purple_txt_resolve@Base 2.6.0
+ purple_txt_response_destroy@Base 2.6.0
+ purple_txt_response_get_content@Base 2.6.0
  purple_unescape_filename@Base 2.2.0
  purple_unescape_html@Base 2.2.0
  purple_upnp_cancel_port_mapping@Base 2.2.0
@@ -2111,11 +2335,13 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_utf8_salvage@Base 2.2.0
  purple_utf8_strcasecmp@Base 2.2.0
  purple_utf8_strftime@Base 2.2.0
+ purple_utf8_strip_unprintables@Base 2.6.0
  purple_utf8_try_convert@Base 2.2.0
  purple_util_chrreplace@Base 2.2.0
  purple_util_fetch_url_cancel@Base 2.2.0
  purple_util_fetch_url_request@Base 2.2.0
  purple_util_fetch_url_request_len@Base 2.5.0
+ purple_util_fetch_url_request_len_with_account@Base 2.6.0
  purple_util_format_song_info@Base 2.4.0
  purple_util_get_image_checksum@Base 2.5.0
  purple_util_get_image_extension@Base 2.2.0
@@ -2210,6 +2436,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_xfer_is_canceled@Base 2.2.0
  purple_xfer_is_completed@Base 2.2.0
  purple_xfer_new@Base 2.2.0
+ purple_xfer_prpl_ready@Base 2.6.0
  purple_xfer_read@Base 2.2.0
  purple_xfer_ref@Base 2.2.0
  purple_xfer_request@Base 2.2.0
@@ -2231,6 +2458,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_xfer_set_start_fnc@Base 2.2.0
  purple_xfer_set_write_fnc@Base 2.2.0
  purple_xfer_start@Base 2.2.0
+ purple_xfer_ui_ready@Base 2.6.0
  purple_xfer_unref@Base 2.2.0
  purple_xfer_update_progress@Base 2.2.0
  purple_xfer_write@Base 2.2.0
@@ -2240,3 +2468,59 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_xfers_init@Base 2.2.0
  purple_xfers_set_ui_ops@Base 2.2.0
  purple_xfers_uninit@Base 2.2.0
+ serv_add_deny@Base 2.6.0
+ serv_add_permit@Base 2.6.0
+ serv_alias_buddy@Base 2.6.0
+ serv_chat_invite@Base 2.6.0
+ serv_chat_leave@Base 2.6.0
+ serv_chat_send@Base 2.6.0
+ serv_chat_whisper@Base 2.6.0
+ serv_get_info@Base 2.6.0
+ serv_got_alias@Base 2.6.0
+ serv_got_attention@Base 2.6.0
+ serv_got_chat_in@Base 2.6.0
+ serv_got_chat_invite@Base 2.6.0
+ serv_got_chat_left@Base 2.6.0
+ serv_got_im@Base 2.6.0
+ serv_got_joined_chat@Base 2.6.0
+ serv_got_typing@Base 2.6.0
+ serv_got_typing_stopped@Base 2.6.0
+ serv_join_chat@Base 2.6.0
+ serv_move_buddy@Base 2.6.0
+ serv_reject_chat@Base 2.6.0
+ serv_rem_deny@Base 2.6.0
+ serv_rem_permit@Base 2.6.0
+ serv_send_attention@Base 2.6.0
+ serv_send_file@Base 2.6.0
+ serv_send_im@Base 2.6.0
+ serv_send_typing@Base 2.6.0
+ serv_set_info@Base 2.6.0
+ serv_set_permit_deny@Base 2.6.0
+ xmlnode_copy@Base 2.6.0
+ xmlnode_free@Base 2.6.0
+ xmlnode_from_file@Base 2.6.0
+ xmlnode_from_str@Base 2.6.0
+ xmlnode_get_attrib@Base 2.6.0
+ xmlnode_get_attrib_with_namespace@Base 2.6.0
+ xmlnode_get_child@Base 2.6.0
+ xmlnode_get_child_with_namespace@Base 2.6.0
+ xmlnode_get_data@Base 2.6.0
+ xmlnode_get_data_unescaped@Base 2.6.0
+ xmlnode_get_namespace@Base 2.6.0
+ xmlnode_get_next_twin@Base 2.6.0
+ xmlnode_get_parent@Base 2.6.0
+ xmlnode_get_prefix@Base 2.6.0
+ xmlnode_insert_child@Base 2.6.0
+ xmlnode_insert_data@Base 2.6.0
+ xmlnode_new@Base 2.6.0
+ xmlnode_new_child@Base 2.6.0
+ xmlnode_remove_attrib@Base 2.6.0
+ xmlnode_remove_attrib_with_namespace@Base 2.6.0
+ xmlnode_set_attrib@Base 2.6.0
+ xmlnode_set_attrib_full@Base 2.6.0
+ xmlnode_set_attrib_with_namespace@Base 2.6.0
+ xmlnode_set_attrib_with_prefix@Base 2.6.0
+ xmlnode_set_namespace@Base 2.6.0
+ xmlnode_set_prefix@Base 2.6.0
+ xmlnode_to_formatted_str@Base 2.6.0
+ xmlnode_to_str@Base 2.6.0

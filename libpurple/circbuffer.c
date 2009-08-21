@@ -44,7 +44,7 @@ void purple_circ_buffer_destroy(PurpleCircBuffer *buf) {
 static void grow_circ_buffer(PurpleCircBuffer *buf, gsize len) {
 	int in_offset = 0, out_offset = 0;
 	int start_buflen;
-	
+
 	g_return_if_fail(buf != NULL);
 
 	start_buflen = buf->buflen;
@@ -95,7 +95,7 @@ void purple_circ_buffer_append(PurpleCircBuffer *buf, gconstpointer src, gsize l
 	int len_stored;
 
 	g_return_if_fail(buf != NULL);
-	
+
 	/* Grow the buffer, if necessary */
 	if ((buf->buflen - buf->bufused) < len)
 		grow_circ_buffer(buf, len);

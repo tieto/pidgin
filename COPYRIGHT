@@ -1,8 +1,21 @@
 Pidgin, Finch, and libpurple
-Copyright (C) 1998-2008 by the following:
 
-If you have contributed to this project then you deserve to be on this
-list.  Contact us (see: AUTHORS) and we'll add you.
+This file is intended to be a comprehensive list of contributors to
+this project.  If you have contributed to this project then you deserve
+to be on this list.  Contact us (see: AUTHORS) and we'll add you.
+
+Many open source projects list contributor names at the top of each
+source file containing their contribution.  However, we've found
+that it is difficult to keep this list accurate, especially when old
+code is removed or existing code is moved to a different file.  So
+instead we chose to list a generic message at the top of each source
+file that points here.
+
+If concerns are raised as to the copyright holder of a particular
+piece of code, then that code should be traced through our version
+control system to see from where it came and who has modified it.
+
+Copyright (C) 1998-2009 by the following:
 
 Saleem Abdulrasool
 Dave Ahlswede
@@ -31,6 +44,7 @@ Derek Battams
 Martin Bayard
 Curtis Beattie
 Stefan Becker
+Carlos Bederian
 Dave Bell
 Igor Belyi
 Brian Bernas
@@ -60,6 +74,7 @@ Jeffery Brown
 Philip Brown
 Dan Bruce
 Norbert Buchmuller
+Johannes Buchner
 Sean Burke
 Thomas Butter
 Trevor Caira
@@ -90,6 +105,7 @@ Jono Cole
 Lorenzo Colitti
 Collabora Ltd.
 Jeff Connelly
+Chris Connett
 Nathan Conrad
 Felipe Contreras
 Alex Converse
@@ -168,6 +184,7 @@ David Grohmann
 Christian Grothoff
 Vladislav Guberinić
 Gideon N. Guillen
+Aman Gupta
 Christian Hammond
 Erick Hamness
 Fred Hampton
@@ -213,6 +230,7 @@ Hans Petter Jansson
 David Jedelsky
 Henry Jen
 Benjamin Kahn
+Jan Kaluza
 Yuriy Kaminskiy
 Anders Kaseorg
 Praveen Karadakal
@@ -221,6 +239,7 @@ John Kelm
 Jochen Kemnade
 Yann Kerherve
 Gordian Klein
+Krzysztof Klinikowski
 Akuke Kok
 Kir Kolyshkin
 F.W. Kong
@@ -264,7 +283,9 @@ Iain MacDonnell
 Lucio Maciel
 Brian Macke
 Paolo Maggi
+Sulabh Mahajan
 Willian T. Mahan
+Tobias Markmann
 Kris Marsh
 Fidel Martinez
 Lalo Martins
@@ -327,15 +348,16 @@ Matt Perry
 Luke Petre
 Diego Petten
 Nathan Peterson
+Dmitry Petroff
 Sebastián E. Peyrott
+Andrea Piccinelli
 Celso Pinto
 Joao Luís Marques Pinto
 Aleksander Piotrowski
 Julien Pivotto
+Robey Pointer
 Eric Polino <aluink@gmail.com>
 Ari Pollak
-Robey Pointer
-Eric Polino
 Stephen Pope
 Nathan Poznick
 Jory A. Pratt
@@ -420,6 +442,7 @@ Peter Speybrouck
 Lex Spoon
 Chris Stafford
 Kevin Stange
+Joshua Stein
 Jakub Steiner
 Richard Stellingwerff
 Charlie Stockman
@@ -446,6 +469,7 @@ Douglas Thrift (douglaswth)
 Mark Tiefenbruck
 Andrew Tinney
 Jeffery To
+Krzysztof Tobola (kreez)
 Warren Togami
 Stu Tomlinson
 Bill Tompkins
@@ -503,6 +527,7 @@ Ximian
 Ma Xuan
 Jared Yanovich
 Timmy Yee
+Li Yuan
 Nickolai Zeldovich
 Tom Zickel
 Marco Ziech

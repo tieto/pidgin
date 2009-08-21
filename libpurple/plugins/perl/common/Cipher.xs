@@ -66,9 +66,9 @@ purple_cipher_digest_region(name, data_sv, in_len, digest)
 		guchar *data = NULL;
 		size_t data_len;
 	CODE:
-		data = SvPV(data_sv, data_len);
+		data = (guchar *)SvPV(data_sv, data_len);
 		SvUPGRADE(digest, SVt_PV);
-		buff = SvGROW(digest, in_len);
+		buff = (guchar *)SvGROW(digest, in_len);
 		ret = purple_cipher_digest_region(name, data, data_len, in_len, buff, &RETVAL);
 		if(!ret) {
 			SvSetSV_nosteal(digest, &PL_sv_undef);
@@ -181,7 +181,7 @@ purple_cipher_context_digest(context, in_len, digest)
 		guchar *buff = NULL;
 	CODE:
 		SvUPGRADE(digest, SVt_PV);
-		buff = SvGROW(digest, in_len);
+		buff = (guchar *)SvGROW(digest, in_len);
 		ret = purple_cipher_context_digest(context, in_len, buff, &RETVAL);
 		if(!ret) {
 			SvSetSV_nosteal(digest, &PL_sv_undef);
@@ -225,9 +225,9 @@ purple_cipher_context_encrypt(context, data_sv, output, OUTLIST size_t outlen)
 		guchar *buff = NULL;
 		guchar *data = NULL;
 	CODE:
-		data = SvPV(data_sv, datalen);
+		data = (guchar *)SvPV(data_sv, datalen);
 		SvUPGRADE(output, SVt_PV);
-		buff = SvGROW(output, datalen);
+		buff = (guchar *)SvGROW(output, datalen);
 		RETVAL = purple_cipher_context_encrypt(context, data, datalen, buff, &outlen);
 		if(outlen != 0) {
 			SvPOK_only(output);
@@ -249,9 +249,9 @@ purple_cipher_context_decrypt(context, data_sv, output, OUTLIST size_t outlen)
 		guchar *buff = NULL;
 		guchar *data = NULL;
 	CODE:
-		data = SvPV(data_sv, datalen);
+		data = (guchar *)SvPV(data_sv, datalen);
 		SvUPGRADE(output, SVt_PV);
-		buff = SvGROW(output, datalen);
+		buff = (guchar *)SvGROW(output, datalen);
 		RETVAL = purple_cipher_context_decrypt(context, data, datalen, buff, &outlen);
 		if(outlen != 0) {
 			SvPOK_only(output);

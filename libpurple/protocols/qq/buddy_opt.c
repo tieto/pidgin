@@ -101,6 +101,7 @@ qq_buddy_data *qq_buddy_data_find(PurpleConnection *gc, guint32 uid)
 {
 	gchar *who;
 	PurpleBuddy *buddy;
+	qq_buddy_data *bd;
 
 	g_return_val_if_fail(gc != NULL, NULL);
 
@@ -113,11 +114,12 @@ qq_buddy_data *qq_buddy_data_find(PurpleConnection *gc, guint32 uid)
 		purple_debug_error("QQ", "Can not find purple buddy of %u\n", uid);
 		return NULL;
 	}
-	if (buddy->proto_data == NULL) {
+	
+	if ((bd = purple_buddy_get_protocol_data(buddy)) == NULL) {
 		purple_debug_error("QQ", "Can not find buddy data of %u\n", uid);
 		return NULL;
 	}
-	return (qq_buddy_data *)buddy->proto_data;
+	return bd;
 }
 
 void qq_buddy_data_free(qq_buddy_data *bd)
@@ -149,7 +151,7 @@ PurpleBuddy *qq_buddy_new(PurpleConnection *gc, guint32 uid)
 	purple_debug_info("QQ", "Add new purple buddy: [%u]\n", uid);
 	who = uid_to_purple_name(uid);
 	buddy = purple_buddy_new(gc->account, who, NULL);	/* alias is NULL */
-	buddy->proto_data = NULL;
+	purple_buddy_set_protocol_data(buddy, NULL);
 
 	g_free(who);
 
@@ -162,11 +164,14 @@ PurpleBuddy *qq_buddy_new(PurpleConnection *gc, guint32 uid)
 
 static void qq_buddy_free(PurpleBuddy *buddy)
 {
+	qq_buddy_data *bd;
+
 	g_return_if_fail(buddy);
-	if (buddy->proto_data)	{
-		qq_buddy_data_free(buddy->proto_data);
+
+	if ((bd = purple_buddy_get_protocol_data(buddy)) != NULL) {
+		qq_buddy_data_free(bd);
 	}
-	buddy->proto_data = NULL;
+	purple_buddy_set_protocol_data(buddy, NULL);
 	purple_blist_remove_buddy(buddy);
 }
 
@@ -186,6 +191,7 @@ PurpleBuddy *qq_buddy_find(PurpleConnection *gc, guint32 uid)
 PurpleBuddy *qq_buddy_find_or_new(PurpleConnection *gc, guint32 uid)
 {
 	PurpleBuddy *buddy;
+	qq_buddy_data *bd;
 
 	g_return_val_if_fail(gc->account != NULL && uid != 0, NULL);
 
@@ -197,11 +203,12 @@ PurpleBuddy *qq_buddy_find_or_new(PurpleConnection *gc, guint32 uid)
 		}
 	}
 
-	if (buddy->proto_data != NULL) {
+	if (purple_buddy_get_protocol_data(buddy) != NULL) {
 		return buddy;
 	}
 
-	buddy->proto_data = qq_buddy_data_new(uid);
+	bd = qq_buddy_data_new(uid);
+	purple_buddy_set_protocol_data(buddy, bd);
 	return buddy;
 }
 
@@ -691,7 +698,7 @@ void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	if (!qd->is_login)
 		return;		/* IMPORTANT ! */
 
-	uid = purple_name_to_uid(buddy->name);
+	uid = purple_name_to_uid(purple_buddy_get_name(buddy));
 	if (uid > 0) {
 		if (qd->client_version > 2005) {
 			request_add_buddy_no_auth_ex(gc, uid);
@@ -782,6 +789,7 @@ void qq_process_add_buddy_no_auth(PurpleConnection *gc,
 	gchar **segments;
 	gchar *dest_uid, *reply;
 	PurpleBuddy *buddy;
+	qq_buddy_data *bd;
 
 	g_return_if_fail(data != NULL && data_len != 0);
 	g_return_if_fail(uid != 0);
@@ -826,10 +834,10 @@ void qq_process_add_buddy_no_auth(PurpleConnection *gc,
 	if (buddy == NULL) {
 		buddy = qq_buddy_new(gc, uid);
 	}
-	if (buddy != NULL && buddy->proto_data != NULL) {
+	if (buddy != NULL && (bd = purple_buddy_get_protocol_data(buddy)) != NULL) {
 		/* Not authorized now, free buddy data */
-		qq_buddy_data_free(buddy->proto_data);
-		buddy->proto_data = NULL;
+		qq_buddy_data_free(bd);
+		purple_buddy_set_protocol_data(buddy, NULL);
 	}
 
 	add_buddy_authorize_input(gc, uid, NULL, 0);
@@ -905,6 +913,7 @@ void qq_process_add_buddy_no_auth_ex(PurpleConnection *gc,
 void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	qq_data *qd;
+	qq_buddy_data *bd;
 	guint32 uid;
 
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
@@ -914,7 +923,7 @@ void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 	if (!qd->is_login)
 		return;
 
-	uid = purple_name_to_uid(buddy->name);
+	uid = purple_name_to_uid(purple_buddy_get_name(buddy));
 	if (uid > 0 && uid != qd->uid) {
 		if (qd->client_version > 2005) {
 			qq_request_auth_code(gc, QQ_AUTH_INFO_BUDDY, QQ_AUTH_INFO_REMOVE_BUDDY, uid);
@@ -924,11 +933,11 @@ void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 		}
 	}
 
-	if (buddy->proto_data) {
-		qq_buddy_data_free(buddy->proto_data);
-		buddy->proto_data = NULL;
+	if ((bd = purple_buddy_get_protocol_data(buddy)) != NULL) {
+		qq_buddy_data_free(bd);
+		purple_buddy_set_protocol_data(buddy, NULL);
 	} else {
-		purple_debug_warning("QQ", "Empty buddy data of %s\n", buddy->name);
+		purple_debug_warning("QQ", "Empty buddy data of %s\n", purple_buddy_get_name(buddy));
 	}
 
 	/* Do not call purple_blist_remove_buddy,
@@ -1003,7 +1012,6 @@ void qq_process_buddy_check_code(PurpleConnection *gc, guint8 *data, gint data_l
 	guint16 flag1, flag2;
 
 	g_return_if_fail(data != NULL && data_len >= 5);
-	g_return_if_fail(uid != 0);
 
 	qd = (qq_data *) gc->proto_data;
 
@@ -1216,6 +1224,7 @@ static void server_buddy_rejected_me(PurpleConnection *gc, gchar *from, gchar *t
 	gint bytes;
 	gchar **segments;
 	gchar *primary, *secondary;
+	qq_buddy_data *bd;
 
 	g_return_if_fail(from != NULL && to != NULL);
 
@@ -1255,10 +1264,10 @@ static void server_buddy_rejected_me(PurpleConnection *gc, gchar *from, gchar *t
 	g_return_if_fail(uid != 0);
 
 	buddy = qq_buddy_find(gc, uid);
-	if (buddy != NULL && buddy->proto_data != NULL) {
+	if (buddy != NULL && (bd = purple_buddy_get_protocol_data(buddy)) != NULL) {
 		/* Not authorized now, free buddy data */
-		qq_buddy_data_free(buddy->proto_data);
-		buddy->proto_data = NULL;
+		qq_buddy_data_free(bd);
+		purple_buddy_set_protocol_data(buddy, NULL);
 	}
 }
 

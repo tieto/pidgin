@@ -401,9 +401,9 @@ static PurpleBlistNode *tcl_list_to_buddy(Tcl_Interp *interp, int count, Tcl_Obj
 		return NULL;
 
 	if (!strcmp(type, "buddy")) {
-		node = (PurpleBlistNode *)purple_find_buddy(account, name);
+		node = PURPLE_BLIST_NODE(purple_find_buddy(account, name));
 	} else if (!strcmp(type, "group")) {
-		node = (PurpleBlistNode *)purple_blist_find_chat(account, name);
+		node = PURPLE_BLIST_NODE(purple_blist_find_chat(account, name));
 	}
 
 	return node;
@@ -683,8 +683,9 @@ int tcl_cmd_cmd(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *list, *elem;
-	const char *cmds[] = { "account", "displayname", "handle", "list", NULL };
-	enum { CMD_CONN_ACCOUNT, CMD_CONN_DISPLAYNAME, CMD_CONN_HANDLE, CMD_CONN_LIST } cmd;
+	const char *cmds[] = { "account", "displayname", "handle", "list", "state", NULL };
+	enum { CMD_CONN_ACCOUNT, CMD_CONN_DISPLAYNAME, CMD_CONN_HANDLE,
+	       CMD_CONN_LIST, CMD_CONN_STATE } cmd;
 	int error;
 	GList *cur;
 	PurpleConnection *gc;
@@ -738,6 +739,25 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 			Tcl_ListObjAppendElement(interp, list, elem);
 		}
 		Tcl_SetObjResult(interp, list);
+		break;
+	case CMD_CONN_STATE:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "gc");
+			return TCL_ERROR;
+		}
+		if ((gc = tcl_validate_gc(objv[2], interp)) == NULL)
+			return TCL_ERROR;
+		switch (purple_connection_get_state(gc)) {
+		case PURPLE_DISCONNECTED:
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("disconnected", -1));
+			break;
+		case PURPLE_CONNECTED:
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("connected", -1));
+			break;
+		case PURPLE_CONNECTING:
+			Tcl_SetObjResult(interp, Tcl_NewStringObj("connecting", -1));
+			break;
+		}
 		break;
 	}
 
@@ -1495,9 +1515,12 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	enum { CMD_STATUS_ATTR, CMD_STATUS_TYPE } cmd;
 	PurpleStatus *status;
 	PurpleStatusType *status_type;
+	int error;
+#if !(defined PURPLE_DISABLE_DEPRECATED)
 	PurpleValue *value;
 	const char *attr;
-	int error, v;
+	int v;
+#endif
 
 	if (objc < 2) {
 		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");
@@ -1509,6 +1532,7 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 
 	switch (cmd) {
 	case CMD_STATUS_ATTR:
+#if !(defined PURPLE_DISABLE_DEPRECATED)
 		if (objc != 4 && objc != 5) {
 			Tcl_WrongNumArgs(interp, 2, objv, "status attr_id ?value?");
 			return TCL_ERROR;
@@ -1554,6 +1578,7 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
                                          Tcl_NewStringObj("attribute has unknown type", -1));
 			return TCL_ERROR;
 		}
+#endif
 		break;
 	case CMD_STATUS_TYPE:
 		if (objc != 3) {
@@ -1727,6 +1752,7 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 						  (purple_status_type_get_primitive(status_type)), -1));
 		break;
 	case CMD_STATUS_TYPE_PRIMARY_ATTR:
+#if !(defined PURPLE_DISABLE_DEPRECATED)
 		if (objc != 3) {
 			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
 			return TCL_ERROR;
@@ -1735,6 +1761,7 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 			return TCL_ERROR;
 		Tcl_SetObjResult(interp,
 				 Tcl_NewStringObj(purple_status_type_get_primary_attr(status_type), -1));
+#endif
 		break;
 	case CMD_STATUS_TYPE_SAVEABLE:
 		if (objc != 3) {

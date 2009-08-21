@@ -248,7 +248,7 @@ static gchar *qq_status_text(PurpleBuddy *b)
 	qq_buddy_data *bd;
 	GString *status;
 
-	bd = (qq_buddy_data *) b->proto_data;
+	bd = purple_buddy_get_protocol_data(b);
 	if (bd == NULL)
 		return NULL;
 
@@ -291,7 +291,7 @@ static void qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gbo
 
 	g_return_if_fail(b != NULL);
 
-	bd = (qq_buddy_data *) b->proto_data;
+	bd = purple_buddy_get_protocol_data(b);
 	if (bd == NULL)
 		return;
 
@@ -382,11 +382,12 @@ static const char *qq_list_emblem(PurpleBuddy *b)
 	qq_data *qd;
 	qq_buddy_data *buddy;
 
-	if (!b || !(account = b->account) ||
-			!(gc = purple_account_get_connection(account)) || !(qd = gc->proto_data))
+	if (!b || !(account = purple_buddy_get_account(b)) ||
+		!(gc = purple_account_get_connection(account)) ||
+		!(qd = purple_connection_get_protocol_data(gc)))
 		return NULL;
 
-	buddy = (qq_buddy_data *)b->proto_data;
+	buddy = purple_buddy_get_protocol_data(b);
 	if (!buddy) {
 		return "not-authorized";
 	}
@@ -673,8 +674,8 @@ static void action_about_openq(PurplePluginAction *action)
 	g_string_append(info, "wd<br>\n");
 	g_string_append(info, "x6719620<br>\n");
 	g_string_append(info, "netelk<br>\n");
-	g_string_append(info, "and more, please let me know... thank you!<br>\n");
-	g_string_append(info, "<br>\n");
+	g_string_append(info, _("and more, please let me know... thank you!))"));
+	g_string_append(info, "<br>\n<br>\n");
 	g_string_append(info, _("<p><i>And, all the boys in the backroom...</i><br>\n"));
 	g_string_append(info, _("<i>Feel free to join us!</i> :)"));
 	g_string_append(info, "</body></html>");
@@ -708,8 +709,9 @@ static void action_about_openq(PurplePluginAction *action)
 static void action_chat_quit(PurpleBlistNode * node)
 {
 	PurpleChat *chat = (PurpleChat *)node;
-	PurpleConnection *gc = purple_account_get_connection(chat->account);
-	GHashTable *components = chat -> components;
+	PurpleAccount *account = purple_chat_get_account(chat);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	GHashTable *components = purple_chat_get_components(chat);
 	gchar *num_str;
 	guint32 room_id;
 
@@ -727,8 +729,9 @@ static void action_chat_quit(PurpleBlistNode * node)
 static void action_chat_get_info(PurpleBlistNode * node)
 {
 	PurpleChat *chat = (PurpleChat *)node;
-	PurpleConnection *gc = purple_account_get_connection(chat->account);
-	GHashTable *components = chat -> components;
+	PurpleAccount *account = purple_chat_get_account(chat);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	GHashTable *components = purple_chat_get_components(chat);
 	gchar *num_str;
 	guint32 room_id;
 
@@ -815,7 +818,7 @@ static void qq_add_buddy_from_menu_cb(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
 	qq_add_buddy(gc, buddy, NULL);
 }
@@ -830,12 +833,12 @@ static void qq_modify_buddy_memo_from_menu_cb(PurpleBlistNode *node, gpointer da
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
-	g_return_if_fail(NULL != buddy && NULL != buddy->proto_data);
+	g_return_if_fail(NULL != buddy);
 
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	g_return_if_fail(NULL != gc);
 
-	bd = (qq_buddy_data *)buddy->proto_data;
+	bd = (qq_buddy_data *)purple_buddy_get_protocol_data(buddy);
 	g_return_if_fail(NULL != bd);
 	bd_uid = bd->uid;
 
@@ -849,7 +852,7 @@ static GList *qq_buddy_menu(PurpleBuddy *buddy)
 {
 	GList *m = NULL;
 	PurpleMenuAction *act;
-	qq_buddy_data *bd = (qq_buddy_data *)buddy->proto_data;
+	qq_buddy_data *bd = purple_buddy_get_protocol_data(buddy);
 
 	if (bd == NULL) {
 		act = purple_menu_action_new(_("Add Buddy"),
@@ -1032,7 +1035,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* get attention_types */
 
 	sizeof(PurplePluginProtocolInfo), /* struct_size */
-	NULL
+	NULL,							/* get_account_text_table */
+	NULL,							/* initiate_media */
+	NULL                            /* can_do_media */
 };
 
 static PurplePluginInfo info = {

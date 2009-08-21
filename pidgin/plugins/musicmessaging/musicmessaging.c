@@ -529,7 +529,7 @@ static void run_editor (MMConversation *mmconv)
 	
 	args[1] = "-session_id";
 	session_id = g_string_new("");
-	g_string_sprintfa(session_id, "%d", mmconv_from_conv_loc(mmconv->conv));
+	g_string_append_printf(session_id, "%d", mmconv_from_conv_loc(mmconv->conv));
 	args[2] = session_id->str;
 	
 	args[3] = NULL;
@@ -684,7 +684,8 @@ static PurplePluginInfo info = {
     DISPLAY_VERSION,                                     /**< version        */
     N_("Music Messaging Plugin for collaborative composition."),
                                                          /**  summary        */
-    N_("The Music Messaging Plugin allows a number of users to simultaneously work on a piece of music by editting a common score in real-time."),
+    N_("The Music Messaging Plugin allows a number of users to simultaneously "
+       "work on a piece of music by editing a common score in real-time."),
 	                                                 /**  description    */
     "Christian Muise <christian.muise@gmail.com>",       /**< author         */
     PURPLE_WEBSITE,                                        /**< homepage       */

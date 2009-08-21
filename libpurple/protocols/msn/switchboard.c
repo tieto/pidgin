@@ -42,15 +42,15 @@ MsnSwitchBoard *
 msn_switchboard_new(MsnSession *session)
 {
 	MsnSwitchBoard *swboard;
-	MsnServConn *servconn;
 
 	g_return_val_if_fail(session != NULL, NULL);
 
 	swboard = g_new0(MsnSwitchBoard, 1);
 
 	swboard->session = session;
-	swboard->servconn = servconn = msn_servconn_new(session, MSN_SERVCONN_SB);
-	swboard->cmdproc = servconn->cmdproc;
+	swboard->servconn = msn_servconn_new(session, MSN_SERVCONN_SB);
+	msn_servconn_set_idle_timeout(swboard->servconn, 60);
+	swboard->cmdproc = swboard->servconn->cmdproc;
 
 	swboard->msg_queue = g_queue_new();
 	swboard->empty = TRUE;
@@ -59,6 +59,9 @@ msn_switchboard_new(MsnSession *session)
 	swboard->cmdproc->cbs_table = cbs_table;
 
 	session->switches = g_list_prepend(session->switches, swboard);
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "switchboard new: swboard(%p)\n", swboard);
 
 	return swboard;
 }
@@ -70,9 +73,8 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	MsnMessage *msg;
 	GList *l;
 
-#ifdef MSN_DEBUG_SB
-	purple_debug_info("msn", "switchboard_destroy: swboard(%p)\n", swboard);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "switchboard destroy: swboard(%p)\n", swboard);
 
 	g_return_if_fail(swboard != NULL);
 
@@ -230,10 +232,9 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	swboard->current_users++;
 	swboard->empty = FALSE;
 
-#ifdef MSN_DEBUG_CHAT
-	purple_debug_info("msn", "user=[%s], total=%d\n", user,
-					swboard->current_users);
-#endif
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "user=[%s], total=%d\n",
+		                  user, swboard->current_users);
 
 	if (!(swboard->flag & MSN_SB_FLAG_IM) && (swboard->conv != NULL))
 	{
@@ -255,10 +256,6 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 		{
 			GList *l;
 
-#ifdef MSN_DEBUG_CHAT
-			purple_debug_info("msn", "[chat] Switching to chat.\n");
-#endif
-
 #if 0
 			/* this is bad - it causes msn_switchboard_close to be called on the
 			 * switchboard we're in the middle of using :( */
@@ -278,17 +275,9 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 				tmp_user = l->data;
 
-#ifdef MSN_DEBUG_CHAT
-				purple_debug_info("msn", "[chat] Adding [%s].\n", tmp_user);
-#endif
-
 				purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
 										tmp_user, NULL, PURPLE_CBFLAGS_NONE, TRUE);
 			}
-
-#ifdef MSN_DEBUG_CHAT
-			purple_debug_info("msn", "[chat] We add ourselves.\n");
-#endif
 
 			purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
 									purple_account_get_username(account),
@@ -589,10 +578,10 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 
 	payload = msn_message_gen_payload(msg, &payload_len);
 
-#ifdef MSN_DEBUG_SB
-	purple_debug_info("msn", "SB length:{%" G_GSIZE_FORMAT "}", payload_len);
-	msn_message_show_readable(msg, "SB SEND", FALSE);
-#endif
+	if (purple_debug_is_verbose()) {
+		purple_debug_info("msn", "SB length:{%" G_GSIZE_FORMAT "}\n", payload_len);
+		msn_message_show_readable(msg, "SB SEND", FALSE);
+	}
 
 	flag = msn_message_get_flag(msg);
 	trans = msn_transaction_new(cmdproc, "MSG", "%c %" G_GSIZE_FORMAT,
@@ -790,9 +779,8 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 	msn_message_parse_payload(msg, payload, len,
 					MSG_LINE_DEM,MSG_BODY_DEM);
-#ifdef MSN_DEBUG_SB
-	msn_message_show_readable(msg, "SB RECV", FALSE);
-#endif
+	if (purple_debug_is_verbose())
+		msn_message_show_readable(msg, "SB RECV", FALSE);
 
 	g_free (msg->remote_user);
 	msg->remote_user = g_strdup(cmd->params[0]);
@@ -903,6 +891,47 @@ clientcaps_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	clientcaps = msn_message_get_hashtable_from_body(msg);
 #endif
+}
+
+void
+msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
+                         const char *data)
+{
+	PurpleConnection *gc;
+	guchar *image_data;
+	size_t image_len;
+	int imgid;
+	char *image_msg;
+
+	if (!purple_str_has_prefix(data, "base64:"))
+	{
+		purple_debug_error("msn", "Ignoring Ink not in Base64 format.\n");
+		return;
+	}
+
+	gc = purple_account_get_connection(swboard->session->account);
+
+	data += sizeof("base64:") - 1;
+	image_data = purple_base64_decode(data, &image_len);
+	if (!image_data || !image_len) 
+	{
+		purple_debug_error("msn", "Unable to decode Ink from Base64 format.\n");
+		return;
+	}
+
+	imgid = purple_imgstore_add_with_id(image_data, image_len, NULL);
+	image_msg = g_strdup_printf("<IMG ID=%d/>", imgid);
+
+	if (swboard->current_users > 1 ||
+		((swboard->conv != NULL) &&
+		 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+		serv_got_chat_in(gc, swboard->chat_id, passport, 0, image_msg,
+						 time(NULL));
+	else
+		serv_got_im(gc, passport, image_msg, 0, time(NULL));
+
+	purple_imgstore_unref_by_id(imgid);
+	g_free(image_msg);
 }
 
 /**************************************************************************
@@ -1237,10 +1266,10 @@ msn_switchboard_init(void)
 	                       msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
 						   msn_datacast_msg);
-#if 0
-	msn_table_add_msg_type(cbs_table, "text/x-msmmsginvite",
+	msn_table_add_msg_type(cbs_table, "text/x-msmsgsinvite",
 						   msn_invite_msg);
-#endif
+	msn_table_add_msg_type(cbs_table, "image/gif",
+						   msn_handwritten_msg);
 }
 
 void

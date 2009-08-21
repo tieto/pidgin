@@ -572,6 +572,9 @@ handle_raise(PidginWindow *purplewin)
 static void
 handle_present(PurpleConversation *conv)
 {
+	if (pidgin_conv_is_hidden(PIDGIN_CONVERSATION(conv)))
+		return;
+
 	purple_conversation_present(conv);
 }
 

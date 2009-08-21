@@ -152,7 +152,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	auto_reply_pref = purple_prefs_get_string("/purple/away/auto_reply");
 	if((gc->flags & PURPLE_CONNECTION_AUTO_RESP) &&
 			!purple_presence_is_available(presence) &&
-			strcmp(auto_reply_pref, "never")) {
+			!purple_strequal(auto_reply_pref, "never")) {
 
 		struct last_auto_response *lar;
 		lar = get_last_auto_response(gc, name);
@@ -172,7 +172,7 @@ void serv_get_info(PurpleConnection *gc, const char *name)
 
 	if(gc)
 		prpl = purple_connection_get_prpl(gc);
-	
+
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
@@ -188,7 +188,7 @@ void serv_set_info(PurpleConnection *gc, const char *info)
 
 	if(gc)
 		prpl = purple_connection_get_prpl(gc);
-	
+
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
@@ -230,7 +230,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if(b && prpl_info && prpl_info->alias_buddy) {
-		prpl_info->alias_buddy(gc, b->name, b->alias);
+		prpl_info->alias_buddy(gc, purple_buddy_get_name(b), purple_buddy_get_local_buddy_alias(b));
 	}
 }
 
@@ -247,20 +247,20 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 
 	while (buddies != NULL)
 	{
+		const char *server_alias;
+
 		b = buddies->data;
 		buddies = g_slist_delete_link(buddies, buddies);
 
-		if((b->server_alias == NULL && alias == NULL) ||
-		    (b->server_alias && alias && !strcmp(b->server_alias, alias)))
-		{
+		server_alias = purple_buddy_get_server_alias(b);
+
+		if (purple_strequal(server_alias, alias))
 			continue;
-		}
 
 		purple_blist_server_alias_buddy(b, alias);
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, account);
-		if(conv != NULL && alias != NULL &&
-		   who != NULL && strcmp(alias, who))
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(b), account);
+		if (conv != NULL && alias != NULL && purple_strequal(alias, who))
 		{
 			char *escaped = g_markup_escape_text(who, -1);
 			char *escaped2 = g_markup_escape_text(alias, -1);
@@ -289,11 +289,13 @@ purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char 
 	buddies = purple_find_buddies(account, who);
 
 	while(buddies != NULL) {
+		const char *balias;
 		b = buddies->data;
 
 		buddies = g_slist_delete_link(buddies, buddies);
 
-		if((!b->alias && !alias) || (b->alias && alias && !strcmp(b->alias, alias)))
+		balias = purple_buddy_get_local_buddy_alias(b);
+		if (purple_strequal(balias, alias))
 			continue;
 
 		purple_blist_alias_buddy(b, alias);
@@ -367,7 +369,9 @@ void serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
 
 	if(gc && og && ng) {
 		if (prpl_info && prpl_info->group_buddy) {
-			prpl_info->group_buddy(gc, b->name, og->name, ng->name);
+			prpl_info->group_buddy(gc, purple_buddy_get_name(b),
+			                       purple_group_get_name(og),
+								   purple_group_get_name(ng));
 		}
 	}
 }
@@ -666,8 +670,8 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 		if ((primitive == PURPLE_STATUS_AVAILABLE) ||
 			(primitive == PURPLE_STATUS_INVISIBLE) ||
 			mobile ||
-		    !strcmp(auto_reply_pref, "never") ||
-		    (!purple_presence_is_idle(presence) && !strcmp(auto_reply_pref, "awayidle")))
+		    purple_strequal(auto_reply_pref, "never") ||
+		    (!purple_presence_is_idle(presence) && purple_strequal(auto_reply_pref, "awayidle")))
 		{
 			g_free(name);
 			return;
@@ -724,7 +728,6 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 		im = PURPLE_CONV_IM(conv);
 
 		purple_conv_im_set_typing_state(im, state);
-		purple_conv_im_update_typing(im);
 	} else {
 		switch (state)
 		{
@@ -762,7 +765,6 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 
 		purple_conv_im_stop_typing_timeout(im);
 		purple_conv_im_set_typing_state(im, PURPLE_NOT_TYPING);
-		purple_conv_im_update_typing(im);
 	}
 	else
 	{
@@ -860,7 +862,12 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 
 	account = purple_connection_get_account(gc);
 
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
 	conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+	g_return_val_if_fail(conv != NULL, NULL);
+
 	chat = PURPLE_CONV_CHAT(conv);
 
 	if (!g_slist_find(gc->buddy_chats, conv))
@@ -936,7 +943,7 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 		return;
 
 	/* Did I send the message? */
-	if (!strcmp(purple_conv_chat_get_nick(chat),
+	if (purple_strequal(purple_conv_chat_get_nick(chat),
 				purple_normalize(purple_conversation_get_account(conv), who))) {
 		flags |= PURPLE_MESSAGE_SEND;
 		flags &= ~PURPLE_MESSAGE_RECV; /* Just in case some prpl sets it! */

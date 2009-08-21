@@ -2941,7 +2941,8 @@ static PurplePluginInfo info =
 	/** description */
 	N_("When viewing logs, this plugin will include "
 	   "logs from other IM clients. Currently, this "
-	   "includes Adium, MSN Messenger, and Trillian.\n\n"
+	   "includes Adium, MSN Messenger, aMSN, and "
+	   "Trillian.\n\n"
 	   "WARNING: This plugin is still alpha code and "
 	   "may crash frequently.  Use it at your own risk!"),
 

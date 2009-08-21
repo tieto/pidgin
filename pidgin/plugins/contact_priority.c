@@ -31,7 +31,7 @@ static void
 select_account(GtkWidget *widget, PurpleAccount *account, gpointer data)
 {
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(data),
-														(gdouble)purple_account_get_int(account, "score", 0));
+	                          (gdouble)purple_account_get_int(account, "score", 0));
 }
 
 static void
@@ -142,18 +142,18 @@ get_config_frame(PurplePlugin *plugin)
 	spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
 
 	optmenu = pidgin_account_option_menu_new(NULL, TRUE,
-																						 G_CALLBACK(select_account),
-																						 NULL, spin);
+	                                         G_CALLBACK(select_account),
+	                                         NULL, spin);
 	gtk_box_pack_start(GTK_BOX(hbox), optmenu, FALSE, FALSE, 0);
 
 	/* this is where we set up the spin button we made above */
 	account = g_object_get_data(G_OBJECT(gtk_menu_get_active(GTK_MENU(gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu))))),
-															"account");
+	                            "account");
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin),
-														(gdouble)purple_account_get_int(account, "score", 0));
+	                          (gdouble)purple_account_get_int(account, "score", 0));
 	gtk_spin_button_set_adjustment(GTK_SPIN_BUTTON(spin), GTK_ADJUSTMENT(adj));
 	g_signal_connect(G_OBJECT(spin), "value-changed",
-									 G_CALLBACK(account_update), optmenu);
+	                 G_CALLBACK(account_update), optmenu);
 	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(ret);
@@ -178,29 +178,29 @@ static PurplePluginInfo info =
 	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_STANDARD,                         /**< type           */
 	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	0,                                              /**< flags          */
+	NULL,                                           /**< dependencies   */
+	PURPLE_PRIORITY_DEFAULT,                        /**< priority       */
 
-	CONTACT_PRIORITY_PLUGIN_ID,                       /**< id             */
-	N_("Contact Priority"),                           /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
+	CONTACT_PRIORITY_PLUGIN_ID,                     /**< id             */
+	N_("Contact Priority"),                         /**< name           */
+	DISPLAY_VERSION,                                /**< version        */
                                                     /**< summary        */
 	N_("Allows for controlling the values associated with different buddy states."),
                                                     /**< description    */
 	N_("Allows for changing the point values of idle/away/offline states for buddies in contact priority computations."),
-	"Etan Reisner <deryni@eden.rutgers.edu>",         /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
+	"Etan Reisner <deryni@eden.rutgers.edu>",       /**< author         */
+	PURPLE_WEBSITE,                                 /**< homepage       */
 
-	NULL,                                             /**< load           */
-	NULL,                                             /**< unload         */
-	NULL,                                             /**< destroy        */
-	&ui_info,                                         /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	NULL,                                             /**< prefs_info     */
-	NULL,                                             /**< actions        */
+	NULL,                                           /**< load           */
+	NULL,                                           /**< unload         */
+	NULL,                                           /**< destroy        */
+	&ui_info,                                       /**< ui_info        */
+	NULL,                                           /**< extra_info     */
+	NULL,                                           /**< prefs_info     */
+	NULL,                                           /**< actions        */
 
 	/* padding */
 	NULL,

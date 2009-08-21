@@ -50,7 +50,7 @@ static void irc_dccsend_recv_destroy(PurpleXfer *xfer)
  * unsigned 4 byte integer in network byte order)
  */
 static void irc_dccsend_recv_ack(PurpleXfer *xfer, const guchar *data, size_t size) {
-	unsigned long l;
+	guint32 l;
 	size_t result;
 
 	l = htonl(xfer->bytes_sent);
@@ -302,7 +302,7 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 
 	if (sock < 0) {
 		purple_notify_error(gc, NULL, _("File Transfer Failed"),
-		                    _("Could not open a listening port."));
+		                    _("Unable to open a listening port."));
 		purple_xfer_cancel_local(xfer);
 		return;
 	}
@@ -343,7 +343,7 @@ static void irc_dccsend_send_init(PurpleXfer *xfer) {
 	if (xd->listen_data == NULL) {
 		purple_xfer_unref(xfer);
 		purple_notify_error(gc, NULL, _("File Transfer Failed"),
-		                    _("Could not open a listening port."));
+		                    _("Unable to open a listening port."));
 		purple_xfer_cancel_local(xfer);
 	}
 

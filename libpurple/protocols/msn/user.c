@@ -74,6 +74,7 @@ msn_user_destroy(MsnUser *user)
 	g_free(user->media.title);
 	g_free(user->media.album);
 	g_free(user->statusline);
+	g_free(user->invite_message);
 
 	g_free(user);
 }
@@ -294,9 +295,8 @@ msn_user_add_group_id(MsnUser *user, const char* group_id)
 		b = purple_buddy_new(account, passport, NULL);
 		purple_blist_add_buddy(b, NULL, g, NULL);
 	}
-	b->proto_data = user;
+	purple_buddy_set_protocol_data(b, user);
 	/*Update the blist Node info*/
-//	purple_blist_node_set_string(&(b->node), "", "");
 }
 
 /*check if the msn user is online*/
@@ -427,6 +427,15 @@ msn_user_set_client_caps(MsnUser *user, GHashTable *info)
 	user->clientcaps = info;
 }
 
+void
+msn_user_set_invite_message(MsnUser *user, const char *message)
+{
+	g_return_if_fail(user != NULL);
+
+	g_free(user->invite_message);
+	user->invite_message = g_strdup(message);
+}
+
 const char *
 msn_user_get_passport(const MsnUser *user)
 {
@@ -490,3 +499,12 @@ msn_user_get_client_caps(const MsnUser *user)
 
 	return user->clientcaps;
 }
+
+const char *
+msn_user_get_invite_message(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, NULL);
+
+	return user->invite_message;
+}
+

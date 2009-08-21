@@ -291,6 +291,7 @@ void purple_notify_searchresults_column_add(PurpleNotifySearchResults *results,
  */
 void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
 									   GList *row);
+
 #if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_NOTIFY_C_)
 /**
  * Returns a number of the rows in the search results object.
@@ -426,7 +427,9 @@ void *purple_notify_email(void *handle, const char *subject,
  * Displays a notification for multiple emails to the user.
  *
  * @param handle    The plugin or connection handle.
- * @param count     The number of emails.
+ * @param count     The number of emails.  '0' can be used to signify that
+ *                  the user has no unread emails and the UI should remove
+ *                  the mail notification.
  * @param detailed  @c TRUE if there is information for each email in the
  *                  arrays.
  * @param subjects  The array of subjects.
@@ -558,14 +561,21 @@ void purple_notify_user_info_add_pair(PurpleNotifyUserInfo *user_info, const cha
  */
 void purple_notify_user_info_prepend_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_NOTIFY_C_)
 /**
  * Remove a PurpleNotifyUserInfoEntry from a PurpleNotifyUserInfo object
  * without freeing the entry.
  *
  * @param user_info        The PurpleNotifyUserInfo
  * @param user_info_entry  The PurpleNotifyUserInfoEntry
+ *
+ * @deprecated Nothing is using this function and it should be removed
+ *             in 3.0.0.  Or, if we decide we want to keep it in 3.0.0
+ *             then we should make purple_notify_user_info_entry_destroy
+ *             public so that entries can be free'd after they're removed.
  */
 void purple_notify_user_info_remove_entry(PurpleNotifyUserInfo *user_info, PurpleNotifyUserInfoEntry *user_info_entry);
+#endif
 
 /**
  * Create a new PurpleNotifyUserInfoEntry

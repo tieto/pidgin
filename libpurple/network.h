@@ -208,11 +208,83 @@ unsigned short purple_network_get_port_from_fd(int fd);
 gboolean purple_network_is_available(void);
 
 /**
+ * Makes purple_network_is_available() always return @c TRUE.
+ *
+ * This is what backs the --force-online command line argument in Pidgin,
+ * for example.  This is useful for offline testing, especially when
+ * combined with nullprpl.
+ *
+ * @since 2.6.0
+ */
+void purple_network_force_online(void);
+
+/**
  * Get the handle for the network system
  *
  * @return the handle to the network system
  */
 void *purple_network_get_handle(void);
+
+/**	
+ * Update the STUN server IP given the host name
+ * Will result in a DNS query being executed asynchronous
+ * 
+ * @param stun_server The host name of the STUN server to set
+ * @since 2.6.0
+ */
+void purple_network_set_stun_server(const gchar *stun_server);
+	
+/**
+ * Get the IP address of the STUN server as a string representation
+ *
+ * @return the IP address
+ * @since 2.6.0
+ */
+const gchar *purple_network_get_stun_ip(void);
+	
+/**	
+ * Update the TURN server IP given the host name
+ * Will result in a DNS query being executed asynchronous
+ * 
+ * @param turn_server The host name of the TURN server to set
+ * @since 2.6.0
+ */
+void purple_network_set_turn_server(const gchar *turn_server);
+	
+/**
+ * Get the IP address of the STUN server as a string representation
+ *
+ * @return the IP address
+ * @since 2.6.0
+ */
+const gchar *purple_network_get_turn_ip(void);
+		
+/**
+ * Remove a port mapping (UPnP or NAT-PMP) associated with listening socket
+ *
+ * @param fd Socket to remove the port mapping for
+ * @since 2.6.0
+ */
+void purple_network_remove_port_mapping(gint fd);	
+
+/**
+ * Convert a UTF-8 domain name to ASCII in accordance with the IDNA
+ * specification. If libpurple is compiled without IDN support, this function
+ * copies the input into the output buffer.
+ *
+ * Because this function is used by DNS resolver child/threads, it uses no
+ * other libpurple API and is threadsafe.
+ *
+ * In general, a buffer of about 512 bytes is the appropriate size to use.
+ *
+ * @param in      The hostname to be converted.
+ * @param out     The output buffer where an allocated string will be returned.
+ *                The caller is responsible for freeing this.
+ * @returns       0 on success, -1 if the out is NULL, or an error code
+ *                that currently corresponds to the Idna_rc enum in libidn.
+ * @since 2.6.0
+ */
+int purple_network_convert_idn_to_ascii(const gchar *in, gchar **out);
 
 /**
  * Initializes the network subsystem.

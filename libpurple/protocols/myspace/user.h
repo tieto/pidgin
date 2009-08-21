@@ -46,7 +46,7 @@ typedef struct _MsimUser
  * initiated from a user lookup. */
 typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, const MsimMessage *userinfo, gpointer data);
 
-MsimUser *msim_get_user_from_buddy(PurpleBuddy *buddy);
+MsimUser *msim_get_user_from_buddy(PurpleBuddy *buddy, gboolean create);
 void msim_user_free(MsimUser *user);
 MsimUser *msim_find_user(MsimSession *session, const gchar *username);
 void msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, MsimUser *user, gboolean full);

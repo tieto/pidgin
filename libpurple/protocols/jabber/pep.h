@@ -19,14 +19,15 @@
  *
  */
 
-#ifndef _PURPLE_JABBER_PEP_H_
-#define _PURPLE_JABBER_PEP_H_
+#ifndef PURPLE_JABBER_PEP_H_
+#define PURPLE_JABBER_PEP_H_
 
 #include "jabber.h"
 #include "message.h"
 #include "buddy.h"
 
 void jabber_pep_init(void);
+void jabber_pep_uninit(void);
 
 void jabber_pep_init_actions(GList **m);
 
@@ -42,11 +43,10 @@ typedef void (JabberPEPHandler)(JabberStream *js, const char *from, xmlnode *ite
  * Registers a callback for PEP events. Also automatically announces this receiving capability via disco#info.
  * Don't forget to use jabber_add_feature when supporting the sending of PEP events of this type.
  *
- * @parameter shortname		A short name for this feature for XEP-0115. It has no semantic meaning, it just has to be unique.
- * @parameter xmlns		The namespace for this event
+ * @parameter xmlns			The namespace for this event
  * @parameter handlerfunc	The callback to be used when receiving an event with this namespace
  */
-void jabber_pep_register_handler(const char *shortname, const char *xmlns, JabberPEPHandler handlerfunc);
+void jabber_pep_register_handler(const char *xmlns, JabberPEPHandler handlerfunc);
 
 /*
  * Request a specific item from another PEP node.
@@ -64,15 +64,19 @@ void jabber_pep_request_item(JabberStream *js, const char *to, const char *node,
 /*
  * Default callback that can be used for namespaces which should only be enabled when PEP is supported
  *
- * @parameter js	The JabberStream struct for this connection
- * @parameter shortname	The namespace's shortname (for caps), ignored.
+ * @parameter js		The JabberStream struct for this connection
  * @parameter namespace The namespace that's queried, ignored.
  *
  * @returns TRUE when PEP is enabled, FALSE otherwise
  */
-gboolean jabber_pep_namespace_only_when_pep_enabled_cb(JabberStream *js, const gchar *shortname, const gchar *namespace);
+gboolean jabber_pep_namespace_only_when_pep_enabled_cb(JabberStream *js, const gchar *namespace);
 
 void jabber_handle_event(JabberMessage *jm);
+
+/**
+ * Delete the specified PEP node.
+ */
+void jabber_pep_delete_node(JabberStream *js, const gchar *node);
 
 /*
  * Publishes PEP item(s)
@@ -82,4 +86,4 @@ void jabber_handle_event(JabberMessage *jm);
  */
 void jabber_pep_publish(JabberStream *js, xmlnode *publish);
 
-#endif /* _PURPLE_JABBER_PEP_H_ */
+#endif /* PURPLE_JABBER_PEP_H_ */

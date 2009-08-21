@@ -34,6 +34,11 @@ struct _MsnSync
 {
 	MsnSession *session;
 	MsnTable *cbs_table;
+
+	/*
+	 * TODO: What is the intended purpose of old_cbs_table?  Nothing
+	 *       sets it and it is only read in two places.
+	 */
 	MsnTable *old_cbs_table;
 
 	int num_users;

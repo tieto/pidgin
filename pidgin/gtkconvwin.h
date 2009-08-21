@@ -96,6 +96,11 @@ struct _PidginWindow
 
 	gint drag_motion_signal;
 	gint drag_leave_signal;
+
+	/* Media menu options. */
+	GtkWidget *audio_call;
+	GtkWidget *video_call;
+	GtkWidget *audio_video_call;
 };
 
 /*@}*/

@@ -40,6 +40,8 @@
 #include "notify.h"
 #include "prefs.h"
 #include "sound.h"
+#include "sound-theme.h"
+#include "theme-manager.h"
 #include "util.h"
 
 #include "gtkconv.h"
@@ -156,7 +158,7 @@ im_msg_sent_cb(PurpleAccount *account, const char *receiver,
 			   const char *message, PurpleSoundEventID event)
 {
 	PurpleConversation *conv = purple_find_conversation_with_account(
-		PURPLE_CONV_TYPE_ANY, receiver, account);
+		PURPLE_CONV_TYPE_IM, receiver, account);
 	play_conv_event(conv, event);
 }
 
@@ -224,9 +226,9 @@ static void
 account_signon_cb(PurpleConnection *gc, gpointer data)
 {
 	if (mute_login_sounds_timeout != 0)
-		g_source_remove(mute_login_sounds_timeout);
+		purple_timeout_remove(mute_login_sounds_timeout);
 	mute_login_sounds = TRUE;
-	mute_login_sounds_timeout = purple_timeout_add(10000, unmute_login_sounds_cb, NULL);
+	mute_login_sounds_timeout = purple_timeout_add_seconds(10, unmute_login_sounds_cb, NULL);
 }
 
 const char *
@@ -294,6 +296,7 @@ pidgin_sound_init(void)
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/nick_said", "");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/pounce_default", TRUE);
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/pounce_default", "");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/sound/theme", "");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/conv_focus", TRUE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/mute", FALSE);
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/command", "");
@@ -557,6 +560,8 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 {
 	char *enable_pref;
 	char *file_pref;
+	const char *theme_name;
+	PurpleSoundTheme *theme;
 
 	if ((event == PURPLE_SOUND_BUDDY_ARRIVE) && mute_login_sounds)
 		return;
@@ -573,18 +578,59 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
 	if (purple_prefs_get_bool(enable_pref)) {
 		char *filename = g_strdup(purple_prefs_get_path(file_pref));
-		if(!filename || !strlen(filename)) {
+		theme_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
+
+		if (theme_name && *theme_name && (!filename || !*filename)) {
+			/* Use theme */
 			g_free(filename);
+
+			theme = PURPLE_SOUND_THEME(purple_theme_manager_find_theme(theme_name, "sound"));
+			filename = purple_sound_theme_get_file_full(theme, sounds[event].pref);
+
+			if(!g_file_test(filename, G_FILE_TEST_IS_REGULAR)){ /* Use Default sound in this case */
+				purple_debug_error("sound", "The file: (%s) %s\n from theme: %s, was not found or wasn't readable\n",
+							sounds[event].pref, filename, theme_name);
+				g_free(filename);
+			}
+		}
+
+		if (!filename || !strlen(filename)) {			    /* Use Default sounds */
+			g_free(filename);
+
 			/* XXX Consider creating a constant for "sounds/purple" to be shared with Finch */
 			filename = g_build_filename(DATADIR, "sounds", "purple", sounds[event].def, NULL);
 		}
 
 		purple_sound_play_file(filename, NULL);
+
 		g_free(filename);
 	}
 
 	g_free(enable_pref);
 	g_free(file_pref);
+}
+
+gboolean
+pidgin_sound_is_customized(void)
+{
+	gint i;
+	gchar *path, *file;
+
+	for (i = 0; i < PURPLE_NUM_SOUNDS; i++) {
+		path = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s", sounds[i].pref);
+		file = g_strdup(purple_prefs_get_path(path));
+		g_free(path);
+
+		if (file && file[0] != '\0'){
+			g_free(file);
+			return TRUE;
+		}
+
+		g_free(file);
+	}
+
+	return FALSE;
+
 }
 
 static PurpleSoundUiOps sound_ui_ops =

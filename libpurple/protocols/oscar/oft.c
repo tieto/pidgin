@@ -544,7 +544,7 @@ peer_oft_recv_frame(PeerConnection *conn, ByteStream *bs)
 	frame.name = byte_stream_getraw(bs, frame.name_length);
 
 	purple_debug_info("oscar", "Incoming OFT frame from %s with "
-			"type=0x%04x\n", conn->sn, frame.type);
+			"type=0x%04x\n", conn->bn, frame.type);
 
 	/* TODOFT: peer_oft_dirconvert_fromstupid(frame->name); */
 

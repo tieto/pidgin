@@ -271,6 +271,7 @@ gnt_entry_draw(GntWidget *widget)
 	GntEntry *entry = GNT_ENTRY(widget);
 	int stop;
 	gboolean focus;
+	int curpos;
 
 	if ((focus = gnt_widget_has_focus(widget)))
 		wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_TEXT_NORMAL));
@@ -289,9 +290,10 @@ gnt_entry_draw(GntWidget *widget)
 	if (stop < widget->priv.width)
 		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
 
+	curpos = gnt_util_onscreen_width(entry->scroll, entry->cursor);
 	if (focus)
-		mvwchgat(widget->window, 0, gnt_util_onscreen_width(entry->scroll, entry->cursor),
-				1, A_REVERSE, GNT_COLOR_TEXT_NORMAL, NULL);
+		mvwchgat(widget->window, 0, curpos, 1, A_REVERSE, GNT_COLOR_TEXT_NORMAL, NULL);
+	wmove(widget->window, 0, curpos);
 
 	GNTDEBUG;
 }

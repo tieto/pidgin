@@ -62,36 +62,39 @@ static void historize(PurpleConversation *c)
 			return;
 
 		/* Find buddies for this conversation. */
-	        buddies = purple_find_buddies(account, name);
+		buddies = purple_find_buddies(account, name);
 
 		/* If we found at least one buddy, save the first buddy's alias. */
 		if (buddies != NULL)
 			alias = purple_buddy_get_contact_alias((PurpleBuddy *)buddies->data);
 
-	        for (cur = buddies; cur != NULL; cur = cur->next)
-	        {
-	                PurpleBlistNode *node = cur->data;
-	                if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
-	                {
+		for (cur = buddies; cur != NULL; cur = cur->next)
+		{
+			PurpleBlistNode *node = cur->data;
+			PurpleBlistNode *prev = purple_blist_node_get_sibling_prev(node);
+			PurpleBlistNode *next = purple_blist_node_get_sibling_next(node);
+			if ((node != NULL) && ((prev != NULL) || (next != NULL)))
+			{
 				PurpleBlistNode *node2;
+				PurpleBlistNode *parent = purple_blist_node_get_parent(node);
+				PurpleBlistNode *child = purple_blist_node_get_first_child(parent);
 
 				alias = purple_buddy_get_contact_alias((PurpleBuddy *)node);
 
 				/* We've found a buddy that matches this conversation.  It's part of a
 				 * PurpleContact with more than one PurpleBuddy.  Loop through the PurpleBuddies
 				 * in the contact and get all the logs. */
-				for (node2 = node->parent->child ; node2 != NULL ; node2 = node2->next)
+				for (node2 = child ; node2 != NULL ; node2 = purple_blist_node_get_sibling_next(node2))
 				{
-					logs = g_list_concat(
-						purple_log_get_logs(PURPLE_LOG_IM,
+					logs = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM,
 							purple_buddy_get_name((PurpleBuddy *)node2),
 							purple_buddy_get_account((PurpleBuddy *)node2)),
-						logs);
+							logs);
 				}
 				break;
-	                }
-	        }
-	        g_slist_free(buddies);
+			}
+		}
+		g_slist_free(buddies);
 
 		if (logs == NULL)
 			logs = purple_log_get_logs(PURPLE_LOG_IM, name, account);
@@ -118,7 +121,7 @@ static void historize(PurpleConversation *c)
 
 	protocol = g_strdup(gtk_imhtml_get_protocol_name(GTK_IMHTML(gtkconv->imhtml)));
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
-							      purple_account_get_protocol_name(((PurpleLog*)logs->data)->account));
+			purple_account_get_protocol_name(((PurpleLog*)logs->data)->account));
 
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", options);

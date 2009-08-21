@@ -36,6 +36,7 @@
 #include <gntutils.h>
 
 #include "finch.h"
+#include <internal.h>
 
 #include "account.h"
 #include "conversation.h"

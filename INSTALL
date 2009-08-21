@@ -158,7 +158,7 @@ Optional Packages:
 
 	`--with-dynamic-prpls' takes a list of comma separated protocols also.  If used only those listed will be built.  If no protocols are listed with either `--with-static-prpls' or with `--with-dynamic-prpls' then Pidgin and Finch will be effectively useless.
 
-	If configure does not find python, it will build without DBUS support.  Thiswill disable scripts such as purple-remote and purple-uri-handler, effectively disabling integration with the browser.  You can tell configure where your python binary is located with `--with-python=PATH'
+	If configure does not find python, it will build without DBUS support.  This will disable scripts such as purple-remote and purple-uri-handler, effectively disabling integration with the browser.  You can tell configure where your python binary is located with `--with-python=PATH'
 
 Specifying the System Type
 ==========================

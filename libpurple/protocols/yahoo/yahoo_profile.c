@@ -29,9 +29,9 @@
 #include "util.h"
 #if PHOTO_SUPPORT
 #include "imgstore.h"
-#endif
+#endif /* PHOTO_SUPPORT */
 
-#include "yahoo.h"
+#include "libymsg.h"
 #include "yahoo_friend.h"
 
 typedef struct {
@@ -40,11 +40,11 @@ typedef struct {
 } YahooGetInfoData;
 
 typedef enum profile_lang_id {
-	XX, DA, DE, EL, 
-	EN, EN_GB, 
+	XX, DA, DE, EL,
+	EN, EN_GB,
 	ES_AR, ES_ES, ES_MX, ES_US,
-	FR_CA, FR_FR, 
-	IT, JA, KO, NO, PT, SV, 
+	FR_CA, FR_FR,
+	IT, JA, KO, NO, PT, SV,
 	ZH_CN, ZH_HK, ZH_TW, ZH_US, PT_BR
 } profile_lang_id_t;
 
@@ -699,9 +699,10 @@ static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooG
 			info_data->name);
 
 	if (b) {
-		if(b->alias && b->alias[0]) {
-			char *aliastext = g_markup_escape_text(b->alias, -1);
-			purple_notify_user_info_add_pair(user_info, _("Alias"), aliastext); 
+		const char *balias = purple_buddy_get_local_buddy_alias(b);
+		if(balias && balias[0]) {
+			char *aliastext = g_markup_escape_text(balias, -1);
+			purple_notify_user_info_add_pair(user_info, _("Alias"), aliastext);
 			g_free(aliastext);
 		}
 		#if 0
@@ -715,7 +716,7 @@ static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooG
 		/* Add the normal tooltip pairs */
 		yahoo_tooltip_text(b, user_info, TRUE);
 
-		if ((f = yahoo_friend_find(info_data->gc, b->name))) {
+		if ((f = yahoo_friend_find(info_data->gc, purple_buddy_get_name(b)))) {
 			const char *ip;
 			if ((ip = yahoo_friend_get_ip(f)))
 				purple_notify_user_info_add_pair(user_info, _("IP Address"), ip);
@@ -776,14 +777,14 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	char *stripped;
 	int stripped_len;
 	char *last_updated_utf8_string = NULL;
-#endif
+#endif /* !PHOTO_SUPPORT */
 	const char *last_updated_string = NULL;
 	char *url_buffer;
 	GString *s;
 	char *tmp;
 	char *profile_url_text = NULL;
 	int lang, strid;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	const profile_strings_node_t *strings = NULL;
 	const char *title;
 	profile_state_t profile_state = PROFILE_STATE_DEFAULT;
@@ -898,7 +899,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 #if PHOTO_SUPPORT
 	photo_url_text = yahoo_get_photo_url(url_text, info_data->name);
-#endif
+#endif /* PHOTO_SUPPORT */
 
 	url_buffer = g_strdup(url_text);
 
@@ -955,7 +956,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 		const gchar *url_text, size_t len, const gchar *error_message)
 {
 	YahooGetInfoStepTwoData *info2_data = (YahooGetInfoStepTwoData *)data;
-	struct yahoo_data *yd;
+	YahooData *yd;
 	gboolean found = FALSE;
 	int id = -1;
 
@@ -1047,7 +1048,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 			purple_debug_info("yahoo", "%s is %" G_GSIZE_FORMAT
 					" bytes\n", photo_url_text, len);
 			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
-			
+
 			tmp = g_strdup_printf("<img id=\"%d\"><br>", id);
 			purple_notify_user_info_add_pair(user_info, NULL, tmp);
 			g_free(tmp);
@@ -1213,7 +1214,9 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 				 * in which case the user may or may not actually exist.
 				 * Hence this extra step.
 				 */
-				f = yahoo_friend_find(b->account->gc, b->name);
+				PurpleAccount *account = purple_buddy_get_account(b);
+				f = yahoo_friend_find(purple_account_get_connection(account),
+						purple_buddy_get_name(b));
 			}
 			str = f ? _("Could not retrieve the user's profile. "
 					  "This most likely is a temporary server-side problem. "
@@ -1256,12 +1259,12 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	g_free(info2_data);
 	if (id != -1)
 		purple_imgstore_unref_by_id(id);
-#endif
+#endif /* PHOTO_SUPPORT */
 }
 
 void yahoo_get_info(PurpleConnection *gc, const char *name)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	YahooGetInfoData *data;
 	char *url;
 	PurpleUtilFetchUrlData *url_data;

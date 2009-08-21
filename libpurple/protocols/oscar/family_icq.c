@@ -246,7 +246,7 @@ int aim_icq_getalias(OscarData *od, const char *uin)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
-	purple_debug_info("oscar", "Requesting ICQ alias for %s", uin);
+	purple_debug_info("oscar", "Requesting ICQ alias for %s\n", uin);
 
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
@@ -734,14 +734,6 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 				guchar cookie[8];
 
 				info = g_new0(struct aim_icq_info, 1);
-
-				if (info == NULL)
-				{
-					g_free(uin);
-					g_free(status_note_title);
-
-					break;
-				}
 
 				bslen = 13 + strlen(uin) + 30 + 6 + 4 + 55 + 85 + 4;
 				byte_stream_new(&bs, 4 + bslen);

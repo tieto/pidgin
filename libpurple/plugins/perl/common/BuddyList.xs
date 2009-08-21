@@ -363,9 +363,9 @@ MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Buddy  PREFIX = purple_
 PROTOTYPES: ENABLE
 
 Purple::BuddyList::Buddy
-purple_buddy_new(account, screenname, alias)
+purple_buddy_new(account, name, alias)
 	Purple::Account account
-	const char *screenname
+	const char *name
 	const char *alias
 
 const char *

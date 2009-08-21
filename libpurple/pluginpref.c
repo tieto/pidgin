@@ -196,7 +196,7 @@ purple_plugin_pref_set_bounds(PurplePluginPref *pref, int min, int max)
 
 	if (purple_prefs_get_type(pref->name) != PURPLE_PREF_INT)
 	{
-		purple_debug_info("pluginpref",
+		purple_debug_warning("pluginpref",
 				"purple_plugin_pref_set_bounds: %s is not an integer pref\n",
 				pref->name);
 		return;
@@ -220,7 +220,7 @@ void purple_plugin_pref_get_bounds(PurplePluginPref *pref, int *min, int *max)
 
 	if (purple_prefs_get_type(pref->name) != PURPLE_PREF_INT)
 	{
-		purple_debug(PURPLE_DEBUG_INFO, "pluginpref",
+		purple_debug_warning("pluginpref",
 				"purple_plugin_pref_get_bounds: %s is not an integer pref\n",
 				pref->name);
 		return;

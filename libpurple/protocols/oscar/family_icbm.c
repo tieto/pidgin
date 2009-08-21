@@ -61,16 +61,16 @@
  * @param bs The bstream to write the ICBM header to.
  * @param c c is for cookie, and cookie is for me.
  * @param channel The ICBM channel (1 through 4).
- * @param sn Null-terminated scrizeen nizame.
+ * @param bn Null-terminated scrizeen nizame.
  * @return The number of bytes written.  It's really not useful.
  */
-static int aim_im_puticbm(ByteStream *bs, const guchar *c, guint16 channel, const char *sn)
+static int aim_im_puticbm(ByteStream *bs, const guchar *c, guint16 channel, const char *bn)
 {
 	byte_stream_putraw(bs, c, 8);
 	byte_stream_put16(bs, channel);
-	byte_stream_put8(bs, strlen(sn));
-	byte_stream_putstr(bs, sn);
-	return 8+2+1+strlen(sn);
+	byte_stream_put8(bs, strlen(bn));
+	byte_stream_putstr(bs, bn);
+	return 8+2+1+strlen(bn);
 }
 
 /**
@@ -221,7 +221,11 @@ static int aim_im_paraminfo(OscarData *od, FlapConnection *conn, aim_module_t *m
 	params.maxrecverwarn = byte_stream_get16(bs);
 	params.minmsginterval = byte_stream_get32(bs);
 
-	params.flags = 0x0000000b | AIM_IMPARAM_FLAG_SUPPORT_OFFLINEMSGS;
+	params.flags = AIM_IMPARAM_FLAG_CHANNEL_MSGS_ALLOWED
+			| AIM_IMPARAM_FLAG_MISSED_CALLS_ENABLED
+			| AIM_IMPARAM_FLAG_EVENTS_ALLOWED
+			| AIM_IMPARAM_FLAG_SMS_SUPPORTED
+			| AIM_IMPARAM_FLAG_OFFLINE_MSGS_ALLOWED;
 	params.maxmsglen = 8000;
 	params.minmsginterval = 0;
 
@@ -324,7 +328,7 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	aim_icbm_makecookie(cookie);
 
 	/* ICBM header */
-	aim_im_puticbm(&data, cookie, 0x0001, args->destsn);
+	aim_im_puticbm(&data, cookie, 0x0001, args->destbn);
 
 	/* Message TLV (type 0x0002) */
 	byte_stream_put16(&data, 0x0002);
@@ -410,7 +414,7 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	}
 
 	/* XXX - should be optional */
-	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, args->destsn, strlen(args->destsn)+1);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, args->destbn, strlen(args->destbn)+1);
 
 	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICBM, 0x0006, 0x0000, snacid, &data);
 	byte_stream_destroy(&data);
@@ -431,11 +435,11 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
  * that requires an explicit message length.  Use aim_im_sendch1_ext().
  *
  */
-int aim_im_sendch1(OscarData *od, const char *sn, guint16 flags, const char *msg)
+int aim_im_sendch1(OscarData *od, const char *bn, guint16 flags, const char *msg)
 {
 	struct aim_sendimext_args args;
 
-	args.destsn = sn;
+	args.destbn = bn;
 	args.flags = flags;
 	args.msg = msg;
 	args.msglen = strlen(msg);
@@ -451,7 +455,7 @@ int aim_im_sendch1(OscarData *od, const char *sn, guint16 flags, const char *msg
 /*
  * Subtype 0x0006 - Send a chat invitation.
  */
-int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, guint16 exchange, const char *roomname, guint16 instance)
+int aim_im_sendch2_chatinvite(OscarData *od, const char *bn, const char *msg, guint16 exchange, const char *roomname, guint16 instance)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -465,18 +469,18 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM)))
 		return -EINVAL;
 
-	if (!sn || !msg || !roomname)
+	if (!bn || !msg || !roomname)
 		return -EINVAL;
 
 	aim_icbm_makecookie(cookie);
 
-	byte_stream_new(&bs, 1142+strlen(sn)+strlen(roomname)+strlen(msg));
+	byte_stream_new(&bs, 1142+strlen(bn)+strlen(roomname)+strlen(msg));
 
-	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, sn, strlen(sn)+1);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, bn, strlen(bn)+1);
 
 	/* XXX should be uncached by an unwritten 'invite accept' handler */
 	priv = g_malloc(sizeof(struct aim_invite_priv));
-	priv->sn = g_strdup(sn);
+	priv->bn = g_strdup(bn);
 	priv->roomname = g_strdup(roomname);
 	priv->exchange = exchange;
 	priv->instance = instance;
@@ -487,7 +491,7 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
 		g_free(priv);
 
 	/* ICBM Header */
-	aim_im_puticbm(&bs, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, bn);
 
 	/*
 	 * TLV t(0005)
@@ -532,7 +536,7 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
  * This is also performance sensitive. (If you can believe it...)
  *
  */
-int aim_im_sendch2_icon(OscarData *od, const char *sn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum)
+int aim_im_sendch2_icon(OscarData *od, const char *bn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -542,17 +546,17 @@ int aim_im_sendch2_icon(OscarData *od, const char *sn, const guint8 *icon, int i
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM)))
 		return -EINVAL;
 
-	if (!sn || !icon || (iconlen <= 0) || (iconlen >= MAXICONLEN))
+	if (!bn || !icon || (iconlen <= 0) || (iconlen >= MAXICONLEN))
 		return -EINVAL;
 
 	aim_icbm_makecookie(cookie);
 
-	byte_stream_new(&bs, 8+2+1+strlen(sn)+2+2+2+8+16+2+2+2+2+2+2+2+4+4+4+iconlen+strlen(AIM_ICONIDENT)+2+2);
+	byte_stream_new(&bs, 8+2+1+strlen(bn)+2+2+2+8+16+2+2+2+2+2+2+2+4+4+4+iconlen+strlen(AIM_ICONIDENT)+2+2);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, NULL, 0);
 
 	/* ICBM header */
-	aim_im_puticbm(&bs, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, bn);
 
 	/*
 	 * TLV t(0005)
@@ -623,7 +627,7 @@ int aim_im_sendch2_rtfmsg(OscarData *od, struct aim_sendrtfmsg_args *args)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM)))
 		return -EINVAL;
 
-	if (!args || !args->destsn || !args->rtfmsg)
+	if (!args || !args->destbn || !args->rtfmsg)
 		return -EINVAL;
 
 	servdatalen = 2+2+16+2+4+1+2  +  2+2+4+4+4  +  2+4+2+strlen(args->rtfmsg)+1  +  4+4+4+strlen(rtfcap)+1;
@@ -635,7 +639,7 @@ int aim_im_sendch2_rtfmsg(OscarData *od, struct aim_sendrtfmsg_args *args)
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, NULL, 0);
 
 	/* ICBM header */
-	aim_im_puticbm(&bs, cookie, 0x0002, args->destsn);
+	aim_im_puticbm(&bs, cookie, 0x0002, args->destbn);
 
 	/* TLV t(0005) - Encompasses everything below. */
 	byte_stream_put16(&bs, 0x0005);
@@ -708,12 +712,12 @@ aim_im_sendch2_cancel(PeerConnection *peer_conn)
 	if (conn == NULL)
 		return;
 
-	byte_stream_new(&bs, 118+strlen(peer_conn->sn));
+	byte_stream_new(&bs, 118+strlen(peer_conn->bn));
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, NULL, 0);
 
 	/* ICBM header */
-	aim_im_puticbm(&bs, peer_conn->cookie, 0x0002, peer_conn->sn);
+	aim_im_puticbm(&bs, peer_conn->cookie, 0x0002, peer_conn->bn);
 
 	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003);
 
@@ -757,12 +761,12 @@ aim_im_sendch2_connected(PeerConnection *peer_conn)
 	if (conn == NULL)
 		return;
 
-	byte_stream_new(&bs, 11+strlen(peer_conn->sn) + 4+2+8+16);
+	byte_stream_new(&bs, 11+strlen(peer_conn->bn) + 4+2+8+16);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, NULL, 0);
 
 	/* ICBM header */
-	aim_im_puticbm(&bs, peer_conn->cookie, 0x0002, peer_conn->sn);
+	aim_im_puticbm(&bs, peer_conn->cookie, 0x0002, peer_conn->bn);
 
 	byte_stream_put16(&bs, 0x0005);
 	byte_stream_put16(&bs, 0x001a);
@@ -783,7 +787,7 @@ aim_im_sendch2_connected(PeerConnection *peer_conn)
  * "I want to connect through a proxy server"
  */
 void
-aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 port, guint16 requestnumber)
+aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *bn, const guint8 *ip, guint16 port, guint16 requestnumber)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -795,12 +799,12 @@ aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *sn, 
 	if (conn == NULL)
 		return;
 
-	byte_stream_new(&bs, 246+strlen(sn));
+	byte_stream_new(&bs, 246+strlen(bn));
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, NULL, 0);
 
 	/* ICBM header */
-	aim_im_puticbm(&bs, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, bn);
 
 	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003);
 
@@ -835,7 +839,7 @@ aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *sn, 
  * remote user to connect to us via a proxy server.
  */
 void
-aim_im_sendch2_odc_requestproxy(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 pin, guint16 requestnumber)
+aim_im_sendch2_odc_requestproxy(OscarData *od, guchar *cookie, const char *bn, const guint8 *ip, guint16 pin, guint16 requestnumber)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -848,12 +852,12 @@ aim_im_sendch2_odc_requestproxy(OscarData *od, guchar *cookie, const char *sn, c
 	if (conn == NULL)
 		return;
 
-	byte_stream_new(&bs, 246+strlen(sn));
+	byte_stream_new(&bs, 246+strlen(bn));
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, NULL, 0);
 
 	/* ICBM header */
-	aim_im_puticbm(&bs, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, bn);
 
 	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003);
 
@@ -898,13 +902,16 @@ aim_im_sendch2_odc_requestproxy(OscarData *od, guchar *cookie, const char *sn, c
  *
  */
 void
-aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 port, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles)
+aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char *bn, const guint8 *ip, guint16 port, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles)
 {
 	FlapConnection *conn;
 	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *outer_tlvlist = NULL, *inner_tlvlist = NULL;
 	ByteStream hdrbs;
+
+	g_return_if_fail(bn != NULL);
+	g_return_if_fail(ip != NULL);
 
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM);
 	if (conn == NULL)
@@ -915,7 +922,7 @@ aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, NULL, 0);
 
 	/* ICBM header */
-	aim_im_puticbm(&bs, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, bn);
 
 	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003);
 
@@ -981,7 +988,7 @@ aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char 
  * remote user to connect to us via a proxy server.
  */
 void
-aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 pin, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles)
+aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *bn, const guint8 *ip, guint16 pin, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -999,7 +1006,7 @@ aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, NULL, 0);
 
 	/* ICBM header */
-	aim_im_puticbm(&bs, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, bn);
 
 	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003);
 
@@ -1073,29 +1080,29 @@ aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *
  * Subtype 0x0006 - Request the status message of the given ICQ user.
  *
  * @param od The oscar session.
- * @param sn The UIN of the user of whom you wish to request info.
+ * @param bn The UIN of the user of whom you wish to request info.
  * @param type The type of info you wish to request.  This should be the current
  *        state of the user, as one of the AIM_ICQ_STATE_* defines.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_im_sendch2_geticqaway(OscarData *od, const char *sn, int type)
+int aim_im_sendch2_geticqaway(OscarData *od, const char *bn, int type)
 {
 	FlapConnection *conn;
 	ByteStream bs;
 	aim_snacid_t snacid;
 	guchar cookie[8];
 
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM)) || !sn)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM)) || !bn)
 		return -EINVAL;
 
 	aim_icbm_makecookie(cookie);
 
-	byte_stream_new(&bs, 8+2+1+strlen(sn) + 4+0x5e + 4);
+	byte_stream_new(&bs, 8+2+1+strlen(bn) + 4+0x5e + 4);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, NULL, 0);
 
 	/* ICBM header */
-	aim_im_puticbm(&bs, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, bn);
 
 	/* TLV t(0005) - Encompasses almost everything below. */
 	byte_stream_put16(&bs, 0x0005); /* T */
@@ -1176,12 +1183,12 @@ int aim_im_sendch2_geticqaway(OscarData *od, const char *sn, int type)
  * but thats ok, because it gives me time to try to figure out what kind of drugs the AOL people
  * were taking when they merged the two protocols.
  *
- * @param sn The destination screen name.
+ * @param bn The destination buddy name.
  * @param type The type of message.  0x0007 for authorization denied.  0x0008 for authorization granted.
  * @param message The message you want to send, it should be null terminated.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_im_sendch4(OscarData *od, const char *sn, guint16 type, const char *message)
+int aim_im_sendch4(OscarData *od, const char *bn, guint16 type, const char *message)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -1191,17 +1198,17 @@ int aim_im_sendch4(OscarData *od, const char *sn, guint16 type, const char *mess
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0002)))
 		return -EINVAL;
 
-	if (!sn || !type || !message)
+	if (!bn || !type || !message)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 8+3+strlen(sn)+12+strlen(message)+1+4);
+	byte_stream_new(&bs, 8+3+strlen(bn)+12+strlen(message)+1+4);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0006, 0x0000, NULL, 0);
 
 	aim_icbm_makecookie(cookie);
 
 	/* ICBM header */
-	aim_im_puticbm(&bs, cookie, 0x0004, sn);
+	aim_im_puticbm(&bs, cookie, 0x0004, bn);
 
 	/*
 	 * TLV t(0005)
@@ -1246,8 +1253,8 @@ static int outgoingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 	guchar cookie[8];
 	guint16 channel;
 	GSList *tlvlist;
-	char *sn;
-	int snlen;
+	char *bn;
+	int bnlen;
 	guint16 icbmflags = 0;
 	guint8 flag1 = 0, flag2 = 0;
 	gchar *msg = NULL;
@@ -1264,8 +1271,8 @@ static int outgoingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 		return 0;
 	}
 
-	snlen = byte_stream_get8(bs);
-	sn = byte_stream_getstr(bs, snlen);
+	bnlen = byte_stream_get8(bs);
+	bn = byte_stream_getstr(bs, bnlen);
 
 	tlvlist = aim_tlvlist_read(bs);
 
@@ -1296,9 +1303,9 @@ static int outgoingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 	}
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, channel, sn, msg, icbmflags, flag1, flag2);
+		ret = userfunc(od, conn, frame, channel, bn, msg, icbmflags, flag1, flag2);
 
-	g_free(sn);
+	g_free(bn);
 	g_free(msg);
 	aim_tlvlist_free(tlvlist);
 
@@ -1480,7 +1487,7 @@ static int incomingim_ch1_parsemsgs(OscarData *od, aim_userinfo_t *userinfo, gui
 		msglen = byte_stream_get16(&mbs);
 		if (msglen > byte_stream_empty(&mbs))
 		{
-			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
 			break;
 		}
 
@@ -1566,7 +1573,7 @@ static int incomingim_ch1_parsemsgs(OscarData *od, aim_userinfo_t *userinfo, gui
 
 static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, guint16 channel, aim_userinfo_t *userinfo, ByteStream *bs, guint8 *cookie)
 {
-	guint16 type, length, magic1, msglen;
+	guint16 type, length, magic1, msglen = 0;
 	aim_rxcallback_t userfunc;
 	int ret = 0;
 	int rev = 0;
@@ -1589,7 +1596,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 		if (length > byte_stream_empty(bs))
 		{
-			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
 			break;
 		}
 
@@ -1625,14 +1632,14 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 			if (magic1 != 0x501)
 			{
-				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
 				break;
 			}
 
 			args.featureslen = byte_stream_get16(bs);
 			if (args.featureslen > byte_stream_empty(bs))
 			{
-				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
 				break;
 			}
 			if (args.featureslen == 0)
@@ -1654,7 +1661,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 			magic1 = byte_stream_get16(bs); /* 01 01 */
 			if (magic1 != 0x101) /* Bad, message comes before attributes */
 			{
-				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
 				break;
 			}
 			msglen = byte_stream_get16(bs);
@@ -1721,7 +1728,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 			if (length > byte_stream_empty(bs))
 			{
-				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
 				break;
 			}
 			g_free(args.extdata);
@@ -1796,7 +1803,7 @@ incomingim_ch2_buddylist(OscarData *od, FlapConnection *conn, aim_module_t *mod,
 			bnlen = byte_stream_get16(servdata);
 			bn = byte_stream_getstr(servdata, bnlen);
 
-			purple_debug_misc("oscar", "got a buddy list from %s: group %s, buddy %s\n", userinfo->sn, gn, bn);
+			purple_debug_misc("oscar", "got a buddy list from %s: group %s, buddy %s\n", userinfo->bn, gn, bn);
 
 			g_free(bn);
 		}
@@ -2285,7 +2292,7 @@ static int incomingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 }
 
 /*
- * Subtype 0x0008 - Send a warning to sn.
+ * Subtype 0x0008 - Send a warning to bn.
  *
  * Flags:
  *  AIM_WARN_ANON  Send as an anonymous (doesn't count as much)
@@ -2293,21 +2300,21 @@ static int incomingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
  * returns -1 on error (couldn't alloc packet), 0 on success.
  *
  */
-int aim_im_warn(OscarData *od, FlapConnection *conn, const char *sn, guint32 flags)
+int aim_im_warn(OscarData *od, FlapConnection *conn, const char *bn, guint32 flags)
 {
 	ByteStream bs;
 	aim_snacid_t snacid;
 
-	if (!od || !conn || !sn)
+	if (!od || !conn || !bn)
 		return -EINVAL;
 
-	byte_stream_new(&bs, strlen(sn)+3);
+	byte_stream_new(&bs, strlen(bn)+3);
 
-	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0008, 0x0000, sn, strlen(sn)+1);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0008, 0x0000, bn, strlen(bn)+1);
 
 	byte_stream_put16(&bs, (flags & AIM_WARN_ANON) ? 0x0001 : 0x0000);
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
+	byte_stream_put8(&bs, strlen(bn));
+	byte_stream_putstr(&bs, bn);
 
 	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICBM, 0x0008, 0x0000, snacid, &bs);
 
@@ -2349,7 +2356,7 @@ static int missedcall(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
  *    AIM_TRANSFER_DENY_NOTACCEPTING -- "client is not accepting transfers"
  *
  */
-int aim_im_denytransfer(OscarData *od, const char *sn, const guchar *cookie, guint16 code)
+int aim_im_denytransfer(OscarData *od, const char *bn, const guchar *cookie, guint16 code)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -2359,15 +2366,15 @@ int aim_im_denytransfer(OscarData *od, const char *sn, const guchar *cookie, gui
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM)))
 		return -EINVAL;
 
-	byte_stream_new(&bs, 8+2+1+strlen(sn)+6);
+	byte_stream_new(&bs, 8+2+1+strlen(bn)+6);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x000b, 0x0000, NULL, 0);
 
 	byte_stream_putraw(&bs, cookie, 8);
 
 	byte_stream_put16(&bs, 0x0002); /* channel */
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
+	byte_stream_put8(&bs, strlen(bn));
+	byte_stream_putstr(&bs, bn);
 
 	aim_tlvlist_add_16(&tlvlist, 0x0003, code);
 	aim_tlvlist_write(&bs, &tlvlist);
@@ -2380,7 +2387,7 @@ int aim_im_denytransfer(OscarData *od, const char *sn, const guchar *cookie, gui
 	return 0;
 }
 
-static void parse_status_note_text(OscarData *od, guchar *cookie, char *sn, ByteStream *bs)
+static void parse_status_note_text(OscarData *od, guchar *cookie, char *bn, ByteStream *bs)
 {
 	struct aim_icq_info *info;
 	struct aim_icq_info *prev_info;
@@ -2534,10 +2541,10 @@ static void parse_status_note_text(OscarData *od, guchar *cookie, char *sn, Byte
 	g_free(status_note_text);
 	g_free(stripped_status_note_text);
 
-	buddy = purple_find_buddy(account, sn);
+	buddy = purple_find_buddy(account, bn);
 	if (buddy == NULL)
 	{
-		purple_debug_misc("oscar", "clientautoresp: buddy %s was not found.\n", sn);
+		purple_debug_misc("oscar", "clientautoresp: buddy %s was not found.\n", bn);
 		g_free(status_note);
 		return;
 	}
@@ -2548,7 +2555,7 @@ static void parse_status_note_text(OscarData *od, guchar *cookie, char *sn, Byte
 	presence = purple_buddy_get_presence(buddy);
 	status = purple_presence_get_active_status(presence);
 
-	purple_prpl_got_user_status(account, sn,
+	purple_prpl_got_user_status(account, bn,
 			purple_status_get_id(status),
 			"message", status_note, NULL);
 
@@ -2565,26 +2572,26 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 channel, reason;
-	char *sn;
+	char *bn;
 	guchar *cookie;
-	guint8 snlen;
+	guint8 bnlen;
 
 	cookie = byte_stream_getraw(bs, 8);
 	channel = byte_stream_get16(bs);
-	snlen = byte_stream_get8(bs);
-	sn = byte_stream_getstr(bs, snlen);
+	bnlen = byte_stream_get8(bs);
+	bn = byte_stream_getstr(bs, bnlen);
 	reason = byte_stream_get16(bs);
 
 	if (channel == 0x0002)
 	{
 		if (reason == 0x0003) /* channel-specific */
 			/* parse status note text */
-			parse_status_note_text(od, cookie, sn, bs);
+			parse_status_note_text(od, cookie, bn, bs);
 
 		byte_stream_get16(bs); /* Unknown */
 		byte_stream_get16(bs); /* Unknown */
 		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-			ret = userfunc(od, conn, frame, channel, sn, reason, cookie);
+			ret = userfunc(od, conn, frame, channel, bn, reason, cookie);
 
 	} else if (channel == 0x0004) { /* ICQ message */
 		switch (reason) {
@@ -2629,20 +2636,20 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 				msg = byte_stream_getraw(bs, len);
 
 				if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-					ret = userfunc(od, conn, frame, channel, sn, reason, state, msg);
+					ret = userfunc(od, conn, frame, channel, bn, reason, state, msg);
 
 				g_free(msg);
 			} break;
 
 			default: {
 				if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-					ret = userfunc(od, conn, frame, channel, sn, reason);
+					ret = userfunc(od, conn, frame, channel, bn, reason);
 			} break;
 		} /* end switch */
 	}
 
 	g_free(cookie);
-	g_free(sn);
+	g_free(bn);
 
 	return ret;
 }
@@ -2660,17 +2667,17 @@ static int msgack(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFr
 	aim_rxcallback_t userfunc;
 	guint16 ch;
 	guchar *cookie;
-	char *sn;
+	char *bn;
 	int ret = 0;
 
 	cookie = byte_stream_getraw(bs, 8);
 	ch = byte_stream_get16(bs);
-	sn = byte_stream_getstr(bs, byte_stream_get8(bs));
+	bn = byte_stream_getstr(bs, byte_stream_get8(bs));
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, ch, sn);
+		ret = userfunc(od, conn, frame, ch, bn);
 
-	g_free(sn);
+	g_free(bn);
 	g_free(cookie);
 
 	return ret;
@@ -2707,7 +2714,7 @@ int aim_im_reqofflinemsgs(OscarData *od)
  * and Purple 0.60 and newer.
  *
  */
-int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2)
+int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -2716,10 +2723,10 @@ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2)
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0002)))
 		return -EINVAL;
 
-	if (!sn)
+	if (!bn)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 11+strlen(sn)+2);
+	byte_stream_new(&bs, 11+strlen(bn)+2);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0014, 0x0000, NULL, 0);
 
@@ -2738,10 +2745,10 @@ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2)
 	byte_stream_put16(&bs, type1);
 
 	/*
-	 * Dest sn
+	 * Dest buddy name
 	 */
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
+	byte_stream_put8(&bs, strlen(bn));
+	byte_stream_putstr(&bs, bn);
 
 	/*
 	 * Type 2 (should be 0x0000, 0x0001, or 0x0002 for mtn)
@@ -2766,20 +2773,20 @@ static int mtn_receive(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	char *sn;
-	guint8 snlen;
+	char *bn;
+	guint8 bnlen;
 	guint16 type1, type2;
 
 	byte_stream_advance(bs, 8); /* Unknown - All 0's */
 	type1 = byte_stream_get16(bs);
-	snlen = byte_stream_get8(bs);
-	sn = byte_stream_getstr(bs, snlen);
+	bnlen = byte_stream_get8(bs);
+	bn = byte_stream_getstr(bs, bnlen);
 	type2 = byte_stream_get16(bs);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, type1, sn, type2);
+		ret = userfunc(od, conn, frame, type1, bn, type2);
 
-	g_free(sn);
+	g_free(bn);
 
 	return ret;
 }

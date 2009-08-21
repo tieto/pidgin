@@ -48,7 +48,7 @@ peer_odc_close(PeerConnection *conn)
 	else if (conn->disconnect_reason == OSCAR_DISCONNECT_INVALID_DATA)
 		tmp = g_strdup(_("Received invalid data on connection with remote user."));
 	else if (conn->disconnect_reason == OSCAR_DISCONNECT_COULD_NOT_CONNECT)
-		tmp = g_strdup(_("Could not establish a connection with the remote user."));
+		tmp = g_strdup(_("Unable to establish a connection with the remote user."));
 	else
 		/*
 		 * We shouldn't print a message for some disconnect_reasons.
@@ -62,7 +62,7 @@ peer_odc_close(PeerConnection *conn)
 		PurpleConversation *conv;
 
 		account = purple_connection_get_account(conn->od->gc);
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
 		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(tmp);
 	}
@@ -90,11 +90,11 @@ peer_odc_send(PeerConnection *conn, OdcFrame *frame)
 
 	purple_debug_info("oscar", "Outgoing ODC frame to %s with "
 		"type=0x%04x, flags=0x%04x, payload length=%u\n",
-		conn->sn, frame->type, frame->flags, frame->payload.len);
+		conn->bn, frame->type, frame->flags, frame->payload.len);
 
 	account = purple_connection_get_account(conn->od->gc);
 	username = purple_account_get_username(account);
-	memcpy(frame->sn, username, strlen(username));
+	memcpy(frame->bn, username, strlen(username));
 	memcpy(frame->cookie, conn->cookie, 8);
 
 	length = 76;
@@ -116,7 +116,7 @@ peer_odc_send(PeerConnection *conn, OdcFrame *frame)
 	byte_stream_put16(&bs, frame->flags);
 	byte_stream_put16(&bs, 0x0000);
 	byte_stream_put16(&bs, 0x0000);
-	byte_stream_putraw(&bs, frame->sn, 32);
+	byte_stream_putraw(&bs, frame->bn, 32);
 	byte_stream_putraw(&bs, frame->payload.data, frame->payload.len);
 
 	peer_connection_send(conn, &bs);
@@ -366,7 +366,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 		g_datalist_clear(&attributes);
 
 		/* Append the message up to the tag */
-		utf8 = purple_plugin_oscar_decode_im_part(account, conn->sn,
+		utf8 = purple_plugin_oscar_decode_im_part(account, conn->bn,
 				encoding, 0x0000, tmp, start - tmp);
 		if (utf8 != NULL) {
 			g_string_append(newmsg, utf8);
@@ -386,7 +386,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 	/* Append any remaining message data */
 	if (tmp <= msgend)
 	{
-		utf8 = purple_plugin_oscar_decode_im_part(account, conn->sn,
+		utf8 = purple_plugin_oscar_decode_im_part(account, conn->bn,
 				encoding, 0x0000, tmp, msgend - tmp);
 		if (utf8 != NULL) {
 			g_string_append(newmsg, utf8);
@@ -400,7 +400,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 		imflags |= PURPLE_MESSAGE_IMAGES;
 	if (autoreply)
 		imflags |= PURPLE_MESSAGE_AUTO_RESP;
-	serv_got_im(gc, conn->sn, newmsg->str, imflags, time(NULL));
+	serv_got_im(gc, conn->bn, newmsg->str, imflags, time(NULL));
 	g_string_free(newmsg, TRUE);
 
 	/* unref any images we allocated */
@@ -503,11 +503,11 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 	byte_stream_advance(bs, 4);
 	frame->flags = byte_stream_get16(bs);
 	byte_stream_advance(bs, 4);
-	byte_stream_getrawbuf(bs, frame->sn, 32);
+	byte_stream_getrawbuf(bs, frame->bn, 32);
 
 	purple_debug_info("oscar", "Incoming ODC frame from %s with "
 			"type=0x%04x, flags=0x%04x, payload length=%u\n",
-			frame->sn, frame->type, frame->flags, frame->payload.len);
+			frame->bn, frame->type, frame->flags, frame->payload.len);
 
 	if (!conn->ready)
 	{
@@ -558,7 +558,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 
 		/* Tell the local user that we are connected */
 		account = purple_connection_get_account(gc);
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
 		purple_conversation_write(conv, NULL, _("Direct IM established"),
 				PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
@@ -576,16 +576,16 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 		/* I had to leave this. It's just too funny. It reminds me of my sister. */
 		purple_debug_info("oscar", "ohmigod! %s has started typing "
 			"(DirectIM). He's going to send you a message! "
-			"*squeal*\n", conn->sn);
-		serv_got_typing(gc, conn->sn, 0, PURPLE_TYPING);
+			"*squeal*\n", conn->bn);
+		serv_got_typing(gc, conn->bn, 0, PURPLE_TYPING);
 	}
 	else if (frame->flags & 0x0004)
 	{
-		serv_got_typing(gc, conn->sn, 0, PURPLE_TYPED);
+		serv_got_typing(gc, conn->bn, 0, PURPLE_TYPED);
 	}
 	else
 	{
-		serv_got_typing_stopped(gc, conn->sn);
+		serv_got_typing_stopped(gc, conn->bn);
 	}
 
 	if (frame->payload.len > 0)
@@ -598,12 +598,12 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 
 			size1 = purple_str_size_to_units(frame->payload.len);
 			size2 = purple_str_size_to_units(DIRECTIM_MAX_FILESIZE);
-			tmp = g_strdup_printf(_("%s tried to send you a %s file, but we only allow files up to %s over Direct IM.  Try using file transfer instead.\n"), conn->sn, size1, size2);
+			tmp = g_strdup_printf(_("%s tried to send you a %s file, but we only allow files up to %s over Direct IM.  Try using file transfer instead.\n"), conn->bn, size1, size2);
 			g_free(size1);
 			g_free(size2);
 
 			account = purple_connection_get_account(conn->od->gc);
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->bn);
 			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
 

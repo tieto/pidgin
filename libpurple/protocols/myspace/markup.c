@@ -112,8 +112,10 @@ static double msim_round(double value)
 	}
 }
 
-/** Convert typographical font point size to HTML font size.
- * Based on libpurple/gtkimhtml.c */
+/**
+ * Convert typographical font point size to HTML font size.
+ * Based on libpurple/gtkimhtml.c
+ */
 static guint
 msim_point_to_purple_size(MsimSession *session, guint point)
 {
@@ -135,7 +137,9 @@ msim_point_to_purple_size(MsimSession *session, guint point)
 	return this_point;
 }
 
-/** Convert HTML font size to point size. */
+/**
+ * Convert HTML font size to point size.
+ */
 static guint
 msim_purple_size_to_point(MsimSession *session, guint size)
 {
@@ -155,7 +159,9 @@ msim_purple_size_to_point(MsimSession *session, guint size)
 	return point;
 }
 
-/** Convert a msim markup font pixel height to the more usual point size, for incoming messages. */
+/**
+ * Convert a msim markup font pixel height to the more usual point size, for incoming messages.
+ */
 static guint
 msim_height_to_point(MsimSession *session, guint height)
 {
@@ -169,7 +175,9 @@ msim_height_to_point(MsimSession *session, guint height)
 	 * _font_size_ichat_to_purple */
 }
 
-/** Convert point size to msim pixel height font size specification, for outgoing messages. */
+/**
+ * Convert point size to msim pixel height font size specification, for outgoing messages.
+ */
 static guint
 msim_point_to_height(MsimSession *session, guint point)
 {
@@ -180,7 +188,9 @@ msim_point_to_height(MsimSession *session, guint point)
 	return (guint)msim_round((dpi * 1. / POINTS_PER_INCH) * point);
 }
 
-/** Convert the msim markup <f> (font) tag into HTML. */
+/**
+ * Convert the msim markup <f> (font) tag into HTML.
+ */
 static void
 msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
@@ -244,7 +254,8 @@ msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	*end = g_string_free(gs_end, FALSE);
 }
 
-/** Convert a msim markup color to a color suitable for libpurple.
+/**
+ * Convert a msim markup color to a color suitable for libpurple.
  *
  * @param msim Either a color name, or an rgb(x,y,z) code.
  *
@@ -268,7 +279,9 @@ msim_color_to_purple(const char *msim)
 	return g_strdup_printf("#%.2x%.2x%.2x", red, green, blue);
 }
 
-/** Convert the msim markup <a> (anchor) tag into HTML. */
+/**
+ * Convert the msim markup <a> (anchor) tag into HTML.
+ */
 static void
 msim_markup_a_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
@@ -283,7 +296,9 @@ msim_markup_a_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	*end = g_strdup("</a>");
 }
 
-/** Convert the msim markup <p> (paragraph) tag into HTML. */
+/**
+ * Convert the msim markup <p> (paragraph) tag into HTML.
+ */
 static void
 msim_markup_p_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
@@ -356,7 +371,9 @@ msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	g_free(purple_color);
 }
 
-/** Convert the msim markup <i> tag (emoticon image) into HTML. */
+/**
+ * Convert the msim markup <i> tag (emoticon image) into HTML.
+ */
 static void
 msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
@@ -387,7 +404,9 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	*end = g_strdup("");
 }
 
-/** Convert an individual msim markup tag to HTML. */
+/**
+ * Convert an individual msim markup tag to HTML.
+ */
 static int
 msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 		gchar **end)
@@ -416,7 +435,9 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 	return 0;
 }
 
-/** Convert an individual HTML tag to msim markup. */
+/**
+ * Convert an individual HTML tag to msim markup.
+ */
 static int
 html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		gchar **end)
@@ -520,10 +541,10 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		tmpend = g_string_new("</f>");
 
 		if (face != NULL)
-			g_string_append_printf(tmpbegin, "f='%s'", face);
+			g_string_append_printf(tmpbegin, " f='%s'", face);
 
 		if (size != NULL)
-			g_string_append_printf(tmpbegin, "h='%d'",
+			g_string_append_printf(tmpbegin, " h='%d'",
 					 msim_point_to_height(session,
 						 msim_purple_size_to_point(session, atoi(size))));
 
@@ -568,7 +589,8 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 	return ret;
 }
 
-/** Convert an xmlnode of msim markup or HTML to an HTML string or msim markup.
+/**
+ * Convert an xmlnode of msim markup or HTML to an HTML string or msim markup.
  *
  * @param f Function to convert tags.
  *
@@ -635,7 +657,9 @@ msim_convert_xmlnode(MsimSession *session, GString *out, xmlnode *root, MSIM_XML
 	g_free(end);
 }
 
-/** Convert XML to something based on MSIM_XMLNODE_CONVERT. */
+/**
+ * Convert XML to something based on MSIM_XMLNODE_CONVERT.
+ */
 static gchar *
 msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 {
@@ -669,7 +693,8 @@ msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 	return g_string_free(str, FALSE);
 }
 
-/** Convert plaintext smileys to <i> markup tags.
+/**
+ * Convert plaintext smileys to <i> markup tags.
  *
  * @param before Original text with ASCII smileys. Will be freed.
  * @return A new string with <i> tags, if applicable. Must be g_free()'d.

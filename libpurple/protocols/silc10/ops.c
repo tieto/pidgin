@@ -1722,7 +1722,7 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 
 	case SILC_CLIENT_CONN_ERROR_TIMEOUT:
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Connection Timeout"));
+			_("Connection timed out"));
 		break;
 	}
 

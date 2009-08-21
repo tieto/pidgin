@@ -384,6 +384,8 @@ pidgin_request_input(const char *title, const char *primary,
 			gtk_imhtml_append_text(GTK_IMHTML(entry), default_value, GTK_IMHTML_NO_SCROLL);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 		gtk_widget_show(frame);
+
+		gtk_imhtml_set_return_inserts_newline(GTK_IMHTML(entry));
 	}
 	else {
 		if (multiline) {
@@ -682,15 +684,17 @@ pidgin_request_action(const char *title, const char *primary,
 static void
 req_entry_field_changed_cb(GtkWidget *entry, PurpleRequestField *field)
 {
+	PurpleRequestFieldGroup *group;
 	PidginRequestData *req_data;
 	const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
 
 	purple_request_field_string_set_value(field, (*text == '\0' ? NULL : text));
 
-	req_data = (PidginRequestData *)field->group->fields_list->ui_data;
+	group = purple_request_field_get_group(field);
+	req_data = (PidginRequestData *)group->fields_list->ui_data;
 
 	gtk_widget_set_sensitive(req_data->ok_button,
-		purple_request_fields_all_required_filled(field->group->fields_list));
+		purple_request_fields_all_required_filled(group->fields_list));
 }
 
 static void
@@ -711,20 +715,27 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 		if (purple_str_has_prefix(type_hint, "screenname"))
 		{
 			GtkWidget *optmenu = NULL;
-			GList *fields = field->group->fields;
+			PurpleRequestFieldGroup *group = purple_request_field_get_group(field);
+			GList *fields = group->fields;
+
+			/* Ensure the account option menu is created (if the widget hasn't
+			 * been initialized already) for username auto-completion. */
 			while (fields)
 			{
 				PurpleRequestField *fld = fields->data;
 				fields = fields->next;
 
-				if (purple_request_field_get_type(fld) == PURPLE_REQUEST_FIELD_ACCOUNT)
+				if (purple_request_field_get_type(fld) == PURPLE_REQUEST_FIELD_ACCOUNT &&
+						purple_request_field_is_visible(fld))
 				{
 					const char *type_hint = purple_request_field_get_type_hint(fld);
 					if (type_hint != NULL && strcmp(type_hint, "account") == 0)
 					{
-						if (fld->ui_data == NULL)
-							fld->ui_data = create_account_field(fld);
-						optmenu = GTK_WIDGET(fld->ui_data);
+						optmenu = GTK_WIDGET(purple_request_field_get_ui_data(fld));
+						if (optmenu == NULL) {
+							optmenu = GTK_WIDGET(create_account_field(fld));
+							purple_request_field_set_ui_data(fld, optmenu);
+						}
 						break;
 					}
 				}
@@ -1338,24 +1349,26 @@ pidgin_request_fields(const char *title, const char *primary,
 					gtk_widget_show(label);
 				}
 
-				if (field->ui_data != NULL)
-					widget = GTK_WIDGET(field->ui_data);
-				else if (type == PURPLE_REQUEST_FIELD_STRING)
-					widget = create_string_field(field);
-				else if (type == PURPLE_REQUEST_FIELD_INTEGER)
-					widget = create_int_field(field);
-				else if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
-					widget = create_bool_field(field);
-				else if (type == PURPLE_REQUEST_FIELD_CHOICE)
-					widget = create_choice_field(field);
-				else if (type == PURPLE_REQUEST_FIELD_LIST)
-					widget = create_list_field(field);
-				else if (type == PURPLE_REQUEST_FIELD_IMAGE)
-					widget = create_image_field(field);
-				else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
-					widget = create_account_field(field);
-				else
-					continue;
+				widget = GTK_WIDGET(purple_request_field_get_ui_data(field));
+				if (widget == NULL)
+				{
+					if (type == PURPLE_REQUEST_FIELD_STRING)
+						widget = create_string_field(field);
+					else if (type == PURPLE_REQUEST_FIELD_INTEGER)
+						widget = create_int_field(field);
+					else if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
+						widget = create_bool_field(field);
+					else if (type == PURPLE_REQUEST_FIELD_CHOICE)
+						widget = create_choice_field(field);
+					else if (type == PURPLE_REQUEST_FIELD_LIST)
+						widget = create_list_field(field);
+					else if (type == PURPLE_REQUEST_FIELD_IMAGE)
+						widget = create_image_field(field);
+					else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
+						widget = create_account_field(field);
+					else
+						continue;
+				}
 
 				if (label)
 					gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
@@ -1400,7 +1413,7 @@ pidgin_request_fields(const char *title, const char *primary,
 
 				gtk_widget_show(widget);
 
-				field->ui_data = widget;
+				purple_request_field_set_ui_data(field, widget);
 			}
 		}
 	}

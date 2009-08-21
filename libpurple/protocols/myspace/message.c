@@ -19,9 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "internal.h"
-#include "message.h"
 #include "myspace.h"
+#include "message.h"
 
 static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 

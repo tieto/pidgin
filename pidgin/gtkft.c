@@ -75,8 +75,6 @@ struct _PidginXferDialog
 
 	/* Buttons */
 	GtkWidget *open_button;
-	GtkWidget *pause_button;
-	GtkWidget *resume_button;
 	GtkWidget *remove_button;
 	GtkWidget *stop_button;
 	GtkWidget *close_button;
@@ -330,8 +328,6 @@ update_buttons(PidginXferDialog *dialog, PurpleXfer *xfer)
 	if (dialog->selected_xfer == NULL) {
 		gtk_widget_set_sensitive(dialog->expander, FALSE);
 		gtk_widget_set_sensitive(dialog->open_button, FALSE);
-		gtk_widget_set_sensitive(dialog->pause_button, FALSE);
-		gtk_widget_set_sensitive(dialog->resume_button, FALSE);
 		gtk_widget_set_sensitive(dialog->stop_button, FALSE);
 
 		gtk_widget_show(dialog->stop_button);
@@ -361,8 +357,6 @@ update_buttons(PidginXferDialog *dialog, PurpleXfer *xfer)
 			gtk_widget_set_sensitive (dialog->open_button, FALSE);
 		}
 #endif
-		gtk_widget_set_sensitive(dialog->pause_button,  FALSE);
-		gtk_widget_set_sensitive(dialog->resume_button, FALSE);
 
 		gtk_widget_set_sensitive(dialog->remove_button, TRUE);
 	} else if (purple_xfer_is_canceled(xfer)) {
@@ -370,8 +364,6 @@ update_buttons(PidginXferDialog *dialog, PurpleXfer *xfer)
 		gtk_widget_show(dialog->remove_button);
 
 		gtk_widget_set_sensitive(dialog->open_button,  FALSE);
-		gtk_widget_set_sensitive(dialog->pause_button,  FALSE);
-		gtk_widget_set_sensitive(dialog->resume_button, FALSE);
 
 		gtk_widget_set_sensitive(dialog->remove_button, TRUE);
 	} else {
@@ -379,10 +371,6 @@ update_buttons(PidginXferDialog *dialog, PurpleXfer *xfer)
 		gtk_widget_hide(dialog->remove_button);
 
 		gtk_widget_set_sensitive(dialog->open_button,  FALSE);
-
-		/* TODO: If the transfer can pause, blah blah */
-		gtk_widget_set_sensitive(dialog->pause_button,  FALSE);
-		gtk_widget_set_sensitive(dialog->resume_button, FALSE);
 		gtk_widget_set_sensitive(dialog->stop_button,   TRUE);
 	}
 }
@@ -559,16 +547,6 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 }
 
 static void
-pause_button_cb(GtkButton *button, PidginXferDialog *dialog)
-{
-}
-
-static void
-resume_button_cb(GtkButton *button, PidginXferDialog *dialog)
-{
-}
-
-static void
 remove_button_cb(GtkButton *button, PidginXferDialog *dialog)
 {
 	pidgin_xfer_dialog_remove_xfer(dialog, dialog->selected_xfer);
@@ -705,12 +683,12 @@ make_info_table(PidginXferDialog *dialog)
 	};
 
 	/* Setup the initial table */
-	dialog->table = table = gtk_table_new(9, 2, FALSE);
+	dialog->table = table = gtk_table_new(G_N_ELEMENTS(labels) + 1, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 
 	/* Setup the labels */
-	for (i = 0; i < sizeof(labels) / sizeof(*labels); i++) {
+	for (i = 0; i < G_N_ELEMENTS(labels); i++) {
 		GtkWidget *label;
 		char buf[256];
 
@@ -734,7 +712,9 @@ make_info_table(PidginXferDialog *dialog)
 
 	/* Setup the progress bar */
 	dialog->progress = gtk_progress_bar_new();
-	gtk_table_attach(GTK_TABLE(table), dialog->progress, 0, 2, 8, 9,
+	gtk_table_attach(GTK_TABLE(table), dialog->progress,
+					 0, 2,
+					 G_N_ELEMENTS(labels), G_N_ELEMENTS(labels) + 1,
 					 GTK_FILL, GTK_FILL, 0, 0);
 	gtk_widget_show(dialog->progress);
 
@@ -761,6 +741,7 @@ pidgin_xfer_dialog_new(void)
 
 	/* Create the window. */
 	dialog->window = window = pidgin_create_dialog(_("File Transfers"), PIDGIN_HIG_BORDER, "file transfer", TRUE);
+	gtk_window_set_default_size(GTK_WINDOW(window), 450, 250);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
@@ -815,16 +796,6 @@ pidgin_xfer_dialog_new(void)
 	button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_OPEN, G_CALLBACK(open_button_cb), dialog);
 	gtk_widget_set_sensitive(button, FALSE);
 	dialog->open_button = button;
-
-	/* Pause button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(window), _("_Pause"), G_CALLBACK(pause_button_cb), dialog);
-	gtk_widget_set_sensitive(button, FALSE);
-	dialog->pause_button = button;
-
-	/* Resume button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(window), _("_Resume"), G_CALLBACK(resume_button_cb), dialog);
-	gtk_widget_set_sensitive(button, FALSE);
-	dialog->resume_button = button;
 
 	/* Remove button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_REMOVE, G_CALLBACK(remove_button_cb), dialog);

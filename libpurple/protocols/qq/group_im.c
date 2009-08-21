@@ -52,6 +52,7 @@ PurpleConversation *qq_room_conv_open(PurpleConnection *gc, qq_room_data *rmd)
 	gchar *topic_utf8;
 
 	g_return_val_if_fail(rmd != NULL, NULL);
+	g_return_val_if_fail(rmd->title_utf8, NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,

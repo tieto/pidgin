@@ -22,10 +22,10 @@
  * Family 0x0018 - Email notification
  *
  * Used for being alerted when the email address(es) associated with
- * your screen name get new electronic-m.  For normal AIM accounts, you
- * get the email address screenname@netscape.net.  AOL accounts have
- * screenname@aol.com, and can also activate a netscape.net account.
- *
+ * your username get new electronic-m.  For normal AIM accounts, you
+ * get the email address username@netscape.net.  AOL accounts have
+ * username@aol.com, and can also activate a netscape.net account.
+ * Note: This information might be out of date.
  */
 
 #include "oscar.h"
@@ -88,7 +88,7 @@ aim_email_sendcookies(OscarData *od)
  * but this is coded so it will handle that, and handle it well.
  * This tells you if you have unread mail or not, the URL you
  * should use to access that mail, and the domain name for the
- * email account (screenname@domainname.com).  If this is the
+ * email account (username@domainname.com).  If this is the
  * first 0x0007 SNAC you've received since you signed on, or if
  * this is just a periodic status update, this will also contain
  * the number of unread emails that you have.

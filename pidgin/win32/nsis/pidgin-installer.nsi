@@ -2,7 +2,7 @@
 ; Original Author: Herman Bloggs <hermanator12002@yahoo.com>
 ; Updated By: Daniel Atallah <daniel_atallah@yahoo.com>
 
-; NOTE: this .NSI script is intended for NSIS 2.27
+; NOTE: this .NSI script is intended for NSIS 2.27+
 ;
 
 ;--------------------------------
@@ -567,6 +567,7 @@ SectionGroup /e $(URI_HANDLERS_SECTION_TITLE) SecURIHandlers
   !insertmacro URI_SECTION "msnim"
   !insertmacro URI_SECTION "myim"
   !insertmacro URI_SECTION "ymsgr"
+  !insertmacro URI_SECTION "xmpp"
 SectionGroupEnd
 
 ;--------------------------------
@@ -708,24 +709,30 @@ Section Uninstall
     Call un.UnregisterURIHandler
     Push "ymsgr"
     Call un.UnregisterURIHandler
+    Push "xmpp"
+    Call un.UnregisterURIHandler
 
     Delete "$INSTDIR\ca-certs\America_Online_Root_Certification_Authority_1.pem"
     Delete "$INSTDIR\ca-certs\AOL_Member_CA.pem"
     Delete "$INSTDIR\ca-certs\CAcert_Class3.pem"
     Delete "$INSTDIR\ca-certs\CAcert_Root.pem"
     Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"
+    Delete "$INSTDIR\ca-certs\Equifax_Secure_Global_eBusiness_CA-1.pem"
     Delete "$INSTDIR\ca-certs\GTE_CyberTrust_Global_Root.pem"
     Delete "$INSTDIR\ca-certs\Microsoft_Internet_Authority.pem"
     Delete "$INSTDIR\ca-certs\Microsoft_Secure_Server_Authority.pem"
+    Delete "$INSTDIR\ca-certs\StartCom_Certification_Authority.pem"
     Delete "$INSTDIR\ca-certs\StartCom_Free_SSL_CA.pem"
+    Delete "$INSTDIR\ca-certs\Thawte_Premium_Server_CA.pem"
+    Delete "$INSTDIR\ca-certs\VeriSign_Class3_Extended_Validation_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_Class3_Primary_CA.pem"
     Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem"
+    Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5_2.pem"
     Delete "$INSTDIR\ca-certs\VeriSign_International_Server_Class_3_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_RSA_Secure_Server_CA.pem"
     RMDir "$INSTDIR\ca-certs"
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"
-    RMDir /r "$INSTDIR\perlmod"
     Delete "$INSTDIR\plugins\autoaccept.dll"
     Delete "$INSTDIR\plugins\buddynote.dll"
     Delete "$INSTDIR\plugins\convcolors.dll"
@@ -750,6 +757,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libsimple.dll"
     Delete "$INSTDIR\plugins\libtoc.dll"
     Delete "$INSTDIR\plugins\libyahoo.dll"
+    Delete "$INSTDIR\plugins\libyahoojp.dll"
     Delete "$INSTDIR\plugins\libxmpp.dll"
     Delete "$INSTDIR\plugins\log_reader.dll"
     Delete "$INSTDIR\plugins\markerline.dll"
@@ -772,6 +780,8 @@ Section Uninstall
     Delete "$INSTDIR\plugins\win2ktrans.dll"
     Delete "$INSTDIR\plugins\winprefs.dll"
     Delete "$INSTDIR\plugins\xmppconsole.dll"
+    Delete "$INSTDIR\plugins\xmppdisco.dll"
+    RMDir /r "$INSTDIR\plugins\perl"
     RMDir "$INSTDIR\plugins"
     RMDir /r "$INSTDIR\sasl2"
     Delete "$INSTDIR\sounds\purple\alert.wav"
@@ -792,6 +802,7 @@ Section Uninstall
     Delete "$INSTDIR\libsilc-1-1-2.dll"
     Delete "$INSTDIR\libsilcclient-1-1-2.dll"
     Delete "$INSTDIR\libxml2.dll"
+    Delete "$INSTDIR\libymsg.dll"
     Delete "$INSTDIR\nspr4.dll"
     Delete "$INSTDIR\nss3.dll"
     Delete "$INSTDIR\nssckbi.dll"

@@ -78,13 +78,11 @@ gnt_box_draw(GntWidget *widget)
 
 	g_list_foreach(box->list, (GFunc)gnt_widget_draw, NULL);
 
-	gnt_box_sync_children(box);
-
 	if (box->title && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
 	{
 		int pos, right;
 		char *title = g_strdup(box->title);
-		
+
 		get_title_thingies(box, title, &pos, &right);
 
 		if (gnt_widget_has_focus(widget))
@@ -96,8 +94,8 @@ gnt_box_draw(GntWidget *widget)
 		mvwaddch(widget->window, 0, right, ACS_LTEE | gnt_color_pair(GNT_COLOR_NORMAL));
 		g_free(title);
 	}
-	
-	GNTDEBUG;
+
+	gnt_box_sync_children(box);
 }
 
 static void
@@ -723,6 +721,9 @@ void gnt_box_sync_children(GntBox *box)
 	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
 		pos = 0;
 
+	if (!box->active)
+		find_focusable_widget(box);
+
 	for (iter = box->list; iter; iter = iter->next)
 	{
 		GntWidget *w = GNT_WIDGET(iter->data);
@@ -764,6 +765,9 @@ void gnt_box_sync_children(GntBox *box)
 		copywin(w->window, widget->window, 0, 0,
 				y, x, y + height - 1, x + width - 1, FALSE);
 		gnt_widget_set_position(w, x + widget->priv.x, y + widget->priv.y);
+		if (w == box->active) {
+			wmove(widget->window, y + getcury(w->window), x + getcurx(w->window));
+		}
 	}
 }
 

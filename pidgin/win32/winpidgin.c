@@ -586,7 +586,7 @@ static void handle_protocol(char *cmd) {
 		return;
 	}
 
-	printf("Trying to handle protocol message:\n'%*s'\n", len, tmp1);
+	printf("Trying to handle protocol message:\n'%.*s'\n", len, tmp1);
 
 	/* MEM_COMMIT initializes the memory to zero,
 	 * so we don't need to worry that our section of tmp1 isn't nul-terminated */

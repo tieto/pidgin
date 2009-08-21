@@ -166,7 +166,7 @@ void gnt_keys_refine(char *text)
 				strstr(term, "xterm") == term ||
 				strstr(term, "vt100") == term)
 			*(text + 1) = 'O';
-	} else if (*(unsigned char*)text == 195) {
+	} else if (g_utf8_get_char(text) == 195) {
 		if (*(text + 2) == 0 && strstr(term, "xterm") == term) {
 			*(text) = 27;
 			*(text + 1) -= 64;  /* Say wha? */

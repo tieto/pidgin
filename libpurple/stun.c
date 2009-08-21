@@ -116,7 +116,7 @@ static void do_callbacks(void) {
 static gboolean timeoutfunc(gpointer data) {
 	struct stun_conn *sc = data;
 	if(sc->retry >= 2) {
-		purple_debug_info("stun", "request timed out, giving up.\n");
+		purple_debug_warning("stun", "request timed out, giving up.\n");
 		if(sc->test == 2)
 			nattype.type = PURPLE_STUN_NAT_TYPE_SYMMETRIC;
 
@@ -176,19 +176,19 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 
 	len = recv(source, buffer, sizeof(buffer) - 1, 0);
 	if (!len) {
-		purple_debug_info("stun", "unable to read stun response\n");
+		purple_debug_warning("stun", "unable to read stun response\n");
 		return;
 	}
 	buffer[len] = '\0';
 
 	if (len < sizeof(struct stun_header)) {
-		purple_debug_info("stun", "got invalid response\n");
+		purple_debug_warning("stun", "got invalid response\n");
 		return;
 	}
 
 	hdr = (struct stun_header*) buffer;
 	if (len != (ntohs(hdr->len) + sizeof(struct stun_header))) {
-		purple_debug_info("stun", "got incomplete response\n");
+		purple_debug_warning("stun", "got incomplete response\n");
 		return;
 	}
 
@@ -197,13 +197,13 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 			|| hdr->transid[1] != sc->packet->transid[1]
 			|| hdr->transid[2] != sc->packet->transid[2]
 			|| hdr->transid[3] != sc->packet->transid[3]) {
-		purple_debug_info("stun", "got wrong transid\n");
+		purple_debug_warning("stun", "got wrong transid\n");
 		return;
 	}
 
 	if(sc->test==1) {
 		if (hdr->type != MSGTYPE_BINDINGRESPONSE) {
-			purple_debug_info("stun",
+			purple_debug_warning("stun",
 				"Expected Binding Response, got %d\n",
 				hdr->type);
 			return;
@@ -341,6 +341,12 @@ static void hbn_cb(GSList *hosts, gpointer data, const char *error_message) {
 	}
 
 	if (!purple_network_listen_range(12108, 12208, SOCK_DGRAM, hbn_listen_cb, hosts)) {
+		while(hosts) {
+			hosts = g_slist_remove(hosts, hosts->data);
+			g_free(hosts->data);
+			hosts = g_slist_remove(hosts, hosts->data);
+		}
+
 		nattype.status = PURPLE_STUN_STATUS_UNKNOWN;
 		nattype.lookup_time = time(NULL);
 		do_callbacks();
@@ -388,9 +394,7 @@ PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
 		/** Deal with the server name having changed since we did the
 		    lookup */
 		if (servername && strlen(servername) > 1
-				&& ((nattype.servername
-					&& strcmp(servername, nattype.servername))
-				|| !nattype.servername)) {
+				&& !purple_strequal(servername, nattype.servername)) {
 			use_cached_result = FALSE;
 		}
 

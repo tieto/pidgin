@@ -951,7 +951,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 		qq_show_packet("Can not decrypted", rcved, rcved_len);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-				_("Could not decrypt login reply"));
+				_("Unable to decrypt login reply"));
 		return QQ_LOGIN_REPLY_ERR;
 	}
 

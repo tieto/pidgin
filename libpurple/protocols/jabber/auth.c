@@ -30,14 +30,16 @@
 #include "util.h"
 #include "xmlnode.h"
 
-#include "jutil.h"
 #include "auth.h"
+#include "disco.h"
 #include "jabber.h"
+#include "jutil.h"
 #include "iq.h"
 #include "notify.h"
 
-static void auth_old_result_cb(JabberStream *js, xmlnode *packet,
-		gpointer data);
+static void auth_old_result_cb(JabberStream *js, const char *from,
+                               JabberIqType type, const char *id,
+                               xmlnode *packet, gpointer data);
 
 gboolean
 jabber_process_starttls(JabberStream *js, xmlnode *packet)
@@ -50,14 +52,14 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
 			return TRUE;
 		} else if(xmlnode_get_child(starttls, "required")) {
-			purple_connection_error_reason (js->gc,
+			purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("Server requires TLS/SSL for login.  No TLS/SSL support found."));
+				_("Server requires TLS/SSL, but no TLS/SSL support was found."));
 			return TRUE;
 		} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE)) {
-			purple_connection_error_reason (js->gc,
+			purple_connection_error_reason(js->gc,
 				 PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("You require encryption, but no TLS/SSL support found."));
+				_("You require encryption, but no TLS/SSL support was found."));
 			return TRUE;
 		}
 	}
@@ -120,7 +122,7 @@ static void allow_plaintext_auth(PurpleAccount *account)
 
 static void disallow_plaintext_auth(PurpleAccount *account)
 {
-	purple_connection_error_reason (account->gc,
+	purple_connection_error_reason(account->gc,
 		PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 		_("Server requires plaintext authentication over an unencrypted stream"));
 }
@@ -281,7 +283,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	secprops.min_ssf = 0;
 	secprops.security_flags = SASL_SEC_NOANONYMOUS;
 
-	if (!js->gsc) {
+	if (!jabber_stream_is_ssl(js)) {
 		secprops.max_ssf = -1;
 		secprops.maxbufsize = 4096;
 		plaintext = purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE);
@@ -384,7 +386,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 					}
 					/* Remove space which separated this mech from the next */
 					if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
-						g_string_erase(js->sasl_mechs, 0, 1);	
+						g_string_erase(js->sasl_mechs, 0, 1);
 					}
 					again = TRUE;
 				}
@@ -397,7 +399,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 		auth = xmlnode_new("auth");
 		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
 		xmlnode_set_attrib(auth, "mechanism", js->current_mech);
-		
+
 		xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
 		xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
 
@@ -413,9 +415,9 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 		jabber_send(js, auth);
 		xmlnode_free(auth);
 	} else {
-		purple_connection_error_reason (js->gc,
+		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
-			"SASL authentication failed\n");
+			_("SASL authentication failed"));
 	}
 }
 
@@ -488,9 +490,9 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	mechs = xmlnode_get_child(packet, "mechanisms");
 
 	if(!mechs) {
-		purple_connection_error_reason (js->gc,
+		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Invalid response from server."));
+			_("Invalid response from server"));
 		return;
 	}
 
@@ -544,7 +546,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	} else if(plain) {
 		js->auth_type = JABBER_AUTH_PLAIN;
 
-		if(js->gsc == NULL && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
+		if(!jabber_stream_is_ssl(js) && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
 			char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 					js->gc->account->username);
 			purple_request_yes_no(js->gc, _("Plaintext Authentication"),
@@ -559,19 +561,19 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		}
 		finish_plaintext_authentication(js);
 	} else {
-		purple_connection_error_reason (js->gc,
+		purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
 				_("Server does not use any supported authentication method"));
 	}
 #endif
 }
 
-static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void auth_old_result_cb(JabberStream *js, const char *from,
+                               JabberIqType type, const char *id,
+                               xmlnode *packet, gpointer data)
 {
-	const char *type = xmlnode_get_attrib(packet, "type");
-
-	if(type && !strcmp(type, "result")) {
-		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+	if (type == JABBER_IQ_RESULT) {
+		jabber_disco_items_server(js);
 	} else {
 		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		char *msg = jabber_parse_error(js, packet, &reason);
@@ -588,29 +590,25 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 				purple_account_set_password(js->gc->account, NULL);
 		}
 
-		purple_connection_error_reason (js->gc, reason, msg);
+		purple_connection_error_reason(js->gc, reason, msg);
 		g_free(msg);
 	}
 }
 
-static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
+static void auth_old_cb(JabberStream *js, const char *from,
+                        JabberIqType type, const char *id,
+                        xmlnode *packet, gpointer data)
 {
 	JabberIq *iq;
 	xmlnode *query, *x;
-	const char *type = xmlnode_get_attrib(packet, "type");
 	const char *pw = purple_connection_get_password(js->gc);
 
-	if(!type) {
-		purple_connection_error_reason (js->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Invalid response from server."));
-		return;
-	} else if(!strcmp(type, "error")) {
+	if (type == JABBER_IQ_ERROR) {
 		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		char *msg = jabber_parse_error(js, packet, &reason);
-		purple_connection_error_reason (js->gc, reason, msg);
+		purple_connection_error_reason(js->gc, reason, msg);
 		g_free(msg);
-	} else if(!strcmp(type, "result")) {
+	} else if (type == JABBER_IQ_RESULT) {
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {
 			char *s, *hash;
@@ -662,7 +660,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			jabber_iq_send(iq);
 
 		} else if(xmlnode_get_child(query, "password")) {
-			if(js->gsc == NULL && !purple_account_get_bool(js->gc->account,
+			if(!jabber_stream_is_ssl(js) && !purple_account_get_bool(js->gc->account,
 						"auth_plain_in_clear", FALSE)) {
 				char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 											js->gc->account->username);
@@ -678,7 +676,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			}
 			finish_plaintext_authentication(js);
 		} else {
-			purple_connection_error_reason (js->gc,
+			purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
 				_("Server does not use any supported authentication method"));
 			return;
@@ -690,6 +688,18 @@ void jabber_auth_start_old(JabberStream *js)
 {
 	JabberIq *iq;
 	xmlnode *query, *username;
+
+	/* We can end up here without encryption if the server doesn't support
+	 * <stream:features/> and we're not using old-style SSL.  If the user
+	 * is requiring SSL/TLS, we need to enforce it.
+	 */
+	if (!jabber_stream_is_ssl(js) &&
+			purple_account_get_bool(purple_connection_get_account(js->gc), "require_tls", FALSE)) {
+		purple_connection_error_reason(js->gc,
+			PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
+			_("You require encryption, but it is not available on this server."));
+		return;
+	}
 
 #ifdef HAVE_CYRUS_SASL
 	/* If we have Cyrus SASL, then passwords will have been set
@@ -846,9 +856,9 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		GHashTable *parts;
 
 		if(!enc_in) {
-			purple_connection_error_reason (js->gc,
+			purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Invalid response from server."));
+				_("Invalid response from server"));
 			return;
 		}
 
@@ -869,7 +879,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 						"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl' />",
 						-1);
 			} else {
-				purple_connection_error_reason (js->gc,
+				purple_connection_error_reason(js->gc,
 					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Invalid challenge from server"));
 			}
@@ -895,7 +905,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 				realm = js->user->domain;
 
 			if (nonce == NULL || realm == NULL)
-				purple_connection_error_reason (js->gc,
+				purple_connection_error_reason(js->gc,
 					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Invalid challenge from server"));
 			else {
@@ -970,16 +980,36 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		g_free(enc_in);
 		g_free(dec_in);
 		if (js->sasl_state != SASL_CONTINUE && js->sasl_state != SASL_OK) {
-			purple_debug_error("jabber", "Error is %d : %s\n",js->sasl_state,sasl_errdetail(js->sasl));
-			purple_connection_error_reason (js->gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("SASL error"));
+			gchar *tmp = g_strdup_printf(_("SASL error: %s"),
+					sasl_errdetail(js->sasl));
+			purple_debug_error("jabber", "Error is %d : %s\n",
+					js->sasl_state, sasl_errdetail(js->sasl));
+			purple_connection_error_reason(js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+			g_free(tmp);
 			return;
 		} else {
 			response = xmlnode_new("response");
 			xmlnode_set_namespace(response, "urn:ietf:params:xml:ns:xmpp-sasl");
 			if (clen > 0) {
-				enc_out = purple_base64_encode((unsigned char*)c_out, clen);
+				/* Cyrus SASL 2.1.22 appears to contain code to add the charset
+				 * to the response for DIGEST-MD5 but there is no possibility
+				 * it will be executed.
+				 *
+				 * My reading of the digestmd5 plugin indicates the username and
+				 * realm are always encoded in UTF-8 (they seem to be the values
+				 * we pass in), so we need to ensure charset=utf-8 is set.
+				 */
+				if (!js->current_mech || !g_str_equal(js->current_mech, "DIGEST-MD5") ||
+						strstr(c_out, ",charset="))
+					/* If we're not using DIGEST-MD5 or Cyrus SASL is fixed */
+					enc_out = purple_base64_encode((unsigned char*)c_out, clen);
+				else {
+					char *tmp = g_strdup_printf("%s,charset=utf-8", c_out);
+					enc_out = purple_base64_encode((unsigned char*)tmp, clen + 14);
+					g_free(tmp);
+				}
+
 				xmlnode_insert_data(response, enc_out, -1);
 				g_free(enc_out);
 			}
@@ -998,9 +1028,9 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 #endif
 
 	if(!ns || strcmp(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
-		purple_connection_error_reason (js->gc,
+		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Invalid response from server."));
+			_("Invalid response from server"));
 		return;
 	}
 
@@ -1025,9 +1055,9 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 
 		if (js->sasl_state != SASL_OK) {
 			/* This should never happen! */
-			purple_connection_error_reason (js->gc,
+			purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Invalid response from server."));
+				_("Invalid response from server"));
 		}
 	}
 	/* If we've negotiated a security layer, we need to enable it */
@@ -1057,13 +1087,13 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 			}
 			/* Remove space which separated this mech from the next */
 			if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
-				g_string_erase(js->sasl_mechs, 0, 1);	
-			}			
+				g_string_erase(js->sasl_mechs, 0, 1);
+			}
 		}
 		if (strlen(js->sasl_mechs->str)) {
 			/* If we have remaining mechs to try, do so */
 			sasl_dispose(&js->sasl);
-			
+
 			jabber_auth_start_cyrus(js);
 			return;
 		}
@@ -1071,11 +1101,11 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 #endif
 	msg = jabber_parse_error(js, packet, &reason);
 	if(!msg) {
-		purple_connection_error_reason (js->gc,
+		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Invalid response from server."));
+			_("Invalid response from server"));
 	} else {
-		purple_connection_error_reason (js->gc, reason, msg);
+		purple_connection_error_reason(js->gc, reason, msg);
 		g_free(msg);
 	}
 }

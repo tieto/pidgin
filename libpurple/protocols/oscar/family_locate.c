@@ -100,7 +100,7 @@ static const struct {
 	  0x82, 0x22, 0x44, 0x45, 0x45, 0x53, 0x54, 0x00}},
 
 	/* Supports "new status message features" (Who advertises this one?) */
-	/* OSCAR_CAPABILITY_HOST_STATUS_TEXT_AWARE */ 
+	/* OSCAR_CAPABILITY_HOST_STATUS_TEXT_AWARE */
 	{OSCAR_CAPABILITY_GENERICUNKNOWN,
 	 {0x09, 0x46, 0x01, 0x0a, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
@@ -112,7 +112,7 @@ static const struct {
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	/* Client only asserts caps for services in which it is participating */
-	/* OSCAR_CAPABILITY_SMARTCAPS */ 
+	/* OSCAR_CAPABILITY_SMARTCAPS */
 	{OSCAR_CAPABILITY_GENERICUNKNOWN,
 	 {0x09, 0x46, 0x01, 0xff, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
@@ -253,11 +253,11 @@ aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 	FlapConnection *conn;
 	aim_rxcallback_t userfunc;
 
-	cur = aim_locate_finduserinfo(od, userinfo->sn);
+	cur = aim_locate_finduserinfo(od, userinfo->bn);
 
 	if (cur == NULL) {
 		cur = (aim_userinfo_t *)g_new0(aim_userinfo_t, 1);
-		cur->sn = g_strdup(userinfo->sn);
+		cur->bn = g_strdup(userinfo->bn);
 		cur->next = od->locate.userinfo;
 		od->locate.userinfo = cur;
 	}
@@ -366,35 +366,35 @@ aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 }
 
 /**
- * Remove this screen name from our queue.  If this info was requested
+ * Remove this buddy name from our queue.  If this info was requested
  * by our info request queue, then pop the next element off of the queue.
  *
  * @param od The aim session.
- * @param sn Screen name of the info we just received.
+ * @param bn Buddy name of the info we just received.
  * @return True if the request was explicit (client requested the info),
  *         false if the request was implicit (libfaim request the info).
  */
 static int
-aim_locate_gotuserinfo(OscarData *od, FlapConnection *conn, const char *sn)
+aim_locate_gotuserinfo(OscarData *od, FlapConnection *conn, const char *bn)
 {
 	struct userinfo_node *cur, *del;
 	int was_explicit = TRUE;
 
-	while ((od->locate.requested != NULL) && (aim_sncmp(sn, od->locate.requested->sn) == 0)) {
+	while ((od->locate.requested != NULL) && (oscar_util_name_compare(bn, od->locate.requested->bn) == 0)) {
 		del = od->locate.requested;
 		od->locate.requested = del->next;
 		was_explicit = FALSE;
-		g_free(del->sn);
+		g_free(del->bn);
 		g_free(del);
 	}
 
 	cur = od->locate.requested;
 	while ((cur != NULL) && (cur->next != NULL)) {
-		if (aim_sncmp(sn, cur->next->sn) == 0) {
+		if (oscar_util_name_compare(bn, cur->next->bn) == 0) {
 			del = cur->next;
 			cur->next = del->next;
 			was_explicit = FALSE;
-			g_free(del->sn);
+			g_free(del->bn);
 			g_free(del);
 		} else
 			cur = cur->next;
@@ -404,34 +404,34 @@ aim_locate_gotuserinfo(OscarData *od, FlapConnection *conn, const char *sn)
 }
 
 void
-aim_locate_autofetch_away_message(OscarData *od, const char *sn)
+aim_locate_autofetch_away_message(OscarData *od, const char *bn)
 {
 	struct userinfo_node *cur;
 
 	/* Make sure we haven't already made an info request for this buddy */
 	for (cur = od->locate.requested; cur != NULL; cur = cur->next)
-		if (aim_sncmp(sn, cur->sn) == 0)
+		if (oscar_util_name_compare(bn, cur->bn) == 0)
 			return;
 
 	/* Add a new node to our request queue */
 	cur = (struct userinfo_node *)g_malloc(sizeof(struct userinfo_node));
-	cur->sn = g_strdup(sn);
+	cur->bn = g_strdup(bn);
 	cur->next = od->locate.requested;
 	od->locate.requested = cur;
 
-	aim_locate_getinfoshort(od, cur->sn, 0x00000002);
+	aim_locate_getinfoshort(od, cur->bn, 0x00000002);
 }
 
-aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *sn) {
+aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *bn) {
 	aim_userinfo_t *cur = NULL;
 
-	if (sn == NULL)
+	if (bn == NULL)
 		return NULL;
 
 	cur = od->locate.userinfo;
 
 	while (cur != NULL) {
-		if (aim_sncmp(cur->sn, sn) == 0)
+		if (oscar_util_name_compare(cur->bn, bn) == 0)
 			return cur;
 		cur = cur->next;
 	}
@@ -552,7 +552,7 @@ dumptlv(OscarData *od, guint16 type, ByteStream *bs, guint8 len)
 void
 aim_info_free(aim_userinfo_t *info)
 {
-	g_free(info->sn);
+	g_free(info->bn);
 	g_free(info->iconcsum);
 	g_free(info->info);
 	g_free(info->info_encoding);
@@ -572,7 +572,7 @@ int
 aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 {
 	int curtlv, tlvcnt;
-	guint8 snlen;
+	guint8 bnlen;
 
 	if (!bs || !outinfo)
 		return -EINVAL;
@@ -581,11 +581,11 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 	memset(outinfo, 0x00, sizeof(aim_userinfo_t));
 
 	/*
-	 * Screen name.  Stored as an unterminated string prepended with a
+	 * Username.  Stored as an unterminated string prepended with a
 	 * byte containing its length.
 	 */
-	snlen = byte_stream_get8(bs);
-	outinfo->sn = byte_stream_getstr(bs, snlen);
+	bnlen = byte_stream_get8(bs);
+	outinfo->bn = byte_stream_getstr(bs, bnlen);
 
 	/*
 	 * Warning Level.  Stored as an unsigned short.
@@ -615,13 +615,15 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			 * User flags
 			 *
 			 * Specified as any of the following ORed together:
-			 *      0x0001  Trial (user less than 60days)
+			 *      0x0001  Unconfirmed account
 			 *      0x0002  Unknown bit 2
 			 *      0x0004  AOL Main Service user
 			 *      0x0008  Unknown bit 4
 			 *      0x0010  Free (AIM) user
 			 *      0x0020  Away
-			 *      0x0400  ActiveBuddy
+			 *      0x0040  ICQ user (AIM bit also set)
+			 *      0x0080  Mobile device
+			 *      0x0400  Bot (like ActiveBuddy)
 			 */
 			outinfo->flags = byte_stream_get16(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_FLAGS;
@@ -881,7 +883,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			 */
 #ifdef LOG_UNKNOWN_TLV
 			purple_debug_misc("oscar", "userinfo: **warning: unexpected TLV:\n");
-			purple_debug_misc("oscar", "userinfo:   sn    =%s\n", outinfo->sn);
+			purple_debug_misc("oscar", "userinfo:   bn    =%s\n", outinfo->bn);
 			dumptlv(od, type, bs, length);
 #endif
 		}
@@ -906,8 +908,8 @@ aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
 	if (!bs || !info)
 		return -EINVAL;
 
-	byte_stream_put8(bs, strlen(info->sn));
-	byte_stream_putstr(bs, info->sn);
+	byte_stream_put8(bs, strlen(info->bn));
+	byte_stream_putstr(bs, info->bn);
 
 	byte_stream_put16(bs, info->warnlevel);
 
@@ -922,7 +924,7 @@ aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
 
 /* XXX - So, ICQ_OSCAR_SUPPORT is never defined anywhere... */
 #ifdef ICQ_OSCAR_SUPPORT
-	if (atoi(info->sn) != 0) {
+	if (atoi(info->bn) != 0) {
 		if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS)
 			aim_tlvlist_add_16(&tlvlist, 0x0006, info->icqinfo.status);
 		if (info->present & AIM_USERINFO_PRESENT_ICQIPADDR)
@@ -953,35 +955,38 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	aim_rxcallback_t userfunc;
 	aim_snac_t *snac2;
 	guint16 reason;
-	char *sn;
+	char *bn;
 	int was_explicit;
 
 	if (!(snac2 = aim_remsnac(od, snac->id))) {
-		purple_debug_misc("oscar", "faim: locate.c, error(): received response from unknown request!\n");
+		purple_debug_misc("oscar", "locate error: received response from unknown request!\n");
 		return 0;
 	}
 
 	if ((snac2->family != SNAC_FAMILY_LOCATE) && (snac2->type != 0x0015)) {
-		purple_debug_misc("oscar", "faim: locate.c, error(): received response from invalid request! %d\n", snac2->family);
+		purple_debug_misc("oscar", "locate error: received response from invalid request! %d\n", snac2->family);
+		g_free(snac2->data);
+		g_free(snac2);
 		return 0;
 	}
 
-	if (!(sn = snac2->data)) {
-		purple_debug_misc("oscar", "faim: locate.c, error(): received response from request without a screen name!\n");
+	if (!(bn = snac2->data)) {
+		purple_debug_misc("oscar", "locate error: received response from request without a buddy name!\n");
+		g_free(snac2);
 		return 0;
 	}
 
 	reason = byte_stream_get16(bs);
 
 	/*
-	 * Remove this screen name from our queue.  If the client requested
+	 * Remove this buddy name from our queue.  If the client requested
 	 * this buddy's info explicitly, then notify them that we do not have
 	 * info for this buddy.
 	 */
-	was_explicit = aim_locate_gotuserinfo(od, conn, sn);
+	was_explicit = aim_locate_gotuserinfo(od, conn, bn);
 	if (was_explicit == TRUE)
 		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-			ret = userfunc(od, conn, frame, reason, sn);
+			ret = userfunc(od, conn, frame, reason, bn);
 
 	if (snac2)
 		g_free(snac2->data);
@@ -1157,29 +1162,29 @@ aim_locate_setcaps(OscarData *od, guint32 caps)
 /*
  * Subtype 0x0005 - Request info of another AIM user.
  *
- * @param sn The screenname whose info you wish to request.
+ * @param bn The buddy name whose info you wish to request.
  * @param infotype The type of info you wish to request.
  *        0x0001 - Info/profile
  *        0x0003 - Away message
  *        0x0004 - Capabilities
  */
 int
-aim_locate_getinfo(OscarData *od, const char *sn, guint16 infotype)
+aim_locate_getinfo(OscarData *od, const char *bn, guint16 infotype)
 {
 	FlapConnection *conn;
 	ByteStream bs;
 	aim_snacid_t snacid;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !sn)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !bn)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 2+1+strlen(sn));
+	byte_stream_new(&bs, 2+1+strlen(bn));
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0005, 0x0000, NULL, 0);
 
 	byte_stream_put16(&bs, infotype);
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
+	byte_stream_put8(&bs, strlen(bn));
+	byte_stream_putstr(&bs, bn);
 
 	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0005, 0x0000, snacid, &bs);
 
@@ -1229,18 +1234,18 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	aim_tlvlist_free(tlvlist);
 
 	aim_locate_adduserinfo(od, userinfo);
-	userinfo2 = aim_locate_finduserinfo(od, userinfo->sn);
+	userinfo2 = aim_locate_finduserinfo(od, userinfo->bn);
 	aim_info_free(userinfo);
 	g_free(userinfo);
 
 	/*
-	 * Remove this screen name from our queue.  If the client requested
+	 * Remove this buddy name from our queue.  If the client requested
 	 * this buddy's info explicitly, then notify them that we have info
 	 * for this buddy.
 	 */
 	if (userinfo2 != NULL)
 	{
-		was_explicit = aim_locate_gotuserinfo(od, conn, userinfo2->sn);
+		was_explicit = aim_locate_gotuserinfo(od, conn, userinfo2->bn);
 		if (was_explicit == TRUE)
 			if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 				ret = userfunc(od, conn, frame, userinfo2);
@@ -1307,7 +1312,7 @@ int aim_locate_setdirinfo(OscarData *od, const char *first, const char *middle, 
 /*
  * Subtype 0x000b - Huh? What is this?
  */
-int aim_locate_000b(OscarData *od, const char *sn)
+int aim_locate_000b(OscarData *od, const char *bn)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -1315,15 +1320,15 @@ int aim_locate_000b(OscarData *od, const char *sn)
 
 		return -EINVAL;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !sn)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !bn)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 1+strlen(sn));
+	byte_stream_new(&bs, 1+strlen(bn));
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x000b, 0x0000, NULL, 0);
 
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
+	byte_stream_put8(&bs, strlen(bn));
+	byte_stream_putstr(&bs, bn);
 
 	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x000b, 0x0000, snacid, &bs);
 
@@ -1380,7 +1385,7 @@ aim_locate_setinterests(OscarData *od, const char *interest1, const char *intere
  * Subtype 0x0015 - Request the info of a user using the short method.  This is
  * what iChat uses.  It normally is VERY leniently rate limited.
  *
- * @param sn The screen name whose info you wish to request.
+ * @param bn The buddy name whose info you wish to request.
  * @param flags The bitmask which specifies the type of info you wish to request.
  *        0x00000001 - Info/profile.
  *        0x00000002 - Away message.
@@ -1389,21 +1394,21 @@ aim_locate_setinterests(OscarData *od, const char *interest1, const char *intere
  * @return Return 0 if no errors, otherwise return the error number.
  */
 int
-aim_locate_getinfoshort(OscarData *od, const char *sn, guint32 flags)
+aim_locate_getinfoshort(OscarData *od, const char *bn, guint32 flags)
 {
 	FlapConnection *conn;
 	ByteStream bs;
 	aim_snacid_t snacid;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !sn)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !bn)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 4 + 1 + strlen(sn));
+	byte_stream_new(&bs, 4 + 1 + strlen(bn));
 	byte_stream_put32(&bs, flags);
-	byte_stream_put8(&bs, strlen(sn));
-	byte_stream_putstr(&bs, sn);
+	byte_stream_put8(&bs, strlen(bn));
+	byte_stream_putstr(&bs, bn);
 
-	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, sn, strlen(sn)+1);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, bn, strlen(bn)+1);
 	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);

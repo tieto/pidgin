@@ -26,9 +26,7 @@
 #define _PIDGINIMHTML_H_
 
 #include <gdk/gdk.h>
-#include <gtk/gtktextview.h>
-#include <gtk/gtktooltips.h>
-#include <gtk/gtkimage.h>
+#include <gtk/gtk.h>
 #include "gtksourceundomanager.h"
 
 #include "connection.h"
@@ -42,13 +40,13 @@ extern "C" {
  **************************************************************************/
 /*@{*/
 
-#define GTK_TYPE_IMHTML            (gtk_imhtml_get_type ())
-#define GTK_IMHTML(obj)            (GTK_CHECK_CAST ((obj), GTK_TYPE_IMHTML, GtkIMHtml))
-#define GTK_IMHTML_CLASS(klass)    (GTK_CHECK_CLASS_CAST ((klass), GTK_TYPE_IMHTML, GtkIMHtmlClass))
-#define GTK_IS_IMHTML(obj)         (GTK_CHECK_TYPE ((obj), GTK_TYPE_IMHTML))
-#define GTK_IS_IMHTML_CLASS(klass) (GTK_CHECK_CLASS_TYPE ((klass), GTK_TYPE_IMHTML))
+#define GTK_TYPE_IMHTML            (gtk_imhtml_get_type())
+#define GTK_IMHTML(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_IMHTML, GtkIMHtml))
+#define GTK_IMHTML_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), GTK_TYPE_IMHTML, GtkIMHtmlClass))
+#define GTK_IS_IMHTML(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GTK_TYPE_IMHTML))
+#define GTK_IS_IMHTML_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), GTK_TYPE_IMHTML))
 #define GTK_IMHTML_SCALABLE(obj)   ((GtkIMHtmlScalable *)obj)
-#define GTK_IMHTML_ANIMATION(obj)   ((GtkIMHtmlAnimation *)obj)
+#define GTK_IMHTML_ANIMATION(obj)  ((GtkIMHtmlAnimation *)obj)
 
 typedef struct _GtkIMHtml			GtkIMHtml;
 typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;
@@ -60,6 +58,11 @@ typedef struct _GtkIMHtmlImage		GtkIMHtmlImage;
 typedef struct _GtkIMHtmlAnimation	GtkIMHtmlAnimation;
 typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
 typedef struct _GtkIMHtmlFuncs		GtkIMHtmlFuncs;
+
+/**
+ * @since 2.6.0
+ */
+typedef struct _GtkIMHtmlLink       GtkIMHtmlLink;
 
 typedef enum {
 	GTK_IMHTML_BOLD =       1 << 0,
@@ -156,6 +159,7 @@ struct _GtkIMHtmlClass {
 	gboolean (*message_send)(GtkIMHtml *);
 	void (*undo)(GtkIMHtml *);
 	void (*redo)(GtkIMHtml *);
+	GList *protocols; /* List of GtkIMHtmlProtocol's */
 };
 
 struct _GtkIMHtmlFontDetail {
@@ -184,6 +188,8 @@ struct _GtkIMHtmlSmiley {
 	GSList *anchors;
 	GtkIMHtmlSmileyFlags flags;
 	GtkIMHtml *imhtml;
+	gpointer data;       /** @Since 2.6.0 */
+	gsize datasize;      /** @Since 2.6.0 */
 };
 
 struct _GtkIMHtmlScalable {
@@ -885,6 +891,84 @@ void gtk_imhtml_smiley_reload(GtkIMHtmlSmiley *smiley);
  * @since 2.5.0
  */
 void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley);
+
+/**
+ * Register a protocol with the GtkIMHtml widget. Registering a protocol would
+ * allow certain text to be clickable.
+ *
+ * @param name      The name of the protocol (e.g. http://)
+ * @param activate  The callback to trigger when the protocol text is clicked.
+ *                  Removes any current protocol definition if @c NULL. The
+ *                  callback should return @c TRUE if the link was activated
+ *                  properly, @c FALSE otherwise.
+ * @param context_menu  The callback to trigger when the context menu is popped
+ *                      up on the protocol text. The callback should return
+ *                      @c TRUE if the request for context menu was processed
+ *                      successfully, @c FALSE otherwise.
+ *
+ * @return  @c TRUE if the protocol was successfully registered (or unregistered, when #activate is @c NULL)
+ *
+ * @since 2.6.0
+ */
+gboolean gtk_imhtml_class_register_protocol(const char *name,
+		gboolean (*activate)(GtkIMHtml *imhtml, GtkIMHtmlLink *link),
+		gboolean (*context_menu)(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu));
+
+/**
+ * Get the URL associated with a link. This should be used by the IMHtml protocol-callbacks.
+ *
+ * @param link   The GtkIMHtmlLink object sent to the callback functions
+ *
+ * @return  The URL
+ *
+ * @since 2.6.0
+ */
+const char *gtk_imhtml_link_get_url(GtkIMHtmlLink *link);
+
+/**
+ * Get the GtkTextTag object (if any) associated with a particular link.
+ *
+ * @param link   The GtkIMHtmlLink object sent to the callback functions
+ *
+ * @return  The GtkTextTag object, or @c NULL
+ *
+ * @since 2.6.0
+ */
+const GtkTextTag *gtk_imhtml_link_get_text_tag(GtkIMHtmlLink *link);
+
+/**
+ * Activates a GtkIMHtmlLink object. This triggers the 'url-clicked' signal, marks the
+ * link as visited (when possible).
+ *
+ * @param link   The GtkIMHtmlLink object sent to the callback functions
+ *
+ * @return  @c TRUE if 'url-clicked' signal was emitted, @c FALSE otherwise.
+ *
+ * @since 2.6.0
+ */
+gboolean gtk_imhtml_link_activate(GtkIMHtmlLink *link);
+
+/**
+ * By default this widget intercepts presses of the "return" key and
+ * emits the "message_send" signal instead.  If you don't want this
+ * behavior, and you want the standard GtkTextView behavior of
+ * inserting a newline into the buffer, then call this function.
+ *
+ * @param imhtml The GtkIMHtml where you want the "return" key to add
+ *        newline and not emit the "message_send" signal.
+ */
+void gtk_imhtml_set_return_inserts_newline(GtkIMHtml *imhtml);
+
+/**
+ * By default this widget populates the PRIMARY clipboard with any selected
+ * text (as you would expect).  For scenarios (e.g. select-on-focus) where this
+ * would be problematic, this function can disable the PRIMARY population.
+ *
+ * @param imhtml The GtkIMHtml to enable/disable populating PRIMARY
+ * @param populate enable/disable PRIMARY population
+ */
+void gtk_imhtml_set_populate_primary_clipboard(GtkIMHtml *imhtml, gboolean populate);
+
 /*@}*/
 
 #ifdef __cplusplus

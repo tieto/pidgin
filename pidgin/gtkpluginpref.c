@@ -93,7 +93,7 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 		case PURPLE_PLUGIN_PREF_NONE:
 		default:
 			if (format == PURPLE_STRING_FORMAT_TYPE_NONE)
-			{				
+			{
 				entry = gtk_entry_new();
 				gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(pref_name));
 				gtk_entry_set_max_length(GTK_ENTRY(entry),

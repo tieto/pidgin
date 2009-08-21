@@ -1,8 +1,8 @@
 Document: pidgin-dev
-Title: Gaim API Manual
-Abstract: This manual describes the Gaim programming interface
- for use by Gaim plugins and scripts.
-Section: devel
+Title: Pidgin/libpurple API Manual
+Abstract: This manual describes the Pidgin programming interface
+ for use by Pidgin/libpurple plugins and scripts.
+Section: Applications/Network/Communication
 
 Format: HTML
 Index: /usr/share/doc/pidgin-dev/html/index.html

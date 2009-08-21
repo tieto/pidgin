@@ -732,7 +732,7 @@ static char *zephyr_to_html(const char *message)
 	return ret;
 }
 
-static gboolean pending_zloc(zephyr_account *zephyr,char *who)
+static gboolean pending_zloc(zephyr_account *zephyr, const char *who)
 {
 	GList *curr;
 
@@ -771,6 +771,8 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 			int nlocs;
 			char *user;
 			PurpleBuddy *b;
+			const char *bname;
+
 			/* XXX add real error reporting */
 			if (ZParseLocations(&notice, NULL, &nlocs, &user) != ZERR_NONE)
 				return;
@@ -780,15 +782,19 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 				b = purple_find_buddy(gc->account,stripped_user);
 				g_free(stripped_user);
 			}
-			if ((b && pending_zloc(zephyr,b->name)) || pending_zloc(zephyr,user)) {
+
+			bname = b ? purple_buddy_get_name(b) : NULL;
+			if ((b && pending_zloc(zephyr,bname)) || pending_zloc(zephyr,user)) {
 				ZLocations_t locs;
 				int one = 1;
 				PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
 				char *tmp;
+				const char *balias;
 
-				purple_notify_user_info_add_pair(user_info, _("User"), (b ? b->name : user));
-				if (b && b->alias)
-					purple_notify_user_info_add_pair(user_info, _("Alias"), b->alias);
+				purple_notify_user_info_add_pair(user_info, _("User"), (b ? bname : user));
+				balias = purple_buddy_get_local_buddy_alias(b);
+				if (b && balias)
+					purple_notify_user_info_add_pair(user_info, _("Alias"), balias);
 
 				if (!nlocs) {
 					purple_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
@@ -801,14 +807,14 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 					purple_notify_user_info_add_pair(user_info, _("Location"), tmp);
 					g_free(tmp);
 				}
-				purple_notify_userinfo(gc, (b ? b->name : user), 
+				purple_notify_userinfo(gc, (b ? bname : user), 
 						     user_info, NULL, NULL);
 				purple_notify_user_info_destroy(user_info);
 			} else {
 				if (nlocs>0) 
-					purple_prpl_got_user_status(gc->account, b ? b->name : user, "available", NULL);
+					purple_prpl_got_user_status(gc->account, b ? bname : user, "available", NULL);
 				else 
-					purple_prpl_got_user_status(gc->account, b ? b->name : user, "offline", NULL);
+					purple_prpl_got_user_status(gc->account, b ? bname : user, "offline", NULL);
 			}
 
 			g_free(user);
@@ -954,7 +960,7 @@ static parse_tree *find_node(parse_tree* ptree,gchar* key)
 	tc = tree_child(ptree,0)->contents;
 
 	/* g_strcasecmp() is deprecated.  What is the encoding here??? */
-	if (ptree->num_children > 0  &&	tc && !g_strcasecmp(tc, key)) {
+	if (ptree->num_children > 0  &&	tc && !g_ascii_strcasecmp(tc, key)) {
 		return ptree;
 	} else {
 		parse_tree *result = &null_parse_tree;
@@ -1141,6 +1147,7 @@ static gint check_notify_tzc(gpointer data)
 				/* XXX fix */
 				char *user; 
 				PurpleBuddy *b;
+				const char *bname;
 				int nlocs = 0;
 				parse_tree *locations;
 				gchar *locval;
@@ -1160,15 +1167,18 @@ static gint check_notify_tzc(gpointer data)
 					nlocs = 1;
 				}
 	
-				if ((b && pending_zloc(zephyr,b->name)) || pending_zloc(zephyr,user) || pending_zloc(zephyr,local_zephyr_normalize(zephyr,user))){
+				bname = b ? purple_buddy_get_name(b) : NULL;
+				if ((b && pending_zloc(zephyr,bname)) || pending_zloc(zephyr,user) || pending_zloc(zephyr,local_zephyr_normalize(zephyr,user))){
 					PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
 					char *tmp;
+					const char *balias;
 
-					purple_notify_user_info_add_pair(user_info, _("User"), (b ? b->name : user));
+					purple_notify_user_info_add_pair(user_info, _("User"), (b ? bname : user));
 
-					if (b && b->alias)
-						purple_notify_user_info_add_pair(user_info, _("Alias"), b->alias);
-											
+					balias = b ? purple_buddy_get_local_buddy_alias(b) : NULL;
+					if (balias)
+						purple_notify_user_info_add_pair(user_info, _("Alias"), balias);
+
 					if (!nlocs) {
 						purple_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
 					} else {
@@ -1179,14 +1189,14 @@ static gint check_notify_tzc(gpointer data)
 						g_free(tmp);
 					}
 
-					purple_notify_userinfo(gc, b ? b->name : user,
+					purple_notify_userinfo(gc, b ? bname : user,
 							     user_info, NULL, NULL);
 					purple_notify_user_info_destroy(user_info);
 				} else {
 					if (nlocs>0) 
-						purple_prpl_got_user_status(gc->account, b ? b->name : user, "available", NULL);
+						purple_prpl_got_user_status(gc->account, b ? bname : user, "available", NULL);
 					else 
-						purple_prpl_got_user_status(gc->account, b ? b->name : user, "offline", NULL);
+						purple_prpl_got_user_status(gc->account, b ? bname : user, "offline", NULL);
 				}
 			}
 			else if (!g_ascii_strncasecmp(spewtype,"subscribed",10)) {
@@ -1244,50 +1254,44 @@ static gint check_notify_zeph02(gpointer data)
 
 #ifdef WIN32
 
-static gint check_loc(gpointer_data)
+static gint check_loc(gpointer data)
 {
-        PurpleBlistNode *gnode, *cnode, *bnode;
-        ZLocations_t locations;
-        int numlocs;
-        int one = 1;
+	GSList *buddies;
+	ZLocations_t locations;
+	PurpleConnection *gc = data;
+	zephyr_account *zephyr = gc->proto_data;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	int numlocs;
+	int one = 1;
 
-	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for (cnode = gnode->child; cnode; cnode = cnode->next) {
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for (bnode = cnode->child; bnode; bnode = bnode->next) {
-				PurpleBuddy *b = (PurpleBuddy *) bnode;
+	for (buddies = purple_find_buddies(account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies)) {
+		PurpleBuddy *b = buddies->data;
+		char *chk;
+		const char *bname = purple_buddy_get_name(b);
+		chk = local_zephyr_normalize(bname);
+		ZLocateUser(chk,&numlocs, ZAUTH);
+		if (numlocs) {
+			int i;
+			for(i=0;i<numlocs;i++) {
+				ZGetLocations(&locations,&one);
+				serv_got_update(zgc,bname,1,0,0,0,0);
+			}
+		}
+	}
 
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				if (b->account->gc == zgc) {
-					char *chk;
-                                        chk = local_zephyr_normalize(b->name);
-                                        ZLocateUser(chk,&numlocs, ZAUTH);
-                                        if (numlocs) {
-                                                int i;
-                                                for(i=0;i<numlocs;i++) {
-                                                        ZGetLocations(&locations,&one);
-                                                        serv_got_update(zgc,b->name,1,0,0,0,0);
-                                                }
-                                        }
-                                }
-                        }
-                }
-        }
-        return TRUE;
+	return TRUE;
 }
 
 #else
 
 static gint check_loc(gpointer data)
 {
-	PurpleBlistNode *gnode, *cnode, *bnode;
+	GSList *buddies;
 	ZAsyncLocateData_t ald;
 	PurpleConnection *gc = (PurpleConnection *)data;
 	zephyr_account *zephyr = gc->proto_data;
+	PurpleAccount *account = purple_connection_get_account(gc);
 
 	if (use_zeph02(zephyr)) {
 		ald.user = NULL;
@@ -1295,59 +1299,49 @@ static gint check_loc(gpointer data)
 		ald.version = NULL;
 	}
 
-	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for (cnode = gnode->child; cnode; cnode = cnode->next) {
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for (bnode = cnode->child; bnode; bnode = bnode->next) {
-				PurpleBuddy *b = (PurpleBuddy *) bnode;
+	for (buddies = purple_find_buddies(account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies)) {
+		PurpleBuddy *b = buddies->data;
 
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				if (b->account->gc == gc) {
-					const char *chk;
+		const char *chk;
+		const char *name = purple_buddy_get_name(b);
 
-					chk = local_zephyr_normalize(zephyr,b->name);
-					purple_debug_info("zephyr","chk: %s b->name %s\n",chk,b->name);
-					/* XXX add real error reporting */
-					/* doesn't matter if this fails or not; we'll just move on to the next one */
-					if (use_zeph02(zephyr)) {
+		chk = local_zephyr_normalize(zephyr,name);
+		purple_debug_info("zephyr","chk: %s b->name %s\n",chk,name);
+		/* XXX add real error reporting */
+		/* doesn't matter if this fails or not; we'll just move on to the next one */
+		if (use_zeph02(zephyr)) {
 #ifdef WIN32
-						int numlocs;
-						int one=1;
-						ZLocateUser(chk,&numlocs,ZAUTH);
-						if (numlocs) {
-							int i;
-							for(i=0;i<numlocs;i++) {
-								ZGetLocations(&locations,&one);
-								if (nlocs>0) 
-									purple_prpl_got_user_status(gc->account,b->name,"available",NULL);
-								else 
-									purple_prpl_got_user_status(gc->account,b->name,"offline",NULL);
-							}
-						}
-#else
-						ZRequestLocations(chk, &ald, UNACKED, ZAUTH);
-						g_free(ald.user);
-						g_free(ald.version);
-#endif /* WIN32 */
-					} else 
-						if (use_tzc(zephyr)) {
-							gchar *zlocstr = g_strdup_printf("((tzcfodder . zlocate) \"%s\")\n",chk);
-							size_t len = strlen(zlocstr);
-							size_t result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,len);
-							if (result != len) {
-								purple_debug_error("zephyr", "Unable to write a message: %s\n", g_strerror(errno));
-							}
-							g_free(zlocstr);
-						}
+			int numlocs;
+			int one=1;
+			ZLocateUser(chk,&numlocs,ZAUTH);
+			if (numlocs) {
+				int i;
+				for(i=0;i<numlocs;i++) {
+					ZGetLocations(&locations,&one);
+					if (nlocs>0) 
+						purple_prpl_got_user_status(account,name,"available",NULL);
+					else 
+						purple_prpl_got_user_status(account,name,"offline",NULL);
 				}
 			}
-		}
+#else
+			ZRequestLocations(chk, &ald, UNACKED, ZAUTH);
+			g_free(ald.user);
+			g_free(ald.version);
+#endif /* WIN32 */
+		} else 
+			if (use_tzc(zephyr)) {
+				gchar *zlocstr = g_strdup_printf("((tzcfodder . zlocate) \"%s\")\n",chk);
+				size_t len = strlen(zlocstr);
+				size_t result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,len);
+				if (result != len) {
+					purple_debug_error("zephyr", "Unable to write a message: %s\n", g_strerror(errno));
+				}
+				g_free(zlocstr);
+			}
 	}
-	
+
 	return TRUE;
 }
 
@@ -1932,10 +1926,10 @@ static void write_zsubs(zephyr_account *zephyr)
 
 static void write_anyone(PurpleConnection *gc)
 {
-	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleBuddy *b;
+	GSList *buddies;
 	char *fname;
 	FILE *fd;
+	PurpleAccount *account;
 	zephyr_account* zephyr = gc->proto_data;
 	fname = g_strdup_printf("%s/.anyone", purple_home_dir());
 	fd = g_fopen(fname, "w");
@@ -1944,23 +1938,13 @@ static void write_anyone(PurpleConnection *gc)
 		return;
 	}
 
-	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for (cnode = gnode->child; cnode; cnode = cnode->next) {
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for (bnode = cnode->child; bnode; bnode = bnode->next) {
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				b = (PurpleBuddy *) bnode;
-				if (b->account == gc->account) {
-					gchar *stripped_user = zephyr_strip_local_realm(zephyr,b->name);
-					fprintf(fd, "%s\n", stripped_user);
-					g_free(stripped_user);
-				}
-			}
-		}
+	account = purple_connection_get_account(gc);
+	for (buddies = purple_find_buddies(account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies)) {
+		PurpleBuddy *b = buddies->data;
+		gchar *stripped_user = zephyr_strip_local_realm(zephyr, purple_buddy_get_name(b));
+		fprintf(fd, "%s\n", stripped_user);
+		g_free(stripped_user);
 	}
 
 	fclose(fd);
@@ -2498,26 +2482,31 @@ static PurpleChat *zephyr_find_blist_chat(PurpleAccount *account, const char *na
 	PurpleBlistNode *gnode, *cnode;
 
 	/* XXX needs to be %host%,%canon%, and %me% clean */
-	for(gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
-		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+	for(gnode = purple_blist_get_root(); gnode;
+			gnode = purple_blist_node_get_sibling_next(gnode)) {
+		for(cnode = purple_blist_node_get_first_child(gnode);
+				cnode;
+				cnode = purple_blist_node_get_sibling_next(cnode)) {
 			PurpleChat *chat = (PurpleChat*)cnode;
 			char *zclass, *inst, *recip;
 			char** triple;
+			GHashTable *components;
 			if(!PURPLE_BLIST_NODE_IS_CHAT(cnode))
 				continue;
-			if(chat->account !=account)
+			if(purple_chat_get_account(chat) != account)
 				continue;
-			if(!(zclass = g_hash_table_lookup(chat->components, "class")))
+			components = purple_chat_get_components(chat);
+			if(!(zclass = g_hash_table_lookup(components, "class")))
 				continue;
-			if(!(inst = g_hash_table_lookup(chat->components, "instance")))
+			if(!(inst = g_hash_table_lookup(components, "instance")))
 				inst = g_strdup("");
-			if(!(recip = g_hash_table_lookup(chat->components, "recipient")))
+			if(!(recip = g_hash_table_lookup(components, "recipient")))
 				recip = g_strdup("");
 			/*			purple_debug_info("zephyr","in zephyr_find_blist_chat name: %s\n",name?name:""); */
 			triple = g_strsplit(name,",",3);
 			if (!g_ascii_strcasecmp(triple[0],zclass) && !g_ascii_strcasecmp(triple[1],inst) && !g_ascii_strcasecmp(triple[2],recip))
 				return chat;
-			
+
 		}
 	}
 	return NULL;
@@ -2917,7 +2906,9 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,
 	NULL,
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL
+	NULL,					/* get_account_text_table */
+	NULL,					/* initate_media */
+	NULL					/* can_do_media */
 };
 
 static PurplePluginInfo info = {

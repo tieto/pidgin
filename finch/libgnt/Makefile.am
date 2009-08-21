@@ -28,6 +28,7 @@ libgnt_la_SOURCES = \
 	gntmenu.c \
 	gntmenuitem.c \
 	gntmenuitemcheck.c \
+	gntprogressbar.c \
 	gntslider.c \
 	gntstyle.c \
 	gnttextview.c \
@@ -56,6 +57,7 @@ libgnt_la_headers = \
 	gntmenu.h \
 	gntmenuitem.h \
 	gntmenuitemcheck.h \
+	gntprogressbar.h \
 	gntslider.h \
 	gntstyle.h \
 	gnttextview.h \

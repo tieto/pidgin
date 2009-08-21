@@ -1,3 +1,24 @@
+pidgin (2.6.1-1) experimental; urgency=low
+
+  * Put into experimental so we don't disturb 2.5.9's migration into testing 
+  * New upstream release (Closes: #542311)
+    - Fixes hurd FTBFS (Closes: #530893)
+    - Supports auto-join in XMPP (Closes: #462250)
+    - Fixes some problems with international characters (Closes: #469829)
+    - purple-* commandline utilities now pass return value from dbus-send
+      (Closes: #504314)
+    - Fixes lots of problems with XMPP new mail notifications (Closes: #505760)
+    - Fixes crash when adding/removing MSN buddy (Closes: #531201)
+    - Contact availability plugin ignores autoreplies (Closes: #459667)
+    - Fixes some people not showing up when offline (Closes: #533314)
+  * Use tcl-dev/tk-dev
+  * Add Network Manager support back in since there's a -f commandline option
+    to override it if it fails horribly (Closes: #534698)
+  * Drop upstream README since it doesn't contain any useful information
+    for end users
+
+ -- Ari Pollak <ari@debian.org>  Thu, 20 Aug 2009 20:12:54 -0400
+
 pidgin (2.5.9-1) unstable; urgency=high
 
   * New upstream release

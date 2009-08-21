@@ -2,17 +2,18 @@ Source: pidgin
 Section: net
 Priority: optional
 Maintainer: Ari Pollak <ari@debian.org>
-Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0), intltool,
- libgtk2.0-dev, libxss-dev, libmeanwhile-dev, libgadu-dev (>= 1:1.6+20060215-1),
- libnss3-dev (>= 3.11.7-1), tcl8.4-dev, tk8.4-dev, libgstreamer0.10-dev,
+Build-Depends: cdbs (>= 0.4.53), debhelper (>= 7), intltool,
+ libgtk2.0-dev, libxss-dev, libmeanwhile-dev, libgadu-dev (>= 1:1.6+20060215),
+ libnss3-dev (>= 3.11.7), tcl-dev, tk-dev, libgstreamer0.10-dev,
  libgtkspell-dev, libltdl3-dev, libperl-dev,
  libstartup-notification0-dev, libzephyr-dev, libxml2-dev,
  libebook1.2-dev, libedata-book1.2-dev, libcamel1.2-dev,
  libdbus-glib-1-dev, dbus, python (>= 2.4), libavahi-client-dev,
  libavahi-glib-dev, libxml-parser-perl, libncursesw5-dev, libsasl2-dev,
- xsltproc, doxygen, libsilc-dev (>= 1.1.1),
- libsqlite3-dev (>= 3.3), ca-certificates
-Standards-Version: 3.7.2
+ xsltproc, doxygen, libsilc-dev (>= 1.1.1), libgstfarsight0.10-dev (>= 0.0.9),
+ libgstreamer-plugins-base0.10-dev, network-manager-dev (>= 0.5.0),
+ libsqlite3-dev (>= 3.3), libidn11-dev, ca-certificates
+Standards-Version: 3.8.3
 XS-Vcs-Svn: svn://svn.debian.org/svn/collab-maint/deb-maint/pidgin/
 XS-Vcs-Browser: http://svn.debian.org/wsvn/collab-maint/deb-maint/pidgin/
 Homepage: http://www.pidgin.im
@@ -47,12 +48,7 @@ Description: graphical multi-protocol instant messaging client for X
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP, Napster, Zephyr, Gadu-Gadu, Bonjour,
  Groupwise, Sametime, SILC, SIMPLE, QQ, and MySpaceIM all at once.
  .
- Some extra packages are recommended to use the core functionality present
- in most pidgin installations:
-  * gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
-    - Sound support.
- .
- More extra packages are suggested to use increased functionality:
+ Some extra packages are suggested to use increased functionality:
   * gnome-panel | kdebase-workspace-bin | docker:
     - To use the system tray icon functionality (minimizing to an icon, having
       the icon blink when there are new messages, etc.)
@@ -99,19 +95,13 @@ Description: Debugging symbols for Pidgin
 Package: finch
 Architecture: any
 Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}
-Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
 Suggests:  ${shlibs:Suggests}
 Description: text-based multi-protocol instant messaging client
  Finch is a text/console-based, modular instant messaging client capable of
  using AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP, Napster, Zephyr, Gadu-Gadu,
  Bonjour, Groupwise, Sametime, SILC, SIMPLE, QQ, and MySpaceIM all at once.
  .
- Some extra packages are recommended to use the core functionality present
- in most finch installations:
-  * gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
-    - Sound support.
- .
- More extra packages are suggested to use increased functionality:
+ Some extra packages are suggested to use increased functionality:
   * libx11-6
     - To use the Clipboard and/or Toaster plugins.
 

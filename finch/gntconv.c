@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "finch.h"
+#include <internal.h>
 
 #include <cmds.h>
 #include <idle.h>
@@ -191,10 +192,7 @@ entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 	}
 	else
 	{
-		char *escape = g_markup_escape_text((*text == '/' ? text + 1 : text), -1);
-		char *apos = purple_strreplace(escape, "&apos;", "'");
-		g_free(escape);
-		escape = apos;
+		char *escape = purple_markup_escape_text((*text == '/' ? text + 1 : text), -1);
 		switch (purple_conversation_get_type(ggconv->active_conv))
 		{
 			case PURPLE_CONV_TYPE_IM:
@@ -496,8 +494,9 @@ view_log_cb(GntMenuItem *n, gpointer ggc)
 	buddies = purple_find_buddies(account, name);
 	for (cur = buddies; cur != NULL; cur = cur->next) {
 		PurpleBlistNode *node = cur->data;
-		if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL))) {
-			finch_log_show_contact((PurpleContact *)node->parent);
+		if ((node != NULL) &&
+				(purple_blist_node_get_sibling_prev(node) || purple_blist_node_get_sibling_next(node))) {
+			finch_log_show_contact((PurpleContact *)purple_blist_node_get_parent(node));
 			g_slist_free(buddies);
 			return;
 		}
@@ -529,7 +528,7 @@ generate_send_to_menu(FinchConv *ggc)
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
 
 	for (; buds; buds = g_slist_delete_link(buds, buds)) {
-		PurpleBlistNode *node = (PurpleBlistNode *)purple_buddy_get_contact((PurpleBuddy *)buds->data);
+		PurpleBlistNode *node = PURPLE_BLIST_NODE(purple_buddy_get_contact(PURPLE_BUDDY(buds->data)));
 		for (node = purple_blist_node_get_first_child(node); node != NULL;
 				node = purple_blist_node_get_sibling_next(node)) {
 			PurpleBuddy *buddy = (PurpleBuddy *)node;
@@ -558,44 +557,11 @@ generate_send_to_menu(FinchConv *ggc)
 }
 
 static void
-invite_select_cb(FinchConv *fc, PurpleRequestFields *fields)
-{
-	PurpleConversation *conv = fc->active_conv;
-	const char *buddy = purple_request_fields_get_string(fields,  "screenname");
-	const char *message = purple_request_fields_get_string(fields,  "message");
-	serv_chat_invite(purple_conversation_get_gc(conv),
-		purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)),
-		message, buddy);
-
-}
-
-static void
 invite_cb(GntMenuItem *item, gpointer ggconv)
 {
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
-
-	fields = purple_request_fields_new();
-
-	group = purple_request_field_group_new(NULL);
-	purple_request_fields_add_group(fields, group);
-
-	field = purple_request_field_string_new("screenname", _("Name"), NULL, FALSE);
-	purple_request_field_set_type_hint(field, "screenname");
-	purple_request_field_set_required(field, TRUE);
-	purple_request_field_group_add_field(group, field);
-	field = purple_request_field_string_new("message", _("Invite message"), NULL, FALSE);
-	purple_request_field_group_add_field(group, field);
-	purple_request_fields(finch_conv_get_handle(), _("Invite"),
-						NULL,
-						_("Please enter the name of the user "
-						  "you wish to invite,\nalong with an optional invite message."),
-						fields,
-						_("OK"), G_CALLBACK(invite_select_cb),
-						_("Cancel"), NULL,
-						NULL, NULL, NULL,
-						ggconv);
+	FinchConv *fc = ggconv;
+	PurpleConversation *conv = fc->active_conv;
+	purple_conv_chat_invite_user(PURPLE_CONV_CHAT(conv), NULL, NULL, TRUE);
 }
 
 static void
@@ -916,9 +882,12 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), "\n", GNT_TEXT_FLAG_NORMAL);
 
 	/* Unnecessary to print the timestamp for delayed message */
-	if (purple_prefs_get_bool("/finch/conversations/timestamps"))
+	if (purple_prefs_get_bool("/finch/conversations/timestamps")) {
+		if (!mtime)
+			time(&mtime);
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					purple_utf8_strftime("(%H:%M:%S)", localtime(&mtime)), gnt_color_pair(color_timestamp));
+	}
 
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), " ", GNT_TEXT_FLAG_NORMAL);
 

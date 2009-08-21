@@ -27,6 +27,7 @@
 
 #include "internal.h"
 #include "pidgin.h"
+#include "package_revision.h"
 
 #include "debug.h"
 #include "notify.h"
@@ -73,9 +74,10 @@ struct artist {
 /* Order: Alphabetical by Last Name */
 static const struct developer developers[] = {
 	{"Daniel 'datallah' Atallah",	NULL, NULL},
-	{"John 'rekkanoryo' Bailey",	N_("bug master"), "rekkanoryo@pidgin.im"},
+	{"Paul 'darkrain42' Aurich",	NULL, NULL },
+	{"John 'rekkanoryo' Bailey",	N_("bug master"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	NULL, NULL},
-	{"Hylke Bons",			N_("artist"), "h.bons@student.rug.nl"},
+	{"Hylke Bons",			N_("artist"), "hylkebons@gmail.com"},
 	{"Thomas Butter",				NULL, NULL},
 	/* feel free to not translate this */
 	{N_("Ka-Hing Cheung"),			NULL, NULL},
@@ -90,6 +92,7 @@ static const struct developer developers[] = {
 	{"Bartosz Oler",		NULL, NULL},
 	{"Etan 'deryni' Reisner",       NULL, NULL},
 	{"Tim 'marv' Ringenbach",		NULL, NULL},
+	{"Michael 'Maiku' Ruprecht",	N_("voice and video"), NULL},
 	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
 	{"Evan Schoenberg",		NULL, NULL},
@@ -101,7 +104,6 @@ static const struct developer developers[] = {
 
 /* Order: Alphabetical by Last Name */
 static const struct developer patch_writers[] = {
-	{"Paul 'darkrain42' Aurich", NULL, NULL },
 	{"Marcus 'malu' Lundblad", NULL, NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
@@ -146,10 +148,8 @@ static const struct translator translators[] = {
 	{N_("Bulgarian"),           "bg", "Vladimira Girginova", "missing@here.is"},
 	{N_("Bulgarian"),           "bg", "Vladimir (Kaladan) Petkov", "vpetkov@i-space.org"},
 	{N_("Bengali"),             "bn", "Israt Jahan", "israt@ankur.org.bd"},
-	{N_("Bengali"),             "bn", "INDRANIL DAS GUPTA", "indradg@l2c2.org"},
 	{N_("Bengali"),             "bn", "Jamil Ahmed", "jamil@bengalinux.org"},
 	{N_("Bengali"),             "bn", "Samia Nimatullah", "mailsamia2001@yahoo.com"},
-	{N_("Bengali"),             "bn", "Tisa Nafisa", "tisa_nafisa@yahoo.com"},
 	{N_("Bosnian"),             "bs", "Lejla Hadzialic", "lejlah@gmail.com"},
 	{N_("Catalan"),             "ca", "Josep Puigdemont", "josep.puigdemont@gmail.com"},
 	{N_("Valencian-Catalan"),   "ca@valencia", "Toni Hermoso", "toniher@softcatala.org"},
@@ -170,8 +170,9 @@ static const struct translator translators[] = {
 	{N_("Esperanto"),           "eo", "Stéphane Fillod", "fillods@users.sourceforge.net"},
 	{N_("Spanish"),             "es", "Javier Fernández-Sanguino Peña", "jfs@debian.org"},
 	{N_("Estonian"),            "et", "Ivar Smolin", "okul@linux.ee"},
-	{N_("Euskera(Basque)"),     "eu", "Hizkuntza Politikarako Sailburuordetza", "hizkpol@ej-gv.es"},
+	{N_("Euskera(Basque)"),     "eu", "Mikel Pascual Aldabaldetreku", "mikel.paskual@gmail.com"},
 	{N_("Euskera(Basque)"),     "eu", "Iñaki Larrañaga Murgoitio", "dooteo@zundan.com"},
+	{N_("Euskera(Basque)"),     "eu", "Hizkuntza Politikarako Sailburuordetza", "hizkpol@ej-gv.es"},
 	{N_("Persian"),             "fa", "Elnaz Sarbar", "elnaz@farsiweb.info"},
 	{N_("Persian"),             "fa", "Meelad Zakaria", "meelad@farsiweb.info"},
 	{N_("Persian"),             "fa", "Roozbeh Pournader ", "roozbeh@farsiweb.info"},
@@ -185,11 +186,12 @@ static const struct translator translators[] = {
 	{N_("Hebrew"),              "he", "Shalom Craimer", "scraimer@gmail.com"},
 	{N_("Hindi"),               "hi", "Ravishankar Shrivastava", "raviratlami@yahoo.com"},
 	{N_("Hungarian"),           "hu", "Kelemen Gábor", "kelemeng@gnome.hu"},
+	{N_("Armenian"),            "hy", "David Avsharyan", "avsharyan@gmail.com"},
 	{N_("Indonesian"),          "id", "Rai S. Regawa", "raireg@yahoo.com"},
 	{N_("Italian"),             "it", "Claudio Satriano", "satriano@na.infn.it"},
 	{N_("Japanese"),            "ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
 	{N_("Georgian"),            "ka", N_("Ubuntu Georgian Translators"), "alexander.didebulidze@stusta.mhn.de"},
-	{"Khmer",                   "km", "Khoem Sokhem", "khoemsokhem@khmeros.info"},
+	{N_("Khmer"),               "km", "Khoem Sokhem", "khoemsokhem@khmeros.info"},
 	{N_("Kannada"),             "kn", N_("Kannada Translation team"), "translation@sampada.info"},
 	{N_("Korean"),              "ko", "Sushizang", "sushizang@empal.com"},
 	{N_("Kurdish"),             "ku", "Erdal Ronahi", "erdal.ronahi@gmail.com"},
@@ -212,6 +214,7 @@ static const struct translator translators[] = {
 	{N_("Portuguese-Brazil"),   "pt_BR", "Rodrigo Luiz Marques Flores", "rodrigomarquesflores@gmail.com"},
 	{N_("Pashto"),              "ps", "Kashif Masood", "masudmails@yahoo.com"},
 	{N_("Romanian"),            "ro", "Mişu Moldovan", "dumol@gnome.ro"},
+	{N_("Romanian"),            "ro", "Andrei Popescu", "andreimpopescu@gmail.com"},
 	{N_("Russian"),             "ru", "Антон Самохвалов", "samant.ua@mail.ru"},
 	{N_("Slovak"),              "sk", "Jozef Káčer", "quickparser@gmail.com"},
 	{N_("Slovak"),              "sk", "loptosko", "loptosko@gmail.com"},
@@ -222,13 +225,14 @@ static const struct translator translators[] = {
 	{N_("Sinhala"),             "si", "Danishka Navin", "snavin@redhat.com"},
 	{N_("Sinhala"),             "si", "Yajith Ajantha Dayarathna", "yajith@gmail.com"},
 	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
+	{N_("Swahili"),             "sw", "Paul Msegeya", "msegeya@gmail.com"},
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
 	{N_("Thai"),                "th", "Isriya Paireepairit", "markpeak@gmail.com"},
 	{N_("Turkish"),             "tr", "Serdar Soytetir", "tulliana@gmail.com"},
 	{N_("Urdu"),                "ur", "RKVS Raman", "rkvsraman@gmail.com"},
 	{N_("Vietnamese"),          "vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
-	{N_("Simplified Chinese"),  "zh_CN", "Funda Wang", "fundawang@linux.net.cn"},
+	{N_("Simplified Chinese"),  "zh_CN", "Aron Xu", "aronmalache@163.com"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Abel Cheung", "abelindsay@gmail.com"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Ambrose C. Li", "acli@ada.dhs.org"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Paladin R. Liu", "paladin@ms1.hinet.net"},
@@ -242,6 +246,8 @@ static const struct translator past_translators[] = {
 	{N_("Amharic"),             "am", "Daniel Yacob", NULL},
 	{N_("Arabic"),              "ar", "Mohamed Magdy", "alnokta@yahoo.com"},
 	{N_("Bulgarian"),           "bg", "Hristo Todorov", NULL},
+	{N_("Bengali"),             "bn", "INDRANIL DAS GUPTA", "indradg@l2c2.org"},
+	{N_("Bengali"),             "bn", "Tisa Nafisa", "tisa_nafisa@yahoo.com"},
 	{N_("Catalan"),             "ca", "JM Pérez Cáncer", NULL},
 	{N_("Catalan"),             "ca", "Robert Millan", NULL},
 	{N_("Czech"),               "cs", "Honza Král", NULL},
@@ -291,6 +297,7 @@ static const struct translator past_translators[] = {
 	{N_("Swedish"),             "sv", "Christian Rose", NULL},
 	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", NULL},
 	{N_("Simplified Chinese"),  "zh_CN", "Hashao, Rocky S. Lee", NULL},
+	{N_("Simplified Chinese"),  "zh_CN", "Funda Wang", "fundawang@linux.net.cn"},
 	{N_("Traditional Chinese"), "zh_TW", "Hashao, Rocky S. Lee", NULL},
 	{NULL, NULL, NULL, NULL}
 };
@@ -351,7 +358,7 @@ static void destroy_about(void)
 }
 
 #if 0
-/* This function puts the version number onto the pixmap we use in the 'about' 
+/* This function puts the version number onto the pixmap we use in the 'about'
  * screen in Pidgin. */
 static void
 pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
@@ -427,7 +434,7 @@ void pidgin_dialogs_about()
 #endif
 	gtk_widget_destroy(logo);
 	logo = gtk_image_new_from_pixbuf(pixbuf);
-	gdk_pixbuf_unref(pixbuf);
+	g_object_unref(G_OBJECT(pixbuf));
 	/* Insert the logo */
 	obj = gtk_widget_get_accessible(logo);
 	tmp = g_strconcat(PIDGIN_NAME, " " DISPLAY_VERSION, NULL);
@@ -442,7 +449,7 @@ void pidgin_dialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR>(libpurple %s)<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version());
+		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR>(libpurple %s)<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
 
 	g_string_append_printf(str,
 		_("%s is a graphical modular messaging client based on "
@@ -494,7 +501,7 @@ void pidgin_dialogs_about()
 						   _("Retired Crazy Patch Writers"));
 	add_developers(str, retired_patch_writers);
 	g_string_append(str, "<BR/>");
-			
+
 	/* Current Translators */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
 						   _("Current Translators"));
@@ -643,6 +650,12 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 	g_string_append(str, "    <b>Tcl:</b> Disabled<br/>");
 	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
 }
+
+#ifdef USE_VV
+	g_string_append(str, "    <b>Voice and Video:</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>Voice and Video:</b> Disabled<br/>");
+#endif
 
 #ifndef _WIN32
 #ifdef USE_SM
@@ -1068,8 +1081,8 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 	g_return_if_fail(contact != NULL);
 	g_return_if_fail(buddy != NULL);
 
-	if (((PurpleBlistNode*)contact)->child == (PurpleBlistNode*)buddy &&
-			!((PurpleBlistNode*)buddy)->next) {
+	if (PURPLE_BLIST_NODE(contact)->child == PURPLE_BLIST_NODE(buddy) &&
+	    PURPLE_BLIST_NODE(buddy)->next == NULL) {
 		pidgin_dialogs_remove_buddy(buddy);
 	} else {
 		gchar *text;
@@ -1123,7 +1136,7 @@ pidgin_dialogs_merge_groups(PurpleGroup *source, const char *new_name)
 	ggp = g_new(struct _PidginGroupMergeObject, 1);
 	ggp->parent = source;
 	ggp->new_name = g_strdup(new_name);
-	
+
 	purple_request_action(source, NULL, _("Merge Groups"), text, 0,
 			NULL, NULL, NULL,
 			ggp, 2,

@@ -789,7 +789,7 @@ msn_login(PurpleAccount *account)
 	if (!msn_session_connect(session, host, port, http_method))
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Failed to connect to server."));
+			_("Unable to connect"));
 }
 
 static void
@@ -2276,9 +2276,10 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* unregister_user */
 	msn_send_attention,                     /* send_attention */
 	msn_attention_types,                    /* attention_types */
-
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	msn_get_account_text_table,             /* get_account_text_table */
+	NULL,                                   /* initiate_media */
+	NULL                                    /* can_do_media */
 };
 
 static PurplePluginInfo info =

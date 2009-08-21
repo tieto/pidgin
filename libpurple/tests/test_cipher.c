@@ -168,6 +168,11 @@ END_TEST
 	purple_cipher_context_destroy(context); \
 }
 
+START_TEST(test_sha1_empty_string) {
+	SHA1_TEST("", "da39a3ee5e6b4b0d3255bfef95601890afd80709");
+}
+END_TEST
+
 START_TEST(test_sha1_a) {
 	SHA1_TEST("a", "86f7e437faa5a7fce15d1ddcb9eaeaea377667b8");
 }
@@ -186,6 +191,66 @@ END_TEST
 
 START_TEST(test_sha1_1000_as_1000_times) {
 	SHA1_TEST(NULL, "34aa973cd4c4daa4f61eeb2bdbad27316534016f");
+}
+END_TEST
+
+/******************************************************************************
+ * SHA-256 Tests
+ *****************************************************************************/
+#define SHA256_TEST(data, digest) { \
+	PurpleCipher *cipher = NULL; \
+	PurpleCipherContext *context = NULL; \
+	gchar cdigest[65]; \
+	gboolean ret = FALSE; \
+	\
+	cipher = purple_ciphers_find_cipher("sha256"); \
+	context = purple_cipher_context_new(cipher, NULL); \
+	\
+	if((data)) { \
+		purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
+	} else { \
+		gint j; \
+		guchar buff[1000]; \
+		\
+		memset(buff, 'a', 1000); \
+		\
+		for(j = 0; j < 1000; j++) \
+			purple_cipher_context_append(context, buff, 1000); \
+	} \
+	\
+	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
+	                                        NULL); \
+	\
+	fail_unless(ret == TRUE, NULL); \
+	\
+	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
+	\
+	purple_cipher_context_destroy(context); \
+}
+
+START_TEST(test_sha256_empty_string) {
+	SHA256_TEST("", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+}
+END_TEST
+
+START_TEST(test_sha256_a) {
+	SHA256_TEST("a", "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb");
+}
+END_TEST
+
+START_TEST(test_sha256_abc) {
+	SHA256_TEST("abc", "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+}
+END_TEST
+
+START_TEST(test_sha256_abcd_gibberish) {
+	SHA256_TEST("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+			  "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1");
+}
+END_TEST
+
+START_TEST(test_sha256_1000_as_1000_times) {
+	SHA256_TEST(NULL, "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0");
 }
 END_TEST
 
@@ -726,10 +791,20 @@ cipher_suite(void) {
 
 	/* sha1 tests */
 	tc = tcase_create("SHA1");
+	tcase_add_test(tc, test_sha1_empty_string);
 	tcase_add_test(tc, test_sha1_a);
 	tcase_add_test(tc, test_sha1_abc);
 	tcase_add_test(tc, test_sha1_abcd_gibberish);
 	tcase_add_test(tc, test_sha1_1000_as_1000_times);
+	suite_add_tcase(s, tc);
+
+	/* sha256 tests */
+	tc = tcase_create("SHA256");
+	tcase_add_test(tc, test_sha256_empty_string);
+	tcase_add_test(tc, test_sha256_a);
+	tcase_add_test(tc, test_sha256_abc);
+	tcase_add_test(tc, test_sha256_abcd_gibberish);
+	tcase_add_test(tc, test_sha256_1000_as_1000_times);
 	suite_add_tcase(s, tc);
 
 	/* des tests */

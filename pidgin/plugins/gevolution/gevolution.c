@@ -39,6 +39,7 @@
 #include <libedata-book/Evolution-DataServer-Addressbook.h>
 
 #include <libedata-book/e-data-book-factory.h>
+/* TODO: bonobo is going away eventually, we'll need to find an alternative */
 #include <bonobo/bonobo-main.h>
 
 #include <glib.h>
@@ -52,7 +53,7 @@ enum
 {
 	COLUMN_AUTOADD,
 	COLUMN_ICON,
-	COLUMN_SCREENNAME,
+	COLUMN_USERNAME,
 	COLUMN_DATA,
 	NUM_COLUMNS
 };
@@ -297,12 +298,18 @@ load_timeout(gpointer data)
 {
 	PurplePlugin *plugin = (PurplePlugin *)data;
 	EBookQuery *query;
+	GError *err = NULL;
 
 	timer = 0;
 
 	/* Maybe this is it? */
-	if (!gevo_load_addressbook(NULL, &book, NULL))
+	if (!gevo_load_addressbook(NULL, &book, &err))
+	{
+		purple_debug_error("evolution",
+						 "Error retrieving addressbook: %s\n", err->message);
+		g_error_free(err);
 		return FALSE;
+	}
 
 	query = e_book_query_any_field_contains("");
 
@@ -463,11 +470,11 @@ get_config_frame(PurplePlugin *plugin)
 	gtk_tree_view_column_add_attribute(column, renderer,
 									   "pixbuf", COLUMN_ICON);
 
-	/* Screenname */
+	/* Username */
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer,
-									   "text", COLUMN_SCREENNAME);
+									   "text", COLUMN_USERNAME);
 
 
 	/* Populate */
@@ -489,7 +496,7 @@ get_config_frame(PurplePlugin *plugin)
 						   purple_account_get_bool(account, "gevo-autoadd",
 												 FALSE),
 						   COLUMN_ICON, pixbuf,
-						   COLUMN_SCREENNAME,
+						   COLUMN_USERNAME,
 						   purple_account_get_username(account),
 						   COLUMN_DATA, account,
 						   -1);

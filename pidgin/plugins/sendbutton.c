@@ -177,8 +177,8 @@ static PurplePluginInfo info =
 	DISPLAY_VERSION,                                /**< version */
 	N_("Conversation Window Send Button."),         /**< summary */
 	N_("Adds a Send button to the entry area of "
-	   "the conversation window. Intended for when "
-	   "no physical keyboard is present."),         /**< description */
+	   "the conversation window. Intended for use "
+	   "when no physical keyboard is present."),    /**< description */
 	"Etan Reisner <deryni@pidgin.im>",              /**< author */
 	PURPLE_WEBSITE,                                 /**< homepage */
 	plugin_load,                                    /**< load */

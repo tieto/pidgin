@@ -165,5 +165,6 @@ int gnt_keys_find_combination(const char *key);
 #undef lines
 #undef buttons
 #undef newline
+#undef set_clock
 
 #endif

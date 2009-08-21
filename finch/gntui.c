@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "finch.h"
+#include <internal.h>
 
 #include "gntui.h"
 
@@ -31,6 +32,7 @@
 #include "gntdebug.h"
 #include "gntft.h"
 #include "gntlog.h"
+#include "gntmedia.h"
 #include "gntnotify.h"
 #include "gntplugin.h"
 #include "gntpounce.h"
@@ -91,6 +93,9 @@ void gnt_ui_init()
 	finch_roomlist_init();
 	purple_roomlist_set_ui_ops(finch_roomlist_get_ui_ops());
 
+	/* Media */
+	finch_media_manager_init();
+
 	gnt_register_action(_("Accounts"), finch_accounts_show_all);
 	gnt_register_action(_("Buddy List"), finch_blist_show);
 	gnt_register_action(_("Buddy Pounces"), finch_pounces_manager_show);
@@ -135,6 +140,10 @@ void gnt_ui_uninit()
 
 	finch_roomlist_uninit();
 	purple_roomlist_set_ui_ops(NULL);
+
+#ifdef USE_VV
+	finch_media_manager_uninit();
+#endif
 
 	gnt_quit();
 #endif

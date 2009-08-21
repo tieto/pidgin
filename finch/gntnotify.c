@@ -32,6 +32,7 @@
 #include <gntwindow.h>
 
 #include "finch.h"
+#include <internal.h>
 
 #include <util.h>
 
@@ -207,6 +208,9 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	GString *message = g_string_new(NULL);
 	void *ret;
 	static int key = 0;
+
+	if (count == 0)
+		return NULL;
 
 	if (!detailed)
 	{

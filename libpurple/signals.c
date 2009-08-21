@@ -363,8 +363,8 @@ purple_signal_disconnect(void *instance, const char *signal,
 		{
 			g_free(handler_data);
 
-			signal_data->handlers = g_list_remove(signal_data->handlers,
-												  handler_data);
+			signal_data->handlers = g_list_delete_link(signal_data->handlers,
+												       l);
 			signal_data->handler_count--;
 
 			found = TRUE;
@@ -398,8 +398,8 @@ disconnect_handle_from_signals(const char *signal,
 			g_free(handler_data);
 
 			signal_data->handler_count--;
-			signal_data->handlers = g_list_remove(signal_data->handlers,
-												  handler_data);
+			signal_data->handlers = g_list_delete_link(signal_data->handlers,
+			                                           l);
 		}
 	}
 }
@@ -487,7 +487,7 @@ purple_signal_emit_vargs(void *instance, const char *signal, va_list args)
 	}
 
 #ifdef HAVE_DBUS
-	purple_dbus_signal_emit_purple(signal, signal_data->num_values, 
+	purple_dbus_signal_emit_purple(signal, signal_data->num_values,
 				   signal_data->values, args);
 #endif	/* HAVE_DBUS */
 
@@ -539,7 +539,7 @@ purple_signal_emit_vargs_return_1(void *instance, const char *signal,
 
 #ifdef HAVE_DBUS
 	G_VA_COPY(tmp, args);
-	purple_dbus_signal_emit_purple(signal, signal_data->num_values, 
+	purple_dbus_signal_emit_purple(signal, signal_data->num_values,
 				   signal_data->values, tmp);
 	va_end(tmp);
 #endif	/* HAVE_DBUS */
@@ -969,6 +969,26 @@ purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT(
 	ret_val =
 		((gboolean (*)(void *, void *, void *, void *, guint, void *))cb)(
 			arg1, arg2, arg3, arg4, arg5, data);
+
+	if (return_val != NULL)
+		*return_val = GINT_TO_POINTER(ret_val);
+}
+
+void
+purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER_POINTER(
+		PurpleCallback cb, va_list args, void *data, void **return_val)
+{
+	gboolean ret_val;
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+	void *arg3 = va_arg(args, void *);
+	void *arg4 = va_arg(args, void *);
+	void *arg5 = va_arg(args, void *);
+	void *arg6 = va_arg(args, void *);
+
+	ret_val =
+		((gboolean (*)(void *, void *, void *, void *, void *, void *, void *))cb)(
+			arg1, arg2, arg3, arg4, arg5, arg6, data);
 
 	if (return_val != NULL)
 		*return_val = GINT_TO_POINTER(ret_val);

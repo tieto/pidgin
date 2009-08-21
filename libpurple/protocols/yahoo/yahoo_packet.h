@@ -98,16 +98,20 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_AVATAR_UPDATE = 0xc7,
 	YAHOO_SERVICE_VERIFY_ID_EXISTS = 0xc8,
 	YAHOO_SERVICE_AUDIBLE = 0xd0,
+	YAHOO_SERVICE_CONTACT_DETAILS = 0xd3,
+	/* YAHOO_SERVICE_CHAT_SESSION = 0xd4,?? Reports start of chat session, gets an id from server */
 	YAHOO_SERVICE_AUTH_REQ_15 = 0xd6,
+	YAHOO_SERVICE_FILETRANS_15 = 0xdc,
+	YAHOO_SERVICE_FILETRANS_INFO_15 = 0xdd,
+	YAHOO_SERVICE_FILETRANS_ACC_15 = 0xde,
+	/* photo sharing services ?? - 0xd2, 0xd7, 0xd8, 0xda */
 	YAHOO_SERVICE_CHGRP_15 = 0xe7,
 	YAHOO_SERVICE_STATUS_15 = 0xf0,
 	YAHOO_SERVICE_LIST_15 = 0xf1,
 	YAHOO_SERVICE_MESSAGE_ACK = 0xfb,
-	YAHOO_SERVICE_FILETRANS_15 = 0xdc,
-	YAHOO_SERVICE_FILETRANS_INFO_15 = 0xdd,
-	YAHOO_SERVICE_FILETRANS_ACC_15 = 0xde,
 	YAHOO_SERVICE_WEBLOGIN = 0x0226,
 	YAHOO_SERVICE_SMS_MSG = 0x02ea
+	/* YAHOO_SERVICE_DISCONNECT = 0x07d1 Server forces us to disconnect. Is sent with TCP FIN flag set */
 };
 
 struct yahoo_pair {
@@ -133,8 +137,8 @@ struct yahoo_packet *yahoo_packet_new(enum yahoo_service service,
 void yahoo_packet_hash(struct yahoo_packet *pkt, const char *fmt, ...);
 void yahoo_packet_hash_str(struct yahoo_packet *pkt, int key, const char *value);
 void yahoo_packet_hash_int(struct yahoo_packet *pkt, int key, int value);
-int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd);
-int yahoo_packet_send_and_free(struct yahoo_packet *pkt, struct yahoo_data *yd);
+int yahoo_packet_send(struct yahoo_packet *pkt, YahooData *yd);
+int yahoo_packet_send_and_free(struct yahoo_packet *pkt, YahooData *yd);
 size_t yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm, gboolean jp,
 guchar **buf);
 void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len);

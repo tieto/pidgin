@@ -26,6 +26,8 @@
 #ifndef _PURPLE_XMLNODE_H_
 #define _PURPLE_XMLNODE_H_
 
+#include <glib.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -51,10 +53,10 @@ struct _xmlnode
 	XMLNodeType type;		/**< The type of the node. */
 	char *data;			/**< The data for the node. */
 	size_t data_sz;			/**< The size of the data. */
-	struct _xmlnode *parent;	/**< The parent node or @c NULL.*/
-	struct _xmlnode *child;		/**< The child node or @c NULL.*/
-	struct _xmlnode *lastchild;	/**< The last child node or @c NULL.*/
-	struct _xmlnode *next;		/**< The next node or @c NULL. */
+	xmlnode *parent;            /**< The parent node or @c NULL.*/
+	xmlnode *child;             /**< The child node or @c NULL.*/
+	xmlnode *lastchild;         /**< The last child node or @c NULL.*/
+	xmlnode *next;              /**< The next node or @c NULL. */
 	char *prefix;               /**< The namespace prefix if any. */
 	GHashTable *namespace_map;  /**< The namespace map. */
 };
@@ -134,7 +136,7 @@ void xmlnode_insert_data(xmlnode *node, const char *data, gssize size);
  * @return The data from the node or NULL. This data is in raw escaped format.
  *         You must g_free this string when finished using it.
  */
-char *xmlnode_get_data(xmlnode *node);
+char *xmlnode_get_data(const xmlnode *node);
 
 /**
  * Gets unescaped data from a node.
@@ -144,7 +146,7 @@ char *xmlnode_get_data(xmlnode *node);
  * @return The data from the node, in unescaped form.   You must g_free
  *         this string when finished using it.
  */
-char *xmlnode_get_data_unescaped(xmlnode *node);
+char *xmlnode_get_data_unescaped(const xmlnode *node);
 
 /**
  * Sets an attribute for a node.
@@ -155,6 +157,7 @@ char *xmlnode_get_data_unescaped(xmlnode *node);
  */
 void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_XMLNODE_C_)
 /**
  * Sets a prefixed attribute for a node
  *
@@ -162,6 +165,8 @@ void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
  * @param attr   The name of the attribute to set
  * @param prefix The prefix of the attribute to ste
  * @param value  The value of the attribute
+ *
+ * @deprecated Use xmlnode_set_attrib_full instead.
  */
 void xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char *prefix, const char *value);
 
@@ -172,8 +177,25 @@ void xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char 
  * @param attr  The name of the attribute to set
  * @param xmlns The namespace of the attribute to ste
  * @param value The value of the attribute
+ *
+ * @deprecated Use xmlnode_set_attrib_full instead.
  */
 void xmlnode_set_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns, const char *value);
+#endif /* PURPLE_DISABLE_DEPRECATED */
+
+/**
+ * Sets a namespaced attribute for a node
+ *
+ * @param node   The node to set an attribute for.
+ * @param attr   The name of the attribute to set
+ * @param xmlns  The namespace of the attribute to ste
+ * @param prefix The prefix of the attribute to ste
+ * @param value  The value of the attribute
+ *
+ * @since 2.6.0
+ */
+void xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns,
+	const char *prefix, const char *value);
 
 /**
  * Gets an attribute from a node.
@@ -246,6 +268,17 @@ void xmlnode_set_prefix(xmlnode *node, const char *prefix);
 const char *xmlnode_get_prefix(const xmlnode *node);
 
 /**
+ * Gets the parent node.
+ *
+ * @param child The child node.
+ *
+ * @return The parent or NULL.
+ *
+ * @since 2.6.0
+ */
+xmlnode *xmlnode_get_parent(const xmlnode *child);
+
+/**
  * Returns the node in a string of xml.
  *
  * @param node The starting node to output.
@@ -296,6 +329,25 @@ xmlnode *xmlnode_copy(const xmlnode *src);
  * @param node The node to free.
  */
 void xmlnode_free(xmlnode *node);
+
+/**
+ * Creates a node from a XML File.  Calling this on the
+ * root node of an XML document will parse the entire document
+ * into a tree of nodes, and return the xmlnode of the root.
+ *
+ * @param dir  The directory where the file is located
+ * @param filename  The filename
+ * @param description  A description of the file being parsed. Displayed to
+ * 			the user if the file cannot be read.
+ * @param process  The subsystem that is calling xmlnode_from_file. Used as
+ * 			the category for debugging.
+ *
+ * @return The new node or NULL if an error occurred.
+ *
+ * @since 2.6.0
+ */
+xmlnode *xmlnode_from_file(const char *dir, const char *filename,
+			   const char *description, const char *process);
 
 #ifdef __cplusplus
 }

@@ -21,9 +21,8 @@
 /*
  * Family 0x0007 - Account Administration.
  *
- * Used for stuff like changing the formating of your screen name, changing your
+ * Used for stuff like changing the formating of your username, changing your
  * email address, requesting an account confirmation email, getting account info,
- *
  */
 
 #include "oscar.h"
@@ -32,7 +31,7 @@
  * Subtype 0x0002 - Request a bit of account info.
  *
  * Info should be one of the following:
- * 0x0001 - Screen name formatting
+ * 0x0001 - Username formatting
  * 0x0011 - Email address
  * 0x0013 - Unknown
  */
@@ -111,7 +110,7 @@ infochange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 }
 
 /**
- * Subtype 0x0004 - Set screenname formatting.
+ * Subtype 0x0004 - Set the formatting of username (change spaces and capitalization).
  */
 void
 aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick)

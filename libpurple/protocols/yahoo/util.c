@@ -22,561 +22,15 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
+#endif /* HAVE_CONFIG_H */
 
-#include "cipher.h"
 #include "debug.h"
 #include "internal.h"
 #include "prpl.h"
-#include "util.h"
 
-#include "yahoo.h"
+#include "libymsg.h"
 
 #include <string.h>
-
-struct _PurpleUtilFetchUrlData
-{
-	PurpleUtilFetchUrlCallback callback;
-	void *user_data;
-
-	struct
-	{
-		char *user;
-		char *passwd;
-		char *address;
-		int port;
-		char *page;
-
-	} website;
-
-	char *url;
-	int num_times_redirected;
-	gboolean full;
-	char *user_agent;
-	gboolean http11;
-	char *request;
-	gsize request_written;
-	gboolean include_headers;
-
-	gboolean is_ssl;
-	PurpleSslConnection *ssl_connection;
-	PurpleProxyConnectData *connect_data;
-	int fd;
-	guint inpa;
-
-	gboolean got_headers;
-	gboolean has_explicit_data_len;
-	char *webdata;
-	unsigned long len;
-	unsigned long data_len;
-	gssize max_len;
-};
-
-/**
- * The arguments to this function are similar to printf.
- */
-static void
-purple_util_fetch_url_error(PurpleUtilFetchUrlData *gfud, const char *format, ...)
-{
-	gchar *error_message;
-	va_list args;
-
-	va_start(args, format);
-	error_message = g_strdup_vprintf(format, args);
-	va_end(args);
-
-	gfud->callback(gfud, gfud->user_data, NULL, 0, error_message);
-	g_free(error_message);
-	purple_util_fetch_url_cancel(gfud);
-}
-static void url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message);
-static void ssl_url_fetch_connect_cb(gpointer data, PurpleSslConnection *ssl_connection, PurpleInputCondition cond);
-static void ssl_url_fetch_error_cb(PurpleSslConnection *ssl_connection, PurpleSslErrorType error, gpointer data);
-
-static gboolean
-parse_redirect(const char *data, size_t data_len,
-			   PurpleUtilFetchUrlData *gfud)
-{
-	gchar *s;
-	gchar *new_url, *temp_url, *end;
-	gboolean full;
-	int len;
-
-	if ((s = g_strstr_len(data, data_len, "\nLocation: ")) == NULL)
-		/* We're not being redirected */
-		return FALSE;
-
-	s += strlen("Location: ");
-	end = strchr(s, '\r');
-
-	/* Just in case :) */
-	if (end == NULL)
-		end = strchr(s, '\n');
-
-	if (end == NULL)
-		return FALSE;
-
-	len = end - s;
-
-	new_url = g_malloc(len + 1);
-	strncpy(new_url, s, len);
-	new_url[len] = '\0';
-
-	full = gfud->full;
-
-	if (*new_url == '/' || g_strstr_len(new_url, len, "://") == NULL)
-	{
-		temp_url = new_url;
-
-		new_url = g_strdup_printf("%s:%d%s", gfud->website.address,
-								  gfud->website.port, temp_url);
-
-		g_free(temp_url);
-
-		full = FALSE;
-	}
-
-	purple_debug_info("util", "Redirecting to %s\n", new_url);
-
-	gfud->num_times_redirected++;
-	if (gfud->num_times_redirected >= 5)
-	{
-		purple_util_fetch_url_error(gfud,
-				_("Could not open %s: Redirected too many times"),
-				gfud->url);
-		return TRUE;
-	}
-
-	/*
-	 * Try again, with this new location.  This code is somewhat
-	 * ugly, but we need to reuse the gfud because whoever called
-	 * us is holding a reference to it.
-	 */
-	g_free(gfud->url);
-	gfud->url = new_url;
-	gfud->full = full;
-	g_free(gfud->request);
-	gfud->request = NULL;
-
-	if (gfud->is_ssl) {
-		gfud->is_ssl = FALSE;
-		purple_ssl_close(gfud->ssl_connection);
-		gfud->ssl_connection = NULL;
-	} else {
-		purple_input_remove(gfud->inpa);
-		gfud->inpa = 0;
-		close(gfud->fd);
-		gfud->fd = -1;
-	}
-	gfud->request_written = 0;
-	gfud->len = 0;
-	gfud->data_len = 0;
-
-	g_free(gfud->website.user);
-	g_free(gfud->website.passwd);
-	g_free(gfud->website.address);
-	g_free(gfud->website.page);
-	purple_url_parse(new_url, &gfud->website.address, &gfud->website.port,
-				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
-
-	if (purple_strcasestr(new_url, "https://") != NULL) {
-		gfud->is_ssl = TRUE;
-		gfud->ssl_connection = purple_ssl_connect(NULL,
-				gfud->website.address, gfud->website.port,
-				ssl_url_fetch_connect_cb, ssl_url_fetch_error_cb, gfud);
-	} else {
-		gfud->connect_data = purple_proxy_connect(NULL, NULL,
-				gfud->website.address, gfud->website.port,
-				url_fetch_connect_cb, gfud);
-	}
-
-	if (gfud->ssl_connection == NULL && gfud->connect_data == NULL)
-	{
-		purple_util_fetch_url_error(gfud, _("Unable to connect to %s"),
-				gfud->website.address);
-	}
-
-	return TRUE;
-}
-
-static size_t
-parse_content_len(const char *data, size_t data_len)
-{
-	size_t content_len = 0;
-	const char *p = NULL;
-
-	/* This is still technically wrong, since headers are case-insensitive
-	 * [RFC 2616, section 4.2], though this ought to catch the normal case.
-	 * Note: data is _not_ nul-terminated.
-	 */
-	if(data_len > 16) {
-		p = (strncmp(data, "Content-Length: ", 16) == 0) ? data : NULL;
-		if(!p)
-			p = (strncmp(data, "CONTENT-LENGTH: ", 16) == 0)
-				? data : NULL;
-		if(!p) {
-			p = g_strstr_len(data, data_len, "\nContent-Length: ");
-			if (p)
-				p++;
-		}
-		if(!p) {
-			p = g_strstr_len(data, data_len, "\nCONTENT-LENGTH: ");
-			if (p)
-				p++;
-		}
-
-		if(p)
-			p += 16;
-	}
-
-	/* If we can find a Content-Length header at all, try to sscanf it.
-	 * Response headers should end with at least \r\n, so sscanf is safe,
-	 * if we make sure that there is indeed a \n in our header.
-	 */
-	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
-		sscanf(p, "%" G_GSIZE_FORMAT, &content_len);
-		purple_debug_misc("util", "parsed %" G_GSIZE_FORMAT "\n", content_len);
-	}
-
-	return content_len;
-}
-
-
-static void
-url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
-{
-	PurpleUtilFetchUrlData *gfud = url_data;
-	int len;
-	char buf[4096];
-	char *data_cursor;
-	gboolean got_eof = FALSE;
-
-	/*
-	 * Read data in a loop until we can't read any more!  This is a
-	 * little confusing because we read using a different function
-	 * depending on whether the socket is ssl or cleartext.
-	 */
-	while ((gfud->is_ssl && ((len = purple_ssl_read(gfud->ssl_connection, buf, sizeof(buf))) > 0)) ||
-			(!gfud->is_ssl && (len = read(source, buf, sizeof(buf))) > 0))
-	{
-		if(gfud->max_len != -1 && (gfud->len + len) > gfud->max_len) {
-			purple_util_fetch_url_error(gfud, _("Error reading from %s: response too long (%d bytes limit)"),
-						    gfud->website.address, gfud->max_len);
-			return;
-		}
-
-		/* If we've filled up our buffer, make it bigger */
-		if((gfud->len + len) >= gfud->data_len) {
-			while((gfud->len + len) >= gfud->data_len)
-				gfud->data_len += sizeof(buf);
-
-			gfud->webdata = g_realloc(gfud->webdata, gfud->data_len);
-		}
-
-		data_cursor = gfud->webdata + gfud->len;
-
-		gfud->len += len;
-
-		memcpy(data_cursor, buf, len);
-
-		gfud->webdata[gfud->len] = '\0';
-
-		if(!gfud->got_headers) {
-			char *tmp;
-
-			/* See if we've reached the end of the headers yet */
-			if((tmp = strstr(gfud->webdata, "\r\n\r\n"))) {
-				char * new_data;
-				guint header_len = (tmp + 4 - gfud->webdata);
-				size_t content_len;
-
-				purple_debug_misc("util", "Response headers: '%.*s'\n",
-					header_len, gfud->webdata);
-
-				/* See if we can find a redirect. */
-				if(parse_redirect(gfud->webdata, header_len, gfud))
-					return;
-
-				gfud->got_headers = TRUE;
-
-				/* No redirect. See if we can find a content length. */
-				content_len = parse_content_len(gfud->webdata, header_len);
-
-				if(content_len == 0) {
-					/* We'll stick with an initial 8192 */
-					content_len = 8192;
-				} else {
-					gfud->has_explicit_data_len = TRUE;
-				}
-
-
-				/* If we're returning the headers too, we don't need to clean them out */
-				if(gfud->include_headers) {
-					gfud->data_len = content_len + header_len;
-					gfud->webdata = g_realloc(gfud->webdata, gfud->data_len);
-				} else {
-					size_t body_len = 0;
-
-					if(gfud->len > (header_len + 1))
-						body_len = (gfud->len - header_len);
-
-					content_len = MAX(content_len, body_len);
-
-					new_data = g_try_malloc(content_len);
-					if(new_data == NULL) {
-						purple_debug_error("util",
-								"Failed to allocate %" G_GSIZE_FORMAT " bytes: %s\n",
-								content_len, g_strerror(errno));
-						purple_util_fetch_url_error(gfud,
-								_("Unable to allocate enough memory to hold "
-								  "the contents from %s.  The web server may "
-								  "be trying something malicious."),
-								gfud->website.address);
-
-						return;
-					}
-
-					/* We may have read part of the body when reading the headers, don't lose it */
-					if(body_len > 0) {
-						tmp += 4;
-						memcpy(new_data, tmp, body_len);
-					}
-
-					/* Out with the old... */
-					g_free(gfud->webdata);
-
-					/* In with the new. */
-					gfud->len = body_len;
-					gfud->data_len = content_len;
-					gfud->webdata = new_data;
-				}
-			}
-		}
-
-		if(gfud->has_explicit_data_len && gfud->len >= gfud->data_len) {
-			got_eof = TRUE;
-			break;
-		}
-	}
-
-	if(len < 0) {
-		if(errno == EAGAIN) {
-			return;
-		} else {
-			purple_util_fetch_url_error(gfud, _("Error reading from %s: %s"),
-					gfud->website.address, g_strerror(errno));
-			return;
-		}
-	}
-
-	if((len == 0) || got_eof) {
-		gfud->webdata = g_realloc(gfud->webdata, gfud->len + 1);
-		gfud->webdata[gfud->len] = '\0';
-
-		gfud->callback(gfud, gfud->user_data, gfud->webdata, gfud->len, NULL);
-		purple_util_fetch_url_cancel(gfud);
-	}
-}
-
-static void ssl_url_fetch_recv_cb(gpointer data, PurpleSslConnection *ssl_connection, PurpleInputCondition cond)
-{
-	url_fetch_recv_cb(data, -1, cond);
-}
-
-/*
- * This function is called when the socket is available to be written
- * to.
- *
- * @param source The file descriptor that can be written to.  This can
- *        be an http connection or it can be the SSL connection of an
- *        https request.  So be careful what you use it for!  If it's
- *        an https request then use purple_ssl_write() instead of
- *        writing to it directly.
- */
-static void
-url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
-{
-	PurpleUtilFetchUrlData *gfud;
-	int len, total_len;
-
-	gfud = data;
-
-	if (gfud->request == NULL)
-	{
-		/* Host header is not forbidden in HTTP/1.0 requests, and HTTP/1.1
-		 * clients must know how to handle the "chunked" transfer encoding.
-		 * Purple doesn't know how to handle "chunked", so should always send
-		 * the Host header regardless, to get around some observed problems
-		 */
-		if (gfud->user_agent) {
-			gfud->request = g_strdup_printf(
-				"GET %s%s HTTP/%s\r\n"
-				"Connection: close\r\n"
-				"User-Agent: %s\r\n"
-				"Accept: */*\r\n"
-				"Host: %s\r\n\r\n",
-				(gfud->full ? "" : "/"),
-				(gfud->full ? (gfud->url ? gfud->url : "") : (gfud->website.page ? gfud->website.page : "")),
-				(gfud->http11 ? "1.1" : "1.0"),
-				(gfud->user_agent ? gfud->user_agent : ""),
-				(gfud->website.address ? gfud->website.address : ""));
-		} else {
-			gfud->request = g_strdup_printf(
-				"GET %s%s HTTP/%s\r\n"
-				"Connection: close\r\n"
-				"Accept: */*\r\n"
-				"Host: %s\r\n\r\n",
-				(gfud->full ? "" : "/"),
-				(gfud->full ? (gfud->url ? gfud->url : "") : (gfud->website.page ? gfud->website.page : "")),
-				(gfud->http11 ? "1.1" : "1.0"),
-				(gfud->website.address ? gfud->website.address : ""));
-		}
-	}
-
-	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
-		purple_debug_misc("util", "Request: '%s'\n", gfud->request);
-	else
-		purple_debug_misc("util", "request constructed\n");
-
-	total_len = strlen(gfud->request);
-
-	if (gfud->is_ssl)
-		len = purple_ssl_write(gfud->ssl_connection, gfud->request + gfud->request_written,
-				total_len - gfud->request_written);
-	else
-		len = write(gfud->fd, gfud->request + gfud->request_written,
-				total_len - gfud->request_written);
-
-	if (len < 0 && errno == EAGAIN)
-		return;
-	else if (len < 0) {
-		purple_util_fetch_url_error(gfud, _("Error writing to %s: %s"),
-				gfud->website.address, g_strerror(errno));
-		return;
-	}
-	gfud->request_written += len;
-
-	if (gfud->request_written < total_len)
-		return;
-
-	/* We're done writing our request, now start reading the response */
-	if (gfud->is_ssl) {
-		purple_input_remove(gfud->inpa);
-		gfud->inpa = 0;
-		purple_ssl_input_add(gfud->ssl_connection, ssl_url_fetch_recv_cb, gfud);
-	} else {
-		purple_input_remove(gfud->inpa);
-		gfud->inpa = purple_input_add(gfud->fd, PURPLE_INPUT_READ, url_fetch_recv_cb,
-			gfud);
-	}
-}
-
-static void
-url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
-{
-	PurpleUtilFetchUrlData *gfud;
-
-	gfud = url_data;
-	gfud->connect_data = NULL;
-
-	if (source == -1)
-	{
-		purple_util_fetch_url_error(gfud, _("Unable to connect to %s: %s"),
-				(gfud->website.address ? gfud->website.address : ""), error_message);
-		return;
-	}
-
-	gfud->fd = source;
-
-	gfud->inpa = purple_input_add(source, PURPLE_INPUT_WRITE,
-								url_fetch_send_cb, gfud);
-	url_fetch_send_cb(gfud, source, PURPLE_INPUT_WRITE);
-}
-
-static void ssl_url_fetch_connect_cb(gpointer data, PurpleSslConnection *ssl_connection, PurpleInputCondition cond)
-{
-	PurpleUtilFetchUrlData *gfud;
-
-	gfud = data;
-
-	gfud->inpa = purple_input_add(ssl_connection->fd, PURPLE_INPUT_WRITE,
-			url_fetch_send_cb, gfud);
-	url_fetch_send_cb(gfud, ssl_connection->fd, PURPLE_INPUT_WRITE);
-}
-
-static void ssl_url_fetch_error_cb(PurpleSslConnection *ssl_connection, PurpleSslErrorType error, gpointer data)
-{
-	PurpleUtilFetchUrlData *gfud;
-
-	gfud = data;
-	gfud->ssl_connection = NULL;
-
-	purple_util_fetch_url_error(gfud, _("Unable to connect to %s: %s"),
-			(gfud->website.address ? gfud->website.address : ""),
-	purple_ssl_strerror(error));
-}
-
-PurpleUtilFetchUrlData *
-purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
-		const char *url, gboolean full,	const char *user_agent, gboolean http11,
-		const char *request, gboolean include_headers, gssize max_len,
-		PurpleUtilFetchUrlCallback callback, void *user_data)
-{
-	PurpleUtilFetchUrlData *gfud;
-
-	g_return_val_if_fail(url      != NULL, NULL);
-	g_return_val_if_fail(callback != NULL, NULL);
-
-	if(g_getenv("PURPLE_UNSAFE_DEBUG"))
-		purple_debug_info("util",
-				 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
-				 url, full, user_agent?user_agent:"(null)", http11);
-	else
-		purple_debug_info("util", "requesting to fetch a URL\n");
-
-	gfud = g_new0(PurpleUtilFetchUrlData, 1);
-
-	gfud->callback = callback;
-	gfud->user_data  = user_data;
-	gfud->url = g_strdup(url);
-	gfud->user_agent = g_strdup(user_agent);
-	gfud->http11 = http11;
-	gfud->full = full;
-	gfud->request = g_strdup(request);
-	gfud->include_headers = include_headers;
-	gfud->fd = -1;
-	gfud->max_len = max_len;
-
-	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
-				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
-
-	if (purple_strcasestr(url, "https://") != NULL) {
-		if (!purple_ssl_is_supported()) {
-			purple_util_fetch_url_error(gfud,
-					_("Unable to connect to %s: Server requires TLS/SSL, but no TLS/SSL support was found."),
-					gfud->website.address);
-			return NULL;
-		}
-
-		gfud->is_ssl = TRUE;
-		gfud->ssl_connection = purple_ssl_connect(account,
-				gfud->website.address, gfud->website.port,
-				ssl_url_fetch_connect_cb, ssl_url_fetch_error_cb, gfud);
-	} else {
-		gfud->connect_data = purple_proxy_connect(NULL, account,
-				gfud->website.address, gfud->website.port,
-				url_fetch_connect_cb, gfud);
-	}
-
-	if (gfud->ssl_connection == NULL && gfud->connect_data == NULL)
-	{
-		purple_util_fetch_url_error(gfud, _("Unable to connect to %s"),
-				gfud->website.address);
-		return NULL;
-	}
-
-	return gfud;
-}
 
 gboolean
 yahoo_account_use_http_proxy(PurpleConnection *conn)
@@ -588,7 +42,7 @@ yahoo_account_use_http_proxy(PurpleConnection *conn)
 /*
  * Returns cookies formatted as a null terminated string for the given connection.
  * Must g_free return value.
- * 
+ *
  * TODO:will work, but must test for strict correctness
  */
 gchar* yahoo_get_cookies(PurpleConnection *gc)
@@ -599,7 +53,7 @@ gchar* yahoo_get_cookies(PurpleConnection *gc)
 	gchar *t1,*t2,*t3;
 	GSList *tmp;
 	GSList *cookies;
-	cookies = ((struct yahoo_data*)(gc->proto_data))->cookies;
+	cookies = ((YahooData*)(gc->proto_data))->cookies;
 	tmp = cookies;
 	while(tmp)
 	{
@@ -664,7 +118,7 @@ gchar* yahoo_get_cookies(PurpleConnection *gc)
  */
 char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	char *ret;
 	const char *to_codeset;
 
@@ -693,7 +147,7 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
  */
 char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	YahooData *yd = gc->proto_data;
 	char *ret;
 	const char *from_codeset;
 
@@ -718,7 +172,6 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 char *yahoo_convert_to_numeric(const char *str)
 {
 	GString *gstr = NULL;
-	char *retstr;
 	const unsigned char *p;
 
 	gstr = g_string_sized_new(strlen(str) * 6 + 1);
@@ -727,112 +180,172 @@ char *yahoo_convert_to_numeric(const char *str)
 		g_string_append_printf(gstr, "&#%u;", *p);
 	}
 
-	retstr = gstr->str;
-
-	g_string_free(gstr, FALSE);
-
-	return retstr;
+	return g_string_free(gstr, FALSE);
 }
 
 /*
+ * The values in this hash table should probably be lowercase, since that's
+ * what xhtml expects.  Also because yahoo_codes_to_html() does
+ * case-sensitive comparisons.
+ *
  * I found these on some website but i don't know that they actually
  * work (or are supposed to work). I didn't implement them yet.
- * 
-     * [0;30m ---black
-     * [1;37m ---white
-     * [0;37m ---tan
-     * [0;38m ---light black
-     * [1;39m ---dark blue
-     * [0;32m ---green
-     * [0;33m ---yellow
-     * [0;35m ---pink
-     * [1;35m ---purple
-     * [1;30m ---light blue
-     * [0;31m ---red
-     * [0;34m ---blue
-     * [0;36m ---aqua
-         * (shift+comma)lyellow(shift+period) ---light yellow
-     * (shift+comma)lgreen(shift+period) ---light green
-[2;30m <--white out
-*/
+ *
+ * [0;30m ---black
+ * [1;37m ---white
+ * [0;37m ---tan
+ * [0;38m ---light black
+ * [1;39m ---dark blue
+ * [0;32m ---green
+ * [0;33m ---yellow
+ * [0;35m ---pink
+ * [1;35m ---purple
+ * [1;30m ---light blue
+ * [0;31m ---red
+ * [0;34m ---blue
+ * [0;36m ---aqua
+ * (shift+comma)lyellow(shift+period) ---light yellow
+ * (shift+comma)lgreen(shift+period) ---light green
+ * [2;30m <--white out
+ */
 
-static GHashTable *ht = NULL;
+static GHashTable *esc_codes_ht = NULL;
+static GHashTable *tags_ht = NULL;
 
 void yahoo_init_colorht()
 {
-	ht = g_hash_table_new(g_str_hash, g_str_equal);
-/* the numbers in comments are what gyach uses, but i think they're incorrect */
-	g_hash_table_insert(ht, "30", "<FONT COLOR=\"#000000\">"); /* black */
-	g_hash_table_insert(ht, "31", "<FONT COLOR=\"#0000FF\">"); /* blue */
-	g_hash_table_insert(ht, "32", "<FONT COLOR=\"#008080\">"); /* cyan */      /* 00b2b2 */
-	g_hash_table_insert(ht, "33", "<FONT COLOR=\"#808080\">"); /* gray */      /* 808080 */
-	g_hash_table_insert(ht, "34", "<FONT COLOR=\"#008000\">"); /* green */     /* 00c200 */
-	g_hash_table_insert(ht, "35", "<FONT COLOR=\"#FF0080\">"); /* pink */      /* ffafaf */
-	g_hash_table_insert(ht, "36", "<FONT COLOR=\"#800080\">"); /* purple */    /* b200b2 */
-	g_hash_table_insert(ht, "37", "<FONT COLOR=\"#FF8000\">"); /* orange */    /* ffff00 */
-	g_hash_table_insert(ht, "38", "<FONT COLOR=\"#FF0000\">"); /* red */
-	g_hash_table_insert(ht, "39", "<FONT COLOR=\"#808000\">"); /* olive */     /* 546b50 */
+	if (esc_codes_ht != NULL)
+		/* Hash table has already been initialized */
+		return;
 
-	g_hash_table_insert(ht,  "1",  "<B>");
-	g_hash_table_insert(ht, "x1", "</B>");
-	g_hash_table_insert(ht,  "2",  "<I>");
-	g_hash_table_insert(ht, "x2", "</I>");
-	g_hash_table_insert(ht,  "4",  "<U>");
-	g_hash_table_insert(ht, "x4", "</U>");
+	/* Key is the escape code string.  Value is the HTML that should be
+	 * inserted in place of the escape code. */
+	esc_codes_ht = g_hash_table_new(g_str_hash, g_str_equal);
+
+	/* Key is the name of the HTML tag, for example "font" or "/font"
+	 * value is the HTML that should be inserted in place of the old tag */
+	tags_ht = g_hash_table_new(g_str_hash, g_str_equal);
+
+	/* the numbers in comments are what gyach uses, but i think they're incorrect */
+#ifdef USE_CSS_FORMATTING
+	g_hash_table_insert(esc_codes_ht, "30", "<span style=\"color: #000000\">"); /* black */
+	g_hash_table_insert(esc_codes_ht, "31", "<span style=\"color: #0000FF\">"); /* blue */
+	g_hash_table_insert(esc_codes_ht, "32", "<span style=\"color: #008080\">"); /* cyan */      /* 00b2b2 */
+	g_hash_table_insert(esc_codes_ht, "33", "<span style=\"color: #808080\">"); /* gray */      /* 808080 */
+	g_hash_table_insert(esc_codes_ht, "34", "<span style=\"color: #008000\">"); /* green */     /* 00c200 */
+	g_hash_table_insert(esc_codes_ht, "35", "<span style=\"color: #FF0080\">"); /* pink */      /* ffafaf */
+	g_hash_table_insert(esc_codes_ht, "36", "<span style=\"color: #800080\">"); /* purple */    /* b200b2 */
+	g_hash_table_insert(esc_codes_ht, "37", "<span style=\"color: #FF8000\">"); /* orange */    /* ffff00 */
+	g_hash_table_insert(esc_codes_ht, "38", "<span style=\"color: #FF0000\">"); /* red */
+	g_hash_table_insert(esc_codes_ht, "39", "<span style=\"color: #808000\">"); /* olive */     /* 546b50 */
+#else
+	g_hash_table_insert(esc_codes_ht, "30", "<font color=\"#000000\">"); /* black */
+	g_hash_table_insert(esc_codes_ht, "31", "<font color=\"#0000FF\">"); /* blue */
+	g_hash_table_insert(esc_codes_ht, "32", "<font color=\"#008080\">"); /* cyan */      /* 00b2b2 */
+	g_hash_table_insert(esc_codes_ht, "33", "<font color=\"#808080\">"); /* gray */      /* 808080 */
+	g_hash_table_insert(esc_codes_ht, "34", "<font color=\"#008000\">"); /* green */     /* 00c200 */
+	g_hash_table_insert(esc_codes_ht, "35", "<font color=\"#FF0080\">"); /* pink */      /* ffafaf */
+	g_hash_table_insert(esc_codes_ht, "36", "<font color=\"#800080\">"); /* purple */    /* b200b2 */
+	g_hash_table_insert(esc_codes_ht, "37", "<font color=\"#FF8000\">"); /* orange */    /* ffff00 */
+	g_hash_table_insert(esc_codes_ht, "38", "<font color=\"#FF0000\">"); /* red */
+	g_hash_table_insert(esc_codes_ht, "39", "<font color=\"#808000\">"); /* olive */     /* 546b50 */
+#endif /* !USE_CSS_FORMATTING */
+
+	g_hash_table_insert(esc_codes_ht,  "1",  "<b>");
+	g_hash_table_insert(esc_codes_ht, "x1", "</b>");
+	g_hash_table_insert(esc_codes_ht,  "2",  "<i>");
+	g_hash_table_insert(esc_codes_ht, "x2", "</i>");
+	g_hash_table_insert(esc_codes_ht,  "4",  "<u>");
+	g_hash_table_insert(esc_codes_ht, "x4", "</u>");
 
 	/* these just tell us the text they surround is supposed
 	 * to be a link. purple figures that out on its own so we
 	 * just ignore it.
 	 */
-	g_hash_table_insert(ht, "l", ""); /* link start */
-	g_hash_table_insert(ht, "xl", ""); /* link end */
+	g_hash_table_insert(esc_codes_ht, "l", ""); /* link start */
+	g_hash_table_insert(esc_codes_ht, "xl", ""); /* link end */
 
-	g_hash_table_insert(ht, "<black>",  "<FONT COLOR=\"#000000\">");
-	g_hash_table_insert(ht, "<blue>",   "<FONT COLOR=\"#0000FF\">");
-	g_hash_table_insert(ht, "<cyan>",   "<FONT COLOR=\"#008284\">");
-	g_hash_table_insert(ht, "<gray>",   "<FONT COLOR=\"#848284\">");
-	g_hash_table_insert(ht, "<green>",  "<FONT COLOR=\"#008200\">");
-	g_hash_table_insert(ht, "<pink>",   "<FONT COLOR=\"#FF0084\">");
-	g_hash_table_insert(ht, "<purple>", "<FONT COLOR=\"#840084\">");
-	g_hash_table_insert(ht, "<orange>", "<FONT COLOR=\"#FF8000\">");
-	g_hash_table_insert(ht, "<red>",    "<FONT COLOR=\"#FF0000\">");
-	g_hash_table_insert(ht, "<yellow>", "<FONT COLOR=\"#848200\">");
+#ifdef USE_CSS_FORMATTING
+	g_hash_table_insert(tags_ht, "black",  "<span style=\"color: #000000\">");
+	g_hash_table_insert(tags_ht, "blue",   "<span style=\"color: #0000FF\">");
+	g_hash_table_insert(tags_ht, "cyan",   "<span style=\"color: #008284\">");
+	g_hash_table_insert(tags_ht, "gray",   "<span style=\"color: #848284\">");
+	g_hash_table_insert(tags_ht, "green",  "<span style=\"color: #008200\">");
+	g_hash_table_insert(tags_ht, "pink",   "<span style=\"color: #FF0084\">");
+	g_hash_table_insert(tags_ht, "purple", "<span style=\"color: #840084\">");
+	g_hash_table_insert(tags_ht, "orange", "<span style=\"color: #FF8000\">");
+	g_hash_table_insert(tags_ht, "red",    "<span style=\"color: #FF0000\">");
+	g_hash_table_insert(tags_ht, "yellow", "<span style=\"color: #848200\">");
 
-	g_hash_table_insert(ht, "</black>",  "</FONT>");
-	g_hash_table_insert(ht, "</blue>",   "</FONT>");
-	g_hash_table_insert(ht, "</cyan>",   "</FONT>");
-	g_hash_table_insert(ht, "</gray>",   "</FONT>");
-	g_hash_table_insert(ht, "</green>",  "</FONT>");
-	g_hash_table_insert(ht, "</pink>",   "</FONT>");
-	g_hash_table_insert(ht, "</purple>", "</FONT>");
-	g_hash_table_insert(ht, "</orange>", "</FONT>");
-	g_hash_table_insert(ht, "</red>",    "</FONT>");
-	g_hash_table_insert(ht, "</yellow>", "</FONT>");
+	g_hash_table_insert(tags_ht, "/black",  "</span>");
+	g_hash_table_insert(tags_ht, "/blue",   "</span>");
+	g_hash_table_insert(tags_ht, "/cyan",   "</span>");
+	g_hash_table_insert(tags_ht, "/gray",   "</span>");
+	g_hash_table_insert(tags_ht, "/green",  "</span>");
+	g_hash_table_insert(tags_ht, "/pink",   "</span>");
+	g_hash_table_insert(tags_ht, "/purple", "</span>");
+	g_hash_table_insert(tags_ht, "/orange", "</span>");
+	g_hash_table_insert(tags_ht, "/red",    "</span>");
+	g_hash_table_insert(tags_ht, "/yellow", "</span>");
+#else
+	g_hash_table_insert(tags_ht, "black",  "<font color=\"#000000\">");
+	g_hash_table_insert(tags_ht, "blue",   "<font color=\"#0000FF\">");
+	g_hash_table_insert(tags_ht, "cyan",   "<font color=\"#008284\">");
+	g_hash_table_insert(tags_ht, "gray",   "<font color=\"#848284\">");
+	g_hash_table_insert(tags_ht, "green",  "<font color=\"#008200\">");
+	g_hash_table_insert(tags_ht, "pink",   "<font color=\"#FF0084\">");
+	g_hash_table_insert(tags_ht, "purple", "<font color=\"#840084\">");
+	g_hash_table_insert(tags_ht, "orange", "<font color=\"#FF8000\">");
+	g_hash_table_insert(tags_ht, "red",    "<font color=\"#FF0000\">");
+	g_hash_table_insert(tags_ht, "yellow", "<font color=\"#848200\">");
 
-	/* remove these once we have proper support for <FADE> and <ALT> */
-	g_hash_table_insert(ht, "</fade>", "");
-	g_hash_table_insert(ht, "</alt>", "");
+	g_hash_table_insert(tags_ht, "/black",  "</font>");
+	g_hash_table_insert(tags_ht, "/blue",   "</font>");
+	g_hash_table_insert(tags_ht, "/cyan",   "</font>");
+	g_hash_table_insert(tags_ht, "/gray",   "</font>");
+	g_hash_table_insert(tags_ht, "/green",  "</font>");
+	g_hash_table_insert(tags_ht, "/pink",   "</font>");
+	g_hash_table_insert(tags_ht, "/purple", "</font>");
+	g_hash_table_insert(tags_ht, "/orange", "</font>");
+	g_hash_table_insert(tags_ht, "/red",    "</font>");
+	g_hash_table_insert(tags_ht, "/yellow", "</font>");
+#endif /* !USE_CSS_FORMATTING */
 
-	/* these are the normal html yahoo sends (besides <font>).
-	 * anything else will get turned into &lt;tag&gt;, so if I forgot
-	 * about something, please add it. Why Yahoo! has to send unescaped
-	 * <'s and >'s that aren't supposed to be html is beyond me.
-	 */
-	g_hash_table_insert(ht, "<b>", "<b>");
-	g_hash_table_insert(ht, "<i>", "<i>");
-	g_hash_table_insert(ht, "<u>", "<u>");
+	/* We don't support these tags, so discard them */
+	g_hash_table_insert(tags_ht, "alt", "");
+	g_hash_table_insert(tags_ht, "fade", "");
+	g_hash_table_insert(tags_ht, "snd", "");
+	g_hash_table_insert(tags_ht, "/alt", "");
+	g_hash_table_insert(tags_ht, "/fade", "");
 
-	g_hash_table_insert(ht, "</b>", "</b>");
-	g_hash_table_insert(ht, "</i>", "</i>");
-	g_hash_table_insert(ht, "</u>", "</u>");
-	g_hash_table_insert(ht, "</font>", "</font>");
+	/* Official clients don't seem to send b, i or u tags.  They use
+	 * the escape codes listed above.  Official clients definitely send
+	 * font tags, though.  I wonder if we can remove the opening and
+	 * closing b, i and u tags from here? */
+	g_hash_table_insert(tags_ht, "b", "<b>");
+	g_hash_table_insert(tags_ht, "i", "<i>");
+	g_hash_table_insert(tags_ht, "u", "<u>");
+	g_hash_table_insert(tags_ht, "font", "<font>");
+
+	g_hash_table_insert(tags_ht, "/b", "</b>");
+	g_hash_table_insert(tags_ht, "/i", "</i>");
+	g_hash_table_insert(tags_ht, "/u", "</u>");
+	g_hash_table_insert(tags_ht, "/font", "</font>");
 }
 
 void yahoo_dest_colorht()
 {
-	g_hash_table_destroy(ht);
+	if (esc_codes_ht == NULL)
+		/* Hash table has already been destroyed */
+		return;
+
+	g_hash_table_destroy(esc_codes_ht);
+	esc_codes_ht = NULL;
+	g_hash_table_destroy(tags_ht);
+	tags_ht = NULL;
 }
 
+#ifndef USE_CSS_FORMATTING
 static int point_to_html(int x)
 {
 	if (x < 9)
@@ -849,128 +362,306 @@ static int point_to_html(int x)
 		return 6;
 	return 7;
 }
+#endif /* !USE_CSS_FORMATTING */
 
-/* The Yahoo size tag is actually an absz tag; convert it to an HTML size, and include both tags */
-static void _font_tags_fix_size(GString *tag, GString *dest)
+static void append_attrs_datalist_foreach_cb(GQuark key_id, gpointer data, gpointer user_data)
 {
-	char *x, *end;
-	int size;
+	const char *key;
+	const char *value;
+	xmlnode *cur;
 
-	if (((x = strstr(tag->str, "size"))) && ((x = strchr(x, '=')))) {
-		while (*x && !g_ascii_isdigit(*x))
-			x++;
-		if (*x) {
-			int htmlsize;
+	key = g_quark_to_string(key_id);
+	value = data;
+	cur = user_data;
 
-			size = strtol(x, &end, 10);
-			htmlsize = point_to_html(size);
-			g_string_append_len(dest, tag->str, x - tag->str);
-			g_string_append_printf(dest, "%d", htmlsize);
-			g_string_append_printf(dest, "\" absz=\"%d", size);
-			g_string_append(dest, end);
-		} else {
-			g_string_append(dest, tag->str);
+	xmlnode_set_attrib(cur, key, value);
+}
+
+/**
+ * @param cur A pointer to the position in the XML tree that we're
+ *        currently building.  This will be modified when opening a tag
+ *        or closing an existing tag.
+ */
+static void yahoo_codes_to_html_add_tag(xmlnode **cur, const char *tag, gboolean is_closing_tag, const gchar *tag_name, gboolean is_font_tag)
+{
+	if (is_closing_tag) {
+		xmlnode *tmp;
+		GSList *dangling_tags = NULL;
+
+		/* Move up the DOM until we find the opening tag */
+		for (tmp = *cur; tmp != NULL; tmp = xmlnode_get_parent(tmp)) {
+			/* Add one to tag_name when doing this comparison because it starts with a / */
+			if (g_str_equal(tmp->name, tag_name + 1))
+				/* Found */
+				break;
+			dangling_tags = g_slist_prepend(dangling_tags, tmp);
+		}
+		if (tmp == NULL) {
+			/* This is a closing tag with no opening tag.  Useless. */
+			purple_debug_error("yahoo", "Ignoring unmatched tag %s", tag);
+			g_slist_free(dangling_tags);
 			return;
 		}
+
+		/* Move our current position up, now that we've closed a tag */
+		*cur = xmlnode_get_parent(tmp);
+
+		/* Re-open any tags that were nested below the tag we just closed */
+		while (dangling_tags != NULL) {
+			tmp = dangling_tags->data;
+			dangling_tags = g_slist_delete_link(dangling_tags, dangling_tags);
+
+			/* Create a copy of this tag+attributes (but not child tags or
+			 * data) at our new location */
+			*cur = xmlnode_new_child(*cur, tmp->name);
+			for (tmp = tmp->child; tmp != NULL; tmp = tmp->next)
+				if (tmp->type == XMLNODE_TYPE_ATTRIB)
+					xmlnode_set_attrib_full(*cur, tmp->name,
+							tmp->xmlns, tmp->prefix, tmp->data);
+		}
 	} else {
-		g_string_append(dest, tag->str);
-		return;
+		const char *start;
+		const char *end;
+		GData *attributes;
+		char *fontsize = NULL;
+
+		purple_markup_find_tag(tag_name, tag, &start, &end, &attributes);
+		*cur = xmlnode_new_child(*cur, tag_name);
+
+		if (is_font_tag) {
+			/* Special case for the font size attribute */
+			fontsize = g_strdup(g_datalist_get_data(&attributes, "size"));
+			if (fontsize != NULL)
+				g_datalist_remove_data(&attributes, "size");
+		}
+
+		/* Add all font tag attributes */
+		g_datalist_foreach(&attributes, append_attrs_datalist_foreach_cb, *cur);
+		g_datalist_clear(&attributes);
+
+		if (fontsize != NULL) {
+#ifdef USE_CSS_FORMATTING
+			/*
+			 * The Yahoo font size value is given in pt, even though the HTML
+			 * standard for <font size="x"> treats the size as a number on a
+			 * scale between 1 and 7.  So we insert the font size as a CSS
+			 * style on a span tag.
+			 */
+			gchar *tmp = g_strdup_printf("font-size: %spt", fontsize);
+			*cur = xmlnode_new_child(*cur, "span");
+			xmlnode_set_attrib(*cur, "style", tmp);
+			g_free(tmp);
+#else
+			/*
+			 * The Yahoo font size value is given in pt, even though the HTML
+			 * standard for <font size="x"> treats the size as a number on a
+			 * scale between 1 and 7.  So we convert it to an appropriate
+			 * value.  This loses precision, which is why CSS formatting is
+			 * preferred.  The "absz" attribute remains here for backward
+			 * compatibility with UIs that might use it, but it is totally
+			 * not standard at all.
+			 */
+			int size, htmlsize;
+			gchar tmp[11];
+			size = strtol(fontsize, NULL, 10);
+			htmlsize = point_to_html(size);
+			sprintf(tmp, "%u", htmlsize);
+			xmlnode_set_attrib(*cur, "size", tmp);
+			xmlnode_set_attrib(*cur, "absz", fontsize);
+#endif /* !USE_CSS_FORMATTING */
+			g_free(fontsize);
+		}
 	}
 }
 
+/**
+ * Similar to purple_markup_get_tag_name(), but works with closing tags.
+ *
+ * @return The lowercase name of the tag.  If this is a closing tag then
+ *         this value starts with a forward slash.  The caller must free
+ *         this string with g_free.
+ */
+static gchar *yahoo_markup_get_tag_name(const char *tag, gboolean *is_closing_tag)
+{
+	size_t len;
+
+	*is_closing_tag = (tag[1] == '/');
+	if (*is_closing_tag)
+		len = strcspn(tag + 1, "> ");
+	else
+		len = strcspn(tag + 1, "> /");
+
+	return g_utf8_strdown(tag + 1, len);
+}
+
+/*
+ * Yahoo! messages generally aren't well-formed.  Their markup is
+ * more of a flow from start to finish rather than a hierarchy from
+ * outer to inner.  They tend to open tags and close them only when
+ * necessary.
+ *
+ * Example: <font size="8">size 8 <font size="16">size 16 <font size="8">size 8 again
+ *
+ * But we want to send well-formed HTML to the core, so we step through
+ * the input string and build an xmlnode tree containing sanitized HTML.
+ */
 char *yahoo_codes_to_html(const char *x)
 {
-	GString *s, *tmp;
-	int i, j, xs, nomoreendtags = 0; /* s/endtags/closinganglebrackets */
-	char *match, *ret;
+	size_t x_len;
+	xmlnode *html, *cur;
+	GString *cdata = g_string_new(NULL);
+	int i, j;
+	gboolean no_more_gt_brackets = FALSE;
+	const char *match;
+	gchar *xmlstr1, *xmlstr2;
 
-	s = g_string_sized_new(strlen(x));
+	x_len = strlen(x);
+	html = xmlnode_new("html");
 
-	for (i = 0, xs = strlen(x); i < xs; i++) {
+	cur = html;
+	for (i = 0; i < x_len; i++) {
 		if ((x[i] == 0x1b) && (x[i+1] == '[')) {
+			/* This escape sequence signifies the beginning of some
+			 * text formatting code */
 			j = i + 1;
 
-			while (j++ < xs) {
+			while (j++ < x_len) {
+				gchar *code;
+
 				if (x[j] != 'm')
+					/* Keep looking for the end of this sequence */
 					continue;
-				else {
-					tmp = g_string_new_len(x + i + 2, j - i - 2);
-					if (tmp->str[0] == '#')
-						g_string_append_printf(s, "<FONT COLOR=\"%s\">", tmp->str);
-					else if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
-						g_string_append(s, match);
-					else {
-						purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
-							"Unknown ansi code 'ESC[%sm'.\n", tmp->str);
-						g_string_free(tmp, TRUE);
-						break;
+
+				/* We've reached the end of the formatting sequence, yay */
+
+				/* Append any character data that belongs in the current node */
+				if (cdata->len > 0) {
+					xmlnode_insert_data(cur, cdata->str, cdata->len);
+					g_string_truncate(cdata, 0);
+				}
+
+				code = g_strndup(x + i + 2, j - i - 2);
+				if (code[0] == '#') {
+#ifdef USE_CSS_FORMATTING
+					gchar *tmp = g_strdup_printf("color: %s", code);
+					cur = xmlnode_new_child(cur, "span");
+					xmlnode_set_attrib(cur, "style", tmp);
+					g_free(tmp);
+#else
+					cur = xmlnode_new_child(cur, "font");
+					xmlnode_set_attrib(cur, "color", code);
+#endif /* !USE_CSS_FORMATTING */
+
+				} else if ((match = g_hash_table_lookup(esc_codes_ht, code))) {
+					/* Some tags are in the hash table only because we
+					 * want to ignore them */
+					if (match[0] != '\0') {
+						gboolean is_closing_tag;
+						gchar *tag_name;
+						tag_name = yahoo_markup_get_tag_name(match, &is_closing_tag);
+						yahoo_codes_to_html_add_tag(&cur, match, is_closing_tag, tag_name, FALSE);
+						g_free(tag_name);
 					}
 
-					i = j;
-					g_string_free(tmp, TRUE);
-					break;
+				} else {
+					purple_debug_error("yahoo",
+						"Ignoring unknown ansi code 'ESC[%sm'.\n", code);
 				}
+
+				g_free(code);
+				i = j;
+				break;
 			}
 
-		} else if (!nomoreendtags && (x[i] == '<')) {
+		} else if (x[i] == '<' && !no_more_gt_brackets) {
+			/* The start of an HTML tag */
 			j = i;
 
-			while (j++ < xs) {
-				if (x[j] != '>')
-					if (j == xs) {
-						g_string_append(s, "&lt;");
-						nomoreendtags = 1;
+			while (j++ < x_len) {
+				gchar *tag;
+				gboolean is_closing_tag;
+				gchar *tag_name;
+
+				if (x[j] != '>') {
+					if (x[j] == '"') {
+						/* We're inside a quoted attribute value. Skip to the end */
+						j++;
+						while (j != x_len && x[j] != '"')
+							j++;
+					} else if (x[j] == '\'') {
+						/* We're inside a quoted attribute value. Skip to the end */
+						j++;
+						while (j != x_len && x[j] != '\'')
+							j++;
 					}
-					else
+					if (j != x_len)
+						/* Keep looking for the end of this tag */
 						continue;
-				else {
-					tmp = g_string_new_len(x + i, j - i + 1);
-					g_string_ascii_down(tmp);
 
-					if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
-						g_string_append(s, match);
-					else if (!strncmp(tmp->str, "<fade ", 6) ||
-						!strncmp(tmp->str, "<alt ", 5) ||
-						!strncmp(tmp->str, "<snd ", 5)) {
-
-						/* remove this if gtkimhtml ever supports any of these */
-						i = j;
-						g_string_free(tmp, TRUE);
-						break;
-
-					} else if (!strncmp(tmp->str, "<font ", 6)) {
-						_font_tags_fix_size(tmp, s);
-					} else {
-						g_string_append(s, "&lt;");
-						g_string_free(tmp, TRUE);
-						break;
-					}
-
-					i = j;
-					g_string_free(tmp, TRUE);
+					/* This < has no corresponding > */
+					g_string_append_c(cdata, x[i]);
+					no_more_gt_brackets = TRUE;
 					break;
 				}
 
+				tag = g_strndup(x + i, j - i + 1);
+				tag_name = yahoo_markup_get_tag_name(tag, &is_closing_tag);
+
+				match = g_hash_table_lookup(tags_ht, tag_name);
+				if (match == NULL) {
+					/* Unknown tag.  The user probably typed a less-than sign */
+					g_string_append_c(cdata, x[i]);
+					no_more_gt_brackets = TRUE;
+					g_free(tag);
+					g_free(tag_name);
+					break;
+				}
+
+				/* Some tags are in the hash table only because we
+				 * want to ignore them */
+				if (match[0] != '\0') {
+					/* Append any character data that belongs in the current node */
+					if (cdata->len > 0) {
+						xmlnode_insert_data(cur, cdata->str, cdata->len);
+						g_string_truncate(cdata, 0);
+					}
+					if (g_str_equal(tag_name, "font"))
+						/* Font tags are a special case.  We don't
+						 * necessarily want to replace the whole thing--
+						 * we just want to fix the size attribute. */
+						yahoo_codes_to_html_add_tag(&cur, tag, is_closing_tag, tag_name, TRUE);
+					else
+						yahoo_codes_to_html_add_tag(&cur, match, is_closing_tag, tag_name, FALSE);
+				}
+
+				i = j;
+				g_free(tag);
+				g_free(tag_name);
+				break;
 			}
 
 		} else {
-			if (x[i] == '<')
-				g_string_append(s, "&lt;");
-			else if (x[i] == '>')
-				g_string_append(s, "&gt;");
-			else if (x[i] == '&')
-				g_string_append(s, "&amp;");
-			else if (x[i] == '"')
-				g_string_append(s, "&quot;");
-			else
-				g_string_append_c(s, x[i]);
+			g_string_append_c(cdata, x[i]);
 		}
 	}
 
-	ret = s->str;
-	g_string_free(s, FALSE);
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", ret);
-	return ret;
+	/* Append any remaining character data */
+	if (cdata->len > 0)
+		xmlnode_insert_data(cur, cdata->str, cdata->len);
+	g_string_free(cdata, TRUE);
+
+	/* Serialize our HTML */
+	xmlstr1 = xmlnode_to_str(html, NULL);
+	xmlnode_free(html);
+
+	/* Strip off the outter HTML node */
+	/* This probably isn't necessary, especially if we made the outter HTML
+	 * node an empty span.  But the HTML is simpler this way. */
+	xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
+	g_free(xmlstr1);
+
+	purple_debug_misc("yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", xmlstr2);
+	return xmlstr2;
 }
 
 /* borrowed from gtkimhtml */
@@ -978,8 +669,16 @@ char *yahoo_codes_to_html(const char *x)
 #define POINT_SIZE(x) (_point_sizes [MIN ((x > 0 ? x : 1), MAX_FONT_SIZE) - 1])
 static const gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
 
-enum fatype { size, color, face, junk };
-typedef struct {
+enum fatype
+{
+	FATYPE_SIZE,
+	FATYPE_COLOR,
+	FATYPE_FACE,
+	FATYPE_JUNK
+};
+
+typedef struct
+{
 	enum fatype type;
 	union {
 		int size;
@@ -991,28 +690,26 @@ typedef struct {
 
 static void fontattr_free(fontattr *f)
 {
-	if (f->type == color)
+	if (f->type == FATYPE_COLOR)
 		g_free(f->u.color);
-	else if (f->type == face)
+	else if (f->type == FATYPE_FACE)
 		g_free(f->u.face);
 	g_free(f);
 }
 
-static void yahoo_htc_queue_cleanup(GQueue *q)
+static void yahoo_htc_list_cleanup(GSList *l)
 {
-	char *tmp;
-
-	while ((tmp = g_queue_pop_tail(q)))
-		g_free(tmp);
-	g_queue_free(q);
+	while (l != NULL) {
+		g_free(l->data);
+		l = g_slist_delete_link(l, l);
+	}
 }
 
 static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
-				int len, GQueue *colors, GQueue *tags, GQueue *ftattr)
+				int len, GSList **colors, GSList **tags, GQueue *ftattr)
 {
-
 	int m, n, vstart;
-	gboolean quote = 0, done = 0;
+	gboolean quote = FALSE, done = FALSE;
 
 	m = *j;
 
@@ -1037,7 +734,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 
 				if (src[n] == '"') {
 					if (!quote) {
-						quote = 1;
+						quote = TRUE;
 						vstart = n;
 						continue;
 					} else {
@@ -1046,14 +743,14 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 				}
 
 				if (!quote && ((src[n] == ' ') || (src[n] == '>')))
-					done = 1;
+					done = TRUE;
 
 				if (done) {
 					if (!g_ascii_strncasecmp(&src[*j+1], "FACE", m - *j - 1)) {
 						fontattr *f;
 
 						f = g_new(fontattr, 1);
-						f->type = face;
+						f->type = FATYPE_FACE;
 						f->u.face = g_strndup(&src[vstart+1], n-vstart-1);
 						if (!ftattr)
 							ftattr = g_queue_new();
@@ -1064,7 +761,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						fontattr *f;
 
 						f = g_new(fontattr, 1);
-						f->type = size;
+						f->type = FATYPE_SIZE;
 						f->u.size = POINT_SIZE(strtol(&src[vstart+1], NULL, 10));
 						if (!ftattr)
 							ftattr = g_queue_new();
@@ -1075,7 +772,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						fontattr *f;
 
 						f = g_new(fontattr, 1);
-						f->type = color;
+						f->type = FATYPE_COLOR;
 						f->u.color = g_strndup(&src[vstart+1], n-vstart-1);
 						if (!ftattr)
 							ftattr = g_queue_new();
@@ -1086,7 +783,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 						fontattr *f;
 
 						f = g_new(fontattr, 1);
-						f->type = junk;
+						f->type = FATYPE_JUNK;
 						f->u.junk = g_strndup(&src[*j+1], n-*j);
 						if (!ftattr)
 							ftattr = g_queue_new();
@@ -1103,56 +800,52 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 			*j = m;
 
 		if (src[m] == '>') {
-			gboolean needendtag = 0;
+			gboolean needendtag = FALSE;
 			fontattr *f;
 			GString *tmp = g_string_new(NULL);
-			char *colorstr;
 
 			if (!g_queue_is_empty(ftattr)) {
 				while ((f = g_queue_pop_tail(ftattr))) {
 					switch (f->type) {
-					case size:
+					case FATYPE_SIZE:
 						if (!needendtag) {
-							needendtag = 1;
+							needendtag = TRUE;
 							g_string_append(dest, "<font ");
 						}
 
 						g_string_append_printf(dest, "size=\"%d\" ", f->u.size);
-						fontattr_free(f);
 						break;
-					case face:
+					case FATYPE_FACE:
 						if (!needendtag) {
-							needendtag = 1;
+							needendtag = TRUE;
 							g_string_append(dest, "<font ");
 						}
 
 						g_string_append_printf(dest, "face=\"%s\" ", f->u.face);
-						fontattr_free(f);
 						break;
-					case junk:
+					case FATYPE_JUNK:
 						if (!needendtag) {
-							needendtag = 1;
+							needendtag = TRUE;
 							g_string_append(dest, "<font ");
 						}
 
 						g_string_append(dest, f->u.junk);
-						fontattr_free(f);
 						break;
 
-					case color:
+					case FATYPE_COLOR:
 						if (needendtag) {
 							g_string_append(tmp, "</font>");
 							dest->str[dest->len-1] = '>';
-							needendtag = 0;
+							needendtag = TRUE;
 						}
 
-						colorstr = g_queue_peek_tail(colors);
-						g_string_append(tmp, colorstr ? colorstr : "\033[#000000m");
+						g_string_append(tmp, *colors ? (*colors)->data : "\033[#000000m");
 						g_string_append_printf(dest, "\033[%sm", f->u.color);
-						g_queue_push_tail(colors, g_strdup_printf("\033[%sm", f->u.color));
-						fontattr_free(f);
+						*colors = g_slist_prepend(*colors,
+								g_strdup_printf("\033[%sm", f->u.color));
 						break;
 					}
+					fontattr_free(f);
 				}
 
 				g_queue_free(ftattr);
@@ -1160,10 +853,10 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 
 				if (needendtag) {
 					dest->str[dest->len-1] = '>';
-					g_queue_push_tail(tags, g_strdup("</font>"));
+					*tags = g_slist_prepend(*tags, g_strdup("</font>"));
 					g_string_free(tmp, TRUE);
 				} else {
-					g_queue_push_tail(tags, tmp->str);
+					*tags = g_slist_prepend(*tags, tmp->str);
 					g_string_free(tmp, FALSE);
 				}
 			}
@@ -1172,31 +865,31 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 			break;
 		}
 	}
-
 }
 
 char *yahoo_html_to_codes(const char *src)
 {
-	int i, j, len;
+	GSList *colors = NULL;
+	GSList *tags = NULL;
+	size_t src_len;
+	int i, j;
 	GString *dest;
-	char *ret, *esc;
-	GQueue *colors, *tags;
+	char *esc;
 	GQueue *ftattr = NULL;
 	gboolean no_more_specials = FALSE;
 
-	colors = g_queue_new();
-	tags = g_queue_new();
-	dest = g_string_sized_new(strlen(src));
+	src_len = strlen(src);
+	dest = g_string_sized_new(src_len);
 
-	for (i = 0, len = strlen(src); i < len; i++) {
+	for (i = 0; i < src_len; i++) {
 
-		if (!no_more_specials && src[i] == '<') {
+		if (src[i] == '<' && !no_more_specials) {
 			j = i;
 
 			while (1) {
 				j++;
 
-				if (j >= len) { /* no '>' */
+				if (j >= src_len) { /* no '>' */
 					g_string_append_c(dest, src[i]);
 					no_more_specials = TRUE;
 					break;
@@ -1225,7 +918,7 @@ char *yahoo_html_to_codes(const char *src)
 						char *t = strchr(&src[j], '>');
 						if (!t) {
 							g_string_append(dest, &src[i]);
-							i = len;
+							i = src_len;
 							break;
 						} else {
 							i = t - src;
@@ -1234,17 +927,19 @@ char *yahoo_html_to_codes(const char *src)
 					} else if (!g_ascii_strncasecmp(&src[i+1], "A HREF=\"", j - i - 1)) {
 						j += 7;
 						g_string_append(dest, "\033[lm");
+						if (purple_str_has_prefix(src + j, "mailto:"))
+							j += sizeof("mailto:") - 1;
 						while (1) {
 							g_string_append_c(dest, src[j]);
-							if (++j >= len) {
-								i = len;
+							if (++j >= src_len) {
+								i = src_len;
 								break;
 							}
 							if (src[j] == '"') {
 								g_string_append(dest, "\033[xlm");
 								while (1) {
-									if (++j >= len) {
-										i = len;
+									if (++j >= src_len) {
+										i = src_len;
 										break;
 									}
 									if (!g_ascii_strncasecmp(&src[j], "</A>", 4)) {
@@ -1258,9 +953,9 @@ char *yahoo_html_to_codes(const char *src)
 						}
 					} else if (!g_ascii_strncasecmp(&src[i+1], "SPAN", j - i - 1)) { /* drop span tags */
 						while (1) {
-							if (++j >= len) {
+							if (++j >= src_len) {
 								g_string_append(dest, &src[i]);
-								i = len;
+								i = src_len;
 								break;
 							}
 							if (src[j] == '>') {
@@ -1270,9 +965,9 @@ char *yahoo_html_to_codes(const char *src)
 						}
 					} else if (g_ascii_strncasecmp(&src[i+1], "FONT", j - i - 1)) { /* not interested! */
 						while (1) {
-							if (++j >= len) {
+							if (++j >= src_len) {
 								g_string_append(dest, &src[i]);
-								i = len;
+								i = src_len;
 								break;
 							}
 							if (src[j] == '>') {
@@ -1282,7 +977,7 @@ char *yahoo_html_to_codes(const char *src)
 							}
 						}
 					} else { /* yay we have a font tag */
-						_parse_font_tag(src, dest, &i, &j, len, colors, tags, ftattr);
+						_parse_font_tag(src, dest, &i, &j, src_len, &colors, &tags, ftattr);
 					}
 
 					break;
@@ -1316,16 +1011,18 @@ char *yahoo_html_to_codes(const char *src)
 							/* mmm, </body> tags. *BURP* */
 						} else if (!g_ascii_strncasecmp(&src[i+1], "/SPAN", sublen)) {
 							/* </span> tags. dangerously close to </spam> */
-						} else if (!g_ascii_strncasecmp(&src[i+1], "/FONT", sublen) && g_queue_peek_tail(tags)) {
-							char *etag, *cl;
+						} else if (!g_ascii_strncasecmp(&src[i+1], "/FONT", sublen) && tags != NULL) {
+							char *etag;
 
-							etag = g_queue_pop_tail(tags);
+							etag = tags->data;
+							tags = g_slist_delete_link(tags, tags);
 							if (etag) {
 								g_string_append(dest, etag);
 								if (!strcmp(etag, "</font>")) {
-									cl = g_queue_pop_tail(colors);
-									if (cl)
-										g_free(cl);
+									if (colors != NULL) {
+										g_free(colors->data);
+										colors = g_slist_delete_link(colors, colors);
+									}
 								}
 								g_free(etag);
 							}
@@ -1343,36 +1040,26 @@ char *yahoo_html_to_codes(const char *src)
 			}
 
 		} else {
-			if (((len - i) >= 4) && !strncmp(&src[i], "&lt;", 4)) {
-				g_string_append_c(dest, '<');
-				i += 3;
-			} else if (((len - i) >= 4) && !strncmp(&src[i], "&gt;", 4)) {
-				g_string_append_c(dest, '>');
-				i += 3;
-			} else if (((len - i) >= 5) && !strncmp(&src[i], "&amp;", 5)) {
-				g_string_append_c(dest, '&');
-				i += 4;
-			} else if (((len - i) >= 6) && !strncmp(&src[i], "&quot;", 6)) {
-				g_string_append_c(dest, '"');
-				i += 5;
-			} else if (((len - i) >= 6) && !strncmp(&src[i], "&apos;", 6)) {
-				g_string_append_c(dest, '\'');
-				i += 5;
-			} else {
+			const char *entity;
+			int length;
+
+			entity = purple_markup_unescape_entity(src + i, &length);
+			if (entity != NULL) {
+				/* src[i] is the start of an HTML entity */
+				g_string_append(dest, entity);
+				i += length - 1;
+			} else
+				/* src[i] is a normal character */
 				g_string_append_c(dest, src[i]);
-			}
 		}
 	}
 
-	ret = dest->str;
-	g_string_free(dest, FALSE);
-
-	esc = g_strescape(ret, NULL);
-	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
+	esc = g_strescape(dest->str, NULL);
+	purple_debug_misc("yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
 	g_free(esc);
 
-	yahoo_htc_queue_cleanup(colors);
-	yahoo_htc_queue_cleanup(tags);
+	yahoo_htc_list_cleanup(colors);
+	yahoo_htc_list_cleanup(tags);
 
-	return ret;
+	return g_string_free(dest, FALSE);
 }

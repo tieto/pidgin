@@ -24,6 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "finch.h"
+#include <internal.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -213,7 +214,7 @@ im_msg_sent_cb(PurpleAccount *account, const char *receiver,
 			   const char *message, PurpleSoundEventID event)
 {
 	PurpleConversation *conv = purple_find_conversation_with_account(
-		PURPLE_CONV_TYPE_ANY, receiver, account);
+		PURPLE_CONV_TYPE_IM, receiver, account);
 	play_conv_event(conv, event);
 }
 
