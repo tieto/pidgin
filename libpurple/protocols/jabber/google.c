@@ -1316,6 +1316,7 @@ jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 		purple_debug_error("jabber", "Google STUN lookup failed: %s\n",
 			error_message);
 		g_slist_free(hosts);
+		js->stun_query = NULL;
 		return;
 	}
 
