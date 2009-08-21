@@ -468,8 +468,10 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 		}
 
 		if (!hash || strcmp(hash, userdata->ver)) {
-			purple_debug_warning("jabber", "Could not validate caps info from %s\n",
-			                     xmlnode_get_attrib(packet, "from"));
+			purple_debug_warning("jabber", "Could not validate caps info from "
+			                     "%s. Expected %s, got %s\n",
+			                     xmlnode_get_attrib(packet, "from"),
+			                     userdata->ver, hash ? hash : "(null)");
 
 			userdata->cb(NULL, NULL, userdata->cb_data);
 			jabber_caps_client_info_destroy(info);
