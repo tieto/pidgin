@@ -1316,6 +1316,7 @@ jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 		purple_debug_error("jabber", "Google STUN lookup failed: %s\n",
 			error_message);
 		g_slist_free(hosts);
+		js->stun_query = NULL;
 		return;
 	}
 
@@ -1334,18 +1335,16 @@ jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 			port = ntohs(((struct sockaddr_in *) addr)->sin_port);
 		}
 
-		if (js) {
-			if (js->stun_ip) {
-				g_free(js->stun_ip);
-			}
-			js->stun_ip = g_strdup(dst);
-			purple_debug_info("jabber", "set Google STUN IP address: %s\n", dst);
-			js->stun_port = port;
-			purple_debug_info("jabber", "set Google STUN port: %d\n", port);
-			purple_debug_info("jabber", "set Google STUN port: %d\n", port);
-			/* unmark ongoing query */
-			js->stun_query = NULL;
-		}
+		if (js->stun_ip)
+			g_free(js->stun_ip);
+		js->stun_ip = g_strdup(dst);
+		js->stun_port = port;
+
+		purple_debug_info("jabber", "set Google STUN IP/port address: "
+		                  "%s:%d\n", dst, port);
+
+		/* unmark ongoing query */
+		js->stun_query = NULL;
 	}
 
 	while (hosts != NULL) {
