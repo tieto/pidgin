@@ -176,7 +176,6 @@ START_TEST(test_html_to_codes)
 	assert_string_equal_free("\x1B[#FF0000m<font size=\"8\">redsmall</font> \x1B[#00FF00mgreennormal\x1B[#FF0000m rednormal\x1B[#000000m",
 			yahoo_html_to_codes("<font color=\"#FF0000\"><font size=\"1\">redsmall</font> <font color=\"#00FF00\">greennormal</font> rednormal</font>"));
 
-	/* This test case isn't correct, and so it's commented out */
 	assert_string_equal_free("\x1B[1mbold \x1B[#FF0000mred <font face=\"Comic Sans MS\" size=\"20\">larger \x1B[#000000mbacktoblack <font size=\"12\">normalsize</font>\x1B[#FF0000m</font>\x1B[#000000m\x1B[x1m",
 			yahoo_html_to_codes("<b>bold <font color=\"#FF0000\">red <font face=\"Comic Sans MS\" size=\"5\">larger <font color=\"#000000\">backtoblack <font size=\"3\">normalsize</font></font></font></font></b>"));
 }
