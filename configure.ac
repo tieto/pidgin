@@ -795,13 +795,13 @@ dnl # Check for Voice and Video support
 dnl #######################################################################
 AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
-	[enable_vv="$enableval" force_vv=$enableval], [enable_vv="yes" force_vv=no])
+	enable_vv="$enableval", enable_vv="yes")
 if test "x$enable_vv" != "xno"; then
 	if test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farsight" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
 	else
 		enable_vv="no"
-		if test "x$force_vv" = "xyes"; then
+		if test "x$force_deps" = "xyes"; then
 			AC_MSG_ERROR([
 Dependencies for voice/video were not met.
 Install the necessary gstreamer and farsight packages first.
