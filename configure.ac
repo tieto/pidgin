@@ -312,7 +312,7 @@ int main()
 dnl #######################################################################
 dnl # Check for GLib 2.0 (required)
 dnl #######################################################################
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.4.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.14.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
@@ -352,7 +352,7 @@ AC_ARG_ENABLE(consoleui, [AC_HELP_STRING([--disable-consoleui],
 	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
 
 dnl #######################################################################
-dnl # Check for GTK+ 2.0 and other things used by the GTK UI
+dnl # Check for GTK+ 2.10 and other things used by the GTK UI
 dnl #######################################################################
 AC_ARG_ENABLE(screensaver,
 	[AC_HELP_STRING([--disable-screensaver],
@@ -399,11 +399,11 @@ else
 fi
 
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.4.0], , [
+	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 
-You must have GTK+ 2.4.0 or newer development headers installed to compile
+You must have GTK+ 2.10.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
