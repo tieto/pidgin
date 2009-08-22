@@ -599,6 +599,8 @@ update_contact_network(MsnSession *session, const char *passport, MsnNetwork net
 		/* Decrement the count for unknown results so that we'll continue login.
 		   Also, need to finish the login process here as well, because ADL OK
 		   will not be called. */
+		if (purple_debug_is_verbose())
+			purple_debug_info("msn", "ADL/FQY count is %d\n", session->adl_fqy);
 		if (--session->adl_fqy == 0)
 			msn_session_finish_login(session);
 		return;
@@ -680,6 +682,9 @@ msn_notification_dump_contact(MsnSession *session)
 
 				/* ADL's are returned all-together */
 				session->adl_fqy++;
+				if (purple_debug_is_verbose())
+					purple_debug_info("msn", "Posting ADL, count is %d\n",
+					                  session->adl_fqy);
 
 				msn_notification_post_adl(session->notification->cmdproc,
 					payload, payload_len);
@@ -694,6 +699,9 @@ msn_notification_dump_contact(MsnSession *session)
 		} else {
 			/* FQY's are returned one-at-a-time */
 			session->adl_fqy++;
+			if (purple_debug_is_verbose())
+				purple_debug_info("msn", "Adding FQY address, count is %d\n",
+				                  session->adl_fqy);
 
 			msn_add_contact_xml(session, fqy_node, user->passport,
 				0, user->networkid);
@@ -718,6 +726,9 @@ msn_notification_dump_contact(MsnSession *session)
 
 		/* ADL's are returned all-together */
 		session->adl_fqy++;
+		if (purple_debug_is_verbose())
+			purple_debug_info("msn", "Posting ADL, count is %d\n",
+			                  session->adl_fqy);
 
 		msn_notification_post_adl(session->notification->cmdproc, payload, payload_len);
 
@@ -809,6 +820,9 @@ adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (!strcmp(cmd->params[1], "OK")) {
 		/* ADL ack */
+		if (purple_debug_is_verbose())
+			purple_debug_info("msn", "ADL ACK, count is %d\n",
+			                  session->adl_fqy);
 		if (--session->adl_fqy == 0)
 			msn_session_finish_login(session);
 	} else {
