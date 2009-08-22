@@ -1679,11 +1679,8 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 		char *crumb = NULL;
 		char *crypt = NULL;
 
-#if GLIB_CHECK_VERSION(2,6,0)
 		totalelements = g_strv_length(split_data);
-#else
-		while (split_data[++totalelements] != NULL);
-#endif
+
 		if (totalelements >= 4) {
 			response_no = strtol(split_data[0], NULL, 10);
 			crumb = g_strdup(split_data[1] + strlen("crumb="));
@@ -1765,11 +1762,8 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 		int response_no = -1;
 		char *token = NULL;
 
-#if GLIB_CHECK_VERSION(2,6,0)
 		totalelements = g_strv_length(split_data);
-#else
-		while (split_data[++totalelements] != NULL);
-#endif
+
 		if(totalelements == 1)
 			response_no = strtol(split_data[0], NULL, 10);
 		else if(totalelements >= 2) {
