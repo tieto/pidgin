@@ -239,7 +239,6 @@ static gchar *
 find_file_common(const char *name)
 {
 	gchar *filename;
-#if GLIB_CHECK_VERSION(2,6,0)
 	const gchar *userdir;
 	const gchar * const *sysdirs;
 
@@ -256,7 +255,6 @@ find_file_common(const char *name)
 			return filename;
 		g_free(filename);
 	}
-#endif
 	filename = g_build_filename(DATADIR, name, NULL);
 	if (g_file_test(filename, G_FILE_TEST_EXISTS))
 		return filename;

@@ -5379,12 +5379,7 @@ headline_style_set (GtkWidget *widget,
 		return;
 
 	tooltips = gtk_tooltips_new ();
-#if GLIB_CHECK_VERSION(2,10,0)
 	g_object_ref_sink (tooltips);
-#else
-	g_object_ref(tooltips);
-	gtk_object_sink(GTK_OBJECT(tooltips));
-#endif
 
 	gtk_tooltips_force_window (tooltips);
 #if GTK_CHECK_VERSION(2, 12, 0)
