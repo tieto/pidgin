@@ -91,6 +91,7 @@ plugins: \
 		spellchk.dll \
 		timestamp_format.dll \
 		timestamp.dll \
+		vvconfig.dll \
 		xmppconsole.dll
 
 ##
