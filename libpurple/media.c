@@ -2730,10 +2730,13 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 					num_params, params, &err);
 		}
 
-		if (err) {
-			purple_debug_error("media", "Error creating stream: %s\n",
-					   err->message);
-			g_error_free(err);
+		if (fsstream == NULL) {
+			purple_debug_error("media",
+					"Error creating stream: %s\n",
+					err && err->message ?
+					err->message : "NULL");
+			if (err)
+				g_error_free(err);
 			g_object_unref(participant);
 			g_hash_table_remove(media->priv->participants, who);
 			purple_media_remove_session(media, session);
