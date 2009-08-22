@@ -607,8 +607,11 @@ jingle_rtp_init_media(JingleContent *content)
 		is_creator = !jingle_session_is_initiator(session);
 	g_free(creator);
 
-	purple_media_add_stream(media, name, remote_jid,
-			type, is_creator, transmitter, num_params, params);
+	if(!purple_media_add_stream(media, name, remote_jid,
+			type, is_creator, transmitter, num_params, params)) {
+		purple_media_end(media, NULL, NULL);
+		return FALSE;
+	}
 
 	g_free(name);
 	g_free(media_type);
