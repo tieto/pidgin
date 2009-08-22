@@ -67,8 +67,11 @@ plugin_LTLIBRARIES = \
 	themeedit.la         \
 	timestamp.la        \
 	timestamp_format.la \
-	vvconfig.la         \
 	xmppconsole.la
+
+if USE_VV
+plugin_LTLIBRARIES +=	vvconfig.la
+endif
 
 noinst_LTLIBRARIES = \
 	contact_priority.la \
@@ -109,7 +112,7 @@ spellchk_la_LIBADD          = $(GTK_LIBS)
 themeedit_la_LIBADD         = $(GTK_LIBS)
 timestamp_la_LIBADD         = $(GTK_LIBS)
 timestamp_format_la_LIBADD  = $(GTK_LIBS)
-vvconfig_la_LIBADD          = $(GTK_LIBS)
+vvconfig_la_LIBADD          = $(GTK_LIBS) $(GSTREAMER_LIBS)
 xmppconsole_la_LIBADD       = $(GTK_LIBS)
 
 endif # PLUGINS

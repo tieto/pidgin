@@ -184,10 +184,12 @@ append_to_list(GtkTreeModel *model, GtkTreePath *path,
 	GList **list = data;
 	*list = g_list_prepend(*list, gtk_tree_path_copy(path));
 }
+
 static void
 pounce_response_dismiss()
 {
 	GtkTreeSelection *selection;
+	GtkTreeIter iter;
 	GList *list = NULL;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(pounce_dialog->treeview));
@@ -203,6 +205,9 @@ pounce_response_dismiss()
 		gtk_tree_path_free(list->data);
 		list = g_list_delete_link(list, list);
 	}
+
+	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(pounce_dialog->treemodel), &iter))
+		pounce_response_close(pounce_dialog);
 }
 
 static void
@@ -293,6 +298,28 @@ pounce_row_selected_cb(GtkTreeView *tv, GtkTreePath *path,
 	}
 
 
+}
+
+static void
+pounce_row_activated_cb(GtkTreeView *tv, GtkTreePath *path,
+	GtkTreeViewColumn *col, gpointer data)
+{
+	PidginNotifyPounceData *pounce_data;
+	PurpleAccount *account;
+	GtkTreeIter iter;
+
+	if(!gtk_tree_model_get_iter(GTK_TREE_MODEL(pounce_dialog->treemodel), &iter, path))
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(pounce_dialog->treemodel), &iter,
+		PIDGIN_POUNCE_DATA, &pounce_data, -1);
+
+	account = pounce_data->account;
+
+	purple_conversation_new(PURPLE_CONV_TYPE_IM, account,
+		purple_account_get_username(account));
+
+	pounce_response_dismiss();
 }
 
 static void
@@ -1539,6 +1566,8 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 		gtk_tree_selection_set_mode(sel, GTK_SELECTION_SINGLE);
 		g_signal_connect(G_OBJECT(sel), "changed",
 			G_CALLBACK(pounce_row_selected_cb), NULL);
+		g_signal_connect(G_OBJECT(spec_dialog->treeview), "row-activated",
+			G_CALLBACK(pounce_row_activated_cb), NULL);
 	}
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);

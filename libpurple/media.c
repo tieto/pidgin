@@ -21,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include <string.h>
@@ -2730,10 +2730,13 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 					num_params, params, &err);
 		}
 
-		if (err) {
-			purple_debug_error("media", "Error creating stream: %s\n",
-					   err->message);
-			g_error_free(err);
+		if (fsstream == NULL) {
+			purple_debug_error("media",
+					"Error creating stream: %s\n",
+					err && err->message ?
+					err->message : "NULL");
+			if (err)
+				g_error_free(err);
 			g_object_unref(participant);
 			g_hash_table_remove(media->priv->participants, who);
 			purple_media_remove_session(media, session);

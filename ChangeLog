@@ -12,6 +12,7 @@ version 2.6.2 (??/??/2009):
 	* Escape status messages that have HTML entities in the Get Info dialog.
 	* Fix connecting to XMPP domains with no SRV records from Pidgin on
 	  Windows.
+	* Fix typing notifications with Pidgin 2.5.9 or earlier.
 
 	Finch:
 	* Properly detect libpanel on OpenBSD.  (Brad Smith)

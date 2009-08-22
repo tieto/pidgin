@@ -100,6 +100,8 @@ START_TEST(test_codes_to_html)
 			yahoo_codes_to_html("<font face='Georgia' size='32'>test"));
 	assert_string_equal_free("<font color='#FF0080'><font size='4' absz='15'>test</font></font>",
 			yahoo_codes_to_html("\x1B[35m<font size='15'>test"));
+	assert_string_equal_free(":&lt;",
+			yahoo_codes_to_html("<FADE #ff0000,#00ff00,#0000ff>:<</FADE>"));
 #endif /* !USE_CSS_FORMATTING */
 }
 END_TEST
