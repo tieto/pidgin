@@ -611,7 +611,6 @@ char *yahoo_codes_to_html(const char *x)
 				if (match == NULL) {
 					/* Unknown tag.  The user probably typed a less-than sign */
 					g_string_append_c(cdata, x[i]);
-					no_more_gt_brackets = TRUE;
 					g_free(tag);
 					g_free(tag_name);
 					break;
