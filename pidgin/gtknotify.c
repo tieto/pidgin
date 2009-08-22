@@ -184,10 +184,12 @@ append_to_list(GtkTreeModel *model, GtkTreePath *path,
 	GList **list = data;
 	*list = g_list_prepend(*list, gtk_tree_path_copy(path));
 }
+
 static void
 pounce_response_dismiss()
 {
 	GtkTreeSelection *selection;
+	GtkTreeIter iter;
 	GList *list = NULL;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(pounce_dialog->treeview));
@@ -203,6 +205,9 @@ pounce_response_dismiss()
 		gtk_tree_path_free(list->data);
 		list = g_list_delete_link(list, list);
 	}
+
+	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(pounce_dialog->treemodel), &iter))
+		pounce_response_close(pounce_dialog);
 }
 
 static void
