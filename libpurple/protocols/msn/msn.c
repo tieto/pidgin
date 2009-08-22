@@ -265,6 +265,7 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
 	MsnPage *page;
+	MsnMessage *msg;
 	MsnUser *user;
 	char *payload = NULL;
 	const char *mobile_number = NULL;
@@ -294,6 +295,9 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 
 	msn_transaction_set_payload(trans, payload, payload_len);
 	g_free(payload);
+
+	msg = msn_message_new_plain(entry);
+	msn_transaction_set_data(trans, msg);
 
 	msn_page_destroy(page);
 

@@ -1178,14 +1178,36 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	id = xmlnode_get_attrib(msg, "id");
 
 	if (id && !strcmp(id, "407")) {
-		/* TODO: Use this to NAK the transaction, maybe print the text, too.
-		unsigned int trId;
-		id = xmlnode_get_attrib(payloadNode, "id");
-		trId = atol(id);
-		*/
-		purple_conv_present_error(who, gc->account,
-			_("Mobile message was not sent because it was too long."));
+		PurpleConversation *conv
+			= purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
+			                                        who, gc->account);
+		if (conv != NULL) {
+			purple_conversation_write(conv, NULL,
+			                          _("Mobile message was not sent because it was too long."),
+			                          PURPLE_MESSAGE_ERROR, time(NULL));
 
+			if ((id = xmlnode_get_attrib(payloadNode, "id")) != NULL) {
+				unsigned int trId = atol(id);
+				MsnTransaction *trans;
+				MsnMessage *msg;
+
+				trans = msn_history_find(cmdproc->history, trId);
+				msg = (MsnMessage *)trans->data;
+
+				if (msg) {
+					char *body_str = msn_message_to_string(msg);
+					char *body_enc = g_markup_escape_text(body_str, -1);
+
+					purple_conversation_write(conv, NULL, body_enc,
+					                          PURPLE_MESSAGE_RAW, time(NULL));
+
+					g_free(body_str);
+					g_free(body_enc);
+					msn_message_destroy(msg);
+					trans->data = NULL;
+				}
+			}
+		}
 	} else {
 		serv_got_im(gc, who, text, 0, time(NULL));
 	}
