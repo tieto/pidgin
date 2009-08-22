@@ -89,8 +89,12 @@ static void handle_chat(JabberMessage *jm)
 	}
 
 	if(!jm->xhtml && !jm->body) {
-		if (jbr)
-			jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+		if (jbr) {
+			if (jm->chat_state != JM_STATE_NONE)
+				jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+			else
+				jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
+		}
 
 		if(JM_STATE_COMPOSING == jm->chat_state) {
 			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPING);
