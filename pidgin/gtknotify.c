@@ -296,6 +296,28 @@ pounce_row_selected_cb(GtkTreeView *tv, GtkTreePath *path,
 }
 
 static void
+pounce_row_activated_cb(GtkTreeView *tv, GtkTreePath *path,
+	GtkTreeViewColumn *col, gpointer data)
+{
+	PidginNotifyPounceData *pounce_data;
+	PurpleAccount *account;
+	GtkTreeIter iter;
+
+	if(!gtk_tree_model_get_iter(GTK_TREE_MODEL(pounce_dialog->treemodel), &iter, path))
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(pounce_dialog->treemodel), &iter,
+		PIDGIN_POUNCE_DATA, &pounce_data, -1);
+
+	account = pounce_data->account;
+
+	purple_conversation_new(PURPLE_CONV_TYPE_IM, account,
+		purple_account_get_username(account));
+
+	pounce_response_dismiss();
+}
+
+static void
 reset_mail_dialog(GtkDialog *unused)
 {
 	if (mail_dialog->in_use)
@@ -1539,6 +1561,8 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 		gtk_tree_selection_set_mode(sel, GTK_SELECTION_SINGLE);
 		g_signal_connect(G_OBJECT(sel), "changed",
 			G_CALLBACK(pounce_row_selected_cb), NULL);
+		g_signal_connect(G_OBJECT(spec_dialog->treeview), "row-activated",
+			G_CALLBACK(pounce_row_activated_cb), NULL);
 	}
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
