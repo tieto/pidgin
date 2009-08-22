@@ -101,7 +101,7 @@ invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
 			         "unknown to Pidgin.");
 			break;
 		case PURPLE_CERTIFICATE_NOT_ACTIVATED:
-			return _("The certificate has not yet been activated.");
+			return _("The certificate is not valid yet.");
 			break;
 		case PURPLE_CERTIFICATE_EXPIRED:
 			return _("The certificate has expired and should not be "
@@ -109,8 +109,7 @@ invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
 			break;
 		case PURPLE_CERTIFICATE_NAME_MISMATCH:
 			/* Translators: "domain" refers to a DNS domain (e.g. talk.google.com) */
-			return _("The certificate presented is not valid for this "
-			         "domain.");
+			return _("The certificate presented is not issued to this domain.");
 			break;
 		case PURPLE_CERTIFICATE_NO_CA_POOL:
 			return _("You have no database of root certificates, so "
