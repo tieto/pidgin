@@ -1839,11 +1839,12 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 			PurpleAccount *account = purple_connection_get_account(gc);
 			char *url = NULL;
 			gboolean yahoojp = yahoo_is_japan(account);
+			gboolean proxy_ssl = purple_account_get_bool(account, "proxy_ssl", FALSE);
 
 			url = g_strdup_printf(yahoojp ? YAHOOJP_LOGIN_URL : YAHOO_LOGIN_URL, token);
-			url_data = purple_util_fetch_url_request_len_with_account(account, url,
-					TRUE, YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
-					yahoo_auth16_stage2, auth_data);
+			url_data = purple_util_fetch_url_request_len_with_account(
+					proxy_ssl ? account : NULL, url, TRUE, YAHOO_CLIENT_USERAGENT,
+					TRUE, NULL, FALSE, -1, yahoo_auth16_stage2, auth_data);
 			g_free(url);
 			g_free(token);
 		}
@@ -1852,12 +1853,14 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 
 static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 {
+	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleUtilFetchUrlData *url_data = NULL;
 	struct yahoo_auth_data *auth_data = NULL;
 	char *url = NULL;
 	char *encoded_username;
 	char *encoded_password;
-	gboolean yahoojp;
+	gboolean yahoojp = yahoo_is_japan(account);
+	gboolean proxy_ssl = purple_account_get_bool(account, "proxy_ssl", FALSE);
 
 	purple_debug_info("yahoo", "Authentication: In yahoo_auth16_stage1\n");
 
@@ -1866,7 +1869,6 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 		return;
 	}
 
-	yahoojp = yahoo_is_japan(purple_connection_get_account(gc));
 	auth_data = g_new0(struct yahoo_auth_data, 1);
 	auth_data->gc = gc;
 	auth_data->seed = g_strdup(seed);
@@ -1879,7 +1881,7 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 	g_free(encoded_username);
 
 	url_data = purple_util_fetch_url_request_len_with_account(
-			purple_connection_get_account(gc), url, TRUE,
+			proxy_ssl ? account : NULL, url, TRUE,
 			YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
 			yahoo_auth16_stage1_cb, auth_data);
 
