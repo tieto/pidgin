@@ -2525,9 +2525,10 @@ char *pidgin_make_pretty_arrows(const char *str)
 
 void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 {
-	gtk_window_set_urgency_hint(window, urgent);
 #if defined _WIN32
 	winpidgin_window_flash(window, urgent);
+#else
+	gtk_window_set_urgency_hint(window, urgent);
 #endif
 }
 
