@@ -53,49 +53,29 @@ static struct StockIcon
 } const stock_icons[] = {
 
 	{ PIDGIN_STOCK_ACTION,          NULL,      GTK_STOCK_EXECUTE          },
-#if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_ALIAS,           NULL,      GTK_STOCK_EDIT             },
-#else
-	{ PIDGIN_STOCK_ALIAS,           "buttons", "edit.png"                 },
-#endif
 	{ PIDGIN_STOCK_CHAT,            NULL,      GTK_STOCK_JUMP_TO          },
 	{ PIDGIN_STOCK_CLEAR,           NULL,      GTK_STOCK_CLEAR            },
 	{ PIDGIN_STOCK_CLOSE_TABS,      NULL,      GTK_STOCK_CLOSE            },
 	{ PIDGIN_STOCK_DEBUG,           NULL,      GTK_STOCK_PROPERTIES       },
 	{ PIDGIN_STOCK_DOWNLOAD,        NULL,      GTK_STOCK_GO_DOWN          },
-#if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_DISCONNECT,      NULL,      GTK_STOCK_DISCONNECT       },
-#else
-	{ PIDGIN_STOCK_DISCONNECT,      "icons",   "stock_disconnect_16.png"  },
-#endif
 	{ PIDGIN_STOCK_FGCOLOR,         "buttons", "change-fgcolor-small.png" },
-#if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_EDIT,            NULL,      GTK_STOCK_EDIT             },
-#else
-	{ PIDGIN_STOCK_EDIT,            "buttons", "edit.png"                 },
-#endif
 	{ PIDGIN_STOCK_FILE_CANCELED,   NULL,      GTK_STOCK_CANCEL           },
 	{ PIDGIN_STOCK_FILE_DONE,       NULL,      GTK_STOCK_APPLY            },
 	{ PIDGIN_STOCK_IGNORE,          NULL,      GTK_STOCK_DIALOG_ERROR     },
 	{ PIDGIN_STOCK_INVITE,          NULL,      GTK_STOCK_JUMP_TO          },
 	{ PIDGIN_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
 	{ PIDGIN_STOCK_ADD,             NULL,	   GTK_STOCK_ADD			  },
-#if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_PAUSE,           NULL,      GTK_STOCK_MEDIA_PAUSE      },
-#else
-	{ PIDGIN_STOCK_PAUSE,           "buttons", "pause.png"                },
-#endif
 	{ PIDGIN_STOCK_POUNCE,          NULL,      GTK_STOCK_REDO             },
 	{ PIDGIN_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
 	{ PIDGIN_STOCK_SIGN_ON,         NULL,      GTK_STOCK_EXECUTE          },
 	{ PIDGIN_STOCK_SIGN_OFF,        NULL,      GTK_STOCK_CLOSE            },
 	{ PIDGIN_STOCK_TYPED,           "pidgin",  "typed.png"                },
 	{ PIDGIN_STOCK_UPLOAD,          NULL,      GTK_STOCK_GO_UP            },
-#if GTK_CHECK_VERSION(2,8,0)
 	{ PIDGIN_STOCK_INFO,            NULL,      GTK_STOCK_INFO             },
-#else
-	{ PIDGIN_STOCK_INFO,            "buttons", "info.png"                 },
-#endif
 };
 
 static const GtkStockItem stock_items[] =
@@ -411,11 +391,9 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 static void
 reload_settings(void)
 {
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkSettings *setting = NULL;
 	setting = gtk_settings_get_default();
 	gtk_rc_reset_styles(setting);
-#endif
 }
 
 /*****************************************************************************
