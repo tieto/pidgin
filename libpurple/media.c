@@ -2129,6 +2129,35 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 			}
 			break;
 		}
+		case GST_MESSAGE_ERROR: {
+			GstElement *element = GST_ELEMENT(GST_MESSAGE_SRC(msg));
+			GstElement *lastElement = NULL;
+			while (!GST_IS_PIPELINE(element)) {
+				if (element == media->priv->confbin) {
+					purple_media_error("media", _("Conference error."));
+					purple_media_end(media, NULL, NULL);
+					break;
+				}
+				lastElement = element;
+				element = GST_ELEMENT_PARENT(element);
+			}
+			if (GST_IS_PIPELINE(element)) {
+				GList *sessions = g_hash_table_get_values(media->priv->sessions);
+				for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+					PurpleMediaSession *session = sessions->data;
+
+					if (session->src == lastElement) {
+						if (session->type & PURPLE_MEDIA_AUDIO)
+							purple_media_error(media, _("Error with your microphone."));
+						else
+							purple_media_error(media, _("Error with your webcam."));
+						purple_media_end(media, NULL, NULL);
+						break;
+					}
+				}
+				g_list_free(sessions);
+			}
+		}
 		default:
 			break;
 	}
