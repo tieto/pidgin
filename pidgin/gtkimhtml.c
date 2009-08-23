@@ -3666,11 +3666,7 @@ image_save_yes_cb(GtkIMHtmlImageSave *save, const char *filename)
 	image->filesel = NULL;
 
 	if (save->data && save->datasize) {
-#if GLIB_CHECK_VERSION(2,8,0)
 		g_file_set_contents(filename, save->data, save->datasize, &error);
-#else
-		purple_util_write_data_to_file_absolute(filename, save->data, save->datasize);
-#endif
 	} else {
 		gchar *type = NULL;
 #if GTK_CHECK_VERSION(2,2,0)
