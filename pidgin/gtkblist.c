@@ -7407,6 +7407,249 @@ static void sort_method_none(PurpleBlistNode *node, PurpleBuddyList *blist, GtkT
 			sibling ? &sibling_iter : NULL);
 }
 
+static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
+{
+	GtkTreeIter more_z;
+
+	const char *my_name;
+
+	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		my_name = purple_contact_get_alias((PurpleContact*)node);
+	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		my_name = purple_chat_get_name((PurpleChat*)node);
+	} else {
+		sort_method_none(node, blist, groupiter, cur, iter);
+		return;
+	}
+
+
+	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
+		gtk_tree_store_insert(gtkblist->treemodel, iter, &groupiter, 0);
+		return;
+	}
+
+	do {
+		GValue val;
+		PurpleBlistNode *n;
+		const char *this_name;
+		int cmp;
+
+		val.g_type = 0;
+		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
+		n = g_value_get_pointer(&val);
+
+		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
+			this_name = purple_contact_get_alias((PurpleContact*)n);
+		} else if(PURPLE_BLIST_NODE_IS_CHAT(n)) {
+			this_name = purple_chat_get_name((PurpleChat*)n);
+		} else {
+			this_name = NULL;
+		}
+
+		cmp = purple_utf8_strcasecmp(my_name, this_name);
+
+		if(this_name && (cmp < 0 || (cmp == 0 && node < n))) {
+			if(cur) {
+				gtk_tree_store_move_before(gtkblist->treemodel, cur, &more_z);
+				*iter = *cur;
+				return;
+			} else {
+				gtk_tree_store_insert_before(gtkblist->treemodel, iter,
+						&groupiter, &more_z);
+				return;
+			}
+		}
+		g_value_unset(&val);
+	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
+
+	if(cur) {
+		gtk_tree_store_move_before(gtkblist->treemodel, cur, NULL);
+		*iter = *cur;
+		return;
+	} else {
+		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
+		return;
+	}
+}
+
+static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
+{
+	GtkTreeIter more_z;
+
+	PurpleBuddy *my_buddy, *this_buddy;
+
+	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		my_buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
+	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		if (cur != NULL) {
+			*iter = *cur;
+			return;
+		}
+
+		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
+		return;
+	} else {
+		sort_method_none(node, blist, groupiter, cur, iter);
+		return;
+	}
+
+
+	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
+		gtk_tree_store_insert(gtkblist->treemodel, iter, &groupiter, 0);
+		return;
+	}
+
+	do {
+		GValue val;
+		PurpleBlistNode *n;
+		gint name_cmp;
+		gint presence_cmp;
+
+		val.g_type = 0;
+		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
+		n = g_value_get_pointer(&val);
+
+		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
+			this_buddy = purple_contact_get_priority_buddy((PurpleContact*)n);
+		} else {
+			this_buddy = NULL;
+		}
+
+		name_cmp = purple_utf8_strcasecmp(
+			purple_contact_get_alias(purple_buddy_get_contact(my_buddy)),
+			(this_buddy
+			 ? purple_contact_get_alias(purple_buddy_get_contact(this_buddy))
+			 : NULL));
+
+		presence_cmp = purple_presence_compare(
+			purple_buddy_get_presence(my_buddy),
+			this_buddy ? purple_buddy_get_presence(this_buddy) : NULL);
+
+		if (this_buddy == NULL ||
+			(presence_cmp < 0 ||
+			 (presence_cmp == 0 &&
+			  (name_cmp < 0 || (name_cmp == 0 && node < n)))))
+		{
+			if (cur != NULL)
+			{
+				gtk_tree_store_move_before(gtkblist->treemodel, cur, &more_z);
+				*iter = *cur;
+				return;
+			}
+			else
+			{
+				gtk_tree_store_insert_before(gtkblist->treemodel, iter,
+											 &groupiter, &more_z);
+				return;
+			}
+		}
+
+		g_value_unset(&val);
+	}
+	while (gtk_tree_model_iter_next(GTK_TREE_MODEL(gtkblist->treemodel),
+									&more_z));
+
+	if (cur) {
+		gtk_tree_store_move_before(gtkblist->treemodel, cur, NULL);
+		*iter = *cur;
+		return;
+	} else {
+		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
+		return;
+	}
+}
+
+static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
+{
+	GtkTreeIter more_z;
+
+	int activity_score = 0, this_log_activity_score = 0;
+	const char *buddy_name, *this_buddy_name;
+
+	if(cur && (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter) == 1)) {
+		*iter = *cur;
+		return;
+	}
+
+	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		PurpleBlistNode *n;
+		PurpleBuddy *buddy;
+		for (n = node->child; n; n = n->next) {
+			buddy = (PurpleBuddy*)n;
+			activity_score += purple_log_get_activity_score(PURPLE_LOG_IM, buddy->name, buddy->account);
+		}
+		buddy_name = purple_contact_get_alias((PurpleContact*)node);
+	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		/* we don't have a reliable way of getting the log filename
+		 * from the chat info in the blist, yet */
+		if (cur != NULL) {
+			*iter = *cur;
+			return;
+		}
+
+		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
+		return;
+	} else {
+		sort_method_none(node, blist, groupiter, cur, iter);
+		return;
+	}
+
+
+	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
+		gtk_tree_store_insert(gtkblist->treemodel, iter, &groupiter, 0);
+		return;
+	}
+
+	do {
+		GValue val;
+		PurpleBlistNode *n;
+		PurpleBlistNode *n2;
+		PurpleBuddy *buddy;
+		int cmp;
+
+		val.g_type = 0;
+		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
+		n = g_value_get_pointer(&val);
+		this_log_activity_score = 0;
+
+		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
+			for (n2 = n->child; n2; n2 = n2->next) {
+                        	buddy = (PurpleBuddy*)n2;
+				this_log_activity_score += purple_log_get_activity_score(PURPLE_LOG_IM, buddy->name, buddy->account);
+			}
+			this_buddy_name = purple_contact_get_alias((PurpleContact*)n);
+		} else {
+			this_buddy_name = NULL;
+		}
+
+		cmp = purple_utf8_strcasecmp(buddy_name, this_buddy_name);
+
+		if (!PURPLE_BLIST_NODE_IS_CONTACT(n) || activity_score > this_log_activity_score ||
+				((activity_score == this_log_activity_score) &&
+				 (cmp < 0 || (cmp == 0 && node < n)))) {
+			if (cur != NULL) {
+				gtk_tree_store_move_before(gtkblist->treemodel, cur, &more_z);
+				*iter = *cur;
+				return;
+			} else {
+				gtk_tree_store_insert_before(gtkblist->treemodel, iter,
+						&groupiter, &more_z);
+				return;
+			}
+		}
+		g_value_unset(&val);
+	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
+
+	if (cur != NULL) {
+		gtk_tree_store_move_before(gtkblist->treemodel, cur, NULL);
+		*iter = *cur;
+		return;
+	} else {
+		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
+		return;
+	}
+}
+
 static void
 plugin_act(GtkObject *obj, PurplePluginAction *pam)
 {
