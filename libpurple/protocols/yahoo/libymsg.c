@@ -1839,11 +1839,12 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 			PurpleAccount *account = purple_connection_get_account(gc);
 			char *url = NULL;
 			gboolean yahoojp = yahoo_is_japan(account);
+			gboolean proxy_ssl = purple_account_get_bool(account, "proxy_ssl", FALSE);
 
 			url = g_strdup_printf(yahoojp ? YAHOOJP_LOGIN_URL : YAHOO_LOGIN_URL, token);
-			url_data = purple_util_fetch_url_request_len_with_account(account, url,
-					TRUE, YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
-					yahoo_auth16_stage2, auth_data);
+			url_data = purple_util_fetch_url_request_len_with_account(
+					proxy_ssl ? account : NULL, url, TRUE, YAHOO_CLIENT_USERAGENT,
+					TRUE, NULL, FALSE, -1, yahoo_auth16_stage2, auth_data);
 			g_free(url);
 			g_free(token);
 		}
@@ -1852,12 +1853,14 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 
 static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 {
+	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleUtilFetchUrlData *url_data = NULL;
 	struct yahoo_auth_data *auth_data = NULL;
 	char *url = NULL;
 	char *encoded_username;
 	char *encoded_password;
-	gboolean yahoojp;
+	gboolean yahoojp = yahoo_is_japan(account);
+	gboolean proxy_ssl = purple_account_get_bool(account, "proxy_ssl", FALSE);
 
 	purple_debug_info("yahoo", "Authentication: In yahoo_auth16_stage1\n");
 
@@ -1866,7 +1869,6 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 		return;
 	}
 
-	yahoojp = yahoo_is_japan(purple_connection_get_account(gc));
 	auth_data = g_new0(struct yahoo_auth_data, 1);
 	auth_data->gc = gc;
 	auth_data->seed = g_strdup(seed);
@@ -1879,7 +1881,7 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 	g_free(encoded_username);
 
 	url_data = purple_util_fetch_url_request_len_with_account(
-			purple_connection_get_account(gc), url, TRUE,
+			proxy_ssl ? account : NULL, url, TRUE,
 			YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
 			yahoo_auth16_stage1_cb, auth_data);
 
@@ -4498,8 +4500,6 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	if (purple_presence_is_idle(presence))
 		yahoo_packet_hash_str(pkt, 47, "2");
-	else if (!purple_status_is_available(status))
-		yahoo_packet_hash_str(pkt, 47, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -4520,6 +4520,7 @@ void yahoo_set_idle(PurpleConnection *gc, int idle)
 	struct yahoo_packet *pkt = NULL;
 	char *msg = NULL, *msg2 = NULL;
 	PurpleStatus *status = NULL;
+	gboolean invisible = FALSE;
 
 	if (idle && yd->current_status != YAHOO_STATUS_CUSTOM)
 		yd->current_status = YAHOO_STATUS_IDLE;
@@ -4528,9 +4529,15 @@ void yahoo_set_idle(PurpleConnection *gc, int idle)
 		yd->current_status = get_yahoo_status_from_purple_status(status);
 	}
 
+	invisible = !( purple_presence_is_available(purple_account_get_presence(purple_connection_get_account(gc))) );
+
 	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
-	yahoo_packet_hash_int(pkt, 10, yd->current_status);
+	if (!idle && invisible)
+		yahoo_packet_hash_int(pkt, 10, YAHOO_STATUS_AVAILABLE);
+	else
+		yahoo_packet_hash_int(pkt, 10, yd->current_status);
+
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
 		const char *tmp;
 		if (status == NULL)
@@ -4553,8 +4560,6 @@ void yahoo_set_idle(PurpleConnection *gc, int idle)
 
 	if (idle)
 		yahoo_packet_hash_str(pkt, 47, "2");
-	else if (!purple_presence_is_available(purple_account_get_presence(purple_connection_get_account(gc))))
-		yahoo_packet_hash_str(pkt, 47, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
 

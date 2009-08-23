@@ -513,7 +513,7 @@ char *yahoo_codes_to_html(const char *x)
 	int i, j;
 	gboolean no_more_gt_brackets = FALSE;
 	const char *match;
-	gchar *xmlstr1, *xmlstr2;
+	gchar *xmlstr1, *xmlstr2, *esc;
 
 	x_len = strlen(x);
 	html = xmlnode_new("html");
@@ -611,7 +611,6 @@ char *yahoo_codes_to_html(const char *x)
 				if (match == NULL) {
 					/* Unknown tag.  The user probably typed a less-than sign */
 					g_string_append_c(cdata, x[i]);
-					no_more_gt_brackets = TRUE;
 					g_free(tag);
 					g_free(tag_name);
 					break;
@@ -660,7 +659,10 @@ char *yahoo_codes_to_html(const char *x)
 	xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
 	g_free(xmlstr1);
 
-	purple_debug_misc("yahoo", "yahoo_codes_to_html(%s)=%s\n", x, xmlstr2);
+	esc = g_strescape(x, NULL);
+	purple_debug_misc("yahoo", "yahoo_codes_to_html(%s)=%s\n", esc, xmlstr2);
+	g_free(esc);
+
 	return xmlstr2;
 }
 
@@ -688,8 +690,8 @@ static void yahoo_htc_list_cleanup(GSList *l)
 	}
 }
 
-static void parse_font_tag(const char *src, GString *dest, const char *tag_name, const char *tag,
-				int src_len, GSList **colors, GSList **tags)
+static void parse_font_tag(GString *dest, const char *tag_name, const char *tag,
+				GSList **colors, GSList **tags)
 {
 	const char *start;
 	const char *end;
@@ -709,6 +711,14 @@ static void parse_font_tag(const char *src, GString *dest, const char *tag_name,
 		g_string_append_printf(dest, "\033[%sm", attribute);
 		*colors = g_slist_prepend(*colors,
 				g_strdup_printf("\033[%sm", attribute));
+	} else {
+		/* We need to add a value to the colors stack even if we're not
+		 * setting a color because we ALWAYS pop exactly 1 element from
+		 * this stack for every </font> tag.  If we don't add anything
+		 * then we'll pop something that we shouldn't when we hit this
+		 * corresponding </font>. */
+		*colors = g_slist_prepend(*colors,
+				*colors ? g_strdup((*colors)->data) : g_strdup("\033[#000000m"));
 	}
 
 	attribute = g_datalist_get_data(&attributes, "face");
@@ -761,7 +771,7 @@ char *yahoo_html_to_codes(const char *src)
 	gboolean is_closing_tag;
 	CurrentMsgState current_state;
 
-	bzero(&current_state, sizeof(current_state));
+	memset(&current_state, 0, sizeof(current_state));
 
 	src_len = strlen(src);
 	dest = g_string_sized_new(src_len);
@@ -831,7 +841,7 @@ char *yahoo_html_to_codes(const char *src)
 						j = end - src + 3;
 
 				} else if (g_str_equal(tag_name, "font")) {
-					parse_font_tag(src, dest, tag_name, tag, src_len, &colors, &tags);
+					parse_font_tag(dest, tag_name, tag, &colors, &tags);
 				} else if (g_str_equal(tag_name, "b")) {
 					g_string_append(dest, "\033[1m");
 					current_state.bold = TRUE;
@@ -865,11 +875,9 @@ char *yahoo_html_to_codes(const char *src)
 						char *etag = tags->data;
 						tags = g_slist_delete_link(tags, tags);
 						g_string_append(dest, etag);
-						if (g_str_equal(etag, "</font>")) {
-							if (colors != NULL) {
-								g_free(colors->data);
-								colors = g_slist_delete_link(colors, colors);
-							}
+						if (colors != NULL) {
+							g_free(colors->data);
+							colors = g_slist_delete_link(colors, colors);
 						}
 						g_free(etag);
 					}

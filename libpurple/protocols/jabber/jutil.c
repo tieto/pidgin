@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -504,8 +506,23 @@ const char *jabber_normalize(const PurpleAccount *account, const char *in)
 	JabberStream *js = gc ? gc->proto_data : NULL;
 	static char buf[3072]; /* maximum legal length of a jabber jid */
 	JabberID *jid;
+	char *tmp;
+	size_t len = strlen(in);
 
-	jid = jabber_id_new(in);
+	/*
+	 * If the JID ends with a '/', jabber_id_new is going to throw it away as
+	 * invalid.  However, this is what the UI generates for a JID with no
+	 * resource. Deal with that by dropping away the '/'...
+	 */
+	if (in[len - 1] == '/')
+		tmp = g_strndup(in, len - 1);
+	else
+		tmp = (gchar *)in;
+
+	jid = jabber_id_new(tmp);
+
+	if (tmp != in)
+		g_free(tmp);
 
 	if(!jid)
 		return NULL;

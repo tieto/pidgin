@@ -60,6 +60,7 @@ typedef struct
 {
 	PurpleAccount *account;
 	PurplePounce *pounce;
+	char *pouncee;
 } PidginNotifyPounceData;
 
 
@@ -155,6 +156,7 @@ pounce_response_close(PidginNotifyDialog *dialog)
 				-1);
 		gtk_tree_store_remove(dialog->treemodel, &iter);
 
+		g_free(pounce_data->pouncee);
 		g_free(pounce_data);
 	}
 
@@ -173,8 +175,29 @@ delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 			PIDGIN_POUNCE_DATA, &pounce_data,
 			-1);
 
-	if (pounce_data != NULL)
+	if (pounce_data != NULL) {
+		g_free(pounce_data->pouncee);
 		g_free(pounce_data);
+	}
+}
+
+static void
+open_im_foreach(GtkTreeModel *model, GtkTreePath *path,
+		GtkTreeIter *iter, gpointer data)
+{
+	PidginNotifyPounceData *pounce_data;
+
+	gtk_tree_model_get(model, iter,
+			PIDGIN_POUNCE_DATA, &pounce_data,
+			-1);
+
+	if (pounce_data != NULL) {
+		PurpleConversation *conv;
+
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
+				pounce_data->account, pounce_data->pouncee);
+		purple_conversation_present(conv);
+	}
 }
 
 static void
@@ -184,10 +207,12 @@ append_to_list(GtkTreeModel *model, GtkTreePath *path,
 	GList **list = data;
 	*list = g_list_prepend(*list, gtk_tree_path_copy(path));
 }
+
 static void
 pounce_response_dismiss()
 {
 	GtkTreeSelection *selection;
+	GtkTreeIter iter;
 	GList *list = NULL;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(pounce_dialog->treeview));
@@ -203,6 +228,20 @@ pounce_response_dismiss()
 		gtk_tree_path_free(list->data);
 		list = g_list_delete_link(list, list);
 	}
+
+	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(pounce_dialog->treemodel), &iter))
+		pounce_response_close(pounce_dialog);
+}
+
+static void
+pounce_response_open_ims()
+{
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(pounce_dialog->treeview));
+	gtk_tree_selection_selected_foreach(selection, open_im_foreach, pounce_dialog);
+	
+	pounce_response_dismiss();
 }
 
 static void
@@ -241,6 +280,9 @@ pounce_response_cb(GtkDialog *dlg, gint id, PidginNotifyDialog *dialog)
 		case GTK_RESPONSE_DELETE_EVENT:
 			pounce_response_close(dialog);
 			break;
+		case GTK_RESPONSE_YES:
+			pounce_response_open_ims();
+			break;
 		case GTK_RESPONSE_NO:
 			pounce_response_dismiss();
 			break;
@@ -256,40 +298,47 @@ static void
 pounce_row_selected_cb(GtkTreeView *tv, GtkTreePath *path,
 	GtkTreeViewColumn *col, gpointer data)
 {
-	GtkTreeIter iter;
 	GtkTreeSelection *selection;
-	gboolean selected;
-	GList *list;
+	int count;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(pounce_dialog->treeview));
 
-	selected = gtk_tree_selection_get_selected(selection,
-			NULL, &iter);
+	count = gtk_tree_selection_count_selected_rows(selection);
 
-	if (selected) {
-		PurplePounce *pounce;
+	if (count == 0) {
+		gtk_widget_set_sensitive(pounce_dialog->open_button, FALSE);
+		gtk_widget_set_sensitive(pounce_dialog->edit_button, FALSE);
+		gtk_widget_set_sensitive(pounce_dialog->dismiss_button, FALSE);
+	} else if (count == 1) {
+		GList *pounces;
+		GList *list;
 		PidginNotifyPounceData *pounce_data;
+		GtkTreeIter iter;
 
-		list = purple_pounces_get_all();
-
+		list = gtk_tree_selection_get_selected_rows(selection, NULL);
+		gtk_tree_model_get_iter(GTK_TREE_MODEL(pounce_dialog->treemodel),
+				&iter, list->data);
 		gtk_tree_model_get(GTK_TREE_MODEL(pounce_dialog->treemodel), &iter,
 				PIDGIN_POUNCE_DATA, &pounce_data,
 				-1);
+		g_list_foreach(list, (GFunc)gtk_tree_path_free, NULL);
+		g_list_free(list);
 
-		gtk_widget_set_sensitive(pounce_dialog->edit_button, FALSE);
-
-		for (; list != NULL; list = list->next) {
-			pounce = list->data;
+		pounces = purple_pounces_get_all();
+		for (; pounces != NULL; pounces = pounces->next) {
+			PurplePounce *pounce = pounces->data;
 			if (pounce == pounce_data->pounce) {
 				gtk_widget_set_sensitive(pounce_dialog->edit_button, TRUE);
 				break;
 			}
 		}
 
+		gtk_widget_set_sensitive(pounce_dialog->open_button, TRUE);
 		gtk_widget_set_sensitive(pounce_dialog->dismiss_button, TRUE);
 	} else {
+		gtk_widget_set_sensitive(pounce_dialog->open_button, TRUE);
 		gtk_widget_set_sensitive(pounce_dialog->edit_button, FALSE);
-		gtk_widget_set_sensitive(pounce_dialog->dismiss_button, FALSE);
+		gtk_widget_set_sensitive(pounce_dialog->dismiss_button, TRUE);
 	}
 
 
@@ -1361,6 +1410,7 @@ pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
 
 	pounce_data->account = account;
 	pounce_data->pounce = pounce;
+	pounce_data->pouncee = g_strdup(purple_pounce_get_pouncee(pounce));
 
 	gtk_tree_store_append(pounce_dialog->treemodel, &iter, NULL);
 
@@ -1484,6 +1534,11 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 		gtk_window_set_title(GTK_WINDOW(dialog), _("New Pounces"));
 
 		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
+						_("IM"), GTK_RESPONSE_YES);
+		gtk_widget_set_sensitive(button, FALSE);
+		spec_dialog->open_button = button;
+	
+		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
 						_("Dismiss"), GTK_RESPONSE_NO);
 		gtk_widget_set_sensitive(button, FALSE);
 		spec_dialog->dismiss_button = button;
@@ -1536,9 +1591,11 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 		gtk_label_set_markup(GTK_LABEL(label), _("<span weight=\"bold\" size=\"larger\">You have pounced!</span>"));
 
 		sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(spec_dialog->treeview));
-		gtk_tree_selection_set_mode(sel, GTK_SELECTION_SINGLE);
+		gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 		g_signal_connect(G_OBJECT(sel), "changed",
 			G_CALLBACK(pounce_row_selected_cb), NULL);
+		g_signal_connect(G_OBJECT(spec_dialog->treeview), "row-activated",
+			G_CALLBACK(pounce_response_open_ims), NULL);
 	}
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);

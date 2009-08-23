@@ -1,11 +1,20 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.2 (??/??/2009):
+	libpurple:
+	* Fix --disable-avahi to actually disable it in configure, as opposed
+	  to just making the warning non-fatal.
+	* Sending custom smileys in MSN chats is now supported.
+
 	XMPP:
 	* Prompt the user before cancelling a presence subscription.
 	* Escape status messages that have HTML entities in the Get Info dialog.
 	* Fix connecting to XMPP domains with no SRV records from Pidgin on
 	  Windows.
+	* Fix typing notifications with Pidgin 2.5.9 or earlier.
+
+	Finch:
+	* Properly detect libpanel on OpenBSD.  (Brad Smith)
 
 version 2.6.1 (08/18/2009):
 	* Fix a crash when some users send you a link in a Yahoo IM

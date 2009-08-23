@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -910,12 +912,14 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 	             (binval = xmlnode_get_child(photo, "BINVAL"))) {
 		gsize size;
 		char *bintext = xmlnode_get_data(binval);
-		guchar *data = purple_base64_decode(bintext, &size);
-		g_free(bintext);
+		if (bintext) {
+			guchar *data = purple_base64_decode(bintext, &size);
+			g_free(bintext);
 
-		if (data) {
-			vcard_hash = jabber_calculate_data_sha1sum(data, size);
-			g_free(data);
+			if (data) {
+				vcard_hash = jabber_calculate_data_sha1sum(data, size);
+				g_free(data);
+			}
 		}
 	}
 
