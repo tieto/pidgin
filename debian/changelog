@@ -1,3 +1,19 @@
+pidgin (2.5.9-1~bpo50+1) lenny-backports; urgency=low
+
+  * Security triggered rebuild for lenny-backports to fix CVE-2009-2694 (buffer
+    overflow in MSN).
+  * Switched libsilc-dev B-D back to libsilc-1.1-2-dev which is in lenny.
+
+ -- Gerfried Fuchs <rhonda@debian.at>  Sun, 23 Aug 2009 22:19:03 +0200
+
+pidgin (2.5.9-1) unstable; urgency=high
+
+  * New upstream release
+    - Fixes MSN buffer overflow (CVE-2009-2964)
+  * Change build-depends for libsilc-dev rename (Closes: #536150)
+
+ -- Ari Pollak <ari@debian.org>  Sun, 16 Aug 2009 19:33:16 -0400
+
 pidgin (2.5.8-1) unstable; urgency=high
 
   * New upstream version
