@@ -137,13 +137,9 @@ static GList *pidgin_blist_sort_methods = NULL;
 static struct pidgin_blist_sort_method *current_sort_method = NULL;
 static void sort_method_none(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 
-/* The functions we use for sorting aren't available in gtk 2.0.x, and
- * segfault in 2.2.0.  2.2.1 is known to work, so I'll require that */
-#if GTK_CHECK_VERSION(2,2,1)
 static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
-#endif
 static PidginBuddyList *gtkblist = NULL;
 
 static GList *groups_tree(void);
@@ -201,7 +197,6 @@ static gboolean gtk_blist_visibility_cb(GtkWidget *w, GdkEventVisibility *event,
 
 static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *event, gpointer data)
 {
-#if GTK_CHECK_VERSION(2,2,0)
 	if(event->changed_mask & GDK_WINDOW_STATE_WITHDRAWN) {
 		if(event->new_window_state & GDK_WINDOW_STATE_WITHDRAWN)
 			purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_visible", FALSE);
@@ -223,28 +218,6 @@ static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *eve
 		if (!(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
 			pidgin_blist_refresh_timer(purple_get_blist());
 	}
-#else
-	/* At least gtk+ 2.0.6 does not properly set the change_mask when unsetting a
-	 * GdkWindowState flag. To work around, the window state will be explicitly
-	 * queried on these older versions of gtk+. See pidgin ticket #739.
-	 */
-	GdkWindowState new_window_state = gdk_window_get_state(G_OBJECT(gtkblist->window->window));
-
-	if(new_window_state & GDK_WINDOW_STATE_WITHDRAWN) {
-		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_visible", FALSE);
-	} else {
-		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_visible", TRUE);
-		pidgin_blist_refresh_timer(purple_get_blist());
-	}
-
-	if(new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
-		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_maximized", TRUE);
-	else
-		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_maximized", FALSE);
-
-	if (!(new_window_state & GDK_WINDOW_STATE_ICONIFIED))
-		pidgin_blist_refresh_timer(purple_get_blist());
-#endif
 
 	return FALSE;
 }
@@ -434,7 +407,6 @@ static void gtk_blist_menu_join_cb(GtkWidget *w, PurpleChat *chat)
 	gtk_blist_join_chat(chat);
 }
 
-#if GTK_CHECK_VERSION(2,6,0)
 static void gtk_blist_renderer_editing_cancelled_cb(GtkCellRenderer *renderer, PurpleBuddyList *list)
 {
 	editing_blist = FALSE;
@@ -480,7 +452,6 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 	}
 	editing_blist = TRUE;
 }
-#endif
 
 static void
 gtk_blist_do_personize(GList *merges)
@@ -758,12 +729,8 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
 	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", TRUE, NULL);
 	gtk_tree_view_set_enable_search (GTK_TREE_VIEW(gtkblist->treeview), FALSE);
 	gtk_widget_grab_focus(gtkblist->treeview);
-#if GTK_CHECK_VERSION(2,2,0)
 	gtk_tree_view_set_cursor_on_cell(GTK_TREE_VIEW(gtkblist->treeview), path,
 			gtkblist->text_column, gtkblist->text_rend, TRUE);
-#else
-	gtk_tree_view_set_cursor(GTK_TREE_VIEW(gtkblist->treeview), path, gtkblist->text_column, TRUE);
-#endif
 	gtk_tree_path_free(path);
 }
 
@@ -3060,7 +3027,6 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 						current_height-1,td->avatar_width+2, td->avatar_height+2);
 		}
 
-#if GTK_CHECK_VERSION(2,2,0)
 		if (td->status_icon) {
 			if (dir == GTK_TEXT_DIR_RTL)
 				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
@@ -3087,16 +3053,6 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 					current_height + ((td->name_height / 2) - (PRPL_SIZE / 2)),
 					-1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 
-#else
-		if (td->status_icon) {
-			gdk_pixbuf_render_to_drawable(td->status_icon, GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 12, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
-		}
-		if(td->avatar)
-			gdk_pixbuf_render_to_drawable(td->avatar,
-					GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0,
-					max_width - (td->avatar_width + TOOLTIP_BORDER),
-					current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
-#endif
 		if (td->name_layout) {
 			if (dir == GTK_TEXT_DIR_RTL) {
 				gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
@@ -3476,11 +3432,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
-#if GTK_CHECK_VERSION(2,6,0)
 	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 4,  "<StockItem>", GTK_STOCK_ABOUT },
-#else
-	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 4,  "<Item>", NULL },
-#endif
 };
 
 /*********************************************************
@@ -4070,44 +4022,11 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 				g_free(tmp);
 				tmp = new;
 			}
-			/* add ... to messages that are too long, GTK 2.6+ does it automatically */
-#if !GTK_CHECK_VERSION(2,6,0)
-			if(tmp) {
-				char buf[32];
-				char *c = tmp;
-				int length = 0, vis=0;
-				gboolean inside = FALSE;
-				g_strdelimit(tmp, "\n", ' ');
-				purple_str_strip_char(tmp, '\r');
-
-				while(*c && vis < 20) {
-					if(*c == '&')
-						inside = TRUE;
-					else if(*c == ';')
-						inside = FALSE;
-					if(!inside)
-						vis++;
-					c = g_utf8_next_char(c); /* this is fun */
-				}
-
-				length = c - tmp;
-
-				if(vis == 20)
-					g_snprintf(buf, sizeof(buf), "%%.%ds...", length);
-				else
-					g_snprintf(buf, sizeof(buf), "%%s ");
-
-				statustext = g_strdup_printf(buf, tmp);
-
-				g_free(tmp);
-			}
-#else
 			if(tmp) {
 				g_strdelimit(tmp, "\n", ' ');
 				purple_str_strip_char(tmp, '\r');
 			}
 			statustext = tmp;
-#endif
 		}
 
 		if(!purple_presence_is_online(presence) && !statustext)
@@ -4660,11 +4579,9 @@ void pidgin_blist_setup_sort_methods()
 	const char *id;
 
 	pidgin_blist_sort_method_reg("none", _("Manually"), sort_method_none);
-#if GTK_CHECK_VERSION(2,2,1)
 	pidgin_blist_sort_method_reg("alphabetical", _("Alphabetically"), sort_method_alphabetical);
 	pidgin_blist_sort_method_reg("status", _("By status"), sort_method_status);
 	pidgin_blist_sort_method_reg("log_size", _("By recent log activity"), sort_method_log_activity);
-#endif
 
 	id = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/sort_type");
 	if (id == NULL) {
@@ -4688,9 +4605,7 @@ static void _prefs_change_redo_list(const char *name, PurplePrefType type,
 	}
 
 	redo_buddy_list(purple_get_blist(), FALSE, FALSE);
-#if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(gtkblist->treeview));
-#endif
 
 	if (node)
 	{
@@ -4726,11 +4641,7 @@ static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 
 	/* this is far too ugly thanks to me not wanting to fix #3989 properly right now */
 	if (priv->error_scrollbook != NULL) {
-#if GTK_CHECK_VERSION(2,2,0)
 		errors = gtk_notebook_get_n_pages(GTK_NOTEBOOK(priv->error_scrollbook->notebook));
-#else
-		errors = g_list_length(GTK_NOTEBOOK(priv->error_scrollbook->notebook)->children);
-#endif
 	}
 	if ((list = purple_accounts_get_all_active()) != NULL || errors) {
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 1);
@@ -4807,23 +4718,11 @@ headline_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, PidginBuddyLis
 	gdk_window_set_cursor(widget->window, gtkblist->hand_cursor);
 
 	if (gtkblist->headline_close) {
-#if GTK_CHECK_VERSION(2,2,0)
 		gdk_draw_pixbuf(widget->window, NULL, gtkblist->headline_close,
-#else
-		gdk_pixbuf_render_to_drawable(gtkblist->headline_close,
-				GDK_DRAWABLE(widget->window), NULL,
-#endif
 					0, 0,
 					widget->allocation.width - 2 - HEADLINE_CLOSE_SIZE, 2,
 					HEADLINE_CLOSE_SIZE, HEADLINE_CLOSE_SIZE,
 					GDK_RGB_DITHER_NONE, 0, 0);
-#if 0
-		/* The presence of one opening paren in each branch of
-		 * GTK_CHECK_VERSION confuses vim's bracket matching for the
-		 * rest of the file.
-		 */
-		)
-#endif
 		gtk_paint_focus(widget->style, widget->window, GTK_STATE_PRELIGHT,
 				NULL, widget, NULL,
 				widget->allocation.width - HEADLINE_CLOSE_SIZE - 3, 1,
@@ -5182,9 +5081,7 @@ create_account_label(PurpleAccount *account)
 	gtk_label_set_markup(GTK_LABEL(label), markup);
 	g_free(markup);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-#if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(G_OBJECT(label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 #if GTK_CHECK_VERSION(2,12,0)
 	{ /* avoid unused variable warnings on pre-2.12 Gtk */
 		char *description =
@@ -5495,10 +5392,8 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 	gtk_tree_view_column_set_attributes(column, rend,
 					    "visible", GROUP_EXPANDER_VISIBLE_COLUMN,
 					    "expander-visible", GROUP_EXPANDER_COLUMN,
-#if GTK_CHECK_VERSION(2,6,0)
 					    "sensitive", GROUP_EXPANDER_COLUMN,
 					    "cell-background-gdk", BGCOLOR_COLUMN,
-#endif
 					    NULL);
 
 	/* contact */
@@ -5507,10 +5402,8 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 	gtk_tree_view_column_set_attributes(column, rend,
 					    "visible", CONTACT_EXPANDER_VISIBLE_COLUMN,
 					    "expander-visible", CONTACT_EXPANDER_COLUMN,
-#if GTK_CHECK_VERSION(2,6,0)
 					    "sensitive", CONTACT_EXPANDER_COLUMN,
 					    "cell-background-gdk", BGCOLOR_COLUMN,
-#endif
 					    NULL);
 
 	for (i = 0; i < 5; i++) {
@@ -5522,9 +5415,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtk_tree_view_column_set_attributes(column, rend,
 							    "pixbuf", STATUS_ICON_COLUMN,
 							    "visible", STATUS_ICON_VISIBLE_COLUMN,
-#if GTK_CHECK_VERSION(2,6,0)
 							    "cell-background-gdk", BGCOLOR_COLUMN,
-#endif
 							    NULL);
 			g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
 
@@ -5533,20 +5424,14 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtkblist->text_rend = rend = gtk_cell_renderer_text_new();
 			gtk_tree_view_column_pack_start(column, rend, TRUE);
 			gtk_tree_view_column_set_attributes(column, rend,
-#if GTK_CHECK_VERSION(2,6,0)
 							    "cell-background-gdk", BGCOLOR_COLUMN,
-#endif
 							    "markup", NAME_COLUMN,
 							    NULL);
-#if GTK_CHECK_VERSION(2,6,0)
 			g_signal_connect(G_OBJECT(rend), "editing-started", G_CALLBACK(gtk_blist_renderer_editing_started_cb), NULL);
 			g_signal_connect(G_OBJECT(rend), "editing-canceled", G_CALLBACK(gtk_blist_renderer_editing_cancelled_cb), list);
-#endif
 			g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(gtk_blist_renderer_edited_cb), list);
 			g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
-#if GTK_CHECK_VERSION(2,6,0)
 			g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 
 			/* idle */
 			rend = gtk_cell_renderer_text_new();
@@ -5555,9 +5440,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtk_tree_view_column_set_attributes(column, rend,
 							    "markup", IDLE_COLUMN,
 							    "visible", IDLE_VISIBLE_COLUMN,
-#if GTK_CHECK_VERSION(2,6,0)
 							    "cell-background-gdk", BGCOLOR_COLUMN,
-#endif
 							    NULL);
 		} else if (emblem == i) {
 			/* emblem */
@@ -5565,9 +5448,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			g_object_set(rend, "xalign", 1.0, "yalign", 0.5, "ypad", 0, "xpad", 3, NULL);
 			gtk_tree_view_column_pack_start(column, rend, FALSE);
 			gtk_tree_view_column_set_attributes(column, rend, "pixbuf", EMBLEM_COLUMN,
-#if GTK_CHECK_VERSION(2,6,0)
 									  "cell-background-gdk", BGCOLOR_COLUMN,
-#endif
 									  "visible", EMBLEM_VISIBLE_COLUMN, NULL);
 
 		} else if (protocol_icon == i) {
@@ -5577,9 +5458,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtk_tree_view_column_set_attributes(column, rend,
 							   "pixbuf", PROTOCOL_ICON_COLUMN,
 							   "visible", PROTOCOL_ICON_VISIBLE_COLUMN,
-#if GTK_CHECK_VERSION(2,6,0)
 							   "cell-background-gdk", BGCOLOR_COLUMN,
-#endif
 							  NULL);
 			g_object_set(rend, "xalign", 0.0, "xpad", 3, "ypad", 0, NULL);
 
@@ -5589,9 +5468,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 			gtk_tree_view_column_pack_start(column, rend, FALSE);
 			gtk_tree_view_column_set_attributes(column, rend, "pixbuf", BUDDY_ICON_COLUMN,
-#if GTK_CHECK_VERSION(2,6,0)
 							    "cell-background-gdk", BGCOLOR_COLUMN,
-#endif
 							    "visible", BUDDY_ICON_VISIBLE_COLUMN,
 							    NULL);
 		}
@@ -6732,9 +6609,6 @@ static void pidgin_blist_update(PurpleBuddyList *list, PurpleBlistNode *node)
 			return;
 	}
 
-#if !GTK_CHECK_VERSION(2,6,0)
-	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(gtkblist->treeview));
-#endif
 }
 
 static void pidgin_blist_destroy(PurpleBuddyList *list)
@@ -7532,253 +7406,6 @@ static void sort_method_none(PurpleBlistNode *node, PurpleBuddyList *blist, GtkT
 			node->parent ? &parent_iter : NULL,
 			sibling ? &sibling_iter : NULL);
 }
-
-#if GTK_CHECK_VERSION(2,2,1)
-
-static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
-{
-	GtkTreeIter more_z;
-
-	const char *my_name;
-
-	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		my_name = purple_contact_get_alias((PurpleContact*)node);
-	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		my_name = purple_chat_get_name((PurpleChat*)node);
-	} else {
-		sort_method_none(node, blist, groupiter, cur, iter);
-		return;
-	}
-
-
-	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
-		gtk_tree_store_insert(gtkblist->treemodel, iter, &groupiter, 0);
-		return;
-	}
-
-	do {
-		GValue val;
-		PurpleBlistNode *n;
-		const char *this_name;
-		int cmp;
-
-		val.g_type = 0;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
-		n = g_value_get_pointer(&val);
-
-		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
-			this_name = purple_contact_get_alias((PurpleContact*)n);
-		} else if(PURPLE_BLIST_NODE_IS_CHAT(n)) {
-			this_name = purple_chat_get_name((PurpleChat*)n);
-		} else {
-			this_name = NULL;
-		}
-
-		cmp = purple_utf8_strcasecmp(my_name, this_name);
-
-		if(this_name && (cmp < 0 || (cmp == 0 && node < n))) {
-			if(cur) {
-				gtk_tree_store_move_before(gtkblist->treemodel, cur, &more_z);
-				*iter = *cur;
-				return;
-			} else {
-				gtk_tree_store_insert_before(gtkblist->treemodel, iter,
-						&groupiter, &more_z);
-				return;
-			}
-		}
-		g_value_unset(&val);
-	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
-
-	if(cur) {
-		gtk_tree_store_move_before(gtkblist->treemodel, cur, NULL);
-		*iter = *cur;
-		return;
-	} else {
-		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
-		return;
-	}
-}
-
-static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
-{
-	GtkTreeIter more_z;
-
-	PurpleBuddy *my_buddy, *this_buddy;
-
-	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		my_buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
-	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		if (cur != NULL) {
-			*iter = *cur;
-			return;
-		}
-
-		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
-		return;
-	} else {
-		sort_method_none(node, blist, groupiter, cur, iter);
-		return;
-	}
-
-
-	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
-		gtk_tree_store_insert(gtkblist->treemodel, iter, &groupiter, 0);
-		return;
-	}
-
-	do {
-		GValue val;
-		PurpleBlistNode *n;
-		gint name_cmp;
-		gint presence_cmp;
-
-		val.g_type = 0;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
-		n = g_value_get_pointer(&val);
-
-		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
-			this_buddy = purple_contact_get_priority_buddy((PurpleContact*)n);
-		} else {
-			this_buddy = NULL;
-		}
-
-		name_cmp = purple_utf8_strcasecmp(
-			purple_contact_get_alias(purple_buddy_get_contact(my_buddy)),
-			(this_buddy
-			 ? purple_contact_get_alias(purple_buddy_get_contact(this_buddy))
-			 : NULL));
-
-		presence_cmp = purple_presence_compare(
-			purple_buddy_get_presence(my_buddy),
-			this_buddy ? purple_buddy_get_presence(this_buddy) : NULL);
-
-		if (this_buddy == NULL ||
-			(presence_cmp < 0 ||
-			 (presence_cmp == 0 &&
-			  (name_cmp < 0 || (name_cmp == 0 && node < n)))))
-		{
-			if (cur != NULL)
-			{
-				gtk_tree_store_move_before(gtkblist->treemodel, cur, &more_z);
-				*iter = *cur;
-				return;
-			}
-			else
-			{
-				gtk_tree_store_insert_before(gtkblist->treemodel, iter,
-											 &groupiter, &more_z);
-				return;
-			}
-		}
-
-		g_value_unset(&val);
-	}
-	while (gtk_tree_model_iter_next(GTK_TREE_MODEL(gtkblist->treemodel),
-									&more_z));
-
-	if (cur) {
-		gtk_tree_store_move_before(gtkblist->treemodel, cur, NULL);
-		*iter = *cur;
-		return;
-	} else {
-		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
-		return;
-	}
-}
-
-static void sort_method_log_activity(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
-{
-	GtkTreeIter more_z;
-
-	int activity_score = 0, this_log_activity_score = 0;
-	const char *buddy_name, *this_buddy_name;
-
-	if(cur && (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter) == 1)) {
-		*iter = *cur;
-		return;
-	}
-
-	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		PurpleBlistNode *n;
-		PurpleBuddy *buddy;
-		for (n = node->child; n; n = n->next) {
-			buddy = (PurpleBuddy*)n;
-			activity_score += purple_log_get_activity_score(PURPLE_LOG_IM, buddy->name, buddy->account);
-		}
-		buddy_name = purple_contact_get_alias((PurpleContact*)node);
-	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		/* we don't have a reliable way of getting the log filename
-		 * from the chat info in the blist, yet */
-		if (cur != NULL) {
-			*iter = *cur;
-			return;
-		}
-
-		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
-		return;
-	} else {
-		sort_method_none(node, blist, groupiter, cur, iter);
-		return;
-	}
-
-
-	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
-		gtk_tree_store_insert(gtkblist->treemodel, iter, &groupiter, 0);
-		return;
-	}
-
-	do {
-		GValue val;
-		PurpleBlistNode *n;
-		PurpleBlistNode *n2;
-		PurpleBuddy *buddy;
-		int cmp;
-
-		val.g_type = 0;
-		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
-		n = g_value_get_pointer(&val);
-		this_log_activity_score = 0;
-
-		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
-			for (n2 = n->child; n2; n2 = n2->next) {
-                        	buddy = (PurpleBuddy*)n2;
-				this_log_activity_score += purple_log_get_activity_score(PURPLE_LOG_IM, buddy->name, buddy->account);
-			}
-			this_buddy_name = purple_contact_get_alias((PurpleContact*)n);
-		} else {
-			this_buddy_name = NULL;
-		}
-
-		cmp = purple_utf8_strcasecmp(buddy_name, this_buddy_name);
-
-		if (!PURPLE_BLIST_NODE_IS_CONTACT(n) || activity_score > this_log_activity_score ||
-				((activity_score == this_log_activity_score) &&
-				 (cmp < 0 || (cmp == 0 && node < n)))) {
-			if (cur != NULL) {
-				gtk_tree_store_move_before(gtkblist->treemodel, cur, &more_z);
-				*iter = *cur;
-				return;
-			} else {
-				gtk_tree_store_insert_before(gtkblist->treemodel, iter,
-						&groupiter, &more_z);
-				return;
-			}
-		}
-		g_value_unset(&val);
-	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
-
-	if (cur != NULL) {
-		gtk_tree_store_move_before(gtkblist->treemodel, cur, NULL);
-		*iter = *cur;
-		return;
-	} else {
-		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
-		return;
-	}
-}
-
-#endif
 
 static void
 plugin_act(GtkObject *obj, PurplePluginAction *pam)
