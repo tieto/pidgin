@@ -1722,6 +1722,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	MsnMessage *msg;
 	char *msgformat;
 	char *msgtext;
+	size_t msglen;
 
 	account = purple_connection_get_account(gc);
 	session = gc->proto_data;
@@ -1736,8 +1737,9 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	swboard->flag |= MSN_SB_FLAG_IM;
 
 	msn_import_html(message, &msgformat, &msgtext);
+	msglen = strlen(msgtext);
 
-	if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
+	if ((msglen == 0) || (msglen + strlen(msgformat) + strlen(VERSION) > 1564))
 	{
 		g_free(msgformat);
 		g_free(msgtext);
