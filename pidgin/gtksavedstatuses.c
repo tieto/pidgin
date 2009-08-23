@@ -34,7 +34,6 @@
 #include "util.h"
 
 #include "gtkblist.h"
-#include "gtkexpander.h"
 #include "pidgin.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
