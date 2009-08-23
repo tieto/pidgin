@@ -89,6 +89,7 @@ typedef struct
 typedef struct
 {
 	char *smile;
+	PurpleSmiley *ps;
 	MsnObject *obj;
 } MsnEmoticon;
 
@@ -1143,6 +1144,7 @@ static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 
 		emoticon = g_new0(MsnEmoticon, 1);
 		emoticon->smile = g_strdup(purple_smiley_get_shortcut(smiley));
+		emoticon->ps = smiley;
 		emoticon->obj = msn_object_new_from_image(img,
 				purple_imgstore_get_filename(img),
 				username, MSN_OBJECT_EMOTICON);
@@ -1165,7 +1167,7 @@ msn_send_im_message(MsnSession *session, MsnMessage *msg)
 
 	smileys = msn_msg_grab_emoticons(msg->body, username);
 	while (smileys) {
-		smile = (MsnEmoticon*)smileys->data;
+		smile = (MsnEmoticon *)smileys->data;
 		emoticons = msn_msg_emoticon_add(emoticons, smile);
 		msn_emoticon_destroy(smile);
 		smileys = g_slist_delete_link(smileys, smileys);
@@ -1757,6 +1759,15 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	while (smileys) {
 		smile = (MsnEmoticon *)smileys->data;
 		emoticons = msn_msg_emoticon_add(emoticons, smile);
+		if (purple_conv_custom_smiley_add(swboard->conv, smile->smile,
+		                                  "sha1", purple_smiley_get_checksum(smile->ps),
+		                                  FALSE)) {
+			gconstpointer data;
+			size_t len;
+			data = purple_smiley_get_data(smile->ps, &len);
+			purple_conv_custom_smiley_write(swboard->conv, smile->smile, data, len);
+			purple_conv_custom_smiley_close(swboard->conv, smile->smile);
+		}
 		msn_emoticon_destroy(smile);
 		smileys = g_slist_delete_link(smileys, smileys);
 	}
