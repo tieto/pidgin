@@ -1,3 +1,23 @@
+pidgin (2.4.3-4lenny3~bpo40+1) etch-backports; urgency=low
+
+  * Security triggered rebuild for etch-backports to fix CVE-2009-2694 (buffer
+    overflow in MSN).
+  * Make pidgin.menu etch-style (use Apps/Net)
+  * Do not require a specific version for libnss3-dev (the one in etch works)
+
+ -- Gerfried Fuchs <rhonda@debian.at>  Sun, 23 Aug 2009 20:45:35 +0200
+
+pidgin (2.4.3-4lenny3) stable-security; urgency=low
+
+  * debian/patches/33_ssl-nss-self-signed-crash.patch:
+    - fix a regression caused by 25_ssl-nss.patch and causes a crash when
+      trying to connect to an XMPP server with a self-signed SSL certificate.
+      (Closes: #533052)
+  * debian/patches/34_CVE-2009-2694.patch:
+    - fix a buffer overflow in MSN (CVE-2009-2694)
+
+ -- Ari Pollak <ari@debian.org>  Fri, 14 Aug 2009 20:54:11 -0400
+
 pidgin (2.4.3-4lenny2) stable-security; urgency=low
 
   * debian/patches/30_CVE-2009-1373.patch:

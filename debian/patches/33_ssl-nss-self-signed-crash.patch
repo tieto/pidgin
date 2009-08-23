@@ -1,0 +1,29 @@
+#
+#
+# patch "libpurple/plugins/ssl/ssl-nss.c"
+#  from [c6c576ba92370703e89850d8e6dc88b7fec3e523]
+#    to [d6de7a59c8b1c42086fd8e7153865718fc3289e6]
+#
+============================================================
+--- libpurple/plugins/ssl/ssl-nss.c	c6c576ba92370703e89850d8e6dc88b7fec3e523
++++ libpurple/plugins/ssl/ssl-nss.c	d6de7a59c8b1c42086fd8e7153865718fc3289e6
+@@ -285,7 +285,8 @@ ssl_nss_get_peer_certificates(PRFileDesc
+ 	}
+ 	
+ 	for (count = 0 ; count < CERT_MAX_CERT_CHAIN ; count++) {
+-		purple_debug_info("nss", "subject=%s issuer=%s\n", curcert->subjectName, curcert->issuerName);
++		purple_debug_info("nss", "subject=%s issuer=%s\n", curcert->subjectName,
++						  curcert->issuerName  ? curcert->issuerName : "(null)");
+ 		newcrt = x509_import_from_nss(curcert);
+ 		peer_certs = g_list_append(peer_certs, newcrt);
+ 
+@@ -676,7 +677,8 @@ x509_signed_by(PurpleCertificate * crt,
+ 	subjectCert = X509_NSS_DATA(crt);
+ 	g_return_val_if_fail(subjectCert, FALSE);
+ 
+-	if ( PORT_Strcmp(subjectCert->issuerName, issuerCert->subjectName) != 0 )
++	if (subjectCert->issuerName == NULL
++			|| PORT_Strcmp(subjectCert->issuerName, issuerCert->subjectName) != 0)
+ 		return FALSE;
+ 	st = CERT_VerifySignedData(&subjectCert->signatureWrap, issuerCert, PR_Now(), NULL);
+ 	return st == SECSuccess;
