@@ -4500,8 +4500,6 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	if (purple_presence_is_idle(presence))
 		yahoo_packet_hash_str(pkt, 47, "2");
-	else if (!purple_status_is_available(status))
-		yahoo_packet_hash_str(pkt, 47, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -4522,6 +4520,7 @@ void yahoo_set_idle(PurpleConnection *gc, int idle)
 	struct yahoo_packet *pkt = NULL;
 	char *msg = NULL, *msg2 = NULL;
 	PurpleStatus *status = NULL;
+	gboolean invisible = FALSE;
 
 	if (idle && yd->current_status != YAHOO_STATUS_CUSTOM)
 		yd->current_status = YAHOO_STATUS_IDLE;
@@ -4530,9 +4529,15 @@ void yahoo_set_idle(PurpleConnection *gc, int idle)
 		yd->current_status = get_yahoo_status_from_purple_status(status);
 	}
 
+	invisible = !( purple_presence_is_available(purple_account_get_presence(purple_connection_get_account(gc))) );
+
 	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
-	yahoo_packet_hash_int(pkt, 10, yd->current_status);
+	if (!idle && invisible)
+		yahoo_packet_hash_int(pkt, 10, YAHOO_STATUS_AVAILABLE);
+	else
+		yahoo_packet_hash_int(pkt, 10, yd->current_status);
+
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
 		const char *tmp;
 		if (status == NULL)
@@ -4555,8 +4560,6 @@ void yahoo_set_idle(PurpleConnection *gc, int idle)
 
 	if (idle)
 		yahoo_packet_hash_str(pkt, 47, "2");
-	else if (!purple_presence_is_available(purple_account_get_presence(purple_connection_get_account(gc))))
-		yahoo_packet_hash_str(pkt, 47, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
 
