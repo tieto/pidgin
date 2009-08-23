@@ -1082,12 +1082,10 @@ msn_msg_emoticon_add(GString *current, MsnEmoticon *emoticon)
 	strobj = msn_object_to_string(obj);
 
 	if (current)
-		g_string_append_printf(current, "\t%s\t%s",
-				emoticon->smile, strobj);
+		g_string_append_printf(current, "\t%s\t%s", emoticon->smile, strobj);
 	else {
 		current = g_string_new("");
-		g_string_printf(current,"%s\t%s",
-					emoticon->smile, strobj);
+		g_string_printf(current, "%s\t%s", emoticon->smile, strobj);
 	}
 
 	g_free(strobj);
@@ -1718,14 +1716,19 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 {
 	PurpleAccount *account;
 	MsnSession *session;
+	const char *username;
 	MsnSwitchBoard *swboard;
 	MsnMessage *msg;
 	char *msgformat;
 	char *msgtext;
 	size_t msglen;
+	MsnEmoticon *smile;
+	GSList *smileys;
+	GString *emoticons = NULL;
 
 	account = purple_connection_get_account(gc);
 	session = gc->proto_data;
+	username = purple_account_get_username(account);
 	swboard = msn_session_find_swboard_with_id(session, id);
 
 	if (swboard == NULL)
@@ -1749,6 +1752,20 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 
 	msg = msn_message_new_plain(msgtext);
 	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+
+	smileys = msn_msg_grab_emoticons(msg->body, username);
+	while (smileys) {
+		smile = (MsnEmoticon *)smileys->data;
+		emoticons = msn_msg_emoticon_add(emoticons, smile);
+		msn_emoticon_destroy(smile);
+		smileys = g_slist_delete_link(smileys, smileys);
+	}
+
+	if (emoticons) {
+		msn_send_emoticons(swboard, emoticons);
+		g_string_free(emoticons, TRUE);
+	}
+
 	msn_switchboard_send_msg(swboard, msg, FALSE);
 	msn_message_destroy(msg);
 

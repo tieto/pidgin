@@ -4,6 +4,7 @@ version 2.6.2 (??/??/2009):
 	libpurple:
 	* Fix --disable-avahi to actually disable it in configure, as opposed
 	  to just making the warning non-fatal.
+	* Sending custom smileys in MSN chats is now supported.
 
 	XMPP:
 	* Prompt the user before cancelling a presence subscription.
