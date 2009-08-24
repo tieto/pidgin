@@ -4774,6 +4774,7 @@ void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g
 void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 	YahooData *yd = (YahooData *)gc->proto_data;
 	struct yahoo_packet *pkt;
+	gboolean msn = FALSE;
 
 	if (!yd->logged_in)
 		return;
@@ -4781,15 +4782,21 @@ void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 	if (!who || who[0] == '\0')
 		return;
 
+	msn = !g_ascii_strncasecmp(who, "msn/", 4);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
-	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
-	                  7, who, 13, "1");
+
+	if(msn)
+		yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc), 7, who+4, 241, "2", 13, "1");
+	else
+		yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 13, "1");
+
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
 void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	YahooData *yd = (YahooData *)gc->proto_data;
 	struct yahoo_packet *pkt;
+	gboolean msn = FALSE;
 
 	if (!yd->logged_in)
 		return;
@@ -4797,8 +4804,14 @@ void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	if (!who || who[0] == '\0')
 		return;
 
+	msn = !g_ascii_strncasecmp(who, "msn/", 4);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
-	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 13, "2");
+
+	if(msn)
+		yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc), 7, who+4, 241, "2", 13, "2");
+	else
+		yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 13, "2");
+	
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
