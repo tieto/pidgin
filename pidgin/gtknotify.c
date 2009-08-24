@@ -1461,9 +1461,7 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 				G_TYPE_STRING, G_TYPE_POINTER);
 	}
 
-	dialog = gtk_dialog_new_with_buttons(NULL, NULL, 0,
-			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
-			NULL);
+	dialog = gtk_dialog_new();
 
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
@@ -1537,16 +1535,16 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 						_("IM"), GTK_RESPONSE_YES);
 		gtk_widget_set_sensitive(button, FALSE);
 		spec_dialog->open_button = button;
-	
+
+		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
+						PIDGIN_STOCK_MODIFY, GTK_RESPONSE_APPLY);
+		gtk_widget_set_sensitive(button, FALSE);
+		spec_dialog->edit_button = button;
+
 		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
 						_("Dismiss"), GTK_RESPONSE_NO);
 		gtk_widget_set_sensitive(button, FALSE);
 		spec_dialog->dismiss_button = button;
-
-		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
-						PIDGIN_STOCK_EDIT, GTK_RESPONSE_APPLY);
-		gtk_widget_set_sensitive(button, FALSE);
-		spec_dialog->edit_button = button;
 
 		g_signal_connect(G_OBJECT(dialog), "response",
 						 G_CALLBACK(pounce_response_cb), spec_dialog);
@@ -1597,6 +1595,9 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 		g_signal_connect(G_OBJECT(spec_dialog->treeview), "row-activated",
 			G_CALLBACK(pounce_response_open_ims), NULL);
 	}
+
+	button = gtk_dialog_add_button(GTK_DIALOG(dialog),
+	                               GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
