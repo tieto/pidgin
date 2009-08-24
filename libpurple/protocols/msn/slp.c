@@ -351,7 +351,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			g_free(bin);
 
-			purple_xfer_set_filename(xfer, file_name);
+			purple_xfer_set_filename(xfer, file_name ? file_name : "");
 			g_free(file_name);
 			purple_xfer_set_size(xfer, file_size);
 			purple_xfer_set_init_fnc(xfer, msn_xfer_init);
@@ -403,9 +403,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			if (conv) {
 				char *buf;
 				buf = g_strdup_printf(
-						_("%s has sent you a webcam "
-						"invite, which is not yet "
-						"supported."), from);
+						_("%s invited you to view his/her webcam, but "
+						"this is not yet supported."), from);
 				purple_conversation_write(conv, NULL, buf,
 						PURPLE_MESSAGE_SYSTEM |
 						PURPLE_MESSAGE_NOTIFY,

@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -469,10 +471,17 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 		jbr->commands_fetched = TRUE;
 	}
 
+#if 0
+	/*
+	 * Versions of libpurple before 2.6.0 didn't advertise this capability, so
+	 * we can't yet use Entity Capabilities to determine whether or not the
+	 * other client supports Entity Capabilities.
+	 */
 	if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/chatstates"))
 		jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
 	else
 		jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
+#endif
 
 out:
 	g_free(userdata->from);

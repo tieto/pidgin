@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,7 +209,10 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	url = xmlnode_get_data(urlnode);
 
 	jox = g_new0(JabberOOBXfer, 1);
-	purple_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL);
+	if (!purple_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL)) {
+		g_free(url);
+		return;
+	}
 	g_free(url);
 	jox->js = js;
 	jox->headers = g_string_new("");

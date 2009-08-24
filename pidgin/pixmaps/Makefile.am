@@ -450,28 +450,28 @@ TOOLBAR_16 = \
 TOOLBAR_22_SCALABLE = \
 		toolbar/22/scalable/select-avatar.svg \
 		toolbar/22/scalable/video-call.svg \
-		toolbar/22/scalable/voice-call.svg
+		toolbar/22/scalable/audio-call.svg
 
 TOOLBAR_22 = \
 		toolbar/22/select-avatar.png \
 		toolbar/22/video-call.png \
-		toolbar/22/voice-call.png
+		toolbar/22/audio-call.png
 
 TOOLBAR_32_SCALABLE = \
 		toolbar/32/scalable/video-call.svg \
-		toolbar/32/scalable/voice-call.svg
+		toolbar/32/scalable/audio-call.svg
 
 TOOLBAR_32 = \
 		toolbar/32/video-call.png \
-		toolbar/32/voice-call.png
+		toolbar/32/audio-call.png
 
 TOOLBAR_48_SCALABLE = \
 		toolbar/48/scalable/video-call.svg \
-		toolbar/48/scalable/voice-call.svg
+		toolbar/48/scalable/audio-call.svg
 
 TOOLBAR_48 = \
 		toolbar/48/video-call.png \
-		toolbar/48/voice-call.png
+		toolbar/48/audio-call.png
 
 TRAY_16_ICO = \
 		tray/16/available_4bit.ico \

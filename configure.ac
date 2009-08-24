@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [6])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [6])
-m4_define([purple_micro_version], [0])
+m4_define([purple_micro_version], [2])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [6])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [6])
-m4_define([gnt_micro_version], [0])
+m4_define([gnt_micro_version], [2])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -312,11 +312,11 @@ int main()
 dnl #######################################################################
 dnl # Check for GLib 2.0 (required)
 dnl #######################################################################
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.4.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have the GLib 2.0 development headers installed to build.
+You must have GLib 2.4.0 or newer development headers installed to build.
 
 If you have these installed already you may need to install pkg-config so
 I can find them.
@@ -399,12 +399,13 @@ else
 fi
 
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.0.0], , [
+	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.4.0], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 
-You must have the GTK+ 2.0 development headers installed to compile Pidgin.
-If you want to build only Finch then specify --disable-gtkui when running configure.
+You must have GTK+ 2.4.0 or newer development headers installed to compile
+Pidgin.  If you want to build only Finch then specify --disable-gtkui when
+running configure.
 ])])
 
 	AC_SUBST(GTK_CFLAGS)
@@ -631,7 +632,8 @@ AC_ARG_WITH(ncurses-headers, [AC_HELP_STRING([--with-ncurses-headers=DIR],
 		[ac_ncurses_includes="$withval"], [ac_ncurses_includes=""])
 if test "x$enable_consoleui" = "xyes"; then
 	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_consoleui=no])
-	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"], [enable_consoleui=no])
+	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"],
+	    [enable_consoleui=no], [$GNT_LIBS])
 
 	if test "x$enable_consoleui" = "xyes"; then
 		dnl # Some distros put the headers in ncursesw/, some don't
@@ -674,7 +676,8 @@ if test "x$enable_consoleui" = "xyes"; then
 		# ncursesw was not found. Look for plain old ncurses
 		enable_consoleui=yes
 		AC_CHECK_LIB(ncurses, initscr, [GNT_LIBS="-lncurses"], [enable_consoleui=no])
-		AC_CHECK_LIB(panel, update_panels, [GNT_LIBS="$GNT_LIBS -lpanel"], [enable_consoleui=no])
+		AC_CHECK_LIB(panel, update_panels, [GNT_LIBS="$GNT_LIBS -lpanel"],
+		    [enable_consoleui=no], [$GNT_LIBS])
 		AC_DEFINE(NO_WIDECHAR, 1, [Define to 1 if you don't have wide-character support.])
 		if test x"$ac_ncurses_includes" != "x"; then
 			GNT_CFLAGS="-I$ac_ncurses_includes"
@@ -792,13 +795,13 @@ dnl # Check for Voice and Video support
 dnl #######################################################################
 AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
-	[enable_vv="$enableval" force_vv=$enableval], [enable_vv="yes" force_vv=no])
+	enable_vv="$enableval", enable_vv="yes")
 if test "x$enable_vv" != "xno"; then
 	if test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farsight" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
 	else
 		enable_vv="no"
-		if test "x$force_vv" = "xyes"; then
+		if test "x$force_deps" = "xyes"; then
 			AC_MSG_ERROR([
 Dependencies for voice/video were not met.
 Install the necessary gstreamer and farsight packages first.
@@ -807,6 +810,7 @@ Or use --disable-vv if you do not need voice/video support.
 		fi
 	fi
 fi
+AM_CONDITIONAL(USE_VV, test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farsight" != "xno")
 
 AC_ARG_ENABLE(idn,
 	[AC_HELP_STRING([--disable-idn], [compile without IDN support])],
@@ -856,36 +860,39 @@ AC_ARG_ENABLE(avahi,
 	[AC_HELP_STRING([--disable-avahi],
 		[compile without avahi (required for Bonjour support)])],
 	enable_avahi="$enableval", enable_avahi="yes")
-AC_ARG_WITH(avahi-client-includes, [AC_HELP_STRING([--with-avahi-client-includes=DIR], [compile the Bonjour plugin against the Avahi Client includes in DIR])], [ac_avahi_client_includes="$withval"], [ac_avahi_client_includes="no"])
-AC_ARG_WITH(avahi-client-libs, [AC_HELP_STRING([--with-avahi-client-libs=DIR], [compile the Bonjour plugin against the Avahi Client libs in DIR])], [ac_avahi_client_libs="$withval"], [ac_avahi_client_libs="no"])
-AVAHI_CFLAGS=""
-AVAHI_LIBS=""
 
-dnl Attempt to autodetect Avahi
-PKG_CHECK_MODULES(AVAHI, [avahi-client avahi-glib], [
-	avahiincludes="yes"
-	avahilibs="yes"
-], [
-	avahiincludes="no"
-	avahilibs="no"
-])
+if test "x$enable_avahi" = "xyes"; then
+	AC_ARG_WITH(avahi-client-includes, [AC_HELP_STRING([--with-avahi-client-includes=DIR], [compile the Bonjour plugin against the Avahi Client includes in DIR])], [ac_avahi_client_includes="$withval"], [ac_avahi_client_includes="no"])
+	AC_ARG_WITH(avahi-client-libs, [AC_HELP_STRING([--with-avahi-client-libs=DIR], [compile the Bonjour plugin against the Avahi Client libs in DIR])], [ac_avahi_client_libs="$withval"], [ac_avahi_client_libs="no"])
+	AVAHI_CFLAGS=""
+	AVAHI_LIBS=""
 
-dnl Override AVAHI_CFLAGS if the user specified an include dir
-if test "$ac_avahi_client_includes" != "no"; then
-	AVAHI_CFLAGS="-I$ac_avahi_client_includes"
+	dnl Attempt to autodetect Avahi
+	PKG_CHECK_MODULES(AVAHI, [avahi-client avahi-glib], [
+		avahiincludes="yes"
+		avahilibs="yes"
+	], [
+		avahiincludes="no"
+		avahilibs="no"
+	])
+
+	dnl Override AVAHI_CFLAGS if the user specified an include dir
+	if test "$ac_avahi_client_includes" != "no"; then
+		AVAHI_CFLAGS="-I$ac_avahi_client_includes"
+	fi
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $AVAHI_CFLAGS"
+	AC_CHECK_HEADER(avahi-client/client.h, [avahiincludes=yes], [avahiincludes=no])
+	CPPFLAGS="$CPPFLAGS $AVAHI_CFLAGS $GLIB_CFLAGS"
+	AC_CHECK_HEADER(avahi-glib/glib-malloc.h, [avahiincludes=yes], [avahiincludes=no])
+	CPPFLAGS="$CPPFLAGS_save"
+
+	dnl Override AVAHI_LIBS if the user specified a libs dir
+	if test "$ac_avahi_client_libs" != "no"; then
+		AVAHI_LIBS="-L$ac_avahi_client_libs -lavahi-common -lavahi-client -lavahi-glib "
+	fi
+	AC_CHECK_LIB(avahi-client, avahi_client_new, [avahilibs=yes], [avahilibs=no], $AVAHI_LIBS)
 fi
-CPPFLAGS_save="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $AVAHI_CFLAGS"
-AC_CHECK_HEADER(avahi-client/client.h, [avahiincludes=yes], [avahiincludes=no])
-CPPFLAGS="$CPPFLAGS $AVAHI_CFLAGS $GLIB_CFLAGS"
-AC_CHECK_HEADER(avahi-glib/glib-malloc.h, [avahiincludes=yes], [avahiincludes=no])
-CPPFLAGS="$CPPFLAGS_save"
-
-dnl Override AVAHI_LIBS if the user specified a libs dir
-if test "$ac_avahi_client_libs" != "no"; then
-	AVAHI_LIBS="-L$ac_avahi_client_libs -lavahi-common -lavahi-client -lavahi-glib "
-fi
-AC_CHECK_LIB(avahi-client, avahi_client_new, [avahilibs=yes], [avahilibs=no], $AVAHI_LIBS)
 
 if test "x$enable_avahi" = "xyes" -a "x$force_deps" = "xyes" -a \( "x$avahiincludes" = "xno" -o "x$avahilibs" = "xno" \); then
 	AC_MSG_ERROR([

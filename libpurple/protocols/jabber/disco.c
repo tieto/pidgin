@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Service Discovery
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -301,6 +303,8 @@ static void jabber_disco_info_cb(JabberStream *js, const char *from,
 				}
 			}
 		}
+
+		js->chat_servers = g_list_reverse(js->chat_servers);
 
 		capabilities |= JABBER_CAP_RETRIEVED;
 

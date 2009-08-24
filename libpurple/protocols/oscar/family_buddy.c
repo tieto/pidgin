@@ -221,9 +221,6 @@ buddychange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, &userinfo);
 
-	if (snac->subtype == SNAC_SUBTYPE_BUDDY_ONCOMING && userinfo.flags & AIM_FLAG_AWAY)
-		aim_locate_autofetch_away_message(od, userinfo.bn);
-
 	aim_info_free(&userinfo);
 
 	return ret;

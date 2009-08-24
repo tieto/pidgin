@@ -622,7 +622,14 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 				struct _pidgin_blist_node *gtknode =
 					(struct _pidgin_blist_node *)purple_blist_node_get_ui_data(node);
 
-				if (purple_contact_get_alias(contact) || gtknode->contact_expanded) {
+				/*
+				 * XXX Using purple_contact_get_alias here breaks because we
+				 * specifically want to check the contact alias only (i.e. not
+				 * the priority buddy, which purple_contact_get_alias does).
+				 * Adding yet another get_alias is evil, so figure this out
+				 * later :-P
+				 */
+				if (contact->alias || gtknode->contact_expanded) {
 					purple_blist_alias_contact(contact, arg2);
 					gtk_blist_auto_personize(purple_blist_node_get_parent(node), arg2);
 				} else {
@@ -4090,7 +4097,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 				else
 					g_snprintf(buf, sizeof(buf), "%%s ");
 
-				statustext = g_strdup_printf(buf, tmp);purple_presence_is_idle(presence)
+				statustext = g_strdup_printf(buf, tmp);
 
 				g_free(tmp);
 			}
@@ -4141,6 +4148,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 			name_color = "dim grey";
 		} else if (!purple_presence_is_online(presence)) {
 			namefont = pidgin_blist_theme_get_offline_text_info(theme);
+			name_color = "dim grey";
 			statusfont = pidgin_blist_theme_get_status_text_info(theme);
 		} else if (purple_presence_is_available(presence)) {
 			namefont = pidgin_blist_theme_get_online_text_info(theme);
@@ -4148,6 +4156,13 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 		} else {
 			namefont = pidgin_blist_theme_get_away_text_info(theme);
 			statusfont = pidgin_blist_theme_get_status_text_info(theme);
+		}
+	} else {
+		if (!selected
+				&& (purple_presence_is_idle(presence)
+							|| !purple_presence_is_online(presence)))
+		{
+			name_color = "dim grey";
 		}
 	}
 
@@ -6398,10 +6413,13 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 			ihrs = (t - idle_secs) / 3600;
 			imin = ((t - idle_secs) / 60) % 60;
 
-			if (!selected && theme != NULL && (pair = pidgin_blist_theme_get_idle_text_info(theme)) != NULL)
+			if (selected)
+				textcolor = NULL;
+			else if (theme != NULL && (pair = pidgin_blist_theme_get_idle_text_info(theme)) != NULL)
 				textcolor = pidgin_theme_font_get_color_describe(pair);
 			else
-				textcolor = NULL;
+				/* If no theme them default to making idle buddy names grey */
+				textcolor = "dim grey";
 
 			if (textcolor) {
 				idle = g_strdup_printf("<span color='%s' font_desc='%s'>%d:%02d</span>",
@@ -7130,7 +7148,7 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	                          data->chat_data.rq_data.sg, data->group_combo,
 	                          TRUE, NULL);
 
-	data->autojoin = gtk_check_button_new_with_mnemonic(_("Auto_join when account becomes online."));
+	data->autojoin = gtk_check_button_new_with_mnemonic(_("Auto_join when account connects."));
 	data->persistent = gtk_check_button_new_with_mnemonic(_("_Remain in chat after window is closed."));
 	gtk_box_pack_start(GTK_BOX(vbox), data->autojoin, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), data->persistent, FALSE, FALSE, 0);
