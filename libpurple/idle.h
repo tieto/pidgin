@@ -26,6 +26,8 @@
 #ifndef _PURPLE_IDLE_H_
 #define _PURPLE_IDLE_H_
 
+#include <time.h>
+
 /**
  * Idle UI operations.
  */

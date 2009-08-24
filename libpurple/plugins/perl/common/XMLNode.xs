@@ -4,21 +4,24 @@ MODULE = Purple::XMLNode  PACKAGE = Purple::XMLNode  PREFIX = xmlnode_
 PROTOTYPES: ENABLE
 
 Purple::XMLNode
-xmlnode_copy(class, src)
+xmlnode_copy(src)
 	Purple::XMLNode src
-    C_ARGS:
-	src
 
 void
 xmlnode_free(node)
 	Purple::XMLNode node
 
 Purple::XMLNode
-xmlnode_from_str(class, str, size)
-	const char *str
-	gssize size
-    C_ARGS:
-	str, size
+xmlnode_from_str(const char *str, gssize length(str))
+    PROTOTYPE: $
+
+const char *
+xmlnode_get_name(node)
+	Purple::XMLNode node
+	CODE:
+	RETVAL = node->name;
+	OUTPUT:
+	RETVAL
 
 const char *
 xmlnode_get_attrib(node, attr)
@@ -78,11 +81,17 @@ xmlnode_set_attrib(node, attr, value)
 	const char *value
 
 gchar_own *
-xmlnode_to_formatted_str(node, len)
+xmlnode_to_formatted_str(node)
 	Purple::XMLNode node
-	int *len
+    CODE:
+	RETVAL = xmlnode_to_formatted_str(node, NULL);
+    OUTPUT:
+	RETVAL
 
 gchar_own *
-xmlnode_to_str(node, len)
+xmlnode_to_str(node)
 	Purple::XMLNode node
-	int *len
+    CODE:
+	RETVAL = xmlnode_to_str(node, NULL);
+    OUTPUT:
+	RETVAL

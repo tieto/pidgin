@@ -50,25 +50,25 @@
  * your accounts are saved so that the next time you start Purple,
  * your accounts will be set to their last known statuses.  There
  * is also a list of saved statuses that are written to the
- * status.xml file.  Also, each PurpleStatus has a "savable" boolean.
- * If "savable" is set to FALSE then the status is NEVER saved.
+ * status.xml file.  Also, each PurpleStatus has a "saveable" boolean.
+ * If "saveable" is set to FALSE then the status is NEVER saved.
  * All PurpleStatuses should be inside a PurplePresence.
  *
  *
- * A PurpleStatus is either "indepedent" or "exclusive."
- * Independent statuses can be active or inactive and it doesn't
+ * A PurpleStatus is either "independent" or "exclusive."
+ * Independent statuses can be active or inactive and they don't
  * affect anything else.  However, you can only have one exclusive
- * status per PurplePresence.  If you activate one exlusive status,
+ * status per PurplePresence.  If you activate one exclusive status,
  * then the previous exclusive status is automatically deactivated.
  *
  * A PurplePresence is like a collection of PurpleStatuses (plus some
  * other random info).  For any buddy, or for any one of your accounts,
- * or for any person you're chatting with, you may know various
+ * or for any person with which you're chatting, you may know various
  * amounts of information.  This information is all contained in
  * one PurplePresence.  If one of your buddies is away and idle,
  * then the presence contains the PurpleStatus for their awayness,
  * and it contains their current idle time.  PurplePresences are
- * never saved to disk.  The information they contain is only relevent
+ * never saved to disk.  The information they contain is only relevant
  * for the current PurpleSession.
  */
 
@@ -80,7 +80,7 @@ typedef struct _PurpleStatus          PurpleStatus;
 /**
  * A context for a presence.
  *
- * The context indicates what the presence applies to.
+ * The context indicates to what the presence applies.
  */
 typedef enum
 {
@@ -134,7 +134,7 @@ extern "C" {
 #endif
 
 /**************************************************************************/
-/** @name PurpleStatusPrimitive API                                         */
+/** @name PurpleStatusPrimitive API                                       */
 /**************************************************************************/
 /*@{*/
 
@@ -172,7 +172,7 @@ PurpleStatusPrimitive purple_primitive_get_type_from_id(const char *id);
 /*@}*/
 
 /**************************************************************************/
-/** @name PurpleStatusType API                                              */
+/** @name PurpleStatusType API                                            */
 /**************************************************************************/
 /*@{*/
 
