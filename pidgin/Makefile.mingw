@@ -58,9 +58,8 @@ PIDGIN_C_SRC =	\
 			gtkblist.c \
 			gtkblist-theme.c \
 			gtkblist-theme-loader.c \
-			gtkcertmgr.c \
 			gtkcellrendererexpander.c \
-			gtkcellrendererprogress.c \
+			gtkcertmgr.c \
 			gtkconn.c \
 			gtkconv.c \
 			gtkdebug.c \
@@ -68,7 +67,6 @@ PIDGIN_C_SRC =	\
 			gtkdnd-hints.c \
 			gtkdocklet.c \
 			gtkeventloop.c \
-			gtkexpander.c \
 			gtkft.c \
 			gtkicon-theme.c \
 			gtkicon-theme-loader.c \
