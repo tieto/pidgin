@@ -4425,7 +4425,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypi
 		else
 			yahoo_packet_hash(pkt, "ssssss", 49, "TYPING", 1, purple_connection_get_display_name(gc),
 	                  14, " ", 13, state == PURPLE_TYPING ? "1" : "0",
-	                  5, who+4, 1002, "1");
+	                  5, who, 1002, "1");
 		yahoo_packet_send_and_free(pkt, yd);
 	}
 
