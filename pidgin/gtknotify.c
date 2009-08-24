@@ -211,25 +211,53 @@ append_to_list(GtkTreeModel *model, GtkTreePath *path,
 static void
 pounce_response_dismiss()
 {
+	GtkTreeModel *model = GTK_TREE_MODEL(pounce_dialog->treemodel);
 	GtkTreeSelection *selection;
 	GtkTreeIter iter;
+	GtkTreeIter new_selection;
 	GList *list = NULL;
+	gboolean found_selection = FALSE;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(pounce_dialog->treeview));
 	gtk_tree_selection_selected_foreach(selection, delete_foreach, pounce_dialog);
 	gtk_tree_selection_selected_foreach(selection, append_to_list, &list);
 
+	g_return_if_fail(list != NULL);
+
+	if (list->next == NULL) {
+		gtk_tree_model_get_iter(model, &new_selection, list->data);
+		if (gtk_tree_model_iter_next(model, &new_selection))
+			found_selection = TRUE;
+		else {
+			/* This is the last thing in the list */
+			GtkTreePath *path;
+
+			/* Because gtk_tree_model_iter_prev doesn't exist... */
+			gtk_tree_model_get_iter(model, &new_selection, list->data);
+			path = gtk_tree_model_get_path(model, &new_selection);
+			if (gtk_tree_path_prev(path)) {
+				gtk_tree_model_get_iter(model, &new_selection, path);
+				found_selection = TRUE;
+			}
+
+			gtk_tree_path_free(path);
+		}
+	}
+
 	while (list) {
-		GtkTreeIter iter;
-		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(pounce_dialog->treemodel), &iter,
-					list->data)) {
+		if (gtk_tree_model_get_iter(model, &iter, list->data)) {
 			gtk_tree_store_remove(GTK_TREE_STORE(pounce_dialog->treemodel), &iter);
 		}
 		gtk_tree_path_free(list->data);
 		list = g_list_delete_link(list, list);
 	}
 
-	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(pounce_dialog->treemodel), &iter))
+	if (gtk_tree_model_get_iter_first(model, &iter)) {
+		if (found_selection)
+			gtk_tree_selection_select_iter(selection, &new_selection);
+		else
+			gtk_tree_selection_select_iter(selection, &iter);
+	} else
 		pounce_response_close(pounce_dialog);
 }
 
@@ -240,7 +268,7 @@ pounce_response_open_ims()
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(pounce_dialog->treeview));
 	gtk_tree_selection_selected_foreach(selection, open_im_foreach, pounce_dialog);
-	
+
 	pounce_response_dismiss();
 }
 
@@ -1400,6 +1428,7 @@ pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
 	GdkPixbuf *icon;
 	GtkTreeIter iter;
 	PidginNotifyPounceData *pounce_data;
+	gboolean first = (pounce_dialog == NULL);
 
 	if (pounce_dialog == NULL)
 		pounce_dialog = pidgin_create_notification_dialog(PIDGIN_NOTIFY_POUNCE);
@@ -1422,6 +1451,12 @@ pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
 			PIDGIN_POUNCE_DATE, date,
 			PIDGIN_POUNCE_DATA, pounce_data,
 			-1);
+
+	if (first) {
+		GtkTreeSelection *selection =
+				gtk_tree_view_get_selection(GTK_TREE_VIEW(pounce_dialog->treeview));
+		gtk_tree_selection_select_iter(selection, &iter);
+	}
 
 	if (icon)
 		g_object_unref(icon);
