@@ -296,6 +296,9 @@ google_session_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		gchar *sid, gchar *name, gboolean local,
 		GoogleSession *session)
 {
+	if (sid != NULL || name != NULL)
+		return;
+
 	if (type == PURPLE_MEDIA_INFO_HANGUP) {
 		xmlnode *sess;
 		JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
@@ -314,6 +317,8 @@ google_session_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		xmlnode_insert_child(iq->node, sess);
 
 		jabber_iq_send(iq);
+	} else if (type == PURPLE_MEDIA_INFO_ACCEPT && local == TRUE) {
+		google_session_ready(session);
 	}
 }
 
