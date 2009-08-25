@@ -5,7 +5,7 @@ version 2.6.2 (??/??/2009):
 	* Fix --disable-avahi to actually disable it in configure, as opposed
 	  to just making the warning non-fatal.
 	* Sending custom smileys in MSN chats is now supported.
-	* Fix using GNOME proxy settings properly.
+	* Fix using GNOME proxy settings properly.  (Erik van Pienbroek)
 
 	XMPP:
 	* Prompt the user before cancelling a presence subscription.
@@ -13,6 +13,7 @@ version 2.6.2 (??/??/2009):
 	* Fix connecting to XMPP domains with no SRV records from Pidgin on
 	  Windows.
 	* Fix typing notifications with Pidgin 2.5.9 or earlier.
+	* Fix connecting using BOSH and legacy authentication (XEP-0078).
 
 	Finch:
 	* Properly detect libpanel on OpenBSD.  (Brad Smith)
