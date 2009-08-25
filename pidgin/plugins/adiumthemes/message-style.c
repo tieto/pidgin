@@ -122,7 +122,7 @@ pidgin_message_style_save_state (const PidginMessageStyle *style)
 	g_free (variant);
 }
 
-void
+static void
 pidgin_message_style_load_state (PidginMessageStyle *style)
 {
 	char *prefname = g_strdup_printf ("/plugins/gtk/adiumthemes/%s", style->cf_bundle_identifier);
@@ -220,12 +220,13 @@ pidgin_message_style_read_info_plist (PidginMessageStyle *style, const char* var
 		else if (str_for_key ("DefaultBackgroundColor", key, variant))
 			pr = parse_info_plist_key_value (iter, &style->default_background_color, "string");
 		else if (str_for_key ("AllowTextColors", key, variant))
-			pr = parse_info_plist_key_value (iter, &style->allow_text_colors, "string");
+			pr = parse_info_plist_key_value (iter, &style->allow_text_colors, "integer");
 		else if (str_for_key ("ImageMask", key, variant))
 			pr = parse_info_plist_key_value (iter, &style->image_mask, "string");
 
+		if (!pr)
+			purple_debug_warning ("webkit", "Failed to parse key %s\n", key);
 		g_free (key);
-		if (!pr) break; /* does not make sense */
 	}
 
 	xmlnode_free (plist);
@@ -328,6 +329,7 @@ pidgin_message_style_load (const char* styledir)
 
 	/* non variant dependent Info.plist checks */
 	if (style->message_view_version < 3) {
+		purple_debug_info ("webkit", "%s is a legacy style (version %d) and will not be loaded\n", style->cf_bundle_name, style->message_view_version);
 		pidgin_message_style_unref (style);
 		return NULL;
 	}
