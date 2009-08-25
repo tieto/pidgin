@@ -17,6 +17,9 @@ version 2.6.2 (??/??/2009):
 	Finch:
 	* Properly detect libpanel on OpenBSD.  (Brad Smith)
 
+	Pidgin:
+	* Fix the auto-personize functionality in the Buddy List.
+
 version 2.6.1 (08/18/2009):
 	* Fix a crash when some users send you a link in a Yahoo IM
 	* Fix compilation with GTK+ < 2.6.0

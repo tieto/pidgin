@@ -476,9 +476,11 @@ void pidgin_dialogs_about()
 				" <A HREF=\"http://pidgin.im/cgi-bin/mailman/listinfo/support\">"
 				"mailing list</A>, and messages sent here are"
 				" <A HREF=\"http://pidgin.im/pipermail/support/\">publicly"
-				" archived!</A>  Furthermore, we do <I><B>not</B></I> support"
-				" MXit, Facebook, Skype, or any other third-party plugins on"
-				" this list.)<BR/><BR/>"));
+				" archived!</A>  Please note that this list's primary language"
+				" is English.  Posts in other languages may not receive answers"
+				" as complete or as helpful as those in English. Additionally,"
+				" we do <U><I><B>not</B></I></U> support MXit, Facebook, Skype,"
+				" or any other third-party plugins on this list.)<BR/><BR/>"));
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC Channel:</FONT> "
 				"#pidgin on irc.freenode.net<BR><BR>"));
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">XMPP MUC:</FONT> "
