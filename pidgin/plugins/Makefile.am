@@ -76,10 +76,6 @@ relnot_la_SOURCES           = relnot.c
 sendbutton_la_SOURCES       = sendbutton.c
 spellchk_la_SOURCES         = spellchk.c
 themeedit_la_SOURCES        = themeedit.c themeedit-icon.c themeedit-icon.h
-<<<<<<< variant A
-timestamp_la_SOURCES        = timestamp.c
-timestamp_format_la_SOURCES = timestamp_format.c
-vvconfig_SOURCES            = vvconfig.c
 xmppconsole_la_SOURCES      = xmppconsole.c
 
 convcolors_la_LIBADD        = $(GTK_LIBS)
@@ -87,41 +83,12 @@ contact_priority_la_LIBADD  = $(GTK_LIBS)
 extplacement_la_LIBADD      = $(GTK_LIBS)
 gtk_signals_test_la_LIBADD  = $(GTK_LIBS)
 gtkbuddynote_la_LIBADD      = $(GTK_LIBS)
-history_la_LIBADD           = $(GTK_LIBS)
 iconaway_la_LIBADD          = $(GTK_LIBS)
-markerline_la_LIBADD        = $(GTK_LIBS)
-notify_la_LIBADD            = $(GTK_LIBS)
 pidginrc_la_LIBADD          = $(GTK_LIBS)
 relnot_la_LIBADD            = $(GLIB_LIBS)
 sendbutton_la_LIBADD        = $(GTK_LIBS)
 spellchk_la_LIBADD          = $(GTK_LIBS)
 themeedit_la_LIBADD         = $(GTK_LIBS)
-timestamp_la_LIBADD         = $(GTK_LIBS)
-timestamp_format_la_LIBADD  = $(GTK_LIBS)
-vvconfig_la_LIBADD          = $(GTK_LIBS) $(GSTREAMER_LIBS)
->>>>>>> variant B
-####### Ancestor
-timestamp_la_SOURCES        = timestamp.c
-timestamp_format_la_SOURCES = timestamp_format.c
-xmppconsole_la_SOURCES      = xmppconsole.c
-
-convcolors_la_LIBADD        = $(GTK_LIBS)
-contact_priority_la_LIBADD  = $(GTK_LIBS)
-extplacement_la_LIBADD      = $(GTK_LIBS)
-gtk_signals_test_la_LIBADD  = $(GTK_LIBS)
-gtkbuddynote_la_LIBADD      = $(GTK_LIBS)
-history_la_LIBADD           = $(GTK_LIBS)
-iconaway_la_LIBADD          = $(GTK_LIBS)
-markerline_la_LIBADD        = $(GTK_LIBS)
-notify_la_LIBADD            = $(GTK_LIBS)
-pidginrc_la_LIBADD          = $(GTK_LIBS)
-relnot_la_LIBADD            = $(GLIB_LIBS)
-sendbutton_la_LIBADD        = $(GTK_LIBS)
-spellchk_la_LIBADD          = $(GTK_LIBS)
-themeedit_la_LIBADD         = $(GTK_LIBS)
-timestamp_la_LIBADD         = $(GTK_LIBS)
-timestamp_format_la_LIBADD  = $(GTK_LIBS)
-======= end
 xmppconsole_la_LIBADD       = $(GTK_LIBS)
 
 endif # PLUGINS
