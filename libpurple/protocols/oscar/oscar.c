@@ -2405,6 +2405,21 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	if (purple_markup_find_tag("body", tmp, &start, &end, &attribs))
 	{
 		const char *ichattextcolor, *ichatballooncolor;
+		const char *start2, *end2;
+		GData *unused;
+
+		/*
+		 * Find the ending </body> so we can strip off the outer <html/>
+		 * and <body/>
+		 */
+		if (purple_markup_find_tag("/body", end + 1, &start2, &end2, &unused))
+		{
+			gchar *tmp2;
+			tmp2 = g_strndup(end + 1, (start2 - 1) - (end + 1) + 1);
+			g_free(tmp);
+			tmp = tmp2;
+			g_datalist_clear(&unused);
+		}
 
 		ichattextcolor = g_datalist_get_data(&attribs, "ichattextcolor");
 		if (ichattextcolor != NULL)
