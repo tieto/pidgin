@@ -1452,15 +1452,6 @@ Function preWelcomePage
     !insertmacro UnselectSection ${SecGtk}
   gtk_selection_done:
 
-  ; If on Win95/98/ME warn them that the GTK+ version wont work
-  ${Unless} ${IsNT}
-    !insertmacro UnselectSection ${SecGtk}
-    !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
-    MessageBox MB_OK $(GTK_WINDOWS_INCOMPATIBLE) /SD IDOK
-    IntCmp $R0 1 done done ; Upgrade isn't optional - abort if we don't have a suitable version
-    Quit
-  ${EndIf}
-
   done:
   Pop $R2
   Pop $R1
