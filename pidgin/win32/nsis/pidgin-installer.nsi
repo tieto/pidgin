@@ -69,12 +69,12 @@ SetDateSave on
 !define STARTUP_RUN_KEY				"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 !define PIDGIN_UNINST_EXE			"pidgin-uninst.exe"
 
-!define GTK_MIN_VERSION				"2.6.10"
+!define GTK_MIN_VERSION				"2.14.0"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl510.dll"
 !define GTK_DEFAULT_INSTALL_PATH		"$COMMONFILES\GTK\2.0"
-!define GTK_RUNTIME_INSTALLER			"..\..\..\..\gtk_installer\gtk-runtime*.exe"
+!define GTK_RUNTIME_INSTALLER			"..\..\..\..\gtk_installer\gtk-runtime-${GTK_INSTALL_VERSION}*.exe"
 
 !define ASPELL_REG_KEY				"SOFTWARE\Aspell"
 !define DOWNLOADER_URL				"http://pidgin.im/win32/download_redir.php"
