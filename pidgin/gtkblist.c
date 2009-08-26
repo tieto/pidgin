@@ -496,12 +496,17 @@ gtk_blist_do_personize(GList *merges)
 	for (tmp = merges; tmp; tmp = tmp->next) {
 		PurpleBlistNode *node = tmp->data;
 		PurpleBlistNode *b;
+		PurpleBlistNodeType type;
 		int i = 0;
 
-		if (purple_blist_node_get_type(node) == PURPLE_BLIST_BUDDY_NODE)
-			node = purple_blist_node_get_parent(node);
+		type = purple_blist_node_get_type(node);
 
-		if (purple_blist_node_get_type(node) != PURPLE_BLIST_CONTACT_NODE)
+		if (type == PURPLE_BLIST_BUDDY_NODE) {
+			node = purple_blist_node_get_parent(node);
+			type = purple_blist_node_get_type(node);
+		}
+
+		if (type != PURPLE_BLIST_CONTACT_NODE)
 			continue;
 
 		for (b = purple_blist_node_get_first_child(node);
