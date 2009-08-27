@@ -499,13 +499,14 @@ pidgin_request_timeout_cb(PidginMedia *gtkmedia)
 	}
 
 	gtkmedia->priv->request_type = PURPLE_MEDIA_NONE;
-
-	purple_request_accept_cancel(gtkmedia, _("Incoming Call"),
-			message, NULL, PURPLE_DEFAULT_ACTION_NONE,
-			(void*)account, gtkmedia->priv->screenname, NULL,
-			gtkmedia->priv->media,
-			pidgin_media_accept_cb,
-			pidgin_media_reject_cb);
+	if (!purple_media_accepted(gtkmedia->priv->media, NULL, NULL)) {
+		purple_request_accept_cancel(gtkmedia, _("Incoming Call"),
+				message, NULL, PURPLE_DEFAULT_ACTION_NONE,
+				(void*)account, gtkmedia->priv->screenname,
+				NULL, gtkmedia->priv->media,
+				pidgin_media_accept_cb,
+				pidgin_media_reject_cb);
+	}
 	pidgin_media_emit_message(gtkmedia, message);
 	g_free(message);
 	return FALSE;
@@ -772,6 +773,8 @@ pidgin_media_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		pidgin_media_emit_message(gtkmedia,
 				_("You have rejected the call."));
 	} else if (type == PURPLE_MEDIA_INFO_ACCEPT) {
+		if (local == TRUE)
+			purple_request_close_with_handle(gtkmedia);
 		pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
 		pidgin_media_emit_message(gtkmedia, _("Call in progress."));
 		gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
