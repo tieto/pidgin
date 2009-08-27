@@ -1,3 +1,9 @@
+pidgin (2.6.1-2) unstable; urgency=low
+
+  * Upload to unstable
+
+ -- Ari Pollak <ari@debian.org>  Wed, 26 Aug 2009 20:40:39 -0400
+
 pidgin (2.6.1-1) experimental; urgency=low
 
   * Put into experimental so we don't disturb 2.5.9's migration into testing 
