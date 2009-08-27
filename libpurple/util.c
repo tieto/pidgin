@@ -4660,17 +4660,11 @@ purple_utf8_strip_unprintables(const gchar *str)
 	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
 
 	workstr = iter = g_new(gchar, strlen(str) + 1);
-	while (*str) {
-		gunichar c = g_utf8_get_char(str);
-		const gchar *next = g_utf8_next_char(str);
-		size_t len = next - str;
-
-		if (g_unichar_isprint(c)) {
-			memcpy(iter, str, len);
-			iter += len;
+	for ( ; *str; ++str) {
+		if (*str >= 0x20 || *str == 0x09 || *str == 0x0a || *str == 0x0d) {
+			*iter = *str;
+			++iter;
 		}
-
-		str = next;
 	}
 
 	/* nul-terminate the new string */
