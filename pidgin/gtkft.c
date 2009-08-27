@@ -1159,32 +1159,18 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer)
 	purple_debug_info("pidgin", "creating thumbnail for transfer\n");
 
 	if (purple_xfer_get_size(xfer) <= PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL) {
-#if GTK_CHECK_VERSION(2, 4, 0)
 		GdkPixbuf *thumbnail = 
 			gdk_pixbuf_new_from_file_at_size(
 				purple_xfer_get_local_filename(xfer), 128, 128, NULL);
-#else
-		GdkPixbuf *full_size =
-			gdk_pixbuf_from_file(purple_xfer_get_local_filename(xfer), NULL);
-		GdkPixbuf *thumbnail = NULL;
-		
-		if (full_size) {
-			thumbnail = gdk_pixbuf_scale_simple(full_size, 128, 128, 
-				GDK_INTERP_BILINEAR);
-			g_object_unref(full_size);
-		}
-#endif
+
 		if (thumbnail) {
 			gpointer *buffer = NULL;
 			gsize size;
-#if GTK_CHECK_VERSION(2, 4, 0)
 			char *option_keys[2] = {"quality", NULL};
 			char *option_values[2] = {"75", NULL};
 			gdk_pixbuf_save_to_bufferv(thumbnail, &buffer, &size, "jpeg", 
 				option_keys, option_values, NULL);
-#else
-			/* TODO: */
-#endif
+
 			if (buffer) {
 				purple_debug_info("pidgin", "created thumbnail of %d bytes\n",
 					size);
