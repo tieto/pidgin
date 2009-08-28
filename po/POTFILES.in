@@ -50,6 +50,7 @@ libpurple/dnsquery.c
 libpurple/ft.c
 libpurple/gconf/purple.schemas.in
 libpurple/log.c
+libpurple/media.c
 libpurple/mediamanager.c
 libpurple/plugin.c
 libpurple/plugins/autoaccept.c
@@ -266,6 +267,7 @@ pidgin/plugins/themeedit.c
 pidgin/plugins/ticker/ticker.c
 pidgin/plugins/timestamp.c
 pidgin/plugins/timestamp_format.c
+pidgin/plugins/vvconfig.c
 pidgin/plugins/win32/transparency/win2ktrans.c
 pidgin/plugins/win32/winprefs/winprefs.c
 pidgin/plugins/xmppconsole.c
