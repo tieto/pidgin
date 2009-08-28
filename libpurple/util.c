@@ -4652,12 +4652,18 @@ gchar *
 purple_utf8_strip_unprintables(const gchar *str)
 {
 	gchar *workstr, *iter;
+	const gchar *bad;
 
 	if (str == NULL)
 		/* Act like g_strdup */
 		return NULL;
 
-	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
+	if (g_utf8_validate(str, -1, &bad)) {
+		purple_debug_error("util", "purple_utf8_strip_unprintables(%s) failed; "
+		                           "first bad character was %02x (%c)\n",
+		                   str, *bad, *bad);
+		g_return_val_if_reached(NULL);
+	}
 
 	workstr = iter = g_new(gchar, strlen(str) + 1);
 	for ( ; *str; ++str) {
