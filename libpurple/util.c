@@ -3129,6 +3129,12 @@ purple_normalize(const PurpleAccount *account, const char *str)
 	const char *ret = NULL;
 	static char buf[BUF_LEN];
 
+	/* g_utf8_normalize() for glib ver < 2.15.0 causes a crash when an invalid utf8 string is passed to it
+	   (http://bugzilla.gnome.org/show_bug.cgi?id=501997).
+	   Returning NULL when str is NULL, should prevent a few crashes, see #10115 */
+	if(!str)
+		return NULL;
+
 	if (account != NULL)
 	{
 		PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
