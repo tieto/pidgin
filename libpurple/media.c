@@ -2046,13 +2046,32 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 				FsError error_no;
 				gst_structure_get_enum(msg->structure, "error-no",
 						FS_TYPE_ERROR, (gint*)&error_no);
-				/*
-				 * Unknown CName is only a problem for the
-				 * multicast transmitter which isn't used.
-				 */
-				if (error_no != FS_ERROR_UNKNOWN_CNAME)
-					purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
-						  	gst_structure_get_string(msg->structure, "error-msg"));
+				switch (error_no) {
+					case FS_ERROR_NO_CODECS:
+						purple_media_error(media, _("No codecs found. Install some GStreamer codecs found in GStreamer plugins packages."));
+						purple_media_end(media, NULL, NULL);
+						break;
+					case FS_ERROR_NO_CODECS_LEFT:
+						purple_media_error(media, _("No codecs left. Your codec preferences in fs-codecs.conf are too strict."));
+						purple_media_end(media, NULL, NULL);
+						break;
+					case FS_ERROR_UNKNOWN_CNAME:
+					/*
+					 * Unknown CName is only a problem for the
+					 * multicast transmitter which isn't used.
+					 * It is also deprecated.
+					 */
+						break;
+					default:
+						purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
+							  	gst_structure_get_string(msg->structure, "error-msg"));
+						break;
+				}
+
+				if (FS_ERROR_IS_FATAL(error_no)) {
+					purple_media_error(media, _("A non-recoverable Farsight2 error has occurred."));
+					purple_media_end(media, NULL, NULL);
+				}
 			} else if (gst_structure_has_name(msg->structure,
 					"farsight-new-local-candidate")) {
 				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
@@ -2570,7 +2589,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 				media->priv->conference, media_type, &err);
 
 		if (err != NULL) {
-			purple_media_error(media, "Error creating session: %s\n", err->message);
+			purple_media_error(media, _("Error creating session: %s"), err->message);
 			g_error_free(err);
 			g_free(session);
 			return FALSE;
