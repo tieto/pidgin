@@ -470,17 +470,15 @@ void pidgin_dialogs_about()
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\""
 				"http://developer.pidgin.im/wiki/FAQ\">"
 				"http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"));
-	g_string_append_printf(str, _("<FONT SIZE=\"4\">Help via e-mail:</FONT>"
-				" <A HREF=\"mailto:support@pidgin.im\">support@pidgin.im</A>"
-				" (This is a"
-				" <A HREF=\"http://pidgin.im/cgi-bin/mailman/listinfo/support\">"
-				"mailing list</A>, and messages sent here are"
-				" <A HREF=\"http://pidgin.im/pipermail/support/\">publicly"
-				" archived!</A>  Please note that this list's primary language"
-				" is English.  Posts in other languages may not receive answers"
-				" as complete or as helpful as those in English. Additionally,"
-				" we do <U><I><B>not</B></I></U> support MXit, Facebook, Skype,"
-				" or any other third-party plugins on this list.)<BR/><BR/>"));
+	g_string_append_printf(str,
+			_("<font size=\"4\">Help from other Pidgin users:</font> "
+			"<a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>"
+			"This is a <b>public</b> mailing list! "
+			"(<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)<br/>"
+			"We can't help with 3rd party protocols or plugins!<br/>"
+			"This list's primary language is <b>English</b>.  You are "
+			"welcome to post in another language, but the responses may "
+			"be less helpful.<br/><br/>"));
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC Channel:</FONT> "
 				"#pidgin on irc.freenode.net<BR><BR>"));
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">XMPP MUC:</FONT> "
