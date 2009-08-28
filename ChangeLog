@@ -20,6 +20,8 @@ version 2.6.2 (??/??/2009):
 
 	Pidgin:
 	* Fix the auto-personize functionality in the Buddy List.
+	* Set the window icon for the media window to an icon corresponding to
+	  the type of call (headphone or webcam).
 
 version 2.6.1 (08/18/2009):
 	* Fix a crash when some users send you a link in a Yahoo IM

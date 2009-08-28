@@ -2095,7 +2095,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 		break;
 	case 1013:
 		msg = g_strdup(_("Error 1013: The username you have entered is invalid."
-					"  The most common cause of this error is entering your e-mail"
+					"  The most common cause of this error is entering your email"
 					" address instead of your Yahoo! ID."));
 		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 		break;

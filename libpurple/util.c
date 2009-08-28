@@ -3129,6 +3129,9 @@ purple_normalize(const PurpleAccount *account, const char *str)
 	const char *ret = NULL;
 	static char buf[BUF_LEN];
 
+	/* This should prevent a crash if purple_normalize gets called with NULL str, see #10115 */
+	g_return_val_if_fail(str != NULL, "");
+
 	if (account != NULL)
 	{
 		PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
