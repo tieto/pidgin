@@ -4658,7 +4658,7 @@ purple_utf8_strip_unprintables(const gchar *str)
 		/* Act like g_strdup */
 		return NULL;
 
-	if (g_utf8_validate(str, -1, &bad)) {
+	if (!g_utf8_validate(str, -1, &bad)) {
 		purple_debug_error("util", "purple_utf8_strip_unprintables(%s) failed; "
 		                           "first bad character was %02x (%c)\n",
 		                   str, *bad, *bad);
