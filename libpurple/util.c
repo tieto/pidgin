@@ -4661,7 +4661,7 @@ purple_utf8_strip_unprintables(const gchar *str)
 
 	workstr = iter = g_new(gchar, strlen(str) + 1);
 	for ( ; *str; ++str) {
-		if (*str >= 0x20 || *str == 0x09 || *str == 0x0a || *str == 0x0d) {
+		if (*str >= 0x20 || *str == '\t' || *str == '\n' || *str == '\r') {
 			*iter = *str;
 			++iter;
 		}
