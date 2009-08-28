@@ -2439,7 +2439,7 @@ msgstr "Verkställ döljningsregler för kompisar"
 #. *< priority
 #. *< id
 msgid "Join/Part Hiding"
-msgstr " Dölj Går in/Lämnar"
+msgstr "Dölj Går in/Lämnar"
 
 #. *< name
 #. *< version
