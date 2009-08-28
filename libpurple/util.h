@@ -1286,16 +1286,14 @@ gchar *purple_utf8_salvage(const char *str);
 /**
  * Removes unprintable characters from a UTF-8 string. These characters
  * (in particular low-ASCII characters) are invalid in XML 1.0 and thus
- * are not allowed in XMPP and are rejected by libxml2 by default. This
- * function uses g_unichar_isprint to determine what characters should
- * be stripped. The returned string must be freed by the caller.
+ * are not allowed in XMPP and are rejected by libxml2 by default.
+ *
+ * The returned string must be freed by the caller.
  *
  * @param str A valid UTF-8 string.
  *
  * @return A newly allocated UTF-8 string without the unprintable characters.
  * @since 2.6.0
- *
- * @see g_unichar_isprint
  */
 gchar *purple_utf8_strip_unprintables(const gchar *str);
 
