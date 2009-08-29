@@ -458,12 +458,16 @@ purple_connection_get_prpl(const PurpleConnection *gc)
 	return gc->prpl;
 }
 
+
+/**
+ * FIXME : all the calling tree needs to be async.
+ */
 const char *
 purple_connection_get_password(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->password ? gc->password : gc->account->password;
+	return gc->password;
 }
 
 const char *
@@ -479,6 +483,14 @@ purple_connection_get_protocol_data(const PurpleConnection *connection) {
 	g_return_val_if_fail(connection != NULL, NULL);
 
 	return connection->proto_data;
+}
+
+gboolean
+purple_connection_had_error(const PurpleConnection *gc)
+{
+	g_return_val_if_fail(gc != NULL, FALSE);
+
+	return gc->disconnect_timeout != 0;
 }
 
 void
@@ -517,18 +529,13 @@ purple_connection_disconnect_cb(gpointer data)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	char *password;
 
 	account = data;
 	gc = purple_account_get_connection(account);
 
 	gc->disconnect_timeout = 0;
 
-	password = g_strdup(purple_account_get_password(account));
 	purple_account_disconnect(account);
-	purple_account_set_password(account, password);
-	g_free(password);
-
 	return FALSE;
 }
 

@@ -163,7 +163,7 @@ void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
  *
  * @param node   The node to set an attribute for.
  * @param attr   The name of the attribute to set
- * @param prefix The prefix of the attribute to ste
+ * @param prefix The prefix of the attribute to set
  * @param value  The value of the attribute
  *
  * @deprecated Use xmlnode_set_attrib_full instead.

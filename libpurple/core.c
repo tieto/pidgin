@@ -35,6 +35,7 @@
 #include "ft.h"
 #include "idle.h"
 #include "imgstore.h"
+#include "keyring.h"
 #include "network.h"
 #include "notify.h"
 #include "plugin.h"
@@ -134,6 +135,7 @@ purple_core_init(const char *ui)
 
 	purple_ciphers_init();
 	purple_cmds_init();
+	purple_keyring_init();
 
 	/* Since plugins get probed so early we should probably initialize their
 	 * subsystem right away too.

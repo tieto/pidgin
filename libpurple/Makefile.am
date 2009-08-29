@@ -52,6 +52,7 @@ purple_coresources = \
 	ft.c \
 	idle.c \
 	imgstore.c \
+	keyring.c \
 	log.c \
 	media.c \
 	mediamanager.c \
@@ -115,6 +116,7 @@ purple_coreheaders = \
 	gaim-compat.h \
 	idle.h \
 	imgstore.h \
+	keyring.h \
 	log.h \
 	media.h \
 	media-gst.h \

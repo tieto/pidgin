@@ -67,6 +67,7 @@ typedef enum
 #define PURPLE_PRIORITY_LOWEST  -9999
 
 #define PURPLE_PLUGIN_FLAG_INVISIBLE 0x01
+#define PURPLE_PLUGIN_FLAG_AUTOLOAD  0x02
 
 #define PURPLE_PLUGIN_MAGIC 5 /* once we hit 6.0.0 I think we can remove this */
 
