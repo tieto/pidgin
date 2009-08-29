@@ -1274,7 +1274,7 @@ void
 purple_account_connect(PurpleAccount *account)
 {
 	PurplePlugin *prpl;
-	const char *password, *username;
+	const char *username;
 	PurplePluginProtocolInfo *prpl_info;
 
 	g_return_if_fail(account != NULL);

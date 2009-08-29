@@ -653,7 +653,7 @@ static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFie
 		goto exit_err;
 	}
 
-	if (g_utf8_collate(cur, purple_account_get_password(account)) != 0) {
+	if (g_utf8_collate(cur, purple_connection_get_password(gc)) != 0) {
 		purple_notify_error(account, NULL,
 			_("Your current password is different from the one that you specified."),
 			NULL);
@@ -664,7 +664,7 @@ static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFie
 
 	/* XXX: this email should be a pref... */
 	h = gg_change_passwd4(ggp_get_uin(account),
-			      "user@example.net", purple_account_get_password(account),
+			      "user@example.net", purple_connection_get_password(gc),
 			      p1, info->token->id, t, 0);
 
 	if (h == NULL) {
@@ -1924,7 +1924,7 @@ static void ggp_login(PurpleAccount *account)
 	gc->proto_data = info;
 
 	glp->uin = ggp_get_uin(account);
-	glp->password = (char *)purple_account_get_password(account);
+	glp->password = (char *)purple_connection_get_password(gc);
 	glp->image_size = 255;
 
 	presence = purple_account_get_presence(account);

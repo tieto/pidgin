@@ -168,7 +168,7 @@ static int jabber_sasl_cb_simple(void *ctx, int id, const char **res, unsigned *
 static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secret_t **secret)
 {
 	JabberStream *js = (JabberStream *)ctx;
-	const char *pw = purple_account_get_password(js->gc->account);
+	const char *pw = purple_connection_get_password(js->gc);
 	size_t len;
 	static sasl_secret_t *x = NULL;
 
@@ -320,7 +320,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 * to get one
 				 */
 
-				if (!purple_account_get_password(js->gc->account)) {
+				if (!purple_connection_get_password(js->gc)) {
 					purple_account_request_password(js->gc->account, G_CALLBACK(auth_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
 					return;
 
@@ -457,7 +457,7 @@ jabber_sasl_build_callbacks(JabberStream *js)
 	js->sasl_cb[id].context = (void *)js;
 	id++;
 
-	if (purple_account_get_password(js->gc->account) != NULL ) {
+	if (purple_connection_get_password(js->gc) != NULL ) {
 		js->sasl_cb[id].id = SASL_CB_PASS;
 		js->sasl_cb[id].proc = jabber_sasl_cb_secret;
 		js->sasl_cb[id].context = (void *)js;
@@ -710,7 +710,7 @@ void jabber_auth_start_old(JabberStream *js)
 	 * password prompting here
 	 */
 
-	if (!purple_account_get_password(js->gc->account)) {
+	if (!purple_connection_get_password(js->gc)) {
 		purple_account_request_password(js->gc->account, G_CALLBACK(auth_old_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
 		return;
 	}
