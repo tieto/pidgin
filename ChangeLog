@@ -17,6 +17,7 @@ version 2.6.2 (??/??/2009):
 
 	Finch:
 	* Properly detect libpanel on OpenBSD.  (Brad Smith)
+	* Remove IO watches in gnt_quit.  (Tomasz Mon)
 
 	Pidgin:
 	* Fix the auto-personize functionality in the Buddy List.
