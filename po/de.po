@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-28 18:10+0200\n"
-"PO-Revision-Date: 2009-08-28 18:09+0200\n"
+"POT-Creation-Date: 2009-08-30 11:00+0200\n"
+"PO-Revision-Date: 2009-08-30 11:00+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1663,9 +1663,8 @@ msgstr ""
 "Das Zertifikat ist abgelaufen und sollte nicht als gültig angesehen werden."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
-#, fuzzy
 msgid "The certificate presented is not issued to this domain."
-msgstr "Die Zertifizierungskette, die für %s präsentiert wird, ist ungültig."
+msgstr "Das präsentierte Zertifikat wurde nicht für diese Domain ausgestellt."
 
 msgid ""
 "You have no database of root certificates, so this certificate cannot be "
@@ -1674,9 +1673,8 @@ msgstr ""
 "Sie haben keine Datenbank für Root-Zertifikate. Zertifikate können nicht "
 "überprüft werden."
 
-#, fuzzy
 msgid "The certificate chain presented is invalid."
-msgstr "Die Zertifizierungskette, die für %s präsentiert wird, ist ungültig."
+msgstr "Die präsentierte Zertifizierungskette ist ungültig."
 
 msgid "The certificate has been revoked."
 msgstr "Das Zertifikat wurde widerrufen."
@@ -2198,10 +2196,11 @@ msgstr ""
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
+"Keine Codecs übrig, Ihre Codec-Einstellungen in fs-codecs.conf sind zu "
+"streng."
 
-#, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
-msgstr "Der folgende Fehler ist aufgetreten:"
+msgstr "Ein nicht behebbarer Farsight2-Fehler ist aufgetreten."
 
 msgid "Conference error."
 msgstr "Konferenz-Fehler"
@@ -2478,14 +2477,14 @@ msgstr ""
 "registriert."
 
 msgid "Hide Joins/Parts"
-msgstr ""
+msgstr "Joins/Parts verstecken"
 
 #. Translators: Followed by an input request a number of people
 msgid "For rooms with more than this many people"
-msgstr ""
+msgstr "Für Räume mit mehr als so vielen Leuten"
 
 msgid "If user has not spoken in this many minutes"
-msgstr ""
+msgstr "Wenn Benutzer so viele Minuten nicht gesprochen hat"
 
 msgid "Apply hiding rules to buddies"
 msgstr "Regeln zum Verstecken auf Buddies anwenden"
@@ -3944,13 +3943,12 @@ msgstr "Foto"
 msgid "Logo"
 msgstr "Logo"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s will no longer be able to see your status updates.  Do you want to "
 "continue?"
 msgstr ""
-"Sie sind dabei, %s aus Ihrer Buddy-Liste zu entfernen. Möchten Sie "
-"fortfahren?"
+"%s wird Ihre Status-Updates nicht länger sehen können. Wollen Sie fortfahren?"
 
 msgid "Cancel Presence Notification"
 msgstr "Abbrechen der Anwesenheitsbenachrichtigung"
@@ -5529,11 +5527,11 @@ msgstr ""
 "%s möchte Ihr Webcam-Bild sehen, diese Anfrage wird jedoch noch nicht "
 "unterstützt."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr ""
-"%s möchte Ihr Webcam-Bild sehen, diese Anfrage wird jedoch noch nicht "
-"unterstützt."
+"%s hat Sie eingeladen sein/ihr Webcam-Bild zu sehen, dies wird aber noch "
+"nicht unterstützt."
 
 msgid "Away From Computer"
 msgstr "Abwesend"
@@ -9617,6 +9615,9 @@ msgid ""
 "Error 1013: The username you have entered is invalid.  The most common cause "
 "of this error is entering your email address instead of your Yahoo! ID."
 msgstr ""
+"Fehler 1013: Der Benutzername, den Sie eingegeben haben, ist ungültig. Die "
+"häufigste Ursache für diesen Fehler ist das Eingeben der E-Mail-Adresse "
+"anstatt der Yahoo!-ID."
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -10492,7 +10493,6 @@ msgstr "Die Textinformation für einen Buddy mit ungelesenen Nachrichten"
 msgid "Message (Nick Said) Text"
 msgstr "Nachrichtentext (mit enthaltenem Spitznamen)"
 
-#, fuzzy
 msgid ""
 "The text information for when a chat has an unread message that mentions "
 "your nickname"
@@ -11060,9 +11060,8 @@ msgstr "/_Unterhaltung"
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Unterhaltung/_Neue Sofortnachricht..."
 
-#, fuzzy
 msgid "/Conversation/Join a _Chat..."
-msgstr "/Unterhaltung/_Einladen..."
+msgstr "/Unterhaltung/Einen Cha_t betreten..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Unterhaltung/_Finden..."
@@ -11655,6 +11654,13 @@ msgid ""
 "primary language is <b>English</b>.  You are welcome to post in another "
 "language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
+"<font size=\"4\">Hilfe von anderen Pidgin-Benutzern:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>Dies ist eine <b>öffentliche</"
+"b> Mailing-Liste! (<a href=\"http://pidgin.im/pipermail/support/\">Archiv</"
+"a>)<br/>Wir können nicht bei Problemen mit Drittanbieter-Protokollen oder "
+"Plugins helfen!<br/>Die Hauptsprache dieser Liste ist <b>Englisch</b>.  Sie "
+"können gern in einer anderen Sprache schreiben, aber die Antworten könnten "
+"weniger hilfreich sein.<br/><br/>"
 
 msgid ""
 "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
@@ -14268,26 +14274,22 @@ msgid "Video"
 msgstr "Video"
 
 msgid "Output"
-msgstr "Ausgabe"
+msgstr "Ausgang"
 
-#, fuzzy
 msgid "_Plugin"
-msgstr "Plugins"
+msgstr "_Plugin"
 
-#, fuzzy
 msgid "_Device"
-msgstr "Gerät"
+msgstr "_Gerät"
 
 msgid "Input"
-msgstr "Eingabe"
+msgstr "Eingang"
 
-#, fuzzy
 msgid "P_lugin"
-msgstr "Plugins"
+msgstr "P_lugin"
 
-#, fuzzy
 msgid "D_evice"
-msgstr "Gerät"
+msgstr "G_erät"
 
 #. *< magic
 #. *< major version
@@ -14298,18 +14300,18 @@ msgstr "Gerät"
 #. *< dependencies
 #. *< priority
 #. *< id
-#, fuzzy
 msgid "Voice/Video Settings"
-msgstr "Einstellungen bearbeiten"
+msgstr "Sprach-/Video-Einstellungen"
 
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
-msgstr ""
+msgstr "Mikrofon und Webcam konfigurieren"
 
 #. *< summary
 msgid "Configure microphone and webcam settings for voice/video calls."
 msgstr ""
+"Die Mikrofon- und Webcam-Einstellungen für Audio- und Video-Anrufe bearbeiten"
 
 msgid "Opacity:"
 msgstr "Durchlässigkeit:"
