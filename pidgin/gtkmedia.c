@@ -747,10 +747,12 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 	/* set the window icon according to the type */
 	if (type & PURPLE_MEDIA_VIDEO) {
-		icon = gtk_widget_render_icon(gtkmedia, PIDGIN_STOCK_TOOLBAR_VIDEO_CALL,
+		icon = gtk_widget_render_icon(GTK_WIDGET(gtkmedia),
+			PIDGIN_STOCK_TOOLBAR_VIDEO_CALL,
 			gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_LARGE), NULL);
 	} else if (type & PURPLE_MEDIA_AUDIO) {
-		icon = gtk_widget_render_icon(gtkmedia, PIDGIN_STOCK_TOOLBAR_AUDIO_CALL,
+		icon = gtk_widget_render_icon(GTK_WIDGET(gtkmedia),
+			PIDGIN_STOCK_TOOLBAR_AUDIO_CALL,
 			gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_LARGE), NULL);
 	}
 
