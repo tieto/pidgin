@@ -31,8 +31,14 @@
 
 #include <stdio.h>
 
+/**
+  * An opaque structure representing a URL request. Can be used to cancel
+  * the request.
+  */
 typedef struct _PurpleUtilFetchUrlData PurpleUtilFetchUrlData;
+/** @copydoc _PurpleMenuAction */
 typedef struct _PurpleMenuAction PurpleMenuAction;
+/** @copydoc _PurpleKeyValuePair */
 typedef struct _PurpleKeyValuePair PurpleKeyValuePair;
 
 #include "account.h"
@@ -107,7 +113,7 @@ void purple_util_set_current_song(const char *title, const char *artist,
  * @param album     The album of the song, can be @c NULL.
  * @param unused    Currently unused, must be @c NULL.
  *
- * @return   The formatted string. The caller must #g_free the returned string.
+ * @return   The formatted string. The caller must g_free the returned string.
  * @since 2.4.0
  */
 char * purple_util_format_song_info(const char *title, const char *artist,
