@@ -2278,6 +2278,18 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 					purple_media_to_fs_stream_direction(
 					stream->session->type), NULL);
 			stream->accepted = TRUE;
+
+			if (stream->remote_candidates != NULL) {
+				GError *err = NULL;
+				fs_stream_set_remote_candidates(stream->stream,
+						stream->remote_candidates, &err);
+
+				if (err) {
+					purple_debug_error("media", "Error adding remote"
+							" candidates: %s\n", err->message);
+					g_error_free(err);
+				}
+			}
 		}
 	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_MUTE ||
 			type == PURPLE_MEDIA_INFO_UNMUTE)) {
@@ -2903,13 +2915,15 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
 			purple_media_candidate_list_to_fs(remote_candidates));
 
-	fs_stream_set_remote_candidates(stream->stream,
-			stream->remote_candidates, &err);
+	if (stream->accepted == TRUE) {
+		fs_stream_set_remote_candidates(stream->stream,
+				stream->remote_candidates, &err);
 
-	if (err) {
-		purple_debug_error("media", "Error adding remote"
-				" candidates: %s\n", err->message);
-		g_error_free(err);
+		if (err) {
+			purple_debug_error("media", "Error adding remote"
+					" candidates: %s\n", err->message);
+			g_error_free(err);
+		}
 	}
 #endif
 }
