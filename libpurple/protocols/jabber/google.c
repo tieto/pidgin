@@ -341,46 +341,26 @@ jabber_google_session_get_params(JabberStream *js, guint *num)
 	return new_params;
 }
 
-
-gboolean
-jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSessionType type)
+static void
+jabber_google_relay_response_cb(PurpleUtilFetchUrlData *url_data, 
+	gpointer user_data, const gchar *url_text, gsize len, 
+	const gchar *error_message)
 {
-	GoogleSession *session;
-	JabberBuddy *jb;
-	JabberBuddyResource *jbr;
-	gchar *jid;
+	GoogleSession *session = (GoogleSession *) user_data;
 	GParameter *params;
 	guint num_params;
+	JabberStream *js = session->js;
 
-	/* construct JID to send to */
-	jb = jabber_buddy_find(js, who, FALSE);
-	if (!jb) {
-		purple_debug_error("jingle-rtp",
-				"Could not find Jabber buddy\n");
-		return FALSE;
-	}
-	jbr = jabber_buddy_find_resource(jb, NULL);
-	if (!jbr) {
-		purple_debug_error("jingle-rtp",
-				"Could not find buddy's resource\n");
-	}
+	js->google_relay_request = NULL;
 
-	if ((strchr(who, '/') == NULL) && jbr && (jbr->name != NULL)) {
-		jid = g_strdup_printf("%s/%s", who, jbr->name);
+	purple_debug_info("jabber", "got response on HTTP request to relay server\n");
+
+	if (url_text && len > 0) {
+		purple_debug_info("jabber", "got Google relay request response:\n%s\n",
+			url_text);
 	} else {
-		jid = g_strdup(who);
+	
 	}
-
-	session = g_new0(GoogleSession, 1);
-	session->id.id = jabber_get_next_id(js);
-	session->id.initiator = g_strdup_printf("%s@%s/%s", js->user->node,
-			js->user->domain, js->user->resource);
-	session->state = SENT_INITIATE;
-	session->js = js;
-	session->remote_jid = jid;
-
-	if (type & PURPLE_MEDIA_VIDEO)
-		session->video = TRUE;
 
 	session->media = purple_media_manager_create_media(
 			purple_media_manager_get(),
@@ -414,9 +394,69 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 		return FALSE;
 	}
 
-	g_free(params);
+	g_free(params);	
+}
 
-	return (session->media != NULL) ? TRUE : FALSE;
+gboolean
+jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSessionType type)
+{
+	GoogleSession *session;
+	JabberBuddy *jb;
+	JabberBuddyResource *jbr;
+	gchar *jid;
+
+	/* construct JID to send to */
+	jb = jabber_buddy_find(js, who, FALSE);
+	if (!jb) {
+		purple_debug_error("jingle-rtp",
+				"Could not find Jabber buddy\n");
+		return FALSE;
+	}
+	jbr = jabber_buddy_find_resource(jb, NULL);
+	if (!jbr) {
+		purple_debug_error("jingle-rtp",
+				"Could not find buddy's resource\n");
+	}
+
+	if ((strchr(who, '/') == NULL) && jbr && (jbr->name != NULL)) {
+		jid = g_strdup_printf("%s/%s", who, jbr->name);
+	} else {
+		jid = g_strdup(who);
+	}
+
+	session = g_new0(GoogleSession, 1);
+	session->id.id = jabber_get_next_id(js);
+	session->id.initiator = g_strdup_printf("%s@%s/%s", js->user->node,
+			js->user->domain, js->user->resource);
+	session->state = SENT_INITIATE;
+	session->js = js;
+	session->remote_jid = jid;
+
+	if (type & PURPLE_MEDIA_VIDEO)
+		session->video = TRUE;
+
+	/* if we got a relay token and relay host in google:jingleinfo, issue an
+	 HTTP request to get that data */
+	if (js->google_relay_host && js->google_relay_token) {
+		const gchar *url = 
+			g_strdup_printf("http://%s/create_session", js->google_relay_host);
+		const gchar *request =
+			g_strdup_printf("GET /create_session HTTP 1.1\r\n"
+							"X-Talk-Google-Relay-Auth: %s\r\n"
+							"X-Google-Relay-Auth: %s\r\n", 
+				js->google_relay_token, js->google_relay_token);
+		js->google_relay_request =
+			purple_util_fetch_url_request(url, TRUE, NULL, TRUE, request, FALSE,
+				jabber_google_relay_response_cb, session);
+		g_free(url);
+		g_free(request);
+	} else {
+		jabber_google_relay_response_cb(NULL, session, NULL, 0, NULL);
+	}
+	
+	/* we don't actually know yet wether it succeeded... maybe this is very
+	 wrong... */
+	return TRUE;
 }
 
 static gboolean
@@ -1345,6 +1385,7 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
                                  JabberIqType type, xmlnode *query)
 {
 	const xmlnode *stun = xmlnode_get_child(query, "stun");
+	const xmlnode *relay = xmlnode_get_child(query, "relay");
 	gchar *my_bare_jid;
 
 	/*
@@ -1388,8 +1429,23 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 			}
 		}
 	}
-	/* should perhaps handle relays later on, or maybe wait until
-	 Google supports a common standard... */
+
+	if (relay) {
+		const xmlnode *token = xmlnode_get_child(relay, "token");
+		const xmlnode *server = xmlnode_get_child(relay, "server");
+		
+		if (token) {
+			gchar *relay_token = xmlnode_get_data(token);
+
+			/* we let js own the string returned from xmlnode_get_data */
+			js->google_relay_token = relay_token;
+		}
+
+		if (server) {
+			js->google_relay_host = 
+				g_strdup(xmlnode_get_attrib(server, "host"));
+		}
+	}
 }
 
 static void
