@@ -76,14 +76,9 @@ jabber_data_create_from_xml(xmlnode *tag)
 
 	raw_data = xmlnode_get_data(tag);
 
-	if (raw_data == NULL) {
+	if (raw_data == NULL || *raw_data == '\0') {
 		purple_debug_error("jabber", "data element was empty");
 		g_free(data);
-		return NULL;
-	}
-
-	if (raw_data == NULL || *raw_data == '\0') {
-		g_free(raw_data);
 		return NULL;
 	}
 
