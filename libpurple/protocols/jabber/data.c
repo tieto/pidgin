@@ -77,6 +77,13 @@ jabber_data_create_from_xml(xmlnode *tag)
 	data->type = g_strdup(xmlnode_get_attrib(tag, "type"));
 
 	raw_data = xmlnode_get_data(tag);
+
+	if (raw_data == NULL) {
+		purple_debug_error("jabber", "data element was empty");
+		g_free(data);
+		return NULL;
+	}
+
 	data->data = purple_base64_decode(raw_data, &size);
 	data->size = size;
 
