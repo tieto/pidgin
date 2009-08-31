@@ -489,19 +489,29 @@ char *jabber_get_resource(const char *in)
 	return out;
 }
 
-char *jabber_get_bare_jid(const char *in)
+char *
+jabber_get_bare_jid(const char *in)
 {
 	JabberID *jid = jabber_id_new(in);
 	char *out;
 
-	if(!jid)
+	if (!jid)
 		return NULL;
-
-	out = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
-			jid->node ? "@" : "", jid->domain);
+	out = jabber_id_get_bare_jid(jid);
 	jabber_id_free(jid);
 
 	return out;
+}
+
+char *
+jabber_id_get_bare_jid(const JabberID *jid)
+{
+	g_return_val_if_fail(jid != NULL, NULL);
+
+	return g_strconcat(jid->node ? jid->node : "",
+	                   jid->node ? "@" : "",
+	                   jid->domain,
+	                   NULL);
 }
 
 JabberID *

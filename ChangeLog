@@ -14,6 +14,10 @@ version 2.6.2 (??/??/2009):
 	  Windows.
 	* Fix typing notifications with Pidgin 2.5.9 or earlier.
 	* Fix connecting using BOSH and legacy authentication (XEP-0078).
+	* Adding buddies of the form "romeo@montague.net/Resource" are handled
+	  properly.  In addition, it is no longer possible to add buddies of
+	  the form "room@conference.example.net/User", where
+	  room@conference.example.net is a MUC.
 
 	Finch:
 	* Properly detect libpanel on OpenBSD.  (Brad Smith)
