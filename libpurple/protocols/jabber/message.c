@@ -493,7 +493,7 @@ jabber_message_get_data_cb(JabberStream *js, const char *from,
 	xmlnode *item_not_found = xmlnode_get_child(packet, "item-not-found");
 
 	/* did we get a data element as result? */
-	if (data_element) {
+	if (data_element && type == JABBER_IQ_RESULT) {
 		JabberData *data = jabber_data_create_from_xml(data_element);
 
 		if (data) {
