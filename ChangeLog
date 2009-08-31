@@ -19,6 +19,11 @@ version 2.6.2 (??/??/2009):
 	  the form "room@conference.example.net/User", where
 	  room@conference.example.net is a MUC.
 
+	Yahoo!/Yahoo! JAPAN:
+	* Accounts now have "Use account proxy for SSL connections" option.  This
+	  option force-overrides the account specific proxy settings for SSL
+	  connections only and instead uses the global proxy configuration.
+
 	Finch:
 	* Properly detect libpanel on OpenBSD.  (Brad Smith)
 	* Remove IO watches in gnt_quit.  (Tomasz Mon)
