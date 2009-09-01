@@ -2046,13 +2046,32 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 				FsError error_no;
 				gst_structure_get_enum(msg->structure, "error-no",
 						FS_TYPE_ERROR, (gint*)&error_no);
-				/*
-				 * Unknown CName is only a problem for the
-				 * multicast transmitter which isn't used.
-				 */
-				if (error_no != FS_ERROR_UNKNOWN_CNAME)
-					purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
-						  	gst_structure_get_string(msg->structure, "error-msg"));
+				switch (error_no) {
+					case FS_ERROR_NO_CODECS:
+						purple_media_error(media, _("No codecs found. Install some GStreamer codecs found in GStreamer plugins packages."));
+						purple_media_end(media, NULL, NULL);
+						break;
+					case FS_ERROR_NO_CODECS_LEFT:
+						purple_media_error(media, _("No codecs left. Your codec preferences in fs-codecs.conf are too strict."));
+						purple_media_end(media, NULL, NULL);
+						break;
+					case FS_ERROR_UNKNOWN_CNAME:
+					/*
+					 * Unknown CName is only a problem for the
+					 * multicast transmitter which isn't used.
+					 * It is also deprecated.
+					 */
+						break;
+					default:
+						purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
+							  	gst_structure_get_string(msg->structure, "error-msg"));
+						break;
+				}
+
+				if (FS_ERROR_IS_FATAL(error_no)) {
+					purple_media_error(media, _("A non-recoverable Farsight2 error has occurred."));
+					purple_media_end(media, NULL, NULL);
+				}
 			} else if (gst_structure_has_name(msg->structure,
 					"farsight-new-local-candidate")) {
 				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
@@ -2134,7 +2153,7 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 			GstElement *lastElement = NULL;
 			while (!GST_IS_PIPELINE(element)) {
 				if (element == media->priv->confbin) {
-					purple_media_error("media", _("Conference error."));
+					purple_media_error(media, _("Conference error."));
 					purple_media_end(media, NULL, NULL);
 					break;
 				}
@@ -2259,6 +2278,18 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 					purple_media_to_fs_stream_direction(
 					stream->session->type), NULL);
 			stream->accepted = TRUE;
+
+			if (stream->remote_candidates != NULL) {
+				GError *err = NULL;
+				fs_stream_set_remote_candidates(stream->stream,
+						stream->remote_candidates, &err);
+
+				if (err) {
+					purple_debug_error("media", "Error adding remote"
+							" candidates: %s\n", err->message);
+					g_error_free(err);
+				}
+			}
 		}
 	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_MUTE ||
 			type == PURPLE_MEDIA_INFO_UNMUTE)) {
@@ -2570,7 +2601,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 				media->priv->conference, media_type, &err);
 
 		if (err != NULL) {
-			purple_media_error(media, "Error creating session: %s\n", err->message);
+			purple_media_error(media, _("Error creating session: %s"), err->message);
 			g_error_free(err);
 			g_free(session);
 			return FALSE;
@@ -2884,13 +2915,15 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
 			purple_media_candidate_list_to_fs(remote_candidates));
 
-	fs_stream_set_remote_candidates(stream->stream,
-			stream->remote_candidates, &err);
+	if (stream->accepted == TRUE) {
+		fs_stream_set_remote_candidates(stream->stream,
+				stream->remote_candidates, &err);
 
-	if (err) {
-		purple_debug_error("media", "Error adding remote"
-				" candidates: %s\n", err->message);
-		g_error_free(err);
+		if (err) {
+			purple_debug_error("media", "Error adding remote"
+					" candidates: %s\n", err->message);
+			g_error_free(err);
+		}
 	}
 #endif
 }

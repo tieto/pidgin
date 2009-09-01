@@ -5,7 +5,7 @@ version 2.6.2 (??/??/2009):
 	* Fix --disable-avahi to actually disable it in configure, as opposed
 	  to just making the warning non-fatal.
 	* Sending custom smileys in MSN chats is now supported.
-	* Fix using GNOME proxy settings properly.
+	* Fix using GNOME proxy settings properly.  (Erik van Pienbroek)
 
 	XMPP:
 	* Prompt the user before cancelling a presence subscription.
@@ -13,9 +13,27 @@ version 2.6.2 (??/??/2009):
 	* Fix connecting to XMPP domains with no SRV records from Pidgin on
 	  Windows.
 	* Fix typing notifications with Pidgin 2.5.9 or earlier.
+	* Fix connecting using BOSH and legacy authentication (XEP-0078).
+	* Adding buddies of the form "romeo@montague.net/Resource" are handled
+	  properly.  In addition, it is no longer possible to add buddies of
+	  the form "room@conference.example.net/User", where
+	  room@conference.example.net is a MUC.
+	* Don't crash when receiving "smileyfied" XHTML-IM from clients that don't
+	  support bits of binary (ie. when getting an empty <data/> in return)
+
+	Yahoo!/Yahoo! JAPAN:
+	* Accounts now have "Use account proxy for SSL connections" option.  This
+	  option force-overrides the account specific proxy settings for SSL
+	  connections only and instead uses the global proxy configuration.
 
 	Finch:
 	* Properly detect libpanel on OpenBSD.  (Brad Smith)
+	* Remove IO watches in gnt_quit.  (Tomasz Mon)
+
+	Pidgin:
+	* Fix the auto-personize functionality in the Buddy List.
+	* Set the window icon for the media window to an icon corresponding to
+	  the type of call (headphone or webcam).
 
 version 2.6.1 (08/18/2009):
 	* Fix a crash when some users send you a link in a Yahoo IM

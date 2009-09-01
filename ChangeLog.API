@@ -1,5 +1,14 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.6.2 (09/??/2009):
+	Perl:
+		Added:
+		* Purple::XMLNode::get_next(), which returns the next neighbor tag of
+		  the current node.
+		Changed:
+		* Purple::XMLNode::get_child() will return the first child node if
+		  passed "" or undef as the name of the node.
+
 version 2.6.1 (08/18/2009):
 	No changes
 

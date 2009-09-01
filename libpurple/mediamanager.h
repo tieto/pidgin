@@ -30,9 +30,9 @@
 #include <glib.h>
 #include <glib-object.h>
 
-/** @copydoc _PurpleMediaManager */
+/** An opaque structure representing a group of (usually all) media calls. */
 typedef struct _PurpleMediaManager PurpleMediaManager;
-/** @copydoc _PurpleMediaManagerClass */
+/** The GObject class structure of the PurpleMediaManager object. */
 typedef struct _PurpleMediaManagerClass PurpleMediaManagerClass;
 
 #include "account.h"
@@ -81,6 +81,7 @@ PurpleMediaManager *purple_media_manager_get(void);
  * @param account The account to create the session on.
  * @param conference_type The conference type to feed into Farsight2.
  * @param remote_user The remote user to initiate the session with.
+ * @param initiator TRUE if the local user is the initiator of this media call, FALSE otherwise.
  *
  * @return A newly created media session.
  *

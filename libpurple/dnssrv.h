@@ -98,11 +98,11 @@ void purple_txt_cancel(PurpleSrvQueryData *query_data);
 /**
  * Get the value of the current TXT record.
  *
- * @param resp  The TXT response record
+ * @param response  The TXT response record
  * @returns The value of the current TXT record.
  * @since 2.6.0
  */
-const gchar *purple_txt_response_get_content(PurpleTxtResponse *resp);
+const gchar *purple_txt_response_get_content(PurpleTxtResponse *response);
 
 /**
  * Destroy a TXT DNS response object.
@@ -110,7 +110,7 @@ const gchar *purple_txt_response_get_content(PurpleTxtResponse *resp);
  * @param response The PurpleTxtResponse to destroy.
  * @since 2.6.0
  */
-void purple_txt_response_destroy(PurpleTxtResponse *resp);
+void purple_txt_response_destroy(PurpleTxtResponse *response);
 
 #ifdef __cplusplus
 }

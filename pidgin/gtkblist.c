@@ -501,10 +501,12 @@ gtk_blist_do_personize(GList *merges)
 
 		type = purple_blist_node_get_type(node);
 
-		if(type == PURPLE_BLIST_BUDDY_NODE)
+		if (type == PURPLE_BLIST_BUDDY_NODE) {
 			node = purple_blist_node_get_parent(node);
+			type = purple_blist_node_get_type(node);
+		}
 
-		if(type == PURPLE_BLIST_CONTACT_NODE)
+		if (type != PURPLE_BLIST_CONTACT_NODE)
 			continue;
 
 		for (b = purple_blist_node_get_first_child(node);

@@ -603,7 +603,7 @@ pidgin_stock_init(void)
 	pidgin_stock_load_stock_icon_theme(NULL);
 
 	/* Pre-load Status icon theme - this avoids a bug with displaying the correct icon in the tray, theme is destroyed after*/
-	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme") &&
+	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme") &&
 	   (path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir"))) {
 
 		PidginStatusIconTheme *theme = PIDGIN_STATUS_ICON_THEME(purple_theme_loader_build(PURPLE_THEME_LOADER(loader), path));

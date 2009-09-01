@@ -1605,12 +1605,9 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 				jabber_auth_start_old(js);
 			}
 			break;
-		case JABBER_STREAM_REINITIALIZING:
+		case JABBER_STREAM_POST_AUTH:
 			purple_connection_update_progress(js->gc, _("Re-initializing Stream"),
 					(js->gsc ? 8 : 4), JABBER_CONNECT_STEPS);
-
-			/* The stream will be reinitialized later, in jabber_recv_cb_ssl() */
-			js->reinit = TRUE;
 
 			break;
 		case JABBER_STREAM_CONNECTED:

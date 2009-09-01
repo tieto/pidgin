@@ -230,7 +230,7 @@ static const struct translator translators[] = {
 	{N_("Turkish"),             "tr", "Serdar Soytetir", "tulliana@gmail.com"},
 	{N_("Urdu"),                "ur", "RKVS Raman", "rkvsraman@gmail.com"},
 	{N_("Vietnamese"),          "vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
-	{N_("Simplified Chinese"),  "zh_CN", "Aron Xu", "aronmalache@163.com"},
+	{N_("Simplified Chinese"),  "zh_CN", "Aron Xu", "happyaron.xu@gmail.com"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Abel Cheung", "abelindsay@gmail.com"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Ambrose C. Li", "acli@ada.dhs.org"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Paladin R. Liu", "paladin@ms1.hinet.net"},
@@ -470,15 +470,15 @@ void pidgin_dialogs_about()
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\""
 				"http://developer.pidgin.im/wiki/FAQ\">"
 				"http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"));
-	g_string_append_printf(str, _("<FONT SIZE=\"4\">Help via e-mail:</FONT>"
-				" <A HREF=\"mailto:support@pidgin.im\">support@pidgin.im</A>"
-				" (This is a"
-				" <A HREF=\"http://pidgin.im/cgi-bin/mailman/listinfo/support\">"
-				"mailing list</A>, and messages sent here are"
-				" <A HREF=\"http://pidgin.im/pipermail/support/\">publicly"
-				" archived!</A>  Furthermore, we do <I><B>not</B></I> support"
-				" MXit, Facebook, Skype, or any other third-party plugins on"
-				" this list.)<BR/><BR/>"));
+	g_string_append_printf(str,
+			_("<font size=\"4\">Help from other Pidgin users:</font> "
+			"<a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>"
+			"This is a <b>public</b> mailing list! "
+			"(<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)<br/>"
+			"We can't help with 3rd party protocols or plugins!<br/>"
+			"This list's primary language is <b>English</b>.  You are "
+			"welcome to post in another language, but the responses may "
+			"be less helpful.<br/><br/>"));
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC Channel:</FONT> "
 				"#pidgin on irc.freenode.net<BR><BR>"));
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">XMPP MUC:</FONT> "

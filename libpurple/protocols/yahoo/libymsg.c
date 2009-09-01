@@ -2097,7 +2097,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 		break;
 	case 1013:
 		msg = g_strdup(_("Error 1013: The username you have entered is invalid."
-					"  The most common cause of this error is entering your e-mail"
+					"  The most common cause of this error is entering your email"
 					" address instead of your Yahoo! ID."));
 		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 		break;
@@ -4427,7 +4427,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypi
 		else
 			yahoo_packet_hash(pkt, "ssssss", 49, "TYPING", 1, purple_connection_get_display_name(gc),
 	                  14, " ", 13, state == PURPLE_TYPING ? "1" : "0",
-	                  5, who+4, 1002, "1");
+	                  5, who, 1002, "1");
 		yahoo_packet_send_and_free(pkt, yd);
 	}
 
@@ -4776,6 +4776,7 @@ void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g
 void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 	YahooData *yd = (YahooData *)gc->proto_data;
 	struct yahoo_packet *pkt;
+	gboolean msn = FALSE;
 
 	if (!yd->logged_in)
 		return;
@@ -4783,15 +4784,21 @@ void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 	if (!who || who[0] == '\0')
 		return;
 
+	msn = !g_ascii_strncasecmp(who, "msn/", 4);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
-	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
-	                  7, who, 13, "1");
+
+	if(msn)
+		yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc), 7, who+4, 241, "2", 13, "1");
+	else
+		yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 13, "1");
+
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
 void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	YahooData *yd = (YahooData *)gc->proto_data;
 	struct yahoo_packet *pkt;
+	gboolean msn = FALSE;
 
 	if (!yd->logged_in)
 		return;
@@ -4799,8 +4806,14 @@ void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	if (!who || who[0] == '\0')
 		return;
 
+	msn = !g_ascii_strncasecmp(who, "msn/", 4);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
-	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 13, "2");
+
+	if(msn)
+		yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc), 7, who+4, 241, "2", 13, "2");
+	else
+		yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 13, "2");
+	
 	yahoo_packet_send_and_free(pkt, yd);
 }
 

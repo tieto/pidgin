@@ -42,7 +42,7 @@ G_BEGIN_DECLS
 #define PURPLE_IS_MEDIA_ELEMENT_INFO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA_ELEMENT_INFO))
 #define PURPLE_MEDIA_ELEMENT_INFO_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA_ELEMENT_INFO, PurpleMediaElementInfo))
 
-/** @copydoc _PurpleMediaElementInfo */
+/** An opaque structure representing an audio/video source/sink. */
 typedef struct _PurpleMediaElementInfo PurpleMediaElementInfo;
 typedef struct _PurpleMediaElementInfoClass PurpleMediaElementInfoClass;
 typedef GstElement *(*PurpleMediaElementCreateCallback)(PurpleMedia *media,
@@ -138,6 +138,9 @@ GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
  *
  * @param manager The media manager to use to obtain the source/sink.
  * @param type The type of source/sink to get.
+ * @param media The media call this element is requested for.
+ * @param session_id The id of the session this element is requested for or NULL.
+ * @param participant The remote user this element is requested for or NULL.
  *
  * @since 2.6.0
  */
