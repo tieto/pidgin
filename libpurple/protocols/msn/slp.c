@@ -708,7 +708,15 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 
 		content = get_token(body, "\r\n\r\n", NULL);
 
-		got_invite(slpcall, branch, content_type, content);
+		if (branch && content_type && content)
+		{
+			got_invite(slpcall, branch, content_type, content);
+		}
+		else
+		{
+			msn_slpcall_destroy(slpcall);
+			slpcall = NULL;
+		}
 
 		g_free(branch);
 		g_free(content_type);
