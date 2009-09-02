@@ -4,8 +4,11 @@ version 2.6.2 (??/??/2009):
 	libpurple:
 	* Fix --disable-avahi to actually disable it in configure, as opposed
 	  to just making the warning non-fatal.
-	* Sending custom smileys in MSN chats is now supported.
 	* Fix using GNOME proxy settings properly.  (Erik van Pienbroek)
+
+	MSN:
+	* Sending custom smileys in chats is now supported.
+	* Ink messages are now saved when using the HTML logger.
 
 	XMPP:
 	* Prompt the user before cancelling a presence subscription.
