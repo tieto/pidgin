@@ -3746,7 +3746,7 @@ savefile_write_cb(gpointer user_data, char *file)
 	char *temp_file = user_data;
 	gchar *contents;
 	gsize length;
-	GError *error;
+	GError *error = NULL;
 
 	if (!g_file_get_contents(temp_file, &contents, &length, &error)) {
 		purple_debug_error("gtkutils", "Unable to read contents of %s: %s\n",
