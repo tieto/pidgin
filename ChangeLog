@@ -7,7 +7,7 @@ version 2.6.2 (??/??/2009):
 	* Fix using GNOME proxy settings properly.  (Erik van Pienbroek)
 
 	IRC:
-	* Fix parsing of invalid TOPIC messages.
+	* Fix parsing of invalid TOPIC messages.  (CVE-2009-2703)
 
 	MSN:
 	* Sending custom smileys in chats is now supported.
