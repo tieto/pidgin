@@ -26,6 +26,9 @@ version 2.6.2 (??/??/2009):
 	  room@conference.example.net is a MUC.
 	* Don't crash when receiving "smileyfied" XHTML-IM from clients that don't
 	  support bits of binary (ie. when getting an empty <data/> in return)
+	* Fix bug where SSL/TLS was not required even though the
+	  "require SSL/TLS" preference checked when connecting to servers
+	  that use the older iq-based authentication.  (CVE-2009-3026)
 
 	Yahoo!/Yahoo! JAPAN:
 	* Accounts now have "Use account proxy for SSL connections" option.  This
