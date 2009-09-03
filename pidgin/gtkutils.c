@@ -1537,7 +1537,6 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 	GList *files = purple_uri_list_extract_filenames((const gchar *)sd->data);
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	gboolean file_send_ok = FALSE;
 #ifndef _WIN32
 	PurpleDesktopItem *item;
 #endif
@@ -1553,9 +1552,6 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 
 		filename = files->data;
 		basename = g_path_get_basename(filename);
-
-		/* Set the default action: don't send anything */
-		file_send_ok = FALSE;
 
 		/* XXX - Make ft API support creating a transfer with more than one file */
 		if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
