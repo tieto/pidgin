@@ -583,11 +583,13 @@ pidgin_stock_init(void)
 	/* Setup the status icon theme */
 	loader = g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "status-icon", NULL);
 	purple_theme_manager_register_type(PURPLE_THEME_LOADER(loader));
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/status");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/status/icon-theme", "");
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", "");
 
 	stockloader = g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "stock-icon", NULL);
 	purple_theme_manager_register_type(PURPLE_THEME_LOADER(stockloader));
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/stock");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/stock/icon-theme", "");
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/stock/icon-theme-dir", "");
 
