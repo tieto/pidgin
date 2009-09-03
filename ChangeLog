@@ -6,6 +6,9 @@ version 2.6.2 (??/??/2009):
 	  to just making the warning non-fatal.
 	* Fix using GNOME proxy settings properly.  (Erik van Pienbroek)
 
+	IRC:
+	* Fix parsing of invalid TOPIC messages.
+
 	MSN:
 	* Sending custom smileys in chats is now supported.
 	* Ink messages are now saved when using the HTML logger.
