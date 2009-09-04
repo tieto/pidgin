@@ -16,12 +16,12 @@ Suite * util_suite(void);
 
 /* helper macros */
 #define assert_int_equal(expected, actual) { \
-	fail_if(expected != actual, "Expecting '%d' but got '%d'", expected, actual); \
+	fail_if(expected != actual, "Expected '%d' but got '%d'", expected, actual); \
 }
 
 #define assert_string_equal(expected, actual) { \
 	const gchar *a = actual; \
-	fail_unless(strcmp(expected, a) == 0, "Expecting '%s' but got '%s'", expected, a); \
+	fail_unless(strcmp(expected, a) == 0, "Expected '%s' but got '%s'", expected, a); \
 }
 
 #define assert_string_equal_free(expected, actual) { \
