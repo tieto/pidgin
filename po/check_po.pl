@@ -361,7 +361,7 @@ while(<>) {
         $state = S_DOING_MSGSTR;
         next LINE;
     }
-    if ( m(^msgstr\[[0-2]\] \"(.*)\"$) ) {
+    if ( m(^msgstr\[[0-5]\] \"(.*)\"$) ) {
         @amsgstr = ($1);
         $state = S_DOING_MSGSTR;
         next LINE;
