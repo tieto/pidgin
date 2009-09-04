@@ -968,7 +968,7 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 		qd->conn_data = purple_proxy_connect_udp(gc, account, server, port, connect_cb, gc);
 	}
 	if ( qd->conn_data == NULL ) {
-		purple_debug_error("QQ", "Couldn't create socket");
+		purple_debug_error("QQ", "Couldn't create socket\n");
 		return FALSE;
 	}
 #else
@@ -978,7 +978,7 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 	if(qd->use_tcp) {
 		qd->conn_data = purple_proxy_connect(gc, account, server, port, connect_cb, gc);
 		if ( qd->conn_data == NULL ) {
-			purple_debug_error("QQ", "Unable to connect.");
+			purple_debug_error("QQ", "Unable to connect.\n");
 			return FALSE;
 		}
 		return TRUE;
@@ -987,7 +987,7 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 	purple_debug_info("QQ", "UDP Connect to %s:%d\n", server, port);
 	qd->udp_query_data = purple_dnsquery_a(server, port, udp_host_resolved, gc);
 	if ( qd->udp_query_data == NULL ) {
-		purple_debug_error("QQ", "Could not resolve hostname");
+		purple_debug_error("QQ", "Could not resolve hostname\n");
 		return FALSE;
 	}
 #endif
