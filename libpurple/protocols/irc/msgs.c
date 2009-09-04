@@ -451,7 +451,7 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 		topic = irc_mirc2txt (args[1]);
 	} else {
 		if (!args[0] || !args[1] || !args[2])
-			return
+			return;
 		chan = args[1];
 		topic = irc_mirc2txt (args[2]);
 	}
