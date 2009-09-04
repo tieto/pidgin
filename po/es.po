@@ -12483,7 +12483,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Atajos de teclado"
 
 msgid "Cl_ose conversations with the Escape key"
-msgstr "C_errrar las conversaciones con la tecla Esc"
+msgstr "C_errar las conversaciones con la tecla Esc"
 
 #. Buddy List Themes
 msgid "Buddy List Theme"
