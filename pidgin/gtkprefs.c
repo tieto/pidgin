@@ -934,7 +934,11 @@ prefs_build_theme_combo_box(GtkListStore *store, const gchar *current_theme, gch
 {
 	GtkCellRenderer *cell_rend;
 	GtkWidget *combo_box;
-	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
+	GtkTargetEntry te[3] = {
+		{"text/plain", 0, 0},
+		{"text/uri-list", 0, 1},
+		{"STRING", 0, 2}
+	};
 
 	g_return_val_if_fail(store != NULL && current_theme != NULL, NULL);
 
@@ -1090,12 +1094,17 @@ theme_page(void)
 	GtkTreeSelection *sel;
 	GtkTreeRowReference *rowref;
 	GtkWidget *label;
-	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
+	GtkTargetEntry te[3] = {
+		{"text/plain", 0, 0},
+		{"text/uri-list", 0, 1},
+		{"STRING", 0, 2}
+	};
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
-	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below. New themes can be installed by dragging and dropping them onto the theme list."));
+	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below."
+	                        " New themes can be installed by dragging and dropping them onto the theme list."));
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
