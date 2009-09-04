@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-04 12:18+0200\n"
-"PO-Revision-Date: 2009-09-04 12:17+0200\n"
+"POT-Creation-Date: 2009-09-04 12:28+0200\n"
+"PO-Revision-Date: 2009-09-04 12:28+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12235,6 +12235,9 @@ msgstr ""
 "Benutzung: %s [OPTION]...\n"
 "\n"
 
+msgid "DIR"
+msgstr "VERZ"
+
 msgid "use DIR for config files"
 msgstr "DIR als Konfigurationsverzeichnis benutzen"
 
@@ -12252,6 +12255,9 @@ msgstr "mehrere Instanzen erlauben"
 
 msgid "don't automatically login"
 msgstr "nicht automatisch anmelden"
+
+msgid "NAME"
+msgstr "NAME"
 
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
@@ -12701,6 +12707,9 @@ msgstr "_End-Port:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Relay-Server (TURN)"
+
+msgid "_TURN server:"
+msgstr "_TURN-Server:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proxy-Server &amp; Browser"
