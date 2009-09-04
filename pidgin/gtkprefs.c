@@ -1890,14 +1890,14 @@ network_page(void)
 			G_CALLBACK(network_turn_server_changed_cb), NULL);
 	gtk_widget_show(entry);
 
-	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), "_TURN server:",
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_TURN server:"),
 			sg, entry, TRUE, NULL);
 
 	pidgin_prefs_labeled_spin_button(hbox, _("_Port:"),
 		"/purple/network/turn_port", 0, 65535, NULL);
-	hbox = pidgin_prefs_labeled_entry(vbox, "_Username:",
+	hbox = pidgin_prefs_labeled_entry(vbox, _("_Username:"),
 		"/purple/network/turn_username", sg);
-	pidgin_prefs_labeled_password(hbox, "_Password:",
+	pidgin_prefs_labeled_password(hbox, _("_Password:"),
 		"/purple/network/turn_password", NULL);
 
 	if (purple_running_gnome()) {
