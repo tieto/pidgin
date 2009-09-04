@@ -1536,34 +1536,19 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 			PROCESS_INFORMATION pi;
 			BOOL retval;
 			gchar *message = NULL;
+			STARTUPINFOW si;
+
+			wchar_t *wc_cmd = g_utf8_to_utf16(command,
+					-1, NULL, NULL, NULL);
 
 			memset(&pi, 0, sizeof(pi));
+			memset(&si, 0 , sizeof(si));
+			si.cb = sizeof(si);
 
-			if (G_WIN32_HAVE_WIDECHAR_API ()) {
-				STARTUPINFOW si;
-				wchar_t *wc_cmd = g_utf8_to_utf16(command,
-						-1, NULL, NULL, NULL);
-
-				memset(&si, 0 , sizeof(si));
-				si.cb = sizeof(si);
-
-				retval = CreateProcessW(NULL, wc_cmd, NULL,
-						NULL, 0, 0, NULL, NULL,
-						&si, &pi);
-				g_free(wc_cmd);
-			} else {
-				STARTUPINFOA si;
-				char *l_cmd = g_locale_from_utf8(command,
-						-1, NULL, NULL, NULL);
-
-				memset(&si, 0 , sizeof(si));
-				si.cb = sizeof(si);
-
-				retval = CreateProcessA(NULL, l_cmd, NULL,
-						NULL, 0, 0, NULL, NULL,
-						&si, &pi);
-				g_free(l_cmd);
-			}
+			retval = CreateProcessW(NULL, wc_cmd, NULL,
+					NULL, 0, 0, NULL, NULL,
+					&si, &pi);
+			g_free(wc_cmd);
 
 			if (retval) {
 				CloseHandle(pi.hProcess);

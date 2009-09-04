@@ -3107,23 +3107,13 @@ file_open_uri(GtkIMHtml *imhtml, const char *uri)
 #ifdef _WIN32
 	/* If using Win32... */
 	int code;
-	if (G_WIN32_HAVE_WIDECHAR_API()) {
-		wchar_t *wc_filename = g_utf8_to_utf16(
-				uri, -1, NULL, NULL, NULL);
+	wchar_t *wc_filename = g_utf8_to_utf16(
+			uri, -1, NULL, NULL, NULL);
 
-		code = (int)ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
-				SW_SHOW);
+	code = (int)ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
+			SW_SHOW);
 
-		g_free(wc_filename);
-	} else {
-		char *l_filename = g_locale_from_utf8(
-				uri, -1, NULL, NULL, NULL);
-
-		code = (int)ShellExecuteA(NULL, NULL, l_filename, NULL, NULL,
-				SW_SHOW);
-
-		g_free(l_filename);
-	}
+	g_free(wc_filename);
 
 	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
 	{
