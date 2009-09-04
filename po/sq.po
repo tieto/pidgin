@@ -11054,7 +11054,7 @@ msgstr "Dështoi në hyrjen te Qun %u, të kontrolluar nga përgjegjësi %u"
 #: ../libpurple/protocols/qq/group_opt.c:522
 #, c-format
 msgid "<b>Joining Qun %u is approved by admin %u for %s</b>"
-msgstr "<b>Pjesëmarrja në Qun %u për %s është miratuar nga përgjegjësi %u</b>"
+msgstr "<b>Pjesëmarrja në Qun %u është miratuar nga Përgjegjësi %u për %s</b>"
 
 #: ../libpurple/protocols/qq/group_opt.c:557
 #, c-format
