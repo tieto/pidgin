@@ -49,6 +49,8 @@ version 2.6.2 (09/04/2009):
 	  the type of call (headphone or webcam).
 	* Customized sound files are no longer reset whenever opening the
 	  Preferences dialog.
+	* The buddy list should now immediately refresh upon changing the icon
+	  theme.
 
 version 2.6.1 (08/18/2009):
 	* Fix a crash when some users send you a link in a Yahoo IM
