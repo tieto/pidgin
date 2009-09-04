@@ -14,6 +14,8 @@ version 2.6.2 (??/??/2009):
 	* Ink messages are now saved when using the HTML logger.
 	* Fix a crash when receiving some handwritten messages.
 	* Fix a crash when receiving certain SLP invite messages.
+	* Chats with multiple people should no longer spontaneously
+	  disconnect.
 
 	XMPP:
 	* Prompt the user before cancelling a presence subscription.
