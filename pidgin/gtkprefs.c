@@ -91,6 +91,8 @@ static GtkWidget *prefs_sound_themes_combo_box;
 static GtkWidget *prefs_blist_themes_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
 
+static gboolean prefs_sound_themes_loading;
+
 /*
  * PROTOTYPES
  */
@@ -580,6 +582,7 @@ prefs_themes_refresh(void)
 	gchar *filename;
 	GtkTreeIter iter;
 
+	prefs_sound_themes_loading = TRUE;
 	/* refresh the list of themes in the manager */
 	purple_theme_manager_refresh();
 
@@ -614,6 +617,7 @@ prefs_themes_refresh(void)
 	prefs_set_active_theme_combo(prefs_sound_themes_combo_box, prefs_sound_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"));
 	prefs_set_active_theme_combo(prefs_blist_themes_combo_box, prefs_blist_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"));
 	prefs_set_active_theme_combo(prefs_status_themes_combo_box, prefs_status_icon_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"));
+	prefs_sound_themes_loading = FALSE;
 }
 
 /* init all the theme variables so that the themes can be sorted later and used by pref pages */
@@ -965,7 +969,7 @@ prefs_set_sound_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 	gchar *new_theme;
 	GtkTreeIter new_iter;
 
-	if(gtk_combo_box_get_active_iter(combo_box, &new_iter)) {
+	if(gtk_combo_box_get_active_iter(combo_box, &new_iter) && !prefs_sound_themes_loading) {
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &new_iter, 2, &new_theme, -1);
 
