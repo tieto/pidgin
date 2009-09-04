@@ -1146,8 +1146,8 @@ static gint send_cmd_detail(PurpleConnection *gc, guint16 cmd, guint16 seq,
 	qd = (qq_data *)gc->proto_data;
 	g_return_val_if_fail(data != NULL && data_len > 0, -1);
 
-	/* at most 16 bytes more */
-	encrypted = g_newa(guint8, data_len + 16);
+	/* at most 17 bytes more */
+	encrypted = g_newa(guint8, data_len + 17);
 	encrypted_len = qq_encrypt(encrypted, data, data_len, qd->session_key);
 	if (encrypted_len < 16) {
 		purple_debug_error("QQ_ENCRYPT", "Error len %d: [%05d] 0x%04X %s\n",
@@ -1223,8 +1223,8 @@ gint qq_send_server_reply(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8
 		purple_debug_info("QQ", "<== [SRV-%05d] %s(0x%04X), datalen %d\n",
 				seq, qq_get_cmd_desc(cmd), cmd, data_len);
 #endif
-	/* at most 16 bytes more */
-	encrypted = g_newa(guint8, data_len + 16);
+	/* at most 17 bytes more */
+	encrypted = g_newa(guint8, data_len + 17);
 	encrypted_len = qq_encrypt(encrypted, data, data_len, qd->session_key);
 	if (encrypted_len < 16) {
 		purple_debug_error("QQ_ENCRYPT", "Error len %d: [%05d] 0x%04X %s\n",
@@ -1270,8 +1270,8 @@ static gint send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id
 	seq = qd->send_seq;
 
 	/* Encrypt to encrypted with session_key */
-	/* at most 16 bytes more */
-	encrypted = g_newa(guint8, buf_len + 16);
+	/* at most 17 bytes more */
+	encrypted = g_newa(guint8, buf_len + 17);
 	encrypted_len = qq_encrypt(encrypted, buf, buf_len, qd->session_key);
 	if (encrypted_len < 16) {
 		purple_debug_error("QQ_ENCRYPT", "Error len %d: [%05d] %s (0x%02X)\n",

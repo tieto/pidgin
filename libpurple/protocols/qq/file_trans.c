@@ -334,7 +334,7 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 		raw_data, bytes,
 		"sending packet[%s]:", qq_get_file_cmd_desc(packet_type));
 
-	encrypted = g_newa(guint8, bytes + 16);
+	encrypted = g_newa(guint8, bytes + 17);
 	encrypted_len = qq_encrypt(encrypted, raw_data, bytes, info->file_session_key);
 	/*debug: try to decrypt it */
 
