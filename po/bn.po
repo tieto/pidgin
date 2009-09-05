@@ -6448,6 +6448,7 @@ msgid "Unable to send message. Could not create the conference (%s)."
 msgstr "বার্তা পাঠাতে ব্যর্থ। অধিবেশন (%s) তৈরি করা সম্ভব হয়নি।"
 
 #, c-format
+#, fuzzy
 msgid ""
 "Unable to move user %s to folder %s in the server side list. Error while "
 "creating folder (%s)."
@@ -8018,7 +8019,10 @@ msgstr "সেটআপ"
 msgid "%u requested to join Qun %u for %s"
 msgstr "%1$u %3$s এর জন্য %2$u Qunএ যুক্ত হতে অনুরোধ করছে"
 
+# If the localized string is intended to swap the parameters, the
+# correct syntax is "%2$u %1$u Qun blah"
 #, c-format
+#, fuzzy
 msgid "%u request to join Qun %u"
 msgstr "%1u %2u Qunএ যুক্ত হতে অনুরোধ করছে"
 

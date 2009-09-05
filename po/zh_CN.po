@@ -4515,10 +4515,12 @@ msgid "No reason"
 msgstr "没有给出理由。"
 
 #, c-format
+#, fuzzy
 msgid "You have been kicked: (%s)"
 msgstr "您被已 %s 踢出 (%s)"
 
 #, c-format
+#, fuzzy
 msgid "Kicked (%s)"
 msgstr "被 %s 踢出 (%s) "
 
@@ -5661,6 +5663,7 @@ msgid "Zap"
 msgstr ""
 
 #, c-format
+#, fuzzy
 msgid "%s has zapped you!"
 msgstr "%s 已经将您[%s]添加为好友"
 
@@ -5673,6 +5676,7 @@ msgid "Whack"
 msgstr ""
 
 #, c-format
+#, fuzzy
 msgid "%s has whacked you!"
 msgstr "%s 已经将您[%s]添加为好友"
 
@@ -5723,6 +5727,7 @@ msgid "Slap"
 msgstr "打盹"
 
 #, c-format
+#, fuzzy
 msgid "%s has slapped you!"
 msgstr "%s 已经将您[%s]添加为好友"
 
@@ -10741,6 +10746,7 @@ msgid "User is typing..."
 msgstr "用户正在打字..."
 
 #, c-format
+#, fuzzy
 msgid ""
 "\n"
 "%s has stopped typing"
