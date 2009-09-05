@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.2 (09/04/2009):
+version 2.6.2 (09/05/2009):
 	Perl:
 		Added:
 		* Purple::XMLNode::get_next(), which returns the next neighbor tag of
