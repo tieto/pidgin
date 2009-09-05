@@ -7359,27 +7359,27 @@ msgstr "<b>我的 Internet IP</b>: %s:%d<br>\n"
 
 #, c-format
 msgid "<b>Sent</b>: %lu<br>\n"
-msgstr "<b>目前在线人数</b>: %d<br>\n"
+msgstr "<b>目前在线人数</b>: %lu<br>\n"
 
 #, c-format
 msgid "<b>Resend</b>: %lu<br>\n"
-msgstr "<b>上次刷新</b>: %s<br>\n"
+msgstr "<b>上次刷新</b>: %lu<br>\n"
 
 #, c-format
 msgid "<b>Lost</b>: %lu<br>\n"
-msgstr "<b>上次刷新</b>: %s<br>\n"
+msgstr "<b>上次刷新</b>: %lu<br>\n"
 
 #, c-format
 msgid "<b>Received</b>: %lu<br>\n"
-msgstr "<b>上次刷新</b>: %s<br>\n"
+msgstr "<b>上次刷新</b>: %lu<br>\n"
 
 #, c-format
 msgid "<b>Received Duplicate</b>: %lu<br>\n"
-msgstr "<b>我的公网 IP</b>: %s<br>\n"
+msgstr "<b>我的公网 IP</b>: %lu<br>\n"
 
 #, c-format
 msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
-msgstr "<b>登录时间</b>: %s<br>\n"
+msgstr "<b>登录时间</b>: %d-%d-%d, %d:%d:%d<br>\n"
 
 #, c-format
 msgid "<b>IP</b>: %s<br>\n"
@@ -9300,7 +9300,7 @@ msgstr "无法建立文件描述符。"
 
 #, c-format
 msgid "%s is trying to send you a group of %d files.\n"
-msgstr "%s 正在发送文件 %s\n"
+msgstr "%s 正在发送文件 %d\n"
 
 msgid "Write Error"
 msgstr "写错误"
@@ -10050,7 +10050,7 @@ msgstr "更改 %s 的用户信息"
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
 "You currently have %d contacts named %s. Would you like to merge them?"
-msgstr[0] "更改 %s 的用户信息"
+msgstr[0] "您已经有名为 %2$s 的 %1$d 位联系人。您是否想要合并？"
 
 msgid ""
 "Merging these contacts will cause them to share a single entry on the buddy "
