@@ -29,7 +29,7 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
-BuildRequires: gtk2-devel
+BuildRequires: gtk2-devel, libidn-devel
 
 %{!?_without_startupnotification:BuildRequires: startup-notification-devel}
 %{?_with_avahi:BuildRequires: avahi-glib-devel}
@@ -86,6 +86,8 @@ Requires: libpurple = %{version}
 
 Obsoletes: gaim
 Provides: gaim
+Obsoletes: pidgin-perl < %{version}
+Provides: pidgin-perl = %{version}-%{release}
 
 %package devel
 Summary:    Development headers, documentation, and libraries for Pidgin
@@ -104,6 +106,8 @@ Obsoletes:  gaim-tcl
 Obsoletes:  gaim-gadugadu
 Obsoletes:  pidgin-tcl < 2.0.0
 Obsoletes:  pidgin-silc < 2.0.0
+Obsoletes:  libpurple-perl < %{version}
+Provides:   libpurple-perl = %{version}-%{release}
 %{?_with_sasl:Requires:   cyrus-sasl-plain, cyrus-sasl-md5}
 
 %package -n libpurple-devel
@@ -226,6 +230,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --mandir=%{_mandir} \
                                     --sysconfdir=%{_sysconfdir} \
                                     --disable-schemas-install \
+                                    %{!?_with_vv:--disable-vv} \
                                     %{!?_with_dbus:--disable-dbus} \
                                     %{!?_with_avahi:--disable-avahi} \
                                     %{!?_with_meanwhile:--disable-meanwhile} \
@@ -465,6 +470,11 @@ fi
 %endif
 
 %changelog
+* Sat Sep 05 2009 Stu Tomlinson <stu@nosnilmot.com>
+- Disable Voice & Video unless --with vv is used
+- Add BuildRequires for libidn-devel
+- Add Provides/Obsoletes to ease transition from Red Hat / Fedora RPMs
+
 * Sat Jul 11 2009 Stu Tomlinson <stu@nosnilmot.com>
 - Update to reflect changes in perl module installation directories
 
