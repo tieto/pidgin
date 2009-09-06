@@ -2714,7 +2714,7 @@ int aim_im_reqofflinemsgs(OscarData *od)
  * and Purple 0.60 and newer.
  *
  */
-int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2)
+int aim_im_sendmtn(OscarData *od, guint16 channel, const char *bn, guint16 event)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -2730,19 +2730,14 @@ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2)
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x0014, 0x0000, NULL, 0);
 
-	/*
-	 * 8 days of light
-	 * Er, that is to say, 8 bytes of 0's
-	 */
-	byte_stream_put16(&bs, 0x0000);
-	byte_stream_put16(&bs, 0x0000);
-	byte_stream_put16(&bs, 0x0000);
-	byte_stream_put16(&bs, 0x0000);
+	/* ICBM cookie */
+	byte_stream_put32(&bs, 0x00000000);
+	byte_stream_put32(&bs, 0x00000000);
 
 	/*
-	 * Type 1 (should be 0x0001 for mtn)
+	 * Channel (should be 0x0001 for mtn)
 	 */
-	byte_stream_put16(&bs, type1);
+	byte_stream_put16(&bs, channel);
 
 	/*
 	 * Dest buddy name
@@ -2751,9 +2746,9 @@ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2)
 	byte_stream_putstr(&bs, bn);
 
 	/*
-	 * Type 2 (should be 0x0000, 0x0001, or 0x0002 for mtn)
+	 * Event (should be 0x0000, 0x0001, or 0x0002 for mtn)
 	 */
-	byte_stream_put16(&bs, type2);
+	byte_stream_put16(&bs, event);
 
 	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICBM, 0x0014, 0x0000, snacid, &bs);
 
@@ -2775,16 +2770,16 @@ static int mtn_receive(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 	aim_rxcallback_t userfunc;
 	char *bn;
 	guint8 bnlen;
-	guint16 type1, type2;
+	guint16 channel, event;
 
-	byte_stream_advance(bs, 8); /* Unknown - All 0's */
-	type1 = byte_stream_get16(bs);
+	byte_stream_advance(bs, 8); /* ICBM cookie */
+	channel = byte_stream_get16(bs);
 	bnlen = byte_stream_get8(bs);
 	bn = byte_stream_getstr(bs, bnlen);
-	type2 = byte_stream_get16(bs);
+	event = byte_stream_get16(bs);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, type1, bn, type2);
+		ret = userfunc(od, conn, frame, channel, bn, event);
 
 	g_free(bn);
 

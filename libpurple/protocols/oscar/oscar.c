@@ -3230,16 +3230,16 @@ static int purple_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	PurpleConnection *gc = od->gc;
 	va_list ap;
-	guint16 type1, type2;
+	guint16 channel, event;
 	char *bn;
 
 	va_start(ap, fr);
-	type1 = (guint16) va_arg(ap, unsigned int);
+	channel = (guint16) va_arg(ap, unsigned int);
 	bn = va_arg(ap, char *);
-	type2 = (guint16) va_arg(ap, unsigned int);
+	event = (guint16) va_arg(ap, unsigned int);
 	va_end(ap);
 
-	switch (type2) {
+	switch (event) {
 		case 0x0000: { /* Text has been cleared */
 			serv_got_typing_stopped(gc, bn);
 		} break;
@@ -3252,12 +3252,14 @@ static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 			serv_got_typing(gc, bn, 0, PURPLE_TYPING);
 		} break;
 
+		case 0x000f: { /* Closed IM window */
+			serv_got_typing_stopped(gc, bn);
+		} break;
+
 		default: {
-			/*
-			 * It looks like iChat sometimes sends typing notification
-			 * with type1=0x0001 and type2=0x000f.  Not sure why.
-			 */
-			purple_debug_info("oscar", "Received unknown typing notification message from %s.  Type1 is 0x%04x and type2 is 0x%04hx.\n", bn, type1, type2);
+			purple_debug_info("oscar", "Received unknown typing "
+					"notification message from %s.  Channel is 0x%04x "
+					"and event is 0x%04hx.\n", bn, channel, event);
 		} break;
 	}
 
