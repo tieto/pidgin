@@ -1757,6 +1757,43 @@ browser_button_clicked_cb(GtkWidget *button, gpointer null)
 	g_error_free(err);
 }
 
+static void
+auto_ip_button_clicked_cb(GtkWidget *button, gpointer null)
+{
+	const char *ip;
+	PurpleStunNatDiscovery *stun;
+	char *auto_ip_text;
+
+	/* purple_network_get_my_ip will return the IP that was set by the user with
+	   purple_network_set_public_ip, so make a lookup for the auto-detected IP
+	   ourselves. */
+
+	if (purple_prefs_get_bool("/purple/network/auto_ip")) {
+		/* Check if STUN discovery was already done */
+		stun = purple_stun_discover(NULL);
+		if ((stun != NULL) && (stun->status == PURPLE_STUN_STATUS_DISCOVERED)) {
+			ip = stun->publicip;
+		} else {
+			/* Attempt to get the IP from a NAT device using UPnP */
+			ip = purple_upnp_get_public_ip();
+			if (ip == NULL) {
+				/* Attempt to get the IP from a NAT device using NAT-PMP */
+				ip = purple_pmp_get_public_ip();
+				if (ip == NULL) {
+					/* Just fetch the IP of the local system */
+					ip = purple_network_get_local_system_ip(-1);
+				}
+			}
+		}
+	}
+	else
+		ip = _("Disabled");
+
+	auto_ip_text = g_strdup_printf(_("Use _automatically detected IP address: %s"), ip);
+	gtk_button_set_label(GTK_BUTTON(button), auto_ip_text);
+	g_free(auto_ip_text);
+}
+
 static GtkWidget *
 network_page(void)
 {
@@ -1767,9 +1804,6 @@ network_page(void)
 	GtkWidget *proxy_button = NULL, *browser_button = NULL;
 	GtkSizeGroup *sg;
 	PurpleProxyInfo *proxy_info = NULL;
-	const char *ip;
-	PurpleStunNatDiscovery *stun;
-	char *auto_ip_text;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -1800,30 +1834,11 @@ network_page(void)
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 	gtk_container_add(GTK_CONTAINER(hbox), label);
 
-	/* purple_network_get_my_ip will return the IP that was set by the user with
-	   purple_network_set_public_ip, so make a lookup for the auto-detected IP
-	   ourselves. */
-
-	/* Check if STUN discovery was already done */
-	stun = purple_stun_discover(NULL);
-	if ((stun != NULL) && (stun->status == PURPLE_STUN_STATUS_DISCOVERED)) {
-		ip = stun->publicip;
-	} else {
-		/* Attempt to get the IP from a NAT device using UPnP */
-		ip = purple_upnp_get_public_ip();
-		if (ip == NULL) {
-			/* Attempt to get the IP from a NAT device using NAT-PMP */
-			ip = purple_pmp_get_public_ip();
-			if (ip == NULL) {
-				/* Just fetch the IP of the local system */
-				ip = purple_network_get_local_system_ip(-1);
-			}
-		}
-	}
-
-	auto_ip_text = g_strdup_printf(_("Use _automatically detected IP address: %s"), ip);
-	auto_ip_checkbox = pidgin_prefs_checkbox(auto_ip_text, "/purple/network/auto_ip", vbox);
-	g_free(auto_ip_text);
+	auto_ip_checkbox = pidgin_prefs_checkbox("Use _automatically detected IP address",
+	                                         "/purple/network/auto_ip", vbox);
+	g_signal_connect(G_OBJECT(auto_ip_checkbox), "clicked",
+	                 G_CALLBACK(auto_ip_button_clicked_cb), NULL);
+	auto_ip_button_clicked_cb(auto_ip_checkbox, NULL); /* Update label */
 
 	table = gtk_table_new(2, 2, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
