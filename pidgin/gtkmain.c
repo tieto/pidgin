@@ -425,9 +425,9 @@ show_usage(const char *name, gboolean terse)
 				_("NAME"),
 				_("enable specified account(s) (optional argument NAME\n"
 				  "                      "
-				  "specifies account(s) to use, separated by commas."));
-		g_string_append_printf(str, "                      %s\n",
-				_("Without this only the first account will be enabled)."));
+				  "specifies account(s) to use, separated by commas.\n"
+				  "                      "
+				  "Without this only the first account will be enabled)."));
 #ifndef WIN32
 		g_string_append_printf(str, "  --display=DISPLAY   %s\n",
 				_("X display to use"));
