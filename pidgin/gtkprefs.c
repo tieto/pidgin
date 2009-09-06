@@ -1840,33 +1840,20 @@ network_page(void)
 	                 G_CALLBACK(auto_ip_button_clicked_cb), NULL);
 	auto_ip_button_clicked_cb(auto_ip_checkbox, NULL); /* Update label */
 
-	table = gtk_table_new(2, 2, FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 10);
-	gtk_container_add(GTK_CONTAINER(vbox), table);
-
-	label = gtk_label_new_with_mnemonic(_("Public _IP:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
-	gtk_size_group_add_widget(sg, label);
-
 	entry = gtk_entry_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
+	gtk_entry_set_text(GTK_ENTRY(entry), purple_network_get_public_ip());
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(network_ip_changed), NULL);
 
-	gtk_entry_set_text(GTK_ENTRY(entry), purple_network_get_public_ip());
-
-	pidgin_set_accessible_label(entry, label);
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Public _IP:"),
+			sg, entry, TRUE, NULL);
 
 	if (purple_prefs_get_bool("/purple/network/auto_ip")) {
-		gtk_widget_set_sensitive(GTK_WIDGET(table), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(hbox), FALSE);
 	}
 
 	g_signal_connect(G_OBJECT(auto_ip_checkbox), "clicked",
-					 G_CALLBACK(pidgin_toggle_sensitive), table);
+					 G_CALLBACK(pidgin_toggle_sensitive), hbox);
 
 	g_object_unref(sg);
 
