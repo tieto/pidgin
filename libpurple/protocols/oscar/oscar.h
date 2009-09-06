@@ -1026,11 +1026,12 @@ gchar *purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *so
 #define AIM_FLAG_ICQ             0x0040
 #define AIM_FLAG_WIRELESS        0x0080
 #define AIM_FLAG_UNKNOWN100      0x0100
-#define AIM_FLAG_UNKNOWN200      0x0200
+#define AIM_FLAG_IMFORWARDING    0x0200
 #define AIM_FLAG_ACTIVEBUDDY     0x0400
 #define AIM_FLAG_UNKNOWN800      0x0800
-#define AIM_FLAG_ABINTERNAL      0x1000
-#define AIM_FLAG_ALLUSERS        0x001f
+#define AIM_FLAG_ONEWAYWIRELESS  0x1000
+#define AIM_FLAG_NOKNOCKKNOCK    0x00040000
+#define AIM_FLAG_FORWARD_MOBILE  0x00080000
 
 #define AIM_USERINFO_PRESENT_FLAGS        0x00000001
 #define AIM_USERINFO_PRESENT_MEMBERSINCE  0x00000002
