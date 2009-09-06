@@ -609,7 +609,8 @@ pidgin_stock_init(void)
 
 		PidginStatusIconTheme *theme = PIDGIN_STATUS_ICON_THEME(purple_theme_loader_build(PURPLE_THEME_LOADER(loader), path));
 		pidgin_stock_load_status_icon_theme(theme);
-		g_object_unref(G_OBJECT(theme));
+		if (theme)
+			g_object_unref(G_OBJECT(theme));
 
 	}
 	else
