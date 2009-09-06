@@ -1799,7 +1799,8 @@ network_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox, *hbox, *entry;
-	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
+	GtkWidget *table = NULL;
+	GtkWidget *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
 	GtkWidget *proxy_warning = NULL, *browser_warning = NULL;
 	GtkWidget *proxy_button = NULL, *browser_button = NULL;
 	GtkSizeGroup *sg;
