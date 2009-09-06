@@ -1466,7 +1466,7 @@ static int incomingim_ch1_parsemsgs(OscarData *od, aim_userinfo_t *userinfo, gui
 	/* Should this be ASCII -> UNICODE -> Custom */
 	static const guint16 charsetpri[] = {
 		AIM_CHARSET_ASCII, /* ASCII first */
-		AIM_CHARSET_CUSTOM, /* then ISO-8859-1 */
+		AIM_CHARSET_LATIN_1, /* then ISO-8859-1 */
 		AIM_CHARSET_UNICODE, /* UNICODE as last resort */
 	};
 	static const int charsetpricount = 3;

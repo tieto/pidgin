@@ -241,7 +241,7 @@ oscar_charset_check(const char *utf8)
 	{
 		if ((unsigned char)utf8[i] > 0x7f) {
 			/* not ASCII! */
-			charset = AIM_CHARSET_CUSTOM;
+			charset = AIM_CHARSET_LATIN_1;
 			break;
 		}
 		i++;
@@ -428,7 +428,7 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcebn,
 	if (charset == AIM_CHARSET_UNICODE) {
 		charsetstr1 = "UTF-16BE";
 		charsetstr2 = "UTF-8";
-	} else if (charset == AIM_CHARSET_CUSTOM) {
+	} else if (charset == AIM_CHARSET_LATIN_1) {
 		if ((sourcebn != NULL) && oscar_util_valid_name_icq(sourcebn))
 			charsetstr1 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 		else
@@ -539,7 +539,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	 */
 	*msg = g_convert(from, -1, charsetstr, "UTF-8", NULL, &msglen, &err);
 	if (*msg != NULL) {
-		*charset = AIM_CHARSET_CUSTOM;
+		*charset = AIM_CHARSET_LATIN_1;
 		*charsubset = 0x0000;
 		*msglen_int = msglen;
 		return;
@@ -2801,7 +2801,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				gchar *reason = NULL;
 
 				if (msg2[5] != NULL)
-					reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_CUSTOM, 0x0000, msg2[5], strlen(msg2[5]));
+					reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_LATIN_1, 0x0000, msg2[5], strlen(msg2[5]));
 
 				purple_debug_info("oscar",
 						   "Received an authorization request from UIN %u\n",
@@ -4687,7 +4687,7 @@ gchar *purple_prpl_oscar_convert_to_infotext(const gchar *str, gsize *ret_len, c
 	if (charset == AIM_CHARSET_UNICODE) {
 		encoded = g_convert(str, -1, "UTF-16BE", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "unicode-2-0";
-	} else if (charset == AIM_CHARSET_CUSTOM) {
+	} else if (charset == AIM_CHARSET_LATIN_1) {
 		encoded = g_convert(str, -1, "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "iso-8859-1";
 	} else {
@@ -5590,7 +5590,7 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 	buddy = purple_find_buddy(account, bn);
 
 	if (msg != NULL)
-		reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_CUSTOM, 0x0000, msg, strlen(msg));
+		reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_LATIN_1, 0x0000, msg, strlen(msg));
 
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
@@ -5827,7 +5827,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		charsetstr = "us-ascii";
 	else if (charset == AIM_CHARSET_UNICODE)
 		charsetstr = "unicode-2-0";
-	else if (charset == AIM_CHARSET_CUSTOM)
+	else if (charset == AIM_CHARSET_LATIN_1)
 		charsetstr = "iso-8859-1";
 	aim_chat_send_im(od, c->conn, 0, buf2, len, charsetstr, "en");
 	g_free(buf2);

@@ -808,9 +808,9 @@ void oscar_chat_destroy(struct chat_connection *cc);
 #define AIM_IMFLAGS_OFFLINE				0x0800 /* send to offline user */
 #define AIM_IMFLAGS_TYPINGNOT			0x1000 /* typing notification */
 
-#define AIM_CHARSET_ASCII		0x0000
-#define AIM_CHARSET_UNICODE	0x0002 /* UTF-16BE */
-#define AIM_CHARSET_CUSTOM	0x0003
+#define AIM_CHARSET_ASCII   0x0000 /* ISO 646 */
+#define AIM_CHARSET_UNICODE 0x0002 /* ISO 10646 (UTF-16/UCS-2BE) */
+#define AIM_CHARSET_LATIN_1 0x0003 /* ISO 8859-1 */
 
 /*
  * Multipart message structures.
