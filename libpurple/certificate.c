@@ -98,7 +98,7 @@ invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
 			break;
 		case PURPLE_CERTIFICATE_CA_UNKNOWN:
 			return _("The root certificate this one claims to be issued by is "
-			         "unknown to Pidgin.");
+			         "unknown to this application.");
 			break;
 		case PURPLE_CERTIFICATE_NOT_ACTIVATED:
 			return _("The certificate is not valid yet.");
