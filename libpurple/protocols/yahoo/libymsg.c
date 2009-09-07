@@ -4500,6 +4500,12 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	if (purple_presence_is_idle(presence))
 		yahoo_packet_hash_str(pkt, 47, "2");
+	else	{
+		if (!purple_status_is_available(status))
+			yahoo_packet_hash_str(pkt, 47, "1");
+		else
+			yahoo_packet_hash_str(pkt, 47, "0");
+	}
 
 	yahoo_packet_send_and_free(pkt, yd);
 
