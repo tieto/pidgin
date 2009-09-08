@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-31 19:52-0700\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-08-23 22:12+0800\n"
 "Last-Translator: Aron Xu <aronmalache@163.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -1601,8 +1601,7 @@ msgstr "好友列表"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
 
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+msgid "The root certificate this one claims to be issued by is unknown."
 msgstr ""
 
 #, fuzzy
@@ -4514,13 +4513,11 @@ msgstr "接受默认值(_A)"
 msgid "No reason"
 msgstr "没有给出理由。"
 
-#, c-format
-#, fuzzy
+#, fuzzy, c-format
 msgid "You have been kicked: (%s)"
 msgstr "您被已 %s 踢出 (%s)"
 
-#, c-format
-#, fuzzy
+#, fuzzy, c-format
 msgid "Kicked (%s)"
 msgstr "被 %s 踢出 (%s) "
 
@@ -5662,8 +5659,7 @@ msgstr ""
 msgid "Zap"
 msgstr ""
 
-#, c-format
-#, fuzzy
+#, fuzzy, c-format
 msgid "%s has zapped you!"
 msgstr "%s 已经将您[%s]添加为好友"
 
@@ -5675,8 +5671,7 @@ msgstr ""
 msgid "Whack"
 msgstr ""
 
-#, c-format
-#, fuzzy
+#, fuzzy, c-format
 msgid "%s has whacked you!"
 msgstr "%s 已经将您[%s]添加为好友"
 
@@ -5726,8 +5721,7 @@ msgstr ""
 msgid "Slap"
 msgstr "打盹"
 
-#, c-format
-#, fuzzy
+#, fuzzy, c-format
 msgid "%s has slapped you!"
 msgstr "%s 已经将您[%s]添加为好友"
 
@@ -10745,8 +10739,7 @@ msgstr "/选项/显示时间戳"
 msgid "User is typing..."
 msgstr "用户正在打字..."
 
-#, c-format
-#, fuzzy
+#, fuzzy, c-format
 msgid ""
 "\n"
 "%s has stopped typing"
@@ -11717,6 +11710,9 @@ msgid ""
 "\n"
 msgstr ""
 
+msgid "DIR"
+msgstr ""
+
 msgid "use DIR for config files"
 msgstr ""
 
@@ -11735,12 +11731,13 @@ msgstr ""
 msgid "don't automatically login"
 msgstr ""
 
-msgid ""
-"enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+msgid "NAME"
 msgstr ""
 
-msgid "Without this only the first account will be enabled)."
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 
 msgid "X display to use"
@@ -12142,12 +12139,16 @@ msgstr "无法启动代理配置程序。"
 msgid "Cannot start browser configuration program."
 msgstr "无法启动浏览器配置程序。"
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">例：stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "禁用(_D)"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "自动检测 IP 地址(_A)：%s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">例：stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "公网 _IP："
@@ -12170,6 +12171,10 @@ msgstr "终止端口(_E)："
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "中继服务器(转)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "STUN 服务器(_U)："
 
 msgid "Proxy Server &amp; Browser"
 msgstr "代理服务器 &amp; 浏览器"
@@ -14434,9 +14439,6 @@ msgstr "此插件用于调试 XMPP 服务器或客户端。"
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "在浏览器中打开链接(_O)"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "STUN 服务器(_U)："
 
 #, fuzzy
 #~ msgid "Smiley _Image"

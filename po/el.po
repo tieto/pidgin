@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin[el]\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-19 00:16-0700\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-07-16 16:48+0300\n"
 "Last-Translator: Bouklis Panos <panos@echidna-band.com>\n"
 "Language-Team: Greek <i18ngr@lists.hellug.gr>\n"
@@ -868,8 +868,8 @@ msgstr "Όλες οι συνομιλίες"
 msgid "System Log"
 msgstr "Καταγραφή συστήματος"
 
-msgid "Calling ... "
-msgstr "Κλήση... "
+msgid "Calling..."
+msgstr "Κλήση..."
 
 msgid "Hangup"
 msgstr ""
@@ -1516,6 +1516,31 @@ msgstr ""
 "Όταν ανοίγει μία νέα συνομιλία αυτό το πρόσθετο θα εισάγει την τελευταία "
 "συνομιλία μέσα στην τρέχουσα."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+#, fuzzy
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr "Δημιουργία TinyURL μόνο για url μεγαλύτερα από αυτό το μήκος"
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+msgid "TinyURL"
+msgstr "TinyURL"
+
+msgid "TinyURL plugin"
+msgstr "Πρόσθετο TinyURL"
+
+#, fuzzy
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+"Κατά τη λήψη ενός μηνήματος με URL, χρήση του TinyURL για ευκολότερη "
+"αντιγραφή"
+
 msgid "Online"
 msgstr "Συνδεδεμένος"
 
@@ -1558,29 +1583,6 @@ msgstr ""
 
 msgid "Lastlog plugin."
 msgstr "Πρόσθετο lastlog."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr "Δημιουργία TinyURL μόνο για url μεγαλύτερα από αυτό το μήκος"
-
-msgid "TinyURL (or other) address prefix"
-msgstr ""
-
-msgid "TinyURL"
-msgstr "TinyURL"
-
-msgid "TinyURL plugin"
-msgstr "Πρόσθετο TinyURL"
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
-"Κατά τη λήψη ενός μηνήματος με URL, χρήση του TinyURL για ευκολότερη "
-"αντιγραφή"
 
 msgid "accounts"
 msgstr "λογαριασμοί"
@@ -1643,6 +1645,45 @@ msgstr "Φίλοι"
 msgid "buddy list"
 msgstr "λίστα φίλων"
 
+#, fuzzy
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+"Το πιστοποιητικό που σας παρουσιάστηκε από \"%s\" έχει προσωπική υπογραφή. "
+"Δεν μπορεί να ελεγχθεί αυτόματα."
+
+msgid "The root certificate this one claims to be issued by is unknown."
+msgstr ""
+
+#, fuzzy
+msgid "The certificate is not valid yet."
+msgstr "Η αλυσίδα πιστοποιητικού που παρουσιάστηκε για %s δεν είναι έγκυρη."
+
+#, fuzzy
+msgid "The certificate has expired and should not be considered valid."
+msgstr "Η αλυσίδα πιστοποιητικού που παρουσιάστηκε για %s δεν είναι έγκυρη."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+#, fuzzy
+msgid "The certificate presented is not issued to this domain."
+msgstr "Η αλυσίδα πιστοποιητικού που παρουσιάστηκε για %s δεν είναι έγκυρη."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+
+#, fuzzy
+msgid "The certificate chain presented is invalid."
+msgstr "Η αλυσίδα πιστοποιητικού που παρουσιάστηκε για %s δεν είναι έγκυρη."
+
+#, fuzzy
+msgid "The certificate has been revoked."
+msgstr "Η κλήση τερματίστηκε."
+
+#, fuzzy
+msgid "An unknown certificate error occurred."
+msgstr "Ένα άγνωστο σφάλμα σύνδεσης συνέβη: %s."
+
 msgid "(DOES NOT MATCH)"
 msgstr "(ΔΕΝ ΤΑΙΡΙΑΖΕΙ)"
 
@@ -1683,60 +1724,22 @@ msgstr "Επιβεβαίωση πιστοποιητικού SSL"
 msgid "_View Certificate..."
 msgstr "_Προβολή πιστοποιητικού..."
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"Το πιστοποιητικό που σας παρουσιάστηκε από \"%s\" έχει προσωπική υπογραφή. "
-"Δεν μπορεί να ελεγχθεί αυτόματα."
-
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
+#, fuzzy, c-format
+msgid "The certificate for %s could not be validated."
 msgstr "Η αλυσίδα πιστοποιητικού που παρουσιάστηκε για %s δεν είναι έγκυρη."
 
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
 #. TODO: Probably wrong.
-#. TODO: Probably wrong
 msgid "SSL Certificate Error"
 msgstr "Σφάλμα πιστοποιητικού SSL"
 
-msgid "Invalid certificate chain"
-msgstr "Μη έγκυρη αλυσίδα πιστοποιητικού"
+#, fuzzy
+msgid "Unable to validate certificate"
+msgstr "Αδυναμία έγκρισης: %s"
 
-#. vrq will be completed by user_auth
+#, fuzzy, c-format
 msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr ""
-
-#, c-format
-msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-
-msgid "Invalid certificate authority signature"
-msgstr ""
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
 "Το πιστοποιητικό που σας παρουσιάστηκε από \"%s\" υποστηρίζει ότι είναι από "
 "\"%s\".  Αυτό μπορεί να σημαίνει ότι δεν είστε συνδεδεμένοι με την υπηρεσία "
@@ -1970,19 +1973,19 @@ msgstr "Η μεταφορά του αρχείου %s ολοκληρώθηκε"
 msgid "File transfer complete"
 msgstr "Μεταφορά αρχείου ολοκληρώθηκε"
 
-#, c-format
-msgid "You canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "You cancelled the transfer of %s"
 msgstr "Ακυρώσατε τη μεταφορά του %s"
 
 msgid "File transfer cancelled"
 msgstr "Μεταφορά αρχείου ακυρώθηκε"
 
-#, c-format
-msgid "%s canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
 msgstr "%s ακύρωσε τη μεταφορά του αρχείου %s"
 
-#, c-format
-msgid "%s canceled the file transfer"
+#, fuzzy, c-format
+msgid "%s cancelled the file transfer"
 msgstr "%s ακύρωσε τη μεταφορά του αρχείου"
 
 #, c-format
@@ -2178,6 +2181,33 @@ msgstr ""
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <ΑΥΤΟΜΑΤΗ-ΑΠΑΝΤΗΣΗ>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
+#, fuzzy
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Ένα άγνωστο σφάλμα σύνδεσης συνέβη: %s."
+
+#, fuzzy
+msgid "Conference error."
+msgstr "Η συζήτηση έκλεισε"
+
+msgid "Error with your microphone."
+msgstr ""
+
+msgid "Error with your webcam."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error creating session: %s"
+msgstr "Σφάλμα δημιουργίας σύνδεσης"
 
 msgid "Error creating conference."
 msgstr "Σφάλμα δημιουργίας συζήτησης."
@@ -2445,14 +2475,15 @@ msgstr ""
 "Πρόσθετο δοκιμής υποστήριξης IPC , ως εξυπηρετητής. Αυτό καταχωρεί τις "
 "εντολές IPC."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "Ρυθμίσεις απόκρυψης συμμετοχής/αποχώρησης"
+msgid "Hide Joins/Parts"
+msgstr ""
 
-msgid "Minimum Room Size"
-msgstr "Ελάχιστο μέγεθος δωματίου"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr ""
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "Τέλος χρονικού ορίου ενεργού χρήστη (σε λεπτά)"
+msgid "If user has not spoken in this many minutes"
+msgstr ""
 
 msgid "Apply hiding rules to buddies"
 msgstr "Εφαρμογή κανόνων απόκρυψης στους φίλους"
@@ -3824,6 +3855,11 @@ msgstr "URL"
 msgid "Street Address"
 msgstr "Διεύθυνση"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "Εκτεταμένη διεύθυνση"
 
@@ -3906,20 +3942,25 @@ msgstr "Φωτογραφία"
 msgid "Logo"
 msgstr "Λογότυπο"
 
+#, fuzzy, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr ""
+"Πρόκειται να αφαιρέσετε τον %s από τη λίστα φίλων σας.  Θέλετε να συνεχίσετε;"
+
+msgid "Cancel Presence Notification"
+msgstr "Ακύρωση ειδοποίησης παρουσίας"
+
 msgid "Un-hide From"
 msgstr "Όχι πια απόκρυψη από"
 
 msgid "Temporarily Hide From"
 msgstr "Προσωρινή απόκρυψη από"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "Ακύρωση ειδοποίησης παρουσίας"
-
 msgid "(Re-)Request authorization"
 msgstr "Αίτηση έγκρισης (ξανά)"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
@@ -4518,9 +4559,10 @@ msgid ""
 "the users with an affiliation or set users' affiliation with the room."
 msgstr ""
 
+#, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "role &lt;moderator|participant|visitor|none&gt; [ψευδώνυμο 1] [ψευδώνυμο "
 "2] ... : Ορίζει το ρόλο ενός χρήστη στο δωμάτιο."
@@ -4667,9 +4709,6 @@ msgstr ""
 
 msgid "Transfer was closed."
 msgstr "Η μεταφορά έκλεισε."
-
-msgid "Failed to open the file"
-msgstr "Αποτυχία κατά το άνοιγμα του αρχείου"
 
 msgid "Failed to open in-band bytestream"
 msgstr ""
@@ -4946,8 +4985,8 @@ msgstr "Λανθασμένο αρχείο φίλων"
 msgid "Not expected"
 msgstr "Αναπάντεχο"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+#, fuzzy
+msgid "Friendly name is changing too rapidly"
 msgstr "Το φιλικό όνομα αλλάζει πολύ γρήγορα"
 
 #, c-format
@@ -5511,8 +5550,8 @@ msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr ""
 "%s σας έστειλε πρόσκληση με κάμερα, κάτι το οποίο δεν υποστηρίζεται ακόμα."
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
+#, fuzzy, c-format
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr ""
 "%s σας έστειλε πρόσκληση με κάμερα, κάτι το οποίο δεν υποστηρίζεται ακόμα."
 
@@ -5567,6 +5606,10 @@ msgstr "Θέλετε να διαγράψετε αυτόν το φίλο και �
 
 msgid "The username specified is invalid."
 msgstr "Το όνομα χρήστη που δόθηκε δεν είναι έγκυρο."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "Το φιλικό όνομα αλλάζει πολύ γρήγορα"
 
 msgid "This Hotmail account may not be active."
 msgstr "Αυτός ο λογαριασμός Hotmail ίσως δεν είναι ενεργός."
@@ -6250,7 +6293,9 @@ msgstr "Διεύθυνση εξυπηρετητή"
 msgid "Server port"
 msgstr "Θύρα εξυπηρετητή"
 
-msgid "Received unexpected response from "
+#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s"
 msgstr "Λήφθηκε αναπάντεχη ανταπόκριση από "
 
 #. username connecting too frequently
@@ -6262,8 +6307,10 @@ msgstr ""
 "ξαναπροσπαθήστε. Αν συνεχίσετε να προσπαθείτε, θα πρέπει να περιμένετε ακόμα "
 "περισσότερο."
 
-#, c-format
-msgid "Error requesting "
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
+#, fuzzy, c-format
+msgid "Error requesting %s: %s"
 msgstr "Σφάλμα αίτησης "
 
 msgid "AOL does not allow your screen name to authenticate here"
@@ -7056,6 +7103,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "_Σύνδεση"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "Ο εξυπηρετητής έκλεισε τη σύνδεση"
+
 msgid "Get AIM Info"
 msgstr "Λήψη πληροφοριών AIM"
 
@@ -7065,6 +7116,10 @@ msgstr "Επεξεργασία σχολίου φίλου"
 
 msgid "Get Status Msg"
 msgstr "Λήψη μηνύματος κατάστασης"
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "Δημιουργήθηκε απευθείας σύνδεση άμεσων μηνυμάτων"
 
 msgid "Direct IM"
 msgstr "Απευθείας άμεσο μήνυμα"
@@ -7898,8 +7953,8 @@ msgstr "%d αρνήθηκε το αρχείο %s"
 msgid "File Send"
 msgstr "Αποστολή αρχείου"
 
-#, c-format
-msgid "%d canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%d cancelled the transfer of %s"
 msgstr "%d ακύρωσε τη μεταφορά του %s"
 
 #, c-format
@@ -8879,9 +8934,6 @@ msgstr "Αδυναμία φορτώματος του ζεύγους κλειδι
 msgid "Connecting to SILC Server"
 msgstr "Γίνεται σύνδεση με τον εξυπηρετητή SILC"
 
-msgid "Unable to not load SILC key pair"
-msgstr "Αδυναμία μη φορτώματος του ζεύγους κλειδιών SILC"
-
 msgid "Out of memory"
 msgstr "Τέλος μνήμης"
 
@@ -9435,6 +9487,9 @@ msgstr "Εντοπιότητα δωματίου συζήτησης"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Παράβλεψη προσκλήσεων συζητήσεων και δωματίων συζητήσεων"
 
+msgid "Use account proxy for SSL connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "URL λίστας δωματίων συζήτησης"
 
@@ -9459,6 +9514,11 @@ msgstr "Yahoo JAPAN ID..."
 #. *  description
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Πρόσθετο πρωτοκόλλου Yahoo! JAPAN"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
+"%s σας έστειλε πρόσκληση με κάμερα, κάτι το οποίο δεν υποστηρίζεται ακόμα."
 
 msgid "Your SMS was not delivered"
 msgstr "Το SMS σας δεν παραδόθηκε"
@@ -9534,10 +9594,26 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Αγνόηση του φίλου;"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "Λανθασμένο όνομα χρήστη ή κωδικός."
+
+#, fuzzy
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
 msgstr ""
-"Ο λογαριασμός σας είναι κλειδωμένος, παρακαλούμε συνδεθείτε στην ιστοσελίδα "
-"του Yahoo!."
+"Ο λογαριασμός κλειδώθηκε: Πολλές αποτυχημένες προσπάθειες εισόδου. Η είσοδος "
+"στην ιστοσελίδα του Yahoo! πιθανώς να το διορθώσει αυτό."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -9717,12 +9793,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "Το προφίλ του χρήστη είναι άδειο."
 
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s αρνήθηκε την πρόσκληση συζήτησης στο δωμάτιο \"%s\" επειδή \"%s\"."
-
-msgid "Invitation Rejected"
-msgstr "Η πρόσκληση απορρίφθηκε"
+#, fuzzy, c-format
+msgid "%s has declined to join."
+msgstr "%s συνδέθηκε."
 
 msgid "Failed to join chat"
 msgstr "Αποτυχία συμμετοχής στη συζήτηση"
@@ -10296,6 +10369,128 @@ msgstr ""
 "επεξεργαστείτε ή να αφαιρέσετε λογαριασμούς μέσω του <b>Λογαριασμοί-"
 ">Διαχείριση λογαριασμών</b> στο παράθυρο της λίστας φίλων"
 
+#. Buddy List
+msgid "Background Color"
+msgstr "Χρώμα παρασκηνίου"
+
+msgid "The background color for the buddy list"
+msgstr "Το χρώμα παρασκηνίου της λίστας φίλων"
+
+msgid "Layout"
+msgstr ""
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr ""
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Background Color"
+msgstr ""
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Text"
+msgstr ""
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Background Color"
+msgstr ""
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Text"
+msgstr ""
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+msgid "Contact/Chat Background Color"
+msgstr "Χρώμα παρασκηνίου συζητήσεων/επαφών"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+msgid "Contact Text"
+msgstr "Κείμενο επαφών"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "Συνδεδεμένος"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+msgid "Away Text"
+msgstr ""
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "Χωρίς σύνδεση"
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "Το κείμενο πληροφοριών για την κατάσταση ενός φίλου"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+msgid "Idle Text"
+msgstr ""
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message Text"
+msgstr "Κείμενο μηνύματος"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+"Το κείμενο πληροφορίας για όταν μία συζήτηση έχει ένα μη αναγνωσμένο μήνυμα "
+"που αναφέρει το ψυεδώνυμό σας"
+
+msgid "The text information for a buddy's status"
+msgstr "Το κείμενο πληροφοριών για την κατάσταση ενός φίλου"
+
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
@@ -10731,7 +10926,8 @@ msgstr "_Γνωστός ως:"
 msgid "_Group:"
 msgstr "_Ομάδα:"
 
-msgid "Auto_join when account becomes online."
+#, fuzzy
+msgid "Auto_join when account connects."
 msgstr "Αυτόματη ε_πανασύνδεση όταν ο λογαριασμός συνδέεται."
 
 msgid "_Remain in chat after window is closed."
@@ -10763,100 +10959,6 @@ msgstr "/Εργαλεία"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Φίλοι/Ταξινόμηση φίλων"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "Χρώμα παρασκηνίου"
-
-msgid "The background color for the buddy list"
-msgstr "Το χρώμα παρασκηνίου της λίστας φίλων"
-
-msgid "Layout"
-msgstr ""
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr ""
-
-#. Group
-msgid "Expanded Background Color"
-msgstr ""
-
-msgid "The background color of an expanded group"
-msgstr ""
-
-msgid "Expanded Text"
-msgstr ""
-
-msgid "The text information for when a group is expanded"
-msgstr ""
-
-msgid "Collapsed Background Color"
-msgstr ""
-
-msgid "The background color of a collapsed group"
-msgstr ""
-
-msgid "Collapsed Text"
-msgstr ""
-
-msgid "The text information for when a group is collapsed"
-msgstr ""
-
-#. Buddy
-msgid "Contact/Chat Background Color"
-msgstr "Χρώμα παρασκηνίου συζητήσεων/επαφών"
-
-msgid "The background color of a contact or chat"
-msgstr ""
-
-msgid "Contact Text"
-msgstr "Κείμενο επαφών"
-
-msgid "The text information for when a contact is expanded"
-msgstr ""
-
-msgid "On-line Text"
-msgstr ""
-
-msgid "The text information for when a buddy is online"
-msgstr ""
-
-msgid "Away Text"
-msgstr ""
-
-msgid "The text information for when a buddy is away"
-msgstr ""
-
-msgid "Off-line Text"
-msgstr ""
-
-msgid "The text information for when a buddy is off-line"
-msgstr ""
-
-msgid "Idle Text"
-msgstr ""
-
-msgid "The text information for when a buddy is idle"
-msgstr ""
-
-msgid "Message Text"
-msgstr "Κείμενο μηνύματος"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr ""
-
-msgid "Message (Nick Said) Text"
-msgstr ""
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-"Το κείμενο πληροφορίας για όταν μία συζήτηση έχει ένα μη αναγνωσμένο μήνυμα "
-"που αναφέρει το ψυεδώνυμό σας"
-
-msgid "The text information for a buddy's status"
-msgstr "Το κείμενο πληροφοριών για την κατάσταση ενός φίλου"
 
 msgid "Type the host name for this certificate."
 msgstr "Εισάγετε το όνομα του υπολογιστή για αυτό το πιστοποιητικό"
@@ -10941,6 +11043,10 @@ msgstr "/_Συνομιλία"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Συνομιλία/Νέο άμεσο _μήνυμα..."
+
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Συνομιλία/_Πρόσκληση..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Συνομιλία/_Εύρεση..."
@@ -11325,8 +11431,8 @@ msgstr "Ισπανικά"
 msgid "Estonian"
 msgstr "Εσθονικά"
 
-msgid "Euskera(Basque)"
-msgstr "Euskera(Βάσκικα)"
+msgid "Basque"
+msgstr ""
 
 msgid "Persian"
 msgstr "Περσικά"
@@ -11530,11 +11636,13 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
-"<FONT SIZE=\"4\">Βοήθεια μέσω ηλ. ταχυδρομίου:</FONT> <A HREF=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
 
 #, c-format
 msgid ""
@@ -11768,14 +11876,6 @@ msgstr "_Καθαρισμός ολοκληρωμένων μεταφορών"
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "_Λεπτομέρειες μεταφοράς αρχείου"
-
-#. Pause button
-msgid "_Pause"
-msgstr "_Παύση"
-
-#. Resume button
-msgid "_Resume"
-msgstr "_Συνέχεια"
 
 msgid "Paste as Plain _Text"
 msgstr "_Επικόλληση ως σκέτο κείμενο"
@@ -12108,69 +12208,46 @@ msgstr "%s %s. Δοκιμάστε `%s -h' για περισσότερες πλη
 
 #, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"Χρήση: %s [ΕΠΙΛΟΓΗ]...\n"
-"\n"
-"  -c, --config=DIR    χρήση του DIR για τα αρχεία ρυθμίσεων\n"
-"  -d, --debug         τύπωμα των μηνυμάτων αποσφαλμάτωσης στο stdout\n"
-"  -h, --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       χωρίς αυτόματη είσοδο\n"
-"  -l, --login[=ΟΝΟΜΑ] ενεργοποίηση συγκεκριμένων λογαριασμών (το όρισμα "
-"ΟΝΟΜΑ προσδιορίζει\n"
-"                        τους λογαριασμούς που θα χρησιμοποιηθούν, "
-"χωρισμένους με κόμματα.\n"
-"                        Χωρίς αυτό θα ενεργοποιηθεί μόνο ο πρώτος "
-"λογαριασμός)\n"
-"  --display=ΟΘΟΝΗ   Οθόνη X που θα χρησιμοποιηθεί\n"
-"  -v, --version       εμφάνιση τρέχουσας έκδοσης και έξοδος\n"
 
-#, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"Χρήση: %s [ΕΠΙΛΟΓΉ]...\n"
-"\n"
-"  -c, --config=DIR    χρήση του DIR για τα αρχεία ρυθμίσεων\n"
-"  -d, --debug         τύπωμα των μηνυμάτων αποσφαλμάτωσης στο stdout\n"
-"  -h, --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       χωρίς αυτόματη είσοδο\n"
-"  -l, --login[=ΟΝΟΜΑ] ενεργοποίηση συγκεκριμένων λογαριασμών (το όρισμα "
-"ΟΝΟΜΑ προσδιορίζει\n"
-"                      τους λογαριασμούς που θα χρησιμοποιηθούν, χωρισμένους "
-"με κόμματα.\n"
-"                      Χωρίς αυτό θα ενεργοποιηθεί μόνο ο πρώτος "
-"λογαριασμός).\n"
-"  -v, --version       εμφάνιση τρέχουσας έκδοσης και έξοδος\n"
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+#, fuzzy
+msgid "allow multiple instances"
+msgstr "Να επιτρέπονται οι πολλαπλές εισόδοι"
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -12203,9 +12280,6 @@ msgstr "/_Πολυμέσα"
 msgid "/Media/_Hangup"
 msgstr ""
 
-msgid "Calling..."
-msgstr "Κλήση..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s επιθυμεί να ξεκινήσει μία συνεδρία ήχου/βίντεο μαζί σας."
@@ -12213,6 +12287,12 @@ msgstr "%s επιθυμεί να ξεκινήσει μία συνεδρία ήχ
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr "%s επιθυμεί να ξεκινήσει μία συνεδρία βίντεο μαζί σας."
+
+msgid "Incoming Call"
+msgstr ""
+
+msgid "_Pause"
+msgstr "_Παύση"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12576,12 +12656,16 @@ msgstr "Δεν είναι δυνατή η εκκίνηση του προγράμ
 msgid "Cannot start browser configuration program."
 msgstr "Δεν είναι δυνατή η εκκίνηση του προγράμματος ρυθμίσεων περιηγητή."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Παράδειγμα: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Απενεργοποίηση"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Χρήση _αυτόματου εντοπισμού διεύθυνσης IP: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Παράδειγμα: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Δημόσια _IP:"
@@ -12604,6 +12688,10 @@ msgstr "_Θύρα τέλους:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr ""
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "Εξυπηρετητής STUN:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr ""
@@ -13231,64 +13319,6 @@ msgid "Displays statistical information about your buddies' availability"
 msgstr ""
 "Εμφανίζει στατιστικές πληροφορίες σχετικά με τη διαθεσιμότητα των φίλων σας"
 
-msgid "Server name request"
-msgstr "Αίτημα ονόματος εξυπηρετητή"
-
-msgid "Enter an XMPP Server"
-msgstr "Εισάγετε έναν εξυπηρετητή XMPP"
-
-msgid "Select an XMPP server to query"
-msgstr "Επιλέξτε έναν εξυπηρετητή XMPP για ερώτημα"
-
-msgid "Find Services"
-msgstr "Εύρεση υπηρεσιών"
-
-msgid "Add to Buddy List"
-msgstr "Προσθήκη στη λίστα φίλων"
-
-msgid "Gateway"
-msgstr ""
-
-msgid "Directory"
-msgstr "Κατάλογος"
-
-msgid "PubSub Collection"
-msgstr ""
-
-msgid "PubSub Leaf"
-msgstr ""
-
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr ""
-"\n"
-"<b>Περιγραφή:</b> "
-
-#. Create the window.
-msgid "Service Discovery"
-msgstr "Ανακάλυψη υπηρεσιών"
-
-msgid "_Browse"
-msgstr "_Περιήγηση"
-
-msgid "Server does not exist"
-msgstr "Ο εξυπηρετητής δεν υπάρχει"
-
-msgid "Server does not support service discovery"
-msgstr "Ο εξυπηρετητής δεν επιτρέπη την ανακάλυψη υπηρεσιών"
-
-msgid "XMPP Service Discovery"
-msgstr "Ανακάλυψη υπηρεσιών XMPP"
-
-msgid "Allows browsing and registering services."
-msgstr "Επιτρέπει την περιήγηση και την εγγραφή σε υπηρεσίες."
-
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr ""
-
 msgid "Buddy is idle"
 msgstr "Ο φίλος είναι ανενεργός"
 
@@ -13380,6 +13410,66 @@ msgstr "Εφαρμογή στις συζητήσεις"
 
 msgid "Apply in IMs"
 msgstr "Εφαρμογή στα άμεσα μηνύματα"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+msgid "Server name request"
+msgstr "Αίτημα ονόματος εξυπηρετητή"
+
+msgid "Enter an XMPP Server"
+msgstr "Εισάγετε έναν εξυπηρετητή XMPP"
+
+msgid "Select an XMPP server to query"
+msgstr "Επιλέξτε έναν εξυπηρετητή XMPP για ερώτημα"
+
+msgid "Find Services"
+msgstr "Εύρεση υπηρεσιών"
+
+msgid "Add to Buddy List"
+msgstr "Προσθήκη στη λίστα φίλων"
+
+msgid "Gateway"
+msgstr ""
+
+msgid "Directory"
+msgstr "Κατάλογος"
+
+msgid "PubSub Collection"
+msgstr ""
+
+msgid "PubSub Leaf"
+msgstr ""
+
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>Περιγραφή:</b> "
+
+#. Create the window.
+msgid "Service Discovery"
+msgstr "Ανακάλυψη υπηρεσιών"
+
+msgid "_Browse"
+msgstr "_Περιήγηση"
+
+msgid "Server does not exist"
+msgstr "Ο εξυπηρετητής δεν υπάρχει"
+
+msgid "Server does not support service discovery"
+msgstr "Ο εξυπηρετητής δεν επιτρέπη την ανακάλυψη υπηρεσιών"
+
+msgid "XMPP Service Discovery"
+msgstr "Ανακάλυψη υπηρεσιών XMPP"
+
+msgid "Allows browsing and registering services."
+msgstr "Επιτρέπει την περιήγηση και την εγγραφή σε υπηρεσίες."
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
 
 msgid "By conversation count"
 msgstr "Ανά πλήθος συνομιλιών"
@@ -14031,9 +14121,12 @@ msgstr "Παραβλέφθηκε"
 msgid "Founder"
 msgstr "Ιδρυτής"
 
+#. A user in a chat room who has special privileges.
 msgid "Operator"
 msgstr ""
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
@@ -14181,6 +14274,58 @@ msgstr ""
 "Αυτό το πρόσθετο επιτρέπει το χρήστη να προσαρμόσει τις μορφές των "
 "χρονοσήμων στα μηνύματα συνομιλιών και καταγραφών."
 
+#, fuzzy
+msgid "Audio"
+msgstr "Αυτόματο"
+
+#, fuzzy
+msgid "Video"
+msgstr "Βίντεο"
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "Πρόσθετα"
+
+#, fuzzy
+msgid "_Device"
+msgstr "Συσκευή"
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "Πρόσθετα"
+
+#, fuzzy
+msgid "D_evice"
+msgstr "Συσκευή"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Voice/Video Settings"
+msgstr "Επεξεργασία ρυθμίσεων"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+
 msgid "Opacity:"
 msgstr "Αδιαφάνεια:"
 
@@ -14309,6 +14454,121 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Αυτό το πρόσθετο είναι χρήσιμο για την αποσφαλμάτωση εξυπηρετητών και "
 "πελατών XMPP."
+
+#~ msgid "Calling ... "
+#~ msgstr "Κλήση... "
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "Μη έγκυρη αλυσίδα πιστοποιητικού"
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "Ρυθμίσεις απόκρυψης συμμετοχής/αποχώρησης"
+
+#~ msgid "Minimum Room Size"
+#~ msgstr "Ελάχιστο μέγεθος δωματίου"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "Τέλος χρονικού ορίου ενεργού χρήστη (σε λεπτά)"
+
+#~ msgid "Failed to open the file"
+#~ msgstr "Αποτυχία κατά το άνοιγμα του αρχείου"
+
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "Αδυναμία μη φορτώματος του ζεύγους κλειδιών SILC"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr ""
+#~ "Ο λογαριασμός σας είναι κλειδωμένος, παρακαλούμε συνδεθείτε στην "
+#~ "ιστοσελίδα του Yahoo!."
+
+#~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr ""
+#~ "%s αρνήθηκε την πρόσκληση συζήτησης στο δωμάτιο \"%s\" επειδή \"%s\"."
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "Η πρόσκληση απορρίφθηκε"
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "Euskera(Βάσκικα)"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">Βοήθεια μέσω ηλ. ταχυδρομίου:</FONT> <A HREF=\"mailto:"
+#~ "support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+
+#~ msgid "_Resume"
+#~ msgstr "_Συνέχεια"
+
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Χρήση: %s [ΕΠΙΛΟΓΗ]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    χρήση του DIR για τα αρχεία ρυθμίσεων\n"
+#~ "  -d, --debug         τύπωμα των μηνυμάτων αποσφαλμάτωσης στο stdout\n"
+#~ "  -h, --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       χωρίς αυτόματη είσοδο\n"
+#~ "  -l, --login[=ΟΝΟΜΑ] ενεργοποίηση συγκεκριμένων λογαριασμών (το όρισμα "
+#~ "ΟΝΟΜΑ προσδιορίζει\n"
+#~ "                        τους λογαριασμούς που θα χρησιμοποιηθούν, "
+#~ "χωρισμένους με κόμματα.\n"
+#~ "                        Χωρίς αυτό θα ενεργοποιηθεί μόνο ο πρώτος "
+#~ "λογαριασμός)\n"
+#~ "  --display=ΟΘΟΝΗ   Οθόνη X που θα χρησιμοποιηθεί\n"
+#~ "  -v, --version       εμφάνιση τρέχουσας έκδοσης και έξοδος\n"
+
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Χρήση: %s [ΕΠΙΛΟΓΉ]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    χρήση του DIR για τα αρχεία ρυθμίσεων\n"
+#~ "  -d, --debug         τύπωμα των μηνυμάτων αποσφαλμάτωσης στο stdout\n"
+#~ "  -h, --help          εμφάνιση αυτής της βοήθειας και έξοδος\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       χωρίς αυτόματη είσοδο\n"
+#~ "  -l, --login[=ΟΝΟΜΑ] ενεργοποίηση συγκεκριμένων λογαριασμών (το όρισμα "
+#~ "ΟΝΟΜΑ προσδιορίζει\n"
+#~ "                      τους λογαριασμούς που θα χρησιμοποιηθούν, "
+#~ "χωρισμένους με κόμματα.\n"
+#~ "                      Χωρίς αυτό θα ενεργοποιηθεί μόνο ο πρώτος "
+#~ "λογαριασμός).\n"
+#~ "  -v, --version       εμφάνιση τρέχουσας έκδοσης και έξοδος\n"
 
 #, fuzzy
 #~ msgid "_Proxy"
@@ -14648,9 +14908,6 @@ msgstr ""
 #~ "προσπαθήστε ξανά.  Αν συνεχίσετε να προσπαθείτε, θα χρειαστεί να "
 #~ "περιμένετε ακόμα περισσότερο."
 
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "Ένα άγνωστο σφάλμα σύνδεσης συνέβη: %s."
-
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "Ένα άγνωστο σφάλμα, %d, συνέβη.  Πληροφορίες: %s"
 
@@ -14717,9 +14974,6 @@ msgstr ""
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "_Άνοιγμα στον περιηγητή"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "Εξυπηρετητής STUN:"
 
 #~ msgid "Smiley _Image"
 #~ msgstr "Εικόνα _φατσούλας"

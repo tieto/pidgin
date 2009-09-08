@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-28 20:00-0700\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-08-28 18:51+0100\n"
 "Last-Translator: Martin Srebotnjak  <miles@filmsi.net>\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
@@ -1648,8 +1648,8 @@ msgstr ""
 "Predstavljeno digitalno potrdilo je samo-podpisano in ga samodejno ni mogoče "
 "preveriti."
 
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
 msgstr ""
 "Korensko digitalno potrdilo, za katerega ta trdi, da ga je izdalo, je "
 "Pidginu neznano."
@@ -12244,6 +12244,9 @@ msgstr ""
 "Uporaba: %s [MOŽNOST]...\n"
 "\n"
 
+msgid "DIR"
+msgstr ""
+
 msgid "use DIR for config files"
 msgstr "uporabi DIR za prilagoditvene datoteke"
 
@@ -12262,16 +12265,18 @@ msgstr "dovoli več hkratnih prijav"
 msgid "don't automatically login"
 msgstr "ne prijavi se samodejno"
 
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 "omogoči navedene račune (neobvezen argument IME\n"
 "                      določa račune, ki naj bodo uporabljeni, ločene z "
 "vejicami."
-
-msgid "Without this only the first account will be enabled)."
-msgstr "Prez tega bo omogočen le prvi račun)."
 
 msgid "X display to use"
 msgstr "Zaslon X, ki naj bo uporabljen"
@@ -12698,12 +12703,16 @@ msgstr "Konfiguracijskega programa za posredovalni strežnik ni mogoče zagnati.
 msgid "Cannot start browser configuration program."
 msgstr "Konfiguracijskega programa brskalnika ni mogoče zagnati."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Primer: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Onemogoči"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Uporabi _samozaznani naslov IP: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Primer: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Javni _IP:"
@@ -12726,6 +12735,10 @@ msgstr "_Končna vrata:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Relejski strežnik (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "_Strežnik:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Posredovalni strežnik in brskalnik"
@@ -14456,3 +14469,6 @@ msgstr "Pošlijaj in sprejemaj surove vrstice XMPP."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ta vtičnik je uporaben za razhroščevanje strežnikov ali odjemalcev XMPP."
+
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "Prez tega bo omogočen le prvi račun)."

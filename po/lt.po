@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-30 15:08+0200\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-08-30 15:07+0200\n"
 "Last-Translator: Laurynas Biveinis <laurynas.biveinis@gmail.com>\n"
 "Language-Team:\n"
@@ -1679,8 +1679,8 @@ msgstr ""
 "Liudijimas yra pasirašytas paties jo savininko.  Jis negali būti "
 "automatiškai patikrintas."
 
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
 msgstr ""
 "Šis liudijimas nurodo jį išleidusį pagrindinį liudijimą, kurio Pidgin nežino."
 
@@ -12447,6 +12447,9 @@ msgstr ""
 "Vartojimas: %s [PARINKTIS]...\n"
 "\n"
 
+msgid "DIR"
+msgstr ""
+
 msgid "use DIR for config files"
 msgstr "naudoti „DIR“ kaip konfigūracinių failų katalogą"
 
@@ -12465,16 +12468,18 @@ msgstr "leisti vienu metu paleistas kelias programas"
 msgid "don't automatically login"
 msgstr "neprisijungti automatiškai"
 
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 "aktyvuoti nurodytą paskyrą ar paskyras (neprivalomas argumentas „NAME“ "
 "nurodo, kurią paskyrą ar paskiras aktyvuoti.  Kelių paskyrų vardai "
 "atskiriami kableliais."
-
-msgid "Without this only the first account will be enabled)."
-msgstr "Be šio argumento bus aktyvuota pirmoji paskyra)."
 
 msgid "X display to use"
 msgstr "kurį X vaizduoklį naudoti"
@@ -12927,12 +12932,16 @@ msgstr "Nepavyko paleisti tinklo tarpininko nustatymų programos."
 msgid "Cannot start browser configuration program."
 msgstr "Nepavyko paleisti naršyklės nustatymų programos."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\\\"italic\\\">Pavyzdžiui: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Deaktyvuoti"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Naudoti _automatiškai aptiktą IP adresą: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\\\"italic\\\">Pavyzdžiui: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Viešas _IP:"
@@ -12955,6 +12964,10 @@ msgstr "Paskutinis pri_evadas:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Perdavimo serveris (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "_Serveris:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Tarpininkaujantis serveris ir naršyklė"
@@ -14827,3 +14840,6 @@ msgstr "Siųsti ir gauti neapdorotas XMPP strofas."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Šis papildinys naudingas XMPP serverių ir klientų derinimui."
+
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "Be šio argumento bus aktyvuota pirmoji paskyra)."

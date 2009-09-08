@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-29 09:41+0200\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-08-29 09:40+0200\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
@@ -1655,8 +1655,8 @@ msgstr "Liste de contacts"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr "Le certificat est auto-signé. Il ne peut être vérifié automatiquement."
 
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
 msgstr ""
 "Le certificat racine dont est prétendu issu ce certificat est inconnu de "
 "Pidgin."
@@ -12252,6 +12252,9 @@ msgstr ""
 "Usage : %s [OPTION]...\n"
 "\n"
 
+msgid "DIR"
+msgstr ""
+
 msgid "use DIR for config files"
 msgstr "utilise le dossier DIR pour les fichiers de config"
 
@@ -12270,15 +12273,17 @@ msgstr "autoriser plusieurs instances du logiciel"
 msgid "don't automatically login"
 msgstr "ne pas se connecter automatiquement"
 
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 "active certains comptes (l'argument facultatif NAME\n"
 "                      spécifie ces comptes, séparés par des virgules."
-
-msgid "Without this only the first account will be enabled)."
-msgstr "Sans cela, seul le premier compte sera activé.)"
 
 msgid "X display to use"
 msgstr "affichage X à utiliser"
@@ -12703,12 +12708,16 @@ msgstr "Impossible de lancer le programme de configuration de proxy."
 msgid "Cannot start browser configuration program."
 msgstr "Impossible de lancer le programme de configuration du navigateur."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Exemple : stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Désactiver"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "_Détection auto de l'adresse IP : %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Exemple : stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Adresse _IP publique :"
@@ -12731,6 +12740,10 @@ msgstr "_Dernier port :"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Serveur relai (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "Serveur ST_UN :"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Serveur proxy &amp; navigateur"
@@ -14473,6 +14486,9 @@ msgstr "Envoyer et recevoir des blocs XMPP."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "Sans cela, seul le premier compte sera activé.)"
+
 #~ msgid "Calling ... "
 #~ msgstr "Appel... "
 
@@ -14877,9 +14893,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "_Ouvrir le lien"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "Serveur ST_UN :"
 
 #~ msgid "Smiley _Image"
 #~ msgstr "_Image de la frimousse"

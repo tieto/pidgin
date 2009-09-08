@@ -630,6 +630,20 @@ const char *purple_account_get_protocol_name(const PurpleAccount *account);
 PurpleConnection *purple_account_get_connection(const PurpleAccount *account);
 
 /**
+ * Returns a name for this account appropriate for display to the user. In
+ * order of preference: the account's alias; the contact or buddy alias (if
+ * the account exists on its own buddy list); the connection's display name;
+ * the account's username.
+ *
+ * @param account The account.
+ *
+ * @return The name to display.
+ *
+ * @since 2.6.0
+ */
+const gchar *purple_account_get_name_for_display(const PurpleAccount *account);
+
+/**
  * Returns whether or not this account should save its password.
  *
  * @param account The account.

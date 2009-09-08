@@ -808,9 +808,9 @@ void oscar_chat_destroy(struct chat_connection *cc);
 #define AIM_IMFLAGS_OFFLINE				0x0800 /* send to offline user */
 #define AIM_IMFLAGS_TYPINGNOT			0x1000 /* typing notification */
 
-#define AIM_CHARSET_ASCII		0x0000
-#define AIM_CHARSET_UNICODE	0x0002 /* UTF-16BE */
-#define AIM_CHARSET_CUSTOM	0x0003
+#define AIM_CHARSET_ASCII   0x0000 /* ISO 646 */
+#define AIM_CHARSET_UNICODE 0x0002 /* ISO 10646 (UTF-16/UCS-2BE) */
+#define AIM_CHARSET_LATIN_1 0x0003 /* ISO 8859-1 */
 
 /*
  * Multipart message structures.
@@ -1006,7 +1006,7 @@ struct aim_incomingim_ch4_args
 /* 0x0008 */ int aim_im_warn(OscarData *od, FlapConnection *conn, const char *destbn, guint32 flags);
 /* 0x000b */ int aim_im_denytransfer(OscarData *od, const char *bn, const guchar *cookie, guint16 code);
 /* 0x0010 */ int aim_im_reqofflinemsgs(OscarData *od);
-/* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2);
+/* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 channel, const char *bn, guint16 event);
 void aim_icbm_makecookie(guchar* cookie);
 gchar *oscar_encoding_extract(const char *encoding);
 gchar *oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char *text, int textlen);
@@ -1026,11 +1026,12 @@ gchar *purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *so
 #define AIM_FLAG_ICQ             0x0040
 #define AIM_FLAG_WIRELESS        0x0080
 #define AIM_FLAG_UNKNOWN100      0x0100
-#define AIM_FLAG_UNKNOWN200      0x0200
+#define AIM_FLAG_IMFORWARDING    0x0200
 #define AIM_FLAG_ACTIVEBUDDY     0x0400
 #define AIM_FLAG_UNKNOWN800      0x0800
-#define AIM_FLAG_ABINTERNAL      0x1000
-#define AIM_FLAG_ALLUSERS        0x001f
+#define AIM_FLAG_ONEWAYWIRELESS  0x1000
+#define AIM_FLAG_NOKNOCKKNOCK    0x00040000
+#define AIM_FLAG_FORWARD_MOBILE  0x00080000
 
 #define AIM_USERINFO_PRESENT_FLAGS        0x00000001
 #define AIM_USERINFO_PRESENT_MEMBERSINCE  0x00000002

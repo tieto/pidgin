@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin-2.6.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-02 09:57-0400\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-09-02 22:53+0300\n"
 "Last-Translator: Mișu Moldovan <dumol@gnome.ro>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
@@ -1534,8 +1534,9 @@ msgid "TinyURL plugin"
 msgstr "Modul TinyURL"
 
 msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-msgstr "Când primiți un mesaj cu URL-uri, folosiți TinyURL pentru o copiere "
-"mai ușoară"
+msgstr ""
+"Când primiți un mesaj cu URL-uri, folosiți TinyURL pentru o copiere mai "
+"ușoară"
 
 msgid "Online"
 msgstr "Conectat"
@@ -1645,8 +1646,8 @@ msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
 "Certificatul este semnat în nume propriu și nu poate fi verificat automat."
 
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
 msgstr ""
 "Acest certificat pretinde că a fost creat cu un certificat root necunoscut "
 "pentru Pidgin."
@@ -2198,8 +2199,8 @@ msgstr ""
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
-"Nu s-a găsit nici un codec. Preferințele legate de codecuri în fișierul "
-"fs-codecs.conf sunt prea stricte."
+"Nu s-a găsit nici un codec. Preferințele legate de codecuri în fișierul fs-"
+"codecs.conf sunt prea stricte."
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "A intervenit o eroare Farsight2 peste care nu se poate trece."
@@ -4558,9 +4559,9 @@ msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
 "users with a role or set users' role with the room."
 msgstr ""
-"role &lt;moderator|participant|vizitator|nimic&gt; [pseudonim1] [pseudonim2] "
-"...: Aflați utilizatorii cu un anume rol sau schimbați rolul utilizatorilor "
-"în camera de chat."
+"role &lt;moderator|participant|vizitator|nimic&gt; [pseudonim1] "
+"[pseudonim2] ...: Aflați utilizatorii cu un anume rol sau schimbați rolul "
+"utilizatorilor în camera de chat."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;nume ales&gt; [chat]:  Invitați un utilizator într-un chat."
@@ -5550,8 +5551,9 @@ msgstr ""
 
 #, c-format
 msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr "%s v-a invitat să-i vedeți webcam-ul, dar această acțiune nu este "
-"încă suportată"
+msgstr ""
+"%s v-a invitat să-i vedeți webcam-ul, dar această acțiune nu este încă "
+"suportată"
 
 msgid "Away From Computer"
 msgstr "Absent din fața calculatorului"
@@ -12228,6 +12230,9 @@ msgstr ""
 "Utilizare: %s [OPȚIUNE]...\n"
 "\n"
 
+msgid "DIR"
+msgstr ""
+
 msgid "use DIR for config files"
 msgstr "utilizează calea DIR pentru fișierele de configurare"
 
@@ -12246,15 +12251,17 @@ msgstr "permite instanțe multiple"
 msgid "don't automatically login"
 msgstr "fără autentificare automată"
 
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 "autentificare automată (argumentul NUME specifică\n"
 "                      conturile de utilizat, despărțite prin virgulă."
-
-msgid "Without this only the first account will be enabled)."
-msgstr "Altfel doar primul cont va fi activat.)"
 
 msgid "X display to use"
 msgstr "ecran X de utilizat"
@@ -12680,12 +12687,16 @@ msgstr "Nu s-a putut porni programul de configurare a unui proxy."
 msgid "Cannot start browser configuration program."
 msgstr "Nu s-a putut porni programul de configurare a unui navigator."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Exemplu: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Dezactivare"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Utilizează adresa IP _autodetectată: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Exemplu: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "_IP public:"
@@ -12708,6 +12719,10 @@ msgstr "_Până la:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Server releu (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "_Server:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Server proxy &amp; navigator"
@@ -14302,8 +14317,9 @@ msgstr "Opțiuni pentru microfon și webcam."
 
 #. *< summary
 msgid "Configure microphone and webcam settings for voice/video calls."
-msgstr "Schimbați opțiunile pentru microfon și webcam pentru apelurile de "
-"voce și video"
+msgstr ""
+"Schimbați opțiunile pentru microfon și webcam pentru apelurile de voce și "
+"video"
 
 msgid "Opacity:"
 msgstr "Opacitate:"
@@ -14433,3 +14449,5 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Acest modul poate fi utilizat pentru depanarea serverelor și clienților XMPP."
 
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "Altfel doar primul cont va fi activat.)"
