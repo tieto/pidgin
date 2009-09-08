@@ -583,11 +583,13 @@ pidgin_stock_init(void)
 	/* Setup the status icon theme */
 	loader = g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "status-icon", NULL);
 	purple_theme_manager_register_type(PURPLE_THEME_LOADER(loader));
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/status");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/status/icon-theme", "");
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir", "");
 
 	stockloader = g_object_new(PIDGIN_TYPE_ICON_THEME_LOADER, "type", "stock-icon", NULL);
 	purple_theme_manager_register_type(PURPLE_THEME_LOADER(stockloader));
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/stock");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/stock/icon-theme", "");
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/stock/icon-theme-dir", "");
 
@@ -602,12 +604,13 @@ pidgin_stock_init(void)
 	pidgin_stock_load_stock_icon_theme(NULL);
 
 	/* Pre-load Status icon theme - this avoids a bug with displaying the correct icon in the tray, theme is destroyed after*/
-	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/icon/status/theme") &&
+	if (purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme") &&
 	   (path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/status/icon-theme-dir"))) {
 
 		PidginStatusIconTheme *theme = PIDGIN_STATUS_ICON_THEME(purple_theme_loader_build(PURPLE_THEME_LOADER(loader), path));
 		pidgin_stock_load_status_icon_theme(theme);
-		g_object_unref(G_OBJECT(theme));
+		if (theme)
+			g_object_unref(G_OBJECT(theme));
 
 	}
 	else

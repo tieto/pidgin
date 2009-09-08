@@ -11306,6 +11306,7 @@ msgid "_Merge Groups"
 msgstr "Бүлэг Нэгтгэх"
 
 #, c-format
+#, fuzzy
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
 "list.  Do you want to continue?"

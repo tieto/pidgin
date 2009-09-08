@@ -1206,11 +1206,14 @@ void
 purple_account_disconnect(PurpleAccount *account)
 {
 	PurpleConnection *gc;
+	const char *username;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(!purple_account_is_disconnected(account));
 
-	purple_debug_info("account", "Disconnecting account %p\n", account);
+	username = purple_account_get_username(account);
+	purple_debug_info("account", "Disconnecting account %s (%p)\n",
+	                  username ? username : "(null)", account);
 
 	account->disconnecting = TRUE;
 
@@ -2323,9 +2326,13 @@ void
 purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = purple_account_get_connection(account);
+	PurpleConnection *gc;
 	PurplePlugin *prpl = NULL;
 
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(buddy != NULL);
+
+	gc = purple_account_get_connection(account);
 	if (gc != NULL)
 	        prpl = purple_connection_get_prpl(gc);
 

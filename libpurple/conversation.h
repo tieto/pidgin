@@ -1308,7 +1308,7 @@ void purple_conv_chat_left(PurpleConvChat *chat);
  * @param user     The user to invite to the chat.
  * @param message  The message to send with the invitation.
  * @param confirm  Prompt before sending the invitation. The user is always
- *                 prompted if either #user or #message is @c NULL.
+ *                 prompted if either \a user or \a message is @c NULL.
  *
  * @since 2.6.0
  */

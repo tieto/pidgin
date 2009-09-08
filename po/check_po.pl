@@ -32,6 +32,12 @@
 #
 # Version: 0.41     (2002-06-06)
 
+# TODO: This script needs to be able to handle Farsi's %Id flag for
+#       number format specifiers.  More information on how it works, see
+#       http://www.gnu.org/software/hello/manual/gettext/c_002dformat.html
+#       It's possible someone has already made this change... look around
+#       for an updated version of this script.
+
 use strict;
 use vars qw($opt_c $opt_n $opt_p $opt_w $opt_W $opt_x $opt_e);
 use Getopt::Std;
@@ -361,7 +367,7 @@ while(<>) {
         $state = S_DOING_MSGSTR;
         next LINE;
     }
-    if ( m(^msgstr\[[0-2]\] \"(.*)\"$) ) {
+    if ( m(^msgstr\[[0-5]\] \"(.*)\"$) ) {
         @amsgstr = ($1);
         $state = S_DOING_MSGSTR;
         next LINE;

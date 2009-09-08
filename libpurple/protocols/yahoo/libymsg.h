@@ -280,6 +280,27 @@ typedef struct {
 void yahoo_init_colorht(void);
 void yahoo_dest_colorht(void);
 char *yahoo_codes_to_html(const char *x);
+
+/**
+ * This function takes a normal HTML message and converts it to the message
+ * format used by Yahoo, which uses a frankensteinish combination of ANSI
+ * escape codes and broken HTML.
+ *
+ * It results in slightly different output than would be sent by official
+ * Yahoo clients.  The two main differences are:
+ *
+ * 1. We always close all tags, whereas official Yahoo clients leave tags
+ *    dangling open at the end of each message (and the client treats them
+ *    as closed).
+ * 2. We always close inner tags first before closing outter tags.
+ *
+ * For example, if you want to send this message:
+ *   <b> bold <i> bolditalic </i></b><i> italic </i>
+ * Official Yahoo clients would send:
+ *   ESC[1m bold ESC[2m bolditalic ESC[x1m italic
+ * But we will send:
+ *   ESC[1m bold ESC[2m bolditalic ESC[x2mESC[x1mESC[2m italic ESC[x2m
+ */
 char *yahoo_html_to_codes(const char *src);
 
 gboolean

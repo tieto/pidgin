@@ -592,13 +592,10 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	 */
 	flags |= PURPLE_MESSAGE_RECV;
 
-	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
-		/* protocol does not support privacy, handle it ourselves */
-		if (!purple_privacy_check(account, who)) {
-			purple_signal_emit(purple_conversations_get_handle(), "blocked-im-msg",
-					account, who, msg, flags, (unsigned int)mtime);
-			return;
-		}
+	if (!purple_privacy_check(account, who)) {
+		purple_signal_emit(purple_conversations_get_handle(), "blocked-im-msg",
+				account, who, msg, flags, (unsigned int)mtime);
+		return;
 	}
 
 	/*

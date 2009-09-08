@@ -2439,7 +2439,7 @@ msgstr "Verkställ döljningsregler för kompisar"
 #. *< priority
 #. *< id
 msgid "Join/Part Hiding"
-msgstr " Dölj Går in/Lämnar"
+msgstr "Dölj Går in/Lämnar"
 
 #. *< name
 #. *< version
@@ -10921,7 +10921,7 @@ msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Konversation/_Rensa tillbakablick"
 
 msgid "/Conversation/M_edia"
-msgstr "/Konversation/M_er"
+msgstr "/Konversation/M_edia"
 
 msgid "/Conversation/Media/_Audio Call"
 msgstr "/Konversation/Media/_Ljudsamtal"

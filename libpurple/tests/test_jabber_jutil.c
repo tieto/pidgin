@@ -153,6 +153,14 @@ START_TEST(test_jabber_id_new)
 }
 END_TEST
 
+START_TEST(test_jabber_normalize)
+{
+	assert_string_equal("paul@darkrain42.org", jabber_normalize(NULL, "PaUL@DaRkRain42.org"));
+	assert_string_equal("paul@darkrain42.org", jabber_normalize(NULL, "PaUL@DaRkRain42.org/"));
+	assert_string_equal("paul@darkrain42.org", jabber_normalize(NULL, "PaUL@DaRkRain42.org/resource"));
+}
+END_TEST
+
 Suite *
 jabber_jutil_suite(void)
 {
@@ -172,6 +180,7 @@ jabber_jutil_suite(void)
 	tcase_add_test(tc, test_nodeprep_validate_illegal_chars);
 	tcase_add_test(tc, test_nodeprep_validate_too_long);
 	tcase_add_test(tc, test_jabber_id_new);
+	tcase_add_test(tc, test_jabber_normalize);
 	suite_add_tcase(s, tc);
 
 	return s;
