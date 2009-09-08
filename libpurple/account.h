@@ -639,7 +639,7 @@ PurpleConnection *purple_account_get_connection(const PurpleAccount *account);
  *
  * @return The name to display.
  *
- * @since 2.6.0
+ * @since 2.7.0
  */
 const gchar *purple_account_get_name_for_display(const PurpleAccount *account);
 
