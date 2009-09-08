@@ -3867,7 +3867,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	gtk_size_group_add_widget(sg, image);
 
 	/* Make our menu item */
-	text = g_strdup_printf("%s (%s)", name, purple_account_get_username(account));
+	text = g_strdup_printf("%s (%s)", name, purple_account_get_name_for_display(account));
 	menuitem = gtk_radio_menu_item_new_with_label(*group, text);
 	g_free(text);
 	*group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
