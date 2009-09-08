@@ -54,7 +54,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-01 09:57-0400\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-09-03 06:04-0400\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
@@ -1723,8 +1723,8 @@ msgstr "好友清單"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr "這張證書是自簽的，無法自動進行核實。"
 
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
 msgstr "這張證書聲稱由一所 Pidgin 不認識的根證書機構簽發。"
 
 msgid "The certificate is not valid yet."
@@ -12557,6 +12557,9 @@ msgstr ""
 "使用方法： %s [選項]...\n"
 "\n"
 
+msgid "DIR"
+msgstr ""
+
 msgid "use DIR for config files"
 msgstr "設定檔所在目錄"
 
@@ -12575,15 +12578,17 @@ msgstr "允許同時執行多個進程"
 msgid "don't automatically login"
 msgstr "不自動登入"
 
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 "啟動指定的帳號 (透過 NAME 參數來指定啟動的\n"
 "                      帳號，並使用逗號分隔；"
-
-msgid "Without this only the first account will be enabled)."
-msgstr "如果不指定帳號，將只會啟動第一個帳號)"
 
 msgid "X display to use"
 msgstr "使用指定的 X display"
@@ -13003,12 +13008,17 @@ msgstr "無法啟動代理伺服器設定程式。"
 msgid "Cannot start browser configuration program."
 msgstr "無法啟動瀏覽器設定程式。"
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">例：stunserver.org</span>"
+# #NOTE 和下一個「Enable Account」對應。
+#, fuzzy
+msgid "Disabled"
+msgstr "停用帳號(_D)"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "使用自動偵測得來的 IP 位址(_A)：%s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">例：stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "公共IP (_I)："
@@ -13032,6 +13042,10 @@ msgstr "結束通訊埠(_E)："
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "中繼伺服器 (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "STUN 伺服器(_U)："
 
 msgid "Proxy Server &amp; Browser"
 msgstr "代理伺服器及瀏覽器"
@@ -14802,6 +14816,9 @@ msgstr "送出、讀取未加工的 XMPP 段落。"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "如果不指定帳號，將只會啟動第一個帳號)"
+
 #~ msgid "Calling ... "
 #~ msgstr "撥打中..."
 
@@ -15348,9 +15365,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
 #~ msgid "Conversation Window Hiding"
 #~ msgstr "隱藏即時訊息交談視窗"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "STUN 伺服器(_U)："
 
 #~ msgid "More Data needed"
 #~ msgstr "需要進一步的資料"

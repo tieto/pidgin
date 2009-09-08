@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-29 01:02+0200\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-08-29 00:59+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
@@ -1640,8 +1640,8 @@ msgstr "partnerlista"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr "A tanúsítvány saját aláírású és nem ellenőrizhető automatikusan."
 
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
 msgstr "A tanúsítványt kiadó gyökértanúsítványt a Pidgin nem ismeri."
 
 msgid "The certificate is not valid yet."
@@ -12215,6 +12215,9 @@ msgstr ""
 "Használat: %s [KAPCSOLÓ]…\n"
 "\n"
 
+msgid "DIR"
+msgstr ""
+
 msgid "use DIR for config files"
 msgstr "a KÖNYVTÁR használata a beállítófájlokhoz"
 
@@ -12233,15 +12236,17 @@ msgstr "több példány engedélyezése"
 msgid "don't automatically login"
 msgstr "ne jelentkezzen be automatikusan"
 
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 "automatikus bejelentkezés (a NÉV paraméter megadja a\n"
 "                      használandó fiókok vesszőkkel tagolt listáját."
-
-msgid "Without this only the first account will be enabled)."
-msgstr "Enélkül csak az első fiók lesz engedélyezve)."
 
 msgid "X display to use"
 msgstr "Használandó X-megjelenítő"
@@ -12662,12 +12667,16 @@ msgstr "Nem indítható a proxykonfigurációs program."
 msgid "Cannot start browser configuration program."
 msgstr "Nem indítható a böngészőkonfigurációs program."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Például: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Tiltás"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Automatikusan felismert _IP cím használata: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Például: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "_Nyilvános IP:"
@@ -12690,6 +12699,10 @@ msgstr "_Utolsó port:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Továbbító kiszolgáló (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "_Kiszolgáló:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proxy-kiszolgáló és böngésző"
@@ -14427,3 +14440,6 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ez a bővítmény XMPP kiszolgálókban vagy kliensekben végzett hibakereséshez "
 "hasznos."
+
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "Enélkül csak az első fiók lesz engedélyezve)."

@@ -52,7 +52,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-01 09:57-0400\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-09-03 06:04-0400\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -1721,8 +1721,8 @@ msgstr "好友清單"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr "這張憑證是自簽的，無法自動進行核實。"
 
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
 msgstr "這張憑證聲稱由一所 Pidgin 不認識的根憑證機構簽發。"
 
 msgid "The certificate is not valid yet."
@@ -1813,9 +1813,7 @@ msgstr "無法驗證憑證"
 msgid ""
 "The certificate claims to be from \"%s\" instead. This could mean that you "
 "are not connecting to the service you believe you are."
-msgstr ""
-"這張憑證聲稱它應該屬於「%s」，您目前可能並沒有連線到您希望使"
-"用的服務。"
+msgstr "這張憑證聲稱它應該屬於「%s」，您目前可能並沒有連線到您希望使用的服務。"
 
 #. Make messages
 #, c-format
@@ -2252,7 +2250,8 @@ msgstr "找不到任何轉碼器。請安裝一些提供轉碼器的 GStreamer �
 
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
-msgstr "由於在 fs-codecs.conf 中指定的轉碼器偏好過於嚴格，沒有乎合偏好的轉碼器可用。"
+msgstr ""
+"由於在 fs-codecs.conf 中指定的轉碼器偏好過於嚴格，沒有乎合偏好的轉碼器可用。"
 
 # NOTE「non-recoverable」當然不解「嚴重」，但這似乎是 glibc 的譯法
 msgid "A non-recoverable Farsight2 error has occurred."
@@ -4735,8 +4734,8 @@ msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
 "users with a role or set users' role with the room."
 msgstr ""
-"role &lt;moderator|participant|visitor|none&gt; [暱稱1] [暱稱"
-"2] ...: 取得在聊天室有身份的使用者，或設定使用者在這聊天室內的身份。"
+"role &lt;moderator|participant|visitor|none&gt; [暱稱1] [暱稱2] ...: 取得在聊"
+"天室有身份的使用者，或設定使用者在這聊天室內的身份。"
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;使用者&gt; [訊息]：邀請使用者進入聊天室"
@@ -9827,7 +9826,9 @@ msgstr "發生了代碼 52 的不明錯誤，重新連線應可清除這個錯�
 msgid ""
 "Error 1013: The username you have entered is invalid.  The most common cause "
 "of this error is entering your email address instead of your Yahoo! ID."
-msgstr "錯誤 1013：您輸入了無效的帳號。導致這個錯誤的原因很可能是您輸入了您的電郵地址而不是輸入了 Yahoo 帳號。"
+msgstr ""
+"錯誤 1013：您輸入了無效的帳號。導致這個錯誤的原因很可能是您輸入了您的電郵地址"
+"而不是輸入了 Yahoo 帳號。"
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -12550,6 +12551,9 @@ msgstr ""
 "使用方法： %s [選項]...\n"
 "\n"
 
+msgid "DIR"
+msgstr ""
+
 msgid "use DIR for config files"
 msgstr "設定檔所在目錄"
 
@@ -12568,15 +12572,17 @@ msgstr "允許同時執行多個進程"
 msgid "don't automatically login"
 msgstr "不自動登入"
 
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 "啟動指定的帳號 (透過 NAME 參數來指定啟動的\n"
 "                      帳號，並使用逗號分隔；"
-
-msgid "Without this only the first account will be enabled)."
-msgstr "如果不指定帳號，將只會啟動第一個帳號)"
 
 msgid "X display to use"
 msgstr "使用指定的 X display"
@@ -12996,12 +13002,17 @@ msgstr "無法啟動代理伺服器設定程式。"
 msgid "Cannot start browser configuration program."
 msgstr "無法啟動瀏覽器設定程式。"
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">例：stunserver.org</span>"
+# #NOTE 和下一個「Enable Account」對應。
+#, fuzzy
+msgid "Disabled"
+msgstr "停用帳號(_D)"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "使用自動偵測得來的 IP 位址(_A)：%s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">例：stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "公共IP (_I)："
@@ -13025,6 +13036,10 @@ msgstr "結束通訊埠(_E)："
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "中繼伺服器 (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "STUN 伺服器(_U)："
 
 msgid "Proxy Server &amp; Browser"
 msgstr "代理伺服器及瀏覽器"
@@ -14795,6 +14810,9 @@ msgstr "送出、讀取未加工的 XMPP 段落。"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "如果不指定帳號，將只會啟動第一個帳號)"
+
 #~ msgid "Calling ... "
 #~ msgstr "撥打中..."
 
@@ -15341,9 +15359,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
 #~ msgid "Conversation Window Hiding"
 #~ msgstr "隱藏即時訊息交談視窗"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "STUN 伺服器(_U)："
 
 #~ msgid "More Data needed"
 #~ msgstr "需要進一步的資料"
