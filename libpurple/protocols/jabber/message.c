@@ -1225,7 +1225,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	jm->id = jabber_get_next_id(jm->js);
 
 	tmp = purple_utf8_strip_unprintables(msg);
-	purple_markup_html_to_xhtml(msg, &xhtml, &jm->body);
+	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
 	g_free(tmp);
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
 	if (tmp) {
