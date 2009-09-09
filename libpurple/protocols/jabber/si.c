@@ -853,8 +853,11 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 	/* If we successfully started listening locally */
 	if (sock >= 0) {
 		gchar *jid;
-		const char *local_ip, *public_ip;
-
+		GList *local_ips =
+			purple_network_get_all_local_system_ips(jsx->js->fd);
+		const char *public_ip;
+		gboolean has_public_ip = FALSE;
+		
 		jsx->local_streamhost_fd = sock;
 
 		jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
@@ -862,19 +865,24 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		xfer->local_port = purple_network_get_port_from_fd(sock);
 		g_snprintf(port, sizeof(port), "%hu", xfer->local_port);
 
-		/* Include the localhost's IP (for in-network transfers) */
-		local_ip = purple_network_get_local_system_ip(jsx->js->fd);
-		if (strcmp(local_ip, "0.0.0.0") != 0) {
+		public_ip = purple_network_get_my_ip(jsx->js->fd);
+
+		/* Include the localhost's IPs (for in-network transfers) */
+		while (local_ips) {
+			gchar *local_ip = local_ips->data;
 			streamhost_count++;
 			streamhost = xmlnode_new_child(query, "streamhost");
 			xmlnode_set_attrib(streamhost, "jid", jid);
 			xmlnode_set_attrib(streamhost, "host", local_ip);
 			xmlnode_set_attrib(streamhost, "port", port);
+			if (purple_strequal(local_ip, public_ip))
+				has_public_ip = TRUE;
+			g_free(local_ip);
+			local_ips = g_list_delete_link(local_ips, local_ips);
 		}
 
 		/* Include the public IP (assuming that there is a port mapped somehow) */
-		public_ip = purple_network_get_my_ip(jsx->js->fd);
-		if (strcmp(public_ip, local_ip) != 0 && strcmp(public_ip, "0.0.0.0") != 0) {
+		if (!has_public_ip && strcmp(public_ip, "0.0.0.0") != 0) {
 			streamhost_count++;
 			streamhost = xmlnode_new_child(query, "streamhost");
 			xmlnode_set_attrib(streamhost, "jid", jid);
