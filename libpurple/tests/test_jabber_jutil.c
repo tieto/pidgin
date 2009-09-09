@@ -132,6 +132,7 @@ START_TEST(test_jabber_id_new)
 	assert_invalid_jid("mark.doliner@gmail\\stuff.org");
 	assert_invalid_jid("paul@[::1]124");
 	assert_invalid_jid("paul@2[::1]124/as");
+	assert_invalid_jid("paul@まつ.おおかみ/\x01");
 
 	/* Ensure that jabber_id_new is properly lowercasing node and domains */
 	assert_jid_parts("paul", "darkrain42.org", "PaUL@darkrain42.org");
