@@ -215,7 +215,6 @@ purple_network_get_all_local_system_ips(void)
 	ioctl(source, SIOCGIFCONF, &ifc);
 	close(source);
 
-	/* enumerate the interfaces on IPv4 (or from source given by fd) */
 	tmp = buffer;
 	while (tmp < buffer + ifc.ifc_len) {
 		char dst[INET_ADDRSTRLEN];
