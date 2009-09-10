@@ -854,7 +854,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 	if (sock >= 0) {
 		gchar *jid;
 		GList *local_ips =
-			purple_network_get_all_local_system_ips(jsx->js->fd);
+			purple_network_get_all_local_system_ips();
 		const char *public_ip;
 		gboolean has_public_ip = FALSE;
 		

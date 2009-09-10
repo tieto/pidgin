@@ -201,33 +201,29 @@ purple_network_get_local_system_ip(int fd)
 }
 
 GList *
-purple_network_get_all_local_system_ips(int fd)
+purple_network_get_all_local_system_ips(void)
 {
 	GList *result = NULL;
-	int source = fd;
+	int source = source = socket(PF_INET,SOCK_STREAM, 0);;
 	char buffer[1024];
 	char *tmp;
 	struct ifconf ifc;
 	struct ifreq *ifr;
-
-	if (fd < 0)
-		source = socket(PF_INET,SOCK_STREAM, 0);
 	
 	ifc.ifc_len = sizeof(buffer);
 	ifc.ifc_req = (struct ifreq *)buffer;
 	ioctl(source, SIOCGIFCONF, &ifc);
-
-	if (fd < 0)
-		close(source);
+	close(source);
 
 	/* enumerate the interfaces on IPv4 (or from source given by fd) */
 	tmp = buffer;
 	while (tmp < buffer + ifc.ifc_len) {
-		char dst[INET6_ADDRSTRLEN];
+		char dst[INET_ADDRSTRLEN];
 
 		ifr = (struct ifreq *)tmp;
 		tmp += HX_SIZE_OF_IFREQ(*ifr);
 
+		/* TODO: handle IPv6 */
 		if (ifr->ifr_addr.sa_family == AF_INET) {
 			struct sockaddr_in *sinptr = (struct sockaddr_in *)&ifr->ifr_addr;
 
@@ -237,38 +233,6 @@ purple_network_get_all_local_system_ips(int fd)
 				"found local i/f with address %s on IPv4\n", dst);
 			if (!purple_strequal(dst, "127.0.0.1")) {
 				result = g_list_append(result, g_strdup(dst));
-			}
-		}
-	}
-	
-	/* enumerate IPv6 interfaces (done when NOT specifying an fd,
-								  in that case use it (see above)) */
-	if (fd < 0) {
-		source = socket(PF_INET6, SOCK_STREAM, 0);
-	
-		ifc.ifc_len = sizeof(buffer);
-		ifc.ifc_req = (struct ifreq *)buffer;
-		ioctl(source, SIOCGIFCONF, &ifc);
-
-		close(source);
-
-		tmp = buffer;
-		while (tmp < buffer + ifc.ifc_len) {
-			char dst[INET6_ADDRSTRLEN];
-
-			ifr = (struct ifreq *)tmp;
-			tmp += HX_SIZE_OF_IFREQ(*ifr);
-
-			if (ifr->ifr_addr.sa_family == AF_INET6) {
-				struct sockaddr_in6 *sinptr =
-					(struct sockaddr_in6 *)&ifr->ifr_addr;
-
-				inet_ntop(AF_INET6, &sinptr->sin6_addr, dst, sizeof(dst));
-				purple_debug_info("network", 
-					"found local i/f with address %s on IPv4\n", dst);
-				if (!purple_strequal(dst, "::1")) {
-					result = g_list_append(result, g_strdup(dst));
-				}
 			}
 		}
 	}
