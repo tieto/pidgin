@@ -204,7 +204,7 @@ GList *
 purple_network_get_all_local_system_ips(void)
 {
 	GList *result = NULL;
-	int source = source = socket(PF_INET,SOCK_STREAM, 0);;
+	int source = source = socket(PF_INET,SOCK_STREAM, 0);
 	char buffer[1024];
 	char *tmp;
 	struct ifconf ifc;
