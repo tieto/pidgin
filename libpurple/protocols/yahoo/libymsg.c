@@ -2025,11 +2025,11 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 				break;
 			}
 		case 2:
-			purple_debug_info("yahoo", "Server reported that %s is already in the ignore list.",
+			purple_debug_info("yahoo", "Server reported that %s is already in the ignore list.\n",
 							  who);
 			break;
 		case 3:
-			purple_debug_info("yahoo", "Server reported that %s is not in the ignore list; could not delete",
+			purple_debug_info("yahoo", "Server reported that %s is not in the ignore list; could not delete\n",
 							  who);
 		case 0:
 		default:
