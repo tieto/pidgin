@@ -126,8 +126,10 @@ purple_dbus_pointer_to_id(gconstpointer node)
 	gint id = GPOINTER_TO_INT(g_hash_table_lookup(map_node_id, node));
 	if ((id == 0) && (node != NULL))
 	{
-		purple_debug_warning("dbus",
-				"Need to register an object with the dbus subsystem. (If you are not a developer, please ignore this message.)\n");
+		if (purple_debug_is_verbose())
+			purple_debug_warning("dbus",
+				"Need to register an object with the dbus subsystem."
+				" (If you are not a developer, please ignore this message.)\n");
 		return 0;
 	}
 	return id;
@@ -795,7 +797,11 @@ purple_dbus_signal_emit_purple(const char *name, int num_values,
 	dbus_message_iter_init_append(signal, &iter);
 
 	if (purple_dbus_message_append_purple_values(&iter, num_values, values, vargs))
-		purple_debug_warning("dbus", "The signal \"%s\" caused some dbus error. (If you are not a developer, please ignore this message.)\n", name);
+		if (purple_debug_is_verbose())
+			purple_debug_warning("dbus",
+				"The signal \"%s\" caused some dbus error."
+				" (If you are not a developer, please ignore this message.)\n",
+				name);
 
 	dbus_connection_send(purple_dbus_connection, signal, NULL);
 
