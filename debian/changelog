@@ -1,3 +1,19 @@
+pidgin (2.4.3-4lenny4~bpo40+1) etch-backports; urgency=low
+
+  * Rebuild for etch-backports.
+  * Make pidgin.menu etch-style (use Apps/Net)
+  * Do not require a specific version for libnss3-dev (the one in etch works)
+
+ -- Gerfried Fuchs <rhonda@debian.at>  Sun, 13 Sep 2009 12:21:07 +0200
+
+pidgin (2.4.3-4lenny4) stable; urgency=medium
+
+  * debian/patches/35_xmpp-require-ssl.patch:
+    - Fix XMPP not properly enforcing "Require SSL/TLS" on some older 
+      servers (Closes: #542891)
+
+ -- Ari Pollak <ari@debian.org>  Tue, 25 Aug 2009 09:53:14 -0400
+
 pidgin (2.4.3-4lenny3) stable-security; urgency=low
 
   * debian/patches/33_ssl-nss-self-signed-crash.patch:
