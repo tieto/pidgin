@@ -373,70 +373,94 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 	g_object_class_install_property(obj_class, PROP_BACKGROUND_COLOR, pspec);
 
 	pspec = g_param_spec_pointer("layout", _("Layout"),
-			_("The layout of icons, name, and status of the blist"),
+			_("The layout of icons, name, and status of the buddy list"),
 			G_PARAM_READWRITE);
 
 	g_object_class_install_property(obj_class, PROP_LAYOUT, pspec);
 
 	/* Group */
+	/* Note to translators: These two strings refer to the background color
+	   of a buddy list group when in its expanded state */
 	pspec = g_param_spec_boxed("expanded-color", _("Expanded Background Color"),
 			_("The background color of an expanded group"),
 			GDK_TYPE_COLOR, G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_EXPANDED_COLOR, pspec);
 
+	/* Note to translators: These two strings refer to the font and color
+	   of a buddy list group when in its expanded state */
 	pspec = g_param_spec_pointer("expanded-text", _("Expanded Text"),
 			_("The text information for when a group is expanded"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_EXPANDED_TEXT, pspec);
 
+	/* Note to translators: These two strings refer to the background color
+	   of a buddy list group when in its collapsed state */
 	pspec = g_param_spec_boxed("collapsed-color", _("Collapsed Background Color"),
 			_("The background color of a collapsed group"),
 			GDK_TYPE_COLOR, G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_COLLAPSED_COLOR, pspec);
 
+	/* Note to translators: These two strings refer to the font and color
+	   of a buddy list group when in its collapsed state */
 	pspec = g_param_spec_pointer("collapsed-text", _("Collapsed Text"),
 			_("The text information for when a group is collapsed"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_COLLAPSED_TEXT, pspec);
 
 	/* Buddy */
+	/* Note to translators: These two strings refer to the background color
+	   of a buddy list contact or chat room */
 	pspec = g_param_spec_boxed("contact-color", _("Contact/Chat Background Color"),
 			_("The background color of a contact or chat"),
 			GDK_TYPE_COLOR, G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_CONTACT_COLOR, pspec);
 
+	/* Note to translators: These two strings refer to the font and color
+	   of a buddy list contact when in its expanded state */
 	pspec = g_param_spec_pointer("contact", _("Contact Text"),
 			_("The text information for when a contact is expanded"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_CONTACT, pspec);
 
-	pspec = g_param_spec_pointer("online", _("On-line Text"),
+	/* Note to translators: These two strings refer to the font and color
+	   of a buddy list buddy when it is online */
+	pspec = g_param_spec_pointer("online", _("Online Text"),
 			_("The text information for when a buddy is online"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_ONLINE, pspec);
 
+	/* Note to translators: These two strings refer to the font and color
+	   of a buddy list buddy when it is away */
 	pspec = g_param_spec_pointer("away", _("Away Text"),
 			_("The text information for when a buddy is away"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_AWAY, pspec);
 
-	pspec = g_param_spec_pointer("offline", _("Off-line Text"),
-			_("The text information for when a buddy is off-line"),
+	/* Note to translators: These two strings refer to the font and color
+	   of a buddy list buddy when it is offline */
+	pspec = g_param_spec_pointer("offline", _("Offline Text"),
+			_("The text information for when a buddy is offline"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_OFFLINE, pspec);
 
+	/* Note to translators: These two strings refer to the font and color
+	   of a buddy list buddy when it is idle */
 	pspec = g_param_spec_pointer("idle", _("Idle Text"),
 			_("The text information for when a buddy is idle"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_IDLE, pspec);
 
+	/* Note to translators: These two strings refer to the font and color
+	   of a buddy list buddy when they have sent you a new message */
 	pspec = g_param_spec_pointer("message", _("Message Text"),
 			_("The text information for when a buddy has an unread message"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_MESSAGE, pspec);
 
+	/* Note to translators: These two strings refer to the font and color
+	   of a buddy list buddy when they have sent you a new message */
 	pspec = g_param_spec_pointer("message_nick_said", _("Message (Nick Said) Text"),
-			_("The text information for when a chat has an unread message that mentions your nick"),
+			_("The text information for when a chat has an unread message that mentions your nickname"),
 			G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_MESSAGE_NICK_SAID, pspec);
 

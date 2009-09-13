@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -749,7 +751,9 @@ add_jbr_info(JabberBuddyInfo *jbi, const char *resource,
 		const char *status_name = jabber_buddy_state_get_name(jbr->state);
 
 		if (jbr->status) {
-			purdy = purple_strdup_withhtml(jbr->status);
+			tmp = purple_markup_escape_text(jbr->status, -1);
+			purdy = purple_strdup_withhtml(tmp);
+			g_free(tmp);
 
 			if (purple_strequal(status_name, purdy))
 				status_name = NULL;
@@ -908,12 +912,14 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 	             (binval = xmlnode_get_child(photo, "BINVAL"))) {
 		gsize size;
 		char *bintext = xmlnode_get_data(binval);
-		guchar *data = purple_base64_decode(bintext, &size);
-		g_free(bintext);
+		if (bintext) {
+			guchar *data = purple_base64_decode(bintext, &size);
+			g_free(bintext);
 
-		if (data) {
-			vcard_hash = jabber_calculate_data_sha1sum(data, size);
-			g_free(data);
+			if (data) {
+				vcard_hash = jabber_calculate_data_sha1sum(data, size);
+				g_free(data);
+			}
 		}
 	}
 
@@ -1675,21 +1681,42 @@ static void jabber_buddy_make_visible(PurpleBlistNode *node, gpointer data)
 	jabber_buddy_set_invisibility(js, purple_buddy_get_name(buddy), FALSE);
 }
 
-static void jabber_buddy_cancel_presence_notification(PurpleBlistNode *node,
-		gpointer data)
+static void cancel_presence_notification(gpointer data)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 	JabberStream *js;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
-
-	buddy = (PurpleBuddy *) node;
+	buddy = data;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	js = purple_connection_get_protocol_data(gc);
 
-	/* I wonder if we should prompt the user before doing this */
 	jabber_presence_subscription_set(js, purple_buddy_get_name(buddy), "unsubscribed");
+}
+
+static void
+jabber_buddy_cancel_presence_notification(PurpleBlistNode *node,
+                                          gpointer data)
+{
+	PurpleBuddy *buddy;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	const gchar *name;
+	char *msg;
+
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (PurpleBuddy *) node;
+	name = purple_buddy_get_name(buddy);
+	account = purple_buddy_get_account(buddy);
+	gc = purple_account_get_connection(account);
+
+	msg = g_strdup_printf(_("%s will no longer be able to see your status "
+	                        "updates.  Do you want to continue?"), name);
+	purple_request_yes_no(gc, NULL, _("Cancel Presence Notification"),
+	                      msg, 0 /* Yes */, account, name, NULL, buddy,
+	                      cancel_presence_notification, NULL /* Do nothing */);
+	g_free(msg);
 }
 
 static void jabber_buddy_rerequest_auth(PurpleBlistNode *node, gpointer data)

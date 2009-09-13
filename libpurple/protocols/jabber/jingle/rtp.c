@@ -3,6 +3,10 @@
  *
  * purple
  *
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -607,8 +611,11 @@ jingle_rtp_init_media(JingleContent *content)
 		is_creator = !jingle_session_is_initiator(session);
 	g_free(creator);
 
-	purple_media_add_stream(media, name, remote_jid,
-			type, is_creator, transmitter, num_params, params);
+	if(!purple_media_add_stream(media, name, remote_jid,
+			type, is_creator, transmitter, num_params, params)) {
+		purple_media_end(media, NULL, NULL);
+		return FALSE;
+	}
 
 	g_free(name);
 	g_free(media_type);

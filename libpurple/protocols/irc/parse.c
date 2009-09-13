@@ -361,7 +361,12 @@ char *irc_mirc2html(const char *string)
 	char fg[3] = "\0\0", bg[3] = "\0\0";
 	int fgnum, bgnum;
 	int font = 0, bold = 0, underline = 0, italic = 0;
-	GString *decoded = g_string_sized_new(strlen(string));
+	GString *decoded;
+
+	if (string == NULL)
+		return NULL;
+
+	decoded = g_string_sized_new(strlen(string));
 
 	cur = string;
 	do {
@@ -461,8 +466,13 @@ char *irc_mirc2html(const char *string)
 
 char *irc_mirc2txt (const char *string)
 {
-	char *result = g_strdup (string);
+	char *result;
 	int i, j;
+
+	if (string == NULL)
+		return NULL;
+
+	result = g_strdup (string);
 
 	for (i = 0, j = 0; result[i]; i++) {
 		switch (result[i]) {

@@ -1,3 +1,18 @@
+pidgin (2.6.2-1~bpo50+1) lenny-backports; urgency=low
+
+  * Rebuild for lenny-backports.
+
+ -- Gerfried Fuchs <rhonda@debian.at>  Sun, 13 Sep 2009 12:17:27 +0200
+
+pidgin (2.6.2-1) unstable; urgency=medium
+
+  * New upstream release
+    - Fixes a crash in msn when handwriting message received (Closes: #544236)
+    - Fixes reading GNOME proxy information (Closes: #543504)
+    - Fixes a few remote crashes, so upload with urgency=medium
+
+ -- Ari Pollak <ari@debian.org>  Sun, 06 Sep 2009 12:46:39 -0400
+
 pidgin (2.6.1-2) unstable; urgency=low
 
   * Upload to unstable

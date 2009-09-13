@@ -170,9 +170,7 @@ static const struct translator translators[] = {
 	{N_("Esperanto"),           "eo", "Stéphane Fillod", "fillods@users.sourceforge.net"},
 	{N_("Spanish"),             "es", "Javier Fernández-Sanguino Peña", "jfs@debian.org"},
 	{N_("Estonian"),            "et", "Ivar Smolin", "okul@linux.ee"},
-	{N_("Euskera(Basque)"),     "eu", "Mikel Pascual Aldabaldetreku", "mikel.paskual@gmail.com"},
-	{N_("Euskera(Basque)"),     "eu", "Iñaki Larrañaga Murgoitio", "dooteo@zundan.com"},
-	{N_("Euskera(Basque)"),     "eu", "Hizkuntza Politikarako Sailburuordetza", "hizkpol@ej-gv.es"},
+	{N_("Basque"),              "eu", "Mikel Pascual Aldabaldetreku", "mikel.paskual@gmail.com"},
 	{N_("Persian"),             "fa", "Elnaz Sarbar", "elnaz@farsiweb.info"},
 	{N_("Persian"),             "fa", "Meelad Zakaria", "meelad@farsiweb.info"},
 	{N_("Persian"),             "fa", "Roozbeh Pournader ", "roozbeh@farsiweb.info"},
@@ -232,7 +230,7 @@ static const struct translator translators[] = {
 	{N_("Turkish"),             "tr", "Serdar Soytetir", "tulliana@gmail.com"},
 	{N_("Urdu"),                "ur", "RKVS Raman", "rkvsraman@gmail.com"},
 	{N_("Vietnamese"),          "vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
-	{N_("Simplified Chinese"),  "zh_CN", "Aron Xu", "aronmalache@163.com"},
+	{N_("Simplified Chinese"),  "zh_CN", "Aron Xu", "happyaron.xu@gmail.com"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Abel Cheung", "abelindsay@gmail.com"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Ambrose C. Li", "acli@ada.dhs.org"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Paladin R. Liu", "paladin@ms1.hinet.net"},
@@ -257,6 +255,8 @@ static const struct translator past_translators[] = {
 	{N_("Spanish"),             "es", "Nicolás Lichtmaier", NULL},
 	{N_("Spanish"),             "es", "Amaya Rodrigo", NULL},
 	{N_("Spanish"),             "es", "Alejandro G Villar", NULL},
+	{N_("Basque"),              "eu", "Iñaki Larrañaga Murgoitio", "dooteo@zundan.com"},
+	{N_("Basque"),              "eu", "Hizkuntza Politikarako Sailburuordetza", "hizkpol@ej-gv.es"},
 	{N_("Finnish"),             "fi", "Arto Alakulju", NULL},
 	{N_("Finnish"),             "fi", "Tero Kuusela", NULL},
 	{N_("French"),              "fr", "Sébastien François", NULL},
@@ -470,9 +470,15 @@ void pidgin_dialogs_about()
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\""
 				"http://developer.pidgin.im/wiki/FAQ\">"
 				"http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"));
-	g_string_append_printf(str, _("<FONT SIZE=\"4\">Help via e-mail:</FONT>"
-				" <A HREF=\"mailto:support@pidgin.im\">support@pidgin.im</A>"
-				"<BR/><BR/>"));
+	g_string_append_printf(str,
+			_("<font size=\"4\">Help from other Pidgin users:</font> "
+			"<a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>"
+			"This is a <b>public</b> mailing list! "
+			"(<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)<br/>"
+			"We can't help with 3rd party protocols or plugins!<br/>"
+			"This list's primary language is <b>English</b>.  You are "
+			"welcome to post in another language, but the responses may "
+			"be less helpful.<br/><br/>"));
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC Channel:</FONT> "
 				"#pidgin on irc.freenode.net<BR><BR>"));
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">XMPP MUC:</FONT> "

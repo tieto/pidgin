@@ -181,14 +181,19 @@ class Binding:
 
    
     def processoutput(self, type, name):
+        const = False
+        unsigned = False
         # the "void" type is simple ...
         if type == ["void"]:
             return self.outputvoid(type, name)
 
-        const = False
         if type[0] == "const":
             type = type[1:]
             const = True
+
+        if type[0] == "unsigned":
+            type = type[1:]
+            unsigned = True
 
         # a string
         if type == ["char", pointer] or type == ["gchar", pointer]:
@@ -197,7 +202,7 @@ class Binding:
         # simple types (ints, booleans, enums, ...)
         if (len(type) == 1) and \
                ((type[0] in simpletypes) or (type[0].startswith("Purple"))):
-            return self.outputsimple(type, name)
+            return self.outputsimple(type, name, unsigned)
 
         # pointers ...
         if (len(type) == 2) and (type[1] == pointer):
@@ -303,10 +308,13 @@ class ClientBinding (Binding):
 #        self.returncode.append("NULLIFY(%s);" % name)
         self.returncode.append("return %s;" % name);
 
-    def outputsimple(self, type, name):
+    def outputsimple(self, type, name, us):
         self.functiontype = type[0]
         self.decls.append("%s %s = 0;" % (type[0], name))
-        self.outputparams.append(("G_TYPE_INT", name))
+        if us:
+            self.outputparams.append(("G_TYPE_UINT", name))
+        else:
+            self.outputparams.append(("G_TYPE_INT", name))
         self.returncode.append("return %s;" % name);
 
     # we could add "const" to the return type but this would probably
@@ -455,11 +463,16 @@ class ServerBinding (Binding):
         if not const:
             self.ccodeout.append("\tg_free(%s);" % name)
 
-    def outputsimple(self, type, name):
-        self.cdecls.append("\tdbus_int32_t %s;" % name)
+    def outputsimple(self, type, name, us):
+        if us:
+            self.cdecls.append("\tdbus_uint32_t %s;" % name)
+            self.cparamsout.append(("UINT32", name))
+            self.addouttype("u", name)
+        else:
+            self.cdecls.append("\tdbus_int32_t %s;" % name)
+            self.cparamsout.append(("INT32", name))
+            self.addouttype("i", name)
         self.ccode.append("\t%s = %s;" % (name, self.call))
-        self.cparamsout.append(("INT32", name))
-        self.addouttype("i", name)
 
     def outputpurplestructure(self, type, name):
         self.cdecls.append("\tdbus_int32_t %s;" % name)

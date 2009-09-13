@@ -497,7 +497,7 @@ purple_core_migrate(void)
 			{
 				char *link;
 #if GLIB_CHECK_VERSION(2,4,0)
-				GError *err = NULL;
+				err = NULL;
 
 				if ((link = g_file_read_link(name, &err)) == NULL)
 				{

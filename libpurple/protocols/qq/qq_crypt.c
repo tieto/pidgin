@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  *
  *
  * QQ encryption algorithm
@@ -171,7 +171,12 @@ static inline void encrypt_out(guint8 *crypted, const gint crypted_len, const gu
 	}
 }
 
-/* length of crypted buffer must be plain_len + 16*/
+/* length of crypted buffer must be plain_len + 17*/
+/*
+ * The above comment used to say "plain_len + 16", but based on the
+ * behavior of the function that is wrong.  If you give this function
+ * a plain string with len%8 = 7 then the returned length is len+17
+ */
 gint qq_encrypt(guint8* crypted, const guint8* const plain, const gint plain_len, const guint8* const key)
 {
 	guint8 *crypted_ptr = crypted;		/* current position of dest */

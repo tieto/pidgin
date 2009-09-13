@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -573,6 +575,7 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
                                xmlnode *packet, gpointer data)
 {
 	if (type == JABBER_IQ_RESULT) {
+		jabber_stream_set_state(js, JABBER_STREAM_POST_AUTH);
 		jabber_disco_items_server(js);
 	} else {
 		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
@@ -1070,7 +1073,12 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 	}
 #endif
 
-	jabber_stream_set_state(js, JABBER_STREAM_REINITIALIZING);
+	/*
+	 * The stream will be reinitialized later in jabber_recv_cb_ssl() or
+	 * jabber_bosh_connection_send.
+	 */
+	js->reinit = TRUE;
+	jabber_stream_set_state(js, JABBER_STREAM_POST_AUTH);
 }
 
 void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)

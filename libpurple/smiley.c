@@ -80,7 +80,7 @@ static char *smileys_dir = NULL;
  * XML descriptor file layout                                                 *
  ******************************************************************************
  *
- * Althought we are creating the profile XML structure here, now we
+ * Although we are creating the profile XML structure here, now we
  * won't handle it.
  * So, we just add one profile named "default" that has no associated
  * account elements, and have only the smiley_set that will contain
@@ -163,14 +163,14 @@ add_smiley_to_main_node(gpointer key, gpointer value, gpointer user_data)
 }
 
 static xmlnode *
-smileys_to_xmlnode()
+smileys_to_xmlnode(void)
 {
 	xmlnode *root_node, *profile_node, *smileyset_node;
 
 	root_node = xmlnode_new(XML_ROOT_TAG);
 	xmlnode_set_attrib(root_node, "version", "1.0");
 
-	/* See the top comment's above to understand why initial tag elements
+	/* See the top comments above to understand why initial tag elements
 	 * are not being considered by now. */
 	profile_node = xmlnode_new(XML_PROFILE_TAG);
 	if (profile_node) {
@@ -188,7 +188,7 @@ smileys_to_xmlnode()
 }
 
 static void
-sync_smileys()
+sync_smileys(void)
 {
 	xmlnode *root_node;
 	char *data;
@@ -216,7 +216,7 @@ save_smileys_cb(gpointer data)
 }
 
 static void
-purple_smileys_save()
+purple_smileys_save(void)
 {
 	if (save_timer == 0)
 		save_timer = purple_timeout_add_seconds(5, save_smileys_cb, NULL);
@@ -248,7 +248,7 @@ parse_smiley(xmlnode *smiley_node)
 }
 
 static void
-purple_smileys_load()
+purple_smileys_load(void)
 {
 	xmlnode *root_node, *profile_node;
 	xmlnode *smileyset_node = NULL;
@@ -262,7 +262,7 @@ purple_smileys_load()
 	if (root_node == NULL)
 		return;
 
-	/* See the top comment's above to understand why initial tag elements
+	/* See the top comments above to understand why initial tag elements
 	 * are not being considered by now. */
 	profile_node = xmlnode_get_child(root_node, XML_PROFILE_TAG);
 	if (profile_node)
@@ -456,7 +456,7 @@ purple_smiley_get_type(void)
 }
 
 /*********************************************************************
- * Other Stuff                                                             *
+ * Other Stuff                                                       *
  *********************************************************************/
 
 static char *get_file_full_path(const char *filename)
@@ -876,7 +876,7 @@ purple_smileys_get_storing_dir(void)
 }
 
 void
-purple_smileys_init()
+purple_smileys_init(void)
 {
 	smiley_shortcut_index = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 	smiley_checksum_index = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
@@ -887,7 +887,7 @@ purple_smileys_init()
 }
 
 void
-purple_smileys_uninit()
+purple_smileys_uninit(void)
 {
 	if (save_timer != 0) {
 		purple_timeout_remove(save_timer);

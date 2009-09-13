@@ -3129,6 +3129,9 @@ purple_normalize(const PurpleAccount *account, const char *str)
 	const char *ret = NULL;
 	static char buf[BUF_LEN];
 
+	/* This should prevent a crash if purple_normalize gets called with NULL str, see #10115 */
+	g_return_val_if_fail(str != NULL, "");
+
 	if (account != NULL)
 	{
 		PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
@@ -4652,25 +4655,26 @@ gchar *
 purple_utf8_strip_unprintables(const gchar *str)
 {
 	gchar *workstr, *iter;
+	const gchar *bad;
 
 	if (str == NULL)
 		/* Act like g_strdup */
 		return NULL;
 
-	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
+	if (!g_utf8_validate(str, -1, &bad)) {
+		purple_debug_error("util", "purple_utf8_strip_unprintables(%s) failed; "
+		                           "first bad character was %02x (%c)\n",
+		                   str, *bad, *bad);
+		g_return_val_if_reached(NULL);
+	}
 
 	workstr = iter = g_new(gchar, strlen(str) + 1);
-	while (*str) {
-		gunichar c = g_utf8_get_char(str);
-		const gchar *next = g_utf8_next_char(str);
-		size_t len = next - str;
-
-		if (g_unichar_isprint(c)) {
-			memcpy(iter, str, len);
-			iter += len;
+	for ( ; *str; ++str) {
+		guchar c = *str;
+		if (c >= 0x20 || c == '\t' || c == '\n' || c == '\r') {
+			*iter = c;
+			++iter;
 		}
-
-		str = next;
 	}
 
 	/* nul-terminate the new string */

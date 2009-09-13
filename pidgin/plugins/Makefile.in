@@ -37,6 +37,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
+@PLUGINS_TRUE@@USE_VV_TRUE@am__append_1 = vvconfig.la
 subdir = pidgin/plugins
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -141,6 +142,12 @@ am__timestamp_format_la_SOURCES_DIST = timestamp_format.c
 @PLUGINS_TRUE@am_timestamp_format_la_OBJECTS = timestamp_format.lo
 timestamp_format_la_OBJECTS = $(am_timestamp_format_la_OBJECTS)
 @PLUGINS_TRUE@am_timestamp_format_la_rpath = -rpath $(plugindir)
+@PLUGINS_TRUE@vvconfig_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+@PLUGINS_TRUE@	$(am__DEPENDENCIES_1)
+am__vvconfig_la_SOURCES_DIST = vvconfig.c
+@PLUGINS_TRUE@am_vvconfig_la_OBJECTS = vvconfig.lo
+vvconfig_la_OBJECTS = $(am_vvconfig_la_OBJECTS)
+@PLUGINS_TRUE@@USE_VV_TRUE@am_vvconfig_la_rpath = -rpath $(plugindir)
 @PLUGINS_TRUE@xmppconsole_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__xmppconsole_la_SOURCES_DIST = xmppconsole.c
 @PLUGINS_TRUE@am_xmppconsole_la_OBJECTS = xmppconsole.lo
@@ -165,7 +172,7 @@ SOURCES = $(contact_priority_la_SOURCES) $(convcolors_la_SOURCES) \
 	$(relnot_la_SOURCES) $(sendbutton_la_SOURCES) \
 	$(spellchk_la_SOURCES) $(themeedit_la_SOURCES) \
 	$(timestamp_la_SOURCES) $(timestamp_format_la_SOURCES) \
-	$(xmppconsole_la_SOURCES)
+	$(vvconfig_la_SOURCES) $(xmppconsole_la_SOURCES)
 DIST_SOURCES = $(am__contact_priority_la_SOURCES_DIST) \
 	$(am__convcolors_la_SOURCES_DIST) \
 	$(am__extplacement_la_SOURCES_DIST) \
@@ -180,6 +187,7 @@ DIST_SOURCES = $(am__contact_priority_la_SOURCES_DIST) \
 	$(am__themeedit_la_SOURCES_DIST) \
 	$(am__timestamp_la_SOURCES_DIST) \
 	$(am__timestamp_format_la_SOURCES_DIST) \
+	$(am__vvconfig_la_SOURCES_DIST) \
 	$(am__xmppconsole_la_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
@@ -454,6 +462,8 @@ USE_TCL_FALSE = @USE_TCL_FALSE@
 USE_TCL_TRUE = @USE_TCL_TRUE@
 USE_TK_FALSE = @USE_TK_FALSE@
 USE_TK_TRUE = @USE_TK_TRUE@
+USE_VV_FALSE = @USE_VV_FALSE@
+USE_VV_TRUE = @USE_VV_TRUE@
 VERSION = @VERSION@
 X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
@@ -557,24 +567,14 @@ spellchk_la_LDFLAGS = -module -avoid-version
 themeedit_la_LDFLAGS = -module -avoid-version
 timestamp_la_LDFLAGS = -module -avoid-version
 timestamp_format_la_LDFLAGS = -module -avoid-version
+vvconfig_la_LDFLAGS = -module -avoid-version
 xmppconsole_la_LDFLAGS = -module -avoid-version
-@PLUGINS_TRUE@plugin_LTLIBRARIES = \
-@PLUGINS_TRUE@	convcolors.la       \
-@PLUGINS_TRUE@	extplacement.la     \
-@PLUGINS_TRUE@	gtkbuddynote.la     \
-@PLUGINS_TRUE@	history.la          \
-@PLUGINS_TRUE@	iconaway.la         \
-@PLUGINS_TRUE@	markerline.la       \
-@PLUGINS_TRUE@	notify.la           \
-@PLUGINS_TRUE@	pidginrc.la         \
-@PLUGINS_TRUE@	relnot.la           \
-@PLUGINS_TRUE@	sendbutton.la       \
-@PLUGINS_TRUE@	spellchk.la         \
-@PLUGINS_TRUE@	themeedit.la         \
-@PLUGINS_TRUE@	timestamp.la        \
-@PLUGINS_TRUE@	timestamp_format.la \
-@PLUGINS_TRUE@	xmppconsole.la
-
+@PLUGINS_TRUE@plugin_LTLIBRARIES = convcolors.la extplacement.la \
+@PLUGINS_TRUE@	gtkbuddynote.la history.la iconaway.la \
+@PLUGINS_TRUE@	markerline.la notify.la pidginrc.la relnot.la \
+@PLUGINS_TRUE@	sendbutton.la spellchk.la themeedit.la \
+@PLUGINS_TRUE@	timestamp.la timestamp_format.la xmppconsole.la \
+@PLUGINS_TRUE@	$(am__append_1)
 @PLUGINS_TRUE@noinst_LTLIBRARIES = \
 @PLUGINS_TRUE@	contact_priority.la \
 @PLUGINS_TRUE@	gtk_signals_test.la
@@ -595,6 +595,7 @@ xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@themeedit_la_SOURCES = themeedit.c themeedit-icon.c themeedit-icon.h
 @PLUGINS_TRUE@timestamp_la_SOURCES = timestamp.c
 @PLUGINS_TRUE@timestamp_format_la_SOURCES = timestamp_format.c
+@PLUGINS_TRUE@vvconfig_la_SOURCES = vvconfig.c
 @PLUGINS_TRUE@xmppconsole_la_SOURCES = xmppconsole.c
 @PLUGINS_TRUE@convcolors_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@contact_priority_la_LIBADD = $(GTK_LIBS)
@@ -612,6 +613,7 @@ xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@themeedit_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@timestamp_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@timestamp_format_la_LIBADD = $(GTK_LIBS)
+@PLUGINS_TRUE@vvconfig_la_LIBADD = $(GTK_LIBS) $(GSTREAMER_LIBS)
 @PLUGINS_TRUE@xmppconsole_la_LIBADD = $(GTK_LIBS)
 EXTRA_DIST = \
 	Makefile.mingw \
@@ -632,6 +634,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/pidgin \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
 	$(PLUGIN_CFLAGS)
 
 
@@ -741,6 +744,8 @@ timestamp.la: $(timestamp_la_OBJECTS) $(timestamp_la_DEPENDENCIES)
 	$(LINK) $(am_timestamp_la_rpath) $(timestamp_la_LDFLAGS) $(timestamp_la_OBJECTS) $(timestamp_la_LIBADD) $(LIBS)
 timestamp_format.la: $(timestamp_format_la_OBJECTS) $(timestamp_format_la_DEPENDENCIES) 
 	$(LINK) $(am_timestamp_format_la_rpath) $(timestamp_format_la_LDFLAGS) $(timestamp_format_la_OBJECTS) $(timestamp_format_la_LIBADD) $(LIBS)
+vvconfig.la: $(vvconfig_la_OBJECTS) $(vvconfig_la_DEPENDENCIES) 
+	$(LINK) $(am_vvconfig_la_rpath) $(vvconfig_la_LDFLAGS) $(vvconfig_la_OBJECTS) $(vvconfig_la_LIBADD) $(LIBS)
 xmppconsole.la: $(xmppconsole_la_OBJECTS) $(xmppconsole_la_DEPENDENCIES) 
 	$(LINK) $(am_xmppconsole_la_rpath) $(xmppconsole_la_LDFLAGS) $(xmppconsole_la_OBJECTS) $(xmppconsole_la_LIBADD) $(LIBS)
 
@@ -767,6 +772,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/themeedit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timestamp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timestamp_format.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vvconfig.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xmppconsole.Plo@am__quote@
 
 .c.o:

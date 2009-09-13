@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-16 21:37+0300\n"
-"PO-Revision-Date: 2009-07-16 21:36+0300\n"
+"POT-Creation-Date: 2009-08-30 16:49+0300\n"
+"PO-Revision-Date: 2009-08-30 16:48+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -867,7 +867,7 @@ msgstr "Kaikki keskustelut"
 msgid "System Log"
 msgstr "Järjestelmäloki"
 
-msgid "Calling ... "
+msgid "Calling..."
 msgstr "Soitetaan..."
 
 msgid "Hangup"
@@ -1508,6 +1508,31 @@ msgstr ""
 "Kun uusi keskustelu aloitetaan, tämä liitännäinen näyttää edellisen "
 "keskustelun keskusteluikkunassa."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+"\n"
+"Noudetaan TinyURL-osoitetta..."
+
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr "Luo TinyURL vain tämän pituisille tai pidemmille osoitteille"
+
+msgid "TinyURL (or other) address prefix"
+msgstr "TinyURL:n (tai muun) osoite-etuliite"
+
+msgid "TinyURL"
+msgstr "TinyURL"
+
+msgid "TinyURL plugin"
+msgstr "TinyURL-liitännäinen"
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+"Vastaanotettaessa viestiä jossa on URL-osoitteita, käytä TinyURL-palvelua "
+"helpompaa kopiomista varten"
+
 msgid "Online"
 msgstr "Linjoilla"
 
@@ -1550,31 +1575,6 @@ msgstr "GntLastLog"
 
 msgid "Lastlog plugin."
 msgstr "Lastlog-liitännäinen."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-"\n"
-"Noudetaan TinyURL-osoitetta..."
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr "Luo TinyURL vain tämän pituisille tai pidemmille osoitteille"
-
-msgid "TinyURL (or other) address prefix"
-msgstr "TinyURL:n (tai muun) osoite-etuliite"
-
-msgid "TinyURL"
-msgstr "TinyURL"
-
-msgid "TinyURL plugin"
-msgstr "TinyURL-liitännäinen"
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
-"Vastaanotettaessa viestiä jossa on URL-osoitteita, käytä TinyURL-palvelua "
-"helpompaa kopiomista varten"
 
 msgid "accounts"
 msgstr "käyttäjätilit"
@@ -1637,6 +1637,39 @@ msgstr "Tuttavat"
 msgid "buddy list"
 msgstr "tuttavat"
 
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+"Varmenne on itseallekirjoitettu eikä sitä voida automaattisesti tarkistaa."
+
+msgid ""
+"The root certificate this one claims to be issued by is unknown to Pidgin."
+msgstr "Tämän varmenteen myöntäjän juurivarmenne on tuntematon Pidginille."
+
+msgid "The certificate is not valid yet."
+msgstr "Varmenne ei ole vielä kelvollinen."
+
+msgid "The certificate has expired and should not be considered valid."
+msgstr "Varmenne on vanhentunut eikä sitä tulisi pitää kelvollisena."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+msgid "The certificate presented is not issued to this domain."
+msgstr "Esitetty varmenne ei ole kohdistettu tälle verkkonimelle."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+"Juurivarmennetietokantaa ei ole, joten tätä varmennetta ei voi kelpuuttaa."
+
+msgid "The certificate chain presented is invalid."
+msgstr "Esitetty varmenneketju ei ole kelvollinen."
+
+msgid "The certificate has been revoked."
+msgstr "Varmenne on kumottu."
+
+msgid "An unknown certificate error occurred."
+msgstr "Tuntematon varmennevirhe."
+
 msgid "(DOES NOT MATCH)"
 msgstr "(EI TÄSMÄÄ)"
 
@@ -1679,66 +1712,24 @@ msgstr "SSL-varmenteen tarkistus"
 msgid "_View Certificate..."
 msgstr "_Näytä varmenne..."
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
 #, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"Kohteen \"%s\" esittämä varmenne on itseallekirjoitettu. Sitä ei voida "
-"automaattisesti tarkistaa."
+msgid "The certificate for %s could not be validated."
+msgstr "Kohteelle %s esitettyä varmennetta ei voitu tarkistaa kelvolliseksi."
 
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
-msgstr "Kohteelle %s esitetty varmenneketju ei ole kelvollinen."
-
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
 #. TODO: Probably wrong.
-#. TODO: Probably wrong
 msgid "SSL Certificate Error"
 msgstr "SSL-varmennevirhe"
 
-msgid "Invalid certificate chain"
-msgstr "Epäkelpo varmenneketju"
-
-#. vrq will be completed by user_auth
-msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-"Juurivarmennetietokantaa ei ole, joten tätä varmennetta ei voi kelpuuttaa."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr "Tämän varmenteen myöntäjän juurivarmenne on tuntematon Pidginille."
+msgid "Unable to validate certificate"
+msgstr "Varmenteen tunnistaminen kelvolliseksi eponnistui"
 
 #, c-format
 msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
-"Kohteen %s esittämällä varmenneketjulla ei ole kelvollista digitaalista "
-"allekirjoitusta varmentajalta jolta se väittää allekirjoituksen olevan."
-
-msgid "Invalid certificate authority signature"
-msgstr "Epäkelpo varmentajan allekirjoitus"
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
-msgstr ""
-"Kohteen \"%s\" esittämä varmenne näyttää olevan lähteestä \"%s\". Tämä "
-"saattaa tarkoittaa ettet ole yhdistämässä siihen palveluun johon luulet."
+"Varmenne näyttää sen sijaan olevan lähteestä \"%s\". Tämä saattaa "
+"tarkoittaa, ettet ole yhdistämässä siihen palveluun johon luulet."
 
 #. Make messages
 #, c-format
@@ -1974,18 +1965,18 @@ msgid "File transfer complete"
 msgstr "Tiedostonsiirto valmis"
 
 #, c-format
-msgid "You canceled the transfer of %s"
+msgid "You cancelled the transfer of %s"
 msgstr "Peruutit tiedoston %s siirron"
 
 msgid "File transfer cancelled"
 msgstr "Tiedostonsiirto peruutettu"
 
 #, c-format
-msgid "%s canceled the transfer of %s"
+msgid "%s cancelled the transfer of %s"
 msgstr "%s peruutti tiedoston %s siirron"
 
 #, c-format
-msgid "%s canceled the file transfer"
+msgid "%s cancelled the file transfer"
 msgstr "Käyttäjä %s peruutti tiedostonsiirron"
 
 #, c-format
@@ -2178,6 +2169,35 @@ msgstr "<font color=\"red\"><b>Ei voi lukea tiedostoa: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTOMAATTIVASTAUS>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+"Koodekkeja ei löytynyt. Asenna GStreamer-koodekkeja GStreamerin "
+"liitännäispaketeista."
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+"Koodekkeja ei jäljellä valittavaksi. Tiedoston fs-codecs.conf "
+"koodekkiasetukset ovat liian tiukat."
+
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Korjaamaton Farsight2-virhe."
+
+msgid "Conference error."
+msgstr "Virhe neuvottelussa."
+
+msgid "Error with your microphone."
+msgstr "Virhe mikrofonin kanssa."
+
+msgid "Error with your webcam."
+msgstr "Virhe web-kameran kanssa."
+
+#, c-format
+msgid "Error creating session: %s"
+msgstr "Virhe luotaessa istuntoa: %s"
 
 msgid "Error creating conference."
 msgstr "Virhe luotaessa konferenssia."
@@ -2438,14 +2458,15 @@ msgstr "Testiliitännäinen - IPC palvelimena"
 msgid "Test plugin IPC support, as a server. This registers the IPC commands."
 msgstr "Testiliitännäinen - IPC palvelimena. Tämä rekisteröi IPC-komennot."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "Liittymisen/poistumisen piilotuksen asetukset"
+msgid "Hide Joins/Parts"
+msgstr "Piilota liittymiset/poistumiset"
 
-msgid "Minimum Room Size"
-msgstr "Huoneen minimikoko"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr "Huoneille, joissa enemmän kuin tämä määrä ihmisiä"
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "Käyttäjän inaktiivisuuden aikakatkaisu (minuuteissa)"
+msgid "If user has not spoken in this many minutes"
+msgstr "Jos käyttäjä ei ole puhunut näin moneen minuuttiin"
 
 msgid "Apply hiding rules to buddies"
 msgstr "Toteuta piilotussäännöt tuttaville"
@@ -3806,6 +3827,11 @@ msgstr "URL"
 msgid "Street Address"
 msgstr "Katuosoite"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "Laajennettu osoite"
 
@@ -3888,20 +3914,24 @@ msgstr "Valokuva"
 msgid "Logo"
 msgstr "Logo"
 
+#, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr "%s ei tule enää näkemään tilapäivityksiäsi. Haluatko jatkaa?"
+
+msgid "Cancel Presence Notification"
+msgstr "Peru paikallaoloilmoitus"
+
 msgid "Un-hide From"
 msgstr "\"Tule esiin\""
 
 msgid "Temporarily Hide From"
 msgstr "Piiloudu väliaikaisesti tuttavalta"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "Peru paikallaoloilmoitus"
-
 msgid "(Re-)Request authorization"
 msgstr "Pyydä valtuutusta uudelleen"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
@@ -4132,9 +4162,6 @@ msgstr "Rekisteröi uusi tili kohteessa %s"
 
 msgid "Change Registration"
 msgstr "Muuta rekisteröitymistä"
-
-msgid "Malformed BOSH Connect Server"
-msgstr "Virheellisesti muodostettu BOSH-yhteyspalvein"
 
 msgid "Error unregistering account"
 msgstr "Virhe poistettaessa käyttäjätilin rekisteröitymistä"
@@ -4507,10 +4534,10 @@ msgstr ""
 
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "role &lt;moderator|participant|visitor|none&gt; [nimi1] [nimi2] ...: Aseta "
-"käyttäjän rooli huoneessa."
+"tai nouda käyttäjän/käyttäjien rooli huoneessa."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;käyttäjä&gt; [viesti]: Kutsu käyttäjä huoneeseen."
@@ -4652,9 +4679,6 @@ msgstr "Kaistansisäisessä tavuvirtasiirrossa tapahtui virhe\n"
 
 msgid "Transfer was closed."
 msgstr "Siirto suljettiin."
-
-msgid "Failed to open the file"
-msgstr "Tiedoston avaaminen epäonnistui"
 
 msgid "Failed to open in-band bytestream"
 msgstr "Kaistansisäisen tavuvirran avaaminen epäonnistui"
@@ -4931,8 +4955,7 @@ msgstr "Virheellinen tuttavatiedosto"
 msgid "Not expected"
 msgstr "Odottamaton"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+msgid "Friendly name is changing too rapidly"
 msgstr "Tuttavanimi vaihtuu liian usein"
 
 #, c-format
@@ -5494,8 +5517,10 @@ msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr "%s on lähettänyt pyynnön nähdä webkamerasi, mutta tätä ei vielä tueta."
 
 #, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s on lähettänyt webkamera-kutsun, mikä ei ole vielä tuettuna."
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
+msgstr ""
+"%s on lähettänyt pyynnön, jotta näkisit hänen webkameran, mutta tätä ei "
+"vielä tueta."
 
 msgid "Away From Computer"
 msgstr "Poissa tietokoneelta"
@@ -5545,6 +5570,10 @@ msgstr "Haluatko poistaa tämän tuttavan myös osoitekirjastasi?"
 
 msgid "The username specified is invalid."
 msgstr "Syötetty käyttäjänimi on virheellinen."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "Tuttavanimi vaihtuu liian usein"
 
 msgid "This Hotmail account may not be active."
 msgstr "Tämä Hotmail-tili ei välttämättä ole aktiivinen."
@@ -6218,8 +6247,10 @@ msgstr "Palvelimen osoite"
 msgid "Server port"
 msgstr "Palvelimen portti"
 
-msgid "Received unexpected response from "
-msgstr "Odottamaton vastaus palvelimelta "
+#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s"
+msgstr "Odottamaton vastaus osoitteesta %s"
 
 #. username connecting too frequently
 msgid ""
@@ -6230,9 +6261,11 @@ msgstr ""
 "ja yritä uudelleen. Jos jatkat yrittämistä, joudut odottamaan vielä "
 "pidempään."
 
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, c-format
-msgid "Error requesting "
-msgstr "Virhe pyydettäessä "
+msgid "Error requesting %s: %s"
+msgstr "Virhe pyydettäessä %s: %s"
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL ei salli näyttönimen todentamista tätä kautta"
@@ -7005,6 +7038,9 @@ msgstr ""
 msgid "C_onnect"
 msgstr "Y_hdistä"
 
+msgid "You closed the connection."
+msgstr "Katkaisit yhteyden."
+
 msgid "Get AIM Info"
 msgstr "Hae AIM-tiedot"
 
@@ -7014,6 +7050,9 @@ msgstr "Muokkaa kommenttia"
 
 msgid "Get Status Msg"
 msgstr "Hae tilaviesti"
+
+msgid "End Direct IM Session"
+msgstr "Lopeta suora pikaviestiyhteys"
 
 msgid "Direct IM"
 msgstr "Suora pikaviesti"
@@ -7847,7 +7886,7 @@ msgid "File Send"
 msgstr "Tiedoston lähetys"
 
 #, c-format
-msgid "%d canceled the transfer of %s"
+msgid "%d cancelled the transfer of %s"
 msgstr "%d peruutti tiedoston %s siirron"
 
 #, c-format
@@ -8832,9 +8871,6 @@ msgstr "SILC-avainparia ei voi ladata"
 msgid "Connecting to SILC Server"
 msgstr "Yhdistetään SILC-palvelimelle"
 
-msgid "Unable to not load SILC key pair"
-msgstr "SILC-avainparin lataamatta jättäminen ei onnistu"
-
 msgid "Out of memory"
 msgstr "Muisti loppu"
 
@@ -9371,6 +9407,9 @@ msgstr "Keskusteluhuoneen paikallisasetus"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Jätä konferenssi- ja keskusteluhuonekutsut huomiotta"
 
+msgid "Use account proxy for SSL connections"
+msgstr "Käytä tilin välipalvelinta SSL-yhteyksissä"
+
 msgid "Chat room list URL"
 msgstr "Keskusteluhuoneluettelon URL"
 
@@ -9395,6 +9434,10 @@ msgstr "Yahoo JAPAN ID..."
 #. *  description
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Yahoo! JAPAN -yhteyskäytäntöliitännäinen"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s on lähettänyt webkamera-kutsun, mikä ei ole vielä tuettuna."
 
 msgid "Your SMS was not delivered"
 msgstr "Tekstiviestiä (SMS) ei välitetty"
@@ -9471,8 +9514,26 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Jätä tuttava huomiotta?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "Käyttäjätilisi on lukittu, kirjaudu sisään yahoo-websivustolta."
+msgid "Invalid username or password"
+msgstr "Virheellinen käyttäjänimi tai salasana"
+
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+"Käyttäjätili lukittu. liian monta epäonnistunutta kirjautumisyritystä. "
+"Yahoo!--sivustolle kirjautuminen saattaa korjata tämän."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr "Tuntematon virhe 52. Yhdistäminen uudelleen pitäisi auttaa."
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
+"Virhe 1013: Syötetty käyttäjänimi on virheellinen. Yleisin syy virheelle on "
+"sähköpostiosoitteen syöttäminen Yahoo! ID:n sijaan."
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -9653,11 +9714,8 @@ msgid "The user's profile is empty."
 msgstr "Käyttäjän profiili on tyhjä."
 
 #, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s kieltäytyi kutsustasi huoneeseen \"%s\" koska \"%s\"."
-
-msgid "Invitation Rejected"
-msgstr "Kutsusta kieltäydytty"
+msgid "%s has declined to join."
+msgstr "%s on kieltäytynyt liittymästä."
 
 msgid "Failed to join chat"
 msgstr "Ryhmäkeskusteluun liittyminen epäonnistui"
@@ -10236,6 +10294,124 @@ msgstr ""
 "Voit palata tähän ikkunaan lisäämään, muokkaamaan tai poistamaan tilejä "
 "valitsemalla <b>Käyttäjätilit->Tilien hallinta</b> Tuttavat-ikkunassa."
 
+#. Buddy List
+msgid "Background Color"
+msgstr "Taustaväri"
+
+msgid "The background color for the buddy list"
+msgstr "Tuttavaluettelon taustaväri"
+
+msgid "Layout"
+msgstr "Asettelu"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr "Tuttavien kuvakkeiden, nimien ja tilojen asettelu"
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Background Color"
+msgstr "Laajennettu taustaväri"
+
+msgid "The background color of an expanded group"
+msgstr "Laajennetun ryhmän taustavärin"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Text"
+msgstr "Laajennettu teksti"
+
+msgid "The text information for when a group is expanded"
+msgstr "Tekstitieto ryhmää laajennettaessa"
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Background Color"
+msgstr "Supistettu taustaväri"
+
+msgid "The background color of a collapsed group"
+msgstr "Supistetun ryhmän taustaväri"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Text"
+msgstr "Supistettu teksti"
+
+msgid "The text information for when a group is collapsed"
+msgstr "Tekstitieto ryhmää supistettaessa"
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+msgid "Contact/Chat Background Color"
+msgstr "Yhteystiedon/keskustelun taustaväri"
+
+msgid "The background color of a contact or chat"
+msgstr "Yhteystiedon tai keskustelun taustaväri"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+msgid "Contact Text"
+msgstr "Yhteystiedon teksti"
+
+msgid "The text information for when a contact is expanded"
+msgstr "Tekstitieto yhteystietoa laajennettaessa"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+msgid "Online Text"
+msgstr "Linjoilla-teksti"
+
+msgid "The text information for when a buddy is online"
+msgstr "Tekstitieto tuttavan ollessa linjoilla"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+msgid "Away Text"
+msgstr "Poissa-teksti"
+
+msgid "The text information for when a buddy is away"
+msgstr "Tekstitieto tuttavan ollessa poissa"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+msgid "Offline Text"
+msgstr "Poissa linjoilta -teksti"
+
+msgid "The text information for when a buddy is offline"
+msgstr "Tekstitieto tuttavan ollessa poissa linjoilta"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+msgid "Idle Text"
+msgstr "Joutenoloteksti"
+
+msgid "The text information for when a buddy is idle"
+msgstr "Tekstitieto tuttavan ollessa jouten"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message Text"
+msgstr "Viestin teksti"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr "Tekstitieto kun tuttavalla on lukematon viesti"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr "Viestin (henkilö sanoi) teksti"
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+"Tekstitieto kun keskustelussa on lukematon viesti, jossa mainitaan "
+"kutsumanimesi"
+
+msgid "The text information for a buddy's status"
+msgstr "Tekstitieto tuttavan tilalle"
+
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
@@ -10671,7 +10847,7 @@ msgstr "_Lempinimi:"
 msgid "_Group:"
 msgstr "_Ryhmä:"
 
-msgid "Auto_join when account becomes online."
+msgid "Auto_join when account connects."
 msgstr "Liity automaattisesti kun käyttä_jätili pääsee linjoille."
 
 msgid "_Remain in chat after window is closed."
@@ -10703,100 +10879,6 @@ msgstr "/Työkalut"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Tuttavat/Lajittele tuttavat"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "Taustaväri"
-
-msgid "The background color for the buddy list"
-msgstr "Tuttavaluettelon taustaväri"
-
-msgid "Layout"
-msgstr "Asettelu"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr "Tuttavien kuvakkeiden, nimien ja tilojen asettelu"
-
-#. Group
-msgid "Expanded Background Color"
-msgstr "Laajennettu taustaväri"
-
-msgid "The background color of an expanded group"
-msgstr "Laajennetun ryhmän taustavärin"
-
-msgid "Expanded Text"
-msgstr "Laajennettu teksti"
-
-msgid "The text information for when a group is expanded"
-msgstr "Tekstitieto ryhmää laajennettaessa"
-
-msgid "Collapsed Background Color"
-msgstr "Supistettu taustaväri"
-
-msgid "The background color of a collapsed group"
-msgstr "Supistetun ryhmän taustaväri"
-
-msgid "Collapsed Text"
-msgstr "Supistettu teksti"
-
-msgid "The text information for when a group is collapsed"
-msgstr "Tekstitieto ryhmää supistettaessa"
-
-#. Buddy
-msgid "Contact/Chat Background Color"
-msgstr "Yhteystiedon/keskustelun taustaväri"
-
-msgid "The background color of a contact or chat"
-msgstr "Yhteystiedon tai keskustelun taustaväri"
-
-msgid "Contact Text"
-msgstr "Yhteystiedon teksti"
-
-msgid "The text information for when a contact is expanded"
-msgstr "Tekstitieto yhteystietoa laajennettaessa"
-
-msgid "On-line Text"
-msgstr "Linjoilla-teksti"
-
-msgid "The text information for when a buddy is online"
-msgstr "Tekstitieto tuttavan ollessa linjoilla"
-
-msgid "Away Text"
-msgstr "Poissa-teksti"
-
-msgid "The text information for when a buddy is away"
-msgstr "Tekstitieto tuttavan ollessa poissa"
-
-msgid "Off-line Text"
-msgstr "Poissa linjoilta -teksti"
-
-msgid "The text information for when a buddy is off-line"
-msgstr "Tekstitieto tuttavan ollessa poissa linjoilta"
-
-msgid "Idle Text"
-msgstr "Joutenoloteksti"
-
-msgid "The text information for when a buddy is idle"
-msgstr "Tekstitieto tuttavan ollessa jouten"
-
-msgid "Message Text"
-msgstr "Viestin teksti"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr "Tekstitieto kun tuttavalla on lukematon viesti"
-
-msgid "Message (Nick Said) Text"
-msgstr "Viestin (henkilö sanoi) teksti"
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-"Tekstitieto kun keskustelussa on lukematon viesti, jossa mainitaan "
-"kutsumanimesi"
-
-msgid "The text information for a buddy's status"
-msgstr "Tekstitieto tuttavan tilalle"
 
 msgid "Type the host name for this certificate."
 msgstr "Kirjoita isäntänimi tälle varmenteelle."
@@ -10881,6 +10963,9 @@ msgstr "/_Keskustelu"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Keskustelu/Uusi _pikaviesti..."
+
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Keskustelu/Liity _keskusteluun..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Keskustelu/_Etsi..."
@@ -11264,8 +11349,8 @@ msgstr "espanja"
 msgid "Estonian"
 msgstr "viro"
 
-msgid "Euskera(Basque)"
-msgstr "euskara (baski)"
+msgid "Basque"
+msgstr "baski"
 
 msgid "Persian"
 msgstr "persia"
@@ -11469,11 +11554,20 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
-"<FONT SIZE=\"4\">Apua sähköpostitse (engl.):</FONT> <A HREF=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Apua muilta Pidgin-käyttäjiltä:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>Tämä on <b>julkinen</b> "
+"sähköpostilista! (<a href=\"http://pidgin.im/pipermail/support/\">archive</"
+"a>)<br/>Emme voi auttaa kolmannen osapuolen yhteyskäytännöissä tai "
+"liitännäisissä.<br/>Tämän listan pääkieli on <b>englanti</b>. Voit käyttää "
+"myös muuta kieltä, mutta auttavan vastauksen saaminen voi tällöin olla "
+"hankalampaa.<br/><br/>"
 
 #, c-format
 msgid ""
@@ -11704,14 +11798,6 @@ msgstr "_Poista valmiit siirrot"
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "Tiedostonsiirron yksityiskohdat"
-
-#. Pause button
-msgid "_Pause"
-msgstr "_Tauko"
-
-#. Resume button
-msgid "_Resume"
-msgstr "_Jatka"
 
 msgid "Paste as Plain _Text"
 msgstr "Liimaa pelkkänä _tekstinä"
@@ -12032,65 +12118,45 @@ msgstr "%s %s. Kirjoita \"%s -h\" saadaksesi lisää tietoja.\n"
 
 #, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
 "Käyttö: %s [VALITSIN]...\n"
 "\n"
-"  -c, --config=HAK    käytä hakemistoa HAK asetustiedostoille\n"
-"  -d, --debug         kirjoita virheenjäljitysviestit putkeen stdout\n"
-"  -f, --force-online  pakota ”tavoitettavissa” riippumatta verkon tilasta\n"
-"  -h, --help          näytä tämä ohje ja poistu\n"
-"  -m, --multiple      älä pitäydy vain yhdessä instanssissa\n"
-"  -n, --nologin       älä kirjaudu automaattisesti\n"
-"  -l, --login[=NIMI]  kirjaudu automaattisesti (valinnainen NIMI \n"
-"                      määrittelee käytettävät tilit pilkuin eroteltuina.\n"
-"                      Ilman tätä vain ensimmäinen tili otetaan käyttöön).\n"
-"  --display=NÄYTTÖ    käytettävä X-näyttö\n"
-"  -v, --version       näytä nykyinen versionumero ja poistu\n"
 
-#, c-format
+msgid "use DIR for config files"
+msgstr "käytä hakemistoa DIR asetustiedostoille"
+
+msgid "print debugging messages to stdout"
+msgstr "tulosta virheenjäljitysviestit standardiulostuloon"
+
+msgid "force online, regardless of network status"
+msgstr "pakota tavoitettavissa olo, riippumatta verkon tilasta"
+
+msgid "display this help and exit"
+msgstr "näytä tämä ohje ja poistu"
+
+msgid "allow multiple instances"
+msgstr "salli usean samanaikaisen ohjelman käynnissä olon"
+
+msgid "don't automatically login"
+msgstr "älä kirjaudu sisään automaattisesti"
+
 msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas."
 msgstr ""
-"%s %s\n"
-"Käyttö: %s [VALITSIN]...\n"
-"\n"
-"  -c, --config=HAK    käytä hakemistoa HAK asetustiedostoille\n"
-"  -d, --debug         kirjoita virheenjäljitysviestit putkeen stdout\n"
-"  -f, --force-online  pakota ”tavoitettavissa” riippumatta verkon tilasta\n"
-"  -h, --help          näytä tämä ohje ja poistu\n"
-"  -m, --multiple      älä pitäydy vain yhdessä instanssissa\n"
-"  -n, --nologin       älä kirjaudu automaattisesti\n"
-"  -l, --login[=NIMI]  kirjaudu automaattisesti (valinnainen NIMI \n"
-"                      määrittelee käytettävät tilit pilkuin eroteltuina.\n"
-"                      Ilman tätä vain ensimmäinen tili otetaan käyttöön).\n"
-"  -v, --version       näytä nykyinen versionumero ja poistu\n"
+"ota käyttöön määritellyt tilit (valinnainen kenttä NAME\n"
+"                      määrittää käytettävät tilit, erotettuina pilkuilla."
+
+msgid "Without this only the first account will be enabled)."
+msgstr "Ilman tätä vain ensimmäinen tili otetaan käyttöön)."
+
+msgid "X display to use"
+msgstr "käytettävä X-näyttö"
+
+msgid "display the current version and exit"
+msgstr "näytä nykyinen versio ja poistu"
 
 #, c-format
 msgid ""
@@ -12135,9 +12201,6 @@ msgstr "/_Media"
 msgid "/Media/_Hangup"
 msgstr "/Media/_Katkaise"
 
-msgid "Calling..."
-msgstr "Soitetaan..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s haluaa aloittaa ääni/videoistunnon kanssasi."
@@ -12145,6 +12208,12 @@ msgstr "%s haluaa aloittaa ääni/videoistunnon kanssasi."
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr "%s haluaa aloittaa videoistunnon kanssasi."
+
+msgid "Incoming Call"
+msgstr "Saapuva puhelu"
+
+msgid "_Pause"
+msgstr "_Tauko"
 
 #, c-format
 msgid "%s has %d new message."
@@ -13143,66 +13212,6 @@ msgstr "Tuttavan paikallaolon ennustava liitännäinen."
 msgid "Displays statistical information about your buddies' availability"
 msgstr "Näyttää tilastotietoja tuttavien läsnäolosta"
 
-msgid "Server name request"
-msgstr "Palvelinnimen pyyntö"
-
-msgid "Enter an XMPP Server"
-msgstr "Syötä XMPP-palvelin"
-
-msgid "Select an XMPP server to query"
-msgstr "Valitse XMPP-palvelin johon kysely lähetetään"
-
-msgid "Find Services"
-msgstr "Etsi palveluita"
-
-msgid "Add to Buddy List"
-msgstr "Lisää tuttaviin"
-
-msgid "Gateway"
-msgstr "Yhdyskäytävä"
-
-msgid "Directory"
-msgstr "Hakemisto"
-
-msgid "PubSub Collection"
-msgstr "PubSub-kokoelma"
-
-msgid "PubSub Leaf"
-msgstr "PubSub-lehti"
-
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr ""
-"\n"
-"<b>Kuvaus:</b> "
-
-#. Create the window.
-msgid "Service Discovery"
-msgstr "Palveluiden löytö"
-
-msgid "_Browse"
-msgstr "_Selaa"
-
-msgid "Server does not exist"
-msgstr "Palvelinta ei ole"
-
-msgid "Server does not support service discovery"
-msgstr "Palvelin ei palveluiden löytämistä"
-
-msgid "XMPP Service Discovery"
-msgstr "XMPP-palveluiden löytö"
-
-msgid "Allows browsing and registering services."
-msgstr "Sallii palveluiden selaamisen ja rekisteröimisen."
-
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr ""
-"Tätä liitännäistä voidaan käyttää vanhojen siirtotapojen tai muiden XMPP-"
-"palveluiden rekisteröimiseen."
-
 msgid "Buddy is idle"
 msgstr "Tuttava on jouten"
 
@@ -13291,6 +13300,68 @@ msgstr "Käytä asetuksia ryhmäkeskusteluissa"
 
 msgid "Apply in IMs"
 msgstr "Käytä asetuksia pikaviesteissä"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+msgid "Server name request"
+msgstr "Palvelinnimen pyyntö"
+
+msgid "Enter an XMPP Server"
+msgstr "Syötä XMPP-palvelin"
+
+msgid "Select an XMPP server to query"
+msgstr "Valitse XMPP-palvelin johon kysely lähetetään"
+
+msgid "Find Services"
+msgstr "Etsi palveluita"
+
+msgid "Add to Buddy List"
+msgstr "Lisää tuttaviin"
+
+msgid "Gateway"
+msgstr "Yhdyskäytävä"
+
+msgid "Directory"
+msgstr "Hakemisto"
+
+msgid "PubSub Collection"
+msgstr "PubSub-kokoelma"
+
+msgid "PubSub Leaf"
+msgstr "PubSub-lehti"
+
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>Kuvaus:</b> "
+
+#. Create the window.
+msgid "Service Discovery"
+msgstr "Palveluiden löytö"
+
+msgid "_Browse"
+msgstr "_Selaa"
+
+msgid "Server does not exist"
+msgstr "Palvelinta ei ole"
+
+msgid "Server does not support service discovery"
+msgstr "Palvelin ei palveluiden löytämistä"
+
+msgid "XMPP Service Discovery"
+msgstr "XMPP-palveluiden löytö"
+
+msgid "Allows browsing and registering services."
+msgstr "Sallii palveluiden selaamisen ja rekisteröimisen."
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"Tätä liitännäistä voidaan käyttää vanhojen siirtotapojen tai muiden XMPP-"
+"palveluiden rekisteröimiseen."
 
 msgid "By conversation count"
 msgstr "Keskustelujen määrän mukaan"
@@ -13926,9 +13997,12 @@ msgstr "Jätetty huomiotta"
 msgid "Founder"
 msgstr "Perustaja"
 
+#. A user in a chat room who has special privileges.
 msgid "Operator"
 msgstr "Operaattori"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr "Puolioperaattori"
 
@@ -14076,6 +14150,52 @@ msgstr ""
 "Tämä liitännäinen mahdollistaa keskustelu- ja lokiviestien aikaleimamuotojen "
 "muokkaamisen."
 
+msgid "Audio"
+msgstr "Ääni"
+
+msgid "Video"
+msgstr "Video"
+
+msgid "Output"
+msgstr "Ulostulo"
+
+msgid "_Plugin"
+msgstr "_Liitännäinen"
+
+msgid "_Device"
+msgstr "_Laite"
+
+msgid "Input"
+msgstr "Sisääntulo"
+
+msgid "P_lugin"
+msgstr "_Liitännäiset"
+
+msgid "D_evice"
+msgstr "Lait_e"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Voice/Video Settings"
+msgstr "Ääni- ja videoasetukset"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr "Muuta mikrofonin ja web-kameran asetuksia."
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+"Muuta mikrofonin ja web-kameran asetuksia ääni- tai videopuheluita varten."
+
 msgid "Opacity:"
 msgstr "Peitto:"
 
@@ -14209,6 +14329,132 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
+
+#~ msgid "Calling ... "
+#~ msgstr "Soitetaan..."
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "Epäkelpo varmenneketju"
+
+#~ msgid ""
+#~ "The certificate chain presented by %s does not have a valid digital "
+#~ "signature from the Certificate Authority from which it claims to have a "
+#~ "signature."
+#~ msgstr ""
+#~ "Kohteen %s esittämällä varmenneketjulla ei ole kelvollista digitaalista "
+#~ "allekirjoitusta varmentajalta jolta se väittää allekirjoituksen olevan."
+
+#~ msgid "Invalid certificate authority signature"
+#~ msgstr "Epäkelpo varmentajan allekirjoitus"
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "Liittymisen/poistumisen piilotuksen asetukset"
+
+#~ msgid "Minimum Room Size"
+#~ msgstr "Huoneen minimikoko"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "Käyttäjän inaktiivisuuden aikakatkaisu (minuuteissa)"
+
+#~ msgid "Malformed BOSH Connect Server"
+#~ msgstr "Virheellisesti muodostettu BOSH-yhteyspalvein"
+
+#~ msgid "Failed to open the file"
+#~ msgstr "Tiedoston avaaminen epäonnistui"
+
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "SILC-avainparin lataamatta jättäminen ei onnistu"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "Käyttäjätilisi on lukittu, kirjaudu sisään yahoo-websivustolta."
+
+#~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr "%s kieltäytyi kutsustasi huoneeseen \"%s\" koska \"%s\"."
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "Kutsusta kieltäydytty"
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "euskara (baski)"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">Apua sähköpostitse (engl.):</FONT> <A HREF=\"mailto:"
+#~ "support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+
+#~ msgid "_Resume"
+#~ msgstr "_Jatka"
+
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Käyttö: %s [VALITSIN]...\n"
+#~ "\n"
+#~ "  -c, --config=HAK    käytä hakemistoa HAK asetustiedostoille\n"
+#~ "  -d, --debug         kirjoita virheenjäljitysviestit putkeen stdout\n"
+#~ "  -f, --force-online  pakota ”tavoitettavissa” riippumatta verkon "
+#~ "tilasta\n"
+#~ "  -h, --help          näytä tämä ohje ja poistu\n"
+#~ "  -m, --multiple      älä pitäydy vain yhdessä instanssissa\n"
+#~ "  -n, --nologin       älä kirjaudu automaattisesti\n"
+#~ "  -l, --login[=NIMI]  kirjaudu automaattisesti (valinnainen NIMI \n"
+#~ "                      määrittelee käytettävät tilit pilkuin eroteltuina.\n"
+#~ "                      Ilman tätä vain ensimmäinen tili otetaan "
+#~ "käyttöön).\n"
+#~ "  --display=NÄYTTÖ    käytettävä X-näyttö\n"
+#~ "  -v, --version       näytä nykyinen versionumero ja poistu\n"
+
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Käyttö: %s [VALITSIN]...\n"
+#~ "\n"
+#~ "  -c, --config=HAK    käytä hakemistoa HAK asetustiedostoille\n"
+#~ "  -d, --debug         kirjoita virheenjäljitysviestit putkeen stdout\n"
+#~ "  -f, --force-online  pakota ”tavoitettavissa” riippumatta verkon "
+#~ "tilasta\n"
+#~ "  -h, --help          näytä tämä ohje ja poistu\n"
+#~ "  -m, --multiple      älä pitäydy vain yhdessä instanssissa\n"
+#~ "  -n, --nologin       älä kirjaudu automaattisesti\n"
+#~ "  -l, --login[=NIMI]  kirjaudu automaattisesti (valinnainen NIMI \n"
+#~ "                      määrittelee käytettävät tilit pilkuin eroteltuina.\n"
+#~ "                      Ilman tätä vain ensimmäinen tili otetaan "
+#~ "käyttöön).\n"
+#~ "  -v, --version       näytä nykyinen versionumero ja poistu\n"
 
 #~ msgid "_Proxy"
 #~ msgstr "_Välipalvelin"
@@ -14635,9 +14881,6 @@ msgstr ""
 #~ "Olet ottanut ja katkaissut yhteyden liian tiheään. Odota kymmenen "
 #~ "minuuttia ja yritä uudestaan. Jos jatkat yrittämistä, joudut odottamaan "
 #~ "vielä pidempään."
-
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "Tuntematon sisäänkirjautumisvirhe esiintyi: %s."
 
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "Tuntematon virhe, %d, esiintyi. Tiedot: %s"
@@ -16413,9 +16656,6 @@ msgstr ""
 
 #~ msgid "Hide Disconnect Errors"
 #~ msgstr "Piilota yhteydenkatkaisuvirheilmoitukset"
-
-#~ msgid "Hide Login Errors"
-#~ msgstr "Piilota sisäänkirjautumisvirheet"
 
 #~ msgid "Hide Reconnecting Dialog"
 #~ msgstr "Piilota uudelleenyhdistämisvirheilmoitukset"

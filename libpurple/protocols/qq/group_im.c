@@ -185,7 +185,7 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 	}
 
 	if (NULL == conv) {
-		purple_debug_info("QQ", "Conversion of %u is not open, missing from %d:/n%s/v",
+		purple_debug_info("QQ", "Conversion of %u is not open, missing from %d:/n%s/v\n",
 				room_id, uid_from, msg);
 		return;
 	}

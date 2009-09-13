@@ -72,6 +72,16 @@
  * for the current PurpleSession.
  */
 
+/**
+ * PurpleStatusType's are created by each PRPL.  They outline the
+ * available statuses of the protocol.  AIM, for example, supports
+ * an available state with an optional available message, an away
+ * state with a mandatory message, and an invisible state (which is
+ * technically "independent" of the other two, but we'll get into
+ * that later).  PurpleStatusTypes are very permanent.  They are
+ * hardcoded in each PRPL and will not change often.  And because
+ * they are hardcoded, they do not need to be saved to any XML file.
+ */
 typedef struct _PurpleStatusType      PurpleStatusType;
 typedef struct _PurpleStatusAttr      PurpleStatusAttr;
 typedef struct _PurplePresence        PurplePresence;

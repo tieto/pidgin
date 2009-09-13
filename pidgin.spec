@@ -9,13 +9,13 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.6.1"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.6.2"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.6.1
+%define pidginver 2.6.2
 %endif
 
 # define the minimum API version required, so we can use it for plugin deps
-%define apiver %(echo "2.6.1"|awk -F. '{print $1"."$2}')
+%define apiver %(echo "2.6.2"|awk -F. '{print $1"."$2}')
 
 Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       pidgin
@@ -24,12 +24,12 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.6.1.tar.bz2
+Source:     %{name}-2.6.2.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
-BuildRequires: gtk2-devel
+BuildRequires: gtk2-devel, libidn-devel
 
 %{!?_without_startupnotification:BuildRequires: startup-notification-devel}
 %{?_with_avahi:BuildRequires: avahi-glib-devel}
@@ -86,6 +86,8 @@ Requires: libpurple = %{version}
 
 Obsoletes: gaim
 Provides: gaim
+Obsoletes: pidgin-perl < %{version}
+Provides: pidgin-perl = %{version}-%{release}
 
 %package devel
 Summary:    Development headers, documentation, and libraries for Pidgin
@@ -104,6 +106,8 @@ Obsoletes:  gaim-tcl
 Obsoletes:  gaim-gadugadu
 Obsoletes:  pidgin-tcl < 2.0.0
 Obsoletes:  pidgin-silc < 2.0.0
+Obsoletes:  libpurple-perl < %{version}
+Provides:   libpurple-perl = %{version}-%{release}
 %{?_with_sasl:Requires:   cyrus-sasl-plain, cyrus-sasl-md5}
 
 %package -n libpurple-devel
@@ -215,7 +219,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.6.1
+%setup -q -n %{name}-2.6.2
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -226,6 +230,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --mandir=%{_mandir} \
                                     --sysconfdir=%{_sysconfdir} \
                                     --disable-schemas-install \
+                                    %{!?_with_vv:--disable-vv} \
                                     %{!?_with_dbus:--disable-dbus} \
                                     %{!?_with_avahi:--disable-avahi} \
                                     %{!?_with_meanwhile:--disable-meanwhile} \
@@ -465,6 +470,11 @@ fi
 %endif
 
 %changelog
+* Sat Sep 05 2009 Stu Tomlinson <stu@nosnilmot.com>
+- Disable Voice & Video unless --with vv is used
+- Add BuildRequires for libidn-devel
+- Add Provides/Obsoletes to ease transition from Red Hat / Fedora RPMs
+
 * Sat Jul 11 2009 Stu Tomlinson <stu@nosnilmot.com>
 - Update to reflect changes in perl module installation directories
 

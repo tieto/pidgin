@@ -248,9 +248,11 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	{
 		purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv), user, NULL,
 								PURPLE_CBFLAGS_NONE, TRUE);
+		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 	}
 	else if (swboard->current_users > 1 || swboard->total_users > 1)
 	{
+		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 		if (swboard->conv == NULL ||
 			purple_conversation_get_type(swboard->conv) != PURPLE_CONV_TYPE_CHAT)
 		{
@@ -920,7 +922,7 @@ msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
 	}
 
 	imgid = purple_imgstore_add_with_id(image_data, image_len, NULL);
-	image_msg = g_strdup_printf("<IMG ID=%d/>", imgid);
+	image_msg = g_strdup_printf("<IMG ID='%d'/>", imgid);
 
 	if (swboard->current_users > 1 ||
 		((swboard->conv != NULL) &&
