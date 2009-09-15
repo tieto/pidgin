@@ -4,6 +4,10 @@ version 2.6.3 (??/??/20??):
 	XMPP:
 	* Fix a crash when attempting to validate an invalid JID.
 
+	General:
+	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
+	  to announce the list of loaded plugins (in both Finch and Pidgin).
+
 version 2.6.2 (09/05/2009):
 	libpurple:
 	* Fix --disable-avahi to actually disable it in configure, as opposed
