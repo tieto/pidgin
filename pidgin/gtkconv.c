@@ -352,7 +352,7 @@ debug_command_cb(PurpleConversation *conv,
 	} else {
 		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins version"),
 		                        PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_ERROR, time(NULL));
-		return PURPLE_CMD_STATUS_OK;
+		return PURPLE_CMD_RET_OK;
 	}
 
 	markup = g_markup_escape_text(tmp, -1);
@@ -363,7 +363,7 @@ debug_command_cb(PurpleConversation *conv,
 
 	g_free(tmp);
 	g_free(markup);
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static void clear_conversation_scrollback(PurpleConversation *conv)
@@ -383,7 +383,7 @@ clear_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
 	clear_conversation_scrollback(conv);
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static PurpleCmdRet
@@ -391,7 +391,7 @@ clearall_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
 	purple_conversation_foreach(clear_conversation_scrollback);
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static PurpleCmdRet
@@ -430,7 +430,7 @@ help_command_cb(PurpleConversation *conv,
 	purple_conversation_write(conv, NULL, s->str, PURPLE_MESSAGE_NO_LOG, time(NULL));
 	g_string_free(s, TRUE);
 
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static void

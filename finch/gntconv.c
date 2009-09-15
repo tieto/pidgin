@@ -1207,7 +1207,7 @@ debug_command_cb(PurpleConversation *conv,
 	} else {
 		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins version"),
 		                        PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_ERROR, time(NULL));
-		return PURPLE_CMD_STATUS_OK;
+		return PURPLE_CMD_RET_OK;
 	}
 
 	markup = g_markup_escape_text(tmp, -1);
@@ -1218,7 +1218,7 @@ debug_command_cb(PurpleConversation *conv,
 
 	g_free(tmp);
 	g_free(markup);
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 /* Xerox */
@@ -1229,7 +1229,7 @@ clear_command_cb(PurpleConversation *conv,
 	FinchConv *ggconv = FINCH_GET_DATA(conv);
 	gnt_text_view_clear(GNT_TEXT_VIEW(ggconv->tv));
 	purple_conversation_clear_message_history(conv);
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 /* Xerox */
@@ -1269,7 +1269,7 @@ help_command_cb(PurpleConversation *conv,
 	purple_conversation_write(conv, NULL, s->str, PURPLE_MESSAGE_NO_LOG, time(NULL));
 	g_string_free(s, TRUE);
 
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static PurpleCmdRet
@@ -1277,7 +1277,7 @@ cmd_show_window(PurpleConversation *conv, const char *cmd, char **args, char **e
 {
 	void (*callback)(void) = data;
 	callback();
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 #if GLIB_CHECK_VERSION(2,6,0)
@@ -1300,26 +1300,26 @@ cmd_message_color(PurpleConversation *conv, const char *cmd, char **args, char *
 	else {
 		if (error)
 			*error = g_strdup_printf(_("%s is not a valid message class. See '/help msgcolor' for valid message classes."), args[0]);
-		return PURPLE_CMD_STATUS_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
 	fg = gnt_colors_get_color(args[1]);
 	if (fg == -EINVAL) {
 		if (error)
 			*error = g_strdup_printf(_("%s is not a valid color. See '/help msgcolor' for valid colors."), args[1]);
-		return PURPLE_CMD_STATUS_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
 	bg = gnt_colors_get_color(args[2]);
 	if (bg == -EINVAL) {
 		if (error)
 			*error = g_strdup_printf(_("%s is not a valid color. See '/help msgcolor' for valid colors."), args[2]);
-		return PURPLE_CMD_STATUS_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
 	init_pair(*msgclass, fg, bg);
 
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 #endif
 
@@ -1329,7 +1329,7 @@ users_command_cb(PurpleConversation *conv, const char *cmd, char **args, char **
 	FinchConv *fc = FINCH_GET_DATA(conv);
 	FinchConvChat *ch;
 	if (!fc)
-		return PURPLE_CMD_STATUS_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	ch = fc->u.chat;
 	gnt_widget_set_visible(ch->userlist,
@@ -1337,7 +1337,7 @@ users_command_cb(PurpleConversation *conv, const char *cmd, char **args, char **
 	gnt_box_readjust(GNT_BOX(fc->window));
 	gnt_box_give_focus_to_child(GNT_BOX(fc->window), fc->entry);
 	purple_prefs_set_bool(PREF_USERLIST, !(GNT_WIDGET_IS_FLAG_SET(ch->userlist, GNT_WIDGET_INVISIBLE)));
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 void finch_conversation_init()
