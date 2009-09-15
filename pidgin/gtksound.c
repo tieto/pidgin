@@ -617,19 +617,16 @@ gboolean
 pidgin_sound_is_customized(void)
 {
 	gint i;
-	gchar *path, *file;
+	gchar *path;
+	const char *file;
 
 	for (i = 0; i < PURPLE_NUM_SOUNDS; i++) {
 		path = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s", sounds[i].pref);
-		file = g_strdup(purple_prefs_get_path(path));
+		file = purple_prefs_get_path(path);
 		g_free(path);
 
-		if (file && file[0] != '\0'){
-			g_free(file);
+		if (file && file[0] != '\0')
 			return TRUE;
-		}
-
-		g_free(file);
 	}
 
 	return FALSE;
