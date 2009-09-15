@@ -7277,7 +7277,8 @@ spellcheck_pref_cb(const char *name, PurplePrefType type,
 			pidgin_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
 		else {
 			spell = gtkspell_get_from_text_view(GTK_TEXT_VIEW(gtkconv->entry));
-			gtkspell_detach(spell);
+			if (spell)
+				gtkspell_detach(spell);
 		}
 	}
 #endif
