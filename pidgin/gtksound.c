@@ -212,6 +212,8 @@ chat_msg_received_cb(PurpleAccount *account, char *sender,
 		return;
 
 	if (flags & PURPLE_MESSAGE_NICK || purple_utf8_has_word(message, chat->nick))
+		/* This isn't quite right; if you have the PURPLE_SOUND_CHAT_NICK event disabled
+		 * and the PURPLE_SOUND_CHAT_SAY event enabled, you won't get a sound at all */
 		play_conv_event(conv, PURPLE_SOUND_CHAT_NICK);
 	else
 		play_conv_event(conv, event);
@@ -591,6 +593,7 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 				purple_debug_error("sound", "The file: (%s) %s\n from theme: %s, was not found or wasn't readable\n",
 							sounds[event].pref, filename, theme_name);
 				g_free(filename);
+				filename = NULL;
 			}
 		}
 
