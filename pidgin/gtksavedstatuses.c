@@ -34,7 +34,6 @@
 #include "util.h"
 
 #include "gtkblist.h"
-#include "gtkexpander.h"
 #include "pidgin.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
@@ -180,23 +179,6 @@ status_window_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 	return FALSE;
 }
 
-#if !GTK_CHECK_VERSION(2,2,0)
-static void
-count_selected_helper(GtkTreeModel *model, GtkTreePath *path,
-					GtkTreeIter *iter, gpointer user_data)
-{
-	(*(gint *)user_data)++;
-}
-
-static void
-list_selected_helper(GtkTreeModel *model, GtkTreePath *path,
-					GtkTreeIter *iter, gpointer user_data)
-{
-	GList **list = (GList **)user_data;
-	*list = g_list_append(*list, gtk_tree_path_copy(path));
-}
-#endif
-
 static void
 status_window_use_cb(GtkButton *button, StatusWindow *dialog)
 {
@@ -207,11 +189,7 @@ status_window_use_cb(GtkButton *button, StatusWindow *dialog)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
 
-#if GTK_CHECK_VERSION(2,2,0)
 	num_selected = gtk_tree_selection_count_selected_rows(selection);
-#else
-	gtk_tree_selection_selected_foreach(selection, count_selected_helper, &num_selected);
-#endif
 	if (num_selected != 1)
 		/*
 		 * This shouldn't happen because the "Use" button should have
@@ -219,11 +197,7 @@ status_window_use_cb(GtkButton *button, StatusWindow *dialog)
 		 */
 		return;
 
-#if GTK_CHECK_VERSION(2,2,0)
 	list = gtk_tree_selection_get_selected_rows(selection, NULL);
-#else
-	gtk_tree_selection_selected_foreach(selection, list_selected_helper, &list);
-#endif
 
 	if (gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model),
 								&iter, list->data))
@@ -311,11 +285,7 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 	gpointer handle;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
-#if GTK_CHECK_VERSION(2,2,0)
 	sel_paths = gtk_tree_selection_get_selected_rows(selection, NULL);
-#else
-	gtk_tree_selection_selected_foreach(selection, list_selected_helper, &sel_paths);
-#endif
 
 	/* This is ugly because we're not allowed to modify the model from within
 	 * gtk_tree_selection_selected_foreach() and the GtkTreePaths can become invalid
@@ -365,11 +335,7 @@ status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 	int num_selected;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 
-#if GTK_CHECK_VERSION(2,2,0)
 	sel_paths = gtk_tree_selection_get_selected_rows(sel, NULL);
-#else
-	gtk_tree_selection_selected_foreach(sel, list_selected_helper, &sel_paths);
-#endif
 
 	for (tmp = sel_paths, num_selected = 0; tmp; tmp = tmp->next, num_selected++) {
 		GtkTreeIter iter;
@@ -521,9 +487,7 @@ create_saved_status_list(StatusWindow *dialog)
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text",
 									   STATUS_WINDOW_COLUMN_TITLE);
-#if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(renderer, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Type"));
@@ -550,9 +514,7 @@ create_saved_status_list(StatusWindow *dialog)
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text",
 									   STATUS_WINDOW_COLUMN_MESSAGE);
-#if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(renderer, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 
 	/* Enable CTRL+F searching */
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(treeview), STATUS_WINDOW_COLUMN_TITLE);

@@ -32,7 +32,6 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Namešèeno imate starejšo razlièico izvajalnega okolja GTK+. Jo želite nadgraditi?$\rOpomba: èe je ne boste nadgradili, $(^Name) morda ne bo deloval."
-!define GTK_WINDOWS_INCOMPATIBLE		"Okolja Windows 95/98/Me z GTK+ 2.8.0 ali novejšimi niso združljiva.  GTK+ ${GTK_INSTALL_VERSION} will not be installed.$\rIf you don't have GTK+ ${GTK_MIN_VERSION} ali novejši je že namešèen, zato se bo namestitev zdaj prekinila."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Obišèite spletno stran Windows Pidgin"

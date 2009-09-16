@@ -2081,24 +2081,11 @@ static void save_list()
 	g_string_free(data, TRUE);
 }
 
-#if !GTK_CHECK_VERSION(2,2,0)
-static void
-count_selected_helper(GtkTreeModel *model, GtkTreePath *path,
-					GtkTreeIter *iter, gpointer user_data)
-{
-	(*(gint *)user_data)++;
-}
-#endif
-
 static void on_selection_changed(GtkTreeSelection *sel,
 	gpointer data)
 {
 	gint num_selected;
-#if GTK_CHECK_VERSION(2,2,0)
 	num_selected = gtk_tree_selection_count_selected_rows(sel);
-#else
-	gtk_tree_selection_selected_foreach(sel, count_selected_helper, &num_selected);
-#endif
 	gtk_widget_set_sensitive((GtkWidget*)data, (num_selected > 0));
 }
 
