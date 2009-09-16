@@ -2153,7 +2153,7 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 			GstElement *lastElement = NULL;
 			while (!GST_IS_PIPELINE(element)) {
 				if (element == media->priv->confbin) {
-					purple_media_error(media, _("Conference error."));
+					purple_media_error(media, _("Conference error"));
 					purple_media_end(media, NULL, NULL);
 					break;
 				}
@@ -2167,9 +2167,9 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 
 					if (session->src == lastElement) {
 						if (session->type & PURPLE_MEDIA_AUDIO)
-							purple_media_error(media, _("Error with your microphone."));
+							purple_media_error(media, _("Error with your microphone"));
 						else
-							purple_media_error(media, _("Error with your webcam."));
+							purple_media_error(media, _("Error with your webcam"));
 						purple_media_end(media, NULL, NULL);
 						break;
 					}
