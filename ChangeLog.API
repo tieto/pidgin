@@ -22,7 +22,6 @@ version 2.6.0 (??/??/2009):
 		  and fwrite for saving a file locally. These allow a UI to stream a
 		  file through a socket without buffering the file on the local disk.
 		* Jabber plugin signals (see jabber-signals.dox)
-		* purple_account_get_name_for_display
 		* purple_account_remove_setting
 		* purple_buddy_destroy
 		* purple_buddy_get_protocol_data
