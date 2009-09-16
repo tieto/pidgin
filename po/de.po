@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-16 10:51+0200\n"
-"PO-Revision-Date: 2009-09-16 10:51+0200\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2009-09-16 11:43+0200\n"
+"PO-Revision-Date: 2009-09-16 11:37+0200\n"
+"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -644,9 +644,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "Liste von %d Benutzer:\n"
 msgstr[1] "Liste von %d Benutzern:\n"
 
-#, fuzzy
 msgid "Supported debug options are: plugins version"
-msgstr "Unterstützte Debug-Optionen sind:  version"
+msgstr "Unterstützte Debug-Optionen sind: plugins version"
 
 msgid "No such command (in this context)."
 msgstr "Kein solches Kommando (in diesem Kontext)."
@@ -2202,13 +2201,13 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Ein nicht behebbarer Farsight2-Fehler ist aufgetreten."
 
-msgid "Conference error."
+msgid "Conference error"
 msgstr "Konferenz-Fehler"
 
-msgid "Error with your microphone."
+msgid "Error with your microphone"
 msgstr "Fehler mit Ihrem Mikrofon"
 
-msgid "Error with your webcam."
+msgid "Error with your webcam"
 msgstr "Fehler mit Ihrer Webcam"
 
 #, c-format
@@ -7105,7 +7104,7 @@ msgid "C_onnect"
 msgstr "V_erbinden"
 
 msgid "You closed the connection."
-msgstr "Sie haben die Verbindung beendet"
+msgstr "Sie haben die Verbindung beendet."
 
 msgid "Get AIM Info"
 msgstr "AIM-Info"
@@ -14318,12 +14317,13 @@ msgstr "Sprach-/Video-Einstellungen"
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
-msgstr "Mikrofon und Webcam konfigurieren"
+msgstr "Mikrofon und Webcam konfigurieren."
 
 #. *< summary
 msgid "Configure microphone and webcam settings for voice/video calls."
 msgstr ""
-"Die Mikrofon- und Webcam-Einstellungen für Audio- und Video-Anrufe bearbeiten"
+"Die Mikrofon- und Webcam-Einstellungen für Audio- und Video-Anrufe "
+"bearbeiten."
 
 msgid "Opacity:"
 msgstr "Durchlässigkeit:"
