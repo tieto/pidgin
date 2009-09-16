@@ -601,8 +601,8 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	jabber_caps_cbplususerdata *userdata;
 
 	if (exts && hash) {
-		purple_debug_info("jabber", "Ignoring exts in new-style caps from %s\n",
-		                     who);
+		purple_debug_misc("jabber", "Ignoring exts in new-style caps from %s\n",
+		                  who);
 		g_strfreev(exts);
 		exts = NULL;
 	}

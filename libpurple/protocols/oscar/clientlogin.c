@@ -62,50 +62,6 @@ static const char *get_client_key(OscarData *od)
 }
 
 /**
- * This is similar to purple_url_encode() except that it follows
- * RFC3986 a little more closely by not encoding - . _ and ~
- * It also uses capital letters as hex characters because capital
- * letters are required by AOL.  The RFC says that capital letters
- * are a SHOULD and that URLs that use capital letters are
- * equivalent to URLs that use small letters.
- *
- * TODO: Check if purple_url_encode() can be replaced with this
- *       version without breaking anything.
- */
-static const char *oscar_auth_url_encode(const char *str)
-{
-	const char *iter;
-	static char buf[BUF_LEN];
-	char utf_char[6];
-	guint i, j = 0;
-
-	g_return_val_if_fail(str != NULL, NULL);
-	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
-
-	iter = str;
-	for (; *iter && j < (BUF_LEN - 1) ; iter = g_utf8_next_char(iter)) {
-		gunichar c = g_utf8_get_char(iter);
-		/* If the character is an ASCII character and is alphanumeric
-		 * no need to escape */
-		if ((c < 128 && isalnum(c)) || c =='-' || c == '.' || c == '_' || c == '~') {
-			buf[j++] = c;
-		} else {
-			int bytes = g_unichar_to_utf8(c, utf_char);
-			for (i = 0; i < bytes; i++) {
-				if (j > (BUF_LEN - 4))
-					break;
-				sprintf(buf + j, "%%%02X", utf_char[i] & 0xff);
-				j += 3;
-			}
-		}
-	}
-
-	buf[j] = '\0';
-
-	return buf;
-}
-
-/**
  * @return A null-terminated base64 encoded version of the HMAC
  *         calculated using the given key and data.
  */
@@ -134,8 +90,8 @@ static gchar *generate_signature(const char *method, const char *url, const char
 	char *encoded_url, *signature_base_string, *signature;
 	const char *encoded_parameters;
 
-	encoded_url = g_strdup(oscar_auth_url_encode(url));
-	encoded_parameters = oscar_auth_url_encode(parameters);
+	encoded_url = g_strdup(purple_url_encode(url));
+	encoded_parameters = purple_url_encode(parameters);
 	signature_base_string = g_strdup_printf("%s&%s&%s",
 			method, encoded_url, encoded_parameters);
 	g_free(encoded_url);
@@ -309,7 +265,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 			"&k=%s"
 			"&ts=%" PURPLE_TIME_T_MODIFIER
 			"&useTLS=0",
-			oscar_auth_url_encode(token), get_client_key(od), hosttime);
+			purple_url_encode(token), get_client_key(od), hosttime);
 	signature = generate_signature("GET", URL_START_OSCAR_SESSION,
 			query_string, session_key);
 	url = g_strdup_printf(URL_START_OSCAR_SESSION "?%s&sig_sha256=%s",
@@ -553,8 +509,8 @@ void send_client_login(OscarData *od, const char *username)
 	body = g_string_new("");
 	g_string_append_printf(body, "devId=%s", get_client_key(od));
 	g_string_append_printf(body, "&f=xml");
-	g_string_append_printf(body, "&pwd=%s", oscar_auth_url_encode(password));
-	g_string_append_printf(body, "&s=%s", oscar_auth_url_encode(username));
+	g_string_append_printf(body, "&pwd=%s", purple_url_encode(password));
+	g_string_append_printf(body, "&s=%s", purple_url_encode(username));
 	g_free(password);
 
 	/* Construct an HTTP POST request */

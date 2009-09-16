@@ -496,7 +496,7 @@ purple_core_migrate(void)
 			if (purple_strequal(entry, "logs"))
 			{
 				char *link;
-				GError *err = NULL;
+				err = NULL;
 
 				if ((link = g_file_read_link(name, &err)) == NULL)
 				{

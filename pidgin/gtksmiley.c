@@ -601,10 +601,17 @@ static void store_smiley_add(PurpleSmiley *smiley)
 		GdkPixbuf *smiley_image = pidgin_pixbuf_from_imgstore(img);
 		purple_imgstore_unref(img);
 
-		if (smiley_image != NULL)
-			sized_smiley = gdk_pixbuf_scale_simple(smiley_image,
+		if (smiley_image != NULL) {
+			if (gdk_pixbuf_get_width(smiley_image) > 22 ||
+				gdk_pixbuf_get_height(smiley_image) > 22) {
+				sized_smiley = gdk_pixbuf_scale_simple(smiley_image,
 					22, 22, GDK_INTERP_HYPER);
-		g_object_unref(G_OBJECT(smiley_image));
+				g_object_unref(G_OBJECT(smiley_image));
+			} else {
+				/* don't scale up smaller smileys, avoid blurryness */
+				sized_smiley = smiley_image;
+			}
+		}
 	}
 
 

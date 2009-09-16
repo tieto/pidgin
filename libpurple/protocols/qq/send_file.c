@@ -390,7 +390,7 @@ static void _qq_xfer_init_socket(PurpleXfer *xfer)
 	info->local_real_ip = 0x7f000001;
 	*/
 	info->local_real_ip = g_ntohl(inet_addr(purple_network_get_my_ip(-1)));
-	purple_debug_info("QQ", "local real ip is %x", info->local_real_ip);
+	purple_debug_info("QQ", "local real ip is %x\n", info->local_real_ip);
 
 	for (i = 0; i < 2; i++) {
 		sockfd = socket(PF_INET, SOCK_DGRAM, 0);
@@ -558,7 +558,7 @@ static void _qq_send_packet_file_reject (PurpleConnection *gc, guint32 to_uid)
 	guint8 *raw_data;
 	gint packet_len, bytes;
 
-	purple_debug_info("_qq_send_packet_file_reject", "start");
+	purple_debug_info("_qq_send_packet_file_reject", "start\n");
 	qd = (qq_data *) gc->proto_data;
 
 	packet_len = 64;

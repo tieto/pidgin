@@ -241,7 +241,7 @@ oscar_charset_check(const char *utf8)
 	{
 		if ((unsigned char)utf8[i] > 0x7f) {
 			/* not ASCII! */
-			charset = AIM_CHARSET_CUSTOM;
+			charset = AIM_CHARSET_LATIN_1;
 			break;
 		}
 		i++;
@@ -428,7 +428,7 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcebn,
 	if (charset == AIM_CHARSET_UNICODE) {
 		charsetstr1 = "UTF-16BE";
 		charsetstr2 = "UTF-8";
-	} else if (charset == AIM_CHARSET_CUSTOM) {
+	} else if (charset == AIM_CHARSET_LATIN_1) {
 		if ((sourcebn != NULL) && oscar_util_valid_name_icq(sourcebn))
 			charsetstr1 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 		else
@@ -539,7 +539,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	 */
 	*msg = g_convert(from, -1, charsetstr, "UTF-8", NULL, &msglen, &err);
 	if (*msg != NULL) {
-		*charset = AIM_CHARSET_CUSTOM;
+		*charset = AIM_CHARSET_LATIN_1;
 		*charsubset = 0x0000;
 		*msglen_int = msglen;
 		return;
@@ -829,19 +829,25 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 	   the "message" attribute of the status contains only the plaintext
 	   message. */
 	if (userinfo) {
-		if ((userinfo->flags & AIM_FLAG_AWAY)) {
-			/* Away message? */
-			if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-				tmp = oscar_encoding_extract(userinfo->away_encoding);
-				message = oscar_encoding_to_utf8(account, tmp, userinfo->away,
-												   userinfo->away_len);
-				g_free(tmp);
-			}
+		if ((userinfo->flags & AIM_FLAG_AWAY)
+				&& userinfo->away_len > 0
+				&& userinfo->away != NULL
+				&& userinfo->away_encoding != NULL)
+		{
+			/* Away message */
+			tmp = oscar_encoding_extract(userinfo->away_encoding);
+			message = oscar_encoding_to_utf8(account,
+					tmp, userinfo->away, userinfo->away_len);
+			g_free(tmp);
 		} else {
-			/* Available message? */
+			/*
+			 * Available message or non-HTML away message (because that's
+			 * all we have right now.
+			 */
 			if ((userinfo->status != NULL) && userinfo->status[0] != '\0') {
-				message = oscar_encoding_to_utf8(account, userinfo->status_encoding,
-											 userinfo->status, userinfo->status_len);
+				message = oscar_encoding_to_utf8(account,
+						userinfo->status_encoding, userinfo->status,
+						userinfo->status_len);
 			}
 #if defined (_WIN32) || defined (__APPLE__)
 			if (userinfo->itmsurl && (userinfo->itmsurl[0] != '\0'))
@@ -2405,6 +2411,21 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	if (purple_markup_find_tag("body", tmp, &start, &end, &attribs))
 	{
 		const char *ichattextcolor, *ichatballooncolor;
+		const char *start2, *end2;
+		GData *unused;
+
+		/*
+		 * Find the ending </body> so we can strip off the outer <html/>
+		 * and <body/>
+		 */
+		if (purple_markup_find_tag("/body", end + 1, &start2, &end2, &unused))
+		{
+			gchar *tmp2;
+			tmp2 = g_strndup(end + 1, (start2 - 1) - (end + 1) + 1);
+			g_free(tmp);
+			tmp = tmp2;
+			g_datalist_clear(&unused);
+		}
 
 		ichattextcolor = g_datalist_get_data(&attribs, "ichattextcolor");
 		if (ichattextcolor != NULL)
@@ -2786,7 +2807,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				gchar *reason = NULL;
 
 				if (msg2[5] != NULL)
-					reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_CUSTOM, 0x0000, msg2[5], strlen(msg2[5]));
+					reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_LATIN_1, 0x0000, msg2[5], strlen(msg2[5]));
 
 				purple_debug_info("oscar",
 						   "Received an authorization request from UIN %u\n",
@@ -3215,16 +3236,16 @@ static int purple_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	PurpleConnection *gc = od->gc;
 	va_list ap;
-	guint16 type1, type2;
+	guint16 channel, event;
 	char *bn;
 
 	va_start(ap, fr);
-	type1 = (guint16) va_arg(ap, unsigned int);
+	channel = (guint16) va_arg(ap, unsigned int);
 	bn = va_arg(ap, char *);
-	type2 = (guint16) va_arg(ap, unsigned int);
+	event = (guint16) va_arg(ap, unsigned int);
 	va_end(ap);
 
-	switch (type2) {
+	switch (event) {
 		case 0x0000: { /* Text has been cleared */
 			serv_got_typing_stopped(gc, bn);
 		} break;
@@ -3237,12 +3258,14 @@ static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 			serv_got_typing(gc, bn, 0, PURPLE_TYPING);
 		} break;
 
+		case 0x000f: { /* Closed IM window */
+			serv_got_typing_stopped(gc, bn);
+		} break;
+
 		default: {
-			/*
-			 * It looks like iChat sometimes sends typing notification
-			 * with type1=0x0001 and type2=0x000f.  Not sure why.
-			 */
-			purple_debug_info("oscar", "Received unknown typing notification message from %s.  Type1 is 0x%04x and type2 is 0x%04hx.\n", bn, type1, type2);
+			purple_debug_info("oscar", "Received unknown typing "
+					"notification message from %s.  Channel is 0x%04x "
+					"and event is 0x%04hx.\n", bn, channel, event);
 		} break;
 	}
 
@@ -4672,7 +4695,7 @@ gchar *purple_prpl_oscar_convert_to_infotext(const gchar *str, gsize *ret_len, c
 	if (charset == AIM_CHARSET_UNICODE) {
 		encoded = g_convert(str, -1, "UTF-16BE", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "unicode-2-0";
-	} else if (charset == AIM_CHARSET_CUSTOM) {
+	} else if (charset == AIM_CHARSET_LATIN_1) {
 		encoded = g_convert(str, -1, "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "iso-8859-1";
 	} else {
@@ -5575,7 +5598,7 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 	buddy = purple_find_buddy(account, bn);
 
 	if (msg != NULL)
-		reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_CUSTOM, 0x0000, msg, strlen(msg));
+		reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_LATIN_1, 0x0000, msg, strlen(msg));
 
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
@@ -5812,7 +5835,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		charsetstr = "us-ascii";
 	else if (charset == AIM_CHARSET_UNICODE)
 		charsetstr = "unicode-2-0";
-	else if (charset == AIM_CHARSET_CUSTOM)
+	else if (charset == AIM_CHARSET_LATIN_1)
 		charsetstr = "iso-8859-1";
 	aim_chat_send_im(od, c->conn, 0, buf2, len, charsetstr, "en");
 	g_free(buf2);

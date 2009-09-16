@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-21 17:54+0200\n"
-"PO-Revision-Date: 2009-08-21 17:54+0200\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"PO-Revision-Date: 2009-08-29 00:59+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
 "MIME-Version: 1.0\n"
@@ -1637,6 +1637,39 @@ msgstr "Partnerek"
 msgid "buddy list"
 msgstr "partnerlista"
 
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr "A tanúsítvány saját aláírású és nem ellenőrizhető automatikusan."
+
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
+msgstr "A tanúsítványt kiadó gyökértanúsítványt a Pidgin nem ismeri."
+
+msgid "The certificate is not valid yet."
+msgstr "A tanúsítvány még nem érvényes."
+
+msgid "The certificate has expired and should not be considered valid."
+msgstr "A tanúsítvány lejárt és nem tekinthető érvényesnek."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+msgid "The certificate presented is not issued to this domain."
+msgstr "A bemutatott tanúsítvány nem ehhez a tartományhoz lett kiállítva."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+"A gyökértanúsítványok adatbázisa nem érhető el, így ez a tanúsítvány nem "
+"ellenőrizhető."
+
+msgid "The certificate chain presented is invalid."
+msgstr "A bemutatott tanúsítványlánc érvénytelen."
+
+msgid "The certificate has been revoked."
+msgstr "A tanúsítványt visszavonták."
+
+msgid "An unknown certificate error occurred."
+msgstr "Ismeretlen tanúsítványhiba történt."
+
 msgid "(DOES NOT MATCH)"
 msgstr "(NEM EGYEZIK)"
 
@@ -1680,87 +1713,23 @@ msgid "_View Certificate..."
 msgstr "_Tanúsítvány megjelenítése…"
 
 #, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
-msgstr ""
-"A(z) „%s” által bemutatott tanúsítvány a következőtől származónak mondja "
-"magát: „%s”. Ez azt jelentheti, hogy a kívánttól eltérő szolgáltatáshoz "
-"kapcsolódik."
+msgid "The certificate for %s could not be validated."
+msgstr "A következő tanúsítványa nem ellenőrizhető: %s."
 
-#. Had no CA pool, so couldn't verify the chain *and*
-#. * the subject name isn't valid.
-#. * I think this is bad enough to warrant a fatal error. It's
-#. * not likely anyway...
-#.
-#. TODO: Probably wrong.
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
-#. TODO: Probably wrong.
-#. TODO: Probably wrong
 #. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "SSL tanúsítványhiba"
 
-msgid "Invalid certificate chain"
-msgstr "Érvénytelen tanúsítványlánc"
+msgid "Unable to validate certificate"
+msgstr "A tanúsítvány nem ellenőrizhető"
 
-#. The subject name is correct, but we weren't able to verify the
-#. * chain because there was no pool of root CAs found. Prompt the user
-#. * to validate it.
-#.
-#. vrq will be completed by user_auth
+#, c-format
 msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
-"A gyökértanúsítványok adatbázisa nem érhető el, így ez a tanúsítvány nem "
-"ellenőrizhető."
-
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"A(z) „%s” által bemutatott tanúsítvány saját aláírású. Nem ellenőrizhető "
-"automatikusan."
-
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
-msgstr "A következőhöz bemutatott tanúsítványlánc nem érvényes: %s."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr "A tanúsítványt kiadó gyökértanúsítványt a Pidgin nem ismeri."
-
-#, c-format
-msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-"A(z) %s által bemutatott tanúsítványlánc nem rendelkezik érvényes digitális "
-"aláírással attól a hitelesítésszolgáltatótól, amely aláírásával állítása "
-"szerint rendelkezik."
-
-msgid "Invalid certificate authority signature"
-msgstr "A hitelesítésszolgáltató aláírása érvénytelen"
-
-#, c-format
-msgid "Failed to validate expiration time for %s"
-msgstr "Nem sikerült ellenőrizni a következő lejárati idejét: %s"
-
-#, c-format
-msgid "The certificate for %s is expired."
-msgstr "%s tanúsítványa lejárt."
-
-#, c-format
-msgid "The certificate for %s should not yet be in use."
-msgstr "A következő tanúsítványát még nem lenne szabad használni: %s."
+"A tanúsítvány a következőtől származónak mondja magát: „%s”. Ez azt "
+"jelentheti, hogy a kívánttól eltérő szolgáltatáshoz kapcsolódik."
 
 #. Make messages
 #, c-format
@@ -2202,6 +2171,35 @@ msgstr "<font color=\"red\"><b>A fájl olvasása sikertelen: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTOMATIKUS VÁLASZ>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+"Nem találhatók kodekek. Telepítsen néhány GStreamer kodeket, ezek a "
+"GStreamer bővítménycsomagokban találhatók."
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+"Nincs több kodek. A fs-codecs.conf fájlban megadott kodekbeállítások túl "
+"szigorúak."
+
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Helyrehozhatatlan Farsight2 hiba történt."
+
+msgid "Conference error."
+msgstr "Konferenciahiba"
+
+msgid "Error with your microphone."
+msgstr "Hiba történt a mikrofonnal."
+
+msgid "Error with your webcam."
+msgstr "Hiba történt a webkamerával."
+
+#, c-format
+msgid "Error creating session: %s"
+msgstr "Hiba a munkamenet létrehozásakor: %s"
 
 msgid "Error creating conference."
 msgstr "Hiba a konferencia létrehozásakor."
@@ -9489,6 +9487,9 @@ msgstr "Csevegőszoba nyelve"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Konferencia- és csevegőszoba-meghívások figyelmen kívül hagyása"
 
+msgid "Use account proxy for SSL connections"
+msgstr "Fiókproxy használata SSL kapcsolatokhoz"
+
 msgid "Chat room list URL"
 msgstr "Csevegőszobák listájának URL címe"
 
@@ -9610,7 +9611,7 @@ msgstr "Ismeretlen hiba: 52. Próbáljon újracsatlakozni."
 
 msgid ""
 "Error 1013: The username you have entered is invalid.  The most common cause "
-"of this error is entering your e-mail address instead of your Yahoo! ID."
+"of this error is entering your email address instead of your Yahoo! ID."
 msgstr ""
 "1013-as hiba: A megadott felhasználónév érvénytelen. Ennek leggyakoribb oka, "
 "hogy az e-mail címét adta meg a Yahoo! azonosítója helyett."
@@ -11639,20 +11640,19 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A> (This is a <A HREF=\"http://pidgin.im/cgi-bin/"
-"mailman/listinfo/support\">mailing list</A>, and messages sent here are <A "
-"HREF=\"http://pidgin.im/pipermail/support/\">publicly archived!</A>  "
-"Furthermore, we do <I><B>not</B></I> support MXit, Facebook, Skype, or any "
-"other third-party plugins on this list.<BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
-"<FONT SIZE=\"4\">Segítség e-mailben:</FONT> <A HREF=\"mailto:support@pidgin."
-"im\">support@pidgin.im</A> (Ez egy angol nyelvű <A HREF=\"http://pidgin.im/"
-"cgi-bin/mailman/listinfo/support\">levelezőlista</A>, az ide küldött levelek "
-"<A HREF=\"http://pidgin.im/pipermail/support/\">nyilvánosan elérhetők "
-"lesznek!</A> Továbbá, ezen a listán <I><B>nem</B></I> támogatjuk az MXit, "
-"Facebook, Skype, vagy bármely más harmadik féltől származó bővítményt.<BR/"
-"><BR/>"
+"<font size=\"4\">Segítség más Pidgin felhasználóktól:</font> <a href="
+"\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Ez egy <b>nyilvános</"
+"b> levelezőlista! (<a href=\"http://pidgin.im/pipermail/support/\">archívum</"
+"a>)<br/>Nem tudunk segíteni külső protokollokkal vagy bővítményekkel "
+"kapcsolatban!<br/>Ez a lista <b>angol</b> nyelvű. Írhat más nyelven is, de a "
+"válaszok nem biztos, hogy túl hasznosak lesznek.<br/><br/>"
 
 #, c-format
 msgid ""
@@ -12215,6 +12215,9 @@ msgstr ""
 "Használat: %s [KAPCSOLÓ]…\n"
 "\n"
 
+msgid "DIR"
+msgstr ""
+
 msgid "use DIR for config files"
 msgstr "a KÖNYVTÁR használata a beállítófájlokhoz"
 
@@ -12233,15 +12236,17 @@ msgstr "több példány engedélyezése"
 msgid "don't automatically login"
 msgstr "ne jelentkezzen be automatikusan"
 
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 "automatikus bejelentkezés (a NÉV paraméter megadja a\n"
 "                      használandó fiókok vesszőkkel tagolt listáját."
-
-msgid "Without this only the first account will be enabled)."
-msgstr "Enélkül csak az első fiók lesz engedélyezve)."
 
 msgid "X display to use"
 msgstr "Használandó X-megjelenítő"
@@ -12662,12 +12667,16 @@ msgstr "Nem indítható a proxykonfigurációs program."
 msgid "Cannot start browser configuration program."
 msgstr "Nem indítható a böngészőkonfigurációs program."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Például: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Tiltás"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Automatikusan felismert _IP cím használata: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Például: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "_Nyilvános IP:"
@@ -12690,6 +12699,10 @@ msgstr "_Utolsó port:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Továbbító kiszolgáló (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "_Kiszolgáló:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proxy-kiszolgáló és böngésző"
@@ -14254,6 +14267,51 @@ msgstr ""
 "Ez a bővítmény lehetővé teszi a felhasználó számára a társalgási és "
 "naplóüzenetek időpecsét-formátumainak testreszabását."
 
+msgid "Audio"
+msgstr "Hang"
+
+msgid "Video"
+msgstr "Videó"
+
+msgid "Output"
+msgstr "Kimenet"
+
+msgid "_Plugin"
+msgstr "_Bővítmény"
+
+msgid "_Device"
+msgstr "_Eszköz"
+
+msgid "Input"
+msgstr "Bemenet"
+
+msgid "P_lugin"
+msgstr "Bő_vítmény"
+
+msgid "D_evice"
+msgstr "_Eszköz"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Voice/Video Settings"
+msgstr "Hang/videobeállítások"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr "Mikrofon és webkamera beállítása."
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr "Mikrofon- és webkamera-beállítások megadása hang- és videohívásokhoz."
+
 msgid "Opacity:"
 msgstr "Átlátszatlanság:"
 
@@ -14382,3 +14440,6 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ez a bővítmény XMPP kiszolgálókban vagy kliensekben végzett hibakereséshez "
 "hasznos."
+
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "Enélkül csak az első fiók lesz engedélyezve)."

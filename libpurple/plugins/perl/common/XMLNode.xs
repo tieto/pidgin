@@ -32,6 +32,18 @@ Purple::XMLNode
 xmlnode_get_child(parent, name)
 	Purple::XMLNode parent
 	const char *name
+PREINIT:
+	xmlnode *tmp;
+CODE:
+	if (!name || *name == '\0') {
+		tmp = parent->child;
+		while (tmp && tmp->type != XMLNODE_TYPE_TAG)
+			tmp = tmp->next;
+		RETVAL = tmp;
+	} else
+		RETVAL = xmlnode_get_child(parent, name);
+OUTPUT:
+	RETVAL
 
 Purple::XMLNode
 xmlnode_get_child_with_namespace(parent, name, xmlns)
@@ -42,6 +54,19 @@ xmlnode_get_child_with_namespace(parent, name, xmlns)
 gchar_own *
 xmlnode_get_data(node)
 	Purple::XMLNode node
+
+Purple::XMLNode
+xmlnode_get_next(node)
+	Purple::XMLNode node
+PREINIT:
+	xmlnode *tmp;
+CODE:
+	tmp = node->next;
+	while (tmp && tmp->type != XMLNODE_TYPE_TAG)
+		tmp = tmp->next;
+	RETVAL = tmp;
+OUTPUT:
+	RETVAL
 
 Purple::XMLNode
 xmlnode_get_next_twin(node)
