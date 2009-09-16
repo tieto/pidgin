@@ -245,10 +245,10 @@ void qq_request_login(PurpleConnection *gc)
 
 	g_return_if_fail(qd->ld.token != NULL && qd->ld.token_len > 0);
 
-	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 16);
-	memset(raw_data, 0, MAX_PACKET_SIZE - 16);
+	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 17);
+	memset(raw_data, 0, MAX_PACKET_SIZE - 17);
 
-	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 16 bytes more */
+	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 17 bytes more */
 
 	bytes = 0;
 	/* now generate the encrypted data
@@ -609,7 +609,7 @@ void qq_request_get_server(PurpleConnection *gc)
 	raw_data = g_newa(guint8, 128);
 	memset(raw_data, 0, 128);
 
-	encrypted = g_newa(guint8, 128 + 16);	/* 16 bytes more */
+	encrypted = g_newa(guint8, 128 + 17);	/* 17 bytes more */
 
 	bytes = 0;
 	if (qd->redirect == NULL) {
@@ -682,10 +682,10 @@ void qq_request_token_ex(PurpleConnection *gc)
 
 	g_return_if_fail(qd->ld.token != NULL && qd->ld.token_len > 0);
 
-	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 16);
-	memset(raw_data, 0, MAX_PACKET_SIZE - 16);
+	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 17);
+	memset(raw_data, 0, MAX_PACKET_SIZE - 17);
 
-	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 16 bytes more */
+	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 17 bytes more */
 
 	bytes = 0;
 	bytes += qq_put8(raw_data + bytes, qd->ld.token_len);
@@ -721,10 +721,10 @@ void qq_request_token_ex_next(PurpleConnection *gc)
 
 	g_return_if_fail(qd->ld.token != NULL && qd->ld.token_len > 0);
 
-	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 16);
-	memset(raw_data, 0, MAX_PACKET_SIZE - 16);
+	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 17);
+	memset(raw_data, 0, MAX_PACKET_SIZE - 17);
 
-	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 16 bytes more */
+	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 17 bytes more */
 
 	bytes = 0;
 	bytes += qq_put8(raw_data + bytes, qd->ld.token_len);
@@ -765,10 +765,10 @@ static void request_token_ex_code(PurpleConnection *gc,
 	g_return_if_fail(qd->ld.token != NULL && qd->ld.token_len > 0);
 	g_return_if_fail(code != NULL && code_len > 0);
 
-	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 16);
-	memset(raw_data, 0, MAX_PACKET_SIZE - 16);
+	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 17);
+	memset(raw_data, 0, MAX_PACKET_SIZE - 17);
 
-	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 16 bytes more */
+	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 17 bytes more */
 
 	bytes = 0;
 	bytes += qq_put8(raw_data + bytes, qd->ld.token_len);
@@ -998,10 +998,10 @@ void qq_request_check_pwd(PurpleConnection *gc)
 
 	g_return_if_fail(qd->ld.token_ex != NULL && qd->ld.token_ex_len > 0);
 
-	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 16);
-	memset(raw_data, 0, MAX_PACKET_SIZE - 16);
+	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 17);
+	memset(raw_data, 0, MAX_PACKET_SIZE - 17);
 
-	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 16 bytes more */
+	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 17 bytes more */
 
 	/* Encrypted password and put in encrypted */
 	bytes = 0;
@@ -1166,10 +1166,10 @@ void qq_request_login_2007(PurpleConnection *gc)
 
 	g_return_if_fail(qd->ld.token != NULL && qd->ld.token_len > 0);
 
-	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 16);
-	memset(raw_data, 0, MAX_PACKET_SIZE - 16);
+	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 17);
+	memset(raw_data, 0, MAX_PACKET_SIZE - 17);
 
-	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 16 bytes more */
+	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 17 bytes more */
 
 	/* Encrypted password and put in encrypted */
 	bytes = 0;
@@ -1342,10 +1342,10 @@ void qq_request_login_2008(PurpleConnection *gc)
 
 	g_return_if_fail(qd->ld.token != NULL && qd->ld.token_len > 0);
 
-	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 16);
-	memset(raw_data, 0, MAX_PACKET_SIZE - 16);
+	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 17);
+	memset(raw_data, 0, MAX_PACKET_SIZE - 17);
 
-	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 16 bytes more */
+	encrypted = g_newa(guint8, MAX_PACKET_SIZE);	/* 17 bytes more */
 
 	/* Encrypted password and put in encrypted */
 	bytes = 0;

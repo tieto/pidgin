@@ -132,6 +132,7 @@ START_TEST(test_jabber_id_new)
 	assert_invalid_jid("mark.doliner@gmail\\stuff.org");
 	assert_invalid_jid("paul@[::1]124");
 	assert_invalid_jid("paul@2[::1]124/as");
+	assert_invalid_jid("paul@まつ.おおかみ/\x01");
 
 	/* Ensure that jabber_id_new is properly lowercasing node and domains */
 	assert_jid_parts("paul", "darkrain42.org", "PaUL@darkrain42.org");
@@ -150,6 +151,14 @@ START_TEST(test_jabber_id_new)
 	assert_jid_parts("ꙥ", "darkrain42.org", "ꙥ@darkrain42.org");
 	/* U+04E9 to U+04E9 */
 	assert_jid_parts("paul", "өarkrain42.org", "paul@Өarkrain42.org");
+}
+END_TEST
+
+START_TEST(test_jabber_normalize)
+{
+	assert_string_equal("paul@darkrain42.org", jabber_normalize(NULL, "PaUL@DaRkRain42.org"));
+	assert_string_equal("paul@darkrain42.org", jabber_normalize(NULL, "PaUL@DaRkRain42.org/"));
+	assert_string_equal("paul@darkrain42.org", jabber_normalize(NULL, "PaUL@DaRkRain42.org/resource"));
 }
 END_TEST
 
@@ -172,6 +181,7 @@ jabber_jutil_suite(void)
 	tcase_add_test(tc, test_nodeprep_validate_illegal_chars);
 	tcase_add_test(tc, test_nodeprep_validate_too_long);
 	tcase_add_test(tc, test_jabber_id_new);
+	tcase_add_test(tc, test_jabber_normalize);
 	suite_add_tcase(s, tc);
 
 	return s;

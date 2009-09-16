@@ -91,6 +91,8 @@ static GtkWidget *prefs_sound_themes_combo_box;
 static GtkWidget *prefs_blist_themes_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
 
+static gboolean prefs_sound_themes_loading;
+
 /*
  * PROTOTYPES
  */
@@ -580,6 +582,7 @@ prefs_themes_refresh(void)
 	gchar *filename;
 	GtkTreeIter iter;
 
+	prefs_sound_themes_loading = TRUE;
 	/* refresh the list of themes in the manager */
 	purple_theme_manager_refresh();
 
@@ -614,6 +617,7 @@ prefs_themes_refresh(void)
 	prefs_set_active_theme_combo(prefs_sound_themes_combo_box, prefs_sound_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"));
 	prefs_set_active_theme_combo(prefs_blist_themes_combo_box, prefs_blist_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"));
 	prefs_set_active_theme_combo(prefs_status_themes_combo_box, prefs_status_icon_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"));
+	prefs_sound_themes_loading = FALSE;
 }
 
 /* init all the theme variables so that the themes can be sorted later and used by pref pages */
@@ -930,7 +934,11 @@ prefs_build_theme_combo_box(GtkListStore *store, const gchar *current_theme, gch
 {
 	GtkCellRenderer *cell_rend;
 	GtkWidget *combo_box;
-	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
+	GtkTargetEntry te[3] = {
+		{"text/plain", 0, 0},
+		{"text/uri-list", 0, 1},
+		{"STRING", 0, 2}
+	};
 
 	g_return_val_if_fail(store != NULL && current_theme != NULL, NULL);
 
@@ -965,7 +973,7 @@ prefs_set_sound_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 	gchar *new_theme;
 	GtkTreeIter new_iter;
 
-	if(gtk_combo_box_get_active_iter(combo_box, &new_iter)) {
+	if(gtk_combo_box_get_active_iter(combo_box, &new_iter) && !prefs_sound_themes_loading) {
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &new_iter, 2, &new_theme, -1);
 
@@ -1086,12 +1094,17 @@ theme_page(void)
 	GtkTreeSelection *sel;
 	GtkTreeRowReference *rowref;
 	GtkWidget *label;
-	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
+	GtkTargetEntry te[3] = {
+		{"text/plain", 0, 0},
+		{"text/uri-list", 0, 1},
+		{"STRING", 0, 2}
+	};
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
-	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below. New themes can be installed by dragging and dropping them onto the theme list."));
+	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below."
+	                        " New themes can be installed by dragging and dropping them onto the theme list."));
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -1409,6 +1422,7 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		g_free(name);
 
 		pidgin_stock_load_status_icon_theme(theme);
+		pidgin_blist_refresh(purple_get_blist());
 	}
 }
 
@@ -1735,19 +1749,54 @@ browser_button_clicked_cb(GtkWidget *button, gpointer null)
 	g_error_free(err);
 }
 
+static void
+auto_ip_button_clicked_cb(GtkWidget *button, gpointer null)
+{
+	const char *ip;
+	PurpleStunNatDiscovery *stun;
+	char *auto_ip_text;
+
+	/* purple_network_get_my_ip will return the IP that was set by the user with
+	   purple_network_set_public_ip, so make a lookup for the auto-detected IP
+	   ourselves. */
+
+	if (purple_prefs_get_bool("/purple/network/auto_ip")) {
+		/* Check if STUN discovery was already done */
+		stun = purple_stun_discover(NULL);
+		if ((stun != NULL) && (stun->status == PURPLE_STUN_STATUS_DISCOVERED)) {
+			ip = stun->publicip;
+		} else {
+			/* Attempt to get the IP from a NAT device using UPnP */
+			ip = purple_upnp_get_public_ip();
+			if (ip == NULL) {
+				/* Attempt to get the IP from a NAT device using NAT-PMP */
+				ip = purple_pmp_get_public_ip();
+				if (ip == NULL) {
+					/* Just fetch the IP of the local system */
+					ip = purple_network_get_local_system_ip(-1);
+				}
+			}
+		}
+	}
+	else
+		ip = _("Disabled");
+
+	auto_ip_text = g_strdup_printf(_("Use _automatically detected IP address: %s"), ip);
+	gtk_button_set_label(GTK_BUTTON(button), auto_ip_text);
+	g_free(auto_ip_text);
+}
+
 static GtkWidget *
 network_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox, *hbox, *entry;
-	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
+	GtkWidget *table = NULL;
+	GtkWidget *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
 	GtkWidget *proxy_warning = NULL, *browser_warning = NULL;
 	GtkWidget *proxy_button = NULL, *browser_button = NULL;
 	GtkSizeGroup *sg;
 	PurpleProxyInfo *proxy_info = NULL;
-	const char *ip;
-	PurpleStunNatDiscovery *stun;
-	char *auto_ip_text;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -1778,58 +1827,26 @@ network_page(void)
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 	gtk_container_add(GTK_CONTAINER(hbox), label);
 
-	/* purple_network_get_my_ip will return the IP that was set by the user with
-	   purple_network_set_public_ip, so make a lookup for the auto-detected IP
-	   ourselves. */
-
-	/* Check if STUN discovery was already done */
-	stun = purple_stun_discover(NULL);
-	if ((stun != NULL) && (stun->status == PURPLE_STUN_STATUS_DISCOVERED)) {
-		ip = stun->publicip;
-	} else {
-		/* Attempt to get the IP from a NAT device using UPnP */
-		ip = purple_upnp_get_public_ip();
-		if (ip == NULL) {
-			/* Attempt to get the IP from a NAT device using NAT-PMP */
-			ip = purple_pmp_get_public_ip();
-			if (ip == NULL) {
-				/* Just fetch the IP of the local system */
-				ip = purple_network_get_local_system_ip(-1);
-			}
-		}
-	}
-
-	auto_ip_text = g_strdup_printf(_("Use _automatically detected IP address: %s"), ip);
-	auto_ip_checkbox = pidgin_prefs_checkbox(auto_ip_text, "/purple/network/auto_ip", vbox);
-	g_free(auto_ip_text);
-
-	table = gtk_table_new(2, 2, FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 10);
-	gtk_container_add(GTK_CONTAINER(vbox), table);
-
-	label = gtk_label_new_with_mnemonic(_("Public _IP:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
-	gtk_size_group_add_widget(sg, label);
+	auto_ip_checkbox = pidgin_prefs_checkbox("Use _automatically detected IP address",
+	                                         "/purple/network/auto_ip", vbox);
+	g_signal_connect(G_OBJECT(auto_ip_checkbox), "clicked",
+	                 G_CALLBACK(auto_ip_button_clicked_cb), NULL);
+	auto_ip_button_clicked_cb(auto_ip_checkbox, NULL); /* Update label */
 
 	entry = gtk_entry_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
+	gtk_entry_set_text(GTK_ENTRY(entry), purple_network_get_public_ip());
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(network_ip_changed), NULL);
 
-	gtk_entry_set_text(GTK_ENTRY(entry), purple_network_get_public_ip());
-
-	pidgin_set_accessible_label(entry, label);
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Public _IP:"),
+			sg, entry, TRUE, NULL);
 
 	if (purple_prefs_get_bool("/purple/network/auto_ip")) {
-		gtk_widget_set_sensitive(GTK_WIDGET(table), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(hbox), FALSE);
 	}
 
 	g_signal_connect(G_OBJECT(auto_ip_checkbox), "clicked",
-					 G_CALLBACK(pidgin_toggle_sensitive), table);
+					 G_CALLBACK(pidgin_toggle_sensitive), hbox);
 
 	g_object_unref(sg);
 
@@ -1869,14 +1886,14 @@ network_page(void)
 			G_CALLBACK(network_turn_server_changed_cb), NULL);
 	gtk_widget_show(entry);
 
-	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), "_TURN server:",
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_TURN server:"),
 			sg, entry, TRUE, NULL);
 
 	pidgin_prefs_labeled_spin_button(hbox, _("_Port:"),
 		"/purple/network/turn_port", 0, 65535, NULL);
-	hbox = pidgin_prefs_labeled_entry(vbox, "_Username:",
+	hbox = pidgin_prefs_labeled_entry(vbox, _("_Username:"),
 		"/purple/network/turn_username", sg);
-	pidgin_prefs_labeled_password(hbox, "_Password:",
+	pidgin_prefs_labeled_password(hbox, _("_Password:"),
 		"/purple/network/turn_password", NULL);
 
 	if (purple_running_gnome()) {

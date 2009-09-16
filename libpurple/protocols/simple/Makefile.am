@@ -13,7 +13,7 @@ AM_CFLAGS = $(st)
 
 libsimple_la_LDFLAGS = -module -avoid-version
 
-if STATIC_MSN
+if STATIC_SIMPLE
 
 st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES   = libsimple.la

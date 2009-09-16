@@ -220,7 +220,12 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (f->status == YAHOO_STATUS_IDLE) {
 				/* Idle may have already been set in a more precise way in case 137 */
 				if (f->idle == 0)
-					f->idle = time(NULL);
+				{
+					if(pkt->service == YAHOO_SERVICE_STATUS_15)
+						f->idle = -1;
+					else
+						f->idle = time(NULL);
+				}
 			} else
 				f->idle = 0;
 
@@ -253,15 +258,20 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (f->away == 2) {
 				/* Idle may have already been set in a more precise way in case 137 */
 				if (f->idle == 0)
-					f->idle = time(NULL);
+				{
+					if(pkt->service == YAHOO_SERVICE_STATUS_15)
+						f->idle = -1;
+					else
+						f->idle = time(NULL);
+				}
 			}
 
 			break;
-		case 138: /* either we're not idle, or we are but won't say how long */
+		case 138: /* when value is 1, either we're not idle, or we are but won't say how long */
 			if (!f)
 				break;
 
-			if (f->idle)
+			if( (strtol(pair->value, NULL, 10) == 1) && (f->idle) )
 				f->idle = -1;
 			break;
 		case 137: /* usually idle time in seconds, sometimes login time */
@@ -2009,11 +2019,11 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 				break;
 			}
 		case 2:
-			purple_debug_info("yahoo", "Server reported that %s is already in the ignore list.",
+			purple_debug_info("yahoo", "Server reported that %s is already in the ignore list.\n",
 							  who);
 			break;
 		case 3:
-			purple_debug_info("yahoo", "Server reported that %s is not in the ignore list; could not delete",
+			purple_debug_info("yahoo", "Server reported that %s is not in the ignore list; could not delete\n",
 							  who);
 		case 0:
 		default:
@@ -2089,7 +2099,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 		break;
 	case 1013:
 		msg = g_strdup(_("Error 1013: The username you have entered is invalid."
-					"  The most common cause of this error is entering your e-mail"
+					"  The most common cause of this error is entering your email"
 					" address instead of your Yahoo! ID."));
 		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 		break;
@@ -4494,6 +4504,12 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	if (purple_presence_is_idle(presence))
 		yahoo_packet_hash_str(pkt, 47, "2");
+	else	{
+		if (!purple_status_is_available(status))
+			yahoo_packet_hash_str(pkt, 47, "1");
+		else
+			yahoo_packet_hash_str(pkt, 47, "0");
+	}
 
 	yahoo_packet_send_and_free(pkt, yd);
 

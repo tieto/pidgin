@@ -100,13 +100,13 @@ package_revision_raw.txt:
 	|| (cd $(srcdir) && mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
 	|| rm -f $@
 package_revision.h: package_revision_raw.txt
-	if [ -f $< ]; then \
-	  sed 's/^\(.\+\)$$/#define REVISION "\1"/' $< > $@; \
+	if test -f $<; then \
+	  echo "#define REVISION \"`cat $<`\"" > $@; \
 	fi
-	if [ ! -f $@ -a -f $(srcdir)/$@ ]; then \
+	if test ! -f $@ -a -f $(srcdir)/$@; then \
 	  cp $(srcdir)/$@ $@; \
 	fi
-	[ -f $@ ] || echo "#define REVISION \"unknown\"" > $@
+	test -f $@ || echo "#define REVISION \"unknown\"" > $@
 
 # This is a magic directive copy-and-pasted, then modified, from the
 # automake 1.9 manual, section 13.4, "Checking the distribution".

@@ -56,31 +56,44 @@ jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type
 JabberData *
 jabber_data_create_from_xml(xmlnode *tag)
 {
-	JabberData *data = g_new0(JabberData, 1);
-	gsize size;
-	gpointer raw_data = NULL;
-
-	if (data == NULL) {
-		purple_debug_error("jabber", "Could not allocate data object\n");
-		g_free(data);
-		return NULL;
-	}
+	JabberData *data;
+	gchar *raw_data = NULL;
+	const gchar *cid, *type;
 
 	/* check if this is a "data" tag */
 	if (strcmp(tag->name, "data") != 0) {
-		purple_debug_error("jabber", "Invalid data element");
+		purple_debug_error("jabber", "Invalid data element\n");
+		return NULL;
+	}
+
+	cid = xmlnode_get_attrib(tag, "cid");
+	type = xmlnode_get_attrib(tag, "type");
+
+	if (!cid || !type) {
+		purple_debug_error("jabber", "cid or type missing\n");
+		return NULL;
+	}
+
+	raw_data = xmlnode_get_data(tag);
+
+	if (raw_data == NULL || *raw_data == '\0') {
+		purple_debug_error("jabber", "data element was empty");
+		g_free(raw_data);
+		return NULL;
+	}
+
+	data = g_new0(JabberData, 1);
+	data->data = purple_base64_decode(raw_data, &data->size);
+	g_free(raw_data);
+
+	if (data->data == NULL) {
+		purple_debug_error("jabber", "Malformed base64 data\n");
 		g_free(data);
 		return NULL;
 	}
 
-	data->cid = g_strdup(xmlnode_get_attrib(tag, "cid"));
-	data->type = g_strdup(xmlnode_get_attrib(tag, "type"));
-
-	raw_data = xmlnode_get_data(tag);
-	data->data = purple_base64_decode(raw_data, &size);
-	data->size = size;
-
-	g_free(raw_data);
+	data->cid = g_strdup(cid);
+	data->type = g_strdup(type);
 
 	return data;
 }

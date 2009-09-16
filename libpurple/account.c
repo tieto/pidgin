@@ -2326,9 +2326,13 @@ void
 purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = purple_account_get_connection(account);
+	PurpleConnection *gc;
 	PurplePlugin *prpl = NULL;
 
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(buddy != NULL);
+
+	gc = purple_account_get_connection(account);
 	if (gc != NULL)
 	        prpl = purple_connection_get_prpl(gc);
 

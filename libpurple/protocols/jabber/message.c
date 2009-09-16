@@ -493,7 +493,7 @@ jabber_message_get_data_cb(JabberStream *js, const char *from,
 	xmlnode *item_not_found = xmlnode_get_child(packet, "item-not-found");
 
 	/* did we get a data element as result? */
-	if (data_element) {
+	if (data_element && type == JABBER_IQ_RESULT) {
 		JabberData *data = jabber_data_create_from_xml(data_element);
 
 		if (data) {
@@ -1225,7 +1225,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	jm->id = jabber_get_next_id(jm->js);
 
 	tmp = purple_utf8_strip_unprintables(msg);
-	purple_markup_html_to_xhtml(msg, &xhtml, &jm->body);
+	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
 	g_free(tmp);
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
 	if (tmp) {

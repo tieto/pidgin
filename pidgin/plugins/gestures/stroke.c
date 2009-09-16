@@ -207,10 +207,7 @@ _gstroke_record (gint x, gint y, struct gstroke_metrics *metrics)
       metrics->max_x = -1;
       metrics->max_y = -1;
 
-      metrics->pointList = (GSList*) g_malloc (sizeof (GSList));
-
-      metrics->pointList->data = new_point_p;
-      metrics->pointList->next = NULL;
+      metrics->pointList = g_slist_prepend(metrics->pointList, new_point_p);
       metrics->point_count = 0;
 
     } else {

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-22 13:37-0700\n"
-"PO-Revision-Date: 2009-07-21 21:04+0100\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"PO-Revision-Date: 2009-09-03 20:14+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -860,8 +860,8 @@ msgstr "Všechny konverzace"
 msgid "System Log"
 msgstr "Systémový záznam"
 
-msgid "Calling ... "
-msgstr "Volání ..."
+msgid "Calling..."
+msgstr "Volání..."
 
 msgid "Hangup"
 msgstr "Zavěsit"
@@ -1499,6 +1499,29 @@ msgstr ""
 "Když je otevřena nová konverzace, tento zásuvný modul vloží poslední "
 "konverzaci do aktuální konverzace."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+"\n"
+"Získávání TinyURL..."
+
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr "Vytvořit TinyURL jen pro url dané délky a delší"
+
+msgid "TinyURL (or other) address prefix"
+msgstr "Předpona TinyURL (nebo jiných) adres"
+
+msgid "TinyURL"
+msgstr "TinyURL"
+
+msgid "TinyURL plugin"
+msgstr "Zásuvný modul TinyURL"
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr "Při zprávě s URL, použít TinyURL pro snadnější kopírování"
+
 msgid "Online"
 msgstr "Připojen"
 
@@ -1541,29 +1564,6 @@ msgstr "GntLastlog"
 
 msgid "Lastlog plugin."
 msgstr "Zásuvný modul posledního záznamu."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-"\n"
-"Získávání TinyURL..."
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr "Vytvořit TinyURL pro url této délky a delší"
-
-msgid "TinyURL (or other) address prefix"
-msgstr "Předpona TinyURL (nebo jiných) adres"
-
-msgid "TinyURL"
-msgstr "TinyURL"
-
-msgid "TinyURL plugin"
-msgstr "Zásuvný modul TinyURL"
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr "Při zprávě s URL, TinyURL pro snadnější kopírování"
 
 msgid "accounts"
 msgstr "účty"
@@ -1626,6 +1626,39 @@ msgstr "Kamarádi"
 msgid "buddy list"
 msgstr "seznam kamarádů"
 
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+"Certifikát \"%s\" je podepsán sám sebou a nemůže být automaticky "
+"zkontrolován."
+
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
+msgstr "Vyžadovaný kořenový certifikát je problematický neznámý Pidginu."
+
+msgid "The certificate is not valid yet."
+msgstr "Certifikát je neplatný."
+
+msgid "The certificate has expired and should not be considered valid."
+msgstr "Certifikát vypršel a neměl by být považován za platný."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+msgid "The certificate presented is not issued to this domain."
+msgstr "Certifikát není vydán pro tuto doménu."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr "Nemáte databázi certifikátů, takže certifikáty nemohou ověřeny."
+
+msgid "The certificate chain presented is invalid."
+msgstr "Certifikační řetěz je neplatný."
+
+msgid "The certificate has been revoked."
+msgstr "Certifikát byl odvolán."
+
+msgid "An unknown certificate error occurred."
+msgstr "Došlo k neznámé chybě certifikátu."
+
 msgid "(DOES NOT MATCH)"
 msgstr "(NEODPOVÍDÁ SI)"
 
@@ -1668,66 +1701,24 @@ msgstr "SSL verifikace certifikátu"
 msgid "_View Certificate..."
 msgstr "Zobrazit certifikát..."
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
 #, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"Certifikát \"%s\" je podepsán sám sebou. Nemůže být automaticky zkontrolován."
+msgid "The certificate for %s could not be validated."
+msgstr "Certifikát pro %s nemohl být ověřen."
 
-#. FIXME 2.6.1
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
-msgstr "Certifikační řetěz pro %s je neplatný."
-
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
-#. TODO: Probably wrong.
-#. TODO: Probably wrong
 #. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "SSL chyba certifikátu"
 
-msgid "Invalid certificate chain"
-msgstr "Neplatný řetěz certifikátu"
-
-#. vrq will be completed by user_auth
-msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr "Nemáte databázi certifikátů, takže certifikáty nemohou ověřeny."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr "Vyžadovaný kořenový certifikát je problematický neznámý Pidginu."
+msgid "Unable to validate certificate"
+msgstr "Nemohu ověřit certifikát"
 
 #, c-format
 msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
-"Certifikační řetěz %s nemá platný digitální podpis od certifikační autority, "
-"kterou vyžaduje podpis."
-
-msgid "Invalid certificate authority signature"
-msgstr "Neplatný podpis certifikační autority"
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
-msgstr ""
-"Certifikát od \"%s\" vypadá, že je namísto toho od \"%s\". To může znamenat, "
-"že nejste připojeni ke službě, kterou jste žádali."
+"Certifikát vypadá, že je od \"%s\". To může znamenat, že nejste připojeni ke "
+"službě, kterou jste žádali."
 
 #. Make messages
 #, c-format
@@ -1964,18 +1955,18 @@ msgid "File transfer complete"
 msgstr "Přenos souborů dokončen"
 
 #, c-format
-msgid "You canceled the transfer of %s"
+msgid "You cancelled the transfer of %s"
 msgstr "Zrušili jste přenos %s"
 
 msgid "File transfer cancelled"
 msgstr "Přenos souborů zrušen"
 
 #, c-format
-msgid "%s canceled the transfer of %s"
+msgid "%s cancelled the transfer of %s"
 msgstr "%s zrušil přenos %s"
 
 #, c-format
-msgid "%s canceled the file transfer"
+msgid "%s cancelled the file transfer"
 msgstr "%s zrušil přenos souborů"
 
 #, c-format
@@ -2164,6 +2155,33 @@ msgstr "<font color=\"red\"><b>Nemohu přečíst soubor: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-ODPOVĚĎ>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+"Kodek nenalezen. Nainstalujte GStreamer kodek z balíčku zásuvných modulů "
+"GStreamer."
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr "Nezanechán kodek. Preference v fs-codecs.conf jsou příliš přísné."
+
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Nastala neobnovitelná Farsight2 chyba."
+
+msgid "Conference error."
+msgstr "Chyba konference."
+
+msgid "Error with your microphone."
+msgstr "Chyba mikrofonu."
+
+msgid "Error with your webcam."
+msgstr "Chyba webové kamery."
+
+#, c-format
+msgid "Error creating session: %s"
+msgstr "Chyba vytváření sezení: %s"
 
 msgid "Error creating conference."
 msgstr "Chyba při vytváření konference."
@@ -2425,14 +2443,15 @@ msgid "Test plugin IPC support, as a server. This registers the IPC commands."
 msgstr ""
 "Test podpory IPC zásuvných modulů jako server. Zaregistruje příkazy IPC."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "Nastavení skrývání připojování/odpojování"
+msgid "Hide Joins/Parts"
+msgstr "Skrýt Připojení/Odchod"
 
-msgid "Minimum Room Size"
-msgstr "Minimální velikost místnosti"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr "Pro místnosti kde je více lidí než zadaný počet"
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "Čas pro ne aktivitu uživatele (v minutách)"
+msgid "If user has not spoken in this many minutes"
+msgstr "Uživatel nepromluvil několik minut"
 
 msgid "Apply hiding rules to buddies"
 msgstr "Aplikovat pravidlo skrývání na kamarády"
@@ -3787,6 +3806,11 @@ msgstr "URL"
 msgid "Street Address"
 msgstr "Adresa ulice"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "Rozšířená adresa"
 
@@ -3868,20 +3892,24 @@ msgstr "Foto"
 msgid "Logo"
 msgstr "Logo"
 
+#, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr "%s už nebude schopen sledovat změny stavu. Chcete pokračovat?"
+
+msgid "Cancel Presence Notification"
+msgstr "Zrušit upozornění na přítomnosti"
+
 msgid "Un-hide From"
 msgstr "Zrušit skrytí Od"
 
 msgid "Temporarily Hide From"
 msgstr "Dočasně skrýt Od"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "Zrušit upozornění na přítomnosti"
-
 msgid "(Re-)Request authorization"
 msgstr "(Znovu) vyžádat autorizaci"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
@@ -4480,7 +4508,7 @@ msgstr ""
 
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Získat "
 "uživatelovu roli nebo nastavit uživatelovu roli v místnosti."
@@ -4626,9 +4654,6 @@ msgstr "Chyba při in-band bytestream přenosu\n"
 
 msgid "Transfer was closed."
 msgstr "Přenos byl ukončen."
-
-msgid "Failed to open the file"
-msgstr "Nemohu otevřít soubor"
 
 msgid "Failed to open in-band bytestream"
 msgstr "Selhalo otevření in-band bytestreamu"
@@ -4902,8 +4927,7 @@ msgstr "Špatný soubor přátel"
 msgid "Not expected"
 msgstr "Neočekáváno"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+msgid "Friendly name is changing too rapidly"
 msgstr "Přátelské jméno se mění příliš rychle"
 
 #, c-format
@@ -5466,8 +5490,9 @@ msgstr ""
 "%s vám poslal požadavek k zobrazení kamery, což ještě není podporováno."
 
 #, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s vám poslal pozvánku k WWW kameře, což ještě není podporováno."
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
+msgstr ""
+"%s vám pozval k zobrazení její/jeho kamery, což ještě není podporováno."
 
 msgid "Away From Computer"
 msgstr "Pryč od počítače"
@@ -5515,6 +5540,10 @@ msgstr "Chcete vymazat tohoto kamaráda ze svého adresáře?"
 
 msgid "The username specified is invalid."
 msgstr "Zadané jméno uživatele není platné."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "Přátelské jméno se mění příliš rychle"
 
 msgid "This Hotmail account may not be active."
 msgstr "Tento účet Hotmail možná není aktivní."
@@ -6188,8 +6217,10 @@ msgstr "Adresa serveru"
 msgid "Server port"
 msgstr "Port serveru"
 
-msgid "Received unexpected response from "
-msgstr "Přijata neočekávaná odpověď od"
+#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s"
+msgstr "Přijata neočekávaná odpověď od %s"
 
 #. username connecting too frequently
 msgid ""
@@ -6199,9 +6230,11 @@ msgstr ""
 "Připojovali a odpojovali jste se příliš často. Počkejte deset minut a zkuste "
 "to znovu. Pokud to budete dále zkouše, budete muset čekat ještě déle."
 
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, c-format
-msgid "Error requesting "
-msgstr "Chyba žádosti"
+msgid "Error requesting %s: %s"
+msgstr "Chyba žádosti %s: %s"
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL neumožňuje ověřit jméno tady"
@@ -6996,6 +7029,9 @@ msgstr ""
 msgid "C_onnect"
 msgstr "_Připojit"
 
+msgid "You closed the connection."
+msgstr "Zavřeli jste spojení."
+
 msgid "Get AIM Info"
 msgstr "Získat informace AIM"
 
@@ -7005,6 +7041,9 @@ msgstr "Upravit poznámku o kamarádovi"
 
 msgid "Get Status Msg"
 msgstr "Získat zprávu o stavu"
+
+msgid "End Direct IM Session"
+msgstr "Přímé IM ukončeno"
 
 msgid "Direct IM"
 msgstr "Přímé IM"
@@ -7834,7 +7873,7 @@ msgid "File Send"
 msgstr "Odeslání souboru"
 
 #, c-format
-msgid "%d canceled the transfer of %s"
+msgid "%d cancelled the transfer of %s"
 msgstr "%d zrušil přenos %s"
 
 #, c-format
@@ -9354,6 +9393,9 @@ msgstr "Locale místnosti chatu"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorovat pozvání do konferencí a místností chatu"
 
+msgid "Use account proxy for SSL connections"
+msgstr "Použít proxy pro SSL připojení"
+
 msgid "Chat room list URL"
 msgstr "URL seznamu místností chatu"
 
@@ -9378,6 +9420,10 @@ msgstr "Yahoo JAPAN ID..."
 #. *  description
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Zásuvný modul protokolu Yahoo! JAPAN"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s vám poslal pozvánku k WWW kameře, což ještě není podporováno."
 
 msgid "Your SMS was not delivered"
 msgstr "Vaše SMS nebyla doručena"
@@ -9451,8 +9497,26 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Ignorovat kamaráda?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "Váš účet je uzamčen, přihlaste se prosím na WWW stránkách Yahoo!."
+msgid "Invalid username or password"
+msgstr "Nesprávné jméno uživatele nebo heslo"
+
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+"Účet uzamčen pro příliš mnoho pokusů o přihlášení. Přihlášte se na stránku "
+"Yahoo!."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr "Neznámá chyba 52. Znovupřipojení by to mělo vyřešit."
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
+"Chyba 1013: Vložené uživatelské jméno je neplatné. Nejčastější chybou je "
+"vložení emailové adresy místo Yahoo! ID."
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -10217,6 +10281,122 @@ msgstr ""
 "Můžete se do tohoto okna vrátit a přidávat, upravovat nebo odstraňovat účty "
 "přes <b>Účty->Spravovat</b> v okně seznamu kamarádů."
 
+#. Buddy List
+msgid "Background Color"
+msgstr "Barva pozadí"
+
+msgid "The background color for the buddy list"
+msgstr "Barva pozadí seznamu kamarádů"
+
+msgid "Layout"
+msgstr "Rozvržení"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr "Rozvržení ikon, jmen a stavů na seznamu kamarádů"
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Background Color"
+msgstr "Barva pozadí rozbaleného"
+
+msgid "The background color of an expanded group"
+msgstr "Barva pozadí rozbalené skupiny"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Text"
+msgstr "Rozbalený text"
+
+msgid "The text information for when a group is expanded"
+msgstr "Text informace při rozbalení skupiny"
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Background Color"
+msgstr "Barvu pozadí sbaleného"
+
+msgid "The background color of a collapsed group"
+msgstr "Barva pozadí sbalené skupiny"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Text"
+msgstr "Sbalený text"
+
+msgid "The text information for when a group is collapsed"
+msgstr "Text informace při sbalení skupiny"
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+msgid "Contact/Chat Background Color"
+msgstr "Barvu pozadí kontaktu/chatu"
+
+msgid "The background color of a contact or chat"
+msgstr "Barva pozadí kontaktu nebo chatu"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+msgid "Contact Text"
+msgstr "Text kontaktu"
+
+msgid "The text information for when a contact is expanded"
+msgstr "Text informace při rozbalení kontaktu"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+msgid "Online Text"
+msgstr "Text při přítomen"
+
+msgid "The text information for when a buddy is online"
+msgstr "Text informace, když je kamarád přítomen"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+msgid "Away Text"
+msgstr "Text pryč"
+
+msgid "The text information for when a buddy is away"
+msgstr "Text informace, když je kamarád pryč"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+msgid "Offline Text"
+msgstr "Text pro odpojen"
+
+msgid "The text information for when a buddy is offline"
+msgstr "Text informace, když je kamarád odpojen"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+msgid "Idle Text"
+msgstr "Text nečinnosti"
+
+msgid "The text information for when a buddy is idle"
+msgstr "Text informace, když je kamarád nečinný"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message Text"
+msgstr "Text zprávy"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr "Text informace, když má kamarád nepřečtenou zprávu"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr "Text zprávy (uživatel jmenován)"
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr "Text informace, když je v chatu zpráva s tvojí přezdívkou"
+
+msgid "The text information for a buddy's status"
+msgstr "Text informace pro stav kamaráda"
+
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
@@ -10652,7 +10832,7 @@ msgstr "_Alias:"
 msgid "_Group:"
 msgstr "_Skupina:"
 
-msgid "Auto_join when account becomes online."
+msgid "Auto_join when account connects."
 msgstr "Automaticky _připojit při připojení účtu."
 
 msgid "_Remain in chat after window is closed."
@@ -10684,98 +10864,6 @@ msgstr "/Nástroje"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Kamarádi/Řadit kamarády"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "Barva pozadí"
-
-msgid "The background color for the buddy list"
-msgstr "Barva pozadí seznamu kamarádů"
-
-msgid "Layout"
-msgstr "Rozvržení"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr "Rozvržení ikon, jmen a stavů na seznamu kamarádů"
-
-#. Group
-msgid "Expanded Background Color"
-msgstr "Barva pozadí rozbaleného"
-
-msgid "The background color of an expanded group"
-msgstr "Barva pozadí rozbalené skupiny"
-
-msgid "Expanded Text"
-msgstr "Rozbalený text"
-
-msgid "The text information for when a group is expanded"
-msgstr "Text informace při rozbalení skupiny"
-
-msgid "Collapsed Background Color"
-msgstr "Barvu pozadí sbaleného"
-
-msgid "The background color of a collapsed group"
-msgstr "Barva pozadí sbalené skupiny"
-
-msgid "Collapsed Text"
-msgstr "Sbalený text"
-
-msgid "The text information for when a group is collapsed"
-msgstr "Text informace při sbalení skupiny"
-
-#. Buddy
-msgid "Contact/Chat Background Color"
-msgstr "Barvu pozadí kontaktu/chatu"
-
-msgid "The background color of a contact or chat"
-msgstr "Barva pozadí kontaktu nebo chatu"
-
-msgid "Contact Text"
-msgstr "Text kontaktu"
-
-msgid "The text information for when a contact is expanded"
-msgstr "Text informace při rozbalení kontaktu"
-
-msgid "On-line Text"
-msgstr "Text při přítomen"
-
-msgid "The text information for when a buddy is online"
-msgstr "Text informace, když je kamarád přítomen"
-
-msgid "Away Text"
-msgstr "Text pryč"
-
-msgid "The text information for when a buddy is away"
-msgstr "Text informace, když je kamarád pryč"
-
-msgid "Off-line Text"
-msgstr "Text pro odpojen"
-
-msgid "The text information for when a buddy is off-line"
-msgstr "Text informace, když je kamarád odpojen"
-
-msgid "Idle Text"
-msgstr "Text nečinnosti"
-
-msgid "The text information for when a buddy is idle"
-msgstr "Text informace, když je kamarád nečinný"
-
-msgid "Message Text"
-msgstr "Text zprávy"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr "Text informace, když má kamarád nepřečtenou zprávu"
-
-msgid "Message (Nick Said) Text"
-msgstr "Text zprávy (uživatel jmenován)"
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr "Text informace, když je v chatu zpráva s tvojí přezdívkou"
-
-msgid "The text information for a buddy's status"
-msgstr "Text informace pro stav kamaráda"
 
 msgid "Type the host name for this certificate."
 msgstr "Zadejte jméno hostitele pro tento certifikát."
@@ -10858,6 +10946,9 @@ msgstr "/_Konverzace"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Konverzace/Nová _Instant Message..."
+
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Konverzace/Připojit k _chatu..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Konverzace/_Hledat..."
@@ -11241,7 +11332,7 @@ msgstr "Španělština"
 msgid "Estonian"
 msgstr "Estonština"
 
-msgid "Euskera(Basque)"
+msgid "Basque"
 msgstr "Baskičtina"
 
 msgid "Persian"
@@ -11443,11 +11534,19 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
-"<FONT SIZE=\"4\">Podpora přes e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
-"im\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Nápověda od jiných uživatelů Pidgin:</font> <a href="
+"\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Je to <b>veřejná</b> "
+"mailová konference! (<a href=\"http://pidgin.im/pipermail/support/\">archív</"
+"a>)<br/>Nemůžeme pomoct s protokoly a zásuvnými moduly třetích stran!<br/"
+">Primárním jazykem je <b>Angličtina</b>.  Jste vítáni s příspěvky v jiných "
+"jazycích, ale odpvědi mohou být méně nápomocné.<br/><br/>"
 
 #, c-format
 msgid ""
@@ -11681,14 +11780,6 @@ msgstr "_Vymazat dokončené přenosy"
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "_Podrobnosti o přenosu souboru"
-
-#. Pause button
-msgid "_Pause"
-msgstr "_Pozastavit"
-
-#. Resume button
-msgid "_Resume"
-msgstr "Po_kračovat"
 
 msgid "Paste as Plain _Text"
 msgstr "Vložit _jako text"
@@ -12009,65 +12100,50 @@ msgstr "%s %s. Pro více informací zkuste `%s -h'.\n"
 
 #, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"Použití: %s [PŘEPÍNAČ]...\n"
+"Použití: %s [VOLBA]...\n"
 "\n"
-"  -c, --config=ADRESÁŘ používat ADRESÁŘ pro soubory s nastavením\n"
-"  -d, --debug          vypisovat ladicí zprávy na stdout\n"
-"  -f, --force-online vynutit stav online, bez ohledu na status\n"
-"  -h, --help           zobrazit tuto nápovědu a skončit\n"
-"  -m, --multiple       nezajišťovat jedinou instanci\n"
-"  -n, --nologin        nepřihlašovat se automaticky\n"
-"  -l, --login[=NÁZEV]  povolit zadané účty (nepovinný parametr NÁZEV\n"
-"                       určuje účty, které použít, oddělené čárkami)\n"
-"                       Bez nich bude povolen jen první účet).\n"
-" --display=DISPLAY použít X obrazovku\n"
-"  -v, --version        zobrazit aktuální verzi a skončit\n"
 
-#, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"Použití: %s [PŘEPÍNAČ]...\n"
-"\n"
-"  -c, --config=ADRESÁŘ používat ADRESÁŘ pro soubory s nastavením\n"
-"  -d, --debug          vypisovat ladicí zprávy na stdout\n"
-"  -f, --force-online vynutit stav online, bez ohledu na status\n"
-"  -h, --help           zobrazit tuto nápovědu a skončit\n"
-"  -m, --multiple       nezajišťovat jedinou instanci\n"
-"  -n, --nologin        nepřihlašovat se automaticky\n"
-"  -l, --login[=NÁZEV]  povolit zadané účty (nepovinný parametr NÁZEV\n"
-"                       určuje účty, které použít, oddělené čárkami)\n"
-"                       Bez nich bude povolen jen první účet).\n"
-"  -v, --version        zobrazit aktuální verzi a skončit\n"
+
+msgid "use DIR for config files"
+msgstr "použít ADRESÁŘ pro konfigurační soubory"
+
+msgid "print debugging messages to stdout"
+msgstr "vypisuje ladící zprávy do stdout"
+
+msgid "force online, regardless of network status"
+msgstr "Vynutí připojen bez ohledu na stav sítě"
+
+msgid "display this help and exit"
+msgstr "zobrazí tento text a skončí"
+
+msgid "allow multiple instances"
+msgstr "povolit několikanásobné současné spuštění"
+
+msgid "don't automatically login"
+msgstr "nepřihlašovat automaticky"
+
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+"povolí zadaný účet(y) (nepovinný argument JMÉNO\n"
+"                      určuje účet(y), které použít, oddělené čárkami."
+
+msgid "X display to use"
+msgstr "použít X displej"
+
+msgid "display the current version and exit"
+msgstr "zobrazit aktuální verzi a ukončit"
 
 #, c-format
 msgid ""
@@ -12112,9 +12188,6 @@ msgstr "/_Multimédia"
 msgid "/Media/_Hangup"
 msgstr "/Multimédia/_Zavěsit"
 
-msgid "Calling..."
-msgstr "Volání..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s chce začít audio/video rozhovor s tebou."
@@ -12122,6 +12195,12 @@ msgstr "%s chce začít audio/video rozhovor s tebou."
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr "%s chce začít video rozhovor s tebou."
+
+msgid "Incoming Call"
+msgstr "Příchozí hovor"
+
+msgid "_Pause"
+msgstr "_Pozastavit"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12479,12 +12558,16 @@ msgstr "Nemohu spustit program pro konfiguraci proxy."
 msgid "Cannot start browser configuration program."
 msgstr "Nemohu spustit konfiguraci prohlížeče."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Příklad: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "Za_kázat"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Použít _automaticky detekovanou IP adresu: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Příklad: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Veřejná _IP:"
@@ -12507,6 +12590,10 @@ msgstr "_Koncový port:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Server pro přenos (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "Server ST_UN:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proxy server a prohlížeč"
@@ -13121,66 +13208,6 @@ msgstr "Zásuvný modul Předpovídání dostupnosti kontaktu."
 msgid "Displays statistical information about your buddies' availability"
 msgstr "Zobrazí statistické informace o dostupnosti kamarádů"
 
-msgid "Server name request"
-msgstr "Požadavek na jméno serveru"
-
-msgid "Enter an XMPP Server"
-msgstr "Zadejte XMPP server"
-
-msgid "Select an XMPP server to query"
-msgstr "Zvolte XMPP server pro rozhovor"
-
-msgid "Find Services"
-msgstr "Najít služby"
-
-msgid "Add to Buddy List"
-msgstr "Přidat do seznamu kamarádů"
-
-msgid "Gateway"
-msgstr "Brána"
-
-msgid "Directory"
-msgstr "Adresář"
-
-msgid "PubSub Collection"
-msgstr "PubSub kolekce"
-
-msgid "PubSub Leaf"
-msgstr "PubSub list"
-
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr ""
-"\n"
-"<b>Popis:</b>"
-
-#. Create the window.
-msgid "Service Discovery"
-msgstr "Prohlížení služeb"
-
-msgid "_Browse"
-msgstr "_Prohlížet"
-
-msgid "Server does not exist"
-msgstr "Server neexistuje"
-
-msgid "Server does not support service discovery"
-msgstr "Server nepodporuje prohlížení služeb"
-
-msgid "XMPP Service Discovery"
-msgstr "Prohlížení XMPP služeb"
-
-msgid "Allows browsing and registering services."
-msgstr "Umožňuje prohlížení a registrování služeb."
-
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr ""
-"Tento zásuvný modul je užitečný pro registraci transportů nebo dalších XMPP "
-"služeb."
-
 msgid "Buddy is idle"
 msgstr "Kamarád je nečinný"
 
@@ -13268,6 +13295,68 @@ msgstr "Používat v chatech"
 
 msgid "Apply in IMs"
 msgstr "Používat v IM"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+msgid "Server name request"
+msgstr "Požadavek na jméno serveru"
+
+msgid "Enter an XMPP Server"
+msgstr "Zadejte XMPP server"
+
+msgid "Select an XMPP server to query"
+msgstr "Zvolte XMPP server pro rozhovor"
+
+msgid "Find Services"
+msgstr "Najít služby"
+
+msgid "Add to Buddy List"
+msgstr "Přidat do seznamu kamarádů"
+
+msgid "Gateway"
+msgstr "Brána"
+
+msgid "Directory"
+msgstr "Adresář"
+
+msgid "PubSub Collection"
+msgstr "PubSub kolekce"
+
+msgid "PubSub Leaf"
+msgstr "PubSub list"
+
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>Popis:</b>"
+
+#. Create the window.
+msgid "Service Discovery"
+msgstr "Prohlížení služeb"
+
+msgid "_Browse"
+msgstr "_Prohlížet"
+
+msgid "Server does not exist"
+msgstr "Server neexistuje"
+
+msgid "Server does not support service discovery"
+msgstr "Server nepodporuje prohlížení služeb"
+
+msgid "XMPP Service Discovery"
+msgstr "Prohlížení XMPP služeb"
+
+msgid "Allows browsing and registering services."
+msgstr "Umožňuje prohlížení a registrování služeb."
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"Tento zásuvný modul je užitečný pro registraci transportů nebo dalších XMPP "
+"služeb."
 
 msgid "By conversation count"
 msgstr "Podle počtu konverzací"
@@ -13894,9 +13983,12 @@ msgstr "Ignorován"
 msgid "Founder"
 msgstr "Zakladatel"
 
+#. A user in a chat room who has special privileges.
 msgid "Operator"
 msgstr "Operátor"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr "Poloviční operátor"
 
@@ -14044,6 +14136,52 @@ msgstr ""
 "Tento zásuvný modul umožňuje uživateli upravit formáty časových značek zpráv "
 "v konverzacích a záznamech."
 
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Video"
+msgstr "Video"
+
+msgid "Output"
+msgstr "Výstup"
+
+msgid "_Plugin"
+msgstr "_Zásuvný modul"
+
+msgid "_Device"
+msgstr "Zaříze_ní"
+
+msgid "Input"
+msgstr "Vstup"
+
+msgid "P_lugin"
+msgstr "Zá_suvný modul"
+
+msgid "D_evice"
+msgstr "Z_ařízení"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Voice/Video Settings"
+msgstr "Nastavení Hlasu/Videa"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr "Konfigurovat mikrofon a webovou kameru."
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+"Konfigurovat nastavení mikrofon a webovou kameru pro hlasové/video volání."
+
 msgid "Opacity:"
 msgstr "Krytí:"
 
@@ -14170,6 +14308,118 @@ msgstr "Přijímat a odesílat přímo sekce XMPP."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů XMPP."
+
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "Jenom první účet bude povolen bez tohoto)."
+
+#~ msgid "Calling ... "
+#~ msgstr "Volání ..."
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "Neplatný řetěz certifikátu"
+
+#~ msgid ""
+#~ "The certificate chain presented by %s does not have a valid digital "
+#~ "signature from the Certificate Authority from which it claims to have a "
+#~ "signature."
+#~ msgstr ""
+#~ "Certifikační řetěz %s nemá platný digitální podpis od certifikační "
+#~ "autority, kterou vyžaduje podpis."
+
+#~ msgid "Invalid certificate authority signature"
+#~ msgstr "Neplatný podpis certifikační autority"
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "Nastavení skrývání připojování/odpojování"
+
+#~ msgid "Minimum Room Size"
+#~ msgstr "Minimální velikost místnosti"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "Čas pro ne aktivitu uživatele (v minutách)"
+
+#~ msgid "Failed to open the file"
+#~ msgstr "Nemohu otevřít soubor"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "Váš účet je uzamčen, přihlaste se prosím na WWW stránkách Yahoo!."
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "Baskičtina"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">Podpora přes e-mail:</FONT> <A HREF=\"mailto:"
+#~ "support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+
+#~ msgid "_Resume"
+#~ msgstr "Po_kračovat"
+
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Použití: %s [PŘEPÍNAČ]...\n"
+#~ "\n"
+#~ "  -c, --config=ADRESÁŘ používat ADRESÁŘ pro soubory s nastavením\n"
+#~ "  -d, --debug          vypisovat ladicí zprávy na stdout\n"
+#~ "  -f, --force-online vynutit stav online, bez ohledu na status\n"
+#~ "  -h, --help           zobrazit tuto nápovědu a skončit\n"
+#~ "  -m, --multiple       nezajišťovat jedinou instanci\n"
+#~ "  -n, --nologin        nepřihlašovat se automaticky\n"
+#~ "  -l, --login[=NÁZEV]  povolit zadané účty (nepovinný parametr NÁZEV\n"
+#~ "                       určuje účty, které použít, oddělené čárkami)\n"
+#~ "                       Bez nich bude povolen jen první účet).\n"
+#~ " --display=DISPLAY použít X obrazovku\n"
+#~ "  -v, --version        zobrazit aktuální verzi a skončit\n"
+
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Použití: %s [PŘEPÍNAČ]...\n"
+#~ "\n"
+#~ "  -c, --config=ADRESÁŘ používat ADRESÁŘ pro soubory s nastavením\n"
+#~ "  -d, --debug          vypisovat ladicí zprávy na stdout\n"
+#~ "  -f, --force-online vynutit stav online, bez ohledu na status\n"
+#~ "  -h, --help           zobrazit tuto nápovědu a skončit\n"
+#~ "  -m, --multiple       nezajišťovat jedinou instanci\n"
+#~ "  -n, --nologin        nepřihlašovat se automaticky\n"
+#~ "  -l, --login[=NÁZEV]  povolit zadané účty (nepovinný parametr NÁZEV\n"
+#~ "                       určuje účty, které použít, oddělené čárkami)\n"
+#~ "                       Bez nich bude povolen jen první účet).\n"
+#~ "  -v, --version        zobrazit aktuální verzi a skončit\n"
 
 #, fuzzy
 #~ msgid "Malformed BOSH Connect Server"
@@ -14612,9 +14862,6 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 #~ "zkuste to znovu. Pokud to budete dále zkoušet, budete muset čekat ještě "
 #~ "déle."
 
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "Došlo k neznámé chybě při přihlašování: %s."
-
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "Došlo k neznámé chybě, %d. Informace: %s"
 
@@ -14677,9 +14924,6 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "_Otevřít odkaz v prohlížeči"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "Server ST_UN:"
 
 #~ msgid "Smiley _Image"
 #~ msgstr "Obrázek _smajlíku"

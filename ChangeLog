@@ -2,12 +2,30 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.0 (??/??/????):
 
-version 2.6.2 (??/??/2009):
+version 2.6.3 (??/??/20??):
+	XMPP:
+	* Fix a crash when attempting to validate an invalid JID.
+
+	General:
+	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
+	  to announce the list of loaded plugins (in both Finch and Pidgin).
+
+version 2.6.2 (09/05/2009):
 	libpurple:
 	* Fix --disable-avahi to actually disable it in configure, as opposed
 	  to just making the warning non-fatal.
-	* Sending custom smileys in MSN chats is now supported.
-	* Fix using GNOME proxy settings properly.
+	* Fix using GNOME proxy settings properly.  (Erik van Pienbroek)
+
+	IRC:
+	* Fix parsing of invalid TOPIC messages.  (CVE-2009-2703)
+
+	MSN:
+	* Sending custom smileys in chats is now supported.
+	* Ink messages are now saved when using the HTML logger.
+	* Fix a crash when receiving some handwritten messages.
+	* Fix a crash when receiving certain SLP invite messages.
+	* Chats with multiple people should no longer spontaneously
+	  disconnect.
 
 	XMPP:
 	* Prompt the user before cancelling a presence subscription.
@@ -15,9 +33,34 @@ version 2.6.2 (??/??/2009):
 	* Fix connecting to XMPP domains with no SRV records from Pidgin on
 	  Windows.
 	* Fix typing notifications with Pidgin 2.5.9 or earlier.
+	* Fix connecting using BOSH and legacy authentication (XEP-0078).
+	* Adding buddies of the form "romeo@montague.net/Resource" are handled
+	  properly.  In addition, it is no longer possible to add buddies of
+	  the form "room@conference.example.net/User", where
+	  room@conference.example.net is a MUC.
+	* Don't crash when receiving "smileyfied" XHTML-IM from clients that don't
+	  support bits of binary (ie. when getting an empty <data/> in return)
+	* Fix bug where SSL/TLS was not required even though the
+	  "require SSL/TLS" preference checked when connecting to servers
+	  that use the older iq-based authentication.  (CVE-2009-3026)
+
+	Yahoo!/Yahoo! JAPAN:
+	* Accounts now have "Use account proxy for SSL connections" option.  This
+	  option force-overrides the account specific proxy settings for SSL
+	  connections only and instead uses the global proxy configuration.
 
 	Finch:
 	* Properly detect libpanel on OpenBSD.  (Brad Smith)
+	* Remove IO watches in gnt_quit.  (Tomasz Mon)
+
+	Pidgin:
+	* Fix the auto-personize functionality in the Buddy List.
+	* Set the window icon for the media window to an icon corresponding to
+	  the type of call (headphone or webcam).
+	* Customized sound files are no longer reset whenever opening the
+	  Preferences dialog.
+	* The buddy list should now immediately refresh upon changing the icon
+	  theme.
 
 version 2.6.1 (08/18/2009):
 	* Fix a crash when some users send you a link in a Yahoo IM
