@@ -215,7 +215,7 @@ guint8 qq_process_get_buddies_online(guint8 *data, gint data_len, PurpleConnecti
 		if (qd->client_version >= 2007)	bytes += 4;
 
 		if (bs.uid == 0 || (bytes - bytes_start) != entry_len) {
-			purple_debug_error("QQ", "uid=0 or entry complete len(%d) != %d",
+			purple_debug_error("QQ", "uid=0 or entry complete len(%d) != %d\n",
 					(bytes - bytes_start), entry_len);
 			continue;
 		}	/* check if it is a valid entry */
@@ -281,7 +281,7 @@ guint16 qq_process_get_buddies(guint8 *data, gint data_len, PurpleConnection *gc
 	qd = (qq_data *) gc->proto_data;
 
 	if (data_len <= 2) {
-		purple_debug_error("QQ", "empty buddies list");
+		purple_debug_error("QQ", "empty buddies list\n");
 		return -1;
 	}
 	/* qq_show_packet("QQ get buddies list", data, data_len); */
@@ -352,7 +352,7 @@ guint16 qq_process_get_buddies(guint8 *data, gint data_len, PurpleConnection *gc
 
 	if(bytes > data_len) {
 		purple_debug_error("QQ",
-				"qq_process_get_buddies: Dangerous error! maybe protocol changed, notify developers!");
+				"qq_process_get_buddies: Dangerous error! maybe protocol changed, notify developers!\n");
 	}
 
 	purple_debug_info("QQ", "Received %d buddies, nextposition=%u\n",
@@ -397,7 +397,7 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 		/* 05: skip unknow 0x00 */
 		bytes += 1;
 		if (uid == 0 || (type != 0x1 && type != 0x4)) {
-			purple_debug_info("QQ", "Buddy entry, uid=%u, type=%d", uid, type);
+			purple_debug_info("QQ", "Buddy entry, uid=%u, type=%d\n", uid, type);
 			continue;
 		}
 		if(0x1 == type) { /* a buddy */
@@ -407,7 +407,7 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 		} else { /* a group */
 			rmd = qq_room_data_find(gc, uid);
 			if(rmd == NULL) {
-				purple_debug_info("QQ", "Unknow room id %u", uid);
+				purple_debug_info("QQ", "Unknown room id %u\n", uid);
 				qq_send_room_cmd_only(gc, QQ_ROOM_CMD_GET_INFO, uid);
 			} else {
 				rmd->my_role = QQ_ROOM_ROLE_YES;
@@ -418,7 +418,7 @@ guint32 qq_process_get_buddies_and_rooms(guint8 *data, gint data_len, PurpleConn
 
 	if(bytes > data_len) {
 		purple_debug_error("QQ",
-				"qq_process_get_buddies_and_rooms: Dangerous error! maybe protocol changed, notify developers!");
+				"qq_process_get_buddies_and_rooms: Dangerous error! maybe protocol changed, notify developers!\n");
 	}
 
 	purple_debug_info("QQ", "Received %d buddies and %d groups, nextposition=%u\n", i, j, (guint) position);

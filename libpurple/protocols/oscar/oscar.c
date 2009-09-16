@@ -160,7 +160,6 @@ static int purple_parse_incoming_im(OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_parse_misses     (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_clientauto (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_userinfo   (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_got_infoblock    (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_motd       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_chatnav_info     (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_conv_chat_join        (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -242,7 +241,7 @@ oscar_charset_check(const char *utf8)
 	{
 		if ((unsigned char)utf8[i] > 0x7f) {
 			/* not ASCII! */
-			charset = AIM_CHARSET_CUSTOM;
+			charset = AIM_CHARSET_LATIN_1;
 			break;
 		}
 		i++;
@@ -429,7 +428,7 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcebn,
 	if (charset == AIM_CHARSET_UNICODE) {
 		charsetstr1 = "UTF-16BE";
 		charsetstr2 = "UTF-8";
-	} else if (charset == AIM_CHARSET_CUSTOM) {
+	} else if (charset == AIM_CHARSET_LATIN_1) {
 		if ((sourcebn != NULL) && oscar_util_valid_name_icq(sourcebn))
 			charsetstr1 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 		else
@@ -540,7 +539,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	 */
 	*msg = g_convert(from, -1, charsetstr, "UTF-8", NULL, &msglen, &err);
 	if (*msg != NULL) {
-		*charset = AIM_CHARSET_CUSTOM;
+		*charset = AIM_CHARSET_LATIN_1;
 		*charsubset = 0x0000;
 		*msglen_int = msglen;
 		return;
@@ -812,37 +811,43 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 
 	od = purple_connection_get_protocol_data(gc);
 
-	if (userinfo == NULL)
-		userinfo = aim_locate_finduserinfo(od, purple_buddy_get_name(b));
-
-	if ((user_info == NULL) || ((b == NULL) && (userinfo == NULL)))
+	if (b == NULL && userinfo == NULL)
 		return;
 
 	if (b == NULL)
 		b = purple_find_buddy(purple_connection_get_account(gc), userinfo->bn);
+	else
+		userinfo = aim_locate_finduserinfo(od, purple_buddy_get_name(b));
 
 	if (b) {
 		presence = purple_buddy_get_presence(b);
 		status = purple_presence_get_active_status(presence);
+	}
 
-		message = g_strdup(purple_status_get_attr_string(status, "message"));
-		itmsurl = g_strdup(purple_status_get_attr_string(status, "itmsurl"));
-
-	} else {
-		/* This is an OSCAR contact for whom we don't have a PurpleBuddy but do have information. */
-		if ((userinfo->flags & AIM_FLAG_AWAY)) {
-			/* Away message? */
-			if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-				tmp = oscar_encoding_extract(userinfo->away_encoding);
-				message = oscar_encoding_to_utf8(account, tmp, userinfo->away,
-												   userinfo->away_len);
-				g_free(tmp);
-			}
+	/* If we have both b and userinfo we favor userinfo, because if we're
+	   viewing someone's profile then we want the HTML away message, and
+	   the "message" attribute of the status contains only the plaintext
+	   message. */
+	if (userinfo) {
+		if ((userinfo->flags & AIM_FLAG_AWAY)
+				&& userinfo->away_len > 0
+				&& userinfo->away != NULL
+				&& userinfo->away_encoding != NULL)
+		{
+			/* Away message */
+			tmp = oscar_encoding_extract(userinfo->away_encoding);
+			message = oscar_encoding_to_utf8(account,
+					tmp, userinfo->away, userinfo->away_len);
+			g_free(tmp);
 		} else {
-			/* Available message? */
+			/*
+			 * Available message or non-HTML away message (because that's
+			 * all we have right now.
+			 */
 			if ((userinfo->status != NULL) && userinfo->status[0] != '\0') {
-				message = oscar_encoding_to_utf8(account, userinfo->status_encoding,
-											 userinfo->status, userinfo->status_len);
+				message = oscar_encoding_to_utf8(account,
+						userinfo->status_encoding, userinfo->status,
+						userinfo->status_len);
 			}
 #if defined (_WIN32) || defined (__APPLE__)
 			if (userinfo->itmsurl && (userinfo->itmsurl[0] != '\0'))
@@ -850,6 +855,9 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 												 userinfo->itmsurl, userinfo->itmsurl_len);
 #endif
 		}
+	} else {
+		message = g_strdup(purple_status_get_attr_string(status, "message"));
+		itmsurl = g_strdup(purple_status_get_attr_string(status, "itmsurl"));
 	}
 
 	is_away = ((status && !purple_status_is_available(status)) ||
@@ -916,7 +924,6 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 			g_free(message);
 			message = g_strdup(_("Offline"));
 		}
-
 	}
 
 	purple_notify_user_info_add_pair(user_info, _("Status"), message);
@@ -1478,7 +1485,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_RIGHTSINFO, purple_parse_locaterights, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_USERINFO, purple_parse_userinfo, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_ERROR, purple_parse_locerr, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_GOTINFOBLOCK, purple_got_infoblock, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x0001, purple_parse_genericerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x000f, purple_selfinfo, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x001f, purple_memrequest, 0);
@@ -2139,6 +2145,23 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	g_return_val_if_fail(info != NULL, 1);
 	g_return_val_if_fail(info->bn != NULL, 1);
 
+	/*
+	 * If this is an AIM buddy and their name has formatting, set their
+	 * server alias.
+	 */
+	if (!oscar_util_valid_name_icq(info->bn)) {
+		gboolean bn_has_formatting = FALSE;
+		char *c;
+		for (c = info->bn; *c != '\0'; c++) {
+			if (!islower(*c)) {
+				bn_has_formatting = TRUE;
+				break;
+			}
+		}
+		serv_got_alias(gc, info->bn,
+				bn_has_formatting ? info->bn : NULL);
+	}
+
 	if (info->present & AIM_USERINFO_PRESENT_FLAGS) {
 		if (info->flags & AIM_FLAG_AWAY)
 			buddy_is_away = TRUE;
@@ -2388,6 +2411,21 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	if (purple_markup_find_tag("body", tmp, &start, &end, &attribs))
 	{
 		const char *ichattextcolor, *ichatballooncolor;
+		const char *start2, *end2;
+		GData *unused;
+
+		/*
+		 * Find the ending </body> so we can strip off the outer <html/>
+		 * and <body/>
+		 */
+		if (purple_markup_find_tag("/body", end + 1, &start2, &end2, &unused))
+		{
+			gchar *tmp2;
+			tmp2 = g_strndup(end + 1, (start2 - 1) - (end + 1) + 1);
+			g_free(tmp);
+			tmp = tmp2;
+			g_datalist_clear(&unused);
+		}
 
 		ichattextcolor = g_datalist_get_data(&attribs, "ichattextcolor");
 		if (ichattextcolor != NULL)
@@ -2769,7 +2807,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				gchar *reason = NULL;
 
 				if (msg2[5] != NULL)
-					reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_CUSTOM, 0x0000, msg2[5], strlen(msg2[5]));
+					reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_LATIN_1, 0x0000, msg2[5], strlen(msg2[5]));
 
 				purple_debug_info("oscar",
 						   "Received an authorization request from UIN %u\n",
@@ -3198,16 +3236,16 @@ static int purple_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	PurpleConnection *gc = od->gc;
 	va_list ap;
-	guint16 type1, type2;
+	guint16 channel, event;
 	char *bn;
 
 	va_start(ap, fr);
-	type1 = (guint16) va_arg(ap, unsigned int);
+	channel = (guint16) va_arg(ap, unsigned int);
 	bn = va_arg(ap, char *);
-	type2 = (guint16) va_arg(ap, unsigned int);
+	event = (guint16) va_arg(ap, unsigned int);
 	va_end(ap);
 
-	switch (type2) {
+	switch (event) {
 		case 0x0000: { /* Text has been cleared */
 			serv_got_typing_stopped(gc, bn);
 		} break;
@@ -3220,12 +3258,14 @@ static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 			serv_got_typing(gc, bn, 0, PURPLE_TYPING);
 		} break;
 
+		case 0x000f: { /* Closed IM window */
+			serv_got_typing_stopped(gc, bn);
+		} break;
+
 		default: {
-			/*
-			 * It looks like iChat sometimes sends typing notification
-			 * with type1=0x0001 and type2=0x000f.  Not sure why.
-			 */
-			purple_debug_info("oscar", "Received unknown typing notification message from %s.  Type1 is 0x%04x and type2 is 0x%04hx.\n", bn, type1, type2);
+			purple_debug_info("oscar", "Received unknown typing "
+					"notification message from %s.  Channel is 0x%04x "
+					"and event is 0x%04hx.\n", bn, channel, event);
 		} break;
 	}
 
@@ -3287,7 +3327,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	oscar_user_info_append_extra_info(gc, user_info, NULL, userinfo);
 
 	if ((userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) && !oscar_util_valid_name_sms(userinfo->bn)) {
-		/* An SMS contact is always online; its Online Since valid is not useful */
+		/* An SMS contact is always online; its Online Since value is not useful */
 		time_t t = userinfo->onlinesince;
 		oscar_user_info_add_pair(user_info, _("Online Since"), purple_date_format_full(localtime(&t)));
 	}
@@ -3326,55 +3366,6 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	purple_notify_userinfo(gc, userinfo->bn, user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);
-
-	return 1;
-}
-
-static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
-{
-	PurpleConnection *gc = od->gc;
-	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleBuddy *b;
-	PurplePresence *presence;
-	PurpleStatus *status;
-	gchar *message = NULL;
-
-	va_list ap;
-	aim_userinfo_t *userinfo;
-
-	va_start(ap, fr);
-	userinfo = va_arg(ap, aim_userinfo_t *);
-	va_end(ap);
-
-	b = purple_find_buddy(account, userinfo->bn);
-	if (b == NULL)
-		return 1;
-
-	if (!oscar_util_valid_name_icq(userinfo->bn))
-	{
-		if (strcmp(purple_buddy_get_name(b), userinfo->bn) != 0)
-			serv_got_alias(gc, purple_buddy_get_name(b), userinfo->bn);
-		else
-			serv_got_alias(gc, purple_buddy_get_name(b), NULL);
-	}
-
-	presence = purple_buddy_get_presence(b);
-	status = purple_presence_get_active_status(presence);
-
-	if (purple_status_is_online(status) && !purple_status_is_available(status) &&
-			userinfo->flags & AIM_FLAG_AWAY && userinfo->away_len > 0 &&
-			userinfo->away != NULL && userinfo->away_encoding != NULL)
-	{
-		gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
-		message = oscar_encoding_to_utf8(account, charset,
-		                                 userinfo->away,
-		                                 userinfo->away_len);
-		g_free(charset);
-		purple_prpl_got_user_status(account, userinfo->bn,
-				purple_status_get_id(status),
-				"message", message, NULL);
-		g_free(message);
-	}
 
 	return 1;
 }
@@ -4704,7 +4695,7 @@ gchar *purple_prpl_oscar_convert_to_infotext(const gchar *str, gsize *ret_len, c
 	if (charset == AIM_CHARSET_UNICODE) {
 		encoded = g_convert(str, -1, "UTF-16BE", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "unicode-2-0";
-	} else if (charset == AIM_CHARSET_CUSTOM) {
+	} else if (charset == AIM_CHARSET_LATIN_1) {
 		encoded = g_convert(str, -1, "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "iso-8859-1";
 	} else {
@@ -5607,7 +5598,7 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 	buddy = purple_find_buddy(account, bn);
 
 	if (msg != NULL)
-		reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_CUSTOM, 0x0000, msg, strlen(msg));
+		reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_LATIN_1, 0x0000, msg, strlen(msg));
 
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
@@ -5844,7 +5835,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		charsetstr = "us-ascii";
 	else if (charset == AIM_CHARSET_UNICODE)
 		charsetstr = "unicode-2-0";
-	else if (charset == AIM_CHARSET_CUSTOM)
+	else if (charset == AIM_CHARSET_LATIN_1)
 		charsetstr = "iso-8859-1";
 	aim_chat_send_im(od, c->conn, 0, buf2, len, charsetstr, "en");
 	g_free(buf2);
@@ -6335,6 +6326,44 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 }
 
 static void
+oscar_close_directim(gpointer object, gpointer ignored)
+{
+	PurpleBlistNode *node;
+	PurpleBuddy *buddy;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	PurpleConversation *conv;
+	OscarData *od;
+	PeerConnection *conn;
+	const char *name;
+
+	node = object;
+
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (PurpleBuddy*)node;
+	name = purple_buddy_get_name(buddy);
+	account = purple_buddy_get_account(buddy);
+	gc = purple_account_get_connection(account);
+	od = gc->proto_data;
+	conn = peer_connection_find_by_type(od, name, OSCAR_CAPABILITY_DIRECTIM);
+
+	if (conn != NULL)
+	{
+		if (!conn->ready)
+			aim_im_sendch2_cancel(conn);
+
+		peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
+
+		/* OSCAR_DISCONNECT_LOCAL_CLOSED doesn't write anything to the convo
+		 * window. Let the user know that we canceled the Direct IM. */
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+		purple_conversation_write(conv, NULL, _("You closed the connection."),
+		                          PURPLE_MESSAGE_SYSTEM, time(NULL));
+	}
+}
+
+static void
 oscar_get_aim_info_cb(PurpleBlistNode *node, gpointer ignore)
 {
 	PurpleBuddy *buddy;
@@ -6397,11 +6426,23 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 		oscar_util_name_compare(purple_account_get_username(account), bname) &&
 		PURPLE_BUDDY_IS_ONLINE(buddy))
 	{
+		PeerConnection *conn;
+		conn = peer_connection_find_by_type(od, bname, OSCAR_CAPABILITY_DIRECTIM);
+
 		if (userinfo->capabilities & OSCAR_CAPABILITY_DIRECTIM)
 		{
-			act = purple_menu_action_new(_("Direct IM"),
-			                           PURPLE_CALLBACK(oscar_ask_directim),
-			                           NULL, NULL);
+			if (conn)
+			{
+				act = purple_menu_action_new(_("End Direct IM Session"),
+				                          PURPLE_CALLBACK(oscar_close_directim),
+				                          NULL, NULL);
+			}
+			else
+			{
+				act = purple_menu_action_new(_("Direct IM"),
+				                          PURPLE_CALLBACK(oscar_ask_directim),
+				                          NULL, NULL);
+			}
 			menu = g_list_prepend(menu, act);
 		}
 #if 0

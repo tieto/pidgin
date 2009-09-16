@@ -2,6 +2,68 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.6.2 (09/05/2009):
+	Mark: Woo boy it's been a busy two weeks.  There was a lot of new code
+	in 2.6.0, and with new code comes new bugs.  The cadre of relentless
+	developers responsible for Pidgin have been hard at work, and I believe
+	they have fixed all the major bugs that cropped up.  My thanks to all
+	those names listed as Current Developers in Pidgin's 'About' window.
+
+	Elliott: Well now, just as Mark said, there was a lot of new stuff that
+	probably came up with tons of bugs.  So I can't say I wrote anything
+	super-awesome, but I definitely fixed quite a few of those itty-bitty
+	why-didn't-this-work-this-way sort of bugs.
+
+2.6.1 (08/18/2009):
+	Mark: There were a lot of changes in 2.6.0, and so a few major bugs
+	crept in.  This is a very minor release to fix those bugs.  Sorry for
+	the inconvenience!
+
+2.6.0 (08/18/2009):
+	John:  Wow, four straight releases that I'm the first to NEWS on.  This
+	is getting kinda scary!  I'm beginning to wonder who else actually does
+	anything around here!  (Just kidding, of course.)  LOTS of new features
+	and a crapton of bugfixes this release.  There should pretty much be
+	something for everybody.  A great example of this is the ton of Yahoo
+	changes that have happened thanks to our SoC student from 2008, Sulabh
+	Mahajan.  Among his massive improvements are the ability to add MSN
+	buddies by adding them as "msn/user@domain.tld" and peer-to-peer file
+	transfers.  Of course, history shows we can't please everyine, so I'm
+	sure I'll see a complaint or five thousand in trac.  Enjoy, though!
+
+	Marcus: This is my first news! It's been quite a few microreleases this
+	time, but now we're finally at 2.6.0. I suppose the most anticipated
+	new feature in this release is the voice and video support, thanks to
+	Mike's heroic work. I've managed to slip in a few features too, like
+	in-band bytestream file transfers as a fallback on XMPP and idle time
+	reporting on XMPP. Enjoy!
+
+	Paul: This is my first news, too!  This release has definitely been a
+	long time coming; hopefully it won't disappoint since we've closed over
+	200 tickets.  Among other things, Tobias Markmann's GSoC project from
+	last year was merged, which means we now support BOSH (XMPP connections
+	over HTTP), and Andrei Mozzhuhin contributed an XMPP Service Discovery
+	Browser.  Also, thanks to Bernmeister for poking (at least) several
+	hundred old tickets!
+
+	Mike: Ditto. This is my first news as well. I have a feeling this is
+	getting repetitive at this point, but voice and video support is
+	finally here! Thanks to the rest of the Pidgin team, Farsight 2, and
+	GStreamer developers for making this possible! (I finally finished my
+	Summer of Code project :D)
+
+	Elliott: Hey, this is my firs... Wait, no it isn't.  Now I feel left
+	out.  So have you heard about this voice and video thing?
+	Unfortunately, not quite ready for all protocols, but it's getting
+	there.  MSN gained support for receiving voice clips at least, and
+	finally we have Ink receiving capabilities too.  Thanks to the guys
+	who wrote the original patch.  And finally, MSN no longer has over a
+	100 tickets open!
+
+2.5.9 (08/18/2009):
+	John:  This release is just a crash fix release to address a security
+	issue reported to us by CORE and a couple crashes Elliott found.
+
 2.5.8 (06/27/2009):
 	John:  This release is another somewhat rushed bugfix release to fix
 	a number of bugs that have come up since we released Pidgin 2.5.7.
@@ -51,10 +113,10 @@ Our development blog is available at: http://planet.pidgin.im
 	a few patches, and we've dealt with what feels like a TON of tickets
 	about two very common issues.  Feels like time for a release to me.
 
-	Etan: My first NEWS in quite a while and I don't have much to say. I
+	Etan: My first NEWS in quite a while and I don't have much to say.  I
 	haven't been too active lately and I'm hoping that won't be the case
-	going forward. I managed to get in a few perl fixes and some UI
-	language tweaks this release. My plan is to work on some of the
+	going forward.  I managed to get in a few perl fixes and some UI
+	language tweaks this release.  My plan is to work on some of the
 	issues pointed out by mpt (during his expert review of pidgin a little
 	while back) in the near future.
 
@@ -92,14 +154,14 @@ Our development blog is available at: http://planet.pidgin.im
 	messaging pleasure.
 
 	Sadrul: Despite our best efforts, this release got delayed by a
-	couple of weeks. But here it is! It is mostly a bug fix release, with
+	couple of weeks.  But here it is! It is mostly a bug fix release, with
 	a couple of important fixes, e.g. fix for the Yahoo! disconnect
-	problem. Also, welcome our newest Crazy Patch Writer, Marcus Lundblad,
+	problem.  Also, welcome our newest Crazy Patch Writer, Marcus Lundblad,
 	who, among various other fixes, has implemented custom smileys for the
-	XMPP protocol, included in this release. Enjoy!
+	XMPP protocol, included in this release.  Enjoy!
 
 	Stu: I guess this is the time of year for server migrations, and
-	I've just about had enough of them. Fortunately Pidgin is still fun,
+	I've just about had enough of them.  Fortunately Pidgin is still fun,
 	and this release should be superb.
 
 	John: Although our services were down for quite some time, we didn't
@@ -109,8 +171,8 @@ Our development blog is available at: http://planet.pidgin.im
 	happy!
 
 	Elliott: This release took a while, but that was due to an unfortunate
-	server snafu. I didn't have much to do with it, but hopefully the new
-	servers will help us out a bit. Anyway, mostly bug-fixes this time.
+	server snafu.  I didn't have much to do with it, but hopefully the new
+	servers will help us out a bit.  Anyway, mostly bug-fixes this time.
 	Nothing spectacular, unless you happen to suffer from one of those bugs.
 	Oh, and don't forget, the "Has you" tooltip is back!
 
@@ -123,9 +185,9 @@ Our development blog is available at: http://planet.pidgin.im
 	coming months.
 
 	Elliott: I'm just commenting so Kevin wouldn't be the only one in NEWS
-	and no-one else seems to want to. Anyway, there's a couple MSN login
-	fixes, so try it out. The contact list problems might still be around,
-	but you can probably find a workaround in trac. And there's a tooltip
+	and no-one else seems to want to.  Anyway, there's a couple MSN login
+	fixes, so try it out.  The contact list problems might still be around,
+	but you can probably find a workaround in trac.  And there's a tooltip
 	fix for our AIM friends, not that I had anything to do with it (except
 	closing many many duplicate tickets).
 
@@ -135,16 +197,16 @@ Our development blog is available at: http://planet.pidgin.im
 	it to the world!  There are myriad bugfixes, including some important
 	ones so you should be sure to update.
 
-	Hylke: Finally MSNP15 support. To celebrate this I refreshed a lot of
+	Hylke: Finally MSNP15 support.  To celebrate this I refreshed a lot of
 	the smilies used in the protocol and added the long awaited indispensable
-	bunny icon. I think this is one of those releases that will make a lot
+	bunny icon.  I think this is one of those releases that will make a lot
 	of users happy, especially MSN users.
 
-	Elliott: Oh look, my first NEWS! Well anyway, with that new MSNP15
+	Elliott: Oh look, my first NEWS!  Well anyway, with that new MSNP15
 	support, this release is set up to be a huge success and a total flop
-	all at the same time. Here's hoping it's the "huge success" one for you.
+	all at the same time.  Here's hoping it's the "huge success" one for you.
 	Those icon changes that Hylke made, while minor, really make things look
-	a little cleaner, I think. Oh yea, did I mention that MSNP15 stuff?
+	a little cleaner, I think.  Oh yea, did I mention that MSNP15 stuff?
 
 	Mark: Speaking of MSNP15, we'd like to welcome Elliott Sales de Andrade
 	as a full fledged developer!  He took the last few strides mushing the
@@ -152,7 +214,7 @@ Our development blog is available at: http://planet.pidgin.im
 	doing other great stuff.
 
 	Ka-Hing: "Reject"ing a certificate after your account is signed off is
-	not recommended. Deleting the file after you start sending it is also
+	not recommended.  Deleting the file after you start sending it is also
 	discouraged.
 
 2.4.3 (07/01/2008):
@@ -162,12 +224,12 @@ Our development blog is available at: http://planet.pidgin.im
 2.4.2 (5/17/2008):
 	Sadrul: We added some usability changes in this release, including the
 	typing notification, buddyicon and input area size in the conversation
-	windows, escape to close conversation windows etc. These changes should
+	windows, escape to close conversation windows etc.  These changes should
 	make pidgin more usable and more fun for Everyone! *wink*
 
 	Stu: I fixed some memory leaks, but nothing like as many as Daniel did.
 	MSN buddy list synchronization should be significantly less painful now,
-	and opening MSN inboxes might work better too. SILC passphrase changes
+	and opening MSN inboxes might work better too.  SILC passphrase changes
 	and support for passphrase-less keys has been improved also.
 
 2.4.1 (3/31/2008):
@@ -184,27 +246,27 @@ Our development blog is available at: http://planet.pidgin.im
 	John: While this release took what seems like forever to get out the
 	door, I think it's well worth the wait, especially for Yahoo! users.
 	This release serves up some fixes for long standing bugs and adds
-	file transfer for transfers with newer Yahoo! clients (finally!). As
+	file transfer for transfers with newer Yahoo! clients (finally!).  As
 	is standard with code I committed, where it works great thank the
-	patch writer, and where it's broken, feel free to yell at me. Enjoy!
+	patch writer, and where it's broken, feel free to yell at me.  Enjoy!
 
-	Sadrul: Finch is more colourful and blinky in this release! There's
+	Sadrul: Finch is more colourful and blinky in this release!  There's
 	now a log viewer, which is very useful, and also the ability to
-	block/unblock buddies. It's now also possible to find chat rooms on
-	many services, e.g. XMPP, IRC, Yahoo! etc. Happy Leap Day!
+	block/unblock buddies.  It's now also possible to find chat rooms on
+	many services, e.g. XMPP, IRC, Yahoo! etc.  Happy Leap Day!
 
 	Ka-Hing: I think all I've done for this release is committing some
 	patches written by other people.
 
-	Stu: Finally, 2.4.0 lands. I didn't do all that much except complain
-	about things I didn't like or just revert Sean's changes. I'm quite
+	Stu: Finally, 2.4.0 lands.  I didn't do all that much except complain
+	about things I didn't like or just revert Sean's changes.  I'm quite
 	pleased with how well it's turned out in the end.
 	Happy Birthday Fred, you must be nearly 10 now ;-)
 
 2.3.1 (12/7/2007):
 	Stu: I'm sorry for the MSN problems and the plugin crashes in 2.3.0.
-	Hopefully this will redeem us. This fixes a number of bugs. I'm a
-	bit late but I'd like to welcome John to the team. Enjoy!
+	Hopefully this will redeem us.  This fixes a number of bugs.  I'm a
+	bit late but I'd like to welcome John to the team.  Enjoy!
 
 	Luke: I've done absolutely nothing in the last 2 weeks, except watch
 	others commit bug and, more, leak fixes.  People should be noticing
@@ -246,23 +308,23 @@ Our development blog is available at: http://planet.pidgin.im
 	last release looking at the tickets that have been submitted
 	and many of them have been closed.
 
-	Stu: I haven't NEWS'd in a while. I haven't actually done much for
-	too long also, maybe I'll find some time soon. This release is
+	Stu: I haven't NEWS'd in a while.  I haven't actually done much for
+	too long also, maybe I'll find some time soon.  This release is
 	basically what 2.2.0 should have been - it actually compiles this
 	time.
 
 2.2.0 (9/13/2007):
 	Sean: 2.2.0 contains the results of several major Google Summer
-	of Code branches bringing some new, extraordinary features. We
+	of Code branches bringing some new, extraordinary features.  We
 	have a new protocol, MySpaceIM, a bunch of new features for an
 	existing protocol, XMPP, and nifty new certificate management
 	to make sure your IM server is who it says it is.
 
 	Ka-Hing: A number of you noticed crashes when dragging windows
-	around when certain options are enabled. Well, that was my fault,
-	and Sadrul fixed it. So Props to him and poos to me. I haven't
+	around when certain options are enabled.  Well, that was my fault,
+	and Sadrul fixed it.  So Props to him and poos to me.  I haven't
 	done much for this release, but the next one should contain
-	something that I helped work on. Hint: students are cheap slave
+	something that I helped work on.  Hint: students are cheap slave
 	coders!
 
 	Kevin: I haven't really been coding much in Pidgin, and this
@@ -272,9 +334,9 @@ Our development blog is available at: http://planet.pidgin.im
 
 2.1.1 (8/20/2007):
 	Sean: Continuing our schedule of frequent releases, Pidgin 2.1.1
-	is out. In it, we've addressed a lot of UI issues from our
+	is out.  In it, we've addressed a lot of UI issues from our
 	experimental new changes introduced in 2.1.0, and gave a lot of 
-	attention to Yahoo! and Bonjour. Thanks to everyone who 
+	attention to Yahoo! and Bonjour.  Thanks to everyone who 
 	contributed.
 
 	Luke: We have reworked some parts of the conversation windows in
@@ -285,14 +347,14 @@ Our development blog is available at: http://planet.pidgin.im
 	various issues, testing fixes, and getting patches in.
 
 	Tim: Sean finally got me to fix some of the buddy list bugs with
-	Yahoo! when in version 15 mode. So now we have some Yahoo! to
-	MSN support, which is kind of nice. Looks like some others have
+	Yahoo! when in version 15 mode.  So now we have some Yahoo! to
+	MSN support, which is kind of nice.  Looks like some others have
 	been contributing to Yahoo! while I've been AWOL, so many thanks
 	to them.
 
 2.1.0 (7/28/2007):
 	Sean: This release took a bit longer than 3 weeks, but boy is it 
-	worth it! We're beginning to experiment with new UI concepts and
+	worth it!  We're beginning to experiment with new UI concepts and
 	this release features a largely re-designed conversation window.
 	We've closed 150 tickets for this release; much thanks go to all
 	the developers, translators, and testers who made this possible.
@@ -300,28 +362,28 @@ Our development blog is available at: http://planet.pidgin.im
 	Ka-Hing: Sean said no one else NEWS'ed, so I figure I should.
 
 2.0.2 (6/14/2007):
-	Sean: Another big maintenance release. Again, about 100 tickets were
-	resolved in this release, and they keep coming in. Lots of bug fixes,
+	Sean: Another big maintenance release.  Again, about 100 tickets were
+	resolved in this release, and they keep coming in.  Lots of bug fixes,
 	some minor icon adjustements, hopefully we addressed some ICQ
 	internationalization issues, and support for Bonjour on Windows!
 	Our next release will be 2.1.0, and will come with some great new
 	features.
 
 	Stu: I think we're gradually getting the hang of this 3 week thing
-	again. This release includes yet more bug fixes. I'd also like to
+	again.  This release includes yet more bug fixes.  I'd also like to
 	specifically thank Pekka Riikonen for the patch to enable using SILC
 	Toolkit 1.1 with Pidgin/libpurple that is included in this release.
 
 2.0.1 (5/24/2007):
-	Sean: 2.0.1! Three weeks later, as scheduled! It is so nice to have
-	regular, frequent, releases again! This is a bugfix release; We have
+	Sean: 2.0.1!  Three weeks later, as scheduled!  It is so nice to have
+	regular, frequent, releases again!  This is a bugfix release; We have
 	fixed over 100 issues reported to us at http://developer.pidgin.im.
 	Thanks to everyone for their great work, and look for the next release
 	in another three weeks!
 
-	Stu: Lots'o'fixes in this. I don't know how you users find so many
-	things for us to fix. 24 hours in a day (sadly). 24 is divisible by the
-	sum of its digits and by their product. It is the smallest composite
+	Stu: Lots'o'fixes in this.  I don't know how you users find so many
+	things for us to fix.  24 hours in a day (sadly).  24 is divisible by the
+	sum of its digits and by their product.  It is the smallest composite
 	number, the product of whose divisors is a cube.
 
 	Luke: I requested that we have a bug fix release, and so we have!
@@ -343,18 +405,18 @@ Our development blog is available at: http://planet.pidgin.im
 	definition of 'cool' to get it.
 
 	Etan: Perl plugins now have access to almost all of the savedstatus
-	API functions. I also removed a couple of the preferences from the
+	API functions.  I also removed a couple of the preferences from the
 	Pidgin GTK+ Theme Control plugin which should help many of the people
-	for whom the configuration dialog size was a problem. The removed
+	for whom the configuration dialog size was a problem.  The removed
 	preferences no longer had the effects they were added to have anyway.
 
 2.0.0 (5/3/2007):
 	Sean: 2.0.0! It's real exciting to finally release Pidgin 2.0.0! I'm
-	really proud of all the work we've all done. I'm pumped. And, while
+	really proud of all the work we've all done.  I'm pumped.  And, while
 	I could go on about all the amazing thing that have been added since
 	1.5.0, what I'm really excited about is getting back to a regular,
 	rapid, release cycle of active, open development, unhindered by legal
-	quandries. Huge thanks to everyone involved.
+	quandries.  Huge thanks to everyone involved.
 
 	Luke: We have finally managed to get 2.0.0 out the door, after nearly
 	but not quite 2 years of effort and fustration.  No one regrets more
@@ -371,24 +433,24 @@ Our development blog is available at: http://planet.pidgin.im
 	attempt to avoid knee-jerk reactions.
 
 	Evan: One small step for bird, one giant leap for birdkind... except
-	this is hardly one small step. A lot more has changed from Gaim 1.5.0
+	this is hardly one small step.  A lot more has changed from Gaim 1.5.0
 	than just the name. Pidgin has a *very* attractive new look, a whole
 	new member of the family (Finch, formerly gaim-console) has been born,
 	and libpurple has come into its own as a solid, full-featured library
-	powering the greatest IM clients around. Bugs were fixed and
+	powering the greatest IM clients around.  Bugs were fixed and
 	features were added by the hundreds (thousands?) since the last
 	major release, all while improving performance and resisting feature
-	creep. As Luke said, a ton of thought and effort has gone into
+	creep.  As Luke said, a ton of thought and effort has gone into
 	Pidgin 2.0.0; I'm proud to have played a part.
 
-	Stu: We did it! finally, we have 2.0.0. It's been a long time coming,
-	but there's a great deal of goodness here. When I say a long time, I'm
+	Stu: We did it! finally, we have 2.0.0.  It's been a long time coming,
+	but there's a great deal of goodness here.  When I say a long time, I'm
 	not kidding - it's been 972 days since we branched off "oldstatus"
-	(aka 1.x). The early Greeks were uncertain as to whether 2 was a
+	(aka 1.x).  The early Greeks were uncertain as to whether 2 was a
 	number at all (or if we'd ever make this release) - it has a beginning
 	and an end but no middle (much like our unfortunately quiet development
-	period). 2 is the first prime number and the only even prime. 2 is also
-	the first deficient number (oh well). There are only 10 types of people
+	period).  2 is the first prime number and the only even prime. 2 is also
+	the first deficient number (oh well).  There are only 10 types of people
 	in the world - those who like our new names and those who do not.
 	Enjoy!
 
@@ -398,7 +460,7 @@ Our development blog is available at: http://planet.pidgin.im
 	where they are today.  Congratulations everyone!
 
 	Sadrul: My first NEWS, and on what an occasion! Pidgin 2.0.0 is finally
-	released!! And it's *really* very good!!! Give your soul a break ...
+	released!!  And it's *really* very good!!!  Give your soul a break ...
 	Use Pidgin!
 
 	Daniel: There has been a fair amount of weeping and gnashing of teeth

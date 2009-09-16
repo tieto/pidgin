@@ -250,8 +250,6 @@ static void
 aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 {
 	aim_userinfo_t *cur;
-	FlapConnection *conn;
-	aim_rxcallback_t userfunc;
 
 	cur = aim_locate_finduserinfo(od, userinfo->bn);
 
@@ -353,73 +351,6 @@ aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 		}
 		cur->away_len = 0;
 	}
-
-	/*
-	 * This callback can be used by a client if they want to know whenever
-	 * info for a buddy is updated.  For example, if a client shows away
-	 * messages in its buddy list, then it would need to know if a user's
-	 * away message changes.
-	 */
-	conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE);
-	if ((userfunc = aim_callhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_GOTINFOBLOCK)))
-		userfunc(od, conn, NULL, cur);
-}
-
-/**
- * Remove this buddy name from our queue.  If this info was requested
- * by our info request queue, then pop the next element off of the queue.
- *
- * @param od The aim session.
- * @param bn Buddy name of the info we just received.
- * @return True if the request was explicit (client requested the info),
- *         false if the request was implicit (libfaim request the info).
- */
-static int
-aim_locate_gotuserinfo(OscarData *od, FlapConnection *conn, const char *bn)
-{
-	struct userinfo_node *cur, *del;
-	int was_explicit = TRUE;
-
-	while ((od->locate.requested != NULL) && (oscar_util_name_compare(bn, od->locate.requested->bn) == 0)) {
-		del = od->locate.requested;
-		od->locate.requested = del->next;
-		was_explicit = FALSE;
-		g_free(del->bn);
-		g_free(del);
-	}
-
-	cur = od->locate.requested;
-	while ((cur != NULL) && (cur->next != NULL)) {
-		if (oscar_util_name_compare(bn, cur->next->bn) == 0) {
-			del = cur->next;
-			cur->next = del->next;
-			was_explicit = FALSE;
-			g_free(del->bn);
-			g_free(del);
-		} else
-			cur = cur->next;
-	}
-
-	return was_explicit;
-}
-
-void
-aim_locate_autofetch_away_message(OscarData *od, const char *bn)
-{
-	struct userinfo_node *cur;
-
-	/* Make sure we haven't already made an info request for this buddy */
-	for (cur = od->locate.requested; cur != NULL; cur = cur->next)
-		if (oscar_util_name_compare(bn, cur->bn) == 0)
-			return;
-
-	/* Add a new node to our request queue */
-	cur = (struct userinfo_node *)g_malloc(sizeof(struct userinfo_node));
-	cur->bn = g_strdup(bn);
-	cur->next = od->locate.requested;
-	od->locate.requested = cur;
-
-	aim_locate_getinfoshort(od, cur->bn, 0x00000002);
 }
 
 aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *bn) {
@@ -745,6 +676,13 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			outinfo->sessionlen = byte_stream_get32(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_SESSIONLEN;
 
+		} else if (type == 0x0014) {
+			/*
+			 * My instance number.
+			 */
+			guint8 instance_number;
+			instance_number = byte_stream_get8(bs);
+
 		} else if (type == 0x0019) {
 			/*
 			 * OSCAR short capability information.  A shortened
@@ -866,8 +804,30 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		} else if (type == 0x001f) {
 			/*
+			 * Upper bytes of user flags.  Can be any size
+			 *
 			 * Seen on a buddy using DeadAIM.  Data was 4 bytes:
 			 * 0x00 00 00 10
+			 */
+
+		} else if (type == 0x0023) {
+			/*
+			 * Last Buddy Feed update time, in seconds since the epoch.
+			 */
+
+		} else if (type == 0x0026) {
+			/*
+			 * Time that the profile was set, in seconds since the epoch.
+			 */
+
+		} else if (type == 0x0027) {
+			/*
+			 * Time that the away message was set, in seconds since the epoch.
+			 */
+
+		} else if (type == 0x002a) {
+			/*
+			 * Country code based on GeoIP data.
 			 */
 
 		} else {
@@ -956,7 +916,6 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	aim_snac_t *snac2;
 	guint16 reason;
 	char *bn;
-	int was_explicit;
 
 	if (!(snac2 = aim_remsnac(od, snac->id))) {
 		purple_debug_misc("oscar", "locate error: received response from unknown request!\n");
@@ -978,15 +937,9 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 
 	reason = byte_stream_get16(bs);
 
-	/*
-	 * Remove this buddy name from our queue.  If the client requested
-	 * this buddy's info explicitly, then notify them that we do not have
-	 * info for this buddy.
-	 */
-	was_explicit = aim_locate_gotuserinfo(od, conn, bn);
-	if (was_explicit == TRUE)
-		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-			ret = userfunc(od, conn, frame, reason, bn);
+	/* Notify the user that we do not have info for this buddy */
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, reason, bn);
 
 	if (snac2)
 		g_free(snac2->data);
@@ -1202,7 +1155,6 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	aim_userinfo_t *userinfo, *userinfo2;
 	GSList *tlvlist;
 	aim_tlv_t *tlv = NULL;
-	int was_explicit;
 
 	userinfo = (aim_userinfo_t *)g_malloc(sizeof(aim_userinfo_t));
 	aim_info_extract(od, bs, userinfo);
@@ -1238,18 +1190,9 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	aim_info_free(userinfo);
 	g_free(userinfo);
 
-	/*
-	 * Remove this buddy name from our queue.  If the client requested
-	 * this buddy's info explicitly, then notify them that we have info
-	 * for this buddy.
-	 */
-	if (userinfo2 != NULL)
-	{
-		was_explicit = aim_locate_gotuserinfo(od, conn, userinfo2->bn);
-		if (was_explicit == TRUE)
-			if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-				ret = userfunc(od, conn, frame, userinfo2);
-	}
+	/* Show the info to the user */
+	if (userinfo2 != NULL && ((userfunc = aim_callhandler(od, snac->family, snac->subtype))))
+		ret = userfunc(od, conn, frame, userinfo2);
 
 	return ret;
 }

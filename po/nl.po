@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-21 08:28-0700\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-07-20 12:53+0100\n"
 "Last-Translator: Daniël Heres <danielheres@gmail.com>\n"
 "Language-Team: Dutch <nl@li.org>\n"
@@ -865,7 +865,7 @@ msgstr "Alle gesprekken"
 msgid "System Log"
 msgstr "Systeemlogboek"
 
-msgid "Calling ... "
+msgid "Calling..."
 msgstr "Bellen..."
 
 msgid "Hangup"
@@ -1508,6 +1508,30 @@ msgstr ""
 "Wanneer een nieuw gesprek wordt gestart, voegt deze plug-in het vorige "
 "gesprek in."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+"\n"
+"Ophalen TinyURL..."
+
+#, fuzzy
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr "Alleen TinyURL aanmaken voor koppelingen van deze lengte of langer"
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+msgid "TinyURL"
+msgstr "TinyURL"
+
+msgid "TinyURL plugin"
+msgstr "TinyURL plug-in"
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+
 msgid "Online"
 msgstr "Online"
 
@@ -1551,29 +1575,6 @@ msgstr "GntGeschiedenis"
 
 msgid "Lastlog plugin."
 msgstr "Geschiedenis-plug-in."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-"\n"
-"Ophalen TinyURL..."
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr "Alleen TinyURL aanmaken voor koppelingen van deze lengte of langer"
-
-msgid "TinyURL (or other) address prefix"
-msgstr ""
-
-msgid "TinyURL"
-msgstr "TinyURL"
-
-msgid "TinyURL plugin"
-msgstr "TinyURL plug-in"
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
 
 msgid "accounts"
 msgstr "accounts"
@@ -1637,6 +1638,47 @@ msgstr "Contacten"
 msgid "buddy list"
 msgstr "contactenlijst"
 
+#, fuzzy
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+"Het certificaat van \"%s\" is zelf-gesigneerd. Het kan niet automatisch "
+"gecontroleerd worden."
+
+msgid "The root certificate this one claims to be issued by is unknown."
+msgstr ""
+
+#, fuzzy
+msgid "The certificate is not valid yet."
+msgstr "De certificaat-keten van %s is niet geldig."
+
+#, fuzzy
+msgid "The certificate has expired and should not be considered valid."
+msgstr "De certificaat-keten van %s is niet geldig."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+#, fuzzy
+msgid "The certificate presented is not issued to this domain."
+msgstr "De certificaat-keten van %s is niet geldig."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+"Je hebt geen databank van belangrijke certificaten, dus deze kan niet worden "
+"gecontroleerd."
+
+#, fuzzy
+msgid "The certificate chain presented is invalid."
+msgstr "De certificaat-keten van %s is niet geldig."
+
+#, fuzzy
+msgid "The certificate has been revoked."
+msgstr "Het gesprek is stopgezet"
+
+#, fuzzy
+msgid "An unknown certificate error occurred."
+msgstr "Onbekende aanmeldingsfout: %s."
+
 msgid "(DOES NOT MATCH)"
 msgstr "(KOMEN NIET OVEREEN)"
 
@@ -1681,67 +1723,22 @@ msgstr "SSL-certificaat-controle"
 msgid "_View Certificate..."
 msgstr "_Bekijk certificaat..."
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"Het certificaat van \"%s\" is zelf-gesigneerd. Het kan niet automatisch "
-"gecontroleerd worden."
-
-#. FIXME 2.6.1
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
+#, fuzzy, c-format
+msgid "The certificate for %s could not be validated."
 msgstr "De certificaat-keten van %s is niet geldig."
 
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
-#. TODO: Probably wrong.
-#. TODO: Probably wrong
 #. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "SSL-certificaat fout"
 
-msgid "Invalid certificate chain"
-msgstr "Dit is een ongeldige certificaat-keten"
+#, fuzzy
+msgid "Unable to validate certificate"
+msgstr "Kan niet authentificeren: %s"
 
-#. vrq will be completed by user_auth
+#, fuzzy, c-format
 msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-"Je hebt geen databank van belangrijke certificaten, dus deze kan niet worden "
-"gecontroleerd."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr ""
-
-#, c-format
-msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-"De certificaat-keten die door %s wordt gegeven heeft geen geldige digitale "
-"handtekening van de certificaat-identiteit van wie het een handtekening zegt "
-"te hebben"
-
-msgid "Invalid certificate authority signature"
-msgstr "Ongeldige certificaat-identiteit handtekening"
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
 "Het certificaat dat komt van \"%s\" zegt in plaats van dat  van \"%s\" te "
 "zijn.  Dit kan betekenen dat je niet verbonden bent met de dienst welke je "
@@ -1985,19 +1982,19 @@ msgstr "Bestandsoverdracht van %s voltooid"
 msgid "File transfer complete"
 msgstr "Bestandsoverdracht voltooid"
 
-#, c-format
-msgid "You canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "You cancelled the transfer of %s"
 msgstr "Je de overdracht van %s afgebroken"
 
 msgid "File transfer cancelled"
 msgstr "Bestandsoverdracht afgebroken"
 
-#, c-format
-msgid "%s canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
 msgstr "%s heeft de overdracht van %s afgebroken"
 
-#, c-format
-msgid "%s canceled the file transfer"
+#, fuzzy, c-format
+msgid "%s cancelled the file transfer"
 msgstr "%s heeft de overdracht afgebroken"
 
 #, c-format
@@ -2206,6 +2203,33 @@ msgstr "<font color=\"red\"><b>Kan bestand niet lezen: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-ANTWOORD>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
+#, fuzzy
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Onbekende aanmeldingsfout: %s."
+
+#, fuzzy
+msgid "Conference error."
+msgstr "Conferentie afgesloten"
+
+msgid "Error with your microphone."
+msgstr ""
+
+msgid "Error with your webcam."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error creating session: %s"
+msgstr "Fout bij maken verbinding"
 
 #, fuzzy
 msgid "Error creating conference."
@@ -2486,14 +2510,15 @@ msgstr ""
 "Test plug-in PIC-ondersteuning, als een server. Deze registreert de IPC-"
 "opdrachten."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "Instellingen om notificaties over deelnemen/verlaten te verbergen"
+msgid "Hide Joins/Parts"
+msgstr ""
 
-msgid "Minimum Room Size"
-msgstr "Minimale grootte van gespreksruimte"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr ""
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "Gebruikers-activiteit verlopen (in minuten)"
+msgid "If user has not spoken in this many minutes"
+msgstr ""
 
 msgid "Apply hiding rules to buddies"
 msgstr ""
@@ -3875,6 +3900,11 @@ msgstr "URL"
 msgid "Street Address"
 msgstr "Adres"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "Adresbijvoeging"
 
@@ -3957,20 +3987,26 @@ msgstr "Foto"
 msgid "Logo"
 msgstr "Logo"
 
+#, fuzzy, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr ""
+"U staat op het punt om %s van uw contactenlijst te verwijderen. Wilt u "
+"doorgaan?"
+
+msgid "Cancel Presence Notification"
+msgstr "Aanwezigheidsmelding annuleren"
+
 msgid "Un-hide From"
 msgstr "Afzender weergeven"
 
 msgid "Temporarily Hide From"
 msgstr "Afzender tijdelijk verbergen"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "Aanwezigheidsmelding annuleren"
-
 msgid "(Re-)Request authorization"
 msgstr "(Opnieuw) toestemming vragen"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
@@ -4572,7 +4608,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "role &lt;naam&gt; &lt;moderator|participant|visitor|none&gt;:Rol van "
 "gebruiker in de ruimte instellen"
@@ -4721,9 +4757,6 @@ msgstr "Er is een fout opgetreden bij het openen van het bestand."
 
 msgid "Transfer was closed."
 msgstr "Bestandsoverdracht gesloten."
-
-msgid "Failed to open the file"
-msgstr "Bestand openen mislukt"
 
 msgid "Failed to open in-band bytestream"
 msgstr ""
@@ -5001,8 +5034,8 @@ msgstr "Onbegrijpelijk contactenbestand"
 msgid "Not expected"
 msgstr "Niet verwacht"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+#, fuzzy
+msgid "Friendly name is changing too rapidly"
 msgstr "Bijnaam verandert te snel"
 
 #, c-format
@@ -5572,8 +5605,8 @@ msgstr ""
 "%s verzond je een uitnodiging voor een webcam, wat nog niet wordt "
 "ondersteund."
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
+#, fuzzy, c-format
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr ""
 "%s verzond je een uitnodiging voor een webcam, wat nog niet wordt "
 "ondersteund."
@@ -5629,6 +5662,10 @@ msgstr "Dit contact ook verwijderen uit adresboek?"
 
 msgid "The username specified is invalid."
 msgstr "Ingevoerde gebruikersnaam is ongeldig."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "Bijnaam verandert te snel"
 
 msgid "This Hotmail account may not be active."
 msgstr "Dit Hotmail-account is misschien niet in gebruik."
@@ -6312,8 +6349,9 @@ msgstr "Server-adres"
 msgid "Server port"
 msgstr "Server-poort"
 
-#, fuzzy
-msgid "Received unexpected response from "
+#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s"
 msgstr "Onverwacht HTTP-antwoord van de server ontvangen"
 
 #. username connecting too frequently
@@ -6324,8 +6362,10 @@ msgstr ""
 "Je hebt je te snel aan en afgemeld. Wacht 10 minuten en probeer het nog een "
 "keer. Als je verdergaat moet je nog langer wachten "
 
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, fuzzy, c-format
-msgid "Error requesting "
+msgid "Error requesting %s: %s"
 msgstr "Fout oplossing %s"
 
 msgid "AOL does not allow your screen name to authenticate here"
@@ -7125,6 +7165,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "_Verbinden"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "Server heeft de verbinding verbroken."
+
 msgid "Get AIM Info"
 msgstr "AIM-info ophalen"
 
@@ -7134,6 +7178,10 @@ msgstr "Opmerking bewerken"
 
 msgid "Get Status Msg"
 msgstr "Statusbericht tonen"
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "Directe verbinding opgezet"
 
 msgid "Direct IM"
 msgstr "Direct bericht"
@@ -7984,8 +8032,8 @@ msgstr "%d heeft het onderwerp veranderd naar: %s"
 msgid "File Send"
 msgstr "Bestanden sturen"
 
-#, c-format
-msgid "%d canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%d cancelled the transfer of %s"
 msgstr "%d heeft de overdracht van %s afgebroken"
 
 #, c-format
@@ -9534,6 +9582,9 @@ msgstr "Taal van chatruimte"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Conferentie- en chatruimteverzoeken negeren"
 
+msgid "Use account proxy for SSL connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "URL voor lijst van ruimtes"
 
@@ -9558,6 +9609,12 @@ msgstr "Yahoo JAPAN ID..."
 #. *  description
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Yahoo! JAPAN protocol-plug-in"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
+"%s verzond je een uitnodiging voor een webcam, wat nog niet wordt "
+"ondersteund."
 
 msgid "Your SMS was not delivered"
 msgstr "De SMS werd niet afgeleverd"
@@ -9638,8 +9695,26 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Contact negeren?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "Uw account is afgesloten. Meld u aan via de Yahoo website."
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "Ongeldige gebruikersnaam of wachtwoord"
+
+#, fuzzy
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+"Onbekende fout %d. Aanmelden via de Yahoo! website zou dit probleem op "
+"kunnen lossen."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -10409,6 +10484,128 @@ msgstr ""
 "of te verwijderen ui <b>Accounts->Toevoegen/bewerken</b> in het "
 "contactenlijst-venser."
 
+#. Buddy List
+msgid "Background Color"
+msgstr "Achtergrondkleur"
+
+msgid "The background color for the buddy list"
+msgstr ""
+
+msgid "Layout"
+msgstr "Lay-out"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr ""
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Achtergrondkleur"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Text"
+msgstr "Uitgevouwde tekst"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Achtergrondkleur selecteren"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Text"
+msgstr "Samengevoegde tekst"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+msgid "Contact/Chat Background Color"
+msgstr "Contact/Achtergrondkleur gesprek"
+
+msgid "The background color of a contact or chat"
+msgstr "De achtergrond voor een contact of gesprek"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+msgid "Contact Text"
+msgstr "Contact tekst"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "Offline tejst"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+msgid "Away Text"
+msgstr "Afwezig tekst"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "Offline tejst"
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "Gebruikersinformatie aanpassen voor %s"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+msgid "Idle Text"
+msgstr "Tekst inactief"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message Text"
+msgstr "Berichttekst"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "Gebruikersinformatie aanpassen voor %s"
+
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
@@ -10844,7 +11041,8 @@ msgstr "A_lias:"
 msgid "_Group:"
 msgstr "_Groep:"
 
-msgid "Auto_join when account becomes online."
+#, fuzzy
+msgid "Auto_join when account connects."
 msgstr "Automatisch deelnemen wanneer account online komt."
 
 #, fuzzy
@@ -10877,101 +11075,6 @@ msgstr "/Extra"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Contacten/Sorteren"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "Achtergrondkleur"
-
-msgid "The background color for the buddy list"
-msgstr ""
-
-msgid "Layout"
-msgstr "Lay-out"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr ""
-
-#. Group
-#, fuzzy
-msgid "Expanded Background Color"
-msgstr "Achtergrondkleur"
-
-msgid "The background color of an expanded group"
-msgstr ""
-
-msgid "Expanded Text"
-msgstr "Uitgevouwde tekst"
-
-msgid "The text information for when a group is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Background Color"
-msgstr "Achtergrondkleur selecteren"
-
-msgid "The background color of a collapsed group"
-msgstr ""
-
-msgid "Collapsed Text"
-msgstr "Samengevoegde tekst"
-
-msgid "The text information for when a group is collapsed"
-msgstr ""
-
-#. Buddy
-msgid "Contact/Chat Background Color"
-msgstr "Contact/Achtergrondkleur gesprek"
-
-msgid "The background color of a contact or chat"
-msgstr "De achtergrond voor een contact of gesprek"
-
-msgid "Contact Text"
-msgstr "Contact tekst"
-
-msgid "The text information for when a contact is expanded"
-msgstr ""
-
-msgid "On-line Text"
-msgstr ""
-
-msgid "The text information for when a buddy is online"
-msgstr ""
-
-msgid "Away Text"
-msgstr "Afwezig tekst"
-
-msgid "The text information for when a buddy is away"
-msgstr ""
-
-msgid "Off-line Text"
-msgstr "Offline tejst"
-
-msgid "The text information for when a buddy is off-line"
-msgstr ""
-
-msgid "Idle Text"
-msgstr "Tekst inactief"
-
-msgid "The text information for when a buddy is idle"
-msgstr ""
-
-msgid "Message Text"
-msgstr "Berichttekst"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr ""
-
-msgid "Message (Nick Said) Text"
-msgstr ""
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-
-#, fuzzy
-msgid "The text information for a buddy's status"
-msgstr "Gebruikersinformatie aanpassen voor %s"
 
 #, fuzzy
 msgid "Type the host name for this certificate."
@@ -11058,6 +11161,10 @@ msgstr "/_Gesprek"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Gesprek/Nieuw _bericht..."
+
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Gesprek/_Uitnodigen..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Gesprek/_Zoeken..."
@@ -11444,8 +11551,8 @@ msgstr "Spaans"
 msgid "Estonian"
 msgstr "Estlands"
 
-msgid "Euskera(Basque)"
-msgstr "Baskisch"
+msgid "Basque"
+msgstr ""
 
 msgid "Persian"
 msgstr "Perzisch"
@@ -11649,8 +11756,12 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
 
 #, fuzzy, c-format
@@ -11886,14 +11997,6 @@ msgstr "Verwerkte overdrachten uit lijst _verwijderen"
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "Details bestand"
-
-#. Pause button
-msgid "_Pause"
-msgstr "_Pauzeren"
-
-#. Resume button
-msgid "_Resume"
-msgstr "_Doorgaan"
 
 msgid "Paste as Plain _Text"
 msgstr "_Plakken als tekst"
@@ -12220,62 +12323,48 @@ msgstr "_Bekijk logboek-folder"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s. Probeer '%s -h' voor meer informatie.\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"Gebruik: %s [OPTIE]...\n"
-"\n"
-"  -c, --config=MAP    MAP gebruiken voor opslaan configuratie\n"
-"  -d, --debug         debugberichten naar stdout sturen\n"
-"  -h, --help          deze hulptekst weergeven\n"
-"  -m, --multiple      niet voor enkele instantie zorgen\n"
-"  -n, --nologin       niet automatisch aanmelden\n"
-"  -l, --login[=NAAM]  automatisch aanmelden (optioneel argument NAAM geeft\n"
-"                      (kommagescheiden)te gebruiken account(s) aan)\n"
-"  -v, --version       versie-info weergeven\n"
 
-#, fuzzy, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"Gebruik: %s [OPTIE]...\n"
-"\n"
-"  -c, --config=MAP    MAP gebruiken voor opslaan configuratie\n"
-"  -d, --debug         debugberichten naar stdout sturen\n"
-"  -h, --help          deze hulptekst weergeven\n"
-"  -m, --multiple      niet voor enkele instantie zorgen\n"
-"  -n, --nologin       niet automatisch aanmelden\n"
-"  -l, --login[=NAAM]  automatisch aanmelden (optioneel argument NAAM geeft\n"
-"                      (kommagescheiden)te gebruiken account(s) aan)\n"
-"  -v, --version       versie-info weergeven\n"
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+#, fuzzy
+msgid "allow multiple instances"
+msgstr "Meerdere keren gelijk inloggen toestaan"
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
+msgstr ""
 
 #, fuzzy, c-format
 msgid ""
@@ -12325,9 +12414,6 @@ msgstr "/_Media"
 msgid "/Media/_Hangup"
 msgstr "/Media/Op_hangen"
 
-msgid "Calling..."
-msgstr "Bellen..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s wil een audio-/videogesprek starten."
@@ -12335,6 +12421,12 @@ msgstr "%s wil een audio-/videogesprek starten."
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr "%s wil een videogesprek starten."
+
+msgid "Incoming Call"
+msgstr ""
+
+msgid "_Pause"
+msgstr "_Pauzeren"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12697,12 +12789,16 @@ msgstr "Kan het programma voor proxy-instellingen niet starten."
 msgid "Cannot start browser configuration program."
 msgstr "Kan het programma voor browser-instellingen niet starten."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Bijvoorbeeld: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Uitzetten"
 
 #, fuzzy, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "IP-adres _automatisch bepalen"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Bijvoorbeeld: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Publiek _IP-adres:"
@@ -12725,6 +12821,10 @@ msgstr "_Eindpoort:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Relay Server (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "ST_UN-server:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proxy-server &amp; browser"
@@ -13343,72 +13443,6 @@ msgstr "Contact-beschikbaarheids-voorspellings-plug-in"
 msgid "Displays statistical information about your buddies' availability"
 msgstr "Geeft statististieke informatie over de beschikbaarheid van je contact"
 
-#, fuzzy
-msgid "Server name request"
-msgstr "Server-adres"
-
-#, fuzzy
-msgid "Enter an XMPP Server"
-msgstr "Verbinden met server voor groepsgesprekken"
-
-#, fuzzy
-msgid "Select an XMPP server to query"
-msgstr "Kies een te raadplegen conferentieserver"
-
-msgid "Find Services"
-msgstr "Diensten zoeken"
-
-msgid "Add to Buddy List"
-msgstr "Aan contactenlijst toevoegen"
-
-msgid "Gateway"
-msgstr "Poort"
-
-msgid "Directory"
-msgstr "Map"
-
-#, fuzzy
-msgid "PubSub Collection"
-msgstr "Geluid selecteren"
-
-#, fuzzy
-msgid "PubSub Leaf"
-msgstr "PubSub dienst"
-
-#, fuzzy
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr "Beschrijving"
-
-#. Create the window.
-#, fuzzy
-msgid "Service Discovery"
-msgstr "Directory info instellen"
-
-msgid "_Browse"
-msgstr "_Bladeren"
-
-msgid "Server does not exist"
-msgstr "Server bestaat niet"
-
-#, fuzzy
-msgid "Server does not support service discovery"
-msgstr "Server gebruikt geen van de ondersteunde identificatiemethoden"
-
-#, fuzzy
-msgid "XMPP Service Discovery"
-msgstr "Directory info instellen"
-
-msgid "Allows browsing and registering services."
-msgstr ""
-
-#, fuzzy
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr "Deze plug-in is handig voor het debuggen van XMPP servers of clienten."
-
 msgid "Buddy is idle"
 msgstr "Contact is inactief"
 
@@ -13499,6 +13533,74 @@ msgstr "Toepassen in de gesprekken"
 
 msgid "Apply in IMs"
 msgstr "Toepassen in gesprekken."
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+#, fuzzy
+msgid "Server name request"
+msgstr "Server-adres"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Verbinden met server voor groepsgesprekken"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "Kies een te raadplegen conferentieserver"
+
+msgid "Find Services"
+msgstr "Diensten zoeken"
+
+msgid "Add to Buddy List"
+msgstr "Aan contactenlijst toevoegen"
+
+msgid "Gateway"
+msgstr "Poort"
+
+msgid "Directory"
+msgstr "Map"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "Geluid selecteren"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "PubSub dienst"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "Beschrijving"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "Directory info instellen"
+
+msgid "_Browse"
+msgstr "_Bladeren"
+
+msgid "Server does not exist"
+msgstr "Server bestaat niet"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "Server gebruikt geen van de ondersteunde identificatiemethoden"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Directory info instellen"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "Deze plug-in is handig voor het debuggen van XMPP servers of clienten."
 
 msgid "By conversation count"
 msgstr "Op hoeveelheid gesprekken"
@@ -14157,9 +14259,12 @@ msgstr "Genegeerd"
 msgid "Founder"
 msgstr "Oprichter"
 
+#. A user in a chat room who has special privileges.
 msgid "Operator"
 msgstr "Operator"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
@@ -14318,6 +14423,58 @@ msgstr ""
 "Deze plug-in geeft de gebruiker de mogelijkheid om de opmaak van de "
 "tijdsaanduiding aante passen."
 
+#, fuzzy
+msgid "Audio"
+msgstr "Automatisch"
+
+#, fuzzy
+msgid "Video"
+msgstr "Video"
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "Plug-ins"
+
+#, fuzzy
+msgid "_Device"
+msgstr "Apparaat"
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "Plug-ins"
+
+#, fuzzy
+msgid "D_evice"
+msgstr "Apparaat"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Voice/Video Settings"
+msgstr "Instellingen bewerken"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+
 msgid "Opacity:"
 msgstr "Doorschijnendheid:"
 
@@ -14444,6 +14601,108 @@ msgstr "Verstuur en ontvang ruwe XMPP stanza's."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Deze plug-in is handig voor het debuggen van XMPP servers of clienten."
+
+#~ msgid "Calling ... "
+#~ msgstr "Bellen..."
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "Dit is een ongeldige certificaat-keten"
+
+#~ msgid ""
+#~ "The certificate chain presented by %s does not have a valid digital "
+#~ "signature from the Certificate Authority from which it claims to have a "
+#~ "signature."
+#~ msgstr ""
+#~ "De certificaat-keten die door %s wordt gegeven heeft geen geldige "
+#~ "digitale handtekening van de certificaat-identiteit van wie het een "
+#~ "handtekening zegt te hebben"
+
+#~ msgid "Invalid certificate authority signature"
+#~ msgstr "Ongeldige certificaat-identiteit handtekening"
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "Instellingen om notificaties over deelnemen/verlaten te verbergen"
+
+#~ msgid "Minimum Room Size"
+#~ msgstr "Minimale grootte van gespreksruimte"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "Gebruikers-activiteit verlopen (in minuten)"
+
+#~ msgid "Failed to open the file"
+#~ msgstr "Bestand openen mislukt"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "Uw account is afgesloten. Meld u aan via de Yahoo website."
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "Baskisch"
+
+#~ msgid "_Resume"
+#~ msgstr "_Doorgaan"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Gebruik: %s [OPTIE]...\n"
+#~ "\n"
+#~ "  -c, --config=MAP    MAP gebruiken voor opslaan configuratie\n"
+#~ "  -d, --debug         debugberichten naar stdout sturen\n"
+#~ "  -h, --help          deze hulptekst weergeven\n"
+#~ "  -m, --multiple      niet voor enkele instantie zorgen\n"
+#~ "  -n, --nologin       niet automatisch aanmelden\n"
+#~ "  -l, --login[=NAAM]  automatisch aanmelden (optioneel argument NAAM "
+#~ "geeft\n"
+#~ "                      (kommagescheiden)te gebruiken account(s) aan)\n"
+#~ "  -v, --version       versie-info weergeven\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Gebruik: %s [OPTIE]...\n"
+#~ "\n"
+#~ "  -c, --config=MAP    MAP gebruiken voor opslaan configuratie\n"
+#~ "  -d, --debug         debugberichten naar stdout sturen\n"
+#~ "  -h, --help          deze hulptekst weergeven\n"
+#~ "  -m, --multiple      niet voor enkele instantie zorgen\n"
+#~ "  -n, --nologin       niet automatisch aanmelden\n"
+#~ "  -l, --login[=NAAM]  automatisch aanmelden (optioneel argument NAAM "
+#~ "geeft\n"
+#~ "                      (kommagescheiden)te gebruiken account(s) aan)\n"
+#~ "  -v, --version       versie-info weergeven\n"
 
 #, fuzzy
 #~ msgid "Malformed BOSH Connect Server"
@@ -14874,9 +15133,6 @@ msgstr "Deze plug-in is handig voor het debuggen van XMPP servers of clienten."
 #~ "U hebt zich te snel aan en afgemeld. Wacht 10 Minuten en probeer het nog "
 #~ "een keer."
 
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "Onbekende aanmeldingsfout: %s."
-
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "Onbekende fout %d opgetreden. Info: %s"
 
@@ -14942,9 +15198,6 @@ msgstr "Deze plug-in is handig voor het debuggen van XMPP servers of clienten."
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "Verwijzing _openen met webbrowser"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "ST_UN-server:"
 
 #~ msgid "Smiley _Image"
 #~ msgstr "_Smiley-afbeelding"

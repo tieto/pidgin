@@ -1206,11 +1206,14 @@ void
 purple_account_disconnect(PurpleAccount *account)
 {
 	PurpleConnection *gc;
+	const char *username;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(!purple_account_is_disconnected(account));
 
-	purple_debug_info("account", "Disconnecting account %p\n", account);
+	username = purple_account_get_username(account);
+	purple_debug_info("account", "Disconnecting account %s (%p)\n",
+	                  username ? username : "(null)", account);
 
 	account->disconnecting = TRUE;
 
@@ -2016,42 +2019,6 @@ purple_account_get_connection(const PurpleAccount *account)
 	return account->gc;
 }
 
-const gchar *
-purple_account_get_name_for_display(const PurpleAccount *account)
-{
-	PurpleBuddy *self = NULL;
-	PurpleConnection *gc = NULL;
-	const gchar *name = NULL, *username = NULL, *displayname = NULL;
-
-	name = purple_account_get_alias(account);
-
-	if (name) {
-		return name;
-	}
-
-	username = purple_account_get_username(account);
-	self = purple_find_buddy((PurpleAccount *)account, username);
-
-	if (self) {
-		const gchar *calias= purple_buddy_get_contact_alias(self);
-
-		/* We don't want to return the buddy name if the buddy/contact
-		 * doesn't have an alias set. */
-		if (!purple_strequal(username, calias)) {
-			return calias;
-		}
-	}
-
-	gc = purple_account_get_connection(account);
-	displayname = purple_connection_get_display_name(gc);
-
-	if (displayname) {
-		return displayname;
-	}
-
-	return username;
-}
-
 gboolean
 purple_account_get_remember_password(const PurpleAccount *account)
 {
@@ -2323,9 +2290,13 @@ void
 purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = purple_account_get_connection(account);
+	PurpleConnection *gc;
 	PurplePlugin *prpl = NULL;
 
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(buddy != NULL);
+
+	gc = purple_account_get_connection(account);
 	if (gc != NULL)
 	        prpl = purple_connection_get_prpl(gc);
 

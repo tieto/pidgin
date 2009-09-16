@@ -198,7 +198,7 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 			break;
 
 		case 800:
-			result = _("Friendly name changes too rapidly");
+			result = _("Friendly name is changing too rapidly");
 			break;
 
 		case 910:

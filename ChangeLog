@@ -1,6 +1,71 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.0 (??/??/2009):
+version 2.6.3 (??/??/20??):
+	XMPP:
+	* Fix a crash when attempting to validate an invalid JID.
+
+	General:
+	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
+	  to announce the list of loaded plugins (in both Finch and Pidgin).
+
+version 2.6.2 (09/05/2009):
+	libpurple:
+	* Fix --disable-avahi to actually disable it in configure, as opposed
+	  to just making the warning non-fatal.
+	* Fix using GNOME proxy settings properly.  (Erik van Pienbroek)
+
+	IRC:
+	* Fix parsing of invalid TOPIC messages.  (CVE-2009-2703)
+
+	MSN:
+	* Sending custom smileys in chats is now supported.
+	* Ink messages are now saved when using the HTML logger.
+	* Fix a crash when receiving some handwritten messages.
+	* Fix a crash when receiving certain SLP invite messages.
+	* Chats with multiple people should no longer spontaneously
+	  disconnect.
+
+	XMPP:
+	* Prompt the user before cancelling a presence subscription.
+	* Escape status messages that have HTML entities in the Get Info dialog.
+	* Fix connecting to XMPP domains with no SRV records from Pidgin on
+	  Windows.
+	* Fix typing notifications with Pidgin 2.5.9 or earlier.
+	* Fix connecting using BOSH and legacy authentication (XEP-0078).
+	* Adding buddies of the form "romeo@montague.net/Resource" are handled
+	  properly.  In addition, it is no longer possible to add buddies of
+	  the form "room@conference.example.net/User", where
+	  room@conference.example.net is a MUC.
+	* Don't crash when receiving "smileyfied" XHTML-IM from clients that don't
+	  support bits of binary (ie. when getting an empty <data/> in return)
+	* Fix bug where SSL/TLS was not required even though the
+	  "require SSL/TLS" preference checked when connecting to servers
+	  that use the older iq-based authentication.  (CVE-2009-3026)
+
+	Yahoo!/Yahoo! JAPAN:
+	* Accounts now have "Use account proxy for SSL connections" option.  This
+	  option force-overrides the account specific proxy settings for SSL
+	  connections only and instead uses the global proxy configuration.
+
+	Finch:
+	* Properly detect libpanel on OpenBSD.  (Brad Smith)
+	* Remove IO watches in gnt_quit.  (Tomasz Mon)
+
+	Pidgin:
+	* Fix the auto-personize functionality in the Buddy List.
+	* Set the window icon for the media window to an icon corresponding to
+	  the type of call (headphone or webcam).
+	* Customized sound files are no longer reset whenever opening the
+	  Preferences dialog.
+	* The buddy list should now immediately refresh upon changing the icon
+	  theme.
+
+version 2.6.1 (08/18/2009):
+	* Fix a crash when some users send you a link in a Yahoo IM
+	* Fix compilation with GTK+ < 2.6.0
+	* Fix compilation on Windows
+
+version 2.6.0 (08/18/2009):
 	libpurple:
 	* Theme support in libpurple thanks to Justin Rodriguez's summer of code
 	  project, with some minor additions and cleanups from Paul Aurich.
@@ -13,10 +78,32 @@ version 2.6.0 (??/??/2009):
 	* Various memory cleanups when unloading libpurple. (Nick Hebner and
 	  Stefan Becker)
 	* Report idle time 'From last message sent' should work properly.
+	* Better handling of corrupt certificates in the TLS Peers cache.
+	* More efficient buddy list and conversation search functions.
+	  (Jan Kaluza and Aman Gupta)
+	* Install scalable versions of the main Pidgin icon, the protocol icons,
+	  the dialog icons, and the Buddy List emblems.
+	* Build properly on Hurd.  (Marc Dequènes)
+	* Various memory leaks fixed as reported by Josh Mueller.
+	* Properly handle an IRC buddy appearing in multiple groups.
+	* Escape HTML entities in usernames when written with the HTML logger.
+	* Do not display MySpace status changes as incoming IMs.  (Mark Doliner and
+	  Justin Williams)
+
+	DNS:
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
 	* DNS SRV records with equal priority are sorted with respect to their
 	  weight as specified in RFC 2782.  (Vijay Raghunathan)
+	* Don't do IPv6 address lookups if the computer does not have an IPv6
+	  address configured.
+	* Fix a leak when the UI provides its own DNS resolving UI op.
+	  (Aman Gupta)
+	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
+	* Internationalized Domain Names are supported when libpurple is compiled
+	  against the GNU IDN library.
+
+	Environment Variables:
 	* GnuTLS logging (disabled by default) can be controlled through the
 	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
 	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
@@ -31,24 +118,6 @@ version 2.6.0 (??/??/2009):
 	  useful when running libpurple inside of Valgrind or similar programs.
 	  Currently, it keeps plugins in memory, allowing Valgrind to perform
 	  symbol resolution of leak traces at shutdown.
-	* Don't do IPv6 address lookups if the computer does not have an IPv6
-	  address configured.
-	* Fix a leak when the UI provides its own DNS resolving UI op.
-	  (Aman Gupta)
-	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
-	* Better handling of corrupt certificates in the TLS Peers cache.
-	* More efficient buddy list and conversation search functions.
-	  (Jan Kaluza and Aman Gupta)
-	* Internationalized Domain Names are supported when libpurple is compiled
-	  against the GNU IDN library.
-	* Install scalable versions of the main Pidgin icon, the protocol icons,
-	  the dialog icons, and the Buddy List emblems.
-	* Build properly on Hurd.  (Marc Dequènes)
-	* Various memory leaks fixed as reported by Josh Mueller.
-	* Properly handle an IRC buddy appearing in multiple groups.
-	* Escape HTML entities in usernames when written with the HTML logger.
-	* Do not display MySpace status changes as incoming IMs.  (Mark Doliner and
-	  Justin Williams)
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
@@ -66,6 +135,17 @@ version 2.6.0 (??/??/2009):
 	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
 	* Support connection progress steps in Gadu-Gadu.  (Krzysztof "kkszysiu"
 	  Klinikowski)
+
+	MSN:
+	* Add support for receiving handwritten (ink) messages on MSN.  (Chris
+	  Stafford, Gal Topper, and Elliott Sales de Andrade)
+	* Add support for receiving audio clips on MSN.  (Chris Stafford, Gal
+	  Topper, and Elliott Sales de Andrade)
+	* Show the invite message for buddies that requested authorization
+	  from you on MSN.
+	* Support sending an invite message to buddies when requesting authorization
+	  from them on MSN.
+	* Timeout switchboard connections aggressively (60 seconds).
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
@@ -136,15 +216,6 @@ version 2.6.0 (??/??/2009):
 	* Ability to set personal details for an account and for buddies in the
 	  buddylist.
 
-	MSN:
-	* Add support for receiving handwritten (ink) messages on MSN.
-	* Add support for receiving audio clips on MSN.
-	* Show the invite message for buddies that requested authorization
-	  from you on MSN.
-	* Support sending an invite message to buddies when requesting authorization
-	  from them on MSN.
-	* Timeout switchboard connections aggressively
-
 	Pidgin:
 	* Added -f command line option to tell Pidgin to ignore NetworkManager
 	  and assume it has a valid network connection.
@@ -192,6 +263,8 @@ version 2.6.0 (??/??/2009):
 	* The hardware cursor is updated correctly. This will be useful
 	  especially for users of braille terminals, screen readers etc.
 	* Added a TinyURL plugin, which aids copying longer URLs.
+	* Fixed UTF-8 compatibility problems which could cause exits or other
+	  unrequested behaviour.
 
 	Pidgin GTK+ Theme Control Plugin:
 	* Removed mouse cursor color preferences.
@@ -199,6 +272,13 @@ version 2.6.0 (??/??/2009):
 	* Added "Disable Typing Notification Text" preference.
 	* Preferences have been reorganized into three tabs for Colors, Fonts, and
 	  Miscellaneous categories.
+
+version 2.5.9 (08/18/2009):
+	* Fix a crash via a specially crafted MSN message (CVE-2009-2694,
+	  thanks to Core Security Technologies for discovering this and
+	  notifying us privately before announcing it).
+	* Fix a crash in Bonjour, MSN, and XMPP when trying to transfer files with
+	  NULL names.
 
 version 2.5.8 (06/27/2009):
 	ICQ:

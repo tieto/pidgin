@@ -188,8 +188,8 @@ struct _GtkIMHtmlSmiley {
 	GSList *anchors;
 	GtkIMHtmlSmileyFlags flags;
 	GtkIMHtml *imhtml;
-	gpointer data;       /** @Since 2.6.0 */
-	gsize datasize;      /** @Since 2.6.0 */
+	gpointer data;       /** @since 2.6.0 */
+	gsize datasize;      /** @since 2.6.0 */
 };
 
 struct _GtkIMHtmlScalable {
@@ -906,7 +906,7 @@ void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley);
  *                      @c TRUE if the request for context menu was processed
  *                      successfully, @c FALSE otherwise.
  *
- * @return  @c TRUE if the protocol was successfully registered (or unregistered, when #activate is @c NULL)
+ * @return  @c TRUE if the protocol was successfully registered (or unregistered, when \a activate is @c NULL)
  *
  * @since 2.6.0
  */

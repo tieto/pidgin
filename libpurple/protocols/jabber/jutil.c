@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,10 +153,9 @@ jabber_idn_validate(const char *str, const char *at, const char *slash,
 		if (!jabber_resourceprep(idn_buffer, sizeof(idn_buffer))) {
 			jabber_id_free(jid);
 			jid = NULL;
-			/* goto out; */
-		}
-
-		jid->resource = g_strdup(idn_buffer);
+			goto out;
+		} else
+			jid->resource = g_strdup(idn_buffer);
 	}
 
 out:
@@ -275,8 +276,8 @@ gboolean jabber_resourceprep_validate(const char *str)
 #endif /* USE_IDN */
 }
 
-JabberID*
-jabber_id_new(const char *str)
+static JabberID*
+jabber_id_new_internal(const char *str, gboolean allow_terminating_slash)
 {
 	const char *at = NULL;
 	const char *slash = NULL;
@@ -321,7 +322,7 @@ jabber_id_new(const char *str)
 						/* JIDs cannot start with / */
 						return NULL;
 					}
-					if (c[1] == '\0') {
+					if (c[1] == '\0' && !allow_terminating_slash) {
 						/* JIDs cannot end with / */
 						return NULL;
 					}
@@ -384,14 +385,16 @@ jabber_id_new(const char *str)
 			jid->node = g_ascii_strdown(str, at - str);
 			if (slash) {
 				jid->domain = g_ascii_strdown(at + 1, slash - (at + 1));
-				jid->resource = g_strdup(slash + 1);
+				if (*(slash + 1))
+					jid->resource = g_strdup(slash + 1);
 			} else {
 				jid->domain = g_ascii_strdown(at + 1, -1);
 			}
 		} else {
 			if (slash) {
 				jid->domain = g_ascii_strdown(str, slash - str);
-				jid->resource = g_strdup(slash + 1);
+				if (*(slash + 1))
+					jid->resource = g_strdup(slash + 1);
 			} else {
 				jid->domain = g_ascii_strdown(str, -1);
 			}
@@ -419,14 +422,16 @@ jabber_id_new(const char *str)
 		node = g_utf8_casefold(str, at-str);
 		if(slash) {
 			domain = g_utf8_casefold(at+1, slash-(at+1));
-			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
+			if (*(slash + 1))
+				jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
 			domain = g_utf8_casefold(at+1, -1);
 		}
 	} else {
 		if(slash) {
 			domain = g_utf8_casefold(str, slash-str);
-			jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
+			if (*(slash + 1))
+				jid->resource = g_utf8_normalize(slash+1, -1, G_NORMALIZE_NFKC);
 		} else {
 			domain = g_utf8_casefold(str, -1);
 		}
@@ -483,19 +488,35 @@ char *jabber_get_resource(const char *in)
 	return out;
 }
 
-char *jabber_get_bare_jid(const char *in)
+char *
+jabber_get_bare_jid(const char *in)
 {
 	JabberID *jid = jabber_id_new(in);
 	char *out;
 
-	if(!jid)
+	if (!jid)
 		return NULL;
-
-	out = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
-			jid->node ? "@" : "", jid->domain);
+	out = jabber_id_get_bare_jid(jid);
 	jabber_id_free(jid);
 
 	return out;
+}
+
+char *
+jabber_id_get_bare_jid(const JabberID *jid)
+{
+	g_return_val_if_fail(jid != NULL, NULL);
+
+	return g_strconcat(jid->node ? jid->node : "",
+	                   jid->node ? "@" : "",
+	                   jid->domain,
+	                   NULL);
+}
+
+JabberID *
+jabber_id_new(const char *str)
+{
+	return jabber_id_new_internal(str, FALSE);
 }
 
 const char *jabber_normalize(const PurpleAccount *account, const char *in)
@@ -505,8 +526,7 @@ const char *jabber_normalize(const PurpleAccount *account, const char *in)
 	static char buf[3072]; /* maximum legal length of a jabber jid */
 	JabberID *jid;
 
-	jid = jabber_id_new(in);
-
+	jid = jabber_id_new_internal(in, TRUE);
 	if(!jid)
 		return NULL;
 
