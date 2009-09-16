@@ -1,6 +1,18 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.0 (??/??/2009):
+version 2.6.2 (09/05/2009):
+	Perl:
+		Added:
+		* Purple::XMLNode::get_next(), which returns the next neighbor tag of
+		  the current node.
+		Changed:
+		* Purple::XMLNode::get_child() will return the first child node if
+		  passed "" or undef as the name of the node.
+
+version 2.6.1 (08/18/2009):
+	No changes
+
+version 2.6.0 (08/18/2009):
 	libpurple:
 		Added:
 		* PurpleMedia and PurpleMediaManager API
@@ -154,6 +166,9 @@ version 2.6.0 (??/??/2009):
 		* GntProgressBar and functions (Saleem Abdulrasool)
 
 	perl:
+		Added:
+		* Purple::XMLNode::get_name()
+
 		Changed:
 		* Made a bunch of functions act more perl-like. Call the new()
 		  functions as Class->new(...) instead of Class::new(...):
@@ -167,6 +182,14 @@ version 2.6.0 (??/??/2009):
 			* Purple::Request::Field::list_new
 			* Purple::Request::Field::string_new
 			* Purple::Request::Field::group_new
+		* Make the XMLNode API more perl-like. Don't pass len
+		  parameters and call them like:
+			* $xmlnode->copy()
+			* $xmlnode->to_str()
+			* $xmlnode->to_formatted_str()
+			* Purple::XMLNode::from_str(...)
+version 2.5.9 (08/18/2009):
+	No changes
 
 version 2.5.8 (06/27/2009):
 	No changes

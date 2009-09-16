@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0beta6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-06 15:04-0700\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2007-03-14 13:08+0500\n"
 "Last-Translator: Kashif Masood <masudmails@yahoo.com>\n"
 "Language-Team: Pashto\n"
@@ -844,7 +844,7 @@ msgid "System Log"
 msgstr "د سیستم یاداشت لیک"
 
 #, fuzzy
-msgid "Calling ... "
+msgid "Calling..."
 msgstr "شمېره و..."
 
 msgid "Hangup"
@@ -1501,6 +1501,28 @@ msgid ""
 "conversation into the current conversation."
 msgstr ""
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "ارل"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+
 msgid "Online"
 msgstr "په ليکه"
 
@@ -1546,28 +1568,6 @@ msgid "GntLastlog"
 msgstr ""
 
 msgid "Lastlog plugin."
-msgstr ""
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr ""
-
-msgid "TinyURL (or other) address prefix"
-msgstr ""
-
-#, fuzzy
-msgid "TinyURL"
-msgstr "ارل"
-
-msgid "TinyURL plugin"
-msgstr ""
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
 msgstr ""
 
 msgid "accounts"
@@ -1631,6 +1631,37 @@ msgstr "ملګري"
 msgid "buddy list"
 msgstr "ملګری فهرست"
 
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+
+msgid "The root certificate this one claims to be issued by is unknown."
+msgstr ""
+
+msgid "The certificate is not valid yet."
+msgstr ""
+
+msgid "The certificate has expired and should not be considered valid."
+msgstr ""
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+msgid "The certificate presented is not issued to this domain."
+msgstr ""
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+
+msgid "The certificate chain presented is invalid."
+msgstr ""
+
+msgid "The certificate has been revoked."
+msgstr ""
+
+#, fuzzy
+msgid "An unknown certificate error occurred."
+msgstr "نااشنا خطا %d و شوه. معلومات: %s"
+
 msgid "(DOES NOT MATCH)"
 msgstr ""
 
@@ -1671,59 +1702,23 @@ msgstr ""
 msgid "_View Certificate..."
 msgstr ""
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
 #, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
+msgid "The certificate for %s could not be validated."
 msgstr ""
 
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
-msgstr ""
-
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
 #. TODO: Probably wrong.
-#. TODO: Probably wrong
 #, fuzzy
 msgid "SSL Certificate Error"
 msgstr "لیک کولو خطا"
 
-msgid "Invalid certificate chain"
-msgstr ""
-
-#. vrq will be completed by user_auth
-msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr ""
+#, fuzzy
+msgid "Unable to validate certificate"
+msgstr "د دوسیه %s ویل نه و شول."
 
 #, c-format
 msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-
-msgid "Invalid certificate authority signature"
-msgstr ""
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
 
 #. Make messages
@@ -1758,7 +1753,6 @@ msgid "+++ %s signed off"
 msgstr "‫+++ %s ووتلو"
 
 #. Unknown error
-#. Unknown error!
 msgid "Unknown error"
 msgstr ""
 
@@ -1933,6 +1927,10 @@ msgid "Starting transfer of %s from %s"
 msgstr ""
 
 #, c-format
+msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
+msgstr ""
+
+#, c-format
 msgid "Transfer of file %s complete"
 msgstr ""
 
@@ -1940,18 +1938,18 @@ msgid "File transfer complete"
 msgstr "دوسیه بدلونه پای"
 
 #, c-format
-msgid "You canceled the transfer of %s"
+msgid "You cancelled the transfer of %s"
 msgstr ""
 
 msgid "File transfer cancelled"
 msgstr "دوسیه بدلونه فسخ شو"
 
-#, c-format
-msgid "%s canceled the transfer of %s"
-msgstr ""
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
+msgstr "‫%s خپل موقعیت د \"%s\" نه \"%s\" ته بدل کړو"
 
 #, c-format
-msgid "%s canceled the file transfer"
+msgid "%s cancelled the file transfer"
 msgstr ""
 
 #, c-format
@@ -2122,6 +2120,34 @@ msgstr ""
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr ""
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr ""
+
+#, fuzzy
+msgid "Conference error."
+msgstr "نوی مجلس"
+
+msgid "Error with your microphone."
+msgstr ""
+
+msgid "Error with your webcam."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error creating session: %s"
+msgstr ""
+"دوسیه %s ویل شی خطا و شوه: \n"
+"%s\n"
 
 #, fuzzy
 msgid "Error creating conference."
@@ -2373,13 +2399,14 @@ msgstr ""
 msgid "Test plugin IPC support, as a server. This registers the IPC commands."
 msgstr ""
 
-msgid "Join/Part Hiding Configuration"
+msgid "Hide Joins/Parts"
 msgstr ""
 
-msgid "Minimum Room Size"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
 msgstr ""
 
-msgid "User Inactivity Timeout (in minutes)"
+msgid "If user has not spoken in this many minutes"
 msgstr ""
 
 msgid "Apply hiding rules to buddies"
@@ -3685,6 +3712,11 @@ msgstr "ارل"
 msgid "Street Address"
 msgstr ""
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr ""
 
@@ -3767,20 +3799,24 @@ msgstr "انځور"
 msgid "Logo"
 msgstr ""
 
+#, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr ""
+
+msgid "Cancel Presence Notification"
+msgstr ""
+
 msgid "Un-hide From"
 msgstr ""
 
 msgid "Temporarily Hide From"
 msgstr ""
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr ""
-
 msgid "(Re-)Request authorization"
 msgstr ""
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
@@ -4019,10 +4055,6 @@ msgstr "نوی جابېر شمېرل ثبت کول"
 #, fuzzy
 msgid "Change Registration"
 msgstr "ثبت کولو شی خطا"
-
-#, fuzzy
-msgid "Malformed BOSH Connect Server"
-msgstr "د خادم سره رابطه کول ناکامه شوه."
 
 #, fuzzy
 msgid "Error unregistering account"
@@ -4398,7 +4430,7 @@ msgstr ""
 
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
@@ -4542,10 +4574,6 @@ msgstr ""
 #, fuzzy
 msgid "Transfer was closed."
 msgstr "دوسیه بدلونه ناکام شوه"
-
-#, fuzzy
-msgid "Failed to open the file"
-msgstr "ګپ شپ نښلول ناکام شو"
 
 msgid "Failed to open in-band bytestream"
 msgstr ""
@@ -4821,8 +4849,7 @@ msgstr ""
 msgid "Not expected"
 msgstr ""
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+msgid "Friendly name is changing too rapidly"
 msgstr ""
 
 #, c-format
@@ -4871,6 +4898,22 @@ msgstr "ترجیحي اړیکه"
 #, fuzzy
 msgid "Non-IM Contacts"
 msgstr "اړیکه خوځول"
+
+#, c-format
+msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a wink, but it could not be saved"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip, but it could not be saved"
+msgstr ""
 
 #, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
@@ -5033,6 +5076,28 @@ msgstr "ګپ شپ پیل کول"
 
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
+
+#, c-format
+msgid ""
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
+"be a valid email address."
+msgstr ""
+
+#, fuzzy
+msgid "Unable to Add"
+msgstr "زیاتول نه و شوه"
+
+msgid "Authorization Request Message:"
+msgstr ""
+
+msgid "Please authorize me!"
+msgstr ""
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "ټیک"
 
 msgid "Error retrieving profile"
 msgstr ""
@@ -5233,6 +5298,7 @@ msgstr "نااشنا خطا رمز %d"
 msgid "Unable to add user"
 msgstr "کاروونکی نه شه شامل"
 
+#. Unknown error!
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "نااشنا خطا رمز %d"
@@ -5337,7 +5403,7 @@ msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr ""
 
 #, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr ""
 
 msgid "Away From Computer"
@@ -5383,6 +5449,10 @@ msgid "Do you want to delete this buddy from your address book as well?"
 msgstr ""
 
 msgid "The username specified is invalid."
+msgstr ""
+
+#, c-format
+msgid "Friendly name changes too rapidly"
 msgstr ""
 
 msgid "This Hotmail account may not be active."
@@ -6052,7 +6122,9 @@ msgstr "خادم پته"
 msgid "Server port"
 msgstr ""
 
-msgid "Received unexpected response from "
+#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s"
 msgstr ""
 
 #. username connecting too frequently
@@ -6061,8 +6133,10 @@ msgid ""
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr ""
 
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, fuzzy, c-format
-msgid "Error requesting "
+msgid "Error requesting %s: %s"
 msgstr "پاتی دی"
 
 msgid "AOL does not allow your screen name to authenticate here"
@@ -6380,6 +6454,7 @@ msgstr ""
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr ""
 
+#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
@@ -6399,12 +6474,6 @@ msgstr ""
 msgid "Enter the 6 digit number from the digital display."
 msgstr ""
 
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "ټیک"
-
 msgid "Password sent"
 msgstr ""
 
@@ -6412,12 +6481,6 @@ msgid "Unable to initialize connection"
 msgstr ""
 
 msgid "Please authorize me so I can add you to my buddy list."
-msgstr ""
-
-msgid "Authorization Request Message:"
-msgstr ""
-
-msgid "Please authorize me!"
 msgstr ""
 
 msgid "No reason given."
@@ -6706,10 +6769,6 @@ msgid ""
 msgstr ""
 
 #, fuzzy
-msgid "Unable to Add"
-msgstr "زیاتول نه و شوه"
-
-#, fuzzy
 msgid "Unable to Retrieve Buddy List"
 msgstr "د دوسیه %s ویل نه و شول."
 
@@ -6790,6 +6849,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "رابطه"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "خادم رابطه قطع کړه."
+
 msgid "Get AIM Info"
 msgstr "د أېم معلومات اخله"
 
@@ -6799,6 +6862,10 @@ msgstr "د ملګری تبصره شی بدلون"
 
 msgid "Get Status Msg"
 msgstr ""
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "نیغ فوری زیری"
 
 msgid "Direct IM"
 msgstr "نیغ فوری زیری"
@@ -7678,7 +7745,7 @@ msgid "File Send"
 msgstr "دوسیه استول"
 
 #, c-format
-msgid "%d canceled the transfer of %s"
+msgid "%d cancelled the transfer of %s"
 msgstr ""
 
 #, c-format
@@ -8603,10 +8670,6 @@ msgstr "کاروونکی نه شه شامل"
 msgid "Connecting to SILC Server"
 msgstr ""
 
-#, fuzzy
-msgid "Unable to not load SILC key pair"
-msgstr "کاروونکی نه شه شامل"
-
 msgid "Out of memory"
 msgstr ""
 
@@ -9130,6 +9193,9 @@ msgstr ""
 msgid "Ignore conference and chatroom invitations"
 msgstr ""
 
+msgid "Use account proxy for SSL connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "د ګپ شپو کوټی فهرست ارل"
 
@@ -9156,6 +9222,10 @@ msgstr "د یاهو هویت"
 #, fuzzy
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "د أېم پروتوکول نښلولی"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
 
 msgid "Your SMS was not delivered"
 msgstr ""
@@ -9220,7 +9290,22 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr ""
 
-msgid "Your account is locked, please log in to the Yahoo! website."
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "باطل نوم"
+
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
 msgstr ""
 
 #, c-format
@@ -9392,12 +9477,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr ""
 
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "‫%s د تا \"%s\" کوټه ته د مجلس لپاره بلل نه و منل ، ولی چه \"%s\"."
-
-msgid "Invitation Rejected"
-msgstr "بلل رد کړي شول"
+#, fuzzy, c-format
+msgid "%s has declined to join."
+msgstr "‫%s راننوتلو."
 
 msgid "Failed to join chat"
 msgstr "ګپ شپ نښلول ناکام شو"
@@ -9877,7 +9959,8 @@ msgstr "د نوی برېشناليک خبرتيا"
 msgid "Use this buddy _icon for this account:"
 msgstr "د دی شمېرل لپاره دغه ملګری تمثال په کار که:"
 
-msgid "_Advanced"
+#, fuzzy
+msgid "Ad_vanced"
 msgstr "مترقي"
 
 msgid "Use GNOME Proxy Settings"
@@ -9942,7 +10025,7 @@ msgid "Create _this new account on the server"
 msgstr ""
 
 #, fuzzy
-msgid "_Proxy"
+msgid "P_roxy"
 msgstr "وکیل"
 
 msgid "Enabled"
@@ -9963,6 +10046,133 @@ msgid ""
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
+
+#. Buddy List
+msgid "Background Color"
+msgstr ""
+
+msgid "The background color for the buddy list"
+msgstr ""
+
+#, fuzzy
+msgid "Layout"
+msgstr "اسد"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr ""
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Background Color"
+msgstr ""
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Text"
+msgstr "ویړول"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Background Color"
+msgstr ""
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "طبیعت"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+msgid "Contact/Chat Background Color"
+msgstr ""
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+#, fuzzy
+msgid "Contact Text"
+msgstr "ملاتړلی"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "په ليکه"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+#, fuzzy
+msgid "Away Text"
+msgstr "ليرې"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "ليکه نه لرې"
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "د %s کاروونکی معلومات بدلون"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+#, fuzzy
+msgid "Idle Text"
+msgstr "طبیعت"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+#, fuzzy
+msgid "Message Text"
+msgstr "پیغام"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "د %s کاروونکی معلومات بدلون"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -10413,7 +10623,7 @@ msgstr "بل نوم:"
 msgid "_Group:"
 msgstr "ډاله:"
 
-msgid "Auto_join when account becomes online."
+msgid "Auto_join when account connects."
 msgstr ""
 
 msgid "_Remain in chat after window is closed."
@@ -10447,108 +10657,6 @@ msgstr "اسباب"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "ملګری فهرست ترتيب"
-
-#. Buddy List
-msgid "Background Color"
-msgstr ""
-
-msgid "The background color for the buddy list"
-msgstr ""
-
-#, fuzzy
-msgid "Layout"
-msgstr "اسد"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr ""
-
-#. Group
-msgid "Expanded Background Color"
-msgstr ""
-
-msgid "The background color of an expanded group"
-msgstr ""
-
-#, fuzzy
-msgid "Expanded Text"
-msgstr "ویړول"
-
-msgid "The text information for when a group is expanded"
-msgstr ""
-
-msgid "Collapsed Background Color"
-msgstr ""
-
-msgid "The background color of a collapsed group"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Text"
-msgstr "طبیعت"
-
-msgid "The text information for when a group is collapsed"
-msgstr ""
-
-#. Buddy
-msgid "Contact/Chat Background Color"
-msgstr ""
-
-msgid "The background color of a contact or chat"
-msgstr ""
-
-#, fuzzy
-msgid "Contact Text"
-msgstr "ملاتړلی"
-
-msgid "The text information for when a contact is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "On-line Text"
-msgstr "په ليکه"
-
-msgid "The text information for when a buddy is online"
-msgstr ""
-
-#, fuzzy
-msgid "Away Text"
-msgstr "ليرې"
-
-msgid "The text information for when a buddy is away"
-msgstr ""
-
-#, fuzzy
-msgid "Off-line Text"
-msgstr "ليکه نه لرې"
-
-msgid "The text information for when a buddy is off-line"
-msgstr ""
-
-#, fuzzy
-msgid "Idle Text"
-msgstr "طبیعت"
-
-msgid "The text information for when a buddy is idle"
-msgstr ""
-
-#, fuzzy
-msgid "Message Text"
-msgstr "پیغام"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr ""
-
-msgid "Message (Nick Said) Text"
-msgstr ""
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-
-#, fuzzy
-msgid "The text information for a buddy's status"
-msgstr "د %s کاروونکی معلومات بدلون"
 
 msgid "Type the host name for this certificate."
 msgstr ""
@@ -10635,6 +10743,10 @@ msgstr "مرکه"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "نوی فوري زيری..."
+
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "پیداکول..."
 
 msgid "/Conversation/_Find..."
 msgstr "پیداکول..."
@@ -11028,7 +11140,7 @@ msgstr ""
 msgid "Estonian"
 msgstr "روماني"
 
-msgid "Euskera(Basque)"
+msgid "Basque"
 msgstr ""
 
 msgid "Persian"
@@ -11226,8 +11338,12 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
 
 #, c-format
@@ -11459,14 +11575,6 @@ msgstr ""
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "دوسیه بدلولو تفصیل"
-
-#. Pause button
-msgid "_Pause"
-msgstr "درنګ"
-
-#. Resume button
-msgid "_Resume"
-msgstr "بیا جاري کول"
 
 msgid "Paste as Plain _Text"
 msgstr ""
@@ -11790,37 +11898,44 @@ msgstr ""
 
 #, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
 
-#, c-format
+msgid "DIR"
+msgstr ""
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+msgid "allow multiple instances"
+msgstr ""
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
 msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
+"enable specified account(s) (optional argument NAME\n"
 "                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
 msgstr ""
 
 #, c-format
@@ -11855,10 +11970,6 @@ msgstr ""
 msgid "/Media/_Hangup"
 msgstr ""
 
-#, fuzzy
-msgid "Calling..."
-msgstr "شمېره و..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr ""
@@ -11866,6 +11977,12 @@ msgstr ""
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr ""
+
+msgid "Incoming Call"
+msgstr ""
+
+msgid "_Pause"
+msgstr "درنګ"
 
 #, fuzzy, c-format
 msgid "%s has %d new message."
@@ -12233,12 +12350,16 @@ msgstr ""
 msgid "Cannot start browser configuration program."
 msgstr ""
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">مثال ‫: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "مه شمېره"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr ""
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">مثال ‫: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr ""
@@ -12261,6 +12382,10 @@ msgstr ""
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr ""
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "د سټن خادم:"
 
 #, fuzzy
 msgid "Proxy Server &amp; Browser"
@@ -12773,7 +12898,22 @@ msgstr "تړنه ځای نقل کول"
 msgid "_Copy Email Address"
 msgstr ""
 
+#, fuzzy
+msgid "_Open File"
+msgstr "دوسیه ښکاره کول..."
+
+msgid "Open _Containing Directory"
+msgstr ""
+
 msgid "Save File"
+msgstr "دوسیه ساتل"
+
+#, fuzzy
+msgid "_Play Sound"
+msgstr "غږونه"
+
+#, fuzzy
+msgid "_Save File"
 msgstr "دوسیه ساتل"
 
 msgid "Select color"
@@ -12869,72 +13009,6 @@ msgstr ""
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
 
-#, fuzzy
-msgid "Server name request"
-msgstr "خادم پته"
-
-msgid "Enter an XMPP Server"
-msgstr ""
-
-msgid "Select an XMPP server to query"
-msgstr ""
-
-#, fuzzy
-msgid "Find Services"
-msgstr "په لیکه خدمتونه"
-
-#, fuzzy
-msgid "Add to Buddy List"
-msgstr "ملګری فهرست"
-
-#, fuzzy
-msgid "Gateway"
-msgstr "لیری لاړ شي"
-
-#, fuzzy
-msgid "Directory"
-msgstr "نیغ فوری زیری"
-
-msgid "PubSub Collection"
-msgstr ""
-
-msgid "PubSub Leaf"
-msgstr ""
-
-#, fuzzy
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr "تشریح"
-
-#. Create the window.
-#, fuzzy
-msgid "Service Discovery"
-msgstr "په ياداشت کتابچه ته معلومات ورکه"
-
-#, fuzzy
-msgid "_Browse"
-msgstr "نور..."
-
-#, fuzzy
-msgid "Server does not exist"
-msgstr "خادم پته"
-
-msgid "Server does not support service discovery"
-msgstr ""
-
-#, fuzzy
-msgid "XMPP Service Discovery"
-msgstr "په ياداشت کتابچه ته معلومات ورکه"
-
-msgid "Allows browsing and registering services."
-msgstr ""
-
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr ""
-
 msgid "Buddy is idle"
 msgstr "ملګری بې کار دی"
 
@@ -13019,6 +13093,74 @@ msgid "Apply in Chats"
 msgstr ""
 
 msgid "Apply in IMs"
+msgstr ""
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+#, fuzzy
+msgid "Server name request"
+msgstr "خادم پته"
+
+msgid "Enter an XMPP Server"
+msgstr ""
+
+msgid "Select an XMPP server to query"
+msgstr ""
+
+#, fuzzy
+msgid "Find Services"
+msgstr "په لیکه خدمتونه"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "ملګری فهرست"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "لیری لاړ شي"
+
+#, fuzzy
+msgid "Directory"
+msgstr "نیغ فوری زیری"
+
+msgid "PubSub Collection"
+msgstr ""
+
+msgid "PubSub Leaf"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "تشریح"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "په ياداشت کتابچه ته معلومات ورکه"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "نور..."
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "خادم پته"
+
+msgid "Server does not support service discovery"
+msgstr ""
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "په ياداشت کتابچه ته معلومات ورکه"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
 msgstr ""
 
 msgid "By conversation count"
@@ -13629,10 +13771,13 @@ msgstr "بی خونده"
 msgid "Founder"
 msgstr "غږونه"
 
+#. A user in a chat room who has special privileges.
 #, fuzzy
 msgid "Operator"
 msgstr "اوپاره"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
@@ -13789,6 +13934,57 @@ msgid ""
 "timestamp formats."
 msgstr ""
 
+#, fuzzy
+msgid "Audio"
+msgstr "کره کول"
+
+#, fuzzy
+msgid "Video"
+msgstr "سنبله"
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "نښلولي"
+
+#, fuzzy
+msgid "_Device"
+msgstr "اله"
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "نښلولي"
+
+#, fuzzy
+msgid "D_evice"
+msgstr "اله"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Voice/Video Settings"
+msgstr ""
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+
 msgid "Opacity:"
 msgstr ""
 
@@ -13910,6 +14106,36 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Calling ... "
+#~ msgstr "شمېره و..."
+
+#, fuzzy
+#~ msgid "Malformed BOSH Connect Server"
+#~ msgstr "د خادم سره رابطه کول ناکامه شوه."
+
+#, fuzzy
+#~ msgid "Failed to open the file"
+#~ msgstr "ګپ شپ نښلول ناکام شو"
+
+#, fuzzy
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "کاروونکی نه شه شامل"
+
+#~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr "‫%s د تا \"%s\" کوټه ته د مجلس لپاره بلل نه و منل ، ولی چه \"%s\"."
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "بلل رد کړي شول"
+
+#, fuzzy
+#~ msgid "_Proxy"
+#~ msgstr "وکیل"
+
+#~ msgid "_Resume"
+#~ msgstr "بیا جاري کول"
 
 #~ msgid "Connection failed."
 #~ msgstr "رابطه ناکامه شوه."
@@ -14094,9 +14320,6 @@ msgstr ""
 #~ msgid "User has no directory information."
 #~ msgstr "د کاروونکی په ياداشت کتابچه کی معلومات نشته."
 
-#~ msgid "An unknown error, %d, has occurred.  Info: %s"
-#~ msgstr "نااشنا خطا %d و شوه. معلومات: %s"
-
 #~ msgid "Get Dir Info"
 #~ msgstr "د ياداشت کتابچه څخه معلومات اخله"
 
@@ -14118,9 +14341,6 @@ msgstr ""
 
 #~ msgid "By log size"
 #~ msgstr "د یاداشت لیک په لویوالی"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "د سټن خادم:"
 
 #, fuzzy
 #~ msgid "Smiley _Image"
@@ -14257,9 +14477,6 @@ msgstr ""
 
 #~ msgid "Login failed, no reply"
 #~ msgstr "ننوتل ناکام شو، هیڅ ځواب نشته"
-
-#~ msgid "%s changed status from %s to %s"
-#~ msgstr "‫%s خپل موقعیت د \"%s\" نه \"%s\" ته بدل کړو"
 
 #~ msgid "%s is now %s"
 #~ msgstr "‫%s اوس %s شو"

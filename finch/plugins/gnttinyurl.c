@@ -354,7 +354,7 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
   frame = purple_plugin_pref_frame_new();
 
   pref = purple_plugin_pref_new_with_name(PREF_LENGTH);
-  purple_plugin_pref_set_label(pref, _("Only create TinyURL for urls"
+  purple_plugin_pref_set_label(pref, _("Only create TinyURL for URLs"
 				     " of this length or greater"));
   purple_plugin_pref_frame_add(frame, pref);
   pref = purple_plugin_pref_new_with_name(PREF_URL);
@@ -390,7 +390,7 @@ static PurplePluginInfo info =
 	N_("TinyURL"),
 	DISPLAY_VERSION,
 	N_("TinyURL plugin"),
-	N_("When receiving a message with URL(s), TinyURL for easier copying"),
+	N_("When receiving a message with URL(s), use TinyURL for easier copying"),
 	"Richard Nelson <wabz@whatsbeef.net>",
 	PURPLE_WEBSITE,
 	plugin_load,

@@ -10,10 +10,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-14 20:04+0200\n"
-"PO-Revision-Date: 2009-08-14 19:58+0200\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"PO-Revision-Date: 2009-08-29 00:59+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
-"Language-Team: Hungarian <gnome at gnome dot hu>\n"
+"Language-Team: Hungarian <gnome at fsf dot hu>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -869,7 +869,7 @@ msgstr "Minden társalgás"
 msgid "System Log"
 msgstr "Rendszernapló"
 
-msgid "Calling ... "
+msgid "Calling..."
 msgstr "Hívás…"
 
 msgid "Hangup"
@@ -1508,6 +1508,31 @@ msgstr ""
 "Ez a bővítmény új társalgás megnyitásakor beszúrja az utolsó társalgást az "
 "aktuális társalgásba."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+"\n"
+"TinyURL lekérése…"
+
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr "TinyURL készítése csak a legalább ilyen hosszú URL-címekhez"
+
+msgid "TinyURL (or other) address prefix"
+msgstr "TinyURL (vagy más) címelőtag"
+
+msgid "TinyURL"
+msgstr "TinyURL"
+
+msgid "TinyURL plugin"
+msgstr "TinyURL bővítmény"
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+"URL-címeket tartalmazó üzenet fogadásakor TinyURL használata a másolás "
+"megkönnyítéséhez"
+
 msgid "Online"
 msgstr "Elérhető"
 
@@ -1550,31 +1575,6 @@ msgstr "GntLastlog"
 
 msgid "Lastlog plugin."
 msgstr "Lastlog bővítmény."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-"\n"
-"TinyURL lekérése…"
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr "TinyURL készítése csak a legalább ilyen hosszú URL-címekhez"
-
-msgid "TinyURL (or other) address prefix"
-msgstr "TinyURL (vagy más) címelőtag"
-
-msgid "TinyURL"
-msgstr "TinyURL"
-
-msgid "TinyURL plugin"
-msgstr "TinyURL bővítmény"
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
-"URL-címeket tartalmazó üzenetek fogadásakor URL-rövidítés a másolás "
-"megkönnyítéséhez"
 
 msgid "accounts"
 msgstr "fiókok"
@@ -1637,6 +1637,39 @@ msgstr "Partnerek"
 msgid "buddy list"
 msgstr "partnerlista"
 
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr "A tanúsítvány saját aláírású és nem ellenőrizhető automatikusan."
+
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
+msgstr "A tanúsítványt kiadó gyökértanúsítványt a Pidgin nem ismeri."
+
+msgid "The certificate is not valid yet."
+msgstr "A tanúsítvány még nem érvényes."
+
+msgid "The certificate has expired and should not be considered valid."
+msgstr "A tanúsítvány lejárt és nem tekinthető érvényesnek."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+msgid "The certificate presented is not issued to this domain."
+msgstr "A bemutatott tanúsítvány nem ehhez a tartományhoz lett kiállítva."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+"A gyökértanúsítványok adatbázisa nem érhető el, így ez a tanúsítvány nem "
+"ellenőrizhető."
+
+msgid "The certificate chain presented is invalid."
+msgstr "A bemutatott tanúsítványlánc érvénytelen."
+
+msgid "The certificate has been revoked."
+msgstr "A tanúsítványt visszavonták."
+
+msgid "An unknown certificate error occurred."
+msgstr "Ismeretlen tanúsítványhiba történt."
+
 msgid "(DOES NOT MATCH)"
 msgstr "(NEM EGYEZIK)"
 
@@ -1680,76 +1713,23 @@ msgid "_View Certificate..."
 msgstr "_Tanúsítvány megjelenítése…"
 
 #, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
-msgstr ""
-"A(z) „%s” által bemutatott tanúsítvány a következőtől származónak mondja "
-"magát: „%s”. Ez azt jelentheti, hogy a kívánttól eltérő szolgáltatáshoz "
-"kapcsolódik."
+msgid "The certificate for %s could not be validated."
+msgstr "A következő tanúsítványa nem ellenőrizhető: %s."
 
-#. Had no CA pool, so couldn't verify the chain *and*
-#. * the subject name isn't valid.
-#. * I think this is bad enough to warrant a fatal error. It's
-#. * not likely anyway...
-#.
-#. TODO: Probably wrong.
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
-#. TODO: Probably wrong.
-#. TODO: Probably wrong
 #. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "SSL tanúsítványhiba"
 
-msgid "Invalid certificate chain"
-msgstr "Érvénytelen tanúsítványlánc"
-
-#. The subject name is correct, but we weren't able to verify the
-#. * chain because there was no pool of root CAs found. Prompt the user
-#. * to validate it.
-#.
-#. vrq will be completed by user_auth
-msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-"A gyökértanúsítványok adatbázisa nem érhető el, így ez a tanúsítvány nem "
-"ellenőrizhető."
-
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"A(z) „%s” által bemutatott tanúsítvány saját aláírású. Nem ellenőrizhető "
-"automatikusan."
-
-#. FIXME 2.6.1
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
-msgstr "A következőhöz bemutatott tanúsítványlánc nem érvényes: %s."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr "A tanúsítványt kiadó gyökértanúsítványt a Pidgin nem ismeri."
+msgid "Unable to validate certificate"
+msgstr "A tanúsítvány nem ellenőrizhető"
 
 #, c-format
 msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
-"A(z) %s által bemutatott tanúsítványlánc nem rendelkezik érvényes digitális "
-"aláírással attól a hitelesítésszolgáltatótól, amely aláírásával állítása "
-"szerint rendelkezik."
-
-msgid "Invalid certificate authority signature"
-msgstr "A hitelesítésszolgáltató aláírása érvénytelen"
+"A tanúsítvány a következőtől származónak mondja magát: „%s”. Ez azt "
+"jelentheti, hogy a kívánttól eltérő szolgáltatáshoz kapcsolódik."
 
 #. Make messages
 #, c-format
@@ -1787,7 +1767,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s kilépett"
 
 #. Unknown error
-#, c-format
 msgid "Unknown error"
 msgstr "Ismeretlen hiba"
 
@@ -1987,18 +1966,18 @@ msgid "File transfer complete"
 msgstr "A fájlátvitel befejeződött"
 
 #, c-format
-msgid "You canceled the transfer of %s"
+msgid "You cancelled the transfer of %s"
 msgstr "Megszakította %s átvitelét"
 
 msgid "File transfer cancelled"
 msgstr "Fájlátvitel megszakítva"
 
 #, c-format
-msgid "%s canceled the transfer of %s"
+msgid "%s cancelled the transfer of %s"
 msgstr "%s megszakította %s átvitelét"
 
 #, c-format
-msgid "%s canceled the file transfer"
+msgid "%s cancelled the file transfer"
 msgstr "%s megszakította a fájlátvitelt"
 
 #, c-format
@@ -2192,6 +2171,35 @@ msgstr "<font color=\"red\"><b>A fájl olvasása sikertelen: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTOMATIKUS VÁLASZ>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+"Nem találhatók kodekek. Telepítsen néhány GStreamer kodeket, ezek a "
+"GStreamer bővítménycsomagokban találhatók."
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+"Nincs több kodek. A fs-codecs.conf fájlban megadott kodekbeállítások túl "
+"szigorúak."
+
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Helyrehozhatatlan Farsight2 hiba történt."
+
+msgid "Conference error."
+msgstr "Konferenciahiba"
+
+msgid "Error with your microphone."
+msgstr "Hiba történt a mikrofonnal."
+
+msgid "Error with your webcam."
+msgstr "Hiba történt a webkamerával."
+
+#, c-format
+msgid "Error creating session: %s"
+msgstr "Hiba a munkamenet létrehozásakor: %s"
 
 msgid "Error creating conference."
 msgstr "Hiba a konferencia létrehozásakor."
@@ -2456,14 +2464,15 @@ msgstr ""
 "Bővítmények IPC támogatásának tesztelése kiszolgálóként. Ez regisztrálja az "
 "IPC parancsokat."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "Belépés/kilépés rejtésének beállítása"
+msgid "Hide Joins/Parts"
+msgstr "Belépés/kilépés elrejtése"
 
-msgid "Minimum Room Size"
-msgstr "Szoba legkisebb mérete"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr "Ennél több jelenlévővel rendelkező szobákhoz:"
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "Felhasználó inaktivitási időtartama (perc)"
+msgid "If user has not spoken in this many minutes"
+msgstr "Ha a felhasználó nem szólalt meg ennyi percig"
 
 msgid "Apply hiding rules to buddies"
 msgstr "Elrejtési szabályok alkalmazása partnerekre"
@@ -3917,14 +3926,20 @@ msgstr "Fotó"
 msgid "Logo"
 msgstr "Logó"
 
+#, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr "%s nem fogja többé látni az Ön állapotfrissítéseit. Folytatni akarja?"
+
+msgid "Cancel Presence Notification"
+msgstr "Jelenlét-értesítés törlése"
+
 msgid "Un-hide From"
 msgstr "Rejtettség visszavonása"
 
 msgid "Temporarily Hide From"
 msgstr "Ideiglenesen elrejt"
-
-msgid "Cancel Presence Notification"
-msgstr "Jelenlét-értesítés törlése"
 
 msgid "(Re-)Request authorization"
 msgstr "Engedélyezés (újra)kérése"
@@ -4537,11 +4552,11 @@ msgstr ""
 
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
-"role &lt;moderator|participant|visitor|none&gt;: [1. becenév] [2. becenév]"
-"… : Adott szereppel rendelkező felhasználók lekérése vagy a felhasználók "
-"szerepének beállítása a szobával."
+"role &lt;moderator|participant|visitor|none&gt; [1. becenév] [2. becenév] …: "
+"Adott szerepű felhasználók lekérése vagy a felhasználók szerepének "
+"beállítása a szobával."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;felhasználó&gt; [üzenet]:  Felhasználó meghívása a szobába."
@@ -4961,8 +4976,7 @@ msgstr "Hibás barát-fájl"
 msgid "Not expected"
 msgstr "Váratlan"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+msgid "Friendly name is changing too rapidly"
 msgstr "A felhasználónév túl gyorsan változik"
 
 #, c-format
@@ -5531,8 +5545,9 @@ msgstr ""
 "%s meg szeretné tekinteni az Ön webkameráját, de ez még nem támogatott."
 
 #, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s webkamera-meghívást küldött, ami még nem támogatott."
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
+msgstr ""
+"%s meghívta Önt a webkamerájának megnézésére, de ez még nem támogatott."
 
 msgid "Away From Computer"
 msgstr "Nem vagyok a gépnél"
@@ -5582,6 +5597,10 @@ msgstr "Törölni kívánja a partnert a címjegyzékéből is?"
 
 msgid "The username specified is invalid."
 msgstr "A megadott felhasználónév érvénytelen."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "A felhasználónév túl gyorsan változik"
 
 msgid "This Hotmail account may not be active."
 msgstr "Lehetséges, hogy ez a Hotmail fiók nem aktív."
@@ -5941,18 +5960,17 @@ msgstr "%s egy pofont küld!"
 msgid "Slapping %s..."
 msgstr "%s pofozása…"
 
-# fixme: hát ez ezt jelenti ;)
 #. Goose means "to pinch someone on their butt"
 msgid "Goose"
-msgstr "Seggberúgás"
+msgstr "Megcsípés"
 
 #, c-format
 msgid "%s has goosed you!"
-msgstr "%s seggberúgta!"
+msgstr "%s megcsípte!"
 
 #, c-format
 msgid "Goosing %s..."
-msgstr "%s seggberúgása…"
+msgstr "%s megcsípése…"
 
 #. A high-five is when two people's hands slap each other
 #. * in the air above their heads.  It is done to celebrate
@@ -6261,8 +6279,10 @@ msgstr "Kiszolgáló címe"
 msgid "Server port"
 msgstr "Kiszolgáló portja"
 
-msgid "Received unexpected response from "
-msgstr "Váratlan válasz érkezett a következőtől: "
+#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s"
+msgstr "Váratlan válasz érkezett innen: %s"
 
 #. username connecting too frequently
 msgid ""
@@ -6272,9 +6292,11 @@ msgstr ""
 "Ön túl gyakran jelentkezik ki/be. Várjon tíz percet és próbálja meg újra. Ha "
 "tovább folytatja, még többet kell majd várnia."
 
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, c-format
-msgid "Error requesting "
-msgstr "Hiba a kéréskor: "
+msgid "Error requesting %s: %s"
+msgstr "Hiba %s lekérésekor: %s"
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "Az AOL nem engedélyezi ezen megjelenő név hitelesítését"
@@ -7068,6 +7090,9 @@ msgstr ""
 msgid "C_onnect"
 msgstr "Kapcs_olódás"
 
+msgid "You closed the connection."
+msgstr "Lezárta a kapcsolatot."
+
 msgid "Get AIM Info"
 msgstr "AIM információk lekérése"
 
@@ -7077,6 +7102,9 @@ msgstr "Partnermegjegyzés szerkesztése"
 
 msgid "Get Status Msg"
 msgstr "Állapotüzenet lekérése"
+
+msgid "End Direct IM Session"
+msgstr "A közvetlen kapcsolat befejezése"
 
 msgid "Direct IM"
 msgstr "Közvetlen IM"
@@ -7909,7 +7937,7 @@ msgid "File Send"
 msgstr "Fájlküldés"
 
 #, c-format
-msgid "%d canceled the transfer of %s"
+msgid "%d cancelled the transfer of %s"
 msgstr "%d megszakította a(z) %s átvitelét"
 
 #, c-format
@@ -9459,6 +9487,9 @@ msgstr "Csevegőszoba nyelve"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Konferencia- és csevegőszoba-meghívások figyelmen kívül hagyása"
 
+msgid "Use account proxy for SSL connections"
+msgstr "Fiókproxy használata SSL kapcsolatokhoz"
+
 msgid "Chat room list URL"
 msgstr "Csevegőszobák listájának URL címe"
 
@@ -9483,6 +9514,10 @@ msgstr "Yahoo Japán azonosító…"
 #. *  description
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Yahoo! Japán protokollbővítmény"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s webkamera-meghívást küldött, ami még nem támogatott."
 
 msgid "Your SMS was not delivered"
 msgstr "Az SMS nem lett kézbesítve"
@@ -9560,8 +9595,26 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Mellőzi a partnert?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "A fiókja zárolva van, kérem jelentkezzen be a Yahoo! weboldalára."
+msgid "Invalid username or password"
+msgstr "Érvénytelen felhasználónév vagy jelszó"
+
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+"A fiók zárolva, mert túl sok bejelentkezési kísérlet hiúsult meg. Próbáljon "
+"meg bejelentkezni a Yahoo! weboldalára."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr "Ismeretlen hiba: 52. Próbáljon újracsatlakozni."
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
+"1013-as hiba: A megadott felhasználónév érvénytelen. Ennek leggyakoribb oka, "
+"hogy az e-mail címét adta meg a Yahoo! azonosítója helyett."
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -10328,6 +10381,124 @@ msgstr ""
 "segítségével visszatérhet ehhez az ablakhoz fiókok hozzáadásához, "
 "szerkesztéséhez vagy eltávolításához."
 
+#. Buddy List
+msgid "Background Color"
+msgstr "Háttérszín"
+
+msgid "The background color for the buddy list"
+msgstr "A partnerlista háttérszíne"
+
+msgid "Layout"
+msgstr "Elrendezés"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr "A partnerlista ikonjainak, nevének és állapotának elrendezése"
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Background Color"
+msgstr "Kibontott háttérszín"
+
+msgid "The background color of an expanded group"
+msgstr "Kibontott csoport háttérszíne"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Text"
+msgstr "Kibontott szöveg"
+
+msgid "The text information for when a group is expanded"
+msgstr "Szöveges információk kibontott csoport esetén"
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Background Color"
+msgstr "Összecsukott háttérszín"
+
+msgid "The background color of a collapsed group"
+msgstr "Összecsukott csoport háttérszíne"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Text"
+msgstr "Összecsukott szöveg"
+
+msgid "The text information for when a group is collapsed"
+msgstr "A szöveges információk összecsukott csoport esetén"
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+msgid "Contact/Chat Background Color"
+msgstr "Partner/csevegés háttérszíne"
+
+msgid "The background color of a contact or chat"
+msgstr "Partner vagy csevegés háttérszíne"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+msgid "Contact Text"
+msgstr "Partnerszöveg"
+
+msgid "The text information for when a contact is expanded"
+msgstr "Kibontott partner szöveges információi"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+msgid "Online Text"
+msgstr "Elérhető szöveg"
+
+msgid "The text information for when a buddy is online"
+msgstr "Elérhető partner szöveges információi"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+msgid "Away Text"
+msgstr "Távol szöveg"
+
+msgid "The text information for when a buddy is away"
+msgstr "Távol lévő partner szöveges információi"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+msgid "Offline Text"
+msgstr "Kilépett szöveg"
+
+msgid "The text information for when a buddy is offline"
+msgstr "Kilépett partner szöveges információi"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+msgid "Idle Text"
+msgstr "Ráérő szöveg"
+
+msgid "The text information for when a buddy is idle"
+msgstr "Ráérő partner szöveges információi"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message Text"
+msgstr "Üzenetszöveg"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr "Olvasatlan üzenetekkel rendelkező partner szöveges információi"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr "Üzenetszöveg (becenév említve)"
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+"Szöveges információk, ha a csevegés olvasatlan üzeneteket tartalmaz, amelyek "
+"az Ön becenevét említik"
+
+msgid "The text information for a buddy's status"
+msgstr "Partner állapotának szöveges információi"
+
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
@@ -10763,8 +10934,8 @@ msgstr "Ál_név:"
 msgid "_Group:"
 msgstr "_Csoport:"
 
-msgid "Auto_join when account becomes online."
-msgstr "Automatikus _csatlakozás a fiók elérhetővé válásakor."
+msgid "Auto_join when account connects."
+msgstr "Automatikus _csatlakozás a fiók csatlakozásakor."
 
 msgid "_Remain in chat after window is closed."
 msgstr "Csevegésben mara_dás az ablak bezárásakor."
@@ -10795,100 +10966,6 @@ msgstr "/Eszközök"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Partnerek/Partnerek rendezése"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "Háttérszín"
-
-msgid "The background color for the buddy list"
-msgstr "A partnerlista háttérszíne"
-
-msgid "Layout"
-msgstr "Elrendezés"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr "A partnerlista ikonjainak, nevének és állapotának elrendezése"
-
-#. Group
-msgid "Expanded Background Color"
-msgstr "Kibontott háttérszín"
-
-msgid "The background color of an expanded group"
-msgstr "Kibontott csoport háttérszíne"
-
-msgid "Expanded Text"
-msgstr "Kibontott szöveg"
-
-msgid "The text information for when a group is expanded"
-msgstr "Szöveges információk kibontott csoport esetén"
-
-msgid "Collapsed Background Color"
-msgstr "Összecsukott háttérszín"
-
-msgid "The background color of a collapsed group"
-msgstr "Összecsukott csoport háttérszíne"
-
-msgid "Collapsed Text"
-msgstr "Összecsukott szöveg"
-
-msgid "The text information for when a group is collapsed"
-msgstr "A szöveges információk összecsukott csoport esetén"
-
-#. Buddy
-msgid "Contact/Chat Background Color"
-msgstr "Partner/csevegés háttérszíne"
-
-msgid "The background color of a contact or chat"
-msgstr "Partner vagy csevegés háttérszíne"
-
-msgid "Contact Text"
-msgstr "Partnerszöveg"
-
-msgid "The text information for when a contact is expanded"
-msgstr "Kibontott partner szöveges információi"
-
-msgid "On-line Text"
-msgstr "Elérhető szöveg"
-
-msgid "The text information for when a buddy is online"
-msgstr "Elérhető partner szöveges információi"
-
-msgid "Away Text"
-msgstr "Távol szöveg"
-
-msgid "The text information for when a buddy is away"
-msgstr "Távol lévő partner szöveges információi"
-
-msgid "Off-line Text"
-msgstr "Kilépett szöveg"
-
-msgid "The text information for when a buddy is off-line"
-msgstr "Kilépett partner szöveges információi"
-
-msgid "Idle Text"
-msgstr "Ráérő szöveg"
-
-msgid "The text information for when a buddy is idle"
-msgstr "Ráérő partner szöveges információi"
-
-msgid "Message Text"
-msgstr "Üzenetszöveg"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr "Olvasatlan üzenetekkel rendelkező partner szöveges információi"
-
-msgid "Message (Nick Said) Text"
-msgstr "Üzenetszöveg (becenév említve)"
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-"Szöveges információk, ha a csevegés olvasatlan üzeneteket tartalmaz, amelyek "
-"az Ön becenevét említik"
-
-msgid "The text information for a buddy's status"
-msgstr "Partner állapotának szöveges információi"
 
 msgid "Type the host name for this certificate."
 msgstr "Írja be a tanúsítványt birtokló gép nevét."
@@ -10973,6 +11050,9 @@ msgstr "/_Társalgás"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Társalgás/Új azonnali ü_zenet…"
+
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Társalgás/Csatlakozás _csevegéshez…"
 
 msgid "/Conversation/_Find..."
 msgstr "/Társalgás/Ker_esés…"
@@ -11356,7 +11436,7 @@ msgstr "Spanyol"
 msgid "Estonian"
 msgstr "észt"
 
-msgid "Euskera(Basque)"
+msgid "Basque"
 msgstr "Baszk"
 
 msgid "Persian"
@@ -11560,11 +11640,19 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
-"<FONT SIZE=\"4\">Segítség e-mailben (angol):</FONT> <A HREF=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Segítség más Pidgin felhasználóktól:</font> <a href="
+"\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Ez egy <b>nyilvános</"
+"b> levelezőlista! (<a href=\"http://pidgin.im/pipermail/support/\">archívum</"
+"a>)<br/>Nem tudunk segíteni külső protokollokkal vagy bővítményekkel "
+"kapcsolatban!<br/>Ez a lista <b>angol</b> nyelvű. Írhat más nyelven is, de a "
+"válaszok nem biztos, hogy túl hasznosak lesznek.<br/><br/>"
 
 #, c-format
 msgid ""
@@ -12121,65 +12209,50 @@ msgstr "%s %s. Próbálja a „%s -h” parancsot további információkért.\n"
 
 #, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
 "Használat: %s [KAPCSOLÓ]…\n"
 "\n"
-"  -c, --config=KÖNYVTÁR A KÖNYVTÁR használata a beállítófájlokhoz\n"
-"  -d, --debug         hibakereső üzenetek kiírása a szabványos kimenetre\n"
-"  -f, --force-online  elérhető állapot kényszerítése, a hálózat állapotától\n"
-"                        függetlenül\n"
-"  -h, --help          ezen súgó megjelenítése és kilépés\n"
-"  -m, --multiple      ne csak egy példány futhasson\n"
-"  -n, --nologin       ne jelentkezzen be automatikusan\n"
-"  -l, --login[=NÉV]   automatikus bejelentkezés (a NÉV paraméter megadja a\n"
-"                      használandó fiókok vesszőkkel tagolt listáját)\n"
-"  --display=KÉPERNYŐ  a használandó X megjelenítő\n"
-"  -v, --version       az aktuális verzió megjelenítése és kilépés\n"
 
-#, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"Használat: %s [KAPCSOLÓ]…\n"
-"\n"
-"  -c, --config=KÖNYVTÁR A KÖNYVTÁR használata a beállítófájlokhoz\n"
-"  -d, --debug         hibakereső üzenetek kiírása a szabványos kimenetre\n"
-"  -f, --force-online  elérhető állapot kényszerítése, a hálózat állapotától\n"
-"                        függetlenül\n"
-"  -h, --help          ezen súgó megjelenítése és kilépés\n"
-"  -m, --multiple      ne csak egy példány futhasson\n"
-"  -n, --nologin       ne jelentkezzen be automatikusan\n"
-"  -l, --login[=NÉV]   automatikus bejelentkezés (a NÉV paraméter megadja a\n"
-"                      használandó fiókok vesszőkkel tagolt listáját)\n"
-"  -v, --version       az aktuális verzió megjelenítése és kilépés\n"
+
+msgid "use DIR for config files"
+msgstr "a KÖNYVTÁR használata a beállítófájlokhoz"
+
+msgid "print debugging messages to stdout"
+msgstr "hibakereső üzenetek kiírása a szabványos kimenetre"
+
+msgid "force online, regardless of network status"
+msgstr "elérhető kényszerítése a hálózat állapotától függetlenül"
+
+msgid "display this help and exit"
+msgstr "ezen súgó megjelenítése és kilépés"
+
+msgid "allow multiple instances"
+msgstr "több példány engedélyezése"
+
+msgid "don't automatically login"
+msgstr "ne jelentkezzen be automatikusan"
+
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+"automatikus bejelentkezés (a NÉV paraméter megadja a\n"
+"                      használandó fiókok vesszőkkel tagolt listáját."
+
+msgid "X display to use"
+msgstr "Használandó X-megjelenítő"
+
+msgid "display the current version and exit"
+msgstr "az aktuális verzió megjelenítése és kilépés"
 
 #, c-format
 msgid ""
@@ -12223,9 +12296,6 @@ msgstr "/_Média"
 
 msgid "/Media/_Hangup"
 msgstr "/Média/_Lerakás"
-
-msgid "Calling..."
-msgstr "Hívás…"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12597,12 +12667,16 @@ msgstr "Nem indítható a proxykonfigurációs program."
 msgid "Cannot start browser configuration program."
 msgstr "Nem indítható a böngészőkonfigurációs program."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Például: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Tiltás"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Automatikusan felismert _IP cím használata: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Például: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "_Nyilvános IP:"
@@ -12625,6 +12699,10 @@ msgstr "_Utolsó port:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Továbbító kiszolgáló (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "_Kiszolgáló:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proxy-kiszolgáló és böngésző"
@@ -13243,66 +13321,6 @@ msgstr "Partnerelérhetőség-előrejelző bővítmény."
 msgid "Displays statistical information about your buddies' availability"
 msgstr "Statisztikai információk megjelenítése a partnerek elérhetőségéről"
 
-msgid "Server name request"
-msgstr "Kiszolgálónév-kérés"
-
-msgid "Enter an XMPP Server"
-msgstr "Adjon meg egy XMPP kiszolgálót"
-
-msgid "Select an XMPP server to query"
-msgstr "Válassza ki a lekérdezendő XMPP kiszolgálót"
-
-msgid "Find Services"
-msgstr "Szolgáltatások keresése"
-
-msgid "Add to Buddy List"
-msgstr "Felvétel a partnerlistára"
-
-msgid "Gateway"
-msgstr "Átjáró"
-
-msgid "Directory"
-msgstr "Címtár"
-
-msgid "PubSub Collection"
-msgstr "PubSub gyűjtemény"
-
-msgid "PubSub Leaf"
-msgstr "PubSub levél"
-
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr ""
-"\n"
-"<b>Leírás:</b>"
-
-#. Create the window.
-msgid "Service Discovery"
-msgstr "Szolgáltatásfeltérképezés"
-
-msgid "_Browse"
-msgstr "_Tallózás"
-
-msgid "Server does not exist"
-msgstr "A kiszolgáló nem létezik"
-
-msgid "Server does not support service discovery"
-msgstr "A kiszolgáló nem támogatja a szolgáltatásfeltérképezést"
-
-msgid "XMPP Service Discovery"
-msgstr "XMPP szolgáltatásfeltérképezés"
-
-msgid "Allows browsing and registering services."
-msgstr "Lehetővé teszi szolgáltatások tallózását és regisztrálását."
-
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr ""
-"Ez a bővítmény örökölt átvitelekkel történő, vagy más XMPP szolgáltatásokhoz "
-"való regisztráláshoz hasznos."
-
 msgid "Buddy is idle"
 msgstr "A partner inaktív"
 
@@ -13394,6 +13412,68 @@ msgstr "Alkalmazás csevegésekben"
 
 msgid "Apply in IMs"
 msgstr "Alkalmazás üzenetváltásokban"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+msgid "Server name request"
+msgstr "Kiszolgálónév-kérés"
+
+msgid "Enter an XMPP Server"
+msgstr "Adjon meg egy XMPP kiszolgálót"
+
+msgid "Select an XMPP server to query"
+msgstr "Válassza ki a lekérdezendő XMPP kiszolgálót"
+
+msgid "Find Services"
+msgstr "Szolgáltatások keresése"
+
+msgid "Add to Buddy List"
+msgstr "Felvétel a partnerlistára"
+
+msgid "Gateway"
+msgstr "Átjáró"
+
+msgid "Directory"
+msgstr "Címtár"
+
+msgid "PubSub Collection"
+msgstr "PubSub gyűjtemény"
+
+msgid "PubSub Leaf"
+msgstr "PubSub levél"
+
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>Leírás:</b>"
+
+#. Create the window.
+msgid "Service Discovery"
+msgstr "Szolgáltatásfeltérképezés"
+
+msgid "_Browse"
+msgstr "_Tallózás"
+
+msgid "Server does not exist"
+msgstr "A kiszolgáló nem létezik"
+
+msgid "Server does not support service discovery"
+msgstr "A kiszolgáló nem támogatja a szolgáltatásfeltérképezést"
+
+msgid "XMPP Service Discovery"
+msgstr "XMPP szolgáltatásfeltérképezés"
+
+msgid "Allows browsing and registering services."
+msgstr "Lehetővé teszi szolgáltatások tallózását és regisztrálását."
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"Ez a bővítmény örökölt átvitelekkel történő, vagy más XMPP szolgáltatásokhoz "
+"való regisztráláshoz hasznos."
 
 msgid "By conversation count"
 msgstr "Társalgások száma szerint"
@@ -14187,6 +14267,51 @@ msgstr ""
 "Ez a bővítmény lehetővé teszi a felhasználó számára a társalgási és "
 "naplóüzenetek időpecsét-formátumainak testreszabását."
 
+msgid "Audio"
+msgstr "Hang"
+
+msgid "Video"
+msgstr "Videó"
+
+msgid "Output"
+msgstr "Kimenet"
+
+msgid "_Plugin"
+msgstr "_Bővítmény"
+
+msgid "_Device"
+msgstr "_Eszköz"
+
+msgid "Input"
+msgstr "Bemenet"
+
+msgid "P_lugin"
+msgstr "Bő_vítmény"
+
+msgid "D_evice"
+msgstr "_Eszköz"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Voice/Video Settings"
+msgstr "Hang/videobeállítások"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr "Mikrofon és webkamera beállítása."
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr "Mikrofon- és webkamera-beállítások megadása hang- és videohívásokhoz."
+
 msgid "Opacity:"
 msgstr "Átlátszatlanság:"
 
@@ -14315,3 +14440,6 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ez a bővítmény XMPP kiszolgálókban vagy kliensekben végzett hibakereséshez "
 "hasznos."
+
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "Enélkül csak az első fiók lesz engedélyezve)."

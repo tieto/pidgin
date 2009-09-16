@@ -53,7 +53,7 @@ void
 gevo_addrbooks_model_populate(GtkTreeModel *model)
 {
 	ESourceList *addressbooks;
-	GError *err;
+	GError *err = NULL;
 	GSList *groups, *g;
 	GtkTreeIter iter;
 	GtkListStore *list;
@@ -173,7 +173,7 @@ EContact *
 gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query)
 {
 	ESourceList *addressbooks;
-	GError *err;
+	GError *err = NULL;
 	EBookQuery *full_query;
 	GSList *groups, *g;
 	EContact *result;

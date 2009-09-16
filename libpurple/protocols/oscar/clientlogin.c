@@ -62,50 +62,6 @@ static const char *get_client_key(OscarData *od)
 }
 
 /**
- * This is similar to purple_url_encode() except that it follows
- * RFC3986 a little more closely by not encoding - . _ and ~
- * It also uses capital letters as hex characters because capital
- * letters are required by AOL.  The RFC says that capital letters
- * are a SHOULD and that URLs that use capital letters are
- * equivalent to URLs that use small letters.
- *
- * TODO: Check if purple_url_encode() can be replaced with this
- *       version without breaking anything.
- */
-static const char *oscar_auth_url_encode(const char *str)
-{
-	const char *iter;
-	static char buf[BUF_LEN];
-	char utf_char[6];
-	guint i, j = 0;
-
-	g_return_val_if_fail(str != NULL, NULL);
-	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
-
-	iter = str;
-	for (; *iter && j < (BUF_LEN - 1) ; iter = g_utf8_next_char(iter)) {
-		gunichar c = g_utf8_get_char(iter);
-		/* If the character is an ASCII character and is alphanumeric
-		 * no need to escape */
-		if ((c < 128 && isalnum(c)) || c =='-' || c == '.' || c == '_' || c == '~') {
-			buf[j++] = c;
-		} else {
-			int bytes = g_unichar_to_utf8(c, utf_char);
-			for (i = 0; i < bytes; i++) {
-				if (j > (BUF_LEN - 4))
-					break;
-				sprintf(buf + j, "%%%02X", utf_char[i] & 0xff);
-				j += 3;
-			}
-		}
-	}
-
-	buf[j] = '\0';
-
-	return buf;
-}
-
-/**
  * @return A null-terminated base64 encoded version of the HMAC
  *         calculated using the given key and data.
  */
@@ -134,8 +90,8 @@ static gchar *generate_signature(const char *method, const char *url, const char
 	char *encoded_url, *signature_base_string, *signature;
 	const char *encoded_parameters;
 
-	encoded_url = g_strdup(oscar_auth_url_encode(url));
-	encoded_parameters = oscar_auth_url_encode(parameters);
+	encoded_url = g_strdup(purple_url_encode(url));
+	encoded_parameters = purple_url_encode(parameters);
 	signature_base_string = g_strdup_printf("%s&%s&%s",
 			method, encoded_url, encoded_parameters);
 	g_free(encoded_url);
@@ -156,11 +112,15 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	response_node = xmlnode_from_str(response, response_len);
 	if (response_node == NULL)
 	{
+		char *msg;
 		purple_debug_error("oscar", "startOSCARSession could not parse "
 				"response as XML: %s\n", response);
+		/* Note to translators: %s in this string is a URL */
+		msg = g_strdup_printf(_("Received unexpected response from %s"),
+				URL_START_OSCAR_SESSION);
 		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Received unexpected response from " URL_START_OSCAR_SESSION));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
 		return FALSE;
 	}
 
@@ -175,11 +135,14 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 
 	/* Make sure we have a status code */
 	if (tmp_node == NULL || (tmp = xmlnode_get_data_unescaped(tmp_node)) == NULL) {
+		char *msg;
 		purple_debug_error("oscar", "startOSCARSession response was "
 				"missing statusCode: %s\n", response);
+		msg = g_strdup_printf(_("Received unexpected response from %s"),
+				URL_START_OSCAR_SESSION);
 		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Received unexpected response from " URL_START_OSCAR_SESSION));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
 		xmlnode_free(response_node);
 		return FALSE;
 	}
@@ -197,10 +160,14 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 					  "frequently. Wait ten minutes and try again. If "
 					  "you continue to try, you will need to wait even "
 					  "longer."));
-		else
+		else {
+			char *msg;
+			msg = g_strdup_printf(_("Received unexpected response from %s"),
+					URL_START_OSCAR_SESSION);
 			purple_connection_error_reason(gc,
-					PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-					_("Received unexpected response from " URL_START_OSCAR_SESSION));
+					PURPLE_CONNECTION_ERROR_OTHER_ERROR, msg);
+			g_free(msg);
+		}
 
 		g_free(tmp);
 		xmlnode_free(response_node);
@@ -212,11 +179,14 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	if (data_node == NULL || host_node == NULL ||
 		port_node == NULL || cookie_node == NULL)
 	{
+		char *msg;
 		purple_debug_error("oscar", "startOSCARSession response was missing "
 				"something: %s\n", response);
+		msg = g_strdup_printf(_("Received unexpected response from %s"),
+				URL_START_OSCAR_SESSION);
 		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Received unexpected response from " URL_START_OSCAR_SESSION));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
 		xmlnode_free(response_node);
 		return FALSE;
 	}
@@ -227,11 +197,14 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	*cookie = xmlnode_get_data_unescaped(cookie_node);
 	if (*host == NULL || **host == '\0' || tmp == NULL || *tmp == '\0' || cookie == NULL || *cookie == '\0')
 	{
+		char *msg;
 		purple_debug_error("oscar", "startOSCARSession response was missing "
 				"something: %s\n", response);
+		msg = g_strdup_printf(_("Received unexpected response from %s"),
+				URL_START_OSCAR_SESSION);
 		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Received unexpected response from " URL_START_OSCAR_SESSION));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
 		g_free(*host);
 		g_free(tmp);
 		g_free(*cookie);
@@ -261,8 +234,10 @@ static void start_oscar_session_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 
 	if (error_message != NULL || len == 0) {
 		gchar *tmp;
-		tmp = g_strdup_printf(_("Error requesting " URL_START_OSCAR_SESSION
-				": %s"), error_message);
+		/* Note to translators: The first %s is a URL, the second is an
+		   error message. */
+		tmp = g_strdup_printf(_("Error requesting %s: %s"),
+				URL_START_OSCAR_SESSION, error_message);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
@@ -290,7 +265,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 			"&k=%s"
 			"&ts=%" PURPLE_TIME_T_MODIFIER
 			"&useTLS=0",
-			oscar_auth_url_encode(token), get_client_key(od), hosttime);
+			purple_url_encode(token), get_client_key(od), hosttime);
 	signature = generate_signature("GET", URL_START_OSCAR_SESSION,
 			query_string, session_key);
 	url = g_strdup_printf(URL_START_OSCAR_SESSION "?%s&sig_sha256=%s",
@@ -339,11 +314,14 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 	response_node = xmlnode_from_str(response, response_len);
 	if (response_node == NULL)
 	{
+		char *msg;
 		purple_debug_error("oscar", "clientLogin could not parse "
 				"response as XML: %s\n", response);
+		msg = g_strdup_printf(_("Received unexpected response from %s"),
+				URL_CLIENT_LOGIN);
 		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Received unexpected response from " URL_CLIENT_LOGIN));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
 		return FALSE;
 	}
 
@@ -360,11 +338,14 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 
 	/* Make sure we have a status code */
 	if (tmp_node == NULL || (tmp = xmlnode_get_data_unescaped(tmp_node)) == NULL) {
+		char *msg;
 		purple_debug_error("oscar", "clientLogin response was "
 				"missing statusCode: %s\n", response);
+		msg = g_strdup_printf(_("Received unexpected response from %s"),
+				URL_CLIENT_LOGIN);
 		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Received unexpected response from " URL_CLIENT_LOGIN));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
 		xmlnode_free(response_node);
 		return FALSE;
 	}
@@ -393,10 +374,14 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 					_("AOL does not allow your screen name to authenticate here"));
-		} else
+		} else {
+			char *msg;
+			msg = g_strdup_printf(_("Received unexpected response from %s"),
+					URL_CLIENT_LOGIN);
 			purple_connection_error_reason(gc,
-					PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-					_("Received unexpected response from " URL_CLIENT_LOGIN));
+					PURPLE_CONNECTION_ERROR_OTHER_ERROR, msg);
+			g_free(msg);
+		}
 
 		xmlnode_free(response_node);
 		return FALSE;
@@ -407,11 +392,14 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 	if (data_node == NULL || secret_node == NULL ||
 		token_node == NULL || tokena_node == NULL)
 	{
+		char *msg;
 		purple_debug_error("oscar", "clientLogin response was missing "
 				"something: %s\n", response);
+		msg = g_strdup_printf(_("Received unexpected response from %s"),
+				URL_CLIENT_LOGIN);
 		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Received unexpected response from " URL_CLIENT_LOGIN));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
 		xmlnode_free(response_node);
 		return FALSE;
 	}
@@ -422,11 +410,14 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 	tmp = xmlnode_get_data_unescaped(hosttime_node);
 	if (*token == NULL || **token == '\0' || *secret == NULL || **secret == '\0' || tmp == NULL || *tmp == '\0')
 	{
+		char *msg;
 		purple_debug_error("oscar", "clientLogin response was missing "
 				"something: %s\n", response);
+		msg = g_strdup_printf(_("Received unexpected response from %s"),
+				URL_CLIENT_LOGIN);
 		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Received unexpected response from " URL_CLIENT_LOGIN));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
+		g_free(msg);
 		g_free(*token);
 		g_free(*secret);
 		g_free(tmp);
@@ -458,8 +449,8 @@ static void client_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data
 
 	if (error_message != NULL || len == 0) {
 		gchar *tmp;
-		tmp = g_strdup_printf(_("Error requesting " URL_CLIENT_LOGIN
-				": %s"), error_message);
+		tmp = g_strdup_printf(_("Error requesting %s: %s"),
+				URL_CLIENT_LOGIN, error_message);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
@@ -518,8 +509,8 @@ void send_client_login(OscarData *od, const char *username)
 	body = g_string_new("");
 	g_string_append_printf(body, "devId=%s", get_client_key(od));
 	g_string_append_printf(body, "&f=xml");
-	g_string_append_printf(body, "&pwd=%s", oscar_auth_url_encode(password));
-	g_string_append_printf(body, "&s=%s", oscar_auth_url_encode(username));
+	g_string_append_printf(body, "&pwd=%s", purple_url_encode(password));
+	g_string_append_printf(body, "&s=%s", purple_url_encode(username));
 	g_free(password);
 
 	/* Construct an HTTP POST request */

@@ -245,7 +245,7 @@ purple_gnome_proxy_get_info(void)
 		return &info;
 	}
 
-	if (purple_strequal(tmp, "manual\n")) {
+	if (!purple_strequal(tmp, "manual\n")) {
 		/* Unknown setting.  Fallback to using our global proxy settings. */
 		g_free(tmp);
 		return purple_global_proxy_get_info();

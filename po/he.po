@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-27 19:57-0700\n"
-"PO-Revision-Date: 2009-07-27 16:21+0200\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"PO-Revision-Date: 2009-08-30 09:44+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at g mail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -842,8 +842,8 @@ msgstr "כל השיחות"
 msgid "System Log"
 msgstr "דו\"ח מערכת"
 
-msgid "Calling ... "
-msgstr "מתקשר ..."
+msgid "Calling..."
+msgstr "מתקשר..."
 
 msgid "Hangup"
 msgstr "התנתק"
@@ -1475,6 +1475,29 @@ msgid ""
 "conversation into the current conversation."
 msgstr "כאשר חלון שיחה חדש נפתח, תוסף זה יכניס את השיחה האחרונה לראש החלון."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+"\n"
+"מביא TinyURL..."
+
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr "רק ייצר TinyURL עבור כתובות באורך הזה ומעלה"
+
+msgid "TinyURL (or other) address prefix"
+msgstr "ראשית כתובת עבור TinyURL (או אחר)"
+
+msgid "TinyURL"
+msgstr "TinyURL"
+
+msgid "TinyURL plugin"
+msgstr "תוסף TinyURL"
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr "בעת קבלת הודעה עם כתובת, השתמש ב-TinyURL להעתקה קלה יותר"
+
 msgid "Online"
 msgstr "מחובר"
 
@@ -1517,29 +1540,6 @@ msgstr "GntLastlog"
 
 msgid "Lastlog plugin."
 msgstr "תוסף Lastlog."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-"\n"
-"מביא TinyURL..."
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr "רק ייצר TinyURL עבור כתובות באורך הזה ומעלה"
-
-msgid "TinyURL (or other) address prefix"
-msgstr "ראשית כתובת עבור TinyURL (או אחר)"
-
-msgid "TinyURL"
-msgstr "TinyURL"
-
-msgid "TinyURL plugin"
-msgstr "תוסף TinyURL"
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr "בעת קבלת הודעה עם כתובת, השתמש ב-TinyURL להעתקה קלה יותר"
 
 msgid "accounts"
 msgstr "חשבונות"
@@ -1602,6 +1602,37 @@ msgstr "אנשי קשר"
 msgid "buddy list"
 msgstr "רשימת אנשי קשר"
 
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr "התעודה נחתמה על ידי עצמה ולא ניתן לבדוק אותה אוטומטית."
+
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
+msgstr "תעודת-השורש שלכאורה הנפיקה את התעודה אינה מוכרת לפידג'ין."
+
+msgid "The certificate is not valid yet."
+msgstr "התעודה עדיין אינה תקפה."
+
+msgid "The certificate has expired and should not be considered valid."
+msgstr "תוקף התעודה פג, ולכן אין להחשיבה כתקפה."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+msgid "The certificate presented is not issued to this domain."
+msgstr "התעודה שהוצגה לא הונפקה עבור האתר הזה."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr "אין לך מסד-נתונים של תעודות שורש, אז לא ניתן לאשרר תעודה זו."
+
+msgid "The certificate chain presented is invalid."
+msgstr "שרשרת התעודות בהנפקת תעודה זו אינה תקפה."
+
+msgid "The certificate has been revoked."
+msgstr "התעודה בוטלה."
+
+msgid "An unknown certificate error occurred."
+msgstr "אירעה שגיאה לא-מוכרת עם התעודה."
+
 msgid "(DOES NOT MATCH)"
 msgstr "(לא תואם)"
 
@@ -1644,66 +1675,24 @@ msgstr "וידוא תעודת SSL"
 msgid "_View Certificate..."
 msgstr "הצג תעודה..."
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
 #, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"התעודה שהוצגה על ידי \"%s\" נחתמה על ידי עצמה. לא ניתן לבצע בדיקה אוטומטית."
+msgid "The certificate for %s could not be validated."
+msgstr "לא ניתן לבצע אימות של התעודה עבור %s."
 
-#. FIXME 2.6.1
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
-msgstr "שרשרת רשויות הנפקת התעודה עבור %s אינה תקפה."
-
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
-#. TODO: Probably wrong.
-#. TODO: Probably wrong
 #. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "שגיאת תעודת SSL"
 
-msgid "Invalid certificate chain"
-msgstr "שרשרת תעודות לא-תקפה"
-
-#. vrq will be completed by user_auth
-msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr "אין לך מסד-נתונים של תעודות שורש, אז לא ניתן לאשרר תעודה זו."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr "תעודת-השורש שלכאורה הנפיקה את התעודה אינה מוכרת לפידג'ין."
+msgid "Unable to validate certificate"
+msgstr "לא ניתן לאמת את התעודה"
 
 #, c-format
 msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
-"שרשרת התעודות שהוצגה על ידי %s לא מכילה חתימה תקפה מרשויות ההנפקה שמהם היא "
-"טוענת שיש לה חתימה."
-
-msgid "Invalid certificate authority signature"
-msgstr "חתימת רשות הנפקות לא תקפה"
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
-msgstr ""
-"תעודה שהוצגה על ידי \"%s\" טוענת שהיא באה בעצם מתוך \"%s\". ייתכן וזה אומר "
-"שהשירות אליו התחברת אינו השירות שחשבת."
+"התעודה טוענת שהיא באה בעצם מאת \"%s\". ייתכן וזה אומר שהשירות אליו התחברת "
+"אינו השירות שחשבת שהוא."
 
 #. Make messages
 #, c-format
@@ -1938,19 +1927,19 @@ msgid "File transfer complete"
 msgstr "הושלמה העברת הקובץ"
 
 #, c-format
-msgid "You canceled the transfer of %s"
+msgid "You cancelled the transfer of %s"
 msgstr "ביטלת את העברת %s"
 
 msgid "File transfer cancelled"
 msgstr "העברת הקובץ בוטלה"
 
 #, c-format
-msgid "%s canceled the transfer of %s"
+msgid "%s cancelled the transfer of %s"
 msgstr "%s ביטל את העברת %s"
 
 #, c-format
-msgid "%s canceled the file transfer"
-msgstr "%s ביטל את העברת הקובץ"
+msgid "%s cancelled the file transfer"
+msgstr "העברת הקובץ בוטלה על ידי %s"
 
 #, c-format
 msgid "File transfer to %s failed."
@@ -2124,6 +2113,32 @@ msgstr "<font color=\"red\"><b>לא ניתן לקרוא קובץ: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <מענה-אוטומטי>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+"לא נמצאו דוחסים. יש להתקין דוחסים של GStreamer מתוך חבילות התוסף GStreamer."
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr "לא נותרו דוחסים. ההגדרות שלך בקובץ fs-codecs.conf נוקשות מדי."
+
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "אירעה שגיאה שלא ניתן להתאושש ממנה ב-Farsight2."
+
+msgid "Conference error."
+msgstr "שגיאה בועידה."
+
+msgid "Error with your microphone."
+msgstr "שגיאה עם המיקרופון שלך."
+
+msgid "Error with your webcam."
+msgstr "שגיאה עם המצלמה שלך."
+
+#, c-format
+msgid "Error creating session: %s"
+msgstr "שגיאה ביצירת החיבור: %s"
 
 msgid "Error creating conference."
 msgstr "שגיאה ביצירת שיחת הועידה."
@@ -2377,14 +2392,15 @@ msgstr "בדוק את תוסף התמיכה ב-IPC, בתור שרת."
 msgid "Test plugin IPC support, as a server. This registers the IPC commands."
 msgstr "בדוק את תוסף התמיכה ב-IPC, בתור שרת. זה רושם את פקודות ה-IPC."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "הגדרות הסתרת הצטרפות/עזיבה"
+msgid "Hide Joins/Parts"
+msgstr "הסתר הצטרפויות/עזיבות"
 
-msgid "Minimum Room Size"
-msgstr "גודל חדר מינימלי"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr "עבור חדרים עם יותר ממספר זה של משתתפים"
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "חוסר פעילות משתמש (בדקות)"
+msgid "If user has not spoken in this many minutes"
+msgstr "אם המשתמש לא דיבר כמספר זה של דקות"
 
 msgid "Apply hiding rules to buddies"
 msgstr "החל חוקי-הסתר על אנשי-הקשר"
@@ -3721,6 +3737,11 @@ msgstr "קישור"
 msgid "Street Address"
 msgstr "כתובת"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "מידע כתובת מורחב"
 
@@ -3801,20 +3822,24 @@ msgstr "תצלום"
 msgid "Logo"
 msgstr "סמל"
 
+#, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr "%s כבר לא יוכל לראות את עדכוני המצב שלך. האם ברצונך להמשיך?"
+
+msgid "Cancel Presence Notification"
+msgstr "בטל התרעת נוכחות"
+
 msgid "Un-hide From"
 msgstr "הצג תבנית"
 
 msgid "Temporarily Hide From"
 msgstr "הסתר את התבנית זמנית"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "בטל התרעת נוכחות"
-
 msgid "(Re-)Request authorization"
 msgstr "בקש אימות (מחדש)"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
@@ -4410,10 +4435,10 @@ msgstr ""
 
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
-"role &lt;משתמש&gt; &lt;בעלים|מפעיל|חבר|בגלות|ללא&gt; [שם1][שם2]...: שלוף או "
-"קבע את ייחוסם של משתמשים עם החדר."
+"role &lt;moderator|participant|visitor|none&gt;  [שם1][שם2]...: שלוף או קבע "
+"את ייחוסם של משתמשים עם החדר."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;משתמש&gt; [חדר]:  הזמן משתמש לחדר."
@@ -4552,9 +4577,6 @@ msgstr "ארעה שגיאה בעת ההעברה בזרם בתווך\n"
 
 msgid "Transfer was closed."
 msgstr "העברת הקובץ נסגרה."
-
-msgid "Failed to open the file"
-msgstr "כישלון בעת פתיחת הקובץ"
 
 msgid "Failed to open in-band bytestream"
 msgstr "כישלון בפתיחת תזרים מידע בתווך"
@@ -4826,8 +4848,7 @@ msgstr "קובץ החבר שגוי"
 msgid "Not expected"
 msgstr "לא היה צפוי"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+msgid "Friendly name is changing too rapidly"
 msgstr "השם הידידותי משתנה מהר מדי"
 
 #, c-format
@@ -5378,8 +5399,8 @@ msgstr ""
 "נשלחה בקשה מאת %s לצפות במצלמת האינטרנט שלך, אבל בקשה זו אינה נתמכת כרגע."
 
 #, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s שלח לך"
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
+msgstr "הוזמנת על ידי %s לצפות במצלמת הוידאו שלו/ה, אבל אין תמיכה בזה עדיין."
 
 msgid "Away From Computer"
 msgstr "מרוחק מהמחשב"
@@ -5427,6 +5448,10 @@ msgstr "האם ברצונך גם למחוק את המשתמש הזה מפנקס 
 
 msgid "The username specified is invalid."
 msgstr "שם המשתמש שהוזן אינו חוקי."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "השם הידידותי משתנה מהר מדי"
 
 msgid "This Hotmail account may not be active."
 msgstr "ייתכן וחשבון ה-Hotmail הזה אינו פעיל."
@@ -6089,8 +6114,10 @@ msgstr "כתובת שרת"
 msgid "Server port"
 msgstr "פורט השרת"
 
-msgid "Received unexpected response from "
-msgstr "התקבלה תגובה לא-צפויה מאת"
+#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s"
+msgstr "התקבלה תגובה לא-צפויה מאת %s"
 
 #. username connecting too frequently
 msgid ""
@@ -6100,9 +6127,11 @@ msgstr ""
 "התחברת והתנתקת התדירות גבוהה מדיי. המתן 10 דקות ונסה שנית. אם תמשיך לנסות, "
 "תיאלץ להמתין אפילו יותר."
 
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, c-format
-msgid "Error requesting "
-msgstr "שגיאה בבקשה"
+msgid "Error requesting %s: %s"
+msgstr "שגיאה בבקשת %s: %s"
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL אינם מאפשרים לאמת את שם המשתמש שלך כאן"
@@ -6847,6 +6876,9 @@ msgstr ""
 msgid "C_onnect"
 msgstr "התחבר"
 
+msgid "You closed the connection."
+msgstr "סגרת את החיבור."
+
 msgid "Get AIM Info"
 msgstr "הצג פרטי AIM"
 
@@ -6856,6 +6888,9 @@ msgstr "ערוך הערת איש קשר"
 
 msgid "Get Status Msg"
 msgstr "הורד הודעת מצב"
+
+msgid "End Direct IM Session"
+msgstr "סיים חיבור IM ישיר"
 
 msgid "Direct IM"
 msgstr "תקשורת ישירה להודעות"
@@ -7685,7 +7720,7 @@ msgid "File Send"
 msgstr "שליחת קובץ"
 
 #, c-format
-msgid "%d canceled the transfer of %s"
+msgid "%d cancelled the transfer of %s"
 msgstr "%d ביטל את העברת %s"
 
 #, c-format
@@ -9184,6 +9219,9 @@ msgstr "הגדרה איזורית לחדר צ'אט"
 msgid "Ignore conference and chatroom invitations"
 msgstr "התעלם מהזמנות לשיחות-ועידה ולחדרי-צ'אט"
 
+msgid "Use account proxy for SSL connections"
+msgstr "השתמש בחשבון שרת-תיווך עבור חיבורי SSL"
+
 msgid "Chat room list URL"
 msgstr "מיקום של רשימת חדרי הצ'אט"
 
@@ -9208,6 +9246,10 @@ msgstr "Yahoo יפן ID"
 #. *  description
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "תוסף פרוטוקול Yahoo! יפן"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s שלח לך"
 
 msgid "Your SMS was not delivered"
 msgstr "הסמס שלך לא הגיע ליעדו"
@@ -9279,8 +9321,26 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "התעלם ממשתמש?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "חשבונך נעול, יש לגשת לאתר של Yahoo."
+msgid "Invalid username or password"
+msgstr "שם משתמש או סיסמה לא-תקפים"
+
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+"חשבונך נעול בגלל יותר מדי ניסיון התחברות כושלים. יש לנסות להיכנס לאתר של "
+"Yahoo!."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr "שגיאה לא-מוכרת מספר 52. התחברות מחדש אמורה לתקן זאת."
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
+"שגיאה 1013: שם המשתמש שהזנת אינו חוקי. בדרך-כלל זה בגלל שהזנת את כתובת "
+"האימייל שלך במקום את שם המשתמש שלך ב-Yahoo!."
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -9450,9 +9510,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "פרופיל המשתמש ריק."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s has declined to join."
-msgstr "%s התחבר."
+msgstr "%s לא רוצה להצטרף."
 
 msgid "Failed to join chat"
 msgstr "לא ניתן להצטרף לשיחה"
@@ -10023,6 +10083,122 @@ msgstr ""
 "ניתן גם לחזור לחלון זה על מנת להוסיף, לערוך, או להסיר חשבונות על-ידי "
 "<b>חשבונות->נהל חשבונות</b> שבחלון רשימת החברים"
 
+#. Buddy List
+msgid "Background Color"
+msgstr "צבע הרקע"
+
+msgid "The background color for the buddy list"
+msgstr "צבע הרקע עבור רשימת החברים"
+
+msgid "Layout"
+msgstr "מתווה"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr "מיקומי הסמלים, השמות והמצבים ברשימת החברים"
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Background Color"
+msgstr "צבע רקע עבור מורחב"
+
+msgid "The background color of an expanded group"
+msgstr "צבע-הרקע של קבוצה שהורחבה"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Text"
+msgstr "טקסט מורחב"
+
+msgid "The text information for when a group is expanded"
+msgstr "טקסט למידע כשקבוצה מורחבת"
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Background Color"
+msgstr "צבע רקע עבור עבור מקופל"
+
+msgid "The background color of a collapsed group"
+msgstr "צבע-הרקע של קבוצה שצומצמה"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Text"
+msgstr "טקסט מקופל"
+
+msgid "The text information for when a group is collapsed"
+msgstr "טקסט למידע כשקבוצה מצומצמת"
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+msgid "Contact/Chat Background Color"
+msgstr "צבע רקע עבור צ'אט/איש-קשר"
+
+msgid "The background color of a contact or chat"
+msgstr "צבע-הרקע של איש-קשר או צ'אט"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+msgid "Contact Text"
+msgstr "טקסט איש-קשר"
+
+msgid "The text information for when a contact is expanded"
+msgstr "טקסט למידע כשאיש-קשר מורחב"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+msgid "Online Text"
+msgstr "טקסט כשמחובר"
+
+msgid "The text information for when a buddy is online"
+msgstr "טקסט למידע כשאיש-קשר מחובר"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+msgid "Away Text"
+msgstr "טקסט כשרחוק מהמחשב"
+
+msgid "The text information for when a buddy is away"
+msgstr "טקסט למידע כשאיש-קשר מרוחק מהמחשב"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+msgid "Offline Text"
+msgstr "טקסט כשמנותק"
+
+msgid "The text information for when a buddy is offline"
+msgstr "טקסט למידע כשחבר אינו מחובר."
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+msgid "Idle Text"
+msgstr "טקסט כשחסר-פעילות"
+
+msgid "The text information for when a buddy is idle"
+msgstr "טקסט למידע כשאיש-קשר חסר-פעילות"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message Text"
+msgstr "טקסט הודעת"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr "טקסט למידע כשלאיש-קשר יש הודעות שלא נקראו"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr "טקסט הודעות (מישהו אמר)"
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr "טקסט להציג כשצ'אט מכיל הודעה שלא נקראה שמזכירה את הכינוי שלך"
+
+msgid "The text information for a buddy's status"
+msgstr "הטקסט עבור מצבו של חבר"
+
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
@@ -10450,8 +10626,8 @@ msgstr "שם:"
 msgid "_Group:"
 msgstr "_קבוצה:"
 
-msgid "Auto_join when account becomes online."
-msgstr "הצטרפות אוטומטית כאשר החשבון נעשה מקוון."
+msgid "Auto_join when account connects."
+msgstr "הצט_רף אוטומטית כשהחשבון נעשה מקוון."
 
 msgid "_Remain in chat after window is closed."
 msgstr "הש_אר בצ'אט אחרי שהחלון נסגר."
@@ -10482,98 +10658,6 @@ msgstr "/_כלים"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/אנשי קשר/מיין אנשי-קשר"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "צבע הרקע"
-
-msgid "The background color for the buddy list"
-msgstr "צבע הרקע עבור רשימת החברים"
-
-msgid "Layout"
-msgstr "מתווה"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr "מיקומי הסמלים, השמות והמצבים ברשימת אנשי-הקשר"
-
-#. Group
-msgid "Expanded Background Color"
-msgstr "צבע רקע עבור מורחב"
-
-msgid "The background color of an expanded group"
-msgstr "צבע-הרקע של קבוצה שהורחבה"
-
-msgid "Expanded Text"
-msgstr "טקסט מורחב"
-
-msgid "The text information for when a group is expanded"
-msgstr "טקסט למידע כשקבוצה מורחבת"
-
-msgid "Collapsed Background Color"
-msgstr "צבע רקע עבור עבור מקופל"
-
-msgid "The background color of a collapsed group"
-msgstr "צבע-הרקע של קבוצה שצומצמה"
-
-msgid "Collapsed Text"
-msgstr "טקסט מקופל"
-
-msgid "The text information for when a group is collapsed"
-msgstr "טקסט למידע כשקבוצה מצומצמת"
-
-#. Buddy
-msgid "Contact/Chat Background Color"
-msgstr "צבע רקע עבור צ'אט/איש-קשר"
-
-msgid "The background color of a contact or chat"
-msgstr "צבע-הרקע של איש-קשר או צ'אט"
-
-msgid "Contact Text"
-msgstr "טקסט איש-קשר"
-
-msgid "The text information for when a contact is expanded"
-msgstr "טקסט למידע כשאיש-קשר מורחב"
-
-msgid "On-line Text"
-msgstr "טקסט כשמחובר"
-
-msgid "The text information for when a buddy is online"
-msgstr "טקסט למידע כשאיש-קשר מחובר"
-
-msgid "Away Text"
-msgstr "טקסט כשרחוק מהמחשב"
-
-msgid "The text information for when a buddy is away"
-msgstr "טקסט למידע כשאיש-קשר מרוחק מהמחשב"
-
-msgid "Off-line Text"
-msgstr "טקסט כשמנותק"
-
-msgid "The text information for when a buddy is off-line"
-msgstr "טקסט למידע כשאיש-קשר מנותק"
-
-msgid "Idle Text"
-msgstr "טקסט כשחסר-פעילות"
-
-msgid "The text information for when a buddy is idle"
-msgstr "טקסט למידע כשאיש-קשר חסר-פעילות"
-
-msgid "Message Text"
-msgstr "טקסט הודעת"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr "טקסט למידע כשלאיש-קשר יש הודעות שלא נקראו"
-
-msgid "Message (Nick Said) Text"
-msgstr "טקסט הודעות (מישהו אמר)"
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr "טקסט להציג כשצ'אט מכיל הודעה שלא-נקראה שמזכירה את הכינוי שלך"
-
-msgid "The text information for a buddy's status"
-msgstr "הטקסט עבור מצבו של חבר"
 
 msgid "Type the host name for this certificate."
 msgstr "יש להקליד את שם השרת שעבורו נועדה תעודה זו"
@@ -10656,6 +10740,9 @@ msgstr "/_שיחה"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/שיחה/הוד_עה חדשה..."
+
+msgid "/Conversation/Join a _Chat..."
+msgstr "/שיחה/ה_צטרף לשיחה..."
 
 msgid "/Conversation/_Find..."
 msgstr "/שיחה/_חפש..."
@@ -11038,8 +11125,8 @@ msgstr "ספרדית"
 msgid "Estonian"
 msgstr "אסטונית"
 
-msgid "Euskera(Basque)"
-msgstr "אאוסקרה(בסקית)"
+msgid "Basque"
+msgstr "בסקית"
 
 msgid "Persian"
 msgstr "פרסית"
@@ -11241,11 +11328,18 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
-"<FONT SIZE=\"4\">עזרה דרך האימייל:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">עזרה ממשתמשי פידג'ין אחרים:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>זוהי רשימת תפוצה<b>פומבית</b>! "
+"(<a href=\"http://pidgin.im/pipermail/support/\">ארכיון</a>)<br/>אנחנו לא "
+"מסוגלים לעזור עם תוספים מצד-שלישי!<br/>השפה השולטת בה היא <b>אנגלית</b>.  "
+"מותר לשלוח הודעות גם בשפות אחרות, אבל ייתכן והתגובות יעזרו לך פחות.<br/><br/>"
 
 #, c-format
 msgid ""
@@ -11470,14 +11564,6 @@ msgstr "_נקה קבצים שהועברו"
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "פרטי העברות קבצים"
-
-#. Pause button
-msgid "_Pause"
-msgstr "השהייה"
-
-#. Resume button
-msgid "_Resume"
-msgstr "ה_משך"
 
 msgid "Paste as Plain _Text"
 msgstr "הדבק בתור _טקסט רגיל"
@@ -11792,64 +11878,50 @@ msgstr "%s %s. יש לנסות את '%s –h' למידע נוסף.\n"
 
 #, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"שימוש: %s [אפשרות]...\n"
+"שימוש: %s [הגדרה]...\n"
 "\n"
-"  -c, --config=ספריה  השתמש בספרייה לקבצי הגדרות\n"
-"  -d, --debug         שלח הודעות ניפוי באגים ל-stdout\n"
-"  -f, --force-online  אלץ מצב מקוון, בלי להתחשב במצב הרשת\n"
-"  -h, --help          הצג הודעה זו וצא\n"
-"  -m, --multiple      אל תוודא שרק עותק אחד רץ\n"
-"  -n, --nologin       אל תתחבר אוטומטית\n"
-"  -l, --login[=שמות]  היכנס אוטומטית )אפשרות לתת שמות חשבונות לחבר,\n"
-"                      ובין כל שם צריך להיות פסיק)\n"
-"  --display=DISPLAY   מספר התצוגה להשתמש בו בחלונות X\n"
-"  -v, --version       הצג את הגירסאשל התוכנה וצא\n"
 
-#, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"שימוש: %s [אפשרות]...\n"
-"\n"
-"  -c, --config=ספריה  השתמש בספרייה לקבצי הגדרות\n"
-"  -d, --debug         שלח הודעות ניפוי באגים ל-stdout\n"
-"  -f, --force-online  אלץ מצב מקוון, בלי להתחשב במצב הרשת\n"
-"  -h, --help          הצג הודעה זו וצא\n"
-"  -m, --multiple      אל תוודא שרק עותק אחד רץ\n"
-"  -n, --nologin       אל תתחבר אוטומטית\n"
-"  -l, --login[=שמות]  היכנס אוטומטית )אפשרות לתת שמות חשבונות לחבר,\n"
-"                      ובין כל שם צריך להיות פסיק)\n"
-"  --display=DISPLAY   מספר התצוגה להשתמש בו בחלונות X\n"
-"  -v, --version       הצג את הגרסה של התוכנה וצא\n"
+
+msgid "use DIR for config files"
+msgstr "השתמש בספרייה DIR לקבצי הגדרות"
+
+msgid "print debugging messages to stdout"
+msgstr "הדפס הודעות איתור-באגים ל-stdout"
+
+msgid "force online, regardless of network status"
+msgstr "אלץ התחברות, ללא התחשבות במצב הרשת"
+
+msgid "display this help and exit"
+msgstr "הצג את מסך עזרה זה, וצא"
+
+msgid "allow multiple instances"
+msgstr "אפשר להפעיל יותר מעותק יחיד"
+
+msgid "don't automatically login"
+msgstr "אל תתחבר אוטומטית"
+
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+"אפשר חשבונות (פרמטר של שם החשבון\n"
+"                      מגדיר איזה חשבונות להשתמש בהם, מופרדים על ידי פסיקים."
+
+msgid "X display to use"
+msgstr "תצוגת X להשתמש בה"
+
+msgid "display the current version and exit"
+msgstr "הצג אצ הגירסא הנוכחית וצא"
 
 #, c-format
 msgid ""
@@ -11893,9 +11965,6 @@ msgstr "/_מדיה"
 msgid "/Media/_Hangup"
 msgstr "/מדיה/_ניתוק"
 
-msgid "Calling..."
-msgstr "מתקשר..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "נתקבלה בקשה מאת %s להתחיל התקשרות קול/וידאו איתך."
@@ -11903,6 +11972,12 @@ msgstr "נתקבלה בקשה מאת %s להתחיל התקשרות קול/וי�
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr "נתקבלה בקשה מאת %s להתחיל התקשרות וידאו איתך."
+
+msgid "Incoming Call"
+msgstr "שיחה נכנסת"
+
+msgid "_Pause"
+msgstr "השהייה"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12258,12 +12333,16 @@ msgstr "לא יכול להפעיל את תוכנת הגדרת שרת התיוו�
 msgid "Cannot start browser configuration program."
 msgstr "לא יכול להפעיל את תוכנת הגדרות הדפדפן."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">לדוגמא: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_בטל"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "התשמש ב_כתובת ה-IP שזוההתה אוטומטית: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">לדוגמא: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "כתובת IP חיצונית:"
@@ -12286,6 +12365,10 @@ msgstr "יציאה _אחרונה:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "שרת העברה (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "שרת STUN:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "שרת תיווך ודפדפן"
@@ -12891,65 +12974,6 @@ msgstr "תוסף ניבוי זמינות אנשי-קשר"
 msgid "Displays statistical information about your buddies' availability"
 msgstr "מציג מידע סטטיסטי על זמינות אנשי-הקשר שלך"
 
-msgid "Server name request"
-msgstr "בקשת שם שרת"
-
-msgid "Enter an XMPP Server"
-msgstr "יש להזין שרת XMPP"
-
-msgid "Select an XMPP server to query"
-msgstr "יש לבחור שרת XMPP לתישאול"
-
-msgid "Find Services"
-msgstr "מצא שירות"
-
-msgid "Add to Buddy List"
-msgstr "הוסף לרשימת אנשי-הקשר"
-
-msgid "Gateway"
-msgstr "שער"
-
-msgid "Directory"
-msgstr "ספרייה"
-
-msgid "PubSub Collection"
-msgstr "אוסף PubSub"
-
-msgid "PubSub Leaf"
-msgstr "עלה PubSub"
-
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr ""
-"\n"
-"<b>תיאור:</b> "
-
-#. Create the window.
-msgid "Service Discovery"
-msgstr "גילוי שרותים"
-
-msgid "_Browse"
-msgstr "_עיין"
-
-msgid "Server does not exist"
-msgstr "השרת אינו קיים"
-
-msgid "Server does not support service discovery"
-msgstr "השרת לא תומך בגילוי שירותים"
-
-msgid "XMPP Service Discovery"
-msgstr "גילוי שירות XMPP"
-
-msgid "Allows browsing and registering services."
-msgstr "מאפשר רישום ועיון ברשימת השירותים"
-
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr ""
-"תוסף זה שימושי לטובת רישום עם פרוטוקולי תקשורת ישנים או שירותי XMPP אחרים."
-
 msgid "Buddy is idle"
 msgstr "איש הקשר במנוחה"
 
@@ -13038,6 +13062,67 @@ msgstr "הפעל בצ'אטים"
 
 msgid "Apply in IMs"
 msgstr "הפעל בהודעות מיידיות"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+msgid "Server name request"
+msgstr "בקשת שם שרת"
+
+msgid "Enter an XMPP Server"
+msgstr "יש להזין שרת XMPP"
+
+msgid "Select an XMPP server to query"
+msgstr "יש לבחור שרת XMPP לתישאול"
+
+msgid "Find Services"
+msgstr "מצא שירות"
+
+msgid "Add to Buddy List"
+msgstr "הוסף לרשימת אנשי-הקשר"
+
+msgid "Gateway"
+msgstr "שער"
+
+msgid "Directory"
+msgstr "ספרייה"
+
+msgid "PubSub Collection"
+msgstr "אוסף PubSub"
+
+msgid "PubSub Leaf"
+msgstr "עלה PubSub"
+
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>תיאור:</b> "
+
+#. Create the window.
+msgid "Service Discovery"
+msgstr "גילוי שרותים"
+
+msgid "_Browse"
+msgstr "_עיין"
+
+msgid "Server does not exist"
+msgstr "השרת אינו קיים"
+
+msgid "Server does not support service discovery"
+msgstr "השרת לא תומך בגילוי שירותים"
+
+msgid "XMPP Service Discovery"
+msgstr "גילוי שירות XMPP"
+
+msgid "Allows browsing and registering services."
+msgstr "מאפשר רישום ועיון ברשימת השירותים"
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"תוסף זה שימושי לטובת רישום עם פרוטוקולי תקשורת ישנים או שירותי XMPP אחרים."
 
 msgid "By conversation count"
 msgstr "עפ\"י מספר השיחות"
@@ -13658,9 +13743,12 @@ msgstr "התעלם"
 msgid "Founder"
 msgstr "מייסד"
 
+#. A user in a chat room who has special privileges.
 msgid "Operator"
 msgstr "מפעיל"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr "חצי-מפעיל"
 
@@ -13806,6 +13894,51 @@ msgid ""
 "timestamp formats."
 msgstr "תוסף זה מאפשר למשתמש לקבוע אפשרויות שיחה וחותמות-זמן ליומני שיחה."
 
+msgid "Audio"
+msgstr "או_טומטי"
+
+msgid "Video"
+msgstr " ו_ידאו"
+
+msgid "Output"
+msgstr "פלט"
+
+msgid "_Plugin"
+msgstr "תוס_פים"
+
+msgid "_Device"
+msgstr "מכ_שיר"
+
+msgid "Input"
+msgstr "קלט"
+
+msgid "P_lugin"
+msgstr "ת_וספים"
+
+msgid "D_evice"
+msgstr "מ_כשיר"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Voice/Video Settings"
+msgstr "הגדרות קול/וידאו"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr "קביעת הגדרות המיקרופון והמצלמה שלך."
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr "קביעת הגדרות מיקרופון ומצלמת-וידאו עבור שיחות קול ווידאו."
+
 msgid "Opacity:"
 msgstr "שקיפות:"
 
@@ -13931,6 +14064,117 @@ msgstr "שלח וקבל סטנזות XMPP גולמיות."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "תוסף זה שימושי לניפוי באגים בשרתים ולקוחות של XMPP."
+
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "בלי זה רק החשבון הראשון יהיה פעיל)."
+
+#~ msgid "Calling ... "
+#~ msgstr "מתקשר ..."
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "שרשרת תעודות לא-תקפה"
+
+#~ msgid ""
+#~ "The certificate chain presented by %s does not have a valid digital "
+#~ "signature from the Certificate Authority from which it claims to have a "
+#~ "signature."
+#~ msgstr ""
+#~ "שרשרת התעודות שהוצגה על ידי %s לא מכילה חתימה תקפה מרשויות ההנפקה שמהם "
+#~ "היא טוענת שיש לה חתימה."
+
+#~ msgid "Invalid certificate authority signature"
+#~ msgstr "חתימת רשות הנפקות לא תקפה"
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "הגדרות הסתרת הצטרפות/עזיבה"
+
+#~ msgid "Minimum Room Size"
+#~ msgstr "גודל חדר מינימלי"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "חוסר פעילות משתמש (בדקות)"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "חשבונך נעול, יש לגשת לאתר של Yahoo."
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "אאוסקרה(בסקית)"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">עזרה דרך האימייל:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "שימוש: %s [אפשרות]...\n"
+#~ "\n"
+#~ "  -c, --config=ספריה  השתמש בספרייה לקבצי הגדרות\n"
+#~ "  -d, --debug         שלח הודעות ניפוי באגים ל-stdout\n"
+#~ "  -f, --force-online  אלץ מצב מקוון, בלי להתחשב במצב הרשת\n"
+#~ "  -h, --help          הצג הודעה זו וצא\n"
+#~ "  -m, --multiple      אל תוודא שרק עותק אחד רץ\n"
+#~ "  -n, --nologin       אל תתחבר אוטומטית\n"
+#~ "  -l, --login[=שמות]  היכנס אוטומטית )אפשרות לתת שמות חשבונות לחבר,\n"
+#~ "                      ובין כל שם צריך להיות פסיק)\n"
+#~ "  --display=DISPLAY   מספר התצוגה להשתמש בו בחלונות X\n"
+#~ "  -v, --version       הצג את הגירסאשל התוכנה וצא\n"
+
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "שימוש: %s [אפשרות]...\n"
+#~ "\n"
+#~ "  -c, --config=ספריה  השתמש בספרייה לקבצי הגדרות\n"
+#~ "  -d, --debug         שלח הודעות ניפוי באגים ל-stdout\n"
+#~ "  -f, --force-online  אלץ מצב מקוון, בלי להתחשב במצב הרשת\n"
+#~ "  -h, --help          הצג הודעה זו וצא\n"
+#~ "  -m, --multiple      אל תוודא שרק עותק אחד רץ\n"
+#~ "  -n, --nologin       אל תתחבר אוטומטית\n"
+#~ "  -l, --login[=שמות]  היכנס אוטומטית )אפשרות לתת שמות חשבונות לחבר,\n"
+#~ "                      ובין כל שם צריך להיות פסיק)\n"
+#~ "  --display=DISPLAY   מספר התצוגה להשתמש בו בחלונות X\n"
+#~ "  -v, --version       הצג את הגרסה של התוכנה וצא\n"
+
+#~ msgid "Failed to open the file"
+#~ msgstr "כישלון בעת פתיחת הקובץ"
+
+#~ msgid "_Resume"
+#~ msgstr "ה_משך"
 
 #~ msgid "Malformed BOSH Connect Server"
 #~ msgstr "שרת חיבור BOSH משובש"
@@ -14410,9 +14654,6 @@ msgstr "תוסף זה שימושי לניפוי באגים בשרתים ולקו
 #~ "התחברת והתנתקת בתדירות גבוהה מדיי. המתן 10 דקות ונסה שנית. אם תמשיך "
 #~ "לנסות, תיאלץ להמתין אפילו יותר."
 
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "ארעה שגיאה לא ידועה בזמן ניסיון לפתיחת %s"
-
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "ארעה שגיאה לא מוכרת, %d, מידע: %s"
 
@@ -14477,9 +14718,6 @@ msgstr "תוסף זה שימושי לניפוי באגים בשרתים ולקו
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "_פתח את הקישור בדפדפן"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "שרת STUN:"
 
 #~ msgid "Smiley _Image"
 #~ msgstr "_תמונת חייכן"

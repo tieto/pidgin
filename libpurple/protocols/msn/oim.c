@@ -21,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
 #include "msn.h"
 #include "soap.h"
@@ -172,8 +172,18 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 
 	if (faultcode) {
 		gchar *faultcode_str = xmlnode_get_data(faultcode);
+		gboolean need_token_update = FALSE;
 
-		if (faultcode_str && g_str_equal(faultcode_str, "q0:BadContextToken")) {
+		if (faultcode_str) {
+			if (g_str_equal(faultcode_str, "q0:BadContextToken") ||
+				g_str_equal(faultcode_str, "AuthenticationFailed"))
+				need_token_update = TRUE;
+			else if (g_str_equal(faultcode_str, "q0:AuthenticationFailed") &&
+				xmlnode_get_child(fault, "detail/RequiredAuthPolicy") != NULL)
+				need_token_update = TRUE;
+		}
+
+		if (need_token_update) {
 			purple_debug_warning("msn", "OIM Request Error, Updating token now.\n");
 			msn_nexus_update_token(data->oim->session->nexus,
 				data->send ? MSN_AUTH_LIVE_SECURE : MSN_AUTH_MESSENGER_WEB,
@@ -181,16 +191,8 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 			g_free(faultcode_str);
 			return;
 
-		} else if (faultcode_str && g_str_equal(faultcode_str, "q0:AuthenticationFailed")) {
-			if (xmlnode_get_child(fault, "detail/RequiredAuthPolicy") != NULL) {
-				purple_debug_warning("msn", "OIM Request Error, Updating token now.\n");
-				msn_nexus_update_token(data->oim->session->nexus,
-					data->send ? MSN_AUTH_LIVE_SECURE : MSN_AUTH_MESSENGER_WEB,
-					(GSourceFunc)msn_oim_request_helper, data);
-				g_free(faultcode_str);
-				return;
-			}
 		}
+
 		g_free(faultcode_str);
 	}
 
