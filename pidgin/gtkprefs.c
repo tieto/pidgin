@@ -692,6 +692,17 @@ purple_theme_file_copy(const gchar *source, const gchar *destination)
 	return TRUE;
 }
 
+static void
+free_theme_info(struct theme_info *info)
+{
+	if (info != NULL) {
+		g_free(info->type);
+		g_free(info->extension);
+		g_free(info->original_name);
+		g_free(info);
+	}
+}
+
 /* installs a theme, info is freed by function */
 static void
 theme_install_theme(char *path, struct theme_info *info)
@@ -699,7 +710,8 @@ theme_install_theme(char *path, struct theme_info *info)
 #ifndef _WIN32
 	gchar *command;
 #endif
-	gchar *destdir, *tail, *type, *original_name;
+	gchar *destdir;
+	const char *tail;
 	GtkTreeRowReference *theme_rowref;
 	gboolean is_smiley_theme, is_archive;
 	PurpleTheme *theme = NULL;
@@ -707,28 +719,20 @@ theme_install_theme(char *path, struct theme_info *info)
 	if (info == NULL)
 		return;
 
-	original_name = info->original_name;
-	type = info->type;
-
 	/* check the extension */
-	tail = info->extension ? info->extension : g_strdup(strrchr(path, '.'));
+	tail = info->extension ? info->extension : strrchr(path, '.');
 
 	if (!tail) {
-		g_free(type);
-		g_free(original_name);
-		g_free(info);
+		free_theme_info(info);
 		return;
-	} else
-		g_free(info);
+	}
 
 	is_archive = !g_ascii_strcasecmp(tail, ".gz") || !g_ascii_strcasecmp(tail, ".tgz");
-
-	g_free(tail);
 
 	/* Just to be safe */
 	g_strchomp(path);
 
-	if ((is_smiley_theme = g_str_equal(type, "smiley")))
+	if ((is_smiley_theme = g_str_equal(info->type, "smiley")))
 		destdir = g_build_filename(purple_user_dir(), "smileys", NULL);
 	else
 		destdir = g_build_filename(purple_user_dir(), "themes", "temp", NULL);
@@ -752,16 +756,14 @@ theme_install_theme(char *path, struct theme_info *info)
 			purple_notify_error(NULL, NULL, _("Theme failed to unpack."), NULL);
 			g_free(command);
 			g_free(destdir);
-			g_free(type);
-			g_free(original_name);
+			free_theme_info(info);
 			return;
 		}
 #else
-		if(!winpidgin_gz_untar(path, destdir)) {
+		if (!winpidgin_gz_untar(path, destdir)) {
 			purple_notify_error(NULL, NULL, _("Theme failed to unpack."), NULL);
 			g_free(destdir);
-			g_free(type);
-			g_free(original_name);
+			free_theme_info(info);
 			return;
 		}
 #endif
@@ -781,13 +783,13 @@ theme_install_theme(char *path, struct theme_info *info)
 		}
 
 	} else if (is_archive) {
-		theme = prefs_theme_find_theme(destdir, type);
+		theme = prefs_theme_find_theme(destdir, info->type);
 
 		if (PURPLE_IS_THEME(theme)) {
 			/* create the location for the theme */
 			gchar *theme_dest = g_build_filename(purple_user_dir(), "themes",
 						 purple_theme_get_name(theme),
-						 "purple", type, NULL);
+						 "purple", info->type, NULL);
 
 			if (!g_file_test(theme_dest, G_FILE_TEST_IS_DIR))
 				purple_build_dir(theme_dest, S_IRUSR | S_IWUSR | S_IXUSR);
@@ -795,7 +797,7 @@ theme_install_theme(char *path, struct theme_info *info)
 			g_free(theme_dest);
 			theme_dest = g_build_filename(purple_user_dir(), "themes",
 						 purple_theme_get_name(theme),
-						 "purple", type, NULL);
+						 "purple", info->type, NULL);
 
 			/* move the entire directory to new location */
 			g_rename(purple_theme_get_dir(theme), theme_dest);
@@ -817,9 +819,9 @@ theme_install_theme(char *path, struct theme_info *info)
 
 		temp_path = g_build_filename(purple_user_dir(), "themes", "temp", "sub_folder", NULL);
 
-		if (original_name != NULL) {
+		if (info->original_name != NULL) {
 			/* name was changed from the original (probably a dnd) change it back before loading */
-			temp_file = g_build_filename(temp_path, original_name, NULL);
+			temp_file = g_build_filename(temp_path, info->original_name, NULL);
 
 		} else {
 			gchar *source_name = g_path_get_basename(path);
@@ -832,12 +834,12 @@ theme_install_theme(char *path, struct theme_info *info)
 
 		if (purple_theme_file_copy(path, temp_file)) {
 			/* find the theme, could be in subfolder */
-			theme = prefs_theme_find_theme(temp_path, type);
+			theme = prefs_theme_find_theme(temp_path, info->type);
 
 			if (PURPLE_IS_THEME(theme)) {
 				gchar *theme_dest = g_build_filename(purple_user_dir(), "themes",
 							 purple_theme_get_name(theme),
-							 "purple", type, NULL);
+							 "purple", info->type, NULL);
 
 				if(!g_file_test(theme_dest, G_FILE_TEST_IS_DIR))
 					purple_build_dir(theme_dest, S_IRUSR | S_IWUSR | S_IXUSR);
@@ -860,9 +862,8 @@ theme_install_theme(char *path, struct theme_info *info)
 		g_free(temp_path);
 	}
 
-	g_free(type);
-	g_free(original_name);
 	g_free(destdir);
+	free_theme_info(info);
 }
 
 static void
@@ -873,8 +874,10 @@ theme_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	gchar *path;
 	size_t wc;
 
-	if ((error_message != NULL) || (len == 0))
+	if ((error_message != NULL) || (len == 0)) {
+		free_theme_info(user_data);
 		return;
+	}
 
 	f = purple_mkstemp(&path, TRUE);
 	wc = fwrite(themedata, len, 1, f);
@@ -883,6 +886,7 @@ theme_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		fclose(f);
 		g_unlink(path);
 		g_free(path);
+		free_theme_info(user_data);
 		return;
 	}
 	fclose(f);
@@ -918,6 +922,7 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 				purple_debug(PURPLE_DEBUG_ERROR, "theme dnd", "%s\n",
 						   (converr ? converr->message :
 							"g_filename_from_uri error"));
+				free_theme_info(info);
 				return;
 			}
 			theme_install_theme(tmp, info);
@@ -938,7 +943,8 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 
 			purple_util_fetch_url(tmp, TRUE, NULL, FALSE, theme_got_url, info);
 			g_free(tmp);
-		}
+		} else
+			free_theme_info(info);
 
 		gtk_drag_finish(dc, TRUE, FALSE, t);
 	}
@@ -948,7 +954,7 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 
 /* builds a theme combo box from a list store with colums: icon preview, markup, theme name */
 static GtkWidget *
-prefs_build_theme_combo_box(GtkListStore *store, const gchar *current_theme, gchar *type)
+prefs_build_theme_combo_box(GtkListStore *store, const char *current_theme, const char *type)
 {
 	GtkCellRenderer *cell_rend;
 	GtkWidget *combo_box;
@@ -977,7 +983,7 @@ prefs_build_theme_combo_box(GtkListStore *store, const gchar *current_theme, gch
 	gtk_drag_dest_set(combo_box, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP, te,
 					sizeof(te) / sizeof(GtkTargetEntry) , GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
-	g_signal_connect(G_OBJECT(combo_box), "drag_data_received", G_CALLBACK(theme_dnd_recv), type);
+	g_signal_connect(G_OBJECT(combo_box), "drag_data_received", G_CALLBACK(theme_dnd_recv), (gpointer) type);
 
 	return combo_box;
 }
@@ -1055,8 +1061,6 @@ request_theme_file_name_cb(gpointer data, char *theme_file_name)
 {
 	struct theme_info *info = g_new0(struct theme_info, 1);
 	info->type = g_strdup("smiley");
-	info->extension = NULL;
-	info->original_name = NULL;
 
 	theme_install_theme(theme_file_name, info);
 }
