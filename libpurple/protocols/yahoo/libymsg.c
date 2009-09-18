@@ -4149,7 +4149,6 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 	struct yahoo_sms_carrier_cb_data *sms_cb_data = user_data;
 	PurpleConnection *gc = sms_cb_data->gc;
 	YahooData *yd = gc->proto_data;
-	char *mobile_no = NULL;
 	char *status = NULL;
 	char *carrier = NULL;
 	PurpleAccount *account = purple_connection_get_account(gc);
@@ -4166,7 +4165,7 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 	else if (len > 0 && webdata && *webdata) {
 		xmlnode *validate_data_root = xmlnode_from_str(webdata, -1);
 		xmlnode *validate_data_child = xmlnode_get_child(validate_data_root, "mobile_no");
-		mobile_no = (char *)xmlnode_get_attrib(validate_data_child, "msisdn");
+		const char *mobile_no = xmlnode_get_attrib(validate_data_child, "msisdn");
 
 		validate_data_root = xmlnode_copy(validate_data_child);
 		validate_data_child = xmlnode_get_child(validate_data_root, "status");
@@ -4191,7 +4190,6 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 		g_free(sms_cb_data->who);
 		g_free(sms_cb_data->what);
 		g_free(sms_cb_data);
-		g_free(mobile_no);
 		g_free(status);
 		g_free(carrier);
 	}
