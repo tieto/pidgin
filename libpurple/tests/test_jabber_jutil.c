@@ -145,7 +145,7 @@ START_TEST(test_jabber_id_new)
 	/*
 	 * These character (U+A664 and U+A665) are not mapped to anything in
 	 * RFC3454 B.2. This first test *fails* when not using IDN because glib's
-	 * case-folding/utf8_strdown improperly lowercases the character.
+	 * case-folding/utf8_strdown improperly (for XMPP) lowercases the character.
 	 */
 	assert_jid_parts("Ꙥ", "darkrain42.org", "Ꙥ@darkrain42.org");
 	assert_jid_parts("ꙥ", "darkrain42.org", "ꙥ@darkrain42.org");
