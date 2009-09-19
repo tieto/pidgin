@@ -1423,7 +1423,7 @@ add_pending_buddy(MsnSession *session,
 	{
 		PurpleBuddy * buddy = purple_find_buddy(session->account, who);
 		gchar *buf;
-		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be a valid email address."), who);
+		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be valid email addresses."), who);
 		if (!purple_conv_present_error(who, session->account, buf))
 			purple_notify_error(purple_account_get_connection(session->account), NULL, _("Unable to Add"), buf);
 		g_free(buf);
@@ -1513,7 +1513,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 
 	if (!purple_email_is_valid(bname)) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be a valid email address."), bname);
+		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be valid email addresses."), bname);
 		if (!purple_conv_present_error(bname, purple_connection_get_account(gc), buf))
 			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 		g_free(buf);
