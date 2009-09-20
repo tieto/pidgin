@@ -2413,7 +2413,7 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 	FsParticipant *participant;
 	PurpleMediaStream *stream;
 	GList *iter;
-
+	
 	g_return_if_fail(FS_IS_STREAM(fsstream));
 	g_return_if_fail(session != NULL);
 
