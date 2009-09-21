@@ -12,7 +12,6 @@ nullclient_LDADD = \
 
 AM_CPPFLAGS = \
 	-DSTANDALONE \
-	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
 	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \

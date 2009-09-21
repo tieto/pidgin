@@ -409,8 +409,8 @@ show_usage(const char *name, gboolean terse)
 		GString *str = g_string_new(NULL);
 		g_string_append_printf(str, "%s %s\n", PIDGIN_NAME, DISPLAY_VERSION);
 		g_string_append_printf(str, _("Usage: %s [OPTION]...\n\n"), name);
-		g_string_append_printf(str, "  -c, --config=DIR    %s\n",
-				_("use DIR for config files"));
+		g_string_append_printf(str, "  -c, --config=%s    %s\n",
+				_("DIR"), _("use DIR for config files"));
 		g_string_append_printf(str, "  -d, --debug         %s\n",
 				_("print debugging messages to stdout"));
 		g_string_append_printf(str, "  -f, --force-online  %s\n",
@@ -421,12 +421,13 @@ show_usage(const char *name, gboolean terse)
 				_("allow multiple instances"));
 		g_string_append_printf(str, "  -n, --nologin       %s\n",
 				_("don't automatically login"));
-		g_string_append_printf(str, "  -l, --login[=NAME]  %s\n",
+		g_string_append_printf(str, "  -l, --login[=%s]  %s\n",
+				_("NAME"),
 				_("enable specified account(s) (optional argument NAME\n"
 				  "                      "
-				  "specifies account(s) to use, separated by commas."));
-		g_string_append_printf(str, "                      %s\n",
-				_("Without this only the first account will be enabled)."));
+				  "specifies account(s) to use, separated by commas.\n"
+				  "                      "
+				  "Without this only the first account will be enabled)."));
 #ifndef WIN32
 		g_string_append_printf(str, "  --display=DISPLAY   %s\n",
 				_("X display to use"));

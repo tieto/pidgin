@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-30 20:44-0700\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-08-30 09:44+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at g mail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
@@ -1605,8 +1605,8 @@ msgstr "רשימת אנשי קשר"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr "התעודה נחתמה על ידי עצמה ולא ניתן לבדוק אותה אוטומטית."
 
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
 msgstr "תעודת-השורש שלכאורה הנפיקה את התעודה אינה מוכרת לפידג'ין."
 
 msgid "The certificate is not valid yet."
@@ -11884,6 +11884,9 @@ msgstr ""
 "שימוש: %s [הגדרה]...\n"
 "\n"
 
+msgid "DIR"
+msgstr ""
+
 msgid "use DIR for config files"
 msgstr "השתמש בספרייה DIR לקבצי הגדרות"
 
@@ -11902,15 +11905,17 @@ msgstr "אפשר להפעיל יותר מעותק יחיד"
 msgid "don't automatically login"
 msgstr "אל תתחבר אוטומטית"
 
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 "אפשר חשבונות (פרמטר של שם החשבון\n"
 "                      מגדיר איזה חשבונות להשתמש בהם, מופרדים על ידי פסיקים."
-
-msgid "Without this only the first account will be enabled)."
-msgstr "בלי זה רק החשבון הראשון יהיה פעיל)."
 
 msgid "X display to use"
 msgstr "תצוגת X להשתמש בה"
@@ -12328,12 +12333,16 @@ msgstr "לא יכול להפעיל את תוכנת הגדרת שרת התיוו�
 msgid "Cannot start browser configuration program."
 msgstr "לא יכול להפעיל את תוכנת הגדרות הדפדפן."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">לדוגמא: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_בטל"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "התשמש ב_כתובת ה-IP שזוההתה אוטומטית: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">לדוגמא: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "כתובת IP חיצונית:"
@@ -12356,6 +12365,10 @@ msgstr "יציאה _אחרונה:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "שרת העברה (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "שרת STUN:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "שרת תיווך ודפדפן"
@@ -14052,6 +14065,9 @@ msgstr "שלח וקבל סטנזות XMPP גולמיות."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "תוסף זה שימושי לניפוי באגים בשרתים ולקוחות של XMPP."
 
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "בלי זה רק החשבון הראשון יהיה פעיל)."
+
 #~ msgid "Calling ... "
 #~ msgstr "מתקשר ..."
 
@@ -14702,9 +14718,6 @@ msgstr "תוסף זה שימושי לניפוי באגים בשרתים ולקו
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "_פתח את הקישור בדפדפן"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "שרת STUN:"
 
 #~ msgid "Smiley _Image"
 #~ msgstr "_תמונת חייכן"

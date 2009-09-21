@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-29 21:39-0700\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-08-29 23:23+0200\n"
 "Last-Translator: Mikel Pascual Aldabaldetreku <mikel.paskual@gmail.com>\n"
 "Language-Team:  <en@li.org>\n"
@@ -1634,8 +1634,8 @@ msgstr "lagun-zerrenda"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr "Auto-sinatua da zertifikatua eta ezin da automatikoki egiaztatu."
 
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
 msgstr "Pidgin-ek ez du ezagutzen hau eskaini duela dioen erro-zertifikatua."
 
 msgid "The certificate is not valid yet."
@@ -12148,6 +12148,9 @@ msgstr ""
 "Erabilera: %s [AUKERA]...\n"
 "\n"
 
+msgid "DIR"
+msgstr ""
+
 msgid "use DIR for config files"
 msgstr "DIR erabili konfigurazio-fitxategietarako"
 
@@ -12166,16 +12169,18 @@ msgstr "istantzia ugari onartu"
 msgid "don't automatically login"
 msgstr "ez automatikoki konektatu"
 
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 "zehaztutako kontua(k) gaitu (NAME argumentu opzionalak\n"
 "                      zehazten ditu erabili beharrelo kontuak, komaz "
 "bereiztuak."
-
-msgid "Without this only the first account will be enabled)."
-msgstr "Hau gabe, lehen kontua bakarrik gaituko da)."
 
 msgid "X display to use"
 msgstr "Erabiliko den X pantaila"
@@ -12585,12 +12590,16 @@ msgstr "Ezin proxy-konfigurazio programa hasiarazi."
 msgid "Cannot start browser configuration program."
 msgstr "Ezin nabigatzaile-konfigurazio programa hasiarazi."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Adibidea: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Ezgaitu"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "_Automatikoki detektatutako IP-helbidea erabili: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Adibidea: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "_IP Publikoa:"
@@ -12613,6 +12622,10 @@ msgstr "_Amaierako ataka:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Relay Zerbitzaria (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "ST_UN Zerbitzaria:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proxy Zerbitzaria &amp; Nabigatzailea"
@@ -14353,6 +14366,9 @@ msgstr ""
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "XMPP zerbitzariak edo bezeroak arazteko erabilgarria da plugin hau."
 
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "Hau gabe, lehen kontua bakarrik gaituko da)."
+
 #~ msgid "Calling ... "
 #~ msgstr "Deitzen ... "
 
@@ -14995,9 +15011,6 @@ msgstr "XMPP zerbitzariak edo bezeroak arazteko erabilgarria da plugin hau."
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "Ire_ki esteka arakatzailean"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "ST_UN Zerbitzaria:"
 
 #, fuzzy
 #~ msgid "Smiley _Image"

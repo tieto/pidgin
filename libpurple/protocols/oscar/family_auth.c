@@ -277,7 +277,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	 * If set, old-fashioned buddy lists will not work. You will need
 	 * to use SSI.
 	 */
-	aim_tlvlist_add_8(&tlvlist, 0x004a, (allow_multiple_logins ? 0x01 : 0x02));
+	aim_tlvlist_add_8(&tlvlist, 0x004a, (allow_multiple_logins ? 0x01 : 0x03));
 
 	aim_tlvlist_write(&frame->data, &tlvlist);
 

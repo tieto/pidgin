@@ -327,23 +327,43 @@ debug_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
 	char *tmp, *markup;
-	PurpleCmdStatus status;
 
 	if (!g_ascii_strcasecmp(args[0], "version")) {
-		tmp = g_strdup_printf("me is using Pidgin v%s with libpurple v%s.",
+		tmp = g_strdup_printf("Using Pidgin v%s with libpurple v%s.",
 				DISPLAY_VERSION, purple_core_get_version());
-		markup = g_markup_escape_text(tmp, -1);
+	} else if (!g_ascii_strcasecmp(args[0], "plugins")) {
+		/* Show all the loaded plugins, including the protocol plugins and plugin loaders.
+		 * This is intentional, since third party prpls are often sources of bugs, and some
+		 * plugin loaders (e.g. mono) can also be buggy.
+		 */
+		GString *str = g_string_new("Loaded Plugins: ");
+		const GList *plugins = purple_plugins_get_loaded();
+		if (plugins) {
+			for (; plugins; plugins = plugins->next) {
+				str = g_string_append(str, purple_plugin_get_name(plugins->data));
+				if (plugins->next)
+					str = g_string_append(str, ", ");
+			}
+		} else {
+			str = g_string_append(str, "(none)");
+		}
 
-		status = purple_cmd_do_command(conv, tmp, markup, error);
-
-		g_free(tmp);
-		g_free(markup);
-		return status;
+		tmp = g_string_free(str, FALSE);
 	} else {
-		purple_conversation_write(conv, NULL, _("Supported debug options are:  version"),
+		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins version"),
 		                        PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_ERROR, time(NULL));
-		return PURPLE_CMD_STATUS_OK;
+		return PURPLE_CMD_RET_OK;
 	}
+
+	markup = g_markup_escape_text(tmp, -1);
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
+		purple_conv_im_send(PURPLE_CONV_IM(conv), markup);
+	else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
+		purple_conv_chat_send(PURPLE_CONV_CHAT(conv), markup);
+
+	g_free(tmp);
+	g_free(markup);
+	return PURPLE_CMD_RET_OK;
 }
 
 static void clear_conversation_scrollback(PurpleConversation *conv)
@@ -363,7 +383,7 @@ clear_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
 	clear_conversation_scrollback(conv);
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static PurpleCmdRet
@@ -371,7 +391,7 @@ clearall_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
 	purple_conversation_foreach(clear_conversation_scrollback);
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static PurpleCmdRet
@@ -410,7 +430,7 @@ help_command_cb(PurpleConversation *conv,
 	purple_conversation_write(conv, NULL, s->str, PURPLE_MESSAGE_NO_LOG, time(NULL));
 	g_string_free(s, TRUE);
 
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static void
@@ -7277,7 +7297,8 @@ spellcheck_pref_cb(const char *name, PurplePrefType type,
 			pidgin_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
 		else {
 			spell = gtkspell_get_from_text_view(GTK_TEXT_VIEW(gtkconv->entry));
-			gtkspell_detach(spell);
+			if (spell)
+				gtkspell_detach(spell);
 		}
 	}
 #endif

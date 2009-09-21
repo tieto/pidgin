@@ -6513,7 +6513,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 			gchar *mark, *tmp;
 			const gchar *fg_color, *font;
 			GdkColor *color = NULL;
-			PidginBlistTheme *theme = pidgin_blist_get_theme();
+			PidginBlistTheme *theme;
 			PidginThemeFont *pair;
 			gboolean selected = (gtkblist->selected_node == cnode);
 

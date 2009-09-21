@@ -2,6 +2,18 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.6.2 (09/05/2009):
+	Mark: Woo boy it's been a busy two weeks.  There was a lot of new code
+	in 2.6.0, and with new code comes new bugs.  The cadre of relentless
+	developers responsible for Pidgin have been hard at work, and I believe
+	they have fixed all the major bugs that cropped up.  My thanks to all
+	those names listed as Current Developers in Pidgin's 'About' window.
+
+	Elliott: Well now, just as Mark said, there was a lot of new stuff that
+	probably came up with tons of bugs.  So I can't say I wrote anything
+	super-awesome, but I definitely fixed quite a few of those itty-bitty
+	why-didn't-this-work-this-way sort of bugs.
+
 2.6.1 (08/18/2009):
 	Mark: There were a lot of changes in 2.6.0, and so a few major bugs
 	crept in.  This is a very minor release to fix those bugs.  Sorry for

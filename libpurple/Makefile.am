@@ -299,7 +299,6 @@ libpurple_la_LIBADD = \
 	-lm
 
 AM_CPPFLAGS = \
-	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
 	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \

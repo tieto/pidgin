@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-30 16:49+0300\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-08-30 16:48+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
@@ -1641,8 +1641,8 @@ msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
 "Varmenne on itseallekirjoitettu eikä sitä voida automaattisesti tarkistaa."
 
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
 msgstr "Tämän varmenteen myöntäjän juurivarmenne on tuntematon Pidginille."
 
 msgid "The certificate is not valid yet."
@@ -12124,6 +12124,10 @@ msgstr ""
 "Käyttö: %s [VALITSIN]...\n"
 "\n"
 
+#, fuzzy
+msgid "DIR"
+msgstr "IRC"
+
 msgid "use DIR for config files"
 msgstr "käytä hakemistoa DIR asetustiedostoille"
 
@@ -12142,15 +12146,17 @@ msgstr "salli usean samanaikaisen ohjelman käynnissä olon"
 msgid "don't automatically login"
 msgstr "älä kirjaudu sisään automaattisesti"
 
+msgid "NAME"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas."
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
 msgstr ""
 "ota käyttöön määritellyt tilit (valinnainen kenttä NAME\n"
 "                      määrittää käytettävät tilit, erotettuina pilkuilla."
-
-msgid "Without this only the first account will be enabled)."
-msgstr "Ilman tätä vain ensimmäinen tili otetaan käyttöön)."
 
 msgid "X display to use"
 msgstr "käytettävä X-näyttö"
@@ -12571,12 +12577,16 @@ msgstr "Välipalvelimen asetusohjelmaa ei voi käynnistää."
 msgid "Cannot start browser configuration program."
 msgstr "Selaimen asetusohjelmaa ei voi käynnistää."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Esimerkki: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Poista käytöstä"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Käytä _automaattisesti tunnistettua IP-osoitetta: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Esimerkki: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Julkinen _IP:"
@@ -12599,6 +12609,10 @@ msgstr "Viimeinen _portti:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Edelleenvälityspalvelin (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "ST_UN-palvelin:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Välipalvelin &amp; selain"
@@ -14330,6 +14344,9 @@ msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
 
+#~ msgid "Without this only the first account will be enabled)."
+#~ msgstr "Ilman tätä vain ensimmäinen tili otetaan käyttöön)."
+
 #~ msgid "Calling ... "
 #~ msgstr "Soitetaan..."
 
@@ -14944,9 +14961,6 @@ msgstr ""
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "_Avaa linkki selaimessa"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "ST_UN-palvelin:"
 
 #~ msgid "Smiley _Image"
 #~ msgstr "Hymiön kuva"
@@ -16762,9 +16776,6 @@ msgstr ""
 
 #~ msgid "Slightly less boring default"
 #~ msgstr "Hieman vähemmän tylsä oletusviesti"
-
-#~ msgid "IRC"
-#~ msgstr "IRC"
 
 #~ msgid "Basic Profile"
 #~ msgstr "Perusprofiili"

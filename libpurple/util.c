@@ -4378,14 +4378,14 @@ purple_url_encode(const char *str)
 		gunichar c = g_utf8_get_char(iter);
 		/* If the character is an ASCII character and is alphanumeric
 		 * no need to escape */
-		if (c < 128 && isalnum(c)) {
+		if (c < 128 && (isalnum(c) || c == '-' || c == '.' || c == '_' || c == '~')) {
 			buf[j++] = c;
 		} else {
 			int bytes = g_unichar_to_utf8(c, utf_char);
 			for (i = 0; i < bytes; i++) {
 				if (j > (BUF_LEN - 4))
 					break;
-				sprintf(buf + j, "%%%02x", utf_char[i] & 0xff);
+				sprintf(buf + j, "%%%02X", utf_char[i] & 0xff);
 				j += 3;
 			}
 		}
