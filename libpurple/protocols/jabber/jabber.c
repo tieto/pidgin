@@ -3033,12 +3033,9 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 		jbr = jabber_buddy_find_resource(jb, resource);
 		g_free(resource);
 
-		/*
-		return jabber_google_session_initiate(js, who, type);
-		*/
+		/* if we are on a Google Talk connection and the remote supports
+		 Google Jingle, we will go with that */
 		if (type & PURPLE_MEDIA_AUDIO &&
-				!jabber_resource_has_capability(jbr,
-				JINGLE_APP_RTP_SUPPORT_AUDIO) &&
 				jabber_resource_has_capability(jbr,
 				GOOGLE_VOICE_CAP))
 			return jabber_google_session_initiate(js, who, type);
