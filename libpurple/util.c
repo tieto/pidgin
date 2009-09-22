@@ -3140,7 +3140,7 @@ purple_normalize(const PurpleAccount *account, const char *str)
 		{
 			PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-			if(prpl_info && prpl_info->normalize)
+			if (prpl_info->normalize)
 				ret = prpl_info->normalize(account, str);
 		}
 	}

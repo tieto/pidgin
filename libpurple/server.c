@@ -142,7 +142,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, account);
 
-	if(prpl_info && prpl_info->send_im)
+	if (prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, flags);
 
 	/*
@@ -176,7 +176,7 @@ void serv_get_info(PurpleConnection *gc, const char *name)
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if(gc && prpl_info && prpl_info->get_info)
+	if (prpl_info && prpl_info->get_info)
 		prpl_info->get_info(gc, name);
 }
 
@@ -229,7 +229,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if(b && prpl_info && prpl_info->alias_buddy) {
+	if (prpl_info && prpl_info->alias_buddy) {
 		prpl_info->alias_buddy(gc, purple_buddy_get_name(b), purple_buddy_get_local_buddy_alias(b));
 	}
 }
@@ -367,12 +367,10 @@ void serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if(gc && og && ng) {
-		if (prpl_info && prpl_info->group_buddy) {
-			prpl_info->group_buddy(gc, purple_buddy_get_name(b),
-			                       purple_group_get_name(og),
-								   purple_group_get_name(ng));
-		}
+	if (prpl_info && prpl_info->group_buddy) {
+		prpl_info->group_buddy(gc, purple_buddy_get_name(b),
+		                       purple_group_get_name(og),
+							   purple_group_get_name(ng));
 	}
 }
 
