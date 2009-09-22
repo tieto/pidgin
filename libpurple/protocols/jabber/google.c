@@ -391,7 +391,6 @@ jabber_google_relay_response_cb(PurpleUtilFetchUrlData *url_data,
 		purple_media_error(session->media, "Error adding stream.");
 		purple_media_end(session->media, NULL, NULL);
 		g_free(params);
-		return FALSE;
 	}
 
 	g_free(params);	
@@ -438,15 +437,18 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 	/* if we got a relay token and relay host in google:jingleinfo, issue an
 	 HTTP request to get that data */
 	if (js->google_relay_host && js->google_relay_token) {
-		const gchar *url = 
-			g_strdup_printf("http://%s/create_session", js->google_relay_host);
-		const gchar *request =
-			g_strdup_printf("GET /create_session HTTP 1.1\r\n"
+		gchar *url = 
+			g_strdup_printf("http://%s", js->google_relay_host);
+		gchar *request =
+			g_strdup_printf("GET /create_session HTTP/1.0\r\n"
+			                "Host: %s\r\n"
 							"X-Talk-Google-Relay-Auth: %s\r\n"
-							"X-Google-Relay-Auth: %s\r\n", 
-				js->google_relay_token, js->google_relay_token);
+							"X-Google-Relay-Auth: %s\r\n\r\n", 
+				js->google_relay_host, js->google_relay_token, js->google_relay_token);
+		purple_debug_info("jabber", 
+			"sending Google relay request %s to %s\n", request, url); 
 		js->google_relay_request =
-			purple_util_fetch_url_request(url, TRUE, NULL, TRUE, request, FALSE,
+			purple_util_fetch_url_request(url, FALSE, NULL, FALSE, request, FALSE,
 				jabber_google_relay_response_cb, session);
 		g_free(url);
 		g_free(request);
@@ -1431,8 +1433,8 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 	}
 
 	if (relay) {
-		const xmlnode *token = xmlnode_get_child(relay, "token");
-		const xmlnode *server = xmlnode_get_child(relay, "server");
+		xmlnode *token = xmlnode_get_child(relay, "token");
+		xmlnode *server = xmlnode_get_child(relay, "server");
 		
 		if (token) {
 			gchar *relay_token = xmlnode_get_data(token);
