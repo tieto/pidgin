@@ -1,6 +1,18 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.0 (??/??/2009):
+version 2.6.2 (09/05/2009):
+	Perl:
+		Added:
+		* Purple::XMLNode::get_next(), which returns the next neighbor tag of
+		  the current node.
+		Changed:
+		* Purple::XMLNode::get_child() will return the first child node if
+		  passed "" or undef as the name of the node.
+
+version 2.6.1 (08/18/2009):
+	No changes
+
+version 2.6.0 (08/18/2009):
 	libpurple:
 		Added:
 		* PurpleMedia and PurpleMediaManager API
@@ -18,6 +30,9 @@ version 2.6.0 (??/??/2009):
 		* Three Blist UI ops used to overload libpurple's built-in saving
 		  of the buddy list to blist.xml. If a UI implements these, it probably
 		  wants to add the buddies itself and not call purple_blist_load.
+		* Three File Transfer UI ops used to overload libpurple's use of fread
+		  and fwrite for saving a file locally. These allow a UI to stream a
+		  file through a socket without buffering the file on the local disk.
 		* Jabber plugin signals (see jabber-signals.dox)
 		* purple_account_remove_setting
 		* purple_buddy_destroy
@@ -65,6 +80,8 @@ version 2.6.0 (??/??/2009):
 		* purple_strequal
 		* purple_utf8_strip_unprintables
 		* purple_util_fetch_url_request_len_with_account
+		* purple_xfer_prpl_ready
+		* purple_xfer_ui_ready
 		* xmlnode_from_file
 		* xmlnode_get_parent
 		* xmlnode_set_attrib_full
@@ -95,6 +112,10 @@ version 2.6.0 (??/??/2009):
 		* status is set before emitting signals in purple_xfer_set_status.
 		* Creating multiple distinct chats with the same name (i.e. "MSN Chat")
 		  is deprecated and will be removed in libpurple 3.0.0.
+		* purple_xfer_start now accepts -1 as the fd parameter if the protocol
+		  plugin will administer the transfer itself. 0 is still accepted for
+		  backward compatibility since older versions of libpurple will not
+		  accept -1.
 
 		Deprecated:
 		* buddy-added and buddy-removed blist signals
@@ -145,6 +166,9 @@ version 2.6.0 (??/??/2009):
 		* GntProgressBar and functions (Saleem Abdulrasool)
 
 	perl:
+		Added:
+		* Purple::XMLNode::get_name()
+
 		Changed:
 		* Made a bunch of functions act more perl-like. Call the new()
 		  functions as Class->new(...) instead of Class::new(...):
@@ -158,6 +182,14 @@ version 2.6.0 (??/??/2009):
 			* Purple::Request::Field::list_new
 			* Purple::Request::Field::string_new
 			* Purple::Request::Field::group_new
+		* Make the XMLNode API more perl-like. Don't pass len
+		  parameters and call them like:
+			* $xmlnode->copy()
+			* $xmlnode->to_str()
+			* $xmlnode->to_formatted_str()
+			* Purple::XMLNode::from_str(...)
+version 2.5.9 (08/18/2009):
+	No changes
 
 version 2.5.8 (06/27/2009):
 	No changes

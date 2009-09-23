@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2007, Andreas Monitzer <andy@monitzer.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
@@ -456,6 +458,11 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 	/* Only validate if these are v1.5 capabilities */
 	if (userdata->hash) {
 		gchar *hash = NULL;
+		/*
+		 * TODO: If you add *any* hash here, make sure the checksum buffer
+		 * size in jabber_caps_calculate_hash is large enough. The cipher API
+		 * doesn't seem to offer a "Get the hash size" function(?).
+		 */
 		if (!strcmp(userdata->hash, "sha-1")) {
 			hash = jabber_caps_calculate_hash(info, "sha1");
 		} else if (!strcmp(userdata->hash, "md5")) {
@@ -463,8 +470,10 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 		}
 
 		if (!hash || strcmp(hash, userdata->ver)) {
-			purple_debug_warning("jabber", "Could not validate caps info from %s\n",
-			                     xmlnode_get_attrib(packet, "from"));
+			purple_debug_warning("jabber", "Could not validate caps info from "
+			                     "%s. Expected %s, got %s\n",
+			                     xmlnode_get_attrib(packet, "from"),
+			                     userdata->ver, hash ? hash : "(null)");
 
 			userdata->cb(NULL, NULL, userdata->cb_data);
 			jabber_caps_client_info_destroy(info);
@@ -592,8 +601,8 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 	jabber_caps_cbplususerdata *userdata;
 
 	if (exts && hash) {
-		purple_debug_info("jabber", "Ignoring exts in new-style caps from %s\n",
-		                     who);
+		purple_debug_misc("jabber", "Ignoring exts in new-style caps from %s\n",
+		                  who);
 		g_strfreev(exts);
 		exts = NULL;
 	}

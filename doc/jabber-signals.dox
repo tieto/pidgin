@@ -8,6 +8,7 @@
   @signal jabber-register-namespace-watcher
   @signal jabber-unregister-namespace-watcher
   @signal jabber-sending-xmlnode
+  @signal jabber-receiving-xmlnode
  @endsignals
 
  <hr>
@@ -71,7 +72,7 @@ gboolean (*presence_received)(PurpleConnection *gc, const char *type,
 
  @signaldef jabber-watched-iq
   @signalproto
-gboolean (*watched_iq)(PurpleConnection *pc, const char *type, const char *id,
+gboolean (*watched_iq)(PurpleConnection *gc, const char *type, const char *id,
                        const char *from, xmlnode *child);
   @endsignalproto
   @signaldesc
@@ -85,18 +86,6 @@ gboolean (*watched_iq)(PurpleConnection *pc, const char *type, const char *id,
   @param child     The child node with namespace.
   @return TRUE if the plugin processed this stanza and *nobody else* should
           process it. FALSE otherwise.
- @endsignaldef
-
- @signaldef jabber-sending-xmlnode
-  @signalproto
-void (sending_xmlnode)(PurpleConnection *gc, xmlnode **stanza);
-  @endsignalproto
-  @signaldesc
-   Emit this signal (@c purple_signal_emit) to send a stanza. It is preferred
-   to use this instead of prpl_info->send_raw.
-   @param gc      The connectoin on which to send the stanza.
-   @param stanza  The stanza to send. If stanza is not NULL after being sent,
-                  the emitter should free it.
  @endsignaldef
 
  @signaldef jabber-register-namespace-watcher
@@ -119,6 +108,30 @@ void (unregister_namespace_watcher)(const char *node, const char *namespace);
    emitted via the jabber-watched-iq signal when received.
   @param node      The IQ child name to no longer watch.
   @param namespace The IQ child namespace to no longer watch.
+ @endsignaldef
+
+ @signaldef jabber-sending-xmlnode
+  @signalproto
+void (sending_xmlnode)(PurpleConnection *gc, xmlnode **stanza);
+  @endsignalproto
+  @signaldesc
+   Emit this signal (@c purple_signal_emit) to send a stanza. It is preferred
+   to use this instead of prpl_info->send_raw.
+   @param gc      The connection on which to send the stanza.
+   @param stanza  The stanza to send. If stanza is not NULL after being sent,
+                  the emitter should free it.
+ @endsignaldef
+
+ @signaldef jabber-receiving-xmlnode
+  @signalproto
+void (receiving_xmlnode)(PurpleConnection *gc, xmlnode **stanza);
+  @endsignalproto
+  @signaldesc
+   Emitted when an XMPP stanza is received. Allows a plugin to process any
+   stanza.
+   @param gc     The connection on which the stanza was received.
+   @param stanza The received stanza. Set stanza to NULL (and free it) to
+                 stop processing the stanza.
  @endsignaldef
 
 */

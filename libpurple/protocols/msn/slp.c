@@ -244,6 +244,8 @@ static void
 got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			   const char *euf_guid, const char *context)
 {
+	gboolean accepted = FALSE;
+
 	if (!strcmp(euf_guid, MSN_OBJ_GUID))
 	{
 		/* Emoticon or UserDisplay */
@@ -314,7 +316,10 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		msn_slpmsg_set_image(slpmsg, img);
 		msn_slplink_queue_slpmsg(slplink, slpmsg);
 		purple_imgstore_unref(img);
+
+		accepted = TRUE;
 	}
+
 	else if (!strcmp(euf_guid, MSN_FT_GUID))
 	{
 		/* File Transfer */
@@ -346,7 +351,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			g_free(bin);
 
-			purple_xfer_set_filename(xfer, file_name);
+			purple_xfer_set_filename(xfer, file_name ? file_name : "");
 			g_free(file_name);
 			purple_xfer_set_size(xfer, file_size);
 			purple_xfer_set_init_fnc(xfer, msn_xfer_init);
@@ -360,6 +365,9 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			purple_xfer_request(xfer);
 		}
+
+		accepted = TRUE;
+
 	} else if (!strcmp(euf_guid, MSN_CAM_REQUEST_GUID)) {
 		purple_debug_info("msn", "Cam request.\n");
 		if (slpcall && slpcall->slplink &&
@@ -382,6 +390,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 				g_free(buf);
 			}
 		}
+
 	} else if (!strcmp(euf_guid, MSN_CAM_GUID)) {
 		purple_debug_info("msn", "Cam invite.\n");
 		if (slpcall && slpcall->slplink &&
@@ -394,9 +403,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			if (conv) {
 				char *buf;
 				buf = g_strdup_printf(
-						_("%s has sent you a webcam "
-						"invite, which is not yet "
-						"supported."), from);
+						_("%s invited you to view his/her webcam, but "
+						"this is not yet supported."), from);
 				purple_conversation_write(conv, NULL, buf,
 						PURPLE_MESSAGE_SYSTEM |
 						PURPLE_MESSAGE_NOTIFY,
@@ -404,8 +412,16 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 				g_free(buf);
 			}
 		}
+
 	} else
 		purple_debug_warning("msn", "SLP SessionReq with unknown EUF-GUID: %s\n", euf_guid);
+
+	if (!accepted) {
+		char *content = g_strdup_printf("SessionID: %lu\r\n\r\n",
+		                                slpcall->session_id);
+		send_decline(slpcall, branch, "application/x-msnmsgr-sessionreqbody", content);
+		g_free(content);
+	}
 }
 
 void
@@ -692,7 +708,15 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 
 		content = get_token(body, "\r\n\r\n", NULL);
 
-		got_invite(slpcall, branch, content_type, content);
+		if (branch && content_type && content)
+		{
+			got_invite(slpcall, branch, content_type, content);
+		}
+		else
+		{
+			msn_slpcall_destroy(slpcall);
+			slpcall = NULL;
+		}
 
 		g_free(branch);
 		g_free(content_type);

@@ -21,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include <string.h>
@@ -1906,8 +1906,8 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 		gst_element_add_pad(session->media->priv->confbin, ghost);
 	}
 
-	gst_element_link(session->src, session->media->priv->confbin);
 	gst_element_set_state(session->tee, GST_STATE_PLAYING);
+	gst_element_link(session->src, session->media->priv->confbin);
 
 	g_object_get(session->session, "sink-pad", &sinkpad, NULL);
 	if (session->type & PURPLE_MEDIA_SEND_AUDIO) {
@@ -1922,10 +1922,10 @@ purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 		g_free(name);
 		gst_bin_add(GST_BIN(session->media->priv->confbin), volume);
 		gst_bin_add(GST_BIN(session->media->priv->confbin), level);
-		gst_element_link(session->tee, volume);
-		gst_element_link(volume, level);
 		gst_element_set_state(level, GST_STATE_PLAYING);
 		gst_element_set_state(volume, GST_STATE_PLAYING);
+		gst_element_link(volume, level);
+		gst_element_link(session->tee, volume);
 		srcpad = gst_element_get_static_pad(level, "src");
 		g_object_set(volume, "volume", input_volume, NULL);
 	} else {
@@ -2046,13 +2046,32 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 				FsError error_no;
 				gst_structure_get_enum(msg->structure, "error-no",
 						FS_TYPE_ERROR, (gint*)&error_no);
-				/*
-				 * Unknown CName is only a problem for the
-				 * multicast transmitter which isn't used.
-				 */
-				if (error_no != FS_ERROR_UNKNOWN_CNAME)
-					purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
-						  	gst_structure_get_string(msg->structure, "error-msg"));
+				switch (error_no) {
+					case FS_ERROR_NO_CODECS:
+						purple_media_error(media, _("No codecs found. Install some GStreamer codecs found in GStreamer plugins packages."));
+						purple_media_end(media, NULL, NULL);
+						break;
+					case FS_ERROR_NO_CODECS_LEFT:
+						purple_media_error(media, _("No codecs left. Your codec preferences in fs-codecs.conf are too strict."));
+						purple_media_end(media, NULL, NULL);
+						break;
+					case FS_ERROR_UNKNOWN_CNAME:
+					/*
+					 * Unknown CName is only a problem for the
+					 * multicast transmitter which isn't used.
+					 * It is also deprecated.
+					 */
+						break;
+					default:
+						purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
+							  	gst_structure_get_string(msg->structure, "error-msg"));
+						break;
+				}
+
+				if (FS_ERROR_IS_FATAL(error_no)) {
+					purple_media_error(media, _("A non-recoverable Farsight2 error has occurred."));
+					purple_media_end(media, NULL, NULL);
+				}
 			} else if (gst_structure_has_name(msg->structure,
 					"farsight-new-local-candidate")) {
 				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
@@ -2128,6 +2147,35 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 				}
 			}
 			break;
+		}
+		case GST_MESSAGE_ERROR: {
+			GstElement *element = GST_ELEMENT(GST_MESSAGE_SRC(msg));
+			GstElement *lastElement = NULL;
+			while (!GST_IS_PIPELINE(element)) {
+				if (element == media->priv->confbin) {
+					purple_media_error(media, _("Conference error"));
+					purple_media_end(media, NULL, NULL);
+					break;
+				}
+				lastElement = element;
+				element = GST_ELEMENT_PARENT(element);
+			}
+			if (GST_IS_PIPELINE(element)) {
+				GList *sessions = g_hash_table_get_values(media->priv->sessions);
+				for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+					PurpleMediaSession *session = sessions->data;
+
+					if (session->src == lastElement) {
+						if (session->type & PURPLE_MEDIA_AUDIO)
+							purple_media_error(media, _("Error with your microphone"));
+						else
+							purple_media_error(media, _("Error with your webcam"));
+						purple_media_end(media, NULL, NULL);
+						break;
+					}
+				}
+				g_list_free(sessions);
+			}
 		}
 		default:
 			break;
@@ -2230,6 +2278,18 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 					purple_media_to_fs_stream_direction(
 					stream->session->type), NULL);
 			stream->accepted = TRUE;
+
+			if (stream->remote_candidates != NULL) {
+				GError *err = NULL;
+				fs_stream_set_remote_candidates(stream->stream,
+						stream->remote_candidates, &err);
+
+				if (err) {
+					purple_debug_error("media", "Error adding remote"
+							" candidates: %s\n", err->message);
+					g_error_free(err);
+				}
+			}
 		}
 	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_MUTE ||
 			type == PURPLE_MEDIA_INFO_UNMUTE)) {
@@ -2463,12 +2523,13 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			gst_bin_add(GST_BIN(priv->confbin), stream->volume);
 			gst_bin_add(GST_BIN(priv->confbin), stream->level);
 			gst_bin_add(GST_BIN(priv->confbin), sink);
+			gst_element_set_state(sink, GST_STATE_PLAYING);
+			gst_element_set_state(stream->level, GST_STATE_PLAYING);
+			gst_element_set_state(stream->volume, GST_STATE_PLAYING);
+			gst_element_set_state(queue, GST_STATE_PLAYING);
 			gst_element_link(stream->level, sink);
 			gst_element_link(stream->volume, stream->level);
 			gst_element_link(queue, stream->volume);
-			gst_element_sync_state_with_parent(sink);
-			gst_element_sync_state_with_parent(stream->level);
-			gst_element_sync_state_with_parent(stream->volume);
 			sink = queue;
 		} else if (codec->media_type == FS_MEDIA_TYPE_VIDEO) {
 			stream->src = gst_element_factory_make(
@@ -2477,13 +2538,13 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 					"fakesink", NULL);
 			g_object_set(G_OBJECT(sink), "async", FALSE, NULL);
 			gst_bin_add(GST_BIN(priv->confbin), sink);
+			gst_element_set_state(sink, GST_STATE_PLAYING);
 		}
 		stream->tee = gst_element_factory_make("tee", NULL);
 		gst_bin_add_many(GST_BIN(priv->confbin),
 				stream->src, stream->tee, NULL);
-		gst_element_sync_state_with_parent(sink);
-		gst_element_sync_state_with_parent(stream->tee);
-		gst_element_sync_state_with_parent(stream->src);
+		gst_element_set_state(stream->tee, GST_STATE_PLAYING);
+		gst_element_set_state(stream->src, GST_STATE_PLAYING);
 		gst_element_link_many(stream->src, stream->tee, sink, NULL);
 	}
 
@@ -2540,7 +2601,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 				media->priv->conference, media_type, &err);
 
 		if (err != NULL) {
-			purple_media_error(media, "Error creating session: %s\n", err->message);
+			purple_media_error(media, _("Error creating session: %s"), err->message);
 			g_error_free(err);
 			g_free(session);
 			return FALSE;
@@ -2617,26 +2678,27 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 				0, PURPLE_MEDIA_STATE_NEW,
 				session->id, NULL);
 
-		session_type = purple_media_from_fs(media_type,
-				FS_DIRECTION_SEND);
-		src = purple_media_manager_get_element(
-				media->priv->manager, session_type,
-				media, session->id, who);
-		if (!GST_IS_ELEMENT(src)) {
-			purple_debug_error("media",
-					"Error creating src for session %s\n",
-					session->id);
-			purple_media_end(media, session->id, NULL);
-			return FALSE;
+		if (type_direction & FS_DIRECTION_SEND) {
+			session_type = purple_media_from_fs(media_type,
+					FS_DIRECTION_SEND);
+			src = purple_media_manager_get_element(
+					media->priv->manager, session_type,
+					media, session->id, who);
+			if (!GST_IS_ELEMENT(src)) {
+				purple_debug_error("media",
+						"Error creating src for session %s\n",
+						session->id);
+				purple_media_end(media, session->id, NULL);
+				return FALSE;
+			}
+
+			purple_media_set_src(media, session->id, src);
+			gst_element_set_state(session->src, GST_STATE_PLAYING);
+			purple_media_manager_create_output_window(
+					media->priv->manager,
+					session->media,
+					session->id, NULL);
 		}
-
-		purple_media_set_src(media, session->id, src);
-		gst_element_set_state(session->src, GST_STATE_PLAYING);
-
-		purple_media_manager_create_output_window(
-				media->priv->manager,
-				session->media,
-				session->id, NULL);
 	}
 
 	if (!(participant = purple_media_add_participant(media, who))) {
@@ -2728,10 +2790,13 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 					num_params, params, &err);
 		}
 
-		if (err) {
-			purple_debug_error("media", "Error creating stream: %s\n",
-					   err->message);
-			g_error_free(err);
+		if (fsstream == NULL) {
+			purple_debug_error("media",
+					"Error creating stream: %s\n",
+					err && err->message ?
+					err->message : "NULL");
+			if (err)
+				g_error_free(err);
 			g_object_unref(participant);
 			g_hash_table_remove(media->priv->participants, who);
 			purple_media_remove_session(media, session);
@@ -2850,13 +2915,15 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
 			purple_media_candidate_list_to_fs(remote_candidates));
 
-	fs_stream_set_remote_candidates(stream->stream,
-			stream->remote_candidates, &err);
+	if (stream->accepted == TRUE) {
+		fs_stream_set_remote_candidates(stream->stream,
+				stream->remote_candidates, &err);
 
-	if (err) {
-		purple_debug_error("media", "Error adding remote"
-				" candidates: %s\n", err->message);
-		g_error_free(err);
+		if (err) {
+			purple_debug_error("media", "Error adding remote"
+					" candidates: %s\n", err->message);
+			g_error_free(err);
+		}
 	}
 #endif
 }
@@ -3002,14 +3069,23 @@ purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id)
 
 		if (session == NULL)
 			return FALSE;
-
-		g_object_get(session->session, "codecs-ready", &ret, NULL);
+		if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
+				PURPLE_MEDIA_SEND_VIDEO))
+			g_object_get(session->session,
+					"codecs-ready", &ret, NULL);
+		else
+			ret = TRUE;
 	} else {
 		GList *values = g_hash_table_get_values(media->priv->sessions);
 		for (; values; values = g_list_delete_link(values, values)) {
 			PurpleMediaSession *session = values->data;
-			g_object_get(session->session,
-					"codecs-ready", &ret, NULL);
+			if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
+					PURPLE_MEDIA_SEND_VIDEO))
+				g_object_get(session->session,
+						"codecs-ready", &ret, NULL);
+			else
+				ret = TRUE;
+
 			if (ret == FALSE)
 				break;
 		}

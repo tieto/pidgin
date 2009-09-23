@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-02 15:45-0700\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
@@ -872,8 +872,9 @@ msgstr "Все беседы"
 msgid "System Log"
 msgstr "Системный журнал"
 
-msgid "Calling ... "
-msgstr "Идёт вызов ... "
+#, fuzzy
+msgid "Calling..."
+msgstr "Подсчёт..."
 
 msgid "Hangup"
 msgstr "Приостановить разговор"
@@ -1514,6 +1515,33 @@ msgid ""
 msgstr ""
 "При открытии новой беседы этот модуль вставит прошлую беседу в текущую."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+"\n"
+"Получение TinyURL..."
+
+#, fuzzy
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr "Только создайте TinyURL для адресов такой длины или большей"
+
+msgid "TinyURL (or other) address prefix"
+msgstr "Приставка адреса TinyURL (или другого)"
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "TinyURL"
+
+msgid "TinyURL plugin"
+msgstr "Модуль TinyURL"
+
+#, fuzzy
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+"При получении сообщения с адресами URL, TinyURL для облегчённого копирования"
+
 msgid "Online"
 msgstr "В сети"
 
@@ -1556,31 +1584,6 @@ msgstr "Последняя отметка Gnt"
 
 msgid "Lastlog plugin."
 msgstr "Вставка для последней отметки."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-"\n"
-"Получение TinyURL..."
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr "Только создайте TinyURL для адресов такой длины или большей"
-
-msgid "TinyURL (or other) address prefix"
-msgstr "Приставка адреса TinyURL (или другого)"
-
-#, fuzzy
-msgid "TinyURL"
-msgstr "TinyURL"
-
-msgid "TinyURL plugin"
-msgstr "Модуль TinyURL"
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
-"При получении сообщения с адресами URL, TinyURL для облегчённого копирования"
 
 msgid "accounts"
 msgstr "учётные записи"
@@ -1643,6 +1646,50 @@ msgstr "Собеседники"
 msgid "buddy list"
 msgstr "список собеседников"
 
+#, fuzzy
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+"Сертификат, представленный \"%s\", является самоподписанным. Он не может "
+"быть автоматически проверен."
+
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
+msgstr ""
+"Корневой сертификат, попытавшийся в этот раз подтвердиться, неизвестен "
+"Пиджину."
+
+#, fuzzy
+msgid "The certificate is not valid yet."
+msgstr "Цепочка сертификатов, представленная для %s, некорректна."
+
+#, fuzzy
+msgid "The certificate has expired and should not be considered valid."
+msgstr "Цепочка сертификатов, представленная для %s, некорректна."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+#, fuzzy
+msgid "The certificate presented is not issued to this domain."
+msgstr "Цепочка сертификатов, представленная для %s, некорректна."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+"У вас нет базы данных корневых сертификатов, так что этот сертификат не "
+"может быть проверен на целостность."
+
+#, fuzzy
+msgid "The certificate chain presented is invalid."
+msgstr "Цепочка сертификатов, представленная для %s, некорректна."
+
+#, fuzzy
+msgid "The certificate has been revoked."
+msgstr "Звонок был прерван."
+
+#, fuzzy
+msgid "An unknown certificate error occurred."
+msgstr "Произошла неизвестная ошибка подключения: %s."
+
 msgid "(DOES NOT MATCH)"
 msgstr "(НЕ СОВПАДАЕТ)"
 
@@ -1685,77 +1732,25 @@ msgstr "Проверка SSL-сертификата"
 msgid "_View Certificate..."
 msgstr "_Просмотреть сертификат..."
 
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
-msgstr ""
-"Этот сертификат представлен \"%s\", а должен быть от \"%s\".Это может "
-"означать, что вы полключены не туда куда вы думаете."
+#, fuzzy, c-format
+msgid "The certificate for %s could not be validated."
+msgstr "Цепочка сертификатов, представленная для %s, некорректна."
 
-#. Had no CA pool, so couldn't verify the chain *and*
-#. * the subject name isn't valid.
-#. * I think this is bad enough to warrant a fatal error. It's
-#. * not likely anyway...
-#.
-#. TODO: Probably wrong.
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
-#. TODO: Probably wrong.
-#. TODO: Probably wrong
 #. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "Ошибка SSL-сертификата"
 
-msgid "Invalid certificate chain"
-msgstr "Неверная цепочка сертификатов"
+#, fuzzy
+msgid "Unable to validate certificate"
+msgstr "Не удаётся аутентифицировать: %s"
 
-#. The subject name is correct, but we weren't able to verify the
-#. * chain because there was no pool of root CAs found. Prompt the user
-#. * to validate it.
-#.
-#. vrq will be completed by user_auth
+#, fuzzy, c-format
 msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
-"У вас нет базы данных корневых сертификатов, так что этот сертификат не "
-"может быть проверен на целостность."
-
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"Сертификат, представленный \"%s\", является самоподписанным. Он не может "
-"быть автоматически проверен."
-
-#. FIXME 2.6.1
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
-msgstr "Цепочка сертификатов, представленная для %s, некорректна."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr ""
-"Корневой сертификат, попытавшийся в этот раз подтвердиться, неизвестен "
-"Пиджину."
-
-#, c-format
-msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-"Цепочка сертификата, представленная %s, не имеет правильной цифровойподписи "
-"в Авторизации Сертификатов, откуда она попыталась получить подпись."
-
-msgid "Invalid certificate authority signature"
-msgstr "Неверная авторская подпись сертификата"
+"Этот сертификат представлен \"%s\", а должен быть от \"%s\".Это может "
+"означать, что вы полключены не туда куда вы думаете."
 
 #. Make messages
 #, c-format
@@ -1793,7 +1788,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s вышел"
 
 #. Unknown error
-#, c-format
 msgid "Unknown error"
 msgstr "Неизвестная ошибка"
 
@@ -1992,19 +1986,19 @@ msgstr "Передача файла %s завершена"
 msgid "File transfer complete"
 msgstr "Передача файлов завершена"
 
-#, c-format
-msgid "You canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "You cancelled the transfer of %s"
 msgstr "Вы отменили передачу %s"
 
 msgid "File transfer cancelled"
 msgstr "Передача файлов отменена"
 
-#, c-format
-msgid "%s canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
 msgstr "%s отменил передачу %s"
 
-#, c-format
-msgid "%s canceled the file transfer"
+#, fuzzy, c-format
+msgid "%s cancelled the file transfer"
 msgstr "%s отменил передачу файлов"
 
 #, c-format
@@ -2199,6 +2193,33 @@ msgstr "<font color=\"red\"><b>Не удалось прочитать файл: 
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
+#, fuzzy
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Произошла неизвестная ошибка подключения: %s."
+
+#, fuzzy
+msgid "Conference error."
+msgstr "Конференция закрыта"
+
+msgid "Error with your microphone."
+msgstr ""
+
+msgid "Error with your webcam."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error creating session: %s"
+msgstr "Ошибка создания соединения"
 
 msgid "Error creating conference."
 msgstr "Ошибка создания конференции"
@@ -2462,14 +2483,15 @@ msgid "Test plugin IPC support, as a server. This registers the IPC commands."
 msgstr ""
 "Тестовый модуль поддержки IPC в качестве сервера. Регистрирует команды IPC."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "Присоединить/Обособить конфигурацию скрывания"
+msgid "Hide Joins/Parts"
+msgstr ""
 
-msgid "Minimum Room Size"
-msgstr "Минимальный размер комнаты"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr ""
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "Время неактивности пользователя (в минутах)"
+msgid "If user has not spoken in this many minutes"
+msgstr ""
 
 msgid "Apply hiding rules to buddies"
 msgstr "Применить правила скрытия к собеседникам"
@@ -3922,14 +3944,20 @@ msgstr "Фотография"
 msgid "Logo"
 msgstr "Логотип"
 
+#, fuzzy, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr "Вы удалите %s из списка собеседников. Хотите продолжить?"
+
+msgid "Cancel Presence Notification"
+msgstr "Отменить уведомление о присутствии"
+
 msgid "Un-hide From"
 msgstr "Показаться для"
 
 msgid "Temporarily Hide From"
 msgstr "Временно скрыться от"
-
-msgid "Cancel Presence Notification"
-msgstr "Отменить уведомление о присутствии"
 
 msgid "(Re-)Request authorization"
 msgstr "(Повторно) Запросить авторизацию"
@@ -4539,7 +4567,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "роль &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Установите "
 "рольпользователя в комнате."
@@ -4689,10 +4717,6 @@ msgstr "Произошла ошибка при открытии файла."
 #, fuzzy
 msgid "Transfer was closed."
 msgstr "Не удалось произвести передачу файлов"
-
-#, fuzzy
-msgid "Failed to open the file"
-msgstr "Не удалось открыть файл '%s': %s"
 
 msgid "Failed to open in-band bytestream"
 msgstr ""
@@ -4971,8 +4995,8 @@ msgstr "Плохой файл друга"
 msgid "Not expected"
 msgstr "Не предусмотрено"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+#, fuzzy
+msgid "Friendly name is changing too rapidly"
 msgstr "Дружественные изменения именни слишком быстры"
 
 #, c-format
@@ -5559,8 +5583,8 @@ msgstr "Загрузка списка собеседников"
 msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr "%s послал вам приглашение к веб-камере, которое ещё не поддерживается."
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
+#, fuzzy, c-format
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr "%s послал вам приглашение к веб-камере, которое ещё не поддерживается."
 
 msgid "Away From Computer"
@@ -5619,6 +5643,10 @@ msgstr "Вы хотите также удалить этого приятеля 
 
 msgid "The username specified is invalid."
 msgstr "Указанное имя пользователя недопустимо."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "Дружественные изменения именни слишком быстры"
 
 msgid "This Hotmail account may not be active."
 msgstr "Эта учётная запись горячей почты может быть неактивна."
@@ -6305,8 +6333,9 @@ msgstr "Адрес сервера"
 msgid "Server port"
 msgstr "Порт сервера"
 
-#, fuzzy
-msgid "Received unexpected response from "
+#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s"
 msgstr "Получен непредвиденный HTTP-отклик от сервера."
 
 #. username connecting too frequently
@@ -6317,8 +6346,10 @@ msgstr ""
 "Вы соединялись и отсоединялись слишком часто. Подождите 10 минут и "
 "попытайтесь снова. Если вы продолжите попытки, вам придётся ждать ещё дольше."
 
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, fuzzy, c-format
-msgid "Error requesting "
+msgid "Error requesting %s: %s"
 msgstr "Ошибка запроса маркера входа"
 
 msgid "AOL does not allow your screen name to authenticate here"
@@ -7132,6 +7163,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "_Установить соединение"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "Сервер закрыл соединение"
+
 msgid "Get AIM Info"
 msgstr "Получить информацию AIM"
 
@@ -7141,6 +7176,10 @@ msgstr "Изменить комментарий собеседника"
 
 msgid "Get Status Msg"
 msgstr "Получить сообщение о статусе"
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "Прямое соединение установлено"
 
 msgid "Direct IM"
 msgstr "Прямое соединение"
@@ -8057,8 +8096,8 @@ msgstr "%d отключил файл %s"
 msgid "File Send"
 msgstr "Отправка файла"
 
-#, c-format
-msgid "%d canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%d cancelled the transfer of %s"
 msgstr "%d отменил передачу %s"
 
 #, c-format
@@ -9603,6 +9642,9 @@ msgstr "Языковой формат чата"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Игнорировать приглашения в конференции и чаты"
 
+msgid "Use account proxy for SSL connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "URL списка чатов"
 
@@ -9629,6 +9671,10 @@ msgstr "Yahoo! ID"
 #, fuzzy
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Модуль протокола Yahoo"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s послал вам приглашение к веб-камере, которое ещё не поддерживается."
 
 msgid "Your SMS was not delivered"
 msgstr ""
@@ -9704,8 +9750,25 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Игнорировать собеседника?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "Ваша учётная запись заблокирована, войдите с web-сайта Yahoo!."
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "Неправильное имя пользователя или пароль"
+
+#, fuzzy
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+"Неизвестная ошибка номер %d. Вход с web-сайта Yahoo! может исправить это."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -10490,6 +10553,137 @@ msgstr ""
 "учётных записей позже через меню <b>Учётные записи->Управление учётными "
 "записями</b> окна списка собеседников."
 
+#. Buddy List
+msgid "Background Color"
+msgstr "Цвет фона"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "Эта группа была добавлена в список собеседников"
+
+#, fuzzy
+msgid "Layout"
+msgstr "Лаосский"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr ""
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Цвет фона"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Text"
+msgstr "Р_азвернуть"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Выбрать цвет фона"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_Свернуть"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "Выбрать цвет фона"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+#, fuzzy
+msgid "Contact Text"
+msgstr "Ярлык"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "В сети"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+#, fuzzy
+msgid "Away Text"
+msgstr "Отошёл"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "Не в сети"
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "Изменить пользовательскую информацию для %s"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+#, fuzzy
+msgid "Idle Text"
+msgstr "Текст настроения"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+#, fuzzy
+msgid "Message Text"
+msgstr "Сообщение отправлено"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "Изменить пользовательскую информацию для %s"
+
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
@@ -10937,7 +11131,8 @@ msgstr "_Псевдоним:"
 msgid "_Group:"
 msgstr "_Группа:"
 
-msgid "Auto_join when account becomes online."
+#, fuzzy
+msgid "Auto_join when account connects."
 msgstr "Автоматически _подключиться, когда учётная запись станет в сети."
 
 msgid "_Remain in chat after window is closed."
@@ -10969,112 +11164,6 @@ msgstr "/Инструменты"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Собеседники/Сортировать собеседников"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "Цвет фона"
-
-#, fuzzy
-msgid "The background color for the buddy list"
-msgstr "Эта группа была добавлена в список собеседников"
-
-#, fuzzy
-msgid "Layout"
-msgstr "Лаосский"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr ""
-
-#. Group
-#, fuzzy
-msgid "Expanded Background Color"
-msgstr "Цвет фона"
-
-msgid "The background color of an expanded group"
-msgstr ""
-
-#, fuzzy
-msgid "Expanded Text"
-msgstr "Р_азвернуть"
-
-msgid "The text information for when a group is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Background Color"
-msgstr "Выбрать цвет фона"
-
-msgid "The background color of a collapsed group"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Text"
-msgstr "_Свернуть"
-
-msgid "The text information for when a group is collapsed"
-msgstr ""
-
-#. Buddy
-#, fuzzy
-msgid "Contact/Chat Background Color"
-msgstr "Выбрать цвет фона"
-
-msgid "The background color of a contact or chat"
-msgstr ""
-
-#, fuzzy
-msgid "Contact Text"
-msgstr "Ярлык"
-
-msgid "The text information for when a contact is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "On-line Text"
-msgstr "В сети"
-
-msgid "The text information for when a buddy is online"
-msgstr ""
-
-#, fuzzy
-msgid "Away Text"
-msgstr "Отошёл"
-
-msgid "The text information for when a buddy is away"
-msgstr ""
-
-#, fuzzy
-msgid "Off-line Text"
-msgstr "Не в сети"
-
-msgid "The text information for when a buddy is off-line"
-msgstr ""
-
-#, fuzzy
-msgid "Idle Text"
-msgstr "Текст настроения"
-
-msgid "The text information for when a buddy is idle"
-msgstr ""
-
-#, fuzzy
-msgid "Message Text"
-msgstr "Сообщение отправлено"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr ""
-
-msgid "Message (Nick Said) Text"
-msgstr ""
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-
-#, fuzzy
-msgid "The text information for a buddy's status"
-msgstr "Изменить пользовательскую информацию для %s"
 
 #, fuzzy
 msgid "Type the host name for this certificate."
@@ -11160,6 +11249,10 @@ msgstr "/_Беседа"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Беседа/Новое мгновенное сооб_щение..."
+
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Беседа/Приг_ласить..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Беседа/_Найти..."
@@ -11552,8 +11645,8 @@ msgstr "Испанский"
 msgid "Estonian"
 msgstr "Эстонский"
 
-msgid "Euskera(Basque)"
-msgstr "Баскский"
+msgid "Basque"
+msgstr ""
 
 msgid "Persian"
 msgstr "Персидский"
@@ -11760,11 +11853,13 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
-"<FONT SIZE=\"4\">Помощь по эл.почте:</FONT> <A HREF=\"mailto:support@pidgin."
-"im\">support@pidgin.im</A><BR/><BR/>"
 
 #, fuzzy, c-format
 msgid ""
@@ -12339,67 +12434,48 @@ msgstr "_Просмотреть папку журналов"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s. Наберите `%s -h' для получения дополнительной информации.\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"Использование: %s [КЛЮЧ]...\n"
-"\n"
-"  -c, --config=КАТ    использовать каталог КАТ для файлов конфигурации\n"
-"  -d, --debug         выводить отладочную информацию в стандартный вывод\n"
-"  -h, --help          показать эту справку и выйти\n"
-"  -m, --multiple      не ограничиваться единственной копией программы\n"
-"  -n, --nologin       не входить автоматически\n"
-"  -l, --login[=ИМЯ]   включить указанную(-ые) учётную(-ые) запись(-и) \n"
-"                      (необязательный аргумент ИМЯ задаёт одну или \n"
-"                      несколько учётных записей, разделённых запятыми.\n"
-"                      без этого, только первая запись будет включена).\n"
-"  --display=DISPLAY   использовать экран X\n"
-"  -v, --version       показать текущую версию и выйти\n"
 
-#, fuzzy, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"Использование: %s [КЛЮЧ]...\n"
-"\n"
-"  -c, --config=КАТ    использовать каталог КАТ для файлов конфигурации\n"
-"  -d, --debug         выводить отладочную информацию в стандартный вывод\n"
-"  -h, --help          показать эту справку и выйти\n"
-"  -m, --multiple      не ограничиваться единственной копией программы\n"
-"  -n, --nologin       не входить автоматически\n"
-"  -l, --login[=ИМЯ]   включить указанную(-ые) учётную(-ые) запись(-и) \n"
-"                      (необязательный аргумент ИМЯ задаёт одну или \n"
-"                      несколько учётных записей, разделённых запятыми.\n"
-"                      без этого, только первая запись будет включена).\n"
-"  -v, --version       показать текущую версию и выйти\n"
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+#, fuzzy
+msgid "allow multiple instances"
+msgstr "Разрешить множественные одновременные входы"
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -12443,10 +12519,6 @@ msgstr ""
 msgid "/Media/_Hangup"
 msgstr ""
 
-#, fuzzy
-msgid "Calling..."
-msgstr "Подсчёт..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr ""
@@ -12454,6 +12526,12 @@ msgstr ""
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr ""
+
+msgid "Incoming Call"
+msgstr ""
+
+msgid "_Pause"
+msgstr "_Пауза"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12823,12 +12901,16 @@ msgstr "Не могу запустить программу настройки �
 msgid "Cannot start browser configuration program."
 msgstr "Не могу запустить программу настройки веб-проводника"
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Пример: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Выключить"
 
 #, fuzzy, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Определять IP-адрес _автоматически"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Пример: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Публичный _IP:"
@@ -12851,6 +12933,10 @@ msgstr "_Конечный порт:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr ""
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "ST_UN-сервер:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Прокси-сервер &amp; браузер"
@@ -13430,9 +13516,6 @@ msgstr "_Добавить..."
 msgid "_Open Mail"
 msgstr "Открыть _почту"
 
-msgid "_Pause"
-msgstr "_Пауза"
-
 #, fuzzy
 msgid "_Edit"
 msgstr "Р_едактировать"
@@ -13498,78 +13581,6 @@ msgstr "Модуль прогнозирования доступности ко�
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr "Отображает статистическую информацию о доступности ваших приятелей"
-
-#, fuzzy
-msgid "Server name request"
-msgstr "Адрес сервера"
-
-#, fuzzy
-msgid "Enter an XMPP Server"
-msgstr "Войти на сервер конференций"
-
-#, fuzzy
-msgid "Select an XMPP server to query"
-msgstr "Выберите сервер конференций для опроса"
-
-#, fuzzy
-msgid "Find Services"
-msgstr "Сетевые службы"
-
-#, fuzzy
-msgid "Add to Buddy List"
-msgstr "Отправить список собеседников"
-
-#, fuzzy
-msgid "Gateway"
-msgstr "Отходит"
-
-#, fuzzy
-msgid "Directory"
-msgstr "Каталог журнала"
-
-#, fuzzy
-msgid "PubSub Collection"
-msgstr "Выбор звука"
-
-#, fuzzy
-msgid "PubSub Leaf"
-msgstr "Служба PubSub"
-
-#, fuzzy
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr "Описание"
-
-#. Create the window.
-#, fuzzy
-msgid "Service Discovery"
-msgstr "Информация о службе Разъяснения"
-
-#, fuzzy
-msgid "_Browse"
-msgstr "_Браузер:"
-
-#, fuzzy
-msgid "Server does not exist"
-msgstr "Пользователь не существует"
-
-#, fuzzy
-msgid "Server does not support service discovery"
-msgstr "Сервер не поддерживает блокировку"
-
-#, fuzzy
-msgid "XMPP Service Discovery"
-msgstr "Информация о службе Разъяснения"
-
-msgid "Allows browsing and registering services."
-msgstr ""
-
-#, fuzzy
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr "Этот модуль полезен для отладки XMPP серверов или клиентов."
 
 msgid "Buddy is idle"
 msgstr "Собеседник бездействует"
@@ -13662,6 +13673,80 @@ msgstr "Применять в чатах"
 
 msgid "Apply in IMs"
 msgstr "Применять в мгновенных сообщениях"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+#, fuzzy
+msgid "Server name request"
+msgstr "Адрес сервера"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Войти на сервер конференций"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "Выберите сервер конференций для опроса"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "Сетевые службы"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "Отправить список собеседников"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "Отходит"
+
+#, fuzzy
+msgid "Directory"
+msgstr "Каталог журнала"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "Выбор звука"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "Служба PubSub"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "Описание"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "Информация о службе Разъяснения"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_Браузер:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "Пользователь не существует"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "Сервер не поддерживает блокировку"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Информация о службе Разъяснения"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "Этот модуль полезен для отладки XMPP серверов или клиентов."
 
 msgid "By conversation count"
 msgstr "По количеству бесед"
@@ -14485,6 +14570,58 @@ msgstr ""
 "Этот модуль позволяет пользователю изменять форматы времени сообщений для "
 "бесед и журналов."
 
+#, fuzzy
+msgid "Audio"
+msgstr "Авто"
+
+#, fuzzy
+msgid "Video"
+msgstr " Видео"
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "Модули"
+
+#, fuzzy
+msgid "_Device"
+msgstr "Устройство"
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "Модули"
+
+#, fuzzy
+msgid "D_evice"
+msgstr "Устройство"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Voice/Video Settings"
+msgstr "Изменить настройки"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+
 msgid "Opacity:"
 msgstr "Непрозрачность:"
 
@@ -14612,6 +14749,116 @@ msgstr "Отправлять и получать прямые XMPP строфы.
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Этот модуль полезен для отладки XMPP серверов или клиентов."
+
+#~ msgid "Calling ... "
+#~ msgstr "Идёт вызов ... "
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "Неверная цепочка сертификатов"
+
+#~ msgid ""
+#~ "The certificate chain presented by %s does not have a valid digital "
+#~ "signature from the Certificate Authority from which it claims to have a "
+#~ "signature."
+#~ msgstr ""
+#~ "Цепочка сертификата, представленная %s, не имеет правильной "
+#~ "цифровойподписи в Авторизации Сертификатов, откуда она попыталась "
+#~ "получить подпись."
+
+#~ msgid "Invalid certificate authority signature"
+#~ msgstr "Неверная авторская подпись сертификата"
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "Присоединить/Обособить конфигурацию скрывания"
+
+#~ msgid "Minimum Room Size"
+#~ msgstr "Минимальный размер комнаты"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "Время неактивности пользователя (в минутах)"
+
+#, fuzzy
+#~ msgid "Failed to open the file"
+#~ msgstr "Не удалось открыть файл '%s': %s"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "Ваша учётная запись заблокирована, войдите с web-сайта Yahoo!."
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "Баскский"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">Помощь по эл.почте:</FONT> <A HREF=\"mailto:"
+#~ "support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Использование: %s [КЛЮЧ]...\n"
+#~ "\n"
+#~ "  -c, --config=КАТ    использовать каталог КАТ для файлов конфигурации\n"
+#~ "  -d, --debug         выводить отладочную информацию в стандартный вывод\n"
+#~ "  -h, --help          показать эту справку и выйти\n"
+#~ "  -m, --multiple      не ограничиваться единственной копией программы\n"
+#~ "  -n, --nologin       не входить автоматически\n"
+#~ "  -l, --login[=ИМЯ]   включить указанную(-ые) учётную(-ые) запись(-и) \n"
+#~ "                      (необязательный аргумент ИМЯ задаёт одну или \n"
+#~ "                      несколько учётных записей, разделённых запятыми.\n"
+#~ "                      без этого, только первая запись будет включена).\n"
+#~ "  --display=DISPLAY   использовать экран X\n"
+#~ "  -v, --version       показать текущую версию и выйти\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Использование: %s [КЛЮЧ]...\n"
+#~ "\n"
+#~ "  -c, --config=КАТ    использовать каталог КАТ для файлов конфигурации\n"
+#~ "  -d, --debug         выводить отладочную информацию в стандартный вывод\n"
+#~ "  -h, --help          показать эту справку и выйти\n"
+#~ "  -m, --multiple      не ограничиваться единственной копией программы\n"
+#~ "  -n, --nologin       не входить автоматически\n"
+#~ "  -l, --login[=ИМЯ]   включить указанную(-ые) учётную(-ые) запись(-и) \n"
+#~ "                      (необязательный аргумент ИМЯ задаёт одну или \n"
+#~ "                      несколько учётных записей, разделённых запятыми.\n"
+#~ "                      без этого, только первая запись будет включена).\n"
+#~ "  -v, --version       показать текущую версию и выйти\n"
 
 #, fuzzy
 #~ msgid "Malformed BOSH Connect Server"
@@ -15066,9 +15313,6 @@ msgstr "Этот модуль полезен для отладки XMPP серв
 #~ "попытайтесь снова. Если вы продолжите попытки, вам придётся ждать ещё "
 #~ "дольше."
 
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "Произошла неизвестная ошибка подключения: %s."
-
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "Произошла неизвестная ошибка %d. Информация: %s"
 
@@ -15132,9 +15376,6 @@ msgstr "Этот модуль полезен для отладки XMPP серв
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "_Открыть ссылку в браузере"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "ST_UN-сервер:"
 
 #, fuzzy
 #~ msgid "Smiley _Image"

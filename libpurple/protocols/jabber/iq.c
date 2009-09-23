@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -282,11 +284,6 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	id = xmlnode_get_attrib(packet, "id");
 	iq_type = xmlnode_get_attrib(packet, "type");
 
-	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
-			"jabber-receiving-iq", js->gc, iq_type, id, from, packet));
-	if (signal_return)
-		return;
-
 	/*
 	 * child will be either the first tag child or NULL if there is no child.
 	 * Historically, we used just the 'query' subchild, but newer XEPs use
@@ -344,6 +341,11 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 		return;
 	}
+
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
+			"jabber-receiving-iq", js->gc, iq_type, id, from, packet));
+	if (signal_return)
+		return;
 
 	/* First, lets see if a special callback got registered */
 	if(type == JABBER_IQ_RESULT || type == JABBER_IQ_ERROR) {

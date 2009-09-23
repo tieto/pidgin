@@ -1,5 +1,29 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.6.2
+	* Afrikaans translation updated (Friedel Wolff)
+	* Albanian translation updated (Besnik Bleta)
+	* Basque translation updated (Mikel Pascual Aldabaldetreku)
+	* Chinese (Hong Kong) translation updated (Ambrose C. Li)
+	* Chinese (Simplified) translation updated (Aron Xu)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Czech translation updated (David Vachulka)
+	* Finnish translation updated (Timo Jyrinki)
+	* French translation updated (Éric Boumaour)
+	* German translation updated (Jochen Kemnade)
+	* Hebrew translation updated (Shalom Craimer)
+	* Hungarian translation updated (Gabor Kelemen)
+	* Italian translation updated (Claudio Satriano)
+	* Lithuanian translation updated (Laurynas Biveinis)
+	* Portuguese (Brazilian) translation updated (Rodrigo Luiz
+	  Marques Flores)
+	* Romanian translation updated (Mişu Moldovan and Andrei Popescu)
+	* Slovak translation updated (loptosko)
+	* Slovenian translation updated (Martin Srebotnjak)
+
+version 2.6.1
+	* No changes
+
 version 2.6.0
 	* Afrikaans translation updated (Friedel Wolff)
 	* Armenian translation added (David Avsharyan)
@@ -14,6 +38,7 @@ version 2.6.0
 	* Czech translation updated (David Vachulka)
 	* Dutch translation updated (Daniël Heres)
 	* English (British) translation updated (Luke Ross)
+	* Esperanto translation updated (Stéphane Fillod)
 	* Finnish translation updated (Timo Jyrinki)
 	* French translation updated (Éric Boumaour)
 	* Galician translation updated (Frco. Javier Rial Rodríguez)
@@ -27,12 +52,17 @@ version 2.6.0
 	* Portuguese (Brazilian) translation updated (Rodrigo Luiz
 	  Marques Flores)
 	* Punjabi translation updated (Amanpreet Singh Alam)
+	* Romanian translation updated (Mişu Moldovan and new translator Andrei
+	  Popescu)
 	* Russian translation updated (Антон Самохвалов)
 	* Slovak translation updated (loptosko)
 	* Slovenian translation updated (Martin Srebotnjak)
 	* Spanish translation updated (Javier Fernández-Sanguino)
 	* Swahili translation added (Paul Msegeya)
 	* Swedish translation updated (Peter Hjalmarsson)
+
+version 2.5.9
+	* No changes
 
 version 2.5.8
 	* No changes

@@ -89,6 +89,7 @@ typedef struct
 typedef struct
 {
 	char *smile;
+	PurpleSmiley *ps;
 	MsnObject *obj;
 } MsnEmoticon;
 
@@ -265,6 +266,7 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
 	MsnPage *page;
+	MsnMessage *msg;
 	MsnUser *user;
 	char *payload = NULL;
 	const char *mobile_number = NULL;
@@ -294,6 +296,9 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 
 	msn_transaction_set_payload(trans, payload, payload_len);
 	g_free(payload);
+
+	msg = msn_message_new_plain(entry);
+	msn_transaction_set_data(trans, msg);
 
 	msn_page_destroy(page);
 
@@ -1078,12 +1083,10 @@ msn_msg_emoticon_add(GString *current, MsnEmoticon *emoticon)
 	strobj = msn_object_to_string(obj);
 
 	if (current)
-		g_string_append_printf(current, "\t%s\t%s",
-				emoticon->smile, strobj);
+		g_string_append_printf(current, "\t%s\t%s", emoticon->smile, strobj);
 	else {
 		current = g_string_new("");
-		g_string_printf(current,"%s\t%s",
-					emoticon->smile, strobj);
+		g_string_printf(current, "%s\t%s", emoticon->smile, strobj);
 	}
 
 	g_free(strobj);
@@ -1141,6 +1144,7 @@ static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
 
 		emoticon = g_new0(MsnEmoticon, 1);
 		emoticon->smile = g_strdup(purple_smiley_get_shortcut(smiley));
+		emoticon->ps = smiley;
 		emoticon->obj = msn_object_new_from_image(img,
 				purple_imgstore_get_filename(img),
 				username, MSN_OBJECT_EMOTICON);
@@ -1163,7 +1167,7 @@ msn_send_im_message(MsnSession *session, MsnMessage *msg)
 
 	smileys = msn_msg_grab_emoticons(msg->body, username);
 	while (smileys) {
-		smile = (MsnEmoticon*)smileys->data;
+		smile = (MsnEmoticon *)smileys->data;
 		emoticons = msn_msg_emoticon_add(emoticons, smile);
 		msn_emoticon_destroy(smile);
 		smileys = g_slist_delete_link(smileys, smileys);
@@ -1419,7 +1423,7 @@ add_pending_buddy(MsnSession *session,
 	{
 		PurpleBuddy * buddy = purple_find_buddy(session->account, who);
 		gchar *buf;
-		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be a valid email address."), who);
+		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be valid email addresses."), who);
 		if (!purple_conv_present_error(who, session->account, buf))
 			purple_notify_error(purple_account_get_connection(session->account), NULL, _("Unable to Add"), buf);
 		g_free(buf);
@@ -1509,7 +1513,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 
 	if (!purple_email_is_valid(bname)) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be a valid email address."), bname);
+		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be valid email addresses."), bname);
 		if (!purple_conv_present_error(bname, purple_connection_get_account(gc), buf))
 			purple_notify_error(gc, NULL, _("Unable to Add"), buf);
 		g_free(buf);
@@ -1714,13 +1718,19 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 {
 	PurpleAccount *account;
 	MsnSession *session;
+	const char *username;
 	MsnSwitchBoard *swboard;
 	MsnMessage *msg;
 	char *msgformat;
 	char *msgtext;
+	size_t msglen;
+	MsnEmoticon *smile;
+	GSList *smileys;
+	GString *emoticons = NULL;
 
 	account = purple_connection_get_account(gc);
 	session = gc->proto_data;
+	username = purple_account_get_username(account);
 	swboard = msn_session_find_swboard_with_id(session, id);
 
 	if (swboard == NULL)
@@ -1732,8 +1742,9 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	swboard->flag |= MSN_SB_FLAG_IM;
 
 	msn_import_html(message, &msgformat, &msgtext);
+	msglen = strlen(msgtext);
 
-	if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
+	if ((msglen == 0) || (msglen + strlen(msgformat) + strlen(VERSION) > 1564))
 	{
 		g_free(msgformat);
 		g_free(msgtext);
@@ -1743,6 +1754,29 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 
 	msg = msn_message_new_plain(msgtext);
 	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+
+	smileys = msn_msg_grab_emoticons(msg->body, username);
+	while (smileys) {
+		smile = (MsnEmoticon *)smileys->data;
+		emoticons = msn_msg_emoticon_add(emoticons, smile);
+		if (purple_conv_custom_smiley_add(swboard->conv, smile->smile,
+		                                  "sha1", purple_smiley_get_checksum(smile->ps),
+		                                  FALSE)) {
+			gconstpointer data;
+			size_t len;
+			data = purple_smiley_get_data(smile->ps, &len);
+			purple_conv_custom_smiley_write(swboard->conv, smile->smile, data, len);
+			purple_conv_custom_smiley_close(swboard->conv, smile->smile);
+		}
+		msn_emoticon_destroy(smile);
+		smileys = g_slist_delete_link(smileys, smileys);
+	}
+
+	if (emoticons) {
+		msn_send_emoticons(swboard, emoticons);
+		g_string_free(emoticons, TRUE);
+	}
+
 	msn_switchboard_send_msg(swboard, msg, FALSE);
 	msn_message_destroy(msg);
 

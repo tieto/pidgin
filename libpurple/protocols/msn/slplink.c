@@ -441,6 +441,7 @@ msn_slplink_send_ack(MsnSlpLink *slplink, MsnMessage *msg)
 	slpmsg->info = "SLP ACK";
 
 	msn_slplink_send_slpmsg(slplink, slpmsg);
+	msn_slpmsg_destroy(slpmsg);
 }
 
 static void
@@ -456,7 +457,7 @@ send_file_cb(MsnSlpCall *slpcall)
 	slpmsg->info = "SLP FILE";
 
 	xfer = (PurpleXfer *)slpcall->xfer;
-	purple_xfer_start(slpcall->xfer, 0, NULL, 0);
+	purple_xfer_start(slpcall->xfer, -1, NULL, 0);
 	slpmsg->fp = xfer->dest_fp;
 	if (g_stat(purple_xfer_get_local_filename(xfer), &st) == 0)
 		slpmsg->size = st.st_size;
@@ -502,13 +503,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		g_return_if_reached();
 	}
 
-	slpmsg = NULL;
 	data = msn_message_get_bin_data(msg, &len);
-
-	/*
-		OVERHEAD!
-		if (msg->msnslp_header.length < msg->msnslp_header.total_size)
-	 */
 
 	offset = msg->msnslp_header.offset;
 
@@ -537,7 +532,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 					if (xfer != NULL)
 					{
 						purple_xfer_ref(xfer);
-						purple_xfer_start(xfer,	0, NULL, 0);
+						purple_xfer_start(xfer,	-1, NULL, 0);
 
 						if (xfer->data == NULL) {
 							purple_xfer_unref(xfer);
@@ -566,13 +561,12 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	else
 	{
 		slpmsg = msn_slplink_message_find(slplink, msg->msnslp_header.session_id, msg->msnslp_header.id);
-	}
-
-	if (slpmsg == NULL)
-	{
-		/* Probably the transfer was canceled */
-		purple_debug_error("msn", "Couldn't find slpmsg\n");
-		return;
+		if (slpmsg == NULL)
+		{
+			/* Probably the transfer was canceled */
+			purple_debug_error("msn", "Couldn't find slpmsg\n");
+			return;
+		}
 	}
 
 	if (slpmsg->fp)
@@ -580,7 +574,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		/* fseek(slpmsg->fp, offset, SEEK_SET); */
 		len = fwrite(data, 1, len, slpmsg->fp);
 	}
-	else if (slpmsg->size)
+	else if (slpmsg->size && slpmsg->buffer)
 	{
 		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size)
 		{

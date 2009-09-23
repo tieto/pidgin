@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-18 01:43-0700\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2009-07-15 15:15+0200\n"
 "Last-Translator: Antón Méixome <meixome@mancomun.org>\n"
 "Language-Team: Galician <g11n@mancomun.org>\n"
@@ -871,8 +871,8 @@ msgstr "Todas as conversas"
 msgid "System Log"
 msgstr "Rexistro do sistema"
 
-msgid "Calling ... "
-msgstr "Chamando... "
+msgid "Calling..."
+msgstr "Chamando..."
 
 msgid "Hangup"
 msgstr "Colgar"
@@ -1512,6 +1512,32 @@ msgstr ""
 "Cando se abra unha nova conversa este complemento introducirá a última "
 "conversa na actual."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+"\n"
+"Obtendo TinyURL..."
+
+#, fuzzy
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr "Só crear TinyURL para enderezos deste tamaño ou superior"
+
+msgid "TinyURL (or other) address prefix"
+msgstr "TinyURL (ou outro) prefixo de enderezo"
+
+msgid "TinyURL"
+msgstr "TinyURL"
+
+msgid "TinyURL plugin"
+msgstr "Plugin TinyURL"
+
+#, fuzzy
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+"Ao recibir unha mensaxe con URL, utilizar o TinyURL para o copiado rápido"
+
 msgid "Online"
 msgstr "Conectado"
 
@@ -1554,30 +1580,6 @@ msgstr "GntLastlog"
 
 msgid "Lastlog plugin."
 msgstr "Complemento de Lastlog."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-"\n"
-"Obtendo TinyURL..."
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr "Só crear TinyURL para enderezos deste tamaño ou superior"
-
-msgid "TinyURL (or other) address prefix"
-msgstr "TinyURL (ou outro) prefixo de enderezo"
-
-msgid "TinyURL"
-msgstr "TinyURL"
-
-msgid "TinyURL plugin"
-msgstr "Plugin TinyURL"
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
-"Ao recibir unha mensaxe con URL, utilizar o TinyURL para o copiado rápido"
 
 msgid "accounts"
 msgstr "contas"
@@ -1640,6 +1642,49 @@ msgstr "Contactos"
 msgid "buddy list"
 msgstr "lista de contactos"
 
+#, fuzzy
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+"O certificado presentado por \"%s\" está autoasinado. Non se pode verificar "
+"automaticamente."
+
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
+msgstr ""
+"O certificado raíz polo que este certificado afirma ser emitido é "
+"descoñecido para o Pidgin."
+
+#, fuzzy
+msgid "The certificate is not valid yet."
+msgstr "A cadea de certificación presentada para %s non é válida."
+
+#, fuzzy
+msgid "The certificate has expired and should not be considered valid."
+msgstr "A cadea de certificación presentada para %s non é válida."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+#, fuzzy
+msgid "The certificate presented is not issued to this domain."
+msgstr "A cadea de certificación presentada para %s non é válida."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+"Non ten unha base de datos de certificados raíz, así que o certificado non "
+"se pode validar."
+
+#, fuzzy
+msgid "The certificate chain presented is invalid."
+msgstr "A cadea de certificación presentada para %s non é válida."
+
+#, fuzzy
+msgid "The certificate has been revoked."
+msgstr "A chamada terminou."
+
+msgid "An unknown certificate error occurred."
+msgstr ""
+
 msgid "(DOES NOT MATCH)"
 msgstr "(NON COINCIDE)"
 
@@ -1682,66 +1727,22 @@ msgstr "Verificación de certificado SSL"
 msgid "_View Certificate..."
 msgstr "_Ver certificado..."
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"O certificado presentado por \"%s\" está autoasinado. Non se pode verificar "
-"automaticamente."
-
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
+#, fuzzy, c-format
+msgid "The certificate for %s could not be validated."
 msgstr "A cadea de certificación presentada para %s non é válida."
 
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
 #. TODO: Probably wrong.
-#. TODO: Probably wrong
 msgid "SSL Certificate Error"
 msgstr "Erro de certificado SSL"
 
-msgid "Invalid certificate chain"
-msgstr "Cadea de certificación non válida"
+#, fuzzy
+msgid "Unable to validate certificate"
+msgstr "Non é posíbel autenticar: %s"
 
-#. vrq will be completed by user_auth
+#, fuzzy, c-format
 msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-"Non ten unha base de datos de certificados raíz, así que o certificado non "
-"se pode validar."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr ""
-"O certificado raíz polo que este certificado afirma ser emitido é "
-"descoñecido para o Pidgin."
-
-#, c-format
-msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-"A cadea de certificación presentada por %s non ten unha sinatura dixital "
-"válida da Autoridade certificadora da que afirma ter unha sinatura."
-
-msgid "Invalid certificate authority signature"
-msgstr "Asinatura de autoridade certificadora non válida"
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
 "O certificado presentado por \"%s\" afirma vir de \"%s\" en vez do primeiro. "
 "Isto podería significar que non se está conectando ao servizo ao que pensa "
@@ -1983,19 +1984,19 @@ msgstr "Terminou a transferencia do ficheiro %s"
 msgid "File transfer complete"
 msgstr "Transferencia de ficheiros terminada"
 
-#, c-format
-msgid "You canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "You cancelled the transfer of %s"
 msgstr "Cancelou a transferencia de %s"
 
 msgid "File transfer cancelled"
 msgstr "Transferencia de ficheiros cancelada"
 
-#, c-format
-msgid "%s canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
 msgstr "%s cancelou a transferencia de %s"
 
-#, c-format
-msgid "%s canceled the file transfer"
+#, fuzzy, c-format
+msgid "%s cancelled the file transfer"
 msgstr "%s cancelou a transferencia de ficheiros"
 
 #, c-format
@@ -2191,6 +2192,33 @@ msgstr "<font color=\"red\"><b>Non se puido ler o ficheiro: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <RESPOSTA AUTOMÁTICA>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
+#, fuzzy
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Ocorreu o seguinte erro:"
+
+#, fuzzy
+msgid "Conference error."
+msgstr "Conferencia pechada"
+
+msgid "Error with your microphone."
+msgstr ""
+
+msgid "Error with your webcam."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error creating session: %s"
+msgstr "Erro ao crear a conexión"
 
 msgid "Error creating conference."
 msgstr "Erro ao crear a conversa."
@@ -2458,14 +2486,15 @@ msgstr ""
 "Probar a compatibilidade do complemento IPC como un servidor. Isto rexistra "
 "as ordes IPC."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "Configuración da ocultación de Unirse/Deixar"
+msgid "Hide Joins/Parts"
+msgstr ""
 
-msgid "Minimum Room Size"
-msgstr "Tamaño mínimo da sala"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr ""
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "Tempo de espera para a inactividade do usuario (en minutos)"
+msgid "If user has not spoken in this many minutes"
+msgstr ""
 
 msgid "Apply hiding rules to buddies"
 msgstr "Aplicar regras de ocultación aos contactos"
@@ -3830,6 +3859,11 @@ msgstr "URL"
 msgid "Street Address"
 msgstr "Rúa"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "Enderezo ampliado"
 
@@ -3912,20 +3946,24 @@ msgstr "Foto"
 msgid "Logo"
 msgstr "Logotipo"
 
+#, fuzzy, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr "Está a punto de eliminar a %s da lista de contactos. Quere continuar?"
+
+msgid "Cancel Presence Notification"
+msgstr "Cancelar a notificación de presenza"
+
 msgid "Un-hide From"
 msgstr "Non ocultarse de"
 
 msgid "Temporarily Hide From"
 msgstr "Ocultarse temporalmente de"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "Cancelar a notificación de presenza"
-
 msgid "(Re-)Request authorization"
 msgstr "(Volver a) pedir autorización"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
@@ -4529,9 +4567,10 @@ msgstr ""
 "[nick1] [nick2] ...: Obter os usuarios cunha afiliación ou conxunto de "
 "afiliación de usuarios coa sala."
 
+#, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "rol &lt;usuario&gt; &lt;moderador|participante|visitante|ningún&gt;:  "
 "[nick1] [nick2] ...: Obter os usuarios cun rol ou conxunto de roles de "
@@ -4679,9 +4718,6 @@ msgstr "Produciuse un erro na transferencia do fluxo de bytes in-band\n"
 
 msgid "Transfer was closed."
 msgstr "A transferencia foi cerrada."
-
-msgid "Failed to open the file"
-msgstr "Fallou ao abrir o ficheiro"
 
 msgid "Failed to open in-band bytestream"
 msgstr "Produciuse un erro no fluxo de bytes in-band"
@@ -4959,8 +4995,8 @@ msgstr "Ficheiro de contactos incorrecto"
 msgid "Not expected"
 msgstr "Non se agardaba"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+#, fuzzy
+msgid "Friendly name is changing too rapidly"
 msgstr "Os nomes dos contactos cambian demasiado rápido"
 
 #, c-format
@@ -5531,9 +5567,9 @@ msgstr "Recuperando a lista de contactos"
 msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr "%s enviou unconvite de cámara web mais aínda isto aínda non é posíbel."
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s enviou unconvite de cámara web, mais aínda non está dispoñíbel."
+#, fuzzy, c-format
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
+msgstr "%s enviou unconvite de cámara web mais aínda isto aínda non é posíbel."
 
 msgid "Away From Computer"
 msgstr "Ausente do computador"
@@ -5587,6 +5623,10 @@ msgstr "Quere eliminar tamén a este contacto da súa axenda de enderezos?"
 
 msgid "The username specified is invalid."
 msgstr "O nome especificado non é válido."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "Os nomes dos contactos cambian demasiado rápido"
 
 msgid "This Hotmail account may not be active."
 msgstr "Pode que esta conta do Hotmail non estea activa."
@@ -6266,7 +6306,9 @@ msgstr "Enderezo do servidor"
 msgid "Server port"
 msgstr "Porto do servidor"
 
-msgid "Received unexpected response from "
+#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s"
 msgstr "Recibiuse unha resposta inesperada de "
 
 #. username connecting too frequently
@@ -6277,8 +6319,10 @@ msgstr ""
 "Conectouse e desconectouse demasiadas veces. Agarde dez minutos e inténteo "
 "de novo. Se segue a intentalo vai precisar agardar cada vez máis tempo."
 
-#, c-format
-msgid "Error requesting "
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
+#, fuzzy, c-format
+msgid "Error requesting %s: %s"
 msgstr "Erro ao consultar"
 
 msgid "AOL does not allow your screen name to authenticate here"
@@ -7062,6 +7106,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "C_onectar"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "O servidor cerrou a conexión"
+
 msgid "Get AIM Info"
 msgstr "Obter información de AIM"
 
@@ -7071,6 +7119,10 @@ msgstr "Editar o comentario de contacto"
 
 msgid "Get Status Msg"
 msgstr "Obter mensaxe de estado"
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "MI directa establecida"
 
 msgid "Direct IM"
 msgstr "MI directa"
@@ -7901,8 +7953,8 @@ msgstr "%d rexeitou o ficheiro %s"
 msgid "File Send"
 msgstr "Ficheiro enviado"
 
-#, c-format
-msgid "%d canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%d cancelled the transfer of %s"
 msgstr "%d cancelou a transferencia de %s"
 
 #, c-format
@@ -8892,9 +8944,6 @@ msgstr "Non se puido cargar o par de chaves SILC"
 msgid "Connecting to SILC Server"
 msgstr "Conectando co servidor SILC"
 
-msgid "Unable to not load SILC key pair"
-msgstr "Non se puido cargar o par de chaves SILC"
-
 msgid "Out of memory"
 msgstr "Sen memoria"
 
@@ -9438,6 +9487,9 @@ msgstr "Localización da sala de conversa"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorar os convites a salas de conferencias ou de conversa"
 
+msgid "Use account proxy for SSL connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "URL de lista de salas da conversa"
 
@@ -9462,6 +9514,10 @@ msgstr "ID de Yahoo JAPAN..."
 #. *  description
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Complemento de protocolo Yahoo! JAPAN"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s enviou unconvite de cámara web, mais aínda non está dispoñíbel."
 
 msgid "Your SMS was not delivered"
 msgstr "O seu SMS non foi entregado"
@@ -9538,8 +9594,26 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Quere ignorar o contacto?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "A súa conta está bloqueada. Inicie unha sesión no sitio web de Yahoo!"
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "O nome de conta ou contrasinal non é correcto"
+
+#, fuzzy
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+"Conta bloqueada: Demasiados intentos fallos. Se inicia sesión no sitio web "
+"de Yahoo! é posíbel que isto se arranxe."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -9717,12 +9791,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "O perfil do usuario está baleiro."
 
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s declinou o seu convite de conferencia na sala \"%s\" porque \"%s\"."
-
-msgid "Invitation Rejected"
-msgstr "Convite rexeitado"
+#, fuzzy, c-format
+msgid "%s has declined to join."
+msgstr "%s conectouse."
 
 msgid "Failed to join chat"
 msgstr "Fallou ao unirse á conversa"
@@ -10308,6 +10379,129 @@ msgstr ""
 "Pode voltar máis tarde a esta xanela para engadir, editar ou eliminar contas "
 "desde<b>Contas->Xestionar contas</b> desde a xanela da lista de contactos"
 
+#. Buddy List
+msgid "Background Color"
+msgstr "Cor do fondo"
+
+msgid "The background color for the buddy list"
+msgstr "A cor de fondo para a lista de contactos"
+
+msgid "Layout"
+msgstr "Disposición"
+
+#, fuzzy
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr "A disposición das iconas, nome e estado da lista blist"
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Background Color"
+msgstr "Cor do fondo expandida"
+
+msgid "The background color of an expanded group"
+msgstr "A cor de fondo dun grupo expandido"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Text"
+msgstr "Texto _expandido"
+
+msgid "The text information for when a group is expanded"
+msgstr "A información textual para cando se expande un grupo"
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Background Color"
+msgstr "Cor do fondo colapsada"
+
+msgid "The background color of a collapsed group"
+msgstr "A cor de fondo dun grupo colapsado"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Text"
+msgstr "_Contraer o texto"
+
+msgid "The text information for when a group is collapsed"
+msgstr "A inforamción textual para cando un grupo se colapsa"
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+msgid "Contact/Chat Background Color"
+msgstr "Cor de fondo para Contacto/Chat"
+
+msgid "The background color of a contact or chat"
+msgstr "A cor de fondo dun contacto ou chat"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+msgid "Contact Text"
+msgstr "Texto do contacto"
+
+msgid "The text information for when a contact is expanded"
+msgstr "A información textual para cando un contacto se expande"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "Texto para conectado"
+
+msgid "The text information for when a buddy is online"
+msgstr "A información textual para cando un contacto está en liña"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+msgid "Away Text"
+msgstr "Texto de despedida"
+
+msgid "The text information for when a buddy is away"
+msgstr "A información textual para cando un contacto se foi"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "Texto para Desconectado"
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "A información textual para cando un contacto está desconectado"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+msgid "Idle Text"
+msgstr "Texto para Inactivo"
+
+msgid "The text information for when a buddy is idle"
+msgstr "A información textual para cando un contacto está inactivo"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message Text"
+msgstr "Texto de mensaxe"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr "A información textual para cando un contacto ten unha mensaxe sen ler"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr "Texto da mensaxe (Alcume referido)"
+
+#, fuzzy
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+"A información textual para cando un chat ten unha mensaxe sen ler que "
+"menciona o seu alcume"
+
+msgid "The text information for a buddy's status"
+msgstr "Información textual para o estado do contacto"
+
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
@@ -10745,7 +10939,8 @@ msgstr "A_lias:"
 msgid "_Group:"
 msgstr "_Grupo:"
 
-msgid "Auto_join when account becomes online."
+#, fuzzy
+msgid "Auto_join when account connects."
 msgstr "_Unirse automatiamente cando unha conta se volve activa."
 
 msgid "_Remain in chat after window is closed."
@@ -10777,100 +10972,6 @@ msgstr "/Ferramentas"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Contactos/Ordenar contactos"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "Cor do fondo"
-
-msgid "The background color for the buddy list"
-msgstr "A cor de fondo para a lista de contactos"
-
-msgid "Layout"
-msgstr "Disposición"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr "A disposición das iconas, nome e estado da lista blist"
-
-#. Group
-msgid "Expanded Background Color"
-msgstr "Cor do fondo expandida"
-
-msgid "The background color of an expanded group"
-msgstr "A cor de fondo dun grupo expandido"
-
-msgid "Expanded Text"
-msgstr "Texto _expandido"
-
-msgid "The text information for when a group is expanded"
-msgstr "A información textual para cando se expande un grupo"
-
-msgid "Collapsed Background Color"
-msgstr "Cor do fondo colapsada"
-
-msgid "The background color of a collapsed group"
-msgstr "A cor de fondo dun grupo colapsado"
-
-msgid "Collapsed Text"
-msgstr "_Contraer o texto"
-
-msgid "The text information for when a group is collapsed"
-msgstr "A inforamción textual para cando un grupo se colapsa"
-
-#. Buddy
-msgid "Contact/Chat Background Color"
-msgstr "Cor de fondo para Contacto/Chat"
-
-msgid "The background color of a contact or chat"
-msgstr "A cor de fondo dun contacto ou chat"
-
-msgid "Contact Text"
-msgstr "Texto do contacto"
-
-msgid "The text information for when a contact is expanded"
-msgstr "A información textual para cando un contacto se expande"
-
-msgid "On-line Text"
-msgstr "Texto para conectado"
-
-msgid "The text information for when a buddy is online"
-msgstr "A información textual para cando un contacto está en liña"
-
-msgid "Away Text"
-msgstr "Texto de despedida"
-
-msgid "The text information for when a buddy is away"
-msgstr "A información textual para cando un contacto se foi"
-
-msgid "Off-line Text"
-msgstr "Texto para Desconectado"
-
-msgid "The text information for when a buddy is off-line"
-msgstr "A información textual para cando un contacto está desconectado"
-
-msgid "Idle Text"
-msgstr "Texto para Inactivo"
-
-msgid "The text information for when a buddy is idle"
-msgstr "A información textual para cando un contacto está inactivo"
-
-msgid "Message Text"
-msgstr "Texto de mensaxe"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr "A información textual para cando un contacto ten unha mensaxe sen ler"
-
-msgid "Message (Nick Said) Text"
-msgstr "Texto da mensaxe (Alcume referido)"
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-"A información textual para cando un chat ten unha mensaxe sen ler que "
-"menciona o seu alcume"
-
-msgid "The text information for a buddy's status"
-msgstr "Información textual para o estado do contacto"
 
 msgid "Type the host name for this certificate."
 msgstr "Escriba o nome do host deste certificado."
@@ -10954,6 +11055,10 @@ msgstr "/_Conversa"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Conversa/_Mensaxe instantánea nova..."
+
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Conversa/Con_vidar..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Conversa/_Buscar..."
@@ -11336,8 +11441,8 @@ msgstr "Castelán"
 msgid "Estonian"
 msgstr "Estoniano"
 
-msgid "Euskera(Basque)"
-msgstr "Euskera"
+msgid "Basque"
+msgstr ""
 
 msgid "Persian"
 msgstr "Persa"
@@ -11540,11 +11645,13 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
-"<FONT SIZE=\"4\">Axuda vía correo:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
 
 #, c-format
 msgid ""
@@ -11777,14 +11884,6 @@ msgstr "L_impar as transferencias rematadas"
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "_Detalles da transferencia de ficheiros"
-
-#. Pause button
-msgid "_Pause"
-msgstr "_Deter"
-
-#. Resume button
-msgid "_Resume"
-msgstr "_Continuar"
 
 msgid "Paste as Plain _Text"
 msgstr "Pegar como _texto plano"
@@ -12110,67 +12209,46 @@ msgstr "%s %s. Probe `%s -h' para máis información.\n"
 
 #, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"Modo de uso: %s [OPCION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR para ficheiros de configuración\n"
-"  -d, --debug         imprime as mensaxes de depuración á saída estándar\n"
-"  -f, --force-online  forzar en liña, coidando o status da rede\n"
-"  -h, --help          mostra esta axuda e sae\n"
-"  -m, --multiple      non se asegurar de que hai só unha instancia\n"
-"  -n, --nologin       non iniciar a sesión de forma automática\n"
-"  -l, --login[=NOME]  activar a conta(s) específica(s) (o argumento "
-"opcional\n"
-"                         NOME especifica a(s) contas que hai que empregar "
-"separadas por comas.\n"
-"  --display=DISPLAY   X mostra para usa\n"
-"                      Sen isto só se activará a primeira conta).\n"
-"  -v, --version       mostra a versión actual e sae\n"
 
-#, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"Modo de uso: %s [OPCION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR para ficheiros de configuración\n"
-"  -d, --debug         imprime as mensaxes de depuración á saída estándar\n"
-"  -f, --force-online  forzar en liña, coidando o status da rede\n"
-"  -h, --help          mostra esta axuda e sae\n"
-"  -m, --multiple      non asegurarse de que hai só unha instancia\n"
-"  -n, --nologin       non conectarse de forma automática\n"
-"  -l, --login[=NOME]  conectarse de forma automática( argumento opcional "
-"NOME especifica\n"
-"                      a(s) conta(s) a empregar separadas por comas)\n"
-"  -v, --version       mostra a versión actual e sae\n"
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+#, fuzzy
+msgid "allow multiple instances"
+msgstr "Permitir múltiples inicios de sesión simultáneos"
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -12215,9 +12293,6 @@ msgstr "/_Media"
 msgid "/Media/_Hangup"
 msgstr "/Media/_Colgar"
 
-msgid "Calling..."
-msgstr "Chamando..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s desexa comezar unha sesión de audio/video contigo."
@@ -12225,6 +12300,12 @@ msgstr "%s desexa comezar unha sesión de audio/video contigo."
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr "%s desexa comezar unha sesión de video con vostede."
+
+msgid "Incoming Call"
+msgstr ""
+
+msgid "_Pause"
+msgstr "_Deter"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12585,12 +12666,16 @@ msgstr "Non se pode iniciar o programa de configuración do proxy."
 msgid "Cannot start browser configuration program."
 msgstr "Non se pode iniciar o programa de configuración do navegador."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Exemplo: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Desactivar"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Usar o enderezo IP detectado _automaticamente: %s"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Exemplo: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "_IP público:"
@@ -12613,6 +12698,10 @@ msgstr "Porto _final:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Servidor de reenvío (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "_Servidor:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Servidor proxy &amp; Navegador"
@@ -13232,66 +13321,6 @@ msgid "Displays statistical information about your buddies' availability"
 msgstr ""
 "Mostra información estatística sobre a dispoñibilidade dos seus contactos"
 
-msgid "Server name request"
-msgstr "Consulta do nome do servidor"
-
-msgid "Enter an XMPP Server"
-msgstr "Introduza un servidor de XMPP"
-
-msgid "Select an XMPP server to query"
-msgstr "Seleccione un servidor de XMPP ao que consultar"
-
-msgid "Find Services"
-msgstr "Encontrar servizos"
-
-msgid "Add to Buddy List"
-msgstr "Engadir á lista de contactos"
-
-msgid "Gateway"
-msgstr "Pasarela"
-
-msgid "Directory"
-msgstr "Directorio"
-
-msgid "PubSub Collection"
-msgstr "Selección de PubSub"
-
-msgid "PubSub Leaf"
-msgstr "Folla PubSub"
-
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr ""
-"\n"
-"<b>Descrición:</b> "
-
-#. Create the window.
-msgid "Service Discovery"
-msgstr "Información de descubrimento de servizo"
-
-msgid "_Browse"
-msgstr "_Navegador"
-
-msgid "Server does not exist"
-msgstr "O usuario non existe"
-
-msgid "Server does not support service discovery"
-msgstr "O servidor non usa ningún método de autenticación coñecido"
-
-msgid "XMPP Service Discovery"
-msgstr "Información de descubrimento de servizo XMPP"
-
-msgid "Allows browsing and registering services."
-msgstr "Permitir a navegación e o rexistro de servizos."
-
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr ""
-"Este complemento é útil para rexistar transportes con herdanza ou outros "
-"servizos sobre XMPP."
-
 msgid "Buddy is idle"
 msgstr "O contacto está inactivo"
 
@@ -13380,6 +13409,68 @@ msgstr "Aplicar nas conversas"
 
 msgid "Apply in IMs"
 msgstr "Aplicar nas MI"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+msgid "Server name request"
+msgstr "Consulta do nome do servidor"
+
+msgid "Enter an XMPP Server"
+msgstr "Introduza un servidor de XMPP"
+
+msgid "Select an XMPP server to query"
+msgstr "Seleccione un servidor de XMPP ao que consultar"
+
+msgid "Find Services"
+msgstr "Encontrar servizos"
+
+msgid "Add to Buddy List"
+msgstr "Engadir á lista de contactos"
+
+msgid "Gateway"
+msgstr "Pasarela"
+
+msgid "Directory"
+msgstr "Directorio"
+
+msgid "PubSub Collection"
+msgstr "Selección de PubSub"
+
+msgid "PubSub Leaf"
+msgstr "Folla PubSub"
+
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>Descrición:</b> "
+
+#. Create the window.
+msgid "Service Discovery"
+msgstr "Información de descubrimento de servizo"
+
+msgid "_Browse"
+msgstr "_Navegador"
+
+msgid "Server does not exist"
+msgstr "O usuario non existe"
+
+msgid "Server does not support service discovery"
+msgstr "O servidor non usa ningún método de autenticación coñecido"
+
+msgid "XMPP Service Discovery"
+msgstr "Información de descubrimento de servizo XMPP"
+
+msgid "Allows browsing and registering services."
+msgstr "Permitir a navegación e o rexistro de servizos."
+
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"Este complemento é útil para rexistar transportes con herdanza ou outros "
+"servizos sobre XMPP."
 
 msgid "By conversation count"
 msgstr "Por número de conversas"
@@ -14019,9 +14110,12 @@ msgstr "Ignorado"
 msgid "Founder"
 msgstr "Fundador"
 
+#. A user in a chat room who has special privileges.
 msgid "Operator"
 msgstr "Operador"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr "Semioperador"
 
@@ -14169,6 +14263,58 @@ msgstr ""
 "Este complemento permítelle ao usuario personalizar os formatos de marca de "
 "tempo para as mensaxes de conversas e as mensaxes de rexistro."
 
+#, fuzzy
+msgid "Audio"
+msgstr "Auto"
+
+#, fuzzy
+msgid "Video"
+msgstr " Vídeo"
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "Complementos"
+
+#, fuzzy
+msgid "_Device"
+msgstr "Dispositivo"
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "Complementos"
+
+#, fuzzy
+msgid "D_evice"
+msgstr "Dispositivo"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Voice/Video Settings"
+msgstr "Editar a configuración"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+
 msgid "Opacity:"
 msgstr "Opacidade:"
 
@@ -14296,6 +14442,129 @@ msgstr "Enviar e recibir entradas XMPP en bruto."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Este complemento é útil para depurar servidores XMPP ou clientes."
+
+#~ msgid "Calling ... "
+#~ msgstr "Chamando... "
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "Cadea de certificación non válida"
+
+#~ msgid ""
+#~ "The certificate chain presented by %s does not have a valid digital "
+#~ "signature from the Certificate Authority from which it claims to have a "
+#~ "signature."
+#~ msgstr ""
+#~ "A cadea de certificación presentada por %s non ten unha sinatura dixital "
+#~ "válida da Autoridade certificadora da que afirma ter unha sinatura."
+
+#~ msgid "Invalid certificate authority signature"
+#~ msgstr "Asinatura de autoridade certificadora non válida"
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "Configuración da ocultación de Unirse/Deixar"
+
+#~ msgid "Minimum Room Size"
+#~ msgstr "Tamaño mínimo da sala"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "Tempo de espera para a inactividade do usuario (en minutos)"
+
+#~ msgid "Failed to open the file"
+#~ msgstr "Fallou ao abrir o ficheiro"
+
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "Non se puido cargar o par de chaves SILC"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr ""
+#~ "A súa conta está bloqueada. Inicie unha sesión no sitio web de Yahoo!"
+
+#~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr ""
+#~ "%s declinou o seu convite de conferencia na sala \"%s\" porque \"%s\"."
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "Convite rexeitado"
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "Euskera"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">Axuda vía correo:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+
+#~ msgid "_Resume"
+#~ msgstr "_Continuar"
+
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Modo de uso: %s [OPCION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR para ficheiros de configuración\n"
+#~ "  -d, --debug         imprime as mensaxes de depuración á saída estándar\n"
+#~ "  -f, --force-online  forzar en liña, coidando o status da rede\n"
+#~ "  -h, --help          mostra esta axuda e sae\n"
+#~ "  -m, --multiple      non se asegurar de que hai só unha instancia\n"
+#~ "  -n, --nologin       non iniciar a sesión de forma automática\n"
+#~ "  -l, --login[=NOME]  activar a conta(s) específica(s) (o argumento "
+#~ "opcional\n"
+#~ "                         NOME especifica a(s) contas que hai que empregar "
+#~ "separadas por comas.\n"
+#~ "  --display=DISPLAY   X mostra para usa\n"
+#~ "                      Sen isto só se activará a primeira conta).\n"
+#~ "  -v, --version       mostra a versión actual e sae\n"
+
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Modo de uso: %s [OPCION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR para ficheiros de configuración\n"
+#~ "  -d, --debug         imprime as mensaxes de depuración á saída estándar\n"
+#~ "  -f, --force-online  forzar en liña, coidando o status da rede\n"
+#~ "  -h, --help          mostra esta axuda e sae\n"
+#~ "  -m, --multiple      non asegurarse de que hai só unha instancia\n"
+#~ "  -n, --nologin       non conectarse de forma automática\n"
+#~ "  -l, --login[=NOME]  conectarse de forma automática( argumento opcional "
+#~ "NOME especifica\n"
+#~ "                      a(s) conta(s) a empregar separadas por comas)\n"
+#~ "  -v, --version       mostra a versión actual e sae\n"
 
 #~ msgid "Malformed BOSH Connect Server"
 #~ msgstr "A conexión BOSH ao servidor está malformada"

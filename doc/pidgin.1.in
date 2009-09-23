@@ -49,6 +49,10 @@ Use \fIDIR\fR as the directory for config files instead of \fI~/.purple\fR.
 Print debugging messages to stdout.  These are the same debugging messages
 that are displayed in the \fBDebug Window\fR.
 .TP
+.B \-f, \-\-force-online
+Try to be online even if the network is reported (by Windows, or NetworkManager
+on Linux) to be unavailable.
+.TP
 .B \-h, \-\-help
 Print a summary of command line options and exit.
 .TP

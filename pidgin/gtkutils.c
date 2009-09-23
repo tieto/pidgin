@@ -1533,25 +1533,25 @@ static void dnd_set_icon_cancel_cb(_DndData *data)
 void
 pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char *who)
 {
-	GList *tmp;
 	GdkPixbuf *pb;
 	GList *files = purple_uri_list_extract_filenames((const gchar *)sd->data);
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	gboolean file_send_ok = FALSE;
 #ifndef _WIN32
 	PurpleDesktopItem *item;
 #endif
+	gchar *filename = NULL;
+	gchar *basename = NULL;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(who != NULL);
 
-	for(tmp = files; tmp != NULL ; tmp = g_list_next(tmp)) {
-		gchar *filename = tmp->data;
-		gchar *basename = g_path_get_basename(filename);
+	for ( ; files; files = g_list_delete_link(files, files)) {
+		g_free(filename);
+		g_free(basename);
 
-		/* Set the default action: don't send anything */
-		file_send_ok = FALSE;
+		filename = files->data;
+		basename = g_path_get_basename(filename);
 
 		/* XXX - Make ft API support creating a transfer with more than one file */
 		if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
@@ -1571,7 +1571,6 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 
 			g_free(str);
 			g_free(str2);
-
 			continue;
 		}
 
@@ -1629,6 +1628,12 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 						    (ft ? _("Send image file") : _("Insert in message")), (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
 							NULL);
 			g_object_unref(G_OBJECT(pb));
+
+			g_free(basename);
+			while (files) {
+				g_free(files->data);
+				files = g_list_delete_link(files, files);
+			}
 			return;
 		}
 
@@ -1686,15 +1691,21 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 				break;
 			}
 			purple_desktop_item_unref(item);
+			g_free(basename);
+			while (files) {
+				g_free(files->data);
+				files = g_list_delete_link(files, files);
+			}
 			return;
 		}
 #endif /* _WIN32 */
 
 		/* Everything is fine, let's send */
 		serv_send_file(gc, who, filename);
-		g_free(filename);
 	}
-	g_list_free(files);
+
+	g_free(filename);
+	g_free(basename);
 }
 
 void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec, PurpleIconScaleRules rules, int *width, int *height)
@@ -3699,9 +3710,13 @@ file_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	/* Open Containing Directory */
+#if GTK_CHECK_VERSION(2,6,0)
 	img = gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("Open _Containing Directory"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+#else
+	item = gtk_menu_item_new_with_mnemonic(_("Open _Containing Directory"));
+#endif
 	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(open_containing_cb), (gpointer)url);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
@@ -3727,7 +3742,7 @@ savefile_write_cb(gpointer user_data, char *file)
 	char *temp_file = user_data;
 	gchar *contents;
 	gsize length;
-	GError *error;
+	GError *error = NULL;
 
 	if (!g_file_get_contents(temp_file, &contents, &length, &error)) {
 		purple_debug_error("gtkutils", "Unable to read contents of %s: %s\n",
@@ -3767,9 +3782,13 @@ audio_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 	url = gtk_imhtml_link_get_url(link);
 
 	/* Play Sound */
+#if GTK_CHECK_VERSION(2,6,0)
 	img = gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Play Sound"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+#else
+	item = gtk_menu_item_new_with_mnemonic(_("_Play Sound"));
+#endif
 	g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_link_activate), link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 

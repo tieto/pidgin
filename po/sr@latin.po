@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-06 15:04-0700\n"
+"POT-Creation-Date: 2009-09-07 18:26-0700\n"
 "PO-Revision-Date: 2007-09-09 11:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -857,7 +857,7 @@ msgid "System Log"
 msgstr "Sistemski dnevnik"
 
 #, fuzzy
-msgid "Calling ... "
+msgid "Calling..."
 msgstr "Računam..."
 
 msgid "Hangup"
@@ -1493,6 +1493,28 @@ msgid ""
 msgstr ""
 "Kada je razgovor u otvoren, dodatak će uneti i prethodne razgovore u njega."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "URL melodije"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+
 msgid "Online"
 msgstr "Na vezi"
 
@@ -1535,28 +1557,6 @@ msgstr "GntPoslednjeBeleške"
 
 msgid "Lastlog plugin."
 msgstr "Dodatak za dnevnik."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr ""
-
-msgid "TinyURL (or other) address prefix"
-msgstr ""
-
-#, fuzzy
-msgid "TinyURL"
-msgstr "URL melodije"
-
-msgid "TinyURL plugin"
-msgstr ""
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
 
 msgid "accounts"
 msgstr "nalozi"
@@ -1619,6 +1619,48 @@ msgstr "Drugari"
 msgid "buddy list"
 msgstr "spisak drugara"
 
+#, fuzzy
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+"Sertifikar dao od „%s“ je samo-potpisan. Ne može biti automatski proveren."
+
+#, fuzzy
+msgid "The root certificate this one claims to be issued by is unknown."
+msgstr ""
+"Sertifikat koji se predstavlja kao administratorski je napoznat Pidžinu."
+
+#, fuzzy
+msgid "The certificate is not valid yet."
+msgstr "Lanac sertifikata dao za %s nije ispravan."
+
+#, fuzzy
+msgid "The certificate has expired and should not be considered valid."
+msgstr "Lanac sertifikata dao za %s nije ispravan."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+#, fuzzy
+msgid "The certificate presented is not issued to this domain."
+msgstr "Lanac sertifikata dao za %s nije ispravan."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+"Nemate bazu administratorskih sertifikata, tako da ovom sertifikatu ne može "
+"biti proverena ispravnost."
+
+#, fuzzy
+msgid "The certificate chain presented is invalid."
+msgstr "Lanac sertifikata dao za %s nije ispravan."
+
+#, fuzzy
+msgid "The certificate has been revoked."
+msgstr "Lanac sertifikata dao za %s nije ispravan."
+
+#, fuzzy
+msgid "An unknown certificate error occurred."
+msgstr "Došlo je do nepoznate greške pri prijavi: %s."
+
 msgid "(DOES NOT MATCH)"
 msgstr "(NE POKLAPA SE)"
 
@@ -1661,64 +1703,22 @@ msgstr "Provera SSL sertifikata"
 msgid "_View Certificate..."
 msgstr "_Pregledaj sertifikate..."
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"Sertifikar dao od „%s“ je samo-potpisan. Ne može biti automatski proveren."
-
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
+#, fuzzy, c-format
+msgid "The certificate for %s could not be validated."
 msgstr "Lanac sertifikata dao za %s nije ispravan."
 
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
 #. TODO: Probably wrong.
-#. TODO: Probably wrong
 msgid "SSL Certificate Error"
 msgstr "Greška u SSL sertifikatima"
 
-msgid "Invalid certificate chain"
-msgstr "Neispravan lanac sertifikata"
+#, fuzzy
+msgid "Unable to validate certificate"
+msgstr "Ne mogu da identifikujem: %s"
 
-#. vrq will be completed by user_auth
+#, fuzzy, c-format
 msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-"Nemate bazu administratorskih sertifikata, tako da ovom sertifikatu ne može "
-"biti proverena ispravnost."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr ""
-"Sertifikat koji se predstavlja kao administratorski je napoznat Pidžinu."
-
-#, c-format
-msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-"Lanac sertifikata dat od %s nama ispravan digitalni potpis od strane "
-"nadležnih za sertifikat od kojih sertifikat tvrdi da ima potpis."
-
-msgid "Invalid certificate authority signature"
-msgstr "Neispravan potpis nadležnih za sertifikat"
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
 "Sertifikat koga je dao „%s“ ukazuje da je potiče od „%s“. Ovo može da "
 "značida ste povezani na servis na koji mislite da jeste."
@@ -1759,7 +1759,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s se odjavio(la)"
 
 #. Unknown error
-#. Unknown error!
 msgid "Unknown error"
 msgstr "Nepoznata greška"
 
@@ -1948,6 +1947,10 @@ msgstr "Ponuda slanja %s za %s"
 msgid "Starting transfer of %s from %s"
 msgstr "Počinje prenos %s od %s"
 
+#, fuzzy, c-format
+msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
+msgstr "Prenos datoteke %s završen"
+
 #, c-format
 msgid "Transfer of file %s complete"
 msgstr "Prenos datoteke %s završen"
@@ -1955,19 +1958,19 @@ msgstr "Prenos datoteke %s završen"
 msgid "File transfer complete"
 msgstr "Prenos datoteke završen"
 
-#, c-format
-msgid "You canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "You cancelled the transfer of %s"
 msgstr "Obustavili ste prenos %s"
 
 msgid "File transfer cancelled"
 msgstr "Obustavljen je prenos"
 
-#, c-format
-msgid "%s canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
 msgstr "%s obustavi prenos %s"
 
-#, c-format
-msgid "%s canceled the file transfer"
+#, fuzzy, c-format
+msgid "%s cancelled the file transfer"
 msgstr "%s obustavi prenos datoteke"
 
 #, c-format
@@ -2152,6 +2155,33 @@ msgstr "<font color=\"red\"><b>Ne mogu da čitam datoteku: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <SAMO-ODGOVOR>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
+#, fuzzy
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Došlo je do nepoznate greške pri prijavi: %s."
+
+#, fuzzy
+msgid "Conference error."
+msgstr "Konferencija je zatvorena"
+
+msgid "Error with your microphone."
+msgstr ""
+
+msgid "Error with your webcam."
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error creating session: %s"
+msgstr "Greška pri uspostavljanju veze"
 
 #, fuzzy
 msgid "Error creating conference."
@@ -2411,14 +2441,15 @@ msgstr "Probni dodatak za MPK podršku, kao server."
 msgid "Test plugin IPC support, as a server. This registers the IPC commands."
 msgstr "Probni dodatak za MPK podršku, kao server. Ovo omogućava MPK naredbe."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "Postavke skrivanja poruka"
+msgid "Hide Joins/Parts"
+msgstr ""
 
-msgid "Minimum Room Size"
-msgstr "Najmanja soba"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr ""
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "Vreme neaktivnosti korisnika (u minutima)"
+msgid "If user has not spoken in this many minutes"
+msgstr ""
 
 msgid "Apply hiding rules to buddies"
 msgstr ""
@@ -3800,6 +3831,11 @@ msgstr "Internet adresa"
 msgid "Street Address"
 msgstr "Ulica"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "Proširena adresa"
 
@@ -3891,20 +3927,24 @@ msgstr "Slika"
 msgid "Logo"
 msgstr "Logotip"
 
+#, fuzzy, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr "Uklanjate %s sa spiska drugara. Da li želite da nastavite?"
+
+msgid "Cancel Presence Notification"
+msgstr "Otkaži obaveštenja o prisustvu"
+
 msgid "Un-hide From"
 msgstr "Ne sakrivaj od"
 
 msgid "Temporarily Hide From"
 msgstr "Privremeno sakrij od"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "Otkaži obaveštenja o prisustvu"
-
 msgid "(Re-)Request authorization"
 msgstr "(Ponovo) zahtevaj ovlašćenje"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
@@ -4140,10 +4180,6 @@ msgstr "Registruj novi nalog na %s"
 
 msgid "Change Registration"
 msgstr "Izmeni registraciju"
-
-#, fuzzy
-msgid "Malformed BOSH Connect Server"
-msgstr "Ne mogu da se povežem na server."
 
 msgid "Error unregistering account"
 msgstr "Greška pri odjavi registracije"
@@ -4516,7 +4552,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "pravilo &lt;korisnik&gt; &lt;owner|admin|member|outcast|none&gt;: Postavlja "
 "korisničko pravilo u pričaonici."
@@ -4665,10 +4701,6 @@ msgstr "Došlo je do greške pri otvaranju datoteke."
 #, fuzzy
 msgid "Transfer was closed."
 msgstr "Propao prenos datoteke"
-
-#, fuzzy
-msgid "Failed to open the file"
-msgstr "Ne mogu da otvorim datoteku „%s“: %s"
 
 msgid "Failed to open in-band bytestream"
 msgstr ""
@@ -4946,8 +4978,8 @@ msgstr "Loša datoteka sa prijateljima"
 msgid "Not expected"
 msgstr "Neočekivano"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+#, fuzzy
+msgid "Friendly name is changing too rapidly"
 msgstr "Drugarsko ime se previše brzo menja"
 
 #, c-format
@@ -4994,6 +5026,24 @@ msgstr "Ostali kontakti"
 
 msgid "Non-IM Contacts"
 msgstr ""
+
+#, c-format
+msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a wink, but it could not be saved"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%s sent a voice clip, but it could not be saved"
+msgstr ""
+"%s Vam je poslao(la) poziv za razgovor preko kamere, koji još uvek nije "
+"podržan."
 
 #, fuzzy, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
@@ -5153,6 +5203,30 @@ msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Za povezivanje sa MSN potrebna je podrška za SSL. Instalirajte podržanu SSL "
 "biblioteku."
+
+#, fuzzy, c-format
+msgid ""
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
+"be a valid email address."
+msgstr ""
+"Ne mogu da dodam drugara sa korisničkim imenom %s, jer je ono neispravno. "
+"Korisnička imena moraju da budu ispravne adrese e-pošte, počnu slovom i "
+"zatim sadrže slova, brojeve i razmake, ili mogu sadržati samo brojeve."
+
+msgid "Unable to Add"
+msgstr "Ne mogu da dodam"
+
+msgid "Authorization Request Message:"
+msgstr "Poruka uz zahtev za ovlašćenje:"
+
+msgid "Please authorize me!"
+msgstr "Ovlasti me!"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_U redu"
 
 msgid "Error retrieving profile"
 msgstr "Greška pri čitanju sa servera"
@@ -5353,6 +5427,7 @@ msgstr "Nepoznata greška (%d)"
 msgid "Unable to add user"
 msgstr "Ne mogu da zabranim korisnika"
 
+#. Unknown error!
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "Nepoznata greška (%d)"
@@ -5483,8 +5558,8 @@ msgstr ""
 "%s Vam je poslao(la) poziv za razgovor preko kamere, koji još uvek nije "
 "podržan."
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
+#, fuzzy, c-format
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr ""
 "%s Vam je poslao(la) poziv za razgovor preko kamere, koji još uvek nije "
 "podržan."
@@ -5535,6 +5610,10 @@ msgstr "Da li želite da obrišete ovog drugara i iz adresara?"
 
 msgid "The username specified is invalid."
 msgstr "Uneto korisničko ime je neispravno."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "Drugarsko ime se previše brzo menja"
 
 msgid "This Hotmail account may not be active."
 msgstr "Ovaj Hotmejl nalog ne mora biti aktivan."
@@ -6212,8 +6291,9 @@ msgstr "Adresa servera"
 msgid "Server port"
 msgstr "Port servera"
 
-#, fuzzy
-msgid "Received unexpected response from "
+#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s"
 msgstr "Dobijen je neočekivan odgovor HTTP servera."
 
 #. username connecting too frequently
@@ -6224,8 +6304,10 @@ msgstr ""
 "Uspostavljali ste i prekidali vezu suviše često. Sačekajte deset minuta pa "
 "pokušajte ponovo. Ako nastavite da pokušavate, moraćete da sačekate još duže."
 
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, fuzzy, c-format
-msgid "Error requesting "
+msgid "Error requesting %s: %s"
 msgstr "Greška u zahtevu tokena za prijavu"
 
 msgid "AOL does not allow your screen name to authenticate here"
@@ -6546,6 +6628,7 @@ msgstr "Vaš nalog je trenutno nedostupan."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Usluga AOL brzih poruka je privremeno nedostupna."
 
+#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Program koji koristite je zastareo. Osvežite ga sa %s"
@@ -6569,12 +6652,6 @@ msgstr "Unesite SecurID"
 msgid "Enter the 6 digit number from the digital display."
 msgstr "Unesite šestocifreni broj sa digitalnog ekrana."
 
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_U redu"
-
 msgid "Password sent"
 msgstr "Lozinka poslata"
 
@@ -6583,12 +6660,6 @@ msgstr "Ne mogu da uspostavim vezu."
 
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "Daj mi ovlašćenje kako bih mogao da te dodam u spisak drugara."
-
-msgid "Authorization Request Message:"
-msgstr "Poruka uz zahtev za ovlašćenje:"
-
-msgid "Please authorize me!"
-msgstr "Ovlasti me!"
 
 msgid "No reason given."
 msgstr "Razlog nije naveden."
@@ -6949,9 +7020,6 @@ msgstr ""
 "Korisnička imena moraju da budu ispravne adrese e-pošte, počnu slovom i "
 "zatim sadrže slova, brojeve i razmake, ili mogu sadržati samo brojeve."
 
-msgid "Unable to Add"
-msgstr "Ne mogu da dodam"
-
 msgid "Unable to Retrieve Buddy List"
 msgstr "Ne mogu da preuzmem spisak drugara"
 
@@ -7044,6 +7112,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "Uspostavi _vezu"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "Server je prekinuo vezu"
+
 msgid "Get AIM Info"
 msgstr "AIM podaci"
 
@@ -7053,6 +7125,10 @@ msgstr "Uredi primedbu za drugara"
 
 msgid "Get Status Msg"
 msgstr "Pribavi poruku o stanju"
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "Neposredan razgovor je omogućen"
 
 msgid "Direct IM"
 msgstr "Neposredna poruka"
@@ -7893,8 +7969,8 @@ msgstr "%d je odbio datoteku %s"
 msgid "File Send"
 msgstr "Datoteka poslata"
 
-#, c-format
-msgid "%d canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%d cancelled the transfer of %s"
 msgstr "%d je prekinuo prenos datoteke %s"
 
 #, c-format
@@ -8883,10 +8959,6 @@ msgstr "Ne mogu da učitam SILC par ključeva"
 msgid "Connecting to SILC Server"
 msgstr "Povezivanje sa SILC serverom"
 
-#, fuzzy
-msgid "Unable to not load SILC key pair"
-msgstr "Ne mogu da učitam SILC par ključeva"
-
 msgid "Out of memory"
 msgstr "Nema dovoljno memorije"
 
@@ -9429,6 +9501,9 @@ msgstr "Lokalizacija pričaonice"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Zanemari pozive pričaonice i konferencije"
 
+msgid "Use account proxy for SSL connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "URL za spisak pričaonica"
 
@@ -9455,6 +9530,12 @@ msgstr "Jahu IB..."
 #, fuzzy
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Dodatak za Jahu protokol"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
+"%s Vam je poslao(la) poziv za razgovor preko kamere, koji još uvek nije "
+"podržan."
 
 msgid "Your SMS was not delivered"
 msgstr ""
@@ -9529,8 +9610,24 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Ignoriši drugara?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "Vaš nalog je zaključan, prijavite se na Jahu! veb stranicu."
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "Neispravno korisničko ime ili lozinka"
+
+#, fuzzy
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr "Nepoznat broj greške: %d. Prijava na Jahu možda može da to otkloni."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -9710,12 +9807,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "Profil korisnika je prazan."
 
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s je odbio vaš poziv na razgovor u sobi „%s“ zbog „%s“."
-
-msgid "Invitation Rejected"
-msgstr "Poziv odbijen"
+#, fuzzy, c-format
+msgid "%s has declined to join."
+msgstr "%s se prijavio(la)."
 
 msgid "Failed to join chat"
 msgstr "Neuspešno priključenje ćaskanju"
@@ -10216,7 +10310,8 @@ msgstr "Obaveštenja o novopristigloj _e-pošti"
 msgid "Use this buddy _icon for this account:"
 msgstr "Koristi ovu _ikonicu drugara za nalog:"
 
-msgid "_Advanced"
+#, fuzzy
+msgid "Ad_vanced"
 msgstr "N_apredno"
 
 msgid "Use GNOME Proxy Settings"
@@ -10280,7 +10375,7 @@ msgid "Create _this new account on the server"
 msgstr "_Napravi ovaj nalog na serveru"
 
 #, fuzzy
-msgid "_Proxy"
+msgid "P_roxy"
 msgstr "Proksi"
 
 msgid "Enabled"
@@ -10310,6 +10405,137 @@ msgstr ""
 "\n"
 "Možete se uvek vratiti u ovaj prozor, kako bi dodali, uredili ili uklonili "
 "naloge iz menija <b>Nalozi->Uredi naloge</b> u prozoru sa spiskom drugara."
+
+#. Buddy List
+msgid "Background Color"
+msgstr "Boja pozadine"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "Ova grupa je dodata u vašu listu drugara"
+
+#, fuzzy
+msgid "Layout"
+msgstr "lao"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr ""
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Boja pozadine"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Text"
+msgstr "_Razgranaj"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Izaberite boju pozadine"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_Skupi"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "Izaberite boju pozadine"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+#, fuzzy
+msgid "Contact Text"
+msgstr "Stanje"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "Na vezi"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+#, fuzzy
+msgid "Away Text"
+msgstr "Odsutan"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "Nepovezan"
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "Izmeni podatke o korisniku za %s"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+#, fuzzy
+msgid "Idle Text"
+msgstr "Tekst o raspoloženju"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+#, fuzzy
+msgid "Message Text"
+msgstr "Poruka poslata"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "Izmeni podatke o korisniku za %s"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -10752,7 +10978,8 @@ msgstr "_Nadimak:"
 msgid "_Group:"
 msgstr "_Grupa:"
 
-msgid "Auto_join when account becomes online."
+#, fuzzy
+msgid "Auto_join when account connects."
 msgstr "_Sam se priključi kada nalog bude dostupan."
 
 msgid "_Remain in chat after window is closed."
@@ -10784,112 +11011,6 @@ msgstr "/Alati"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Drugari/Poređaj drugare"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "Boja pozadine"
-
-#, fuzzy
-msgid "The background color for the buddy list"
-msgstr "Ova grupa je dodata u vašu listu drugara"
-
-#, fuzzy
-msgid "Layout"
-msgstr "lao"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr ""
-
-#. Group
-#, fuzzy
-msgid "Expanded Background Color"
-msgstr "Boja pozadine"
-
-msgid "The background color of an expanded group"
-msgstr ""
-
-#, fuzzy
-msgid "Expanded Text"
-msgstr "_Razgranaj"
-
-msgid "The text information for when a group is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Background Color"
-msgstr "Izaberite boju pozadine"
-
-msgid "The background color of a collapsed group"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Text"
-msgstr "_Skupi"
-
-msgid "The text information for when a group is collapsed"
-msgstr ""
-
-#. Buddy
-#, fuzzy
-msgid "Contact/Chat Background Color"
-msgstr "Izaberite boju pozadine"
-
-msgid "The background color of a contact or chat"
-msgstr ""
-
-#, fuzzy
-msgid "Contact Text"
-msgstr "Stanje"
-
-msgid "The text information for when a contact is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "On-line Text"
-msgstr "Na vezi"
-
-msgid "The text information for when a buddy is online"
-msgstr ""
-
-#, fuzzy
-msgid "Away Text"
-msgstr "Odsutan"
-
-msgid "The text information for when a buddy is away"
-msgstr ""
-
-#, fuzzy
-msgid "Off-line Text"
-msgstr "Nepovezan"
-
-msgid "The text information for when a buddy is off-line"
-msgstr ""
-
-#, fuzzy
-msgid "Idle Text"
-msgstr "Tekst o raspoloženju"
-
-msgid "The text information for when a buddy is idle"
-msgstr ""
-
-#, fuzzy
-msgid "Message Text"
-msgstr "Poruka poslata"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr ""
-
-msgid "Message (Nick Said) Text"
-msgstr ""
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-
-#, fuzzy
-msgid "The text information for a buddy's status"
-msgstr "Izmeni podatke o korisniku za %s"
 
 #, fuzzy
 msgid "Type the host name for this certificate."
@@ -10974,6 +11095,10 @@ msgstr "/_Razgovor"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Razgovor/Nova _brza poruka..."
+
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Razgovor/_Pozovi..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Razgovor/_Nađi..."
@@ -11365,8 +11490,8 @@ msgstr "španski"
 msgid "Estonian"
 msgstr "estonski"
 
-msgid "Euskera(Basque)"
-msgstr "euskera(baskijski)"
+msgid "Basque"
+msgstr ""
 
 msgid "Persian"
 msgstr "persijski"
@@ -11573,11 +11698,13 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
-"<FONT SIZE=\"4\">Pomoć preko e-pošte:</FONT> <A HREF=\"mailto:support@pidgin."
-"im\">support@pidgin.im</A><BR/><BR/>"
 
 #, c-format
 msgid ""
@@ -11813,14 +11940,6 @@ msgstr "_Izbaci završene prenose"
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "_Detalji prenosa datoteke"
-
-#. Pause button
-msgid "_Pause"
-msgstr "_Zastani"
-
-#. Resume button
-msgid "_Resume"
-msgstr "_Nastavi"
 
 msgid "Paste as Plain _Text"
 msgstr "Ubaci kao _tekst"
@@ -12141,65 +12260,47 @@ msgstr "_Razgledaj fasciklu sa dnevicima"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s. Pokušajte „%s -h“ za više podataka.\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"Korišćenje: %s [MOGUĆNOST]...\n"
-"\n"
-"  -c, --config=DIR    koristi navedeni DIR za datoteke sa postavkama\n"
-"  -d, --debug         ispisuje poruke grešaka na standardni izlaz\n"
-"  -h, --help          prikazuje ovu pomoć i izlazi iz programa\n"
-"  -m, --multiple      omogućava više pokrenutih programa u isto vreme\n"
-"  -n, --nologin       isključuje automatsku prijavu\n"
-"  -l, --login[=IME]   uključuje željene naloge (neobavezni argument IME "
-"naznačava\n"
-"                      nalog(e), razdvojene zarezima)\n"
-"  --display=EKRAN     prikazuje se na zadati X-ov ekran\n"
-"  -v, --version       ispisuje trenutno izdanje i izlazi iz programa\n"
 
-#, fuzzy, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"Korišćenje: %s [MOGUĆNOST]...\n"
-"\n"
-"  -c, --config=DIR    koristi navedeni DIR za datoteke sa postavkama\n"
-"  -d, --debug         ispisuje poruke grešaka na standardni izlaz\n"
-"  -h, --help          prikazuje ovu pomoć i izlazi iz programa\n"
-"  -m, --multiple      omogućava više pokrenutih programa u isto vreme\n"
-"  -n, --nologin       isključuje automatsku prijavu\n"
-"  -l, --login[=IME]   uključuje željene naloge (neobavezni argument IME "
-"naznačava\n"
-"                      nalog(e), razdvojene zarezima)\n"
-"  -v, --version       ispisuje trenutno izdanje i izlazi iz programa\n"
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+msgid "allow multiple instances"
+msgstr ""
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -12244,10 +12345,6 @@ msgstr ""
 msgid "/Media/_Hangup"
 msgstr ""
 
-#, fuzzy
-msgid "Calling..."
-msgstr "Računam..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr ""
@@ -12255,6 +12352,12 @@ msgstr ""
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr ""
+
+msgid "Incoming Call"
+msgstr ""
+
+msgid "_Pause"
+msgstr "_Zastani"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12625,12 +12728,16 @@ msgstr ""
 msgid "Cannot start browser configuration program."
 msgstr "Ne mogu da pokrenem program za podešavanje veb preglednika."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Primer: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Onemogući"
 
 #, fuzzy, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Sam o_dredi IP adresu"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Primer: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "Javni _IP broj:"
@@ -12653,6 +12760,10 @@ msgstr "Po_slednji port:"
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr ""
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "S_TUN Server:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Posrednički server &amp; Veb preglednik"
@@ -13167,7 +13278,23 @@ msgstr "_Kopiraj adresu veze"
 msgid "_Copy Email Address"
 msgstr "_Kopiraj adresu e-pošte"
 
+#, fuzzy
+msgid "_Open File"
+msgstr "Otvori..."
+
+#, fuzzy
+msgid "Open _Containing Directory"
+msgstr "Direktorijum za dnevnik"
+
 msgid "Save File"
+msgstr "Sačuvaj datoteku"
+
+#, fuzzy
+msgid "_Play Sound"
+msgstr "Pusti zvuk"
+
+#, fuzzy
+msgid "_Save File"
 msgstr "Sačuvaj datoteku"
 
 msgid "Select color"
@@ -13256,79 +13383,6 @@ msgstr "Dodatak za predviđanje dostupnosti kontakta."
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
-
-#, fuzzy
-msgid "Server name request"
-msgstr "Adresa servera"
-
-#, fuzzy
-msgid "Enter an XMPP Server"
-msgstr "Server za razgovore"
-
-#, fuzzy
-msgid "Select an XMPP server to query"
-msgstr "Izaberite server za konferencije koji se upituje"
-
-#, fuzzy
-msgid "Find Services"
-msgstr "Mrežne usluge"
-
-#, fuzzy
-msgid "Add to Buddy List"
-msgstr "Pošalji spisak drugara"
-
-#, fuzzy
-msgid "Gateway"
-msgstr "Postade odsutan"
-
-#, fuzzy
-msgid "Directory"
-msgstr "Direktorijum za dnevnik"
-
-#, fuzzy
-msgid "PubSub Collection"
-msgstr "Izbor zvuka"
-
-#, fuzzy
-msgid "PubSub Leaf"
-msgstr "PubSub servis"
-
-#, fuzzy
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr "Opis"
-
-#. Create the window.
-#, fuzzy
-msgid "Service Discovery"
-msgstr "Podaci otkrivanja servisa"
-
-#, fuzzy
-msgid "_Browse"
-msgstr "_Veb preglednik:"
-
-#, fuzzy
-msgid "Server does not exist"
-msgstr "Korisnik ne postoji."
-
-#, fuzzy
-msgid "Server does not support service discovery"
-msgstr "Server ne koristi nijedan od podržanih načina identifikovanja"
-
-#, fuzzy
-msgid "XMPP Service Discovery"
-msgstr "Podaci otkrivanja servisa"
-
-msgid "Allows browsing and registering services."
-msgstr ""
-
-#, fuzzy
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr ""
-"Ovaj dodatak je koristan za uklanjanje grešaka Džaber servera ili programa"
 
 msgid "Buddy is idle"
 msgstr "Drugar je neaktivan"
@@ -13419,6 +13473,81 @@ msgstr "Primeni u ćaskanjima"
 
 msgid "Apply in IMs"
 msgstr "Primeni u brzim porukama"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+#, fuzzy
+msgid "Server name request"
+msgstr "Adresa servera"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Server za razgovore"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "Izaberite server za konferencije koji se upituje"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "Mrežne usluge"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "Pošalji spisak drugara"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "Postade odsutan"
+
+#, fuzzy
+msgid "Directory"
+msgstr "Direktorijum za dnevnik"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "Izbor zvuka"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "PubSub servis"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "Opis"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "Podaci otkrivanja servisa"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_Veb preglednik:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "Korisnik ne postoji."
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "Server ne koristi nijedan od podržanih načina identifikovanja"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Podaci otkrivanja servisa"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"Ovaj dodatak je koristan za uklanjanje grešaka Džaber servera ili programa"
 
 msgid "By conversation count"
 msgstr "Prema broju razgovora"
@@ -14053,10 +14182,13 @@ msgstr "Ignoriši"
 msgid "Founder"
 msgstr "Glasnije"
 
+#. A user in a chat room who has special privileges.
 #, fuzzy
 msgid "Operator"
 msgstr "Opera"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
@@ -14219,6 +14351,58 @@ msgstr ""
 "Ovaj dodatak dozvoljava korisniku da podesi format vremenskih oznaka pri "
 "komunikaciji i u dnevniu poruka "
 
+#, fuzzy
+msgid "Audio"
+msgstr "Automatski"
+
+#, fuzzy
+msgid "Video"
+msgstr " Video"
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "Dodaci"
+
+#, fuzzy
+msgid "_Device"
+msgstr "Uređaj"
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "Dodaci"
+
+#, fuzzy
+msgid "D_evice"
+msgstr "Uređaj"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Voice/Video Settings"
+msgstr "Izmeni postavke"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+
 msgid "Opacity:"
 msgstr "Providnost:"
 
@@ -14347,6 +14531,136 @@ msgstr "Pošalji i primi izvorne Džaber odeljke"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ovaj dodatak je koristan za uklanjanje grešaka Džaber servera ili programa"
+
+#, fuzzy
+#~ msgid "Calling ... "
+#~ msgstr "Računam..."
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "Neispravan lanac sertifikata"
+
+#~ msgid ""
+#~ "The certificate chain presented by %s does not have a valid digital "
+#~ "signature from the Certificate Authority from which it claims to have a "
+#~ "signature."
+#~ msgstr ""
+#~ "Lanac sertifikata dat od %s nama ispravan digitalni potpis od strane "
+#~ "nadležnih za sertifikat od kojih sertifikat tvrdi da ima potpis."
+
+#~ msgid "Invalid certificate authority signature"
+#~ msgstr "Neispravan potpis nadležnih za sertifikat"
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "Postavke skrivanja poruka"
+
+#~ msgid "Minimum Room Size"
+#~ msgstr "Najmanja soba"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "Vreme neaktivnosti korisnika (u minutima)"
+
+#, fuzzy
+#~ msgid "Malformed BOSH Connect Server"
+#~ msgstr "Ne mogu da se povežem na server."
+
+#, fuzzy
+#~ msgid "Failed to open the file"
+#~ msgstr "Ne mogu da otvorim datoteku „%s“: %s"
+
+#, fuzzy
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "Ne mogu da učitam SILC par ključeva"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "Vaš nalog je zaključan, prijavite se na Jahu! veb stranicu."
+
+#~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr "%s je odbio vaš poziv na razgovor u sobi „%s“ zbog „%s“."
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "Poziv odbijen"
+
+#, fuzzy
+#~ msgid "_Proxy"
+#~ msgstr "Proksi"
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "euskera(baskijski)"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">Pomoć preko e-pošte:</FONT> <A HREF=\"mailto:"
+#~ "support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+
+#~ msgid "_Resume"
+#~ msgstr "_Nastavi"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Korišćenje: %s [MOGUĆNOST]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    koristi navedeni DIR za datoteke sa postavkama\n"
+#~ "  -d, --debug         ispisuje poruke grešaka na standardni izlaz\n"
+#~ "  -h, --help          prikazuje ovu pomoć i izlazi iz programa\n"
+#~ "  -m, --multiple      omogućava više pokrenutih programa u isto vreme\n"
+#~ "  -n, --nologin       isključuje automatsku prijavu\n"
+#~ "  -l, --login[=IME]   uključuje željene naloge (neobavezni argument IME "
+#~ "naznačava\n"
+#~ "                      nalog(e), razdvojene zarezima)\n"
+#~ "  --display=EKRAN     prikazuje se na zadati X-ov ekran\n"
+#~ "  -v, --version       ispisuje trenutno izdanje i izlazi iz programa\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Korišćenje: %s [MOGUĆNOST]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    koristi navedeni DIR za datoteke sa postavkama\n"
+#~ "  -d, --debug         ispisuje poruke grešaka na standardni izlaz\n"
+#~ "  -h, --help          prikazuje ovu pomoć i izlazi iz programa\n"
+#~ "  -m, --multiple      omogućava više pokrenutih programa u isto vreme\n"
+#~ "  -n, --nologin       isključuje automatsku prijavu\n"
+#~ "  -l, --login[=IME]   uključuje željene naloge (neobavezni argument IME "
+#~ "naznačava\n"
+#~ "                      nalog(e), razdvojene zarezima)\n"
+#~ "  -v, --version       ispisuje trenutno izdanje i izlazi iz programa\n"
 
 #~ msgid "Cannot open socket"
 #~ msgstr "Ne mogu da otvorim utičnicu"
@@ -14748,9 +15062,6 @@ msgstr ""
 #~ "pokušajte ponovo. Ako nastavite sa pokušajima, moraćete sačekati čak i "
 #~ "duže."
 
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "Došlo je do nepoznate greške pri prijavi: %s."
-
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "Dogodila se nepoznata greška %d. Podaci: %s"
 
@@ -14814,9 +15125,6 @@ msgstr ""
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "_Otvori vezu u pregledniku"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "S_TUN Server:"
 
 #~ msgid "Smiley _Image"
 #~ msgstr "_Ikonica za smešak"

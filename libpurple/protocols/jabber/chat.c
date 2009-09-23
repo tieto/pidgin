@@ -1,7 +1,9 @@
 /*
  * purple - Jabber Protocol Plugin
  *
- * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -750,6 +752,7 @@ static void roomlist_ok_cb(JabberStream *js, const char *server)
 
 	if(!server || !*server) {
 		purple_notify_error(js->gc, _("Invalid Server"), _("Invalid Server"), NULL);
+		purple_roomlist_set_in_progress(js->roomlist, FALSE);
 		return;
 	}
 

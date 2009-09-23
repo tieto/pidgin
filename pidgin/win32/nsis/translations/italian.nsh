@@ -1,7 +1,7 @@
 ;;
-;;  english.nsh
+;;  italian.nsh
 ;;
-;;  Default language strings for the Windows Pidgin NSIS installer.
+;;  Italian language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Claudio Satriano <satriano@na.infn.it>, 2003-2009.
@@ -9,13 +9,13 @@
 ;;
 
 ; Startup Checks
-!define INSTALLER_IS_RUNNING			"Il programma di installazione √® gi√† in esecuzione"
-!define PIDGIN_IS_RUNNING			"√à attualmente in esecuzione un'istanza di Pidgin. Esci da Pidgin e riprova."
-!define GTK_INSTALLER_NEEDED			"L'ambiente di runtime GTK+ non √® presente o deve essere aggiornato.$\rInstallare GTK+ versione ${GTK_MIN_VERSION} o maggiore"
+!define INSTALLER_IS_RUNNING			"Il programma di installazione Ë gi‡ in esecuzione"
+!define PIDGIN_IS_RUNNING			"» attualmente in esecuzione un'istanza di Pidgin. Esci da Pidgin e riprova."
+!define GTK_INSTALLER_NEEDED			"L'ambiente di runtime GTK+ non Ë presente o deve essere aggiornato.$\rInstallare GTK+ versione ${GTK_MIN_VERSION} o maggiore"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Avanti >"
-!define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) √® distribuito sotto la GNU General Public License (GPL). La licenza √® mostrata qui solamente a scopo informativo. $_CLICK"
+!define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) Ë distribuito sotto la GNU General Public License (GPL). La licenza Ë mostrata qui solamente a scopo informativo. $_CLICK"
 
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin - Client per Messaggi Immediati (richiesto)"
@@ -31,31 +31,31 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Crea una voce per Pidgin nel Menu Avvio"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"√à stata trovata una versione precedente di GTK+. Vuoi aggiornarla?$\rNota: $(^Name) potrebbe non funzionare senza l'aggiornamento."
-!define GTK_WINDOWS_INCOMPATIBLE		"Windows 95/98/Me non √® incompatible con GTK+ 2.8.0 o successivo. GTK+ ${GTK_INSTALL_VERSION} non sar√† installato.$\rSe non hai GTK+ ${GTK_MIN_VERSION} o successivo gi√† installato sul tuo computer, questa installazione sar√† interrotta."
+!define GTK_UPGRADE_PROMPT			"» stata trovata una versione precedente di GTK+. Vuoi aggiornarla?$\rNota: $(^Name) potrebbe non funzionare senza l'aggiornamento."
+!define GTK_WINDOWS_INCOMPATIBLE		"Windows 95/98/Me non Ë incompatible con GTK+ 2.8.0 o successivo. GTK+ ${GTK_INSTALL_VERSION} non sar‡ installato.$\rSe non hai GTK+ ${GTK_MIN_VERSION} o successivo gi‡ installato sul tuo computer, questa installazione sar‡ interrotta."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visita la pagina web di Pidgin"
 
 ; Pidgin Section Prompts and Texts
-!define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Impossibile rimuovere la versione di Pidgin attualmente presente sul tuo computer. La nuova versione sar√† installata senza rimuovere la versione precedente."
+!define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Impossibile rimuovere la versione di Pidgin attualmente presente sul tuo computer. La nuova versione sar‡ installata senza rimuovere la versione precedente."
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Error nell'installazione del runtime GTK+."
-!define GTK_BAD_INSTALL_PATH			"Il percorso scelto non pu√≤ essere raggiunto o creato."
+!define GTK_BAD_INSTALL_PATH			"Il percorso scelto non puÚ essere raggiunto o creato."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"Gestori degli URI"
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1		"Il programma di rimozione non √® in grado di trovare le voci di registro per Pidgin.$\rProbabilmente questa applicazione √® stata installata da un altro utente."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"Il programma di rimozione non Ë in grado di trovare le voci di registro per Pidgin.$\rProbabilmente questa applicazione Ë stata installata da un altro utente."
 !define un.PIDGIN_UNINSTALL_ERROR_2		"Non hai il permesso per rimuovere questa applicazione."
 
 ; Spellcheck Section Prompts
 !define PIDGIN_SPELLCHECK_SECTION_TITLE	"Supporto per il correttore ortografico"
 !define PIDGIN_SPELLCHECK_ERROR		"Errore nell'installazione del correttore ortografico"
 !define PIDGIN_SPELLCHECK_DICT_ERROR		"Errore nell'installazione del dizionario per il correttore ortografico"
-!define PIDGIN_SPELLCHECK_SECTION_DESCRIPTION	"Supporto per il correttore ortografico.  (√à richiesta una connessione a internet per l'installazione)"
+!define PIDGIN_SPELLCHECK_SECTION_DESCRIPTION	"Supporto per il correttore ortografico.  (» richiesta una connessione a internet per l'installazione)"
 !define ASPELL_INSTALL_FAILED			"Installazione fallita"
 !define PIDGIN_SPELLCHECK_BRETON		"Bretone"
 !define PIDGIN_SPELLCHECK_CATALAN		"Catalano"

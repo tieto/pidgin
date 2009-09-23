@@ -626,14 +626,28 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 	/* If debug or help or version flag used, create console for output */
 	for (i = 1; i < __argc; i++) {
-		if (strstr(__argv[i], "-d") || strstr(__argv[i], "--debug"))
-			debug = TRUE;
-		else if (strstr(__argv[i], "-h") || strstr(__argv[i], "--help"))
-			help = TRUE;
-		else if (strstr(__argv[i], "-v") || strstr(__argv[i], "--version"))
-			version = TRUE;
-		else if (strstr(__argv[i], "-m") || strstr(__argv[i], "--multiple"))
-			multiple = TRUE;
+		if (strlen(__argv[i]) > 1 && __argv[i][0] == '-') {
+			/* check if we're looking at -- or - option */
+			if (__argv[i][1] == '-') {
+				if (strstr(__argv[i], "--debug") == __argv[i])
+					debug = TRUE;
+				else if (strstr(__argv[i], "--help") == __argv[i])
+					help = TRUE;
+				else if (strstr(__argv[i], "--version") == __argv[i])
+					version = TRUE;
+				else if (strstr(__argv[i], "--multiple") == __argv[i])
+					multiple = TRUE;
+			} else {
+				if (strchr(__argv[i], 'd'))
+					debug = TRUE;
+				else if (strchr(__argv[i], 'h'))
+					help = TRUE;
+				else if (strchr(__argv[i], 'v'))
+					version = TRUE;
+				else if (strchr(__argv[i], 'm'))
+					multiple = TRUE;
+			}
+		}
 	}
 
 	if (debug || help || version) {
@@ -705,10 +719,9 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		/* Remove the --portable-mode arg from the args passed to pidgin so it doesn't choke */
 		pidgin_argv = malloc(sizeof(char*) * pidgin_argc);
 		for (; i < __argc; i++) {
-			if (strstr(__argv[i], "--portable-mode") == NULL) {
-				pidgin_argv[c] = __argv[i];
-				c++;
-			} else
+			if (strstr(__argv[i], "--portable-mode") == NULL)
+				pidgin_argv[c++] = __argv[i];
+			else
 				pidgin_argc--;
 		}
 	}

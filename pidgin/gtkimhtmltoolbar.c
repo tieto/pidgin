@@ -133,22 +133,30 @@ cancel_toolbar_font(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 	destroy_toolbar_font(widget, NULL, toolbar);
 }
 
-static void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
+static void
+apply_font(GtkWidget *widget, GtkFontSelectionDialog *fontsel)
 {
 	/* this could be expanded to include font size, weight, etc.
 	   but for now only works with font face */
-	char *fontname;
-	char *space;
-	GtkIMHtmlToolbar *toolbar =  g_object_get_data(G_OBJECT(fontsel), "purple_toolbar");
+	gchar *fontname = gtk_font_selection_dialog_get_font_name(fontsel);
+	GtkIMHtmlToolbar *toolbar = g_object_get_data(G_OBJECT(fontsel),
+	                                              "purple_toolbar");
 
-	fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
+	if (fontname) {
+		const gchar *family_name = NULL;
+		PangoFontDescription *desc = NULL;
 
-	space = strrchr(fontname, ' ');
-	if(space && isdigit(*(space+1)))
-		*space = '\0';
+		desc = pango_font_description_from_string(fontname);
+		family_name = pango_font_description_get_family(desc);
 
-	gtk_imhtml_toggle_fontface(GTK_IMHTML(toolbar->imhtml), fontname);
-	g_free(fontname);
+		if (family_name) {
+			gtk_imhtml_toggle_fontface(GTK_IMHTML(toolbar->imhtml),
+			                           family_name);
+		}
+
+		pango_font_description_free(desc);
+		g_free(fontname);
+	}
 
 	cancel_toolbar_font(NULL, toolbar);
 }
@@ -1224,13 +1232,14 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER, do_small, &toolbar->smaller_size, _("Decrease Font Size")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_FONT_FACE, toggle_font, &toolbar->font, _("Font Face")},
-		{PIDGIN_STOCK_TOOLBAR_BGCOLOR, toggle_bg_color, &toolbar->bgcolor, _("Background Color")},
 		{PIDGIN_STOCK_TOOLBAR_FGCOLOR, toggle_fg_color, &toolbar->fgcolor, _("Foreground Color")},
+		{PIDGIN_STOCK_TOOLBAR_BGCOLOR, toggle_bg_color, &toolbar->bgcolor, _("Background Color")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_CLEAR, clear_formatting_cb, &toolbar->clear, _("Reset Formatting")},
 		{"", NULL, NULL, NULL},
-		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
 		{PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, insert_image_cb, &toolbar->image, _("Insert IM Image")},
+		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
+		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
 		{NULL, NULL, NULL, NULL}
 	};
