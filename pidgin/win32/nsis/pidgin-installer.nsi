@@ -1345,13 +1345,14 @@ Function .onInit
   StrCpy $LANGUAGE_SET "0"
   ClearErrors
   ${GetOptions} "$R3" "/L=" $R1
-  IfErrors +3
+  IfErrors +4
   StrCpy $LANGUAGE $R1
   StrCpy $LANGUAGE_SET "1"
   Goto skip_lang
 
   ; Select Language
     ; Display Language selection dialog
+    !define MUI_LANGDLL_ALWAYSSHOW
     !insertmacro MUI_LANGDLL_DISPLAY
     skip_lang:
 
