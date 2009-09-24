@@ -323,10 +323,14 @@ google_session_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 }
 
 static GParameter *
-jabber_google_session_get_params(JabberStream *js, guint *num)
+jabber_google_session_get_params(JabberStream *js, const gchar *relay_ip,
+	guint16 relay_udp, guint16 relay_tcp, guint16 relay_ssltcp,
+    const gchar *relay_username, const gchar *relay_password, guint *num)
 {
 	guint num_params;
-	GParameter *params = jingle_get_params(js, &num_params);
+	GParameter *params = 
+		jingle_get_params(js, relay_ip, relay_udp, relay_tcp, relay_ssltcp,
+	    	relay_username, relay_password, &num_params);
 	GParameter *new_params = g_new0(GParameter, num_params + 1);
 
 	memcpy(new_params, params, sizeof(GParameter) * num_params);
@@ -342,6 +346,41 @@ jabber_google_session_get_params(JabberStream *js, guint *num)
 }
 
 static void
+jabber_google_relay_parse_response(const gchar *response, gchar **ip,
+	guint *udp, guint *tcp, guint *ssltcp, gchar **username, gchar **password)
+{
+	gchar **lines = g_strsplit(response, "\n", -1);
+	int i = 0;
+
+	for (; lines[i] ; i++) {
+		gchar *line = lines[i];
+		gchar **parts = g_strsplit(line, "=", 2);
+
+		purple_debug_info("jabber", "parsing line %s in Google relay response\n",
+			line);
+		
+		if (parts[0] && parts[1]) {
+			if (purple_strequal(parts[0], "relay.ip")) {
+				*ip = g_strdup(parts[1]);
+			} else if (purple_strequal(parts[0], "relay.udp_port")) {
+				*udp = atoi(parts[1]);
+			} else if (purple_strequal(parts[0], "relay.tcp_port")) {
+				*tcp = atoi(parts[1]);
+			} else if (purple_strequal(parts[0], "relay.ssltcp_port")) {
+				*ssltcp = atoi(parts[1]);
+			} else if (purple_strequal(parts[0], "username")) {
+				*username = g_strdup(parts[1]);
+			} else if (purple_strequal(parts[0], "password")) {
+				*password = g_strdup(parts[1]);
+			}
+		}
+		g_strfreev(parts);
+	}
+
+	g_strfreev(lines);
+}
+
+static void
 jabber_google_relay_response_cb(PurpleUtilFetchUrlData *url_data, 
 	gpointer user_data, const gchar *url_text, gsize len, 
 	const gchar *error_message)
@@ -350,6 +389,12 @@ jabber_google_relay_response_cb(PurpleUtilFetchUrlData *url_data,
 	GParameter *params;
 	guint num_params;
 	JabberStream *js = session->js;
+	gchar *relay_ip = NULL;
+	guint relay_udp = 0;
+	guint relay_tcp = 0;
+	guint relay_ssltcp = 0;
+	gchar *relay_username = NULL;
+	gchar *relay_password = NULL;
 
 	js->google_relay_request = NULL;
 
@@ -358,8 +403,8 @@ jabber_google_relay_response_cb(PurpleUtilFetchUrlData *url_data,
 	if (url_text && len > 0) {
 		purple_debug_info("jabber", "got Google relay request response:\n%s\n",
 			url_text);
-	} else {
-	
+		jabber_google_relay_parse_response(url_text, &relay_ip, &relay_udp,
+			&relay_tcp, &relay_ssltcp, &relay_username, &relay_password);
 	}
 
 	session->media = purple_media_manager_create_media(
@@ -379,8 +424,14 @@ jabber_google_relay_response_cb(PurpleUtilFetchUrlData *url_data,
 	g_signal_connect(G_OBJECT(session->media), "stream-info",
 			G_CALLBACK(google_session_stream_info_cb), session);
 
-	params = jabber_google_session_get_params(js, &num_params);
+	params =
+		jabber_google_session_get_params(js, relay_ip, relay_udp, relay_tcp,
+			relay_ssltcp, relay_username, relay_password, &num_params);
 
+	g_free(relay_ip);
+	g_free(relay_username);
+	g_free(relay_password);
+	
 	if (purple_media_add_stream(session->media, "google-voice",
 			session->remote_jid, PURPLE_MEDIA_AUDIO,
 			TRUE, "nice", num_params, params) == FALSE ||
@@ -507,7 +558,9 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	g_signal_connect(G_OBJECT(session->media), "stream-info",
 			G_CALLBACK(google_session_stream_info_cb), session);
 
-	params = jabber_google_session_get_params(js, &num_params);
+	/* TODO: setup relay stuff... */
+	params = jabber_google_session_get_params(js, NULL, 0, 0, 0, NULL, NULL,
+		&num_params);
 
 	if (purple_media_add_stream(session->media, "google-voice",
 			session->remote_jid, PURPLE_MEDIA_AUDIO, FALSE,

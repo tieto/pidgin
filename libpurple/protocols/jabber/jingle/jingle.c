@@ -35,6 +35,11 @@
 #include "rawudp.h"
 #include "rtp.h"
 
+#ifdef USE_VV
+#include <gst/farsight/fs-conference-iface.h>
+#include <gst/farsight/fs-element-added-notifier.h>
+#endif
+
 GType
 jingle_get_type(const gchar *type)
 {
@@ -430,32 +435,103 @@ jingle_terminate_sessions(JabberStream *js)
 				jingle_terminate_sessions_gh, NULL);
 }
 
+#ifdef USE_VV
 GParameter *
-jingle_get_params(JabberStream *js, guint *num)
+jingle_get_params(JabberStream *js, const gchar *relay_ip, guint relay_udp,
+	guint relay_tcp, guint relay_ssltcp, const gchar *relay_username,
+    const gchar *relay_password, guint *num)
 {
 	/* don't set a STUN server if one is set globally in prefs, in that case
 	 this will be handled in media.c */
 	gboolean has_account_stun = js->stun_ip && !purple_network_get_stun_ip();
-	guint num_params = has_account_stun ? 2 : 0;
+	guint num_params = has_account_stun ?
+		(relay_ip ? 3 : 2) : (relay_ip ? 1 : 0);
 	GParameter *params = NULL;
-
+	int next_index = 0;
+	
 	if (num_params > 0) {
 		params = g_new0(GParameter, num_params);
 
-		purple_debug_info("jabber", 
-						  "setting param stun-ip for stream using Google auto-config: %s\n",
-						  js->stun_ip);
-		params[0].name = "stun-ip";
-		g_value_init(&params[0].value, G_TYPE_STRING);
-		g_value_set_string(&params[0].value, js->stun_ip);
-		purple_debug_info("jabber", 
-						  "setting param stun-port for stream using Google auto-config: %d\n",
-						  js->stun_port);
-		params[1].name = "stun-port";
-		g_value_init(&params[1].value, G_TYPE_UINT);
-		g_value_set_uint(&params[1].value, js->stun_port);
+		if (has_account_stun) {
+			purple_debug_info("jabber", 
+				"setting param stun-ip for stream using Google auto-config: %s\n",
+				js->stun_ip);
+			params[next_index].name = "stun-ip";
+			g_value_init(&params[next_index].value, G_TYPE_STRING);
+			g_value_set_string(&params[next_index].value, js->stun_ip);
+			purple_debug_info("jabber", 
+				"setting param stun-port for stream using Google auto-config: %d\n",
+				js->stun_port);
+			next_index++;
+			params[next_index].name = "stun-port";
+			g_value_init(&params[next_index].value, G_TYPE_UINT);
+			g_value_set_uint(&params[next_index].value, js->stun_port);
+			next_index++;
+		}
+	
+		if (relay_ip) {
+			GValueArray *relay_info = g_value_array_new(0);
+			GValue udp_value;
+			GValue tcp_value;
+			GValue ssltcp_value;
+
+			if (relay_udp) {
+				GstStructure *turn_setup = gst_structure_new("relay-info",
+					"ip", G_TYPE_STRING, relay_ip, 
+					"port", G_TYPE_UINT, relay_udp,
+					"username", G_TYPE_STRING, relay_username,
+					"password", G_TYPE_STRING, relay_password,
+				    "relay-type", G_TYPE_STRING, "udp",
+					NULL);
+				if (turn_setup) {
+					memset(&udp_value, 0, sizeof(GValue));
+					g_value_init(&udp_value, GST_TYPE_STRUCTURE);
+					gst_value_set_structure(&udp_value, turn_setup);
+					relay_info = g_value_array_append(relay_info, &udp_value);
+					gst_structure_free(turn_setup);
+				}
+			}
+			if (relay_tcp) {
+				GstStructure *turn_setup = gst_structure_new("relay-info",
+					"ip", G_TYPE_STRING, relay_ip, 
+					"port", G_TYPE_UINT, relay_tcp,
+					"username", G_TYPE_STRING, relay_username,
+					"password", G_TYPE_STRING, relay_password,
+				    "relay-type", G_TYPE_STRING, "tcp",
+					NULL);
+				if (turn_setup) {
+					memset(&tcp_value, 0, sizeof(GValue));
+					g_value_init(&tcp_value, GST_TYPE_STRUCTURE);
+					gst_value_set_structure(&tcp_value, turn_setup);
+					relay_info = g_value_array_append(relay_info, &tcp_value);
+					gst_structure_free(turn_setup);
+				}
+			}
+			if (relay_ssltcp) {
+				GstStructure *turn_setup = gst_structure_new("relay-info",
+					"ip", G_TYPE_STRING, relay_ip, 
+					"port", G_TYPE_UINT, relay_ssltcp,
+					"username", G_TYPE_STRING, relay_username,
+					"password", G_TYPE_STRING, relay_password,
+				    "relay-type", G_TYPE_STRING, "tls",
+					NULL);
+				if (turn_setup) {
+					memset(&ssltcp_value, 0, sizeof(GValue));
+					g_value_init(&ssltcp_value, GST_TYPE_STRUCTURE);
+					gst_value_set_structure(&ssltcp_value, turn_setup);
+					relay_info = g_value_array_append(relay_info, &ssltcp_value);
+					gst_structure_free(turn_setup);
+				}
+			}
+			params[next_index].name = "relay-info";
+			g_value_init(&params[next_index].value, G_TYPE_VALUE_ARRAY);
+			g_value_set_boxed(&params[next_index].value, relay_info);
+			g_value_array_free(relay_info);
+		}
 	}
 
 	*num = num_params;
 	return params;
 }
+#endif
+
