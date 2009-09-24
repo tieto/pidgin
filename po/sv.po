@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-07 18:26-0700\n"
-"PO-Revision-Date: 2009-07-15 18:36+0100\n"
+"POT-Creation-Date: 2009-09-24 22:37+0200\n"
+"PO-Revision-Date: 2009-09-24 22:37+0100\n"
 "Last-Translator: Peter Hjalmarsson <xake@rymdraket.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -365,7 +365,7 @@ msgid "OK"
 msgstr "OK"
 
 msgid "New Instant Message"
-msgstr "Nytt snabbmeddelanden"
+msgstr "Nytt snabbmeddelande"
 
 msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
@@ -636,8 +636,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "Lista över %d användare:\n"
 msgstr[1] "Lista över %d användare:\n"
 
-msgid "Supported debug options are:  version"
-msgstr "De felsökningsalternativ som stöds är:  version"
+msgid "Supported debug options are: plugins version"
+msgstr "De felsökningsalternativ som stöds är: moduler version"
 
 msgid "No such command (in this context)."
 msgstr "Det finns inget sådant kommando (i denna kontext)."
@@ -1300,10 +1300,10 @@ msgid "Always"
 msgstr "Alltid"
 
 msgid "Only when available"
-msgstr "Endast vid tillgänglig"
+msgstr "Endast när \"Tillgänglig\""
 
 msgid "Only when not available"
-msgstr "Endast vid Ej tillgänglig"
+msgstr "Endast när \"Ej tillgänglig\""
 
 msgid "Volume(0-100):"
 msgstr "Volym(0-100):"
@@ -1510,9 +1510,8 @@ msgstr ""
 "\n"
 "Hämtar TinyURL..."
 
-#, fuzzy
 msgid "Only create TinyURL for URLs of this length or greater"
-msgstr "Skapa enbart TinyURL om url:en är av denna längd eller större"
+msgstr "Skapa enbart TinyURL om url:en är av denna längd eller längre"
 
 msgid "TinyURL (or other) address prefix"
 msgstr "TinyURL (eller annan) adressprefix"
@@ -1523,9 +1522,10 @@ msgstr "TinyURL"
 msgid "TinyURL plugin"
 msgstr "TinyURL modul"
 
-#, fuzzy
 msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-msgstr "När du får en/flera URL/URLer, TinyURL för att lättare hantering"
+msgstr ""
+"När du får meddelande med en/flera URL/URLer, använd TinyURL för att lättare "
+"hantering"
 
 msgid "Online"
 msgstr "Ansluten"
@@ -1631,28 +1631,22 @@ msgstr "Kompisar"
 msgid "buddy list"
 msgstr "kompislista"
 
-#, fuzzy
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
-"Certifikatet uppvisat av \"%s\" är självsignerat. Det kan inte kontrolleras "
-"automatiskt."
+"Detta certifikatet är självsignerat och kan inte kontrolleras automatiskt."
 
-#, fuzzy
 msgid "The root certificate this one claims to be issued by is unknown."
-msgstr "Rootcertifikatet som denna påstås använda är okänd för Pidgin."
+msgstr "Rootcertifikatet som denna påstås använda är okänd."
 
-#, fuzzy
 msgid "The certificate is not valid yet."
-msgstr "Certifikatskedjan uppvisad för %s är inte giltig."
+msgstr "Certifikatet är inte giltigt än."
 
-#, fuzzy
 msgid "The certificate has expired and should not be considered valid."
-msgstr "Certifikatskedjan uppvisad för %s är inte giltig."
+msgstr "Certifikatet är för gammalt och bör inte anses giltigt."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
-#, fuzzy
 msgid "The certificate presented is not issued to this domain."
-msgstr "Certifikatskedjan uppvisad för %s är inte giltig."
+msgstr "Certifikatet är inte utfärdat för denna domän."
 
 msgid ""
 "You have no database of root certificates, so this certificate cannot be "
@@ -1661,17 +1655,14 @@ msgstr ""
 "Du har ingen databas över rootcertifikat, så detta certifikat kan inte bli "
 "verifierat."
 
-#, fuzzy
 msgid "The certificate chain presented is invalid."
-msgstr "Certifikatskedjan uppvisad för %s är inte giltig."
+msgstr "Certifikatskedjan som uppvisades är ogiltig."
 
-#, fuzzy
 msgid "The certificate has been revoked."
-msgstr "Samtalet avslutat."
+msgstr "Certifikatet är taget tillbaka."
 
-#, fuzzy
 msgid "An unknown certificate error occurred."
-msgstr "Ett okänt inloggningsfel har inträffat: %s."
+msgstr "Ett okänt certifikatsfel har inträffat."
 
 msgid "(DOES NOT MATCH)"
 msgstr "(MATCHAR INTE)"
@@ -1717,25 +1708,24 @@ msgstr "SSL Certifikatsverifikation"
 msgid "_View Certificate..."
 msgstr "_Visa Certifikat..."
 
-#, fuzzy, c-format
+#, c-format
 msgid "The certificate for %s could not be validated."
-msgstr "Certifikatskedjan uppvisad för %s är inte giltig."
+msgstr "Certifikatet för %s kunde inte valideras."
 
 #. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "SSL Certifikatsfel"
 
-#, fuzzy
 msgid "Unable to validate certificate"
-msgstr "Kan inte autentisera: %s"
+msgstr "Kan inte validera certifikat."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The certificate claims to be from \"%s\" instead. This could mean that you "
 "are not connecting to the service you believe you are."
 msgstr ""
-"Certifikatet uppvisat av \"%s\" påstår sig istället vara för \"%s\". Detta "
-"kan betyda att du inte ansluter till den tjänst du tror du ansluter till."
+"Certifikatet påstår sig vara för \"%s\" istället. Detta kan betyda att du "
+"inte ansluter till den tjänst du tror du ansluter till."
 
 #. Make messages
 #, c-format
@@ -1973,18 +1963,18 @@ msgstr "Överföringen av filen %s är färdig"
 msgid "File transfer complete"
 msgstr "Filöverföringen slutfördes"
 
-#, fuzzy, c-format
+#, c-format
 msgid "You cancelled the transfer of %s"
 msgstr "Du avbröt överföringen av %s"
 
 msgid "File transfer cancelled"
 msgstr "Filöverföringen avbröts"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s cancelled the transfer of %s"
 msgstr "%s avbröt överföringen av %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s cancelled the file transfer"
 msgstr "%s avbröt filöverföringen"
 
@@ -2167,28 +2157,29 @@ msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
+"Hittade inga codecs. Installera några GStreamer codecs vilka finns i "
+"GStreamers pluginpaket."
 
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
+"Ingen codec kvar. Dina codec-inställningar i fs-codecs.conf är för strikta."
 
-#, fuzzy
 msgid "A non-recoverable Farsight2 error has occurred."
-msgstr "Ett okänt inloggningsfel har inträffat: %s."
+msgstr "Ett okänt Farsight2-fel har inträffat."
 
-#, fuzzy
-msgid "Conference error."
-msgstr "Konferansen är stängd"
+msgid "Conference error"
+msgstr "Konferensfel"
 
-msgid "Error with your microphone."
-msgstr ""
+msgid "Error with your microphone"
+msgstr "Problem med din mikrofon"
 
-msgid "Error with your webcam."
-msgstr ""
+msgid "Error with your webcam"
+msgstr "Problem med din webbkamera"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error creating session: %s"
-msgstr "Fel vid skapandet av anslutning"
+msgstr "Problem att skapa session: %s"
 
 msgid "Error creating conference."
 msgstr "Fel vid skapandet av konferens."
@@ -2397,7 +2388,7 @@ msgid "_Unset"
 msgstr "_Ta bort"
 
 msgid "Set Idle Time for All Accounts"
-msgstr "Ange Inaktivitetstiden för alla konton"
+msgstr "Ange inaktivitetstiden för alla konton"
 
 msgid "Unset Idle Time for All Idled Accounts"
 msgstr "Tar bort inaktivitetstiden för alla inaktiva konton"
@@ -2450,14 +2441,14 @@ msgstr ""
 "kommandona."
 
 msgid "Hide Joins/Parts"
-msgstr ""
+msgstr "Göm gå med/lämna"
 
 #. Translators: Followed by an input request a number of people
 msgid "For rooms with more than this many people"
-msgstr ""
+msgstr "För rum med fler än detta antalet personer"
 
 msgid "If user has not spoken in this many minutes"
-msgstr ""
+msgstr "Om användaren inte pratat på så här många minuter"
 
 msgid "Apply hiding rules to buddies"
 msgstr "Verkställ döljningsregler för kompisar"
@@ -3921,11 +3912,12 @@ msgstr "Foto"
 msgid "Logo"
 msgstr "Logotyp"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s will no longer be able to see your status updates.  Do you want to "
 "continue?"
-msgstr "Du håller på att ta bort %s från din kompislista. Vill du fortsätta?"
+msgstr ""
+"%s kommer inte längre kunna se dina statusuppdateringar. Vill du fortsätta?"
 
 msgid "Cancel Presence Notification"
 msgstr "Avbryt närvarorapportering"
@@ -4275,7 +4267,7 @@ msgstr "Ändra användarinfo..."
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
 msgid "Change Password..."
-msgstr "Byt lösenor..."
+msgstr "Byt lösenord..."
 
 #. }
 msgid "Search for Users..."
@@ -4540,12 +4532,11 @@ msgstr ""
 "affiliate &lt;ägare|admin|medlem|utstött|ingen&gt;: [nick1] [nick2] ...: "
 "Hämta eller ange användarnas anknytning till rummet."
 
-#, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
 "users with a role or set users' role with the room."
 msgstr ""
-"role &lt;moderator|deltagare|besökare|inget&gt;: [nick1] [nick2] ...: Hämta "
+"role &lt;moderator|participant|visitor|none&gt;: [nick1] [nick2] ...: Hämta "
 "eller ange användarnas roll i rummet."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
@@ -4969,7 +4960,6 @@ msgstr "Fel på friend-fil"
 msgid "Not expected"
 msgstr "Ej väntat"
 
-#, fuzzy
 msgid "Friendly name is changing too rapidly"
 msgstr "Smeknamn ändras för ofta"
 
@@ -5197,7 +5187,7 @@ msgstr ""
 #, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 "Kunde inte lägga till kompisen %s eftersom användarnamnet är ogiltigt. "
 "Användarnamnet måste vara en giltig epost-adress."
@@ -5536,10 +5526,10 @@ msgstr ""
 "%s har frågar efter att få se fin webbkamera, men denna förfrågan stöds inte "
 "än."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr ""
-"%s har frågar efter att få se fin webbkamera, men denna förfrågan stöds inte "
+"%s har gett dig en inbjudan att se dennes webbkamera, men detta stöds inte "
 "än."
 
 msgid "Away From Computer"
@@ -6274,9 +6264,9 @@ msgid "Server port"
 msgstr "Serverport"
 
 #. Note to translators: %s in this string is a URL
-#, fuzzy, c-format
+#, c-format
 msgid "Received unexpected response from %s"
-msgstr "Mottog oväntat svar från"
+msgstr "Mottog oväntat svar från %s"
 
 #. username connecting too frequently
 msgid ""
@@ -6288,9 +6278,9 @@ msgstr ""
 
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
-#, fuzzy, c-format
+#, c-format
 msgid "Error requesting %s: %s"
-msgstr "Fel vid efterfrågan av"
+msgstr "Fel vid efterfrågan av %s: %s"
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL tillåter inte ditt skärmnamn att autentisera här"
@@ -7077,9 +7067,8 @@ msgstr ""
 msgid "C_onnect"
 msgstr "_Anslut"
 
-#, fuzzy
 msgid "You closed the connection."
-msgstr "Servern stängde anslutningen"
+msgstr "Du stängde anslutningen."
 
 msgid "Get AIM Info"
 msgstr "Hämta AIM-info"
@@ -7091,9 +7080,8 @@ msgstr "Ändra kompiskommentar"
 msgid "Get Status Msg"
 msgstr "Hämta statusmeddelande"
 
-#, fuzzy
 msgid "End Direct IM Session"
-msgstr "Direktmeddelande har etablerats"
+msgstr "Avsluta direkt-IM session"
 
 msgid "Direct IM"
 msgstr "Direktmeddelande"
@@ -7925,7 +7913,7 @@ msgstr "%d har har nekat filen %s"
 msgid "File Send"
 msgstr "Filsändning"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%d cancelled the transfer of %s"
 msgstr "%d avbröt överföringen av %s"
 
@@ -9455,7 +9443,7 @@ msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorera inbjudningar till konferenser och chatrum"
 
 msgid "Use account proxy for SSL connections"
-msgstr ""
+msgstr "Använd kontoproxy för SSL-anslutningar"
 
 msgid "Chat room list URL"
 msgstr "URL för chattrumlista"
@@ -9560,26 +9548,27 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Ignorera kompis?"
 
-#, fuzzy
 msgid "Invalid username or password"
 msgstr "Felaktigt användarnamn eller lösenord"
 
-#, fuzzy
 msgid ""
 "Your account has been locked due to too many failed login attempts.  Please "
 "try logging into the Yahoo! website."
 msgstr ""
-"Kontot låst: För många inloggningsförsök.  Logga in på Yahoo!s hemsida kan "
-"fixa detta."
+"Ditt kontot har låsts på grund av för många inloggningsförsök.  Försök att "
+"logga in på Yahoo!s hemsida."
 
 #, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr ""
+msgstr "Okänt fel 52. En återanslutning borde fixa detta."
 
 msgid ""
 "Error 1013: The username you have entered is invalid.  The most common cause "
 "of this error is entering your email address instead of your Yahoo! ID."
 msgstr ""
+"Fel 1013: Användarnamnet du har angivit är ogiltigt.  Den vanligaste "
+"anledningen till detta är att du angett din epost-adress istället flr ditt "
+"Yahoo! ID."
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -9667,6 +9656,15 @@ msgstr "Gå med användare i chatt..."
 msgid "Open Inbox"
 msgstr "Öppna Inkorg"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -9749,9 +9747,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "Användarens profil är tom."
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s has declined to join."
-msgstr "%s har loggat in."
+msgstr "%s har nekat att ansluta."
 
 msgid "Failed to join chat"
 msgstr "Kunde inte ansluta till chatt"
@@ -10022,7 +10020,7 @@ msgid "SSL Handshake Failed"
 msgstr "SSL_handskakning misslyckades"
 
 msgid "SSL peer presented an invalid certificate"
-msgstr "SSL-motparten uppvisade ett ogiltig certifikat"
+msgstr "SSL-motparten uppvisade ett ogiltigt certifikat"
 
 msgid "Unknown SSL error"
 msgstr "Okänt SSL-fel"
@@ -10343,7 +10341,6 @@ msgstr "Bakgrundsfärgen för kompislistan"
 msgid "Layout"
 msgstr "Utseende"
 
-#, fuzzy
 msgid "The layout of icons, name, and status of the buddy list"
 msgstr "Utseendet på ikoner, namn och status i kompislistan"
 
@@ -10399,7 +10396,6 @@ msgstr "Textinformationen för när en kontakt är expanderad"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is online
-#, fuzzy
 msgid "Online Text"
 msgstr "Ansluten-text"
 
@@ -10416,11 +10412,9 @@ msgstr "Textinformationen för när en kompis är borta"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is offline
-#, fuzzy
 msgid "Offline Text"
 msgstr "Frånkopplad-text"
 
-#, fuzzy
 msgid "The text information for when a buddy is offline"
 msgstr "Textinformationen för när en kompis är frånkopplad"
 
@@ -10445,7 +10439,6 @@ msgstr "Textinformationen för när en kompis har ett oläst meddelande"
 msgid "Message (Nick Said) Text"
 msgstr "Meddelande (Smeknamn nämnt) Text"
 
-#, fuzzy
 msgid ""
 "The text information for when a chat has an unread message that mentions "
 "your nickname"
@@ -10651,7 +10644,7 @@ msgid "/Tools/_Certificates"
 msgstr "/Verktyg/_Certifikat"
 
 msgid "/Tools/Custom Smile_ys"
-msgstr "/Verktyg/Egna Smile_ys"
+msgstr "/Verktyg/Egna smile_ys"
 
 msgid "/Tools/Plu_gins"
 msgstr "/Verktyg/Insticksmodu_ler"
@@ -10891,9 +10884,8 @@ msgstr "A_lias:"
 msgid "_Group:"
 msgstr "_Grupp:"
 
-#, fuzzy
 msgid "Auto_join when account connects."
-msgstr "_Gå med automatiskt då kontot är anslutet."
+msgstr "_Gå med automatiskt då kontot ansluter."
 
 msgid "_Remain in chat after window is closed."
 msgstr "Va_r kvar i chattfönster efter att det stängts."
@@ -11009,9 +11001,8 @@ msgstr "/_Konversation"
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Konversation/Nytt snabb_meddelande..."
 
-#, fuzzy
 msgid "/Conversation/Join a _Chat..."
-msgstr "/Konversation/_Bjud in..."
+msgstr "/Konversation/Anslut till en _chatt..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Konversation/_Sök..."
@@ -11403,7 +11394,7 @@ msgid "Estonian"
 msgstr "Estniska"
 
 msgid "Basque"
-msgstr ""
+msgstr "Baskiska"
 
 msgid "Persian"
 msgstr "Persiska"
@@ -11612,6 +11603,12 @@ msgid ""
 "primary language is <b>English</b>.  You are welcome to post in another "
 "language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
+"<font size=\"4\">Hjälp från andra Pidgin-användare:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>Detta är en <b>publik</b> "
+"epostlista! (<a href=\"http://pidgin.im/pipermail/support/\">arkiv</a>)<br/"
+">Vi kan inte hjälpa dig med 3:djepartsmoduler och protokoll!<br/>Listans "
+"huvudspråk är <b>Engelska</b>.  Du är välkommen att skriva i ett annat "
+"språk, men svaren kan vara mindre hjälpsamma.<br/><br/>"
 
 #, c-format
 msgid ""
@@ -12173,43 +12170,48 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 msgstr ""
+"Användning: %s [FLAGGOR]...\n"
+"\n"
 
 msgid "DIR"
-msgstr ""
+msgstr "KATALOG"
 
 msgid "use DIR for config files"
-msgstr ""
+msgstr "Använd KATALOG för konfigurationsfiler"
 
 msgid "print debugging messages to stdout"
-msgstr ""
+msgstr "skriv ut felsökningsmeddelanden till stdout"
 
 msgid "force online, regardless of network status"
-msgstr ""
+msgstr "tvinga ansluten, oavsätt nätverkets status"
 
 msgid "display this help and exit"
-msgstr ""
+msgstr "visa denna hjältexten och avsluta"
 
-#, fuzzy
 msgid "allow multiple instances"
-msgstr "Tillåt många samtidiga inloggningar"
+msgstr "tillåt flera instanser"
 
 msgid "don't automatically login"
-msgstr ""
+msgstr "anslut inte automatiskt"
 
 msgid "NAME"
-msgstr ""
+msgstr "NAMN"
 
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
 "                      specifies account(s) to use, separated by commas.\n"
 "                      Without this only the first account will be enabled)."
 msgstr ""
+"aktivera valda konton (det ej obligatoriska argumentet NAMN\n"
+"                      specificerar en kommaseparerad lista av konton.\n"
+"                      Utan denna lista kommer enbart det första kontot "
+"aktiveras)."
 
 msgid "X display to use"
-msgstr ""
+msgstr "X displayen att använda"
 
 msgid "display the current version and exit"
-msgstr ""
+msgstr "Visar nuvarande version och avslutar"
 
 #, c-format
 msgid ""
@@ -12263,7 +12265,7 @@ msgid "%s wishes to start a video session with you."
 msgstr "%s önskar påbörja en videosession med dig."
 
 msgid "Incoming Call"
-msgstr ""
+msgstr "Inkommande samtal"
 
 msgid "_Pause"
 msgstr "_Pausa"
@@ -12481,6 +12483,21 @@ msgstr "Skicka ett meddelande"
 msgid "Unknown.... Please report this!"
 msgstr "Okänd... Var snäll och rapportera detta!"
 
+msgid "(Custom)"
+msgstr "(Egen)"
+
+msgid "(Default)"
+msgstr "(Förvald)"
+
+msgid "The default Pidgin sound theme"
+msgstr "Pidgins förvalda ljudtema"
+
+msgid "The default Pidgin buddy list theme"
+msgstr "Pidgins förvalda tema för kompislistan"
+
+msgid "The default Pidgin status icon theme"
+msgstr "Pidgins förvalda statusikon-tema"
+
 msgid "Theme failed to unpack."
 msgstr "Temat kunde inte packas upp."
 
@@ -12511,7 +12528,7 @@ msgstr "_Stäng konversationsfönster med Escape-knappen"
 
 #. Buddy List Themes
 msgid "Buddy List Theme"
-msgstr "Tema för Kompislista"
+msgstr "Tema för kompislista"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -12624,9 +12641,8 @@ msgstr "Kan inte starta konfigurationsprogrammet för proxy."
 msgid "Cannot start browser configuration program."
 msgstr "Kan inte starta konfigurationsprogrammet för webbläsaren"
 
-#, fuzzy
 msgid "Disabled"
-msgstr "A_vaktivera"
+msgstr "Avaktiverad"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
@@ -12657,9 +12673,8 @@ msgstr "_Slutport:"
 msgid "Relay Server (TURN)"
 msgstr "Återsändningsserver (TURN)"
 
-#, fuzzy
 msgid "_TURN server:"
-msgstr "ST_UN-server:"
+msgstr "_TURN-server:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proxyserver &amp; Webbläsare"
@@ -12674,7 +12689,7 @@ msgid ""
 "Proxy & Browser preferences are configured\n"
 "in GNOME Preferences"
 msgstr ""
-"Proxy- & Webbläsar-inställningarna konfigureras i\n"
+"Proxy- & webbläsar-inställningarna konfigureras i\n"
 "GNOMEs inställningar"
 
 msgid "Configure _Proxy"
@@ -12839,7 +12854,7 @@ msgid "_Report idle time:"
 msgstr "_Rapportera inaktivitetstid:"
 
 msgid "Based on keyboard or mouse use"
-msgstr "Baserat på tangetbord eller musanvändning"
+msgstr "Baserat på tangentbord eller musanvändning"
 
 msgid "_Auto-reply:"
 msgstr "_Automatiskt svar:"
@@ -13038,7 +13053,7 @@ msgid "Shortcut Text"
 msgstr "Genvägstext"
 
 msgid "Custom Smiley Manager"
-msgstr "Hanterare för egna Smileys"
+msgstr "Hanterare för egna smileys"
 
 msgid "Select Buddy Icon"
 msgstr "Välj kompisikon"
@@ -13233,7 +13248,7 @@ msgid "Small"
 msgstr "Liten"
 
 msgid "Smaller versions of the default smilies"
-msgstr "Mindre versioner av de förvadla smiliesarna."
+msgstr "Mindre versioner av de förvalda smiliesarna."
 
 msgid "Response Probability:"
 msgstr "Trolighet för svar:"
@@ -14215,35 +14230,29 @@ msgstr ""
 "Denna modul tillåter användaren att personifiera konversationernas och "
 "loggarnas tidsstämpelformat."
 
-#, fuzzy
 msgid "Audio"
-msgstr "Auto"
+msgstr "Ljud"
 
-#, fuzzy
 msgid "Video"
-msgstr " Video"
+msgstr "Video"
 
 msgid "Output"
-msgstr ""
+msgstr "Utmatning"
 
-#, fuzzy
 msgid "_Plugin"
-msgstr "Insticksmoduler"
+msgstr "_Insticksmoduler"
 
-#, fuzzy
 msgid "_Device"
-msgstr "Enhet"
+msgstr "_Enhet"
 
 msgid "Input"
-msgstr ""
+msgstr "Inmatning"
 
-#, fuzzy
 msgid "P_lugin"
-msgstr "Insticksmoduler"
+msgstr "Insticksmodu_ler"
 
-#, fuzzy
 msgid "D_evice"
-msgstr "Enhet"
+msgstr "_Enhet"
 
 #. *< magic
 #. *< major version
@@ -14254,18 +14263,18 @@ msgstr "Enhet"
 #. *< dependencies
 #. *< priority
 #. *< id
-#, fuzzy
 msgid "Voice/Video Settings"
-msgstr "Ändra inställningar"
+msgstr "Röst/videoinställningar"
 
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
-msgstr ""
+msgstr "Konfigurerar din mikrofon och kamera."
 
 #. *< summary
 msgid "Configure microphone and webcam settings for voice/video calls."
 msgstr ""
+"Konfigurera mikrofon och webbkamera-inställningar för röst/videosamtal."
 
 msgid "Opacity:"
 msgstr "Ogenomskinlighet:"
@@ -14323,9 +14332,6 @@ msgstr ""
 "\n"
 "* Observera: Denna insticksmodul kräver Win2000 eller senare."
 
-msgid "GTK+ Runtime Version"
-msgstr "GTK+ Runtime-version"
-
 #. Autostart
 msgid "Startup"
 msgstr "Uppstart"
@@ -14333,6 +14339,9 @@ msgstr "Uppstart"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "_Starta %s när Windows startar"
+
+msgid "Allow multiple instances"
+msgstr "Tillåt flera instanser"
 
 msgid "_Dockable Buddy List"
 msgstr "_Dockningsbar kompislista"
@@ -14394,11 +14403,14 @@ msgstr "Skicka och ta emot råa XMPP strofer."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Denna modul är användbar vid felsökning av XMPP serverar och klienter."
 
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "GTK+ Runtime-version"
+
 #~ msgid "Calling ... "
 #~ msgstr "Ringer..."
 
 #~ msgid "Invalid certificate chain"
-#~ msgstr "Ogiltigt certifikatskedja"
+#~ msgstr "Ogiltig certifikatskedja"
 
 #~ msgid ""
 #~ "The certificate chain presented by %s does not have a valid digital "
