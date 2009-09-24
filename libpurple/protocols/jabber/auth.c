@@ -692,7 +692,8 @@ void jabber_auth_start_old(JabberStream *js)
 	JabberIq *iq;
 	xmlnode *query, *username;
 
-	/* We can end up here without encryption if the server doesn't support
+	/*
+	 * We can end up here without encryption if the server doesn't support
 	 * <stream:features/> and we're not using old-style SSL.  If the user
 	 * is requiring SSL/TLS, we need to enforce it.
 	 */
@@ -702,6 +703,16 @@ void jabber_auth_start_old(JabberStream *js)
 			PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
 		return;
+	}
+
+	/*
+	 * IQ Auth doesn't have support for resource binding, so we need to pick a
+	 * default resource so it will work properly.  jabberd14 throws an error and
+	 * iChat server just fails silently.
+	 */
+	if (!js->user->resource || *js->user->resource == '\0') {
+		g_free(js->user->resource);
+		js->user->resource = g_strdup("Home");
 	}
 
 #ifdef HAVE_CYRUS_SASL
