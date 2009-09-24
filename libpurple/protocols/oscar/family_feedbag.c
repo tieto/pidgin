@@ -135,13 +135,18 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 					}
 			} while (exists);
 		}
-	} else if (type == AIM_SSI_TYPE_ICONINFO) {
+	} else if (new->gid == 0x0000) {
+		/*
+		 * This is weird, but apparently items in the root group can't
+		 * have a buddy ID equal to any group ID.  You'll get error
+		 * 0x0003 when trying to add, which is "item already exists"
+		 */
 		if (new->bid == 0xFFFF) {
 			do {
 				new->bid += 0x0001;
 				exists = FALSE;
 				for (cur = *list; cur != NULL; cur = cur->next)
-					if ((cur->bid >= new->bid) || (cur->gid >= new->bid)) {
+					if (cur->bid == new->bid || cur->gid == new->bid) {
 						exists = TRUE;
 						break;
 					}
@@ -153,7 +158,7 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 				new->bid += 0x0001;
 				exists = FALSE;
 				for (cur = *list; cur != NULL; cur = cur->next)
-					if ((cur->bid == new->bid) && (cur->gid == new->gid)) {
+					if (cur->bid == new->bid && cur->gid == new->gid) {
 						exists = TRUE;
 						break;
 					}
