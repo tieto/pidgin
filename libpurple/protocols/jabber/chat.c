@@ -99,6 +99,9 @@ JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 {
 	JabberChat *chat = NULL;
 
+	g_return_val_if_fail(room != NULL, NULL);
+	g_return_val_if_fail(server != NULL, NULL);
+
 	if(NULL != js->chats)
 	{
 		char *room_jid = g_strdup_printf("%s@%s", room, server);

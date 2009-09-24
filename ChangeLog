@@ -5,6 +5,7 @@ version 2.6.3 (??/??/20??):
 	* Fix a crash when attempting to validate an invalid JID.
 	* Resolve an issue when connecting to iChat Server when no resource
 	  is specified.
+	* Fix a crash when adding a buddy without an '@'.
 
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')

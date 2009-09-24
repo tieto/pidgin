@@ -354,7 +354,7 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 	}
 
 	/* Adding a chat room or a chat buddy to the roster is *not* supported. */
-	if (jabber_chat_find(js, jid->node, jid->domain) != NULL) {
+	if (jid->node && jabber_chat_find(js, jid->node, jid->domain) != NULL) {
 		/*
 		 * This is the same thing Bonjour does. If it causes problems, move
 		 * it to an idle callback.
