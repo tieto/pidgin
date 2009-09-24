@@ -687,10 +687,6 @@ int aim_ssi_cleanlist(OscarData *od)
 		cur = cur->next;
 	}
 
-	/* Check if the master group is empty */
-	if ((cur = aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000)) && (!cur->data))
-		aim_ssi_itemlist_del(&od->ssi.local, cur);
-
 	/* If we've made any changes then sync our list with the server's */
 	return aim_ssi_sync(od);
 }
