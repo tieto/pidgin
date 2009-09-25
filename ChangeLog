@@ -10,6 +10,8 @@ version 2.6.3 (??/??/20??):
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
 	  to announce the list of loaded plugins (in both Finch and Pidgin).
+	* Fix a crash when performing DNS queries on Unixes that use the
+	  blocking DNS lookups.  (Brian Lu)
 
 version 2.6.2 (09/05/2009):
 	libpurple:
