@@ -3,10 +3,15 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.6.3 (??/??/20??):
 	XMPP:
 	* Fix a crash when attempting to validate an invalid JID.
+	* Resolve an issue when connecting to iChat Server when no resource
+	  is specified.
+	* Fix a crash when adding a buddy without an '@'.
 
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
 	  to announce the list of loaded plugins (in both Finch and Pidgin).
+	* Fix a crash when performing DNS queries on Unixes that use the
+	  blocking DNS lookups.  (Brian Lu)
 
 version 2.6.2 (09/05/2009):
 	libpurple:
