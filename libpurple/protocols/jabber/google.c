@@ -59,6 +59,7 @@ typedef struct {
 	JabberStream *js;
 	char *remote_jid;
 	gboolean video;
+	char *iq_id;
 } GoogleSession;
 
 static gboolean
@@ -76,6 +77,7 @@ google_session_destroy(GoogleSession *session)
 	g_free(session->id.id);
 	g_free(session->id.initiator);
 	g_free(session->remote_jid);
+	g_free(session->iq_id);
 	g_free(session);
 }
 
@@ -381,7 +383,7 @@ jabber_google_relay_parse_response(const gchar *response, gchar **ip,
 }
 
 static void
-jabber_google_relay_response_cb(PurpleUtilFetchUrlData *url_data, 
+jabber_google_relay_response_session_initiate_cb(PurpleUtilFetchUrlData *url_data, 
 	gpointer user_data, const gchar *url_text, gsize len, 
 	const gchar *error_message)
 {
@@ -447,6 +449,26 @@ jabber_google_relay_response_cb(PurpleUtilFetchUrlData *url_data,
 	g_free(params);	
 }
 
+static void
+jabber_google_do_relay_request(JabberStream *js, GoogleSession *session,
+	PurpleUtilFetchUrlCallback cb)
+{
+	gchar *url = g_strdup_printf("http://%s", js->google_relay_host);
+	gchar *request =
+		g_strdup_printf("GET /create_session HTTP/1.0\r\n"
+			            "Host: %s\r\n"
+						"X-Talk-Google-Relay-Auth: %s\r\n"
+						"X-Google-Relay-Auth: %s\r\n\r\n", 
+			js->google_relay_host, js->google_relay_token, js->google_relay_token);
+	purple_debug_info("jabber", 
+		"sending Google relay request %s to %s\n", request, url); 
+	js->google_relay_request =
+		purple_util_fetch_url_request(url, FALSE, NULL, FALSE, request, FALSE,
+			cb, session);
+	g_free(url);
+	g_free(request);
+}
+
 gboolean
 jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSessionType type)
 {
@@ -488,23 +510,11 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 	/* if we got a relay token and relay host in google:jingleinfo, issue an
 	 HTTP request to get that data */
 	if (js->google_relay_host && js->google_relay_token) {
-		gchar *url = 
-			g_strdup_printf("http://%s", js->google_relay_host);
-		gchar *request =
-			g_strdup_printf("GET /create_session HTTP/1.0\r\n"
-			                "Host: %s\r\n"
-							"X-Talk-Google-Relay-Auth: %s\r\n"
-							"X-Google-Relay-Auth: %s\r\n\r\n", 
-				js->google_relay_host, js->google_relay_token, js->google_relay_token);
-		purple_debug_info("jabber", 
-			"sending Google relay request %s to %s\n", request, url); 
-		js->google_relay_request =
-			purple_util_fetch_url_request(url, FALSE, NULL, FALSE, request, FALSE,
-				jabber_google_relay_response_cb, session);
-		g_free(url);
-		g_free(request);
+		jabber_google_do_relay_request(js, session,
+			jabber_google_relay_response_session_initiate_cb);
 	} else {
-		jabber_google_relay_response_cb(NULL, session, NULL, 0, NULL);
+		jabber_google_relay_response_session_initiate_cb(NULL, session, NULL, 0,
+			NULL);
 	}
 	
 	/* we don't actually know yet wether it succeeded... maybe this is very
@@ -512,55 +522,40 @@ jabber_google_session_initiate(JabberStream *js, const gchar *who, PurpleMediaSe
 	return TRUE;
 }
 
-static gboolean
-google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
+static void
+jabber_google_relay_response_session_handle_initiate_cb(
+    PurpleUtilFetchUrlData *url_data, 
+	gpointer user_data, const gchar *url_text, gsize len, 
+	const gchar *error_message)
 {
-	JabberIq *result;
-	GList *codecs = NULL, *video_codecs = NULL;
-	xmlnode *desc_element, *codec_element;
-	PurpleMediaCodec *codec;
-	const char *xmlns;
+	GoogleSession *session = (GoogleSession *) user_data;
 	GParameter *params;
 	guint num_params;
-
-	if (session->state != UNINIT) {
-		purple_debug_error("jabber", "Received initiate for active session.\n");
-		return FALSE;
+	JabberStream *js = session->js;
+	gchar *relay_ip = NULL;
+	guint relay_udp = 0;
+	guint relay_tcp = 0;
+	guint relay_ssltcp = 0;
+	gchar *relay_username = NULL;
+	gchar *relay_password = NULL;
+	xmlnode *codec_element;
+	xmlnode *desc_element;
+	const gchar *xmlns;
+	PurpleMediaCodec *codec;
+	GList *video_codecs = NULL;
+	GList *codecs = NULL;
+	JabberIq *result;
+	
+	if (url_text && len > 0) {
+		purple_debug_info("jabber", "got Google relay request response:\n%s\n",
+			url_text);
+		jabber_google_relay_parse_response(url_text, &relay_ip, &relay_udp,
+			&relay_tcp, &relay_ssltcp, &relay_username, &relay_password);
 	}
 
-	desc_element = xmlnode_get_child(sess, "description");
-	xmlns = xmlnode_get_namespace(desc_element);
-
-	if (purple_strequal(xmlns, NS_GOOGLE_PHONE))
-		session->video = FALSE;
-	else if (purple_strequal(xmlns, NS_GOOGLE_VIDEO))
-		session->video = TRUE;
-	else {
-		purple_debug_error("jabber", "Received initiate with "
-				"invalid namespace %s.\n", xmlns);
-		return FALSE;
-	}
-
-	session->media = purple_media_manager_create_media(
-			purple_media_manager_get(),
-			purple_connection_get_account(js->gc),
-			"fsrtpconference", session->remote_jid, FALSE);
-
-	purple_media_set_prpl_data(session->media, session);
-
-	g_signal_connect_swapped(G_OBJECT(session->media),
-			"candidates-prepared",
-			G_CALLBACK(google_session_ready), session);
-	g_signal_connect_swapped(G_OBJECT(session->media), "codecs-changed",
-			G_CALLBACK(google_session_ready), session);
-	g_signal_connect(G_OBJECT(session->media), "state-changed",
-			G_CALLBACK(google_session_state_changed_cb), session);
-	g_signal_connect(G_OBJECT(session->media), "stream-info",
-			G_CALLBACK(google_session_stream_info_cb), session);
-
-	/* TODO: setup relay stuff... */
-	params = jabber_google_session_get_params(js, NULL, 0, 0, 0, NULL, NULL,
-		&num_params);
+	params = 
+		jabber_google_session_get_params(js, relay_ip, relay_udp, relay_tcp, 
+	    	relay_ssltcp, relay_username, relay_password, &num_params);
 
 	if (purple_media_add_stream(session->media, "google-voice",
 			session->remote_jid, PURPLE_MEDIA_AUDIO, FALSE,
@@ -573,7 +568,6 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 		purple_media_stream_info(session->media,
 				PURPLE_MEDIA_INFO_REJECT, NULL, NULL, TRUE);
 		g_free(params);
-		return FALSE;
 	}
 
 	g_free(params);
@@ -629,9 +623,61 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	purple_media_codec_list_free(video_codecs);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
-	jabber_iq_set_id(result, iq_id);
+	jabber_iq_set_id(result, session->iq_id);
 	xmlnode_set_attrib(result->node, "to", session->remote_jid);
 	jabber_iq_send(result);
+}
+
+static gboolean
+google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
+{
+	xmlnode *desc_element;
+	const gchar *xmlns;
+	
+	if (session->state != UNINIT) {
+		purple_debug_error("jabber", "Received initiate for active session.\n");
+		return FALSE;
+	}
+
+	desc_element = xmlnode_get_child(sess, "description");
+	xmlns = xmlnode_get_namespace(desc_element);
+
+	if (purple_strequal(xmlns, NS_GOOGLE_PHONE))
+		session->video = FALSE;
+	else if (purple_strequal(xmlns, NS_GOOGLE_VIDEO))
+		session->video = TRUE;
+	else {
+		purple_debug_error("jabber", "Received initiate with "
+				"invalid namespace %s.\n", xmlns);
+		return FALSE;
+	}
+
+	session->media = purple_media_manager_create_media(
+			purple_media_manager_get(),
+			purple_connection_get_account(js->gc),
+			"fsrtpconference", session->remote_jid, FALSE);
+
+	purple_media_set_prpl_data(session->media, session);
+
+	g_signal_connect_swapped(G_OBJECT(session->media),
+			"candidates-prepared",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect_swapped(G_OBJECT(session->media), "codecs-changed",
+			G_CALLBACK(google_session_ready), session);
+	g_signal_connect(G_OBJECT(session->media), "state-changed",
+			G_CALLBACK(google_session_state_changed_cb), session);
+	g_signal_connect(G_OBJECT(session->media), "stream-info",
+			G_CALLBACK(google_session_stream_info_cb), session);
+
+	session->iq_id = g_strdup(iq_id);
+	
+	if (js->google_relay_host && js->google_relay_token) {
+		jabber_google_do_relay_request(js, session, 
+			jabber_google_relay_response_session_handle_initiate_cb);
+	} else {
+		jabber_google_relay_response_session_handle_initiate_cb(NULL, session,
+			NULL, 0, NULL);
+	}
 
 	return TRUE;
 }
