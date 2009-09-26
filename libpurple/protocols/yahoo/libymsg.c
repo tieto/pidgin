@@ -4286,7 +4286,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 
 	msn = !g_ascii_strncasecmp(who, "msn/", 4);
 
-	if( strncmp(who, "+", 1) == 0 ) {
+	if (who[0] == '+') {
 		/* we have an sms to be sent */
 		gchar *carrier = NULL;
 		const char *alias = NULL;
@@ -4543,7 +4543,7 @@ void yahoo_set_idle(PurpleConnection *gc, int idle)
 		yd->current_status = get_yahoo_status_from_purple_status(status);
 	}
 
-	invisible = !( purple_presence_is_available(purple_account_get_presence(purple_connection_get_account(gc))) );
+	invisible = (yd->current_status == YAHOO_STATUS_INVISIBLE);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
