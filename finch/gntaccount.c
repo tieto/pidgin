@@ -166,8 +166,7 @@ save_account_cb(AccountEditDialog *dialog)
 
 	/* Alias */
 	value = gnt_entry_get_text(GNT_ENTRY(dialog->alias));
-	if (value && *value)
-		purple_account_set_alias(account, value);
+	purple_account_set_alias(account, value);
 
 	/* Remember password and password */
 	purple_account_set_remember_password(account,
