@@ -1363,7 +1363,6 @@ static void yahoo_p2p_ft_POST_cb(gpointer data, gint source, PurpleInputConditio
 
 	xfer = data;
 	if (!(xd = xfer->data))	{
-		purple_input_remove(xd->input_event);
 		purple_xfer_cancel_remote(xfer);
 		return;
 	}
@@ -1387,7 +1386,6 @@ static void yahoo_p2p_ft_HEAD_GET_cb(gpointer data, gint source, PurpleInputCond
 
 	xfer = data;
 	if (!(xd = xfer->data))	{
-		purple_input_remove(xd->input_event);
 		purple_xfer_cancel_remote(xfer);
 		return;
 	}
@@ -1491,7 +1489,7 @@ static void yahoo_p2p_ft_server_listen_cb(int listenfd, gpointer data)
 	char *filename_without_spaces = NULL;
 
 	xfer = data;
-	if ( !( (xd = xfer->data) || (listenfd != -1) ) )	{
+	if (!(xd = xfer->data) || (listenfd == -1))	{
 		purple_debug_warning("yahoo","p2p: error starting server for p2p file transfer\n");
 		purple_xfer_cancel_remote(xfer);
 		return;
