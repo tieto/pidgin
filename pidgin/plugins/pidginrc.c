@@ -198,17 +198,13 @@ static void
 purplerc_make_changes(void)
 {
 	GString *str = make_gtkrc_string();
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkSettings *setting = NULL;
-#endif
 
 	gtk_rc_parse_string(str->str);
 	g_string_free(str, TRUE);
 
-#if GTK_CHECK_VERSION(2,4,0)
 	setting = gtk_settings_get_default();
 	gtk_rc_reset_styles(setting);
-#endif
 }
 
 static void
