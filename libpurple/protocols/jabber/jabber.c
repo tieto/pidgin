@@ -1569,6 +1569,10 @@ void jabber_close(PurpleConnection *gc)
 	/* remove Google relay-related stuff */
 	g_free(js->google_relay_token);
 	g_free(js->google_relay_host);
+	if (js->google_relay_request) {
+		purple_util_fetch_url_cancel(js->google_relay_request);
+		js->google_relay_request = NULL;
+	}
 
 	if (js->google_relay_request != NULL) {
 		purple_util_fetch_url_cancel(js->google_relay_request);

@@ -545,7 +545,9 @@ jabber_google_relay_response_session_handle_initiate_cb(
 	GList *video_codecs = NULL;
 	GList *codecs = NULL;
 	JabberIq *result;
-	
+
+	js->google_relay_request = NULL;
+
 	if (url_text && len > 0) {
 		purple_debug_info("jabber", "got Google relay request response:\n%s\n",
 			url_text);
