@@ -1025,7 +1025,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		char *m, *m2;
 		char *msn_from = NULL;
 		const char *from;
-		PurpleConversation *c;
 		im = l->data;
 
 		if (!im->from || !im->msg) {
@@ -1077,14 +1076,9 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			from = im->from;
 		}
 
-		c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, account);
-
 		if (!strcmp(m, "<ding>")) {
 			char *username;
 
-			if (c == NULL) {
-				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, from);
-			}
 			username = g_markup_escape_text(from, -1);
 			purple_prpl_got_attention(gc, username, YAHOO_BUZZ);
 			g_free(username);
