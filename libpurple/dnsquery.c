@@ -328,6 +328,8 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 				printf("dns[%d] Error: getaddrinfo returned %d\n",
 					getpid(), rc);
 			dns_params.hostname[0] = '\0';
+			g_free(hostname);
+			hostname = NULL;
 			continue;
 		}
 		tmp = res;
@@ -948,6 +950,7 @@ resolve_host(gpointer data)
 			g_snprintf(message, sizeof(message), _("Error resolving %s: %d"),
 					query_data->hostname, h_errno);
 			purple_dnsquery_failed(query_data, message);
+			g_free(hostname);
 			return FALSE;
 		}
 		memset(&sin, 0, sizeof(struct sockaddr_in));
