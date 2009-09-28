@@ -842,6 +842,9 @@ jabber_stream_new(PurpleAccount *account)
 	js->stun_ip = NULL;
 	js->stun_port = 0;
 	js->stun_query = NULL;
+	js->google_relay_token = NULL;
+	js->google_relay_host = NULL;
+	js->google_relay_request = NULL;
 
 	/* if we are idle, set idle-ness on the stream (this could happen if we get
 		disconnected and the reconnects while being idle. I don't think it makes
@@ -1561,6 +1564,19 @@ void jabber_close(PurpleConnection *gc)
 	if (js->stun_query) {
 		purple_dnsquery_destroy(js->stun_query);
 		js->stun_query = NULL;
+	}
+
+	/* remove Google relay-related stuff */
+	g_free(js->google_relay_token);
+	g_free(js->google_relay_host);
+	if (js->google_relay_request) {
+		purple_util_fetch_url_cancel(js->google_relay_request);
+		js->google_relay_request = NULL;
+	}
+
+	if (js->google_relay_request != NULL) {
+		purple_util_fetch_url_cancel(js->google_relay_request);
+		js->google_relay_request = NULL;
 	}
 
 	g_free(js);
@@ -3012,10 +3028,11 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 		jbr = jabber_buddy_find_resource(jb, resource);
 		g_free(resource);
 
-		if (type & PURPLE_MEDIA_AUDIO &&
-				!jabber_resource_has_capability(jbr,
-				JINGLE_APP_RTP_SUPPORT_AUDIO) &&
-				jabber_resource_has_capability(jbr,
+		/* if we are on a Google Talk connection and the remote supports
+		 Google Jingle, we will go with that */
+		if ((js->googletalk || 
+		     !jabber_resource_has_capability(jbr, JINGLE_APP_RTP_SUPPORT_AUDIO))
+		    && type & PURPLE_MEDIA_AUDIO && jabber_resource_has_capability(jbr,
 				GOOGLE_VOICE_CAP))
 			return jabber_google_session_initiate(js, who, type);
 		else
