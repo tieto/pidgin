@@ -436,6 +436,30 @@ jingle_terminate_sessions(JabberStream *js)
 }
 
 #ifdef USE_VV
+static GValueArray *
+jingle_create_relay_info(const gchar *ip, guint port, const gchar *username,
+	const gchar *password, const gchar *relay_type, GValueArray *relay_info)
+{
+	GValue value;
+	GstStructure *turn_setup = gst_structure_new("relay-info",
+		"ip", G_TYPE_STRING, ip, 
+		"port", G_TYPE_UINT, port,
+		"username", G_TYPE_STRING, username,
+		"password", G_TYPE_STRING, password,
+		"relay-type", G_TYPE_STRING, relay_type,
+		NULL);
+	purple_debug_info("jabber", "created gst_structure %" GST_PTR_FORMAT "\n", 
+		turn_setup);
+	if (turn_setup) {
+		memset(&value, 0, sizeof(GValue));
+		g_value_init(&value, GST_TYPE_STRUCTURE);
+		gst_value_set_structure(&value, turn_setup);
+		relay_info = g_value_array_append(relay_info, &value);
+		gst_structure_free(turn_setup);
+	}
+	return relay_info;
+}
+
 GParameter *
 jingle_get_params(JabberStream *js, const gchar *relay_ip, guint relay_udp,
 	guint relay_tcp, guint relay_ssltcp, const gchar *relay_username,
@@ -471,57 +495,21 @@ jingle_get_params(JabberStream *js, const gchar *relay_ip, guint relay_udp,
 	
 		if (relay_ip) {
 			GValueArray *relay_info = g_value_array_new(0);
-			GValue udp_value;
-			GValue tcp_value;
-			GValue ssltcp_value;
 
 			if (relay_udp) {
-				GstStructure *turn_setup = gst_structure_new("relay-info",
-					"ip", G_TYPE_STRING, relay_ip, 
-					"port", G_TYPE_UINT, relay_udp,
-					"username", G_TYPE_STRING, relay_username,
-					"password", G_TYPE_STRING, relay_password,
-				    "relay-type", G_TYPE_STRING, "udp",
-					NULL);
-				if (turn_setup) {
-					memset(&udp_value, 0, sizeof(GValue));
-					g_value_init(&udp_value, GST_TYPE_STRUCTURE);
-					gst_value_set_structure(&udp_value, turn_setup);
-					relay_info = g_value_array_append(relay_info, &udp_value);
-					gst_structure_free(turn_setup);
-				}
+				relay_info = 
+					jingle_create_relay_info(relay_ip, relay_udp, relay_username,
+						relay_password, "udp", relay_info);
 			}
 			if (relay_tcp) {
-				GstStructure *turn_setup = gst_structure_new("relay-info",
-					"ip", G_TYPE_STRING, relay_ip, 
-					"port", G_TYPE_UINT, relay_tcp,
-					"username", G_TYPE_STRING, relay_username,
-					"password", G_TYPE_STRING, relay_password,
-				    "relay-type", G_TYPE_STRING, "tcp",
-					NULL);
-				if (turn_setup) {
-					memset(&tcp_value, 0, sizeof(GValue));
-					g_value_init(&tcp_value, GST_TYPE_STRUCTURE);
-					gst_value_set_structure(&tcp_value, turn_setup);
-					relay_info = g_value_array_append(relay_info, &tcp_value);
-					gst_structure_free(turn_setup);
-				}
+				relay_info = 
+					jingle_create_relay_info(relay_ip, relay_tcp, relay_username,
+						relay_password, "tcp", relay_info);
 			}
 			if (relay_ssltcp) {
-				GstStructure *turn_setup = gst_structure_new("relay-info",
-					"ip", G_TYPE_STRING, relay_ip, 
-					"port", G_TYPE_UINT, relay_ssltcp,
-					"username", G_TYPE_STRING, relay_username,
-					"password", G_TYPE_STRING, relay_password,
-				    "relay-type", G_TYPE_STRING, "tls",
-					NULL);
-				if (turn_setup) {
-					memset(&ssltcp_value, 0, sizeof(GValue));
-					g_value_init(&ssltcp_value, GST_TYPE_STRUCTURE);
-					gst_value_set_structure(&ssltcp_value, turn_setup);
-					relay_info = g_value_array_append(relay_info, &ssltcp_value);
-					gst_structure_free(turn_setup);
-				}
+				relay_info = 
+					jingle_create_relay_info(relay_ip, relay_ssltcp, relay_username,
+						relay_password, "tls", relay_info);
 			}
 			params[next_index].name = "relay-info";
 			g_value_init(&params[next_index].value, G_TYPE_VALUE_ARRAY);
