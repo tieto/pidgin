@@ -401,7 +401,8 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn,
 
 void jabber_bosh_connection_close(PurpleBOSHConnection *conn)
 {
-	jabber_bosh_connection_send(conn, PACKET_TERMINATE, NULL);
+	if (conn->state == BOSH_CONN_ONLINE)
+		jabber_bosh_connection_send(conn, PACKET_TERMINATE, NULL);
 }
 
 static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node) {
