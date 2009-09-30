@@ -13,6 +13,11 @@ version 2.6.3 (??/??/20??):
 	* Fix a crash when performing DNS queries on Unixes that use the
 	  blocking DNS lookups.  (Brian Lu)
 
+	Finch:
+	* The TinyURL plugin now creates shorter URLs for long non-conversation
+	  URLs, e.g. URLs to open Inbox in Yahoo/MSN protocols, or the Yahoo
+	  Captcha when joining chat rooms.
+
 version 2.6.2 (09/05/2009):
 	libpurple:
 	* Fix --disable-avahi to actually disable it in configure, as opposed
