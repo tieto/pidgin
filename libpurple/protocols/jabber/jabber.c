@@ -844,7 +844,7 @@ jabber_stream_new(PurpleAccount *account)
 	js->stun_query = NULL;
 	js->google_relay_token = NULL;
 	js->google_relay_host = NULL;
-	js->google_relay_request = NULL;
+	js->google_relay_requests = NULL;
 
 	/* if we are idle, set idle-ness on the stream (this could happen if we get
 		disconnected and the reconnects while being idle. I don't think it makes
@@ -1569,14 +1569,16 @@ void jabber_close(PurpleConnection *gc)
 	/* remove Google relay-related stuff */
 	g_free(js->google_relay_token);
 	g_free(js->google_relay_host);
-	if (js->google_relay_request) {
-		purple_util_fetch_url_cancel(js->google_relay_request);
-		js->google_relay_request = NULL;
-	}
-
-	if (js->google_relay_request != NULL) {
-		purple_util_fetch_url_cancel(js->google_relay_request);
-		js->google_relay_request = NULL;
+	if (js->google_relay_requests) {
+		while (js->google_relay_requests) {
+			PurpleUtilFetchUrlData *url_data =
+				(PurpleUtilFetchUrlData *) js->google_relay_requests->data;
+			purple_util_fetch_url_cancel(url_data);
+			g_free(url_data);
+			js->google_relay_requests = 
+				g_list_delete_link(js->google_relay_requests, 
+					js->google_relay_requests);
+		}
 	}
 
 	g_free(js);

@@ -276,7 +276,7 @@ struct _JabberStream
 	/* stuff for Google's relay handling */
 	gchar *google_relay_token;
 	gchar *google_relay_host;
-	PurpleUtilFetchUrlData *google_relay_request; /* the HTTP request to get */
+	GList *google_relay_requests; /* the HTTP requests to get */
 												/* relay info */
 };
 

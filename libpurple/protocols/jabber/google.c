@@ -379,6 +379,21 @@ jabber_google_relay_parse_response(const gchar *response, gchar **ip,
 }
 
 static void
+jabber_google_relay_remove_url_data(JabberStream *js, 
+	PurpleUtilFetchUrlData *url_data)
+{
+	GList *iter = js->google_relay_requests;
+
+	while (iter) {
+		if (iter->data == url_data) {
+			js->google_relay_requests =
+				g_list_delete_link(js->google_relay_requests, iter);
+			break;
+		}
+	}
+}
+
+static void
 jabber_google_relay_response_session_initiate_cb(PurpleUtilFetchUrlData *url_data, 
 	gpointer user_data, const gchar *url_text, gsize len, 
 	const gchar *error_message)
@@ -394,7 +409,9 @@ jabber_google_relay_response_session_initiate_cb(PurpleUtilFetchUrlData *url_dat
 	gchar *relay_username = NULL;
 	gchar *relay_password = NULL;
 
-	js->google_relay_request = NULL;
+	if (url_data) {
+		jabber_google_relay_remove_url_data(js, url_data);
+	}
 
 	purple_debug_info("jabber", "got response on HTTP request to relay server\n");
 
@@ -449,6 +466,7 @@ static void
 jabber_google_do_relay_request(JabberStream *js, GoogleSession *session,
 	PurpleUtilFetchUrlCallback cb)
 {
+	PurpleUtilFetchUrlData *url_data = NULL;
 	gchar *url = g_strdup_printf("http://%s", js->google_relay_host);
 	gchar *request =
 		g_strdup_printf("GET /create_session HTTP/1.0\r\n"
@@ -458,9 +476,16 @@ jabber_google_do_relay_request(JabberStream *js, GoogleSession *session,
 			js->google_relay_host, js->google_relay_token, js->google_relay_token);
 	purple_debug_info("jabber", 
 		"sending Google relay request %s to %s\n", request, url); 
-	js->google_relay_request =
+	url_data = 
 		purple_util_fetch_url_request(url, FALSE, NULL, FALSE, request, FALSE,
 			cb, session);
+	if (url_data) {
+		js->google_relay_requests =
+			g_list_prepend(js->google_relay_requests, url_data);
+	} else {
+		purple_debug_error("jabber", "unable to create Google relay request\n");
+		cb(NULL, session, NULL, 0, NULL);
+	}
 	g_free(url);
 	g_free(request);
 }
@@ -542,7 +567,9 @@ jabber_google_relay_response_session_handle_initiate_cb(
 	GList *codecs = NULL;
 	JabberIq *result;
 
-	js->google_relay_request = NULL;
+	if (url_data) {
+		jabber_google_relay_remove_url_data(js, url_data);
+	}
 
 	if (url_text && len > 0) {
 		purple_debug_info("jabber", "got Google relay request response:\n%s\n",
