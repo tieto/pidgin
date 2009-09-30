@@ -356,9 +356,6 @@ jabber_google_relay_parse_response(const gchar *response, gchar **ip,
 	for (; lines[i] ; i++) {
 		gchar *line = lines[i];
 		gchar **parts = g_strsplit(line, "=", 2);
-
-		purple_debug_info("jabber", "parsing line %s in Google relay response\n",
-			line);
 		
 		if (parts[0] && parts[1]) {
 			if (purple_strequal(parts[0], "relay.ip")) {
