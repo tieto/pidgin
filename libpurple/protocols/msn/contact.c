@@ -1418,11 +1418,12 @@ msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateTy
 	xmlnode *contact_info;
 	xmlnode *changes;
 
-	purple_debug_info("msn", "Update contact information with new %s: %s\n",
+	purple_debug_info("msn", "Update contact information for %s with new %s: %s\n",
+		passport ? passport : "(null)",
 		type == MSN_UPDATE_DISPLAY ? "display name" : "alias",
 		value ? value : "(null)");
-	purple_debug_info("msn", "passport=%s\n", passport);
 	g_return_if_fail(passport != NULL);
+
 	contact_info = xmlnode_new("contactInfo");
 	changes = xmlnode_new("propertiesChanged");
 
@@ -1450,8 +1451,6 @@ msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateTy
 		default:
 			g_return_if_reached();
 	}
-
-
 
 	state = msn_callback_state_new(session);
 
