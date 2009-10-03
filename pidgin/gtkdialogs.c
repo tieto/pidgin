@@ -47,6 +47,8 @@
 static GList *dialogwindows = NULL;
 
 static GtkWidget *about = NULL;
+static GtkWidget *buildinfo = NULL;
+static GtkWidget *translator_info = NULL;
 
 struct _PidginGroupMergeObject {
 	PurpleGroup* parent;
@@ -350,6 +352,20 @@ pidgin_dialogs_destroy_all()
 	}
 }
 
+static void destroy_translator_info(void)
+{
+	if (translator_info != NULL)
+		gtk_widget_destroy(translator_info);
+	translator_info = NULL;
+}
+
+static void destroy_buildinfo(void)
+{
+	if (buildinfo != NULL)
+		gtk_widget_destroy(buildinfo);
+	buildinfo = NULL;
+}
+
 static void destroy_about(void)
 {
 	if (about != NULL)
@@ -508,19 +524,66 @@ void pidgin_dialogs_about()
 	add_developers(str, retired_patch_writers);
 	g_string_append(str, "<BR/>");
 
-	/* Current Translators */
-	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
-						   _("Current Translators"));
-	add_translators(str, translators);
-	g_string_append(str, "<BR/>");
+	gtk_imhtml_append_text(GTK_IMHTML(text), str->str, GTK_IMHTML_NO_SCROLL);
+	g_string_free(str, TRUE);
 
-	/* Past Translators */
-	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
-						   _("Past Translators"));
-	add_translators(str, past_translators);
-	g_string_append(str, "<BR/>");
+	gtk_text_buffer_get_start_iter(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
+	gtk_text_buffer_place_cursor(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
 
-	g_string_append_printf(str, "<FONT SIZE=\"4\">%s</FONT><br/>", _("Debugging Information"));
+	/* Close Button */
+	button = pidgin_dialog_add_button(GTK_DIALOG(about), GTK_STOCK_CLOSE,
+	                G_CALLBACK(destroy_about), about);
+
+	g_signal_connect(G_OBJECT(about), "destroy",
+					 G_CALLBACK(destroy_about), G_OBJECT(about));
+
+	/* this makes the sizes not work? */
+	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+	gtk_widget_grab_default(button);
+
+	/* Let's give'em something to talk about -- woah woah woah */
+	buddylist = pidgin_blist_get_default_gtk_blist();
+	if (buddylist)
+		gtk_window_set_transient_for(GTK_WINDOW(about),
+				GTK_WINDOW(buddylist->window));
+
+	gtk_widget_show_all(about);
+	gtk_window_present(GTK_WINDOW(about));
+}
+
+void pidgin_dialogs_buildinfo()
+{
+	GtkWidget *vbox;
+	GtkWidget *frame;
+	GtkWidget *text;
+	GtkWidget *button;
+	GtkTextIter iter;
+	GString *str;
+	char *tmp;
+	PidginBuddyList *buddylist;
+
+	if (about != NULL) {
+		gtk_window_present(GTK_WINDOW(about));
+		return;
+	}
+
+	tmp = g_strdup_printf(_("%s Build Information"), PIDGIN_NAME);
+	buildinfo = pidgin_create_dialog(tmp, PIDGIN_HIG_BORDER, "buildinfo", TRUE);
+	g_free(tmp);
+	gtk_window_set_default_size(GTK_WINDOW(buildinfo), 450, 450);
+
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(buildinfo), FALSE, PIDGIN_HIG_BORDER);
+
+	frame = pidgin_create_imhtml(FALSE, &text, NULL, NULL);
+	gtk_imhtml_set_format_functions(GTK_IMHTML(text), GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+
+	str = g_string_sized_new(4096);
+
+	g_string_append_printf(str,
+		"<FONT SIZE=\"4\"><B>%s %s</B></FONT>><BR>(libpurple %s)<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
+
+	g_string_append_printf(str, "<FONT SIZE=\"4\">%s</FONT><br/>", _("Build Information"));
 
 	/* The following primarly intented for user/developer interaction and thus
 	   ought not be translated */
@@ -698,11 +761,11 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 	gtk_text_buffer_place_cursor(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
 
 	/* Close Button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(about), GTK_STOCK_CLOSE,
-	                G_CALLBACK(destroy_about), about);
+	button = pidgin_dialog_add_button(GTK_DIALOG(buildinfo), GTK_STOCK_CLOSE,
+	                G_CALLBACK(destroy_buildinfo), about);
 
-	g_signal_connect(G_OBJECT(about), "destroy",
-					 G_CALLBACK(destroy_about), G_OBJECT(about));
+	g_signal_connect(G_OBJECT(buildinfo), "destroy",
+					 G_CALLBACK(destroy_buildinfo), G_OBJECT(buildinfo));
 
 	/* this makes the sizes not work? */
 	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
@@ -711,11 +774,79 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 	/* Let's give'em something to talk about -- woah woah woah */
 	buddylist = pidgin_blist_get_default_gtk_blist();
 	if (buddylist)
-		gtk_window_set_transient_for(GTK_WINDOW(about),
+		gtk_window_set_transient_for(GTK_WINDOW(buildinfo),
 				GTK_WINDOW(buddylist->window));
 
-	gtk_widget_show_all(about);
-	gtk_window_present(GTK_WINDOW(about));
+	gtk_widget_show_all(buildinfo);
+	gtk_window_present(GTK_WINDOW(buildinfo));
+}
+
+void pidgin_dialogs_translators()
+{
+	GtkWidget *vbox;
+	GtkWidget *frame;
+	GtkWidget *text;
+	GtkWidget *button;
+	GtkTextIter iter;
+	GString *str;
+	char *tmp;
+	PidginBuddyList *buddylist;
+
+	if (about != NULL) {
+		gtk_window_present(GTK_WINDOW(about));
+		return;
+	}
+
+	tmp = g_strdup_printf(_("%s Translator Information"), PIDGIN_NAME);
+	translator_info = pidgin_create_dialog(tmp, PIDGIN_HIG_BORDER, "translator_info", TRUE);
+	g_free(tmp);
+	gtk_window_set_default_size(GTK_WINDOW(translator_info), 450, 450);
+
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(translator_info), FALSE, PIDGIN_HIG_BORDER);
+
+	frame = pidgin_create_imhtml(FALSE, &text, NULL, NULL);
+	gtk_imhtml_set_format_functions(GTK_IMHTML(text), GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+
+	str = g_string_sized_new(4096);
+
+	/* Current Translators */
+	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
+						   _("Current Translators"));
+	add_translators(str, translators);
+	g_string_append(str, "<BR/>");
+
+	/* Past Translators */
+	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
+						   _("Past Translators"));
+	add_translators(str, past_translators);
+	g_string_append(str, "<BR/>");
+
+	gtk_imhtml_append_text(GTK_IMHTML(text), str->str, GTK_IMHTML_NO_SCROLL);
+	g_string_free(str, TRUE);
+
+	gtk_text_buffer_get_start_iter(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
+	gtk_text_buffer_place_cursor(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
+
+	/* Close Button */
+	button = pidgin_dialog_add_button(GTK_DIALOG(translator_info), GTK_STOCK_CLOSE,
+	                G_CALLBACK(destroy_translator_info), about);
+
+	g_signal_connect(G_OBJECT(translator_info), "destroy",
+					 G_CALLBACK(destroy_translator_info), G_OBJECT(translator_info));
+
+	/* this makes the sizes not work? */
+	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+	gtk_widget_grab_default(button);
+
+	/* Let's give'em something to talk about -- woah woah woah */
+	buddylist = pidgin_blist_get_default_gtk_blist();
+	if (buddylist)
+		gtk_window_set_transient_for(GTK_WINDOW(translator_info),
+				GTK_WINDOW(buddylist->window));
+
+	gtk_widget_show_all(translator_info);
+	gtk_window_present(GTK_WINDOW(translator_info));
 }
 
 static void

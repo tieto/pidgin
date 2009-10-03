@@ -3433,7 +3433,11 @@ static GtkItemFactoryEntry blist_menu[] =
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
+	{ "/Help/sep1", NULL, NULL, 0, "<Separator>", NULL },
+	{ N_("/Help/_Build Information"), NULL, pidgin_dialogs_buildinfo, 0, "<Item>", NULL },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
+	{ N_("/Help/_Translators"), NULL, pidgin_dialogs_translators, 0, "<Item>", NULL },
+	{ "/Help/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 4,  "<StockItem>", GTK_STOCK_ABOUT },
 };
 
