@@ -34,7 +34,6 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"ДснЕ² чоМЦЛ ЦмМь рЦгД глягЛ GTK+ │Мог то. бМг ЦгМАМо бД яг гяйчга оЕМо©$\rйФлЕ: $(^Name) ЦЦ≤Д гсй чхА гр гяйчга ≤гя Д≤До."
-!define GTK_WINDOWS_INCOMPATIBLE		"ФМДоФр 95/98Ч/Me хг GTKЩ+Щ ДснЕ 2.8.0 Мг лоМойя сгр░гя ДМсй. GTK+ ${GTK_INSTALL_VERSION} Дух ДнФгЕо то.$\r г░я  GTK+ ${GTK_MIN_VERSION} Мг лоМойя яг чхАгП Дух Д≤яоЕ²гМо║ Дух чьз нФгЕо то."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"ущмЕ ФхЛ │МлМД яг ххМДМо"

@@ -720,9 +720,7 @@ debug_window_new(void)
 		/* Setup our top button bar thingie. */
 		toolbar = gtk_toolbar_new();
 		gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
-#if GTK_CHECK_VERSION(2,4,0)
 		gtk_toolbar_set_show_arrow(GTK_TOOLBAR(toolbar), TRUE);
-#endif
 		g_signal_connect(G_OBJECT(toolbar), "button-press-event", G_CALLBACK(toolbar_context), win);
 
 		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar),

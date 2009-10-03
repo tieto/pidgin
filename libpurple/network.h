@@ -88,6 +88,17 @@ const char *purple_network_get_public_ip(void);
 const char *purple_network_get_local_system_ip(int fd);
 
 /**
+ * Returns all IP addresses of the local system.
+ *
+ * @note The caller must free this list, this function currently only
+ *       handles IPv4 addresses
+ * @since 2.7.0
+ *
+ * @return A list of local IP addresses.
+ */
+GList *purple_network_get_all_local_system_ips(void);
+
+/**
  * Returns the IP address that should be used anywhere a
  * public IP addresses is needed (listening for an incoming
  * file transfer, etc).

@@ -32,7 +32,6 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"'n Ou weergawe van die GTK+-looptyd is gevind. Wil u opgradeer?$\rLet wel: $(^Name) werk dalk net as u so maak."
-!define GTK_WINDOWS_INCOMPATIBLE		"Windows 95/98/Me is onversoenbaar met GTK+ 2.8.0 en nuwer.  GTK+ ${GTK_INSTALL_VERSION} sal nie installeer nie.$\rIndien u nie GTK+ ${GTK_MIN_VERSION} of nuwer reeds geïnstalleer het nie, sal die installasie nou staak."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Besoek die WinPidgin-webblad"

@@ -44,7 +44,6 @@
 
 !define INSTALLER_IS_RUNNING                   "O instalador já está em execução."
 !define PIDGIN_IS_RUNNING                      "Uma instância do Pidgin está em execução. Feche o Pidgin e tente novamente."
-!define GTK_WINDOWS_INCOMPATIBLE               "O Windows 95/98/Me é incompatível com o GTK+ 2.8.0 ou superior. O GTK+ ${GTK_INSTALL_VERSION} não será instalado.$\rSe você não possuir o GTK+ versão ${GTK_MIN_VERSION} ou superior já instalado, o instalador irá fechar agora."
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL       "Não foi possível desinstalar a versão do Pidgin que está instalada atualmente. A nova versão será instalada sem que a versão antiga seja removida."
 !define URI_HANDLERS_SECTION_TITLE             "Handlers para endereços"
 !define PIDGIN_SPELLCHECK_SECTION_TITLE        "Suporte a verificação ortográfica"

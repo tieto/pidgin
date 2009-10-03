@@ -12,7 +12,6 @@ Var GTK_FOLDER
 Var ISSILENT
 Var STARTUP_RUN_KEY
 Var SPELLCHECK_SEL
-Var LANGUAGE_SET
 
 ;--------------------------------
 ;Configuration
@@ -70,7 +69,7 @@ SetDateSave on
 !define STARTUP_RUN_KEY				"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 !define PIDGIN_UNINST_EXE			"pidgin-uninst.exe"
 
-!define GTK_MIN_VERSION				"2.6.10"
+!define GTK_MIN_VERSION				"2.14.0"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl510.dll"
@@ -1342,12 +1341,10 @@ Function .onInit
   IfSilent 0 +2
     StrCpy $ISSILENT "/NOUI"
 
-  StrCpy $LANGUAGE_SET "0"
   ClearErrors
   ${GetOptions} "$R3" "/L=" $R1
   IfErrors +4
   StrCpy $LANGUAGE $R1
-  StrCpy $LANGUAGE_SET "1"
   Goto skip_lang
 
   ; Select Language
@@ -1411,17 +1408,6 @@ Function .onInit
   Pop $R0
 FunctionEnd
 
-Function .onInstSuccess
-  ; NSIS doesn't appear to save the language when in Silent Mode, so we do so manually
-  IfSilent 0 done
-
-  StrCmp $LANGUAGE_SET "0" done
-
-  WriteRegStr "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" $LANGUAGE
-
-  done:
-FunctionEnd
-
 Function un.onInit
   Call un.RunCheck
   StrCpy $name "Pidgin ${PIDGIN_VERSION}"
@@ -1466,15 +1452,6 @@ Function preWelcomePage
     ; Don't select the GTK+ section if we already have this version or newer installed
     !insertmacro UnselectSection ${SecGtk}
   gtk_selection_done:
-
-  ; If on Win95/98/ME warn them that the GTK+ version wont work
-  ${Unless} ${IsNT}
-    !insertmacro UnselectSection ${SecGtk}
-    !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
-    MessageBox MB_OK $(GTK_WINDOWS_INCOMPATIBLE) /SD IDOK
-    IntCmp $R0 1 done done ; Upgrade isn't optional - abort if we don't have a suitable version
-    Quit
-  ${EndIf}
 
   done:
   Pop $R2

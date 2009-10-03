@@ -172,6 +172,7 @@ resolve_ip(PurpleDnsQueryData *query_data)
 	return FALSE;
 }
 
+#ifdef USE_IDN
 static gboolean
 dns_str_is_ascii(const char *name)
 {
@@ -183,6 +184,7 @@ dns_str_is_ascii(const char *name)
 
 	return TRUE;
 }
+#endif
 
 #if defined(PURPLE_DNSQUERY_USE_FORK)
 
