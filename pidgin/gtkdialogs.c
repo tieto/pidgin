@@ -48,6 +48,7 @@ static GList *dialogwindows = NULL;
 
 static GtkWidget *about = NULL;
 static GtkWidget *buildinfo = NULL;
+static GtkWidget *developer_info = NULL;
 static GtkWidget *translator_info = NULL;
 
 struct _PidginGroupMergeObject {
@@ -352,6 +353,13 @@ pidgin_dialogs_destroy_all()
 	}
 }
 
+static void destroy_developer_info(void)
+{
+	if (developer_info != NULL)
+		gtk_widget_destroy(developer_info);
+	developer_info = NULL;
+}
+
 static void destroy_translator_info(void)
 {
 	if (translator_info != NULL)
@@ -500,30 +508,7 @@ void pidgin_dialogs_about()
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">XMPP MUC:</FONT> "
 				"devel@conference.pidgin.im<BR><BR>"));
 
-	/* Current Developers */
-	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
-						   _("Current Developers"));
-	add_developers(str, developers);
-	g_string_append(str, "<BR/>");
-
-	/* Crazy Patch Writers */
-	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
-						   _("Crazy Patch Writers"));
-	add_developers(str, patch_writers);
-	g_string_append(str, "<BR/>");
-
-	/* Retired Developers */
-	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
-						   _("Retired Developers"));
-	add_developers(str, retired_developers);
-	g_string_append(str, "<BR/>");
-
-	/* Retired Crazy Patch Writers */
-	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
-						   _("Retired Crazy Patch Writers"));
-	add_developers(str, retired_patch_writers);
-	g_string_append(str, "<BR/>");
-
+	
 	gtk_imhtml_append_text(GTK_IMHTML(text), str->str, GTK_IMHTML_NO_SCROLL);
 	g_string_free(str, TRUE);
 
@@ -779,6 +764,86 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 
 	gtk_widget_show_all(buildinfo);
 	gtk_window_present(GTK_WINDOW(buildinfo));
+}
+
+void pidgin_dialogs_developers()
+{
+	GtkWidget *vbox;
+	GtkWidget *frame;
+	GtkWidget *text;
+	GtkWidget *button;
+	GtkTextIter iter;
+	GString *str;
+	char *tmp;
+	PidginBuddyList *buddylist;
+
+	if (about != NULL) {
+		gtk_window_present(GTK_WINDOW(about));
+		return;
+	}
+
+	tmp = g_strdup_printf(_("%s Developer Information"), PIDGIN_NAME);
+	developer_info = pidgin_create_dialog(tmp, PIDGIN_HIG_BORDER, "developer_info", TRUE);
+	g_free(tmp);
+	gtk_window_set_default_size(GTK_WINDOW(developer_info), 450, 450);
+
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(developer_info), FALSE, PIDGIN_HIG_BORDER);
+
+	frame = pidgin_create_imhtml(FALSE, &text, NULL, NULL);
+	gtk_imhtml_set_format_functions(GTK_IMHTML(text), GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+
+	str = g_string_sized_new(4096);
+
+	/* Current Developers */
+	g_string_append_printf(str, "<FONT SIZE=\"4\"><B>%s:</B></FONT><BR/>",
+						   _("Current Developers"));
+	add_developers(str, developers);
+	g_string_append(str, "<BR/>");
+
+	/* Crazy Patch Writers */
+	g_string_append_printf(str, "<FONT SIZE=\"4\"><B>%s:</B></FONT><BR/>",
+						   _("Crazy Patch Writers"));
+	add_developers(str, patch_writers);
+	g_string_append(str, "<BR/>");
+
+	/* Retired Developers */
+	g_string_append_printf(str, "<FONT SIZE=\"4\"><B>%s:</B></FONT><BR/>",
+						   _("Retired Developers"));
+	add_developers(str, retired_developers);
+	g_string_append(str, "<BR/>");
+
+	/* Retired Crazy Patch Writers */
+	g_string_append_printf(str, "<FONT SIZE=\"4\"><B>%s:</B></FONT><BR/>",
+						   _("Retired Crazy Patch Writers"));
+	add_developers(str, retired_patch_writers);
+	g_string_append(str, "<BR/>");
+
+	gtk_imhtml_append_text(GTK_IMHTML(text), str->str, GTK_IMHTML_NO_SCROLL);
+	g_string_free(str, TRUE);
+
+	gtk_text_buffer_get_start_iter(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
+	gtk_text_buffer_place_cursor(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
+
+	/* Close Button */
+	button = pidgin_dialog_add_button(GTK_DIALOG(developer_info), GTK_STOCK_CLOSE,
+	                G_CALLBACK(destroy_developer_info), about);
+
+	g_signal_connect(G_OBJECT(developer_info), "destroy",
+					 G_CALLBACK(destroy_developer_info), G_OBJECT(developer_info));
+
+	/* this makes the sizes not work? */
+	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+	gtk_widget_grab_default(button);
+
+	/* Let's give'em something to talk about -- woah woah woah */
+	buddylist = pidgin_blist_get_default_gtk_blist();
+	if (buddylist)
+		gtk_window_set_transient_for(GTK_WINDOW(developer_info),
+				GTK_WINDOW(buddylist->window));
+
+	gtk_widget_show_all(developer_info);
+	gtk_window_present(GTK_WINDOW(developer_info));
 }
 
 void pidgin_dialogs_translators()
