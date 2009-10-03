@@ -1417,12 +1417,19 @@ msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateTy
 	xmlnode *contact;
 	xmlnode *contact_info;
 	xmlnode *changes;
+	MsnUser *user = NULL;
 
 	purple_debug_info("msn", "Update contact information for %s with new %s: %s\n",
 		passport ? passport : "(null)",
 		type == MSN_UPDATE_DISPLAY ? "display name" : "alias",
 		value ? value : "(null)");
 	g_return_if_fail(passport != NULL);
+
+	if (strcmp(passport, "Me") != 0) {
+		user = msn_userlist_find_user(session->userlist, passport);
+		if (!user)
+			return;
+	}
 
 	contact_info = xmlnode_new("contactInfo");
 	changes = xmlnode_new("propertiesChanged");
@@ -1464,14 +1471,13 @@ msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateTy
 	xmlnode_insert_child(contact, contact_info);
 	xmlnode_insert_child(contact, changes);
 
-	if (!strcmp(passport, "Me")) {
-		xmlnode *contactType = xmlnode_new_child(contact_info, "contactType");
-		xmlnode_insert_data(contactType, "Me", -1);
-	} else {
-		MsnUser *user = msn_userlist_find_user(session->userlist, passport);
+	if (user) {
 		xmlnode *contactId = xmlnode_new_child(contact, "contactId");
 		msn_callback_state_set_uid(state, user->uid);
 		xmlnode_insert_data(contactId, state->uid, -1);
+	} else {
+		xmlnode *contactType = xmlnode_new_child(contact_info, "contactType");
+		xmlnode_insert_data(contactType, "Me", -1);
 	}
 
 	msn_contact_request(state);
