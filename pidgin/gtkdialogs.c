@@ -473,40 +473,37 @@ void pidgin_dialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR>(libpurple %s)<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
+		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER> (libpurple %s)"
+		"<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION,
+		purple_core_get_version(), REVISION);
 
 	g_string_append_printf(str,
-		_("%s is a graphical modular messaging client based on "
-		  "libpurple which is capable of connecting to "
-		  "AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-		  "Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, "
-		  "MySpaceIM, Gadu-Gadu, and QQ all at once.  "
-		  "It is written using GTK+.<BR><BR>"
-		  "You may modify and redistribute the program under "
-		  "the terms of the GPL (version 2 or later).  A copy of the GPL is "
-		  "contained in the 'COPYING' file distributed with %s.  "
-		  "%s is copyrighted by its contributors.  See the 'COPYRIGHT' "
-		  "file for the complete list of contributors.  We provide no "
-		  "warranty for this program.<BR><BR>"), PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME);
+		_("%s is a messaging client based on libpurple which is capable of "
+		  "connecting to multiple messaging services at once.  %s is written "
+		  "in C using GTK+.  %s is released, and may be modified and "
+		  "redistributed,  under the terms of the GPL version 2 (or later).  "
+		  "A copy of the GPL is distributed with %s.  %s is copyrighted by "
+		  "its contributors, a list of whom is also distributed with %s.  "
+		  "There is no warranty for %s.<BR><BR>"), PIDGIN_NAME, PIDGIN_NAME,
+		PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME);
 
-	g_string_append(str, "<FONT SIZE=\"4\">URL:</FONT> <A HREF=\""
-				PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");
-	g_string_append_printf(str, _("<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\""
-				"http://developer.pidgin.im/wiki/FAQ\">"
-				"http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"));
 	g_string_append_printf(str,
-			_("<font size=\"4\">Help from other Pidgin users:</font> "
-			"<a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>"
-			"This is a <b>public</b> mailing list! "
-			"(<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)<br/>"
-			"We can't help with 3rd party protocols or plugins!<br/>"
-			"This list's primary language is <b>English</b>.  You are "
-			"welcome to post in another language, but the responses may "
-			"be less helpful.<br/><br/>"));
-	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC Channel:</FONT> "
-				"#pidgin on irc.freenode.net<BR><BR>"));
-	g_string_append_printf(str, _("<FONT SIZE=\"4\">XMPP MUC:</FONT> "
-				"devel@conference.pidgin.im<BR><BR>"));
+			_("<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A "
+			  "HREF=\"%s\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked "
+			  "Questions</A><BR>\tIRC Channel: #pidgin on irc.freenode.net<BR>"
+			  "\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"), PURPLE_WEBSITE,
+			"http://developer.pidgin.im/wiki/FAQ");
+	
+	g_string_append_printf(str,
+			_("<font size=\"4\"><b>Help from other Pidgin users</b></font> is "
+			  "available by e-mailing <a "
+			  "href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>"
+			  "This is a <b>public</b> mailing list! "
+			  "(<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)<br/>"
+			  "We can't help with third-party protocols or plugins!<br/>"
+			  "This list's primary language is <b>English</b>.  You are "
+			  "welcome to post in another language, but the responses may "
+			  "be less helpful.<br/><br/>"));
 
 	
 	gtk_imhtml_append_text(GTK_IMHTML(text), str->str, GTK_IMHTML_NO_SCROLL);
@@ -566,7 +563,7 @@ void pidgin_dialogs_buildinfo()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		"<FONT SIZE=\"4\"><B>%s %s</B></FONT><BR>(libpurple %s)<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
+		"<FONT SIZE=\"4\"><B>%s %s</B></FONT> (libpurple %s)<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
 
 	g_string_append_printf(str, "<FONT SIZE=\"4\"><B>%s</B></FONT><br/>", _("Build Information"));
 
