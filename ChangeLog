@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.0 (??/??/????):
+	General:
+	* Changed GTK+ minimum version requirement to 2.10.0.
+	* Changed GLib minimum version requirement to 2.12.0.
 
 version 2.6.3 (??/??/20??):
 	XMPP:
