@@ -435,7 +435,7 @@ void pidgin_dialogs_about()
 	tmp = g_strdup_printf(_("About %s"), PIDGIN_NAME);
 	about = pidgin_create_dialog(tmp, PIDGIN_HIG_BORDER, "about", TRUE);
 	g_free(tmp);
-	gtk_window_set_default_size(GTK_WINDOW(about), 340, 450);
+	gtk_window_set_default_size(GTK_WINDOW(about), 450, 450);
 
 	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(about), FALSE, PIDGIN_HIG_BORDER);
 
@@ -581,7 +581,7 @@ void pidgin_dialogs_buildinfo()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		"<FONT SIZE=\"4\"><B>%s %s</B></FONT>><BR>(libpurple %s)<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
+		"<FONT SIZE=\"4\"><B>%s %s</B></FONT><BR>(libpurple %s)<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
 
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s</FONT><br/>", _("Build Information"));
 
