@@ -583,7 +583,7 @@ void pidgin_dialogs_buildinfo()
 	g_string_append_printf(str,
 		"<FONT SIZE=\"4\"><B>%s %s</B></FONT><BR>(libpurple %s)<BR>%s<BR><BR>", PIDGIN_NAME, DISPLAY_VERSION, purple_core_get_version(), REVISION);
 
-	g_string_append_printf(str, "<FONT SIZE=\"4\">%s</FONT><br/>", _("Build Information"));
+	g_string_append_printf(str, "<FONT SIZE=\"4\"><B>%s</B></FONT><br/>", _("Build Information"));
 
 	/* The following primarly intented for user/developer interaction and thus
 	   ought not be translated */
