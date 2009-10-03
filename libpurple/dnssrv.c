@@ -676,6 +676,7 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 
 	internal_query.type = T_SRV;
 	strncpy(internal_query.query, query, 255);
+	internal_query.query[255] = '\0';
 
 	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
 		purple_debug_error("dnssrv", "Could not write to SRV resolver\n");

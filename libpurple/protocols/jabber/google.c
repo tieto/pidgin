@@ -104,7 +104,8 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 
 	for (;candidates;candidates = candidates->next) {
 		JabberIq *iq;
-		gchar *ip, *port, *pref, *username, *password;
+		gchar *ip, *port, *username, *password;
+		gchar pref[16];
 		PurpleMediaCandidateType type;
 		xmlnode *sess;
 		xmlnode *candidate;
@@ -123,9 +124,8 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 		ip = purple_media_candidate_get_ip(transport);
 		port = g_strdup_printf("%d",
 				purple_media_candidate_get_port(transport));
-		pref = g_strdup_printf("%f",
-				purple_media_candidate_get_priority(transport)
-				/1000.0);
+		g_ascii_dtostr(pref, 16,
+			purple_media_candidate_get_priority(transport) / 1000.0);
 		username = purple_media_candidate_get_username(transport);
 		password = purple_media_candidate_get_password(transport);
 		type = purple_media_candidate_get_candidate_type(transport);
@@ -163,7 +163,6 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 
 		g_free(ip);
 		g_free(port);
-		g_free(pref);
 		g_free(username);
 		g_free(password);
 

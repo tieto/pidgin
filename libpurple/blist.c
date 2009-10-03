@@ -2009,17 +2009,13 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 
 	ops = purple_blist_get_ui_ops();
 
-	if (!purplebuddylist->root) {
-		purplebuddylist->root = gnode;
-
-		key = g_utf8_collate_key(group->name, -1);
-		g_hash_table_insert(groups_cache, key, group);
-		return;
-	}
-
 	/* if we're moving to overtop of ourselves, do nothing */
-	if (gnode == node)
-		return;
+	if (gnode == node) {
+		if (!purplebuddylist->root)
+			node = NULL;
+		else
+			return;
+	}
 
 	if (purple_find_group(group->name)) {
 		/* This is just being moved */
