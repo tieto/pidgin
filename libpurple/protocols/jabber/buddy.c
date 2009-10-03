@@ -1149,9 +1149,8 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 				char *bintext = NULL;
 				xmlnode *binval;
 
-				if( ((binval = xmlnode_get_child(child, "BINVAL")) &&
-						(bintext = xmlnode_get_data(binval))) ||
-						(bintext = xmlnode_get_data(child))) {
+				if ((binval = xmlnode_get_child(child, "BINVAL")) &&
+						(bintext = xmlnode_get_data(binval))) {
 					gsize size;
 					guchar *data;
 					gboolean photo = (strcmp(child->name, "PHOTO") == 0);
