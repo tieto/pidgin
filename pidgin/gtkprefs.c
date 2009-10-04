@@ -1532,10 +1532,8 @@ interface_page(void)
 					_("Bottom"), GTK_POS_BOTTOM,
 					_("Left"), GTK_POS_LEFT,
 					_("Right"), GTK_POS_RIGHT,
-#if GTK_CHECK_VERSION(2,6,0)
 					_("Left Vertical"), GTK_POS_LEFT|8,
 					_("Right Vertical"), GTK_POS_RIGHT|8,
-#endif
 					NULL);
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
@@ -1556,14 +1554,12 @@ interface_page(void)
 	return ret;
 }
 
-#if GTK_CHECK_VERSION(2,4,0)
 static void
 pidgin_custom_font_set(GtkFontButton *font_button, gpointer nul)
 {
 	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/custom_font",
 				gtk_font_button_get_font_name(font_button));
 }
-#endif
 
 static GtkWidget *
 conv_page(void)
@@ -1577,11 +1573,9 @@ conv_page(void)
 	GtkWidget *imhtml;
 	GtkWidget *frame;
 
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkWidget *hbox;
 	GtkWidget *font_button;
 	const char *font_name;
-#endif
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
@@ -1620,7 +1614,6 @@ conv_page(void)
 		PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines",
 		1, 8, NULL);
 
-#if GTK_CHECK_VERSION(2,4,0)
 	vbox = pidgin_make_frame(ret, _("Font"));
 	if (purple_running_gnome())
 		fontpref = pidgin_prefs_checkbox(_("Use document font from _theme"), PIDGIN_PREFS_ROOT "/conversations/use_theme_font", vbox);
@@ -1640,7 +1633,6 @@ conv_page(void)
 		gtk_widget_set_sensitive(hbox, FALSE);
 	g_signal_connect(G_OBJECT(fontpref), "clicked", G_CALLBACK(pidgin_toggle_sensitive), hbox);
 	g_signal_connect(G_OBJECT(font_button), "font-set", G_CALLBACK(pidgin_custom_font_set), NULL);
-#endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
 	gtk_box_set_child_packing(GTK_BOX(vbox->parent), vbox, TRUE, TRUE, 0, GTK_PACK_START);
@@ -2821,12 +2813,7 @@ away_page(void)
 static int
 prefs_notebook_add_page(const char *text, GtkWidget *page, int ind)
 {
-#if GTK_CHECK_VERSION(2,4,0)
 	return gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
-#else
-	gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
-	return gtk_notebook_page_num(GTK_NOTEBOOK(prefsnotebook), page);
-#endif
 }
 
 static void

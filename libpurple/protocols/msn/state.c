@@ -114,11 +114,7 @@ msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
 	 *  6: Album
 	 *  7: ?
 	 */
-#if GLIB_CHECK_VERSION(2,6,0)
 	strings  = g_strv_length(cmedia_array);
-#else
-	while (cmedia_array[++strings] != NULL);
-#endif
 
 	if (strings >= 4 && !strcmp(cmedia_array[2], "1")) {
 		parsed = TRUE;

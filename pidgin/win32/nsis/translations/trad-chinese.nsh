@@ -34,7 +34,6 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"發現一個舊版的 GTK+ 執行環境。您要將它升級嗎？$\r請注意：如果您不升級， $(^Name) 可能無法正確的被執行。"
-!define GTK_WINDOWS_INCOMPATIBLE		"自版本 2.8.0 開始，GTK＋ 與 Windows 95/98/Me 已不再相容，GTK+ ${GTK_INSTALL_VERSION} 因此將不會被安裝。$\r如果系統內未有已經安裝的 GTK+ ${GTK_MIN_VERSION} 或更新的版本，安裝程式將隨即結束。"
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"拜訪 Windows Pidgin 網頁"

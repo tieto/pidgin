@@ -1169,7 +1169,6 @@ static gboolean imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStat
 	return FALSE;
 }
 
-#if GTK_CHECK_VERSION(2,6,0)
 static gboolean
 dropdown_store_row_separator_func(GtkTreeModel *model,
 								  GtkTreeIter *iter, gpointer data)
@@ -1183,7 +1182,6 @@ dropdown_store_row_separator_func(GtkTreeModel *model,
 
 	return FALSE;
 }
-#endif
 
 static void
 cache_pixbufs(PidginStatusBox *status_box)
@@ -1293,11 +1291,9 @@ static gboolean button_pressed_cb(GtkWidget *widget, GdkEventButton *event, Pidg
 static void
 pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, int *width, int *height)
 {
-#if GTK_CHECK_VERSION(2,2,0)
   GdkScreen *screen;
   gint monitor_num;
   GdkRectangle monitor;
-#endif
   GtkRequisition popup_req;
   GtkPolicyType hpolicy, vpolicy;
 
@@ -1323,7 +1319,6 @@ pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, in
 
   *height = popup_req.height;
 
-#if GTK_CHECK_VERSION(2,2,0)
   screen = gtk_widget_get_screen (GTK_WIDGET (status_box));
   monitor_num = gdk_screen_get_monitor_at_window (screen,
 						  GTK_WIDGET (status_box)->window);
@@ -1356,7 +1351,6 @@ pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, in
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
 				      hpolicy, vpolicy);
     }
-#endif
 }
 
 static gboolean
@@ -1364,29 +1358,20 @@ popup_grab_on_window (GdkWindow *window,
 		      guint32    activate_time,
 		      gboolean   grab_keyboard)
 {
-  if ((gdk_pointer_grab (window, TRUE,
+	if ((gdk_pointer_grab (window, TRUE,
 			 GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK |
 			 GDK_POINTER_MOTION_MASK,
 			 NULL, NULL, activate_time) == 0))
-    {
-      if (!grab_keyboard ||
-	  gdk_keyboard_grab (window, TRUE,
-			     activate_time) == 0)
-	return TRUE;
-      else
 	{
-#if GTK_CHECK_VERSION(2,2,0)
-	  gdk_display_pointer_ungrab (gdk_drawable_get_display (window),
-				      activate_time);
-#else
-	  gdk_pointer_ungrab(activate_time);
-	  gdk_keyboard_ungrab(activate_time);
-#endif
-	  return FALSE;
+		if (!grab_keyboard || gdk_keyboard_grab (window, TRUE, activate_time) == 0)
+			return TRUE;
+		else {
+			gdk_display_pointer_ungrab (gdk_drawable_get_display (window), activate_time);
+			return FALSE;
+		}
 	}
-    }
 
-  return FALSE;
+	return FALSE;
 }
 
 
@@ -1781,9 +1766,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->vsep, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->arrow, FALSE, FALSE, 0);
 	gtk_widget_show_all(status_box->toggle_button);
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_button_set_focus_on_click(GTK_BUTTON(status_box->toggle_button), FALSE);
-#endif
 
 	text_rend = gtk_cell_renderer_text_new();
 	icon_rend = gtk_cell_renderer_pixbuf_new();
@@ -1797,14 +1780,10 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	}
 
 	gtk_window_set_resizable (GTK_WINDOW (status_box->popup_window), FALSE);
-#if GTK_CHECK_VERSION(2,10,0)
 	gtk_window_set_type_hint (GTK_WINDOW (status_box->popup_window),
 			GDK_WINDOW_TYPE_HINT_POPUP_MENU);
-#endif
-#if GTK_CHECK_VERSION(2,2,0)
 	gtk_window_set_screen (GTK_WINDOW (status_box->popup_window),
 			gtk_widget_get_screen (GTK_WIDGET (status_box)));
-#endif
 	status_box->popup_frame = gtk_frame_new (NULL);
 	gtk_frame_set_shadow_type (GTK_FRAME (status_box->popup_frame),
 			GTK_SHADOW_ETCHED_IN);
@@ -1831,10 +1810,8 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	gtk_tree_selection_set_mode (sel, GTK_SELECTION_BROWSE);
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (status_box->tree_view),
 			FALSE);
-#if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_set_hover_selection (GTK_TREE_VIEW (status_box->tree_view),
 			TRUE);
-#endif
 	gtk_tree_view_set_model (GTK_TREE_VIEW (status_box->tree_view),
 			GTK_TREE_MODEL(status_box->dropdown_store));
 	status_box->column = gtk_tree_view_column_new ();
@@ -1852,9 +1829,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(status_box->tree_view),
 				pidgin_tree_view_search_equal_func, NULL, NULL);
 
-#if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 
 	status_box->icon_rend = gtk_cell_renderer_pixbuf_new();
 	status_box->text_rend = gtk_cell_renderer_text_new();
@@ -1865,9 +1840,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->icon_rend, "stock-id", ICON_STOCK_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, "markup", TEXT_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), emblem_rend, "pixbuf", EMBLEM_COLUMN, "visible", EMBLEM_VISIBLE_COLUMN, NULL);
-#if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(status_box->text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 
 	status_box->vbox = gtk_vbox_new(0, FALSE);
 	status_box->sw = pidgin_create_imhtml(FALSE, &status_box->imhtml, NULL, NULL);
@@ -1912,9 +1885,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	g_signal_connect(G_OBJECT(status_box->tree_view), "cursor-changed",
 					 G_CALLBACK(treeview_cursor_changed_cb), status_box->dropdown_store);
 
-#if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_set_row_separator_func(GTK_TREE_VIEW(status_box->tree_view), dropdown_store_row_separator_func, NULL, NULL);
-#endif
 
 	status_box->token_status_account = check_active_accounts_for_identical_statuses();
 
@@ -2198,14 +2169,12 @@ pidgin_status_box_add_separator(PidginStatusBox *status_box)
 {
 	/* Don't do anything unless GTK actually supports
 	 * gtk_combo_box_set_row_separator_func */
-#if GTK_CHECK_VERSION(2,6,0)
 	GtkTreeIter iter;
 
 	gtk_list_store_append(status_box->dropdown_store, &iter);
 	gtk_list_store_set(status_box->dropdown_store, &iter,
 			   TYPE_COLUMN, PIDGIN_STATUS_BOX_TYPE_SEPARATOR,
 			   -1);
-#endif
 }
 
 void
@@ -2229,7 +2198,6 @@ pidgin_status_box_set_connecting(PidginStatusBox *status_box, gboolean connectin
 static void
 pixbuf_size_prepared_cb(GdkPixbufLoader *loader, int width, int height, gpointer data)
 {
-#if GTK_CHECK_VERSION(2,2,0)
 	int w, h;
 	GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MEDIUM);
 	gtk_icon_size_lookup(icon_size, &w, &h);
@@ -2238,7 +2206,6 @@ pixbuf_size_prepared_cb(GdkPixbufLoader *loader, int width, int height, gpointer
 	else if (width > height)
 		h = height * w / width;
 	gdk_pixbuf_loader_set_size(loader, w, h);
-#endif
 }
 
 static void
