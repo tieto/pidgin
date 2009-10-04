@@ -658,6 +658,12 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
 }
 
+#ifdef USE_IDN
+	g_string_append(str, "    <b>UTF-8 DNS (IDN):</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>UTF-8 DNS (IDN):</b> Disabled<br/>");
+#endif
+
 #ifdef USE_VV
 	g_string_append(str, "    <b>Voice and Video:</b> Enabled<br/>");
 #else
