@@ -660,7 +660,6 @@ signed_off_cb(PurpleConnection *gc)
 
 	gtk_combo_box_remove_text(GTK_COMBO_BOX(console->dropdown), i);
 	console->accounts = g_list_remove(console->accounts, gc);
-	printf("%s\n", purple_account_get_username(gc->account));
 	console->count--;
 
 	if (gc == console->gc) {
