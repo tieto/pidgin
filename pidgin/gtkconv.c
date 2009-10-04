@@ -4812,6 +4812,9 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	list = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ls));
 
+	/* Allow a user to specify gtkrc settings for the chat userlist only */
+	gtk_widget_set_name(list, "pidgin_conv_userlist");
+
 	rend = gtk_cell_renderer_pixbuf_new();
 	g_object_set(G_OBJECT(rend),
 				 "stock-size", gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL),
