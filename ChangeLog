@@ -18,6 +18,10 @@ version 2.6.3 (??/??/20??):
 	  URLs, e.g. URLs to open Inbox in Yahoo/MSN protocols, or the Yahoo
 	  Captcha when joining chat rooms.
 
+	Pidgin:
+	* The userlist in a multiuser chat can be styled via gtkrc by using the
+	  widget name "pidgin_conv_userlist".
+
 version 2.6.2 (09/05/2009):
 	libpurple:
 	* Fix --disable-avahi to actually disable it in configure, as opposed
