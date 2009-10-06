@@ -62,11 +62,6 @@ jabber_parser_element_start_libxml(void *user_data,
 				g_free(attrib);
 			}
 		}
-		if(js->protocol_version == JABBER_PROTO_0_9)
-			js->auth_type = JABBER_AUTH_IQ_AUTH;
-
-		if(js->state == JABBER_STREAM_INITIALIZING || js->state == JABBER_STREAM_INITIALIZING_ENCRYPTION)
-			jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
 	} else {
 
 		if(js->current)
@@ -255,6 +250,18 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 				                                _("XML Parse error"));
 				break;
 		}
+	}
+
+	if (js->protocol_version == JABBER_PROTO_0_9 && !js->gc->disconnect_timeout &&
+			(js->state == JABBER_STREAM_INITIALIZING ||
+			 js->state == JABBER_STREAM_INITIALIZING_ENCRYPTION)) {
+		/*
+		 * Legacy servers don't advertise features, so if we've just gotten
+		 * the opening <stream:stream> and there was no version, we need to
+		 * immediately start legacy IQ auth.
+		 */
+		js->auth_type = JABBER_AUTH_IQ_AUTH;
+		jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
 	}
 }
 
