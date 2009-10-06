@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-16 11:43+0200\n"
-"PO-Revision-Date: 2009-09-16 11:37+0200\n"
+"POT-Creation-Date: 2009-10-05 21:56+0200\n"
+"PO-Revision-Date: 2009-10-05 21:59+0200\n"
 "Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -951,6 +951,9 @@ msgstr "Einladen"
 msgid "(none)"
 msgstr "(kein)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 msgid "URI"
 msgstr "URI"
 
@@ -1041,10 +1044,10 @@ msgid "Pounce When Buddy..."
 msgstr "Alarm, wenn Buddy..."
 
 msgid "Signs on"
-msgstr "sich anmeldet"
+msgstr "sich angemeldet"
 
 msgid "Signs off"
-msgstr "sich abmeldet"
+msgstr "sich abgemeldet"
 
 msgid "Goes away"
 msgstr "hinausgeht"
@@ -1461,7 +1464,7 @@ msgid "%s sent a message in %s"
 msgstr "%s hat eine Nachricht in %s gesendet"
 
 msgid "Buddy signs on/off"
-msgstr "Buddy sich an/abmeldet"
+msgstr "Buddy hat sich an- oder abgemeldet"
 
 msgid "You receive an IM"
 msgstr "Sie empfangen einen Nachricht"
@@ -1525,6 +1528,13 @@ msgid ""
 msgstr ""
 "\n"
 "Hole TinyURL..."
+
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "TinyURL nur für URLs mit mindestens dieser Länge generieren"
@@ -1883,6 +1893,10 @@ msgstr ""
 
 msgid "Resolver process exited without answering our request"
 msgstr "Auflösungsprozess hat sich beendet ohne die Anfrage zu beantworten"
+
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "Fehler beim Auflösen von %s: %d"
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -2898,7 +2912,7 @@ msgid "Buddy Goes _Idle"
 msgstr "Buddy _untätig wird"
 
 msgid "Buddy _Signs On/Off"
-msgstr "Buddy _sich an/abmeldet"
+msgstr "Buddy hat_sich an- oder abgemeldet"
 
 #. *< type
 #. *< ui_requirement
@@ -5176,10 +5190,10 @@ msgstr ""
 "Für MSN wird SSL-Unterstützung benötigt. Bitte installieren Sie eine "
 "unterstützte SSL-Bibliothek."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 "Konnte den Buddy %s nicht hinzufügen, da der Benutzername ungültig ist.  "
 "Benutzernamen müssen gültige E-Mail-Adressen sein."
@@ -9708,6 +9722,15 @@ msgstr "Einen Benutzer zum Chat einladen..."
 msgid "Open Inbox"
 msgstr "Öffne Posteingang"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -12440,10 +12463,10 @@ msgid "_Buddy name:"
 msgstr "Budd_y-Name:"
 
 msgid "Si_gns on"
-msgstr "si_ch anmeldet"
+msgstr "si_ch angemeldet"
 
 msgid "Signs o_ff"
-msgstr "sich abmel_det"
+msgstr "sich abgemel_det"
 
 msgid "Goes a_way"
 msgstr "hinausgeh_t"
@@ -12509,7 +12532,7 @@ msgid "Paused while typing"
 msgstr "Hat beim Tippen angehalten"
 
 msgid "Signed on"
-msgstr "Hat sich anmeldet"
+msgstr "Hat sich angemeldet"
 
 msgid "Returned from being idle"
 msgstr "Ist nicht mehr inaktiv"
@@ -12521,7 +12544,7 @@ msgid "Stopped typing"
 msgstr "Hat das Tippen gestoppt"
 
 msgid "Signed off"
-msgstr "Hat sich abmeldet"
+msgstr "Hat sich abgemeldet"
 
 msgid "Became idle"
 msgstr "Wurde untätig"
@@ -12534,6 +12557,23 @@ msgstr "Eine Nachricht senden"
 
 msgid "Unknown.... Please report this!"
 msgstr "Unbekannt.... Bitte berichten Sie dieses Problem!"
+
+msgid "(Custom)"
+msgstr ""
+
+#, fuzzy
+msgid "(Default)"
+msgstr "(Standard)"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "Pidgin Buddy-Listen-Thema-Editor"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 msgid "Theme failed to unpack."
 msgstr "Thema konnte nicht entpackt werden."
@@ -14381,9 +14421,6 @@ msgstr ""
 "\n"
 "* Hinweis: Dieses Plugin verlangt Win2000 oder höher."
 
-msgid "GTK+ Runtime Version"
-msgstr "GTK+ Runtime Version"
-
 #. Autostart
 msgid "Startup"
 msgstr "Start"
@@ -14391,6 +14428,10 @@ msgstr "Start"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "_Starte %s beim Windows-Start"
+
+#, fuzzy
+msgid "Allow multiple instances"
+msgstr "mehrere Instanzen erlauben"
 
 msgid "_Dockable Buddy List"
 msgstr "An_dockbare Buddy-Liste"
@@ -14451,3 +14492,6 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "GTK+ Runtime Version"

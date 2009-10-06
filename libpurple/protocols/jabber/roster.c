@@ -229,7 +229,7 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 		else
 			jb->subscription &= ~JABBER_SUB_PENDING;
 
-		if(jb->subscription == JABBER_SUB_REMOVE) {
+		if(jb->subscription & JABBER_SUB_REMOVE) {
 			remove_purple_buddies(js, jid);
 		} else {
 			GSList *groups = NULL;
