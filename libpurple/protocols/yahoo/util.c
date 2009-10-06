@@ -881,6 +881,9 @@ char *yahoo_html_to_codes(const char *src)
 						}
 						g_free(etag);
 					}
+				} else {
+					/* We don't know what the tag is. Send it unmodified. */
+					g_string_append(dest, tag);
 				}
 
 				i = j;

@@ -7,6 +7,9 @@ version 2.6.3 (??/??/20??):
 	  is specified.
 	* Fix a crash when adding a buddy without an '@'.
 
+	Yahoo:
+	* Fix sending /buzz.
+
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
 	  to announce the list of loaded plugins (in both Finch and Pidgin).
