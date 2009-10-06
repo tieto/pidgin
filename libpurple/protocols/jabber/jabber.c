@@ -68,8 +68,6 @@
 #include "jingle/jingle.h"
 #include "jingle/rtp.h"
 
-#define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
-
 PurplePlugin *jabber_plugin = NULL;
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
@@ -198,9 +196,10 @@ static char *jabber_prep_resource(char *input) {
 void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 {
 	if(xmlnode_get_child(packet, "starttls")) {
-		if(jabber_process_starttls(js, packet))
-
+		if(jabber_process_starttls(js, packet)) {
+			jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 			return;
+		}
 	} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE) && !jabber_stream_is_ssl(js)) {
 		purple_connection_error_reason(js->gc,
 			 PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
@@ -211,6 +210,7 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 	if(js->registration) {
 		jabber_register_start(js);
 	} else if(xmlnode_get_child(packet, "mechanisms")) {
+		jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
 		jabber_auth_start(js, packet);
 	} else if(xmlnode_get_child(packet, "bind")) {
 		xmlnode *bind, *resource;
@@ -289,8 +289,10 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 		if(js->state == JABBER_STREAM_AUTHENTICATING)
 			jabber_auth_handle_failure(js, *packet);
 	} else if(!strcmp((*packet)->name, "proceed")) {
-		if(js->state == JABBER_STREAM_AUTHENTICATING && !js->gsc)
+		if (js->state == JABBER_STREAM_INITIALIZING_ENCRYPTION && !js->gsc)
 			tls_init(js);
+		else
+			purple_debug_warning("jabber", "Ignoring spurious <proceed/>\n");
 	} else {
 		purple_debug(PURPLE_DEBUG_WARNING, "jabber", "Unknown packet: %s\n",
 				(*packet)->name);
@@ -1570,6 +1572,8 @@ void jabber_close(PurpleConnection *gc)
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 {
+#define JABBER_CONNECT_STEPS ((js->gsc || js->state == JABBER_STREAM_INITIALIZING_ENCRYPTION) ? 9 : 5)
+
 	js->state = state;
 	switch(state) {
 		case JABBER_STREAM_OFFLINE:
@@ -1607,6 +1611,8 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 			break;
 	}
+
+#undef JABBER_CONNECT_STEPS
 }
 
 char *jabber_get_next_id(JabberStream *js)
