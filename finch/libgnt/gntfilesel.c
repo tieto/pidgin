@@ -176,9 +176,13 @@ process_path(const char *path)
 	splits = g_strsplit(path, G_DIR_SEPARATOR_S, -1);
 	for (i = 0, j = 0; splits[i]; i++) {
 		if (strcmp(splits[i], ".") == 0) {
+			g_free(splits[i]);
+			splits[i] = NULL;
 		} else if (strcmp(splits[i], "..") == 0) {
 			if (j)
 				j--;
+			g_free(splits[i]);
+			splits[i] = NULL;
 		} else {
 			if (i != j) {
 				g_free(splits[j]);
@@ -625,6 +629,7 @@ gnt_file_sel_init(GTypeInstance *instance, gpointer class)
 
 	sel->files = gnt_tree_new_with_columns(2);  /* Name, Size */
 	gnt_tree_set_compare_func(GNT_TREE(sel->files), (GCompareFunc)g_utf8_collate);
+	gnt_tree_set_hash_fns(GNT_TREE(sel->files), g_str_hash, g_str_equal, g_free);
 	gnt_tree_set_column_titles(GNT_TREE(sel->files), "Filename", "Size");
 	gnt_tree_set_show_title(GNT_TREE(sel->files), TRUE);
 	gnt_tree_set_col_width(GNT_TREE(sel->files), 0, 25);
