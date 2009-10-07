@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-07 22:09+0200\n"
-"PO-Revision-Date: 2009-10-07 22:14+0200\n"
+"POT-Creation-Date: 2009-10-07 22:35+0200\n"
+"PO-Revision-Date: 2009-10-07 22:34+0200\n"
 "Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1531,10 +1531,10 @@ msgstr ""
 
 #, c-format
 msgid "TinyURL for above: %s"
-msgstr ""
+msgstr "TinyURL für oben: %s"
 
 msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr ""
+msgstr "Bitte warten Sie, während TinyURL eine kürzere URL holt ..."
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "TinyURL nur für URLs mit mindestens dieser Länge generieren"
@@ -1894,9 +1894,9 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "Auflösungsprozess hat sich beendet ohne die Anfrage zu beantworten"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error converting %s to punycode: %d"
-msgstr "Fehler beim Auflösen von %s: %d"
+msgstr "Fehler beim Konvertieren von %s zu Punycode: %d"
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -5190,7 +5190,7 @@ msgstr ""
 "Für MSN wird SSL-Unterstützung benötigt. Bitte installieren Sie eine "
 "unterstützte SSL-Bibliothek."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be valid email addresses."
@@ -9724,12 +9724,14 @@ msgstr "Öffne Posteingang"
 
 msgid "Can't send SMS. Unable to obtain mobile carrier."
 msgstr ""
+"Die SMS kann nicht gesendet werden. Es konnte kein Mobilfunkkanal erreicht "
+"werden."
 
 msgid "Can't send SMS. Unknown mobile carrier."
-msgstr ""
+msgstr "Die SMS kann nicht gesendet werden. Unbekannter Mobilfunkkanal."
 
 msgid "Getting mobile carrier to send the SMS."
-msgstr ""
+msgstr "Hole einen Mobilfunkkanal zum Senden der SMS."
 
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
@@ -12559,21 +12561,19 @@ msgid "Unknown.... Please report this!"
 msgstr "Unbekannt.... Bitte berichten Sie dieses Problem!"
 
 msgid "(Custom)"
-msgstr ""
+msgstr "(Benutzerdefiniert)"
 
-#, fuzzy
 msgid "(Default)"
 msgstr "(Standard)"
 
 msgid "The default Pidgin sound theme"
-msgstr ""
+msgstr "Das Standard-Klangthema für Pidgin"
 
-#, fuzzy
 msgid "The default Pidgin buddy list theme"
-msgstr "Pidgin Buddy-Listen-Thema-Editor"
+msgstr "Das Standard-Buddy-Listen-Thema für Pidgin"
 
 msgid "The default Pidgin status icon theme"
-msgstr ""
+msgstr "Das Standard-Status-Icon-Thema für Pidgin"
 
 msgid "Theme failed to unpack."
 msgstr "Thema konnte nicht entpackt werden."
@@ -14429,9 +14429,8 @@ msgstr "Start"
 msgid "_Start %s on Windows startup"
 msgstr "_Starte %s beim Windows-Start"
 
-#, fuzzy
 msgid "Allow multiple instances"
-msgstr "mehrere Instanzen erlauben"
+msgstr "Mehrere Instanzen erlauben"
 
 msgid "_Dockable Buddy List"
 msgstr "An_dockbare Buddy-Liste"
@@ -14492,6 +14491,3 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ Runtime Version"
