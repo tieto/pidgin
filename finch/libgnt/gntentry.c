@@ -495,7 +495,7 @@ suggest_show(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->ddown) {
-		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-down");
+		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-down", NULL);
 		return TRUE;
 	}
 	return show_suggest_dropdown(entry);

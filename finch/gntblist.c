@@ -1940,7 +1940,7 @@ key_pressed(GntWidget *widget, const char *text, FinchBlist *ggblist)
 	} else if (!gnt_tree_is_searching(GNT_TREE(ggblist->tree))) {
 		if (strcmp(text, "t") == 0) {
 			finch_blist_toggle_tag_buddy(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
-			gnt_bindable_perform_action_named(GNT_BINDABLE(ggblist->tree), "move-down");
+			gnt_bindable_perform_action_named(GNT_BINDABLE(ggblist->tree), "move-down", NULL);
 		} else if (strcmp(text, "a") == 0) {
 			finch_blist_place_tagged(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
 		} else
