@@ -687,8 +687,8 @@ void gnt_box_set_title(GntBox *b, const char *title)
 		get_title_thingies(b, prev, &pos, &right);
 		mvwhline(w->window, 0, pos - 1, ACS_HLINE | gnt_color_pair(GNT_COLOR_NORMAL),
 				right - pos + 2);
-		g_free(prev);
 	}
+	g_free(prev);
 }
 
 void gnt_box_set_pad(GntBox *box, int pad)
