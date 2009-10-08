@@ -767,6 +767,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 							line->segments = g_list_delete_link(line->segments, segs);
 							if (line->segments == NULL) {
 								free_text_line(line, NULL);
+								line = NULL;
 								if (view->list == iter) {
 									if (inext)
 										view->list = inext;
@@ -780,7 +781,8 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 							seg->start = tag->start;
 							seg->end = tag->end - change;
 						}
-						line->length -= change;
+						if (line)
+							line->length -= change;
 						/* XXX: Make things work if the tagged text spans over several lines. */
 					} else {
 						/* XXX: handle the rest of the conditions */
