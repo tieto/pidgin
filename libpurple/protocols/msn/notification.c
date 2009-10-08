@@ -582,7 +582,7 @@ msn_notification_send_fqy(MsnSession *session,
 
 	trans = msn_transaction_new(cmdproc, "FQY", "%d", payload_len);
 	msn_transaction_set_payload(trans, payload, payload_len);
-	msn_transaction_set_data(trans, data);
+	msn_transaction_set_data(trans, data);	/* XXX: 'data' leaks */
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 

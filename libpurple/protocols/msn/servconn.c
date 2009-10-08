@@ -440,11 +440,12 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	memcpy(servconn->rx_buf + servconn->rx_len, buf, len + 1);
 	servconn->rx_len += len;
 
-	msn_servconn_process_data(servconn);
-	servconn_timeout_renew(servconn);
+	servconn = msn_servconn_process_data(servconn);
+	if (servconn)
+		servconn_timeout_renew(servconn);
 }
 
-void msn_servconn_process_data(MsnServConn *servconn)
+MsnServConn *msn_servconn_process_data(MsnServConn *servconn)
 {
 	char *cur, *end, *old_rx_buf;
 	int cur_len;
@@ -503,10 +504,13 @@ void msn_servconn_process_data(MsnServConn *servconn)
 
 	servconn->processing = FALSE;
 
-	if (servconn->wasted)
+	if (servconn->wasted) {
 		msn_servconn_destroy(servconn);
+		servconn = NULL;
+	}
 
 	g_free(old_rx_buf);
+	return servconn;
 }
 
 #if 0
