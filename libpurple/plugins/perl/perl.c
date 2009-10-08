@@ -621,6 +621,9 @@ destroy_perl_plugin(PurplePlugin *plugin)
 			g_free(gps);
 			plugin->info->extra_info = NULL;
 		}
+
+		g_free(plugin->info);
+		plugin->info = NULL;
 	}
 }
 
