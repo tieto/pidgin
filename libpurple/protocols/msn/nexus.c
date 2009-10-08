@@ -338,8 +338,10 @@ nexus_parse_collection(MsnNexus *nexus, int id, xmlnode *collection)
 			xmlnode *cipher = xmlnode_get_child(node, "RequestedSecurityToken/EncryptedData/CipherData/CipherValue");
 			xmlnode *secret = xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
 
+			g_free(nexus->cipher);
 			nexus->cipher = xmlnode_get_data(cipher);
 			data = xmlnode_get_data(secret);
+			g_free(nexus->secret);
 			nexus->secret = (char *)purple_base64_decode(data, NULL);
 			g_free(data);
 
