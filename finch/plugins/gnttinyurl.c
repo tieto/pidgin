@@ -148,7 +148,9 @@ static GList *extract_urls(const char *text)
 					url_buf = g_strndup(c, t - c);
 					if (!g_list_find_custom(ret, url_buf, (GCompareFunc)strcmp)) {
 						purple_debug_info("TinyURL", "Added URL %s\n", url_buf);
-						ret = g_list_append(ret, g_strdup(url_buf));
+						ret = g_list_append(ret, url_buf);
+					} else {
+						g_free(url_buf);
 					}
 					c = t;
 					break;
@@ -179,6 +181,8 @@ static GList *extract_urls(const char *text)
 						if (!g_list_find_custom(ret, url_buf, (GCompareFunc)strcmp)) {
 							purple_debug_info("TinyURL", "Added URL %s\n", url_buf);
 							ret = g_list_append(ret, url_buf);
+						} else {
+							g_free(url_buf);
 						}
 						c = t;
 						break;
@@ -231,7 +235,7 @@ static gboolean writing_msg(PurpleAccount *account, char *sender, char **message
 				PurpleConversation *conv, PurpleMessageFlags flags)
 {
 	GString *t;
-	GList *iter, *urls;
+	GList *iter, *urls, *next;
 	int c = 0;
 
 	if ((flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_INVISIBLE)))
@@ -247,7 +251,8 @@ static gboolean writing_msg(PurpleAccount *account, char *sender, char **message
 
 	t = g_string_new(*message);
 	g_free(*message);
-	for (iter = urls; iter; iter = iter->next) {
+	for (iter = urls; iter; iter = next) {
+		next = iter->next;
 		if (g_utf8_strlen((char *)iter->data, -1) >= purple_prefs_get_int(PREF_LENGTH)) {
 			int pos, x = 0;
 			gchar *j, *s, *str, *orig;
@@ -265,15 +270,8 @@ static gboolean writing_msg(PurpleAccount *account, char *sender, char **message
 			g_free(str);
 			continue;
 		} else {
-			if (iter->prev) {
-				iter = iter->prev;
-				g_free(iter->next->data);
-				urls = g_list_delete_link(urls, iter->next);
-			} else {
-				g_free(iter->data);
-				g_list_free(urls);
-				urls = NULL;
-			}
+			g_free(iter->data);
+			urls = g_list_delete_link(urls, iter);
 		}
 	}
 	*message = t->str;
