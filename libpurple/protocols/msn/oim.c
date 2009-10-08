@@ -481,6 +481,7 @@ msn_oim_send_msg(MsnOim *oim)
 
 	g_free(msg_body);
 	g_free(soap_body);
+	msn_oim_free_send_req(oim_request);
 }
 
 /****************************************

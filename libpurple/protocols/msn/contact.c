@@ -206,6 +206,7 @@ msn_contact_request_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		                   "Operation {%s} failed. No response received from server.\n",
 		                   msn_contact_operation_str(state->action));
 		msn_session_set_error(state->session, MSN_ERROR_BAD_BLIST, NULL);
+		msn_callback_state_free(state);
 		return;
 	}
 

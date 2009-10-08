@@ -86,7 +86,7 @@ msn_servconn_destroy(MsnServConn *servconn)
 	if (servconn->tx_handler > 0)
 		purple_input_remove(servconn->tx_handler);
 	if (servconn->timeout_handle > 0)
-		purple_input_remove(servconn->timeout_handle);
+		purple_timeout_remove(servconn->timeout_handle);
 
 	msn_cmdproc_destroy(servconn->cmdproc);
 	g_free(servconn);
@@ -280,7 +280,7 @@ msn_servconn_disconnect(MsnServConn *servconn)
 
 	if (servconn->timeout_handle > 0)
 	{
-		purple_input_remove(servconn->timeout_handle);
+		purple_timeout_remove(servconn->timeout_handle);
 		servconn->timeout_handle = 0;
 	}
 
@@ -300,7 +300,7 @@ static gboolean
 servconn_idle_timeout_cb(MsnServConn *servconn)
 {
 	msn_servconn_disconnect(servconn);
-	servconn->timeout_handle = 0;
+	servconn->timeout_handle = 0;	/* XXX: servconn may not be valid anymore */
 	return FALSE;
 }
 
@@ -308,7 +308,7 @@ static void
 servconn_timeout_renew(MsnServConn *servconn)
 {
 	if (servconn->timeout_handle) {
-		purple_input_remove(servconn->timeout_handle);
+		purple_timeout_remove(servconn->timeout_handle);
 		servconn->timeout_handle = 0;
 	}
 
