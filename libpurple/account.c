@@ -1052,8 +1052,10 @@ purple_account_destroy(PurpleAccount *account)
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 	PURPLE_DBUS_UNREGISTER_POINTER(priv->current_error);
-	g_free(priv->current_error->description);
-	g_free(priv->current_error);
+	if (priv->current_error) {
+		g_free(priv->current_error->description);
+		g_free(priv->current_error);
+	}
 	g_free(priv);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(account);
