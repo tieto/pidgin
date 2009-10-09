@@ -582,7 +582,8 @@ msn_notification_send_fqy(MsnSession *session,
 
 	trans = msn_transaction_new(cmdproc, "FQY", "%d", payload_len);
 	msn_transaction_set_payload(trans, payload, payload_len);
-	msn_transaction_set_data(trans, data);	/* XXX: 'data' leaks */
+	msn_transaction_set_data(trans, data);
+	msn_transaction_set_data_free(trans, g_free);
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
@@ -962,9 +963,8 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			if (cmd->trans->data) {
 				MsnFqyCbData *fqy_data = cmd->trans->data;
 				fqy_data->cb(session, passport, network, fqy_data->data);
-				/* TODO: This leaks, but the server responds to FQY multiple times, so we
-				         can't free it yet. We need to figure out somewhere else to do so.
-				g_free(fqy_data); */
+				/* Don't free fqy_data yet since the server responds to FQY multipe times.
+				   It will be freed when cmd->trans is freed. */
 			}
 
 			g_free(passport);
