@@ -373,6 +373,7 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 								msg->oim_msg);
 							g_queue_push_head(oim->send_queue, msg);
 							msn_oim_send_msg(oim);
+							msg = NULL;
 						} else {
 							purple_debug_info("msn",
 								"Can't find lock key for OIM: %s\n",
@@ -393,6 +394,7 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 						purple_debug_info("msn", "Resending OIM: %s\n", msg->oim_msg);
 						g_queue_push_head(oim->send_queue, msg);
 						msn_oim_send_msg(oim);
+						msg = NULL;
 					}
 				} else {
 					/* Report the error */
@@ -426,6 +428,9 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 			}
 		}
 	}
+
+	if (msg)
+		msn_oim_free_send_req(msg);
 }
 
 void
@@ -481,7 +486,6 @@ msn_oim_send_msg(MsnOim *oim)
 
 	g_free(msg_body);
 	g_free(soap_body);
-	msn_oim_free_send_req(oim_request);
 }
 
 /****************************************
