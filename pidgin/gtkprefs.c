@@ -1841,7 +1841,7 @@ network_page(void)
 			G_CALLBACK(network_stun_server_changed_cb), NULL);
 	gtk_widget_show(entry);
 
-	pidgin_add_widget_to_vbox(GTK_BOX(vbox), "ST_UN server:",
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("ST_UN server:"),
 			sg, entry, TRUE, NULL);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
