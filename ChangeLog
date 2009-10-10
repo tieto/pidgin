@@ -15,6 +15,7 @@ version 2.6.3 (??/??/20??):
 	  to announce the list of loaded plugins (in both Finch and Pidgin).
 	* Fix a crash when performing DNS queries on Unixes that use the
 	  blocking DNS lookups.  (Brian Lu)
+	* Fix building the GnuTLS plugin with older versions of GnuTLS.
 
 	Finch:
 	* The TinyURL plugin now creates shorter URLs for long non-conversation

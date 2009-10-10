@@ -730,6 +730,7 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 		return FALSE;
 	}
 
+#ifdef HAVE_GNUTLS_CERT_INSECURE_ALGORITHM
 	if (verify & GNUTLS_CERT_INSECURE_ALGORITHM) {
 		/*
 		 * A certificate in the chain is signed with an insecure
@@ -743,6 +744,7 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 				"Insecure hash algorithm used by %s to sign %s\n",
 				issuer_id, crt_id);
 	}
+#endif
 
 	if (verify & GNUTLS_CERT_INVALID) {
 		/* Signature didn't check out, but at least
