@@ -95,14 +95,14 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 		gchar *participant, GoogleSession *session)
 {
 	GList *candidates = purple_media_get_local_candidates(
-			session->media, session_id, session->remote_jid);
+			session->media, session_id, session->remote_jid), *iter;
 	PurpleMediaCandidate *transport;
 	gboolean video = FALSE;
 
 	if (!strcmp(session_id, "google-video"))
 		video = TRUE;
 
-	for (;candidates;candidates = candidates->next) {
+	for (iter = candidates; iter; iter = iter->next) {
 		JabberIq *iq;
 		gchar *ip, *port, *username, *password;
 		gchar pref[16];
@@ -110,7 +110,7 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 		xmlnode *sess;
 		xmlnode *candidate;
 		guint component_id;
-		transport = (PurpleMediaCandidate*)(candidates->data);
+		transport = PURPLE_MEDIA_CANDIDATE(iter->data);
 		component_id = purple_media_candidate_get_component_id(
 				transport);
 
@@ -168,6 +168,7 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 
 		jabber_iq_send(iq);
 	}
+	purple_media_candidate_list_free(candidates);
 }
 
 static void
