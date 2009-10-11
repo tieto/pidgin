@@ -299,8 +299,8 @@ msn_servconn_disconnect(MsnServConn *servconn)
 static gboolean
 servconn_idle_timeout_cb(MsnServConn *servconn)
 {
+	servconn->timeout_handle = 0;
 	msn_servconn_disconnect(servconn);
-	servconn->timeout_handle = 0;	/* XXX: servconn may not be valid anymore */
 	return FALSE;
 }
 
