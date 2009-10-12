@@ -63,8 +63,8 @@ char *jabber_get_chat_name(GHashTable *data);
  * into a hash table.
  *
  * @param password The password (if required) to join the room. May be NULL.
- * @param data     A hash table (since it's still required for the core
- *                 interface API).
+ * @param data     The chat hash table.  May be NULL (it will be generated
+ *                 for current core<>prpl API interface.)
  */
 JabberChat *jabber_join_chat(JabberStream *js, const char *room,
                              const char *server, const char *handle,

@@ -226,10 +226,16 @@ static JabberChat *jabber_chat_new(JabberStream *js, const char *room,
 	chat->handle = g_strdup(handle);
 
 	/* Copy the data hash table to chat->components */
-	/* TODO: Create entries in data table if data is NULL... */
 	chat->components = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
-	g_hash_table_foreach(data, insert_in_hash_table, chat->components);
+	if (data == NULL) {
+		g_hash_table_insert(chat->components, g_strdup("handle"), g_strdup(handle));
+		g_hash_table_insert(chat->components, g_strdup("room"), g_strdup(room));
+		g_hash_table_insert(chat->components, g_strdup("server"), g_strdup(server));
+		/* g_hash_table_insert(chat->components, g_strdup("password"), g_strdup(server)); */
+	} else {
+		g_hash_table_foreach(data, insert_in_hash_table, chat->components);
+	}
 
 	chat->members = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
 			(GDestroyNotify)jabber_chat_member_free);
