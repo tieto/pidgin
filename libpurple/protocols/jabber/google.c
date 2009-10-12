@@ -31,6 +31,7 @@
 #include "jabber.h"
 #include "presence.h"
 #include "iq.h"
+#include "chat.h"
 
 #include "jingle/jingle.h"
 
@@ -1424,4 +1425,54 @@ jabber_google_send_jingle_info(JabberStream *js)
 		NULL);
 	purple_debug_info("jabber", "sending google:jingleinfo query\n");
 	jabber_iq_send(jingle_info);
+}
+
+void google_buddy_node_chat(PurpleBlistNode *node, gpointer data)
+{
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
+	JabberStream *js;
+	JabberChat *jc;
+	GHashTable *chat_info;
+	gchar *chat_name;
+	gchar *uuid;
+	gchar *room;
+	guint32 tmp, a, b;
+
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = PURPLE_BUDDY(node);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
+	js = purple_connection_get_protocol_data(gc);
+
+	tmp = g_random_int();
+	a = 0x4000 | (tmp & 0xFFF); /* 0x4000 to 0x4FFF */
+	tmp >>= 12;
+	b = ((1 << 3) << 12) | (tmp & 0x3FFF); /* 0x8000 to 0xBFFF */
+
+	tmp = g_random_int();
+	uuid = g_strdup_printf("%08x-%04x-%04x-%04x-%04x%08x",
+			g_random_int(),
+			tmp & 0xFFFF,
+			a,
+			b,
+			(tmp >> 16) & 0xFFFF, g_random_int());
+
+	room = g_strdup_printf("private-chat-%s", uuid);
+	chat_name = g_strdup_printf("%s@%s", room, GOOGLE_GROUPCHAT_SERVER);
+	chat_info = jabber_chat_info_defaults(gc, chat_name);
+	if (chat_info) {
+		jabber_chat_join(gc, chat_info);
+		jc = jabber_chat_find(js, room, GOOGLE_GROUPCHAT_SERVER);
+		if (jc)
+		{
+			jc->muc = TRUE;
+			jabber_chat_invite(gc, jc->id, "", buddy->name);
+		}
+		g_hash_table_destroy(chat_info);
+	}
+
+	g_free(room);
+	g_free(uuid);
+	g_free(chat_name);
 }

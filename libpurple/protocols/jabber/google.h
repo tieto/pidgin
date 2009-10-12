@@ -31,6 +31,8 @@
 #define GOOGLE_VIDEO_CAP "http://www.google.com/xmpp/protocol/video/v1"
 #define GOOGLE_JINGLE_INFO_NAMESPACE "google:jingleinfo"
 
+#define GOOGLE_GROUPCHAT_SERVER "groupchat.google.com"
+
 void jabber_gmail_init(JabberStream *js);
 void jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
                        const char *id, xmlnode *new_mail);
@@ -58,5 +60,7 @@ void jabber_google_handle_jingle_info(JabberStream *js, const char *from,
                                       JabberIqType type, const char *id,
                                       xmlnode *child);
 void jabber_google_send_jingle_info(JabberStream *js);
+
+void google_buddy_node_chat(PurpleBlistNode *node, gpointer data);
 
 #endif   /* PURPLE_JABBER_GOOGLE_H_ */
