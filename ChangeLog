@@ -23,6 +23,7 @@ version 2.6.3 (??/??/20??):
 	Yahoo:
 	* Fix sending /buzz.
 	* Fix blocking behavior for federated (MSN/OCS/Sametime) service users.
+	  (Jason Cohen)
 	* Add support for adding OCS and Sametime buddies.  OCS users are added
 	  as "ocs/user@domain.tld" and Sametime users are added as
 	  "ibm/sametime_id".  (Jason Cohen)

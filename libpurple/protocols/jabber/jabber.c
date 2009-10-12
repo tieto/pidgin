@@ -1079,39 +1079,19 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 					return;
 				}
 			} else {
+				const char *ids[] = {"username", "password", "name", "email", "nick", "first",
+					"last", "address", "city", "state", "zip", "phone", "url", "date",
+					NULL};
 				const char *value = purple_request_field_string_get_value(field);
-
-				if(!strcmp(id, "username")) {
-					y = xmlnode_new_child(query, "username");
-				} else if(!strcmp(id, "password")) {
-					y = xmlnode_new_child(query, "password");
-				} else if(!strcmp(id, "name")) {
-					y = xmlnode_new_child(query, "name");
-				} else if(!strcmp(id, "email")) {
-					y = xmlnode_new_child(query, "email");
-				} else if(!strcmp(id, "nick")) {
-					y = xmlnode_new_child(query, "nick");
-				} else if(!strcmp(id, "first")) {
-					y = xmlnode_new_child(query, "first");
-				} else if(!strcmp(id, "last")) {
-					y = xmlnode_new_child(query, "last");
-				} else if(!strcmp(id, "address")) {
-					y = xmlnode_new_child(query, "address");
-				} else if(!strcmp(id, "city")) {
-					y = xmlnode_new_child(query, "city");
-				} else if(!strcmp(id, "state")) {
-					y = xmlnode_new_child(query, "state");
-				} else if(!strcmp(id, "zip")) {
-					y = xmlnode_new_child(query, "zip");
-				} else if(!strcmp(id, "phone")) {
-					y = xmlnode_new_child(query, "phone");
-				} else if(!strcmp(id, "url")) {
-					y = xmlnode_new_child(query, "url");
-				} else if(!strcmp(id, "date")) {
-					y = xmlnode_new_child(query, "date");
-				} else {
-					continue;
+				int i;
+				for (i = 0; ids[i]; i++) {
+					if (!strcmp(id, ids[i]))
+						break;
 				}
+
+				if (!ids[i])
+					continue;
+				y = xmlnode_new_child(query, ids[i]);
 				xmlnode_insert_data(y, value, -1);
 				if(cbdata->js->registration && !strcmp(id, "username")) {
 					g_free(cbdata->js->user->node);
