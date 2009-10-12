@@ -12,6 +12,8 @@ version 2.6.3 (??/??/20??):
 	* Don't forget display names for buddies.
 
 	XMPP:
+	* Users connecting to Google Talk now have an "Initiate Chat" context menu
+	  option for their buddies.  (Eion Robb)
 	* Fix a crash when attempting to validate an invalid JID.
 	* Resolve an issue when connecting to iChat Server when no resource
 	  is specified.

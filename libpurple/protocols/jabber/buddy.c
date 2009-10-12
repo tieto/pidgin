@@ -38,6 +38,7 @@
 #include "xdata.h"
 #include "pep.h"
 #include "adhoccommands.h"
+#include "google.h"
 
 typedef struct {
 	long idle_seconds;
@@ -1838,6 +1839,13 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 		   removed? */
 		act = purple_menu_action_new(_("Unsubscribe"),
 		                           PURPLE_CALLBACK(jabber_buddy_unsubscribe),
+		                           NULL, NULL);
+		m = g_list_append(m, act);
+	}
+
+	if (js->googletalk) {
+		act = purple_menu_action_new(_("Initiate _Chat"),
+		                           PURPLE_CALLBACK(google_buddy_node_chat),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
