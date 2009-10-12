@@ -57,6 +57,19 @@ typedef struct _JabberChat {
 GList *jabber_chat_info(PurpleConnection *gc);
 GHashTable *jabber_chat_info_defaults(PurpleConnection *gc, const char *chat_name);
 char *jabber_get_chat_name(GHashTable *data);
+
+/**
+ * in-prpl function for joining a chat room. Doesn't require sticking goop
+ * into a hash table.
+ *
+ * @param password The password (if required) to join the room. May be NULL.
+ * @param data     A hash table (since it's still required for the core
+ *                 interface API).
+ */
+JabberChat *jabber_join_chat(JabberStream *js, const char *room,
+                             const char *server, const char *handle,
+                             const char *password, GHashTable *data);
+
 void jabber_chat_join(PurpleConnection *gc, GHashTable *data);
 JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 		const char *server);
