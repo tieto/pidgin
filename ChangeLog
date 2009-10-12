@@ -2,6 +2,8 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.3 (??/??/20??):
 	XMPP:
+	* Users connecting to Google Talk now have an "Initiate Chat" context menu
+	  option for their buddies.  (Eion Robb)
 	* Fix a crash when attempting to validate an invalid JID.
 	* Resolve an issue when connecting to iChat Server when no resource
 	  is specified.
@@ -9,12 +11,18 @@ version 2.6.3 (??/??/20??):
 
 	Yahoo:
 	* Fix sending /buzz.
+	* Fix blocking behavior for federated (MSN/OCS/Sametime) service users.
+	  (Jason Cohen)
+	* Add support for adding OCS and Sametime buddies.  OCS users are added
+	  as "ocs/user@domain.tld" and Sametime users are added as
+	  "ibm/sametime_id".  (Jason Cohen)
 
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
 	  to announce the list of loaded plugins (in both Finch and Pidgin).
 	* Fix a crash when performing DNS queries on Unixes that use the
 	  blocking DNS lookups.  (Brian Lu)
+	* Fix building the GnuTLS plugin with older versions of GnuTLS.
 
 	Finch:
 	* The TinyURL plugin now creates shorter URLs for long non-conversation

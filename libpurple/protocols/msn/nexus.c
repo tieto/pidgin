@@ -508,6 +508,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	}
 
 	g_free(ud);
+	g_free(key);
 }
 
 void

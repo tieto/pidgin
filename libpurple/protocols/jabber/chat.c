@@ -209,18 +209,95 @@ static void insert_in_hash_table(gpointer key, gpointer value, gpointer user_dat
 	g_hash_table_insert(hash_table, g_strdup(key), g_strdup(value));
 }
 
-void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
+static JabberChat *jabber_chat_new(JabberStream *js, const char *room,
+                                   const char *server, const char *handle,
+                                   const char *password, GHashTable *data)
 {
 	JabberChat *chat;
-	char *room, *server, *handle, *passwd;
-	xmlnode *presence, *x;
-	char *tmp, *room_jid, *full_jid;
-	JabberStream *js = gc->proto_data;
-	PurplePresence *gpresence;
+	char *jid;
+
+	g_return_val_if_fail(jabber_chat_find(js, room, server) == NULL, NULL);
+
+	chat = g_new0(JabberChat, 1);
+	chat->js = js;
+
+	chat->room = g_strdup(room);
+	chat->server = g_strdup(server);
+	chat->handle = g_strdup(handle);
+
+	/* Copy the data hash table to chat->components */
+	chat->components = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, g_free);
+	if (data == NULL) {
+		g_hash_table_insert(chat->components, g_strdup("handle"), g_strdup(handle));
+		g_hash_table_insert(chat->components, g_strdup("room"), g_strdup(room));
+		g_hash_table_insert(chat->components, g_strdup("server"), g_strdup(server));
+		/* g_hash_table_insert(chat->components, g_strdup("password"), g_strdup(server)); */
+	} else {
+		g_hash_table_foreach(data, insert_in_hash_table, chat->components);
+	}
+
+	chat->members = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
+			(GDestroyNotify)jabber_chat_member_free);
+
+	jid = g_strdup_printf("%s@%s", room, server);
+	g_hash_table_insert(js->chats, jid, chat);
+
+	return chat;
+}
+
+JabberChat *jabber_join_chat(JabberStream *js, const char *room,
+                             const char *server, const char *handle,
+                             const char *password, GHashTable *data)
+{
+	JabberChat *chat;
+
+	PurpleConnection *gc;
+	PurpleAccount *account;
 	PurpleStatus *status;
+
+	xmlnode *presence, *x;
 	JabberBuddyState state;
 	char *msg;
 	int priority;
+
+	char *jid;
+
+	chat = jabber_chat_new(js, room, server, handle, password, data);
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	gc = js->gc;
+	account = purple_connection_get_account(gc);
+	status = purple_account_get_active_status(account);
+	purple_status_to_jabber(status, &state, &msg, &priority);
+
+	presence = jabber_presence_create_js(js, state, msg, priority);
+	g_free(msg);
+
+	jid = g_strdup_printf("%s@%s/%s", room, server, handle);
+	xmlnode_set_attrib(presence, "to", jid);
+	g_free(jid);
+
+	x = xmlnode_new_child(presence, "x");
+	xmlnode_set_namespace(x, "http://jabber.org/protocol/muc");
+
+	if (password && *password) {
+		xmlnode *p = xmlnode_new_child(x, "password");
+		xmlnode_insert_data(p, password, -1);
+	}
+
+	jabber_send(js, presence);
+	xmlnode_free(presence);
+
+	return chat;
+}
+
+void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
+{
+	char *room, *server, *handle, *passwd;
+	JabberID *jid;
+	JabberStream *js = gc->proto_data;
+	char *tmp;
 
 	room = g_hash_table_lookup(data, "room");
 	server = g_hash_table_lookup(data, "server");
@@ -256,51 +333,23 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 		return;
 	}
 
-	if(jabber_chat_find(js, room, server))
-		return;
-
+	/* Normalize the room and server parameters */
 	tmp = g_strdup_printf("%s@%s", room, server);
-	room_jid = g_strdup(jabber_normalize(NULL, tmp));
+	jid = jabber_id_new(tmp);
 	g_free(tmp);
 
-	chat = g_new0(JabberChat, 1);
-	chat->js = gc->proto_data;
+	if (jid == NULL) {
+		/* TODO: Error message */
 
-	chat->room = g_strdup(room);
-	chat->server = g_strdup(server);
-	chat->handle = g_strdup(handle);
-
-	/* Copy the data hash table to chat->components */
-	chat->components = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, g_free);
-	g_hash_table_foreach(data, insert_in_hash_table, chat->components);
-
-	chat->members = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
-			(GDestroyNotify)jabber_chat_member_free);
-
-	g_hash_table_insert(js->chats, room_jid, chat);
-
-	gpresence = purple_account_get_presence(gc->account);
-	status = purple_presence_get_active_status(gpresence);
-
-	purple_status_to_jabber(status, &state, &msg, &priority);
-
-	presence = jabber_presence_create_js(js, state, msg, priority);
-	full_jid = g_strdup_printf("%s/%s", room_jid, handle);
-	xmlnode_set_attrib(presence, "to", full_jid);
-	g_free(full_jid);
-	g_free(msg);
-
-	x = xmlnode_new_child(presence, "x");
-	xmlnode_set_namespace(x, "http://jabber.org/protocol/muc");
-
-	if(passwd && *passwd) {
-		xmlnode *password = xmlnode_new_child(x, "password");
-		xmlnode_insert_data(password, passwd, -1);
+		g_return_if_reached();
 	}
 
-	jabber_send(js, presence);
-	xmlnode_free(presence);
+	/*
+	 * Now that we've done all that nice core-interface stuff, let's join
+	 * this room!
+	 */
+	jabber_join_chat(js, jid->node, jid->domain, handle, passwd, data);
+	jabber_id_free(jid);
 }
 
 void jabber_chat_leave(PurpleConnection *gc, int id)
