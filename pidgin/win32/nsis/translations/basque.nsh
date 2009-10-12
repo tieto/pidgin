@@ -30,7 +30,6 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"GTK+ exekuzio-ingurunearen bertsio zahar bat aurkitu da. Eguneratu egin nahi al duzu?$\rOharra: Bestela, posible da $(^Name) ez ibiltzea."
-!define GTK_WINDOWS_INCOMPATIBLE		"GTK+ 2.8.0 eta berriagoekin bateraezinak dira Windows 95/98/Me.  Ez da GTK+ ${GTK_INSTALL_VERSION} instalatuko.$\rJadanik ez badaukazu GTK+ ${GTK_MIN_VERSION} edo berriagorik instalatuta, bertan behera utziko da instalazioa."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Pidgin Webgunera etorri"

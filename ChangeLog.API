@@ -1,5 +1,17 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.7.0 (??/??/????):
+	libpurple:
+		Added:
+		* purple_account_get_name_for_display
+		* purple_network_get_all_local_system_ips
+	
+	Pidgin:
+		Added:
+		* pidgin_dialogs_buildinfo (should not be used by anything but Pidgin)
+		* pidgin_dialogs_developers (should not be used by anything but Pidgin)
+		* pidgin_dialogs_translators (should not be used by anything but Pidgin)
+
 version 2.6.2 (09/05/2009):
 	Perl:
 		Added:

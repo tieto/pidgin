@@ -200,6 +200,45 @@ purple_network_get_local_system_ip(int fd)
 	return "0.0.0.0";
 }
 
+GList *
+purple_network_get_all_local_system_ips(void)
+{
+	GList *result = NULL;
+	int source = source = socket(PF_INET,SOCK_STREAM, 0);
+	char buffer[1024];
+	char *tmp;
+	struct ifconf ifc;
+	struct ifreq *ifr;
+	
+	ifc.ifc_len = sizeof(buffer);
+	ifc.ifc_req = (struct ifreq *)buffer;
+	ioctl(source, SIOCGIFCONF, &ifc);
+	close(source);
+
+	tmp = buffer;
+	while (tmp < buffer + ifc.ifc_len) {
+		char dst[INET_ADDRSTRLEN];
+
+		ifr = (struct ifreq *)tmp;
+		tmp += HX_SIZE_OF_IFREQ(*ifr);
+
+		/* TODO: handle IPv6 */
+		if (ifr->ifr_addr.sa_family == AF_INET) {
+			struct sockaddr_in *sinptr = (struct sockaddr_in *)&ifr->ifr_addr;
+
+			inet_ntop(AF_INET, &sinptr->sin_addr, dst,
+				sizeof(dst));
+			purple_debug_info("network", 
+				"found local i/f with address %s on IPv4\n", dst);
+			if (!purple_strequal(dst, "127.0.0.1")) {
+				result = g_list_append(result, g_strdup(dst));
+			}
+		}
+	}
+
+	return result;
+}
+
 const char *
 purple_network_get_my_ip(int fd)
 {
