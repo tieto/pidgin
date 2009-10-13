@@ -963,7 +963,7 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			if (cmd->trans->data) {
 				MsnFqyCbData *fqy_data = cmd->trans->data;
 				fqy_data->cb(session, passport, network, fqy_data->data);
-				/* Don't free fqy_data yet since the server responds to FQY multipe times.
+				/* Don't free fqy_data yet since the server responds to FQY multiple times.
 				   It will be freed when cmd->trans is freed. */
 			}
 
@@ -1098,7 +1098,6 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 
 	if (msn_user_set_friendly_name(user, friendly)) {
-		serv_got_alias(gc, passport, friendly);
 		msn_update_contact(session, passport, MSN_UPDATE_DISPLAY, friendly);
 	}
 	g_free(friendly);
@@ -1263,7 +1262,6 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (msn_user_set_friendly_name(user, friendly))
 	{
-		serv_got_alias(gc, passport, friendly);
 		msn_update_contact(session, passport, MSN_UPDATE_DISPLAY, friendly);
 	}
 
