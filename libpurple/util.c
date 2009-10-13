@@ -4973,3 +4973,23 @@ purple_get_host_name(void)
 {
 	return g_get_host_name();
 }
+
+gchar *
+purple_uuid_random(void)
+{
+	guint32 tmp, a, b;
+
+	tmp = g_random_int();
+	a = 0x4000 | (tmp & 0xFFF); /* 0x4000 to 0x4FFF */
+	tmp >>= 12;
+	b = ((1 << 3) << 12) | (tmp & 0x3FFF); /* 0x8000 to 0xBFFF */
+
+	tmp = g_random_int();
+
+	return g_strdup_printf("%08x-%04x-%04x-%04x-%04x%08x",
+			g_random_int(),
+			tmp & 0xFFFF,
+			a,
+			b,
+			(tmp >> 16) & 0xFFFF, g_random_int());
+}
