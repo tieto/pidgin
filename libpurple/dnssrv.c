@@ -809,6 +809,7 @@ PurpleSrvQueryData *purple_txt_resolve(const char *owner, const char *domain, Pu
 
 	internal_query.type = T_TXT;
 	strncpy(internal_query.query, query, 255);
+	internal_query.query[255] = '\0';
 
 	if (write(in[1], &internal_query, sizeof(internal_query)) < 0)
 		purple_debug_error("dnssrv", "Could not write to TXT resolver\n");
