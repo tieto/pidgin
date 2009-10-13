@@ -361,8 +361,12 @@ end:
 		/* TODO: Check return value */
 		if (query.type == T_SRV)
 			write(out, ret->data, sizeof(PurpleSrvResponse));
-		if (query.type == T_TXT)
-			write(out, ret->data, sizeof(PurpleTxtResponse));
+		if (query.type == T_TXT) {
+			PurpleTxtResponse *response = ret->data;
+			gsize l = strlen(response->content) + 1 /* null byte */;
+			write(out, &l, sizeof(l));
+			write(out, response->content, l);
+		}
 
 		g_free(ret->data);
 		ret = g_list_remove(ret, ret->data);
@@ -429,21 +433,38 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 					PurpleTxtCallback cb = query_data->cb.txt;
 					ssize_t red;
 					purple_debug_info("dnssrv","found %d TXT entries\n", size);
-					res = g_new0(PurpleTxtResponse, 1);
 					for (i = 0; i < size; i++) {
-						red = read(source, res, sizeof(PurpleTxtResponse));
-						if (red != sizeof(PurpleTxtResponse)) {
+						gsize len;
+
+						red = read(source, &len, sizeof(len));
+						if (red != sizeof(len)) {
 							purple_debug_error("dnssrv","unable to read txt "
-									"response: %s\n", g_strerror(errno));
+									"response length: %s\n", g_strerror(errno));
 							size = 0;
-							g_free(res);
 							g_list_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
 							g_list_free(responses);
 							responses = NULL;
 							break;
 						}
+
+						res = g_new0(PurpleTxtResponse, 1);
+						res->content = g_new0(gchar, len);
+
+						red = read(source, res->content, len);
+						if (red != len) {
+							purple_debug_error("dnssrv","unable to read txt "
+									"response: %s\n", g_strerror(errno));
+							size = 0;
+							purple_txt_response_destroy(res);
+							g_list_foreach(responses, (GFunc)purple_txt_response_destroy, NULL);
+							g_list_free(responses);
+							responses = NULL;
+							break;
+						}
+						responses = g_list_prepend(responses, res);
 					}
 
+					responses = g_list_reverse(responses);
 					cb(responses, query_data->extradata);
 				} else {
 					purple_debug_error("dnssrv", "type unknown of DNS result entry; errno is %i\n", errno);
