@@ -658,6 +658,7 @@ style_changed (GtkWidget* combobox, gpointer null)
 	g_free (name);
 	g_free (cur_style_dir);
 	cur_style_dir = g_strdup (iter->data);;
+	purple_prefs_set_string ("/plugins/gtk/adiumthemes/stylepath", cur_style_dir);
 
 	/* inform the user that existing conversations haven't changed */
 	dialog = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, "The style for existing conversations have not been changed. Please close and re-open the conversation for the changes to take effect.");
@@ -846,7 +847,7 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_none ("/plugins");
 	purple_prefs_add_none ("/plugins/gtk");
 	purple_prefs_add_none ("/plugins/gtk/adiumthemes");
-	purple_prefs_add_string ("/plugins/gtk/adiumthemes/csspath", "");
+	purple_prefs_add_string ("/plugins/gtk/adiumthemes/stylepath", "");
 }
 
 PURPLE_INIT_PLUGIN(webkit, init_plugin, info)
