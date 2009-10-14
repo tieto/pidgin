@@ -32,7 +32,7 @@ version 2.6.3 (??/??/20??):
 
 	Pidgin:
 	* The userlist in a multiuser chat can be styled via gtkrc by using the
-	  widget name "pidgin_conv_userlist".
+	  widget name "pidgin_conv_userlist". (Heiko Schmitt)
 
 version 2.6.2 (09/05/2009):
 	libpurple:
