@@ -205,7 +205,6 @@ docklet_x11_set_tooltip(gchar *tooltip)
 	}
 }
 
-#if GTK_CHECK_VERSION(2,2,0)
 static void
 docklet_x11_position_menu(GtkMenu *menu, int *x, int *y, gboolean *push_in,
 						  gpointer user_data)
@@ -230,7 +229,6 @@ docklet_x11_position_menu(GtkMenu *menu, int *x, int *y, gboolean *push_in,
 
 	*push_in = TRUE;
 }
-#endif
 
 static void
 docklet_x11_destroy(void)
@@ -344,11 +342,7 @@ static struct docklet_ui_ops ui_ops =
 	docklet_x11_update_icon,
 	docklet_x11_blank_icon,
 	docklet_x11_set_tooltip,
-#if GTK_CHECK_VERSION(2,2,0)
 	docklet_x11_position_menu
-#else
-	NULL
-#endif
 };
 
 void

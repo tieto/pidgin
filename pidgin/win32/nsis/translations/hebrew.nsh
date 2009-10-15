@@ -33,7 +33,6 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"A?נמצאה. לשדרג GTK+ סביבה ישנה של$\rNote: .יכול לא לעבוד אם לא $(^Name)"
-!define GTK_WINDOWS_INCOMPATIBLE		"חלונות 95/98/מילניום אינם תואמים ל-GTK+ 2.8.0 ומעלה. GTK+ ${GTK_INSTALL_VERSION} לא יותקן.$\rאם אין לך GTK+ ${GTK_MIN_VERSION} ומעלה מותקן, ההתקנה כעת תעצור."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		".Pidginבקרו באתר של "

@@ -32,7 +32,6 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"È stata trovata una versione precedente di GTK+. Vuoi aggiornarla?$\rNota: $(^Name) potrebbe non funzionare senza l'aggiornamento."
-!define GTK_WINDOWS_INCOMPATIBLE		"Windows 95/98/Me non è incompatible con GTK+ 2.8.0 o successivo. GTK+ ${GTK_INSTALL_VERSION} non sarà installato.$\rSe non hai GTK+ ${GTK_MIN_VERSION} o successivo già installato sul tuo computer, questa installazione sarà interrotta."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visita la pagina web di Pidgin"

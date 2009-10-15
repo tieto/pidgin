@@ -138,9 +138,7 @@ pidgin_menu_tray_class_init(PidginMenuTrayClass *klass) {
 static void
 pidgin_menu_tray_init(PidginMenuTray *menu_tray) {
 	GtkWidget *widget = GTK_WIDGET(menu_tray);
-#if GTK_CHECK_VERSION(2,2,0)
 	GtkSettings *settings;
-#endif
 	gint height = -1;
 
 	gtk_menu_item_set_right_justified(GTK_MENU_ITEM(menu_tray), TRUE);
@@ -148,15 +146,11 @@ pidgin_menu_tray_init(PidginMenuTray *menu_tray) {
 	if(!GTK_IS_WIDGET(menu_tray->tray))
 		menu_tray->tray = gtk_hbox_new(FALSE, 0);
 
-#if GTK_CHECK_VERSION(2,2,0)
 	settings =
 		gtk_settings_get_for_screen(gtk_widget_get_screen(widget));
 
 	if(gtk_icon_size_lookup_for_settings(settings, GTK_ICON_SIZE_MENU,
 										 NULL, &height))
-#else
-	if(gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, NULL, &height))
-#endif
 	{
 		gtk_widget_set_size_request(widget, -1, height);
 	}
