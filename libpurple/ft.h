@@ -120,6 +120,11 @@ typedef struct
 	 */
 	void (*data_not_sent)(PurpleXfer *xfer, const guchar *buffer, gsize size);
 
+	/**
+	 * Op to create a thumbnail image for a file transfer
+	 *
+	 * @param xfer   The file transfer structure
+	 */
 	void (*add_thumbnail)(PurpleXfer *xfer);
 } PurpleXferUiOps;
 
