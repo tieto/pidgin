@@ -216,7 +216,8 @@ static JabberChat *jabber_chat_new(JabberStream *js, const char *room,
 	JabberChat *chat;
 	char *jid;
 
-	g_return_val_if_fail(jabber_chat_find(js, room, server) == NULL, NULL);
+	if (jabber_chat_find(js, room, server) != NULL)
+		return NULL;
 
 	chat = g_new0(JabberChat, 1);
 	chat->js = js;
@@ -264,7 +265,8 @@ JabberChat *jabber_join_chat(JabberStream *js, const char *room,
 	char *jid;
 
 	chat = jabber_chat_new(js, room, server, handle, password, data);
-	g_return_val_if_fail(chat != NULL, NULL);
+	if (chat == NULL)
+		return NULL;
 
 	gc = js->gc;
 	account = purple_connection_get_account(gc);
