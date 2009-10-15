@@ -3909,11 +3909,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	od->rights.maxpermits = (guint)maxpermits;
 	od->rights.maxdenies = (guint)maxdenies;
 
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
-
 	purple_debug_info("oscar", "buddy list loaded\n");
-
-	aim_srv_clientready(od, conn);
 
 	if (purple_account_get_user_info(account) != NULL)
 		serv_set_info(gc, purple_account_get_user_info(account));
@@ -3956,6 +3952,22 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 
 	aim_srv_requestnew(od, SNAC_FAMILY_ALERT);
 	aim_srv_requestnew(od, SNAC_FAMILY_CHATNAV);
+
+	od->bos.have_rights = TRUE;
+
+	/*
+	 * If we've already received our feedbag data then we're not waiting on
+	 * anything else, so send the server clientready.
+	 *
+	 * Normally we get bos rights before we get our feedbag data, so this
+	 * rarely (never?) happens.  And I'm not sure it actually matters if we
+	 * wait for bos rights before calling clientready.  But it seems safer
+	 * to do it this way.
+	 */
+	if (od->ssi.received_data) {
+		aim_srv_clientready(od, conn);
+		purple_connection_set_state(gc, PURPLE_CONNECTED);
+	}
 
 	return 1;
 }
@@ -5395,6 +5407,15 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	img = purple_buddy_icons_find_account_icon(account);
 	oscar_set_icon(gc, img);
 	purple_imgstore_unref(img);
+
+	/*
+	 * If we've already received our bos rights then we're not waiting on
+	 * anything else, so send the server clientready.
+	 */
+	if (od->bos.have_rights) {
+		aim_srv_clientready(od, conn);
+		purple_connection_set_state(gc, PURPLE_CONNECTED);
+	}
 
 	return 1;
 }
