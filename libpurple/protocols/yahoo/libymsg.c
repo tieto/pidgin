@@ -1140,10 +1140,12 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			}
 		}
 
+		if(im->fed != YAHOO_FEDERATION_NONE)
+			g_free(fed_from);
+
 		g_free(im);
 	}
-	if (fed_from != im->from)
-		g_free(fed_from);
+
 	g_slist_free(list);
 }
 

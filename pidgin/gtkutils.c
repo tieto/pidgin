@@ -3901,6 +3901,40 @@ register_gnome_url_handlers(void)
 	return (gnome_url_handlers != NULL);
 }
 
+#ifdef _WIN32
+static void
+winpidgin_register_win32_url_handlers(void)
+{
+	int idx = 0;
+	LONG ret = ERROR_SUCCESS;
+
+	do {
+		DWORD nameSize = 256;
+		char protocol[256];
+		/* I don't think we need to worry about non-ASCII protocol names */
+		ret = RegEnumKeyExA(HKEY_CLASSES_ROOT, idx++, protocol, &nameSize,
+							NULL, NULL, NULL, NULL);
+		if (ret == ERROR_SUCCESS) {
+			HKEY reg_key = NULL;
+			ret = RegOpenKeyExA(HKEY_CLASSES_ROOT, protocol, 0, KEY_READ, &reg_key);
+			if (ret == ERROR_SUCCESS) {
+				ret = RegQueryValueExA(reg_key, "URL Protocol", NULL, NULL, NULL, NULL);
+				if (ret == ERROR_SUCCESS) {
+					/* We still pass everything to the "http" "open" handler for security reasons */
+					gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
+				}
+				RegCloseKey(reg_key);
+			}
+			ret = ERROR_SUCCESS;
+		}
+	} while (ret == ERROR_SUCCESS);
+
+	if (ret != ERROR_NO_MORE_ITEMS)
+		purple_debug_error("winpidgin", "Error iterating HKEY_CLASSES_ROOT subkeys: %ld\n",
+						   ret);
+}
+#endif
+
 void pidgin_utils_init(void)
 {
 	gtk_imhtml_class_register_protocol("http://", url_clicked_cb, link_context_menu);
@@ -3918,6 +3952,11 @@ void pidgin_utils_init(void)
 	/* If we're under GNOME, try registering the system URL handlers. */
 	if (purple_running_gnome())
 		register_gnome_url_handlers();
+
+#ifdef _WIN32
+	winpidgin_register_win32_url_handlers();
+#endif
+
 }
 
 void pidgin_utils_uninit(void)
