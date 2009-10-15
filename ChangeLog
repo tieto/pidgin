@@ -9,6 +9,9 @@ version 2.6.3 (??/??/20??):
 	* Fix building the GnuTLS plugin with older versions of GnuTLS.
 	* Fix DNS TXT query resolution.
 
+	AIM and ICQ:
+	* Fix blocking and other privacy lists.  (Thanks to AOL)
+
 	XMPP:
 	* Users connecting to Google Talk now have an "Initiate Chat" context menu
 	  option for their buddies.  (Eion Robb)
