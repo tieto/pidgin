@@ -1405,7 +1405,7 @@ x509_tls_cached_complete(PurpleCertificateVerificationRequest *vrq,
 			g_string_append_printf(errors, _("The certificate claims to be "
 						"from \"%s\" instead. This could mean that you are "
 						"not connecting to the service you believe you are."),
-						sn);
+						sn ? sn : "(null)");
 			g_free(sn);
 
 			flags &= ~PURPLE_CERTIFICATE_NAME_MISMATCH;
