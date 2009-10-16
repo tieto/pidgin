@@ -55,6 +55,7 @@ struct _MsnSlpMessage
 	long flags;
 
 	FILE *fp;
+	gboolean ft;
 	PurpleStoredImage *img;
 	guchar *buffer;
 	long long offset;

@@ -84,6 +84,9 @@ void msn_slplink_send_queued_slpmsgs(MsnSlpLink *slplink);
 void msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg);
 void msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer);
 
+/* Only exported for msn_xfer_write */
+void msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
+
 void msn_slplink_request_object(MsnSlpLink *slplink,
 								const char *info,
 								MsnSlpCb cb,
