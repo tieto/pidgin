@@ -1,16 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.3 (??/??/20??):
+version 2.6.4 (??/??/20??):
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
 	  to announce the list of loaded plugins (in both Finch and Pidgin).
-	* Fix a crash when performing DNS queries on Unixes that use the
-	  blocking DNS lookups.  (Brian Lu)
 	* Fix building the GnuTLS plugin with older versions of GnuTLS.
 	* Fix DNS TXT query resolution.
-
-	AIM and ICQ:
-	* Fix blocking and other privacy lists.  (Thanks to AOL)
 
 	XMPP:
 	* Users connecting to Google Talk now have an "Initiate Chat" context menu
@@ -36,6 +31,16 @@ version 2.6.3 (??/??/20??):
 	Pidgin:
 	* The userlist in a multiuser chat can be styled via gtkrc by using the
 	  widget name "pidgin_conv_userlist". (Heiko Schmitt)
+
+version 2.6.3 (10/16/2009):
+	General:
+	* Fix a crash when performing DNS queries on Unixes that use the
+	  blocking DNS lookups.  (Brian Lu)
+
+	AIM and ICQ:
+	* Fix a crash when some clients send contacts in a format we don't
+	  understand.
+	* Fix blocking and other privacy lists.  (Thanks to AOL)
 
 version 2.6.2 (09/05/2009):
 	libpurple:
