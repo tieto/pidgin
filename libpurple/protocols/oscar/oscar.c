@@ -2874,25 +2874,46 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			gchar **text;
 			text = g_strsplit(args->msg, "\376", 0);
 			if (text) {
-				num = 0;
-				for (i=0; i<strlen(text[0]); i++)
-					num = num*10 + text[0][i]-48;
-				for (i=0; i<num; i++) {
-					struct name_data *data = g_new(struct name_data, 1);
-					gchar *message = g_strdup_printf(_("ICQ user %u has sent you a buddy: %s (%s)"), args->uin, text[i*2+2], text[i*2+1]);
-					data->gc = gc;
-					data->name = g_strdup(text[i*2+1]);
-					data->nick = g_strdup(text[i*2+2]);
+				/* Read the number of contacts that we were sent */
+				errno = 0;
+				num = strtoul(text[0], NULL, 10);
 
-					purple_request_action(gc, NULL, message,
-										_("Do you want to add this buddy "
-										  "to your buddy list?"),
-										PURPLE_DEFAULT_ACTION_NONE,
-										purple_connection_get_account(gc), data->name, NULL,
-										data, 2,
-										_("_Add"), G_CALLBACK(purple_icq_buddyadd),
-										_("_Decline"), G_CALLBACK(oscar_free_name_data));
-					g_free(message);
+				if (num > 0 && errno == 0) {
+					for (i=0; i<num; i++) {
+						struct name_data *data;
+						gchar *message;
+
+						if (!text[i*2 + 1] || !text[i*2 + 2]) {
+							/* We're missing the contact name or nickname.  Bail out. */
+							gchar *tmp = g_strescape(args->msg, NULL);
+							purple_debug_error("oscar", "Unknown syntax parsing "
+									"ICQ buddies.  args->msg=%s\n", tmp);
+							g_free(tmp);
+							break;
+						}
+
+						message = g_strdup_printf(_("ICQ user %u has sent you a buddy: %s (%s)"), args->uin, text[i*2+2], text[i*2+1]);
+
+						data = g_new(struct name_data, 1);
+						data->gc = gc;
+						data->name = g_strdup(text[i*2+1]);
+						data->nick = g_strdup(text[i*2+2]);
+
+						purple_request_action(gc, NULL, message,
+								_("Do you want to add this buddy "
+								  "to your buddy list?"),
+								PURPLE_DEFAULT_ACTION_NONE,
+								purple_connection_get_account(gc), data->name, NULL,
+								data, 2,
+								_("_Add"), G_CALLBACK(purple_icq_buddyadd),
+								_("_Decline"), G_CALLBACK(oscar_free_name_data));
+						g_free(message);
+					}
+				} else {
+					gchar *tmp = g_strescape(args->msg, NULL);
+					purple_debug_error("oscar", "Unknown syntax parsing "
+							"ICQ buddies.  args->msg=%s\n", tmp);
+					g_free(tmp);
 				}
 				g_strfreev(text);
 			}
