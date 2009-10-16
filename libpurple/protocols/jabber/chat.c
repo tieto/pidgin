@@ -106,7 +106,7 @@ JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 	{
 		char *room_jid = g_strdup_printf("%s@%s", room, server);
 
-		chat = g_hash_table_lookup(js->chats, jabber_normalize(NULL, room_jid));
+		chat = g_hash_table_lookup(js->chats, room_jid);
 		g_free(room_jid);
 	}
 
@@ -373,7 +373,7 @@ void jabber_chat_destroy(JabberChat *chat)
 	JabberStream *js = chat->js;
 	char *room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
 
-	g_hash_table_remove(js->chats, jabber_normalize(NULL, room_jid));
+	g_hash_table_remove(js->chats, room_jid);
 	g_free(room_jid);
 }
 
