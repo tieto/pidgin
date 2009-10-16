@@ -1,5 +1,7 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+versoin 2.6.3 (10/16/2009):
+
 version 2.6.2 (09/05/2009):
 	libpurple:
 	* Fix --disable-avahi to actually disable it in configure, as opposed
