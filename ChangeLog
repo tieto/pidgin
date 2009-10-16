@@ -7,6 +7,9 @@ version 2.6.4 (??/??/20??):
 	* Fix building the GnuTLS plugin with older versions of GnuTLS.
 	* Fix DNS TXT query resolution.
 
+	MSN:
+	* Don't forget display names for buddies.
+
 	XMPP:
 	* Users connecting to Google Talk now have an "Initiate Chat" context menu
 	  option for their buddies.  (Eion Robb)
