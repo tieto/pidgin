@@ -829,19 +829,25 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 	   the "message" attribute of the status contains only the plaintext
 	   message. */
 	if (userinfo) {
-		if ((userinfo->flags & AIM_FLAG_AWAY)) {
-			/* Away message? */
-			if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-				tmp = oscar_encoding_extract(userinfo->away_encoding);
-				message = oscar_encoding_to_utf8(account, tmp, userinfo->away,
-												   userinfo->away_len);
-				g_free(tmp);
-			}
+		if ((userinfo->flags & AIM_FLAG_AWAY)
+				&& userinfo->away_len > 0
+				&& userinfo->away != NULL
+				&& userinfo->away_encoding != NULL)
+		{
+			/* Away message */
+			tmp = oscar_encoding_extract(userinfo->away_encoding);
+			message = oscar_encoding_to_utf8(account,
+					tmp, userinfo->away, userinfo->away_len);
+			g_free(tmp);
 		} else {
-			/* Available message? */
+			/*
+			 * Available message or non-HTML away message (because that's
+			 * all we have right now.
+			 */
 			if ((userinfo->status != NULL) && userinfo->status[0] != '\0') {
-				message = oscar_encoding_to_utf8(account, userinfo->status_encoding,
-											 userinfo->status, userinfo->status_len);
+				message = oscar_encoding_to_utf8(account,
+						userinfo->status_encoding, userinfo->status,
+						userinfo->status_len);
 			}
 #if defined (_WIN32) || defined (__APPLE__)
 			if (userinfo->itmsurl && (userinfo->itmsurl[0] != '\0'))
