@@ -1,6 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-versoin 2.6.3 (10/16/2009):
+version 2.6.3 (10/16/2009):
+	General:
+	* Fix a crash when performing DNS queries on Unixes that use the
+	  blocking DNS lookups.  (Brian Lu)
+
 	AIM and ICQ:
 	* Fix a crash when some clients send contacts in a format we don't
 	  understand.
