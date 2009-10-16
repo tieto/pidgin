@@ -535,6 +535,10 @@ struct _OscarData
 		struct aim_userinfo_s *userinfo;
 	} locate;
 
+	struct {
+		gboolean have_rights;
+	} bos;
+
 	/* Server-stored information (ssi) */
 	struct {
 		gboolean received_data;

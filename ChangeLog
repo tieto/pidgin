@@ -1,6 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 versoin 2.6.3 (10/16/2009):
+	AIM and ICQ:
+	* Fix a crash when some clients send contacts in a format we don't
+	  understand.
+	* Fix blocking and other privacy list problems.
 
 version 2.6.2 (09/05/2009):
 	libpurple:
