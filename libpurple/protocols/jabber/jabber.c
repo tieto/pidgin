@@ -3239,7 +3239,7 @@ void jabber_register_commands(void)
 	id = purple_cmd_register("part", "s", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-	                  jabber_cmd_chat_part, _("part [room]:  Leave the room."),
+	                  jabber_cmd_chat_part, _("part [message]:  Leave the room."),
 	                  NULL);
 	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
 
