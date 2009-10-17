@@ -758,9 +758,22 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					jm->type != JABBER_MESSAGE_ERROR) {
 				const char *jid = xmlnode_get_attrib(child, "jid");
 				if(jid) {
+					const char *reason = xmlnode_get_attrib(child, "reason");
+					const char *password = xmlnode_get_attrib(child, "password");
+
 					jm->type = JABBER_MESSAGE_GROUPCHAT_INVITE;
 					g_free(jm->to);
 					jm->to = g_strdup(jid);
+
+					if (reason) {
+						g_free(jm->body);
+						jm->body = g_strdup(reason);
+					}
+
+					if (password) {
+						g_free(jm->password);
+						jm->password = g_strdup(password);
+					}
 				}
 			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user") &&
 					jm->type != JABBER_MESSAGE_ERROR) {
@@ -775,8 +788,10 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						g_free(jm->body);
 						jm->body = xmlnode_get_data(reason);
 					}
-					if((password = xmlnode_get_child(child, "password")))
+					if((password = xmlnode_get_child(child, "password"))) {
+						g_free(jm->password);
 						jm->password = xmlnode_get_data(password);
+					}
 
 					jm->type = JABBER_MESSAGE_GROUPCHAT_INVITE;
 				}

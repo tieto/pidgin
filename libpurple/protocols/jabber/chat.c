@@ -177,10 +177,21 @@ void jabber_chat_invite(PurpleConnection *gc, int id, const char *msg,
 		xmlnode_insert_data(body, msg, -1);
 	} else {
 		xmlnode_set_attrib(message, "to", name);
+		/*
+		 * Putting the reason into the body was an 'undocumented protocol,
+		 * ...not part of "groupchat 1.0"'.
+		 * http://xmpp.org/extensions/attic/jep-0045-1.16.html#invite
+		 *
+		 * Left here for compatibility.
+		 */
 		body = xmlnode_new_child(message, "body");
 		xmlnode_insert_data(body, msg, -1);
+
 		x = xmlnode_new_child(message, "x");
 		xmlnode_set_attrib(x, "jid", room_jid);
+
+		/* The better place for it! XEP-0249 style. */
+		xmlnode_set_attrib(x, "reason", msg);
 		xmlnode_set_namespace(x, "jabber:x:conference");
 	}
 
