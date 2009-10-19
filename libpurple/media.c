@@ -281,7 +281,7 @@ purple_media_info_type_get_type()
 			{ PURPLE_MEDIA_INFO_HOLD,
 					"PURPLE_MEDIA_INFO_HOLD", "hold" },
 			{ PURPLE_MEDIA_INFO_UNHOLD,
-					"PURPLE_MEDIA_INFO_HOLD", "unhold" },
+					"PURPLE_MEDIA_INFO_UNHOLD", "unhold" },
 			{ 0, NULL, NULL }
 		};
 		type = g_enum_register_static("PurpleMediaInfoType", values);
