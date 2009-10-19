@@ -103,6 +103,8 @@ struct _PurpleMediaStream
 	gboolean initiator;
 	gboolean accepted;
 	gboolean candidates_prepared;
+	gboolean held;
+	gboolean paused;
 
 	GList *active_local_candidates;
 	GList *active_remote_candidates;
@@ -281,7 +283,7 @@ purple_media_info_type_get_type()
 			{ PURPLE_MEDIA_INFO_HOLD,
 					"PURPLE_MEDIA_INFO_HOLD", "hold" },
 			{ PURPLE_MEDIA_INFO_UNHOLD,
-					"PURPLE_MEDIA_INFO_HOLD", "unhold" },
+					"PURPLE_MEDIA_INFO_UNHOLD", "unhold" },
 			{ 0, NULL, NULL }
 		};
 		type = g_enum_register_static("PurpleMediaInfoType", values);
@@ -2330,11 +2332,46 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 		for (; streams; streams = g_list_delete_link(streams, streams)) {
 			PurpleMediaStream *stream = streams->data;
 			if (stream->session->type & PURPLE_MEDIA_SEND_VIDEO) {
+				stream->paused = active;
+
+				if (!stream->held)
+					g_object_set(stream->stream, "direction",
+							purple_media_to_fs_stream_direction(
+							stream->session->type & ((active) ?
+							~PURPLE_MEDIA_SEND_VIDEO :
+							PURPLE_MEDIA_VIDEO)), NULL);
+			}
+		}
+	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_HOLD ||
+			type == PURPLE_MEDIA_INFO_UNHOLD)) {
+		GList *streams;
+		gboolean active = (type == PURPLE_MEDIA_INFO_HOLD);
+
+		g_return_if_fail(PURPLE_IS_MEDIA(media));
+
+		streams = purple_media_get_streams(media,
+				session_id, participant);
+		for (; streams; streams = g_list_delete_link(streams, streams)) {
+			PurpleMediaStream *stream = streams->data;
+			stream->held = active;
+			if (stream->session->type & PURPLE_MEDIA_VIDEO) {
+				FsStreamDirection direction;
+
+				direction = ((active) ?
+						~PURPLE_MEDIA_VIDEO :
+						PURPLE_MEDIA_VIDEO);
+				if (!active && stream->paused)
+					direction &= ~PURPLE_MEDIA_SEND_VIDEO;
+
+				g_object_set(stream->stream, "direction",
+						purple_media_to_fs_stream_direction(
+						stream->session->type & direction), NULL);
+			} else if (stream->session->type & PURPLE_MEDIA_AUDIO) {
 				g_object_set(stream->stream, "direction",
 						purple_media_to_fs_stream_direction(
 						stream->session->type & ((active) ?
-						~PURPLE_MEDIA_SEND_VIDEO :
-						PURPLE_MEDIA_VIDEO)), NULL);
+						~PURPLE_MEDIA_AUDIO :
+						PURPLE_MEDIA_AUDIO)), NULL);
 			}
 		}
 	}
