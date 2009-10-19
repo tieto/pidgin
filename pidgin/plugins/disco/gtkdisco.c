@@ -141,8 +141,18 @@ static void pidgin_disco_create_tree(PidginDiscoList *pdl);
 static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
                                      PidginDiscoDialog *dialog)
 {
+	gboolean change = (account != dialog->account);
 	dialog->account = account;
 	gtk_widget_set_sensitive(dialog->browse_button, account != NULL);
+
+	if (change && dialog->discolist) {
+		if (dialog->discolist->tree) {
+			gtk_widget_destroy(dialog->discolist->tree);
+			dialog->discolist->tree = NULL;
+		}
+		pidgin_disco_list_unref(dialog->discolist);
+		dialog->discolist = NULL;
+	}
 }
 
 static void register_button_cb(GtkWidget *unused, PidginDiscoDialog *dialog)
