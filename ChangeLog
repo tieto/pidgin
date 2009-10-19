@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.4 (??/??/20??):
+	libpurple:
+	* Actually emit the hold signal for media calls.
+
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
 	  to announce the list of loaded plugins (in both Finch and Pidgin).
@@ -35,6 +38,7 @@ version 2.6.4 (??/??/20??):
 	Pidgin:
 	* The userlist in a multiuser chat can be styled via gtkrc by using the
 	  widget name "pidgin_conv_userlist". (Heiko Schmitt)
+	* Add a hold button to the media window.
 
 version 2.6.3 (10/16/2009):
 	General:
