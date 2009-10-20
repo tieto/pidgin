@@ -33,15 +33,20 @@ typedef struct {
 	char *type;
 	gsize size;
 	gpointer data;
+	gboolean ephemeral;
 } JabberData;
 
 /* creates a JabberData instance from raw data */
 JabberData *jabber_data_create_from_data(gconstpointer data, gsize size,
-										 const char *type, JabberStream *js);
+	const char *type, gboolean ephemeral, JabberStream *js);
 
 /* create a JabberData instance from an XML "data" element (as defined by
   XEP 0231 */
 JabberData *jabber_data_create_from_xml(xmlnode *tag);
+
+/* destroy a JabberData instance, NOT to be used on data that has been
+	associated, since they get "owned" */
+void jabber_data_destroy(JabberData *data);
 
 const char *jabber_data_get_cid(const JabberData *data);
 const char *jabber_data_get_type(const JabberData *data);

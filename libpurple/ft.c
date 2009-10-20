@@ -136,6 +136,7 @@ purple_xfer_destroy(PurpleXfer *xfer)
 	g_free(xfer->local_filename);
 
 	g_hash_table_remove(xfers_data, xfer);
+	g_free(xfer->thumbnail_data);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(xfer);
 	xfers = g_list_remove(xfers, xfer);
@@ -398,13 +399,20 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 			serv_got_im(purple_account_get_connection(xfer->account),
 								 xfer->who, xfer->message, 0, time(NULL));
 
-		purple_request_accept_cancel(xfer, NULL, buf, NULL,
-								  PURPLE_DEFAULT_ACTION_NONE,
-								  xfer->account, xfer->who, NULL,
-								  xfer,
-								  G_CALLBACK(purple_xfer_choose_file),
-								  G_CALLBACK(cancel_recv_cb));
-
+		if (purple_xfer_get_thumbnail_data(xfer)) {
+			purple_request_accept_cancel_with_icon(xfer, NULL, buf, NULL,
+				PURPLE_DEFAULT_ACTION_NONE, xfer->account, xfer->who, NULL,
+				purple_xfer_get_thumbnail_data(xfer),
+				purple_xfer_get_thumbnail_size(xfer), xfer, 
+				G_CALLBACK(purple_xfer_choose_file),
+				G_CALLBACK(cancel_recv_cb));
+		} else {
+			purple_request_accept_cancel(xfer, NULL, buf, NULL,
+				PURPLE_DEFAULT_ACTION_NONE, xfer->account, xfer->who, NULL,
+				xfer, G_CALLBACK(purple_xfer_choose_file),
+				G_CALLBACK(cancel_recv_cb));
+		}
+			
 		g_free(buf);
 	} else
 		purple_xfer_choose_file(xfer);
@@ -1459,6 +1467,35 @@ purple_xfer_update_progress(PurpleXfer *xfer)
 		ui_ops->update_progress(xfer, purple_xfer_get_progress(xfer));
 }
 
+const void *
+purple_xfer_get_thumbnail_data(const PurpleXfer *xfer)
+{
+	return xfer->thumbnail_data;
+}
+
+gsize
+purple_xfer_get_thumbnail_size(const PurpleXfer *xfer)
+{
+	return xfer->thumbnail_size;
+}
+
+void
+purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
+	gsize size)
+{
+	if (thumbnail && size > 0) {
+		xfer->thumbnail_data = g_memdup(thumbnail, size);
+		xfer->thumbnail_size = size;
+	}
+}
+
+void
+purple_xfer_prepare_thumbnail(PurpleXfer *xfer)
+{
+	if (xfer->ui_ops->add_thumbnail) {
+		xfer->ui_ops->add_thumbnail(xfer);
+	}
+}
 
 /**************************************************************************
  * File Transfer Subsystem API
