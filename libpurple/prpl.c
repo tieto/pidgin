@@ -560,6 +560,30 @@ purple_prpl_get_media_caps(PurpleAccount *account, const char *who)
 	return PURPLE_MEDIA_CAPS_NONE;
 }
 
+void
+purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
+{
+#ifdef USE_VV
+	GSList *list;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(name    != NULL);
+
+	if ((list = purple_find_buddies(account, name)) == NULL)
+		return;
+
+	while (list) {
+		PurpleBuddy *buddy = list->data;
+		list = g_slist_delete_link(list, list);
+
+		purple_signal_emit(purple_blist_get_handle(),
+				"buddy-caps-changed", buddy,
+				purple_prpl_get_media_caps(account, name),
+				PURPLE_MEDIA_CAPS_NONE);
+	}
+#endif
+}
+
 /**************************************************************************
  * Protocol Plugin Subsystem API
  **************************************************************************/
