@@ -577,8 +577,9 @@ purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
 	while (list) {
 		PurpleBuddy *buddy = list->data;
 		PurpleMediaCaps oldcaps = buddy->media_caps;
+		const gchar *bname = purple_buddy_get_name(buddy);
 		list = g_slist_delete_link(list, list);
-		buddy->media_caps = purple_prpl_get_media_caps(account, name);
+		buddy->media_caps = purple_prpl_get_media_caps(account, bname);
 
 		if (oldcaps == buddy->media_caps)
 			continue;
