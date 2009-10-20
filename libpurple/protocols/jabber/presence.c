@@ -472,6 +472,10 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 		jbr->commands_fetched = TRUE;
 	}
 
+	purple_prpl_got_media_caps(
+			purple_connection_get_account(userdata->js->gc),
+			userdata->from);
+
 #if 0
 	/*
 	 * Versions of libpurple before 2.6.0 didn't advertise this capability, so
