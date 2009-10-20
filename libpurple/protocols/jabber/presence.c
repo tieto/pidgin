@@ -476,7 +476,7 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 	/*
 	 * Versions of libpurple before 2.6.0 didn't advertise this capability, so
 	 * we can't yet use Entity Capabilities to determine whether or not the
-	 * other client supports Entity Capabilities.
+	 * other client supports Chat States.
 	 */
 	if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/chatstates"))
 		jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
