@@ -576,12 +576,16 @@ purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
 
 	while (list) {
 		PurpleBuddy *buddy = list->data;
+		PurpleMediaCaps oldcaps = buddy->media_caps;
 		list = g_slist_delete_link(list, list);
+		buddy->media_caps = purple_prpl_get_media_caps(account, name);
+
+		if (oldcaps == buddy->media_caps)
+			continue;
 
 		purple_signal_emit(purple_blist_get_handle(),
 				"buddy-caps-changed", buddy,
-				purple_prpl_get_media_caps(account, name),
-				PURPLE_MEDIA_CAPS_NONE);
+				buddy->media_caps, oldcaps);
 	}
 #endif
 }

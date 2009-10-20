@@ -108,6 +108,7 @@ typedef enum
 
 #include "account.h"
 #include "buddyicon.h"
+#include "media.h"
 #include "status.h"
 
 /**************************************************************************/
@@ -143,6 +144,7 @@ struct _PurpleBuddy {
 	PurpleBuddyIcon *icon;                    /**< The buddy icon. */
 	PurpleAccount *account;					/**< the account this buddy belongs to */
 	PurplePresence *presence;
+	PurpleMediaCaps media_caps;		/**< The media capabilities of the buddy. */
 };
 
 /**
