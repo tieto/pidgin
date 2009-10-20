@@ -288,8 +288,10 @@ purple_prpl_got_user_status(PurpleAccount *account, const char *name,
 
 	/* The buddy is no longer online, they are therefore by definition not
 	 * still typing to us. */
-	if (!purple_status_is_online(status))
+	if (!purple_status_is_online(status)) {
 		serv_got_typing_stopped(purple_account_get_connection(account), name);
+		purple_prpl_got_media_caps(account, name);
+	}
 }
 
 void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *name,
