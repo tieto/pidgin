@@ -134,6 +134,14 @@ START_TEST(test_jabber_id_new)
 	assert_invalid_jid("paul@2[::1]124/as");
 	assert_invalid_jid("paul@まつ.おおかみ/\x01");
 
+	/*
+	 * RFC 3454 Section 6 reads, in part,
+	 * "If a string contains any RandALCat character, the
+	 *  string MUST NOT contain any LCat character."
+	 * The character is U+066D (ARABIC FIVE POINTED STAR).
+	 */
+	assert_invalid_jid("foo@example.com/٭simplexe٭");
+
 	/* Ensure that jabber_id_new is properly lowercasing node and domains */
 	assert_jid_parts("paul", "darkrain42.org", "PaUL@darkrain42.org");
 	assert_jid_parts("paul", "darkrain42.org", "paul@DaRkRaIn42.org");
