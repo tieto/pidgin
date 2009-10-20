@@ -6,6 +6,7 @@ version 2.7.0 (??/??/????):
 		* purple_account_get_name_for_display
 		* purple_network_get_all_local_system_ips
 		* purple_uuid_random
+		* ui-caps-changed media manager signal
 	
 	Pidgin:
 		Added:
