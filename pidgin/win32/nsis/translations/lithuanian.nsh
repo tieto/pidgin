@@ -30,7 +30,6 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Rasta sena GTK+ vykdymo meto aplinkos versija. Ar norite jà atnaujinti?$\rPastaba: $(^Name) gali neveikti, jeigu to nepadarysite."
-!define GTK_WINDOWS_INCOMPATIBLE		"Windows 95/98/Me yra nesuderinami su GTK+ 2.8.0 ir naujesnëmis versijomis.  GTK+ ${GTK_INSTALL_VERSION} nebus ádiegta.$\rJeigu neturite ásidiegæ GTK+ ${GTK_MIN_VERSION} ar naujesnës versijos, diegimas dabar bus nutrauktas."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Aplankyti Pidgin tinklalapá"

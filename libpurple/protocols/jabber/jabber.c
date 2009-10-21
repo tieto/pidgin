@@ -3453,6 +3453,9 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, jabber_video_enabled);
 	jabber_add_feature(JINGLE_TRANSPORT_RAWUDP, 0);
 	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
+
+	g_signal_connect(G_OBJECT(purple_media_manager_get()), "ui-caps-changed",
+			G_CALLBACK(jabber_caps_broadcast_change), NULL);
 #endif
 
 	/* IPC functions */

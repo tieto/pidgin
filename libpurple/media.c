@@ -291,6 +291,40 @@ purple_media_info_type_get_type()
 	return type;
 }
 
+GType
+purple_media_caps_get_type()
+{
+	static GType type = 0;
+	if (type == 0) {
+		static const GEnumValue values[] = {
+			{ PURPLE_MEDIA_CAPS_NONE,
+					"PURPLE_MEDIA_CAPS_NONE", "none" },
+			{ PURPLE_MEDIA_CAPS_AUDIO,
+					"PURPLE_MEDIA_CAPS_AUDIO", "audio" },
+			{ PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION,
+					"PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION",
+					"audio-single-direction" },
+			{ PURPLE_MEDIA_CAPS_VIDEO,
+					"PURPLE_MEDIA_CAPS_VIDEO", "video" },
+			{ PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION,
+					"PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION",
+					"video-single-direction" },
+			{ PURPLE_MEDIA_CAPS_AUDIO_VIDEO,
+					"PURPLE_MEDIA_CAPS_AUDIO_VIDEO",
+					"audio-video" },
+			{ PURPLE_MEDIA_CAPS_MODIFY_SESSION,
+					"PURPLE_MEDIA_CAPS_MODIFY_SESSION",
+					"modify-session" },
+			{ PURPLE_MEDIA_CAPS_CHANGE_DIRECTION,
+					"PURPLE_MEDIA_CAPS_CHANGE_DIRECTION",
+					"change-direction" },
+			{ 0, NULL, NULL }
+		};
+		type = g_enum_register_static("PurpleMediaCaps", values);
+	}
+	return type;
+}
+
 #ifdef USE_VV
 static void
 purple_media_class_init (PurpleMediaClass *klass)

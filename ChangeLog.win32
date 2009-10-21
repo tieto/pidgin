@@ -1,3 +1,7 @@
+version 2.7.0 (??/??/????):
+	* Minimum required GTK+ version increased to 2.14.0
+	* Win9x no longer supported.
+
 version 2.6.3 (10/16/2009):
 	* No changes
 

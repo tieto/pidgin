@@ -32,7 +32,6 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Egy régi verziójú GTK+ futtatókörnyezet van telepítve. Kívánja frissíteni?$\rMegjegyzés: a Pidgin nem fog mûködni, ha nem frissíti."
-!define GTK_WINDOWS_INCOMPATIBLE		"A Windows 95/98/Me nem kompatibillisek a GTK+ 2.8.0 vagy újabb változatokkal. A GTK+ ${GTK_INSTALL_VERSION} nem kerül telepítésre. $\rHa a GTK+ ${GTK_MIN_VERSION} vagy újabb még nincs telepítve, akkor a telepítés most megszakad."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"A Windows Pidgin weboldalának felkeresése"

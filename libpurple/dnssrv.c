@@ -248,6 +248,7 @@ purple_srv_sort(GList *list)
 	return list;
 }
 
+#ifdef USE_IDN
 static gboolean
 dns_str_is_ascii(const char *name)
 {
@@ -259,6 +260,7 @@ dns_str_is_ascii(const char *name)
 
 	return TRUE;
 }
+#endif
 
 #ifndef _WIN32
 
