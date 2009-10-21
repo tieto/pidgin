@@ -367,6 +367,26 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 	}
 }
 
+static void
+account_signing_off(PurpleConnection *gc)
+{
+	GList *list = purple_get_chats();
+
+	/* We are about to sign off. See which chats we are currently in, and mark
+	 * them for rejoin on reconnect. */
+	while (list) {
+		PurpleConversation *conv = list->data;
+		if (!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
+			purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
+			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
+						"longer in this chat. You will be automatically rejoined in the chat when "
+						"the account reconnects."),
+					PURPLE_MESSAGE_SYSTEM, time(NULL));
+		}
+		list = list->next;
+	}
+}
+
 static gpointer
 finch_conv_get_handle(void)
 {
@@ -1433,6 +1453,8 @@ void finch_conversation_init()
 					PURPLE_CALLBACK(account_signed_on_off), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off", finch_conv_get_handle(),
 					PURPLE_CALLBACK(account_signed_on_off), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signing-off", finch_conv_get_handle(),
+					PURPLE_CALLBACK(account_signing_off), NULL);
 }
 
 void finch_conversation_uninit()
