@@ -1,11 +1,3 @@
-pidgin (2.4.3-4lenny5~bpo40+1) etch-backports; urgency=low
-
-  * Rebuild for etch-backports.
-  * Make pidgin.menu etch-style (use Apps/Net)
-  * Do not require a specific version for libnss3-dev (the one in etch works)
-
- -- Gerfried Fuchs <rhonda@debian.at>  Thu, 12 Nov 2009 20:03:42 +0100
-
 pidgin (2.4.3-4lenny5) stable-security; urgency=medium
 
   * Non-maintainer upload by the Security Team.
