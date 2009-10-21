@@ -787,13 +787,10 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 	int plugin_return;
 
 	account = purple_connection_get_account(gc);
-	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
-		/* protocol does not support privacy, handle it ourselves */
-		if (!purple_privacy_check(account, who)) {
-			purple_signal_emit(purple_conversations_get_handle(), "chat-invite-blocked",
-					account, who, name, message, data);
-			return;
-		}
+	if (!purple_privacy_check(account, who)) {
+		purple_signal_emit(purple_conversations_get_handle(), "chat-invite-blocked",
+				account, who, name, message, data);
+		return;
 	}
 
 	cid = g_new0(struct chat_invite_data, 1);
