@@ -786,6 +786,9 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 	struct chat_invite_data *cid;
 	int plugin_return;
 
+	g_return_if_fail(name != NULL);
+	g_return_if_fail(who != NULL);
+
 	account = purple_connection_get_account(gc);
 	if (!purple_privacy_check(account, who)) {
 		purple_signal_emit(purple_conversations_get_handle(), "chat-invite-blocked",
