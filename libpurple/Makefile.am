@@ -53,7 +53,7 @@ purple_coresources = \
 	idle.c \
 	imgstore.c \
 	log.c \
-	media.c \
+	media/media.c \
 	mediamanager.c \
 	mime.c \
 	nat-pmp.c \
