@@ -783,6 +783,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					const char *jid = xmlnode_get_attrib(invite, "from");
 					g_free(jm->to);
 					jm->to = jm->from;
+					g_free(jm->from);
 					jm->from = g_strdup(jid);
 					if((reason = xmlnode_get_child(invite, "reason"))) {
 						g_free(jm->body);
