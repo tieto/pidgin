@@ -48,6 +48,7 @@ C_SRC =	\
 			idle.c \
 			imgstore.c \
 			log.c \
+			media/enum-types.c \
 			media/media.c \
 			mediamanager.c \
 			mime.c \

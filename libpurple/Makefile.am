@@ -53,6 +53,7 @@ purple_coresources = \
 	idle.c \
 	imgstore.c \
 	log.c \
+	media/enum-types.c \
 	media/media.c \
 	mediamanager.c \
 	mime.c \
@@ -116,6 +117,7 @@ purple_coreheaders = \
 	idle.h \
 	imgstore.h \
 	log.h \
+	media/enum-types.h \
 	media.h \
 	media-gst.h \
 	mediamanager.h \

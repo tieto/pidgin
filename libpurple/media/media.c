@@ -180,38 +180,6 @@ enum {
 #endif
 
 
-/*
- * PurpleMediaElementType
- */
-
-GType
-purple_media_session_type_get_type()
-{
-	static GType type = 0;
-	if (type == 0) {
-		static const GFlagsValue values[] = {
-			{ PURPLE_MEDIA_NONE,
-				"PURPLE_MEDIA_NONE", "none" },
-			{ PURPLE_MEDIA_RECV_AUDIO,
-				"PURPLE_MEDIA_RECV_AUDIO", "recv-audio" },
-			{ PURPLE_MEDIA_SEND_AUDIO,
-				"PURPLE_MEDIA_SEND_AUDIO", "send-audio" },
-			{ PURPLE_MEDIA_RECV_VIDEO,
-				"PURPLE_MEDIA_RECV_VIDEO", "recv-video" },
-			{ PURPLE_MEDIA_SEND_VIDEO,
-				"PURPLE_MEDIA_SEND_VIDEO", "send-audio" },
-			{ PURPLE_MEDIA_AUDIO,
-				"PURPLE_MEDIA_AUDIO", "audio" },
-			{ PURPLE_MEDIA_VIDEO,
-				"PURPLE_MEDIA_VIDEO", "video" },
-			{ 0, NULL, NULL }
-		};
-		type = g_flags_register_static(
-				"PurpleMediaSessionType", values);
-	}
-	return type;
-}
-
 GType
 purple_media_get_type()
 {
@@ -237,90 +205,6 @@ purple_media_get_type()
 #else
 	return G_TYPE_NONE;
 #endif
-}
-
-GType
-purple_media_state_changed_get_type()
-{
-	static GType type = 0;
-	if (type == 0) {
-		static const GEnumValue values[] = {
-			{ PURPLE_MEDIA_STATE_NEW,
-				"PURPLE_MEDIA_STATE_NEW", "new" },
-			{ PURPLE_MEDIA_STATE_CONNECTED,
-				"PURPLE_MEDIA_STATE_CONNECTED", "connected" },
-			{ PURPLE_MEDIA_STATE_END,
-				"PURPLE_MEDIA_STATE_END", "end" },
-			{ 0, NULL, NULL }
-		};
-		type = g_enum_register_static("PurpleMediaState", values);
-	}
-	return type;
-}
-
-GType
-purple_media_info_type_get_type()
-{
-	static GType type = 0;
-	if (type == 0) {
-		static const GEnumValue values[] = {
-			{ PURPLE_MEDIA_INFO_HANGUP,
-					"PURPLE_MEDIA_INFO_HANGUP", "hangup" },
-			{ PURPLE_MEDIA_INFO_ACCEPT,
-					"PURPLE_MEDIA_INFO_ACCEPT", "accept" },
-			{ PURPLE_MEDIA_INFO_REJECT,
-					"PURPLE_MEDIA_INFO_REJECT", "reject" },
-			{ PURPLE_MEDIA_INFO_MUTE,
-					"PURPLE_MEDIA_INFO_MUTE", "mute" },
-			{ PURPLE_MEDIA_INFO_UNMUTE,
-					"PURPLE_MEDIA_INFO_UNMUTE", "unmute" },
-			{ PURPLE_MEDIA_INFO_PAUSE,
-					"PURPLE_MEDIA_INFO_PAUSE", "pause" },
-			{ PURPLE_MEDIA_INFO_UNPAUSE,
-					"PURPLE_MEDIA_INFO_UNPAUSE", "unpause" },
-			{ PURPLE_MEDIA_INFO_HOLD,
-					"PURPLE_MEDIA_INFO_HOLD", "hold" },
-			{ PURPLE_MEDIA_INFO_UNHOLD,
-					"PURPLE_MEDIA_INFO_HOLD", "unhold" },
-			{ 0, NULL, NULL }
-		};
-		type = g_enum_register_static("PurpleMediaInfoType", values);
-	}
-	return type;
-}
-
-GType
-purple_media_caps_get_type()
-{
-	static GType type = 0;
-	if (type == 0) {
-		static const GEnumValue values[] = {
-			{ PURPLE_MEDIA_CAPS_NONE,
-					"PURPLE_MEDIA_CAPS_NONE", "none" },
-			{ PURPLE_MEDIA_CAPS_AUDIO,
-					"PURPLE_MEDIA_CAPS_AUDIO", "audio" },
-			{ PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION,
-					"PURPLE_MEDIA_CAPS_AUDIO_SINGLE_DIRECTION",
-					"audio-single-direction" },
-			{ PURPLE_MEDIA_CAPS_VIDEO,
-					"PURPLE_MEDIA_CAPS_VIDEO", "video" },
-			{ PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION,
-					"PURPLE_MEDIA_CAPS_VIDEO_SINGLE_DIRECTION",
-					"video-single-direction" },
-			{ PURPLE_MEDIA_CAPS_AUDIO_VIDEO,
-					"PURPLE_MEDIA_CAPS_AUDIO_VIDEO",
-					"audio-video" },
-			{ PURPLE_MEDIA_CAPS_MODIFY_SESSION,
-					"PURPLE_MEDIA_CAPS_MODIFY_SESSION",
-					"modify-session" },
-			{ PURPLE_MEDIA_CAPS_CHANGE_DIRECTION,
-					"PURPLE_MEDIA_CAPS_CHANGE_DIRECTION",
-					"change-direction" },
-			{ 0, NULL, NULL }
-		};
-		type = g_enum_register_static("PurpleMediaCaps", values);
-	}
-	return type;
 }
 
 #ifdef USE_VV
@@ -628,63 +512,6 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 
 }
 #endif
-
-/*
- * PurpleMediaCandidateType
- */
-
-GType
-purple_media_candidate_type_get_type()
-{
-	static GType type = 0;
-	if (type == 0) {
-		static const GEnumValue values[] = {
-			{ PURPLE_MEDIA_CANDIDATE_TYPE_HOST,
-					"PURPLE_MEDIA_CANDIDATE_TYPE_HOST",
-					"host" },
-			{ PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX,
-					"PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX",
-					"srflx" },
-			{ PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX,
-					"PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX",
-					"prflx" },
-			{ PURPLE_MEDIA_CANDIDATE_TYPE_RELAY,
-					"PPURPLE_MEDIA_CANDIDATE_TYPE_RELAY",
-					"relay" },
-			{ PURPLE_MEDIA_CANDIDATE_TYPE_MULTICAST,
-					"PURPLE_MEDIA_CANDIDATE_TYPE_MULTICAST",
-					"multicast" },
-			{ 0, NULL, NULL }
-		};
-		type = g_enum_register_static("PurpleMediaCandidateType",
-				values);
-	}
-	return type;
-}
-
-/*
- * PurpleMediaNetworkProtocol
- */
-
-GType
-purple_media_network_protocol_get_type()
-{
-	static GType type = 0;
-	if (type == 0) {
-		static const GEnumValue values[] = {
-			{ PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
-					"PURPLE_MEDIA_NETWORK_PROTOCOL_UDP",
-					"udp" },
-			{ PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
-					"PURPLE_MEDIA_NETWORK_PROTOCOL_TCP",
-					"tcp" },
-			{ 0, NULL, NULL }
-		};
-		type = g_enum_register_static("PurpleMediaNetworkProtocol",
-				values);
-	}
-	return type;
-}
 
 /*
  * PurpleMediaCandidate
