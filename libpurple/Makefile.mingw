@@ -49,6 +49,7 @@ C_SRC =	\
 			imgstore.c \
 			log.c \
 			media/candidate.c \
+			media/codec.c \
 			media/enum-types.c \
 			media/media.c \
 			mediamanager.c \

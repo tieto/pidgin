@@ -28,19 +28,13 @@
 #define _PURPLE_MEDIA_H_
 
 #include "media/candidate.h"
+#include "media/codec.h"
 #include "media/enum-types.h"
 
 #include <glib.h>
 #include <glib-object.h>
 
 G_BEGIN_DECLS
-
-#define PURPLE_TYPE_MEDIA_CODEC           (purple_media_codec_get_type())
-#define PURPLE_MEDIA_CODEC(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA_CODEC, PurpleMediaCodec))
-#define PURPLE_MEDIA_CODEC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_MEDIA_CODEC, PurpleMediaCodec))
-#define PURPLE_IS_MEDIA_CODEC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA_CODEC))
-#define PURPLE_IS_MEDIA_CODEC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA_CODEC))
-#define PURPLE_MEDIA_CODEC_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA_CODEC, PurpleMediaCodec))
 
 #define PURPLE_TYPE_MEDIA            (purple_media_get_type())
 #define PURPLE_MEDIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MEDIA, PurpleMedia))
@@ -51,8 +45,6 @@ G_BEGIN_DECLS
 
 /** An opaque structure representing a media call. */
 typedef struct _PurpleMedia PurpleMedia;
-/** An opaque structure representing an audio or video codec. */
-typedef struct _PurpleMediaCodec PurpleMediaCodec;
 
 #include "signals.h"
 #include "util.h"
@@ -69,105 +61,6 @@ extern "C" {
  * @since 2.6.0
  */
 GType purple_media_get_type(void);
-
-/**
- * Gets the type of the media codec structure.
- *
- * @return The media codec's GType
- *
- * @since 2.6.0
- */
-GType purple_media_codec_get_type(void);
-
-/**
- * Creates a new PurpleMediaCodec instance.
- *
- * @param id Codec identifier.
- * @param encoding_name Name of the media type this encodes.
- * @param media_type PurpleMediaSessionType of this codec.
- * @param clock_rate The clock rate this codec encodes at, if applicable.
- *
- * @return The newly created PurpleMediaCodec.
- *
- * @since 2.6.0
- */
-PurpleMediaCodec *purple_media_codec_new(int id, const char *encoding_name,
-		PurpleMediaSessionType media_type, guint clock_rate);
-
-guint purple_media_codec_get_id(PurpleMediaCodec *codec);
-gchar *purple_media_codec_get_encoding_name(PurpleMediaCodec *codec);
-guint purple_media_codec_get_clock_rate(PurpleMediaCodec *codec);
-guint purple_media_codec_get_channels(PurpleMediaCodec *codec);
-GList *purple_media_codec_get_optional_parameters(PurpleMediaCodec *codec);
-
-/**
- * Creates a string representation of the codec.
- *
- * @param codec The codec to create the string of.
- *
- * @return The new string representation.
- *
- * @since 2.6.0
- */
-gchar *purple_media_codec_to_string(const PurpleMediaCodec *codec);
-
-/**
- * Adds an optional parameter to the codec.
- *
- * @param codec The codec to add the parameter to.
- * @param name The name of the parameter to add.
- * @param value The value of the parameter to add.
- *
- * @since 2.6.0
- */
-void purple_media_codec_add_optional_parameter(PurpleMediaCodec *codec,
-		const gchar *name, const gchar *value);
-
-/**
- * Removes an optional parameter from the codec.
- *
- * @param codec The codec to remove the parameter from.
- * @param param A pointer to the parameter to remove.
- *
- * @since 2.6.0
- */
-void purple_media_codec_remove_optional_parameter(PurpleMediaCodec *codec,
-		PurpleKeyValuePair *param);
-
-/**
- * Gets an optional parameter based on the values given.
- *
- * @param codec The codec to find the parameter in.
- * @param name The name of the parameter to search for.
- * @param value The value to search for or NULL.
- *
- * @return The value found or NULL.
- *
- * @since 2.6.0
- */
-PurpleKeyValuePair *purple_media_codec_get_optional_parameter(
-		PurpleMediaCodec *codec, const gchar *name,
-		const gchar *value);
-
-/**
- * Copies a GList of PurpleMediaCodec and its contents.
- *
- * @param codecs The list of codecs to be copied.
- *
- * @return The copy of the GList.
- *
- * @since 2.6.0
- */
-GList *purple_media_codec_list_copy(GList *codecs);
-
-/**
- * Frees a GList of PurpleMediaCodec and its contents.
- *
- * @param codecs The list of codecs to be freed.
- *
- * @since 2.6.0
- */
-void purple_media_codec_list_free(GList *codecs);
 
 /**
  * Gets a list of session IDs.
