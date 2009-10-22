@@ -662,8 +662,25 @@ static void
 create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 {
 	PurpleAccount *account = purple_conversation_get_account(fc->active_conv);
-	char *name = gnt_tree_get_selection_data(GNT_TREE(widget));
-	purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	char *name, *realname;
+
+	if (!gc) {
+		purple_conversation_write(fc->active_conv, NULL, _("You are not connected."),
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		return;
+	}
+
+	name = gnt_tree_get_selection_data(GNT_TREE(widget));
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_cb_real_name))
+		realname = prpl_info->get_cb_real_name(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(fc->active_conv)), name);
+	else
+		realname = NULL;
+	purple_conversation_new(PURPLE_CONV_TYPE_IM, account, realname ? realname : name);
+	g_free(realname);
 }
 
 static void
