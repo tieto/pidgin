@@ -41,6 +41,7 @@ static guint purple_media_backend_signals[LAST_SIGNAL] = {0};
 
 enum {
 	PROP_0,
+	PROP_CONFERENCE_TYPE,
 	PROP_MEDIA,
 };
 
@@ -52,6 +53,13 @@ purple_media_backend_base_init(gpointer iface)
 	if (is_initialized)
 		return;
 
+	g_object_class_install_property(iface, PROP_CONFERENCE_TYPE,
+			g_param_spec_object("conference-type",
+			"Conference Type",
+			"The type of conference that this backend "
+			"has been created to provide.",
+			G_TYPE_STRING,
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 	g_object_class_install_property(iface, PROP_MEDIA,
 			g_param_spec_object("media",
 			"Purple Media",
