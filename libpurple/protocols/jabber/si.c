@@ -1674,11 +1674,6 @@ jabber_si_thumbnail_cb(JabberStream *js, const char *from, JabberIqType type,
 		purple_debug_error("jabber", "Unknown response to data request\n");
 	}
 	purple_xfer_request(xfer);
-	if (data) {
-		PurpleConversation *conv =
-				purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
-					from, js->gc->account);
-	}
 }
 
 void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
