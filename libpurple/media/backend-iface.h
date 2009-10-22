@@ -46,7 +46,6 @@ struct _PurpleMediaBackendIface
 {
 	GTypeInterface parent_iface;
 
-	void (*do_action) (PurpleMediaBackend *self);
 	gboolean (*add_stream) (PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *who,
 		PurpleMediaSessionType type, gboolean initiator,
