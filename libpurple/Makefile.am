@@ -53,6 +53,8 @@ purple_coresources = \
 	idle.c \
 	imgstore.c \
 	log.c \
+	media/backend-fs2.c \
+	media/backend-fs2.h \
 	media/backend-iface.c \
 	media/candidate.c \
 	media/codec.c \
