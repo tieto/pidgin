@@ -371,12 +371,14 @@ static void
 account_signing_off(PurpleConnection *gc)
 {
 	GList *list = purple_get_chats();
+	PurpleAccount *account = purple_connection_get_account(gc);
 
 	/* We are about to sign off. See which chats we are currently in, and mark
 	 * them for rejoin on reconnect. */
 	while (list) {
 		PurpleConversation *conv = list->data;
-		if (!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
+		if (!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)) &&
+				purple_conversation_get_account(conv) == account) {
 			purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
 			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
 						"longer in this chat. You will be automatically rejoined in the chat when "
