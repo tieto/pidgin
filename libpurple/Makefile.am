@@ -53,6 +53,7 @@ purple_coresources = \
 	idle.c \
 	imgstore.c \
 	log.c \
+	media/backend-iface.c \
 	media/candidate.c \
 	media/codec.c \
 	media/enum-types.c \
@@ -119,6 +120,7 @@ purple_coreheaders = \
 	idle.h \
 	imgstore.h \
 	log.h \
+	media/backend-iface.h \
 	media/candidate.h \
 	media/codec.h \
 	media/enum-types.h \
