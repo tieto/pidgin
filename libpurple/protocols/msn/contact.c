@@ -362,7 +362,7 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	char *display_text;
 
 	passport = xmlnode_get_data(xmlnode_get_child(member, node));
-	if (!purple_email_is_valid(passport)) {
+	if (!msn_email_is_valid(passport)) {
 		g_free(passport);
 		return;
 	}
@@ -765,7 +765,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		if (passport == NULL)
 			continue;
 
-		if (!purple_email_is_valid(passport))
+		if (!msn_email_is_valid(passport))
 			continue;
 
 		if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
