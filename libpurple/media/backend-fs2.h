@@ -55,6 +55,15 @@ typedef struct _PurpleMediaBackendFs2 PurpleMediaBackendFs2;
  */
 GType purple_media_backend_fs2_get_type(void);
 
+/*
+ * Temporary function in order to be able to test while
+ * integrating with PurpleMedia
+ */
+#include <gst/farsight/fs-conference-iface.h>
+FsConference *purple_media_backend_fs2_get_conference(
+		PurpleMediaBackendFs2 *self);
+/* end tmp */
+
 G_END_DECLS
 
 #endif /* _MEDIA_BACKEND_FS2_H_ */

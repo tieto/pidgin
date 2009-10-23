@@ -45,6 +45,13 @@ static void purple_media_backend_iface_init(PurpleMediaBackendIface *iface);
 
 static gboolean
 _gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackend *self);
+static void
+_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
+		gchar *sid, gchar *name, PurpleMediaBackendFs2 *self);
+static void
+_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
+		gchar *sid, gchar *name, gboolean local,
+		PurpleMediaBackendFs2 *self);
 
 static gboolean purple_media_backend_fs2_add_stream(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *who,
@@ -106,6 +113,8 @@ purple_media_backend_fs2_dispose(GObject *obj)
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(obj);
 
+	purple_debug_info("backend-fs2", "purple_media_backend_fs2_dispose\n");
+
 	if (priv->confbin) {
 		GstElement *pipeline;
 
@@ -137,9 +146,12 @@ purple_media_backend_fs2_dispose(GObject *obj)
 	}
 
 	if (priv->media) {
-		g_object_unref(priv->media);
+		g_object_remove_weak_pointer(G_OBJECT(priv->media),
+				(gpointer*)&priv->media);
 		priv->media = NULL;
 	}
+
+	G_OBJECT_CLASS(purple_media_backend_fs2_parent_class)->dispose(obj);
 }
 
 static void
@@ -147,7 +159,12 @@ purple_media_backend_fs2_finalize(GObject *obj)
 {
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(obj);
+
+	purple_debug_info("backend-fs2", "purple_media_backend_fs2_finalize\n");
+
 	g_free(priv->conference_type);
+
+	G_OBJECT_CLASS(purple_media_backend_fs2_parent_class)->finalize(obj);
 }
 
 static void
@@ -164,7 +181,21 @@ purple_media_backend_fs2_set_property(GObject *object, guint prop_id,
 			priv->conference_type = g_value_dup_string(value);
 			break;
 		case PROP_MEDIA:
-			priv->media = g_value_dup_object(value);
+			priv->media = g_value_get_object(value);
+
+			if (priv->media == NULL)
+				break;
+
+			g_object_add_weak_pointer(G_OBJECT(priv->media),
+					(gpointer*)&priv->media);
+
+			g_signal_connect(G_OBJECT(priv->media),
+					"state-changed",
+					G_CALLBACK(_state_changed_cb),
+					PURPLE_MEDIA_BACKEND_FS2(object));
+			g_signal_connect(G_OBJECT(priv->media), "stream-info",
+					G_CALLBACK(_stream_info_cb),
+					PURPLE_MEDIA_BACKEND_FS2(object));
 			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(
@@ -232,6 +263,19 @@ _gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackend *self)
 	return TRUE;
 }
 
+static void
+_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
+		gchar *sid, gchar *name, PurpleMediaBackendFs2 *self)
+{
+}
+
+static void
+_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
+		gchar *sid, gchar *name, gboolean local,
+		PurpleMediaBackendFs2 *self)
+{
+}
+
 static gboolean
 _init_conference(PurpleMediaBackend *self)
 {
@@ -250,7 +294,7 @@ _init_conference(PurpleMediaBackend *self)
 	}
 
 	pipeline = purple_media_manager_get_pipeline(
-			purple_media_manager_get());
+			purple_media_get_manager(priv->media));
 
 	if (pipeline == NULL) {
 		purple_debug_error("backend-fs2",
@@ -313,7 +357,7 @@ purple_media_backend_fs2_add_stream(PurpleMediaBackend *self,
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
 
-	if (priv->conference == NULL || !_init_conference(self)) {
+	if (priv->conference == NULL && !_init_conference(self)) {
 		purple_debug_error("backend-fs2",
 				"Error initializing the conference.\n");
 		return FALSE;
@@ -354,5 +398,13 @@ static void
 purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec)
 {
+}
+
+FsConference *
+purple_media_backend_fs2_get_conference(PurpleMediaBackendFs2 *self)
+{
+	PurpleMediaBackendFs2Private *priv =
+			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+	return priv->conference;
 }
 
