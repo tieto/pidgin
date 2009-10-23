@@ -39,12 +39,6 @@ enum {
 
 static guint purple_media_backend_signals[LAST_SIGNAL] = {0};
 
-enum {
-	PROP_0,
-	PROP_CONFERENCE_TYPE,
-	PROP_MEDIA,
-};
-
 static void
 purple_media_backend_base_init(gpointer iface)
 {
@@ -53,14 +47,14 @@ purple_media_backend_base_init(gpointer iface)
 	if (is_initialized)
 		return;
 
-	g_object_class_install_property(iface, PROP_CONFERENCE_TYPE,
+	g_object_interface_install_property(iface,
 			g_param_spec_string("conference-type",
 			"Conference Type",
 			"The type of conference that this backend "
 			"has been created to provide.",
 			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
-	g_object_class_install_property(iface, PROP_MEDIA,
+	g_object_interface_install_property(iface,
 			g_param_spec_object("media",
 			"Purple Media",
 			"The media object that this backend is bound to.",
