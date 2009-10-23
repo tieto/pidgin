@@ -38,7 +38,6 @@
 
 #ifdef USE_VV
 
-#include <gst/farsight/fs-conference-iface.h>
 #include <gst/farsight/fs-element-added-notifier.h>
 #include <gst/interfaces/xoverlay.h>
 
@@ -314,33 +313,14 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 {
 #ifdef USE_VV
 	PurpleMedia *media;
-	FsConference *conference = FS_CONFERENCE(gst_element_factory_make(conference_type, NULL));
-	GstStateChangeReturn ret;
 	gboolean signal_ret;
-
-	if (conference == NULL) {
-		purple_conv_present_error(remote_user, account,
-					  _("Error creating conference."));
-		purple_debug_error("media", "Conference == NULL\n");
-		return NULL;
-	}
 
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
 			     "manager", manager,
 			     "account", account,
-			     "conference", conference,
+			     "conference-type", conference_type,
 			     "initiator", initiator,
 			     NULL));
-
-	ret = gst_element_set_state(GST_ELEMENT(conference), GST_STATE_PLAYING);
-
-	if (ret == GST_STATE_CHANGE_FAILURE) {
-		purple_conv_present_error(remote_user, account,
-					  _("Error creating conference."));
-		purple_debug_error("media", "Failed to start conference.\n");
-		g_object_unref(media);
-		return NULL;
-	}
 
 	g_signal_emit(manager, purple_media_manager_signals[INIT_MEDIA], 0,
 			media, account, remote_user, &signal_ret);

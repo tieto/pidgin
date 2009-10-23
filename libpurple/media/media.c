@@ -30,6 +30,8 @@
 
 #include "account.h"
 #include "media.h"
+#include "media/backend-fs2.h"
+#include "media/backend-iface.h"
 #include "mediamanager.h"
 #include "network.h"
 
@@ -108,6 +110,7 @@ struct _PurpleMediaPrivate
 #ifdef USE_VV
 	PurpleMediaManager *manager;
 	PurpleAccount *account;
+	PurpleMediaBackend *backend;
 	FsConference *conference;
 	gchar *conference_type;
 	gboolean initiator;
@@ -341,14 +344,9 @@ purple_media_dispose(GObject *media)
 
 	purple_media_manager_remove_media(priv->manager, PURPLE_MEDIA(media));
 
-	if (priv->confbin) {
-		gst_element_set_locked_state(priv->confbin, TRUE);
-		gst_element_set_state(GST_ELEMENT(priv->confbin),
-				GST_STATE_NULL);
-		gst_bin_remove(GST_BIN(purple_media_manager_get_pipeline(
-				priv->manager)), priv->confbin);
-		priv->confbin = NULL;
-		priv->conference = NULL;
+	if (priv->backend) {
+		g_object_unref(priv->backend);
+		priv->backend = NULL;
 	}
 
 	for (iter = priv->streams; iter; iter = g_list_next(iter)) {
@@ -413,36 +411,6 @@ purple_media_finalize(GObject *media)
 }
 
 static void
-purple_media_setup_pipeline(PurpleMedia *media)
-{
-	GstBus *bus;
-	gchar *name;
-	GstElement *pipeline;
-
-	if (media->priv->conference == NULL || media->priv->manager == NULL)
-		return;
-
-	pipeline = purple_media_manager_get_pipeline(media->priv->manager);
-
-	name = g_strdup_printf("conf_%p",
-			media->priv->conference);
-	media->priv->confbin = gst_bin_new(name);
-	g_free(name);
-
-	bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
-	g_signal_connect(G_OBJECT(bus), "message",
-			G_CALLBACK(media_bus_call), media);
-	gst_object_unref(bus);
-
-	gst_bin_add(GST_BIN(pipeline),
-			media->priv->confbin);
-	gst_bin_add(GST_BIN(media->priv->confbin),
-			GST_ELEMENT(media->priv->conference));
-	gst_element_set_state(GST_ELEMENT(media->priv->confbin),
-			GST_STATE_PLAYING);
-}
-
-static void
 purple_media_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	PurpleMedia *media;
@@ -452,10 +420,7 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 
 	switch (prop_id) {
 		case PROP_MANAGER:
-			media->priv->manager = g_value_get_object(value);
-			g_object_ref(media->priv->manager);
-
-			purple_media_setup_pipeline(media);
+			media->priv->manager = g_value_dup_object(value);
 			break;
 		case PROP_ACCOUNT:
 			media->priv->account = g_value_get_pointer(value);
@@ -463,15 +428,19 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 		case PROP_CONFERENCE: {
 			if (media->priv->conference)
 				gst_object_unref(media->priv->conference);
-			media->priv->conference = g_value_get_object(value);
-			gst_object_ref(media->priv->conference);
-
-			purple_media_setup_pipeline(media);
+			media->priv->conference = g_value_dup_object(value);
 			break;
 		}
 		case PROP_CONFERENCE_TYPE:
 			media->priv->conference_type =
 					g_value_dup_string(value);
+			/* Will eventually get this type from the media manager */
+			media->priv->backend = g_object_new(
+					PURPLE_TYPE_MEDIA_BACKEND_FS2,
+					"conference-type",
+					media->priv->conference_type,
+					"media", media,
+					NULL);
 			break;
 		case PROP_INITIATOR:
 			media->priv->initiator = g_value_get_boolean(value);
@@ -1629,6 +1598,30 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 	gboolean is_nice = !strcmp(transmitter, "nice");
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
+
+	if (!purple_media_backend_add_stream(media->priv->backend,
+			sess_id, who, type, initiator, transmitter,
+			num_params, params)) {
+		purple_debug_error("media", "Error adding stream.\n");
+		return FALSE;
+	}
+
+	/* XXX: Temporary call while integrating with backend */
+	if (media->priv->conference == NULL) {
+		GstBus *bus;
+		media->priv->conference =
+				purple_media_backend_fs2_get_conference(
+				PURPLE_MEDIA_BACKEND_FS2(
+				media->priv->backend));
+		media->priv->confbin = GST_ELEMENT_PARENT(
+				media->priv->conference);
+		bus = gst_pipeline_get_bus(GST_PIPELINE(
+				purple_media_manager_get_pipeline(
+				purple_media_manager_get())));
+		g_signal_connect(G_OBJECT(bus), "message",
+				G_CALLBACK(media_bus_call), media);
+		gst_object_unref(bus);
+	}
 
 	session = purple_media_get_session(media, sess_id);
 
