@@ -146,6 +146,8 @@ static void purple_media_candidates_prepared_cb(FsStream *stream,
 static void purple_media_candidate_pair_established_cb(FsStream *stream,
 		FsCandidate *native_candidate, FsCandidate *remote_candidate,
 		PurpleMediaSession *session);
+static void purple_media_codecs_changed_cb(PurpleMediaBackend *backend,
+		const gchar *sess_id, PurpleMedia *media);
 static gboolean media_bus_call(GstBus *bus,
 		GstMessage *msg, PurpleMedia *media);
 
@@ -439,6 +441,11 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 					media->priv->conference_type,
 					"media", media,
 					NULL);
+			g_signal_connect(media->priv->backend,
+					"codecs-changed",
+					G_CALLBACK(
+					purple_media_codecs_changed_cb),
+					media);
 			g_signal_connect(media->priv->backend,
 					"new-candidate",
 					G_CALLBACK(
@@ -1072,20 +1079,6 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 				FsCandidate *remote_candidate = g_value_get_boxed(gst_structure_get_value(msg->structure, "remote-candidate"));
 				PurpleMediaSession *session = purple_media_session_from_fs_stream(media, stream);
 				purple_media_candidate_pair_established_cb(stream, local_candidate, remote_candidate, session);
-			} else if (gst_structure_has_name(msg->structure,
-					"farsight-codecs-changed")) {
-				GList *sessions = g_hash_table_get_values(PURPLE_MEDIA(media)->priv->sessions);
-				FsSession *fssession = g_value_get_object(gst_structure_get_value(msg->structure, "session"));
-				for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-					PurpleMediaSession *session = sessions->data;
-					if (session->session == fssession) {
-						gchar *session_id = g_strdup(session->id);
-						g_signal_emit(media, purple_media_signals[CODECS_CHANGED], 0, session_id);
-						g_free(session_id);
-						g_list_free(sessions);
-						break;
-					}
-				}
 			}
 			break;
 		}
@@ -1360,6 +1353,13 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 				fs_candidate_copy(remote_candidate));
 
 	purple_debug_info("media", "candidate pair established\n");
+}
+
+static void
+purple_media_codecs_changed_cb(PurpleMediaBackend *backend,
+		const gchar *sess_id, PurpleMedia *media)
+{
+	g_signal_emit(media, purple_media_signals[CODECS_CHANGED], 0, sess_id);
 }
 
 static gboolean

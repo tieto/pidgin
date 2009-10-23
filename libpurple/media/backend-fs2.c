@@ -663,13 +663,10 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 			"farsight-codecs-changed")) {
 		const GValue *value;
 		FsSession *fssession;
-#if 0
 		GList *sessions;
-#endif
 
 		value = gst_structure_get_value(msg->structure, "session");
 		fssession = g_value_get_object(value);
-#if 0
 		sessions = g_hash_table_get_values(priv->sessions);
 
 		for (; sessions; sessions =
@@ -681,14 +678,12 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 				continue;
 
 			session_id = g_strdup(session->id);
-			g_signal_emit(media,
-					purple_media_backend_fs2_signals[
-					CODECS_CHANGED], 0, session_id);
+			g_signal_emit_by_name(self, "codecs-changed",
+					session_id);
 			g_free(session_id);
 			g_list_free(sessions);
 			break;
 		}
-#endif
 	}
 }
 
