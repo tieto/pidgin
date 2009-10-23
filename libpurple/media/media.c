@@ -113,6 +113,7 @@ struct _PurpleMediaPrivate
 	PurpleMediaBackend *backend;
 	FsConference *conference;
 	gchar *conference_type;
+	gulong gst_bus_handler_id;
 	gboolean initiator;
 	gpointer prpl_data;
 
@@ -378,15 +379,16 @@ purple_media_dispose(GObject *media)
 			g_object_unref(participants->data);
 	}
 
-	if (priv->manager) {
+	if (priv->gst_bus_handler_id != 0) {
 		GstElement *pipeline = purple_media_manager_get_pipeline(
 				priv->manager);
 		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
-		g_signal_handlers_disconnect_matched(G_OBJECT(bus),
-				G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA,
-				0, 0, 0, media_bus_call, media);
+		g_signal_handler_disconnect(bus, priv->gst_bus_handler_id);
 		gst_object_unref(bus);
+		priv->gst_bus_handler_id = 0;
+	}
 
+	if (priv->manager) {
 		g_object_unref(priv->manager);
 		priv->manager = NULL;
 	}
@@ -1607,6 +1609,16 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
 
+	if (media->priv->gst_bus_handler_id == 0) {
+		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(
+				purple_media_manager_get_pipeline(
+				purple_media_manager_get())));
+		media->priv->gst_bus_handler_id =
+				g_signal_connect(G_OBJECT(bus), "message",
+				G_CALLBACK(media_bus_call), media);
+		gst_object_unref(bus);
+	}
+
 	if (!purple_media_backend_add_stream(media->priv->backend,
 			sess_id, who, type, initiator, transmitter,
 			num_params, params)) {
@@ -1616,19 +1628,12 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 
 	/* XXX: Temporary call while integrating with backend */
 	if (media->priv->conference == NULL) {
-		GstBus *bus;
 		media->priv->conference =
 				purple_media_backend_fs2_get_conference(
 				PURPLE_MEDIA_BACKEND_FS2(
 				media->priv->backend));
 		media->priv->confbin = GST_ELEMENT_PARENT(
 				media->priv->conference);
-		bus = gst_pipeline_get_bus(GST_PIPELINE(
-				purple_media_manager_get_pipeline(
-				purple_media_manager_get())));
-		g_signal_connect(G_OBJECT(bus), "message",
-				G_CALLBACK(media_bus_call), media);
-		gst_object_unref(bus);
 	}
 
 	session = purple_media_get_session(media, sess_id);
