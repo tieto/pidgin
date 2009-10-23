@@ -138,8 +138,9 @@ static void purple_media_finalize (GObject *object);
 static void purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void purple_media_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void purple_media_new_local_candidate_cb(FsStream *stream,
-		FsCandidate *local_candidate, PurpleMediaSession *session);
+static void purple_media_new_local_candidate_cb(PurpleMediaBackend *backend,
+		const gchar *sess_id, const gchar *participant,
+		PurpleMediaCandidate *candidate, PurpleMedia *media);
 static void purple_media_candidates_prepared_cb(FsStream *stream,
 		PurpleMediaSession *session);
 static void purple_media_candidate_pair_established_cb(FsStream *stream,
@@ -438,6 +439,11 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 					media->priv->conference_type,
 					"media", media,
 					NULL);
+			g_signal_connect(media->priv->backend,
+					"new-candidate",
+					G_CALLBACK(
+					purple_media_new_local_candidate_cb),
+					media);
 			break;
 		case PROP_INITIATOR:
 			media->priv->initiator = g_value_get_boolean(value);
@@ -1055,12 +1061,6 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 				break;
 
 			if (gst_structure_has_name(msg->structure,
-					"farsight-new-local-candidate")) {
-				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
-				FsCandidate *local_candidate = g_value_get_boxed(gst_structure_get_value(msg->structure, "candidate"));
-				PurpleMediaSession *session = purple_media_session_from_fs_stream(media, stream);
-				purple_media_new_local_candidate_cb(stream, local_candidate, session);
-			} else if (gst_structure_has_name(msg->structure,
 					"farsight-local-candidates-prepared")) {
 				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
 				PurpleMediaSession *session = purple_media_session_from_fs_stream(media, stream);
@@ -1263,30 +1263,18 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 
 #ifdef USE_VV
 static void
-purple_media_new_local_candidate_cb(FsStream *stream,
-				    FsCandidate *local_candidate,
-				    PurpleMediaSession *session)
+purple_media_new_local_candidate_cb(PurpleMediaBackend *backend,
+		const gchar *sess_id, const gchar *participant,
+		PurpleMediaCandidate *candidate, PurpleMedia *media)
 {
-	gchar *name;
-	FsParticipant *participant;
-	PurpleMediaCandidate *candidate;
+	PurpleMediaSession *session =
+			purple_media_get_session(media, sess_id);
 
-	g_return_if_fail(FS_IS_STREAM(stream));
-	g_return_if_fail(session != NULL);
+	purple_media_insert_local_candidate(session, participant,
+			purple_media_candidate_to_fs(candidate));
 
-	purple_debug_info("media", "got new local candidate: %s\n", local_candidate->foundation);
-	g_object_get(stream, "participant", &participant, NULL);
-	g_object_get(participant, "cname", &name, NULL);
-	g_object_unref(participant);
-
-	purple_media_insert_local_candidate(session, name, fs_candidate_copy(local_candidate));
-
-	candidate = purple_media_candidate_from_fs(local_candidate);
 	g_signal_emit(session->media, purple_media_signals[NEW_CANDIDATE],
-		      0, session->id, name, candidate);
-	g_object_unref(candidate);
-
-	g_free(name);
+		      0, session->id, participant, candidate);
 }
 
 static void

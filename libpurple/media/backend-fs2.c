@@ -49,7 +49,7 @@ typedef struct _PurpleMediaBackendFs2Session PurpleMediaBackendFs2Session;
 static void purple_media_backend_iface_init(PurpleMediaBackendIface *iface);
 
 static gboolean
-_gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackend *self);
+_gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackendFs2 *self);
 static void
 _state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *sid, gchar *name, PurpleMediaBackendFs2 *self);
@@ -347,7 +347,79 @@ _session_type_from_fs(FsMediaType type, FsStreamDirection direction)
 	}
 	return result;
 }
+
+static FsCandidate *
+purple_media_candidate_to_fs(PurpleMediaCandidate *candidate)
+{
+	FsCandidate *fscandidate;
+	gchar *foundation;
+	guint component_id;
+	gchar *ip;
+	guint port;
+	gchar *base_ip;
+	guint base_port;
+	PurpleMediaNetworkProtocol proto;
+	guint32 priority;
+	PurpleMediaCandidateType type;
+	gchar *username;
+	gchar *password;
+	guint ttl;
+
+	if (candidate == NULL)
+		return NULL;
+
+	g_object_get(G_OBJECT(candidate),
+			"foundation", &foundation,
+			"component-id", &component_id,
+			"ip", &ip,
+			"port", &port,
+			"base-ip", &base_ip,
+			"base-port", &base_port,
+			"protocol", &proto,
+			"priority", &priority,
+			"type", &type,
+			"username", &username,
+			"password", &password,
+			"ttl", &ttl,
+			NULL);
+
+	fscandidate = fs_candidate_new(foundation,
+			component_id, type,
+			proto, ip, port);
+
+	fscandidate->base_ip = base_ip;
+	fscandidate->base_port = base_port;
+	fscandidate->priority = priority;
+	fscandidate->username = username;
+	fscandidate->password = password;
+	fscandidate->ttl = ttl;
+
+	g_free(foundation);
+	g_free(ip);
+	return fscandidate;
+}
 #endif
+
+static PurpleMediaCandidate *
+purple_media_candidate_from_fs(FsCandidate *fscandidate)
+{
+	PurpleMediaCandidate *candidate;
+
+	if (fscandidate == NULL)
+		return NULL;
+
+	candidate = purple_media_candidate_new(fscandidate->foundation,
+		fscandidate->component_id, fscandidate->type,
+		fscandidate->proto, fscandidate->ip, fscandidate->port);
+	g_object_set(candidate,
+			"base-ip", fscandidate->base_ip,
+			"base-port", fscandidate->base_port,
+			"priority", fscandidate->priority,
+			"username", fscandidate->username,
+			"password", fscandidate->password,
+			"ttl", fscandidate->ttl, NULL);
+	return candidate;
+}
 
 static PurpleMediaBackendFs2Session *
 _get_session(PurpleMediaBackendFs2 *self, const gchar *sess_id)
@@ -365,9 +437,38 @@ _get_session(PurpleMediaBackendFs2 *self, const gchar *sess_id)
 	return session;
 }
 
+static PurpleMediaBackendFs2Session *
+_get_session_from_fs_stream(PurpleMediaBackendFs2 *self, FsStream *stream)
+{
+	PurpleMediaBackendFs2Private *priv =
+			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+	FsSession *fssession;
+	GList *values;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), NULL);
+	g_return_val_if_fail(FS_IS_STREAM(stream), NULL);
+
+	g_object_get(stream, "session", &fssession, NULL);
+
+	values = g_hash_table_get_values(priv->sessions);
+
+	for (; values; values = g_list_delete_link(values, values)) {
+		PurpleMediaBackendFs2Session *session = values->data;
+
+		if (session->session == fssession) {
+			g_list_free(values);
+			g_object_unref(fssession);
+			return session;
+		}
+	}
+
+	g_object_unref(fssession);
+	return NULL;
+}
+
 static void
 _gst_handle_message_element(GstBus *bus, GstMessage *msg,
-		PurpleMediaBackend *self)
+		PurpleMediaBackendFs2 *self)
 {
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
@@ -424,18 +525,35 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		const GValue *value;
 		FsStream *stream;
 		FsCandidate *local_candidate;
-#if 0
-		PurpleMediaSession *session;
-#endif
+		PurpleMediaCandidate *candidate;
+		FsParticipant *participant;
+		PurpleMediaBackendFs2Session *session;
+		gchar *name;
 
 		value = gst_structure_get_value(msg->structure, "stream");
 		stream = g_value_get_object(value);
 		value = gst_structure_get_value(msg->structure, "candidate");
 		local_candidate = g_value_get_boxed(value);
+
+		session = _get_session_from_fs_stream(self, stream);
+
+		purple_debug_info("backend-fs2",
+				"got new local candidate: %s\n",
+				local_candidate->foundation);
+
+		g_object_get(stream, "participant", &participant, NULL);
+		g_object_get(participant, "cname", &name, NULL);
+		g_object_unref(participant);
+
 #if 0
-		session = purple_media_session_from_fs_stream(media, stream);
-		_new_local_candidate_cb(stream,	local_candidate, session);
+		purple_media_insert_local_candidate(session, name,
+				fs_candidate_copy(local_candidate));
 #endif
+
+		candidate = purple_media_candidate_from_fs(local_candidate);
+		g_signal_emit_by_name(self, "new-candidate",
+				session->id, name, candidate);
+		g_object_unref(candidate);
 	} else if (gst_structure_has_name(msg->structure,
 			"farsight-local-candidates-prepared")) {
 		const GValue *value;
@@ -576,7 +694,7 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 
 static void
 _gst_handle_message_error(GstBus *bus, GstMessage *msg,
-		PurpleMediaBackend *self)
+		PurpleMediaBackendFs2 *self)
 {
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
@@ -620,7 +738,7 @@ _gst_handle_message_error(GstBus *bus, GstMessage *msg,
 }
 
 static gboolean
-_gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackend *self)
+_gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackendFs2 *self)
 {
 	switch(GST_MESSAGE_TYPE(msg)) {
 		case GST_MESSAGE_ELEMENT:
