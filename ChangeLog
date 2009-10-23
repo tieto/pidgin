@@ -14,6 +14,8 @@ version 2.6.4 (??/??/20??):
 	MSN:
 	* Don't forget display names for buddies.
 	* Fix a random crash that might occur when idle.
+	* Fix more FQY 240 connection errors.
+	* Fix a crash that could occur when adding a buddy.
 
 	XMPP:
 	* Users connecting to Google Talk now have an "Initiate Chat" context menu
