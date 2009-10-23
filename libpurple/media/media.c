@@ -1065,37 +1065,7 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 					FS_CONFERENCE(GST_MESSAGE_SRC(msg)))
 				break;
 
-			if (gst_structure_has_name(msg->structure, "farsight-error")) {
-				FsError error_no;
-				gst_structure_get_enum(msg->structure, "error-no",
-						FS_TYPE_ERROR, (gint*)&error_no);
-				switch (error_no) {
-					case FS_ERROR_NO_CODECS:
-						purple_media_error(media, _("No codecs found. Install some GStreamer codecs found in GStreamer plugins packages."));
-						purple_media_end(media, NULL, NULL);
-						break;
-					case FS_ERROR_NO_CODECS_LEFT:
-						purple_media_error(media, _("No codecs left. Your codec preferences in fs-codecs.conf are too strict."));
-						purple_media_end(media, NULL, NULL);
-						break;
-					case FS_ERROR_UNKNOWN_CNAME:
-					/*
-					 * Unknown CName is only a problem for the
-					 * multicast transmitter which isn't used.
-					 * It is also deprecated.
-					 */
-						break;
-					default:
-						purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
-							  	gst_structure_get_string(msg->structure, "error-msg"));
-						break;
-				}
-
-				if (FS_ERROR_IS_FATAL(error_no)) {
-					purple_media_error(media, _("A non-recoverable Farsight2 error has occurred."));
-					purple_media_end(media, NULL, NULL);
-				}
-			} else if (gst_structure_has_name(msg->structure,
+			if (gst_structure_has_name(msg->structure,
 					"farsight-new-local-candidate")) {
 				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
 				FsCandidate *local_candidate = g_value_get_boxed(gst_structure_get_value(msg->structure, "candidate"));
@@ -1114,47 +1084,6 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 				PurpleMediaSession *session = purple_media_session_from_fs_stream(media, stream);
 				purple_media_candidate_pair_established_cb(stream, local_candidate, remote_candidate, session);
 			} else if (gst_structure_has_name(msg->structure,
-					"farsight-recv-codecs-changed")) {
-				GList *codecs = g_value_get_boxed(gst_structure_get_value(msg->structure, "codecs"));
-				FsCodec *codec = codecs->data;
-				purple_debug_info("media", "farsight-recv-codecs-changed: %s\n", codec->encoding_name);
-				
-			} else if (gst_structure_has_name(msg->structure,
-					"farsight-component-state-changed")) {
-				FsStreamState fsstate = g_value_get_enum(gst_structure_get_value(msg->structure, "state"));
-				guint component = g_value_get_uint(gst_structure_get_value(msg->structure, "component"));
-				const gchar *state;
-				switch (fsstate) {
-					case FS_STREAM_STATE_FAILED:
-						state = "FAILED";
-						break;
-					case FS_STREAM_STATE_DISCONNECTED:
-						state = "DISCONNECTED";
-						break;
-					case FS_STREAM_STATE_GATHERING:
-						state = "GATHERING";
-						break;
-					case FS_STREAM_STATE_CONNECTING:
-						state = "CONNECTING";
-						break;
-					case FS_STREAM_STATE_CONNECTED:
-						state = "CONNECTED";
-						break;
-					case FS_STREAM_STATE_READY:
-						state = "READY";
-						break;
-					default:
-						state = "UNKNOWN";
-						break;
-				}
-				purple_debug_info("media", "farsight-component-state-changed: component: %u state: %s\n", component, state);
-			} else if (gst_structure_has_name(msg->structure,
-					"farsight-send-codec-changed")) {
-				FsCodec *codec = g_value_get_boxed(gst_structure_get_value(msg->structure, "codec"));
-				gchar *codec_str = fs_codec_to_string(codec);
-				purple_debug_info("media", "farsight-send-codec-changed: codec: %s\n", codec_str);
-				g_free(codec_str);
-			} else if (gst_structure_has_name(msg->structure,
 					"farsight-codecs-changed")) {
 				GList *sessions = g_hash_table_get_values(PURPLE_MEDIA(media)->priv->sessions);
 				FsSession *fssession = g_value_get_object(gst_structure_get_value(msg->structure, "session"));
@@ -1170,35 +1099,6 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 				}
 			}
 			break;
-		}
-		case GST_MESSAGE_ERROR: {
-			GstElement *element = GST_ELEMENT(GST_MESSAGE_SRC(msg));
-			GstElement *lastElement = NULL;
-			while (!GST_IS_PIPELINE(element)) {
-				if (element == media->priv->confbin) {
-					purple_media_error(media, _("Conference error"));
-					purple_media_end(media, NULL, NULL);
-					break;
-				}
-				lastElement = element;
-				element = GST_ELEMENT_PARENT(element);
-			}
-			if (GST_IS_PIPELINE(element)) {
-				GList *sessions = g_hash_table_get_values(media->priv->sessions);
-				for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-					PurpleMediaSession *session = sessions->data;
-
-					if (session->src == lastElement) {
-						if (session->type & PURPLE_MEDIA_AUDIO)
-							purple_media_error(media, _("Error with your microphone"));
-						else
-							purple_media_error(media, _("Error with your webcam"));
-						purple_media_end(media, NULL, NULL);
-						break;
-					}
-				}
-				g_list_free(sessions);
-			}
 		}
 		default:
 			break;
