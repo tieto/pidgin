@@ -54,11 +54,11 @@ purple_media_backend_base_init(gpointer iface)
 		return;
 
 	g_object_class_install_property(iface, PROP_CONFERENCE_TYPE,
-			g_param_spec_object("conference-type",
+			g_param_spec_string("conference-type",
 			"Conference Type",
 			"The type of conference that this backend "
 			"has been created to provide.",
-			G_TYPE_STRING,
+			NULL,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 	g_object_class_install_property(iface, PROP_MEDIA,
 			g_param_spec_object("media",
