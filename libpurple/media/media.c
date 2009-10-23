@@ -109,6 +109,7 @@ struct _PurpleMediaPrivate
 	PurpleMediaManager *manager;
 	PurpleAccount *account;
 	FsConference *conference;
+	gchar *conference_type;
 	gboolean initiator;
 	gpointer prpl_data;
 
@@ -164,6 +165,7 @@ enum {
 	PROP_MANAGER,
 	PROP_ACCOUNT,
 	PROP_CONFERENCE,
+	PROP_CONFERENCE_TYPE,
 	PROP_INITIATOR,
 	PROP_PRPL_DATA,
 };
@@ -228,6 +230,14 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"The FsConference associated with this media.",
 			FS_TYPE_CONFERENCE,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE));
+
+	g_object_class_install_property(gobject_class, PROP_CONFERENCE_TYPE,
+			g_param_spec_string("conference-type",
+			"Conference Type",
+			"The type of conference that this media object "
+			"has been created to provide.",
+			NULL,
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	g_object_class_install_property(gobject_class, PROP_INITIATOR,
 			g_param_spec_boolean("initiator",
@@ -459,6 +469,10 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			purple_media_setup_pipeline(media);
 			break;
 		}
+		case PROP_CONFERENCE_TYPE:
+			media->priv->conference_type =
+					g_value_dup_string(value);
+			break;
 		case PROP_INITIATOR:
 			media->priv->initiator = g_value_get_boolean(value);
 			break;
@@ -488,6 +502,10 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 			break;
 		case PROP_CONFERENCE:
 			g_value_set_object(value, media->priv->conference);
+			break;
+		case PROP_CONFERENCE_TYPE:
+			g_value_set_string(value,
+					media->priv->conference_type);
 			break;
 		case PROP_INITIATOR:
 			g_value_set_boolean(value, media->priv->initiator);
