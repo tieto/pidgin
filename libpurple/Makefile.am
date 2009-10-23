@@ -54,7 +54,6 @@ purple_coresources = \
 	imgstore.c \
 	log.c \
 	media/backend-fs2.c \
-	media/backend-fs2.h \
 	media/backend-iface.c \
 	media/candidate.c \
 	media/codec.c \
@@ -285,6 +284,7 @@ libpurple_la_SOURCES = \
 
 noinst_HEADERS= \
 	internal.h \
+	media/backend-fs2.h \
 	valgrind.h
 
 libpurpleincludedir=$(includedir)/libpurple
