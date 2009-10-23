@@ -1232,8 +1232,13 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 	if (user->invite_message) {
 		char *tmp;
 		body = g_markup_escape_text(user->invite_message, -1);
-		tmp = g_markup_escape_text(purple_connection_get_display_name(session->account->gc), -1);
+
+		/* Ignore the cast, we treat it as const anyway. */
+		tmp = (char *)purple_connection_get_display_name(session->account->gc);
+		tmp = tmp ? g_markup_escape_text(tmp, -1) : g_strdup("");
+
 		invite = g_strdup_printf(MSN_CONTACT_INVITE_MESSAGE_XML, body, tmp);
+
 		g_free(body);
 		g_free(tmp);
 
