@@ -62,6 +62,9 @@ GType purple_media_backend_fs2_get_type(void);
 #include <gst/farsight/fs-conference-iface.h>
 FsConference *purple_media_backend_fs2_get_conference(
 		PurpleMediaBackendFs2 *self);
+FsSession *purple_media_backend_fs2_get_session(
+		PurpleMediaBackendFs2 *self,
+		const gchar *sess_id);
 /* end tmp */
 
 G_END_DECLS

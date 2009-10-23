@@ -362,17 +362,6 @@ purple_media_dispose(GObject *media)
 		}
 	}
 
-	if (priv->sessions) {
-		GList *sessions = g_hash_table_get_values(priv->sessions);
-		for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-			PurpleMediaSession *session = sessions->data;
-			if (session->session) {
-				g_object_unref(session->session);
-				session->session = NULL;
-			}
-		}
-	}
-
 	if (priv->participants) {
 		GList *participants = g_hash_table_get_values(priv->participants);
 		for (; participants; participants = g_list_delete_link(participants, participants))
@@ -1478,18 +1467,6 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	stream->connected_cb_id = purple_timeout_add(0,
 			(GSourceFunc)purple_media_connected_cb, stream);
 }
-
-static void
-purple_media_element_added_cb(FsElementAddedNotifier *self,
-		GstBin *bin, GstElement *element, gpointer user_data)
-{
-	/*
-	 * Hack to make H264 work with Gmail video.
-	 */
-	if (!strncmp(GST_ELEMENT_NAME(element), "x264", 4)) {
-		g_object_set(GST_OBJECT(element), "cabac", FALSE, NULL);
-	}
-}
 #endif  /* USE_VV */
 
 gboolean
@@ -1539,85 +1516,13 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 	session = purple_media_get_session(media, sess_id);
 
 	if (!session) {
-		GError *err = NULL;
-		GList *codec_conf = NULL, *iter = NULL;
-		gchar *filename = NULL;
 		PurpleMediaSessionType session_type;
 		GstElement *src = NULL;
 
 		session = g_new0(PurpleMediaSession, 1);
-
-		session->session = fs_conference_new_session(
-				media->priv->conference, media_type, &err);
-
-		if (err != NULL) {
-			purple_media_error(media, _("Error creating session: %s"), err->message);
-			g_error_free(err);
-			g_free(session);
-			return FALSE;
-		}
-
-		filename = g_build_filename(purple_user_dir(), "fs-codec.conf", NULL);
-		codec_conf = fs_codec_list_from_keyfile(filename, &err);
-		g_free(filename);
-
-		if (err != NULL) {
-			if (err->code == 4)
-				purple_debug_info("media", "Couldn't read "
-						"fs-codec.conf: %s\n",
-						err->message);
-			else
-				purple_debug_error("media", "Error reading "
-						"fs-codec.conf: %s\n",
-						err->message);
-			g_error_free(err);
-		}
-
-		/*
-		 * Add SPEEX if the configuration file doesn't exist or
-		 * there isn't a speex entry.
-		 */
-		for (iter = codec_conf; iter; iter = g_list_next(iter)) {
-			FsCodec *codec = iter->data;
-			if (!g_ascii_strcasecmp(codec->encoding_name, "speex"))
-				break;
-		}
-
-		if (iter == NULL) {
-			codec_conf = g_list_prepend(codec_conf,
-					fs_codec_new(FS_CODEC_ID_ANY,
-					"SPEEX", FS_MEDIA_TYPE_AUDIO, 8000));
-			codec_conf = g_list_prepend(codec_conf,
-					fs_codec_new(FS_CODEC_ID_ANY,
-					"SPEEX", FS_MEDIA_TYPE_AUDIO, 16000));
-		}
-
-		fs_session_set_codec_preferences(session->session, codec_conf, NULL);
-
-		/*
-		 * Removes a 5-7 second delay before
-		 * receiving the src-pad-added signal.
-		 * Only works for non-multicast FsRtpSessions.
-		 */
-		if (is_nice || !strcmp(transmitter, "rawudp"))
-			g_object_set(G_OBJECT(session->session),
-					"no-rtcp-timeout", 0, NULL);
-
-		/*
-		 * Hack to make x264 work with Gmail video.
-		 */
-		if (is_nice && !strcmp(sess_id, "google-video")) {
-			FsElementAddedNotifier *notifier =
-					fs_element_added_notifier_new();
-			g_signal_connect(G_OBJECT(notifier), "element-added",
-					G_CALLBACK(purple_media_element_added_cb),
-					stream);
-			fs_element_added_notifier_add(notifier,
-					GST_BIN(media->priv->conference));
-		}
-
-		fs_codec_list_destroy(codec_conf);
-
+		session->session = purple_media_backend_fs2_get_session(
+				PURPLE_MEDIA_BACKEND_FS2(media->priv->backend),
+				sess_id);
 		session->id = g_strdup(sess_id);
 		session->media = media;
 		session->type = type;

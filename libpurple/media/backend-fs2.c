@@ -33,11 +33,14 @@
 #include "media-gst.h"
 
 #include <gst/farsight/fs-conference-iface.h>
+#include <gst/farsight/fs-element-added-notifier.h>
 
 /** @copydoc _PurpleMediaBackendFs2Class */
 typedef struct _PurpleMediaBackendFs2Class PurpleMediaBackendFs2Class;
 /** @copydoc _PurpleMediaBackendFs2Private */
 typedef struct _PurpleMediaBackendFs2Private PurpleMediaBackendFs2Private;
+/** @copydoc _PurpleMediaBackendFs2Session */
+typedef struct _PurpleMediaBackendFs2Session PurpleMediaBackendFs2Session;
 
 #define PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(obj) \
 		(G_TYPE_INSTANCE_GET_PRIVATE((obj), \
@@ -90,12 +93,23 @@ G_DEFINE_TYPE_WITH_CODE(PurpleMediaBackendFs2, purple_media_backend_fs2,
 		G_TYPE_OBJECT, G_IMPLEMENT_INTERFACE(
 		PURPLE_TYPE_MEDIA_BACKEND, purple_media_backend_iface_init));
 
+struct _PurpleMediaBackendFs2Session
+{
+	PurpleMediaBackendFs2 *backend;
+	gchar *id;
+	gboolean initiator;
+	FsSession *session;
+	PurpleMediaSessionType type;
+};
+
 struct _PurpleMediaBackendFs2Private
 {
 	PurpleMedia *media;
 	GstElement *confbin;
 	FsConference *conference;
 	gchar *conference_type;
+
+	GHashTable *sessions;
 };
 
 enum {
@@ -147,6 +161,21 @@ purple_media_backend_fs2_dispose(GObject *obj)
 
 	}
 
+	if (priv->sessions) {
+		GList *sessions = g_hash_table_get_values(priv->sessions);
+
+		for (; sessions; sessions =
+				g_list_delete_link(sessions, sessions)) {
+			PurpleMediaBackendFs2Session *session =
+					sessions->data;
+
+			if (session->session) {
+				g_object_unref(session->session);
+				session->session = NULL;
+			}
+		}
+	}
+
 	if (priv->media) {
 		g_object_remove_weak_pointer(G_OBJECT(priv->media),
 				(gpointer*)&priv->media);
@@ -165,6 +194,20 @@ purple_media_backend_fs2_finalize(GObject *obj)
 	purple_debug_info("backend-fs2", "purple_media_backend_fs2_finalize\n");
 
 	g_free(priv->conference_type);
+
+	if (priv->sessions) {
+		GList *sessions = g_hash_table_get_values(priv->sessions);
+
+		for (; sessions; sessions =
+				g_list_delete_link(sessions, sessions)) {
+			PurpleMediaBackendFs2Session *session =
+					sessions->data;
+			g_free(session->id);
+			g_free(session);
+		}
+
+		g_hash_table_destroy(priv->sessions);
+	}
 
 	G_OBJECT_CLASS(purple_media_backend_fs2_parent_class)->finalize(obj);
 }
@@ -257,6 +300,69 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 			purple_media_backend_fs2_get_local_candidates;
 	iface->set_remote_codecs = purple_media_backend_fs2_set_remote_codecs;
 	iface->set_send_codec = purple_media_backend_fs2_set_send_codec;
+}
+
+static FsMediaType
+_session_type_to_fs_media_type(PurpleMediaSessionType type)
+{
+	if (type & PURPLE_MEDIA_AUDIO)
+		return FS_MEDIA_TYPE_AUDIO;
+	else if (type & PURPLE_MEDIA_VIDEO)
+		return FS_MEDIA_TYPE_VIDEO;
+	else
+		return 0;
+}
+
+#if 0
+static FsStreamDirection
+_session_type_to_fs_stream_direction(PurpleMediaSessionType type)
+{
+	if ((type & PURPLE_MEDIA_AUDIO) == PURPLE_MEDIA_AUDIO ||
+			(type & PURPLE_MEDIA_VIDEO) == PURPLE_MEDIA_VIDEO)
+		return FS_DIRECTION_BOTH;
+	else if ((type & PURPLE_MEDIA_SEND_AUDIO) ||
+			(type & PURPLE_MEDIA_SEND_VIDEO))
+		return FS_DIRECTION_SEND;
+	else if ((type & PURPLE_MEDIA_RECV_AUDIO) ||
+			(type & PURPLE_MEDIA_RECV_VIDEO))
+		return FS_DIRECTION_RECV;
+	else
+		return FS_DIRECTION_NONE;
+}
+
+static PurpleMediaSessionType
+_session_type_from_fs(FsMediaType type, FsStreamDirection direction)
+{
+	PurpleMediaSessionType result = PURPLE_MEDIA_NONE;
+	if (type == FS_MEDIA_TYPE_AUDIO) {
+		if (direction & FS_DIRECTION_SEND)
+			result |= PURPLE_MEDIA_SEND_AUDIO;
+		if (direction & FS_DIRECTION_RECV)
+			result |= PURPLE_MEDIA_RECV_AUDIO;
+	} else if (type == FS_MEDIA_TYPE_VIDEO) {
+		if (direction & FS_DIRECTION_SEND)
+			result |= PURPLE_MEDIA_SEND_VIDEO;
+		if (direction & FS_DIRECTION_RECV)
+			result |= PURPLE_MEDIA_RECV_VIDEO;
+	}
+	return result;
+}
+#endif
+
+static PurpleMediaBackendFs2Session *
+_get_session(PurpleMediaBackendFs2 *self, const gchar *sess_id)
+{
+	PurpleMediaBackendFs2Private *priv;
+	PurpleMediaBackendFs2Session *session = NULL;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), NULL);
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+
+	if (priv->sessions != NULL)
+		session = g_hash_table_lookup(priv->sessions, sess_id);
+
+	return session;
 }
 
 static void
@@ -544,7 +650,7 @@ _stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 }
 
 static gboolean
-_init_conference(PurpleMediaBackend *self)
+_init_conference(PurpleMediaBackendFs2 *self)
 {
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
@@ -614,6 +720,120 @@ _init_conference(PurpleMediaBackend *self)
 	return TRUE;
 }
 
+static void
+_gst_element_added_cb(FsElementAddedNotifier *self,
+		GstBin *bin, GstElement *element, gpointer user_data)
+{
+	/*
+	 * Hack to make H264 work with Gmail video.
+	 */
+	if (!strncmp(GST_ELEMENT_NAME(element), "x264", 4)) {
+		g_object_set(GST_OBJECT(element), "cabac", FALSE, NULL);
+	}
+}
+
+static gboolean
+_create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
+		PurpleMediaSessionType type, gboolean initiator,
+		const gchar *transmitter)
+{
+	PurpleMediaBackendFs2Private *priv =
+			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+	PurpleMediaBackendFs2Session *session;
+	GError *err = NULL;
+	GList *codec_conf = NULL, *iter = NULL;
+	gchar *filename = NULL;
+	gboolean is_nice = !strcmp(transmitter, "nice");
+
+	session = g_new0(PurpleMediaBackendFs2Session, 1);
+
+	session->session = fs_conference_new_session(priv->conference,
+			_session_type_to_fs_media_type(type), &err);
+
+	if (err != NULL) {
+		purple_media_error(priv->media,
+				_("Error creating session: %s"),
+				err->message);
+		g_error_free(err);
+		g_free(session);
+		return FALSE;
+	}
+
+	filename = g_build_filename(purple_user_dir(), "fs-codec.conf", NULL);
+	codec_conf = fs_codec_list_from_keyfile(filename, &err);
+	g_free(filename);
+
+	if (err != NULL) {
+		if (err->code == 4)
+			purple_debug_info("media", "Couldn't read "
+					"fs-codec.conf: %s\n",
+					err->message);
+		else
+			purple_debug_error("media", "Error reading "
+					"fs-codec.conf: %s\n",
+					err->message);
+		g_error_free(err);
+	}
+
+	/*
+	 * Add SPEEX if the configuration file doesn't exist or
+	 * there isn't a speex entry.
+	 */
+	for (iter = codec_conf; iter; iter = g_list_next(iter)) {
+		FsCodec *codec = iter->data;
+		if (!g_ascii_strcasecmp(codec->encoding_name, "speex"))
+			break;
+	}
+
+	if (iter == NULL) {
+		codec_conf = g_list_prepend(codec_conf,
+				fs_codec_new(FS_CODEC_ID_ANY,
+				"SPEEX", FS_MEDIA_TYPE_AUDIO, 8000));
+		codec_conf = g_list_prepend(codec_conf,
+				fs_codec_new(FS_CODEC_ID_ANY,
+				"SPEEX", FS_MEDIA_TYPE_AUDIO, 16000));
+	}
+
+	fs_session_set_codec_preferences(session->session, codec_conf, NULL);
+	fs_codec_list_destroy(codec_conf);
+
+	/*
+	 * Removes a 5-7 second delay before
+	 * receiving the src-pad-added signal.
+	 * Only works for non-multicast FsRtpSessions.
+	 */
+	if (is_nice || !strcmp(transmitter, "rawudp"))
+		g_object_set(G_OBJECT(session->session),
+				"no-rtcp-timeout", 0, NULL);
+
+	/*
+	 * Hack to make x264 work with Gmail video.
+	 */
+	if (is_nice && !strcmp(sess_id, "google-video")) {
+		FsElementAddedNotifier *notifier =
+				fs_element_added_notifier_new();
+		g_signal_connect(G_OBJECT(notifier), "element-added",
+				G_CALLBACK(_gst_element_added_cb), NULL);
+		fs_element_added_notifier_add(notifier,
+				GST_BIN(priv->conference));
+	}
+
+	session->id = g_strdup(sess_id);
+	session->backend = self;
+	session->type = type;
+	session->initiator = initiator;
+
+	if (!priv->sessions) {
+		purple_debug_info("backend-fs2",
+				"Creating hash table for sessions\n");
+		priv->sessions = g_hash_table_new(g_str_hash, g_str_equal);
+	}
+
+	g_hash_table_insert(priv->sessions, g_strdup(session->id), session);
+
+	return TRUE;
+}
+
 static gboolean
 purple_media_backend_fs2_add_stream(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *who,
@@ -621,12 +841,21 @@ purple_media_backend_fs2_add_stream(PurpleMediaBackend *self,
 		const gchar *transmitter,
 		guint num_params, GParameter *params)
 {
+	PurpleMediaBackendFs2 *backend = PURPLE_MEDIA_BACKEND_FS2(self);
 	PurpleMediaBackendFs2Private *priv =
-			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(backend);
 
-	if (priv->conference == NULL && !_init_conference(self)) {
+	if (priv->conference == NULL && !_init_conference(backend)) {
 		purple_debug_error("backend-fs2",
 				"Error initializing the conference.\n");
+		return FALSE;
+	}
+
+	if (_get_session(backend, sess_id) == NULL &&
+			!_create_session(backend, sess_id, type,
+			initiator, transmitter)) {
+		purple_debug_error("backend-fs2",
+				"Error creating the session.\n");
 		return FALSE;
 	}
 
@@ -675,3 +904,10 @@ purple_media_backend_fs2_get_conference(PurpleMediaBackendFs2 *self)
 	return priv->conference;
 }
 
+FsSession *
+purple_media_backend_fs2_get_session(PurpleMediaBackendFs2 *self,
+		const gchar *sess_id)
+{
+	PurpleMediaBackendFs2Session *session = _get_session(self, sess_id);
+	return session != NULL? session->session : NULL;
+}
