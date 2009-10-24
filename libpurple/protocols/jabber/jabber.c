@@ -2606,8 +2606,15 @@ static PurpleCmdRet jabber_cmd_chat_nick(PurpleConversation *conv,
 	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	jabber_chat_change_nick(chat, args[0]);
-	return PURPLE_CMD_RET_OK;
+	if (!jabber_resourceprep_validate(args[0])) {
+		*error = g_strdup(_("Invalid nickname"));
+		return PURPLE_CMD_RET_FAILED;
+	}
+
+	if (jabber_chat_change_nick(chat, args[0]))
+		return PURPLE_CMD_RET_OK;
+	else
+		return PURPLE_CMD_RET_FAILED;
 }
 
 static PurpleCmdRet jabber_cmd_chat_part(PurpleConversation *conv,

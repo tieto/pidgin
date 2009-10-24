@@ -89,7 +89,7 @@ void jabber_chat_create_instant_room(JabberChat *chat);
 void jabber_chat_register(JabberChat *chat);
 void jabber_chat_change_topic(JabberChat *chat, const char *topic);
 void jabber_chat_set_topic(PurpleConnection *gc, int id, const char *topic);
-void jabber_chat_change_nick(JabberChat *chat, const char *nick);
+gboolean jabber_chat_change_nick(JabberChat *chat, const char *nick);
 void jabber_chat_part(JabberChat *chat, const char *msg);
 void jabber_chat_track_handle(JabberChat *chat, const char *handle,
 		const char *jid, const char *affiliation, const char *role);
