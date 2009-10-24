@@ -952,7 +952,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 	GSList *list = NULL;
 	struct _yahoo_im *im = NULL;
 	const char *imv = NULL;
-	gint val_11 = 0;
 
 	account = purple_connection_get_account(gc);
 
@@ -1006,9 +1005,18 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 					
 			}
 			/* peer session id */
-			if (pair->key == 11) {
-				if (im)
-					val_11 = strtol(pair->value, NULL, 10);
+			if (im && (pair->key == 11)) {
+				/* disconnect the peer if connected through p2p and sends wrong value for session id */
+				if( (im->fed == YAHOO_FEDERATION_NONE) && (pkt_type == YAHOO_PKT_TYPE_P2P) 
+						&& (yd->session_id != strtol(pair->value, NULL, 10)) )
+				{
+					purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im->fed_from);
+					/* remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data */
+					g_hash_table_remove(yd->peers, im->fed_from);
+					g_free(im->fed_from);
+					g_free(im);
+					return; /* Not sure whether we should process remaining IMs in this packet */
+				}
 			}
 			/* IMV key */
 			if (pair->key == 63)
@@ -1025,20 +1033,9 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		                  _("Your Yahoo! message did not get sent."), NULL);
 	}
 
-	/* disconnect the peer if connected through p2p and sends wrong value for session id */
-	if( (pkt_type == YAHOO_PKT_TYPE_P2P) && (val_11 != yd->session_id) ) {
-		purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im ? im->fed_from : "(im was null)");
-		/* remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data */
-		if (im) {
-			g_hash_table_remove(yd->peers, im->fed_from);
-			g_free(im);
-		}
-		return;
-	}
-
 	/* TODO: It seems that this check should be per IM, not global */
 	/* Check for the Doodle IMV */
-	/* no doodle with federated buddies -- assumption???  */
+	/* no doodle with federated buddies */
 	if (im != NULL && imv!= NULL && im->from != NULL)
 	{
 		g_hash_table_replace(yd->imvironments, g_strdup(im->from), g_strdup(imv));
