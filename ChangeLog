@@ -16,6 +16,7 @@ version 2.6.4 (??/??/20??):
 	* Fix a random crash that might occur when idle.
 	* Fix more FQY 240 connection errors.
 	* Fix a crash that could occur when adding a buddy.
+	* Fix an occasional crash when sending message to an offline user.
 
 	XMPP:
 	* Users connecting to Google Talk now have an "Initiate Chat" context menu
