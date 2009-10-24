@@ -951,7 +951,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 	GSList *l = pkt->hash;
 	GSList *list = NULL;
 	struct _yahoo_im *im = NULL;
-	const char *imv = NULL;
 
 	account = purple_connection_get_account(gc);
 
@@ -1019,9 +1018,41 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				}
 			}
 			/* IMV key */
-			if (pair->key == 63)
+			if (im && pair->key == 63)
 			{
-				imv = pair->value;
+				/* Check for the Doodle IMV, no IMvironment for federated buddies */
+				if (im->from != NULL && im->fed == YAHOO_FEDERATION_NONE)
+				{
+					g_hash_table_replace(yd->imvironments, g_strdup(im->from), g_strdup(pair->value));
+
+					if (strstr(pair->value, "doodle;") != NULL)
+					{
+						PurpleWhiteboard *wb;
+
+						if (!purple_privacy_check(account, im->from)) {
+							purple_debug_info("yahoo", "Doodle request from %s dropped.\n",
+												im->from);
+							g_free(im->fed_from);
+							g_free(im);
+							return;
+						}
+						/* I'm not sure the following ever happens -DAA */
+						wb = purple_whiteboard_get_session(account, im->from);
+
+						/* If a Doodle session doesn't exist between this user */
+						if(wb == NULL)
+						{
+							doodle_session *ds;
+							wb = purple_whiteboard_create(account, im->from,
+											DOODLE_STATE_REQUESTED);
+							ds = wb->proto_data;
+							ds->imv_key = g_strdup(pair->value);
+
+							yahoo_doodle_command_send_request(gc, im->from, pair->value);
+							yahoo_doodle_command_send_ready(gc, im->from, pair->value);
+						}
+					}
+				}
 			}
 			if (pair->key == 429)
 				if (im)
@@ -1031,40 +1062,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 	} else if (pkt->status == 2) {
 		purple_notify_error(gc, NULL,
 		                  _("Your Yahoo! message did not get sent."), NULL);
-	}
-
-	/* TODO: It seems that this check should be per IM, not global */
-	/* Check for the Doodle IMV */
-	/* no doodle with federated buddies */
-	if (im != NULL && imv!= NULL && im->from != NULL)
-	{
-		g_hash_table_replace(yd->imvironments, g_strdup(im->from), g_strdup(imv));
-
-		if (strstr(imv, "doodle;") != NULL)
-		{
-			PurpleWhiteboard *wb;
-
-			if (!purple_privacy_check(account, im->from)) {
-				purple_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
-				return;
-			}
-
-			/* I'm not sure the following ever happens -DAA */
-
-			wb = purple_whiteboard_get_session(account, im->from);
-
-			/* If a Doodle session doesn't exist between this user */
-			if(wb == NULL)
-			{
-				doodle_session *ds;
-				wb = purple_whiteboard_create(account, im->from, DOODLE_STATE_REQUESTED);
-				ds = wb->proto_data;
-				ds->imv_key = g_strdup(imv);
-
-				yahoo_doodle_command_send_request(gc, im->from, imv);
-				yahoo_doodle_command_send_ready(gc, im->from, imv);
-			}
-		}
 	}
 
 	for (l = list; l; l = l->next) {
