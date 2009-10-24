@@ -879,6 +879,7 @@ struct _yahoo_im {
 	char *id;
 	char *msg;
 	YahooFederation fed;
+	char *fed_from;
 };
 
 static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -950,9 +951,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 	GSList *l = pkt->hash;
 	GSList *list = NULL;
 	struct _yahoo_im *im = NULL;
-	const char *imv = NULL;
-	gint val_11 = 0;
-	char *fed_from = NULL;
 
 	account = purple_connection_get_account(gc);
 
@@ -963,10 +961,11 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			if (pair->key == 4 || pair->key == 1) {
 				im = g_new0(struct _yahoo_im, 1);
 				list = g_slist_append(list, im);
-				im->from = fed_from = pair->value;
+				im->from = pair->value;
 				im->time = time(NULL);
 				im->utf8 = TRUE;
 				im->fed = YAHOO_FEDERATION_NONE;
+				im->fed_from = g_strdup(im->from);
 			}
 			if (im && pair->key == 5)
 				im->active_id = pair->value;
@@ -985,32 +984,75 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			}
 			if (im && pair->key == 241) {
 				im->fed = strtol(pair->value, NULL, 10);
+				g_free(im->fed_from);
 				switch (im->fed) {
 					case YAHOO_FEDERATION_MSN:
-						fed_from = g_strconcat("msn/",im->from, NULL);
+						im->fed_from = g_strconcat("msn/",im->from, NULL);
 						break;
 					case YAHOO_FEDERATION_OCS:
-						fed_from = g_strconcat("ocs/",im->from, NULL);
+						im->fed_from = g_strconcat("ocs/",im->from, NULL);
 						break;
 					case YAHOO_FEDERATION_IBM:
-						fed_from = g_strconcat("ibm/",im->from, NULL);
+						im->fed_from = g_strconcat("ibm/",im->from, NULL);
 						break;
 					case YAHOO_FEDERATION_NONE:
 					default:
+						im->fed_from = g_strdup(im->from);
 						break;
 				}
-				purple_debug_info("yahoo", "Message from federated (%d) buddy %s.\n", im->fed, fed_from);
+				purple_debug_info("yahoo", "Message from federated (%d) buddy %s.\n", im->fed, im->fed_from);
 					
 			}
 			/* peer session id */
-			if (pair->key == 11) {
-				if (im)
-					val_11 = strtol(pair->value, NULL, 10);
+			if (im && (pair->key == 11)) {
+				/* disconnect the peer if connected through p2p and sends wrong value for session id */
+				if( (im->fed == YAHOO_FEDERATION_NONE) && (pkt_type == YAHOO_PKT_TYPE_P2P) 
+						&& (yd->session_id != strtol(pair->value, NULL, 10)) )
+				{
+					purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im->fed_from);
+					/* remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data */
+					g_hash_table_remove(yd->peers, im->fed_from);
+					g_free(im->fed_from);
+					g_free(im);
+					return; /* Not sure whether we should process remaining IMs in this packet */
+				}
 			}
 			/* IMV key */
-			if (pair->key == 63)
+			if (im && pair->key == 63)
 			{
-				imv = pair->value;
+				/* Check for the Doodle IMV, no IMvironment for federated buddies */
+				if (im->from != NULL && im->fed == YAHOO_FEDERATION_NONE)
+				{
+					g_hash_table_replace(yd->imvironments, g_strdup(im->from), g_strdup(pair->value));
+
+					if (strstr(pair->value, "doodle;") != NULL)
+					{
+						PurpleWhiteboard *wb;
+
+						if (!purple_privacy_check(account, im->from)) {
+							purple_debug_info("yahoo", "Doodle request from %s dropped.\n",
+												im->from);
+							g_free(im->fed_from);
+							g_free(im);
+							return;
+						}
+						/* I'm not sure the following ever happens -DAA */
+						wb = purple_whiteboard_get_session(account, im->from);
+
+						/* If a Doodle session doesn't exist between this user */
+						if(wb == NULL)
+						{
+							doodle_session *ds;
+							wb = purple_whiteboard_create(account, im->from,
+											DOODLE_STATE_REQUESTED);
+							ds = wb->proto_data;
+							ds->imv_key = g_strdup(pair->value);
+
+							yahoo_doodle_command_send_request(gc, im->from, pair->value);
+							yahoo_doodle_command_send_ready(gc, im->from, pair->value);
+						}
+					}
+				}
 			}
 			if (pair->key == 429)
 				if (im)
@@ -1022,63 +1064,19 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		                  _("Your Yahoo! message did not get sent."), NULL);
 	}
 
-	/* disconnect the peer if connected through p2p and sends wrong value for session id */
-	if( (pkt_type == YAHOO_PKT_TYPE_P2P) && (val_11 != yd->session_id) ) {
-		purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im ? fed_from : "(im was null)");
-		/* remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data */
-		if (im) {
-			g_hash_table_remove(yd->peers, fed_from);
-			g_free(im);
-		}
-		return;
-	}
-
-	/* TODO: It seems that this check should be per IM, not global */
-	/* Check for the Doodle IMV */
-	/* no doodle with federated buddies -- assumption???  */
-	if (im != NULL && imv!= NULL && im->from != NULL)
-	{
-		g_hash_table_replace(yd->imvironments, g_strdup(im->from), g_strdup(imv));
-
-		if (strstr(imv, "doodle;") != NULL)
-		{
-			PurpleWhiteboard *wb;
-
-			if (!purple_privacy_check(account, im->from)) {
-				purple_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
-				return;
-			}
-
-			/* I'm not sure the following ever happens -DAA */
-
-			wb = purple_whiteboard_get_session(account, im->from);
-
-			/* If a Doodle session doesn't exist between this user */
-			if(wb == NULL)
-			{
-				doodle_session *ds;
-				wb = purple_whiteboard_create(account, im->from, DOODLE_STATE_REQUESTED);
-				ds = wb->proto_data;
-				ds->imv_key = g_strdup(imv);
-
-				yahoo_doodle_command_send_request(gc, im->from, imv);
-				yahoo_doodle_command_send_ready(gc, im->from, imv);
-			}
-		}
-	}
-
 	for (l = list; l; l = l->next) {
 		YahooFriend *f;
 		char *m, *m2;
 		im = l->data;
 
-		if (!fed_from || !im->msg) {
+		if (!im->fed_from || !im->msg) {
+			g_free(im->fed_from);
 			g_free(im);
 			continue;
 		}
 
-		if (!purple_privacy_check(account, fed_from)) {
-			purple_debug_info("yahoo", "Message from %s dropped.\n", fed_from);
+		if (!purple_privacy_check(account, im->fed_from)) {
+			purple_debug_info("yahoo", "Message from %s dropped.\n", im->fed_from);
 			return;
 		}
 
@@ -1116,10 +1114,11 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		if (!strcmp(m, "<ding>")) {
 			char *username;
 
-			username = g_markup_escape_text(fed_from, -1);
+			username = g_markup_escape_text(im->fed_from, -1);
 			purple_prpl_got_attention(gc, username, YAHOO_BUZZ);
 			g_free(username);
 			g_free(m);
+			g_free(im->fed_from);
 			g_free(im);
 			continue;
 		}
@@ -1127,7 +1126,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		m2 = yahoo_codes_to_html(m);
 		g_free(m);
 
-		serv_got_im(gc, fed_from, m2, 0, im->time);
+		serv_got_im(gc, im->fed_from, m2, 0, im->time);
 		g_free(m2);
 
 		/* Official clients don't share buddy images with federated buddies */
@@ -1140,9 +1139,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			}
 		}
 
-		if(im->fed != YAHOO_FEDERATION_NONE)
-			g_free(fed_from);
-
+		g_free(im->fed_from);
 		g_free(im);
 	}
 
