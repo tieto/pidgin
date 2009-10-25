@@ -2374,6 +2374,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 
 	if (status_box->account == NULL) {
 		PurpleStatusType *acct_status_type = NULL;
+		const char *id = NULL; /* id of acct_status_type */
 		PurpleStatusPrimitive primitive = GPOINTER_TO_INT(data);
 		/* Global */
 		/* Save the newly selected status to prefs.xml and status.xml */
@@ -2382,7 +2383,6 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 		if (status_box->token_status_account) {
 			gint active;
 			PurpleStatus *status;
-			const char *id = NULL;
 			GtkTreePath *path = gtk_tree_row_reference_get_path(status_box->active_row);
 			active = gtk_tree_path_get_indices(path)[0];
 
@@ -2390,7 +2390,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 
 			status = purple_account_get_active_status(status_box->token_status_account);
 
-			 acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
+			acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
 			id = purple_status_type_get_id(acct_status_type);
 
 			if (strncmp(id, purple_status_get_id(status), strlen(id)) == 0)
@@ -2420,7 +2420,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 
 		if (changed)
 		{
-			/* Manually find the appropriate transient acct */
+			/* Manually find the appropriate transient status */
 			if (status_box->token_status_account) {
 				GList *iter = purple_savedstatuses_get_all();
 				GList *tmp, *active_accts = purple_accounts_get_all_active();
@@ -2428,6 +2428,8 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 				for (; iter != NULL; iter = iter->next) {
 					PurpleSavedStatus *ss = iter->data;
 					const char *ss_msg = purple_savedstatus_get_message(ss);
+					/* find a known transient status that is the same as the
+					 * new selected one */
 					if ((purple_savedstatus_get_type(ss) == primitive) && purple_savedstatus_is_transient(ss) &&
 						purple_savedstatus_has_substatuses(ss) && /* Must have substatuses */
 						purple_strequal(ss_msg, message))
@@ -2440,8 +2442,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 							if (sub) {
 								const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_type(sub);
 								const char *subtype_status_id = purple_status_type_get_id(sub_type);
-								if (subtype_status_id && !strcmp(subtype_status_id,
-										purple_status_type_get_id(acct_status_type))) {
+								if (purple_strequal(subtype_status_id, id)) {
 									found = TRUE;
 									break;
 								}
