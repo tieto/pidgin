@@ -2324,18 +2324,6 @@ pidgin_status_box_pulse_typing(PidginStatusBox *status_box)
 	pidgin_status_box_refresh(status_box);
 }
 
-static gboolean
-message_changed(const char *one, const char *two)
-{
-	if (one == NULL && two == NULL)
-		return FALSE;
-
-	if (one == NULL || two == NULL)
-		return TRUE;
-
-	return (g_utf8_collate(one, two) != 0);
-}
-
 static void
 activate_currently_selected_status(PidginStatusBox *status_box)
 {
@@ -2408,7 +2396,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 			if (strncmp(id, purple_status_get_id(status), strlen(id)) == 0)
 			{
 				/* Selected status and previous status is the same */
-				if (!message_changed(message, purple_status_get_attr_string(status, "message")))
+				if (purple_strequal(message, purple_status_get_attr_string(status, "message")))
 				{
 					PurpleSavedStatus *ss = purple_savedstatus_get_current();
 					/* Make sure that statusbox displays the correct thing.
@@ -2425,7 +2413,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 			if (purple_savedstatus_get_type(saved_status) == primitive &&
 			    !purple_savedstatus_has_substatuses(saved_status))
 			{
-				if (!message_changed(purple_savedstatus_get_message(saved_status), message))
+				if (purple_strequal(purple_savedstatus_get_message(saved_status), message))
 					changed = FALSE;
 			}
 		}
@@ -2442,7 +2430,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 					const char *ss_msg = purple_savedstatus_get_message(ss);
 					if ((purple_savedstatus_get_type(ss) == primitive) && purple_savedstatus_is_transient(ss) &&
 						purple_savedstatus_has_substatuses(ss) && /* Must have substatuses */
-						!message_changed(ss_msg, message))
+						purple_strequal(ss_msg, message))
 					{
 						gboolean found = FALSE;
 						/* The currently enabled accounts must have substatuses for all the active accts */
@@ -2509,7 +2497,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 		if (strncmp(id, purple_status_get_id(status), strlen(id)) == 0)
 		{
 			/* Selected status and previous status is the same */
-			if (!message_changed(message, purple_status_get_attr_string(status, "message")))
+			if (purple_strequal(message, purple_status_get_attr_string(status, "message")))
 				changed = FALSE;
 		}
 
