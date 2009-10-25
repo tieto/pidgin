@@ -43,6 +43,7 @@ version 2.6.4 (??/??/20??):
 	* The userlist in a multiuser chat can be styled via gtkrc by using the
 	  widget name "pidgin_conv_userlist". (Heiko Schmitt)
 	* Add a hold button to the media window.
+	* Tooltips for custom smileys should work now.
 
 version 2.6.3 (10/16/2009):
 	General:
