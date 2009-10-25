@@ -2393,7 +2393,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 			acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
 			id = purple_status_type_get_id(acct_status_type);
 
-			if (strncmp(id, purple_status_get_id(status), strlen(id)) == 0)
+			if (g_str_equal(id, purple_status_get_id(status)))
 			{
 				/* Selected status and previous status is the same */
 				if (purple_strequal(message, purple_status_get_attr_string(status, "message")))
@@ -2495,7 +2495,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 		status_type = find_status_type_by_index(status_box->account, active);
 		id = purple_status_type_get_id(status_type);
 
-		if (strncmp(id, purple_status_get_id(status), strlen(id)) == 0)
+		if (g_str_equal(id, purple_status_get_id(status)))
 		{
 			/* Selected status and previous status is the same */
 			if (purple_strequal(message, purple_status_get_attr_string(status, "message")))
