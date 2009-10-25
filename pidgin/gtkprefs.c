@@ -624,7 +624,8 @@ prefs_themes_refresh(void)
 		_("The default Pidgin status icon theme"));
 	gtk_list_store_set(prefs_status_icon_themes, &iter, 0, pixbuf, 1, tmp, 2, "", -1);
 	g_free(tmp);
-	g_object_unref(G_OBJECT(pixbuf));
+	if (pixbuf)
+		g_object_unref(G_OBJECT(pixbuf));
 
 	purple_theme_manager_for_each_theme(prefs_themes_sort);
 	pref_sound_generate_markup();
