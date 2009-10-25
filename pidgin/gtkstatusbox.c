@@ -2453,14 +2453,17 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 								const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_type(sub);
 								const char *subtype_status_id = purple_status_type_get_id(sub_type);
 								if (subtype_status_id && !strcmp(subtype_status_id,
-										purple_status_type_get_id(acct_status_type)))
+										purple_status_type_get_id(acct_status_type))) {
 									found = TRUE;
+									break;
+								}
 							}
 						}
-						if (!found)
-							continue;
-						saved_status = ss;
-						break;
+
+						if (found) {
+							saved_status = ss;
+							break;
+						}
 					}
 				}
 
