@@ -774,12 +774,14 @@ purple_media_add_session(PurpleMedia *media, PurpleMediaSession *session)
 	g_hash_table_insert(media->priv->sessions, g_strdup(session->id), session);
 }
 
+#if 0
 static gboolean
 purple_media_remove_session(PurpleMedia *media, PurpleMediaSession *session)
 {
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
 	return g_hash_table_remove(media->priv->sessions, session->id);
 }
+#endif
 
 static PurpleMediaStream *
 purple_media_insert_stream(PurpleMediaSession *session, const gchar *name, FsStream *stream)
