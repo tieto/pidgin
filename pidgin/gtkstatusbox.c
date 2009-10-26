@@ -996,50 +996,50 @@ add_popular_statuses(PidginStatusBox *statusbox)
  * statuses and a token account if they do */
 static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 {
-	PurpleAccount *acct = NULL, *acct2;
-	GList *tmp, *tmp2, *active_accts = purple_accounts_get_all_active();
-	GList *s, *s1, *s2;
+	GList *iter, *active_accts = purple_accounts_get_all_active();
+	PurpleAccount *acct1 = NULL;
+	const char *prpl1 = NULL;
 
-	for (tmp = active_accts; tmp; tmp = tmp->next) {
-		acct = tmp->data;
-		s = purple_account_get_status_types(acct);
-		for (tmp2 = tmp->next; tmp2; tmp2 = tmp2->next) {
-			acct2 = tmp2->data;
+	if (active_accts) {
+		acct1 = active_accts->data;
+		prpl1 = purple_account_get_protocol_id(acct1);
+	} else {
+		/* there's no enabled account */
+		return NULL;
+	}
 
-			/* Only actually look at the statuses if the accounts use the same prpl */
-			if (strcmp(purple_account_get_protocol_id(acct), purple_account_get_protocol_id(acct2))) {
-				acct = NULL;
-				break;
-			}
+	/* start at the second account */
+	for (iter = active_accts->next; iter; iter = iter->next) {
+		PurpleAccount *acct2 = iter->data;
+		GList *s1, *s2;
 
-			s2 = purple_account_get_status_types(acct2);
+		if (!g_str_equal(prpl1, purple_account_get_protocol_id(acct2))) {
+			acct1 = NULL;
+			break;
+		}
 
-			s1 = s;
-			while (s1 && s2) {
-				PurpleStatusType *st1 = s1->data, *st2 = s2->data;
-				/* TODO: Are these enough to consider the statuses identical? */
-				if (purple_status_type_get_primitive(st1) != purple_status_type_get_primitive(st2)
-						|| strcmp(purple_status_type_get_id(st1), purple_status_type_get_id(st2))
-						|| strcmp(purple_status_type_get_name(st1), purple_status_type_get_name(st2))) {
-					acct = NULL;
-					break;
-				}
-
-				s1 = s1->next;
-				s2 = s2->next;
-			}
-
-			if (s1 != s2) {/* Will both be NULL if matched */
-				acct = NULL;
+		for (s1 = purple_account_get_status_types(acct1),
+				 s2 = purple_account_get_status_types(acct2); s1 && s2;
+			 s1 = s1->next, s2 = s2->next) {
+			PurpleStatusType *st1 = s1->data, *st2 = s2->data;
+			/* TODO: Are these enough to consider the statuses identical? */
+			if (purple_status_type_get_primitive(st1) != purple_status_type_get_primitive(st2)
+				|| strcmp(purple_status_type_get_id(st1), purple_status_type_get_id(st2))
+				|| strcmp(purple_status_type_get_name(st1), purple_status_type_get_name(st2))) {
+				acct1 = NULL;
 				break;
 			}
 		}
-		if (!acct)
+
+		if (s1 != s2) {/* Will both be NULL if matched */
+			acct1 = NULL;
 			break;
+		}
 	}
+
 	g_list_free(active_accts);
 
-	return acct;
+	return acct1;
 }
 
 static void
