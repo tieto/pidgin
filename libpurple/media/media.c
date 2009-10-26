@@ -658,59 +658,6 @@ purple_media_codec_to_fs(const PurpleMediaCodec *codec)
 	return new_codec;
 }
 
-static PurpleMediaCodec *
-purple_media_codec_from_fs(const FsCodec *codec)
-{
-	PurpleMediaCodec *new_codec;
-	GList *iter;
-
-	if (codec == NULL)
-		return NULL;
-
-	new_codec = purple_media_codec_new(codec->id, codec->encoding_name,
-			purple_media_from_fs(codec->media_type,
-			FS_DIRECTION_BOTH), codec->clock_rate);
-	g_object_set(new_codec, "channels", codec->channels, NULL);
-
-	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
-		FsCodecParameter *param = (FsCodecParameter*)iter->data;
-		purple_media_codec_add_optional_parameter(new_codec,
-				param->name, param->value);
-	}
-
-	return new_codec;
-}
-
-static GList *
-purple_media_codec_list_from_fs(GList *codecs)
-{
-	GList *new_list = NULL;
-
-	for (; codecs; codecs = g_list_next(codecs)) {
-		new_list = g_list_prepend(new_list,
-				purple_media_codec_from_fs(
-				codecs->data));
-	}
-
-	new_list = g_list_reverse(new_list);
-	return new_list;
-}
-
-static GList *
-purple_media_codec_list_to_fs(GList *codecs)
-{
-	GList *new_list = NULL;
-
-	for (; codecs; codecs = g_list_next(codecs)) {
-		new_list = g_list_prepend(new_list,
-				purple_media_codec_to_fs(
-				codecs->data));
-	}
-
-	new_list = g_list_reverse(new_list);
-	return new_list;
-}
-
 static PurpleMediaSession*
 purple_media_get_session(PurpleMedia *media, const gchar *sess_id)
 {
@@ -1585,29 +1532,10 @@ purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id,
                                const gchar *participant, GList *codecs)
 {
 #ifdef USE_VV
-	PurpleMediaStream *stream;
-	FsStream *fsstream;
-	GList *fscodecs;
-	GError *err = NULL;
-
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
-	stream = purple_media_get_stream(media, sess_id, participant);
 
-	if (stream == NULL)
-		return FALSE;
-
-	fsstream = stream->stream;
-	fscodecs = purple_media_codec_list_to_fs(codecs);
-	fs_stream_set_remote_codecs(fsstream, fscodecs, &err);
-	fs_codec_list_destroy(fscodecs);
-
-	if (err) {
-		purple_debug_error("media", "Error setting remote codecs: %s\n",
-				   err->message);
-		g_error_free(err);
-		return FALSE;
-	}
-	return TRUE;
+	return purple_media_backend_set_remote_codecs(media->priv->backend,
+			sess_id, participant, codecs);
 #else
 	return FALSE;
 #endif

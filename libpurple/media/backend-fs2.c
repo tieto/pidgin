@@ -481,7 +481,6 @@ _candidate_list_from_fs(GList *candidates)
 	return new_list;
 }
 
-#if 0
 static FsCodec *
 _codec_to_fs(const PurpleMediaCodec *codec)
 {
@@ -519,7 +518,6 @@ _codec_to_fs(const PurpleMediaCodec *codec)
 	g_free(encoding_name);
 	return new_codec;
 }
-#endif
 
 static PurpleMediaCodec *
 _codec_from_fs(const FsCodec *codec)
@@ -558,7 +556,6 @@ _codec_list_from_fs(GList *codecs)
 	return new_list;
 }
 
-#if 0
 static GList *
 _codec_list_to_fs(GList *codecs)
 {
@@ -572,7 +569,6 @@ _codec_list_to_fs(GList *codecs)
 	new_list = g_list_reverse(new_list);
 	return new_list;
 }
-#endif
 
 static PurpleMediaBackendFs2Session *
 _get_session(PurpleMediaBackendFs2 *self, const gchar *sess_id)
@@ -1435,7 +1431,30 @@ purple_media_backend_fs2_set_remote_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
 		GList *codecs)
 {
-	return FALSE;
+	PurpleMediaBackendFs2Stream *stream;
+	GList *fscodecs;
+	GError *err = NULL;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
+	stream = _get_stream(PURPLE_MEDIA_BACKEND_FS2(self),
+			sess_id, participant);
+
+	if (stream == NULL)
+		return FALSE;
+
+	fscodecs = _codec_list_to_fs(codecs);
+	fs_stream_set_remote_codecs(stream->stream, fscodecs, &err);
+	fs_codec_list_destroy(fscodecs);
+
+	if (err) {
+		purple_debug_error("backend-fs2",
+				"Error setting remote codecs: %s\n",
+				err->message);
+		g_error_free(err);
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 static void
