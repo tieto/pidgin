@@ -975,7 +975,7 @@ void jabber_caps_calculate_own_hash(JabberStream *js) {
 	g_free(js->caps_hash);
 	js->caps_hash = jabber_caps_calculate_hash(&info, "sha1");
 	g_list_free(info.identities);
-	g_list_free(features);
+	g_list_free(info.features);
 }
 
 const gchar* jabber_caps_get_own_hash(JabberStream *js)
