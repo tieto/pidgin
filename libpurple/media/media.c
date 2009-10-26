@@ -1531,7 +1531,6 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 {
 #ifdef USE_VV
 	PurpleMediaStream *stream;
-	GError *err = NULL;
 
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
 	stream = purple_media_get_stream(media, sess_id, participant);
@@ -1549,17 +1548,9 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 			purple_media_candidate_list_copy(remote_candidates));
 
 	if (stream->accepted == TRUE) {
-		GList *candidates = purple_media_candidate_list_to_fs(
-				stream->remote_candidates);
-		fs_stream_set_remote_candidates(stream->stream,
-				candidates, &err);
-		fs_candidate_list_destroy(candidates);
-
-		if (err) {
-			purple_debug_error("media", "Error adding remote"
-					" candidates: %s\n", err->message);
-			g_error_free(err);
-		}
+		purple_media_backend_add_remote_candidates(
+				media->priv->backend, sess_id, participant,
+				remote_candidates);
 	}
 #endif
 }
