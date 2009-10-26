@@ -1490,22 +1490,9 @@ GList *
 purple_media_get_codecs(PurpleMedia *media, const gchar *sess_id)
 {
 #ifdef USE_VV
-	GList *fscodecs;
-	GList *codecs;
-	PurpleMediaSession *session;
-
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
 
-	session = purple_media_get_session(media, sess_id);
-
-	if (session == NULL)
-		return NULL;
-
-	g_object_get(G_OBJECT(session->session),
-		     "codecs", &fscodecs, NULL);
-	codecs = purple_media_codec_list_from_fs(fscodecs);
-	fs_codec_list_destroy(fscodecs);
-	return codecs;
+	return purple_media_backend_get_codecs(media->priv->backend, sess_id);
 #else
 	return NULL;
 #endif

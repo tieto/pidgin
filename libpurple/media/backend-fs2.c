@@ -363,7 +363,6 @@ _session_type_to_fs_stream_direction(PurpleMediaSessionType type)
 		return FS_DIRECTION_NONE;
 }
 
-#if 0
 static PurpleMediaSessionType
 _session_type_from_fs(FsMediaType type, FsStreamDirection direction)
 {
@@ -381,7 +380,6 @@ _session_type_from_fs(FsMediaType type, FsStreamDirection direction)
 	}
 	return result;
 }
-#endif
 
 static FsCandidate *
 _candidate_to_fs(PurpleMediaCandidate *candidate)
@@ -468,6 +466,99 @@ purple_media_candidate_from_fs(FsCandidate *fscandidate)
 			"ttl", fscandidate->ttl, NULL);
 	return candidate;
 }
+
+#if 0
+static FsCodec *
+_codec_to_fs(const PurpleMediaCodec *codec)
+{
+	FsCodec *new_codec;
+	gint id;
+	char *encoding_name;
+	PurpleMediaSessionType media_type;
+	guint clock_rate;
+	guint channels;
+	GList *iter;
+
+	if (codec == NULL)
+		return NULL;
+
+	g_object_get(G_OBJECT(codec),
+			"id", &id,
+			"encoding-name", &encoding_name,
+			"media-type", &media_type,
+			"clock-rate", &clock_rate,
+			"channels", &channels,
+			"optional-params", &iter,
+			NULL);
+
+	new_codec = fs_codec_new(id, encoding_name,
+			_session_type_to_fs_media_type(media_type),
+			clock_rate);
+	new_codec->channels = channels;
+
+	for (; iter; iter = g_list_next(iter)) {
+		PurpleKeyValuePair *param = (PurpleKeyValuePair*)iter->data;
+		fs_codec_add_optional_parameter(new_codec,
+				param->key, param->value);
+	}
+
+	g_free(encoding_name);
+	return new_codec;
+}
+#endif
+
+static PurpleMediaCodec *
+_codec_from_fs(const FsCodec *codec)
+{
+	PurpleMediaCodec *new_codec;
+	GList *iter;
+
+	if (codec == NULL)
+		return NULL;
+
+	new_codec = purple_media_codec_new(codec->id, codec->encoding_name,
+			_session_type_from_fs(codec->media_type,
+			FS_DIRECTION_BOTH), codec->clock_rate);
+	g_object_set(new_codec, "channels", codec->channels, NULL);
+
+	for (iter = codec->optional_params; iter; iter = g_list_next(iter)) {
+		FsCodecParameter *param = (FsCodecParameter*)iter->data;
+		purple_media_codec_add_optional_parameter(new_codec,
+				param->name, param->value);
+	}
+
+	return new_codec;
+}
+
+static GList *
+_codec_list_from_fs(GList *codecs)
+{
+	GList *new_list = NULL;
+
+	for (; codecs; codecs = g_list_next(codecs)) {
+		new_list = g_list_prepend(new_list,
+				_codec_from_fs(codecs->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+
+#if 0
+static GList *
+_codec_list_to_fs(GList *codecs)
+{
+	GList *new_list = NULL;
+
+	for (; codecs; codecs = g_list_next(codecs)) {
+		new_list = g_list_prepend(new_list,
+				_codec_to_fs(codecs->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+#endif
 
 static PurpleMediaBackendFs2Session *
 _get_session(PurpleMediaBackendFs2 *self, const gchar *sess_id)
@@ -1284,7 +1375,26 @@ static GList *
 purple_media_backend_fs2_get_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id)
 {
-	return NULL;
+	PurpleMediaBackendFs2Private *priv;
+	PurpleMediaBackendFs2Session *session;
+	GList *fscodecs;
+	GList *codecs;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), NULL);
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+
+	session = _get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
+
+	if (session == NULL)
+		return NULL;
+
+	g_object_get(G_OBJECT(session->session),
+		     "codecs", &fscodecs, NULL);
+	codecs = _codec_list_from_fs(fscodecs);
+	fs_codec_list_destroy(fscodecs);
+
+	return codecs;
 }
 
 static GList *
