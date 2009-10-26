@@ -4184,6 +4184,12 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 		}
 	}
 
+	if (hidden_conv) {
+		char *tmp = nametext;
+		nametext = g_strdup_printf("<b>%s</b>", tmp);
+		g_free(tmp);
+	}
+
 	/* Put it all together */
 	if ((!aliased || biglist) && (statustext || idletime)) {
 		/* using <span size='smaller'> breaks the status, so it must be seperated into <small><span>*/
