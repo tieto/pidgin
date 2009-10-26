@@ -176,11 +176,11 @@ purple_media_backend_set_remote_codecs(PurpleMediaBackend *self,
 			self, sess_id, participant, codecs);
 }
 
-void
+gboolean
 purple_media_backend_set_send_codec(PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec)
 {
-	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND(self));
-	PURPLE_MEDIA_BACKEND_GET_INTERFACE(self)->set_send_codec(self,
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND(self), FALSE);
+	return PURPLE_MEDIA_BACKEND_GET_INTERFACE(self)->set_send_codec(self,
 			sess_id, codec);
 }

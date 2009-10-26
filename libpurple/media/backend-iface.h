@@ -61,7 +61,7 @@ struct _PurpleMediaBackendIface
 	gboolean (*set_remote_codecs) (PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
 		GList *codecs);
-	void (*set_send_codec) (PurpleMediaBackend *self,
+	gboolean (*set_send_codec) (PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec);
 };
 
@@ -82,7 +82,7 @@ GList *purple_media_backend_get_local_candidates(PurpleMediaBackend *self,
 gboolean purple_media_backend_set_remote_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
 		GList *codecs);
-void purple_media_backend_set_send_codec(PurpleMediaBackend *self,
+gboolean purple_media_backend_set_send_codec(PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec);
 
 G_END_DECLS

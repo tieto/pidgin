@@ -79,8 +79,9 @@ static gboolean purple_media_backend_fs2_set_remote_codecs(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
 		GList *codecs);
-static void purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
-		const gchar *sess_id, PurpleMediaCodec *codec);
+static gboolean purple_media_backend_fs2_set_send_codec(
+		PurpleMediaBackend *self, const gchar *sess_id,
+		PurpleMediaCodec *codec);
 
 struct _PurpleMediaBackendFs2Class
 {
@@ -1457,10 +1458,11 @@ purple_media_backend_fs2_set_remote_codecs(PurpleMediaBackend *self,
 	return TRUE;
 }
 
-static void
+static gboolean
 purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec)
 {
+	return TRUE;
 }
 
 FsConference *
