@@ -1352,7 +1352,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 	FsMediaType media_type = purple_media_to_fs_media_type(type);
 	FsStreamDirection type_direction =
 			purple_media_to_fs_stream_direction(type);
-	gboolean is_nice = !strcmp(transmitter, "nice");
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
 
@@ -1432,91 +1431,11 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 	stream = purple_media_get_stream(media, sess_id, who);
 
 	if (!stream) {
-		GError *err = NULL;
 		FsStream *fsstream = NULL;
-		const gchar *stun_ip = purple_network_get_stun_ip();
-		const gchar *turn_ip = purple_network_get_turn_ip();
 
-		if (stun_ip || turn_ip) {
-			guint new_num_params = 
-					(stun_ip && is_nice) && turn_ip ?
-					num_params + 2 : num_params + 1;
-			guint next_param_index = num_params;
-			GParameter *param = g_new0(GParameter, new_num_params);
-			memcpy(param, params, sizeof(GParameter) * num_params);
-
-			if (stun_ip) {
-				purple_debug_info("media", 
-					"setting property stun-ip on new stream: %s\n", stun_ip);
-
-				param[next_param_index].name = "stun-ip";
-				g_value_init(&param[next_param_index].value, G_TYPE_STRING);
-				g_value_set_string(&param[next_param_index].value, stun_ip);
-				next_param_index++;
-			}
-
-			if (turn_ip && is_nice) {
-				GValueArray *relay_info = g_value_array_new(0);
-				GValue value;
-				gint turn_port = 
-					purple_prefs_get_int("/purple/network/turn_port");
-				const gchar *username =
-					purple_prefs_get_string("/purple/network/turn_username");
-				const gchar *password =
-					purple_prefs_get_string("/purple/network/turn_password");
-				GstStructure *turn_setup = gst_structure_new("relay-info",
-					"ip", G_TYPE_STRING, turn_ip, 
-					"port", G_TYPE_UINT, turn_port,
-					"username", G_TYPE_STRING, username,
-					"password", G_TYPE_STRING, password,
-					NULL);
-
-				if (turn_setup) {
-					memset(&value, 0, sizeof(GValue));
-					g_value_init(&value, GST_TYPE_STRUCTURE);
-					gst_value_set_structure(&value, turn_setup);
-					relay_info = g_value_array_append(relay_info, &value);
-					gst_structure_free(turn_setup);
-
-					purple_debug_info("media",
-						"setting property relay-info on new stream\n");
-					param[next_param_index].name = "relay-info";
-					g_value_init(&param[next_param_index].value, 
-						G_TYPE_VALUE_ARRAY);
-					g_value_set_boxed(&param[next_param_index].value,
-						relay_info);
-					g_value_array_free(relay_info);
-				} else {
-					purple_debug_error("media", "Error relay info");
-					purple_media_remove_session(media, session);
-					g_free(session);
-					return FALSE;
-				}
-			}
-
-			fsstream = fs_session_new_stream(session->session,
-					participant, type_direction &
-					FS_DIRECTION_RECV, transmitter,
-					new_num_params, param, &err);
-			g_free(param);
-		} else {
-			fsstream = fs_session_new_stream(session->session,
-					participant, type_direction &
-					FS_DIRECTION_RECV, transmitter,
-					num_params, params, &err);
-		}
-
-		if (fsstream == NULL) {
-			purple_debug_error("media",
-					"Error creating stream: %s\n",
-					err && err->message ?
-					err->message : "NULL");
-			if (err)
-				g_error_free(err);
-			purple_media_remove_session(media, session);
-			g_free(session);
-			return FALSE;
-		}
+		fsstream = purple_media_backend_fs2_get_stream(
+				PURPLE_MEDIA_BACKEND_FS2(
+				media->priv->backend), sess_id, who);
 
 		stream = purple_media_insert_stream(session, who, fsstream);
 		stream->initiator = initiator;

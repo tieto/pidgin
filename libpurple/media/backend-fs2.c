@@ -30,6 +30,7 @@
 
 #include "backend-iface.h"
 #include "debug.h"
+#include "network.h"
 #include "media-gst.h"
 
 #include <gst/farsight/fs-conference-iface.h>
@@ -41,6 +42,8 @@ typedef struct _PurpleMediaBackendFs2Class PurpleMediaBackendFs2Class;
 typedef struct _PurpleMediaBackendFs2Private PurpleMediaBackendFs2Private;
 /** @copydoc _PurpleMediaBackendFs2Session */
 typedef struct _PurpleMediaBackendFs2Session PurpleMediaBackendFs2Session;
+/** @copydoc _PurpleMediaBackendFs2Stream */
+typedef struct _PurpleMediaBackendFs2Stream PurpleMediaBackendFs2Stream;
 
 #define PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(obj) \
 		(G_TYPE_INSTANCE_GET_PRIVATE((obj), \
@@ -93,6 +96,25 @@ G_DEFINE_TYPE_WITH_CODE(PurpleMediaBackendFs2, purple_media_backend_fs2,
 		G_TYPE_OBJECT, G_IMPLEMENT_INTERFACE(
 		PURPLE_TYPE_MEDIA_BACKEND, purple_media_backend_iface_init));
 
+struct _PurpleMediaBackendFs2Stream
+{
+	PurpleMediaBackendFs2Session *session;
+	gchar *participant;
+	FsStream *stream;
+
+	GList *local_candidates;
+	GList *remote_candidates;
+
+	GList *active_local_candidates;
+	GList *active_remote_candidates;
+
+	guint connected_cb_id;
+
+	gboolean initiator;
+	gboolean accepted;
+	gboolean candidates_prepared;
+};
+
 struct _PurpleMediaBackendFs2Session
 {
 	PurpleMediaBackendFs2 *backend;
@@ -111,6 +133,8 @@ struct _PurpleMediaBackendFs2Private
 
 	GHashTable *sessions;
 	GHashTable *participants;
+
+	GList *streams;
 };
 
 enum {
@@ -323,7 +347,6 @@ _session_type_to_fs_media_type(PurpleMediaSessionType type)
 		return 0;
 }
 
-#if 0
 static FsStreamDirection
 _session_type_to_fs_stream_direction(PurpleMediaSessionType type)
 {
@@ -340,6 +363,7 @@ _session_type_to_fs_stream_direction(PurpleMediaSessionType type)
 		return FS_DIRECTION_NONE;
 }
 
+#if 0
 static PurpleMediaSessionType
 _session_type_from_fs(FsMediaType type, FsStreamDirection direction)
 {
@@ -461,6 +485,28 @@ _get_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 		participant = g_hash_table_lookup(priv->participants, name);
 
 	return participant;
+}
+
+static PurpleMediaBackendFs2Stream *
+_get_stream(PurpleMediaBackendFs2 *self,
+		const gchar *sess_id, const gchar *name)
+{
+	PurpleMediaBackendFs2Private *priv;
+	GList *streams;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), NULL);
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+	streams = priv->streams;
+
+	for (; streams; streams = g_list_next(streams)) {
+		PurpleMediaBackendFs2Stream *stream = streams->data;
+		if (!strcmp(stream->session->id, sess_id) &&
+				!strcmp(stream->participant, name))
+			return stream;
+	}
+
+	return NULL;
 }
 
 static PurpleMediaBackendFs2Session *
@@ -1023,6 +1069,122 @@ _create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 }
 
 static gboolean
+_create_stream(PurpleMediaBackendFs2 *self,
+		const gchar *sess_id, const gchar *who,
+		PurpleMediaSessionType type, gboolean initiator,
+		const gchar *transmitter,
+		guint num_params, GParameter *params)
+{
+	PurpleMediaBackendFs2Private *priv =
+			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+	GError *err = NULL;
+	FsStream *fsstream = NULL;
+	const gchar *stun_ip = purple_network_get_stun_ip();
+	const gchar *turn_ip = purple_network_get_turn_ip();
+	guint _num_params = num_params;
+	GParameter *_params = g_new0(GParameter, num_params + 2);
+	FsStreamDirection type_direction =
+			_session_type_to_fs_stream_direction(type);
+	PurpleMediaBackendFs2Session *session;
+	PurpleMediaBackendFs2Stream *stream;
+	FsParticipant *participant;
+
+	memcpy(_params, params, sizeof(GParameter) * num_params);
+
+	if (stun_ip) {
+		purple_debug_info("backend-fs2", 
+			"Setting stun-ip on new stream: %s\n", stun_ip);
+
+		_params[_num_params].name = "stun-ip";
+		g_value_init(&_params[_num_params].value, G_TYPE_STRING);
+		g_value_set_string(&_params[_num_params].value, stun_ip);
+		++_num_params;
+	}
+
+	if (turn_ip && !strcmp("nice", transmitter)) {
+		GValueArray *relay_info = g_value_array_new(0);
+		GValue value;
+		gint turn_port = purple_prefs_get_int(
+				"/purple/network/turn_port");
+		const gchar *username =	purple_prefs_get_string(
+				"/purple/network/turn_username");
+		const gchar *password = purple_prefs_get_string(
+				"/purple/network/turn_password");
+		GstStructure *turn_setup = gst_structure_new("relay-info",
+				"ip", G_TYPE_STRING, turn_ip, 
+				"port", G_TYPE_UINT, turn_port,
+				"username", G_TYPE_STRING, username,
+				"password", G_TYPE_STRING, password,
+				NULL);
+
+		if (!turn_setup) {
+			purple_debug_error("backend-fs2",
+					"Error creating relay info structure");
+			return FALSE;
+		}
+
+		memset(&value, 0, sizeof(GValue));
+		g_value_init(&value, GST_TYPE_STRUCTURE);
+		gst_value_set_structure(&value, turn_setup);
+		relay_info = g_value_array_append(relay_info, &value);
+		gst_structure_free(turn_setup);
+
+		purple_debug_info("backend-fs2",
+			"Setting relay-info on new stream\n");
+		_params[_num_params].name = "relay-info";
+		g_value_init(&_params[_num_params].value, 
+			G_TYPE_VALUE_ARRAY);
+		g_value_set_boxed(&_params[_num_params].value,
+			relay_info);
+		g_value_array_free(relay_info);
+	}
+
+	session = _get_session(self, sess_id);
+
+	if (session == NULL) {
+		purple_debug_error("backend-fs2",
+				"Couldn't find session to create stream.\n");
+		return FALSE;
+	}
+
+	participant = _get_participant(self, who);
+
+	if (participant == NULL) {
+		purple_debug_error("backend-fs2", "Couldn't find "
+				"participant to create stream.\n");
+		return FALSE;
+	}
+
+	fsstream = fs_session_new_stream(session->session, participant,
+			type_direction & FS_DIRECTION_RECV, transmitter,
+			_num_params, _params, &err);
+	g_free(_params);
+
+	if (fsstream == NULL) {
+		if (err) {
+			purple_debug_error("backend-fs2",
+					"Error creating stream: %s\n",
+					err && err->message ?
+					err->message : "NULL");
+			g_error_free(err);
+		} else
+			purple_debug_error("backend-fs2",
+					"Error creating stream\n");
+		return FALSE;
+	}
+
+	stream = g_new0(PurpleMediaBackendFs2Stream, 1);
+	stream->initiator = initiator;
+	stream->participant = g_strdup(who);
+	stream->session = session;
+	stream->stream = fsstream;
+
+	priv->streams =	g_list_append(priv->streams, stream);
+
+	return TRUE;
+}
+
+static gboolean
 purple_media_backend_fs2_add_stream(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *who,
 		PurpleMediaSessionType type, gboolean initiator,
@@ -1051,6 +1213,14 @@ purple_media_backend_fs2_add_stream(PurpleMediaBackend *self,
 			!_create_participant(backend, who)) {
 		purple_debug_error("backend-fs2",
 				"Error creating the participant.\n");
+		return FALSE;
+	}
+
+	if (_get_stream(backend, sess_id, who) == NULL &&
+			!_create_stream(backend, sess_id, who, type,
+			initiator, transmitter, num_params, params)) {
+		purple_debug_error("backend-fs2",
+				"Error creating the stream.\n");
 		return FALSE;
 	}
 
@@ -1112,4 +1282,13 @@ purple_media_backend_fs2_get_participant(PurpleMediaBackendFs2 *self,
 		const gchar *name)
 {
 	return _get_participant(self, name);
+}
+
+FsStream *
+purple_media_backend_fs2_get_stream(PurpleMediaBackendFs2 *self,
+		const gchar *sess_id, const gchar *who)
+{
+	PurpleMediaBackendFs2Stream *stream =
+			_get_stream(self, sess_id, who);
+	return stream != NULL? stream->stream : NULL;
 }
