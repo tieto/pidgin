@@ -325,7 +325,7 @@ purple_media_stream_free(PurpleMediaStream *stream)
 	if (stream->local_candidates)
 		purple_media_candidate_list_free(stream->local_candidates);
 	if (stream->remote_candidates)
-		fs_candidate_list_destroy(stream->remote_candidates);
+		purple_media_candidate_list_free(stream->remote_candidates);
 
 	if (stream->active_local_candidates)
 		fs_candidate_list_destroy(stream->active_local_candidates);
@@ -1117,8 +1117,13 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 
 			if (stream->remote_candidates != NULL) {
 				GError *err = NULL;
+				GList *candidates;
+
+				candidates = purple_media_candidate_list_to_fs(
+						stream->remote_candidates);
 				fs_stream_set_remote_candidates(stream->stream,
-						stream->remote_candidates, &err);
+						candidates, &err);
+				fs_candidate_list_destroy(candidates);
 
 				if (err) {
 					purple_debug_error("media", "Error adding remote"
@@ -1680,11 +1685,14 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 	}
 
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
-			purple_media_candidate_list_to_fs(remote_candidates));
+			purple_media_candidate_list_copy(remote_candidates));
 
 	if (stream->accepted == TRUE) {
+		GList *candidates = purple_media_candidate_list_to_fs(
+				stream->remote_candidates);
 		fs_stream_set_remote_candidates(stream->stream,
-				stream->remote_candidates, &err);
+				candidates, &err);
+		fs_candidate_list_destroy(candidates);
 
 		if (err) {
 			purple_debug_error("media", "Error adding remote"
