@@ -331,7 +331,8 @@ purple_media_stream_free(PurpleMediaStream *stream)
 		purple_media_candidate_list_free(
 				stream->active_local_candidates);
 	if (stream->active_remote_candidates)
-		fs_candidate_list_destroy(stream->active_remote_candidates);
+		purple_media_candidate_list_free(
+				stream->active_remote_candidates);
 
 	g_free(stream);
 }
@@ -1264,14 +1265,14 @@ purple_media_candidate_pair_established_cb(PurpleMediaBackend *backend,
 
 	iter = stream->active_remote_candidates;
 	for(; iter; iter = g_list_next(iter)) {
-		FsCandidate *c = iter->data;
-		if (id == c->component_id) {
-			fs_candidate_destroy(c);
+		PurpleMediaCandidate *c = iter->data;
+		if (id == purple_media_candidate_get_component_id(c)) {
+			g_object_unref(c);
 			stream->active_remote_candidates =
 					g_list_delete_link(iter, iter);
 			stream->active_remote_candidates = g_list_prepend(
 					stream->active_remote_candidates,
-					purple_media_candidate_to_fs(
+					purple_media_candidate_copy(
 					remote_candidate));
 			break;
 		}
@@ -1279,7 +1280,7 @@ purple_media_candidate_pair_established_cb(PurpleMediaBackend *backend,
 	if (iter == NULL)
 		stream->active_remote_candidates = g_list_prepend(
 				stream->active_remote_candidates,
-				purple_media_candidate_to_fs(
+				purple_media_candidate_copy(
 				remote_candidate));
 
 	purple_debug_info("media", "candidate pair established\n");
@@ -1733,7 +1734,7 @@ purple_media_get_active_remote_candidates(PurpleMedia *media,
 	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
 	stream = purple_media_get_stream(media, sess_id, participant);
-	return purple_media_candidate_list_from_fs(
+	return purple_media_candidate_list_copy(
 			stream->active_remote_candidates);
 #else
 	return NULL;
