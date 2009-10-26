@@ -1462,6 +1462,27 @@ static gboolean
 purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec)
 {
+	PurpleMediaBackendFs2Session *session;
+	FsCodec *fscodec;
+	GError *err = NULL;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
+
+	session = _get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
+
+	if (session == NULL)
+		return FALSE;
+
+	fscodec = _codec_to_fs(codec);
+	fs_session_set_send_codec(session->session, fscodec, &err);
+	fs_codec_destroy(fscodec);
+
+	if (err) {
+		purple_debug_error("media", "Error setting send codec\n");
+		g_error_free(err);
+		return FALSE;
+	}
+
 	return TRUE;
 }
 

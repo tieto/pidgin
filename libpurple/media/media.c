@@ -620,44 +620,6 @@ purple_media_from_fs(FsMediaType type, FsStreamDirection direction)
 	return result;
 }
 
-static FsCodec *
-purple_media_codec_to_fs(const PurpleMediaCodec *codec)
-{
-	FsCodec *new_codec;
-	gint id;
-	char *encoding_name;
-	PurpleMediaSessionType media_type;
-	guint clock_rate;
-	guint channels;
-	GList *iter;
-
-	if (codec == NULL)
-		return NULL;
-
-	g_object_get(G_OBJECT(codec),
-			"id", &id,
-			"encoding-name", &encoding_name,
-			"media-type", &media_type,
-			"clock-rate", &clock_rate,
-			"channels", &channels,
-			"optional-params", &iter,
-			NULL);
-
-	new_codec = fs_codec_new(id, encoding_name,
-			purple_media_to_fs_media_type(media_type),
-			clock_rate);
-	new_codec->channels = channels;
-
-	for (; iter; iter = g_list_next(iter)) {
-		PurpleKeyValuePair *param = (PurpleKeyValuePair*)iter->data;
-		fs_codec_add_optional_parameter(new_codec,
-				param->key, param->value);
-	}
-
-	g_free(encoding_name);
-	return new_codec;
-}
-
 static PurpleMediaSession*
 purple_media_get_session(PurpleMedia *media, const gchar *sess_id)
 {
@@ -1572,27 +1534,10 @@ gboolean
 purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, PurpleMediaCodec *codec)
 {
 #ifdef USE_VV
-	PurpleMediaSession *session;
-	FsCodec *fscodec;
-	GError *err = NULL;
-
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
 
-	session = purple_media_get_session(media, sess_id);
-
-	if (session != NULL)
-		return FALSE;
-
-	fscodec = purple_media_codec_to_fs(codec);
-	fs_session_set_send_codec(session->session, fscodec, &err);
-	fs_codec_destroy(fscodec);
-
-	if (err) {
-		purple_debug_error("media", "Error setting send codec\n");
-		g_error_free(err);
-		return FALSE;
-	}
-	return TRUE;
+	return purple_media_backend_set_send_codec(
+			media->priv->backend, sess_id, codec);
 #else
 	return FALSE;
 #endif
