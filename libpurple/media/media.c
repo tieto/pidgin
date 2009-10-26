@@ -118,7 +118,6 @@ struct _PurpleMediaPrivate
 	gpointer prpl_data;
 
 	GHashTable *sessions;	/* PurpleMediaSession table */
-	GHashTable *participants; /* FsParticipant table */
 
 	GList *streams;		/* PurpleMediaStream table */
 
@@ -368,12 +367,6 @@ purple_media_dispose(GObject *media)
 			g_object_unref(stream->stream);
 			stream->stream = NULL;
 		}
-	}
-
-	if (priv->participants) {
-		GList *participants = g_hash_table_get_values(priv->participants);
-		for (; participants; participants = g_list_delete_link(participants, participants))
-			g_object_unref(participants->data);
 	}
 
 	if (priv->gst_bus_handler_id != 0) {
@@ -726,14 +719,6 @@ purple_media_get_session(PurpleMedia *media, const gchar *sess_id)
 			g_hash_table_lookup(media->priv->sessions, sess_id) : NULL;
 }
 
-static FsParticipant*
-purple_media_get_participant(PurpleMedia *media, const gchar *name)
-{
-	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	return (FsParticipant*) (media->priv->participants) ?
-			g_hash_table_lookup(media->priv->participants, name) : NULL;
-}
-
 static PurpleMediaStream*
 purple_media_get_stream(PurpleMedia *media, const gchar *session, const gchar *participant)
 {
@@ -794,40 +779,6 @@ purple_media_remove_session(PurpleMedia *media, PurpleMediaSession *session)
 {
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
 	return g_hash_table_remove(media->priv->sessions, session->id);
-}
-
-static FsParticipant *
-purple_media_add_participant(PurpleMedia *media, const gchar *name)
-{
-	FsParticipant *participant;
-	GError *err = NULL;
-
-	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-
-	participant = purple_media_get_participant(media, name);
-
-	if (participant)
-		return participant;
-
-	participant = fs_conference_new_participant(media->priv->conference,
-						    (gchar*)name, &err);
-
-	if (err) {
-		purple_debug_error("media", "Error creating participant: %s\n",
-				   err->message);
-		g_error_free(err);
-		return NULL;
-	}
-
-	if (!media->priv->participants) {
-		purple_debug_info("media", "Creating hash table for participants\n");
-		media->priv->participants = g_hash_table_new_full(g_str_hash,
-				g_str_equal, g_free, NULL);
-	}
-
-	g_hash_table_insert(media->priv->participants, g_strdup(name), participant);
-
-	return participant;
 }
 
 static PurpleMediaStream *
@@ -1475,15 +1426,8 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		}
 	}
 
-	if (!(participant = purple_media_add_participant(media, who))) {
-		purple_media_remove_session(media, session);
-		g_free(session);
-		return FALSE;
-	} else {
-		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
-				0, PURPLE_MEDIA_STATE_NEW,
-				NULL, who);
-	}
+	participant = purple_media_backend_fs2_get_participant(
+			PURPLE_MEDIA_BACKEND_FS2(media->priv->backend), who);
 
 	stream = purple_media_get_stream(media, sess_id, who);
 
@@ -1544,8 +1488,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 					g_value_array_free(relay_info);
 				} else {
 					purple_debug_error("media", "Error relay info");
-					g_object_unref(participant);
-					g_hash_table_remove(media->priv->participants, who);
 					purple_media_remove_session(media, session);
 					g_free(session);
 					return FALSE;
@@ -1571,8 +1513,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 					err->message : "NULL");
 			if (err)
 				g_error_free(err);
-			g_object_unref(participant);
-			g_hash_table_remove(media->priv->participants, who);
 			purple_media_remove_session(media, session);
 			g_free(session);
 			return FALSE;
