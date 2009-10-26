@@ -447,7 +447,7 @@ _candidate_list_to_fs(GList *candidates)
 }
 
 static PurpleMediaCandidate *
-purple_media_candidate_from_fs(FsCandidate *fscandidate)
+_candidate_from_fs(FsCandidate *fscandidate)
 {
 	PurpleMediaCandidate *candidate;
 
@@ -727,7 +727,7 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 				fs_candidate_copy(local_candidate));
 #endif
 
-		candidate = purple_media_candidate_from_fs(local_candidate);
+		candidate = _candidate_from_fs(local_candidate);
 		g_signal_emit_by_name(self, "new-candidate",
 				session->id, name, candidate);
 		g_object_unref(candidate);
@@ -775,8 +775,8 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 
 		session = _get_session_from_fs_stream(self, stream);
 
-		lcandidate = purple_media_candidate_from_fs(local_candidate);
-		rcandidate = purple_media_candidate_from_fs(remote_candidate);
+		lcandidate = _candidate_from_fs(local_candidate);
+		rcandidate = _candidate_from_fs(remote_candidate);
 
 		g_signal_emit_by_name(self, "active-candidate-pair",
 				session->id, name, lcandidate, rcandidate);
