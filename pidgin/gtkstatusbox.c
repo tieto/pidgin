@@ -2435,7 +2435,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 						purple_strequal(ss_msg, message))
 					{
 						gboolean found = FALSE;
-						/* The currently enabled accounts must have substatuses for all the active accts */
+						/* this status must have substatuses for all the active accts */
 						for(tmp = active_accts; tmp != NULL; tmp = tmp->next) {
 							PurpleAccount *acct = tmp->data;
 							PurpleSavedStatusSub *sub = purple_savedstatus_get_substatus(ss, acct);
