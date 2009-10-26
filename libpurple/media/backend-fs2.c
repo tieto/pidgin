@@ -110,6 +110,7 @@ struct _PurpleMediaBackendFs2Private
 	gchar *conference_type;
 
 	GHashTable *sessions;
+	GHashTable *participants;
 };
 
 enum {
@@ -174,6 +175,15 @@ purple_media_backend_fs2_dispose(GObject *obj)
 				session->session = NULL;
 			}
 		}
+	}
+
+	if (priv->participants) {
+		GList *participants =
+				g_hash_table_get_values(priv->participants);
+		for (; participants; participants = g_list_delete_link(
+				participants, participants))
+			g_object_unref(participants->data);
+		priv->participants = NULL;
 	}
 
 	if (priv->media) {
@@ -435,6 +445,22 @@ _get_session(PurpleMediaBackendFs2 *self, const gchar *sess_id)
 		session = g_hash_table_lookup(priv->sessions, sess_id);
 
 	return session;
+}
+
+static FsParticipant *
+_get_participant(PurpleMediaBackendFs2 *self, const gchar *name)
+{
+	PurpleMediaBackendFs2Private *priv;
+	FsParticipant *participant = NULL;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), NULL);
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+
+	if (priv->participants != NULL)
+		participant = g_hash_table_lookup(priv->participants, name);
+
+	return participant;
 }
 
 static PurpleMediaBackendFs2Session *
@@ -963,6 +989,40 @@ _create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 }
 
 static gboolean
+_create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
+{
+	PurpleMediaBackendFs2Private *priv =
+			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+	FsParticipant *participant;
+	GError *err = NULL;
+
+	participant = fs_conference_new_participant(
+			priv->conference, name, &err);
+
+	if (err) {
+		purple_debug_error("backend-fs2",
+				"Error creating participant: %s\n",
+				err->message);
+		g_error_free(err);
+		return FALSE;
+	}
+
+	if (!priv->participants) {
+		purple_debug_info("backend-fs2",
+				"Creating hash table for participants\n");
+		priv->participants = g_hash_table_new_full(g_str_hash,
+				g_str_equal, g_free, NULL);
+	}
+
+	g_hash_table_insert(priv->participants, g_strdup(name), participant);
+
+	g_signal_emit_by_name(priv->media, "state-changed",
+			PURPLE_MEDIA_STATE_NEW, NULL, name);
+
+	return TRUE;
+}
+
+static gboolean
 purple_media_backend_fs2_add_stream(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *who,
 		PurpleMediaSessionType type, gboolean initiator,
@@ -984,6 +1044,13 @@ purple_media_backend_fs2_add_stream(PurpleMediaBackend *self,
 			initiator, transmitter)) {
 		purple_debug_error("backend-fs2",
 				"Error creating the session.\n");
+		return FALSE;
+	}
+
+	if (_get_participant(backend, who) == NULL &&
+			!_create_participant(backend, who)) {
+		purple_debug_error("backend-fs2",
+				"Error creating the participant.\n");
 		return FALSE;
 	}
 
@@ -1038,4 +1105,11 @@ purple_media_backend_fs2_get_session(PurpleMediaBackendFs2 *self,
 {
 	PurpleMediaBackendFs2Session *session = _get_session(self, sess_id);
 	return session != NULL? session->session : NULL;
+}
+
+FsParticipant *
+purple_media_backend_fs2_get_participant(PurpleMediaBackendFs2 *self,
+		const gchar *name)
+{
+	return _get_participant(self, name);
 }
