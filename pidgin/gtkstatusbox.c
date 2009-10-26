@@ -2393,28 +2393,26 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 			acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
 			id = purple_status_type_get_id(acct_status_type);
 
-			if (g_str_equal(id, purple_status_get_id(status)))
+			if (g_str_equal(id, purple_status_get_id(status)) &&
+				purple_strequal(message, purple_status_get_attr_string(status, "message")))
 			{
 				/* Selected status and previous status is the same */
-				if (purple_strequal(message, purple_status_get_attr_string(status, "message")))
-				{
-					PurpleSavedStatus *ss = purple_savedstatus_get_current();
-					/* Make sure that statusbox displays the correct thing.
-					 * It can get messed up if the previous selection was a
-					 * saved status that wasn't supported by this account */
-					if ((purple_savedstatus_get_type(ss) == primitive)
-							&& purple_savedstatus_is_transient(ss)
-							&& purple_savedstatus_has_substatuses(ss))
-						changed = FALSE;
-				}
+				PurpleSavedStatus *ss = purple_savedstatus_get_current();
+				/* Make sure that statusbox displays the correct thing.
+				 * It can get messed up if the previous selection was a
+				 * saved status that wasn't supported by this account */
+				if ((purple_savedstatus_get_type(ss) == primitive)
+					&& purple_savedstatus_is_transient(ss)
+					&& purple_savedstatus_has_substatuses(ss))
+					changed = FALSE;
 			}
 		} else {
 			saved_status = purple_savedstatus_get_current();
 			if (purple_savedstatus_get_type(saved_status) == primitive &&
-			    !purple_savedstatus_has_substatuses(saved_status))
+			    !purple_savedstatus_has_substatuses(saved_status) &&
+				purple_strequal(purple_savedstatus_get_message(saved_status), message))
 			{
-				if (purple_strequal(purple_savedstatus_get_message(saved_status), message))
-					changed = FALSE;
+				changed = FALSE;
 			}
 		}
 
@@ -2495,11 +2493,11 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 		status_type = find_status_type_by_index(status_box->account, active);
 		id = purple_status_type_get_id(status_type);
 
-		if (g_str_equal(id, purple_status_get_id(status)))
+		if (g_str_equal(id, purple_status_get_id(status)) &&
+			purple_strequal(message, purple_status_get_attr_string(status, "message")))
 		{
 			/* Selected status and previous status is the same */
-			if (purple_strequal(message, purple_status_get_attr_string(status, "message")))
-				changed = FALSE;
+			changed = FALSE;
 		}
 
 		if (changed)
