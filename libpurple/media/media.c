@@ -1503,11 +1503,10 @@ purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id,
                                   const gchar *participant)
 {
 #ifdef USE_VV
-	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	stream = purple_media_get_stream(media, sess_id, participant);
-	return stream ? purple_media_candidate_list_copy(
-			stream->local_candidates) : NULL;
+
+	return purple_media_backend_get_local_candidates(media->priv->backend,
+			sess_id, participant);
 #else
 	return NULL;
 #endif

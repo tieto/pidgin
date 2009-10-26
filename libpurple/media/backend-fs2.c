@@ -467,6 +467,20 @@ _candidate_from_fs(FsCandidate *fscandidate)
 	return candidate;
 }
 
+static GList *
+_candidate_list_from_fs(GList *candidates)
+{
+	GList *new_list = NULL;
+
+	for (; candidates; candidates = g_list_next(candidates)) {
+		new_list = g_list_prepend(new_list,
+			_candidate_from_fs(candidates->data));
+	}
+
+	new_list = g_list_reverse(new_list);
+	return new_list;
+}
+
 #if 0
 static FsCodec *
 _codec_to_fs(const PurpleMediaCodec *codec)
@@ -705,6 +719,7 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		PurpleMediaCandidate *candidate;
 		FsParticipant *participant;
 		PurpleMediaBackendFs2Session *session;
+		PurpleMediaBackendFs2Stream *media_stream;
 		gchar *name;
 
 		value = gst_structure_get_value(msg->structure, "stream");
@@ -722,10 +737,10 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		g_object_get(participant, "cname", &name, NULL);
 		g_object_unref(participant);
 
-#if 0
-		purple_media_insert_local_candidate(session, name,
+		media_stream = _get_stream(self, session->id, name);
+		media_stream->local_candidates = g_list_append(
+				media_stream->local_candidates,
 				fs_candidate_copy(local_candidate));
-#endif
 
 		candidate = _candidate_from_fs(local_candidate);
 		g_signal_emit_by_name(self, "new-candidate",
@@ -1401,7 +1416,18 @@ static GList *
 purple_media_backend_fs2_get_local_candidates(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant)
 {
-	return NULL;
+	PurpleMediaBackendFs2Stream *stream;
+	GList *candidates = NULL;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), NULL);
+
+	stream = _get_stream(PURPLE_MEDIA_BACKEND_FS2(self),
+			sess_id, participant);
+
+	if (stream != NULL)
+		candidates = _candidate_list_from_fs(
+				stream->local_candidates);
+	return candidates;
 }
 
 static void
