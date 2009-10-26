@@ -323,7 +323,7 @@ purple_media_stream_free(PurpleMediaStream *stream)
 	g_free(stream->participant);
 
 	if (stream->local_candidates)
-		fs_candidate_list_destroy(stream->local_candidates);
+		purple_media_candidate_list_free(stream->local_candidates);
 	if (stream->remote_candidates)
 		fs_candidate_list_destroy(stream->remote_candidates);
 
@@ -563,42 +563,6 @@ purple_media_candidate_to_fs(PurpleMediaCandidate *candidate)
 	g_free(foundation);
 	g_free(ip);
 	return fscandidate;
-}
-
-static PurpleMediaCandidate *
-purple_media_candidate_from_fs(FsCandidate *fscandidate)
-{
-	PurpleMediaCandidate *candidate;
-
-	if (fscandidate == NULL)
-		return NULL;
-
-	candidate = purple_media_candidate_new(fscandidate->foundation,
-		fscandidate->component_id, fscandidate->type,
-		fscandidate->proto, fscandidate->ip, fscandidate->port);
-	g_object_set(candidate,
-			"base-ip", fscandidate->base_ip,
-			"base-port", fscandidate->base_port,
-			"priority", fscandidate->priority,
-			"username", fscandidate->username,
-			"password", fscandidate->password,
-			"ttl", fscandidate->ttl, NULL);
-	return candidate;
-}
-
-static GList *
-purple_media_candidate_list_from_fs(GList *candidates)
-{
-	GList *new_list = NULL;
-
-	for (; candidates; candidates = g_list_next(candidates)) {
-		new_list = g_list_prepend(new_list,
-				purple_media_candidate_from_fs(
-				candidates->data));
-	}
-
-	new_list = g_list_reverse(new_list);
-	return new_list;
 }
 
 static GList *
@@ -884,7 +848,7 @@ purple_media_insert_stream(PurpleMediaSession *session, const gchar *name, FsStr
 
 static void
 purple_media_insert_local_candidate(PurpleMediaSession *session, const gchar *name,
-				     FsCandidate *candidate)
+				     PurpleMediaCandidate *candidate)
 {
 	PurpleMediaStream *stream;
 
@@ -1231,7 +1195,7 @@ purple_media_new_local_candidate_cb(PurpleMediaBackend *backend,
 			purple_media_get_session(media, sess_id);
 
 	purple_media_insert_local_candidate(session, participant,
-			purple_media_candidate_to_fs(candidate));
+			purple_media_candidate_copy(candidate));
 
 	g_signal_emit(session->media, purple_media_signals[NEW_CANDIDATE],
 		      0, session->id, participant, candidate);
@@ -1687,7 +1651,7 @@ purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id,
 	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
 	stream = purple_media_get_stream(media, sess_id, participant);
-	return stream ? purple_media_candidate_list_from_fs(
+	return stream ? purple_media_candidate_list_copy(
 			stream->local_candidates) : NULL;
 #else
 	return NULL;
