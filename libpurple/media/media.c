@@ -143,9 +143,12 @@ static void purple_media_new_local_candidate_cb(PurpleMediaBackend *backend,
 		PurpleMediaCandidate *candidate, PurpleMedia *media);
 static void purple_media_candidates_prepared_cb(FsStream *stream,
 		PurpleMediaSession *session);
-static void purple_media_candidate_pair_established_cb(FsStream *stream,
-		FsCandidate *native_candidate, FsCandidate *remote_candidate,
-		PurpleMediaSession *session);
+static void purple_media_candidate_pair_established_cb(
+		PurpleMediaBackend *backend,
+		const gchar *sess_id, const gchar *name,
+		PurpleMediaCandidate *local_candidate,
+		PurpleMediaCandidate *remote_candidate,
+		PurpleMedia *media);
 static void purple_media_codecs_changed_cb(PurpleMediaBackend *backend,
 		const gchar *sess_id, PurpleMedia *media);
 static gboolean media_bus_call(GstBus *bus,
@@ -441,6 +444,11 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 					media->priv->conference_type,
 					"media", media,
 					NULL);
+			g_signal_connect(media->priv->backend,
+					"active-candidate-pair",
+					G_CALLBACK(
+					purple_media_candidate_pair_established_cb),
+					media);
 			g_signal_connect(media->priv->backend,
 					"codecs-changed",
 					G_CALLBACK(
@@ -1072,13 +1080,6 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
 				PurpleMediaSession *session = purple_media_session_from_fs_stream(media, stream);
 				purple_media_candidates_prepared_cb(stream, session);
-			} else if (gst_structure_has_name(msg->structure,
-					"farsight-new-active-candidate-pair")) {
-				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
-				FsCandidate *local_candidate = g_value_get_boxed(gst_structure_get_value(msg->structure, "local-candidate"));
-				FsCandidate *remote_candidate = g_value_get_boxed(gst_structure_get_value(msg->structure, "remote-candidate"));
-				PurpleMediaSession *session = purple_media_session_from_fs_stream(media, stream);
-				purple_media_candidate_pair_established_cb(stream, local_candidate, remote_candidate, session);
 			}
 			break;
 		}
@@ -1297,60 +1298,62 @@ purple_media_candidates_prepared_cb(FsStream *stream, PurpleMediaSession *sessio
 /* callback called when a pair of transport candidates (local and remote)
  * has been established */
 static void
-purple_media_candidate_pair_established_cb(FsStream *fsstream,
-					   FsCandidate *native_candidate,
-					   FsCandidate *remote_candidate,
-					   PurpleMediaSession *session)
+purple_media_candidate_pair_established_cb(PurpleMediaBackend *backend,
+		const gchar *sess_id, const gchar *name,
+		PurpleMediaCandidate *local_candidate,
+		PurpleMediaCandidate *remote_candidate,
+		PurpleMedia *media)
 {
-	gchar *name;
-	FsParticipant *participant;
 	PurpleMediaStream *stream;
 	GList *iter;
+	guint id;
 
-	g_return_if_fail(FS_IS_STREAM(fsstream));
-	g_return_if_fail(session != NULL);
+	g_return_if_fail(PURPLE_IS_MEDIA(media));
 
-	g_object_get(fsstream, "participant", &participant, NULL);
-	g_object_get(participant, "cname", &name, NULL);
-	g_object_unref(participant);
-
-	stream = purple_media_get_stream(session->media, session->id, name);
+	stream = purple_media_get_stream(media, sess_id, name);
+	id = purple_media_candidate_get_component_id(local_candidate);
 
 	iter = stream->active_local_candidates;
 	for(; iter; iter = g_list_next(iter)) {
 		FsCandidate *c = iter->data;
-		if (native_candidate->component_id == c->component_id) {
+		if (id == c->component_id) {
 			fs_candidate_destroy(c);
 			stream->active_local_candidates =
 					g_list_delete_link(iter, iter);
 			stream->active_local_candidates = g_list_prepend(
 					stream->active_local_candidates,
-					fs_candidate_copy(native_candidate));
+					purple_media_candidate_to_fs(
+					local_candidate));
 			break;
 		}
 	}
 	if (iter == NULL)
 		stream->active_local_candidates = g_list_prepend(
 				stream->active_local_candidates,
-				fs_candidate_copy(native_candidate));
+				purple_media_candidate_to_fs(
+				local_candidate));
+
+	id = purple_media_candidate_get_component_id(local_candidate);
 
 	iter = stream->active_remote_candidates;
 	for(; iter; iter = g_list_next(iter)) {
 		FsCandidate *c = iter->data;
-		if (native_candidate->component_id == c->component_id) {
+		if (id == c->component_id) {
 			fs_candidate_destroy(c);
 			stream->active_remote_candidates =
 					g_list_delete_link(iter, iter);
 			stream->active_remote_candidates = g_list_prepend(
 					stream->active_remote_candidates,
-					fs_candidate_copy(remote_candidate));
+					purple_media_candidate_to_fs(
+					remote_candidate));
 			break;
 		}
 	}
 	if (iter == NULL)
 		stream->active_remote_candidates = g_list_prepend(
 				stream->active_remote_candidates,
-				fs_candidate_copy(remote_candidate));
+				purple_media_candidate_to_fs(
+				remote_candidate));
 
 	purple_debug_info("media", "candidate pair established\n");
 }

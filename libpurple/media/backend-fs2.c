@@ -574,9 +574,10 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		FsStream *stream;
 		FsCandidate *local_candidate;
 		FsCandidate *remote_candidate;
-#if 0
-		PurpleMediaSession *session;
-#endif
+		FsParticipant *participant;
+		PurpleMediaBackendFs2Session *session;
+		PurpleMediaCandidate *lcandidate, *rcandidate;
+		gchar *name;
 
 		value = gst_structure_get_value(msg->structure, "stream");
 		stream = g_value_get_object(value);
@@ -586,11 +587,21 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		value = gst_structure_get_value(msg->structure,
 				"remote-candidate");
 		remote_candidate = g_value_get_boxed(value);
-#if 0
-		session = purple_media_session_from_fs_stream(media, stream);
-		_candidate_pair_established_cb(stream, local_candidate,
-				remote_candidate, session);
-#endif
+
+		g_object_get(stream, "participant", &participant, NULL);
+		g_object_get(participant, "cname", &name, NULL);
+		g_object_unref(participant);
+
+		session = _get_session_from_fs_stream(self, stream);
+
+		lcandidate = purple_media_candidate_from_fs(local_candidate);
+		rcandidate = purple_media_candidate_from_fs(remote_candidate);
+
+		g_signal_emit_by_name(self, "active-candidate-pair",
+				session->id, name, lcandidate, rcandidate);
+
+		g_object_unref(lcandidate);
+		g_object_unref(rcandidate);
 	} else if (gst_structure_has_name(msg->structure,
 			"farsight-recv-codecs-changed")) {
 		const GValue *value;
