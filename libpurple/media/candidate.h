@@ -73,6 +73,18 @@ PurpleMediaCandidate *purple_media_candidate_new(
 		const gchar *ip, guint port);
 
 /**
+ * Copies a PurpleMediaCandidate.
+ *
+ * @param candidate The candidate to copy.
+ *
+ * @return The copy of the PurpleMediaCandidate.
+ *
+ * @since 2.7.0
+ */
+PurpleMediaCandidate *purple_media_candidate_copy(
+		PurpleMediaCandidate *candidate);
+
+/**
  * Copies a GList of PurpleMediaCandidate and its contents.
  *
  * @param candidates The list of candidates to be copied.

@@ -336,7 +336,7 @@ purple_media_candidate_new(const gchar *foundation, guint component_id,
 			"port", port, NULL);
 }
 
-static PurpleMediaCandidate *
+PurpleMediaCandidate *
 purple_media_candidate_copy(PurpleMediaCandidate *candidate)
 {
 	PurpleMediaCandidatePrivate *priv;
