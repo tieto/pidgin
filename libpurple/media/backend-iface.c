@@ -166,14 +166,14 @@ purple_media_backend_get_local_candidates(PurpleMediaBackend *self,
 			sess_id, participant);
 }
 
-void
+gboolean
 purple_media_backend_set_remote_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
 		GList *codecs)
 {
-	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND(self));
-	PURPLE_MEDIA_BACKEND_GET_INTERFACE(self)->set_remote_codecs(self,
-			sess_id, participant, codecs);
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND(self), FALSE);
+	return PURPLE_MEDIA_BACKEND_GET_INTERFACE(self)->set_remote_codecs(
+			self, sess_id, participant, codecs);
 }
 
 void

@@ -75,7 +75,7 @@ static GList *purple_media_backend_fs2_get_codecs(PurpleMediaBackend *self,
 static GList *purple_media_backend_fs2_get_local_candidates(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant);
-static void purple_media_backend_fs2_set_remote_codecs(
+static gboolean purple_media_backend_fs2_set_remote_codecs(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
 		GList *codecs);
@@ -1430,11 +1430,12 @@ purple_media_backend_fs2_get_local_candidates(PurpleMediaBackend *self,
 	return candidates;
 }
 
-static void
+static gboolean
 purple_media_backend_fs2_set_remote_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
 		GList *codecs)
 {
+	return FALSE;
 }
 
 static void
