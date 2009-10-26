@@ -919,11 +919,11 @@ _create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 
 	if (err != NULL) {
 		if (err->code == 4)
-			purple_debug_info("media", "Couldn't read "
+			purple_debug_info("backend-fs2", "Couldn't read "
 					"fs-codec.conf: %s\n",
 					err->message);
 		else
-			purple_debug_error("media", "Error reading "
+			purple_debug_error("backend-fs2", "Error reading "
 					"fs-codec.conf: %s\n",
 					err->message);
 		g_error_free(err);
