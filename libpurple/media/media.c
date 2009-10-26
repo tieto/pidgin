@@ -141,8 +141,8 @@ static void purple_media_set_property (GObject *object, guint prop_id, const GVa
 static void purple_media_new_local_candidate_cb(PurpleMediaBackend *backend,
 		const gchar *sess_id, const gchar *participant,
 		PurpleMediaCandidate *candidate, PurpleMedia *media);
-static void purple_media_candidates_prepared_cb(FsStream *stream,
-		PurpleMediaSession *session);
+static void purple_media_candidates_prepared_cb(PurpleMediaBackend *backend,
+		const gchar *sess_id, const gchar *name, PurpleMedia *media);
 static void purple_media_candidate_pair_established_cb(
 		PurpleMediaBackend *backend,
 		const gchar *sess_id, const gchar *name,
@@ -448,6 +448,11 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 					"active-candidate-pair",
 					G_CALLBACK(
 					purple_media_candidate_pair_established_cb),
+					media);
+			g_signal_connect(media->priv->backend,
+					"candidates-prepared",
+					G_CALLBACK(
+					purple_media_candidates_prepared_cb),
 					media);
 			g_signal_connect(media->priv->backend,
 					"codecs-changed",
@@ -988,33 +993,6 @@ purple_media_get_src(PurpleMedia *media, const gchar *sess_id)
 #endif /* USE_GSTREAMER */
 
 #ifdef USE_VV
-static PurpleMediaSession *
-purple_media_session_from_fs_stream(PurpleMedia *media, FsStream *stream)
-{
-	FsSession *fssession;
-	GList *values;
-
-	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	g_return_val_if_fail(FS_IS_STREAM(stream), NULL);
-
-	g_object_get(stream, "session", &fssession, NULL);
-
-	values = g_hash_table_get_values(media->priv->sessions);
-
-	for (; values; values = g_list_delete_link(values, values)) {
-		PurpleMediaSession *session = values->data;
-
-		if (session->session == fssession) {
-			g_list_free(values);
-			g_object_unref(fssession);
-			return session;
-		}
-	}
-
-	g_object_unref(fssession);
-	return NULL;
-}
-
 static gboolean
 media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 {
@@ -1068,18 +1046,6 @@ media_bus_call(GstBus *bus, GstMessage *msg, PurpleMedia *media)
 				g_signal_emit(media, purple_media_signals[LEVEL],
 						0, session->id, participant, percent);
 				break;
-			}
-			if (!FS_IS_CONFERENCE(GST_MESSAGE_SRC(msg)) ||
-					!PURPLE_IS_MEDIA(media) ||
-					media->priv->conference !=
-					FS_CONFERENCE(GST_MESSAGE_SRC(msg)))
-				break;
-
-			if (gst_structure_has_name(msg->structure,
-					"farsight-local-candidates-prepared")) {
-				FsStream *stream = g_value_get_object(gst_structure_get_value(msg->structure, "stream"));
-				PurpleMediaSession *session = purple_media_session_from_fs_stream(media, stream);
-				purple_media_candidates_prepared_cb(stream, session);
 			}
 			break;
 		}
@@ -1272,27 +1238,18 @@ purple_media_new_local_candidate_cb(PurpleMediaBackend *backend,
 }
 
 static void
-purple_media_candidates_prepared_cb(FsStream *stream, PurpleMediaSession *session)
+purple_media_candidates_prepared_cb(PurpleMediaBackend *backend,
+		const gchar *sess_id, const gchar *name, PurpleMedia *media)
 {
-	gchar *name;
-	FsParticipant *participant;
 	PurpleMediaStream *stream_data;
 
-	g_return_if_fail(FS_IS_STREAM(stream));
-	g_return_if_fail(session != NULL);
+	g_return_if_fail(PURPLE_IS_MEDIA(media));
 
-	g_object_get(stream, "participant", &participant, NULL);
-	g_object_get(participant, "cname", &name, NULL);
-	g_object_unref(participant);
-
-	stream_data = purple_media_get_stream(session->media, session->id, name);
+	stream_data = purple_media_get_stream(media, sess_id, name);
 	stream_data->candidates_prepared = TRUE;
 
-	g_signal_emit(session->media,
-			purple_media_signals[CANDIDATES_PREPARED],
-			0, session->id, name);
-
-	g_free(name);
+	g_signal_emit(media, purple_media_signals[CANDIDATES_PREPARED],
+			0, sess_id, name);
 }
 
 /* callback called when a pair of transport candidates (local and remote)

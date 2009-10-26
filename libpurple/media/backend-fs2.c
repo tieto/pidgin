@@ -558,16 +558,20 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 			"farsight-local-candidates-prepared")) {
 		const GValue *value;
 		FsStream *stream;
-#if 0
-		PurpleMediaSession *session;
-#endif
+		FsParticipant *participant;
+		PurpleMediaBackendFs2Session *session;
+		gchar *name;
 
 		value = gst_structure_get_value(msg->structure, "stream");
 		stream = g_value_get_object(value);
-#if 0
-		session = purple_media_session_from_fs_stream(media, stream);
-		_candidates_prepared_cb(stream, session);
-#endif
+		session = _get_session_from_fs_stream(self, stream);
+
+		g_object_get(stream, "participant", &participant, NULL);
+		g_object_get(participant, "cname", &name, NULL);
+		g_object_unref(participant);
+
+		g_signal_emit_by_name(self, "candidates-prepared",
+				session->id, name);
 	} else if (gst_structure_has_name(msg->structure,
 			"farsight-new-active-candidate-pair")) {
 		const GValue *value;
