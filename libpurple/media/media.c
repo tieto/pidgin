@@ -716,37 +716,6 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 
 			stream->accepted = TRUE;
 		}
-	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_MUTE ||
-			type == PURPLE_MEDIA_INFO_UNMUTE)) {
-		GList *sessions;
-		gboolean active = (type == PURPLE_MEDIA_INFO_MUTE);
-
-		g_return_if_fail(PURPLE_IS_MEDIA(media));
-
-		if (session_id == NULL)
-			sessions = g_hash_table_get_values(
-					media->priv->sessions);
-		else
-			sessions = g_list_prepend(NULL,
-					purple_media_get_session(
-					media, session_id));
-
-		purple_debug_info("media", "Turning mute %s\n",
-				active ? "on" : "off");
-
-		for (; sessions; sessions = g_list_delete_link(
-				sessions, sessions)) {
-			PurpleMediaSession *session = sessions->data;
-			if (session->type & PURPLE_MEDIA_SEND_AUDIO) {
-				gchar *name = g_strdup_printf("volume_%s",
-						session->id);
-				GstElement *volume = gst_bin_get_by_name(
-						GST_BIN(session->media->
-						priv->confbin), name);
-				g_free(name);
-				g_object_set(volume, "mute", active, NULL);
-			}
-		}
 	}
 
 	g_signal_emit(media, purple_media_signals[STREAM_INFO],

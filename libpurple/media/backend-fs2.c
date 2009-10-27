@@ -1121,6 +1121,36 @@ _stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 					err->message);
 			g_error_free(err);
 		}
+	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_MUTE ||
+			type == PURPLE_MEDIA_INFO_UNMUTE)) {
+		PurpleMediaBackendFs2Private *priv =
+				PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+		gboolean active = (type == PURPLE_MEDIA_INFO_MUTE);
+		GList *sessions;
+
+		if (sid == NULL)
+			sessions = g_hash_table_get_values(priv->sessions);
+		else
+			sessions = g_list_prepend(NULL,
+					_get_session(self, sid));
+
+		purple_debug_info("media", "Turning mute %s\n",
+				active ? "on" : "off");
+
+		for (; sessions; sessions = g_list_delete_link(
+				sessions, sessions)) {
+			PurpleMediaBackendFs2Session *session =
+					sessions->data;
+
+			if (session->type & PURPLE_MEDIA_SEND_AUDIO) {
+				gchar *name = g_strdup_printf("volume_%s",
+						session->id);
+				GstElement *volume = gst_bin_get_by_name(
+						GST_BIN(priv->confbin), name);
+				g_free(name);
+				g_object_set(volume, "mute", active, NULL);
+			}
+		}
 	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_PAUSE ||
 			type == PURPLE_MEDIA_INFO_UNPAUSE)) {
 		gboolean active = (type == PURPLE_MEDIA_INFO_PAUSE);
