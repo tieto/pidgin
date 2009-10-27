@@ -1416,6 +1416,7 @@ purple_media_backend_fs2_add_stream(PurpleMediaBackend *self,
 	PurpleMediaBackendFs2 *backend = PURPLE_MEDIA_BACKEND_FS2(self);
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(backend);
+	PurpleMediaBackendFs2Stream *stream;
 
 	if (priv->conference == NULL && !_init_conference(backend)) {
 		purple_debug_error("backend-fs2",
@@ -1438,8 +1439,19 @@ purple_media_backend_fs2_add_stream(PurpleMediaBackend *self,
 		return FALSE;
 	}
 
-	if (_get_stream(backend, sess_id, who) == NULL &&
-			!_create_stream(backend, sess_id, who, type,
+	stream = _get_stream(backend, sess_id, who);
+
+	if (stream != NULL) {
+		FsStreamDirection type_direction =
+				_session_type_to_fs_stream_direction(type);
+
+		if (_session_type_to_fs_stream_direction(
+				stream->session->type) != type_direction) {
+			/* change direction */
+			g_object_set(stream->stream, "direction",
+					type_direction, NULL);
+		}
+	} else if (!_create_stream(backend, sess_id, who, type,
 			initiator, transmitter, num_params, params)) {
 		purple_debug_error("backend-fs2",
 				"Error creating the stream.\n");

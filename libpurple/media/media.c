@@ -1230,9 +1230,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 	participant = purple_media_backend_fs2_get_participant(
 			PURPLE_MEDIA_BACKEND_FS2(media->priv->backend), who);
 
-	stream = purple_media_get_stream(media, sess_id, who);
-
-	if (!stream) {
+	if (purple_media_get_stream(media, sess_id, who) == NULL) {
 		FsStream *fsstream = NULL;
 
 		fsstream = purple_media_backend_fs2_get_stream(
@@ -1249,13 +1247,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 				0, PURPLE_MEDIA_STATE_NEW,
 				session->id, who);
-	} else {
-		if (purple_media_to_fs_stream_direction(stream->session->type)
-				!= type_direction) {
-			/* change direction */
-			g_object_set(stream->stream, "direction",
-					type_direction, NULL);
-		}
 	}
 
 	return TRUE;
