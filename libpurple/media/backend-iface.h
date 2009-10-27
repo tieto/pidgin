@@ -54,6 +54,8 @@ struct _PurpleMediaBackendIface
 	void (*add_remote_candidates) (PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
 		GList *remote_candidates);
+	gboolean (*codecs_ready) (PurpleMediaBackend *self,
+		const gchar *sess_id);
 	GList *(*get_codecs) (PurpleMediaBackend *self,
 		const gchar *sess_id);
 	GList *(*get_local_candidates) (PurpleMediaBackend *self,
@@ -75,6 +77,8 @@ gboolean purple_media_backend_add_stream(PurpleMediaBackend *self,
 void purple_media_backend_add_remote_candidates(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
 		GList *remote_candidates);
+gboolean purple_media_backend_codecs_ready(PurpleMediaBackend *self,
+		const gchar *sess_id);
 GList *purple_media_backend_get_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id);
 GList *purple_media_backend_get_local_candidates(PurpleMediaBackend *self,

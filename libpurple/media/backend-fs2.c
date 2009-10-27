@@ -70,6 +70,8 @@ static void purple_media_backend_fs2_add_remote_candidates(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
 		GList *remote_candidates);
+static gboolean purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
+		const gchar *sess_id);
 static GList *purple_media_backend_fs2_get_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id);
 static GList *purple_media_backend_fs2_get_local_candidates(
@@ -366,6 +368,7 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 	iface->add_stream = purple_media_backend_fs2_add_stream;
 	iface->add_remote_candidates =
 			purple_media_backend_fs2_add_remote_candidates;
+	iface->codecs_ready = purple_media_backend_fs2_codecs_ready;
 	iface->get_codecs = purple_media_backend_fs2_get_codecs;
 	iface->get_local_candidates =
 			purple_media_backend_fs2_get_local_candidates;
@@ -1498,6 +1501,53 @@ purple_media_backend_fs2_add_remote_candidates(PurpleMediaBackend *self,
 			g_error_free(err);
 		}
 	}
+}
+
+static gboolean
+purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
+		const gchar *sess_id)
+{
+	PurpleMediaBackendFs2Private *priv;
+	gboolean ret;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+
+	if (sess_id != NULL) {
+		PurpleMediaBackendFs2Session *session = _get_session(
+				PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
+
+		if (session == NULL)
+			return FALSE;
+
+		if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
+				PURPLE_MEDIA_SEND_VIDEO))
+			g_object_get(session->session,
+					"codecs-ready", &ret, NULL);
+		else
+			ret = TRUE;
+	} else {
+		GList *values = g_hash_table_get_values(priv->sessions);
+
+		for (; values; values = g_list_delete_link(values, values)) {
+			PurpleMediaBackendFs2Session *session = values->data;
+			if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
+					PURPLE_MEDIA_SEND_VIDEO))
+				g_object_get(session->session,
+						"codecs-ready", &ret, NULL);
+			else
+				ret = TRUE;
+
+			if (ret == FALSE)
+				break;
+		}
+
+		if (values != NULL)
+			g_list_free(values);
+	}
+
+	return ret;
 }
 
 static GList *

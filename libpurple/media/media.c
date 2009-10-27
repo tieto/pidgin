@@ -1425,40 +1425,10 @@ gboolean
 purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id)
 {
 #ifdef USE_VV
-	gboolean ret;
-
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
 
-	if (sess_id != NULL) {
-		PurpleMediaSession *session;
-		session = purple_media_get_session(media, sess_id);
-
-		if (session == NULL)
-			return FALSE;
-		if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
-				PURPLE_MEDIA_SEND_VIDEO))
-			g_object_get(session->session,
-					"codecs-ready", &ret, NULL);
-		else
-			ret = TRUE;
-	} else {
-		GList *values = g_hash_table_get_values(media->priv->sessions);
-		for (; values; values = g_list_delete_link(values, values)) {
-			PurpleMediaSession *session = values->data;
-			if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
-					PURPLE_MEDIA_SEND_VIDEO))
-				g_object_get(session->session,
-						"codecs-ready", &ret, NULL);
-			else
-				ret = TRUE;
-
-			if (ret == FALSE)
-				break;
-		}
-		if (values != NULL)
-			g_list_free(values);
-	}
-	return ret;
+	return purple_media_backend_codecs_ready(
+			media->priv->backend, sess_id);
 #else
 	return FALSE;
 #endif

@@ -146,6 +146,14 @@ purple_media_backend_add_remote_candidates(PurpleMediaBackend *self,
 			sess_id, participant, remote_candidates);
 }
 
+gboolean
+purple_media_backend_codecs_ready(PurpleMediaBackend *self,
+		const gchar *sess_id)
+{
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND(self), FALSE);
+	return PURPLE_MEDIA_BACKEND_GET_INTERFACE(self)->codecs_ready(self,
+			sess_id);
+}
 
 GList *
 purple_media_backend_get_codecs(PurpleMediaBackend *self,
