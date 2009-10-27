@@ -509,72 +509,6 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 
 }
 
-static FsCandidate *
-purple_media_candidate_to_fs(PurpleMediaCandidate *candidate)
-{
-	FsCandidate *fscandidate;
-	gchar *foundation;
-	guint component_id;
-	gchar *ip;
-	guint port;
-	gchar *base_ip;
-	guint base_port;
-	PurpleMediaNetworkProtocol proto;
-	guint32 priority;
-	PurpleMediaCandidateType type;
-	gchar *username;
-	gchar *password;
-	guint ttl;
-
-	if (candidate == NULL)
-		return NULL;
-
-	g_object_get(G_OBJECT(candidate),
-			"foundation", &foundation,
-			"component-id", &component_id,
-			"ip", &ip,
-			"port", &port,
-			"base-ip", &base_ip,
-			"base-port", &base_port,
-			"protocol", &proto,
-			"priority", &priority,
-			"type", &type,
-			"username", &username,
-			"password", &password,
-			"ttl", &ttl,
-			NULL);
-
-	fscandidate = fs_candidate_new(foundation,
-			component_id, type,
-			proto, ip, port);
-
-	fscandidate->base_ip = base_ip;
-	fscandidate->base_port = base_port;
-	fscandidate->priority = priority;
-	fscandidate->username = username;
-	fscandidate->password = password;
-	fscandidate->ttl = ttl;
-
-	g_free(foundation);
-	g_free(ip);
-	return fscandidate;
-}
-
-static GList *
-purple_media_candidate_list_to_fs(GList *candidates)
-{
-	GList *new_list = NULL;
-
-	for (; candidates; candidates = g_list_next(candidates)) {
-		new_list = g_list_prepend(new_list,
-				purple_media_candidate_to_fs(
-				candidates->data));
-	}
-
-	new_list = g_list_reverse(new_list);
-	return new_list;
-}
-
 static FsMediaType
 purple_media_to_fs_media_type(PurpleMediaSessionType type)
 {
@@ -974,27 +908,8 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 		for (; streams; streams =
 				g_list_delete_link(streams, streams)) {
 			PurpleMediaStream *stream = streams->data;
-			g_object_set(G_OBJECT(stream->stream), "direction",
-					purple_media_to_fs_stream_direction(
-					stream->session->type), NULL);
+
 			stream->accepted = TRUE;
-
-			if (stream->remote_candidates != NULL) {
-				GError *err = NULL;
-				GList *candidates;
-
-				candidates = purple_media_candidate_list_to_fs(
-						stream->remote_candidates);
-				fs_stream_set_remote_candidates(stream->stream,
-						candidates, &err);
-				fs_candidate_list_destroy(candidates);
-
-				if (err) {
-					purple_debug_error("media", "Error adding remote"
-							" candidates: %s\n", err->message);
-					g_error_free(err);
-				}
-			}
 		}
 	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_MUTE ||
 			type == PURPLE_MEDIA_INFO_UNMUTE)) {
@@ -1444,11 +1359,8 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
 			purple_media_candidate_list_copy(remote_candidates));
 
-	if (stream->accepted == TRUE) {
-		purple_media_backend_add_remote_candidates(
-				media->priv->backend, sess_id, participant,
-				remote_candidates);
-	}
+	purple_media_backend_add_remote_candidates(media->priv->backend,
+			sess_id, participant, remote_candidates);
 #endif
 }
 

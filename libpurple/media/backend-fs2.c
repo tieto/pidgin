@@ -625,6 +625,33 @@ _get_stream(PurpleMediaBackendFs2 *self,
 	return NULL;
 }
 
+static GList *
+_get_streams(PurpleMediaBackendFs2 *self,
+		const gchar *sess_id, const gchar *name)
+{
+	PurpleMediaBackendFs2Private *priv;
+	GList *streams, *ret = NULL;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), NULL);
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+	streams = priv->streams;
+
+	for (; streams; streams = g_list_next(streams)) {
+		PurpleMediaBackendFs2Stream *stream = streams->data;
+
+		if (sess_id != NULL && strcmp(stream->session->id, sess_id))
+			continue;
+		else if (name != NULL && strcmp(stream->participant, name))
+			continue;
+		else
+			ret = g_list_prepend(ret, stream);
+	}
+
+	ret = g_list_reverse(ret);
+	return ret;
+}
+
 static PurpleMediaBackendFs2Session *
 _get_session_from_fs_stream(PurpleMediaBackendFs2 *self, FsStream *stream)
 {
@@ -964,6 +991,33 @@ _stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		gchar *sid, gchar *name, gboolean local,
 		PurpleMediaBackendFs2 *self)
 {
+	if (type == PURPLE_MEDIA_INFO_ACCEPT) {
+		GList *streams = _get_streams(self, sid, name);
+		
+		for (; streams; streams =
+				g_list_delete_link(streams, streams)) {
+			PurpleMediaBackendFs2Stream *stream = streams->data;
+			GError *err = NULL;
+
+			g_object_set(G_OBJECT(stream->stream), "direction",
+					_session_type_to_fs_stream_direction(
+					stream->session->type), NULL);
+
+			if (stream->remote_candidates == NULL)
+				continue;
+
+			fs_stream_set_remote_candidates(stream->stream,
+					stream->remote_candidates, &err);
+
+			if (err == NULL)
+				continue;
+
+			purple_debug_error("backend-fs2", "Error adding "
+					"remote candidates: %s\n",
+					err->message);
+			g_error_free(err);
+		}
+	}
 }
 
 static gboolean
