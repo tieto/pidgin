@@ -68,6 +68,12 @@ FsSession *purple_media_backend_fs2_get_session(
 FsStream *purple_media_backend_fs2_get_stream(
 		PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who);
+GstElement *purple_media_backend_fs2_get_src(
+		PurpleMediaBackendFs2 *self,
+		const gchar *sess_id);
+GstElement *purple_media_backend_fs2_get_tee(
+		PurpleMediaBackendFs2 *self,
+		const gchar *sess_id, const gchar *who);
 /* end tmp */
 
 G_END_DECLS

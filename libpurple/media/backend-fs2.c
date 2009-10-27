@@ -105,6 +105,11 @@ struct _PurpleMediaBackendFs2Stream
 	gchar *participant;
 	FsStream *stream;
 
+	GstElement *src;
+	GstElement *tee;
+	GstElement *volume;
+	GstElement *level;
+
 	GList *local_candidates;
 	GList *remote_candidates;
 
@@ -124,6 +129,10 @@ struct _PurpleMediaBackendFs2Session
 	gchar *id;
 	gboolean initiator;
 	FsSession *session;
+
+	GstElement *src;
+	GstElement *tee;
+
 	PurpleMediaSessionType type;
 };
 
@@ -727,6 +736,62 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
 	GstElement *src = GST_ELEMENT(GST_MESSAGE_SRC(msg));
+	static guint level_id = 0;
+
+	if (level_id == 0)
+		level_id = g_signal_lookup("level", PURPLE_TYPE_MEDIA);
+
+	if (g_signal_has_handler_pending(priv->media, level_id, 0, FALSE)
+			&& gst_structure_has_name(
+			gst_message_get_structure(msg), "level")) {
+		GstElement *src = GST_ELEMENT(GST_MESSAGE_SRC(msg));
+		gchar *name;
+		gchar *participant = NULL;
+		PurpleMediaBackendFs2Session *session = NULL;
+		gdouble rms_db;
+		gdouble percent;
+		const GValue *list;
+		const GValue *value;
+
+		if (!PURPLE_IS_MEDIA(priv->media) ||
+				GST_ELEMENT_PARENT(src) != priv->confbin)
+			return;
+
+		name = gst_element_get_name(src);
+
+		if (!strncmp(name, "sendlevel_", 10)) {
+			session = _get_session(self, name+10);
+		} else {
+			GList *iter = priv->streams;
+			PurpleMediaBackendFs2Stream *stream;
+			for (; iter; iter = g_list_next(iter)) {
+				stream = iter->data;
+				if (stream->level == src) {
+					session = stream->session;
+					participant = stream->participant;
+					break;
+				}
+			}
+		}
+
+		g_free(name);
+
+		if (!session)
+			return;
+
+		list = gst_structure_get_value(
+				gst_message_get_structure(msg), "rms");
+		value = gst_value_list_get_value(list, 0);
+		rms_db = g_value_get_double(value);
+		percent = pow(10, rms_db / 20) * 5;
+
+		if(percent > 1.0)
+			percent = 1.0;
+
+		g_signal_emit(priv->media, level_id, 0,
+				session->id, participant, percent);
+		return;
+	}
 
 	if (!FS_IS_CONFERENCE(src) || !PURPLE_IS_MEDIA_BACKEND(self) ||
 			priv->conference != FS_CONFERENCE(src))
@@ -1158,6 +1223,104 @@ _gst_element_added_cb(FsElementAddedNotifier *self,
 }
 
 static gboolean
+_create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
+		PurpleMediaSessionType type)
+{
+	PurpleMediaBackendFs2Private *priv =
+			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+	PurpleMediaBackendFs2Session *session;
+	PurpleMediaSessionType session_type;
+	FsMediaType media_type = _session_type_to_fs_media_type(type);
+	FsStreamDirection type_direction =
+			_session_type_to_fs_stream_direction(type);
+	GstElement *src;
+	GstPad *sinkpad, *srcpad;
+
+	if ((type_direction & FS_DIRECTION_SEND) == 0)
+		return TRUE;
+ 
+	session_type = _session_type_from_fs(
+			media_type, FS_DIRECTION_SEND);
+	src = purple_media_manager_get_element(
+			purple_media_get_manager(priv->media),
+			session_type, priv->media, sess_id, NULL);
+
+	if (!GST_IS_ELEMENT(src)) {
+		purple_debug_error("backend-fs2",
+				"Error creating src for session %s\n",
+				sess_id);
+		return FALSE;
+	}
+
+	session = _get_session(self, sess_id);
+
+	if (session == NULL) {
+		purple_debug_warning("backend-fs2",
+				"purple_media_set_src: trying to set"
+				" src on non-existent session\n");
+		return FALSE;
+	}
+
+	if (session->src)
+		gst_object_unref(session->src);
+
+	session->src = src;
+	gst_element_set_locked_state(session->src, TRUE);
+
+	session->tee = gst_element_factory_make("tee", NULL);
+	gst_bin_add(GST_BIN(priv->confbin), session->tee);
+
+	/* This supposedly isn't necessary, but it silences some warnings */
+	if (GST_ELEMENT_PARENT(priv->confbin)
+			== GST_ELEMENT_PARENT(session->src)) {
+		GstPad *pad = gst_element_get_static_pad(session->tee, "sink");
+		GstPad *ghost = gst_ghost_pad_new(NULL, pad);
+		gst_object_unref(pad);
+		gst_pad_set_active(ghost, TRUE);
+		gst_element_add_pad(priv->confbin, ghost);
+	}
+
+	gst_element_set_state(session->tee, GST_STATE_PLAYING);
+	gst_element_link(session->src, priv->confbin);
+
+	g_object_get(session->session, "sink-pad", &sinkpad, NULL);
+	if (session->type & PURPLE_MEDIA_SEND_AUDIO) {
+		gchar *name = g_strdup_printf("volume_%s", session->id);
+		GstElement *level;
+		GstElement *volume = gst_element_factory_make("volume", name);
+		double input_volume = purple_prefs_get_int(
+				"/purple/media/audio/volume/input")/10.0;
+		g_free(name);
+		name = g_strdup_printf("sendlevel_%s", session->id);
+		level = gst_element_factory_make("level", name);
+		g_free(name);
+		gst_bin_add(GST_BIN(priv->confbin), volume);
+		gst_bin_add(GST_BIN(priv->confbin), level);
+		gst_element_set_state(level, GST_STATE_PLAYING);
+		gst_element_set_state(volume, GST_STATE_PLAYING);
+		gst_element_link(volume, level);
+		gst_element_link(session->tee, volume);
+		srcpad = gst_element_get_static_pad(level, "src");
+		g_object_set(volume, "volume", input_volume, NULL);
+	} else {
+		srcpad = gst_element_get_request_pad(session->tee, "src%d");
+	}
+
+	purple_debug_info("backend-fs2", "connecting pad: %s\n", 
+			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK
+			  ? "success" : "failure");
+	gst_element_set_locked_state(session->src, FALSE);
+	gst_object_unref(session->src);
+
+	gst_element_set_state(session->src, GST_STATE_PLAYING);
+
+	purple_media_manager_create_output_window(purple_media_get_manager(
+			priv->media), priv->media, sess_id, NULL);
+
+	return TRUE;
+}
+
+static gboolean
 _create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 		PurpleMediaSessionType type, gboolean initiator,
 		const gchar *transmitter)
@@ -1256,6 +1419,11 @@ _create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 
 	g_hash_table_insert(priv->sessions, g_strdup(session->id), session);
 
+	if (!_create_src(self, sess_id, type)) {
+		purple_debug_info("backend-fs2", "Error creating the src\n");
+		return FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -1291,6 +1459,101 @@ _create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 			PURPLE_MEDIA_STATE_NEW, NULL, name);
 
 	return TRUE;
+}
+
+static gboolean
+_src_pad_added_cb_cb(PurpleMediaBackendFs2Stream *stream)
+{
+	PurpleMediaBackendFs2Private *priv;
+
+	g_return_val_if_fail(stream != NULL, FALSE);
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(stream->session->backend);
+	stream->connected_cb_id = 0;
+
+	purple_media_manager_create_output_window(
+			purple_media_get_manager(priv->media), priv->media,
+			stream->session->id, stream->participant);
+
+	g_signal_emit_by_name(priv->media, "state-changed",
+			PURPLE_MEDIA_STATE_CONNECTED,
+			stream->session->id, stream->participant);
+	return FALSE;
+}
+
+static void
+_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
+		FsCodec *codec, PurpleMediaBackendFs2Stream *stream)
+{
+	PurpleMediaBackendFs2Private *priv;
+	GstPad *sinkpad;
+
+	g_return_if_fail(FS_IS_STREAM(fsstream));
+	g_return_if_fail(stream != NULL);
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(stream->session->backend);
+
+	if (stream->src == NULL) {
+		GstElement *sink = NULL;
+
+		if (codec->media_type == FS_MEDIA_TYPE_AUDIO) {
+			GstElement *queue = NULL;
+			double output_volume = purple_prefs_get_int(
+					"/purple/media/audio/volume/output")/10.0;
+			/*
+			 * Should this instead be:
+			 *  audioconvert ! audioresample ! liveadder !
+			 *   audioresample ! audioconvert ! realsink
+			 */
+			queue = gst_element_factory_make("queue", NULL);
+			stream->volume = gst_element_factory_make(
+					"volume", NULL);
+			g_object_set(stream->volume, "volume",
+					output_volume, NULL);
+			stream->level = gst_element_factory_make(
+					"level", NULL);
+			stream->src = gst_element_factory_make(
+					"liveadder", NULL);
+			sink = purple_media_manager_get_element(
+					purple_media_get_manager(priv->media),
+					PURPLE_MEDIA_RECV_AUDIO, priv->media,
+					stream->session->id,
+					stream->participant);
+			gst_bin_add(GST_BIN(priv->confbin), queue);
+			gst_bin_add(GST_BIN(priv->confbin), stream->volume);
+			gst_bin_add(GST_BIN(priv->confbin), stream->level);
+			gst_bin_add(GST_BIN(priv->confbin), sink);
+			gst_element_set_state(sink, GST_STATE_PLAYING);
+			gst_element_set_state(stream->level, GST_STATE_PLAYING);
+			gst_element_set_state(stream->volume, GST_STATE_PLAYING);
+			gst_element_set_state(queue, GST_STATE_PLAYING);
+			gst_element_link(stream->level, sink);
+			gst_element_link(stream->volume, stream->level);
+			gst_element_link(queue, stream->volume);
+			sink = queue;
+		} else if (codec->media_type == FS_MEDIA_TYPE_VIDEO) {
+			stream->src = gst_element_factory_make(
+					"fsfunnel", NULL);
+			sink = gst_element_factory_make(
+					"fakesink", NULL);
+			g_object_set(G_OBJECT(sink), "async", FALSE, NULL);
+			gst_bin_add(GST_BIN(priv->confbin), sink);
+			gst_element_set_state(sink, GST_STATE_PLAYING);
+		}
+		stream->tee = gst_element_factory_make("tee", NULL);
+		gst_bin_add_many(GST_BIN(priv->confbin),
+				stream->src, stream->tee, NULL);
+		gst_element_set_state(stream->tee, GST_STATE_PLAYING);
+		gst_element_set_state(stream->src, GST_STATE_PLAYING);
+		gst_element_link_many(stream->src, stream->tee, sink, NULL);
+	}
+
+	sinkpad = gst_element_get_request_pad(stream->src, "sink%d");
+	gst_pad_link(srcpad, sinkpad);
+	gst_object_unref(sinkpad);
+
+	stream->connected_cb_id = purple_timeout_add(0,
+			(GSourceFunc)_src_pad_added_cb_cb, stream);
 }
 
 static gboolean
@@ -1405,6 +1668,9 @@ _create_stream(PurpleMediaBackendFs2 *self,
 	stream->stream = fsstream;
 
 	priv->streams =	g_list_append(priv->streams, stream);
+
+	g_signal_connect(G_OBJECT(fsstream), "src-pad-added",
+			G_CALLBACK(_src_pad_added_cb), stream);
 
 	return TRUE;
 }
@@ -1676,4 +1942,29 @@ purple_media_backend_fs2_get_stream(PurpleMediaBackendFs2 *self,
 	PurpleMediaBackendFs2Stream *stream =
 			_get_stream(self, sess_id, who);
 	return stream != NULL? stream->stream : NULL;
+}
+
+GstElement *
+purple_media_backend_fs2_get_src(PurpleMediaBackendFs2 *self,
+		const gchar *sess_id)
+{
+	PurpleMediaBackendFs2Session *session = _get_session(self, sess_id);
+	return session != NULL ? session->src : NULL;
+}
+
+GstElement *
+purple_media_backend_fs2_get_tee(PurpleMediaBackendFs2 *self,
+		const gchar *sess_id, const gchar *who)
+{
+	if (sess_id != NULL && who == NULL) {
+		PurpleMediaBackendFs2Session *session =
+				_get_session(self, sess_id);
+		return (session != NULL) ? session->tee : NULL;
+	} else if (sess_id != NULL && who != NULL) {
+		PurpleMediaBackendFs2Stream *stream =
+				_get_stream(self, sess_id, who);
+		return (stream != NULL) ? stream->tee : NULL;
+	}
+
+	g_return_val_if_reached(NULL);
 }
