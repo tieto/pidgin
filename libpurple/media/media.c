@@ -1176,31 +1176,13 @@ void purple_media_set_input_volume(PurpleMedia *media,
 		const gchar *session_id, double level)
 {
 #ifdef USE_VV
-	GList *sessions;
-
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
+	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(media->priv->backend));
 
-	purple_prefs_set_int("/purple/media/audio/volume/input", level);
-
-	if (session_id == NULL)
-		sessions = g_hash_table_get_values(media->priv->sessions);
-	else
-		sessions = g_list_append(NULL,
-				purple_media_get_session(media, session_id));
-
-	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
-		PurpleMediaSession *session = sessions->data;
-
-		if (session->type & PURPLE_MEDIA_SEND_AUDIO) {
-			gchar *name = g_strdup_printf("volume_%s",
-					session->id);
-			GstElement *volume = gst_bin_get_by_name(
-					GST_BIN(session->media->priv->confbin),
-					name);
-			g_free(name);
-			g_object_set(volume, "volume", level/10.0, NULL);
-		}
-	}
+	purple_media_backend_fs2_set_input_volume(
+			PURPLE_MEDIA_BACKEND_FS2(
+			media->priv->backend),
+			session_id, level);
 #endif
 }
 
@@ -1209,23 +1191,13 @@ void purple_media_set_output_volume(PurpleMedia *media,
 		double level)
 {
 #ifdef USE_VV
-	GList *streams;
-
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
+	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(media->priv->backend));
 
-	purple_prefs_set_int("/purple/media/audio/volume/output", level);
-
-	streams = purple_media_get_streams(media,
-			session_id, participant);
-
-	for (; streams; streams = g_list_delete_link(streams, streams)) {
-		PurpleMediaStream *stream = streams->data;
-
-		if (stream->session->type & PURPLE_MEDIA_RECV_AUDIO
-				&& GST_IS_ELEMENT(stream->volume)) {
-			g_object_set(stream->volume, "volume", level/10.0, NULL);
-		}
-	}
+	purple_media_backend_fs2_set_output_volume(
+			PURPLE_MEDIA_BACKEND_FS2(
+			media->priv->backend),
+			session_id, participant, level);
 #endif
 }
 

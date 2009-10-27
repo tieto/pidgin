@@ -71,6 +71,10 @@ GstElement *purple_media_backend_fs2_get_src(
 GstElement *purple_media_backend_fs2_get_tee(
 		PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who);
+void purple_media_backend_fs2_set_input_volume(PurpleMediaBackendFs2 *self,
+		const gchar *sess_id, double level);
+void purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
+		const gchar *sess_id, const gchar *who, double level);
 /* end tmp */
 
 G_END_DECLS

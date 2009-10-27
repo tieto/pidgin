@@ -1960,3 +1960,62 @@ purple_media_backend_fs2_get_tee(PurpleMediaBackendFs2 *self,
 
 	g_return_val_if_reached(NULL);
 }
+
+void
+purple_media_backend_fs2_set_input_volume(PurpleMediaBackendFs2 *self,
+		const gchar *sess_id, double level)
+{
+	PurpleMediaBackendFs2Private *priv;
+	GList *sessions;
+
+	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self));
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+
+	purple_prefs_set_int("/purple/media/audio/volume/input", level);
+
+	if (sess_id == NULL)
+		sessions = g_hash_table_get_values(priv->sessions);
+	else
+		sessions = g_list_append(NULL, _get_session(self, sess_id));
+
+	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+		PurpleMediaBackendFs2Session *session = sessions->data;
+
+		if (session->type & PURPLE_MEDIA_SEND_AUDIO) {
+			gchar *name = g_strdup_printf("volume_%s",
+					session->id);
+			GstElement *volume = gst_bin_get_by_name(
+					GST_BIN(priv->confbin), name);
+			g_free(name);
+			g_object_set(volume, "volume", level/10.0, NULL);
+		}
+	}
+}
+
+void
+purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
+		const gchar *sess_id, const gchar *who, double level)
+{
+	
+	PurpleMediaBackendFs2Private *priv;
+	GList *streams;
+
+	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self));
+
+	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
+
+	purple_prefs_set_int("/purple/media/audio/volume/output", level);
+
+	streams = _get_streams(self, sess_id, who);
+
+	for (; streams; streams = g_list_delete_link(streams, streams)) {
+		PurpleMediaBackendFs2Stream *stream = streams->data;
+
+		if (stream->session->type & PURPLE_MEDIA_RECV_AUDIO
+				&& GST_IS_ELEMENT(stream->volume)) {
+			g_object_set(stream->volume, "volume",
+					level/10.0, NULL);
+		}
+	}
+}
