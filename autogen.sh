@@ -99,9 +99,17 @@ run_or_die () { # beotch
 	fi
 }
 
+cleanup () {
+	rm -f autogen-??????
+	echo
+	exit 2
+}
+
 ###############################################################################
 # We really start here, yes, very sneaky!
 ###############################################################################
+trap cleanup 2
+
 FIGLET=`which figlet 2> /dev/null`
 if [ x"${FIGLET}" != x"" ] ; then
 	${FIGLET} -f small ${PACKAGE}
