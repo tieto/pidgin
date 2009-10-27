@@ -1044,8 +1044,11 @@ gnt_entry_set_text_internal(GntEntry *entry, const char *text)
 		snprintf(entry->start, len + 1, "%s", text);
 	entry->end = entry->start + len;
 
-	entry->scroll = entry->start + scroll;
-	entry->cursor = entry->end - cursor;
+	if ((entry->scroll = entry->start + scroll) > entry->end)
+		entry->scroll = entry->end;
+
+	if ((entry->cursor = entry->end - cursor) > entry->end)
+		entry->cursor = entry->end;
 
 	if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(entry), GNT_WIDGET_MAPPED))
 		entry_redraw(GNT_WIDGET(entry));
