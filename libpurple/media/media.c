@@ -1149,7 +1149,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 {
 #ifdef USE_VV
 	PurpleMediaSession *session;
-	FsParticipant *participant = NULL;
 	PurpleMediaStream *stream = NULL;
 	FsMediaType media_type = purple_media_to_fs_media_type(type);
 	FsStreamDirection type_direction =
@@ -1226,9 +1225,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 					session->id, NULL);
 		}
 	}
-
-	participant = purple_media_backend_fs2_get_participant(
-			PURPLE_MEDIA_BACKEND_FS2(media->priv->backend), who);
 
 	if (purple_media_get_stream(media, sess_id, who) == NULL) {
 		FsStream *fsstream = NULL;

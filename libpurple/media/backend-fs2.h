@@ -65,9 +65,6 @@ FsConference *purple_media_backend_fs2_get_conference(
 FsSession *purple_media_backend_fs2_get_session(
 		PurpleMediaBackendFs2 *self,
 		const gchar *sess_id);
-FsParticipant *purple_media_backend_fs2_get_participant(
-		PurpleMediaBackendFs2 *self,
-		const gchar *name);
 FsStream *purple_media_backend_fs2_get_stream(
 		PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who);
