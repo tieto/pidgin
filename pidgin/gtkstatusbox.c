@@ -914,6 +914,21 @@ status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed)
 
 	if (status_changed) {
 		message = purple_savedstatus_get_message(saved_status);
+
+		/*
+		 * If we are going to hide the imhtml, don't retain the
+		 * message because showing the old message later is
+		 * confusing. If we are going to set the message to a pre-set,
+		 * then we need to do this anyway
+		 *
+		 * Suppress the "changed" signal because the status
+		 * was changed programmatically.
+		 */
+		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), FALSE);
+
+		gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
+		gtk_imhtml_clear_formatting(GTK_IMHTML(status_box->imhtml));
+
 		if (!purple_savedstatus_is_transient(saved_status) || !message || !*message)
 		{
 			status_box->imhtml_visible = FALSE;
@@ -924,18 +939,10 @@ status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed)
 			status_box->imhtml_visible = TRUE;
 			gtk_widget_show_all(status_box->vbox);
 
-			/*
-			 * Suppress the "changed" signal because the status
-			 * was changed programmatically.
-			 */
-			gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), FALSE);
-
-			gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
-			gtk_imhtml_clear_formatting(GTK_IMHTML(status_box->imhtml));
 			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
-			gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
 		}
 
+		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
 		update_size(status_box);
 	}
 
