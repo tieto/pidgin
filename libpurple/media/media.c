@@ -111,8 +111,6 @@ struct _PurpleMediaPrivate
 	GHashTable *sessions;	/* PurpleMediaSession table */
 
 	GList *streams;		/* PurpleMediaStream table */
-
-	GstElement *confbin;
 #else
 	gpointer dummy;
 #endif
@@ -855,8 +853,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 				purple_media_backend_fs2_get_conference(
 				PURPLE_MEDIA_BACKEND_FS2(
 				media->priv->backend));
-		media->priv->confbin = GST_ELEMENT_PARENT(
-				media->priv->conference);
 	}
 
 	session = purple_media_get_session(media, sess_id);
