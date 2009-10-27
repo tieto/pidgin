@@ -634,12 +634,90 @@ purple_media_end(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
 #ifdef USE_VV
+	GList *iter, *sessions = NULL, *participants = NULL;
+
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
-	if (session_id == NULL && participant == NULL) {
+
+	iter = purple_media_get_streams(media, session_id, participant);
+
+	/* Free matching streams */
+	for (; iter; iter = g_list_delete_link(iter, iter)) {
+		PurpleMediaStream *stream = iter->data;
+
+		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
+				0, PURPLE_MEDIA_STATE_END,
+				stream->session->id, stream->participant);
+
+		media->priv->streams =
+				g_list_remove(media->priv->streams, stream);
+
+		if (g_list_find(sessions, stream->session) == NULL)
+			sessions = g_list_prepend(sessions, stream->session);
+
+		if (g_list_find_custom(participants, stream->participant,
+				(GCompareFunc)strcmp) == NULL)
+			participants = g_list_prepend(participants,
+					g_strdup(stream->participant));
+
+		purple_media_stream_free(stream);
+	}
+
+	iter = media->priv->streams;
+
+	/* Reduce to list of sessions to remove */
+	for (; iter; iter = g_list_next(iter)) {
+		PurpleMediaStream *stream = iter->data;
+
+		sessions = g_list_remove(sessions, stream->session);
+	}
+
+	/* Free sessions with no streams left */
+	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
+		PurpleMediaSession *session = sessions->data;
+
+		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
+				0, PURPLE_MEDIA_STATE_END,
+				session->id, NULL);
+
+		g_hash_table_remove(media->priv->sessions, session->id);
+		purple_media_session_free(session);
+	}
+
+	iter = media->priv->streams;
+
+	/* Reduce to list of participants to remove */
+	for (; iter; iter = g_list_next(iter)) {
+		PurpleMediaStream *stream = iter->data;
+		GList *tmp;
+
+		tmp = g_list_find_custom(participants,
+				stream->participant, (GCompareFunc)strcmp);
+
+		if (tmp != NULL) {
+			g_free(tmp->data);
+			participants = g_list_delete_link(participants,	tmp);
+		}
+	}
+
+	/* Remove participants with no streams left (just emit the signal) */
+	for (; participants; participants =
+			g_list_delete_link(participants, participants)) {
+		gchar *participant = participants->data;
+		
+		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
+				0, PURPLE_MEDIA_STATE_END,
+				NULL, participant);
+
+		g_free(participant);
+	}
+
+	/* Free the conference if no sessions left */
+	if (g_hash_table_size(media->priv->sessions) == 0) {
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 				0, PURPLE_MEDIA_STATE_END,
 				NULL, NULL);
 		g_object_unref(media);
+		return;
 	}
 #endif
 }
