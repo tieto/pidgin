@@ -85,8 +85,6 @@ struct _PurpleMediaStream
 
 	GList *active_local_candidates;
 	GList *active_remote_candidates;
-
-	guint connected_cb_id;
 };
 #endif
 
@@ -97,7 +95,6 @@ struct _PurpleMediaPrivate
 	PurpleAccount *account;
 	PurpleMediaBackend *backend;
 	gchar *conference_type;
-	gulong gst_bus_handler_id;
 	gboolean initiator;
 	gpointer prpl_data;
 
@@ -283,10 +280,6 @@ purple_media_stream_free(PurpleMediaStream *stream)
 	if (stream == NULL)
 		return;
 
-	/* Remove the connected_cb timeout */
-	if (stream->connected_cb_id != 0)
-		purple_timeout_remove(stream->connected_cb_id);
-
 	g_free(stream->participant);
 
 	if (stream->local_candidates)
@@ -326,15 +319,6 @@ purple_media_dispose(GObject *media)
 	if (priv->backend) {
 		g_object_unref(priv->backend);
 		priv->backend = NULL;
-	}
-
-	if (priv->gst_bus_handler_id != 0) {
-		GstElement *pipeline = purple_media_manager_get_pipeline(
-				priv->manager);
-		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
-		g_signal_handler_disconnect(bus, priv->gst_bus_handler_id);
-		gst_object_unref(bus);
-		priv->gst_bus_handler_id = 0;
 	}
 
 	if (priv->manager) {
