@@ -85,7 +85,6 @@ struct _PurpleMediaStream
 {
 	PurpleMediaSession *session;
 	gchar *participant;
-	FsStream *stream;
 	GstElement *src;
 	GstElement *tee;
 	GstElement *volume;
@@ -618,16 +617,17 @@ purple_media_remove_session(PurpleMedia *media, PurpleMediaSession *session)
 #endif
 
 static PurpleMediaStream *
-purple_media_insert_stream(PurpleMediaSession *session, const gchar *name, FsStream *stream)
+purple_media_insert_stream(PurpleMediaSession *session,
+		const gchar *name, gboolean initiator)
 {
 	PurpleMediaStream *media_stream;
 	
 	g_return_val_if_fail(session != NULL, NULL);
 
 	media_stream = g_new0(PurpleMediaStream, 1);
-	media_stream->stream = stream;
 	media_stream->participant = g_strdup(name);
 	media_stream->session = session;
+	media_stream->initiator = initiator;
 
 	session->media->priv->streams =
 			g_list_append(session->media->priv->streams, media_stream);
@@ -1237,8 +1237,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 				PURPLE_MEDIA_BACKEND_FS2(
 				media->priv->backend), sess_id, who);
 
-		stream = purple_media_insert_stream(session, who, fsstream);
-		stream->initiator = initiator;
+		stream = purple_media_insert_stream(session, who, initiator);
 
 		/* callback for source pad added (new stream source ready) */
 		g_signal_connect(G_OBJECT(fsstream),
