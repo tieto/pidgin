@@ -44,9 +44,6 @@
 
 #ifdef USE_VV
 
-#include <gst/farsight/fs-conference-iface.h>
-#include <gst/farsight/fs-element-added-notifier.h>
-
 /** @copydoc _PurpleMediaSession */
 typedef struct _PurpleMediaSession PurpleMediaSession;
 /** @copydoc _PurpleMediaStream */
