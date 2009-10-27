@@ -933,21 +933,6 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 				g_object_set(volume, "mute", active, NULL);
 			}
 		}
-	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_PAUSE ||
-			type == PURPLE_MEDIA_INFO_UNPAUSE)) {
-		gboolean active = (type == PURPLE_MEDIA_INFO_PAUSE);
-		GList *streams = purple_media_get_streams(media,
-				session_id, participant);
-		for (; streams; streams = g_list_delete_link(streams, streams)) {
-			PurpleMediaStream *stream = streams->data;
-			if (stream->session->type & PURPLE_MEDIA_SEND_VIDEO) {
-				g_object_set(stream->stream, "direction",
-						purple_media_to_fs_stream_direction(
-						stream->session->type & ((active) ?
-						~PURPLE_MEDIA_SEND_VIDEO :
-						PURPLE_MEDIA_VIDEO)), NULL);
-			}
-		}
 	}
 
 	g_signal_emit(media, purple_media_signals[STREAM_INFO],

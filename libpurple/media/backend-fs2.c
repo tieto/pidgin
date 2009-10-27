@@ -1053,6 +1053,21 @@ _stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 					err->message);
 			g_error_free(err);
 		}
+	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_PAUSE ||
+			type == PURPLE_MEDIA_INFO_UNPAUSE)) {
+		gboolean active = (type == PURPLE_MEDIA_INFO_PAUSE);
+		GList *streams = _get_streams(self, sid, name);
+		for (; streams; streams =
+				g_list_delete_link(streams, streams)) {
+			PurpleMediaBackendFs2Stream *stream = streams->data;
+			if (stream->session->type & PURPLE_MEDIA_SEND_VIDEO) {
+				g_object_set(stream->stream, "direction",
+						_session_type_to_fs_stream_direction(
+						stream->session->type & ((active) ?
+						~PURPLE_MEDIA_SEND_VIDEO :
+						PURPLE_MEDIA_VIDEO)), NULL);
+			}
+		}
 	}
 }
 
