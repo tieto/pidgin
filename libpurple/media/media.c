@@ -81,7 +81,6 @@ struct _PurpleMediaStream
 {
 	PurpleMediaSession *session;
 	gchar *participant;
-	GstElement *volume;
 
 	GList *local_candidates;
 	GList *remote_candidates;
