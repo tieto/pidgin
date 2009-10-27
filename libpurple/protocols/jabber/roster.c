@@ -72,7 +72,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups)
 {
 	GSList *buddies, *l;
-	GSList *pool = NULL;
+	PurpleAccount *account = purple_connection_get_account(js->gc);
 
 	buddies = purple_find_buddies(js->gc->account, jid);
 
@@ -117,23 +117,12 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 			groups = g_slist_delete_link(groups, l);
 		} else {
 			/* This buddy isn't in the group on the server anymore */
-			pool = g_slist_prepend(pool, b);
+			purple_debug_info("jabber", "jabber_roster_parse(): Removing %s "
+			                  "from group '%s' on the local list\n",
+			                  purple_buddy_get_name(b),
+			                  purple_group_get_name(g));
+			purple_blist_remove_buddy(b);
 		}
-	}
-
-	if (pool) {
-		GString *tmp = g_string_new(NULL);
-		GSList *list = pool;
-		for ( ; list; list = list->next) {
-			tmp = g_string_append(tmp,
-					purple_group_get_name(purple_buddy_get_group(list->data)));
-			if (list->next)
-				tmp = g_string_append(tmp, ", ");
-		}
-
-		purple_debug_info("jabber", "jabber_roster_parse(): Removing %s from "
-		                  "groups: %s\n", jid, tmp->str);
-		g_string_free(tmp, TRUE);
 	}
 
 	if (groups) {
@@ -145,17 +134,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 
 	while(groups) {
 		PurpleGroup *g = purple_find_group(groups->data);
-		PurpleBuddy *b = NULL;
-
-		/* If there are buddies we would otherwise delete, move them to
-		 * the new group (instead of deleting them below)
-		 */
-		if (pool) {
-			b = pool->data;
-			pool = g_slist_delete_link(pool, pool);
-		} else {
-			b = purple_buddy_new(js->gc->account, jid, alias);
-		}
+		PurpleBuddy *b = purple_buddy_new(account, jid, alias);
 
 		if(!g) {
 			g = purple_group_new(groups->data);
@@ -167,14 +146,6 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 
 		g_free(groups->data);
 		groups = g_slist_delete_link(groups, groups);
-	}
-
-	/* Remove this person from all the groups they're no longer in on the
-	 * server */
-	while (pool) {
-		PurpleBuddy *b = pool->data;
-		purple_blist_remove_buddy(b);
-		pool = g_slist_delete_link(pool, pool);
 	}
 
 	g_slist_free(buddies);

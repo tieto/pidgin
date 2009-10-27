@@ -1050,6 +1050,16 @@ purple_account_destroy(PurpleAccount *account)
 	if(account->system_log)
 		purple_log_free(account->system_log);
 
+	while (account->deny) {
+		g_free(account->deny->data);
+		account->deny = g_slist_delete_link(account->deny, account->deny);
+	}
+
+	while (account->permit) {
+		g_free(account->permit->data);
+		account->permit = g_slist_delete_link(account->permit, account->permit);
+	}
+
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 	PURPLE_DBUS_UNREGISTER_POINTER(priv->current_error);
 	if (priv->current_error) {
