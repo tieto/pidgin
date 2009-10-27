@@ -837,12 +837,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 	}
 
 	if (purple_media_get_stream(media, sess_id, who) == NULL) {
-		FsStream *fsstream = NULL;
-
-		fsstream = purple_media_backend_fs2_get_stream(
-				PURPLE_MEDIA_BACKEND_FS2(
-				media->priv->backend), sess_id, who);
-
 		stream = purple_media_insert_stream(session, who, initiator);
 
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],

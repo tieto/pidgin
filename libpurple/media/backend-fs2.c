@@ -1949,15 +1949,6 @@ purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
 	return TRUE;
 }
 
-FsStream *
-purple_media_backend_fs2_get_stream(PurpleMediaBackendFs2 *self,
-		const gchar *sess_id, const gchar *who)
-{
-	PurpleMediaBackendFs2Stream *stream =
-			_get_stream(self, sess_id, who);
-	return stream != NULL? stream->stream : NULL;
-}
-
 GstElement *
 purple_media_backend_fs2_get_src(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id)

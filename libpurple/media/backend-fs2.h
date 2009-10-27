@@ -59,10 +59,7 @@ GType purple_media_backend_fs2_get_type(void);
  * Temporary function in order to be able to test while
  * integrating with PurpleMedia
  */
-#include <gst/farsight/fs-conference-iface.h>
-FsStream *purple_media_backend_fs2_get_stream(
-		PurpleMediaBackendFs2 *self,
-		const gchar *sess_id, const gchar *who);
+#include <gst/gst.h>
 GstElement *purple_media_backend_fs2_get_src(
 		PurpleMediaBackendFs2 *self,
 		const gchar *sess_id);
