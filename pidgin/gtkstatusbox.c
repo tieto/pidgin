@@ -79,8 +79,8 @@ static PurpleAccount* check_active_accounts_for_identical_statuses(void);
 
 static void pidgin_status_box_pulse_typing(PidginStatusBox *status_box);
 static void pidgin_status_box_refresh(PidginStatusBox *status_box);
-static void status_menu_refresh_iter(PidginStatusBox *status_box);
-static void pidgin_status_box_regenerate(PidginStatusBox *status_box);
+static void status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed);
+static void pidgin_status_box_regenerate(PidginStatusBox *status_box, gboolean status_changed);
 static void pidgin_status_box_changed(PidginStatusBox *box);
 static void pidgin_status_box_size_request (GtkWidget *widget, GtkRequisition *requisition);
 static void pidgin_status_box_size_allocate (GtkWidget *widget, GtkAllocation *allocation);
@@ -304,7 +304,7 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus, Purpl
 	if (status_box->account == account)
 		update_to_reflect_account_status(status_box, account, newstatus);
 	else if (status_box->token_status_account == account)
-		status_menu_refresh_iter(status_box);
+		status_menu_refresh_iter(status_box, TRUE);
 }
 
 static gboolean
@@ -559,7 +559,7 @@ pidgin_status_box_set_property(GObject *object, guint param_id,
 		else
 			statusbox->token_status_account = check_active_accounts_for_identical_statuses();
 
-		pidgin_status_box_regenerate(statusbox);
+		pidgin_status_box_regenerate(statusbox, TRUE);
 
 		break;
 	default:
@@ -821,7 +821,7 @@ find_status_type_by_index(const PurpleAccount *account, gint active)
  * keyboard signals instead of the changed signal?
  */
 static void
-status_menu_refresh_iter(PidginStatusBox *status_box)
+status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed)
 {
 	PurpleSavedStatus *saved_status;
 	PurpleStatusPrimitive primitive;
@@ -912,30 +912,32 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 	} else
 		status_box->active_row = NULL;
 
-	message = purple_savedstatus_get_message(saved_status);
-	if (!purple_savedstatus_is_transient(saved_status) || !message || !*message)
-	{
-		status_box->imhtml_visible = FALSE;
-		gtk_widget_hide_all(status_box->vbox);
+	if (status_changed) {
+		message = purple_savedstatus_get_message(saved_status);
+		if (!purple_savedstatus_is_transient(saved_status) || !message || !*message)
+		{
+			status_box->imhtml_visible = FALSE;
+			gtk_widget_hide_all(status_box->vbox);
+		}
+		else
+		{
+			status_box->imhtml_visible = TRUE;
+			gtk_widget_show_all(status_box->vbox);
+
+			/*
+			 * Suppress the "changed" signal because the status
+			 * was changed programmatically.
+			 */
+			gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), FALSE);
+
+			gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
+			gtk_imhtml_clear_formatting(GTK_IMHTML(status_box->imhtml));
+			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
+			gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
+		}
+
+		update_size(status_box);
 	}
-	else
-	{
-		status_box->imhtml_visible = TRUE;
-		gtk_widget_show_all(status_box->vbox);
-
-		/*
-		 * Suppress the "changed" signal because the status
-		 * was changed programmatically.
-		 */
-		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), FALSE);
-
-		gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
-		gtk_imhtml_clear_formatting(GTK_IMHTML(status_box->imhtml));
-		gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
-		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
-	}
-
-	update_size(status_box);
 
 	/* Stop suppressing the "changed" signal. */
 	gtk_widget_set_sensitive(GTK_WIDGET(status_box), TRUE);
@@ -1068,7 +1070,7 @@ add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 }
 
 static void
-pidgin_status_box_regenerate(PidginStatusBox *status_box)
+pidgin_status_box_regenerate(PidginStatusBox *status_box, gboolean status_changed)
 {
 	GtkIconSize icon_size;
 
@@ -1104,7 +1106,7 @@ pidgin_status_box_regenerate(PidginStatusBox *status_box)
 		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_CUSTOM, NULL, _("New status..."), NULL, NULL);
 		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_SAVED, NULL, _("Saved statuses..."), NULL, NULL);
 
-		status_menu_refresh_iter(status_box);
+		status_menu_refresh_iter(status_box, status_changed);
 		pidgin_status_box_refresh(status_box);
 
 	} else {
@@ -1156,7 +1158,7 @@ static gboolean imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStat
 			update_to_reflect_account_status(status_box, status_box->account,
 							purple_account_get_active_status(status_box->account));
 		else {
-			status_menu_refresh_iter(status_box);
+			status_menu_refresh_iter(status_box, TRUE);
 			pidgin_status_box_refresh(status_box);
 		}
 		return TRUE;
@@ -1229,7 +1231,7 @@ static void account_enabled_cb(PurpleAccount *acct, PidginStatusBox *status_box)
 
 	/* Regenerate the list if it has changed */
 	if (initial_token_acct != status_box->token_status_account) {
-		pidgin_status_box_regenerate(status_box);
+		pidgin_status_box_regenerate(status_box, TRUE);
 	}
 
 }
@@ -1238,13 +1240,14 @@ static void
 current_savedstatus_changed_cb(PurpleSavedStatus *now, PurpleSavedStatus *old, PidginStatusBox *status_box)
 {
 	/* Make sure our current status is added to the list of popular statuses */
-	pidgin_status_box_regenerate(status_box);
+	pidgin_status_box_regenerate(status_box, TRUE);
 }
 
 static void
 saved_status_updated_cb(PurpleSavedStatus *status, PidginStatusBox *status_box)
 {
-	pidgin_status_box_regenerate(status_box);
+	pidgin_status_box_regenerate(status_box,
+		purple_savedstatus_get_current() == status);
 }
 
 static void
@@ -1919,7 +1922,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->token_status_account = check_active_accounts_for_identical_statuses();
 
 	cache_pixbufs(status_box);
-	pidgin_status_box_regenerate(status_box);
+	pidgin_status_box_regenerate(status_box, TRUE);
 
 	purple_signal_connect(purple_savedstatuses_get_handle(), "savedstatus-changed",
 						status_box,
@@ -2587,7 +2590,7 @@ static void remove_typing_cb(PidginStatusBox *status_box)
 	if (status_box->typing == 0)
 	{
 		/* Nothing has changed, so we don't need to do anything */
-		status_menu_refresh_iter(status_box);
+		status_menu_refresh_iter(status_box, FALSE);
 		return;
 	}
 
@@ -2645,14 +2648,14 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			pidgin_status_editor_show(FALSE,
 				purple_savedstatus_is_transient(saved_status)
 					? saved_status : NULL);
-			status_menu_refresh_iter(status_box);
+			status_menu_refresh_iter(status_box, FALSE);
 			return;
 		}
 
 		if (type == PIDGIN_STATUS_BOX_TYPE_SAVED)
 		{
 			pidgin_status_window_show();
-			status_menu_refresh_iter(status_box);
+			status_menu_refresh_iter(status_box, FALSE);
 			return;
 		}
 	}
