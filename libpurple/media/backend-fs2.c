@@ -113,21 +113,13 @@ struct _PurpleMediaBackendFs2Stream
 	GList *local_candidates;
 	GList *remote_candidates;
 
-	GList *active_local_candidates;
-	GList *active_remote_candidates;
-
 	guint connected_cb_id;
-
-	gboolean initiator;
-	gboolean accepted;
-	gboolean candidates_prepared;
 };
 
 struct _PurpleMediaBackendFs2Session
 {
 	PurpleMediaBackendFs2 *backend;
 	gchar *id;
-	gboolean initiator;
 	FsSession *session;
 
 	GstElement *src;
@@ -265,14 +257,6 @@ purple_media_backend_fs2_finalize(GObject *obj)
 
 		if (stream->remote_candidates)
 			fs_candidate_list_destroy(stream->remote_candidates);
-
-		if (stream->active_local_candidates)
-			fs_candidate_list_destroy(
-					stream->active_local_candidates);
-
-		if (stream->active_remote_candidates)
-			fs_candidate_list_destroy(
-					stream->active_remote_candidates);
 
 		g_free(stream);
 	}
@@ -1439,7 +1423,6 @@ _create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	session->id = g_strdup(sess_id);
 	session->backend = self;
 	session->type = type;
-	session->initiator = initiator;
 
 	if (!priv->sessions) {
 		purple_debug_info("backend-fs2",
@@ -1692,7 +1675,6 @@ _create_stream(PurpleMediaBackendFs2 *self,
 	}
 
 	stream = g_new0(PurpleMediaBackendFs2Stream, 1);
-	stream->initiator = initiator;
 	stream->participant = g_strdup(who);
 	stream->session = session;
 	stream->stream = fsstream;
