@@ -73,8 +73,6 @@ struct _PurpleMediaSession
 {
 	gchar *id;
 	PurpleMedia *media;
-	FsSession *session;
-
 	PurpleMediaSessionType type;
 	gboolean initiator;
 };
@@ -897,9 +895,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 
 	if (!session) {
 		session = g_new0(PurpleMediaSession, 1);
-		session->session = purple_media_backend_fs2_get_session(
-				PURPLE_MEDIA_BACKEND_FS2(media->priv->backend),
-				sess_id);
 		session->id = g_strdup(sess_id);
 		session->media = media;
 		session->type = type;

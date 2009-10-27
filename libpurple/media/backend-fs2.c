@@ -1927,14 +1927,6 @@ purple_media_backend_fs2_get_conference(PurpleMediaBackendFs2 *self)
 	return priv->conference;
 }
 
-FsSession *
-purple_media_backend_fs2_get_session(PurpleMediaBackendFs2 *self,
-		const gchar *sess_id)
-{
-	PurpleMediaBackendFs2Session *session = _get_session(self, sess_id);
-	return session != NULL? session->session : NULL;
-}
-
 FsStream *
 purple_media_backend_fs2_get_stream(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who)
