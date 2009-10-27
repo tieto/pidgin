@@ -1949,14 +1949,6 @@ purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
 	return TRUE;
 }
 
-FsConference *
-purple_media_backend_fs2_get_conference(PurpleMediaBackendFs2 *self)
-{
-	PurpleMediaBackendFs2Private *priv =
-			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
-	return priv->conference;
-}
-
 FsStream *
 purple_media_backend_fs2_get_stream(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who)

@@ -102,7 +102,6 @@ struct _PurpleMediaPrivate
 	PurpleMediaManager *manager;
 	PurpleAccount *account;
 	PurpleMediaBackend *backend;
-	FsConference *conference;
 	gchar *conference_type;
 	gulong gst_bus_handler_id;
 	gboolean initiator;
@@ -160,9 +159,6 @@ enum {
 	PROP_0,
 	PROP_MANAGER,
 	PROP_ACCOUNT,
-#ifndef PURPLE_DISABLE_DEPRECATED
-	PROP_CONFERENCE,
-#endif
 	PROP_CONFERENCE_TYPE,
 	PROP_INITIATOR,
 	PROP_PRPL_DATA,
@@ -221,15 +217,6 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"PurpleAccount",
 			"The account this media session is on.",
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
-
-#ifndef PURPLE_DISABLE_DEPRECATED
-	g_object_class_install_property(gobject_class, PROP_CONFERENCE,
-			g_param_spec_object("conference",
-			"Farsight conference",
-			"The FsConference associated with this media.",
-			FS_TYPE_CONFERENCE,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE));
-#endif
 
 	g_object_class_install_property(gobject_class, PROP_CONFERENCE_TYPE,
 			g_param_spec_string("conference-type",
@@ -399,14 +386,6 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 		case PROP_ACCOUNT:
 			media->priv->account = g_value_get_pointer(value);
 			break;
-#ifndef PURPLE_DISABLE_DEPRECATED
-		case PROP_CONFERENCE: {
-			if (media->priv->conference)
-				gst_object_unref(media->priv->conference);
-			media->priv->conference = g_value_dup_object(value);
-			break;
-		}
-#endif
 		case PROP_CONFERENCE_TYPE:
 			media->priv->conference_type =
 					g_value_dup_string(value);
@@ -465,11 +444,6 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 		case PROP_ACCOUNT:
 			g_value_set_pointer(value, media->priv->account);
 			break;
-#ifndef PURPLE_DISABLE_DEPRECATED
-		case PROP_CONFERENCE:
-			g_value_set_object(value, media->priv->conference);
-			break;
-#endif
 		case PROP_CONFERENCE_TYPE:
 			g_value_set_string(value,
 					media->priv->conference_type);
@@ -845,14 +819,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 			num_params, params)) {
 		purple_debug_error("media", "Error adding stream.\n");
 		return FALSE;
-	}
-
-	/* XXX: Temporary call while integrating with backend */
-	if (media->priv->conference == NULL) {
-		media->priv->conference =
-				purple_media_backend_fs2_get_conference(
-				PURPLE_MEDIA_BACKEND_FS2(
-				media->priv->backend));
 	}
 
 	session = purple_media_get_session(media, sess_id);
