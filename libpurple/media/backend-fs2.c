@@ -154,6 +154,7 @@ purple_media_backend_fs2_dispose(GObject *obj)
 {
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(obj);
+	GList *iter = NULL;
 
 	purple_debug_info("backend-fs2", "purple_media_backend_fs2_dispose\n");
 
@@ -211,6 +212,14 @@ purple_media_backend_fs2_dispose(GObject *obj)
 		priv->participants = NULL;
 	}
 
+	for (iter = priv->streams; iter; iter = g_list_next(iter)) {
+		PurpleMediaBackendFs2Stream *stream = iter->data;
+		if (stream->stream) {
+			g_object_unref(stream->stream);
+			stream->stream = NULL;
+		}
+	}
+
 	if (priv->media) {
 		g_object_remove_weak_pointer(G_OBJECT(priv->media),
 				(gpointer*)&priv->media);
@@ -229,6 +238,33 @@ purple_media_backend_fs2_finalize(GObject *obj)
 	purple_debug_info("backend-fs2", "purple_media_backend_fs2_finalize\n");
 
 	g_free(priv->conference_type);
+
+	for (; priv->streams; priv->streams =
+			g_list_delete_link(priv->streams, priv->streams)) {
+		PurpleMediaBackendFs2Stream *stream = priv->streams->data;
+
+		/* Remove the connected_cb timeout */
+		if (stream->connected_cb_id != 0)
+			purple_timeout_remove(stream->connected_cb_id);
+
+		g_free(stream->participant);
+
+		if (stream->local_candidates)
+			fs_candidate_list_destroy(stream->local_candidates);
+
+		if (stream->remote_candidates)
+			fs_candidate_list_destroy(stream->remote_candidates);
+
+		if (stream->active_local_candidates)
+			fs_candidate_list_destroy(
+					stream->active_local_candidates);
+
+		if (stream->active_remote_candidates)
+			fs_candidate_list_destroy(
+					stream->active_remote_candidates);
+
+		g_free(stream);
+	}
 
 	if (priv->sessions) {
 		GList *sessions = g_hash_table_get_values(priv->sessions);

@@ -350,7 +350,6 @@ static void
 purple_media_dispose(GObject *media)
 {
 	PurpleMediaPrivate *priv = PURPLE_MEDIA_GET_PRIVATE(media);
-	GList *iter = NULL;
 
 	purple_debug_info("media","purple_media_dispose\n");
 
@@ -359,14 +358,6 @@ purple_media_dispose(GObject *media)
 	if (priv->backend) {
 		g_object_unref(priv->backend);
 		priv->backend = NULL;
-	}
-
-	for (iter = priv->streams; iter; iter = g_list_next(iter)) {
-		PurpleMediaStream *stream = iter->data;
-		if (stream->stream) {
-			g_object_unref(stream->stream);
-			stream->stream = NULL;
-		}
 	}
 
 	if (priv->gst_bus_handler_id != 0) {
