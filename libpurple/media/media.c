@@ -99,7 +99,7 @@ struct _PurpleMediaPrivate
 	gpointer prpl_data;
 
 	GHashTable *sessions;	/* PurpleMediaSession table */
-
+	GList *participants;
 	GList *streams;		/* PurpleMediaStream table */
 #else
 	gpointer dummy;
@@ -337,6 +337,10 @@ purple_media_finalize(GObject *media)
 
 	for (; priv->streams; priv->streams = g_list_delete_link(priv->streams, priv->streams))
 		purple_media_stream_free(priv->streams->data);
+
+	for (; priv->participants; priv->participants = g_list_delete_link(
+			priv->participants, priv->participants))
+		g_free(priv->participants->data);
 
 	if (priv->sessions) {
 		GList *sessions = g_hash_table_get_values(priv->sessions);
