@@ -83,7 +83,7 @@ run_or_die () { # beotch
 
 	OUTPUT=`mktemp autogen-XXXXXX`
 
-	printf "%s" "running ${CMD} ${@}... "
+	printf "running %s %s..." ${CMD} ${@}
 	${CMD} ${@} >${OUTPUT} 2>&1
 
 	if [ $? != 0 ] ; then
