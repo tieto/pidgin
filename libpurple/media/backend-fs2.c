@@ -1079,32 +1079,28 @@ _stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		gchar *sid, gchar *name, gboolean local,
 		PurpleMediaBackendFs2 *self)
 {
-	if (type == PURPLE_MEDIA_INFO_ACCEPT) {
-		GList *streams = _get_streams(self, sid, name);
-		
-		for (; streams; streams =
-				g_list_delete_link(streams, streams)) {
-			PurpleMediaBackendFs2Stream *stream = streams->data;
-			GError *err = NULL;
+	if (type == PURPLE_MEDIA_INFO_ACCEPT && sid != NULL && name != NULL) {
+		PurpleMediaBackendFs2Stream *stream =
+				_get_stream(self, sid, name);
+		GError *err = NULL;
 
-			g_object_set(G_OBJECT(stream->stream), "direction",
-					_session_type_to_fs_stream_direction(
-					stream->session->type), NULL);
+		g_object_set(G_OBJECT(stream->stream), "direction",
+				_session_type_to_fs_stream_direction(
+				stream->session->type), NULL);
 
-			if (stream->remote_candidates == NULL)
-				continue;
+		if (stream->remote_candidates == NULL)
+			return;
 
-			fs_stream_set_remote_candidates(stream->stream,
-					stream->remote_candidates, &err);
+		fs_stream_set_remote_candidates(stream->stream,
+				stream->remote_candidates, &err);
 
-			if (err == NULL)
-				continue;
+		if (err == NULL)
+			return;
 
-			purple_debug_error("backend-fs2", "Error adding "
-					"remote candidates: %s\n",
-					err->message);
-			g_error_free(err);
-		}
+		purple_debug_error("backend-fs2", "Error adding "
+				"remote candidates: %s\n",
+				err->message);
+		g_error_free(err);
 	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_MUTE ||
 			type == PURPLE_MEDIA_INFO_UNMUTE)) {
 		PurpleMediaBackendFs2Private *priv =
