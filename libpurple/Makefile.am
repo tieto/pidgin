@@ -121,10 +121,6 @@ purple_coreheaders = \
 	idle.h \
 	imgstore.h \
 	log.h \
-	media/backend-iface.h \
-	media/candidate.h \
-	media/codec.h \
-	media/enum-types.h \
 	media.h \
 	media-gst.h \
 	mediamanager.h \
@@ -165,6 +161,12 @@ purple_coreheaders = \
 	xmlnode.h \
 	whiteboard.h
 
+purple_mediaheaders = \
+	backend-iface.h \
+	candidate.h \
+	codec.h \
+	enum-types.h
+
 purple_builtheaders = purple.h version.h marshallers.h
 
 marshallers.h: marshallers.list
@@ -201,6 +203,7 @@ dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
                 savedstatuses.h smiley.h status.h server.h util.h xmlnode.h prpl.h
 
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
+		$(addprefix $(srcdir)/media/, $(purple_mediaheaders)) \
 		$(purple_builtheaders)
 dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
 # We should probably make this better
@@ -235,7 +238,7 @@ libpurple_client_la_LIBADD = $(DBUS_LIBS)
 purple-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client > $@
 
-purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(purple_builtheaders) $(dbus_exported)
+purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(addprefix media/, $(purple_mediaheaders)) $(purple_builtheaders) $(dbus_exported)
 	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim > $@
 	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers >> $@
 
@@ -292,6 +295,10 @@ libpurpleinclude_HEADERS = \
 	$(purple_coreheaders) \
 	$(purple_builtheaders) \
 	$(dbus_headers)
+
+mediaincludedir=$(includedir)/libpurple/media
+mediainclude_HEADERS = \
+	$(addprefix $(srcdir)/media/, $(purple_mediaheaders))
 
 libpurple_la_DEPENDENCIES = $(STATIC_LINK_LIBS)
 libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
