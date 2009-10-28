@@ -809,7 +809,7 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 		return;
 	} else if (type == PURPLE_MEDIA_INFO_HANGUP ||
 			type == PURPLE_MEDIA_INFO_REJECT) {
-		GList *streams, *participants = NULL;
+		GList *streams;
 
 		g_return_if_fail(PURPLE_IS_MEDIA(media));
 
@@ -825,12 +825,6 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 					purple_media_signals[STREAM_INFO],
 					0, type, stream->session->id,
 					stream->participant, local);
-
-			if (g_list_find_custom(participants,
-					stream->participant,
-					(GCompareFunc)strcmp) == NULL)
-				participants = g_list_prepend(participants,
-						g_strdup(stream->participant));
 		}
 
 		if (session_id != NULL && participant != NULL) {
@@ -839,6 +833,7 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 			/* Emit for everything in the conference */
 			GList *sessions = g_hash_table_get_values(
 					media->priv->sessions);
+			GList *participants = media->priv->participants;
 
 			/* Emit for sessions */
 			for (; sessions; sessions = g_list_delete_link(
@@ -852,15 +847,12 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 
 			/* Emit for participants */
 			for (; participants; participants =
-					g_list_delete_link(
-					participants, participants)) {
+					g_list_next(participants)) {
 				gchar *participant = participants->data;
 
 				g_signal_emit(media, purple_media_signals[
 						STREAM_INFO], 0, type,
 						NULL, participant, local);
-
-				g_free(participant);
 			}
 
 			/* Emit for conference */
@@ -884,7 +876,7 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 			}
 		} else if (participant != NULL) {
 			/* Emit just the specific participant */
-			if (!g_list_find_custom(participants,
+			if (!g_list_find_custom(media->priv->participants,
 					participant, (GCompareFunc)strcmp)) {
 				purple_debug_warning("media",
 						"Couldn't find participant"
@@ -894,12 +886,6 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 						STREAM_INFO], 0, type, NULL,
 						participant, local);
 			}
-		}
-
-		/* Clear participants if any remain */
-		for (; participants; participants = g_list_delete_link(
-				participants, participants)) {
-			g_free(participants->data);
 		}
 
 		purple_media_end(media, session_id, participant);
