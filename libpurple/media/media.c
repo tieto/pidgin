@@ -707,10 +707,18 @@ purple_media_end(PurpleMedia *media,
 	for (; participants; participants =
 			g_list_delete_link(participants, participants)) {
 		gchar *participant = participants->data;
-		
+		GList *link = g_list_find_custom(media->priv->participants,
+				participant, (GCompareFunc)strcmp);
+
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 				0, PURPLE_MEDIA_STATE_END,
 				NULL, participant);
+
+		if (link != NULL) {
+			g_free(link->data);
+			media->priv->participants = g_list_delete_link(
+					media->priv->participants, link);
+		}
 
 		g_free(participant);
 	}
