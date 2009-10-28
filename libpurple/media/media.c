@@ -371,9 +371,9 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 		case PROP_CONFERENCE_TYPE:
 			media->priv->conference_type =
 					g_value_dup_string(value);
-			/* Will eventually get this type from the media manager */
 			media->priv->backend = g_object_new(
-					PURPLE_TYPE_MEDIA_BACKEND_FS2,
+					purple_media_manager_get_backend_type(
+					purple_media_manager_get()),
 					"conference-type",
 					media->priv->conference_type,
 					"media", media,

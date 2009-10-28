@@ -37,6 +37,7 @@
 #endif
 
 #ifdef USE_VV
+#include <media/backend-fs2.h>
 
 #include <gst/farsight/fs-element-added-notifier.h>
 #include <gst/interfaces/xoverlay.h>
@@ -79,6 +80,7 @@ struct _PurpleMediaManagerPrivate
 	GList *elements;
 	GList *output_windows;
 	gulong next_output_window_id;
+	GType backend_type;
 
 	PurpleMediaElementInfo *video_src;
 	PurpleMediaElementInfo *video_sink;
@@ -166,6 +168,9 @@ purple_media_manager_init (PurpleMediaManager *media)
 	media->priv = PURPLE_MEDIA_MANAGER_GET_PRIVATE(media);
 	media->priv->medias = NULL;
 	media->priv->next_output_window_id = 1;
+#ifdef USE_VV
+	media->priv->backend_type = PURPLE_TYPE_MEDIA_BACKEND_FS2;
+#endif
 
 	purple_prefs_add_none("/purple/media");
 	purple_prefs_add_none("/purple/media/audio");
@@ -907,6 +912,30 @@ purple_media_manager_get_ui_caps(PurpleMediaManager *manager)
 	return manager->priv->ui_caps;
 #else
 	return PURPLE_MEDIA_CAPS_NONE;
+#endif
+}
+
+void
+purple_media_manager_set_backend_type(PurpleMediaManager *manager,
+		GType backend_type)
+{
+#ifdef USE_VV
+	g_return_if_fail(PURPLE_IS_MEDIA_MANAGER(manager));
+
+	manager->priv->backend_type = backend_type;
+#endif
+}
+
+GType
+purple_media_manager_get_backend_type(PurpleMediaManager *manager)
+{	
+#ifdef USE_VV
+	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager),
+			PURPLE_MEDIA_CAPS_NONE);
+
+	return manager->priv->backend_type;
+#else
+	return G_TYPE_NONE;
 #endif
 }
 
