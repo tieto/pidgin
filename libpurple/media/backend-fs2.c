@@ -1468,9 +1468,6 @@ _create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 
 	g_hash_table_insert(priv->participants, g_strdup(name), participant);
 
-	g_signal_emit_by_name(priv->media, "state-changed",
-			PURPLE_MEDIA_STATE_NEW, NULL, name);
-
 	return TRUE;
 }
 

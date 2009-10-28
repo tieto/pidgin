@@ -1033,6 +1033,15 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 				session->id, NULL);
 	}
 
+	if (!g_list_find_custom(media->priv->participants,
+			who, (GCompareFunc)strcmp)) {
+		media->priv->participants = g_list_prepend(
+				media->priv->participants, g_strdup(who));
+
+		g_signal_emit_by_name(media, "state-changed",
+				PURPLE_MEDIA_STATE_NEW, NULL, who);
+	}
+
 	if (purple_media_get_stream(media, sess_id, who) == NULL) {
 		stream = purple_media_insert_stream(session, who, initiator);
 
