@@ -731,19 +731,70 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
 
 	if (type == PURPLE_MEDIA_INFO_ACCEPT) {
-		GList *streams;
+		GList *streams, *sessions = NULL, *participants = NULL;
 
 		g_return_if_fail(PURPLE_IS_MEDIA(media));
 
 		streams = purple_media_get_streams(media,
 				session_id, participant);
 
+		/* Emit stream acceptance */
 		for (; streams; streams =
 				g_list_delete_link(streams, streams)) {
 			PurpleMediaStream *stream = streams->data;
 
 			stream->accepted = TRUE;
+
+			g_signal_emit(media,
+					purple_media_signals[STREAM_INFO],
+					0, type, stream->session->id,
+					stream->participant, local);
+
+			if (g_list_find(sessions, stream->session) == NULL)
+				sessions = g_list_prepend(sessions,
+						stream->session);
+
+			if (g_list_find_custom(participants,
+					stream->participant,
+					(GCompareFunc)strcmp) == NULL)
+				participants = g_list_prepend(participants,
+						g_strdup(stream->participant));
 		}
+
+		/* Emit session acceptance */
+		for (; sessions; sessions =
+				g_list_delete_link(sessions, sessions)) {
+			PurpleMediaSession *session = sessions->data;
+
+			if (purple_media_accepted(media, session->id, NULL))
+				g_signal_emit(media, purple_media_signals[
+						STREAM_INFO], 0,
+						PURPLE_MEDIA_INFO_ACCEPT,
+						session->id, NULL, local);
+		}
+
+		/* Emit participant acceptance */
+		for (; participants; participants = g_list_delete_link(
+				participants, participants)) {
+			gchar *participant = participants->data;
+
+			if (purple_media_accepted(media, NULL, participant))
+				g_signal_emit(media, purple_media_signals[
+						STREAM_INFO], 0,
+						PURPLE_MEDIA_INFO_ACCEPT,
+						NULL, participant, local);
+
+			g_free(participant);
+		}
+
+		/* Emit conference acceptance */
+		if (purple_media_accepted(media, NULL, NULL))
+			g_signal_emit(media,
+					purple_media_signals[STREAM_INFO],
+					0, PURPLE_MEDIA_INFO_ACCEPT,
+					NULL, NULL, local);
+
+		return;
 	}
 
 	g_signal_emit(media, purple_media_signals[STREAM_INFO],
