@@ -1,3 +1,23 @@
+pidgin (2.6.3-1~bpo50+1) lenny-backports; urgency=low
+
+  * Rebuild for lenny-backports.
+  * Changes to Build-Depends:
+    - Lowered cdbs versioned depends to 0.4.52 which is in stable.
+    - Removed versioning from libsilc-dev because the renaming was after that
+      version anyway.
+    - Removed libgstfarsight0.10-dev and call configure with --disable-vv
+      --disable-farsight, the libraries for that are too much to carry.
+
+ -- Gerfried Fuchs <rhonda@debian.at>  Thu, 29 Oct 2009 17:30:01 +0100
+
+pidgin (2.6.3-1) unstable; urgency=medium
+
+  * New upstream release
+    - fixes a remote ICQ crash (CVE-2009-3615)
+    - fix building on non-Linux architectures (Closes: #546024)
+
+ -- Ari Pollak <ari@debian.org>  Fri, 16 Oct 2009 10:30:34 -0400
+
 pidgin (2.6.2-1) unstable; urgency=medium
 
   * New upstream release

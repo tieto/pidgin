@@ -1402,13 +1402,15 @@ x509_tls_cached_complete(PurpleCertificateVerificationRequest *vrq,
 		if (flags & PURPLE_CERTIFICATE_NAME_MISMATCH) {
 			gchar *sn = purple_certificate_get_subject_name(peer_crt);
 
-			g_string_append_printf(errors, _("The certificate claims to be "
-						"from \"%s\" instead. This could mean that you are "
-						"not connecting to the service you believe you are."),
-						sn);
-			g_free(sn);
+			if (sn) {
+				g_string_append_printf(errors, _("The certificate claims to be "
+							"from \"%s\" instead. This could mean that you are "
+							"not connecting to the service you believe you are."),
+							sn);
+				g_free(sn);
 
-			flags &= ~PURPLE_CERTIFICATE_NAME_MISMATCH;
+				flags &= ~PURPLE_CERTIFICATE_NAME_MISMATCH;
+			}
 		}
 
 		while (i != PURPLE_CERTIFICATE_LAST) {

@@ -2,6 +2,11 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.6.3 (10/16/2009):
+	Mark: Someone reported a fairly serious bug in our AIM/ICQ code
+	so we're releasing a special "severe bug fix only" build.  See the
+	ChangeLog for details.  Enjoy!
+
 2.6.2 (09/05/2009):
 	Mark: Woo boy it's been a busy two weeks.  There was a lot of new code
 	in 2.6.0, and with new code comes new bugs.  The cadre of relentless
