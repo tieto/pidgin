@@ -52,12 +52,12 @@ typedef struct _PurpleMediaBackendFs2Stream PurpleMediaBackendFs2Stream;
 static void purple_media_backend_iface_init(PurpleMediaBackendIface *iface);
 
 static gboolean
-_gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackendFs2 *self);
+gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackendFs2 *self);
 static void
-_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
+state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *sid, gchar *name, PurpleMediaBackendFs2 *self);
 static void
-_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
+stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		gchar *sid, gchar *name, gboolean local,
 		PurpleMediaBackendFs2 *self);
 
@@ -178,7 +178,7 @@ purple_media_backend_fs2_dispose(GObject *obj)
 			g_signal_handlers_disconnect_matched(G_OBJECT(bus),
 					G_SIGNAL_MATCH_FUNC |
 					G_SIGNAL_MATCH_DATA,
-					0, 0, 0, _gst_bus_cb, obj);
+					0, 0, 0, gst_bus_cb, obj);
 			gst_object_unref(bus);
 		} else {
 			purple_debug_warning("backend-fs2", "Unable to "
@@ -302,10 +302,10 @@ purple_media_backend_fs2_set_property(GObject *object, guint prop_id,
 
 			g_signal_connect(G_OBJECT(priv->media),
 					"state-changed",
-					G_CALLBACK(_state_changed_cb),
+					G_CALLBACK(state_changed_cb),
 					PURPLE_MEDIA_BACKEND_FS2(object));
 			g_signal_connect(G_OBJECT(priv->media), "stream-info",
-					G_CALLBACK(_stream_info_cb),
+					G_CALLBACK(stream_info_cb),
 					PURPLE_MEDIA_BACKEND_FS2(object));
 			break;
 		default:	
@@ -370,7 +370,7 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 }
 
 static FsMediaType
-_session_type_to_fs_media_type(PurpleMediaSessionType type)
+session_type_to_fs_media_type(PurpleMediaSessionType type)
 {
 	if (type & PURPLE_MEDIA_AUDIO)
 		return FS_MEDIA_TYPE_AUDIO;
@@ -381,7 +381,7 @@ _session_type_to_fs_media_type(PurpleMediaSessionType type)
 }
 
 static FsStreamDirection
-_session_type_to_fs_stream_direction(PurpleMediaSessionType type)
+session_type_to_fs_stream_direction(PurpleMediaSessionType type)
 {
 	if ((type & PURPLE_MEDIA_AUDIO) == PURPLE_MEDIA_AUDIO ||
 			(type & PURPLE_MEDIA_VIDEO) == PURPLE_MEDIA_VIDEO)
@@ -397,7 +397,7 @@ _session_type_to_fs_stream_direction(PurpleMediaSessionType type)
 }
 
 static PurpleMediaSessionType
-_session_type_from_fs(FsMediaType type, FsStreamDirection direction)
+session_type_from_fs(FsMediaType type, FsStreamDirection direction)
 {
 	PurpleMediaSessionType result = PURPLE_MEDIA_NONE;
 	if (type == FS_MEDIA_TYPE_AUDIO) {
@@ -415,7 +415,7 @@ _session_type_from_fs(FsMediaType type, FsStreamDirection direction)
 }
 
 static FsCandidate *
-_candidate_to_fs(PurpleMediaCandidate *candidate)
+candidate_to_fs(PurpleMediaCandidate *candidate)
 {
 	FsCandidate *fscandidate;
 	gchar *foundation;
@@ -466,13 +466,13 @@ _candidate_to_fs(PurpleMediaCandidate *candidate)
 }
 
 static GList *
-_candidate_list_to_fs(GList *candidates)
+candidate_list_to_fs(GList *candidates)
 {
 	GList *new_list = NULL;
 
 	for (; candidates; candidates = g_list_next(candidates)) {
 		new_list = g_list_prepend(new_list,
-				_candidate_to_fs(candidates->data));
+				candidate_to_fs(candidates->data));
 	}
 
 	new_list = g_list_reverse(new_list);
@@ -480,7 +480,7 @@ _candidate_list_to_fs(GList *candidates)
 }
 
 static PurpleMediaCandidate *
-_candidate_from_fs(FsCandidate *fscandidate)
+candidate_from_fs(FsCandidate *fscandidate)
 {
 	PurpleMediaCandidate *candidate;
 
@@ -501,13 +501,13 @@ _candidate_from_fs(FsCandidate *fscandidate)
 }
 
 static GList *
-_candidate_list_from_fs(GList *candidates)
+candidate_list_from_fs(GList *candidates)
 {
 	GList *new_list = NULL;
 
 	for (; candidates; candidates = g_list_next(candidates)) {
 		new_list = g_list_prepend(new_list,
-			_candidate_from_fs(candidates->data));
+			candidate_from_fs(candidates->data));
 	}
 
 	new_list = g_list_reverse(new_list);
@@ -515,7 +515,7 @@ _candidate_list_from_fs(GList *candidates)
 }
 
 static FsCodec *
-_codec_to_fs(const PurpleMediaCodec *codec)
+codec_to_fs(const PurpleMediaCodec *codec)
 {
 	FsCodec *new_codec;
 	gint id;
@@ -538,7 +538,7 @@ _codec_to_fs(const PurpleMediaCodec *codec)
 			NULL);
 
 	new_codec = fs_codec_new(id, encoding_name,
-			_session_type_to_fs_media_type(media_type),
+			session_type_to_fs_media_type(media_type),
 			clock_rate);
 	new_codec->channels = channels;
 
@@ -553,7 +553,7 @@ _codec_to_fs(const PurpleMediaCodec *codec)
 }
 
 static PurpleMediaCodec *
-_codec_from_fs(const FsCodec *codec)
+codec_from_fs(const FsCodec *codec)
 {
 	PurpleMediaCodec *new_codec;
 	GList *iter;
@@ -562,7 +562,7 @@ _codec_from_fs(const FsCodec *codec)
 		return NULL;
 
 	new_codec = purple_media_codec_new(codec->id, codec->encoding_name,
-			_session_type_from_fs(codec->media_type,
+			session_type_from_fs(codec->media_type,
 			FS_DIRECTION_BOTH), codec->clock_rate);
 	g_object_set(new_codec, "channels", codec->channels, NULL);
 
@@ -576,13 +576,13 @@ _codec_from_fs(const FsCodec *codec)
 }
 
 static GList *
-_codec_list_from_fs(GList *codecs)
+codec_list_from_fs(GList *codecs)
 {
 	GList *new_list = NULL;
 
 	for (; codecs; codecs = g_list_next(codecs)) {
 		new_list = g_list_prepend(new_list,
-				_codec_from_fs(codecs->data));
+				codec_from_fs(codecs->data));
 	}
 
 	new_list = g_list_reverse(new_list);
@@ -590,13 +590,13 @@ _codec_list_from_fs(GList *codecs)
 }
 
 static GList *
-_codec_list_to_fs(GList *codecs)
+codec_list_to_fs(GList *codecs)
 {
 	GList *new_list = NULL;
 
 	for (; codecs; codecs = g_list_next(codecs)) {
 		new_list = g_list_prepend(new_list,
-				_codec_to_fs(codecs->data));
+				codec_to_fs(codecs->data));
 	}
 
 	new_list = g_list_reverse(new_list);
@@ -604,7 +604,7 @@ _codec_list_to_fs(GList *codecs)
 }
 
 static PurpleMediaBackendFs2Session *
-_get_session(PurpleMediaBackendFs2 *self, const gchar *sess_id)
+get_session(PurpleMediaBackendFs2 *self, const gchar *sess_id)
 {
 	PurpleMediaBackendFs2Private *priv;
 	PurpleMediaBackendFs2Session *session = NULL;
@@ -620,7 +620,7 @@ _get_session(PurpleMediaBackendFs2 *self, const gchar *sess_id)
 }
 
 static FsParticipant *
-_get_participant(PurpleMediaBackendFs2 *self, const gchar *name)
+get_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 {
 	PurpleMediaBackendFs2Private *priv;
 	FsParticipant *participant = NULL;
@@ -636,7 +636,7 @@ _get_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 }
 
 static PurpleMediaBackendFs2Stream *
-_get_stream(PurpleMediaBackendFs2 *self,
+get_stream(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *name)
 {
 	PurpleMediaBackendFs2Private *priv;
@@ -658,7 +658,7 @@ _get_stream(PurpleMediaBackendFs2 *self,
 }
 
 static GList *
-_get_streams(PurpleMediaBackendFs2 *self,
+get_streams(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *name)
 {
 	PurpleMediaBackendFs2Private *priv;
@@ -685,7 +685,7 @@ _get_streams(PurpleMediaBackendFs2 *self,
 }
 
 static PurpleMediaBackendFs2Session *
-_get_session_from_fs_stream(PurpleMediaBackendFs2 *self, FsStream *stream)
+get_session_from_fs_stream(PurpleMediaBackendFs2 *self, FsStream *stream)
 {
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
@@ -714,7 +714,7 @@ _get_session_from_fs_stream(PurpleMediaBackendFs2 *self, FsStream *stream)
 }
 
 static void
-_gst_handle_message_element(GstBus *bus, GstMessage *msg,
+gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		PurpleMediaBackendFs2 *self)
 {
 	PurpleMediaBackendFs2Private *priv =
@@ -744,7 +744,7 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		name = gst_element_get_name(src);
 
 		if (!strncmp(name, "sendlevel_", 10)) {
-			session = _get_session(self, name+10);
+			session = get_session(self, name+10);
 		} else {
 			GList *iter = priv->streams;
 			PurpleMediaBackendFs2Stream *stream;
@@ -839,7 +839,7 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		value = gst_structure_get_value(msg->structure, "candidate");
 		local_candidate = g_value_get_boxed(value);
 
-		session = _get_session_from_fs_stream(self, stream);
+		session = get_session_from_fs_stream(self, stream);
 
 		purple_debug_info("backend-fs2",
 				"got new local candidate: %s\n",
@@ -849,12 +849,12 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		g_object_get(participant, "cname", &name, NULL);
 		g_object_unref(participant);
 
-		media_stream = _get_stream(self, session->id, name);
+		media_stream = get_stream(self, session->id, name);
 		media_stream->local_candidates = g_list_append(
 				media_stream->local_candidates,
 				fs_candidate_copy(local_candidate));
 
-		candidate = _candidate_from_fs(local_candidate);
+		candidate = candidate_from_fs(local_candidate);
 		g_signal_emit_by_name(self, "new-candidate",
 				session->id, name, candidate);
 		g_object_unref(candidate);
@@ -868,7 +868,7 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 
 		value = gst_structure_get_value(msg->structure, "stream");
 		stream = g_value_get_object(value);
-		session = _get_session_from_fs_stream(self, stream);
+		session = get_session_from_fs_stream(self, stream);
 
 		g_object_get(stream, "participant", &participant, NULL);
 		g_object_get(participant, "cname", &name, NULL);
@@ -900,10 +900,10 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 		g_object_get(participant, "cname", &name, NULL);
 		g_object_unref(participant);
 
-		session = _get_session_from_fs_stream(self, stream);
+		session = get_session_from_fs_stream(self, stream);
 
-		lcandidate = _candidate_from_fs(local_candidate);
-		rcandidate = _candidate_from_fs(remote_candidate);
+		lcandidate = candidate_from_fs(local_candidate);
+		rcandidate = candidate_from_fs(remote_candidate);
 
 		g_signal_emit_by_name(self, "active-candidate-pair",
 				session->id, name, lcandidate, rcandidate);
@@ -1007,7 +1007,7 @@ _gst_handle_message_element(GstBus *bus, GstMessage *msg,
 }
 
 static void
-_gst_handle_message_error(GstBus *bus, GstMessage *msg,
+gst_handle_message_error(GstBus *bus, GstMessage *msg,
 		PurpleMediaBackendFs2 *self)
 {
 	PurpleMediaBackendFs2Private *priv =
@@ -1052,14 +1052,14 @@ _gst_handle_message_error(GstBus *bus, GstMessage *msg,
 }
 
 static gboolean
-_gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackendFs2 *self)
+gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackendFs2 *self)
 {
 	switch(GST_MESSAGE_TYPE(msg)) {
 		case GST_MESSAGE_ELEMENT:
-			_gst_handle_message_element(bus, msg, self);
+			gst_handle_message_element(bus, msg, self);
 			break;
 		case GST_MESSAGE_ERROR:
-			_gst_handle_message_error(bus, msg, self);
+			gst_handle_message_error(bus, msg, self);
 			break;
 		default:
 			break;
@@ -1069,23 +1069,23 @@ _gst_bus_cb(GstBus *bus, GstMessage *msg, PurpleMediaBackendFs2 *self)
 }
 
 static void
-_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
+state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *sid, gchar *name, PurpleMediaBackendFs2 *self)
 {
 }
 
 static void
-_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
+stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 		gchar *sid, gchar *name, gboolean local,
 		PurpleMediaBackendFs2 *self)
 {
 	if (type == PURPLE_MEDIA_INFO_ACCEPT && sid != NULL && name != NULL) {
 		PurpleMediaBackendFs2Stream *stream =
-				_get_stream(self, sid, name);
+				get_stream(self, sid, name);
 		GError *err = NULL;
 
 		g_object_set(G_OBJECT(stream->stream), "direction",
-				_session_type_to_fs_stream_direction(
+				session_type_to_fs_stream_direction(
 				stream->session->type), NULL);
 
 		if (stream->remote_candidates == NULL)
@@ -1112,7 +1112,7 @@ _stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 			sessions = g_hash_table_get_values(priv->sessions);
 		else
 			sessions = g_list_prepend(NULL,
-					_get_session(self, sid));
+					get_session(self, sid));
 
 		purple_debug_info("media", "Turning mute %s\n",
 				active ? "on" : "off");
@@ -1134,13 +1134,13 @@ _stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_PAUSE ||
 			type == PURPLE_MEDIA_INFO_UNPAUSE)) {
 		gboolean active = (type == PURPLE_MEDIA_INFO_PAUSE);
-		GList *streams = _get_streams(self, sid, name);
+		GList *streams = get_streams(self, sid, name);
 		for (; streams; streams =
 				g_list_delete_link(streams, streams)) {
 			PurpleMediaBackendFs2Stream *stream = streams->data;
 			if (stream->session->type & PURPLE_MEDIA_SEND_VIDEO) {
 				g_object_set(stream->stream, "direction",
-						_session_type_to_fs_stream_direction(
+						session_type_to_fs_stream_direction(
 						stream->session->type & ((active) ?
 						~PURPLE_MEDIA_SEND_VIDEO :
 						PURPLE_MEDIA_VIDEO)), NULL);
@@ -1150,7 +1150,7 @@ _stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 }
 
 static gboolean
-_init_conference(PurpleMediaBackendFs2 *self)
+init_conference(PurpleMediaBackendFs2 *self)
 {
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
@@ -1193,7 +1193,7 @@ _init_conference(PurpleMediaBackendFs2 *self)
 	}
 
 	g_signal_connect(G_OBJECT(bus), "message",
-			G_CALLBACK(_gst_bus_cb), self);
+			G_CALLBACK(gst_bus_cb), self);
 	gst_object_unref(bus);
 
 	if (!gst_bin_add(GST_BIN(pipeline),
@@ -1221,7 +1221,7 @@ _init_conference(PurpleMediaBackendFs2 *self)
 }
 
 static void
-_gst_element_added_cb(FsElementAddedNotifier *self,
+gst_element_added_cb(FsElementAddedNotifier *self,
 		GstBin *bin, GstElement *element, gpointer user_data)
 {
 	/*
@@ -1233,23 +1233,23 @@ _gst_element_added_cb(FsElementAddedNotifier *self,
 }
 
 static gboolean
-_create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
+create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 		PurpleMediaSessionType type)
 {
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
 	PurpleMediaBackendFs2Session *session;
 	PurpleMediaSessionType session_type;
-	FsMediaType media_type = _session_type_to_fs_media_type(type);
+	FsMediaType media_type = session_type_to_fs_media_type(type);
 	FsStreamDirection type_direction =
-			_session_type_to_fs_stream_direction(type);
+			session_type_to_fs_stream_direction(type);
 	GstElement *src;
 	GstPad *sinkpad, *srcpad;
 
 	if ((type_direction & FS_DIRECTION_SEND) == 0)
 		return TRUE;
  
-	session_type = _session_type_from_fs(
+	session_type = session_type_from_fs(
 			media_type, FS_DIRECTION_SEND);
 	src = purple_media_manager_get_element(
 			purple_media_get_manager(priv->media),
@@ -1262,7 +1262,7 @@ _create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 		return FALSE;
 	}
 
-	session = _get_session(self, sess_id);
+	session = get_session(self, sess_id);
 
 	if (session == NULL) {
 		purple_debug_warning("backend-fs2",
@@ -1331,7 +1331,7 @@ _create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 }
 
 static gboolean
-_create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
+create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 		PurpleMediaSessionType type, gboolean initiator,
 		const gchar *transmitter)
 {
@@ -1346,7 +1346,7 @@ _create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	session = g_new0(PurpleMediaBackendFs2Session, 1);
 
 	session->session = fs_conference_new_session(priv->conference,
-			_session_type_to_fs_media_type(type), &err);
+			session_type_to_fs_media_type(type), &err);
 
 	if (err != NULL) {
 		purple_media_error(priv->media,
@@ -1411,7 +1411,7 @@ _create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 		FsElementAddedNotifier *notifier =
 				fs_element_added_notifier_new();
 		g_signal_connect(G_OBJECT(notifier), "element-added",
-				G_CALLBACK(_gst_element_added_cb), NULL);
+				G_CALLBACK(gst_element_added_cb), NULL);
 		fs_element_added_notifier_add(notifier,
 				GST_BIN(priv->conference));
 	}
@@ -1428,7 +1428,7 @@ _create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 
 	g_hash_table_insert(priv->sessions, g_strdup(session->id), session);
 
-	if (!_create_src(self, sess_id, type)) {
+	if (!create_src(self, sess_id, type)) {
 		purple_debug_info("backend-fs2", "Error creating the src\n");
 		return FALSE;
 	}
@@ -1437,7 +1437,7 @@ _create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 }
 
 static gboolean
-_create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
+create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 {
 	PurpleMediaBackendFs2Private *priv =
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
@@ -1468,7 +1468,7 @@ _create_participant(PurpleMediaBackendFs2 *self, const gchar *name)
 }
 
 static gboolean
-_src_pad_added_cb_cb(PurpleMediaBackendFs2Stream *stream)
+src_pad_added_cb_cb(PurpleMediaBackendFs2Stream *stream)
 {
 	PurpleMediaBackendFs2Private *priv;
 
@@ -1488,7 +1488,7 @@ _src_pad_added_cb_cb(PurpleMediaBackendFs2Stream *stream)
 }
 
 static void
-_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
+src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 		FsCodec *codec, PurpleMediaBackendFs2Stream *stream)
 {
 	PurpleMediaBackendFs2Private *priv;
@@ -1559,11 +1559,11 @@ _src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	gst_object_unref(sinkpad);
 
 	stream->connected_cb_id = purple_timeout_add(0,
-			(GSourceFunc)_src_pad_added_cb_cb, stream);
+			(GSourceFunc)src_pad_added_cb_cb, stream);
 }
 
 static gboolean
-_create_stream(PurpleMediaBackendFs2 *self,
+create_stream(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who,
 		PurpleMediaSessionType type, gboolean initiator,
 		const gchar *transmitter,
@@ -1578,7 +1578,7 @@ _create_stream(PurpleMediaBackendFs2 *self,
 	guint _num_params = num_params;
 	GParameter *_params = g_new0(GParameter, num_params + 2);
 	FsStreamDirection type_direction =
-			_session_type_to_fs_stream_direction(type);
+			session_type_to_fs_stream_direction(type);
 	PurpleMediaBackendFs2Session *session;
 	PurpleMediaBackendFs2Stream *stream;
 	FsParticipant *participant;
@@ -1633,7 +1633,7 @@ _create_stream(PurpleMediaBackendFs2 *self,
 		g_value_array_free(relay_info);
 	}
 
-	session = _get_session(self, sess_id);
+	session = get_session(self, sess_id);
 
 	if (session == NULL) {
 		purple_debug_error("backend-fs2",
@@ -1641,7 +1641,7 @@ _create_stream(PurpleMediaBackendFs2 *self,
 		return FALSE;
 	}
 
-	participant = _get_participant(self, who);
+	participant = get_participant(self, who);
 
 	if (participant == NULL) {
 		purple_debug_error("backend-fs2", "Couldn't find "
@@ -1675,7 +1675,7 @@ _create_stream(PurpleMediaBackendFs2 *self,
 	priv->streams =	g_list_append(priv->streams, stream);
 
 	g_signal_connect(G_OBJECT(fsstream), "src-pad-added",
-			G_CALLBACK(_src_pad_added_cb), stream);
+			G_CALLBACK(src_pad_added_cb), stream);
 
 	return TRUE;
 }
@@ -1692,40 +1692,40 @@ purple_media_backend_fs2_add_stream(PurpleMediaBackend *self,
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(backend);
 	PurpleMediaBackendFs2Stream *stream;
 
-	if (priv->conference == NULL && !_init_conference(backend)) {
+	if (priv->conference == NULL && !init_conference(backend)) {
 		purple_debug_error("backend-fs2",
 				"Error initializing the conference.\n");
 		return FALSE;
 	}
 
-	if (_get_session(backend, sess_id) == NULL &&
-			!_create_session(backend, sess_id, type,
+	if (get_session(backend, sess_id) == NULL &&
+			!create_session(backend, sess_id, type,
 			initiator, transmitter)) {
 		purple_debug_error("backend-fs2",
 				"Error creating the session.\n");
 		return FALSE;
 	}
 
-	if (_get_participant(backend, who) == NULL &&
-			!_create_participant(backend, who)) {
+	if (get_participant(backend, who) == NULL &&
+			!create_participant(backend, who)) {
 		purple_debug_error("backend-fs2",
 				"Error creating the participant.\n");
 		return FALSE;
 	}
 
-	stream = _get_stream(backend, sess_id, who);
+	stream = get_stream(backend, sess_id, who);
 
 	if (stream != NULL) {
 		FsStreamDirection type_direction =
-				_session_type_to_fs_stream_direction(type);
+				session_type_to_fs_stream_direction(type);
 
-		if (_session_type_to_fs_stream_direction(
+		if (session_type_to_fs_stream_direction(
 				stream->session->type) != type_direction) {
 			/* change direction */
 			g_object_set(stream->stream, "direction",
 					type_direction, NULL);
 		}
-	} else if (!_create_stream(backend, sess_id, who, type,
+	} else if (!create_stream(backend, sess_id, who, type,
 			initiator, transmitter, num_params, params)) {
 		purple_debug_error("backend-fs2",
 				"Error creating the stream.\n");
@@ -1747,7 +1747,7 @@ purple_media_backend_fs2_add_remote_candidates(PurpleMediaBackend *self,
 	g_return_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self));
 
 	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
-	stream = _get_stream(PURPLE_MEDIA_BACKEND_FS2(self),
+	stream = get_stream(PURPLE_MEDIA_BACKEND_FS2(self),
 			sess_id, participant);
 
 	if (stream == NULL) {
@@ -1760,7 +1760,7 @@ purple_media_backend_fs2_add_remote_candidates(PurpleMediaBackend *self,
 	}
 
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
-			_candidate_list_to_fs(remote_candidates));
+			candidate_list_to_fs(remote_candidates));
 
 	if (purple_media_accepted(priv->media, sess_id, participant)) {
 		fs_stream_set_remote_candidates(stream->stream,
@@ -1786,7 +1786,7 @@ purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
 	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
 
 	if (sess_id != NULL) {
-		PurpleMediaBackendFs2Session *session = _get_session(
+		PurpleMediaBackendFs2Session *session = get_session(
 				PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
 
 		if (session == NULL)
@@ -1834,14 +1834,14 @@ purple_media_backend_fs2_get_codecs(PurpleMediaBackend *self,
 
 	priv = PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
 
-	session = _get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
+	session = get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
 
 	if (session == NULL)
 		return NULL;
 
 	g_object_get(G_OBJECT(session->session),
 		     "codecs", &fscodecs, NULL);
-	codecs = _codec_list_from_fs(fscodecs);
+	codecs = codec_list_from_fs(fscodecs);
 	fs_codec_list_destroy(fscodecs);
 
 	return codecs;
@@ -1856,11 +1856,11 @@ purple_media_backend_fs2_get_local_candidates(PurpleMediaBackend *self,
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), NULL);
 
-	stream = _get_stream(PURPLE_MEDIA_BACKEND_FS2(self),
+	stream = get_stream(PURPLE_MEDIA_BACKEND_FS2(self),
 			sess_id, participant);
 
 	if (stream != NULL)
-		candidates = _candidate_list_from_fs(
+		candidates = candidate_list_from_fs(
 				stream->local_candidates);
 	return candidates;
 }
@@ -1875,13 +1875,13 @@ purple_media_backend_fs2_set_remote_codecs(PurpleMediaBackend *self,
 	GError *err = NULL;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
-	stream = _get_stream(PURPLE_MEDIA_BACKEND_FS2(self),
+	stream = get_stream(PURPLE_MEDIA_BACKEND_FS2(self),
 			sess_id, participant);
 
 	if (stream == NULL)
 		return FALSE;
 
-	fscodecs = _codec_list_to_fs(codecs);
+	fscodecs = codec_list_to_fs(codecs);
 	fs_stream_set_remote_codecs(stream->stream, fscodecs, &err);
 	fs_codec_list_destroy(fscodecs);
 
@@ -1906,12 +1906,12 @@ purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
 
-	session = _get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
+	session = get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
 
 	if (session == NULL)
 		return FALSE;
 
-	fscodec = _codec_to_fs(codec);
+	fscodec = codec_to_fs(codec);
 	fs_session_set_send_codec(session->session, fscodec, &err);
 	fs_codec_destroy(fscodec);
 
@@ -1928,7 +1928,7 @@ GstElement *
 purple_media_backend_fs2_get_src(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id)
 {
-	PurpleMediaBackendFs2Session *session = _get_session(self, sess_id);
+	PurpleMediaBackendFs2Session *session = get_session(self, sess_id);
 	return session != NULL ? session->src : NULL;
 }
 
@@ -1938,11 +1938,11 @@ purple_media_backend_fs2_get_tee(PurpleMediaBackendFs2 *self,
 {
 	if (sess_id != NULL && who == NULL) {
 		PurpleMediaBackendFs2Session *session =
-				_get_session(self, sess_id);
+				get_session(self, sess_id);
 		return (session != NULL) ? session->tee : NULL;
 	} else if (sess_id != NULL && who != NULL) {
 		PurpleMediaBackendFs2Stream *stream =
-				_get_stream(self, sess_id, who);
+				get_stream(self, sess_id, who);
 		return (stream != NULL) ? stream->tee : NULL;
 	}
 
@@ -1965,7 +1965,7 @@ purple_media_backend_fs2_set_input_volume(PurpleMediaBackendFs2 *self,
 	if (sess_id == NULL)
 		sessions = g_hash_table_get_values(priv->sessions);
 	else
-		sessions = g_list_append(NULL, _get_session(self, sess_id));
+		sessions = g_list_append(NULL, get_session(self, sess_id));
 
 	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
 		PurpleMediaBackendFs2Session *session = sessions->data;
@@ -1995,7 +1995,7 @@ purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
 
 	purple_prefs_set_int("/purple/media/audio/volume/output", level);
 
-	streams = _get_streams(self, sess_id, who);
+	streams = get_streams(self, sess_id, who);
 
 	for (; streams; streams = g_list_delete_link(streams, streams)) {
 		PurpleMediaBackendFs2Stream *stream = streams->data;
