@@ -312,6 +312,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 {
 	if (event->button == 3) {
 		GtkWidget *menu_item;
+		const char *path;
 
 		if (box->icon_box_menu)
 			gtk_widget_destroy(box->icon_box_menu);
@@ -325,7 +326,8 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 		menu_item = pidgin_new_item_from_stock(box->icon_box_menu, _("Remove"), GTK_STOCK_REMOVE,
 						     G_CALLBACK(remove_buddy_icon_cb),
 						     box, 0, 0, NULL);
-		if (purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon") == NULL)
+		if (!(path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon"))
+				|| !*path)
 			gtk_widget_set_sensitive(menu_item, FALSE);
 
 		gtk_menu_popup(GTK_MENU(box->icon_box_menu), NULL, NULL, NULL, NULL,
