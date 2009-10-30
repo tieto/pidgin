@@ -909,6 +909,52 @@ adl_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 }
 
 static void
+rml_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
+{
+	MsnSession *session;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	char *adl, *reason;
+	int error = GPOINTER_TO_INT(cmd->payload_cbdata);
+
+	session = cmdproc->session;
+	account = session->account;
+	gc = purple_account_get_connection(account);
+
+	adl = g_strndup(payload, len);
+	reason = g_strdup_printf(_("Unknown error (%d): %s"),
+		error, adl);
+	g_free(adl);
+
+	purple_notify_error(gc, NULL, _("Unable to remove user"), reason);
+	g_free(reason);
+}
+
+static void
+rml_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
+{
+	MsnSession *session;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	MsnCommand *cmd = cmdproc->last_cmd;
+
+	session = cmdproc->session;
+	account = session->account;
+	gc = purple_account_get_connection(account);
+
+	purple_debug_error("msn", "RML error\n");
+	if (cmd->param_count > 1) {
+		cmd->payload_cb = rml_error_parse;
+		cmd->payload_len = atoi(cmd->params[1]);
+		cmd->payload_cbdata = GINT_TO_POINTER(error);
+	} else {
+		char *reason = g_strdup_printf(_("Unknown error (%d)"), error);
+		purple_notify_error(gc, NULL, _("Unable to remove user"), reason);
+		g_free(reason);
+	}
+}
+
+static void
 fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
@@ -2080,6 +2126,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "fallback", "XFR", xfr_cmd);
 
 	msn_table_add_error(cbs_table, "ADL", adl_error);
+	msn_table_add_error(cbs_table, "RML", rml_error);
 	msn_table_add_error(cbs_table, "FQY", fqy_error);
 	msn_table_add_error(cbs_table, "USR", usr_error);
 
