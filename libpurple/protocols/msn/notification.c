@@ -670,7 +670,7 @@ msn_notification_dump_contact(MsnSession *session)
 			                     "User %s is on both Allow and Block list; "
 			                     "removing from Allow list.\n",
 			                     user->passport);
-			msn_userlist_rem_buddy_from_list(session->userlist, user->passport, MSN_LIST_AL);
+			msn_user_unset_op(user, MSN_LIST_AL_OP);
 		}
 
 		if (user->networkid != MSN_NETWORK_UNKNOWN) {
