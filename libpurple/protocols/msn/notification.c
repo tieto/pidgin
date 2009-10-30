@@ -1068,7 +1068,17 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* Where'd this come from? */
 		return;
 
-	if (cmd->param_count == 7) {
+	if (cmd->param_count == 8) {
+		/* Yahoo! Buddy, looks like */
+		networkid = atoi(cmd->params[3]);
+		friendly = g_strdup(purple_url_decode(cmd->params[4]));
+		clientid = strtoul(cmd->params[5], NULL, 10);
+
+		/* cmd->params[7] seems to be a URL to a Yahoo! icon:
+				https://sec.yimg.com/i/us/nt/b/purpley.1.0.png
+		   ... and it's purple, HAH!
+		*/
+	} else if (cmd->param_count == 7) {
 		/* MSNP14+ with Display Picture object */
 		networkid = atoi(cmd->params[3]);
 		friendly = g_strdup(purple_url_decode(cmd->params[4]));
