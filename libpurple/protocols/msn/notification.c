@@ -840,17 +840,48 @@ adl_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	MsnSession *session;
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	char *adl = g_strndup(payload, len);
-	char *reason = g_strdup_printf(_("Unknown error (%d): %s"),
-		GPOINTER_TO_INT(cmd->payload_cbdata), adl);
-	g_free(adl);
+	int error = GPOINTER_TO_INT(cmd->payload_cbdata);
 
 	session = cmdproc->session;
 	account = session->account;
 	gc = purple_account_get_connection(account);
 
-	purple_notify_error(gc, NULL, _("Unable to add user"), reason);
-	g_free(reason);
+	if (error == 241) {
+		/* khc: some googling suggests that error 241 means the buddy is somehow
+		   in the local list, but not the server list, and that we should add
+		   those buddies to the addressbook. For now I will just notify the user
+		   about the raw payload, because I am lazy */
+		xmlnode *adl = xmlnode_from_str(payload, len);
+		GString *emails = g_string_new(NULL);
+
+		xmlnode *domain = xmlnode_get_child(adl, "d");
+		while (domain) {
+			const char *domain_str = xmlnode_get_attrib(domain, "n");
+			xmlnode *contact = xmlnode_get_child(domain, "c");
+			while (contact) {
+				g_string_append_printf(emails, "%s@%s\n",
+					xmlnode_get_attrib(contact, "n"), domain_str);
+				contact = xmlnode_get_next_twin(contact);
+			}
+			domain = xmlnode_get_next_twin(domain);
+		}
+
+		purple_notify_error(gc, NULL,
+			_("The following users are missing from your addressbook"),
+			emails->str);
+		g_string_free(emails, TRUE);
+		xmlnode_free(adl);
+	}
+	else
+	{
+		char *adl = g_strndup(payload, len);
+		char *reason = g_strdup_printf(_("Unknown error (%d): %s"),
+			error, adl);
+		g_free(adl);
+
+		purple_notify_error(gc, NULL, _("Unable to add user"), reason);
+		g_free(reason);
+	}
 }
 
 static void
@@ -875,53 +906,6 @@ adl_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 		purple_notify_error(gc, NULL, _("Unable to add user"), reason);
 		g_free(reason);
 	}
-}
-
-static void
-adl_241_error_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
-	size_t len)
-{
-	/* khc: some googling suggests that error 241 means the buddy is somehow
-	   in the local list, but not the server list, and that we should add
-	   those buddies to the addressbook. For now I will just notify the user
-	   about the raw payload, because I am lazy */
-	MsnSession *session;
-	PurpleAccount *account;
-	PurpleConnection *gc;
-	xmlnode *adl;
-	xmlnode *domain;
-	GString *emails;
-
-	session = cmdproc->session;
-	account = session->account;
-	gc = purple_account_get_connection(account);
-
-	adl = xmlnode_from_str(payload, len);
-	emails = g_string_new(NULL);
-
-	domain = xmlnode_get_child(adl, "d");
-	while (domain) {
-		const char *domain_str = xmlnode_get_attrib(domain, "n");
-		xmlnode *contact = xmlnode_get_child(domain, "c");
-		while (contact) {
-			g_string_append_printf(emails, "%s@%s\n",
-				xmlnode_get_attrib(contact, "n"), domain_str);
-			contact = xmlnode_get_next_twin(contact);
-		}
-		domain = xmlnode_get_next_twin(domain);
-	}
-
-	purple_notify_error(gc, NULL,
-		_("The following users are missing from your addressbook"), emails->str);
-	g_string_free(emails, TRUE);
-	xmlnode_free(adl);
-}
-
-static void
-adl_241_error_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	cmdproc->last_cmd->payload_cb = adl_241_error_cmd_post;
-	cmd->payload_len = atoi(cmd->params[1]);
 }
 
 static void
@@ -2094,8 +2078,6 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, NULL, "URL", url_cmd);
 
 	msn_table_add_cmd(cbs_table, "fallback", "XFR", xfr_cmd);
-
-	msn_table_add_cmd(cbs_table, NULL, "241", adl_241_error_cmd);
 
 	msn_table_add_error(cbs_table, "ADL", adl_error);
 	msn_table_add_error(cbs_table, "FQY", fqy_error);
