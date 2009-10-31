@@ -1825,7 +1825,7 @@ static void jabber_features_destroy(void)
 		JabberFeature *feature = jabber_features->data;
 		g_free(feature->namespace);
 		g_free(feature);
-		jabber_features = g_list_remove_link(jabber_features, jabber_features);
+		jabber_features = g_list_delete_link(jabber_features, jabber_features);
 	}
 }
 
@@ -1862,7 +1862,7 @@ static void jabber_identities_destroy(void)
 		g_free(id->lang);
 		g_free(id->name);
 		g_free(id);
-		jabber_identities = g_list_remove_link(jabber_identities, jabber_identities);
+		jabber_identities = g_list_delete_link(jabber_identities, jabber_identities);
 	}
 }
 
@@ -2606,8 +2606,15 @@ static PurpleCmdRet jabber_cmd_chat_nick(PurpleConversation *conv,
 	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	jabber_chat_change_nick(chat, args[0]);
-	return PURPLE_CMD_RET_OK;
+	if (!jabber_resourceprep_validate(args[0])) {
+		*error = g_strdup(_("Invalid nickname"));
+		return PURPLE_CMD_RET_FAILED;
+	}
+
+	if (jabber_chat_change_nick(chat, args[0]))
+		return PURPLE_CMD_RET_OK;
+	else
+		return PURPLE_CMD_RET_FAILED;
 }
 
 static PurpleCmdRet jabber_cmd_chat_part(PurpleConversation *conv,

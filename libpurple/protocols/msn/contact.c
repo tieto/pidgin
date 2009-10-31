@@ -362,7 +362,7 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	char *display_text;
 
 	passport = xmlnode_get_data(xmlnode_get_child(member, node));
-	if (!purple_email_is_valid(passport)) {
+	if (!msn_email_is_valid(passport)) {
 		g_free(passport);
 		return;
 	}
@@ -765,7 +765,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		if (passport == NULL)
 			continue;
 
-		if (!purple_email_is_valid(passport))
+		if (!msn_email_is_valid(passport))
 			continue;
 
 		if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
@@ -1232,8 +1232,13 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 	if (user->invite_message) {
 		char *tmp;
 		body = g_markup_escape_text(user->invite_message, -1);
-		tmp = g_markup_escape_text(purple_connection_get_display_name(session->account->gc), -1);
+
+		/* Ignore the cast, we treat it as const anyway. */
+		tmp = (char *)purple_connection_get_display_name(session->account->gc);
+		tmp = tmp ? g_markup_escape_text(tmp, -1) : g_strdup("");
+
 		invite = g_strdup_printf(MSN_CONTACT_INVITE_MESSAGE_XML, body, tmp);
+
 		g_free(body);
 		g_free(tmp);
 

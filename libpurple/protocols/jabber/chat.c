@@ -692,11 +692,11 @@ void jabber_chat_set_topic(PurpleConnection *gc, int id, const char *topic)
 }
 
 
-void jabber_chat_change_nick(JabberChat *chat, const char *nick)
+gboolean jabber_chat_change_nick(JabberChat *chat, const char *nick)
 {
 	xmlnode *presence;
 	char *full_jid;
-	PurplePresence *gpresence;
+	PurpleAccount *account;
 	PurpleStatus *status;
 	JabberBuddyState state;
 	char *msg;
@@ -706,11 +706,11 @@ void jabber_chat_change_nick(JabberChat *chat, const char *nick)
 		purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "",
 				_("Nick changing not supported in non-MUC chatrooms"),
 				PURPLE_MESSAGE_SYSTEM, time(NULL));
-		return;
+		return FALSE;
 	}
 
-	gpresence = purple_account_get_presence(chat->js->gc->account);
-	status = purple_presence_get_active_status(gpresence);
+	account = purple_connection_get_account(chat->js->gc);
+	status = purple_account_get_active_status(account);
 
 	purple_status_to_jabber(status, &state, &msg, &priority);
 
@@ -722,6 +722,8 @@ void jabber_chat_change_nick(JabberChat *chat, const char *nick)
 
 	jabber_send(chat->js, presence);
 	xmlnode_free(presence);
+
+	return TRUE;
 }
 
 void jabber_chat_part(JabberChat *chat, const char *msg)

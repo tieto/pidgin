@@ -153,7 +153,7 @@ typedef struct _MsnOimRequestData {
 	gpointer cb_data;
 } MsnOimRequestData;
 
-static void msn_oim_request_helper(MsnOimRequestData *data);
+static gboolean msn_oim_request_helper(MsnOimRequestData *data);
 
 static void
 msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
@@ -202,7 +202,7 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	g_free(data);
 }
 
-static void
+static gboolean
 msn_oim_request_helper(MsnOimRequestData *data)
 {
 	MsnSession *session = data->oim->session;
@@ -224,13 +224,13 @@ msn_oim_request_helper(MsnOimRequestData *data)
 		const char *msn_p;
 
 		token = msn_nexus_get_token(session->nexus, MSN_AUTH_MESSENGER_WEB);
-		g_return_if_fail(token != NULL);
+		g_return_val_if_fail(token != NULL, FALSE);
 
 		msn_t = g_hash_table_lookup(token, "t");
 		msn_p = g_hash_table_lookup(token, "p");
 
-		g_return_if_fail(msn_t != NULL);
-		g_return_if_fail(msn_p != NULL);
+		g_return_val_if_fail(msn_t != NULL, FALSE);
+		g_return_val_if_fail(msn_p != NULL, FALSE);
 
 		passport = xmlnode_get_child(data->body, "Header/PassportCookie");
 		xml_t = xmlnode_get_child(passport, "t");
@@ -248,6 +248,8 @@ msn_oim_request_helper(MsnOimRequestData *data)
 		msn_soap_message_new(data->action, xmlnode_copy(data->body)),
 		data->host, data->url, FALSE,
 		msn_oim_request_cb, data);
+
+	return FALSE;
 }
 
 

@@ -994,8 +994,9 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 
 	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", "google:roster");
 	const char *subscription = xmlnode_get_attrib(item, "subscription");
+	const char *ask = xmlnode_get_attrib(item, "ask");
 
-	if (!subscription || !strcmp(subscription, "none")) {
+	if ((!subscription || !strcmp(subscription, "none")) && !ask) {
 		/* The Google Talk servers will automatically add people from your Gmail address book
 		 * with subscription=none. If we see someone with subscription=none, ignore them.
 		 */

@@ -67,6 +67,12 @@ static gboolean double_click;
 
 static void reset_text_view(GntTextView *view);
 
+static gboolean
+text_view_contains(GntTextView *view, const char *str)
+{
+	return (str >= view->string->str && str < view->string->str + view->string->len);
+}
+
 static void
 gnt_text_view_draw(GntWidget *widget)
 {
@@ -109,7 +115,7 @@ gnt_text_view_draw(GntWidget *widget)
 			char back = *end;
 			chtype fl = seg->flags;
 			*end = '\0';
-			if (select_start < view->string->str + seg->start && select_end > view->string->str + seg->end) {
+			if (select_start && select_start < view->string->str + seg->start && select_end > view->string->str + seg->end) {
 				fl |= A_REVERSE;
 				wattrset(widget->window, fl);
 				wprintw(widget->window, "%s", (view->string->str + seg->start));
@@ -326,9 +332,10 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 		select_start = gnt_text_view_get_p(GNT_TEXT_VIEW(widget), x - widget->priv.x, y - widget->priv.y);
 		g_timeout_add(500, too_slow, NULL);
 	} else if (event == GNT_MOUSE_UP) {
-		if (select_start) {
+		GntTextView *view = GNT_TEXT_VIEW(widget);
+		if (text_view_contains(view, select_start)) {
 			GString *clip;
-			select_end = gnt_text_view_get_p(GNT_TEXT_VIEW(widget), x - widget->priv.x, y - widget->priv.y);
+			select_end = gnt_text_view_get_p(view, x - widget->priv.x, y - widget->priv.y);
 			if (select_end < select_start) {
 				gchar *t = select_start;
 				select_start = select_end;
@@ -336,7 +343,7 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 			}
 			if (select_start == select_end) {
 				if (double_click) {
-					clip = select_word_text(GNT_TEXT_VIEW(widget), select_start);
+					clip = select_word_text(view, select_start);
 					double_click = FALSE;
 				} else {
 					double_click = TRUE;
