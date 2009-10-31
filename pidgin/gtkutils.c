@@ -3416,7 +3416,6 @@ winpidgin_register_win32_url_handlers(void)
 	do {
 		DWORD nameSize = 256;
 		wchar_t start[256];
-		/* I don't think we need to worry about non-ASCII protocol names */
 		ret = RegEnumKeyExW(HKEY_CLASSES_ROOT, idx++, start, &nameSize,
 							NULL, NULL, NULL, NULL);
 		if (ret == ERROR_SUCCESS) {
