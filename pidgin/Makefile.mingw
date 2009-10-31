@@ -7,6 +7,8 @@
 PIDGIN_TREE_TOP := ..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
+DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
+
 NEEDED_DLLS = $(GTKSPELL_TOP)/gtkspell/libgtkspell.dll
 
 ##
@@ -55,9 +57,9 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 PIDGIN_C_SRC =	\
 			gtkaccount.c \
-			gtkblist.c \
-			gtkblist-theme.c \
 			gtkblist-theme-loader.c \
+			gtkblist-theme.c \
+			gtkblist.c \
 			gtkcellrendererexpander.c \
 			gtkcertmgr.c \
 			gtkconn.c \
@@ -68,8 +70,8 @@ PIDGIN_C_SRC =	\
 			gtkdocklet.c \
 			gtkeventloop.c \
 			gtkft.c \
-			gtkicon-theme.c \
 			gtkicon-theme-loader.c \
+			gtkicon-theme.c \
 			gtkidle.c \
 			gtkimhtml.c \
 			gtkimhtmltoolbar.c \
