@@ -3415,17 +3415,19 @@ winpidgin_register_win32_url_handlers(void)
 
 	do {
 		DWORD nameSize = 256;
-		char start[256];
+		wchar_t start[256];
 		/* I don't think we need to worry about non-ASCII protocol names */
-		ret = RegEnumKeyExA(HKEY_CLASSES_ROOT, idx++, start, &nameSize,
+		ret = RegEnumKeyExW(HKEY_CLASSES_ROOT, idx++, start, &nameSize,
 							NULL, NULL, NULL, NULL);
 		if (ret == ERROR_SUCCESS) {
 			HKEY reg_key = NULL;
-			ret = RegOpenKeyExA(HKEY_CLASSES_ROOT, start, 0, KEY_READ, &reg_key);
+			ret = RegOpenKeyExW(HKEY_CLASSES_ROOT, start, 0, KEY_READ, &reg_key);
 			if (ret == ERROR_SUCCESS) {
-				ret = RegQueryValueExA(reg_key, "URL Protocol", NULL, NULL, NULL, NULL);
+				ret = RegQueryValueExW(reg_key, L"URL Protocol", NULL, NULL, NULL, NULL);
 				if (ret == ERROR_SUCCESS) {
-					gchar *protocol = g_strdup_printf("%s:", start);
+					gchar *utf8 = g_utf16_to_utf8(start, -1, NULL, NULL, NULL);
+					gchar *protocol = g_strdup_printf("%s:", utf8);
+					g_free(utf8);
 					registered_url_handlers = g_slist_prepend(registered_url_handlers, protocol);
 					/* We still pass everything to the "http" "open" handler for security reasons */
 					gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
