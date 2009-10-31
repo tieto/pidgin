@@ -30,14 +30,6 @@
 #include "notify.h"
 
 /*
- *  DEFINES & MACROS
- */
-
-/* For shfolder.dll */
-typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHA)(HWND, int, HANDLE, DWORD, LPSTR);
-typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHW)(HWND, int, HANDLE, DWORD, LPWSTR);
-
-/*
  * LOCALS
  */
 static char *app_data_dir = NULL, *install_dir = NULL,
@@ -115,21 +107,12 @@ FARPROC wpurple_find_and_loadproc(const char *dllname, const char *procedure) {
 
 /* Get paths to special Windows folders. */
 gchar *wpurple_get_special_folder(int folder_type) {
-	static LPFNSHGETFOLDERPATHW MySHGetFolderPathW = NULL;
 	gchar *retval = NULL;
+	wchar_t utf_16_dir[MAX_PATH + 1];
 
-	if (!MySHGetFolderPathW) {
-		MySHGetFolderPathW = (LPFNSHGETFOLDERPATHW)
-			wpurple_find_and_loadproc("shfolder.dll", "SHGetFolderPathW");
-	}
-
-	if (MySHGetFolderPathW) {
-		wchar_t utf_16_dir[MAX_PATH + 1];
-
-		if (SUCCEEDED(MySHGetFolderPathW(NULL, folder_type, NULL,
-						SHGFP_TYPE_CURRENT, utf_16_dir))) {
-			retval = g_utf16_to_utf8(utf_16_dir, -1, NULL, NULL, NULL);
-		}
+	if (SUCCEEDED(SHGetFolderPathW(NULL, folder_type, NULL,
+					SHGFP_TYPE_CURRENT, utf_16_dir))) {
+		retval = g_utf16_to_utf8(utf_16_dir, -1, NULL, NULL, NULL);
 	}
 
 	return retval;

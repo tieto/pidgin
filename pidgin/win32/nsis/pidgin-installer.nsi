@@ -480,14 +480,6 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     File "${PIDGIN_INSTALLER_DEPS}\exchndl.dll"
     !endif
 
-    ; Install shfolder.dll if need be..
-    SearchPath $R4 "shfolder.dll"
-    StrCmp $R4 "" 0 got_shfolder
-      SetOutPath "$SYSDIR"
-      File "${PIDGIN_INSTALLER_DEPS}\shfolder.dll"
-      SetOutPath "$INSTDIR"
-    got_shfolder:
-
     ; Check if Perl is installed, if so add it to the AppPaths
     ReadRegStr $R2 HKLM ${PERL_REG_KEY} ""
     StrCmp $R2 "" 0 perl_exists
