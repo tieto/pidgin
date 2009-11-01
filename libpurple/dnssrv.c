@@ -263,6 +263,57 @@ dns_str_is_ascii(const char *name)
 #endif
 
 #ifndef _WIN32
+static void
+write_to_parent(int in, int out, gconstpointer data, gsize size)
+{
+	const guchar *buf = data;
+	gssize w;
+
+	do {
+		w = write(out, buf, size);
+		if (w > 0) {
+			buf += w;
+			size -= w;
+		} else if (w < 0 && errno == EINTR) {
+			/* Let's try some more; */
+			w = 1;
+		}
+	} while (size > 0 && w > 0);
+
+	if (size != 0) {
+		/* An error occurred */
+		close(out);
+		close(in);
+		_exit(0);
+	}
+}
+
+/* Read size bytes to data. Dies if an error occurs. */
+static void
+read_from_parent(int in, int out, gpointer data, gsize size)
+{
+	guchar *buf = data;
+	gssize r;
+
+	do {
+		r = read(in, data, size);
+		if (r > 0) {
+			buf += r;
+			size -= r;
+		} else if (r < 0 && errno == EINTR) {
+			/* Let's try some more; */
+			r = 1;
+		}
+	} while (size > 0 && r > 0);
+
+	if (size != 0) {
+		/* An error occurred */
+		close(out);
+		close(in);
+		_exit(0);
+	}
+}
+
 
 G_GNUC_NORETURN static void
 resolve(int in, int out)
@@ -281,16 +332,12 @@ resolve(int in, int out)
 	purple_restore_default_signal_handlers();
 #endif
 
-	if (read(in, &query, sizeof(query)) <= 0) {
-		close(out);
-		close(in);
-		_exit(0);
-	}
+	read_from_parent(in, out, &query, sizeof(query));
 
 	size = res_query( query.query, C_IN, query.type, (u_char*)&answer, sizeof( answer));
 	if (size == -1) {
-		write(out, &(query.type), sizeof(query.type));
-		write(out, &size, sizeof(int));
+		write_to_parent(in, out, &(query.type), sizeof(query.type));
+		write_to_parent(in, out, &size, sizeof(size));
 		close(out);
 		close(in);
 		_exit(0);
@@ -355,19 +402,17 @@ end:
 	if (query.type == T_SRV)
 		ret = purple_srv_sort(ret);
 
-	/* TODO: Check return value */
-	write(out, &(query.type), sizeof(query.type));
-	write(out, &size, sizeof(size));
+	write_to_parent(in, out, &(query.type), sizeof(query.type));
+	write_to_parent(in, out, &size, sizeof(size));
 	while (ret != NULL)
 	{
-		/* TODO: Check return value */
 		if (query.type == T_SRV)
-			write(out, ret->data, sizeof(PurpleSrvResponse));
+			write_to_parent(in, out, ret->data, sizeof(PurpleSrvResponse));
 		if (query.type == T_TXT) {
 			PurpleTxtResponse *response = ret->data;
 			gsize l = strlen(response->content) + 1 /* null byte */;
-			write(out, &l, sizeof(l));
-			write(out, response->content, l);
+			write_to_parent(in, out, &l, sizeof(l));
+			write_to_parent(in, out, response->content, l);
 		}
 
 		g_free(ret->data);
