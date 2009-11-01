@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "config.h"
 
 /* These will hopefully be in the win32api next time it is updated - at which point, we'll remove them */
 #ifndef LANG_PERSIAN
@@ -672,28 +673,49 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 	/* Load exception handler if we have it */
 	if (GetModuleFileName(NULL, pidgin_dir, MAX_PATH) != 0) {
-		char *prev = NULL;
-		tmp = pidgin_dir;
 
 		/* primitive dirname() */
-		while ((tmp = strchr(tmp, '\\'))) {
-			prev = tmp;
-			tmp++;
-		}
+		tmp = strrchr(pidgin_dir, '\\');
 
-		if (prev) {
+		if (tmp) {
 			HMODULE hmod;
-			prev[0] = '\0';
+			tmp[0] = '\0';
 
-			/* prev++ will now point to the executable file name */
-			strcpy(exe_name, prev + 1);
+			/* tmp++ will now point to the executable file name */
+			strcpy(exe_name, tmp + 1);
 
 			strcat(pidgin_dir, "\\exchndl.dll");
 			if ((hmod = LoadLibrary(pidgin_dir))) {
+				FARPROC proc;
+				char debug_dir[MAX_PATH];
 				printf("Loaded exchndl.dll\n");
+				/* Temporarily override exchndl.dll's logfile
+				 * to something sane (Pidgin will override it
+				 * again when it initializes) */
+				proc = GetProcAddress(hmod, "SetLogFile");
+				if (proc) {
+					if (GetTempPath(sizeof(debug_dir), debug_dir) != 0) {
+						strcat(debug_dir, "pidgin.RPT");
+						printf(" Setting exchndl.dll LogFile to %s\n",
+							debug_dir);
+						(proc)(debug_dir);
+					}
+				}
+				proc = GetProcAddress(hmod, "SetDebugInfoDir");
+				if (proc) {
+					tmp[0] = '\0';
+					_snprintf(debug_dir, sizeof(debug_dir),
+						"%s\\pidgin-%s-dbgsym",
+						pidgin_dir,  VERSION);
+					debug_dir[sizeof(debug_dir) - 1] = '\0';
+					printf(" Setting exchndl.dll DebugInfoDir to %s\n",
+						debug_dir);
+					(proc)(debug_dir);
+				}
+
 			}
 
-			prev[0] = '\0';
+			tmp[0] = '\0';
 		}
 	} else {
 		DWORD dw = GetLastError();

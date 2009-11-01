@@ -383,6 +383,7 @@ winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
 }
 
 void winpidgin_init(HINSTANCE hint) {
+	FARPROC exchndl_SetLogFile;
 
 	purple_debug_info("winpidgin", "winpidgin_init start\n");
 
@@ -399,6 +400,16 @@ void winpidgin_init(HINSTANCE hint) {
 	messagewin_hwnd = winpidgin_message_window_init();
 
 	MyFlashWindowEx = (LPFNFLASHWINDOWEX) wpurple_find_and_loadproc("user32.dll", "FlashWindowEx");
+
+	exchndl_SetLogFile = wpurple_find_and_loadproc("exchndl.dll", "SetLogFile");
+	if (exchndl_SetLogFile) {
+		gchar *filename = g_build_filename(purple_user_dir(),
+			"pidgin.RPT", NULL);
+		purple_debug_info("winpidgin", "Setting exchndl.dll LogFile to %s\n",
+			filename);
+		(exchndl_SetLogFile)(filename);
+		g_free(filename);
+	}
 
 	purple_debug_info("winpidgin", "winpidgin_init end\n");
 }
