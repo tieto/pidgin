@@ -346,6 +346,7 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8);
 
 char *yahoo_convert_to_numeric(const char *str);
 
+YahooFederation yahoo_get_federation_from_name(const char *who);
 
 /* yahoo_profile.c */
 void yahoo_get_info(PurpleConnection *gc, const char *name);

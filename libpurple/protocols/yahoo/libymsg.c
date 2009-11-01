@@ -4367,17 +4367,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 		}
 	}
 
-	if (who[3] == '/') {
-		if (!g_ascii_strncasecmp(who, "msn/", 4)) {
-			fed = YAHOO_FEDERATION_MSN;
-		}
-		else if (!g_ascii_strncasecmp(who, "ocs/", 4)) {
-			fed = YAHOO_FEDERATION_OCS;
-		}
-		else if (!g_ascii_strncasecmp(who, "ibm/", 4)) {
-			fed = YAHOO_FEDERATION_IBM;
-		}
-	}
+	fed = yahoo_get_federation_from_name(who);
 
 	if (who[0] == '+') {
 		/* we have an sms to be sent */
@@ -4509,17 +4499,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypi
 	YahooFederation fed = YAHOO_FEDERATION_NONE;
 	struct yahoo_packet *pkt = NULL;
 
-	if (who[3] == '/') {
-		if (!g_ascii_strncasecmp(who, "msn/", 4)) {
-			fed = YAHOO_FEDERATION_MSN;
-		}
-		else if (!g_ascii_strncasecmp(who, "ocs/", 4)) {
-			fed = YAHOO_FEDERATION_OCS;
-		}
-		else if (!g_ascii_strncasecmp(who, "ibm/", 4)) {
-			fed = YAHOO_FEDERATION_IBM;
-		}
-	}
+	fed = yahoo_get_federation_from_name(who);
 
 	/* Don't do anything if sms is being typed */
 	if( strncmp(who, "+", 1) == 0 )
@@ -4811,18 +4791,9 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
 		return;
 
 	f = yahoo_friend_find(gc, bname);
-	if (bname[3] == '/') {
+	fed = yahoo_get_federation_from_name(bname);
+	if (fed != YAHOO_FEDERATION_NONE)
 		fed_bname += 4;
-		if (!g_ascii_strncasecmp(bname, "msn/", 4)) {
-			fed = YAHOO_FEDERATION_MSN;
-		}
-		else if (!g_ascii_strncasecmp(bname, "ocs/", 4)) {
-			fed = YAHOO_FEDERATION_OCS;
-		}
-		else if (!g_ascii_strncasecmp(bname, "ibm/", 4)) {
-			fed = YAHOO_FEDERATION_IBM;
-		}
-	}
 
 	g = purple_buddy_get_group(buddy);
 	if (g)
@@ -4934,18 +4905,8 @@ void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 	if (!who || who[0] == '\0')
 		return;
 
-	if (who[3] == '/') {
-		if (!g_ascii_strncasecmp(who, "msn/", 4)) {
-			fed = YAHOO_FEDERATION_MSN;
-		}
-		else if (!g_ascii_strncasecmp(who, "ocs/", 4)) {
-			fed = YAHOO_FEDERATION_OCS;
-		}
-		else if (!g_ascii_strncasecmp(who, "ibm/", 4)) {
-			fed = YAHOO_FEDERATION_IBM;
-		}
-	}
-	
+	fed = yahoo_get_federation_from_name(who);
+
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	if(fed)
@@ -4966,17 +4927,8 @@ void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 
 	if (!who || who[0] == '\0')
 		return;
-	if (who[3] == '/') {
-		if (!g_ascii_strncasecmp(who, "msn/", 4)) {
-			fed = YAHOO_FEDERATION_MSN;
-		}
-		else if (!g_ascii_strncasecmp(who, "ocs/", 4)) {
-			fed = YAHOO_FEDERATION_OCS;
-		}
-		else if (!g_ascii_strncasecmp(who, "ibm/", 4)) {
-			fed = YAHOO_FEDERATION_IBM;
-		}
-	}
+	fed = yahoo_get_federation_from_name(who);
+
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	if(fed)
