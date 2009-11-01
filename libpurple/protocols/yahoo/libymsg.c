@@ -3999,7 +3999,7 @@ static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
 
 	}
 
-	if (f && f->status != YAHOO_STATUS_OFFLINE) {
+	if (f && f->status != YAHOO_STATUS_OFFLINE && f->fed == YAHOO_FEDERATION_NONE) {
 		if (!yd->wm) {
 			act = purple_menu_action_new(_("Join in Chat"),
 			                           PURPLE_CALLBACK(yahoo_chat_goto_menu),
@@ -4039,10 +4039,12 @@ static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
 		                           build_presence_submenu(f, gc));
 		m = g_list_append(m, act);
 
-		act = purple_menu_action_new(_("Start Doodling"),
-		                           PURPLE_CALLBACK(yahoo_doodle_blist_node),
-		                           NULL, NULL);
-		m = g_list_append(m, act);
+		if (f->fed == YAHOO_FEDERATION_NONE) {
+			act = purple_menu_action_new(_("Start Doodling"),
+					PURPLE_CALLBACK(yahoo_doodle_blist_node),
+					NULL, NULL);
+			m = g_list_append(m, act);
+		}
 
 		act = purple_menu_action_new(_("Set User Info..."),
 		                           PURPLE_CALLBACK(yahoo_userinfo_blist_node),
