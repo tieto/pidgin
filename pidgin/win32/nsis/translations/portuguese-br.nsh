@@ -8,8 +8,6 @@
 ;;  Version 3
 ;;
 
-; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"O ambiente de tempo de execução do GTK+ está ausente ou precisa ser atualizado.$\rFavor instalar a versão v${GTK_MIN_VERSION} ou superior do ambiente de tempo de execução do GTK+."
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Avançar >"
@@ -29,11 +27,8 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC   "Crie uma entrada no Menu Iniciar para o Pidgin"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Uma versão antiga do ambiente de tempo de execução do GTK+ foi encontrada. Você deseja atualizá-lo?$\rNota: O $(^Name) poderá não funcionar a menos que você o faça."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Erro ao instalar o ambiente de tempo de execução do GTK+."
-!define GTK_BAD_INSTALL_PATH			"O caminho que você digitou não pôde ser acessado ou criado."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visite a página da web do Pidgin para Windows"

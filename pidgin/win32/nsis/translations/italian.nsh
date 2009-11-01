@@ -11,7 +11,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Il programma di installazione è già in esecuzione"
 !define PIDGIN_IS_RUNNING			"È attualmente in esecuzione un'istanza di Pidgin. Esci da Pidgin e riprova."
-!define GTK_INSTALLER_NEEDED			"L'ambiente di runtime GTK+ non è presente o deve essere aggiornato.$\rInstallare GTK+ versione ${GTK_MIN_VERSION} o maggiore"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Avanti >"
@@ -31,7 +30,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Crea una voce per Pidgin nel Menu Avvio"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"È stata trovata una versione precedente di GTK+. Vuoi aggiornarla?$\rNota: $(^Name) potrebbe non funzionare senza l'aggiornamento."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visita la pagina web di Pidgin"
@@ -40,8 +38,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Impossibile rimuovere la versione di Pidgin attualmente presente sul tuo computer. La nuova versione sarà installata senza rimuovere la versione precedente."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Error nell'installazione del runtime GTK+."
-!define GTK_BAD_INSTALL_PATH			"Il percorso scelto non può essere raggiunto o creato."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"Gestori degli URI"

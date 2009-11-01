@@ -11,7 +11,6 @@
 ; Startup GTK+ check
 !define INSTALLER_IS_RUNNING			"Namešèanje že poteka."
 !define PIDGIN_IS_RUNNING			"Trenutno že teèe ena razlièica Pidgina. Prosimo, zaprite aplikacijo in poskusite znova."
-!define GTK_INSTALLER_NEEDED			"Izvajalno okolje GTK+ manjka ali pa ga je potrebno nadgraditi.$\rProsimo, namestite v${GTK_MIN_VERSION} ali novejšo razlièico izvajalnega okolja GTK+"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Naprej >"
@@ -31,7 +30,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Ustvari izbiro Pidgin v meniju Start"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Namešèeno imate starejšo razlièico izvajalnega okolja GTK+. Jo želite nadgraditi?$\rOpomba: èe je ne boste nadgradili, $(^Name) morda ne bo deloval."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Obišèite spletno stran Windows Pidgin"
@@ -40,8 +38,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Trenutno namešèene razlièice Pidgina ni mogoèe odstraniti. Nova razlièica bo namešèena brez odstranitve trenutno namešèene razlièice."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Napaka pri namestitvi izvajalnega okolja GTK+."
-!define GTK_BAD_INSTALL_PATH			"Pot, ki ste jo vnesli, ni dosegljiva ali je ni mogoèe ustvariti."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"URI Handlers"

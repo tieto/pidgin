@@ -9,7 +9,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"ÇבדËÈרצÊ םÚדב ÈÇבÝÚב."
 !define PIDGIN_IS_RUNNING			"ÈצÏתÌצה םÚדב ÍÇבםÇ.  דה ÝÖב‗ ÃÛבÞ ÈצÏתÌה Ëד ÃÚÏ ÇבדÍÇזבÉ."
-!define GTK_INSTALLER_NEEDED			"ÈםÆÉ ÌÊ‗+ (GTK+) דÝÞזÏÉ Ãז ÊÍÊÇÌ בבÊÍÏםË.$\rדה ÝÖב‗ ËÈרצÊ v${GTK_MIN_VERSION} Ãז ÃÍÏË דה ÈםÆÉ ÌÊ‗+"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"ÇבÊÇבם >"
@@ -29,7 +28,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"ÃהÔÆ דץÏÎבÉ בÈÏÌה Ýם ÞÇÆדÉ ÇÈÏÃ"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"זץÌצÏÊ הÓÎÉ ÞÏםדÉ דה ÈםÆÉ ÌÊ‗+. ÃÊÑםÏ ÇבÊÍÏםË¿$\rבÇÍÙ: ÞÏ בÇ םÚדב $(^Name) דÇבד ÊÝÚב וÐÇ."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Þד ÈÒםÇÑÉ ÕÝÍÉ ÈÏÌה Úבל ÇבזצÈ"
@@ -38,8 +36,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"ÊÚÐרÑ ÅÒÇבÉ הÓÎÉ ÈÏÌה ÇבדËÈרÊÉ. ËÊץËÈרÊ ÇבהÓÎÉ ÇבÍÏםËÉ ÈÏזה ÅÒÇבÉ ÇבהÓÎÉ ÇבדËÈרÊÉ דÓÈÞÇ."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"ÎØÃ ÃËהÇÁ ÊËÈםÊ ÈםÆÉ ÌÊ‗+."
-!define GTK_BAD_INSTALL_PATH			"בÇ םד‗ה ÇבזÕזב Ãז ÅהÔÇÁ ÇבדÓÇÑ ÇבÐם ÍÏÏÊו."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"דÊÚÇדבÇÊ ÇבדÓÇÑÇÊ"

@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 /* These will hopefully be in the win32api next time it is updated - at which point, we'll remove them */
 #ifndef LANG_PERSIAN
@@ -110,6 +112,19 @@ static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data
 static void common_dll_prep(const char *path) {
 	HMODULE hmod;
 	HKEY hkey;
+	struct _stat stat_buf;
+	char test_path[MAX_PATH + 1];
+
+	_snprintf(test_path, sizeof(test_path), "%s\\libgtk-win32-2.0-0.dll",
+		path);
+	test_path[sizeof(test_path) - 1] = '\0';
+
+	if (_stat(test_path, &stat_buf) != 0) {
+		printf("Unable to determine GTK+ path. \n"
+			"Assuming GTK+ is in the PATH.\n");
+		return;
+	}
+
 
 	printf("GTK+ path found: %s\n", path);
 
@@ -232,35 +247,16 @@ static void portable_mode_dll_prep(const char *pidgin_dir) {
 	common_dll_prep(path);
 }
 
-static void dll_prep() {
-	char path[MAX_PATH + 1];
-	HKEY hkey;
-	char gtkpath[MAX_PATH + 1];
-	DWORD plen;
+static void dll_prep(const char *pidgin_dir) {
+	char gtk_path[MAX_PATH + 1];
+	gtk_path[0] = '\0';
 
-	plen = sizeof(gtkpath);
-	hkey = HKEY_CURRENT_USER;
-	if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "Path",
-			(LPBYTE) &gtkpath, &plen)) {
-		hkey = HKEY_LOCAL_MACHINE;
-		if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "Path",
-				(LPBYTE) &gtkpath, &plen)) {
-			printf("GTK+ Path Registry Key not found. "
-				"Assuming GTK+ is in the PATH.\n");
-			return;
-		}
+	if (*pidgin_dir) {
+		_snprintf(gtk_path, sizeof(gtk_path), "%s\\Gtk\\bin", pidgin_dir);
+		gtk_path[sizeof(gtk_path)] = '\0';
 	}
 
-	/* this value is replaced during a successful RegQueryValueEx() */
-	plen = sizeof(path);
-	/* Determine GTK+ dll path .. */
-	if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "DllPath",
-				(LPBYTE) &path, &plen)) {
-		strcpy(path, gtkpath);
-		strcat(path, "\\bin");
-	}
-
-	common_dll_prep(path);
+	common_dll_prep(gtk_path);
 }
 
 static char* winpidgin_lcid_to_posix(LCID lcid) {
@@ -686,14 +682,16 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		}
 
 		if (prev) {
+			HMODULE hmod;
 			prev[0] = '\0';
 
 			/* prev++ will now point to the executable file name */
 			strcpy(exe_name, prev + 1);
 
 			strcat(pidgin_dir, "\\exchndl.dll");
-			if (LoadLibrary(pidgin_dir))
+			if ((hmod = LoadLibrary(pidgin_dir))) {
 				printf("Loaded exchndl.dll\n");
+			}
 
 			prev[0] = '\0';
 		}
@@ -729,7 +727,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	if (portable_mode)
 		portable_mode_dll_prep(pidgin_dir);
 	else if (!getenv("PIDGIN_NO_DLL_CHECK"))
-		dll_prep();
+		dll_prep(pidgin_dir);
 
 	winpidgin_set_locale();
 

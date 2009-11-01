@@ -9,7 +9,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Diegimo programa jau paleista."
 !define PIDGIN_IS_RUNNING			"Ðiuo metu Pidgin yra paleistas. Uþdarykite ðià programà ir pabandykite ið naujo."
-!define GTK_INSTALLER_NEEDED			"GTK+ vykdymo meto aplinkos nëra arba ji turi bûti atnaujinta.$\rÁdiekite v${GTK_MIN_VERSION} arba naujesnæ GTK+ vykdymo meto aplinkos versijà"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Toliau >"
@@ -29,7 +28,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Sukurti pradinio meniu áraðà, skirtà Pidgin."
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Rasta sena GTK+ vykdymo meto aplinkos versija. Ar norite jà atnaujinti?$\rPastaba: $(^Name) gali neveikti, jeigu to nepadarysite."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Aplankyti Pidgin tinklalapá"
@@ -38,8 +36,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Nepavyko iðdiegti anksèiau ádiegtos Pidgin versijos.  Nauja versija bus ádiegta neiðdiegus senosios."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"GTK+ vykdymo meto aplinkos diegimo klaida"
-!define GTK_BAD_INSTALL_PATH			"Jûsø ávestas kelias negali bûti pasiektas ar sukurtas."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"URI doroklës"

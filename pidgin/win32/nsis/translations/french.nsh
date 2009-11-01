@@ -1,4 +1,3 @@
-;;  vim:syn=winbatch:fileencoding=cp1252:
 ;;
 ;;  french.nsh
 ;;
@@ -15,7 +14,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Le programme d'installation est déjà en cours d'exécution."
 !define PIDGIN_IS_RUNNING				"Une instance de Pidgin est en cours d'exécution. Veuillez quitter Pidgin et réessayer."
-!define GTK_INSTALLER_NEEDED			"Les bibliothèques de l'environnement GTK+ ne sont pas installées ou ont besoin d'une mise à jour.$\rVeuillez installer la version ${GTK_MIN_VERSION} ou plus récente des bibliothèques GTK+."
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Suivant >"
@@ -35,7 +33,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Créer un raccourci pour Pidgin dans le menu Démarrer"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Une ancienne version des bibliothèques GTK+ a été trouvée. Voulez-vous la mettre à jour ?$\rNote : $(^Name) peut ne pas fonctionner si vous ne le faites pas."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visitez la page web de Pidgin Windows" 
@@ -44,8 +41,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Impossible de désinstaller la version de Pidgin en place. La nouvelle version sera installée sans supprimer la version en place."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Erreur lors de l'installation des bibliothèques GTK+"
-!define GTK_BAD_INSTALL_PATH			"Le dossier d'installation ne peut pas être créé ou n'est pas accessible."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"Gestion des liens (URI)"

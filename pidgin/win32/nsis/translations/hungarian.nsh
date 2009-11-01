@@ -9,7 +9,6 @@
 ;;
 
 ; Startup Checks
-!define GTK_INSTALLER_NEEDED			"A GTK+ futtató környezet hiányzik vagy frissítése szükséges.$\rKérem telepítse a v${GTK_MIN_VERSION} vagy magasabb verziójú GTK+ futtató környezetet."
 !define INSTALLER_IS_RUNNING			"A telepítõ már fut."
 !define PIDGIN_IS_RUNNING				"Jelenleg fut a Pidgin egy példánya. Lépjen ki a Pidginból és azután próbálja újra."
 
@@ -31,7 +30,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Start Menü bejegyzés létrehozása a Pidginhez"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Egy régi verziójú GTK+ futtatókörnyezet van telepítve. Kívánja frissíteni?$\rMegjegyzés: a Pidgin nem fog mûködni, ha nem frissíti."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"A Windows Pidgin weboldalának felkeresése"
@@ -41,8 +39,6 @@
 
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Hiba a GTK+ futtatókörnyezet telepítése közben."
-!define GTK_BAD_INSTALL_PATH			"A megadott elérési út nem érhetõ el, vagy nem hozható létre."
 
 !define URI_HANDLERS_SECTION_TITLE		"URI kezelõk"
 
