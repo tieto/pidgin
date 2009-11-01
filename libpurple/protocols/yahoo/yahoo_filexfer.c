@@ -1070,6 +1070,13 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
+gboolean yahoo_can_receive_file(PurpleConnection *gc, const char *who)
+{
+	if (!who || yahoo_get_federation_from_name(who) != YAHOO_FEDERATION_NONE)
+		return FALSE;
+	return TRUE;
+}
+
 void yahoo_send_file(PurpleConnection *gc, const char *who, const char *file)
 {
 	struct yahoo_xfer_data *xfer_data;

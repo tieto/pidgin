@@ -249,7 +249,7 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_roomlist_get_list,
 	yahoo_roomlist_cancel,
 	yahoo_roomlist_expand_category,
-	NULL, /* can_receive_file */
+	yahoo_can_receive_file, /* can_receive_file */
 	yahoo_send_file,
 	yahoo_new_xfer,
 	yahoo_offline_message, /* offline_message */
