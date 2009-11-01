@@ -41,22 +41,6 @@
 #include <sys/stat.h>
 #include "config.h"
 
-/* These will hopefully be in the win32api next time it is updated - at which point, we'll remove them */
-#ifndef LANG_PERSIAN
-#define LANG_PERSIAN 0x29
-#endif
-#ifndef LANG_BOSNIAN
-#define SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_LATIN	0x05
-#define SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_CYRILLIC	0x08
-#endif
-#ifndef SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN
-#define SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN	0x04
-#endif
-#ifndef LANG_XHOSA
-#define LANG_XHOSA 0x34
-#endif
-
-
 typedef int (CALLBACK* LPFNPIDGINMAIN)(HINSTANCE, int, char**);
 typedef void (CALLBACK* LPFNSETDLLDIRECTORY)(LPCWSTR);
 typedef BOOL (CALLBACK* LPFNATTACHCONSOLE)(DWORD);
