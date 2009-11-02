@@ -2021,7 +2021,7 @@ network_page(void)
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
 		gtk_table_attach(GTK_TABLE(table), label, 2, 3, 0, 1, GTK_FILL, 0, 0, 0);
 
-		entry = gtk_entry_new();
+		entry = gtk_spin_button_new_with_range(0, 65535, 1);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 		gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 0, 1, GTK_FILL, 0, 0, 0);
 		g_signal_connect(G_OBJECT(entry), "changed",
