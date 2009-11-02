@@ -12,7 +12,6 @@
 ; Startup checks
 !define INSTALLER_IS_RUNNING			"תוכנת ההתקנה כבר רצה."
 !define PIDGIN_IS_RUNNING			"עותק של פידג'ין כבר רץ. יש לסגור את פידג'ין ולנסות שנית."
-!define GTK_INSTALLER_NEEDED			".לא נמצאת או צריכה שידרוג GTK+ סביבת$\rבבקשה התקן v${GTK_MIN_VERSION} .GTK+ או גבוהה יותר של סביבת"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"הבא >"
@@ -32,8 +31,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"צור קיצור-דרך עבור פידג'ין בתפריט ההתחל"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"A?נמצאה. לשדרג GTK+ סביבה ישנה של$\rNote: .יכול לא לעבוד אם לא $(^Name)"
-!define GTK_WINDOWS_INCOMPATIBLE		"חלונות 95/98/מילניום אינם תואמים ל-GTK+ 2.8.0 ומעלה. GTK+ ${GTK_INSTALL_VERSION} לא יותקן.$\rאם אין לך GTK+ ${GTK_MIN_VERSION} ומעלה מותקן, ההתקנה כעת תעצור."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		".Pidginבקרו באתר של "
@@ -42,8 +39,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"לא מסוגל להסיר את הגירסא המותקנת של פידג'ין. הגירסא החדשה תותקן ללא הסרת הגרסא המותקנת."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			".GTK+ שגיאה בהתקנת סביבת"
-!define GTK_BAD_INSTALL_PATH			".המסלול שציינת לא יכול להיווצר"
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"מנהלי URI"

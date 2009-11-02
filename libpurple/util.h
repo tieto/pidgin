@@ -1427,6 +1427,14 @@ void purple_restore_default_signal_handlers(void);
  */
 const gchar *purple_get_host_name(void);
 
+/**
+ * Returns a type 4 (random) UUID
+ *
+ * @return A UUID, caller is responsible for freeing it
+ * @since 2.7.0
+ */
+gchar *purple_uuid_random(void);
+
 #ifdef __cplusplus
 }
 #endif
