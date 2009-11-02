@@ -45,6 +45,10 @@ version 2.6.4 (??/??/20??):
 	* Add a hold button to the media window.
 	* Tooltips for custom smileys should work now.
 	* Users with unread messages are again bolded in the Buddy List.
+	* Minor reworking of the Preferences window's Network tab to make it need
+	  less vertical space.
+	* The global "Use remote DNS with SOCKS4 proxies" preference no longer
+	  disappears when the preference value changes in certain ways.
 
 version 2.6.3 (10/16/2009):
 	General:
