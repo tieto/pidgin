@@ -1887,22 +1887,26 @@ network_page(void)
 	pidgin_prefs_checkbox(_("_Enable automatic router port forwarding"),
 			"/purple/network/map_ports", vbox);
 
-	ports_checkbox = pidgin_prefs_checkbox(_("_Manually specify range of ports to listen on"),
-			"/purple/network/ports_range_use", vbox);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
-	spin_button = pidgin_prefs_labeled_spin_button(vbox, _("_Start port:"),
+	ports_checkbox = pidgin_prefs_checkbox(_("_Manually specify range of ports to listen on:"),
+			"/purple/network/ports_range_use", hbox);
+
+	spin_button = pidgin_prefs_labeled_spin_button(hbox, _("_Start:"),
 			"/purple/network/ports_range_start", 0, 65535, sg);
 	if (!purple_prefs_get_bool("/purple/network/ports_range_use"))
 		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
 
-	spin_button = pidgin_prefs_labeled_spin_button(vbox, _("_End port:"),
+	spin_button = pidgin_prefs_labeled_spin_button(hbox, _("_End:"),
 			"/purple/network/ports_range_end", 0, 65535, sg);
 	if (!purple_prefs_get_bool("/purple/network/ports_range_use"))
 		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
+
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), NULL, NULL, hbox, TRUE, NULL);
 
 	g_object_unref(sg);
 
