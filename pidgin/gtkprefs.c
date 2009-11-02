@@ -77,6 +77,7 @@ static GtkWidget *sound_entry = NULL;
 static GtkListStore *smiley_theme_store = NULL;
 static GtkTreeSelection *smiley_theme_sel = NULL;
 static GtkWidget *prefs_proxy_frame = NULL;
+static GtkWidget *prefs_proxy_subframe = NULL;
 
 static GtkWidget *prefs = NULL;
 static GtkWidget *debugbutton = NULL;
@@ -1972,9 +1973,15 @@ network_page(void)
 		gtk_widget_show(browser_button);
 	} else {
 		vbox = pidgin_make_frame(ret, _("Proxy Server"));
-		prefs_proxy_frame = gtk_vbox_new(FALSE, 0);
+		prefs_proxy_frame = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		prefs_proxy_subframe = gtk_vbox_new(FALSE, 0);
 
-		pidgin_prefs_dropdown(vbox, _("Proxy _type:"), PURPLE_PREF_STRING,
+		/* This is a global option that affects SOCKS4 usage even with account-specific proxy settings */
+		pidgin_prefs_checkbox(_("Use remote DNS with SOCKS4 proxies"),
+							  "/purple/proxy/socks4_remotedns", prefs_proxy_frame);
+		gtk_box_pack_start(GTK_BOX(vbox), prefs_proxy_frame, 0, 0, 0);
+
+		pidgin_prefs_dropdown(prefs_proxy_frame, _("Proxy _type:"), PURPLE_PREF_STRING,
 					"/purple/proxy/type",
 					_("No proxy"), "none",
 					"SOCKS 4", "socks4",
@@ -1982,21 +1989,17 @@ network_page(void)
 					"HTTP", "http",
 					_("Use Environmental Settings"), "envvar",
 					NULL);
-		gtk_box_pack_start(GTK_BOX(vbox), prefs_proxy_frame, 0, 0, 0);
+		gtk_box_pack_start(GTK_BOX(prefs_proxy_frame), prefs_proxy_subframe, 0, 0, 0);
 		proxy_info = purple_global_proxy_get_info();
 
 		purple_prefs_connect_callback(prefs, "/purple/proxy/type",
-					    proxy_changed_cb, prefs_proxy_frame);
-
-		/* This is a global option that affects SOCKS4 usage even with account-specific proxy settings */
-		pidgin_prefs_checkbox(_("Use remote DNS with SOCKS4 proxies"),
-							  "/purple/proxy/socks4_remotedns", prefs_proxy_frame);
+					    proxy_changed_cb, prefs_proxy_subframe);
 
 		table = gtk_table_new(4, 2, FALSE);
 		gtk_container_set_border_width(GTK_CONTAINER(table), 0);
 		gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 		gtk_table_set_row_spacings(GTK_TABLE(table), 10);
-		gtk_container_add(GTK_CONTAINER(prefs_proxy_frame), table);
+		gtk_container_add(GTK_CONTAINER(prefs_proxy_subframe), table);
 
 
 		label = gtk_label_new_with_mnemonic(_("_Host:"));
