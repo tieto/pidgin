@@ -2876,7 +2876,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			if (text) {
 				/* Read the number of contacts that we were sent */
 				errno = 0;
-				num = strtoul(text[0], NULL, 10);
+				num = text[0] ? strtoul(text[0], NULL, 10) : 0;
 
 				if (num > 0 && errno == 0) {
 					for (i=0; i<num; i++) {
