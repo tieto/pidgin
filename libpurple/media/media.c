@@ -149,6 +149,7 @@ static guint purple_media_signals[LAST_SIGNAL] = {0};
 enum {
 	PROP_0,
 	PROP_MANAGER,
+	PROP_BACKEND,
 	PROP_ACCOUNT,
 	PROP_CONFERENCE_TYPE,
 	PROP_INITIATOR,
@@ -202,6 +203,17 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"The media manager that contains this media session.",
 			PURPLE_TYPE_MEDIA_MANAGER,
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+
+	/*
+	 * This one should be PURPLE_TYPE_MEDIA_BACKEND, but it doesn't
+	 * like interfaces because they "aren't GObjects"
+	 */
+	g_object_class_install_property(gobject_class, PROP_BACKEND,
+			g_param_spec_object("backend",
+			"Purple Media Backend",
+			"The backend object this media object uses.",
+			G_TYPE_OBJECT,
+			G_PARAM_READABLE));
 
 	g_object_class_install_property(gobject_class, PROP_ACCOUNT,
 			g_param_spec_pointer("account",
@@ -422,6 +434,9 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 	switch (prop_id) {
 		case PROP_MANAGER:
 			g_value_set_object(value, media->priv->manager);
+			break;
+		case PROP_BACKEND:
+			g_value_set_object(value, media->priv->backend);
 			break;
 		case PROP_ACCOUNT:
 			g_value_set_pointer(value, media->priv->account);
