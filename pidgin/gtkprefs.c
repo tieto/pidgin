@@ -1927,9 +1927,9 @@ network_page(void)
 
 	pidgin_prefs_labeled_spin_button(hbox, _("_Port:"),
 		"/purple/network/turn_port", 0, 65535, NULL);
-	hbox = pidgin_prefs_labeled_entry(vbox, _("_Username:"),
+	hbox = pidgin_prefs_labeled_entry(vbox, _("Use_rname:"),
 		"/purple/network/turn_username", sg);
-	pidgin_prefs_labeled_password(hbox, _("_Password:"),
+	pidgin_prefs_labeled_password(hbox, _("Pass_word:"),
 		"/purple/network/turn_password", NULL);
 
 	if (purple_running_gnome()) {
@@ -1977,11 +1977,11 @@ network_page(void)
 		prefs_proxy_subframe = gtk_vbox_new(FALSE, 0);
 
 		/* This is a global option that affects SOCKS4 usage even with account-specific proxy settings */
-		pidgin_prefs_checkbox(_("Use remote DNS with SOCKS4 proxies"),
+		pidgin_prefs_checkbox(_("Use remote _DNS with SOCKS4 proxies"),
 							  "/purple/proxy/socks4_remotedns", prefs_proxy_frame);
 		gtk_box_pack_start(GTK_BOX(vbox), prefs_proxy_frame, 0, 0, 0);
 
-		pidgin_prefs_dropdown(prefs_proxy_frame, _("Proxy _type:"), PURPLE_PREF_STRING,
+		pidgin_prefs_dropdown(prefs_proxy_frame, _("Proxy t_ype:"), PURPLE_PREF_STRING,
 					"/purple/proxy/type",
 					_("No proxy"), "none",
 					"SOCKS 4", "socks4",
@@ -2020,7 +2020,7 @@ network_page(void)
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 		pidgin_set_accessible_label (entry, label);
 
-		label = gtk_label_new_with_mnemonic(_("_Port:"));
+		label = gtk_label_new_with_mnemonic(_("P_ort:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
 		gtk_table_attach(GTK_TABLE(table), label, 2, 3, 0, 1, GTK_FILL, 0, 0, 0);
 
@@ -2039,7 +2039,7 @@ network_page(void)
 		}
 		pidgin_set_accessible_label (entry, label);
 
-		label = gtk_label_new_with_mnemonic(_("_Username:"));
+		label = gtk_label_new_with_mnemonic(_("User_name:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
 		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 
