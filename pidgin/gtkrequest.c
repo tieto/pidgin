@@ -81,6 +81,33 @@ typedef struct
 } PidginRequestData;
 
 static void
+pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
+{
+	GtkWidget *image;
+	GdkPixbuf *pixbuf;
+	GtkTooltips *tips;
+
+	if (!account)
+		return;
+
+	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	image = gtk_image_new_from_pixbuf(pixbuf);
+	g_object_unref(G_OBJECT(pixbuf));
+
+	tips = gtk_tooltips_new();
+	gtk_tooltips_set_tip(tips, image, purple_account_get_username(account), NULL);
+
+	if (GTK_IS_DIALOG(cont)) {
+		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(cont)->action_area), image, FALSE, TRUE, 0);
+		gtk_box_reorder_child(GTK_BOX(GTK_DIALOG(cont)->action_area), image, 0);
+	} else if (GTK_IS_HBOX(cont)) {
+		gtk_misc_set_alignment(GTK_MISC(image), 0, 0);
+		gtk_box_pack_end(GTK_BOX(cont), image, FALSE, TRUE, 0);
+	}
+	gtk_widget_show(image);
+}
+
+static void
 generic_response_start(PidginRequestData *data)
 {
 	g_return_if_fail(data != NULL);
@@ -347,6 +374,8 @@ pidgin_request_input(const char *title, const char *primary,
 
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
+	pidgin_widget_decorate_account(hbox, account);
+
 	/* Descriptive label */
 	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
 	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
@@ -515,6 +544,8 @@ pidgin_request_choice(const char *title, const char *primary,
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
+	pidgin_widget_decorate_account(hbox, account);
+
 	/* Vertical box */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
@@ -638,6 +669,8 @@ pidgin_request_action(const char *title, const char *primary,
 	/* Vertical box */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
+
+	pidgin_widget_decorate_account(hbox, account);
 
 	/* Descriptive label */
 	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
@@ -1143,6 +1176,8 @@ pidgin_request_fields(const char *title, const char *primary,
 	data->ok_button = button;
 	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
 	gtk_window_set_default(GTK_WINDOW(win), button);
+
+	pidgin_widget_decorate_account(hbox, account);
 
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
