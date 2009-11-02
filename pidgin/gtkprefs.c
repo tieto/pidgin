@@ -2039,7 +2039,7 @@ network_page(void)
 		}
 		pidgin_set_accessible_label (entry, label);
 
-		label = gtk_label_new_with_mnemonic(_("_User:"));
+		label = gtk_label_new_with_mnemonic(_("_Username:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
 		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 
