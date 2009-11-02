@@ -739,7 +739,8 @@ purple_media_end(PurpleMedia *media,
 	}
 
 	/* Free the conference if no sessions left */
-	if (g_hash_table_size(media->priv->sessions) == 0) {
+	if (media->priv->sessions != NULL &&
+			g_hash_table_size(media->priv->sessions) == 0) {
 		g_signal_emit(media, purple_media_signals[STATE_CHANGED],
 				0, PURPLE_MEDIA_STATE_END,
 				NULL, NULL);
@@ -846,9 +847,12 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 			/* Everything that needs to be emitted has been */
 		} else if (session_id == NULL && participant == NULL) {
 			/* Emit for everything in the conference */
-			GList *sessions = g_hash_table_get_values(
-					media->priv->sessions);
+			GList *sessions = NULL;
 			GList *participants = media->priv->participants;
+
+			if (media->priv->sessions != NULL)
+				sessions = g_hash_table_get_values(
+					media->priv->sessions);
 
 			/* Emit for sessions */
 			for (; sessions; sessions = g_list_delete_link(
