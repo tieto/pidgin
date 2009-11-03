@@ -5276,7 +5276,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	for (curitem=od->ssi.local; curitem; curitem=curitem->next) {
 	  if ((curitem->name == NULL) || (g_utf8_validate(curitem->name, -1, NULL)))
 		switch (curitem->type) {
-			case 0x0000: { /* Buddy */
+			case AIM_SSI_TYPE_BUDDY: { /* Buddy */
 				if (curitem->name) {
 					struct aim_ssi_item *groupitem;
 					char *gname, *gname_utf8, *alias, *alias_utf8;
@@ -5342,7 +5342,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				}
 			} break;
 
-			case 0x0001: { /* Group */
+			case AIM_SSI_TYPE_GROUP: { /* Group */
 				char *gname;
 				char *gname_utf8;
 
@@ -5362,7 +5362,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				g_free(gname_utf8);
 			} break;
 
-			case 0x0002: { /* Permit buddy */
+			case AIM_SSI_TYPE_PERMIT: { /* Permit buddy */
 				if (curitem->name) {
 					/* if (!find_permdeny_by_name(gc->permit, curitem->name)) { AAA */
 					GSList *list;
@@ -5375,7 +5375,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				}
 			} break;
 
-			case 0x0003: { /* Deny buddy */
+			case AIM_SSI_TYPE_DENY: { /* Deny buddy */
 				if (curitem->name) {
 					GSList *list;
 					for (list=account->deny; (list && oscar_util_name_compare(curitem->name, list->data)); list=list->next);
@@ -5387,7 +5387,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				}
 			} break;
 
-			case 0x0004: { /* Permit/deny setting */
+			case AIM_SSI_TYPE_PDINFO: { /* Permit/deny setting */
 				/*
 				 * We don't inherit the permit/deny setting from the server
 				 * for ICQ because, for ICQ, this setting controls who can
@@ -5405,7 +5405,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				}
 			} break;
 
-			case 0x0005: { /* Presence setting */
+			case AIM_SSI_TYPE_PRESENCEPREFS: { /* Presence setting */
 				/* We don't want to change Purple's setting because it applies to all accounts */
 			} break;
 		} /* End of switch on curitem->type */
