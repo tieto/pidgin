@@ -144,6 +144,26 @@ static const char * const msgerrreason[] = {
 };
 static const int msgerrreasonlen = G_N_ELEMENTS(msgerrreason);
 
+static const char * const errcodereason[] = {
+	N_("Invalid error"),
+	N_("Not logged in"),
+	N_("Cannot receive IM due to parental controls"),
+	N_("Cannot send SMS without accepting terms"),
+	N_("Cannot send SMS"), /* SMS_WITHOUT_DISCLAIMER is weird */
+	N_("Cannot send SMS to this country"),
+	N_("Unknown error"), /* Undocumented */
+	N_("Unknown error"), /* Undocumented */
+	N_("Cannot send SMS to unknown country"),
+	N_("Bot accounts cannot initiate IMs"),
+	N_("Bot account cannot IM this user"),
+	N_("Bot account reached IM limit"),
+	N_("Bot account reached daily IM limit"),
+	N_("Bot account reached monthly IM limit"),
+	N_("Unable to receive offline messages"),
+	N_("Offline message store full")
+};
+static const int errcodereasonlen = G_N_ELEMENTS(errcodereason);
+
 /* All the libfaim->purple callback functions */
 
 /* Only used when connecting with the old-style BUCP login */
@@ -3217,17 +3237,18 @@ static int purple_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	PurpleXfer *xfer;
 #endif
 	va_list ap;
-	guint16 reason;
-	char *data, *buf;
+	guint16 reason, errcode;
+	char *data, *reason_str, *buf, *error;
 
 	va_start(ap, fr);
 	reason = (guint16)va_arg(ap, unsigned int);
+	errcode = (guint16)va_arg(ap, unsigned int);
 	data = va_arg(ap, char *);
 	va_end(ap);
 
 	purple_debug_error("oscar",
-			   "Message error with data %s and reason %hu\n",
-				(data != NULL ? data : ""), reason);
+			   "Message error with data %s and reason %hu and errcode %hu\n",
+				(data != NULL ? data : ""), reason, errcode);
 
 	if ((data == NULL) || (*data == '\0'))
 		/* We can't do anything if data is empty */
@@ -3242,14 +3263,21 @@ static int purple_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 #endif
 
 	/* Data is assumed to be the destination bn */
-	buf = g_strdup_printf(_("Unable to send message: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
+	reason_str = g_strdup((reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason"));
+	if (errcode != 0 && errcode < errcodereasonlen) {
+		error = g_strdup_printf("%s: %s", reason_str, _(errcodereason[errcode]));
+		g_free(reason_str);
+	} else
+		error = reason_str;
+
+	buf = g_strdup_printf(_("Unable to send message: %s"), error);
 	if (!purple_conv_present_error(data, purple_connection_get_account(gc), buf)) {
 		g_free(buf);
 		buf = g_strdup_printf(_("Unable to send message to %s:"), data ? data : "(unknown)");
-		purple_notify_error(od->gc, NULL, buf,
-				  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
+		purple_notify_error(od->gc, NULL, buf, error);
 	}
 	g_free(buf);
+	g_free(error);
 
 	return 1;
 }

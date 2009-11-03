@@ -13,6 +13,7 @@ version 2.6.4 (??/??/20??):
 
 	AIM and ICQ:
 	* Better rate limit calculations and other improvements.  (Aman Gupta)
+	* More detailed error messages when messages fail to send.  (Aman Gupta)
 
 	MSN:
 	* Don't forget display names for buddies.
