@@ -389,11 +389,10 @@ int aim_ssi_getpermdeny(struct aim_ssi_item *list)
 
 /**
  * Locally find the presence flag item, and return the setting.  The returned setting is a
- * bitmask of the user flags that you are visible to.  See the AIM_FLAG_* #defines
- * in oscar.h
+ * bitmask of the preferences.  See the AIM_SSI_PRESENCE_FLAG_* #defines in oscar.h.
  *
  * @param list A pointer to the current list of items.
- * @return Return the current visibility mask.
+ * @return Return the current set of preferences.
  */
 guint32 aim_ssi_getpresence(struct aim_ssi_item *list)
 {
