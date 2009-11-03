@@ -3740,7 +3740,8 @@ static int purple_parse_ratechange(OscarData *od, FlapConnection *conn, FlapFram
 	};
 	va_list ap;
 	guint16 code, rateclass;
-	guint32 windowsize, clear, alert, limit, disconnect, currentavg, maxavg;
+	guint32 windowsize, clear, alert, limit, disconnect, currentavg, maxavg, delta;
+	guint8 dropping_snacs;
 
 	va_start(ap, fr);
 	code = (guint16)va_arg(ap, unsigned int);
@@ -3752,23 +3753,28 @@ static int purple_parse_ratechange(OscarData *od, FlapConnection *conn, FlapFram
 	disconnect = va_arg(ap, guint32);
 	currentavg = va_arg(ap, guint32);
 	maxavg = va_arg(ap, guint32);
+	delta = va_arg(ap, guint32);
+	dropping_snacs = (guint8)va_arg(ap, unsigned int);
 	va_end(ap);
 
 	purple_debug_misc("oscar",
 			   "rate %s (param ID 0x%04hx): curavg = %u, maxavg = %u, alert at %u, "
-		     "clear warning at %u, limit at %u, disconnect at %u (window size = %u)\n",
+		     "clear warning at %u, limit at %u, disconnect at %u, delta is %u, dropping is %u (window size = %u)\n",
 		     (code < 5) ? codes[code] : codes[0],
 		     rateclass,
 		     currentavg, maxavg,
 		     alert, clear,
 		     limit, disconnect,
-		     windowsize);
+		     delta,
+		     dropping_snacs,
+		     windowsize
+		     );
 
 	if (code == AIM_RATE_CODE_LIMIT)
 	{
 		purple_debug_warning("oscar",  _("The last action you attempted could not be "
 				"performed because you are over the rate limit. "
-				"Please wait 10 seconds and try again."));
+				"Please wait 10 seconds and try again.\n"));
 	}
 
 	return 1;
