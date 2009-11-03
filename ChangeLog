@@ -11,6 +11,9 @@ version 2.6.4 (??/??/20??):
 	* Fix DNS TXT query resolution.
 	* Always rejoin open chats after an account reconnects.
 
+	AIM and ICQ:
+	* Better rate limit calculations and other improvements.  (Aman Gupta)
+
 	MSN:
 	* Don't forget display names for buddies.
 	* Fix a random crash that might occur when idle.
