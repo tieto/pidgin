@@ -477,10 +477,10 @@ static void
 jabber_disco_stun_srv_resolve_cb(PurpleSrvResponse *resp, int results, gpointer data)
 {
 	JabberStream *js = (JabberStream *) data;
-	
+
 	purple_debug_info("jabber", "got %d SRV responses for STUN.\n", results);
 	js->srv_query_data = NULL;
-	
+
 	if (results > 0) {
 		purple_debug_info("jabber", "looking up IP for %s:%d\n", 
 			resp[0].hostname, resp[0].port);
