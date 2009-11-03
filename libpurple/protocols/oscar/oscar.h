@@ -1240,7 +1240,7 @@ int aim_bart_request(OscarData *od, const char *bn, guint8 iconcsumtype, const g
 #define AIM_SSI_ACK_INVALIDNAME		0x000d
 #define AIM_SSI_ACK_AUTHREQUIRED	0x000e
 
-/* These flags are set in the 0x00c9 TLV of SSI teyp 0x0005 */
+/* These flags are set in the 0x00c9 TLV of SSI type 0x0005 */
 #define AIM_SSI_PRESENCE_FLAG_SHOWIDLE        0x00000400
 #define AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES 0x00020000
 

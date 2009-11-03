@@ -1130,9 +1130,11 @@ int aim_ssi_delicon(OscarData *od)
  * should show up as idle or not, etc.
  *
  * @param od The oscar odion.
- * @param presence I think it's a bitmask, but I only know what one of the bits is:
- *        0x00000002 - Hide wireless?
+ * @param presence A bitmask of the first 32 entries [0-31] from
+ *        http://dev.aol.com/aim/oscar/#FEEDBAG__BUDDY_PREFS
+ *        0x00000002 - Hide "eBuddy group" (whatever that is)
  *        0x00000400 - Allow others to see your idle time
+ *        0x00020000 - Don't show Recent Buddies
  * @return Return 0 if no errors, otherwise return the error number.
  */
 int aim_ssi_setpresence(OscarData *od, guint32 presence) {

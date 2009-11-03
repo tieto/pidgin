@@ -1414,9 +1414,9 @@ idle_reporting_pref_cb(const char *name, PurplePrefType type,
 	presence = aim_ssi_getpresence(od->ssi.local);
 
 	if (report_idle)
-		aim_ssi_setpresence(od, presence | 0x400);
+		aim_ssi_setpresence(od, presence | AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
 	else
-		aim_ssi_setpresence(od, presence & ~0x400);
+		aim_ssi_setpresence(od, presence & ~AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
 }
 
 /**
@@ -5298,9 +5298,9 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			report_idle = strcmp(idle_reporting_pref, "none") != 0;
 
 			if (report_idle)
-				aim_ssi_setpresence(od, tmp | 0x400);
+				aim_ssi_setpresence(od, tmp | AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
 			else
-				aim_ssi_setpresence(od, tmp & ~0x400);
+				aim_ssi_setpresence(od, tmp & ~AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
 		}
 
 
