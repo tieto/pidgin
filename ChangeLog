@@ -29,6 +29,9 @@ version 2.6.4 (??/??/20??):
 	* Resolve an issue when connecting to iChat Server when no resource
 	  is specified.
 	* Fix a crash when adding a buddy without an '@'.
+	* Try to automatically find a STUN server by using an SRV lookup on the
+	  account's domain, and use that for voice and video if found and the user 
+	  didn't set one manually in prefs.
 
 	Yahoo:
 	* Fix sending /buzz.

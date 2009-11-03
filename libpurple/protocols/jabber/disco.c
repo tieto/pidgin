@@ -421,6 +421,76 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 
 }
 
+/* should probably share this code with google.c, or maybe from 2.7.0
+ introduce an abstracted hostname -> IP function in dns.c */
+static void
+jabber_disco_stun_lookup_cb(GSList *hosts, gpointer data,
+	const char *error_message)
+{
+	JabberStream *js = (JabberStream *) data;
+
+	if (error_message) {
+		purple_debug_error("jabber", "STUN lookup failed: %s\n",
+			error_message);
+		g_slist_free(hosts);
+		js->stun_query = NULL;
+		return;
+	}
+
+	if (hosts && g_slist_next(hosts)) {
+		struct sockaddr *addr = g_slist_next(hosts)->data;
+		char dst[INET6_ADDRSTRLEN];
+		int port;
+
+		if (addr->sa_family == AF_INET6) {
+			inet_ntop(addr->sa_family, &((struct sockaddr_in6 *) addr)->sin6_addr,
+				dst, sizeof(dst));
+			port = ntohs(((struct sockaddr_in6 *) addr)->sin6_port);
+		} else {
+			inet_ntop(addr->sa_family, &((struct sockaddr_in *) addr)->sin_addr,
+				dst, sizeof(dst));
+			port = ntohs(((struct sockaddr_in *) addr)->sin_port);
+		}
+
+		if (js->stun_ip)
+			g_free(js->stun_ip);
+		js->stun_ip = g_strdup(dst);
+		js->stun_port = port;
+
+		purple_debug_info("jabber", "set STUN IP/port address: "
+		                  "%s:%d\n", dst, port);
+
+		/* unmark ongoing query */
+		js->stun_query = NULL;
+	}
+
+	while (hosts != NULL) {
+		hosts = g_slist_delete_link(hosts, hosts);
+		/* Free the address */
+		g_free(hosts->data);
+		hosts = g_slist_delete_link(hosts, hosts);
+	}
+}
+
+
+static void
+jabber_disco_stun_srv_resolve_cb(PurpleSrvResponse *resp, int results, gpointer data)
+{
+	JabberStream *js = (JabberStream *) data;
+	
+	purple_debug_info("jabber", "got %d SRV responses for STUN.\n", results);
+	js->srv_query_data = NULL;
+	
+	if (results > 0) {
+		purple_debug_info("jabber", "looking up IP for %s:%d\n", 
+			resp[0].hostname, resp[0].port);
+		js->stun_query = 
+			purple_dnsquery_a(resp[0].hostname, resp[0].port, 
+				jabber_disco_stun_lookup_cb, js);
+	}
+}
+
+
 static void
 jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
                                    JabberIqType type, const char *id,
@@ -471,7 +541,10 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 			/* autodiscover stun and relays */
 			jabber_google_send_jingle_info(js);
 		} else {
-			/* TODO: add external service discovery here... */
+			js->srv_query_data = 
+				purple_srv_resolve("stun", "udp", js->user->domain,
+					jabber_disco_stun_srv_resolve_cb, js);
+			/* TODO: add TURN support later... */
 		}
 	}
 
