@@ -7159,8 +7159,9 @@ static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable
 	return FALSE;
 }
 
-void oscar_init(PurplePluginProtocolInfo *prpl_info)
+void oscar_init(PurplePlugin *plugin)
 {
+	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 	PurpleAccountOption *option;
 	static gboolean init = FALSE;
 
@@ -7183,9 +7184,11 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
-											OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
-	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	if (g_str_equal(purple_plugin_get_id(plugin), "prpl-aim")) {
+		option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
+												OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
+		prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	}
 
 	if (init)
 		return;
