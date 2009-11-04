@@ -3999,9 +3999,6 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	presence = purple_status_get_presence(status);
 	aim_srv_setidle(od, !purple_presence_is_idle(presence) ? 0 : time(NULL) - purple_presence_get_idle_time(presence));
 
-	/* Request offline messages for AIM and ICQ */
-	aim_im_reqofflinemsgs(od);
-
 	if (od->icq) {
 #ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 		aim_icq_reqofflinemsgs(od);
@@ -4028,6 +4025,10 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	 */
 	if (od->ssi.received_data) {
 		aim_srv_clientready(od, conn);
+
+		/* Request offline messages for AIM and ICQ */
+		aim_im_reqofflinemsgs(od);
+
 		purple_connection_set_state(gc, PURPLE_CONNECTED);
 	}
 
@@ -5444,6 +5445,10 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	 */
 	if (od->bos.have_rights) {
 		aim_srv_clientready(od, conn);
+
+		/* Request offline messages for AIM and ICQ */
+		aim_im_reqofflinemsgs(od);
+
 		purple_connection_set_state(gc, PURPLE_CONNECTED);
 	}
 

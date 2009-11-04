@@ -17,6 +17,8 @@ version 2.6.4 (??/??/20??):
 	* The simultaneous login account option is respected when using
 	  the clientLogin authentication method.
 
+	AIM and ICQ:
+	* Fix offline message retrieval (broken in 2.6.3)
 
 	MSN:
 	* Don't forget display names for buddies.
