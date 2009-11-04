@@ -5225,7 +5225,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	{ /* If not in server list then prune from local list */
 		GSList *cur, *next;
 		GSList *buddies = purple_find_buddies(account, NULL);
-		
+
 		/* Buddies */
 		cur = NULL;
 
@@ -5315,45 +5315,28 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	/* Add from server list to local list */
 	for (curitem=od->ssi.local; curitem; curitem=curitem->next) {
-	  if ((curitem->name == NULL) || (g_utf8_validate(curitem->name, -1, NULL)))
 		switch (curitem->type) {
 			case AIM_SSI_TYPE_BUDDY: { /* Buddy */
 				if (curitem->name) {
 					struct aim_ssi_item *groupitem;
-					char *gname, *gname_utf8, *alias, *alias_utf8;
+					const char *gname, *alias;
 
 					groupitem = aim_ssi_itemlist_find(od->ssi.local, curitem->gid, 0x0000);
 					gname = groupitem ? groupitem->name : NULL;
-					if (gname != NULL) {
-						if (g_utf8_validate(gname, -1, NULL))
-							gname_utf8 = g_strdup(gname);
-						else
-							gname_utf8 = oscar_utf8_try_convert(account, gname);
-					} else
-						gname_utf8 = NULL;
 
-					g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans"));
+					g = purple_find_group(gname ? gname : _("Orphans"));
 					if (g == NULL) {
-						g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
+						g = purple_group_new(gname ? gname : _("Orphans"));
 						purple_blist_add_group(g, NULL);
 					}
 
 					alias = aim_ssi_getalias(od->ssi.local, gname, curitem->name);
-					if (alias != NULL) {
-						if (g_utf8_validate(alias, -1, NULL))
-							alias_utf8 = g_strdup(alias);
-						else
-							alias_utf8 = oscar_utf8_try_convert(account, alias);
-						g_free(alias);
-					} else
-						alias_utf8 = NULL;
-
 					b = purple_find_buddy_in_group(account, curitem->name, g);
 					if (b) {
 						/* Get server stored alias */
-						purple_blist_alias_buddy(b, alias_utf8);
+						purple_blist_alias_buddy(b, alias);
 					} else {
-						b = purple_buddy_new(account, curitem->name, alias_utf8);
+						b = purple_buddy_new(account, curitem->name, alias);
 
 						purple_debug_info("oscar",
 								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
@@ -5377,30 +5360,15 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 								purple_buddy_get_name(b),
 								OSCAR_STATUS_ID_MOBILE, NULL);
 					}
-
-					g_free(gname_utf8);
-					g_free(alias_utf8);
 				}
 			} break;
 
 			case AIM_SSI_TYPE_GROUP: { /* Group */
-				char *gname;
-				char *gname_utf8;
-
-				gname = curitem->name;
-				if (gname != NULL) {
-					if (g_utf8_validate(gname, -1, NULL))
-						gname_utf8 = g_strdup(gname);
-					else
-						gname_utf8 = oscar_utf8_try_convert(account, gname);
-				} else
-					gname_utf8 = NULL;
-
-				if (gname_utf8 != NULL && purple_find_group(gname_utf8) == NULL) {
-					g = purple_group_new(gname_utf8);
+				const char *gname = curitem->name;
+				if (gname != NULL && purple_find_group(gname) == NULL) {
+					g = purple_group_new(gname);
 					purple_blist_add_group(g, NULL);
 				}
-				g_free(gname_utf8);
 			} break;
 
 			case AIM_SSI_TYPE_PERMIT: { /* Permit buddy */
@@ -5535,7 +5503,8 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	char *gname, *gname_utf8, *alias, *alias_utf8;
+	const char *gname;
+	char *alias;
 	PurpleBuddy *b;
 	PurpleGroup *g;
 	struct aim_ssi_item *ssi_item;
@@ -5556,19 +5525,7 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		return 1;
 
 	gname = aim_ssi_itemlist_findparentname(od->ssi.local, name);
-	gname_utf8 = gname ? oscar_utf8_try_convert(account, gname) : NULL;
-
 	alias = aim_ssi_getalias(od->ssi.local, gname, name);
-	if (alias != NULL)
-	{
-		if (g_utf8_validate(alias, -1, NULL))
-			alias_utf8 = g_strdup(alias);
-		else
-			alias_utf8 = oscar_utf8_try_convert(account, alias);
-	}
-	else
-		alias_utf8 = NULL;
-	g_free(alias);
 
 	b = purple_find_buddy(account, name);
 	if (b) {
@@ -5577,21 +5534,21 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		 * of your buddies, so update our local buddy list with
 		 * the person's new alias.
 		 */
-		purple_blist_alias_buddy(b, alias_utf8);
+		purple_blist_alias_buddy(b, alias);
 	} else if (snac_subtype == 0x0008) {
 		/*
 		 * You're logged in somewhere else and you added a buddy to
 		 * your server list, so add them to your local buddy list.
 		 */
-		b = purple_buddy_new(account, name, alias_utf8);
+		b = purple_buddy_new(account, name, alias);
 
-		if (!(g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans")))) {
-			g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
+		if (!(g = purple_find_group(gname ? gname : _("Orphans")))) {
+			g = purple_group_new(gname ? gname : _("Orphans"));
 			purple_blist_add_group(g, NULL);
 		}
 
 		purple_debug_info("oscar",
-				   "ssi: adding buddy %s to group %s to local list\n", name, gname_utf8 ? gname_utf8 : _("Orphans"));
+				   "ssi: adding buddy %s to group %s to local list\n", name, gname ? gname : _("Orphans"));
 		purple_blist_add_buddy(b, NULL, g, NULL);
 
 		/* Mobile users should always be online */
@@ -5604,6 +5561,8 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	}
 
+	g_free(alias);
+
 	ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
 			gname, name, AIM_SSI_TYPE_BUDDY);
 	if (ssi_item == NULL)
@@ -5612,9 +5571,6 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 				"Could not find ssi item for oncoming buddy %s, "
 				"group %s\n", name, gname);
 	}
-
-	g_free(gname_utf8);
-	g_free(alias_utf8);
 
 	return 1;
 }
@@ -6318,7 +6274,6 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	struct name_data *data;
 	PurpleGroup *g;
 	char *comment;
-	gchar *comment_utf8;
 	gchar *title;
 	PurpleAccount *account;
 	const char *name;
@@ -6337,7 +6292,6 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	data = g_new(struct name_data, 1);
 
 	comment = aim_ssi_getcomment(od->ssi.local, purple_group_get_name(g), name);
-	comment_utf8 = comment ? oscar_utf8_try_convert(account, comment) : NULL;
 
 	data->gc = gc;
 	data->name = g_strdup(name);
@@ -6345,7 +6299,7 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 
 	title = g_strdup_printf(_("Buddy Comment for %s"), data->name);
 	purple_request_input(gc, title, _("Buddy Comment:"), NULL,
-					   comment_utf8, TRUE, FALSE, NULL,
+					   comment, TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(oscar_ssi_editcomment),
 					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
 					   account, data->name, NULL,
@@ -6353,7 +6307,6 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	g_free(title);
 
 	g_free(comment);
-	g_free(comment_utf8);
 }
 
 static void
