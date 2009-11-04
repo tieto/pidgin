@@ -73,7 +73,7 @@ flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, gu
 }
 
 void
-flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci)
+flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci, gboolean allow_multiple_logins)
 {
 	FlapFrame *frame;
 	GSList *tlvlist = NULL;
@@ -94,7 +94,7 @@ flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConne
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
 	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
 	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
-	aim_tlvlist_add_8(&tlvlist, 0x004a, 0x01);
+	aim_tlvlist_add_8(&tlvlist, 0x004a, (allow_multiple_logins ? 0x01 : 0x03));
 
 	aim_tlvlist_write(&frame->data, &tlvlist);
 

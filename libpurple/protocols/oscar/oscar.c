@@ -1188,7 +1188,8 @@ connection_common_established_cb(FlapConnection *conn)
 			ClientInfo icqinfo = CLIENTINFO_PURPLE_ICQ;
 			flap_connection_send_version_with_cookie_and_clientinfo(od,
 					conn, conn->cookielen, conn->cookie,
-					od->icq ? &icqinfo : &aiminfo);
+					od->icq ? &icqinfo : &aiminfo,
+					purple_account_get_bool(account, "allow_multiple_logins", OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS));
 		} else {
 			flap_connection_send_version_with_cookie(od, conn,
 					conn->cookielen, conn->cookie);
