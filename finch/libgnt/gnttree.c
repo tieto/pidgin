@@ -815,7 +815,7 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 		gnt_widget_activate(widget);
 	} else if (tree->priv->search) {
 		gboolean changed = TRUE;
-		if (isalnum(*text)) {
+		if (g_unichar_isprint(*text)) {
 			tree->priv->search = g_string_append_c(tree->priv->search, *text);
 		} else if (g_utf8_collate(text, GNT_KEY_BACKSPACE) == 0) {
 			if (tree->priv->search->len)
