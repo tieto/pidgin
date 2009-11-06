@@ -381,13 +381,13 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 * due to mechanism specific issues, so we want to try one of the other
 				 * supported mechanisms. This code handles that case
 				 */
-				if (js->current_mech && strlen(js->current_mech) > 0) {
+				if (js->current_mech && *js->current_mech) {
 					char *pos;
 					if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
 						g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
 					}
 					/* Remove space which separated this mech from the next */
-					if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
+					if ((js->sasl_mechs->str)[0] == ' ') {
 						g_string_erase(js->sasl_mechs, 0, 1);
 					}
 					again = TRUE;
@@ -1099,17 +1099,17 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 
 #ifdef HAVE_CYRUS_SASL
 	if(js->auth_fail_count++ < 5) {
-		if (js->current_mech && strlen(js->current_mech) > 0) {
+		if (js->current_mech && *js->current_mech) {
 			char *pos;
 			if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
 				g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
 			}
 			/* Remove space which separated this mech from the next */
-			if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
+			if ((js->sasl_mechs->str)[0] == ' ') {
 				g_string_erase(js->sasl_mechs, 0, 1);
 			}
 		}
-		if (strlen(js->sasl_mechs->str)) {
+		if (*js->sasl_mechs->str) {
 			/* If we have remaining mechs to try, do so */
 			sasl_dispose(&js->sasl);
 
