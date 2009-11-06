@@ -377,9 +377,9 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 
 void jabber_send_raw(JabberStream *js, const char *data, int len)
 {
-
 	/* because printing a tab to debug every minute gets old */
 	if(strcmp(data, "\t")) {
+		const char *username;
 		char *text = NULL, *last_part = NULL, *tag_start = NULL;
 
 		/* Because debug logs with plaintext passwords make me sad */
@@ -404,8 +404,13 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 			*data_start = '\0';
 		}
 
-		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s%s%s\n",
-				jabber_stream_is_ssl(js) ? " (ssl)" : "", text ? text : data,
+		username = purple_connection_get_display_name(js->gc);
+		if (!username)
+			username = purple_account_get_username(purple_connection_get_account(js->gc));
+
+		purple_debug_misc("jabber", "Sending%s (%s): %s%s%s\n",
+				jabber_stream_is_ssl(js) ? " (ssl)" : "", username,
+				text ? text : data,
 				last_part ? "password removed" : "",
 				last_part ? last_part : "");
 
