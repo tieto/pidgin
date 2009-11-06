@@ -511,7 +511,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		 * support it and including it gives a false fall-back to other mechs offerred,
 		 * leading to incorrect error handling.
 		 */
-		if (mech_name && !strcmp(mech_name, "X-GOOGLE-TOKEN")) {
+		if (purple_strequal(mech_name, "X-GOOGLE-TOKEN")) {
 			g_free(mech_name);
 			continue;
 		}
@@ -519,9 +519,9 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		g_string_append(js->sasl_mechs, mech_name);
 		g_string_append_c(js->sasl_mechs, ' ');
 #else
-		if(mech_name && !strcmp(mech_name, "DIGEST-MD5"))
+		if (purple_strequal(mech_name, "DIGEST-MD5"))
 			digest_md5 = TRUE;
-		else if(mech_name && !strcmp(mech_name, "PLAIN"))
+		else if (purple_strequal(mech_name, "PLAIN"))
 			plain = TRUE;
 #endif
 		g_free(mech_name);
@@ -586,7 +586,7 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
 		/* FIXME: Why is this not in jabber_parse_error? */
 		if((error = xmlnode_get_child(packet, "error")) &&
 					(err_code = xmlnode_get_attrib(error, "code")) &&
-					!strcmp(err_code, "401")) {
+					g_str_equal(err_code, "401")) {
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(js->gc->account))
@@ -887,8 +887,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			char *rspauth = g_hash_table_lookup(parts, "rspauth");
 
 
-			if(rspauth && js->expected_rspauth &&
-					!strcmp(rspauth, js->expected_rspauth)) {
+			if (rspauth && purple_strequal(rspauth, js->expected_rspauth)) {
 				jabber_send_raw(js,
 						"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl' />",
 						-1);
@@ -1014,7 +1013,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 				 * realm are always encoded in UTF-8 (they seem to be the values
 				 * we pass in), so we need to ensure charset=utf-8 is set.
 				 */
-				if (!js->current_mech || !g_str_equal(js->current_mech, "DIGEST-MD5") ||
+				if (!purple_strequal(js->current_mech, "DIGEST-MD5") ||
 						strstr(c_out, ",charset="))
 					/* If we're not using DIGEST-MD5 or Cyrus SASL is fixed */
 					enc_out = purple_base64_encode((unsigned char*)c_out, clen);
@@ -1041,7 +1040,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 	const void *x;
 #endif
 
-	if(!ns || strcmp(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
+	if (!purple_strequal(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
 		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Invalid response from server"));
