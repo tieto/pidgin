@@ -205,7 +205,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	if (use_tls)
 		*tls_certname = xmlnode_get_data_unescaped(tls_node);
 
-	if (*host == NULL || **host == '\0' || tmp == NULL || *tmp == '\0' || cookie == NULL || *cookie == '\0' ||
+	if (*host == NULL || **host == '\0' || tmp == NULL || *tmp == '\0' || *cookie == NULL || **cookie == '\0' ||
 			(use_tls && (*tls_certname == NULL || **tls_certname == '\0')))
 	{
 		char *msg;
