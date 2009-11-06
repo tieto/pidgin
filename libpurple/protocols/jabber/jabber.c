@@ -294,8 +294,7 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 		else
 			purple_debug_warning("jabber", "Ignoring spurious <proceed/>\n");
 	} else {
-		purple_debug(PURPLE_DEBUG_WARNING, "jabber", "Unknown packet: %s\n",
-				(*packet)->name);
+		purple_debug_warning("jabber", "Unknown packet: %s\n", (*packet)->name);
 	}
 }
 
@@ -531,7 +530,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
 		gc->last_received = time(NULL);
 		buf[len] = '\0';
-		purple_debug(PURPLE_DEBUG_INFO, "jabber", "Recv (ssl)(%d): %s\n", len, buf);
+		purple_debug_info("jabber", "Recv (ssl)(%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
 		if(js->reinit)
 			jabber_stream_init(js);
@@ -571,7 +570,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 			unsigned int olen;
 			sasl_decode(js->sasl, buf, len, &out, &olen);
 			if (olen>0) {
-				purple_debug(PURPLE_DEBUG_INFO, "jabber", "RecvSASL (%u): %s\n", olen, out);
+				purple_debug_info("jabber", "RecvSASL (%u): %s\n", olen, out);
 				jabber_parser_process(js,out,olen);
 				if(js->reinit)
 					jabber_stream_init(js);
@@ -580,7 +579,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 		}
 #endif
 		buf[len] = '\0';
-		purple_debug(PURPLE_DEBUG_INFO, "jabber", "Recv (%d): %s\n", len, buf);
+		purple_debug_info("jabber", "Recv (%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
 		if(js->reinit)
 			jabber_stream_init(js);

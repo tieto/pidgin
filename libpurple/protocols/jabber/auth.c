@@ -877,7 +877,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		}
 
 		dec_in = (char *)purple_base64_decode(enc_in, NULL);
-		purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded challenge (%"
+		purple_debug_misc("jabber", "decoded challenge (%"
 				G_GSIZE_FORMAT "): %s\n", strlen(dec_in), dec_in);
 
 		parts = parse_challenge(dec_in);
