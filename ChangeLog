@@ -11,14 +11,14 @@ version 2.6.4 (??/??/20??):
 	* Fix building the GnuTLS plugin with older versions of GnuTLS.
 	* Fix DNS TXT query resolution.
 	* Always rejoin open chats after an account reconnects.
+
 	AIM and ICQ:
 	* Better rate limit calculations and other improvements.  (Aman Gupta)
 	* More detailed error messages when messages fail to send.  (Aman Gupta)
 	* The simultaneous login account option is respected when using
 	  the clientLogin authentication method.
-
-	AIM and ICQ:
 	* Fix offline message retrieval (broken in 2.6.3)
+	* Fix SSL when clientLogin is enabled.
 
 	MSN:
 	* Don't forget display names for buddies.

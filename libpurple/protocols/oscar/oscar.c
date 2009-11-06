@@ -1827,17 +1827,35 @@ static int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 	return 1;
 }
 
-int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, guint16 port, guint8 *cookie, guint16 cookielen)
+int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, guint16 port, guint8 *cookie, guint16 cookielen, const char *tls_certname)
 {
+	PurpleAccount *account;
 	FlapConnection *conn;
+
+	account = purple_connection_get_account(gc);
 
 	conn = flap_connection_new(od, SNAC_FAMILY_LOCATE);
 	conn->cookielen = cookielen;
 	conn->cookie = g_memdup(cookie, cookielen);
-	conn->connect_data = purple_proxy_connect(NULL,
-			purple_connection_get_account(gc), host, port,
-			connection_established_cb, conn);
-	if (conn->connect_data == NULL)
+
+	/*
+	 * tls_certname is only set (and must be set if we get this far) if
+	 * SSL is enabled.
+	 */
+	if (tls_certname)
+	{
+		conn->gsc = purple_ssl_connect_with_ssl_cn(account, host, port,
+				ssl_connection_established_cb, ssl_connection_error_cb,
+				tls_certname, conn);
+	}
+	else
+	{
+		conn->connect_data = purple_proxy_connect(NULL,
+				account, host, port,
+				connection_established_cb, conn);
+	}
+
+	if (conn->gsc == NULL && conn->connect_data == NULL)
 	{
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
 		return 0;
