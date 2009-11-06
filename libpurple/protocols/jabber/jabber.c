@@ -68,10 +68,9 @@
 #include "jingle/jingle.h"
 #include "jingle/rtp.h"
 
-PurplePlugin *jabber_plugin = NULL;
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
-GSList *jabber_cmds = NULL;
+static GSList *jabber_cmds = NULL;
 
 static void jabber_unregister_account_cb(JabberStream *js);
 static void try_srv_connect(JabberStream *js);
@@ -255,7 +254,7 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 {
 	const char *xmlns;
 
-	purple_signal_emit(jabber_plugin, "jabber-receiving-xmlnode", js->gc, packet);
+	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-receiving-xmlnode", js->gc, packet);
 
 	/* if the signal leaves us with a null packet, we're done */
 	if(NULL == *packet)
@@ -419,7 +418,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	/* If we've got a security layer, we need to encode the data,
 	 * splitting it on the maximum buffer length negotiated */
 
-	purple_signal_emit(jabber_plugin, "jabber-sending-text", js->gc, &data);
+	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-sending-text", js->gc, &data);
 	if (data == NULL)
 		return;
 
@@ -489,7 +488,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 
 void jabber_send(JabberStream *js, xmlnode *packet)
 {
-	purple_signal_emit(jabber_plugin, "jabber-sending-xmlnode", js->gc, &packet);
+	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-sending-xmlnode", js->gc, &packet);
 }
 
 static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
@@ -3405,8 +3404,6 @@ jabber_init_plugin(PurplePlugin *plugin)
 								unspecified */
 	const gchar *ui_name = NULL;
 
-	jabber_plugin = plugin;
-
 	ui_type = ui_info ? g_hash_table_lookup(ui_info, "client_type") : NULL;
 	if (ui_type) {
 		if (strcmp(ui_type, "pc") == 0 ||
@@ -3496,9 +3493,9 @@ jabber_init_plugin(PurplePlugin *plugin)
 }
 
 void
-jabber_uninit_plugin(void)
+jabber_uninit_plugin(PurplePlugin *plugin)
 {
-	purple_plugin_ipc_unregister_all(jabber_plugin);
+	purple_plugin_ipc_unregister_all(plugin);
 
 	jabber_features_destroy();
 	jabber_identities_destroy();

@@ -227,7 +227,7 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	jabber_unregister_commands();
 
 	/* Stay on target...stay on target... Almost there... */
-	jabber_uninit_plugin();
+	jabber_uninit_plugin(plugin);
 
 	return TRUE;
 }
