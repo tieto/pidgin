@@ -1071,7 +1071,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 			purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Invalid response from server"));
-			g_return_val_if_reached();
+			g_return_if_reached();
 		}
 	}
 	/* If we've negotiated a security layer, we need to enable it */
