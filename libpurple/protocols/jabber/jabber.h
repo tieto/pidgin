@@ -76,6 +76,8 @@ typedef struct _JabberStream JabberStream;
 
 #define CAPS0115_NODE "http://pidgin.im/"
 
+#define JABBER_DEFAULT_REQUIRE_SSL    TRUE
+
 /* Index into attention_types list */
 #define JABBER_BUZZ 0
 

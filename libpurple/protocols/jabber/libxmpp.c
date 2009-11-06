@@ -355,7 +355,7 @@ init_plugin(PurplePlugin *plugin)
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", TRUE);
+	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", JABBER_DEFAULT_REQUIRE_TLS);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
