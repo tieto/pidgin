@@ -109,6 +109,7 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	xmlnode *host_node = NULL, *port_node = NULL, *cookie_node = NULL, *tls_node = NULL;
 	gboolean use_tls;
 	char *tmp;
+	guint code;
 
 	use_tls = purple_account_get_bool(purple_connection_get_account(gc), "use_ssl", OSCAR_DEFAULT_USE_SSL);
 
@@ -153,12 +154,13 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	}
 
 	/* Make sure the status code was 200 */
-	if (strcmp(tmp, "200") != 0)
+	code = atoi(tmp);
+	if (code != 200)
 	{
 		purple_debug_error("oscar", "startOSCARSession response statusCode "
 				"was %s: %s\n", tmp, response);
 
-		if (strcmp(tmp, "401") == 0)
+		if (code == 401 || code == 607)
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 					_("You have been connecting and disconnecting too "
