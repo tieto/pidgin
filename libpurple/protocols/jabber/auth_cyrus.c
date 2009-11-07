@@ -72,9 +72,13 @@ static int jabber_sasl_cb_simple(void *ctx, int id, const char **res, unsigned *
 static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secret_t **secret)
 {
 	JabberStream *js = ctx;
-	const char *pw = purple_account_get_password(js->gc->account);
+	PurpleAccount *account;
+	const char *pw;
 	size_t len;
 	static sasl_secret_t *x = NULL;
+
+	account = = purple_connection_get_account(js->gc);
+	pw = purple_account_get_password(account);
 
 	if (!conn || !secret || id != SASL_CB_PASS)
 		return SASL_BADPARAM;
@@ -167,6 +171,7 @@ auth_no_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 
 static xmlnode *jabber_auth_start_cyrus(JabberStream *js)
 {
+	PurpleAccount *account;
 	const char *clientout = NULL;
 	char *enc_out;
 	unsigned coutlen = 0;
@@ -179,10 +184,12 @@ static xmlnode *jabber_auth_start_cyrus(JabberStream *js)
 	secprops.min_ssf = 0;
 	secprops.security_flags = SASL_SEC_NOANONYMOUS;
 
+	account = purple_connection_get_account(js->gc);
+
 	if (!jabber_stream_is_ssl(js)) {
 		secprops.max_ssf = -1;
 		secprops.maxbufsize = 4096;
-		plaintext = purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE);
+		plaintext = purple_account_get_bool(account, "auth_plain_in_clear", FALSE);
 		if (!plaintext)
 			secprops.security_flags |= SASL_SEC_NOPLAINTEXT;
 	} else {
@@ -214,8 +221,8 @@ static xmlnode *jabber_auth_start_cyrus(JabberStream *js)
 				 * to get one
 				 */
 
-				if (!purple_account_get_password(js->gc->account)) {
-					purple_account_request_password(js->gc->account, G_CALLBACK(auth_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
+				if (!purple_account_get_password(account)) {
+					purple_account_request_password(account, G_CALLBACK(auth_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
 					return NULL;
 
 				/* If we've got a password, but aren't sending
@@ -224,11 +231,11 @@ static xmlnode *jabber_auth_start_cyrus(JabberStream *js)
 				 */
 				} else if (!plaintext) {
 					char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-							js->gc->account->username);
+							purple_account_get_username(account));
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
 							msg,
-							1, js->gc->account, NULL, NULL, js->gc->account,
+							1, account, NULL, NULL, account,
 							allow_cyrus_plaintext_auth,
 							disallow_plaintext_auth);
 					g_free(msg);
@@ -313,7 +320,7 @@ static xmlnode *jabber_auth_start_cyrus(JabberStream *js)
 		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
 			_("SASL authentication failed"));
-	
+
 		return NULL;
 	}
 }
@@ -330,6 +337,7 @@ jabber_sasl_cb_log(void *context, int level, const char *message)
 static void
 jabber_sasl_build_callbacks(JabberStream *js)
 {
+	PurpleAccount *account;
 	int id;
 
 	/* Set up our callbacks structure */
@@ -352,7 +360,8 @@ jabber_sasl_build_callbacks(JabberStream *js)
 	js->sasl_cb[id].context = (void *)js;
 	id++;
 
-	if (purple_account_get_password(js->gc->account) != NULL ) {
+	account = purple_connection_get_account(js->gc);
+	if (purple_account_get_password(account) != NULL ) {
 		js->sasl_cb[id].id = SASL_CB_PASS;
 		js->sasl_cb[id].proc = jabber_sasl_cb_secret;
 		js->sasl_cb[id].context = (void *)js;
