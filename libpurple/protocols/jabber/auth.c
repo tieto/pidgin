@@ -486,7 +486,7 @@ static gint compare_mech(gconstpointer a, gconstpointer b)
 void jabber_auth_init(void)
 {
 	auth_mechs = g_slist_insert_sorted(auth_mechs, jabber_auth_get_plain_mech(), compare_mech);
-//	auth_mechs = g_slist_insert_sorted(auth_mechs, jabber_auth_get_digest_md5_mech(), compare_mech);
+	auth_mechs = g_slist_insert_sorted(auth_mechs, jabber_auth_get_digest_md5_mech(), compare_mech);
 #ifdef HAVE_CYRUS_SASL
 	auth_mechs = g_slist_insert_sorted(auth_mechs, jabber_auth_get_cyrus_mech(), compare_mech);
 #endif
