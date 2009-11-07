@@ -233,8 +233,8 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		 * an auth feature with namespace http://jabber.org/features/iq-auth
 		 * we should revert back to iq:auth authentication, even though we're
 		 * connecting to an XMPP server.  */
-		js->auth_type = JABBER_AUTH_IQ_AUTH;
 		jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
+		jabber_auth_start_old(js);
 	}
 }
 
@@ -1577,11 +1577,6 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_AUTHENTICATING:
 			purple_connection_update_progress(js->gc, _("Authenticating"),
 					js->gsc ? 7 : 3, JABBER_CONNECT_STEPS);
-			if(js->protocol_version == JABBER_PROTO_0_9 && js->registration) {
-				jabber_register_start(js);
-			} else if(js->auth_type == JABBER_AUTH_IQ_AUTH) {
-				jabber_auth_start_old(js);
-			}
 			break;
 		case JABBER_STREAM_POST_AUTH:
 			purple_connection_update_progress(js->gc, _("Re-initializing Stream"),
@@ -3463,6 +3458,8 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
 #endif
 
+	jabber_auth_init();
+
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
 							 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
@@ -3497,6 +3494,7 @@ jabber_uninit_plugin(PurplePlugin *plugin)
 {
 	purple_plugin_ipc_unregister_all(plugin);
 
+	jabber_auth_uninit();
 	jabber_features_destroy();
 	jabber_identities_destroy();
 }

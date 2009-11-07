@@ -64,6 +64,7 @@ typedef struct _JabberStream JabberStream;
 #include "roomlist.h"
 #include "sslconn.h"
 
+#include "auth.h"
 #include "iq.h"
 #include "jutil.h"
 #include "xmlnode.h"
@@ -104,13 +105,8 @@ struct _JabberStream
 		JABBER_PROTO_0_9,
 		JABBER_PROTO_1_0
 	} protocol_version;
-	enum {
-		JABBER_AUTH_UNKNOWN,
-		JABBER_AUTH_DIGEST_MD5,
-		JABBER_AUTH_PLAIN,
-		JABBER_AUTH_IQ_AUTH,
-		JABBER_AUTH_CYRUS
-	} auth_type;
+
+	JabberSaslMech *auth_mech;
 	char *stream_id;
 	JabberStreamState state;
 
