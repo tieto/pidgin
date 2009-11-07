@@ -77,7 +77,7 @@ static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secr
 	size_t len;
 	static sasl_secret_t *x = NULL;
 
-	account = = purple_connection_get_account(js->gc);
+	account = purple_connection_get_account(js->gc);
 	pw = purple_account_get_password(account);
 
 	if (!conn || !secret || id != SASL_CB_PASS)
