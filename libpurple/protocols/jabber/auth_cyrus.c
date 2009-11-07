@@ -155,18 +155,20 @@ static void auth_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 }
 
 static void
-auth_no_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
+auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
+	PurpleAccount *account;
 	JabberStream *js;
 
 	/* The password prompt dialog doesn't get disposed if the account disconnects */
-	if (!PURPLE_CONNECTION_IS_VALID(conn))
+	if (!PURPLE_CONNECTION_IS_VALID(gc))
 		return;
 
-	js = conn->proto_data;
+	account = purple_connection_get_account(gc);
+	js = purple_connection_get_protocol_data(gc);
 
 	/* Disable the account as the user has canceled connecting */
-	purple_account_set_enabled(conn->account, purple_core_get_ui(), FALSE);
+	purple_account_set_enabled(account, purple_core_get_ui(), FALSE);
 }
 
 static xmlnode *jabber_auth_start_cyrus(JabberStream *js)
