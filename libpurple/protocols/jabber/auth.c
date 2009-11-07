@@ -233,7 +233,7 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
 		xmlnode *error;
 		const char *err_code;
 
-		account = purple_connectoion_get_account(js->gc);
+		account = purple_connection_get_account(js->gc);
 
 		/* FIXME: Why is this not in jabber_parse_error? */
 		if((error = xmlnode_get_child(packet, "error")) &&
