@@ -1077,11 +1077,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	gdk_window_set_cursor(gtkblist->window->window, cursor);
 	gdk_window_set_cursor(win->window->window, cursor);
 	gdk_cursor_unref(cursor);
-#if GTK_CHECK_VERSION(2,4,0)
 	gdk_display_flush(gdk_drawable_get_display(GDK_DRAWABLE(widget->window)));
-#else
-	gdk_flush();
-#endif
 
 	name = purple_conversation_get_name(conv);
 	account = purple_conversation_get_account(conv);
@@ -2050,11 +2046,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 			case GDK_period:
 				gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook),
 						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), curconv),
-#if GTK_CHECK_VERSION(2,2,0)
 						(curconv + 1) % gtk_notebook_get_n_pages(GTK_NOTEBOOK(win->notebook)));
-#else
-						(curconv + 1) % g_list_length(GTK_NOTEBOOK(win->notebook)->children));
-#endif
 				return TRUE;
 				break;
 			case GDK_F6:
@@ -3887,7 +3879,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	gtk_size_group_add_widget(sg, image);
 
 	/* Make our menu item */
-	text = g_strdup_printf("%s (%s)", name, purple_account_get_username(account));
+	text = g_strdup_printf("%s (%s)", name, purple_account_get_name_for_display(account));
 	menuitem = gtk_radio_menu_item_new_with_label(*group, text);
 	g_free(text);
 	*group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
@@ -4117,7 +4109,6 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 		color = (GdkColor*)get_nick_color(gtkconv, name);
 	}
 
-#if GTK_CHECK_VERSION(2,6,0)
 	gtk_list_store_insert_with_values(ls, &iter,
 /*
 * The GTK docs are mute about the effects of the "row" value for performance.
@@ -4135,18 +4126,6 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 			CHAT_USERS_COLOR_COLUMN, color,
 			CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
 			-1);
-#else
-	gtk_list_store_append(ls, &iter);
-	gtk_list_store_set(ls, &iter,
-			CHAT_USERS_ICON_STOCK_COLUMN,  stock,
-			CHAT_USERS_ALIAS_COLUMN, alias,
-			CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
-			CHAT_USERS_NAME_COLUMN,  name,
-			CHAT_USERS_FLAGS_COLUMN, flags,
-			CHAT_USERS_COLOR_COLUMN, color,
-			CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
-			-1);
-#endif
 
 	if (is_me && color)
 		gdk_color_free(color);
@@ -4790,9 +4769,7 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	/* Setup the label telling how many people are in the room. */
 	gtkchat->count = gtk_label_new(_("0 people in room"));
-#if GTK_CHECK_VERSION(2,6,0)
 	gtk_label_set_ellipsize(GTK_LABEL(gtkchat->count), PANGO_ELLIPSIZE_END);
-#endif
 	gtk_box_pack_start(GTK_BOX(lbox), gtkchat->count, FALSE, FALSE, 0);
 	gtk_widget_show(gtkchat->count);
 
@@ -4862,10 +4839,8 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	purple_signal_connect(blist_handle, "blist-node-aliased",
 						gtkchat, PURPLE_CALLBACK(blist_node_aliased_cb), conv);
 
-#if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_column_set_expand(col, TRUE);
 	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
 
@@ -4921,9 +4896,7 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	/* Setup the info pane */
 	event_box = gtk_event_box_new();
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event_box), FALSE);
-#endif
 	gtk_widget_show(event_box);
 	gtkconv->infopane_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), event_box, FALSE, FALSE, 0);
@@ -4993,9 +4966,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "markup", CONV_TEXT_COLUMN, NULL);
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 
-#if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, FALSE);
@@ -6131,10 +6102,8 @@ pidgin_conv_chat_add_users(PurpleConversation *conv, GList *cbuddies, gboolean n
 
 	ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list)));
 
-#if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),  GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID,
 										 GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID);
-#endif
 
 	l = cbuddies;
 	while (l != NULL) {
@@ -6236,12 +6205,7 @@ pidgin_conv_chat_remove_users(PurpleConversation *conv, GList *users)
 							   CHAT_USERS_NAME_COLUMN, &val, -1);
 
 			if (!purple_utf8_strcasecmp((char *)l->data, val)) {
-#if GTK_CHECK_VERSION(2,2,0)
 				f = gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-#else
-				gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-				f = gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter);
-#endif
 			}
 			else
 				f = gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter);
@@ -6757,31 +6721,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				? gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text))
 				: NULL;
 			char *esc = NULL, *tmp;
-#if GTK_CHECK_VERSION(2,6,0)
 			esc = topic ? g_markup_escape_text(topic, -1) : NULL;
-#else
-			/* GTK < 2.6 doesn't have auto ellipsization, so we do a crude
-			 * trucation to prevent forcing the window to be as wide as the topic */
-			int len = 0;
-			char *c;
-
-			if (topic != NULL) {
-				tmp = g_strdup(topic);
-				c = tmp;
-				while(*c && len < 72) {
-					c = g_utf8_next_char(c);
-					len++;
-				}
-				if (len == 72) {
-					*c = '\0';
-					c = g_strdup_printf("%s...", tmp);
-					g_free(tmp);
-					tmp = c;
-				}
-				esc = g_markup_escape_text(tmp, -1);
-				g_free(tmp);
-			}
-#endif
 			tmp = g_markup_escape_text(purple_conversation_get_title(conv), -1);
 			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",
 						tmp, esc  && *esc ? "\n" : "",
@@ -7132,9 +7072,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(gtkconv->u.im->icon_container), event);
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
-#endif
 	gtk_widget_add_events(event,
                               GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
@@ -7207,12 +7145,7 @@ pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right)
 	horiz = (gtk_notebook_get_tab_pos(notebook) == GTK_POS_TOP ||
 			gtk_notebook_get_tab_pos(notebook) == GTK_POS_BOTTOM);
 
-#if GTK_CHECK_VERSION(2,2,0)
 	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(notebook));
-#else
-	/* this is hacky, but it's only for Gtk 2.0.0... */
-	count = g_list_length(GTK_NOTEBOOK(notebook)->children);
-#endif
 
 	for (i = 0; i < count; i++) {
 
@@ -8201,9 +8134,7 @@ pidgin_conversations_init(void)
 		}
 		gtk_rc_parse_string(str->str);
 		g_string_free(str, TRUE);
-#if GTK_CHECK_VERSION(2,4,0)
 		gtk_rc_reset_styles(settings);
-#endif
 	}
 }
 
@@ -8449,16 +8380,6 @@ focus_win_cb(GtkWidget *w, GdkEventFocus *e, gpointer d)
 
 	return FALSE;
 }
-
-#if !GTK_CHECK_VERSION(2,6,0)
-/* Courtesy of Galeon! */
-static void
-tab_close_button_state_changed_cb(GtkWidget *widget, GtkStateType prev_state)
-{
-	if (GTK_WIDGET_STATE(widget) == GTK_STATE_ACTIVE)
-		gtk_widget_set_state(widget, GTK_STATE_NORMAL);
-}
-#endif
 
 static void
 notebook_init_grab(PidginWindow *gtkwin, GtkWidget *widget)
@@ -9101,9 +9022,7 @@ infopane_entry_activate(PidginConversation *gtkconv)
 	entry = gtk_entry_new();
 	gtk_entry_set_has_frame(GTK_ENTRY(entry), FALSE);
 	gtk_entry_set_width_chars(GTK_ENTRY(entry), 10);
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_entry_set_alignment(GTK_ENTRY(entry), 0.5);
-#endif
 
 	gtk_box_pack_start(GTK_BOX(gtkconv->infopane_hbox), entry, TRUE, TRUE, 0);
 	/* after the tab label */
@@ -9302,9 +9221,7 @@ pidgin_conv_window_new()
 	GtkPositionType pos;
 	GtkWidget *testidea;
 	GtkWidget *menubar;
-#if GTK_CHECK_VERSION(2,6,0)
 	GdkModifierType state;
-#endif
 
 	win = g_malloc0(sizeof(PidginWindow));
 
@@ -9312,10 +9229,9 @@ pidgin_conv_window_new()
 
 	/* Create the window. */
 	win->window = pidgin_create_window(NULL, 0, "conversation", TRUE);
-#if GTK_CHECK_VERSION(2,6,0)
 	if (!gtk_get_current_event_state(&state))
 		gtk_window_set_focus_on_map(GTK_WINDOW(win->window), FALSE);
-#endif
+
 	/* Etan: I really think this entire function call should happen only
 	 * when we are on Windows but I was informed that back before we used
 	 * to save the window position we stored the window size, so I'm
@@ -9504,9 +9420,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	/* Close button. */
 	gtkconv->close = gtk_event_box_new();
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(gtkconv->close), FALSE);
-#endif
 	gtk_widget_set_events(gtkconv->close, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
 	close_image = gtk_label_new("×");
 	g_signal_connect(G_OBJECT(gtkconv->close), "enter-notify-event", G_CALLBACK(close_button_entered_cb), close_image);
@@ -9518,16 +9432,6 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	g_signal_connect(G_OBJECT(gtkconv->close), "button-press-event",
 			 G_CALLBACK(close_conv_cb), gtkconv);
-
-#if !GTK_CHECK_VERSION(2,6,0)
-	/*
-	* I love Galeon. They have a fix for that stupid annoying visible
-	* border bug. I love you guys! -- ChipX86
-	*/
-	/* This is fixed properly in some version of Gtk before 2.6.0  */
-	g_signal_connect(G_OBJECT(gtkconv->close), "state_changed",
-	                 G_CALLBACK(tab_close_button_state_changed_cb), NULL);
-#endif
 
 	/* Status icon. */
 	gtkconv->icon = gtk_image_new();
@@ -9597,7 +9501,6 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 	else if (purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == (GTK_POS_RIGHT|8))
 		angle = 270;
 
-#if GTK_CHECK_VERSION(2,6,0)
 	if (!angle) {
 		g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_END,  NULL);
 		gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), 4);
@@ -9614,7 +9517,6 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 	}
 
 	gtk_label_set_angle(GTK_LABEL(gtkconv->tab_label), angle);
-#endif
 
 #if 0
 	gtk_misc_set_alignment(GTK_MISC(gtkconv->tab_label), 0.00, 0.5);
@@ -9637,9 +9539,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 	}
 
 	ebox = gtk_event_box_new();
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
-#endif
 	gtk_container_add(GTK_CONTAINER(ebox), gtkconv->tabby);
 
 	if (gtkconv->tab_label->parent == NULL) {
