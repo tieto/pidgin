@@ -9,6 +9,8 @@ JABBERSOURCES = auth.c \
 			  auth.h \
 			  auth_digest_md5.c \
 			  auth_plain.c \
+			  auth_scram.c \
+			  auth_scram.h \
 			  buddy.c \
 			  buddy.h \
 			  bosh.c \
