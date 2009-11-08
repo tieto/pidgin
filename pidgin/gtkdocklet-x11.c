@@ -34,6 +34,8 @@
 #include "gtkdocklet.h"
 #include <gdk/gdkkeysyms.h>
 
+#if !GTK_CHECK_VERSION(2,10,0)
+
 #define SHORT_EMBED_TIMEOUT 5000
 #define LONG_EMBED_TIMEOUT 15000
 
@@ -352,3 +354,6 @@ docklet_ui_init()
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/docklet/x11");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/x11/embedded", FALSE);
 }
+
+#endif  /* !GTK_CHECK_VERSION(2,10,0) */
+

@@ -12,6 +12,8 @@ version 2.7.0 (??/??/????):
 	  box to a "Developer Information" dialog accessible on the Help menu.
 	* Moved the Translator information from the About box to a "Translator
 	  Information" dialog accessible on the Help menu.
+	* Use GtkStatusIcon for the docklet, providing better integration in
+	  notification area.
 
 version 2.6.4 (??/??/20??):
 	libpurple:

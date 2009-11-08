@@ -87,6 +87,7 @@ pidgin_SOURCES = \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
+	gtkdocklet-gtk.c \
 	gtkdocklet-x11.c \
 	gtkeventloop.c \
 	gtkft.c \
