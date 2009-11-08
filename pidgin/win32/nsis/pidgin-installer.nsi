@@ -612,6 +612,13 @@ Section /o $(DEBUG_SYMBOLS_SECTION_TITLE) SecDebugSymbols
 
   ; We need to download and extract the debug symbols
   StrCpy $R1 "$PLUGINSDIR\pidgin-${PIDGIN_VERSION}-dbgsym.zip"
+!ifdef OFFLINE_INSTALLER
+
+  SetOutPath $PLUGINSDIR
+  File /oname=pidgin-${PIDGIN_VERSION}-dbgsym.zip "..\..\..\..\gtk_installer\gtk-runtime-${GTK_INSTALL_VERSION}.zip"
+
+!else
+
   retry:
   StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=dbgsym"
   DetailPrint "Downloading Debug Symbols... ($R2)"
@@ -620,6 +627,8 @@ Section /o $(DEBUG_SYMBOLS_SECTION_TITLE) SecDebugSymbols
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" +2
     MessageBox MB_RETRYCANCEL "$(PIDGIN_DEBUGSYMBOLS_ERROR) : $R2" /SD IDCANCEL IDRETRY retry IDCANCEL done
+
+!endif
 
   nsisunz::UnzipToLog $R1 "$INSTDIR"
   Pop $R0
