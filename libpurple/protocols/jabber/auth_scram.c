@@ -28,13 +28,13 @@
 #include "cipher.h"
 #include "debug.h"
 
-
 GString *jabber_auth_scram_hi(const gchar *hash, const GString *str,
                               GString *salt, guint iterations)
 {
 	PurpleCipherContext *context;
 	GString *result;
 	guint i;
+	guchar prev[20], tmp[20]; /* FIXME: Hardcoded 20 */
 
 	g_return_val_if_fail(hash != NULL, NULL);
 	g_return_val_if_fail(str != NULL && str->len > 0, NULL);
@@ -55,17 +55,20 @@ GString *jabber_auth_scram_hi(const gchar *hash, const GString *str,
 	purple_cipher_context_append(context, (guchar *)salt->str, salt->len);
 	purple_cipher_context_digest(context, result->allocated_len, (guchar *)result->str, &(result->len));
 
+	memcpy(prev, result->str, result->len);
+
 	/* Compute U1...Ui */
 	for (i = 1; i < iterations; ++i) {
-		guchar tmp[20]; /* FIXME: hardcoded 20 */
 		guint j;
 		purple_cipher_context_set_option(context, "hash", (gpointer)hash);
 		purple_cipher_context_set_key_with_len(context, (guchar *)str->str, str->len);
-		purple_cipher_context_append(context, (guchar *)result->str, result->len);
+		purple_cipher_context_append(context, prev, result->len);
 		purple_cipher_context_digest(context, sizeof(tmp), tmp, NULL);
 
 		for (j = 0; j < 20; ++j)
 			result->str[j] ^= tmp[j];
+
+		memcpy(prev, tmp, result->len);
 	}
 
 	purple_cipher_context_destroy(context);
