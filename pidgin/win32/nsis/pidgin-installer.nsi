@@ -35,6 +35,7 @@ SetDateSave on
 !include "Sections.nsh"
 !include "WinVer.nsh"
 !include "LogicLib.nsh"
+!include "Memento.nsh"
 
 !include "FileFunc.nsh"
 !insertmacro GetParameters
@@ -72,6 +73,9 @@ SetDateSave on
 
 !define ASPELL_REG_KEY				"SOFTWARE\Aspell"
 !define DOWNLOADER_URL				"http://pidgin.im/win32/download_redir.php"
+
+!define MEMENTO_REGISTRY_ROOT			HKLM
+!define MEMENTO_REGISTRY_KEY			"${PIDGIN_UNINSTALL_KEY}"
 
 ;--------------------------------
 ;Version resource
@@ -408,7 +412,7 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     Delete "$INSTDIR\plugins\liboscar.dll"
     Delete "$INSTDIR\plugins\libjabber.dll"
 
-    File /r ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
+    File /r /x locale ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
     File "${PIDGIN_INSTALLER_DEPS}\exchndl.dll"
 
     ; Check if Perl is installed, if so add it to the AppPaths
@@ -492,6 +496,22 @@ SectionGroup /e $(URI_HANDLERS_SECTION_TITLE) SecURIHandlers
   !insertmacro URI_SECTION "ymsgr"
   !insertmacro URI_SECTION "xmpp"
 SectionGroupEnd
+
+;--------------------------------
+;Translations
+
+!macro LANG_SECTION lang
+  ${MementoUnselectedSection} "${lang}" SecLang_${lang}
+    SetOutPath "$INSTDIR\locale\${lang}\LC_MESSAGES"
+    File /oname=pidgin.mo "..\..\..\${PIDGIN_INSTALL_DIR}\locale\${lang}\LC_MESSAGES\pidgin.mo"
+    SetOutPath "$INSTDIR"
+  ${MementoSectionEnd}
+!macroend
+SectionGroup $(TRANSLATIONS_SECTION_TITLE) SecTranslations
+  # pidgin-translations is generated based on the contents of the locale directory
+  !include "pidgin-translations.nsh"
+SectionGroupEnd
+${MementoSectionDone}
 
 ;--------------------------------
 ;Spell Checking
@@ -1199,6 +1219,8 @@ Function .onInit
   DeleteRegValue HKCU "${OLD_GAIM_REG_KEY}" "Installer Language"
   WriteRegStr HKCU "${PIDGIN_REG_KEY}" "Installer Language" "$R0"
 
+  ${MementoSectionRestore}
+
   !insertmacro SetSectionFlag ${SecSpellCheck} ${SF_RO}
   !insertmacro UnselectSection ${SecSpellCheck}
 
@@ -1309,6 +1331,13 @@ Function .onInit
   Pop $R1
   Pop $R0
 FunctionEnd
+
+Function .onInstSuccess
+
+  ${MementoSectionSave}
+
+FunctionEnd
+
 
 Function un.onInit
 
