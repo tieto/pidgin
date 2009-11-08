@@ -43,6 +43,8 @@ struct _PidginDiscoDialog {
 
 	PurpleAccount *account;
 	PidginDiscoList *discolist;
+
+	gpointer *prompt_handle;
 };
 
 struct _PidginDiscoList {

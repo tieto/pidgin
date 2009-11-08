@@ -262,7 +262,7 @@ do_buddy_avatar_update_fromurl(PurpleUtilFetchUrlData *url_data,
 	gpointer icon_data;
 
 	if(!url_text) {
-		purple_debug(PURPLE_DEBUG_ERROR, "jabber",
+		purple_debug_error("jabber",
 		             "do_buddy_avatar_update_fromurl got error \"%s\"",
 		             error_message);
 		goto out;

@@ -910,7 +910,7 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 	xmlnode_set_attrib(iq->node, "id", id);
 	jabber_iq_send(iq);
 
-	purple_debug(PURPLE_DEBUG_MISC, "jabber",
+	purple_debug_misc("jabber",
 		   "Got new mail notification. Sending request for more info\n");
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "google:mail:notify");
@@ -1094,12 +1094,13 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 			jbr = l->data;
 			if (jbr && jbr->name)
 			{
-				purple_debug(PURPLE_DEBUG_MISC, "jabber", "Removing resource %s\n", jbr->name);
+				purple_debug_misc("jabber", "Removing resource %s\n", jbr->name);
 				jabber_buddy_remove_resource(jb, jbr->name);
 			}
 			l = l->next;
 		}
 	}
+
 	purple_prpl_got_user_status(purple_connection_get_account(gc), who, "offline", NULL);
 }
 

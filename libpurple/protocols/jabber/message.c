@@ -545,7 +545,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	to   = xmlnode_get_attrib(packet, "to");
 	type = xmlnode_get_attrib(packet, "type");
 
-	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_connection_get_prpl(js->gc),
 			"jabber-receiving-message", js->gc, type, id, from, to, packet));
 	if (signal_return)
 		return;
@@ -812,7 +812,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 	switch(jm->type) {
 		case JABBER_MESSAGE_OTHER:
-			purple_debug(PURPLE_DEBUG_INFO, "jabber",
+			purple_debug_info("jabber",
 					"Received message of unknown type: %s\n", type);
 			/* Fall-through is intentional */
 		case JABBER_MESSAGE_NORMAL:
@@ -1103,7 +1103,7 @@ void jabber_message_send(JabberMessage *jm)
 		if ((child = xmlnode_from_str(jm->xhtml, -1))) {
 			xmlnode_insert_child(message, child);
 		} else {
-			purple_debug(PURPLE_DEBUG_ERROR, "jabber",
+			purple_debug_error("jabber",
 					"XHTML translation/validation failed, returning: %s\n",
 					jm->xhtml);
 		}

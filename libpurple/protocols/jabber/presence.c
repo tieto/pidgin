@@ -522,7 +522,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	jb = jabber_buddy_find(js, from, TRUE);
 	g_return_if_fail(jb != NULL);
 
-	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_connection_get_prpl(js->gc),
 			"jabber-receiving-presence", js->gc, type, from, packet));
 	if (signal_return)
 		return;

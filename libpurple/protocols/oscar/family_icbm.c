@@ -151,6 +151,55 @@ guint16 aim_im_fingerprint(const guint8 *msghdr, int len)
 	return AIM_CLIENTTYPE_UNKNOWN;
 }
 
+/*
+ * Subtype 0x0001 - Error
+ */
+static int
+error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
+{
+	int ret = 0;
+	aim_rxcallback_t userfunc;
+	aim_snac_t *snac2;
+	guint16 reason, errcode = 0;
+	char *bn;
+	GSList *tlvlist;
+
+	if (!(snac2 = aim_remsnac(od, snac->id))) {
+		purple_debug_misc("oscar", "icbm error: received response from unknown request!\n");
+		return 0;
+	}
+
+	if (snac2->family != SNAC_FAMILY_ICBM) {
+		purple_debug_misc("oscar", "icbm error: received response from invalid request! %d\n", snac2->family);
+		g_free(snac2->data);
+		g_free(snac2);
+		return 0;
+	}
+
+	if (!(bn = snac2->data)) {
+		purple_debug_misc("oscar", "icbm error: received response from request without a buddy name!\n");
+		g_free(snac2);
+		return 0;
+	}
+
+	reason = byte_stream_get16(bs);
+
+	tlvlist = aim_tlvlist_read(bs);
+	if (aim_tlv_gettlv(tlvlist, 0x0008, 1))
+		errcode = aim_tlv_get16(tlvlist, 0x0008, 1);
+	aim_tlvlist_free(tlvlist);
+
+	/* Notify the user that the message wasn't delivered */
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, reason, errcode, bn);
+
+	if (snac2)
+		g_free(snac2->data);
+	g_free(snac2);
+
+	return ret;
+}
+
 /**
  * Subtype 0x0002 - Set ICBM parameters.
  *
@@ -2789,7 +2838,9 @@ static int mtn_receive(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 static int
 snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	if (snac->subtype == 0x0005)
+	if (snac->subtype == 0x0001)
+		return error(od, conn, mod, frame, snac, bs);
+	else if (snac->subtype == 0x0005)
 		return aim_im_paraminfo(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0006)
 		return outgoingim(od, conn, mod, frame, snac, bs);

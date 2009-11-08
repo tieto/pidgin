@@ -141,7 +141,7 @@ static PurplePluginInfo info =
 static void
 init_plugin(PurplePlugin *plugin)
 {
-	oscar_init(PURPLE_PLUGIN_PROTOCOL_INFO(plugin));
+	oscar_init(plugin);
 }
 
 PURPLE_INIT_PLUGIN(aim, init_plugin, info);

@@ -162,12 +162,15 @@ static void register_button_cb(GtkWidget *unused, PidginDiscoDialog *dialog)
 
 static void discolist_cancel_cb(PidginDiscoList *pdl, const char *server)
 {
+	pdl->dialog->prompt_handle = NULL;
+
 	pidgin_disco_list_set_in_progress(pdl, FALSE);
 	pidgin_disco_list_unref(pdl);
 }
 
 static void discolist_ok_cb(PidginDiscoList *pdl, const char *server)
 {
+	pdl->dialog->prompt_handle = NULL;
 	gtk_widget_set_sensitive(pdl->dialog->browse_button, TRUE);
 
 	if (!server || !*server) {
@@ -236,7 +239,7 @@ static void browse_button_cb(GtkWidget *button, PidginDiscoDialog *dialog)
 
 	/* Note to translators: The string "Enter an XMPP Server" is asking the
 	   user to type the name of an XMPP server which will then be queried */
-	purple_request_input(my_plugin, _("Server name request"), _("Enter an XMPP Server"),
+	dialog->prompt_handle = purple_request_input(my_plugin, _("Server name request"), _("Enter an XMPP Server"),
 			_("Select an XMPP server to query"),
 			server, FALSE, FALSE, NULL,
 			_("Find Services"), PURPLE_CALLBACK(discolist_ok_cb),
@@ -389,6 +392,9 @@ destroy_win_cb(GtkWidget *window, gpointer d)
 {
 	PidginDiscoDialog *dialog = d;
 	PidginDiscoList *list = dialog->discolist;
+
+	if (dialog->prompt_handle)
+		purple_request_close(PURPLE_REQUEST_INPUT, dialog->prompt_handle);
 
 	if (list) {
 		list->dialog = NULL;

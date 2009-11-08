@@ -1357,7 +1357,7 @@ static void jabber_si_xfer_cancel_send(PurpleXfer *xfer)
 		jabber_ibb_session_close(jsx->ibb_session);
 	}
 	jabber_si_xfer_free(xfer);
-	purple_debug(PURPLE_DEBUG_INFO, "jabber", "in jabber_si_xfer_cancel_send\n");
+	purple_debug_info("jabber", "in jabber_si_xfer_cancel_send\n");
 }
 
 
@@ -1389,7 +1389,7 @@ static void jabber_si_xfer_request_denied(PurpleXfer *xfer)
 	}
 
 	jabber_si_xfer_free(xfer);
-	purple_debug(PURPLE_DEBUG_INFO, "jabber", "in jabber_si_xfer_request_denied\n");
+	purple_debug_info("jabber", "in jabber_si_xfer_request_denied\n");
 }
 
 
@@ -1401,7 +1401,7 @@ static void jabber_si_xfer_cancel_recv(PurpleXfer *xfer)
 		jabber_ibb_session_close(jsx->ibb_session);
 	}
 	jabber_si_xfer_free(xfer);
-	purple_debug(PURPLE_DEBUG_INFO, "jabber", "in jabber_si_xfer_cancel_recv\n");
+	purple_debug_info("jabber", "in jabber_si_xfer_cancel_recv\n");
 }
 
 
