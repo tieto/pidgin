@@ -106,5 +106,7 @@ GString *jabber_auth_scram_hi(const gchar *hash, const GString *str,
 	}
 
 	purple_cipher_context_destroy(context);
+	g_free(tmp);
+	g_free(prev);
 	return result;
 }
