@@ -219,7 +219,6 @@ PROTOCOLS_16_SCALABLE = \
 		protocols/16/scalable/jabber.svg \
 		protocols/16/scalable/meanwhile.svg \
 		protocols/16/scalable/msn.svg \
-		protocols/16/scalable/mxit.svg \
 		protocols/16/scalable/qq.svg \
 		protocols/16/scalable/silc.svg \
 		protocols/16/scalable/simple.svg \
