@@ -107,6 +107,7 @@ struct _JabberStream
 	} protocol_version;
 
 	JabberSaslMech *auth_mech;
+	gpointer auth_mech_data;
 	char *stream_id;
 	JabberStreamState state;
 

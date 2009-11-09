@@ -1501,6 +1501,8 @@ void jabber_close(PurpleConnection *gc)
 	purple_circ_buffer_destroy(js->write_buffer);
 	if(js->writeh)
 		purple_input_remove(js->writeh);
+	if (js->auth_mech && js->auth_mech->dispose)
+		js->auth_mech->dispose(js);
 #ifdef HAVE_CYRUS_SASL
 	if(js->sasl)
 		sasl_dispose(&js->sasl);

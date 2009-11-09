@@ -485,11 +485,18 @@ static gint compare_mech(gconstpointer a, gconstpointer b)
 
 void jabber_auth_init(void)
 {
+	JabberSaslMech **tmp;
+	gint count, i;
+
 	auth_mechs = g_slist_insert_sorted(auth_mechs, jabber_auth_get_plain_mech(), compare_mech);
 	auth_mechs = g_slist_insert_sorted(auth_mechs, jabber_auth_get_digest_md5_mech(), compare_mech);
 #ifdef HAVE_CYRUS_SASL
 	auth_mechs = g_slist_insert_sorted(auth_mechs, jabber_auth_get_cyrus_mech(), compare_mech);
 #endif
+
+	tmp = jabber_auth_get_scram_mechs(&count);
+	for (i = 0; i < count; ++i)
+		auth_mechs = g_slist_insert_sorted(auth_mechs, tmp[i], compare_mech);
 }
 
 void jabber_auth_uninit(void)

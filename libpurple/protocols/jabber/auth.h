@@ -48,6 +48,7 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet);
 
 JabberSaslMech *jabber_auth_get_plain_mech(void);
 JabberSaslMech *jabber_auth_get_digest_md5_mech(void);
+JabberSaslMech **jabber_auth_get_scram_mechs(gint *count);
 #ifdef HAVE_CYRUS_SASL
 JabberSaslMech *jabber_auth_get_cyrus_mech(void);
 #endif

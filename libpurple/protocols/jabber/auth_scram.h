@@ -24,6 +24,29 @@
 #ifndef PURPLE_JABBER_AUTH_SCRAM_H_
 #define PURPLE_JABBER_AUTH_SCRAM_H_
 
+/*
+ * Every function in this file is ONLY exposed for tests.
+ * DO NOT USE ANYTHING HERE OR YOU WILL BE SENT TO THE PIT OF DESPAIR.
+ */
+
+/* Per-connection state stored between messages.
+ * This is stored in js->auth_data_mech.
+ */
+
+typedef struct {
+	const char *hash;
+	char *cnonce;
+	GString *auth_message;
+
+	GString *client_proof;
+	GString *server_signature;
+	gboolean channel_binding;
+} JabberScramData;
+
+#include "auth.h"
+
+JabberSaslMech *jabber_scram_get_sha1(void);
+
 /**
  * Implements the Hi() function as described in the SASL-SCRAM I-D.
  *
@@ -34,9 +57,26 @@
  * @param salt The salt.
  * @param iterations The number of iterations to perform.
  *
- * @returns A newly allocated string containing the result.
+ * @returns A newly allocated string containing the result. The string is
+ *          NOT null-terminated and its length is the length of the binary
+ *          output of the hash function in-use.
  */
-GString *jabber_auth_scram_hi(const char *hash, const GString *str,
-                              GString *salt, guint iterations);
+guchar *jabber_scram_hi(const char *hash, const GString *str,
+                        GString *salt, guint iterations);
+
+/**
+ * Calculates the proofs as described in Section 3 of the SASL-SCRAM I-D.
+ *
+ * @param data A JabberScramData structure. hash and auth_message must be
+ *             set. client_proof and server_signature will be set as a result
+ *             of this function.
+ * @param password   The user's password.
+ * @param salt       The salt (as specified by the server)
+ * @param iterations The number of iterations to perform.
+ *
+ * @returns TRUE if the proofs were successfully calculated. FALSE otherwise.
+ */
+gboolean jabber_scram_calc_proofs(JabberScramData *data, const char *password,
+                                  GString *salt, guint iterations);
 
 #endif /* PURPLE_JABBER_AUTH_SCRAM_H_ */
