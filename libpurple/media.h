@@ -58,6 +58,7 @@ G_BEGIN_DECLS
 #define PURPLE_TYPE_MEDIA_NETWORK_PROTOCOL (purple_media_network_protocol_get_type())
 #define PURPLE_MEDIA_TYPE_STATE      (purple_media_state_changed_get_type())
 #define PURPLE_MEDIA_TYPE_INFO_TYPE	(purple_media_info_type_get_type())
+#define PURPLE_MEDIA_TYPE_CAPS	     (purple_media_caps_get_type())
 
 /** An opaque structure representing a media call. */
 typedef struct _PurpleMedia PurpleMedia;
@@ -188,6 +189,15 @@ GType purple_media_state_changed_get_type(void);
  * @since 2.6.0
  */
 GType purple_media_info_type_get_type(void);
+
+/**
+ * Gets the type of the media caps flags
+ *
+ * @return The media caps flags' GType
+ *
+ * @since 2.7.0
+ */
+GType purple_media_caps_get_type(void);
 
 /**
  * Gets the type of the media candidate structure.
