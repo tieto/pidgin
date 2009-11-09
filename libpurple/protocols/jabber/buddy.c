@@ -581,8 +581,7 @@ jabber_format_info(PurpleConnection *gc, PurpleRequestFields *fields)
 		if (text != NULL && *text != '\0') {
 			xmlnode *xp;
 
-			purple_debug(PURPLE_DEBUG_INFO, "jabber",
-					"Setting %s to '%s'\n", vc_tp->tag, text);
+			purple_debug_info("jabber", "Setting %s to '%s'\n", vc_tp->tag, text);
 
 			if ((xp = insert_tag_to_parent_tag(vc_node,
 											   NULL, vc_tp->tag)) != NULL) {

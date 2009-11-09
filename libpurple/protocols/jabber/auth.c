@@ -58,7 +58,7 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("Server requires TLS/SSL, but no TLS/SSL support was found."));
 			return TRUE;
-		} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE)) {
+		} else if(purple_account_get_bool(js->gc->account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS)) {
 			purple_connection_error_reason(js->gc,
 				 PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("You require encryption, but no TLS/SSL support was found."));
@@ -381,13 +381,13 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 * due to mechanism specific issues, so we want to try one of the other
 				 * supported mechanisms. This code handles that case
 				 */
-				if (js->current_mech && strlen(js->current_mech) > 0) {
+				if (js->current_mech && *js->current_mech) {
 					char *pos;
 					if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
 						g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
 					}
 					/* Remove space which separated this mech from the next */
-					if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
+					if ((js->sasl_mechs->str)[0] == ' ') {
 						g_string_erase(js->sasl_mechs, 0, 1);
 					}
 					again = TRUE;
@@ -511,7 +511,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		 * support it and including it gives a false fall-back to other mechs offerred,
 		 * leading to incorrect error handling.
 		 */
-		if (mech_name && !strcmp(mech_name, "X-GOOGLE-TOKEN")) {
+		if (purple_strequal(mech_name, "X-GOOGLE-TOKEN")) {
 			g_free(mech_name);
 			continue;
 		}
@@ -519,9 +519,9 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		g_string_append(js->sasl_mechs, mech_name);
 		g_string_append_c(js->sasl_mechs, ' ');
 #else
-		if(mech_name && !strcmp(mech_name, "DIGEST-MD5"))
+		if (purple_strequal(mech_name, "DIGEST-MD5"))
 			digest_md5 = TRUE;
-		else if(mech_name && !strcmp(mech_name, "PLAIN"))
+		else if (purple_strequal(mech_name, "PLAIN"))
 			plain = TRUE;
 #endif
 		g_free(mech_name);
@@ -586,7 +586,7 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
 		/* FIXME: Why is this not in jabber_parse_error? */
 		if((error = xmlnode_get_child(packet, "error")) &&
 					(err_code = xmlnode_get_attrib(error, "code")) &&
-					!strcmp(err_code, "401")) {
+					g_str_equal(err_code, "401")) {
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(js->gc->account))
@@ -698,7 +698,7 @@ void jabber_auth_start_old(JabberStream *js)
 	 * is requiring SSL/TLS, we need to enforce it.
 	 */
 	if (!jabber_stream_is_ssl(js) &&
-			purple_account_get_bool(purple_connection_get_account(js->gc), "require_tls", FALSE)) {
+			purple_account_get_bool(purple_connection_get_account(js->gc), "require_tls", JABBER_DEFAULT_REQUIRE_TLS)) {
 		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
@@ -877,7 +877,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		}
 
 		dec_in = (char *)purple_base64_decode(enc_in, NULL);
-		purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded challenge (%"
+		purple_debug_misc("jabber", "decoded challenge (%"
 				G_GSIZE_FORMAT "): %s\n", strlen(dec_in), dec_in);
 
 		parts = parse_challenge(dec_in);
@@ -887,8 +887,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			char *rspauth = g_hash_table_lookup(parts, "rspauth");
 
 
-			if(rspauth && js->expected_rspauth &&
-					!strcmp(rspauth, js->expected_rspauth)) {
+			if (rspauth && purple_strequal(rspauth, js->expected_rspauth)) {
 				jabber_send_raw(js,
 						"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl' />",
 						-1);
@@ -1014,7 +1013,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 				 * realm are always encoded in UTF-8 (they seem to be the values
 				 * we pass in), so we need to ensure charset=utf-8 is set.
 				 */
-				if (!js->current_mech || !g_str_equal(js->current_mech, "DIGEST-MD5") ||
+				if (!purple_strequal(js->current_mech, "DIGEST-MD5") ||
 						strstr(c_out, ",charset="))
 					/* If we're not using DIGEST-MD5 or Cyrus SASL is fixed */
 					enc_out = purple_base64_encode((unsigned char*)c_out, clen);
@@ -1041,7 +1040,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 	const void *x;
 #endif
 
-	if(!ns || strcmp(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
+	if (!purple_strequal(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
 		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Invalid response from server"));
@@ -1072,6 +1071,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 			purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Invalid response from server"));
+			g_return_if_reached();
 		}
 	}
 	/* If we've negotiated a security layer, we need to enable it */
@@ -1099,17 +1099,17 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 
 #ifdef HAVE_CYRUS_SASL
 	if(js->auth_fail_count++ < 5) {
-		if (js->current_mech && strlen(js->current_mech) > 0) {
+		if (js->current_mech && *js->current_mech) {
 			char *pos;
 			if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
 				g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
 			}
 			/* Remove space which separated this mech from the next */
-			if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
+			if ((js->sasl_mechs->str)[0] == ' ') {
 				g_string_erase(js->sasl_mechs, 0, 1);
 			}
 		}
-		if (strlen(js->sasl_mechs->str)) {
+		if (*js->sasl_mechs->str) {
 			/* If we have remaining mechs to try, do so */
 			sasl_dispose(&js->sasl);
 

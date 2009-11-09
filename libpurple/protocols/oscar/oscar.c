@@ -1188,7 +1188,8 @@ connection_common_established_cb(FlapConnection *conn)
 			ClientInfo icqinfo = CLIENTINFO_PURPLE_ICQ;
 			flap_connection_send_version_with_cookie_and_clientinfo(od,
 					conn, conn->cookielen, conn->cookie,
-					od->icq ? &icqinfo : &aiminfo);
+					od->icq ? &icqinfo : &aiminfo,
+					purple_account_get_bool(account, "allow_multiple_logins", OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS));
 		} else {
 			flap_connection_send_version_with_cookie(od, conn,
 					conn->cookielen, conn->cookie);
@@ -1414,9 +1415,9 @@ idle_reporting_pref_cb(const char *name, PurplePrefType type,
 	presence = aim_ssi_getpresence(od->ssi.local);
 
 	if (report_idle)
-		aim_ssi_setpresence(od, presence | 0x400);
+		aim_ssi_setpresence(od, presence | AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
 	else
-		aim_ssi_setpresence(od, presence & ~0x400);
+		aim_ssi_setpresence(od, presence & ~AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
 }
 
 /**
@@ -1826,17 +1827,35 @@ static int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 	return 1;
 }
 
-int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, guint16 port, guint8 *cookie, guint16 cookielen)
+int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, guint16 port, guint8 *cookie, guint16 cookielen, const char *tls_certname)
 {
+	PurpleAccount *account;
 	FlapConnection *conn;
+
+	account = purple_connection_get_account(gc);
 
 	conn = flap_connection_new(od, SNAC_FAMILY_LOCATE);
 	conn->cookielen = cookielen;
 	conn->cookie = g_memdup(cookie, cookielen);
-	conn->connect_data = purple_proxy_connect(NULL,
-			purple_connection_get_account(gc), host, port,
-			connection_established_cb, conn);
-	if (conn->connect_data == NULL)
+
+	/*
+	 * tls_certname is only set (and must be set if we get this far) if
+	 * SSL is enabled.
+	 */
+	if (tls_certname)
+	{
+		conn->gsc = purple_ssl_connect_with_ssl_cn(account, host, port,
+				ssl_connection_established_cb, ssl_connection_error_cb,
+				tls_certname, conn);
+	}
+	else
+	{
+		conn->connect_data = purple_proxy_connect(NULL,
+				account, host, port,
+				connection_established_cb, conn);
+	}
+
+	if (conn->gsc == NULL && conn->connect_data == NULL)
 	{
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to connect"));
 		return 0;
@@ -3238,7 +3257,7 @@ static int purple_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 #endif
 	va_list ap;
 	guint16 reason, errcode;
-	char *data, *reason_str, *buf, *error;
+	char *data, *reason_str, *buf;
 
 	va_start(ap, fr);
 	reason = (guint16)va_arg(ap, unsigned int);
@@ -3263,21 +3282,27 @@ static int purple_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 #endif
 
 	/* Data is assumed to be the destination bn */
-	reason_str = g_strdup((reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason"));
-	if (errcode != 0 && errcode < errcodereasonlen) {
-		error = g_strdup_printf("%s: %s", reason_str, _(errcodereason[errcode]));
-		g_free(reason_str);
-	} else
-		error = reason_str;
 
-	buf = g_strdup_printf(_("Unable to send message: %s"), error);
+	reason_str = g_strdup((reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason"));
+	if (errcode != 0 && errcode < errcodereasonlen)
+		buf = g_strdup_printf(_("Unable to send message: %s (%s)"), reason_str,
+		                      _(errcodereason[errcode]));
+	else
+		buf = g_strdup_printf(_("Unable to send message: %s"), reason_str);
+
 	if (!purple_conv_present_error(data, purple_connection_get_account(gc), buf)) {
 		g_free(buf);
-		buf = g_strdup_printf(_("Unable to send message to %s:"), data ? data : "(unknown)");
-		purple_notify_error(od->gc, NULL, buf, error);
+		if (errcode != 0 && errcode < errcodereasonlen)
+			buf = g_strdup_printf(_("Unable to send message to %s: %s (%s)"),
+			                      data ? data : "(unknown)", reason_str,
+			                      _(errcodereason[errcode]));
+		else
+			buf = g_strdup_printf(_("Unable to send message to %s: %s"),
+			                      data ? data : "(unknown)", reason_str);
+		purple_notify_error(od->gc, NULL, buf, reason_str);
 	}
 	g_free(buf);
-	g_free(error);
+	g_free(reason_str);
 
 	return 1;
 }
@@ -3992,9 +4017,6 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	presence = purple_status_get_presence(status);
 	aim_srv_setidle(od, !purple_presence_is_idle(presence) ? 0 : time(NULL) - purple_presence_get_idle_time(presence));
 
-	/* Request offline messages for AIM and ICQ */
-	aim_im_reqofflinemsgs(od);
-
 	if (od->icq) {
 #ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 		aim_icq_reqofflinemsgs(od);
@@ -4021,6 +4043,10 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	 */
 	if (od->ssi.received_data) {
 		aim_srv_clientready(od, conn);
+
+		/* Request offline messages for AIM and ICQ */
+		aim_im_reqofflinemsgs(od);
+
 		purple_connection_set_state(gc, PURPLE_CONNECTED);
 	}
 
@@ -5218,7 +5244,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	{ /* If not in server list then prune from local list */
 		GSList *cur, *next;
 		GSList *buddies = purple_find_buddies(account, NULL);
-		
+
 		/* Buddies */
 		cur = NULL;
 
@@ -5298,9 +5324,9 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			report_idle = strcmp(idle_reporting_pref, "none") != 0;
 
 			if (report_idle)
-				aim_ssi_setpresence(od, tmp | 0x400);
+				aim_ssi_setpresence(od, tmp | AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
 			else
-				aim_ssi_setpresence(od, tmp & ~0x400);
+				aim_ssi_setpresence(od, tmp & ~AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
 		}
 
 
@@ -5308,45 +5334,28 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	/* Add from server list to local list */
 	for (curitem=od->ssi.local; curitem; curitem=curitem->next) {
-	  if ((curitem->name == NULL) || (g_utf8_validate(curitem->name, -1, NULL)))
 		switch (curitem->type) {
 			case AIM_SSI_TYPE_BUDDY: { /* Buddy */
 				if (curitem->name) {
 					struct aim_ssi_item *groupitem;
-					char *gname, *gname_utf8, *alias, *alias_utf8;
+					const char *gname, *alias;
 
 					groupitem = aim_ssi_itemlist_find(od->ssi.local, curitem->gid, 0x0000);
 					gname = groupitem ? groupitem->name : NULL;
-					if (gname != NULL) {
-						if (g_utf8_validate(gname, -1, NULL))
-							gname_utf8 = g_strdup(gname);
-						else
-							gname_utf8 = oscar_utf8_try_convert(account, gname);
-					} else
-						gname_utf8 = NULL;
 
-					g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans"));
+					g = purple_find_group(gname ? gname : _("Orphans"));
 					if (g == NULL) {
-						g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
+						g = purple_group_new(gname ? gname : _("Orphans"));
 						purple_blist_add_group(g, NULL);
 					}
 
 					alias = aim_ssi_getalias(od->ssi.local, gname, curitem->name);
-					if (alias != NULL) {
-						if (g_utf8_validate(alias, -1, NULL))
-							alias_utf8 = g_strdup(alias);
-						else
-							alias_utf8 = oscar_utf8_try_convert(account, alias);
-						g_free(alias);
-					} else
-						alias_utf8 = NULL;
-
 					b = purple_find_buddy_in_group(account, curitem->name, g);
 					if (b) {
 						/* Get server stored alias */
-						purple_blist_alias_buddy(b, alias_utf8);
+						purple_blist_alias_buddy(b, alias);
 					} else {
-						b = purple_buddy_new(account, curitem->name, alias_utf8);
+						b = purple_buddy_new(account, curitem->name, alias);
 
 						purple_debug_info("oscar",
 								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
@@ -5370,30 +5379,15 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 								purple_buddy_get_name(b),
 								OSCAR_STATUS_ID_MOBILE, NULL);
 					}
-
-					g_free(gname_utf8);
-					g_free(alias_utf8);
 				}
 			} break;
 
 			case AIM_SSI_TYPE_GROUP: { /* Group */
-				char *gname;
-				char *gname_utf8;
-
-				gname = curitem->name;
-				if (gname != NULL) {
-					if (g_utf8_validate(gname, -1, NULL))
-						gname_utf8 = g_strdup(gname);
-					else
-						gname_utf8 = oscar_utf8_try_convert(account, gname);
-				} else
-					gname_utf8 = NULL;
-
-				if (gname_utf8 != NULL && purple_find_group(gname_utf8) == NULL) {
-					g = purple_group_new(gname_utf8);
+				const char *gname = curitem->name;
+				if (gname != NULL && purple_find_group(gname) == NULL) {
+					g = purple_group_new(gname);
 					purple_blist_add_group(g, NULL);
 				}
-				g_free(gname_utf8);
 			} break;
 
 			case AIM_SSI_TYPE_PERMIT: { /* Permit buddy */
@@ -5469,6 +5463,10 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	 */
 	if (od->bos.have_rights) {
 		aim_srv_clientready(od, conn);
+
+		/* Request offline messages for AIM and ICQ */
+		aim_im_reqofflinemsgs(od);
+
 		purple_connection_set_state(gc, PURPLE_CONNECTED);
 	}
 
@@ -5528,7 +5526,8 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	char *gname, *gname_utf8, *alias, *alias_utf8;
+	const char *gname;
+	char *alias;
 	PurpleBuddy *b;
 	PurpleGroup *g;
 	struct aim_ssi_item *ssi_item;
@@ -5549,19 +5548,7 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		return 1;
 
 	gname = aim_ssi_itemlist_findparentname(od->ssi.local, name);
-	gname_utf8 = gname ? oscar_utf8_try_convert(account, gname) : NULL;
-
 	alias = aim_ssi_getalias(od->ssi.local, gname, name);
-	if (alias != NULL)
-	{
-		if (g_utf8_validate(alias, -1, NULL))
-			alias_utf8 = g_strdup(alias);
-		else
-			alias_utf8 = oscar_utf8_try_convert(account, alias);
-	}
-	else
-		alias_utf8 = NULL;
-	g_free(alias);
 
 	b = purple_find_buddy(account, name);
 	if (b) {
@@ -5570,21 +5557,21 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		 * of your buddies, so update our local buddy list with
 		 * the person's new alias.
 		 */
-		purple_blist_alias_buddy(b, alias_utf8);
+		purple_blist_alias_buddy(b, alias);
 	} else if (snac_subtype == 0x0008) {
 		/*
 		 * You're logged in somewhere else and you added a buddy to
 		 * your server list, so add them to your local buddy list.
 		 */
-		b = purple_buddy_new(account, name, alias_utf8);
+		b = purple_buddy_new(account, name, alias);
 
-		if (!(g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans")))) {
-			g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
+		if (!(g = purple_find_group(gname ? gname : _("Orphans")))) {
+			g = purple_group_new(gname ? gname : _("Orphans"));
 			purple_blist_add_group(g, NULL);
 		}
 
 		purple_debug_info("oscar",
-				   "ssi: adding buddy %s to group %s to local list\n", name, gname_utf8 ? gname_utf8 : _("Orphans"));
+				   "ssi: adding buddy %s to group %s to local list\n", name, gname ? gname : _("Orphans"));
 		purple_blist_add_buddy(b, NULL, g, NULL);
 
 		/* Mobile users should always be online */
@@ -5597,6 +5584,8 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	}
 
+	g_free(alias);
+
 	ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
 			gname, name, AIM_SSI_TYPE_BUDDY);
 	if (ssi_item == NULL)
@@ -5605,9 +5594,6 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 				"Could not find ssi item for oncoming buddy %s, "
 				"group %s\n", name, gname);
 	}
-
-	g_free(gname_utf8);
-	g_free(alias_utf8);
 
 	return 1;
 }
@@ -6311,7 +6297,6 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	struct name_data *data;
 	PurpleGroup *g;
 	char *comment;
-	gchar *comment_utf8;
 	gchar *title;
 	PurpleAccount *account;
 	const char *name;
@@ -6330,7 +6315,6 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	data = g_new(struct name_data, 1);
 
 	comment = aim_ssi_getcomment(od->ssi.local, purple_group_get_name(g), name);
-	comment_utf8 = comment ? oscar_utf8_try_convert(account, comment) : NULL;
 
 	data->gc = gc;
 	data->name = g_strdup(name);
@@ -6338,7 +6322,7 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 
 	title = g_strdup_printf(_("Buddy Comment for %s"), data->name);
 	purple_request_input(gc, title, _("Buddy Comment:"), NULL,
-					   comment_utf8, TRUE, FALSE, NULL,
+					   comment, TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(oscar_ssi_editcomment),
 					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
 					   account, data->name, NULL,
@@ -6346,7 +6330,6 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	g_free(title);
 
 	g_free(comment);
-	g_free(comment_utf8);
 }
 
 static void
@@ -7152,8 +7135,9 @@ static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable
 	return FALSE;
 }
 
-void oscar_init(PurplePluginProtocolInfo *prpl_info)
+void oscar_init(PurplePlugin *plugin)
 {
+	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 	PurpleAccountOption *option;
 	static gboolean init = FALSE;
 
@@ -7176,9 +7160,11 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
-											OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
-	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	if (g_str_equal(purple_plugin_get_id(plugin), "prpl-aim")) {
+		option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
+												OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
+		prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	}
 
 	if (init)
 		return;

@@ -95,7 +95,7 @@ static void jabber_oob_xfer_request_send(gpointer data, gint source, PurpleInput
 	if(len < 0 && errno == EAGAIN)
 		return;
 	else if(len < 0) {
-		purple_debug(PURPLE_DEBUG_ERROR, "jabber", "Write error on oob xfer!\n");
+		purple_debug_error("jabber", "Write error on oob xfer!\n");
 		purple_input_remove(jox->writeh);
 		purple_xfer_cancel_local(xfer);
 	}
@@ -150,7 +150,7 @@ static gssize jabber_oob_xfer_read(guchar **buffer, PurpleXfer *xfer) {
 		}
 		return 0;
 	} else if (errno != EAGAIN) {
-		purple_debug(PURPLE_DEBUG_ERROR, "jabber", "Read error on oob xfer!\n");
+		purple_debug_error("jabber", "Read error on oob xfer!\n");
 		purple_xfer_cancel_local(xfer);
 	}
 

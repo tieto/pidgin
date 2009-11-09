@@ -399,7 +399,14 @@ msn_nexus_connect(MsnNexus *nexus)
 
 	username = purple_account_get_username(session->account);
 	password = purple_connection_get_password(session->account->gc);
-	password_xml = g_markup_escape_text(password, MIN(strlen(password), 16));
+	if (g_utf8_strlen(password, -1) > 16) {
+		/* max byte size for 16 utf8 characters is 64 + 1 for the null */
+		gchar truncated[65];
+		g_utf8_strncpy(truncated, password, 16);
+		password_xml = g_markup_escape_text(truncated, -1);
+	} else {
+		password_xml = g_markup_escape_text(password, -1);
+	}
 
 	purple_debug_info("msn", "Logging on %s, with policy '%s', nonce '%s'\n",
 	                  username, nexus->policy, nexus->nonce);

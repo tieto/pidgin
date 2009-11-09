@@ -1,3 +1,4 @@
+
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.4 (??/??/20??):
@@ -14,6 +15,10 @@ version 2.6.4 (??/??/20??):
 	AIM and ICQ:
 	* Better rate limit calculations and other improvements.  (Aman Gupta)
 	* More detailed error messages when messages fail to send.  (Aman Gupta)
+	* The simultaneous login account option is respected when using
+	  the clientLogin authentication method.
+	* Fix offline message retrieval (broken in 2.6.3)
+	* Fix SSL when clientLogin is enabled.
 
 	MSN:
 	* Don't forget display names for buddies.
@@ -21,6 +26,9 @@ version 2.6.4 (??/??/20??):
 	* Fix more FQY 240 connection errors.
 	* Fix a crash that could occur when adding a buddy.
 	* Fix an occasional crash when sending message to an offline user.
+	* Fix a random crash that might occur when idle.
+	* Fix a crash when logging in with some long non-ASCII passwords.
+	  (Shaun Lindsay)
 
 	XMPP:
 	* Users connecting to Google Talk now have an "Initiate Chat" context menu
@@ -28,6 +36,9 @@ version 2.6.4 (??/??/20??):
 	* Fix a crash when attempting to validate an invalid JID.
 	* Resolve an issue when connecting to iChat Server when no resource
 	  is specified.
+	* Try to automatically find a STUN server by using an SRV lookup on the
+	  account's domain, and use that for voice and video if found and the user 
+	  didn't set one manually in prefs.
 	* Fix a crash when adding a buddy without an '@'.
 
 	Yahoo:
@@ -47,12 +58,6 @@ version 2.6.4 (??/??/20??):
 	* The userlist in a multiuser chat can be styled via gtkrc by using the
 	  widget name "pidgin_conv_userlist". (Heiko Schmitt)
 	* Add a hold button to the media window.
-	* Tooltips for custom smileys should work now.
-	* Users with unread messages are again bolded in the Buddy List.
-	* Minor reworking of the Preferences window's Network tab to make it need
-	  less vertical space.
-	* The global "Use remote DNS with SOCKS4 proxies" preference no longer
-	  disappears when the preference value changes in certain ways.
 
 version 2.6.3 (10/16/2009):
 	General:
