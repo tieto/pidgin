@@ -260,8 +260,8 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 		 * the opening <stream:stream> and there was no version, we need to
 		 * immediately start legacy IQ auth.
 		 */
-		js->auth_type = JABBER_AUTH_IQ_AUTH;
 		jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
+		jabber_auth_start_old(js);
 	}
 }
 

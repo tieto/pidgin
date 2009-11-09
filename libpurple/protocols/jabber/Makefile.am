@@ -7,6 +7,10 @@ pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 JABBERSOURCES = auth.c \
 			  auth.h \
+			  auth_digest_md5.c \
+			  auth_plain.c \
+			  auth_scram.c \
+			  auth_scram.h \
 			  buddy.c \
 			  buddy.h \
 			  bosh.c \
@@ -75,6 +79,10 @@ JABBERSOURCES = auth.c \
 AM_CFLAGS = $(st)
 
 libxmpp_la_LDFLAGS = -module -avoid-version
+
+if USE_CYRUS_SASL
+JABBERSOURCES += auth_cyrus.c
+endif
 
 if STATIC_JABBER
 
