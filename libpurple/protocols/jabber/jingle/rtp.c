@@ -871,7 +871,6 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 			}
 
 			codecs = g_list_concat(codecs, remote_codecs);
-			g_list_free (remote_codecs);
 
 			purple_media_set_remote_codecs(media,
 					name, remote_jid, codecs);
