@@ -42,6 +42,7 @@ typedef struct _PurpleMenuAction PurpleMenuAction;
 typedef struct _PurpleKeyValuePair PurpleKeyValuePair;
 
 #include "account.h"
+#include "signals.h"
 #include "xmlnode.h"
 #include "notify.h"
 
