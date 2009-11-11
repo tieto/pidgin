@@ -19,6 +19,8 @@ version 2.7.0 (??/??/????):
 version 2.6.4 (??/??/20??):
 	libpurple:
 	* Actually emit the hold signal for media calls.
+	* Added "MXit" protocol plugin, supported and maintained by the MXit folks
+	  themselves (MXit Lifestyle (Pty) Ltd.)
 
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
