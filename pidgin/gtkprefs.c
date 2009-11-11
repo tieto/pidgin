@@ -2809,21 +2809,6 @@ away_page(void)
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
-	/* Away stuff */
-	vbox = pidgin_make_frame(ret, _("Away"));
-
-	dd = pidgin_prefs_dropdown(vbox, _("_Auto-reply:"),
-		PURPLE_PREF_STRING, "/purple/away/auto_reply",
-		_("Never"), "never",
-		_("When away"), "away",
-		_("When both away and idle"), "awayidle",
-		NULL);
-	gtk_size_group_add_widget(sg, dd);
-	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
-
-	/* Auto-away stuff */
-	vbox = pidgin_make_frame(ret, _("Auto-away"));
-
 	select = pidgin_prefs_labeled_spin_button(vbox,
 			_("_Minutes before becoming idle:"), "/purple/away/mins_before_away",
 			1, 24 * 60, sg);
@@ -2843,6 +2828,18 @@ away_page(void)
 		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
 	}
+
+	/* Away stuff */
+	vbox = pidgin_make_frame(ret, _("Away"));
+
+	dd = pidgin_prefs_dropdown(vbox, _("_Auto-reply:"),
+		PURPLE_PREF_STRING, "/purple/away/auto_reply",
+		_("Never"), "never",
+		_("When away"), "away",
+		_("When both away and idle"), "awayidle",
+		NULL);
+	gtk_size_group_add_widget(sg, dd);
+	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
 	/* Signon status stuff */
 	vbox = pidgin_make_frame(ret, _("Status at Startup"));
