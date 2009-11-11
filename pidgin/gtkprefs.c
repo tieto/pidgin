@@ -1169,6 +1169,7 @@ theme_page(void)
 	GtkWidget *themesel_hbox;
 	GtkSizeGroup *label_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	GtkSizeGroup *combo_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	GtkSizeGroup *smiley_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -1207,15 +1208,33 @@ theme_page(void)
 
 	gtk_box_pack_start(GTK_BOX(ret), themesel_hbox, FALSE, FALSE, 0);
 
+	/* Sound Themes */
+	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+
+	label = gtk_label_new(_("Sound Theme:"));
+	gtk_size_group_add_widget(label_sg, label);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
+
+	prefs_sound_themes_combo_box = prefs_build_theme_combo_box(prefs_sound_themes,
+						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"),
+						"sound");
+	g_signal_connect(G_OBJECT(prefs_sound_themes_combo_box), "changed",
+						(GCallback)prefs_set_sound_theme_cb, NULL);
+	gtk_size_group_add_widget(combo_sg, prefs_sound_themes_combo_box);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_sound_themes_combo_box, FALSE, FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(ret), themesel_hbox, FALSE, FALSE, 0);
+
 	/* Smiley Themes */
-	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below."
-	                        " New themes can be installed by dragging and dropping them onto the theme list."));
+	label = gtk_label_new(_("Select a smiley theme that you would like to use "
+							"from the list below. New themes can be installed "
+							"by dragging and dropping them onto the theme list."));
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
 
-	gtk_box_pack_start(GTK_BOX(ret), label, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
@@ -2660,16 +2679,6 @@ sound_page(void)
 			TRUE, 0, GTK_PACK_START);
 	gtk_box_set_child_packing(GTK_BOX(vbox->parent->parent->parent),
 			vbox->parent->parent, TRUE, TRUE, 0, GTK_PACK_START);
-
-	/* SOUND THEMES */
-	prefs_sound_themes_combo_box = prefs_build_theme_combo_box(prefs_sound_themes,
-						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"),
-						"sound");
-
-
-	gtk_box_pack_start(GTK_BOX (vbox), prefs_sound_themes_combo_box, FALSE, FALSE, 0);
-
-	g_signal_connect(G_OBJECT(prefs_sound_themes_combo_box), "changed", (GCallback)prefs_set_sound_theme_cb, NULL);
 
 	/* SOUND SELECTION */
 	sw = gtk_scrolled_window_new(NULL,NULL);
