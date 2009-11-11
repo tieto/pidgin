@@ -2855,10 +2855,6 @@ static void
 prefs_notebook_init(void)
 {
 	prefs_notebook_add_page(_("Interface"), interface_page(), notebook_page++);
-	prefs_notebook_add_page(_("Conversations"), conv_page(), notebook_page++);
-	prefs_notebook_add_page(_("Themes"), theme_page(), notebook_page++);
-	prefs_notebook_add_page(_("Sounds"), sound_page(), notebook_page++);
-	prefs_notebook_add_page(_("Network"), network_page(), notebook_page++);
 
 #ifndef _WIN32
 	/* We use the registered default browser in windows */
@@ -2867,11 +2863,15 @@ prefs_notebook_init(void)
 		prefs_notebook_add_page(_("Browser"), browser_page(), notebook_page++);
 #endif
 
+	prefs_notebook_add_page(_("Conversations"), conv_page(), notebook_page++);
+	prefs_notebook_add_page(_("Logging"), logging_page(), notebook_page++);
+	prefs_notebook_add_page(_("Network"), network_page(), notebook_page++);
 	if(purple_running_gnome() == FALSE)
 		prefs_notebook_add_page(_("Proxy"), proxy_page(), notebook_page++);
 
-	prefs_notebook_add_page(_("Logging"), logging_page(), notebook_page++);
+	prefs_notebook_add_page(_("Sounds"), sound_page(), notebook_page++);
 	prefs_notebook_add_page(_("Status / Idle"), away_page(), notebook_page++);
+	prefs_notebook_add_page(_("Themes"), theme_page(), notebook_page++);
 }
 
 void
