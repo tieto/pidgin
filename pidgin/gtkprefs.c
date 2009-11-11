@@ -2883,7 +2883,8 @@ pidgin_prefs_show(void)
 
 	/* The notebook */
 	prefsnotebook = notebook = gtk_notebook_new ();
-	gtk_box_pack_start (GTK_BOX (vbox), notebook, FALSE, FALSE, 0);
+	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_LEFT);
+	gtk_box_pack_start(GTK_BOX (vbox), notebook, FALSE, FALSE, 0);
 	gtk_widget_show(prefsnotebook);
 
 	button = pidgin_dialog_add_button(GTK_DIALOG(prefs), GTK_STOCK_CLOSE, NULL, NULL);
