@@ -1104,6 +1104,49 @@ remove_theme_button_clicked_cb(GtkWidget *button, GtkTreeView *tv)
 	g_free(theme_name);
 }
 
+/* sets the current buddy list theme */
+static void
+prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
+{
+	PidginBlistTheme *theme =  NULL;
+	GtkTreeIter iter;
+	gchar *name = NULL;
+
+	if(gtk_combo_box_get_active_iter(combo_box, &iter)) {
+
+		gtk_tree_model_get(GTK_TREE_MODEL(prefs_blist_themes), &iter, 2, &name, -1);
+
+		if(!name || !g_str_equal(name, ""))
+			theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(name, "blist"));
+
+		g_free(name);
+
+		pidgin_blist_set_theme(theme);
+	}
+}
+
+/* sets the current icon theme */
+static void
+prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
+{
+	PidginStatusIconTheme *theme = NULL;
+	GtkTreeIter iter;
+	gchar *name = NULL;
+
+	if(gtk_combo_box_get_active_iter(combo_box, &iter)) {
+
+		gtk_tree_model_get(GTK_TREE_MODEL(prefs_status_icon_themes), &iter, 2, &name, -1);
+
+		if(!name || !g_str_equal(name, ""))
+			theme = PIDGIN_STATUS_ICON_THEME(purple_theme_manager_find_theme(name, "status-icon"));
+
+		g_free(name);
+
+		pidgin_stock_load_status_icon_theme(theme);
+		pidgin_blist_refresh(purple_get_blist());
+	}
+}
+
 static GtkWidget *
 theme_page(void)
 {
@@ -1123,10 +1166,42 @@ theme_page(void)
 		{"text/uri-list", 0, 1},
 		{"STRING", 0, 2}
 	};
+	GtkWidget *themesel_hbox;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
+	/* Buddy List Themes */
+	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+
+	label = gtk_label_new(_("Buddy List Theme:"));
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
+
+	prefs_blist_themes_combo_box = prefs_build_theme_combo_box(prefs_blist_themes,
+						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"),
+						"blist");
+
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_blist_themes_combo_box, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(prefs_blist_themes_combo_box), "changed", (GCallback)prefs_set_blist_theme_cb, NULL);
+
+	gtk_box_pack_start(GTK_BOX(ret), themesel_hbox, FALSE, FALSE, 0);
+
+	/* Status Icon Themes */
+	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+
+	label = gtk_label_new(_("Status Icon Theme:"));
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
+
+	prefs_status_themes_combo_box = prefs_build_theme_combo_box(prefs_status_icon_themes,
+						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"),
+						"icon");
+
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_status_themes_combo_box, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(prefs_status_themes_combo_box), "changed", (GCallback)prefs_set_status_icon_theme_cb, NULL);
+
+	gtk_box_pack_start(GTK_BOX(ret), themesel_hbox, FALSE, FALSE, 0);
+
+	/* Smiley Themes */
 	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below."
 	                        " New themes can be installed by dragging and dropping them onto the theme list."));
 
@@ -1407,49 +1482,6 @@ keyboard_shortcuts(GtkWidget *page)
 	gtk_box_pack_start(GTK_BOX(vbox), checkbox, FALSE, FALSE, 0);
 }
 
-/* sets the current buddy list theme */
-static void
-prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
-{
-	PidginBlistTheme *theme =  NULL;
-	GtkTreeIter iter;
-	gchar *name = NULL;
-
-	if(gtk_combo_box_get_active_iter(combo_box, &iter)) {
-
-		gtk_tree_model_get(GTK_TREE_MODEL(prefs_blist_themes), &iter, 2, &name, -1);
-
-		if(!name || !g_str_equal(name, ""))
-			theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(name, "blist"));
-
-		g_free(name);
-
-		pidgin_blist_set_theme(theme);
-	}
-}
-
-/* sets the current icon theme */
-static void
-prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
-{
-	PidginStatusIconTheme *theme = NULL;
-	GtkTreeIter iter;
-	gchar *name = NULL;
-
-	if(gtk_combo_box_get_active_iter(combo_box, &iter)) {
-
-		gtk_tree_model_get(GTK_TREE_MODEL(prefs_status_icon_themes), &iter, 2, &name, -1);
-
-		if(!name || !g_str_equal(name, ""))
-			theme = PIDGIN_STATUS_ICON_THEME(purple_theme_manager_find_theme(name, "status-icon"));
-
-		g_free(name);
-
-		pidgin_stock_load_status_icon_theme(theme);
-		pidgin_blist_refresh(purple_get_blist());
-	}
-}
-
 static GtkWidget *
 interface_page(void)
 {
@@ -1464,24 +1496,6 @@ interface_page(void)
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-
-	/* Buddy List Themes */
-	vbox = pidgin_make_frame(ret, _("Buddy List Theme"));
-
-	prefs_blist_themes_combo_box = prefs_build_theme_combo_box(prefs_blist_themes,
-						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"),
-						"blist");
-
-	gtk_box_pack_start(GTK_BOX (vbox), prefs_blist_themes_combo_box, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(prefs_blist_themes_combo_box), "changed", (GCallback)prefs_set_blist_theme_cb, NULL);
-
-	/* Status Icon Themes */
-	prefs_status_themes_combo_box = prefs_build_theme_combo_box(prefs_status_icon_themes,
-						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"),
-						"icon");
-
-	gtk_box_pack_start(GTK_BOX (vbox), prefs_status_themes_combo_box, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(prefs_status_themes_combo_box), "changed", (GCallback)prefs_set_status_icon_theme_cb, NULL);
 
 	/* System Tray */
 	vbox = pidgin_make_frame(ret, _("System Tray Icon"));
