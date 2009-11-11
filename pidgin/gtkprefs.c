@@ -493,7 +493,7 @@ pref_sound_generate_markup(void)
 			if (!name || *name == '\0') {
 				g_free(name);
 				name = g_strdup(_("(Default)"));
-				author = _("None");
+				author = _("Penguin Pimps");
 				description = _("The default Pidgin sound theme");
 			} else {
 				theme = PURPLE_SOUND_THEME(purple_theme_manager_find_theme(name, "sound"));
@@ -613,7 +613,7 @@ prefs_themes_refresh(void)
 	/* blist themes */
 	gtk_list_store_clear(prefs_blist_themes);
 	gtk_list_store_append(prefs_blist_themes, &iter);
-	tmp = get_theme_markup(_("(Default)"), FALSE, _("None"),
+	tmp = get_theme_markup(_("(Default)"), FALSE, _("Penguin Pimps"),
 		_("The default Pidgin buddy list theme"));
 	gtk_list_store_set(prefs_blist_themes, &iter, 0, pixbuf, 1, tmp, 2, "", -1);
 	g_free(tmp);
@@ -621,7 +621,7 @@ prefs_themes_refresh(void)
 	/* status icon themes */
 	gtk_list_store_clear(prefs_status_icon_themes);
 	gtk_list_store_append(prefs_status_icon_themes, &iter);
-	tmp = get_theme_markup(_("(Default)"), FALSE, _("None"),
+	tmp = get_theme_markup(_("(Default)"), FALSE, _("Penguin Pimps"),
 		_("The default Pidgin status icon theme"));
 	gtk_list_store_set(prefs_status_icon_themes, &iter, 0, pixbuf, 1, tmp, 2, "", -1);
 	g_free(tmp);
