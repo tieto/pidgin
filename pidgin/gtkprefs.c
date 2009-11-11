@@ -2175,6 +2175,7 @@ proxy_page(void)
 	PurpleProxyInfo *proxy_info;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 
 	vbox = pidgin_make_frame(ret, _("Proxy Server"));
 	prefs_proxy_frame = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
