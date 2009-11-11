@@ -1167,6 +1167,8 @@ theme_page(void)
 		{"STRING", 0, 2}
 	};
 	GtkWidget *themesel_hbox;
+	GtkSizeGroup *label_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	GtkSizeGroup *combo_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -1175,14 +1177,16 @@ theme_page(void)
 	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	label = gtk_label_new(_("Buddy List Theme:"));
+	gtk_size_group_add_widget(label_sg, label);
 	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
 
 	prefs_blist_themes_combo_box = prefs_build_theme_combo_box(prefs_blist_themes,
 						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"),
 						"blist");
-
+	g_signal_connect(G_OBJECT(prefs_blist_themes_combo_box), "changed",
+						(GCallback)prefs_set_blist_theme_cb, NULL);
+	gtk_size_group_add_widget(combo_sg, prefs_blist_themes_combo_box);
 	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_blist_themes_combo_box, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(prefs_blist_themes_combo_box), "changed", (GCallback)prefs_set_blist_theme_cb, NULL);
 
 	gtk_box_pack_start(GTK_BOX(ret), themesel_hbox, FALSE, FALSE, 0);
 
@@ -1190,14 +1194,16 @@ theme_page(void)
 	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	label = gtk_label_new(_("Status Icon Theme:"));
+	gtk_size_group_add_widget(label_sg, label);
 	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
 
 	prefs_status_themes_combo_box = prefs_build_theme_combo_box(prefs_status_icon_themes,
 						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"),
 						"icon");
-
+	g_signal_connect(G_OBJECT(prefs_status_themes_combo_box), "changed",
+						(GCallback)prefs_set_status_icon_theme_cb, NULL);
+	gtk_size_group_add_widget(combo_sg, prefs_status_themes_combo_box);
 	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_status_themes_combo_box, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(prefs_status_themes_combo_box), "changed", (GCallback)prefs_set_status_icon_theme_cb, NULL);
 
 	gtk_box_pack_start(GTK_BOX(ret), themesel_hbox, FALSE, FALSE, 0);
 
