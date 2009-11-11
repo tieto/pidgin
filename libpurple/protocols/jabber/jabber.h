@@ -193,25 +193,16 @@ struct _JabberStream
 
 	char *serverFQDN;
 
-	/* OK, this stays at the end of the struct, so plugins can depend
-	 * on the rest of the stuff being in the right place
-	 */
 #ifdef HAVE_CYRUS_SASL
 	sasl_conn_t *sasl;
 	sasl_callback_t *sasl_cb;
-#else /* keep the struct the same size */
-	void *sasl;
-	void *sasl_cb;
-#endif
-	/* did someone say something about the end of the struct? */
-#ifdef HAVE_CYRUS_SASL
 	const char *current_mech;
 	int auth_fail_count;
-#endif
 
 	int sasl_state;
 	int sasl_maxbuf;
 	GString *sasl_mechs;
+#endif
 
 	gboolean unregistration;
 	PurpleAccountUnregistrationCb unregistration_cb;

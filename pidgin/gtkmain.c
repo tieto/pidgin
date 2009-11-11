@@ -541,8 +541,8 @@ int main(int argc, char *argv[])
 	GIOStatus signal_status;
 #ifndef DEBUG
 	char *segfault_message_tmp;
-	GError *error = NULL;
 #endif
+	GError *error = NULL;
 #endif
 	int opt;
 	gboolean gui_check;
