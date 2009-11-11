@@ -288,8 +288,10 @@ purple_prpl_got_user_status(PurpleAccount *account, const char *name,
 
 	/* The buddy is no longer online, they are therefore by definition not
 	 * still typing to us. */
-	if (!purple_status_is_online(status))
+	if (!purple_status_is_online(status)) {
 		serv_got_typing_stopped(purple_account_get_connection(account), name);
+		purple_prpl_got_media_caps(account, name);
+	}
 }
 
 void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *name,
@@ -558,6 +560,35 @@ purple_prpl_get_media_caps(PurpleAccount *account, const char *who)
 	}
 #endif
 	return PURPLE_MEDIA_CAPS_NONE;
+}
+
+void
+purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
+{
+#ifdef USE_VV
+	GSList *list;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(name    != NULL);
+
+	if ((list = purple_find_buddies(account, name)) == NULL)
+		return;
+
+	while (list) {
+		PurpleBuddy *buddy = list->data;
+		PurpleMediaCaps oldcaps = buddy->media_caps;
+		const gchar *bname = purple_buddy_get_name(buddy);
+		list = g_slist_delete_link(list, list);
+		buddy->media_caps = purple_prpl_get_media_caps(account, bname);
+
+		if (oldcaps == buddy->media_caps)
+			continue;
+
+		purple_signal_emit(purple_blist_get_handle(),
+				"buddy-caps-changed", buddy,
+				buddy->media_caps, oldcaps);
+	}
+#endif
 }
 
 /**************************************************************************
