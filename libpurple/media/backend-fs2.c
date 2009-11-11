@@ -1088,7 +1088,8 @@ stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 				session_type_to_fs_stream_direction(
 				stream->session->type), NULL);
 
-		if (stream->remote_candidates == NULL)
+		if (stream->remote_candidates == NULL ||
+				purple_media_is_initiator(media, sid, name))
 			return;
 
 		fs_stream_set_remote_candidates(stream->stream,
@@ -1650,7 +1651,8 @@ create_stream(PurpleMediaBackendFs2 *self,
 	}
 
 	fsstream = fs_session_new_stream(session->session, participant,
-			type_direction & FS_DIRECTION_RECV, transmitter,
+			initiator == TRUE ? type_direction :
+			(type_direction & FS_DIRECTION_RECV), transmitter,
 			_num_params, _params, &err);
 	g_free(_params);
 
@@ -1762,7 +1764,9 @@ purple_media_backend_fs2_add_remote_candidates(PurpleMediaBackend *self,
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
 			candidate_list_to_fs(remote_candidates));
 
-	if (purple_media_accepted(priv->media, sess_id, participant)) {
+	if (purple_media_is_initiator(priv->media, sess_id, participant) ||
+			purple_media_accepted(
+			priv->media, sess_id, participant)) {
 		fs_stream_set_remote_candidates(stream->stream,
 				stream->remote_candidates, &err);
 
