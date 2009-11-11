@@ -38,13 +38,14 @@ START_TEST(test_proofs)
 /*	const char *server_signature; */
 
 	data->hash = "sha1";
+	data->password = "password";
 	data->auth_message = g_string_new("n=username@jabber.org,r=8jLxB5515dhFxBil5A0xSXMH,"
 			"r=8jLxB5515dhFxBil5A0xSXMHabc,s=c2FsdA==,i=1,"
 			"c=biws,r=8jLxB5515dhFxBil5A0xSXMHabc");
 	client_proof = "\x48\x61\x30\xa5\x61\x0b\xae\xb9\xe4\x11\xa8\xfd\xa5\xcd\x34\x1d\x8a\x3c\x28\x17";
 
 	salt = g_string_new("salt");
-	ret = jabber_scram_calc_proofs(data, "password", salt, 1);
+	ret = jabber_scram_calc_proofs(data, salt, 1);
 	fail_if(ret == FALSE, "Failed to calculate SCRAM proofs!");
 
 	fail_unless(0 == memcmp(client_proof, data->client_proof->str, 20));

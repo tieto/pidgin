@@ -40,7 +40,10 @@ typedef struct {
 
 	GString *client_proof;
 	GString *server_signature;
+	
+	const gchar *password;
 	gboolean channel_binding;
+	int step;
 } JabberScramData;
 
 #include "auth.h"
@@ -70,13 +73,12 @@ guchar *jabber_scram_hi(const char *hash, const GString *str,
  * @param data A JabberScramData structure. hash and auth_message must be
  *             set. client_proof and server_signature will be set as a result
  *             of this function.
- * @param password   The user's password.
  * @param salt       The salt (as specified by the server)
  * @param iterations The number of iterations to perform.
  *
  * @returns TRUE if the proofs were successfully calculated. FALSE otherwise.
  */
-gboolean jabber_scram_calc_proofs(JabberScramData *data, const char *password,
-                                  GString *salt, guint iterations);
+gboolean jabber_scram_calc_proofs(JabberScramData *data, GString *salt,
+                                  guint iterations);
 
 #endif /* PURPLE_JABBER_AUTH_SCRAM_H_ */

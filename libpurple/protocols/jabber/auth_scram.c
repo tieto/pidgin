@@ -160,13 +160,12 @@ hash(const gchar *hash_alg, gsize len, guchar *out, const guchar *data)
 }
 
 gboolean
-jabber_scram_calc_proofs(JabberScramData *data, const char *password,
-                         GString *salt, guint iterations)
+jabber_scram_calc_proofs(JabberScramData *data, GString *salt, guint iterations)
 {
 	guint hash_len = hash_to_output_len(data->hash);
 	guint i;
 
-	GString *pass = g_string_new(password);
+	GString *pass = g_string_new(data->password);
 
 	guchar *salted_password;
 	guchar client_key[hash_len];
@@ -206,124 +205,153 @@ jabber_scram_calc_proofs(JabberScramData *data, const char *password,
 }
 
 static gboolean
-parse_challenge(JabberScramData *data, const char *challenge,
-                gchar **out_nonce, GString **out_salt, guint *out_iterations)
+parse_server_step1(JabberScramData *data, const char *challenge,
+                   gchar **out_nonce, GString **out_salt, guint *out_iterations)
 {
-	gsize cnonce_len;
-	const char *cur;
-	const char *end;
-	const char *val_start, *val_end;
-	char *tmp, *decoded;
-	gsize decoded_len;
-	char *nonce;
-	GString *salt;
+	char **tokens;
+	char *token, *decoded, *tmp;
+	gsize len;
+	char *nonce = NULL;
+	GString *salt = NULL;
 	guint iterations;
 
-	cur = challenge;
-	end = challenge + strlen(challenge);
-
-	if (cur[0] != 'r' || cur[1] != '=')
+	tokens = g_strsplit(challenge, ",", -1);
+	if (tokens == NULL)
 		return FALSE;
 
-	val_start = cur + 2;
-	val_end = strchr(val_start, ',');
-	if (val_end == NULL)
-		return FALSE;
+	token = tokens[0];
+	if (token[0] != 'r' || token[1] != '=')
+		goto err;
 
 	/* Ensure that the first cnonce_len bytes of the nonce are the original
 	 * cnonce we sent to the server.
 	 */
-	cnonce_len = strlen(data->cnonce);
-	if ((val_end - val_start + 1) <= cnonce_len ||
-			strncmp(data->cnonce, val_start, cnonce_len) != 0)
-		return FALSE;
+	if (!g_str_equal(data->cnonce, token + 2))
+		goto err;
 
-	nonce = g_strndup(val_start, val_end - val_start + 1);
+	nonce = g_strdup(token + 2);
 
 	/* The Salt, base64-encoded */
-	cur = val_end + 1;
-	if (cur[0] != 's' || cur[1] != '=') {
-		g_free(nonce);
-		return FALSE;
-	}
+	token = tokens[1];
+	if (token[0] != 's' || token[1] != '=')
+		goto err;
 
-	val_start = cur + 2;
-	val_end = strchr(val_start, ',');
-	if (val_end == NULL) {
-		g_free(nonce);
-		return FALSE;
+	decoded = (gchar *)purple_base64_decode(token + 2, &len);
+	if (!decoded || *decoded == '\0') {
+		g_free(decoded);
+		goto err;
 	}
-
-	tmp = g_strndup(val_start, val_end - val_start + 1);
-	decoded = (gchar *)purple_base64_decode(tmp, &decoded_len);
-	g_free(tmp);
-	salt = g_string_new_len(decoded, decoded_len);
+	salt = g_string_new_len(decoded, len);
 	g_free(decoded);
 
 	/* The iteration count */
-	cur = val_end + 1;
-	if (cur[0] != 'i' || cur[1] != '=') {
-		g_free(nonce);
-		g_string_free(salt, TRUE);
-		return FALSE;
-	}
-
-	val_start = cur + 2;
-	val_end = strchr(val_start, ',');
-	if (val_end == NULL)
-		/* There could be extensions. This should possibly be a hard fail. */
-		val_end = end - 1;
+	token = tokens[2];
+	if (token[0] != 'i' || token[1] != '=' || token[2] == '\0')
+		goto err;
 
 	/* Validate the string */
-	for (tmp = (gchar *)val_start; tmp != val_end; ++tmp) {
-		if (!g_ascii_isdigit(*tmp)) {
-			g_free(nonce);
-			g_string_free(salt, TRUE);
-			return FALSE;
-		}
-	}
+	for (tmp = token + 2; *tmp; ++tmp)
+		if (!g_ascii_isdigit(*tmp))
+			goto err;
 
-	tmp = g_strndup(val_start, val_end - val_start + 1);
-	iterations = strtoul(tmp, NULL, 10);
-	g_free(tmp);
+	iterations = strtoul(token + 2, NULL, 10);
 
+	g_strfreev(tokens);
 	*out_nonce = nonce;
 	*out_salt = salt;
 	*out_iterations = iterations;
 	return TRUE;
+
+err:
+	g_free(nonce);
+	g_string_free(salt, TRUE);
+	g_strfreev(tokens);
+	return FALSE;
 }
 
 static gboolean
-parse_success(JabberScramData *data, const char *success,
-              gchar **out_verifier)
+parse_server_step2(JabberScramData *data, const char *challenge, gchar **out_verifier)
 {
-	const char *cur;
-	const char *val_start, *val_end;
-	const char *end;
+	char **tokens;
+	char *token;
 
-	char *verifier;
+	tokens = g_strsplit(challenge, ",", -1);
+	if (tokens == NULL)
+		return FALSE;
 
-	g_return_val_if_fail(data != NULL, FALSE);
-	g_return_val_if_fail(success != NULL, FALSE);
-	g_return_val_if_fail(out_verifier != NULL, FALSE);
-
-	cur = success;
-	end = cur + strlen(cur);
-
-	if (cur[0] != 'v' || cur[1] != '=') {
-		/* TODO: Error handling */
+	token = tokens[0];
+	if (token[0] != 'v' || token[1] != '=' || token[2] == '\0') {
+		g_strfreev(tokens);
 		return FALSE;
 	}
 
-	val_start = cur + 2;
-	val_end = strchr(val_start, ',');
-	if (val_end == NULL)
-		/* TODO: Maybe make this a strict check on not having any extensions? */
-		val_end = end - 1;
+	*out_verifier = g_strdup(token + 2);
+	g_strfreev(tokens);
+	return TRUE;
+}
 
-	verifier = g_strndup(val_start, val_end - val_start + 1);
+static gboolean
+feed_parser(JabberScramData *data, gchar *in, gchar **out)
+{
+	gboolean ret;
 
-	*out_verifier = verifier;
+	g_return_val_if_fail(data != NULL, FALSE);
+
+	g_string_append_c(data->auth_message, ',');
+	g_string_append(data->auth_message, in);
+
+	if (data->step == 1) {
+		gchar *nonce, *proof;
+		GString *salt;
+		guint iterations;
+
+		ret = parse_server_step1(data, in, &nonce, &salt, &iterations);
+		if (!ret)
+			return FALSE;
+
+		g_string_append_c(data->auth_message, ',');
+
+		/* "biwsCg==" is the base64 encoding of "n,,". I promise. */
+		g_string_append_printf(data->auth_message, "c=%s,r=%s", "biwsCg==", nonce);
+#ifdef CHANNEL_BINDING
+#error fix this
+#endif
+
+		ret = jabber_scram_calc_proofs(data, salt, iterations);
+		if (!ret)
+			return FALSE;
+
+		proof = purple_base64_encode((guchar *)data->client_proof->str, data->client_proof->len);
+		*out = g_strdup_printf("c=%s,r=%s,p=%s", "biwsCg==", nonce, proof);
+		g_free(proof);
+	} else if (data->step == 2) {
+		gchar *server_sig, *enc_server_sig;
+		gsize len;
+
+		ret = parse_server_step2(data, in, &enc_server_sig);
+		if (!ret)
+			return FALSE;
+
+		server_sig = (gchar *)purple_base64_decode(enc_server_sig, &len);
+		g_free(enc_server_sig);
+
+		if (server_sig == NULL || len != data->server_signature->len) {
+			g_free(server_sig);
+			return FALSE;
+		}
+
+		if (0 != memcmp(server_sig, data->server_signature->str, len)) {
+			g_free(server_sig);
+			return FALSE;
+		}
+		g_free(server_sig);
+
+		*out = NULL;
+	} else {
+		purple_debug_error("jabber", "SCRAM: There is no step %d\n", data->step);
+		return FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -339,6 +367,7 @@ static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
 
 	data = js->auth_mech_data = g_new0(JabberScramData, 1);
 	data->hash = mech_to_hash(js->auth_mech->name);
+	data->password = purple_connection_get_password(js->gc);
 
 #ifdef CHANNEL_BINDING
 	if (strstr(js->auth_mech_name, "-PLUS"))
@@ -351,6 +380,8 @@ static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
 	g_string_printf(data->auth_message, "n=%s,r=%s",
 			js->user->node /* TODO: SaslPrep */,
 			data->cnonce);
+
+	data->step = 1;
 
 	reply = xmlnode_new("auth");
 	xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
@@ -373,70 +404,51 @@ static xmlnode *scram_handle_challenge(JabberStream *js, xmlnode *challenge)
 {
 	JabberScramData *data = js->auth_mech_data;
 	xmlnode *reply;
-
 	gchar *enc_in, *dec_in;
-	gchar *enc_out, *dec_out;
-	gsize decoded_size;
-
-	gchar *enc_proof;
-
-	gchar *nonce;
-	GString *salt;
-	guint iterations;
-
-	g_return_val_if_fail(data != NULL, NULL);
+	gchar *enc_out = NULL, *dec_out = NULL;
+	gsize len;
 
 	enc_in = xmlnode_get_data(challenge);
-	/* TODO: Error handling */
-	g_return_val_if_fail(enc_in != NULL && *enc_in != '\0', NULL);
+	if (!enc_in || *enc_in == '\0') {
+		reply = xmlnode_new("abort");
+		xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
+		data->step = -1;
+		goto out;
+	}
 
-	dec_in = (gchar *)purple_base64_decode(enc_in, &decoded_size);
+	dec_in = (gchar *)purple_base64_decode(enc_in, &len);
 	g_free(enc_in);
-	if (!dec_in || decoded_size != strlen(dec_in)) {
+	if (!dec_in || len != strlen(dec_in)) {
 		/* Danger afoot; SCRAM shouldn't contain NUL bytes */
-		/* TODO: Error handling */
-		g_free(dec_in);
-		return NULL;
+		reply = xmlnode_new("abort");
+		xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
+		data->step = -1;
+		goto out;
 	}
 
-	purple_debug_misc("jabber", "decoded challenge (%" G_GSIZE_FORMAT "): %s\n",
-			decoded_size, dec_in);
+	purple_debug_misc("jabber", "decoded challenge: %s\n", dec_in);
 
-	g_string_append_c(data->auth_message, ',');
-	g_string_append(data->auth_message, dec_in);
-
-	if (!parse_challenge(data, dec_in, &nonce, &salt, &iterations)) {
-		/* TODO: Error handling */
-		return NULL;
+	if (!feed_parser(data, dec_in, &dec_out)) {
+		reply = xmlnode_new("abort");
+		xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
+		data->step = -1;
+		goto out;
 	}
 
-	g_string_append_c(data->auth_message, ',');
-	/* "biwsCg==" is the base64 encoding of "n,,". I promise. */
-	g_string_append_printf(data->auth_message, "c=%s,r=%s", "biwsCg==", nonce);
-#ifdef CHANNEL_BINDING
-	#error fix this
-#endif
-
-	if (!jabber_scram_calc_proofs(data, purple_connection_get_password(js->gc), salt, iterations)) {
-		/* TODO: Error handling */
-		return NULL;
-	}
+	data->step += 1;
 
 	reply = xmlnode_new("response");
 	xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
 
-	enc_proof = purple_base64_encode((guchar *)data->client_proof->str, data->client_proof->len);
-	dec_out = g_strdup_printf("c=%s,r=%s,p=%s", "biwsCg==", nonce, enc_proof);
-	enc_out = purple_base64_encode((guchar *)dec_out, strlen(dec_out));
+	purple_debug_misc("jabber", "decoded response: %s\n", dec_out ? dec_out : "(null)");
+	if (dec_out) {
+		enc_out = purple_base64_encode((guchar *)dec_out, strlen(dec_out));
+		xmlnode_insert_data(reply, enc_out, -1);
+	}
 
-	purple_debug_misc("jabber", "decoded response (%" G_GSIZE_FORMAT "): %s\n",
-			strlen(dec_out), dec_out);
-
-	xmlnode_insert_data(reply, enc_out, -1);
-
+out:
 	g_free(enc_out);
 	g_free(dec_out);
-	g_free(enc_proof);
 
 	return reply;
 }
@@ -445,48 +457,30 @@ static gboolean scram_handle_success(JabberStream *js, xmlnode *packet)
 {
 	JabberScramData *data = js->auth_mech_data;
 	char *enc_in, *dec_in;
-	char *enc_server_signature;
-	guchar *server_signature;
-	gsize decoded_size;
+	char *dec_out = NULL;
+	gsize len;
 
 	enc_in = xmlnode_get_data(packet);
-	/* TODO: Error handling */
 	g_return_val_if_fail(enc_in != NULL && *enc_in != '\0', FALSE);
 
-	dec_in = (gchar *)purple_base64_decode(enc_in, &decoded_size);
+	if (data->step == 3)
+		return TRUE;
+
+	if (data->step != 2)
+		return FALSE;
+
+	dec_in = (gchar *)purple_base64_decode(enc_in, &len);
 	g_free(enc_in);
-	if (!dec_in || decoded_size != strlen(dec_in)) {
+	if (!dec_in || len != strlen(dec_in)) {
 		/* Danger afoot; SCRAM shouldn't contain NUL bytes */
-		/* TODO: Error handling */
 		g_free(dec_in);
 		return FALSE;
 	}
 
-	purple_debug_misc("jabber", "decoded success (%" G_GSIZE_FORMAT "): %s\n",
-			decoded_size, dec_in);
+	purple_debug_misc("jabber", "decoded success: %s\n", dec_in);
 
-	if (!parse_success(data, dec_in, &enc_server_signature)) {
-		/* TODO: Error handling */
-		return FALSE;
-	}
-
-	server_signature = purple_base64_decode(enc_server_signature, &decoded_size);
-	if (server_signature == NULL) {
-		/* TODO: Error handling */
-		return FALSE;
-	}
-
-	if (decoded_size != data->server_signature->len) {
-		/* TODO: Error handling */
-		purple_debug_error("jabber", "SCRAM server signature wrong length (was "
-				"(was %" G_GSIZE_FORMAT ", expected %" G_GSIZE_FORMAT ")\n",
-				decoded_size, data->server_signature->len);
-		return FALSE;
-	}
-
-	if (0 != memcmp(server_signature, data->server_signature->str, decoded_size)) {
-		/* TODO: Error handling */
-		purple_debug_error("jabber", "SCRAM server signature did not match!\n");
+	if (!feed_parser(data, dec_in, &dec_out) || dec_out != NULL) {
+		g_free(dec_out);
 		return FALSE;
 	}
 
