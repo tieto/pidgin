@@ -492,7 +492,7 @@ pref_sound_generate_markup(void)
 
 			if (!name || *name == '\0') {
 				g_free(name);
-				name = g_strdup(_("(Default)"));
+				name = g_strdup(_("Default"));
 				author = _("Penguin Pimps");
 				description = _("The default Pidgin sound theme");
 			} else {
@@ -613,7 +613,7 @@ prefs_themes_refresh(void)
 	/* blist themes */
 	gtk_list_store_clear(prefs_blist_themes);
 	gtk_list_store_append(prefs_blist_themes, &iter);
-	tmp = get_theme_markup(_("(Default)"), FALSE, _("Penguin Pimps"),
+	tmp = get_theme_markup(_("Default"), FALSE, _("Penguin Pimps"),
 		_("The default Pidgin buddy list theme"));
 	gtk_list_store_set(prefs_blist_themes, &iter, 0, pixbuf, 1, tmp, 2, "", -1);
 	g_free(tmp);
@@ -621,7 +621,7 @@ prefs_themes_refresh(void)
 	/* status icon themes */
 	gtk_list_store_clear(prefs_status_icon_themes);
 	gtk_list_store_append(prefs_status_icon_themes, &iter);
-	tmp = get_theme_markup(_("(Default)"), FALSE, _("Penguin Pimps"),
+	tmp = get_theme_markup(_("Default"), FALSE, _("Penguin Pimps"),
 		_("The default Pidgin status icon theme"));
 	gtk_list_store_set(prefs_status_icon_themes, &iter, 0, pixbuf, 1, tmp, 2, "", -1);
 	g_free(tmp);
@@ -1169,7 +1169,6 @@ theme_page(void)
 	GtkWidget *themesel_hbox;
 	GtkSizeGroup *label_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	GtkSizeGroup *combo_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	GtkSizeGroup *smiley_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
