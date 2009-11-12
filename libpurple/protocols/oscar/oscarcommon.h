@@ -94,4 +94,4 @@ PurpleXfer *oscar_new_xfer(PurpleConnection *gc, const char *who);
 gboolean oscar_offline_message(const PurpleBuddy *buddy);
 void oscar_format_username(PurpleConnection *gc, const char *nick);
 GList *oscar_actions(PurplePlugin *plugin, gpointer context);
-void oscar_init(PurplePluginProtocolInfo *prpl_info);
+void oscar_init(PurplePlugin *plugin);

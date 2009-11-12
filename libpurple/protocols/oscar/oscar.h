@@ -623,7 +623,7 @@ struct aim_redirect_data
 	} chat;
 };
 
-int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, guint16 port, guint8 *cookie, guint16 cookielen);
+int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, guint16 port, guint8 *cookie, guint16 cookielen, const char *tls_certname);
 
 /* family_auth.c */
 
@@ -661,7 +661,7 @@ void flap_connection_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc, Purple
 void flap_connection_send(FlapConnection *conn, FlapFrame *frame);
 void flap_connection_send_version(OscarData *od, FlapConnection *conn);
 void flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy);
-void flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci);
+void flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci, gboolean allow_multiple_login);
 void flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data);
 void flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data, gboolean high_priority);
 void flap_connection_send_keepalive(OscarData *od, FlapConnection *conn);
@@ -1240,7 +1240,7 @@ int aim_bart_request(OscarData *od, const char *bn, guint8 iconcsumtype, const g
 #define AIM_SSI_ACK_INVALIDNAME		0x000d
 #define AIM_SSI_ACK_AUTHREQUIRED	0x000e
 
-/* These flags are set in the 0x00c9 TLV of SSI teyp 0x0005 */
+/* These flags are set in the 0x00c9 TLV of SSI type 0x0005 */
 #define AIM_SSI_PRESENCE_FLAG_SHOWIDLE        0x00000400
 #define AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES 0x00020000
 

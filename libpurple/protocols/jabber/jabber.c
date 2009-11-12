@@ -52,6 +52,7 @@
 #include "data.h"
 #include "disco.h"
 #include "google.h"
+#include "ibb.h"
 #include "iq.h"
 #include "jutil.h"
 #include "message.h"
@@ -68,10 +69,9 @@
 #include "jingle/jingle.h"
 #include "jingle/rtp.h"
 
-PurplePlugin *jabber_plugin = NULL;
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
-GSList *jabber_cmds = NULL;
+static GSList *jabber_cmds = NULL;
 
 static void jabber_unregister_account_cb(JabberStream *js);
 static void try_srv_connect(JabberStream *js);
@@ -200,7 +200,7 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 			jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 			return;
 		}
-	} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE) && !jabber_stream_is_ssl(js)) {
+	} else if(purple_account_get_bool(js->gc->account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS) && !jabber_stream_is_ssl(js)) {
 		purple_connection_error_reason(js->gc,
 			 PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
@@ -255,7 +255,7 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 {
 	const char *xmlns;
 
-	purple_signal_emit(jabber_plugin, "jabber-receiving-xmlnode", js->gc, packet);
+	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-receiving-xmlnode", js->gc, packet);
 
 	/* if the signal leaves us with a null packet, we're done */
 	if(NULL == *packet)
@@ -294,8 +294,7 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 		else
 			purple_debug_warning("jabber", "Ignoring spurious <proceed/>\n");
 	} else {
-		purple_debug(PURPLE_DEBUG_WARNING, "jabber", "Unknown packet: %s\n",
-				(*packet)->name);
+		purple_debug_warning("jabber", "Unknown packet: %s\n", (*packet)->name);
 	}
 }
 
@@ -377,9 +376,9 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 
 void jabber_send_raw(JabberStream *js, const char *data, int len)
 {
-
 	/* because printing a tab to debug every minute gets old */
 	if(strcmp(data, "\t")) {
+		const char *username;
 		char *text = NULL, *last_part = NULL, *tag_start = NULL;
 
 		/* Because debug logs with plaintext passwords make me sad */
@@ -404,8 +403,13 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 			*data_start = '\0';
 		}
 
-		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s%s%s\n",
-				jabber_stream_is_ssl(js) ? " (ssl)" : "", text ? text : data,
+		username = purple_connection_get_display_name(js->gc);
+		if (!username)
+			username = purple_account_get_username(purple_connection_get_account(js->gc));
+
+		purple_debug_misc("jabber", "Sending%s (%s): %s%s%s\n",
+				jabber_stream_is_ssl(js) ? " (ssl)" : "", username,
+				text ? text : data,
 				last_part ? "password removed" : "",
 				last_part ? last_part : "");
 
@@ -415,7 +419,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	/* If we've got a security layer, we need to encode the data,
 	 * splitting it on the maximum buffer length negotiated */
 
-	purple_signal_emit(jabber_plugin, "jabber-sending-text", js->gc, &data);
+	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-sending-text", js->gc, &data);
 	if (data == NULL)
 		return;
 
@@ -485,7 +489,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 
 void jabber_send(JabberStream *js, xmlnode *packet)
 {
-	purple_signal_emit(jabber_plugin, "jabber-sending-xmlnode", js->gc, &packet);
+	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-sending-xmlnode", js->gc, &packet);
 }
 
 static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
@@ -526,7 +530,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
 		gc->last_received = time(NULL);
 		buf[len] = '\0';
-		purple_debug(PURPLE_DEBUG_INFO, "jabber", "Recv (ssl)(%d): %s\n", len, buf);
+		purple_debug_info("jabber", "Recv (ssl)(%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
 		if(js->reinit)
 			jabber_stream_init(js);
@@ -566,7 +570,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 			unsigned int olen;
 			sasl_decode(js->sasl, buf, len, &out, &olen);
 			if (olen>0) {
-				purple_debug(PURPLE_DEBUG_INFO, "jabber", "RecvSASL (%u): %s\n", olen, out);
+				purple_debug_info("jabber", "RecvSASL (%u): %s\n", olen, out);
 				jabber_parser_process(js,out,olen);
 				if(js->reinit)
 					jabber_stream_init(js);
@@ -575,7 +579,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 		}
 #endif
 		buf[len] = '\0';
-		purple_debug(PURPLE_DEBUG_INFO, "jabber", "Recv (%d): %s\n", len, buf);
+		purple_debug_info("jabber", "Recv (%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
 		if(js->reinit)
 			jabber_stream_init(js);
@@ -3218,6 +3222,50 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 #endif
 }
 
+gboolean jabber_can_receive_file(PurpleConnection *gc, const char *who)
+{
+	JabberStream *js = gc->proto_data;
+
+	if (js) {
+		JabberBuddy *jb = jabber_buddy_find(js, who, FALSE);
+		GList *iter;
+		gboolean has_resources_without_caps = FALSE;
+
+		/* find out if there is any resources without caps */
+		for (iter = jb->resources; iter ; iter = g_list_next(iter)) {
+			JabberBuddyResource *jbr = (JabberBuddyResource *) iter->data;
+
+			if (!jabber_resource_know_capabilities(jbr)) {
+				has_resources_without_caps = TRUE;
+			}
+		}
+
+		if (has_resources_without_caps) {
+			/* there is at least one resource which we don't have caps for, 
+			 let's assume they can receive files... */
+			return TRUE;
+		} else {
+			/* we have caps for all the resources, see if at least one has
+			 right caps */
+			for (iter = jb->resources; iter ; iter = g_list_next(iter)) {
+				JabberBuddyResource *jbr = (JabberBuddyResource *) iter->data;
+
+				if (jabber_resource_has_capability(jbr,
+						"http://jabber.org/protocol/si/profile/file-transfer")
+			    	&& (jabber_resource_has_capability(jbr,
+			    			"http://jabber.org/protocol/bytestreams")
+			        	|| jabber_resource_has_capability(jbr,
+				           		XEP_0047_NAMESPACE))) {
+					return TRUE;
+				}
+			}
+			return FALSE;
+		}
+	} else {
+		return TRUE;
+	}
+}
+
 void jabber_register_commands(void)
 {
 	PurpleCmdId id;
@@ -3398,8 +3446,6 @@ jabber_init_plugin(PurplePlugin *plugin)
 								unspecified */
 	const gchar *ui_name = NULL;
 
-	jabber_plugin = plugin;
-
 	ui_type = ui_info ? g_hash_table_lookup(ui_info, "client_type") : NULL;
 	if (ui_type) {
 		if (strcmp(ui_type, "pc") == 0 ||
@@ -3489,9 +3535,9 @@ jabber_init_plugin(PurplePlugin *plugin)
 }
 
 void
-jabber_uninit_plugin(void)
+jabber_uninit_plugin(PurplePlugin *plugin)
 {
-	purple_plugin_ipc_unregister_all(jabber_plugin);
+	purple_plugin_ipc_unregister_all(plugin);
 
 	jabber_features_destroy();
 	jabber_identities_destroy();

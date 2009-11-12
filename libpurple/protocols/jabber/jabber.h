@@ -76,10 +76,10 @@ typedef struct _JabberStream JabberStream;
 
 #define CAPS0115_NODE "http://pidgin.im/"
 
+#define JABBER_DEFAULT_REQUIRE_TLS    TRUE
+
 /* Index into attention_types list */
 #define JABBER_BUZZ 0
-
-extern PurplePlugin *jabber_plugin;
 
 typedef enum {
 	JABBER_STREAM_OFFLINE,
@@ -193,25 +193,16 @@ struct _JabberStream
 
 	char *serverFQDN;
 
-	/* OK, this stays at the end of the struct, so plugins can depend
-	 * on the rest of the stuff being in the right place
-	 */
 #ifdef HAVE_CYRUS_SASL
 	sasl_conn_t *sasl;
 	sasl_callback_t *sasl_cb;
-#else /* keep the struct the same size */
-	void *sasl;
-	void *sasl_cb;
-#endif
-	/* did someone say something about the end of the struct? */
-#ifdef HAVE_CYRUS_SASL
 	const char *current_mech;
 	int auth_fail_count;
-#endif
 
 	int sasl_state;
 	int sasl_maxbuf;
 	GString *sasl_mechs;
+#endif
 
 	gboolean unregistration;
 	PurpleAccountUnregistrationCb unregistration_cb;
@@ -377,11 +368,12 @@ gboolean jabber_video_enabled(JabberStream *js, const char *unused);
 gboolean jabber_initiate_media(PurpleAccount *account, const char *who,
 		PurpleMediaSessionType type);
 PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who);
+gboolean jabber_can_receive_file(PurpleConnection *gc, const gchar *who);
 
 void jabber_register_commands(void);
 void jabber_unregister_commands(void);
 
 void jabber_init_plugin(PurplePlugin *plugin);
-void jabber_uninit_plugin(void);
+void jabber_uninit_plugin(PurplePlugin *plugin);
 
 #endif /* PURPLE_JABBER_H_ */
