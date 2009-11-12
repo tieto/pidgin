@@ -2574,7 +2574,7 @@ static GtkWidget *
 sound_page(void)
 {
 	GtkWidget *ret;
-	GtkWidget *vbox, *sw, *button;
+	GtkWidget *vbox, *vbox2, *sw, *button;
 	GtkSizeGroup *sg;
 	GtkTreeIter iter;
 	GtkWidget *event_view;
@@ -2598,9 +2598,10 @@ sound_page(void)
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
+	vbox2 = pidgin_make_frame(ret, _("Sound Options"));
+
 #ifndef _WIN32
-	vbox = pidgin_make_frame (ret, _("Sound Method"));
-	dd = pidgin_prefs_dropdown(vbox, _("_Method:"), PURPLE_PREF_STRING,
+	dd = pidgin_prefs_dropdown(vbox2, _("_Method:"), PURPLE_PREF_STRING,
 			PIDGIN_PREFS_ROOT "/sound/method",
 			_("Console beep"), "beep",
 #ifdef USE_GSTREAMER
@@ -2613,6 +2614,9 @@ sound_page(void)
 			NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
+
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox2), vbox, FALSE, FALSE, 0);
 
 	entry = gtk_entry_new();
 	gtk_editable_set_editable(GTK_EDITABLE(entry), TRUE);
@@ -2629,8 +2633,6 @@ sound_page(void)
 			!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"),
 					"custom"));
 #endif /* _WIN32 */
-
-	vbox = pidgin_make_frame (ret, _("Sound Options"));
 
 	button = pidgin_prefs_checkbox(_("M_ute sounds"), PIDGIN_PREFS_ROOT "/sound/mute", vbox);
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/mute", mute_changed_cb, button);
