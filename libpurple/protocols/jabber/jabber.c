@@ -52,6 +52,7 @@
 #include "data.h"
 #include "disco.h"
 #include "google.h"
+#include "ibb.h"
 #include "iq.h"
 #include "jutil.h"
 #include "message.h"
@@ -3222,6 +3223,50 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 #else
 	return PURPLE_MEDIA_CAPS_NONE;
 #endif
+}
+
+gboolean jabber_can_receive_file(PurpleConnection *gc, const char *who)
+{
+	JabberStream *js = gc->proto_data;
+
+	if (js) {
+		JabberBuddy *jb = jabber_buddy_find(js, who, FALSE);
+		GList *iter;
+		gboolean has_resources_without_caps = FALSE;
+
+		/* find out if there is any resources without caps */
+		for (iter = jb->resources; iter ; iter = g_list_next(iter)) {
+			JabberBuddyResource *jbr = (JabberBuddyResource *) iter->data;
+
+			if (!jabber_resource_know_capabilities(jbr)) {
+				has_resources_without_caps = TRUE;
+			}
+		}
+
+		if (has_resources_without_caps) {
+			/* there is at least one resource which we don't have caps for, 
+			 let's assume they can receive files... */
+			return TRUE;
+		} else {
+			/* we have caps for all the resources, see if at least one has
+			 right caps */
+			for (iter = jb->resources; iter ; iter = g_list_next(iter)) {
+				JabberBuddyResource *jbr = (JabberBuddyResource *) iter->data;
+
+				if (jabber_resource_has_capability(jbr,
+						"http://jabber.org/protocol/si/profile/file-transfer")
+			    	&& (jabber_resource_has_capability(jbr,
+			    			"http://jabber.org/protocol/bytestreams")
+			        	|| jabber_resource_has_capability(jbr,
+				           		XEP_0047_NAMESPACE))) {
+					return TRUE;
+				}
+			}
+			return FALSE;
+		}
+	} else {
+		return TRUE;
+	}
 }
 
 void jabber_register_commands(void)

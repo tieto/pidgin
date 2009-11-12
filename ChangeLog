@@ -42,6 +42,8 @@ version 2.6.4 (??/??/20??):
 	  account's domain, and use that for voice and video if found and the user 
 	  didn't set one manually in prefs.
 	* Fix a crash when adding a buddy without an '@'.
+	* Don't show the option to send a file to a buddy if we know for certain
+	  they don't support any file transfer method supported by libpurple.
 
 	Yahoo:
 	* Fix sending /buzz.

@@ -2341,6 +2341,12 @@ void jabber_user_search_begin(PurplePluginAction *action)
 }
 
 gboolean
+jabber_resource_know_capabilities(const JabberBuddyResource *jbr)
+{
+	return jbr->caps.info != NULL;
+}
+
+gboolean
 jabber_resource_has_capability(const JabberBuddyResource *jbr, const gchar *cap)
 {
 	const GList *node = NULL;
