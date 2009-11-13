@@ -70,10 +70,61 @@ GType purple_media_codec_get_type(void);
 PurpleMediaCodec *purple_media_codec_new(int id, const char *encoding_name,
 		PurpleMediaSessionType media_type, guint clock_rate);
 
+/**
+ * Gets the codec id.
+ *
+ * @param The codec to get the id from.
+ *
+ * @return The codec id.
+ *
+ * @since 2.6.0
+ */
 guint purple_media_codec_get_id(PurpleMediaCodec *codec);
+
+/**
+ * Gets the encoding name.
+ *
+ * @param The codec to get the encoding name from.
+ *
+ * @return The encoding name.
+ *
+ * @since 2.6.0
+ */
 gchar *purple_media_codec_get_encoding_name(PurpleMediaCodec *codec);
+
+/**
+ * Gets the clock rate.
+ *
+ * @param The codec to get the clock rate from.
+ *
+ * @return The clock rate.
+ *
+ * @since 2.6.0
+ */
 guint purple_media_codec_get_clock_rate(PurpleMediaCodec *codec);
+
+/**
+ * Gets the number of channels.
+ *
+ * @param The codec to get the number of channels from.
+ *
+ * @return The number of channels.
+ *
+ * @since 2.6.0
+ */
 guint purple_media_codec_get_channels(PurpleMediaCodec *codec);
+
+/**
+ * Gets a list of the optional parameters.
+ *
+ * The list consists of PurpleKeyValuePair's. 
+ *
+ * @param The codec to get the optional parameters from.
+ *
+ * @return The list of optional parameters.
+ *
+ * @since 2.6.0
+ */
 GList *purple_media_codec_get_optional_parameters(PurpleMediaCodec *codec);
 
 /**
