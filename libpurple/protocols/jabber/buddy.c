@@ -936,7 +936,7 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 			                                             js);
 		else
 			jabber_set_info(js->gc, purple_account_get_user_info(account));
-	} else {
+	} else if (vcard_hash) {
 		/* A photo is in the vCard. Advertise its hash */
 		js->avatar_hash = vcard_hash;
 		vcard_hash = NULL;
