@@ -104,19 +104,146 @@ GList *purple_media_candidate_list_copy(GList *candidates);
  */
 void purple_media_candidate_list_free(GList *candidates);
 
+/**
+ * Gets the foundation (identifier) from the candidate.
+ *
+ * @param candidate The candidate to get the foundation from.
+ *
+ * @return The foundation.
+ *
+ * @since 2.6.0
+ */
 gchar *purple_media_candidate_get_foundation(PurpleMediaCandidate *candidate);
+
+/**
+ * Gets the component id (rtp or rtcp)
+ *
+ * @param candidate The candidate to get the compnent id from.
+ *
+ * @return The component id.
+ *
+ * @since 2.6.0
+ */
 guint purple_media_candidate_get_component_id(PurpleMediaCandidate *candidate);
+
+/**
+ * Gets the IP address.
+ *
+ * @param candidate The candidate to get the IP address from.
+ *
+ * @return The IP address.
+ *
+ * @since 2.6.0
+ */
 gchar *purple_media_candidate_get_ip(PurpleMediaCandidate *candidate);
+
+/**
+ * Gets the port.
+ *
+ * @param candidate The candidate to get the port from.
+ *
+ * @return The port.
+ *
+ * @since 2.6.0
+ */
 guint16 purple_media_candidate_get_port(PurpleMediaCandidate *candidate);
+
+/**
+ * Gets the base (internal) IP address.
+ *
+ * This can be NULL.
+ *
+ * @param candidate The candidate to get the base IP address from.
+ *
+ * @return The base IP address.
+ *
+ * @since 2.6.0
+ */
 gchar *purple_media_candidate_get_base_ip(PurpleMediaCandidate *candidate);
+
+/**
+ * Gets the base (internal) port.
+ *
+ * Invalid if the base IP is NULL.
+ *
+ * @param candidate The candidate to get the base port.
+ *
+ * @return The base port.
+ *
+ * @since 2.6.0
+ */
 guint16 purple_media_candidate_get_base_port(PurpleMediaCandidate *candidate);
+
+/**
+ * Gets the protocol (TCP or UDP).
+ *
+ * @param candidate The candidate to get the protocol from.
+ *
+ * @return The protocol.
+ *
+ * @since 2.6.0
+ */
 PurpleMediaNetworkProtocol purple_media_candidate_get_protocol(
 		PurpleMediaCandidate *candidate);
+
+/**
+ * Gets the priority.
+ *
+ * @param candidate The candidate to get the priority from.
+ *
+ * @return The priority.
+ *
+ * @since 2.6.0
+ */
 guint32 purple_media_candidate_get_priority(PurpleMediaCandidate *candidate);
+
+/**
+ * Gets the candidate type.
+ *
+ * @param candidate The candidate to get the candidate type from.
+ *
+ * @return The candidate type.
+ *
+ * @since 2.6.0
+ */
 PurpleMediaCandidateType purple_media_candidate_get_candidate_type(
 		PurpleMediaCandidate *candidate);
+
+/**
+ * Gets the username.
+ *
+ * This can be NULL. It depends on the transmission type.
+ *
+ * @param The candidate to get the username from.
+ *
+ * @return The username.
+ *
+ * @since 2.6.0
+ */
 gchar *purple_media_candidate_get_username(PurpleMediaCandidate *candidate);
+
+/**
+ * Gets the password.
+ *
+ * This can be NULL. It depends on the transmission type.
+ *
+ * @param The candidate to get the password from.
+ *
+ * @return The password.
+ *
+ * @since 2.6.0
+ */
 gchar *purple_media_candidate_get_password(PurpleMediaCandidate *candidate);
+
+/**
+ * Gets the TTL.
+ *
+ * @param The candidate to get the TTL from.
+ *
+ * @return The TTL.
+ *
+ * @since 2.6.0
+ */
 guint purple_media_candidate_get_ttl(PurpleMediaCandidate *candidate);
 
 G_END_DECLS
