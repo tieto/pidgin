@@ -44,6 +44,7 @@ version 2.6.4 (??/??/20??):
 	* Fix a crash when adding a buddy without an '@'.
 	* Don't show the option to send a file to a buddy if we know for certain
 	  they don't support any file transfer method supported by libpurple.
+	* Keep the avatar on the server if one is not set locally.
 
 	Yahoo:
 	* Fix sending /buzz.
