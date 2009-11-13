@@ -936,9 +936,13 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 			                                             js);
 		else
 			jabber_set_info(js->gc, purple_account_get_user_info(account));
-	} else if (js->initial_avatar_hash) {
-		/* Our photo is in the vcard, so advertise vcard-temp updates */
-		js->avatar_hash = g_strdup(js->initial_avatar_hash);
+	} else {
+		/* A photo is in the vCard. Advertise its hash */
+		js->avatar_hash = vcard_hash;
+		vcard_hash = NULL;
+
+		/* Send presence to update vcard-temp:x:update */
+		jabber_presence_send(js, FALSE);
 	}
 
 	g_free(vcard_hash);
