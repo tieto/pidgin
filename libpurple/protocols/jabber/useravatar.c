@@ -229,7 +229,7 @@ do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
 	 * push our avatar. If the server avatar doesn't match the local one, push
 	 * our avatar.
 	 */
-	if (((!items || !metadata) && js->initial_avatar_hash) ||
+	if ((!items || !metadata) ||
 			!purple_strequal(server_hash, js->initial_avatar_hash)) {
 		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
 		jabber_avatar_set(js, img);
@@ -240,10 +240,14 @@ do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
 void jabber_avatar_fetch_mine(JabberStream *js)
 {
 	char *jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-	jabber_pep_request_item(js, jid, NS_AVATAR_0_12_METADATA, NULL,
-	                        do_got_own_avatar_0_12_cb);
-	jabber_pep_request_item(js, jid, NS_AVATAR_1_1_METADATA, NULL,
-	                        do_got_own_avatar_cb);
+
+	if (js->initial_avatar_hash) {
+		jabber_pep_request_item(js, jid, NS_AVATAR_0_12_METADATA, NULL,
+		                        do_got_own_avatar_0_12_cb);
+		jabber_pep_request_item(js, jid, NS_AVATAR_1_1_METADATA, NULL,
+		                        do_got_own_avatar_cb);
+	}
+
 	g_free(jid);
 }
 

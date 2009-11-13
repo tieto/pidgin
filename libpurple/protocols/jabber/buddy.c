@@ -924,7 +924,7 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 	}
 
 	/* Republish our vcard if the photo is different than the server's */
-	if (!purple_strequal(vcard_hash, js->initial_avatar_hash)) {
+	if (js->initial_avatar_hash && !purple_strequal(vcard_hash, js->initial_avatar_hash)) {
 		/*
 		 * Google Talk has developed the behavior that it will not accept
 		 * a vcard set in the first 10 seconds (or so) of the connection;
