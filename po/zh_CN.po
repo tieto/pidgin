@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"POT-Creation-Date: 2009-11-14 20:36-0500\n"
 "PO-Revision-Date: 2009-08-23 22:12+0800\n"
 "Last-Translator: Aron Xu <aronmalache@163.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -57,6 +57,7 @@ msgstr ""
 "%s 在将您的设置从 %s 迁移到 %s 时遇到错误。您可能必须手动完成迁移操作。请将错"
 "误报告给 http://developer.pidgin.im"
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "出错"
 
@@ -539,11 +540,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "重新启用账户"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr "帐号已禁用，您已退出此会话。当帐号重新连接时您将自动重新加入此会话。"
-
 msgid "No such command."
 msgstr "无此命令。"
 
@@ -584,6 +580,11 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "您已经离开了此聊天。"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr "帐号已禁用，您已退出此会话。当帐号重新连接时您将自动重新加入此会话。"
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr "聊天记录已启动。此会话中的后续消息将会被自动记录。"
 
@@ -615,6 +616,10 @@ msgstr "启用聊天记录"
 msgid "Enable Sounds"
 msgstr "启用声音"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "无法连接"
+
 msgid "<AUTO-REPLY> "
 msgstr "<自动回复> "
 
@@ -623,7 +628,8 @@ msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
 msgstr[0] "%d 个用户的列表：\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "支持的调试选项有：version"
 
 msgid "No such command (in this context)."
@@ -745,6 +751,7 @@ msgid "Remaining"
 msgstr "剩余"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "状态"
 
@@ -911,6 +918,9 @@ msgstr "邀请"
 msgid "(none)"
 msgstr "(无)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 msgid "URI"
 msgstr "URI"
 
@@ -1310,6 +1320,8 @@ msgstr "删除状态"
 msgid "Saved Statuses"
 msgstr "已存状态"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "标题"
 
@@ -1477,6 +1489,13 @@ msgstr ""
 "\n"
 "正在获取 TinyURL..."
 
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
 #, fuzzy
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "只为等于或超过此长度的 URL 创建 TinyURL"
@@ -1601,7 +1620,9 @@ msgstr "好友列表"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
 
-msgid "The root certificate this one claims to be issued by is unknown."
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
 msgstr ""
 
 #, fuzzy
@@ -1705,6 +1726,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "证书信息"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "注册错误"
 
@@ -1719,6 +1741,7 @@ msgstr "+++ %s 已登录"
 msgid "+++ %s signed off"
 msgstr "+++ %s 已退出"
 
+#. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "未知错误"
@@ -1823,10 +1846,15 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "解析器进程在应答请求前退出"
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "解析 %s 时出错: %d"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "线程创建失败: %s"
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "未知原因"
 
@@ -2118,13 +2146,13 @@ msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "发生了未知登录错误: %s。"
 
 #, fuzzy
-msgid "Conference error."
+msgid "Conference error"
 msgstr "会议已关闭"
 
-msgid "Error with your microphone."
+msgid "Error with your microphone"
 msgstr ""
 
-msgid "Error with your webcam."
+msgid "Error with your webcam"
 msgstr ""
 
 #, fuzzy, c-format
@@ -2830,6 +2858,7 @@ msgstr "名"
 msgid "Last name"
 msgstr "姓"
 
+#. email
 msgid "Email"
 msgstr "电子邮件"
 
@@ -2969,12 +2998,14 @@ msgstr "城市"
 msgid "Year of birth"
 msgstr "出生年"
 
+#. gender
 msgid "Gender"
 msgstr "性别"
 
 msgid "Male or female"
 msgstr "男或女"
 
+#. 0
 msgid "Male"
 msgstr "男"
 
@@ -3043,6 +3074,7 @@ msgstr "离开"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "名"
 
@@ -3722,6 +3754,7 @@ msgstr "组织单元"
 msgid "Role"
 msgstr "职务"
 
+#. birthday
 msgid "Birthday"
 msgstr "生日"
 
@@ -3796,6 +3829,9 @@ msgstr "(重新)请求认证"
 msgid "Unsubscribe"
 msgstr "退订"
 
+msgid "Initiate _Chat"
+msgstr "发起聊天(_C)"
+
 msgid "Log In"
 msgstr "登录"
 
@@ -3814,6 +3850,7 @@ msgstr "请勿打扰"
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "姓"
 
@@ -4044,6 +4081,7 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "未认证"
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "心情"
 
@@ -4068,6 +4106,7 @@ msgstr "无(待推迟)"
 msgid "None"
 msgstr "无"
 
+#. subscription type
 msgid "Subscription"
 msgstr "订阅"
 
@@ -4365,7 +4404,8 @@ msgstr "配置：配置聊天室。"
 msgid "configure:  Configure a chat room."
 msgstr "配置：配置聊天室。"
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "part [聊天室]: 离聊天天室。"
 
 msgid "register:  Register with a chat room."
@@ -5008,16 +5048,13 @@ msgstr "打开 Hotmail 收件箱"
 msgid "Send to Mobile"
 msgstr "发送到移动设备"
 
-msgid "Initiate _Chat"
-msgstr "发起聊天(_C)"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr "MSN 需要 SSL 支持。请安装本软件支持的 SSL 库。"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 "无法添加好友 %s，原因是用户名无效。用户名必须是有效的电子邮件地址，或者以字母"
 "开头，且只能包含字母、数字和空格，或者只包含数字。"
@@ -5226,6 +5263,9 @@ msgstr "Windows Live ID 验证：无效应答"
 msgid "%s just sent you a Nudge!"
 msgstr "%s 刚刚给您发送了闪屏振动！"
 
+msgid "The following users are missing from your addressbook"
+msgstr "以下用户不在您的通讯录中"
+
 #, c-format
 msgid "Unknown error (%d): %s"
 msgstr "未知错误 (%d): %s"
@@ -5238,8 +5278,9 @@ msgstr "无法添加用户"
 msgid "Unknown error (%d)"
 msgstr "未知错误 (%d)"
 
-msgid "The following users are missing from your addressbook"
-msgstr "以下用户不在您的通讯录中"
+#, fuzzy
+msgid "Unable to remove user"
+msgstr "无法添加用户"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "消息未发出，因为消息太长。"
@@ -5453,6 +5494,382 @@ msgstr "%s 已将您添加为好友。"
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s 已经将您从好友名单中删除。"
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "您现在的心情"
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "用户心情"
+
+#, fuzzy
+msgid "Change your Mood"
+msgstr "更改密码"
+
+#, fuzzy
+msgid "How do you feel right now?"
+msgstr "我目前不在"
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "写错误"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "个人资料"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "姓"
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "移动电话号码"
+
+#, fuzzy
+msgid "Update your Profile"
+msgstr "用户资料"
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+msgid "There is no splash-screen currently available"
+msgstr ""
+
+#, fuzzy
+msgid "About"
+msgstr "关于我"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "更改密码..."
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "更改密码..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "查看聊天记录..."
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "关于我"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "消息太长。"
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "登录"
+
+#, fuzzy
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr "无法连接到服务器。请输入您想要连接的服务器的地址。"
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "正在连接"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "昵称"
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "注册新的 XMPP 账户"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "请填入下列字段"
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "服务器不可用；请稍候再试"
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "安全已启用"
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "输入代码"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "国家"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "首选语言"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "请求认证"
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "服务器信息"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "已发消息"
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "教名"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "设置移动电话号码..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "服务器"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "通过 TCP 连接"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "XMPP 消息错误"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "无法解析服务器"
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "成功加入群"
+
+#, fuzzy
+msgid "Message Error"
+msgstr "XMPP 消息错误"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "连接错误"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "XMPP 消息错误"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "流错误"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "图标错误"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "解除注册错误"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "连接错误"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "订阅"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "连接错误"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "文件传送"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "无法创建千里眼"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "解除注册错误"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "写错误"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr "生气"
+
+msgid "Excited"
+msgstr "激动"
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "组"
+
+msgid "Happy"
+msgstr "高兴"
+
+msgid "In Love"
+msgstr "热恋"
+
+msgid "Invincible"
+msgstr "无敌"
+
+msgid "Sad"
+msgstr "郁闷"
+
+#, fuzzy
+msgid "Hot"
+msgstr "主机(_H)："
+
+#, fuzzy
+msgid "Sick"
+msgstr "昵称"
+
+msgid "Sleepy"
+msgstr "打盹"
+
+#, fuzzy
+msgid "Pending"
+msgstr "正在发送"
+
+#, fuzzy
+msgid "Invited"
+msgstr "邀请"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "拒绝"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "删除"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "工作信息"
 
 #, c-format
 msgid "No such user: %s"
@@ -6039,7 +6456,6 @@ msgstr "服务器端口"
 msgid "Received unexpected response from %s"
 msgstr "从服务器收到了意外的 HTTP 响应。"
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6197,6 +6613,48 @@ msgstr "队列满"
 
 msgid "Not while on AOL"
 msgstr "不位于 AOL 上"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "无法发送文件"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "无法发送目录。"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "无法发送消息。"
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "离线消息"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6358,15 +6816,27 @@ msgstr "您的账户被停用。"
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL 即时通讯服务暂时不可用。"
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"您连接和断开得太频繁。请等十分钟，然后再试一次。如果您继续重试，您等的时间可"
+"能会更长。"
+
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "您使用的客户版本太老。请在 %s 升级"
 
 #. IP address connecting too frequently
+#, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "您连接和断开得太频繁。请等十分钟，然后再试一次。如果您继续重试，您等的时间可"
 "能会更长。"
@@ -6496,21 +6966,28 @@ msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "拒绝(_D)"
 
-#. Data is assumed to be the destination bn
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "无法发送消息(%s)。"
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "无法发送消息: %s"
 
-msgid "Unknown reason."
-msgstr "未知原因。"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "无法给 %s 发送消息："
 
-#, c-format
-msgid "Unable to send message to %s:"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
 msgstr "无法给 %s 发送消息："
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "用户信息不可用：%s"
+
+msgid "Unknown reason."
+msgstr "未知原因。"
 
 msgid "Online Since"
 msgstr "上线时间"
@@ -6521,9 +6998,6 @@ msgstr "注册时间"
 msgid "Capabilities"
 msgstr "容量"
 
-msgid "Profile"
-msgstr "个人资料"
-
 msgid "Your AIM connection may be lost."
 msgstr "您的 AIM 连接可能已丢失。"
 
@@ -6533,9 +7007,10 @@ msgid ""
 "characters.]"
 msgstr "[无法显示来自此用户的信息，原因是其中包含了无效的字符。"
 
+#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "您试图的最后一次操作未执行，原因是您已经得到了速度极限。请等 10 秒，然后再试"
 "一次。"
@@ -7673,6 +8148,10 @@ msgstr "会议已关闭"
 msgid "Unable to send message: "
 msgstr "无法发送消息: "
 
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "无法给 %s 发送消息："
+
 msgid "Place Closed"
 msgstr "已取消"
 
@@ -8055,35 +8534,14 @@ msgstr "多动"
 msgid "Robot"
 msgstr "机器人"
 
-msgid "Happy"
-msgstr "高兴"
-
-msgid "Sad"
-msgstr "郁闷"
-
-msgid "Angry"
-msgstr "生气"
-
 msgid "Jealous"
 msgstr "警惕"
 
 msgid "Ashamed"
 msgstr "害羞"
 
-msgid "Invincible"
-msgstr "无敌"
-
-msgid "In Love"
-msgstr "热恋"
-
-msgid "Sleepy"
-msgstr "打盹"
-
 msgid "Bored"
 msgstr "枯燥"
-
-msgid "Excited"
-msgstr "激动"
 
 msgid "Anxious"
 msgstr "饥渴"
@@ -9285,6 +9743,15 @@ msgstr "在聊天中加入用户..."
 msgid "Open Inbox"
 msgstr "打开收件箱"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -9791,14 +10258,15 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr "读取您的 %s 时遇到了错误。该文件未载入，旧文件被移动到 %s~ 中了。"
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "互联网通讯程序"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin 互联网通讯程序"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "通过多种协议发送即时消息"
 
 msgid "Orientation"
 msgstr "方向"
@@ -11762,11 +12230,6 @@ msgid ""
 "%swiki/GetABacktrace\n"
 msgstr ""
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "Pidgin"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "退出，因为另一个 libpurple 客户端已运行。\n"
@@ -11956,49 +12419,55 @@ msgstr "再现(_R)"
 msgid "Pounce Target"
 msgstr "监视目标"
 
-#, c-format
 msgid "Started typing"
 msgstr "开始打字"
 
-#, c-format
 msgid "Paused while typing"
 msgstr "暂停打字"
 
-#, c-format
 msgid "Signed on"
 msgstr "登录"
 
-#, c-format
 msgid "Returned from being idle"
 msgstr "发完呆了"
 
-#, c-format
 msgid "Returned from being away"
 msgstr "回来"
 
-#, c-format
 msgid "Stopped typing"
 msgstr "停止打字"
 
-#, c-format
 msgid "Signed off"
 msgstr "退出"
 
-#, c-format
 msgid "Became idle"
 msgstr "发起了呆"
 
-#, c-format
 msgid "Went away"
 msgstr "离开"
 
-#, c-format
 msgid "Sent a message"
 msgstr "发送消息"
 
-#, c-format
 msgid "Unknown.... Please report this!"
 msgstr "未知的千里眼。请报告此错误！"
+
+msgid "(Custom)"
+msgstr ""
+
+#, fuzzy
+msgid "(Default)"
+msgstr "(默认)"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "好友列表"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 msgid "Theme failed to unpack."
 msgstr "主题解包失败。"
@@ -12147,6 +12616,10 @@ msgstr "禁用(_D)"
 msgid "Use _automatically detected IP address: %s"
 msgstr "自动检测 IP 地址(_A)：%s"
 
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "STUN 服务器(_U)："
+
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">例：stunserver.org</span>"
 
@@ -12159,14 +12632,17 @@ msgstr "端口"
 msgid "_Enable automatic router port forwarding"
 msgstr "启用自动路由器端口转发(_E)"
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "手动指定要监听的端口范围(_M)"
 
-msgid "_Start port:"
-msgstr "起始端口(_S)："
+#, fuzzy
+msgid "_Start:"
+msgstr "状态(_S)："
 
-msgid "_End port:"
-msgstr "终止端口(_E)："
+#, fuzzy
+msgid "_End:"
+msgstr "展开(_E)"
 
 #. TURN server
 msgid "Relay Server (TURN)"
@@ -12175,6 +12651,14 @@ msgstr "中继服务器(转)"
 #, fuzzy
 msgid "_TURN server:"
 msgstr "STUN 服务器(_U)："
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "用户名："
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "密码："
 
 msgid "Proxy Server &amp; Browser"
 msgstr "代理服务器 &amp; 浏览器"
@@ -12199,15 +12683,25 @@ msgstr "配置浏览器(_B)"
 msgid "Proxy Server"
 msgstr "代理服务器"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+#, fuzzy
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr "通过 SOCKS4 代理使用远程 DNS"
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "代理类型(_T)："
+
 msgid "No proxy"
 msgstr "无代理"
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr "通过 SOCKS4 代理使用远程 DNS"
+#, fuzzy
+msgid "P_ort:"
+msgstr "端口(_P)："
 
-msgid "_User:"
-msgstr "用户(_U)："
+#, fuzzy
+msgid "User_name:"
+msgstr "用户名："
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -12692,6 +13186,11 @@ msgstr "保存文件"
 
 msgid "Select color"
 msgstr "选择颜色"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "Pidgin"
 
 msgid "_Alias"
 msgstr "别名(_A)"
@@ -13792,9 +14291,6 @@ msgstr ""
 "\n"
 "* 注意: 此插件需要 Win2000 或更高版本。"
 
-msgid "GTK+ Runtime Version"
-msgstr "GTK+ 运行时刻版本"
-
 #. Autostart
 msgid "Startup"
 msgstr "启动"
@@ -13802,6 +14298,9 @@ msgstr "启动"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "Windows 启动时运行 %s(_S)"
+
+msgid "Allow multiple instances"
+msgstr ""
 
 msgid "_Dockable Buddy List"
 msgstr "可停靠的好友列表(_D)"
@@ -13860,6 +14359,21 @@ msgstr "发送和接受原始 XMPP 节。"
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "此插件用于调试 XMPP 服务器或客户端。"
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "通过多种协议发送即时消息"
+
+#~ msgid "_Start port:"
+#~ msgstr "起始端口(_S)："
+
+#~ msgid "_End port:"
+#~ msgstr "终止端口(_E)："
+
+#~ msgid "_User:"
+#~ msgstr "用户(_U)："
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "GTK+ 运行时刻版本"
 
 #~ msgid "Calling ... "
 #~ msgstr "正在呼叫..."
@@ -14023,9 +14537,6 @@ msgstr "此插件用于调试 XMPP 服务器或客户端。"
 #~ msgid "Stream Initiation"
 #~ msgstr "方向"
 
-#~ msgid "User Mood"
-#~ msgstr "用户心情"
-
 #~ msgid "User Activity"
 #~ msgstr "用户活动"
 
@@ -14043,9 +14554,6 @@ msgstr "此插件用于调试 XMPP 服务器或客户端。"
 
 #~ msgid "Reachability Address"
 #~ msgstr "可用地址"
-
-#~ msgid "User Profile"
-#~ msgstr "用户资料"
 
 #~ msgid "Jingle"
 #~ msgstr "Jingle"
@@ -14163,9 +14671,6 @@ msgstr "此插件用于调试 XMPP 服务器或客户端。"
 
 #~ msgid "Could not write"
 #~ msgstr "无法写入"
-
-#~ msgid "Could not connect"
-#~ msgstr "无法连接"
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "无法创建监听套接字"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin-2.6.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"POT-Creation-Date: 2009-11-14 20:35-0500\n"
 "PO-Revision-Date: 2009-09-02 22:53+0300\n"
 "Last-Translator: Mișu Moldovan <dumol@gnome.ro>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
@@ -57,6 +57,7 @@ msgstr ""
 "investigați problema și să terminați manual migrarea. Raportați această "
 "eroare la http://developer.pidgin.im"
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Eroare"
 
@@ -548,13 +549,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "Reactivare cont"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-"Contul a fost deconectat și nu mai sunteți parte în acest chat. Veți intra "
-"din nou automat atunci când contactul se va conecta din nou."
-
 msgid "No such command."
 msgstr "Nu există o asemenea comandă."
 
@@ -597,6 +591,13 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "Ați ieșit din acest chat."
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+"Contul a fost deconectat și nu mai sunteți parte în acest chat. Veți intra "
+"din nou automat atunci când contactul se va conecta din nou."
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr ""
 "Înregistrarea a fost activată. Mesajele viitoare din această discuție vor fi "
@@ -632,6 +633,10 @@ msgstr "Activează înregistrarea"
 msgid "Enable Sounds"
 msgstr "Activează sunetul"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "Ați închis conexiunea."
+
 msgid "<AUTO-REPLY> "
 msgstr "<Răspuns-Automat> "
 
@@ -642,7 +647,8 @@ msgstr[0] "Lista utilizatorului:\n"
 msgstr[1] "Lista celor %d utilizatori:\n"
 msgstr[2] "Lista celor %d utilizatori:\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "Opțiunile de depanare suportate sunt:  version"
 
 msgid "No such command (in this context)."
@@ -773,6 +779,7 @@ msgid "Remaining"
 msgstr "Rămas"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "Status"
 
@@ -946,6 +953,9 @@ msgstr "Invită"
 msgid "(none)"
 msgstr "(nimic)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 msgid "URI"
 msgstr "URI"
 
@@ -1347,6 +1357,8 @@ msgstr "Ștergere status"
 msgid "Saved Statuses"
 msgstr "Statusuri salvate"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "Titlu"
 
@@ -1521,6 +1533,13 @@ msgstr ""
 "\n"
 "Se creează un TinyURL..."
 
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Creează TinyURL doar pentru URL-uri de această lungime sau mai mari"
 
@@ -1646,11 +1665,10 @@ msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
 "Certificatul este semnat în nume propriu și nu poate fi verificat automat."
 
-#, fuzzy
-msgid "The root certificate this one claims to be issued by is unknown."
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
 msgstr ""
-"Acest certificat pretinde că a fost creat cu un certificat root necunoscut "
-"pentru Pidgin."
 
 msgid "The certificate is not valid yet."
 msgstr "Certificatul nu este încă valid."
@@ -1760,6 +1778,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "Detalii certificat"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "Eroare la înregistrare"
 
@@ -1774,6 +1793,7 @@ msgstr "+++ %s s-a autentificat"
 msgid "+++ %s signed off"
 msgstr "+++ %s s-a deconectat"
 
+#. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "Eroare necunoscută"
@@ -1880,10 +1900,15 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "Rezoluția de nume s-a terminat fără a se răspunde cererii"
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "Eroare la rezolvarea %s: %d"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "Eroare la crearea firului de execuție: %s"
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Motiv necunoscut"
 
@@ -2205,13 +2230,16 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "A intervenit o eroare Farsight2 peste care nu se poate trece."
 
-msgid "Conference error."
+#, fuzzy
+msgid "Conference error"
 msgstr "Eroare de conferință."
 
-msgid "Error with your microphone."
+#, fuzzy
+msgid "Error with your microphone"
 msgstr "Eroare de microfon."
 
-msgid "Error with your webcam."
+#, fuzzy
+msgid "Error with your webcam"
 msgstr "Eroare de webcam"
 
 #, c-format
@@ -2951,6 +2979,7 @@ msgstr "Prenume"
 msgid "Last name"
 msgstr "Nume de familie"
 
+#. email
 msgid "Email"
 msgstr "Mail"
 
@@ -3087,12 +3116,14 @@ msgstr "Oraș"
 msgid "Year of birth"
 msgstr "An naștere"
 
+#. gender
 msgid "Gender"
 msgstr "Sex"
 
 msgid "Male or female"
 msgstr "Masculin sau feminin"
 
+#. 0
 msgid "Male"
 msgstr "Masculin"
 
@@ -3161,6 +3192,7 @@ msgstr "Absent"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "Prenume"
 
@@ -3879,6 +3911,7 @@ msgstr "Departament"
 msgid "Role"
 msgstr "Funcție"
 
+#. birthday
 msgid "Birthday"
 msgstr "Zi de naștere"
 
@@ -3956,6 +3989,9 @@ msgstr "Solicit (din nou) autorizare"
 msgid "Unsubscribe"
 msgstr "Desubscrie"
 
+msgid "Initiate _Chat"
+msgstr "Inițiază o _discuție"
+
 msgid "Log In"
 msgstr "Conectare"
 
@@ -3974,6 +4010,7 @@ msgstr "Nu deranjați"
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "Nume de familie"
 
@@ -4209,6 +4246,7 @@ msgstr "Serverul nu permite blocarea"
 msgid "Not Authorized"
 msgstr "Neautorizat"
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Dispoziție"
 
@@ -4233,6 +4271,7 @@ msgstr "Niciunul (în așteptare)"
 msgid "None"
 msgstr "Fără"
 
+#. subscription type
 msgid "Subscription"
 msgstr "Subscriere"
 
@@ -4534,7 +4573,8 @@ msgstr "config:  Configurați o cameră de chat."
 msgid "configure:  Configure a chat room."
 msgstr "configure:  Configurați o cameră de chat."
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "part [chat]:  Ieșiți dintr-un chat."
 
 msgid "register:  Register with a chat room."
@@ -5196,17 +5236,14 @@ msgstr "Deschidere mail Hotmail"
 msgid "Send to Mobile"
 msgstr "Trimite către mobil"
 
-msgid "Initiate _Chat"
-msgstr "Inițiază o _discuție"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Pentru MSN aveți nevoie de suport SSL. Instalați bibliotecile SSL necesare. "
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 "Nu se poate adăuga contactul %s deoarece numele de utilizator este nevalid. "
 "Un nume valid trebuie să fie o adresă de mail."
@@ -5418,6 +5455,9 @@ msgstr "Autentificare Windows Live ID: Răspuns nevalid"
 msgid "%s just sent you a Nudge!"
 msgstr "%s vă sâcâie cu un „nudge”!"
 
+msgid "The following users are missing from your addressbook"
+msgstr "Următorii utilizatori vă lipsesc din cartea de adrese"
+
 #, c-format
 msgid "Unknown error (%d): %s"
 msgstr "Eroare necunoscută (%d): %s"
@@ -5430,8 +5470,9 @@ msgstr "Nu se poate adăuga utilizatorul"
 msgid "Unknown error (%d)"
 msgstr "Eroare necunoscută (%d)"
 
-msgid "The following users are missing from your addressbook"
-msgstr "Următorii utilizatori vă lipsesc din cartea de adrese"
+#, fuzzy
+msgid "Unable to remove user"
+msgstr "Nu se poate adăuga utilizatorul"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mesajul mobil nu a fost trimis pentru era prea lung."
@@ -5675,6 +5716,384 @@ msgstr "%s v-a adăugat în lista sa de contacte."
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s v-a șters din lista sa de contacte."
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "Propria dispoziție"
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "Dispoziție"
+
+#, fuzzy
+msgid "Change your Mood"
+msgstr "Schimbare parolă"
+
+#, fuzzy
+msgid "How do you feel right now?"
+msgstr "Lipsesc momentan"
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "Eroare la scriere"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "Nume de familie"
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "Număr de telefon mobil"
+
+#, fuzzy
+msgid "Update your Profile"
+msgstr "Profil Yahoo!"
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+msgid "There is no splash-screen currently available"
+msgstr ""
+
+#, fuzzy
+msgid "About"
+msgstr "Despre mine"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "Schimbare parolă..."
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "Schimbare parolă..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "Arată înregistrările..."
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "Despre mine"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "Mesaj în absență prea mare."
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "Autentificare..."
+
+#, fuzzy
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr ""
+"Conectarea la server a eșuat. Introduceți adresa serverului la care doriți "
+"să vă conectați."
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "Autentificare"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "Pseudonim"
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "Înregistrare cont nou XMPP"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "Completați următoarele câmpuri:"
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "Serverul este indisponibil, încercați din nou mai tărziu"
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "Securitate activată"
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "Introduceți codul"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "Țară"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "Limbă preferată"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "Solicit autorizare"
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "Informații server"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "Mesaje trimise"
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "Inițială"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "Introducere număr telefon mobil..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "Server"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "Conectare folosind TCP"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "Eroare de mesaj XMPP"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "Nu se poate rezolva numele serverului"
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "Ați intrat cu succes în Qun"
+
+#, fuzzy
+msgid "Message Error"
+msgstr "Eroare de mesaj XMPP"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "Eroare la conectare"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "Eroare de mesaj XMPP"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "Eroare de flux"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "Eroare iconiță"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "Eroare la ștergerea înregistrării"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "Eroare la conectare"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "Subscriere"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "Eroare la conectare"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "Transfer de fișiere"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "Nu se poate crea întâmpinarea"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "Eroare la ștergerea înregistrării"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "Eroare la scriere"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr "Supărat"
+
+msgid "Excited"
+msgstr "Entuziast"
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "Grup"
+
+msgid "Happy"
+msgstr "Fericit"
+
+msgid "In Love"
+msgstr "Îndrăgostit"
+
+msgid "Invincible"
+msgstr "Invincibil"
+
+msgid "Sad"
+msgstr "Trist"
+
+#, fuzzy
+msgid "Hot"
+msgstr "Ser_ver:"
+
+#, fuzzy
+msgid "Sick"
+msgstr "Pseudonim"
+
+msgid "Sleepy"
+msgstr "Adormit"
+
+#, fuzzy
+msgid "Pending"
+msgstr "Se trimite"
+
+#, fuzzy
+msgid "Invited"
+msgstr "Invită"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "Respingere"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "Șterge"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "Informații serviciu"
 
 #, c-format
 msgid "No such user: %s"
@@ -6291,7 +6710,6 @@ msgstr "Port server"
 msgid "Received unexpected response from %s"
 msgstr "S-a primit un răspuns neașteptat de la %s"
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6452,6 +6870,48 @@ msgstr "Coadă plină"
 
 msgid "Not while on AOL"
 msgstr "Nu (cât timp e pe AOL)"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Nu s-a putut trimite fișierul"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Nu se poate trimite un director."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Nu se poate trimite mesajul."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Mesaje offline"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6621,15 +7081,27 @@ msgstr "Contul vă este momentan suspendat"
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Serviciul de mesagerie instant AOL este temporar indisponibil."
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"V-ați conectat și deconectat prea des. Așteptați zece minute și încercați "
+"din nou. Dacă continuați să încercați, va trebui să așteptați mai mult."
+
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Versiunea clientului folosit este prea veche. Actualizați-l la %s"
 
 #. IP address connecting too frequently
+#, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "V-ați conectat și deconectat prea des. Așteptați un minut și încercați din "
 "nou. Dacă continuați să încercați, va trebui să așteptați mai mult."
@@ -6788,21 +7260,28 @@ msgstr[0] "Ați pierdut %hu mesaj de la %s din motive necunoscute."
 msgstr[1] "Ați pierdut %hu mesaje de la %s din motive necunoscute."
 msgstr[2] "Ați pierdut %hu de mesaje de la %s din motive necunoscute."
 
-#. Data is assumed to be the destination bn
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Nu se poate trimite mesajul (%s)."
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Mesajul nu poate fi trimis: %s"
 
-msgid "Unknown reason."
-msgstr "Motiv necunoscut."
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Nu se poate trimite mesajul către %s:"
 
-#, c-format
-msgid "Unable to send message to %s:"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
 msgstr "Nu se poate trimite mesajul către %s:"
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "Detaliile utilizatorului nu sunt disponibile: %s"
+
+msgid "Unknown reason."
+msgstr "Motiv necunoscut."
 
 msgid "Online Since"
 msgstr "Conectat din"
@@ -6812,9 +7291,6 @@ msgstr "Membru din"
 
 msgid "Capabilities"
 msgstr "Facilități"
-
-msgid "Profile"
-msgstr "Profil"
 
 msgid "Your AIM connection may be lost."
 msgstr "S-ar putea să fi pierdut conexiunea AIM."
@@ -6827,9 +7303,10 @@ msgstr ""
 "[Nu se poate afișa mesajul acestui utilizator deoarece conține caractere "
 "nevalide]"
 
+#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "Ultima acțiune cerută nu a fost îndeplinită pentru că ați depășit limitarea "
 "fixată. Așteptați 10 secunde și încercați din nou."
@@ -8019,6 +8496,10 @@ msgstr "Conferință închisă"
 msgid "Unable to send message: "
 msgstr "Nu se poate trimite mesajul: "
 
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "Nu se poate trimite mesajul către %s:"
+
 msgid "Place Closed"
 msgstr "Loc închis"
 
@@ -8431,35 +8912,14 @@ msgstr "Hiperactiv"
 msgid "Robot"
 msgstr "Roboțel"
 
-msgid "Happy"
-msgstr "Fericit"
-
-msgid "Sad"
-msgstr "Trist"
-
-msgid "Angry"
-msgstr "Supărat"
-
 msgid "Jealous"
 msgstr "Gelos/Geloasă"
 
 msgid "Ashamed"
 msgstr "Rușinat"
 
-msgid "Invincible"
-msgstr "Invincibil"
-
-msgid "In Love"
-msgstr "Îndrăgostit"
-
-msgid "Sleepy"
-msgstr "Adormit"
-
 msgid "Bored"
 msgstr "Plictisit"
-
-msgid "Excited"
-msgstr "Entuziast"
 
 msgid "Anxious"
 msgstr "Stresat"
@@ -9709,6 +10169,15 @@ msgstr "Chat cu un utilizator..."
 msgid "Open Inbox"
 msgstr "Deschidere mail"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -10252,14 +10721,15 @@ msgstr ""
 "A apărut o eroare la citirea %s. Fișierul nu a fost încărcat și vechiul "
 "fișier a fost redenumit în „%s~”."
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "Mesagerie instant"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Mesagerul Pidgin"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "Trimiteți mesaje instant prin orice protocol IM"
 
 msgid "Orientation"
 msgstr "Orientare"
@@ -12297,11 +12767,6 @@ msgstr ""
 "generați un backtrace, citiți instrucțiunile de la:\n"
 "%swiki/GetABacktrace\n"
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "Pidgin"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Se iese pentru că un alt client libpurple este deja pornit.\n"
@@ -12499,49 +12964,55 @@ msgstr "Re_curentă"
 msgid "Pounce Target"
 msgstr "Țintă întâmpinare"
 
-#, c-format
 msgid "Started typing"
 msgstr "A început să tasteze"
 
-#, c-format
 msgid "Paused while typing"
 msgstr "S-a oprit momentan din tastare"
 
-#, c-format
 msgid "Signed on"
 msgstr "S-a autentificat"
 
-#, c-format
 msgid "Returned from being idle"
 msgstr "S-a întors din inactivitate"
 
-#, c-format
 msgid "Returned from being away"
 msgstr "S-a întors din absență"
 
-#, c-format
 msgid "Stopped typing"
 msgstr "S-a oprit din scris"
 
-#, c-format
 msgid "Signed off"
 msgstr "S-a deconectat"
 
-#, c-format
 msgid "Became idle"
 msgstr "A intrat în inactivitate"
 
-#, c-format
 msgid "Went away"
 msgstr "A devenit absent"
 
-#, c-format
 msgid "Sent a message"
 msgstr "A trimis un mesaj"
 
-#, c-format
 msgid "Unknown.... Please report this!"
 msgstr "Eveniment necunoscut... Vă rugăm să raportați acest lucru!"
+
+msgid "(Custom)"
+msgstr ""
+
+#, fuzzy
+msgid "(Default)"
+msgstr "(implicit)"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "Editor de teme pentru lista de contacte Pidgin"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 msgid "Theme failed to unpack."
 msgstr "Tema nu a putut fi despachetată."
@@ -12695,6 +13166,10 @@ msgstr "_Dezactivare"
 msgid "Use _automatically detected IP address: %s"
 msgstr "Utilizează adresa IP _autodetectată: %s"
 
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "_Server:"
+
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Exemplu: stunserver.org</span>"
 
@@ -12707,14 +13182,17 @@ msgstr "Porturi"
 msgid "_Enable automatic router port forwarding"
 msgstr "_Activează automat „port forwarding” în ruter"
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "P_orturi de utilizat"
 
-msgid "_Start port:"
-msgstr "_De la:"
+#, fuzzy
+msgid "_Start:"
+msgstr "St_atus:"
 
-msgid "_End port:"
-msgstr "_Până la:"
+#, fuzzy
+msgid "_End:"
+msgstr "Des_fă"
 
 #. TURN server
 msgid "Relay Server (TURN)"
@@ -12723,6 +13201,14 @@ msgstr "Server releu (TURN)"
 #, fuzzy
 msgid "_TURN server:"
 msgstr "_Server:"
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "Nume utilizator:"
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "Parolă:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Server proxy &amp; navigator"
@@ -12749,15 +13235,25 @@ msgstr "Opțiuni _navigator"
 msgid "Proxy Server"
 msgstr "Server proxy"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+#, fuzzy
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr "Cereri DNS prin proxy-urile SOCKS4"
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "_Tip proxy:"
+
 msgid "No proxy"
 msgstr "Fără proxy"
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr "Cereri DNS prin proxy-urile SOCKS4"
+#, fuzzy
+msgid "P_ort:"
+msgstr "P_ort:"
 
-msgid "_User:"
-msgstr "Utili_zator:"
+#, fuzzy
+msgid "User_name:"
+msgstr "Nume utilizator:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -13253,6 +13749,11 @@ msgstr "_Salvare fișier"
 
 msgid "Select color"
 msgstr "Selectare culoare"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "Pidgin"
 
 msgid "_Alias"
 msgstr "_Alias"
@@ -14377,9 +14878,6 @@ msgstr ""
 "\n"
 "Notă: Acest modul necesită Windows 2000 sau mai nou."
 
-msgid "GTK+ Runtime Version"
-msgstr "Versiune GTK+ utilizată"
-
 #. Autostart
 msgid "Startup"
 msgstr "Pornire"
@@ -14387,6 +14885,10 @@ msgstr "Pornire"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "Pornește %s odată cu _Windows"
+
+#, fuzzy
+msgid "Allow multiple instances"
+msgstr "permite instanțe multiple"
 
 msgid "_Dockable Buddy List"
 msgstr "Listă de contacte în _dock"
@@ -14448,6 +14950,27 @@ msgstr "Trimitere și primire blocuri XMPP brute"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Acest modul poate fi utilizat pentru depanarea serverelor și clienților XMPP."
+
+#, fuzzy
+#~ msgid "The root certificate this one claims to be issued by is unknown."
+#~ msgstr ""
+#~ "Acest certificat pretinde că a fost creat cu un certificat root "
+#~ "necunoscut pentru Pidgin."
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "Trimiteți mesaje instant prin orice protocol IM"
+
+#~ msgid "_Start port:"
+#~ msgstr "_De la:"
+
+#~ msgid "_End port:"
+#~ msgstr "_Până la:"
+
+#~ msgid "_User:"
+#~ msgstr "Utili_zator:"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "Versiune GTK+ utilizată"
 
 #~ msgid "Without this only the first account will be enabled)."
 #~ msgstr "Altfel doar primul cont va fi activat.)"
