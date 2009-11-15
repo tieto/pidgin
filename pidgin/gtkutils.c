@@ -105,7 +105,6 @@ static GtkIMHtmlFuncs gtkimhtml_cbs = {
 void
 pidgin_setup_imhtml(GtkWidget *imhtml)
 {
-	PangoFontDescription *desc = NULL;
 	g_return_if_fail(imhtml != NULL);
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
 
@@ -113,31 +112,6 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 
 	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
 
-	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
-		const char *font = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
-		desc = pango_font_description_from_string(font);
-	} else if (purple_running_gnome()) {
-		/* Use the GNOME "document" font, if applicable */
-		char *path;
-
-		if ((path = g_find_program_in_path("gconftool-2"))) {
-			char *font = NULL;
-			char *err = NULL;
-			g_free(path);
-			if (g_spawn_command_line_sync(
-					"gconftool-2 -g /desktop/gnome/interface/document_font_name",
-					&font, &err, NULL, NULL)) {
-				desc = pango_font_description_from_string(font);
-			}
-			g_free(err);
-			g_free(font);
-		}
-	}
-
-	if (desc) {
-		gtk_widget_modify_font(imhtml, desc);
-		pango_font_description_free(desc);
-	}
 }
 
 static

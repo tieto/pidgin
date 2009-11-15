@@ -1660,28 +1660,6 @@ conv_page(void)
 		PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines",
 		1, 8, NULL);
 
-#if GTK_CHECK_VERSION(2,4,0)
-	vbox = pidgin_make_frame(ret, _("Font"));
-	if (purple_running_gnome())
-		fontpref = pidgin_prefs_checkbox(_("Use document font from _theme"), PIDGIN_PREFS_ROOT "/conversations/use_theme_font", vbox);
-	else
-		fontpref = pidgin_prefs_checkbox(_("Use font from _theme"), PIDGIN_PREFS_ROOT "/conversations/use_theme_font", vbox);
-
-	font_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
-	if ((font_name == NULL) || (*font_name == '\0')) {
-		font_button = gtk_font_button_new();
-	} else {
-		font_button = gtk_font_button_new_with_font(font_name);
-	}
-
-	gtk_font_button_set_show_style(GTK_FONT_BUTTON(font_button), TRUE);
-	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Conversation _font:"), NULL, font_button, FALSE, NULL);
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font"))
-		gtk_widget_set_sensitive(hbox, FALSE);
-	g_signal_connect(G_OBJECT(fontpref), "clicked", G_CALLBACK(pidgin_toggle_sensitive), hbox);
-	g_signal_connect(G_OBJECT(font_button), "font-set", G_CALLBACK(pidgin_custom_font_set), NULL);
-#endif
-
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
 	gtk_box_set_child_packing(GTK_BOX(vbox->parent), vbox, TRUE, TRUE, 0, GTK_PACK_START);
 
@@ -3071,6 +3049,7 @@ pidgin_prefs_update_old(void)
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/use_custom_bgcolor");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/use_custom_fgcolor");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/use_custom_font");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/custom_font");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/use_custom_size");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/chat/old_tab_complete");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/chat/tab_completion");
