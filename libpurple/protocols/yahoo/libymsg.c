@@ -1116,12 +1116,17 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		m = m2;
 		purple_util_chrreplace(m, '\r', '\n');
 		if (!strcmp(m, "<ding>")) {
+			PurpleConversation *conv = NULL;
 			char *username;
 
 			username = g_markup_escape_text(im->fed_from, -1);
+			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY,
+				username, account);
 			purple_prpl_got_attention(gc, username, YAHOO_BUZZ);
-			purple_conversation_attention(c, username, 0, PURPLE_MESSAGE_RECV,
-				time(NULL));
+			if (conv) {
+				purple_conversation_attention(conv, username, 0, PURPLE_MESSAGE_RECV,
+					time(NULL));
+			}
 			g_free(username);
 			g_free(m);
 			g_free(im->fed_from);
