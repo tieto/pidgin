@@ -87,7 +87,7 @@ do_pep_iq_request_item_callback(JabberStream *js, const char *from,
 
 void jabber_pep_request_item(JabberStream *js, const char *to, const char *node, const char *id, JabberPEPHandler cb) {
 	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
-	xmlnode *pubsub, *items, *item;
+	xmlnode *pubsub, *items;
 
 	xmlnode_set_attrib(iq->node,"to",to);
 	pubsub = xmlnode_new_child(iq->node,"pubsub");
@@ -97,9 +97,12 @@ void jabber_pep_request_item(JabberStream *js, const char *to, const char *node,
 	items = xmlnode_new_child(pubsub, "items");
 	xmlnode_set_attrib(items,"node",node);
 
-	item = xmlnode_new_child(items, "item");
-	if(id)
+	if (id) {
+		xmlnode *item = xmlnode_new_child(items, "item");
 		xmlnode_set_attrib(item, "id", id);
+	} else
+		/* Most recent item */
+		xmlnode_set_attrib(items, "max_items", "1");
 
 	jabber_iq_set_callback(iq,do_pep_iq_request_item_callback,(gpointer)cb);
 
