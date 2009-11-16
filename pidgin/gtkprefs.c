@@ -1948,47 +1948,6 @@ network_page(void)
 	pidgin_prefs_labeled_password(hbox, _("Pass_word:"),
 		"/purple/network/turn_password", NULL);
 
-	if (purple_running_gnome()) {
-		vbox = pidgin_make_frame(ret, _("Proxy Server &amp; Browser"));
-		prefs_proxy_frame = gtk_vbox_new(FALSE, 0);
-
-		proxy_warning = hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-
-		label = gtk_label_new(NULL);
-		gtk_label_set_markup(GTK_LABEL(label),
-		                     _("<b>Proxy configuration program was not found.</b>"));
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-
-		browser_warning = hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-
-		label = gtk_label_new(NULL);
-		gtk_label_set_markup(GTK_LABEL(label),
-		                     _("<b>Browser configuration program was not found.</b>"));
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-
-		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-		label = gtk_label_new(_("Proxy & Browser preferences are configured\n"
-		                        "in GNOME Preferences"));
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-		gtk_widget_show(label);
-
-		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-		proxy_button = gtk_button_new_with_mnemonic(_("Configure _Proxy"));
-		g_signal_connect(G_OBJECT(proxy_button), "clicked",
-		                 G_CALLBACK(proxy_button_clicked_cb), NULL);
-		gtk_box_pack_start(GTK_BOX(hbox), proxy_button, FALSE, FALSE, 0);
-		gtk_widget_show(proxy_button);
-		browser_button = gtk_button_new_with_mnemonic(_("Configure _Browser"));
-		g_signal_connect(G_OBJECT(browser_button), "clicked",
-		                 G_CALLBACK(browser_button_clicked_cb), NULL);
-		gtk_box_pack_start(GTK_BOX(hbox), browser_button, FALSE, FALSE, 0);
-		gtk_widget_show(browser_button);
-	}
-		
 	gtk_widget_show_all(ret);
 	g_object_unref(sg);
 	/* Only hide table if not running gnome otherwise we hide the IP address table! */
@@ -2111,60 +2070,84 @@ browser_changed2_cb(const char *name, PurplePrefType type,
 static GtkWidget *
 browser_page(void)
 {
-	GtkWidget *ret;
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *entry;
+	GtkWidget *ret, *vbox, *hbox, *label, *entry;
+	GtkWidget *browser_warning, *browser_button;
 	GtkSizeGroup *sg;
 	GList *browsers = NULL;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = pidgin_make_frame (ret, _("Browser Selection"));
 
-	browsers = get_available_browsers();
-	if (browsers != NULL) {
-		label = pidgin_prefs_dropdown_from_list(vbox,_("_Browser:"), PURPLE_PREF_STRING,
-										 PIDGIN_PREFS_ROOT "/browsers/browser",
-										 browsers);
-		g_list_free(browsers);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_size_group_add_widget(sg, label);
+	if(purple_running_gnome()) {
+		browser_warning = hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-		hbox = gtk_hbox_new(FALSE, 0);
-		label = pidgin_prefs_dropdown(hbox, _("_Open link in:"), PURPLE_PREF_INT,
-			PIDGIN_PREFS_ROOT "/browsers/place",
-			_("Browser default"), PIDGIN_BROWSER_DEFAULT,
-			_("Existing window"), PIDGIN_BROWSER_CURRENT,
-			_("New window"), PIDGIN_BROWSER_NEW_WINDOW,
-			_("New tab"), PIDGIN_BROWSER_NEW_TAB,
-			NULL);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_size_group_add_widget(sg, label);
-		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+		label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(label),
+							 _("<b>Browser configuration program was not found.</b>"));
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-		if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+
+		label = gtk_label_new(_("Browser preferences are configured in GNOME preferences"));
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		gtk_widget_show(label);
+
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+		browser_button = gtk_button_new_with_mnemonic(_("Configure _Browser"));
+		g_signal_connect(G_OBJECT(browser_button), "clicked",
+						 G_CALLBACK(browser_button_clicked_cb), NULL);
+		gtk_box_pack_start(GTK_BOX(hbox), browser_button, FALSE, FALSE, 0);
+		gtk_widget_show(browser_button);
+	} else {
+		sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	
+		browsers = get_available_browsers();
+		if (browsers != NULL) {
+			label = pidgin_prefs_dropdown_from_list(vbox,_("_Browser:"), PURPLE_PREF_STRING,
+											 PIDGIN_PREFS_ROOT "/browsers/browser",
+											 browsers);
+			g_list_free(browsers);
+			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+			gtk_size_group_add_widget(sg, label);
+	
+			hbox = gtk_hbox_new(FALSE, 0);
+			label = pidgin_prefs_dropdown(hbox, _("_Open link in:"), PURPLE_PREF_INT,
+				PIDGIN_PREFS_ROOT "/browsers/place",
+				_("Browser default"), PIDGIN_BROWSER_DEFAULT,
+				_("Existing window"), PIDGIN_BROWSER_CURRENT,
+				_("New window"), PIDGIN_BROWSER_NEW_WINDOW,
+				_("New tab"), PIDGIN_BROWSER_NEW_TAB,
+				NULL);
+			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+			gtk_size_group_add_widget(sg, label);
+			gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	
+			if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
+				gtk_widget_set_sensitive(hbox, FALSE);
+			purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
+										browser_changed1_cb, hbox);
+		}
+
+		entry = gtk_entry_new();
+		gtk_entry_set_text(GTK_ENTRY(entry),
+						   purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command"));
+		g_signal_connect(G_OBJECT(entry), "focus-out-event",
+						 G_CALLBACK(manual_browser_set), NULL);
+		hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Manual:\n(%s for URL)"), sg, entry, TRUE, NULL);
+		if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
 			gtk_widget_set_sensitive(hbox, FALSE);
 		purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
-									browser_changed1_cb, hbox);
+				browser_changed2_cb, hbox);
+	
+		gtk_widget_show_all(ret);
+		g_object_unref(sg);
 	}
 
-	entry = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(entry),
-					   purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command"));
-	g_signal_connect(G_OBJECT(entry), "focus-out-event",
-					 G_CALLBACK(manual_browser_set), NULL);
-	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Manual:\n(%s for URL)"), sg, entry, TRUE, NULL);
-	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
-		gtk_widget_set_sensitive(hbox, FALSE);
-	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
-			browser_changed2_cb, hbox);
-
-	gtk_widget_show_all(ret);
-	g_object_unref(sg);
 	return ret;
 }
 #endif /*_WIN32*/
@@ -2174,117 +2157,143 @@ proxy_page(void)
 {
 	GtkWidget *ret = NULL, *vbox = NULL, *hbox = NULL;
 	GtkWidget *table = NULL, *entry = NULL, *label = NULL;
+	GtkWidget *proxy_warning = NULL, *proxy_button = NULL;
 	PurpleProxyInfo *proxy_info;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
-
 	vbox = pidgin_make_frame(ret, _("Proxy Server"));
 	prefs_proxy_frame = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	prefs_proxy_subframe = gtk_vbox_new(FALSE, 0);
 
-	/* This is a global option that affects SOCKS4 usage even with account-specific proxy settings */
-	pidgin_prefs_checkbox(_("Use remote _DNS with SOCKS4 proxies"),
-						  "/purple/proxy/socks4_remotedns", prefs_proxy_frame);
-	gtk_box_pack_start(GTK_BOX(vbox), prefs_proxy_frame, 0, 0, 0);
+	if(purple_running_gnome()) {
+		proxy_warning = hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-	pidgin_prefs_dropdown(prefs_proxy_frame, _("Proxy t_ype:"), PURPLE_PREF_STRING,
-				"/purple/proxy/type",
-				_("No proxy"), "none",
-				"SOCKS 4", "socks4",
-				"SOCKS 5", "socks5",
-				"HTTP", "http",
-				_("Use Environmental Settings"), "envvar",
-				NULL);
-	gtk_box_pack_start(GTK_BOX(prefs_proxy_frame), prefs_proxy_subframe, 0, 0, 0);
-	proxy_info = purple_global_proxy_get_info();
+		label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(label),
+							 _("<b>Proxy configuration program was not found.</b>"));
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-	gtk_widget_show_all(ret);
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-	purple_prefs_connect_callback(prefs, "/purple/proxy/type",
-				    proxy_changed_cb, prefs_proxy_subframe);
+		label = gtk_label_new(_("Proxy preferences are configured in GNOME preferences"));
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		gtk_widget_show(label);
 
-	table = gtk_table_new(4, 2, FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 10);
-	gtk_container_add(GTK_CONTAINER(prefs_proxy_subframe), table);
-
-
-	label = gtk_label_new_with_mnemonic(_("_Host:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
-
-	entry = gtk_entry_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
-	g_signal_connect(G_OBJECT(entry), "changed",
-			 G_CALLBACK(proxy_print_option), (void *)PROXYHOST);
-
-	if (proxy_info != NULL && purple_proxy_info_get_host(proxy_info))
-		gtk_entry_set_text(GTK_ENTRY(entry),
-				   purple_proxy_info_get_host(proxy_info));
-
-	hbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	pidgin_set_accessible_label (entry, label);
-
-	label = gtk_label_new_with_mnemonic(_("P_ort:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-	gtk_table_attach(GTK_TABLE(table), label, 2, 3, 0, 1, GTK_FILL, 0, 0, 0);
-
-	entry = gtk_spin_button_new_with_range(0, 65535, 1);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-	gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 0, 1, GTK_FILL, 0, 0, 0);
-	g_signal_connect(G_OBJECT(entry), "changed",
-			 G_CALLBACK(proxy_print_option), (void *)PROXYPORT);
-
-	if (proxy_info != NULL && purple_proxy_info_get_port(proxy_info) != 0) {
-		char buf[128];
-		g_snprintf(buf, sizeof(buf), "%d",
-			   purple_proxy_info_get_port(proxy_info));
-
-			gtk_entry_set_text(GTK_ENTRY(entry), buf);
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+		proxy_button = gtk_button_new_with_mnemonic(_("Configure _Proxy"));
+		g_signal_connect(G_OBJECT(proxy_button), "clicked",
+						 G_CALLBACK(proxy_button_clicked_cb), NULL);
+		gtk_box_pack_start(GTK_BOX(hbox), proxy_button, FALSE, FALSE, 0);
+		gtk_widget_show(proxy_button);
+	} else {
+		prefs_proxy_subframe = gtk_vbox_new(FALSE, 0);
+	
+		/* This is a global option that affects SOCKS4 usage even with account-specific proxy settings */
+		pidgin_prefs_checkbox(_("Use remote _DNS with SOCKS4 proxies"),
+							  "/purple/proxy/socks4_remotedns", prefs_proxy_frame);
+		gtk_box_pack_start(GTK_BOX(vbox), prefs_proxy_frame, 0, 0, 0);
+	
+		pidgin_prefs_dropdown(prefs_proxy_frame, _("Proxy t_ype:"), PURPLE_PREF_STRING,
+					"/purple/proxy/type",
+					_("No proxy"), "none",
+					"SOCKS 4", "socks4",
+					"SOCKS 5", "socks5",
+					"HTTP", "http",
+					_("Use Environmental Settings"), "envvar",
+					NULL);
+		gtk_box_pack_start(GTK_BOX(prefs_proxy_frame), prefs_proxy_subframe, 0, 0, 0);
+		proxy_info = purple_global_proxy_get_info();
+	
+		gtk_widget_show_all(ret);
+	
+		purple_prefs_connect_callback(prefs, "/purple/proxy/type",
+					    proxy_changed_cb, prefs_proxy_subframe);
+	
+		table = gtk_table_new(4, 2, FALSE);
+		gtk_container_set_border_width(GTK_CONTAINER(table), 0);
+		gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+		gtk_table_set_row_spacings(GTK_TABLE(table), 10);
+		gtk_container_add(GTK_CONTAINER(prefs_proxy_subframe), table);
+	
+	
+		label = gtk_label_new_with_mnemonic(_("_Host:"));
+		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
+	
+		entry = gtk_entry_new();
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+		gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
+		g_signal_connect(G_OBJECT(entry), "changed",
+				 G_CALLBACK(proxy_print_option), (void *)PROXYHOST);
+	
+		if (proxy_info != NULL && purple_proxy_info_get_host(proxy_info))
+			gtk_entry_set_text(GTK_ENTRY(entry),
+					   purple_proxy_info_get_host(proxy_info));
+	
+		hbox = gtk_hbox_new(TRUE, 5);
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+		pidgin_set_accessible_label (entry, label);
+	
+		label = gtk_label_new_with_mnemonic(_("P_ort:"));
+		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+		gtk_table_attach(GTK_TABLE(table), label, 2, 3, 0, 1, GTK_FILL, 0, 0, 0);
+	
+		entry = gtk_spin_button_new_with_range(0, 65535, 1);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+		gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 0, 1, GTK_FILL, 0, 0, 0);
+		g_signal_connect(G_OBJECT(entry), "changed",
+				 G_CALLBACK(proxy_print_option), (void *)PROXYPORT);
+	
+		if (proxy_info != NULL && purple_proxy_info_get_port(proxy_info) != 0) {
+			char buf[128];
+			g_snprintf(buf, sizeof(buf), "%d",
+				   purple_proxy_info_get_port(proxy_info));
+	
+				gtk_entry_set_text(GTK_ENTRY(entry), buf);
+		}
+		pidgin_set_accessible_label (entry, label);
+	
+		label = gtk_label_new_with_mnemonic(_("User_name:"));
+		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
+	
+		entry = gtk_entry_new();
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+		gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 1, 2, GTK_FILL, 0, 0, 0);
+		g_signal_connect(G_OBJECT(entry), "changed",
+				 G_CALLBACK(proxy_print_option), (void *)PROXYUSER);
+	
+		if (proxy_info != NULL && purple_proxy_info_get_username(proxy_info) != NULL)
+			gtk_entry_set_text(GTK_ENTRY(entry),
+						   purple_proxy_info_get_username(proxy_info));
+	
+		hbox = gtk_hbox_new(TRUE, 5);
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+		pidgin_set_accessible_label (entry, label);
+	
+		label = gtk_label_new_with_mnemonic(_("Pa_ssword:"));
+		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+		gtk_table_attach(GTK_TABLE(table), label, 2, 3, 1, 2, GTK_FILL, 0, 0, 0);
+	
+		entry = gtk_entry_new();
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+		gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 1, 2, GTK_FILL , 0, 0, 0);
+		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+	#if !GTK_CHECK_VERSION(2,16,0)
+		if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
+			gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
+	#endif /* Less than GTK+ 2.16 */
+		g_signal_connect(G_OBJECT(entry), "changed",
+				 G_CALLBACK(proxy_print_option), (void *)PROXYPASS);
+	
+		if (proxy_info != NULL && purple_proxy_info_get_password(proxy_info) != NULL)
+			gtk_entry_set_text(GTK_ENTRY(entry),
+					   purple_proxy_info_get_password(proxy_info));
+		pidgin_set_accessible_label (entry, label);
 	}
-	pidgin_set_accessible_label (entry, label);
-
-	label = gtk_label_new_with_mnemonic(_("User_name:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
-
-	entry = gtk_entry_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 1, 2, GTK_FILL, 0, 0, 0);
-	g_signal_connect(G_OBJECT(entry), "changed",
-			 G_CALLBACK(proxy_print_option), (void *)PROXYUSER);
-
-	if (proxy_info != NULL && purple_proxy_info_get_username(proxy_info) != NULL)
-		gtk_entry_set_text(GTK_ENTRY(entry),
-					   purple_proxy_info_get_username(proxy_info));
-
-	hbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	pidgin_set_accessible_label (entry, label);
-
-	label = gtk_label_new_with_mnemonic(_("Pa_ssword:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-	gtk_table_attach(GTK_TABLE(table), label, 2, 3, 1, 2, GTK_FILL, 0, 0, 0);
-
-	entry = gtk_entry_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-	gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 1, 2, GTK_FILL , 0, 0, 0);
-	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-#if !GTK_CHECK_VERSION(2,16,0)
-	if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
-		gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
-#endif /* Less than GTK+ 2.16 */
-	g_signal_connect(G_OBJECT(entry), "changed",
-			 G_CALLBACK(proxy_print_option), (void *)PROXYPASS);
-
-	if (proxy_info != NULL && purple_proxy_info_get_password(proxy_info) != NULL)
-		gtk_entry_set_text(GTK_ENTRY(entry),
-				   purple_proxy_info_get_password(proxy_info));
-	pidgin_set_accessible_label (entry, label);
 
 	return ret;
 }
