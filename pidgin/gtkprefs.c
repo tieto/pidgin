@@ -1150,33 +1150,30 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 static GtkWidget *
 theme_page(void)
 {
-	GtkWidget *add_button, *remove_button;
-	GtkWidget *hbox_buttons;
-	GtkWidget *alignment;
-	GtkWidget *ret;
-	GtkWidget *sw;
-	GtkWidget *view;
+	GtkWidget *add_button, *remove_button, *hbox_buttons, *themesel_hbox;
+	GtkWidget *vbox, *alignment, *ret, *sw, *view, *label;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
 	GtkTreeRowReference *rowref;
-	GtkWidget *label;
 	GtkTargetEntry te[3] = {
 		{"text/plain", 0, 0},
 		{"text/uri-list", 0, 1},
 		{"STRING", 0, 2}
 	};
-	GtkWidget *themesel_hbox;
 	GtkSizeGroup *label_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	GtkSizeGroup *combo_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
+	vbox = pidgin_make_frame(ret, _("Theme Selections"));
+
 	/* Buddy List Themes */
 	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	label = gtk_label_new(_("Buddy List Theme:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(label_sg, label);
 	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
 
@@ -1188,12 +1185,13 @@ theme_page(void)
 	gtk_size_group_add_widget(combo_sg, prefs_blist_themes_combo_box);
 	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_blist_themes_combo_box, FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(ret), themesel_hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
 
 	/* Status Icon Themes */
 	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	label = gtk_label_new(_("Status Icon Theme:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(label_sg, label);
 	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
 
@@ -1205,12 +1203,13 @@ theme_page(void)
 	gtk_size_group_add_widget(combo_sg, prefs_status_themes_combo_box);
 	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_status_themes_combo_box, FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(ret), themesel_hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
 
 	/* Sound Themes */
 	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	label = gtk_label_new(_("Sound Theme:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(label_sg, label);
 	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
 
@@ -1222,7 +1221,7 @@ theme_page(void)
 	gtk_size_group_add_widget(combo_sg, prefs_sound_themes_combo_box);
 	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_sound_themes_combo_box, FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(ret), themesel_hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
 
 	/* Smiley Themes */
 	label = gtk_label_new(_("Select a smiley theme that you would like to use "
