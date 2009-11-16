@@ -757,7 +757,6 @@ static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data
 
 	int result;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	dialog = gtk_file_chooser_dialog_new (_("Save File"),
 										  GTK_WINDOW(gtkwb->window),
 										  GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -776,21 +775,15 @@ static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data
 	else
 		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), filename_for_existing_document);
 	*/
-#else
-	dialog = gtk_file_selection_new(_("Save File"));
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog), "whiteboard.jpg");
-#endif
+
 	result = gtk_dialog_run(GTK_DIALOG(dialog));
 
 	if(result == GTK_RESPONSE_ACCEPT)
 	{
 		char *filename;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-#else
-		filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(dialog)));
-#endif
+
 		gtk_widget_destroy(dialog);
 
 		/* Makes an icon from the whiteboard's canvas 'image' */

@@ -815,6 +815,17 @@ gboolean purple_prpl_initiate_media(PurpleAccount *account,
 					const char *who,
 					PurpleMediaSessionType type);
 
+/**
+ * Signals that the prpl received capabilities for the given contact.
+ *
+ * This function is intended to be used only by prpls.
+ *
+ * @param account The account the user is on.
+ * @param who The name of the contact for which capabilities have been received.
+ * @since 2.7.0
+ */
+void purple_prpl_got_media_caps(PurpleAccount *account, const char *who);
+
 /*@}*/
 
 /**************************************************************************/

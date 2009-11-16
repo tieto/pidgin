@@ -479,34 +479,18 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 	GtkTextIter iter;
 	GtkTextMark *ins;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	if (response != GTK_RESPONSE_ACCEPT)
-#else /* FILECHOOSER */
-	if (response != GTK_RESPONSE_OK)
-#endif /* FILECHOOSER */
 	{
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-#else /* FILECHOOSER */
-	filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(widget)));
-#endif /* FILECHOOSER */
 
 	if (filename == NULL) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}
-
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	if (pidgin_check_if_dir(filename, GTK_FILE_SELECTION(widget))) {
-		g_free(filename);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
-		return;
-	}
-#endif /* FILECHOOSER */
 
 	/* The following triggers a callback that closes the widget */
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
@@ -550,7 +534,6 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 	GtkWidget *window;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->image))) {
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 		window = gtk_file_chooser_dialog_new(_("Insert Image"),
 						NULL,
 						GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -560,12 +543,6 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 		gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_ACCEPT);
 		g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(window)),
 				"response", G_CALLBACK(do_insert_image_cb), toolbar);
-#else /* FILECHOOSER */
-		window = gtk_file_selection_new(_("Insert Image"));
-		gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_OK);
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)),
-				"response", G_CALLBACK(do_insert_image_cb), toolbar);
-#endif /* FILECHOOSER */
 
 		gtk_widget_show(window);
 		toolbar->image_dialog = window;
@@ -1508,9 +1485,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 			G_CALLBACK(purple_prefs_trigger_callback), PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
 			NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
-#endif
 
 	gtk_widget_add_events(event, GDK_BUTTON_PRESS_MASK);
 	gtk_box_pack_start(GTK_BOX(hbox), event, TRUE, TRUE, 0);

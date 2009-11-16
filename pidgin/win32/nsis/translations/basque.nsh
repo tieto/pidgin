@@ -9,7 +9,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Instalatzailea martxan dago."
 !define PIDGIN_IS_RUNNING			"Pidgin istantzia bat dago martxan. Pidgin itxi eta berriro saiatu."
-!define GTK_INSTALLER_NEEDED			"GTK+ exekuzio-ingurunea falta da, edo eguneratu egin beharko litzateke.$\rGTK+ exekuzio-ingurunearen ${GTK_MIN_VERSION} bertsioa edo berriagoa instalatu"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Jarraitu >"
@@ -29,8 +28,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Pidgin-entzako lasterbidea Abio-Menuan"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"GTK+ exekuzio-ingurunearen bertsio zahar bat aurkitu da. Eguneratu egin nahi al duzu?$\rOharra: Bestela, posible da $(^Name) ez ibiltzea."
-!define GTK_WINDOWS_INCOMPATIBLE		"GTK+ 2.8.0 eta berriagoekin bateraezinak dira Windows 95/98/Me.  Ez da GTK+ ${GTK_INSTALL_VERSION} instalatuko.$\rJadanik ez badaukazu GTK+ ${GTK_MIN_VERSION} edo berriagorik instalatuta, bertan behera utziko da instalazioa."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Pidgin Webgunera etorri"
@@ -39,8 +36,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Ezin izan da jadanik instalatuta zegoen Pidgin bertsioa kendu. Aurreko bertsioa kendu gabe instalatuko da bertsio berria."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Errorea GTK+ exekuzio-ingurunea instalatzean."
-!define GTK_BAD_INSTALL_PATH			"The path you entered can not be accessed or created."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"URI Kudeatzaileak"

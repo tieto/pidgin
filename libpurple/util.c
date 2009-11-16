@@ -220,50 +220,12 @@ static const char xdigits[] =
 gchar *
 purple_base64_encode(const guchar *data, gsize len)
 {
-#if GLIB_CHECK_VERSION(2,12,0)
 	return g_base64_encode(data, len);
-#else
-	char *out, *rv;
-
-	g_return_val_if_fail(data != NULL, NULL);
-	g_return_val_if_fail(len > 0,  NULL);
-
-	rv = out = g_malloc(((len/3)+1)*4 + 1);
-
-	for (; len >= 3; len -= 3)
-	{
-		*out++ = alphabet[data[0] >> 2];
-		*out++ = alphabet[((data[0] << 4) & 0x30) | (data[1] >> 4)];
-		*out++ = alphabet[((data[1] << 2) & 0x3c) | (data[2] >> 6)];
-		*out++ = alphabet[data[2] & 0x3f];
-		data += 3;
-	}
-
-	if (len > 0)
-	{
-		unsigned char fragment;
-
-		*out++ = alphabet[data[0] >> 2];
-		fragment = (data[0] << 4) & 0x30;
-
-		if (len > 1)
-			fragment |= data[1] >> 4;
-
-		*out++ = alphabet[fragment];
-		*out++ = (len < 2) ? '=' : alphabet[(data[1] << 2) & 0x3c];
-		*out++ = '=';
-	}
-
-	*out = '\0';
-
-	return rv;
-#endif /* GLIB < 2.12.0 */
 }
 
 guchar *
 purple_base64_decode(const char *str, gsize *ret_len)
 {
-#if GLIB_CHECK_VERSION(2,12,0)
 	/*
 	 * We want to allow ret_len to be NULL for backward compatibility,
 	 * but g_base64_decode() requires a valid length variable.  So if
@@ -271,69 +233,6 @@ purple_base64_decode(const char *str, gsize *ret_len)
 	 */
 	gsize unused;
 	return g_base64_decode(str, ret_len != NULL ? ret_len : &unused);
-#else
-	guchar *out = NULL;
-	char tmp = 0;
-	const char *c;
-	gint32 tmp2 = 0;
-	int len = 0, n = 0;
-
-	g_return_val_if_fail(str != NULL, NULL);
-
-	c = str;
-
-	while (*c) {
-		if (*c >= 'A' && *c <= 'Z') {
-			tmp = *c - 'A';
-		} else if (*c >= 'a' && *c <= 'z') {
-			tmp = 26 + (*c - 'a');
-		} else if (*c >= '0' && *c <= 57) {
-			tmp = 52 + (*c - '0');
-		} else if (*c == '+') {
-			tmp = 62;
-		} else if (*c == '/') {
-			tmp = 63;
-		} else if (*c == '\r' || *c == '\n') {
-			c++;
-			continue;
-		} else if (*c == '=') {
-			if (n == 3) {
-				out = g_realloc(out, len + 2);
-				out[len] = (guchar)(tmp2 >> 10) & 0xff;
-				len++;
-				out[len] = (guchar)(tmp2 >> 2) & 0xff;
-				len++;
-			} else if (n == 2) {
-				out = g_realloc(out, len + 1);
-				out[len] = (guchar)(tmp2 >> 4) & 0xff;
-				len++;
-			}
-			break;
-		}
-		tmp2 = ((tmp2 << 6) | (tmp & 0xff));
-		n++;
-		if (n == 4) {
-			out = g_realloc(out, len + 3);
-			out[len] = (guchar)((tmp2 >> 16) & 0xff);
-			len++;
-			out[len] = (guchar)((tmp2 >> 8) & 0xff);
-			len++;
-			out[len] = (guchar)(tmp2 & 0xff);
-			len++;
-			tmp2 = 0;
-			n = 0;
-		}
-		c++;
-	}
-
-	out = g_realloc(out, len + 1);
-	out[len] = 0;
-
-	if (ret_len != NULL)
-		*ret_len = len;
-
-	return out;
-#endif /* GLIB < 2.12.0 */
 }
 
 /**************************************************************************
@@ -2656,56 +2555,7 @@ void purple_util_set_user_dir(const char *dir)
 
 int purple_build_dir (const char *path, int mode)
 {
-#if GLIB_CHECK_VERSION(2,8,0)
 	return g_mkdir_with_parents(path, mode);
-#else
-	char *dir, **components, delim[] = { G_DIR_SEPARATOR, '\0' };
-	int cur, len;
-
-	g_return_val_if_fail(path != NULL, -1);
-
-	dir = g_new0(char, strlen(path) + 1);
-	components = g_strsplit(path, delim, -1);
-	len = 0;
-	for (cur = 0; components[cur] != NULL; cur++) {
-		/* If you don't know what you're doing on both
-		 * win32 and *NIX, stay the hell away from this code */
-		if(cur > 1)
-			dir[len++] = G_DIR_SEPARATOR;
-		strcpy(dir + len, components[cur]);
-		len += strlen(components[cur]);
-		if(cur == 0)
-			dir[len++] = G_DIR_SEPARATOR;
-
-		if(g_file_test(dir, G_FILE_TEST_IS_DIR)) {
-			continue;
-#ifdef _WIN32
-		/* allow us to create subdirs on UNC paths
-		 * (\\machinename\path\to\blah)
-		 * g_file_test() doesn't work on "\\machinename" */
-		} else if (cur == 2 && dir[0] == '\\' && dir[1] == '\\'
-				&& components[cur + 1] != NULL) {
-			continue;
-#endif
-		} else if(g_file_test(dir, G_FILE_TEST_EXISTS)) {
-			purple_debug_warning("build_dir", "bad path: %s\n", path);
-			g_strfreev(components);
-			g_free(dir);
-			return -1;
-		}
-
-		if (g_mkdir(dir, mode) < 0) {
-			purple_debug_warning("build_dir", "mkdir: %s\n", g_strerror(errno));
-			g_strfreev(components);
-			g_free(dir);
-			return -1;
-		}
-	}
-
-	g_strfreev(components);
-	g_free(dir);
-	return 0;
-#endif
 }
 
 /*
@@ -3218,30 +3068,13 @@ purple_strdup_withhtml(const gchar *src)
 gboolean
 purple_str_has_prefix(const char *s, const char *p)
 {
-#if GLIB_CHECK_VERSION(2,2,0)
 	return g_str_has_prefix(s, p);
-#else
-	g_return_val_if_fail(s != NULL, FALSE);
-	g_return_val_if_fail(p != NULL, FALSE);
-
-	return (!strncmp(s, p, strlen(p)));
-#endif
 }
 
 gboolean
 purple_str_has_suffix(const char *s, const char *x)
 {
-#if GLIB_CHECK_VERSION(2,2,0)
 	return g_str_has_suffix(s, x);
-#else
-	int off;
-
-	g_return_val_if_fail(s != NULL, FALSE);
-	g_return_val_if_fail(x != NULL, FALSE);
-
-	off = strlen(s) - strlen(x);
-	return (off >= 0 && purple_strequal(s + off, x));
-#endif
 }
 
 char *
@@ -5138,18 +4971,25 @@ char * purple_util_format_song_info(const char *title, const char *artist, const
 const gchar *
 purple_get_host_name(void)
 {
-#if GLIB_CHECK_VERSION(2,8,0)
 	return g_get_host_name();
-#else
-	static char hostname[256];
-	int ret = gethostname(hostname, sizeof(hostname));
-	hostname[sizeof(hostname) - 1] = '\0';
+}
 
-	if (ret == -1 || hostname[0] == '\0') {
-		purple_debug_info("purple_get_host_name: ", "could not find host name");
-		return "localhost";
-	} else {
-		return hostname;
-	}
-#endif
+gchar *
+purple_uuid_random(void)
+{
+	guint32 tmp, a, b;
+
+	tmp = g_random_int();
+	a = 0x4000 | (tmp & 0xFFF); /* 0x4000 to 0x4FFF */
+	tmp >>= 12;
+	b = ((1 << 3) << 12) | (tmp & 0x3FFF); /* 0x8000 to 0xBFFF */
+
+	tmp = g_random_int();
+
+	return g_strdup_printf("%08x-%04x-%04x-%04x-%04x%08x",
+			g_random_int(),
+			tmp & 0xFFFF,
+			a,
+			b,
+			(tmp >> 16) & 0xFFFF, g_random_int());
 }

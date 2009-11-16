@@ -244,15 +244,6 @@ struct _MsnNexusUpdateCallback {
 	gpointer data;
 };
 
-#if !GLIB_CHECK_VERSION(2, 12, 0)
-static gboolean
-nexus_remove_all_cb(gpointer key, gpointer val, gpointer data)
-{
-	return TRUE;
-}
-#endif
-
-
 static gboolean
 nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 {
@@ -281,12 +272,7 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 	if (token_str == NULL)
 		return FALSE;
 
-#if GLIB_CHECK_VERSION(2, 12, 0)
 	g_hash_table_remove_all(nexus->tokens[id].token);
-#else
-	g_hash_table_foreach_remove(nexus->tokens[id].token,
-		nexus_remove_all_cb, NULL);
-#endif
 
 	elems = g_strsplit(token_str, "&", 0);
 
