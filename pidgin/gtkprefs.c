@@ -1887,6 +1887,7 @@ browser_page(void)
 			gtk_box_pack_start(GTK_BOX(hbox), browser_button, FALSE, FALSE, 0);
 		}
 
+		g_free(path);
 		gtk_widget_show_all(ret);
 	} else {
 		sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -1960,7 +1961,7 @@ proxy_page(void)
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-		if(path == NULL) {
+		if (path == NULL) {
 			label = gtk_label_new(NULL);
 			gtk_label_set_markup(GTK_LABEL(label),
 								 _("<b>Proxy configuration program was not found.</b>"));
@@ -1972,6 +1973,7 @@ proxy_page(void)
 			gtk_box_pack_start(GTK_BOX(hbox), proxy_button, FALSE, FALSE, 0);
 		}
 
+		g_free(path);
 		gtk_widget_show_all(ret);
 	} else {
 		prefs_proxy_subframe = gtk_vbox_new(FALSE, 0);
