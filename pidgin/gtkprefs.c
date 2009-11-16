@@ -1823,12 +1823,8 @@ network_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox, *hbox, *entry;
-	GtkWidget *table = NULL;
 	GtkWidget *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
-	GtkWidget *proxy_warning = NULL, *browser_warning = NULL;
-	GtkWidget *proxy_button = NULL, *browser_button = NULL;
 	GtkSizeGroup *sg;
-	PurpleProxyInfo *proxy_info = NULL;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -1934,32 +1930,6 @@ network_page(void)
 
 	gtk_widget_show_all(ret);
 	g_object_unref(sg);
-	/* Only hide table if not running gnome otherwise we hide the IP address table! */
-	if (!purple_running_gnome() && (proxy_info == NULL ||
-	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_NONE ||
-	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_ENVVAR)) {
-		gtk_widget_hide(table);
-	} else if (purple_running_gnome()) {
-		gchar *path;
-		path = g_find_program_in_path("gnome-network-preferences");
-		if (path != NULL) {
-			gtk_widget_set_sensitive(proxy_button, TRUE);
-			gtk_widget_hide(proxy_warning);
-			g_free(path);
-		} else {
-			gtk_widget_set_sensitive(proxy_button, FALSE);
-			gtk_widget_show(proxy_warning);
-		}
-		path = g_find_program_in_path("gnome-default-applications-properties");
-		if (path != NULL) {
-			gtk_widget_set_sensitive(browser_button, TRUE);
-			gtk_widget_hide(browser_warning);
-			g_free(path);
-		} else {
-			gtk_widget_set_sensitive(browser_button, FALSE);
-			gtk_widget_show(browser_warning);
-		}
-	}
 
 	return ret;
 }
@@ -2175,7 +2145,8 @@ proxy_page(void)
 	} else {
 		prefs_proxy_subframe = gtk_vbox_new(FALSE, 0);
 	
-		/* This is a global option that affects SOCKS4 usage even with account-specific proxy settings */
+		/* This is a global option that affects SOCKS4 usage even with
+		 * account-specific proxy settings */
 		pidgin_prefs_checkbox(_("Use remote _DNS with SOCKS4 proxies"),
 							  "/purple/proxy/socks4_remotedns", prefs_proxy_frame);
 		gtk_box_pack_start(GTK_BOX(vbox), prefs_proxy_frame, 0, 0, 0);
@@ -2797,7 +2768,6 @@ away_page(void)
 	/* TODO: Show something useful if we don't have any saved statuses. */
 	menu = pidgin_status_menu(purple_savedstatus_get_idleaway(), G_CALLBACK(set_idle_away));
 	gtk_size_group_add_widget(sg, menu);
-	gtk_misc_set_alignment(GTK_MISC(menu), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), menu, FALSE, FALSE, 0);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
@@ -2830,7 +2800,6 @@ away_page(void)
 	/* TODO: Show something useful if we don't have any saved statuses. */
 	menu = pidgin_status_menu(purple_savedstatus_get_startup(), G_CALLBACK(set_startupstatus));
 	gtk_size_group_add_widget(sg, menu);
-	gtk_misc_set_alignment(GTK_MISC(menu), 0, 0.5);
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(pidgin_toggle_sensitive), menu);
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Status to a_pply at startup:"), sg, menu, TRUE, &label);
