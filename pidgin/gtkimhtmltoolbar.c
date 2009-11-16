@@ -924,12 +924,14 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 
 static void send_attention_cb(GtkWidget *attention, GtkIMHtmlToolbar *toolbar)
 {
-	PurpleConversation *conv = toolbar->active_conv;
+	PurpleConversation *conv =
+		g_object_get_data(G_OBJECT(toolbar), "active_conv");
 	const gchar *who = purple_conversation_get_name(conv);
 	PurpleConnection *gc = purple_conversation_get_gc(conv);
-	
-	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->attention), FALSE, 
-		toolbar);
+
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(attention), FALSE, toolbar);
+	/*toggle_button_set_active_block(GTK_TOGGLE_BUTTON(
+	    g_object_get_data(G_OBJECT(toolbar->imhtml), "attention")), FALSE, toolbar);*/
 	purple_conversation_attention(conv, who, 0, PURPLE_MESSAGE_SEND, time(NULL));
 	purple_prpl_send_attention(gc, who, 0);
 }
@@ -1254,8 +1256,8 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
-		{PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, send_attention_cb, &toolbar->attention,
-			_("Send Attention")},
+		/*{PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, send_attention_cb, 
+			g_object_get_data(G_OBJECT(toolbar->imhtml), "attention"), _("Send Attention")},*/
 		{NULL, NULL, NULL, NULL}
 	};
 	int iter;
@@ -1273,6 +1275,13 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 			button = gtk_vseparator_new();
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	}
+	/* create the attention button (this is a bit hacky to not break ABI) */
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION);
+	g_signal_connect(G_OBJECT(button), "clicked",
+		G_CALLBACK(send_attention_cb), toolbar);
+	g_object_set_data(G_OBJECT(toolbar), "attention", button);
+	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Send Attention"), NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(toolbar), hbox, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(toolbar), "wide-view", hbox);
@@ -1480,14 +1489,17 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), attention_button, FALSE, FALSE, 0);
 	g_signal_connect_swapped(G_OBJECT(attention_button), "clicked", 
-		G_CALLBACK(gtk_button_clicked), toolbar->attention);
+		G_CALLBACK(gtk_button_clicked),
+	    g_object_get_data(G_OBJECT(toolbar), "attention"));
 	gtk_widget_show_all(attention_button);
 	
-	g_signal_connect(G_OBJECT(toolbar->attention), "notify::sensitive",
+	g_signal_connect(G_OBJECT(g_object_get_data(G_OBJECT(toolbar), "attention")),
+	        "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), attention_button);
 
 	/* set attention button to be greyed out until we get a conversation */
-	gtk_widget_set_sensitive(toolbar->attention, FALSE);
+	gtk_widget_set_sensitive(g_object_get_data(G_OBJECT(toolbar), "attention"),
+		FALSE);
 	
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
@@ -1576,14 +1588,14 @@ void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
 {
 	PurpleConnection *gc = purple_conversation_get_gc(conv);
 	PurplePlugin *prpl = purple_connection_get_prpl(gc);
-	
-	purple_debug_info("gtkimhtmltoolbar", "switch active conversation to %p\n",
-		conv);
-	toolbar->active_conv = conv;
+	GtkWidget *attention =
+		g_object_get_data(G_OBJECT(toolbar), "attention");
+
+	g_object_set_data(G_OBJECT(toolbar), "active_conv", conv);
 	
 	/* gray out attention button on protocols that don't support it
 	 for the time being it is always disabled for chats */
-	gtk_widget_set_sensitive(toolbar->attention,
+	gtk_widget_set_sensitive(attention,
 		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM && 
 		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
 }
