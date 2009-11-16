@@ -2756,6 +2756,7 @@ away_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
+	GtkWidget *hbox;
 	GtkWidget *dd;
 	GtkWidget *label;
 	GtkWidget *button;
@@ -2786,16 +2787,21 @@ away_page(void)
 			_("_Minutes before becoming idle:"), "/purple/away/mins_before_away",
 			1, 24 * 60, sg);
 
-	button = pidgin_prefs_checkbox(_("Change status when _idle"),
-						   "/purple/away/away_when_idle", vbox);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	button = pidgin_prefs_checkbox(_("Change to this status when _idle:"),
+						   "/purple/away/away_when_idle", hbox);
+	gtk_size_group_add_widget(sg, button);
 
 	/* TODO: Show something useful if we don't have any saved statuses. */
 	menu = pidgin_status_menu(purple_savedstatus_get_idleaway(), G_CALLBACK(set_idle_away));
-	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Change _status to:"), sg, menu, TRUE, &label);
+	gtk_size_group_add_widget(sg, menu);
+	gtk_misc_set_alignment(GTK_MISC(menu), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), menu, FALSE, FALSE, 0);
+
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(pidgin_toggle_sensitive), menu);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(pidgin_toggle_sensitive), label);
 
 	if (!purple_prefs_get_bool("/purple/away/away_when_idle")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
@@ -2819,9 +2825,12 @@ away_page(void)
 
 	button = pidgin_prefs_checkbox(_("Use status from last _exit at startup"),
 		"/purple/savedstatus/startup_current_status", vbox);
+	gtk_size_group_add_widget(sg, button);
 
 	/* TODO: Show something useful if we don't have any saved statuses. */
 	menu = pidgin_status_menu(purple_savedstatus_get_startup(), G_CALLBACK(set_startupstatus));
+	gtk_size_group_add_widget(sg, menu);
+	gtk_misc_set_alignment(GTK_MISC(menu), 0, 0.5);
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(pidgin_toggle_sensitive), menu);
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Status to a_pply at startup:"), sg, menu, TRUE, &label);
