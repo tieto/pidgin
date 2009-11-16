@@ -1596,15 +1596,6 @@ interface_page(void)
 	return ret;
 }
 
-#if GTK_CHECK_VERSION(2,4,0)
-static void
-pidgin_custom_font_set(GtkFontButton *font_button, gpointer nul)
-{
-	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/custom_font",
-				gtk_font_button_get_font_name(font_button));
-}
-#endif
-
 static GtkWidget *
 conv_page(void)
 {
@@ -1613,15 +1604,8 @@ conv_page(void)
 	GtkWidget *toolbar;
 	GtkWidget *iconpref1;
 	GtkWidget *iconpref2;
-	GtkWidget *fontpref;
 	GtkWidget *imhtml;
 	GtkWidget *frame;
-
-#if GTK_CHECK_VERSION(2,4,0)
-	GtkWidget *hbox;
-	GtkWidget *font_button;
-	const char *font_name;
-#endif
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
