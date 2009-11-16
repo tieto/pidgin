@@ -2890,7 +2890,6 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 	
 	description = 
 		g_strdup_printf(purple_attention_type_get_outgoing_desc(attn), alias);
-	purple_conversation_attention(conv, who, 0, PURPLE_MESSAGE_SEND, time(NULL));
 	purple_conversation_write(conv, NULL, description, 
 		PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM, time(NULL));
 	g_free(description);

@@ -1265,8 +1265,6 @@ menu_get_attention_cb(gpointer data, guint action, GtkWidget *widget)
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
 		purple_prpl_send_attention(purple_conversation_get_gc(conv), 
 			purple_conversation_get_name(conv), 0);
-		purple_conversation_attention(conv, purple_conversation_get_name(conv),
-			0, PURPLE_MESSAGE_SEND, time(NULL));
 	}
 }
 

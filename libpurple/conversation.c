@@ -1017,16 +1017,6 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 	g_free(displayed);
 }
 
-void
-purple_conversation_attention(PurpleConversation *conv, const char *who,
-	guint type, PurpleMessageFlags flags, time_t mtime)
-{
-	PurpleAccount *account = purple_conversation_get_account(conv);
-	purple_signal_emit(purple_conversations_get_handle(),
-		flags == PURPLE_MESSAGE_SEND ? "sent-attention" : "got-attention",
-		account, who, conv, type);
-}
-
 gboolean
 purple_conversation_has_focus(PurpleConversation *conv)
 {

@@ -5048,7 +5048,6 @@ yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gcha
 		return PURPLE_CMD_RET_FAILED;
 
 	purple_prpl_send_attention(account->gc, c->name, YAHOO_BUZZ);
-	purple_conversation_attention(c, c->name, 0, PURPLE_MESSAGE_SEND, time(NULL));
 
 	return PURPLE_CMD_RET_OK;
 }
