@@ -2045,6 +2045,7 @@ browser_page(void)
 
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+		gtk_widget_show(hbox);
 
 		label = gtk_label_new(_("Browser preferences are configured in GNOME preferences"));
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -2057,6 +2058,7 @@ browser_page(void)
 						 G_CALLBACK(browser_button_clicked_cb), NULL);
 		gtk_box_pack_start(GTK_BOX(hbox), browser_button, FALSE, FALSE, 0);
 		gtk_widget_show(browser_button);
+		gtk_widget_show(hbox);
 
 		gtk_widget_show(vbox);
 		gtk_widget_show(ret);
@@ -2137,6 +2139,7 @@ proxy_page(void)
 		label = gtk_label_new(_("Proxy preferences are configured in GNOME preferences"));
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 		gtk_widget_show(label);
+		gtk_widget_show(hbox);
 
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
@@ -2145,6 +2148,7 @@ proxy_page(void)
 						 G_CALLBACK(proxy_button_clicked_cb), NULL);
 		gtk_box_pack_start(GTK_BOX(hbox), proxy_button, FALSE, FALSE, 0);
 		gtk_widget_show(proxy_button);
+		gtk_widget_show(hbox);
 
 		gtk_widget_show(vbox);
 		gtk_widget_show(ret);
