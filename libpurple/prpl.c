@@ -503,7 +503,15 @@ got_attention(PurpleConnection *gc, int id, const char *who, guint type_code)
 void
 purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code)
 {
+	PurpleConversation *conv = NULL;
+	PurpleAccount *account = purple_connection_get_account(gc);
+
 	got_attention(gc, -1, who, type_code);
+	conv = 
+		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, account);
+	if (conv)
+		purple_conversation_attention(conv, who, type_code, PURPLE_MESSAGE_RECV,
+			time(NULL));
 }
 
 void
