@@ -1040,7 +1040,7 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 static GtkWidget *
 theme_page(void)
 {
-	GtkWidget *ret;
+	GtkWidget *ret, *vbox;
 	GtkWidget *label;
 	GtkWidget *themesel_hbox;
 	GtkSizeGroup *label_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
