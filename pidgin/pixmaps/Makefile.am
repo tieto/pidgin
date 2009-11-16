@@ -446,8 +446,7 @@ TOOLBAR_16 = \
 		toolbar/16/send-file.png \
 		toolbar/16/transfer.png \
 		toolbar/16/unblock.png \
-		toolbar/16/video-call.png
-		toolbar/16/unblock.png \
+		toolbar/16/video-call.png \
 		toolbar/16/get-attention.png
 
 TOOLBAR_22_SCALABLE = \
