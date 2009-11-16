@@ -2057,6 +2057,9 @@ browser_page(void)
 						 G_CALLBACK(browser_button_clicked_cb), NULL);
 		gtk_box_pack_start(GTK_BOX(hbox), browser_button, FALSE, FALSE, 0);
 		gtk_widget_show(browser_button);
+
+		gtk_widget_show(vbox);
+		gtk_widget_show(ret);
 	} else {
 		sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	
@@ -2142,6 +2145,9 @@ proxy_page(void)
 						 G_CALLBACK(proxy_button_clicked_cb), NULL);
 		gtk_box_pack_start(GTK_BOX(hbox), proxy_button, FALSE, FALSE, 0);
 		gtk_widget_show(proxy_button);
+
+		gtk_widget_show(vbox);
+		gtk_widget_show(ret);
 	} else {
 		prefs_proxy_subframe = gtk_vbox_new(FALSE, 0);
 	
