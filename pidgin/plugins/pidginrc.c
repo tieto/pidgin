@@ -75,16 +75,19 @@ static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
 
 static const gchar *font_prefs[] = {
 	"/plugins/gtk/purplerc/font/*pidgin_conv_entry",
+	"/plugins/gtk/purplerc/font/*pidgin_conv_imhtml",
 	"/plugins/gtk/purplerc/font/*pidgin_request_imhtml",
 	"/plugins/gtk/purplerc/font/*pidgin_notify_imhtml",
 };
 static const gchar *font_prefs_set[] = {
 	"/plugins/gtk/purplerc/set/font/*pidgin_conv_entry",
+	"/plugins/gtk/purplerc/set/font/*pidgin_conv_imhtml",
 	"/plugins/gtk/purplerc/set/font/*pidgin_request_imhtml",
 	"/plugins/gtk/purplerc/set/font/*pidgin_notify_imhtml",
 };
 static const gchar *font_names[] = {
 	N_("Conversation Entry"),
+	N_("Conversation History"),
 	N_("Request Dialog"),
 	N_("Notify Dialog")
 };
