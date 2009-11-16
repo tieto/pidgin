@@ -2024,8 +2024,7 @@ browser_changed2_cb(const char *name, PurplePrefType type,
 static GtkWidget *
 browser_page(void)
 {
-	GtkWidget *ret, *vbox, *hbox, *label, *entry;
-	GtkWidget *browser_warning, *browser_button;
+	GtkWidget *ret, *vbox, *hbox, *label, *entry, *browser_button;
 	GtkSizeGroup *sg;
 	GList *browsers = NULL;
 
@@ -2035,33 +2034,29 @@ browser_page(void)
 	vbox = pidgin_make_frame (ret, _("Browser Selection"));
 
 	if(purple_running_gnome()) {
-		browser_warning = hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-
-		label = gtk_label_new(NULL);
-		gtk_label_set_markup(GTK_LABEL(label),
-							 _("<b>Browser configuration program was not found.</b>"));
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		gchar *path = g_find_program_in_path("gnome-default-applications-properties");
 
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-		gtk_widget_show(hbox);
-
 		label = gtk_label_new(_("Browser preferences are configured in GNOME preferences"));
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-		gtk_widget_show(label);
 
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-		browser_button = gtk_button_new_with_mnemonic(_("Configure _Browser"));
-		g_signal_connect(G_OBJECT(browser_button), "clicked",
-						 G_CALLBACK(browser_button_clicked_cb), NULL);
-		gtk_box_pack_start(GTK_BOX(hbox), browser_button, FALSE, FALSE, 0);
-		gtk_widget_show(browser_button);
-		gtk_widget_show(hbox);
 
-		gtk_widget_show(vbox);
-		gtk_widget_show(ret);
+		if(path == NULL) {
+			label = gtk_label_new(NULL);
+			gtk_label_set_markup(GTK_LABEL(label),
+								 _("<b>Browser configuration program was not found.</b>"));
+			gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		} else {
+			browser_button = gtk_button_new_with_mnemonic(_("Configure _Browser"));
+			g_signal_connect(G_OBJECT(browser_button), "clicked",
+							 G_CALLBACK(browser_button_clicked_cb), NULL);
+			gtk_box_pack_start(GTK_BOX(hbox), browser_button, FALSE, FALSE, 0);
+		}
+
+		gtk_widget_show_all(ret);
 	} else {
 		sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	
@@ -2115,8 +2110,7 @@ static GtkWidget *
 proxy_page(void)
 {
 	GtkWidget *ret = NULL, *vbox = NULL, *hbox = NULL;
-	GtkWidget *table = NULL, *entry = NULL, *label = NULL;
-	GtkWidget *proxy_warning = NULL, *proxy_button = NULL;
+	GtkWidget *table = NULL, *entry = NULL, *label = NULL, *proxy_button = NULL;
 	PurpleProxyInfo *proxy_info;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
@@ -2125,33 +2119,29 @@ proxy_page(void)
 	prefs_proxy_frame = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	if(purple_running_gnome()) {
-		proxy_warning = hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-
-		label = gtk_label_new(NULL);
-		gtk_label_set_markup(GTK_LABEL(label),
-							 _("<b>Proxy configuration program was not found.</b>"));
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		gchar *path = g_find_program_in_path("gnome-network-preferences");
 
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-
 		label = gtk_label_new(_("Proxy preferences are configured in GNOME preferences"));
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-		gtk_widget_show(label);
-		gtk_widget_show(hbox);
 
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-		proxy_button = gtk_button_new_with_mnemonic(_("Configure _Proxy"));
-		g_signal_connect(G_OBJECT(proxy_button), "clicked",
-						 G_CALLBACK(proxy_button_clicked_cb), NULL);
-		gtk_box_pack_start(GTK_BOX(hbox), proxy_button, FALSE, FALSE, 0);
-		gtk_widget_show(proxy_button);
-		gtk_widget_show(hbox);
 
-		gtk_widget_show(vbox);
-		gtk_widget_show(ret);
+		if(path == NULL) {
+			label = gtk_label_new(NULL);
+			gtk_label_set_markup(GTK_LABEL(label),
+								 _("<b>Proxy configuration program was not found.</b>"));
+			gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		} else {
+			proxy_button = gtk_button_new_with_mnemonic(_("Configure _Proxy"));
+			g_signal_connect(G_OBJECT(proxy_button), "clicked",
+							 G_CALLBACK(proxy_button_clicked_cb), NULL);
+			gtk_box_pack_start(GTK_BOX(hbox), proxy_button, FALSE, FALSE, 0);
+		}
+
+		gtk_widget_show_all(ret);
 	} else {
 		prefs_proxy_subframe = gtk_vbox_new(FALSE, 0);
 	
