@@ -1051,14 +1051,13 @@ theme_page(void)
 
 	/* Instructions */
 	label = gtk_label_new(_("Select a theme that you would like to use from "
-							"the lists below. New themes can be installed by "
+							"the lists below.\nNew themes can be installed by "
 							"dragging and dropping them onto the theme list."));
 
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
 
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, FALSE, 0);
 	gtk_widget_show(label);
 
 	/* Buddy List Themes */
