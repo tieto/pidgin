@@ -74,23 +74,22 @@ static int sound_row_sel = 0;
 static GtkWidget *prefsnotebook;
 
 static GtkWidget *sound_entry = NULL;
-static GtkListStore *smiley_theme_store = NULL;
-static GtkTreeSelection *smiley_theme_sel = NULL;
 static GtkWidget *prefs_proxy_frame = NULL;
 static GtkWidget *prefs_proxy_subframe = NULL;
 
 static GtkWidget *prefs = NULL;
 static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
-static GtkTreeRowReference *previous_smiley_row = NULL;
 
 static GtkListStore *prefs_sound_themes;
 static GtkListStore *prefs_blist_themes;
 static GtkListStore *prefs_status_icon_themes;
+static GtkListStore *prefs_smiley_themes;
 
 static GtkWidget *prefs_sound_themes_combo_box;
 static GtkWidget *prefs_blist_themes_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
+static GtkWidget *prefs_smiley_themes_combo_box;
 
 static gboolean prefs_sound_themes_loading;
 
@@ -341,91 +340,26 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	sound_entry = NULL;
 	debugbutton = NULL;
 	notebook_page = 0;
-	smiley_theme_store = NULL;
-	if (previous_smiley_row)
-		gtk_tree_row_reference_free(previous_smiley_row);
-	previous_smiley_row = NULL;
-
 }
 
 static void
-smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model)
-{
-	GtkTreeIter  iter;
-	const char *themename;
-	char *description;
-	GValue val;
-	GtkTreePath *path, *oldpath;
-	struct smiley_theme *new_theme, *old_theme;
-	GtkWidget *remove_button = g_object_get_data(G_OBJECT(sel), "remove_button");
-
-	if (!gtk_tree_selection_get_selected(sel, &model, &iter)) {
-		gtk_widget_set_sensitive(remove_button, FALSE);
-		return;
-	}
-
-	old_theme = current_smiley_theme;
-	val.g_type = 0;
-	gtk_tree_model_get_value(model, &iter, 3, &val);
-	path = gtk_tree_model_get_path(model, &iter);
-	themename = g_value_get_string(&val);
-	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", themename);
-
-	gtk_widget_set_sensitive(remove_button, (strcmp(themename, "none") &&
-	                                         strcmp(themename, _("Default"))));
-	g_value_unset (&val);
-
-	/* current_smiley_theme is set in callback for the above pref change */
-	new_theme = current_smiley_theme;
-	description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
-								"<span size='smaller' foreground='white'>%s</span>",
-								_(new_theme->name), _(new_theme->author), _(new_theme->desc));
-	gtk_list_store_set(smiley_theme_store, &iter, 1, description, -1);
-	g_free(description);
-
-	if (new_theme != old_theme && previous_smiley_row) {
-		oldpath = gtk_tree_row_reference_get_path(previous_smiley_row);
-		if (gtk_tree_model_get_iter(model, &iter, oldpath)) {
-			description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
-								"<span size='smaller' foreground='dim grey'>%s</span>",
-								_(old_theme->name), _(old_theme->author), _(old_theme->desc));
-			gtk_list_store_set(smiley_theme_store, &iter, 1,
-				description, -1);
-			g_free(description);
-		}
-		gtk_tree_path_free(oldpath);
-	}
-	if (previous_smiley_row)
-		gtk_tree_row_reference_free(previous_smiley_row);
-	previous_smiley_row = gtk_tree_row_reference_new(model, path);
-	gtk_tree_path_free(path);
-}
-
-static GtkTreeRowReference *
 theme_refresh_theme_list(void)
 {
 	GdkPixbuf *pixbuf;
 	GSList *themes;
 	GtkTreeIter iter;
-	GtkTreeRowReference *row_ref = NULL;
-
-	if (previous_smiley_row)
-		gtk_tree_row_reference_free(previous_smiley_row);
-	previous_smiley_row = NULL;
 
 	pidgin_themes_smiley_theme_probe();
 
 	if (!(themes = smiley_themes))
-		return NULL;
-
-	gtk_list_store_clear(smiley_theme_store);
+		return;
 
 	while (themes) {
 		struct smiley_theme *theme = themes->data;
 		char *description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 						    "<span size='smaller' foreground='dim grey'>%s</span>",
 						    _(theme->name), _(theme->author), _(theme->desc));
-		gtk_list_store_append (smiley_theme_store, &iter);
+		gtk_list_store_append(prefs_smiley_themes, &iter);
 
 		/*
 		 * LEAK - Gentoo memprof thinks pixbuf is leaking here... but it
@@ -433,11 +367,10 @@ theme_refresh_theme_list(void)
 		 */
 		pixbuf = (theme->icon ? gdk_pixbuf_new_from_file(theme->icon, NULL) : NULL);
 
-		gtk_list_store_set(smiley_theme_store, &iter,
+		gtk_list_store_set(prefs_smiley_themes, &iter,
 				   0, pixbuf,
 				   1, description,
-				   2, theme->path,
-				   3, theme->name,
+				   2, theme->name,
 				   -1);
 
 		if (pixbuf != NULL)
@@ -445,19 +378,7 @@ theme_refresh_theme_list(void)
 
 		g_free(description);
 		themes = themes->next;
-
-		/* If this is the currently selected theme,
-		 * we will need to select it. Grab the row reference. */
-		if (theme == current_smiley_theme) {
-			GtkTreePath *path = gtk_tree_model_get_path(
-				GTK_TREE_MODEL(smiley_theme_store), &iter);
-			row_ref = gtk_tree_row_reference_new(
-				GTK_TREE_MODEL(smiley_theme_store), path);
-			gtk_tree_path_free(path);
-		}
 	}
-
-	return row_ref;
 }
 
 static gchar *
@@ -628,13 +549,18 @@ prefs_themes_refresh(void)
 	if (pixbuf)
 		g_object_unref(G_OBJECT(pixbuf));
 
+	/* smiley themes */
+	gtk_list_store_clear(prefs_smiley_themes);
+
 	purple_theme_manager_for_each_theme(prefs_themes_sort);
 	pref_sound_generate_markup();
+	theme_refresh_theme_list();
 
 	/* set active */
 	prefs_set_active_theme_combo(prefs_sound_themes_combo_box, prefs_sound_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"));
 	prefs_set_active_theme_combo(prefs_blist_themes_combo_box, prefs_blist_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"));
 	prefs_set_active_theme_combo(prefs_status_themes_combo_box, prefs_status_icon_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/status/icon-theme"));
+	prefs_set_active_theme_combo(prefs_smiley_themes_combo_box, prefs_smiley_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/smileys/theme"));
 	prefs_sound_themes_loading = FALSE;
 }
 
@@ -647,6 +573,8 @@ prefs_themes_init(void)
 	prefs_blist_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
 	prefs_status_icon_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
+
+	prefs_smiley_themes = gtk_list_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 }
 
 static PurpleTheme *
@@ -714,7 +642,6 @@ theme_install_theme(char *path, struct theme_info *info)
 #endif
 	gchar *destdir;
 	const char *tail;
-	GtkTreeRowReference *theme_rowref;
 	gboolean is_smiley_theme, is_archive;
 	PurpleTheme *theme = NULL;
 
@@ -773,16 +700,9 @@ theme_install_theme(char *path, struct theme_info *info)
 
 	if (is_smiley_theme) {
 		/* just extract the folder to the smiley directory */
-		theme_rowref = theme_refresh_theme_list();
+		theme_refresh_theme_list();
 
-		if (theme_rowref != NULL) {
-			GtkTreePath *tp = gtk_tree_row_reference_get_path(theme_rowref);
-
-			if (tp)
-				gtk_tree_selection_select_path(smiley_theme_sel, tp);
-
-			gtk_tree_row_reference_free(theme_rowref);
-		}
+		prefs_themes_refresh();
 
 	} else if (is_archive) {
 		theme = prefs_theme_find_theme(destdir, info->type);
@@ -1022,6 +942,23 @@ prefs_set_sound_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 	}
 }
 
+/* sets the current smiley theme */
+static void
+prefs_set_smiley_theme_cb(GtkComboBox *combo_box, gpointer user_data)
+{
+	gchar *new_theme;
+	GtkTreeIter new_iter;
+
+	if (gtk_combo_box_get_active_iter(combo_box, &new_iter)) {
+
+		gtk_tree_model_get(GTK_TREE_MODEL(prefs_smiley_themes), &new_iter, 2, &new_theme, -1);
+
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", new_theme);
+
+		g_free(new_theme);
+	}
+}
+
 
 /* Does same as normal sort, except "none" is sorted first */
 static gint pidgin_sort_smileys (GtkTreeModel	*model,
@@ -1032,8 +969,8 @@ static gint pidgin_sort_smileys (GtkTreeModel	*model,
 	gint ret = 0;
 	gchar *name1 = NULL, *name2 = NULL;
 
-	gtk_tree_model_get(model, a, 3, &name1, -1);
-	gtk_tree_model_get(model, b, 3, &name2, -1);
+	gtk_tree_model_get(model, a, 2, &name1, -1);
+	gtk_tree_model_get(model, b, 2, &name2, -1);
 
 	if (name1 == NULL || name2 == NULL) {
 		if (!(name1 == NULL && name2 == NULL))
@@ -1049,59 +986,13 @@ static gint pidgin_sort_smileys (GtkTreeModel	*model,
 		ret = 1;
 	} else {
 		/* Neither string is "none", default to normal sort */
-		ret = purple_utf8_strcasecmp(name1,name2);
+		ret = purple_utf8_strcasecmp(name1, name2);
 	}
 
 	g_free(name1);
 	g_free(name2);
 
 	return ret;
-}
-
-static void
-request_theme_file_name_cb(gpointer data, char *theme_file_name)
-{
-	struct theme_info *info = g_new0(struct theme_info, 1);
-	info->type = g_strdup("smiley");
-
-	theme_install_theme(theme_file_name, info);
-}
-
-static void
-add_theme_button_clicked_cb(GtkWidget *widget, gpointer user_data)
-{
-	purple_request_file(NULL, _("Install Theme"), NULL, FALSE, (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, NULL);
-}
-
-static void
-remove_theme_button_clicked_cb(GtkWidget *button, GtkTreeView *tv)
-{
-	char *theme_name = NULL, *theme_file = NULL;
-	GtkTreeModel *tm;
-	GtkTreeIter itr;
-	GtkTreeRowReference *trr = NULL;
-
-	if ((tm = gtk_tree_view_get_model(tv)) == NULL)
-		return;
-	if (!gtk_tree_selection_get_selected(smiley_theme_sel, NULL, &itr))
-		return;
-	gtk_tree_model_get(tm, &itr, 2, &theme_file, 3, &theme_name, -1);
-
-	if (theme_file && theme_name && strcmp(theme_name, "none"))
-		pidgin_themes_remove_smiley_theme(theme_file);
-
-	if ((trr = theme_refresh_theme_list()) != NULL) {
-		GtkTreePath *tp = gtk_tree_row_reference_get_path(trr);
-
-		if (tp) {
-			gtk_tree_selection_select_path(smiley_theme_sel, tp);
-			gtk_tree_path_free(tp);
-		}
-		gtk_tree_row_reference_free(trr);
-	}
-
-	g_free(theme_file);
-	g_free(theme_name);
 }
 
 /* sets the current buddy list theme */
@@ -1150,28 +1041,26 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 static GtkWidget *
 theme_page(void)
 {
-	GtkWidget *add_button, *remove_button;
-	GtkWidget *hbox_buttons;
-	GtkWidget *alignment;
 	GtkWidget *ret;
-	GtkWidget *sw;
-	GtkWidget *view;
-	GtkCellRenderer *rend;
-	GtkTreeViewColumn *col;
-	GtkTreeSelection *sel;
-	GtkTreeRowReference *rowref;
 	GtkWidget *label;
-	GtkTargetEntry te[3] = {
-		{"text/plain", 0, 0},
-		{"text/uri-list", 0, 1},
-		{"STRING", 0, 2}
-	};
 	GtkWidget *themesel_hbox;
 	GtkSizeGroup *label_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	GtkSizeGroup *combo_sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
+
+	/* Instructions */
+	label = gtk_label_new(_("Select a theme that you would like to use from "
+							"the lists below. New themes can be installed by "
+							"dragging and dropping them onto the theme list."));
+
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+
+	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
 
 	/* Buddy List Themes */
 	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -1225,89 +1114,29 @@ theme_page(void)
 	gtk_box_pack_start(GTK_BOX(ret), themesel_hbox, FALSE, FALSE, 0);
 
 	/* Smiley Themes */
-	label = gtk_label_new(_("Select a smiley theme that you would like to use "
-							"from the list below. New themes can be installed "
-							"by dragging and dropping them onto the theme list."));
+	themesel_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+	label = gtk_label_new(_("Smiley Theme:"));
+	gtk_size_group_add_widget(label_sg, label);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), label, FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
+	prefs_smiley_themes_combo_box = prefs_build_theme_combo_box(prefs_smiley_themes,
+						purple_prefs_get_string(PIDGIN_PREFS_ROOT "/smileys/theme"),
+						"smiley");
+	g_signal_connect(G_OBJECT(prefs_smiley_themes_combo_box), "changed",
+						(GCallback)prefs_set_smiley_theme_cb, NULL);
+	gtk_size_group_add_widget(combo_sg, prefs_smiley_themes_combo_box);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_smiley_themes_combo_box, FALSE, FALSE, 0);
 
-	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-
-	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
-	smiley_theme_store = gtk_list_store_new (4, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-
-	rowref = theme_refresh_theme_list();
-
-	view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(smiley_theme_store));
-
-	gtk_drag_dest_set(view, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP, te,
-					sizeof(te) / sizeof(GtkTargetEntry) , GDK_ACTION_COPY | GDK_ACTION_MOVE);
-
-	g_signal_connect(G_OBJECT(view), "drag_data_received", G_CALLBACK(theme_dnd_recv), "smiley");
-
-	rend = gtk_cell_renderer_pixbuf_new();
-	smiley_theme_sel = sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+	gtk_box_pack_start(GTK_BOX(ret), themesel_hbox, FALSE, FALSE, 0);
 
 	/* Custom sort so "none" theme is at top of list */
-	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(smiley_theme_store),
-									3, pidgin_sort_smileys, NULL, NULL);
-
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(smiley_theme_store),
-										 3, GTK_SORT_ASCENDING);
-
-	col = gtk_tree_view_column_new_with_attributes (_("Icon"),
-							rend,
-							"pixbuf", 0,
-							NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW(view), col);
-
-	rend = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes (_("Description"),
-							rend,
-							"markup", 1,
-							NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW(view), col);
-	g_object_unref(G_OBJECT(smiley_theme_store));
-	gtk_container_add(GTK_CONTAINER(sw), view);
-
-	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(smiley_sel), NULL);
-
-	alignment = gtk_alignment_new(1.0, 0.5, 0.0, 1.0);
-	gtk_widget_show(alignment);
-	gtk_box_pack_start(GTK_BOX(ret), alignment, FALSE, TRUE, 0);
-
-	hbox_buttons = gtk_hbox_new(TRUE, PIDGIN_HIG_CAT_SPACE);
-	gtk_widget_show(hbox_buttons);
-	gtk_container_add(GTK_CONTAINER(alignment), hbox_buttons);
-
-	add_button = gtk_button_new_from_stock(GTK_STOCK_ADD);
-	gtk_widget_show(add_button);
-	gtk_box_pack_start(GTK_BOX(hbox_buttons), add_button, FALSE, TRUE, 0);
-	g_signal_connect(G_OBJECT(add_button), "clicked", (GCallback)add_theme_button_clicked_cb, view);
-
-	remove_button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
-	gtk_widget_show(remove_button);
-	gtk_box_pack_start(GTK_BOX(hbox_buttons), remove_button, FALSE, TRUE, 0);
-	g_signal_connect(G_OBJECT(remove_button), "clicked", (GCallback)remove_theme_button_clicked_cb, view);
-	g_object_set_data(G_OBJECT(sel), "remove_button", remove_button);
-
-	if (rowref) {
-		GtkTreePath *path = gtk_tree_row_reference_get_path(rowref);
-		gtk_tree_row_reference_free(rowref);
-		gtk_tree_selection_select_path(sel, path);
-		gtk_tree_path_free(path);
-	}
+	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(prefs_smiley_themes),
+	                                2, pidgin_sort_smileys, NULL, NULL);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(prefs_smiley_themes),
+										 2, GTK_SORT_ASCENDING);
 
 	gtk_widget_show_all(ret);
-
-	pidgin_set_accessible_label (view, label);
 
 	return ret;
 }
