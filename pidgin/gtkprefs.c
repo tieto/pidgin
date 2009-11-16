@@ -342,6 +342,17 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	notebook_page = 0;
 }
 
+static gchar *
+get_theme_markup(const char *name, gboolean custom, const char *author,
+				 const char *description)
+{
+
+	return g_strdup_printf("<b>%s</b>%s%s%s%s\n<span foreground='dim grey'>%s</span>",
+						   name, custom ? " " : "", custom ? _("(Custom)") : "",
+						   author != NULL ? " - " : "", author != NULL ? author : "",
+						   description != NULL ? description : "");
+}
+
 static void
 theme_refresh_theme_list(void)
 {
@@ -356,9 +367,8 @@ theme_refresh_theme_list(void)
 
 	while (themes) {
 		struct smiley_theme *theme = themes->data;
-		char *description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
-						    "<span size='smaller' foreground='dim grey'>%s</span>",
-						    _(theme->name), _(theme->author), _(theme->desc));
+		char *description = get_theme_markup(_(theme->name), FALSE,
+		                                     _(theme->author), _(theme->desc));
 		gtk_list_store_append(prefs_smiley_themes, &iter);
 
 		/*
@@ -379,17 +389,6 @@ theme_refresh_theme_list(void)
 		g_free(description);
 		themes = themes->next;
 	}
-}
-
-static gchar *
-get_theme_markup(const char *name, gboolean custom, const char *author,
-				 const char *description)
-{
-
-	return g_strdup_printf("<b>%s</b>%s%s%s%s\n<span foreground='dim grey'>%s</span>",
-						   name, custom ? " " : "", custom ? _("(Custom)") : "",
-						   author != NULL ? " - " : "", author != NULL ? author : "",
-						   description != NULL ? description : "");
 }
 
 /* Rebuild the markup for the sound theme selection for "(Custom)" themes */
