@@ -354,7 +354,7 @@ get_theme_markup(const char *name, gboolean custom, const char *author,
 }
 
 static void
-theme_refresh_theme_list(void)
+smileys_refresh_theme_list(void)
 {
 	GdkPixbuf *pixbuf;
 	GSList *themes;
@@ -553,7 +553,7 @@ prefs_themes_refresh(void)
 
 	purple_theme_manager_for_each_theme(prefs_themes_sort);
 	pref_sound_generate_markup();
-	theme_refresh_theme_list();
+	smileys_refresh_theme_list();
 
 	/* set active */
 	prefs_set_active_theme_combo(prefs_sound_themes_combo_box, prefs_sound_themes, purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme"));
@@ -699,8 +699,6 @@ theme_install_theme(char *path, struct theme_info *info)
 
 	if (is_smiley_theme) {
 		/* just extract the folder to the smiley directory */
-		theme_refresh_theme_list();
-
 		prefs_themes_refresh();
 
 	} else if (is_archive) {
