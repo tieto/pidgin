@@ -471,7 +471,7 @@ got_attention(PurpleConnection *gc, int id, const char *who, guint type_code)
 	attn = purple_get_attention_type_from_code(gc->account, type_code);
 
 	/* PURPLE_MESSAGE_NOTIFY is for attention messages. */
-	flags = PURPLE_MESSAGE_SYSTEM;
+	flags = PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_RECV;
 
 	/* TODO: if (attn->icon_name) is non-null, use it to lookup an emoticon and display
 	 * it next to the attention command. And if it is null, display a generic icon. */
