@@ -1589,11 +1589,11 @@ proxy_print_option(GtkEntry *entry, int entrynum)
 }
 
 static void
-proxy_button_clicked_cb(GtkWidget *button, gpointer null)
+proxy_button_clicked_cb(GtkWidget *button, gchar *program)
 {
 	GError *err = NULL;
 
-	if (g_spawn_command_line_async ("gnome-network-preferences", &err))
+	if (g_spawn_command_line_async(program, &err))
 		return;
 
 	purple_notify_error(NULL, NULL, _("Cannot start proxy configuration program."), err->message);
@@ -1951,7 +1951,7 @@ proxy_page(void)
 	prefs_proxy_frame = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	if(purple_running_gnome()) {
-		gchar *path = g_find_program_in_path("gnome-network-preferences");
+		gchar *path = NULL;
 
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		label = gtk_label_new(_("Proxy preferences are configured in GNOME preferences"));
@@ -1961,6 +1961,10 @@ proxy_page(void)
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
+		path = g_find_program_in_path("gnome-network-properties");
+		if (path == NULL)
+			path = g_find_program_in_path("gnome-network-preferences");
+
 		if (path == NULL) {
 			label = gtk_label_new(NULL);
 			gtk_label_set_markup(GTK_LABEL(label),
@@ -1969,11 +1973,13 @@ proxy_page(void)
 		} else {
 			proxy_button = gtk_button_new_with_mnemonic(_("Configure _Proxy"));
 			g_signal_connect(G_OBJECT(proxy_button), "clicked",
-							 G_CALLBACK(proxy_button_clicked_cb), NULL);
+							 G_CALLBACK(proxy_button_clicked_cb),
+							 path);
 			gtk_box_pack_start(GTK_BOX(hbox), proxy_button, FALSE, FALSE, 0);
 		}
 
-		g_free(path);
+		/* NOTE: path leaks, but only when the prefs window is destroyed,
+		         which is never */
 		gtk_widget_show_all(ret);
 	} else {
 		prefs_proxy_subframe = gtk_vbox_new(FALSE, 0);
