@@ -8,9 +8,6 @@
 ;;
 
 
-; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"GTK+ runtime липсва или трябва да бъде обновена.$\rМоля инсталирайте версия v${GTK_MIN_VERSION} или по-нова"
-
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin Клиент за Бързи Съобщения (изисква се)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime Среда (required)"
@@ -19,11 +16,8 @@
 
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Стара версия GTK+ runtime е открита. Искате ли да обновите?$\rNote: Pidgin може да не сработи ако не го направите."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Грешка при инсталиране на GTK+ runtime."
-!define GTK_BAD_INSTALL_PATH			"Въведеният път не може да бъде достъпен или създаден."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Деисталатоа не може да намери записи в регистъра за Pidgin.$\rВероятно е бил инсталиран от друг потребител."

@@ -11,7 +11,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Inštalácia je u spustená"
 !define PIDGIN_IS_RUNNING				"Pidgin je práve spustenı. Vypnite ho a skúste znova."
-!define GTK_INSTALLER_NEEDED			"GTK+ runtime prostredie chıba alebo musí by upgradované.$\rNainštalujte, prosím, GTK+ runtime verziu v${GTK_MIN_VERSION}, alebo novšiu"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Ïalej >"
@@ -31,14 +30,11 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Vytvori odkaz na Pidgin v Štart Menu"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Bola nájdená staršia verzia GTK+ runtime. Prajete si upgradova súèasnú verziu?$\rPoznámka: $(^Name) nemusí po upgradovaní fungova správne."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Navštívi webstránku Windows Pidgin"
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Chyba pri inštalácii GTK+ runtime."
-!define GTK_BAD_INSTALL_PATH			"Zadaná cesta nie je prístupná alebo ju nie je moné vytvori."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Inštalátoru sa nepodarilo nájs poloky v registri pre Pidgin.$\rJe moné, e túto aplikáciu nainštaloval inı pouívate¾."
