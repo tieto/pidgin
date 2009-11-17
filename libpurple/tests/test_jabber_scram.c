@@ -4,8 +4,6 @@
 #include "../util.h"
 #include "../protocols/jabber/auth_scram.h"
 
-static JabberSaslMech *scram_sha1_mech = NULL;
-
 #define assert_pbkdf2_equal(password, salt, count, expected) { \
 	GString *p = g_string_new(password); \
 	GString *s = g_string_new(salt); \
@@ -55,14 +53,31 @@ START_TEST(test_proofs)
 }
 END_TEST
 
-#if 0
 START_TEST(test_mech)
 {
-	scram_sha1_mech = jabber_scram_get_sha1();
+	JabberScramData *data = g_new0(JabberScramData, 1);
+	gboolean ret;
+	gchar *out;
 
+	data->step = 1;
+	data->hash = "sha1";
+	data->password = "password";
+	data->cnonce = g_strdup("H7yDYKAWBCrM2Fa5SxGa4iez");
+	data->auth_message = g_string_new("n=paul,r=H7yDYKAWBCrM2Fa5SxGa4iez");
+
+	ret = jabber_scram_feed_parser(data, "r=H7yDYKAWBCrM2Fa5SxGa4iezFPVDPpDUcGxPkH3RzP,s=3rXeErP/os7jUNqU,i=4096", &out);
+	fail_unless(ret == TRUE);
+	fail_unless(g_str_equal(out, "c=biws,r=H7yDYKAWBCrM2Fa5SxGa4iezFPVDPpDUcGxPkH3RzP,p=pXkak78EuwwOEwk2/h/OzD7NkEI="), "Failed. Got %s instead", out);
+	g_free(out);
+
+	data->step = 2;
+	ret = jabber_scram_feed_parser(data, "v=ldX4EBNnOgDnNTOCmbSfBHAUCOs=", &out);
+	fail_unless(ret == TRUE);
+	fail_unless(out == NULL);
+
+	jabber_scram_data_destroy(data);
 }
 END_TEST
-#endif
 
 Suite *
 jabber_scram_suite(void)
@@ -77,5 +92,8 @@ jabber_scram_suite(void)
 	tcase_add_test(tc, test_proofs);
 	suite_add_tcase(s, tc);
 
+	tc = tcase_create("SCRAM exchange");
+	tcase_add_test(tc, test_mech);
+	suite_add_tcase(s, tc);
 	return s;
 }

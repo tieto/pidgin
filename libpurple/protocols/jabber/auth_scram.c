@@ -226,7 +226,7 @@ parse_server_step1(JabberScramData *data, const char *challenge,
 	/* Ensure that the first cnonce_len bytes of the nonce are the original
 	 * cnonce we sent to the server.
 	 */
-	if (!g_str_equal(data->cnonce, token + 2))
+	if (0 != strncmp(data->cnonce, token + 2, strlen(data->cnonce)))
 		goto err;
 
 	nonce = g_strdup(token + 2);
@@ -264,7 +264,8 @@ parse_server_step1(JabberScramData *data, const char *challenge,
 
 err:
 	g_free(nonce);
-	g_string_free(salt, TRUE);
+	if (salt)
+		g_string_free(salt, TRUE);
 	g_strfreev(tokens);
 	return FALSE;
 }
@@ -290,8 +291,8 @@ parse_server_step2(JabberScramData *data, const char *challenge, gchar **out_ver
 	return TRUE;
 }
 
-static gboolean
-feed_parser(JabberScramData *data, gchar *in, gchar **out)
+gboolean
+jabber_scram_feed_parser(JabberScramData *data, gchar *in, gchar **out)
 {
 	gboolean ret;
 
@@ -311,8 +312,8 @@ feed_parser(JabberScramData *data, gchar *in, gchar **out)
 
 		g_string_append_c(data->auth_message, ',');
 
-		/* "biwsCg==" is the base64 encoding of "n,,". I promise. */
-		g_string_append_printf(data->auth_message, "c=%s,r=%s", "biwsCg==", nonce);
+		/* "biws" is the base64 encoding of "n,,". I promise. */
+		g_string_append_printf(data->auth_message, "c=%s,r=%s", "biws", nonce);
 #ifdef CHANNEL_BINDING
 #error fix this
 #endif
@@ -322,7 +323,7 @@ feed_parser(JabberScramData *data, gchar *in, gchar **out)
 			return FALSE;
 
 		proof = purple_base64_encode((guchar *)data->client_proof->str, data->client_proof->len);
-		*out = g_strdup_printf("c=%s,r=%s,p=%s", "biwsCg==", nonce, proof);
+		*out = g_strdup_printf("c=%s,r=%s,p=%s", "biws", nonce, proof);
 		g_free(proof);
 	} else if (data->step == 2) {
 		gchar *server_sig, *enc_server_sig;
@@ -428,7 +429,7 @@ static xmlnode *scram_handle_challenge(JabberStream *js, xmlnode *challenge)
 
 	purple_debug_misc("jabber", "decoded challenge: %s\n", dec_in);
 
-	if (!feed_parser(data, dec_in, &dec_out)) {
+	if (!jabber_scram_feed_parser(data, dec_in, &dec_out)) {
 		reply = xmlnode_new("abort");
 		xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
 		data->step = -1;
@@ -479,7 +480,7 @@ static gboolean scram_handle_success(JabberStream *js, xmlnode *packet)
 
 	purple_debug_misc("jabber", "decoded success: %s\n", dec_in);
 
-	if (!feed_parser(data, dec_in, &dec_out) || dec_out != NULL) {
+	if (!jabber_scram_feed_parser(data, dec_in, &dec_out) || dec_out != NULL) {
 		g_free(dec_out);
 		return FALSE;
 	}
@@ -488,19 +489,22 @@ static gboolean scram_handle_success(JabberStream *js, xmlnode *packet)
 	return TRUE;
 }
 
+void jabber_scram_data_destroy(JabberScramData *data)
+{
+	g_free(data->cnonce);
+	if (data->auth_message)
+		g_string_free(data->auth_message, TRUE);
+	if (data->client_proof)
+		g_string_free(data->client_proof, TRUE);
+	if (data->server_signature)
+		g_string_free(data->server_signature, TRUE);
+	g_free(data);
+}
+
 static void scram_dispose(JabberStream *js)
 {
 	if (js->auth_mech_data) {
-		JabberScramData *data = js->auth_mech_data;
-
-		g_free(data->cnonce);
-		if (data->auth_message)
-			g_string_free(data->auth_message, TRUE);
-		if (data->client_proof)
-			g_string_free(data->client_proof, TRUE);
-		if (data->server_signature)
-			g_string_free(data->server_signature, TRUE);
-		g_free(data);
+		jabber_scram_data_destroy(js->auth_mech_data);
 		js->auth_mech_data = NULL;
 	}
 }

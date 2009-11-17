@@ -81,4 +81,14 @@ guchar *jabber_scram_hi(const char *hash, const GString *str,
 gboolean jabber_scram_calc_proofs(JabberScramData *data, GString *salt,
                                   guint iterations);
 
+/**
+ * Feed the algorithm with the data from the server.
+ */
+gboolean jabber_scram_feed_parser(JabberScramData *data, gchar *in, gchar **out);
+
+/**
+ * Clean up and destroy the data struct
+ */
+void jabber_scram_data_destroy(JabberScramData *data);
+
 #endif /* PURPLE_JABBER_AUTH_SCRAM_H_ */
