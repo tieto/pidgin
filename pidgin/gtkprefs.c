@@ -2078,11 +2078,8 @@ proxy_page(void)
 				 G_CALLBACK(proxy_print_option), (void *)PROXYPORT);
 
 		if (proxy_info != NULL && purple_proxy_info_get_port(proxy_info) != 0) {
-			char buf[128];
-			g_snprintf(buf, sizeof(buf), "%d",
-				   purple_proxy_info_get_port(proxy_info));
-
-			gtk_entry_set_text(GTK_ENTRY(entry), buf);
+			gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry),
+				purple_proxy_info_get_port(proxy_info));
 		}
 		pidgin_set_accessible_label (entry, label);
 
