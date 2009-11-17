@@ -1427,6 +1427,16 @@ interface_page(void)
 	return ret;
 }
 
+#ifdef _WIN32
+static void
+pidgin_custom_font_set(GtkFontButton *font_button, gpointer nul)
+{
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/custom_font",
+				gtk_font_button_get_font_name(font_button))
+;
+}
+#endif
+
 static GtkWidget *
 conv_page(void)
 {
@@ -1476,6 +1486,9 @@ conv_page(void)
 		1, 8, NULL);
 
 #if GTK_CHECK_VERSION(2,4,0) && defined _WIN32
+	{
+	GtkWidget *fontpref, *font_button, *hbox;
+	const char *font_name;
 	vbox = pidgin_make_frame(ret, _("Font"));
 
 	fontpref = pidgin_prefs_checkbox(_("Use font from _theme"),
@@ -1494,6 +1507,8 @@ conv_page(void)
 		gtk_widget_set_sensitive(hbox, FALSE);
 	g_signal_connect(G_OBJECT(fontpref), "clicked", G_CALLBACK(pidgin_toggle_sensitive), hbox);
 	g_signal_connect(G_OBJECT(font_button), "font-set", G_CALLBACK(pidgin_custom_font_set), NULL);
+
+	}
 #endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
@@ -1621,6 +1636,7 @@ proxy_button_clicked_cb(GtkWidget *button, gchar *program)
 	g_error_free(err);
 }
 
+#ifndef _WIN32
 static void
 browser_button_clicked_cb(GtkWidget *button, gpointer null)
 {
@@ -1632,6 +1648,7 @@ browser_button_clicked_cb(GtkWidget *button, gpointer null)
 	purple_notify_error(NULL, NULL, _("Cannot start browser configuration program."), err->message);
 	g_error_free(err);
 }
+#endif
 
 static void
 auto_ip_button_clicked_cb(GtkWidget *button, gpointer null)
@@ -2402,6 +2419,9 @@ sound_page(void)
 
 	vbox2 = pidgin_make_frame(ret, _("Sound Options"));
 
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox2), vbox, FALSE, FALSE, 0);
+
 #ifndef _WIN32
 	dd = pidgin_prefs_dropdown(vbox2, _("_Method:"), PURPLE_PREF_STRING,
 			PIDGIN_PREFS_ROOT "/sound/method",
@@ -2416,9 +2436,6 @@ sound_page(void)
 			NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
-
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox2), vbox, FALSE, FALSE, 0);
 
 	entry = gtk_entry_new();
 	gtk_editable_set_editable(GTK_EDITABLE(entry), TRUE);
