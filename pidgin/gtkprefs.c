@@ -2645,10 +2645,8 @@ away_page(void)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), label);
 
-	if (purple_prefs_get_bool("/purple/savedstatus/startup_current_status")) {
+	if(purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
 		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
-		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
-	}
 
 	gtk_widget_show_all(ret);
 	g_object_unref(sg);
