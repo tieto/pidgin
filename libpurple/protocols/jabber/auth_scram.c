@@ -32,7 +32,7 @@ static const struct {
 	const char *mech_substr;
 	const char *hash;
 } mech_hashes[] = {
-	{ "-SHA-1-", "sha1" },
+	{ "-SHA-1", "sha1" },
 };
 
 static const struct {
@@ -52,6 +52,8 @@ static const gchar *mech_to_hash(const char *mech)
 		if (strstr(mech, mech_hashes[i].mech_substr))
 			return mech_hashes[i].hash;
 	}
+
+	purple_debug_error("jabber", "Unknown SCRAM mechanism %s\n", mech);
 
 	return NULL;
 }
@@ -375,7 +377,7 @@ static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
 		data->channel_binding = TRUE;
 #endif
 	cnonce = ((guint64)g_random_int() << 32) | g_random_int();
-	data->cnonce = purple_base64_encode((guchar *)cnonce, sizeof(cnonce));
+	data->cnonce = purple_base64_encode((guchar *)&cnonce, sizeof(cnonce));
 
 	data->auth_message = g_string_new(NULL);
 	g_string_printf(data->auth_message, "n=%s,r=%s",
