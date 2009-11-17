@@ -27,14 +27,7 @@
 #define		_MXIT_H_
 
 
-/* internationalize feedback strings */
-#ifndef		_
-#ifdef		GETTEXT_PACKAGE
-#include	<glib/gi18n-lib.h>
-#else
-#define		_( x )						( x )
-#endif
-#endif
+#include "internal.h"
 
 
 #if defined( __APPLE__ )
