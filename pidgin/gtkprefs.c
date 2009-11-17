@@ -2891,10 +2891,6 @@ pidgin_prefs_update_old(void)
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/sound/signon");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/sound/silent_signon");
 
-#ifndef _WIN32
-	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/custom_font");
-#endif
-
 	/* Convert old queuing prefs to hide_new 3-way pref. */
 	if (purple_prefs_exists("/plugins/gtk/docklet/queue_messages") &&
 	    purple_prefs_get_bool("/plugins/gtk/docklet/queue_messages"))
