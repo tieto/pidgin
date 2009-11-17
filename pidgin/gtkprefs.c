@@ -1473,7 +1473,7 @@ conv_page(void)
 		PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines",
 		1, 8, NULL);
 
-#if GTK_CHECK_VERSION(2,4,0) && defined _WIN32
+#ifdef _WIN32
 	vbox = pidgin_make_frame(ret, _("Font"));
 
 	fontpref = pidgin_prefs_checkbox(_("Use font from _theme"),
@@ -1492,6 +1492,7 @@ conv_page(void)
 		gtk_widget_set_sensitive(hbox, FALSE);
 	g_signal_connect(G_OBJECT(fontpref), "clicked", G_CALLBACK(pidgin_toggle_sensitive), hbox);
 	g_signal_connect(G_OBJECT(font_button), "font-set", G_CALLBACK(pidgin_custom_font_set), NULL);
+#endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
 	gtk_box_set_child_packing(GTK_BOX(vbox->parent), vbox, TRUE, TRUE, 0, GTK_PACK_START);
