@@ -113,26 +113,12 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 
 	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
 
+#ifdef _WIN32
 	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
 		const char *font = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
 		desc = pango_font_description_from_string(font);
-	} else if (purple_running_gnome()) {
-		/* Use the GNOME "document" font, if applicable */
-		char *path;
-
-		if ((path = g_find_program_in_path("gconftool-2"))) {
-			char *font = NULL;
-			char *err = NULL;
-			g_free(path);
-			if (g_spawn_command_line_sync(
-					"gconftool-2 -g /desktop/gnome/interface/document_font_name",
-					&font, &err, NULL, NULL)) {
-				desc = pango_font_description_from_string(font);
-			}
-			g_free(err);
-			g_free(font);
-		}
 	}
+#endif
 
 	if (desc) {
 		gtk_widget_modify_font(imhtml, desc);
