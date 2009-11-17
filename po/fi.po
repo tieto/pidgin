@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"POT-Creation-Date: 2009-11-14 20:34-0500\n"
 "PO-Revision-Date: 2009-08-30 16:48+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
@@ -58,6 +58,7 @@ msgstr ""
 "Tutki asiaa ja suorita asetusten siirto käsin. Ilmoita tästä ongelmasta "
 "osoitteessa http://developer.pidgin.im/"
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Virhe"
 
@@ -547,13 +548,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "Ota tili uudelleen käyttöön"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-"Yhteys käyttäjätiliin on katkennut, etkä ole enää tässä keskustelussa. "
-"Keskusteluun liitytään uudelleen kun käyttäjätili on jälleen yhdistettynä. "
-
 msgid "No such command."
 msgstr "Sellaista komentoa ei ole."
 
@@ -595,6 +589,13 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "Olet poistunut tästä keskustelusta."
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+"Yhteys käyttäjätiliin on katkennut, etkä ole enää tässä keskustelussa. "
+"Keskusteluun liitytään uudelleen kun käyttäjätili on jälleen yhdistettynä. "
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr ""
 "Kirjaaminen lokiin aloitettu. Tämän keskustelun viestit kirjataan nyt lokiin."
@@ -629,6 +630,10 @@ msgstr "Ota lokiinkirjaus käyttöön"
 msgid "Enable Sounds"
 msgstr "Ota äänet käyttöön"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "Yhdistäminen ei onnistu"
+
 msgid "<AUTO-REPLY> "
 msgstr "<AUTOMAATTIVASTAUS> "
 
@@ -638,7 +643,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "Luettelo %d käyttäjästä:\n"
 msgstr[1] "Luettelo %d käyttäjistä:\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "Tuetut vianjäljitysvalinnat ovat: versio"
 
 msgid "No such command (in this context)."
@@ -768,6 +774,7 @@ msgid "Remaining"
 msgstr "Jäljellä"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "Tila"
 
@@ -941,6 +948,9 @@ msgstr "Kutsu"
 msgid "(none)"
 msgstr "(ei mitään)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 msgid "URI"
 msgstr "URI"
 
@@ -1343,6 +1353,8 @@ msgstr "Poista tila"
 msgid "Saved Statuses"
 msgstr "Tallennetut tilat"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "Otsikko"
 
@@ -1516,6 +1528,13 @@ msgstr ""
 "\n"
 "Noudetaan TinyURL-osoitetta..."
 
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Luo TinyURL vain tämän pituisille tai pidemmille osoitteille"
 
@@ -1641,9 +1660,10 @@ msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
 "Varmenne on itseallekirjoitettu eikä sitä voida automaattisesti tarkistaa."
 
-#, fuzzy
-msgid "The root certificate this one claims to be issued by is unknown."
-msgstr "Tämän varmenteen myöntäjän juurivarmenne on tuntematon Pidginille."
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
+msgstr ""
 
 msgid "The certificate is not valid yet."
 msgstr "Varmenne ei ole vielä kelvollinen."
@@ -1752,6 +1772,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "Varmennetiedot"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "Rekisteröintivirhe"
 
@@ -1766,6 +1787,7 @@ msgstr "+++ %s kirjautui sisään"
 msgid "+++ %s signed off"
 msgstr "+++ %s kirjautui ulos"
 
+#. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "Tuntematon virhe"
@@ -1871,10 +1893,15 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "Selvitinprosessi päättyi vastaamatta pyyntöön"
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "Virhe selvitettäessä %s: %d"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "Säikeen luonti epäonnistui: %s"
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Tuntematon syy"
 
@@ -2186,13 +2213,16 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Korjaamaton Farsight2-virhe."
 
-msgid "Conference error."
+#, fuzzy
+msgid "Conference error"
 msgstr "Virhe neuvottelussa."
 
-msgid "Error with your microphone."
+#, fuzzy
+msgid "Error with your microphone"
 msgstr "Virhe mikrofonin kanssa."
 
-msgid "Error with your webcam."
+#, fuzzy
+msgid "Error with your webcam"
 msgstr "Virhe web-kameran kanssa."
 
 #, c-format
@@ -2938,6 +2968,7 @@ msgstr "Etunimi"
 msgid "Last name"
 msgstr "Sukunimi"
 
+#. email
 msgid "Email"
 msgstr "Sähköposti"
 
@@ -3075,12 +3106,14 @@ msgstr "Paikkakunta"
 msgid "Year of birth"
 msgstr "Syntymävuosi"
 
+#. gender
 msgid "Gender"
 msgstr "Sukupuoli"
 
 msgid "Male or female"
 msgstr "Mies vai nainen"
 
+#. 0
 msgid "Male"
 msgstr "Mies"
 
@@ -3149,6 +3182,7 @@ msgstr "Poissa"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "Etunimi"
 
@@ -3861,6 +3895,7 @@ msgstr "Organisaatioyksikkö"
 msgid "Role"
 msgstr "Asema"
 
+#. birthday
 msgid "Birthday"
 msgstr "Syntymäpäivä"
 
@@ -3937,6 +3972,9 @@ msgstr "Pyydä valtuutusta uudelleen"
 msgid "Unsubscribe"
 msgstr "Poista listalta"
 
+msgid "Initiate _Chat"
+msgstr "Aloita _ryhmäkeskustelu"
+
 msgid "Log In"
 msgstr "Kirjaudu sisään"
 
@@ -3955,6 +3993,7 @@ msgstr "Älä häiritse"
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "Sukunimi"
 
@@ -4187,6 +4226,7 @@ msgstr "Palvelin ei tue estämistä"
 msgid "Not Authorized"
 msgstr "Ei valtuuksia"
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Mieliala"
 
@@ -4211,6 +4251,7 @@ msgstr "Ei mitään (odottaa lupaa)"
 msgid "None"
 msgstr "Ei mitään"
 
+#. subscription type
 msgid "Subscription"
 msgstr "Tilailmoitus"
 
@@ -4513,7 +4554,8 @@ msgstr "config: Konfiguroi ryhmäkeskusteluhuone."
 msgid "configure:  Configure a chat room."
 msgstr "configure: Konfiguroi ryhmäkeskusteluhuone."
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "part [huone]: Poistu huoneesta."
 
 msgid "register:  Register with a chat room."
@@ -5173,16 +5215,13 @@ msgstr "Avaa Hotmailin saapuneet-kansio"
 msgid "Send to Mobile"
 msgstr "Lähetä mobiililaitteeseen"
 
-msgid "Initiate _Chat"
-msgstr "Aloita _ryhmäkeskustelu"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr "MSN vaatii SSL-tuen. Asenna tuettu SSL-kirjasto."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 "Tuttavaa %s ei voi lisätä koska käyttäjänimi on virheellinen. Käyttäjänimen "
 "tulee olla oikea sähköpostiosoite."
@@ -5393,6 +5432,9 @@ msgstr "Windows Live ID -tunnistautuminen:Virheellinen vastaus"
 msgid "%s just sent you a Nudge!"
 msgstr "Käyttäjä %s lähetti sinulle juuri tönäisyn!"
 
+msgid "The following users are missing from your addressbook"
+msgstr "Seuraavat käyttäjät puuttuvat osoitekirjastasi"
+
 #, c-format
 msgid "Unknown error (%d): %s"
 msgstr "Tuntematon virhe (%d): %s"
@@ -5405,8 +5447,9 @@ msgstr "Käyttäjää ei voi lisätä"
 msgid "Unknown error (%d)"
 msgstr "Tuntematon virhe (%d)"
 
-msgid "The following users are missing from your addressbook"
-msgstr "Seuraavat käyttäjät puuttuvat osoitekirjastasi"
+#, fuzzy
+msgid "Unable to remove user"
+msgstr "Käyttäjää ei voi lisätä"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mobiiliviestiä ei lähetetty, koska se on liian pitkä."
@@ -5641,6 +5684,396 @@ msgstr "Käyttäjä %s on lisännyt sinut tuttaviinsa."
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s on poistanut sinut tuttavistaan."
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "Tämänhetkinen mielialasi"
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "Käyttäjän mieliala"
+
+#, fuzzy
+msgid "Change your Mood"
+msgstr "Vaihda salasana"
+
+#, fuzzy
+msgid "How do you feel right now?"
+msgstr "En ole täällä juuri nyt"
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "Virhe kirjoituksessa"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "Profiili"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "Näyttö"
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "Matkapuhelinnumero"
+
+#, fuzzy
+msgid "Update your Profile"
+msgstr "Käyttäjän profiili"
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+#, fuzzy
+msgid "There is no splash-screen currently available"
+msgstr "Ryhmäkeskustelu ei ole parhaillaan käytettävissä"
+
+#, fuzzy
+msgid "About"
+msgstr "Omat tiedot"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "Vaihda salasana..."
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "Vaihda salasana..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "Näytä loki..."
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "Omat tiedot"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "Viesti on liian suuri."
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "Kirjaudutaan sisään"
+
+#, fuzzy
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr ""
+"Palvelimeen ei voi yhdistää. Ole hyvä, syötä palvelimen osoite jolle haluat "
+"yhdistää."
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "Yhdistetään"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "Kutsumanimi"
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "Rekisteröi uusi XMPP-tili"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "Täytä seuraavat kentät"
+
+#. no reply from the WAP site
+#, fuzzy
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+"Pidgin epäonnistui saamaan yhteyttä tuttavalistapalvelimelle. Yritä "
+"uudelleen myöhemmin."
+
+#. wapserver error
+#. server could not find the user
+#, fuzzy
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+"Pidgin epäonnistui saamaan yhteyttä tuttavalistapalvelimelle. Yritä "
+"uudelleen myöhemmin."
+
+#, fuzzy
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+"Pidgin epäonnistui saamaan yhteyttä tuttavalistapalvelimelle. Yritä "
+"uudelleen myöhemmin."
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "Palvelin ei ole käytössä; yritä myöhemmin uudelleen"
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "Turvatoimet käytössä"
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "Syötä koodi"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "Maa"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "Ensisijainen kieli"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "Pyydä valtuutusta"
+
+#, fuzzy
+msgid "MXit account validation"
+msgstr "Aseta tilin joutenoloaika"
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "Palvelimen tiedot"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "Tilaviesti"
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "Muut etunimet"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "Aseta matkapuhelinnumero..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "Palvelin"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "Yhdistetään käyttäen TCP:tä"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+#, fuzzy
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr "Yhteytesi keskusteluhuoneeseen %s on katkennut."
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "XMPP-viestivirhe"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "Ei kyetty selvittämään palvelimen nimeä"
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "Liityttiin onnistuneesti Quniin"
+
+#, fuzzy
+msgid "Message Error"
+msgstr "XMPP-viestivirhe"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "Yhteysvirhe"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "XMPP-viestivirhe"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "Datavirtavirhe"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "Kuvakevirhe"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "Rekisteröinnin poistamisen virhe"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "Yhteysvirhe"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "Tilailmoitus"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "Yhteysvirhe"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "Tiedostonsiirto"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "Ilmoitinta ei voi luoda"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "Rekisteröinnin poistamisen virhe"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "Virhe kirjoituksessa"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr "Vihainen"
+
+msgid "Excited"
+msgstr "Innostunut"
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "Ryhmä"
+
+msgid "Happy"
+msgstr "Onnellinen"
+
+msgid "In Love"
+msgstr "Rakastunut"
+
+msgid "Invincible"
+msgstr "Haavoittumaton"
+
+msgid "Sad"
+msgstr "Surullinen"
+
+#, fuzzy
+msgid "Hot"
+msgstr "P_alvelin:"
+
+#, fuzzy
+msgid "Sick"
+msgstr "Kutsumanimi"
+
+msgid "Sleepy"
+msgstr "Unelias"
+
+#, fuzzy
+msgid "Pending"
+msgstr "Lähetetään"
+
+#, fuzzy
+msgid "Invited"
+msgstr "Kutsu"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "Kieltäydy"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "Poista"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "Työtiedot"
 
 #, c-format
 msgid "No such user: %s"
@@ -6252,7 +6685,6 @@ msgstr "Palvelimen portti"
 msgid "Received unexpected response from %s"
 msgstr "Odottamaton vastaus osoitteesta %s"
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6414,6 +6846,48 @@ msgstr "Jono täynnä"
 
 msgid "Not while on AOL"
 msgstr "Ei kun AOL on käytössä"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Tiedoston lähetys ei onnistu"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Kansiota ei voi lähettää."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Viestiä ei voi lähettää."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Yhteydetön viesti"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6583,15 +7057,28 @@ msgstr "Käyttäjätilisi palvelu on parhaillaan keskeytetty"
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL-pikaviestipalvelu ei tilapäisesti ole käytössä."
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"Olet ottanut ja katkaissut yhteyden liian tiheästi. Odota kymmenen minuuttia "
+"ja yritä uudelleen. Jos jatkat yrittämistä, joudut odottamaan vielä "
+"pidempään."
+
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Asiakasohjelmasi versio on liian vanha. Päivitä osoitteessa %s"
 
 #. IP address connecting too frequently
+#, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "Olet ottanut ja katkaissut yhteyden liian tiheästi. Odota jonkin aikaa ja "
 "yritä uudelleen. Jos jatkat yrittämistä, joudut odottamaan vielä pidempään."
@@ -6729,21 +7216,28 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Et saanut %hu viestiä %s:lta tuntemattomasta syystä."
 msgstr[1] "Et saanut %hu viestiä %s:lta tuntemattomasta syystä."
 
-#. Data is assumed to be the destination bn
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Viestiä ei voi lähettää (%s)."
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Viestiä ei voi lähettää: %s"
 
-msgid "Unknown reason."
-msgstr "Tuntematon syy."
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Viestiä ei voi lähettää käyttäjälle %s."
 
-#, c-format
-msgid "Unable to send message to %s:"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
 msgstr "Viestiä ei voi lähettää käyttäjälle %s."
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "Käyttäjätiedot eivät ole saatavilla: %s"
+
+msgid "Unknown reason."
+msgstr "Tuntematon syy."
 
 msgid "Online Since"
 msgstr "Kirjautunut"
@@ -6753,9 +7247,6 @@ msgstr "Rekisteröitynyt"
 
 msgid "Capabilities"
 msgstr "Kyvyt"
-
-msgid "Profile"
-msgstr "Profiili"
 
 msgid "Your AIM connection may be lost."
 msgstr "AIM-yhteytesi saattaa olla katkennut."
@@ -6768,9 +7259,10 @@ msgstr ""
 "[Viestiä tältä käyttäjältä ei voi näyttää koska se sisälsi epäkelpoja "
 "merkkejä.]"
 
+#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "Viimeistä viestiä ei lähetetty koska olet ylittänyt taajuusrajan. Odota 10 "
 "sekuntia ja yritä uudelleen."
@@ -7952,6 +8444,10 @@ msgstr "Neuvottelu suljettu"
 msgid "Unable to send message: "
 msgstr "Viestiä ei voi lähettää: "
 
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "Viestiä ei voi lähettää käyttäjälle %s."
+
 msgid "Place Closed"
 msgstr "Paikka suljettu"
 
@@ -8363,35 +8859,14 @@ msgstr "Hyperaktiivinen"
 msgid "Robot"
 msgstr "Robotti"
 
-msgid "Happy"
-msgstr "Onnellinen"
-
-msgid "Sad"
-msgstr "Surullinen"
-
-msgid "Angry"
-msgstr "Vihainen"
-
 msgid "Jealous"
 msgstr "Mustasukkainen"
 
 msgid "Ashamed"
 msgstr "Häpeää"
 
-msgid "Invincible"
-msgstr "Haavoittumaton"
-
-msgid "In Love"
-msgstr "Rakastunut"
-
-msgid "Sleepy"
-msgstr "Unelias"
-
 msgid "Bored"
 msgstr "Tylsistynyt"
-
-msgid "Excited"
-msgstr "Innostunut"
 
 msgid "Anxious"
 msgstr "Levoton"
@@ -9624,6 +10099,15 @@ msgstr "Liity käyttäjän seuraan ryhmäkeskustelussa..."
 msgid "Open Inbox"
 msgstr "Avaa saapuneet-kansio"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -10158,14 +10642,15 @@ msgstr ""
 "%s:n lukemisessa tapahtui virhe. Tiedostoa ei ladattu ja vanha tiedosto on "
 "nimetty uudelleen nimelle %s~."
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "Pikaviestin"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin-pikaviestin"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "Lähetä pikaviestejä monilla eri yhteyskäytännöillä"
 
 msgid "Orientation"
 msgstr "Asento"
@@ -12192,11 +12677,6 @@ msgstr ""
 "pinolistaus (backtrace) haetaan, lue ohjeita osoitteessa\n"
 "%swiki/GetABacktrace\n"
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "Pidgin"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Poistutaan, koska toinen libpurple-asiakas on jo käynnissä.\n"
@@ -12390,49 +12870,55 @@ msgstr "_Toistuva"
 msgid "Pounce Target"
 msgstr "Ilmoituksen kohde"
 
-#, c-format
 msgid "Started typing"
 msgstr "alkoi kirjoittaa"
 
-#, c-format
 msgid "Paused while typing"
 msgstr "keskeytti kirjoittamisen"
 
-#, c-format
 msgid "Signed on"
 msgstr "kirjautui sisään"
 
-#, c-format
 msgid "Returned from being idle"
 msgstr "palasi oltuaan jouten"
 
-#, c-format
 msgid "Returned from being away"
 msgstr "palasi oltuaan poissa"
 
-#, c-format
 msgid "Stopped typing"
 msgstr "lopetti kirjoittamisen"
 
-#, c-format
 msgid "Signed off"
 msgstr "kirjautui ulos"
 
-#, c-format
 msgid "Became idle"
 msgstr "muuttui jouten olevaksi"
 
-#, c-format
 msgid "Went away"
 msgstr "muuttui poissa olevaksi"
 
-#, c-format
 msgid "Sent a message"
 msgstr "lähetti viestin"
 
-#, c-format
 msgid "Unknown.... Please report this!"
 msgstr "Tuntematon... Raportoi tästä!"
+
+msgid "(Custom)"
+msgstr ""
+
+#, fuzzy
+msgid "(Default)"
+msgstr "(oletus)"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "Pidginin tuttavaluettelon teemaeditori"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 msgid "Theme failed to unpack."
 msgstr "Teeman purkaminen epäonnistui."
@@ -12585,6 +13071,10 @@ msgstr "_Poista käytöstä"
 msgid "Use _automatically detected IP address: %s"
 msgstr "Käytä _automaattisesti tunnistettua IP-osoitetta: %s"
 
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "ST_UN-palvelin:"
+
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Esimerkki: stunserver.org</span>"
 
@@ -12597,14 +13087,17 @@ msgstr "Portit"
 msgid "_Enable automatic router port forwarding"
 msgstr "_Ota käyttöön automaattinen reitittimen porttien uudelleenohjaus"
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "_Aseta kuunneltava porttialue"
 
-msgid "_Start port:"
-msgstr "_Ensimmäinen portti:"
+#, fuzzy
+msgid "_Start:"
+msgstr "_Käynnistä "
 
-msgid "_End port:"
-msgstr "Viimeinen _portti:"
+#, fuzzy
+msgid "_End:"
+msgstr "_Laajenna"
 
 #. TURN server
 msgid "Relay Server (TURN)"
@@ -12613,6 +13106,14 @@ msgstr "Edelleenvälityspalvelin (TURN)"
 #, fuzzy
 msgid "_TURN server:"
 msgstr "ST_UN-palvelin:"
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "Käyttäjänimi:"
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "Salasana:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Välipalvelin &amp; selain"
@@ -12639,15 +13140,25 @@ msgstr "Aseta _selain"
 msgid "Proxy Server"
 msgstr "Välipalvelin"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+#, fuzzy
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr "Käytä etä-DNS:ää SOCKS4-välipalvelimien kanssa"
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "Välipalvelimen _tyyppi:"
+
 msgid "No proxy"
 msgstr "Ei välipalvelinta"
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr "Käytä etä-DNS:ää SOCKS4-välipalvelimien kanssa"
+#, fuzzy
+msgid "P_ort:"
+msgstr "_Portti:"
 
-msgid "_User:"
-msgstr "_Käyttäjä:"
+#, fuzzy
+msgid "User_name:"
+msgstr "Käyttäjänimi:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -13141,6 +13652,11 @@ msgstr "_Tallenna tiedosto"
 
 msgid "Select color"
 msgstr "Valitse väri"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "Pidgin"
 
 msgid "_Alias"
 msgstr "_Lempinimi"
@@ -14271,9 +14787,6 @@ msgstr ""
 "\n"
 "Huomaa: Tämä liitännäinen vaatii Win2000 tai uudemman."
 
-msgid "GTK+ Runtime Version"
-msgstr "GTK+ Runtime -versio"
-
 #. Autostart
 msgid "Startup"
 msgstr "Käynnistys"
@@ -14281,6 +14794,10 @@ msgstr "Käynnistys"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "_Käynnistä %s Windowsin käynnistyessä"
+
+#, fuzzy
+msgid "Allow multiple instances"
+msgstr "salli usean samanaikaisen ohjelman käynnissä olon"
 
 msgid "_Dockable Buddy List"
 msgstr "_Telakoi tuttavat-ikkuna ruudun reunaan"
@@ -14343,6 +14860,25 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
+
+#, fuzzy
+#~ msgid "The root certificate this one claims to be issued by is unknown."
+#~ msgstr "Tämän varmenteen myöntäjän juurivarmenne on tuntematon Pidginille."
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "Lähetä pikaviestejä monilla eri yhteyskäytännöillä"
+
+#~ msgid "_Start port:"
+#~ msgstr "_Ensimmäinen portti:"
+
+#~ msgid "_End port:"
+#~ msgstr "Viimeinen _portti:"
+
+#~ msgid "_User:"
+#~ msgstr "_Käyttäjä:"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "GTK+ Runtime -versio"
 
 #~ msgid "Without this only the first account will be enabled)."
 #~ msgstr "Ilman tätä vain ensimmäinen tili otetaan käyttöön)."
@@ -14564,9 +15100,6 @@ msgstr ""
 #~ msgid "Stream Initiation"
 #~ msgstr "Virtauksen alustus"
 
-#~ msgid "User Mood"
-#~ msgstr "Käyttäjän mieliala"
-
 #~ msgid "User Activity"
 #~ msgstr "Käyttäjän aktiivisuus"
 
@@ -14584,9 +15117,6 @@ msgstr ""
 
 #~ msgid "Reachability Address"
 #~ msgstr "Tavoitettavuusosoite"
-
-#~ msgid "User Profile"
-#~ msgstr "Käyttäjän profiili"
 
 #~ msgid "Jingle"
 #~ msgstr "Jingle"
@@ -14725,9 +15255,6 @@ msgstr ""
 
 #~ msgid "Could not write"
 #~ msgstr "Kirjoittaminen ei onnistu"
-
-#~ msgid "Could not connect"
-#~ msgstr "Yhdistäminen ei onnistu"
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "Kuuntelupistokkeen luominen epäonnistui"
@@ -15725,9 +16252,6 @@ msgstr ""
 #~ msgid "_Default reply"
 #~ msgstr "_Oletusvastaus"
 
-#~ msgid "Status message"
-#~ msgstr "Tilaviesti"
-
 #~ msgid "Autoreply with status message"
 #~ msgstr "Automaattivastaus tilaviestillä"
 
@@ -15797,9 +16321,6 @@ msgstr ""
 
 #~ msgid "<span weight='bold' size='larger'>Welcome to "
 #~ msgstr "<span weight='bold' size='larger'>Tervetuloa "
-
-#~ msgid "_Start "
-#~ msgstr "_Käynnistä "
 
 #~ msgid "Provides options specific to Windows "
 #~ msgstr "Tarjoaa asetukset jotka liittyvät erityisesti Windows-versioon "
@@ -16060,9 +16581,6 @@ msgstr ""
 #~ "Käyttäjä %s vaatii valtuutuksen ennenkuin hänet voi lisätä "
 #~ "tuttavalistalle. Haluatko lähettää valtuutuspyynnön?"
 
-#~ msgid "Request Authorization"
-#~ msgstr "Pyydä valtuutusta"
-
 #~ msgid "_Request Authorization"
 #~ msgstr "_Pyydä valtuutusta"
 
@@ -16293,12 +16811,6 @@ msgstr ""
 
 #~ msgid "Unable to open Direct IM"
 #~ msgstr "Ei voitu avata suoraa pikaviestiyhteyttä"
-
-#~ msgid "You have lost your connection to chat room %s."
-#~ msgstr "Yhteytesi keskusteluhuoneeseen %s on katkennut."
-
-#~ msgid "Chat is currently unavailable"
-#~ msgstr "Ryhmäkeskustelu ei ole parhaillaan käytettävissä"
 
 #~ msgid ""
 #~ "Transfer of file %s timed out.\n"
@@ -16596,9 +17108,6 @@ msgstr ""
 #~ "Oletusarvot (poissa linjoilta = 4, poissa = 2, jouten = 1)\n"
 #~ "käyttävät aikaisempaa sisäänrakennettua järjestystä: aktiivinen->jouten-"
 #~ ">poissa->poissa+jouten->poissa linjoilta."
-
-#~ msgid "Set account idle time"
-#~ msgstr "Aseta tilin joutenoloaika"
 
 #~ msgid "Unset account idle time"
 #~ msgstr "Poista tilin joutenoloajan asetus"
@@ -17122,9 +17631,6 @@ msgstr ""
 #~ "_Näytä palvelimelle tallennetut kutsumanimet jos lempinimeä ei ole "
 #~ "asetettu"
 
-#~ msgid "Display"
-#~ msgstr "Näyttö"
-
 #~ msgid "Show _timestamp on messages"
 #~ msgstr "Näytä _aikaleimat viesteissä"
 
@@ -17327,13 +17833,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Pidgin ei saanut yhteyttä Gadu-Gadu tuttavalistapalvelimeen. Yritä "
 #~ "myöhemmin uudelleen."
-
-#~ msgid ""
-#~ "Pidgin was unable to connect to the buddy list server.  Please try again "
-#~ "later."
-#~ msgstr ""
-#~ "Pidgin epäonnistui saamaan yhteyttä tuttavalistapalvelimelle. Yritä "
-#~ "uudelleen myöhemmin."
 
 #~ msgid "Unable to delete Gadu-Gadu buddy list"
 #~ msgstr "Gadu-Gadu tuttavalistan poistaminen ei onnistu"
