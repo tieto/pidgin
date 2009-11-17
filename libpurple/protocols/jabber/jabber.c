@@ -3234,6 +3234,12 @@ gboolean jabber_can_receive_file(PurpleConnection *gc, const char *who)
 		GList *iter;
 		gboolean has_resources_without_caps = FALSE;
 
+		/* if we didn't find a JabberBuddy, we don't have presence for this
+		 buddy, let's assume they can receive files, disco should tell us
+		 when actually trying */
+		if (jb == NULL)
+			return TRUE;
+
 		/* find out if there is any resources without caps */
 		for (iter = jb->resources; iter ; iter = g_list_next(iter)) {
 			JabberBuddyResource *jbr = (JabberBuddyResource *) iter->data;
