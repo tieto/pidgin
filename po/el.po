@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin[el]\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"POT-Creation-Date: 2009-11-14 20:33-0500\n"
 "PO-Revision-Date: 2009-07-16 16:48+0300\n"
 "Last-Translator: Bouklis Panos <panos@echidna-band.com>\n"
 "Language-Team: Greek <i18ngr@lists.hellug.gr>\n"
@@ -59,6 +59,7 @@ msgstr ""
 "Παρακαλούμε ελέγξτε το και ολοκληρώστε τη μεταφορά με το χέρι. Παρακαλούμε "
 "αναφέρετε αυτό το σφάλμα στο http://developer.pidgin.im"
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Σφάλμα"
 
@@ -552,13 +553,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "Επανενεργοποίηση λογαριασμού"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-"Αυτός ο λογαριασμός αποσυνδέθηκε και δε συμμετέχετε πλέον σε αυτή τη "
-"συζήτηση. Θα συμμετάσχετε ξανά αυτόματα όταν επανασυνδεθεί ο λογαριασμός."
-
 msgid "No such command."
 msgstr "Δεν υπάρχει τέτοια εντολή."
 
@@ -600,6 +594,13 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "Φύγατε από αυτή τη συζήτηση."
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+"Αυτός ο λογαριασμός αποσυνδέθηκε και δε συμμετέχετε πλέον σε αυτή τη "
+"συζήτηση. Θα συμμετάσχετε ξανά αυτόματα όταν επανασυνδεθεί ο λογαριασμός."
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr ""
 "Η καταγραφή ξεκίνησε. Τα μελλοντικά μηνύματα σε αυτή τη συνομιλία θα "
@@ -635,6 +636,10 @@ msgstr "Ενεργοποίηση καταγραφής"
 msgid "Enable Sounds"
 msgstr "Ενεργοποίηση ήχων"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "Δεν ήταν δυνατή η σύνδεση"
+
 msgid "<AUTO-REPLY> "
 msgstr "<ΑΥΤΟΜΑΤΗ-ΑΠΑΝΤΗΣΗ> "
 
@@ -644,7 +649,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "Λίστα %d χρήστη:\n"
 msgstr[1] "Λίστα %d χρηστών:\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "Οι υποστηριζόμενες επιλογές αποσφαλμάτωσης είναι:  έκδοση"
 
 msgid "No such command (in this context)."
@@ -769,6 +775,7 @@ msgid "Remaining"
 msgstr "Απομένουν"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "Κατάσταση"
 
@@ -943,6 +950,9 @@ msgstr "Πρόσκληση"
 msgid "(none)"
 msgstr "(κανένα)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 msgid "URI"
 msgstr "URI"
 
@@ -1347,6 +1357,8 @@ msgstr "Διαγραφή κατάστασης"
 msgid "Saved Statuses"
 msgstr "Αποθηκευμένες καταστάσεις"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "Τίτλος"
 
@@ -1522,6 +1534,13 @@ msgid ""
 "Fetching TinyURL..."
 msgstr ""
 
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
 #, fuzzy
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Δημιουργία TinyURL μόνο για url μεγαλύτερα από αυτό το μήκος"
@@ -1651,7 +1670,9 @@ msgstr ""
 "Το πιστοποιητικό που σας παρουσιάστηκε από \"%s\" έχει προσωπική υπογραφή. "
 "Δεν μπορεί να ελεγχθεί αυτόματα."
 
-msgid "The root certificate this one claims to be issued by is unknown."
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
 msgstr ""
 
 #, fuzzy
@@ -1760,6 +1781,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "Πληροφορίες πιστοποιητικού"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "Σφάλμα καταχώρησης"
 
@@ -1774,6 +1796,7 @@ msgstr "+++ %s συνδέθηκε"
 msgid "+++ %s signed off"
 msgstr "+++ %s αποσυνδέθηκε"
 
+#. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "Άγνωστο σφάλμα"
@@ -1878,10 +1901,15 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "Σφάλμα κατά την εύρεση του %s: %d"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr ""
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Άγνωστη αιτία"
 
@@ -2196,13 +2224,13 @@ msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Ένα άγνωστο σφάλμα σύνδεσης συνέβη: %s."
 
 #, fuzzy
-msgid "Conference error."
+msgid "Conference error"
 msgstr "Η συζήτηση έκλεισε"
 
-msgid "Error with your microphone."
+msgid "Error with your microphone"
 msgstr ""
 
-msgid "Error with your webcam."
+msgid "Error with your webcam"
 msgstr ""
 
 #, fuzzy, c-format
@@ -2958,6 +2986,7 @@ msgstr "Όνομα"
 msgid "Last name"
 msgstr "Επώνυμο"
 
+#. email
 msgid "Email"
 msgstr "Email"
 
@@ -3095,12 +3124,14 @@ msgstr "Πόλη"
 msgid "Year of birth"
 msgstr "Ημερομηνία γέννησης"
 
+#. gender
 msgid "Gender"
 msgstr "Φύλο"
 
 msgid "Male or female"
 msgstr "Άντρας ή γυναίκα"
 
+#. 0
 msgid "Male"
 msgstr "Άντρας"
 
@@ -3170,6 +3201,7 @@ msgstr "Απών"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "Όνομα"
 
@@ -3889,6 +3921,7 @@ msgstr "Τμήμα"
 msgid "Role"
 msgstr "Ρόλος"
 
+#. birthday
 msgid "Birthday"
 msgstr "Ημερομηνία γέννησης"
 
@@ -3966,6 +3999,9 @@ msgstr "Αίτηση έγκρισης (ξανά)"
 msgid "Unsubscribe"
 msgstr "Διαγραφή από τη συνδρομή"
 
+msgid "Initiate _Chat"
+msgstr "Έναρξη _συζήτησης"
+
 msgid "Log In"
 msgstr "Σύνδεση"
 
@@ -3984,6 +4020,7 @@ msgstr "Μην ενοχλείτε"
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "Επώνυμο"
 
@@ -4218,6 +4255,7 @@ msgstr "Ο εξυπηρετητής δεν υπηστηρίζει αποκλει
 msgid "Not Authorized"
 msgstr "Δεν εγκρίθηκε"
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Διάθεση"
 
@@ -4242,6 +4280,7 @@ msgstr "Κανένα (Προς εκκρεμεί)"
 msgid "None"
 msgstr "Καμία"
 
+#. subscription type
 msgid "Subscription"
 msgstr "Εγγραφή"
 
@@ -4541,7 +4580,8 @@ msgstr "config:  Ρύθμιση του δωματίου συζήτησης."
 msgid "configure:  Configure a chat room."
 msgstr "configure:  Ρύθμιση του δωματίου συζήτησης."
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "part [δωμάτιο]:  Αποχώρηση από το δωμάτιο."
 
 msgid "register:  Register with a chat room."
@@ -5200,18 +5240,15 @@ msgstr "Άνοιγμα εισερχομένων Hotmail"
 msgid "Send to Mobile"
 msgstr "Αποστολή σε κινητό"
 
-msgid "Initiate _Chat"
-msgstr "Έναρξη _συζήτησης"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Χρειάζεται υποστήριξη SSL για το MSN. Παρακαλούμε εγκαταστήστε μία "
 "υποστηριζόμενη βιβλιοθήκη SSL."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 "Δεν ήταν δυνατή η προσθήκη του φίλου %s επειδή το όνομα χρήστη δεν είναι "
 "έγκυρο.  Τα ονόματα χρήστη πρέπει να είναι μία έγκυρη διεύθυνση ηλεκτρονικού "
@@ -5424,6 +5461,9 @@ msgstr "Έγκριση Windows Live ID:Μη έγκυρη απάντηση"
 msgid "%s just sent you a Nudge!"
 msgstr "%s μόλις σας σκούντηξε!"
 
+msgid "The following users are missing from your addressbook"
+msgstr "Οι ακόλουθοι χρήστες λείπουν από το βιβλίο επαφών σας"
+
 #, c-format
 msgid "Unknown error (%d): %s"
 msgstr "Άγνωστο σφάλμα (%d): %s"
@@ -5436,8 +5476,9 @@ msgstr "Αδυναμία προσθήκης χρήστη"
 msgid "Unknown error (%d)"
 msgstr "Άγνωστο σφάλμα (%d)"
 
-msgid "The following users are missing from your addressbook"
-msgstr "Οι ακόλουθοι χρήστες λείπουν από το βιβλίο επαφών σας"
+#, fuzzy
+msgid "Unable to remove user"
+msgstr "Αδυναμία προσθήκης χρήστη"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "Το μήνυμα κινητού δε στάλθηκε επειδή ήταν πολύ μεγάλο."
@@ -5677,6 +5718,383 @@ msgstr "%s σας προσέθεσε στη λίστα φίλων του."
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s σας αφαίρεσε από τη λίστα φίλων του."
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "Η τρέχουσα διάθεσή σας"
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "Διάθεση χρήστη"
+
+#, fuzzy
+msgid "Change your Mood"
+msgstr "Αλλαγή κωδικού"
+
+#, fuzzy
+msgid "How do you feel right now?"
+msgstr "Δεν είμαι εδώ αυτή τη στιγμή"
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "Σφάλμα εγγραφής"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "Προφίλ"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "Επώνυμο"
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "Κινητό τηλέφωνο"
+
+#, fuzzy
+msgid "Update your Profile"
+msgstr "Προφίλ χρήστη"
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+msgid "There is no splash-screen currently available"
+msgstr ""
+
+#, fuzzy
+msgid "About"
+msgstr "Σχετικά με μένα"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "Αλλαγή κωδικού..."
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "Αλλαγή κωδικού..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "Εμφάνιση καταγραφής..."
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "Σχετικά με μένα"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "Το μήνυμα είναι πολύ μεγάλο."
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "Γίνεται είσοδος"
+
+#, fuzzy
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr ""
+"Αδύνατη η σύνδεση με τον εξυπηρετητή. Παρακαλούμε εισάγετε τη διεύθυνση του "
+"εξυπηρετητή με τον οποίο επιθυμείτε να συνδεθείτε."
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "Γίνεται σύνδεση"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "Ψευδώνυμο"
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "Καταχώρηση νέου λογαριασμού XMPP"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "Παρακαλούμε, συμπληρώστε τα παρακάτω πεδία"
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "Ο εξυπηρετητής δεν είναι διαθέσιμος, ξαναδοκιμάστε αργότερα"
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "Ασφάλεια ενεργοποιήθηκε"
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "Εισαγωγή κωδικού"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "Χώρα"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "Προτιμώμενη γλώσσα"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "Αίτηση έγκρισης"
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "Πληροφορίες εξυπηρετητή"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "Εξερχόμενα μηνύματα"
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "Πατρώνυμο"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "Ορισ�ός κινητού τηλεφώνου..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "Εξυπηρετητής"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "Σύνδεση με χρήση TCP"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "Σφάλμα μηνύματος XMPP"
+
+msgid "Unable to process your request at this time"
+msgstr ""
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "Επιστυχής συμμετοχή σε Qun"
+
+#, fuzzy
+msgid "Message Error"
+msgstr "Σφάλμα μηνύματος XMPP"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "Σφάλμα σύνδεσης"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "Σφάλμα μηνύματος XMPP"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "Σφάλμα ροής"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "Σφάλμα εικονιδίου"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "Σφάλμα διαγραφής"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "Σφάλμα σύνδεσης"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "Εγγραφή"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "Σφάλμα σύνδεσης"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "Μεταφορές αρχείων"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "Δεν είναι δυνατή η δημιουργία εφόρμησης"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "Σφάλμα διαγραφής"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "Σφάλμα εγγραφής"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr "Θυμωμένος"
+
+msgid "Excited"
+msgstr "Εντυπωσιασμένος"
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "Ομάδα"
+
+msgid "Happy"
+msgstr "Χαρούμενος"
+
+msgid "In Love"
+msgstr "Ερωτευμένος"
+
+msgid "Invincible"
+msgstr "Άτρωτος"
+
+msgid "Sad"
+msgstr "Λυπημένος"
+
+#, fuzzy
+msgid "Hot"
+msgstr "_Κεντρικός Υπολογιστής:"
+
+#, fuzzy
+msgid "Sick"
+msgstr "Ψευδώνυμο"
+
+msgid "Sleepy"
+msgstr "Κοιμισμένος"
+
+#, fuzzy
+msgid "Pending"
+msgstr "Αποστολή"
+
+#, fuzzy
+msgid "Invited"
+msgstr "Πρόσκληση"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "Απόρριψη"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "Διαγραφή"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "Πληροφορίες εργασίας"
 
 #, c-format
 msgid "No such user: %s"
@@ -6298,7 +6716,6 @@ msgstr "Θύρα εξυπηρετητή"
 msgid "Received unexpected response from %s"
 msgstr "Λήφθηκε αναπάντεχη ανταπόκριση από "
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6462,6 +6879,48 @@ msgstr "Ουρά πλήρης"
 
 msgid "Not while on AOL"
 msgstr "Όχι όταν είστε στο AOL"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Αδύνατη η αποστολή του αρχείου"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Αδύνατο να σταλεί κατάλογος."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Αδύνατο να σταλεί το μήνυμα."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Μήνυμα χωρίς σύνδεση"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6632,6 +7091,17 @@ msgstr "Ο λογαριασμός σας είναι προς το παρόν σ�
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Η υπηρεσία AOL Instant Messenger είναι προσωρινά μη διαθέσιμη."
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"Συνδεόσασταν και αποσυνδεόσασταν πολύ γρήγορα. Περιμένετε δέκα λεπτά και "
+"ξαναπροσπαθήστε. Αν συνεχίσετε να προσπαθείτε, θα πρέπει να περιμένετε ακόμα "
+"περισσότερο."
+
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
@@ -6640,9 +7110,11 @@ msgstr ""
 "σε %s"
 
 #. IP address connecting too frequently
+#, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "Συνδεόσασταν και αποσυνδεόσασταν πολύ γρήγορα. Περιμένετε ένα λεπτό και "
 "ξαναπροσπαθήστε. Αν συνεχίσετε να προσπαθείτε, θα πρέπει να περιμένετε ακόμα "
@@ -6790,21 +7262,28 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Χάσατε %hu μήνυμα από %s για άγνωστο λόγο."
 msgstr[1] "Χάσατε %hu μηνύματα από %s για άγνωστο λόγο."
 
-#. Data is assumed to be the destination bn
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Αδυναμία αποστολής μηνύματος (%s)."
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Αδυναμία αποστολής μηνύματος: %s"
 
-msgid "Unknown reason."
-msgstr "Άγνωστη αιτία."
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Αδύνατο να σταλεί στο μήνυμα σε %s:"
 
-#, c-format
-msgid "Unable to send message to %s:"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
 msgstr "Αδύνατο να σταλεί στο μήνυμα σε %s:"
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "Πληροφορίες χρήστη μη διαθέσιμες: %s"
+
+msgid "Unknown reason."
+msgstr "Άγνωστη αιτία."
 
 msgid "Online Since"
 msgstr "Συνδεδεμένος από"
@@ -6814,9 +7293,6 @@ msgstr "Μέλος από"
 
 msgid "Capabilities"
 msgstr "Δυνατότητες"
-
-msgid "Profile"
-msgstr "Προφίλ"
 
 msgid "Your AIM connection may be lost."
 msgstr "Η σύνδεσή σας AIM μπορεί να χαθεί."
@@ -6829,9 +7305,10 @@ msgstr ""
 "[Αδύνατη η εμφάνιση ενός μηνύματος από αυτόν το χρήστη επειδή περιείχε "
 "λανθασμένους χαρακτήρες.]"
 
+#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "Η τελευταία προσπάθεια ενέργειας δεν μπορούσε να εφαρμοστεί λόγω υπέρβασης "
 "του ορίου εύρους. Παρακαλούμε περιμένετε 10 δευτερόλεπτα και ξαναπροσπαθήστε."
@@ -8022,6 +8499,10 @@ msgstr "Η συζήτηση έκλεισε"
 msgid "Unable to send message: "
 msgstr "Αδυναμία αποστολής μηνύματος. "
 
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "Αδύνατο να σταλεί στο μήνυμα σε %s:"
+
 msgid "Place Closed"
 msgstr "Η περιοχή έκλεισε"
 
@@ -8424,35 +8905,14 @@ msgstr "Υπερδραστήριος"
 msgid "Robot"
 msgstr "Ρομπότ"
 
-msgid "Happy"
-msgstr "Χαρούμενος"
-
-msgid "Sad"
-msgstr "Λυπημένος"
-
-msgid "Angry"
-msgstr "Θυμωμένος"
-
 msgid "Jealous"
 msgstr "Ζηλιάρης"
 
 msgid "Ashamed"
 msgstr "Ντροπαλός"
 
-msgid "Invincible"
-msgstr "Άτρωτος"
-
-msgid "In Love"
-msgstr "Ερωτευμένος"
-
-msgid "Sleepy"
-msgstr "Κοιμισμένος"
-
 msgid "Bored"
 msgstr "Βαριεστημένος"
-
-msgid "Excited"
-msgstr "Εντυπωσιασμένος"
 
 msgid "Anxious"
 msgstr "Αμήχανος"
@@ -9705,6 +10165,15 @@ msgstr "Συμμετοχή χρήστη σε συζήτηση..."
 msgid "Open Inbox"
 msgstr "Άνοιγμα εισερχομένων"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -10231,14 +10700,15 @@ msgstr ""
 "Ένα σφάλμα συνέβη κατά την ανάγνωση του %s σας.  Δεν φορτώθηκε, και το παλιό "
 "αρχείο μετονομάστηκε σε %s~."
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "Αποστολέας μηνυμάτων διαδικτύου"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Αποστολέας μηνυμάτων διαδικτύου Pidgin"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "Αποστολή άμεσων μηνυμάτων με τη χρήση πολλαπλών πρωτοκόλλων"
 
 msgid "Orientation"
 msgstr "Προσανατολισμός"
@@ -12265,11 +12735,6 @@ msgid ""
 "%swiki/GetABacktrace\n"
 msgstr ""
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "Pidgin"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Έξοδος επειδή ήδη τρέχει ένας άλλος πελάτης της libpurple.\n"
@@ -12468,49 +12933,55 @@ msgstr "_Κατ' επανάληψη"
 msgid "Pounce Target"
 msgstr "Στόχος εφόρμησης"
 
-#, c-format
 msgid "Started typing"
 msgstr "Ξεκίνησε να πληκτρολογεί"
 
-#, c-format
 msgid "Paused while typing"
 msgstr "Έκανε παύση κατά την πληκτρολόγηση"
 
-#, c-format
 msgid "Signed on"
 msgstr "Συνδέθηκε"
 
-#, c-format
 msgid "Returned from being idle"
 msgstr ""
 
-#, c-format
 msgid "Returned from being away"
 msgstr "Επιστρέφει από απών"
 
-#, c-format
 msgid "Stopped typing"
 msgstr "Σταμάτησε την πληκτρολόγηση"
 
-#, c-format
 msgid "Signed off"
 msgstr "Αποσυνδέθηκε"
 
-#, c-format
 msgid "Became idle"
 msgstr "Έγινε ανενεργός"
 
-#, c-format
 msgid "Went away"
 msgstr "Έγινε απών"
 
-#, c-format
 msgid "Sent a message"
 msgstr "Έστειλε ένα μήνυμα"
 
-#, c-format
 msgid "Unknown.... Please report this!"
 msgstr "Άγνωστο.... Παρακαλούμε αναφέρετέ το!"
+
+msgid "(Custom)"
+msgstr ""
+
+#, fuzzy
+msgid "(Default)"
+msgstr "(προεπιλογή)"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "Επεξεργαστής θεμάτων λίστα φίλων Pidgin"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 msgid "Theme failed to unpack."
 msgstr ""
@@ -12664,6 +13135,10 @@ msgstr "_Απενεργοποίηση"
 msgid "Use _automatically detected IP address: %s"
 msgstr "Χρήση _αυτόματου εντοπισμού διεύθυνσης IP: %s"
 
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "Εξυπηρετητής STUN:"
+
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Παράδειγμα: stunserver.org</span>"
 
@@ -12676,14 +13151,17 @@ msgstr "Θύρες"
 msgid "_Enable automatic router port forwarding"
 msgstr ""
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "_Ορισμός του εύρους των θυρών ακρόασης με το χέρι"
 
-msgid "_Start port:"
-msgstr "_Θύρα εκκίνησης:"
+#, fuzzy
+msgid "_Start:"
+msgstr "_Κατάσταση:"
 
-msgid "_End port:"
-msgstr "_Θύρα τέλους:"
+#, fuzzy
+msgid "_End:"
+msgstr "_Ανάπτυξη"
 
 #. TURN server
 msgid "Relay Server (TURN)"
@@ -12692,6 +13170,14 @@ msgstr ""
 #, fuzzy
 msgid "_TURN server:"
 msgstr "Εξυπηρετητής STUN:"
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "Όνομα χρήστη:"
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "Κωδικός:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr ""
@@ -12718,15 +13204,24 @@ msgstr "Ρύθμιση _περιηγητή"
 msgid "Proxy Server"
 msgstr "Διαμεσολαβητής"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "_Τύπος διαμεσολαβητή:"
+
 msgid "No proxy"
 msgstr "Χωρίς διαμεσολαβητή"
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr ""
+#, fuzzy
+msgid "P_ort:"
+msgstr "_Θύρα:"
 
-msgid "_User:"
-msgstr "_Χρήστης:"
+#, fuzzy
+msgid "User_name:"
+msgstr "Όνομα χρήστη:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -13233,6 +13728,11 @@ msgstr "_Αποθήκευση αρχείου"
 
 msgid "Select color"
 msgstr "Επιλογή χρώματος"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "Pidgin"
 
 msgid "_Alias"
 msgstr "_Γνωστός ως"
@@ -14382,9 +14882,6 @@ msgstr ""
 "\n"
 "* Σημείωση: Αυτό το πρόσθετο απαιτεί Win2000 ή νεότερο."
 
-msgid "GTK+ Runtime Version"
-msgstr "Έκδοση GTK+ Runtime"
-
 #. Autostart
 msgid "Startup"
 msgstr "Εκκίνηση"
@@ -14392,6 +14889,10 @@ msgstr "Εκκίνηση"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "_Εκτέλεση του %s κατά την εκκίνηση των Windows"
+
+#, fuzzy
+msgid "Allow multiple instances"
+msgstr "Να επιτρέπονται οι πολλαπλές εισόδοι"
 
 msgid "_Dockable Buddy List"
 msgstr "_Προσαρτήσιμη λίστα φίλων"
@@ -14454,6 +14955,21 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Αυτό το πρόσθετο είναι χρήσιμο για την αποσφαλμάτωση εξυπηρετητών και "
 "πελατών XMPP."
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "Αποστολή άμεσων μηνυμάτων με τη χρήση πολλαπλών πρωτοκόλλων"
+
+#~ msgid "_Start port:"
+#~ msgstr "_Θύρα εκκίνησης:"
+
+#~ msgid "_End port:"
+#~ msgstr "_Θύρα τέλους:"
+
+#~ msgid "_User:"
+#~ msgstr "_Χρήστης:"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "Έκδοση GTK+ Runtime"
 
 #~ msgid "Calling ... "
 #~ msgstr "Κλήση... "
@@ -14629,14 +15145,8 @@ msgstr ""
 #~ msgid "Software Version"
 #~ msgstr "Έκδοση λογισμικού"
 
-#~ msgid "User Mood"
-#~ msgstr "Διάθεση χρήστη"
-
 #~ msgid "User Activity"
 #~ msgstr "Δραστηριότητα χρήστη"
-
-#~ msgid "User Profile"
-#~ msgstr "Προφίλ χρήστη"
 
 #~ msgid "User Nickname"
 #~ msgstr "Όνομα χρήστη"
@@ -14726,9 +15236,6 @@ msgstr ""
 
 #~ msgid "Could not write"
 #~ msgstr "Δεν ήταν δυνατή η εγγραφή"
-
-#~ msgid "Could not connect"
-#~ msgstr "Δεν ήταν δυνατή η σύνδεση"
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "Δεν ήταν δυνατή η δημιουργία υποδοχέα ακρόασης"

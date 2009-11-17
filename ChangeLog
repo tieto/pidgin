@@ -4,6 +4,8 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.6.4 (??/??/20??):
 	libpurple:
 	* Actually emit the hold signal for media calls.
+	* Added "MXit" protocol plugin, supported and maintained by the MXit folks
+	  themselves (MXit Lifestyle (Pty) Ltd.)
 
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
@@ -40,6 +42,9 @@ version 2.6.4 (??/??/20??):
 	  account's domain, and use that for voice and video if found and the user 
 	  didn't set one manually in prefs.
 	* Fix a crash when adding a buddy without an '@'.
+	* Don't show the option to send a file to a buddy if we know for certain
+	  they don't support any file transfer method supported by libpurple.
+	* Keep the avatar on the server if one is not set locally.
 
 	Yahoo:
 	* Fix sending /buzz.
@@ -58,6 +63,31 @@ version 2.6.4 (??/??/20??):
 	* The userlist in a multiuser chat can be styled via gtkrc by using the
 	  widget name "pidgin_conv_userlist". (Heiko Schmitt)
 	* Add a hold button to the media window.
+
+	Pidgin Preference and Preference Window Changes:
+	* Removed the "Use font from theme" and "Conversation Font" preferences
+	  for everyone except Windows users.  The font can be controlled from the
+	  Pidgin GTK+ Theme Control plugin.
+	* Tabs in the Preferences window are now on the left side.
+	* The Browser tab is now visible for GNOME users.
+	* Added a Proxy tab shown no matter what environment Pidgin runs in.
+	* The Browser and Proxy tabs show appropriate GNOME-specific messages and
+	  allow launching the correct applications to change the relevant GNOME
+	  preferences if found.  These were previously together on the Network
+	  tab.
+	* Moved the port range spin buttons on the Network tab to be beside the
+	  checkbox that enables/disables them.
+	* Reorganized preferences on the Status/Idle tab to have one less
+	  "section."
+	* Reorganized preferences on the Sounds tab to have one less "section."
+	* Renamed Smiley Themes tab to Themes.
+	* Moved Buddy List Theme and Status Icon Theme selectors from Interface
+	  tab to Themes tab.
+	* Moved Sound Theme selector from Sounds tab to Themes tab.
+	* Changed the Smiley Theme selector to be consistent with the other theme
+	  selectors.
+	* Rearranged tabs such that Interface is first and all remaining tabs are
+	  alphabetized in English.
 
 version 2.6.3 (10/16/2009):
 	General:

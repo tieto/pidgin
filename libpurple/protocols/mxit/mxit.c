@@ -541,7 +541,7 @@ static GHashTable* mxit_get_text_table( PurpleAccount* acc )
 
 	table = g_hash_table_new( g_str_hash, g_str_equal );
 
-	g_hash_table_insert( table, "login_label", _( "Your Mobile Number..." ) );
+	g_hash_table_insert( table, "login_label", (gpointer)_( "Your Mobile Number..." ) );
 
 	return table;
 }

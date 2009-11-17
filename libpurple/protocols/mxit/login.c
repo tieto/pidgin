@@ -164,7 +164,7 @@ static void mxit_cb_connect( gpointer user_data, gint source, const gchar* error
 	/* source is the file descriptor of the new connection */
 	if ( source < 0 ) {
 		purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_connect failed: %s\n", error_message );
-		purple_connection_error( session->con, _( "Unable to connect to the mxit server. Please check your server server settings." ) );
+		purple_connection_error( session->con, _( "Unable to connect to the MXit server. Please check your server settings." ) );
 		return;
 	}
 
@@ -201,7 +201,7 @@ static void mxit_login_connect( struct MXitSession* session )
 		/* socket connection */
 		data = purple_proxy_connect( session->con, session->acc, session->server, session->port, mxit_cb_connect, session );
 		if ( !data ) {
-			purple_connection_error( session->con, _( "Unable to connect to the mxit server. Please check your server server settings." ) );
+			purple_connection_error( session->con, _( "Unable to connect to the MXit server. Please check your server settings." ) );
 			return;
 		}
 	}

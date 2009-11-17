@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"POT-Creation-Date: 2009-11-14 20:34-0500\n"
 "PO-Revision-Date: 2009-08-29 09:40+0200\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
@@ -70,6 +70,7 @@ msgstr ""
 "vers %s. Veuillez enquêter et terminer la migration à la main. Reportez "
 "cette erreur sur http://developer.pidgin.im"
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Erreur"
 
@@ -559,13 +560,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "Réactiver le compte"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-"Ce compte a été déconnecté et vous n'êtes plus dans la discussion. Vous "
-"rejoindrez automatiquement cette discussion lors de la reconnexion."
-
 msgid "No such command."
 msgstr "Cette commande n'existe pas."
 
@@ -608,6 +602,13 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "Vous avez quitté la discussion."
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+"Ce compte a été déconnecté et vous n'êtes plus dans la discussion. Vous "
+"rejoindrez automatiquement cette discussion lors de la reconnexion."
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr ""
 "Archives démarrées. Les nouveaux messages de cette conversation seront "
@@ -643,6 +644,10 @@ msgstr "Activer l'archivage"
 msgid "Enable Sounds"
 msgstr "Activer les sons"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "Impossible de se connecter."
+
 msgid "<AUTO-REPLY> "
 msgstr "<Réponse automatique> "
 
@@ -652,7 +657,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "Liste de %d utilisateur :\n"
 msgstr[1] "Liste de %d utilisateurs :\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "Les options de débuggage supportées sont : version"
 
 msgid "No such command (in this context)."
@@ -785,6 +791,7 @@ msgid "Remaining"
 msgstr "Reste"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "État"
 
@@ -957,6 +964,9 @@ msgstr "Inviter"
 msgid "(none)"
 msgstr "(aucun)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 msgid "URI"
 msgstr "URI"
 
@@ -1358,6 +1368,8 @@ msgstr "Supprimer un état"
 msgid "Saved Statuses"
 msgstr "États prédéfinis"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "Titre"
 
@@ -1531,6 +1543,13 @@ msgstr ""
 "\n"
 "Récupération TinyURL..."
 
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Création de TinyURL seulement pour les liens de cette taille mini"
 
@@ -1655,11 +1674,10 @@ msgstr "Liste de contacts"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr "Le certificat est auto-signé. Il ne peut être vérifié automatiquement."
 
-#, fuzzy
-msgid "The root certificate this one claims to be issued by is unknown."
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
 msgstr ""
-"Le certificat racine dont est prétendu issu ce certificat est inconnu de "
-"Pidgin."
 
 msgid "The certificate is not valid yet."
 msgstr "Le certificat n'est pas encore valide."
@@ -1769,6 +1787,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "Informations du certificat"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "Erreur d'enregistrement"
 
@@ -1783,6 +1802,7 @@ msgstr "+++ %s vient de se connecter"
 msgid "+++ %s signed off"
 msgstr "+++ %s a quitté"
 
+#. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "Erreur inconnue"
@@ -1889,10 +1909,15 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "Le processus de résolution s'est arrêté sans répondre."
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "Erreur à la résolution du nom %s : %d"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "Échec de la création de processus :%s"
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Raison inconnue"
 
@@ -2209,13 +2234,16 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Une erreur insurmontable de Farsight2 est survenue."
 
-msgid "Conference error."
+#, fuzzy
+msgid "Conference error"
 msgstr "Erreur de conférence."
 
-msgid "Error with your microphone."
+#, fuzzy
+msgid "Error with your microphone"
 msgstr "Problème avec votre micro."
 
-msgid "Error with your webcam."
+#, fuzzy
+msgid "Error with your webcam"
 msgstr "Problème avec votre webcam."
 
 #, c-format
@@ -2970,6 +2998,7 @@ msgstr "Prénom :"
 msgid "Last name"
 msgstr "Nom :"
 
+#. email
 msgid "Email"
 msgstr "Courriel"
 
@@ -3106,12 +3135,14 @@ msgstr "Localité"
 msgid "Year of birth"
 msgstr "Année de naissance"
 
+#. gender
 msgid "Gender"
 msgstr "Genre"
 
 msgid "Male or female"
 msgstr "Homme ou femme"
 
+#. 0
 msgid "Male"
 msgstr "Homme"
 
@@ -3181,6 +3212,7 @@ msgstr "Absent"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "Prénom"
 
@@ -3905,6 +3937,7 @@ msgstr "Service"
 msgid "Role"
 msgstr "Rôle"
 
+#. birthday
 msgid "Birthday"
 msgstr "Date de naissance"
 
@@ -3981,6 +4014,9 @@ msgstr "(Re-)Demander autorisation"
 msgid "Unsubscribe"
 msgstr "Désinscription"
 
+msgid "Initiate _Chat"
+msgstr "Lancer une _discussion"
+
 msgid "Log In"
 msgstr "Connexion"
 
@@ -4000,6 +4036,7 @@ msgstr "Ne pas déranger"
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "Nom"
 
@@ -4238,6 +4275,7 @@ msgstr "Le serveur ne supporte pas le blocage"
 msgid "Not Authorized"
 msgstr "Non autorisé"
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Humeur"
 
@@ -4262,6 +4300,7 @@ msgstr "Aucune (Destination en attente)"
 msgid "None"
 msgstr "Aucun"
 
+#. subscription type
 msgid "Subscription"
 msgstr "Inscription"
 
@@ -4567,7 +4606,8 @@ msgstr "config : Configurer un salon de discussions"
 msgid "configure:  Configure a chat room."
 msgstr "configure : Configurer un salon de discussions"
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "part [salon] : Quitter le salon"
 
 msgid "register:  Register with a chat room."
@@ -5235,18 +5275,15 @@ msgstr "Ouvrir la boîte à lettres Hotmail"
 msgid "Send to Mobile"
 msgstr "Envoyer vers un téléphone portable"
 
-msgid "Initiate _Chat"
-msgstr "Lancer une _discussion"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Le support de SSL est nécessaire pour MSN. Veuillez installer une "
 "bibliothèque SSL pour l'application."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 "Impossible d'ajouter le contact %s car son nom d'utilisateur est non valide. "
 "Les noms des contacts doivent être une adresse électronique valide."
@@ -5457,6 +5494,9 @@ msgstr "Authentification Windows Live ID : réponse non valide."
 msgid "%s just sent you a Nudge!"
 msgstr "%s vient de vous envoyer un « Nudge. »"
 
+msgid "The following users are missing from your addressbook"
+msgstr "Les utilisateurs suivants manquent dans votre carnet d'adresse"
+
 #, c-format
 msgid "Unknown error (%d): %s"
 msgstr "Erreur inconnue (%d) : %s"
@@ -5469,8 +5509,9 @@ msgstr "Impossible d'ajouter un utilisateur"
 msgid "Unknown error (%d)"
 msgstr "Erreur inconnue (%d)"
 
-msgid "The following users are missing from your addressbook"
-msgstr "Les utilisateurs suivants manquent dans votre carnet d'adresse"
+#, fuzzy
+msgid "Unable to remove user"
+msgstr "Impossible d'ajouter un utilisateur"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "Le message mobile n'a pas été envoyé parce qu'il est trop long."
@@ -5709,6 +5750,384 @@ msgstr "L'utilisateur %s vous a ajouté à sa liste de contacts."
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "L'utilisateur %s vous a supprimé de sa liste de contacts."
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "Votre humeur actuelle"
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "Humeur de l'utilisateur"
+
+#, fuzzy
+msgid "Change your Mood"
+msgstr "Changer de mot de passe"
+
+#, fuzzy
+msgid "How do you feel right now?"
+msgstr "Je ne suis pas là pour l'instant."
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "Erreur d'écriture"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "Informations"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "Nom de famille"
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "Téléphone portable"
+
+#, fuzzy
+msgid "Update your Profile"
+msgstr "Profil de l'utilisateur"
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+msgid "There is no splash-screen currently available"
+msgstr ""
+
+#, fuzzy
+msgid "About"
+msgstr "À mon propos"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "Changer de mot de passe..."
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "Changer de mot de passe..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "Voir les archives..."
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "À mon propos"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "Message trop long"
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "Connexion"
+
+#, fuzzy
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr ""
+"Impossible de se connecter au serveur. Veuillez saisir l'adresse du serveur "
+"sur lequel vous voulez vous connecter."
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "Connexion en cours"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "Pseudonyme"
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "Enregistrer un nouveau compte XMPP"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "Veuillez renseigner les rubriques suivantes"
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "Le serveur est non disponible. Veuillez réessayer plus tard."
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "Sécurité activée"
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "Saisissez le code"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "Pays"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "Langue préférée"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "Demande d'autorisation"
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "Informations du serveur"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "Messages envoyés"
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "Deuxième prénom"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "Changer le numéro de téléphone portable..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "Serveur"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "Connexion par TCP"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "Erreur message XMPP"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "Impossible de résoudre l'adresse internet."
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "Entrée réussie dans le Qun"
+
+#, fuzzy
+msgid "Message Error"
+msgstr "Erreur message XMPP"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "Erreur de connexion"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "Erreur message XMPP"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "Erreur dans le flux"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "Erreur d'icône"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "Erreur de désinscription"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "Erreur de connexion"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "Inscription"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "Erreur de connexion"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "Transfert de fichier"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "Impossible de créer l'alerte"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "Erreur de désinscription"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "Erreur d'écriture"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr "En colère"
+
+msgid "Excited"
+msgstr "Excité"
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "Groupe"
+
+msgid "Happy"
+msgstr "Heureux"
+
+msgid "In Love"
+msgstr "Amoureux"
+
+msgid "Invincible"
+msgstr "Invincible"
+
+msgid "Sad"
+msgstr "Triste"
+
+#, fuzzy
+msgid "Hot"
+msgstr "_Hôte :"
+
+#, fuzzy
+msgid "Sick"
+msgstr "Pseudonyme"
+
+msgid "Sleepy"
+msgstr "Somnolant"
+
+#, fuzzy
+msgid "Pending"
+msgstr "Envoi en cours"
+
+#, fuzzy
+msgid "Invited"
+msgstr "Inviter"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "Refuser"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "Supprimer"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "Informations professionnelles"
 
 #, c-format
 msgid "No such user: %s"
@@ -6325,7 +6744,6 @@ msgstr "Port du serveur"
 msgid "Received unexpected response from %s"
 msgstr "Réception d'une réponse non attendue de %s"
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6488,6 +6906,48 @@ msgstr "File d'attente pleine"
 
 msgid "Not while on AOL"
 msgstr "Impossible sur AOL"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Impossible d'envoyer le fichier"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Impossible d'envoyer un dossier."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Impossible d'envoyer le message"
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Message déconnecté"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6657,6 +7117,17 @@ msgstr "Votre compte est actuellement suspendu."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Le service est temporairement indisponible."
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"Vous vous êtes connecté/déconnecté trop rapidement. Attendez 10 minutes et "
+"réessayez. Si vous persistez maintenant, il vous faudra attendre encore plus "
+"longtemps."
+
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
@@ -6665,9 +7136,11 @@ msgstr ""
 "à jour sur %s."
 
 #. IP address connecting too frequently
+#, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "Vous vous reconnectez trop rapidement. Attendez quelques minutes et "
 "réessayez. Si vous persistez maintenant, il vous faudra attendre encore plus "
@@ -6818,21 +7291,28 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Vous avez raté %hu message de %s pour des raisons inconnues."
 msgstr[1] "Vous avez raté %hu messages de %s pour des raisons inconnues."
 
-#. Data is assumed to be the destination bn
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Impossible d'envoyer le message (%s)"
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Impossible d'envoyer le message : %s"
 
-msgid "Unknown reason."
-msgstr "Erreur inconnue"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Impossible d'envoyer le message vers %s :"
 
-#, c-format
-msgid "Unable to send message to %s:"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
 msgstr "Impossible d'envoyer le message vers %s :"
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "Les informations ne sont pas disponibles : %s"
+
+msgid "Unknown reason."
+msgstr "Erreur inconnue"
 
 msgid "Online Since"
 msgstr "En ligne depuis"
@@ -6842,9 +7322,6 @@ msgstr "Inscrit depuis"
 
 msgid "Capabilities"
 msgstr "Possibilités"
-
-msgid "Profile"
-msgstr "Informations"
 
 msgid "Your AIM connection may be lost."
 msgstr "Votre connexion AIM risque d'être coupée"
@@ -6857,9 +7334,10 @@ msgstr ""
 "[Impossible d'afficher un message de cet utilisateur car il contient des "
 "caractères non valides.]"
 
+#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "La dernière action n'a pas pu être effectuée car vous avez dépassé le quota "
 "limite. Veuillez attendre 10 secondes et réessayer."
@@ -8046,6 +8524,10 @@ msgstr "Conférence fermée"
 msgid "Unable to send message: "
 msgstr "Impossible d'envoyer le message : "
 
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "Impossible d'envoyer le message vers %s :"
+
 msgid "Place Closed"
 msgstr "Endroit fermé"
 
@@ -8456,35 +8938,14 @@ msgstr "Hyperactif"
 msgid "Robot"
 msgstr "Robot"
 
-msgid "Happy"
-msgstr "Heureux"
-
-msgid "Sad"
-msgstr "Triste"
-
-msgid "Angry"
-msgstr "En colère"
-
 msgid "Jealous"
 msgstr "Jaloux"
 
 msgid "Ashamed"
 msgstr "Honteux"
 
-msgid "Invincible"
-msgstr "Invincible"
-
-msgid "In Love"
-msgstr "Amoureux"
-
-msgid "Sleepy"
-msgstr "Somnolant"
-
 msgid "Bored"
 msgstr "Ennuyé"
-
-msgid "Excited"
-msgstr "Excité"
 
 msgid "Anxious"
 msgstr "Anxieux"
@@ -9734,6 +10195,15 @@ msgstr "Joindre l'utilisateur dans une discussion..."
 msgid "Open Inbox"
 msgstr "Ouvrir la boîte à lettres"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -10273,14 +10743,15 @@ msgstr ""
 "Une erreur est survenue à la lecture de « %s ». Il n'a pas été chargé et "
 "l'ancien fichier a été renommé « %s~ »."
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "Messagerie internet"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Messagerie internet Pidgin"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "Envoie des messages instantanés en utilisant divers protocoles"
 
 msgid "Orientation"
 msgstr "Disposition"
@@ -12320,11 +12791,6 @@ msgstr ""
 "les indications sur\n"
 "%swiki/GetABacktrace\n"
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "Pidgin"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Arrêt à cause d'un autre client libpurple existant.\n"
@@ -12520,49 +12986,55 @@ msgstr "_Récurrente"
 msgid "Pounce Target"
 msgstr "Cible de l'alerte"
 
-#, c-format
 msgid "Started typing"
 msgstr "Commence à écrire"
 
-#, c-format
 msgid "Paused while typing"
 msgstr "Pause pendant la saisie"
 
-#, c-format
 msgid "Signed on"
 msgstr "Se connecte"
 
-#, c-format
 msgid "Returned from being idle"
 msgstr "N'est plus inactif"
 
-#, c-format
 msgid "Returned from being away"
 msgstr "Revient d'absence"
 
-#, c-format
 msgid "Stopped typing"
 msgstr "S'arrête d'écrire"
 
-#, c-format
 msgid "Signed off"
 msgstr "Se déconnecte"
 
-#, c-format
 msgid "Became idle"
 msgstr "Devient inactif"
 
-#, c-format
 msgid "Went away"
 msgstr "Devient absent"
 
-#, c-format
 msgid "Sent a message"
 msgstr "Envoi un message"
 
-#, c-format
 msgid "Unknown.... Please report this!"
 msgstr "Événement d'alerte inconnu. Veuillez reporter cette erreur."
+
+msgid "(Custom)"
+msgstr ""
+
+#, fuzzy
+msgid "(Default)"
+msgstr "(défaut)"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "Éditeur de thème de liste de contacts Pidgin"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 msgid "Theme failed to unpack."
 msgstr "Le thème de frimousses n'a pas pu être déballé."
@@ -12716,6 +13188,10 @@ msgstr "_Désactiver"
 msgid "Use _automatically detected IP address: %s"
 msgstr "_Détection auto de l'adresse IP : %s"
 
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "Serveur ST_UN :"
+
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Exemple : stunserver.org</span>"
 
@@ -12728,14 +13204,17 @@ msgstr "Ports"
 msgid "_Enable automatic router port forwarding"
 msgstr "_Activer la redirection automatique des ports du routeur"
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "Spécifier _manuellement la plage de ports à écouter"
 
-msgid "_Start port:"
-msgstr "_Premier port : "
+#, fuzzy
+msgid "_Start:"
+msgstr "É_tat :"
 
-msgid "_End port:"
-msgstr "_Dernier port :"
+#, fuzzy
+msgid "_End:"
+msgstr "_Etendre"
 
 #. TURN server
 msgid "Relay Server (TURN)"
@@ -12744,6 +13223,14 @@ msgstr "Serveur relai (TURN)"
 #, fuzzy
 msgid "_TURN server:"
 msgstr "Serveur ST_UN :"
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "Utilisateur :"
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "Mot de passe :"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Serveur proxy &amp; navigateur"
@@ -12770,15 +13257,25 @@ msgstr "_Configurer le navigateur"
 msgid "Proxy Server"
 msgstr "Serveur proxy"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+#, fuzzy
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr "Utiliser une DNS distantes avec SOCKS4"
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "_Type :"
+
 msgid "No proxy"
 msgstr "Aucun"
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr "Utiliser une DNS distantes avec SOCKS4"
+#, fuzzy
+msgid "P_ort:"
+msgstr "_Port :"
 
-msgid "_User:"
-msgstr "_Utilisateur :"
+#, fuzzy
+msgid "User_name:"
+msgstr "Utilisateur :"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -13276,6 +13773,11 @@ msgstr "_Sauver le fichier"
 
 msgid "Select color"
 msgstr "Choisir la couleur"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "Pidgin"
 
 msgid "_Alias"
 msgstr "_Alias"
@@ -14415,9 +14917,6 @@ msgstr ""
 "\n"
 "Note : Ce plugin nécessite Windows 2000 ou plus récent."
 
-msgid "GTK+ Runtime Version"
-msgstr "Version des bibliothèques GTK+"
-
 #. Autostart
 msgid "Startup"
 msgstr "Démarrage"
@@ -14425,6 +14924,10 @@ msgstr "Démarrage"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "_Démarrer %s au lancement de Windows"
+
+#, fuzzy
+msgid "Allow multiple instances"
+msgstr "autoriser plusieurs instances du logiciel"
 
 msgid "_Dockable Buddy List"
 msgstr "Liste de contacts _accrochable"
@@ -14485,6 +14988,27 @@ msgstr "Envoyer et recevoir des blocs XMPP."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
+
+#, fuzzy
+#~ msgid "The root certificate this one claims to be issued by is unknown."
+#~ msgstr ""
+#~ "Le certificat racine dont est prétendu issu ce certificat est inconnu de "
+#~ "Pidgin."
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "Envoie des messages instantanés en utilisant divers protocoles"
+
+#~ msgid "_Start port:"
+#~ msgstr "_Premier port : "
+
+#~ msgid "_End port:"
+#~ msgstr "_Dernier port :"
+
+#~ msgid "_User:"
+#~ msgstr "_Utilisateur :"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "Version des bibliothèques GTK+"
 
 #~ msgid "Without this only the first account will be enabled)."
 #~ msgstr "Sans cela, seul le premier compte sera activé.)"
@@ -14576,9 +15100,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 #~ msgid "Stream Initiation"
 #~ msgstr "Initialisation de flux"
 
-#~ msgid "User Mood"
-#~ msgstr "Humeur de l'utilisateur"
-
 #~ msgid "User Activity"
 #~ msgstr "Activité de l'utilisateur"
 
@@ -14590,9 +15111,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "User Tune"
 #~ msgstr "Musique de l'utilisateur"
-
-#~ msgid "User Profile"
-#~ msgstr "Profil de l'utilisateur"
 
 #~ msgid "Jingle"
 #~ msgstr "Jingle"
@@ -14698,9 +15216,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "Could not write"
 #~ msgstr "Impossible d'envoyer."
-
-#~ msgid "Could not connect"
-#~ msgstr "Impossible de se connecter."
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "Impossible de créer le socket d'écoute."

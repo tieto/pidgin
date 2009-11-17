@@ -41,17 +41,17 @@
 
 /* MXit Moods */
 static const char*	moods[] = {
-	/* 0 */		"None",
-	/* 1 */		"Angry",
-	/* 2 */		"Excited",
-	/* 3 */		"Grumpy",
-	/* 4 */		"Happy",
-	/* 5 */		"In Love",
-	/* 6 */		"Invincible",
-	/* 7 */		"Sad",
-	/* 8 */		"Hot",
-	/* 9 */		"Sick",
-	/* 10 */	"Sleepy"
+	/* 0 */		N_("None"),
+	/* 1 */		N_("Angry"),
+	/* 2 */		N_("Excited"),
+	/* 3 */		N_("Grumpy"),
+	/* 4 */		N_("Happy"),
+	/* 5 */		N_("In Love"),
+	/* 6 */		N_("Invincible"),
+	/* 7 */		N_("Sad"),
+	/* 8 */		N_("Hot"),
+	/* 9 */		N_("Sick"),
+	/* 10 */	N_("Sleepy")
 };
 
 
