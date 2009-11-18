@@ -28,6 +28,7 @@
 
 #include "internal.h"
 
+#ifdef USE_VV
 #include "backend-iface.h"
 #include "debug.h"
 #include "network.h"
@@ -1927,19 +1928,32 @@ purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
 
 	return TRUE;
 }
+#else
+GType
+purple_media_backend_fs2_get_type(void)
+{
+	return G_TYPE_NONE;
+}
+#endif /* USE_VV */
 
+#ifdef USE_GSTREAMER
 GstElement *
 purple_media_backend_fs2_get_src(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id)
 {
+#ifdef USE_VV
 	PurpleMediaBackendFs2Session *session = get_session(self, sess_id);
 	return session != NULL ? session->src : NULL;
+#else
+	return NULL;
+#endif
 }
 
 GstElement *
 purple_media_backend_fs2_get_tee(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who)
 {
+#ifdef USE_VV
 	if (sess_id != NULL && who == NULL) {
 		PurpleMediaBackendFs2Session *session =
 				get_session(self, sess_id);
@@ -1950,13 +1964,16 @@ purple_media_backend_fs2_get_tee(PurpleMediaBackendFs2 *self,
 		return (stream != NULL) ? stream->tee : NULL;
 	}
 
+#endif /* USE_VV */
 	g_return_val_if_reached(NULL);
 }
+#endif /* USE_GSTREAMER */
 
 void
 purple_media_backend_fs2_set_input_volume(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, double level)
 {
+#ifdef USE_VV
 	PurpleMediaBackendFs2Private *priv;
 	GList *sessions;
 
@@ -1983,13 +2000,14 @@ purple_media_backend_fs2_set_input_volume(PurpleMediaBackendFs2 *self,
 			g_object_set(volume, "volume", level/10.0, NULL);
 		}
 	}
+#endif /* USE_VV */
 }
 
 void
 purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
 		const gchar *sess_id, const gchar *who, double level)
 {
-	
+#ifdef USE_VV
 	PurpleMediaBackendFs2Private *priv;
 	GList *streams;
 
@@ -2010,4 +2028,5 @@ purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
 					level/10.0, NULL);
 		}
 	}
+#endif /* USE_VV */
 }
