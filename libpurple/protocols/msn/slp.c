@@ -182,19 +182,6 @@ msn_xfer_read(guchar **data, PurpleXfer *xfer)
 }
 
 void
-msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize len, gsize offset)
-{
-	PurpleXfer *xfer;
-
-	xfer = slpcall->xfer;
-
-	xfer->bytes_sent = (offset + len);
-	xfer->bytes_remaining = total_length - (offset + len);
-
-	purple_xfer_update_progress(xfer);
-}
-
-void
 msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session)
 {
 	if ((purple_xfer_get_status(slpcall->xfer) != PURPLE_XFER_STATUS_DONE) &&

@@ -29,9 +29,6 @@
 #include "internal.h"
 #include "ft.h"
 
-void msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize
-						  len, gsize offset);
-
 MsnSlpCall * msn_slp_sip_recv(MsnSlpLink *slplink,
 							  const char *body);
 
