@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "gntinternal.h"
 #include "gntbutton.h"
 #include "gntstyle.h"
 #include "gntutils.h"
@@ -48,7 +49,7 @@ gnt_button_draw(GntWidget *widget)
 		type = GNT_COLOR_NORMAL;
 
 	wbkgdset(widget->window, '\0' | gnt_color_pair(type));
-	mvwaddstr(widget->window, (small_button) ? 0 : 1, 2, button->priv->text);
+	mvwaddstr(widget->window, (small_button) ? 0 : 1, 2, C_(button->priv->text));
 	if (small_button) {
 		type = GNT_COLOR_HIGHLIGHT;
 		mvwchgat(widget->window, 0, 0, widget->priv.width, focus ? A_BOLD : A_REVERSE, type, NULL);

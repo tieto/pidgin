@@ -19,6 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include <glib.h>
 #undef G_LOG_DOMAIN
 #define G_LOG_DOMAIN "Gnt"
 
@@ -30,4 +31,7 @@
 #else /* __GNUC__ */
 # define gnt_warning g_warning
 #endif
+
+extern int gnt_need_conversation_to_locale;
+extern const char *C_(const char *x);
 

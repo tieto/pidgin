@@ -1,5 +1,6 @@
 #include <gmodule.h>
 
+#include "gntinternal.h"
 #include "gntbox.h"
 #include "gntwidget.h"
 #include "gntwindow.h"
@@ -73,7 +74,7 @@ gnt_ws_draw_taskbar(GntWS *ws, gboolean reposition)
 		else
 			mvwhline(taskbar, 0, width * i, ' ' | gnt_color_pair(color), getmaxx(stdscr) - width * i);
 		title = GNT_BOX(w)->title;
-		mvwprintw(taskbar, 0, width * i, "%s", title ? title : "<gnt>");
+		mvwprintw(taskbar, 0, width * i, "%s", title ? C_(title) : "<gnt>");
 		if (i)
 			mvwaddch(taskbar, 0, width *i - 1, ACS_VLINE | A_STANDOUT | gnt_color_pair(GNT_COLOR_NORMAL));
 	}

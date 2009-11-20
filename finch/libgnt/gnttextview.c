@@ -118,7 +118,7 @@ gnt_text_view_draw(GntWidget *widget)
 			if (select_start && select_start < view->string->str + seg->start && select_end > view->string->str + seg->end) {
 				fl |= A_REVERSE;
 				wattrset(widget->window, fl);
-				wprintw(widget->window, "%s", (view->string->str + seg->start));
+				wprintw(widget->window, "%s", C_(view->string->str + seg->start));
 			} else if (select_start && select_end &&
 				((select_start >= view->string->str + seg->start && select_start <= view->string->str + seg->end) ||
 				(select_end <= view->string->str + seg->end && select_start <= view->string->str + seg->start))) {
@@ -132,13 +132,13 @@ gnt_text_view_draw(GntWidget *widget)
 						fl = seg->flags;
 					str = g_strndup(cur, last - cur);
 					wattrset(widget->window, fl);
-					waddstr(widget->window, str);
+					waddstr(widget->window, C_(str));
 					g_free(str);
 					cur = g_utf8_next_char(cur);
 				}
 			} else {
 				wattrset(widget->window, fl);
-				wprintw(widget->window, "%s", (view->string->str + seg->start));
+				wprintw(widget->window, "%s", C_(view->string->str + seg->start));
 			}
 			*end = back;
 		}
