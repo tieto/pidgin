@@ -1501,7 +1501,6 @@ GType gtk_imhtmltoolbar_get_type()
 void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 {
 	GtkIMHtmlButtons buttons;
-	gboolean bold, italic, underline;
 
 	g_return_if_fail(toolbar != NULL);
 	g_return_if_fail(GTK_IS_IMHTMLTOOLBAR(toolbar));
@@ -1517,9 +1516,6 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 
 	buttons = gtk_imhtml_get_format_functions(GTK_IMHTML(imhtml));
 	update_buttons_cb(GTK_IMHTML(imhtml), buttons, toolbar);
-
-	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), &bold, &italic, &underline);
-
 	update_buttons(toolbar);
 }
 
