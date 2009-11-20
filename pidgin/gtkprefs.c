@@ -1510,12 +1510,11 @@ conv_page(void)
 #endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
-	gtk_box_set_child_packing(GTK_BOX(vbox->parent), vbox, TRUE, TRUE, 0, GTK_PACK_START);
 
 	frame = pidgin_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
 	gtk_widget_show(frame);
 	gtk_widget_set_name(imhtml, "pidgin_prefs_font_imhtml");
-	gtk_widget_set_size_request(frame, 300, -1);
+	gtk_widget_set_size_request(frame, 450, -1);
 	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml),
 									GTK_IMHTML_BOLD |
