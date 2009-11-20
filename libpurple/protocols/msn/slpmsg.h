@@ -54,7 +54,6 @@ struct _MsnSlpMessage
 	gboolean sip; /**< A flag that states if this is a SIP slp message. */
 	long flags;
 
-	FILE *fp;
 	gboolean ft;
 	PurpleStoredImage *img;
 	guchar *buffer;

@@ -253,12 +253,6 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			len = MIN(1202, slpmsg->slpcall->u.outgoing.len);
 			msn_message_set_bin_data(msg, slpmsg->slpcall->u.outgoing.data, len);
 		}
-		else if (slpmsg->fp)
-		{
-			char data[1202];
-			len = fread(data, 1, sizeof(data), slpmsg->fp);
-			msn_message_set_bin_data(msg, data, len);
-		}
 		else
 		{
 			len = slpmsg->size - slpmsg->offset;
@@ -558,7 +552,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 				}
 			}
 		}
-		if (!slpmsg->fp && !slpmsg->ft && slpmsg->size)
+		if (!slpmsg->ft && slpmsg->size)
 		{
 			slpmsg->buffer = g_try_malloc(slpmsg->size);
 			if (slpmsg->buffer == NULL)
@@ -580,12 +574,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		}
 	}
 
-	if (slpmsg->fp)
-	{
-		/* fseek(slpmsg->fp, offset, SEEK_SET); */
-		len = fwrite(data, 1, len, slpmsg->fp);
-	}
-	else if (slpmsg->ft)
+	if (slpmsg->ft)
 	{
 		xfer = slpmsg->slpcall->xfer;
 		slpmsg->slpcall->u.incoming_data =
