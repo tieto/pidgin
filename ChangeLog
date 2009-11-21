@@ -64,6 +64,8 @@ version 2.6.4 (??/??/20??):
 	* The userlist in a multiuser chat can be styled via gtkrc by using the
 	  widget name "pidgin_conv_userlist". (Heiko Schmitt)
 	* Add a hold button to the media window.
+	* Fix a bug where the conversation backlog stops scrolling in a very busy
+	  chat room.
 
 	Pidgin Preference and Preference Window Changes:
 	* Removed the "Use font from theme" and "Conversation Font" preferences

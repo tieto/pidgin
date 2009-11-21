@@ -2423,6 +2423,8 @@ static int gtk_imhtml_is_protocol(const char *text)
 	return proto ? proto->length : 0;
 }
 
+static gboolean smooth_scroll_cb(gpointer data);
+
 /*
  <KingAnt> marv: The two IM image functions in oscar are purple_odc_send_im and purple_odc_incoming
 
@@ -2477,7 +2479,14 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 
 		if (((y + height) - (rect.y + rect.height)) > height &&
 				gtk_text_buffer_get_char_count(imhtml->text_buffer)) {
-			options |= GTK_IMHTML_NO_SCROLL;
+			/* If we are in the middle of smooth-scrolling, then take a scroll step.
+			 * If we are not in the middle of smooth-scrolling, that means we were
+			 * not looking at the end of the buffer before the new text was added,
+			 * so do not scroll. */
+			if (imhtml->scroll_time)
+				smooth_scroll_cb(imhtml);
+			else
+				options |= GTK_IMHTML_NO_SCROLL;
 		}
 	}
 
@@ -2506,7 +2515,7 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
  *
  * @return TRUE if the window needs to be scrolled further, FALSE if we're at the bottom.
  */
-static gboolean scroll_cb(gpointer data)
+static gboolean smooth_scroll_cb(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
 	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
@@ -2520,19 +2529,14 @@ static gboolean scroll_cb(gpointer data)
 		gtk_adjustment_set_value(adj, max_val);
 		g_timer_destroy(imhtml->scroll_time);
 		imhtml->scroll_time = NULL;
+		g_source_remove(imhtml->scroll_src);
+		imhtml->scroll_src = 0;
 		return FALSE;
 	}
 
 	/* scroll by 1/3rd the remaining distance */
 	gtk_adjustment_set_value(adj, scroll_val);
 	return TRUE;
-}
-
-static gboolean smooth_scroll_idle_cb(gpointer data)
-{
-	GtkIMHtml *imhtml = data;
-	imhtml->scroll_src = g_timeout_add(SCROLL_DELAY, scroll_cb, imhtml);
-	return FALSE;
 }
 
 static gboolean scroll_idle_cb(gpointer data)
@@ -2554,7 +2558,7 @@ void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml, gboolean smooth)
 		g_source_remove(imhtml->scroll_src);
 	if(smooth) {
 		imhtml->scroll_time = g_timer_new();
-		imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, smooth_scroll_idle_cb, imhtml, NULL);
+		imhtml->scroll_src = g_timeout_add_full(G_PRIORITY_LOW, SCROLL_DELAY, smooth_scroll_cb, imhtml, NULL);
 	} else {
 		imhtml->scroll_time = NULL;
 		imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, scroll_idle_cb, imhtml, NULL);
