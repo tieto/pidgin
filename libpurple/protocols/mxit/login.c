@@ -142,8 +142,10 @@ static void mxit_connected( struct MXitSession* session )
 		session->http_timer_id = purple_timeout_add_seconds( 2, mxit_manage_polling, session );
 	}
 
-	/* start the tx queue manager timer */
-	session->q_timer = purple_timeout_add_seconds( 2, mxit_manage_queue, session );
+	/* This timer might already exist if we're registering a new account */
+	if ( session->q_timer == 0 )
+		/* start the tx queue manager timer */
+		session->q_timer = purple_timeout_add_seconds( 2, mxit_manage_queue, session );
 }
 
 
