@@ -577,7 +577,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 		return;
 	}
 
-	purple_debug_info("oscar", "Conversion from UTF-8 to %s failed (%s), falling back to unicode.\n",
+	purple_debug_info("oscar", "Conversion from UTF-8 to %s failed (%s). Falling back to unicode.\n",
 					  charsetstr, err->message);
 	g_error_free(err);
 	err = NULL;
@@ -587,9 +587,6 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	 */
 	*msg = g_convert(from, -1, "UTF-16BE", "UTF-8", NULL, &msglen, &err);
 	if (*msg != NULL) {
-		purple_debug_info("oscar", "Conversion from UTF-8 to UTF-16BE results in %s.\n",
-						  *msg);
-
 		*charset = AIM_CHARSET_UNICODE;
 		*charsubset = 0x0000;
 		*msglen_int = msglen;
