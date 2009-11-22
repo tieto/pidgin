@@ -287,7 +287,7 @@ out:
 	}
 	else {
 		/* show error to user */
-		mxit_popup( PURPLE_NOTIFY_MSG_ERROR, _( "Registration Error" ), _( err ) );
+		mxit_popup( PURPLE_NOTIFY_MSG_ERROR, _( "Registration Error" ), err );
 		mxit_register_view( session );
 	}
 }

@@ -279,7 +279,7 @@ out:
 	}
 	else {
 		/* show error to user */
-		mxit_popup( PURPLE_NOTIFY_MSG_ERROR, _( "Profile Update Error" ), _( err ) );
+		mxit_popup( PURPLE_NOTIFY_MSG_ERROR, _( "Profile Update Error" ), err );
 	}
 }
 

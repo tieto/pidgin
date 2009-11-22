@@ -1958,7 +1958,7 @@ static int process_error_response( struct MXitSession* session, struct rx_packet
 				}
 				else {
 					sprintf( errmsg, _( "Login error: %s (%i)" ), errdesc, packet->errcode );
-					purple_connection_error( session->con, _( errmsg ) );
+					purple_connection_error( session->con, errmsg );
 					return -1;
 				}
 		case CP_CMD_LOGOUT :
