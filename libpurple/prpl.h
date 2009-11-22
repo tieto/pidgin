@@ -91,14 +91,17 @@ struct _PurpleBuddyIconSpec {
 	PurpleIconScaleRules scale_rules;  /**< How to stretch this icon */
 };
 
+/** Represents an entry containing information that must be supplied by the
+ *  user when joining a chat.
+ */
 struct proto_chat_entry {
-	const char *label;
-	const char *identifier;
-	gboolean required;
-	gboolean is_int;
-	int min;
-	int max;
-	gboolean secret;
+	const char *label;       /**< User-friendly name of the entry */
+	const char *identifier;  /**< Used by the PRPL to identify the option */
+	gboolean required;       /**< True if it's required */
+	gboolean is_int;         /**< True if the entry expects an integer */
+	int min;                 /**< Minimum value in case of integer */
+	int max;                 /**< Maximum value in case of integer */
+	gboolean secret;         /**< True if the entry is secret (password) */
 };
 
 /** Represents "nudges" and "buzzes" that you may send to a buddy to attract
@@ -252,7 +255,26 @@ struct _PurplePluginProtocolInfo
 	 * node.
 	 */
 	GList *(*blist_node_menu)(PurpleBlistNode *node);
+
+	/**
+	 * Returns a list of #proto_chat_entry structs, which represent
+	 * information required by the PRPL to join a chat. libpurple will
+	 * call join_chat along with the information filled by the user.
+	 *
+	 * @return A list of #proto_chat_entry structs
+	 */
 	GList *(*chat_info)(PurpleConnection *);
+
+	/**
+	 * Returns a hashtable which maps #proto_chat_entry struct identifiers
+	 * to default options as strings based on chat_name. The resulting 
+	 * hashtable should be created with g_hash_table_new_full(g_str_hash,
+	 * g_str_equal, NULL, g_free);. Use #get_chat_name if you instead need
+	 * to extract a chat name from a hashtable.
+	 *
+	 * @param chat_name The chat name to be turned into components
+	 * @return Hashtable containing the information extracted from chat_name
+	 */
 	GHashTable *(*chat_info_defaults)(PurpleConnection *, const char *chat_name);
 
 	/* All the server-related functions */
@@ -314,14 +336,80 @@ struct _PurplePluginProtocolInfo
 	void (*rem_permit)(PurpleConnection *, const char *name);
 	void (*rem_deny)(PurpleConnection *, const char *name);
 	void (*set_permit_deny)(PurpleConnection *);
+
+	/**
+	 * Called when the user requests joining a chat. Should arrange for
+	 * #serv_got_joined_chat to be called.
+	 *
+	 * @param components A hashtable containing information required to
+	 *                   join the chat as described by the entries returned
+	 *                   by #chat_info. It may also be called when accepting
+	 *                   an invitation, in which case this matches the
+	 *                   data parameter passed to #serv_got_chat_invite.
+	 */
 	void (*join_chat)(PurpleConnection *, GHashTable *components);
+
+	/**
+	 * Called when the user refuses a chat invitation.
+	 *
+	 * @param components A hashtable containing information required to
+	 *                   join the chat as passed to #serv_got_chat_invite.
+	 */
 	void (*reject_chat)(PurpleConnection *, GHashTable *components);
+
+	/**
+	 * Returns a chat name based on the information in components. Use
+	 * #chat_info_defaults if you instead need to generate a hashtable 
+	 * from a chat name.
+	 *
+	 * @param components A hashtable containing information about the chat.
+	 */
 	char *(*get_chat_name)(GHashTable *components);
+
+	/**
+	 * Invite a user to join a chat.
+	 *
+	 * @param id      The id of the chat to invite the user to.
+	 * @param message A message displayed to the user when the invitation 
+	 *                is received.
+	 * @param who     The name of the user to send the invation to.
+	 */
 	void (*chat_invite)(PurpleConnection *, int id,
 						const char *message, const char *who);
+	/**
+	 * Called when the user requests leaving a chat.
+	 *
+	 * @param id The id of the chat to leave
+	 */
 	void (*chat_leave)(PurpleConnection *, int id);
+
+	/**
+	 * Send a whisper to a user in a chat.
+	 *
+	 * @param id      The id of the chat.
+	 * @param who     The name of the user to send the whisper to.
+	 * @param message The message of the whisper.
+	 */
 	void (*chat_whisper)(PurpleConnection *, int id,
 						 const char *who, const char *message);
+
+	/**
+	 * Send a message to a chat.
+	 * This PRPL function should return a positive value on success.
+	 * If the message is too big to be sent, return -E2BIG.  If
+	 * the account is not connected, return -ENOTCONN.  If the
+	 * PRPL is unable to send the message for another reason, return
+	 * some other negative value.  You can use one of the valid
+	 * errno values, or just big something.  If the message should
+	 * not be echoed to the conversation window, return 0.
+	 *
+	 * @param id      The id of the chat to send the message to.
+	 * @param message The message to send to the chat.
+	 * @param flags   A bitwise OR of #PurpleMessageFlags representing
+	 *                message flags.
+	 * @return 	  A positive number or 0 in case of succes,
+	 *                a negative error number in case of failure.
+	 */
 	int  (*chat_send)(PurpleConnection *, int id, const char *message, PurpleMessageFlags flags);
 
 	/** If implemented, this will be called regularly for this prpl's
