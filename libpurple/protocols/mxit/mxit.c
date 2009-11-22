@@ -170,7 +170,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 	struct contact*		contact;
 	PurpleBuddy*		buddy;
 	const char*			who;
-	const char*			tmp;
+	char*				tmp;
 
 	gc = purple_conversation_get_gc( conv );
 	if ( session->con != gc ) {
@@ -205,9 +205,9 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 		case MXIT_TYPE_CHATROOM :
 		case MXIT_TYPE_GALLERY :
 		case MXIT_TYPE_INFO :
-				/* TODO: Allow "Loading menu..." to be localized (but not the HTML markup) */
-				tmp = _("Loading menu...");
-				serv_got_im( session->con, who, "<font color=\"#999999\">Loading menu...</font>\n", PURPLE_MESSAGE_NOTIFY, time( NULL ) );
+				tmp = g_strdup_printf("<font color=\"#999999\">%s</font>\n", _("Loading menu..."));
+				serv_got_im( session->con, who, tmp, PURPLE_MESSAGE_NOTIFY, time( NULL ) );
+				g_free(tmp);
 				mxit_send_message( session, who, " ", FALSE );
 		default :
 				break;
