@@ -150,37 +150,37 @@ static void mxit_cb_set_profile( PurpleConnection* gc, PurpleRequestFields* fiel
 	/* validate pin */
 	pin = purple_request_fields_get_string( fields, "pin" );
 	if ( !pin ) {
-		err = "The PIN you entered is invalid.";
+		err = _("The PIN you entered is invalid.");
 		goto out;
 	}
 	len = strlen( pin );
 	if ( ( len < 4 ) || ( len > 10 ) ) {
-		err = "The PIN you entered has an invalid length [4-10].";
+		err = _("The PIN you entered has an invalid length [4-10].");
 		goto out;
 	}
 	for ( i = 0; i < len; i++ ) {
 		if ( !g_ascii_isdigit( pin[i] ) ) {
-			err = "The PIN is invalid. It should only consist of digits [0-9].";
+			err = _("The PIN is invalid. It should only consist of digits [0-9].");
 			goto out;
 		}
 	}
 	pin2 = purple_request_fields_get_string( fields, "pin2" );
 	if ( ( !pin2 ) || ( strcmp( pin, pin2 ) != 0 ) ) {
-		err = "The two PINs you entered does not match.";
+		err = _("The two PINs you entered do not match.");
 		goto out;
 	}
 
 	/* validate name */
 	name = purple_request_fields_get_string( fields, "name" );
 	if ( ( !name ) || ( strlen( name ) < 3 ) ) {
-		err = "The name you entered is invalid.";
+		err = _("The name you entered is invalid.");
 		goto out;
 	}
 
 	/* validate birthdate */
 	bday = purple_request_fields_get_string( fields, "bday" );
 	if ( ( !bday ) || ( strlen( bday ) < 10 ) || ( !validateDate( bday ) ) ) {
-		err = "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'.";
+		err = _("The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'.");
 		goto out;
 	}
 
@@ -218,10 +218,7 @@ out:
 		acount++;
 
 		/* update gender */
-		if ( purple_request_fields_get_choice( fields, "male" ) == 0 )
-			profile->male = FALSE;
-		else
-			profile->male = TRUE;
+		profile->male = ( purple_request_fields_get_choice( fields, "male" ) == 0 );
 		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_GENDER, CP_PROF_TYPE_BOOL, ( profile->male ) ? "1" : "0" );
 		g_string_append( attributes, attrib );
 		acount++;

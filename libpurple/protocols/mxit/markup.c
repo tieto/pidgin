@@ -66,16 +66,16 @@ struct tag {
 
 /* vibes */
 static const char*	vibes[] = {
-	/* 0 */		"Cool Vibrations",
-	/* 1 */		"Purple Rain",
-	/* 2 */		"Polite",
-	/* 3 */		"Rock n Roll",
-	/* 4 */		"Summer Slumber",
-	/* 5 */		"Electric Razor",
-	/* 6 */		"S.O.S",
-	/* 7 */		"Jack Hammer",
-	/* 8 */		"Bumble Bee",
-	/* 9 */		"Ripple"
+	/* 0 */		N_( "Cool Vibrations" ),
+	/* 1 */		N_( "Purple Rain" ),
+	/* 2 */		N_( "Polite" ),
+	/* 3 */		N_( "Rock n Roll" ),
+	/* 4 */		N_( "Summer Slumber" ),
+	/* 5 */		N_( "Electric Razor" ),
+	/* 6 */		N_( "S.O.S" ),
+	/* 7 */		N_( "Jack Hammer" ),
+	/* 8 */		N_( "Bumble Bee" ),
+	/* 9 */		N_( "Ripple" )
 };
 
 
@@ -653,7 +653,7 @@ static int mxit_parse_vibe( struct RXMsgData* mx, const char* message )
 		return 0;
 	}
 
-	g_string_append_printf( mx->msg, "<font color=\"%s\"><i>%s Vibe...</i></font>", MXIT_VIBE_MSG_COLOR, vibes[vibeid] );
+	g_string_append_printf( mx->msg, "<font color=\"%s\"><i>%s Vibe...</i></font>", MXIT_VIBE_MSG_COLOR, _( vibes[vibeid] ) );
 	return 2;
 }
 

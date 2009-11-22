@@ -226,7 +226,7 @@ static void mxit_cb_register_ok( PurpleConnection *gc, PurpleRequestFields *fiel
 	struct MXitProfile*		profile		= session->profile;
 	const char*				str;
 	const char*				pin;
-	char*					err			= NULL;
+	const char*				err			= NULL;
 	int						len;
 	int						i;
 
@@ -240,7 +240,7 @@ static void mxit_cb_register_ok( PurpleConnection *gc, PurpleRequestFields *fiel
 	/* nickname */
 	str = purple_request_fields_get_string( fields, "nickname" );
 	if ( ( !str ) || ( strlen( str ) < 3 ) ) {
-		err = "The nick name you entered is invalid.";
+		err = _( "The nick name you entered is invalid." );
 		goto out;
 	}
 	g_strlcpy( profile->nickname, str, sizeof( profile->nickname ) );
@@ -248,37 +248,34 @@ static void mxit_cb_register_ok( PurpleConnection *gc, PurpleRequestFields *fiel
 	/* birthdate */
 	str = purple_request_fields_get_string( fields, "bday" );
 	if ( ( !str ) || ( strlen( str ) < 10 ) || ( !validateDate( str ) ) ) {
-		err = "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'.";
+		err = _( "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'." );
 		goto out;
 	}
 	g_strlcpy( profile->birthday, str, sizeof( profile->birthday ) );
 
 	/* gender */
-	if ( purple_request_fields_get_choice( fields, "male" ) == 0 )
-		profile->male = FALSE;
-	else
-		profile->male = TRUE;
+	profile->male = ( purple_request_fields_get_choice( fields, "male" ) == 0 );
 
 	/* pin */
 	pin = purple_request_fields_get_string( fields, "pin" );
 	if ( !pin ) {
-		err = "The PIN you entered is invalid.";
+		err = _( "The PIN you entered is invalid." );
 		goto out;
 	}
 	len = strlen( pin );
 	if ( ( len < 7 ) || ( len > 10 ) ) {
-		err = "The PIN you entered has an invalid length [7-10].";
+		err = _( "The PIN you entered has an invalid length [7-10]." );
 		goto out;
 	}
 	for ( i = 0; i < len; i++ ) {
 		if ( !g_ascii_isdigit( pin[i] ) ) {
-			err = "The PIN is invalid. It should only consist of digits [0-9].";
+			err = _( "The PIN is invalid. It should only consist of digits [0-9]." );
 			goto out;
 		}
 	}
 	str = purple_request_fields_get_string( fields, "pin2" );
 	if ( ( !str ) || ( strcmp( pin, str ) != 0 ) ) {
-		err = "The two PINs you entered does not match.";
+		err = _( "The two PINs you entered do not match." );
 		goto out;
 	}
 	g_strlcpy( profile->pin, pin, sizeof( profile->pin ) );

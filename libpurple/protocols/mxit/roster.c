@@ -53,11 +53,11 @@ static struct status
 	const char*				name;
 } const mxit_statuses[] = {
 		/*	primative,						no,							id,			name					*/
-		{	PURPLE_STATUS_OFFLINE,			MXIT_PRESENCE_OFFLINE,		"offline",	"Offline"			},	/* 0 */
-		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_ONLINE,		"online",	"Available"			},	/* 1 */
-		{	PURPLE_STATUS_AWAY,				MXIT_PRESENCE_AWAY,			"away",		"Away"				},	/* 2 */
-		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_AVAILABLE,	"chat",		"Chatty"			},	/* 3 */
-		{	PURPLE_STATUS_UNAVAILABLE,		MXIT_PRESENCE_DND,			"dnd",		"Do Not Disturb"	}	/* 4 */
+		{	PURPLE_STATUS_OFFLINE,			MXIT_PRESENCE_OFFLINE,		"offline",	NULL				},	/* 0 */
+		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_ONLINE,		"online",	NULL				},	/* 1 */
+		{	PURPLE_STATUS_AWAY,				MXIT_PRESENCE_AWAY,			"away",		NULL				},	/* 2 */
+		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_AVAILABLE,	"chat",		N_( "Chatty" )		},	/* 3 */
+		{	PURPLE_STATUS_UNAVAILABLE,		MXIT_PRESENCE_DND,			"dnd",		NULL				}	/* 4 */
 };
 
 
@@ -77,7 +77,7 @@ GList* mxit_status_types( PurpleAccount* account )
 		const struct status* status = &mxit_statuses[i];
 
 		/* add mxit status (reference: "libpurple/status.h") */
-		type = purple_status_type_new_with_attrs( status->primative, status->id, status->name, TRUE, TRUE, FALSE,
+		type = purple_status_type_new_with_attrs( status->primative, status->id, _( status->name ), TRUE, TRUE, FALSE,
 					"message", _( "Message" ), purple_value_new( PURPLE_TYPE_STRING ),
 					NULL );
 
