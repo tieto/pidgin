@@ -218,7 +218,7 @@ out:
 		acount++;
 
 		/* update gender */
-		profile->male = ( purple_request_fields_get_choice( fields, "male" ) == 0 );
+		profile->male = ( purple_request_fields_get_choice( fields, "male" ) != 0 );
 		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_GENDER, CP_PROF_TYPE_BOOL, ( profile->male ) ? "1" : "0" );
 		g_string_append( attributes, attrib );
 		acount++;
