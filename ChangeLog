@@ -21,6 +21,7 @@ version 2.6.4 (??/??/20??):
 	  the clientLogin authentication method.
 	* Fix offline message retrieval (broken in 2.6.3)
 	* Fix SSL when clientLogin is enabled.
+    * Fix sending and receiving Unicode characters in a Direct IM
 
 	MSN:
 	* Don't forget display names for buddies.
