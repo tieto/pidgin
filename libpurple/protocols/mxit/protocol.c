@@ -1345,8 +1345,8 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 			name = purple_buddy_get_alias( buddy );
 		else
 			name = records[0]->fields[0]->data;
-		g_snprintf( msg, sizeof( msg ), "%s sent you an encrypted message, but it is not supported on this client.", name );
-		mxit_popup( PURPLE_NOTIFY_MSG_WARNING, _( "Message Error" ), _( msg ) );
+		g_snprintf( msg, sizeof( msg ), _( "%s sent you an encrypted message, but it is not supported on this client." ), name );
+		mxit_popup( PURPLE_NOTIFY_MSG_WARNING, _( "Message Error" ), msg );
 		return;
 	}
 
@@ -1938,7 +1938,7 @@ static int process_error_response( struct MXitSession* session, struct rx_packet
 	if ( packet->errmsg )
 		errdesc = packet->errmsg;
 	else
-		errdesc = "An internal MXit server error occurred.";
+		errdesc = _( "An internal MXit server error occurred." );
 
 	purple_debug_info( MXIT_PLUGIN_ID, "Error Reply %i:%s\n", packet->errcode, errdesc );
 
@@ -1957,12 +1957,12 @@ static int process_error_response( struct MXitSession* session, struct rx_packet
 					return 0;
 				}
 				else {
-					sprintf( errmsg, "Login error: %s (%i)", errdesc, packet->errcode );
+					sprintf( errmsg, _( "Login error: %s (%i)" ), errdesc, packet->errcode );
 					purple_connection_error( session->con, _( errmsg ) );
 					return -1;
 				}
 		case CP_CMD_LOGOUT :
-				sprintf( errmsg, "Logout error: %s (%i)", errdesc, packet->errcode );
+				sprintf( errmsg, _( "Logout error: %s (%i)" ), errdesc, packet->errcode );
 				purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NAME_IN_USE, _( errmsg ) );
 				return -1;
 		case CP_CMD_CONTACT :

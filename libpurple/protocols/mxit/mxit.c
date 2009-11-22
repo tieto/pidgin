@@ -63,7 +63,7 @@ static void* mxit_link_click( const char* link64 )
 	PurpleConnection*	con;
 	gchar**				parts	= NULL;
 	gchar*				link	= NULL;
-	unsigned int		len;
+	gsize				len;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_link_click (%s)\n", link64 );
 
@@ -170,6 +170,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 	struct contact*		contact;
 	PurpleBuddy*		buddy;
 	const char*			who;
+	const char*			tmp;
 
 	gc = purple_conversation_get_gc( conv );
 	if ( session->con != gc ) {
@@ -204,6 +205,8 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 		case MXIT_TYPE_CHATROOM :
 		case MXIT_TYPE_GALLERY :
 		case MXIT_TYPE_INFO :
+				/* TODO: Allow "Loading menu..." to be localized (but not the HTML markup) */
+				tmp = _("Loading menu...");
 				serv_got_im( session->con, who, "<font color=\"#999999\">Loading menu...</font>\n", PURPLE_MESSAGE_NOTIFY, time( NULL ) );
 				mxit_send_message( session, who, " ", FALSE );
 		default :
@@ -343,7 +346,7 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 
 	/* hidden number */
 	if ( contact->flags & MXIT_CFLAG_HIDDEN )
-		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), "Yes" );
+		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), _( "Yes" ) );
 }
 
 

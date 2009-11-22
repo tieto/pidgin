@@ -408,7 +408,7 @@ GList* mxit_chat_info(PurpleConnection *gc)
 
 	/* Configuration option: Room Name */
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = "_Room Name:";
+	pce->label = _( "_Room Name:" );
 	pce->identifier = "room";
 	pce->required = TRUE;
 	m = g_list_append(m, pce);
