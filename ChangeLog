@@ -21,7 +21,7 @@ version 2.6.4 (??/??/20??):
 	  the clientLogin authentication method.
 	* Fix offline message retrieval (broken in 2.6.3)
 	* Fix SSL when clientLogin is enabled.
-    * Fix sending and receiving Unicode characters in a Direct IM
+	* Fix sending and receiving Unicode characters in a Direct IM
 
 	MSN:
 	* Don't forget display names for buddies.
@@ -40,7 +40,7 @@ version 2.6.4 (??/??/20??):
 	* Resolve an issue when connecting to iChat Server when no resource
 	  is specified.
 	* Try to automatically find a STUN server by using an SRV lookup on the
-	  account's domain, and use that for voice and video if found and the user 
+	  account's domain, and use that for voice and video if found and the user
 	  didn't set one manually in prefs.
 	* Fix a crash when adding a buddy without an '@'.
 	* Don't show the option to send a file to a buddy if we know for certain
