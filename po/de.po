@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-23 18:01+0100\n"
-"PO-Revision-Date: 2009-11-23 18:01+0100\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2009-11-23 19:22+0100\n"
+"PO-Revision-Date: 2009-11-23 19:21+0100\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1393,7 +1393,7 @@ msgid "Duplicate title"
 msgstr "Doppelte Bezeichnung"
 
 msgid "Please enter a different title for the status."
-msgstr "Bitte geben sie eine andere Bezeichnung für den Status ein."
+msgstr "Bitte geben Sie eine andere Bezeichnung für den Status ein."
 
 msgid "Substatus"
 msgstr "Unter-Status"
@@ -1464,7 +1464,7 @@ msgstr "%s hat Ihnen eine Nachricht gesendet"
 
 #, c-format
 msgid "%s said your nick in %s"
-msgstr "%s sagte ihren Spitznamen in %s"
+msgstr "%s sagte Ihren Spitznamen in %s"
 
 #, c-format
 msgid "%s sent a message in %s"
@@ -2443,7 +2443,7 @@ msgid "_Set"
 msgstr "_Setzen"
 
 msgid "None of your accounts are idle."
-msgstr "Keine ihrer Konten sind untätig."
+msgstr "Keine Ihrer Konten sind untätig."
 
 msgid "Unset Account Idle Time"
 msgstr "Untätigkeitszeit zurücksetzen"
@@ -3047,7 +3047,7 @@ msgstr "Falsche Proxy-Einstellungen"
 msgid ""
 "Either the host name or port number specified for your given proxy type is "
 "invalid."
-msgstr "Hostname oder Portnummer ihres Proxys sind falsch angegeben."
+msgstr "Hostname oder Portnummer Ihres Proxys sind falsch angegeben."
 
 msgid "Token Error"
 msgstr "Token-Fehler"
@@ -3115,7 +3115,7 @@ msgid "Register New Gadu-Gadu Account"
 msgstr "Registrierung eines neuen Gadu-Gadu-Kontos"
 
 msgid "Please, fill in the following fields"
-msgstr "Bitte füllen sie die folgenden Felder aus"
+msgstr "Bitte füllen Sie die folgenden Felder aus"
 
 msgid "City"
 msgstr "Stadt"
@@ -3182,7 +3182,7 @@ msgstr "Gadu-Gadu Passwort ändern"
 
 #, c-format
 msgid "Select a chat for buddy: %s"
-msgstr "Wählen sie einen Chat für den Benutzer: %s"
+msgstr "Wählen Sie einen Chat für den Benutzer: %s"
 
 msgid "Add to chat..."
 msgstr "Zum Chat hinzufügen..."
@@ -3779,7 +3779,7 @@ msgid ""
 "use it."
 msgstr ""
 "wallops &lt;Nachricht&gt;:  Wenn Sie diese Funktion nicht kennen, brauchen "
-"sie sie wahrscheinlich nicht."
+"Sie sie wahrscheinlich nicht."
 
 msgid "whois [server] &lt;nick&gt;:  Get information on a user."
 msgstr "whois [Server] &lt;Nick&gt;:  Informationen zu einem Benutzer abrufen."
@@ -4056,7 +4056,7 @@ msgstr "Anleitung vom Server: %s"
 
 msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
-"Füllen sie ein oder mehrere Felder aus, um nach entsprechenden XMPP-"
+"Füllen Sie ein oder mehrere Felder aus, um nach entsprechenden XMPP-"
 "Benutzern zu suchen."
 
 msgid "Email Address"
@@ -5869,7 +5869,7 @@ msgid "Mobile Number"
 msgstr "Handynummer"
 
 msgid "Update your Profile"
-msgstr "Aktualisieren Sie ihr Profil"
+msgstr "Aktualisieren Sie Ihr Profil"
 
 msgid "Here you can update your MXit profile"
 msgstr "Hier können Sie Ihr MXit-Profil aktualisieren"
@@ -5940,12 +5940,12 @@ msgid "Register New MXit Account"
 msgstr "Ein neues MXit-Konto registrieren"
 
 msgid "Please fill in the following fields:"
-msgstr "Bitte füllen sie die folgenden Felder aus:"
+msgstr "Bitte füllen Sie die folgenden Felder aus:"
 
 #. no reply from the WAP site
 msgid "Error contacting the MXit WAP site. Please try again later."
 msgstr ""
-"Fehler beim Verbinden mit der MXit WAP-Seite. Bitte versuchen sie es später "
+"Fehler beim Verbinden mit der MXit-WAP-Seite. Bitte versuchen Sie es später "
 "noch einmal."
 
 #. wapserver error
@@ -5953,17 +5953,17 @@ msgstr ""
 msgid ""
 "MXit is currently unable to process the request. Please try again later."
 msgstr ""
-"MXit kann im Moment Ihre Anfrage nicht verarbeiten. Bitte versuchen sie es "
+"MXit kann im Moment Ihre Anfrage nicht verarbeiten. Bitte versuchen Sie es "
 "später noch einmal."
 
 msgid "Wrong security code entered. Please try again later."
 msgstr ""
-"Es wurde ein falscher Sicherheitscode eingegeben. Bitte versuchen sie es "
+"Es wurde ein falscher Sicherheitscode eingegeben. Bitte versuchen Sie es "
 "später noch einmal."
 
 msgid "Your session has expired. Please try again later."
 msgstr ""
-"Ihre Sitzung ist abgelaufen. Bitte versuchen sie es später noch einmal."
+"Ihre Sitzung ist abgelaufen. Bitte versuchen Sie es später noch einmal."
 
 msgid "Invalid country selected. Please try again."
 msgstr "Ungültiges Land gewählt. Bitte versuchen Sie es noch einmal."
@@ -5998,10 +5998,10 @@ msgstr "Ihre Sprache"
 
 #. display the form to the user and wait for his/her input
 msgid "MXit Authorization"
-msgstr "MXit Autorisierung"
+msgstr "MXit-Autorisierung"
 
 msgid "MXit account validation"
-msgstr "MXit Kontoüberprüfung"
+msgstr "MXit-Kontoüberprüfung"
 
 msgid "Retrieving User Information..."
 msgstr "Abrufen der Benutzerinformationen..."
@@ -6090,7 +6090,7 @@ msgid "Contact Removal Error"
 msgstr "Fehler beim Löschen eines Kontakts"
 
 msgid "Subscription Error"
-msgstr "Fehler beim Abonieren"
+msgstr "Fehler beim Abonnieren"
 
 msgid "Contact Update Error"
 msgstr "Fehler beim Aktualisieren"
@@ -6102,7 +6102,7 @@ msgid "Cannot create MultiMx room"
 msgstr "Kann MultiMx-Raum nicht erzeugen"
 
 msgid "MultiMx Invitation Error"
-msgstr "MultiMx Fehler beim Einladen"
+msgstr "Fehler bei der MultiMx-Einladung"
 
 msgid "Profile Error"
 msgstr "Profilfehler"
@@ -6113,26 +6113,26 @@ msgstr "Ungültiges Paket von MXit empfangen."
 
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x01)"
+msgstr "Ein MXit-Verbindungsfehler trat auf. (Lesephase 0x01)"
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x02)"
+msgstr "Ein MXit-Verbindungsfehler trat auf. (Lesephase 0x02)"
 
 msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x03)"
+msgstr "Ein MXit-Verbindungsfehler trat auf. (Lesephase 0x03)"
 
 #. malformed packet length record (too long)
 msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x04)"
+msgstr "Ein MXit-Verbindungsfehler trat auf. (Lesephase 0x04)"
 
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x05)"
+msgstr "Ein MXit-Verbindungsfehler trat auf. (Lesephase 0x05)"
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x05)"
+msgstr "Ein MXit-Verbindungsfehler trat auf. (Lesephase 0x05)"
 
 msgid "Pending"
 msgstr "Ausstehend"
@@ -6147,7 +6147,7 @@ msgid "Deleted"
 msgstr "Gelöscht"
 
 msgid "MXit Advertising"
-msgstr "MXit Werbung"
+msgstr "MXit-Werbung"
 
 msgid "More Information"
 msgstr "Mehr Informationen"
@@ -6233,7 +6233,7 @@ msgid ""
 "cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
 "%s Ihr Passwort hat %zu Buchstaben, mehr als die erwartete maximale Länge "
-"von %d.  Bitte kürzen Sie ihr Passwort unter http://profileedit.myspace.com/"
+"von %d.  Bitte kürzen Sie Ihr Passwort unter http://profileedit.myspace.com/"
 "index.cfm?fuseaction=accountSettings.changePassword und versuchen Sie es "
 "erneut."
 
@@ -6274,7 +6274,7 @@ msgid ""
 "Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
 "not be loaded."
 msgstr ""
-"Benutzen sie libpurple mit RC4-Unterstützung (>= 2.0.1). MySpaceIM-Plugin "
+"Benutzen Sie libpurple mit RC4-Unterstützung (>= 2.0.1). MySpaceIM-Plugin "
 "wird nicht geladen."
 
 msgid "Add friends from MySpace.com"
@@ -7952,7 +7952,7 @@ msgid "Buddy Memo"
 msgstr "Buddy-Notiz"
 
 msgid "Change his/her memo as you like"
-msgstr "Ändern Sie seine/ihre Notiz wie sie möchten"
+msgstr "Ändern Sie seine/ihre Notiz wie Sie möchten"
 
 msgid "_Modify"
 msgstr "_Bearbeiten"
@@ -8597,7 +8597,7 @@ msgid ""
 "Please enter a topic for the new conference, and an invitation message to be "
 "sent to %s"
 msgstr ""
-"Bitte geben sie ein Thema für die neue Konferenz und eine "
+"Bitte geben Sie ein Thema für die neue Konferenz und eine "
 "Einladungsnachricht für %s ein"
 
 msgid "New Conference"
@@ -8621,8 +8621,8 @@ msgid ""
 "\"Create New Conference\" if you'd like to create a new conference to invite "
 "this user to."
 msgstr ""
-"Wählen sie eine Konferenz von der Liste, zu der Sie den Benutzer %s einladen "
-"möchten. Wählen sie „Neue Konferenz erzeugen“, wenn Sie den Benutzer zu "
+"Wählen Sie eine Konferenz von der Liste, zu der Sie den Benutzer %s einladen "
+"möchten. Wählen Sie „Neue Konferenz erzeugen“, wenn Sie den Benutzer zu "
 "einer neuen Konferenz einladen möchten."
 
 msgid "Invite to Conference"
@@ -8778,7 +8778,7 @@ msgid ""
 "group and its members to your buddy list."
 msgstr ""
 "Geben Sie den Namen einer Notes-Adressbuchgruppe in das Feld ein um die "
-"Gruppe und ihre Mitglieder zu ihrer Buddy-Liste hinzuzufügen."
+"Gruppe und ihre Mitglieder zu Ihrer Buddy-Liste hinzuzufügen."
 
 #, c-format
 msgid "Search results for '%s'"
@@ -8793,7 +8793,7 @@ msgstr ""
 "Der Bezeichner '%s' kann sich vielleicht zu einem der folgenden Benutzer "
 "beziehen. Mehr als ein Benutzer wurde mit dem gleichen Namen gefunden. Sie "
 "können diese Benutzer zu Ihrer Buddy-Liste hinzufügen oder ihnen Nachrichten "
-"senden, indem sie die folgenden Aktions-Buttons benutzen."
+"senden, indem Sie die folgenden Aktions-Buttons benutzen."
 
 msgid "Search Results"
 msgstr "Suchergebnisse"
@@ -10374,7 +10374,7 @@ msgid ""
 "able to rejoin a chatroom"
 msgstr ""
 "Unbekannter Fehler. Sie müssen sich eventuell abmelden und fünf Minuten "
-"warten, bevor sie wieder einen Chatraum betreten können"
+"warten, bevor Sie wieder einen Chatraum betreten können"
 
 #, c-format
 msgid "You are now chatting in %s."
@@ -10384,7 +10384,7 @@ msgid "Failed to join buddy in chat"
 msgstr "Es gelang nicht, den Buddy in dem Chat zu holen"
 
 msgid "Maybe they're not in a chat?"
-msgstr "Vielleicht sind sie nicht im Chat?"
+msgstr "Vielleicht sind Sie nicht im Chat?"
 
 msgid "Fetching the room list failed."
 msgstr "Abrufen der Raumliste gescheitert."
@@ -10769,7 +10769,7 @@ msgstr " (%s)"
 #, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
-"Die Verbindung wurde von einer anderen Software auf ihrem Computer "
+"Die Verbindung wurde von einer anderen Software auf Ihrem Computer "
 "unterbrochen."
 
 #. 10054
@@ -13725,7 +13725,7 @@ msgid ""
 "%s cannot transfer a folder. You will need to send the files within "
 "individually."
 msgstr ""
-"%s kann keine Verzeichnisse übertragen. Bitte senden sie die Dateien einzeln."
+"%s kann keine Verzeichnisse übertragen. Bitte senden Sie die Dateien einzeln."
 
 msgid "You have dragged an image"
 msgstr "Sie haben ein Bild gewählt"
@@ -13775,7 +13775,7 @@ msgid ""
 "You dragged a desktop launcher. Most likely you wanted to send the target of "
 "this launcher instead of this launcher itself."
 msgstr ""
-"Sie haben eine Verknüpfung gewählt. Wahrscheinlich wollten sie das Ziel der "
+"Sie haben eine Verknüpfung gewählt. Wahrscheinlich wollten Sie das Ziel der "
 "Verknüpfung senden und nicht die Verknüpfung selbst."
 
 #, c-format
