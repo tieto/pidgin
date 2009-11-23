@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: si\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"POT-Creation-Date: 2009-11-14 20:35-0500\n"
 "PO-Revision-Date: 2008-05-17 11:08+0530\n"
 "Last-Translator: Yajith Ajantha Dayarathna <yajith@gmail.com>\n"
 "Language-Team: Sinhala <sinhala@linux.lk>\n"
@@ -46,6 +46,7 @@ msgid ""
 "http://developer.pidgin.im"
 msgstr ""
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "දෝෂය"
 
@@ -524,11 +525,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "ගිණුම යළි සක්‍රීය කිරීම"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-
 msgid "No such command."
 msgstr ""
 
@@ -569,6 +565,11 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "ඔබ මෙම පිළිසඳරෙන් ඉවත් වී ඇත."
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr ""
 
@@ -601,6 +602,9 @@ msgstr "පිවිසුම සක්‍රීය කරන්න"
 msgid "Enable Sounds"
 msgstr "ශබ්ද සක්‍රීය කරන්න"
 
+msgid "You are not connected."
+msgstr ""
+
 msgid "<AUTO-REPLY> "
 msgstr "<AUTO-REPLY> "
 
@@ -610,7 +614,7 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "පරිශීලක ලැයිස්තුව:\n"
 msgstr[1] "පරිශීලක ලැයිස්තුව:\n"
 
-msgid "Supported debug options are:  version"
+msgid "Supported debug options are: plugins version"
 msgstr ""
 
 msgid "No such command (in this context)."
@@ -724,6 +728,7 @@ msgid "Remaining"
 msgstr "ඉතිරිය"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "තත්වය"
 
@@ -896,6 +901,9 @@ msgstr "ඇරයුම"
 msgid "(none)"
 msgstr "(කිසිවක් නැත)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 #, fuzzy
 msgid "URI"
 msgstr "UIN"
@@ -1295,6 +1303,8 @@ msgstr ""
 msgid "Saved Statuses"
 msgstr ""
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "සිරස්තලය"
 
@@ -1457,6 +1467,13 @@ msgid ""
 "Fetching TinyURL..."
 msgstr ""
 
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr ""
 
@@ -1584,7 +1601,9 @@ msgstr "මිතුරු ලැයිස්තුව"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
 
-msgid "The root certificate this one claims to be issued by is unknown."
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
 msgstr ""
 
 msgid "The certificate is not valid yet."
@@ -1684,6 +1703,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr ""
 
+#. show error to user
 msgid "Registration Error"
 msgstr ""
 
@@ -1698,6 +1718,7 @@ msgstr ""
 msgid "+++ %s signed off"
 msgstr ""
 
+#. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "නොදන්නා දෝෂයක්"
@@ -1799,10 +1820,15 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "%s ආරම්භ කිරීමේ දෝශයක්: %s"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr ""
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "නොදන්නා හේතුවක්"
 
@@ -2080,13 +2106,13 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "පෙන්වා දී ඇත දෝෂය ඇති විය:"
 
-msgid "Conference error."
+msgid "Conference error"
 msgstr ""
 
-msgid "Error with your microphone."
+msgid "Error with your microphone"
 msgstr ""
 
-msgid "Error with your webcam."
+msgid "Error with your webcam"
 msgstr ""
 
 #, fuzzy, c-format
@@ -2787,6 +2813,7 @@ msgstr "මුල් නම"
 msgid "Last name"
 msgstr "අවසන් නම"
 
+#. email
 msgid "Email"
 msgstr "විද්‍යුත් තැපෑල"
 
@@ -2924,12 +2951,14 @@ msgstr "නගරය"
 msgid "Year of birth"
 msgstr "උපන් වසර"
 
+#. gender
 msgid "Gender"
 msgstr "ස්ත්‍රි/පුරුෂ භාවය"
 
 msgid "Male or female"
 msgstr "ස්ත්‍රි හෝ පුරුෂ"
 
+#. 0
 msgid "Male"
 msgstr "පුරුෂ"
 
@@ -2998,6 +3027,7 @@ msgstr "පිටතට ගොස්"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "පළමු නම"
 
@@ -3671,6 +3701,7 @@ msgstr "ආයතන ඒකකය"
 msgid "Role"
 msgstr "කාර්‍යය"
 
+#. birthday
 msgid "Birthday"
 msgstr "උපන්දිනය"
 
@@ -3748,6 +3779,9 @@ msgstr ""
 msgid "Unsubscribe"
 msgstr "දායකත්වය නවතන්න"
 
+msgid "Initiate _Chat"
+msgstr ""
+
 msgid "Log In"
 msgstr "පිවිසීම"
 
@@ -3766,6 +3800,7 @@ msgstr ""
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr ""
 
@@ -3997,6 +4032,7 @@ msgstr ""
 msgid "Not Authorized"
 msgstr ""
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr ""
 
@@ -4021,6 +4057,7 @@ msgstr ""
 msgid "None"
 msgstr "කිසිවක් නැත"
 
+#. subscription type
 msgid "Subscription"
 msgstr ""
 
@@ -4319,7 +4356,7 @@ msgstr ""
 msgid "configure:  Configure a chat room."
 msgstr ""
 
-msgid "part [room]:  Leave the room."
+msgid "part [message]:  Leave the room."
 msgstr ""
 
 msgid "register:  Register with a chat room."
@@ -4964,16 +5001,13 @@ msgstr ""
 msgid "Send to Mobile"
 msgstr ""
 
-msgid "Initiate _Chat"
-msgstr ""
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 
 #, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 
 #, fuzzy
@@ -5181,6 +5215,9 @@ msgstr ""
 msgid "%s just sent you a Nudge!"
 msgstr ""
 
+msgid "The following users are missing from your addressbook"
+msgstr ""
+
 #, fuzzy, c-format
 msgid "Unknown error (%d): %s"
 msgstr "නොදන්නා දෝෂයක්"
@@ -5193,8 +5230,9 @@ msgstr ""
 msgid "Unknown error (%d)"
 msgstr ""
 
-msgid "The following users are missing from your addressbook"
-msgstr ""
+#, fuzzy
+msgid "Unable to remove user"
+msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr ""
@@ -5409,6 +5447,367 @@ msgstr ""
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr ""
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "වර්තමාන කේත රචකයන්"
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "නව පණිවිඩය"
+
+#, fuzzy
+msgid "Change your Mood"
+msgstr "රහස්පදය වෙනස් කරන්න"
+
+msgid "How do you feel right now?"
+msgstr ""
+
+#. show error to user
+msgid "Profile Update Error"
+msgstr ""
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr ""
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "පෙලපත් නාමය"
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "ජංගම දුරකථනය"
+
+msgid "Update your Profile"
+msgstr ""
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+msgid "There is no splash-screen currently available"
+msgstr ""
+
+#, fuzzy
+msgid "About"
+msgstr "%s සම්බන්ධව"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "රහස්පදය වෙනස් කරන්න"
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "ගොනුව සුරකින්න..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "සටහන් දර්ශනය"
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "%s සම්බන්ධව"
+
+#. the file is too big
+msgid "The file you are trying to send is too large!"
+msgstr ""
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "පිවිසීම"
+
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "සම්බන්ධ (_o)"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "අනුර්ත නම"
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "නව ගිණුම"
+
+msgid "Please fill in the following fields:"
+msgstr ""
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+msgid "Internal error. Please try again later."
+msgstr ""
+
+msgid "You did not enter the security code"
+msgstr ""
+
+msgid "Security Code"
+msgstr ""
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "රහස්පදය ඇතුළත් කරන්න"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "රට"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "ගුජරාති භාෂා කණ්ඩායම"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "අනුමත මිතුරකුද?"
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "සේවාදායකයේ තොරතුරු"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "පණිවිඩයක් යවන ලදි"
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "ගෘහස්ථ දුරකථනය 2"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "ජංගම දුරකථනය"
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "සේවා දායකය"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "සම්බන්ධ (_o)"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "පණිවිඩ"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "පිවිසුම් තොරතුරු"
+
+#, fuzzy
+msgid "Message Error"
+msgstr "පණිවිඩ"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "සබඳතාවයට වෙනත් නමක්"
+
+msgid "Message Sending Error"
+msgstr ""
+
+#, fuzzy
+msgid "Status Error"
+msgstr "තත්වය"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "දෝෂය"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "හඳුනානොගත් දෝෂයකි"
+
+msgid "Contact Removal Error"
+msgstr ""
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "විස්තරය"
+
+msgid "Contact Update Error"
+msgstr ""
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "ගොනු හුවමාරුව"
+
+msgid "Cannot create MultiMx room"
+msgstr ""
+
+msgid "MultiMx Invitation Error"
+msgstr ""
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "පැතිකඩ"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr ""
+
+msgid "Excited"
+msgstr ""
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "සමුහය"
+
+msgid "Happy"
+msgstr ""
+
+msgid "In Love"
+msgstr ""
+
+msgid "Invincible"
+msgstr ""
+
+msgid "Sad"
+msgstr ""
+
+msgid "Hot"
+msgstr ""
+
+msgid "Sick"
+msgstr ""
+
+msgid "Sleepy"
+msgstr ""
+
+#, fuzzy
+msgid "Pending"
+msgstr "යවන්න"
+
+#, fuzzy
+msgid "Invited"
+msgstr "ඇරයුම"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "අනුමත නොකරන්න"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "මකන්න"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "මිතුරු තොරතුරු"
 
 #, c-format
 msgid "No such user: %s"
@@ -5995,7 +6394,6 @@ msgstr ""
 msgid "Received unexpected response from %s"
 msgstr ""
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6151,6 +6549,45 @@ msgid "Queue full"
 msgstr ""
 
 msgid "Not while on AOL"
+msgstr ""
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+msgid "Cannot send SMS"
+msgstr ""
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr ""
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
+
+msgid "Offline message store full"
 msgstr ""
 
 msgid ""
@@ -6311,6 +6748,13 @@ msgstr ""
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr ""
 
+#. username connecting too frequently
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
@@ -6318,8 +6762,9 @@ msgstr ""
 
 #. IP address connecting too frequently
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 
 msgid "The SecurID key entered is invalid"
@@ -6439,20 +6884,27 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 msgstr[1] ""
 
-#. Data is assumed to be the destination bn
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr ""
 
-msgid "Unknown reason."
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
 
-#, c-format
-msgid "Unable to send message to %s:"
-msgstr ""
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "කෙවෙනියට සම්බන්ධවිය නොහැක"
 
 #, c-format
 msgid "User information not available: %s"
+msgstr ""
+
+msgid "Unknown reason."
 msgstr ""
 
 msgid "Online Since"
@@ -6462,9 +6914,6 @@ msgid "Member Since"
 msgstr ""
 
 msgid "Capabilities"
-msgstr ""
-
-msgid "Profile"
 msgstr ""
 
 msgid "Your AIM connection may be lost."
@@ -6478,7 +6927,7 @@ msgstr ""
 
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 
 #, c-format
@@ -7660,6 +8109,10 @@ msgstr ""
 msgid "Unable to send message: "
 msgstr ""
 
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr ""
+
 msgid "Place Closed"
 msgstr ""
 
@@ -8032,34 +8485,13 @@ msgstr ""
 msgid "Robot"
 msgstr ""
 
-msgid "Happy"
-msgstr ""
-
-msgid "Sad"
-msgstr ""
-
-msgid "Angry"
-msgstr ""
-
 msgid "Jealous"
 msgstr ""
 
 msgid "Ashamed"
 msgstr ""
 
-msgid "Invincible"
-msgstr ""
-
-msgid "In Love"
-msgstr ""
-
-msgid "Sleepy"
-msgstr ""
-
 msgid "Bored"
-msgstr ""
-
-msgid "Excited"
 msgstr ""
 
 msgid "Anxious"
@@ -9233,6 +9665,15 @@ msgstr ""
 msgid "Open Inbox"
 msgstr ""
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -9739,13 +10180,14 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "අන්තර්ජාල පණිවිඩකරු"
 
 msgid "Pidgin Internet Messenger"
-msgstr ""
-
-msgid "Send instant messages over multiple protocols"
 msgstr ""
 
 msgid "Orientation"
@@ -11725,11 +12167,6 @@ msgid ""
 "%swiki/GetABacktrace\n"
 msgstr ""
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr ""
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
@@ -11924,48 +12361,64 @@ msgstr ""
 msgid "Pounce Target"
 msgstr ""
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Started typing"
 msgstr "ලිවීම අරඹමින්"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Paused while typing"
 msgstr "ලිවීම සඳහා විරාමයක්"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed on"
 msgstr "ඇතුළත් වීම"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being idle"
 msgstr "%s අභාවිතවව සිට යළි ක්‍රියාත්මකයි (%s)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being away"
 msgstr "නැවත පැමිණියා"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Stopped typing"
 msgstr "ලිවීම අවසන්"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed off"
 msgstr "පිට වීම"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Became idle"
 msgstr "අභාවිත වී"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Went away"
 msgstr "ඉවත්ව ඇත"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Sent a message"
 msgstr "පණිවිඩයක් යවන ලදි"
 
-#, c-format
 msgid "Unknown.... Please report this!"
+msgstr ""
+
+msgid "(Custom)"
+msgstr ""
+
+#, fuzzy
+msgid "(Default)"
+msgstr "(පෙරනිමය)"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "මිතුරු ලැයිස්තුව"
+
+msgid "The default Pidgin status icon theme"
 msgstr ""
 
 msgid "Theme failed to unpack."
@@ -12117,6 +12570,10 @@ msgstr "අක්‍රීය (_D)"
 msgid "Use _automatically detected IP address: %s"
 msgstr ""
 
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "සේවාදායකය (_S):"
+
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr ""
 
@@ -12129,14 +12586,16 @@ msgstr ""
 msgid "_Enable automatic router port forwarding"
 msgstr ""
 
-msgid "_Manually specify range of ports to listen on"
+msgid "_Manually specify range of ports to listen on:"
 msgstr ""
 
-msgid "_Start port:"
-msgstr ""
+#, fuzzy
+msgid "_Start:"
+msgstr "තත්වය:"
 
-msgid "_End port:"
-msgstr ""
+#, fuzzy
+msgid "_End:"
+msgstr "යවන්න (_S)"
 
 #. TURN server
 msgid "Relay Server (TURN)"
@@ -12145,6 +12604,14 @@ msgstr ""
 #, fuzzy
 msgid "_TURN server:"
 msgstr "සේවාදායකය (_S):"
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "පරිශීලක නම (_U):"
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "රහස්පදය:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr ""
@@ -12169,15 +12636,23 @@ msgstr ""
 msgid "Proxy Server"
 msgstr ""
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+msgid "Proxy t_ype:"
+msgstr ""
+
 msgid "No proxy"
 msgstr ""
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr ""
+#, fuzzy
+msgid "P_ort:"
+msgstr "තොට (_P):"
 
-msgid "_User:"
-msgstr "පරිශීලක (_U):"
+#, fuzzy
+msgid "User_name:"
+msgstr "පරිශීලක නම (_U):"
 
 msgid "Seamonkey"
 msgstr "සීමංකි"
@@ -12667,6 +13142,11 @@ msgid "_Save File"
 msgstr "ගොනුව සුරකින්න..."
 
 msgid "Select color"
+msgstr ""
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
 msgstr ""
 
 msgid "_Alias"
@@ -13789,9 +14269,6 @@ msgstr ""
 "\n"
 "* සටහන: මෙම ඈඳුතුව සඳහා Win2000 හෝ නව සංස්කරණයක් අවශ්‍යයි."
 
-msgid "GTK+ Runtime Version"
-msgstr "GTK+ ධාවනකාල අනුවාදය"
-
 #. Autostart
 msgid "Startup"
 msgstr "පණගැන්වුම"
@@ -13799,6 +14276,9 @@ msgstr "පණගැන්වුම"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "වින්ඩෝස් පණගැන්වුමේදී %s _ආරම්භ කරන්න"
+
+msgid "Allow multiple instances"
+msgstr ""
 
 msgid "_Dockable Buddy List"
 msgstr "_යාකල හැකි මිතුරු ලැයිස්තුව"
@@ -13858,6 +14338,12 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "මෙම ඈඳුතුව XMPP සේවා දායකයන්හි නිරවද්‍යකරනයන් කිරීමට ප්‍රයෝජනවත් වේ."
+
+#~ msgid "_User:"
+#~ msgstr "පරිශීලක (_U):"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "GTK+ ධාවනකාල අනුවාදය"
 
 #, fuzzy
 #~ msgid "Calling ... "

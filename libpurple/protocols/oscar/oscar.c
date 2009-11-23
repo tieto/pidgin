@@ -438,9 +438,7 @@ gchar *
 purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcebn, guint16 charset, guint16 charsubset, const gchar *data, gsize datalen)
 {
 	gchar *ret = NULL;
-	const gchar *charsetstr1, *charsetstr2;
-
-	purple_debug_info("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%" G_GSIZE_FORMAT "\n", charset, charsubset, datalen);
+	const gchar *charsetstr1, *charsetstr2, *charsetstr3 = NULL;
 
 	if ((datalen == 0) || (data == NULL))
 		return NULL;
@@ -459,18 +457,32 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcebn,
 		charsetstr1 = "ASCII";
 		charsetstr2 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	} else if (charset == 0x000d) {
-		/* Mobile AIM client on a Nokia 3100 and an LG VX6000 */
-		charsetstr1 = "ISO-8859-1";
-		charsetstr2 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
+		/* iChat sending unicode over a Direct IM connection = Unicode */
+		/* Mobile AIM client on a Nokia 3100 and an LG VX6000 = ISO-8859-1 */
+		charsetstr1 = "UTF-16BE";
+		charsetstr2 = "UTF-8";
+		charsetstr3 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	} else {
 		/* Unknown, hope for valid UTF-8... */
 		charsetstr1 = "UTF-8";
 		charsetstr2 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	}
+	
+	purple_debug_info("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%" G_GSIZE_FORMAT ", choice1=%s, choice2=%s, choice3=%s\n",
+					  charset, charsubset, datalen, charsetstr1, charsetstr2, (charsetstr3 ? charsetstr3 : ""));
 
 	ret = purple_plugin_oscar_convert_to_utf8(data, datalen, charsetstr1, FALSE);
-	if (ret == NULL)
-		ret = purple_plugin_oscar_convert_to_utf8(data, datalen, charsetstr2, TRUE);
+	if (ret == NULL) {
+		if (charsetstr3 != NULL) {
+			/* Try charsetstr2 without allowing substitutions, then fall through to charsetstr3 if needed */
+			ret = purple_plugin_oscar_convert_to_utf8(data, datalen, charsetstr2, FALSE);
+			if (ret == NULL)
+				ret = purple_plugin_oscar_convert_to_utf8(data, datalen, charsetstr3, TRUE);
+		} else {
+			/* Try charsetstr2, allowing substitutions */
+			ret = purple_plugin_oscar_convert_to_utf8(data, datalen, charsetstr2, TRUE);
+		}
+	}
 	if (ret == NULL) {
 		char *str, *salvage, *tmp;
 
@@ -565,7 +577,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 		return;
 	}
 
-	purple_debug_info("oscar", "Conversion from UTF-8 to %s failed (%s), falling back to unicode.\n",
+	purple_debug_info("oscar", "Conversion from UTF-8 to %s failed (%s). Falling back to unicode.\n",
 					  charsetstr, err->message);
 	g_error_free(err);
 	err = NULL;
@@ -4552,6 +4564,8 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	}
 	g_string_free(data, TRUE);
 
+	purple_debug_info("oscar", "sending direct IM %s using charset %i", msg->str, charset);
+	
 	peer_odc_send_im(conn, msg->str, msg->len, charset,
 			imflags & PURPLE_MESSAGE_AUTO_RESP);
 	g_string_free(msg, TRUE);

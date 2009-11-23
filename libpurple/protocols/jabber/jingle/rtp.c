@@ -824,6 +824,64 @@ jingle_rtp_handle_action_internal(JingleContent *content, xmlnode *xmlcontent, J
 			g_object_unref(session);
 			break;
 		}
+		case JINGLE_DESCRIPTION_INFO: {
+			JingleSession *session =
+					jingle_content_get_session(content);
+			xmlnode *description = xmlnode_get_child(
+					xmlcontent, "description");
+			GList *codecs, *iter, *iter2, *remote_codecs =
+					jingle_rtp_parse_codecs(description);
+			gchar *name = jingle_content_get_name(content);
+			gchar *remote_jid =
+					jingle_session_get_remote_jid(session);
+			PurpleMedia *media;
+
+			media = jingle_rtp_get_media(session);
+
+			/*
+			 * This may have problems if description-info is
+			 * received without the optional parameters for a
+			 * codec with configuration info (such as THEORA
+			 * or H264). The local configuration info may be
+			 * set for the remote codec.
+			 *
+			 * As of 2.6.3 there's no API to support getting
+			 * the remote codecs specifically, just the
+			 * intersection. Another option may be to cache
+			 * the remote codecs received in initiate/accept.
+			 */
+			codecs = purple_media_get_codecs(media, name);
+
+			for (iter = codecs; iter; iter = g_list_next(iter)) {
+				guint id;
+
+				id = purple_media_codec_get_id(iter->data);
+				iter2 = remote_codecs;
+
+				for (; iter2; iter2 = g_list_next(iter2)) {
+					if (purple_media_codec_get_id(
+							iter2->data) != id)
+						continue;
+
+					g_object_unref(iter->data);
+					iter->data = iter2->data;
+					remote_codecs = g_list_delete_link(
+							remote_codecs, iter2);
+					break;
+				}
+			}
+
+			codecs = g_list_concat(codecs, remote_codecs);
+
+			purple_media_set_remote_codecs(media,
+					name, remote_jid, codecs);
+
+			purple_media_codec_list_free (codecs);
+			g_free(remote_jid);
+			g_free(name);
+			g_object_unref(session);
+			break;
+		}
 		default:
 			break;
 	}

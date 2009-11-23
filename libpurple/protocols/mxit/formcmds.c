@@ -216,7 +216,7 @@ static void command_clearscreen(struct MXitSession* session, const char* from)
 
     conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, session->acc);
     if (conv == NULL) {
-        purple_debug_error(MXIT_PLUGIN_ID, "Conversation with '%s' not found\n", from);
+        purple_debug_error(MXIT_PLUGIN_ID, _( "Conversation with '%s' not found\n" ), from);
         return;
     }
 
@@ -268,7 +268,7 @@ static void command_platformreq(GHashTable* hash, GString* msg)
 
 	dest = g_hash_table_lookup(hash, "dest");				/* find the destination */
 	if (dest) {
-		g_string_append_printf(msg, "<a href=\"%s\">%s</a>", purple_url_decode(dest), (text) ? text : "Download");		/* add link to display message */
+		g_string_append_printf(msg, "<a href=\"%s\">%s</a>", purple_url_decode(dest), (text) ? text : _( "Download" ));		/* add link to display message */
 	}
 
 	if (text)
@@ -333,7 +333,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 	reply = g_hash_table_lookup(hash, "replymsg");
 	if (reply) {
 		g_string_append_printf(msg, "\n");
-		mxit_add_html_link(mx, reply, "click here");
+		mxit_add_html_link(mx, reply, _( "click here" ));
 	}
 }
 

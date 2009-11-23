@@ -924,7 +924,7 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 	}
 
 	/* Republish our vcard if the photo is different than the server's */
-	if (!purple_strequal(vcard_hash, js->initial_avatar_hash)) {
+	if (js->initial_avatar_hash && !purple_strequal(vcard_hash, js->initial_avatar_hash)) {
 		/*
 		 * Google Talk has developed the behavior that it will not accept
 		 * a vcard set in the first 10 seconds (or so) of the connection;
@@ -936,9 +936,13 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 			                                             js);
 		else
 			jabber_set_info(js->gc, purple_account_get_user_info(account));
-	} else if (js->initial_avatar_hash) {
-		/* Our photo is in the vcard, so advertise vcard-temp updates */
-		js->avatar_hash = g_strdup(js->initial_avatar_hash);
+	} else if (vcard_hash) {
+		/* A photo is in the vCard. Advertise its hash */
+		js->avatar_hash = vcard_hash;
+		vcard_hash = NULL;
+
+		/* Send presence to update vcard-temp:x:update */
+		jabber_presence_send(js, FALSE);
 	}
 
 	g_free(vcard_hash);
@@ -2338,6 +2342,12 @@ void jabber_user_search_begin(PurplePluginAction *action)
 			_("Cancel"), NULL,
 			NULL, NULL, NULL,
 			js);
+}
+
+gboolean
+jabber_resource_know_capabilities(const JabberBuddyResource *jbr)
+{
+	return jbr->caps.info != NULL;
 }
 
 gboolean
