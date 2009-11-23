@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-22 14:36+0100\n"
-"PO-Revision-Date: 2009-11-22 14:35+0100\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2009-11-23 17:26+0100\n"
+"PO-Revision-Date: 2009-11-23 17:24+0100\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4011,6 +4011,10 @@ msgstr "Anmelden"
 msgid "Log Out"
 msgstr "Abmelden"
 
+#. primative,						no,							id,			name
+#. 0
+#. 1
+#. 2
 msgid "Chatty"
 msgstr "Gesprächig"
 
@@ -5785,9 +5789,8 @@ msgid "Sad"
 msgstr "Traurig"
 
 #. 8
-#, fuzzy
 msgid "Hot"
-msgstr "_Host:"
+msgstr "Heiß"
 
 #. 9
 msgid "Sick"
@@ -5810,6 +5813,27 @@ msgstr "Ihre Stimmung ändern"
 
 msgid "How do you feel right now?"
 msgstr "Wie fühlen Sie sich gerade?"
+
+msgid "The PIN you entered is invalid."
+msgstr "Der eingegebene PIN ist ungültig."
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Die eingegebene PIN hat eine ungültige Länge [4-10]."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "Die PIN ist ungültig. Sie sollte nur aus Ziffern [0-9] bestehen."
+
+msgid "The two PINs you entered do not match."
+msgstr "Die beiden PINs, die Sie eingegeben haben, stimmen nicht überein."
+
+msgid "The name you entered is invalid."
+msgstr "Der eingegebene Name ist ungültig."
+
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr ""
+"Der eingegebene Geburtstag ist ungültig. Das korrekte Format ist: 'JJJJ-MM-"
+"TT'."
 
 #. show error to user
 msgid "Profile Update Error"
@@ -5844,22 +5868,20 @@ msgstr "Meine Nummer verstecken"
 msgid "Mobile Number"
 msgstr "Handynummer"
 
-#, fuzzy
 msgid "Update your Profile"
-msgstr "Yahoo!-Profil"
+msgstr "Aktualisieren Sie ihr Profil"
 
 msgid "Here you can update your MXit profile"
 msgstr "Hier können Sie Ihr MXit-Profil aktualisieren"
 
 msgid "View Splash"
-msgstr ""
+msgstr "Startbildschirn anschauen"
 
 msgid "There is no splash-screen currently available"
-msgstr ""
+msgstr "Es gibt gerade keinen Startbildschirm"
 
-#, fuzzy
 msgid "About"
-msgstr "Über mich"
+msgstr "Info"
 
 #. display / change mood
 msgid "Change Mood..."
@@ -5870,9 +5892,8 @@ msgid "Change Profile..."
 msgstr "Profil ändern..."
 
 #. display splash-screen
-#, fuzzy
 msgid "View Splash..."
-msgstr "Mitschnitt anzeigen..."
+msgstr "Startbildschirm anzeigen..."
 
 #. display plugin version
 msgid "About..."
@@ -5900,6 +5921,12 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Verbinde..."
 
+msgid "The nick name you entered is invalid."
+msgstr "Der eingegebene Spitzname ist ungültig."
+
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "Die eingegebene PIN hat eine ungültige Länge [7-10]."
+
 #. mxit login name
 msgid "MXit Login Name"
 msgstr "MXit-Login-Name"
@@ -5918,15 +5945,21 @@ msgstr "Bitte füllen sie die folgenden Felder aus:"
 #. no reply from the WAP site
 msgid "Error contacting the MXit WAP site. Please try again later."
 msgstr ""
+"Fehler beim Verbinden mit der MXit WAP-Seite. Bitte versuchen sie es später "
+"noch einmal."
 
 #. wapserver error
 #. server could not find the user
 msgid ""
 "MXit is currently unable to process the request. Please try again later."
 msgstr ""
+"MXit kann im Moment Ihre Anfrage nicht verarbeiten. Bitte versuchen sie es "
+"später noch einmal."
 
 msgid "Wrong security code entered. Please try again later."
 msgstr ""
+"Es wurde ein falscher Sicherheitscode eingegeben. Bitte versuchen sie es "
+"später noch einmal."
 
 msgid "Your session has expired. Please try again later."
 msgstr ""
@@ -5948,16 +5981,14 @@ msgid "Internal error. Please try again later."
 msgstr "Internet Fehler. Versuchen Sie es später noch einmal."
 
 msgid "You did not enter the security code"
-msgstr ""
+msgstr "Sie haben den Sicherheitscode nicht eingegeben"
 
-#, fuzzy
 msgid "Security Code"
-msgstr "Sicherheit aktiviert"
+msgstr "Sicherheitscode"
 
 #. ask for input
-#, fuzzy
 msgid "Enter Security Code"
-msgstr "Geben Sie den Code ein"
+msgstr "Geben Sie den Sicherheitscode ein"
 
 msgid "Your Country"
 msgstr "Ihr Land"
@@ -5966,22 +5997,23 @@ msgid "Your Language"
 msgstr "Ihre Sprache"
 
 #. display the form to the user and wait for his/her input
-#, fuzzy
 msgid "MXit Authorization"
-msgstr "Autorisierung erforderlich"
+msgstr "MXit Autorisierung"
 
 msgid "MXit account validation"
-msgstr ""
+msgstr "MXit Kontoüberprüfung"
 
 msgid "Retrieving User Information..."
 msgstr "Abrufen der Benutzerinformationen..."
 
+msgid "Loading menu..."
+msgstr "Lade das Menü..."
+
 msgid "Status Message"
 msgstr "Status-Nachricht"
 
-#, fuzzy
 msgid "Hidden Number"
-msgstr "Zweiter Name"
+msgstr "Versteckte Nummer"
 
 msgid "Your Mobile Number..."
 msgstr "Ihre Handynummer..."
@@ -5995,42 +6027,55 @@ msgid "Connect via HTTP"
 msgstr "Über HTTP verbinden"
 
 msgid "Enable splash-screen popup"
-msgstr ""
+msgstr "Startbildschirm-Popup aktivieren"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
 msgstr ""
+"Wir haben die Verbindung zu MXit verloren. Bitte verbinden Sie sich neu."
 
 #. packet could not be queued for transmission
-#, fuzzy
 msgid "Message Send Error"
-msgstr "XMPP-Nachrichtenfehler"
+msgstr "Fehler beim Senden der Nachricht"
 
-#, fuzzy
 msgid "Unable to process your request at this time"
-msgstr "Hostname konnte nicht aufgelöst werden"
+msgstr "Kann Ihre Anfrage im Moment nicht verarbeiten"
 
 msgid "Timeout while waiting for a response from the MXit server."
-msgstr ""
+msgstr "Beim Warten auf den MXit-Server trat eine Zeitüberschreitung auf."
 
-#, fuzzy
 msgid "Successfully Logged In..."
-msgstr "Qun erfolgreich betreten"
+msgstr "Erfolgreich angemeldet..."
 
-#, fuzzy
+#, c-format
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
+msgstr ""
+"%s hat Ihnen eine verschlüsselte Nachricht gesendet, aber Verschlüsselung "
+"wird noch nicht unterstützt."
+
 msgid "Message Error"
-msgstr "XMPP-Nachrichtenfehler"
+msgstr "Nachrichtenfehler"
 
 msgid "Cannot perform redirect using the specified protocol"
-msgstr ""
+msgstr "Kann die Umleitung nicht mit dem angegebenen Protokoll durchführen"
 
-#, fuzzy
+msgid "An internal MXit server error occurred."
+msgstr "Es ist ein unbekannter MXit-Serverfehler aufgetreten."
+
+#, c-format
+msgid "Login error: %s (%i)"
+msgstr "Anmeldefehler: %s (%i)"
+
+#, c-format
+msgid "Logout error: %s (%i)"
+msgstr "Abmeldefehler: %s (%i)"
+
 msgid "Contact Error"
-msgstr "Verbindungsfehler"
+msgstr "Kontaktfehler"
 
-#, fuzzy
 msgid "Message Sending Error"
-msgstr "XMPP-Nachrichtenfehler"
+msgstr "Fehler beim Nachrichtenversand"
 
 msgid "Status Error"
 msgstr "Status-Fehler"
@@ -6038,21 +6083,17 @@ msgstr "Status-Fehler"
 msgid "Mood Error"
 msgstr "Stimmungs-Fehler"
 
-#, fuzzy
 msgid "Invitation Error"
-msgstr "Fehler beim Aufheben der Registrierung"
+msgstr "Fehler beim Einladen"
 
-#, fuzzy
 msgid "Contact Removal Error"
-msgstr "Verbindungsfehler"
+msgstr "Fehler beim Löschen eines Kontakts"
 
-#, fuzzy
 msgid "Subscription Error"
-msgstr "Abonnement"
+msgstr "Fehler beim Abonieren"
 
-#, fuzzy
 msgid "Contact Update Error"
-msgstr "Verbindungsfehler"
+msgstr "Fehler beim Aktualisieren"
 
 msgid "File Transfer Error"
 msgstr "Dateiübertragungsfehler"
@@ -6060,39 +6101,38 @@ msgstr "Dateiübertragungsfehler"
 msgid "Cannot create MultiMx room"
 msgstr "Kann MultiMx-Raum nicht erzeugen"
 
-#, fuzzy
 msgid "MultiMx Invitation Error"
-msgstr "Fehler beim Aufheben der Registrierung"
+msgstr "MultiMx Fehler beim Einladen"
 
 msgid "Profile Error"
 msgstr "Profilfehler"
 
 #. bad packet
 msgid "Invalid packet received from MXit."
-msgstr ""
+msgstr "Ungültiges Paket von MXit empfangen."
 
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr ""
+msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x01)"
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr ""
+msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x02)"
 
 msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr ""
+msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x03)"
 
 #. malformed packet length record (too long)
 msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr ""
+msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x04)"
 
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr ""
+msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x05)"
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr ""
+msgstr "An MXit-Verbindungsfehler trat auf. (Lesephase 0x05)"
 
 msgid "Pending"
 msgstr "Ausstehend"
@@ -6107,7 +6147,7 @@ msgid "Deleted"
 msgstr "Gelöscht"
 
 msgid "MXit Advertising"
-msgstr ""
+msgstr "MXit Werbung"
 
 msgid "More Information"
 msgstr "Mehr Informationen"
@@ -6902,10 +6942,11 @@ msgid "Not while on AOL"
 msgstr "Nicht solange bei AOL angemeldet"
 
 msgid "Cannot receive IM due to parental controls"
-msgstr ""
+msgstr "Kann wegen Kinderschutzeinstellungen keine IM empfangen"
 
 msgid "Cannot send SMS without accepting terms"
 msgstr ""
+"SMS können nicht gesendet werden ohne die Vertragsbedingungen zu akzeptieren"
 
 msgid "Cannot send SMS"
 msgstr "Kann SMS nicht senden"
@@ -6919,19 +6960,19 @@ msgid "Cannot send SMS to unknown country"
 msgstr "Kann keine SMS in ein unbekanntes Land schicken"
 
 msgid "Bot accounts cannot initiate IMs"
-msgstr ""
+msgstr "Bot-Konten können keine IMs initiieren"
 
 msgid "Bot account cannot IM this user"
-msgstr ""
+msgstr "Bot-Konten können diesem Benutzer keine Nachricht senden"
 
 msgid "Bot account reached IM limit"
-msgstr ""
+msgstr "Das Bot-Konto erreichte die IM-Grenze"
 
 msgid "Bot account reached daily IM limit"
-msgstr ""
+msgstr "Bot-Konto erreichte die tägliche IM-Grenze"
 
 msgid "Bot account reached monthly IM limit"
-msgstr ""
+msgstr "Bot-Konto erreichte die monatliche IM-Grenze"
 
 msgid "Unable to receive offline messages"
 msgstr "Kann keine Offline-Nachrichten empfangen"
@@ -10766,6 +10807,8 @@ msgstr ""
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
+"Chatten mit Kurznachrichten.  Unterstützt AIM, Google Talk, Jabber/XMPP, "
+"MSN, Yahoo und weitere"
 
 msgid "Internet Messenger"
 msgstr "Internet-Sofortnachrichtendienst"
@@ -13077,9 +13120,8 @@ msgstr "Thema konnte nicht geladen werden."
 msgid "Theme failed to copy."
 msgstr "Thema konnte nicht kopiert werden."
 
-#, fuzzy
 msgid "Theme Selections"
-msgstr "Browserauswahl"
+msgstr "Themenauswahl"
 
 #. Instructions
 msgid ""
@@ -13223,9 +13265,8 @@ msgstr "Deaktiviert"
 msgid "Use _automatically detected IP address: %s"
 msgstr "Benutze _automatisch erkannte IP-Adresse: %s"
 
-#, fuzzy
 msgid "ST_UN server:"
-msgstr "_TURN-Server:"
+msgstr "ST_UN-Server:"
 
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Beispiel: stunserver.org</span>"
@@ -13242,13 +13283,11 @@ msgstr "Automatischer _Router-Port-Weiterleitung aktivieren"
 msgid "_Manually specify range of ports to listen on:"
 msgstr "Port-Bereich, auf dem gehört werden soll, _manuell bestimmen:"
 
-#, fuzzy
 msgid "_Start:"
-msgstr "_Status:"
+msgstr "_Start:"
 
-#, fuzzy
 msgid "_End:"
-msgstr "A_usklappen"
+msgstr "_Ende:"
 
 #. TURN server
 msgid "Relay Server (TURN)"
@@ -13257,13 +13296,11 @@ msgstr "Relay-Server (TURN)"
 msgid "_TURN server:"
 msgstr "_TURN-Server:"
 
-#, fuzzy
 msgid "Use_rname:"
-msgstr "Benutzername:"
+msgstr "Benutze_rname:"
 
-#, fuzzy
 msgid "Pass_word:"
-msgstr "Passwort:"
+msgstr "Pass_wort:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -13350,24 +13387,20 @@ msgstr "_Proxy konfigurieren"
 
 #. This is a global option that affects SOCKS4 usage even with
 #. * account-specific proxy settings
-#, fuzzy
 msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr "Remote-DNS mit SOCKS4-Proxys benutzen"
+msgstr "Remote-_DNS mit SOCKS4-Proxys benutzen"
 
-#, fuzzy
 msgid "Proxy t_ype:"
 msgstr "Proxy-_Typ:"
 
 msgid "No proxy"
 msgstr "Kein Proxy"
 
-#, fuzzy
 msgid "P_ort:"
-msgstr "_Port:"
+msgstr "P_ort:"
 
-#, fuzzy
 msgid "User_name:"
-msgstr "Benutzername:"
+msgstr "Benutzer_name:"
 
 msgid "Log _format:"
 msgstr "Mitschnitt-_Format:"
@@ -13455,9 +13488,8 @@ msgstr "Abhängig von Tastatur- oder Mausbenutzung"
 msgid "_Minutes before becoming idle:"
 msgstr "_Minuten, bevor auf abwesend gesetzt wird:"
 
-#, fuzzy
 msgid "Change to this status when _idle:"
-msgstr "Ändere Status, wenn _inaktiv"
+msgstr "Ändere zu diesem Status, wenn _inaktiv:"
 
 msgid "_Auto-reply:"
 msgstr "A_utomatische Antwort:"
