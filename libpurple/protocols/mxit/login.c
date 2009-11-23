@@ -254,7 +254,7 @@ static void mxit_cb_register_ok( PurpleConnection *gc, PurpleRequestFields *fiel
 	g_strlcpy( profile->birthday, str, sizeof( profile->birthday ) );
 
 	/* gender */
-	profile->male = ( purple_request_fields_get_choice( fields, "male" ) == 0 );
+	profile->male = ( purple_request_fields_get_choice( fields, "male" ) != 0 );
 
 	/* pin */
 	pin = purple_request_fields_get_string( fields, "pin" );
@@ -287,7 +287,7 @@ out:
 	}
 	else {
 		/* show error to user */
-		mxit_popup( PURPLE_NOTIFY_MSG_ERROR, _( "Registration Error" ), _( err ) );
+		mxit_popup( PURPLE_NOTIFY_MSG_ERROR, _( "Registration Error" ), err );
 		mxit_register_view( session );
 	}
 }

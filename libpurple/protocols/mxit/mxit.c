@@ -205,7 +205,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 		case MXIT_TYPE_CHATROOM :
 		case MXIT_TYPE_GALLERY :
 		case MXIT_TYPE_INFO :
-				tmp = g_strdup_printf("<font color=\"#999999\">%s</font>\n", _("Loading menu..."));
+				tmp = g_strdup_printf("<font color=\"#999999\">%s</font>\n", _( "Loading menu..." ));
 				serv_got_im( session->con, who, tmp, PURPLE_MESSAGE_NOTIFY, time( NULL ) );
 				g_free(tmp);
 				mxit_send_message( session, who, " ", FALSE );
@@ -690,7 +690,8 @@ static void init_plugin( PurplePlugin* plugin )
 	option = purple_account_option_bool_new( _( "Enable splash-screen popup" ), MXIT_CONFIG_SPLASHPOPUP, FALSE );
 	proto_info.protocol_options = g_list_append( proto_info.protocol_options, option );
 
-	g_assert( sizeof( struct raw_chunk ) == 5 );
+	if ( sizeof( struct raw_chunk ) != 5 )
+		g_log(G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL, "sizeof(struct raw_chunk) != 5!  MXit probably won't work!\n");
 }
 
 PURPLE_INIT_PLUGIN( mxit, init_plugin, plugin_info );
