@@ -50,7 +50,7 @@ libpurple/dnsquery.c
 libpurple/ft.c
 libpurple/gconf/purple.schemas.in
 libpurple/log.c
-libpurple/media.c
+libpurple/media/media.c
 libpurple/mediamanager.c
 libpurple/plugin.c
 libpurple/plugins/autoaccept.c

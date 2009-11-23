@@ -34,6 +34,8 @@
 #include "gtkdocklet.h"
 #include <gdk/gdkkeysyms.h>
 
+#if !GTK_CHECK_VERSION(2,10,0)
+
 #define SHORT_EMBED_TIMEOUT 5000
 #define LONG_EMBED_TIMEOUT 15000
 
@@ -205,7 +207,6 @@ docklet_x11_set_tooltip(gchar *tooltip)
 	}
 }
 
-#if GTK_CHECK_VERSION(2,2,0)
 static void
 docklet_x11_position_menu(GtkMenu *menu, int *x, int *y, gboolean *push_in,
 						  gpointer user_data)
@@ -230,7 +231,6 @@ docklet_x11_position_menu(GtkMenu *menu, int *x, int *y, gboolean *push_in,
 
 	*push_in = TRUE;
 }
-#endif
 
 static void
 docklet_x11_destroy(void)
@@ -344,11 +344,7 @@ static struct docklet_ui_ops ui_ops =
 	docklet_x11_update_icon,
 	docklet_x11_blank_icon,
 	docklet_x11_set_tooltip,
-#if GTK_CHECK_VERSION(2,2,0)
 	docklet_x11_position_menu
-#else
-	NULL
-#endif
 };
 
 void
@@ -358,3 +354,6 @@ docklet_ui_init()
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/docklet/x11");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/x11/embedded", FALSE);
 }
+
+#endif  /* !GTK_CHECK_VERSION(2,10,0) */
+
