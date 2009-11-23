@@ -39,7 +39,7 @@ const char* splash_current(struct MXitSession* session);
 /*
  * Indicate if splash-screen popups are enabled.
  */
-gboolean splash_popup_enabled();
+gboolean splash_popup_enabled(struct MXitSession* session);
 
 /*
  * Save a new splash-screen.

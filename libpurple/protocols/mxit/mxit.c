@@ -125,7 +125,7 @@ skip:
 /*------------------------------------------------------------------------
  * Register MXit to receive URI click notifications from the UI
  */
-void mxit_register_uri_handler()
+void mxit_register_uri_handler(void)
 {
 	not_link_ref_count++;
 	if ( not_link_ref_count == 1 ) {
