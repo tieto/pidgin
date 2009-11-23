@@ -24,11 +24,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "backend-fs2.h"
-
 #include "internal.h"
 
 #ifdef USE_VV
+#include "backend-fs2.h"
+
 #include "backend-iface.h"
 #include "debug.h"
 #include "network.h"
@@ -1967,7 +1967,6 @@ purple_media_backend_fs2_get_tee(PurpleMediaBackendFs2 *self,
 #endif /* USE_VV */
 	g_return_val_if_reached(NULL);
 }
-#endif /* USE_GSTREAMER */
 
 void
 purple_media_backend_fs2_set_input_volume(PurpleMediaBackendFs2 *self,
@@ -2030,3 +2029,4 @@ purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
 	}
 #endif /* USE_VV */
 }
+#endif /* USE_GSTREAMER */

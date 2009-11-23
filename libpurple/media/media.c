@@ -28,13 +28,13 @@
 
 #include "account.h"
 #include "media.h"
-#include "media/backend-fs2.h"
 #include "media/backend-iface.h"
 #include "mediamanager.h"
 
 #include "debug.h"
 
 #ifdef USE_GSTREAMER
+#include "media/backend-fs2.h"
 #include "marshallers.h"
 #include "media-gst.h"
 #endif
