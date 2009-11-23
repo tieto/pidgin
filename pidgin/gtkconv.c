@@ -1113,114 +1113,13 @@ menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
 	clear_conversation_scrollback(conv);
 }
 
-struct _search {
-	PidginWindow *gtkwin;
-	GtkWidget *entry;
-};
-
-static void do_search_cb(GtkWidget *widget, gint resp, struct _search *s)
-{
-	PurpleConversation *conv;
-	PidginConversation *gtk_active_conv;
-	GList *iter;
-
-	conv = pidgin_conv_window_get_active_conversation(s->gtkwin);
-	gtk_active_conv = PIDGIN_CONVERSATION(conv);
-
-	switch (resp)
-	{
-		case GTK_RESPONSE_OK:
-			/* clear highlighting except the active conversation window
-			 * highlight the keywords in the active conversation window */
-			for (iter = pidgin_conv_window_get_gtkconvs(s->gtkwin) ; iter ; iter = iter->next)
-			{
-				PidginConversation *gtkconv = iter->data;
-
-				if (gtkconv != gtk_active_conv)
-				{
-					gtk_imhtml_search_clear(GTK_IMHTML(gtkconv->imhtml));
-				}
-				else
-				{
-					gtk_imhtml_search_find(GTK_IMHTML(gtk_active_conv->imhtml),
-					                       gtk_entry_get_text(GTK_ENTRY(s->entry)));
-				}
-			}
-			break;
-
-		case GTK_RESPONSE_DELETE_EVENT:
-		case GTK_RESPONSE_CLOSE:
-			/* clear the keyword highlighting in all the conversation windows */
-			for (iter = pidgin_conv_window_get_gtkconvs(s->gtkwin); iter; iter=iter->next)
-			{
-				PidginConversation *gconv = iter->data;
-				gtk_imhtml_search_clear(GTK_IMHTML(gconv->imhtml));
-			}
-
-			gtk_widget_destroy(s->gtkwin->dialogs.search);
-			s->gtkwin->dialogs.search = NULL;
-			g_free(s);
-			break;
-	}
-}
-
 static void
 menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *gtkwin = data;
-	GtkWidget *hbox;
-	GtkWidget *img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
-						  gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
-	GtkWidget *label;
-	struct _search *s;
-
-	if (gtkwin->dialogs.search) {
-		gtk_window_present(GTK_WINDOW(gtkwin->dialogs.search));
-		return;
-	}
-
-	s = g_malloc(sizeof(struct _search));
-	s->gtkwin = gtkwin;
-
-	gtkwin->dialogs.search = gtk_dialog_new_with_buttons(_("Find"),
-			GTK_WINDOW(gtkwin->window), GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
-			GTK_STOCK_FIND, GTK_RESPONSE_OK, NULL);
-	gtk_dialog_set_default_response(GTK_DIALOG(gtkwin->dialogs.search),
-									GTK_RESPONSE_OK);
-	g_signal_connect(G_OBJECT(gtkwin->dialogs.search), "response",
-					 G_CALLBACK(do_search_cb), s);
-
-	gtk_container_set_border_width(GTK_CONTAINER(gtkwin->dialogs.search), PIDGIN_HIG_BOX_SPACE);
-	gtk_window_set_resizable(GTK_WINDOW(gtkwin->dialogs.search), FALSE);
-	gtk_dialog_set_has_separator(GTK_DIALOG(gtkwin->dialogs.search), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(gtkwin->dialogs.search)->vbox), PIDGIN_HIG_BORDER);
-	gtk_container_set_border_width(
-		GTK_CONTAINER(GTK_DIALOG(gtkwin->dialogs.search)->vbox), PIDGIN_HIG_BOX_SPACE);
-
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(gtkwin->dialogs.search)->vbox),
-					  hbox);
-	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-	gtk_dialog_set_response_sensitive(GTK_DIALOG(gtkwin->dialogs.search),
-									  GTK_RESPONSE_OK, FALSE);
-
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Search for:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-
-	s->entry = gtk_entry_new();
-	gtk_entry_set_activates_default(GTK_ENTRY(s->entry), TRUE);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(s->entry));
-	g_signal_connect(G_OBJECT(s->entry), "changed",
-					 G_CALLBACK(pidgin_set_sensitive_if_input),
-					 gtkwin->dialogs.search);
-	gtk_box_pack_start(GTK_BOX(hbox), s->entry, FALSE, FALSE, 0);
-
-	gtk_widget_show_all(gtkwin->dialogs.search);
-	gtk_widget_grab_focus(s->entry);
+	PidginConversation *gtkconv = pidgin_conv_window_get_active_gtkconv(gtkwin);
+	gtk_widget_show_all(gtkconv->quickfind.container);
+	gtk_widget_grab_focus(gtkconv->quickfind.entry);
 }
 
 #ifdef USE_VV
@@ -4899,6 +4798,121 @@ pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int 
 	return FALSE;
 }
 
+/* Close button {{{ */
+static gboolean
+close_button_left_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
+{
+	static GdkCursor *ptr = NULL;
+	if (ptr == NULL) {
+		ptr = gdk_cursor_new(GDK_LEFT_PTR);
+	}
+
+	gtk_label_set_markup(label, "×");
+	gdk_window_set_cursor(event->window, ptr);
+	return FALSE;
+}
+
+static gboolean
+close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
+{
+	static GdkCursor *hand = NULL;
+	if (hand == NULL) {
+		hand = gdk_cursor_new(GDK_HAND2);
+	}
+
+	gtk_label_set_markup(label, "<u>×</u>");
+	gdk_window_set_cursor(event->window, hand);
+	return FALSE;
+}
+
+static GtkWidget *
+create_close_button(void)
+{
+	GtkWidget *ebox = gtk_event_box_new();
+	GtkWidget *close_image;
+
+	gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
+	gtk_widget_set_events(ebox, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
+	close_image = gtk_label_new("×");
+	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(close_button_entered_cb), close_image);
+	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(close_button_left_cb), close_image);
+	gtk_widget_show(close_image);
+	gtk_container_add(GTK_CONTAINER(ebox), close_image);
+
+	return ebox;
+}
+
+/* }}} */
+
+/* Quick Find {{{ */
+static gboolean
+pidgin_conv_end_quickfind(PidginConversation *gtkconv)
+{
+	gtk_widget_modify_base(gtkconv->quickfind.entry, GTK_STATE_NORMAL, NULL);
+
+	gtk_imhtml_search_clear(GTK_IMHTML(gtkconv->imhtml));
+	gtk_widget_hide_all(gtkconv->quickfind.container);
+
+	gtk_widget_grab_focus(gtkconv->entry);
+	return TRUE;
+}
+
+static gboolean
+quickfind_process_input(GtkWidget *entry, GdkEventKey *event, PidginConversation *gtkconv)
+{
+	switch (event->keyval) {
+		case GDK_Return:
+		case GDK_KP_Enter:
+			if (gtk_imhtml_search_find(GTK_IMHTML(gtkconv->imhtml), gtk_entry_get_text(GTK_ENTRY(entry)))) {
+				gtk_widget_modify_base(gtkconv->quickfind.entry, GTK_STATE_NORMAL, NULL);
+			} else {
+				GdkColor col;
+				col.red = 0xffff;
+				col.green = 0xafff;
+				col.blue = 0xafff;
+				gtk_widget_modify_base(gtkconv->quickfind.entry, GTK_STATE_NORMAL, &col);
+			}
+			break;
+		case GDK_Escape:
+			pidgin_conv_end_quickfind(gtkconv);
+			break;
+		default:
+			return FALSE;
+	}
+	return TRUE;
+}
+
+static void
+pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
+{
+	GtkWidget *widget = gtk_hbox_new(FALSE, 0);
+	GtkWidget *label, *entry, *close;
+
+	gtk_box_pack_start(GTK_BOX(container), widget, FALSE, FALSE, 0);
+
+	close = create_close_button();
+	gtk_box_pack_start(GTK_BOX(widget), close, FALSE, FALSE, 0);
+	gtk_tooltips_set_tip(gtkconv->tooltips, close,
+	                     _("Close Find bar"), NULL);
+
+	label = gtk_label_new(_("Find:"));
+	gtk_box_pack_start(GTK_BOX(widget), label, FALSE, FALSE, 10);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(widget), entry, TRUE, TRUE, 0);
+
+	gtkconv->quickfind.entry = entry;
+	gtkconv->quickfind.container = widget;
+
+	/* Hook to signals and stuff */
+	g_signal_connect(G_OBJECT(entry), "key_press_event",
+			G_CALLBACK(quickfind_process_input), gtkconv);
+	g_signal_connect_swapped(G_OBJECT(close), "button-press-event",
+			G_CALLBACK(pidgin_conv_end_quickfind), gtkconv);
+}
+
+/* }}} */
+
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
@@ -5036,6 +5050,8 @@ setup_common_pane(PidginConversation *gtkconv)
 	                 G_CALLBACK(refocus_entry_cb), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_release_event",
 	                 G_CALLBACK(refocus_entry_cb), gtkconv);
+
+	pidgin_conv_setup_quickfind(gtkconv, vbox);
 
 	gtkconv->lower_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->lower_hbox, FALSE, FALSE, 0);
@@ -9402,39 +9418,12 @@ pidgin_conv_window_switch_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 		                              gtkconv->tab_cont));
 }
 
-static gboolean
-close_button_left_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
-{
-	static GdkCursor *ptr = NULL;
-	if (ptr == NULL) {
-		ptr = gdk_cursor_new(GDK_LEFT_PTR);
-	}
-
-	gtk_label_set_markup(label, "×");
-	gdk_window_set_cursor(event->window, ptr);
-	return FALSE;
-}
-
-static gboolean
-close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
-{
-	static GdkCursor *hand = NULL;
-	if (hand == NULL) {
-		hand = gdk_cursor_new(GDK_HAND2);
-	}
-
-	gtk_label_set_markup(label, "<u>×</u>");
-	gdk_window_set_cursor(event->window, hand);
-	return FALSE;
-}
-
 void
 pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 {
 	PurpleConversation *conv = gtkconv->active_conv;
 	PidginConversation *focus_gtkconv;
 	GtkWidget *tab_cont = gtkconv->tab_cont;
-	GtkWidget *close_image;
 	PurpleConversationType conv_type;
 	const gchar *tmp_lab;
 
@@ -9448,14 +9437,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 
 	/* Close button. */
-	gtkconv->close = gtk_event_box_new();
-	gtk_event_box_set_visible_window(GTK_EVENT_BOX(gtkconv->close), FALSE);
-	gtk_widget_set_events(gtkconv->close, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
-	close_image = gtk_label_new("×");
-	g_signal_connect(G_OBJECT(gtkconv->close), "enter-notify-event", G_CALLBACK(close_button_entered_cb), close_image);
-	g_signal_connect(G_OBJECT(gtkconv->close), "leave-notify-event", G_CALLBACK(close_button_left_cb), close_image);
-	gtk_widget_show(close_image);
-	gtk_container_add(GTK_CONTAINER(gtkconv->close), close_image);
+	gtkconv->close = create_close_button();
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
 	                     _("Close conversation"), NULL);
 

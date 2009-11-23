@@ -16,6 +16,8 @@ version 2.7.0 (??/??/????):
 	* Use GtkStatusIcon for the docklet, providing better integration in
 	  notification area.
 	* Added UI for sending attentions (buzz, nudge) on supporting protocols.
+	* Make the search dialog unobtrusive in the conversation window (by making
+	  it look and behave like the search dialog in Firefox)
 
 version 2.6.4 (??/??/20??):
 	libpurple:
