@@ -339,10 +339,10 @@ static void mxit_write_http_post( struct MXitSession* session, struct tx_packet*
 	/* build the HTTP request packet */
 	reqlen = g_snprintf( request, 256,
 					"POST %s?%s HTTP/1.1\r\n"
-			  		"User-Agent: " MXIT_HTTP_USERAGENT "\r\n"
+					"User-Agent: " MXIT_HTTP_USERAGENT "\r\n"
 					"Content-Type: application/octet-stream\r\n"
-			 		"Host: %s\r\n"
-					"Content-Length: %" G_GSIZE_FORMAT "\r\n"
+					"Host: %s\r\n"
+					"Content-Length: %d\r\n"
 					"\r\n",
 					session->http_server,
 					purple_url_encode( packet->header ),
