@@ -398,7 +398,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 		contact->statusMsg = NULL;
 	}
 	if ( statusMsg[0] != '\0' )
-		contact->statusMsg = g_strdup( statusMsg );	
+		contact->statusMsg = g_markup_escape_text( statusMsg, -1 );
 
 	/* update avatarId */
 	if ( ( contact->avatarId ) && ( g_ascii_strcasecmp( contact->avatarId, avatarId ) == 0 ) ) {
