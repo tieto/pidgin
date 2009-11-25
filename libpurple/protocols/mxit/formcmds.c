@@ -345,7 +345,6 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
  *  @param message			The message text
  *  @return					The length of the command
  */
-//void mxit_command_received(struct MXitSession* session, const char* from, char* message, time_t timestamp)
 int mxit_parse_command(struct RXMsgData* mx, char* message)
 {
 	GHashTable* hash	= NULL;
