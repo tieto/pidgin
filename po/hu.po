@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 20:34-0500\n"
-"PO-Revision-Date: 2009-08-29 00:59+0200\n"
+"POT-Creation-Date: 2009-11-26 13:07+0100\n"
+"PO-Revision-Date: 2009-11-26 13:06+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
 "MIME-Version: 1.0\n"
@@ -633,9 +633,8 @@ msgstr "Naplózás engedélyezése"
 msgid "Enable Sounds"
 msgstr "Hangok engedélyezése"
 
-#, fuzzy
 msgid "You are not connected."
-msgstr "Lezárta a kapcsolatot."
+msgstr "Nincs csatlakozva."
 
 msgid "<AUTO-REPLY> "
 msgstr "<AUTOMATIKUS VÁLASZ> "
@@ -646,9 +645,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "%d felhasználó listája:\n"
 msgstr[1] "%d felhasználó listája:\n"
 
-#, fuzzy
 msgid "Supported debug options are: plugins version"
-msgstr "A támogatott hibakeresési parancsok:  version"
+msgstr "A támogatott hibakeresési parancsok: plugins version"
 
 msgid "No such command (in this context)."
 msgstr "Nincs ilyen parancs (ebben a kontextusban)."
@@ -800,7 +798,7 @@ msgstr "Sikertelen"
 
 #, c-format
 msgid "%.2f KiB/s"
-msgstr "%.2f KiB/mp"
+msgstr "%.2f KiB/s"
 
 msgid "Sent"
 msgstr "Elküldött"
@@ -1530,10 +1528,10 @@ msgstr ""
 
 #, c-format
 msgid "TinyURL for above: %s"
-msgstr ""
+msgstr "TinyURL a fentihez: %s"
 
 msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr ""
+msgstr "Kis türelmet, a TinyURL rövidebb URL címet készít…"
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "TinyURL készítése csak a legalább ilyen hosszú URL-címekhez"
@@ -1663,6 +1661,8 @@ msgid ""
 "The certificate is not trusted because no certificate that can verify it is "
 "currently trusted."
 msgstr ""
+"A tanúsítvány nem megbízható, mivel az ellenőrzésére képes egyik tanúsítvány "
+"sem megbízható."
 
 msgid "The certificate is not valid yet."
 msgstr "A tanúsítvány még nem érvényes."
@@ -1894,9 +1894,9 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "A feloldó folyamat a kérés megválaszolása nélkül lépett ki"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Error converting %s to punycode: %d"
-msgstr "Hiba %s feloldásakor: %d"
+msgstr "Hiba %s átalakításakor punycode-ra: %d"
 
 #, c-format
 msgid "Thread creation failure: %s"
@@ -2215,17 +2215,14 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Helyrehozhatatlan Farsight2 hiba történt."
 
-#, fuzzy
 msgid "Conference error"
 msgstr "Konferenciahiba"
 
-#, fuzzy
 msgid "Error with your microphone"
-msgstr "Hiba történt a mikrofonnal."
+msgstr "Hiba történt a mikrofonnal"
 
-#, fuzzy
 msgid "Error with your webcam"
-msgstr "Hiba történt a webkamerával."
+msgstr "Hiba történt a webkamerával"
 
 #, c-format
 msgid "Error creating session: %s"
@@ -3993,6 +3990,10 @@ msgstr "Bejelentkezés"
 msgid "Log Out"
 msgstr "Kijelentkezés"
 
+#. primative,						no,							id,			name
+#. 0
+#. 1
+#. 2
 msgid "Chatty"
 msgstr "Beszédes"
 
@@ -4261,6 +4262,7 @@ msgstr "Címzett"
 msgid "None (To pending)"
 msgstr "Senki (Címzett függőben)"
 
+#. 0
 msgid "None"
 msgstr "Nincs"
 
@@ -4571,9 +4573,8 @@ msgstr "config:   Csevegőszoba beállítása."
 msgid "configure:  Configure a chat room."
 msgstr "configure:  Csevegőszoba beállítása."
 
-#, fuzzy
 msgid "part [message]:  Leave the room."
-msgstr "part [szoba]:  A szoba elhagyása."
+msgstr "part [üzenet]:  A szoba elhagyása."
 
 msgid "register:  Register with a chat room."
 msgstr "register:  Regisztráció csevegőszobánál."
@@ -5242,7 +5243,7 @@ msgstr ""
 "Az MSN használatához SSL támogatás szükséges. Telepítsen egy támogatott SSL "
 "könyvtárat."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be valid email addresses."
@@ -5472,9 +5473,8 @@ msgstr "Nem vehető fel a felhasználó"
 msgid "Unknown error (%d)"
 msgstr "Ismeretlen hiba (%d)"
 
-#, fuzzy
 msgid "Unable to remove user"
-msgstr "Nem vehető fel a felhasználó"
+msgstr "Nem törölhető a felhasználó"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "A mobilüzenet nem küldhető el, mert túl hosszú."
@@ -5712,28 +5712,82 @@ msgstr "%s felvette Önt a partnerlistájára."
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s eltávolította Önt a partnerlistájáról."
 
+#. 1
+msgid "Angry"
+msgstr "Dühös"
+
+#. 2
+msgid "Excited"
+msgstr "Érdeklődő"
+
+#. 3
+msgid "Grumpy"
+msgstr "Rosszkedvű"
+
+#. 4
+msgid "Happy"
+msgstr "Boldog"
+
+#. 5
+msgid "In Love"
+msgstr "Szerelmes"
+
+#. 6
+msgid "Invincible"
+msgstr "Legyőzhetetlen"
+
+#. 7
+msgid "Sad"
+msgstr "Szomorú"
+
+#. 8
+msgid "Hot"
+msgstr "Forró"
+
+#. 9
+msgid "Sick"
+msgstr "Beteg"
+
+#. 10
+msgid "Sleepy"
+msgstr "Álmos"
+
 #. show current mood
-#, fuzzy
 msgid "Current Mood"
-msgstr "Az Ön jelenlegi hangulata"
+msgstr "Jelenlegi hangulat"
 
 #. add all moods to list
-#, fuzzy
 msgid "New Mood"
-msgstr "Hangulat"
+msgstr "Új hangulat"
 
-#, fuzzy
 msgid "Change your Mood"
-msgstr "Jelszó módosítása"
+msgstr "Hangulat módosítása"
 
-#, fuzzy
 msgid "How do you feel right now?"
-msgstr "Nem vagyok itt"
+msgstr "Hogy érzi magát?"
+
+msgid "The PIN you entered is invalid."
+msgstr "A megadott PIN érvénytelen."
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "A megadott PIN hossza érvénytelen [4-10]."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "A PIN érvénytelen. Csak számokból állhat [0-9]."
+
+msgid "The two PINs you entered do not match."
+msgstr "A megadott két PIN nem egyezik."
+
+msgid "The name you entered is invalid."
+msgstr "A megadott név érvénytelen."
+
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr "A megadott születésnap érvénytelen. A helyes formátum: „ÉÉÉÉ-HH-NN”."
 
 #. show error to user
-#, fuzzy
 msgid "Profile Update Error"
-msgstr "Írási hiba"
+msgstr "Profilfrissítési hiba"
 
 #. no profile information yet, so we cannot update
 #. (reference: "libpurple/request.h")
@@ -5741,354 +5795,298 @@ msgid "Profile"
 msgstr "Profil"
 
 msgid "Your profile information is not yet retrieved. Please try again later."
-msgstr ""
+msgstr "A profilinformációi még nincsenek lekérve. Próbálja újra később."
 
 #. pin
-#, fuzzy
 msgid "PIN"
-msgstr "UIN"
+msgstr "PIN"
 
 msgid "Verify PIN"
-msgstr ""
+msgstr "PIN ellenőrzése"
 
 #. display name
-#, fuzzy
 msgid "Display Name"
-msgstr "Vezetéknév"
+msgstr "Megjelenő név"
 
 #. hidden
 msgid "Hide my number"
-msgstr ""
+msgstr "Rejtsd el a számom"
 
 #. mobile number
-#, fuzzy
 msgid "Mobile Number"
 msgstr "Mobiltelefonszám"
 
-#, fuzzy
 msgid "Update your Profile"
-msgstr "Yahoo! profil"
+msgstr "Profil frissítése"
 
 msgid "Here you can update your MXit profile"
-msgstr ""
+msgstr "Itt frissítheti MXit profilját"
 
 msgid "View Splash"
-msgstr ""
+msgstr "Indítókép megjelenítése"
 
 msgid "There is no splash-screen currently available"
-msgstr ""
+msgstr "Nem érhető el indítókép"
 
-#, fuzzy
 msgid "About"
-msgstr "A névjegyem"
+msgstr "Névjegy"
 
 #. display / change mood
-#, fuzzy
 msgid "Change Mood..."
-msgstr "Jelszó módosítása…"
+msgstr "Hangulat módosítása…"
 
 #. display / change profile
-#, fuzzy
 msgid "Change Profile..."
-msgstr "Jelszó módosítása…"
+msgstr "Profil módosítása…"
 
 #. display splash-screen
-#, fuzzy
 msgid "View Splash..."
-msgstr "Napló megtekintése…"
+msgstr "Indítókép megtekintése…"
 
 #. display plugin version
-#, fuzzy
 msgid "About..."
-msgstr "A névjegyem"
+msgstr "Névjegy…"
 
 #. the file is too big
-#, fuzzy
 msgid "The file you are trying to send is too large!"
-msgstr "Az üzenet túl nagy."
+msgstr "A küldeni kívánt fájl túl nagy."
 
 msgid ""
-"Unable to connect to the mxit HTTP server. Please check your server server "
-"settings."
+"Unable to connect to the MXit HTTP server. Please check your server settings."
 msgstr ""
+"Nem lehet kapcsolódni a Mxit HTTP kiszolgálóhoz. Ellenőrizze a kiszolgáló "
+"beállításait."
 
-#, fuzzy
 msgid "Logging In..."
-msgstr "Bejelentkezés"
+msgstr "Bejelentkezés…"
 
-#, fuzzy
 msgid ""
-"Unable to connect to the mxit server. Please check your server server "
-"settings."
+"Unable to connect to the MXit server. Please check your server settings."
 msgstr ""
-"Nem lehet kapcsolódni a kiszolgálóhoz. Adja meg a kiszolgáló címét, amelyhez "
-"kapcsolódni szeretne."
+"Nem lehet kapcsolódni a MXit kiszolgálóhoz. Ellenőrizze a kiszolgáló "
+"beállításait."
 
-#, fuzzy
 msgid "Connecting..."
-msgstr "Kapcsolódás"
+msgstr "Kapcsolódás…"
+
+msgid "The nick name you entered is invalid."
+msgstr "A megadott becenév érvénytelen."
+
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "A megadott PIN érvénytelen hosszúságú [7-10]."
 
 #. mxit login name
 msgid "MXit Login Name"
-msgstr ""
+msgstr "MXit bejelentkezési név"
 
 #. nick name
-#, fuzzy
 msgid "Nick Name"
 msgstr "Becenév"
 
 #. show the form to the user to complete
-#, fuzzy
 msgid "Register New MXit Account"
-msgstr "Új XMPP fiók regisztrálása"
+msgstr "Új MXit fiók regisztrálása"
 
-#, fuzzy
 msgid "Please fill in the following fields:"
-msgstr "Töltse ki az alábbi mezőket"
+msgstr "Töltse ki az alábbi mezőket:"
 
 #. no reply from the WAP site
 msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr ""
+msgstr "Hiba a MXit WAP oldalhoz kapcsolódáskor. Próbálja újra később."
 
 #. wapserver error
 #. server could not find the user
 msgid ""
 "MXit is currently unable to process the request. Please try again later."
-msgstr ""
+msgstr "A MXit jelenleg nem képes feldolgozni a kérést. Próbálja újra később."
 
 msgid "Wrong security code entered. Please try again later."
-msgstr ""
+msgstr "A megadott biztonsági kód hibás. Próbálja újra később."
 
 msgid "Your session has expired. Please try again later."
-msgstr ""
+msgstr "A munkamenet lejárt. Próbálja újra később."
 
 msgid "Invalid country selected. Please try again."
-msgstr ""
+msgstr "Érvénytelen országot választott. Próbálja újra később."
 
 msgid "Username is not registered. Please register first."
-msgstr ""
+msgstr "A felhasználónév nincs regisztrálva. Először regisztráljon."
 
 msgid "Username is already registered. Please choose another username."
 msgstr ""
+"A felhasználónév már használatban van. Válasszon másik felhasználónevet."
 
-#, fuzzy
 msgid "Internal error. Please try again later."
-msgstr "A kiszolgáló nem érhető el, próbálkozzon később"
+msgstr "Belső hiba. Próbálja újra később."
 
 msgid "You did not enter the security code"
-msgstr ""
+msgstr "Nem adta meg a biztonsági kódot."
 
-#, fuzzy
 msgid "Security Code"
-msgstr "Biztonság engedélyezve"
+msgstr "Biztonsági kód"
 
 #. ask for input
-#, fuzzy
 msgid "Enter Security Code"
-msgstr "Adja meg a kódot"
+msgstr "Adja meg a biztonsági kódot"
 
-#, fuzzy
 msgid "Your Country"
 msgstr "Ország"
 
-#, fuzzy
 msgid "Your Language"
-msgstr "Előnyben részesített nyelv"
+msgstr "Nyelv"
 
 #. display the form to the user and wait for his/her input
-#, fuzzy
 msgid "MXit Authorization"
-msgstr "Engedélyezés kérése"
+msgstr "MXit engedélyezés"
 
 msgid "MXit account validation"
-msgstr ""
+msgstr "Mxit fiókellenőrzés"
 
-#, fuzzy
 msgid "Retrieving User Information..."
-msgstr "Kiszolgálóinformációk"
+msgstr "Felhasználóinformációk lekérése…"
 
-#, fuzzy
+msgid "Loading menu..."
+msgstr "Menü betöltése…"
+
 msgid "Status Message"
-msgstr "Elküldött üzenetek"
+msgstr "Állapotüzenet"
 
-#, fuzzy
 msgid "Hidden Number"
-msgstr "Középső név"
+msgstr "Rejtett szám"
 
-#, fuzzy
 msgid "Your Mobile Number..."
-msgstr "Mobiltelefonszám beállítása…"
+msgstr "Az Ön mobiltelefonszáma…"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
-#, fuzzy
 msgid "WAP Server"
-msgstr "Kiszolgáló"
+msgstr "WAP kiszolgáló"
 
-#, fuzzy
 msgid "Connect via HTTP"
-msgstr "Kapcsolódás TCP segítségével"
+msgstr "Kapcsolódás HTTP segítségével"
 
 msgid "Enable splash-screen popup"
-msgstr ""
+msgstr "Felugró indítókép engedélyezése"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
-msgstr ""
+msgstr "A kapcsolat elveszett a MXithez. Csatlakozzon újra."
 
 #. packet could not be queued for transmission
-#, fuzzy
 msgid "Message Send Error"
-msgstr "XMPP üzenethiba"
+msgstr "Üzenetküldési hiba"
 
-#, fuzzy
 msgid "Unable to process your request at this time"
-msgstr "Nem oldható fel a gépnév"
+msgstr "Nem dolgozható fel a kérés"
 
 msgid "Timeout while waiting for a response from the MXit server."
-msgstr ""
+msgstr "Időtúllépés a MXit kiszolgáló válaszára várakozás közben."
 
-#, fuzzy
 msgid "Successfully Logged In..."
-msgstr "Sikeresen csatlakozott a Qun-hoz"
+msgstr "Sikeres bejelentkezés…"
 
-#, fuzzy
+#, c-format
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
+msgstr "%s titkosított üzenetet küldött, de ez még nem támogatott."
+
 msgid "Message Error"
-msgstr "XMPP üzenethiba"
+msgstr "Üzenethiba"
 
 msgid "Cannot perform redirect using the specified protocol"
-msgstr ""
+msgstr "Nem végezhető átirányítás a megadott protokoll használatával"
 
-#, fuzzy
+msgid "An internal MXit server error occurred."
+msgstr "Belső MXit kiszolgálóhiba történt."
+
+#, c-format
+msgid "Login error: %s (%i)"
+msgstr "Bejelentkezési hiba: %s (%i)"
+
+#, c-format
+msgid "Logout error: %s (%i)"
+msgstr "Kijelentkezési hiba: %s (%i)"
+
 msgid "Contact Error"
-msgstr "Kapcsolódási hiba"
+msgstr "Partnerhiba"
 
-#, fuzzy
 msgid "Message Sending Error"
-msgstr "XMPP üzenethiba"
+msgstr "Üzenetküldési hiba"
 
-#, fuzzy
 msgid "Status Error"
-msgstr "Folyamhiba"
+msgstr "Állapothiba"
 
-#, fuzzy
 msgid "Mood Error"
-msgstr "Ikonhiba"
+msgstr "Hangulathiba"
 
-#, fuzzy
 msgid "Invitation Error"
-msgstr "Regisztrációtörlési hiba"
+msgstr "Meghívási hiba"
 
-#, fuzzy
 msgid "Contact Removal Error"
-msgstr "Kapcsolódási hiba"
+msgstr "Partnereltávolítási hiba"
 
-#, fuzzy
 msgid "Subscription Error"
-msgstr "Feliratkozás"
+msgstr "Feliratkozási hiba"
 
-#, fuzzy
 msgid "Contact Update Error"
-msgstr "Kapcsolódási hiba"
+msgstr "Partnerfrissítési hiba"
 
-#, fuzzy
 msgid "File Transfer Error"
-msgstr "Fájlátvitel"
+msgstr "Fájlátviteli hiba"
 
-#, fuzzy
 msgid "Cannot create MultiMx room"
-msgstr "Nem hozható létre figyelmeztetés"
+msgstr "Nem hozható létre MultiMx szoba"
 
-#, fuzzy
 msgid "MultiMx Invitation Error"
-msgstr "Regisztrációtörlési hiba"
+msgstr "MultiMx meghívási hiba"
 
-#, fuzzy
 msgid "Profile Error"
-msgstr "Írási hiba"
+msgstr "Profilhiba"
 
 #. bad packet
 msgid "Invalid packet received from MXit."
-msgstr ""
+msgstr "Érvénytelen csomag érkezett a MXit-től."
 
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr ""
+msgstr "Kapcsolathiba történt a MXit-tel. (olvasási állapot: 0x01)"
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr ""
+msgstr "Kapcsolathiba történt a MXit-tel. (olvasási állapot: 0x02)"
 
 msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr ""
+msgstr "Kapcsolathiba történt a MXit-tel. (olvasási állapot: 0x03)"
 
 #. malformed packet length record (too long)
 msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr ""
+msgstr "Kapcsolathiba történt a MXit-tel. (olvasási állapot: 0x04)"
 
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr ""
+msgstr "Kapcsolathiba történt a MXit-tel. (olvasási állapot: 0x05)"
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr ""
+msgstr "Kapcsolathiba történt a MXit-tel. (olvasási állapot: 0x06)"
 
-msgid "Angry"
-msgstr "Dühös"
-
-msgid "Excited"
-msgstr "Érdeklődő"
-
-#, fuzzy
-msgid "Grumpy"
-msgstr "Csoport"
-
-msgid "Happy"
-msgstr "Boldog"
-
-msgid "In Love"
-msgstr "Szerelmes"
-
-msgid "Invincible"
-msgstr "Legyőzhetetlen"
-
-msgid "Sad"
-msgstr "Szomorú"
-
-#, fuzzy
-msgid "Hot"
-msgstr "_Gépnév:"
-
-#, fuzzy
-msgid "Sick"
-msgstr "Becenév"
-
-msgid "Sleepy"
-msgstr "Álmos"
-
-#, fuzzy
 msgid "Pending"
-msgstr "Küldés"
+msgstr "Függőben"
 
-#, fuzzy
 msgid "Invited"
-msgstr "Meghívás"
+msgstr "Meghívva"
 
-#, fuzzy
 msgid "Rejected"
-msgstr "Visszautasítás"
+msgstr "Visszautasítva"
 
-#, fuzzy
 msgid "Deleted"
-msgstr "Törlés"
+msgstr "Törölve"
 
 msgid "MXit Advertising"
-msgstr ""
+msgstr "MXit hirdetés"
 
-#, fuzzy
 msgid "More Information"
-msgstr "Munkahelyi adatok"
+msgstr "További információk"
 
 #, c-format
 msgid "No such user: %s"
@@ -6866,46 +6864,42 @@ msgid "Not while on AOL"
 msgstr "Nem, amíg az AOL-on tartózkodik"
 
 msgid "Cannot receive IM due to parental controls"
-msgstr ""
+msgstr "Nem fogadható üzenet a szülői felügyelet miatt"
 
 msgid "Cannot send SMS without accepting terms"
-msgstr ""
+msgstr "Nem küldhető SMS a feltételek elfogadása nélkül"
 
-#, fuzzy
 msgid "Cannot send SMS"
-msgstr "A fájl nem küldhető el"
+msgstr "Nem küldhető SMS"
 
 #. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
 msgid "Cannot send SMS to this country"
-msgstr "Könyvtár nem küldhető."
+msgstr "Nem küldhető SMS ebbe az országba"
 
 #. Undocumented
 msgid "Cannot send SMS to unknown country"
-msgstr ""
+msgstr "Nem küldhető SMS ismeretlen országba"
 
 msgid "Bot accounts cannot initiate IMs"
-msgstr ""
+msgstr "Botfiókok nem kezdeményezhetnek azonnali üzenetküldést"
 
 msgid "Bot account cannot IM this user"
-msgstr ""
+msgstr "Botfiókok nem küldhetnek azonnali üzenetet a felhasználónak"
 
 msgid "Bot account reached IM limit"
-msgstr ""
+msgstr "A botfiók elérte az azonnali üzenetek korlátját"
 
 msgid "Bot account reached daily IM limit"
-msgstr ""
+msgstr "A botfiók elérte a napi azonnali üzenetek korlátját"
 
 msgid "Bot account reached monthly IM limit"
-msgstr ""
+msgstr "A botfiók elérte a havi azonnali üzenetek korlátját"
 
-#, fuzzy
 msgid "Unable to receive offline messages"
-msgstr "Az üzenetet nem lehet elküldeni."
+msgstr "Nem lehet offline üzeneteket fogadni"
 
-#, fuzzy
 msgid "Offline message store full"
-msgstr "Offline üzenet"
+msgstr "Az offline üzenetek tárolója megtelt"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7076,14 +7070,13 @@ msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Az AOL azonnali üzenő szolgáltatás átmenetileg nem érhető el."
 
 #. username connecting too frequently
-#, fuzzy
 msgid ""
 "Your username has been connecting and disconnecting too frequently. Wait ten "
 "minutes and try again. If you continue to try, you will need to wait even "
 "longer."
 msgstr ""
-"Ön túl gyakran jelentkezik ki/be. Várjon tíz percet és próbálja meg újra. Ha "
-"tovább folytatja, még többet kell majd várnia."
+"A felhasználóneve túl gyakran jelentkezik ki/be. Várjon tíz percet és "
+"próbálja meg újra. Ha tovább próbálkozik, még többet kell majd várnia."
 
 #. client too old
 #, c-format
@@ -7093,14 +7086,13 @@ msgstr ""
 "következő helyről: %s"
 
 #. IP address connecting too frequently
-#, fuzzy
 msgid ""
 "Your IP address has been connecting and disconnecting too frequently. Wait a "
 "minute and try again. If you continue to try, you will need to wait even "
 "longer."
 msgstr ""
-"Ön túl gyakran jelentkezik ki/be. Várjon egy percet és próbálja meg újra. Ha "
-"tovább folytatja, még többet kell majd várnia."
+"Az IP-címe túl gyakran jelentkezik ki/be. Várjon egy percet és próbálja meg "
+"újra. Ha tovább próbálkozik, még többet kell majd várnia."
 
 msgid "The SecurID key entered is invalid"
 msgstr "A megadott SecurID kulcs érvénytelen"
@@ -7254,21 +7246,21 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Nem kapott meg %hu üzenetet a következőtől: %s, ismeretlen okból."
 msgstr[1] "Nem kapott meg %hu üzenetet a következőtől: %s, ismeretlen okból."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message: %s (%s)"
-msgstr "Az üzenetet nem lehet elküldeni (%s)."
+msgstr "Az üzenetet nem lehet elküldeni: %s (%s)"
 
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Az üzenetet nem lehet elküldeni: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message to %s: %s (%s)"
-msgstr "Az üzenetet nem lehet elküldeni a következőnek: %s:"
+msgstr "Az üzenetet nem lehet elküldeni a következőnek: %s: %s (%s)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message to %s: %s"
-msgstr "Az üzenetet nem lehet elküldeni a következőnek: %s:"
+msgstr "Az üzenetet nem lehet elküldeni a következőnek: %s: %s"
 
 #, c-format
 msgid "User information not available: %s"
@@ -7297,13 +7289,12 @@ msgstr ""
 "[Nem lehet megjeleníteni az üzenetet ettől a felhasználótól, mert az "
 "érvénytelen karaktereket tartalmazott.]"
 
-#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
-"Az utolsó művelet nem hajtható végre, mert a túllépte a sebességkorlátot. "
-"Kérem várjon 10 másodpercet és próbálja meg újra."
+"Az utolsó művelet nem hajtható végre, mert túllépte a sebességkorlátot. "
+"Kérem várjon 10 másodpercet és próbálja meg újra.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -10169,13 +10160,13 @@ msgid "Open Inbox"
 msgstr "Bejövő levelek megnyitása"
 
 msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr ""
+msgstr "Nem küldhető SMS. Nem található mobilszolgáltató."
 
 msgid "Can't send SMS. Unknown mobile carrier."
-msgstr ""
+msgstr "Nem küldhető SMS. Ismeretlen mobilszolgáltató."
 
 msgid "Getting mobile carrier to send the SMS."
-msgstr ""
+msgstr "Mobilszolgáltató keresése az SMS elküldéséhez."
 
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
@@ -10717,6 +10708,8 @@ msgstr ""
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
+"Azonnali üzenetküldés AIM, Google Talk, Jabber/XMPP, MSN, Yahoo és más "
+"protokollok támogatásával"
 
 msgid "Internet Messenger"
 msgstr "Azonnali üzenetküldés"
@@ -11986,6 +11979,9 @@ msgstr "macedón"
 msgid "Mongolian"
 msgstr "Mongol"
 
+msgid "Malay"
+msgstr "Maláj"
+
 msgid "Bokmål Norwegian"
 msgstr "Norvég Bokmål"
 
@@ -12054,6 +12050,9 @@ msgstr "thai"
 
 msgid "Turkish"
 msgstr "török"
+
+msgid "Ukranian"
+msgstr "Ukrán"
 
 msgid "Urdu"
 msgstr "urdu"
@@ -12688,7 +12687,7 @@ msgstr ""
 "\n"
 
 msgid "DIR"
-msgstr ""
+msgstr "KÖNYVTÁR"
 
 msgid "use DIR for config files"
 msgstr "a KÖNYVTÁR használata a beállítófájlokhoz"
@@ -12709,16 +12708,16 @@ msgid "don't automatically login"
 msgstr "ne jelentkezzen be automatikusan"
 
 msgid "NAME"
-msgstr ""
+msgstr "NÉV"
 
-#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
 "                      specifies account(s) to use, separated by commas.\n"
 "                      Without this only the first account will be enabled)."
 msgstr ""
-"automatikus bejelentkezés (a NÉV paraméter megadja a\n"
-"                      használandó fiókok vesszőkkel tagolt listáját."
+"adott fiókok engedélyezése (a NÉV paraméter megadja a\n"
+"                      használandó fiókok vesszőkkel tagolt listáját.\n"
+"                      Enélkül csak az első fiók lesz engedélyezve."
 
 msgid "X display to use"
 msgstr "Használandó X-megjelenítő"
@@ -12981,21 +12980,19 @@ msgid "Unknown.... Please report this!"
 msgstr "Ismeretlen… Kérjük jelentse ezt!"
 
 msgid "(Custom)"
-msgstr ""
+msgstr "(Egyéni)"
 
-#, fuzzy
-msgid "(Default)"
-msgstr "(alapértelmezett)"
+msgid "Penguin Pimps"
+msgstr "Penguin Pimps"
 
 msgid "The default Pidgin sound theme"
-msgstr ""
+msgstr "Az alapértelmezett Pidgin hangtéma"
 
-#, fuzzy
 msgid "The default Pidgin buddy list theme"
-msgstr "Pidgin partnerlistatéma-szerkesztő"
+msgstr "Az alapértelmezett Pidgin partnerlistatéma"
 
 msgid "The default Pidgin status icon theme"
-msgstr ""
+msgstr "Az alapértelmezett Pidgin állapotikon-téma"
 
 msgid "Theme failed to unpack."
 msgstr "A téma kicsomagolása meghiúsult."
@@ -13006,28 +13003,35 @@ msgstr "A téma betöltése meghiúsult."
 msgid "Theme failed to copy."
 msgstr "A téma másolása meghiúsult."
 
-msgid "Install Theme"
-msgstr "Téma telepítése"
+msgid "Theme Selections"
+msgstr "Témaválasztás"
 
+#. Instructions
 msgid ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 msgstr ""
-"Válassza ki a használni kívánt hangulatjel-témát az alábbi listából. Új "
-"témák a témalistába dobással telepíthetők."
+"Válassza ki a használni kívánt témát az alábbi listákból.\n"
+"Új témák a témalistába húzva telepíthetők."
 
-msgid "Icon"
-msgstr "Ikon"
+msgid "Buddy List Theme:"
+msgstr "Partnerlistatéma:"
+
+msgid "Status Icon Theme:"
+msgstr "Állapotikon-téma:"
+
+msgid "Sound Theme:"
+msgstr "Hangtéma:"
+
+msgid "Smiley Theme:"
+msgstr "Hangulatjel-téma:"
 
 msgid "Keyboard Shortcuts"
 msgstr "Gyorsbillentyűk"
 
 msgid "Cl_ose conversations with the Escape key"
 msgstr "Társalgások bezárása az _Escape billentyűvel"
-
-#. Buddy List Themes
-msgid "Buddy List Theme"
-msgstr "Partnerlista-téma"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -13115,9 +13119,6 @@ msgstr "Beviteli terület minimális magassága sorokban:"
 msgid "Font"
 msgstr "Betűkészlet"
 
-msgid "Use document font from _theme"
-msgstr "A _téma dokumentum-betűkészletének használata"
-
 msgid "Use font from _theme"
 msgstr "A téma _betűkészletének használata"
 
@@ -13140,17 +13141,15 @@ msgstr "Nem indítható a proxykonfigurációs program."
 msgid "Cannot start browser configuration program."
 msgstr "Nem indítható a böngészőkonfigurációs program."
 
-#, fuzzy
 msgid "Disabled"
-msgstr "_Tiltás"
+msgstr "Tiltva"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Automatikusan felismert _IP cím használata: %s"
 
-#, fuzzy
 msgid "ST_UN server:"
-msgstr "_Kiszolgáló:"
+msgstr "ST_UN kiszolgáló:"
 
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Például: stunserver.org</span>"
@@ -13164,78 +13163,27 @@ msgstr "Portok"
 msgid "_Enable automatic router port forwarding"
 msgstr "A_utomatikus útválasztóport-átirányítás"
 
-#, fuzzy
 msgid "_Manually specify range of ports to listen on:"
-msgstr "A figyelendő porttartomány _kézi megadása"
+msgstr "A figyelendő porttartomány _kézi megadása:"
 
-#, fuzzy
 msgid "_Start:"
-msgstr "Áll_apot:"
+msgstr "Ke_zdete:"
 
-#, fuzzy
 msgid "_End:"
-msgstr "_Kibontás"
+msgstr "_Vége:"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Továbbító kiszolgáló (TURN)"
 
-#, fuzzy
 msgid "_TURN server:"
-msgstr "_Kiszolgáló:"
+msgstr "_TURN kiszolgáló:"
 
-#, fuzzy
 msgid "Use_rname:"
-msgstr "Felhasználónév:"
+msgstr "_Felhasználónév:"
 
-#, fuzzy
 msgid "Pass_word:"
-msgstr "Jelszó:"
-
-msgid "Proxy Server &amp; Browser"
-msgstr "Proxy-kiszolgáló és böngésző"
-
-msgid "<b>Proxy configuration program was not found.</b>"
-msgstr "<b>A proxykonfigurációs program nem található.</b>"
-
-msgid "<b>Browser configuration program was not found.</b>"
-msgstr "<b>A böngészőkonfigurációs program nem található.</b>"
-
-msgid ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
-msgstr ""
-"A proxy és böngésző a GNOME beállításaiban\n"
-"vannak konfigurálva"
-
-msgid "Configure _Proxy"
-msgstr "_Proxy beállítása"
-
-msgid "Configure _Browser"
-msgstr "Bö_ngésző beállítása"
-
-msgid "Proxy Server"
-msgstr "Proxy-kiszolgáló"
-
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-#, fuzzy
-msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr "Távoli DNS használata SOCKS4 proxykkal"
-
-#, fuzzy
-msgid "Proxy t_ype:"
-msgstr "Proxy _típusa:"
-
-msgid "No proxy"
-msgstr "Nincs Proxy"
-
-#, fuzzy
-msgid "P_ort:"
-msgstr "_Port:"
-
-#, fuzzy
-msgid "User_name:"
-msgstr "Felhasználónév:"
+msgstr "_Jelszó:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -13276,6 +13224,15 @@ msgstr "Egyéni"
 msgid "Browser Selection"
 msgstr "Böngészőválasztás"
 
+msgid "Browser preferences are configured in GNOME preferences"
+msgstr "A böngésző beállításai a GNOME beállításaiban vannak megadva"
+
+msgid "<b>Browser configuration program was not found.</b>"
+msgstr "<b>A böngészőkonfigurációs program nem található.</b>"
+
+msgid "Configure _Browser"
+msgstr "Bö_ngésző beállítása"
+
 msgid "_Browser:"
 msgstr "_Böngésző:"
 
@@ -13298,6 +13255,35 @@ msgid ""
 msgstr ""
 "_Kézi:\n"
 "(%s az URL-hez)"
+
+msgid "Proxy Server"
+msgstr "Proxy-kiszolgáló"
+
+msgid "Proxy preferences are configured in GNOME preferences"
+msgstr "A proxy beállításai a GNOME beállításaiban vannak megadva"
+
+msgid "<b>Proxy configuration program was not found.</b>"
+msgstr "<b>A proxykonfigurációs program nem található.</b>"
+
+msgid "Configure _Proxy"
+msgstr "_Proxy beállítása"
+
+#. This is a global option that affects SOCKS4 usage even with
+#. * account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr "Távoli _DNS használata SOCKS4 proxykkal"
+
+msgid "Proxy t_ype:"
+msgstr "Proxy _típusa:"
+
+msgid "No proxy"
+msgstr "Nincs Proxy"
+
+msgid "P_ort:"
+msgstr "P_ort:"
+
+msgid "User_name:"
+msgstr "_Felhasználónév:"
 
 msgid "Log _format:"
 msgstr "Napló_formátum:"
@@ -13382,24 +13368,17 @@ msgstr "_Inaktivitás idejének jelentése:"
 msgid "Based on keyboard or mouse use"
 msgstr "Billentyűzet vagy egér használata alapján"
 
+msgid "_Minutes before becoming idle:"
+msgstr "Üresjárat ennyi _perc után:"
+
+msgid "Change to this status when _idle:"
+msgstr "Állapot módosítása erre, _ha inaktív:"
+
 msgid "_Auto-reply:"
 msgstr "_Automatikus válasz:"
 
 msgid "When both away and idle"
 msgstr "Ha távol van és inaktív"
-
-#. Auto-away stuff
-msgid "Auto-away"
-msgstr "Automatikus távollét"
-
-msgid "_Minutes before becoming idle:"
-msgstr "Üresjárat ennyi _perc után:"
-
-msgid "Change status when _idle"
-msgstr "Állapot módosítása, _ha inaktív"
-
-msgid "Change _status to:"
-msgstr "Állap_ot módosítása a következőre:"
 
 #. Signon status stuff
 msgid "Status at Startup"
@@ -13414,14 +13393,14 @@ msgstr "In_dításkor alkalmazandó állapot:"
 msgid "Interface"
 msgstr "Felület"
 
-msgid "Smiley Themes"
-msgstr "Hangulatjel-témák"
-
 msgid "Browser"
 msgstr "Böngésző"
 
 msgid "Status / Idle"
 msgstr "Állapot / Inaktív"
+
+msgid "Themes"
+msgstr "Témák"
 
 msgid "Allow all users to contact me"
 msgstr "Mindenki kapcsolatba léphet velem"
@@ -13769,9 +13748,6 @@ msgstr "Pidgin buboréksúgó"
 
 msgid "Pidgin smileys"
 msgstr "Pidgin hangulatjelek"
-
-msgid "Penguin Pimps"
-msgstr "Penguin Pimps"
 
 msgid "Selecting this disables graphical emoticons."
 msgstr "Ennek kiválasztása letiltja a grafikus hangulatjeleket."
@@ -14414,6 +14390,9 @@ msgstr "GtkTreeView vízszintes elválasztás"
 msgid "Conversation Entry"
 msgstr "Társalgás beviteli mező"
 
+msgid "Conversation History"
+msgstr "Társalgáselőzmények"
+
 msgid "Request Dialog"
 msgstr "Kérdés párbeszédablak"
 
@@ -14879,9 +14858,8 @@ msgstr "Indítás"
 msgid "_Start %s on Windows startup"
 msgstr "A %s indítá_sa a Windows indulásakor"
 
-#, fuzzy
 msgid "Allow multiple instances"
-msgstr "több példány engedélyezése"
+msgstr "Több példány engedélyezése"
 
 msgid "_Dockable Buddy List"
 msgstr "_Dokkolható partnerlista"
@@ -14944,25 +14922,3 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ez a bővítmény XMPP kiszolgálókban vagy kliensekben végzett hibakereséshez "
 "hasznos."
-
-#, fuzzy
-#~ msgid "The root certificate this one claims to be issued by is unknown."
-#~ msgstr "A tanúsítványt kiadó gyökértanúsítványt a Pidgin nem ismeri."
-
-#~ msgid "Send instant messages over multiple protocols"
-#~ msgstr "Azonnali üzenetek küldése több protokoll használatával"
-
-#~ msgid "_Start port:"
-#~ msgstr "_Első port:"
-
-#~ msgid "_End port:"
-#~ msgstr "_Utolsó port:"
-
-#~ msgid "_User:"
-#~ msgstr "_Felhasználó:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ runtime verzió"
-
-#~ msgid "Without this only the first account will be enabled)."
-#~ msgstr "Enélkül csak az első fiók lesz engedélyezve)."
