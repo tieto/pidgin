@@ -48,6 +48,7 @@ JABBERSOURCES = \
 			  jutil.h \
 			  message.c \
 			  message.h \
+			  namespaces.h \
 			  oob.c \
 			  oob.h \
 			  parser.c \

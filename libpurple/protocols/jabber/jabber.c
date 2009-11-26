@@ -3500,7 +3500,7 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature(JINGLE, 0);
 
 #ifdef USE_VV
-	jabber_add_feature(NS_GOOGLE_SESSION, jabber_audio_enabled);
+	jabber_add_feature(NS_GOOGLE_PROTOCOL_SESSION, jabber_audio_enabled);
 	jabber_add_feature(NS_GOOGLE_VOICE, jabber_audio_enabled);
 	jabber_add_feature(NS_GOOGLE_VIDEO, jabber_video_enabled);
 	jabber_add_feature(NS_GOOGLE_CAMERA, jabber_video_enabled);

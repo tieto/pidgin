@@ -480,7 +480,7 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("query", "jabber:iq:version",
 			jabber_iq_version_parse);
 #ifdef USE_VV
-	jabber_iq_register_handler("session", "http://www.google.com/session",
+	jabber_iq_register_handler("session", NS_GOOGLE_SESSION,
 		jabber_google_session_parse);
 #endif
 	jabber_iq_register_handler("block", "urn:xmpp:blocking", jabber_blocklist_parse_push);

@@ -81,7 +81,7 @@ static xmlnode *
 google_session_create_xmlnode(GoogleSession *session, const char *type)
 {
 	xmlnode *node = xmlnode_new("session");
-	xmlnode_set_namespace(node, "http://www.google.com/session");
+	xmlnode_set_namespace(node, NS_GOOGLE_SESSION);
 	xmlnode_set_attrib(node, "id", session->id.id);
 	xmlnode_set_attrib(node, "initiator", session->id.initiator);
 	xmlnode_set_attrib(node, "type", type);
