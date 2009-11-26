@@ -152,7 +152,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			 * advertises as 'voice-v1'.
 			 */
 			xmlnode *feature = xmlnode_new_child(query, "feature");
-			xmlnode_set_attrib(feature, "var", "http://www.google.com/xmpp/protocol/voice/v1");
+			xmlnode_set_attrib(feature, "var", NS_GOOGLE_VOICE);
 		} else if (g_str_equal(node, CAPS0115_NODE "#" "video-v1")) {
 			/*
 			 * HUGE HACK! We advertise this ext (see jabber_presence_create_js
@@ -164,7 +164,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			 * advertises as 'video-v1'.
 			 */
 			xmlnode *feature = xmlnode_new_child(query, "feature");
-			xmlnode_set_attrib(feature, "var", "http://www.google.com/xmpp/protocol/video/v1");
+			xmlnode_set_attrib(feature, "var", NS_GOOGLE_VIDEO);
 		} else if (g_str_equal(node, CAPS0115_NODE "#" "camera-v1")) {
 			/*
 			 * HUGE HACK! We advertise this ext (see jabber_presence_create_js
@@ -176,7 +176,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			 * advertises as 'camera-v1'.
 			 */
 			xmlnode *feature = xmlnode_new_child(query, "feature");
-			xmlnode_set_attrib(feature, "var", "http://www.google.com/xmpp/protocol/camera/v1");
+			xmlnode_set_attrib(feature, "var", NS_GOOGLE_CAMERA);
 #endif
 		} else {
 			xmlnode *error, *inf;
@@ -290,7 +290,7 @@ static void jabber_disco_info_cb(JabberStream *js, const char *from,
 					capabilities |= JABBER_CAP_IQ_SEARCH;
 				else if(!strcmp(var, "jabber:iq:register"))
 					capabilities |= JABBER_CAP_IQ_REGISTER;
-				else if(!strcmp(var, "urn:xmpp:ping"))
+				else if(!strcmp(var, NS_PING))
 					capabilities |= JABBER_CAP_PING;
 				else if(!strcmp(var, "http://jabber.org/protocol/disco#items"))
 					capabilities |= JABBER_CAP_ITEMS;

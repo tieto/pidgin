@@ -2835,7 +2835,7 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 		return FALSE;
 	}
 
-	if (jabber_resource_has_capability(jbr, XEP_0224_NAMESPACE)) {
+	if (jabber_resource_has_capability(jbr, NS_ATTENTION)) {
 		xmlnode *buzz, *msg = xmlnode_new("message");
 		gchar *to;
 
@@ -2847,7 +2847,7 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 		xmlnode_set_attrib(msg, "type", "headline");
 
 		buzz = xmlnode_new_child(msg, "attention");
-		xmlnode_set_namespace(buzz, XEP_0224_NAMESPACE);
+		xmlnode_set_namespace(buzz, NS_ATTENTION);
 
 		jabber_send(js, msg);
 		xmlnode_free(msg);
@@ -3012,8 +3012,7 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 		if (type & PURPLE_MEDIA_AUDIO &&
 				!jabber_resource_has_capability(jbr,
 				JINGLE_APP_RTP_SUPPORT_AUDIO) &&
-				jabber_resource_has_capability(jbr,
-				GOOGLE_VOICE_CAP))
+				jabber_resource_has_capability(jbr, NS_GOOGLE_VOICE))
 			return jabber_google_session_initiate(js, who, type);
 		else
 			return jingle_rtp_initiate_media(js, who, type);
@@ -3182,10 +3181,9 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 				caps |= PURPLE_MEDIA_CAPS_MODIFY_SESSION |
 						PURPLE_MEDIA_CAPS_CHANGE_DIRECTION;
 		}
-		if (jabber_resource_has_capability(jbr, GOOGLE_VOICE_CAP)) {
+		if (jabber_resource_has_capability(jbr, NS_GOOGLE_VOICE)) {
 			caps |= PURPLE_MEDIA_CAPS_AUDIO;
-			if (jabber_resource_has_capability(jbr,
-					GOOGLE_VIDEO_CAP))
+			if (jabber_resource_has_capability(jbr, NS_GOOGLE_VIDEO))
 				caps |= PURPLE_MEDIA_CAPS_AUDIO_VIDEO;
 		}
 		return caps;
@@ -3263,8 +3261,7 @@ gboolean jabber_can_receive_file(PurpleConnection *gc, const char *who)
 						"http://jabber.org/protocol/si/profile/file-transfer")
 			    	&& (jabber_resource_has_capability(jbr,
 			    			"http://jabber.org/protocol/bytestreams")
-			        	|| jabber_resource_has_capability(jbr,
-				           		XEP_0047_NAMESPACE))) {
+			        	|| jabber_resource_has_capability(jbr, NS_IBB))) {
 					return TRUE;
 				}
 			}
@@ -3485,28 +3482,28 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("http://jabber.org/protocol/chatstates", 0);
 	jabber_add_feature("http://jabber.org/protocol/disco#info", 0);
 	jabber_add_feature("http://jabber.org/protocol/disco#items", 0);
-	jabber_add_feature("http://jabber.org/protocol/ibb", 0);
+	jabber_add_feature(NS_IBB, 0);
 	jabber_add_feature("http://jabber.org/protocol/muc", 0);
 	jabber_add_feature("http://jabber.org/protocol/muc#user", 0);
 	jabber_add_feature("http://jabber.org/protocol/si", 0);
 	jabber_add_feature("http://jabber.org/protocol/si/profile/file-transfer", 0);
 	jabber_add_feature("http://jabber.org/protocol/xhtml-im", 0);
-	jabber_add_feature("urn:xmpp:ping", 0);
+	jabber_add_feature(NS_PING, 0);
 
 	/* Buzz/Attention */
-	jabber_add_feature(XEP_0224_NAMESPACE, jabber_buzz_isenabled);
+	jabber_add_feature(NS_ATTENTION, jabber_buzz_isenabled);
 
 	/* Bits Of Binary */
-	jabber_add_feature(XEP_0231_NAMESPACE, 0);
+	jabber_add_feature(NS_BOB, 0);
 
 	/* Jingle features! */
 	jabber_add_feature(JINGLE, 0);
 
 #ifdef USE_VV
-	jabber_add_feature("http://www.google.com/xmpp/protocol/session", jabber_audio_enabled);
-	jabber_add_feature("http://www.google.com/xmpp/protocol/voice/v1", jabber_audio_enabled);
-	jabber_add_feature("http://www.google.com/xmpp/protocol/video/v1", jabber_video_enabled);
-	jabber_add_feature("http://www.google.com/xmpp/protocol/camera/v1", jabber_video_enabled);
+	jabber_add_feature(NS_GOOGLE_SESSION, jabber_audio_enabled);
+	jabber_add_feature(NS_GOOGLE_VOICE, jabber_audio_enabled);
+	jabber_add_feature(NS_GOOGLE_VIDEO, jabber_video_enabled);
+	jabber_add_feature(NS_GOOGLE_CAMERA, jabber_video_enabled);
 	jabber_add_feature(JINGLE_APP_RTP, 0);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, jabber_audio_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, jabber_video_enabled);

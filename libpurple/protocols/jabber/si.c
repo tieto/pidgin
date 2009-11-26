@@ -1210,7 +1210,7 @@ static void jabber_si_xfer_send_method_cb(JabberStream *js, const char *from,
 					jabber_si_xfer_bytestreams_send_init(xfer);
 					jsx->stream_method |= STREAM_METHOD_BYTESTREAMS;
 					found_method = TRUE;
-				} else if (val && !strcmp(val, XEP_0047_NAMESPACE)) {
+				} else if (val && !strcmp(val, NS_IBB)) {
 					jsx->stream_method |= STREAM_METHOD_IBB;
 					if (!found_method) {
 						/* we haven't tried to init a bytestream session, yet
@@ -1452,7 +1452,7 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 	if (jbr) {
 		char *msg;
 
-		if (jabber_resource_has_capability(jbr, XEP_0047_NAMESPACE))
+		if (jabber_resource_has_capability(jbr, NS_IBB))
 			jsx->stream_method |= STREAM_METHOD_IBB;
 		if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/si/profile/file-transfer")) {
 			jabber_si_xfer_send_request(xfer);

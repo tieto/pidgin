@@ -460,7 +460,7 @@ static void
 jabber_message_add_remote_smileys(const xmlnode *message)
 {
 	xmlnode *data_tag;
-	for (data_tag = xmlnode_get_child_with_namespace(message, "data", XEP_0231_NAMESPACE) ;
+	for (data_tag = xmlnode_get_child_with_namespace(message, "data", NS_BOB) ;
 		 data_tag ;
 		 data_tag = xmlnode_get_next_twin(data_tag)) {
 		const gchar *cid = xmlnode_get_attrib(data_tag, "cid");
@@ -740,7 +740,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			jm->type = JABBER_MESSAGE_EVENT;
 			for(items = xmlnode_get_child(child,"items"); items; items = items->next)
 				jm->eventitems = g_list_append(jm->eventitems, items);
-		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns, XEP_0224_NAMESPACE)) {
+		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns, NS_ATTENTION)) {
 			jm->hasBuzz = TRUE;
 		} else if(!strcmp(child->name, "delay") && !strcmp(xmlns,"urn:xmpp:delay")) {
 			const char *timestamp = xmlnode_get_attrib(child, "stamp");
@@ -946,7 +946,7 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 		case PURPLE_CONV_TYPE_IM:
 			jb = jabber_buddy_find(js, who, FALSE);
 			if (jb) {
-				return jabber_buddy_has_capability(jb, XEP_0231_NAMESPACE);
+				return jabber_buddy_has_capability(jb, NS_BOB);
 			} else {
 				return FALSE;
 			}
@@ -958,7 +958,7 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 				 10 people, to avoid getting too many BoB requests */
 				return jabber_chat_get_num_participants(chat) <= 10 &&
 					jabber_chat_all_participants_have_capability(chat,
-						XEP_0231_NAMESPACE);
+						NS_BOB);
 			} else {
 				return FALSE;
 			}

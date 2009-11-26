@@ -228,7 +228,7 @@ jabber_ibb_session_open(JabberIBBSession *sess)
 		gchar block_size[10];
 
 		xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
-		xmlnode_set_namespace(open, XEP_0047_NAMESPACE);
+		xmlnode_set_namespace(open, NS_IBB);
 		xmlnode_set_attrib(open, "sid", jabber_ibb_session_get_sid(sess));
 		g_snprintf(block_size, sizeof(block_size), "%" G_GSIZE_FORMAT,
 			jabber_ibb_session_get_block_size(sess));
@@ -256,7 +256,7 @@ jabber_ibb_session_close(JabberIBBSession *sess)
 		xmlnode *close = xmlnode_new("close");
 
 		xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
-		xmlnode_set_namespace(close, XEP_0047_NAMESPACE);
+		xmlnode_set_namespace(close, NS_IBB);
 		xmlnode_set_attrib(close, "sid", jabber_ibb_session_get_sid(sess));
 		xmlnode_insert_child(set->node, close);
 		jabber_iq_send(set);
@@ -333,7 +333,7 @@ jabber_ibb_session_send_data(JabberIBBSession *sess, gconstpointer data,
 		g_snprintf(seq, sizeof(seq), "%u", jabber_ibb_session_get_send_seq(sess));
 
 		xmlnode_set_attrib(set->node, "to", jabber_ibb_session_get_who(sess));
-		xmlnode_set_namespace(data_element, XEP_0047_NAMESPACE);
+		xmlnode_set_namespace(data_element, NS_IBB);
 		xmlnode_set_attrib(data_element, "sid", jabber_ibb_session_get_sid(sess));
 		xmlnode_set_attrib(data_element, "seq", seq);
 		xmlnode_insert_data(data_element, base64, -1);
@@ -507,11 +507,11 @@ jabber_ibb_init(void)
 {
 	jabber_ibb_sessions = g_hash_table_new(g_str_hash, g_str_equal);
 
-	jabber_add_feature(XEP_0047_NAMESPACE, NULL);
+	jabber_add_feature(NS_IBB, NULL);
 
-	jabber_iq_register_handler("close", XEP_0047_NAMESPACE, jabber_ibb_parse);
-	jabber_iq_register_handler("data", XEP_0047_NAMESPACE, jabber_ibb_parse);
-	jabber_iq_register_handler("open", XEP_0047_NAMESPACE, jabber_ibb_parse);
+	jabber_iq_register_handler("close", NS_IBB, jabber_ibb_parse);
+	jabber_iq_register_handler("data", NS_IBB, jabber_ibb_parse);
+	jabber_iq_register_handler("open", NS_IBB, jabber_ibb_parse);
 }
 
 void

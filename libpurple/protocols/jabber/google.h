@@ -25,11 +25,6 @@
  * such that they don't intermingle with code for the XMPP RFCs and XEPs :) */
 
 #include "jabber.h"
-#include "media.h"
-
-#define GOOGLE_VOICE_CAP "http://www.google.com/xmpp/protocol/voice/v1"
-#define GOOGLE_VIDEO_CAP "http://www.google.com/xmpp/protocol/video/v1"
-#define GOOGLE_JINGLE_INFO_NAMESPACE "google:jingleinfo"
 
 #define GOOGLE_GROUPCHAT_SERVER "groupchat.google.com"
 

@@ -37,9 +37,6 @@
 
 #ifdef USE_VV
 
-#define NS_GOOGLE_VIDEO "http://www.google.com/session/video"
-#define NS_GOOGLE_PHONE "http://www.google.com/session/phone"
-
 typedef struct {
 	char *id;
 	char *initiator;
@@ -213,9 +210,9 @@ google_session_ready(GoogleSession *session)
 		xmlnode_insert_child(iq->node, sess);
 		desc = xmlnode_new_child(sess, "description");
 		if (session->video)
-			xmlnode_set_namespace(desc, NS_GOOGLE_VIDEO);
+			xmlnode_set_namespace(desc, NS_GOOGLE_SESSION_VIDEO);
 		else
-			xmlnode_set_namespace(desc, NS_GOOGLE_PHONE);
+			xmlnode_set_namespace(desc, NS_GOOGLE_SESSION_PHONE);
 
 		codecs = purple_media_get_codecs(media, "google-video");
 
@@ -248,7 +245,7 @@ google_session_ready(GoogleSession *session)
 					purple_media_codec_get_clock_rate(codec));
 			payload = xmlnode_new_child(desc, "payload-type");
 			if (session->video)
-				xmlnode_set_namespace(payload, NS_GOOGLE_PHONE);
+				xmlnode_set_namespace(payload, NS_GOOGLE_SESSION_PHONE);
 			xmlnode_set_attrib(payload, "id", id);
 			/*
 			 * Hack to make Gmail accept speex as the codec.
@@ -439,9 +436,9 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	desc_element = xmlnode_get_child(sess, "description");
 	xmlns = xmlnode_get_namespace(desc_element);
 
-	if (purple_strequal(xmlns, NS_GOOGLE_PHONE))
+	if (purple_strequal(xmlns, NS_GOOGLE_SESSION_PHONE))
 		session->video = FALSE;
-	else if (purple_strequal(xmlns, NS_GOOGLE_VIDEO))
+	else if (purple_strequal(xmlns, NS_GOOGLE_SESSION_VIDEO))
 		session->video = TRUE;
 	else {
 		purple_debug_error("jabber", "Received initiate with "
@@ -498,7 +495,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 		id = xmlnode_get_attrib(codec_element, "id");
 
 		if (!session->video ||
-				(xmlns && !strcmp(xmlns, NS_GOOGLE_PHONE))) {
+				(xmlns && !strcmp(xmlns, NS_GOOGLE_SESSION_PHONE))) {
 			clock_rate = xmlnode_get_attrib(
 					codec_element, "clockrate");
 			video = FALSE;
@@ -623,7 +620,7 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 	GList *codecs = NULL, *video_codecs = NULL;
 	JabberIq *result = NULL;
 	const gchar *xmlns = xmlnode_get_namespace(desc_element);
-	gboolean video = (xmlns && !strcmp(xmlns, NS_GOOGLE_VIDEO));
+	gboolean video = (xmlns && !strcmp(xmlns, NS_GOOGLE_SESSION_VIDEO));
 
 	for (; codec_element; codec_element = codec_element->next) {
 		const gchar *xmlns, *encoding_name, *id,
@@ -637,7 +634,7 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 		encoding_name =	xmlnode_get_attrib(codec_element, "name");
 		id = xmlnode_get_attrib(codec_element, "id");
 
-		if (!video || purple_strequal(xmlns, NS_GOOGLE_PHONE))
+		if (!video || purple_strequal(xmlns, NS_GOOGLE_SESSION_PHONE))
 			clock_rate = xmlnode_get_attrib(
 					codec_element, "clockrate");
 		else {
@@ -1401,7 +1398,7 @@ jabber_google_jingle_info_cb(JabberStream *js, const char *from,
                              xmlnode *packet, gpointer data)
 {
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
-			GOOGLE_JINGLE_INFO_NAMESPACE);
+			NS_GOOGLE_JINGLE_INFO);
 
 	if (query)
 		jabber_google_jingle_info_common(js, from, type, query);
@@ -1421,7 +1418,7 @@ void
 jabber_google_send_jingle_info(JabberStream *js)
 {
 	JabberIq *jingle_info =
-		jabber_iq_new_query(js, JABBER_IQ_GET, GOOGLE_JINGLE_INFO_NAMESPACE);
+		jabber_iq_new_query(js, JABBER_IQ_GET, NS_GOOGLE_JINGLE_INFO);
 
 	jabber_iq_set_callback(jingle_info, jabber_google_jingle_info_cb,
 		NULL);
