@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-23 19:22+0100\n"
-"PO-Revision-Date: 2009-11-23 19:21+0100\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2009-11-26 22:45+0100\n"
+"PO-Revision-Date: 2009-11-26 22:44+0100\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12083,6 +12083,9 @@ msgstr "Makedonisch"
 msgid "Mongolian"
 msgstr "Mongolisch"
 
+msgid "Malay"
+msgstr "Malaiisch"
+
 msgid "Bokmål Norwegian"
 msgstr "Bokmål Norwegisch"
 
@@ -12151,6 +12154,9 @@ msgstr "Thailändisch"
 
 msgid "Turkish"
 msgstr "Türkisch"
+
+msgid "Ukranian"
+msgstr "Ukrainisch"
 
 msgid "Urdu"
 msgstr "Urdu"
