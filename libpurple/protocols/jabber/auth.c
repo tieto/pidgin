@@ -111,6 +111,7 @@ static void disallow_plaintext_auth(PurpleAccount *account)
 		_("Server requires plaintext authentication over an unencrypted stream"));
 }
 
+#ifdef HAVE_CYRUS_SASL
 static void
 auth_old_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
@@ -154,6 +155,7 @@ auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	/* Disable the account as the user has canceled connecting */
 	purple_account_set_enabled(purple_connection_get_account(gc), purple_core_get_ui(), FALSE);
 }
+#endif
 
 void
 jabber_auth_start(JabberStream *js, xmlnode *packet)
@@ -403,7 +405,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 {
 	const char *ns = xmlnode_get_namespace(packet);
 
-	if (!purple_strequal(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
+	if (!purple_strequal(ns, NS_XMPP_SASL)) {
 		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Invalid response from server"));
@@ -424,7 +426,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 {
 	const char *ns = xmlnode_get_namespace(packet);
 
-	if (!purple_strequal(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
+	if (!purple_strequal(ns, NS_XMPP_SASL)) {
 		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Invalid response from server"));

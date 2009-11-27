@@ -387,7 +387,7 @@ static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
 	data->step = 1;
 
 	reply = xmlnode_new("auth");
-	xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
+	xmlnode_set_namespace(reply, NS_XMPP_SASL);
 	xmlnode_set_attrib(reply, "mechanism", js->auth_mech->name);
 
 	/* TODO: Channel binding */
@@ -414,7 +414,7 @@ static xmlnode *scram_handle_challenge(JabberStream *js, xmlnode *challenge)
 	enc_in = xmlnode_get_data(challenge);
 	if (!enc_in || *enc_in == '\0') {
 		reply = xmlnode_new("abort");
-		xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
+		xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		data->step = -1;
 		goto out;
 	}
@@ -424,7 +424,7 @@ static xmlnode *scram_handle_challenge(JabberStream *js, xmlnode *challenge)
 	if (!dec_in || len != strlen(dec_in)) {
 		/* Danger afoot; SCRAM shouldn't contain NUL bytes */
 		reply = xmlnode_new("abort");
-		xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
+		xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		data->step = -1;
 		goto out;
 	}
@@ -433,7 +433,7 @@ static xmlnode *scram_handle_challenge(JabberStream *js, xmlnode *challenge)
 
 	if (!jabber_scram_feed_parser(data, dec_in, &dec_out)) {
 		reply = xmlnode_new("abort");
-		xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
+		xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		data->step = -1;
 		goto out;
 	}
@@ -441,7 +441,7 @@ static xmlnode *scram_handle_challenge(JabberStream *js, xmlnode *challenge)
 	data->step += 1;
 
 	reply = xmlnode_new("response");
-	xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
+	xmlnode_set_namespace(reply, NS_XMPP_SASL);
 
 	purple_debug_misc("jabber", "decoded response: %s\n", dec_out ? dec_out : "(null)");
 	if (dec_out) {

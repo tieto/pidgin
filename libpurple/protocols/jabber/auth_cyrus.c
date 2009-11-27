@@ -302,7 +302,7 @@ static xmlnode *jabber_auth_start_cyrus(JabberStream *js)
 
 	if (js->sasl_state == SASL_CONTINUE || js->sasl_state == SASL_OK) {
 		auth = xmlnode_new("auth");
-		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
+		xmlnode_set_namespace(auth, NS_XMPP_SASL);
 		xmlnode_set_attrib(auth, "mechanism", js->current_mech);
 
 		xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
@@ -439,7 +439,7 @@ static xmlnode *jabber_cyrus_handle_challenge(JabberStream *js, xmlnode *packet)
 		g_free(tmp);
 	} else {
 		response = xmlnode_new("response");
-		xmlnode_set_namespace(response, "urn:ietf:params:xml:ns:xmpp-sasl");
+		xmlnode_set_namespace(response, NS_XMPP_SASL);
 		if (clen > 0) {
 			/* Cyrus SASL 2.1.22 appears to contain code to add the charset
 			 * to the response for DIGEST-MD5 but there is no possibility

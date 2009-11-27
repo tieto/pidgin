@@ -35,7 +35,7 @@ static xmlnode *digest_md5_start(JabberStream *js, xmlnode *packet)
 	xmlnode *auth;
 
 	auth = xmlnode_new("auth");
-	xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
+	xmlnode_set_namespace(auth, NS_XMPP_SASL);
 	xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
 
 	return auth;
@@ -189,7 +189,7 @@ static xmlnode *digest_md5_handle_challenge(JabberStream *js, xmlnode *packet)
 
 		if (rspauth && purple_strequal(rspauth, js->expected_rspauth)) {
 			reply = xmlnode_new("response");
-			xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
+			xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		} else {
 			purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -259,7 +259,7 @@ static xmlnode *digest_md5_handle_challenge(JabberStream *js, xmlnode *packet)
 					response->len, response->str);
 
 			reply = xmlnode_new("response");
-			xmlnode_set_namespace(reply, "urn:ietf:params:xml:ns:xmpp-sasl");
+			xmlnode_set_namespace(reply, NS_XMPP_SASL);
 			xmlnode_insert_data(reply, enc_out, -1);
 
 			g_free(enc_out);
