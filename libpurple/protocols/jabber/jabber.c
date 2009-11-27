@@ -476,7 +476,14 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 	if (NULL == packet)
 		return;
 
+	if (!PURPLE_CONNECTION_IS_VALID(pc))
+		return;
+
 	js = purple_connection_get_protocol_data(pc);
+
+	if (NULL == js)
+		return;
+
 	if (js->bosh)
 		if (g_str_equal((*packet)->name, "message") ||
 				g_str_equal((*packet)->name, "iq") ||
