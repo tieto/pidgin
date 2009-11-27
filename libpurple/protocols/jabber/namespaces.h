@@ -37,14 +37,14 @@
 #define NS_AVATAR_1_1_DATA      "urn:xmpp:avatar:data"
 #define NS_AVATAR_1_1_METADATA  "urn:xmpp:avatar:metadata"
 
+/* XEP-0199 Ping */
+#define NS_PING "urn:xmpp:ping"
+
 /* XEP-0224 Attention */
 #define NS_ATTENTION "urn:xmpp:attention:0"
 
 /* XEP-0231 BoB (Bits of Binary) */
 #define NS_BOB "urn:xmpp:bob"
-
-/* XEP-???? Ping */
-#define NS_PING "urn:xmpp:ping"
 
 /* Google extensions */
 #define NS_GOOGLE_CAMERA "http://www.google.com/xmpp/protocol/camera/v1"
