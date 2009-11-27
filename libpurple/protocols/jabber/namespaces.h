@@ -24,10 +24,33 @@
 #ifndef PURPLE_JABBER_NAMESPACES_H_
 #define PURPLE_JABBER_NAMESPACES_H_
 
-/* Implementation of XEP-0084 */
+#define NS_XMPP_BIND "urn:ietf:params:xml:ns:xmpp-bind"
+#define NS_XMPP_CLIENT "jabber:client"
+#define NS_XMPP_SASL "urn:ietf:params:xml:ns:xmpp-sasl"
+#define NS_XMPP_SESSION "urn:ietf:params:xml:ns:xmpp-session"
+#define NS_XMPP_STANZAS "urn:ietf:params:xml:ns:xmpp-stanzas"
+#define NS_XMPP_STREAMS "http://etherx.jabber.org/streams"
+
+/* XEP-0012 Last Activity (and XEP-0256 Last Activity in Presence) */
+#define NS_LAST_ACTIVITY "jabber:iq:last"
+
+/* XEP-0030 Service Discovery */
+#define NS_DISCO_INFO "http://jabber.org/protocol/disco#info"
+#define NS_DISCO_ITEMS "http://jabber.org/protocol/disco#items"
 
 /* XEP-0047 IBB (In-band bytestreams) */
 #define NS_IBB "http://jabber.org/protocol/ibb"
+
+/* XEP-0065 SOCKS5 Bytestreams */
+#define NS_BYTESTREAMS "http://jabber.org/protocol/bytestreams"
+
+/* XEP-0066 Out of Band Data (OOB) */
+#define NS_OOB_IQ_DATA "jabber:iq:oob"
+#define NS_OOB_X_DATA  "jabber:x:oob"
+
+/* XEP-0071 XHTML-IM (rich-text messages) */
+#define NS_XHTML_IM "http://jabber.org/protocol/xhtml-im"
+#define NS_XHTML "http://www.w3.org/1999/xhtml"
 
 /* XEP-0084 v0.12 User Avatar */
 #define NS_AVATAR_0_12_DATA     "http://www.xmpp.org/extensions/xep-0084.html#ns-data"
@@ -37,8 +60,14 @@
 #define NS_AVATAR_1_1_DATA      "urn:xmpp:avatar:data"
 #define NS_AVATAR_1_1_METADATA  "urn:xmpp:avatar:metadata"
 
+/* XEP-0191 Simple Communications Blocking */
+#define NS_SIMPLE_BLOCKING "urn:xmpp:blocking"
+
 /* XEP-0199 Ping */
 #define NS_PING "urn:xmpp:ping"
+
+/* XEP-0202 Entity Time */
+#define NS_ENTITY_TIME "urn:xmpp:time"
 
 /* XEP-0224 Attention */
 #define NS_ATTENTION "urn:xmpp:attention:0"
@@ -51,6 +80,8 @@
 #define NS_GOOGLE_VIDEO "http://www.google.com/xmpp/protocol/video/v1"
 #define NS_GOOGLE_VOICE "http://www.google.com/xmpp/protocol/voice/v1"
 #define NS_GOOGLE_JINGLE_INFO "google:jingleinfo"
+
+#define NS_GOOGLE_MAIL_NOTIFY "google:mail:notify"
 
 #define NS_GOOGLE_PROTOCOL_SESSION "http://www.google.com/xmpp/protocol/session"
 #define NS_GOOGLE_SESSION "http://www.google.com/session"

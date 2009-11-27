@@ -144,7 +144,7 @@ jabber_si_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_
 	if(xfer->type == PURPLE_XFER_SEND)
 	{
 		xmlnode *activate;
-		iq = jabber_iq_new_query(jsx->js, JABBER_IQ_SET, "http://jabber.org/protocol/bytestreams");
+		iq = jabber_iq_new_query(jsx->js, JABBER_IQ_SET, NS_BYTESTREAMS);
 		xmlnode_set_attrib(iq->node, "to", streamhost->jid);
 		query = xmlnode_get_child(iq->node, "query");
 		xmlnode_set_attrib(query, "sid", jsx->stream_id);
@@ -155,7 +155,7 @@ jabber_si_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_
 	}
 	else
 	{
-		iq = jabber_iq_new_query(jsx->js, JABBER_IQ_RESULT, "http://jabber.org/protocol/bytestreams");
+		iq = jabber_iq_new_query(jsx->js, JABBER_IQ_RESULT, NS_BYTESTREAMS);
 		xmlnode_set_attrib(iq->node, "to", xfer->who);
 		jabber_iq_set_id(iq, jsx->iq_id);
 		query = xmlnode_get_child(iq->node, "query");
@@ -232,7 +232,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 		xmlnode_set_attrib(error, "code", "404");
 		xmlnode_set_attrib(error, "type", "cancel");
 		inf = xmlnode_new_child(error, "item-not-found");
-		xmlnode_set_namespace(inf, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_set_namespace(inf, NS_XMPP_STANZAS);
 
 		jabber_iq_send(iq);
 
@@ -843,8 +843,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 
 	purple_xfer_unref(xfer);
 
-	iq = jabber_iq_new_query(jsx->js, JABBER_IQ_SET,
-			"http://jabber.org/protocol/bytestreams");
+	iq = jabber_iq_new_query(jsx->js, JABBER_IQ_SET, NS_BYTESTREAMS);
 	xmlnode_set_attrib(iq->node, "to", xfer->who);
 	query = xmlnode_get_child(iq->node, "query");
 
@@ -1206,7 +1205,7 @@ static void jabber_si_xfer_send_method_cb(JabberStream *js, const char *from,
 		if(var && !strcmp(var, "stream-method")) {
 			if((value = xmlnode_get_child(field, "value"))) {
 				char *val = xmlnode_get_data(value);
-				if(val && !strcmp(val, "http://jabber.org/protocol/bytestreams")) {
+				if(val && !strcmp(val, NS_BYTESTREAMS)) {
 					jabber_si_xfer_bytestreams_send_init(xfer);
 					jsx->stream_method |= STREAM_METHOD_BYTESTREAMS;
 					found_method = TRUE;
@@ -1268,10 +1267,10 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 		behind troublesome firewalls */
 	option = xmlnode_new_child(field, "option");
 	value = xmlnode_new_child(option, "value");
-	xmlnode_insert_data(value, "http://jabber.org/protocol/bytestreams", -1);
+	xmlnode_insert_data(value, NS_BYTESTREAMS, -1);
 	option = xmlnode_new_child(field, "option");
 	value = xmlnode_new_child(option, "value");
-	xmlnode_insert_data(value, "http://jabber.org/protocol/ibb", -1);
+	xmlnode_insert_data(value, NS_IBB, -1);
 
 	jabber_iq_set_callback(iq, jabber_si_xfer_send_method_cb, xfer);
 
@@ -1372,9 +1371,9 @@ static void jabber_si_xfer_request_denied(PurpleXfer *xfer)
 		error = xmlnode_new_child(iq->node, "error");
 		xmlnode_set_attrib(error, "type", "cancel");
 		child = xmlnode_new_child(error, "forbidden");
-		xmlnode_set_namespace(child, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_set_namespace(child, NS_XMPP_STANZAS);
 		child = xmlnode_new_child(error, "text");
-		xmlnode_set_namespace(child, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_set_namespace(child, NS_XMPP_STANZAS);
 		xmlnode_insert_data(child, "Offer Declined", -1);
 
 		jabber_iq_send(iq);
@@ -1580,10 +1579,10 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 			for people who know their firewalls are very restrictive */
 		if (jsx->stream_method & STREAM_METHOD_BYTESTREAMS) {
 			value = xmlnode_new_child(field, "value");
-			xmlnode_insert_data(value, "http://jabber.org/protocol/bytestreams", -1);
+			xmlnode_insert_data(value, NS_BYTESTREAMS, -1);
 		} else if(jsx->stream_method & STREAM_METHOD_IBB) {
 			value = xmlnode_new_child(field, "value");
-			xmlnode_insert_data(value, "http://jabber.org/protocol/ibb", -1);
+			xmlnode_insert_data(value, NS_IBB, -1);
 		}
 
 		jabber_iq_send(iq);
@@ -1687,9 +1686,9 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 				if((value = xmlnode_get_child(option, "value"))) {
 					char *val;
 					if((val = xmlnode_get_data(value))) {
-						if(!strcmp(val, "http://jabber.org/protocol/bytestreams")) {
+						if(!strcmp(val, NS_BYTESTREAMS)) {
 							jsx->stream_method |= STREAM_METHOD_BYTESTREAMS;
-						} else if(!strcmp(val, "http://jabber.org/protocol/ibb")) {
+						} else if(!strcmp(val, NS_IBB)) {
 							jsx->stream_method |= STREAM_METHOD_IBB;
 						}
 						g_free(val);

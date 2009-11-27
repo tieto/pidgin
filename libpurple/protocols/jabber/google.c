@@ -910,7 +910,7 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 	purple_debug_misc("jabber",
 		   "Got new mail notification. Sending request for more info\n");
 
-	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "google:mail:notify");
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_GOOGLE_MAIL_NOTIFY);
 	jabber_iq_set_callback(iq, jabber_gmail_parse, NULL);
 	query = xmlnode_get_child(iq->node, "query");
 
@@ -944,7 +944,7 @@ void jabber_gmail_init(JabberStream *js) {
 	xmlnode_set_attrib(mailnotifications, "value", "true");
 	jabber_iq_send(iq);
 
-	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "google:mail:notify");
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_GOOGLE_MAIL_NOTIFY);
 	jabber_iq_set_callback(iq, jabber_gmail_parse, NULL);
 	jabber_iq_send(iq);
 }

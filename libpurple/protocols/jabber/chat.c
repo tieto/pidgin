@@ -825,7 +825,7 @@ static void roomlist_ok_cb(JabberStream *js, const char *server)
 
 	purple_roomlist_set_in_progress(js->roomlist, TRUE);
 
-	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_DISCO_ITEMS);
 
 	xmlnode_set_attrib(iq->node, "to", server);
 
@@ -1201,7 +1201,7 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, const char *from,
 	for(x = xmlnode_get_child(query, "feature"); x; x = xmlnode_get_next_twin(x)) {
 		const char *var = xmlnode_get_attrib(x, "var");
 
-		if(var && !strcmp(var, "http://jabber.org/protocol/xhtml-im")) {
+		if(var && !strcmp(var, NS_XHTML_IM)) {
 			chat->xhtml = TRUE;
 		}
 	}
@@ -1216,8 +1216,7 @@ void jabber_chat_disco_traffic(JabberChat *chat)
 
 	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
 
-	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET,
-			"http://jabber.org/protocol/disco#info");
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET, NS_DISCO_INFO);
 
 	xmlnode_set_attrib(iq->node, "to", room_jid);
 

@@ -297,7 +297,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 		gchar seconds[10];
 		g_snprintf(seconds, 10, "%d", (int) (time(NULL) - js->idle));
 
-		xmlnode_set_namespace(query, "jabber:iq:last");
+		xmlnode_set_namespace(query, NS_LAST_ACTIVITY);
 		xmlnode_set_attrib(query, "seconds", seconds);
 	}
 
@@ -462,8 +462,8 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 		goto out;
 
 	if (!jbr->commands_fetched && jabber_resource_has_capability(jbr, "http://jabber.org/protocol/commands")) {
-		JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
-		xmlnode *query = xmlnode_get_child_with_namespace(iq->node, "query", "http://jabber.org/protocol/disco#items");
+		JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, NS_DISCO_ITEMS);
+		xmlnode *query = xmlnode_get_child_with_namespace(iq->node, "query", NS_DISCO_ITEMS);
 		xmlnode_set_attrib(iq->node, "to", userdata->from);
 		xmlnode_set_attrib(query, "node", "http://jabber.org/protocol/commands");
 		jabber_iq_set_callback(iq, jabber_adhoc_disco_result_cb, NULL);
@@ -655,7 +655,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				}
 			}
 		} else if (!strcmp(y->name, "query") &&
-			!strcmp(xmlnode_get_namespace(y), "jabber:iq:last")) {
+			!strcmp(xmlnode_get_namespace(y), NS_LAST_ACTIVITY)) {
 			/* resource has specified idle */
 			const gchar *seconds = xmlnode_get_attrib(y, "seconds");
 			if (seconds) {

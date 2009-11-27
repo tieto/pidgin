@@ -1466,7 +1466,7 @@ static gboolean _client_is_blacklisted(JabberBuddyResource *jbr, const char *ns)
 	if(!jbr->client.name)
 		return FALSE;
 
-	if(!strcmp(ns, "jabber:iq:last")) {
+	if(!strcmp(ns, NS_LAST_ACTIVITY)) {
 		if(!strcmp(jbr->client.name, "Trillian")) {
 			/* verified by nwalp 2007/05/09 */
 			if(!strcmp(jbr->client.version, "3.1.0.121") ||
@@ -1512,8 +1512,8 @@ dispatch_queries_for_resource(JabberStream *js, JabberBuddyInfo *jbi,
 	 * respond (with an error or otherwise) to jabber:iq:last
 	 * requests.  There are a number of Trillian users in my
 	 * office. */
-	if(!_client_is_blacklisted(jbr, "jabber:iq:last")) {
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
+	if(!_client_is_blacklisted(jbr, NS_LAST_ACTIVITY)) {
+		iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_LAST_ACTIVITY);
 		xmlnode_set_attrib(iq->node, "to", to);
 		jabber_iq_set_callback(iq, jabber_last_parse, jbi);
 		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
@@ -1522,12 +1522,12 @@ dispatch_queries_for_resource(JabberStream *js, JabberBuddyInfo *jbi,
 
 	if (jbr->tz_off == PURPLE_NO_TZ_OFF &&
 			(!jbr->caps.info ||
-			 	jabber_resource_has_capability(jbr, "urn:xmpp:time"))) {
+			 	jabber_resource_has_capability(jbr, NS_ENTITY_TIME))) {
 		xmlnode *child;
 		iq = jabber_iq_new(js, JABBER_IQ_GET);
 		xmlnode_set_attrib(iq->node, "to", to);
 		child = xmlnode_new_child(iq->node, "time");
-		xmlnode_set_namespace(child, "urn:xmpp:time");
+		xmlnode_set_namespace(child, NS_ENTITY_TIME);
 		jabber_iq_set_callback(iq, jabber_time_parse, jbi);
 		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
 		jabber_iq_send(iq);
@@ -1590,7 +1590,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 
 	if (!jb->resources && is_bare_jid) {
 		/* user is offline, send a jabber:iq:last to find out last time online */
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
+		iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_LAST_ACTIVITY);
 		xmlnode_set_attrib(iq->node, "to", jid);
 		jabber_iq_set_callback(iq, jabber_last_offline_parse, jbi);
 		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));

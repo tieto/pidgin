@@ -361,8 +361,7 @@ jabber_ibb_send_error_response(JabberStream *js, const char *to, const char *id)
 	xmlnode *error = xmlnode_new("error");
 	xmlnode *item_not_found = xmlnode_new("item-not-found");
 
-	xmlnode_set_namespace(item_not_found,
-		"urn:ietf:params:xml:ns:xmpp-stanzas");
+	xmlnode_set_namespace(item_not_found, NS_XMPP_STANZAS);
 	xmlnode_set_attrib(error, "code", "440");
 	xmlnode_set_attrib(error, "type", "cancel");
 	jabber_iq_set_id(result, id);
