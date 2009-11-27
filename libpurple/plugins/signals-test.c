@@ -20,9 +20,10 @@
  */
 #define SIGNAL_TEST_PLUGIN_ID "core-signals-test"
 
+#include "internal.h"
+
 #include <stdio.h>
 
-#include "internal.h"
 #include "cipher.h"
 #include "connection.h"
 #include "conversation.h"

@@ -25,6 +25,8 @@
 #define DBUS_API_SUBJECT_TO_CHANGE
 #endif
 
+#include "internal.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,7 +44,6 @@
 #include "dbus-bindings.h"
 #include "debug.h"
 #include "core.h"
-#include "internal.h"
 #include "savedstatuses.h"
 #include "smiley.h"
 #include "util.h"

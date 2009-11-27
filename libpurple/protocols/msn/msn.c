@@ -23,8 +23,6 @@
  */
 #define PHOTO_SUPPORT 1
 
-#include <glib.h>
-
 #include "msn.h"
 #include "accountopt.h"
 #include "contact.h"
