@@ -239,12 +239,10 @@ static void command_reply(struct RXMsgData* mx, GHashTable* hash)
 	replymsg = g_hash_table_lookup(hash, "replymsg");		/* find the reply message */
 	if ((selmsg) && (replymsg)) {
 		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
-		gchar*	replytext = g_markup_escape_text(purple_url_decode(replymsg), -1);
 
-		mxit_add_html_link( mx, replytext, seltext );
+		mxit_add_html_link( mx, purple_url_decode(replymsg), seltext );
 
 		g_free(seltext);
-		g_free(replytext);
 	}
 }
 
@@ -345,7 +343,6 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
  *  @param message			The message text
  *  @return					The length of the command
  */
-//void mxit_command_received(struct MXitSession* session, const char* from, char* message, time_t timestamp)
 int mxit_parse_command(struct RXMsgData* mx, char* message)
 {
 	GHashTable* hash	= NULL;
