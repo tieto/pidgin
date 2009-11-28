@@ -76,7 +76,7 @@
 #define NS_DELAYED_DELIVERY "urn:xmpp:delay"
 #define NS_DELAYED_DELIVERY_LEGACY "jabber:x:delay"
 
-/* XEP-0206 */
+/* XEP-0206 XMPP over BOSH */
 #define NS_XMPP_BOSH "urn:xmpp:xbosh"
 
 /* XEP-0224 Attention */
