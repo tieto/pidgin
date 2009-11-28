@@ -152,6 +152,15 @@ jabber_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
 		 */
 		return;
 
+	if (error->level == XML_ERR_FATAL && error->message != NULL
+			&& strcmp(error->message, "Extra content at the end of the document\n") == 0)
+		/*
+		 * This is probably more annoying than the vcard-temp error; it occurs
+		 * because we disconnect in most cases without waiting for the receiving
+		 * </stream:stream> (limitations of libpurple)
+		 */
+		return;
+
 	purple_debug_error("jabber", "XML parser error for JabberStream %p: "
 								 "Domain %i, code %i, level %i: %s",
 					   js,
