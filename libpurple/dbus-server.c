@@ -25,15 +25,15 @@
 #define DBUS_API_SUBJECT_TO_CHANGE
 #endif
 
+/* Allow the code below to see deprecated functions, so we can continue to
+ * export them via DBus. */
+#undef PURPLE_DISABLE_DEPRECATED
+
 #include "internal.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-/* Allow the code below to see deprecated functions, so we can continue to
- * export them via DBus. */
-#undef PURPLE_DISABLE_DEPRECATED
 
 #include "account.h"
 #include "blist.h"
