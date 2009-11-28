@@ -60,6 +60,9 @@
 #define NS_AVATAR_1_1_DATA      "urn:xmpp:avatar:data"
 #define NS_AVATAR_1_1_METADATA  "urn:xmpp:avatar:metadata"
 
+/* XEP-0124 Bidirectional-streams Over Synchronous HTTP (BOSH) */
+#define NS_BOSH "http://jabber.org/protocol/httpbind"
+
 /* XEP-0191 Simple Communications Blocking */
 #define NS_SIMPLE_BLOCKING "urn:xmpp:blocking"
 
@@ -72,6 +75,9 @@
 /* XEP-0203 Delayed Delivery (and legacy delayed delivery) */
 #define NS_DELAYED_DELIVERY "urn:xmpp:delay"
 #define NS_DELAYED_DELIVERY_LEGACY "jabber:x:delay"
+
+/* XEP-0206 */
+#define NS_XMPP_BOSH "urn:xmpp:xbosh"
 
 /* XEP-0224 Attention */
 #define NS_ATTENTION "urn:xmpp:attention:0"
