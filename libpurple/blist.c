@@ -3187,6 +3187,13 @@ purple_blist_init(void)
 										PURPLE_SUBTYPE_BLIST_NODE),
 						 purple_value_new(PURPLE_TYPE_STRING));
 
+	purple_signal_register(handle, "buddy-caps-changed",
+			purple_marshal_VOID__POINTER_INT_INT, NULL,
+			3, purple_value_new(PURPLE_TYPE_SUBTYPE,
+				PURPLE_SUBTYPE_BLIST_BUDDY),
+			purple_value_new(PURPLE_TYPE_INT),
+			purple_value_new(PURPLE_TYPE_INT));
+
 	purple_signal_connect(purple_accounts_get_handle(), "account-created",
 			handle,
 			PURPLE_CALLBACK(purple_blist_buddies_cache_add_account),
