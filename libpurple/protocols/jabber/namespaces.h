@@ -69,6 +69,10 @@
 /* XEP-0202 Entity Time */
 #define NS_ENTITY_TIME "urn:xmpp:time"
 
+/* XEP-0203 Delayed Delivery (and legacy delayed delivery) */
+#define NS_DELAYED_DELIVERY "urn:xmpp:delay"
+#define NS_DELAYED_DELIVERY_LEGACY "jabber:x:delay"
+
 /* XEP-0224 Attention */
 #define NS_ATTENTION "urn:xmpp:attention:0"
 
