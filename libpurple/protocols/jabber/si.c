@@ -1264,7 +1264,7 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 				purple_xfer_get_thumbnail_size(xfer), "image/jpeg", TRUE,
 				jsx->js);
 		xmlnode *thumbnail = xmlnode_new_child(file, "thumbnail");
-		xmlnode_set_namespace(thumbnail, "urn:xmpp:thumbs:0");
+		xmlnode_set_namespace(thumbnail, NS_THUMBS);
 		xmlnode_set_attrib(thumbnail, "cid", 
 			jabber_data_get_cid(thumbnail_data));
 		xmlnode_set_attrib(thumbnail, "mime-type", "image/jpeg");
@@ -1766,7 +1766,8 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
 
 	/* if there is a thumbnail, we should request it... */
-	if ((thumbnail = xmlnode_get_child(file, "thumbnail"))) {
+	if ((thumbnail = xmlnode_get_child_with_namespace(file, "thumbnail",
+		NS_THUMBS))) {
 		const char *cid = xmlnode_get_attrib(thumbnail, "cid");
 		if (cid) {
 			JabberIq *request = 
