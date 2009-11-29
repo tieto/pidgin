@@ -896,10 +896,14 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 			   (userinfo && (userinfo->flags & AIM_FLAG_AWAY)));
 
 	if (strip_html_tags) {
-		/* Away messges are HTML, but available messages were originally plain text.
+		/* Away messages are HTML, but available messages were originally plain text.
 		 * We therefore need to strip away messages but not available messages if we're asked to remove HTML tags.
 		 */
-		if (is_away && message) {
+		/*
+		 * It seems like the above comment no longer applies.  All messages need
+		 * to be escaped.
+		 */
+		if (message) {
 			gchar *tmp2;
 			tmp = purple_markup_strip_html(message);
 			g_free(message);
@@ -918,7 +922,7 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 	}
 	g_free(itmsurl);
 
-	if (is_away && message) {
+	if (message) {
 		tmp = purple_str_sub_away_formatters(message, purple_account_get_username(account));
 		g_free(message);
 		message = tmp;
