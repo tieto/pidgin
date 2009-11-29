@@ -3039,9 +3039,9 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 		if (((js->googletalk && js->google_relay_token) ||
 		     !jabber_resource_has_capability(jbr, JINGLE_APP_RTP_SUPPORT_AUDIO))
 		    && (((type & PURPLE_MEDIA_AUDIO) && 
-		    	jabber_resource_has_capability(jbr, GOOGLE_VOICE_CAP))
+		    	jabber_resource_has_capability(jbr, NS_GOOGLE_VOICE))
 		        || ((type & PURPLE_MEDIA_VIDEO) &&
-		    		jabber_resource_has_capability(jbr, GOOGLE_VIDEO_CAP))))
+		    		jabber_resource_has_capability(jbr, NS_GOOGLE_VIDEO))))
 			return jabber_google_session_initiate(js, who, type);
 		else
 			return jingle_rtp_initiate_media(js, who, type);

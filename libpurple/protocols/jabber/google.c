@@ -666,9 +666,9 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	desc_element = xmlnode_get_child(sess, "description");
 	xmlns = xmlnode_get_namespace(desc_element);
 
-	if (purple_strequal(xmlns, NS_GOOGLE_PHONE))
+	if (purple_strequal(xmlns, NS_GOOGLE_SESSION_PHONE))
 		session->video = FALSE;
-	else if (purple_strequal(xmlns, NS_GOOGLE_VIDEO))
+	else if (purple_strequal(xmlns, NS_GOOGLE_SESSION_VIDEO))
 		session->video = TRUE;
 	else {
 		purple_debug_error("jabber", "Received initiate with "
