@@ -3903,8 +3903,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
 
 	if (buddy != NULL &&
-	    !purple_presence_is_online(purple_buddy_get_presence(buddy)) &&
-	    !purple_account_supports_offline_message(account, buddy))
+	    !purple_presence_is_online(purple_buddy_get_presence(buddy)))
 	{
 		gtk_widget_set_sensitive(label, FALSE);
 
