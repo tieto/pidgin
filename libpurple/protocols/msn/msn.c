@@ -23,8 +23,6 @@
  */
 #define PHOTO_SUPPORT 1
 
-#include <glib.h>
-
 #include "msn.h"
 #include "accountopt.h"
 #include "contact.h"
@@ -1063,6 +1061,9 @@ msn_login(PurpleAccount *account)
 
 	if (strcmp(username, purple_account_get_username(account)))
 		purple_account_set_username(account, username);
+
+	username = purple_account_get_string(account, "display-name", NULL);
+	purple_connection_set_display_name(gc, username);
 
 	if (!msn_session_connect(session, host, port, http_method))
 		purple_connection_error_reason(gc,

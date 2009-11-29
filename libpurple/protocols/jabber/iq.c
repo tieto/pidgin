@@ -155,7 +155,7 @@ static void jabber_iq_last_parse(JabberStream *js, const char *from,
 	char *idle_time;
 
 	if(type == JABBER_IQ_GET) {
-		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:last");
+		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, NS_LAST_ACTIVITY);
 		jabber_iq_set_id(iq, id);
 		if (from)
 			xmlnode_set_attrib(iq->node, "to", from);
@@ -190,7 +190,7 @@ static void jabber_time_parse(JabberStream *js, const char *from,
 			xmlnode_set_attrib(iq->node, "to", from);
 
 		child = xmlnode_new_child(iq->node, child->name);
-		xmlnode_set_namespace(child, "urn:xmpp:time");
+		xmlnode_set_namespace(child, NS_ENTITY_TIME);
 
 		/* <tzo>-06:00</tzo> */
 		tm = localtime(&now_t);
@@ -200,7 +200,7 @@ static void jabber_time_parse(JabberStream *js, const char *from,
 
 		/* <utc>2006-12-19T17:58:35Z</utc> */
 		tm = gmtime(&now_t);
-		date = purple_utf8_strftime("%FT%TZ", tm);
+		date = purple_utf8_strftime("%Y-%m-%dT%H:%M:%SZ", tm);
 		utc = xmlnode_new_child(child, "utc");
 		xmlnode_insert_data(utc, date, -1);
 
@@ -332,7 +332,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 			error = xmlnode_new_child(iq->node, "error");
 			xmlnode_set_attrib(error, "type", "modify");
 			x = xmlnode_new_child(error, "bad-request");
-			xmlnode_set_namespace(x, "urn:ietf:params:xml:ns:xmpp-stanzas");
+			xmlnode_set_namespace(x, NS_XMPP_STANZAS);
 
 			jabber_iq_send(iq);
 		} else
@@ -397,7 +397,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		xmlnode_set_attrib(error, "type", "cancel");
 		xmlnode_set_attrib(error, "code", "501");
 		x = xmlnode_new_child(error, "feature-not-implemented");
-		xmlnode_set_namespace(x, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_set_namespace(x, NS_XMPP_STANZAS);
 
 		jabber_iq_send(iq);
 	}
@@ -458,21 +458,19 @@ void jabber_iq_init(void)
 	signal_iq_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	jabber_iq_register_handler("jingle", JINGLE, jingle_parse);
-	jabber_iq_register_handler("mailbox", "google:mail:notify",
+	jabber_iq_register_handler("mailbox", NS_GOOGLE_MAIL_NOTIFY,
 			jabber_gmail_poke);
-	jabber_iq_register_handler("new-mail", "google:mail:notify",
+	jabber_iq_register_handler("new-mail", NS_GOOGLE_MAIL_NOTIFY,
 			jabber_gmail_poke);
-	jabber_iq_register_handler("ping", "urn:xmpp:ping", jabber_ping_parse);
-	jabber_iq_register_handler("query", GOOGLE_JINGLE_INFO_NAMESPACE,
+	jabber_iq_register_handler("ping", NS_PING, jabber_ping_parse);
+	jabber_iq_register_handler("query", NS_GOOGLE_JINGLE_INFO,
 			jabber_google_handle_jingle_info);
-	jabber_iq_register_handler("query", "http://jabber.org/protocol/bytestreams",
+	jabber_iq_register_handler("query", NS_BYTESTREAMS,
 			jabber_bytestreams_parse);
-	jabber_iq_register_handler("query", "http://jabber.org/protocol/disco#info",
-			jabber_disco_info_parse);
-	jabber_iq_register_handler("query", "http://jabber.org/protocol/disco#items",
-			jabber_disco_items_parse);
-	jabber_iq_register_handler("query", "jabber:iq:last", jabber_iq_last_parse);
-	jabber_iq_register_handler("query", "jabber:iq:oob", jabber_oob_parse);
+	jabber_iq_register_handler("query", NS_DISCO_INFO, jabber_disco_info_parse);
+	jabber_iq_register_handler("query", NS_DISCO_ITEMS, jabber_disco_items_parse);
+	jabber_iq_register_handler("query", NS_LAST_ACTIVITY, jabber_iq_last_parse);
+	jabber_iq_register_handler("query", NS_OOB_IQ_DATA, jabber_oob_parse);
 	jabber_iq_register_handler("query", "jabber:iq:register",
 			jabber_register_parse);
 	jabber_iq_register_handler("query", "jabber:iq:roster",
@@ -480,12 +478,12 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("query", "jabber:iq:version",
 			jabber_iq_version_parse);
 #ifdef USE_VV
-	jabber_iq_register_handler("session", "http://www.google.com/session",
+	jabber_iq_register_handler("session", NS_GOOGLE_SESSION,
 		jabber_google_session_parse);
 #endif
-	jabber_iq_register_handler("block", "urn:xmpp:blocking", jabber_blocklist_parse_push);
-	jabber_iq_register_handler("unblock", "urn:xmpp:blocking", jabber_blocklist_parse_push);
-	jabber_iq_register_handler("time", "urn:xmpp:time", jabber_time_parse);
+	jabber_iq_register_handler("block", NS_SIMPLE_BLOCKING, jabber_blocklist_parse_push);
+	jabber_iq_register_handler("unblock", NS_SIMPLE_BLOCKING, jabber_blocklist_parse_push);
+	jabber_iq_register_handler("time", NS_ENTITY_TIME, jabber_time_parse);
 
 }
 

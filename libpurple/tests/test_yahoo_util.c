@@ -15,6 +15,10 @@ static void teardown_codes_to_html(void)
 
 START_TEST(test_codes_to_html)
 {
+	assert_string_equal_free("",
+			yahoo_codes_to_html(""));
+	assert_string_equal_free("",
+			yahoo_codes_to_html("\x1B[12345m"));
 	assert_string_equal_free("plain",
 			yahoo_codes_to_html("plain"));
 	assert_string_equal_free("unknown  ansi code",
