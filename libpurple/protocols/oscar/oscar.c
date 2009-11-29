@@ -2461,42 +2461,81 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	 */
 	if (purple_markup_find_tag("body", tmp, &start, &end, &attribs))
 	{
+		int len;
+		char *tmp2, *body;
 		const char *ichattextcolor, *ichatballooncolor;
-		const char *start2, *end2;
+		const char *slash_body_start, *slash_body_end = NULL; /* </body> */
 		GData *unused;
 
 		/*
 		 * Find the ending </body> so we can strip off the outer <html/>
 		 * and <body/>
 		 */
-		if (purple_markup_find_tag("/body", end + 1, &start2, &end2, &unused))
+		if (purple_markup_find_tag("/body", end + 1, &slash_body_start, &slash_body_end, &unused))
 		{
-			gchar *tmp2;
-			tmp2 = g_strndup(end + 1, (start2 - 1) - (end + 1) + 1);
-			g_free(tmp);
-			tmp = tmp2;
+			body = g_strndup(start, slash_body_end - start + 1);
 			g_datalist_clear(&unused);
+		}
+		else
+		{
+			purple_debug_warning("oscar", "Broken message contains <body> but not </body>!\n");
+			/* Take everything after <body> */
+			body = g_strdup(start);
 		}
 
 		ichattextcolor = g_datalist_get_data(&attribs, "ichattextcolor");
 		if (ichattextcolor != NULL)
 		{
-			gchar *tmp2;
-			tmp2 = g_strdup_printf("<font color=\"%s\">%s</font>", ichattextcolor, tmp);
-			g_free(tmp);
-			tmp = tmp2;
+			tmp2 = g_strdup_printf("<font color=\"%s\">%s</font>", ichattextcolor, body);
+			g_free(body);
+			body = tmp2;
 		}
 
 		ichatballooncolor = g_datalist_get_data(&attribs, "ichatballooncolor");
 		if (ichatballooncolor != NULL)
 		{
-			gchar *tmp2;
-			tmp2 = g_strdup_printf("<font back=\"%s\">%s</font>", ichatballooncolor, tmp);
-			g_free(tmp);
-			tmp = tmp2;
+			tmp2 = g_strdup_printf("<font back=\"%s\">%s</font>", ichatballooncolor, body);
+			g_free(body);
+			body = tmp2;
 		}
 
 		g_datalist_clear(&attribs);
+
+		len = start - tmp;
+		tmp2 = g_strdup_printf("%.*s%s%s", len, tmp, body, slash_body_end ? slash_body_end + 1: "</body>");
+		g_free(tmp);
+		g_free(body);
+
+		tmp = tmp2;
+	}
+
+	/*
+	 * Are there <html/> surrounding tags? If so, strip them out, too.
+	 */
+	if (purple_markup_find_tag("html", tmp, &start, &end, &attribs))
+	{
+		gchar *tmp2;
+		int len;
+
+		g_datalist_clear(&attribs);
+
+		len = start - tmp;
+		tmp2 = g_strdup_printf("%.*s%s", len, tmp, end + 1);
+		g_free(tmp);
+		tmp = tmp2;
+	}
+
+	if (purple_markup_find_tag("/html", tmp, &start, &end, &attribs))
+	{
+		gchar *tmp2;
+		int len;
+
+		g_datalist_clear(&attribs);
+
+		len = start - tmp;
+		tmp2 = g_strdup_printf("%.*s%s", len, tmp, end + 1);
+		g_free(tmp);
+		tmp = tmp2;
 	}
 
 	serv_got_im(gc, userinfo->bn, tmp, flags,
