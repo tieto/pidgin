@@ -416,7 +416,6 @@ void mxit_show_message( struct RXMsgData* mx )
 	}
 	else if ( mx->chatid < 0 ) {
 		/* normal chat message */
-		//serv_got_im( mx->session->con, mx->from, mx->msg->str, mx->flags, mx->timestamp );
 		mxit_show_split_message( mx );
 	}
 	else {

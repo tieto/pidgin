@@ -633,7 +633,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if(xmlns == NULL) {
 			/* The rest of the cases used to check xmlns individually. */
 			continue;
-		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, "urn:xmpp:delay")) {
+		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, NS_DELAYED_DELIVERY)) {
 			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 			delayed = TRUE;
 			stamp = xmlnode_get_attrib(y, "stamp");
@@ -642,7 +642,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if (g_str_equal(y->name, "nick") && g_str_equal(xmlns, "http://jabber.org/protocol/nick")) {
 			nickname = xmlnode_get_data(y);
 		} else if(!strcmp(y->name, "x")) {
-			if(!strcmp(xmlns, "jabber:x:delay")) {
+			if(!strcmp(xmlns, NS_DELAYED_DELIVERY_LEGACY)) {
 				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 				delayed = TRUE;
 				stamp = xmlnode_get_attrib(y, "stamp");

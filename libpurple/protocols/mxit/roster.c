@@ -53,11 +53,11 @@ static struct status
 	const char*				name;
 } const mxit_statuses[] = {
 		/*	primative,						no,							id,			name					*/
-		{	PURPLE_STATUS_OFFLINE,			MXIT_PRESENCE_OFFLINE,		"offline",	NULL				},	/* 0 */
-		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_ONLINE,		"online",	NULL				},	/* 1 */
-		{	PURPLE_STATUS_AWAY,				MXIT_PRESENCE_AWAY,			"away",		NULL				},	/* 2 */
-		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_AVAILABLE,	"chat",		N_( "Chatty" )		},	/* 3 */
-		{	PURPLE_STATUS_UNAVAILABLE,		MXIT_PRESENCE_DND,			"dnd",		NULL				}	/* 4 */
+		{	PURPLE_STATUS_OFFLINE,			MXIT_PRESENCE_OFFLINE,		"offline",	N_( "Offline" )			},	/* 0 */
+		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_ONLINE,		"online",	N_( "Available" )		},	/* 1 */
+		{	PURPLE_STATUS_AWAY,				MXIT_PRESENCE_AWAY,			"away",		N_( "Away" )			},	/* 2 */
+		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_AVAILABLE,	"chat",		N_( "Chatty" )			},	/* 3 */
+		{	PURPLE_STATUS_UNAVAILABLE,		MXIT_PRESENCE_DND,			"dnd",		N_( "Do Not Disturb" )	}	/* 4 */
 };
 
 
@@ -398,7 +398,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 		contact->statusMsg = NULL;
 	}
 	if ( statusMsg[0] != '\0' )
-		contact->statusMsg = g_strdup( statusMsg );	
+		contact->statusMsg = g_markup_escape_text( statusMsg, -1 );
 
 	/* update avatarId */
 	if ( ( contact->avatarId ) && ( g_ascii_strcasecmp( contact->avatarId, avatarId ) == 0 ) ) {
