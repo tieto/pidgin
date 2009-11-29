@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"POT-Creation-Date: 2009-11-14 20:36-0500\n"
 "PO-Revision-Date: 2009-09-03 14:47+0100\n"
 "Last-Translator: loptosko <loptosko@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -59,6 +59,7 @@ msgstr ""
 "skúste dokončiť prenos nastavení sami. Prosím, ohláste túto chybu na adrese "
 "http://developer.pidgin.im"
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Chyba"
 
@@ -552,13 +553,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "Znovu povoliť účet"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-"Účet bol odpojený a už sa nenachádzate v chate. Keď sa účet znovu pripojí, "
-"budete automaticky prihlásený k tomuto chatu."
-
 msgid "No such command."
 msgstr "Tento príkaz neexistuje."
 
@@ -599,6 +593,13 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "Opustili ste tento chat."
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+"Účet bol odpojený a už sa nenachádzate v chate. Keď sa účet znovu pripojí, "
+"budete automaticky prihlásený k tomuto chatu."
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr ""
 "Zaznamenávanie bolo spustené. Nasledujúce správy v rozhovore budú "
@@ -634,6 +635,10 @@ msgstr "Zapnúť zaznamenávanie"
 msgid "Enable Sounds"
 msgstr "Zapnúť zvuky"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "Nepodarilo sa pripojiť"
+
 msgid "<AUTO-REPLY> "
 msgstr "<AUTOMATICKÁ ODPOVEĎ> "
 
@@ -644,7 +649,8 @@ msgstr[0] "Zoznam %d používateľa:\n"
 msgstr[1] "Zoznam %d používateľov:\n"
 msgstr[2] "Zoznam %d používateľov:\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "Podporované ladiace voľby sú:  version"
 
 msgid "No such command (in this context)."
@@ -770,6 +776,7 @@ msgid "Remaining"
 msgstr "Zostáva"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "Status"
 
@@ -943,6 +950,9 @@ msgstr "Pozvať"
 msgid "(none)"
 msgstr "(žiadne)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 msgid "URI"
 msgstr "Adresa"
 
@@ -1344,6 +1354,8 @@ msgstr "Odstrániť status"
 msgid "Saved Statuses"
 msgstr "Uložené statusy"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "Nadpis"
 
@@ -1515,6 +1527,13 @@ msgstr ""
 "\n"
 "Získava sa TinyURL..."
 
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "TinyURL vytvárať iba pre adresy tejto dĺžky alebo dlhšie"
 
@@ -1638,9 +1657,10 @@ msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
 "Certifikát je podpísaný sám sebou a nie je možné ho automaticky overiť."
 
-#, fuzzy
-msgid "The root certificate this one claims to be issued by is unknown."
-msgstr "Certifikát, ktorým je tento certifikát vydaný, je pre Pidgin neznámy."
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
+msgstr ""
 
 msgid "The certificate is not valid yet."
 msgstr "Certifikát zatiaľ nie je platný."
@@ -1750,6 +1770,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "Podrobnosti o certifikáte"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "Chyba pri registrácii"
 
@@ -1764,6 +1785,7 @@ msgstr "+++ používateľ %s sa prihlásil"
 msgid "+++ %s signed off"
 msgstr "+++ používateľ %s sa odhlásil"
 
+#. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "Neznáma chyba"
@@ -1870,10 +1892,15 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "Proces resolvera bol ukončený bez toho, aby odpovedal na požiadavku"
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "Chyba pri preklade %s: %d"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "Nepodarilo sa vytvoriť vlákno: %s"
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Neznáma príčina"
 
@@ -2176,13 +2203,16 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Vyskytla sa závažná chyba v Farsight2."
 
-msgid "Conference error."
+#, fuzzy
+msgid "Conference error"
 msgstr "Chyba konferencie."
 
-msgid "Error with your microphone."
+#, fuzzy
+msgid "Error with your microphone"
 msgstr "Chyba mikrofónu."
 
-msgid "Error with your webcam."
+#, fuzzy
+msgid "Error with your webcam"
 msgstr "Chyba webkamery."
 
 #, c-format
@@ -2920,6 +2950,7 @@ msgstr "Krstné meno"
 msgid "Last name"
 msgstr "Priezvisko"
 
+#. email
 msgid "Email"
 msgstr "E-mail"
 
@@ -3055,12 +3086,14 @@ msgstr "Mesto"
 msgid "Year of birth"
 msgstr "Rok narodenia"
 
+#. gender
 msgid "Gender"
 msgstr "Pohlavie"
 
 msgid "Male or female"
 msgstr "Muž alebo žena"
 
+#. 0
 msgid "Male"
 msgstr "Muž"
 
@@ -3129,6 +3162,7 @@ msgstr "Neprítomný"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "Krstné meno"
 
@@ -3843,6 +3877,7 @@ msgstr "Organizačná jednotka"
 msgid "Role"
 msgstr "Postavenie"
 
+#. birthday
 msgid "Birthday"
 msgstr "Dátum narodenia"
 
@@ -3920,6 +3955,9 @@ msgstr "Znovu požiadať o autorizáciu"
 msgid "Unsubscribe"
 msgstr "Odhlásiť sa"
 
+msgid "Initiate _Chat"
+msgstr "Začať _chat"
+
 msgid "Log In"
 msgstr "Prihlásiť"
 
@@ -3938,6 +3976,7 @@ msgstr "Nerušiť"
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "Priezvisko"
 
@@ -4173,6 +4212,7 @@ msgstr "Server nepodporuje blokovanie"
 msgid "Not Authorized"
 msgstr "Neautorizovaný"
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Nálada"
 
@@ -4197,6 +4237,7 @@ msgstr "Žiadny (Čaká sa)"
 msgid "None"
 msgstr "Žiadne"
 
+#. subscription type
 msgid "Subscription"
 msgstr "Prihlásenie"
 
@@ -4500,7 +4541,8 @@ msgstr "config:  Nastavenie miestnosti chatu."
 msgid "configure:  Configure a chat room."
 msgstr "configure:  Nastavenie miestnosti chatu."
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "part [miestnosť]:  Opustí miestnosť."
 
 msgid "register:  Register with a chat room."
@@ -5156,18 +5198,15 @@ msgstr "Otvoriť poštovú schránku Hotmail"
 msgid "Send to Mobile"
 msgstr "Odoslať na mobil"
 
-msgid "Initiate _Chat"
-msgstr "Začať _chat"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Pre MSN je potrebná podpora SSL. Nainštalujte, prosím, podporovanú SSL "
 "knižnicu."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 "Nepodarilo sa pridať priateľa %s, pretože používateľské meno je chybné.  "
 "Používateľské mená musia byť správna e-mailová adresa."
@@ -5378,6 +5417,9 @@ msgstr "Autentifikácia Windows Live ID:Chybná odpoveď"
 msgid "%s just sent you a Nudge!"
 msgstr "%s vám práve poslal „šťuchanec“!"
 
+msgid "The following users are missing from your addressbook"
+msgstr "Nasledujúci používatelia chýbajú vo vašom adresári"
+
 #, c-format
 msgid "Unknown error (%d): %s"
 msgstr "Neznáma chyba (%d): %s"
@@ -5390,8 +5432,9 @@ msgstr "Nebolo možné pridať používateľa"
 msgid "Unknown error (%d)"
 msgstr "Neznáma chyba (%d)"
 
-msgid "The following users are missing from your addressbook"
-msgstr "Nasledujúci používatelia chýbajú vo vašom adresári"
+#, fuzzy
+msgid "Unable to remove user"
+msgstr "Nebolo možné pridať používateľa"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mobilná správa nebola odoslaná, pretože bola príliš dlhá."
@@ -5626,6 +5669,384 @@ msgstr "Používateľ %s si vás pridal do svojho zoznamu priateľov."
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "Používateľ %s vás odstránil zo svojho zoznamu priateľov."
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "Vaša aktuálna nálada"
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "Nálada používateľa"
+
+#, fuzzy
+msgid "Change your Mood"
+msgstr "Zmeniť heslo"
+
+#, fuzzy
+msgid "How do you feel right now?"
+msgstr "Momentálne nie som prítomný"
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "Chyba zápisu"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "Priezvisko"
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "Telefónne číslo na mobilný telefón"
+
+#, fuzzy
+msgid "Update your Profile"
+msgstr "Profil používateľa"
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+msgid "There is no splash-screen currently available"
+msgstr ""
+
+#, fuzzy
+msgid "About"
+msgstr "O mne"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "Zmeniť heslo..."
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "Zmeniť heslo..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "Zobraziť záznam..."
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "O mne"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "Správa je príliš dlhá."
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "Prihlasuje sa"
+
+#, fuzzy
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr ""
+"Nepodarilo sa pripojiť na server. Zadajte, prosím, adresu servera, na ktorý "
+"sa chcete pripojiť."
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "Pripája sa"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "Prezývka"
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "Registrovať nový XMPP účet"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "Prosím, vyplňte nasledujúce políčka"
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "Server je nedostupný; skúste to neskôr"
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "Bezpečnosť zapnutá"
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "Zadajte kód"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "Krajina"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "Preferovaný jazyk"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "Vyžadovať autorizáciu"
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "Podrobnosti o serveri"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "Odoslané správy"
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "Prostredné meno"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "Nastaviť číslo mobilného telefónu..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "Server"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "Pripojiť sa pomocou TCP"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "Chyba správy XMPP"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "Nepodarilo sa preložiť meno hostiteľa"
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "Podarilo sa pripojiť do Qun"
+
+#, fuzzy
+msgid "Message Error"
+msgstr "Chyba správy XMPP"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "Chyba pripojenia"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "Chyba správy XMPP"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "Chyba prúdu"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "Chyba ikony"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "Chyba pri rušení registrácie"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "Chyba pripojenia"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "Prihlásenie"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "Chyba pripojenia"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "Prenos súborov"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "Nebolo možné vytvoriť sledovanie"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "Chyba pri rušení registrácie"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "Chyba zápisu"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr "Nahnevaný"
+
+msgid "Excited"
+msgstr "Vzrušený"
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "Skupina"
+
+msgid "Happy"
+msgstr "Šťastný"
+
+msgid "In Love"
+msgstr "Zaľúbený"
+
+msgid "Invincible"
+msgstr "Neprekonateľný"
+
+msgid "Sad"
+msgstr "Smutný"
+
+#, fuzzy
+msgid "Hot"
+msgstr "_Hostiteľ:"
+
+#, fuzzy
+msgid "Sick"
+msgstr "Prezývka"
+
+msgid "Sleepy"
+msgstr "Ospalý"
+
+#, fuzzy
+msgid "Pending"
+msgstr "Odosiela sa"
+
+#, fuzzy
+msgid "Invited"
+msgstr "Pozvať"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "Odmietnuť"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "Odstrániť"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "Pracovné informácie"
 
 #, c-format
 msgid "No such user: %s"
@@ -6244,7 +6665,6 @@ msgstr "Port servera"
 msgid "Received unexpected response from %s"
 msgstr "Bola prijatá neočakávaná odpoveď od %s"
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6404,6 +6824,48 @@ msgstr "Rad je plný"
 
 msgid "Not while on AOL"
 msgstr "Nie, pokým ste na AOL"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Nepodarilo sa odoslať súbor"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Nie je možné odoslať priečinok."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Nepodarilo sa odoslať správu."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Offline správa"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6571,6 +7033,16 @@ msgstr "Váš účet je momentálne pozastavený"
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Služba AOL je dočasne nedostupná."
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"Pripájali a odpájali ste sa príliš často. Počkajte desať minút a skúste "
+"znova. Ak budete i naďalej skúšať, budete musieť čakať este dlhšie."
+
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
@@ -6579,9 +7051,11 @@ msgstr ""
 "na %s"
 
 #. IP address connecting too frequently
+#, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "Pripájali a odpájali ste sa príliš často. Počkajte minútu a skúste to znova. "
 "Ak budete pokračovať, budete musieť čakať este dlhšie."
@@ -6732,21 +7206,28 @@ msgstr[0] "Z neznámeho dôvodu ste prišli o %hu správ od používateľa %s."
 msgstr[1] "Z neznámeho dôvodu ste prišli o %hu správu od používateľa %s."
 msgstr[2] "Z neznámeho dôvodu ste prišli o %hu správy od používateľa %s."
 
-#. Data is assumed to be the destination bn
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Nepodarilo sa odoslať správu (%s)."
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Nemôžem odoslať správu: %s"
 
-msgid "Unknown reason."
-msgstr "Neznámy dôvod."
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Nemôžem poslať správu k %s:"
 
-#, c-format
-msgid "Unable to send message to %s:"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
 msgstr "Nemôžem poslať správu k %s:"
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "Informácie o používateľovi sú nedostupné: %s"
+
+msgid "Unknown reason."
+msgstr "Neznámy dôvod."
 
 msgid "Online Since"
 msgstr "Prihlásený od"
@@ -6756,9 +7237,6 @@ msgstr "Člen od"
 
 msgid "Capabilities"
 msgstr "Schopnosti"
-
-msgid "Profile"
-msgstr "Profil"
 
 msgid "Your AIM connection may be lost."
 msgstr "Vaše AIM spojenie je zrejme prerušené."
@@ -6771,9 +7249,10 @@ msgstr ""
 "[Správa od používateľa obsahovala nesprávne znaky, preto ju nebolo možné "
 "zobraziť.]"
 
+#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "Akciu nebolo možné vykonať, pretože ste prekročili limit hodnotenia. Prosím, "
 "počkajte 10 sekúnd a skúste to znovu."
@@ -7960,6 +8439,10 @@ msgstr "Konferencia zrušená"
 msgid "Unable to send message: "
 msgstr "Nepodarilo sa odoslať správu: "
 
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "Nemôžem poslať správu k %s:"
+
 msgid "Place Closed"
 msgstr "Miesto uzavreté"
 
@@ -8373,35 +8856,14 @@ msgstr "Hyperaktívny"
 msgid "Robot"
 msgstr "Robot"
 
-msgid "Happy"
-msgstr "Šťastný"
-
-msgid "Sad"
-msgstr "Smutný"
-
-msgid "Angry"
-msgstr "Nahnevaný"
-
 msgid "Jealous"
 msgstr "Žiarlivý"
 
 msgid "Ashamed"
 msgstr "Zahanbený"
 
-msgid "Invincible"
-msgstr "Neprekonateľný"
-
-msgid "In Love"
-msgstr "Zaľúbený"
-
-msgid "Sleepy"
-msgstr "Ospalý"
-
 msgid "Bored"
 msgstr "Unudený"
-
-msgid "Excited"
-msgstr "Vzrušený"
 
 msgid "Anxious"
 msgstr "Ustarostený"
@@ -9637,6 +10099,15 @@ msgstr "Spojiť sa s používateľom v chate..."
 msgid "Open Inbox"
 msgstr "Otvoriť schránku Doručené"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -10180,15 +10651,15 @@ msgstr ""
 "Počas načítavania vášho %s sa vyskytla chyba. Súbor nebol načítaný a starý "
 "súbor bol premenovaný na %s~."
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "Internetový komunikátor"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Internetový komunikátor Pidgin"
-
-msgid "Send instant messages over multiple protocols"
-msgstr ""
-"Program na odosielanie okamžitých správ, ktorý podporuje viacero protokolov"
 
 msgid "Orientation"
 msgstr "Orientácia"
@@ -12214,11 +12685,6 @@ msgstr ""
 "spätný výpis, prečítajte si, prosím, návod na adrese:\n"
 "%swiki/GetABacktrace\n"
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "Pidgin"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Je spustený iný klient libpurple, ukončuje sa.\n"
@@ -12412,49 +12878,55 @@ msgstr "_Opakujúce sa"
 msgid "Pounce Target"
 msgstr "Cieľ sledovania"
 
-#, c-format
 msgid "Started typing"
 msgstr "Začal písať"
 
-#, c-format
 msgid "Paused while typing"
 msgstr "Preruší písanie"
 
-#, c-format
 msgid "Signed on"
 msgstr "Prihlásil sa"
 
-#, c-format
 msgid "Returned from being idle"
 msgstr "Prestane byť nečinný"
 
-#, c-format
 msgid "Returned from being away"
 msgstr "Prestane byť neprítomný"
 
-#, c-format
 msgid "Stopped typing"
 msgstr "Prestal písať"
 
-#, c-format
 msgid "Signed off"
 msgstr "Odhlásil sa"
 
-#, c-format
 msgid "Became idle"
 msgstr "Stane sa nečinný"
 
-#, c-format
 msgid "Went away"
 msgstr "Stane sa neprítomný"
 
-#, c-format
 msgid "Sent a message"
 msgstr "Odoslal správu"
 
-#, c-format
 msgid "Unknown.... Please report this!"
 msgstr "Neznáme... Oznámte to, prosím!"
+
+msgid "(Custom)"
+msgstr ""
+
+#, fuzzy
+msgid "(Default)"
+msgstr "(predvolené)"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "Editor témy zoznamu priateľov programu Pidgin"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 msgid "Theme failed to unpack."
 msgstr "Nepodarilo sa rozbaliť tému."
@@ -12608,6 +13080,10 @@ msgstr "_Vypnúť"
 msgid "Use _automatically detected IP address: %s"
 msgstr "Použiť _automaticky zistenú IP adresu: %s"
 
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "ST_UN server:"
+
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Príklad: stunserver.org</span>"
 
@@ -12620,14 +13096,17 @@ msgstr "Porty"
 msgid "_Enable automatic router port forwarding"
 msgstr "Povoliť _automatické presmerovanie portu routeru"
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "_Ručne určiť rozsah portov, na ktorých počúvať"
 
-msgid "_Start port:"
-msgstr "_Počiatočný port:"
+#, fuzzy
+msgid "_Start:"
+msgstr "_Status:"
 
-msgid "_End port:"
-msgstr "_Koncový port:"
+#, fuzzy
+msgid "_End:"
+msgstr "_Rozbaliť"
 
 #. TURN server
 msgid "Relay Server (TURN)"
@@ -12636,6 +13115,14 @@ msgstr "Relay Server (TURN)"
 #, fuzzy
 msgid "_TURN server:"
 msgstr "ST_UN server:"
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "Používateľské meno:"
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "Heslo:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "Proxy server a prehliadač"
@@ -12662,15 +13149,25 @@ msgstr "Nastaviť _Prehliadač"
 msgid "Proxy Server"
 msgstr "Proxy server"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+#, fuzzy
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr "Použiť vzdialené DNS s proxy SOCKS 4"
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "_Typ proxy:"
+
 msgid "No proxy"
 msgstr "Bez proxy"
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr "Použiť vzdialené DNS s proxy SOCKS 4"
+#, fuzzy
+msgid "P_ort:"
+msgstr "_Port:"
 
-msgid "_User:"
-msgstr "Po_užívateľ:"
+#, fuzzy
+msgid "User_name:"
+msgstr "Používateľské meno:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -13165,6 +13662,11 @@ msgstr "_Uložiť súbor"
 
 msgid "Select color"
 msgstr "Vyberte farbu"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "Pidgin"
 
 msgid "_Alias"
 msgstr "_Prezývka"
@@ -14289,9 +14791,6 @@ msgstr ""
 "\n"
 "* Poznámka: Tento modul vyžaduje Win2000 alebo novší."
 
-msgid "GTK+ Runtime Version"
-msgstr "Verzia GTK+ Runtime"
-
 #. Autostart
 msgid "Startup"
 msgstr "Spustenie"
@@ -14299,6 +14798,10 @@ msgstr "Spustenie"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "_Spustiť %s pri štarte Windows"
+
+#, fuzzy
+msgid "Allow multiple instances"
+msgstr "Umožniť viacero súbežných prihlásení"
 
 msgid "_Dockable Buddy List"
 msgstr "_Ukotviteľný zoznam priateľov"
@@ -14359,6 +14862,28 @@ msgstr "Odosielanie a prijímanie nespracovaných XMPP slôh."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Tento modul je vhodný pre ladenie XMPP serverov alebo klientov."
+
+#, fuzzy
+#~ msgid "The root certificate this one claims to be issued by is unknown."
+#~ msgstr ""
+#~ "Certifikát, ktorým je tento certifikát vydaný, je pre Pidgin neznámy."
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr ""
+#~ "Program na odosielanie okamžitých správ, ktorý podporuje viacero "
+#~ "protokolov"
+
+#~ msgid "_Start port:"
+#~ msgstr "_Počiatočný port:"
+
+#~ msgid "_End port:"
+#~ msgstr "_Koncový port:"
+
+#~ msgid "_User:"
+#~ msgstr "Po_užívateľ:"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "Verzia GTK+ Runtime"
 
 #~ msgid "Without this only the first account will be enabled)."
 #~ msgstr "Inak bude zapnutý len prvý účet)."
@@ -14555,9 +15080,6 @@ msgstr "Tento modul je vhodný pre ladenie XMPP serverov alebo klientov."
 #~ msgid "Stream Initiation"
 #~ msgstr "Iniciácia toku"
 
-#~ msgid "User Mood"
-#~ msgstr "Nálada používateľa"
-
 #~ msgid "User Activity"
 #~ msgstr "Aktivita používateľa"
 
@@ -14575,9 +15097,6 @@ msgstr "Tento modul je vhodný pre ladenie XMPP serverov alebo klientov."
 
 #~ msgid "Reachability Address"
 #~ msgstr "Dostupná adresa"
-
-#~ msgid "User Profile"
-#~ msgstr "Profil používateľa"
 
 #~ msgid "Jingle"
 #~ msgstr "Jingle"
@@ -14716,9 +15235,6 @@ msgstr "Tento modul je vhodný pre ladenie XMPP serverov alebo klientov."
 
 #~ msgid "Could not write"
 #~ msgstr "Nepodarilo sa zapisovať"
-
-#~ msgid "Could not connect"
-#~ msgstr "Nepodarilo sa pripojiť"
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "Nepodarilo sa vytvoriť socket pre príjem"

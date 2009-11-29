@@ -165,7 +165,10 @@ struct _PurpleXfer
 
 	PurpleXferStatusType status;    /**< File Transfer's status.             */
 
-	/* I/O operations. */
+	/** I/O operations, which should be set by the prpl using
+	 *  purple_xfer_set_init_fnc() and friends.  Setting #init is
+	 *  mandatory; all others are optional.
+	 */
 	struct
 	{
 		void (*init)(PurpleXfer *xfer);

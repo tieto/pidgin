@@ -24,8 +24,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <string.h>
-
 #include "internal.h"
 
 #include "account.h"
@@ -2281,7 +2279,8 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 					stream->session->type), NULL);
 			stream->accepted = TRUE;
 
-			if (stream->remote_candidates != NULL) {
+			if (stream->remote_candidates != NULL &&
+					stream->initiator == FALSE) {
 				GError *err = NULL;
 				fs_stream_set_remote_candidates(stream->stream,
 						stream->remote_candidates, &err);
@@ -2816,14 +2815,16 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 			}
 
 			fsstream = fs_session_new_stream(session->session,
-					participant, type_direction &
-					FS_DIRECTION_RECV, transmitter,
+					participant, initiator == TRUE ?
+					type_direction : (type_direction &
+					FS_DIRECTION_RECV), transmitter,
 					new_num_params, param, &err);
 			g_free(param);
 		} else {
 			fsstream = fs_session_new_stream(session->session,
-					participant, type_direction &
-					FS_DIRECTION_RECV, transmitter,
+					participant, initiator == TRUE ?
+					type_direction : (type_direction &
+					FS_DIRECTION_RECV), transmitter,
 					num_params, params, &err);
 		}
 
@@ -2952,7 +2953,7 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 	stream->remote_candidates = g_list_concat(stream->remote_candidates,
 			purple_media_candidate_list_to_fs(remote_candidates));
 
-	if (stream->accepted == TRUE) {
+	if (stream->initiator == TRUE || stream->accepted == TRUE) {
 		fs_stream_set_remote_candidates(stream->stream,
 				stream->remote_candidates, &err);
 

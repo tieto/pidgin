@@ -1862,6 +1862,9 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 	g_object_set(G_OBJECT(icon_rend),
 			"stock-size", gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL),
 			NULL);
+#if GTK_CHECK_VERSION(2,6,0)
+	g_object_set(text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combobox), index);
 	g_signal_connect(G_OBJECT(combobox), "changed", G_CALLBACK(status_menu_cb), callback);

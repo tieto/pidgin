@@ -17,6 +17,7 @@
 
 */
 
+#include "internal.h"
 #include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"

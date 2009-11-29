@@ -233,7 +233,7 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 	escaped = g_markup_escape_text(message, -1);
 
 	if (is_error)
-		flags = PURPLE_MESSAGE_ERROR;
+		flags |= PURPLE_MESSAGE_ERROR;
 
 	if (print_thumbnail && thumbnail_data) {
 		gchar *message_with_img;

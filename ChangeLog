@@ -1,8 +1,14 @@
+
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.4 (??/??/20??):
 	libpurple:
 	* Actually emit the hold signal for media calls.
+	* Don't send Proxy-Authorization headers to HTTP proxy servers until we've
+	  received a "407 Proxy Authentication Required" response from the server.
+	  (thecrux)
+	* Added "MXit" protocol plugin, supported and maintained by the MXit folks
+	  themselves (MXit Lifestyle (Pty) Ltd.)
 
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
@@ -14,6 +20,12 @@ version 2.6.4 (??/??/20??):
 	AIM and ICQ:
 	* Better rate limit calculations and other improvements.  (Aman Gupta)
 	* More detailed error messages when messages fail to send.  (Aman Gupta)
+	* The simultaneous login account option is respected when using
+	  the clientLogin authentication method.
+	* Fix offline message retrieval (broken in 2.6.3)
+	* Fix handling of markup on some messages (broken in 2.6.2)
+	* Fix SSL when clientLogin is enabled.
+	* Fix sending and receiving Unicode characters in a Direct IM
 
 	MSN:
 	* Don't forget display names for buddies.
@@ -21,6 +33,12 @@ version 2.6.4 (??/??/20??):
 	* Fix more FQY 240 connection errors.
 	* Fix a crash that could occur when adding a buddy.
 	* Fix an occasional crash when sending message to an offline user.
+	* Fix a random crash that might occur when idle.
+	* Fix a crash when logging in with some long non-ASCII passwords.
+	  (Shaun Lindsay)
+	* Cache our own friendly name as the server no longer does that for
+	  us.  Users of older versions may need to re-set their friendly name
+	  as it has probably been reset.
 
 	XMPP:
 	* Users connecting to Google Talk now have an "Initiate Chat" context menu
@@ -28,7 +46,13 @@ version 2.6.4 (??/??/20??):
 	* Fix a crash when attempting to validate an invalid JID.
 	* Resolve an issue when connecting to iChat Server when no resource
 	  is specified.
+	* Try to automatically find a STUN server by using an SRV lookup on the
+	  account's domain, and use that for voice and video if found and the user
+	  didn't set one manually in prefs.
 	* Fix a crash when adding a buddy without an '@'.
+	* Don't show the option to send a file to a buddy if we know for certain
+	  they don't support any file transfer method supported by libpurple.
+	* Keep the avatar on the server if one is not set locally.
 
 	Yahoo:
 	* Fix sending /buzz.
@@ -42,17 +66,42 @@ version 2.6.4 (??/??/20??):
 	* The TinyURL plugin now creates shorter URLs for long non-conversation
 	  URLs, e.g. URLs to open Inbox in Yahoo/MSN protocols, or the Yahoo
 	  Captcha when joining chat rooms.
+	* Fix displaying umlauts etc. in non-utf8 locale (fix in libgnt).
 
 	Pidgin:
 	* The userlist in a multiuser chat can be styled via gtkrc by using the
 	  widget name "pidgin_conv_userlist". (Heiko Schmitt)
 	* Add a hold button to the media window.
-	* Tooltips for custom smileys should work now.
-	* Users with unread messages are again bolded in the Buddy List.
-	* Minor reworking of the Preferences window's Network tab to make it need
-	  less vertical space.
-	* The global "Use remote DNS with SOCKS4 proxies" preference no longer
-	  disappears when the preference value changes in certain ways.
+	* Fix a bug where the conversation backlog stops scrolling in a very busy
+	  chat room.
+	* In the Conversation "Send To" menu, offline buddies appear grayed
+	  out (but are still selectable).  Previously, only offline buddies on
+	  accounts that do not support offline messaging appeared grayed out.
+
+	Pidgin Preference and Preference Window Changes:
+	* Removed the "Use font from theme" and "Conversation Font" preferences
+	  for everyone except Windows users.  The font can be controlled from the
+	  Pidgin GTK+ Theme Control plugin.
+	* Tabs in the Preferences window are now on the left side.
+	* The Browser tab is now visible for GNOME users.
+	* Added a Proxy tab shown no matter what environment Pidgin runs in.
+	* The Browser and Proxy tabs show appropriate GNOME-specific messages and
+	  allow launching the correct applications to change the relevant GNOME
+	  preferences if found.  These were previously together on the Network
+	  tab.
+	* Moved the port range spin buttons on the Network tab to be beside the
+	  checkbox that enables/disables them.
+	* Reorganized preferences on the Status/Idle tab to have one less
+	  "section."
+	* Reorganized preferences on the Sounds tab to have one less "section."
+	* Renamed Smiley Themes tab to Themes.
+	* Moved Buddy List Theme and Status Icon Theme selectors from Interface
+	  tab to Themes tab.
+	* Moved Sound Theme selector from Sounds tab to Themes tab.
+	* Changed the Smiley Theme selector to be consistent with the other theme
+	  selectors.
+	* Rearranged tabs such that Interface is first and all remaining tabs are
+	  alphabetized in English.
 
 version 2.6.3 (10/16/2009):
 	General:

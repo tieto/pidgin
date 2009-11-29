@@ -3903,8 +3903,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
 
 	if (buddy != NULL &&
-	    !purple_presence_is_online(purple_buddy_get_presence(buddy)) &&
-	    !purple_account_supports_offline_message(account, buddy))
+	    !purple_presence_is_online(purple_buddy_get_presence(buddy)))
 	{
 		gtk_widget_set_sensitive(label, FALSE);
 
@@ -7931,8 +7930,10 @@ pidgin_conversations_init(void)
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/tab_side", GTK_POS_TOP);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/scrollback_lines", 4000);
 
+#ifdef _WIN32
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font", TRUE);
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/custom_font", "");
+#endif
 
 	/* Conversations -> Chat */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/chat");

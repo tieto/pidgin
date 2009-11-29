@@ -40,6 +40,8 @@ START_TEST(test_nodeprep_validate)
 	fail_unless(jabber_nodeprep_validate("foo"));
 	fail_unless(jabber_nodeprep_validate("%d"));
 	fail_unless(jabber_nodeprep_validate("y\\z"));
+	fail_unless(jabber_nodeprep_validate("a="));
+	fail_unless(jabber_nodeprep_validate("a,"));
 
 	longnode = g_strnfill(1023, 'a');
 	fail_unless(jabber_nodeprep_validate(longnode));
@@ -118,6 +120,8 @@ START_TEST(test_jabber_id_new)
 	assert_valid_jid("paul@[::1]"); /* IPv6 */
 	assert_valid_jid("paul@[2001:470:1f05:d58::2]");
 	assert_valid_jid("paul@[2001:470:1f05:d58::2]/foo");
+	assert_valid_jid("pa=ul@10.0.42.230");
+	assert_valid_jid("pa,ul@10.0.42.230");
 
 	assert_invalid_jid("@gmail.com");
 	assert_invalid_jid("@@gmail.com");

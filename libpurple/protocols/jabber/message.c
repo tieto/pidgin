@@ -178,7 +178,7 @@ static void handle_headline(JabberMessage *jm)
 	for(etc = jm->etc; etc; etc = etc->next) {
 		xmlnode *x = etc->data;
 		const char *xmlns = xmlnode_get_namespace(x);
-		if(xmlns && !strcmp(xmlns, "jabber:x:oob")) {
+		if(xmlns && !strcmp(xmlns, NS_OOB_X_DATA)) {
 			xmlnode *url, *desc;
 			char *urltxt, *desctxt;
 
@@ -460,7 +460,7 @@ static void
 jabber_message_add_remote_smileys(const xmlnode *message)
 {
 	xmlnode *data_tag;
-	for (data_tag = xmlnode_get_child_with_namespace(message, "data", XEP_0231_NAMESPACE) ;
+	for (data_tag = xmlnode_get_child_with_namespace(message, "data", NS_BOB) ;
 		 data_tag ;
 		 data_tag = xmlnode_get_next_twin(data_tag)) {
 		const gchar *cid = xmlnode_get_attrib(data_tag, "cid");
@@ -545,7 +545,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	to   = xmlnode_get_attrib(packet, "to");
 	type = xmlnode_get_attrib(packet, "type");
 
-	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(jabber_plugin,
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_connection_get_prpl(js->gc),
 			"jabber-receiving-message", js->gc, type, id, from, to, packet));
 	if (signal_return)
 		return;
@@ -611,22 +611,22 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				jm->etc = g_list_append(jm->etc, child);
 			/* The following tests expect xmlns != NULL */
 			continue;
-		} else if(!strcmp(child->name, "subject") && !strcmp(xmlns,"jabber:client")) {
+		} else if(!strcmp(child->name, "subject") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->subject) {
 				jm->subject = xmlnode_get_data(child);
 				if(!jm->subject)
 					jm->subject = g_strdup("");
 			}
-		} else if(!strcmp(child->name, "thread") && !strcmp(xmlns,"jabber:client")) {
+		} else if(!strcmp(child->name, "thread") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->thread_id)
 				jm->thread_id = xmlnode_get_data(child);
-		} else if(!strcmp(child->name, "body") && !strcmp(xmlns,"jabber:client")) {
+		} else if(!strcmp(child->name, "body") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->body) {
 				char *msg = xmlnode_to_str(child, NULL);
 				jm->body = purple_strdup_withhtml(msg);
 				g_free(msg);
 			}
-		} else if(!strcmp(child->name, "html") && !strcmp(xmlns,"http://jabber.org/protocol/xhtml-im")) {
+		} else if(!strcmp(child->name, "html") && !strcmp(xmlns, NS_XHTML_IM)) {
 			if(!jm->xhtml && xmlnode_get_child(child, "body")) {
 				char *c;
 
@@ -740,15 +740,15 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			jm->type = JABBER_MESSAGE_EVENT;
 			for(items = xmlnode_get_child(child,"items"); items; items = items->next)
 				jm->eventitems = g_list_append(jm->eventitems, items);
-		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns, XEP_0224_NAMESPACE)) {
+		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns, NS_ATTENTION)) {
 			jm->hasBuzz = TRUE;
-		} else if(!strcmp(child->name, "delay") && !strcmp(xmlns,"urn:xmpp:delay")) {
+		} else if(!strcmp(child->name, "delay") && !strcmp(xmlns, NS_DELAYED_DELIVERY)) {
 			const char *timestamp = xmlnode_get_attrib(child, "stamp");
 			jm->delayed = TRUE;
 			if(timestamp)
 				jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
 		} else if(!strcmp(child->name, "x")) {
-			if(!strcmp(xmlns, "jabber:x:delay")) {
+			if(!strcmp(xmlns, NS_DELAYED_DELIVERY_LEGACY)) {
 				const char *timestamp = xmlnode_get_attrib(child, "stamp");
 				jm->delayed = TRUE;
 				if(timestamp)
@@ -800,7 +800,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			}
 		} else if (g_str_equal(child->name, "query")) {
 			const char *node = xmlnode_get_attrib(child, "node");
-			if (purple_strequal(xmlns, "http://jabber.org/protocol/disco#items")
+			if (purple_strequal(xmlns, NS_DISCO_ITEMS)
 					&& purple_strequal(node, "http://jabber.org/protocol/commands")) {
 				jabber_adhoc_got_list(js, jm->from, child);
 			}
@@ -812,7 +812,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 	switch(jm->type) {
 		case JABBER_MESSAGE_OTHER:
-			purple_debug(PURPLE_DEBUG_INFO, "jabber",
+			purple_debug_info("jabber",
 					"Received message of unknown type: %s\n", type);
 			/* Fall-through is intentional */
 		case JABBER_MESSAGE_NORMAL:
@@ -946,7 +946,7 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 		case PURPLE_CONV_TYPE_IM:
 			jb = jabber_buddy_find(js, who, FALSE);
 			if (jb) {
-				return jabber_buddy_has_capability(jb, XEP_0231_NAMESPACE);
+				return jabber_buddy_has_capability(jb, NS_BOB);
 			} else {
 				return FALSE;
 			}
@@ -958,7 +958,7 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 				 10 people, to avoid getting too many BoB requests */
 				return jabber_chat_get_num_participants(chat) <= 10 &&
 					jabber_chat_all_participants_have_capability(chat,
-						XEP_0231_NAMESPACE);
+						NS_BOB);
 			} else {
 				return FALSE;
 			}
@@ -1103,7 +1103,7 @@ void jabber_message_send(JabberMessage *jm)
 		if ((child = xmlnode_from_str(jm->xhtml, -1))) {
 			xmlnode_insert_child(message, child);
 		} else {
-			purple_debug(PURPLE_DEBUG_ERROR, "jabber",
+			purple_debug_error("jabber",
 					"XHTML translation/validation failed, returning: %s\n",
 					jm->xhtml);
 		}
@@ -1204,9 +1204,9 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	 * the user's roster, allow sending XHTML-IM markup.
 	 */
 	if (!jbr || !jbr->caps.info ||
-			jabber_resource_has_capability(jbr, "http://jabber.org/protocol/xhtml-im")) {
+			jabber_resource_has_capability(jbr, NS_XHTML_IM)) {
 		if (!jabber_xhtml_plain_equal(xhtml, jm->body))
-			jm->xhtml = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", xhtml);
+			jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'>%s</body></html>", xhtml);
 	}
 
 	g_free(xhtml);
@@ -1249,7 +1249,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	}
 
 	if (chat->xhtml && !jabber_xhtml_plain_equal(xhtml, jm->body))
-		jm->xhtml = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", xhtml);
+		jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'>%s</body></html>", xhtml);
 
 	g_free(xhtml);
 
