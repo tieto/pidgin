@@ -2,6 +2,12 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.6.4 (11/29/2009):
+	John:  It's release time again.  Lots of bug fixes this time around, as
+	well as a new protocol plugin developed and maintained by the MXit folks
+	folks.  Elliott and I also did a ton of work on the Preferences window,
+	which will now hopefully fit on most people's small screens.  Enjoy!
+
 2.6.3 (10/16/2009):
 	Mark: Someone reported a fairly serious bug in our AIM/ICQ code
 	so we're releasing a special "severe bug fix only" build.  See the
