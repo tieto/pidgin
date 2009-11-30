@@ -200,7 +200,7 @@ static void jabber_time_parse(JabberStream *js, const char *from,
 
 		/* <utc>2006-12-19T17:58:35Z</utc> */
 		tm = gmtime(&now_t);
-		date = purple_utf8_strftime("%FT%TZ", tm);
+		date = purple_utf8_strftime("%Y-%m-%dT%H:%M:%SZ", tm);
 		utc = xmlnode_new_child(child, "utc");
 		xmlnode_insert_data(utc, date, -1);
 

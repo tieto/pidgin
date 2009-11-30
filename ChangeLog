@@ -4,6 +4,9 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.6.4 (??/??/20??):
 	libpurple:
 	* Actually emit the hold signal for media calls.
+	* Don't send Proxy-Authorization headers to HTTP proxy servers until we've
+	  received a "407 Proxy Authentication Required" response from the server.
+	  (thecrux)
 	* Added "MXit" protocol plugin, supported and maintained by the MXit folks
 	  themselves (MXit Lifestyle (Pty) Ltd.)
 
@@ -20,6 +23,7 @@ version 2.6.4 (??/??/20??):
 	* The simultaneous login account option is respected when using
 	  the clientLogin authentication method.
 	* Fix offline message retrieval (broken in 2.6.3)
+	* Fix handling of markup on some messages (broken in 2.6.2)
 	* Fix SSL when clientLogin is enabled.
 	* Fix sending and receiving Unicode characters in a Direct IM
 
@@ -32,6 +36,9 @@ version 2.6.4 (??/??/20??):
 	* Fix a random crash that might occur when idle.
 	* Fix a crash when logging in with some long non-ASCII passwords.
 	  (Shaun Lindsay)
+	* Cache our own friendly name as the server no longer does that for
+	  us.  Users of older versions may need to re-set their friendly name
+	  as it has probably been reset.
 
 	XMPP:
 	* Users connecting to Google Talk now have an "Initiate Chat" context menu
@@ -67,6 +74,9 @@ version 2.6.4 (??/??/20??):
 	* Add a hold button to the media window.
 	* Fix a bug where the conversation backlog stops scrolling in a very busy
 	  chat room.
+	* In the Conversation "Send To" menu, offline buddies appear grayed
+	  out (but are still selectable).  Previously, only offline buddies on
+	  accounts that do not support offline messaging appeared grayed out.
 
 	Pidgin Preference and Preference Window Changes:
 	* Removed the "Use font from theme" and "Conversation Font" preferences

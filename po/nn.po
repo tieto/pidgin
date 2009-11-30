@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-23 10:04-0800\n"
-"PO-Revision-Date: 2009-11-22 11:56+0100\n"
+"POT-Creation-Date: 2009-11-29 20:30-0500\n"
+"PO-Revision-Date: 2009-11-29 10:08+0100\n"
 "Last-Translator: Yngve Spjeld Landro <nynorsk(a)strilen.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1556,6 +1556,7 @@ msgstr ""
 msgid "Online"
 msgstr "Tilkopla"
 
+#. primative,						no,							id,			name
 msgid "Offline"
 msgstr "Fråkopla"
 
@@ -3168,10 +3169,12 @@ msgstr "Vel eit praterom for vennen: %s"
 msgid "Add to chat..."
 msgstr "Legg til praterom…"
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "Tilgjengeleg"
 
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3981,9 +3984,6 @@ msgstr "Logg på"
 msgid "Log Out"
 msgstr "Logg av"
 
-#. primative,						no,							id,			name
-#. 0
-#. 1
 #. 2
 msgid "Chatty"
 msgstr "Snakkesaleg"
@@ -3991,6 +3991,7 @@ msgstr "Snakkesaleg"
 msgid "Extended Away"
 msgstr "Utvida vekke"
 
+#. 3
 msgid "Do Not Disturb"
 msgstr "Ikkje forstyrr meg"
 
@@ -5746,28 +5747,25 @@ msgstr "Endra sinnsstemninga di"
 msgid "How do you feel right now?"
 msgstr "Korleis kjenner du deg nett no?"
 
-#, fuzzy
 msgid "The PIN you entered is invalid."
-msgstr "Den innskrivne SecurID-nøkkelen er ugyldig"
+msgstr "Du skreiv inn ein ugyldig PIN."
 
-#, fuzzy
 msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "Den innskrivne SecurID-nøkkelen er ugyldig"
+msgstr "Du skreiv inn ein PIN med ulovleg lengd [4-10]."
 
 msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
+msgstr "PIN er ugyldig - kan berre innehalda tala [0-9]."
 
-#, fuzzy
 msgid "The two PINs you entered do not match."
-msgstr "Dei nye passorda samsvarer ikkje."
+msgstr "Dei to PIN-ane du skreiv inn samsvarer ikkje."
 
-#, fuzzy
 msgid "The name you entered is invalid."
-msgstr "Den innskrivne SecurID-nøkkelen er ugyldig"
+msgstr "Namnet du skreiv er ugyldig."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
 msgstr ""
+"Fødselsdagen du skreiv inn er ugyldig. Det rette formatet er : 'ÅÅÅÅ-MM-DD'."
 
 #. show error to user
 msgid "Profile Update Error"
@@ -5852,13 +5850,11 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Koplar til…"
 
-#, fuzzy
 msgid "The nick name you entered is invalid."
-msgstr "Den innskrivne SecurID-nøkkelen er ugyldig"
+msgstr "Kallenamnet du skreiv er ugyldig."
 
-#, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
-msgstr "Den innskrivne SecurID-nøkkelen er ugyldig"
+msgstr "PIN-en du skreiv nyttar ei ulovleg lengd [7-10]."
 
 #. mxit login name
 msgid "MXit Login Name"
@@ -5929,9 +5925,8 @@ msgstr "MXit-kontovalidering"
 msgid "Retrieving User Information..."
 msgstr "Hentar brukaropplysningar…"
 
-#, fuzzy
 msgid "Loading menu..."
-msgstr "Loggar på…"
+msgstr "Lastar menyen…"
 
 msgid "Status Message"
 msgstr "Statusmelding"
@@ -5972,12 +5967,11 @@ msgstr "Tidsavbrot medan ein venta på svar frå MXit-tenaren."
 msgid "Successfully Logged In..."
 msgstr "Du er pålogga…"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s sent you an encrypted message, but it is not supported on this client."
 msgstr ""
-"%s har sendt deg ein lydpratinvitasjon. Denne funksjonen er enno ikkje "
-"støtta."
+"%s har sendt deg ei kryptert melding, men klienten støttar ikkje dette."
 
 # var: Jabber meldingsfeil
 msgid "Message Error"
@@ -5986,17 +5980,16 @@ msgstr "Meldingsfeil"
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Kan ikkje nytta den spesifiserte protokollen til å vidaresenda"
 
-#, fuzzy
 msgid "An internal MXit server error occurred."
-msgstr "Det oppstod ein ukjent sertifikatfeil."
+msgstr "Det oppstod ein intern MXit-tenarfeil."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Login error: %s (%i)"
-msgstr "SASL-feil: %s"
+msgstr "Påloggingsfeil: %s (%i)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Logout error: %s (%i)"
-msgstr "SASL-feil: %s"
+msgstr "Avloggingsfeil: %s (%i)"
 
 # Kontaktfeil? - Sannsynlegvis ikkje
 msgid "Contact Error"
@@ -11925,6 +11918,9 @@ msgstr "Makedonsk"
 msgid "Mongolian"
 msgstr "Mongolsk"
 
+msgid "Malay"
+msgstr "Malayisk"
+
 msgid "Bokmål Norwegian"
 msgstr "Norsk (bokmål)"
 
@@ -11993,6 +11989,9 @@ msgstr "Thai"
 
 msgid "Turkish"
 msgstr "Tyrkisk"
+
+msgid "Ukranian"
+msgstr "Ukrainsk"
 
 msgid "Urdu"
 msgstr "Urdu"

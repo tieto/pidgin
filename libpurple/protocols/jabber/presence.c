@@ -633,7 +633,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if(xmlns == NULL) {
 			/* The rest of the cases used to check xmlns individually. */
 			continue;
-		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, "urn:xmpp:delay")) {
+		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, NS_DELAYED_DELIVERY)) {
 			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 			delayed = TRUE;
 			stamp = xmlnode_get_attrib(y, "stamp");
@@ -642,7 +642,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if (g_str_equal(y->name, "nick") && g_str_equal(xmlns, "http://jabber.org/protocol/nick")) {
 			nickname = xmlnode_get_data(y);
 		} else if(!strcmp(y->name, "x")) {
-			if(!strcmp(xmlns, "jabber:x:delay")) {
+			if(!strcmp(xmlns, NS_DELAYED_DELIVERY_LEGACY)) {
 				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 				delayed = TRUE;
 				stamp = xmlnode_get_attrib(y, "stamp");
@@ -957,7 +957,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
 									 jid->node ? "@" : "", jid->domain);
 		if((b = purple_find_buddy(js->gc->account, buddy_name)) == NULL) {
-			if(!jid->node || strcmp(jid->node,js->user->node) || strcmp(jid->domain,js->user->domain)) {
+			if (jb != js->user_jb) {
 				purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%p)\n",
 									 buddy_name, purple_account_get_username(js->gc->account), js->gc->account);
 				jabber_id_free(jid);

@@ -1062,6 +1062,9 @@ msn_login(PurpleAccount *account)
 	if (strcmp(username, purple_account_get_username(account)))
 		purple_account_set_username(account, username);
 
+	username = purple_account_get_string(account, "display-name", NULL);
+	purple_connection_set_display_name(gc, username);
+
 	if (!msn_session_connect(session, host, port, http_method))
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,

@@ -702,12 +702,15 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		type = xmlnode_get_data(contactType);
 
 		/*setup the Display Name*/
-		if (type && !strcmp(type, "Me")){
-			char *friendly = NULL;
-			if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
-				friendly = xmlnode_get_data(displayName);
-			purple_connection_set_display_name(session->account->gc, friendly ? purple_url_decode(friendly) : NULL);
-			g_free(friendly);
+		if (type && !strcmp(type, "Me")) {
+			if (purple_connection_get_display_name(pc) == NULL) {
+				char *friendly = NULL;
+				if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
+					friendly = xmlnode_get_data(displayName);
+				purple_connection_set_display_name(pc,
+					friendly ? purple_url_decode(friendly) : NULL);
+				g_free(friendly);
+			}
 			continue; /* Not adding own account as buddy to buddylist */
 		}
 
