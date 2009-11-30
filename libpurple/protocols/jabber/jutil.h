@@ -51,6 +51,15 @@ gboolean jabber_nodeprep_validate(const char *);
 gboolean jabber_domain_validate(const char *);
 gboolean jabber_resourceprep_validate(const char *);
 
+/**
+ * Apply the SASLprep profile of stringprep to the string passed in.
+ *
+ * @returns A newly allocated string containing the normalized version
+ *          of the input, or NULL if an error occurred (the string could
+ *          not be normalized)
+ */
+char *jabber_saslprep(const char *);
+
 PurpleConversation *jabber_find_unnormalized_conv(const char *name, PurpleAccount *account);
 
 char *jabber_calculate_data_sha1sum(gconstpointer data, size_t len);
