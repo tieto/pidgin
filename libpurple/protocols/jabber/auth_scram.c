@@ -181,7 +181,10 @@ jabber_scram_calc_proofs(JabberScramData *data, GString *salt, guint iterations)
 	data->server_signature->len = hash_len;
 
 	salted_password = jabber_scram_hi(data->hash, pass, salt, iterations);
+
+	memset(pass->str, 0, pass->allocated_len);
 	g_string_free(pass, TRUE);
+
 	if (!salted_password)
 		return FALSE;
 
@@ -358,6 +361,25 @@ jabber_scram_feed_parser(JabberScramData *data, gchar *in, gchar **out)
 	return TRUE;
 }
 
+static gchar *escape_username(const gchar *in)
+{
+	GString *s = g_string_new(in);
+	gchar *c;
+	gsize i = 0;
+
+	c = s->str;
+	while (*c) {
+		if (*c == ',' || *c == '=') {
+			g_string_erase(s, i, 1);
+			g_string_insert(s, i, *c == ',' ? "=2C" : "=3D");
+		}
+
+		++c; ++i;
+	}
+
+	return g_string_free(s, FALSE);
+}
+
 static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
 {
 	xmlnode *reply;
@@ -367,10 +389,28 @@ static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
 	gboolean binding_supported = TRUE;
 #endif
 	gchar *dec_out, *enc_out;
+	gchar *prepped_node, *tmp;
+	gchar *prepped_pass;
+
+	prepped_node = jabber_saslprep(js->user->node);
+	if (!prepped_node) {
+		/* TODO: Error handling in the response value from scram_start */
+		return NULL;
+	}
+
+	tmp = escape_username(prepped_node);
+	g_free(prepped_node);
+	prepped_node = tmp;
+
+	prepped_pass = jabber_saslprep(purple_connection_get_password(js->gc));
+	if (!prepped_pass) {
+		g_free(prepped_node);
+		return NULL;
+	}
 
 	data = js->auth_mech_data = g_new0(JabberScramData, 1);
 	data->hash = mech_to_hash(js->auth_mech->name);
-	data->password = purple_connection_get_password(js->gc);
+	data->password = prepped_pass;
 
 #ifdef CHANNEL_BINDING
 	if (strstr(js->auth_mech_name, "-PLUS"))
@@ -381,8 +421,8 @@ static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
 
 	data->auth_message = g_string_new(NULL);
 	g_string_printf(data->auth_message, "n=%s,r=%s",
-			js->user->node /* TODO: SaslPrep */,
-			data->cnonce);
+			prepped_node, data->cnonce);
+	g_free(prepped_node);
 
 	data->step = 1;
 
@@ -500,6 +540,11 @@ void jabber_scram_data_destroy(JabberScramData *data)
 		g_string_free(data->client_proof, TRUE);
 	if (data->server_signature)
 		g_string_free(data->server_signature, TRUE);
+	if (data->password) {
+		memset(data->password, 0, strlen(data->password));
+		g_free(data->password);
+	}
+
 	g_free(data);
 }
 

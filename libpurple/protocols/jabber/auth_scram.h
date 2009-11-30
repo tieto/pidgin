@@ -40,8 +40,8 @@ typedef struct {
 
 	GString *client_proof;
 	GString *server_signature;
-	
-	const gchar *password;
+
+	gchar *password;
 	gboolean channel_binding;
 	int step;
 } JabberScramData;

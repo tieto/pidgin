@@ -36,7 +36,7 @@ START_TEST(test_proofs)
 /*	const char *server_signature; */
 
 	data->hash = "sha1";
-	data->password = "password";
+	data->password = g_strdup("password");
 	data->auth_message = g_string_new("n=username@jabber.org,r=8jLxB5515dhFxBil5A0xSXMH,"
 			"r=8jLxB5515dhFxBil5A0xSXMHabc,s=c2FsdA==,i=1,"
 			"c=biws,r=8jLxB5515dhFxBil5A0xSXMHabc");
@@ -48,8 +48,8 @@ START_TEST(test_proofs)
 
 	fail_unless(0 == memcmp(client_proof, data->client_proof->str, 20));
 	g_string_free(salt, TRUE);
-	g_string_free(data->auth_message, TRUE);
-	g_free(data);
+
+	jabber_scram_data_destroy(data);
 }
 END_TEST
 
@@ -61,7 +61,7 @@ START_TEST(test_mech)
 
 	data->step = 1;
 	data->hash = "sha1";
-	data->password = "password";
+	data->password = g_strdup("password");
 	data->cnonce = g_strdup("H7yDYKAWBCrM2Fa5SxGa4iez");
 	data->auth_message = g_string_new("n=paul,r=H7yDYKAWBCrM2Fa5SxGa4iez");
 
