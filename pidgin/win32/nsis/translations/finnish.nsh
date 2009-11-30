@@ -13,7 +13,6 @@
 ; Startup checks
 !define INSTALLER_IS_RUNNING			"Asennusohjelma on jo käynnissä."
 !define PIDGIN_IS_RUNNING			"Pidgin on tällä hetkellä käynnissä. Poistu Pidginistä ja yritä uudelleen."
-!define GTK_INSTALLER_NEEDED			"Ajonaikainen GTK+-ympäristö joko puuttuu tai tarvitsee päivitystä.$\rOle hyvä ja asenna v${GTK_MIN_VERSION} tai uudempi ajonaikainen GTK+-ympäristö."
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Seuraava >"
@@ -33,14 +32,11 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC   	"Tee Pidgin-pikakuvake käynnistysvalikkoon"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Vanha versio ajonaikaisesta GTK+-ympäristöstä löytynyt. Tahdotko päivittää?$\rHuomio: $(^Name) ei välttämättä toimi mikäli jätät päivittämättä."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Vieraile Pidginin WWW-sivustolla"
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Virhe asennettaessa ajonaikaista GTK+-ympäristöä."
-!define GTK_BAD_INSTALL_PATH			"Antamasi polku ei toimi tai sitä ei voi luoda."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"URI-käsittelijät"

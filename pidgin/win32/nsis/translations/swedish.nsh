@@ -11,7 +11,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Installationsprogrammet körs redan."
 !define PIDGIN_IS_RUNNING			"En instans av Pidgin körs redan. Avsluta Pidgin och försök igen."
-!define GTK_INSTALLER_NEEDED			"Körmiljön GTK+ är antingen inte installerat eller behöver uppgraderas.$\rVar  god installera v${GTK_MIN_VERSION} eller högre av GTK+-körmiljön."
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Nästa >"
@@ -31,7 +30,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC   	"Skapar ett tillägg i startmenyn för Pidgin"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"En äldre version av GTK+ runtime hittades, vill du uppgradera den?$\rOBS! $(^Name) kommer kanske inte att fungera om du inte uppgraderar."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Besök Windows-Pidgin hemsida"
@@ -40,8 +38,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Kunde inte avinstallera den nuvarande versionen av Pidgin. Den nya versionen kommer att installeras utan att ta bort den för närvarande installerade versionen."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Fel vid installation av GTK+ runtime."
-!define GTK_BAD_INSTALL_PATH			"Den sökväg du angivit går inte att komma åt eller skapa."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"URI Hanterare"

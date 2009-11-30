@@ -13,7 +13,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"安裝程式正在執行中。"
 !define PIDGIN_IS_RUNNING				"Pidgin 正在執行中，請先結束這個程式後再行安裝。"
-!define GTK_INSTALLER_NEEDED			"找不到符合的 GTK+ 執行環境或是需要被更新。$\r請安裝 v${GTK_MIN_VERSION} 或以上版本的 GTK+ 執行環境。"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"下一步 >"
@@ -33,8 +32,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"在開始功能表建立捷徑"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"發現一個舊版的 GTK+ 執行環境。您要將它升級嗎？$\r請注意：如果您不升級， $(^Name) 可能無法正確的被執行。"
-!define GTK_WINDOWS_INCOMPATIBLE		"自版本 2.8.0 開始，GTK＋ 與 Windows 95/98/Me 已不再相容，GTK+ ${GTK_INSTALL_VERSION} 因此將不會被安裝。$\r如果系統內未有已經安裝的 GTK+ ${GTK_MIN_VERSION} 或更新的版本，安裝程式將隨即結束。"
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"拜訪 Windows Pidgin 網頁"
@@ -43,8 +40,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"無法移除目前已安裝的 Pidgin，新版本將在未經移除舊版本的情況下進行安裝。"
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"安裝 GTK+ 執行環境時發生錯誤。"
-!define GTK_BAD_INSTALL_PATH			"您所輸入的安裝目錄無法存取或建立。"
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"URI 處理程式"

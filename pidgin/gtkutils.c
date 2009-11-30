@@ -1247,7 +1247,6 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 							gboolean *push_in,
 							gpointer data)
 {
-#if GTK_CHECK_VERSION(2,2,0)
 	GtkWidget *widget;
 	GtkRequisition requisition;
 	GdkScreen *screen;
@@ -1388,7 +1387,6 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 	{
 		*y = monitor.y;
 	}
-#endif
 }
 
 
@@ -1630,7 +1628,6 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			char key[64];
 			const char *itemname = NULL;
 
-#if GTK_CHECK_VERSION(2,6,0)
 			const char * const *langs;
 			int i;
 			langs = g_get_language_names();
@@ -1639,15 +1636,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 				itemname = purple_desktop_item_get_string(item, key);
 				break;
 			}
-#else
-			const char *lang = g_getenv("LANG");
-			char *dot;
-			dot = strchr(lang, '.');
-			if (dot)
-				*dot = '\0';
-			g_snprintf(key, sizeof(key), "Name[%s]", lang);
-			itemname = purple_desktop_item_get_string(item, key);
-#endif
+
 			if (!itemname)
 				itemname = purple_desktop_item_get_string(item, "Name");
 
@@ -1664,10 +1653,13 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 						       purple_desktop_item_get_string(item, "URL"), itemname);
 				break;
 			default:
-				/* I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-				 * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-				 * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-				 * Probably not.  I'll just give an error and return. */
+				/* I don't know if we really want to do anything here.  Most of
+				 * the desktop item types are crap like "MIME Type" (I have no
+				 * clue how that would be a desktop item) and "Comment"...
+				 * nothing we can really send.  The only logical one is
+				 * "Application," but do we really want to send a binary and
+				 * nothing else? Probably not.  I'll just give an error and
+				 * return. */
 				/* The original patch sent the icon used by the launcher.  That's probably wrong */
 				purple_notify_error(NULL, NULL, _("Cannot send launcher"),
 				                    _("You dragged a desktop launcher. Most "
@@ -1862,10 +1854,6 @@ pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
 	return menuitem;
 }
 
-#if GTK_CHECK_VERSION(2,3,0)
-# define NEW_STYLE_COMPLETION
-#endif
-
 typedef struct
 {
 	GtkWidget *entry;
@@ -1874,97 +1862,9 @@ typedef struct
 	PidginFilterBuddyCompletionEntryFunc filter_func;
 	gpointer filter_func_user_data;
 
-#ifdef NEW_STYLE_COMPLETION
 	GtkListStore *store;
-#else
-	GCompletion *completion;
-	gboolean completion_started;
-	GList *log_items;
-#endif /* NEW_STYLE_COMPLETION */
 } PidginCompletionData;
 
-#ifndef NEW_STYLE_COMPLETION
-static gboolean
-completion_entry_event(GtkEditable *entry, GdkEventKey *event,
-					   PidginCompletionData *data)
-{
-	int pos, end_pos;
-
-	if (event->type == GDK_KEY_PRESS && event->keyval == GDK_Tab)
-	{
-		gtk_editable_get_selection_bounds(entry, &pos, &end_pos);
-
-		if (data->completion_started &&
-			pos != end_pos && pos > 1 &&
-			end_pos == strlen(gtk_entry_get_text(GTK_ENTRY(entry))))
-		{
-			gtk_editable_select_region(entry, 0, 0);
-			gtk_editable_set_position(entry, -1);
-
-			return TRUE;
-		}
-	}
-	else if (event->type == GDK_KEY_PRESS && event->length > 0)
-	{
-		char *prefix, *nprefix;
-
-		gtk_editable_get_selection_bounds(entry, &pos, &end_pos);
-
-		if (data->completion_started &&
-			pos != end_pos && pos > 1 &&
-			end_pos == strlen(gtk_entry_get_text(GTK_ENTRY(entry))))
-		{
-			char *temp;
-
-			temp = gtk_editable_get_chars(entry, 0, pos);
-			prefix = g_strconcat(temp, event->string, NULL);
-			g_free(temp);
-		}
-		else if (pos == end_pos && pos > 1 &&
-				 end_pos == strlen(gtk_entry_get_text(GTK_ENTRY(entry))))
-		{
-			prefix = g_strconcat(gtk_entry_get_text(GTK_ENTRY(entry)),
-								 event->string, NULL);
-		}
-		else
-			return FALSE;
-
-		pos = strlen(prefix);
-		nprefix = NULL;
-
-		g_completion_complete(data->completion, prefix, &nprefix);
-
-		if (nprefix != NULL)
-		{
-			gtk_entry_set_text(GTK_ENTRY(entry), nprefix);
-			gtk_editable_set_position(entry, pos);
-			gtk_editable_select_region(entry, pos, -1);
-
-			data->completion_started = TRUE;
-
-			g_free(nprefix);
-			g_free(prefix);
-
-			return TRUE;
-		}
-
-		g_free(prefix);
-	}
-
-	return FALSE;
-}
-
-static void
-destroy_completion_data(GtkWidget *w, PidginCompletionData *data)
-{
-	g_list_foreach(data->completion->items, (GFunc)g_free, NULL);
-	g_completion_free(data->completion);
-
-	g_free(data);
-}
-#endif /* !NEW_STYLE_COMPLETION */
-
-#ifdef NEW_STYLE_COMPLETION
 static gboolean buddyname_completion_match_func(GtkEntryCompletion *completion,
 		const gchar *key, GtkTreeIter *iter, gpointer user_data)
 {
@@ -2098,7 +1998,6 @@ add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, c
 
 	g_free(normalized_buddyname);
 }
-#endif /* NEW_STYLE_COMPLETION */
 
 static void get_log_set_name(PurpleLogSet *set, gpointer value, PidginCompletionData *data)
 {
@@ -2113,14 +2012,8 @@ static void get_log_set_name(PurpleLogSet *set, gpointer value, PidginCompletion
 		entry.entry.logged_buddy = set;
 
 		if (filter_func(&entry, user_data)) {
-#ifdef NEW_STYLE_COMPLETION
 			add_buddyname_autocomplete_entry(data->store,
 												NULL, NULL, set->account, set->name);
-#else
-			/* Steal the name for the GCompletion. */
-			data->log_items = g_list_append(data->log_items, set->name);
-			set->name = set->normalized_name = NULL;
-#endif /* NEW_STYLE_COMPLETION */
 		}
 	}
 }
@@ -2133,14 +2026,7 @@ add_completion_list(PidginCompletionData *data)
 	gpointer user_data = data->filter_func_user_data;
 	GHashTable *sets;
 
-#ifdef NEW_STYLE_COMPLETION
 	gtk_list_store_clear(data->store);
-#else
-	GList *item = g_list_append(NULL, NULL);
-
-	g_list_foreach(data->completion->items, (GFunc)g_free, NULL);
-	g_completion_clear_items(data->completion);
-#endif /* NEW_STYLE_COMPLETION */
 
 	for (gnode = purple_get_blist()->root; gnode != NULL; gnode = gnode->next)
 	{
@@ -2159,35 +2045,21 @@ add_completion_list(PidginCompletionData *data)
 				entry.entry.buddy = (PurpleBuddy *) bnode;
 
 				if (filter_func(&entry, user_data)) {
-#ifdef NEW_STYLE_COMPLETION
 					add_buddyname_autocomplete_entry(data->store,
 														((PurpleContact *)cnode)->alias,
 														purple_buddy_get_contact_alias(entry.entry.buddy),
 														entry.entry.buddy->account,
 														entry.entry.buddy->name
 													 );
-#else
-					item->data = g_strdup(entry.entry.buddy->name);
-					g_completion_add_items(data->completion, item);
-#endif /* NEW_STYLE_COMPLETION */
 				}
 			}
 		}
 	}
 
-#ifndef NEW_STYLE_COMPLETION
-	g_list_free(item);
-	data->log_items = NULL;
-#endif /* NEW_STYLE_COMPLETION */
-
 	sets = purple_log_get_log_sets();
 	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, data);
 	g_hash_table_destroy(sets);
 
-#ifndef NEW_STYLE_COMPLETION
-	g_completion_add_items(data->completion, data->log_items);
-	g_list_free(data->log_items);
-#endif /* NEW_STYLE_COMPLETION */
 }
 
 static void
@@ -2208,7 +2080,6 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 {
 	PidginCompletionData *data;
 
-#ifdef NEW_STYLE_COMPLETION
 	/*
 	 * Store the displayed completion value, the buddy name, the UTF-8
 	 * normalized & casefolded buddy name, the UTF-8 normalized &
@@ -2251,33 +2122,6 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 	g_object_unref(store);
 
 	gtk_entry_completion_set_text_column(completion, 0);
-
-#else /* !NEW_STYLE_COMPLETION */
-
-	data = g_new0(PidginCompletionData, 1);
-
-	data->entry = entry;
-	data->accountopt = accountopt;
-	if (filter_func == NULL) {
-		data->filter_func = pidgin_screenname_autocomplete_default_filter;
-		data->filter_func_user_data = NULL;
-	} else {
-		data->filter_func = filter_func;
-		data->filter_func_user_data = user_data;
-	}
-	data->completion = g_completion_new(NULL);
-	data->completion_started = FALSE;
-
-	add_completion_list(data);
-
-	g_completion_set_compare(data->completion, g_ascii_strncasecmp);
-
-	g_signal_connect(G_OBJECT(entry), "event",
-					 G_CALLBACK(completion_entry_event), data);
-	g_signal_connect(G_OBJECT(entry), "destroy",
-					 G_CALLBACK(destroy_completion_data), data);
-
-#endif /* !NEW_STYLE_COMPLETION */
 
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", entry,
 						PURPLE_CALLBACK(repopulate_autocomplete), data);
@@ -2322,11 +2166,7 @@ void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 	gdk_window_set_cursor(widget->window, cursor);
 	gdk_cursor_unref(cursor);
 
-#if GTK_CHECK_VERSION(2,4,0)
 	gdk_display_flush(gdk_drawable_get_display(GDK_DRAWABLE(widget->window)));
-#else
-	gdk_flush();
-#endif
 }
 
 void pidgin_clear_cursor(GtkWidget *widget)
@@ -2347,23 +2187,6 @@ struct _icon_chooser {
 	gpointer data;
 };
 
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-static void
-icon_filesel_delete_cb(GtkWidget *w, struct _icon_chooser *dialog)
-{
-	if (dialog->icon_filesel != NULL)
-		gtk_widget_destroy(dialog->icon_filesel);
-
-	if (dialog->callback)
-		dialog->callback(NULL, dialog->data);
-
-	g_free(dialog);
-}
-#endif /* FILECHOOSER */
-
-
-
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
 icon_filesel_choose_cb(GtkWidget *widget, gint response, struct _icon_chooser *dialog)
 {
@@ -2387,33 +2210,7 @@ icon_filesel_choose_cb(GtkWidget *widget, gint response, struct _icon_chooser *d
 		g_free(current_folder);
 	}
 
-#else /* FILECHOOSER */
-static void
-icon_filesel_choose_cb(GtkWidget *w, struct _icon_chooser *dialog)
-{
-	char *filename, *current_folder;
 
-	filename = g_strdup(gtk_file_selection_get_filename(
-				GTK_FILE_SELECTION(dialog->icon_filesel)));
-
-	/* If they typed in a directory, change there */
-	if (pidgin_check_if_dir(filename,
-				GTK_FILE_SELECTION(dialog->icon_filesel)))
-	{
-		g_free(filename);
-		return;
-	}
-
-	current_folder = g_path_get_dirname(filename);
-	if (current_folder != NULL) {
-		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/filelocations/last_icon_folder", current_folder);
-		g_free(current_folder);
-	}
-
-#endif /* FILECHOOSER */
-#if 0 /* mismatched curly braces */
-	}
-#endif
 	if (dialog->callback)
 		dialog->callback(filename, dialog->data);
 	gtk_widget_destroy(dialog->icon_filesel);
@@ -2423,11 +2220,7 @@ icon_filesel_choose_cb(GtkWidget *w, struct _icon_chooser *dialog)
 
 
 static void
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 icon_preview_change_cb(GtkFileChooser *widget, struct _icon_chooser *dialog)
-#else /* FILECHOOSER */
-icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
-#endif /* FILECHOOSER */
 {
 	GdkPixbuf *pixbuf, *scale;
 	int height, width;
@@ -2435,13 +2228,8 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 	struct stat st;
 	char *filename;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	filename = gtk_file_chooser_get_preview_filename(
 					GTK_FILE_CHOOSER(dialog->icon_filesel));
-#else /* FILECHOOSER */
-	filename = g_strdup(gtk_file_selection_get_filename(
-		GTK_FILE_SELECTION(dialog->icon_filesel)));
-#endif /* FILECHOOSER */
 
 	if (!filename || g_stat(filename, &st) || !(pixbuf = gdk_pixbuf_new_from_file(filename, NULL)))
 	{
@@ -2477,20 +2265,13 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char *, gpointer), gpointer data) {
 	struct _icon_chooser *dialog = g_new0(struct _icon_chooser, 1);
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	GtkWidget *vbox;
-#else
-	GtkWidget *hbox;
-	GtkWidget *tv;
-	GtkTreeSelection *sel;
-#endif /* FILECHOOSER */
 	const char *current_folder;
 
 	dialog->callback = callback;
 	dialog->data = data;
 
 	current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_icon_folder");
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 
 	dialog->icon_filesel = gtk_file_chooser_dialog_new(_("Buddy Icon"),
 							   parent,
@@ -2521,39 +2302,6 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 	g_signal_connect(G_OBJECT(dialog->icon_filesel), "response",
 					 G_CALLBACK(icon_filesel_choose_cb), dialog);
 	icon_preview_change_cb(NULL, dialog);
-#else /* FILECHOOSER */
-	dialog->icon_filesel = gtk_file_selection_new(_("Buddy Icon"));
-	dialog->icon_preview = gtk_image_new();
-	dialog->icon_text = gtk_label_new(NULL);
-	if ((current_folder != NULL) && (*current_folder != '\0'))
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog->icon_filesel),
-										current_folder);
-
-	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview),-1, 50);
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(
-		GTK_BOX(GTK_FILE_SELECTION(dialog->icon_filesel)->main_vbox),
-		hbox, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), dialog->icon_preview,
-			 FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), dialog->icon_text, FALSE, FALSE, 0);
-
-	tv = GTK_FILE_SELECTION(dialog->icon_filesel)->file_list;
-	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
-
-	g_signal_connect(G_OBJECT(sel), "changed",
-					 G_CALLBACK(icon_preview_change_cb), dialog);
-	g_signal_connect(
-		G_OBJECT(GTK_FILE_SELECTION(dialog->icon_filesel)->ok_button),
-		"clicked",
-		G_CALLBACK(icon_filesel_choose_cb), dialog);
-	g_signal_connect(
-		G_OBJECT(GTK_FILE_SELECTION(dialog->icon_filesel)->cancel_button),
-		"clicked",
-		G_CALLBACK(icon_filesel_delete_cb), dialog);
-	g_signal_connect(G_OBJECT(dialog->icon_filesel), "destroy",
-					 G_CALLBACK(icon_filesel_delete_cb), dialog);
-#endif /* FILECHOOSER */
 
 #ifdef _WIN32
 	g_signal_connect(G_OBJECT(dialog->icon_filesel), "show",
@@ -2564,7 +2312,6 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 }
 
 
-#if GTK_CHECK_VERSION(2,2,0)
 static gboolean
 str_array_match(char **a, char **b)
 {
@@ -2578,22 +2325,16 @@ str_array_match(char **a, char **b)
 				return TRUE;
 	return FALSE;
 }
-#endif
 
 gpointer
 pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 {
 	PurplePluginProtocolInfo *prpl_info;
-#if GTK_CHECK_VERSION(2,2,0)
 	char **prpl_formats;
 	int width, height;
 	char **pixbuf_formats = NULL;
 	GdkPixbufFormat *format;
 	GdkPixbuf *pixbuf;
-#if !GTK_CHECK_VERSION(2,4,0)
-	GdkPixbufLoader *loader;
-#endif
-#endif
 	gchar *contents;
 	gsize length;
 
@@ -2602,22 +2343,8 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 	g_return_val_if_fail(prpl_info->icon_spec.format != NULL, NULL);
 
 
-#if GTK_CHECK_VERSION(2,2,0)
-#if GTK_CHECK_VERSION(2,4,0)
 	format = gdk_pixbuf_get_file_info(path, &width, &height);
-#else
-	loader = gdk_pixbuf_loader_new();
-	if (g_file_get_contents(path, &contents, &length, NULL)) {
-		gdk_pixbuf_loader_write(loader, contents, length, NULL);
-		g_free(contents);
-	}
-	gdk_pixbuf_loader_close(loader, NULL);
-	pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
-	width = gdk_pixbuf_get_width(pixbuf);
-	height = gdk_pixbuf_get_height(pixbuf);
-	format = gdk_pixbuf_loader_get_format(loader);
-	g_object_unref(G_OBJECT(loader));
-#endif
+
 	if (format == NULL)
 		return NULL;
 
@@ -2629,25 +2356,18 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 		   prpl_info->icon_spec.max_width >= width &&
 		   prpl_info->icon_spec.min_height <= height &&
 		   prpl_info->icon_spec.max_height >= height)))                   /* The icon is the correct size */
-#endif
 	{
-#if GTK_CHECK_VERSION(2,2,0)
 		g_strfreev(prpl_formats);
 		g_strfreev(pixbuf_formats);
-#endif
-		/* We don't need to scale the image. */
 
+		/* We don't need to scale the image. */
 		contents = NULL;
 		if (!g_file_get_contents(path, &contents, &length, NULL))
 		{
 			g_free(contents);
-#if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
-		g_object_unref(G_OBJECT(pixbuf));
-#endif
 			return NULL;
 		}
 	}
-#if GTK_CHECK_VERSION(2,2,0)
 	else
 	{
 		int i;
@@ -2768,155 +2488,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 	if (len)
 		*len = length;
 	return contents;
-#else
-	/*
-	 * The chosen icon wasn't the right size, and we're using
-	 * GTK+ 2.0 so we can't scale it.
-	 */
-	return NULL;
-#endif
 }
-
-#if !GTK_CHECK_VERSION(2,6,0)
-static void
-_gdk_file_scale_size_prepared_cb (GdkPixbufLoader *loader,
-		  int              width,
-		  int              height,
-		  gpointer         data)
-{
-	struct {
-		gint width;
-		gint height;
-		gboolean preserve_aspect_ratio;
-	} *info = data;
-
-	g_return_if_fail (width > 0 && height > 0);
-
-	if (info->preserve_aspect_ratio &&
-		(info->width > 0 || info->height > 0)) {
-		if (info->width < 0)
-		{
-			width = width * (double)info->height/(double)height;
-			height = info->height;
-		}
-		else if (info->height < 0)
-		{
-			height = height * (double)info->width/(double)width;
-			width = info->width;
-		}
-		else if ((double)height * (double)info->width >
-				 (double)width * (double)info->height) {
-			width = 0.5 + (double)width * (double)info->height / (double)height;
-			height = info->height;
-		} else {
-			height = 0.5 + (double)height * (double)info->width / (double)width;
-			width = info->width;
-		}
-	} else {
-			if (info->width > 0)
-				width = info->width;
-			if (info->height > 0)
-				height = info->height;
-	}
-
-#if GTK_CHECK_VERSION(2,2,0) /* 2.0 users are going to have very strangely sized things */
-	gdk_pixbuf_loader_set_size (loader, width, height);
-#else
-#warning  nosnilmot could not be bothered to fix this properly for you
-#warning  ... good luck ... your images may end up strange sizes
-#endif
-}
-
-GdkPixbuf *
-gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
-				  				  gboolean preserve_aspect_ratio,
-								  GError **error)
-{
-	GdkPixbufLoader *loader;
-	GdkPixbuf       *pixbuf;
-	guchar buffer [4096];
-	int length;
-	FILE *f;
-	struct {
-		gint width;
-		gint height;
-		gboolean preserve_aspect_ratio;
-	} info;
-	GdkPixbufAnimation *animation;
-	GdkPixbufAnimationIter *iter;
-	gboolean has_frame;
-
-	g_return_val_if_fail (filename != NULL, NULL);
-	g_return_val_if_fail (width > 0 || width == -1, NULL);
-	g_return_val_if_fail (height > 0 || height == -1, NULL);
-
-	f = g_fopen (filename, "rb");
-	if (!f) {
-		gint save_errno = errno;
-		gchar *display_name = g_filename_to_utf8 (filename, -1, NULL, NULL, NULL);
-		g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (save_errno),
-					 _("Failed to open file '%s': %s"),
-					 display_name ? display_name : "(unknown)",
-					 g_strerror (save_errno));
-		g_free (display_name);
-		return NULL;
-	}
-
-	loader = gdk_pixbuf_loader_new ();
-
-	info.width = width;
-	info.height = height;
-	info.preserve_aspect_ratio = preserve_aspect_ratio;
-
-	g_signal_connect (loader, "size-prepared", G_CALLBACK (_gdk_file_scale_size_prepared_cb), &info);
-
-	has_frame = FALSE;
-	while (!has_frame && !feof (f) && !ferror (f)) {
-		length = fread (buffer, 1, sizeof (buffer), f);
-		if (length > 0)
-			if (!gdk_pixbuf_loader_write (loader, buffer, length, error)) {
-				gdk_pixbuf_loader_close (loader, NULL);
-				fclose (f);
-				g_object_unref (loader);
-				return NULL;
-			}
-
-		animation = gdk_pixbuf_loader_get_animation (loader);
-		if (animation) {
-			iter = gdk_pixbuf_animation_get_iter (animation, 0);
-			if (!gdk_pixbuf_animation_iter_on_currently_loading_frame (iter)) {
-				has_frame = TRUE;
-			}
-			g_object_unref (iter);
-		}
-	}
-
-	fclose (f);
-
-	if (!gdk_pixbuf_loader_close (loader, error) && !has_frame) {
-		g_object_unref (loader);
-		return NULL;
-	}
-
-	pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
-
-	if (!pixbuf) {
-		gchar *display_name = g_filename_to_utf8 (filename, -1, NULL, NULL, NULL);
-		g_object_unref (loader);
-		g_set_error (error, GDK_PIXBUF_ERROR, GDK_PIXBUF_ERROR_FAILED,
-					 _("Failed to load image '%s': reason not known, probably a corrupt image file"),
-					 display_name ? display_name : "(unknown)");
-		g_free (display_name);
-		return NULL;
-	}
-
-	g_object_ref (pixbuf);
-
-	g_object_unref (loader);
-
-	return pixbuf;
-}
-#endif /* ! Gtk 2.6.0 */
 
 void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename)
 {
@@ -2950,34 +2522,10 @@ char *pidgin_make_pretty_arrows(const char *str)
 
 void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 {
-#if GTK_CHECK_VERSION(2,8,0)
-	gtk_window_set_urgency_hint(window, urgent);
-#elif defined _WIN32
+#if defined _WIN32
 	winpidgin_window_flash(window, urgent);
-#elif defined GDK_WINDOWING_X11
-	GdkWindow *gdkwin;
-	XWMHints *hints;
-
-	g_return_if_fail(window != NULL);
-
-	gdkwin = GTK_WIDGET(window)->window;
-
-	g_return_if_fail(gdkwin != NULL);
-
-	hints = XGetWMHints(GDK_WINDOW_XDISPLAY(gdkwin),
-	                    GDK_WINDOW_XWINDOW(gdkwin));
-	if(!hints)
-		hints = XAllocWMHints();
-
-	if (urgent)
-		hints->flags |= XUrgencyHint;
-	else
-		hints->flags &= ~XUrgencyHint;
-	XSetWMHints(GDK_WINDOW_XDISPLAY(gdkwin),
-	            GDK_WINDOW_XWINDOW(gdkwin), hints);
-	XFree(hints);
 #else
-	/* do something else? */
+	gtk_window_set_urgency_hint(window, urgent);
 #endif
 }
 
@@ -3286,31 +2834,6 @@ const char *pidgin_get_dim_grey_string(GtkWidget *widget) {
 	return dim_grey_string;
 }
 
-#if !GTK_CHECK_VERSION(2,2,0)
-GtkTreePath *
-gtk_tree_path_new_from_indices (gint first_index, ...)
-{
-	int arg;
-	va_list args;
-	GtkTreePath *path;
-
-	path = gtk_tree_path_new ();
-
-	va_start (args, first_index);
-	arg = first_index;
-
-	while (arg != -1)
-	{
-		gtk_tree_path_append_index (path, arg);
-		arg = va_arg (args, gint);
-	}
-
-	va_end (args);
-
-	return path;
-}
-#endif
-
 static void
 combo_box_changed_cb(GtkComboBox *combo_box, GtkEntry *entry)
 {
@@ -3456,7 +2979,6 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 	return FALSE;
 #endif
 #else
-#if GTK_CHECK_VERSION(2,4,0)
 	/* This finds the currently active window and makes that the parent window. */
 	GList *windows = NULL;
 	GtkWidget *parent = NULL;
@@ -3499,7 +3021,6 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 		gtk_window_set_transient_for(GTK_WINDOW(widget), GTK_WINDOW(parent));
 		return TRUE;
 	}
-#endif
 	return FALSE;
 #endif
 }
@@ -3583,23 +3104,13 @@ file_open_uri(GtkIMHtml *imhtml, const char *uri)
 #ifdef _WIN32
 	/* If using Win32... */
 	int code;
-	if (G_WIN32_HAVE_WIDECHAR_API()) {
-		wchar_t *wc_filename = g_utf8_to_utf16(
-				uri, -1, NULL, NULL, NULL);
+	wchar_t *wc_filename = g_utf8_to_utf16(
+			uri, -1, NULL, NULL, NULL);
 
-		code = (int)ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
-				SW_SHOW);
+	code = (int)ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
+			SW_SHOW);
 
-		g_free(wc_filename);
-	} else {
-		char *l_filename = g_locale_from_utf8(
-				uri, -1, NULL, NULL, NULL);
-
-		code = (int)ShellExecuteA(NULL, NULL, l_filename, NULL, NULL,
-				SW_SHOW);
-
-		g_free(l_filename);
-	}
+	g_free(wc_filename);
 
 	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
 	{
@@ -3696,13 +3207,10 @@ file_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
 	/* Open Containing Directory */
-#if GTK_CHECK_VERSION(2,6,0)
 	img = gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("Open _Containing Directory"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-#else
-	item = gtk_menu_item_new_with_mnemonic(_("Open _Containing Directory"));
-#endif
+
 	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(open_containing_cb), (gpointer)url);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
@@ -3768,13 +3276,10 @@ audio_context_menu(GtkIMHtml *imhtml, GtkIMHtmlLink *link, GtkWidget *menu)
 	url = gtk_imhtml_link_get_url(link);
 
 	/* Play Sound */
-#if GTK_CHECK_VERSION(2,6,0)
 	img = gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU);
 	item = gtk_image_menu_item_new_with_mnemonic(_("_Play Sound"));
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-#else
-	item = gtk_menu_item_new_with_mnemonic(_("_Play Sound"));
-#endif
+
 	g_signal_connect_swapped(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_link_activate), link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
@@ -3896,17 +3401,18 @@ winpidgin_register_win32_url_handlers(void)
 
 	do {
 		DWORD nameSize = 256;
-		char start[256];
-		/* I don't think we need to worry about non-ASCII protocol names */
-		ret = RegEnumKeyExA(HKEY_CLASSES_ROOT, idx++, start, &nameSize,
+		wchar_t start[256];
+		ret = RegEnumKeyExW(HKEY_CLASSES_ROOT, idx++, start, &nameSize,
 							NULL, NULL, NULL, NULL);
 		if (ret == ERROR_SUCCESS) {
 			HKEY reg_key = NULL;
-			ret = RegOpenKeyExA(HKEY_CLASSES_ROOT, start, 0, KEY_READ, &reg_key);
+			ret = RegOpenKeyExW(HKEY_CLASSES_ROOT, start, 0, KEY_READ, &reg_key);
 			if (ret == ERROR_SUCCESS) {
-				ret = RegQueryValueExA(reg_key, "URL Protocol", NULL, NULL, NULL, NULL);
+				ret = RegQueryValueExW(reg_key, L"URL Protocol", NULL, NULL, NULL, NULL);
 				if (ret == ERROR_SUCCESS) {
-					gchar *protocol = g_strdup_printf("%s:", start);
+					gchar *utf8 = g_utf16_to_utf8(start, -1, NULL, NULL, NULL);
+					gchar *protocol = g_strdup_printf("%s:", utf8);
+					g_free(utf8);
 					registered_url_handlers = g_slist_prepend(registered_url_handlers, protocol);
 					/* We still pass everything to the "http" "open" handler for security reasons */
 					gtk_imhtml_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
