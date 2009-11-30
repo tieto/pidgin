@@ -15,6 +15,11 @@ Our development blog is available at: http://planet.pidgin.im
 	a nice new Preferences dialog.  You can thank John for that mostly, with
 	a couple of tweaks by me.
 
+	Sadrul: A lot of little fixes for a lot of things! Among them, a fix
+	for a long standing issue with displaying unicode in non-utf8 locale in
+	finch. We also have a new prpl for MXit. This release is very very cool
+	altogether. Enjoy!
+
 2.6.3 (10/16/2009):
 	Mark: Someone reported a fairly serious bug in our AIM/ICQ code
 	so we're releasing a special "severe bug fix only" build.  See the
