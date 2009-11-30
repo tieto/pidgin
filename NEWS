@@ -8,6 +8,13 @@ Our development blog is available at: http://planet.pidgin.im
 	folks.  Elliott and I also did a ton of work on the Preferences window,
 	which will now hopefully fit on most people's small screens.  Enjoy!
 
+	Elliott: This release has been in the works for so long, I don't really
+	remember doing any work on it.  But I do know the MSN servers gave us a
+	little bit of trouble this time around, forgetting people's friendly
+	names.  Nothing too problematic, just a touch annoying.  Also, we've got
+	a nice new Preferences dialog.  You can thank John for that mostly, with
+	a couple of tweaks by me.
+
 2.6.3 (10/16/2009):
 	Mark: Someone reported a fairly serious bug in our AIM/ICQ code
 	so we're releasing a special "severe bug fix only" build.  See the
