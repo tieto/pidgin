@@ -145,7 +145,7 @@ jabber_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
 	JabberStream *js = user_data;
 
 	if (error->level == XML_ERR_WARNING && error->message != NULL
-			&& strcmp(error->message, "xmlns: URI vcard-temp is not absolute\n") == 0)
+			&& g_str_equal(error->message, "xmlns: URI vcard-temp is not absolute\n"))
 		/*
 		 * This message happens when parsing vcards, and is normal, so don't
 		 * bother logging it because people scare easily.
@@ -153,7 +153,7 @@ jabber_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
 		return;
 
 	if (error->level == XML_ERR_FATAL && error->message != NULL
-			&& strcmp(error->message, "Extra content at the end of the document\n") == 0)
+			&& g_str_equal(error->message, "Extra content at the end of the document\n"))
 		/*
 		 * This is probably more annoying than the vcard-temp error; it occurs
 		 * because we disconnect in most cases without waiting for the receiving
