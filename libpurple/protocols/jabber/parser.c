@@ -47,9 +47,7 @@ jabber_parser_element_start_libxml(void *user_data,
 		js->protocol_version = JABBER_PROTO_0_9;
 		for(i=0; i < nb_attributes * 5; i += 5) {
 			int attrib_len = attributes[i+4] - attributes[i+3];
-			char *attrib = g_malloc(attrib_len + 1);
-			memcpy(attrib, attributes[i+3], attrib_len);
-			attrib[attrib_len] = '\0';
+			char *attrib = g_strndup((gchar *)attributes[i+3], attrib_len);
 
 			if(!xmlStrcmp(attributes[i], (xmlChar*) "version")
 					&& !strcmp(attrib, "1.0")) {
@@ -88,10 +86,7 @@ jabber_parser_element_start_libxml(void *user_data,
 			const char *attrib_ns = (const char *)attributes[i+2];
 			char *txt;
 			int attrib_len = attributes[i+4] - attributes[i+3];
-			char *attrib = g_malloc(attrib_len + 1);
-
-			memcpy(attrib, attributes[i+3], attrib_len);
-			attrib[attrib_len] = '\0';
+			char *attrib = g_strndup((gchar *)attributes[i+3], attrib_len);
 
 			txt = attrib;
 			attrib = purple_unescape_html(txt);
