@@ -363,21 +363,12 @@ jabber_scram_feed_parser(JabberScramData *data, gchar *in, gchar **out)
 
 static gchar *escape_username(const gchar *in)
 {
-	GString *s = g_string_new(in);
-	gchar *c;
-	gsize i = 0;
+	gchar *tmp, *tmp2;
 
-	c = s->str;
-	while (*c) {
-		if (*c == ',' || *c == '=') {
-			g_string_erase(s, i, 1);
-			g_string_insert(s, i, *c == ',' ? "=2C" : "=3D");
-		}
-
-		++c; ++i;
-	}
-
-	return g_string_free(s, FALSE);
+	tmp = purple_strreplace(in, "=", "=3D");
+	tmp2 = purple_strreplace(tmp, ",", "=2D");
+	g_free(tmp);
+	return tmp2;
 }
 
 static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
