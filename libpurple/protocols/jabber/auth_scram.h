@@ -32,9 +32,14 @@
 /* Per-connection state stored between messages.
  * This is stored in js->auth_data_mech.
  */
+typedef struct {
+	const char *mech_substr;
+	const char *name;
+	guint size;
+} JabberScramHash;
 
 typedef struct {
-	const char *hash;
+	const JabberScramHash *hash;
 	char *cnonce;
 	GString *auth_message;
 
@@ -48,14 +53,10 @@ typedef struct {
 
 #include "auth.h"
 
-JabberSaslMech *jabber_scram_get_sha1(void);
-
 /**
  * Implements the Hi() function as described in the SASL-SCRAM I-D.
  *
- * @param hash The name of a hash function to be used with HMAC.  This should
- *             be suitable to be passed to the libpurple cipher API.  Typically
- *             it will be "sha1".
+ * @param hash The struct corresponding to the hash function to be used.
  * @param str  The string to perform the PBKDF2 operation on.
  * @param salt The salt.
  * @param iterations The number of iterations to perform.
@@ -64,7 +65,7 @@ JabberSaslMech *jabber_scram_get_sha1(void);
  *          NOT null-terminated and its length is the length of the binary
  *          output of the hash function in-use.
  */
-guchar *jabber_scram_hi(const char *hash, const GString *str,
+guchar *jabber_scram_hi(const JabberScramHash *hash, const GString *str,
                         GString *salt, guint iterations);
 
 /**

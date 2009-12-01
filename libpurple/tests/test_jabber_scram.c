@@ -4,10 +4,12 @@
 #include "../util.h"
 #include "../protocols/jabber/auth_scram.h"
 
+static JabberScramHash sha1_mech = { "-SHA-1", "sha1", 20 };
+
 #define assert_pbkdf2_equal(password, salt, count, expected) { \
 	GString *p = g_string_new(password); \
 	GString *s = g_string_new(salt); \
-	guchar *result = jabber_scram_hi("sha1", p, s, count); \
+	guchar *result = jabber_scram_hi(&sha1_mech, p, s, count); \
 	fail_if(result == NULL, "Hi() returned NULL"); \
 	fail_if(0 != memcmp(result, expected, 20), "Hi() returned invalid result"); \
 	g_string_free(s, TRUE); \
@@ -35,7 +37,7 @@ START_TEST(test_proofs)
 	const char *client_proof;
 /*	const char *server_signature; */
 
-	data->hash = "sha1";
+	data->hash = &sha1_mech;
 	data->password = g_strdup("password");
 	data->auth_message = g_string_new("n=username@jabber.org,r=8jLxB5515dhFxBil5A0xSXMH,"
 			"r=8jLxB5515dhFxBil5A0xSXMHabc,s=c2FsdA==,i=1,"
@@ -60,7 +62,7 @@ START_TEST(test_mech)
 	gchar *out;
 
 	data->step = 1;
-	data->hash = "sha1";
+	data->hash = &sha1_mech;
 	data->password = g_strdup("password");
 	data->cnonce = g_strdup("H7yDYKAWBCrM2Fa5SxGa4iez");
 	data->auth_message = g_string_new("n=paul,r=H7yDYKAWBCrM2Fa5SxGa4iez");
