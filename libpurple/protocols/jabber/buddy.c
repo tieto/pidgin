@@ -1860,8 +1860,10 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 	 * However, since the gateway might appear offline to us, we cannot get that information. Therefore, I just assume
 	 * that gateways on the roster can be identified by having no '@' in their jid. This is a faily safe assumption, since
 	 * people don't tend to have a server or other service there.
+	 *
+	 * TODO: Use disco#info...
 	 */
-	if (g_utf8_strchr(name, -1, '@') == NULL) {
+	if (strchr(name, '@') == NULL) {
 		act = purple_menu_action_new(_("Log In"),
 									 PURPLE_CALLBACK(jabber_buddy_login),
 									 NULL, NULL);
