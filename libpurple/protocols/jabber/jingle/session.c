@@ -377,7 +377,7 @@ static gboolean find_by_jid_ghr(gpointer key,
 {
 	JingleSession *session = (JingleSession *)value;
 	const gchar *jid = user_data;
-	gboolean use_bare = g_utf8_strchr(jid, -1, '/') == NULL;
+	gboolean use_bare = strchr(jid, '/') == NULL;
 	gchar *remote_jid = jingle_session_get_remote_jid(session);
 	gchar *cmp_jid = use_bare ? jabber_get_bare_jid(remote_jid)
 				  : g_strdup(remote_jid);
@@ -438,7 +438,7 @@ jingle_session_find_by_jid(JabberStream *js, const gchar *jid)
 
 	data.jid = jid;
 	data.ret = NULL;
-	data.use_bare = g_utf8_strchr(jid, -1, '/') == NULL;
+	data.use_bare = strchr(jid, '/') == NULL;
 
 	g_hash_table_foreach(js->sessions, find_by_jid_ghr, &data);
 	return data.ret;
