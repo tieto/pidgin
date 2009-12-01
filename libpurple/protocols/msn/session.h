@@ -126,6 +126,7 @@ struct _MsnSession
 
 	GHashTable *soap_table;
 	guint soap_cleanup_handle;
+	char *guid;
 };
 
 /**

@@ -161,7 +161,10 @@ msn_got_login_params(MsnSession *session, const char *ticket, const char *respon
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_END);
 
-	msn_cmdproc_send(cmdproc, "USR", "SSO S %s %s", ticket, response);
+	if (session->protocol_ver >= 16)
+		msn_cmdproc_send(cmdproc, "USR", "SSO S %s %s %s", ticket, response, session->guid);
+	else
+		msn_cmdproc_send(cmdproc, "USR", "SSO S %s %s", ticket, response);
 }
 
 static void
@@ -1674,6 +1677,86 @@ uux_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	purple_debug_misc("msn", "UUX received.\n");
 	cmdproc->last_cmd->payload_cb = uux_cmd_post;
 	cmd->payload_len = atoi(cmd->params[1]);
+}
+
+void
+msn_notification_send_uux(MsnSession *session, const char *payload)
+{
+	MsnTransaction *trans;
+	MsnCmdProc *cmdproc;
+	size_t len = strlen(payload);
+
+	cmdproc = session->notification->cmdproc;
+	purple_debug_misc("msn", "Sending UUX command with payload: %s\n", payload);
+	trans = msn_transaction_new(cmdproc, "UUX", "%" G_GSIZE_FORMAT, len);
+	msn_transaction_set_payload(trans, payload, len);
+	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
+void msn_notification_send_uux_endpointdata(MsnSession *session)
+{
+	xmlnode *epDataNode;
+	xmlnode *capNode;
+	char *caps;
+	char *payload;
+	int length;
+
+	epDataNode = xmlnode_new("EndpointData");
+
+	capNode = xmlnode_new_child(epDataNode, "Capabilities");
+	caps = g_strdup_printf("%d:%02d", MSN_CLIENT_ID_CAPABILITIES, MSN_CLIENT_ID_EXT_CAPS);
+	xmlnode_insert_data(capNode, caps, -1);
+	g_free(caps);
+
+	payload = xmlnode_to_str(epDataNode, &length);
+
+	msn_notification_send_uux(session, payload);
+
+	xmlnode_free(epDataNode);
+	g_free(payload);
+}
+
+void msn_notification_send_uux_private_endpointdata(MsnSession *session)
+{
+	xmlnode *private;
+	xmlnode *epname;
+	xmlnode *idle;
+	xmlnode *client_type;
+	xmlnode *state;
+	char *payload;
+	int length;
+
+	private = xmlnode_new("PrivateEndPointData");
+
+	/* TODO: "Pidgin" is a temp EndPointName.. we must use hostid or some.*/
+	epname = xmlnode_new_child(private, "EpName");
+	xmlnode_insert_data(epname, "Pidgin", -1);
+
+	idle = xmlnode_new_child(private, "Idle");
+	xmlnode_insert_data(idle, "false", -1);
+
+	/* TODO: support different client types */
+	/* ClientType info (from amsn guys):
+		0: None
+		1: Computer
+		2: Website
+		3: Mobile / none
+		4: Xbox / phone /mobile
+		9: MsnGroup
+		32: Email member, currently Yahoo!
+	*/
+	client_type = xmlnode_new_child(private, "ClientType");
+	xmlnode_insert_data(client_type, "1", -1);
+
+	state = xmlnode_new_child(private, "State");
+	xmlnode_insert_data(state, msn_state_get_text(msn_state_from_account(session->account)), -1);
+
+	payload = xmlnode_to_str(private, &length);
+
+	msn_notification_send_uux(session, payload);
+
+	xmlnode_free(private);
+	g_free(payload);
 }
 
 /**************************************************************************

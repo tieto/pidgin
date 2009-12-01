@@ -82,6 +82,12 @@ gboolean msn_notification_connect(MsnNotification *notification,
 void msn_notification_disconnect(MsnNotification *notification);
 void msn_notification_dump_contact(MsnSession *session);
 
+void msn_notification_send_uux(MsnSession *session, const char *payload);
+
+void msn_notification_send_uux_endpointdata(MsnSession *session);
+
+void msn_notification_send_uux_private_endpointdata(MsnSession *session);
+
 /**
  * Closes a notification.
  *
