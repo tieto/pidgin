@@ -225,8 +225,8 @@ static void browse_button_cb(GtkWidget *button, PidginDiscoDialog *dialog)
 		gtk_widget_set_sensitive(dialog->account_widget, FALSE);
 
 	username = purple_account_get_username(dialog->account);
-	at = strchr(username, -1, '@');
-	slash = strchr(username, -1, '/');
+	at = strchr(username, '@');
+	slash = strchr(username, '/');
 	if (at && !slash) {
 		server = g_strdup_printf("%s", at + 1);
 	} else if (at && slash && at + 1 < slash) {
