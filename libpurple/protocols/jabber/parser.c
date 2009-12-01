@@ -147,8 +147,7 @@ jabber_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
 		 */
 		return;
 
-	if (error->level == XML_ERR_FATAL && error->message != NULL
-			&& g_str_equal(error->message, "Extra content at the end of the document\n"))
+	if (error->level == XML_ERR_FATAL && error->code == XML_ERR_DOCUMENT_END)
 		/*
 		 * This is probably more annoying than the vcard-temp error; it occurs
 		 * because we disconnect in most cases without waiting for the receiving
