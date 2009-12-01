@@ -30,15 +30,16 @@
 #include "auth.h"
 #include "jabber.h"
 
-static xmlnode *digest_md5_start(JabberStream *js, xmlnode *packet)
+static JabberSaslState
+digest_md5_start(JabberStream *js, xmlnode *packet, xmlnode **response,
+                 const char **msg)
 {
-	xmlnode *auth;
-
-	auth = xmlnode_new("auth");
+	xmlnode *auth = xmlnode_new("auth");
 	xmlnode_set_namespace(auth, NS_XMPP_SASL);
 	xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
 
-	return auth;
+	*response = auth;
+	return JABBER_SASL_STATE_CONTINUE;
 }
 
 /* Parts of this algorithm are inspired by stuff in libgsasl */
@@ -163,19 +164,20 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 	return z;
 }
 
-static xmlnode *digest_md5_handle_challenge(JabberStream *js, xmlnode *packet)
+static JabberSaslState
+digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
+                            xmlnode **response, const char **msg)
 {
 	xmlnode *reply = NULL;
 	char *enc_in = xmlnode_get_data(packet);
 	char *dec_in;
 	char *enc_out;
 	GHashTable *parts;
+	JabberSaslState state = JABBER_SASL_STATE_CONTINUE;
 
 	if (!enc_in) {
-		purple_connection_error_reason(js->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Invalid response from server"));
-		return NULL;
+		*msg = _("Invalid response from server");
+		return JABBER_SASL_STATE_FAIL;
 	}
 
 	dec_in = (char *)purple_base64_decode(enc_in, NULL);
@@ -191,9 +193,8 @@ static xmlnode *digest_md5_handle_challenge(JabberStream *js, xmlnode *packet)
 			reply = xmlnode_new("response");
 			xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		} else {
-			purple_connection_error_reason(js->gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Invalid challenge from server"));
+			*msg = _("Invalid challenge from server");
+			state = JABBER_SASL_STATE_FAIL;
 		}
 		g_free(js->expected_rspauth);
 		js->expected_rspauth = NULL;
@@ -216,11 +217,10 @@ static xmlnode *digest_md5_handle_challenge(JabberStream *js, xmlnode *packet)
 		if(!realm)
 			realm = js->user->domain;
 
-		if (nonce == NULL || realm == NULL)
-			purple_connection_error_reason(js->gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Invalid challenge from server"));
-		else {
+		if (nonce == NULL || realm == NULL) {
+			*msg = _("Invalid challenge from server");
+			state = JABBER_SASL_STATE_FAIL;
+		} else {
 			GString *response = g_string_new("");
 			char *a2;
 			char *auth_resp;
@@ -272,7 +272,8 @@ static xmlnode *digest_md5_handle_challenge(JabberStream *js, xmlnode *packet)
 	g_free(dec_in);
 	g_hash_table_destroy(parts);
 
-	return reply;
+	*response = reply;
+	return state;
 }
 
 static JabberSaslMech digest_md5_mech = {

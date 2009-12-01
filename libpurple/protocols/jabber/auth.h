@@ -29,13 +29,19 @@ typedef struct _JabberSaslMech JabberSaslMech;
 #include "jabber.h"
 #include "xmlnode.h"
 
+typedef enum {
+	JABBER_SASL_STATE_FAIL = -1,    /* Abort, Retry, Fail? */
+	JABBER_SASL_STATE_OK = 0,       /* Hooray! */
+	JABBER_SASL_STATE_CONTINUE = 1  /* More authentication required */
+} JabberSaslState;
+
 struct _JabberSaslMech {
 	gint8 priority; /* Higher priority will be tried before lower priority */
 	const gchar *name;
-	xmlnode *(*start)(JabberStream *js, xmlnode *mechanisms);
-	xmlnode *(*handle_challenge)(JabberStream *js, xmlnode *packet);
-	gboolean (*handle_success)(JabberStream *js, xmlnode *packet);
-	xmlnode *(*handle_failure)(JabberStream *js, xmlnode *packet);
+	JabberSaslState (*start)(JabberStream *js, xmlnode *mechanisms, xmlnode **reply, const char **msg);
+	JabberSaslState (*handle_challenge)(JabberStream *js, xmlnode *packet, xmlnode **reply, const char **msg);
+	JabberSaslState (*handle_success)(JabberStream *js, xmlnode *packet, const char **msg);
+	JabberSaslState (*handle_failure)(JabberStream *js, xmlnode *packet, xmlnode **reply, const char **msg);
 	void (*dispose)(JabberStream *js);
 };
 

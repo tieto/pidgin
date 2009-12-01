@@ -80,13 +80,16 @@ static void disallow_plaintext_auth(PurpleAccount *account)
 		_("Server requires plaintext authentication over an unencrypted stream"));
 }
 
-static xmlnode *jabber_plain_start(JabberStream *js, xmlnode *packet)
+static JabberSaslState
+jabber_plain_start(JabberStream *js, xmlnode *packet, xmlnode **response, const char **error)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	char *msg;
 
-	if (jabber_stream_is_ssl(js) || purple_account_get_bool(account, "auth_plain_in_clear", FALSE))
-		return finish_plaintext_authentication(js);
+	if (jabber_stream_is_ssl(js) || purple_account_get_bool(account, "auth_plain_in_clear", FALSE)) {
+		*response = finish_plaintext_authentication(js);
+		return JABBER_SASL_STATE_OK;
+	}
 
 	msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 			purple_account_get_username(account));
@@ -97,7 +100,7 @@ static xmlnode *jabber_plain_start(JabberStream *js, xmlnode *packet)
 			account, NULL, NULL,
 			account, allow_plaintext_auth, disallow_plaintext_auth);
 	g_free(msg);
-	return NULL;
+	return JABBER_SASL_STATE_CONTINUE;
 }
 
 static JabberSaslMech plain_mech = {

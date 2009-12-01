@@ -341,7 +341,8 @@ static gchar *escape_username(const gchar *in)
 	return tmp2;
 }
 
-static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
+static JabberSaslState
+scram_start(JabberStream *js, xmlnode *mechanisms, xmlnode **out, const char **error)
 {
 	xmlnode *reply;
 	JabberScramData *data;
@@ -355,8 +356,8 @@ static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
 
 	prepped_node = jabber_saslprep(js->user->node);
 	if (!prepped_node) {
-		/* TODO: Error handling in the response value from scram_start */
-		return NULL;
+		*error = _("Unable to canonicalize username");
+		return JABBER_SASL_STATE_FAIL;
 	}
 
 	tmp = escape_username(prepped_node);
@@ -366,7 +367,8 @@ static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
 	prepped_pass = jabber_saslprep(purple_connection_get_password(js->gc));
 	if (!prepped_pass) {
 		g_free(prepped_node);
-		return NULL;
+		*error = _("Unable to canonicalize password");
+		return JABBER_SASL_STATE_FAIL;
 	}
 
 	data = js->auth_mech_data = g_new0(JabberScramData, 1);
@@ -401,22 +403,26 @@ static xmlnode *scram_start(JabberStream *js, xmlnode *mechanisms)
 	g_free(enc_out);
 	g_free(dec_out);
 
-	return reply;
+	*out = reply;
+	return JABBER_SASL_STATE_CONTINUE;
 }
 
-static xmlnode *scram_handle_challenge(JabberStream *js, xmlnode *challenge)
+static JabberSaslState
+scram_handle_challenge(JabberStream *js, xmlnode *challenge, xmlnode **out, const char **error)
 {
 	JabberScramData *data = js->auth_mech_data;
 	xmlnode *reply;
 	gchar *enc_in, *dec_in;
 	gchar *enc_out = NULL, *dec_out = NULL;
 	gsize len;
+	JabberSaslState state = JABBER_SASL_STATE_FAIL;
 
 	enc_in = xmlnode_get_data(challenge);
 	if (!enc_in || *enc_in == '\0') {
 		reply = xmlnode_new("abort");
 		xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		data->step = -1;
+		*error = _("Invalid challenge from server");
 		goto out;
 	}
 
@@ -427,6 +433,7 @@ static xmlnode *scram_handle_challenge(JabberStream *js, xmlnode *challenge)
 		reply = xmlnode_new("abort");
 		xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		data->step = -1;
+		*error = _("Malicious challenge from server");
 		goto out;
 	}
 
@@ -436,6 +443,7 @@ static xmlnode *scram_handle_challenge(JabberStream *js, xmlnode *challenge)
 		reply = xmlnode_new("abort");
 		xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		data->step = -1;
+		*error = _("Invalid challenge from server");
 		goto out;
 	}
 
@@ -450,14 +458,18 @@ static xmlnode *scram_handle_challenge(JabberStream *js, xmlnode *challenge)
 		xmlnode_insert_data(reply, enc_out, -1);
 	}
 
+	state = JABBER_SASL_STATE_CONTINUE;
+
 out:
 	g_free(enc_out);
 	g_free(dec_out);
 
-	return reply;
+	*out = reply;
+	return state;
 }
 
-static gboolean scram_handle_success(JabberStream *js, xmlnode *packet)
+static JabberSaslState
+scram_handle_success(JabberStream *js, xmlnode *packet, const char **error)
 {
 	JabberScramData *data = js->auth_mech_data;
 	char *enc_in, *dec_in;
@@ -468,28 +480,32 @@ static gboolean scram_handle_success(JabberStream *js, xmlnode *packet)
 	g_return_val_if_fail(enc_in != NULL && *enc_in != '\0', FALSE);
 
 	if (data->step == 3)
-		return TRUE;
+		return JABBER_SASL_STATE_OK;
 
-	if (data->step != 2)
-		return FALSE;
+	if (data->step != 2) {
+		*error = _("Unexpected response from server");
+		return JABBER_SASL_STATE_FAIL;
+	}
 
 	dec_in = (gchar *)purple_base64_decode(enc_in, &len);
 	g_free(enc_in);
 	if (!dec_in || len != strlen(dec_in)) {
 		/* Danger afoot; SCRAM shouldn't contain NUL bytes */
 		g_free(dec_in);
-		return FALSE;
+		*error = _("Invalid challenge from server");
+		return JABBER_SASL_STATE_FAIL;
 	}
 
 	purple_debug_misc("jabber", "decoded success: %s\n", dec_in);
 
 	if (!jabber_scram_feed_parser(data, dec_in, &dec_out) || dec_out != NULL) {
 		g_free(dec_out);
-		return FALSE;
+		*error = _("Invalid challenge from server");
+		return JABBER_SASL_STATE_FAIL;
 	}
 
 	/* Hooray */
-	return TRUE;
+	return JABBER_SASL_STATE_OK;
 }
 
 void jabber_scram_data_destroy(JabberScramData *data)
