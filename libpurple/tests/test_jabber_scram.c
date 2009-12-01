@@ -3,6 +3,7 @@
 #include "tests.h"
 #include "../util.h"
 #include "../protocols/jabber/auth_scram.h"
+#include "../protocols/jabber/jutil.h"
 
 static JabberScramHash sha1_mech = { "-SHA-1", "sha1", 20 };
 
@@ -55,29 +56,44 @@ START_TEST(test_proofs)
 }
 END_TEST
 
+#define assert_successful_exchange(pw, nonce, start_data, challenge1, response1, success) { \
+	JabberScramData *data = g_new0(JabberScramData, 1); \
+	gboolean ret; \
+	gchar *out; \
+	\
+	data->step = 1; \
+	data->hash = &sha1_mech; \
+	data->password = jabber_saslprep(pw); \
+	fail_if(data->password == NULL); \
+	data->cnonce = g_strdup(nonce); \
+	data->auth_message = g_string_new(start_data); \
+	\
+	ret = jabber_scram_feed_parser(data, challenge1, &out); \
+	fail_unless(ret == TRUE); \
+	fail_unless(g_str_equal(out, response1), "Got unexpected response to challenge. Expected %s, got %s", response1, out); \
+	g_free(out); \
+	\
+	data->step = 2; \
+	ret = jabber_scram_feed_parser(data, success, &out); \
+	fail_unless(ret == TRUE); \
+	fail_unless(out == NULL); \
+	\
+	jabber_scram_data_destroy(data); \
+}
+
 START_TEST(test_mech)
 {
-	JabberScramData *data = g_new0(JabberScramData, 1);
-	gboolean ret;
-	gchar *out;
+	assert_successful_exchange("password", "H7yDYKAWBCrM2Fa5SxGa4iez",
+			"n=paul,r=H7yDYKAWBCrM2Fa5SxGa4iez",
+			"r=H7yDYKAWBCrM2Fa5SxGa4iezFPVDPpDUcGxPkH3RzP,s=3rXeErP/os7jUNqU,i=4096",
+			"c=biws,r=H7yDYKAWBCrM2Fa5SxGa4iezFPVDPpDUcGxPkH3RzP,p=pXkak78EuwwOEwk2/h/OzD7NkEI=",
+			"v=ldX4EBNnOgDnNTOCmbSfBHAUCOs=");
 
-	data->step = 1;
-	data->hash = &sha1_mech;
-	data->password = g_strdup("password");
-	data->cnonce = g_strdup("H7yDYKAWBCrM2Fa5SxGa4iez");
-	data->auth_message = g_string_new("n=paul,r=H7yDYKAWBCrM2Fa5SxGa4iez");
-
-	ret = jabber_scram_feed_parser(data, "r=H7yDYKAWBCrM2Fa5SxGa4iezFPVDPpDUcGxPkH3RzP,s=3rXeErP/os7jUNqU,i=4096", &out);
-	fail_unless(ret == TRUE);
-	fail_unless(g_str_equal(out, "c=biws,r=H7yDYKAWBCrM2Fa5SxGa4iezFPVDPpDUcGxPkH3RzP,p=pXkak78EuwwOEwk2/h/OzD7NkEI="), "Failed. Got %s instead", out);
-	g_free(out);
-
-	data->step = 2;
-	ret = jabber_scram_feed_parser(data, "v=ldX4EBNnOgDnNTOCmbSfBHAUCOs=", &out);
-	fail_unless(ret == TRUE);
-	fail_unless(out == NULL);
-
-	jabber_scram_data_destroy(data);
+	assert_successful_exchange("pass½word", "GNb2HsNI7VnTv8ABsE5AnY8W",
+			"n=paul,r=GNb2HsNI7VnTv8ABsE5AnY8W",
+			"r=GNb2HsNI7VnTv8ABsE5AnY8W/w/I3eRKM0I7jxFWOH,s=ysAriUjPzFqOXnMQ,i=4096",
+			"c=biws,r=GNb2HsNI7VnTv8ABsE5AnY8W/w/I3eRKM0I7jxFWOH,p=n/CtgdWjOYnLQ4m9Na+wPn9D2uY=",
+			"v=4TkZwKWy6JHNmrUbU2+IdAaXtos=");
 }
 END_TEST
 
