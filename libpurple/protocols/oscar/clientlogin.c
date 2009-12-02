@@ -277,11 +277,15 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 
 	/* Construct the GET parameters */
 	query_string = g_strdup_printf("a=%s"
+			"&distId=%d"
 			"&f=xml"
 			"&k=%s"
 			"&ts=%" PURPLE_TIME_T_MODIFIER
 			"&useTLS=%d",
-			purple_url_encode(token), get_client_key(od), hosttime, use_tls);
+			purple_url_encode(token),
+			oscar_get_ui_info_int(od->icq ? "prpl-icq-distid"
+					: "prpl-aim-distid", 0x00000611),
+			get_client_key(od), hosttime, use_tls);
 	signature = generate_signature("GET", URL_START_OSCAR_SESSION,
 			query_string, session_key);
 	url = g_strdup_printf(URL_START_OSCAR_SESSION "?%s&sig_sha256=%s",
