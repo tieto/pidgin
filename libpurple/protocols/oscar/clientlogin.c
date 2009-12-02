@@ -275,7 +275,10 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 	char *query_string, *signature, *url;
 	gboolean use_tls = purple_account_get_bool(purple_connection_get_account(od->gc), "use_ssl", OSCAR_DEFAULT_USE_SSL);
 
-	/* Construct the GET parameters */
+	/*
+	 * Construct the GET parameters.  0x00000611 is the distid given to
+	 * us by AOL for use as the default libpurple distid.
+	 */
 	query_string = g_strdup_printf("a=%s"
 			"&distId=%d"
 			"&f=xml"
