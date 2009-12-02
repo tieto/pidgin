@@ -1470,7 +1470,7 @@ if test "_$pythonpath" != _ ; then
 		AC_CHECK_LIB(pthread, pthread_create, )
 		AC_CHECK_LIB(util, openpty, )
 		AC_CHECK_LIB(db, dbopen, )
-		PY_LIBS="-lpython$PY_VERSION -L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config"
+		PY_LIBS="-L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config -lpython$PY_VERSION"
 		PY_CFLAGS="-I$PY_PREFIX/include/python$PY_VERSION"
 		AC_DEFINE(USE_PYTHON, [1], [Define if python headers are available.])
 		AC_MSG_RESULT(ok)

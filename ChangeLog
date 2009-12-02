@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.5 (??/??/20??):
+	General:
+	* Build-time fixes for Solaris.  (Paul Townsend)
+
 	XMPP:
 	* When getting info on a domain-only (server) JID, show uptime
 	  (when given by the result of the "last query") and don't show status as
