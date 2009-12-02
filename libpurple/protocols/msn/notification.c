@@ -236,20 +236,22 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnSession *session;
 	PurpleAccount *account;
 	gboolean protocol_supported = FALSE;
-	char proto_str[8];
+	int proto_ver;
 	size_t i;
 
 	session = cmdproc->session;
 	account = session->account;
 
-	g_snprintf(proto_str, sizeof(proto_str), "MSNP%d", session->protocol_ver);
-
+	session->protocol_ver = 0;
 	for (i = 1; i < cmd->param_count; i++)
 	{
-		if (!strcmp(cmd->params[i], proto_str))
-		{
-			protocol_supported = TRUE;
-			break;
+		if (sscanf(cmd->params[i], "MSNP%d", &proto_ver) == 1) {
+			if (proto_ver >= WLM_MIN_PROTOCOL
+			 && proto_ver <= WLM_MAX_PROTOCOL
+			 && proto_ver > session->protocol_ver) {
+				protocol_supported = TRUE;
+				session->protocol_ver = proto_ver;
+			}
 		}
 	}
 
@@ -259,6 +261,8 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 							  NULL);
 		return;
 	}
+
+	purple_debug_info("msn", "Negotiated protocol version %d with the server.\n", session->protocol_ver);
 
 	/*
 	 * Windows Live Messenger 8.5

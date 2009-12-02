@@ -46,7 +46,7 @@ msn_session_new(PurpleAccount *account)
 								 purple_account_get_username(account), NULL);
 	session->oim = msn_oim_new(session);
 
-	session->protocol_ver = WLM_PROT_VER;
+	session->protocol_ver = 0;
 
 	session->guid = rand_guid();
 
