@@ -15,9 +15,6 @@ version 2.6.4 (11/29/2009):
 	* Actually emit the hold signal for media calls.
 	* Fix building the GnuTLS plugin with older versions of GnuTLS.
 	* Fix DNS TXT query resolution.
-	* Don't send Proxy-Authorization headers to HTTP proxy servers until we've
-	  received a "407 Proxy Authentication Required" response from the server.
-	  (thecrux)
 	* Added "MXit" protocol plugin, supported and maintained by the MXit folks
 	  themselves (MXit Lifestyle (Pty) Ltd.)
 
