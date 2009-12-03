@@ -1,9 +1,20 @@
-
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.4 (??/??/20??):
+version 2.6.5 (??/??/20??):
+	General:
+	* Build-time fixes for Solaris.  (Paul Townsend)
+
+	XMPP:
+	* When getting info on a domain-only (server) JID, show uptime
+	  (when given by the result of the "last query") and don't show status as
+	  offline.
+	* Do not crash when attempting to register for a new account on Windows.
+
+version 2.6.4 (11/29/2009):
 	libpurple:
 	* Actually emit the hold signal for media calls.
+	* Fix building the GnuTLS plugin with older versions of GnuTLS.
+	* Fix DNS TXT query resolution.
 	* Don't send Proxy-Authorization headers to HTTP proxy servers until we've
 	  received a "407 Proxy Authentication Required" response from the server.
 	  (thecrux)
@@ -13,8 +24,6 @@ version 2.6.4 (??/??/20??):
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
 	  to announce the list of loaded plugins (in both Finch and Pidgin).
-	* Fix building the GnuTLS plugin with older versions of GnuTLS.
-	* Fix DNS TXT query resolution.
 	* Always rejoin open chats after an account reconnects.
 
 	AIM and ICQ:
