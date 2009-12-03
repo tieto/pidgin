@@ -815,19 +815,29 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 	if (!jbi->jb->resources) {
 		/* the buddy is offline */
+		gboolean is_domain = jabber_jid_is_domain(jbi->jid);
 		gchar *status =
 			g_strdup_printf("%s%s%s",	_("Offline"),
 			                jbi->last_message ? ": " : "",
 			                jbi->last_message ? jbi->last_message : "");
 		if (jbi->last_seconds > 0) {
 			char *last = purple_str_seconds_to_string(jbi->last_seconds);
-			gchar *message = g_strdup_printf(_("%s ago"), last);
-			purple_notify_user_info_prepend_pair(user_info,
-				_("Logged Off"), message);
+			gchar *message = NULL;
+			const gchar *title = NULL;
+			if (is_domain) {
+				title = _("Uptime");
+				message = g_strdup_printf(_("%s"), last);
+			} else {
+				title = _("Logged Off");
+				message = g_strdup_printf(_("%s ago"), last);
+			}
+			purple_notify_user_info_prepend_pair(user_info, title, message);
 			g_free(last);
 			g_free(message);
 		}
-		purple_notify_user_info_prepend_pair(user_info, _("Status"), status);
+
+		if (!is_domain)
+			purple_notify_user_info_prepend_pair(user_info, _("Status"), status);
 		g_free(status);
 	}
 
@@ -1860,8 +1870,10 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 	 * However, since the gateway might appear offline to us, we cannot get that information. Therefore, I just assume
 	 * that gateways on the roster can be identified by having no '@' in their jid. This is a faily safe assumption, since
 	 * people don't tend to have a server or other service there.
+	 *
+	 * TODO: Use disco#info...
 	 */
-	if (g_utf8_strchr(name, -1, '@') == NULL) {
+	if (strchr(name, '@') == NULL) {
 		act = purple_menu_action_new(_("Log In"),
 									 PURPLE_CALLBACK(jabber_buddy_login),
 									 NULL, NULL);

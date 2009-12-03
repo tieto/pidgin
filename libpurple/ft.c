@@ -229,7 +229,7 @@ void purple_xfer_conversation_write(PurpleXfer *xfer, char *message, gboolean is
 	escaped = g_markup_escape_text(message, -1);
 
 	if (is_error)
-		flags = PURPLE_MESSAGE_ERROR;
+		flags |= PURPLE_MESSAGE_ERROR;
 
 	purple_conversation_write(conv, NULL, escaped, flags, time(NULL));
 	g_free(escaped);

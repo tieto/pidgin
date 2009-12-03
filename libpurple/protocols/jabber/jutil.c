@@ -473,6 +473,19 @@ jabber_id_free(JabberID *jid)
 	}
 }
 
+char *jabber_get_domain(const char *in)
+{
+	JabberID *jid = jabber_id_new(in);
+	char *out;
+
+	if (!jid)
+		return NULL;
+
+	out = g_strdup(jid->domain);
+	jabber_id_free(jid);
+
+	return out;
+}
 
 char *jabber_get_resource(const char *in)
 {
@@ -512,6 +525,17 @@ jabber_id_get_bare_jid(const JabberID *jid)
 	                   jid->domain,
 	                   NULL);
 }
+
+gboolean
+jabber_jid_is_domain(const char *jid)
+{
+	char *domain = jabber_get_domain(jid);
+	gboolean is_domain = purple_strequal(jid, domain);
+
+	g_free(domain);
+	return is_domain;
+}
+
 
 JabberID *
 jabber_id_new(const char *str)

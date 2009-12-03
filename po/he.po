@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-23 10:05-0800\n"
-"PO-Revision-Date: 2009-11-23 12:21+0200\n"
+"POT-Creation-Date: 2009-11-29 20:30-0500\n"
+"PO-Revision-Date: 2009-11-29 20:20+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at g mail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1518,6 +1518,7 @@ msgstr "בעת קבלת הודעה עם כתובת, השתמש ב-TinyURL להע
 msgid "Online"
 msgstr "מחובר"
 
+#. primative,						no,							id,			name
 msgid "Offline"
 msgstr "מנותק"
 
@@ -3087,10 +3088,12 @@ msgstr "בחר צ'אט עבור איש הקשר: %s"
 msgid "Add to chat..."
 msgstr "הוסף לשיחה..."
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "זמין"
 
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3884,9 +3887,6 @@ msgstr "התחבר"
 msgid "Log Out"
 msgstr "התנתק"
 
-#. primative,						no,							id,			name
-#. 0
-#. 1
 #. 2
 msgid "Chatty"
 msgstr "פטפטן"
@@ -3894,6 +3894,7 @@ msgstr "פטפטן"
 msgid "Extended Away"
 msgstr "העדרות ממושכת"
 
+#. 3
 msgid "Do Not Disturb"
 msgstr "נא לא להפריע"
 
@@ -5615,28 +5616,24 @@ msgstr "שנה את מצב הרוח שלך"
 msgid "How do you feel right now?"
 msgstr "איך את/ה מרגיש/ה עכשיו?"
 
-#, fuzzy
 msgid "The PIN you entered is invalid."
-msgstr "המפתח SecurID שהוזן אינו תקף."
+msgstr "ה-PIN שהזנת אינו חוקי."
 
-#, fuzzy
 msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "המפתח SecurID שהוזן אינו תקף."
+msgstr "ה-PIN שהזנת בעל אורך לא-חוקי [4-10[."
 
 msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
+msgstr "ה-PIN אינו חוקי. על הקוד להכיל רק ספרות [0-9]."
 
-#, fuzzy
 msgid "The two PINs you entered do not match."
-msgstr "הסיסמה החדשה ווידואה אינם תואמים."
+msgstr "שני ה-PIN שהזנת אינם זהים."
 
-#, fuzzy
 msgid "The name you entered is invalid."
-msgstr "המפתח SecurID שהוזן אינו תקף."
+msgstr "השם שהזנת אינו חוקי."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr ""
+msgstr "יום ההולדת שהזנת אינו חוקי. הפורמט החוקי הינו 'YYYY-MM-DD'."
 
 #. show error to user
 msgid "Profile Update Error"
@@ -5718,13 +5715,11 @@ msgstr "לא ניתן להתחבר לשרת ה-MXit. יש לוודא את הגד
 msgid "Connecting..."
 msgstr "מתחבר..."
 
-#, fuzzy
 msgid "The nick name you entered is invalid."
-msgstr "המפתח SecurID שהוזן אינו תקף."
+msgstr "שם-הכינוי שהזנת אינו חוקי."
 
-#, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
-msgstr "המפתח SecurID שהוזן אינו תקף."
+msgstr "ה-PIN שהזנת בעל אורך לא-חוקי [7-10[."
 
 #. mxit login name
 msgid "MXit Login Name"
@@ -5795,9 +5790,8 @@ msgstr "אימות חשבון MXit"
 msgid "Retrieving User Information..."
 msgstr "שולף מידע משתמש..."
 
-#, fuzzy
 msgid "Loading menu..."
-msgstr "מתאמת..."
+msgstr "טוען תפריט..."
 
 msgid "Status Message"
 msgstr "הודעת מצב"
@@ -5836,10 +5830,11 @@ msgstr "עבר הזמן שציפינו לחכות עד שנקבל תשובה מ�
 msgid "Successfully Logged In..."
 msgstr "החיבור הושלם בהצלחה..."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s sent you an encrypted message, but it is not supported on this client."
-msgstr "נשלחה אליך הזמנה לשיחה קולית מאת %s, אשר אינה נתמכת כעת."
+msgstr ""
+"נשלחה אליך הודעה מוצפנת מאת %s, אבל הודעות אלו לא נתמכות ע\"י תוכנה זו."
 
 msgid "Message Error"
 msgstr "שגיאת הודעה"
@@ -5847,17 +5842,16 @@ msgstr "שגיאת הודעה"
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "לא ניתן לבצע ניתוב בעזרת הפרוטוקול שנבחר"
 
-#, fuzzy
 msgid "An internal MXit server error occurred."
-msgstr "אירעה שגיאה לא-מוכרת עם התעודה."
+msgstr "אירעה שגיאה פנימית בשרת ה-MXit."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Login error: %s (%i)"
-msgstr "שגיאת SASL: %s"
+msgstr "שגיאת התחברות: %s (%i)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Logout error: %s (%i)"
-msgstr "שגיאת SASL: %s"
+msgstr "שגיאת התנתקות: %s (%i)"
 
 msgid "Contact Error"
 msgstr "שגיאת חיבור"
@@ -11669,6 +11663,9 @@ msgstr "מקדונית"
 msgid "Mongolian"
 msgstr "מונגולית"
 
+msgid "Malay"
+msgstr "מאלאית"
+
 msgid "Bokmål Norwegian"
 msgstr "נורבגית ספרותית"
 
@@ -11737,6 +11734,9 @@ msgstr "תאלנדית"
 
 msgid "Turkish"
 msgstr "תורכית"
+
+msgid "Ukranian"
+msgstr "אוקראינית"
 
 msgid "Urdu"
 msgstr "אורדו"

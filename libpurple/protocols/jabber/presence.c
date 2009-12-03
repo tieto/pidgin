@@ -433,7 +433,7 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
                                  JabberPresenceCapabilities *userdata)
 {
 	JabberBuddyResource *jbr;
-	char *resource = g_utf8_strchr(userdata->from, -1, '/');
+	char *resource = strchr(userdata->from, '/');
 
 	if (resource)
 		resource += 1;
@@ -957,7 +957,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
 									 jid->node ? "@" : "", jid->domain);
 		if((b = purple_find_buddy(js->gc->account, buddy_name)) == NULL) {
-			if(!jid->node || strcmp(jid->node,js->user->node) || strcmp(jid->domain,js->user->domain)) {
+			if (jb != js->user_jb) {
 				purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%p)\n",
 									 buddy_name, purple_account_get_username(js->gc->account), js->gc->account);
 				jabber_id_free(jid);
