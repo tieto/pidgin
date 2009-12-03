@@ -1088,6 +1088,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 static void
 http_start_connect_tunneling(PurpleProxyConnectData *connect_data) {
 	GString *request;
+	int ret;
 
 	purple_debug_info("proxy", "Using CONNECT tunneling for %s:%d\n",
 		connect_data->host, connect_data->port);
