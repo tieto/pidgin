@@ -4,6 +4,9 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.6.4 (??/??/20??):
 	libpurple:
 	* Actually emit the hold signal for media calls.
+	* Don't send Proxy-Authorization headers to HTTP proxy servers until we've
+	  received a "407 Proxy Authentication Required" response from the server.
+	  (thecrux)
 	* Added "MXit" protocol plugin, supported and maintained by the MXit folks
 	  themselves (MXit Lifestyle (Pty) Ltd.)
 
