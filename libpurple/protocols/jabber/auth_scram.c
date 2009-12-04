@@ -140,10 +140,12 @@ jabber_scram_calc_proofs(JabberScramData *data, GString *salt, guint iterations)
 	GString *pass = g_string_new(data->password);
 
 	guchar *salted_password;
-	guchar client_key[hash_len];
-	guchar stored_key[hash_len];
-	guchar client_signature[hash_len];
-	guchar server_key[hash_len];
+	guchar *client_key, *stored_key, *client_signature, *server_key;
+
+	client_key = g_new0(guchar, hash_len);
+	stored_key = g_new0(guchar, hash_len);
+	client_signature = g_new0(guchar, hash_len);
+	server_key = g_new0(guchar, hash_len);
 
 	data->client_proof = g_string_sized_new(hash_len);
 	data->client_proof->len = hash_len;
@@ -175,6 +177,11 @@ jabber_scram_calc_proofs(JabberScramData *data, GString *salt, guint iterations)
 	/* client_proof = client_key XOR client_signature */
 	for (i = 0; i < hash_len; ++i)
 		data->client_proof->str[i] = client_key[i] ^ client_signature[i];
+
+	g_free(server_key);
+	g_free(client_signature);
+	g_free(stored_key);
+	g_free(client_key);
 
 	return TRUE;
 }
