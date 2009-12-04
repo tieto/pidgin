@@ -32,7 +32,7 @@
 
 static JabberSaslState
 digest_md5_start(JabberStream *js, xmlnode *packet, xmlnode **response,
-                 const char **msg)
+                 char **error)
 {
 	xmlnode *auth = xmlnode_new("auth");
 	xmlnode_set_namespace(auth, NS_XMPP_SASL);
@@ -166,7 +166,7 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 
 static JabberSaslState
 digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
-                            xmlnode **response, const char **msg)
+                            xmlnode **response, char **msg)
 {
 	xmlnode *reply = NULL;
 	char *enc_in = xmlnode_get_data(packet);
@@ -176,7 +176,7 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 	JabberSaslState state = JABBER_SASL_STATE_CONTINUE;
 
 	if (!enc_in) {
-		*msg = _("Invalid response from server");
+		*msg = g_strdup(_("Invalid response from server"));
 		return JABBER_SASL_STATE_FAIL;
 	}
 
@@ -193,7 +193,7 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 			reply = xmlnode_new("response");
 			xmlnode_set_namespace(reply, NS_XMPP_SASL);
 		} else {
-			*msg = _("Invalid challenge from server");
+			*msg = g_strdup(_("Invalid challenge from server"));
 			state = JABBER_SASL_STATE_FAIL;
 		}
 		g_free(js->expected_rspauth);
@@ -218,7 +218,7 @@ digest_md5_handle_challenge(JabberStream *js, xmlnode *packet,
 			realm = js->user->domain;
 
 		if (nonce == NULL || realm == NULL) {
-			*msg = _("Invalid challenge from server");
+			*msg = g_strdup(_("Invalid challenge from server"));
 			state = JABBER_SASL_STATE_FAIL;
 		} else {
 			GString *response = g_string_new("");

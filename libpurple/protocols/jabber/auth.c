@@ -165,7 +165,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	xmlnode *response = NULL;
 	xmlnode *mechs, *mechnode;
 	JabberSaslState state;
-	const char *msg = NULL;
+	char *msg = NULL;
 
 	if(js->registration) {
 		jabber_register_start(js);
@@ -225,6 +225,8 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		jabber_send(js, response);
 		xmlnode_free(response);
 	}
+
+	g_free(msg);
 }
 
 static void auth_old_result_cb(JabberStream *js, const char *from,
@@ -420,7 +422,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 
 	if (js->auth_mech && js->auth_mech->handle_challenge) {
 		xmlnode *response = NULL;
-		const char *msg = NULL;
+		char *msg = NULL;
 		JabberSaslState state = js->auth_mech->handle_challenge(js, packet, &response, &msg);
 		if (state == JABBER_SASL_STATE_FAIL) {
 			purple_connection_error_reason(js->gc,
@@ -430,6 +432,8 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			jabber_send(js, response);
 			xmlnode_free(response);
 		}
+
+		g_free(msg);
 	} else
 		purple_debug_warning("jabber", "Received unexpected (and unhandled) <challenge/>\n");
 }
@@ -446,7 +450,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 	}
 
 	if (js->auth_mech && js->auth_mech->handle_success) {
-		const char *msg = NULL;
+		char *msg = NULL;
 		JabberSaslState state = js->auth_mech->handle_success(js, packet, &msg);
 
 		if (state == JABBER_SASL_STATE_FAIL) {
@@ -460,6 +464,8 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 					msg ? msg : _("Server thinks authentication is complete, but client does not"));
 			return;
 		}
+
+		g_free(msg);
 	}
 
 	/*
@@ -473,11 +479,10 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 {
 	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
-	char *msg;
+	char *msg = NULL;
 
 	if (js->auth_mech && js->auth_mech->handle_failure) {
 		xmlnode *stanza = NULL;
-		const char *msg = NULL;
 		JabberSaslState state = js->auth_mech->handle_failure(js, packet, &stanza, &msg);
 
 		if (state != JABBER_SASL_STATE_FAIL && stanza) {
@@ -487,8 +492,10 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 		}
 	}
 
-	msg = jabber_parse_error(js, packet, &reason);
-	if(!msg) {
+	if (!msg)
+		msg = jabber_parse_error(js, packet, &reason);
+
+	if (!msg) {
 		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Invalid response from server"));

@@ -29,7 +29,7 @@
 #include "jabber.h"
 
 static JabberSaslState jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply,
-                                               const char **error);
+                                               char **error);
 static void jabber_sasl_build_callbacks(JabberStream *);
 
 static void disallow_plaintext_auth(PurpleAccount *account)
@@ -41,14 +41,15 @@ static void disallow_plaintext_auth(PurpleAccount *account)
 
 static void start_cyrus_wrapper(JabberStream *js)
 {
-	const char *error;
-	xmlnode *response;
+	char *error = NULL;
+	xmlnode *response = NULL;
 	JabberSaslState state = jabber_auth_start_cyrus(js, &response, &error);
 
 	if (state == JABBER_SASL_STATE_FAIL) {
 		purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
 				error);
+		g_free(error);
 	} else if (response) {
 		jabber_send(js, response);
 		xmlnode_free(response);
@@ -180,7 +181,7 @@ auth_no_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 }
 
 static JabberSaslState
-jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, const char **error)
+jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 {
 	PurpleAccount *account;
 	const char *clientout = NULL;
@@ -329,7 +330,7 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, const char **error)
 		*reply = auth;
 		return JABBER_SASL_STATE_CONTINUE;
 	} else {
-		*error = _("SASL authentication failed");
+		*error = g_strdup(_("SASL authentication failed"));
 		return JABBER_SASL_STATE_FAIL;
 	}
 }
@@ -387,7 +388,7 @@ jabber_sasl_build_callbacks(JabberStream *js)
 
 static JabberSaslState
 jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
-                   xmlnode **reply, const char **error)
+                   xmlnode **reply, char **error)
 {
 	xmlnode *mechnode;
 
@@ -423,7 +424,7 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 
 static JabberSaslState
 jabber_cyrus_handle_challenge(JabberStream *js, xmlnode *packet,
-                              xmlnode **reply, const char **error)
+                              xmlnode **reply, char **error)
 {
 	char *enc_in = xmlnode_get_data(packet);
 	unsigned char *dec_in;
@@ -478,7 +479,7 @@ jabber_cyrus_handle_challenge(JabberStream *js, xmlnode *packet,
 
 static JabberSaslState
 jabber_cyrus_handle_success(JabberStream *js, xmlnode *packet,
-                            const char **error)
+                            char **error)
 {
 	const void *x;
 
@@ -502,7 +503,7 @@ jabber_cyrus_handle_success(JabberStream *js, xmlnode *packet,
 
 		if (js->sasl_state != SASL_OK) {
 			/* This should never happen! */
-			*error = _("Invalid response from server");
+			*error = g_strdup(_("Invalid response from server"));
 			g_return_val_if_reached(JABBER_SASL_STATE_FAIL);
 		}
 	}
@@ -521,7 +522,7 @@ jabber_cyrus_handle_success(JabberStream *js, xmlnode *packet,
 
 static JabberSaslState
 jabber_cyrus_handle_failure(JabberStream *js, xmlnode *packet,
-                            xmlnode **reply, const char **error)
+                            xmlnode **reply, char **error)
 {
 	if (js->auth_fail_count++ < 5) {
 		if (js->current_mech && *js->current_mech) {
