@@ -91,6 +91,7 @@ libpurple/protocols/jabber/auth.c
 libpurple/protocols/jabber/auth_cyrus.c
 libpurple/protocols/jabber/auth_digest_md5.c
 libpurple/protocols/jabber/auth_plain.c
+libpurple/protocols/jabber/auth_scram.c
 libpurple/protocols/jabber/bosh.c
 libpurple/protocols/jabber/buddy.c
 libpurple/protocols/jabber/chat.c
