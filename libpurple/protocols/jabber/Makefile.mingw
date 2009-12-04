@@ -45,6 +45,10 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 C_SRC =	\
 			adhoccommands.c \
 			auth.c \
+			auth_cyrus.c \
+			auth_digest_md5.c \
+			auth_plain.c \
+			auth_scram.c \
 			buddy.c \
 			bosh.c \
 			caps.c \
