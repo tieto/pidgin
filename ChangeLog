@@ -5,6 +5,8 @@ version 2.6.5 (??/??/20??):
 	* Build-time fixes for Solaris.  (Paul Townsend)
 
 	XMPP:
+	* Added support for the SCRAM-SHA-1 SASL mechanism.  This support is only
+	  available when built without Cyrus SASL support.
 	* When getting info on a domain-only (server) JID, show uptime
 	  (when given by the result of the "last query") and don't show status as
 	  offline.
