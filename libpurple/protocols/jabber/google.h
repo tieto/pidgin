@@ -43,8 +43,8 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item);
 void jabber_google_presence_incoming(JabberStream *js, const char *who, JabberBuddyResource *jbr);
 char *jabber_google_presence_outgoing(PurpleStatus *tune);
 
-void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who);
-void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who);
+void jabber_google_roster_add_deny(JabberStream *js, const char *who);
+void jabber_google_roster_rem_deny(JabberStream *js, const char *who);
 
 char *jabber_google_format_to_html(const char *text);
 
