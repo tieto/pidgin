@@ -30,6 +30,7 @@
 #include "google.h"
 #include "jabber.h"
 #include "presence.h"
+#include "roster.h"
 #include "iq.h"
 #include "chat.h"
 
@@ -949,6 +950,18 @@ void jabber_gmail_init(JabberStream *js) {
 	jabber_iq_send(iq);
 }
 
+static void
+roster_init_cb(JabberStream *js, const char *from, JabberIqType type,
+               const char *id, xmlnode *packet, gpointer data)
+{
+	xmlnode *query = xmlnode_get_child(packet, "query");
+
+	if (type == JABBER_IQ_RESULT && query)
+		jabber_roster_parse(js, from, type, id, query);
+
+	jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+}
+
 void jabber_google_roster_init(JabberStream *js)
 {
 	JabberIq *iq;
@@ -960,6 +973,7 @@ void jabber_google_roster_init(JabberStream *js)
 	xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
 	xmlnode_set_attrib(query, "gr:ext", "2");
 
+	jabber_iq_set_callback(iq, roster_init_cb, NULL);
 	jabber_iq_send(iq);
 }
 
