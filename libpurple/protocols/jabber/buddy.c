@@ -816,10 +816,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 	if (!jbi->jb->resources) {
 		/* the buddy is offline */
 		gboolean is_domain = jabber_jid_is_domain(jbi->jid);
-		gchar *status =
-			g_strdup_printf("%s%s%s",	_("Offline"),
-			                jbi->last_message ? ": " : "",
-			                jbi->last_message ? jbi->last_message : "");
+
 		if (jbi->last_seconds > 0) {
 			char *last = purple_str_seconds_to_string(jbi->last_seconds);
 			gchar *message = NULL;
@@ -836,9 +833,14 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			g_free(message);
 		}
 
-		if (!is_domain)
+		if (!is_domain) {
+			gchar *status =
+				g_strdup_printf("%s%s%s",	_("Offline"),
+				                jbi->last_message ? ": " : "",
+				                jbi->last_message ? jbi->last_message : "");
 			purple_notify_user_info_prepend_pair(user_info, _("Status"), status);
-		g_free(status);
+			g_free(status);
+		}
 	}
 
 	g_free(resource_name);

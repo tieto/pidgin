@@ -565,11 +565,14 @@ jabber_id_get_bare_jid(const JabberID *jid)
 gboolean
 jabber_jid_is_domain(const char *jid)
 {
-	char *domain = jabber_get_domain(jid);
-	gboolean is_domain = purple_strequal(jid, domain);
+	const char *c;
 
-	g_free(domain);
-	return is_domain;
+	for (c = jid; *c; ++c) {
+		if (*c == '@' || *c == '/')
+			return FALSE;
+	}
+
+	return TRUE;
 }
 
 
