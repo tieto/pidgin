@@ -78,9 +78,13 @@ void jingle_parse(JabberStream *js, const char *from, JabberIqType type,
 
 void jingle_terminate_sessions(JabberStream *js);
 
+#ifdef USE_VV
 /* create a GParam array given autoconfigured STUN (and later perhaps TURN).
 	if google_talk is TRUE, set compatability mode to GOOGLE_TALK */
-GParameter *jingle_get_params(JabberStream *js, guint *num_params);
+GParameter *jingle_get_params(JabberStream *js, const gchar *relay_ip,
+	guint relay_udp, guint relay_tcp, guint relay_ssltcp,
+    const gchar *relay_username, const gchar *relay_password, guint *num_params);
+#endif
 
 #ifdef __cplusplus
 }
