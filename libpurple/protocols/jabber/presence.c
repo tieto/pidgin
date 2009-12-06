@@ -150,7 +150,7 @@ void jabber_presence_send(JabberStream *js, gboolean force)
 
 	/* we don't want to send presence before we've gotten our roster */
 	if (js->state != JABBER_STREAM_CONNECTED) {
-		purple_debug_info("jabber", "attempt to send presence before roster retrieved\n");
+		purple_debug_misc("jabber", "attempt to send presence before roster retrieved\n");
 		return;
 	}
 
