@@ -950,33 +950,6 @@ void jabber_gmail_init(JabberStream *js) {
 	jabber_iq_send(iq);
 }
 
-static void
-roster_init_cb(JabberStream *js, const char *from, JabberIqType type,
-               const char *id, xmlnode *packet, gpointer data)
-{
-	xmlnode *query = xmlnode_get_child(packet, "query");
-
-	if (type == JABBER_IQ_RESULT && query)
-		jabber_roster_parse(js, from, type, id, query);
-
-	jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
-}
-
-void jabber_google_roster_init(JabberStream *js)
-{
-	JabberIq *iq;
-	xmlnode *query;
-
-	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:roster");
-	query = xmlnode_get_child(iq->node, "query");
-
-	xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
-	xmlnode_set_attrib(query, "gr:ext", "2");
-
-	jabber_iq_set_callback(iq, roster_init_cb, NULL);
-	jabber_iq_send(iq);
-}
-
 void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
@@ -986,7 +959,7 @@ void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *it
 
 	while (list) {
 		if (!strcmp(jid_norm, (char*)list->data)) {
-			xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
+			xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
 			xmlnode_set_attrib(query, "gr:ext", "2");
 			xmlnode_set_attrib(item, "gr:t", "B");
 			return;
@@ -1003,7 +976,7 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 
 	char *jid_norm;
 
-	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", "google:roster");
+	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", NS_GOOGLE_ROSTER);
 	const char *subscription = xmlnode_get_attrib(item, "subscription");
 	const char *ask = xmlnode_get_attrib(item, "ask");
 
@@ -1088,7 +1061,7 @@ void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 	xmlnode_set_attrib(item, "jid", who);
 	xmlnode_set_attrib(item, "name", balias ? balias : "");
 	xmlnode_set_attrib(item, "gr:t", "B");
-	xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
+	xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
 	xmlnode_set_attrib(query, "gr:ext", "2");
 
 	jabber_iq_send(iq);
@@ -1147,7 +1120,7 @@ void jabber_google_roster_rem_deny(JabberStream *js, const char *who)
 	balias = purple_buddy_get_local_buddy_alias(b);
 	xmlnode_set_attrib(item, "jid", who);
 	xmlnode_set_attrib(item, "name", balias ? balias : "");
-	xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
+	xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
 	xmlnode_set_attrib(query, "gr:ext", "2");
 
 	jabber_iq_send(iq);

@@ -87,8 +87,13 @@ void jabber_roster_request(JabberStream *js)
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:roster");
 	query = xmlnode_get_child(iq->node, "query");
 	xmlnode_set_attrib(query, "ver", ver);
-	jabber_iq_set_callback(iq, roster_request_cb, NULL);
 
+	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER) {
+		xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
+		xmlnode_set_attrib(query, "gr:ext", "2");
+	}
+
+	jabber_iq_set_callback(iq, roster_request_cb, NULL);
 	jabber_iq_send(iq);
 }
 
@@ -334,7 +339,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 
 	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER) {
 		jabber_google_roster_outgoing(js, query, item);
-		xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
+		xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
 		xmlnode_set_attrib(query, "gr:ext", "2");
 	}
 	jabber_iq_send(iq);

@@ -95,6 +95,7 @@
 #define NS_GOOGLE_JINGLE_INFO "google:jingleinfo"
 
 #define NS_GOOGLE_MAIL_NOTIFY "google:mail:notify"
+#define NS_GOOGLE_ROSTER "google:roster"
 
 #define NS_GOOGLE_PROTOCOL_SESSION "http://www.google.com/xmpp/protocol/session"
 #define NS_GOOGLE_SESSION "http://www.google.com/session"
