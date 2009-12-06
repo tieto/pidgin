@@ -47,11 +47,47 @@ static gchar *roster_groups_join(GSList *list)
 	return g_string_free(out, FALSE);
 }
 
+static void roster_request_cb(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id,
+                              xmlnode *packet, gpointer data)
+{
+	xmlnode *query;
+
+	if (type == JABBER_IQ_ERROR) {
+		/*
+		 * This shouldn't happen in any real circumstances and
+		 * likely constitutes a server-side misconfiguration (i.e.
+		 * explicitly not loading mod_roster...)
+		 */
+		purple_debug_error("jabber", "Error retrieving roster!?\n");
+		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+		return;
+	}
+
+	query = xmlnode_get_child(packet, "query");
+	if (query == NULL) {
+		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+		return;
+	}
+
+	jabber_roster_parse(js, from, type, id, query);
+	jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+}
+
 void jabber_roster_request(JabberStream *js)
 {
+	PurpleAccount *account;
+	const char *ver;
 	JabberIq *iq;
+	xmlnode *query;
+
+	account = purple_connection_get_account(js->gc);
+	ver = purple_account_get_string(account, "roster_ver", "");
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:roster");
+	query = xmlnode_get_child(iq->node, "query");
+	xmlnode_set_attrib(query, "ver", ver);
+	jabber_iq_set_callback(iq, roster_request_cb, NULL);
 
 	jabber_iq_send(iq);
 }
@@ -155,6 +191,7 @@ void jabber_roster_parse(JabberStream *js, const char *from,
                          JabberIqType type, const char *id, xmlnode *query)
 {
 	xmlnode *item, *group;
+	const char *ver;
 
 	if (!jabber_is_own_account(js, from)) {
 		purple_debug_warning("jabber", "Received bogon roster push from %s\n",
@@ -227,13 +264,13 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 		}
 	}
 
-	js->currently_parsing_roster_push = FALSE;
+	ver = xmlnode_get_attrib(query, "ver");
+	if (ver) {
+		 PurpleAccount *account = purple_connection_get_account(js->gc);
+		 purple_account_set_string(account, "roster_ver", ver);
+	}
 
-	/* if we're just now parsing the roster for the first time,
-	 * then now would be the time to declare ourselves connected.
-	 */
-	if (js->state != JABBER_STREAM_CONNECTED)
-		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+	js->currently_parsing_roster_push = FALSE;
 }
 
 /* jabber_roster_update frees the GSList* passed in */

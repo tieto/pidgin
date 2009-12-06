@@ -229,6 +229,8 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		jabber_iq_set_callback(iq, jabber_bind_result_cb, NULL);
 
 		jabber_iq_send(iq);
+	} else if (xmlnode_get_child_with_namespace(packet, "ver", NS_ROSTER_VERSIONING)) {
+		js->server_caps |= JABBER_CAP_ROSTER_VERSIONING;
 	} else /* if(xmlnode_get_child_with_namespace(packet, "auth")) */ {
 		/* If we get an empty stream:features packet, or we explicitly get
 		 * an auth feature with namespace http://jabber.org/features/iq-auth

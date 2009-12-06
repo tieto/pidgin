@@ -5,12 +5,13 @@ version 2.6.5 (??/??/20??):
 	* Build-time fixes for Solaris.  (Paul Townsend)
 
 	XMPP:
-	* Added support for the SCRAM-SHA-1 SASL mechanism.  This support is only
+	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
 	  available when built without Cyrus SASL support.
 	* When getting info on a domain-only (server) JID, show uptime
 	  (when given by the result of the "last query") and don't show status as
 	  offline.
 	* Do not crash when attempting to register for a new account on Windows.
+	* Added support for Roster Versioning (XEP-0237).
 
 version 2.6.4 (11/29/2009):
 	libpurple:
