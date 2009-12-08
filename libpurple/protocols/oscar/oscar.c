@@ -3576,9 +3576,9 @@ static int purple_chatnav_info(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 			purple_debug_misc("oscar",
 					"created room: %s %hu %hu %hu %u %hu %hu %hhu %hu %s %s\n",
-					fqcn, exchange, instance, flags, createtime,
+					fqcn ? fqcn : "(null)", exchange, instance, flags, createtime,
 					maxmsglen, maxoccupancy, createperms, unknown,
-					name, ck);
+					name ? name : "(null)", ck);
 			aim_chat_join(od, exchange, ck, instance);
 			}
 			break;
