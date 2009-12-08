@@ -23,10 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include	<glib.h>
-#include	<stdio.h>
-#include	<string.h>
-
+#include    "internal.h"
 #include	"purple.h"
 #include	"notify.h"
 #include	"plugin.h"

@@ -36,11 +36,11 @@
  * http://dev.aol.com/authentication_for_clients
  */
 
-#include "cipher.h"
-#include "core.h"
-
 #include "oscar.h"
 #include "oscarcommon.h"
+
+#include "cipher.h"
+#include "core.h"
 
 #define URL_CLIENT_LOGIN "https://api.screenname.aol.com/auth/clientLogin"
 #define URL_START_OSCAR_SESSION "http://api.oscar.aol.com/aim/startOSCARSession"
