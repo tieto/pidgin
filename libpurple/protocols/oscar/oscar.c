@@ -4650,7 +4650,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	if ((conn != NULL) && (conn->ready))
 	{
 		/* If we're directly connected, send a direct IM */
-		purple_debug_info("oscar", "Sending direct IM with flags %i", imflags);
+		purple_debug_info("oscar", "Sending direct IM with flags %i\n", imflags);
 		purple_odc_send_im(conn, tmp1, imflags);
 	} else {
 		struct buddyinfo *bi;
