@@ -1305,7 +1305,10 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	networkid = atoi(cmd->params[2]);
 	friendly = purple_url_decode(cmd->params[3]);
 
-	user = msn_userlist_find_user(session->userlist, passport);
+	if (g_str_equal(passport, session->user->passport))
+		user = session->user;
+	else
+		user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) return;
 
 	if (msn_user_set_friendly_name(user, friendly))
