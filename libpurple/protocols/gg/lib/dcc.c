@@ -19,6 +19,8 @@
  *  USA.
  */
 
+#include "libgadu.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifndef _WIN32
@@ -41,8 +43,6 @@
 #include <unistd.h>
 
 #include "compat.h"
-#include "libgadu.h"
-
 #ifndef GG_DEBUG_DISABLE
 /*
  * gg_dcc_debug_data() // funkcja wewnêtrzna

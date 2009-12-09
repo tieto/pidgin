@@ -1,4 +1,3 @@
-
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.0 (??/??/????):
@@ -20,6 +19,21 @@ version 2.7.0 (??/??/????):
 	  it look and behave like the search dialog in Firefox)
 
 version 2.6.5 (??/??/20??):
+	General:
+	* Build-time fixes for Solaris.  (Paul Townsend)
+
+	AIM and ICQ:
+	* Messages from some mobile clients are no longer displayed as
+	  Chinese characters (broken in 2.6.4)
+
+	XMPP:
+	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
+	  available when built without Cyrus SASL support.
+	* When getting info on a domain-only (server) JID, show uptime
+	  (when given by the result of the "last query") and don't show status as
+	  offline.
+	* Do not crash when attempting to register for a new account on Windows.
+	* Added support for Roster Versioning (XEP-0237).
 
 version 2.6.4 (11/29/2009):
 	libpurple:

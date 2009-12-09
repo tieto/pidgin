@@ -2,6 +2,10 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.0
 
+version 2.6.5
+	* Norwegian Nynorsk win32 translation added (Yngve Spjeld Landro)
+	* Russian translation updated (Антон Самохвалов)
+
 version 2.6.4
 	* Afrikaans translation updated (Friedel Wolff)
 	* Chinese (Hong Kong) translation updated (Ambrose C. Li, Paladin R. Liu)

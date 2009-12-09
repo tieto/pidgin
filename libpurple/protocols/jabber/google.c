@@ -30,6 +30,7 @@
 #include "google.h"
 #include "jabber.h"
 #include "presence.h"
+#include "roster.h"
 #include "iq.h"
 #include "chat.h"
 
@@ -949,20 +950,6 @@ void jabber_gmail_init(JabberStream *js) {
 	jabber_iq_send(iq);
 }
 
-void jabber_google_roster_init(JabberStream *js)
-{
-	JabberIq *iq;
-	xmlnode *query;
-
-	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:roster");
-	query = xmlnode_get_child(iq->node, "query");
-
-	xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
-	xmlnode_set_attrib(query, "gr:ext", "2");
-
-	jabber_iq_send(iq);
-}
-
 void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
@@ -972,7 +959,7 @@ void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *it
 
 	while (list) {
 		if (!strcmp(jid_norm, (char*)list->data)) {
-			xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
+			xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
 			xmlnode_set_attrib(query, "gr:ext", "2");
 			xmlnode_set_attrib(item, "gr:t", "B");
 			return;
@@ -989,7 +976,7 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 
 	char *jid_norm;
 
-	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", "google:roster");
+	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", NS_GOOGLE_ROSTER);
 	const char *subscription = xmlnode_get_attrib(item, "subscription");
 	const char *ask = xmlnode_get_attrib(item, "ask");
 
@@ -1032,9 +1019,9 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 	return TRUE;
 }
 
-void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
+void jabber_google_roster_add_deny(JabberStream *js, const char *who)
 {
-	JabberStream *js;
+	PurpleAccount *account;
 	GSList *buddies;
 	JabberIq *iq;
 	xmlnode *query;
@@ -1044,14 +1031,10 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 	JabberBuddy *jb;
 	const char *balias;
 
-	js = (JabberStream*)(gc->proto_data);
-
-	if (!js || !(js->server_caps & JABBER_CAP_GOOGLE_ROSTER))
-		return;
-
 	jb = jabber_buddy_find(js, who, TRUE);
 
-	buddies = purple_find_buddies(js->gc->account, who);
+	account = purple_connection_get_account(js->gc);
+	buddies = purple_find_buddies(account, who);
 	if(!buddies)
 		return;
 
@@ -1078,7 +1061,7 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 	xmlnode_set_attrib(item, "jid", who);
 	xmlnode_set_attrib(item, "name", balias ? balias : "");
 	xmlnode_set_attrib(item, "gr:t", "B");
-	xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
+	xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
 	xmlnode_set_attrib(query, "gr:ext", "2");
 
 	jabber_iq_send(iq);
@@ -1098,12 +1081,11 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 		}
 	}
 
-	purple_prpl_got_user_status(purple_connection_get_account(gc), who, "offline", NULL);
+	purple_prpl_got_user_status(account, who, "offline", NULL);
 }
 
-void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
+void jabber_google_roster_rem_deny(JabberStream *js, const char *who)
 {
-	JabberStream *js;
 	GSList *buddies;
 	JabberIq *iq;
 	xmlnode *query;
@@ -1111,14 +1093,6 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 	xmlnode *group;
 	PurpleBuddy *b;
 	const char *balias;
-
-	g_return_if_fail(gc != NULL);
-	g_return_if_fail(who != NULL);
-
-	js = (JabberStream*)(gc->proto_data);
-
-	if (!js || !(js->server_caps & JABBER_CAP_GOOGLE_ROSTER))
-		return;
 
 	buddies = purple_find_buddies(purple_connection_get_account(js->gc), who);
 	if(!buddies)
@@ -1146,7 +1120,7 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 	balias = purple_buddy_get_local_buddy_alias(b);
 	xmlnode_set_attrib(item, "jid", who);
 	xmlnode_set_attrib(item, "name", balias ? balias : "");
-	xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
+	xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
 	xmlnode_set_attrib(query, "gr:ext", "2");
 
 	jabber_iq_send(iq);
