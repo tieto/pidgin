@@ -1612,6 +1612,40 @@ sbs_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	/*get the payload content*/
 }
 
+static void
+parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
+{
+	xmlnode *epNode, *capsNode;
+	MsnUserEndpoint data;
+	const char *id;
+	char *caps, *tmp;
+
+	for (epNode = xmlnode_get_child(payloadNode, "EndpointData");
+	     epNode;
+	     epNode = xmlnode_get_next_twin(epNode)) {
+		id = xmlnode_get_attrib(epNode, "id");
+		capsNode = xmlnode_get_child(epNode, "Capabilities");
+
+		if (capsNode != NULL) {
+			caps = xmlnode_get_data(capsNode);
+
+			data.clientid = strtoul(caps, &tmp, 10);
+			if (tmp && *tmp)
+				data.extcaps = strtoul(tmp + 1, NULL, 10);
+			else
+				data.extcaps = 0;
+
+			g_free(caps);
+
+		} else {
+			data.clientid = 0;
+			data.extcaps = 0;
+		}
+
+		msn_user_set_endpoint_data(user, id, &data);
+	}
+}
+
 /*
  * Get the UBX's PSM info
  * Post it to the User status
@@ -1668,6 +1702,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		g_free(media.artist);
 		g_free(str);
 
+		parse_user_endpoints(user, payloadNode);
 	} else {
 		msn_user_set_statusline(user, NULL);
 		msn_user_set_currentmedia(user, NULL);
