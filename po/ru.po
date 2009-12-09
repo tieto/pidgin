@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-29 20:30-0500\n"
+"POT-Creation-Date: 2009-12-05 19:57-0800\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
@@ -1540,7 +1540,7 @@ msgid "TinyURL for above: %s"
 msgstr "TinyURL для вышеуказанного: %s"
 
 msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr ""
+msgstr "Пожалуйста, подождите пока TinyURL получает короткий адрес ..."
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Создайте TinyURL для адресов только с такой длиной или больше"
@@ -3830,6 +3830,13 @@ msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Сервер требует аутентификацию простым текстом через нешифрованный поток"
 
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "Неверный отклик от сервера"
+
+msgid "Server does not use any supported authentication method"
+msgstr "Сервер не использует ни одного поддерживаемого метода аутентификации"
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3841,24 +3848,37 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Аутентификация простым текстом"
 
-msgid "SASL authentication failed"
-msgstr "Аутентификация SASL провалилась"
-
-msgid "Invalid response from server"
-msgstr "Неверный отклик от сервера"
-
-msgid "Server does not use any supported authentication method"
-msgstr "Сервер не использует ни одного поддерживаемого метода аутентификации"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr "Вы запросили шифрование, но оно недоступно на сервере."
 
 msgid "Invalid challenge from server"
 msgstr "Неверный запрос с сервера"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+
+msgid "SASL authentication failed"
+msgstr "Аутентификация SASL провалилась"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "Ошибка SASL: %s"
+
+#, fuzzy
+msgid "Unable to canonicalize username"
+msgstr "Не удаётся настроить"
+
+#, fuzzy
+msgid "Unable to canonicalize password"
+msgstr "Не удалось открыть прослушиваемый порт."
+
+#, fuzzy
+msgid "Malicious challenge from server"
+msgstr "Неверный запрос с сервера"
+
+#, fuzzy
+msgid "Unexpected response from server"
+msgstr "Получен непредвиденный HTTP-отклик от сервера."
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Управление соединениями BOSH прервало ваш сеанс."
@@ -3959,12 +3979,20 @@ msgstr "Приоритет"
 msgid "Resource"
 msgstr "Ресурс"
 
+#, fuzzy
+msgid "Uptime"
+msgstr "Обновить"
+
 #, c-format
-msgid "%s ago"
-msgstr "%s назад"
+msgid "%s"
+msgstr ""
 
 msgid "Logged Off"
 msgstr "Вышел из сети"
+
+#, c-format
+msgid "%s ago"
+msgstr "%s назад"
 
 msgid "Middle Name"
 msgstr "Отчество"
@@ -5818,45 +5846,37 @@ msgid "Current Mood"
 msgstr "Ваше текущее настроение"
 
 #. add all moods to list
-#, fuzzy
 msgid "New Mood"
-msgstr "Настроение пользователя"
+msgstr "Новое настроение"
 
-#, fuzzy
 msgid "Change your Mood"
-msgstr "Изменить пароль"
+msgstr "Изменить ваше настроение"
 
-#, fuzzy
 msgid "How do you feel right now?"
-msgstr "Прямо сейчас меня здесь нет"
+msgstr "Как вы сейчас?"
 
-#, fuzzy
 msgid "The PIN you entered is invalid."
-msgstr "Введённый ключ SecurID неверный."
+msgstr "Введённый PIN-код неправильный."
 
-#, fuzzy
 msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "Введённый ключ SecurID неверный."
+msgstr "Введённый PIN-код неправильной длины [4-10]."
 
 msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
+msgstr "PIN-код неправильный. Он должен содержать только цифры [0-9]."
 
-#, fuzzy
 msgid "The two PINs you entered do not match."
-msgstr "Новые пароли не совпадают."
+msgstr "Два введённых PIN-кода не совпадают."
 
-#, fuzzy
 msgid "The name you entered is invalid."
-msgstr "Введённый ключ SecurID неверный."
+msgstr "Введённое имя неправильное."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr ""
+msgstr "Введённая вами дата рождения неправильная. Формат такой: 'ГГГГ-ММ-ДД'."
 
 #. show error to user
-#, fuzzy
 msgid "Profile Update Error"
-msgstr "Ошибка записи"
+msgstr "Ошибка Обновления Профиля"
 
 #. no profile information yet, so we cannot update
 #. (reference: "libpurple/request.h")
@@ -5865,89 +5885,80 @@ msgstr "Профиль"
 
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
+"Информация о вашем профиле ещё не получена. Пожалуйста, попробуйте позже."
 
 #. pin
-#, fuzzy
 msgid "PIN"
-msgstr "UIN"
+msgstr "PIN"
 
 msgid "Verify PIN"
-msgstr ""
+msgstr "Проверьте PIN"
 
 #. display name
-#, fuzzy
 msgid "Display Name"
-msgstr "Фамилия"
+msgstr "Показать имя"
 
 #. hidden
 msgid "Hide my number"
-msgstr ""
+msgstr "Скрыть мой номер"
 
 #. mobile number
-#, fuzzy
 msgid "Mobile Number"
-msgstr "Номер мобильного телефона"
+msgstr "Номер мобильного"
 
-#, fuzzy
 msgid "Update your Profile"
-msgstr "Профиль пользователя"
+msgstr "Обновить ваш профиль"
 
 msgid "Here you can update your MXit profile"
-msgstr ""
+msgstr "Здесь вы можете обновить ваш MXit-профиль"
 
 msgid "View Splash"
-msgstr ""
+msgstr "Показать заставку"
 
 msgid "There is no splash-screen currently available"
-msgstr ""
+msgstr "Сейчас нет доступных экранов-заставок"
 
-#, fuzzy
 msgid "About"
-msgstr "Обо мне"
+msgstr "Про"
 
 #. display / change mood
-#, fuzzy
 msgid "Change Mood..."
-msgstr "Изменить пароль..."
+msgstr "Изменить настроение..."
 
 #. display / change profile
-#, fuzzy
 msgid "Change Profile..."
-msgstr "Изменить пароль..."
+msgstr "Изменить профиль..."
 
 #. display splash-screen
-#, fuzzy
 msgid "View Splash..."
-msgstr "Просмотреть журнал..."
+msgstr "Показать заставку..."
 
 #. display plugin version
-#, fuzzy
 msgid "About..."
-msgstr "Обо мне"
+msgstr "О модуле..."
 
 #. the file is too big
-#, fuzzy
 msgid "The file you are trying to send is too large!"
-msgstr "Сообщение слишком велико."
+msgstr "Файл, которые вы пытаетесь отправить слишком велик!"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
 msgstr ""
+"Не удаётся соединиться с сервером HTTP MXit. Пожалуйста, проверьте ваши "
+"настройки сервера."
 
-#, fuzzy
 msgid "Logging In..."
-msgstr "Входит в сеть"
+msgstr "Входит в сеть..."
 
 #, fuzzy
 msgid ""
 "Unable to connect to the MXit server. Please check your server settings."
 msgstr ""
-"Не удаётся соединиться с сервером. Введите адрес сервера, с которым вы "
-"хотите соединиться."
+"Не удаётся соединиться с сервером MXit. Пожалуйста, проверьте ваши настройки "
+"сервера."
 
-#, fuzzy
 msgid "Connecting..."
-msgstr "Соединение"
+msgstr "Соединение..."
 
 #, fuzzy
 msgid "The nick name you entered is invalid."
@@ -5959,142 +5970,126 @@ msgstr "Введённый ключ SecurID неверный."
 
 #. mxit login name
 msgid "MXit Login Name"
-msgstr ""
+msgstr "Имя входа MXit"
 
 #. nick name
-#, fuzzy
 msgid "Nick Name"
 msgstr "Псевдоним"
 
 #. show the form to the user to complete
 #, fuzzy
 msgid "Register New MXit Account"
-msgstr "Зарегистрировать новую учётную запись XMPP"
+msgstr "Зарегистрировать новую учётную запись MXit"
 
-#, fuzzy
 msgid "Please fill in the following fields:"
-msgstr "Заполните следующие поля"
+msgstr "Пожалуйста, заполните следующие поля:"
 
 #. no reply from the WAP site
 msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr ""
+msgstr "Ошибка связи с сайтом MXit WAP. Пожалуйста, попробуйте позже."
 
 #. wapserver error
 #. server could not find the user
 msgid ""
 "MXit is currently unable to process the request. Please try again later."
-msgstr ""
+msgstr "MXit не может сейчас обработать апрос. Пожалуйста, попробуйте позже."
 
 msgid "Wrong security code entered. Please try again later."
-msgstr ""
+msgstr "Введён ошибочный код безопасности. Пожалуйста, попробуйте позже."
 
 msgid "Your session has expired. Please try again later."
-msgstr ""
+msgstr "Ваш сеанс истёк. Пожалуйста, попробуйте позже."
 
 msgid "Invalid country selected. Please try again."
-msgstr ""
+msgstr "Выбрана неправильная страна. Пожалуйста, попробуйте ещё раз."
 
 msgid "Username is not registered. Please register first."
 msgstr ""
+"Имя пользователя не зарегистрировано. Пожалуйста, сначала зарегистрируйтесь."
 
 msgid "Username is already registered. Please choose another username."
 msgstr ""
+"Имя пользователя уже зарегистрировано. Пожалуйста, выберите другое имя."
 
-#, fuzzy
 msgid "Internal error. Please try again later."
-msgstr "Сервер недоступен; повторите попытку позже"
+msgstr "Внутренняя ошибка. Пожалуйста, попробуйте позже."
 
 msgid "You did not enter the security code"
-msgstr ""
+msgstr "Вы не ввели код безопасности"
 
-#, fuzzy
 msgid "Security Code"
-msgstr "Безопасность включена"
+msgstr "Код безопасности"
 
 #. ask for input
-#, fuzzy
 msgid "Enter Security Code"
-msgstr "Введите код"
+msgstr "Введите код безопасности"
 
-#, fuzzy
 msgid "Your Country"
-msgstr "Страна"
+msgstr "Ваша страна"
 
-#, fuzzy
 msgid "Your Language"
-msgstr "Предпочитаемый язык"
+msgstr "Ваш язык"
 
 #. display the form to the user and wait for his/her input
-#, fuzzy
 msgid "MXit Authorization"
-msgstr "Требовать авторизацию"
+msgstr "Авторизация MXit"
 
 msgid "MXit account validation"
-msgstr ""
+msgstr "Подтверждение учётной записи MXit"
 
-#, fuzzy
 msgid "Retrieving User Information..."
-msgstr "Информация о сервере"
+msgstr "Получение информации о пользователе..."
 
 msgid "Loading menu..."
-msgstr ""
+msgstr "Загрузка меню..."
 
-#, fuzzy
 msgid "Status Message"
-msgstr "Отправленные сообщения"
+msgstr "Сообщения состояния"
 
-#, fuzzy
 msgid "Hidden Number"
-msgstr "Отчество"
+msgstr "Скрытый номер"
 
-#, fuzzy
 msgid "Your Mobile Number..."
-msgstr "Ввести номер мобильного телефона..."
+msgstr "Номер мобильного телефона..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
-#, fuzzy
 msgid "WAP Server"
-msgstr "Сервер"
+msgstr "WAP-сервер"
 
-#, fuzzy
 msgid "Connect via HTTP"
-msgstr "Соединение по TCP"
+msgstr "Соединение через HTTP"
 
 msgid "Enable splash-screen popup"
-msgstr ""
+msgstr "Включить контекстное меню экрана-заставки"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
-msgstr ""
+msgstr "Мы потеряли соединение с MXit. Пожалуйста, пересоединитесь."
 
 #. packet could not be queued for transmission
-#, fuzzy
 msgid "Message Send Error"
-msgstr "Ошибка сообщения XMPP"
+msgstr "Ошибка отправки сообщения"
 
-#, fuzzy
 msgid "Unable to process your request at this time"
-msgstr "Не удаётся соединиться с сервером."
+msgstr "Не удаётся сейчас обработать ваш запрос"
 
 msgid "Timeout while waiting for a response from the MXit server."
-msgstr ""
+msgstr "Истекло время во время ожидания ответа от сервера MXit."
 
-#, fuzzy
 msgid "Successfully Logged In..."
-msgstr "Успешно подсоединён Qun"
+msgstr "Успешно вошёл в сеть..."
 
 #, fuzzy, c-format
 msgid ""
 "%s sent you an encrypted message, but it is not supported on this client."
 msgstr "%s послал вам приглашение к веб-камере, которое ещё не поддерживается."
 
-#, fuzzy
 msgid "Message Error"
-msgstr "Ошибка сообщения XMPP"
+msgstr "Сообщение об ошибке"
 
 msgid "Cannot perform redirect using the specified protocol"
-msgstr ""
+msgstr "Не могу осуществить перенаправление используя указанный протокол"
 
 #, fuzzy
 msgid "An internal MXit server error occurred."
@@ -6158,53 +6153,52 @@ msgstr "Ошибка записи"
 
 #. bad packet
 msgid "Invalid packet received from MXit."
-msgstr ""
+msgstr "Получен неправильный пакет от MXit."
 
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr ""
+msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x01)"
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr ""
+msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x02)"
 
 msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr ""
+msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x03)"
 
 #. malformed packet length record (too long)
 msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr ""
+msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x04)"
 
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr ""
+msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x05)"
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr ""
+msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x06)"
 
 #, fuzzy
 msgid "Pending"
-msgstr "Отправка"
+msgstr "Рассмотрение"
 
 #, fuzzy
 msgid "Invited"
-msgstr "Пригласить"
+msgstr "Приглашено"
 
 #, fuzzy
 msgid "Rejected"
-msgstr "Отвергнуть"
+msgstr "Отклонено"
 
 #, fuzzy
 msgid "Deleted"
-msgstr "Удалить"
+msgstr "Удалено"
 
 msgid "MXit Advertising"
-msgstr ""
+msgstr "Реклама MXit"
 
-#, fuzzy
 msgid "More Information"
-msgstr "Информация о работе"
+msgstr "Больше информации"
 
 #, c-format
 msgid "No such user: %s"
@@ -13354,20 +13348,17 @@ msgstr ""
 "Выберите тему смайликов, которую вы хотели бы использовать. Новые темы могут "
 "быть установлены перетаскиванием их в список тем."
 
-#, fuzzy
 msgid "Buddy List Theme:"
-msgstr "Тема Списка собеседников"
+msgstr "Тема Списка собеседников:"
 
-#, fuzzy
 msgid "Status Icon Theme:"
-msgstr "Статус для %s"
+msgstr "Тема значков состояния:"
 
 msgid "Sound Theme:"
-msgstr ""
+msgstr "Звуковая тема:"
 
-#, fuzzy
 msgid "Smiley Theme:"
-msgstr "Темы смайликов"
+msgstr "Тема смайликов:"
 
 msgid "Keyboard Shortcuts"
 msgstr "Горячие клавиши"
@@ -13385,9 +13376,8 @@ msgstr "_Показывать значок системного лотка:"
 msgid "On unread messages"
 msgstr "При наличии непрочитанных сообщений"
 
-#, fuzzy
 msgid "Conversation Window"
-msgstr "Окна бесед"
+msgstr "Окно беседы"
 
 msgid "_Hide new IM conversations:"
 msgstr "_Скрывать новые беседы:"
@@ -13481,21 +13471,18 @@ msgstr ""
 msgid "Cannot start proxy configuration program."
 msgstr "Не могу запустить программу настройки прокси."
 
-#, fuzzy
 msgid "Cannot start browser configuration program."
 msgstr "Не могу запустить программу настройки веб-проводника."
 
-#, fuzzy
 msgid "Disabled"
 msgstr "Отключено"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Use _automatically detected IP address: %s"
-msgstr "Использовать _автоматически обнаруженный IP-адрес: %s"
+msgstr "И_спользовать автоматически определённый IP-адрес: %s"
 
-#, fuzzy
 msgid "ST_UN server:"
-msgstr "ST_UN сервер:"
+msgstr "_STUN сервер:"
 
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Пример: stunserver.org</span>"
@@ -13519,7 +13506,7 @@ msgstr "_Статус:"
 
 #, fuzzy
 msgid "_End:"
-msgstr "Р_азвернуть"
+msgstr "Коне_ц:"
 
 #. TURN server
 msgid "Relay Server (TURN)"
@@ -13527,15 +13514,15 @@ msgstr "Реле сервер (TURN)"
 
 #, fuzzy
 msgid "_TURN server:"
-msgstr "ST_UN-сервер:"
+msgstr "_TURN-сервер:"
 
 #, fuzzy
 msgid "Use_rname:"
-msgstr "Имя пользователя:"
+msgstr "Им_я пользователя:"
 
 #, fuzzy
 msgid "Pass_word:"
-msgstr "Пароль:"
+msgstr "Паро_ль:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"

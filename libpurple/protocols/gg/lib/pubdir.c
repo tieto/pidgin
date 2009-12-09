@@ -19,6 +19,8 @@
  *  USA.
  */
 
+#include "libgadu.h"
+
 #include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>
@@ -26,8 +28,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-#include "libgadu.h"
 
 /*
  * gg_register3()

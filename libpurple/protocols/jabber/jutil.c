@@ -276,6 +276,42 @@ gboolean jabber_resourceprep_validate(const char *str)
 #endif /* USE_IDN */
 }
 
+char *jabber_saslprep(const char *in)
+{
+#ifdef USE_IDN
+	char *out;
+
+	g_return_val_if_fail(in != NULL, NULL);
+	g_return_val_if_fail(strlen(in) <= sizeof(idn_buffer) - 1, NULL);
+
+	strncpy(idn_buffer, in, sizeof(idn_buffer) - 1);
+	idn_buffer[sizeof(idn_buffer) - 1] = '\0';
+
+	if (STRINGPREP_OK != stringprep(idn_buffer, sizeof(idn_buffer), 0,
+	                                stringprep_saslprep)) {
+		memset(idn_buffer, 0, sizeof(idn_buffer));
+		return NULL;
+	}
+
+	out = g_strdup(idn_buffer);
+	memset(idn_buffer, 0, sizeof(idn_buffer));
+	return out;
+#else /* USE_IDN */
+	/* TODO: Something better than disallowing all non-ASCII characters */
+	/* TODO: Is this even correct? */
+	const guchar *c;
+
+	c = (const guchar *)in;
+	while (*c) {
+		if (*c > 0x7f ||
+				(*c < 0x20 && *c != '\t' && *c != '\n' && *c != '\r'))
+			return NULL;
+	}
+
+	return g_strdup(in);
+#endif /* USE_IDN */
+}
+
 static JabberID*
 jabber_id_new_internal(const char *str, gboolean allow_terminating_slash)
 {
@@ -529,11 +565,14 @@ jabber_id_get_bare_jid(const JabberID *jid)
 gboolean
 jabber_jid_is_domain(const char *jid)
 {
-	char *domain = jabber_get_domain(jid);
-	gboolean is_domain = purple_strequal(jid, domain);
+	const char *c;
 
-	g_free(domain);
-	return is_domain;
+	for (c = jid; *c; ++c) {
+		if (*c == '@' || *c == '/')
+			return FALSE;
+	}
+
+	return TRUE;
 }
 
 
