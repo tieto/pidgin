@@ -272,7 +272,7 @@ void msn_user_set_uid(MsnUser *user, const char *uid);
  * @param data     The endpoint data.
  */
 void
-msn_user_set_endpoint_data(MsnUser *user, char *endpoint, MsnUserEndpoint *data);
+msn_user_set_endpoint_data(MsnUser *user, const char *endpoint, MsnUserEndpoint *data);
 
 /**
  * Sets the client id for a user.
@@ -385,7 +385,7 @@ const char *msn_user_get_mobile_phone(const MsnUser *user);
  * @return The user's endpoint data.
  */
 MsnUserEndpoint *
-msn_user_get_endpoint_data(MsnUser *user, char *endpoint);
+msn_user_get_endpoint_data(MsnUser *user, const char *endpoint);
 
 /**
  * Returns the client id for a user.

@@ -234,7 +234,7 @@ msn_user_set_uid(MsnUser *user, const char *uid)
 }
 
 void
-msn_user_set_endpoint_data(MsnUser *user, char *endpoint, MsnUserEndpoint *data)
+msn_user_set_endpoint_data(MsnUser *user, const char *endpoint, MsnUserEndpoint *data)
 {
 	MsnUserEndpoint *new;
 	g_return_if_fail(user != NULL);
@@ -531,7 +531,7 @@ msn_user_get_extcaps(const MsnUser *user)
 }
 
 MsnUserEndpoint *
-msn_user_get_endpoint_data(MsnUser *user, char *endpoint)
+msn_user_get_endpoint_data(MsnUser *user, const char *endpoint)
 {
 	g_return_val_if_fail(user != NULL, NULL);
 
