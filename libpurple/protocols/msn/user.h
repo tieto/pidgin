@@ -72,6 +72,7 @@ struct _MsnUser
 	char *friendly_name;    /**< The friendly name.             */
 
 	char * uid;				/*< User Id							*/
+	GHashTable *endpoints;	/*< Endpoint-specific data          */
 
 	const char *status;     /**< The state of the user.         */
 	char *statusline;       /**< The state of the user.         */
@@ -98,6 +99,7 @@ struct _MsnUser
 	GHashTable *clientcaps; /**< The client's capabilities.     */
 
 	guint clientid;         /**< The client's ID                */
+	guint extcaps;			/**< The client's extended capabilities */
 
 	MsnNetwork networkid;   /**< The user's network             */
 
@@ -108,6 +110,15 @@ struct _MsnUser
 
 	char *invite_message;   /**< Invite message of user request */
 };
+
+/**
+ * A specific user endpoint.
+ */
+typedef struct MsnUserEndpoint {
+	guint clientid;         /**< The client's ID                   */
+	guint extcaps;			/**< The client's extended capabilites */
+
+} MsnUserEndpoint;
 
 /**************************************************************************
  ** @name User API                                                        *
@@ -253,12 +264,30 @@ void msn_user_set_work_phone(MsnUser *user, const char *number);
 void msn_user_set_uid(MsnUser *user, const char *uid);
 
 /**
+ * Sets endpoint data for a user.
+ *
+ * @param user     The user.
+ * @param endpoint The endpoint.
+ * @param data     The endpoint data.
+ */
+void
+msn_user_set_endpoint_data(MsnUser *user, char *endpoint, MsnUserEndpoint *data);
+
+/**
  * Sets the client id for a user.
  *
  * @param user     The user.
  * @param clientid The client id.
  */
 void msn_user_set_clientid(MsnUser *user, guint clientid);
+
+/**
+ * Sets the client id for a user.
+ *
+ * @param user     The user.
+ * @param extcaps  The client's extended capabilities.
+ */
+void msn_user_set_extcaps(MsnUser *user, guint extcaps);
 
 /**
  * Sets the network id for a user.
@@ -347,6 +376,17 @@ const char *msn_user_get_work_phone(const MsnUser *user);
 const char *msn_user_get_mobile_phone(const MsnUser *user);
 
 /**
+ * Gets endpoint data for a user.
+ *
+ * @param user     The user.
+ * @param endpoint The endpoint.
+ *
+ * @return The user's endpoint data.
+ */
+MsnUserEndpoint *
+msn_user_get_endpoint_data(MsnUser *user, char *endpoint);
+
+/**
  * Returns the client id for a user.
  *
  * @param user    The user.
@@ -354,6 +394,15 @@ const char *msn_user_get_mobile_phone(const MsnUser *user);
  * @return The user's client id.
  */
 guint msn_user_get_clientid(const MsnUser *user);
+
+/**
+ * Returns the extended capabilities for a user.
+ *
+ * @param user    The user.
+ *
+ * @return The user's extended capabilities.
+ */
+guint msn_user_get_extcaps(const MsnUser *user);
 
 /**
  * Returns the network id for a user.
@@ -405,6 +454,19 @@ msn_user_is_yahoo(PurpleAccount *account ,const char *name);
 
 void msn_user_set_op(MsnUser *user, int list_op);
 void msn_user_unset_op(MsnUser *user, int list_op);
+
+/**
+ * Checks whether a user is capable of some task.
+ *
+ * @param user       The user.
+ * @param endpoint   The endpoint. Can be @NULL to check overall capabilities.
+ * @param capability The capability (including client version).
+ * @param extcap     The extended capability.
+ *
+ * @return Whether the user supports the capability.
+ */
+gboolean
+msn_user_is_capable(MsnUser *user, char *endpoint, guint capability, guint extcap);
 
 /*@}*/
 

@@ -39,6 +39,8 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	msn_user_set_passport(user, passport);
 	msn_user_set_friendly_name(user, friendly_name);
 
+	user->endpoints = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
 	return user;
 }
 
@@ -47,6 +49,9 @@ void
 msn_user_destroy(MsnUser *user)
 {
 	g_return_if_fail(user != NULL);
+
+	if (user->endpoints != NULL)
+		g_hash_table_destroy(user->endpoints);
 
 	if (user->clientcaps != NULL)
 		g_hash_table_destroy(user->clientcaps);
@@ -229,6 +234,27 @@ msn_user_set_uid(MsnUser *user, const char *uid)
 }
 
 void
+msn_user_set_endpoint_data(MsnUser *user, char *endpoint, MsnUserEndpoint *data)
+{
+	MsnUserEndpoint *new;
+	g_return_if_fail(user != NULL);
+
+	if (data == NULL) {
+		g_hash_table_remove(user->endpoints, endpoint);
+		return;
+	}
+
+	new = g_hash_table_lookup(user->endpoints, endpoint);
+	if (!new) {
+		new = g_new0(MsnUserEndpoint, 1);
+		g_hash_table_insert(user->endpoints, g_strdup(endpoint), new);
+	}
+
+	new->clientid = data->clientid;
+	new->extcaps = data->extcaps;
+}
+
+void
 msn_user_set_op(MsnUser *user, int list_op)
 {
 	g_return_if_fail(user != NULL);
@@ -397,6 +423,14 @@ msn_user_set_clientid(MsnUser *user, guint clientid)
 }
 
 void
+msn_user_set_extcaps(MsnUser *user, guint extcaps)
+{
+	g_return_if_fail(user != NULL);
+
+	user->extcaps = extcaps;
+}
+
+void
 msn_user_set_network(MsnUser *user, MsnNetwork network)
 {
 	g_return_if_fail(user != NULL);
@@ -487,6 +521,22 @@ msn_user_get_clientid(const MsnUser *user)
 	return user->clientid;
 }
 
+guint
+msn_user_get_extcaps(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, 0);
+
+	return user->extcaps;
+}
+
+MsnUserEndpoint *
+msn_user_get_endpoint_data(MsnUser *user, char *endpoint)
+{
+	g_return_val_if_fail(user != NULL, NULL);
+
+	return g_hash_table_lookup(user->endpoints, endpoint);
+}
+
 MsnObject *
 msn_user_get_object(const MsnUser *user)
 {
@@ -510,4 +560,23 @@ msn_user_get_invite_message(const MsnUser *user)
 
 	return user->invite_message;
 }
+
+gboolean
+msn_user_is_capable(MsnUser *user, char *endpoint, guint capability, guint extcap)
+{
+	g_return_val_if_fail(user != NULL, FALSE);
+
+	if (endpoint != NULL) {
+		MsnUserEndpoint *ep = g_hash_table_lookup(user->endpoints, endpoint);
+		if (ep != NULL)
+			return (ep->clientid & capability) == capability
+			    && (ep->extcaps & extcap) == extcap;
+		else
+			return FALSE;
+	}
+
+	return (user->clientid & capability) == capability
+	    && (user->extcaps & extcap) == extcap;
+}
+
 
