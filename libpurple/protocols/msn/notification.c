@@ -1291,7 +1291,8 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
-	unsigned long clientid;
+	unsigned long clientid, extcaps;
+	char *extcap_str;
 	int networkid;
 	const char *state, *passport, *friendly;
 
@@ -1322,10 +1323,15 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_user_set_object(user, NULL);
 	}
 
-	clientid = strtoul(cmd->params[4], NULL, 10);
+	clientid = strtoul(cmd->params[4], &extcap_str, 10);
+	if (extcap_str && *extcap_str)
+		extcaps = strtoul(extcap_str+1, NULL, 10);
+	else
+		extcaps = 0;
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
 
 	msn_user_set_clientid(user, clientid);
+	msn_user_set_extcaps(user, extcaps);
 	msn_user_set_network(user, networkid);
 
 	msn_user_set_state(user, state);
