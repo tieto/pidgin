@@ -247,6 +247,7 @@ msn_user_set_endpoint_data(MsnUser *user, char *endpoint, MsnUserEndpoint *data)
 	new = g_hash_table_lookup(user->endpoints, endpoint);
 	if (!new) {
 		new = g_new0(MsnUserEndpoint, 1);
+		new->id = g_strdup(endpoint);
 		g_hash_table_insert(user->endpoints, g_strdup(endpoint), new);
 	}
 

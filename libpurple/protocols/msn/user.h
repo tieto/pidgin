@@ -115,6 +115,7 @@ struct _MsnUser
  * A specific user endpoint.
  */
 typedef struct MsnUserEndpoint {
+	char *id;				/**< The client's endpoint ID          */
 	guint clientid;         /**< The client's ID                   */
 	guint extcaps;			/**< The client's extended capabilites */
 
