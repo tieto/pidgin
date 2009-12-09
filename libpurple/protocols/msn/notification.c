@@ -1625,6 +1625,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	PurpleAccount *account;
 	MsnUser *user;
 	const char *passport;
+	xmlnode *payloadNode;
 	char *psm_str, *str;
 	CurrentMedia media = {CURRENT_MEDIA_UNKNOWN, NULL, NULL, NULL};
 
@@ -1642,11 +1643,22 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	}
 
 	if (len != 0) {
-		psm_str = msn_get_psm(cmd->payload,len);
+		payloadNode = xmlnode_from_str(payload, len);
+		if (!payloadNode) {
+			purple_debug_error("msn", "UBX XML parse Error!\n");
+
+			msn_user_set_statusline(user, NULL);
+			msn_user_set_currentmedia(user, NULL);
+
+			msn_user_update(user);
+			return;
+		}
+
+		psm_str = msn_get_psm(payloadNode);
 		msn_user_set_statusline(user, psm_str);
 		g_free(psm_str);
 
-		str = msn_get_currentmedia(cmd->payload, len);
+		str = msn_get_currentmedia(payloadNode);
 		if (msn_parse_currentmedia(str, &media))
 			msn_user_set_currentmedia(user, &media);
 		else

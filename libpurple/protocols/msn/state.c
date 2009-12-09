@@ -161,19 +161,14 @@ msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
 	return parsed;
 }
 
-/* get the CurrentMedia info from the XML string */
+/* get the CurrentMedia info from the XML node */
 char *
-msn_get_currentmedia(char *xml_str, gsize len)
+msn_get_currentmedia(xmlnode *payloadNode)
 {
-	xmlnode *payloadNode, *currentmediaNode;
+	xmlnode *currentmediaNode;
 	char *currentmedia;
 
 	purple_debug_info("msn", "Get CurrentMedia\n");
-	payloadNode = xmlnode_from_str(xml_str, len);
-	if (!payloadNode) {
-		purple_debug_error("msn", "PSM XML parse Error!\n");
-		return NULL;
-	}
 	currentmediaNode = xmlnode_get_child(payloadNode, "CurrentMedia");
 	if (currentmediaNode == NULL) {
 		purple_debug_info("msn", "No CurrentMedia Node\n");
@@ -187,19 +182,14 @@ msn_get_currentmedia(char *xml_str, gsize len)
 	return currentmedia;
 }
 
-/*get the PSM info from the XML string*/
+/* Get the PSM info from the XML node */
 char *
-msn_get_psm(char *xml_str, gsize len)
+msn_get_psm(xmlnode *payloadNode)
 {
-	xmlnode *payloadNode, *psmNode;
+	xmlnode *psmNode;
 	char *psm;
 
 	purple_debug_info("msn", "msn get PSM\n");
-	payloadNode = xmlnode_from_str(xml_str, len);
-	if (!payloadNode) {
-		purple_debug_error("msn", "PSM XML parse Error!\n");
-		return NULL;
-	}
 	psmNode = xmlnode_get_child(payloadNode, "PSM");
 	if (psmNode == NULL) {
 		purple_debug_info("msn", "No PSM status Node\n");
