@@ -1324,7 +1324,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 
 	clientid = strtoul(cmd->params[4], &extcap_str, 10);
-	if (extcap_str && *extcap_str)
+	if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
 		extcaps = strtoul(extcap_str+1, NULL, 10);
 	else
 		extcaps = 0;
