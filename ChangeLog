@@ -16,6 +16,8 @@ version 2.6.5 (??/??/20??):
 	  offline.
 	* Do not crash when attempting to register for a new account on Windows.
 	* Added support for Roster Versioning (XEP-0237).
+	* Fix file transfer with clients that do not support Entity Capabilities
+	  (e.g. Spark)
 
 version 2.6.4 (11/29/2009):
 	libpurple:
