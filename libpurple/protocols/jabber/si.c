@@ -1448,7 +1448,7 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 	g_free(xfer->who);
 	xfer->who = who;
 
-	if (jbr && jbr->caps.info) {
+	if (jbr && jabber_resource_know_capabilities(jbr)) {
 		char *msg;
 
 		if (jabber_resource_has_capability(jbr, NS_IBB))
