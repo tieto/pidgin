@@ -15,7 +15,6 @@ version 2.6.5 (??/??/20??):
 	  (when given by the result of the "last query") and don't show status as
 	  offline.
 	* Do not crash when attempting to register for a new account on Windows.
-	* Added support for Roster Versioning (XEP-0237).
 	* Fix file transfer with clients that do not support Entity Capabilities
 	  (e.g. Spark)
 
