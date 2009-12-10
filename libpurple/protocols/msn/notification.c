@@ -1088,7 +1088,8 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj = NULL;
-	unsigned long clientid;
+	unsigned long clientid, extcaps;
+	char *extcap_str;
 	int networkid = 0;
 	const char *state, *passport;
 	char *friendly;
@@ -1109,7 +1110,11 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* Yahoo! Buddy, looks like */
 		networkid = atoi(cmd->params[3]);
 		friendly = g_strdup(purple_url_decode(cmd->params[4]));
-		clientid = strtoul(cmd->params[5], NULL, 10);
+		clientid = strtoul(cmd->params[5], &extcap_str, 10);
+		if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
+			extcaps = strtoul(extcap_str+1, NULL, 10);
+		else
+			extcaps = 0;
 
 		/* cmd->params[7] seems to be a URL to a Yahoo! icon:
 				https://sec.yimg.com/i/us/nt/b/purpley.1.0.png
@@ -1119,7 +1124,11 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* MSNP14+ with Display Picture object */
 		networkid = atoi(cmd->params[3]);
 		friendly = g_strdup(purple_url_decode(cmd->params[4]));
-		clientid = strtoul(cmd->params[5], NULL, 10);
+		clientid = strtoul(cmd->params[5], &extcap_str, 10);
+		if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
+			extcaps = strtoul(extcap_str+1, NULL, 10);
+		else
+			extcaps = 0;
 		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[6]));
 	} else if (cmd->param_count == 6) {
 		/* Yes, this is 5. The friendly name could start with a number,
@@ -1128,17 +1137,29 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			/* MSNP14 without Display Picture object */
 			networkid = atoi(cmd->params[3]);
 			friendly = g_strdup(purple_url_decode(cmd->params[4]));
-			clientid = strtoul(cmd->params[5], NULL, 10);
+			clientid = strtoul(cmd->params[5], &extcap_str, 10);
+			if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
+				extcaps = strtoul(extcap_str+1, NULL, 10);
+			else
+				extcaps = 0;
 		} else {
 			/* MSNP8+ with Display Picture object */
 			friendly = g_strdup(purple_url_decode(cmd->params[3]));
-			clientid = strtoul(cmd->params[4], NULL, 10);
+			clientid = strtoul(cmd->params[4], &extcap_str, 10);
+			if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
+				extcaps = strtoul(extcap_str+1, NULL, 10);
+			else
+				extcaps = 0;
 			msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[5]));
 		}
 	} else if (cmd->param_count == 5) {
 		/* MSNP8+ without Display Picture object */
 		friendly = g_strdup(purple_url_decode(cmd->params[3]));
-		clientid = strtoul(cmd->params[4], NULL, 10);
+		clientid = strtoul(cmd->params[4], &extcap_str, 10);
+		if (session->protocol_ver >= 16 && extcap_str && *extcap_str)
+			extcaps = strtoul(extcap_str+1, NULL, 10);
+		else
+			extcaps = 0;
 	} else {
 		purple_debug_warning("msn", "Received ILN with unknown number of parameters.\n");
 		return;
@@ -1153,6 +1174,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
 	msn_user_set_clientid(user, clientid);
+	msn_user_set_extcaps(user, extcaps);
 	msn_user_set_network(user, networkid);
 
 	msn_user_set_state(user, state);
