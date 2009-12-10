@@ -2449,7 +2449,7 @@ purple_media_candidate_pair_established_cb(FsStream *fsstream,
 	FsParticipant *participant;
 	PurpleMediaStream *stream;
 	GList *iter;
-
+	
 	g_return_if_fail(FS_IS_STREAM(fsstream));
 	g_return_if_fail(session != NULL);
 
@@ -2755,9 +2755,22 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		const gchar *stun_ip = purple_network_get_stun_ip();
 		const gchar *turn_ip = purple_network_get_turn_ip();
 
-		if (stun_ip || turn_ip) {
+		/* check if the prpl has already specified a relay-info
+		 we need to do this to allow them to override when using non-standard
+		 TURN modes, like Google f.ex. */
+		gboolean got_turn_from_prpl = FALSE;
+		int i;
+		
+		for (i = 0 ; i < num_params ; i++) {
+			if (purple_strequal(params[i].name, "relay-info")) {
+				got_turn_from_prpl = TRUE;
+				break;
+			}
+		}
+
+		if (stun_ip || (turn_ip && !got_turn_from_prpl)) {
 			guint new_num_params = 
-					(stun_ip && is_nice) && turn_ip ?
+					(stun_ip && is_nice && turn_ip && !got_turn_from_prpl) ?
 					num_params + 2 : num_params + 1;
 			guint next_param_index = num_params;
 			GParameter *param = g_new0(GParameter, new_num_params);
@@ -2773,7 +2786,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 				next_param_index++;
 			}
 
-			if (turn_ip && is_nice) {
+			if (turn_ip && !got_turn_from_prpl && is_nice) {
 				GValueArray *relay_info = g_value_array_new(0);
 				GValue value;
 				gint turn_port = 
