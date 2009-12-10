@@ -177,8 +177,6 @@ msn_get_currentmedia(xmlnode *payloadNode)
 	}
 	currentmedia = xmlnode_get_data(currentmediaNode);
 
-	xmlnode_free(payloadNode);
-
 	return currentmedia;
 }
 
@@ -197,8 +195,6 @@ msn_get_psm(xmlnode *payloadNode)
 		return NULL;
 	}
 	psm = xmlnode_get_data(psmNode);
-
-	xmlnode_free(payloadNode);
 
 	return psm;
 }

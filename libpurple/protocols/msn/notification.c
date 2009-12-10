@@ -1709,6 +1709,9 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		g_free(str);
 
 		parse_user_endpoints(user, payloadNode);
+
+		xmlnode_free(payloadNode);
+
 	} else {
 		msn_user_set_statusline(user, NULL);
 		msn_user_set_currentmedia(user, NULL);
