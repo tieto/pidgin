@@ -1623,6 +1623,8 @@ parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 	const char *id;
 	char *caps, *tmp;
 
+	purple_debug_info("msn", "Get EndpointData\n");
+
 	for (epNode = xmlnode_get_child(payloadNode, "EndpointData");
 	     epNode;
 	     epNode = xmlnode_get_next_twin(epNode)) {
