@@ -595,17 +595,21 @@ purple_prpl_got_media_caps(PurpleAccount *account, const char *name)
 
 	while (list) {
 		PurpleBuddy *buddy = list->data;
-		PurpleMediaCaps oldcaps = buddy->media_caps;
+		PurpleMediaCaps oldcaps = purple_buddy_get_media_caps(buddy);
+		PurpleMediaCaps newcaps = 0;
 		const gchar *bname = purple_buddy_get_name(buddy);
 		list = g_slist_delete_link(list, list);
-		buddy->media_caps = purple_prpl_get_media_caps(account, bname);
 
-		if (oldcaps == buddy->media_caps)
+		
+		newcaps = purple_prpl_get_media_caps(account, bname);
+		purple_buddy_set_media_caps(buddy, newcaps);
+
+		if (oldcaps == newcaps)
 			continue;
 
 		purple_signal_emit(purple_blist_get_handle(),
 				"buddy-caps-changed", buddy,
-				buddy->media_caps, oldcaps);
+				newcaps, oldcaps);
 	}
 #endif
 }
