@@ -2605,6 +2605,18 @@ PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy)
 	return buddy->presence;
 }
 
+PurpleMediaCaps purple_buddy_get_media_caps(const PurpleBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, 0);
+	return buddy->media_caps;
+}
+
+void purple_buddy_set_media_caps(PurpleBuddy *buddy, PurpleMediaCaps media_caps)
+{
+	g_return_if_fail(buddy != NULL);
+	buddy->media_caps = media_caps;
+}
+
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
 {
 	g_return_val_if_fail(buddy != NULL, NULL);

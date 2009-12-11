@@ -659,6 +659,24 @@ PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy);
 PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy);
 
 /**
+ * Gets the media caps from a buddy.
+ *
+ * @param buddy The buddy.
+ * @return      The media caps.
+ *
+ * @since 2.7.0
+ */
+PurpleMediaCaps purple_buddy_get_media_caps(const PurpleBuddy *buddy);
+
+/**
+ * Sets the media caps for a buddy.
+ *
+ * @param buddy      The PurpleBuddy.
+ * @param media_caps The PurpleMediaCaps.
+ */
+void purple_buddy_set_media_caps(PurpleBuddy *buddy, PurpleMediaCaps media_caps);
+
+/**
  * Adds a new buddy to the buddy list.
  *
  * The buddy will be inserted right after node or prepended to the
