@@ -602,7 +602,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 				 * Adding yet another get_alias is evil, so figure this out
 				 * later :-P
 				 */
-				if (purple_contact_get_alias(contact) || gtknode->contact_expanded) {
+				if (contact->alias || gtknode->contact_expanded) {
 					purple_blist_alias_contact(contact, arg2);
 					gtk_blist_auto_personize(purple_blist_node_get_parent(node), arg2);
 				} else {
