@@ -1421,7 +1421,7 @@ void google_buddy_node_chat(PurpleBlistNode *node, gpointer data)
 	                        NULL, NULL);
 	if (chat) {
 		chat->muc = TRUE;
-		jabber_chat_invite(gc, chat->id, "", buddy->name);
+		jabber_chat_invite(gc, chat->id, "", purple_buddy_get_name(buddy));
 	}
 
 	g_free(room);
