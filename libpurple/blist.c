@@ -1739,6 +1739,14 @@ purple_contact_destroy(PurpleContact *contact)
 	g_free(contact);
 }
 
+PurpleGroup *
+purple_contact_get_group(const PurpleContact *contact)
+{
+	g_return_val_if_fail(contact, NULL);
+
+	return (PurpleGroup *)(((PurpleBlistNode *)contact)->parent);
+}
+
 void purple_contact_set_alias(PurpleContact *contact, const char *alias)
 {
 	purple_blist_alias_contact(contact,alias);

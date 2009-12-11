@@ -735,6 +735,16 @@ PurpleContact *purple_contact_new(void);
 void purple_contact_destroy(PurpleContact *contact);
 
 /**
+ * Gets the PurpleGroup from a PurpleContact
+ *
+ * @param contact  The contact
+ * @return         The group
+ *
+ * @since 2.7.0
+ */
+PurpleGroup *purple_contact_get_group(const PurpleContact *contact);
+
+/**
  * Adds a new contact to the buddy list.
  *
  * The new contact will be inserted after insert or prepended to the list if
