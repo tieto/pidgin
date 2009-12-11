@@ -602,7 +602,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 				 * Adding yet another get_alias is evil, so figure this out
 				 * later :-P
 				 */
-				if (contact->alias || gtknode->contact_expanded) {
+				if (purple_contact_get_alias(contact) || gtknode->contact_expanded) {
 					purple_blist_alias_contact(contact, arg2);
 					gtk_blist_auto_personize(purple_blist_node_get_parent(node), arg2);
 				} else {
@@ -1205,9 +1205,9 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 
 		purple_blist_node_set_bool(node, "collapsed", TRUE);
 
-		for(cnode = node->child; cnode; cnode = cnode->next) {
+		for(cnode = purple_blist_node_get_first_child(node); cnode; cnode = purple_blist_node_get_sibling_next(cnode)) {
 			if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
-				gtknode = cnode->ui_data;
+				gtknode = purple_blist_node_get_ui_data(cnode);
 				if (!gtknode->contact_expanded)
 					continue;
 				gtknode->contact_expanded = FALSE;
@@ -1239,7 +1239,7 @@ static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTr
 		else
 			buddy = (PurpleBuddy*)node;
 
-		pidgin_dialogs_im_with_user(buddy->account, buddy->name);
+		pidgin_dialogs_im_with_user(purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		gtk_blist_join_chat((PurpleChat *)node);
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
@@ -1259,9 +1259,9 @@ static void pidgin_blist_add_chat_cb(void)
 	if(gtk_tree_selection_get_selected(sel, NULL, &iter)){
 		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 		if (PURPLE_BLIST_NODE_IS_BUDDY(node))
-			purple_blist_request_add_chat(NULL, (PurpleGroup*)node->parent->parent, NULL, NULL);
+			purple_blist_request_add_chat(NULL, purple_buddy_get_group(PURPLE_BUDDY(node)), NULL, NULL);
 		if (PURPLE_BLIST_NODE_IS_CONTACT(node) || PURPLE_BLIST_NODE_IS_CHAT(node))
-			purple_blist_request_add_chat(NULL, (PurpleGroup*)node->parent, NULL, NULL);
+			purple_blist_request_add_chat(NULL, purple_contact_get_group(PURPLE_CONTACT(node)), NULL, NULL);
 		else if (PURPLE_BLIST_NODE_IS_GROUP(node))
 			purple_blist_request_add_chat(NULL, (PurpleGroup*)node, NULL, NULL);
 	}
@@ -1279,13 +1279,13 @@ static void pidgin_blist_add_buddy_cb(void)
 	if(gtk_tree_selection_get_selected(sel, NULL, &iter)){
 		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 		if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
-			purple_blist_request_add_buddy(NULL, NULL, ((PurpleGroup*)node->parent->parent)->name,
-					NULL);
-		} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)
-				|| PURPLE_BLIST_NODE_IS_CHAT(node)) {
-			purple_blist_request_add_buddy(NULL, NULL, ((PurpleGroup*)node->parent)->name, NULL);
+			PurpleGroup *group = purple_buddy_get_group(PURPLE_BUDDY(node));
+			purple_blist_request_add_buddy(NULL, NULL, purple_group_get_name(group), NULL);
+		} else if (PURPLE_BLIST_NODE_IS_CONTACT(node) || PURPLE_BLIST_NODE_IS_CHAT(node)) {
+			PurpleGroup *group = purple_contact_get_group(PURPLE_CONTACT(node));
+			purple_blist_request_add_buddy(NULL, NULL, purple_group_get_name(group), NULL);
 		} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-			purple_blist_request_add_buddy(NULL, NULL, ((PurpleGroup*)node)->name, NULL);
+			purple_blist_request_add_buddy(NULL, NULL, purple_group_get_name(PURPLE_GROUP(node)), NULL);
 		}
 	}
 	else {
@@ -1337,11 +1337,11 @@ pidgin_blist_expand_contact_cb(GtkWidget *w, PurpleBlistNode *node)
 	if(!PURPLE_BLIST_NODE_IS_CONTACT(node))
 		return;
 
-	gtknode = (struct _pidgin_blist_node *)node->ui_data;
+	gtknode = purple_blist_node_get_ui_data(node);
 
 	gtknode->contact_expanded = TRUE;
 
-	for(bnode = node->child; bnode; bnode = bnode->next) {
+	for(bnode = purple_blist_node_get_first_child(node); bnode; bnode = purple_blist_node_get_sibling_next(bnode)) {
 		pidgin_blist_update(NULL, bnode);
 	}
 
@@ -1356,7 +1356,7 @@ pidgin_blist_expand_contact_cb(GtkWidget *w, PurpleBlistNode *node)
 		/* Let the treeview draw so it knows where to scroll */
 		ex->treeview = GTK_TREE_VIEW(gtkblist->treeview);
 		ex->path = path;
-		ex->node = node->child;
+		ex->node = purple_blist_node_get_first_child(node);
 		g_idle_add(scroll_to_expanded_cell, ex);
 	}
 }
@@ -1370,11 +1370,11 @@ pidgin_blist_collapse_contact_cb(GtkWidget *w, PurpleBlistNode *node)
 	if(!PURPLE_BLIST_NODE_IS_CONTACT(node))
 		return;
 
-	gtknode = (struct _pidgin_blist_node *)node->ui_data;
+	gtknode = purple_blist_node_get_ui_data(node);
 
 	gtknode->contact_expanded = FALSE;
 
-	for(bnode = node->child; bnode; bnode = bnode->next) {
+	for(bnode = purple_blist_node_get_first_child(node); bnode; bnode = purple_blist_node_get_sibling_next(bnode)) {
 		pidgin_blist_update(NULL, bnode);
 	}
 }
@@ -1465,10 +1465,10 @@ pidgin_append_blist_node_move_to_menu(GtkWidget *menu, PurpleBlistNode *node)
 	submenu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
-	for (group = purple_blist_get_root(); group; group = group->next) {
-		if (group->type != PURPLE_BLIST_GROUP_NODE)
+	for (group = purple_blist_get_root(); group; group = purple_blist_node_get_sibling_next(group)) {
+		if (!PURPLE_BLIST_NODE_IS_GROUP(group))
 			continue;
-		if (group == node->parent)
+		if (group == purple_blist_node_get_parent(node))
 			continue;
 		menuitem = pidgin_new_item_from_stock(submenu, purple_group_get_name((PurpleGroup *)group), NULL,
 						      G_CALLBACK(gtk_blist_menu_move_to_cb), node, 0, 0, NULL);
@@ -1479,6 +1479,8 @@ pidgin_append_blist_node_move_to_menu(GtkWidget *menu, PurpleBlistNode *node)
 
 void
 pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) {
+	PurpleAccount *account = NULL;
+	PurpleConnection *pc = NULL;
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleContact *contact;
 	PurpleBlistNode *node;
@@ -1487,13 +1489,16 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	g_return_if_fail(menu);
 	g_return_if_fail(buddy);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(buddy->account->gc->prpl);
+	account = purple_buddy_get_account(buddy);
+	pc = purple_account_get_connection(account);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(pc));
 
-	node = (PurpleBlistNode*)buddy;
+	node = PURPLE_BLIST_NODE(buddy);
 
 	contact = purple_buddy_get_contact(buddy);
 	if (contact) {
-		contact_expanded = ((struct _pidgin_blist_node *)(((PurpleBlistNode*)contact)->ui_data))->contact_expanded;
+		PidginBlistNode *node = purple_blist_node_get_ui_data(PURPLE_BLIST_NODE(contact));
+		contact_expanded = node->contact_expanded;
 	}
 
 	if (prpl_info && prpl_info->get_info) {
