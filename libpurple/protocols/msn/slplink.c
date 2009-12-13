@@ -309,7 +309,7 @@ msg_ack(MsnMessage *msg, void *data)
 
 	if (slpmsg->offset < real_size)
 	{
-		if (slpmsg->slpcall->xfer)
+		if (slpmsg->slpcall->xfer && purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
 		{
 			slpmsg->slpcall->xfer_msg = slpmsg;
 			purple_xfer_prpl_ready(slpmsg->slpcall->xfer);
