@@ -67,6 +67,9 @@ int main(void)
 	int number_failed;
 	SRunner *sr;
 
+	if (g_getenv("PURPLE_CHECK_DEBUG"))
+		purple_debug_set_enabled(TRUE);
+
 	/* Make g_return_... functions fatal, ALWAYS.
 	 * As this is the test code, this is NOT controlled
 	 * by PURPLE_FATAL_ASSERTS. */
