@@ -44,7 +44,7 @@ purple_check_init(void) {
 	purple_eventloop_set_ui_ops(&eventloop_ui_ops);
 
 	/* build our fake home directory */
-	home_dir = g_build_path(BUILDDIR, "libpurple", "tests", "home", NULL);
+	home_dir = g_build_path(G_DIR_SEPARATOR_S, BUILDDIR, "libpurple", "tests", "home", NULL);
 	purple_util_set_user_dir(home_dir);
 	g_free(home_dir);
 
