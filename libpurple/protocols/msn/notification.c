@@ -583,6 +583,7 @@ msn_notification_send_fqy(MsnSession *session,
 	trans = msn_transaction_new(cmdproc, "FQY", "%d", payload_len);
 	msn_transaction_set_payload(trans, payload, payload_len);
 	msn_transaction_set_data(trans, data);
+	msn_transaction_set_data_free(trans, g_free);
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
@@ -621,7 +622,7 @@ update_contact_network(MsnSession *session, const char *passport, MsnNetwork net
 				user->list_op & MSN_LIST_OP_MASK, network);
 		payload = xmlnode_to_str(adl_node, &payload_len);
 		msn_notification_post_adl(session->notification->cmdproc, payload, payload_len);
-
+		g_free(payload);
 	} else {
 		purple_debug_error("msn",
 		                   "Got FQY update for unknown user %s on network %d.\n",
@@ -669,7 +670,7 @@ msn_notification_dump_contact(MsnSession *session)
 			                     "User %s is on both Allow and Block list; "
 			                     "removing from Allow list.\n",
 			                     user->passport);
-			msn_userlist_rem_buddy_from_list(session->userlist, user->passport, MSN_LIST_AL);
+			msn_user_unset_op(user, MSN_LIST_AL_OP);
 		}
 
 		if (user->networkid != MSN_NETWORK_UNKNOWN) {
@@ -839,17 +840,48 @@ adl_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	MsnSession *session;
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	char *adl = g_strndup(payload, len);
-	char *reason = g_strdup_printf(_("Unknown error (%d): %s"),
-		GPOINTER_TO_INT(cmd->payload_cbdata), adl);
-	g_free(adl);
+	int error = GPOINTER_TO_INT(cmd->payload_cbdata);
 
 	session = cmdproc->session;
 	account = session->account;
 	gc = purple_account_get_connection(account);
 
-	purple_notify_error(gc, NULL, _("Unable to add user"), reason);
-	g_free(reason);
+	if (error == 241) {
+		/* khc: some googling suggests that error 241 means the buddy is somehow
+		   in the local list, but not the server list, and that we should add
+		   those buddies to the addressbook. For now I will just notify the user
+		   about the raw payload, because I am lazy */
+		xmlnode *adl = xmlnode_from_str(payload, len);
+		GString *emails = g_string_new(NULL);
+
+		xmlnode *domain = xmlnode_get_child(adl, "d");
+		while (domain) {
+			const char *domain_str = xmlnode_get_attrib(domain, "n");
+			xmlnode *contact = xmlnode_get_child(domain, "c");
+			while (contact) {
+				g_string_append_printf(emails, "%s@%s\n",
+					xmlnode_get_attrib(contact, "n"), domain_str);
+				contact = xmlnode_get_next_twin(contact);
+			}
+			domain = xmlnode_get_next_twin(domain);
+		}
+
+		purple_notify_error(gc, NULL,
+			_("The following users are missing from your addressbook"),
+			emails->str);
+		g_string_free(emails, TRUE);
+		xmlnode_free(adl);
+	}
+	else
+	{
+		char *adl = g_strndup(payload, len);
+		char *reason = g_strdup_printf(_("Unknown error (%d): %s"),
+			error, adl);
+		g_free(adl);
+
+		purple_notify_error(gc, NULL, _("Unable to add user"), reason);
+		g_free(reason);
+	}
 }
 
 static void
@@ -877,50 +909,49 @@ adl_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 }
 
 static void
-adl_241_error_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
-	size_t len)
+rml_error_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 {
-	/* khc: some googling suggests that error 241 means the buddy is somehow
-	   in the local list, but not the server list, and that we should add
-	   those buddies to the addressbook. For now I will just notify the user
-	   about the raw payload, because I am lazy */
 	MsnSession *session;
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	xmlnode *adl;
-	xmlnode *domain;
-	GString *emails;
+	char *adl, *reason;
+	int error = GPOINTER_TO_INT(cmd->payload_cbdata);
 
 	session = cmdproc->session;
 	account = session->account;
 	gc = purple_account_get_connection(account);
 
-	adl = xmlnode_from_str(payload, len);
-	emails = g_string_new(NULL);
+	adl = g_strndup(payload, len);
+	reason = g_strdup_printf(_("Unknown error (%d): %s"),
+		error, adl);
+	g_free(adl);
 
-	domain = xmlnode_get_child(adl, "d");
-	while (domain) {
-		const char *domain_str = xmlnode_get_attrib(domain, "n");
-		xmlnode *contact = xmlnode_get_child(domain, "c");
-		while (contact) {
-			g_string_append_printf(emails, "%s@%s\n",
-				xmlnode_get_attrib(contact, "n"), domain_str);
-			contact = xmlnode_get_next_twin(contact);
-		}
-		domain = xmlnode_get_next_twin(domain);
-	}
-
-	purple_notify_error(gc, NULL,
-		_("The following users are missing from your addressbook"), emails->str);
-	g_string_free(emails, TRUE);
-	xmlnode_free(adl);
+	purple_notify_error(gc, NULL, _("Unable to remove user"), reason);
+	g_free(reason);
 }
 
 static void
-adl_241_error_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+rml_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 {
-	cmdproc->last_cmd->payload_cb = adl_241_error_cmd_post;
-	cmd->payload_len = atoi(cmd->params[1]);
+	MsnSession *session;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	MsnCommand *cmd = cmdproc->last_cmd;
+
+	session = cmdproc->session;
+	account = session->account;
+	gc = purple_account_get_connection(account);
+
+	purple_debug_error("msn", "RML error\n");
+	if (cmd->param_count > 1) {
+		cmd->payload_cb = rml_error_parse;
+		cmd->payload_len = atoi(cmd->params[1]);
+		cmd->payload_cbdata = GINT_TO_POINTER(error);
+	} else {
+		char *reason = g_strdup_printf(_("Unknown error (%d)"), error);
+		purple_notify_error(gc, NULL, _("Unable to remove user"), reason);
+		g_free(reason);
+	}
 }
 
 static void
@@ -962,9 +993,8 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			if (cmd->trans->data) {
 				MsnFqyCbData *fqy_data = cmd->trans->data;
 				fqy_data->cb(session, passport, network, fqy_data->data);
-				/* TODO: This leaks, but the server responds to FQY multiple times, so we
-				         can't free it yet. We need to figure out somewhere else to do so.
-				g_free(fqy_data); */
+				/* Don't free fqy_data yet since the server responds to FQY multiple times.
+				   It will be freed when cmd->trans is freed. */
 			}
 
 			g_free(passport);
@@ -1068,7 +1098,17 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* Where'd this come from? */
 		return;
 
-	if (cmd->param_count == 7) {
+	if (cmd->param_count == 8) {
+		/* Yahoo! Buddy, looks like */
+		networkid = atoi(cmd->params[3]);
+		friendly = g_strdup(purple_url_decode(cmd->params[4]));
+		clientid = strtoul(cmd->params[5], NULL, 10);
+
+		/* cmd->params[7] seems to be a URL to a Yahoo! icon:
+				https://sec.yimg.com/i/us/nt/b/purpley.1.0.png
+		   ... and it's purple, HAH!
+		*/
+	} else if (cmd->param_count == 7) {
 		/* MSNP14+ with Display Picture object */
 		networkid = atoi(cmd->params[3]);
 		friendly = g_strdup(purple_url_decode(cmd->params[4]));
@@ -1098,7 +1138,6 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 
 	if (msn_user_set_friendly_name(user, friendly)) {
-		serv_got_alias(gc, passport, friendly);
 		msn_update_contact(session, passport, MSN_UPDATE_DISPLAY, friendly);
 	}
 	g_free(friendly);
@@ -1263,7 +1302,6 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (msn_user_set_friendly_name(user, friendly))
 	{
-		serv_got_alias(gc, passport, friendly);
 		msn_update_contact(session, passport, MSN_UPDATE_DISPLAY, friendly);
 	}
 
@@ -1370,6 +1408,7 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 				purple_connection_set_display_name(
 					purple_account_get_connection(session->account),
 					friendlyname);
+				purple_account_set_string(session->account, "display-name", friendlyname);
 			}
 		}
 	}
@@ -2097,9 +2136,8 @@ msn_notification_init(void)
 
 	msn_table_add_cmd(cbs_table, "fallback", "XFR", xfr_cmd);
 
-	msn_table_add_cmd(cbs_table, NULL, "241", adl_241_error_cmd);
-
 	msn_table_add_error(cbs_table, "ADL", adl_error);
+	msn_table_add_error(cbs_table, "RML", rml_error);
 	msn_table_add_error(cbs_table, "FQY", fqy_error);
 	msn_table_add_error(cbs_table, "USR", usr_error);
 

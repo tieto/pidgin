@@ -150,6 +150,10 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			}
 			break;
 		case AVAHI_RESOLVER_FOUND:
+
+			purple_debug_info("bonjour", "_resolve_callback - name:%s account:%p bb:%p\n",
+				name, account, bb);
+
 			/* create a buddy record */
 			if (bb == NULL)
 				bb = bonjour_buddy_new(name, account);
@@ -173,7 +177,11 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 
 
 			/* Get the ip as a string */
+			ip[0] = '\0';
 			avahi_address_snprint(ip, AVAHI_ADDRESS_STR_MAX, a);
+
+			purple_debug_info("bonjour", "_resolve_callback - name:%s ip:%s prev_ip:%s\n",
+				name, ip, rd->ip);
 
 			if (rd->ip == NULL || strcmp(rd->ip, ip) != 0) {
 				/* We store duplicates in bb->ips, so we always remove the one */

@@ -31,13 +31,11 @@
 #include "jabber.h"
 #include "presence.h"
 #include "iq.h"
+#include "chat.h"
 
 #include "jingle/jingle.h"
 
 #ifdef USE_VV
-
-#define NS_GOOGLE_VIDEO "http://www.google.com/session/video"
-#define NS_GOOGLE_PHONE "http://www.google.com/session/phone"
 
 typedef struct {
 	char *id;
@@ -83,7 +81,7 @@ static xmlnode *
 google_session_create_xmlnode(GoogleSession *session, const char *type)
 {
 	xmlnode *node = xmlnode_new("session");
-	xmlnode_set_namespace(node, "http://www.google.com/session");
+	xmlnode_set_namespace(node, NS_GOOGLE_SESSION);
 	xmlnode_set_attrib(node, "id", session->id.id);
 	xmlnode_set_attrib(node, "initiator", session->id.initiator);
 	xmlnode_set_attrib(node, "type", type);
@@ -95,21 +93,22 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 		gchar *participant, GoogleSession *session)
 {
 	GList *candidates = purple_media_get_local_candidates(
-			session->media, session_id, session->remote_jid);
+			session->media, session_id, session->remote_jid), *iter;
 	PurpleMediaCandidate *transport;
 	gboolean video = FALSE;
 
 	if (!strcmp(session_id, "google-video"))
 		video = TRUE;
 
-	for (;candidates;candidates = candidates->next) {
+	for (iter = candidates; iter; iter = iter->next) {
 		JabberIq *iq;
-		gchar *ip, *port, *pref, *username, *password;
+		gchar *ip, *port, *username, *password;
+		gchar pref[16];
 		PurpleMediaCandidateType type;
 		xmlnode *sess;
 		xmlnode *candidate;
 		guint component_id;
-		transport = (PurpleMediaCandidate*)(candidates->data);
+		transport = PURPLE_MEDIA_CANDIDATE(iter->data);
 		component_id = purple_media_candidate_get_component_id(
 				transport);
 
@@ -123,9 +122,8 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 		ip = purple_media_candidate_get_ip(transport);
 		port = g_strdup_printf("%d",
 				purple_media_candidate_get_port(transport));
-		pref = g_strdup_printf("%f",
-				purple_media_candidate_get_priority(transport)
-				/1000.0);
+		g_ascii_dtostr(pref, 16,
+			purple_media_candidate_get_priority(transport) / 1000.0);
 		username = purple_media_candidate_get_username(transport);
 		password = purple_media_candidate_get_password(transport);
 		type = purple_media_candidate_get_candidate_type(transport);
@@ -163,12 +161,12 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 
 		g_free(ip);
 		g_free(port);
-		g_free(pref);
 		g_free(username);
 		g_free(password);
 
 		jabber_iq_send(iq);
 	}
+	purple_media_candidate_list_free(candidates);
 }
 
 static void
@@ -212,9 +210,9 @@ google_session_ready(GoogleSession *session)
 		xmlnode_insert_child(iq->node, sess);
 		desc = xmlnode_new_child(sess, "description");
 		if (session->video)
-			xmlnode_set_namespace(desc, NS_GOOGLE_VIDEO);
+			xmlnode_set_namespace(desc, NS_GOOGLE_SESSION_VIDEO);
 		else
-			xmlnode_set_namespace(desc, NS_GOOGLE_PHONE);
+			xmlnode_set_namespace(desc, NS_GOOGLE_SESSION_PHONE);
 
 		codecs = purple_media_get_codecs(media, "google-video");
 
@@ -247,7 +245,7 @@ google_session_ready(GoogleSession *session)
 					purple_media_codec_get_clock_rate(codec));
 			payload = xmlnode_new_child(desc, "payload-type");
 			if (session->video)
-				xmlnode_set_namespace(payload, NS_GOOGLE_PHONE);
+				xmlnode_set_namespace(payload, NS_GOOGLE_SESSION_PHONE);
 			xmlnode_set_attrib(payload, "id", id);
 			/*
 			 * Hack to make Gmail accept speex as the codec.
@@ -438,9 +436,9 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	desc_element = xmlnode_get_child(sess, "description");
 	xmlns = xmlnode_get_namespace(desc_element);
 
-	if (purple_strequal(xmlns, NS_GOOGLE_PHONE))
+	if (purple_strequal(xmlns, NS_GOOGLE_SESSION_PHONE))
 		session->video = FALSE;
-	else if (purple_strequal(xmlns, NS_GOOGLE_VIDEO))
+	else if (purple_strequal(xmlns, NS_GOOGLE_SESSION_VIDEO))
 		session->video = TRUE;
 	else {
 		purple_debug_error("jabber", "Received initiate with "
@@ -497,7 +495,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 		id = xmlnode_get_attrib(codec_element, "id");
 
 		if (!session->video ||
-				(xmlns && !strcmp(xmlns, NS_GOOGLE_PHONE))) {
+				(xmlns && !strcmp(xmlns, NS_GOOGLE_SESSION_PHONE))) {
 			clock_rate = xmlnode_get_attrib(
 					codec_element, "clockrate");
 			video = FALSE;
@@ -622,7 +620,7 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 	GList *codecs = NULL, *video_codecs = NULL;
 	JabberIq *result = NULL;
 	const gchar *xmlns = xmlnode_get_namespace(desc_element);
-	gboolean video = (xmlns && !strcmp(xmlns, NS_GOOGLE_VIDEO));
+	gboolean video = (xmlns && !strcmp(xmlns, NS_GOOGLE_SESSION_VIDEO));
 
 	for (; codec_element; codec_element = codec_element->next) {
 		const gchar *xmlns, *encoding_name, *id,
@@ -636,7 +634,7 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 		encoding_name =	xmlnode_get_attrib(codec_element, "name");
 		id = xmlnode_get_attrib(codec_element, "id");
 
-		if (!video || purple_strequal(xmlns, NS_GOOGLE_PHONE))
+		if (!video || purple_strequal(xmlns, NS_GOOGLE_SESSION_PHONE))
 			clock_rate = xmlnode_get_attrib(
 					codec_element, "clockrate");
 		else {
@@ -909,10 +907,10 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 	xmlnode_set_attrib(iq->node, "id", id);
 	jabber_iq_send(iq);
 
-	purple_debug(PURPLE_DEBUG_MISC, "jabber",
+	purple_debug_misc("jabber",
 		   "Got new mail notification. Sending request for more info\n");
 
-	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "google:mail:notify");
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_GOOGLE_MAIL_NOTIFY);
 	jabber_iq_set_callback(iq, jabber_gmail_parse, NULL);
 	query = xmlnode_get_child(iq->node, "query");
 
@@ -946,7 +944,7 @@ void jabber_gmail_init(JabberStream *js) {
 	xmlnode_set_attrib(mailnotifications, "value", "true");
 	jabber_iq_send(iq);
 
-	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "google:mail:notify");
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_GOOGLE_MAIL_NOTIFY);
 	jabber_iq_set_callback(iq, jabber_gmail_parse, NULL);
 	jabber_iq_send(iq);
 }
@@ -993,8 +991,9 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 
 	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", "google:roster");
 	const char *subscription = xmlnode_get_attrib(item, "subscription");
+	const char *ask = xmlnode_get_attrib(item, "ask");
 
-	if (!subscription || !strcmp(subscription, "none")) {
+	if ((!subscription || !strcmp(subscription, "none")) && !ask) {
 		/* The Google Talk servers will automatically add people from your Gmail address book
 		 * with subscription=none. If we see someone with subscription=none, ignore them.
 		 */
@@ -1092,12 +1091,13 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 			jbr = l->data;
 			if (jbr && jbr->name)
 			{
-				purple_debug(PURPLE_DEBUG_MISC, "jabber", "Removing resource %s\n", jbr->name);
+				purple_debug_misc("jabber", "Removing resource %s\n", jbr->name);
 				jabber_buddy_remove_resource(jb, jbr->name);
 			}
 			l = l->next;
 		}
 	}
+
 	purple_prpl_got_user_status(purple_connection_get_account(gc), who, "offline", NULL);
 }
 
@@ -1398,7 +1398,7 @@ jabber_google_jingle_info_cb(JabberStream *js, const char *from,
                              xmlnode *packet, gpointer data)
 {
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
-			GOOGLE_JINGLE_INFO_NAMESPACE);
+			NS_GOOGLE_JINGLE_INFO);
 
 	if (query)
 		jabber_google_jingle_info_common(js, from, type, query);
@@ -1418,10 +1418,50 @@ void
 jabber_google_send_jingle_info(JabberStream *js)
 {
 	JabberIq *jingle_info =
-		jabber_iq_new_query(js, JABBER_IQ_GET, GOOGLE_JINGLE_INFO_NAMESPACE);
+		jabber_iq_new_query(js, JABBER_IQ_GET, NS_GOOGLE_JINGLE_INFO);
 
 	jabber_iq_set_callback(jingle_info, jabber_google_jingle_info_cb,
 		NULL);
 	purple_debug_info("jabber", "sending google:jingleinfo query\n");
 	jabber_iq_send(jingle_info);
+}
+
+void google_buddy_node_chat(PurpleBlistNode *node, gpointer data)
+{
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
+	JabberStream *js;
+	JabberChat *chat;
+	gchar *room;
+	guint32 tmp, a, b;
+
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = PURPLE_BUDDY(node);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
+	g_return_if_fail(gc != NULL);
+	js = purple_connection_get_protocol_data(gc);
+
+	/* Generate a version 4 UUID */
+	tmp = g_random_int();
+	a = 0x4000 | (tmp & 0xFFF); /* 0x4000 to 0x4FFF */
+	tmp >>= 12;
+	b = ((1 << 3) << 12) | (tmp & 0x3FFF); /* 0x8000 to 0xBFFF */
+
+	tmp = g_random_int();
+	room = g_strdup_printf("private-chat-%08x-%04x-%04x-%04x-%04x%08x",
+			g_random_int(),
+			tmp & 0xFFFF,
+			a,
+			b,
+			(tmp >> 16) & 0xFFFF, g_random_int());
+
+	chat = jabber_join_chat(js, room, GOOGLE_GROUPCHAT_SERVER, js->user->node,
+	                        NULL, NULL);
+	if (chat) {
+		chat->muc = TRUE;
+		jabber_chat_invite(gc, chat->id, "", buddy->name);
+	}
+
+	g_free(room);
 }

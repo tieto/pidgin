@@ -539,7 +539,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 
 	purple_debug_info("msn", "Add user: %s to group: %s\n", who, new_group_name);
 
-	if (!purple_email_is_valid(who))
+	if (!msn_email_is_valid(who))
 	{
 		/* only notify the user about problems adding to the friends list
 		 * maybe we should do something else for other lists, but it probably

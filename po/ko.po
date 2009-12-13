@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-06 15:04-0700\n"
+"POT-Creation-Date: 2009-11-14 20:35-0500\n"
 "PO-Revision-Date: 2007-10-01 16:15+0900\n"
 "Last-Translator: sushizang <sushizang@empal.com>\n"
 "Language-Team: GTP Korean <gnome-kr-translation@gnome.or.kr>\n"
@@ -58,6 +58,7 @@ msgid ""
 "http://developer.pidgin.im"
 msgstr ""
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "오류"
 
@@ -564,11 +565,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "계정 재사용"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-
 msgid "No such command."
 msgstr "그런 명령은 없습니다."
 
@@ -611,6 +607,11 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "대화로 이야기했습니다."
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr "로그 기록이 시작되었습니다. 지금부터 대화가 로그에 기록됩니다."
 
@@ -649,6 +650,10 @@ msgstr "/설정/로그 기록"
 msgid "Enable Sounds"
 msgstr "소리를 재생할 때:"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "접속할 수 없었습니다."
+
 msgid "<AUTO-REPLY> "
 msgstr "<AUTO-REPLY> "
 
@@ -657,7 +662,8 @@ msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
 msgstr[0] "사용자 목록\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "지원하는 디버그 옵션은:  버전"
 
 msgid "No such command (in this context)."
@@ -778,6 +784,7 @@ msgid "Remaining"
 msgstr "남은 양"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "상태"
 
@@ -886,7 +893,7 @@ msgid "System Log"
 msgstr "시스템 로그"
 
 #, fuzzy
-msgid "Calling ... "
+msgid "Calling..."
 msgstr "계산 중..."
 
 msgid "Hangup"
@@ -961,6 +968,9 @@ msgstr "초대"
 msgid "(none)"
 msgstr "(없음)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 #, fuzzy
 msgid "URI"
 msgstr "UIN"
@@ -1401,6 +1411,8 @@ msgstr "상태 삭제"
 msgid "Saved Statuses"
 msgstr "저장된 상태"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "제목"
 
@@ -1565,6 +1577,35 @@ msgid ""
 msgstr ""
 "새로운 대화가 시작되면 이전 대화의 맨 마지막 메시지를 앞 부분에 추가합니다."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "URL"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+
 msgid "Online"
 msgstr "온라인"
 
@@ -1613,28 +1654,6 @@ msgstr "GntLastlog"
 #, fuzzy
 msgid "Lastlog plugin."
 msgstr "Lastlog 플러그인입니다."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr ""
-
-msgid "TinyURL (or other) address prefix"
-msgstr ""
-
-#, fuzzy
-msgid "TinyURL"
-msgstr "URL"
-
-msgid "TinyURL plugin"
-msgstr ""
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
 
 msgid "accounts"
 msgstr "계정"
@@ -1697,6 +1716,41 @@ msgstr "친구"
 msgid "buddy list"
 msgstr "친구 목록"
 
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
+msgstr ""
+
+#, fuzzy
+msgid "The certificate is not valid yet."
+msgstr "지정한 아이디가 잘못되었습니다."
+
+msgid "The certificate has expired and should not be considered valid."
+msgstr ""
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+msgid "The certificate presented is not issued to this domain."
+msgstr ""
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr "루트 인증 데이터베이스가 없습니다.이 인증은 유효화 되지 못했습니다."
+
+#, fuzzy
+msgid "The certificate chain presented is invalid."
+msgstr "지정한 아이디가 잘못되었습니다."
+
+msgid "The certificate has been revoked."
+msgstr ""
+
+#, fuzzy
+msgid "An unknown certificate error occurred."
+msgstr "원인을 알 수 없는 접속 오류가 발생했습니다: %s"
+
 msgid "(DOES NOT MATCH)"
 msgstr ""
 
@@ -1741,60 +1795,23 @@ msgstr "SSL 호스트 인증"
 msgid "_View Certificate..."
 msgstr "인증"
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
 #, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
+msgid "The certificate for %s could not be validated."
 msgstr ""
 
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
-msgstr ""
-
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
 #. TODO: Probably wrong.
-#. TODO: Probably wrong
 #, fuzzy
 msgid "SSL Certificate Error"
 msgstr "인증 가져오기 오류"
 
 #, fuzzy
-msgid "Invalid certificate chain"
-msgstr "잘못된 제목입니다."
-
-#. vrq will be completed by user_auth
-msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr "루트 인증 데이터베이스가 없습니다.이 인증은 유효화 되지 못했습니다."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr ""
+msgid "Unable to validate certificate"
+msgstr "인증할 수 없습니다: %s"
 
 #, c-format
 msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-
-msgid "Invalid certificate authority signature"
-msgstr ""
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
 
 #. Make messages
@@ -1813,6 +1830,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "인증 가져오기"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "등록 오류"
 
@@ -1828,8 +1846,8 @@ msgstr "+++ %s 님이 접속했습니다."
 msgid "+++ %s signed off"
 msgstr "+++ %s 님이 접속을 끊었습니다."
 
+#. Undocumented
 #. Unknown error
-#. Unknown error!
 msgid "Unknown error"
 msgstr "알 수 없는 오류"
 
@@ -1935,10 +1953,15 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "%s 해석 중 오류: %d"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "스레드 생성에 실패했습니다: %s"
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "이유를 알 수 없습니다."
 
@@ -2017,6 +2040,10 @@ msgstr "%s 을(를) %s 에게 전송할 것을 전달하고 있습니다."
 msgid "Starting transfer of %s from %s"
 msgstr "%s 을(를) %s (으)로부터 전송을 시작하고 있습니다."
 
+#, fuzzy, c-format
+msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
+msgstr "파일 %s 의 전송이 완료되었습니다."
+
 #, c-format
 msgid "Transfer of file %s complete"
 msgstr "파일 %s 의 전송이 완료되었습니다."
@@ -2024,19 +2051,19 @@ msgstr "파일 %s 의 전송이 완료되었습니다."
 msgid "File transfer complete"
 msgstr "파일 전송이 완료되었습니다."
 
-#, c-format
-msgid "You canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "You cancelled the transfer of %s"
 msgstr "%s 의 전송이 취소되었습니다."
 
 msgid "File transfer cancelled"
 msgstr "파일 전송이 취소되었습니다."
 
-#, c-format
-msgid "%s canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
 msgstr "%s 님이 %s 의 전송을 취소했습니다."
 
-#, c-format
-msgid "%s canceled the file transfer"
+#, fuzzy, c-format
+msgid "%s cancelled the file transfer"
 msgstr "%s 님이 파일 전송을 취소했습니다."
 
 #, c-format
@@ -2224,6 +2251,33 @@ msgstr "<font color=\"red\"><b>파일을 읽지 못했습니다: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
+#, fuzzy
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "원인을 알 수 없는 접속 오류가 발생했습니다: %s"
+
+#, fuzzy
+msgid "Conference error"
+msgstr "회의를 폐회했습니다."
+
+msgid "Error with your microphone"
+msgstr ""
+
+msgid "Error with your webcam"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error creating session: %s"
+msgstr "접속 생성 중 오류"
 
 #, fuzzy
 msgid "Error creating conference."
@@ -2485,13 +2539,14 @@ msgstr ""
 "서버 측에서 IPC를 지원하는 시험용 플러그인입니다. 이것은 IPC 명령을 등록합니"
 "다."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "Join/Part Hiding 설정"
-
-msgid "Minimum Room Size"
+msgid "Hide Joins/Parts"
 msgstr ""
 
-msgid "User Inactivity Timeout (in minutes)"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr ""
+
+msgid "If user has not spoken in this many minutes"
 msgstr ""
 
 msgid "Apply hiding rules to buddies"
@@ -2961,6 +3016,7 @@ msgstr "이름"
 msgid "Last name"
 msgstr "성"
 
+#. email
 msgid "Email"
 msgstr "이메일"
 
@@ -3108,12 +3164,14 @@ msgstr "도시"
 msgid "Year of birth"
 msgstr "생년"
 
+#. gender
 msgid "Gender"
 msgstr "성별"
 
 msgid "Male or female"
 msgstr "남/여"
 
+#. 0
 msgid "Male"
 msgstr "남"
 
@@ -3182,6 +3240,7 @@ msgstr "자리 비움"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "이름"
 
@@ -3886,6 +3945,11 @@ msgstr "URL"
 msgid "Street Address"
 msgstr "주소1"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "주소2"
 
@@ -3915,6 +3979,7 @@ msgstr "부서"
 msgid "Role"
 msgstr "직위"
 
+#. birthday
 msgid "Birthday"
 msgstr "생일"
 
@@ -3969,24 +4034,31 @@ msgstr "사진"
 msgid "Logo"
 msgstr "로고"
 
+#, fuzzy, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr "친구 목록에서 %s 을(를) 삭제하려고 합니다. 계속 하시겠습니까?"
+
+msgid "Cancel Presence Notification"
+msgstr "존재 알림을 멈춤"
+
 msgid "Un-hide From"
 msgstr "이곳부터 보이기"
 
 msgid "Temporarily Hide From"
 msgstr "일반적으로 이곳부터 숨김"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "존재 알림을 멈춤"
-
 msgid "(Re-)Request authorization"
 msgstr "인증 재요구"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
 msgstr "구독 취소"
+
+msgid "Initiate _Chat"
+msgstr "대화 시작(_C)"
 
 #, fuzzy
 msgid "Log In"
@@ -4008,6 +4080,7 @@ msgstr "다른 용무 중"
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "성"
 
@@ -4229,10 +4302,6 @@ msgid "Change Registration"
 msgstr "다음 상태로 변경(_S):"
 
 #, fuzzy
-msgid "Malformed BOSH Connect Server"
-msgstr "서버 접속에 실패했습니다."
-
-#, fuzzy
 msgid "Error unregistering account"
 msgstr "계정 정보 변경 오류"
 
@@ -4259,6 +4328,7 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "인증되어 있지 않습니다."
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "기분"
 
@@ -4283,6 +4353,7 @@ msgstr "None (To pending)"
 msgid "None"
 msgstr "없음"
 
+#. subscription type
 msgid "Subscription"
 msgstr "구독"
 
@@ -4595,7 +4666,8 @@ msgstr "config:  대화실을 설정합니다."
 msgid "configure:  Configure a chat room."
 msgstr "configure:  대화실을 설정합니다."
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "part [대화실]:  대화실로부터 나갑니다."
 
 msgid "register:  Register with a chat room."
@@ -4619,7 +4691,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "role &lt;사용자&gt; &lt;moderator|participant|visitor|none&gt;: 대화실에서 역"
 "할을 설정합니다."
@@ -4774,10 +4846,6 @@ msgstr "파일을 여는 중 오류가 발생했습니다."
 #, fuzzy
 msgid "Transfer was closed."
 msgstr "파일 전송이 실패했습니다."
-
-#, fuzzy
-msgid "Failed to open the file"
-msgstr "파일 '%s' 을(를) 열 수 없었습니다: %s"
 
 msgid "Failed to open in-band bytestream"
 msgstr ""
@@ -5063,8 +5131,8 @@ msgstr "잘못된 친구 파일"
 msgid "Not expected"
 msgstr "예상치 못한 데이터"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+#, fuzzy
+msgid "Friendly name is changing too rapidly"
 msgstr "공개명이 너무 짧습니다."
 
 #, c-format
@@ -5115,6 +5183,22 @@ msgstr "선호하는 연락처"
 #, fuzzy
 msgid "Non-IM Contacts"
 msgstr "연락처 삭제"
+
+#, c-format
+msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a wink, but it could not be saved"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip, but it could not be saved"
+msgstr ""
 
 #, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
@@ -5275,12 +5359,33 @@ msgstr "Hotmail의 받은 편지함 열기"
 msgid "Send to Mobile"
 msgstr "휴대용 기기에 전송"
 
-msgid "Initiate _Chat"
-msgstr "대화 시작(_C)"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "MSN 에서는 SSL 지원이 필요합니다. 지원하는 SSL 라이브러리를 설치해 주십시오."
+
+#, fuzzy, c-format
+msgid ""
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
+"be valid email addresses."
+msgstr ""
+"아이디가 상이하기 때문에, 친구 %s 을(를) 추가할 수 없었습니다. 아이디의 앞 부"
+"분은 문자, 문자와 숫자와 공백만 또는 숫자만이 가능합니다."
+
+#, fuzzy
+msgid "Unable to Add"
+msgstr "추가할 수 없습니다."
+
+msgid "Authorization Request Message:"
+msgstr "승인 요구 메시지:"
+
+msgid "Please authorize me!"
+msgstr "저를 승인해 주세요!"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "확인(_O)"
 
 msgid "Error retrieving profile"
 msgstr "프로파일을 가져오는 중 오류"
@@ -5476,6 +5581,10 @@ msgstr "Windows Live ID 인증: 연결할 수 없음"
 msgid "%s just sent you a Nudge!"
 msgstr "%s 님이 신호를 보내고 싶어 합니다!"
 
+#, fuzzy
+msgid "The following users are missing from your addressbook"
+msgstr "검색 결과입니다."
+
 #, fuzzy, c-format
 msgid "Unknown error (%d): %s"
 msgstr "알 수 없는 오류"
@@ -5483,13 +5592,14 @@ msgstr "알 수 없는 오류"
 msgid "Unable to add user"
 msgstr "사용자를 추가할 수 없습니다."
 
+#. Unknown error!
 #, fuzzy, c-format
 msgid "Unknown error (%d)"
 msgstr "알 수 없는 오류"
 
 #, fuzzy
-msgid "The following users are missing from your addressbook"
-msgstr "검색 결과입니다."
+msgid "Unable to remove user"
+msgstr "사용자를 추가할 수 없습니다."
 
 # msgstr[1] "%2$s 님으로부터의 %1$hu 개의 메시지는 타당하지 않아 받지 못했습니다."
 #, fuzzy
@@ -5606,7 +5716,7 @@ msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr ""
 
 #, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr ""
 
 msgid "Away From Computer"
@@ -5656,6 +5766,10 @@ msgstr "이 상대를 친구 목록에 추가하시겠습니까?"
 #, fuzzy
 msgid "The username specified is invalid."
 msgstr "지정한 아이디가 잘못되었습니다."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "공개명이 너무 짧습니다."
 
 msgid "This Hotmail account may not be active."
 msgstr "이 Hotmail 계정은 사용 불가능한 것 같습니다."
@@ -5723,6 +5837,382 @@ msgstr "%s 님은 나를 친구 목록에 추가했습니다."
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s 님은 나를 친구 목록에서 삭제했습니다."
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "현재의 기분"
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "사용자 모드"
+
+#, fuzzy
+msgid "Change your Mood"
+msgstr "비밀번호 변경"
+
+#, fuzzy
+msgid "How do you feel right now?"
+msgstr "지금 자리에 없습니다."
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "쓰기 오류"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "프로파일"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "성"
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "휴대 전화번호 설정..."
+
+#, fuzzy
+msgid "Update your Profile"
+msgstr "프로파일"
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+msgid "There is no splash-screen currently available"
+msgstr ""
+
+#, fuzzy
+msgid "About"
+msgstr "%s 정보"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "비밀번호 변경..."
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "비밀번호 변경..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "로그 보기"
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "%s 정보"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "메시지가 너무 깁니다."
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "로그 기록"
+
+#, fuzzy
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr "서버에 접속할 수 없습니다. 접속할 서버의 주소를 입력해 주십시오."
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "접속 중입니다."
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "별명"
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "새 Jabber 계정 등록"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "다음의 빈 칸을 입력해 주십시오."
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "서버를 이용할 수 없습니다; 잠시 후에 다시 시도해 보십시오."
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "보안 사용"
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "비밀번호 입력"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "국가"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "선호하는 언어"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "승인이 필요합니다."
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "서버 정보"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "상태 메시지"
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "가운데 이름"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "휴대 전화번호 설정..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "서버"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "접속"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "Jabber 메시지 오류"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "서버에 접속할 수 없습니다."
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "Qun 생성이 성공적으로 완료했습니다."
+
+#, fuzzy
+msgid "Message Error"
+msgstr "Jabber 메시지 오류"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "접속 오류"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "Jabber 메시지 오류"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "스트림 오류"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "아이콘 오류"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "등록 오류"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "접속 오류"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "구독"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "접속 오류"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "파일 전송"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "별명을 변경할 수 없습니다."
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "등록 오류"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "쓰기 오류"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr "언짢음"
+
+msgid "Excited"
+msgstr "흥분됨"
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "그룹"
+
+msgid "Happy"
+msgstr "행복함"
+
+msgid "In Love"
+msgstr "연애"
+
+msgid "Invincible"
+msgstr "무적"
+
+msgid "Sad"
+msgstr "슬픔"
+
+#, fuzzy
+msgid "Hot"
+msgstr "호스트명(_H):"
+
+#, fuzzy
+msgid "Sick"
+msgstr "별명"
+
+msgid "Sleepy"
+msgstr "취침"
+
+#, fuzzy
+msgid "Pending"
+msgstr "보내기"
+
+#, fuzzy
+msgid "Invited"
+msgstr "초대"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "거부"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "삭제"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "직업"
 
 #, c-format
 msgid "No such user: %s"
@@ -6347,11 +6837,11 @@ msgstr "서버 주소"
 msgid "Server port"
 msgstr "서버 포트"
 
-#, fuzzy
-msgid "Received unexpected response from "
+#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s"
 msgstr "서버로부터 예상치 못한 HTTP 응답을 받았습니다."
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6359,8 +6849,10 @@ msgstr ""
 "접속과 해제를 반복 수행했습니다. 10분 정도 후 다시 시도해 보시기 바랍니다. 이"
 "대로 계속하면 더 오래 기다려야 합니다."
 
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, fuzzy, c-format
-msgid "Error requesting "
+msgid "Error requesting %s: %s"
 msgstr "%s 을(를) 해석하는 중 오류"
 
 msgid "AOL does not allow your screen name to authenticate here"
@@ -6511,6 +7003,48 @@ msgstr "큐가 다 찼습니다."
 
 msgid "Not while on AOL"
 msgstr "AOL 사용 중에는 불가능합니다."
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "파일을 전송할 수 없습니다."
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "폴더는 전송할 수 없습니다."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "메시지를 보낼 수 없습니다."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "오프라인 메시지"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6681,6 +7215,17 @@ msgstr "사용 중인 계정은 현재 정지 중입니다."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL 인스턴트 메신저 서비스는 일시적으로 이용할 수 없습니다."
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"접속과 해제를 반복 수행했습니다. 10분 정도 후 다시 시도해 보시기 바랍니다. 이"
+"대로 계속하면 더 오래 기다려야 합니다."
+
+#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "클라이언트 버전이 너무 오래 되었습니다. %s (으)로 업그레이드 하십시오."
@@ -6688,8 +7233,9 @@ msgstr "클라이언트 버전이 너무 오래 되었습니다. %s (으)로 업
 #. IP address connecting too frequently
 #, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "접속과 해제를 반복 수행했습니다. 10분 정도 후 다시 시도해 보시기 바랍니다. 이"
 "대로 계속하면 더 오래 기다려야 합니다."
@@ -6704,12 +7250,6 @@ msgstr "보안 ID 입력"
 msgid "Enter the 6 digit number from the digital display."
 msgstr "디지털 표시 방식으로 6자리의 숫자를 입력해 주십시오."
 
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "확인(_O)"
-
 msgid "Password sent"
 msgstr "비밀번호 전송 중"
 
@@ -6718,12 +7258,6 @@ msgstr "새로운 접속을 열 수 없습니다."
 
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "제가 당신을 친구 목록에 추가할 수 있도록 승인해 주십시오."
-
-msgid "Authorization Request Message:"
-msgstr "승인 요구 메시지:"
-
-msgid "Please authorize me!"
-msgstr "저를 승인해 주세요!"
 
 msgid "No reason given."
 msgstr "이유를 알 수 없습니다."
@@ -6841,21 +7375,28 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 "원인은 알 수 없지만, %2$s 님으로부터의 %1$hu개의 메시지를 못했습니다."
 
-#. Data is assumed to be the destination bn
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "메시지 (%s) 을(를) 보낼 수 없습니다."
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "메시지를 보낼 수 없습니다: %s"
 
-msgid "Unknown reason."
-msgstr "원인을 알 수 없습니다."
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%s 님에게 메시지를 보낼 수 없습니다."
 
-#, c-format
-msgid "Unable to send message to %s:"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
 msgstr "%s 님에게 메시지를 보낼 수 없습니다."
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "사용자 정보를 이용할 수 없습니다: %s"
+
+msgid "Unknown reason."
+msgstr "원인을 알 수 없습니다."
 
 msgid "Online Since"
 msgstr "접속한 일시"
@@ -6865,9 +7406,6 @@ msgstr "멤버가 된 일시"
 
 msgid "Capabilities"
 msgstr "기능"
-
-msgid "Profile"
-msgstr "프로파일"
 
 msgid "Your AIM connection may be lost."
 msgstr "AIM 으로의 접속이 끊어진 것 같습니다."
@@ -6880,9 +7418,10 @@ msgstr ""
 "[메시지에 잘못된 문자가 포함되어 있기 때문에, 이 사용자로부터의 메시지를 표시"
 "할 수 없습니다.]"
 
+#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "속도 제한을 초과했기 때문에, 마지막 조작은 실행할 수 없었습니다. 10초 정도 후"
 "에 다시 시도해 보시기 바랍니다."
@@ -7045,10 +7584,6 @@ msgstr ""
 "분은 문자, 문자와 숫자와 공백만 또는 숫자만이 가능합니다."
 
 #, fuzzy
-msgid "Unable to Add"
-msgstr "추가할 수 없습니다."
-
-#, fuzzy
 msgid "Unable to Retrieve Buddy List"
 msgstr "친구 목록을 가져올 수 없습니다."
 
@@ -7141,6 +7676,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "접속(_O)"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "서버가 접속을 닫았습니다."
+
 msgid "Get AIM Info"
 msgstr "AIM 정보 가져오기"
 
@@ -7150,6 +7689,10 @@ msgstr "친구 코멘트 편집"
 
 msgid "Get Status Msg"
 msgstr "상태 메시지 가져오기"
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "Direct IM 을 확립했습니다."
 
 msgid "Direct IM"
 msgstr "Direct IM"
@@ -8064,8 +8607,8 @@ msgstr "%d 님이 파일 %s 을(를) 거절했습니다."
 msgid "File Send"
 msgstr "파일 보내기"
 
-#, c-format
-msgid "%d canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%d cancelled the transfer of %s"
 msgstr "%d 님이 %s 의 전송을 취소했습니다."
 
 #, c-format
@@ -8130,6 +8673,10 @@ msgstr "회의를 폐회했습니다."
 
 msgid "Unable to send message: "
 msgstr "메시지를 보낼 수 없습니다: "
+
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "%s 님에게 메시지를 보낼 수 없습니다."
 
 msgid "Place Closed"
 msgstr "Place Closed"
@@ -8537,35 +9084,14 @@ msgstr "활동적"
 msgid "Robot"
 msgstr "로봇"
 
-msgid "Happy"
-msgstr "행복함"
-
-msgid "Sad"
-msgstr "슬픔"
-
-msgid "Angry"
-msgstr "언짢음"
-
 msgid "Jealous"
 msgstr "질투남"
 
 msgid "Ashamed"
 msgstr "부끄러움"
 
-msgid "Invincible"
-msgstr "무적"
-
-msgid "In Love"
-msgstr "연애"
-
-msgid "Sleepy"
-msgstr "취침"
-
 msgid "Bored"
 msgstr "지루함"
-
-msgid "Excited"
-msgstr "흥분됨"
 
 msgid "Anxious"
 msgstr "걱정됨"
@@ -9051,10 +9577,6 @@ msgstr "SILC 의 키 쌍을 읽을 수 없습니다: %s"
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "SILC 서버에 접속 중"
-
-#, fuzzy
-msgid "Unable to not load SILC key pair"
-msgstr "SILC 의 키 쌍을 읽을 수 없습니다: %s"
 
 msgid "Out of memory"
 msgstr "메모리가 부족합니다."
@@ -9610,6 +10132,9 @@ msgstr "대화실 위치"
 msgid "Ignore conference and chatroom invitations"
 msgstr "회의 및 대화실 초대 무시"
 
+msgid "Use account proxy for SSL connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "대화실 URL 목록"
 
@@ -9636,6 +10161,10 @@ msgstr "Yahoo! ID"
 #, fuzzy
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Yahoo! 프로토콜 플러그인"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr ""
 
 msgid "Your SMS was not delivered"
 msgstr ""
@@ -9716,8 +10245,26 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "친구를 무시하시겠습니까?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "사용 중인 계정이 잠겨 있습니다. Yahoo! 웹사이트로 로그인 하십시오."
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "아이디 또는 비밀번호가 틀립니다."
+
+#, fuzzy
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+"알 수 없는 오류 번호 %d 입니다. Yahoo! 웹사이트로 로그인하면 해결될 수도 있습"
+"니다."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -9817,6 +10364,15 @@ msgstr "대화에 참가..."
 msgid "Open Inbox"
 msgstr "Hotmail의 받은 편지함 열기"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -9905,12 +10461,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "사용자 프로파일이 비어 있습니다."
 
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s 은(는) 회의 초대를 대화실 \"%s\" 에 거절했습니다 (이유는 \"%s\")."
-
-msgid "Invitation Rejected"
-msgstr "초대가 거부되었습니다."
+#, fuzzy, c-format
+msgid "%s has declined to join."
+msgstr "%s 님이 접속했습니다."
 
 msgid "Failed to join chat"
 msgstr "대화 참가에 실패했습니다."
@@ -10360,14 +10913,15 @@ msgstr ""
 "%s 을(를) 읽는 중 오류가 발생했습니다. 이 정보는 읽을 수 없습니다. 또한, 오래"
 "된 파일 이름을 \"%s~\" (으)로 변경했습니다."
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "인터넷 메신저"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin 인터넷 메신저"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "복수의 프로토콜을 이용하여 인터넷 메시지를 보냅니다."
 
 msgid "Orientation"
 msgstr "방향"
@@ -10402,7 +10956,8 @@ msgstr "새 메일 알림"
 msgid "Use this buddy _icon for this account:"
 msgstr "다음 아이콘 사용:"
 
-msgid "_Advanced"
+#, fuzzy
+msgid "Ad_vanced"
 msgstr "고급 설정(_A)"
 
 msgid "Use GNOME Proxy Settings"
@@ -10467,7 +11022,7 @@ msgid "Create _this new account on the server"
 msgstr ""
 
 #, fuzzy
-msgid "_Proxy"
+msgid "P_roxy"
 msgstr "프록시"
 
 msgid "Enabled"
@@ -10497,6 +11052,137 @@ msgstr ""
 "\n"
 "친구 목록 창에 있는 <b>계정 -> 추가/편집</b> 메뉴에서도 이 창을 열 수 있습니"
 "다."
+
+#. Buddy List
+msgid "Background Color"
+msgstr "배경색"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "이 그룹은 친구 목록에 추가되어 있습니다."
+
+#, fuzzy
+msgid "Layout"
+msgstr "사자자리"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr ""
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "배경색"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Text"
+msgstr "보이기(_E)"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "배경색 선택"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "숨기기(_C)"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "배경색 선택"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+#, fuzzy
+msgid "Contact Text"
+msgstr "상태 문자"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "온라인"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+#, fuzzy
+msgid "Away Text"
+msgstr "자리 비움"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "오프라인"
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "%s 의 사용자 정보 변경"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+#, fuzzy
+msgid "Idle Text"
+msgstr "혈액형"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+#, fuzzy
+msgid "Message Text"
+msgstr "메시지를 보냈습니다."
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "%s 의 사용자 정보 변경"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -10954,7 +11640,7 @@ msgstr "별칭:"
 msgid "_Group:"
 msgstr "그룹(_G):"
 
-msgid "Auto_join when account becomes online."
+msgid "Auto_join when account connects."
 msgstr ""
 
 msgid "_Remain in chat after window is closed."
@@ -10988,112 +11674,6 @@ msgstr "/도구"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/친구/친구 정렬"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "배경색"
-
-#, fuzzy
-msgid "The background color for the buddy list"
-msgstr "이 그룹은 친구 목록에 추가되어 있습니다."
-
-#, fuzzy
-msgid "Layout"
-msgstr "사자자리"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr ""
-
-#. Group
-#, fuzzy
-msgid "Expanded Background Color"
-msgstr "배경색"
-
-msgid "The background color of an expanded group"
-msgstr ""
-
-#, fuzzy
-msgid "Expanded Text"
-msgstr "보이기(_E)"
-
-msgid "The text information for when a group is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Background Color"
-msgstr "배경색 선택"
-
-msgid "The background color of a collapsed group"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Text"
-msgstr "숨기기(_C)"
-
-msgid "The text information for when a group is collapsed"
-msgstr ""
-
-#. Buddy
-#, fuzzy
-msgid "Contact/Chat Background Color"
-msgstr "배경색 선택"
-
-msgid "The background color of a contact or chat"
-msgstr ""
-
-#, fuzzy
-msgid "Contact Text"
-msgstr "상태 문자"
-
-msgid "The text information for when a contact is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "On-line Text"
-msgstr "온라인"
-
-msgid "The text information for when a buddy is online"
-msgstr ""
-
-#, fuzzy
-msgid "Away Text"
-msgstr "자리 비움"
-
-msgid "The text information for when a buddy is away"
-msgstr ""
-
-#, fuzzy
-msgid "Off-line Text"
-msgstr "오프라인"
-
-msgid "The text information for when a buddy is off-line"
-msgstr ""
-
-#, fuzzy
-msgid "Idle Text"
-msgstr "혈액형"
-
-msgid "The text information for when a buddy is idle"
-msgstr ""
-
-#, fuzzy
-msgid "Message Text"
-msgstr "메시지를 보냈습니다."
-
-msgid "The text information for when a buddy has an unread message"
-msgstr ""
-
-msgid "Message (Nick Said) Text"
-msgstr ""
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-
-#, fuzzy
-msgid "The text information for a buddy's status"
-msgstr "%s 의 사용자 정보 변경"
 
 #, fuzzy
 msgid "Type the host name for this certificate."
@@ -11180,6 +11760,10 @@ msgstr "/대화(_C)"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/대화/새 인스턴트 메시지(_M)..."
+
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "/대화/초대(_V)..."
 
 msgid "/Conversation/_Find..."
 msgstr "/대화/찾기(_F)..."
@@ -11575,8 +12159,8 @@ msgstr "스페인어"
 msgid "Estonian"
 msgstr "보스니아어"
 
-msgid "Euskera(Basque)"
-msgstr "유케라 (바스크어)"
+msgid "Basque"
+msgstr ""
 
 msgid "Persian"
 msgstr "페르시아어"
@@ -11787,8 +12371,12 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
 
 #, fuzzy, c-format
@@ -12026,14 +12614,6 @@ msgstr "완료된 전송은 비우기(_L)"
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "파일 전송 상세(_D)"
-
-#. Pause button
-msgid "_Pause"
-msgstr "일시정지(_P)"
-
-#. Resume button
-msgid "_Resume"
-msgstr "복귀(_R)"
 
 msgid "Paste as Plain _Text"
 msgstr "문자열로 붙여넣기(_T)"
@@ -12358,60 +12938,47 @@ msgstr "로그 폴더 찾아보기(_B)"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s 상세 정보는 `%s -h' 를 입력해 주십시오.\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"사용법: %s [옵션]...\n"
-"\n"
-"  -c, --config=DIR    DIR에 있는 설정 파일 사용\n"
-"  -d, --debug         디버그 정보를 표준 출력으로 표시\n"
-"  -h, --help          이 도움말을 표시하고 종료\n"
-"  -n, --nologin       자동으로 로그인 하지 않음\n"
-"  -l, --login[=NAME]  자동으로 로그인 (선택 인수 NAME 은\n"
-"                      사용할 계정을 지정, 쉼표로 분리)\n"
-"  -v, --version       현재 버전을 표시하고 종료\n"
 
-#, fuzzy, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"사용법: %s [옵션]...\n"
-"\n"
-"  -c, --config=DIR    DIR에 있는 설정 파일 사용\n"
-"  -d, --debug         디버그 정보를 표준 출력으로 표시\n"
-"  -h, --help          이 도움말을 표시하고 종료\n"
-"  -n, --nologin       자동으로 로그인 하지 않음\n"
-"  -l, --login[=NAME]  자동으로 로그인 (선택 인수 NAME 은\n"
-"                      사용할 계정을 지정, 쉼표로 분리)\n"
-"  -v, --version       현재 버전을 표시하고 종료\n"
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+msgid "allow multiple instances"
+msgstr ""
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
+msgstr ""
 
 #, fuzzy, c-format
 msgid ""
@@ -12448,12 +13015,6 @@ msgstr ""
 "다음 사이트를 참조해 주십시오.\n"
 "%swiki/DeveloperPages\n"
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-#, fuzzy
-msgid "Pidgin"
-msgstr "해(돼지)"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
@@ -12464,10 +13025,6 @@ msgstr ""
 msgid "/Media/_Hangup"
 msgstr ""
 
-#, fuzzy
-msgid "Calling..."
-msgstr "계산 중..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr ""
@@ -12475,6 +13032,12 @@ msgstr ""
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr ""
+
+msgid "Incoming Call"
+msgstr ""
+
+msgid "_Pause"
+msgstr "일시정지(_P)"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12656,49 +13219,66 @@ msgstr "반복(_R)"
 msgid "Pounce Target"
 msgstr "알림 받을 상대"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Started typing"
 msgstr "입력 시작했을 때(_T)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Paused while typing"
 msgstr "입력을 일시 중지했을 때(_A)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed on"
 msgstr "접속했을 때(_G)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being idle"
 msgstr "%s 대기로부터 복귀했습니다. (%s)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being away"
 msgstr "자리 비움으로부터 복귀했을 때(_U)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Stopped typing"
 msgstr "입력을 중지했습니다."
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed off"
 msgstr "접속을 해제했을 때(_F)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Became idle"
 msgstr "대기 상태가 되었을 때(_I)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Went away"
 msgstr "자리 비움일 때만"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Sent a message"
 msgstr "메시지 보내기(_M)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Unknown.... Please report this!"
 msgstr "알 수 없는 \"알림\" 이벤트입니다. 꼭 보고해 주십시오!"
+
+msgid "(Custom)"
+msgstr ""
+
+#, fuzzy
+msgid "(Default)"
+msgstr "GNOME 디폴트"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "친구 목록"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 #, fuzzy
 msgid "Theme failed to unpack."
@@ -12850,12 +13430,20 @@ msgstr ""
 msgid "Cannot start browser configuration program."
 msgstr "사용자 정보를 가져오지 못했습니다."
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">예: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "사용 안 함(_D)"
 
 #, fuzzy, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "IP 주소를 자동으로 감지(_A)"
+
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "STUN 서버(_U):"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">예: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "공인 IP(_I):"
@@ -12866,18 +13454,33 @@ msgstr "포트"
 msgid "_Enable automatic router port forwarding"
 msgstr ""
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "수동으로 감시할 포트 번호의 범위를 지정(_M)"
 
-msgid "_Start port:"
-msgstr "시작 포트 번호(_S):"
+#, fuzzy
+msgid "_Start:"
+msgstr "상태(_S):"
 
-msgid "_End port:"
-msgstr "종료 포트 번호(_E):"
+#, fuzzy
+msgid "_End:"
+msgstr "보이기(_E)"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr ""
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "STUN 서버(_U):"
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "사용자명(_U):"
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "비밀번호:"
 
 #, fuzzy
 msgid "Proxy Server &amp; Browser"
@@ -12905,14 +13508,23 @@ msgstr "대화실 설정(_C)"
 msgid "Proxy Server"
 msgstr "프록시 서버"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "프록시 형식(_T):"
+
 msgid "No proxy"
 msgstr "프록시 없음"
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr ""
+#, fuzzy
+msgid "P_ort:"
+msgstr "포트 번호(_P):"
 
-msgid "_User:"
+#, fuzzy
+msgid "User_name:"
 msgstr "사용자명(_U):"
 
 msgid "Seamonkey"
@@ -13415,11 +14027,33 @@ msgstr "링크 주소 복사(_C)"
 msgid "_Copy Email Address"
 msgstr "이메일 주소 복사(_C)"
 
+#, fuzzy
+msgid "_Open File"
+msgstr "파일 열기"
+
+#, fuzzy
+msgid "Open _Containing Directory"
+msgstr "로그 기록 폴더"
+
 msgid "Save File"
+msgstr "파일 저장"
+
+#, fuzzy
+msgid "_Play Sound"
+msgstr "소리 재생(_L)"
+
+#, fuzzy
+msgid "_Save File"
 msgstr "파일 저장"
 
 msgid "Select color"
 msgstr "색상 선택"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+#, fuzzy
+msgid "Pidgin"
+msgstr "해(돼지)"
 
 msgid "_Alias"
 msgstr "별칭(_A)"
@@ -13510,78 +14144,6 @@ msgstr "친구와 대화할 가능성을 예측하는 플러그인입니다."
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
 
-#, fuzzy
-msgid "Server name request"
-msgstr "서버 주소"
-
-#, fuzzy
-msgid "Enter an XMPP Server"
-msgstr "회의 서버 입력"
-
-#, fuzzy
-msgid "Select an XMPP server to query"
-msgstr "질의할 회의 서버 선택"
-
-#, fuzzy
-msgid "Find Services"
-msgstr "온라인 서비스"
-
-#, fuzzy
-msgid "Add to Buddy List"
-msgstr "친구 목록 보내기"
-
-#, fuzzy
-msgid "Gateway"
-msgstr "자리 비움이 되었을 때(_W)"
-
-#, fuzzy
-msgid "Directory"
-msgstr "로그 기록 폴더"
-
-#, fuzzy
-msgid "PubSub Collection"
-msgstr "소리 선택"
-
-msgid "PubSub Leaf"
-msgstr ""
-
-#, fuzzy
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr "설명"
-
-#. Create the window.
-#, fuzzy
-msgid "Service Discovery"
-msgstr "폴더 정보 설정"
-
-#, fuzzy
-msgid "_Browse"
-msgstr "브라우저(_B):"
-
-#, fuzzy
-msgid "Server does not exist"
-msgstr "사용자가 없습니다."
-
-#, fuzzy
-msgid "Server does not support service discovery"
-msgstr "서버는 지원하고 있는 인증 방식을 이용하지 않습니다."
-
-#, fuzzy
-msgid "XMPP Service Discovery"
-msgstr "폴더 정보 설정"
-
-msgid "Allows browsing and registering services."
-msgstr ""
-
-#, fuzzy
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr ""
-"이것은 XMPP 서버 또는 클라이언트를 디버그 할 때에 편리한 플러그인입니다."
-
 msgid "Buddy is idle"
 msgstr "대기 중인 친구"
 
@@ -13669,6 +14231,80 @@ msgstr "대화 적용"
 
 msgid "Apply in IMs"
 msgstr "메시지에 적용"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+#, fuzzy
+msgid "Server name request"
+msgstr "서버 주소"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "회의 서버 입력"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "질의할 회의 서버 선택"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "온라인 서비스"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "친구 목록 보내기"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "자리 비움이 되었을 때(_W)"
+
+#, fuzzy
+msgid "Directory"
+msgstr "로그 기록 폴더"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "소리 선택"
+
+msgid "PubSub Leaf"
+msgstr ""
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "설명"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "폴더 정보 설정"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "브라우저(_B):"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "사용자가 없습니다."
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "서버는 지원하고 있는 인증 방식을 이용하지 않습니다."
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "폴더 정보 설정"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr ""
+"이것은 XMPP 서버 또는 클라이언트를 디버그 할 때에 편리한 플러그인입니다."
 
 msgid "By conversation count"
 msgstr "대화 횟수순으로 정렬"
@@ -14312,10 +14948,13 @@ msgstr "무시할 대상"
 msgid "Founder"
 msgstr "약간 크게"
 
+#. A user in a chat room who has special privileges.
 #, fuzzy
 msgid "Operator"
 msgstr "Opera"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
@@ -14477,6 +15116,58 @@ msgstr ""
 "이 플러그인을 사용하면 대화나 로그 메시지에 부여하는 타임스탬프의 형식을 정의"
 "할 수 있습니다."
 
+#, fuzzy
+msgid "Audio"
+msgstr "인증"
+
+#, fuzzy
+msgid "Video"
+msgstr "라이브 영상"
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "플러그인"
+
+#, fuzzy
+msgid "_Device"
+msgstr "장치"
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "플러그인"
+
+#, fuzzy
+msgid "D_evice"
+msgstr "장치"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Voice/Video Settings"
+msgstr "설정 편집"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+
 msgid "Opacity:"
 msgstr "불투명도:"
 
@@ -14532,9 +15223,6 @@ msgstr ""
 "\n"
 "* 주: 이 플러그인은 윈도우즈 2000 이상에서만 동작합니다."
 
-msgid "GTK+ Runtime Version"
-msgstr "GTK+ 런타임 버전"
-
 #. Autostart
 msgid "Startup"
 msgstr "시작"
@@ -14542,6 +15230,9 @@ msgstr "시작"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "윈도우즈 시작 시 %s 실행(_S)"
+
+msgid "Allow multiple instances"
+msgstr ""
 
 msgid "_Dockable Buddy List"
 msgstr "친구 목록을 결합할 수 있게(_D)"
@@ -14602,6 +15293,124 @@ msgstr "낮은 수준의 XMPP stanza 를 전송 또는 수신합니다."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "이것은 XMPP 서버 또는 클라이언트를 디버그 할 때에 편리한 플러그인입니다."
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "복수의 프로토콜을 이용하여 인터넷 메시지를 보냅니다."
+
+#~ msgid "_Start port:"
+#~ msgstr "시작 포트 번호(_S):"
+
+#~ msgid "_End port:"
+#~ msgstr "종료 포트 번호(_E):"
+
+#~ msgid "_User:"
+#~ msgstr "사용자명(_U):"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "GTK+ 런타임 버전"
+
+#, fuzzy
+#~ msgid "Calling ... "
+#~ msgstr "계산 중..."
+
+#, fuzzy
+#~ msgid "Invalid certificate chain"
+#~ msgstr "잘못된 제목입니다."
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "Join/Part Hiding 설정"
+
+#, fuzzy
+#~ msgid "Malformed BOSH Connect Server"
+#~ msgstr "서버 접속에 실패했습니다."
+
+#, fuzzy
+#~ msgid "Failed to open the file"
+#~ msgstr "파일 '%s' 을(를) 열 수 없었습니다: %s"
+
+#, fuzzy
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "SILC 의 키 쌍을 읽을 수 없습니다: %s"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "사용 중인 계정이 잠겨 있습니다. Yahoo! 웹사이트로 로그인 하십시오."
+
+#~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr ""
+#~ "%s 은(는) 회의 초대를 대화실 \"%s\" 에 거절했습니다 (이유는 \"%s\")."
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "초대가 거부되었습니다."
+
+#, fuzzy
+#~ msgid "_Proxy"
+#~ msgstr "프록시"
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "유케라 (바스크어)"
+
+#~ msgid "_Resume"
+#~ msgstr "복귀(_R)"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "사용법: %s [옵션]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    DIR에 있는 설정 파일 사용\n"
+#~ "  -d, --debug         디버그 정보를 표준 출력으로 표시\n"
+#~ "  -h, --help          이 도움말을 표시하고 종료\n"
+#~ "  -n, --nologin       자동으로 로그인 하지 않음\n"
+#~ "  -l, --login[=NAME]  자동으로 로그인 (선택 인수 NAME 은\n"
+#~ "                      사용할 계정을 지정, 쉼표로 분리)\n"
+#~ "  -v, --version       현재 버전을 표시하고 종료\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "사용법: %s [옵션]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    DIR에 있는 설정 파일 사용\n"
+#~ "  -d, --debug         디버그 정보를 표준 출력으로 표시\n"
+#~ "  -h, --help          이 도움말을 표시하고 종료\n"
+#~ "  -n, --nologin       자동으로 로그인 하지 않음\n"
+#~ "  -l, --login[=NAME]  자동으로 로그인 (선택 인수 NAME 은\n"
+#~ "                      사용할 계정을 지정, 쉼표로 분리)\n"
+#~ "  -v, --version       현재 버전을 표시하고 종료\n"
 
 #~ msgid "Cannot open socket"
 #~ msgstr "소켓을 열 수 없습니다."
@@ -14686,10 +15495,6 @@ msgstr ""
 #~ msgstr "방향"
 
 #, fuzzy
-#~ msgid "User Mood"
-#~ msgstr "사용자 모드"
-
-#, fuzzy
 #~ msgid "User Activity"
 #~ msgstr "사용자 제한"
 
@@ -14708,10 +15513,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Reachability Address"
 #~ msgstr "이메일 주소"
-
-#, fuzzy
-#~ msgid "User Profile"
-#~ msgstr "프로파일"
 
 #, fuzzy
 #~ msgid "Jingle"
@@ -14823,9 +15624,6 @@ msgstr ""
 
 #~ msgid "Could not write"
 #~ msgstr "쓸 수 없었습니다."
-
-#~ msgid "Could not connect"
-#~ msgstr "접속할 수 없었습니다."
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "감시 소켓을 생성할 수 없었습니다."
@@ -15033,9 +15831,6 @@ msgstr ""
 #~ "접속과 해제를 반복 수행했습니다. 10분 정도 후에 재시도 하십시오. 이대로 계"
 #~ "속하면 더 많이 시간을 기다려야 합니다."
 
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "원인을 알 수 없는 접속 오류가 발생했습니다: %s"
-
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "알 수 없는 오류 %d 이(가) 발생했습니다 (정보: %s)."
 
@@ -15101,9 +15896,6 @@ msgstr ""
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "링크를 브라우저로 열기(_O)"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "STUN 서버(_U):"
 
 #, fuzzy
 #~ msgid "Smiley _Image"
@@ -15535,9 +16327,6 @@ msgstr ""
 
 #~ msgid "_Default reply"
 #~ msgstr "기본 응답(_D)"
-
-#~ msgid "Status message"
-#~ msgstr "상태 메시지"
 
 #~ msgid "Autoreply with status message"
 #~ msgstr "상태 메시지를 추가하여 자동 응답"

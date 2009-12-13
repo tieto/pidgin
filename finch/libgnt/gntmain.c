@@ -82,6 +82,8 @@ static gboolean refresh_screen(void);
 static GntWM *wm;
 static GntClipboard *clipboard;
 
+int gnt_need_conversation_to_locale;
+
 #define HOLDING_ESCAPE  (escape_stuff.timer != 0)
 
 static struct {
@@ -465,10 +467,12 @@ void gnt_init()
 #ifdef NO_WIDECHAR
 	ascii_only = TRUE;
 #else
-	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf")))
+	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf"))) {
 		ascii_only = FALSE;
-	else
+	} else {
 		ascii_only = TRUE;
+		gnt_need_conversation_to_locale = TRUE;
+	}
 #endif
 
 	initscr();
@@ -729,5 +733,26 @@ gboolean gnt_is_refugee()
 #else
 	return FALSE;
 #endif
+}
+
+const char *C_(const char *x)
+{
+	static char *c = NULL;
+	if (gnt_need_conversation_to_locale) {
+		GError *error = NULL;
+		g_free(c);
+		c = g_locale_from_utf8(x, -1, NULL, NULL, &error);
+		if (c == NULL || error) {
+			char *store = c;
+			c = NULL;
+			gnt_warning("Error: %s\n", error ? error->message : "(unknown)");
+			g_error_free(error);
+			error = NULL;
+			g_free(c);
+			c = store;
+		}
+		return c ? c : x;
+	} else
+		return x;
 }
 

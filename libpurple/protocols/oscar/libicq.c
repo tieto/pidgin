@@ -153,7 +153,7 @@ init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
 
-	oscar_init(PURPLE_PLUGIN_PROTOCOL_INFO(plugin));
+	oscar_init(plugin);
 
 	option = purple_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);

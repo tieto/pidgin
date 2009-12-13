@@ -30,6 +30,11 @@
 #include "eventloop.h"
 #include "account.h"
 
+/**
+ * An opaque structure representing a DNS query.  The hostname and port
+ * associated with the query can be retrieved using
+ * purple_dnsquery_get_host() and purple_dnsquery_get_port().
+ */
 typedef struct _PurpleDnsQueryData PurpleDnsQueryData;
 
 /**

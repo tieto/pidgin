@@ -1,6 +1,6 @@
-#include <stdio.h>
-
 #include "internal.h"
+
+#include <stdio.h>
 
 #include "debug.h"
 #include "log.h"

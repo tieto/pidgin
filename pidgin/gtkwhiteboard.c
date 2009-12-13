@@ -21,8 +21,6 @@
  *
  */
 
-#include <stdlib.h>
-
 #include "internal.h"
 #include "blist.h"
 #include "debug.h"

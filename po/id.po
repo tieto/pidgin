@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.2.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-06 15:04-0700\n"
+"POT-Creation-Date: 2009-11-14 20:34-0500\n"
 "PO-Revision-Date: 2007-10-28 02:39+0800\n"
 "Last-Translator: Rai S. Regawa <raireg@yahoo.com>\n"
 "Language-Team: Rai S. Regawa <raireg@yahoo.com>\n"
@@ -58,6 +58,7 @@ msgstr ""
 "selidiki dan selesaikan migrasinya secara manual. Mohon laporkan kesalahan "
 "ini ke http://developer.pidgin.im"
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Kesalahan"
 
@@ -570,11 +571,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "Aktifkan kembali Akun"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-
 msgid "No such command."
 msgstr "Tidak ada perintah seperti itu."
 
@@ -617,6 +613,11 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "Anda meninggalkan percakapan"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr "Logging dimulai. Pesan-pesan berikutnya dalam percakapan akan di-log."
 
@@ -650,6 +651,10 @@ msgstr "Aktifkan Logging"
 msgid "Enable Sounds"
 msgstr "Aktifkan Suara:"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "Tidak dapat menyambung"
+
 msgid "<AUTO-REPLY> "
 msgstr "<JAWAB-OTOMATIS> "
 
@@ -659,7 +664,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "Daftar dari pengguna:\n"
 msgstr[1] "Daftar dari pengguna:\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "Pilihan-pilihan debug yang didukung adalah:  versi"
 
 msgid "No such command (in this context)."
@@ -780,6 +786,7 @@ msgid "Remaining"
 msgstr "Tersisa"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "Status"
 
@@ -885,7 +892,7 @@ msgid "System Log"
 msgstr "Log Sistem"
 
 #, fuzzy
-msgid "Calling ... "
+msgid "Calling..."
 msgstr "Menghitung..."
 
 msgid "Hangup"
@@ -959,6 +966,9 @@ msgstr "Undang"
 msgid "(none)"
 msgstr "(tidak ada)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 #, fuzzy
 msgid "URI"
 msgstr "UIN"
@@ -1369,6 +1379,8 @@ msgstr "Status Penghapusan"
 msgid "Saved Statuses"
 msgstr "Status Penyimpanan"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "Judul"
 
@@ -1533,6 +1545,35 @@ msgstr ""
 "Ketika percakapan baru dibuka plugin ini akan memasukkanpercakapan terakhir "
 "ke dalam percakapan baru."
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr ""
+
+msgid "TinyURL (or other) address prefix"
+msgstr ""
+
+#, fuzzy
+msgid "TinyURL"
+msgstr "URL Nada"
+
+msgid "TinyURL plugin"
+msgstr ""
+
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+
 msgid "Online"
 msgstr "Online"
 
@@ -1580,28 +1621,6 @@ msgstr "GntLastlog"
 
 msgid "Lastlog plugin."
 msgstr "Plugin Logterakhir."
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr ""
-
-msgid "TinyURL (or other) address prefix"
-msgstr ""
-
-#, fuzzy
-msgid "TinyURL"
-msgstr "URL Nada"
-
-msgid "TinyURL plugin"
-msgstr ""
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
 
 msgid "accounts"
 msgstr "akun-akun"
@@ -1664,6 +1683,49 @@ msgstr "Teman-teman"
 msgid "buddy list"
 msgstr "daftar teman"
 
+#, fuzzy
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+"Sertifikat yang ditampilkan oleh \"%s\" ditandai sendiri. Tidak dapat "
+"diperiksa secara otomatis."
+
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
+msgstr ""
+
+#, fuzzy
+msgid "The certificate is not valid yet."
+msgstr "Rantai sertifikat yang ditampilkan untuk %s tidak berlaku."
+
+#, fuzzy
+msgid "The certificate has expired and should not be considered valid."
+msgstr "Rantai sertifikat yang ditampilkan untuk %s tidak berlaku."
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+#, fuzzy
+msgid "The certificate presented is not issued to this domain."
+msgstr "Rantai sertifikat yang ditampilkan untuk %s tidak berlaku."
+
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+"Anda tidak memiliki database dari sertifikat akar, jadi sertifikat ini tidak "
+"dapat divalidasi."
+
+#, fuzzy
+msgid "The certificate chain presented is invalid."
+msgstr "Rantai sertifikat yang ditampilkan untuk %s tidak berlaku."
+
+#, fuzzy
+msgid "The certificate has been revoked."
+msgstr "Rantai sertifikat yang ditampilkan untuk %s tidak berlaku."
+
+#, fuzzy
+msgid "An unknown certificate error occurred."
+msgstr "Kesalahan signon tidak dikenal terjadi: %s."
+
 msgid "(DOES NOT MATCH)"
 msgstr "(TIDAK COCOK)"
 
@@ -1706,67 +1768,22 @@ msgstr "Verfikasi Sertifikat SSL"
 msgid "_View Certificate..."
 msgstr "_Lihat Sertifikat..."
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"Sertifikat yang ditampilkan oleh \"%s\" ditandai sendiri. Tidak dapat "
-"diperiksa secara otomatis."
-
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
+#, fuzzy, c-format
+msgid "The certificate for %s could not be validated."
 msgstr "Rantai sertifikat yang ditampilkan untuk %s tidak berlaku."
 
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
 #. TODO: Probably wrong.
-#. TODO: Probably wrong
 msgid "SSL Certificate Error"
 msgstr "Kesalahan Sertifikat SSL"
 
-msgid "Invalid certificate chain"
-msgstr "Rantai sertifikat tidak berlaku"
+#, fuzzy
+msgid "Unable to validate certificate"
+msgstr "Tidak dapat mengotentikasi: %s"
 
-#. vrq will be completed by user_auth
+#, fuzzy, c-format
 msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-"Anda tidak memiliki database dari sertifikat akar, jadi sertifikat ini tidak "
-"dapat divalidasi."
-
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr ""
-"Sertifikat akar yang diklaim dikeluarkan oleh yang satu ini didak dikenal "
-"Pidgin."
-
-#, c-format
-msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-"Rantai sertifikat yang ditampilkan oleh %s tidak memiliki tanda tangan "
-"digital yang valid dari Otoritas Sertifikat dari yang mana dia mengakui "
-"memiliki tanda tangan."
-
-msgid "Invalid certificate authority signature"
-msgstr "Tanda tangan otoritas sertifikat tidak berlaku"
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
 "Sertifikat yang ditampilkan \"%s\" sebalikna mengklaim berasal dari \"%s\". "
 "Ini dapat berarti bahwa anda tidak meyambung ke layanan yang anda kira."
@@ -1792,6 +1809,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "Informasi Sertifikat"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "Kesalahan Pendaftaran"
 
@@ -1806,8 +1824,8 @@ msgstr "+++ %s tergabung"
 msgid "+++ %s signed off"
 msgstr "+++ %s keluar"
 
+#. Undocumented
 #. Unknown error
-#. Unknown error!
 msgid "Unknown error"
 msgstr "Kesalahan Tidak Dikenal"
 
@@ -1914,10 +1932,15 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "Kesalahan penanganan %s: %d"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "Kegagalan pembuatan thread: %s"
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Alasan tidak jelas"
 
@@ -1996,6 +2019,10 @@ msgstr "Menawarkan untuk mengirim %s kepada %s"
 msgid "Starting transfer of %s from %s"
 msgstr "Memulai transfer %s dari %s"
 
+#, fuzzy, c-format
+msgid "Transfer of file <A HREF=\"file://%s\">%s</A> complete"
+msgstr "Transfer file %s selesai"
+
 #, c-format
 msgid "Transfer of file %s complete"
 msgstr "Transfer file %s selesai"
@@ -2003,19 +2030,19 @@ msgstr "Transfer file %s selesai"
 msgid "File transfer complete"
 msgstr "Transfer file selesai"
 
-#, c-format
-msgid "You canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "You cancelled the transfer of %s"
 msgstr "Anda membatalkan transfer %s"
 
 msgid "File transfer cancelled"
 msgstr "Transfer file dibatalkan"
 
-#, c-format
-msgid "%s canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
 msgstr "%s membatalkan transfer %s"
 
-#, c-format
-msgid "%s canceled the file transfer"
+#, fuzzy, c-format
+msgid "%s cancelled the file transfer"
 msgstr "%s membatalkan transfer file"
 
 #, c-format
@@ -2211,6 +2238,33 @@ msgstr "<font color=\"red\"><b>Tidak dapat membaca file: %s</b></font>"
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
+#, fuzzy
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "Kesalahan signon tidak dikenal terjadi: %s."
+
+#, fuzzy
+msgid "Conference error"
+msgstr "Konferensi Ditutup"
+
+msgid "Error with your microphone"
+msgstr ""
+
+msgid "Error with your webcam"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Error creating session: %s"
+msgstr "Kesalahan membuat sambungan"
 
 #, fuzzy
 msgid "Error creating conference."
@@ -2473,14 +2527,15 @@ msgstr ""
 "Uji dukungan plugin IPC, sebagai server. Ini mendaftarkan perintah-perintah "
 "IPC."
 
-msgid "Join/Part Hiding Configuration"
-msgstr "Gabung/Keluarkan Konfigurasi Tersembunyi"
+msgid "Hide Joins/Parts"
+msgstr ""
 
-msgid "Minimum Room Size"
-msgstr "Ukuran Kamar Terkecil"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr ""
 
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "Timeout Ketidakaktifan Pengguna (dalam menit)"
+msgid "If user has not spoken in this many minutes"
+msgstr ""
 
 msgid "Apply hiding rules to buddies"
 msgstr ""
@@ -2946,6 +3001,7 @@ msgstr "Nama Depan"
 msgid "Last name"
 msgstr "Nama Belakang"
 
+#. email
 msgid "Email"
 msgstr "Email"
 
@@ -3093,12 +3149,14 @@ msgstr "Kota"
 msgid "Year of birth"
 msgstr "Tahun kelahiran"
 
+#. gender
 msgid "Gender"
 msgstr "Jenis Kelamin"
 
 msgid "Male or female"
 msgstr "Pria atau wanita"
 
+#. 0
 msgid "Male"
 msgstr "Pria"
 
@@ -3168,6 +3226,7 @@ msgstr "Menjauh"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "Nama Depan"
 
@@ -3876,6 +3935,11 @@ msgstr "URL"
 msgid "Street Address"
 msgstr "Alamat Jalan"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "Alamat Lengkap"
 
@@ -3905,6 +3969,7 @@ msgstr "Unit Organisasi"
 msgid "Role"
 msgstr "Peranan"
 
+#. birthday
 msgid "Birthday"
 msgstr "Ulang Tahun"
 
@@ -3960,24 +4025,32 @@ msgstr "Foto"
 msgid "Logo"
 msgstr "Logo"
 
+#, fuzzy, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr ""
+"Anda akan menghilangkan %s dari daftar teman.  Apakah anda ingin melanjutkan?"
+
+msgid "Cancel Presence Notification"
+msgstr "Batalkan Pemberitahuan Kehadiran"
+
 msgid "Un-hide From"
 msgstr "Tidak disembunyikan Dari"
 
 msgid "Temporarily Hide From"
 msgstr "Sementara Sembunyikan Dari"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "Batalkan Pemberitahuan Kehadiran"
-
 msgid "(Re-)Request authorization"
 msgstr "Ajukan (ulang) otorisasi"
 
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
 msgstr "Batalkan berlangganan"
+
+msgid "Initiate _Chat"
+msgstr "Memulai _Percakapan"
 
 msgid "Log In"
 msgstr "Log Masuk"
@@ -3997,6 +4070,7 @@ msgstr "Jangan Diganggu"
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "Nama Belakang"
 
@@ -4212,10 +4286,6 @@ msgstr "Daftarkan Akun Baru pada %s"
 msgid "Change Registration"
 msgstr "Rubah Registrasi"
 
-#, fuzzy
-msgid "Malformed BOSH Connect Server"
-msgstr "Gagal tersambung ke server."
-
 msgid "Error unregistering account"
 msgstr "Kesalahan dalam membatalkan registrasi akun"
 
@@ -4240,6 +4310,7 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "Tidak Diijinkan"
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Mood"
 
@@ -4264,6 +4335,7 @@ msgstr "Tidak ada (Ke pending)"
 msgid "None"
 msgstr "Tidak Ada"
 
+#. subscription type
 msgid "Subscription"
 msgstr "Langganan"
 
@@ -4564,7 +4636,8 @@ msgstr "konfig:  Konfigurasi kamar percakapan."
 msgid "configure:  Configure a chat room."
 msgstr "konfigurasi:  Konfigurasi kamar percakapan."
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "tinggalkan [kamar]:  Tinggalkan kamar."
 
 msgid "register:  Register with a chat room."
@@ -4588,7 +4661,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "peranan &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Atur "
 "peranan pengguna dalam kamar."
@@ -4739,10 +4812,6 @@ msgstr "Kesalahan terjadi ketika membuka file."
 #, fuzzy
 msgid "Transfer was closed."
 msgstr "Transfer File Gagal"
-
-#, fuzzy
-msgid "Failed to open the file"
-msgstr "Gagal membuka file \"%s\": %s"
 
 msgid "Failed to open in-band bytestream"
 msgstr ""
@@ -5020,8 +5089,8 @@ msgstr "File teman buruk"
 msgid "Not expected"
 msgstr "Tidak diharapkan"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
+#, fuzzy
+msgid "Friendly name is changing too rapidly"
 msgstr "Nama bersahabat berubah terlalu cepat"
 
 #, c-format
@@ -5071,6 +5140,22 @@ msgstr "Kontak Pilihan"
 #, fuzzy
 msgid "Non-IM Contacts"
 msgstr "Hilangkan Kontak"
+
+#, c-format
+msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
+msgstr ""
+
+#, c-format
+msgid "%s sent a wink, but it could not be saved"
+msgstr ""
+
+#, c-format
+msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "%s sent a voice clip, but it could not be saved"
+msgstr "%s telah mengirimkan anda undangan webcam yang belum didukung."
 
 #, fuzzy, c-format
 msgid "%s sent you a voice chat invite, which is not yet supported."
@@ -5232,12 +5317,34 @@ msgstr "Buka Inbox Hotmail"
 msgid "Send to Mobile"
 msgstr "Kirim ke Mobile"
 
-msgid "Initiate _Chat"
-msgstr "Memulai _Percakapan"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Dukungan SSL diperlukan untuk MSN. Mohon instal pustaka SSL yang didukung. "
+
+#, fuzzy, c-format
+msgid ""
+"Unable to add the buddy %s because the username is invalid.  Usernames must "
+"be valid email addresses."
+msgstr ""
+"Tidak dapat menambahakn teman %s Karena nama layar tidak valid. Nama layar "
+"haruslah email yang valid, atau dimulai dengan huruf dan mengandung hanya "
+"huruf, angka dan sepasi, atau mengandung hanya angka."
+
+#, fuzzy
+msgid "Unable to Add"
+msgstr "Tidak Dapat Menambahkan"
+
+msgid "Authorization Request Message:"
+msgstr "Pesan Permohonan Otorisasi:"
+
+msgid "Please authorize me!"
+msgstr "Mohon otorisasi saya!"
+
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#.
+msgid "_OK"
+msgstr "_OK"
 
 msgid "Error retrieving profile"
 msgstr "Kesalahan pemanggilan profil"
@@ -5432,6 +5539,10 @@ msgstr "Otentikasi Windows Live ID:Tidak dapat tersambung"
 msgid "%s just sent you a Nudge!"
 msgstr "%s barusan mengirim anda Sikutan!"
 
+#, fuzzy
+msgid "The following users are missing from your addressbook"
+msgstr "Berikut ini adalah hasil pencarian anda"
+
 #, fuzzy, c-format
 msgid "Unknown error (%d): %s"
 msgstr "Kesalahan Tidak Dikenal (%d)"
@@ -5439,13 +5550,14 @@ msgstr "Kesalahan Tidak Dikenal (%d)"
 msgid "Unable to add user"
 msgstr "Tidak dapat menambahkan pengguna"
 
+#. Unknown error!
 #, c-format
 msgid "Unknown error (%d)"
 msgstr "Kesalahan Tidak Dikenal (%d)"
 
 #, fuzzy
-msgid "The following users are missing from your addressbook"
-msgstr "Berikut ini adalah hasil pencarian anda"
+msgid "Unable to remove user"
+msgstr "Tidak dapat menambahkan pengguna"
 
 #, fuzzy
 msgid "Mobile message was not sent because it was too long."
@@ -5561,8 +5673,8 @@ msgstr "Mengambil daftar teman"
 msgid "%s requests to view your webcam, but this request is not yet supported."
 msgstr "%s telah mengirimkan anda undangan webcam yang belum didukung."
 
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
+#, fuzzy, c-format
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr "%s telah mengirimkan anda undangan webcam yang belum didukung."
 
 msgid "Away From Computer"
@@ -5614,6 +5726,10 @@ msgstr "Apakah anda ingin menambahkan teman ini ke daftar teman anda?"
 #, fuzzy
 msgid "The username specified is invalid."
 msgstr "Nama layar yang ditentukan tidak valid."
+
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "Nama bersahabat berubah terlalu cepat"
 
 msgid "This Hotmail account may not be active."
 msgstr "Akun Hotmail ini mungkin tidak aktif."
@@ -5682,6 +5798,384 @@ msgstr "%s telah menambahkan anda pada daftar temannya."
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s menghilangkan anda dari daftar temannya."
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "Mood Anda Sekarang"
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "Mood Pengguna"
+
+#, fuzzy
+msgid "Change your Mood"
+msgstr "Rubah Kata Sandi"
+
+#, fuzzy
+msgid "How do you feel right now?"
+msgstr "Saya tidak ada di sini sekarang"
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "Kesalahan Penulisan"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "Nama Keluarga"
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "Atur Nomor Telepon Seluler..."
+
+#, fuzzy
+msgid "Update your Profile"
+msgstr "Profil Pengguna"
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+msgid "There is no splash-screen currently available"
+msgstr ""
+
+#, fuzzy
+msgid "About"
+msgstr "Tentang %s"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "Ganti kata sandi..."
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "Ganti Kata Sandi..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "Lihat Log"
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "Tentang %s"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "Pesan terlalu panjang."
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "Logging masuk"
+
+#, fuzzy
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr ""
+"Tidak dapat menyambung ke server. Mohon masukkan alamat server ke mana anda "
+"ingin menyambung."
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "Menyambungkan"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "Nama Panggilan"
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "Daftarkan Akun XMPP Baru"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "Mohon isi bagian-bagian berikut"
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "Server tidak tersedia; coba lagi nanti"
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "Keamanan Diaktifkan"
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "Masukkan kata sandi"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "Negara"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "Bahasa Pilihan"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "Memerlukan Otorisasi"
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "Informasi Server"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "Pesan status"
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "Nama Tengah"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "Atur Nomor Telepon Seluler..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "Server"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "Menyambung menggunakan TCP"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "Kesalahan Pesan XMPP"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "Tidak dapat menyambung ke server."
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "Anda telah sukses memodifikasi anggota Qun"
+
+#, fuzzy
+msgid "Message Error"
+msgstr "Kesalahan Pesan XMPP"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "Kesalahan Sambungan"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "Kesalahan Pesan XMPP"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "Kesalahan Aliran"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "Kesalahan Ikon"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "Kesalahan Pembatalan Pendaftaran"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "Kesalahan Sambungan"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "Langganan"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "Kesalahan Sambungan"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "Transfer File"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "Tidak dapat membuat tos"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "Kesalahan Pembatalan Pendaftaran"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "Kesalahan Penulisan"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr "Marah"
+
+msgid "Excited"
+msgstr "Bersemangant"
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "Kelompok"
+
+msgid "Happy"
+msgstr "Senang"
+
+msgid "In Love"
+msgstr "Jatuh Cinta"
+
+msgid "Invincible"
+msgstr "Tak Terkalahkan"
+
+msgid "Sad"
+msgstr "Sedih"
+
+#, fuzzy
+msgid "Hot"
+msgstr "_Host:"
+
+#, fuzzy
+msgid "Sick"
+msgstr "Nama Panggilan"
+
+msgid "Sleepy"
+msgstr "Mengantuk"
+
+#, fuzzy
+msgid "Pending"
+msgstr "Kirim"
+
+#, fuzzy
+msgid "Invited"
+msgstr "Undang"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "Tolak"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "Hapus"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "Informasi Pekerjaan"
 
 #, c-format
 msgid "No such user: %s"
@@ -6299,11 +6793,11 @@ msgstr "Alamat Server"
 msgid "Server port"
 msgstr "Port Server"
 
-#, fuzzy
-msgid "Received unexpected response from "
+#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s"
 msgstr "Menerima respon HTTP tidak terduga dari server."
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6312,8 +6806,10 @@ msgstr ""
 "dan coba lagi. Apabila anda meneruskan mencoba, anda akan harus menuggu "
 "lebih lama"
 
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
 #, fuzzy, c-format
-msgid "Error requesting "
+msgid "Error requesting %s: %s"
 msgstr "Kesalahan dalam memohon token login"
 
 msgid "AOL does not allow your screen name to authenticate here"
@@ -6464,6 +6960,48 @@ msgstr "Antrian penuh"
 
 msgid "Not while on AOL"
 msgstr "Tidak sementara pada AOL"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Tidak dapat mengirim file"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Tidak dapat mengirim direktori."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Tidak dapat mengirim pesan."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Pesan Offlinee"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6637,6 +7175,18 @@ msgstr "Akun anda sementara ditahan."
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Layanan AOL Instant Messenger sementara tidak tersedia."
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"Anda telah menyambung dan memutuskan terlalu sering. Tunggu sepuluh menit "
+"dan coba lagi. Apabila anda meneruskan mencoba, anda akan harus menuggu "
+"lebih lama"
+
+#. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
@@ -6645,8 +7195,9 @@ msgstr ""
 #. IP address connecting too frequently
 #, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "Anda telah menyambung dan memutuskan terlalu sering. Tunggu sepuluh menit "
 "dan coba lagi. Apabila anda meneruskan mencoba, anda akan harus menuggu "
@@ -6662,12 +7213,6 @@ msgstr "Masukkan SecurID"
 msgid "Enter the 6 digit number from the digital display."
 msgstr "Masukkan nomor 6 digit dari tampilan digital."
 
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
-msgid "_OK"
-msgstr "_OK"
-
 msgid "Password sent"
 msgstr "Kata sandi terkirim"
 
@@ -6678,12 +7223,6 @@ msgid "Please authorize me so I can add you to my buddy list."
 msgstr ""
 "Mohon otorisasi saya sehingga saya dapat menambahkan anda ke daftar teman "
 "saya."
-
-msgid "Authorization Request Message:"
-msgstr "Pesan Permohonan Otorisasi:"
-
-msgid "Please authorize me!"
-msgstr "Mohon otorisasi saya!"
 
 msgid "No reason given."
 msgstr "Tidak diberikan alasan."
@@ -6803,21 +7342,28 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Anda melewatkan %hu pesan dari %s karena alasan tidak jelas."
 msgstr[1] "Anda melewatkan %hu pesan-pesan dari %s karena alasan tidak jelas."
 
-#. Data is assumed to be the destination bn
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Tidak dapat mengirim pesan (%s)."
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Tidak dapat mengirim pesan: %s"
 
-msgid "Unknown reason."
-msgstr "Alasan tidak jelas."
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Tidak dapat mengirim pesan kepada %s:"
 
-#, c-format
-msgid "Unable to send message to %s:"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
 msgstr "Tidak dapat mengirim pesan kepada %s:"
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "Informasi pengguna tidak tersedia: %s"
+
+msgid "Unknown reason."
+msgstr "Alasan tidak jelas."
 
 msgid "Online Since"
 msgstr "Online Sejak"
@@ -6827,9 +7373,6 @@ msgstr "Anggota Sejak"
 
 msgid "Capabilities"
 msgstr "Kemampuan"
-
-msgid "Profile"
-msgstr "Profil"
 
 msgid "Your AIM connection may be lost."
 msgstr "Sambungan AIM anda mungkin hilang."
@@ -6842,9 +7385,10 @@ msgstr ""
 "[Tidak dapat menampilkan pesan dari pengguna ini karena mengandung karakter "
 "tidak valid.]"
 
+#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "Aksi yang anda coba terakhir tidak dapat dilakukan karena anda melewati "
 "tingkat pembatasan. Mohon tunggu 10 detik dan coba lagi."
@@ -7020,10 +7564,6 @@ msgstr ""
 "huruf, angka dan sepasi, atau mengandung hanya angka."
 
 #, fuzzy
-msgid "Unable to Add"
-msgstr "Tidak Dapat Menambahkan"
-
-#, fuzzy
 msgid "Unable to Retrieve Buddy List"
 msgstr "Tidak Dapat Memanggil Daftar Teman"
 
@@ -7120,6 +7660,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "S_ambung"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "Server menutup sambungan."
+
 msgid "Get AIM Info"
 msgstr "Dapatkan Info AIM"
 
@@ -7129,6 +7673,10 @@ msgstr "Rubah Komentar Teman"
 
 msgid "Get Status Msg"
 msgstr "Dapatkan Pesan Status"
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "PI langsung terpasang"
 
 msgid "Direct IM"
 msgstr "PI Langsung"
@@ -8044,8 +8592,8 @@ msgstr "%d telah menolak file %s"
 msgid "File Send"
 msgstr "File Terkirim"
 
-#, c-format
-msgid "%d canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%d cancelled the transfer of %s"
 msgstr "%d membatalkan trasnfer dari %s"
 
 #, c-format
@@ -8111,6 +8659,10 @@ msgstr "Konferensi Ditutup"
 
 msgid "Unable to send message: "
 msgstr "Tidak dapat mengirim pesan: "
+
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "Tidak dapat mengirim pesan kepada %s:"
 
 msgid "Place Closed"
 msgstr "Tempat Ditutup"
@@ -8526,35 +9078,14 @@ msgstr "Hiperaktif"
 msgid "Robot"
 msgstr "Robot"
 
-msgid "Happy"
-msgstr "Senang"
-
-msgid "Sad"
-msgstr "Sedih"
-
-msgid "Angry"
-msgstr "Marah"
-
 msgid "Jealous"
 msgstr "Cemburu"
 
 msgid "Ashamed"
 msgstr "Malu"
 
-msgid "Invincible"
-msgstr "Tak Terkalahkan"
-
-msgid "In Love"
-msgstr "Jatuh Cinta"
-
-msgid "Sleepy"
-msgstr "Mengantuk"
-
 msgid "Bored"
 msgstr "Bosan"
-
-msgid "Excited"
-msgstr "Bersemangant"
 
 msgid "Anxious"
 msgstr "Tidak Sabar Lagi"
@@ -9035,10 +9566,6 @@ msgstr "Tidak dapat memuat pasangan kunci SILC"
 #. Progress
 msgid "Connecting to SILC Server"
 msgstr "Menyambung ke Server SILC"
-
-#, fuzzy
-msgid "Unable to not load SILC key pair"
-msgstr "Tidak dapat memuat pasangan kunci SILC"
 
 msgid "Out of memory"
 msgstr "Kehabisan memori"
@@ -9586,6 +10113,9 @@ msgstr "Kamar Pengguna Lokal"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Abaikan undangan konferensi dan kamar percakapan"
 
+msgid "Use account proxy for SSL connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "Daftar URL kamar percakapan"
 
@@ -9612,6 +10142,10 @@ msgstr "ID Yahoo!"
 #, fuzzy
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "Protokol Plugin Yahoo"
+
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s telah mengirimkan anda undangan webcam yang belum didukung."
 
 msgid "Your SMS was not delivered"
 msgstr ""
@@ -9692,8 +10226,26 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "Acuhkan teman?"
 
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "Akun anda dikunci, mohon login pada situs Yahoo!."
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "Nama layar atau kata sandi salah."
+
+#, fuzzy
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+"Kesalahan nomor tidak dikenal %d. Login ke situs Yahoo! dapat memperbaiki "
+"ini."
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
 
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
@@ -9791,6 +10343,15 @@ msgstr "Gabung Pengguna dalam Percakapan..."
 msgid "Open Inbox"
 msgstr "Buka Inbox"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -9880,12 +10441,9 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr "Profil Pengguna Kosong."
 
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr "%s menolak undangan konferensi anda ke kamar \"%s\" karena \"%s\"."
-
-msgid "Invitation Rejected"
-msgstr "Undangan Ditolak"
+#, fuzzy, c-format
+msgid "%s has declined to join."
+msgstr "%s telah bergabung."
 
 msgid "Failed to join chat"
 msgstr "Gagal bergabung ke percakapan"
@@ -10330,14 +10888,15 @@ msgstr ""
 "Kesalahan ditemukan dalam membaca %s anda.  File belum dimuat, dan file lama "
 "anda telah dirubah namanya menjadi %s~."
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "Pengirim Pesan Internet"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pesan Internet Pidgin"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "Kirim pesan-pesan instan memalui banyak protokol"
 
 msgid "Orientation"
 msgstr "Orientasi"
@@ -10372,7 +10931,8 @@ msgstr "Pemberitahuan e_mail baru"
 msgid "Use this buddy _icon for this account:"
 msgstr "Gunakan _ikon teman ini untuk akun ini:"
 
-msgid "_Advanced"
+#, fuzzy
+msgid "Ad_vanced"
 msgstr "_Lanjutan"
 
 msgid "Use GNOME Proxy Settings"
@@ -10437,7 +10997,7 @@ msgid "Create _this new account on the server"
 msgstr "Buat akun baru ini pada server."
 
 #, fuzzy
-msgid "_Proxy"
+msgid "P_roxy"
 msgstr "Proxy"
 
 msgid "Enabled"
@@ -10467,6 +11027,137 @@ msgstr ""
 "\n"
 "Anda dapat kembali ke jendela ini untuk menambahkan, merubah, atau mengahpus "
 "akun-akun dari <b>Accounts->Tambahkan/Ubah</b> pada jendela Daftar Teman"
+
+#. Buddy List
+msgid "Background Color"
+msgstr "Warna Latar Belakang"
+
+#, fuzzy
+msgid "The background color for the buddy list"
+msgstr "Kelompok ini telah ditambahkan ke daftar teman anda"
+
+#, fuzzy
+msgid "Layout"
+msgstr "Lao"
+
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr ""
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Background Color"
+msgstr "Warna Latar Belakang"
+
+msgid "The background color of an expanded group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+#, fuzzy
+msgid "Expanded Text"
+msgstr "_Lebarkan"
+
+msgid "The text information for when a group is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Background Color"
+msgstr "Pilih Warna Latar Belakanga"
+
+msgid "The background color of a collapsed group"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+#, fuzzy
+msgid "Collapsed Text"
+msgstr "_Ringkas"
+
+msgid "The text information for when a group is collapsed"
+msgstr ""
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+#, fuzzy
+msgid "Contact/Chat Background Color"
+msgstr "Pilih Warna Latar Belakanga"
+
+msgid "The background color of a contact or chat"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+#, fuzzy
+msgid "Contact Text"
+msgstr "Urut"
+
+msgid "The text information for when a contact is expanded"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "Online"
+
+msgid "The text information for when a buddy is online"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+#, fuzzy
+msgid "Away Text"
+msgstr "Menjauh"
+
+msgid "The text information for when a buddy is away"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "Offline"
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "Rubah informasi pengguna untuk %s"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+#, fuzzy
+msgid "Idle Text"
+msgstr "Teks Mood"
+
+msgid "The text information for when a buddy is idle"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+#, fuzzy
+msgid "Message Text"
+msgstr "Pesan terkirim"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr ""
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr ""
+
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr ""
+
+#, fuzzy
+msgid "The text information for a buddy's status"
+msgstr "Rubah informasi pengguna untuk %s"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
@@ -10930,7 +11621,7 @@ msgid "_Group:"
 msgstr "_Kelompok:"
 
 #, fuzzy
-msgid "Auto_join when account becomes online."
+msgid "Auto_join when account connects."
 msgstr "Gabung otomatis ketika akun tersembung."
 
 #, fuzzy
@@ -10963,112 +11654,6 @@ msgstr "/Piranti"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/Teman-teman/Atur Teman-teman"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "Warna Latar Belakang"
-
-#, fuzzy
-msgid "The background color for the buddy list"
-msgstr "Kelompok ini telah ditambahkan ke daftar teman anda"
-
-#, fuzzy
-msgid "Layout"
-msgstr "Lao"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr ""
-
-#. Group
-#, fuzzy
-msgid "Expanded Background Color"
-msgstr "Warna Latar Belakang"
-
-msgid "The background color of an expanded group"
-msgstr ""
-
-#, fuzzy
-msgid "Expanded Text"
-msgstr "_Lebarkan"
-
-msgid "The text information for when a group is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Background Color"
-msgstr "Pilih Warna Latar Belakanga"
-
-msgid "The background color of a collapsed group"
-msgstr ""
-
-#, fuzzy
-msgid "Collapsed Text"
-msgstr "_Ringkas"
-
-msgid "The text information for when a group is collapsed"
-msgstr ""
-
-#. Buddy
-#, fuzzy
-msgid "Contact/Chat Background Color"
-msgstr "Pilih Warna Latar Belakanga"
-
-msgid "The background color of a contact or chat"
-msgstr ""
-
-#, fuzzy
-msgid "Contact Text"
-msgstr "Urut"
-
-msgid "The text information for when a contact is expanded"
-msgstr ""
-
-#, fuzzy
-msgid "On-line Text"
-msgstr "Online"
-
-msgid "The text information for when a buddy is online"
-msgstr ""
-
-#, fuzzy
-msgid "Away Text"
-msgstr "Menjauh"
-
-msgid "The text information for when a buddy is away"
-msgstr ""
-
-#, fuzzy
-msgid "Off-line Text"
-msgstr "Offline"
-
-msgid "The text information for when a buddy is off-line"
-msgstr ""
-
-#, fuzzy
-msgid "Idle Text"
-msgstr "Teks Mood"
-
-msgid "The text information for when a buddy is idle"
-msgstr ""
-
-#, fuzzy
-msgid "Message Text"
-msgstr "Pesan terkirim"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr ""
-
-msgid "Message (Nick Said) Text"
-msgstr ""
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr ""
-
-#, fuzzy
-msgid "The text information for a buddy's status"
-msgstr "Rubah informasi pengguna untuk %s"
 
 #, fuzzy
 msgid "Type the host name for this certificate."
@@ -11156,6 +11741,10 @@ msgstr "/_Percakapan"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Percakapan/_Pesan Instan Baru..."
+
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "/Percakapan/Un_dang..."
 
 msgid "/Conversation/_Find..."
 msgstr "/Percakapan/_Temukan..."
@@ -11547,8 +12136,8 @@ msgstr "Spanyol"
 msgid "Estonian"
 msgstr "Estonia"
 
-msgid "Euskera(Basque)"
-msgstr "Euskera (Basque)"
+msgid "Basque"
+msgstr ""
 
 msgid "Persian"
 msgstr "Persia"
@@ -11754,8 +12343,12 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
 
 #, fuzzy, c-format
@@ -12001,14 +12594,6 @@ msgstr "B_ersihkan transfer yang selesai"
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "_Detail-detail transfer file"
-
-#. Pause button
-msgid "_Pause"
-msgstr "_Pause"
-
-#. Resume button
-msgid "_Resume"
-msgstr "_Rangkuman"
 
 msgid "Paste as Plain _Text"
 msgstr "Paste sebagai _Tets Biasa"
@@ -12339,62 +12924,47 @@ msgstr "_Browse map logs"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s. Coba `%s -h' untuk informasi lebih lanjut.\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"Penggunaan: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    gunakan DIR untuk konfigurasi arsip\n"
-"  -d, --debug         cetak pesan debug ke stdout\n"
-"  -h, --help          tampilkan bantuan ini dan keluar\n"
-"  -n, --nologin       jangan login otomatis\n"
-"  -l, --login[=NAME]  login otomatis (optional argument NAME specifies\n"
-"                      akun(-akun) yang digunakan, dipisahkan dengan koma)\n"
-"  --display=DISPLAY   X tampilkan untuk menggunakan\n"
-"  -v, --version       tampilkan versi terakhir dan keluar\n"
 
-#, fuzzy, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"Penggunaan: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    gunakan DIR untuk konfigurasi arsip\n"
-"  -d, --debug         cetak pesan debug ke stdout\n"
-"  -h, --help          tampilkan bantuan ini dan keluar\n"
-"  -n, --nologin       jangan login otomatis\n"
-"  -l, --login[=NAME]  login otomatis (optional argument NAME specifies\n"
-"                      akun(-akun) yang digunakan, dipisahkan dengan koma)\n"
-"  --display=DISPLAY   X tampilkan untuk menggunakan\n"
-"  -v, --version       tampilkan versi terakhir dan keluar\n"
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+msgid "allow multiple instances"
+msgstr ""
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
+msgstr ""
 
 #, fuzzy, c-format
 msgid ""
@@ -12429,11 +12999,6 @@ msgstr ""
 "pada protokol lain terdapat pada\n"
 "%swiki/DeveloperPages\n"
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "Pidgin"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
@@ -12444,10 +13009,6 @@ msgstr ""
 msgid "/Media/_Hangup"
 msgstr ""
 
-#, fuzzy
-msgid "Calling..."
-msgstr "Menghitung..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr ""
@@ -12455,6 +13016,12 @@ msgstr ""
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr ""
+
+msgid "Incoming Call"
+msgstr ""
+
+msgid "_Pause"
+msgstr "_Pause"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12635,49 +13202,66 @@ msgstr "_Berulang-ulang"
 msgid "Pounce Target"
 msgstr "Sasaran Tos"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Started typing"
 msgstr "Mulai mengetik"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Paused while typing"
 msgstr "Berhenti saat mengetik"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed on"
 msgstr "Bergabung"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being idle"
 msgstr "%s telah kembali dari berdiam (%s)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being away"
 msgstr "Kembali dari menjauh"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Stopped typing"
 msgstr "Berhenti Mengetik"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed off"
 msgstr "Keluar"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Became idle"
 msgstr "Menjadi diam"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Went away"
 msgstr "Ketika menjauh"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Sent a message"
 msgstr "Kirim sebuah pesan"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Unknown.... Please report this!"
 msgstr "Peristiwa tos tak dikenal. Mohon laporkan ini!"
+
+msgid "(Custom)"
+msgstr ""
+
+#, fuzzy
+msgid "(Default)"
+msgstr "(standar)"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "Daftar Teman"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 #, fuzzy
 msgid "Theme failed to unpack."
@@ -12829,12 +13413,20 @@ msgstr ""
 msgid "Cannot start browser configuration program."
 msgstr "Tidak dapat memperoleh informasi pengguna"
 
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "<span style=\"italic\">Contoh: stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "_Nonaktifkan"
 
 #, fuzzy, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "_Deteksi otomatis alamat IP"
+
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "Server ST_UN:"
+
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "<span style=\"italic\">Contoh: stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "_IP Publik:"
@@ -12845,18 +13437,33 @@ msgstr "Port-port"
 msgid "_Enable automatic router port forwarding"
 msgstr ""
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "Tentukan secara _manual cakupan port-port untuk didengarkan pada"
 
-msgid "_Start port:"
-msgstr "_Mulai port:"
+#, fuzzy
+msgid "_Start:"
+msgstr "_Status:"
 
-msgid "_End port:"
-msgstr "_Akhiri port:"
+#, fuzzy
+msgid "_End:"
+msgstr "_Lebarkan"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr ""
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "Server ST_UN:"
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "_Namapengguna:"
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "Kata Sandi:"
 
 #, fuzzy
 msgid "Proxy Server &amp; Browser"
@@ -12884,15 +13491,24 @@ msgstr "_Konfigurasi Kamar"
 msgid "Proxy Server"
 msgstr "Server Proxy"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "_Jenis Proxy:"
+
 msgid "No proxy"
 msgstr "Tanpa proxy"
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr ""
+#, fuzzy
+msgid "P_ort:"
+msgstr "_Port:"
 
-msgid "_User:"
-msgstr "_Pengguna:"
+#, fuzzy
+msgid "User_name:"
+msgstr "_Namapengguna:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -13394,11 +14010,32 @@ msgstr "_Salin Lokasi Link"
 msgid "_Copy Email Address"
 msgstr "_Salin Alamat Email"
 
+#, fuzzy
+msgid "_Open File"
+msgstr "Buka File..."
+
+#, fuzzy
+msgid "Open _Containing Directory"
+msgstr "Direktori Log"
+
 msgid "Save File"
+msgstr "Simpan File"
+
+#, fuzzy
+msgid "_Play Sound"
+msgstr "Mainkan suara"
+
+#, fuzzy
+msgid "_Save File"
 msgstr "Simpan File"
 
 msgid "Select color"
 msgstr "Pilih warna"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "Pidgin"
 
 msgid "_Alias"
 msgstr "_Alias"
@@ -13488,78 +14125,6 @@ msgstr "Plugin Prediksi Ketersediaan Kontak."
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
 msgstr ""
-
-#, fuzzy
-msgid "Server name request"
-msgstr "Alamat Server"
-
-#, fuzzy
-msgid "Enter an XMPP Server"
-msgstr "Masukkan Server Konferensi"
-
-#, fuzzy
-msgid "Select an XMPP server to query"
-msgstr "Pilih server konferensi untuk dicari"
-
-#, fuzzy
-msgid "Find Services"
-msgstr "Layanan Online"
-
-#, fuzzy
-msgid "Add to Buddy List"
-msgstr "Kirim Daftar Teman"
-
-#, fuzzy
-msgid "Gateway"
-msgstr "Pergi menjauh"
-
-#, fuzzy
-msgid "Directory"
-msgstr "Direktori Log"
-
-#, fuzzy
-msgid "PubSub Collection"
-msgstr "Pilihan Suara"
-
-#, fuzzy
-msgid "PubSub Leaf"
-msgstr "Layanan PubSub"
-
-#, fuzzy
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr "Deskripsi"
-
-#. Create the window.
-#, fuzzy
-msgid "Service Discovery"
-msgstr "Layani Info Temuan"
-
-#, fuzzy
-msgid "_Browse"
-msgstr "_Browser:"
-
-#, fuzzy
-msgid "Server does not exist"
-msgstr "Pengguna tidak pernah ada"
-
-#, fuzzy
-msgid "Server does not support service discovery"
-msgstr "Server tidak menggunakan metode otentifikasi yang didukung"
-
-#, fuzzy
-msgid "XMPP Service Discovery"
-msgstr "Layani Info Temuan"
-
-msgid "Allows browsing and registering services."
-msgstr ""
-
-#, fuzzy
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
 msgid "Buddy is idle"
 msgstr "Teman sedang diam"
@@ -13652,6 +14217,80 @@ msgstr "Terapkan dalam Percakapan"
 
 msgid "Apply in IMs"
 msgstr "Terapkan dalam PI"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+#, fuzzy
+msgid "Server name request"
+msgstr "Alamat Server"
+
+#, fuzzy
+msgid "Enter an XMPP Server"
+msgstr "Masukkan Server Konferensi"
+
+#, fuzzy
+msgid "Select an XMPP server to query"
+msgstr "Pilih server konferensi untuk dicari"
+
+#, fuzzy
+msgid "Find Services"
+msgstr "Layanan Online"
+
+#, fuzzy
+msgid "Add to Buddy List"
+msgstr "Kirim Daftar Teman"
+
+#, fuzzy
+msgid "Gateway"
+msgstr "Pergi menjauh"
+
+#, fuzzy
+msgid "Directory"
+msgstr "Direktori Log"
+
+#, fuzzy
+msgid "PubSub Collection"
+msgstr "Pilihan Suara"
+
+#, fuzzy
+msgid "PubSub Leaf"
+msgstr "Layanan PubSub"
+
+#, fuzzy
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr "Deskripsi"
+
+#. Create the window.
+#, fuzzy
+msgid "Service Discovery"
+msgstr "Layani Info Temuan"
+
+#, fuzzy
+msgid "_Browse"
+msgstr "_Browser:"
+
+#, fuzzy
+msgid "Server does not exist"
+msgstr "Pengguna tidak pernah ada"
+
+#, fuzzy
+msgid "Server does not support service discovery"
+msgstr "Server tidak menggunakan metode otentifikasi yang didukung"
+
+#, fuzzy
+msgid "XMPP Service Discovery"
+msgstr "Layani Info Temuan"
+
+msgid "Allows browsing and registering services."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
 msgid "By conversation count"
 msgstr "Hitungan berdasarkan percakapan"
@@ -14306,10 +14945,13 @@ msgstr "Acuhkan"
 msgid "Founder"
 msgstr "Lebih Keras"
 
+#. A user in a chat room who has special privileges.
 #, fuzzy
 msgid "Operator"
 msgstr "Opera"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
@@ -14471,6 +15113,58 @@ msgstr ""
 "Plugin ini memungkinkan pengguna untuk mengkostumisasi percakapan dan format "
 "penanda waktu pesan log."
 
+#, fuzzy
+msgid "Audio"
+msgstr "Otorisasi"
+
+#, fuzzy
+msgid "Video"
+msgstr "Video Langsung"
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "Plug-ins"
+
+#, fuzzy
+msgid "_Device"
+msgstr "Perangkat"
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "Plug-ins"
+
+#, fuzzy
+msgid "D_evice"
+msgstr "Perangkat"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Voice/Video Settings"
+msgstr "Rubah Pengaturan"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+
 msgid "Opacity:"
 msgstr "Ke-tampak-an:"
 
@@ -14527,9 +15221,6 @@ msgstr ""
 "\n"
 "* Catatan: Plugin ini memerlukan Win2000 atau di atasnya."
 
-msgid "GTK+ Runtime Version"
-msgstr "Versi Runtime GTK+"
-
 #. Autostart
 msgid "Startup"
 msgstr "Awalan"
@@ -14537,6 +15228,9 @@ msgstr "Awalan"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "_Mulai %s pada permulaan Windows"
+
+msgid "Allow multiple instances"
+msgstr ""
 
 msgid "_Dockable Buddy List"
 msgstr "Daftar Teman yang dapat di-_Labuhkan"
@@ -14598,6 +15292,150 @@ msgstr "Kirim dan terima bait-bait XMPP mentah."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
+
+#, fuzzy
+#~ msgid "The root certificate this one claims to be issued by is unknown."
+#~ msgstr ""
+#~ "Sertifikat akar yang diklaim dikeluarkan oleh yang satu ini didak dikenal "
+#~ "Pidgin."
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "Kirim pesan-pesan instan memalui banyak protokol"
+
+#~ msgid "_Start port:"
+#~ msgstr "_Mulai port:"
+
+#~ msgid "_End port:"
+#~ msgstr "_Akhiri port:"
+
+#~ msgid "_User:"
+#~ msgstr "_Pengguna:"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "Versi Runtime GTK+"
+
+#, fuzzy
+#~ msgid "Calling ... "
+#~ msgstr "Menghitung..."
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "Rantai sertifikat tidak berlaku"
+
+#~ msgid ""
+#~ "The certificate chain presented by %s does not have a valid digital "
+#~ "signature from the Certificate Authority from which it claims to have a "
+#~ "signature."
+#~ msgstr ""
+#~ "Rantai sertifikat yang ditampilkan oleh %s tidak memiliki tanda tangan "
+#~ "digital yang valid dari Otoritas Sertifikat dari yang mana dia mengakui "
+#~ "memiliki tanda tangan."
+
+#~ msgid "Invalid certificate authority signature"
+#~ msgstr "Tanda tangan otoritas sertifikat tidak berlaku"
+
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "Gabung/Keluarkan Konfigurasi Tersembunyi"
+
+#~ msgid "Minimum Room Size"
+#~ msgstr "Ukuran Kamar Terkecil"
+
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "Timeout Ketidakaktifan Pengguna (dalam menit)"
+
+#, fuzzy
+#~ msgid "Malformed BOSH Connect Server"
+#~ msgstr "Gagal tersambung ke server."
+
+#, fuzzy
+#~ msgid "Failed to open the file"
+#~ msgstr "Gagal membuka file \"%s\": %s"
+
+#, fuzzy
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "Tidak dapat memuat pasangan kunci SILC"
+
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "Akun anda dikunci, mohon login pada situs Yahoo!."
+
+#~ msgid ""
+#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
+#~ msgstr "%s menolak undangan konferensi anda ke kamar \"%s\" karena \"%s\"."
+
+#~ msgid "Invitation Rejected"
+#~ msgstr "Undangan Ditolak"
+
+#, fuzzy
+#~ msgid "_Proxy"
+#~ msgstr "Proxy"
+
+#~ msgid "Euskera(Basque)"
+#~ msgstr "Euskera (Basque)"
+
+#~ msgid "_Resume"
+#~ msgstr "_Rangkuman"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Penggunaan: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    gunakan DIR untuk konfigurasi arsip\n"
+#~ "  -d, --debug         cetak pesan debug ke stdout\n"
+#~ "  -h, --help          tampilkan bantuan ini dan keluar\n"
+#~ "  -n, --nologin       jangan login otomatis\n"
+#~ "  -l, --login[=NAME]  login otomatis (optional argument NAME specifies\n"
+#~ "                      akun(-akun) yang digunakan, dipisahkan dengan "
+#~ "koma)\n"
+#~ "  --display=DISPLAY   X tampilkan untuk menggunakan\n"
+#~ "  -v, --version       tampilkan versi terakhir dan keluar\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "Penggunaan: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    gunakan DIR untuk konfigurasi arsip\n"
+#~ "  -d, --debug         cetak pesan debug ke stdout\n"
+#~ "  -h, --help          tampilkan bantuan ini dan keluar\n"
+#~ "  -n, --nologin       jangan login otomatis\n"
+#~ "  -l, --login[=NAME]  login otomatis (optional argument NAME specifies\n"
+#~ "                      akun(-akun) yang digunakan, dipisahkan dengan "
+#~ "koma)\n"
+#~ "  --display=DISPLAY   X tampilkan untuk menggunakan\n"
+#~ "  -v, --version       tampilkan versi terakhir dan keluar\n"
 
 #~ msgid "Cannot open socket"
 #~ msgstr "Tidak dapat membuka soket"
@@ -14687,9 +15525,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ msgid "Stream Initiation"
 #~ msgstr "Inisasi Arus"
 
-#~ msgid "User Mood"
-#~ msgstr "Mood Pengguna"
-
 #~ msgid "User Activity"
 #~ msgstr "Aktifitas Pengguna"
 
@@ -14707,9 +15542,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
 #~ msgid "Reachability Address"
 #~ msgstr "Alamat Tetap"
-
-#~ msgid "User Profile"
-#~ msgstr "Profil Pengguna"
 
 #~ msgid "Jingle"
 #~ msgstr "Jingle"
@@ -14850,9 +15682,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
 #~ msgid "Could not write"
 #~ msgstr "Tidak dapat menulis"
-
-#~ msgid "Could not connect"
-#~ msgstr "Tidak dapat menyambung"
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "Tidak dapat membuat soket pendengar"
@@ -15065,9 +15894,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 #~ "dan coba lagi.  Apabila terus mencoba, anda harus menunggu bahkan lebih "
 #~ "lama."
 
-#~ msgid "An unknown signon error has occurred: %s."
-#~ msgstr "Kesalahan signon tidak dikenal terjadi: %s."
-
 #~ msgid "An unknown error, %d, has occurred.  Info: %s"
 #~ msgstr "Kesalahan tidak dikenal, %d, telah terjadi.  Info: %s"
 
@@ -15132,9 +15958,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
 #~ msgid "_Open Link in Browser"
 #~ msgstr "_Buka Link dalam Browser"
-
-#~ msgid "ST_UN server:"
-#~ msgstr "Server ST_UN:"
 
 #, fuzzy
 #~ msgid "Smiley _Image"
@@ -15750,9 +16573,6 @@ msgstr "Plugin ini berguna untuk debug server atau klien XMPP."
 
 #~ msgid "_Default reply"
 #~ msgstr "Jawaban _standar"
-
-#~ msgid "Status message"
-#~ msgstr "Pesan status"
 
 #~ msgid "Autoreply with status message"
 #~ msgstr "Jawab otomatis dengan pesan status"

@@ -111,7 +111,18 @@ static gint delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
 				     PidginRoomlistDialog *dialog)
 {
+	gboolean change = (account != dialog->account);
 	dialog->account = account;
+
+	if (change && dialog->roomlist) {
+		PidginRoomlist *rl = dialog->roomlist->ui_data;
+		if (rl->tree) {
+			gtk_widget_destroy(rl->tree);
+			rl->tree = NULL;
+		}
+		purple_roomlist_unref(dialog->roomlist);
+		dialog->roomlist = NULL;
+	}
 }
 
 static void list_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)

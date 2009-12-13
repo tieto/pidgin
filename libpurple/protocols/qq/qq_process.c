@@ -22,9 +22,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "internal.h"
 #include "cipher.h"
 #include "debug.h"
-#include "internal.h"
 
 #include "buddy_info.h"
 #include "buddy_list.h"

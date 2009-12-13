@@ -29,12 +29,6 @@
 
 /* Implementation of XEP-0084 */
 
-#define NS_AVATAR_0_12_DATA     "http://www.xmpp.org/extensions/xep-0084.html#ns-data"
-#define NS_AVATAR_0_12_METADATA "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata"
-
-#define NS_AVATAR_1_1_DATA      "urn:xmpp:avatar:data"
-#define NS_AVATAR_1_1_METADATA  "urn:xmpp:avatar:metadata"
-
 void jabber_avatar_init(void);
 void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img);
 

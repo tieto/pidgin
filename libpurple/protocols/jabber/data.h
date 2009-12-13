@@ -24,8 +24,6 @@
 #include "xmlnode.h"
 #include "jabber.h"
 
-#define XEP_0231_NAMESPACE "urn:xmpp:bob"
-
 #include <glib.h>
 
 typedef struct {

@@ -29,8 +29,8 @@
  * OF SUCH DAMAGE.
  */
 
-#include "nat-pmp.h"
 #include "internal.h"
+#include "nat-pmp.h"
 #include "debug.h"
 #include "signals.h"
 #include "network.h"

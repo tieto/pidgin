@@ -1,7 +1,6 @@
 #!/usr/bin/make -f
 
 include /usr/share/cdbs/1/class/autotools.mk
-include /usr/share/cdbs/1/rules/simple-patchsys.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/gnome.mk
 include /usr/share/cdbs/1/rules/utils.mk
@@ -13,7 +12,7 @@ LDFLAGS = -Wl,--as-needed
 DEB_CONFIGURE_EXTRA_FLAGS = --enable-gevolution \
 	    --enable-cap --with-system-ssl-certs=/etc/ssl/certs \
 	    --enable-perl --with-zephyr=/usr --enable-dbus --enable-gnutls=no \
-	    --enable-nss=yes --enable-cyrus-sasl --enable-vv --enable-farsight \
+	    --enable-nss=yes --enable-cyrus-sasl --disable-vv --disable-farsight \
 	    --enable-tcl --enable-tk
 ifeq ($(DEB_BUILD_ARCH_OS),linux)
   DEB_CONFIGURE_EXTRA_FLAGS += --enable-nm

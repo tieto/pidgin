@@ -160,7 +160,10 @@ struct _PurpleXfer
 
 	PurpleXferStatusType status;    /**< File Transfer's status.             */
 
-	/* I/O operations. */
+	/** I/O operations, which should be set by the prpl using
+	 *  purple_xfer_set_init_fnc() and friends.  Setting #init is
+	 *  mandatory; all others are optional.
+	 */
 	struct
 	{
 		void (*init)(PurpleXfer *xfer);
@@ -674,7 +677,7 @@ void purple_xfer_conversation_write(PurpleXfer *xfer, char *message, gboolean is
 void purple_xfer_ui_ready(PurpleXfer *xfer);
 
 /**
- * Allows the prpl to signal it's readh to send/receive data (depending on
+ * Allows the prpl to signal it's ready to send/receive data (depending on
  * the direction of the file transfer. Used when the prpl provides read/write
  * ops and cannot/does not provide a raw fd to the core.
  *

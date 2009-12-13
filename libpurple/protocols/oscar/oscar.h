@@ -29,10 +29,10 @@
 #ifndef _OSCAR_H_
 #define _OSCAR_H_
 
+#include "internal.h"
 #include "circbuffer.h"
 #include "debug.h"
 #include "eventloop.h"
-#include "internal.h"
 #include "proxy.h"
 #include "sslconn.h"
 
@@ -623,7 +623,7 @@ struct aim_redirect_data
 	} chat;
 };
 
-int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, guint16 port, guint8 *cookie, guint16 cookielen);
+int oscar_connect_to_bos(PurpleConnection *gc, OscarData *od, const char *host, guint16 port, guint8 *cookie, guint16 cookielen, const char *tls_certname);
 
 /* family_auth.c */
 
@@ -661,7 +661,7 @@ void flap_connection_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc, Purple
 void flap_connection_send(FlapConnection *conn, FlapFrame *frame);
 void flap_connection_send_version(OscarData *od, FlapConnection *conn);
 void flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy);
-void flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci);
+void flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci, gboolean allow_multiple_login);
 void flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data);
 void flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data, gboolean high_priority);
 void flap_connection_send_keepalive(OscarData *od, FlapConnection *conn);
@@ -812,9 +812,9 @@ void oscar_chat_destroy(struct chat_connection *cc);
 #define AIM_IMFLAGS_OFFLINE				0x0800 /* send to offline user */
 #define AIM_IMFLAGS_TYPINGNOT			0x1000 /* typing notification */
 
-#define AIM_CHARSET_ASCII		0x0000
-#define AIM_CHARSET_UNICODE	0x0002 /* UTF-16BE */
-#define AIM_CHARSET_CUSTOM	0x0003
+#define AIM_CHARSET_ASCII   0x0000 /* ISO 646 */
+#define AIM_CHARSET_UNICODE 0x0002 /* ISO 10646 (UTF-16/UCS-2BE) */
+#define AIM_CHARSET_LATIN_1 0x0003 /* ISO 8859-1 */
 
 /*
  * Multipart message structures.
@@ -1010,7 +1010,7 @@ struct aim_incomingim_ch4_args
 /* 0x0008 */ int aim_im_warn(OscarData *od, FlapConnection *conn, const char *destbn, guint32 flags);
 /* 0x000b */ int aim_im_denytransfer(OscarData *od, const char *bn, const guchar *cookie, guint16 code);
 /* 0x0010 */ int aim_im_reqofflinemsgs(OscarData *od);
-/* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2);
+/* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 channel, const char *bn, guint16 event);
 void aim_icbm_makecookie(guchar* cookie);
 gchar *oscar_encoding_extract(const char *encoding);
 gchar *oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char *text, int textlen);
@@ -1030,11 +1030,12 @@ gchar *purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *so
 #define AIM_FLAG_ICQ             0x0040
 #define AIM_FLAG_WIRELESS        0x0080
 #define AIM_FLAG_UNKNOWN100      0x0100
-#define AIM_FLAG_UNKNOWN200      0x0200
+#define AIM_FLAG_IMFORWARDING    0x0200
 #define AIM_FLAG_ACTIVEBUDDY     0x0400
 #define AIM_FLAG_UNKNOWN800      0x0800
-#define AIM_FLAG_ABINTERNAL      0x1000
-#define AIM_FLAG_ALLUSERS        0x001f
+#define AIM_FLAG_ONEWAYWIRELESS  0x1000
+#define AIM_FLAG_NOKNOCKKNOCK    0x00040000
+#define AIM_FLAG_FORWARD_MOBILE  0x00080000
 
 #define AIM_USERINFO_PRESENT_FLAGS        0x00000001
 #define AIM_USERINFO_PRESENT_MEMBERSINCE  0x00000002
@@ -1239,7 +1240,7 @@ int aim_bart_request(OscarData *od, const char *bn, guint8 iconcsumtype, const g
 #define AIM_SSI_ACK_INVALIDNAME		0x000d
 #define AIM_SSI_ACK_AUTHREQUIRED	0x000e
 
-/* These flags are set in the 0x00c9 TLV of SSI teyp 0x0005 */
+/* These flags are set in the 0x00c9 TLV of SSI type 0x0005 */
 #define AIM_SSI_PRESENCE_FLAG_SHOWIDLE        0x00000400
 #define AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES 0x00020000
 
@@ -1684,7 +1685,8 @@ struct rateclass {
 	guint32 disconnect;
 	guint32 current;
 	guint32 max;
-	guint8 unknown[5]; /* only present in versions >= 3 */
+	guint32 delta;
+	guint8 dropping_snacs;
 	GHashTable *members; /* Key is family and subtype, value is TRUE. */
 
 	struct timeval last; /**< The time when we last sent a SNAC of this rate class. */

@@ -327,23 +327,43 @@ debug_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
 	char *tmp, *markup;
-	PurpleCmdStatus status;
 
 	if (!g_ascii_strcasecmp(args[0], "version")) {
-		tmp = g_strdup_printf("me is using Pidgin v%s with libpurple v%s.",
+		tmp = g_strdup_printf("Using Pidgin v%s with libpurple v%s.",
 				DISPLAY_VERSION, purple_core_get_version());
-		markup = g_markup_escape_text(tmp, -1);
+	} else if (!g_ascii_strcasecmp(args[0], "plugins")) {
+		/* Show all the loaded plugins, including the protocol plugins and plugin loaders.
+		 * This is intentional, since third party prpls are often sources of bugs, and some
+		 * plugin loaders (e.g. mono) can also be buggy.
+		 */
+		GString *str = g_string_new("Loaded Plugins: ");
+		const GList *plugins = purple_plugins_get_loaded();
+		if (plugins) {
+			for (; plugins; plugins = plugins->next) {
+				str = g_string_append(str, purple_plugin_get_name(plugins->data));
+				if (plugins->next)
+					str = g_string_append(str, ", ");
+			}
+		} else {
+			str = g_string_append(str, "(none)");
+		}
 
-		status = purple_cmd_do_command(conv, tmp, markup, error);
-
-		g_free(tmp);
-		g_free(markup);
-		return status;
+		tmp = g_string_free(str, FALSE);
 	} else {
-		purple_conversation_write(conv, NULL, _("Supported debug options are:  version"),
+		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins version"),
 		                        PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_ERROR, time(NULL));
-		return PURPLE_CMD_STATUS_OK;
+		return PURPLE_CMD_RET_OK;
 	}
+
+	markup = g_markup_escape_text(tmp, -1);
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
+		purple_conv_im_send(PURPLE_CONV_IM(conv), markup);
+	else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
+		purple_conv_chat_send(PURPLE_CONV_CHAT(conv), markup);
+
+	g_free(tmp);
+	g_free(markup);
+	return PURPLE_CMD_RET_OK;
 }
 
 static void clear_conversation_scrollback(PurpleConversation *conv)
@@ -363,7 +383,7 @@ clear_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
 	clear_conversation_scrollback(conv);
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static PurpleCmdRet
@@ -371,7 +391,7 @@ clearall_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
 	purple_conversation_foreach(clear_conversation_scrollback);
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static PurpleCmdRet
@@ -410,7 +430,7 @@ help_command_cb(PurpleConversation *conv,
 	purple_conversation_write(conv, NULL, s->str, PURPLE_MESSAGE_NO_LOG, time(NULL));
 	g_string_free(s, TRUE);
 
-	return PURPLE_CMD_STATUS_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static void
@@ -3883,8 +3903,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
 
 	if (buddy != NULL &&
-	    !purple_presence_is_online(purple_buddy_get_presence(buddy)) &&
-	    !purple_account_supports_offline_message(account, buddy))
+	    !purple_presence_is_online(purple_buddy_get_presence(buddy)))
 	{
 		gtk_widget_set_sensitive(label, FALSE);
 
@@ -4257,7 +4276,7 @@ tab_complete(PurpleConversation *conv)
 		/* Users */
 		for (; l != NULL; l = l->next) {
 			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
-									  &matches, TRUE, ((PurpleConvChatBuddy *)l->data)->name);
+									  &matches, FALSE, ((PurpleConvChatBuddy *)l->data)->name);
 		}
 
 
@@ -4791,6 +4810,9 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 									sort_chat_users, NULL, NULL);
 
 	list = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ls));
+
+	/* Allow a user to specify gtkrc settings for the chat userlist only */
+	gtk_widget_set_name(list, "pidgin_conv_userlist");
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	g_object_set(G_OBJECT(rend),
@@ -7277,7 +7299,8 @@ spellcheck_pref_cb(const char *name, PurplePrefType type,
 			pidgin_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
 		else {
 			spell = gtkspell_get_from_text_view(GTK_TEXT_VIEW(gtkconv->entry));
-			gtkspell_detach(spell);
+			if (spell)
+				gtkspell_detach(spell);
 		}
 	}
 #endif
@@ -7574,6 +7597,28 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 			if (chat == NULL && comps != NULL)
 				g_hash_table_destroy(comps);
 		}
+	}
+}
+
+static void
+account_signing_off(PurpleConnection *gc)
+{
+	GList *list = purple_get_chats();
+	PurpleAccount *account = purple_connection_get_account(gc);
+
+	/* We are about to sign off. See which chats we are currently in, and mark
+	 * them for rejoin on reconnect. */
+	while (list) {
+		PurpleConversation *conv = list->data;
+		if (!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)) &&
+				purple_conversation_get_account(conv) == account) {
+			purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
+			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
+						"longer in this chat. You will be automatically rejoined in the chat when "
+						"the account reconnects."),
+					PURPLE_MESSAGE_SYSTEM, time(NULL));
+		}
+		list = list->next;
 	}
 }
 
@@ -7885,8 +7930,10 @@ pidgin_conversations_init(void)
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/tab_side", GTK_POS_TOP);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/scrollback_lines", 4000);
 
+#ifdef _WIN32
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font", TRUE);
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/custom_font", "");
+#endif
 
 	/* Conversations -> Chat */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/chat");
@@ -8071,6 +8118,8 @@ pidgin_conversations_init(void)
 	purple_signal_connect(purple_connections_get_handle(), "signed-off", handle,
 						G_CALLBACK(account_signed_off_cb),
 						GINT_TO_POINTER(PURPLE_CONV_ACCOUNT_OFFLINE));
+	purple_signal_connect(purple_connections_get_handle(), "signing-off", handle,
+						G_CALLBACK(account_signing_off), NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "received-im-msg",
 						handle, G_CALLBACK(received_im_msg_cb), NULL);

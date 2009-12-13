@@ -24,8 +24,6 @@
 #include "jabber.h"
 #include "iq.h"
 
-#define XEP_0047_NAMESPACE "http://jabber.org/protocol/ibb"
-
 typedef struct _JabberIBBSession JabberIBBSession;
 
 typedef void

@@ -29,8 +29,8 @@
  * as I want to be.  Thank you libxode for giving me a good starting point */
 #define _PURPLE_XMLNODE_C_
 
-#include "debug.h"
 #include "internal.h"
+#include "debug.h"
 
 #include <libxml/parser.h>
 #include <string.h>

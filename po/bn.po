@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.5.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-22 14:13-0700\n"
+"POT-Creation-Date: 2009-11-14 20:33-0500\n"
 "PO-Revision-Date: 2009-07-21 18:20+0700\n"
 "Last-Translator: Samia <samia@ankur.org.bd>\n"
 "Language-Team: Bengali <ankur-bd-l10n@googlegroups.com>\n"
@@ -65,6 +65,7 @@ msgstr ""
 "করে তদন্ত করুন এবং নিজ হাতে স্থানান্তর শেষ করুন। অনুগ্রহ করে এই ত্রুটিটির রিপোর্ট "
 "http://developer.pidgin.im এ পাঠান।"
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "ত্রুটি"
 
@@ -582,14 +583,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "একাউন্ট পুনরায় সক্রিয়করণ "
 
-# tithi
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-"এই একাউন্টটি বিচ্ছিন্ন হয়েছে এবং আপনি আর আড্ডায় নেই। একাউন্টটি পুনরায় সংযোজিত হলে "
-"আপনি স্বয়ংক্রিয় ভাবে আড্ডায় যুক্ত হবেন।"
-
 # ***
 msgid "No such command."
 msgstr "এমন কোনো কমান্ড নেই।"
@@ -632,6 +625,14 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "আপনি এই  আড্ডা ত্যাগ করেছেন।"
 
+# tithi
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+"এই একাউন্টটি বিচ্ছিন্ন হয়েছে এবং আপনি আর আড্ডায় নেই। একাউন্টটি পুনরায় সংযোজিত হলে "
+"আপনি স্বয়ংক্রিয় ভাবে আড্ডায় যুক্ত হবেন।"
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr "কথোপকথন সংরক্ষণ করা শুরু হয়েছে। ভবিষ্যতে বার্তা লগ করা হবে।"
 
@@ -665,6 +666,10 @@ msgstr "লগ সক্রিয়করণ"
 msgid "Enable Sounds"
 msgstr "শব্দ সক্রিয়করণ"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "সার্ভার সংযোগটি বন্ধ করে দিয়েছে"
+
 msgid "<AUTO-REPLY> "
 msgstr "<AUTO-REPLY>"
 
@@ -674,7 +679,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "%d ব্যবহারকারীর তালিকা:...\n"
 msgstr[1] "%d ব্যবহারকারীগণের তালিকা:\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "সমর্থিত ডিবাগ অপশন: সংস্করণ"
 
 # ***
@@ -804,6 +810,7 @@ msgid "Remaining"
 msgstr "অবশিষ্ট"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "অবস্থা"
 
@@ -904,7 +911,7 @@ msgstr "সব কথোপকথন"
 msgid "System Log"
 msgstr "সিস্টেম লগ"
 
-msgid "Calling ... "
+msgid "Calling..."
 msgstr "কল করা হচ্ছে..."
 
 msgid "Hangup"
@@ -977,6 +984,9 @@ msgstr "আমন্ত্রণ জানান"
 msgid "(none)"
 msgstr "(কোনটি না)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 msgid "URI"
 msgstr "URI"
 
@@ -1400,6 +1410,8 @@ msgstr "অবস্থা মুছে ফেলুন"
 msgid "Saved Statuses"
 msgstr "সংরক্ষিত অবস্থা"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "শিরোনাম"
 
@@ -1576,6 +1588,40 @@ msgstr ""
 "নতুন কথোপকথন শুরু করার সময় এই প্লাগইনটি নতুন কথোপকথনের উইন্ডোতে সর্বশেষ কথোপকথন "
 "প্রবেশ করাবে।"
 
+#, c-format
+msgid ""
+"\n"
+"Fetching TinyURL..."
+msgstr ""
+"\n"
+"TinyURL  আনা হচ্ছে..."
+
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
+#, fuzzy
+msgid "Only create TinyURL for URLs of this length or greater"
+msgstr "শুধুমাত্র এইরকম অথবা এর চাইতে বড় দৈর্ঘ্যের URL এর জন্য TinyURL তৈরি করুন।"
+
+msgid "TinyURL (or other) address prefix"
+msgstr "TinyURL (অথবা অন্যান্য) ঠিকানার উপসর্গ"
+
+# tithi
+msgid "TinyURL"
+msgstr "TinyURL"
+
+msgid "TinyURL plugin"
+msgstr "TinyURL প্লাগইন"
+
+#, fuzzy
+msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgstr ""
+"URL সহ একটি বার্তা গ্রহন করার সময় সহজভাবে অনুলিপি করার জন্য TinyURL ব্যবহৃত হয়"
+
 msgid "Online"
 msgstr "অনলাইন"
 
@@ -1625,31 +1671,6 @@ msgstr "GntLastlog"
 # tithi
 msgid "Lastlog plugin."
 msgstr "Lastlog প্লাগইন।"
-
-#, c-format
-msgid ""
-"\n"
-"Fetching TinyURL..."
-msgstr ""
-"\n"
-"TinyURL  আনা হচ্ছে..."
-
-msgid "Only create TinyURL for urls of this length or greater"
-msgstr "শুধুমাত্র এইরকম অথবা এর চাইতে বড় দৈর্ঘ্যের URL এর জন্য TinyURL তৈরি করুন।"
-
-msgid "TinyURL (or other) address prefix"
-msgstr "TinyURL (অথবা অন্যান্য) ঠিকানার উপসর্গ"
-
-# tithi
-msgid "TinyURL"
-msgstr "TinyURL"
-
-msgid "TinyURL plugin"
-msgstr "TinyURL প্লাগইন"
-
-msgid "When receiving a message with URL(s), TinyURL for easier copying"
-msgstr ""
-"URL সহ একটি বার্তা গ্রহন করার সময় সহজভাবে অনুলিপি করার জন্য TinyURL ব্যবহৃত হয়"
 
 msgid "accounts"
 msgstr "একাউন্ট"
@@ -1712,6 +1733,49 @@ msgstr "বন্ধুগণ"
 msgid "buddy list"
 msgstr "বন্ধু তালিকা"
 
+#, fuzzy
+msgid "The certificate is self-signed and cannot be automatically checked."
+msgstr ""
+"\"%s\" দ্বারা উপস্থাপিত সার্টিফিকেটটি স্ব-স্বাক্ষরিত। এটি স্বয়ংক্রিয়ভাবে পরীক্ষা করা "
+"যাবে না।"
+
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
+msgstr ""
+
+#, fuzzy
+msgid "The certificate is not valid yet."
+msgstr "%s এর জন্য উপস্থাপিত সার্টিফিকেট চেইন কার্যকর নয়।"
+
+#, fuzzy
+msgid "The certificate has expired and should not be considered valid."
+msgstr "%s এর জন্য উপস্থাপিত সার্টিফিকেট চেইন কার্যকর নয়।"
+
+#. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
+#, fuzzy
+msgid "The certificate presented is not issued to this domain."
+msgstr "%s এর জন্য উপস্থাপিত সার্টিফিকেট চেইন কার্যকর নয়।"
+
+# tithi
+msgid ""
+"You have no database of root certificates, so this certificate cannot be "
+"validated."
+msgstr ""
+"আপনার মূল সার্টিফিকেটের কোনো ডাটাবেস নেই, সুতরাং এই সার্টিফিকেটটির কার্যকারিতা "
+"পরীক্ষা করা যাবে না।"
+
+#, fuzzy
+msgid "The certificate chain presented is invalid."
+msgstr "%s এর জন্য উপস্থাপিত সার্টিফিকেট চেইন কার্যকর নয়।"
+
+#, fuzzy
+msgid "The certificate has been revoked."
+msgstr "কল সমাপ্ত করা হয়েছে।"
+
+msgid "An unknown certificate error occurred."
+msgstr ""
+
 # tithi
 msgid "(DOES NOT MATCH)"
 msgstr "(মিলে না)"
@@ -1762,68 +1826,22 @@ msgstr "SSL সার্টিফিকেটের সত্যতা যাচ
 msgid "_View Certificate..."
 msgstr "সার্টিফিকেট প্রদর্শন... (_V)"
 
-#. Prompt the user to authenticate the certificate
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" is self-signed. It cannot be "
-"automatically checked."
-msgstr ""
-"\"%s\" দ্বারা উপস্থাপিত সার্টিফিকেটটি স্ব-স্বাক্ষরিত। এটি স্বয়ংক্রিয়ভাবে পরীক্ষা করা "
-"যাবে না।"
-
-#. FIXME 2.6.1
-#, c-format
-msgid "The certificate chain presented for %s is not valid."
+#, fuzzy, c-format
+msgid "The certificate for %s could not be validated."
 msgstr "%s এর জন্য উপস্থাপিত সার্টিফিকেট চেইন কার্যকর নয়।"
 
-#. TODO: Make this error either block the ensuing SSL
-#. connection error until the user dismisses this one, or
-#. stifle it.
-#. TODO: Probably wrong.
-#. TODO: Probably wrong
 #. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "SSL সার্টিফিকেট ত্রুটি"
 
-msgid "Invalid certificate chain"
-msgstr "অকার্যকর সার্টিফিকেট চেইন"
+#, fuzzy
+msgid "Unable to validate certificate"
+msgstr "প্রমাণীকরণ করতে ব্যর্থ: %s"
 
-# tithi
-#. vrq will be completed by user_auth
+#, fuzzy, c-format
 msgid ""
-"You have no database of root certificates, so this certificate cannot be "
-"validated."
-msgstr ""
-"আপনার মূল সার্টিফিকেটের কোনো ডাটাবেস নেই, সুতরাং এই সার্টিফিকেটটির কার্যকারিতা "
-"পরীক্ষা করা যাবে না।"
-
-# tithi
-#. vrq will be completed by user_auth
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
-msgstr "মূল সার্টিফিকেটটি যার দ্বারা প্রদান করা হয়েছে তা পিজিনের কাছে অপরিচিত।"
-
-#, c-format
-msgid ""
-"The certificate chain presented by %s does not have a valid digital "
-"signature from the Certificate Authority from which it claims to have a "
-"signature."
-msgstr ""
-"%s দ্বারা উপস্থাপিত সার্টিফিকেট চেইনটির তার নিজের দ্বারা দাবিকৃত কর্তৃপক্ষ থেকে কোন "
-"বৈধ ডিজিটাল স্বাক্ষর নেই।"
-
-msgid "Invalid certificate authority signature"
-msgstr "অকার্যকর সার্টিফিকেট কতৃপক্ষের স্বাক্ষর"
-
-#. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
+"The certificate claims to be from \"%s\" instead. This could mean that you "
+"are not connecting to the service you believe you are."
 msgstr ""
 "সার্টিফিকেটটি দাবি করে যে এটি \"%1$s\" এর পরিবর্তে \"%2$s\" দ্বারা উপস্থাপিত "
 "হয়েছে। এর অর্থ হতে পার যে, আপনি যে সার্ভিসের সাথে সংযুক্ত বলে মনে করছেন আসলে তা "
@@ -1851,6 +1869,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "সার্টিফিকেটের তথ্য"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "নিবন্ধন ত্রুটি"
 
@@ -1865,6 +1884,7 @@ msgstr "+++ %s লগইন করেছে"
 msgid "+++ %s signed off"
 msgstr "+++ %s লগআউট করেছে"
 
+#. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "অজানা ত্রুটি"
@@ -1974,11 +1994,16 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "রিসলভার প্রসেস অনুরোধের উত্তর না দিয়ে প্রস্থান করেছে"
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "%1$s নিরূপণে ত্রুটি: %2$d"
+
 # tithi
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "থ্রেড তৈরি করতে ব্যর্থ: %s"
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "অজানা কারণ"
 
@@ -2069,19 +2094,19 @@ msgstr "%s ফাইলের স্থানান্তর সম্পন্�
 msgid "File transfer complete"
 msgstr "ফাইল স্থানান্তর সম্পন্ন"
 
-#, c-format
-msgid "You canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "You cancelled the transfer of %s"
 msgstr "আপনি %s এর স্থানান্তর বাতিল করেছেন"
 
 msgid "File transfer cancelled"
 msgstr "ফাইল স্থানান্তর বাতিল করা হয়েছে"
 
-#, c-format
-msgid "%s canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%s cancelled the transfer of %s"
 msgstr "%1$s %2$s-এর স্থানান্তর বাতিল করেছে"
 
-#, c-format
-msgid "%s canceled the file transfer"
+#, fuzzy, c-format
+msgid "%s cancelled the file transfer"
 msgstr "%s ফাইল স্থানান্তর বাতিল করেছে"
 
 #, c-format
@@ -2297,6 +2322,35 @@ msgstr "<font color=\"red\"><b>ফাইল পড়া সম্ভব হয়�
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
+
+msgid ""
+"No codecs found. Install some GStreamer codecs found in GStreamer plugins "
+"packages."
+msgstr ""
+
+msgid ""
+"No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
+#, fuzzy
+msgid "A non-recoverable Farsight2 error has occurred."
+msgstr "নিম্নোক্ত ত্রুটি হয়েছে:"
+
+# tithi
+#, fuzzy
+msgid "Conference error"
+msgstr "অধিবেশন বন্ধ"
+
+msgid "Error with your microphone"
+msgstr ""
+
+msgid "Error with your webcam"
+msgstr ""
+
+# tithi
+#, fuzzy, c-format
+msgid "Error creating session: %s"
+msgstr "সংযোগ তৈরিতে ত্রুটি"
 
 # tithi
 msgid "Error creating conference."
@@ -2566,17 +2620,15 @@ msgstr ""
 "সার্ভার হিসেবে, প্লাগইনের IPC সাপোর্ট পরীক্ষা করা হবে। এটি IPC কমান্ডগুলো নিবন্ধন "
 "করে।"
 
-# ***
-msgid "Join/Part Hiding Configuration"
-msgstr "লুকানো কনফিগারেশন যুক্ত/বিভক্ত করা হবে"
+msgid "Hide Joins/Parts"
+msgstr ""
 
-# tithi
-msgid "Minimum Room Size"
-msgstr "আসরের নূন্যতম আকার"
+#. Translators: Followed by an input request a number of people
+msgid "For rooms with more than this many people"
+msgstr ""
 
-# tithi
-msgid "User Inactivity Timeout (in minutes)"
-msgstr "ব্যবহারকারীর মিথস্ক্রিয়তার সময়সীমা উত্তীর্ণ (মিনিটে)"
+msgid "If user has not spoken in this many minutes"
+msgstr ""
 
 msgid "Apply hiding rules to buddies"
 msgstr "বন্ধুদের লুকানোর নিয়ম প্রয়োগ করুন"
@@ -3067,6 +3119,7 @@ msgstr "প্রথম নাম"
 msgid "Last name"
 msgstr "শেষ নাম"
 
+#. email
 msgid "Email"
 msgstr "ইমেইল"
 
@@ -3206,12 +3259,14 @@ msgstr "শহর"
 msgid "Year of birth"
 msgstr "জন্ম সাল"
 
+#. gender
 msgid "Gender"
 msgstr "লিঙ্গ"
 
 msgid "Male or female"
 msgstr "পুরুষ বা মহিলা"
 
+#. 0
 msgid "Male"
 msgstr "পুরুষ"
 
@@ -3281,6 +3336,7 @@ msgstr "অন্যত্র"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "প্রথম নাম"
 
@@ -3990,6 +4046,11 @@ msgstr "URL"
 msgid "Street Address"
 msgstr "রাস্তার ঠিকানা"
 
+#.
+#. * EXTADD is correct, EXTADR is generated by other
+#. * clients. The next time someone reads this, remove
+#. * EXTADR.
+#.
 msgid "Extended Address"
 msgstr "বর্ধিত ঠিকানা"
 
@@ -4019,6 +4080,7 @@ msgstr "সংগঠনের বিভাগ"
 msgid "Role"
 msgstr "ভূমিকা"
 
+#. birthday
 msgid "Birthday"
 msgstr "জন্মদিন"
 
@@ -4071,6 +4133,17 @@ msgstr "ছবি"
 msgid "Logo"
 msgstr "লোগো"
 
+#, fuzzy, c-format
+msgid ""
+"%s will no longer be able to see your status updates.  Do you want to "
+"continue?"
+msgstr ""
+"আপনি %s-কে আপনার বন্ধু তালিকা থেকে অপসারণ করতে পারেন।  আপনি কি অব্যাহত রাখতে "
+"চান?"
+
+msgid "Cancel Presence Notification"
+msgstr "উপস্থিতির ঘোষণা বাতিল"
+
 # tithi
 msgid "Un-hide From"
 msgstr "এর থেকে উন্মোচিত"
@@ -4079,20 +4152,19 @@ msgstr "এর থেকে উন্মোচিত"
 msgid "Temporarily Hide From"
 msgstr "এর থেকে সাময়িকভাবে লুকানো"
 
-#. && NOT ME
-msgid "Cancel Presence Notification"
-msgstr "উপস্থিতির ঘোষণা বাতিল"
-
 # tithi
 msgid "(Re-)Request authorization"
 msgstr "(পুনরায়) অনুমোদন অনুরোধ"
 
 # tithi
-#. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
 msgstr "আনসাবস্ক্রাইব"
+
+# tithi
+msgid "Initiate _Chat"
+msgstr "আড্ডা শুরু করুন (_C)"
 
 msgid "Log In"
 msgstr "লগইন"
@@ -4114,6 +4186,7 @@ msgstr "বিরক্ত করবেন না"
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "শেষ নাম"
 
@@ -4351,6 +4424,7 @@ msgstr "সার্ভার ব্লক করা সমর্থন কর�
 msgid "Not Authorized"
 msgstr "অনুমোদিত নয়"
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "মনমেজাজ"
 
@@ -4378,6 +4452,7 @@ msgstr "কোনটি নয় (প্রাপক অমীমাংসি�
 msgid "None"
 msgstr "কোনটি নয়"
 
+#. subscription type
 msgid "Subscription"
 msgstr "সাবস্ক্রিপশন"
 
@@ -4710,7 +4785,8 @@ msgstr "config: একটি আড্ডার আসর কনফিগার 
 msgid "configure:  Configure a chat room."
 msgstr "configure: একটি আড্ডার আসর কনফিগার করে।"
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "part [room]:  আসর ত্যাগ করুন।"
 
 # tithi
@@ -4732,9 +4808,10 @@ msgstr ""
 "সহকারে ব্যবহারকারী গ্রহন করুন অথবা আসরের সঙ্গে ব্যবহারকারীর অধিভুক্তি নির্ধারণ করুন।"
 
 # tithi
+#, fuzzy
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
-"users with an role or set users' role with the room."
+"users with a role or set users' role with the room."
 msgstr ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: ভূমিকা সহকারে "
 "ব্যবহারকারী গ্রহন করুন অথবা আসরের সঙ্গে ব্যবহারকারীর ভূমিকা নির্ধারণ করুন।"
@@ -4893,9 +4970,6 @@ msgstr "ইন-ব্যান্ড বাইটস্ট্রিম বিন
 
 msgid "Transfer was closed."
 msgstr "স্থানান্তর বন্ধ করে দেয়া হয়েছে।"
-
-msgid "Failed to open the file"
-msgstr "ফাইলটি খুলতে ব্যর্থ"
 
 msgid "Failed to open in-band bytestream"
 msgstr "ইন-ব্যান্ড বাইটস্ট্রিম খুলতে ব্যর্থ"
@@ -5192,8 +5266,8 @@ msgid "Not expected"
 msgstr "প্রত্যাশিত নয়"
 
 # tithi
-#, c-format
-msgid "Friendly name changes too rapidly"
+#, fuzzy
+msgid "Friendly name is changing too rapidly"
 msgstr "বন্ধুসুলভ নাম খুব দ্রুত পরিবর্তিত হয়"
 
 #, c-format
@@ -5435,19 +5509,15 @@ msgstr "হটমেইল ইনবক্স খুলুন"
 msgid "Send to Mobile"
 msgstr "মোবাইলে প্রেরণ"
 
-# tithi
-msgid "Initiate _Chat"
-msgstr "আড্ডা শুরু করুন (_C)"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "MSN এর জন্য SSL সমর্থন প্রয়োজন। অনুগ্রহ করে একটি সমর্থিত SSL লাইব্রেরী ইনস্টল করুন।"
 
 # tithi
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 "বন্ধু %s কে যোগ করা সম্ভব হয়নি কারণ ব্যবহারকারীর নামটি অকার্যকর। ব্যবহারকারী নাম "
 "অবশ্যই একটি কার্যকর ইমেইল ঠিকানা হতে হবে।"
@@ -5670,6 +5740,9 @@ msgstr "Windows Live ID প্রমাণীকরণ: অকার্যকর
 msgid "%s just sent you a Nudge!"
 msgstr "%s আপনাকে ধাক্কা দিয়েছে!"
 
+msgid "The following users are missing from your addressbook"
+msgstr "আপনার ঠিকানা বইয়ে নিম্নোক্ত ব্যবহারকারীরা নেই"
+
 #, c-format
 msgid "Unknown error (%d): %s"
 msgstr "অজানা ত্রুটি (%d): %s"
@@ -5682,8 +5755,9 @@ msgstr "ব্যবহারকারী যোগ করতে ব্যর্
 msgid "Unknown error (%d)"
 msgstr "অজানা ত্রুটি (%d)"
 
-msgid "The following users are missing from your addressbook"
-msgstr "আপনার ঠিকানা বইয়ে নিম্নোক্ত ব্যবহারকারীরা নেই"
+#, fuzzy
+msgid "Unable to remove user"
+msgstr "ব্যবহারকারী যোগ করতে ব্যর্থ"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "মোবাইল বার্তাটি অনেক বড় বিধায় পাঠানো হয়নি।"
@@ -5804,9 +5878,10 @@ msgstr ""
 "আপনার ওয়েবক্যাম প্রদর্শনের জন্য %s অনুরোধ করেছেন কিন্তু এই অনুরোধটি এখনও সমর্থিত হয়নি।"
 
 # tithi
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s আপনাকে ওয়েবক্যাম আমন্ত্রন পাঠিয়েছেন, যা এখনও সমর্থিত নয়।"
+#, fuzzy, c-format
+msgid "%s invited you to view his/her webcam, but this is not yet supported."
+msgstr ""
+"আপনার ওয়েবক্যাম প্রদর্শনের জন্য %s অনুরোধ করেছেন কিন্তু এই অনুরোধটি এখনও সমর্থিত হয়নি।"
 
 msgid "Away From Computer"
 msgstr "কম্পিউটার থেকে দূরে"
@@ -5856,6 +5931,11 @@ msgstr "আপনি কি এই বন্ধুকে আপনার ঠি�
 
 msgid "The username specified is invalid."
 msgstr "উল্লেখিত ব্যবহারকারীর নামটি অকার্যকর।"
+
+# tithi
+#, c-format
+msgid "Friendly name changes too rapidly"
+msgstr "বন্ধুসুলভ নাম খুব দ্রুত পরিবর্তিত হয়"
 
 # tithi
 msgid "This Hotmail account may not be active."
@@ -5925,6 +6005,388 @@ msgstr "%s আপনাকে তার বন্ধু তালিকায়
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s আপনাকে তার বন্ধু তালিকা থেকে অপসারণ করেছেন।"
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "আপনার বর্তমান মনমেজাজ"
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "মনমেজাজ"
+
+#, fuzzy
+msgid "Change your Mood"
+msgstr "পাসওয়ার্ড পরিবর্তন"
+
+#, fuzzy
+msgid "How do you feel right now?"
+msgstr "এই মূহুর্তে আমি এখানে নেই"
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "লিখতে ত্রুটি"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "প্রোফাইল"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "UIN"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "পারিবারিক নাম"
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "মোবাইল ফোন নম্বর"
+
+#, fuzzy
+msgid "Update your Profile"
+msgstr "ইয়াহু! প্রোফাইল"
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+msgid "There is no splash-screen currently available"
+msgstr ""
+
+#, fuzzy
+msgid "About"
+msgstr "আমার সম্পর্কে"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "পাসওয়ার্ড পরিবর্তন..."
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "পাসওয়ার্ড পরিবর্তন..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "লগ প্রদর্শন..."
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "আমার সম্পর্কে"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "বার্তাটি খুবই বড়।"
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "লগইন হচ্ছে"
+
+#, fuzzy
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr ""
+"সার্ভারে সংযোগ দিতে ব্যর্থ। অনুগ্রহ করে আপনি যে সার্ভারে সংযোগ দিতে চান তার ঠিকানা "
+"দিন।"
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "সংযুক্ত করা হচ্ছে"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "ডাকনাম"
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "নতুন XMPP একাউন্ট নিবন্ধন"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "অনুগ্রহ করে, নিচের ক্ষেত্রগুলো পূরণ করুন"
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr ""
+
+msgid "Wrong security code entered. Please try again later."
+msgstr ""
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+# tithi
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "সার্ভার বিদ্যমান নয়; পরবর্তীতে আবার চেষ্টা করুন"
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "নিরাপত্তা সক্রিয়"
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "কোড দিন"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "দেশ"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "পছন্দের ভাষা"
+
+# tithi
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "অনুমোদন প্রয়োজন"
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "সার্ভারের তথ্য"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "প্রেরিত বার্তা"
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "মধ্য নাম"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "মোবাইল ফোন নম্বর নির্ধারণ..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "সার্ভার"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "TCP দ্বারা সংযোগ করা হবে"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "XMPP বার্তায় ত্রুটি"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "হোস্টের নাম নিরূপণ করতে ব্যর্থ"
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "Qun এ সফলভাবে যুক্ত হয়েছে"
+
+#, fuzzy
+msgid "Message Error"
+msgstr "XMPP বার্তায় ত্রুটি"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "সংযোগে ত্রুটি"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "XMPP বার্তায় ত্রুটি"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "স্ট্রীম ত্রুটি"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "আইকন ত্রুটি"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "অনিবন্ধন ত্রুটি"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "সংযোগে ত্রুটি"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "সাবস্ক্রিপশন"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "সংযোগে ত্রুটি"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "ফাইল স্থানান্তর"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "পাউন্স তৈরী করা সম্ভব হয়নি"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "অনিবন্ধন ত্রুটি"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "লিখতে ত্রুটি"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr "রাগী"
+
+msgid "Excited"
+msgstr "উত্তেজিত"
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "দল"
+
+msgid "Happy"
+msgstr "সুখী"
+
+# tithi
+msgid "In Love"
+msgstr "প্রেমময়"
+
+# tithi
+msgid "Invincible"
+msgstr "অজেয়"
+
+msgid "Sad"
+msgstr "দুঃখী"
+
+#, fuzzy
+msgid "Hot"
+msgstr "হোস্ট (_H):"
+
+#, fuzzy
+msgid "Sick"
+msgstr "ডাকনাম"
+
+msgid "Sleepy"
+msgstr "ঘুমন্ত"
+
+#, fuzzy
+msgid "Pending"
+msgstr "পাঠানো হচ্ছে"
+
+#, fuzzy
+msgid "Invited"
+msgstr "আমন্ত্রণ জানান"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "প্রত্যাখান"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "অপসারণ"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "কাজের তথ্য"
 
 # tithi
 #, c-format
@@ -6447,8 +6909,7 @@ msgstr "%s কে বার্তা পাঠাতে ব্যর্থ। �
 msgid "Unable to send message. Could not create the conference (%s)."
 msgstr "বার্তা পাঠাতে ব্যর্থ। অধিবেশন (%s) তৈরি করা সম্ভব হয়নি।"
 
-#, c-format
-#, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Unable to move user %s to folder %s in the server side list. Error while "
 "creating folder (%s)."
@@ -6587,11 +7048,12 @@ msgstr "সার্ভারের ঠিকানা"
 msgid "Server port"
 msgstr "সার্ভারের পোর্ট"
 
-msgid "Received unexpected response from "
+#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s"
 msgstr "এটি থেকে অপ্রত্যাশিত উত্তর পাওয়া গেছে।"
 
 # tithi
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6599,8 +7061,10 @@ msgstr ""
 "আপনি খুব ঘনঘন সংযোগ স্থাপন এবং বিচ্ছিন্ন করছেন। দশ মিনিট অপেক্ষা করে পুনরায় চেষ্টা "
 "করুন। আপনি যদি চেষ্টা অব্যাহত রাখতে চান, আপনাকে আরও বেশী অপেক্ষা করতে হবে।"
 
-#, c-format
-msgid "Error requesting "
+#. Note to translators: The first %s is a URL, the second is an
+#. error message.
+#, fuzzy, c-format
+msgid "Error requesting %s: %s"
 msgstr "অনুরোধ করতে ত্রুটি"
 
 msgid "AOL does not allow your screen name to authenticate here"
@@ -6774,6 +7238,48 @@ msgstr "কিউ পরিপূর্ণ"
 
 msgid "Not while on AOL"
 msgstr "AOL এ থাকা অবস্থায় নয়"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "ফাইল পাঠানো সম্ভব হয়নি"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "ডিরেক্টরি পাঠানো সম্ভব নয়।"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "বার্তা পাঠানো যায়নি।"
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "অফলাইন বার্তা"
 
 # tithi
 msgid ""
@@ -6961,6 +7467,17 @@ msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL তাৎক্ষণিক বার্তাবাহক সার্ভিস সাময়িকভাবে পাওয়া যায়না।"
 
 # tithi
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"আপনি খুব ঘনঘন সংযোগ স্থাপন এবং বিচ্ছিন্ন করছেন। দশ মিনিট অপেক্ষা করে পুনরায় চেষ্টা "
+"করুন। আপনি যদি চেষ্টা অব্যাহত রাখতে চান, আপনাকে আরও বেশী অপেক্ষা করতে হবে।"
+
+# tithi
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
@@ -6968,9 +7485,11 @@ msgstr "আপনার ব্যবহৃত ক্লায়েন্ট সং
 
 # tithi
 #. IP address connecting too frequently
+#, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "আপনি খুব ঘনঘন সংযোগ স্থাপন এবং বিচ্ছিন্ন করছেন। কিছুক্ষন অপেক্ষা করে পুনরায় চেষ্টা "
 "করুন। আপনি যদি চেষ্টা অব্যাহত রাখতে চান, আপনাকে আরও বেশী সময় অপেক্ষা করতে হবে।"
@@ -7126,21 +7645,28 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "আপনি অজ্ঞাত কারণে %2$s থেকে %1$huটি বার্তা হারিয়েছেন।"
 msgstr[1] "আপনি অজ্ঞাত কারণে %2$s থেকে %1$huটি বার্তা হারিয়েছেন।"
 
-#. Data is assumed to be the destination bn
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "বার্তা (%s) পাঠাতে ব্যর্থ।"
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "বার্তা পাঠাতে ব্যর্থ: %s।"
 
-msgid "Unknown reason."
-msgstr "অজ্ঞাত কারণ।"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%s এ বার্তা পাঠাতে ব্যর্থ:"
 
-#, c-format
-msgid "Unable to send message to %s:"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
 msgstr "%s এ বার্তা পাঠাতে ব্যর্থ:"
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "ব্যবহারকারীর তথ্য পাওয়া যাচ্ছে না: %s"
+
+msgid "Unknown reason."
+msgstr "অজ্ঞাত কারণ।"
 
 msgid "Online Since"
 msgstr "যখন থেকে অনলাইনে"
@@ -7152,9 +7678,6 @@ msgstr "যখন থেকে সদস্য"
 # tithi
 msgid "Capabilities"
 msgstr "ক্ষমতা"
-
-msgid "Profile"
-msgstr "প্রোফাইল"
 
 # tithi
 msgid "Your AIM connection may be lost."
@@ -7169,9 +7692,10 @@ msgstr ""
 "[এই ব্যবহারকারী থেকে একটি বার্তা প্রদর্শন করতে ব্যর্থ কারণ এটি অকার্যকর বর্ণচিহ্ন "
 "ধারণ করেছিল।]"
 
+#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "আপনি সর্বশেষ যে কাজটি করার চেষ্টা করেছেন তা সম্পাদন করা যায়নি কারণ আপনি দ্রুততার "
 "সীমা অতিক্রম করেছেন। অনুগ্রহ করে ১০ সেকেন্ড অপেক্ষা করুন এবং পুনরায় চেষ্টা করুন।"
@@ -7467,6 +7991,10 @@ msgstr ""
 msgid "C_onnect"
 msgstr "সংযোগ (_O)"
 
+#, fuzzy
+msgid "You closed the connection."
+msgstr "সার্ভার সংযোগটি বন্ধ করে দিয়েছে"
+
 msgid "Get AIM Info"
 msgstr "AIM তথ্য গ্রহণ"
 
@@ -7477,6 +8005,10 @@ msgstr "বন্ধুর মন্তব্য সম্পাদন"
 # mark30
 msgid "Get Status Msg"
 msgstr "অবস্থার বার্তা খুঁজুন"
+
+#, fuzzy
+msgid "End Direct IM Session"
+msgstr "সরাসরি IM স্থাপন করা হয়েছে"
 
 # tithi
 msgid "Direct IM"
@@ -8021,8 +8553,7 @@ msgstr "%1$u %3$s এর জন্য %2$u Qunএ যুক্ত হতে অ�
 
 # If the localized string is intended to swap the parameters, the
 # correct syntax is "%2$u %1$u Qun blah"
-#, c-format
-#, fuzzy
+#, fuzzy, c-format
 msgid "%u request to join Qun %u"
 msgstr "%1u %2u Qunএ যুক্ত হতে অনুরোধ করছে"
 
@@ -8401,8 +8932,8 @@ msgstr "%1$d %2$s ফাইলটি প্রত্যাখ্যান কর
 msgid "File Send"
 msgstr "ফাইল প্রেরণ"
 
-#, c-format
-msgid "%d canceled the transfer of %s"
+#, fuzzy, c-format
+msgid "%d cancelled the transfer of %s"
 msgstr "%1$d %2$s-এর স্থানান্তর বাতিল করেছে"
 
 #, c-format
@@ -8481,6 +9012,10 @@ msgstr "অধিবেশন বন্ধ"
 
 msgid "Unable to send message: "
 msgstr "বার্তা পাঠাতে ব্যর্থ:"
+
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "%s এ বার্তা পাঠাতে ব্যর্থ:"
 
 msgid "Place Closed"
 msgstr "স্থান বন্ধ"
@@ -8957,37 +9492,14 @@ msgstr "অতিসক্রিয়"
 msgid "Robot"
 msgstr "যন্ত্রমানব"
 
-msgid "Happy"
-msgstr "সুখী"
-
-msgid "Sad"
-msgstr "দুঃখী"
-
-msgid "Angry"
-msgstr "রাগী"
-
 msgid "Jealous"
 msgstr "ঈর্ষান্বিত"
 
 msgid "Ashamed"
 msgstr "লজ্জিত"
 
-# tithi
-msgid "Invincible"
-msgstr "অজেয়"
-
-# tithi
-msgid "In Love"
-msgstr "প্রেমময়"
-
-msgid "Sleepy"
-msgstr "ঘুমন্ত"
-
 msgid "Bored"
 msgstr "বিরক্ত"
-
-msgid "Excited"
-msgstr "উত্তেজিত"
 
 msgid "Anxious"
 msgstr "উদ্বিগ্ন"
@@ -10140,6 +10652,9 @@ msgstr "আড্ডার আসরের লোক্যাল"
 msgid "Ignore conference and chatroom invitations"
 msgstr "অধিবেশন এবং আড্ডার আসরের আমন্ত্রন অগ্রাহ্য করা হবে"
 
+msgid "Use account proxy for SSL connections"
+msgstr ""
+
 msgid "Chat room list URL"
 msgstr "আড্ডার আসরের তালিকার URL"
 
@@ -10164,6 +10679,11 @@ msgstr "ইয়াহু জাপান ID..."
 #. *  description
 msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr "ইয়াহু! জাপান প্রোটোকল প্লাগইন"
+
+# tithi
+#, c-format
+msgid "%s has sent you a webcam invite, which is not yet supported."
+msgstr "%s আপনাকে ওয়েবক্যাম আমন্ত্রন পাঠিয়েছেন, যা এখনও সমর্থিত নয়।"
 
 msgid "Your SMS was not delivered"
 msgstr "আপনার SMS প্রেরণ করা যায়নি"
@@ -10242,9 +10762,27 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "বন্ধুকে অগ্রাহ্য করবেন?"
 
+#, fuzzy
+msgid "Invalid username or password"
+msgstr "ভুল ব্যবহারকারীর নাম বা পাসওয়ার্ড"
+
 # tithi
-msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "আপনার একাউন্টটি আবদ্ধ, অনুগ্রহ করে ইয়াহু! ওয়েবসাইটে লগইন করুন।"
+#, fuzzy
+msgid ""
+"Your account has been locked due to too many failed login attempts.  Please "
+"try logging into the Yahoo! website."
+msgstr ""
+"একাউন্ট আবদ্ধ: অত্যধিকবার লগইন করার ব্যর্থ চেষ্টা। ইয়াহু! তে লগইন করলে হয়তো এটি ঠিক "
+"হবে।"
+
+#, c-format
+msgid "Unknown error 52.  Reconnecting should fix this."
+msgstr ""
+
+msgid ""
+"Error 1013: The username you have entered is invalid.  The most common cause "
+"of this error is entering your email address instead of your Yahoo! ID."
+msgstr ""
 
 # tithi
 #, c-format
@@ -10340,6 +10878,15 @@ msgstr "ব্যবহারকারীকে আড্ডায় যোগ.
 
 msgid "Open Inbox"
 msgstr "ইনবক্স খুলুন"
+
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
 
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
@@ -10908,15 +11455,15 @@ msgstr ""
 "আপনার %1$s পড়ার সময় একটি ত্রুটির দেখা দেয়েছে। ফাইলটি লোড করা হয়নি, এবং পুরনো "
 "ফাইলটি %2$s~ এ নামান্তর করা হয়েছে।"
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "ইন্টারনেট বার্তাবাহক"
 
 msgid "Pidgin Internet Messenger"
 msgstr "পিজিন ইন্টারনেট বার্তাবাহক"
-
-# tithi
-msgid "Send instant messages over multiple protocols"
-msgstr "বহুবিধ প্রোটোকল দিয়ে তাৎক্ষনিক বার্তা প্রেরণ করুন"
 
 # page orientation
 msgid "Orientation"
@@ -11049,6 +11596,128 @@ msgstr ""
 "\n"
 "আপনি পুনরায় এই উইন্ডোতে ফিরে আসতে পারেন এবং \"একাউন্টসমূহ\" মেনুর \"একাউন্ট নিয়ন্ত্রন"
 "\" উইন্ডো থেকে নতুন একাউন্ট যোগ, সম্পাদনা বা অপসারণ করতে পারেন।"
+
+#. Buddy List
+msgid "Background Color"
+msgstr "পটভূমির রং"
+
+msgid "The background color for the buddy list"
+msgstr "বন্ধু তালিকার জন্য পটভূমির রং"
+
+# tithi
+msgid "Layout"
+msgstr "বহির্বিন্যাস"
+
+#, fuzzy
+msgid "The layout of icons, name, and status of the buddy list"
+msgstr "আইকন, নাম এবং blist এর অবস্থার বহির্বিন্যাস"
+
+#. Group
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Background Color"
+msgstr "প্রসারিত পটভূমির রং"
+
+msgid "The background color of an expanded group"
+msgstr "একটি প্রসারিত গ্রুপের পটভূমি রং "
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its expanded state
+msgid "Expanded Text"
+msgstr "প্রসারিত টেক্সট"
+
+msgid "The text information for when a group is expanded"
+msgstr "একটি দল প্রসারিত হওয়ার সময় টেক্সট তথ্য"
+
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Background Color"
+msgstr "গুটানো পটভূমির রং"
+
+msgid "The background color of a collapsed group"
+msgstr "একটি গুটিয়ে ফেলা দলের পটভূমির রং"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list group when in its collapsed state
+msgid "Collapsed Text"
+msgstr "গুটানো টেক্সট"
+
+msgid "The text information for when a group is collapsed"
+msgstr "একটি দল গুটানোর সময় টেক্সট তথ্য"
+
+#. Buddy
+#. Note to translators: These two strings refer to the background color
+#. of a buddy list contact or chat room
+msgid "Contact/Chat Background Color"
+msgstr "পরিচিতি/ আড্ডার পটভূমির রং"
+
+msgid "The background color of a contact or chat"
+msgstr "একটি পরিচিতি অথবা আড্ডার পটভূমির রং"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list contact when in its expanded state
+msgid "Contact Text"
+msgstr "পরিচিতি টেক্সট"
+
+msgid "The text information for when a contact is expanded"
+msgstr "পরিচিতি প্রসারনের সময় টেক্সট তথ্য"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is online
+#, fuzzy
+msgid "Online Text"
+msgstr "অনলাইন টেক্সট"
+
+msgid "The text information for when a buddy is online"
+msgstr "বন্ধু অনলাইনে থাকার সময় টেক্সট তথ্য"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is away
+msgid "Away Text"
+msgstr "অন্যত্র অবস্থার টেক্সট"
+
+msgid "The text information for when a buddy is away"
+msgstr "বন্ধু অন্যত্র থাকার সময় টেক্সট তথ্য"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is offline
+#, fuzzy
+msgid "Offline Text"
+msgstr "অফলাইন অবস্থার টেক্সট"
+
+#, fuzzy
+msgid "The text information for when a buddy is offline"
+msgstr "বন্ধু অফলাইনে থাকার সময় টেক্সট তথ্য"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when it is idle
+msgid "Idle Text"
+msgstr "নিষ্ক্রিয় অবস্থার টেক্সট"
+
+msgid "The text information for when a buddy is idle"
+msgstr "বন্ধু নিষ্ক্রিয় থাকার সময় টেক্সট তথ্য"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message Text"
+msgstr "বার্তার টেক্সট"
+
+msgid "The text information for when a buddy has an unread message"
+msgstr "বন্ধুর অপঠিত বার্তা থাকলে যে টেক্সট তথ্য দেখায়"
+
+#. Note to translators: These two strings refer to the font and color
+#. of a buddy list buddy when they have sent you a new message
+msgid "Message (Nick Said) Text"
+msgstr "বার্তা (\"ডাকনাম\" বলেছিল) টেক্সট"
+
+#, fuzzy
+msgid ""
+"The text information for when a chat has an unread message that mentions "
+"your nickname"
+msgstr "একটি অপঠিত বার্তায় আপনার নাম উল্লেখ করা হলে যে লেখা প্রদর্শিত হবে"
+
+msgid "The text information for a buddy's status"
+msgstr "বন্ধুর অবস্থার জন্য টেক্সট তথ্য "
 
 # tithi
 #, c-format
@@ -11492,7 +12161,8 @@ msgid "_Group:"
 msgstr "দল (_G):"
 
 # tithi
-msgid "Auto_join when account becomes online."
+#, fuzzy
+msgid "Auto_join when account connects."
 msgstr "একাউন্ট অনলাইনে থাকলে স্বয়ংক্রিয় ভাবে যোগদান করা হবে।"
 
 # tithi
@@ -11525,99 +12195,6 @@ msgstr "/টুল"
 
 msgid "/Buddies/Sort Buddies"
 msgstr "/বন্ধু/বন্ধুদের সাজান"
-
-#. Buddy List
-msgid "Background Color"
-msgstr "পটভূমির রং"
-
-msgid "The background color for the buddy list"
-msgstr "বন্ধু তালিকার জন্য পটভূমির রং"
-
-# tithi
-msgid "Layout"
-msgstr "বহির্বিন্যাস"
-
-msgid "The layout of icons, name, and status of the blist"
-msgstr "আইকন, নাম এবং blist এর অবস্থার বহির্বিন্যাস"
-
-#. Group
-msgid "Expanded Background Color"
-msgstr "প্রসারিত পটভূমির রং"
-
-msgid "The background color of an expanded group"
-msgstr "একটি প্রসারিত গ্রুপের পটভূমি রং "
-
-msgid "Expanded Text"
-msgstr "প্রসারিত টেক্সট"
-
-msgid "The text information for when a group is expanded"
-msgstr "একটি দল প্রসারিত হওয়ার সময় টেক্সট তথ্য"
-
-msgid "Collapsed Background Color"
-msgstr "গুটানো পটভূমির রং"
-
-msgid "The background color of a collapsed group"
-msgstr "একটি গুটিয়ে ফেলা দলের পটভূমির রং"
-
-msgid "Collapsed Text"
-msgstr "গুটানো টেক্সট"
-
-msgid "The text information for when a group is collapsed"
-msgstr "একটি দল গুটানোর সময় টেক্সট তথ্য"
-
-#. Buddy
-msgid "Contact/Chat Background Color"
-msgstr "পরিচিতি/ আড্ডার পটভূমির রং"
-
-msgid "The background color of a contact or chat"
-msgstr "একটি পরিচিতি অথবা আড্ডার পটভূমির রং"
-
-msgid "Contact Text"
-msgstr "পরিচিতি টেক্সট"
-
-msgid "The text information for when a contact is expanded"
-msgstr "পরিচিতি প্রসারনের সময় টেক্সট তথ্য"
-
-msgid "On-line Text"
-msgstr "অনলাইন টেক্সট"
-
-msgid "The text information for when a buddy is online"
-msgstr "বন্ধু অনলাইনে থাকার সময় টেক্সট তথ্য"
-
-msgid "Away Text"
-msgstr "অন্যত্র অবস্থার টেক্সট"
-
-msgid "The text information for when a buddy is away"
-msgstr "বন্ধু অন্যত্র থাকার সময় টেক্সট তথ্য"
-
-msgid "Off-line Text"
-msgstr "অফলাইন অবস্থার টেক্সট"
-
-msgid "The text information for when a buddy is off-line"
-msgstr "বন্ধু অফলাইনে থাকার সময় টেক্সট তথ্য"
-
-msgid "Idle Text"
-msgstr "নিষ্ক্রিয় অবস্থার টেক্সট"
-
-msgid "The text information for when a buddy is idle"
-msgstr "বন্ধু নিষ্ক্রিয় থাকার সময় টেক্সট তথ্য"
-
-msgid "Message Text"
-msgstr "বার্তার টেক্সট"
-
-msgid "The text information for when a buddy has an unread message"
-msgstr "বন্ধুর অপঠিত বার্তা থাকলে যে টেক্সট তথ্য দেখায়"
-
-msgid "Message (Nick Said) Text"
-msgstr "বার্তা (\"ডাকনাম\" বলেছিল) টেক্সট"
-
-msgid ""
-"The text information for when a chat has an unread message that mentions "
-"your nick"
-msgstr "একটি অপঠিত বার্তায় আপনার নাম উল্লেখ করা হলে যে লেখা প্রদর্শিত হবে"
-
-msgid "The text information for a buddy's status"
-msgstr "বন্ধুর অবস্থার জন্য টেক্সট তথ্য "
 
 # tithi
 msgid "Type the host name for this certificate."
@@ -11702,6 +12279,10 @@ msgstr "/কথোপকথন (_C)"
 
 msgid "/Conversation/New Instant _Message..."
 msgstr "/কথোপকথন/নতুন বার্তা... (_M)"
+
+#, fuzzy
+msgid "/Conversation/Join a _Chat..."
+msgstr "/কথোপকথন/আমন্ত্রণ... (_v)"
 
 msgid "/Conversation/_Find..."
 msgstr "/কথোপকথন/খুঁজুন... (_F)"
@@ -12097,9 +12678,8 @@ msgstr "স্প্যানিশ"
 msgid "Estonian"
 msgstr "এসতোনীয়"
 
-# tithi
-msgid "Euskera(Basque)"
-msgstr "ইউসকেরা(বাস্ক)"
+msgid "Basque"
+msgstr ""
 
 msgid "Persian"
 msgstr "পার্সীয়"
@@ -12313,11 +12893,13 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</A><BR/><BR/>"
+"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
+"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
+"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
+"primary language is <b>English</b>.  You are welcome to post in another "
+"language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
-"<FONT SIZE=\"4\">ইমেইলের মাধ্যমে সহায়তা:</FONT> <A HREF=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
 
 # fix me
 #, c-format
@@ -12552,14 +13134,6 @@ msgstr "স্থানান্তর সমাপ্ত হলে তালি
 #. "Download Details" arrow
 msgid "File transfer _details"
 msgstr "ফাইল স্থানান্তরের বিবরণ (_d)"
-
-#. Pause button
-msgid "_Pause"
-msgstr "বিরতি (_P)"
-
-#. Resume button
-msgid "_Resume"
-msgstr "পুনরায় শুরু (_R)"
 
 msgid "Paste as Plain _Text"
 msgstr "সরল টেক্সট হিসেবে প্রতিলেপন (_T)"
@@ -12907,71 +13481,49 @@ msgstr "লগ ফোল্ডার ব্রাউজ (_B)"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%1$s %2$s। আরও তথ্যের জন্য `%3$s -h' চেষ্টা করুন।\n"
 
-# fix me
 #, c-format
 msgid ""
-"%s %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  --display=DISPLAY   X display to use\n"
-"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s %s\n"
-"ব্যবহার: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    কনফিগারেশন ফাইলের জন্য DIR ব্যবহার করা হবে\n"
-"  -d, --debug         stdout এ ডিবাগিং বার্তা প্রিন্ট করা হবে\n"
-"  -f, --force-online  অনলাইন হতে বাধ্য করুন, নেটওয়ার্কের অবস্থা যাই হোক\n"
-"  -h, --help          এই সহায়িকা দেখুন ও প্রস্থান করুন\n"
-"  -m, --multiple     একক ইনস্ট্যান্স নিশ্চিত করা হবে না\n"
-"  -n, --nologin       স্বয়ংক্রিয়ভাবে লগইন করা হবে না\n"
-"  -l, --login[=NAME]  নির্দিষ্ট একাউন্ট(সমূহ) সক্রিয় করা হবে (NAME হচ্ছে কমা দ্বারা "
-"পৃথককৃত ঐচ্ছিক আর্গুমেন্ট\n"
-"                        যা একাউন্ট(সমূহ) নির্দিষ্ট করে,\n"
-"                       এটি ব্যতিত শুধুমাত্র প্রথম একাউন্টটি সক্রিয় হবে)। \n"
-"  --display=DISPLAY   যে X-ডিসপ্লে ব্যবহার করা হবে তা নির্দিষ্ট করে।\n"
-"  -v, --version       বর্তমান সংস্করণ প্রদর্শন করে প্রস্থান করা হবে\n"
 
-# fix me
-#, c-format
-msgid ""
-"%s %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -f, --force-online  force online, regardless of network status\n"
-"  -h, --help          display this help and exit\n"
-"  -m, --multiple      do not ensure single instance\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
-"                      specifies account(s) to use, separated by commas.\n"
-"                      Without this only the first account will be enabled).\n"
-"  -v, --version       display the current version and exit\n"
+msgid "DIR"
 msgstr ""
-"%s %s\n"
-"ব্যবহার: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    কনফিগারেশন ফাইলের জন্য DIR ব্যবহার করা হবে\n"
-"  -d, --debug         stdout এ ডিবাগিং বার্তা প্রিন্ট করা হবে\n"
-"  -f, --force-online  অনলাইন হতে বাধ্য করুন, নেটওয়ার্কের অবস্থা যাই হোক\n"
-"  -h, --help          এই সহায়িকা দেখুন ও প্রস্থান করুন\n"
-"  -m, --multiple     একক ইনস্ট্যান্স নিশ্চিত করা হবে না\n"
-"  -n, --nologin       স্বয়ংক্রিয়ভাবে লগইন করা হবে না\n"
-"  -l, --login[=NAME]  নির্দিষ্ট একাউন্ট(সমূহ) সক্রিয় করা হবে (NAME হচ্ছে কমা দ্বারা "
-"পৃথককৃত ঐচ্ছিক আর্গুমেন্ট\n"
-"                        যা একাউন্ট(সমূহ) নির্দিষ্ট করে,\n"
-"                       এটি ব্যতিত শুধুমাত্র প্রথম একাউন্টটি সক্রিয় হবে)।\n"
-"  -v, --version       বর্তমান সংস্করণ প্রদর্শন করে প্রস্থান করা হবে\n"
+
+msgid "use DIR for config files"
+msgstr ""
+
+msgid "print debugging messages to stdout"
+msgstr ""
+
+msgid "force online, regardless of network status"
+msgstr ""
+
+msgid "display this help and exit"
+msgstr ""
+
+# tithi
+#, fuzzy
+msgid "allow multiple instances"
+msgstr "একসাথে একাধিক লগইন অনুমোদন করা হবে"
+
+msgid "don't automatically login"
+msgstr ""
+
+msgid "NAME"
+msgstr ""
+
+msgid ""
+"enable specified account(s) (optional argument NAME\n"
+"                      specifies account(s) to use, separated by commas.\n"
+"                      Without this only the first account will be enabled)."
+msgstr ""
+
+msgid "X display to use"
+msgstr ""
+
+msgid "display the current version and exit"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -13000,11 +13552,6 @@ msgstr ""
 "অনুগ্রহ করে\n"
 "%swiki/GetABacktrace এর নিয়মাবলী পাঠ করুন\n"
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "পিজিন"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "প্রস্থান করছে কারণ আরেকটি libpurple ক্লায়েন্ট ইতিমধ্যে চলছে।\n"
@@ -13015,9 +13562,6 @@ msgstr "/মিডিয়া (_M)"
 msgid "/Media/_Hangup"
 msgstr "/মিডিয়া/কল শেষ করুন (_H)"
 
-msgid "Calling..."
-msgstr "কল করা হচ্ছে..."
-
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s আপনার সাথে একটি অডিও/ভিডিও সেশন শুরু করতে চায়।"
@@ -13025,6 +13569,12 @@ msgstr "%s আপনার সাথে একটি অডিও/ভিডি�
 #, c-format
 msgid "%s wishes to start a video session with you."
 msgstr "%s আপনার সাথে একটি ভিডিও সেশন শুরু করতে চায়।"
+
+msgid "Incoming Call"
+msgstr ""
+
+msgid "_Pause"
+msgstr "বিরতি (_P)"
 
 #, c-format
 msgid "%s has %d new message."
@@ -13203,49 +13753,56 @@ msgstr "পুনরাবৃত্ত (_R)"
 msgid "Pounce Target"
 msgstr "পাউন্সের লক্ষ্য"
 
-#, c-format
 msgid "Started typing"
 msgstr "টাইপ শুরু করেছে"
 
-#, c-format
 msgid "Paused while typing"
 msgstr "টাইপ করা থামিয়েছে"
 
-#, c-format
 msgid "Signed on"
 msgstr "লগইন করেছে"
 
-#, c-format
 msgid "Returned from being idle"
 msgstr "নিষ্ক্রিয় অবস্থা থেকে ফিরেছে"
 
-#, c-format
 msgid "Returned from being away"
 msgstr "অন্যত্র থেকে ফিরে এসেছে"
 
-#, c-format
 msgid "Stopped typing"
 msgstr "টাইপ করা বন্ধ করেছে"
 
-#, c-format
 msgid "Signed off"
 msgstr "লগআউট করেছে"
 
-#, c-format
 msgid "Became idle"
 msgstr "নিষ্ক্রিয় হয়েছে"
 
-#, c-format
 msgid "Went away"
 msgstr "এখন অন্যত্র"
 
-#, c-format
 msgid "Sent a message"
 msgstr "একটি বার্তা পাঠানো হয়েছে"
 
-#, c-format
 msgid "Unknown.... Please report this!"
 msgstr "অজানা... অনুগ্রহ করে এটি রিপোর্ট করুন!"
+
+msgid "(Custom)"
+msgstr ""
+
+# tithi mark
+#, fuzzy
+msgid "(Default)"
+msgstr "(ডিফল্ট)"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "পিজিন বন্ধু তালিকার থীম সম্পাদক"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 msgid "Theme failed to unpack."
 msgstr "থীম আনপ্যাক করতে ব্যর্থ হয়েছে।"
@@ -13398,13 +13955,21 @@ msgstr "প্রক্সি কনফিগারেশন প্রোগ্�
 msgid "Cannot start browser configuration program."
 msgstr "ব্রাউজার কনফিগারেশন প্রোগ্রাম শুরু করা সম্ভব হয়নি।"
 
-# tithi
-msgid "<span style=\"italic\">Example: stunserver.org</span>"
-msgstr "উদাহরণ: <span style=\"italic\">stunserver.org</span>"
+#, fuzzy
+msgid "Disabled"
+msgstr "নিষ্ক্রিয় (_D)"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "স্বয়ংক্রিয়ভাবে সনাক্তকৃত IP ঠিকানা ব্যবহার করুন (_a): %s"
+
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "সার্ভার: (_S)"
+
+# tithi
+msgid "<span style=\"italic\">Example: stunserver.org</span>"
+msgstr "উদাহরণ: <span style=\"italic\">stunserver.org</span>"
 
 msgid "Public _IP:"
 msgstr "পাবলিক _IP:"
@@ -13416,18 +13981,33 @@ msgstr "পোর্ট"
 msgid "_Enable automatic router port forwarding"
 msgstr "স্বয়ংক্রিয় রাউটার পোর্ট ফরওয়ার্ডিং সক্রিয় করা হবে (_E)"
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "যেসব পোর্টে লিসেন করা হবে তার সীমা স্বনির্ধারণ (_M)"
 
-msgid "_Start port:"
-msgstr "শুরুর পোর্ট (_S):"
+#, fuzzy
+msgid "_Start:"
+msgstr "অবস্থা (_S):"
 
-msgid "_End port:"
-msgstr "শেষের পোর্ট (_E):"
+#, fuzzy
+msgid "_End:"
+msgstr "প্রসারিত (_E)"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "রিলে সার্ভার (TURN)"
+
+#, fuzzy
+msgid "_TURN server:"
+msgstr "সার্ভার: (_S)"
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "ব্যবহারকারীর নাম:"
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "পাসওয়ার্ড:"
 
 msgid "Proxy Server &amp; Browser"
 msgstr "প্রক্সি সার্ভার &amp; ব্রাউজার"
@@ -13457,15 +14037,25 @@ msgstr "ব্রাউজার কনফিগারেশন (_B)"
 msgid "Proxy Server"
 msgstr "প্রক্সি সার্ভার"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+#, fuzzy
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr "SOCKS4 প্রক্সি সম্বলিত দুরবর্তী DNS ব্যবহৃত হবে"
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "প্রক্সির ধরন (_t):"
+
 msgid "No proxy"
 msgstr "কোনো প্রক্সি নেই"
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr "SOCKS4 প্রক্সি সম্বলিত দুরবর্তী DNS ব্যবহৃত হবে"
+#, fuzzy
+msgid "P_ort:"
+msgstr "পোর্ট (_P):"
 
-msgid "_User:"
-msgstr "ব্যবহারকারী (_U):"
+#, fuzzy
+msgid "User_name:"
+msgstr "ব্যবহারকারীর নাম:"
 
 # tithi
 msgid "Seamonkey"
@@ -13975,6 +14565,11 @@ msgstr "ফাইল সংরক্ষণ (_S)"
 msgid "Select color"
 msgstr "রং নির্বাচন"
 
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "পিজিন"
+
 msgid "_Alias"
 msgstr "উপনাম (_A)"
 
@@ -14070,68 +14665,6 @@ msgstr "পরিচিত ব্যক্তির উপস্থিতি ভ
 msgid "Displays statistical information about your buddies' availability"
 msgstr "আপনার বন্ধুদের উপস্থিতি সংক্রান্ত পরিসংখ্যান প্রদর্শন করে"
 
-msgid "Server name request"
-msgstr "সার্ভার নামের অনুরোধ"
-
-msgid "Enter an XMPP Server"
-msgstr "একটি XMPP সার্ভারের ঠিকানা দিন"
-
-msgid "Select an XMPP server to query"
-msgstr "কোয়েরির জন্য একটি XMPP সার্ভার নির্বাচন করুন"
-
-msgid "Find Services"
-msgstr "সার্ভিস খুঁজুন"
-
-msgid "Add to Buddy List"
-msgstr "বন্ধু তালিকায় যোগ"
-
-msgid "Gateway"
-msgstr "গেটওয়ে"
-
-msgid "Directory"
-msgstr "ডিরেক্টরি"
-
-msgid "PubSub Collection"
-msgstr "PubSub সংগ্রহ"
-
-# tithi
-msgid "PubSub Leaf"
-msgstr "PubSub লিফ"
-
-msgid ""
-"\n"
-"<b>Description:</b> "
-msgstr ""
-"\n"
-"<b>বর্ণনা:</b> "
-
-# ***
-#. Create the window.
-msgid "Service Discovery"
-msgstr "সার্ভিস অনুসন্ধান"
-
-msgid "_Browse"
-msgstr "ব্রাউজ (_B)"
-
-msgid "Server does not exist"
-msgstr "সার্ভার বিদ্যমান নেই"
-
-msgid "Server does not support service discovery"
-msgstr "সার্ভার সার্ভিস অনুসন্ধান সমর্থন করে না"
-
-# ***
-msgid "XMPP Service Discovery"
-msgstr "XMPP সার্ভিস অনুসন্ধান"
-
-msgid "Allows browsing and registering services."
-msgstr "সার্ভিস ব্রাউজ এবং নিবন্ধন করা অনুমোদন করে।"
-
-# tithi
-msgid ""
-"This plugin is useful for registering with legacy transports or other XMPP "
-"services."
-msgstr "এই প্লাগইনটি  ট্রান্সপোর্ট অথবা XMPP সার্ভিস দ্বারা নিবন্ধন করার জন্য কার্যকর।"
-
 msgid "Buddy is idle"
 msgstr "বন্ধু নিষ্ক্রিয়"
 
@@ -14222,6 +14755,70 @@ msgstr "আড্ডায় প্রয়োগ করা হবে"
 # tithi
 msgid "Apply in IMs"
 msgstr "IM গুলোতে প্রয়োগ করা হবে"
+
+#. Note to translators: The string "Enter an XMPP Server" is asking the
+#. user to type the name of an XMPP server which will then be queried
+msgid "Server name request"
+msgstr "সার্ভার নামের অনুরোধ"
+
+msgid "Enter an XMPP Server"
+msgstr "একটি XMPP সার্ভারের ঠিকানা দিন"
+
+msgid "Select an XMPP server to query"
+msgstr "কোয়েরির জন্য একটি XMPP সার্ভার নির্বাচন করুন"
+
+msgid "Find Services"
+msgstr "সার্ভিস খুঁজুন"
+
+msgid "Add to Buddy List"
+msgstr "বন্ধু তালিকায় যোগ"
+
+msgid "Gateway"
+msgstr "গেটওয়ে"
+
+msgid "Directory"
+msgstr "ডিরেক্টরি"
+
+msgid "PubSub Collection"
+msgstr "PubSub সংগ্রহ"
+
+# tithi
+msgid "PubSub Leaf"
+msgstr "PubSub লিফ"
+
+msgid ""
+"\n"
+"<b>Description:</b> "
+msgstr ""
+"\n"
+"<b>বর্ণনা:</b> "
+
+# ***
+#. Create the window.
+msgid "Service Discovery"
+msgstr "সার্ভিস অনুসন্ধান"
+
+msgid "_Browse"
+msgstr "ব্রাউজ (_B)"
+
+msgid "Server does not exist"
+msgstr "সার্ভার বিদ্যমান নেই"
+
+msgid "Server does not support service discovery"
+msgstr "সার্ভার সার্ভিস অনুসন্ধান সমর্থন করে না"
+
+# ***
+msgid "XMPP Service Discovery"
+msgstr "XMPP সার্ভিস অনুসন্ধান"
+
+msgid "Allows browsing and registering services."
+msgstr "সার্ভিস ব্রাউজ এবং নিবন্ধন করা অনুমোদন করে।"
+
+# tithi
+msgid ""
+"This plugin is useful for registering with legacy transports or other XMPP "
+"services."
+msgstr "এই প্লাগইনটি  ট্রান্সপোর্ট অথবা XMPP সার্ভিস দ্বারা নিবন্ধন করার জন্য কার্যকর।"
 
 msgid "By conversation count"
 msgstr "মোট কথোপকথন অনুসারে"
@@ -14871,9 +15468,12 @@ msgstr "অগ্রাহ্য করা হয়েছে"
 msgid "Founder"
 msgstr "প্রতিষ্ঠাতা"
 
+#. A user in a chat room who has special privileges.
 msgid "Operator"
 msgstr "অপারেটর"
 
+#. A half operator is someone who has a subset of the privileges
+#. that an operator has.
 msgid "Half Operator"
 msgstr "আংশিক অপারেটর"
 
@@ -15031,6 +15631,60 @@ msgstr ""
 "এই প্লাগইন ব্যবহারকারীকে কথোপকথন এবং বার্তার টাইমস্টাম্পের বিন্যাস স্বনির্বাচন করার "
 "অনুমতি দেয়।"
 
+#, fuzzy
+msgid "Audio"
+msgstr "স্বয়ংক্রিয়"
+
+#, fuzzy
+msgid "Video"
+msgstr "ভিডিও"
+
+msgid "Output"
+msgstr ""
+
+#, fuzzy
+msgid "_Plugin"
+msgstr "প্লাগইন"
+
+# tithi
+#, fuzzy
+msgid "_Device"
+msgstr "ডিভাইস"
+
+msgid "Input"
+msgstr ""
+
+#, fuzzy
+msgid "P_lugin"
+msgstr "প্লাগইন"
+
+# tithi
+#, fuzzy
+msgid "D_evice"
+msgstr "ডিভাইস"
+
+#. *< magic
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "Voice/Video Settings"
+msgstr "সেটিং সম্পাদনা"
+
+#. *< name
+#. *< version
+msgid "Configure your microphone and webcam."
+msgstr ""
+
+#. *< summary
+msgid "Configure microphone and webcam settings for voice/video calls."
+msgstr ""
+
 msgid "Opacity:"
 msgstr "অস্বচ্ছতা:"
 
@@ -15086,9 +15740,6 @@ msgstr ""
 "\n"
 "* নোট: এই প্লাগইনের জন্য Win2000 অথবা ততোধিক প্রয়োজন।"
 
-msgid "GTK+ Runtime Version"
-msgstr "GTK+ Runtime সংস্করণ"
-
 #. Autostart
 msgid "Startup"
 msgstr "আরম্ভ"
@@ -15096,6 +15747,11 @@ msgstr "আরম্ভ"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "উইন্ডোজ আরম্ভের সময় %s চালু করা হবে (_S)"
+
+# tithi
+#, fuzzy
+msgid "Allow multiple instances"
+msgstr "একসাথে একাধিক লগইন অনুমোদন করা হবে"
 
 msgid "_Dockable Buddy List"
 msgstr "ডকযোগ্য বন্ধু তালিকা (_D)"
@@ -15159,6 +15815,145 @@ msgstr "নতুন XMPP স্তবক পাঠান এবং গ্রহ
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "এই প্লাগইনটি XMPP সার্ভার বা ক্লায়েন্ট ডিবাগ করার জন্য কার্যকর।"
+
+# tithi
+#, fuzzy
+#~ msgid "The root certificate this one claims to be issued by is unknown."
+#~ msgstr "মূল সার্টিফিকেটটি যার দ্বারা প্রদান করা হয়েছে তা পিজিনের কাছে অপরিচিত।"
+
+# tithi
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "বহুবিধ প্রোটোকল দিয়ে তাৎক্ষনিক বার্তা প্রেরণ করুন"
+
+#~ msgid "_Start port:"
+#~ msgstr "শুরুর পোর্ট (_S):"
+
+#~ msgid "_End port:"
+#~ msgstr "শেষের পোর্ট (_E):"
+
+#~ msgid "_User:"
+#~ msgstr "ব্যবহারকারী (_U):"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "GTK+ Runtime সংস্করণ"
+
+#~ msgid "Calling ... "
+#~ msgstr "কল করা হচ্ছে..."
+
+#~ msgid "Invalid certificate chain"
+#~ msgstr "অকার্যকর সার্টিফিকেট চেইন"
+
+#~ msgid ""
+#~ "The certificate chain presented by %s does not have a valid digital "
+#~ "signature from the Certificate Authority from which it claims to have a "
+#~ "signature."
+#~ msgstr ""
+#~ "%s দ্বারা উপস্থাপিত সার্টিফিকেট চেইনটির তার নিজের দ্বারা দাবিকৃত কর্তৃপক্ষ থেকে "
+#~ "কোন বৈধ ডিজিটাল স্বাক্ষর নেই।"
+
+#~ msgid "Invalid certificate authority signature"
+#~ msgstr "অকার্যকর সার্টিফিকেট কতৃপক্ষের স্বাক্ষর"
+
+# ***
+#~ msgid "Join/Part Hiding Configuration"
+#~ msgstr "লুকানো কনফিগারেশন যুক্ত/বিভক্ত করা হবে"
+
+# tithi
+#~ msgid "Minimum Room Size"
+#~ msgstr "আসরের নূন্যতম আকার"
+
+# tithi
+#~ msgid "User Inactivity Timeout (in minutes)"
+#~ msgstr "ব্যবহারকারীর মিথস্ক্রিয়তার সময়সীমা উত্তীর্ণ (মিনিটে)"
+
+#~ msgid "Failed to open the file"
+#~ msgstr "ফাইলটি খুলতে ব্যর্থ"
+
+# tithi
+#~ msgid "Your account is locked, please log in to the Yahoo! website."
+#~ msgstr "আপনার একাউন্টটি আবদ্ধ, অনুগ্রহ করে ইয়াহু! ওয়েবসাইটে লগইন করুন।"
+
+# tithi
+#~ msgid "Euskera(Basque)"
+#~ msgstr "ইউসকেরা(বাস্ক)"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
+#~ "im\">support@pidgin.im</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">ইমেইলের মাধ্যমে সহায়তা:</FONT> <A HREF=\"mailto:"
+#~ "support@pidgin.im\">support@pidgin.im</A><BR/><BR/>"
+
+#~ msgid "_Resume"
+#~ msgstr "পুনরায় শুরু (_R)"
+
+# fix me
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  --display=DISPLAY   X display to use\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "ব্যবহার: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    কনফিগারেশন ফাইলের জন্য DIR ব্যবহার করা হবে\n"
+#~ "  -d, --debug         stdout এ ডিবাগিং বার্তা প্রিন্ট করা হবে\n"
+#~ "  -f, --force-online  অনলাইন হতে বাধ্য করুন, নেটওয়ার্কের অবস্থা যাই হোক\n"
+#~ "  -h, --help          এই সহায়িকা দেখুন ও প্রস্থান করুন\n"
+#~ "  -m, --multiple     একক ইনস্ট্যান্স নিশ্চিত করা হবে না\n"
+#~ "  -n, --nologin       স্বয়ংক্রিয়ভাবে লগইন করা হবে না\n"
+#~ "  -l, --login[=NAME]  নির্দিষ্ট একাউন্ট(সমূহ) সক্রিয় করা হবে (NAME হচ্ছে কমা "
+#~ "দ্বারা পৃথককৃত ঐচ্ছিক আর্গুমেন্ট\n"
+#~ "                        যা একাউন্ট(সমূহ) নির্দিষ্ট করে,\n"
+#~ "                       এটি ব্যতিত শুধুমাত্র প্রথম একাউন্টটি সক্রিয় হবে)। \n"
+#~ "  --display=DISPLAY   যে X-ডিসপ্লে ব্যবহার করা হবে তা নির্দিষ্ট করে।\n"
+#~ "  -v, --version       বর্তমান সংস্করণ প্রদর্শন করে প্রস্থান করা হবে\n"
+
+# fix me
+#~ msgid ""
+#~ "%s %s\n"
+#~ "Usage: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    use DIR for config files\n"
+#~ "  -d, --debug         print debugging messages to stdout\n"
+#~ "  -f, --force-online  force online, regardless of network status\n"
+#~ "  -h, --help          display this help and exit\n"
+#~ "  -m, --multiple      do not ensure single instance\n"
+#~ "  -n, --nologin       don't automatically login\n"
+#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
+#~ "NAME\n"
+#~ "                      specifies account(s) to use, separated by commas.\n"
+#~ "                      Without this only the first account will be "
+#~ "enabled).\n"
+#~ "  -v, --version       display the current version and exit\n"
+#~ msgstr ""
+#~ "%s %s\n"
+#~ "ব্যবহার: %s [OPTION]...\n"
+#~ "\n"
+#~ "  -c, --config=DIR    কনফিগারেশন ফাইলের জন্য DIR ব্যবহার করা হবে\n"
+#~ "  -d, --debug         stdout এ ডিবাগিং বার্তা প্রিন্ট করা হবে\n"
+#~ "  -f, --force-online  অনলাইন হতে বাধ্য করুন, নেটওয়ার্কের অবস্থা যাই হোক\n"
+#~ "  -h, --help          এই সহায়িকা দেখুন ও প্রস্থান করুন\n"
+#~ "  -m, --multiple     একক ইনস্ট্যান্স নিশ্চিত করা হবে না\n"
+#~ "  -n, --nologin       স্বয়ংক্রিয়ভাবে লগইন করা হবে না\n"
+#~ "  -l, --login[=NAME]  নির্দিষ্ট একাউন্ট(সমূহ) সক্রিয় করা হবে (NAME হচ্ছে কমা "
+#~ "দ্বারা পৃথককৃত ঐচ্ছিক আর্গুমেন্ট\n"
+#~ "                        যা একাউন্ট(সমূহ) নির্দিষ্ট করে,\n"
+#~ "                       এটি ব্যতিত শুধুমাত্র প্রথম একাউন্টটি সক্রিয় হবে)।\n"
+#~ "  -v, --version       বর্তমান সংস্করণ প্রদর্শন করে প্রস্থান করা হবে\n"
 
 #~ msgid "Malformed BOSH Connect Server"
 #~ msgstr "ত্রুটিপূর্ণ BOSH সংযোগ সার্ভার"

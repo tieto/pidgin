@@ -369,8 +369,8 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn,
 	                "sid='%s' "
 	                "to='%s' "
 	                "xml:lang='en' "
-	                "xmlns='http://jabber.org/protocol/httpbind' "
-	                "xmlns:xmpp='urn:xmpp:xbosh'",
+	                "xmlns='" NS_BOSH "' "
+	                "xmlns:xmpp='" NS_XMPP_BOSH "'",
 	                ++conn->rid,
 	                conn->sid,
 	                conn->js->user->domain);
@@ -401,7 +401,8 @@ jabber_bosh_connection_send(PurpleBOSHConnection *conn,
 
 void jabber_bosh_connection_close(PurpleBOSHConnection *conn)
 {
-	jabber_bosh_connection_send(conn, PACKET_TERMINATE, NULL);
+	if (conn->state == BOSH_CONN_ONLINE)
+		jabber_bosh_connection_send(conn, PACKET_TERMINATE, NULL);
 }
 
 static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, xmlnode *node) {
@@ -566,13 +567,13 @@ static void jabber_bosh_connection_boot(PurpleBOSHConnection *conn) {
 	                "xml:lang='en' "
 	                "xmpp:version='1.0' "
 	                "ver='1.6' "
-	                "xmlns:xmpp='urn:xmpp:bosh' "
+	                "xmlns:xmpp='" NS_XMPP_BOSH "' "
 	                "rid='%" G_GUINT64_FORMAT "' "
 /* TODO: This should be adjusted/adjustable automatically according to
  * realtime network behavior */
 	                "wait='60' "
 	                "hold='1' "
-	                "xmlns='http://jabber.org/protocol/httpbind'/>",
+	                "xmlns='" NS_BOSH "'/>",
 	                conn->js->user->domain,
 	                ++conn->rid);
 

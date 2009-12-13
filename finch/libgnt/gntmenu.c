@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
 #include "gntmenu.h"
 #include "gntmenuitemcheck.h"
 
@@ -92,7 +93,7 @@ gnt_menu_draw(GntWidget *widget)
 			item->priv.x = getcurx(widget->window) + widget->priv.x;
 			item->priv.y = getcury(widget->window) + widget->priv.y + 1;
 			wbkgdset(widget->window, type);
-			wprintw(widget->window, " %s   ", item->text);
+			wprintw(widget->window, " %s   ", C_(item->text));
 		}
 	} else {
 		org_draw(widget);

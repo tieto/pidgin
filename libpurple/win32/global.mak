@@ -85,7 +85,7 @@ ifeq ($(CYRUS_SASL), 1)
 DEFINES += -DHAVE_CYRUS_SASL
 endif
 
-DEFINES += -DHAVE_CONFIG_H
+DEFINES += -DHAVE_CONFIG_H -DWIN32_LEAN_AND_MEAN
 
 # Use -g flag when building debug version of Pidgin (including plugins).
 # Use -fnative-struct instead of -mms-bitfields when using mingw 1.1

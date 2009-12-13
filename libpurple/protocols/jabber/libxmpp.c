@@ -111,7 +111,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_roomlist_get_list,		/* roomlist_get_list */
 	jabber_roomlist_cancel,			/* roomlist_cancel */
 	NULL,							/* roomlist_expand_category */
-	NULL,							/* can_receive_file */
+	jabber_can_receive_file,		/* can_receive_file */
 	jabber_si_xfer_send,			/* send_file */
 	jabber_si_new_xfer,				/* new_xfer */
 	jabber_offline_message,			/* offline_message */
@@ -227,7 +227,7 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	jabber_unregister_commands();
 
 	/* Stay on target...stay on target... Almost there... */
-	jabber_uninit_plugin();
+	jabber_uninit_plugin(plugin);
 
 	return TRUE;
 }
@@ -355,7 +355,7 @@ init_plugin(PurplePlugin *plugin)
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", TRUE);
+	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", JABBER_DEFAULT_REQUIRE_TLS);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

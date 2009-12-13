@@ -25,10 +25,8 @@
  *
  */
 
-#include <glib.h>
-
-#include "core.h"
 #include "internal.h"
+#include "core.h"
 #include "pidgin.h"
 #include "pidginstock.h"
 

@@ -21,6 +21,7 @@
   USA.
 */
 
+#include "internal.h"
 
 /* system includes */
 #include <stdlib.h>
@@ -30,9 +31,6 @@
 #include <glib.h>
 
 /* purple includes */
-#include "internal.h"
-#include "config.h"
-
 #include "account.h"
 #include "accountopt.h"
 #include "circbuffer.h"
