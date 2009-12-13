@@ -229,13 +229,15 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		jabber_iq_set_callback(iq, jabber_bind_result_cb, NULL);
 
 		jabber_iq_send(iq);
+	} else if (xmlnode_get_child_with_namespace(packet, "ver", NS_ROSTER_VERSIONING)) {
+		js->server_caps |= JABBER_CAP_ROSTER_VERSIONING;
 	} else /* if(xmlnode_get_child_with_namespace(packet, "auth")) */ {
 		/* If we get an empty stream:features packet, or we explicitly get
 		 * an auth feature with namespace http://jabber.org/features/iq-auth
 		 * we should revert back to iq:auth authentication, even though we're
 		 * connecting to an XMPP server.  */
-		js->auth_type = JABBER_AUTH_IQ_AUTH;
 		jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
+		jabber_auth_start_old(js);
 	}
 }
 
@@ -1116,7 +1118,8 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 
 	if(cbdata->js->registration) {
 		username = g_strdup_printf("%s@%s%s%s", cbdata->js->user->node, cbdata->js->user->domain,
-			cbdata->js->user->resource ? "/" : "", cbdata->js->user->resource);
+			cbdata->js->user->resource ? "/" : "",
+			cbdata->js->user->resource ? cbdata->js->user->resource : "");
 		purple_account_set_username(cbdata->js->gc->account, username);
 		g_free(username);
 	}
@@ -1509,6 +1512,8 @@ void jabber_close(PurpleConnection *gc)
 	purple_circ_buffer_destroy(js->write_buffer);
 	if(js->writeh)
 		purple_input_remove(js->writeh);
+	if (js->auth_mech && js->auth_mech->dispose)
+		js->auth_mech->dispose(js);
 #ifdef HAVE_CYRUS_SASL
 	if(js->sasl)
 		sasl_dispose(&js->sasl);
@@ -1585,11 +1590,6 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_AUTHENTICATING:
 			purple_connection_update_progress(js->gc, _("Authenticating"),
 					js->gsc ? 7 : 3, JABBER_CONNECT_STEPS);
-			if(js->protocol_version == JABBER_PROTO_0_9 && js->registration) {
-				jabber_register_start(js);
-			} else if(js->auth_type == JABBER_AUTH_IQ_AUTH) {
-				jabber_auth_start_old(js);
-			}
 			break;
 		case JABBER_STREAM_POST_AUTH:
 			purple_connection_update_progress(js->gc, _("Re-initializing Stream"),
@@ -1744,13 +1744,15 @@ void jabber_add_deny(PurpleConnection *gc, const char *who)
 	JabberIq *iq;
 	xmlnode *block, *item;
 
-	js = gc->proto_data;
+	g_return_if_fail(who != NULL && *who != '\0');
+
+	js = purple_connection_get_protocol_data(gc);
 	if (js == NULL)
 		return;
 
 	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 	{
-		jabber_google_roster_add_deny(gc, who);
+		jabber_google_roster_add_deny(js, who);
 		return;
 	}
 
@@ -1778,13 +1780,15 @@ void jabber_rem_deny(PurpleConnection *gc, const char *who)
 	JabberIq *iq;
 	xmlnode *unblock, *item;
 
-	js = gc->proto_data;
+	g_return_if_fail(who != NULL && *who != '\0');
+
+	js = purple_connection_get_protocol_data(gc);
 	if (js == NULL)
 		return;
 
 	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 	{
-		jabber_google_roster_rem_deny(gc, who);
+		jabber_google_roster_rem_deny(js, who);
 		return;
 	}
 
@@ -3518,6 +3522,8 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
 #endif
 
+	jabber_auth_init();
+
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
 							 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
@@ -3552,6 +3558,7 @@ jabber_uninit_plugin(PurplePlugin *plugin)
 {
 	purple_plugin_ipc_unregister_all(plugin);
 
+	jabber_auth_uninit();
 	jabber_features_destroy();
 	jabber_identities_destroy();
 }

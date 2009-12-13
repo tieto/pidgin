@@ -927,7 +927,7 @@ gboolean jabber_chat_ban_user(JabberChat *chat, const char *who, const char *why
 	jcm = g_hash_table_lookup(chat->members, who);
 	if (jcm && jcm->jid)
 		jid = jcm->jid;
-	else if (g_utf8_strchr(who, -1, '@') != NULL)
+	else if (strchr(who, '@') != NULL)
 		jid = who;
 	else
 		return FALSE;
@@ -964,7 +964,7 @@ gboolean jabber_chat_affiliate_user(JabberChat *chat, const char *who, const cha
 	jcm = g_hash_table_lookup(chat->members, who);
 	if (jcm && jcm->jid)
 		jid = jcm->jid;
-	else if (g_utf8_strchr(who, -1, '@') != NULL)
+	else if (strchr(who, '@') != NULL)
 		jid = who;
 	else
 		return FALSE;

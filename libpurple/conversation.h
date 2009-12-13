@@ -1025,7 +1025,8 @@ PurpleConversation *purple_conv_chat_get_conversation(const PurpleConvChat *chat
 GList *purple_conv_chat_set_users(PurpleConvChat *chat, GList *users);
 
 /**
- * Returns a list of users in the chat room.
+ * Returns a list of users in the chat room.  The members of the list
+ * are PurpleConvChatBuddy objects.
  *
  * @param chat The chat.
  *

@@ -295,7 +295,7 @@ static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
 
 static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable *params)
 {
-	char *acct_id = g_hash_table_lookup(params, "account");
+	char *acct_id = params ? g_hash_table_lookup(params, "account") : NULL;
 	PurpleAccount *acct;
 
 	if (g_ascii_strcasecmp(proto, "xmpp"))
@@ -307,7 +307,8 @@ static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable
 		return FALSE;
 
 	/* xmpp:romeo@montague.net?message;subject=Test%20Message;body=Here%27s%20a%20test%20message */
-	if (g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
+	/* params is NULL if the URI has no '?' (or anything after it) */
+	if (!params || g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
 		char *body = g_hash_table_lookup(params, "body");
 		if (user && *user) {
 			PurpleConversation *conv =

@@ -19,6 +19,8 @@
  *  USA.
  */
 
+#include "libgadu.h"
+
 #ifndef _WIN32
 #include <sys/types.h>
 #include <sys/ioctl.h>
@@ -40,8 +42,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-#include "libgadu.h"
 
 FILE *gg_debug_file = NULL;
 

@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-26 22:45+0100\n"
-"PO-Revision-Date: 2009-11-26 22:44+0100\n"
+"POT-Creation-Date: 2009-12-10 22:38+0100\n"
+"PO-Revision-Date: 2009-12-11 20:55+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1564,6 +1564,7 @@ msgstr ""
 msgid "Online"
 msgstr "Online"
 
+#. primative,						no,							id,			name
 msgid "Offline"
 msgstr "Offline"
 
@@ -2516,7 +2517,7 @@ msgid "If user has not spoken in this many minutes"
 msgstr "Wenn Benutzer so viele Minuten nicht gesprochen hat"
 
 msgid "Apply hiding rules to buddies"
-msgstr "Regeln zum Verstecken auf Buddies anwenden"
+msgstr "Regeln zum Verstecken auf Buddys anwenden"
 
 #. *< type
 #. *< ui_requirement
@@ -3106,7 +3107,7 @@ msgid "Password (again)"
 msgstr "Passwort (nochmal)"
 
 msgid "Enter captcha text"
-msgstr "Captcha-Text eigeben"
+msgstr "Captcha-Text eingeben"
 
 msgid "Captcha"
 msgstr "Captcha"
@@ -3187,10 +3188,12 @@ msgstr "Wählen Sie einen Chat für den Benutzer: %s"
 msgid "Add to chat..."
 msgstr "Zum Chat hinzufügen..."
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "Verfügbar"
 
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3824,6 +3827,13 @@ msgstr ""
 "Der Server erfordert eine Klartext-Authentifizierung über einen "
 "unverschlüsselten Kanal"
 
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "Ungültige Serverantwort"
+
+msgid "Server does not use any supported authentication method"
+msgstr "Der Server benutzt keine der unterstützten Authentifizierungsmethoden"
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3836,15 +3846,6 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Klartext-Authentifizierung"
 
-msgid "SASL authentication failed"
-msgstr "SASL-Authentifizierung fehlgeschlagen"
-
-msgid "Invalid response from server"
-msgstr "Ungültige Serverantwort"
-
-msgid "Server does not use any supported authentication method"
-msgstr "Der Server benutzt keine der unterstützten Authentifizierungsmethoden"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
 "Sie fordern Verschlüsselung, aber diese ist auf dem Server nicht verfügbar."
@@ -3852,9 +3853,31 @@ msgstr ""
 msgid "Invalid challenge from server"
 msgstr "Ungültige Challenge vom Server"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+
+msgid "SASL authentication failed"
+msgstr "SASL-Authentifizierung fehlgeschlagen"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL-Fehler: %s"
+
+#, fuzzy
+msgid "Unable to canonicalize username"
+msgstr "Kann nicht konfigurieren"
+
+#, fuzzy
+msgid "Unable to canonicalize password"
+msgstr "Es konnte kein lauschender Port geöffnet werden."
+
+#, fuzzy
+msgid "Malicious challenge from server"
+msgstr "Ungültige Challenge vom Server"
+
+#, fuzzy
+msgid "Unexpected response from server"
+msgstr "Ungültige HTTP-Antwort vom Server empfangen"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Der BOSH-Verbindungsmanager hat Ihre Sitzung beendet."
@@ -3956,12 +3979,20 @@ msgstr "Priorität"
 msgid "Resource"
 msgstr "Ressource"
 
+#, fuzzy
+msgid "Uptime"
+msgstr "Aktualisieren"
+
 #, c-format
-msgid "%s ago"
-msgstr "vor %s"
+msgid "%s"
+msgstr ""
 
 msgid "Logged Off"
 msgstr "Abgemeldet"
+
+#, c-format
+msgid "%s ago"
+msgstr "vor %s"
 
 msgid "Middle Name"
 msgstr "Zweiter Name"
@@ -4011,9 +4042,6 @@ msgstr "Anmelden"
 msgid "Log Out"
 msgstr "Abmelden"
 
-#. primative,						no,							id,			name
-#. 0
-#. 1
 #. 2
 msgid "Chatty"
 msgstr "Gesprächig"
@@ -4021,6 +4049,7 @@ msgstr "Gesprächig"
 msgid "Extended Away"
 msgstr "Abwesend (erweitert)"
 
+#. 3
 msgid "Do Not Disturb"
 msgstr "Nicht stören"
 
@@ -4161,7 +4190,7 @@ msgid ""
 "Unable to find alternative XMPP connection methods after failing to connect "
 "directly."
 msgstr ""
-"Nach dem Fehlschlagen einer direkten XMPP-Verbindung konnen keine "
+"Nach dem Fehlschlagen einer direkten XMPP-Verbindung können keine "
 "alternativen Verbindungsmethoden gefunden werden."
 
 msgid "Invalid XMPP ID"
@@ -4459,7 +4488,7 @@ msgid "Invalid ID"
 msgstr "Ungültige ID"
 
 msgid "Invalid Namespace"
-msgstr "Ungültiger Namenraum"
+msgstr "Ungültiger Namensraum"
 
 msgid "Invalid XML"
 msgstr "Ungültiges XML"
@@ -5875,7 +5904,7 @@ msgid "Here you can update your MXit profile"
 msgstr "Hier können Sie Ihr MXit-Profil aktualisieren"
 
 msgid "View Splash"
-msgstr "Startbildschirn anschauen"
+msgstr "Startbildschirm anschauen"
 
 msgid "There is no splash-screen currently available"
 msgstr "Es gibt gerade keinen Startbildschirm"
@@ -6315,7 +6344,7 @@ msgid "Screen resolution (dots per inch)"
 msgstr "Bildschirmauflösung (dpi)"
 
 msgid "Base font size (points)"
-msgstr "Basis-Schriftgrüße (Punkt)"
+msgstr "Basis-Schriftgröße (Punkt)"
 
 msgid "User"
 msgstr "Benutzer"
@@ -6888,7 +6917,7 @@ msgid "Service not defined"
 msgstr "Dienst nicht definiert"
 
 msgid "Obsolete SNAC"
-msgstr "Obsoleteter SNAC"
+msgstr "Obsoleter SNAC"
 
 msgid "Not supported by host"
 msgstr "Nicht unterstützt vom Host"
@@ -7993,7 +8022,7 @@ msgstr "Tut mir Leid, du bist nicht mein Typ."
 
 #, c-format
 msgid "%u needs authorization"
-msgstr "%u benötigt Authorisierung"
+msgstr "%u benötigt Autorisierung"
 
 msgid "Add buddy authorize"
 msgstr "Buddy-Autorisierung hinzufügen"
@@ -8678,8 +8707,8 @@ msgid ""
 "The identifier '%s' may possibly refer to any of the following users. Please "
 "select the correct user from the list below to add them to your buddy list."
 msgstr ""
-"Der Bezeichner '%s' kann sich vielleicht zu einem der folgenden Benutzer "
-"beziehen. Bitte wählen Sie den korrekten Benutzer vor der untenstehenden "
+"Der Bezeichner '%s' kann sich vielleicht auf einen der folgenden Benutzer "
+"beziehen. Bitte wählen Sie den korrekten Benutzer aus der untenstehenden "
 "Liste, um ihn zu Ihrer Buddy-Liste hinzuzufügen."
 
 msgid "Select User"
@@ -8923,7 +8952,7 @@ msgstr "Kann die Benutzerinformation nicht abrufen"
 
 #, c-format
 msgid "The %s buddy is not trusted"
-msgstr "Dem Buddy %s wird nicht (kryptografisch) vertraut"
+msgstr "Dem Buddy %s wird nicht (kryptographisch) vertraut"
 
 msgid ""
 "You cannot receive buddy notifications until you import his/her public key.  "
@@ -9902,7 +9931,7 @@ msgstr ""
 #, c-format
 msgid "Failure: Remote does not support proposed cipher"
 msgstr ""
-"Fehler: Entferntes Programm unterstützt die vorgeschlagene Cipher nicht"
+"Fehler: Entferntes Programm unterstützt die vorgeschlagene Chiffre nicht"
 
 #, c-format
 msgid "Failure: Remote does not support proposed PKCS"
@@ -12221,14 +12250,7 @@ msgid ""
 "<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
 "primary language is <b>English</b>.  You are welcome to post in another "
 "language, but the responses may be less helpful.<br/><br/>"
-msgstr ""
-"<font size=\"4\">Hilfe von anderen Pidgin-Benutzern:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>Dies ist eine <b>öffentliche</"
-"b> Mailing-Liste! (<a href=\"http://pidgin.im/pipermail/support/\">Archiv</"
-"a>)<br/>Wir können nicht bei Problemen mit Drittanbieter-Protokollen oder "
-"Plugins helfen!<br/>Die Hauptsprache dieser Liste ist <b>Englisch</b>.  Sie "
-"können gern in einer anderen Sprache schreiben, aber die Antworten könnten "
-"weniger hilfreich sein.<br/><br/>"
+msgstr "<font size=\"4\">Hilfe von anderen Pidgin-Benutzern:</font> <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Dies ist eine <b>öffentliche</b> Mailing-Liste! (<a href=\"http://pidgin.im/pipermail/support/\">Archiv</a>)<br/>Wir können nicht bei Problemen mit Drittanbieter-Protokollen oder Plugins helfen!<br/>Die Hauptsprache dieser Liste ist <b>Englisch</b>.  Sie können gern in einer anderen Sprache schreiben, aber die Antworten könnten weniger hilfreich sein.<br/>Deutschsprachige Benutzer können auch das Portal <a href=\"http://www.pidgin-im.de/\">Pidgin-IM.de</a> nutzen.  Dort finden Sie aktuelle Informationen zu Pidgin, können mit anderen Benutzern im <a href=\"http://forum.pidgin-im.de/\">Forum</a> diskutieren und Hilfe zu Problemen finden.  Beachten Sie, dass dieses Portal unabhängig vom offiziellen Pidgin-Projekt ist.<br/><br/>"
 
 #, c-format
 msgid ""
@@ -14326,17 +14348,17 @@ msgstr ""
 "haben."
 
 msgid "Markerline"
-msgstr "Markierunglinie"
+msgstr "Markierungslinie"
 
 msgid "Draw a line to indicate new messages in a conversation."
 msgstr ""
 "Eine Linie zeichnen um neue Nachrichten in einer Unterhaltung anzuzeigen."
 
 msgid "Jump to markerline"
-msgstr "Springen zur Markierunglinie"
+msgstr "Springen zur Markierungslinie"
 
 msgid "Draw Markerline in "
-msgstr "Zeichne eine Markierunglinie in "
+msgstr "Zeichne eine Markierungslinie in "
 
 msgid "_IM windows"
 msgstr "_IM-Fenster"
@@ -14816,7 +14838,7 @@ msgid "A horizontal scrolling version of the buddy list."
 msgstr "Zeigt die Buddy-Liste als tickerähnliche Laufschrift."
 
 msgid "Display Timestamps Every"
-msgstr "Zeige Zeitstemple alle"
+msgstr "Zeige Zeitstempel alle"
 
 #. *< type
 #. *< ui_requirement

@@ -50,8 +50,11 @@ msn_accept_add_cb(gpointer data)
 	{
 		MsnSession *session = pa->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
+		PurpleAccount *account = purple_connection_get_account(pa->gc);
 
 		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_AL);
+		purple_privacy_deny_remove(account, pa->who, TRUE);
+		purple_privacy_permit_add(account, pa->who, TRUE);
 
 		msn_del_contact_from_list(session, NULL, pa->who, MSN_LIST_PL);
 	}
