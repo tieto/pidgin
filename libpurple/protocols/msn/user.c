@@ -25,6 +25,8 @@
 #include "user.h"
 #include "slp.h"
 
+static void free_user_endpoint(MsnUserEndpoint *data);
+
 /*new a user object*/
 MsnUser *
 msn_user_new(MsnUserList *userlist, const char *passport,
@@ -39,7 +41,8 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	msn_user_set_passport(user, passport);
 	msn_user_set_friendly_name(user, friendly_name);
 
-	user->endpoints = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	user->endpoints = g_hash_table_new_full(g_str_hash, g_str_equal,
+	                                        g_free, (GDestroyNotify)free_user_endpoint);
 
 	return user;
 }
@@ -234,6 +237,13 @@ msn_user_set_uid(MsnUser *user, const char *uid)
 
 	g_free(user->uid);
 	user->uid = g_strdup(uid);
+}
+
+static void
+free_user_endpoint(MsnUserEndpoint *data)
+{
+	g_free(data->id);
+	g_free(data);
 }
 
 void
