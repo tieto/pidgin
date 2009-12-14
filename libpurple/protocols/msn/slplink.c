@@ -141,11 +141,9 @@ msn_session_get_slplink(MsnSession *session, const char *username)
 	g_return_val_if_fail(username != NULL, NULL);
 
 	slplink = msn_session_find_slplink(session, username);
-	purple_debug_info("msn", "Hey, we got a slplink: %p\n", slplink);
 
 	if (slplink == NULL)
 		slplink = msn_slplink_new(session, username);
-	purple_debug_info("msn", "Hey, the slplink's really: %p\n", slplink);
 
 	return slplink;
 }
