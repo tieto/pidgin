@@ -454,7 +454,6 @@ static void
 send_file_cb(MsnSlpCall *slpcall)
 {
 	MsnSlpMessage *slpmsg;
-	struct stat st;
 	PurpleXfer *xfer;
 
 	slpmsg = msn_slpmsg_new(slpcall->slplink);
