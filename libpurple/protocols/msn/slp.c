@@ -128,7 +128,10 @@ msn_xfer_cancel(PurpleXfer *xfer)
 			g_free(content);
 			msn_slplink_send_queued_slpmsgs(slpcall->slplink);
 
-			msn_slpcall_destroy(slpcall);
+			if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND)
+				slpcall->wasted = TRUE;
+			else
+				msn_slpcall_destroy(slpcall);
 		}
 	}
 }
