@@ -454,20 +454,22 @@ static void
 send_file_cb(MsnSlpCall *slpcall)
 {
 	MsnSlpMessage *slpmsg;
-	struct stat st;
 	PurpleXfer *xfer;
+
+	xfer = (PurpleXfer *)slpcall->xfer;
+	purple_xfer_ref(xfer);
+	purple_xfer_start(xfer, -1, NULL, 0);
+	if (purple_xfer_get_status(xfer) != PURPLE_XFER_STATUS_STARTED) {
+		purple_xfer_unref(xfer);
+		return;
+	}
+	purple_xfer_unref(xfer);
 
 	slpmsg = msn_slpmsg_new(slpcall->slplink);
 	slpmsg->slpcall = slpcall;
 	slpmsg->flags = 0x1000030;
 	slpmsg->info = "SLP FILE";
-
-	xfer = (PurpleXfer *)slpcall->xfer;
-	purple_xfer_start(slpcall->xfer, -1, NULL, 0);
-	if (g_stat(purple_xfer_get_local_filename(xfer), &st) == 0)
-		slpmsg->size = st.st_size;
-	else if (purple_xfer_get_size(xfer))
-		slpmsg->size = purple_xfer_get_size(xfer);
+	slpmsg->size = purple_xfer_get_size(xfer);
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
 }
@@ -620,29 +622,37 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 		slpcall = msn_slp_process_msg(slplink, slpmsg);
 
-		if (slpmsg->flags == 0x100)
-		{
-			MsnDirectConn *directconn;
-
-			directconn = slplink->directconn;
-#if 0
-			if (!directconn->acked)
-				msn_directconn_send_handshake(directconn);
-#endif
+		if (slpcall == NULL) {
+			msn_slpmsg_destroy(slpmsg);
+			return;
 		}
-		else if (slpmsg->flags == 0x00 || slpmsg->flags == 0x1000000 ||  
-		         slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||  
-		         slpmsg->flags == 0x1000030)
-		{
-			/* Release all the messages and send the ACK */
 
-			msn_slplink_send_ack(slplink, msg);
-			msn_slplink_send_queued_slpmsgs(slplink);
+		if (!slpcall->wasted) {
+			if (slpmsg->flags == 0x100)
+			{
+				MsnDirectConn *directconn;
+
+				directconn = slplink->directconn;
+#if 0
+				if (!directconn->acked)
+					msn_directconn_send_handshake(directconn);
+#endif
+			}
+			else if (slpmsg->flags == 0x00 || slpmsg->flags == 0x1000000 ||  
+			         slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||  
+			         slpmsg->flags == 0x1000030)
+			{
+				/* Release all the messages and send the ACK */
+
+				msn_slplink_send_ack(slplink, msg);
+				msn_slplink_send_queued_slpmsgs(slplink);
+			}
+
 		}
 
 		msn_slpmsg_destroy(slpmsg);
 
-		if (slpcall != NULL && slpcall->wasted)
+		if (slpcall->wasted)
 			msn_slpcall_destroy(slpcall);
 	}
 }
