@@ -9,10 +9,12 @@ version 2.6.5 (??/??/20??):
 	  Chinese characters (broken in 2.6.4)
 
 	MSN:
-	* File transfer requests will no longer cause a crash if you delete the file
-	  before the other side accepts.
-	* Recieved files will no longer hold an extra lock after completion, meaning
-	  they can be moved or deleted without complaints from your OS.
+	* File transfer requests will no longer cause a crash if you delete the
+	  file before the other side accepts.
+	* Recieved files will no longer hold an extra lock after completion,
+	  meaning they can be moved or deleted without complaints from your OS.
+	* Buddies who sign in from a second location will no longer cause an
+	  unnecessary chat window to open.
 
 	XMPP:
 	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
