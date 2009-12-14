@@ -8,11 +8,9 @@
 ;--------------------------------
 ;Global Variables
 Var name
-Var GTK_FOLDER
 Var ISSILENT
 Var STARTUP_RUN_KEY
 Var SPELLCHECK_SEL
-Var LANGUAGE_SET
 
 ;--------------------------------
 ;Configuration
@@ -20,14 +18,10 @@ Var LANGUAGE_SET
 ;The name var is set in .onInit
 Name $name
 
-!ifdef WITH_GTK
+!ifdef OFFLINE_INSTALLER
+OutFile "pidgin-${PIDGIN_VERSION}-offline.exe"
+!else
 OutFile "pidgin-${PIDGIN_VERSION}.exe"
-!else
-!ifdef DEBUG
-OutFile "pidgin-${PIDGIN_VERSION}-debug.exe"
-!else
-OutFile "pidgin-${PIDGIN_VERSION}-no-gtk.exe"
-!endif
 !endif
 
 SetCompressor /SOLID lzma
@@ -41,6 +35,7 @@ SetDateSave on
 !include "Sections.nsh"
 !include "WinVer.nsh"
 !include "LogicLib.nsh"
+!include "Memento.nsh"
 
 !include "FileFunc.nsh"
 !insertmacro GetParameters
@@ -52,11 +47,13 @@ SetDateSave on
 !insertmacro WordFind
 !insertmacro un.WordFind
 
+!include "TextFunc.nsh"
+
 ;--------------------------------
 ;Defines
 
 !define PIDGIN_NSIS_INCLUDE_PATH		"."
-!define PIDGIN_INSTALLER_DEPS			"..\..\..\..\win32-dev\pidgin-inst-deps"
+!define PIDGIN_INSTALLER_DEPS			"..\..\..\..\win32-dev\pidgin-inst-deps-0.2"
 
 ; Remove these and the stuff that uses them at some point
 !define OLD_GAIM_REG_KEY			"SOFTWARE\gaim"
@@ -70,15 +67,15 @@ SetDateSave on
 !define STARTUP_RUN_KEY				"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 !define PIDGIN_UNINST_EXE			"pidgin-uninst.exe"
 
-!define GTK_MIN_VERSION				"2.6.10"
-!define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
+!define GTK_MIN_VERSION				"2.14.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl510.dll"
-!define GTK_DEFAULT_INSTALL_PATH		"$COMMONFILES\GTK\2.0"
-!define GTK_RUNTIME_INSTALLER			"..\..\..\..\gtk_installer\gtk-runtime-${GTK_INSTALL_VERSION}*.exe"
 
 !define ASPELL_REG_KEY				"SOFTWARE\Aspell"
 !define DOWNLOADER_URL				"http://pidgin.im/win32/download_redir.php"
+
+!define MEMENTO_REGISTRY_ROOT			HKLM
+!define MEMENTO_REGISTRY_KEY			"${PIDGIN_UNINSTALL_KEY}"
 
 ;--------------------------------
 ;Version resource
@@ -87,14 +84,10 @@ VIAddVersionKey "ProductName" "Pidgin"
 VIAddVersionKey "FileVersion" "${PIDGIN_VERSION}"
 VIAddVersionKey "ProductVersion" "${PIDGIN_VERSION}"
 VIAddVersionKey "LegalCopyright" ""
-!ifdef WITH_GTK
-VIAddVersionKey "FileDescription" "Pidgin Installer (w/ GTK+ Installer)"
+!ifdef OFFLINE_INSTALLER
+VIAddVersionKey "FileDescription" "Pidgin Installer (Offline)"
 !else
-!ifdef DEBUG
-VIAddVersionKey "FileDescription" "Pidgin Installer (Debug Version)"
-!else
-VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
-!endif
+VIAddVersionKey "FileDescription" "Pidgin Installer"
 !endif
 
 ;--------------------------------
@@ -138,14 +131,6 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE			"../../../COPYING"
   !insertmacro MUI_PAGE_COMPONENTS
-
-!ifdef WITH_GTK
-  ; GTK+ install dir page
-  !define MUI_PAGE_CUSTOMFUNCTION_PRE		preGtkDirPage
-  !define MUI_PAGE_CUSTOMFUNCTION_LEAVE		postGtkDirPage
-  !define MUI_DIRECTORYPAGE_VARIABLE		$GTK_FOLDER
-  !insertmacro MUI_PAGE_DIRECTORY
-!endif
 
   ; Pidgin install dir page
   !insertmacro MUI_PAGE_DIRECTORY
@@ -317,7 +302,7 @@ Section -SecUninstallOldPidgin
           IfErrors uninstall_problem
             ; Ready to uninstall..
             ClearErrors
-            ExecWait '"$TEMP\$R6" /S _?=$R1'
+            ExecWait '"$TEMP\$R6" /S /KEEPGTK=1 _?=$R1'
             IfErrors exec_error
               Delete "$TEMP\$R6"
             Goto done
@@ -348,77 +333,38 @@ SectionEnd
 ;--------------------------------
 ;GTK+ Runtime Install Section
 
-!ifdef WITH_GTK
 Section $(GTK_SECTION_TITLE) SecGtk
 
-  Call CheckUserInstallRights
-  Pop $R1
+  InitPluginsDir
+  StrCpy $R1 "$PLUGINSDIR\gtk.zip"
+!ifdef OFFLINE_INSTALLER
 
-  SetOutPath $TEMP
-  SetOverwrite on
-  File /oname=gtk-runtime.exe ${GTK_RUNTIME_INSTALLER}
-  SetOverwrite off
+  SetOutPath $PLUGINSDIR
+  File /oname=gtk.zip "..\..\..\..\gtk_installer\gtk-runtime-${GTK_INSTALL_VERSION}.zip"
 
-  Call DoWeNeedGtk
+!else
+
+  ; We need to download the GTK+ runtime
+  retry:
+  StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&gtk_version=${GTK_INSTALL_VERSION}&dl_pkg=gtk"
+  DetailPrint "Downloading GTK+ Runtime ... ($R2)"
+  NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
-  Pop $R6
+  StrCmp $R0 "cancel" done
+  StrCmp $R0 "success" +2
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR) : $R1" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
-  StrCmp $R0 "0" have_gtk
-  StrCmp $R0 "1" upgrade_gtk
-  StrCmp $R0 "2" upgrade_gtk
-  ;StrCmp $R0 "3" no_gtk no_gtk
+!endif
 
-  ;no_gtk:
-    StrCmp $R1 "NONE" gtk_no_install_rights
-    ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
-    IfErrors gtk_install_error done
+  SetOutPath "$INSTDIR"
 
-  upgrade_gtk:
-    StrCpy $GTK_FOLDER $R6
-    StrCmp $R0 "2" +2 ; Upgrade isn't optional
-    MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) /SD IDYES IDNO done
-    ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
-    IfErrors gtk_install_error done
-
-    gtk_install_error:
-      Delete "$TEMP\gtk-runtime.exe"
-      MessageBox MB_OK $(GTK_INSTALL_ERROR) /SD IDOK
-      Quit
-
-  have_gtk:
-    StrCpy $GTK_FOLDER $R6
-    StrCmp $R1 "NONE" done ; If we have no rights, we can't re-install
-    ; Even if we have a sufficient version of GTK+, we give user choice to re-install.
-    ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT'
-    IfErrors gtk_install_error
-    Goto done
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ; end got_install rights
-
-  gtk_no_install_rights:
-    ; Install GTK+ to Pidgin install dir
-    StrCpy $GTK_FOLDER $INSTDIR
-    ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
-    IfErrors gtk_install_error
-      SetOverwrite on
-      ClearErrors
-      CopyFiles /FILESONLY "$GTK_FOLDER\bin\*.dll" $GTK_FOLDER
-      SetOverwrite off
-      IfErrors gtk_install_error
-        Delete "$GTK_FOLDER\bin\*.dll"
-        Goto done
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ; end gtk_no_install_rights
+  nsisunz::UnzipToLog $R1 "$INSTDIR"
+  Pop $R0
+  StrCmp $R0 "success" +2
+    DetailPrint "$R0" ;print error message to log
 
   done:
-    Delete "$TEMP\gtk-runtime.exe"
 SectionEnd ; end of GTK+ section
-!endif
 
 ;--------------------------------
 ;Pidgin Install Section
@@ -430,15 +376,12 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
   Call CheckUserInstallRights
   Pop $R0
 
-  ; Get GTK+ lib dir if we have it..
-
-  StrCmp $R0 "NONE" pidgin_none
+  StrCmp $R0 "NONE" pidgin_install_files
   StrCmp $R0 "HKLM" pidgin_hklm pidgin_hkcu
 
   pidgin_hklm:
-    ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
     WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "" "$INSTDIR\pidgin.exe"
-    WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R1\bin"
+    WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$INSTDIR\Gtk\bin"
     WriteRegStr HKLM ${PIDGIN_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKLM ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
     WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
@@ -452,10 +395,6 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     Goto pidgin_install_files
 
   pidgin_hkcu:
-    ReadRegStr $R1 HKCU ${GTK_REG_KEY} "Path"
-    StrCmp $R1 "" 0 +2
-      ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
-
     WriteRegStr HKCU ${PIDGIN_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKCU ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
@@ -466,9 +405,6 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${PIDGIN_UNINST_EXE}"
     Goto pidgin_install_files
 
-  pidgin_none:
-    ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
-
   pidgin_install_files:
     SetOutPath "$INSTDIR"
     ; Pidgin files
@@ -478,18 +414,8 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     Delete "$INSTDIR\plugins\liboscar.dll"
     Delete "$INSTDIR\plugins\libjabber.dll"
 
-    File /r ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
-    !ifdef DEBUG
+    File /r /x locale ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
     File "${PIDGIN_INSTALLER_DEPS}\exchndl.dll"
-    !endif
-
-    ; Install shfolder.dll if need be..
-    SearchPath $R4 "shfolder.dll"
-    StrCmp $R4 "" 0 got_shfolder
-      SetOutPath "$SYSDIR"
-      File "${PIDGIN_INSTALLER_DEPS}\shfolder.dll"
-      SetOutPath "$INSTDIR"
-    got_shfolder:
 
     ; Check if Perl is installed, if so add it to the AppPaths
     ReadRegStr $R2 HKLM ${PERL_REG_KEY} ""
@@ -572,6 +498,22 @@ SectionGroup /e $(URI_HANDLERS_SECTION_TITLE) SecURIHandlers
   !insertmacro URI_SECTION "ymsgr"
   !insertmacro URI_SECTION "xmpp"
 SectionGroupEnd
+
+;--------------------------------
+;Translations
+
+!macro LANG_SECTION lang
+  ${MementoUnselectedSection} "${lang}" SecLang_${lang}
+    SetOutPath "$INSTDIR\locale\${lang}\LC_MESSAGES"
+    File /oname=pidgin.mo "..\..\..\${PIDGIN_INSTALL_DIR}\locale\${lang}\LC_MESSAGES\pidgin.mo"
+    SetOutPath "$INSTDIR"
+  ${MementoSectionEnd}
+!macroend
+SectionGroup $(TRANSLATIONS_SECTION_TITLE) SecTranslations
+  # pidgin-translations is generated based on the contents of the locale directory
+  !include "pidgin-translations.nsh"
+SectionGroupEnd
+${MementoSectionDone}
 
 ;--------------------------------
 ;Spell Checking
@@ -666,6 +608,37 @@ SectionGroup /e $(PIDGIN_SPELLCHECK_SECTION_TITLE) SecSpellCheck
     Call InstallAspellAndDict
   SectionEnd
 SectionGroupEnd
+
+Section /o $(DEBUG_SYMBOLS_SECTION_TITLE) SecDebugSymbols
+  InitPluginsDir
+
+  ; We need to download and extract the debug symbols
+  StrCpy $R1 "$PLUGINSDIR\pidgin-${PIDGIN_VERSION}-dbgsym.zip"
+!ifdef OFFLINE_INSTALLER
+
+  SetOutPath $PLUGINSDIR
+  File /oname=pidgin-${PIDGIN_VERSION}-dbgsym.zip "..\..\..\..\gtk_installer\gtk-runtime-${GTK_INSTALL_VERSION}.zip"
+
+!else
+
+  retry:
+  StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=dbgsym"
+  DetailPrint "Downloading Debug Symbols... ($R2)"
+  NSISdl::download /TIMEOUT=10000 $R2 $R1
+  Pop $R0
+  StrCmp $R0 "cancel" done
+  StrCmp $R0 "success" +2
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_DEBUGSYMBOLS_ERROR) : $R2" /SD IDCANCEL IDRETRY retry IDCANCEL done
+
+!endif
+
+  nsisunz::UnzipToLog $R1 "$INSTDIR"
+  Pop $R0
+  StrCmp $R0 "success" +2
+    DetailPrint "$R0" ;print error message to log
+
+  done:
+SectionEnd
 
 ;--------------------------------
 ;Uninstaller Section
@@ -819,10 +792,19 @@ Section Uninstall
     Delete "$INSTDIR\softokn3.dll"
     Delete "$INSTDIR\ssl3.dll"
     Delete "$INSTDIR\${PIDGIN_UNINST_EXE}"
-    !ifdef DEBUG
     Delete "$INSTDIR\exchndl.dll"
-    !endif
     Delete "$INSTDIR\install.log"
+
+    ; Remove the debug symbols
+    RMDir /r "$INSTDIR\pidgin-${PIDGIN_VERSION}-dbgsym"
+
+    ; Remove the local GTK+ copy (if we're not just upgrading)
+    ${GetParameters} $R0
+    ClearErrors
+    ${GetOptions} "$R3" "/KEEPGTK=" $R1
+    IfErrors +2
+    StrCmp $R1 "1" +2
+    RMDir /r "$INSTDIR\Gtk"
 
     ;Try to remove Pidgin install dir (only if empty)
     RMDir "$INSTDIR"
@@ -849,10 +831,8 @@ SectionEnd ; end of uninstall section
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPidgin} \
         $(PIDGIN_SECTION_DESCRIPTION)
-!ifdef WITH_GTK
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtk} \
         $(GTK_SECTION_DESCRIPTION)
-!endif
 
   !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} \
         $(PIDGIN_SHORTCUTS_SECTION_DESCRIPTION)
@@ -1145,93 +1125,42 @@ FunctionEnd
 ; Call DoWeNeedGtk
 ; First Pop:
 ;   0 - We have the correct version
-;       Second Pop: Key where Version was found
 ;   1 - We have an old version that should work, prompt user for optional upgrade
-;       Second Pop: HKLM or HKCU depending on where GTK was found.
 ;   2 - We have an old version that needs to be upgraded
-;       Second Pop: HKLM or HKCU depending on where GTK was found.
 ;   3 - We don't have Gtk+ at all
-;       Second Pop: "NONE, HKLM or HKCU" depending on our rights..
 ;
 Function DoWeNeedGtk
-  ; Logic should be:
-  ; - Check what user rights we have (HKLM or HKCU)
-  ;   - If HKLM rights..
-  ;     - Only check HKLM key for GTK+
-  ;       - If installed to HKLM, check it and return.
-  ;   - If HKCU rights..
-  ;     - First check HKCU key for GTK+
-  ;       - if good or bad exists stop and ret.
-  ;     - If no hkcu gtk+ install, check HKLM
-  ;       - If HKLM ver exists but old, return as if no ver exits.
-  ;   - If no rights
-  ;     - Check HKLM
   Push $0
   Push $1
-  Push $2
-  Push $3
 
-  Call CheckUserInstallRights
-  Pop $1
-  StrCmp $1 "HKLM" check_hklm
-  StrCmp $1 "HKCU" check_hkcu check_hklm
-    check_hkcu:
-      ReadRegStr $0 HKCU ${GTK_REG_KEY} "Version"
-      StrCpy $2 "HKCU"
-      StrCmp $0 "" check_hklm have_gtk
+  IfFileExists "$INSTDIR\Gtk\CONTENTS" +3
+  Push "3"
+  Goto done
 
-    check_hklm:
-      ReadRegStr $0 HKLM ${GTK_REG_KEY} "Version"
-      StrCpy $2 "HKLM"
-      StrCmp $0 "" no_gtk have_gtk
+  ClearErrors
+  ${ConfigRead} "$INSTDIR\Gtk\CONTENTS" "Bundle Version " $0
+  IfErrors 0 +3
+  Push "3"
+  Goto done
 
-  have_gtk:
-    ; GTK+ is already installed; check version.
-    ; Change this to not even run the GTK installer if this version is already installed.
-    ${VersionCompare} ${GTK_INSTALL_VERSION} $0 $3
-    IntCmp $3 1 +1 good_version good_version
-    ${VersionCompare} ${GTK_MIN_VERSION} $0 $3
+  ${VersionCompare} ${GTK_INSTALL_VERSION} $0 $1
+  IntCmp $1 1 +3
+  Push "0" ; Have a good version
+  Goto done
 
-      ; Bad version. If hklm ver and we have hkcu or no rights.. return no gtk
-      StrCmp $1 "NONE" no_gtk ; if no rights.. can't upgrade
-      StrCmp $1 "HKCU" 0 +2   ; if HKLM can upgrade..
-      StrCmp $2 "HKLM" no_gtk ; have hkcu rights.. if found hklm ver can't upgrade..
-      Push $2
-      IntCmp $3 1 +3
-        Push "1" ; Optional Upgrade
-        Goto done
-        Push "2" ; Mandatory Upgrade
-        Goto done
-
-  good_version:
-    StrCmp $2 "HKLM" have_hklm_gtk have_hkcu_gtk
-      have_hkcu_gtk:
-        ; Have HKCU version
-        ReadRegStr $0 HKCU ${GTK_REG_KEY} "Path"
-        Goto good_version_cont
-
-      have_hklm_gtk:
-        ReadRegStr $0 HKLM ${GTK_REG_KEY} "Path"
-        Goto good_version_cont
-
-    good_version_cont:
-      Push $0  ; The path to existing GTK+
-      Push "0"
-      Goto done
-
-  no_gtk:
-    Push $1 ; our rights
-    Push "3"
-    Goto done
+  ${VersionCompare} ${GTK_MIN_VERSION} $0 $1
+  IntCmp $1 1 +3
+  Push "1" ; Optional Upgrade
+  Goto done
+  Push "2" ; Mandatory Upgrade
+  Goto done
 
   done:
-  ; The top two items on the stack are what we want to return
-  Exch 4
+  ; The item on the stack is what we want to return
+  Exch
   Pop $1
-  Exch 4
+  Exch
   Pop $0
-  Pop $3
-  Pop $2
 FunctionEnd
 
 
@@ -1302,6 +1231,8 @@ Function .onInit
   DeleteRegValue HKCU "${OLD_GAIM_REG_KEY}" "Installer Language"
   WriteRegStr HKCU "${PIDGIN_REG_KEY}" "Installer Language" "$R0"
 
+  ${MementoSectionRestore}
+
   !insertmacro SetSectionFlag ${SecSpellCheck} ${SF_RO}
   !insertmacro UnselectSection ${SecSpellCheck}
 
@@ -1346,12 +1277,10 @@ Function .onInit
   IfSilent 0 +2
     StrCpy $ISSILENT "/NOUI"
 
-  StrCpy $LANGUAGE_SET "0"
   ClearErrors
   ${GetOptions} "$R3" "/L=" $R1
-  IfErrors +4
+  IfErrors +3
   StrCpy $LANGUAGE $R1
-  StrCpy $LANGUAGE_SET "1"
   Goto skip_lang
 
   ; Select Language
@@ -1416,17 +1345,14 @@ Function .onInit
 FunctionEnd
 
 Function .onInstSuccess
-  ; NSIS doesn't appear to save the language when in Silent Mode, so we do so manually
-  IfSilent 0 done
 
-  StrCmp $LANGUAGE_SET "0" done
+  ${MementoSectionSave}
 
-  WriteRegStr "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" $LANGUAGE
-
-  done:
 FunctionEnd
 
+
 Function un.onInit
+
   Call un.RunCheck
   StrCpy $name "Pidgin ${PIDGIN_VERSION}"
 ;LogSet on
@@ -1440,106 +1366,22 @@ FunctionEnd
 
 Function preWelcomePage
   Push $R0
-
-!ifndef WITH_GTK
-  ; If this installer dosn't have GTK, check whether we need it.
-  ; We do this here and not in .onInit because language change in
-  ; .onInit doesn't take effect until it is finished.
-  Call DoWeNeedGtk
-  Pop $R0
-  Pop $GTK_FOLDER
-
-  IntCmp $R0 1 done done
-  MessageBox MB_OK $(GTK_INSTALLER_NEEDED) /SD IDOK
-  Quit
-
-  done:
-
-!else
   Push $R1
-  Push $R2
 
   Call DoWeNeedGtk
   Pop $R0
-  Pop $R2
-  IntCmp $R0 1 gtk_selection_done gtk_not_mandatory
+  IntCmp $R0 1 done gtk_not_mandatory
     ; Make the GTK+ Section RO if it is required.
     !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
-    Goto gtk_selection_done
+    Goto done
   gtk_not_mandatory:
     ; Don't select the GTK+ section if we already have this version or newer installed
     !insertmacro UnselectSection ${SecGtk}
-  gtk_selection_done:
-
-  ; If on Win95/98/ME warn them that the GTK+ version wont work
-  ${Unless} ${IsNT}
-    !insertmacro UnselectSection ${SecGtk}
-    !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
-    MessageBox MB_OK $(GTK_WINDOWS_INCOMPATIBLE) /SD IDOK
-    IntCmp $R0 1 done done ; Upgrade isn't optional - abort if we don't have a suitable version
-    Quit
-  ${EndIf}
 
   done:
-  Pop $R2
-  Pop $R1
-!endif
-  Pop $R0
-FunctionEnd
-
-!ifdef WITH_GTK
-Function preGtkDirPage
-  Push $R0
-  Push $R1
-  Call DoWeNeedGtk
-  Pop $R0
-  Pop $R1
-
-  IntCmp $R0 2 +2 +2 no_gtk
-  StrCmp $R0 "3" no_gtk no_gtk
-
-  ; Don't show dir selector.. Upgrades are done to existing path..
   Pop $R1
   Pop $R0
-  Abort
-
-  no_gtk:
-    StrCmp $R1 "NONE" 0 no_gtk_cont
-      ; Got no install rights..
-      Pop $R1
-      Pop $R0
-      Abort
-    no_gtk_cont:
-      ; Suggest path..
-      StrCmp $R1 "HKCU" 0 hklm1
-        ${GetParent} $SMPROGRAMS $R0
-        ${GetParent} $R0 $R0
-        StrCpy $R0 "$R0\GTK\2.0"
-        Goto got_path
-      hklm1:
-        StrCpy $R0 "${GTK_DEFAULT_INSTALL_PATH}"
-
-   got_path:
-     StrCpy $name "GTK+ ${GTK_INSTALL_VERSION}"
-     StrCpy $GTK_FOLDER $R0
-     Pop $R1
-     Pop $R0
 FunctionEnd
-
-Function postGtkDirPage
-  Push $R0
-  StrCpy $name "Pidgin ${PIDGIN_VERSION}"
-  Push $GTK_FOLDER
-  Call VerifyDir
-  Pop $R0
-  StrCmp $R0 "0" 0 done
-    MessageBox MB_OK $(GTK_BAD_INSTALL_PATH) /SD IDOK
-    Pop $R0
-    Abort
-  done:
-  Pop $R0
-FunctionEnd
-!endif
 
 ; SpellChecker Related Functions
 ;-------------------------------
@@ -1668,6 +1510,8 @@ Function InstallAspellAndDict
   Pop $R0 ;This is the language code
   Push $R1
 
+  InitPluginsDir
+
   IfErrors done ; We weren't able to convert the section to lang code
 
   retry:
@@ -1702,12 +1546,12 @@ Function InstallAspell
   IntCmp $R0 15 installed
 
   ; If this is the check after installation, don't infinite loop on failure
-  StrCmp $R1 "$TEMP\aspell_installer.exe" 0 +3
+  StrCmp $R1 "$PLUGINSDIR\aspell_installer.exe" 0 +3
     StrCpy $R0 $(ASPELL_INSTALL_FAILED)
     Goto done
 
   ; We need to download and install aspell
-  StrCpy $R1 "$TEMP\aspell_installer.exe"
+  StrCpy $R1 "$PLUGINSDIR\aspell_installer.exe"
   StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=aspell_core"
   DetailPrint "Downloading Aspell... ($R2)"
   NSISdl::download /TIMEOUT=10000 $R2 $R1
@@ -1743,12 +1587,12 @@ Function InstallAspellDictionary
   StrCmp $R2 "" 0 installed
 
   ; If this is the check after installation, don't infinite loop on failure
-  StrCmp $R1 "$TEMP\aspell_dict-$R0.exe" 0 +3
+  StrCmp $R1 "$PLUGINSDIR\aspell_dict-$R0.exe" 0 +3
     StrCpy $R0 $(ASPELL_INSTALL_FAILED)
     Goto done
 
   ; We need to download and install aspell
-  StrCpy $R1 "$TEMP\aspell_dict-$R0.exe"
+  StrCpy $R1 "$PLUGINSDIR\aspell_dict-$R0.exe"
   StrCpy $R3 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=lang_$R0"
   DetailPrint "Downloading the Aspell $R0 Dictionary... ($R3)"
   NSISdl::download /TIMEOUT=10000 $R3 $R1
@@ -1758,10 +1602,10 @@ Function InstallAspellDictionary
     Goto done
   ; Use a specific temporary $OUTDIR for each dictionary because the installer doesn't clean up after itself
   StrCpy $R4 "$OUTDIR"
-  SetOutPath "$TEMP\aspell_dict-$R0"
+  SetOutPath "$PLUGINSDIR\aspell_dict-$R0"
   ExecWait '"$R1"'
   SetOutPath "$R4"
-  RMDir /r "$TEMP\aspell_dict-$R0"
+  RMDir /r "$PLUGINSDIR\aspell_dict-$R0"
   Delete $R1
   Goto check ; Check that it is now installed correctly
 
