@@ -464,10 +464,7 @@ send_file_cb(MsnSlpCall *slpcall)
 
 	xfer = (PurpleXfer *)slpcall->xfer;
 	purple_xfer_start(slpcall->xfer, -1, NULL, 0);
-	if (g_stat(purple_xfer_get_local_filename(xfer), &st) == 0)
-		slpmsg->size = st.st_size;
-	else if (purple_xfer_get_size(xfer))
-		slpmsg->size = purple_xfer_get_size(xfer);
+	slpmsg->size = purple_xfer_get_size(xfer);
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
 }
