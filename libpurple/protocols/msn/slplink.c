@@ -624,30 +624,37 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 		slpcall = msn_slp_process_msg(slplink, slpmsg);
 
-		if (slpmsg->flags == 0x100)
-		{
-			MsnDirectConn *directconn;
-
-			directconn = slplink->directconn;
-#if 0
-			if (!directconn->acked)
-				msn_directconn_send_handshake(directconn);
-#endif
+		if (slpcall == NULL) {
+			msn_slpmsg_destroy(slpmsg);
+			return;
 		}
-		else if (slpmsg->flags == 0x00 || slpmsg->flags == 0x1000000 ||  
-		         slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||  
-		         slpmsg->flags == 0x1000030)
-		{
-			/* Release all the messages and send the ACK */
 
-			msn_slplink_send_ack(slplink, msg);
-			msn_slplink_send_queued_slpmsgs(slplink);
+		if (!slpcall->wasted) {
+			if (slpmsg->flags == 0x100)
+			{
+				MsnDirectConn *directconn;
+
+				directconn = slplink->directconn;
+#if 0
+				if (!directconn->acked)
+					msn_directconn_send_handshake(directconn);
+#endif
+			}
+			else if (slpmsg->flags == 0x00 || slpmsg->flags == 0x1000000 ||  
+			         slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||  
+			         slpmsg->flags == 0x1000030)
+			{
+				/* Release all the messages and send the ACK */
+
+				msn_slplink_send_ack(slplink, msg);
+				msn_slplink_send_queued_slpmsgs(slplink);
+			}
+
+		} else {
+			msn_slpcall_destroy(slpcall);
 		}
 
 		msn_slpmsg_destroy(slpmsg);
-
-		if (slpcall != NULL && slpcall->wasted)
-			msn_slpcall_destroy(slpcall);
 	}
 }
 
