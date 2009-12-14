@@ -96,8 +96,6 @@ msn_xfer_init(PurpleXfer *xfer)
 
 	g_free(content);
 	msn_slplink_send_queued_slpmsgs(slpcall->slplink);
-
-	purple_xfer_start(xfer, -1, NULL, 0);
 }
 
 void
