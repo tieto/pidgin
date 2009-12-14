@@ -648,11 +648,12 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 				msn_slplink_send_queued_slpmsgs(slplink);
 			}
 
-		} else {
-			msn_slpcall_destroy(slpcall);
 		}
 
 		msn_slpmsg_destroy(slpmsg);
+
+		if (slpcall->wasted)
+			msn_slpcall_destroy(slpcall);
 	}
 }
 
