@@ -959,11 +959,11 @@ connect_cb(MsnServConn *servconn)
 	g_return_if_fail(swboard != NULL);
 
 	if (servconn->session->protocol_ver >= 16)
-		username = g_strdup(purple_account_get_username(account));
-	else
 		username = g_strdup_printf("%s;{%s}",
 		                           purple_account_get_username(account),
 		                           servconn->session->guid);
+	else
+		username = g_strdup(purple_account_get_username(account));
 
 	if (msn_switchboard_is_invited(swboard))
 	{
