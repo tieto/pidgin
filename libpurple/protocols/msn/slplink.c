@@ -141,9 +141,11 @@ msn_session_get_slplink(MsnSession *session, const char *username)
 	g_return_val_if_fail(username != NULL, NULL);
 
 	slplink = msn_session_find_slplink(session, username);
+	purple_debug_info("msn", "Hey, we got a slplink: %p\n", slplink);
 
 	if (slplink == NULL)
 		slplink = msn_slplink_new(session, username);
+	purple_debug_info("msn", "Hey, the slplink's really: %p\n", slplink);
 
 	return slplink;
 }
@@ -456,13 +458,19 @@ send_file_cb(MsnSlpCall *slpcall)
 	MsnSlpMessage *slpmsg;
 	PurpleXfer *xfer;
 
+	xfer = (PurpleXfer *)slpcall->xfer;
+	purple_xfer_ref(xfer);
+	purple_xfer_start(xfer, -1, NULL, 0);
+	if (purple_xfer_get_status(xfer) != PURPLE_XFER_STATUS_STARTED) {
+		purple_xfer_unref(xfer);
+		return;
+	}
+	purple_xfer_unref(xfer);
+
 	slpmsg = msn_slpmsg_new(slpcall->slplink);
 	slpmsg->slpcall = slpcall;
 	slpmsg->flags = 0x1000030;
 	slpmsg->info = "SLP FILE";
-
-	xfer = (PurpleXfer *)slpcall->xfer;
-	purple_xfer_start(slpcall->xfer, -1, NULL, 0);
 	slpmsg->size = purple_xfer_get_size(xfer);
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
