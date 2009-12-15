@@ -455,7 +455,7 @@ msn_session_finish_login(MsnSession *session)
 	if (session->protocol_ver >= 16) {
 		/* TODO: Send this when updating status instead? */
 		msn_notification_send_uux_endpointdata(session);
-		/*msn_notification_send_uux_private_endpointdata(session);*/
+		msn_notification_send_uux_private_endpointdata(session);
 	}
 	msn_change_status(session);
 }

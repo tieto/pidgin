@@ -1851,7 +1851,7 @@ void msn_notification_send_uux_private_endpointdata(MsnSession *session)
 	char *payload;
 	int length;
 
-	private = xmlnode_new("PrivateEndPointData");
+	private = xmlnode_new("PrivateEndpointData");
 
 	/* TODO: "Pidgin" is a temp EndPointName.. we must use hostid or some.*/
 	epname = xmlnode_new_child(private, "EpName");
