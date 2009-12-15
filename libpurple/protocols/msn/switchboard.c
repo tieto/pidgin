@@ -243,6 +243,12 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 		return;
 	}
 
+	/* Don't add ourselves either... */
+	if (g_str_equal(passport, purple_account_get_username(account))) {
+		g_free(passport);
+		return;
+	}
+
 	swboard->users = g_list_prepend(swboard->users, passport);
 	swboard->current_users++;
 	swboard->empty = FALSE;
