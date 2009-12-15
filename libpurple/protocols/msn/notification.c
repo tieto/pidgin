@@ -1671,6 +1671,41 @@ parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 
 		msn_user_set_endpoint_data(user, id, &data);
 	}
+
+	/* Need to shortcut this check, probably... */
+	if (user == user->userlist->session->user) {
+		for (epNode = xmlnode_get_child(payloadNode, "PrivateEndpointData");
+		     epNode;
+		     epNode = xmlnode_get_next_twin(epNode)) {
+			MsnUserEndpoint *ep;
+			xmlnode *nameNode, *clientNode;
+
+			/*	<PrivateEndpointData id='{GUID}'>
+					<EpName>Endpoint Name</EpName>
+					<Idle>true/false</Idle>
+					<ClientType>1</ClientType>
+					<State>NLN</State>
+				</PrivateEndpointData>
+			*/
+			id = xmlnode_get_attrib(epNode, "id");
+			ep = msn_user_get_endpoint_data(user, id);
+
+			if (ep != NULL) {
+				nameNode = xmlnode_get_child(epNode, "EpName");
+				if (nameNode != NULL) {
+					g_free(ep->name);
+					ep->name = xmlnode_get_data(nameNode);
+				}
+
+				clientNode = xmlnode_get_child(epNode, "ClientType");
+				if (clientNode != NULL) {
+					tmp = xmlnode_get_data(clientNode);
+					ep->type = strtoul(tmp, 10, NULL);
+					g_free(tmp);
+				}
+			}
+		}
+	}
 }
 
 /*
