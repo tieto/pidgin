@@ -1700,7 +1700,7 @@ parse_user_endpoints(MsnUser *user, xmlnode *payloadNode)
 				clientNode = xmlnode_get_child(epNode, "ClientType");
 				if (clientNode != NULL) {
 					tmp = xmlnode_get_data(clientNode);
-					ep->type = strtoul(tmp, 10, NULL);
+					ep->type = strtoul(tmp, NULL, 10);
 					g_free(tmp);
 				}
 			}
