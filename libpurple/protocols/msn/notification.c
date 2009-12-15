@@ -1902,6 +1902,61 @@ void msn_notification_send_uux_private_endpointdata(MsnSession *session)
 	g_free(payload);
 }
 
+static void
+ubn_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
+			 size_t len)
+{
+	/* Do Nothing, right now. */
+	if (payload != NULL)
+		purple_debug_info("msn", "UBN payload:\n%s\n", payload);
+}
+
+static void
+ubn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	purple_debug_misc("msn", "UBN received from %s.\n", cmd->params[0]);
+	cmdproc->last_cmd->payload_cb  = ubn_cmd_post;
+	cmd->payload_len = atoi(cmd->params[2]);
+}
+
+static void
+uun_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
+			 size_t len)
+{
+	/* Do Nothing, right now. */
+	if (payload != NULL)
+		purple_debug_info("msn", "UUN payload:\n%s\n", payload);
+}
+
+static void
+uun_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	if (strcmp(cmd->params[1], "OK") != 0) {
+		purple_debug_misc("msn", "UUN received.\n");
+		cmdproc->last_cmd->payload_cb = uun_cmd_post;
+		cmd->payload_len = atoi(cmd->params[1]);
+	}
+	else
+		purple_debug_misc("msn", "UUN OK received.\n");
+}
+
+void
+msn_notification_send_uun(MsnSession *session, const char *user,
+                          MsnUnifiedNotificationType type, const char *payload)
+{
+	MsnTransaction *trans;
+	MsnCmdProc *cmdproc;
+	size_t len = strlen(payload);
+
+	cmdproc = session->notification->cmdproc;
+	purple_debug_misc("msn", "Sending UUN command %d to %s with payload: %s\n",
+	                  type, user, payload);
+	trans = msn_transaction_new(cmdproc, "UUN", "%s %d %" G_GSIZE_FORMAT,
+	                            user, type, len);
+	msn_transaction_set_payload(trans, payload, len);
+	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
 /**************************************************************************
  * Message Types
  **************************************************************************/
@@ -2357,6 +2412,9 @@ msn_notification_init(void)
 
 	msn_table_add_cmd(cbs_table, NULL, "UBX", ubx_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "UUX", uux_cmd);
+
+	msn_table_add_cmd(cbs_table, NULL, "UBN", ubn_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "UUN", uun_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "URL", url_cmd);
 
