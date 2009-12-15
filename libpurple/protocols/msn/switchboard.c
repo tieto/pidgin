@@ -271,7 +271,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 								PURPLE_CBFLAGS_NONE, TRUE);
 		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 	}
-	else if (swboard->current_users > 1 || swboard->total_users > 1)
+	else if (swboard->current_users > 1)
 	{
 		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 		if (swboard->conv == NULL ||
