@@ -552,11 +552,19 @@ msn_user_get_extcaps(const MsnUser *user)
 }
 
 MsnUserEndpoint *
-msn_user_get_endpoint_data(MsnUser *user, const char *endpoint)
+msn_user_get_endpoint_data(MsnUser *user, const char *input)
 {
-	g_return_val_if_fail(user != NULL, NULL);
+	char *endpoint;
+	MsnUserEndpoint *data;
 
-	return g_hash_table_lookup(user->endpoints, endpoint);
+	g_return_val_if_fail(user != NULL, NULL);
+	g_return_val_if_fail(input != NULL, NULL);
+
+	endpoint = g_ascii_strdown(input, -1);
+	data = g_hash_table_lookup(user->endpoints, endpoint);
+	g_free(endpoint);
+
+	return data;
 }
 
 MsnObject *
