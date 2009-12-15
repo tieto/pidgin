@@ -1,6 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.5 (??/??/20??):
+	libpurple:
+	* TLS certificates are actually stored to the local cache once again
+	  (accepting a name mismatch on a certificate should now be remembered)
+
 	General:
 	* Build-time fixes for Solaris.  (Paul Townsend)
 
