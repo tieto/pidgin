@@ -22,6 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "msn.h"
+#include "core.h"
 #include "notification.h"
 #include "contact.h"
 #include "state.h"
@@ -1847,6 +1848,8 @@ void msn_notification_send_uux_private_endpointdata(MsnSession *session)
 	const char *name;
 	xmlnode *epname;
 	xmlnode *idle;
+	GHashTable *ui_info;
+	const gchar *ui_type;
 	xmlnode *client_type;
 	xmlnode *state;
 	char *payload;
@@ -1861,7 +1864,6 @@ void msn_notification_send_uux_private_endpointdata(MsnSession *session)
 	idle = xmlnode_new_child(private, "Idle");
 	xmlnode_insert_data(idle, "false", -1);
 
-	/* TODO: support different client types */
 	/* ClientType info (from amsn guys):
 		0: None
 		1: Computer
@@ -1872,7 +1874,22 @@ void msn_notification_send_uux_private_endpointdata(MsnSession *session)
 		32: Email member, currently Yahoo!
 	*/
 	client_type = xmlnode_new_child(private, "ClientType");
-	xmlnode_insert_data(client_type, "1", -1);
+	ui_info = purple_core_get_ui_info();
+	ui_type = ui_info ? g_hash_table_lookup(ui_info, "client_type") : NULL;
+	if (ui_type) {
+		if (strcmp(ui_type, "pc") == 0)
+			xmlnode_insert_data(client_type, "1", -1);
+		else if (strcmp(ui_type, "web") == 0)
+			xmlnode_insert_data(client_type, "2", -1);
+		else if (strcmp(ui_type, "phone") == 0)
+			xmlnode_insert_data(client_type, "3", -1);
+		else if (strcmp(ui_type, "handheld") == 0)
+			xmlnode_insert_data(client_type, "3", -1);
+		else
+			xmlnode_insert_data(client_type, "1", -1);
+	}
+	else
+		xmlnode_insert_data(client_type, "1", -1);
 
 	state = xmlnode_new_child(private, "State");
 	xmlnode_insert_data(state, msn_state_get_text(msn_state_from_account(session->account)), -1);
