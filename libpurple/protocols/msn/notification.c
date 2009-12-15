@@ -1844,6 +1844,7 @@ void msn_notification_send_uux_endpointdata(MsnSession *session)
 void msn_notification_send_uux_private_endpointdata(MsnSession *session)
 {
 	xmlnode *private;
+	const char *name;
 	xmlnode *epname;
 	xmlnode *idle;
 	xmlnode *client_type;
@@ -1853,9 +1854,9 @@ void msn_notification_send_uux_private_endpointdata(MsnSession *session)
 
 	private = xmlnode_new("PrivateEndpointData");
 
-	/* TODO: "Pidgin" is a temp EndPointName.. we must use hostid or some.*/
+	name = purple_account_get_string(session->account, "endpoint-name", NULL);
 	epname = xmlnode_new_child(private, "EpName");
-	xmlnode_insert_data(epname, "Pidgin", -1);
+	xmlnode_insert_data(epname, name, -1);
 
 	idle = xmlnode_new_child(private, "Idle");
 	xmlnode_insert_data(idle, "false", -1);

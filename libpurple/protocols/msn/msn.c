@@ -359,6 +359,42 @@ msn_show_set_friendly_name(PurplePluginAction *action)
 }
 
 static void
+set_endpoint_cb(PurpleConnection *pc, const char *entry)
+{
+	MsnSession *session;
+	PurpleAccount *account;
+
+	session = purple_connection_get_protocol_data(pc);
+	account = purple_connection_get_account(pc);
+
+	/* Empty endpoint names are not allowed */
+	if (!entry || !*entry)
+		return;
+
+	purple_account_set_string(account, "endpoint-name", entry);
+	msn_notification_send_uux_private_endpointdata(session);
+}
+
+static void
+msn_show_set_endpoint_name(PurplePluginAction *action)
+{
+	PurpleConnection *pc;
+	PurpleAccount *account;
+
+	pc = (PurpleConnection *)action->context;
+	account = purple_connection_get_account(pc);
+
+	purple_request_input(pc, NULL, _("Set your location name."),
+	                     _("This is the name that identifies this location."),
+	                     purple_account_get_string(account, "endpoint-name", NULL),
+	                     FALSE, FALSE, NULL,
+	                     _("OK"), G_CALLBACK(set_endpoint_cb),
+	                     _("Cancel"), NULL,
+	                     account, NULL, NULL,
+	                     pc);
+}
+
+static void
 msn_show_set_home_phone(PurplePluginAction *action)
 {
 	PurpleConnection *gc;
@@ -931,6 +967,11 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
+	act = purple_plugin_action_new(_("Set Location Name..."),
+	                               msn_show_set_endpoint_name);
+	m = g_list_append(m, act);
+	m = g_list_append(m, NULL);
+
 	act = purple_plugin_action_new(_("Set Home Phone Number..."),
 								 msn_show_set_home_phone);
 	m = g_list_append(m, act);
@@ -1064,6 +1105,10 @@ msn_login(PurpleAccount *account)
 
 	username = purple_account_get_string(account, "display-name", NULL);
 	purple_connection_set_display_name(gc, username);
+
+	if (purple_account_get_string(account, "endpoint-name", NULL) == NULL) {
+		purple_account_set_string(account, "endpoint-name", "Pidgin");
+	}
 
 	if (!msn_session_connect(session, host, port, http_method))
 		purple_connection_error_reason(gc,
