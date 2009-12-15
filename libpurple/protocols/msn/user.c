@@ -247,13 +247,19 @@ free_user_endpoint(MsnUserEndpoint *data)
 }
 
 void
-msn_user_set_endpoint_data(MsnUser *user, const char *endpoint, MsnUserEndpoint *data)
+msn_user_set_endpoint_data(MsnUser *user, const char *input, MsnUserEndpoint *data)
 {
 	MsnUserEndpoint *new;
+	char *endpoint;
+
 	g_return_if_fail(user != NULL);
+	g_return_if_fail(input != NULL);
+
+	endpoint = g_ascii_strdown(input, -1);
 
 	if (data == NULL) {
 		g_hash_table_remove(user->endpoints, endpoint);
+		g_free(endpoint);
 		return;
 	}
 
@@ -266,6 +272,8 @@ msn_user_set_endpoint_data(MsnUser *user, const char *endpoint, MsnUserEndpoint 
 
 	new->clientid = data->clientid;
 	new->extcaps = data->extcaps;
+
+	g_free(endpoint);
 }
 
 void
