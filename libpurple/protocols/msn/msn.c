@@ -388,8 +388,11 @@ update_endpoint_cb(MsnLocationData *data, PurpleRequestFields *fields)
 	for (others = purple_request_field_group_get_fields(data->group);
 	     others;
 	     others = g_list_next(others)) {
-		if (!purple_request_field_bool_get_value(others->data)) {
-			const char *id = purple_request_field_get_id(others->data);
+		PurpleRequestField *field = others->data;
+		if (purple_request_field_get_type(field) != PURPLE_REQUEST_FIELD_BOOLEAN)
+			continue;
+		if (!purple_request_field_bool_get_value(field)) {
+			const char *id = purple_request_field_get_id(field);
 			char *user;
 			purple_debug_info("msn", "Disconnecting Endpoint %s\n", id);
 
