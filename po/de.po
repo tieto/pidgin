@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-30 11:50+0100\n"
-"PO-Revision-Date: 2009-11-30 11:45+0100\n"
+"POT-Creation-Date: 2009-12-10 22:38+0100\n"
+"PO-Revision-Date: 2009-12-11 20:55+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -3827,6 +3827,13 @@ msgstr ""
 "Der Server erfordert eine Klartext-Authentifizierung über einen "
 "unverschlüsselten Kanal"
 
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "Ungültige Serverantwort"
+
+msgid "Server does not use any supported authentication method"
+msgstr "Der Server benutzt keine der unterstützten Authentifizierungsmethoden"
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3839,15 +3846,6 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Klartext-Authentifizierung"
 
-msgid "SASL authentication failed"
-msgstr "SASL-Authentifizierung fehlgeschlagen"
-
-msgid "Invalid response from server"
-msgstr "Ungültige Serverantwort"
-
-msgid "Server does not use any supported authentication method"
-msgstr "Der Server benutzt keine der unterstützten Authentifizierungsmethoden"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
 "Sie fordern Verschlüsselung, aber diese ist auf dem Server nicht verfügbar."
@@ -3855,9 +3853,31 @@ msgstr ""
 msgid "Invalid challenge from server"
 msgstr "Ungültige Challenge vom Server"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+
+msgid "SASL authentication failed"
+msgstr "SASL-Authentifizierung fehlgeschlagen"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL-Fehler: %s"
+
+#, fuzzy
+msgid "Unable to canonicalize username"
+msgstr "Kann nicht konfigurieren"
+
+#, fuzzy
+msgid "Unable to canonicalize password"
+msgstr "Es konnte kein lauschender Port geöffnet werden."
+
+#, fuzzy
+msgid "Malicious challenge from server"
+msgstr "Ungültige Challenge vom Server"
+
+#, fuzzy
+msgid "Unexpected response from server"
+msgstr "Ungültige HTTP-Antwort vom Server empfangen"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Der BOSH-Verbindungsmanager hat Ihre Sitzung beendet."
@@ -3959,12 +3979,20 @@ msgstr "Priorität"
 msgid "Resource"
 msgstr "Ressource"
 
+#, fuzzy
+msgid "Uptime"
+msgstr "Aktualisieren"
+
 #, c-format
-msgid "%s ago"
-msgstr "vor %s"
+msgid "%s"
+msgstr ""
 
 msgid "Logged Off"
 msgstr "Abgemeldet"
+
+#, c-format
+msgid "%s ago"
+msgstr "vor %s"
 
 msgid "Middle Name"
 msgstr "Zweiter Name"
@@ -12222,14 +12250,7 @@ msgid ""
 "<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
 "primary language is <b>English</b>.  You are welcome to post in another "
 "language, but the responses may be less helpful.<br/><br/>"
-msgstr ""
-"<font size=\"4\">Hilfe von anderen Pidgin-Benutzern:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>Dies ist eine <b>öffentliche</"
-"b> Mailing-Liste! (<a href=\"http://pidgin.im/pipermail/support/\">Archiv</"
-"a>)<br/>Wir können nicht bei Problemen mit Drittanbieter-Protokollen oder "
-"Plugins helfen!<br/>Die Hauptsprache dieser Liste ist <b>Englisch</b>.  Sie "
-"können gern in einer anderen Sprache schreiben, aber die Antworten könnten "
-"weniger hilfreich sein.<br/><br/>"
+msgstr "<font size=\"4\">Hilfe von anderen Pidgin-Benutzern:</font> <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Dies ist eine <b>öffentliche</b> Mailing-Liste! (<a href=\"http://pidgin.im/pipermail/support/\">Archiv</a>)<br/>Wir können nicht bei Problemen mit Drittanbieter-Protokollen oder Plugins helfen!<br/>Die Hauptsprache dieser Liste ist <b>Englisch</b>.  Sie können gern in einer anderen Sprache schreiben, aber die Antworten könnten weniger hilfreich sein.<br/>Deutschsprachige Benutzer können auch das Portal <a href=\"http://www.pidgin-im.de/\">Pidgin-IM.de</a> nutzen.  Dort finden Sie aktuelle Informationen zu Pidgin, können mit anderen Benutzern im <a href=\"http://forum.pidgin-im.de/\">Forum</a> diskutieren und Hilfe zu Problemen finden.  Beachten Sie, dass dieses Portal unabhängig vom offiziellen Pidgin-Projekt ist.<br/><br/>"
 
 #, c-format
 msgid ""

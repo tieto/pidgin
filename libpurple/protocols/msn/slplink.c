@@ -232,7 +232,7 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	}
 }
 
-static void
+void
 msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	MsnMessage *msg;
@@ -247,11 +247,11 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	if (slpmsg->offset < real_size)
 	{
-		if (slpmsg->fp)
+		if (slpmsg->slpcall && slpmsg->slpcall->xfer && purple_xfer_get_type(slpmsg->slpcall->xfer) == PURPLE_XFER_SEND &&
+				purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
 		{
-			char data[1202];
-			len = fread(data, 1, sizeof(data), slpmsg->fp);
-			msn_message_set_bin_data(msg, data, len);
+			len = MIN(1202, slpmsg->slpcall->u.outgoing.len);
+			msn_message_set_bin_data(msg, slpmsg->slpcall->u.outgoing.data, len);
 		}
 		else
 		{
@@ -309,7 +309,13 @@ msg_ack(MsnMessage *msg, void *data)
 
 	if (slpmsg->offset < real_size)
 	{
-		msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
+		if (slpmsg->slpcall->xfer && purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
+		{
+			slpmsg->slpcall->xfer_msg = slpmsg;
+			purple_xfer_prpl_ready(slpmsg->slpcall->xfer);
+		}
+		else
+			msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
 	}
 	else
 	{
@@ -448,20 +454,22 @@ static void
 send_file_cb(MsnSlpCall *slpcall)
 {
 	MsnSlpMessage *slpmsg;
-	struct stat st;
 	PurpleXfer *xfer;
+
+	xfer = (PurpleXfer *)slpcall->xfer;
+	purple_xfer_ref(xfer);
+	purple_xfer_start(xfer, -1, NULL, 0);
+	if (purple_xfer_get_status(xfer) != PURPLE_XFER_STATUS_STARTED) {
+		purple_xfer_unref(xfer);
+		return;
+	}
+	purple_xfer_unref(xfer);
 
 	slpmsg = msn_slpmsg_new(slpcall->slplink);
 	slpmsg->slpcall = slpcall;
 	slpmsg->flags = 0x1000030;
 	slpmsg->info = "SLP FILE";
-
-	xfer = (PurpleXfer *)slpcall->xfer;
-	purple_xfer_start(slpcall->xfer, -1, NULL, 0);
-	slpmsg->fp = xfer->dest_fp;
-	if (g_stat(purple_xfer_get_local_filename(xfer), &st) == 0)
-		slpmsg->size = st.st_size;
-	xfer->dest_fp = NULL; /* Disable double fclose() */
+	slpmsg->size = purple_xfer_get_size(xfer);
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
 }
@@ -489,6 +497,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	const char *data;
 	guint64 offset;
 	gsize len;
+	PurpleXfer *xfer = NULL;
 
 	if (purple_debug_is_verbose())
 		msn_slpmsg_show(msg);
@@ -525,12 +534,12 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 				if (slpmsg->flags == 0x20 ||
 				    slpmsg->flags == 0x1000020 || slpmsg->flags == 0x1000030)
 				{
-					PurpleXfer *xfer;
-
 					xfer = slpmsg->slpcall->xfer;
-
 					if (xfer != NULL)
 					{
+						slpmsg->ft = TRUE;
+						slpmsg->slpcall->xfer_msg = slpmsg;
+
 						purple_xfer_ref(xfer);
 						purple_xfer_start(xfer,	-1, NULL, 0);
 
@@ -540,14 +549,12 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 							g_return_if_reached();
 						} else {
 							purple_xfer_unref(xfer);
-							slpmsg->fp = xfer->dest_fp;
-							xfer->dest_fp = NULL; /* Disable double fclose() */
 						}
 					}
 				}
 			}
 		}
-		if (!slpmsg->fp && slpmsg->size)
+		if (!slpmsg->ft && slpmsg->size)
 		{
 			slpmsg->buffer = g_try_malloc(slpmsg->size);
 			if (slpmsg->buffer == NULL)
@@ -569,10 +576,12 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		}
 	}
 
-	if (slpmsg->fp)
+	if (slpmsg->ft)
 	{
-		/* fseek(slpmsg->fp, offset, SEEK_SET); */
-		len = fwrite(data, 1, len, slpmsg->fp);
+		xfer = slpmsg->slpcall->xfer;
+		slpmsg->slpcall->u.incoming_data =
+				g_byte_array_append(slpmsg->slpcall->u.incoming_data, (const guchar *)data, len);
+		purple_xfer_prpl_ready(xfer);
 	}
 	else if (slpmsg->size && slpmsg->buffer)
 	{
@@ -613,29 +622,37 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 		slpcall = msn_slp_process_msg(slplink, slpmsg);
 
-		if (slpmsg->flags == 0x100)
-		{
-			MsnDirectConn *directconn;
-
-			directconn = slplink->directconn;
-#if 0
-			if (!directconn->acked)
-				msn_directconn_send_handshake(directconn);
-#endif
+		if (slpcall == NULL) {
+			msn_slpmsg_destroy(slpmsg);
+			return;
 		}
-		else if (slpmsg->flags == 0x00 || slpmsg->flags == 0x1000000 ||  
-		         slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||  
-		         slpmsg->flags == 0x1000030)
-		{
-			/* Release all the messages and send the ACK */
 
-			msn_slplink_send_ack(slplink, msg);
-			msn_slplink_send_queued_slpmsgs(slplink);
+		if (!slpcall->wasted) {
+			if (slpmsg->flags == 0x100)
+			{
+				MsnDirectConn *directconn;
+
+				directconn = slplink->directconn;
+#if 0
+				if (!directconn->acked)
+					msn_directconn_send_handshake(directconn);
+#endif
+			}
+			else if (slpmsg->flags == 0x00 || slpmsg->flags == 0x1000000 ||  
+			         slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||  
+			         slpmsg->flags == 0x1000030)
+			{
+				/* Release all the messages and send the ACK */
+
+				msn_slplink_send_ack(slplink, msg);
+				msn_slplink_send_queued_slpmsgs(slplink);
+			}
+
 		}
 
 		msn_slpmsg_destroy(slpmsg);
 
-		if (slpcall != NULL && slpcall->wasted)
+		if (slpcall->wasted)
 			msn_slpcall_destroy(slpcall);
 	}
 }
@@ -732,7 +749,6 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 
 	slpcall->session_init_cb = send_file_cb;
 	slpcall->end_cb = msn_xfer_end_cb;
-	slpcall->progress_cb = msn_xfer_progress_cb;
 	slpcall->cb = msn_xfer_completed_cb;
 	slpcall->xfer = xfer;
 	purple_xfer_ref(slpcall->xfer);
@@ -740,6 +756,8 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 	slpcall->pending = TRUE;
 
 	purple_xfer_set_cancel_send_fnc(xfer, msn_xfer_cancel);
+	purple_xfer_set_read_fnc(xfer, msn_xfer_read);
+	purple_xfer_set_write_fnc(xfer, msn_xfer_write);
 
 	xfer->data = slpcall;
 
