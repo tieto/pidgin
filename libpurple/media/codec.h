@@ -32,7 +32,7 @@
 /** An opaque structure representing an audio or video codec. */
 typedef struct _PurpleMediaCodec PurpleMediaCodec;
 
-#include "util.h"
+#include "../util.h"
 
 #include <glib-object.h>
 
