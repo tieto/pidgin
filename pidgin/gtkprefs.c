@@ -77,6 +77,9 @@ static GtkWidget *prefs = NULL;
 static GtkWidget *prefsnotebook = NULL;
 static int notebook_page = 0;
 
+/* Conversations page */
+static GtkWidget *sample_imhtml = NULL;
+
 /* Themes page */
 static GtkWidget *prefs_sound_themes_combo_box;
 static GtkWidget *prefs_blist_themes_combo_box;
@@ -346,6 +349,8 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	prefs_blist_themes_combo_box = NULL;
 	prefs_status_themes_combo_box = NULL;
 	prefs_smiley_themes_combo_box = NULL;
+
+	sample_imhtml = NULL;
 
 	notebook_page = 0;
 	prefsnotebook = NULL;
@@ -961,6 +966,7 @@ prefs_set_smiley_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_smiley_themes), &new_iter, 2, &new_theme, -1);
 
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", new_theme);
+		pidgin_themes_smiley_themeize(sample_imhtml);
 
 		g_free(new_theme);
 	}
@@ -1549,7 +1555,7 @@ conv_page(void)
 					 G_CALLBACK(formatting_toggle_cb), toolbar);
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_clear",
 					 G_CALLBACK(formatting_clear_cb), NULL);
-
+	sample_imhtml = imhtml;
 
 	gtk_widget_show(ret);
 
