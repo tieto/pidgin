@@ -372,6 +372,7 @@ purple_xfer_choose_file_cancel_cb(void *user_data, const char *filename)
 
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_LOCAL);
 	purple_xfer_request_denied(xfer);
+	purple_xfer_unref(xfer);
 }
 
 static int
