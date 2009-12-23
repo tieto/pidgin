@@ -74,7 +74,7 @@ struct theme_info {
 static GtkWidget *prefs = NULL;
 
 /* Notebook */
-static GtkWidget *prefsnotebook;
+static GtkWidget *prefsnotebook = NULL;
 static int notebook_page = 0;
 
 /* Themes page */
@@ -336,9 +336,24 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	/* Unregister callbacks. */
 	purple_prefs_disconnect_by_handle(prefs);
 
-	prefs = NULL;
+	/* NULL-ify globals */
 	sound_entry = NULL;
+	sound_row_sel = 0;
+	prefs_sound_themes_loading = FALSE;
+
+	prefs_sound_themes = NULL;
+	prefs_blist_themes = NULL;
+	prefs_status_icon_themes = NULL;
+	prefs_smiley_themes = NULL;
+
+	prefs_sound_themes_combo_box = NULL;
+	prefs_blist_themes_combo_box = NULL;
+	prefs_status_themes_combo_box = NULL;
+	prefs_smiley_themes_combo_box = NULL;
+
 	notebook_page = 0;
+	prefsnotebook = NULL;
+	prefs = NULL;
 }
 
 static gchar *
