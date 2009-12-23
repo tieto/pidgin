@@ -76,7 +76,6 @@ static GtkWidget *prefsnotebook;
 static GtkWidget *sound_entry = NULL;
 
 static GtkWidget *prefs = NULL;
-static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
 
 static GtkListStore *prefs_sound_themes;
@@ -336,7 +335,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 
 	prefs = NULL;
 	sound_entry = NULL;
-	debugbutton = NULL;
 	notebook_page = 0;
 }
 
