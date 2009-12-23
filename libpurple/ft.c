@@ -268,14 +268,16 @@ static void
 purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 {
 	PurpleXfer *xfer;
+	PurpleXferType type;
 	struct stat st;
 	gchar *dir;
 
 	xfer = (PurpleXfer *)user_data;
+	type = purple_xfer_get_type(xfer);
 
 	if (g_stat(filename, &st) != 0) {
 		/* File not found. */
-		if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
+		if (type == PURPLE_XFER_RECEIVE) {
 #ifndef _WIN32
 			int mode = W_OK;
 #else
@@ -300,16 +302,14 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 			purple_xfer_request_denied(xfer);
 		}
 	}
-	else if ((purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) &&
-			 (st.st_size == 0)) {
+	else if ((type == PURPLE_XFER_SEND) && (st.st_size == 0)) {
 
 		purple_notify_error(NULL, NULL,
 						  _("Cannot send a file of 0 bytes."), NULL);
 
 		purple_xfer_request_denied(xfer);
 	}
-	else if ((purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) &&
-			 S_ISDIR(st.st_mode)) {
+	else if ((type == PURPLE_XFER_SEND) && S_ISDIR(st.st_mode)) {
 		/*
 		 * XXX - Sending a directory should be valid for some protocols.
 		 */
@@ -318,8 +318,7 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 
 		purple_xfer_request_denied(xfer);
 	}
-	else if ((purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) &&
-			 S_ISDIR(st.st_mode)) {
+	else if ((type == PURPLE_XFER_RECEIVE) && S_ISDIR(st.st_mode)) {
 		char *msg, *utf8;
 		utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
 		msg = g_strdup_printf(
