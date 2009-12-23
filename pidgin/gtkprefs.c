@@ -70,14 +70,14 @@ struct theme_info {
 	gchar *original_name;
 };
 
-static int sound_row_sel = 0;
-static GtkWidget *prefsnotebook;
-
-static GtkWidget *sound_entry = NULL;
-
+/* Main dialog */
 static GtkWidget *prefs = NULL;
+
+/* Notebook */
+static GtkWidget *prefsnotebook;
 static int notebook_page = 0;
 
+/* Themes page */
 static GtkListStore *prefs_sound_themes;
 static GtkListStore *prefs_blist_themes;
 static GtkListStore *prefs_status_icon_themes;
@@ -88,6 +88,9 @@ static GtkWidget *prefs_blist_themes_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
 static GtkWidget *prefs_smiley_themes_combo_box;
 
+/* Sound theme specific */
+static GtkWidget *sound_entry = NULL;
+static int sound_row_sel = 0;
 static gboolean prefs_sound_themes_loading;
 
 /*
