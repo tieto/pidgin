@@ -328,6 +328,23 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 		g_free(msg);
 		purple_xfer_request_denied(xfer);
 	}
+	else if (type == PURPLE_XFER_SEND) {
+#ifndef _WIN32
+		int mode = R_OK;
+#else
+		int mode = F_OK;
+#endif
+
+		if (g_access(filename, mode) == 0) {
+			purple_xfer_request_accepted(xfer, filename);
+		} else {
+			purple_xfer_ref(xfer);
+			purple_notify_message(
+				NULL, PURPLE_NOTIFY_MSG_ERROR, NULL,
+				_("File is not readable."), NULL,
+				(PurpleNotifyCloseCallback)purple_xfer_choose_file, xfer);
+		}
+	}
 	else {
 		purple_xfer_request_accepted(xfer, filename);
 	}
