@@ -2860,7 +2860,7 @@ pidgin_prefs_init(void)
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/smileys/theme", "Default");
 
 	/* Smiley Callbacks */
-	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
+	purple_prefs_connect_callback(&prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
 								smiley_theme_pref_cb, NULL);
 
 	pidgin_prefs_update_old();
