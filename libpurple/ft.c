@@ -109,6 +109,10 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 		ui_ops->new_xfer(xfer);
 
 	xfers = g_list_prepend(xfers, xfer);
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("xfer", "new %p [%d]\n", xfer, xfer->ref);
+
 	return xfer;
 }
 
@@ -118,6 +122,9 @@ purple_xfer_destroy(PurpleXfer *xfer)
 	PurpleXferUiOps *ui_ops;
 
 	g_return_if_fail(xfer != NULL);
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("xfer", "destroyed %p [%d]\n", xfer, xfer->ref);
 
 	/* Close the file browser, if it's open */
 	purple_request_close_with_handle(xfer);
@@ -148,6 +155,9 @@ purple_xfer_ref(PurpleXfer *xfer)
 	g_return_if_fail(xfer != NULL);
 
 	xfer->ref++;
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("xfer", "ref'd %p [%d]\n", xfer, xfer->ref);
 }
 
 void
@@ -157,6 +167,9 @@ purple_xfer_unref(PurpleXfer *xfer)
 	g_return_if_fail(xfer->ref > 0);
 
 	xfer->ref--;
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("xfer", "unref'd %p [%d]\n", xfer, xfer->ref);
 
 	if (xfer->ref == 0)
 		purple_xfer_destroy(xfer);
