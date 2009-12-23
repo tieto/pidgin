@@ -78,11 +78,6 @@ static GtkWidget *prefsnotebook = NULL;
 static int notebook_page = 0;
 
 /* Themes page */
-static GtkListStore *prefs_sound_themes;
-static GtkListStore *prefs_blist_themes;
-static GtkListStore *prefs_status_icon_themes;
-static GtkListStore *prefs_smiley_themes;
-
 static GtkWidget *prefs_sound_themes_combo_box;
 static GtkWidget *prefs_blist_themes_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
@@ -92,6 +87,12 @@ static GtkWidget *prefs_smiley_themes_combo_box;
 static GtkWidget *sound_entry = NULL;
 static int sound_row_sel = 0;
 static gboolean prefs_sound_themes_loading;
+
+/* These exist outside the lifetime of the prefs dialog */
+static GtkListStore *prefs_sound_themes;
+static GtkListStore *prefs_blist_themes;
+static GtkListStore *prefs_status_icon_themes;
+static GtkListStore *prefs_smiley_themes;
 
 /*
  * PROTOTYPES
@@ -340,11 +341,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	sound_entry = NULL;
 	sound_row_sel = 0;
 	prefs_sound_themes_loading = FALSE;
-
-	prefs_sound_themes = NULL;
-	prefs_blist_themes = NULL;
-	prefs_status_icon_themes = NULL;
-	prefs_smiley_themes = NULL;
 
 	prefs_sound_themes_combo_box = NULL;
 	prefs_blist_themes_combo_box = NULL;
