@@ -312,7 +312,7 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 		}
 		else {
 			purple_xfer_show_file_error(xfer, filename);
-			purple_xfer_request_denied(xfer);
+			purple_xfer_cancel_local(xfer);
 		}
 	}
 	else if ((type == PURPLE_XFER_SEND) && (st.st_size == 0)) {
@@ -320,7 +320,7 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 		purple_notify_error(NULL, NULL,
 						  _("Cannot send a file of 0 bytes."), NULL);
 
-		purple_xfer_request_denied(xfer);
+		purple_xfer_cancel_local(xfer);
 	}
 	else if ((type == PURPLE_XFER_SEND) && S_ISDIR(st.st_mode)) {
 		/*
@@ -329,7 +329,7 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 		purple_notify_error(NULL, NULL,
 						  _("Cannot send a directory."), NULL);
 
-		purple_xfer_request_denied(xfer);
+		purple_xfer_cancel_local(xfer);
 	}
 	else if ((type == PURPLE_XFER_RECEIVE) && S_ISDIR(st.st_mode)) {
 		char *msg, *utf8;
@@ -371,7 +371,10 @@ purple_xfer_choose_file_cancel_cb(void *user_data, const char *filename)
 	PurpleXfer *xfer = (PurpleXfer *)user_data;
 
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_LOCAL);
-	purple_xfer_request_denied(xfer);
+	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND)
+		purple_xfer_cancel_local(xfer);
+	else
+		purple_xfer_request_denied(xfer);
 	purple_xfer_unref(xfer);
 }
 
