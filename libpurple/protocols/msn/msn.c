@@ -345,17 +345,23 @@ static void
 msn_show_set_friendly_name(PurplePluginAction *action)
 {
 	PurpleConnection *gc;
+	PurpleAccount *account;
+	char *tmp;
 
 	gc = (PurpleConnection *) action->context;
+	account = purple_connection_get_account(gc);
 
-	purple_request_input(gc, NULL, _("Set your friendly name."),
+	tmp = g_strdup_printf(_("Set friendly name for %s."),
+	                      purple_account_get_username(account));
+	purple_request_input(gc, _("Set your friendly name."), tmp,
 					   _("This is the name that other MSN buddies will "
 						 "see you as."),
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_act_id),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   account, NULL, NULL,
 					   gc);
+	g_free(tmp);
 }
 
 static void
