@@ -2502,6 +2502,8 @@ AC_OUTPUT([Makefile
 		   pidgin/Makefile
 		   pidgin/pidgin.pc
 		   pidgin/pidgin-uninstalled.pc
+		   pidgin/pidgin-2.pc
+		   pidgin/pidgin-2-uninstalled.pc
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
@@ -2519,6 +2521,8 @@ AC_OUTPUT([Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple.pc
 		   libpurple/purple-uninstalled.pc
+		   libpurple/purple-2.pc
+		   libpurple/purple-2-uninstalled.pc
 		   libpurple/plugins/Makefile
 		   libpurple/plugins/mono/Makefile
 		   libpurple/plugins/mono/api/Makefile
