@@ -812,6 +812,10 @@ Or use --disable-vv if you do not need voice/video support.
 fi
 AM_CONDITIONAL(USE_VV, test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farsight" != "xno")
 
+dnl #######################################################################
+dnl # Check for Internationalized Domain Name support
+dnl #######################################################################
+
 AC_ARG_ENABLE(idn,
 	[AC_HELP_STRING([--disable-idn], [compile without IDN support])],
 	[enable_idn="$enableval" force_idn=$enableval], [enable_idn="yes" force_idn=no])

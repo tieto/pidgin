@@ -70,26 +70,32 @@ struct theme_info {
 	gchar *original_name;
 };
 
-static int sound_row_sel = 0;
-static GtkWidget *prefsnotebook;
-
-static GtkWidget *sound_entry = NULL;
-
+/* Main dialog */
 static GtkWidget *prefs = NULL;
-static GtkWidget *debugbutton = NULL;
+
+/* Notebook */
+static GtkWidget *prefsnotebook = NULL;
 static int notebook_page = 0;
 
-static GtkListStore *prefs_sound_themes;
-static GtkListStore *prefs_blist_themes;
-static GtkListStore *prefs_status_icon_themes;
-static GtkListStore *prefs_smiley_themes;
+/* Conversations page */
+static GtkWidget *sample_imhtml = NULL;
 
+/* Themes page */
 static GtkWidget *prefs_sound_themes_combo_box;
 static GtkWidget *prefs_blist_themes_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
 static GtkWidget *prefs_smiley_themes_combo_box;
 
+/* Sound theme specific */
+static GtkWidget *sound_entry = NULL;
+static int sound_row_sel = 0;
 static gboolean prefs_sound_themes_loading;
+
+/* These exist outside the lifetime of the prefs dialog */
+static GtkListStore *prefs_sound_themes;
+static GtkListStore *prefs_blist_themes;
+static GtkListStore *prefs_status_icon_themes;
+static GtkListStore *prefs_smiley_themes;
 
 /*
  * PROTOTYPES
@@ -334,10 +340,21 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	/* Unregister callbacks. */
 	purple_prefs_disconnect_by_handle(prefs);
 
-	prefs = NULL;
+	/* NULL-ify globals */
 	sound_entry = NULL;
-	debugbutton = NULL;
+	sound_row_sel = 0;
+	prefs_sound_themes_loading = FALSE;
+
+	prefs_sound_themes_combo_box = NULL;
+	prefs_blist_themes_combo_box = NULL;
+	prefs_status_themes_combo_box = NULL;
+	prefs_smiley_themes_combo_box = NULL;
+
+	sample_imhtml = NULL;
+
 	notebook_page = 0;
+	prefsnotebook = NULL;
+	prefs = NULL;
 }
 
 static gchar *
@@ -949,6 +966,7 @@ prefs_set_smiley_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_smiley_themes), &new_iter, 2, &new_theme, -1);
 
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", new_theme);
+		pidgin_themes_smiley_themeize(sample_imhtml);
 
 		g_free(new_theme);
 	}
@@ -1535,7 +1553,7 @@ conv_page(void)
 					 G_CALLBACK(formatting_toggle_cb), toolbar);
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_clear",
 					 G_CALLBACK(formatting_clear_cb), NULL);
-
+	sample_imhtml = imhtml;
 
 	gtk_widget_show(ret);
 
@@ -2835,7 +2853,7 @@ pidgin_prefs_init(void)
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/smileys/theme", "Default");
 
 	/* Smiley Callbacks */
-	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
+	purple_prefs_connect_callback(&prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
 								smiley_theme_pref_cb, NULL);
 
 	pidgin_prefs_update_old();

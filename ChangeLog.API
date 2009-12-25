@@ -28,6 +28,12 @@ version 2.7.0 (??/??/????):
 		* gtk_imhtmltoolbar_switch_active_conversation
 
 version 2.6.5 (??/??/20??):
+	libpurple:
+		Changed:
+		* purple_xfer_cancel_local is now called instead of
+		  purple_xfer_request_denied if an error is found when selecting
+		  a file to send. Request denied is still used when a receive
+		  request is not allowed.
 
 version 2.6.4 (11/29/2009):
 	No changes
