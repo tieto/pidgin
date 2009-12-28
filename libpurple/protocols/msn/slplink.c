@@ -669,7 +669,7 @@ typedef struct
 #define MAX_FILE_NAME_LEN 0x226
 
 static gchar *
-gen_context(const char *file_name, const char *file_path)
+gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 {
 	struct stat st;
 	gsize size = 0;
@@ -683,7 +683,10 @@ gen_context(const char *file_name, const char *file_path)
 	glong uni_len = 0;
 	gsize len;
 
-	if (g_stat(file_path, &st) == 0)
+	if (xfer)
+		size = purple_xfer_get_size(xfer);
+
+	if (size == 0 && g_stat(file_path, &st) == 0)
 		size = st.st_size;
 
 	if(!file_name) {
@@ -761,7 +764,7 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 
 	xfer->data = slpcall;
 
-	context = gen_context(fn, fp);
+	context = gen_context(xfer, fn, fp);
 
 	msn_slpcall_invite(slpcall, MSN_FT_GUID, 2, context);
 
