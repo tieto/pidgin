@@ -325,30 +325,29 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		}
 		msn_object_destroy(obj);
 
-		if (img == NULL)
-		{
+		if (img != NULL) {
+			/* DATA PREP */
+			slpmsg = msn_slpmsg_new(slplink);
+			slpmsg->slpcall = slpcall;
+			slpmsg->session_id = slpcall->session_id;
+			msn_slpmsg_set_body(slpmsg, NULL, 4);
+			slpmsg->info = "SLP DATA PREP";
+			msn_slplink_queue_slpmsg(slplink, slpmsg);
+
+			/* DATA */
+			slpmsg = msn_slpmsg_new(slplink);
+			slpmsg->slpcall = slpcall;
+			slpmsg->flags = 0x20;
+			slpmsg->info = "SLP DATA";
+			msn_slpmsg_set_image(slpmsg, img);
+			msn_slplink_queue_slpmsg(slplink, slpmsg);
+			purple_imgstore_unref(img);
+
+			accepted = TRUE;
+
+		} else {
 			purple_debug_error("msn", "Wrong object.\n");
-			return;
 		}
-
-		/* DATA PREP */
-		slpmsg = msn_slpmsg_new(slplink);
-		slpmsg->slpcall = slpcall;
-		slpmsg->session_id = slpcall->session_id;
-		msn_slpmsg_set_body(slpmsg, NULL, 4);
-		slpmsg->info = "SLP DATA PREP";
-		msn_slplink_queue_slpmsg(slplink, slpmsg);
-
-		/* DATA */
-		slpmsg = msn_slpmsg_new(slplink);
-		slpmsg->slpcall = slpcall;
-		slpmsg->flags = 0x20;
-		slpmsg->info = "SLP DATA";
-		msn_slpmsg_set_image(slpmsg, img);
-		msn_slplink_queue_slpmsg(slplink, slpmsg);
-		purple_imgstore_unref(img);
-
-		accepted = TRUE;
 	}
 
 	else if (!strcmp(euf_guid, MSN_FT_GUID))
