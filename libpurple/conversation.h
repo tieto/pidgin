@@ -368,7 +368,8 @@ extern "C" {
  * @param type    The type of conversation.
  * @param account The account opening the conversation window on the purple
  *                user's end.
- * @param name    The name of the conversation.
+ * @param name    The name of the conversation.  For PURPLE_CONV_TYPE_IM,
+ *                this is the name of the buddy.
  *
  * @return The new conversation.
  */
