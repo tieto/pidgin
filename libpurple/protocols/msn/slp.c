@@ -276,6 +276,38 @@ send_decline(MsnSlpCall *slpcall, const char *branch,
 	msn_slplink_queue_slpmsg(slplink, slpmsg);
 }
 
+/* XXX: this could be improved if we tracked custom smileys
+ * per-protocol, per-account, per-session or (ideally) per-conversation
+ */
+static PurpleStoredImage *
+find_valid_emoticon(PurpleAccount *account, const char *path)
+{
+	GList *smileys;
+
+	if (!purple_account_get_bool(account, "custom_smileys", TRUE))
+		return NULL;
+
+	smileys = purple_smileys_get_all();
+
+	for (; smileys; smileys = g_list_delete_link(smileys, smileys)) {
+		PurpleSmiley *smiley;
+		PurpleStoredImage *img;
+
+		smiley = smileys->data;
+		img = purple_smiley_get_stored_image(smiley);
+
+		if (purple_strequal(path, purple_imgstore_get_filename(img))) {
+			g_list_free(smileys);
+			return img;
+		}
+
+		purple_imgstore_unref(img);
+	}
+
+	purple_debug_error("msn", "Received illegal request for file %s\n", path);
+	return NULL;
+}
+
 #define MAX_FILE_NAME_LEN 0x226
 
 static void
@@ -313,11 +345,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		g_free(msnobj_data);
 
 		if (type == MSN_OBJECT_EMOTICON) {
-			char *path;
-			path = g_build_filename(purple_smileys_get_storing_dir(),
-					obj->location, NULL);
-			img = purple_imgstore_new_from_file(path);
-			g_free(path);
+			img = find_valid_emoticon(slplink->session->account, obj->location);
 		} else if (type == MSN_OBJECT_USERTILE) {
 			img = msn_object_get_image(obj);
 			if (img)
