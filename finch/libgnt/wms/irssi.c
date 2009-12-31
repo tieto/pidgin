@@ -33,6 +33,8 @@
 #include <string.h>
 #include <sys/types.h>
 
+#include "gntinternal.h"
+
 #include "gnt.h"
 #include "gntbox.h"
 #include "gntmenu.h"
