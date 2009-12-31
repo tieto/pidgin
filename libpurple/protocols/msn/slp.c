@@ -293,7 +293,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		MsnSlpMessage *slpmsg;
 		MsnObject *obj;
 		char *msnobj_data;
-		PurpleStoredImage *img;
+		PurpleStoredImage *img = NULL;
 		int type;
 
 		/* Send Ok */
@@ -312,20 +312,13 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		type = msn_object_get_type(obj);
 		g_free(msnobj_data);
 
-		if ((type != MSN_OBJECT_USERTILE) && (type != MSN_OBJECT_EMOTICON))
-		{
-			purple_debug_error("msn", "Wrong object?\n");
-			msn_object_destroy(obj);
-			g_return_if_reached();
-		}
-
 		if (type == MSN_OBJECT_EMOTICON) {
 			char *path;
 			path = g_build_filename(purple_smileys_get_storing_dir(),
 					obj->location, NULL);
 			img = purple_imgstore_new_from_file(path);
 			g_free(path);
-		} else {
+		} else if (type == MSN_OBJECT_USERTILE) {
 			img = msn_object_get_image(obj);
 			if (img)
 				purple_imgstore_ref(img);
@@ -335,7 +328,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		if (img == NULL)
 		{
 			purple_debug_error("msn", "Wrong object.\n");
-			g_return_if_reached();
+			return;
 		}
 
 		/* DATA PREP */
