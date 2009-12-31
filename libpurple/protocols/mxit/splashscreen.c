@@ -24,7 +24,6 @@
  */
 
 #include "internal.h"
-#include <glib/gstdio.h>
 
 #include "purple.h"
 #include "imgstore.h"
