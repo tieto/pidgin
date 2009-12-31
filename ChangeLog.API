@@ -7,6 +7,13 @@ version 2.6.5 (??/??/20??):
 		  purple_xfer_request_denied if an error is found when selecting
 		  a file to send. Request denied is still used when a receive
 		  request is not allowed.
+	Perl:
+		Changed:
+		* Corrected the package names for the PurpleProxyType and
+		  PurpleLogReadFlags enums to have the correct number of colons
+		  (from Purple::ProxyType::::<type> to Purple::ProxyType::<type>
+		  and Purple::Log:ReadFlags::::<type> to
+		  Purple::Log::ReadFlags::<type>)  (Chris Foote)
 
 version 2.6.4 (11/29/2009):
 	No changes
