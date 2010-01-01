@@ -671,7 +671,6 @@ typedef struct
 static gchar *
 gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 {
-	struct stat st;
 	gsize size = 0;
 	MsnContextHeader header;
 	gchar *u8 = NULL;
@@ -683,11 +682,7 @@ gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 	glong uni_len = 0;
 	gsize len;
 
-	if (xfer)
-		size = purple_xfer_get_size(xfer);
-
-	if (size == 0 && g_stat(file_path, &st) == 0)
-		size = st.st_size;
+	size = purple_xfer_get_size(xfer);
 
 	if(!file_name) {
 		gchar *basename = g_path_get_basename(file_path);
