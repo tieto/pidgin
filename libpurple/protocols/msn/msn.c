@@ -1543,6 +1543,8 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	const char *bname;
 	MsnAddReqData *data;
+	MsnSession *session;
+	MsnUser *user;
 
 	bname = purple_buddy_get_name(buddy);
 
@@ -1564,12 +1566,18 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	data->buddy = buddy;
 	data->group = group;
 
-	purple_request_input(gc, NULL, _("Authorization Request Message:"),
-	                     NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
-	                     _("_OK"), G_CALLBACK(finish_auth_request),
-	                     _("_Cancel"), G_CALLBACK(cancel_auth_request),
-	                     purple_connection_get_account(gc), bname, NULL,
-	                     data);
+	session = purple_connection_get_protocol_data(gc);
+	user = msn_userlist_find_user(session->userlist, bname);
+	if (user && user->authorized) {
+		finish_auth_request(data, NULL);
+	} else {
+		purple_request_input(gc, NULL, _("Authorization Request Message:"),
+		                     NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
+		                     _("_OK"), G_CALLBACK(finish_auth_request),
+		                     _("_Cancel"), G_CALLBACK(cancel_auth_request),
+		                     purple_connection_get_account(gc), bname, NULL,
+		                     data);
+	}
 }
 
 static void
