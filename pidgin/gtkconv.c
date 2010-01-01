@@ -5493,10 +5493,12 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 	}
 
 	/* Somebody wants to keep this conversation around, so don't time it out */
-	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
-	if (timer) {
-		purple_timeout_remove(timer);
-		purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(0));
+	if (conv) {
+		timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
+		if (timer) {
+			purple_timeout_remove(timer);
+			purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(0));
+		}
 	}
 }
 
