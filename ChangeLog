@@ -19,6 +19,7 @@ version 2.6.5 (??/??/20??):
 	  meaning they can be moved or deleted without complaints from your OS.
 	* Buddies who sign in from a second location will no longer cause an
 	  unnecessary chat window to open.
+	* Support setting an animated GIF as a buddy icon.
 
 	XMPP:
 	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
