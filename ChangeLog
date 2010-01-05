@@ -12,6 +12,10 @@ version 2.6.5 (??/??/20??):
 	* Messages from some mobile clients are no longer displayed as
 	  Chinese characters (broken in 2.6.4)
 
+	Gadu-Gadu:
+	* Fix display of avatars after a server-side change. (Krzysztof
+	  Klinikowski)
+
 	MSN:
 	* File transfer requests will no longer cause a crash if you delete the
 	  file before the other side accepts.
