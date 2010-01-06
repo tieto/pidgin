@@ -7624,15 +7624,23 @@ account_signing_off(PurpleConnection *gc)
 	}
 }
 
+struct _status_timeout_user {
+	gchar *name;
+	PurpleAccount *account;
+};
+
 static gboolean
-update_buddy_status_timeout(PurpleBuddy *buddy)
+update_buddy_status_timeout(struct _status_timeout_user *user)
 {
 	/* To remove the signing-on/off door icon */
 	PurpleConversation *conv;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy->name, buddy->account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, user->name, user->account);
 	if (conv)
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON);
+
+	g_free(user->name);
+	g_free(user);
 
 	return FALSE;
 }
@@ -7642,6 +7650,7 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 {
 	PidginConversation *gtkconv;
 	PurpleConversation *conv;
+	struct _status_timeout_user *user;
 
 	gtkconv = get_gtkconv_with_contact(purple_buddy_get_contact(buddy));
 	if (gtkconv)
@@ -7654,8 +7663,12 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_MENU);
 	}
 
+	user = g_malloc(sizeof(struct _status_timeout_user));
+	user->name = g_strdup(buddy->name);
+	user->account = buddy->account;
+
 	/* In case a conversation is started after the buddy has signed-on/off */
-	purple_timeout_add_seconds(11, (GSourceFunc)update_buddy_status_timeout, buddy);
+	purple_timeout_add_seconds(11, (GSourceFunc)update_buddy_status_timeout, user);
 }
 
 static void
