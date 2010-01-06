@@ -601,7 +601,6 @@ purple_dbus_dispatch_init(void)
 {
 	static DBusObjectPathVTable vtable = {NULL, &purple_dbus_dispatch, NULL, NULL, NULL, NULL};
 	DBusError error;
-	int result;
 
 	dbus_error_init(&error);
 	purple_dbus_connection = dbus_bus_get(DBUS_BUS_STARTER, &error);
@@ -625,16 +624,15 @@ purple_dbus_dispatch_init(void)
 		return;
 	}
 
-	dbus_request_name_reply =
-	result = dbus_bus_request_name(purple_dbus_connection,
+	dbus_request_name_reply = dbus_bus_request_name(purple_dbus_connection,
 			DBUS_SERVICE_PURPLE, 0, &error);
 
 	if (dbus_error_is_set(&error))
 	{
 		dbus_connection_unref(purple_dbus_connection);
-		dbus_error_free(&error);
 		purple_dbus_connection = NULL;
 		init_error = g_strdup_printf(N_("Failed to get serv name: %s"), error.name);
+		dbus_error_free(&error);
 		return;
 	}
 
