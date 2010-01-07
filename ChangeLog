@@ -5,6 +5,10 @@ version 2.6.5 (??/??/20??):
 	General:
 	* Build-time fixes for Solaris.  (Paul Townsend)
 
+	AIM and ICQ:
+	* Messages from some mobile clients are no longer displayed as
+	  Chinese characters (broken in 2.6.4)
+
 	XMPP:
 	* Do not crash when attempting to register for a new account on Windows.
 

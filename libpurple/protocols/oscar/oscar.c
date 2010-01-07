@@ -457,10 +457,10 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcebn,
 		charsetstr1 = "ASCII";
 		charsetstr2 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	} else if (charset == 0x000d) {
-		/* iChat sending unicode over a Direct IM connection = Unicode */
-		/* Mobile AIM client on a Nokia 3100 and an LG VX6000 = ISO-8859-1 */
-		charsetstr1 = "UTF-16BE";
-		charsetstr2 = "UTF-8";
+		/* iChat sending unicode over a Direct IM connection = UTF-8 */
+		/* Mobile AIM client on multiple devices (including Blackberry Tour, Nokia 3100, and LG VX6000) = ISO-8859-1 */
+		charsetstr1 = "UTF-8";
+		charsetstr2 = "ISO-8859-1";
 		charsetstr3 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	} else {
 		/* Unknown, hope for valid UTF-8... */
