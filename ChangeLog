@@ -2,6 +2,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.5 (??/??/20??):
+	General:
+	* Build-time fixes for Solaris.  (Paul Townsend)
+
 	XMPP:
 	* Do not crash when attempting to register for a new account on Windows.
 
