@@ -11,6 +11,8 @@ version 2.6.5 (??/??/20??):
 
 	XMPP:
 	* Do not crash when attempting to register for a new account on Windows.
+	* Fix file transfer with clients that do not support Entity Capabilities
+	  (e.g. Spark)
 
 version 2.6.4 (11/29/2009):
 	libpurple:
