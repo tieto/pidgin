@@ -27,11 +27,11 @@ check_libpurple_CFLAGS=\
 		-DBUILDDIR=\"$(top_builddir)\"
 
 check_libpurple_LDADD=\
-        @CHECK_LIBS@ \
-		$(GLIB_LIBS) \
 		$(top_builddir)/libpurple/protocols/jabber/libjabber.la \
 		$(top_builddir)/libpurple/protocols/qq/libqq.la \
 		$(top_builddir)/libpurple/protocols/yahoo/libymsg.la \
-		$(top_builddir)/libpurple/libpurple.la
+		$(top_builddir)/libpurple/libpurple.la \
+        @CHECK_LIBS@ \
+		$(GLIB_LIBS)
 
 endif

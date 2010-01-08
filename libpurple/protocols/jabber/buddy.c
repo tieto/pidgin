@@ -823,7 +823,8 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			const gchar *title = NULL;
 			if (is_domain) {
 				title = _("Uptime");
-				message = g_strdup_printf(_("%s"), last);
+				message = last;
+				last = NULL;
 			} else {
 				title = _("Logged Off");
 				message = g_strdup_printf(_("%s ago"), last);
