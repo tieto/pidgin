@@ -343,7 +343,6 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		obj = msn_object_new_from_string(msnobj_data);
 		type = msn_object_get_type(obj);
 		g_free(msnobj_data);
-
 		if (type == MSN_OBJECT_EMOTICON) {
 			img = find_valid_emoticon(slplink->session->account, obj->location);
 		} else if (type == MSN_OBJECT_USERTILE) {

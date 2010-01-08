@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.5 (??/??/20??):
+version 2.6.6 (??/??/2010):
 	libpurple:
 		Changed:
 		* purple_xfer_cancel_local is now called instead of
@@ -14,6 +14,9 @@ version 2.6.5 (??/??/20??):
 		  (from Purple::ProxyType::::<type> to Purple::ProxyType::<type>
 		  and Purple::Log:ReadFlags::::<type> to
 		  Purple::Log::ReadFlags::<type>)  (Chris Foote)
+
+version 2.6.5 (01/08/2010):
+	No changes
 
 version 2.6.4 (11/29/2009):
 	No changes
