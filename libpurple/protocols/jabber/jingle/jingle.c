@@ -29,16 +29,12 @@
 #include "content.h"
 #include "debug.h"
 #include "jingle.h"
-#include <string.h>
 #include "session.h"
 #include "iceudp.h"
 #include "rawudp.h"
 #include "rtp.h"
 
-#ifdef USE_VV
-#include <gst/farsight/fs-conference-iface.h>
-#include <gst/farsight/fs-element-added-notifier.h>
-#endif
+#include <string.h>
 
 GType
 jingle_get_type(const gchar *type)
