@@ -13,6 +13,10 @@ version 2.6.5 (01/07/2010):
 	* Messages from some mobile clients are no longer displayed as
 	  Chinese characters (broken in 2.6.4)
 
+	MSN:
+	* Fix an issue allowing a remote user to download arbitrary files from
+	  a libpurple client.  (CVE-2010-0013)
+
 	XMPP:
 	* Do not crash when attempting to register for a new account on Windows.
 	* Fix file transfer with clients that do not support Entity Capabilities
