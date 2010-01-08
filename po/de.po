@@ -2,7 +2,7 @@
 # Pidgin German translation
 # Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
-# Copyright (C) 2002-2009, Björn Voigt <bjoern@cs.tu-berlin.de>,
+# Copyright (C) 2002-2010, Björn Voigt <bjoern@cs.tu-berlin.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-06 09:43+0100\n"
-"PO-Revision-Date: 2010-01-06 09:39+0100\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2010-01-08 16:32+0100\n"
+"PO-Revision-Date: 2010-01-08 16:30+0100\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3868,11 +3868,9 @@ msgstr "SASL-Authentifizierung fehlgeschlagen"
 msgid "SASL error: %s"
 msgstr "SASL-Fehler: %s"
 
-#, fuzzy
 msgid "Unable to canonicalize username"
 msgstr "Benutzername konnte nicht in Normalform gebracht werden"
 
-#, fuzzy
 msgid "Unable to canonicalize password"
 msgstr "Passwort konnte nicht in Normalform gebracht werden"
 
