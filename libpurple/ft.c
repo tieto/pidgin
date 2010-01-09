@@ -131,7 +131,6 @@ static void
 purple_xfer_destroy(PurpleXfer *xfer)
 {
 	PurpleXferUiOps *ui_ops;
-	PurpleXferPrivData *priv;
 
 	g_return_if_fail(xfer != NULL);
 
