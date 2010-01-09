@@ -1,3 +1,12 @@
+pidgin (2.6.5-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/patches/CVE-2010-0013.patch:
+    - Fix MSN local file disclosure vulnerability (Closes: #563206)
+      (CVE-2010-0013) 
+
+ -- Ari Pollak <ari@debian.org>  Sat, 09 Jan 2010 14:13:53 -0500
+
 pidgin (2.6.4-1) unstable; urgency=low
 
   * New upstream release

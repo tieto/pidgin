@@ -22,6 +22,7 @@
 
 /* Stuff brutally ripped from Gflib */
 
+#include "gntinternal.h"
 #include "gntwidget.h"
 #include "gntstyle.h"
 #include "gntmarshal.h"
