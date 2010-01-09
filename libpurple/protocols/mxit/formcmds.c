@@ -23,8 +23,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <string.h>
-#include <glib.h>
+
+#include "internal.h"
 #include <glib/gprintf.h>
 
 #include "purple.h"
@@ -216,7 +216,7 @@ static void command_clearscreen(struct MXitSession* session, const char* from)
 
     conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, session->acc);
     if (conv == NULL) {
-        purple_debug_error(MXIT_PLUGIN_ID, "Conversation with '%s' not found\n", from);
+        purple_debug_error(MXIT_PLUGIN_ID, _( "Conversation with '%s' not found\n" ), from);
         return;
     }
 
@@ -239,12 +239,10 @@ static void command_reply(struct RXMsgData* mx, GHashTable* hash)
 	replymsg = g_hash_table_lookup(hash, "replymsg");		/* find the reply message */
 	if ((selmsg) && (replymsg)) {
 		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
-		gchar*	replytext = g_markup_escape_text(purple_url_decode(replymsg), -1);
 
-		mxit_add_html_link( mx, replytext, seltext );
+		mxit_add_html_link( mx, purple_url_decode(replymsg), seltext );
 
 		g_free(seltext);
-		g_free(replytext);
 	}
 }
 
@@ -268,7 +266,7 @@ static void command_platformreq(GHashTable* hash, GString* msg)
 
 	dest = g_hash_table_lookup(hash, "dest");				/* find the destination */
 	if (dest) {
-		g_string_append_printf(msg, "<a href=\"%s\">%s</a>", purple_url_decode(dest), (text) ? text : "Download");		/* add link to display message */
+		g_string_append_printf(msg, "<a href=\"%s\">%s</a>", purple_url_decode(dest), (text) ? text : _( "Download" ));		/* add link to display message */
 	}
 
 	if (text)
@@ -333,7 +331,7 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
 	reply = g_hash_table_lookup(hash, "replymsg");
 	if (reply) {
 		g_string_append_printf(msg, "\n");
-		mxit_add_html_link(mx, reply, "click here");
+		mxit_add_html_link(mx, reply, _( "click here" ));
 	}
 }
 
@@ -345,7 +343,6 @@ static void command_image(struct RXMsgData* mx, GHashTable* hash, GString* msg)
  *  @param message			The message text
  *  @return					The length of the command
  */
-//void mxit_command_received(struct MXitSession* session, const char* from, char* message, time_t timestamp)
 int mxit_parse_command(struct RXMsgData* mx, char* message)
 {
 	GHashTable* hash	= NULL;

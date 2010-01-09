@@ -23,10 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include	<stdio.h>
-#include	<unistd.h>
-#include	<string.h>
-
+#include    "internal.h"
 #include	"purple.h"
 #include	"protocol.h"
 #include	"mxit.h"
@@ -576,18 +573,17 @@ void mxit_chunk_parse_cr( char* chunkdata, int datalen, struct cr_chunk* cr )
 
 	/* parse the resource chunks */
 	while ( chunklen > 0 ) {
-		struct raw_chunk* chunkhdr = ( struct raw_chunk * ) &chunkdata[pos];
-		chunkhdr->length = ntohl( chunkhdr->length );		/* host byte-order */
+		gchar* chunk = &chunkdata[pos];
 
 		/* start of chunk data */
-		pos += sizeof( struct raw_chunk );
+		pos += MXIT_CHUNK_HEADER_SIZE;
 
-		switch ( chunkhdr->type ) {
+		switch ( chunk_type( chunk ) ) {
 			case CP_CHUNK_SPLASH :			/* splash image */
 				{
 					struct splash_chunk* splash = g_new0( struct splash_chunk, 1 );
 
-					mxit_chunk_parse_splash( &chunkdata[pos], chunkhdr->length, splash );
+					mxit_chunk_parse_splash( &chunkdata[pos], chunk_length( chunk ), splash );
 
 					cr->resources = g_list_append( cr->resources, splash );
 					break;
@@ -600,12 +596,12 @@ void mxit_chunk_parse_cr( char* chunkdata, int datalen, struct cr_chunk* cr )
 					break;
 				}
 			default:
-				purple_debug_info( MXIT_PLUGIN_ID, "Unsupported custom resource chunk received (%i)\n", chunkhdr->type );
+				purple_debug_info( MXIT_PLUGIN_ID, "Unsupported custom resource chunk received (%i)\n", chunk_type( chunk) );
 		}
 
 		/* skip over data to next resource chunk */
-		pos += chunkhdr->length;
-		chunklen -= ( sizeof( struct raw_chunk ) + chunkhdr->length );
+		pos += chunk_length( chunk );
+		chunklen -= ( MXIT_CHUNK_HEADER_SIZE + chunk_length( chunk ) );
 	}
 }
 

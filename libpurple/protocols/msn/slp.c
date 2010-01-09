@@ -126,22 +126,60 @@ msn_xfer_cancel(PurpleXfer *xfer)
 			g_free(content);
 			msn_slplink_send_queued_slpmsgs(slpcall->slplink);
 
-			msn_slpcall_destroy(slpcall);
+			if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND)
+				slpcall->wasted = TRUE;
+			else
+				msn_slpcall_destroy(slpcall);
 		}
 	}
 }
 
-void
-msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize len, gsize offset)
+gssize
+msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer)
 {
-	PurpleXfer *xfer;
+	MsnSlpCall *slpcall;
 
-	xfer = slpcall->xfer;
+	g_return_val_if_fail(xfer != NULL, -1);
+	g_return_val_if_fail(data != NULL, -1);
+	g_return_val_if_fail(len > 0, -1);
 
-	xfer->bytes_sent = (offset + len);
-	xfer->bytes_remaining = total_length - (offset + len);
+	g_return_val_if_fail(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND, -1);
 
-	purple_xfer_update_progress(xfer);
+	slpcall = xfer->data;
+	/* Not sure I trust it'll be there */
+	g_return_val_if_fail(slpcall != NULL, -1);
+
+	g_return_val_if_fail(slpcall->xfer_msg != NULL, -1);
+
+	slpcall->u.outgoing.len = len;
+	slpcall->u.outgoing.data = data;
+	msn_slplink_send_msgpart(slpcall->slplink, slpcall->xfer_msg);
+	return MIN(1202, len);
+}
+
+gssize
+msn_xfer_read(guchar **data, PurpleXfer *xfer)
+{
+	MsnSlpCall *slpcall;
+	gsize len;
+
+	g_return_val_if_fail(xfer != NULL, -1);
+	g_return_val_if_fail(data != NULL, -1);
+
+	g_return_val_if_fail(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE, -1);
+
+	slpcall = xfer->data;
+	/* Not sure I trust it'll be there */
+	g_return_val_if_fail(slpcall != NULL, -1);
+
+	/* Just pass up the whole GByteArray. We'll make another. */
+	*data = slpcall->u.incoming_data->data;
+	len = slpcall->u.incoming_data->len;
+
+	g_byte_array_free(slpcall->u.incoming_data, FALSE);
+	slpcall->u.incoming_data = g_byte_array_new();
+
+	return len;
 }
 
 void
@@ -332,9 +370,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		account = slpcall->slplink->session->account;
 
-		slpcall->cb = msn_xfer_completed_cb;
 		slpcall->end_cb = msn_xfer_end_cb;
-		slpcall->progress_cb = msn_xfer_progress_cb;
 		slpcall->branch = g_strdup(branch);
 
 		slpcall->pending = TRUE;
@@ -357,6 +393,10 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			purple_xfer_set_init_fnc(xfer, msn_xfer_init);
 			purple_xfer_set_request_denied_fnc(xfer, msn_xfer_cancel);
 			purple_xfer_set_cancel_recv_fnc(xfer, msn_xfer_cancel);
+			purple_xfer_set_read_fnc(xfer, msn_xfer_read);
+			purple_xfer_set_write_fnc(xfer, msn_xfer_write);
+
+			slpcall->u.incoming_data = g_byte_array_new();
 
 			slpcall->xfer = xfer;
 			purple_xfer_ref(slpcall->xfer);

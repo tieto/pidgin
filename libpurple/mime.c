@@ -21,11 +21,6 @@
  * USA.
  */
 
-#include <stdio.h>
-#include <string.h>
-
-#include <glib.h>
-
 #include "internal.h"
 
 /* this should become "util.h" if we ever get this into purple proper */

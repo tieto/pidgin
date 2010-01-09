@@ -574,6 +574,8 @@ int main(int argc, char *argv[])
 	/* Initialize GThread before calling any Glib or GTK+ functions. */
 	g_thread_init(NULL);
 
+	g_set_prgname("Pidgin");
+
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");

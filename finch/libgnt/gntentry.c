@@ -23,6 +23,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "gntinternal.h"
 #include "gntbox.h"
 #include "gntentry.h"
 #include "gntmarshal.h"
@@ -284,7 +285,7 @@ gnt_entry_draw(GntWidget *widget)
 				g_utf8_pointer_to_offset(entry->scroll, entry->end));
 	}
 	else
-		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
+		mvwprintw(widget->window, 0, 0, "%s", C_(entry->scroll));
 
 	stop = gnt_util_onscreen_width(entry->scroll, entry->end);
 	if (stop < widget->priv.width)

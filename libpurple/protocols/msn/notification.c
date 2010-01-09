@@ -1408,6 +1408,7 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 				purple_connection_set_display_name(
 					purple_account_get_connection(session->account),
 					friendlyname);
+				purple_account_set_string(session->account, "display-name", friendlyname);
 			}
 		}
 	}

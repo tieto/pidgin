@@ -144,7 +144,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mk mn my_MM nb ne nl nn oc pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
+ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mk mn ms_MY my_MM nb ne nl nn oc pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -812,6 +812,10 @@ Or use --disable-vv if you do not need voice/video support.
 fi
 AM_CONDITIONAL(USE_VV, test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farsight" != "xno")
 
+dnl #######################################################################
+dnl # Check for Internationalized Domain Name support
+dnl #######################################################################
+
 AC_ARG_ENABLE(idn,
 	[AC_HELP_STRING([--disable-idn], [compile without IDN support])],
 	[enable_idn="$enableval" force_idn=$enableval], [enable_idn="yes" force_idn=no])
@@ -1470,7 +1474,7 @@ if test "_$pythonpath" != _ ; then
 		AC_CHECK_LIB(pthread, pthread_create, )
 		AC_CHECK_LIB(util, openpty, )
 		AC_CHECK_LIB(db, dbopen, )
-		PY_LIBS="-lpython$PY_VERSION -L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config"
+		PY_LIBS="-L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config -lpython$PY_VERSION"
 		PY_CFLAGS="-I$PY_PREFIX/include/python$PY_VERSION"
 		AC_DEFINE(USE_PYTHON, [1], [Define if python headers are available.])
 		AC_MSG_RESULT(ok)
@@ -2267,11 +2271,15 @@ AC_SUBST(SASL_LIBS)
 AC_ARG_ENABLE(cyrus-sasl, AC_HELP_STRING([--enable-cyrus-sasl], [enable Cyrus SASL support for jabberd]), enable_cyrus_sasl=$enableval, enable_cyrus_sasl=no)
 if test "x$enable_cyrus_sasl" = "xyes" ; then
 	AC_CHECK_LIB(sasl2, sasl_client_init, [
+			AM_CONDITIONAL(USE_CYRUS_SASL, true)
 			AC_DEFINE(HAVE_CYRUS_SASL, [1], [Define to 1 if Cyrus SASL is present])
 			SASL_LIBS=-"lsasl2"
 		], [
+			AM_CONDITIONAL(USE_CYRUS_SASL, false)
 			AC_ERROR(Cyrus SASL library not found)
 		])
+else
+	AM_CONDITIONAL(USE_CYRUS_SASL, false)
 fi
 
 dnl #######################################################################
@@ -2498,6 +2506,8 @@ AC_OUTPUT([Makefile
 		   pidgin/Makefile
 		   pidgin/pidgin.pc
 		   pidgin/pidgin-uninstalled.pc
+		   pidgin/pidgin-2.pc
+		   pidgin/pidgin-2-uninstalled.pc
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
@@ -2515,6 +2525,8 @@ AC_OUTPUT([Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple.pc
 		   libpurple/purple-uninstalled.pc
+		   libpurple/purple-2.pc
+		   libpurple/purple-2-uninstalled.pc
 		   libpurple/plugins/Makefile
 		   libpurple/plugins/mono/Makefile
 		   libpurple/plugins/mono/api/Makefile

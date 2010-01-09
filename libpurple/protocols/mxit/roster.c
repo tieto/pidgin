@@ -23,10 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include	<stdio.h>
-#include	<unistd.h>
-#include	<string.h>
-
+#include    "internal.h"
 #include	"purple.h"
 
 #include	"protocol.h"
@@ -53,11 +50,11 @@ static struct status
 	const char*				name;
 } const mxit_statuses[] = {
 		/*	primative,						no,							id,			name					*/
-		{	PURPLE_STATUS_OFFLINE,			MXIT_PRESENCE_OFFLINE,		"offline",	"Offline"			},	/* 0 */
-		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_ONLINE,		"online",	"Available"			},	/* 1 */
-		{	PURPLE_STATUS_AWAY,				MXIT_PRESENCE_AWAY,			"away",		"Away"				},	/* 2 */
-		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_AVAILABLE,	"chat",		"Chatty"			},	/* 3 */
-		{	PURPLE_STATUS_UNAVAILABLE,		MXIT_PRESENCE_DND,			"dnd",		"Do Not Disturb"	}	/* 4 */
+		{	PURPLE_STATUS_OFFLINE,			MXIT_PRESENCE_OFFLINE,		"offline",	N_( "Offline" )			},	/* 0 */
+		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_ONLINE,		"online",	N_( "Available" )		},	/* 1 */
+		{	PURPLE_STATUS_AWAY,				MXIT_PRESENCE_AWAY,			"away",		N_( "Away" )			},	/* 2 */
+		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_AVAILABLE,	"chat",		N_( "Chatty" )			},	/* 3 */
+		{	PURPLE_STATUS_UNAVAILABLE,		MXIT_PRESENCE_DND,			"dnd",		N_( "Do Not Disturb" )	}	/* 4 */
 };
 
 
@@ -77,7 +74,7 @@ GList* mxit_status_types( PurpleAccount* account )
 		const struct status* status = &mxit_statuses[i];
 
 		/* add mxit status (reference: "libpurple/status.h") */
-		type = purple_status_type_new_with_attrs( status->primative, status->id, status->name, TRUE, TRUE, FALSE,
+		type = purple_status_type_new_with_attrs( status->primative, status->id, _( status->name ), TRUE, TRUE, FALSE,
 					"message", _( "Message" ), purple_value_new( PURPLE_TYPE_STRING ),
 					NULL );
 
@@ -321,7 +318,7 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
 
 		/* create new buddy */
 		buddy = purple_buddy_new( session->acc, contact->username, contact->alias );
-		buddy->proto_data = contact;
+		purple_buddy_set_protocol_data(buddy, contact);
 
 		/* add new buddy to list */
 		purple_blist_add_buddy( buddy, NULL, group, NULL );
@@ -329,13 +326,15 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
 	else {
 		/* buddy was found in the group */
 
+		gpointer data = NULL;
+
 		/* now update the buddy's alias */
 		purple_blist_alias_buddy( buddy, contact->alias );
 
 		/* replace the buddy's contact struct */
-		if ( buddy->proto_data )
-			free( buddy->proto_data );
-		buddy->proto_data = contact;
+		if ( ( data = purple_buddy_get_protocol_data( buddy ) ) )
+			free( data );
+		purple_buddy_set_protocol_data( buddy, contact );
 	}
 
 	/* load buddy's avatar id */
@@ -382,7 +381,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 		return;
 	}
 
-	contact = buddy->proto_data;
+	contact = purple_buddy_get_protocol_data( buddy );
 	if ( !contact )
 		return;
 
@@ -398,7 +397,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 		contact->statusMsg = NULL;
 	}
 	if ( statusMsg[0] != '\0' )
-		contact->statusMsg = g_strdup( statusMsg );	
+		contact->statusMsg = g_markup_escape_text( statusMsg, -1 );
 
 	/* update avatarId */
 	if ( ( contact->avatarId ) && ( g_ascii_strcasecmp( contact->avatarId, avatarId ) == 0 ) ) {
@@ -442,9 +441,12 @@ void mxit_update_blist( struct MXitSession* session )
 	for ( i = 0; i < g_slist_length( list ); i++ ) {
 		buddy = g_slist_nth_data( list, i );
 
-		if ( !buddy->proto_data ) {
+		if ( !purple_buddy_get_protocol_data( buddy ) ) {
+			const gchar *alias = purple_buddy_get_alias( buddy );
+			const gchar *name = purple_buddy_get_name( buddy );
+
 			/* this buddy should be removed, because we did not receive him in our roster update from MXit */
-			purple_debug_info( MXIT_PLUGIN_ID, "Removed 'old' buddy from the blist '%s' (%s)\n", buddy->alias, buddy->name );
+			purple_debug_info( MXIT_PLUGIN_ID, "Removed 'old' buddy from the blist '%s' (%s)\n", alias, name );
 			purple_blist_remove_buddy( buddy );
 		}
 	}
@@ -538,7 +540,7 @@ gboolean is_mxit_chatroom_contact( struct MXitSession* session, const char* user
 		return FALSE;
 	}
 
-	contact = buddy->proto_data;
+	contact = purple_buddy_get_protocol_data( buddy );
 	if ( !contact )
 		return FALSE;
 
@@ -563,10 +565,13 @@ void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* grou
 	GSList*				list	= NULL;
 	PurpleBuddy*		mxbuddy	= NULL;
 	unsigned int		i;
+	const gchar *		buddy_name = purple_buddy_get_name( buddy );
+	const gchar *		buddy_alias = purple_buddy_get_alias( buddy );
+	const gchar *		group_name = purple_group_get_name( group );
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_add_buddy '%s' (group='%s')\n", buddy->name, group->name );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_add_buddy '%s' (group='%s')\n", buddy_name, group_name );
 
-	list = purple_find_buddies( session->acc, buddy->name );
+	list = purple_find_buddies( session->acc, buddy_name );
 	if ( g_slist_length( list ) == 1 ) {
 		purple_debug_info( MXIT_PLUGIN_ID, "mxit_add_buddy (scenario 1) (list:%i)\n", g_slist_length( list ) );
 		/*
@@ -575,7 +580,7 @@ void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* grou
 		 * you accept an invite.  so in that case the user is already
 		 * in our blist and ready to be chatted to.
 		 */
-		mxit_send_invite( session, buddy->name, buddy->alias, group->name );
+		mxit_send_invite( session, buddy_name, buddy_alias, group_name );
 	}
 	else {
 		purple_debug_info( MXIT_PLUGIN_ID, "mxit_add_buddy (scenario 2) (list:%i)\n", g_slist_length( list ) );
@@ -588,17 +593,17 @@ void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* grou
 		for ( i = 0; i < g_slist_length( list ); i++ ) {
 			mxbuddy = g_slist_nth_data( list, i );
 
-			if ( mxbuddy->proto_data != NULL ) {
+			if ( purple_buddy_get_protocol_data( mxbuddy ) != NULL ) {
 				/* this is our REAL MXit buddy! */
 
 				/* now update the buddy's alias */
-				purple_blist_alias_buddy( mxbuddy, buddy->alias );
+				purple_blist_alias_buddy( mxbuddy, buddy_alias );
 
 				/* now update the buddy's group */
 //				mxbuddy = mxit_update_buddy_group( session, mxbuddy, group );
 
 				/* send the update to the MXit server */
-				mxit_send_update_contact( session, mxbuddy->name, mxbuddy->alias, group->name );
+				mxit_send_update_contact( session, purple_buddy_get_name( mxbuddy ), purple_buddy_get_alias( mxbuddy ), group_name );
 			}
 		}
 	}
@@ -626,10 +631,11 @@ void mxit_add_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* grou
 void mxit_remove_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* group )
 {
 	struct MXitSession*	session	= (struct MXitSession*) gc->proto_data;
+	const gchar *		buddy_name = purple_buddy_get_name( buddy );
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_remove_buddy '%s'\n", buddy->name );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_remove_buddy '%s'\n", buddy_name );
 
-	mxit_send_remove( session, buddy->name );
+	mxit_send_remove( session, buddy_name );
 }
 
 
@@ -662,7 +668,7 @@ void mxit_buddy_alias( PurpleConnection* gc, const char* who, const char* alias 
 		return;
 	}
 
-	mxit_send_update_contact( session, who, alias, group->name );
+	mxit_send_update_contact( session, who, alias, purple_group_get_name( group ) );
 }
 
 
@@ -688,7 +694,7 @@ void mxit_buddy_group( PurpleConnection* gc, const char* who, const char* old_gr
 		return;
 	}
 
-	mxit_send_update_contact( session, who, buddy->alias, new_group );
+	mxit_send_update_contact( session, who, purple_buddy_get_alias( buddy ), new_group );
 }
 
 
@@ -707,7 +713,7 @@ void mxit_rename_group( PurpleConnection* gc, const char* old_name, PurpleGroup*
 	PurpleBuddy*		buddy	= NULL;
 	GList*				item	= NULL;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_rename_group from '%s' to '%s\n", old_name, group->name );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_rename_group from '%s' to '%s\n", old_name, purple_group_get_name( group ) );
 
 	//  TODO: Might be more efficient to use the "rename group" command (cmd=29).
 
@@ -715,7 +721,7 @@ void mxit_rename_group( PurpleConnection* gc, const char* old_name, PurpleGroup*
 	item = moved_buddies;
 	while ( item ) {
 		buddy = item->data;
-		mxit_send_update_contact( session, buddy->name, buddy->alias, group->name );
+		mxit_send_update_contact( session, purple_buddy_get_name( buddy ), purple_buddy_get_alias( buddy ), purple_group_get_name( group ) );
 		item = g_list_next( item );
 	}
 }

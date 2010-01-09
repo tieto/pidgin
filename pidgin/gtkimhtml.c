@@ -462,6 +462,24 @@ gtk_imhtml_style_set(GtkWidget *widget, GtkStyle *prev_style)
 	parent_style_set(widget, prev_style);
 }
 
+static gboolean
+imhtml_get_iter_bounds(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end)
+{
+	if (imhtml->wbfo) {
+		gtk_text_buffer_get_bounds(imhtml->text_buffer, start, end);
+		return TRUE;
+	} else if (imhtml->editable) {
+		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, start, end)) {
+			GtkTextMark *mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
+			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, start, mark);
+			*end = *start;
+		}
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static void
 gtk_imhtml_set_link_color(GtkIMHtml *imhtml, GtkTextTag *tag)
 {
@@ -521,6 +539,7 @@ gtk_imhtml_tip (gpointer data)
 	imhtml->tip_timer = 0;
 	imhtml->tip_window = gtk_window_new (GTK_WINDOW_POPUP);
 	gtk_widget_set_app_paintable (imhtml->tip_window, TRUE);
+	gtk_window_set_title(GTK_WINDOW(imhtml->tip_window), "GtkIMHtml");
 	gtk_window_set_resizable (GTK_WINDOW (imhtml->tip_window), FALSE);
 	gtk_widget_set_name (imhtml->tip_window, "gtk-tooltips");
 	gtk_window_set_type_hint (GTK_WINDOW (imhtml->tip_window),
@@ -2363,6 +2382,8 @@ static int gtk_imhtml_is_protocol(const char *text)
 	return proto ? proto->length : 0;
 }
 
+static gboolean smooth_scroll_cb(gpointer data);
+
 /*
  <KingAnt> marv: The two IM image functions in oscar are purple_odc_send_im and purple_odc_incoming
 
@@ -2417,7 +2438,14 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 
 		if (((y + height) - (rect.y + rect.height)) > height &&
 				gtk_text_buffer_get_char_count(imhtml->text_buffer)) {
-			options |= GTK_IMHTML_NO_SCROLL;
+			/* If we are in the middle of smooth-scrolling, then take a scroll step.
+			 * If we are not in the middle of smooth-scrolling, that means we were
+			 * not looking at the end of the buffer before the new text was added,
+			 * so do not scroll. */
+			if (imhtml->scroll_time)
+				smooth_scroll_cb(imhtml);
+			else
+				options |= GTK_IMHTML_NO_SCROLL;
 		}
 	}
 
@@ -2446,7 +2474,7 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
  *
  * @return TRUE if the window needs to be scrolled further, FALSE if we're at the bottom.
  */
-static gboolean scroll_cb(gpointer data)
+static gboolean smooth_scroll_cb(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
 	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
@@ -2460,19 +2488,14 @@ static gboolean scroll_cb(gpointer data)
 		gtk_adjustment_set_value(adj, max_val);
 		g_timer_destroy(imhtml->scroll_time);
 		imhtml->scroll_time = NULL;
+		g_source_remove(imhtml->scroll_src);
+		imhtml->scroll_src = 0;
 		return FALSE;
 	}
 
 	/* scroll by 1/3rd the remaining distance */
 	gtk_adjustment_set_value(adj, scroll_val);
 	return TRUE;
-}
-
-static gboolean smooth_scroll_idle_cb(gpointer data)
-{
-	GtkIMHtml *imhtml = data;
-	imhtml->scroll_src = g_timeout_add(SCROLL_DELAY, scroll_cb, imhtml);
-	return FALSE;
 }
 
 static gboolean scroll_idle_cb(gpointer data)
@@ -2494,7 +2517,7 @@ void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml, gboolean smooth)
 		g_source_remove(imhtml->scroll_src);
 	if(smooth) {
 		imhtml->scroll_time = g_timer_new();
-		imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, smooth_scroll_idle_cb, imhtml, NULL);
+		imhtml->scroll_src = g_timeout_add_full(G_PRIORITY_LOW, SCROLL_DELAY, smooth_scroll_cb, imhtml, NULL);
 	} else {
 		imhtml->scroll_time = NULL;
 		imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, scroll_idle_cb, imhtml, NULL);
@@ -4182,11 +4205,8 @@ imhtml_clear_formatting(GtkIMHtml *imhtml)
 	if (!imhtml->editable)
 		return;
 
-	if (imhtml->wbfo)
-		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-	else
-		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
+		return;
 
 	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
 	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
@@ -4529,19 +4549,13 @@ static void imhtml_toggle_bold(GtkIMHtml *imhtml)
 
 	imhtml->edit.bold = !imhtml->edit.bold;
 
-	if (imhtml->wbfo) {
-		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-		if (imhtml->edit.bold)
-			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
-		else
-			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
-	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
-		if (imhtml->edit.bold)
-			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
-		else
-			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
+	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
+		return;
 
-	}
+	if (imhtml->edit.bold)
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
+	else
+		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
 }
 
 void gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
@@ -4555,18 +4569,13 @@ static void imhtml_toggle_italic(GtkIMHtml *imhtml)
 
 	imhtml->edit.italic = !imhtml->edit.italic;
 
-	if (imhtml->wbfo) {
-		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-		if (imhtml->edit.italic)
-			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
-		else
-			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
-	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
-		if (imhtml->edit.italic)
-			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
-		else
-			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
-	}
+	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
+		return;
+
+	if (imhtml->edit.italic)
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
+	else
+		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
 }
 
 void gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
@@ -4580,18 +4589,13 @@ static void imhtml_toggle_underline(GtkIMHtml *imhtml)
 
 	imhtml->edit.underline = !imhtml->edit.underline;
 
-	if (imhtml->wbfo) {
-		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-		if (imhtml->edit.underline)
-			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
-		else
-			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
-	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
-		if (imhtml->edit.underline)
-			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
-		else
-			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
-	}
+	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
+		return;
+
+	if (imhtml->edit.underline)
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
+	else
+		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
 }
 
 void gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
@@ -4605,18 +4609,13 @@ static void imhtml_toggle_strike(GtkIMHtml *imhtml)
 
 	imhtml->edit.strike = !imhtml->edit.strike;
 
-	if (imhtml->wbfo) {
-		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-		if (imhtml->edit.strike)
-			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
-		else
-			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
-	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
-		if (imhtml->edit.strike)
-			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
-		else
-			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
-	}
+	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
+		return;
+
+	if (imhtml->edit.strike)
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
+	else
+		gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
 }
 
 void gtk_imhtml_toggle_strike(GtkIMHtml *imhtml)
@@ -4631,16 +4630,12 @@ void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size)
 
 	imhtml->edit.fontsize = size;
 
-	if (imhtml->wbfo) {
-		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-		remove_font_size(imhtml, &start, &end, TRUE);
-		gtk_text_buffer_apply_tag(imhtml->text_buffer,
-		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
-	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
-		remove_font_size(imhtml, &start, &end, FALSE);
-		gtk_text_buffer_apply_tag(imhtml->text_buffer,
-		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
-	}
+	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
+		return;
+
+	remove_font_size(imhtml, &start, &end, imhtml->wbfo);
+	gtk_text_buffer_apply_tag(imhtml->text_buffer,
+			find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
 
 	object = g_object_ref(G_OBJECT(imhtml));
 	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_SHRINK | GTK_IMHTML_GROW);
@@ -4659,16 +4654,11 @@ static void imhtml_font_shrink(GtkIMHtml *imhtml)
 	else
 		imhtml->edit.fontsize--;
 
-	if (imhtml->wbfo) {
-		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-		remove_font_size(imhtml, &start, &end, TRUE);
-		gtk_text_buffer_apply_tag(imhtml->text_buffer,
+	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
+		return;
+	remove_font_size(imhtml, &start, &end, imhtml->wbfo);
+	gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
-	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
-		remove_font_size(imhtml, &start, &end, FALSE);
-		gtk_text_buffer_apply_tag(imhtml->text_buffer,
-		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
-	}
 }
 
 void gtk_imhtml_font_shrink(GtkIMHtml *imhtml)
@@ -4688,16 +4678,11 @@ static void imhtml_font_grow(GtkIMHtml *imhtml)
 	else
 		imhtml->edit.fontsize++;
 
-	if (imhtml->wbfo) {
-		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-		remove_font_size(imhtml, &start, &end, TRUE);
-		gtk_text_buffer_apply_tag(imhtml->text_buffer,
-		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
-	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
-		remove_font_size(imhtml, &start, &end, FALSE);
-		gtk_text_buffer_apply_tag(imhtml->text_buffer,
-		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
-	}
+	if (!imhtml_get_iter_bounds(imhtml, &start, &end))
+		return;
+	remove_font_size(imhtml, &start, &end, imhtml->wbfo);
+	gtk_text_buffer_apply_tag(imhtml->text_buffer,
+			find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
 }
 
 void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
@@ -4720,39 +4705,16 @@ static gboolean gtk_imhtml_toggle_str_tag(GtkIMHtml *imhtml, const char *value, 
 	{
 		*edit_field = g_strdup(value);
 
-		if (imhtml->wbfo)
-		{
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-			remove_func(imhtml, &start, &end, TRUE);
+		if (imhtml_get_iter_bounds(imhtml, &start, &end)) {
+			remove_func(imhtml, &start, &end, imhtml->wbfo);
 			gtk_text_buffer_apply_tag(imhtml->text_buffer,
-		                              find_func(imhtml, *edit_field), &start, &end);
-		}
-		else
-		{
-			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start,
-			                                 gtk_text_buffer_get_mark(imhtml->text_buffer, "insert"));
-			if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
-			{
-				remove_func(imhtml, &start, &end, FALSE);
-				gtk_text_buffer_apply_tag(imhtml->text_buffer,
-				                          find_func(imhtml,
-				                                    *edit_field),
-				                                    &start, &end);
-			}
+					find_func(imhtml, *edit_field), &start, &end);
 		}
 	}
 	else
 	{
-		if (imhtml->wbfo)
-		{
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-			remove_func(imhtml, &start, &end, TRUE);
-		}
-		else
-		{
-			if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
-				remove_func(imhtml, &start, &end, TRUE);
-		}
+		if (imhtml_get_iter_bounds(imhtml, &start, &end))
+			remove_func(imhtml, &start, &end, TRUE);	/* 'TRUE' or 'imhtml->wbfo'? */
 	}
 
 	object = g_object_ref(G_OBJECT(imhtml));

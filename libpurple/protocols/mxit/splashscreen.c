@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <libgen.h>
+#include "internal.h"
 #include <glib/gstdio.h>
 
 #include "purple.h"
@@ -44,10 +44,10 @@ const char* splash_current(struct MXitSession* session)
 {
 	const char* splashId = purple_account_get_string(session->acc, MXIT_CONFIG_SPLASHID, NULL);
 
-	purple_debug_info(MXIT_PLUGIN_ID, "Current splashId: '%s'\n", splashId);
-
-	if ((splashId != NULL) && (*splashId != '\0'))
+	if ((splashId != NULL) && (*splashId != '\0')) {
+		purple_debug_info(MXIT_PLUGIN_ID, "Current splashId: '%s'\n", splashId);
 		return splashId;
+	}
 	else
 		return NULL;
 }
@@ -150,7 +150,7 @@ static void splash_click_ok(PurpleConnection* gc, PurpleRequestFields* fields)
 
 	/* Get current splash ID */
 	splashId = splash_current(session);
-	if (!splashId)
+	if (splashId == NULL)		/* no splash-screen */
 		return;
 
 	/* if is clickable, then send click event */

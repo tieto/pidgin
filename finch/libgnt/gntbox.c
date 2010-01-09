@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
 #include "gntbox.h"
 #include "gntstyle.h"
 #include "gntutils.h"
@@ -90,7 +91,7 @@ gnt_box_draw(GntWidget *widget)
 		else
 			wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_TITLE_D));
 		mvwaddch(widget->window, 0, pos-1, ACS_RTEE | gnt_color_pair(GNT_COLOR_NORMAL));
-		mvwaddstr(widget->window, 0, pos, title);
+		mvwaddstr(widget->window, 0, pos, C_(title));
 		mvwaddch(widget->window, 0, right, ACS_LTEE | gnt_color_pair(GNT_COLOR_NORMAL));
 		g_free(title);
 	}

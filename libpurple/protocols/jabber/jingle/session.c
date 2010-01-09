@@ -360,11 +360,15 @@ jingle_session_get_pending_contents(JingleSession *session)
 JingleSession *
 jingle_session_find_by_sid(JabberStream *js, const gchar *sid)
 {
+	JingleSession *session = NULL;
+
+	if (js->sessions)
+		session = g_hash_table_lookup(js->sessions, sid);
+
 	purple_debug_info("jingle", "find_by_id %s\n", sid);
-	purple_debug_info("jingle", "lookup: %p\n", (js->sessions) ?
-			  g_hash_table_lookup(js->sessions, sid) : NULL);  
-	return (JingleSession *) (js->sessions) ?
-			  g_hash_table_lookup(js->sessions, sid) : NULL;
+	purple_debug_info("jingle", "lookup: %p\n", session);
+
+	return session;
 }
 
 static gboolean find_by_jid_ghr(gpointer key,
@@ -372,7 +376,7 @@ static gboolean find_by_jid_ghr(gpointer key,
 {
 	JingleSession *session = (JingleSession *)value;
 	const gchar *jid = user_data;
-	gboolean use_bare = g_utf8_strchr(jid, -1, '/') == NULL;
+	gboolean use_bare = strchr(jid, '/') == NULL;
 	gchar *remote_jid = jingle_session_get_remote_jid(session);
 	gchar *cmp_jid = use_bare ? jabber_get_bare_jid(remote_jid)
 				  : g_strdup(remote_jid);

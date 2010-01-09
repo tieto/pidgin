@@ -29,8 +29,8 @@
  * as I want to be.  Thank you libxode for giving me a good starting point */
 #define _PURPLE_XMLNODE_C_
 
-#include "debug.h"
 #include "internal.h"
+#include "debug.h"
 
 #include <libxml/parser.h>
 #include <string.h>
@@ -588,9 +588,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 			const char *prefix = (const char *)attributes[i+1];
 			char *txt;
 			int attrib_len = attributes[i+4] - attributes[i+3];
-			char *attrib = g_malloc(attrib_len + 1);
-			memcpy(attrib, attributes[i+3], attrib_len);
-			attrib[attrib_len] = '\0';
+			char *attrib = g_strndup((const char *)attributes[i+3], attrib_len);
 			txt = attrib;
 			attrib = purple_unescape_html(txt);
 			g_free(txt);

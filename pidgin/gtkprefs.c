@@ -70,28 +70,32 @@ struct theme_info {
 	gchar *original_name;
 };
 
-static int sound_row_sel = 0;
-static GtkWidget *prefsnotebook;
-
-static GtkWidget *sound_entry = NULL;
-static GtkWidget *prefs_proxy_frame = NULL;
-static GtkWidget *prefs_proxy_subframe = NULL;
-
+/* Main dialog */
 static GtkWidget *prefs = NULL;
-static GtkWidget *debugbutton = NULL;
+
+/* Notebook */
+static GtkWidget *prefsnotebook = NULL;
 static int notebook_page = 0;
 
-static GtkListStore *prefs_sound_themes;
-static GtkListStore *prefs_blist_themes;
-static GtkListStore *prefs_status_icon_themes;
-static GtkListStore *prefs_smiley_themes;
+/* Conversations page */
+static GtkWidget *sample_imhtml = NULL;
 
+/* Themes page */
 static GtkWidget *prefs_sound_themes_combo_box;
 static GtkWidget *prefs_blist_themes_combo_box;
 static GtkWidget *prefs_status_themes_combo_box;
 static GtkWidget *prefs_smiley_themes_combo_box;
 
+/* Sound theme specific */
+static GtkWidget *sound_entry = NULL;
+static int sound_row_sel = 0;
 static gboolean prefs_sound_themes_loading;
+
+/* These exist outside the lifetime of the prefs dialog */
+static GtkListStore *prefs_sound_themes;
+static GtkListStore *prefs_blist_themes;
+static GtkListStore *prefs_status_icon_themes;
+static GtkListStore *prefs_smiley_themes;
 
 /*
  * PROTOTYPES
@@ -336,10 +340,21 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	/* Unregister callbacks. */
 	purple_prefs_disconnect_by_handle(prefs);
 
-	prefs = NULL;
+	/* NULL-ify globals */
 	sound_entry = NULL;
-	debugbutton = NULL;
+	sound_row_sel = 0;
+	prefs_sound_themes_loading = FALSE;
+
+	prefs_sound_themes_combo_box = NULL;
+	prefs_blist_themes_combo_box = NULL;
+	prefs_status_themes_combo_box = NULL;
+	prefs_smiley_themes_combo_box = NULL;
+
+	sample_imhtml = NULL;
+
 	notebook_page = 0;
+	prefsnotebook = NULL;
+	prefs = NULL;
 }
 
 static gchar *
@@ -951,6 +966,7 @@ prefs_set_smiley_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_smiley_themes), &new_iter, 2, &new_theme, -1);
 
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", new_theme);
+		pidgin_themes_smiley_themeize(sample_imhtml);
 
 		g_free(new_theme);
 	}
@@ -1425,6 +1441,16 @@ interface_page(void)
 	return ret;
 }
 
+#ifdef _WIN32
+static void
+pidgin_custom_font_set(GtkFontButton *font_button, gpointer nul)
+{
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/custom_font",
+				gtk_font_button_get_font_name(font_button))
+;
+}
+#endif
+
 static GtkWidget *
 conv_page(void)
 {
@@ -1474,6 +1500,9 @@ conv_page(void)
 		1, 8, NULL);
 
 #ifdef _WIN32
+	{
+	GtkWidget *fontpref, *font_button, *hbox;
+	const char *font_name;
 	vbox = pidgin_make_frame(ret, _("Font"));
 
 	fontpref = pidgin_prefs_checkbox(_("Use font from _theme"),
@@ -1492,15 +1521,16 @@ conv_page(void)
 		gtk_widget_set_sensitive(hbox, FALSE);
 	g_signal_connect(G_OBJECT(fontpref), "clicked", G_CALLBACK(pidgin_toggle_sensitive), hbox);
 	g_signal_connect(G_OBJECT(font_button), "font-set", G_CALLBACK(pidgin_custom_font_set), NULL);
+
+	}
 #endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
-	gtk_box_set_child_packing(GTK_BOX(vbox->parent), vbox, TRUE, TRUE, 0, GTK_PACK_START);
 
 	frame = pidgin_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
 	gtk_widget_show(frame);
 	gtk_widget_set_name(imhtml, "pidgin_prefs_font_imhtml");
-	gtk_widget_set_size_request(frame, 300, -1);
+	gtk_widget_set_size_request(frame, 450, -1);
 	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml),
 									GTK_IMHTML_BOLD |
@@ -1523,7 +1553,7 @@ conv_page(void)
 					 G_CALLBACK(formatting_toggle_cb), toolbar);
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_clear",
 					 G_CALLBACK(formatting_clear_cb), NULL);
-
+	sample_imhtml = imhtml;
 
 	gtk_widget_show(ret);
 
@@ -1619,6 +1649,7 @@ proxy_button_clicked_cb(GtkWidget *button, gchar *program)
 	g_error_free(err);
 }
 
+#ifndef _WIN32
 static void
 browser_button_clicked_cb(GtkWidget *button, gpointer null)
 {
@@ -1630,6 +1661,7 @@ browser_button_clicked_cb(GtkWidget *button, gpointer null)
 	purple_notify_error(NULL, NULL, _("Cannot start browser configuration program."), err->message);
 	g_error_free(err);
 }
+#endif
 
 static void
 auto_ip_button_clicked_cb(GtkWidget *button, gpointer null)
@@ -1962,6 +1994,7 @@ proxy_page(void)
 {
 	GtkWidget *ret = NULL, *vbox = NULL, *hbox = NULL;
 	GtkWidget *table = NULL, *entry = NULL, *label = NULL, *proxy_button = NULL;
+	GtkWidget *prefs_proxy_frame = NULL;
 	PurpleProxyInfo *proxy_info;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
@@ -2001,14 +2034,14 @@ proxy_page(void)
 		         which is never */
 		gtk_widget_show_all(ret);
 	} else {
-		prefs_proxy_subframe = gtk_vbox_new(FALSE, 0);
-	
+		GtkWidget *prefs_proxy_subframe = gtk_vbox_new(FALSE, 0);
+
 		/* This is a global option that affects SOCKS4 usage even with
 		 * account-specific proxy settings */
 		pidgin_prefs_checkbox(_("Use remote _DNS with SOCKS4 proxies"),
 							  "/purple/proxy/socks4_remotedns", prefs_proxy_frame);
 		gtk_box_pack_start(GTK_BOX(vbox), prefs_proxy_frame, 0, 0, 0);
-	
+
 		pidgin_prefs_dropdown(prefs_proxy_frame, _("Proxy t_ype:"), PURPLE_PREF_STRING,
 					"/purple/proxy/type",
 					_("No proxy"), "none",
@@ -2019,93 +2052,94 @@ proxy_page(void)
 					NULL);
 		gtk_box_pack_start(GTK_BOX(prefs_proxy_frame), prefs_proxy_subframe, 0, 0, 0);
 		proxy_info = purple_global_proxy_get_info();
-	
+
 		gtk_widget_show_all(ret);
-	
+
 		purple_prefs_connect_callback(prefs, "/purple/proxy/type",
 					    proxy_changed_cb, prefs_proxy_subframe);
-	
+
 		table = gtk_table_new(4, 2, FALSE);
 		gtk_container_set_border_width(GTK_CONTAINER(table), 0);
 		gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 		gtk_table_set_row_spacings(GTK_TABLE(table), 10);
 		gtk_container_add(GTK_CONTAINER(prefs_proxy_subframe), table);
-	
-	
+
 		label = gtk_label_new_with_mnemonic(_("_Host:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
 		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
-	
+
 		entry = gtk_entry_new();
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 		gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYHOST);
-	
+
 		if (proxy_info != NULL && purple_proxy_info_get_host(proxy_info))
 			gtk_entry_set_text(GTK_ENTRY(entry),
 					   purple_proxy_info_get_host(proxy_info));
-	
+
 		hbox = gtk_hbox_new(TRUE, 5);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 		pidgin_set_accessible_label (entry, label);
-	
+
 		label = gtk_label_new_with_mnemonic(_("P_ort:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
 		gtk_table_attach(GTK_TABLE(table), label, 2, 3, 0, 1, GTK_FILL, 0, 0, 0);
-	
+
 		entry = gtk_spin_button_new_with_range(0, 65535, 1);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 		gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 0, 1, GTK_FILL, 0, 0, 0);
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYPORT);
-	
+
 		if (proxy_info != NULL && purple_proxy_info_get_port(proxy_info) != 0) {
-			char buf[128];
-			g_snprintf(buf, sizeof(buf), "%d",
-				   purple_proxy_info_get_port(proxy_info));
-	
-				gtk_entry_set_text(GTK_ENTRY(entry), buf);
+			gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry),
+				purple_proxy_info_get_port(proxy_info));
 		}
 		pidgin_set_accessible_label (entry, label);
-	
+
 		label = gtk_label_new_with_mnemonic(_("User_name:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
 		gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
-	
+
 		entry = gtk_entry_new();
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 		gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 1, 2, GTK_FILL, 0, 0, 0);
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYUSER);
-	
+
 		if (proxy_info != NULL && purple_proxy_info_get_username(proxy_info) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry),
 						   purple_proxy_info_get_username(proxy_info));
-	
+
 		hbox = gtk_hbox_new(TRUE, 5);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 		pidgin_set_accessible_label (entry, label);
-	
+
 		label = gtk_label_new_with_mnemonic(_("Pa_ssword:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
 		gtk_table_attach(GTK_TABLE(table), label, 2, 3, 1, 2, GTK_FILL, 0, 0, 0);
-	
+
 		entry = gtk_entry_new();
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 		gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 1, 2, GTK_FILL , 0, 0, 0);
 		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-	#if !GTK_CHECK_VERSION(2,16,0)
+#if !GTK_CHECK_VERSION(2,16,0)
 		if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
 			gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
-	#endif /* Less than GTK+ 2.16 */
+#endif /* Less than GTK+ 2.16 */
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYPASS);
-	
+
 		if (proxy_info != NULL && purple_proxy_info_get_password(proxy_info) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry),
 					   purple_proxy_info_get_password(proxy_info));
 		pidgin_set_accessible_label (entry, label);
+
+		proxy_changed_cb("/purple/proxy/type", PURPLE_PREF_STRING,
+			purple_prefs_get_string("/purple/proxy/type"),
+			prefs_proxy_subframe);
+
 	}
 
 	return ret;
@@ -2400,6 +2434,9 @@ sound_page(void)
 
 	vbox2 = pidgin_make_frame(ret, _("Sound Options"));
 
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox2), vbox, FALSE, FALSE, 0);
+
 #ifndef _WIN32
 	dd = pidgin_prefs_dropdown(vbox2, _("_Method:"), PURPLE_PREF_STRING,
 			PIDGIN_PREFS_ROOT "/sound/method",
@@ -2414,9 +2451,6 @@ sound_page(void)
 			NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
-
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox2), vbox, FALSE, FALSE, 0);
 
 	entry = gtk_entry_new();
 	gtk_editable_set_editable(GTK_EDITABLE(entry), TRUE);
@@ -2819,7 +2853,7 @@ pidgin_prefs_init(void)
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/smileys/theme", "Default");
 
 	/* Smiley Callbacks */
-	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
+	purple_prefs_connect_callback(&prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
 								smiley_theme_pref_cb, NULL);
 
 	pidgin_prefs_update_old();
@@ -2883,10 +2917,6 @@ pidgin_prefs_update_old(void)
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/logging/individual_logs");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/sound/signon");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/sound/silent_signon");
-
-#ifndef _WIN32
-	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/custom_font");
-#endif
 
 	/* Convert old queuing prefs to hide_new 3-way pref. */
 	if (purple_prefs_exists("/plugins/gtk/docklet/queue_messages") &&

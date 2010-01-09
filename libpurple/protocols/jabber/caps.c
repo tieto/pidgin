@@ -440,7 +440,7 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
                         const char *id, xmlnode *packet, gpointer data)
 {
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
-		"http://jabber.org/protocol/disco#info");
+		NS_DISCO_INFO);
 	jabber_caps_cbplususerdata *userdata = data;
 	JabberCapsClientInfo *info = NULL, *value;
 	JabberCapsTuple key;
@@ -531,7 +531,7 @@ jabber_caps_ext_iqcb(JabberStream *js, const char *from, JabberIqType type,
                      const char *id, xmlnode *packet, gpointer data)
 {
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
-		"http://jabber.org/protocol/disco#info");
+		NS_DISCO_INFO);
 	xmlnode *child;
 	ext_iq_data *userdata = data;
 	GList *features = NULL;
@@ -638,10 +638,9 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 		xmlnode *query;
 		char *nodever;
 
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET,
-					"http://jabber.org/protocol/disco#info");
+		iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_DISCO_INFO);
 		query = xmlnode_get_child_with_namespace(iq->node, "query",
-					"http://jabber.org/protocol/disco#info");
+					NS_DISCO_INFO);
 		nodever = g_strdup_printf("%s#%s", node, ver);
 		xmlnode_set_attrib(query, "node", nodever);
 		g_free(nodever);
@@ -679,10 +678,9 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 				cbdata->name = exts[i];
 				cbdata->data = cbplususerdata_ref(userdata);
 
-				iq = jabber_iq_new_query(js, JABBER_IQ_GET,
-				            "http://jabber.org/protocol/disco#info");
+				iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_DISCO_INFO);
 				query = xmlnode_get_child_with_namespace(iq->node, "query",
-				            "http://jabber.org/protocol/disco#info");
+				            NS_DISCO_INFO);
 				nodeext = g_strdup_printf("%s#%s", node, exts[i]);
 				xmlnode_set_attrib(query, "node", nodeext);
 				g_free(nodeext);
@@ -771,7 +769,7 @@ static JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query)
 	xmlnode *child;
 	JabberCapsClientInfo *info;
 
-	if (!query || strcmp(query->xmlns, "http://jabber.org/protocol/disco#info"))
+	if (!query || strcmp(query->xmlns, NS_DISCO_INFO))
 		return 0;
 
 	info = g_new0(JabberCapsClientInfo, 1);

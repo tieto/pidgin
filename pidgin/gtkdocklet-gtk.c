@@ -79,7 +79,7 @@ docklet_gtk_status_update_icon(PurpleStatusPrimitive status, gboolean connecting
 		icon_name = PIDGIN_STOCK_TRAY_CONNECT;
 
 	if (icon_name) {
-		gtk_status_icon_set_from_stock(docklet, icon_name);
+		gtk_status_icon_set_from_icon_name(docklet, icon_name);
 	}
 }
 
@@ -156,6 +156,8 @@ void
 docklet_ui_init(void)
 {
 	pidgin_docklet_set_ui_ops(&ui_ops);
+	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
+		DATADIR G_DIR_SEPARATOR_S "pixmaps" G_DIR_SEPARATOR_S "pidgin" G_DIR_SEPARATOR_S "tray");
 }
 
 #endif  /* GTK_CHECK_VERSION(2,10,0) */

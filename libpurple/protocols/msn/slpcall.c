@@ -105,9 +105,12 @@ msn_slpcall_destroy(MsnSlpCall *slpcall)
 		slpcall->end_cb(slpcall, slpcall->slplink->session);
 
 	if (slpcall->xfer != NULL) {
+		if (purple_xfer_get_type(slpcall->xfer) == PURPLE_XFER_RECEIVE)
+			g_byte_array_free(slpcall->u.incoming_data, TRUE);
 		slpcall->xfer->data = NULL;
 		purple_xfer_unref(slpcall->xfer);
 	}
+
 
 	msn_slplink_remove_slpcall(slpcall->slplink, slpcall);
 
@@ -272,7 +275,8 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 				slpcall->timer = 0;
 			}
 
-			slpcall->cb(slpcall, body, body_len);
+			if (slpcall->cb)
+				slpcall->cb(slpcall, body, body_len);
 
 			slpcall->wasted = TRUE;
 		}

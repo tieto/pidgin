@@ -29,10 +29,10 @@
 #ifndef _OSCAR_H_
 #define _OSCAR_H_
 
+#include "internal.h"
 #include "circbuffer.h"
 #include "debug.h"
 #include "eventloop.h"
-#include "internal.h"
 #include "proxy.h"
 #include "sslconn.h"
 

@@ -18,11 +18,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "internal.h"
+
 #include <stdlib.h>
 #include <glib.h>
 #include <string.h>
 
-#include "internal.h"
 #include "data.h"
 #include "debug.h"
 #include "xmlnode.h"
@@ -140,7 +141,7 @@ jabber_data_get_xml_definition(const JabberData *data)
 	xmlnode *tag = xmlnode_new("data");
 	char *base64data = purple_base64_encode(data->data, data->size);
 
-	xmlnode_set_namespace(tag, XEP_0231_NAMESPACE);
+	xmlnode_set_namespace(tag, NS_BOB);
 	xmlnode_set_attrib(tag, "cid", data->cid);
 	xmlnode_set_attrib(tag, "type", data->type);
 
@@ -169,7 +170,7 @@ jabber_data_get_xml_request(const gchar *cid)
 {
 	xmlnode *tag = xmlnode_new("data");
 
-	xmlnode_set_namespace(tag, XEP_0231_NAMESPACE);
+	xmlnode_set_namespace(tag, NS_BOB);
 	xmlnode_set_attrib(tag, "cid", cid);
 
 	return tag;
@@ -254,7 +255,7 @@ jabber_data_init(void)
 	remote_data_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal,
 		g_free, jabber_data_delete);
 
-	jabber_iq_register_handler("data", XEP_0231_NAMESPACE, jabber_data_parse);
+	jabber_iq_register_handler("data", NS_BOB, jabber_data_parse);
 }
 
 void

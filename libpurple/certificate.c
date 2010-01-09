@@ -26,8 +26,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <glib.h>
-
 #include "internal.h"
 #include "certificate.h"
 #include "dbus-maybe.h"
@@ -1433,9 +1431,8 @@ x509_tls_cached_complete(PurpleCertificateVerificationRequest *vrq,
 	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,
 						 "tls_peers");
 	if (tls_peers) {
-		if (!purple_certificate_pool_contains(tls_peers, vrq->subject_name) &&
-		        !purple_certificate_pool_store(tls_peers,vrq->subject_name,
-		                                       peer_crt)) {
+		if (!purple_certificate_pool_store(tls_peers,vrq->subject_name,
+		                                   peer_crt)) {
 			purple_debug_error("certificate/x509/tls_cached",
 			                   "FAILED to cache peer certificate\n");
 		}

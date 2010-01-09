@@ -44,7 +44,7 @@ purple_check_init(void) {
 	purple_eventloop_set_ui_ops(&eventloop_ui_ops);
 
 	/* build our fake home directory */
-	home_dir = g_build_path(BUILDDIR, "libpurple", "tests", "home", NULL);
+	home_dir = g_build_path(G_DIR_SEPARATOR_S, BUILDDIR, "libpurple", "tests", "home", NULL);
 	purple_util_set_user_dir(home_dir);
 	g_free(home_dir);
 
@@ -67,6 +67,9 @@ int main(void)
 	int number_failed;
 	SRunner *sr;
 
+	if (g_getenv("PURPLE_CHECK_DEBUG"))
+		purple_debug_set_enabled(TRUE);
+
 	/* Make g_return_... functions fatal, ALWAYS.
 	 * As this is the test code, this is NOT controlled
 	 * by PURPLE_FATAL_ASSERTS. */
@@ -76,6 +79,7 @@ int main(void)
 
 	srunner_add_suite(sr, cipher_suite());
 	srunner_add_suite(sr, jabber_jutil_suite());
+	srunner_add_suite(sr, jabber_scram_suite());
 	srunner_add_suite(sr, qq_suite());
 	srunner_add_suite(sr, yahoo_util_suite());
 	srunner_add_suite(sr, util_suite());

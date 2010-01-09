@@ -23,10 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include	<stdio.h>
-#include	<unistd.h>
-#include	<string.h>
-
+#include    "internal.h"
 #include	"purple.h"
 
 #include	"protocol.h"
@@ -66,16 +63,16 @@ struct tag {
 
 /* vibes */
 static const char*	vibes[] = {
-	/* 0 */		"Cool Vibrations",
-	/* 1 */		"Purple Rain",
-	/* 2 */		"Polite",
-	/* 3 */		"Rock n Roll",
-	/* 4 */		"Summer Slumber",
-	/* 5 */		"Electric Razor",
-	/* 6 */		"S.O.S",
-	/* 7 */		"Jack Hammer",
-	/* 8 */		"Bumble Bee",
-	/* 9 */		"Ripple"
+	/* 0 */		N_( "Cool Vibrations" ),
+	/* 1 */		N_( "Purple Rain" ),
+	/* 2 */		N_( "Polite" ),
+	/* 3 */		N_( "Rock n Roll" ),
+	/* 4 */		N_( "Summer Slumber" ),
+	/* 5 */		N_( "Electric Razor" ),
+	/* 6 */		N_( "S.O.S" ),
+	/* 7 */		N_( "Jack Hammer" ),
+	/* 8 */		N_( "Bumble Bee" ),
+	/* 9 */		N_( "Ripple" )
 };
 
 
@@ -416,7 +413,6 @@ void mxit_show_message( struct RXMsgData* mx )
 	}
 	else if ( mx->chatid < 0 ) {
 		/* normal chat message */
-		//serv_got_im( mx->session->con, mx->from, mx->msg->str, mx->flags, mx->timestamp );
 		mxit_show_split_message( mx );
 	}
 	else {
@@ -653,7 +649,7 @@ static int mxit_parse_vibe( struct RXMsgData* mx, const char* message )
 		return 0;
 	}
 
-	g_string_append_printf( mx->msg, "<font color=\"%s\"><i>%s Vibe...</i></font>", MXIT_VIBE_MSG_COLOR, vibes[vibeid] );
+	g_string_append_printf( mx->msg, "<font color=\"%s\"><i>%s Vibe...</i></font>", MXIT_VIBE_MSG_COLOR, _( vibes[vibeid] ) );
 	return 2;
 }
 

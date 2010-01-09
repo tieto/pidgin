@@ -31,6 +31,8 @@
 
 
 #define		MXIT_CHUNK_FILEID_LEN		8			/* bytes */
+#define		MXIT_CHUNK_HEADER_SIZE		5			/* type (1 byte) + length (4 bytes) */
+
 
 /* Multimedia chunk types */
 #define		CP_CHUNK_NONE				0x00		/* (0) no chunk */
@@ -68,13 +70,35 @@
 #define		REJECT_BAD_RECIPIENT		4
 
 /*
- * a Chunk header
+ * Chunk header manipulation functions
  */
-struct raw_chunk {
-	guint8		type;
-	guint32		length;
-	gchar		data[0];
-} __attribute__ ((packed));
+static inline guint chunk_type( gchar* chunkheader )
+{
+	return *chunkheader;
+}
+
+static inline void set_chunk_type( gchar* chunkheader, guint type )
+{
+	*chunkheader = type;
+}
+
+static inline guint32 chunk_length( gchar* chunkheader )
+{
+	guint32 length = *( (const guint32*) &chunkheader[1] );
+	return htonl( length );
+}
+
+static inline void set_chunk_length( gchar* chunkheader, guint32 size )
+{
+	size = htonl( size );
+	memcpy( &chunkheader[1], &size, sizeof( guint32 ) );
+}
+
+static inline gchar* chunk_data( gchar* chunkheader )
+{
+	return &chunkheader[MXIT_CHUNK_HEADER_SIZE];
+}
+
 
 struct offerfile_chunk {
 	char	fileid[MXIT_CHUNK_FILEID_LEN];
