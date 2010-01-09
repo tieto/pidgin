@@ -193,7 +193,9 @@ void jabber_roster_parse(JabberStream *js, const char *from,
                          JabberIqType type, const char *id, xmlnode *query)
 {
 	xmlnode *item, *group;
+#if 0
 	const char *ver;
+#endif
 
 	if (!jabber_is_own_account(js, from)) {
 		purple_debug_warning("jabber", "Received bogon roster push from %s\n",
@@ -266,11 +268,13 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 		}
 	}
 
+#if 0
 	ver = xmlnode_get_attrib(query, "ver");
 	if (ver) {
 		 PurpleAccount *account = purple_connection_get_account(js->gc);
 		 purple_account_set_string(account, "roster_ver", ver);
 	}
+#endif
 
 	js->currently_parsing_roster_push = FALSE;
 }

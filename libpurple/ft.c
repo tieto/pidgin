@@ -73,6 +73,30 @@ purple_xfer_priv_data_destroy(gpointer data)
 	g_free(priv);
 }
 
+static const gchar *
+purple_xfer_status_type_to_string(PurpleXferStatusType type)
+{
+	static const struct {
+		PurpleXferStatusType type;
+		const char *name;
+	} type_names[] = {
+		{ PURPLE_XFER_STATUS_UNKNOWN, "unknown" },
+		{ PURPLE_XFER_STATUS_NOT_STARTED, "not started" },
+		{ PURPLE_XFER_STATUS_ACCEPTED, "accepted" },
+		{ PURPLE_XFER_STATUS_STARTED, "started" },
+		{ PURPLE_XFER_STATUS_DONE, "done" },
+		{ PURPLE_XFER_STATUS_CANCEL_LOCAL, "cancelled locally" },
+		{ PURPLE_XFER_STATUS_CANCEL_REMOTE, "cancelled remotely" }
+	};
+	int i;
+
+	for (i = 0; i < G_N_ELEMENTS(type_names); ++i)
+		if (type_names[i].type == type)
+			return type_names[i].name;
+
+	return "invalid state";
+}
+
 GList *
 purple_xfers_get_all()
 {
@@ -187,6 +211,11 @@ static void
 purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 {
 	g_return_if_fail(xfer != NULL);
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("xfer", "Changing status of xfer %p from %s to %s\n",
+				xfer, purple_xfer_status_type_to_string(xfer->status),
+				purple_xfer_status_type_to_string(status));
 
 	if (xfer->status == status)
 		return;
@@ -547,6 +576,8 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 	type = purple_xfer_get_type(xfer);
 	account = purple_xfer_get_account(xfer);
 
+	purple_debug_misc("xfer", "request accepted for %p\n", xfer); 
+
 	if (!filename && type == PURPLE_XFER_RECEIVE) {
 		xfer->status = PURPLE_XFER_STATUS_ACCEPTED;
 		xfer->ops.init(xfer);
@@ -623,6 +654,8 @@ void
 purple_xfer_request_denied(PurpleXfer *xfer)
 {
 	g_return_if_fail(xfer != NULL);
+
+	purple_debug_misc("xfer", "xfer %p denied\n", xfer);
 
 	if (xfer->ops.request_denied != NULL)
 		xfer->ops.request_denied(xfer);
@@ -1176,6 +1209,8 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 
 			purple_input_remove(xfer->watcher);
 			xfer->watcher = 0;
+
+			purple_debug_misc("xfer", "prpl is ready on ft %p, waiting for UI\n", xfer);
 			return;
 		}
 	}
@@ -1238,8 +1273,12 @@ purple_xfer_ui_ready(PurpleXfer *xfer)
 	priv = g_hash_table_lookup(xfers_data, xfer);
 	priv->ready |= PURPLE_XFER_READY_UI;
 
-	if (0 == (priv->ready & PURPLE_XFER_READY_PRPL))
+	if (0 == (priv->ready & PURPLE_XFER_READY_PRPL)) {
+		purple_debug_misc("xfer", "UI is ready on ft %p, waiting for prpl\n", xfer);
 		return;
+	}
+
+	purple_debug_misc("xfer", "UI (and prpl) ready on ft %p, so proceeding\n", xfer);
 
 	type = purple_xfer_get_type(xfer);
 	if (type == PURPLE_XFER_SEND)
@@ -1266,8 +1305,12 @@ purple_xfer_prpl_ready(PurpleXfer *xfer)
 	priv->ready |= PURPLE_XFER_READY_PRPL;
 
 	/* I don't think fwrite/fread are ever *not* ready */
-	if (xfer->dest_fp == NULL && 0 == (priv->ready & PURPLE_XFER_READY_UI))
+	if (xfer->dest_fp == NULL && 0 == (priv->ready & PURPLE_XFER_READY_UI)) {
+		purple_debug_misc("xfer", "prpl is ready on ft %p, waiting for UI\n", xfer);
 		return;
+	}
+
+	purple_debug_misc("xfer", "Prpl (and UI) ready on ft %p, so proceeding\n", xfer);
 
 	priv->ready = PURPLE_XFER_READY_NONE;
 

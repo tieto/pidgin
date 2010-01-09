@@ -210,6 +210,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 
 	if (list_op & MSN_LIST_PL_OP)
 	{
+		user->authorized = TRUE;
 		got_new_entry(gc, passport, store, message);
 	}
 }

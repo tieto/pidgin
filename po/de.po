@@ -2,7 +2,7 @@
 # Pidgin German translation
 # Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
-# Copyright (C) 2002-2009, Björn Voigt <bjoern@cs.tu-berlin.de>,
+# Copyright (C) 2002-2010, Björn Voigt <bjoern@cs.tu-berlin.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-10 22:38+0100\n"
-"PO-Revision-Date: 2009-12-11 20:55+0100\n"
+"POT-Creation-Date: 2010-01-08 16:32+0100\n"
+"PO-Revision-Date: 2010-01-08 16:30+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1960,6 +1960,9 @@ msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr ""
 "%s ist keine reguläre Datei. Pidgin wird die Datei nicht überschreiben.\n"
 
+msgid "File is not readable."
+msgstr "Datei ist nicht lesbar."
+
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s möchte Ihnen %s (%s) senden"
@@ -3855,6 +3858,8 @@ msgstr "Ungültige Challenge vom Server"
 
 msgid "Server thinks authentication is complete, but client does not"
 msgstr ""
+"Der Server ist der Meinung, dass die Authentifizierung vollständig ist, der "
+"Client aber nicht"
 
 msgid "SASL authentication failed"
 msgstr "SASL-Authentifizierung fehlgeschlagen"
@@ -3863,21 +3868,17 @@ msgstr "SASL-Authentifizierung fehlgeschlagen"
 msgid "SASL error: %s"
 msgstr "SASL-Fehler: %s"
 
-#, fuzzy
 msgid "Unable to canonicalize username"
-msgstr "Kann nicht konfigurieren"
+msgstr "Benutzername konnte nicht in Normalform gebracht werden"
 
-#, fuzzy
 msgid "Unable to canonicalize password"
-msgstr "Es konnte kein lauschender Port geöffnet werden."
+msgstr "Passwort konnte nicht in Normalform gebracht werden"
 
-#, fuzzy
 msgid "Malicious challenge from server"
-msgstr "Ungültige Challenge vom Server"
+msgstr "Bösartige Challenge vom Server"
 
-#, fuzzy
 msgid "Unexpected response from server"
-msgstr "Ungültige HTTP-Antwort vom Server empfangen"
+msgstr "Unerwartete Antwort vom Server"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Der BOSH-Verbindungsmanager hat Ihre Sitzung beendet."
@@ -3979,13 +3980,8 @@ msgstr "Priorität"
 msgid "Resource"
 msgstr "Ressource"
 
-#, fuzzy
 msgid "Uptime"
-msgstr "Aktualisieren"
-
-#, c-format
-msgid "%s"
-msgstr ""
+msgstr "Betriebszeit"
 
 msgid "Logged Off"
 msgstr "Abgemeldet"
@@ -4185,13 +4181,6 @@ msgstr "Rollen:"
 
 msgid "Ping timed out"
 msgstr "Ping-Zeitüberschreitung"
-
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-"Nach dem Fehlschlagen einer direkten XMPP-Verbindung können keine "
-"alternativen Verbindungsmethoden gefunden werden."
 
 msgid "Invalid XMPP ID"
 msgstr "Ungültige XMPP-ID"
@@ -5167,6 +5156,10 @@ msgstr "E-Mail-Adresse..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Ihr neuer MSN-Benutzername zu lang."
+
+#, c-format
+msgid "Set friendly name for %s."
+msgstr "Setze Spitznamen für %s."
 
 msgid "Set your friendly name."
 msgstr "Setze Ihren Spitznamen."
@@ -12103,9 +12096,6 @@ msgstr "Kurdisch"
 msgid "Lao"
 msgstr "Laotisch"
 
-msgid "Lithuanian"
-msgstr "Litauisch"
-
 msgid "Macedonian"
 msgstr "Makedonisch"
 
@@ -12208,6 +12198,9 @@ msgstr "Traditionelles Chinesisch"
 msgid "Amharic"
 msgstr "Amharisch"
 
+msgid "Lithuanian"
+msgstr "Litauisch"
+
 #, c-format
 msgid "About %s"
 msgstr "Über %s"
@@ -12250,7 +12243,19 @@ msgid ""
 "<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
 "primary language is <b>English</b>.  You are welcome to post in another "
 "language, but the responses may be less helpful.<br/><br/>"
-msgstr "<font size=\"4\">Hilfe von anderen Pidgin-Benutzern:</font> <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Dies ist eine <b>öffentliche</b> Mailing-Liste! (<a href=\"http://pidgin.im/pipermail/support/\">Archiv</a>)<br/>Wir können nicht bei Problemen mit Drittanbieter-Protokollen oder Plugins helfen!<br/>Die Hauptsprache dieser Liste ist <b>Englisch</b>.  Sie können gern in einer anderen Sprache schreiben, aber die Antworten könnten weniger hilfreich sein.<br/>Deutschsprachige Benutzer können auch das Portal <a href=\"http://www.pidgin-im.de/\">Pidgin-IM.de</a> nutzen.  Dort finden Sie aktuelle Informationen zu Pidgin, können mit anderen Benutzern im <a href=\"http://forum.pidgin-im.de/\">Forum</a> diskutieren und Hilfe zu Problemen finden.  Beachten Sie, dass dieses Portal unabhängig vom offiziellen Pidgin-Projekt ist.<br/><br/>"
+msgstr ""
+"<font size=\"4\">Hilfe von anderen Pidgin-Benutzern:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>Dies ist eine <b>öffentliche</"
+"b> Mailing-Liste! (<a href=\"http://pidgin.im/pipermail/support/\">Archiv</"
+"a>)<br/>Wir können nicht bei Problemen mit Drittanbieter-Protokollen oder "
+"Plugins helfen!<br/>Die Hauptsprache dieser Liste ist <b>Englisch</b>.  Sie "
+"können gern in einer anderen Sprache schreiben, aber die Antworten könnten "
+"weniger hilfreich sein.<br/>Deutschsprachige Benutzer können auch das Portal "
+"<a href=\"http://www.pidgin-im.de/\">Pidgin-IM.de</a> nutzen.  Dort finden "
+"Sie aktuelle Informationen zu Pidgin, können mit anderen Benutzern im <a "
+"href=\"http://forum.pidgin-im.de/\">Forum</a> diskutieren und Hilfe zu "
+"Problemen finden.  Beachten Sie, dass dieses Portal unabhängig vom "
+"offiziellen Pidgin-Projekt ist.<br/><br/>"
 
 #, c-format
 msgid ""

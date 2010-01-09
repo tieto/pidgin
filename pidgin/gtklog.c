@@ -420,6 +420,7 @@ static gboolean search_find_cb(gpointer data)
 {
 	PidginLogViewer *viewer = data;
 	gtk_imhtml_search_find(GTK_IMHTML(viewer->imhtml), viewer->search);
+	g_object_steal_data(G_OBJECT(viewer->entry), "search-find-cb");
 	return FALSE;
 }
 
@@ -472,8 +473,11 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 	g_free(read);
 
 	if (viewer->search != NULL) {
+		guint source;
 		gtk_imhtml_search_clear(GTK_IMHTML(viewer->imhtml));
-		g_idle_add(search_find_cb, viewer);
+		source = g_idle_add(search_find_cb, viewer);
+		g_object_set_data_full(G_OBJECT(viewer->entry), "search-find-cb",
+		                       GINT_TO_POINTER(source), (GDestroyNotify)g_source_remove);
 	}
 
 	pidgin_clear_cursor(viewer->window);
