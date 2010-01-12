@@ -59,6 +59,9 @@ msn_transaction_destroy(MsnTransaction *trans)
 	g_free(trans->params);
 	g_free(trans->payload);
 
+	if (trans->data_free)
+		trans->data_free(trans->data);
+
 #if 0
 	if (trans->pendent_cmd != NULL)
 		msn_message_unref(trans->pendent_msg);
@@ -163,6 +166,12 @@ msn_transaction_set_data(MsnTransaction *trans, void *data)
 	g_return_if_fail(trans != NULL);
 
 	trans->data = data;
+}
+
+void msn_transaction_set_data_free(MsnTransaction *trans, GDestroyNotify fn)
+{
+	g_return_if_fail(trans != NULL);
+	trans->data_free = fn;
 }
 
 void

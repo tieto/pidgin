@@ -26,8 +26,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <glib.h>
-
 #include "internal.h"
 #include "certificate.h"
 #include "dbus-maybe.h"
@@ -97,8 +95,8 @@ invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
 			         "automatically checked.");
 			break;
 		case PURPLE_CERTIFICATE_CA_UNKNOWN:
-			return _("The root certificate this one claims to be issued by is "
-			         "unknown.");
+			return _("The certificate is not trusted because no certificate "
+			         "that can verify it is currently trusted.");
 			break;
 		case PURPLE_CERTIFICATE_NOT_ACTIVATED:
 			return _("The certificate is not valid yet.");
@@ -1402,13 +1400,15 @@ x509_tls_cached_complete(PurpleCertificateVerificationRequest *vrq,
 		if (flags & PURPLE_CERTIFICATE_NAME_MISMATCH) {
 			gchar *sn = purple_certificate_get_subject_name(peer_crt);
 
-			g_string_append_printf(errors, _("The certificate claims to be "
-						"from \"%s\" instead. This could mean that you are "
-						"not connecting to the service you believe you are."),
-						sn);
-			g_free(sn);
+			if (sn) {
+				g_string_append_printf(errors, _("The certificate claims to be "
+							"from \"%s\" instead. This could mean that you are "
+							"not connecting to the service you believe you are."),
+							sn);
+				g_free(sn);
 
-			flags &= ~PURPLE_CERTIFICATE_NAME_MISMATCH;
+				flags &= ~PURPLE_CERTIFICATE_NAME_MISMATCH;
+			}
 		}
 
 		while (i != PURPLE_CERTIFICATE_LAST) {
@@ -1431,9 +1431,8 @@ x509_tls_cached_complete(PurpleCertificateVerificationRequest *vrq,
 	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,
 						 "tls_peers");
 	if (tls_peers) {
-		if (!purple_certificate_pool_contains(tls_peers, vrq->subject_name) &&
-		        !purple_certificate_pool_store(tls_peers,vrq->subject_name,
-		                                       peer_crt)) {
+		if (!purple_certificate_pool_store(tls_peers,vrq->subject_name,
+		                                   peer_crt)) {
 			purple_debug_error("certificate/x509/tls_cached",
 			                   "FAILED to cache peer certificate\n");
 		}

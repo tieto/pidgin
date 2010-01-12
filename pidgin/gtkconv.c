@@ -3903,8 +3903,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
 
 	if (buddy != NULL &&
-	    !purple_presence_is_online(purple_buddy_get_presence(buddy)) &&
-	    !purple_account_supports_offline_message(account, buddy))
+	    !purple_presence_is_online(purple_buddy_get_presence(buddy)))
 	{
 		gtk_widget_set_sensitive(label, FALSE);
 
@@ -4277,7 +4276,7 @@ tab_complete(PurpleConversation *conv)
 		/* Users */
 		for (; l != NULL; l = l->next) {
 			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
-									  &matches, TRUE, ((PurpleConvChatBuddy *)l->data)->name);
+									  &matches, FALSE, ((PurpleConvChatBuddy *)l->data)->name);
 		}
 
 
@@ -4811,6 +4810,9 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 									sort_chat_users, NULL, NULL);
 
 	list = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ls));
+
+	/* Allow a user to specify gtkrc settings for the chat userlist only */
+	gtk_widget_set_name(list, "pidgin_conv_userlist");
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	g_object_set(G_OBJECT(rend),
@@ -5491,10 +5493,12 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 	}
 
 	/* Somebody wants to keep this conversation around, so don't time it out */
-	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
-	if (timer) {
-		purple_timeout_remove(timer);
-		purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(0));
+	if (conv) {
+		timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
+		if (timer) {
+			purple_timeout_remove(timer);
+			purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(0));
+		}
 	}
 }
 
@@ -7598,15 +7602,45 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 	}
 }
 
+static void
+account_signing_off(PurpleConnection *gc)
+{
+	GList *list = purple_get_chats();
+	PurpleAccount *account = purple_connection_get_account(gc);
+
+	/* We are about to sign off. See which chats we are currently in, and mark
+	 * them for rejoin on reconnect. */
+	while (list) {
+		PurpleConversation *conv = list->data;
+		if (!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)) &&
+				purple_conversation_get_account(conv) == account) {
+			purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
+			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
+						"longer in this chat. You will be automatically rejoined in the chat when "
+						"the account reconnects."),
+					PURPLE_MESSAGE_SYSTEM, time(NULL));
+		}
+		list = list->next;
+	}
+}
+
+struct _status_timeout_user {
+	gchar *name;
+	PurpleAccount *account;
+};
+
 static gboolean
-update_buddy_status_timeout(PurpleBuddy *buddy)
+update_buddy_status_timeout(struct _status_timeout_user *user)
 {
 	/* To remove the signing-on/off door icon */
 	PurpleConversation *conv;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy->name, buddy->account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, user->name, user->account);
 	if (conv)
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON);
+
+	g_free(user->name);
+	g_free(user);
 
 	return FALSE;
 }
@@ -7616,6 +7650,7 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 {
 	PidginConversation *gtkconv;
 	PurpleConversation *conv;
+	struct _status_timeout_user *user;
 
 	gtkconv = get_gtkconv_with_contact(purple_buddy_get_contact(buddy));
 	if (gtkconv)
@@ -7628,8 +7663,12 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_MENU);
 	}
 
+	user = g_malloc(sizeof(struct _status_timeout_user));
+	user->name = g_strdup(buddy->name);
+	user->account = buddy->account;
+
 	/* In case a conversation is started after the buddy has signed-on/off */
-	purple_timeout_add_seconds(11, (GSourceFunc)update_buddy_status_timeout, buddy);
+	purple_timeout_add_seconds(11, (GSourceFunc)update_buddy_status_timeout, user);
 }
 
 static void
@@ -7906,8 +7945,10 @@ pidgin_conversations_init(void)
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/tab_side", GTK_POS_TOP);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/scrollback_lines", 4000);
 
+#ifdef _WIN32
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font", TRUE);
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/custom_font", "");
+#endif
 
 	/* Conversations -> Chat */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/chat");
@@ -8092,6 +8133,8 @@ pidgin_conversations_init(void)
 	purple_signal_connect(purple_connections_get_handle(), "signed-off", handle,
 						G_CALLBACK(account_signed_off_cb),
 						GINT_TO_POINTER(PURPLE_CONV_ACCOUNT_OFFLINE));
+	purple_signal_connect(purple_connections_get_handle(), "signing-off", handle,
+						G_CALLBACK(account_signing_off), NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "received-im-msg",
 						handle, G_CALLBACK(received_im_msg_cb), NULL);

@@ -73,7 +73,7 @@ flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, gu
 }
 
 void
-flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci)
+flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci, gboolean allow_multiple_logins)
 {
 	FlapFrame *frame;
 	GSList *tlvlist = NULL;
@@ -94,7 +94,7 @@ flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConne
 	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
 	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
 	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
-	aim_tlvlist_add_8(&tlvlist, 0x004a, 0x01);
+	aim_tlvlist_add_8(&tlvlist, 0x004a, (allow_multiple_logins ? 0x01 : 0x03));
 
 	aim_tlvlist_write(&frame->data, &tlvlist);
 
@@ -131,11 +131,13 @@ static guint32
 rateclass_get_new_current(FlapConnection *conn, struct rateclass *rateclass, struct timeval *now)
 {
 	unsigned long timediff; /* In milliseconds */
+	guint32 current;
 
 	timediff = (now->tv_sec - rateclass->last.tv_sec) * 1000 + (now->tv_usec - rateclass->last.tv_usec) / 1000;
+	current = ((rateclass->current * (rateclass->windowsize - 1)) + timediff) / rateclass->windowsize;
 
-	/* This formula is taken from the joscar API docs. Preesh. */
-	return MIN(((rateclass->current * (rateclass->windowsize - 1)) + timediff) / rateclass->windowsize, rateclass->max);
+	/* This formula is taken from http://dev.aol.com/aim/oscar/#RATELIMIT */
+	return MIN(current, rateclass->max);
 }
 
 /*
@@ -161,8 +163,7 @@ static gboolean flap_connection_send_snac_queue(FlapConnection *conn, struct tim
 
 			new_current = rateclass_get_new_current(conn, rateclass, &now);
 
-			/* (Add 100ms padding to account for inaccuracies in the calculation) */
-			if (new_current < rateclass->alert + 100)
+			if (rateclass->dropping_snacs || new_current <= rateclass->alert)
 				/* Not ready to send this SNAC yet--keep waiting. */
 				return FALSE;
 
@@ -245,10 +246,9 @@ flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, gui
 		gettimeofday(&now, NULL);
 		new_current = rateclass_get_new_current(conn, rateclass, &now);
 
-		/* (Add 100ms padding to account for inaccuracies in the calculation) */
-		if (new_current < rateclass->alert + 100)
+		if (rateclass->dropping_snacs || new_current <= rateclass->alert)
 		{
-			purple_debug_info("oscar", "Current rate for conn %p would be %u, but we alert at %u; enqueueing\n", conn, new_current, (rateclass->alert + 100));
+			purple_debug_info("oscar", "Current rate for conn %p would be %u, but we alert at %u; enqueueing\n", conn, new_current, rateclass->alert);
 
 			enqueue = TRUE;
 		}

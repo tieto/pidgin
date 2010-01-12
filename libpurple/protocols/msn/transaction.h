@@ -48,6 +48,8 @@ struct _MsnTransaction
 	guint timer;
 
 	void *data; /**< The data to be used on the different callbacks. */
+	GDestroyNotify data_free;  /**< The function to free 'data', or @c NULL */
+
 	GHashTable *callbacks;
 	gboolean has_custom_callbacks;
 	MsnErrorCb error_cb;
@@ -71,6 +73,7 @@ void msn_transaction_unqueue_cmd(MsnTransaction *trans, MsnCmdProc *cmdproc);
 void msn_transaction_set_payload(MsnTransaction *trans,
 								 const char *payload, int payload_len);
 void msn_transaction_set_data(MsnTransaction *trans, void *data);
+void msn_transaction_set_data_free(MsnTransaction *trans, GDestroyNotify fn);
 void msn_transaction_add_cb(MsnTransaction *trans, char *answer,
 							MsnTransCb cb);
 void msn_transaction_set_error_cb(MsnTransaction *trans, MsnErrorCb cb);

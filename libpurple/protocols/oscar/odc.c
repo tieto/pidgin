@@ -110,8 +110,8 @@ peer_odc_send(PeerConnection *conn, OdcFrame *frame)
 	byte_stream_put16(&bs, 0x0000);
 	byte_stream_put16(&bs, 0x0000);
 	byte_stream_put32(&bs, frame->payload.len);
-	byte_stream_put16(&bs, 0x0000);
 	byte_stream_put16(&bs, frame->encoding);
+	byte_stream_put16(&bs, 0x0000);	
 	byte_stream_put16(&bs, 0x0000);
 	byte_stream_put16(&bs, frame->flags);
 	byte_stream_put16(&bs, 0x0000);

@@ -47,12 +47,50 @@ static gchar *roster_groups_join(GSList *list)
 	return g_string_free(out, FALSE);
 }
 
+static void roster_request_cb(JabberStream *js, const char *from,
+                              JabberIqType type, const char *id,
+                              xmlnode *packet, gpointer data)
+{
+	xmlnode *query;
+
+	if (type == JABBER_IQ_ERROR) {
+		/*
+		 * This shouldn't happen in any real circumstances and
+		 * likely constitutes a server-side misconfiguration (i.e.
+		 * explicitly not loading mod_roster...)
+		 */
+		purple_debug_error("jabber", "Error retrieving roster!?\n");
+		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+		return;
+	}
+
+	query = xmlnode_get_child(packet, "query");
+	if (query == NULL) {
+		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+		return;
+	}
+
+	jabber_roster_parse(js, from, type, id, query);
+	jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+}
+
 void jabber_roster_request(JabberStream *js)
 {
+	PurpleAccount *account;
 	JabberIq *iq;
+	xmlnode *query;
+
+	account = purple_connection_get_account(js->gc);
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:roster");
+	query = xmlnode_get_child(iq->node, "query");
 
+	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER) {
+		xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
+		xmlnode_set_attrib(query, "gr:ext", "2");
+	}
+
+	jabber_iq_set_callback(iq, roster_request_cb, NULL);
 	jabber_iq_send(iq);
 }
 
@@ -72,7 +110,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups)
 {
 	GSList *buddies, *l;
-	GSList *pool = NULL;
+	PurpleAccount *account = purple_connection_get_account(js->gc);
 
 	buddies = purple_find_buddies(js->gc->account, jid);
 
@@ -117,23 +155,12 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 			groups = g_slist_delete_link(groups, l);
 		} else {
 			/* This buddy isn't in the group on the server anymore */
-			pool = g_slist_prepend(pool, b);
+			purple_debug_info("jabber", "jabber_roster_parse(): Removing %s "
+			                  "from group '%s' on the local list\n",
+			                  purple_buddy_get_name(b),
+			                  purple_group_get_name(g));
+			purple_blist_remove_buddy(b);
 		}
-	}
-
-	if (pool) {
-		GString *tmp = g_string_new(NULL);
-		GSList *list = pool;
-		for ( ; list; list = list->next) {
-			tmp = g_string_append(tmp,
-					purple_group_get_name(purple_buddy_get_group(list->data)));
-			if (list->next)
-				tmp = g_string_append(tmp, ", ");
-		}
-
-		purple_debug_info("jabber", "jabber_roster_parse(): Removing %s from "
-		                  "groups: %s\n", jid, tmp->str);
-		g_string_free(tmp, TRUE);
 	}
 
 	if (groups) {
@@ -145,17 +172,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 
 	while(groups) {
 		PurpleGroup *g = purple_find_group(groups->data);
-		PurpleBuddy *b = NULL;
-
-		/* If there are buddies we would otherwise delete, move them to
-		 * the new group (instead of deleting them below)
-		 */
-		if (pool) {
-			b = pool->data;
-			pool = g_slist_delete_link(pool, pool);
-		} else {
-			b = purple_buddy_new(js->gc->account, jid, alias);
-		}
+		PurpleBuddy *b = purple_buddy_new(account, jid, alias);
 
 		if(!g) {
 			g = purple_group_new(groups->data);
@@ -169,14 +186,6 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		groups = g_slist_delete_link(groups, groups);
 	}
 
-	/* Remove this person from all the groups they're no longer in on the
-	 * server */
-	while (pool) {
-		PurpleBuddy *b = pool->data;
-		purple_blist_remove_buddy(b);
-		pool = g_slist_delete_link(pool, pool);
-	}
-
 	g_slist_free(buddies);
 }
 
@@ -184,6 +193,9 @@ void jabber_roster_parse(JabberStream *js, const char *from,
                          JabberIqType type, const char *id, xmlnode *query)
 {
 	xmlnode *item, *group;
+#if 0
+	const char *ver;
+#endif
 
 	if (!jabber_is_own_account(js, from)) {
 		purple_debug_warning("jabber", "Received bogon roster push from %s\n",
@@ -210,18 +222,18 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 			continue;
 
 		if(subscription) {
-			if (jb == js->user_jb)
-				jb->subscription = JABBER_SUB_BOTH;
-			else if(!strcmp(subscription, "none"))
-				jb->subscription = JABBER_SUB_NONE;
-			else if(!strcmp(subscription, "to"))
-				jb->subscription = JABBER_SUB_TO;
-			else if(!strcmp(subscription, "from"))
-				jb->subscription = JABBER_SUB_FROM;
-			else if(!strcmp(subscription, "both"))
-				jb->subscription = JABBER_SUB_BOTH;
-			else if(!strcmp(subscription, "remove"))
+			if (g_str_equal(subscription, "remove"))
 				jb->subscription = JABBER_SUB_REMOVE;
+			else if (jb == js->user_jb)
+				jb->subscription = JABBER_SUB_BOTH;
+			else if (g_str_equal(subscription, "none"))
+				jb->subscription = JABBER_SUB_NONE;
+			else if (g_str_equal(subscription, "to"))
+				jb->subscription = JABBER_SUB_TO;
+			else if (g_str_equal(subscription, "from"))
+				jb->subscription = JABBER_SUB_FROM;
+			else if (g_str_equal(subscription, "both"))
+				jb->subscription = JABBER_SUB_BOTH;
 		}
 
 		if(purple_strequal(ask, "subscribe"))
@@ -229,7 +241,7 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 		else
 			jb->subscription &= ~JABBER_SUB_PENDING;
 
-		if(jb->subscription == JABBER_SUB_REMOVE) {
+		if(jb->subscription & JABBER_SUB_REMOVE) {
 			remove_purple_buddies(js, jid);
 		} else {
 			GSList *groups = NULL;
@@ -256,13 +268,15 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 		}
 	}
 
-	js->currently_parsing_roster_push = FALSE;
+#if 0
+	ver = xmlnode_get_attrib(query, "ver");
+	if (ver) {
+		 PurpleAccount *account = purple_connection_get_account(js->gc);
+		 purple_account_set_string(account, "roster_ver", ver);
+	}
+#endif
 
-	/* if we're just now parsing the roster for the first time,
-	 * then now would be the time to declare ourselves connected.
-	 */
-	if (js->state != JABBER_STREAM_CONNECTED)
-		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+	js->currently_parsing_roster_push = FALSE;
 }
 
 /* jabber_roster_update frees the GSList* passed in */
@@ -326,7 +340,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 
 	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER) {
 		jabber_google_roster_outgoing(js, query, item);
-		xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
+		xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
 		xmlnode_set_attrib(query, "gr:ext", "2");
 	}
 	jabber_iq_send(iq);
@@ -354,7 +368,7 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 	}
 
 	/* Adding a chat room or a chat buddy to the roster is *not* supported. */
-	if (jabber_chat_find(js, jid->node, jid->domain) != NULL) {
+	if (jid->node && jabber_chat_find(js, jid->node, jid->domain) != NULL) {
 		/*
 		 * This is the same thing Bonjour does. If it causes problems, move
 		 * it to an idle callback.

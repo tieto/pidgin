@@ -69,6 +69,30 @@ purple_xfer_priv_data_destroy(gpointer data)
 	g_free(priv);
 }
 
+static const gchar *
+purple_xfer_status_type_to_string(PurpleXferStatusType type)
+{
+	static const struct {
+		PurpleXferStatusType type;
+		const char *name;
+	} type_names[] = {
+		{ PURPLE_XFER_STATUS_UNKNOWN, "unknown" },
+		{ PURPLE_XFER_STATUS_NOT_STARTED, "not started" },
+		{ PURPLE_XFER_STATUS_ACCEPTED, "accepted" },
+		{ PURPLE_XFER_STATUS_STARTED, "started" },
+		{ PURPLE_XFER_STATUS_DONE, "done" },
+		{ PURPLE_XFER_STATUS_CANCEL_LOCAL, "cancelled locally" },
+		{ PURPLE_XFER_STATUS_CANCEL_REMOTE, "cancelled remotely" }
+	};
+	int i;
+
+	for (i = 0; i < G_N_ELEMENTS(type_names); ++i)
+		if (type_names[i].type == type)
+			return type_names[i].name;
+
+	return "invalid state";
+}
+
 GList *
 purple_xfers_get_all()
 {
@@ -109,6 +133,10 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 		ui_ops->new_xfer(xfer);
 
 	xfers = g_list_prepend(xfers, xfer);
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("xfer", "new %p [%d]\n", xfer, xfer->ref);
+
 	return xfer;
 }
 
@@ -118,6 +146,9 @@ purple_xfer_destroy(PurpleXfer *xfer)
 	PurpleXferUiOps *ui_ops;
 
 	g_return_if_fail(xfer != NULL);
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("xfer", "destroyed %p [%d]\n", xfer, xfer->ref);
 
 	/* Close the file browser, if it's open */
 	purple_request_close_with_handle(xfer);
@@ -148,6 +179,9 @@ purple_xfer_ref(PurpleXfer *xfer)
 	g_return_if_fail(xfer != NULL);
 
 	xfer->ref++;
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("xfer", "ref'd %p [%d]\n", xfer, xfer->ref);
 }
 
 void
@@ -158,6 +192,9 @@ purple_xfer_unref(PurpleXfer *xfer)
 
 	xfer->ref--;
 
+	if (purple_debug_is_verbose())
+		purple_debug_info("xfer", "unref'd %p [%d]\n", xfer, xfer->ref);
+
 	if (xfer->ref == 0)
 		purple_xfer_destroy(xfer);
 }
@@ -166,6 +203,11 @@ static void
 purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 {
 	g_return_if_fail(xfer != NULL);
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("xfer", "Changing status of xfer %p from %s to %s\n",
+				xfer, purple_xfer_status_type_to_string(xfer->status),
+				purple_xfer_status_type_to_string(status));
 
 	if (xfer->status == status)
 		return;
@@ -229,7 +271,7 @@ void purple_xfer_conversation_write(PurpleXfer *xfer, char *message, gboolean is
 	escaped = g_markup_escape_text(message, -1);
 
 	if (is_error)
-		flags = PURPLE_MESSAGE_ERROR;
+		flags |= PURPLE_MESSAGE_ERROR;
 
 	purple_conversation_write(conv, NULL, escaped, flags, time(NULL));
 	g_free(escaped);
@@ -268,14 +310,16 @@ static void
 purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 {
 	PurpleXfer *xfer;
+	PurpleXferType type;
 	struct stat st;
 	gchar *dir;
 
 	xfer = (PurpleXfer *)user_data;
+	type = purple_xfer_get_type(xfer);
 
 	if (g_stat(filename, &st) != 0) {
 		/* File not found. */
-		if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
+		if (type == PURPLE_XFER_RECEIVE) {
 #ifndef _WIN32
 			int mode = W_OK;
 #else
@@ -297,29 +341,26 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 		}
 		else {
 			purple_xfer_show_file_error(xfer, filename);
-			purple_xfer_request_denied(xfer);
+			purple_xfer_cancel_local(xfer);
 		}
 	}
-	else if ((purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) &&
-			 (st.st_size == 0)) {
+	else if ((type == PURPLE_XFER_SEND) && (st.st_size == 0)) {
 
 		purple_notify_error(NULL, NULL,
 						  _("Cannot send a file of 0 bytes."), NULL);
 
-		purple_xfer_request_denied(xfer);
+		purple_xfer_cancel_local(xfer);
 	}
-	else if ((purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) &&
-			 S_ISDIR(st.st_mode)) {
+	else if ((type == PURPLE_XFER_SEND) && S_ISDIR(st.st_mode)) {
 		/*
 		 * XXX - Sending a directory should be valid for some protocols.
 		 */
 		purple_notify_error(NULL, NULL,
 						  _("Cannot send a directory."), NULL);
 
-		purple_xfer_request_denied(xfer);
+		purple_xfer_cancel_local(xfer);
 	}
-	else if ((purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) &&
-			 S_ISDIR(st.st_mode)) {
+	else if ((type == PURPLE_XFER_RECEIVE) && S_ISDIR(st.st_mode)) {
 		char *msg, *utf8;
 		utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
 		msg = g_strdup_printf(
@@ -328,6 +369,23 @@ purple_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 		purple_notify_error(NULL, NULL, msg, NULL);
 		g_free(msg);
 		purple_xfer_request_denied(xfer);
+	}
+	else if (type == PURPLE_XFER_SEND) {
+#ifndef _WIN32
+		int mode = R_OK;
+#else
+		int mode = F_OK;
+#endif
+
+		if (g_access(filename, mode) == 0) {
+			purple_xfer_request_accepted(xfer, filename);
+		} else {
+			purple_xfer_ref(xfer);
+			purple_notify_message(
+				NULL, PURPLE_NOTIFY_MSG_ERROR, NULL,
+				_("File is not readable."), NULL,
+				(PurpleNotifyCloseCallback)purple_xfer_choose_file, xfer);
+		}
 	}
 	else {
 		purple_xfer_request_accepted(xfer, filename);
@@ -342,7 +400,11 @@ purple_xfer_choose_file_cancel_cb(void *user_data, const char *filename)
 	PurpleXfer *xfer = (PurpleXfer *)user_data;
 
 	purple_xfer_set_status(xfer, PURPLE_XFER_STATUS_CANCEL_LOCAL);
-	purple_xfer_request_denied(xfer);
+	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND)
+		purple_xfer_cancel_local(xfer);
+	else
+		purple_xfer_request_denied(xfer);
+	purple_xfer_unref(xfer);
 }
 
 static int
@@ -506,6 +568,8 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 	type = purple_xfer_get_type(xfer);
 	account = purple_xfer_get_account(xfer);
 
+	purple_debug_misc("xfer", "request accepted for %p\n", xfer); 
+
 	if (!filename && type == PURPLE_XFER_RECEIVE) {
 		xfer->status = PURPLE_XFER_STATUS_ACCEPTED;
 		xfer->ops.init(xfer);
@@ -582,6 +646,8 @@ void
 purple_xfer_request_denied(PurpleXfer *xfer)
 {
 	g_return_if_fail(xfer != NULL);
+
+	purple_debug_misc("xfer", "xfer %p denied\n", xfer);
 
 	if (xfer->ops.request_denied != NULL)
 		xfer->ops.request_denied(xfer);
@@ -1030,7 +1096,7 @@ do_transfer(PurpleXfer *xfer)
 				 * watcher.
 				 */
 				if (xfer->watcher != 0) {
-					purple_timeout_remove(xfer->watcher);
+					purple_input_remove(xfer->watcher);
 					xfer->watcher = 0;
 				}
 
@@ -1111,6 +1177,8 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 
 			purple_input_remove(xfer->watcher);
 			xfer->watcher = 0;
+
+			purple_debug_misc("xfer", "prpl is ready on ft %p, waiting for UI\n", xfer);
 			return;
 		}
 	}
@@ -1173,8 +1241,12 @@ purple_xfer_ui_ready(PurpleXfer *xfer)
 	priv = g_hash_table_lookup(xfers_data, xfer);
 	priv->ready |= PURPLE_XFER_READY_UI;
 
-	if (0 == (priv->ready & PURPLE_XFER_READY_PRPL))
+	if (0 == (priv->ready & PURPLE_XFER_READY_PRPL)) {
+		purple_debug_misc("xfer", "UI is ready on ft %p, waiting for prpl\n", xfer);
 		return;
+	}
+
+	purple_debug_misc("xfer", "UI (and prpl) ready on ft %p, so proceeding\n", xfer);
 
 	type = purple_xfer_get_type(xfer);
 	if (type == PURPLE_XFER_SEND)
@@ -1201,8 +1273,12 @@ purple_xfer_prpl_ready(PurpleXfer *xfer)
 	priv->ready |= PURPLE_XFER_READY_PRPL;
 
 	/* I don't think fwrite/fread are ever *not* ready */
-	if (xfer->dest_fp == NULL && 0 == (priv->ready & PURPLE_XFER_READY_UI))
+	if (xfer->dest_fp == NULL && 0 == (priv->ready & PURPLE_XFER_READY_UI)) {
+		purple_debug_misc("xfer", "prpl is ready on ft %p, waiting for UI\n", xfer);
 		return;
+	}
+
+	purple_debug_misc("xfer", "Prpl (and UI) ready on ft %p, so proceeding\n", xfer);
 
 	priv->ready = PURPLE_XFER_READY_NONE;
 

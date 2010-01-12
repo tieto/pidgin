@@ -18,12 +18,12 @@
  *  USA.
  */
 
+#include "libgadu.h"
+
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
-#include "libgadu.h"
 
 /*
  * gg_pubdir50_new()

@@ -258,7 +258,7 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 		purple_blist_server_alias_buddy(b, alias);
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(b), account);
-		if (conv != NULL && alias != NULL && purple_strequal(alias, who))
+		if (conv != NULL && alias != NULL && !purple_strequal(alias, who))
 		{
 			char *escaped = g_markup_escape_text(who, -1);
 			char *escaped2 = g_markup_escape_text(alias, -1);
@@ -786,14 +786,14 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 	struct chat_invite_data *cid;
 	int plugin_return;
 
+	g_return_if_fail(name != NULL);
+	g_return_if_fail(who != NULL);
+
 	account = purple_connection_get_account(gc);
-	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
-		/* protocol does not support privacy, handle it ourselves */
-		if (!purple_privacy_check(account, who)) {
-			purple_signal_emit(purple_conversations_get_handle(), "chat-invite-blocked",
-					account, who, name, message, data);
-			return;
-		}
+	if (!purple_privacy_check(account, who)) {
+		purple_signal_emit(purple_conversations_get_handle(), "chat-invite-blocked",
+				account, who, name, message, data);
+		return;
 	}
 
 	cid = g_new0(struct chat_invite_data, 1);

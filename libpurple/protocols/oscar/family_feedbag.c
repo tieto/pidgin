@@ -135,13 +135,18 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 					}
 			} while (exists);
 		}
-	} else if (type == AIM_SSI_TYPE_ICONINFO) {
+	} else if (new->gid == 0x0000) {
+		/*
+		 * This is weird, but apparently items in the root group can't
+		 * have a buddy ID equal to any group ID.  You'll get error
+		 * 0x0003 when trying to add, which is "item already exists"
+		 */
 		if (new->bid == 0xFFFF) {
 			do {
 				new->bid += 0x0001;
 				exists = FALSE;
 				for (cur = *list; cur != NULL; cur = cur->next)
-					if ((cur->bid >= new->bid) || (cur->gid >= new->bid)) {
+					if (cur->bid == new->bid || cur->gid == new->bid) {
 						exists = TRUE;
 						break;
 					}
@@ -153,7 +158,7 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 				new->bid += 0x0001;
 				exists = FALSE;
 				for (cur = *list; cur != NULL; cur = cur->next)
-					if ((cur->bid == new->bid) && (cur->gid == new->gid)) {
+					if (cur->bid == new->bid && cur->gid == new->gid) {
 						exists = TRUE;
 						break;
 					}
@@ -384,11 +389,10 @@ int aim_ssi_getpermdeny(struct aim_ssi_item *list)
 
 /**
  * Locally find the presence flag item, and return the setting.  The returned setting is a
- * bitmask of the user flags that you are visible to.  See the AIM_FLAG_* #defines
- * in oscar.h
+ * bitmask of the preferences.  See the AIM_SSI_PRESENCE_FLAG_* #defines in oscar.h.
  *
  * @param list A pointer to the current list of items.
- * @return Return the current visibility mask.
+ * @return Return the current set of preferences.
  */
 guint32 aim_ssi_getpresence(struct aim_ssi_item *list)
 {
@@ -686,10 +690,6 @@ int aim_ssi_cleanlist(OscarData *od)
 		}
 		cur = cur->next;
 	}
-
-	/* Check if the master group is empty */
-	if ((cur = aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000)) && (!cur->data))
-		aim_ssi_itemlist_del(&od->ssi.local, cur);
 
 	/* If we've made any changes then sync our list with the server's */
 	return aim_ssi_sync(od);
@@ -1129,9 +1129,11 @@ int aim_ssi_delicon(OscarData *od)
  * should show up as idle or not, etc.
  *
  * @param od The oscar odion.
- * @param presence I think it's a bitmask, but I only know what one of the bits is:
- *        0x00000002 - Hide wireless?
+ * @param presence A bitmask of the first 32 entries [0-31] from
+ *        http://dev.aol.com/aim/oscar/#FEEDBAG__BUDDY_PREFS
+ *        0x00000002 - Hide "eBuddy group" (whatever that is)
  *        0x00000400 - Allow others to see your idle time
+ *        0x00020000 - Don't show Recent Buddies
  * @return Return 0 if no errors, otherwise return the error number.
  */
 int aim_ssi_setpresence(OscarData *od, guint32 presence) {

@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "config.h"
+
 #include "gntinternal.h"
 #undef GNT_LOG_DOMAIN
 #define GNT_LOG_DOMAIN "Utils"
@@ -35,8 +37,6 @@
 #include "gntutils.h"
 #include "gntwindow.h"
 
-#include "config.h"
-
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,8 +45,6 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #endif
-
-#include "config.h"
 
 void gnt_util_get_text_bound(const char *text, int *width, int *height)
 {
@@ -374,6 +372,7 @@ void gnt_util_parse_widgets(const char *string, int num, ...)
 	gnt_widget_from_xmlnode(node, data, num);
 
 	xmlFreeDoc(doc);
+	xmlFreeParserCtxt(ctxt);
 	xmlCleanupParser();
 	va_end(list);
 	g_free(data);
@@ -470,6 +469,7 @@ gboolean gnt_util_parse_xhtml_to_textview(const char *string, GntTextView *tv)
 		xmlFreeDoc(doc);
 		ret = TRUE;
 	}
+	xmlFreeParserCtxt(ctxt);
 	xmlCleanupParser();
 	return ret;
 #endif

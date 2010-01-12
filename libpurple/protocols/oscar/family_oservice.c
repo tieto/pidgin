@@ -319,7 +319,10 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	for (i = 0; i < numclasses; i++)
 	{
 		struct rateclass *rateclass;
+		guint32 delta;
+		struct timeval now;
 
+		gettimeofday(&now, NULL);
 		rateclass = g_new0(struct rateclass, 1);
 
 		rateclass->classid = byte_stream_get16(bs);
@@ -339,11 +342,24 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		 * the new version hardcoded here.
 		 */
 		if (mod->version >= 3)
-			byte_stream_getrawbuf(bs, rateclass->unknown, sizeof(rateclass->unknown));
+		{
+			rateclass->delta = byte_stream_get32(bs);
+			rateclass->dropping_snacs = byte_stream_get8(bs);
+
+			delta = rateclass->delta;
+
+			rateclass->last.tv_sec = now.tv_sec - delta / 1000;
+			delta %= 1000;
+			rateclass->last.tv_usec = now.tv_usec - delta * 1000;
+		}
+		else
+		{
+			rateclass->delta = rateclass->dropping_snacs = 0;
+			rateclass->last.tv_sec = now.tv_sec;
+			rateclass->last.tv_usec = now.tv_usec;
+		}
 
 		rateclass->members = g_hash_table_new(g_direct_hash, g_direct_equal);
-		rateclass->last.tv_sec = 0;
-		rateclass->last.tv_usec = 0;
 		conn->rateclasses = g_slist_prepend(conn->rateclasses, rateclass);
 	}
 	conn->rateclasses = g_slist_reverse(conn->rateclasses);
@@ -383,8 +399,7 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	 */
 
 	/*
-	 * Last step in the conn init procedure is to acknowledge that we
-	 * agree to these draconian limitations.
+	 * Subscribe to rate change information for all rate classes.
 	 */
 	aim_srv_rates_addparam(od, conn);
 
@@ -451,7 +466,10 @@ ratechange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	aim_rxcallback_t userfunc;
 	guint16 code, classid;
 	struct rateclass *rateclass;
+	guint32 delta;
+	struct timeval now;
 
+	gettimeofday(&now, NULL);
 	code = byte_stream_get16(bs);
 	classid = byte_stream_get16(bs);
 
@@ -468,8 +486,29 @@ ratechange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	rateclass->current = byte_stream_get32(bs);
 	rateclass->max = byte_stream_get32(bs);
 
-	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, code, classid, rateclass->windowsize, rateclass->clear, rateclass->alert, rateclass->limit, rateclass->disconnect, rateclass->current, rateclass->max);
+	if (mod->version >= 3)
+	{
+		rateclass->delta = byte_stream_get32(bs);
+		rateclass->dropping_snacs = byte_stream_get8(bs);
+
+		delta = rateclass->delta;
+
+		rateclass->last.tv_sec = now.tv_sec - delta / 1000;
+		delta %= 1000;
+		rateclass->last.tv_usec = now.tv_usec - delta * 1000;
+	}
+	else
+	{
+		rateclass->delta = rateclass->dropping_snacs = 0;
+		rateclass->last.tv_sec = now.tv_sec;
+		rateclass->last.tv_usec = now.tv_usec;
+	}
+
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype))) {
+		/* Can't pass in guint8 via ... varargs, so we use an unsigned int */
+		unsigned int dropping_snacs = rateclass->dropping_snacs;
+		ret = userfunc(od, conn, frame, code, classid, rateclass->windowsize, rateclass->clear, rateclass->alert, rateclass->limit, rateclass->disconnect, rateclass->current, rateclass->max, rateclass->delta, dropping_snacs);
+	}
 
 	return ret;
 }

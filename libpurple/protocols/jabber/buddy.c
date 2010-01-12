@@ -38,6 +38,7 @@
 #include "xdata.h"
 #include "pep.h"
 #include "adhoccommands.h"
+#include "google.h"
 
 typedef struct {
 	long idle_seconds;
@@ -580,8 +581,7 @@ jabber_format_info(PurpleConnection *gc, PurpleRequestFields *fields)
 		if (text != NULL && *text != '\0') {
 			xmlnode *xp;
 
-			purple_debug(PURPLE_DEBUG_INFO, "jabber",
-					"Setting %s to '%s'\n", vc_tp->tag, text);
+			purple_debug_info("jabber", "Setting %s to '%s'\n", vc_tp->tag, text);
 
 			if ((xp = insert_tag_to_parent_tag(vc_node,
 											   NULL, vc_tp->tag)) != NULL) {
@@ -815,20 +815,33 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 	if (!jbi->jb->resources) {
 		/* the buddy is offline */
-		gchar *status =
-			g_strdup_printf("%s%s%s",	_("Offline"),
-			                jbi->last_message ? ": " : "",
-			                jbi->last_message ? jbi->last_message : "");
+		gboolean is_domain = jabber_jid_is_domain(jbi->jid);
+
 		if (jbi->last_seconds > 0) {
 			char *last = purple_str_seconds_to_string(jbi->last_seconds);
-			gchar *message = g_strdup_printf(_("%s ago"), last);
-			purple_notify_user_info_prepend_pair(user_info,
-				_("Logged Off"), message);
+			gchar *message = NULL;
+			const gchar *title = NULL;
+			if (is_domain) {
+				title = _("Uptime");
+				message = last;
+				last = NULL;
+			} else {
+				title = _("Logged Off");
+				message = g_strdup_printf(_("%s ago"), last);
+			}
+			purple_notify_user_info_prepend_pair(user_info, title, message);
 			g_free(last);
 			g_free(message);
 		}
-		purple_notify_user_info_prepend_pair(user_info, _("Status"), status);
-		g_free(status);
+
+		if (!is_domain) {
+			gchar *status =
+				g_strdup_printf("%s%s%s",	_("Offline"),
+				                jbi->last_message ? ": " : "",
+				                jbi->last_message ? jbi->last_message : "");
+			purple_notify_user_info_prepend_pair(user_info, _("Status"), status);
+			g_free(status);
+		}
 	}
 
 	g_free(resource_name);
@@ -924,7 +937,7 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 	}
 
 	/* Republish our vcard if the photo is different than the server's */
-	if (!purple_strequal(vcard_hash, js->initial_avatar_hash)) {
+	if (js->initial_avatar_hash && !purple_strequal(vcard_hash, js->initial_avatar_hash)) {
 		/*
 		 * Google Talk has developed the behavior that it will not accept
 		 * a vcard set in the first 10 seconds (or so) of the connection;
@@ -936,9 +949,13 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 			                                             js);
 		else
 			jabber_set_info(js->gc, purple_account_get_user_info(account));
-	} else if (js->initial_avatar_hash) {
-		/* Our photo is in the vcard, so advertise vcard-temp updates */
-		js->avatar_hash = g_strdup(js->initial_avatar_hash);
+	} else if (vcard_hash) {
+		/* A photo is in the vCard. Advertise its hash */
+		js->avatar_hash = vcard_hash;
+		vcard_hash = NULL;
+
+		/* Send presence to update vcard-temp:x:update */
+		jabber_presence_send(js, FALSE);
 	}
 
 	g_free(vcard_hash);
@@ -1149,9 +1166,8 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 				char *bintext = NULL;
 				xmlnode *binval;
 
-				if( ((binval = xmlnode_get_child(child, "BINVAL")) &&
-						(bintext = xmlnode_get_data(binval))) ||
-						(bintext = xmlnode_get_data(child))) {
+				if ((binval = xmlnode_get_child(child, "BINVAL")) &&
+						(bintext = xmlnode_get_data(binval))) {
 					gsize size;
 					guchar *data;
 					gboolean photo = (strcmp(child->name, "PHOTO") == 0);
@@ -1463,7 +1479,7 @@ static gboolean _client_is_blacklisted(JabberBuddyResource *jbr, const char *ns)
 	if(!jbr->client.name)
 		return FALSE;
 
-	if(!strcmp(ns, "jabber:iq:last")) {
+	if(!strcmp(ns, NS_LAST_ACTIVITY)) {
 		if(!strcmp(jbr->client.name, "Trillian")) {
 			/* verified by nwalp 2007/05/09 */
 			if(!strcmp(jbr->client.version, "3.1.0.121") ||
@@ -1509,8 +1525,8 @@ dispatch_queries_for_resource(JabberStream *js, JabberBuddyInfo *jbi,
 	 * respond (with an error or otherwise) to jabber:iq:last
 	 * requests.  There are a number of Trillian users in my
 	 * office. */
-	if(!_client_is_blacklisted(jbr, "jabber:iq:last")) {
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
+	if(!_client_is_blacklisted(jbr, NS_LAST_ACTIVITY)) {
+		iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_LAST_ACTIVITY);
 		xmlnode_set_attrib(iq->node, "to", to);
 		jabber_iq_set_callback(iq, jabber_last_parse, jbi);
 		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
@@ -1519,12 +1535,12 @@ dispatch_queries_for_resource(JabberStream *js, JabberBuddyInfo *jbi,
 
 	if (jbr->tz_off == PURPLE_NO_TZ_OFF &&
 			(!jbr->caps.info ||
-			 	jabber_resource_has_capability(jbr, "urn:xmpp:time"))) {
+			 	jabber_resource_has_capability(jbr, NS_ENTITY_TIME))) {
 		xmlnode *child;
 		iq = jabber_iq_new(js, JABBER_IQ_GET);
 		xmlnode_set_attrib(iq->node, "to", to);
 		child = xmlnode_new_child(iq->node, "time");
-		xmlnode_set_namespace(child, "urn:xmpp:time");
+		xmlnode_set_namespace(child, NS_ENTITY_TIME);
 		jabber_iq_set_callback(iq, jabber_time_parse, jbi);
 		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
 		jabber_iq_send(iq);
@@ -1587,7 +1603,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 
 	if (!jb->resources && is_bare_jid) {
 		/* user is offline, send a jabber:iq:last to find out last time online */
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
+		iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_LAST_ACTIVITY);
 		xmlnode_set_attrib(iq->node, "to", jid);
 		jabber_iq_set_callback(iq, jabber_last_offline_parse, jbi);
 		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
@@ -1843,6 +1859,13 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 		m = g_list_append(m, act);
 	}
 
+	if (js->googletalk) {
+		act = purple_menu_action_new(_("Initiate _Chat"),
+		                           PURPLE_CALLBACK(google_buddy_node_chat),
+		                           NULL, NULL);
+		m = g_list_append(m, act);
+	}
+
 	/*
 	 * This if-condition implements parts of XEP-0100: Gateway Interaction
 	 *
@@ -1850,8 +1873,10 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 	 * However, since the gateway might appear offline to us, we cannot get that information. Therefore, I just assume
 	 * that gateways on the roster can be identified by having no '@' in their jid. This is a faily safe assumption, since
 	 * people don't tend to have a server or other service there.
+	 *
+	 * TODO: Use disco#info...
 	 */
-	if (g_utf8_strchr(name, -1, '@') == NULL) {
+	if (strchr(name, '@') == NULL) {
 		act = purple_menu_action_new(_("Log In"),
 									 PURPLE_CALLBACK(jabber_buddy_login),
 									 NULL, NULL);
@@ -2332,6 +2357,12 @@ void jabber_user_search_begin(PurplePluginAction *action)
 			_("Cancel"), NULL,
 			NULL, NULL, NULL,
 			js);
+}
+
+gboolean
+jabber_resource_know_capabilities(const JabberBuddyResource *jbr)
+{
+	return jbr->caps.info != NULL;
 }
 
 gboolean

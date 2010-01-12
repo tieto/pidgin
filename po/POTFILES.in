@@ -88,6 +88,10 @@ libpurple/protocols/irc/msgs.c
 libpurple/protocols/irc/parse.c
 libpurple/protocols/jabber/adhoccommands.c
 libpurple/protocols/jabber/auth.c
+libpurple/protocols/jabber/auth_cyrus.c
+libpurple/protocols/jabber/auth_digest_md5.c
+libpurple/protocols/jabber/auth_plain.c
+libpurple/protocols/jabber/auth_scram.c
 libpurple/protocols/jabber/bosh.c
 libpurple/protocols/jabber/buddy.c
 libpurple/protocols/jabber/chat.c
@@ -126,6 +130,15 @@ libpurple/protocols/msnp9/session.c
 libpurple/protocols/msnp9/state.c
 libpurple/protocols/msnp9/switchboard.c
 libpurple/protocols/msnp9/userlist.c
+libpurple/protocols/mxit/actions.c
+libpurple/protocols/mxit/filexfer.c
+libpurple/protocols/mxit/http.c
+libpurple/protocols/mxit/login.c
+libpurple/protocols/mxit/mxit.c
+libpurple/protocols/mxit/profile.c
+libpurple/protocols/mxit/protocol.c
+libpurple/protocols/mxit/roster.c
+libpurple/protocols/mxit/splashscreen.c
 libpurple/protocols/myspace/myspace.c
 libpurple/protocols/myspace/user.c
 libpurple/protocols/myspace/zap.c

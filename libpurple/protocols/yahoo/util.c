@@ -656,7 +656,10 @@ char *yahoo_codes_to_html(const char *x)
 	/* Strip off the outter HTML node */
 	/* This probably isn't necessary, especially if we made the outter HTML
 	 * node an empty span.  But the HTML is simpler this way. */
-	xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
+	if (!purple_strequal(xmlstr1, "<html/>"))
+		xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
+	else
+		xmlstr2 = g_strdup("");
 	g_free(xmlstr1);
 
 	esc = g_strescape(x, NULL);
@@ -881,6 +884,9 @@ char *yahoo_html_to_codes(const char *src)
 						}
 						g_free(etag);
 					}
+				} else {
+					/* We don't know what the tag is. Send it unmodified. */
+					g_string_append(dest, tag);
 				}
 
 				i = j;
@@ -913,3 +919,18 @@ char *yahoo_html_to_codes(const char *src)
 
 	return g_string_free(dest, FALSE);
 }
+
+YahooFederation yahoo_get_federation_from_name(const char *who)
+{
+	YahooFederation fed = YAHOO_FEDERATION_NONE;
+	if (who[3] == '/') {
+		if (!g_ascii_strncasecmp(who, "msn", 3))
+			fed = YAHOO_FEDERATION_MSN;
+		else if (!g_ascii_strncasecmp(who, "ocs", 3))
+			fed = YAHOO_FEDERATION_OCS;
+		else if (!g_ascii_strncasecmp(who, "ibm", 3))
+			fed = YAHOO_FEDERATION_IBM;
+	}
+	return fed;
+}
+

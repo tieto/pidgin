@@ -79,8 +79,8 @@ static PurpleAccount* check_active_accounts_for_identical_statuses(void);
 
 static void pidgin_status_box_pulse_typing(PidginStatusBox *status_box);
 static void pidgin_status_box_refresh(PidginStatusBox *status_box);
-static void status_menu_refresh_iter(PidginStatusBox *status_box);
-static void pidgin_status_box_regenerate(PidginStatusBox *status_box);
+static void status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed);
+static void pidgin_status_box_regenerate(PidginStatusBox *status_box, gboolean status_changed);
 static void pidgin_status_box_changed(PidginStatusBox *box);
 static void pidgin_status_box_size_request (GtkWidget *widget, GtkRequisition *requisition);
 static void pidgin_status_box_size_allocate (GtkWidget *widget, GtkAllocation *allocation);
@@ -304,7 +304,7 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus, Purpl
 	if (status_box->account == account)
 		update_to_reflect_account_status(status_box, account, newstatus);
 	else if (status_box->token_status_account == account)
-		status_menu_refresh_iter(status_box);
+		status_menu_refresh_iter(status_box, TRUE);
 }
 
 static gboolean
@@ -312,6 +312,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 {
 	if (event->button == 3) {
 		GtkWidget *menu_item;
+		const char *path;
 
 		if (box->icon_box_menu)
 			gtk_widget_destroy(box->icon_box_menu);
@@ -325,7 +326,8 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 		menu_item = pidgin_new_item_from_stock(box->icon_box_menu, _("Remove"), GTK_STOCK_REMOVE,
 						     G_CALLBACK(remove_buddy_icon_cb),
 						     box, 0, 0, NULL);
-		if (purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon") == NULL)
+		if (!(path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon"))
+				|| !*path)
 			gtk_widget_set_sensitive(menu_item, FALSE);
 
 		gtk_menu_popup(GTK_MENU(box->icon_box_menu), NULL, NULL, NULL, NULL,
@@ -559,7 +561,7 @@ pidgin_status_box_set_property(GObject *object, guint param_id,
 		else
 			statusbox->token_status_account = check_active_accounts_for_identical_statuses();
 
-		pidgin_status_box_regenerate(statusbox);
+		pidgin_status_box_regenerate(statusbox, TRUE);
 
 		break;
 	default:
@@ -821,7 +823,7 @@ find_status_type_by_index(const PurpleAccount *account, gint active)
  * keyboard signals instead of the changed signal?
  */
 static void
-status_menu_refresh_iter(PidginStatusBox *status_box)
+status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed)
 {
 	PurpleSavedStatus *saved_status;
 	PurpleStatusPrimitive primitive;
@@ -912,18 +914,15 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 	} else
 		status_box->active_row = NULL;
 
-	message = purple_savedstatus_get_message(saved_status);
-	if (!purple_savedstatus_is_transient(saved_status) || !message || !*message)
-	{
-		status_box->imhtml_visible = FALSE;
-		gtk_widget_hide_all(status_box->vbox);
-	}
-	else
-	{
-		status_box->imhtml_visible = TRUE;
-		gtk_widget_show_all(status_box->vbox);
+	if (status_changed) {
+		message = purple_savedstatus_get_message(saved_status);
 
 		/*
+		 * If we are going to hide the imhtml, don't retain the
+		 * message because showing the old message later is
+		 * confusing. If we are going to set the message to a pre-set,
+		 * then we need to do this anyway
+		 *
 		 * Suppress the "changed" signal because the status
 		 * was changed programmatically.
 		 */
@@ -931,11 +930,23 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 
 		gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
 		gtk_imhtml_clear_formatting(GTK_IMHTML(status_box->imhtml));
-		gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
-		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
-	}
 
-	update_size(status_box);
+		if (!purple_savedstatus_is_transient(saved_status) || !message || !*message)
+		{
+			status_box->imhtml_visible = FALSE;
+			gtk_widget_hide_all(status_box->vbox);
+		}
+		else
+		{
+			status_box->imhtml_visible = TRUE;
+			gtk_widget_show_all(status_box->vbox);
+
+			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
+		}
+
+		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
+		update_size(status_box);
+	}
 
 	/* Stop suppressing the "changed" signal. */
 	gtk_widget_set_sensitive(GTK_WIDGET(status_box), TRUE);
@@ -996,50 +1007,50 @@ add_popular_statuses(PidginStatusBox *statusbox)
  * statuses and a token account if they do */
 static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 {
-	PurpleAccount *acct = NULL, *acct2;
-	GList *tmp, *tmp2, *active_accts = purple_accounts_get_all_active();
-	GList *s, *s1, *s2;
+	GList *iter, *active_accts = purple_accounts_get_all_active();
+	PurpleAccount *acct1 = NULL;
+	const char *prpl1 = NULL;
 
-	for (tmp = active_accts; tmp; tmp = tmp->next) {
-		acct = tmp->data;
-		s = purple_account_get_status_types(acct);
-		for (tmp2 = tmp->next; tmp2; tmp2 = tmp2->next) {
-			acct2 = tmp2->data;
+	if (active_accts) {
+		acct1 = active_accts->data;
+		prpl1 = purple_account_get_protocol_id(acct1);
+	} else {
+		/* there's no enabled account */
+		return NULL;
+	}
 
-			/* Only actually look at the statuses if the accounts use the same prpl */
-			if (strcmp(purple_account_get_protocol_id(acct), purple_account_get_protocol_id(acct2))) {
-				acct = NULL;
-				break;
-			}
+	/* start at the second account */
+	for (iter = active_accts->next; iter; iter = iter->next) {
+		PurpleAccount *acct2 = iter->data;
+		GList *s1, *s2;
 
-			s2 = purple_account_get_status_types(acct2);
+		if (!g_str_equal(prpl1, purple_account_get_protocol_id(acct2))) {
+			acct1 = NULL;
+			break;
+		}
 
-			s1 = s;
-			while (s1 && s2) {
-				PurpleStatusType *st1 = s1->data, *st2 = s2->data;
-				/* TODO: Are these enough to consider the statuses identical? */
-				if (purple_status_type_get_primitive(st1) != purple_status_type_get_primitive(st2)
-						|| strcmp(purple_status_type_get_id(st1), purple_status_type_get_id(st2))
-						|| strcmp(purple_status_type_get_name(st1), purple_status_type_get_name(st2))) {
-					acct = NULL;
-					break;
-				}
-
-				s1 = s1->next;
-				s2 = s2->next;
-			}
-
-			if (s1 != s2) {/* Will both be NULL if matched */
-				acct = NULL;
+		for (s1 = purple_account_get_status_types(acct1),
+				 s2 = purple_account_get_status_types(acct2); s1 && s2;
+			 s1 = s1->next, s2 = s2->next) {
+			PurpleStatusType *st1 = s1->data, *st2 = s2->data;
+			/* TODO: Are these enough to consider the statuses identical? */
+			if (purple_status_type_get_primitive(st1) != purple_status_type_get_primitive(st2)
+				|| strcmp(purple_status_type_get_id(st1), purple_status_type_get_id(st2))
+				|| strcmp(purple_status_type_get_name(st1), purple_status_type_get_name(st2))) {
+				acct1 = NULL;
 				break;
 			}
 		}
-		if (!acct)
+
+		if (s1 != s2) {/* Will both be NULL if matched */
+			acct1 = NULL;
 			break;
+		}
 	}
+
 	g_list_free(active_accts);
 
-	return acct;
+	return acct1;
 }
 
 static void
@@ -1068,7 +1079,7 @@ add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 }
 
 static void
-pidgin_status_box_regenerate(PidginStatusBox *status_box)
+pidgin_status_box_regenerate(PidginStatusBox *status_box, gboolean status_changed)
 {
 	GtkIconSize icon_size;
 
@@ -1104,7 +1115,7 @@ pidgin_status_box_regenerate(PidginStatusBox *status_box)
 		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_CUSTOM, NULL, _("New status..."), NULL, NULL);
 		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_SAVED, NULL, _("Saved statuses..."), NULL, NULL);
 
-		status_menu_refresh_iter(status_box);
+		status_menu_refresh_iter(status_box, status_changed);
 		pidgin_status_box_refresh(status_box);
 
 	} else {
@@ -1156,7 +1167,7 @@ static gboolean imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStat
 			update_to_reflect_account_status(status_box, status_box->account,
 							purple_account_get_active_status(status_box->account));
 		else {
-			status_menu_refresh_iter(status_box);
+			status_menu_refresh_iter(status_box, TRUE);
 			pidgin_status_box_refresh(status_box);
 		}
 		return TRUE;
@@ -1229,7 +1240,7 @@ static void account_enabled_cb(PurpleAccount *acct, PidginStatusBox *status_box)
 
 	/* Regenerate the list if it has changed */
 	if (initial_token_acct != status_box->token_status_account) {
-		pidgin_status_box_regenerate(status_box);
+		pidgin_status_box_regenerate(status_box, TRUE);
 	}
 
 }
@@ -1238,13 +1249,14 @@ static void
 current_savedstatus_changed_cb(PurpleSavedStatus *now, PurpleSavedStatus *old, PidginStatusBox *status_box)
 {
 	/* Make sure our current status is added to the list of popular statuses */
-	pidgin_status_box_regenerate(status_box);
+	pidgin_status_box_regenerate(status_box, TRUE);
 }
 
 static void
 saved_status_updated_cb(PurpleSavedStatus *status, PidginStatusBox *status_box)
 {
-	pidgin_status_box_regenerate(status_box);
+	pidgin_status_box_regenerate(status_box,
+		purple_savedstatus_get_current() == status);
 }
 
 static void
@@ -1919,7 +1931,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->token_status_account = check_active_accounts_for_identical_statuses();
 
 	cache_pixbufs(status_box);
-	pidgin_status_box_regenerate(status_box);
+	pidgin_status_box_regenerate(status_box, TRUE);
 
 	purple_signal_connect(purple_savedstatuses_get_handle(), "savedstatus-changed",
 						status_box,
@@ -2324,18 +2336,6 @@ pidgin_status_box_pulse_typing(PidginStatusBox *status_box)
 	pidgin_status_box_refresh(status_box);
 }
 
-static gboolean
-message_changed(const char *one, const char *two)
-{
-	if (one == NULL && two == NULL)
-		return FALSE;
-
-	if (one == NULL || two == NULL)
-		return TRUE;
-
-	return (g_utf8_collate(one, two) != 0);
-}
-
 static void
 activate_currently_selected_status(PidginStatusBox *status_box)
 {
@@ -2386,6 +2386,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 
 	if (status_box->account == NULL) {
 		PurpleStatusType *acct_status_type = NULL;
+		const char *id = NULL; /* id of acct_status_type */
 		PurpleStatusPrimitive primitive = GPOINTER_TO_INT(data);
 		/* Global */
 		/* Save the newly selected status to prefs.xml and status.xml */
@@ -2394,7 +2395,6 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 		if (status_box->token_status_account) {
 			gint active;
 			PurpleStatus *status;
-			const char *id = NULL;
 			GtkTreePath *path = gtk_tree_row_reference_get_path(status_box->active_row);
 			active = gtk_tree_path_get_indices(path)[0];
 
@@ -2402,37 +2402,35 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 
 			status = purple_account_get_active_status(status_box->token_status_account);
 
-			 acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
+			acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
 			id = purple_status_type_get_id(acct_status_type);
 
-			if (strncmp(id, purple_status_get_id(status), strlen(id)) == 0)
+			if (g_str_equal(id, purple_status_get_id(status)) &&
+				purple_strequal(message, purple_status_get_attr_string(status, "message")))
 			{
 				/* Selected status and previous status is the same */
-				if (!message_changed(message, purple_status_get_attr_string(status, "message")))
-				{
-					PurpleSavedStatus *ss = purple_savedstatus_get_current();
-					/* Make sure that statusbox displays the correct thing.
-					 * It can get messed up if the previous selection was a
-					 * saved status that wasn't supported by this account */
-					if ((purple_savedstatus_get_type(ss) == primitive)
-							&& purple_savedstatus_is_transient(ss)
-							&& purple_savedstatus_has_substatuses(ss))
-						changed = FALSE;
-				}
+				PurpleSavedStatus *ss = purple_savedstatus_get_current();
+				/* Make sure that statusbox displays the correct thing.
+				 * It can get messed up if the previous selection was a
+				 * saved status that wasn't supported by this account */
+				if ((purple_savedstatus_get_type(ss) == primitive)
+					&& purple_savedstatus_is_transient(ss)
+					&& purple_savedstatus_has_substatuses(ss))
+					changed = FALSE;
 			}
 		} else {
 			saved_status = purple_savedstatus_get_current();
 			if (purple_savedstatus_get_type(saved_status) == primitive &&
-			    !purple_savedstatus_has_substatuses(saved_status))
+			    !purple_savedstatus_has_substatuses(saved_status) &&
+				purple_strequal(purple_savedstatus_get_message(saved_status), message))
 			{
-				if (!message_changed(purple_savedstatus_get_message(saved_status), message))
-					changed = FALSE;
+				changed = FALSE;
 			}
 		}
 
 		if (changed)
 		{
-			/* Manually find the appropriate transient acct */
+			/* Manually find the appropriate transient status */
 			if (status_box->token_status_account) {
 				GList *iter = purple_savedstatuses_get_all();
 				GList *tmp, *active_accts = purple_accounts_get_all_active();
@@ -2440,27 +2438,31 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 				for (; iter != NULL; iter = iter->next) {
 					PurpleSavedStatus *ss = iter->data;
 					const char *ss_msg = purple_savedstatus_get_message(ss);
+					/* find a known transient status that is the same as the
+					 * new selected one */
 					if ((purple_savedstatus_get_type(ss) == primitive) && purple_savedstatus_is_transient(ss) &&
 						purple_savedstatus_has_substatuses(ss) && /* Must have substatuses */
-						!message_changed(ss_msg, message))
+						purple_strequal(ss_msg, message))
 					{
 						gboolean found = FALSE;
-						/* The currently enabled accounts must have substatuses for all the active accts */
+						/* this status must have substatuses for all the active accts */
 						for(tmp = active_accts; tmp != NULL; tmp = tmp->next) {
 							PurpleAccount *acct = tmp->data;
 							PurpleSavedStatusSub *sub = purple_savedstatus_get_substatus(ss, acct);
 							if (sub) {
 								const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_type(sub);
 								const char *subtype_status_id = purple_status_type_get_id(sub_type);
-								if (subtype_status_id && !strcmp(subtype_status_id,
-										purple_status_type_get_id(acct_status_type)))
+								if (purple_strequal(subtype_status_id, id)) {
 									found = TRUE;
+									break;
+								}
 							}
 						}
-						if (!found)
-							continue;
-						saved_status = ss;
-						break;
+
+						if (found) {
+							saved_status = ss;
+							break;
+						}
 					}
 				}
 
@@ -2503,11 +2505,11 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 		status_type = find_status_type_by_index(status_box->account, active);
 		id = purple_status_type_get_id(status_type);
 
-		if (strncmp(id, purple_status_get_id(status), strlen(id)) == 0)
+		if (g_str_equal(id, purple_status_get_id(status)) &&
+			purple_strequal(message, purple_status_get_attr_string(status, "message")))
 		{
 			/* Selected status and previous status is the same */
-			if (!message_changed(message, purple_status_get_attr_string(status, "message")))
-				changed = FALSE;
+			changed = FALSE;
 		}
 
 		if (changed)
@@ -2597,7 +2599,7 @@ static void remove_typing_cb(PidginStatusBox *status_box)
 	if (status_box->typing == 0)
 	{
 		/* Nothing has changed, so we don't need to do anything */
-		status_menu_refresh_iter(status_box);
+		status_menu_refresh_iter(status_box, FALSE);
 		return;
 	}
 
@@ -2655,14 +2657,14 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			pidgin_status_editor_show(FALSE,
 				purple_savedstatus_is_transient(saved_status)
 					? saved_status : NULL);
-			status_menu_refresh_iter(status_box);
+			status_menu_refresh_iter(status_box, FALSE);
 			return;
 		}
 
 		if (type == PIDGIN_STATUS_BOX_TYPE_SAVED)
 		{
 			pidgin_status_window_show();
-			status_menu_refresh_iter(status_box);
+			status_menu_refresh_iter(status_box, FALSE);
 			return;
 		}
 	}

@@ -1,5 +1,28 @@
+/*
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+
 #include <gmodule.h>
 
+#include "gntinternal.h"
 #include "gntbox.h"
 #include "gntwidget.h"
 #include "gntwindow.h"
@@ -73,7 +96,7 @@ gnt_ws_draw_taskbar(GntWS *ws, gboolean reposition)
 		else
 			mvwhline(taskbar, 0, width * i, ' ' | gnt_color_pair(color), getmaxx(stdscr) - width * i);
 		title = GNT_BOX(w)->title;
-		mvwprintw(taskbar, 0, width * i, "%s", title ? title : "<gnt>");
+		mvwprintw(taskbar, 0, width * i, "%s", title ? C_(title) : "<gnt>");
 		if (i)
 			mvwaddch(taskbar, 0, width *i - 1, ACS_VLINE | A_STANDOUT | gnt_color_pair(GNT_COLOR_NORMAL));
 	}

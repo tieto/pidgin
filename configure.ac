@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [6])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [6])
-m4_define([purple_micro_version], [3])
+m4_define([purple_micro_version], [6])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [6])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [6])
-m4_define([gnt_micro_version], [3])
+m4_define([gnt_micro_version], [6])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -144,7 +144,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mk mn my_MM nb ne nl nn oc pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
+ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mk mn ms_MY my_MM nb ne nl nn oc pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -812,6 +812,10 @@ Or use --disable-vv if you do not need voice/video support.
 fi
 AM_CONDITIONAL(USE_VV, test "x$enable_gstreamer" != "xno" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farsight" != "xno")
 
+dnl #######################################################################
+dnl # Check for Internationalized Domain Name support
+dnl #######################################################################
+
 AC_ARG_ENABLE(idn,
 	[AC_HELP_STRING([--disable-idn], [compile without IDN support])],
 	[enable_idn="$enableval" force_idn=$enableval], [enable_idn="yes" force_idn=no])
@@ -1078,7 +1082,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="bonjour gg irc jabber msn myspace novell oscar qq sametime silc simple yahoo zephyr"
+	STATIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar qq sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
@@ -1135,6 +1139,7 @@ for i in $STATIC_PRPLS ; do
 		msn)		static_msn=yes ;;
 		msnp9)		static_msn=yes ;;
 		myspace)	static_myspace=yes ;;
+		mxit)		static_mxit=yes ;;
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
 		aim)		static_oscar=yes ;;
@@ -1155,6 +1160,7 @@ AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
 AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
 AM_CONDITIONAL(STATIC_MYSPACE, test "x$static_myspace" = "xyes")
+AM_CONDITIONAL(STATIC_MXIT, test "x$static_mxit" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_QQ, test "x$static_qq" = "xyes")
@@ -1169,7 +1175,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init
 
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace novell oscar qq sametime silc simple yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar qq sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
@@ -1196,6 +1202,7 @@ for i in $DYNAMIC_PRPLS ; do
 		msn)		dynamic_msn=yes ;;
 		msnp9)		dynamic_msn=yes ;;
 		myspace)	dynamic_myspace=yes ;;
+		mxit)		dynamic_mxit=yes ;;
 		novell)		dynamic_novell=yes ;;
 		null)		dynamic_null=yes ;;
 		oscar)		dynamic_oscar=yes ;;
@@ -1467,7 +1474,7 @@ if test "_$pythonpath" != _ ; then
 		AC_CHECK_LIB(pthread, pthread_create, )
 		AC_CHECK_LIB(util, openpty, )
 		AC_CHECK_LIB(db, dbopen, )
-		PY_LIBS="-lpython$PY_VERSION -L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config"
+		PY_LIBS="-L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config -lpython$PY_VERSION"
 		PY_CFLAGS="-I$PY_PREFIX/include/python$PY_VERSION"
 		AC_DEFINE(USE_PYTHON, [1], [Define if python headers are available.])
 		AC_MSG_RESULT(ok)
@@ -1772,6 +1779,23 @@ if test "x$enable_gnutls" = "xyes"; then
 	CPPFLAGS="$CPPFLAGS_save"
         LIBS="$LIBS_save"
 fi
+
+if test "x$enable_gnutls" = "xyes"; then
+	AC_MSG_CHECKING(for GNUTLS_CERT_INSECURE_ALGORITHM)
+	LIBS_save="$LIBS"
+	LIBS="$LIBS $GNUTLS_LIBS"
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
+                                        [[unsigned int verify = GNUTLS_CERT_INSECURE_ALGORITHM;]])],
+	               [AC_DEFINE([HAVE_GNUTLS_CERT_INSECURE_ALGORITHM], 1,
+                                  [Define if your gnutls has the GNUTLS_CERT_INSECURE_ALGORITHM flag])
+	                AC_MSG_RESULT(yes)],
+	               [AC_MSG_RESULT(no)])
+	CPPFLAGS="$CPPFLAGS_save"
+        LIBS="$LIBS_save"
+fi
+
 
 AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
 
@@ -2247,11 +2271,15 @@ AC_SUBST(SASL_LIBS)
 AC_ARG_ENABLE(cyrus-sasl, AC_HELP_STRING([--enable-cyrus-sasl], [enable Cyrus SASL support for jabberd]), enable_cyrus_sasl=$enableval, enable_cyrus_sasl=no)
 if test "x$enable_cyrus_sasl" = "xyes" ; then
 	AC_CHECK_LIB(sasl2, sasl_client_init, [
+			AM_CONDITIONAL(USE_CYRUS_SASL, true)
 			AC_DEFINE(HAVE_CYRUS_SASL, [1], [Define to 1 if Cyrus SASL is present])
 			SASL_LIBS=-"lsasl2"
 		], [
+			AM_CONDITIONAL(USE_CYRUS_SASL, false)
 			AC_ERROR(Cyrus SASL library not found)
 		])
+else
+	AM_CONDITIONAL(USE_CYRUS_SASL, false)
 fi
 
 dnl #######################################################################
@@ -2512,6 +2540,7 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/msn/Makefile
 		   libpurple/protocols/msnp9/Makefile
 		   libpurple/protocols/myspace/Makefile
+		   libpurple/protocols/mxit/Makefile
 		   libpurple/protocols/novell/Makefile
 		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile

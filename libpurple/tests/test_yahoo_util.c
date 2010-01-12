@@ -15,6 +15,10 @@ static void teardown_codes_to_html(void)
 
 START_TEST(test_codes_to_html)
 {
+	assert_string_equal_free("",
+			yahoo_codes_to_html(""));
+	assert_string_equal_free("",
+			yahoo_codes_to_html("\x1B[12345m"));
 	assert_string_equal_free("plain",
 			yahoo_codes_to_html("plain"));
 	assert_string_equal_free("unknown  ansi code",
@@ -180,6 +184,12 @@ START_TEST(test_html_to_codes)
 
 	assert_string_equal_free("\x1B[1mbold \x1B[#FF0000mred <font face=\"Comic Sans MS\" size=\"20\">larger \x1B[#000000mbacktoblack <font size=\"12\">normalsize</font>\x1B[#FF0000m</font>\x1B[#000000m\x1B[x1m",
 			yahoo_html_to_codes("<b>bold <font color=\"#FF0000\">red <font face=\"Comic Sans MS\" size=\"5\">larger <font color=\"#000000\">backtoblack <font size=\"3\">normalsize</font></font></font></font></b>"));
+
+	/* buzz/unknown tags */
+	assert_string_equal_free("<ding>",
+			yahoo_html_to_codes("<ding>"));
+	assert_string_equal_free("Unknown <tags>",
+			yahoo_html_to_codes("Unknown <tags>"));
 }
 END_TEST
 

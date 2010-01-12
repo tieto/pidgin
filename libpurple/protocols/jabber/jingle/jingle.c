@@ -29,11 +29,12 @@
 #include "content.h"
 #include "debug.h"
 #include "jingle.h"
-#include <string.h>
 #include "session.h"
 #include "iceudp.h"
 #include "rawudp.h"
 #include "rtp.h"
+
+#include <string.h>
 
 GType
 jingle_get_type(const gchar *type)
@@ -442,15 +443,15 @@ jingle_get_params(JabberStream *js, guint *num)
 	if (num_params > 0) {
 		params = g_new0(GParameter, num_params);
 
-		purple_debug_info("jabber", 
-						  "setting param stun-ip for stream using Google auto-config: %s\n",
-						  js->stun_ip);
+		purple_debug_info("jabber",
+			"setting param stun-ip for stream using auto-discovered IP: %s\n",
+			js->stun_ip);
 		params[0].name = "stun-ip";
 		g_value_init(&params[0].value, G_TYPE_STRING);
 		g_value_set_string(&params[0].value, js->stun_ip);
 		purple_debug_info("jabber", 
-						  "setting param stun-port for stream using Google auto-config: %d\n",
-						  js->stun_port);
+			"setting param stun-port for stream using auto-discovered port: %d\n",
+			js->stun_port);
 		params[1].name = "stun-port";
 		g_value_init(&params[1].value, G_TYPE_UINT);
 		g_value_set_uint(&params[1].value, js->stun_port);

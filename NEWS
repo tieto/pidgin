@@ -2,6 +2,36 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.6.6 (??/??/2010):
+
+2.6.5 (01/08/2010):
+	Paul: This release fixes a pretty serious bug in the MSN code, so we're
+	releasing this build a little earlier than planned with only major
+	bugs fixed.  See the ChangeLog for details.  Enjoy!
+
+2.6.4 (11/29/2009):
+	John:  It's release time again.  Lots of bug fixes this time around, as
+	well as a new protocol plugin developed and maintained by the MXit folks
+	folks.  Elliott and I also did a ton of work on the Preferences window,
+	which will now hopefully fit on most people's small screens.  Enjoy!
+
+	Elliott: This release has been in the works for so long, I don't really
+	remember doing any work on it.  But I do know the MSN servers gave us a
+	little bit of trouble this time around, forgetting people's friendly
+	names.  Nothing too problematic, just a touch annoying.  Also, we've got
+	a nice new Preferences dialog.  You can thank John for that mostly, with
+	a couple of tweaks by me.
+
+	Sadrul: A lot of little fixes for a lot of things! Among them, a fix
+	for a long standing issue with displaying unicode in non-utf8 locale in
+	finch. We also have a new prpl for MXit. This release is very very cool
+	altogether. Enjoy!
+
+2.6.3 (10/16/2009):
+	Mark: Someone reported a fairly serious bug in our AIM/ICQ code
+	so we're releasing a special "severe bug fix only" build.  See the
+	ChangeLog for details.  Enjoy!
+
 2.6.2 (09/05/2009):
 	Mark: Woo boy it's been a busy two weeks.  There was a lot of new code
 	in 2.6.0, and with new code comes new bugs.  The cadre of relentless

@@ -24,8 +24,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "finch.h"
 #include <internal.h>
+#include "finch.h"
 #include "gntconv.h"
 #include "gntmedia.h"
 

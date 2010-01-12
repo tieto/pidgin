@@ -111,7 +111,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_roomlist_get_list,		/* roomlist_get_list */
 	jabber_roomlist_cancel,			/* roomlist_cancel */
 	NULL,							/* roomlist_expand_category */
-	NULL,							/* can_receive_file */
+	jabber_can_receive_file,		/* can_receive_file */
 	jabber_si_xfer_send,			/* send_file */
 	jabber_si_new_xfer,				/* new_xfer */
 	jabber_offline_message,			/* offline_message */
@@ -227,7 +227,7 @@ static gboolean unload_plugin(PurplePlugin *plugin)
 	jabber_unregister_commands();
 
 	/* Stay on target...stay on target... Almost there... */
-	jabber_uninit_plugin();
+	jabber_uninit_plugin(plugin);
 
 	return TRUE;
 }
@@ -295,7 +295,7 @@ static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
 
 static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable *params)
 {
-	char *acct_id = g_hash_table_lookup(params, "account");
+	char *acct_id = params ? g_hash_table_lookup(params, "account") : NULL;
 	PurpleAccount *acct;
 
 	if (g_ascii_strcasecmp(proto, "xmpp"))
@@ -307,7 +307,8 @@ static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable
 		return FALSE;
 
 	/* xmpp:romeo@montague.net?message;subject=Test%20Message;body=Here%27s%20a%20test%20message */
-	if (g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
+	/* params is NULL if the URI has no '?' (or anything after it) */
+	if (!params || g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
 		char *body = g_hash_table_lookup(params, "body");
 		if (user && *user) {
 			PurpleConversation *conv =
@@ -355,7 +356,7 @@ init_plugin(PurplePlugin *plugin)
 	purple_account_user_split_set_reverse(split, FALSE);
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", TRUE);
+	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", JABBER_DEFAULT_REQUIRE_TLS);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

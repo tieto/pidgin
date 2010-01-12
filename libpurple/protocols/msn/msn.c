@@ -23,8 +23,6 @@
  */
 #define PHOTO_SUPPORT 1
 
-#include <glib.h>
-
 #include "msn.h"
 #include "accountopt.h"
 #include "contact.h"
@@ -116,6 +114,29 @@ msn_normalize(const PurpleAccount *account, const char *str)
 	g_free(tmp);
 
 	return buf;
+}
+
+gboolean
+msn_email_is_valid(const char *passport)
+{
+	if (purple_email_is_valid(passport)) {
+		/* Special characters aren't allowed in domains, so only go to '@' */
+		while (*passport != '@') {
+			if (*passport == '/')
+				return FALSE;
+			else if (*passport == '?')
+				return FALSE;
+			else if (*passport == '=')
+				return FALSE;
+			/* MSN also doesn't like colons, but that's checked already */
+
+			passport++;
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 static gboolean
@@ -324,17 +345,23 @@ static void
 msn_show_set_friendly_name(PurplePluginAction *action)
 {
 	PurpleConnection *gc;
+	PurpleAccount *account;
+	char *tmp;
 
 	gc = (PurpleConnection *) action->context;
+	account = purple_connection_get_account(gc);
 
-	purple_request_input(gc, NULL, _("Set your friendly name."),
+	tmp = g_strdup_printf(_("Set friendly name for %s."),
+	                      purple_account_get_username(account));
+	purple_request_input(gc, _("Set your friendly name."), tmp,
 					   _("This is the name that other MSN buddies will "
 						 "see you as."),
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_act_id),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   account, NULL, NULL,
 					   gc);
+	g_free(tmp);
 }
 
 static void
@@ -611,9 +638,14 @@ msn_can_receive_file(PurpleConnection *gc, const char *who)
 		MsnSession *session = gc->proto_data;
 		if (session) {
 			MsnUser *user = msn_userlist_find_user(session->userlist, who);
-			if (user)
+			if (user) {
 				/* Include these too: MSN_CLIENT_CAP_MSNMOBILE|MSN_CLIENT_CAP_MSNDIRECT ? */
-				ret = (user->clientid & MSN_CLIENT_CAP_WEBMSGR) == 0;
+				if ((user->clientid & MSN_CLIENT_CAP_WEBMSGR) ||
+						user->networkid == MSN_NETWORK_YAHOO)
+					ret = FALSE;
+				else
+					ret = TRUE;
+			}
 		} else
 			ret = FALSE;
 	}
@@ -1035,6 +1067,9 @@ msn_login(PurpleAccount *account)
 
 	if (strcmp(username, purple_account_get_username(account)))
 		purple_account_set_username(account, username);
+
+	username = purple_account_get_string(account, "display-name", NULL);
+	purple_connection_set_display_name(gc, username);
 
 	if (!msn_session_connect(session, host, port, http_method))
 		purple_connection_error_reason(gc,
@@ -1508,10 +1543,12 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	const char *bname;
 	MsnAddReqData *data;
+	MsnSession *session;
+	MsnUser *user;
 
 	bname = purple_buddy_get_name(buddy);
 
-	if (!purple_email_is_valid(bname)) {
+	if (!msn_email_is_valid(bname)) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Unable to add the buddy %s because the username is invalid.  Usernames must be valid email addresses."), bname);
 		if (!purple_conv_present_error(bname, purple_connection_get_account(gc), buf))
@@ -1529,12 +1566,18 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	data->buddy = buddy;
 	data->group = group;
 
-	purple_request_input(gc, NULL, _("Authorization Request Message:"),
-	                     NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
-	                     _("_OK"), G_CALLBACK(finish_auth_request),
-	                     _("_Cancel"), G_CALLBACK(cancel_auth_request),
-	                     purple_connection_get_account(gc), bname, NULL,
-	                     data);
+	session = purple_connection_get_protocol_data(gc);
+	user = msn_userlist_find_user(session->userlist, bname);
+	if (user && user->authorized) {
+		finish_auth_request(data, NULL);
+	} else {
+		purple_request_input(gc, NULL, _("Authorization Request Message:"),
+		                     NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
+		                     _("_OK"), G_CALLBACK(finish_auth_request),
+		                     _("_Cancel"), G_CALLBACK(cancel_auth_request),
+		                     purple_connection_get_account(gc), bname, NULL,
+		                     data);
+	}
 }
 
 static void
@@ -2624,7 +2667,7 @@ static PurplePluginProtocolInfo prpl_info =
 	OPT_PROTO_MAIL_CHECK,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
-	{"png", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_SEND},	/* icon_spec */
+	{"png,gif", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_SEND},	/* icon_spec */
 	msn_list_icon,			/* list_icon */
 	msn_list_emblems,		/* list_emblems */
 	msn_status_text,		/* status_text */

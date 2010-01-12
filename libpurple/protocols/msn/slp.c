@@ -126,22 +126,60 @@ msn_xfer_cancel(PurpleXfer *xfer)
 			g_free(content);
 			msn_slplink_send_queued_slpmsgs(slpcall->slplink);
 
-			msn_slpcall_destroy(slpcall);
+			if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND)
+				slpcall->wasted = TRUE;
+			else
+				msn_slpcall_destroy(slpcall);
 		}
 	}
 }
 
-void
-msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize len, gsize offset)
+gssize
+msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer)
 {
-	PurpleXfer *xfer;
+	MsnSlpCall *slpcall;
 
-	xfer = slpcall->xfer;
+	g_return_val_if_fail(xfer != NULL, -1);
+	g_return_val_if_fail(data != NULL, -1);
+	g_return_val_if_fail(len > 0, -1);
 
-	xfer->bytes_sent = (offset + len);
-	xfer->bytes_remaining = total_length - (offset + len);
+	g_return_val_if_fail(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND, -1);
 
-	purple_xfer_update_progress(xfer);
+	slpcall = xfer->data;
+	/* Not sure I trust it'll be there */
+	g_return_val_if_fail(slpcall != NULL, -1);
+
+	g_return_val_if_fail(slpcall->xfer_msg != NULL, -1);
+
+	slpcall->u.outgoing.len = len;
+	slpcall->u.outgoing.data = data;
+	msn_slplink_send_msgpart(slpcall->slplink, slpcall->xfer_msg);
+	return MIN(1202, len);
+}
+
+gssize
+msn_xfer_read(guchar **data, PurpleXfer *xfer)
+{
+	MsnSlpCall *slpcall;
+	gsize len;
+
+	g_return_val_if_fail(xfer != NULL, -1);
+	g_return_val_if_fail(data != NULL, -1);
+
+	g_return_val_if_fail(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE, -1);
+
+	slpcall = xfer->data;
+	/* Not sure I trust it'll be there */
+	g_return_val_if_fail(slpcall != NULL, -1);
+
+	/* Just pass up the whole GByteArray. We'll make another. */
+	*data = slpcall->u.incoming_data->data;
+	len = slpcall->u.incoming_data->len;
+
+	g_byte_array_free(slpcall->u.incoming_data, FALSE);
+	slpcall->u.incoming_data = g_byte_array_new();
+
+	return len;
 }
 
 void
@@ -238,6 +276,38 @@ send_decline(MsnSlpCall *slpcall, const char *branch,
 	msn_slplink_queue_slpmsg(slplink, slpmsg);
 }
 
+/* XXX: this could be improved if we tracked custom smileys
+ * per-protocol, per-account, per-session or (ideally) per-conversation
+ */
+static PurpleStoredImage *
+find_valid_emoticon(PurpleAccount *account, const char *path)
+{
+	GList *smileys;
+
+	if (!purple_account_get_bool(account, "custom_smileys", TRUE))
+		return NULL;
+
+	smileys = purple_smileys_get_all();
+
+	for (; smileys; smileys = g_list_delete_link(smileys, smileys)) {
+		PurpleSmiley *smiley;
+		PurpleStoredImage *img;
+
+		smiley = smileys->data;
+		img = purple_smiley_get_stored_image(smiley);
+
+		if (purple_strequal(path, purple_imgstore_get_filename(img))) {
+			g_list_free(smileys);
+			return img;
+		}
+
+		purple_imgstore_unref(img);
+	}
+
+	purple_debug_error("msn", "Received illegal request for file %s\n", path);
+	return NULL;
+}
+
 #define MAX_FILE_NAME_LEN 0x226
 
 static void
@@ -255,7 +325,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		MsnSlpMessage *slpmsg;
 		MsnObject *obj;
 		char *msnobj_data;
-		PurpleStoredImage *img;
+		PurpleStoredImage *img = NULL;
 		int type;
 
 		/* Send Ok */
@@ -273,51 +343,38 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		obj = msn_object_new_from_string(msnobj_data);
 		type = msn_object_get_type(obj);
 		g_free(msnobj_data);
-
-		if ((type != MSN_OBJECT_USERTILE) && (type != MSN_OBJECT_EMOTICON))
-		{
-			purple_debug_error("msn", "Wrong object?\n");
-			msn_object_destroy(obj);
-			g_return_if_reached();
-		}
-
 		if (type == MSN_OBJECT_EMOTICON) {
-			char *path;
-			path = g_build_filename(purple_smileys_get_storing_dir(),
-					obj->location, NULL);
-			img = purple_imgstore_new_from_file(path);
-			g_free(path);
-		} else {
+			img = find_valid_emoticon(slplink->session->account, obj->location);
+		} else if (type == MSN_OBJECT_USERTILE) {
 			img = msn_object_get_image(obj);
 			if (img)
 				purple_imgstore_ref(img);
 		}
 		msn_object_destroy(obj);
 
-		if (img == NULL)
-		{
+		if (img != NULL) {
+			/* DATA PREP */
+			slpmsg = msn_slpmsg_new(slplink);
+			slpmsg->slpcall = slpcall;
+			slpmsg->session_id = slpcall->session_id;
+			msn_slpmsg_set_body(slpmsg, NULL, 4);
+			slpmsg->info = "SLP DATA PREP";
+			msn_slplink_queue_slpmsg(slplink, slpmsg);
+
+			/* DATA */
+			slpmsg = msn_slpmsg_new(slplink);
+			slpmsg->slpcall = slpcall;
+			slpmsg->flags = 0x20;
+			slpmsg->info = "SLP DATA";
+			msn_slpmsg_set_image(slpmsg, img);
+			msn_slplink_queue_slpmsg(slplink, slpmsg);
+			purple_imgstore_unref(img);
+
+			accepted = TRUE;
+
+		} else {
 			purple_debug_error("msn", "Wrong object.\n");
-			g_return_if_reached();
 		}
-
-		/* DATA PREP */
-		slpmsg = msn_slpmsg_new(slplink);
-		slpmsg->slpcall = slpcall;
-		slpmsg->session_id = slpcall->session_id;
-		msn_slpmsg_set_body(slpmsg, NULL, 4);
-		slpmsg->info = "SLP DATA PREP";
-		msn_slplink_queue_slpmsg(slplink, slpmsg);
-
-		/* DATA */
-		slpmsg = msn_slpmsg_new(slplink);
-		slpmsg->slpcall = slpcall;
-		slpmsg->flags = 0x20;
-		slpmsg->info = "SLP DATA";
-		msn_slpmsg_set_image(slpmsg, img);
-		msn_slplink_queue_slpmsg(slplink, slpmsg);
-		purple_imgstore_unref(img);
-
-		accepted = TRUE;
 	}
 
 	else if (!strcmp(euf_guid, MSN_FT_GUID))
@@ -332,9 +389,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		account = slpcall->slplink->session->account;
 
-		slpcall->cb = msn_xfer_completed_cb;
 		slpcall->end_cb = msn_xfer_end_cb;
-		slpcall->progress_cb = msn_xfer_progress_cb;
 		slpcall->branch = g_strdup(branch);
 
 		slpcall->pending = TRUE;
@@ -357,6 +412,10 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			purple_xfer_set_init_fnc(xfer, msn_xfer_init);
 			purple_xfer_set_request_denied_fnc(xfer, msn_xfer_cancel);
 			purple_xfer_set_cancel_recv_fnc(xfer, msn_xfer_cancel);
+			purple_xfer_set_read_fnc(xfer, msn_xfer_read);
+			purple_xfer_set_write_fnc(xfer, msn_xfer_write);
+
+			slpcall->u.incoming_data = g_byte_array_new();
 
 			slpcall->xfer = xfer;
 			purple_xfer_ref(slpcall->xfer);

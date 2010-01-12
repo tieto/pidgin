@@ -23,8 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "finch.h"
 #include <internal.h>
+#include "finch.h"
 
 #include <account.h>
 #include <blist.h>
@@ -1119,6 +1119,8 @@ append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 		PurpleMenuAction *act = (PurpleMenuAction *) list->data;
 		act->data = node;
 		gnt_append_menu_action(menu, act, NULL);
+		g_signal_connect_swapped(G_OBJECT(menu), "destroy",
+			G_CALLBACK(purple_menu_action_free), act);
 	}
 }
 
@@ -1368,6 +1370,8 @@ append_extended_menu(GntMenu *menu, PurpleBlistNode *node)
 			iter; iter = g_list_delete_link(iter, iter))
 	{
 		gnt_append_menu_action(menu, iter->data, NULL);
+		g_signal_connect_swapped(G_OBJECT(menu), "destroy",
+				G_CALLBACK(purple_menu_action_free), iter->data);
 	}
 }
 
@@ -1940,7 +1944,7 @@ key_pressed(GntWidget *widget, const char *text, FinchBlist *ggblist)
 	} else if (!gnt_tree_is_searching(GNT_TREE(ggblist->tree))) {
 		if (strcmp(text, "t") == 0) {
 			finch_blist_toggle_tag_buddy(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
-			gnt_bindable_perform_action_named(GNT_BINDABLE(ggblist->tree), "move-down");
+			gnt_bindable_perform_action_named(GNT_BINDABLE(ggblist->tree), "move-down", NULL);
 		} else if (strcmp(text, "a") == 0) {
 			finch_blist_place_tagged(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
 		} else

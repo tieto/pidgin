@@ -1455,7 +1455,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 		 * Here we place the protocol name in the pounce dialog to lessen
 		 * confusion about what protocol a pounce is for.
 		 */
-		tmp = g_strdup_printf(
+		tmp = g_strdup(
 				   (events & PURPLE_POUNCE_TYPING) ?
 				   _("Started typing") :
 				   (events & PURPLE_POUNCE_TYPED) ?

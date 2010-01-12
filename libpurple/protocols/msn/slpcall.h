@@ -72,6 +72,14 @@ struct _MsnSlpCall
 	char *data_info;
 
 	PurpleXfer *xfer;
+	union {
+		GByteArray *incoming_data;
+		struct {
+			gsize len;
+			const guchar *data;
+		} outgoing;
+	} u;
+	MsnSlpMessage *xfer_msg; /* A dirty hack */
 
 	MsnSlpCb cb;
 	void (*end_cb)(MsnSlpCall *slpcall, MsnSession *session);

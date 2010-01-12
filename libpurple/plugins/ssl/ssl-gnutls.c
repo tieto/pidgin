@@ -698,9 +698,8 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 			crt_issuer_id =
 				purple_certificate_get_issuer_unique_id(crt);
 			purple_debug_info("gnutls/x509",
-					  "Certificate for %s claims to be "
-					  "issued by %s, but the certificate "
-					  "for %s does not match.\n",
+					  "Certificate %s is issued by "
+					  "%s, which does not match %s.\n",
 					  crt_id ? crt_id : "(null)",
 					  crt_issuer_id ? crt_issuer_id : "(null)",
 					  issuer_id ? issuer_id : "(null)");
@@ -730,6 +729,7 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 		return FALSE;
 	}
 
+#ifdef HAVE_GNUTLS_CERT_INSECURE_ALGORITHM
 	if (verify & GNUTLS_CERT_INSECURE_ALGORITHM) {
 		/*
 		 * A certificate in the chain is signed with an insecure
@@ -743,6 +743,7 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 				"Insecure hash algorithm used by %s to sign %s\n",
 				issuer_id, crt_id);
 	}
+#endif
 
 	if (verify & GNUTLS_CERT_INVALID) {
 		/* Signature didn't check out, but at least

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"POT-Creation-Date: 2009-11-14 20:33-0500\n"
 "PO-Revision-Date: 2006-11-09 17:11+0530\n"
 "Last-Translator: wangmo sherpa <rinwanshe@yahoo.com>\n"
 "Language-Team:  <pgeygel@dit.gov.bt>\n"
@@ -58,6 +58,7 @@ msgid ""
 "http://developer.pidgin.im"
 msgstr ""
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "འཛོལ་བ།"
 
@@ -566,11 +567,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "རྩིས་ཐོ་འདི་སླར་ལྕོགས་ཅན་བཟོ།"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-
 msgid "No such command."
 msgstr "འདི་བཟུམ་མའི་བརྡ་བཀོད་མེད།"
 
@@ -611,6 +607,11 @@ msgstr "ལག་ལེན་པ་འདི་ཡིག་དཔར་རྐྱ
 msgid "You have left this chat."
 msgstr "ཁ་སླབ་ནང་བློ་སླབ།"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr ""
 "དྲན་དེབ་འབད་ནི་འགོ་བཙུགས་ཅི། འ་ནི་ གྲོས་གླེང་ནང་ མ་འོངས་པའི་འཕྲིན་དོན་ཚུ་ དྲན་དེབ་བཀོད་ནི་ཨིན།"
@@ -650,6 +651,10 @@ msgstr "/གདམ་ཁཚུ/ནང་བསྐྱོད་ ལྕོགས་
 msgid "Enable Sounds"
 msgstr "/གདམ་ཁ་ཚུ/སྒྲ་སྐད་ཚུ་ལྕོགས་ཅན་བཟོ།"
 
+#, fuzzy
+msgid "You are not connected."
+msgstr "མཐུད་མ་ཚུགས།"
+
 msgid "<AUTO-REPLY> "
 msgstr "<རང་བཏིན་-ལན་གསལ།> "
 
@@ -659,7 +664,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "ལག་ལེན་པ་ཚུའི་ཐོ་ཡིག་:\n"
 msgstr[1] "ལག་ལེན་པ་ཚུའི་ཐོ་ཡིག་:\n"
 
-msgid "Supported debug options are:  version"
+#, fuzzy
+msgid "Supported debug options are: plugins version"
 msgstr "རྒྱབ་སྐྱོར་འབད་ཡོད་པའི་རྐྱེན་སེལ་གདམ་ཁ་ཚུ་:ཐོན་རིམ་ཨིན།"
 
 msgid "No such command (in this context)."
@@ -780,6 +786,7 @@ msgid "Remaining"
 msgstr "ལྷག་ལུས།"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "གནས་ཚད།"
 
@@ -964,6 +971,9 @@ msgstr "མགྲོན་དུ་འབོད།"
 msgid "(none)"
 msgstr "(ཅི་མེད།)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 #, fuzzy
 msgid "URI"
 msgstr "ཡུ་ཨའི་ཨེན།"
@@ -1409,6 +1419,8 @@ msgstr "གནས་ཚད་བཏོན་གཏང་།"
 msgid "Saved Statuses"
 msgstr "གནས་ཚད་ཚུ་སྲུངས་བཞག་ཡོདཔ།"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "མགོ་མིང་།"
 
@@ -1581,6 +1593,13 @@ msgid ""
 "Fetching TinyURL..."
 msgstr ""
 
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr ""
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr ""
+
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr ""
 
@@ -1710,7 +1729,9 @@ msgstr "ཆ་རོགས་ཐོ་ཡིག"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
 
-msgid "The root certificate this one claims to be issued by is unknown."
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
 msgstr ""
 
 #, fuzzy
@@ -1815,6 +1836,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "སར་བར་ བརྡ་དོན།"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "ཐོ་འགོད་འབད་ནིའི་འཛོལ་བ།"
 
@@ -1830,6 +1852,7 @@ msgstr "+++ %s འཛུལ་ཡོདཔ།"
 msgid "+++ %s signed off"
 msgstr "+++ %s འཐོན་ཡོདཔ།"
 
+#. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "ངོ་མ་ཤེས་པའི་འཛོལ་བ།"
@@ -1937,10 +1960,15 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "%s: %d དོགས་པ་སེལ་ནིའི་འཛོལ་བ།"
+
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr "ཐེ་རེཌི་གསར་བསྐྲུན་འཐུས་ཤོར།: %s"
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "མ་ཤེས་པའི་རྒྱུ་མཚན།"
 
@@ -2266,13 +2294,13 @@ msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "ངོ་མ་ཤེསཔ་ནང་ན་འཛུལཝ་ད་ འཛོལ་བ་བྱུང་ནུག: %s"
 
 #, fuzzy
-msgid "Conference error."
+msgid "Conference error"
 msgstr "གྲོས་ཚོགས་ཁ་བསྡམས་ཡོདཔ།"
 
-msgid "Error with your microphone."
+msgid "Error with your microphone"
 msgstr ""
 
-msgid "Error with your webcam."
+msgid "Error with your webcam"
 msgstr ""
 
 #, fuzzy, c-format
@@ -3017,6 +3045,7 @@ msgstr "མགོ་མིང་།"
 msgid "Last name"
 msgstr "མཇུག་མིང་།"
 
+#. email
 msgid "Email"
 msgstr "གློག་འཕྲིན།"
 
@@ -3166,12 +3195,14 @@ msgstr "གྲོང་སྡེ།"
 msgid "Year of birth"
 msgstr "སྐྱེས་པའི་ལོ།"
 
+#. gender
 msgid "Gender"
 msgstr "ཕོ་མོའི་དབྱེ་བ།"
 
 msgid "Male or female"
 msgstr "ཕོ་/མོ།"
 
+#. 0
 msgid "Male"
 msgstr "ཕོ།"
 
@@ -3240,6 +3271,7 @@ msgstr "ཕྱི་ཁ།"
 msgid "UIN"
 msgstr "ཡུ་ཨའི་ཨེན།"
 
+#. first name
 msgid "First Name"
 msgstr "འགོ་མིང་།"
 
@@ -3983,6 +4015,7 @@ msgstr "ཚོགས་སྡེའི་ཆ་ཕྲན།"
 msgid "Role"
 msgstr "ལས་འགན།"
 
+#. birthday
 msgid "Birthday"
 msgstr "སྐྱེ་བའི་ཉིནམ།"
 
@@ -4062,6 +4095,9 @@ msgstr "(ལོག-)ཞུ་ནིའི་དབང་ཆ་སྤྲོད་
 msgid "Unsubscribe"
 msgstr "མངགས་བཤོལ"
 
+msgid "Initiate _Chat"
+msgstr "ཁ་སླབ་འགོ་བཙུགས(_c)"
+
 #, fuzzy
 msgid "Log In"
 msgstr "ཨའི་ཨེམ་ཨེསི་ལོག"
@@ -4082,6 +4118,7 @@ msgstr "མ་དཀྲོགས།"
 msgid "JID"
 msgstr "ཇེ་ཨའི་ཌི།"
 
+#. last name
 msgid "Last Name"
 msgstr "མཇུག་མིང་།"
 
@@ -4329,6 +4366,7 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "དབང་སྤྲོད་མ་འབད།"
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "ཁམས།"
 
@@ -4353,6 +4391,7 @@ msgstr "ཅི་མེད་ (བསྣར་ལུ)"
 msgid "None"
 msgstr "ཅི་མེད།"
 
+#. subscription type
 msgid "Subscription"
 msgstr "མཁོ་མངགས"
 
@@ -4662,7 +4701,8 @@ msgstr "ཀཱོན་ཕིག: ཁ་སླབ་ཁང་མིག་  ར�
 msgid "configure:  Configure a chat room."
 msgstr "རིམ་སྒྲིག་འབད: ཁ་སླབ་ཁང་མིག་ རིམ་སྒྲིག་འབད།"
 
-msgid "part [room]:  Leave the room."
+#, fuzzy
+msgid "part [message]:  Leave the room."
 msgstr "ཡན་ལག [ཁང་མིག]: ཁང་མིག་བཞག་སྟེ་འགྱོ།"
 
 msgid "register:  Register with a chat room."
@@ -5353,9 +5393,6 @@ msgstr "ཧོཊ་མཱེལ་ ནང་སྒྲོམ་ཁ་ཕྱེ�
 msgid "Send to Mobile"
 msgstr "འགྲུལ་འཕྲིན་ལུ་གཏང་།"
 
-msgid "Initiate _Chat"
-msgstr "ཁ་སླབ་འགོ་བཙུགས(_c)"
-
 #, fuzzy
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
@@ -5366,7 +5403,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 "ཆ་རོགས་ %s འདི་ཁ་སྐོང་རྐྱབས་མ་ཚུགས་  ག་ཅི་འབད་ཟེར་བ་ཅིན་ གསལ་གཞིའི་མིང་འདི་ནུས་མེད་ཨིན། གསལ་"
 "གཞིའི་མིང་ཚུ་ཡིག་འབྲུ་གིས་འགོ་བཙུགས་དགོཔ་དང་ནང་ན་ ཡིག་འབྲུ་ཚུ་དང་ཨང་གྲངས་ཚུ་དེ་ལས་ བར་སྟོང་ཚུ་རྐྱངམ་"
@@ -5588,6 +5625,10 @@ msgstr "སྤྱིར་བཏང་གི་བདེན་བཤད་འཐ
 msgid "%s just sent you a Nudge!"
 msgstr "%s གིས་ ཁྱོད་ལུ་ ནཱཌཇི་བཏང་ཡོདཔ་ཨིན།"
 
+#, fuzzy
+msgid "The following users are missing from your addressbook"
+msgstr "འོག་ལུ་ཡོད་མི་ཚུ་ ཁྱོད་ཀྱི་འཚོལ་ཞིབ་ཀྱི་གྲུབ་འབྲས་ཚུ་ཨིན།"
+
 #, fuzzy, c-format
 msgid "Unknown error (%d): %s"
 msgstr "ངོ་མ་ཤེས་པའི་འཛོལ་བ།"
@@ -5601,8 +5642,8 @@ msgid "Unknown error (%d)"
 msgstr "ངོ་མ་ཤེས་པའི་འཛོལ་བ།"
 
 #, fuzzy
-msgid "The following users are missing from your addressbook"
-msgstr "འོག་ལུ་ཡོད་མི་ཚུ་ ཁྱོད་ཀྱི་འཚོལ་ཞིབ་ཀྱི་གྲུབ་འབྲས་ཚུ་ཨིན།"
+msgid "Unable to remove user"
+msgstr "ལག་ལེན་པ་ཁ་སྐོང་བརྐྱབ་མ་ཚུགས།"
 
 #, fuzzy
 msgid "Mobile message was not sent because it was too long."
@@ -5837,6 +5878,386 @@ msgstr " %s གིས་ ཁོ་རའི་ཡང་ན་མོ་རའི�
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s གིས་ ཁོ་རའི་ཡང་ན་མོ་རའི་ཆ་རོགས་ཐོ་ཡིག་ལས་ ཁྱོད་རྩ་བསྐྲད་བཏང་ནུག"
+
+#. show current mood
+#, fuzzy
+msgid "Current Mood"
+msgstr "ཁྱོད་ཀྱི་ད་ལྟོའི་ཁམས།"
+
+#. add all moods to list
+#, fuzzy
+msgid "New Mood"
+msgstr "ལག་ལེན་པའི་ཐབས་ལམ་ཚུ།"
+
+#, fuzzy
+msgid "Change your Mood"
+msgstr "ཆོག་ཡིག་བསྒྱུར་བཅོས་འབད།"
+
+#, fuzzy
+msgid "How do you feel right now?"
+msgstr "ད་ལྟོ་ང་ནཱ་ལུ་ཡོདཔ།"
+
+#. show error to user
+#, fuzzy
+msgid "Profile Update Error"
+msgstr "འཛོལ་བ་འབྲི།"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "གསལ་སྡུད།"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr ""
+
+#. pin
+#, fuzzy
+msgid "PIN"
+msgstr "ཡུ་ཨའི་ཨེན།"
+
+msgid "Verify PIN"
+msgstr ""
+
+#. display name
+#, fuzzy
+msgid "Display Name"
+msgstr "བཀྲམ་སྟོན།"
+
+#. hidden
+msgid "Hide my number"
+msgstr ""
+
+#. mobile number
+#, fuzzy
+msgid "Mobile Number"
+msgstr "འགྲུལ་འཕྲིན་ཨང་ གཞི་སྒྲིག་འབད།..."
+
+#, fuzzy
+msgid "Update your Profile"
+msgstr "གསལ་སྡུད་གཞི་སྒྲིག་འབད།"
+
+msgid "Here you can update your MXit profile"
+msgstr ""
+
+msgid "View Splash"
+msgstr ""
+
+#, fuzzy
+msgid "There is no splash-screen currently available"
+msgstr "ཁ་སླབ་ནི་  ད་ལྟོ་མི་ཐོབ།"
+
+#, fuzzy
+msgid "About"
+msgstr "གཱེམ་གྱི་སྐོར་ལས"
+
+#. display / change mood
+#, fuzzy
+msgid "Change Mood..."
+msgstr "ཆོག་ཡིག་བསྒྱུར་བཅོས་འབད།..."
+
+#. display / change profile
+#, fuzzy
+msgid "Change Profile..."
+msgstr "ཆོག་ཡིག་བསྒྱུར་བཅོས་རྐྱབས..."
+
+#. display splash-screen
+#, fuzzy
+msgid "View Splash..."
+msgstr "དྲན་དེབ་སྟོན་བལྟ།"
+
+#. display plugin version
+#, fuzzy
+msgid "About..."
+msgstr "གཱེམ་གྱི་སྐོར་ལས"
+
+#. the file is too big
+#, fuzzy
+msgid "The file you are trying to send is too large!"
+msgstr "འཕྲིན་དོན་འདི་གནམ་མེད་ས་མེད་རིང་དྲག་པས།"
+
+msgid ""
+"Unable to connect to the mxit HTTP server. Please check your server server "
+"settings."
+msgstr ""
+
+#, fuzzy
+msgid "Logging In..."
+msgstr "ནང་བསྐྱོད།"
+
+#, fuzzy
+msgid ""
+"Unable to connect to the mxit server. Please check your server server "
+"settings."
+msgstr "སར་བར་ལུ་ མཐུད་མ་ཚུགས། ཁྱོད་ཀྱིས་མཐུད་དགོ་མནོ་མི སར་བར་གྱི་ ཁ་བྱང་འདི་བཙུགས་གནང་།"
+
+#, fuzzy
+msgid "Connecting..."
+msgstr "མཐུད་དོ།"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr ""
+
+#. nick name
+#, fuzzy
+msgid "Nick Name"
+msgstr "སྐྱོན་མིང་།"
+
+#. show the form to the user to complete
+#, fuzzy
+msgid "Register New MXit Account"
+msgstr "ཇར་བར་རྩིས་ཐོ་གསརཔ་ ཐོ་བཀོད་འབད།"
+
+#, fuzzy
+msgid "Please fill in the following fields:"
+msgstr "འོག་ལུ་ཡོད་པའི་ས་སྒོ་ཚུ་བཀང་གནང་།"
+
+#. no reply from the WAP site
+#, fuzzy
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr "གཱེམ་འདི་ ཆ་རོགས་ཐོ་ཡིག་ སར་བར་ལུ་མཐུད་མ་ཚུགས་པས།  དོ་རུང་ཤུལ་ལས་འབད་རྩོལ་བསྐྱེད་གནང་།"
+
+#. wapserver error
+#. server could not find the user
+#, fuzzy
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr "གཱེམ་འདི་ ཆ་རོགས་ཐོ་ཡིག་ སར་བར་ལུ་མཐུད་མ་ཚུགས་པས།  དོ་རུང་ཤུལ་ལས་འབད་རྩོལ་བསྐྱེད་གནང་།"
+
+#, fuzzy
+msgid "Wrong security code entered. Please try again later."
+msgstr "གཱེམ་འདི་ ཆ་རོགས་ཐོ་ཡིག་ སར་བར་ལུ་མཐུད་མ་ཚུགས་པས།  དོ་རུང་ཤུལ་ལས་འབད་རྩོལ་བསྐྱེད་གནང་།"
+
+msgid "Your session has expired. Please try again later."
+msgstr ""
+
+msgid "Invalid country selected. Please try again."
+msgstr ""
+
+msgid "Username is not registered. Please register first."
+msgstr ""
+
+msgid "Username is already registered. Please choose another username."
+msgstr ""
+
+#, fuzzy
+msgid "Internal error. Please try again later."
+msgstr "སར་བར་ ཐོབ་མི་ཚུགས་པས། ཨ་ཙི་ཁར་འབད་རྩོལ་བསྐྱེད།"
+
+msgid "You did not enter the security code"
+msgstr ""
+
+#, fuzzy
+msgid "Security Code"
+msgstr "མཐའ་བཙན་ལྕོགས་ཅན་བཟོ་ཡི།"
+
+#. ask for input
+#, fuzzy
+msgid "Enter Security Code"
+msgstr "ཆོག་ཡིག་བཙུགས།"
+
+#, fuzzy
+msgid "Your Country"
+msgstr "རྒྱལ་ཁབ།"
+
+#, fuzzy
+msgid "Your Language"
+msgstr "དགའ་མིའི་སྐད་ཡིག"
+
+#. display the form to the user and wait for his/her input
+#, fuzzy
+msgid "MXit Authorization"
+msgstr "ཞུ་བའི་དབང་སྤྲོད།"
+
+msgid "MXit account validation"
+msgstr ""
+
+#, fuzzy
+msgid "Retrieving User Information..."
+msgstr "སར་བར་ བརྡ་དོན།"
+
+#, fuzzy
+msgid "Status Message"
+msgstr "འཕྲིན་དོན་གཏང་།"
+
+#, fuzzy
+msgid "Hidden Number"
+msgstr "བར་མའི་མིང་།"
+
+#, fuzzy
+msgid "Your Mobile Number..."
+msgstr "འགྲུལ་འཕྲིན་ཨང་ གཞི་སྒྲིག་འབད།..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
+msgid "WAP Server"
+msgstr "སར་བར།"
+
+#, fuzzy
+msgid "Connect via HTTP"
+msgstr "མཐུད་དོ།"
+
+msgid "Enable splash-screen popup"
+msgstr ""
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr ""
+
+#. packet could not be queued for transmission
+#, fuzzy
+msgid "Message Send Error"
+msgstr "ཇབ་བར་འཕྲིན་དོན་འཛོལ་བ།"
+
+#, fuzzy
+msgid "Unable to process your request at this time"
+msgstr "སར་བར་ པིང་འབད་མ་ཚུགས།"
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr ""
+
+#, fuzzy
+msgid "Successfully Logged In..."
+msgstr "ཁྱོད་ཀྱིས་ ཀིའུན་འཐུས་མི་མཐར་འཁྱོལ་སྦེ་ལེགས་བཅོས་འབད་དགོས།"
+
+#, fuzzy
+msgid "Message Error"
+msgstr "ཇབ་བར་འཕྲིན་དོན་འཛོལ་བ།"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr ""
+
+#, fuzzy
+msgid "Contact Error"
+msgstr "མཐུད་ལམ་གྱི་འཛོལ་བ།"
+
+#, fuzzy
+msgid "Message Sending Error"
+msgstr "ཇབ་བར་འཕྲིན་དོན་འཛོལ་བ།"
+
+#, fuzzy
+msgid "Status Error"
+msgstr "རྒྱུན་རིམ་གྱི་འཛོལ་བ།"
+
+#, fuzzy
+msgid "Mood Error"
+msgstr "ངོ་རྟགས་འཛོལ་བ།"
+
+#, fuzzy
+msgid "Invitation Error"
+msgstr "ཐོ་འགོད་འབད་ནིའི་འཛོལ་བ།"
+
+#, fuzzy
+msgid "Contact Removal Error"
+msgstr "མཐུད་ལམ་གྱི་འཛོལ་བ།"
+
+#, fuzzy
+msgid "Subscription Error"
+msgstr "མཁོ་མངགས"
+
+#, fuzzy
+msgid "Contact Update Error"
+msgstr "མཐུད་ལམ་གྱི་འཛོལ་བ།"
+
+#, fuzzy
+msgid "File Transfer Error"
+msgstr "ཡིག་སྣོད་གནས་སོར།"
+
+#, fuzzy
+msgid "Cannot create MultiMx room"
+msgstr "ནིཀ་ བསྒྱུར་བཅོས་རྐྱབས་མི་ཚུགས།"
+
+#, fuzzy
+msgid "MultiMx Invitation Error"
+msgstr "ཐོ་འགོད་འབད་ནིའི་འཛོལ་བ།"
+
+#, fuzzy
+msgid "Profile Error"
+msgstr "འཛོལ་བ་འབྲི།"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr ""
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr ""
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr ""
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr ""
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "Angry"
+msgstr "ཁྲོ་བོ།"
+
+msgid "Excited"
+msgstr "སྤྲོ་སེམས་སློང་བའི།"
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "སྡེ་ཚན།"
+
+msgid "Happy"
+msgstr "དགའ་ཉམས་ཅན།"
+
+msgid "In Love"
+msgstr "མཛའ་མཐུན།"
+
+msgid "Invincible"
+msgstr "དབང་ལུ་བསྡུ་མི་ཚུགས་པའི།"
+
+msgid "Sad"
+msgstr "སྐྱོ་ཉམས་ཅན།"
+
+#, fuzzy
+msgid "Hot"
+msgstr "ཧོསཊི:(_H)"
+
+#, fuzzy
+msgid "Sick"
+msgstr "སྐྱོན་མིང་།"
+
+msgid "Sleepy"
+msgstr "གཉིད་ཐིབ་ཐིབ།"
+
+#, fuzzy
+msgid "Pending"
+msgstr "གཏང་།"
+
+#, fuzzy
+msgid "Invited"
+msgstr "མགྲོན་དུ་འབོད།"
+
+#, fuzzy
+msgid "Rejected"
+msgstr "ཕྱིར་བཏོན།"
+
+#, fuzzy
+msgid "Deleted"
+msgstr "བཏོན་བཏང་།"
+
+msgid "MXit Advertising"
+msgstr ""
+
+#, fuzzy
+msgid "More Information"
+msgstr "ལཱ་གི་བརྡ་དོན།"
 
 #, c-format
 msgid "No such user: %s"
@@ -6474,7 +6895,6 @@ msgstr "སར་བར་ འདྲེན་ལམ།"
 msgid "Received unexpected response from %s"
 msgstr "སར་བར་ལས་ རེ་བ་མེད་པའི་ཨེཅ་ཊི་ཊི་པི་ ལན་ཐོབ་ཡོདཔ།"
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6639,6 +7059,48 @@ msgstr "གྲལ་རིམ་གང་།"
 
 msgid "Not while on AOL"
 msgstr "ཨེ་ཨོ་ཨེལ་གྱི་སྐབས་སུ་ མེན།"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "ཡིག་སྣོད་གཏང་མི་ཚུགས།"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "སྣོད་ཐོ་གཏང་མི་ཚུགས།"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "འཕྲིན་དོན་གཏང་མ་ཚུགས།"
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "ཨོཕ་ལ་ཡིན།"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6813,6 +7275,16 @@ msgstr "ཁྱོད་ཀྱི་ རྩིས་ཐོ་འདི་ ད་�
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "ཨེ་ཨོ་ཨེལ་ འཕྲལ་མྱུར་ འཕྲིན་སྐྱེལ་པའི་ཞབས་ཏོག་འདི་ གནས་སྐབས་ཅིག་ ཐོབ་མི་ཚུགས།"
 
+#. username connecting too frequently
+#, fuzzy
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"ཁྱོད་  འཕྲལ་འཕྲལ་འབད་རང་ མཐུད་ནི་དང་མཐུད་བཏོག་སྟེ་འདུག  སྐར་མ་བཅུ་ཐམ་དེ་ཅིག་བསྒུག་ཞིན་ན་ དེ་ལས་"
+"འབད་རྩོལ་བསྐྱེད།  ཁྱོད་ཀྱིས་འཕྲོ་མཐུད་དེ་རང་འབད་རྩོལ་བསྐྱེད་པ་ཅིན་ ཧེང་བཀལ་རང་བསྒུག་དགོ"
+
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
@@ -6822,8 +7294,9 @@ msgstr ""
 #. IP address connecting too frequently
 #, fuzzy
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "ཁྱོད་  འཕྲལ་འཕྲལ་འབད་རང་ མཐུད་ནི་དང་མཐུད་བཏོག་སྟེ་འདུག  སྐར་མ་བཅུ་ཐམ་དེ་ཅིག་བསྒུག་ཞིན་ན་ དེ་ལས་"
 "འབད་རྩོལ་བསྐྱེད།  ཁྱོད་ཀྱིས་འཕྲོ་མཐུད་དེ་རང་འབད་རྩོལ་བསྐྱེད་པ་ཅིན་ ཧེང་བཀལ་རང་བསྒུག་དགོ"
@@ -6975,21 +7448,28 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "ངོ་མ་ཤེས་པའི་རྒྱུ་མཚན་གྱི་དོན་ལུ་ %hu འཕྲིན་དོན་འདི་%sལས་ བྱིག་ཡར་སོ་ནུག  "
 msgstr[1] "ངོ་མ་ཤེས་པའི་རྒྱུ་མཚན་གྱི་དོན་ལུ  ཁྱོད་ཀྱིས%huའཕྲིན་དོན་ཚུ %sལས བྱིག་ཡར་སོ་ནུག "
 
-#. Data is assumed to be the destination bn
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "འཕྲིན་དོན་གཏང་མ་ཚུགས(%s)།"
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "འཕྲིན་དོན%sའདི་གཏང་མ་ཚུགས།"
 
-msgid "Unknown reason."
-msgstr "ངོ་མ་ཤེས་པའི་རྒྱུ་མཚན།"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%sལུ་འཕྲིན་དོན་གཏང་མ་ཚུགས།"
 
-#, c-format
-msgid "Unable to send message to %s:"
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
 msgstr "%sལུ་འཕྲིན་དོན་གཏང་མ་ཚུགས།"
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "ལག་ལེན་པའི་བརྡ་དོན་%sའདི་ཐོབ་མི་ཚུགས།"
+
+msgid "Unknown reason."
+msgstr "ངོ་མ་ཤེས་པའི་རྒྱུ་མཚན།"
 
 msgid "Online Since"
 msgstr "ལས་ཚུར་ གློག་ཐོག"
@@ -6999,9 +7479,6 @@ msgstr "ལས་ཚུར་ འཐུས་མི།"
 
 msgid "Capabilities"
 msgstr "ལྕོགས་གྲུབ།"
-
-msgid "Profile"
-msgstr "གསལ་སྡུད།"
 
 msgid "Your AIM connection may be lost."
 msgstr "ཁྱོད་ཀྱི་ ཨེ་ཨའི་ཨེམ་ མཐུད་ལམ་འདི་བརླག་གཏོར་ཞུགས་ཞུགསཔ་འོང་།"
@@ -7013,9 +7490,10 @@ msgid ""
 msgstr ""
 "[ནང་ན་ལུ་ ནུས་མེད་ཀྱི་ཡིག་འབྲུ་ཚུ་ཡོདཔ་ལས་  ལག་ལེན་པ་འདི་ལས་ འཕྲིན་དོན་བཀྲམ་སྟོན་འབད་མ་ཚུགས།]"
 
+#, fuzzy
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "ཁྱོད་ཀྱིས་དཔའ་བཅམ་པའི་ མཇུག་གི་བྱ་བ་འདིའི་ལཱ་འགན་གྲུབ་མི་ཚུགས་  ག་ཅི་འབད་ཟེར་བ་ཅིན་ ཁྱོད་ མགྱོགས་"
 "ཚད་ལས་ལྷག་སོ་ནུགསྐར་ཆ་བཅུ་ཐམ་དེ་ཅིག་བསྒུག་ཞིན་ན་  དོ་རུང་འབད་རྩོལ་བསྐྱེད་གནང་།"
@@ -8286,6 +8764,10 @@ msgstr "གྲོས་ཚོགས་ཁ་བསྡམས་ཡོདཔ།"
 msgid "Unable to send message: "
 msgstr "འཕྲིན་དོན་གཏང་མ་ཚུགས།:"
 
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "%sལུ་འཕྲིན་དོན་གཏང་མ་ཚུགས།"
+
 msgid "Place Closed"
 msgstr "ས་གནས་ཁ་བསྡམས་ཡོདཔ།"
 
@@ -8702,35 +9184,14 @@ msgstr "ཤིན་ཏུ་ཤུགས་ལྡན།"
 msgid "Robot"
 msgstr "འཕྲུལ་མི།"
 
-msgid "Happy"
-msgstr "དགའ་ཉམས་ཅན།"
-
-msgid "Sad"
-msgstr "སྐྱོ་ཉམས་ཅན།"
-
-msgid "Angry"
-msgstr "ཁྲོ་བོ།"
-
 msgid "Jealous"
 msgstr "ཕྲག་དོག་ཅན།"
 
 msgid "Ashamed"
 msgstr "ངོ་ཚ་སྟེ།"
 
-msgid "Invincible"
-msgstr "དབང་ལུ་བསྡུ་མི་ཚུགས་པའི།"
-
-msgid "In Love"
-msgstr "མཛའ་མཐུན།"
-
-msgid "Sleepy"
-msgstr "གཉིད་ཐིབ་ཐིབ།"
-
 msgid "Bored"
 msgstr "ཡིད་བསུན་ཏེ།"
-
-msgid "Excited"
-msgstr "སྤྲོ་སེམས་སློང་བའི།"
 
 msgid "Anxious"
 msgstr "སེམས་འཚབ།"
@@ -9991,6 +10452,15 @@ msgstr "ལག་ལེན་པའི་ཁ་སླབ་ནང་འཛུལ
 msgid "Open Inbox"
 msgstr "ཧོཊ་མཱེལ་ ནང་སྒྲོམ་ཁ་ཕྱེ།"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr ""
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr ""
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr ""
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -10543,15 +11013,16 @@ msgstr ""
 "ཁྱོད་ཀྱི་ %s ལྷག་པའི་སྐབས་སུ་ འཛོལ་བ་གཅིག་གདོང་ཐུག་བྱུང་ནུག ཁོང་དེ་ཚུ་ མངོན་གསལ་འབད་དེ་མེདཔ་མ་ཚད་ "
 "ཡིག་སྣོད་རྙིངམ་འདི་  %s~ ལུ་བསྐྱར་མིང་བཏགས་ཏེ་ཡོད། "
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+
 msgid "Internet Messenger"
 msgstr "ཨིན་ཊར་ནེཊི་འཕྲིན་སྐྱེལ་པ།"
 
 #, fuzzy
 msgid "Pidgin Internet Messenger"
 msgstr "ཨིན་ཊར་ནེཊི་འཕྲིན་སྐྱེལ་པ།"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "གནད་སྤེལ་ལམ་ལུགས་སྣ་མང་གུ་ལུ་ འཕྲལ་མྱུར་འཕྲིན་དོན་ཚུ་གཏང་།"
 
 msgid "Orientation"
 msgstr "ཕྱོགས།"
@@ -12688,12 +13159,6 @@ msgstr ""
 "སིན་དང་ལིའུཀ་དོན་ལུ་བརྡ་དོན་འདི་ \n"
 "%scontactinfo.php ནང་འབྲེལ་བ་འབད་གནང་།\n"
 
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-#, fuzzy
-msgid "Pidgin"
-msgstr "ཕགཔ།"
-
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
@@ -12897,49 +13362,67 @@ msgstr "སླར་འབྱུང་དོ།(_R)"
 msgid "Pounce Target"
 msgstr "དམིགས་གཏད་པའུནསི།"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Started typing"
 msgstr "ཡིག་དཔར་བརྐྱབ་ནི་འགོ་བཙུགསཔ་ཨིན།(_t)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Paused while typing"
 msgstr "ཡིག་དཔར་བརྐྱབ་པའི་སྐབས་སུ་ཐེམ་ཚུ།(_a)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed on"
 msgstr "འཛུལཝ་ཨིན།(_g)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being idle"
 msgstr "ལས་མེད་ལས་ལོག་ནི(_n)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Returned from being away"
 msgstr "ཕྱི་ཁ་ལས་སླར་ལོག་འབདཝ་ཨིན།"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Stopped typing"
 msgstr "ཡིག་དཔར་བརྐྱབ་ནི་བཀག་ཡོདཔ།"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Signed off"
 msgstr "འཐོནམ་ཨིན།(_f)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Became idle"
 msgstr "ལས་མེད་འགྱུརཝ་ཨིན།(_i)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Went away"
 msgstr "ཕྱི་ཁ་ཨིན་པའི་སྐབས།"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Sent a message"
 msgstr "འཕྲིན་དོན་གཏང་(_m)"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Unknown.... Please report this!"
 msgstr "ངོ་མ་ཤེས་པའི་ པའུནསི་གི་ བྱུང་ལས། འ་ནི་འདི་སྙན་ཞུ་འབད་གནང་།"
+
+#, fuzzy
+msgid "(Custom)"
+msgstr "སྲོལ་སྒྲིག།"
+
+#, fuzzy
+msgid "(Default)"
+msgstr "ཇི་ནོམ་སྔོན་སྒྲིག"
+
+msgid "The default Pidgin sound theme"
+msgstr ""
+
+#, fuzzy
+msgid "The default Pidgin buddy list theme"
+msgstr "ཆ་རོགས་ཀྱི་ཐོ་ཡིག"
+
+msgid "The default Pidgin status icon theme"
+msgstr ""
 
 #, fuzzy
 msgid "Theme failed to unpack."
@@ -13110,6 +13593,10 @@ msgstr "ལྕོགས་མིན་བཟོ།(_D)"
 msgid "Use _automatically detected IP address: %s"
 msgstr "རང་བཞིན་སྐྱོན་འཛིན་ནི་ཨའི་པི་ཁ་བྱང་།(_A)"
 
+#, fuzzy
+msgid "ST_UN server:"
+msgstr "ཨེསི་ཊི་ཡུ་ཨེན་ སར་བར།:(_U)"
+
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">དཔེར་བརྗོད།: stunserver.org</span>"
 
@@ -13122,14 +13609,17 @@ msgstr "འདྲེན་ལམ་ཚུ།"
 msgid "_Enable automatic router port forwarding"
 msgstr ""
 
-msgid "_Manually specify range of ports to listen on"
+#, fuzzy
+msgid "_Manually specify range of ports to listen on:"
 msgstr "ཉན་ནིའི་དོན་ལུ་ ལག་ཐོག་ལས་དམིགས་བསལ་ཁྱབ་ཚད་ཀྱི་འདྲེན་ལམ(_M)"
 
-msgid "_Start port:"
-msgstr "འདྲེན་ལམ་ འགོ་བཙུགས:(_S)"
+#, fuzzy
+msgid "_Start:"
+msgstr "གནས་ཚད:(_S)"
 
-msgid "_End port:"
-msgstr "འདྲེན་ལམ་ མཇུག་བསྡུ:(_E)"
+#, fuzzy
+msgid "_End:"
+msgstr "རྒྱ་འཕར།(_E)"
 
 #. TURN server
 msgid "Relay Server (TURN)"
@@ -13138,6 +13628,14 @@ msgstr ""
 #, fuzzy
 msgid "_TURN server:"
 msgstr "ཨེསི་ཊི་ཡུ་ཨེན་ སར་བར།:(_U)"
+
+#, fuzzy
+msgid "Use_rname:"
+msgstr "ལག་ལེན་པའི་མིང་:(_U)"
+
+#, fuzzy
+msgid "Pass_word:"
+msgstr "ཆོག་ཡིག:"
 
 #, fuzzy
 msgid "Proxy Server &amp; Browser"
@@ -13165,15 +13663,24 @@ msgstr "ཁང་མིག་རིམ་སྒྲིག་འབད།(_C)"
 msgid "Proxy Server"
 msgstr "པོརོག་སི་སར་བར།"
 
+#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "པོ་རོག་སི་དབྱེ་བ་:(_t)"
+
 msgid "No proxy"
 msgstr "པོརོག་སི་མེད།"
 
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr ""
+#, fuzzy
+msgid "P_ort:"
+msgstr "འདྲེན་ལམ:(_P)"
 
-msgid "_User:"
-msgstr "ལག་ལེན་པ:(_U)"
+#, fuzzy
+msgid "User_name:"
+msgstr "ལག་ལེན་པའི་མིང་:(_U)"
 
 msgid "Seamonkey"
 msgstr "སི་མཱང་ཀི།"
@@ -13698,6 +14205,12 @@ msgstr "ཡིག་སྣོད་སྲུངས།"
 
 msgid "Select color"
 msgstr "ཚོས་གཞི་སེལ་འཐུ་འབད།"
+
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+#, fuzzy
+msgid "Pidgin"
+msgstr "ཕགཔ།"
 
 msgid "_Alias"
 msgstr "མིང་གཞན"
@@ -14893,9 +15406,6 @@ msgstr ""
 "\n"
 "* དྲན་དགོཔ་: འ་ནི་པ་ལག་ཨིན་གི་ ཝིན་ཌོ་ ༢༠༠༠ ཡང་ན་སྦོམ་ དགོས་མཁོཝ་ཨིན།"
 
-msgid "GTK+ Runtime Version"
-msgstr "ཇི་ཊི་ཀེ་+གཡོག་བཀོད་དུས་ཚོད་ཐོན་རིམ།"
-
 #. Autostart
 msgid "Startup"
 msgstr "འགོ་བཙུགས།"
@@ -14903,6 +15413,9 @@ msgstr "འགོ་བཙུགས།"
 #, fuzzy, c-format
 msgid "_Start %s on Windows startup"
 msgstr "སྒོ་སྒྲིག་འགོ་བཙུགས་ཀྱི་སྐབས་ལུ་གཱེམ་འགོ་བཙུགས་(_S)"
+
+msgid "Allow multiple instances"
+msgstr ""
 
 msgid "_Dockable Buddy List"
 msgstr "ཌོཀ་འབད་བཏུབ་པའི་ཆ་རོགས་ཀྱི་ཐོ་ཡིག(_D)"
@@ -14966,6 +15479,21 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "གནད་སྤེལ་ལམ་ལུགས་སྣ་མང་གུ་ལུ་ འཕྲལ་མྱུར་འཕྲིན་དོན་ཚུ་གཏང་།"
+
+#~ msgid "_Start port:"
+#~ msgstr "འདྲེན་ལམ་ འགོ་བཙུགས:(_S)"
+
+#~ msgid "_End port:"
+#~ msgstr "འདྲེན་ལམ་ མཇུག་བསྡུ:(_E)"
+
+#~ msgid "_User:"
+#~ msgstr "ལག་ལེན་པ:(_U)"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "ཇི་ཊི་ཀེ་+གཡོག་བཀོད་དུས་ཚོད་ཐོན་རིམ།"
 
 #, fuzzy
 #~ msgid "Calling ... "
@@ -15157,10 +15685,6 @@ msgstr ""
 #~ msgstr "ཕྱོགས།"
 
 #, fuzzy
-#~ msgid "User Mood"
-#~ msgstr "ལག་ལེན་པའི་ཐབས་ལམ་ཚུ།"
-
-#, fuzzy
 #~ msgid "User Activity"
 #~ msgstr "ལག་ལེན་པའི་ཚད།"
 
@@ -15179,10 +15703,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Reachability Address"
 #~ msgstr "གློག་འཕྲིན་ཁ་བྱང་།"
-
-#, fuzzy
-#~ msgid "User Profile"
-#~ msgstr "གསལ་སྡུད་གཞི་སྒྲིག་འབད།"
 
 #, fuzzy
 #~ msgid "Jingle"
@@ -15301,9 +15821,6 @@ msgstr ""
 
 #~ msgid "Could not write"
 #~ msgstr "འབྲི་མ་ཚུགས།"
-
-#~ msgid "Could not connect"
-#~ msgstr "མཐུད་མ་ཚུགས།"
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "ཉན་སོ་ཀེཊི་གསར་བསྐྲུན་འབད་མ་ཚུགས།"
@@ -16348,9 +16865,6 @@ msgstr ""
 #~ "ཆ་རོགས་ཐོ་ཡིག་ནང་ཁ་སྐོང་མ་འབད་ཚུན་ཚོད་  ལག་ལེན་པ %sལུ དབང་སྤྲོད་དགོས་མཁོ་ཡོདཔ་ཨིན། ཁྱོད་ "
 #~ "དབང་སྤྲོད་ཞུ་བ་གཏང་ནི་ཨིན་ན?"
 
-#~ msgid "Request Authorization"
-#~ msgstr "ཞུ་བའི་དབང་སྤྲོད།"
-
 #~ msgid "_Request Authorization"
 #~ msgstr "ཞུ་བའི་དབང་སྤྲོད།(_R)"
 
@@ -16994,9 +17508,6 @@ msgstr ""
 #~ msgid "D_isplay remote nicknames if no alias is set"
 #~ msgstr "མིང་གཞན་ གཞི་སྒྲིག་མ་འབད་བ་ཅིན་ ཐག་རིང་གི་སྐྱོན་མིང་ཚུ་བཀྲམ་སྟོན་འབད(_i)"
 
-#~ msgid "Display"
-#~ msgstr "བཀྲམ་སྟོན།"
-
 #~ msgid "Show _timestamp on messages"
 #~ msgstr "འཕྲིན་དོན་ཚུ་གུ་དུས་བཀོད་སྟོན(_t)"
 
@@ -17271,12 +17782,6 @@ msgstr ""
 #~ "གཱེམ་འདི་   ག་ཌུ་-ག་ཌུ་ ཆ་རོགས་ཐོ་ཡིག་སར་བར་ལུ་ མཐུད་མ་ཚུགས་པས།   དོ་རུང་ཤུལ་ལས་འབད་རྩོལ་"
 #~ "བསྐྱེད་གནང་།"
 
-#~ msgid ""
-#~ "Pidgin was unable to connect to the buddy list server.  Please try again "
-#~ "later."
-#~ msgstr ""
-#~ "གཱེམ་འདི་ ཆ་རོགས་ཐོ་ཡིག་ སར་བར་ལུ་མཐུད་མ་ཚུགས་པས།  དོ་རུང་ཤུལ་ལས་འབད་རྩོལ་བསྐྱེད་གནང་།"
-
 #~ msgid "Unable to delete Gadu-Gadu buddy list"
 #~ msgstr "ག་ཌུ་-ག་ཌུ་ ཆ་རོགས་ཐོ་ཡིག་འདི་བཏོན་གཏང་མི་ཚུགས།"
 
@@ -17397,9 +17902,6 @@ msgstr ""
 #~ msgid "Unable to open Direct IM"
 #~ msgstr "ཨའི་ཨེམ་ཐད་ཀར་ ཁ་ཕྱེ་མ་ཚུགས།"
 
-#~ msgid "Chat is currently unavailable"
-#~ msgstr "ཁ་སླབ་ནི་  ད་ལྟོ་མི་ཐོབ།"
-
 #~ msgid "Transfer of file %s timed out."
 #~ msgstr "ཡིག་སྣོད%sགི་གནས་སོར་  ངལ་མཚམས་བཟོ་ཡོདཔ།"
 
@@ -17515,9 +18017,6 @@ msgstr ""
 
 #~ msgid "YCHT Port"
 #~ msgstr "ཝའི་སི་ཨེཆ་ཊི་ འདྲེན་ལམ།"
-
-#~ msgid "Custom"
-#~ msgstr "སྲོལ་སྒྲིག།"
 
 #~ msgid "Please enter your password"
 #~ msgstr "ཁྱོད་རའི་ཆོག་ཡིག་བཙུགས་གནང་།"

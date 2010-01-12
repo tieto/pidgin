@@ -50,8 +50,11 @@ msn_accept_add_cb(gpointer data)
 	{
 		MsnSession *session = pa->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
+		PurpleAccount *account = purple_connection_get_account(pa->gc);
 
 		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_AL);
+		purple_privacy_deny_remove(account, pa->who, TRUE);
+		purple_privacy_permit_add(account, pa->who, TRUE);
 
 		msn_del_contact_from_list(session, NULL, pa->who, MSN_LIST_PL);
 	}
@@ -207,6 +210,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 
 	if (list_op & MSN_LIST_PL_OP)
 	{
+		user->authorized = TRUE;
 		got_new_entry(gc, passport, store, message);
 	}
 }
@@ -539,7 +543,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 
 	purple_debug_info("msn", "Add user: %s to group: %s\n", who, new_group_name);
 
-	if (!purple_email_is_valid(who))
+	if (!msn_email_is_valid(who))
 	{
 		/* only notify the user about problems adding to the friends list
 		 * maybe we should do something else for other lists, but it probably

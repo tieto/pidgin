@@ -23,10 +23,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include <string.h>
 
-#include "finch.h"
 #include <internal.h>
+#include "finch.h"
 
 #include <cmds.h>
 #include <core.h>
@@ -367,6 +366,28 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 	}
 }
 
+static void
+account_signing_off(PurpleConnection *gc)
+{
+	GList *list = purple_get_chats();
+	PurpleAccount *account = purple_connection_get_account(gc);
+
+	/* We are about to sign off. See which chats we are currently in, and mark
+	 * them for rejoin on reconnect. */
+	while (list) {
+		PurpleConversation *conv = list->data;
+		if (!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)) &&
+				purple_conversation_get_account(conv) == account) {
+			purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
+			purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
+						"longer in this chat. You will be automatically rejoined in the chat when "
+						"the account reconnects."),
+					PURPLE_MESSAGE_SYSTEM, time(NULL));
+		}
+		list = list->next;
+	}
+}
+
 static gpointer
 finch_conv_get_handle(void)
 {
@@ -642,8 +663,25 @@ static void
 create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 {
 	PurpleAccount *account = purple_conversation_get_account(fc->active_conv);
-	char *name = gnt_tree_get_selection_data(GNT_TREE(widget));
-	purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	char *name, *realname;
+
+	if (!gc) {
+		purple_conversation_write(fc->active_conv, NULL, _("You are not connected."),
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
+		return;
+	}
+
+	name = gnt_tree_get_selection_data(GNT_TREE(widget));
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_cb_real_name))
+		realname = prpl_info->get_cb_real_name(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(fc->active_conv)), name);
+	else
+		realname = NULL;
+	purple_conversation_new(PURPLE_CONV_TYPE_IM, account, realname ? realname : name);
+	g_free(realname);
 }
 
 static void
@@ -1433,6 +1471,8 @@ void finch_conversation_init()
 					PURPLE_CALLBACK(account_signed_on_off), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off", finch_conv_get_handle(),
 					PURPLE_CALLBACK(account_signed_on_off), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signing-off", finch_conv_get_handle(),
+					PURPLE_CALLBACK(account_signing_off), NULL);
 }
 
 void finch_conversation_uninit()

@@ -23,6 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include <internal.h>
+
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -36,7 +38,6 @@
 #include <gntwindow.h>
 
 #include "finch.h"
-#include <internal.h>
 
 #include <account.h>
 #include <accountopt.h>
@@ -166,8 +167,7 @@ save_account_cb(AccountEditDialog *dialog)
 
 	/* Alias */
 	value = gnt_entry_get_text(GNT_ENTRY(dialog->alias));
-	if (value && *value)
-		purple_account_set_alias(account, value);
+	purple_account_set_alias(account, value);
 
 	/* Remember password and password */
 	purple_account_set_remember_password(account,

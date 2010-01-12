@@ -33,6 +33,7 @@
 static const char * const moodstrings[] = {
 	"afraid",
 	"amazed",
+	"amorous",
 	"angry",
 	"annoyed",
 	"anxious",
@@ -41,22 +42,31 @@ static const char * const moodstrings[] = {
 	"bored",
 	"brave",
 	"calm",
+	"cautious",
 	"cold",
+	"confident",
 	"confused",
+	"contemplative",
 	"contented",
 	"cranky",
+	"crazy",
+	"creative",
 	"curious",
+	"dejected",
 	"depressed",
 	"disappointed",
 	"disgusted",
+	"dismayed",
 	"distracted",
 	"embarrassed",
+	"envious",
 	"excited",
 	"flirtatious",
 	"frustrated",
 	"grumpy",
 	"guilty",
 	"happy",
+	"hopeful",
 	"hot",
 	"humbled",
 	"humiliated",
@@ -71,13 +81,16 @@ static const char * const moodstrings[] = {
 	"invincible",
 	"jealous",
 	"lonely",
+	"lucky",
 	"mean",
 	"moody",
 	"nervous",
 	"neutral",
 	"offended",
+	"outraged",
 	"playful",
 	"proud",
+	"relaxed",
 	"relieved",
 	"remorseful",
 	"restless",
@@ -88,20 +101,29 @@ static const char * const moodstrings[] = {
 	"shy",
 	"sick",
 	"sleepy",
+	"spontaneous",
 	"stressed",
+	"strong",
 	"surprised",
+	"thankful",
 	"thirsty",
-	"worried",
-	NULL
+	"tired",
+	"weak",
+	"worried"
 };
 
-static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
-	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
-	xmlnode *item = xmlnode_get_child(items, "item");
+static void
+jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items)
+{
+	xmlnode *item;
+	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
 	const char *newmood = NULL;
 	char *moodtext = NULL;
-	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
-	xmlnode *moodinfo, *mood;
+	xmlnode *child, *mood;
+
+	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
+	item = xmlnode_get_child(items, "item");
+
 	/* ignore the mood of people not on our buddy list */
 	if (!buddy || !item)
 		return;
@@ -109,35 +131,39 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 	mood = xmlnode_get_child_with_namespace(item, "mood", "http://jabber.org/protocol/mood");
 	if (!mood)
 		return;
-	for (moodinfo = mood->child; moodinfo; moodinfo = moodinfo->next) {
-		if (moodinfo->type == XMLNODE_TYPE_TAG) {
-			if (!strcmp(moodinfo->name, "text")) {
-				if (!moodtext) /* only pick the first one */
-					moodtext = xmlnode_get_data(moodinfo);
-			} else {
-				int i;
-				for (i = 0; moodstrings[i]; ++i) {
-					/* verify that the mood is known (valid) */
-					if (!strcmp(moodinfo->name, moodstrings[i])) {
-						newmood = moodstrings[i];
-						break;
-					}
+	for (child = mood->child; child; child = child->next) {
+		if (child->type != XMLNODE_TYPE_TAG)
+			continue;
+
+		if (g_str_equal("text", child->name) && moodtext == NULL)
+				moodtext = xmlnode_get_data(child);
+		else {
+			int i;
+			for (i = 0; i < G_N_ELEMENTS(moodstrings); ++i) {
+				/* verify that the mood is known (valid) */
+				if (g_str_equal(child->name, moodstrings[i])) {
+					newmood = moodstrings[i];
+					break;
 				}
 			}
-			if (newmood != NULL && moodtext != NULL)
-			   break;
 		}
+		if (newmood != NULL && moodtext != NULL)
+		   break;
 	}
 	if (newmood != NULL) {
+		PurpleAccount *account;
 		const char *status_id;
 		JabberBuddyResource *resource = jabber_buddy_find_resource(buddy, NULL);
-		if(!resource) { /* huh? */
+		if (!resource) { /* huh? */
 			g_free(moodtext);
 			return;
 		}
 		status_id = jabber_buddy_state_get_status_id(resource->state);
 
-		purple_prpl_got_user_status(js->gc->account, from, status_id, "mood", _(newmood), "moodtext", moodtext?moodtext:"", NULL);
+		account = purple_connection_get_account(js->gc);
+		purple_prpl_got_user_status(account, from, status_id, "mood",
+		                            _(newmood), "moodtext",
+		                            moodtext ? moodtext : "", NULL);
 	}
 	g_free(moodtext);
 }
@@ -149,7 +175,6 @@ void jabber_mood_init(void) {
 
 static void do_mood_set_from_fields(PurpleConnection *gc, PurpleRequestFields *fields) {
 	JabberStream *js;
-	const int max_mood_idx = sizeof(moodstrings) / sizeof(moodstrings[0]) - 1;
 	int selected_mood = purple_request_fields_get_choice(fields, "mood");
 
 	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
@@ -159,7 +184,7 @@ static void do_mood_set_from_fields(PurpleConnection *gc, PurpleRequestFields *f
 
 	js = gc->proto_data;
 
-	if (selected_mood < 0 || selected_mood >= max_mood_idx) {
+	if (selected_mood < 0 || selected_mood >= G_N_ELEMENTS(moodstrings)) {
 		purple_debug_error("jabber", "Invalid mood index (%d) selected.\n", selected_mood);
 		return;
 	}
@@ -182,7 +207,7 @@ static void do_mood_set_mood(PurplePluginAction *action) {
 	field = purple_request_field_choice_new("mood",
 											_("Mood"), 0);
 
-	for(i = 0; moodstrings[i]; ++i)
+	for(i = 0; i < G_N_ELEMENTS(moodstrings); ++i)
 		purple_request_field_choice_add(field, _(moodstrings[i]));
 
 	purple_request_field_set_required(field, TRUE);
