@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.6 (??/??/20??):
+	libpurple:
+	* Fix 'make check' on OS X. (David Fang)
+
 	Gadu-Gadu:
 	* Fix display of avatars after a server-side change. (Krzysztof
 	  Klinikowski)
