@@ -2439,16 +2439,8 @@ msim_get_info_cb(MsimSession *session, const MsimMessage *user_info_msg,
 
 	purple_notify_user_info_destroy(user_info);
 
-	if (user->temporary_user) {
-		g_free(user->client_info);
-		g_free(user->gender);
-		g_free(user->location);
-		g_free(user->headline);
-		g_free(user->display_name);
-		g_free(user->username);
-		g_free(user->image_url);
-		g_free(user);
-	}
+	if (user->temporary_user)
+		msim_user_free(user);
 	g_free(username);
 }
 
