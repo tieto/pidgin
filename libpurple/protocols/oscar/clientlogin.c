@@ -43,8 +43,7 @@
 #include "oscarcommon.h"
 
 #define URL_CLIENT_LOGIN "https://api.screenname.aol.com/auth/clientLogin"
-#define URL_START_OSCAR_SESSION "https://api.oscar.aol.com/aim/startOSCARSession"
-#define URL_START_OSCAR_SESSION_SIG "https://api.oscar.aol.com:80/aim/startOSCARSession"
+#define URL_START_OSCAR_SESSION "http://api.oscar.aol.com/aim/startOSCARSession"
 
 /*
  * Using clientLogin requires a developer ID.  This key is for libpurple.
@@ -283,7 +282,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 			"&ts=%" PURPLE_TIME_T_MODIFIER
 			"&useTLS=%d",
 			purple_url_encode(token), get_client_key(od), hosttime, use_tls);
-	signature = generate_signature("GET", URL_START_OSCAR_SESSION_SIG,
+	signature = generate_signature("GET", URL_START_OSCAR_SESSION,
 			query_string, session_key);
 	url = g_strdup_printf(URL_START_OSCAR_SESSION "?%s&sig_sha256=%s",
 			query_string, signature);
