@@ -24,6 +24,10 @@ version 2.6.6 (??/??/20??):
 	  (when given by the result of the "last query") and don't show status as
 	  offline.
 
+	Pidgin:
+	* Correctly size conversation and status box entries when the
+	  interior-focus style property is diabled. (Gabriel Schulhof)
+
 version 2.6.5 (01/08/2010):
 	libpurple:
 	* TLS certificates are actually stored to the local cache once again

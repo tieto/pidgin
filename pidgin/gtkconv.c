@@ -4652,6 +4652,8 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	int max_height = total_height / 2;
 	int min_lines = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines");
 	int min_height;
+	gboolean interior_focus;
+	int focus_width;
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4677,6 +4679,13 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	 * is the beginning of a new paragraph. */
 	min_height = min_lines * (oneline.height + MAX(pad_inside, pad_top + pad_bottom));
 	height = CLAMP(height, MIN(min_height, max_height), max_height);
+
+	gtk_widget_style_get(gtkconv->entry,
+	                     "interior-focus", &interior_focus,
+	                     "focus-line-width", &focus_width,
+	                     NULL);
+	if (!interior_focus)
+		height += 2 * focus_width;
 
 	diff = height - gtkconv->entry->allocation.height;
 	if (ABS(diff) < oneline.height / 2)

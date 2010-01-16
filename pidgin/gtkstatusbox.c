@@ -2541,6 +2541,8 @@ static void update_size(PidginStatusBox *status_box)
 	GdkRectangle oneline;
 	int height;
 	int pad_top, pad_inside, pad_bottom;
+	gboolean interior_focus;
+	int focus_width;
 
 	if (!status_box->imhtml_visible)
 	{
@@ -2590,6 +2592,13 @@ static void update_size(PidginStatusBox *status_box)
 
 	height += (pad_top + pad_bottom) * lines;
 	height += (pad_inside) * (display_lines - lines);
+
+	gtk_widget_style_get(status_box->imhtml,
+	                     "interior-focus", &interior_focus,
+	                     "focus-line-width", &focus_width,
+	                     NULL);
+	if (!interior_focus)
+		height += 2 * focus_width;
 
 	gtk_widget_set_size_request(status_box->vbox, -1, height + PIDGIN_HIG_BOX_SPACE);
 }
