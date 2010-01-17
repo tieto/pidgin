@@ -426,6 +426,7 @@ running configure.
 					X11_LIBS="$x_libpath_add"
 					X11_CFLAGS="$x_incpath_add"
 				else
+					with_x="no"
 					if test "x$force_deps" = "xyes" ; then
 						AC_MSG_ERROR([
 X11 development headers not found.
@@ -528,6 +529,7 @@ Use --disable-sm if you do not need session management support.
 	if test "x$enable_startup_notification" = "xyes"; then
 		PKG_CHECK_MODULES(STARTUP_NOTIFICATION, [libstartup-notification-1.0 >= 0.5], , [
 			AC_MSG_RESULT(no)
+			enable_startup_notification="no"
 			if test "x$force_deps" = "xyes" ; then
 				AC_MSG_ERROR([
 Startup notification development headers not found.
@@ -548,6 +550,7 @@ Use --disable-startup-notification if you do not need it.
 	if test "x$enable_gtkspell" = "xyes" ; then
 		PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , [
 			AC_MSG_RESULT(no)
+			enable_gtkspell="no"
 			if test "x$force_deps" = "xyes" ; then
 				AC_MSG_ERROR([
 GtkSpell development headers not found.
@@ -598,6 +601,7 @@ Use --disable-gevolution if you do not need it.
 	if test "x$enable_cap" = "xyes"; then
 		PKG_CHECK_MODULES(SQLITE3, sqlite3 >= 3.3,,[
 			AC_MSG_RESULT(no)
+			enable_cap="no"
 			if test "x$force_deps" = "xyes" ; then
 				AC_MSG_ERROR([
 sqlite3 development headers not found.
@@ -746,6 +750,7 @@ if test "x$enable_gst" != "xno"; then
 			[], [$GSTREAMER_LIBS])
 	], [
 		AC_MSG_RESULT(no)
+		enable_gst="no"
 		if test "x$force_deps" = "xyes" ; then
 			AC_MSG_ERROR([
 GStreamer development headers not found.
@@ -826,6 +831,7 @@ if test "x$enable_idn" != "xno"; then
 		AC_SUBST(IDN_LIBS)
 	], [
 		AC_MSG_RESULT(no)
+		enable_idn="no"
 		if test "x$force_deps" = "xyes" ; then
 			AC_MSG_ERROR([
 GNU Libidn development headers not found.
@@ -898,11 +904,14 @@ if test "x$enable_avahi" = "xyes"; then
 	AC_CHECK_LIB(avahi-client, avahi_client_new, [avahilibs=yes], [avahilibs=no], $AVAHI_LIBS)
 fi
 
-if test "x$enable_avahi" = "xyes" -a "x$force_deps" = "xyes" -a \( "x$avahiincludes" = "xno" -o "x$avahilibs" = "xno" \); then
-	AC_MSG_ERROR([
+if test "x$enable_avahi" = "xyes" -a \( "x$avahiincludes" = "xno" -o "x$avahilibs" = "xno" \); then
+	enable_avahi="no"
+	if test "x$force_deps" = "xyes"; then
+		AC_MSG_ERROR([
 avahi development headers not found.
 Use --disable-avahi if you do not need avahi (Bonjour) support.
 ])
+	fi
 fi
 AC_SUBST(AVAHI_CFLAGS)
 AC_SUBST(AVAHI_LIBS)

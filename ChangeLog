@@ -4,6 +4,10 @@ version 2.6.6 (??/??/20??):
 	libpurple:
 	* Fix 'make check' on OS X. (David Fang)
 
+	General:
+	* Correctly disable all missing dependencies when using the
+	  --disable-missing-dependencies option.  (Gabriel Schulhof)
+
 	Gadu-Gadu:
 	* Fix display of avatars after a server-side change. (Krzysztof
 	  Klinikowski)
