@@ -15,7 +15,7 @@ version 2.6.6 (??/??/20??):
 	MSN:
 	* File transfer requests will no longer cause a crash if you delete the
 	  file before the other side accepts.
-	* Recieved files will no longer hold an extra lock after completion,
+	* Received files will no longer hold an extra lock after completion,
 	  meaning they can be moved or deleted without complaints from your OS.
 	* Buddies who sign in from a second location will no longer cause an
 	  unnecessary chat window to open.
