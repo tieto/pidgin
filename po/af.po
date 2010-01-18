@@ -2,13 +2,13 @@
 # Copyright (C) 2006-2008
 # This file is distributed under the same license as the pidgin package.
 # Samuel Murray <afrikaans BY gmail.com>, 2007
-# F Wolff <friedel@translate.org.za>, 2006-2009
+# F Wolff <friedel@translate.org.za>, 2006-2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-29 20:30-0500\n"
-"PO-Revision-Date: 2009-11-30 00:41+0200\n"
+"POT-Creation-Date: 2010-01-15 17:10-0800\n"
+"PO-Revision-Date: 2010-01-15 00:24+0200\n"
 "Last-Translator: F Wolff <friedel@translate.org.za>\n"
 "Language-Team: translate-discuss-af@lists.sourceforge.net\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: af\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.5.0-rc1\n"
+"X-Generator: Virtaal 0.5.1\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -1948,6 +1948,9 @@ msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr ""
 "%s is nie 'n gewone lêer nie. Gaan dus nie probeer om te oorskryf nie.\n"
 
+msgid "File is not readable."
+msgstr "Lêer is onleesbaar."
+
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s wil %s aan u stuur (%s)"
@@ -3801,6 +3804,13 @@ msgstr "U vereis enkripsie, maar geen TLS/SSL-steun is gevind nie."
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Bediener vereis skoonteksstawing oor 'n ongeënkripteerde stroom"
 
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "Ongeldige respons van die bediener"
+
+msgid "Server does not use any supported authentication method"
+msgstr "Bediener gebruik nie enige gesteunde stawingmetode nie"
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3812,24 +3822,33 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Skoonteksstawing"
 
-msgid "SASL authentication failed"
-msgstr "SASL-stawing het misluk"
-
-msgid "Invalid response from server"
-msgstr "Ongeldige respons van die bediener"
-
-msgid "Server does not use any supported authentication method"
-msgstr "Bediener gebruik nie enige gesteunde stawingmetode nie"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr "U vereis enkripsie, maar dis nie op hierdie bediener beskikbaar nie."
 
 msgid "Invalid challenge from server"
 msgstr "Ongeldige uitdaging vanaf bediener"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+
+msgid "SASL authentication failed"
+msgstr "SASL-stawing het misluk"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL-fout: %s"
+
+msgid "Unable to canonicalize username"
+msgstr ""
+
+msgid "Unable to canonicalize password"
+msgstr ""
+
+msgid "Malicious challenge from server"
+msgstr ""
+
+msgid "Unexpected response from server"
+msgstr "Onverwagse respons vanaf bediener"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Die BOSH-verbindingbestuurder het u sessie beëindig."
@@ -3931,12 +3950,15 @@ msgstr "Prioriteit"
 msgid "Resource"
 msgstr "Hulpbron"
 
-#, c-format
-msgid "%s ago"
-msgstr "%s gelede"
+msgid "Uptime"
+msgstr ""
 
 msgid "Logged Off"
 msgstr "Afgemeld"
+
+#, c-format
+msgid "%s ago"
+msgstr "%s gelede"
 
 msgid "Middle Name"
 msgstr "Tweede naam"
@@ -4125,13 +4147,6 @@ msgstr "Rolle:"
 
 msgid "Ping timed out"
 msgstr "Pieng het uitgetel"
-
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-"Kan nie alternatiewe metodes vind vir XMPP-verbinding nadat direkte "
-"verbinding gefaal het nie."
 
 msgid "Invalid XMPP ID"
 msgstr "Ongeldige XMPP-ID"
@@ -5096,6 +5111,10 @@ msgstr "E-posadres..."
 msgid "Your new MSN friendly name is too long."
 msgstr "U nuwe MSN- vriendelike naam is te lank."
 
+#, c-format
+msgid "Set friendly name for %s."
+msgstr "Stel vriendelike naam vir %s."
+
 msgid "Set your friendly name."
 msgstr "Stel u vriendelike naam in."
 
@@ -5792,7 +5811,7 @@ msgstr "Verifieer PIN"
 
 #. display name
 msgid "Display Name"
-msgstr ""
+msgstr "Vertoonnaam"
 
 #. hidden
 msgid "Hide my number"
@@ -5924,7 +5943,7 @@ msgid "MXit Authorization"
 msgstr ""
 
 msgid "MXit account validation"
-msgstr ""
+msgstr "MXit-rekeningvalidering"
 
 msgid "Retrieving User Information..."
 msgstr "Verkry tans gebruikerinligting..."
@@ -6056,9 +6075,8 @@ msgstr ""
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
 
-#, fuzzy
 msgid "Pending"
-msgstr "Stuur tans"
+msgstr "Hangend"
 
 msgid "Invited"
 msgstr "Uitgenooi"
@@ -6229,7 +6247,7 @@ msgid "Show headline in status text"
 msgstr "Wys opskrif in statusteks"
 
 msgid "Send emoticons"
-msgstr "Stuur emotikons"
+msgstr "Stuur gesiggies"
 
 msgid "Screen resolution (dots per inch)"
 msgstr "Skermresolusie (stippels per duim)"
@@ -6851,20 +6869,21 @@ msgstr "Nie terwyl op AOL nie"
 msgid "Cannot receive IM due to parental controls"
 msgstr ""
 
+#, fuzzy
 msgid "Cannot send SMS without accepting terms"
-msgstr ""
+msgstr "Kan nie SMS stuur sonder om terme te aanvaar nie"
 
 #, fuzzy
 msgid "Cannot send SMS"
-msgstr "Kan nie lêer stuur nie"
+msgstr "Kan nie SMS stuur nie"
 
 #. SMS_WITHOUT_DISCLAIMER is weird
 msgid "Cannot send SMS to this country"
-msgstr ""
+msgstr "Kan nie SMS stuur na hierdie land nie"
 
 #. Undocumented
 msgid "Cannot send SMS to unknown country"
-msgstr ""
+msgstr "Kan nie SMS stuur na onbekende land nie"
 
 msgid "Bot accounts cannot initiate IMs"
 msgstr ""
@@ -8188,11 +8207,11 @@ msgid "<p><i>And, all the boys in the backroom...</i><br>\n"
 msgstr ""
 
 msgid "<i>Feel free to join us!</i> :)"
-msgstr ""
+msgstr "<i>Sluit gerus by ons aan!</i> :)"
 
-#, fuzzy, c-format
+#, c-format
 msgid "About OpenQ %s"
-msgstr "Omtrent %s"
+msgstr "Omtrent OpenQ %s"
 
 msgid "Change Icon"
 msgstr "Verander ikoon"
@@ -8208,7 +8227,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About OpenQ"
-msgstr "Omtrent %s"
+msgstr "Omtrent OpenQ"
 
 #, fuzzy
 msgid "Modify Buddy Memo"
@@ -8224,25 +8243,23 @@ msgstr "Wysig adres"
 #. *< version
 #. *  summary
 #. *  description
-#, fuzzy
 msgid "QQ Protocol Plugin"
-msgstr "QQ-protokol-\tinprop"
+msgstr "QQ-protokol-inprop"
 
 msgid "Auto"
 msgstr "Outomaties"
 
-#, fuzzy
 msgid "Select Server"
 msgstr "Kies bediener"
 
 msgid "QQ2005"
-msgstr ""
+msgstr "QQ2005"
 
 msgid "QQ2007"
-msgstr ""
+msgstr "QQ2007"
 
 msgid "QQ2008"
-msgstr ""
+msgstr "QQ2008"
 
 msgid "Connect by TCP"
 msgstr "Koppel met TCP"
@@ -8256,17 +8273,14 @@ msgstr "Wys bedienernuus"
 msgid "Show chat room when msg comes"
 msgstr ""
 
-#, fuzzy
 msgid "Keep alive interval (seconds)"
-msgstr "Wakkerhou-interval(le)"
+msgstr "Wakkerhou-interval (sekondes)"
 
-#, fuzzy
 msgid "Update interval (seconds)"
-msgstr "Opdateringsinterval(le)"
+msgstr "Opdateringsinterval (sekondes)"
 
-#, fuzzy
 msgid "Unable to decrypt server reply"
-msgstr "Kan nie bedienerinligting kry nie"
+msgstr "Kan nie bediener se antwoord dekripteer nie"
 
 #, c-format
 msgid "Failed requesting token, 0x%02X"
@@ -11945,14 +11959,15 @@ msgstr "Koerdies"
 msgid "Lao"
 msgstr "Lao"
 
-msgid "Lithuanian"
-msgstr "Litous"
-
 msgid "Macedonian"
 msgstr "Masedonies"
 
 msgid "Mongolian"
 msgstr "Mongools"
+
+#, fuzzy
+msgid "Marathi"
+msgstr "Gujaraties"
 
 msgid "Malay"
 msgstr "Maleisies"
@@ -12049,6 +12064,9 @@ msgstr "Tradisionele Sjinees"
 
 msgid "Amharic"
 msgstr "Amharies"
+
+msgid "Lithuanian"
+msgstr "Litous"
 
 #, c-format
 msgid "About %s"
@@ -12859,40 +12877,40 @@ msgid "Pounce on Whom"
 msgstr "Hou wie dop"
 
 msgid "_Account:"
-msgstr "_Rekening:"
+msgstr "R_ekening:"
 
 msgid "_Buddy name:"
 msgstr "_Vriendnaam:"
 
 msgid "Si_gns on"
-msgstr "Aa_nmeld"
+msgstr "aan_meld"
 
 msgid "Signs o_ff"
-msgstr "A_fmeld"
+msgstr "a_fmeld"
 
 msgid "Goes a_way"
-msgstr "_Weggaan"
+msgstr "_weggaan"
 
 msgid "Ret_urns from away"
-msgstr "Ter_ugkeer"
+msgstr "ter_ugkeer"
 
 msgid "Becomes _idle"
-msgstr "_Ledig raak"
+msgstr "led_ig raak"
 
 msgid "Is no longer i_dle"
-msgstr "Nie meer l_edig is nie"
+msgstr "nie meer le_dig is nie"
 
 msgid "Starts _typing"
-msgstr "Begin _tik"
+msgstr "begin _tik"
 
 msgid "P_auses while typing"
-msgstr "W_ag tydens tik"
+msgstr "w_ag tydens tik"
 
 msgid "Stops t_yping"
 msgstr "Ophou ti_k"
 
 msgid "Sends a _message"
-msgstr "'n _Boodskap stuur"
+msgstr "'n _boodskap stuur"
 
 msgid "Ope_n an IM window"
 msgstr "Ope_n 'n kitsboodskapvenster"
@@ -12901,10 +12919,10 @@ msgid "_Pop up a notification"
 msgstr "Wys 'n kennis_gewing"
 
 msgid "Send a _message"
-msgstr "Stuur 'n _boodskap"
+msgstr "_Stuur 'n boodskap"
 
 msgid "E_xecute a command"
-msgstr "_Voer 'n bevel uit"
+msgstr "V_oer 'n bevel uit"
 
 msgid "P_lay a sound"
 msgstr "Spee_l 'n klank"
@@ -12919,10 +12937,10 @@ msgid "Pre_view"
 msgstr "_Voorskou"
 
 msgid "P_ounce only when my status is not Available"
-msgstr "_Hou dop net wanneer my status 'Nie beskikbaar' is"
+msgstr "_Hou net dop wanneer my status 'Nie beskikbaar' is"
 
 msgid "_Recurring"
-msgstr "_Herhalend"
+msgstr "He_rhalend"
 
 msgid "Pounce Target"
 msgstr "Dophou-teiken"
@@ -12977,52 +12995,47 @@ msgid "Penguin Pimps"
 msgstr "Pikkepikkewyne"
 
 msgid "The default Pidgin sound theme"
-msgstr ""
+msgstr "Pidgin se verstek klanktema"
 
 msgid "The default Pidgin buddy list theme"
-msgstr ""
+msgstr "Pidgin se verstek vriendelystema"
 
 msgid "The default Pidgin status icon theme"
-msgstr ""
+msgstr "Pidgin se verstek statusikoontema"
 
-#, fuzzy
 msgid "Theme failed to unpack."
-msgstr "Uitpak van gesiggie-tema het misluk."
+msgstr "Uitpak van tema het misluk."
 
-#, fuzzy
 msgid "Theme failed to load."
-msgstr "Uitpak van gesiggie-tema het misluk."
+msgstr "Laai van tema het misluk."
 
-#, fuzzy
 msgid "Theme failed to copy."
-msgstr "Uitpak van gesiggie-tema het misluk."
+msgstr "Kopiëring van tema het misluk."
 
 msgid "Theme Selections"
-msgstr ""
+msgstr "Temakeuses"
 
 #. Instructions
-#, fuzzy
 msgid ""
 "Select a theme that you would like to use from the lists below.\n"
 "New themes can be installed by dragging and dropping them onto the theme "
 "list."
 msgstr ""
-"Kies 'n gesiggie-tema wat u wil gebruik vanuit die lys hier onder. Nuwe "
-"temas kan geïnstalleer word deur hulle te sleep en te los op die temalys."
+"Kies 'n tema wat u wil gebruik vanuit die lyste hier onder.\n"
+"Nuwe temas kan geïnstalleer word deur hulle te sleep en te los op die "
+"temalys."
 
-#, fuzzy
 msgid "Buddy List Theme:"
-msgstr "Vriendelystema"
+msgstr "Vriendelystema:"
 
 msgid "Status Icon Theme:"
-msgstr ""
+msgstr "Statusikoontema:"
 
 msgid "Sound Theme:"
-msgstr ""
+msgstr "Klanktema:"
 
-#, fuzzy
 msgid "Smiley Theme:"
-msgstr "Gesiggie-temas"
+msgstr "Gesiggie-tema:"
 
 msgid "Keyboard Shortcuts"
 msgstr "Sleutelbordkortpaaie"
@@ -13171,7 +13184,7 @@ msgstr "_Einde:"
 
 #. TURN server
 msgid "Relay Server (TURN)"
-msgstr ""
+msgstr "Aanstuurbediener (TURN)"
 
 msgid "_TURN server:"
 msgstr "_TURN-bediener:"
@@ -13742,7 +13755,7 @@ msgid "Pidgin smileys"
 msgstr "Pidgin-gesiggies"
 
 msgid "Selecting this disables graphical emoticons."
-msgstr "Deur hier te kies, deaktiveer u grafiese emotikons."
+msgstr "Deur hier te kies, deaktiveer u grafiese gesiggies."
 
 msgid "none"
 msgstr "geen"
@@ -14577,9 +14590,8 @@ msgstr "Ikoon vir geselsie"
 msgid "Ignored"
 msgstr "Geïgnoreer"
 
-#, fuzzy
 msgid "Founder"
-msgstr "Harder"
+msgstr "Stigter"
 
 #. A user in a chat room who has special privileges.
 msgid "Operator"
@@ -14603,9 +14615,8 @@ msgstr "Inligtingsdialoog"
 msgid "Mail dialog"
 msgstr "Posdialoog"
 
-#, fuzzy
 msgid "Question dialog"
-msgstr "Versoek-dialoog"
+msgstr "Vraagdialoog"
 
 msgid "Warning dialog"
 msgstr "Waarskuwingsdieloog"
@@ -14619,17 +14630,15 @@ msgstr "Statusikone"
 msgid "Chatroom Emblems"
 msgstr "Geselsiekamer-embleme"
 
-#, fuzzy
 msgid "Dialog Icons"
-msgstr "Verander ikoon"
+msgstr "Dialoogikone"
 
 #, fuzzy
 msgid "Pidgin Icon Theme Editor"
 msgstr "Pidgin GTK+-temabeheer"
 
-#, fuzzy
 msgid "Contact"
-msgstr "Kontakinligting"
+msgstr "Kontak"
 
 #, fuzzy
 msgid "Pidgin Buddylist Theme Editor"
@@ -14911,6 +14920,13 @@ msgstr "Stuur en ontvang rou XMPP-stanzas."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Hierdie inprop is nuttig om XMPP-bedieners of -kliënte te ontfout."
+
+#~ msgid ""
+#~ "Unable to find alternative XMPP connection methods after failing to "
+#~ "connect directly."
+#~ msgstr ""
+#~ "Kan nie alternatiewe metodes vind vir XMPP-verbinding nadat direkte "
+#~ "verbinding gefaal het nie."
 
 #~ msgid ""
 #~ "The root certificate this one claims to be issued by is unknown to Pidgin."

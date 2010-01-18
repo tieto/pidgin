@@ -947,7 +947,7 @@ static void gg_get_avatar_url_cb(PurpleUtilFetchUrlData *url_data, gpointer user
 		if (xmlnode_avatar == NULL)
 			goto out;
 
-		xmlnode_bigavatar = xmlnode_get_child(xmlnode_avatar, "bigAvatar");
+		xmlnode_bigavatar = xmlnode_get_child(xmlnode_avatar, "originBigAvatar");
 		if (xmlnode_bigavatar == NULL)
 			goto out;
 

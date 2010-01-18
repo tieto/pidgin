@@ -1543,6 +1543,8 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	const char *bname;
 	MsnAddReqData *data;
+	MsnSession *session;
+	MsnUser *user;
 
 	bname = purple_buddy_get_name(buddy);
 
@@ -1564,12 +1566,18 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	data->buddy = buddy;
 	data->group = group;
 
-	purple_request_input(gc, NULL, _("Authorization Request Message:"),
-	                     NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
-	                     _("_OK"), G_CALLBACK(finish_auth_request),
-	                     _("_Cancel"), G_CALLBACK(cancel_auth_request),
-	                     purple_connection_get_account(gc), bname, NULL,
-	                     data);
+	session = purple_connection_get_protocol_data(gc);
+	user = msn_userlist_find_user(session->userlist, bname);
+	if (user && user->authorized) {
+		finish_auth_request(data, NULL);
+	} else {
+		purple_request_input(gc, NULL, _("Authorization Request Message:"),
+		                     NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
+		                     _("_OK"), G_CALLBACK(finish_auth_request),
+		                     _("_Cancel"), G_CALLBACK(cancel_auth_request),
+		                     purple_connection_get_account(gc), bname, NULL,
+		                     data);
+	}
 }
 
 static void
@@ -2659,7 +2667,7 @@ static PurplePluginProtocolInfo prpl_info =
 	OPT_PROTO_MAIL_CHECK,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
-	{"png", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_SEND},	/* icon_spec */
+	{"png,gif", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_SEND},	/* icon_spec */
 	msn_list_icon,			/* list_icon */
 	msn_list_emblems,		/* list_emblems */
 	msn_status_text,		/* status_text */

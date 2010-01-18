@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-29 20:30-0500\n"
-"PO-Revision-Date: 2009-11-29 21:18+0100\n"
+"POT-Creation-Date: 2010-01-14 12:19-0800\n"
+"PO-Revision-Date: 2010-01-14 21:08+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1653,8 +1653,8 @@ msgid ""
 "The certificate is not trusted because no certificate that can verify it is "
 "currently trusted."
 msgstr ""
-"Certifikát není důvěryhodný, protože certifikát, který to může ověřit je "
-"momentálně důvěryhodný."
+"Certifikát není důvěryhodný, protože v současnosti není k dispozici "
+"důvěryhodný certifikát pro jeho ověření."
 
 msgid "The certificate is not valid yet."
 msgstr "Certifikát je neplatný."
@@ -1932,6 +1932,9 @@ msgstr "Nemohu odeslat adresář."
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s není obyčejný soubor. Zbaběle odmítám jej přepsat.\n"
+
+msgid "File is not readable."
+msgstr "Soubor není pro čtení."
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
@@ -3776,6 +3779,13 @@ msgstr "Požadujete šifrování, ale nebyla nalezena podpora TLS/SSL."
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Server vyžaduje textovou autentizaci v nešifrovaném proudu"
 
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "Neplatná odpověď od serveru"
+
+msgid "Server does not use any supported authentication method"
+msgstr "Server nepoužívá žádnou podporovanou metodu autentizace"
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3787,24 +3797,33 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Textová autentizace"
 
-msgid "SASL authentication failed"
-msgstr "SASL autentizace selhala"
-
-msgid "Invalid response from server"
-msgstr "Neplatná odpověď od serveru"
-
-msgid "Server does not use any supported authentication method"
-msgstr "Server nepoužívá žádnou podporovanou metodu autentizace"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr "Vyžadujete šifrování, ale to není na serveru dostupné."
 
 msgid "Invalid challenge from server"
 msgstr "Neplatná výzva od serveru"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr "Server považuje ověření za kompletní, ale klient ne"
+
+msgid "SASL authentication failed"
+msgstr "SASL autentizace selhala"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "Chyba SASL: %s"
+
+msgid "Unable to canonicalize username"
+msgstr "Nemohu posvětit uživatelské jméno"
+
+msgid "Unable to canonicalize password"
+msgstr "Nemohu posvětit heslo"
+
+msgid "Malicious challenge from server"
+msgstr "Zlomyslná výzva od serveru"
+
+msgid "Unexpected response from server"
+msgstr "Neočekávaná odpověď od serveru"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Správce připojení BOSH ukončil sezení."
@@ -3905,12 +3924,15 @@ msgstr "Priorita"
 msgid "Resource"
 msgstr "Zdroj"
 
-#, c-format
-msgid "%s ago"
-msgstr "před %s"
+msgid "Uptime"
+msgstr "Uptime"
 
 msgid "Logged Off"
 msgstr "Odhlášen"
+
+#, c-format
+msgid "%s ago"
+msgstr "před %s"
 
 msgid "Middle Name"
 msgstr "Prostřední jméno"
@@ -4099,11 +4121,6 @@ msgstr "Role:"
 
 msgid "Ping timed out"
 msgstr "Ping timeout"
-
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr "Nemohu najít alternativní XMPP připojení po selhání přímého spojení."
 
 msgid "Invalid XMPP ID"
 msgstr "Neplatné ID XMPP"
@@ -5055,6 +5072,10 @@ msgstr "Emailová adresa..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Vaše nové přátelské jméno MSN je příliš dlouhé."
+
+#, c-format
+msgid "Set friendly name for %s."
+msgstr "Nastavit přátelské jméno pro %s."
 
 msgid "Set your friendly name."
 msgstr "Nastavit vaše přátelské jméno"
@@ -11863,14 +11884,14 @@ msgstr "Kurdština"
 msgid "Lao"
 msgstr "Laonština"
 
-msgid "Lithuanian"
-msgstr "Litevština"
-
 msgid "Macedonian"
 msgstr "Makedonština"
 
 msgid "Mongolian"
 msgstr "Mongolština"
+
+msgid "Marathi"
+msgstr "Marathi"
 
 msgid "Malay"
 msgstr "Malajština"
@@ -11967,6 +11988,9 @@ msgstr "Tradiční čínština"
 
 msgid "Amharic"
 msgstr "Amharština"
+
+msgid "Lithuanian"
+msgstr "Litevština"
 
 #, c-format
 msgid "About %s"
@@ -14787,6 +14811,12 @@ msgstr "Přijímat a odesílat přímo sekce XMPP."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů XMPP."
+
+#~ msgid ""
+#~ "Unable to find alternative XMPP connection methods after failing to "
+#~ "connect directly."
+#~ msgstr ""
+#~ "Nemohu najít alternativní XMPP připojení po selhání přímého spojení."
 
 #, fuzzy
 #~ msgid "(Default)"

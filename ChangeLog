@@ -1,6 +1,30 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.5 (??/??/20??):
+version 2.6.6 (??/??/20??):
+	libpurple:
+	* Fix 'make check' on OS X. (David Fang)
+
+	Gadu-Gadu:
+	* Fix display of avatars after a server-side change. (Krzysztof
+	  Klinikowski)
+
+	MSN:
+	* File transfer requests will no longer cause a crash if you delete the
+	  file before the other side accepts.
+	* Recieved files will no longer hold an extra lock after completion,
+	  meaning they can be moved or deleted without complaints from your OS.
+	* Buddies who sign in from a second location will no longer cause an
+	  unnecessary chat window to open.
+	* Support setting an animated GIF as a buddy icon.
+
+	XMPP:
+	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
+	  available when built without Cyrus SASL support.
+	* When getting info on a domain-only (server) JID, show uptime
+	  (when given by the result of the "last query") and don't show status as
+	  offline.
+
+version 2.6.5 (01/08/2010):
 	libpurple:
 	* TLS certificates are actually stored to the local cache once again
 	  (accepting a name mismatch on a certificate should now be remembered)
@@ -13,19 +37,10 @@ version 2.6.5 (??/??/20??):
 	  Chinese characters (broken in 2.6.4)
 
 	MSN:
-	* File transfer requests will no longer cause a crash if you delete the
-	  file before the other side accepts.
-	* Recieved files will no longer hold an extra lock after completion,
-	  meaning they can be moved or deleted without complaints from your OS.
-	* Buddies who sign in from a second location will no longer cause an
-	  unnecessary chat window to open.
+	* Fix an issue allowing a remote user to download arbitrary files from
+	  a libpurple client.  (CVE-2010-0013)
 
 	XMPP:
-	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
-	  available when built without Cyrus SASL support.
-	* When getting info on a domain-only (server) JID, show uptime
-	  (when given by the result of the "last query") and don't show status as
-	  offline.
 	* Do not crash when attempting to register for a new account on Windows.
 	* Fix file transfer with clients that do not support Entity Capabilities
 	  (e.g. Spark)

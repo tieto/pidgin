@@ -2723,6 +2723,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 		g_object_unref(G_OBJECT(pixbuf));
 		if (!success) {
 			purple_debug_error("buddyicon", "Could not convert icon to usable format.\n");
+			g_free(filename);
 			return NULL;
 		}
 
