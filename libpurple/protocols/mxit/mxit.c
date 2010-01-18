@@ -263,6 +263,10 @@ static const char* mxit_list_emblem( PurpleBuddy* buddy )
 	if ( !contact )
 		return NULL;
 
+	/* subscription state is Pending, Rejected or Deleted */
+	if ( contact->subtype != MXIT_SUBTYPE_BOTH )
+		return "not-authorized";
+
 	switch ( contact-> type ) {
 		case MXIT_TYPE_JABBER :			/* external contacts via MXit */
 		case MXIT_TYPE_MSN :
