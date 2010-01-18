@@ -689,7 +689,9 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_xfer_get_end_time@Base 2.4.0
  purple_xfer_get_filename@Base 2.2.0
  purple_xfer_get_local_filename@Base 2.2.0
+ purple_xfer_get_local_port@Base 2.6.0
  purple_xfer_get_remote_ip@Base 2.2.0
+ purple_xfer_get_remote_port@Base 2.6.0
  purple_xfer_get_remote_user@Base 2.2.0
  purple_xfer_get_size@Base 2.2.0
  purple_xfer_get_start_time@Base 2.4.0
@@ -742,6 +744,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  serv_send_attention@Base 2.2.0
  serv_send_file@Base 2.2.0
  serv_send_im@Base 2.2.0
+ serv_send_typing@Base 2.6.0
  serv_set_info@Base 2.2.0
  serv_set_permit_deny@Base 2.2.0
  xmlnode_free@Base 2.2.0

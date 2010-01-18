@@ -1,0 +1,28 @@
+From: Paul Aurich <paul@darkrain42.org>
+Subject: fix ICQ clientLogin issue
+Origin: upstream (2.6.6)
+Bug-Debian: http://bugs.debian.org/565147
+============================================================
+Index: pidgin-2.6.5/libpurple/protocols/oscar/clientlogin.c
+===================================================================
+--- pidgin-2.6.5.orig/libpurple/protocols/oscar/clientlogin.c
++++ pidgin-2.6.5/libpurple/protocols/oscar/clientlogin.c
+@@ -43,7 +43,8 @@
+ #include "oscarcommon.h"
+ 
+ #define URL_CLIENT_LOGIN "https://api.screenname.aol.com/auth/clientLogin"
+-#define URL_START_OSCAR_SESSION "http://api.oscar.aol.com/aim/startOSCARSession"
++#define URL_START_OSCAR_SESSION "https://api.oscar.aol.com/aim/startOSCARSession"
++#define URL_START_OSCAR_SESSION_SIG "https://api.oscar.aol.com:80/aim/startOSCARSession"
+ 
+ /*
+  * Using clientLogin requires a developer ID.  This key is for libpurple.
+@@ -282,7 +283,7 @@ static void send_start_oscar_session(Osc
+ 			"&ts=%" PURPLE_TIME_T_MODIFIER
+ 			"&useTLS=%d",
+ 			purple_url_encode(token), get_client_key(od), hosttime, use_tls);
+-	signature = generate_signature("GET", URL_START_OSCAR_SESSION,
++	signature = generate_signature("GET", URL_START_OSCAR_SESSION_SIG,
+ 			query_string, session_key);
+ 	url = g_strdup_printf(URL_START_OSCAR_SESSION "?%s&sig_sha256=%s",
+ 			query_string, signature);
