@@ -640,7 +640,7 @@ txt_resolved_cb(GList *responses, gpointer data)
 
 	if (responses == NULL) {
 		purple_debug_warning("jabber", "Unable to find alternative XMPP connection "
-				  "methods after failing to connect directly.");
+				  "methods after failing to connect directly.\n");
 		purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to connect"));
