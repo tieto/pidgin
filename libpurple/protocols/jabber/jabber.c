@@ -678,14 +678,14 @@ static void
 jabber_login_callback(gpointer data, gint source, const gchar *error)
 {
 	PurpleConnection *gc = data;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 
 	if (source < 0) {
 		if (js->srv_rec != NULL) {
-			purple_debug_error("jabber", "Unable to connect to server: %s.  Trying next SRV record.\n", error);
+			purple_debug_error("jabber", "Unable to connect to server: %s.  Trying next SRV record or connecting directly.\n", error);
 			try_srv_connect(js);
 		} else {
-			purple_debug_info("jabber","Couldn't connect directly to %s. Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
+			purple_debug_info("jabber","Couldn't connect directly to %s.  Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
 			js->srv_query_data = purple_txt_resolve("_xmppconnect",
 					js->user->domain, txt_resolved_cb, js);
 		}
