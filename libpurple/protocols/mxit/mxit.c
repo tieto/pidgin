@@ -23,10 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include	<glib.h>
-#include	<stdio.h>
-#include	<string.h>
-
+#include    "internal.h"
 #include	"purple.h"
 #include	"notify.h"
 #include	"plugin.h"
@@ -63,7 +60,7 @@ static void* mxit_link_click( const char* link64 )
 	PurpleConnection*	con;
 	gchar**				parts	= NULL;
 	gchar*				link	= NULL;
-	unsigned int		len;
+	gsize				len;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_link_click (%s)\n", link64 );
 
@@ -125,7 +122,7 @@ skip:
 /*------------------------------------------------------------------------
  * Register MXit to receive URI click notifications from the UI
  */
-void mxit_register_uri_handler()
+void mxit_register_uri_handler(void)
 {
 	not_link_ref_count++;
 	if ( not_link_ref_count == 1 ) {
@@ -170,6 +167,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 	struct contact*		contact;
 	PurpleBuddy*		buddy;
 	const char*			who;
+	char*				tmp;
 
 	gc = purple_conversation_get_gc( conv );
 	if ( session->con != gc ) {
@@ -204,7 +202,9 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 		case MXIT_TYPE_CHATROOM :
 		case MXIT_TYPE_GALLERY :
 		case MXIT_TYPE_INFO :
-				serv_got_im( session->con, who, "<font color=\"#999999\">Loading menu...</font>\n", PURPLE_MESSAGE_NOTIFY, time( NULL ) );
+				tmp = g_strdup_printf("<font color=\"#999999\">%s</font>\n", _( "Loading menu..." ));
+				serv_got_im( session->con, who, tmp, PURPLE_MESSAGE_NOTIFY, time( NULL ) );
+				g_free(tmp);
 				mxit_send_message( session, who, " ", FALSE );
 		default :
 				break;
@@ -343,7 +343,7 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 
 	/* hidden number */
 	if ( contact->flags & MXIT_CFLAG_HIDDEN )
-		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), "Yes" );
+		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), _( "Yes" ) );
 }
 
 
@@ -541,7 +541,7 @@ static GHashTable* mxit_get_text_table( PurpleAccount* acc )
 
 	table = g_hash_table_new( g_str_hash, g_str_equal );
 
-	g_hash_table_insert( table, "login_label", _( "Your Mobile Number..." ) );
+	g_hash_table_insert( table, "login_label", (gpointer)_( "Your Mobile Number..." ) );
 
 	return table;
 }
@@ -686,8 +686,6 @@ static void init_plugin( PurplePlugin* plugin )
 
 	option = purple_account_option_bool_new( _( "Enable splash-screen popup" ), MXIT_CONFIG_SPLASHPOPUP, FALSE );
 	proto_info.protocol_options = g_list_append( proto_info.protocol_options, option );
-
-	g_assert( sizeof( struct raw_chunk ) == 5 );
 }
 
 PURPLE_INIT_PLUGIN( mxit, init_plugin, plugin_info );

@@ -5,7 +5,7 @@ PROTOTYPES: ENABLE
 
 BOOT:
 {
-	HV *stash = gv_stashpv("Purple::ProxyType::", 1);
+	HV *stash = gv_stashpv("Purple::ProxyType", 1);
 
 	static const constiv *civ, const_iv[] = {
 #define const_iv(name) {#name, (IV)PURPLE_PROXY_##name}

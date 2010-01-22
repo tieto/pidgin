@@ -27,14 +27,7 @@
 #define		_MXIT_H_
 
 
-/* internationalize feedback strings */
-#ifndef		_
-#ifdef		GETTEXT_PACKAGE
-#include	<glib/gi18n-lib.h>
-#else
-#define		_( x )						( x )
-#endif
-#endif
+#include "internal.h"
 
 
 #if defined( __APPLE__ )
@@ -68,7 +61,7 @@
 /* Plugin details */
 #define		MXIT_PLUGIN_ID				"prpl-loubserp-mxit"
 #define		MXIT_PLUGIN_NAME			"MXit"
-#define		MXIT_PLUGIN_VERSION			"2.2.0"
+#define		MXIT_PLUGIN_VERSION			"2.3.0"
 #define		MXIT_PLUGIN_EMAIL			"Pieter Loubser <libpurple@mxit.com>"
 #define		MXIT_PLUGIN_WWW				"http://www.mxit.com"
 #define		MXIT_PLUGIN_SUMMARY			"MXit Protocol Plugin"
@@ -189,7 +182,7 @@ char* mxit_status_text( PurpleBuddy* buddy );
 void mxit_enable_signals( struct MXitSession* session );
 
 #ifdef	MXIT_LINK_CLICK
-void mxit_register_uri_handler();
+void mxit_register_uri_handler(void);
 #endif
 
 

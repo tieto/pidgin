@@ -25,7 +25,6 @@
  *
 */
 
-#include <glib.h>
 #include "internal.h"
 
 #include "dbus-maybe.h"

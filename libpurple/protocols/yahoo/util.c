@@ -656,7 +656,10 @@ char *yahoo_codes_to_html(const char *x)
 	/* Strip off the outter HTML node */
 	/* This probably isn't necessary, especially if we made the outter HTML
 	 * node an empty span.  But the HTML is simpler this way. */
-	xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
+	if (!purple_strequal(xmlstr1, "<html/>"))
+		xmlstr2 = g_strndup(xmlstr1 + 6, strlen(xmlstr1) - 13);
+	else
+		xmlstr2 = g_strdup("");
 	g_free(xmlstr1);
 
 	esc = g_strescape(x, NULL);

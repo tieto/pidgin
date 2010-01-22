@@ -70,6 +70,9 @@ void msim_user_free(MsimUser *user)
 	if (!user)
 		return;
 
+	if (user->url_data != NULL)
+		purple_util_fetch_url_cancel(user->url_data);
+
 	g_free(user->client_info);
 	g_free(user->gender);
 	g_free(user->location);
@@ -211,6 +214,8 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
 	MsimUser *user = (MsimUser *)user_data;
 	const char *name = purple_buddy_get_name(user->buddy);
 	PurpleAccount *account;
+
+	user->url_data = NULL;
 
 	purple_debug_info("msim_downloaded_buddy_icon",
 			"Downloaded %" G_GSIZE_FORMAT " bytes\n", len);
@@ -375,7 +380,9 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 
 		/* Only download if URL changed */
 		if (!previous_url || !g_str_equal(previous_url, user->image_url)) {
-			purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, msim_downloaded_buddy_icon, (gpointer)user);
+			if (user->url_data != NULL)
+				purple_util_fetch_url_cancel(user->url_data);
+			user->url_data = purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, msim_downloaded_buddy_icon, (gpointer)user);
 		}
 	} else if (g_str_equal(key_str, "LastImageUpdated")) {
 		/* TODO: use somewhere */

@@ -23,11 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include	<stdio.h>
-#include	<unistd.h>
-#include	<string.h>
-#include	<errno.h>
-
+#include    "internal.h"
 #include	"purple.h"
 
 #include	"mxit.h"
@@ -277,7 +273,7 @@ static void mxit_cb_http_connect( gpointer user_data, gint source, const gchar* 
 	/* source is the file descriptor of the new connection */
 	if ( source < 0 ) {
 		purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_http_connect failed: %s\n", error_message );
-		purple_connection_error( req->session->con, _( "Unable to connect to the mxit HTTP server. Please check your server server settings." ) );
+		purple_connection_error( req->session->con, _( "Unable to connect to the MXit HTTP server. Please check your server settings." ) );
 		return;
 	}
 

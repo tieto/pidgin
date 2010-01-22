@@ -730,6 +730,7 @@ pidgin_xfer_dialog_new(void)
 	GtkWidget *sw;
 	GtkWidget *button;
 	GtkWidget *expander;
+	GtkWidget *alignment;
 	GtkWidget *table;
 	GtkWidget *checkbox;
 
@@ -787,9 +788,15 @@ pidgin_xfer_dialog_new(void)
 
 	gtk_widget_set_sensitive(expander, FALSE);
 
+	/* Small indent make table fall under GtkExpander's label */
+	alignment = gtk_alignment_new(1, 0, 1, 1);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 20, 0);
+	gtk_container_add(GTK_CONTAINER(expander), alignment);
+	gtk_widget_show(alignment);
+
 	/* The table of information. */
 	table = make_info_table(dialog);
-	gtk_container_add(GTK_CONTAINER(expander), table);
+	gtk_container_add(GTK_CONTAINER(alignment), table);
 	gtk_widget_show(table);
 
 	/* Open button */

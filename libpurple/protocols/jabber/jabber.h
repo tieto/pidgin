@@ -47,6 +47,7 @@ typedef enum {
 	JABBER_CAP_BLOCKING       = 1 << 13,
 
 	JABBER_CAP_ITEMS          = 1 << 14,
+	JABBER_CAP_ROSTER_VERSIONING = 1 << 15,
 
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;
@@ -64,6 +65,9 @@ typedef struct _JabberStream JabberStream;
 #include "roomlist.h"
 #include "sslconn.h"
 
+#include "namespaces.h"
+
+#include "auth.h"
 #include "iq.h"
 #include "jutil.h"
 #include "xmlnode.h"
@@ -104,13 +108,9 @@ struct _JabberStream
 		JABBER_PROTO_0_9,
 		JABBER_PROTO_1_0
 	} protocol_version;
-	enum {
-		JABBER_AUTH_UNKNOWN,
-		JABBER_AUTH_DIGEST_MD5,
-		JABBER_AUTH_PLAIN,
-		JABBER_AUTH_IQ_AUTH,
-		JABBER_AUTH_CYRUS
-	} auth_type;
+
+	JabberSaslMech *auth_mech;
+	gpointer auth_mech_data;
 	char *stream_id;
 	JabberStreamState state;
 
@@ -368,6 +368,7 @@ gboolean jabber_video_enabled(JabberStream *js, const char *unused);
 gboolean jabber_initiate_media(PurpleAccount *account, const char *who,
 		PurpleMediaSessionType type);
 PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who);
+gboolean jabber_can_receive_file(PurpleConnection *gc, const gchar *who);
 
 void jabber_register_commands(void);
 void jabber_unregister_commands(void);

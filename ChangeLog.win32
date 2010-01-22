@@ -1,3 +1,14 @@
+
+version 2.6.6 (??/??/2010):
+	* Installer translations for: Norwegian nynorsk
+
+version 2.6.5 (01/08/2010):
+	* No changes
+
+version 2.6.4 (11/29/2009):
+	* Register URL handlers for everything that Windows knows about.  Still
+	  use the HTTP "open" handler for security reasons.
+
 version 2.6.3 (10/16/2009):
 	* No changes
 

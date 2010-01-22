@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-07 18:26-0700\n"
-"PO-Revision-Date: 2009-08-28 18:51+0100\n"
+"POT-Creation-Date: 2009-11-29 20:30-0500\n"
+"PO-Revision-Date: 2009-11-24 01:00+0100\n"
 "Last-Translator: Martin Srebotnjak  <miles@filmsi.net>\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
@@ -60,6 +60,7 @@ msgstr ""
 "raziščite in dokončajte migracijo ročno (s kopiranjem ustreznih datotek). "
 "Prosimo, da to napako javite na naslov http://developer.pidgin.im."
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Napaka"
 
@@ -551,13 +552,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "Ponovno omogoči račun"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-"Ta račun je bil prekinjen in nič več niste v tem klepetu. Samodejno boste "
-"pridruženi klepetu, ko se račun ponovno poveže."
-
 msgid "No such command."
 msgstr "Ta ukaz ne obstaja."
 
@@ -599,6 +593,13 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "Ta klepet ste zapustili."
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+"Ta račun je bil prekinjen in nič več niste v tem klepetu. Samodejno boste "
+"pridruženi klepetu, ko se račun ponovno poveže."
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr ""
 "Začelo se je beleženje v dnevnik. Vsa nadaljna sporočila pogovora bodo "
@@ -634,6 +635,9 @@ msgstr "Vključi dnevnik"
 msgid "Enable Sounds"
 msgstr "Vključi zvoke"
 
+msgid "You are not connected."
+msgstr "Niste povezani."
+
 msgid "<AUTO-REPLY> "
 msgstr "<SAMODEJNI ODGOVOR>"
 
@@ -645,8 +649,8 @@ msgstr[1] "Seznam %d uporabnika:\n"
 msgstr[2] "Seznam %d uporabnikov:\n"
 msgstr[3] "Seznam %d uporabnikov:\n"
 
-msgid "Supported debug options are:  version"
-msgstr "Podprte možnosti razhroščevanja:  različica"
+msgid "Supported debug options are: plugins version"
+msgstr "Podprte možnosti razhroščevanja: plugins version"
 
 msgid "No such command (in this context)."
 msgstr "Tak ukaz ne obstaja (v tem sklopu)."
@@ -777,6 +781,7 @@ msgid "Remaining"
 msgstr "Preostanek"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "Stanje"
 
@@ -951,6 +956,9 @@ msgstr "Povabi"
 msgid "(none)"
 msgstr "(brez)"
 
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 msgid "URI"
 msgstr "URI"
 
@@ -1352,6 +1360,8 @@ msgstr "Izbriši stanje"
 msgid "Saved Statuses"
 msgstr "Shranjena stanja"
 
+#. title
+#. optional information
 msgid "Title"
 msgstr "Naziv"
 
@@ -1524,6 +1534,13 @@ msgstr ""
 "\n"
 "Pridobivanje TinyURL ..."
 
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr "TinyURL za zgornje: %s"
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr "Počakajte trenutek, da TinyURL pridobi krajši URL ..."
+
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Ustvari TinyURL le za naslove URL te dolžina ali daljše"
 
@@ -1542,6 +1559,7 @@ msgstr "Ob prejemu sporočil z URL-ji uporabi TinyURL za enostavnejše kopiranje
 msgid "Online"
 msgstr "Prisoten"
 
+#. primative,						no,							id,			name
 msgid "Offline"
 msgstr "Brez povezave"
 
@@ -1648,11 +1666,12 @@ msgstr ""
 "Predstavljeno digitalno potrdilo je samo-podpisano in ga samodejno ni mogoče "
 "preveriti."
 
-#, fuzzy
-msgid "The root certificate this one claims to be issued by is unknown."
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
 msgstr ""
-"Korensko digitalno potrdilo, za katerega ta trdi, da ga je izdalo, je "
-"Pidginu neznano."
+"Njihovo potrdilo ni zaupanja vredno, ker ni nobeno potrdilo, ki ga potrjuje, "
+"zaupanja vredno."
 
 msgid "The certificate is not valid yet."
 msgstr "Digitalno potrdilo še ni veljavno."
@@ -1764,6 +1783,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "Podatki o digitalnem potrdilu"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "Napaka pri prijavi"
 
@@ -1778,6 +1798,7 @@ msgstr "+++ %s se je prijavil(a)"
 msgid "+++ %s signed off"
 msgstr "+++ %s se je odjavil(a)"
 
+#. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "Neznana napaka"
@@ -1885,9 +1906,14 @@ msgid "Resolver process exited without answering our request"
 msgstr "Postopek razločevanja je bil prekinjen brez odgovora na vašo zahtevo"
 
 #, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "Napaka pri pretvarjanju %s v punycode: %d"
+
+#, c-format
 msgid "Thread creation failure: %s"
 msgstr "Napaka pri ustvarjanju niti: %s"
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Neznan razlog"
 
@@ -2197,13 +2223,13 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Prišlo je do napake Farsight2, od katere si ni mogoče opomoči."
 
-msgid "Conference error."
+msgid "Conference error"
 msgstr "Konferenčna napaka."
 
-msgid "Error with your microphone."
+msgid "Error with your microphone"
 msgstr "Napaka na vašem mikrofonu."
 
-msgid "Error with your webcam."
+msgid "Error with your webcam"
 msgstr "Napaka na vaši spletni kameri."
 
 #, c-format
@@ -2968,6 +2994,7 @@ msgstr "Ime"
 msgid "Last name"
 msgstr "Priimek"
 
+#. email
 msgid "Email"
 msgstr "E-pošta"
 
@@ -3106,12 +3133,14 @@ msgstr "Kraj"
 msgid "Year of birth"
 msgstr "Leto rojstva"
 
+#. gender
 msgid "Gender"
 msgstr "Spol"
 
 msgid "Male or female"
 msgstr "Moški ali ženska"
 
+#. 0
 msgid "Male"
 msgstr "Moški"
 
@@ -3167,10 +3196,12 @@ msgstr "Izberite klepet za prijatelja: %s"
 msgid "Add to chat..."
 msgstr "Dodaj k pomenku ..."
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "Na voljo"
 
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3180,6 +3211,7 @@ msgstr "Odsoten"
 msgid "UIN"
 msgstr "UIN"
 
+#. first name
 msgid "First Name"
 msgstr "Ime"
 
@@ -3896,6 +3928,7 @@ msgstr "Enota organizacije"
 msgid "Role"
 msgstr "Funkcija"
 
+#. birthday
 msgid "Birthday"
 msgstr "Rojstni dan"
 
@@ -3972,24 +4005,30 @@ msgstr "Ponovno zahtevaj pooblastitev"
 msgid "Unsubscribe"
 msgstr "Odjavi"
 
+msgid "Initiate _Chat"
+msgstr "Začni _pogovor"
+
 msgid "Log In"
 msgstr "Prijavi se"
 
 msgid "Log Out"
 msgstr "Odjavi se"
 
+#. 2
 msgid "Chatty"
 msgstr "Pomenek"
 
 msgid "Extended Away"
 msgstr "Odsotnost - Napredno"
 
+#. 3
 msgid "Do Not Disturb"
 msgstr "Ne moti"
 
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "Priimek"
 
@@ -4223,6 +4262,7 @@ msgstr "Strežnik ne podpira blokiranja"
 msgid "Not Authorized"
 msgstr "Nepooblaščeno"
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Razpoloženje"
 
@@ -4244,9 +4284,11 @@ msgstr "Za"
 msgid "None (To pending)"
 msgstr "Brez (Za čakajoče)"
 
+#. 0
 msgid "None"
 msgstr "brez"
 
+#. subscription type
 msgid "Subscription"
 msgstr "Naročilo"
 
@@ -4548,8 +4590,8 @@ msgstr "config:  Nastavi pogovorno sobo."
 msgid "configure:  Configure a chat room."
 msgstr "configure:  Nastavi pogovorno sobo."
 
-msgid "part [room]:  Leave the room."
-msgstr "part [soba]:  Zapusti sobo."
+msgid "part [message]:  Leave the room."
+msgstr "part [sporočilo]:  Zapusti sobo."
 
 msgid "register:  Register with a chat room."
 msgstr "register:  Registriraj se v pogovorno sobo."
@@ -5207,9 +5249,6 @@ msgstr "Odpri prispelo pošto Hotmail"
 msgid "Send to Mobile"
 msgstr "Pošlji na mobilca"
 
-msgid "Initiate _Chat"
-msgstr "Začni _pogovor"
-
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Za MSN potrebujete podporo SSL, zato morate namestiti podprto knjižnico SSL."
@@ -5217,7 +5256,7 @@ msgstr ""
 #, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr ""
 "Ni mogoče dodati prijatelja %s, ker uporabniško ime ni veljavno. Imena so "
 "lahko le veljavni e-poštni naslovi."
@@ -5435,6 +5474,9 @@ msgstr "Overjanje Windows Live ID: Neveljaven odziv"
 msgid "%s just sent you a Nudge!"
 msgstr "Uporabnik %s vam je ravnokar pomežiknil!"
 
+msgid "The following users are missing from your addressbook"
+msgstr "Naslednji uporabniki manjkajo v vašem adresarju"
+
 #, c-format
 msgid "Unknown error (%d): %s"
 msgstr "Neznana napaka (%d): %s"
@@ -5447,8 +5489,8 @@ msgstr "Ni mogoče dodati uporabnika"
 msgid "Unknown error (%d)"
 msgstr "Neznana napaka (%d)"
 
-msgid "The following users are missing from your addressbook"
-msgstr "Naslednji uporabniki manjkajo v vašem adresarju"
+msgid "Unable to remove user"
+msgstr "Ni mogoče odstraniti uporabnika"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "Mobilnega sporočila ni mogoče poslati, ker je predolgo."
@@ -5693,6 +5735,382 @@ msgstr "%s vas je dodal(a) na svoj seznam prijateljev."
 #, c-format
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s vas je odstranil(a) s svojega seznama prijateljev."
+
+#. 1
+msgid "Angry"
+msgstr "Jezen"
+
+#. 2
+msgid "Excited"
+msgstr "Razburjen"
+
+#. 3
+msgid "Grumpy"
+msgstr "Tečno"
+
+#. 4
+msgid "Happy"
+msgstr "Vesel"
+
+#. 5
+msgid "In Love"
+msgstr "Zaljubljen"
+
+#. 6
+msgid "Invincible"
+msgstr "Nepremagljiv"
+
+#. 7
+msgid "Sad"
+msgstr "Žalosten"
+
+#. 8
+msgid "Hot"
+msgstr "Vroče"
+
+#. 9
+msgid "Sick"
+msgstr "Bolno"
+
+#. 10
+msgid "Sleepy"
+msgstr "Zaspan"
+
+#. show current mood
+msgid "Current Mood"
+msgstr "Trenutno razpoloženje"
+
+#. add all moods to list
+msgid "New Mood"
+msgstr "Novo razpoloženje"
+
+msgid "Change your Mood"
+msgstr "Spremeni razpoloženje"
+
+msgid "How do you feel right now?"
+msgstr "Kako se počutite?"
+
+msgid "The PIN you entered is invalid."
+msgstr "Vneseni PIN ni veljaven."
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Vneseni PIN ni veljavne dolžine [4-10]."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "PIN ni veljaven. Sestavljen mora biti iz števk [0-9]."
+
+msgid "The two PINs you entered do not match."
+msgstr "Vnesena PIN-a se ne ujemata."
+
+msgid "The name you entered is invalid."
+msgstr "Vneseno ime ni veljavno."
+
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr "Vneseni rojstni datum ni veljaven. Pravilna oblika je: 'LLLL-MM-DD'."
+
+#. show error to user
+msgid "Profile Update Error"
+msgstr "Napaka pri posodobitvi profila"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr "Podatki o vašem profilu še niso pridobljen. Poskusite znova kasneje."
+
+#. pin
+msgid "PIN"
+msgstr "PIN"
+
+msgid "Verify PIN"
+msgstr "Preveri PIN"
+
+#. display name
+msgid "Display Name"
+msgstr "Pojavno ime"
+
+#. hidden
+msgid "Hide my number"
+msgstr "Skrij mojo številko"
+
+#. mobile number
+msgid "Mobile Number"
+msgstr "Št. mobilnega telefona"
+
+msgid "Update your Profile"
+msgstr "Posodobite svoj profil"
+
+msgid "Here you can update your MXit profile"
+msgstr "Tukaj lahko posodobite svoj profil MXit"
+
+msgid "View Splash"
+msgstr "Pokaži pozdravno okno"
+
+msgid "There is no splash-screen currently available"
+msgstr "Trenutno ni na voljo nobenega pozdravnega okna"
+
+msgid "About"
+msgstr "O programu"
+
+#. display / change mood
+msgid "Change Mood..."
+msgstr "Spremeni razpoloženje ..."
+
+#. display / change profile
+msgid "Change Profile..."
+msgstr "Spremeni profil ..."
+
+#. display splash-screen
+msgid "View Splash..."
+msgstr "Pokaži pozdravno okno ..."
+
+#. display plugin version
+msgid "About..."
+msgstr "O razširitvi ..."
+
+#. the file is too big
+msgid "The file you are trying to send is too large!"
+msgstr "Datoteka, ki jo želite poslati, je prevelika!"
+
+msgid ""
+"Unable to connect to the MXit HTTP server. Please check your server settings."
+msgstr ""
+"Povezava s strežnikom MXit HTTP ni možna. Preverite svoje nastavitve "
+"strežnika."
+
+msgid "Logging In..."
+msgstr "Prijavljanje ..."
+
+msgid ""
+"Unable to connect to the MXit server. Please check your server settings."
+msgstr ""
+"S strežnikom MXit se ni mogoče povezati. Preverite nastavitve svojega "
+"strežnika."
+
+msgid "Connecting..."
+msgstr "Povezovanje ..."
+
+msgid "The nick name you entered is invalid."
+msgstr "Vneseni vzdevek ni veljaven."
+
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "Vneseni PIN ni veljavne dolžine [7-10]."
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr "Prijavno ime MXit"
+
+#. nick name
+msgid "Nick Name"
+msgstr "Vzdevek"
+
+#. show the form to the user to complete
+msgid "Register New MXit Account"
+msgstr "Registriraj nov račun za MXit"
+
+msgid "Please fill in the following fields:"
+msgstr "Izpolnite naslednja polja:"
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr ""
+"Napaka pri navezovanju stika z mestom MXit WAP. Poskusite znova kasneje."
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr "MXit trenutno ne more obdelati zahteve. Poskusite znova kasneje."
+
+msgid "Wrong security code entered. Please try again later."
+msgstr "Vnesena napačna varnostna koda. Poskusite znova kasneje."
+
+msgid "Your session has expired. Please try again later."
+msgstr "Vaša seja je potekla. Poskusite znova kasneje."
+
+msgid "Invalid country selected. Please try again."
+msgstr "Izbrana neveljavna država. Poskusite znova kasneje."
+
+msgid "Username is not registered. Please register first."
+msgstr "Uporabniško ime ni registrirano. Najprej se registrirajte."
+
+msgid "Username is already registered. Please choose another username."
+msgstr "Uporabniško ime je že registrirano. Izberite drugo ime."
+
+msgid "Internal error. Please try again later."
+msgstr "Notranja napaka. Poskusite znova pozneje."
+
+msgid "You did not enter the security code"
+msgstr "Niste vnesli varnostne kode."
+
+msgid "Security Code"
+msgstr "Varnostna koda"
+
+#. ask for input
+msgid "Enter Security Code"
+msgstr "Vnesite varnostno kodo"
+
+msgid "Your Country"
+msgstr "Vaša država"
+
+msgid "Your Language"
+msgstr "Vaš jezik"
+
+#. display the form to the user and wait for his/her input
+msgid "MXit Authorization"
+msgstr "Pooblastitev MXit"
+
+msgid "MXit account validation"
+msgstr "Overjanje računa MXit"
+
+msgid "Retrieving User Information..."
+msgstr "Pridobivanje podatkov o uporabniku ..."
+
+msgid "Loading menu..."
+msgstr "Nalaganje menija ..."
+
+msgid "Status Message"
+msgstr "Sporočilo stanja"
+
+msgid "Hidden Number"
+msgstr "Skrita številka"
+
+msgid "Your Mobile Number..."
+msgstr "Vaša mobilna številka ..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+msgid "WAP Server"
+msgstr "Strežnik WAP"
+
+msgid "Connect via HTTP"
+msgstr "Poveži prek HTTP"
+
+msgid "Enable splash-screen popup"
+msgstr "Omogoči pozdravno okno ob zagonu"
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr "Povezava z MXite je izgubljena. Znova se povežite."
+
+#. packet could not be queued for transmission
+msgid "Message Send Error"
+msgstr "Napaka pošiljanja sporočila"
+
+msgid "Unable to process your request at this time"
+msgstr "Vaše zahteve v tem trenutku ni mogoče obdelati"
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr "Časovna prekoračitev med čakanjem na odgovor strežnika MXit."
+
+msgid "Successfully Logged In..."
+msgstr "Uspešno prijavljeni ..."
+
+#, c-format
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
+msgstr "%s vam je poslal šifrirano sporočilo, kar še ni podprto v odjemalcu."
+
+msgid "Message Error"
+msgstr "Napaka sporočila"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr "Preusmeritve ni mogoče izvršiti z navedenim protokolom"
+
+msgid "An internal MXit server error occurred."
+msgstr "Prišlo je do notranje napake strežnika MXit."
+
+#, c-format
+msgid "Login error: %s (%i)"
+msgstr "Napaka prijave: %s (%i)"
+
+#, c-format
+msgid "Logout error: %s (%i)"
+msgstr "Napaka odjave: %s (%i)"
+
+msgid "Contact Error"
+msgstr "Napaka stika"
+
+msgid "Message Sending Error"
+msgstr "Napaka pošiljanja sporočila"
+
+msgid "Status Error"
+msgstr "Napaka stanja"
+
+msgid "Mood Error"
+msgstr "Napaka razpoloženja"
+
+msgid "Invitation Error"
+msgstr "Napaka povabila"
+
+msgid "Contact Removal Error"
+msgstr "Napaka odstranitve stika"
+
+msgid "Subscription Error"
+msgstr "Napaka naročanja"
+
+msgid "Contact Update Error"
+msgstr "Napaka posodobitve stikov"
+
+msgid "File Transfer Error"
+msgstr "Napaka prenosa datoteke"
+
+msgid "Cannot create MultiMx room"
+msgstr "Sobe MultiMx ni mogoče ustvariti"
+
+msgid "MultiMx Invitation Error"
+msgstr "Napaka povabila MultiMx"
+
+msgid "Profile Error"
+msgstr "Napaka profila"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr "Sprejet neveljaven paket z MXit."
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr "Napaka povezave v MXit. (faza branja 0x01)"
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr "Napaka povezave v MXit. (faza branja 0x02)"
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr "Napaka povezave v MXit. (faza branja 0x03)"
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr "Napaka povezave v MXit. (faza branja 0x04)"
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr "Napaka povezave v MXit. (faza branja 0x05)"
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr "Napaka povezave v MXit. (faza branja 0x06)"
+
+msgid "Pending"
+msgstr "Čakajoči"
+
+msgid "Invited"
+msgstr "Povabljeni"
+
+msgid "Rejected"
+msgstr "Zavrnjeni"
+
+msgid "Deleted"
+msgstr "Izbrisani"
+
+msgid "MXit Advertising"
+msgstr "Oglaševanje MXit"
+
+msgid "More Information"
+msgstr "Več informacij"
 
 #, c-format
 msgid "No such user: %s"
@@ -6308,7 +6726,6 @@ msgstr "Vrata strežnika"
 msgid "Received unexpected response from %s"
 msgstr "Prejet nepričakovan odgovor s strani osebe %s"
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6471,6 +6888,44 @@ msgstr "Čakalna vrsta je polna"
 
 msgid "Not while on AOL"
 msgstr "Na omrežju AOL ni dovoljeno"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "Sporočila ne morete prejeti zaradi starševskega nadzora"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "SMS ni mogoče poslati brez sprejetja pogojev"
+
+msgid "Cannot send SMS"
+msgstr "Ni mogoče poslati SMS-a"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "SMS-a v to državo ni mogoče poslati."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "SMS ni mogoče poslati v neznano državo"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Računi bot ne morejo začeti klepetov"
+
+msgid "Bot account cannot IM this user"
+msgstr "Račun bot ne more klepetati s tem uporabnikom"
+
+msgid "Bot account reached IM limit"
+msgstr "Račun bot je dosegel številsko omejitev sporočil"
+
+msgid "Bot account reached daily IM limit"
+msgstr "Račun bot je dosegel dnevno omejitev sporočil"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "Račun bot je dosegel mesečno omejitev sporočil"
+
+msgid "Unable to receive offline messages"
+msgstr "Sporočil stanja nepovezanosti ni mogoče prejemati."
+
+msgid "Offline message store full"
+msgstr "Shramba sporočil ob nepovezanosti je polna"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6640,6 +7095,15 @@ msgstr "Vaš račun je trenutno zamrznjen"
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Storitev AOL neposrednih sporočil je trenuno nedosegljiva."
 
+#. username connecting too frequently
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"Povezava ste prevečkrat vzpostavili in prekinili. Počakajte deset minut in "
+"poskusite znova. Če ne počakate sedaj, boste čakali še dlje."
+
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
@@ -6649,14 +7113,15 @@ msgstr ""
 
 #. IP address connecting too frequently
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
 "Povezava ste prevečkrat vzpostavili in prekinili. Počakajte minutko in "
 "poskusite znova. Če ne počakate sedaj, boste čakali še dlje."
 
 msgid "The SecurID key entered is invalid"
-msgstr "Vnešeni ključ SecurID ni veljaven"
+msgstr "Vneseni ključ SecurID ni veljaven"
 
 msgid "Enter SecurID"
 msgstr "Vnesite SecurID"
@@ -6811,22 +7276,29 @@ msgstr[1] "Spregledali ste %hu sporočilo od %s, ker je bilo neveljavno."
 msgstr[2] "Spregledali ste %hu sporočili od %s, ker sta bili neveljavni."
 msgstr[3] "Spregledali ste %hu sporočila od %s, ker so bila neveljavna."
 
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Sporočila ni mogoče poslati: %s (%s)"
+
 #  Data is assumed to be the destination sn
-#. Data is assumed to be the destination bn
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Ni moč poslati sporočila: %s"
 
-msgid "Unknown reason."
-msgstr "Neznan vzrok."
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Ni moč poslati sporočila k %s: %s (%s)"
 
 #, c-format
-msgid "Unable to send message to %s:"
-msgstr "Ni moč poslati sporočila k %s:"
+msgid "Unable to send message to %s: %s"
+msgstr "Ni moč poslati sporočila k %s: %s"
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "Podatki o uporabniku niso dostopni: %s"
+
+msgid "Unknown reason."
+msgstr "Neznan vzrok."
 
 msgid "Online Since"
 msgstr "Na zvezi od"
@@ -6836,9 +7308,6 @@ msgstr "Član od"
 
 msgid "Capabilities"
 msgstr "Zmožnosti"
-
-msgid "Profile"
-msgstr "Profil"
 
 msgid "Your AIM connection may be lost."
 msgstr "Vaša povezava z AIM je morda prekinjena."
@@ -6853,11 +7322,11 @@ msgstr ""
 
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
 "Zadnjega dejanja, ki ste ga želeli izvesti, ni bilo mogoče izvesti, ker ste "
 "prekoračili dovoljeno pogostost. Prosim počakajte 10 sekund in poskusite "
-"znova."
+"znova.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -8050,6 +8519,10 @@ msgstr "Konferenčni pogovor zaprt"
 msgid "Unable to send message: "
 msgstr "Ni moč poslati sporočila: "
 
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "Ni moč poslati sporočila k %s:"
+
 msgid "Place Closed"
 msgstr "Zaprto mesto"
 
@@ -8457,35 +8930,14 @@ msgstr "Hiperaktiven"
 msgid "Robot"
 msgstr "Robot"
 
-msgid "Happy"
-msgstr "Vesel"
-
-msgid "Sad"
-msgstr "Žalosten"
-
-msgid "Angry"
-msgstr "Jezen"
-
 msgid "Jealous"
 msgstr "Ljubosumen"
 
 msgid "Ashamed"
 msgstr "Osramočen"
 
-msgid "Invincible"
-msgstr "Nepremagljiv"
-
-msgid "In Love"
-msgstr "Zaljubljen"
-
-msgid "Sleepy"
-msgstr "Zaspan"
-
 msgid "Bored"
 msgstr "Zdolgočasen"
-
-msgid "Excited"
-msgstr "Razburjen"
 
 msgid "Anxious"
 msgstr "Vznemirjen"
@@ -9716,6 +10168,15 @@ msgstr "Pridruži se uporabniku v pomenku ..."
 msgid "Open Inbox"
 msgstr "Odpri prejeto pošto"
 
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr "SMS ni mogoče poslati. Mobilnega operaterja ni mogoče pridobiti."
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr "SMS ni mogoče poslati. Neznan mobilni operater."
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr "Pridobivanje mobilnega operaterja za pošiljanje SMS."
+
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
@@ -10268,14 +10729,17 @@ msgstr ""
 "Pri branju vašega %s je prišlo do napake. Datoteka ni bial naložena, stara "
 "datoteka pa je bila preimenovana v %s~."
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+"Klepetajte s svetom. Podpira AIM, Google Talk, Jabber/XMPP, MSN, Yahoo in "
+"druge."
+
 msgid "Internet Messenger"
 msgstr "Spletni sel"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Spletni sel Pidgin"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "Pošlji neposredna sporočila prek več protokolov"
 
 msgid "Orientation"
 msgstr "Postavitev"
@@ -11542,6 +12006,10 @@ msgstr "makedonsko"
 msgid "Mongolian"
 msgstr "mongolsko"
 
+#, fuzzy
+msgid "Malay"
+msgstr "Moški"
+
 msgid "Bokmål Norwegian"
 msgstr "norveško (Bokmål)"
 
@@ -11610,6 +12078,10 @@ msgstr "tajsko"
 
 msgid "Turkish"
 msgstr "turško"
+
+#, fuzzy
+msgid "Ukranian"
+msgstr "armensko"
 
 msgid "Urdu"
 msgstr "urdujsko"
@@ -12245,7 +12717,7 @@ msgstr ""
 "\n"
 
 msgid "DIR"
-msgstr ""
+msgstr "MAPA"
 
 msgid "use DIR for config files"
 msgstr "uporabi DIR za prilagoditvene datoteke"
@@ -12266,17 +12738,17 @@ msgid "don't automatically login"
 msgstr "ne prijavi se samodejno"
 
 msgid "NAME"
-msgstr ""
+msgstr "IME"
 
-#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
 "                      specifies account(s) to use, separated by commas.\n"
 "                      Without this only the first account will be enabled)."
 msgstr ""
-"omogoči navedene račune (neobvezen argument IME\n"
+"omogoči naveden(e) račun(e) (neobvezen argument IME\n"
 "                      določa račune, ki naj bodo uporabljeni, ločene z "
-"vejicami."
+"vejicami;\n"
+"                      brez tega bo omogočen le prvi račun)"
 
 msgid "X display to use"
 msgstr "Zaslon X, ki naj bo uporabljen"
@@ -12310,11 +12782,6 @@ msgstr ""
 "objavite tudi izsledek iz datoteke pomnilniškega izmeta (core).\n"
 "Če ne veste, kako pridobiti izsledek, si preberite navodila na naslovu\n"
 "%swiki/GetABacktrace\n"
-
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "Pidgin"
 
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
@@ -12516,49 +12983,53 @@ msgstr "Ponavl_jajoč"
 msgid "Pounce Target"
 msgstr "Tarča opozorila"
 
-#, c-format
 msgid "Started typing"
 msgstr "Začel je tipkati"
 
-#, c-format
 msgid "Paused while typing"
 msgstr "Postal je med tipkanjem"
 
-#, c-format
 msgid "Signed on"
 msgstr "Prijavil se je"
 
-#, c-format
 msgid "Returned from being idle"
 msgstr "Postal je spet dejaven"
 
-#, c-format
 msgid "Returned from being away"
 msgstr "Vrnil se je iz odsotnosti"
 
-#, c-format
 msgid "Stopped typing"
 msgstr "Prenehal je tipkati"
 
-#, c-format
 msgid "Signed off"
 msgstr "Odjavil se je"
 
-#, c-format
 msgid "Became idle"
 msgstr "Postal je nedejaven"
 
-#, c-format
 msgid "Went away"
 msgstr "Odšel je"
 
-#, c-format
 msgid "Sent a message"
 msgstr "Poslal je sporočilo"
 
-#, c-format
 msgid "Unknown.... Please report this!"
 msgstr "Neznano ... Poročajte o tem!"
+
+msgid "(Custom)"
+msgstr "(po meri)"
+
+msgid "Penguin Pimps"
+msgstr "Pingvinske ikone (Penguin Pimps)"
+
+msgid "The default Pidgin sound theme"
+msgstr "Privzeta zvočna tema za Pidgin"
+
+msgid "The default Pidgin buddy list theme"
+msgstr "Privzeta tema seznama prijateljev Pidgin"
+
+msgid "The default Pidgin status icon theme"
+msgstr "Privzeta tema ikon stanja za Pidgin"
 
 msgid "Theme failed to unpack."
 msgstr "Teme ni mogoče razpakirati."
@@ -12569,28 +13040,35 @@ msgstr "Tema se ni naložila."
 msgid "Theme failed to copy."
 msgstr "Teme ni mogoče kopirati."
 
-msgid "Install Theme"
-msgstr "Namesti temo"
+msgid "Theme Selections"
+msgstr "Izbire tem"
 
+#. Instructions
 msgid ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 msgstr ""
-"S spodnjega seznama izberite vrsto smejčkov, ki jih želite uporabljati. Nove "
-"teme lahko namestite, če jih povlečete in spustite na seznam."
+"S spodnjega seznama izberite temo, ki jih želite uporabljati.\n"
+"Nove teme lahko namestite, če jih povlečete in spustite na seznam tem."
 
-msgid "Icon"
-msgstr "Ikona"
+msgid "Buddy List Theme:"
+msgstr "Tema seznama prijateljev:"
+
+msgid "Status Icon Theme:"
+msgstr "Tema ikon stanja:"
+
+msgid "Sound Theme:"
+msgstr "Zvočna tema:"
+
+msgid "Smiley Theme:"
+msgstr "Teme za smejčke:"
 
 msgid "Keyboard Shortcuts"
 msgstr "Tipke za bližnjice"
 
 msgid "Cl_ose conversations with the Escape key"
 msgstr "_Zapri pomenke s tipko Esc"
-
-#. Buddy List Themes
-msgid "Buddy List Theme"
-msgstr "Tema seznama prijateljev"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -12678,9 +13156,6 @@ msgstr "Najmanjša višina vnosne površine v vrsticah:"
 msgid "Font"
 msgstr "Pisava"
 
-msgid "Use document font from _theme"
-msgstr "Uporabi pisavo dokumenta iz _teme"
-
 msgid "Use font from _theme"
 msgstr "Uporabi pisavo iz _teme"
 
@@ -12703,13 +13178,15 @@ msgstr "Konfiguracijskega programa za posredovalni strežnik ni mogoče zagnati.
 msgid "Cannot start browser configuration program."
 msgstr "Konfiguracijskega programa brskalnika ni mogoče zagnati."
 
-#, fuzzy
 msgid "Disabled"
-msgstr "_Onemogoči"
+msgstr "Onemogočeno"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "Uporabi _samozaznani naslov IP: %s"
+
+msgid "ST_UN server:"
+msgstr "Strežnik ST_UN:"
 
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">Primer: stunserver.org</span>"
@@ -12723,58 +13200,27 @@ msgstr "Vrata"
 msgid "_Enable automatic router port forwarding"
 msgstr "_Omogoči samodejno prepošiljanje vrat usmerjevalnika"
 
-msgid "_Manually specify range of ports to listen on"
-msgstr "_Ročno določi obseg vrat za poslušanje"
+msgid "_Manually specify range of ports to listen on:"
+msgstr "_Ročno določi obseg vrat za poslušanje:"
 
-msgid "_Start port:"
-msgstr "_Začetna vrata:"
+msgid "_Start:"
+msgstr "_Začetek:"
 
-msgid "_End port:"
-msgstr "_Končna vrata:"
+msgid "_End:"
+msgstr "_Konec:"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "Relejski strežnik (TURN)"
 
-#, fuzzy
 msgid "_TURN server:"
-msgstr "_Strežnik:"
+msgstr "Strežnik _TURN:"
 
-msgid "Proxy Server &amp; Browser"
-msgstr "Posredovalni strežnik in brskalnik"
+msgid "Use_rname:"
+msgstr "Upo_rabniško ime:"
 
-msgid "<b>Proxy configuration program was not found.</b>"
-msgstr ""
-"<b>Konfiguracijskega programa posredovalnega strežnika ni mogoče najti.</b>"
-
-msgid "<b>Browser configuration program was not found.</b>"
-msgstr "<b>Konfiguracijskega programa brskalnika ni mogoče najti.</b>"
-
-msgid ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
-msgstr ""
-"Nastavitve posredovalnega strežnika in brskalnika določite\n"
-"v nastavitvah GNOME"
-
-msgid "Configure _Proxy"
-msgstr "Prilagodi po_sredovalni strežnik"
-
-msgid "Configure _Browser"
-msgstr "Prilagodi _brskalnik"
-
-msgid "Proxy Server"
-msgstr "Posredovalni strežnik"
-
-msgid "No proxy"
-msgstr "brez posredovalnega strežnika"
-
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr "Uporabi oddaljeni DNS s posredovalnimi strežniki SOCKS4"
-
-msgid "_User:"
-msgstr "_Uporabnik:"
+msgid "Pass_word:"
+msgstr "Ges_lo:"
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -12815,6 +13261,15 @@ msgstr "Ročni"
 msgid "Browser Selection"
 msgstr "Izbira brskalnika"
 
+msgid "Browser preferences are configured in GNOME preferences"
+msgstr "Nastavitve brskalnika določite v nastavitvah GNOME"
+
+msgid "<b>Browser configuration program was not found.</b>"
+msgstr "<b>Konfiguracijskega programa brskalnika ni mogoče najti.</b>"
+
+msgid "Configure _Browser"
+msgstr "Prilagodi _brskalnik"
+
 msgid "_Browser:"
 msgstr "_Brskalnik:"
 
@@ -12837,6 +13292,36 @@ msgid ""
 msgstr ""
 "_Ročno:\n"
 "(%s namesto URL)"
+
+msgid "Proxy Server"
+msgstr "Posredovalni strežnik"
+
+msgid "Proxy preferences are configured in GNOME preferences"
+msgstr "Nastavitve posredovalnega strežnika določite v nastavitvah GNOME"
+
+msgid "<b>Proxy configuration program was not found.</b>"
+msgstr ""
+"<b>Konfiguracijskega programa posredovalnega strežnika ni mogoče najti.</b>"
+
+msgid "Configure _Proxy"
+msgstr "Prilagodi po_sredovalni strežnik"
+
+#. This is a global option that affects SOCKS4 usage even with
+#. * account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr "Uporabi oddaljeni _DNS s posredovalnimi strežniki SOCKS4"
+
+msgid "Proxy t_ype:"
+msgstr "Vrsta posredovalnega s_trežnika:"
+
+msgid "No proxy"
+msgstr "brez posredovalnega strežnika"
+
+msgid "P_ort:"
+msgstr "_Vrata:"
+
+msgid "User_name:"
+msgstr "_Uporabniško ime:"
 
 msgid "Log _format:"
 msgstr "Oblika _dnevnika:"
@@ -12921,24 +13406,17 @@ msgstr "_Poročaj o času odsotnosti:"
 msgid "Based on keyboard or mouse use"
 msgstr "glede na rabo tipkovnice ali miške"
 
+msgid "_Minutes before becoming idle:"
+msgstr "Število _minut pred nedejavnostjo:"
+
+msgid "Change to this status when _idle:"
+msgstr "Spremeni stanje ob _nedejavnosti:"
+
 msgid "_Auto-reply:"
 msgstr "_Samodejni odziv"
 
 msgid "When both away and idle"
 msgstr "ob odsotnosti in nedejavnosti"
-
-#. Auto-away stuff
-msgid "Auto-away"
-msgstr "Samodejna odsotnost"
-
-msgid "_Minutes before becoming idle:"
-msgstr "Število _minut pred nedejavnostjo:"
-
-msgid "Change status when _idle"
-msgstr "Spremeni stanje ob _nedejavnosti"
-
-msgid "Change _status to:"
-msgstr "Spremeni _stanje v:"
 
 #. Signon status stuff
 msgid "Status at Startup"
@@ -12953,14 +13431,14 @@ msgstr "Stanje ob _zagonu:"
 msgid "Interface"
 msgstr "Vmesnik"
 
-msgid "Smiley Themes"
-msgstr "Teme za smejčke"
-
 msgid "Browser"
 msgstr "Brskalnik"
 
 msgid "Status / Idle"
 msgstr "Stanje / Nedejaven"
+
+msgid "Themes"
+msgstr "Teme"
 
 msgid "Allow all users to contact me"
 msgstr "Dovoli vsem uporabnikom, da stopijo v stik z mano"
@@ -13268,6 +13746,11 @@ msgstr "_Shrani datoteko"
 msgid "Select color"
 msgstr "Izberite barvo"
 
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "Pidgin"
+
 msgid "_Alias"
 msgstr "Psev_donim"
 
@@ -13297,9 +13780,6 @@ msgstr "Namig Pidgin"
 
 msgid "Pidgin smileys"
 msgstr "Smejčki Pidgin"
-
-msgid "Penguin Pimps"
-msgstr "Pingvinske ikone (Penguin Pimps)"
 
 msgid "Selecting this disables graphical emoticons."
 msgstr "S to izbiro onemogočite grafične smejčke."
@@ -13941,6 +14421,9 @@ msgstr "Vodoravno ločilo GtkTreeView"
 msgid "Conversation Entry"
 msgstr "Vnos pogovora"
 
+msgid "Conversation History"
+msgstr "Zgodovina pogovora"
+
 msgid "Request Dialog"
 msgstr "Pogovorno okno zahteve"
 
@@ -14398,9 +14881,6 @@ msgstr ""
 "\n"
 "* Pozor: Ta vtičnik zahteva Win2000 ali novejše."
 
-msgid "GTK+ Runtime Version"
-msgstr "Nastavitve GTK+"
-
 #. Autostart
 msgid "Startup"
 msgstr "Zagon"
@@ -14408,6 +14888,9 @@ msgstr "Zagon"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "_Zaženi %s ob zagonu sistema"
+
+msgid "Allow multiple instances"
+msgstr "Dovoli več hkratnih prijav"
 
 msgid "_Dockable Buddy List"
 msgstr "Le_pljiv seznam prijateljev"
@@ -14469,6 +14952,48 @@ msgstr "Pošlijaj in sprejemaj surove vrstice XMPP."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ta vtičnik je uporaben za razhroščevanje strežnikov ali odjemalcev XMPP."
+
+#~ msgid "(Default)"
+#~ msgstr "(privzeto)"
+
+#~ msgid "Install Theme"
+#~ msgstr "Namesti temo"
+
+#~ msgid "Icon"
+#~ msgstr "Ikona"
+
+#~ msgid "Use document font from _theme"
+#~ msgstr "Uporabi pisavo dokumenta iz _teme"
+
+#~ msgid "Proxy Server &amp; Browser"
+#~ msgstr "Posredovalni strežnik in brskalnik"
+
+#~ msgid "Auto-away"
+#~ msgstr "Samodejna odsotnost"
+
+#~ msgid "Change _status to:"
+#~ msgstr "Spremeni _stanje v:"
+
+#, fuzzy
+#~ msgid "The root certificate this one claims to be issued by is unknown."
+#~ msgstr ""
+#~ "Korensko digitalno potrdilo, za katerega ta trdi, da ga je izdalo, je "
+#~ "Pidginu neznano."
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "Pošlji neposredna sporočila prek več protokolov"
+
+#~ msgid "_Start port:"
+#~ msgstr "_Začetna vrata:"
+
+#~ msgid "_End port:"
+#~ msgstr "_Končna vrata:"
+
+#~ msgid "_User:"
+#~ msgstr "_Uporabnik:"
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "Nastavitve GTK+"
 
 #~ msgid "Without this only the first account will be enabled)."
 #~ msgstr "Prez tega bo omogočen le prvi račun)."

@@ -1,15 +1,61 @@
-
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.4 (??/??/20??):
+version 2.6.6 (??/??/20??):
+	Gadu-Gadu:
+	* Fix display of avatars after a server-side change. (Krzysztof
+	  Klinikowski)
+
+	MSN:
+	* File transfer requests will no longer cause a crash if you delete the
+	  file before the other side accepts.
+	* Recieved files will no longer hold an extra lock after completion,
+	  meaning they can be moved or deleted without complaints from your OS.
+	* Buddies who sign in from a second location will no longer cause an
+	  unnecessary chat window to open.
+	* Support setting an animated GIF as a buddy icon.
+
+	XMPP:
+	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
+	  available when built without Cyrus SASL support.
+	* When getting info on a domain-only (server) JID, show uptime
+	  (when given by the result of the "last query") and don't show status as
+	  offline.
+
+version 2.6.5 (01/08/2010):
+	libpurple:
+	* TLS certificates are actually stored to the local cache once again
+	  (accepting a name mismatch on a certificate should now be remembered)
+
+	General:
+	* Build-time fixes for Solaris.  (Paul Townsend)
+
+	AIM and ICQ:
+	* Messages from some mobile clients are no longer displayed as
+	  Chinese characters (broken in 2.6.4)
+
+	MSN:
+	* Fix an issue allowing a remote user to download arbitrary files from
+	  a libpurple client.  (CVE-2010-0013)
+
+	XMPP:
+	* Do not crash when attempting to register for a new account on Windows.
+	* Fix file transfer with clients that do not support Entity Capabilities
+	  (e.g. Spark)
+
+version 2.6.4 (11/29/2009):
 	libpurple:
 	* Actually emit the hold signal for media calls.
+	* Fix building the GnuTLS plugin with older versions of GnuTLS.
+	* Fix DNS TXT query resolution.
+	* Don't send Proxy-Authorization headers to HTTP proxy servers until we've
+	  received a "407 Proxy Authentication Required" response from the server.
+	  (thecrux)
+	* Added "MXit" protocol plugin, supported and maintained by the MXit folks
+	  themselves (MXit Lifestyle (Pty) Ltd.)
 
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
 	  to announce the list of loaded plugins (in both Finch and Pidgin).
-	* Fix building the GnuTLS plugin with older versions of GnuTLS.
-	* Fix DNS TXT query resolution.
 	* Always rejoin open chats after an account reconnects.
 
 	AIM and ICQ:
@@ -18,7 +64,9 @@ version 2.6.4 (??/??/20??):
 	* The simultaneous login account option is respected when using
 	  the clientLogin authentication method.
 	* Fix offline message retrieval (broken in 2.6.3)
+	* Fix handling of markup on some messages (broken in 2.6.2)
 	* Fix SSL when clientLogin is enabled.
+	* Fix sending and receiving Unicode characters in a Direct IM
 
 	MSN:
 	* Don't forget display names for buddies.
@@ -29,6 +77,9 @@ version 2.6.4 (??/??/20??):
 	* Fix a random crash that might occur when idle.
 	* Fix a crash when logging in with some long non-ASCII passwords.
 	  (Shaun Lindsay)
+	* Cache our own friendly name as the server no longer does that for
+	  us.  Users of older versions may need to re-set their friendly name
+	  as it has probably been reset.
 
 	XMPP:
 	* Users connecting to Google Talk now have an "Initiate Chat" context menu
@@ -37,9 +88,12 @@ version 2.6.4 (??/??/20??):
 	* Resolve an issue when connecting to iChat Server when no resource
 	  is specified.
 	* Try to automatically find a STUN server by using an SRV lookup on the
-	  account's domain, and use that for voice and video if found and the user 
+	  account's domain, and use that for voice and video if found and the user
 	  didn't set one manually in prefs.
 	* Fix a crash when adding a buddy without an '@'.
+	* Don't show the option to send a file to a buddy if we know for certain
+	  they don't support any file transfer method supported by libpurple.
+	* Keep the avatar on the server if one is not set locally.
 
 	Yahoo:
 	* Fix sending /buzz.
@@ -53,11 +107,42 @@ version 2.6.4 (??/??/20??):
 	* The TinyURL plugin now creates shorter URLs for long non-conversation
 	  URLs, e.g. URLs to open Inbox in Yahoo/MSN protocols, or the Yahoo
 	  Captcha when joining chat rooms.
+	* Fix displaying umlauts etc. in non-utf8 locale (fix in libgnt).
 
 	Pidgin:
 	* The userlist in a multiuser chat can be styled via gtkrc by using the
 	  widget name "pidgin_conv_userlist". (Heiko Schmitt)
 	* Add a hold button to the media window.
+	* Fix a bug where the conversation backlog stops scrolling in a very busy
+	  chat room.
+	* In the Conversation "Send To" menu, offline buddies appear grayed
+	  out (but are still selectable).  Previously, only offline buddies on
+	  accounts that do not support offline messaging appeared grayed out.
+
+	Pidgin Preference and Preference Window Changes:
+	* Removed the "Use font from theme" and "Conversation Font" preferences
+	  for everyone except Windows users.  The font can be controlled from the
+	  Pidgin GTK+ Theme Control plugin.
+	* Tabs in the Preferences window are now on the left side.
+	* The Browser tab is now visible for GNOME users.
+	* Added a Proxy tab shown no matter what environment Pidgin runs in.
+	* The Browser and Proxy tabs show appropriate GNOME-specific messages and
+	  allow launching the correct applications to change the relevant GNOME
+	  preferences if found.  These were previously together on the Network
+	  tab.
+	* Moved the port range spin buttons on the Network tab to be beside the
+	  checkbox that enables/disables them.
+	* Reorganized preferences on the Status/Idle tab to have one less
+	  "section."
+	* Reorganized preferences on the Sounds tab to have one less "section."
+	* Renamed Smiley Themes tab to Themes.
+	* Moved Buddy List Theme and Status Icon Theme selectors from Interface
+	  tab to Themes tab.
+	* Moved Sound Theme selector from Sounds tab to Themes tab.
+	* Changed the Smiley Theme selector to be consistent with the other theme
+	  selectors.
+	* Rearranged tabs such that Interface is first and all remaining tabs are
+	  alphabetized in English.
 
 version 2.6.3 (10/16/2009):
 	General:

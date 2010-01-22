@@ -23,10 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include	<stdio.h>
-#include	<unistd.h>
-#include	<string.h>
-
+#include    "internal.h"
 #include	"purple.h"
 
 #include	"protocol.h"
@@ -53,11 +50,11 @@ static struct status
 	const char*				name;
 } const mxit_statuses[] = {
 		/*	primative,						no,							id,			name					*/
-		{	PURPLE_STATUS_OFFLINE,			MXIT_PRESENCE_OFFLINE,		"offline",	"Offline"			},	/* 0 */
-		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_ONLINE,		"online",	"Available"			},	/* 1 */
-		{	PURPLE_STATUS_AWAY,				MXIT_PRESENCE_AWAY,			"away",		"Away"				},	/* 2 */
-		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_AVAILABLE,	"chat",		"Chatty"			},	/* 3 */
-		{	PURPLE_STATUS_UNAVAILABLE,		MXIT_PRESENCE_DND,			"dnd",		"Do Not Disturb"	}	/* 4 */
+		{	PURPLE_STATUS_OFFLINE,			MXIT_PRESENCE_OFFLINE,		"offline",	N_( "Offline" )			},	/* 0 */
+		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_ONLINE,		"online",	N_( "Available" )		},	/* 1 */
+		{	PURPLE_STATUS_AWAY,				MXIT_PRESENCE_AWAY,			"away",		N_( "Away" )			},	/* 2 */
+		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_AVAILABLE,	"chat",		N_( "Chatty" )			},	/* 3 */
+		{	PURPLE_STATUS_UNAVAILABLE,		MXIT_PRESENCE_DND,			"dnd",		N_( "Do Not Disturb" )	}	/* 4 */
 };
 
 
@@ -77,7 +74,7 @@ GList* mxit_status_types( PurpleAccount* account )
 		const struct status* status = &mxit_statuses[i];
 
 		/* add mxit status (reference: "libpurple/status.h") */
-		type = purple_status_type_new_with_attrs( status->primative, status->id, status->name, TRUE, TRUE, FALSE,
+		type = purple_status_type_new_with_attrs( status->primative, status->id, _( status->name ), TRUE, TRUE, FALSE,
 					"message", _( "Message" ), purple_value_new( PURPLE_TYPE_STRING ),
 					NULL );
 
@@ -398,7 +395,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 		contact->statusMsg = NULL;
 	}
 	if ( statusMsg[0] != '\0' )
-		contact->statusMsg = g_strdup( statusMsg );	
+		contact->statusMsg = g_markup_escape_text( statusMsg, -1 );
 
 	/* update avatarId */
 	if ( ( contact->avatarId ) && ( g_ascii_strcasecmp( contact->avatarId, avatarId ) == 0 ) ) {

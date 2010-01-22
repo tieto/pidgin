@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "gntinternal.h"
 #include "gntmarshal.h"
 #include "gntstyle.h"
 #include "gnttree.h"
@@ -549,7 +550,7 @@ redraw_tree(GntTree *tree)
 		}
 
 		wbkgdset(widget->window, '\0' | attr);
-		mvwaddstr(widget->window, i, pos, str);
+		mvwaddstr(widget->window, i, pos, C_(str));
 		whline(widget->window, ' ', scrcol - wr);
 		tree->bottom = row;
 		g_free(str);

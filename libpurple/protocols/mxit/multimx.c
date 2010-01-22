@@ -23,9 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <string.h>
-#include <errno.h>
-
+#include "internal.h"
 #include "purple.h"
 #include "prpl.h"
 
@@ -408,7 +406,7 @@ GList* mxit_chat_info(PurpleConnection *gc)
 
 	/* Configuration option: Room Name */
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = "_Room Name:";
+	pce->label = _( "_Room Name:" );
 	pce->identifier = "room";
 	pce->required = TRUE;
 	m = g_list_append(m, pce);

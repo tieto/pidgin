@@ -97,7 +97,7 @@ jabber_adhoc_disco_result_cb(JabberStream *js, const char *from,
 	if (type == JABBER_IQ_ERROR)
 		return;
 
-	query = xmlnode_get_child_with_namespace(packet, "query", "http://jabber.org/protocol/disco#items");
+	query = xmlnode_get_child_with_namespace(packet, "query", NS_DISCO_ITEMS);
 	if (!query)
 		return;
 	node = xmlnode_get_attrib(query, "node");
@@ -275,7 +275,8 @@ jabber_adhoc_server_got_list_cb(JabberStream *js, const char *from,
                                 JabberIqType type, const char *id,
                                 xmlnode *packet, gpointer data)
 {
-	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query", "http://jabber.org/protocol/disco#items");
+	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
+			NS_DISCO_ITEMS);
 
 	jabber_adhoc_got_server_list(js, from, query);
 
@@ -291,8 +292,9 @@ void jabber_adhoc_got_list(JabberStream *js, const char *from, xmlnode *query)
 }
 
 void jabber_adhoc_server_get_list(JabberStream *js) {
-	JabberIq *iq = jabber_iq_new_query(js,JABBER_IQ_GET,"http://jabber.org/protocol/disco#items");
-	xmlnode *query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#items");
+	JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_DISCO_ITEMS);
+	xmlnode *query = xmlnode_get_child_with_namespace(iq->node, "query",
+			NS_DISCO_ITEMS);
 
 	xmlnode_set_attrib(iq->node,"to",js->user->domain);
 	xmlnode_set_attrib(query,"node","http://jabber.org/protocol/commands");

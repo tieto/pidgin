@@ -6,7 +6,7 @@
 # LINE NUMBERS (LINES BEGINNING WITH #:) IN THIS FILE.
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.600 2009/09/03 13:49:05 acli Exp $
+# $InternalId: zh_TW.po,v 1.615 2009/11/29 00:48:50 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -22,6 +22,14 @@
 # (01時52分58秒) wing: hmm. does "screen name" mean "user name" now, or has it actually always meant "user name"?
 # (02時09分45秒) KingAnt: wing: They're the same thing.  If you're unhappy with the change please email the gaim-devel mailing list.  (I'm unhappy with the change.)
 # ----------------------------------------------------------
+# Jabber術語 (20091127) presence、subscription 等參閱
+# - http://www.2cm.com.tw/coverstory_content.asp?sn=0701010062
+# - http://nctur.lib.nctu.edu.tw/handle/987654321/3479
+# - http://voiplab.niu.edu.tw/Course98.html (尤其是 http://voiplab.niu.edu.tw/ppt/SIP/05.IMPS.pdf)
+# - presence service 如出現譯「現狀資訊服務」
+# - subscribe to presence 譯「訂閱XXX的狀態資訊」
+# - identifier 譯「辨識碼」
+# - message body 譯「訊息內容」
 # SILC問題：似乎臺灣和香港的「密碼學」術語相差甚遠，很頭痛 (^^;)
 # - Key 暫譯「密鑰」，原因：「Key Exchange」既有譯文為「交換密鑰」
 # - Public Key 暫譯「公鑰」
@@ -50,9 +58,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.6.2\n"
+"Project-Id-Version: Pidgin 2.6.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-07 18:26-0700\n"
+"POT-Creation-Date: 2009-11-29 20:30-0500\n"
 "PO-Revision-Date: 2009-09-03 06:04-0400\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -101,6 +109,7 @@ msgstr ""
 "%s 將設定由目錄 %s 轉移至目錄 %s 途中發生錯誤，請調查後改以人手完成轉移程序，"
 "並透過 http://developer.pidgin.im 回報這個錯誤。"
 
+#. the user did not fill in the captcha
 msgid "Error"
 msgstr "錯誤"
 
@@ -610,13 +619,6 @@ msgstr ""
 msgid "Re-enable Account"
 msgstr "重新啟動帳號"
 
-msgid ""
-"The account has disconnected and you are no longer in this chat. You will be "
-"automatically rejoined in the chat when the account reconnects."
-msgstr ""
-"因帳號已停止連線，您已離開這個聊天室；一旦帳號重新連線，即會自動重新加入這個"
-"聊天室。"
-
 msgid "No such command."
 msgstr "無此指令。"
 
@@ -659,6 +661,13 @@ msgstr ""
 msgid "You have left this chat."
 msgstr "您離開了聊天室。"
 
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+"因帳號已停止連線，您已離開這個聊天室；一旦帳號重新連線，即會自動重新加入這個"
+"聊天室。"
+
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr "日誌系統啟動。未來在這個交談中的訊息都將被記錄於日誌中。"
 
@@ -690,6 +699,9 @@ msgstr "開始記錄日誌"
 msgid "Enable Sounds"
 msgstr "啟動音效"
 
+msgid "You are not connected."
+msgstr "連線成功。"
+
 msgid "<AUTO-REPLY> "
 msgstr "<自動回應> "
 
@@ -700,8 +712,8 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "使用者列表（%d個使用者）：\n"
 msgstr[1] "使用者列表（%d個使用者）：\n"
 
-msgid "Supported debug options are:  version"
-msgstr "支援的除錯選項有：version"
+msgid "Supported debug options are: plugins version"
+msgstr "支援的除錯選項有：plugins version"
 
 msgid "No such command (in this context)."
 msgstr "沒有這個指令（可在這裏使用）"
@@ -823,6 +835,7 @@ msgid "Remaining"
 msgstr "剩餘"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
+#. presence
 msgid "Status"
 msgstr "狀態"
 
@@ -1003,6 +1016,9 @@ msgid "(none)"
 msgstr "(沒有名字)"
 
 # XXX 是否應譯「網址」？ - 20080508 acli
+#. XXX: The following expects that finch_notify_message gets called. This
+#. * may not always happen, e.g. when another plugin sets its own
+#. * notify_message. So tread carefully.
 msgid "URI"
 msgstr "URI"
 
@@ -1413,6 +1429,8 @@ msgid "Saved Statuses"
 msgstr "狀態清單"
 
 # FIXME 原文一詞兩義，根本無法翻譯
+#. title
+#. optional information
 msgid "Title"
 msgstr "職銜"
 
@@ -1584,6 +1602,13 @@ msgstr ""
 "\n"
 "取得 TinyURL 中..."
 
+#, c-format
+msgid "TinyURL for above: %s"
+msgstr "上列網址的 TinyURL：%s"
+
+msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgstr "TinyURL 正在取得縮短的網址中，請稍候..."
+
 # XXX 暫譯 - 20090729 acli
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "只在網址長度為這個數值或以上時才建立 TinyURL"
@@ -1606,6 +1631,7 @@ msgstr "當接收到含有網址的訊息時，使用 TinyURL 縮短網址，好
 msgid "Online"
 msgstr "上線"
 
+#. primative,						no,							id,			name
 msgid "Offline"
 msgstr "離線"
 
@@ -1721,9 +1747,10 @@ msgstr "好友清單"
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr "這張憑證是自簽的，無法自動進行核實。"
 
-#, fuzzy
-msgid "The root certificate this one claims to be issued by is unknown."
-msgstr "這張憑證聲稱由一所 Pidgin 不認識的根憑證機構簽發。"
+msgid ""
+"The certificate is not trusted because no certificate that can verify it is "
+"currently trusted."
+msgstr "無法信賴這張憑證，因為目前沒有可信賴的憑證可以驗證這張憑證。"
 
 msgid "The certificate is not valid yet."
 msgstr "這張憑證尚未生效。"
@@ -1836,6 +1863,7 @@ msgstr ""
 msgid "Certificate Information"
 msgstr "憑證資訊"
 
+#. show error to user
 msgid "Registration Error"
 msgstr "註冊錯誤"
 
@@ -1850,6 +1878,7 @@ msgstr "+++ %s 登入"
 msgid "+++ %s signed off"
 msgstr "+++ %s 登出"
 
+#. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "未知錯誤"
@@ -1958,9 +1987,14 @@ msgid "Resolver process exited without answering our request"
 msgstr "解析程序已結束，但未有回覆我方發出的請求"
 
 #, c-format
+msgid "Error converting %s to punycode: %d"
+msgstr "將 %s 轉換成 punycode 途中發生了錯誤：%d"
+
+#, c-format
 msgid "Thread creation failure: %s"
 msgstr "無法建立執行緒：%s"
 
+#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "原因不明"
 
@@ -2257,14 +2291,14 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "發生了一個嚴重的 Farsight2 錯誤。"
 
-msgid "Conference error."
-msgstr "會議室錯誤。"
+msgid "Conference error"
+msgstr "會議室錯誤"
 
-msgid "Error with your microphone."
-msgstr "您的麥克風出現錯誤。"
+msgid "Error with your microphone"
+msgstr "您的麥克風出現錯誤"
 
-msgid "Error with your webcam."
-msgstr "您的 webcam 出現錯誤。"
+msgid "Error with your webcam"
+msgstr "您的 webcam 出現錯誤"
 
 # FIXME 譯文有待改進 - acli 20090902
 #, c-format
@@ -2803,12 +2837,15 @@ msgstr "一次性密碼支援"
 msgid "Enforce that passwords are used only once."
 msgstr "強制密碼只用一次"
 
+# XXX 譯文不太通順 - acli 20091128
 #. *  description
 msgid ""
 "Allows you to enforce on a per-account basis that passwords not being saved "
 "are only used in a single successful connection.\n"
 "Note: The account password must not be saved for this to work."
 msgstr ""
+"針對個別不記住密碼的帳號，讓您強制成功登入後不會再使用同一個密碼。注意：使用"
+"這個功能，帳號必須停用「記住密碼」選項"
 
 #. *< type
 #. *< ui_requirement
@@ -3021,6 +3058,7 @@ msgstr "名"
 msgid "Last name"
 msgstr "姓"
 
+#. email
 msgid "Email"
 msgstr "電子郵件"
 
@@ -3160,12 +3198,14 @@ msgstr "城市"
 msgid "Year of birth"
 msgstr "出生年"
 
+#. gender
 msgid "Gender"
 msgstr "性別"
 
 msgid "Male or female"
 msgstr "男性或女性"
 
+#. 0
 msgid "Male"
 msgstr "男"
 
@@ -3221,10 +3261,12 @@ msgstr "選取一個聊天室給好友；%s"
 msgid "Add to chat..."
 msgstr "新增到聊天室..."
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "上線"
 
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3234,6 +3276,7 @@ msgstr "離開"
 msgid "UIN"
 msgstr "帳號"
 
+#. first name
 msgid "First Name"
 msgstr "名"
 
@@ -3954,6 +3997,7 @@ msgstr "所屬部門"
 msgid "Role"
 msgstr "職責"
 
+#. birthday
 msgid "Birthday"
 msgstr "生日"
 
@@ -4023,13 +4067,13 @@ msgid ""
 msgstr "%s 將不再可以檢視您的狀態更新。您要繼續這個動作嗎？"
 
 msgid "Cancel Presence Notification"
-msgstr "取消上線狀態通知"
+msgstr "取消發出狀態資訊通知（移除自己）"
 
 msgid "Un-hide From"
-msgstr "現身給"
+msgstr "現身給此好友"
 
 msgid "Temporarily Hide From"
-msgstr "暫時隱身於"
+msgstr "暫時隱身於此好友"
 
 msgid "(Re-)Request authorization"
 msgstr "要求或重新要求認證"
@@ -4039,7 +4083,10 @@ msgstr "要求或重新要求認證"
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 msgid "Unsubscribe"
-msgstr "從好友名單中移除"
+msgstr "取消訂閱狀態資訊（移除好友）"
+
+msgid "Initiate _Chat"
+msgstr "開啟聊天室(_C)"
 
 msgid "Log In"
 msgstr "登入"
@@ -4047,18 +4094,21 @@ msgstr "登入"
 msgid "Log Out"
 msgstr "登出"
 
+#. 2
 msgid "Chatty"
 msgstr "想聊天"
 
 msgid "Extended Away"
 msgstr "長時間離開"
 
+#. 3
 msgid "Do Not Disturb"
 msgstr "請勿打擾"
 
 msgid "JID"
 msgstr "JID"
 
+#. last name
 msgid "Last Name"
 msgstr "姓"
 
@@ -4299,6 +4349,7 @@ msgstr "伺服器不支援封鎖"
 msgid "Not Authorized"
 msgstr "未認證"
 
+#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "心情"
 
@@ -4312,32 +4363,32 @@ msgstr "正在聽的音樂"
 # NOTE ie each "subscription" represents the fact that either you send status notifications to someone, or that you recieve them, or both
 # NOTE thus "from" means you only recieve status notification, "to" means you only send status notification and "both" is thus obviously that you both send and recieve status notification
 msgid "Both"
-msgstr "已互相認證"
+msgstr "訂閱及發出狀態資訊通知（已互相認證）"
 
 #  NOTE Jabber 術語，見「Both」條
 msgid "From (To pending)"
-msgstr "已認證對方（但仍等待對方認證您）"
+msgstr "訂閱對方狀態資訊，未認證發出狀態資訊通知"
 
-# FIXME 原文一詞兩義，根本無法翻譯
-#  NOTE gntnotify 字義為「發信人」
 #  NOTE Jabber 術語字義見「Both」條
 msgid "From"
-msgstr "已認證對方"
+msgstr "訂閱對方狀態資訊"
 
 #  NOTE Jabber 術語，見「Both」條
 msgid "To"
-msgstr "已獲對方認證"
+msgstr "發出狀態資訊通知"
 
 #  NOTE Jabber 術語，見「Both」條
 msgid "None (To pending)"
-msgstr "無（但正等待對方認證您）"
+msgstr "無，等待認證發出狀態資訊通知"
 
+#. 0
 msgid "None"
 msgstr "無"
 
 #  NOTE Jabber 術語，見「Both」條
+#. subscription type
 msgid "Subscription"
-msgstr "認證狀態"
+msgstr "狀態資訊訂閱"
 
 # XXX 要覆查 - acli 20070914
 msgid "Mood Text"
@@ -4477,7 +4528,7 @@ msgstr "不提供該項服務"
 #  NOTE 必須事先取得「Subscription」（認證）
 #  NOTE 詳見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-23.txt
 msgid "Subscription Required"
-msgstr "必須認證"
+msgstr "必須訂閱狀態資訊"
 
 msgid "Unexpected Request"
 msgstr "未預期的要求"
@@ -4680,11 +4731,9 @@ msgid "Unable to initiate media with %s: user is not online"
 msgstr "無法與 %s 進行媒體通話，因為對方目前沒有連線"
 
 #  NOTE「not subscribed to user presence」是指沒有「SUB_TO」的 subscription
-#  FIXME 這很明顯是有問題的譯文，但這是這個 PO 檔現有的譯法（見「To」條）；
-#  FIXME 如果這個要改，其他有關 presence 的譯文也要一齊改才行。-acli 20070614
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
-msgstr "無法與 %s 進行媒體通話，因為未獲對方認證"
+msgstr "無法與 %s 進行媒體通話，因為未有訂閱對方的狀態資訊"
 
 msgid "Media Initiation Failed"
 msgstr "媒體通話啟動失敗"
@@ -4709,8 +4758,8 @@ msgstr "config：設定一個聊天室"
 msgid "configure:  Configure a chat room."
 msgstr "configure：設定一個聊天室"
 
-msgid "part [room]:  Leave the room."
-msgstr "part [聊天室]：離開聊天室。"
+msgid "part [message]:  Leave the room."
+msgstr "part [訊息]：離開聊天室。"
 
 msgid "register:  Register with a chat room."
 msgstr "register：加入一個聊天室"
@@ -4834,7 +4883,7 @@ msgid "XML Parse error"
 msgstr "XML 分析錯誤"
 
 msgid "Unknown Error in presence"
-msgstr "不明的上線狀態錯誤"
+msgstr "不明的狀態資訊錯誤"
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4895,11 +4944,9 @@ msgid "Unable to send file to %s, user is not online"
 msgstr "無法傳送檔案至 %s，因為對方目前沒有連線"
 
 #  NOTE「not subscribed to user presence」是指沒有「SUB_TO」的 subscription
-#  FIXME 這很明顯是有問題的譯文，但這是這個 PO 檔現有的譯法（見「To」條）；
-#  FIXME 如果這個要改，其他有關 presence 的譯文也要一齊改才行。-acli 20070614
 #, c-format
 msgid "Unable to send file to %s, not subscribed to user presence"
-msgstr "無法傳送檔案至 %s，因為未獲對方認證"
+msgstr "無法傳送檔案至 %s，因為未有訂閱對方的狀態資訊"
 
 #  FIXME 這不通順 - acli 20070614
 #, c-format
@@ -5387,9 +5434,6 @@ msgstr "開啟Hotmail收件匣"
 msgid "Send to Mobile"
 msgstr "傳送至行動電話"
 
-msgid "Initiate _Chat"
-msgstr "開啟聊天室(_C)"
-
 # XXX 暫譯
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr "MSN 需要 SSL 程式庫的支援，請安裝一個受支援的 SSL 程式庫。"
@@ -5397,7 +5441,7 @@ msgstr "MSN 需要 SSL 程式庫的支援，請安裝一個受支援的 SSL 程�
 #, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be a valid email address."
+"be valid email addresses."
 msgstr "所以無法新增好友「%s」，因為這個帳號是無效的。帳號必須為有效電郵地址。"
 
 msgid "Unable to Add"
@@ -5607,6 +5651,10 @@ msgstr "Windows Live ID 認證：回應無效"
 msgid "%s just sent you a Nudge!"
 msgstr "%s 在呼叫您！"
 
+# XXX 暫譯 - 20090226
+msgid "The following users are missing from your addressbook"
+msgstr "以下使用者不在通訊錄內"
+
 #, c-format
 msgid "Unknown error (%d): %s"
 msgstr "不明錯誤（代碼 %d）：%s"
@@ -5619,9 +5667,8 @@ msgstr "無法新增使用者"
 msgid "Unknown error (%d)"
 msgstr "不明錯誤（代碼 %d）"
 
-# XXX 暫譯 - 20090226
-msgid "The following users are missing from your addressbook"
-msgstr "以下使用者不在通訊錄內"
+msgid "Unable to remove user"
+msgstr "無法移除使用者"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "因為行動訊息過長，所以無法送出："
@@ -5864,6 +5911,393 @@ msgstr "%s 將您加入他（她）的好友清單。"
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s 將您從他（她）的好友清單中移除。"
 
+#. 1
+msgid "Angry"
+msgstr "憤怒"
+
+#. 2
+msgid "Excited"
+msgstr "興奮"
+
+# XXX 譯文有待改進 - 20091126 acli
+#. 3
+msgid "Grumpy"
+msgstr "暴躁"
+
+#. 4
+msgid "Happy"
+msgstr "開心"
+
+#. 5
+msgid "In Love"
+msgstr "戀愛中"
+
+#. 6
+msgid "Invincible"
+msgstr "無敵"
+
+#. 7
+msgid "Sad"
+msgstr "憂愁"
+
+# XXX 原文瞹眛，譯文可能有錯 =P  - acli 20091127
+#. 8
+msgid "Hot"
+msgstr "火熱"
+
+#. 9
+msgid "Sick"
+msgstr "生病"
+
+#. 10
+msgid "Sleepy"
+msgstr "想睡"
+
+#. show current mood
+msgid "Current Mood"
+msgstr "目前的心情"
+
+#. add all moods to list
+msgid "New Mood"
+msgstr "新心情"
+
+msgid "Change your Mood"
+msgstr "修改心情"
+
+msgid "How do you feel right now?"
+msgstr "您現在覺得怎樣？"
+
+msgid "The PIN you entered is invalid."
+msgstr "您所輸入的密碼無效。"
+
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "您所輸入的密碼過短或過長（應為 4 至 10 個數字）。"
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "您所輸入的密碼無效，密碼必須由數字（0 至 9）組成。"
+
+msgid "The two PINs you entered do not match."
+msgstr "兩個密碼並不相符。"
+
+msgid "The name you entered is invalid."
+msgstr "您所輸入的名稱無效。"
+
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr "您所輸入的出生日期無效，正確格式應為：YYYY-MM-DD（年-月-日）。"
+
+#. show error to user
+msgid "Profile Update Error"
+msgstr "更新個人資料途中發生錯誤"
+
+#. no profile information yet, so we cannot update
+#. (reference: "libpurple/request.h")
+msgid "Profile"
+msgstr "個人資料"
+
+msgid "Your profile information is not yet retrieved. Please try again later."
+msgstr "未能讀取您的個人資料，請稍後重試。"
+
+#. pin
+msgid "PIN"
+msgstr "密碼"
+
+msgid "Verify PIN"
+msgstr "確認密碼"
+
+# NOTE「Display Name」和「Nick Name」都是指同一個欄位，就是 profile->nickname
+#. display name
+msgid "Display Name"
+msgstr "暱稱"
+
+#. hidden
+msgid "Hide my number"
+msgstr "隱藏電話號碼"
+
+#. mobile number
+msgid "Mobile Number"
+msgstr "行動電話號碼"
+
+msgid "Update your Profile"
+msgstr "更新個人資料"
+
+msgid "Here you can update your MXit profile"
+msgstr "您可以在這裏更新您在 MXit 的個人資料"
+
+msgid "View Splash"
+msgstr "檢視啟動畫面"
+
+msgid "There is no splash-screen currently available"
+msgstr "目前沒有可用的啟動畫面"
+
+msgid "About"
+msgstr "關於此模組"
+
+#. display / change mood
+msgid "Change Mood..."
+msgstr "修改心情..."
+
+#. display / change profile
+msgid "Change Profile..."
+msgstr "修改個人資料..."
+
+#. display splash-screen
+msgid "View Splash..."
+msgstr "檢視啟動畫面..."
+
+# XXX 這隨時會變成不對... - acli 20091127
+#. display plugin version
+msgid "About..."
+msgstr "關於此模組..."
+
+#. the file is too big
+msgid "The file you are trying to send is too large!"
+msgstr "您要傳送的檔案太大了！"
+
+msgid ""
+"Unable to connect to the MXit HTTP server. Please check your server settings."
+msgstr "無法連線至 MXit 的 HTTP 伺服器，請檢查伺服器設定。"
+
+msgid "Logging In..."
+msgstr "登入中..."
+
+msgid ""
+"Unable to connect to the MXit server. Please check your server settings."
+msgstr "無法連線至 MXit 伺服器，請檢查伺服器設定。"
+
+msgid "Connecting..."
+msgstr "連線中..."
+
+msgid "The nick name you entered is invalid."
+msgstr "您所輸入的暱稱無效。"
+
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "您所輸入的密碼過短或過長（長度應為 7 至 10 個數字）。"
+
+#. mxit login name
+msgid "MXit Login Name"
+msgstr "MXit 帳號"
+
+# NOTE「Display Name」和「Nick Name」都是指同一個欄位，就是 profile->nickname
+#. nick name
+msgid "Nick Name"
+msgstr "暱稱"
+
+#. show the form to the user to complete
+msgid "Register New MXit Account"
+msgstr "註冊新的 MXit 帳戶"
+
+msgid "Please fill in the following fields:"
+msgstr "請輸入以下的欄位："
+
+#. no reply from the WAP site
+msgid "Error contacting the MXit WAP site. Please try again later."
+msgstr "無法連線 MXit 的 WAP 網站，請稍後重試。"
+
+#. wapserver error
+#. server could not find the user
+msgid ""
+"MXit is currently unable to process the request. Please try again later."
+msgstr "MXit 目前無法處理這個要求，請稍後重試。"
+
+msgid "Wrong security code entered. Please try again later."
+msgstr "輸入了錯誤的保安碼，請稍後重試。"
+
+msgid "Your session has expired. Please try again later."
+msgstr "您的工作階段已逾時，請稍後重試。"
+
+msgid "Invalid country selected. Please try again."
+msgstr "指定的國家是無效的，請重試。"
+
+msgid "Username is not registered. Please register first."
+msgstr "帳號未有註冊，請先註冊。"
+
+msgid "Username is already registered. Please choose another username."
+msgstr "帳號已註冊，請選擇另一個帳號。"
+
+msgid "Internal error. Please try again later."
+msgstr "內部錯誤，請稍後重試"
+
+msgid "You did not enter the security code"
+msgstr "未有輸入保安碼"
+
+msgid "Security Code"
+msgstr "保安碼"
+
+#. ask for input
+msgid "Enter Security Code"
+msgstr "輸入保安碼"
+
+msgid "Your Country"
+msgstr "國家"
+
+msgid "Your Language"
+msgstr "語文"
+
+#. display the form to the user and wait for his/her input
+msgid "MXit Authorization"
+msgstr "MXit 授權"
+
+msgid "MXit account validation"
+msgstr "MXit 帳號驗核"
+
+msgid "Retrieving User Information..."
+msgstr "讀取使用者資訊中..."
+
+msgid "Loading menu..."
+msgstr "載入清單中..."
+
+msgid "Status Message"
+msgstr "狀態訊息"
+
+# NOTE 這是「是否隱藏電話號碼？」之意 - acli 20091127
+msgid "Hidden Number"
+msgstr "隱藏電話號碼"
+
+msgid "Your Mobile Number..."
+msgstr "行動電話號碼..."
+
+#. Configuration options
+#. WAP server (reference: "libpurple/accountopt.h")
+msgid "WAP Server"
+msgstr "WAP 伺服器"
+
+msgid "Connect via HTTP"
+msgstr "使用 HTTP 連線"
+
+msgid "Enable splash-screen popup"
+msgstr "啟用啟動畫面彈出視窗"
+
+#. we must have lost the connection, so terminate it so that we can reconnect
+msgid "We have lost the connection to MXit. Please reconnect."
+msgstr "與 MXit 的連線已中斷，請重新連線。"
+
+#. packet could not be queued for transmission
+msgid "Message Send Error"
+msgstr "送出訊息錯誤"
+
+msgid "Unable to process your request at this time"
+msgstr "目前無法處理送出的要求"
+
+msgid "Timeout while waiting for a response from the MXit server."
+msgstr "等候 MXit 伺服器送出回應已逾時。"
+
+msgid "Successfully Logged In..."
+msgstr "成功登入..."
+
+#, c-format
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
+msgstr "%s 送來了一個加密的訊息，但這個用戶端目前還沒有解密的支援。"
+
+msgid "Message Error"
+msgstr "訊息錯誤"
+
+msgid "Cannot perform redirect using the specified protocol"
+msgstr "無法以指定的通訊協定進行重新導向"
+
+msgid "An internal MXit server error occurred."
+msgstr "MXit 的伺服器發生了內部錯誤。"
+
+#, c-format
+msgid "Login error: %s (%i)"
+msgstr "登入錯誤：%s (%i)"
+
+#, c-format
+msgid "Logout error: %s (%i)"
+msgstr "登出錯誤：%s (%i)"
+
+# NOTE 指收到 CP_CMD_CONTACT (received contact update packet)，但出現錯誤 (???) - acli 20091128
+# NOTE 似乎是指更新好友狀態/好友清單，但出現錯誤 - acli 20091128
+msgid "Contact Error"
+msgstr "好友資訊錯誤"
+
+msgid "Message Sending Error"
+msgstr "送出訊息途中發生錯誤"
+
+# NOTE 似乎是指發出狀態資訊通知，以更新自己的狀態，但出現錯誤 - acli 20091128
+msgid "Status Error"
+msgstr "更新狀態資訊途中發生錯誤"
+
+# NOTE 似乎是指更新自己的心情，但出現錯誤 - acli 20091128
+msgid "Mood Error"
+msgstr "更新心情途中發生錯誤"
+
+# NOTE 似乎是指發出邀請(?)，但出現錯誤 - acli 20091128
+# NOTE http://devzone.mxit.com/trac/libpurple/
+msgid "Invitation Error"
+msgstr "邀請好友途中發生錯誤"
+
+msgid "Contact Removal Error"
+msgstr "移除好友途中發生錯誤"
+
+#  NOTE Jabber 術語，見「Both」條
+msgid "Subscription Error"
+msgstr "訂閱狀態資訊途中發生錯誤"
+
+# NOTE 指發出 CP_CMD_UPDATE (Send an update contact packet to the MXit server) 指令後收到錯誤回覆 - acli 20091128
+msgid "Contact Update Error"
+msgstr "更新好友資訊途中發生錯誤"
+
+msgid "File Transfer Error"
+msgstr "檔案傳輸錯誤"
+
+msgid "Cannot create MultiMx room"
+msgstr "無法建立 MultiMx 聊天室"
+
+# XXX 好像很怪 - acli 20091127
+msgid "MultiMx Invitation Error"
+msgstr "MultiMx 邀請錯誤"
+
+# NOTE 指讀取或修改個人資料期間發生錯誤 - acli 20091128
+msgid "Profile Error"
+msgstr "存取個人資料途中發生錯誤"
+
+#. bad packet
+msgid "Invalid packet received from MXit."
+msgstr "從 MXit 收到了無效的封包。"
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x01)"
+msgstr "（在讀取階段 0x01 時）MXit 發生連線錯誤"
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x02)"
+msgstr "（在讀取階段 0x02 時）MXit 發生連線錯誤"
+
+msgid "A connection error occurred to MXit. (read stage 0x03)"
+msgstr "（在讀取階段 0x03 時）MXit 發生連線錯誤"
+
+#. malformed packet length record (too long)
+msgid "A connection error occurred to MXit. (read stage 0x04)"
+msgstr "（在讀取階段 0x04 時）MXit 發生連線錯誤"
+
+#. connection error
+msgid "A connection error occurred to MXit. (read stage 0x05)"
+msgstr "（在讀取階段 0x05 時）MXit 發生連線錯誤"
+
+#. connection closed
+msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr "（在讀取階段 0x06 時）MXit 發生連線錯誤"
+
+msgid "Pending"
+msgstr "等候中"
+
+msgid "Invited"
+msgstr "已邀請"
+
+msgid "Rejected"
+msgstr "已拒絕"
+
+msgid "Deleted"
+msgstr "已刪除"
+
+msgid "MXit Advertising"
+msgstr "MXit 廣告"
+
+msgid "More Information"
+msgstr "更多資訊"
+
 #, c-format
 msgid "No such user: %s"
 msgstr "無此使用者：%s"
@@ -5892,7 +6326,7 @@ msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
 msgstr "您現在就要設定嗎？（注意：設定後是無法修改的！）"
 
 msgid "Lost connection with server"
-msgstr "與伺服器之間的連線中斷"
+msgstr "與伺服器之間的連線突然中斷"
 
 #. Can't write _()'d strings in array initializers. Workaround.
 #. khc: then use N_() in the array initializer and use _() when they are
@@ -6483,7 +6917,6 @@ msgstr "伺服器通訊埠"
 msgid "Received unexpected response from %s"
 msgstr "%s 發出了奇怪的回應"
 
-#. username connecting too frequently
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -6649,6 +7082,44 @@ msgstr "佇列滿了"
 
 msgid "Not while on AOL"
 msgstr "在 AOL 時不允許"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "被家長監控限制，無法接收即時訊息"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "未同意使用條款前無法送出短訊"
+
+msgid "Cannot send SMS"
+msgstr "無法送出短訊"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "無法送出短訊至指定的國家"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "無法送出短訊至不明的國家"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "機器人帳號無法啟動即時通訊"
+
+msgid "Bot account cannot IM this user"
+msgstr "機器人帳號無法向這個使用者送出即時通訊"
+
+msgid "Bot account reached IM limit"
+msgstr "機器人帳號進行即時通訊的次數已達到了上限"
+
+msgid "Bot account reached daily IM limit"
+msgstr "機器人帳號進行即時通訊的次數已達到了每日的上限"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "機器人帳號進行即時通訊的次數已達到了每月的上限"
+
+msgid "Unable to receive offline messages"
+msgstr "無法接收離線訊息"
+
+msgid "Offline message store full"
+msgstr "離線訊息庫已滿"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -6833,6 +7304,15 @@ msgstr "您的帳號目前停用中"
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "暫時無法使用 AOL 即時訊息服務。"
 
+#. username connecting too frequently
+msgid ""
+"Your username has been connecting and disconnecting too frequently. Wait ten "
+"minutes and try again. If you continue to try, you will need to wait even "
+"longer."
+msgstr ""
+"您的帳號的連線／斷線動作太過頻繁。請等待十分鐘後再行重試。如果您依然繼續嘗試"
+"著連線，那麼您的等待時間將會更加的延長。"
+
 #. client too old
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
@@ -6840,11 +7320,12 @@ msgstr "您所使用的用戶端程式太過老舊。請到 %s 更新"
 
 #. IP address connecting too frequently
 msgid ""
-"You have been connecting and disconnecting too frequently. Wait a minute and "
-"try again. If you continue to try, you will need to wait even longer."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer."
 msgstr ""
-"您的連線／斷線動作太過頻繁。請等待一分鐘後再行重試。如果您依然繼續嘗試著連"
-"線，那麼您的等待時間將會更加的延長。"
+"您的IP位址的連線／斷線動作太過頻繁。請等待一分鐘後再行重試。如果您依然繼續嘗"
+"試著連線，那麼您的等待時間將會更加的延長。"
 
 msgid "The SecurID key entered is invalid"
 msgstr "您所輸入的 SecurID 碼無效"
@@ -6978,21 +7459,28 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "您遺失了 %hu 個由 %s 送來的訊息，原因不明。"
 msgstr[1] "您遺失了 %hu 個由 %s 送來的訊息，原因不明。"
 
-#. Data is assumed to be the destination bn
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "無法送出訊息：%s (%s)"
+
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "無法送出訊息：%s"
 
-msgid "Unknown reason."
-msgstr "原因不明。"
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "無法送出訊息至 %s：%s (%s)"
 
 #, c-format
-msgid "Unable to send message to %s:"
-msgstr "無法送出訊息至 %s："
+msgid "Unable to send message to %s: %s"
+msgstr "無法送出訊息至 %s：%s"
 
 #, c-format
 msgid "User information not available: %s"
 msgstr "無法取得個人資訊：%s"
+
+msgid "Unknown reason."
+msgstr "原因不明。"
 
 msgid "Online Since"
 msgstr "上線自"
@@ -7004,13 +7492,9 @@ msgstr "成為成員的時間"
 msgid "Capabilities"
 msgstr "相容性"
 
-msgid "Profile"
-msgstr "個人資料"
-
 msgid "Your AIM connection may be lost."
 msgstr "您的 AIM 可能斷線了。"
 
-#  The conversion failed!
 #. The conversion failed!
 msgid ""
 "[Unable to display a message from this user because it contained invalid "
@@ -7019,10 +7503,10 @@ msgstr "（無法顯示來自這個使用者的訊息，因為它包含了無效
 
 msgid ""
 "The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again."
+"the rate limit. Please wait 10 seconds and try again.\n"
 msgstr ""
-"您最近做的一個動作無法完成，因為您已經達到發送訊息速率的上限。請等待十秒後再"
-"試一次。"
+"您最近做的一個動作無法完成，因為您已經達到這個動作的速率的上限。請等待十秒後"
+"再試一次。\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -8246,6 +8730,10 @@ msgstr "會議室關閉"
 msgid "Unable to send message: "
 msgstr "無法送出訊息："
 
+#, c-format
+msgid "Unable to send message to %s:"
+msgstr "無法送出訊息至 %s："
+
 msgid "Place Closed"
 msgstr "Place 已關閉"
 
@@ -8653,35 +9141,14 @@ msgstr "極度活躍"
 msgid "Robot"
 msgstr "機械人"
 
-msgid "Happy"
-msgstr "開心"
-
-msgid "Sad"
-msgstr "憂愁"
-
-msgid "Angry"
-msgstr "憤怒"
-
 msgid "Jealous"
 msgstr "嫉妒"
 
 msgid "Ashamed"
 msgstr "慚愧"
 
-msgid "Invincible"
-msgstr "無敵"
-
-msgid "In Love"
-msgstr "戀愛中"
-
-msgid "Sleepy"
-msgstr "想睡"
-
 msgid "Bored"
 msgstr "發悶"
-
-msgid "Excited"
-msgstr "興奮"
 
 msgid "Anxious"
 msgstr "憂慮"
@@ -9887,7 +10354,7 @@ msgid "Appear Permanently Offline"
 msgstr "長期報稱離線"
 
 msgid "Presence"
-msgstr "上線狀態"
+msgstr "現狀"
 
 # NOTE 下次登入時不報稱離線，所以加「暫時」字眼
 msgid "Appear Offline"
@@ -9907,7 +10374,7 @@ msgid "Initiate Conference"
 msgstr "開啟會議室"
 
 msgid "Presence Settings"
-msgstr "上線狀態設定"
+msgstr "現狀設定"
 
 msgid "Start Doodling"
 msgstr "開始 Doodle"
@@ -9928,6 +10395,16 @@ msgstr "加入好友目前所在的聊天室..."
 
 msgid "Open Inbox"
 msgstr "開啟收件匣"
+
+# XXX「obtain」譯文可能有問題 - acli 20091127
+msgid "Can't send SMS. Unable to obtain mobile carrier."
+msgstr "無法取得電訊網絡，所以無法送出短訊。"
+
+msgid "Can't send SMS. Unknown mobile carrier."
+msgstr "未知的電訊網絡，所以無法送出短訊。"
+
+msgid "Getting mobile carrier to send the SMS."
+msgstr "正在要求電訊網絡送出短訊。"
 
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
@@ -10492,14 +10969,17 @@ msgid ""
 msgstr ""
 "在解析您的%s時發生錯誤。檔案內的資料並沒有被讀入，同時舊檔案已移至 %s~。"
 
+msgid ""
+"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgstr ""
+"讓您可以透過即時通訊與好友聊天，支援 AIM、Google Talk、Jabber/XMPP、MSN、"
+"Yahoo 等等"
+
 msgid "Internet Messenger"
 msgstr "網路即時通"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin 網路即時通"
-
-msgid "Send instant messages over multiple protocols"
-msgstr "透過多種通訊協定發送即時訊息"
 
 msgid "Orientation"
 msgstr "方向"
@@ -11817,6 +12297,9 @@ msgstr "馬其頓文"
 msgid "Mongolian"
 msgstr "蒙古文"
 
+msgid "Malay"
+msgstr "馬來文"
+
 #  NOTE 譯文不統一，一般似乎偏向音譯，但譯音也不統一
 #  NOTE 音譯包括：博克馬爾、波克默爾、布克莫爾、巴克摩
 #  NOTE 其他譯法包括：丹麥－挪威文（大英百科）、丹麥式挪威文（維基百科）、東挪威文、標準挪威文（國內不是標準，國外是 :P）
@@ -11905,6 +12388,9 @@ msgstr "泰文"
 msgid "Turkish"
 msgstr "土耳其文"
 
+msgid "Ukranian"
+msgstr "烏克蘭文"
+
 msgid "Urdu"
 msgstr "烏爾都文"
 
@@ -11968,6 +12454,11 @@ msgid ""
 "primary language is <b>English</b>.  You are welcome to post in another "
 "language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
+"<font size=\"4\">其他 Pidgin 使用者提供的支援：</font><a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>這是個<b>公開的</b>郵件論壇！"
+"（<a href=\"http://pidgin.im/pipermail/support/\">論壇存檔</a>）<br/>本論壇恕"
+"不為第三者開發的模組（包括通訊協定模組）提供任何支援！<br/>發帖請以<b>英文</"
+"b>為主；以中文或其他語文發帖亦可，但收到的回覆未必有用。<br/><br/>"
 
 #, c-format
 msgid ""
@@ -12552,7 +13043,7 @@ msgstr ""
 "\n"
 
 msgid "DIR"
-msgstr ""
+msgstr "目錄"
 
 msgid "use DIR for config files"
 msgstr "設定檔所在目錄"
@@ -12573,16 +13064,16 @@ msgid "don't automatically login"
 msgstr "不自動登入"
 
 msgid "NAME"
-msgstr ""
+msgstr "名稱"
 
-#, fuzzy
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
 "                      specifies account(s) to use, separated by commas.\n"
 "                      Without this only the first account will be enabled)."
 msgstr ""
-"啟動指定的帳號 (透過 NAME 參數來指定啟動的\n"
-"                      帳號，並使用逗號分隔；"
+"啟動指定的帳號 (可選擇指定啟動的帳號名稱，\n"
+"                      啟動多個帳號時請使用逗號分隔，\n"
+"                      不指定帳號名稱時只會啟動頭一個帳號)"
 
 msgid "X display to use"
 msgstr "使用指定的 X display"
@@ -12605,12 +13096,6 @@ msgid ""
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
 msgstr ""
-
-#  TODO Untranslated - This will need to be translated (NOT transliterated) for Chinese, but that'd be too much work
-#. Translators may want to transliterate the name.
-#. It is not to be translated.
-msgid "Pidgin"
-msgstr "Pidgin"
 
 #, c-format
 msgid "Exiting because another libpurple client is already running.\n"
@@ -12810,49 +13295,54 @@ msgstr "重覆發生(_R)"
 msgid "Pounce Target"
 msgstr "捕捉目標"
 
-#, c-format
 msgid "Started typing"
 msgstr "開始輸入"
 
-#, c-format
 msgid "Paused while typing"
 msgstr "暫停輸入"
 
-#, c-format
 msgid "Signed on"
 msgstr "登入"
 
-#, c-format
 msgid "Returned from being idle"
 msgstr "由閒置返回"
 
-#, c-format
 msgid "Returned from being away"
 msgstr "由離開返回"
 
-#, c-format
 msgid "Stopped typing"
 msgstr "停止輸入"
 
-#, c-format
 msgid "Signed off"
 msgstr "登出"
 
-#, c-format
 msgid "Became idle"
 msgstr "閒置"
 
-#, c-format
 msgid "Went away"
 msgstr "離開"
 
-#, c-format
 msgid "Sent a message"
 msgstr "送出訊息"
 
-#, c-format
 msgid "Unknown.... Please report this!"
 msgstr "未知的捕捉事件……請回報這個問題！"
+
+msgid "(Custom)"
+msgstr "（使用者自定）"
+
+# NOTE 這是「none」表情主題的標題（太奇怪了，這是沒有圖示的主題喎）
+msgid "Penguin Pimps"
+msgstr ""
+
+msgid "The default Pidgin sound theme"
+msgstr "預設的 Pidgin 音效主題"
+
+msgid "The default Pidgin buddy list theme"
+msgstr "預設的 Pidgin 好友清單主題"
+
+msgid "The default Pidgin status icon theme"
+msgstr "預設的 Pidgin 狀態圖示主題"
 
 # XXX 要覆查 - 20090730
 msgid "Theme failed to unpack."
@@ -12864,29 +13354,35 @@ msgstr "無法載入表情主題。"
 msgid "Theme failed to copy."
 msgstr "無法複製表情主題。"
 
-#  NOTE 直譯「安裝主題」好像很無棱兩可，加個「檔」字好像較好
-msgid "Install Theme"
-msgstr "安裝主題檔"
+msgid "Theme Selections"
+msgstr "主題選擇"
 
+#. Instructions
 msgid ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 msgstr ""
 "在下面的清單中選取一個您所想喜歡的表情主題。您可以用拖曳的方式將新的表情主題"
 "安裝到清單中。"
 
-msgid "Icon"
-msgstr "圖示"
+msgid "Buddy List Theme:"
+msgstr "好友清單主題："
+
+msgid "Status Icon Theme:"
+msgstr "狀態圖示主題："
+
+msgid "Sound Theme:"
+msgstr "音效主題："
+
+msgid "Smiley Theme:"
+msgstr "表情主題："
 
 msgid "Keyboard Shortcuts"
 msgstr "鍵盤捷徑"
 
 msgid "Cl_ose conversations with the Escape key"
 msgstr "允許使用 Escape 鍵關閉交談(_O)"
-
-#. Buddy List Themes
-msgid "Buddy List Theme"
-msgstr "好友清單主題"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -12976,10 +13472,6 @@ msgstr "文字輸入區的最少行數："
 msgid "Font"
 msgstr "字型"
 
-#  XXX 要覆查 - acli 20070614
-msgid "Use document font from _theme"
-msgstr "使用主題指定的文件字型(_T)"
-
 msgid "Use font from _theme"
 msgstr "使用主題指定的字型(_T)"
 
@@ -13002,14 +13494,15 @@ msgstr "無法啟動代理伺服器設定程式。"
 msgid "Cannot start browser configuration program."
 msgstr "無法啟動瀏覽器設定程式。"
 
-# #NOTE 和下一個「Enable Account」對應。
-#, fuzzy
 msgid "Disabled"
-msgstr "停用帳號(_D)"
+msgstr "停用"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "使用自動偵測得來的 IP 位址(_A)：%s"
+
+msgid "ST_UN server:"
+msgstr "STUN 伺服器(_U)："
 
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr "<span style=\"italic\">例：stunserver.org</span>"
@@ -13023,57 +13516,28 @@ msgstr "通訊埠"
 msgid "_Enable automatic router port forwarding"
 msgstr "啟用路由器的自動連接埠轉送(_E)"
 
-msgid "_Manually specify range of ports to listen on"
-msgstr "自定通訊埠監聽範圍(_M)"
+msgid "_Manually specify range of ports to listen on:"
+msgstr "自定通訊埠監聽範圍(_M)："
 
-msgid "_Start port:"
-msgstr "啟始通訊埠(_S)："
+msgid "_Start:"
+msgstr "起始(_S)："
 
-msgid "_End port:"
-msgstr "結束通訊埠(_E)："
+msgid "_End:"
+msgstr "結束(_E)："
 
 # NOTE 參見 http://www.cnscode.org.tw/cnscode/standard.jsp?keyword=relay&qrytype=en&x=29&y=11
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "中繼伺服器 (TURN)"
 
-#, fuzzy
 msgid "_TURN server:"
-msgstr "STUN 伺服器(_U)："
+msgstr "TURN 伺服器(_U)："
 
-msgid "Proxy Server &amp; Browser"
-msgstr "代理伺服器及瀏覽器"
+msgid "Use_rname:"
+msgstr "帳號(_R)："
 
-msgid "<b>Proxy configuration program was not found.</b>"
-msgstr "<b>找不到代理伺服器設定程式。</b>"
-
-msgid "<b>Browser configuration program was not found.</b>"
-msgstr "<b>找不到瀏覽器設定程式。</b>"
-
-msgid ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
-msgstr "請使用 GNOME 的「偏好設定」功能更改代理伺服器或瀏覽器設定。"
-
-msgid "Configure _Proxy"
-msgstr "設定代理伺服器(_P)"
-
-msgid "Configure _Browser"
-msgstr "設定瀏覽器(_B)"
-
-msgid "Proxy Server"
-msgstr "代理伺服器"
-
-# NOTE 理由同前，不用「毋須」，改為「不使用」
-msgid "No proxy"
-msgstr "不使用代理伺服器"
-
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote DNS with SOCKS4 proxies"
-msgstr "使用 SOCKS4 代理伺服器時使用遠端 DNS"
-
-msgid "_User:"
-msgstr "使用者(_U)："
+msgid "Pass_word:"
+msgstr "密碼(_W)："
 
 msgid "Seamonkey"
 msgstr "Seamonkey"
@@ -13114,6 +13578,15 @@ msgstr "使用者自定"
 msgid "Browser Selection"
 msgstr "選擇瀏覽器"
 
+msgid "Browser preferences are configured in GNOME preferences"
+msgstr "請使用 GNOME 的「偏好設定」功能更改瀏覽器設定"
+
+msgid "<b>Browser configuration program was not found.</b>"
+msgstr "<b>找不到瀏覽器設定程式。</b>"
+
+msgid "Configure _Browser"
+msgstr "設定瀏覽器(_B)"
+
 msgid "_Browser:"
 msgstr "瀏覽器(_B)："
 
@@ -13136,6 +13609,36 @@ msgid ""
 msgstr ""
 "使用者自定(_M)：\n"
 "(請以 %s 代表網址)"
+
+msgid "Proxy Server"
+msgstr "代理伺服器"
+
+msgid "Proxy preferences are configured in GNOME preferences"
+msgstr "請使用 GNOME 的「偏好設定」功能更改代理伺服器設定"
+
+msgid "<b>Proxy configuration program was not found.</b>"
+msgstr "<b>找不到代理伺服器設定程式。</b>"
+
+msgid "Configure _Proxy"
+msgstr "設定代理伺服器(_P)"
+
+#. This is a global option that affects SOCKS4 usage even with
+#. * account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr "使用 SOCKS4 代理伺服器時使用遠端 DNS (_D)"
+
+msgid "Proxy t_ype:"
+msgstr "代理伺服器型態(_T)："
+
+# NOTE 理由同前，不用「毋須」，改為「不使用」
+msgid "No proxy"
+msgstr "不使用代理伺服器"
+
+msgid "P_ort:"
+msgstr "通訊埠(_O)："
+
+msgid "User_name:"
+msgstr "帳號(_N)："
 
 msgid "Log _format:"
 msgstr "日誌格式(_F)："
@@ -13220,25 +13723,18 @@ msgstr "閒置時間基準(_R)"
 msgid "Based on keyboard or mouse use"
 msgstr "以鍵盤及滑鼠的使用為基準"
 
+# NOTE 譯文更動 by Ambrose
+msgid "_Minutes before becoming idle:"
+msgstr "閒置多少分鐘更改狀態(_M)："
+
+msgid "Change to this status when _idle:"
+msgstr "閒置時更改狀態為(_I)："
+
 msgid "_Auto-reply:"
 msgstr "何時送出自動回應(_A)："
 
 msgid "When both away and idle"
 msgstr "當離開並同時閒置時"
-
-#. Auto-away stuff
-msgid "Auto-away"
-msgstr "自動離開"
-
-# NOTE 譯文更動 by Ambrose
-msgid "_Minutes before becoming idle:"
-msgstr "閒置多少分鐘更改狀態(_M)："
-
-msgid "Change status when _idle"
-msgstr "閒置時更改狀態(_I)"
-
-msgid "Change _status to:"
-msgstr "更改狀態為(_S)："
 
 #. Signon status stuff
 msgid "Status at Startup"
@@ -13253,14 +13749,14 @@ msgstr "啟動時套用的狀態："
 msgid "Interface"
 msgstr "介面"
 
-msgid "Smiley Themes"
-msgstr "表情主題"
-
 msgid "Browser"
 msgstr "瀏覽器"
 
 msgid "Status / Idle"
 msgstr "狀態／閒置"
+
+msgid "Themes"
+msgstr "主題"
 
 msgid "Allow all users to contact me"
 msgstr "允許所有的使用者和我聯絡"
@@ -13568,6 +14064,12 @@ msgstr "儲存檔案(_S)"
 msgid "Select color"
 msgstr "選擇顏色"
 
+#  TODO Untranslated - This will need to be translated (NOT transliterated) for Chinese, but that'd be too much work
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
+msgid "Pidgin"
+msgstr "Pidgin"
+
 msgid "_Alias"
 msgstr "別名(_A)"
 
@@ -13600,10 +14102,6 @@ msgstr "Pidgin 工具提示"
 # NOTE 這是「Default」表情主題的說明
 msgid "Pidgin smileys"
 msgstr "為 Pidgin 特別設計的表情圖示"
-
-# NOTE 這是「none」表情主題的標題（太奇怪了，這是沒有圖示的主題喎）
-msgid "Penguin Pimps"
-msgstr ""
 
 msgid "Selecting this disables graphical emoticons."
 msgstr "不使用表情圖示，選擇這個主題即可。"
@@ -14275,6 +14773,10 @@ msgstr "GtkTreeView 水平間隔距離"
 msgid "Conversation Entry"
 msgstr "交談視窗的輸入欄位"
 
+# NOTE 這是指「Conversation History」類文字的字型(?!)設定 - acli 20091127
+msgid "Conversation History"
+msgstr "交談歷史"
+
 #  XXX 這譯文絶對有問題，但想不到怎樣譯較好 - ambrose 20070415
 msgid "Request Dialog"
 msgstr "對話視窗 (Request Dialog)"
@@ -14738,9 +15240,6 @@ msgstr ""
 "\n"
 "* 請注意：這個模組需要至少 Win2000 的 Windows 版本才能產生效果。"
 
-msgid "GTK+ Runtime Version"
-msgstr "GTK+ Runtime 版本"
-
 #. Autostart
 msgid "Startup"
 msgstr "啟動"
@@ -14748,6 +15247,9 @@ msgstr "啟動"
 #, c-format
 msgid "_Start %s on Windows startup"
 msgstr "當 Windows 啟動時同時執行 %s (_S)"
+
+msgid "Allow multiple instances"
+msgstr "允許同時執行多個進程"
 
 msgid "_Dockable Buddy List"
 msgstr "可停駐的好友清單(_D)"
@@ -14810,8 +15312,47 @@ msgstr "送出、讀取未加工的 XMPP 段落。"
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
+#~ msgid ""
+#~ "The root certificate this one claims to be issued by is unknown to Pidgin."
+#~ msgstr "這張憑證聲稱由一所 Pidgin 不認識的根憑證機構簽發。"
+
+#~ msgid "Send instant messages over multiple protocols"
+#~ msgstr "透過多種通訊協定發送即時訊息"
+
 #~ msgid "Without this only the first account will be enabled)."
 #~ msgstr "如果不指定帳號，將只會啟動第一個帳號)"
+
+#  NOTE 直譯「安裝主題」好像很無棱兩可，加個「檔」字好像較好
+#~ msgid "Install Theme"
+#~ msgstr "安裝主題檔"
+
+#~ msgid "Icon"
+#~ msgstr "圖示"
+
+#  XXX 要覆查 - acli 20070614
+#~ msgid "Use document font from _theme"
+#~ msgstr "使用主題指定的文件字型(_T)"
+
+#~ msgid "_Start port:"
+#~ msgstr "啟始通訊埠(_S)："
+
+#~ msgid "_End port:"
+#~ msgstr "結束通訊埠(_E)："
+
+#~ msgid "Proxy Server &amp; Browser"
+#~ msgstr "代理伺服器及瀏覽器"
+
+#~ msgid "_User:"
+#~ msgstr "使用者(_U)："
+
+#~ msgid "Auto-away"
+#~ msgstr "自動離開"
+
+#~ msgid "Change _status to:"
+#~ msgstr "更改狀態為(_S)："
+
+#~ msgid "GTK+ Runtime Version"
+#~ msgstr "GTK+ Runtime 版本"
 
 #~ msgid "Calling ... "
 #~ msgstr "撥打中..."
@@ -15027,9 +15568,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #~ msgid "Stream Initiation"
 #~ msgstr "開始串流"
 
-#~ msgid "User Mood"
-#~ msgstr "使用者情緒"
-
 # XXX may be wrong
 #~ msgid "User Activity"
 #~ msgstr "使用者活動狀態"
@@ -15057,9 +15595,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #  XXX 是否譯「其他通訊方法」較好？但要先看上下文 - acli 20070918
 #~ msgid "Reachability Address"
 #~ msgstr "可抵達性位址"
-
-#~ msgid "User Profile"
-#~ msgstr "使用者資料"
 
 #~ msgid "Jingle"
 #~ msgstr "Jingle"
@@ -15180,9 +15715,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
 #~ msgid "Could not write"
 #~ msgstr "無法寫入"
-
-#~ msgid "Could not connect"
-#~ msgstr "無法連結"
 
 #~ msgid "Could not create listen socket"
 #~ msgstr "無法建立 Socket 監聽"

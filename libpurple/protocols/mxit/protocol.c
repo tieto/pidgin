@@ -23,11 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include	<stdio.h>
-#include	<unistd.h>
-#include	<string.h>
-#include	<errno.h>
-
+#include    "internal.h"
 #include	"purple.h"
 
 #include	"protocol.h"
@@ -339,10 +335,10 @@ static void mxit_write_http_post( struct MXitSession* session, struct tx_packet*
 	/* build the HTTP request packet */
 	reqlen = g_snprintf( request, 256,
 					"POST %s?%s HTTP/1.1\r\n"
-			  		"User-Agent: " MXIT_HTTP_USERAGENT "\r\n"
+					"User-Agent: " MXIT_HTTP_USERAGENT "\r\n"
 					"Content-Type: application/octet-stream\r\n"
-			 		"Host: %s\r\n"
-					"Content-Length: %" G_GSIZE_FORMAT "\r\n"
+					"Host: %s\r\n"
+					"Content-Length: %d\r\n"
 					"\r\n",
 					session->http_server,
 					purple_url_encode( packet->header ),
@@ -1035,7 +1031,7 @@ void mxit_send_file( struct MXitSession* session, const char* username, const ch
 {
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
-	struct raw_chunk*	chunk;
+	gchar*				chunk;
 	int					size;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "SENDING FILE '%s' of %i bytes to user '%s'\n", filename, buflen, username );
@@ -1044,17 +1040,17 @@ void mxit_send_file( struct MXitSession* session, const char* username, const ch
 	datalen = sprintf( data, "ms=" );
 
 	/* map chunk header over data buffer */
-	chunk = (struct raw_chunk *) &data[datalen];
+	chunk = &data[datalen];
 
-	size = mxit_chunk_create_senddirect( chunk->data, username, filename, buf, buflen );
+	size = mxit_chunk_create_senddirect( chunk_data( chunk ), username, filename, buf, buflen );
 	if ( size < 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Error creating senddirect chunk (%i)\n", size );
 		return;
 	}
 
-	chunk->type = CP_CHUNK_DIRECT_SND;
-	chunk->length = htonl( size );
-	datalen += sizeof( struct raw_chunk ) + size;
+	set_chunk_type( chunk, CP_CHUNK_DIRECT_SND );
+	set_chunk_length( chunk, size );
+	datalen += MXIT_CHUNK_HEADER_SIZE + size;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
@@ -1071,7 +1067,7 @@ void mxit_send_file_reject( struct MXitSession* session, const char* fileid )
 {
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
-	struct raw_chunk*	chunk;
+	gchar*				chunk;
 	int					size;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_send_file_reject\n" );
@@ -1080,17 +1076,17 @@ void mxit_send_file_reject( struct MXitSession* session, const char* fileid )
 	datalen = sprintf( data, "ms=" );
 
 	/* map chunk header over data buffer */
-	chunk = (struct raw_chunk *) &data[datalen];
+	chunk = &data[datalen];
 
-	size = mxit_chunk_create_reject( chunk->data, fileid );
+	size = mxit_chunk_create_reject( chunk_data( chunk ), fileid );
 	if ( size < 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Error creating reject chunk (%i)\n", size );
 		return;
 	}
 
-	chunk->type = CP_CHUNK_REJECT;
-	chunk->length = htonl( size );
-	datalen += sizeof( struct raw_chunk ) + size;
+	set_chunk_type( chunk, CP_CHUNK_REJECT );
+	set_chunk_length( chunk, size );
+	datalen += MXIT_CHUNK_HEADER_SIZE + size;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
@@ -1109,7 +1105,7 @@ void mxit_send_file_accept( struct MXitSession* session, const char* fileid, int
 {
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
-	struct raw_chunk*	chunk;
+	gchar*				chunk;
 	int					size;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_send_file_accept\n" );
@@ -1118,17 +1114,17 @@ void mxit_send_file_accept( struct MXitSession* session, const char* fileid, int
 	datalen = sprintf( data, "ms=" );
 
 	/* map chunk header over data buffer */
-	chunk = (struct raw_chunk *) &data[datalen];
+	chunk = &data[datalen];
 
-	size = mxit_chunk_create_get( chunk->data, fileid, filesize, offset );
+	size = mxit_chunk_create_get( chunk_data(chunk), fileid, filesize, offset );
 	if ( size < 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Error creating getfile chunk (%i)\n", size );
 		return;
 	}
 
-	chunk->type = CP_CHUNK_GET;
-	chunk->length = htonl( size );
-	datalen += sizeof( struct raw_chunk ) + size;
+	set_chunk_type( chunk, CP_CHUNK_GET );
+	set_chunk_length( chunk, size );
+	datalen += MXIT_CHUNK_HEADER_SIZE + size;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
@@ -1145,7 +1141,7 @@ void mxit_send_file_received( struct MXitSession* session, const char* fileid, s
 {
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
-	struct raw_chunk*	chunk;
+	gchar*				chunk;
 	int					size;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_send_file_received\n" );
@@ -1154,17 +1150,17 @@ void mxit_send_file_received( struct MXitSession* session, const char* fileid, s
 	datalen = sprintf( data, "ms=" );
 
 	/* map chunk header over data buffer */
-	chunk = (struct raw_chunk *) &data[datalen];
+	chunk = &data[datalen];
 
-	size = mxit_chunk_create_received( chunk->data, fileid, status );
+	size = mxit_chunk_create_received( chunk_data(chunk), fileid, status );
 	if ( size < 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Error creating received chunk (%i)\n", size );
 		return;
 	}
 
-	chunk->type = CP_CHUNK_RECIEVED;
-	chunk->length = htonl( size );
-	datalen += sizeof( struct raw_chunk ) + size;
+	set_chunk_type( chunk, CP_CHUNK_RECIEVED );
+	set_chunk_length( chunk, size );
+	datalen += MXIT_CHUNK_HEADER_SIZE + size;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
@@ -1182,7 +1178,7 @@ void mxit_set_avatar( struct MXitSession* session, const unsigned char* avatar, 
 {
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
-	struct raw_chunk*	chunk;
+	gchar*				chunk;
 	int					size;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_set_avatar: %i bytes\n", avatarlen );
@@ -1191,17 +1187,17 @@ void mxit_set_avatar( struct MXitSession* session, const unsigned char* avatar, 
 	datalen = sprintf( data, "ms=" );
 
 	/* map chunk header over data buffer */
-	chunk = (struct raw_chunk *) &data[datalen];
+	chunk = &data[datalen];
 
-	size = mxit_chunk_create_set_avatar( chunk->data, avatar, avatarlen );
+	size = mxit_chunk_create_set_avatar( chunk_data(chunk), avatar, avatarlen );
 	if ( size < 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Error creating set avatar chunk (%i)\n", size );
 		return;
 	}
 
-	chunk->type = CP_CHUNK_SET_AVATAR;
-	chunk->length = htonl( size );
-	datalen += sizeof( struct raw_chunk ) + size;
+	set_chunk_type( chunk, CP_CHUNK_SET_AVATAR );
+	set_chunk_length( chunk, size );
+	datalen += MXIT_CHUNK_HEADER_SIZE + size;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
@@ -1221,7 +1217,7 @@ void mxit_get_avatar( struct MXitSession* session, const char* mxitId, const cha
 {
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
-	struct raw_chunk*	chunk;
+	gchar*				chunk;
 	int					size;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_avatar: %s\n", mxitId );
@@ -1230,17 +1226,17 @@ void mxit_get_avatar( struct MXitSession* session, const char* mxitId, const cha
 	datalen = sprintf( data, "ms=" );
 
 	/* map chunk header over data buffer */
-	chunk = (struct raw_chunk *) &data[datalen];
+	chunk = &data[datalen];
 
-	size = mxit_chunk_create_get_avatar( chunk->data, mxitId, avatarId, MXIT_AVATAR_SIZE );
+	size = mxit_chunk_create_get_avatar( chunk_data(chunk), mxitId, avatarId, MXIT_AVATAR_SIZE );
 	if ( size < 0 ) {
 		purple_debug_error( MXIT_PLUGIN_ID, "Error creating get avatar chunk (%i)\n", size );
 		return;
 	}
 
-	chunk->type = CP_CHUNK_GET_AVATAR;
-	chunk->length = htonl( size );
-	datalen += sizeof( struct raw_chunk ) + size;
+	set_chunk_type( chunk, CP_CHUNK_GET_AVATAR );
+	set_chunk_length( chunk, size );
+	datalen += MXIT_CHUNK_HEADER_SIZE + size;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
@@ -1345,8 +1341,8 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 			name = purple_buddy_get_alias( buddy );
 		else
 			name = records[0]->fields[0]->data;
-		g_snprintf( msg, sizeof( msg ), "%s sent you an encrypted message, but it is not supported on this client.", name );
-		mxit_popup( PURPLE_NOTIFY_MSG_WARNING, _( "Message Error" ), _( msg ) );
+		g_snprintf( msg, sizeof( msg ), _( "%s sent you an encrypted message, but it is not supported on this client." ), name );
+		mxit_popup( PURPLE_NOTIFY_MSG_WARNING, _( "Message Error" ), msg );
 		return;
 	}
 
@@ -1938,13 +1934,13 @@ static int process_error_response( struct MXitSession* session, struct rx_packet
 	if ( packet->errmsg )
 		errdesc = packet->errmsg;
 	else
-		errdesc = "An internal MXit server error occurred.";
+		errdesc = _( "An internal MXit server error occurred." );
 
 	purple_debug_info( MXIT_PLUGIN_ID, "Error Reply %i:%s\n", packet->errcode, errdesc );
 
 	if ( packet->errcode == MXIT_ERRCODE_LOGGEDOUT ) {
 		/* we are not currently logged in, so we need to reconnect */
-		purple_connection_error( session->con, _( errmsg ) );
+		purple_connection_error( session->con, _( errdesc ) );
 	}
 
 	/* packet command */
@@ -1957,12 +1953,12 @@ static int process_error_response( struct MXitSession* session, struct rx_packet
 					return 0;
 				}
 				else {
-					sprintf( errmsg, "Login error: %s (%i)", errdesc, packet->errcode );
-					purple_connection_error( session->con, _( errmsg ) );
+					sprintf( errmsg, _( "Login error: %s (%i)" ), errdesc, packet->errcode );
+					purple_connection_error( session->con, errmsg );
 					return -1;
 				}
 		case CP_CMD_LOGOUT :
-				sprintf( errmsg, "Logout error: %s (%i)", errdesc, packet->errcode );
+				sprintf( errmsg, _( "Logout error: %s (%i)" ), errdesc, packet->errcode );
 				purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NAME_IN_USE, _( errmsg ) );
 				return -1;
 		case CP_CMD_CONTACT :

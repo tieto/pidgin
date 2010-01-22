@@ -23,8 +23,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "finch.h"
 #include <internal.h>
+#include "finch.h"
 
 #include <account.h>
 #include <blist.h>
@@ -1119,6 +1119,8 @@ append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 		PurpleMenuAction *act = (PurpleMenuAction *) list->data;
 		act->data = node;
 		gnt_append_menu_action(menu, act, NULL);
+		g_signal_connect_swapped(G_OBJECT(menu), "destroy",
+			G_CALLBACK(purple_menu_action_free), act);
 	}
 }
 
@@ -1368,6 +1370,8 @@ append_extended_menu(GntMenu *menu, PurpleBlistNode *node)
 			iter; iter = g_list_delete_link(iter, iter))
 	{
 		gnt_append_menu_action(menu, iter->data, NULL);
+		g_signal_connect_swapped(G_OBJECT(menu), "destroy",
+				G_CALLBACK(purple_menu_action_free), iter->data);
 	}
 }
 
