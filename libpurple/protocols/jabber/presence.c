@@ -790,8 +790,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				g_free(room_jid);
 			}
 
-			jabber_buddy_track_resource(jb, jid->resource, priority, state,
+			jbr = jabber_buddy_track_resource(jb, jid->resource, priority, state,
 					status);
+			jbr->commands_fetched = TRUE;
 
 			jabber_chat_track_handle(chat, jid->resource, real_jid, affiliation, role);
 
