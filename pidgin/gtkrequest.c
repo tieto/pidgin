@@ -719,23 +719,25 @@ req_entry_field_changed_cb(GtkWidget *entry, PurpleRequestField *field)
 {
 	PurpleRequestFieldGroup *group;
 	PidginRequestData *req_data;
-	const char *text = NULL;
 
 	if (purple_request_field_string_is_multiline(field))
 	{
+		char *text;
 		GtkTextIter start_iter, end_iter;
 
 		gtk_text_buffer_get_start_iter(GTK_TEXT_BUFFER(entry), &start_iter);
 		gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(entry), &end_iter);
 
 		text = gtk_text_buffer_get_text(GTK_TEXT_BUFFER(entry), &start_iter, &end_iter, FALSE);
+		purple_request_field_string_set_value(field, (!text || !*text) ? NULL : text);
+		g_free(text);
 	}
 	else
 	{
+		const char *text = NULL;
 		text = gtk_entry_get_text(GTK_ENTRY(entry));
+		purple_request_field_string_set_value(field, (*text == '\0') ? NULL : text);
 	}
-
-	purple_request_field_string_set_value(field, (*text == '\0') ? NULL : text);
 
 	group = purple_request_field_get_group(field);
 	req_data = (PidginRequestData *)group->fields_list->ui_data;
