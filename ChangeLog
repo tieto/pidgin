@@ -3,6 +3,8 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.6.6 (??/??/20??):
 	libpurple:
 	* Fix 'make check' on OS X. (David Fang)
+	* Fix a quirk in purple_markup_html_to_xhtml that caused some messages
+	  to be improperly converted to XHTML.
 
 	General:
 	* Correctly disable all missing dependencies when using the
@@ -27,6 +29,8 @@ version 2.6.6 (??/??/20??):
 	* When getting info on a domain-only (server) JID, show uptime
 	  (when given by the result of the "last query") and don't show status as
 	  offline.
+	* Wrap XHTML messages in <p>, as described in XEP-0071, for compatibility
+	  with some clients.
 
 	Pidgin:
 	* Correctly size conversation and status box entries when the

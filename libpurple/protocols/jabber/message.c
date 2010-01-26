@@ -1193,6 +1193,7 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	tmp = purple_utf8_strip_unprintables(msg);
 	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
 	g_free(tmp);
+
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
 	if (tmp) {
 		g_free(xhtml);
@@ -1206,7 +1207,8 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	if (!jbr || !jbr->caps.info ||
 			jabber_resource_has_capability(jbr, NS_XHTML_IM)) {
 		if (!jabber_xhtml_plain_equal(xhtml, jm->body))
-			jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'>%s</body></html>", xhtml);
+			/* Wrap the message in <p/> for great interoperability justice. */
+			jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'><p>%s</p></body></html>", xhtml);
 	}
 
 	g_free(xhtml);
@@ -1249,7 +1251,8 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	}
 
 	if (chat->xhtml && !jabber_xhtml_plain_equal(xhtml, jm->body))
-		jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'>%s</body></html>", xhtml);
+		/* Wrap the message in <p/> for greater interoperability justice. */
+		jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'><p>%s</p></body></html>", xhtml);
 
 	g_free(xhtml);
 
