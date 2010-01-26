@@ -695,12 +695,12 @@ void mxit_send_login( struct MXitSession* session )
  *  @param to			The username of the recipient
  *  @param msg			The message text
  */
-void mxit_send_message( struct MXitSession* session, const char* to, const char* msg, gboolean parse_markup )
+void mxit_send_message( struct MXitSession* session, const char* to, const char* msg, gboolean parse_markup, gboolean is_command )
 {
 	char		data[CP_MAX_PACKET];
 	char*		markuped_msg;
 	int			datalen;
-	int			msgtype = CP_MSGTYPE_NORMAL;
+	int			msgtype = ( is_command ? CP_MSGTYPE_COMMAND : CP_MSGTYPE_NORMAL );
 
 	/* first we need to convert the markup from libPurple to MXit format */
 	if ( parse_markup )
