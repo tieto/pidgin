@@ -889,6 +889,13 @@ shift_window(GntWM *wm, GntWidget *widget, int dir)
 	all = g_list_delete_link(all, list);
 	wm->cws->list = all;
 	gnt_ws_draw_taskbar(wm->cws, FALSE);
+	if (wm->cws->ordered) {
+		GntWidget *w = wm->cws->ordered->data;
+		GntNode *node = g_hash_table_lookup(wm->nodes, w);
+		top_panel(node->panel);
+		update_panels();
+		doupdate();
+	}
 }
 
 static gboolean
