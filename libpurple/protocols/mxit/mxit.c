@@ -58,9 +58,10 @@ static void* mxit_link_click( const char* link64 )
 {
 	PurpleAccount*		account;
 	PurpleConnection*	con;
-	gchar**				parts	= NULL;
-	gchar*				link	= NULL;
+	gchar**				parts		= NULL;
+	gchar*				link		= NULL;
 	gsize				len;
+	gboolean			is_command	= FALSE;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_link_click (%s)\n", link64 );
 
@@ -92,7 +93,7 @@ static void* mxit_link_click( const char* link64 )
 	con = purple_account_get_connection( account );
 
 	/* send click message back to MXit */
-	mxit_send_message( con->proto_data, parts[3], parts[4], FALSE );
+	mxit_send_message( con->proto_data, parts[3], parts[4], FALSE, is_command );
 
 	g_free( link );
 	link = NULL;
@@ -205,7 +206,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 				tmp = g_strdup_printf("<font color=\"#999999\">%s</font>\n", _( "Loading menu..." ));
 				serv_got_im( session->con, who, tmp, PURPLE_MESSAGE_NOTIFY, time( NULL ) );
 				g_free(tmp);
-				mxit_send_message( session, who, " ", FALSE );
+				mxit_send_message( session, who, " ", FALSE, FALSE );
 		default :
 				break;
 	}
@@ -262,6 +263,10 @@ static const char* mxit_list_emblem( PurpleBuddy* buddy )
 
 	if ( !contact )
 		return NULL;
+
+	/* subscription state is Pending, Rejected or Deleted */
+	if ( contact->subtype != MXIT_SUBTYPE_BOTH )
+		return "not-authorized";
 
 	switch ( contact-> type ) {
 		case MXIT_TYPE_JABBER :			/* external contacts via MXit */
@@ -390,7 +395,7 @@ static int mxit_send_im( PurpleConnection* gc, const char* who, const char* mess
 {
 	purple_debug_info( MXIT_PLUGIN_ID, "Sending message '%s' to buddy '%s'\n", message, who );
 
-	mxit_send_message( gc->proto_data, who, message, TRUE );
+	mxit_send_message( gc->proto_data, who, message, TRUE, FALSE );
 
 	return 1;		/* echo to conversation window */
 }
@@ -423,6 +428,7 @@ static void mxit_set_status( PurpleAccount* account, PurpleStatus* status )
 
 	statusmsg1 = purple_markup_strip_html( purple_status_get_attr_string( status, "message" ) );
 	statusmsg2 = g_strndup( statusmsg1, CP_MAX_STATUS_MSG );
+
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_set_status: '%s'\n", statusmsg2 );
 
 	/* update presence state */
