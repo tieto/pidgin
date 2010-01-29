@@ -5616,6 +5616,51 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 
 }
 
+static gboolean
+pidgin_blist_search_equal_func(GtkTreeModel *model, gint column,
+			const gchar *key, GtkTreeIter *iter, gpointer data)
+{
+	PurpleBlistNode *node = NULL;
+	gboolean res = TRUE;
+	const char *compare = NULL;
+
+	if (!pidgin_tree_view_search_equal_func(model, column, key, iter, data))
+		return FALSE;
+
+	/* If the search string does not match the displayed label, then look
+	 * at the alternate labels for the nodes and search in them. Currently,
+	 * alternate labels that make sense are usernames/email addresses for
+	 * buddies (but only for the ones who don't have a local alias).
+	 */
+
+	gtk_tree_model_get(model, iter, NODE_COLUMN, &node, -1);
+	if (!node)
+		return TRUE;
+
+	compare = NULL;
+	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		PurpleBuddy *b = purple_contact_get_priority_buddy(PURPLE_CONTACT(node));
+		if (!purple_buddy_get_local_buddy_alias(b))
+			compare = purple_buddy_get_name(b);
+	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		if (!purple_buddy_get_local_buddy_alias(PURPLE_BUDDY(node)))
+			compare = purple_buddy_get_name(PURPLE_BUDDY(node));
+	}
+
+	if (compare) {
+		char *tmp, *enteredstring;
+		tmp = g_utf8_normalize(key, -1, G_NORMALIZE_DEFAULT);
+		enteredstring = g_utf8_casefold(tmp, -1);
+		g_free(tmp);
+
+		if (purple_str_has_prefix(compare, enteredstring))
+			res = FALSE;
+		g_free(enteredstring);
+	}
+
+	return res;
+}
+
 static void pidgin_blist_show(PurpleBuddyList *list)
 {
 	PidginBuddyListPrivate *priv;
@@ -5852,7 +5897,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	/* Enable CTRL+F searching */
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(gtkblist->treeview), NAME_COLUMN);
-	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(gtkblist->treeview), pidgin_tree_view_search_equal_func, NULL, NULL);
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(gtkblist->treeview),
+			pidgin_blist_search_equal_func, NULL, NULL);
 
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
