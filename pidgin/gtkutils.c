@@ -1586,8 +1586,8 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 						    _("You have dragged an image"),
 						    _("You can send this image as a file transfer, "
 						      "embed it into this message, or use it as the buddy icon for this user."),
-						    DND_FILE_TRANSFER, "OK", (GCallback)dnd_image_ok_callback,
-						    "Cancel", (GCallback)dnd_image_cancel_callback,
+						    DND_FILE_TRANSFER, _("OK"), (GCallback)dnd_image_ok_callback,
+						    _("Cancel"), (GCallback)dnd_image_cancel_callback,
 							account, who, NULL,
 							data,
 							_("Set as buddy icon"), DND_BUDDY_ICON,
@@ -1606,8 +1606,8 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 						    (ft ? _("You can send this image as a file transfer, or use it as the buddy icon for this user.") :
 						    _("You can insert this image into this message, or use it as the buddy icon for this user")),
 						    (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
-							"OK", (GCallback)dnd_image_ok_callback,
-						    "Cancel", (GCallback)dnd_image_cancel_callback,
+							_("OK"), (GCallback)dnd_image_ok_callback,
+						    _("Cancel"), (GCallback)dnd_image_cancel_callback,
 							account, who, NULL,
 							data,
 						    _("Set as buddy icon"), DND_BUDDY_ICON,
