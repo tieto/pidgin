@@ -32,6 +32,9 @@ version 2.6.6 (??/??/20??):
 	* Wrap XHTML messages in <p>, as described in XEP-0071, for compatibility
 	  with some clients.
 
+	Yahoo:
+	* Don't send <span> and </span> tags.  (Fartash Faghri)
+
 	Pidgin:
 	* Correctly size conversation and status box entries when the
 	  interior-focus style property is diabled. (Gabriel Schulhof)
