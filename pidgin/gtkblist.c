@@ -470,6 +470,9 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 	case PURPLE_BLIST_GROUP_NODE:
 		text = purple_group_get_name(PURPLE_GROUP(node));
 		break;
+	case PURPLE_BLIST_CHAT_NODE:
+		text = purple_chat_get_name(PURPLE_CHAT(node));
+		break;
 	default:
 		g_return_if_reached();
 	}
