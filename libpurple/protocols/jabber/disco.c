@@ -22,6 +22,7 @@
  */
 
 #include "internal.h"
+#include "network.h"
 #include "prefs.h"
 #include "debug.h"
 #include "request.h"
@@ -534,8 +535,12 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 			js->googletalk = TRUE;
 
 			/* autodiscover stun and relays */
-			jabber_google_send_jingle_info(js);
-		} else {
+			if (purple_network_get_stun_ip() == NULL ||
+		    	purple_strequal(purple_network_get_stun_ip(), "")) {
+				jabber_google_send_jingle_info(js);
+			}
+		} else if (purple_network_get_stun_ip() == NULL ||
+		    purple_strequal(purple_network_get_stun_ip(), "")) {
 			js->srv_query_data = 
 				purple_srv_resolve("stun", "udp", js->user->domain,
 					jabber_disco_stun_srv_resolve_cb, js);

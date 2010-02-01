@@ -31,6 +31,8 @@ version 2.6.6 (??/??/20??):
 	  offline.
 	* Wrap XHTML messages in <p>, as described in XEP-0071, for compatibility
 	  with some clients.
+	* Don't do an SRV lookup for a STUN server associated with the account
+	  if one is already set globally in prefs.
 
 	Yahoo:
 	* Don't send <span> and </span> tags.  (Fartash Faghri)
