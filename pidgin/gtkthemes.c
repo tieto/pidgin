@@ -310,7 +310,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 			while  (*i) {
 				char l[64];
 				int li = 0;
-				while (!isspace(*i) && li < sizeof(l) - 1) {
+				while (*i && !isspace(*i) && li < sizeof(l) - 1) {
 					if (*i == '\\' && *(i+1) != '\0' && *(i+1) != '\n' && *(i+1) != '\r')
 						i++;
 					l[li++] = *(i++);
