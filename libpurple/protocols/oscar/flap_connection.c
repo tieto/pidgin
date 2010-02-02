@@ -133,10 +133,10 @@ rateclass_get_new_current(FlapConnection *conn, struct rateclass *rateclass, str
 	unsigned long timediff; /* In milliseconds */
 	guint32 current;
 
+	/* This formula is documented at http://dev.aol.com/aim/oscar/#RATELIMIT */
 	timediff = (now->tv_sec - rateclass->last.tv_sec) * 1000 + (now->tv_usec - rateclass->last.tv_usec) / 1000;
 	current = ((rateclass->current * (rateclass->windowsize - 1)) + timediff) / rateclass->windowsize;
 
-	/* This formula is taken from http://dev.aol.com/aim/oscar/#RATELIMIT */
 	return MIN(current, rateclass->max);
 }
 
