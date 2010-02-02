@@ -342,8 +342,7 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		}
 
 		rateclass->last.tv_sec = now.tv_sec - delta / 1000;
-		delta %= 1000;
-		rateclass->last.tv_usec = now.tv_usec - delta * 1000;
+		rateclass->last.tv_usec = now.tv_usec - (delta % 1000) * 1000;
 
 		rateclass->members = g_hash_table_new(g_direct_hash, g_direct_equal);
 		conn->rateclasses = g_slist_prepend(conn->rateclasses, rateclass);
@@ -485,8 +484,7 @@ ratechange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	}
 
 	rateclass->last.tv_sec = now.tv_sec - delta / 1000;
-	delta %= 1000;
-	rateclass->last.tv_usec = now.tv_usec - delta * 1000;
+	rateclass->last.tv_usec = now.tv_usec - (delta % 1000) * 1000;
 
 	purple_debug_misc("oscar", "rate %s (param ID 0x%04hx): curavg = %u, "
 			"maxavg = %u, alert at %u, clear warning at %u, limit at %u, "
