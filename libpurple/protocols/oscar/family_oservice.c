@@ -323,7 +323,7 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		struct timeval now;
 
 		gettimeofday(&now, NULL);
-		rateclass = g_new0(struct rateclass, 1);
+		rateclass = g_new(struct rateclass, 1);
 
 		rateclass->classid = byte_stream_get16(bs);
 		rateclass->windowsize = byte_stream_get32(bs);
