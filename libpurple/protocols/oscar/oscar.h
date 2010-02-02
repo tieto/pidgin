@@ -1685,7 +1685,6 @@ struct rateclass {
 	guint32 disconnect;
 	guint32 current;
 	guint32 max;
-	guint32 delta;
 	guint8 dropping_snacs;
 	GHashTable *members; /* Key is family and subtype, value is TRUE. */
 
