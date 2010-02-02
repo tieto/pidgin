@@ -190,7 +190,6 @@ static int purple_email_parseupdate(OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_icon_parseicon   (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int oscar_icon_req        (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_msgack     (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_parse_ratechange (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_evilnotify (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_searcherror(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_searchreply(OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -1526,7 +1525,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x000f, purple_selfinfo, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x001f, purple_memrequest, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x0021, oscar_icon_req,0);
-	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_RATECHANGE, purple_parse_ratechange, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_REDIRECT, purple_handle_redirect, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_MOTD, purple_parse_motd, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_EVIL, purple_parse_evilnotify, 0);
@@ -3834,56 +3832,6 @@ static int purple_parse_msgack(OscarData *od, FlapConnection *conn, FlapFrame *f
 	va_end(ap);
 
 	purple_debug_info("oscar", "Sent message to %s.\n", bn);
-
-	return 1;
-}
-
-static int purple_parse_ratechange(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	static const char *codes[5] = {
-		"invalid",
-		"change",
-		"warning",
-		"limit",
-		"limit cleared",
-	};
-	va_list ap;
-	guint16 code, rateclass;
-	guint32 windowsize, clear, alert, limit, disconnect, currentavg, maxavg, delta;
-	guint8 dropping_snacs;
-
-	va_start(ap, fr);
-	code = (guint16)va_arg(ap, unsigned int);
-	rateclass= (guint16)va_arg(ap, unsigned int);
-	windowsize = va_arg(ap, guint32);
-	clear = va_arg(ap, guint32);
-	alert = va_arg(ap, guint32);
-	limit = va_arg(ap, guint32);
-	disconnect = va_arg(ap, guint32);
-	currentavg = va_arg(ap, guint32);
-	maxavg = va_arg(ap, guint32);
-	delta = va_arg(ap, guint32);
-	dropping_snacs = (guint8)va_arg(ap, unsigned int);
-	va_end(ap);
-
-	purple_debug_misc("oscar",
-			   "rate %s (param ID 0x%04hx): curavg = %u, maxavg = %u, alert at %u, "
-		     "clear warning at %u, limit at %u, disconnect at %u, delta is %u, dropping is %u (window size = %u)\n",
-		     (code < 5) ? codes[code] : codes[0],
-		     rateclass,
-		     currentavg, maxavg,
-		     alert, clear,
-		     limit, disconnect,
-		     delta,
-		     dropping_snacs,
-		     windowsize
-		     );
-
-	if (code == AIM_RATE_CODE_LIMIT)
-	{
-		purple_debug_warning("oscar",  _("The last action you attempted could not be "
-				"performed because you are over the rate limit. "
-				"Please wait 10 seconds and try again.\n"));
-	}
 
 	return 1;
 }
