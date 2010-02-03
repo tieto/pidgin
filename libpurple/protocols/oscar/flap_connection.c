@@ -106,19 +106,13 @@ flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConne
 static struct rateclass *
 flap_connection_get_rateclass(FlapConnection *conn, guint16 family, guint16 subtype)
 {
-	GSList *tmp1;
 	gconstpointer key;
+	gpointer rateclass;
 
 	key = GUINT_TO_POINTER((family << 16) + subtype);
-
-	for (tmp1 = conn->rateclasses; tmp1 != NULL; tmp1 = tmp1->next)
-	{
-		struct rateclass *rateclass;
-		rateclass = tmp1->data;
-
-		if (g_hash_table_lookup(rateclass->members, key))
-			return rateclass;
-	}
+	rateclass = g_hash_table_lookup(conn->rateclass_members, key);
+	if (rateclass != NULL)
+		return rateclass;
 
 	return conn->default_rateclass;
 }
@@ -346,6 +340,7 @@ flap_connection_new(OscarData *od, int type)
 	conn->fd = -1;
 	conn->subtype = -1;
 	conn->type = type;
+	conn->rateclass_members = g_hash_table_new(g_direct_hash, g_direct_equal);
 
 	od->oscar_connections = g_slist_prepend(od->oscar_connections, conn);
 
@@ -411,13 +406,6 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 
 	purple_circ_buffer_destroy(conn->buffer_outgoing);
 	conn->buffer_outgoing = NULL;
-}
-
-static void
-flap_connection_destroy_rateclass(struct rateclass *rateclass)
-{
-	g_hash_table_destroy(rateclass->members);
-	g_free(rateclass);
 }
 
 /**
@@ -507,9 +495,11 @@ flap_connection_destroy_cb(gpointer data)
 	g_slist_free(conn->groups);
 	while (conn->rateclasses != NULL)
 	{
-		flap_connection_destroy_rateclass(conn->rateclasses->data);
+		g_free(conn->rateclasses->data);
 		conn->rateclasses = g_slist_delete_link(conn->rateclasses, conn->rateclasses);
 	}
+
+	g_hash_table_destroy(conn->rateclass_members);
 
 	if (conn->queued_snacs) {
 		while (!g_queue_is_empty(conn->queued_snacs))

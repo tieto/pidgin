@@ -362,7 +362,6 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		rateclass->last.tv_sec = now.tv_sec - delta / 1000;
 		rateclass->last.tv_usec = now.tv_usec - (delta % 1000) * 1000;
 
-		rateclass->members = g_hash_table_new(g_direct_hash, g_direct_equal);
 		conn->rateclasses = g_slist_prepend(conn->rateclasses, rateclass);
 
 		if (rateclass->classid == OSCAR_DEFAULT_RATECLASS)
@@ -401,9 +400,9 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 			subtype = byte_stream_get16(bs);
 
 			if (rateclass != NULL)
-				g_hash_table_insert(rateclass->members,
+				g_hash_table_insert(conn->rateclass_members,
 						GUINT_TO_POINTER((group << 16) + subtype),
-						GUINT_TO_POINTER(TRUE));
+						rateclass);
 		}
 	}
 
