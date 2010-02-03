@@ -497,17 +497,15 @@ check_for_and_do_command(PurpleConversation *conv)
 						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 					if ((prpl_info != NULL) && (prpl_info->options & OPT_PROTO_SLASH_COMMANDS_NATIVE)) {
-						char *firstspace;
-						char *slash;
+						char *spaceslash;
 
-						firstspace = strchr(cmdline, ' ');
-						if (firstspace != NULL) {
-							slash = strrchr(firstspace, '/');
-						} else {
-							slash = strchr(cmdline, '/');
-						}
+						/* If the first word in the entered text has a '/' in it, then the user
+						 * probably didn't mean it as a command. So send the text as message. */
+						spaceslash = cmdline;
+						while (*spaceslash && *spaceslash != ' ' && *spaceslash != '/')
+							spaceslash++;
 
-						if (slash == NULL) {
+						if (*spaceslash != '/') {
 							purple_conversation_write(conv, "", _("Unknown command."), PURPLE_MESSAGE_NO_LOG, time(NULL));
 							retval = TRUE;
 						}
