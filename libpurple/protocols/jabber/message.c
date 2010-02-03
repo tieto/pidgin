@@ -985,6 +985,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 			gchar *smileyfied_xhtml = NULL;
 			const GList *iterator;
 			GList *valid_smileys = NULL;
+			gboolean has_too_large_smiley = FALSE;
 			
 			for (iterator = found_smileys; iterator ;
 				iterator = g_list_next(iterator)) {
@@ -1011,13 +1012,14 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 					}
 					valid_smileys = g_list_append(valid_smileys, smiley);
 				} else {
-					gchar *msg =
-						g_strdup_printf(_("Custom smiley with shortcut %s is too large to send."),
-						    purple_smiley_get_shortcut(smiley));
-					purple_conversation_write(conv, NULL, msg,
-					    PURPLE_MESSAGE_ERROR, time(NULL));
-					g_free(msg);
+					has_too_large_smiley = TRUE;
 				}				
+			}
+
+			if (has_too_large_smiley) {
+				purple_conversation_write(conv, NULL,
+				    _("A custom smiley in the message is too large to send."),
+					PURPLE_MESSAGE_ERROR, time(NULL));
 			}
 
 			smileyfied_xhtml =
