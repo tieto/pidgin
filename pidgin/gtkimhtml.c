@@ -4934,7 +4934,9 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 	mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
 
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, mark);
+	gtk_text_buffer_begin_user_action(imhtml->text_buffer);
 	gtk_imhtml_insert_smiley_at_iter(imhtml, sml, smiley, &iter);
+	gtk_text_buffer_end_user_action(imhtml->text_buffer);
 }
 
 static gboolean
