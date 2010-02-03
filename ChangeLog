@@ -44,6 +44,12 @@ version 2.6.6 (??/??/20??):
 	  request form.  (Thanks to Florian Zeitz for finding this problem)
 	* Search friends by email-addresses in the buddy list. (Luoh Ren-Shan)
 
+	Finch:
+	* Rebindable 'move-first' and 'move-last' actions for tree widgets. So
+	  it is possible to jump to the first or last entry in the buddy list
+	  (and other such lists) by pressing home or end key (defaults)
+	  respectively.
+
 version 2.6.5 (01/08/2010):
 	libpurple:
 	* TLS certificates are actually stored to the local cache once again
