@@ -1443,30 +1443,21 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
  */
 void jabber_close(PurpleConnection *gc)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 
 	/* Close all of the open Jingle sessions on this stream */
 	jingle_terminate_sessions(js);
 
-	/* Don't perform any actions on the ssl connection
-	 * if we were forcibly disconnected because it will crash
-	 * on some SSL backends.
-	 */
-	if (!gc->disconnect_timeout) {
-		if (js->bosh)
-			jabber_bosh_connection_close(js->bosh);
-		else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
-			jabber_send_raw(js, "</stream:stream>", -1);
-	}
+	if (js->bosh)
+		jabber_bosh_connection_close(js->bosh);
+	else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
+		jabber_send_raw(js, "</stream:stream>", -1);
 
 	if (js->srv_query_data)
 		purple_srv_cancel(js->srv_query_data);
 
 	if(js->gsc) {
-#ifdef HAVE_OPENSSL
-		if (!gc->disconnect_timeout)
-#endif
-			purple_ssl_close(js->gsc);
+		purple_ssl_close(js->gsc);
 	} else if (js->fd > 0) {
 		if(js->gc->inpa)
 			purple_input_remove(js->gc->inpa);
