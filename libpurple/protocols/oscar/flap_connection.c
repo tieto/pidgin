@@ -120,7 +120,7 @@ flap_connection_get_rateclass(FlapConnection *conn, guint16 family, guint16 subt
 			return rateclass;
 	}
 
-	return NULL;
+	return conn->default_rateclass;
 }
 
 /*

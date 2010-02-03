@@ -445,6 +445,7 @@ struct _FlapConnection
 	guint16 seqnum_in; /**< The sequence number of most recently received packet. */
 	GSList *groups;
 	GSList *rateclasses; /* Contains nodes of struct rateclass. */
+	struct rateclass *default_rateclass;
 
 	GQueue *queued_snacs; /**< Contains QueuedSnacs. */
 	GQueue *queued_lowpriority_snacs; /**< Contains QueuedSnacs to send only once queued_snacs is empty */

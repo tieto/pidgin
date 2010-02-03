@@ -27,6 +27,24 @@
 
 #include "cipher.h"
 
+/*
+ * Each time we make a FLAP connection to an oscar server the server gives
+ * us a list of rate classes.  Each rate class has different properties for
+ * how frequently we can send SNACs in that rate class before we become
+ * throttled or disconnected.
+ *
+ * The server also gives us a list of every available SNAC and tells us which
+ * rate class it's in.  There are a lot of different SNACs, so this list can be
+ * fairly large.  One important characteristic of these rate classes is that
+ * currently (and since at least 2004) most SNACs are in the same rate class.
+ *
+ * One optimization we can do to save memory is to only keep track of SNACs
+ * that are in classes other than this default rate class.  So if we try to
+ * look up a SNAC and it's not in our hash table then we can assume that it's
+ * in the default rate class.
+ */
+#define OSCAR_DEFAULT_RATECLASS 1
+
 /* Subtype 0x0002 - Client Online */
 void
 aim_srv_clientready(OscarData *od, FlapConnection *conn)
@@ -346,6 +364,9 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 
 		rateclass->members = g_hash_table_new(g_direct_hash, g_direct_equal);
 		conn->rateclasses = g_slist_prepend(conn->rateclasses, rateclass);
+
+		if (rateclass->classid == OSCAR_DEFAULT_RATECLASS)
+			conn->default_rateclass = rateclass;
 	}
 	conn->rateclasses = g_slist_reverse(conn->rateclasses);
 
@@ -360,6 +381,15 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 
 		classid = byte_stream_get16(bs);
 		count = byte_stream_get16(bs);
+
+		if (classid == OSCAR_DEFAULT_RATECLASS) {
+			/*
+			 * Don't bother adding these SNACs to the hash table.  See the
+			 * comment for OSCAR_DEFAULT_RATECLASS at the top of this file.
+			 */
+			byte_stream_advance(bs, 4 * count);
+			continue;
+		}
 
 		rateclass = rateclass_find(conn->rateclasses, classid);
 
