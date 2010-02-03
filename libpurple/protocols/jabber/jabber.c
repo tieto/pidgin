@@ -427,13 +427,12 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		g_free(text);
 	}
 
-	/* If we've got a security layer, we need to encode the data,
-	 * splitting it on the maximum buffer length negotiated */
-
 	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-sending-text", js->gc, &data);
 	if (data == NULL)
 		return;
 
+	/* If we've got a security layer, we need to encode the data,
+	 * splitting it on the maximum buffer length negotiated */
 #ifdef HAVE_CYRUS_SASL
 	if (js->sasl_maxbuf>0) {
 		int pos = 0;
