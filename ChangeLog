@@ -5,6 +5,8 @@ version 2.6.6 (??/??/20??):
 	* Fix 'make check' on OS X. (David Fang)
 	* Fix a quirk in purple_markup_html_to_xhtml that caused some messages
 	  to be improperly converted to XHTML.
+	* Set "controlling-mode" correctly when initializing a media session.
+	  Fixes receiving voice calls from Psi.
 
 	General:
 	* Correctly disable all missing dependencies when using the
