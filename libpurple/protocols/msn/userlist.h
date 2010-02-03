@@ -31,12 +31,11 @@ typedef struct _MsnUserList MsnUserList;
 
 typedef enum
 {
-	MSN_LIST_FL,
-	MSN_LIST_AL,
-	MSN_LIST_BL,
-	MSN_LIST_RL,
-	MSN_LIST_PL
-
+	MSN_LIST_FL, /**< Forward list */
+	MSN_LIST_AL, /**< Allow list */
+	MSN_LIST_BL, /**< Block list */
+	MSN_LIST_RL, /**< Reverse list */
+	MSN_LIST_PL  /**< Pending list */
 } MsnListId;
 
 
