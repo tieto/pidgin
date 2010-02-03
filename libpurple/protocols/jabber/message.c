@@ -1013,6 +1013,10 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 					valid_smileys = g_list_append(valid_smileys, smiley);
 				} else {
 					has_too_large_smiley = TRUE;
+					purple_debug_warning("jabber", "Refusing to send smiley %s "
+							"(too large, max is %d)\n",
+							purple_smiley_get_shortcut(smiley),
+							JABBER_DATA_MAX_SIZE);
 				}				
 			}
 

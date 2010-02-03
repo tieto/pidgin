@@ -38,8 +38,8 @@ version 2.6.6 (??/??/20??):
 	* Don't do an SRV lookup for a STUN server associated with the account
 	  if one is already set globally in prefs.
 	* Don't send custom smileys larger than the recommended maximum object size
-	  specified in the BoB XEP. Will prevent getting disconnected because of
-	  sending to large stanzas.
+	  specified in the BoB XEP.   This prevents a client from being
+	  disconnected by servers that dislike overly-large stanzas.
 
 	Yahoo:
 	* Don't send <span> and </span> tags.  (Fartash Faghri)
