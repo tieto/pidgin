@@ -103,8 +103,11 @@ struct _MsnUser
 
 	int list_op;            /**< Which lists the user is in     */
 
-	guint membership_id[5];	/**< The membershipId sent by the contacts server,
-				     indexed by the list it belongs to		*/
+	/**
+	 * The membershipId for this buddy on our pending list.  Sent by
+	 * the contact's server
+	 */
+	guint member_id_on_pending_list;
 
 	char *invite_message;   /**< Invite message of user request */
 };

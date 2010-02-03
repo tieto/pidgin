@@ -406,8 +406,8 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	msn_user_set_network(user, nid);
 	msn_user_set_invite_message(user, invite);
 
-	if (member_id) {
-		user->membership_id[list] = atoi(member_id);
+	if (list == MSN_LIST_PL && member_id) {
+		user->member_id_on_pending_list = atoi(member_id);
 	}
 
 	msn_got_lst_user(session, user, 1 << list, NULL);
@@ -1567,11 +1567,11 @@ msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 		if (user && user->networkid != MSN_NETWORK_PASSPORT)
 			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
 			                         "EmailMember", "Email",
-			                         user->membership_id[MSN_LIST_PL]);
+			                         user->member_id_on_pending_list);
 		else
 			member = g_strdup_printf(MSN_MEMBER_MEMBERSHIPID_XML,
 			                         "PassportMember", "Passport",
-			                         user->membership_id[MSN_LIST_PL]);
+			                         user->member_id_on_pending_list);
 	} else {
 		/* list == MSN_LIST_AL || list == MSN_LIST_BL */
 		partner_scenario = MSN_PS_BLOCK_UNBLOCK;
