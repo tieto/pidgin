@@ -186,7 +186,6 @@ void purple_prefs_destroy(void);
  * @param name  The name of the pref
  * @param value The value to set
  *
- * @deprecatethis?
  * @deprecated We're not really sure what purpose this function serves, so it
  *             will be removed in 3.0.0.  Preferences values set using this
  *             function aren't serialized to prefs.xml, which could be
