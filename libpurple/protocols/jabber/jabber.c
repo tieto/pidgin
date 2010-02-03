@@ -356,11 +356,20 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 	}
 
 	if (ret < 0 && errno != EAGAIN) {
-		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
-				g_strerror(errno));
-		purple_connection_error_reason(js->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
-		g_free(tmp);
+		PurpleAccount *account = purple_connection_get_account(js->gc);
+		/*
+		 * The server may have closed the socket (on a stream error), so if
+		 * we're disconnecting, don't generate (possibly another) error that
+		 * (for some UIs) would mask the first.
+		 */
+		if (!account->disconnecting) {
+			gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+					g_strerror(errno));
+			purple_connection_error_reason(js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+			g_free(tmp);
+		}
+
 		success = FALSE;
 	} else if (ret < len) {
 		if (ret < 0)
