@@ -11,7 +11,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Er is al een installatie actief."
 !define PIDGIN_IS_RUNNING			"Pidgin wordt op dit moment uitgevoerd. Sluit Pidgin af en start de installatie opnieuw."
-!define GTK_INSTALLER_NEEDED			"De GTK+ runtime-omgeving is niet aanwezig of moet vernieuwd worden.$\rInstalleer v${GTK_MIN_VERSION} of nieuwer van de GTK+ runtime-omgeving"
 
 
 ; License Page
@@ -26,14 +25,11 @@
 
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Er is een oude versie van GTK+ gevonden. Wilt u deze bijwerken?$\rLet op: $(^Name) werkt misschien niet als u dit niet doet."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Neem een kijkje op de Windows Pidgin webpagina"
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Fout bij installatie van GTK+ runtime omgeving."
-!define GTK_BAD_INSTALL_PATH			"Het door u gegeven pad kan niet benaderd worden."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Het verwijderingsprogramma voor Pidgin kon geen register-ingangen voor Pidgin vinden.$\rWaarschijnlijk heeft een andere gebruiker het programma geïnstalleerd."
