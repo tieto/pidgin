@@ -335,11 +335,11 @@ msn_userlist_find_user_with_mobile_phone(MsnUserList *userlist, const char *numb
 	for (l = userlist->users; l != NULL; l = l->next) {
 		MsnUser *user = (MsnUser *)l->data;
 
-		if (user->phone.mobile == NULL) {
+		if (!user->phone || !user->phone->mobile) {
 			continue;
 		}
 
-		if (!g_ascii_strcasecmp(number, user->phone.mobile)) {
+		if (!g_ascii_strcasecmp(number, user->phone->mobile)) {
 			return user;
 		}
 	}

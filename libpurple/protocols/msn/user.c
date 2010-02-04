@@ -67,9 +67,12 @@ msn_user_destroy(MsnUser *user)
 	g_free(user->passport);
 	g_free(user->friendly_name);
 	g_free(user->uid);
-	g_free(user->phone.home);
-	g_free(user->phone.work);
-	g_free(user->phone.mobile);
+	if (user->phone) {
+		g_free(user->phone->home);
+		g_free(user->phone->work);
+		g_free(user->phone->mobile);
+		g_free(user->phone);
+	}
 	if (user->media) {
 		g_free(user->media->artist);
 		g_free(user->media->title);
@@ -367,8 +370,15 @@ msn_user_set_home_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	g_free(user->phone.home);
-	user->phone.home = g_strdup(number);
+	if (!number && !user->phone)
+		return;
+
+	if (user->phone)
+		g_free(user->phone->home);
+	else
+		user->phone = g_new0(MsnUserPhoneInfo, 1);
+
+	user->phone->home = g_strdup(number);
 }
 
 void
@@ -376,8 +386,15 @@ msn_user_set_work_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	g_free(user->phone.work);
-	user->phone.work = g_strdup(number);
+	if (!number && !user->phone)
+		return;
+
+	if (user->phone)
+		g_free(user->phone->work);
+	else
+		user->phone = g_new0(MsnUserPhoneInfo, 1);
+
+	user->phone->work = g_strdup(number);
 }
 
 void
@@ -385,8 +402,15 @@ msn_user_set_mobile_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	g_free(user->phone.mobile);
-	user->phone.mobile = g_strdup(number);
+	if (!number && !user->phone)
+		return;
+
+	if (user->phone)
+		g_free(user->phone->mobile);
+	else
+		user->phone = g_new0(MsnUserPhoneInfo, 1);
+
+	user->phone->mobile = g_strdup(number);
 }
 
 void
@@ -461,7 +485,7 @@ msn_user_get_home_phone(const MsnUser *user)
 {
 	g_return_val_if_fail(user != NULL, NULL);
 
-	return user->phone.home;
+	return user->phone ? user->phone->home : NULL;
 }
 
 const char *
@@ -469,7 +493,7 @@ msn_user_get_work_phone(const MsnUser *user)
 {
 	g_return_val_if_fail(user != NULL, NULL);
 
-	return user->phone.work;
+	return user->phone ? user->phone->work : NULL;
 }
 
 const char *
@@ -477,7 +501,7 @@ msn_user_get_mobile_phone(const MsnUser *user)
 {
 	g_return_val_if_fail(user != NULL, NULL);
 
-	return user->phone.mobile;
+	return user->phone ? user->phone->mobile : NULL;
 }
 
 guint

@@ -61,6 +61,13 @@ typedef struct _CurrentMedia
 	char *album;    /**< Album.  */
 } CurrentMedia;
 
+typedef struct _MsnUserPhoneInfo
+{
+	char *home;     /**< Home phone number.   */
+	char *work;     /**< Work phone number.   */
+	char *mobile;   /**< Mobile phone number. */
+} MsnUserPhoneInfo;
+
 /**
  * A user.
  */
@@ -79,13 +86,7 @@ struct _MsnUser
 
 	gboolean idle;          /**< The idle state of the user.    */
 
-	struct
-	{
-		char *home;         /**< Home phone number.             */
-		char *work;         /**< Work phone number.             */
-		char *mobile;       /**< Mobile phone number.           */
-
-	} phone;
+	MsnUserPhoneInfo *phone; /**< This user's phone numbers.    */
 
 	gboolean authorized;    /**< Authorized to add this user.   */
 	gboolean mobile;        /**< Signed up with MSN Mobile.     */
