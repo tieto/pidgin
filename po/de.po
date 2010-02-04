@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-24 23:42+0100\n"
-"PO-Revision-Date: 2010-01-24 23:42+0100\n"
+"POT-Creation-Date: 2010-02-04 11:33+0100\n"
+"PO-Revision-Date: 2010-02-04 11:32+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -4742,6 +4742,11 @@ msgstr "XMPP-Nachrichtenfehler"
 msgid "(Code %s)"
 msgstr "(Code %s)"
 
+msgid "A custom smiley in the message is too large to send."
+msgstr ""
+"Ein benutzerdefinierter Smiley in der Nachricht ist zu groß, um gesendet zu "
+"werden."
+
 msgid "XML Parse error"
 msgstr "Fehler beim Einlesen von XML-Daten"
 
@@ -6797,7 +6802,10 @@ msgstr "Server-Adresse"
 msgid "Server port"
 msgstr "Server-Port"
 
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "Unerwartete Antwort von %s erhalten: %s"
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "Unerwartete Antwort von %s erhalten"
@@ -7393,14 +7401,6 @@ msgid ""
 msgstr ""
 "[Kann die Nachricht von diesem Benutzer nicht anzeigen, da sie ungültige "
 "Zeichen enthält.]"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"Die letzte gewünschte Aktion konnte nicht durchgeführt werden, da die "
-"Senderate überschritten wurde. Bitte warten Sie 10 Sekunden und versuchen "
-"Sie es erneut.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
