@@ -416,7 +416,7 @@ create_endpoint_fields(gpointer key, gpointer value, gpointer user_data)
 	if (g_str_equal(id, data->session->guid))
 		return;
 
-	field = purple_request_field_bool_new(id, ep->name, TRUE);
+	field = purple_request_field_bool_new(id, ep->name, FALSE);
 	purple_request_field_group_add_field(data->group, field);
 }
 
