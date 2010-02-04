@@ -469,65 +469,7 @@ int wpurple_gettimeofday(struct timeval *p, struct timezone *z) {
 /* stdio.h */
 
 int wpurple_rename (const char *oldname, const char *newname) {
-
-#if GLIB_CHECK_VERSION(2,8,5)
-
 	return g_rename(oldname, newname);
-
-#else
-
-	/* This is a ugly, but we still compile with 2.6.10 but use newer runtimes */
-	struct stat oldstat, newstat;
-
-	/* As of Glib 2.8.5, g_rename() uses MoveFileEx() with MOVEFILE_REPLACE_EXISTING to behave more sanely */
-	if (glib_check_version(2, 8, 5) == NULL) {
-		return g_rename(oldname, newname);
-	}
-
-	if(g_stat(oldname, &oldstat) == 0) {
-		/* newname exists */
-		if(g_stat(newname, &newstat) == 0) {
-			/* oldname is a dir */
-			if(S_ISDIR(oldstat.st_mode)) {
-				if(!S_ISDIR(newstat.st_mode)) {
-					return g_rename(oldname, newname);
-				}
-				/* newname is a dir */
-				else {
-					/* This is not quite right.. If newname is empty and
-					   is not a sub dir of oldname, newname should be
-					   deleted and oldname should be renamed.
-					*/
-					purple_debug(PURPLE_DEBUG_WARNING, "wpurple", "wpurple_rename does not behave here as it should\n");
-					return g_rename(oldname, newname);
-				}
-			}
-			/* oldname is not a dir */
-			else {
-				/* newname is a dir */
-				if(S_ISDIR(newstat.st_mode)) {
-					errno = EISDIR;
-					return -1;
-				}
-				/* newname is not a dir */
-				else {
-					g_remove(newname);
-					return g_rename(oldname, newname);
-				}
-			}
-		}
-		/* newname doesn't exist */
-		else
-			return g_rename(oldname, newname);
-	}
-	else {
-		/* oldname doesn't exist */
-		errno = ENOENT;
-		return -1;
-	}
-
-#endif
-
 }
 
 /* time.h */
@@ -1129,54 +1071,7 @@ int
 wpurple_g_access (const gchar *filename,
 	  int          mode)
 {
-#if GLIB_CHECK_VERSION(2,8,0)
-
 	return g_access(filename, mode);
-
-#else
-
-  if (G_WIN32_HAVE_WIDECHAR_API ())
-    {
-      wchar_t *wfilename = g_utf8_to_utf16 (filename, -1, NULL, NULL, NULL);
-      int retval;
-      int save_errno;
-
-      if (wfilename == NULL)
-	{
-	  errno = EINVAL;
-	  return -1;
-	}
-
-      retval = _waccess (wfilename, mode);
-      save_errno = errno;
-
-      g_free (wfilename);
-
-      errno = save_errno;
-      return retval;
-    }
-  else
-    {
-      gchar *cp_filename = g_locale_from_utf8 (filename, -1, NULL, NULL, NULL);
-      int retval;
-      int save_errno;
-
-      if (cp_filename == NULL)
-	{
-	  errno = EINVAL;
-	  return -1;
-	}
-
-      retval = access (cp_filename, mode);
-      save_errno = errno;
-
-      g_free (cp_filename);
-
-      errno = save_errno;
-      return retval;
-    }
-
-#endif
 }
 
 

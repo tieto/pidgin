@@ -32,10 +32,8 @@
 #include "prpl.h"
 #include "util.h"
 
-#include "gtkcellrendererprogress.h"
 #include "gtkft.h"
 #include "prefs.h"
-#include "gtkexpander.h"
 #include "pidginstock.h"
 #include "gtkutils.h"
 
@@ -460,27 +458,15 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 #ifdef _WIN32
 	/* If using Win32... */
 	int code;
-	if (G_WIN32_HAVE_WIDECHAR_API ()) {
-		wchar_t *wc_filename = g_utf8_to_utf16(
-				purple_xfer_get_local_filename(
-					dialog->selected_xfer),
-				-1, NULL, NULL, NULL);
+	wchar_t *wc_filename = g_utf8_to_utf16(
+			purple_xfer_get_local_filename(
+				dialog->selected_xfer),
+			-1, NULL, NULL, NULL);
 
-		code = (int) ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
-				SW_SHOW);
+	code = (int) ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
+			SW_SHOW);
 
-		g_free(wc_filename);
-	} else {
-		char *l_filename = g_locale_from_utf8(
-				purple_xfer_get_local_filename(
-					dialog->selected_xfer),
-				-1, NULL, NULL, NULL);
-
-		code = (int) ShellExecuteA(NULL, NULL, l_filename, NULL, NULL,
-				SW_SHOW);
-
-		g_free(l_filename);
-	}
+	g_free(wc_filename);
 
 	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
 	{
@@ -621,7 +607,7 @@ setup_tree(PidginXferDialog *dialog)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), column);
 
 	/* Progress bar column */
-	renderer = pidgin_cell_renderer_progress_new();
+	renderer = gtk_cell_renderer_progress_new();
 	column = gtk_tree_view_column_new_with_attributes(_("Progress"), renderer,
 				"percentage", COLUMN_PROGRESS, NULL);
 	gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(column), TRUE);
