@@ -78,7 +78,7 @@ struct _MsnUser
 	char *passport;         /**< The passport account.          */
 	char *friendly_name;    /**< The friendly name.             */
 
-	char * uid;				/*< User Id							*/
+	char *uid;              /*< User ID                         */
 
 	const char *status;     /**< The state of the user.         */
 	char *statusline;       /**< The state of the user.         */
