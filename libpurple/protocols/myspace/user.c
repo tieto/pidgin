@@ -92,16 +92,13 @@ MsimUser *
 msim_find_user(MsimSession *session, const gchar *username)
 {
 	PurpleBuddy *buddy;
-	MsimUser *user;
 
 	buddy = purple_find_buddy(session->account, username);
 	if (!buddy) {
 		return NULL;
 	}
 
-	user = msim_get_user_from_buddy(buddy, TRUE);
-
-	return user;
+	return msim_get_user_from_buddy(buddy, TRUE);
 }
 
 /**
