@@ -5,6 +5,8 @@ version 2.6.6 (??/??/20??):
 	* Fix 'make check' on OS X. (David Fang)
 	* Fix a quirk in purple_markup_html_to_xhtml that caused some messages
 	  to be improperly converted to XHTML.
+	* Set "controlling-mode" correctly when initializing a media session.
+	  Fixes receiving voice calls from Psi.
 
 	General:
 	* Correctly disable all missing dependencies when using the
@@ -13,6 +15,10 @@ version 2.6.6 (??/??/20??):
 	Gadu-Gadu:
 	* Fix display of avatars after a server-side change. (Krzysztof
 	  Klinikowski)
+
+	AIM:
+	* Allow setting and displaying icons between 1x1 and 100x100 pixels.
+	  Previously only icons between 48x48 and 50x50 were allowed.
 
 	MSN:
 	* File transfer requests will no longer cause a crash if you delete the
@@ -33,6 +39,9 @@ version 2.6.6 (??/??/20??):
 	  with some clients.
 	* Don't do an SRV lookup for a STUN server associated with the account
 	  if one is already set globally in prefs.
+	* Don't send custom smileys larger than the recommended maximum object size
+	  specified in the BoB XEP.   This prevents a client from being
+	  disconnected by servers that dislike overly-large stanzas.
 
 	Yahoo:
 	* Don't send <span> and </span> tags.  (Fartash Faghri)

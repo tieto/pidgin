@@ -61,6 +61,13 @@ typedef struct _CurrentMedia
 	char *album;    /**< Album.  */
 } CurrentMedia;
 
+typedef struct _MsnUserPhoneInfo
+{
+	char *home;     /**< Home phone number.   */
+	char *work;     /**< Work phone number.   */
+	char *mobile;   /**< Mobile phone number. */
+} MsnUserPhoneInfo;
+
 /**
  * A user.
  */
@@ -71,21 +78,15 @@ struct _MsnUser
 	char *passport;         /**< The passport account.          */
 	char *friendly_name;    /**< The friendly name.             */
 
-	char * uid;				/*< User Id							*/
+	char *uid;              /*< User ID                         */
 
 	const char *status;     /**< The state of the user.         */
 	char *statusline;       /**< The state of the user.         */
-	CurrentMedia media;     /**< Current media of the user.     */
+	CurrentMedia *media;    /**< Current media of the user.     */
 
 	gboolean idle;          /**< The idle state of the user.    */
 
-	struct
-	{
-		char *home;         /**< Home phone number.             */
-		char *work;         /**< Work phone number.             */
-		char *mobile;       /**< Mobile phone number.           */
-
-	} phone;
+	MsnUserPhoneInfo *phone; /**< This user's phone numbers.    */
 
 	gboolean authorized;    /**< Authorized to add this user.   */
 	gboolean mobile;        /**< Signed up with MSN Mobile.     */
@@ -103,8 +104,11 @@ struct _MsnUser
 
 	int list_op;            /**< Which lists the user is in     */
 
-	guint membership_id[5];	/**< The membershipId sent by the contacts server,
-				     indexed by the list it belongs to		*/
+	/**
+	 * The membershipId for this buddy on our pending list.  Sent by
+	 * the contact's server
+	 */
+	guint member_id_on_pending_list;
 
 	char *invite_message;   /**< Invite message of user request */
 };
@@ -155,9 +159,10 @@ void msn_user_set_statusline(MsnUser *user, const char *statusline);
   *  Sets the current media of user.
   *
   *  @param user   The user.
-  *  @param cmedia Current media.
+  *  @param cmedia Current media.  This function takes ownership of this
+  *         object and its contents.
   */
-void msn_user_set_currentmedia(MsnUser *user, const CurrentMedia *cmedia);
+void msn_user_set_currentmedia(MsnUser *user, CurrentMedia *cmedia);
 
 /**
  * Sets the new state of user.

@@ -92,16 +92,13 @@ MsimUser *
 msim_find_user(MsimSession *session, const gchar *username)
 {
 	PurpleBuddy *buddy;
-	MsimUser *user;
 
 	buddy = purple_find_buddy(session->account, username);
 	if (!buddy) {
 		return NULL;
 	}
 
-	user = msim_get_user_from_buddy(buddy, TRUE);
-
-	return user;
+	return msim_get_user_from_buddy(buddy, TRUE);
 }
 
 /**
@@ -346,14 +343,6 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		g_free(value_str);
 	} else if (g_str_equal(key_str, "ImageURL") || g_str_equal(key_str, "AvatarURL")) {
 		const gchar *previous_url;
-
-		if (user->temporary_user) {
-			/* This user will be destroyed soon; don't try to look up its image or avatar,
-			 * since that won't return immediately and we will end up accessing freed data.
-			 */
-			g_free(value_str);
-			return;
-		}
 
 		if (user->temporary_user) {
 			/* This user will be destroyed soon; don't try to look up its image or avatar,

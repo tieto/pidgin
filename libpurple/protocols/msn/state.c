@@ -86,17 +86,15 @@ msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
 	return result;
 }
 
-/* parse CurrentMedia string */
-gboolean
-msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
+CurrentMedia *msn_parse_currentmedia(const char *cmedia)
 {
 	char **cmedia_array;
 	int strings = 0;
-	gboolean parsed = FALSE;
+	CurrentMedia *media = NULL;
 
-	if ((cmedia == NULL) || (*cmedia == '\0')) {
+	if (!cmedia || cmedia[0] == '\0') {
 		purple_debug_info("msn", "No currentmedia string\n");
-		return FALSE;
+		return NULL;
 	}
 
 	purple_debug_info("msn", "Parsing currentmedia string: \"%s\"\n", cmedia);
@@ -121,7 +119,7 @@ msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
 #endif
 
 	if (strings >= 4 && !strcmp(cmedia_array[2], "1")) {
-		parsed = TRUE;
+		media = g_new(CurrentMedia, 1);
 
 		if (!strcmp(cmedia_array[1], "Music"))
 			media->type = CURRENT_MEDIA_MUSIC;
@@ -132,30 +130,14 @@ msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
 		else
 			media->type = CURRENT_MEDIA_UNKNOWN;
 
-		g_free(media->title);
-		if (strings == 4) {
-			media->title = g_strdup(cmedia_array[3]);
-		} else {
-			media->title = g_strdup(cmedia_array[4]);
-		}
-
-		g_free(media->artist);
-		if (strings > 5)
-			media->artist = g_strdup(cmedia_array[5]);
-		else
-			media->artist = NULL;
-
-		g_free(media->album);
-		if (strings > 6)
-			media->album = g_strdup(cmedia_array[6]);
-		else
-			media->album = NULL;
-
+		media->title = g_strdup(cmedia_array[strings == 4 ? 3 : 4]);
+		media->artist = strings > 5 ? g_strdup(cmedia_array[5]) : NULL;
+		media->album = strings > 6 ? g_strdup(cmedia_array[6]) : NULL;
 	}
 
 	g_strfreev(cmedia_array);
 
-	return parsed;
+	return media;
 }
 
 /* get the CurrentMedia info from the XML string */
