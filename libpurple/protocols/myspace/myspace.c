@@ -2264,6 +2264,13 @@ msim_login(PurpleAccount *acct)
 	}
 }
 
+static void
+msim_buddy_free(PurpleBuddy *buddy)
+{
+	msim_user_free(purple_buddy_get_protocol_data(buddy));
+	purple_buddy_set_protocol_data(buddy, NULL);
+}
+
 /**
  * Close the connection.
  *
@@ -2272,7 +2279,19 @@ msim_login(PurpleAccount *acct)
 static void
 msim_close(PurpleConnection *gc)
 {
+	GSList *buddies;
 	MsimSession *session;
+
+	/*
+	 * Free our protocol-specific buddy data.  It almost seems like libpurple
+	 * should call our buddy_free prpl callback so that we don't need to do
+	 * this... but it doesn't, so we do.
+	 */
+	buddies = purple_blist_get_buddies();
+	while (buddies != NULL) {
+		msim_buddy_free(buddies->data);
+		buddies = g_slist_delete_link(buddies, buddies);
+	}
 
 	if (gc == NULL) {
 		return;
@@ -2732,13 +2751,6 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 
 	/* Add to allow list, remove from block list */
 	msim_update_blocklist_for_buddy(session, name, TRUE, FALSE);
-}
-
-static void
-msim_buddy_free(PurpleBuddy *buddy)
-{
-	msim_user_free(purple_buddy_get_protocol_data(buddy));
-	purple_buddy_set_protocol_data(buddy, NULL);
 }
 
 /**
