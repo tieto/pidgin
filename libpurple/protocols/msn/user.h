@@ -75,7 +75,7 @@ struct _MsnUser
 
 	const char *status;     /**< The state of the user.         */
 	char *statusline;       /**< The state of the user.         */
-	CurrentMedia media;     /**< Current media of the user.     */
+	CurrentMedia *media;    /**< Current media of the user.     */
 
 	gboolean idle;          /**< The idle state of the user.    */
 
@@ -158,9 +158,10 @@ void msn_user_set_statusline(MsnUser *user, const char *statusline);
   *  Sets the current media of user.
   *
   *  @param user   The user.
-  *  @param cmedia Current media.
+  *  @param cmedia Current media.  This function takes ownership of this
+  *         object and its contents.
   */
-void msn_user_set_currentmedia(MsnUser *user, const CurrentMedia *cmedia);
+void msn_user_set_currentmedia(MsnUser *user, CurrentMedia *cmedia);
 
 /**
  * Sets the new state of user.

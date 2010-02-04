@@ -1613,7 +1613,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	MsnUser *user;
 	const char *passport;
 	char *psm_str, *str;
-	CurrentMedia media = {CURRENT_MEDIA_UNKNOWN, NULL, NULL, NULL};
+	CurrentMedia *media = NULL;
 
 	session = cmdproc->session;
 	account = session->account;
@@ -1634,19 +1634,12 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		g_free(psm_str);
 
 		str = msn_get_currentmedia(cmd->payload, len);
-		if (msn_parse_currentmedia(str, &media))
-			msn_user_set_currentmedia(user, &media);
-		else
-			msn_user_set_currentmedia(user, NULL);
-		g_free(media.title);
-		g_free(media.album);
-		g_free(media.artist);
+		media = msn_parse_currentmedia(str);
 		g_free(str);
-
 	} else {
 		msn_user_set_statusline(user, NULL);
-		msn_user_set_currentmedia(user, NULL);
 	}
+	msn_user_set_currentmedia(user, media);
 
 	msn_user_update(user);
 }
