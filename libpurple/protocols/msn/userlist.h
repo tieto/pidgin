@@ -21,13 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_USERLIST_H_
-#define _MSN_USERLIST_H_
+#ifndef MSN_USERLIST_H
+#define MSN_USERLIST_H
 
 typedef struct _MsnUserList MsnUserList;
-
-#include "user.h"
-#include "group.h"
 
 typedef enum
 {
@@ -38,6 +35,8 @@ typedef enum
 	MSN_LIST_PL  /**< Pending list */
 } MsnListId;
 
+#include "group.h"
+#include "user.h"
 
 struct _MsnUserList
 {
@@ -101,4 +100,4 @@ void msn_userlist_rem_buddy_from_list(MsnUserList *userlist, const char *who,
 
 void msn_userlist_load(MsnSession *session);
 
-#endif /* _MSN_USERLIST_H_ */
+#endif /* MSN_USERLIST_H */

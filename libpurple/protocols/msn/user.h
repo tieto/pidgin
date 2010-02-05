@@ -21,15 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_USER_H_
-#define _MSN_USER_H_
+#ifndef MSN_USER_H
+#define MSN_USER_H
 
 typedef struct _MsnUser  MsnUser;
-
-#include "session.h"
-#include "object.h"
-
-#include "userlist.h"
 
 typedef enum
 {
@@ -52,6 +47,10 @@ typedef enum
 	CURRENT_MEDIA_GAMES,
 	CURRENT_MEDIA_OFFICE
 } CurrentMediaType;
+
+#include "object.h"
+#include "session.h"
+#include "userlist.h"
 
 /**
  * Contains optional info about a user that is fairly uncommon.  We
@@ -394,19 +393,16 @@ const char *msn_user_get_invite_message(const MsnUser *user);
 /**
  * check to see if user is online
  */
-gboolean
-msn_user_is_online(PurpleAccount *account, const char *name);
+gboolean msn_user_is_online(PurpleAccount *account, const char *name);
 
 /**
  * check to see if user is Yahoo User
  */
-gboolean
-msn_user_is_yahoo(PurpleAccount *account ,const char *name);
+gboolean msn_user_is_yahoo(PurpleAccount *account ,const char *name);
 
 void msn_user_set_op(MsnUser *user, int list_op);
 void msn_user_unset_op(MsnUser *user, int list_op);
 
 /*@}*/
 
-
-#endif /* _MSN_USER_H_ */
+#endif /* MSN_USER_H */

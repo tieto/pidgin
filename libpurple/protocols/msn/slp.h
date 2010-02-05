@@ -21,13 +21,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_SLP_H_
-#define _MSN_SLP_H_
+#ifndef MSN_SLP_H
+#define MSN_SLP_H
 
-#include "slpcall.h"
-#include "session.h"
 #include "internal.h"
+
 #include "ft.h"
+#include "session.h"
+#include "slpcall.h"
 
 MsnSlpCall * msn_slp_sip_recv(MsnSlpLink *slplink,
 							  const char *body);
@@ -45,4 +46,4 @@ void msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session);
 
 void msn_queue_buddy_icon_request(MsnUser *user);
 
-#endif /* _MSN_SLP_H_ */
+#endif /* MSN_SLP_H */

@@ -21,8 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_SYNC_H_
-#define _MSN_SYNC_H_
+#ifndef MSN_SYNC_H
+#define MSN_SYNC_H
 
 typedef struct _MsnSync MsnSync;
 
@@ -51,7 +51,7 @@ struct _MsnSync
 void msn_sync_init(void);
 void msn_sync_end(void);
 
-MsnSync * msn_sync_new(MsnSession *session);
+MsnSync *msn_sync_new(MsnSession *session);
 void msn_sync_destroy(MsnSync *sync);
 
-#endif /* _MSN_SYNC_H_ */
+#endif /* MSN_SYNC_H */

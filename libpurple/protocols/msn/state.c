@@ -23,6 +23,7 @@
  */
 
 #include "internal.h"
+
 #include "core.h"
 
 #include "msn.h"
