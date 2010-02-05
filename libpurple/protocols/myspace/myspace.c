@@ -2254,8 +2254,15 @@ msim_buddy_free(PurpleBuddy *buddy)
 static void
 msim_close(PurpleConnection *gc)
 {
+	PurpleAccount *account;
 	GSList *buddies;
 	MsimSession *session;
+
+	if (gc == NULL) {
+		return;
+	}
+
+	account = purple_connection_get_account(gc);
 
 	/*
 	 * Free our protocol-specific buddy data.  It almost seems like libpurple
@@ -2264,12 +2271,12 @@ msim_close(PurpleConnection *gc)
 	 */
 	buddies = purple_blist_get_buddies();
 	while (buddies != NULL) {
-		msim_buddy_free(buddies->data);
-		buddies = g_slist_delete_link(buddies, buddies);
-	}
+		PurpleBuddy *buddy = buddies->data;
 
-	if (gc == NULL) {
-		return;
+		if (purple_buddy_get_account(buddy) == account)
+			msim_buddy_free(buddy);
+
+		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
 	session = (MsimSession *)gc->proto_data;
