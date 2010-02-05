@@ -2254,7 +2254,6 @@ msim_buddy_free(PurpleBuddy *buddy)
 static void
 msim_close(PurpleConnection *gc)
 {
-	PurpleAccount *account;
 	GSList *buddies;
 	MsimSession *session;
 
@@ -2262,20 +2261,14 @@ msim_close(PurpleConnection *gc)
 		return;
 	}
 
-	account = purple_connection_get_account(gc);
-
 	/*
 	 * Free our protocol-specific buddy data.  It almost seems like libpurple
 	 * should call our buddy_free prpl callback so that we don't need to do
 	 * this... but it doesn't, so we do.
 	 */
-	buddies = purple_blist_get_buddies();
+	buddies = purple_find_buddies(purple_connection_get_account(gc), NULL);
 	while (buddies != NULL) {
-		PurpleBuddy *buddy = buddies->data;
-
-		if (purple_buddy_get_account(buddy) == account)
-			msim_buddy_free(buddy);
-
+		msim_buddy_free(buddies->data);
 		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
