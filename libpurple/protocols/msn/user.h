@@ -53,20 +53,25 @@ typedef enum
 	CURRENT_MEDIA_OFFICE
 } CurrentMediaType;
 
-typedef struct _CurrentMedia
+/**
+ * Contains optional info about a user that is fairly uncommon.  We
+ * put this info in in a separate struct to save memory because we
+ * allocate an MsnUser struct for each buddy, but we generally only
+ * need this information for a small percentage of our buddies
+ * (usually less than 1%).  Putting it in a separate struct saves
+ * makes MsnUser smaller by the size of a few pointers.
+ */
+typedef struct _MsnUserExtendedInfo
 {
-	CurrentMediaType type;     /**< Type.   */
-	char *title;    /**< Title.  */
-	char *artist;   /**< Artist. */
-	char *album;    /**< Album.  */
-} CurrentMedia;
+	CurrentMediaType media_type; /**< Type of the user's current media.   */
+	char *media_title;  /**< Title of the user's current media.  */
+	char *media_artist; /**< Artist of the user's current media. */
+	char *media_album;  /**< Album of the user's current media.  */
 
-typedef struct _MsnUserPhoneInfo
-{
-	char *home;     /**< Home phone number.   */
-	char *work;     /**< Work phone number.   */
-	char *mobile;   /**< Mobile phone number. */
-} MsnUserPhoneInfo;
+	char *phone_home;   /**< E.T. uses this.                     */
+	char *phone_work;   /**< Work phone number.                  */
+	char *phone_mobile; /**< Mobile phone number.                */
+} MsnUserExtendedInfo;
 
 /**
  * A user.
@@ -82,11 +87,10 @@ struct _MsnUser
 
 	const char *status;     /**< The state of the user.         */
 	char *statusline;       /**< The state of the user.         */
-	CurrentMedia *media;    /**< Current media of the user.     */
 
 	gboolean idle;          /**< The idle state of the user.    */
 
-	MsnUserPhoneInfo *phone; /**< This user's phone numbers.    */
+	MsnUserExtendedInfo *extinfo; /**< Extended info for the user. */
 
 	gboolean authorized;    /**< Authorized to add this user.   */
 	gboolean mobile;        /**< Signed up with MSN Mobile.     */
@@ -154,15 +158,6 @@ void msn_user_update(MsnUser *user);
   *  @param state The statusline string.
   */
 void msn_user_set_statusline(MsnUser *user, const char *statusline);
-
- /**
-  *  Sets the current media of user.
-  *
-  *  @param user   The user.
-  *  @param cmedia Current media.  This function takes ownership of this
-  *         object and its contents.
-  */
-void msn_user_set_currentmedia(MsnUser *user, CurrentMedia *cmedia);
 
 /**
  * Sets the new state of user.
