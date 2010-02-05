@@ -36,6 +36,7 @@ typedef enum
 } MsnListId;
 
 #include "group.h"
+#include "msn.h"
 #include "user.h"
 
 struct _MsnUserList
@@ -55,7 +56,7 @@ gboolean msn_userlist_user_is_in_group(MsnUser *user, const char * group_id);
 gboolean msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id);
 
 void msn_got_lst_user(MsnSession *session, MsnUser *user,
-					  int list_op, GSList *group_ids);
+					  MsnListOp list_op, GSList *group_ids);
 
 MsnUserList *msn_userlist_new(MsnSession *session);
 void msn_userlist_destroy(MsnUserList *userlist);

@@ -105,7 +105,7 @@ struct _MsnUser
 
 	MsnNetwork networkid;   /**< The user's network             */
 
-	int list_op;            /**< Which lists the user is in     */
+	MsnListOp list_op;      /**< Which lists the user is in     */
 
 	/**
 	 * The membershipId for this buddy on our pending list.  Sent by
@@ -400,8 +400,8 @@ gboolean msn_user_is_online(PurpleAccount *account, const char *name);
  */
 gboolean msn_user_is_yahoo(PurpleAccount *account ,const char *name);
 
-void msn_user_set_op(MsnUser *user, int list_op);
-void msn_user_unset_op(MsnUser *user, int list_op);
+void msn_user_set_op(MsnUser *user, MsnListOp list_op);
+void msn_user_unset_op(MsnUser *user, MsnListOp list_op);
 
 /*@}*/
 

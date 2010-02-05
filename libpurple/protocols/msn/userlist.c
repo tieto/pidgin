@@ -137,7 +137,7 @@ msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id)
 
 void
 msn_got_lst_user(MsnSession *session, MsnUser *user,
-				 int list_op, GSList *group_ids)
+				 MsnListOp list_op, GSList *group_ids)
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
