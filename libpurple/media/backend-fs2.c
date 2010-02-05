@@ -1578,7 +1578,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 	const gchar *stun_ip = purple_network_get_stun_ip();
 	const gchar *turn_ip = purple_network_get_turn_ip();
 	guint _num_params = num_params;
-	GParameter *_params = g_new0(GParameter, num_params + 2);
+	GParameter *_params = g_new0(GParameter, num_params + 3);
 	FsStreamDirection type_direction =
 			session_type_to_fs_stream_direction(type);
 	PurpleMediaBackendFs2Session *session;
@@ -1586,6 +1586,12 @@ create_stream(PurpleMediaBackendFs2 *self,
 	FsParticipant *participant;
 
 	memcpy(_params, params, sizeof(GParameter) * num_params);
+
+	/* set the controlling mode parameter */
+	_params[_num_params].name = "controlling-mode";
+	g_value_init(&_params[_num_params].value, G_TYPE_BOOLEAN);
+	g_value_set_boolean(&_params[_num_params].value, initiator);
+	++_num_params;
 
 	if (stun_ip) {
 		purple_debug_info("backend-fs2", 
