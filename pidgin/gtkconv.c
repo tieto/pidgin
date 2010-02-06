@@ -5621,7 +5621,11 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 
 		buddyname = (tag->name) + 6;
 
-		if (btn_event->button == 2
+		if (btn_event->button == 1 &&
+				event->type == GDK_2BUTTON_PRESS) {
+			chat_do_im(PIDGIN_CONVERSATION(conv), buddyname);
+			return TRUE;
+		} else if (btn_event->button == 2
 				&& event->type == GDK_2BUTTON_PRESS) {
 			chat_do_info(PIDGIN_CONVERSATION(conv), buddyname);
 
@@ -5683,6 +5687,7 @@ static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, Purp
 					"weight", purple_find_buddy(purple_conversation_get_account(conv), who) ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
 					NULL);
 
+		g_object_set_data(G_OBJECT(buddytag), "cursor", "");
 		g_signal_connect(G_OBJECT(buddytag), "event",
 				G_CALLBACK(buddytag_event), conv);
 	}

@@ -628,6 +628,7 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	GtkTextTag *tag = NULL, *oldprelit_tag;
 	GtkTextChildAnchor* anchor;
 	gboolean hand = TRUE;
+	GdkCursor *cursor = NULL;
 
 	oldprelit_tag = GTK_IMHTML(imhtml)->prelit_tag;
 
@@ -676,9 +677,9 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 			GTK_IMHTML(imhtml)->tip_window = NULL;
 		}
 		if (GTK_IMHTML(imhtml)->editable)
-			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->text_cursor);
+			cursor = GTK_IMHTML(imhtml)->text_cursor;
 		else
-			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->arrow_cursor);
+			cursor = GTK_IMHTML(imhtml)->arrow_cursor;
 		if (GTK_IMHTML(imhtml)->tip_timer)
 			g_source_remove(GTK_IMHTML(imhtml)->tip_timer);
 		GTK_IMHTML(imhtml)->tip_timer = 0;
@@ -692,11 +693,24 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	}
 
 	if (tip && *tip) {
-		if (!GTK_IMHTML(imhtml)->editable && hand)
-			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
 		GTK_IMHTML(imhtml)->tip_timer = g_timeout_add (TOOLTIP_TIMEOUT,
 							       gtk_imhtml_tip, imhtml);
+	} else if (!tip) {
+		hand = FALSE;
+		for (templist = tags; templist; templist = templist->next) {
+			tag = templist->data;
+			if ((tip = g_object_get_data(G_OBJECT(tag), "cursor"))) {
+				hand = TRUE;
+				break;
+			}
+		}
 	}
+
+	if (hand && !(GTK_IMHTML(imhtml)->editable))
+		cursor = GTK_IMHTML(imhtml)->hand_cursor;
+
+	if (cursor)
+		gdk_window_set_cursor(win, cursor);
 
 	GTK_IMHTML(imhtml)->tip = tip;
 	g_slist_free(tags);
