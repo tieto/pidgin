@@ -485,9 +485,12 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 		xmlnode *stanza = NULL;
 		JabberSaslState state = js->auth_mech->handle_failure(js, packet, &stanza, &msg);
 
-		if (state != JABBER_SASL_STATE_FAIL && stanza) {
-			jabber_send(js, stanza);
-			xmlnode_free(stanza);
+		if (state != JABBER_SASL_STATE_FAIL) {
+			if (stanza) {
+				jabber_send(js, stanza);
+				xmlnode_free(stanza);
+			}
+
 			return;
 		}
 	}

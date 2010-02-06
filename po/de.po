@@ -2,7 +2,7 @@
 # Pidgin German translation
 # Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
-# Copyright (C) 2002-2009, Björn Voigt <bjoern@cs.tu-berlin.de>,
+# Copyright (C) 2002-2010, Björn Voigt <bjoern@cs.tu-berlin.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-10 22:38+0100\n"
-"PO-Revision-Date: 2009-12-11 20:55+0100\n"
+"POT-Creation-Date: 2010-02-04 11:33+0100\n"
+"PO-Revision-Date: 2010-02-04 11:32+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -362,7 +362,7 @@ msgid ""
 "Unblock."
 msgstr ""
 "Bitte geben Sie den Benutzernamen oder den Alias der Person ein, die Sie "
-"blockieren oder für die Sie die Blockierung aufheben wollen."
+"sperren oder entsperren möchten."
 
 #. Not multiline
 #. Not masked?
@@ -1960,6 +1960,9 @@ msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr ""
 "%s ist keine reguläre Datei. Pidgin wird die Datei nicht überschreiben.\n"
 
+msgid "File is not readable."
+msgstr "Datei ist nicht lesbar."
+
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s möchte Ihnen %s (%s) senden"
@@ -2444,7 +2447,7 @@ msgid "_Set"
 msgstr "_Setzen"
 
 msgid "None of your accounts are idle."
-msgstr "Keine Ihrer Konten sind untätig."
+msgstr "Keines Ihrer Konten verzeichnet Untätigkeit."
 
 msgid "Unset Account Idle Time"
 msgstr "Untätigkeitszeit zurücksetzen"
@@ -2469,7 +2472,7 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "IPC Test Client"
-msgstr "IPC Testclient"
+msgstr "IPC-Testclient"
 
 #. *< name
 #. *< version
@@ -2492,7 +2495,7 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "IPC Test Server"
-msgstr "IPC Testserver"
+msgstr "IPC-Testserver"
 
 #. *< name
 #. *< version
@@ -2514,7 +2517,7 @@ msgid "For rooms with more than this many people"
 msgstr "Für Räume mit mehr als so vielen Leuten"
 
 msgid "If user has not spoken in this many minutes"
-msgstr "Wenn Benutzer so viele Minuten nicht gesprochen hat"
+msgstr "Wenn der Benutzer so viele Minuten nicht gesprochen hat"
 
 msgid "Apply hiding rules to buddies"
 msgstr "Regeln zum Verstecken auf Buddys anwenden"
@@ -3366,7 +3369,7 @@ msgid "_Password:"
 msgstr "_Passwort:"
 
 msgid "IRC nick and server may not contain whitespace"
-msgstr "IRC- Server und -Nicknamen dürfen keine Leerzeichen enthalten"
+msgstr "IRC-Server und -Spitzname dürfen keinen Leerraum enthalten"
 
 msgid "SSL support unavailable"
 msgstr "SSL-Unterstützung nicht verfügbar"
@@ -3546,20 +3549,20 @@ msgid "mode (%s %s) by %s"
 msgstr "Modus (%s %s) von %s"
 
 msgid "Invalid nickname"
-msgstr "Ungültiger Benutzername"
+msgstr "Ungültiger Spitzname"
 
 msgid ""
 "Your selected nickname was rejected by the server.  It probably contains "
 "invalid characters."
 msgstr ""
-"Ihr gewählter Kontoname wurde vom Server abgelehnt.  Er enthält vermutlich "
+"Ihr gewünschter Spitzname wurde vom Server abgelehnt.  Er enthält vermutlich "
 "ungültige Zeichen."
 
 msgid ""
 "Your selected account name was rejected by the server.  It probably contains "
 "invalid characters."
 msgstr ""
-"Ihr gewählter Kontoname wurde vom Server abgelehnt.  Er enthält vermutlich "
+"Ihr gewünschter Kontoname wurde vom Server abgelehnt.  Er enthält vermutlich "
 "ungültige Zeichen."
 
 #. We only want to do the following dance if the connection
@@ -3614,7 +3617,7 @@ msgstr ""
 "keine Nachricht, um wieder zurückzukehren."
 
 msgid "ctcp <nick> <msg>: sends ctcp msg to nick."
-msgstr "ctcp <nick> <anfrage>: Sendet CTCP-Anfrage an nick."
+msgstr "ctcp <nick> <anfrage>: Sendet CTCP-Anfrage an einen Spitznamen."
 
 msgid "chanserv: Send a command to chanserv"
 msgstr "chanserv: Sendet ein Kommando zum Chanserv"
@@ -3623,24 +3626,24 @@ msgid ""
 "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from "
 "someone. You must be a channel operator to do this."
 msgstr ""
-"deop &lt;Nick1&gt; [Nick2] ...:  Entferne den Kanal-Operator-Status von "
-"jemanden. Sie müssen hierfür selbst Operator des Kanals sein."
+"deop &lt;Spitzname1&gt; [Spitzname2] ...:  Entferne den Kanal-Operator-"
+"Status von jemanden. Sie müssen hierfür selbst Operator des Kanals sein."
 
 msgid ""
 "devoice &lt;nick1&gt; [nick2] ...:  Remove channel voice status from "
 "someone, preventing them from speaking if the channel is moderated (+m). You "
 "must be a channel operator to do this."
 msgstr ""
-"devoice &lt;Nick1&gt; [Nick2] ...:  Entferne den Voice-Status von jemanden. "
-"Dies verbietet ihm zu sprechen, wenn der Kanal moderiert wird (+). Sie "
-"müssen hierfür selbst Operator des Kanals sein."
+"devoice &lt;Spitzname1&gt; [Spitzname2] ...:  Entferne den Voice-Status von "
+"jemanden. Dies verbietet ihm zu sprechen, wenn der Kanal moderiert wird (+). "
+"Sie müssen hierfür selbst Operator des Kanals sein."
 
 msgid ""
 "invite &lt;nick&gt; [room]:  Invite someone to join you in the specified "
 "channel, or the current channel."
 msgstr ""
-"invite &lt;Nick&gt; [Raum]:  Jemanden in den angegeben Kanal oder in den "
-"aktuellen Kanal einladen."
+"invite &lt;Spitzname&gt; [Raum]:  Jemanden in den angegeben Kanal oder in "
+"den aktuellen Kanal einladen."
 
 msgid ""
 "j &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more "
@@ -3682,21 +3685,21 @@ msgid ""
 "mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;nick|channel&gt;:  Set or unset a channel "
 "or user mode."
 msgstr ""
-"mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;Nick|Kanal&gt;:  Kanal- oder Benutzermodi "
-"setzen oder zurücknehmen."
+"mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;Spitzname|Kanal&gt;:  Kanal- oder "
+"Benutzermodi setzen oder zurücknehmen."
 
 msgid ""
 "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as "
 "opposed to a channel)."
 msgstr ""
-"msg &lt;nick&gt; &lt;nachricht&gt;:  Sendet eine private Nachricht an einen "
-"Benutzer (im Gegensatz zum Kanal)."
+"msg &lt;Spitzname&gt; &lt;Nachricht&gt;:  Sendet eine private Nachricht an "
+"einen Benutzer (im Gegensatz zum Kanal)."
 
 msgid "names [channel]:  List the users currently in a channel."
 msgstr "names [Kanal]:  Listet die Benutzer im aktuellen Kanal auf."
 
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
-msgstr "nick &lt;new nickname&gt;:  Ihren Spitznamen ändern."
+msgstr "nick &lt;neuer Spitzname&gt;:  Ihren Spitznamen ändern."
 
 msgid "nickserv: Send a command to nickserv"
 msgstr "nickserv: Sendet ein Kommando zum Nickserv"
@@ -3709,8 +3712,8 @@ msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
 "must be a channel operator to do this."
 msgstr ""
-"op &lt;Nick1&gt; [Nick2] ...:  Erteile den Operator-Status an jemanden. Sie "
-"müssen hierfür selbst Operator des Kanals sein."
+"op &lt;Spitzname1&gt; [Spitzname2] ...:  Erteile den Operator-Status an "
+"jemanden. Sie müssen hierfür selbst Operator des Kanals sein."
 
 msgid ""
 "operwall &lt;message&gt;:  If you don't know what this is, you probably "
@@ -3733,14 +3736,14 @@ msgid ""
 "ping [nick]:  Asks how much lag a user (or the server if no user specified) "
 "has."
 msgstr ""
-"ping [Nick]:  Ermittelt die Verzögerung eines Benutzers (oder eines Server, "
-"wenn kein Benutzer angegeben wird) über ein Ping."
+"ping [Spitzname]:  Ermittelt die Verzögerung eines Benutzers (oder eines "
+"Server, wenn kein Benutzer angegeben wird) über ein Ping."
 
 msgid ""
 "query &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as "
 "opposed to a channel)."
 msgstr ""
-"query &lt;Nick&gt; &lt;Nachricht&gt;:  Sendet eine private Nachricht an "
+"query &lt;Spitzname&gt; &lt;Nachricht&gt;:  Sendet eine private Nachricht an "
 "einen Benutzer (im Gegensatz zu einem Kanal)."
 
 msgid "quit [message]:  Disconnect from the server, with an optional message."
@@ -3753,7 +3756,7 @@ msgid ""
 "remove &lt;nick&gt; [message]:  Remove someone from a room. You must be a "
 "channel operator to do this."
 msgstr ""
-"remove &lt;Nick&gt; [Nachricht]:  Jemanden aus dem Raum entfernen. Sie "
+"remove &lt;Spitzname&gt; [Nachricht]:  Jemanden aus dem Raum entfernen. Sie "
 "müssen hierfür selbst Operator des Kanals sein."
 
 msgid "time: Displays the current local time at the IRC server."
@@ -3773,9 +3776,9 @@ msgid ""
 "voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You "
 "must be a channel operator to do this."
 msgstr ""
-"voice &lt;Nick1&gt; [Nick2] ...:  Vergibt jemanden den Voice-Status. Dies "
-"erlaubt ihm auch dann noch zu sprechen, wenn der Kanal moderiert wird (+m). "
-"Sie müssen hierfür selbst Operator des Kanals sein."
+"voice &lt;Spitzname1&gt; [Spitzname2] ...:  Vergibt jemanden den Voice-"
+"Status. Dies erlaubt ihm auch dann noch zu sprechen, wenn der Kanal "
+"moderiert wird (+m). Sie müssen hierfür selbst Operator des Kanals sein."
 
 msgid ""
 "wallops &lt;message&gt;:  If you don't know what this is, you probably can't "
@@ -3785,11 +3788,13 @@ msgstr ""
 "Sie sie wahrscheinlich nicht."
 
 msgid "whois [server] &lt;nick&gt;:  Get information on a user."
-msgstr "whois [Server] &lt;Nick&gt;:  Informationen zu einem Benutzer abrufen."
+msgstr ""
+"whois [Server] &lt;Spitzname&gt;:  Informationen zu einem Benutzer abrufen."
 
 msgid "whowas &lt;nick&gt;: Get information on a user that has logged off."
 msgstr ""
-"whowas &lt;Nick&gt;:  Informationen zu einem abgemeldeten Benutzer abrufen."
+"whowas &lt;Spitzname&gt;:  Informationen zu einem abgemeldeten Benutzer "
+"abrufen."
 
 #, c-format
 msgid "Reply time from %s: %lu seconds"
@@ -3855,6 +3860,8 @@ msgstr "Ungültige Challenge vom Server"
 
 msgid "Server thinks authentication is complete, but client does not"
 msgstr ""
+"Der Server ist der Meinung, dass die Authentifizierung vollständig ist, der "
+"Client aber nicht"
 
 msgid "SASL authentication failed"
 msgstr "SASL-Authentifizierung fehlgeschlagen"
@@ -3863,21 +3870,17 @@ msgstr "SASL-Authentifizierung fehlgeschlagen"
 msgid "SASL error: %s"
 msgstr "SASL-Fehler: %s"
 
-#, fuzzy
 msgid "Unable to canonicalize username"
-msgstr "Kann nicht konfigurieren"
+msgstr "Benutzername konnte nicht in Normalform gebracht werden"
 
-#, fuzzy
 msgid "Unable to canonicalize password"
-msgstr "Es konnte kein lauschender Port geöffnet werden."
+msgstr "Passwort konnte nicht in Normalform gebracht werden"
 
-#, fuzzy
 msgid "Malicious challenge from server"
-msgstr "Ungültige Challenge vom Server"
+msgstr "Bösartige Challenge vom Server"
 
-#, fuzzy
 msgid "Unexpected response from server"
-msgstr "Ungültige HTTP-Antwort vom Server empfangen"
+msgstr "Unerwartete Antwort vom Server"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Der BOSH-Verbindungsmanager hat Ihre Sitzung beendet."
@@ -3979,13 +3982,8 @@ msgstr "Priorität"
 msgid "Resource"
 msgstr "Ressource"
 
-#, fuzzy
 msgid "Uptime"
-msgstr "Aktualisieren"
-
-#, c-format
-msgid "%s"
-msgstr ""
+msgstr "Betriebszeit"
 
 msgid "Logged Off"
 msgstr "Abgemeldet"
@@ -4157,7 +4155,7 @@ msgstr "Registrierungsfehler"
 
 msgid "Nick changing not supported in non-MUC chatrooms"
 msgstr ""
-"Die Änderung des Nick-Namens wird in nicht-MUC-Chaträumen nicht unterstützt"
+"Die Änderung des Spitznamens wird in nicht-MUC-Chaträumen nicht unterstützt"
 
 msgid "Error retrieving room list"
 msgstr "Fehler beim Empfangen der Raumliste"
@@ -4185,13 +4183,6 @@ msgstr "Rollen:"
 
 msgid "Ping timed out"
 msgstr "Ping-Zeitüberschreitung"
-
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-"Nach dem Fehlschlagen einer direkten XMPP-Verbindung können keine "
-"alternativen Verbindungsmethoden gefunden werden."
 
 msgid "Invalid XMPP ID"
 msgstr "Ungültige XMPP-ID"
@@ -4304,23 +4295,23 @@ msgid "Now Listening"
 msgstr "Hört gerade"
 
 msgid "Both"
-msgstr "Beide"
+msgstr "Beiderseitig"
 
 msgid "From (To pending)"
-msgstr "Von (zu den offenen)"
+msgstr "Eingehend (ausgehend unbestätigt)"
 
 msgid "From"
-msgstr "Von"
+msgstr "Eingehend"
 
 msgid "To"
-msgstr "Zu"
+msgstr "Ausstehend"
 
 msgid "None (To pending)"
-msgstr "Kein (zu den offenen)"
+msgstr "Nein (ausgehend unbestätigt)"
 
 #. 0
 msgid "None"
-msgstr "Kein"
+msgstr "Nein"
 
 #. subscription type
 msgid "Subscription"
@@ -4644,15 +4635,15 @@ msgid ""
 "affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
 "the users with an affiliation or set users' affiliation with the room."
 msgstr ""
-"affiliate &lt;owner|admin|member|outcast|none&gt; [Benutzer1] "
-"[Benutzer2] ...: Benutzer mit einer Mitgliedschaft für den Raum erfragen "
+"affiliate &lt;owner|admin|member|outcast|none&gt; [Spitzname1] "
+"[Spitzname2] ...: Benutzer mit einer Mitgliedschaft für den Raum erfragen "
 "oder setzen."
 
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
 "users with a role or set users' role with the room."
 msgstr ""
-"role &lt;owner|admin|member|outcast|none&gt; [Benutzer1] [Benutzer2] ...: "
+"role &lt;owner|admin|member|outcast|none&gt; [Spitzname1] [Spitzname2] ...: "
 "Benutzer mit einer Rolle für den Raum erfragen oder Benutzern eine Rolle "
 "zuweisen."
 
@@ -4751,8 +4742,13 @@ msgstr "XMPP-Nachrichtenfehler"
 msgid "(Code %s)"
 msgstr "(Code %s)"
 
+msgid "A custom smiley in the message is too large to send."
+msgstr ""
+"Ein benutzerdefinierter Smiley in der Nachricht ist zu groß, um gesendet zu "
+"werden."
+
 msgid "XML Parse error"
-msgstr "Fehler bei Einlesen von XML-Daten"
+msgstr "Fehler beim Einlesen von XML-Daten"
 
 msgid "Unknown Error in presence"
 msgstr "Unbekannter Fehlercode"
@@ -4841,10 +4837,10 @@ msgid "Set Mood..."
 msgstr "Setze Stimmung..."
 
 msgid "Set User Nickname"
-msgstr "Setze Benutzer-Spitznamen"
+msgstr "Setze Benutzer-Spitzname"
 
 msgid "Please specify a new nickname for you."
-msgstr "Bitte geben Sie den neuen Spitznamen für ein."
+msgstr "Bitte geben Sie einen neuen Spitznamen für Sie ein."
 
 msgid ""
 "This information is visible to all contacts on your contact list, so choose "
@@ -4921,7 +4917,7 @@ msgstr "Schon angemeldet"
 
 #, c-format
 msgid "Invalid username"
-msgstr "Ungültiger Benutzername"
+msgstr "Benutzername ungültig"
 
 #, c-format
 msgid "Invalid friendly name"
@@ -5167,6 +5163,10 @@ msgstr "E-Mail-Adresse..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Ihr neuer MSN-Benutzername zu lang."
+
+#, c-format
+msgid "Set friendly name for %s."
+msgstr "Setze Spitznamen für %s."
 
 msgid "Set your friendly name."
 msgstr "Setze Ihren Spitznamen."
@@ -5939,7 +5939,7 @@ msgstr ""
 "Ihre Server-Einstellungen."
 
 msgid "Logging In..."
-msgstr "Logge ein..."
+msgstr "Anmeldung läuft..."
 
 msgid ""
 "Unable to connect to the MXit server. Please check your server settings."
@@ -6195,7 +6195,7 @@ msgid "Unexpected challenge length from server"
 msgstr "Unerwartete Challenge-Länge vom Server"
 
 msgid "Logging in"
-msgstr "Logge ein"
+msgstr "Anmeldung läuft"
 
 msgid "MySpaceIM - No Username Set"
 msgstr "MySpaceIM - Kein Benutzername gesetzt"
@@ -6205,7 +6205,8 @@ msgstr "Sie scheinen keinen MySpace-Benutzernamen zu haben."
 
 msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
 msgstr ""
-"Möchten Sie jetzt einen setzen? (Bemerkung: DIES KANN NICHT GEÄNDERT WERDEN!)"
+"Möchten Sie jetzt einen festlegen? (Achtung: DIES KANN NICHT GEÄNDERT "
+"WERDEN!)"
 
 msgid "Lost connection with server"
 msgstr "Verbindung zum Server verloren"
@@ -6375,7 +6376,7 @@ msgid "MySpaceIM - Username Available"
 msgstr "MySpaceIM - Benutzername verfügbar"
 
 msgid "This username is available. Would you like to set it?"
-msgstr "Dieser Benutzername ist verfügbar. Möchten Sie ihn setzen?"
+msgstr "Dieser Benutzername ist verfügbar. Möchten Sie ihn festlegen?"
 
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
 msgstr "EINMAL GESETZT, KANN DIES NICHT GEÄNDERT WERDEN!"
@@ -6603,7 +6604,7 @@ msgid "You cannot add the same person twice to a conversation"
 msgstr "Sie können die selbe Person nicht zweimal zu einem Gespräch hinzufügen"
 
 msgid "You have reached your limit for the number of contacts allowed"
-msgstr "Sie haben die Grenze der maximal erlaubten Kontakte erreicht"
+msgstr "Sie haben die Maximalzahl an erlaubten Kontakten erreicht"
 
 msgid "You have entered an incorrect username"
 msgstr "Sie haben einen ungültigen Benutzernamen eingegeben"
@@ -6761,7 +6762,7 @@ msgstr ""
 "Gesendet: %s"
 
 msgid "Would you like to join the conversation?"
-msgstr "Möchten der Konferenz beitreten?"
+msgstr "Möchten Sie an der Konferenz teilnehmen?"
 
 #, c-format
 msgid ""
@@ -6801,7 +6802,10 @@ msgstr "Server-Adresse"
 msgid "Server port"
 msgstr "Server-Port"
 
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "Unerwartete Antwort von %s erhalten: %s"
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "Unerwartete Antwort von %s erhalten"
@@ -6811,7 +6815,7 @@ msgid ""
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr ""
 "Sie haben sich zu schnell an- und abgemeldet. Warten Sie 10 Minuten und "
-"versuchen Sie es noch einmal. Wenn Sie es weiterversuchen, müssen Sie sogar "
+"versuchen Sie es noch einmal. Wenn Sie es weiter versuchen, müssen Sie sogar "
 "noch länger warten."
 
 #. Note to translators: The first %s is a URL, the second is an
@@ -7185,7 +7189,7 @@ msgid ""
 "longer."
 msgstr ""
 "Ihr Benutzername hat sich zu schnell an- und abgemeldet. Warten Sie 10 "
-"Minuten und versuchen Sie es noch einmal. Wenn Sie es weiterversuchen, "
+"Minuten und versuchen Sie es noch einmal. Wenn Sie es weiter versuchen, "
 "müssen Sie sogar noch länger warten."
 
 #. client too old
@@ -7201,8 +7205,8 @@ msgid ""
 "longer."
 msgstr ""
 "Ihre IP-Adresse hat sich zu schnell an- und abgemeldet. Warten Sie eine "
-"Minute und versuchen Sie es noch einmal. Wenn Sie es weiterversuchen, müssen "
-"Sie sogar noch länger warten."
+"Minute und versuchen Sie es noch einmal. Wenn Sie es weiter versuchen, "
+"müssen Sie sogar noch länger warten."
 
 msgid "The SecurID key entered is invalid"
 msgstr "Der eingegebene SecurID-Schlüssel ist falsch"
@@ -7288,7 +7292,7 @@ msgstr ""
 
 #, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
-msgstr "Der ICQ Benutzer %u hat Ihnen einen Buddy gesendet: %s (%s)"
+msgstr "Der ICQ-Benutzer %u hat Ihnen einen Buddy gesendet: %s (%s)"
 
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "Möchten Sie diesen Buddy zu Ihrer Buddy-Liste hinzufügen?"
@@ -7397,14 +7401,6 @@ msgid ""
 msgstr ""
 "[Kann die Nachricht von diesem Benutzer nicht anzeigen, da sie ungültige "
 "Zeichen enthält.]"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"Die letzte gewünschte Aktion konnte nicht durchgeführt werden, da die "
-"Senderate überschritten wurde. Bitte warten Sie 10 Sekunden und versuchen "
-"Sie es erneut.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -8989,16 +8985,16 @@ msgid ""
 "More than one user was found with the same public key. Select the correct "
 "user from the list to add to the buddy list."
 msgstr ""
-"Mehr als ein Benutzer wurde mit dem gleichen öffentlichen Schlüssel "
-"gefunden. Wählen Sie den richtigen Benutzer, um ihn zur Buddy-Liste "
-"hinzuzufügen."
+"Es gibt mehr als einen Benutzer mit dem gleichen öffentlichen Schlüssel. "
+"Wählen Sie den richtigen Benutzer aus, der zur Buddy-Liste hinzugefügt "
+"werden soll."
 
 msgid ""
 "More than one user was found with the same name. Select the correct user "
 "from the list to add to the buddy list."
 msgstr ""
-"Mehr als ein Benutzer wurde mit dem gleichen Namen gefunden. Wählen Sie den "
-"richtigen Benutzer, um ihn zur Buddy-Liste hinzuzufügen."
+"Es gibt mehr als einen Benutzer mit gleichem Namen. Wählen Sie den richtigen "
+"Benutzer aus, der zur Buddy-Liste hinzugefügt werden soll."
 
 msgid "Detached"
 msgstr "Unbeteiligt"
@@ -9355,7 +9351,7 @@ msgid "Cannot set topic"
 msgstr "Kann das Thema nicht setzen"
 
 msgid "Failed to change nickname"
-msgstr "Kann den Nickname nicht ändern"
+msgstr "Kann den Spitznamen nicht ändern"
 
 msgid "Roomlist"
 msgstr "Raumliste"
@@ -9628,7 +9624,7 @@ msgid "Topic too long"
 msgstr "Thema zu lang"
 
 msgid "You must specify a nick"
-msgstr "Sie müssen einen Nick angeben"
+msgstr "Sie müssen einen Spitznamen angeben"
 
 #, c-format
 msgid "channel %s not found"
@@ -9667,7 +9663,7 @@ msgid "list:  List channels on this network"
 msgstr "list:  Liste Kanäle in diesem Netzwerk auf"
 
 msgid "whois &lt;nick&gt;:  View nick's information"
-msgstr "whois &lt;Nick&gt;:  Informationen zum Nick anzeigen"
+msgstr "whois &lt;Spitzname&gt;:  Informationen zum Spitznamen anzeigen"
 
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"
 msgstr ""
@@ -9676,8 +9672,8 @@ msgstr ""
 
 msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
 msgstr ""
-"query &lt;Nick&gt; [&lt;Nachricht&gt;]:  Sende eine private Nachricht an "
-"einen Benutzer"
+"query &lt;Spitzname&gt; [&lt;Nachricht&gt;]:  Sende eine private Nachricht "
+"an einen Benutzer"
 
 msgid "motd:  View the server's Message Of The Day"
 msgstr "motd:  Nachricht des Tages vom Server anzeigen"
@@ -9692,13 +9688,15 @@ msgid "call &lt;command&gt;:  Call any silc client command"
 msgstr "call &lt;Kommando&gt;:  Rufe ein Silc-Client-Kommando auf"
 
 msgid "kill &lt;nick&gt; [-pubkey|&lt;reason&gt;]:  Kill nick"
-msgstr "kill &lt;Nick&gt; [-pubkey|&lt;Grund&gt;]:  Killt einen Nick"
+msgstr ""
+"kill &lt;Spitzname&gt; [-pubkey|&lt;Grund&gt;]:  Wirft einen Spitznamen "
+"hinaus"
 
 msgid "nick &lt;newnick&gt;:  Change your nickname"
-msgstr "nick &lt;neue Nickname&gt;:  Ihren Nickname ändern"
+msgstr "nick &lt;neuer Spitzname&gt;:  Ihren Spitznamen ändern"
 
 msgid "whowas &lt;nick&gt;:  View nick's information"
-msgstr "whowas &lt;Nick&gt;:  Informationen zu einem Benutzer abrufen"
+msgstr "whowas &lt;Spitzname&gt;:  Informationen zu einem Benutzer abrufen"
 
 msgid ""
 "cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Change or display "
@@ -9711,8 +9709,8 @@ msgid ""
 "cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Change nick's modes "
 "on channel"
 msgstr ""
-"cumode &lt;Kanal&gt; +|-&lt;Modi&gt; &lt;Nick&gt;:  Modi des Benutzers auf "
-"dem Kanal ändern"
+"cumode &lt;Kanal&gt; +|-&lt;Modi&gt; &lt;Spitzname&gt;:  Modi des Benutzers "
+"auf dem Kanal ändern"
 
 msgid "umode &lt;usermodes&gt;:  Set your modes in the network"
 msgstr ""
@@ -9720,30 +9718,31 @@ msgstr ""
 
 msgid "oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"
 msgstr ""
-"oper &lt;Nick&gt; [-pubkey]:  Privilegien des Server-Operators verlangen"
+"oper &lt;Spitzname&gt; [-pubkey]:  Privilegien des Server-Operators verlangen"
 
 msgid ""
 "invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from "
 "channel invite list"
 msgstr ""
-"invite &lt;Kanal&gt; [-|+]&lt;Nick&gt;:  Benutzer einladen oder Benutzer zur "
-"Einladungsliste des Kanals hinzufügen oder von der Einladungsliste entfernen"
+"invite &lt;Kanal&gt; [-|+]&lt;Spitzname&gt;:  Benutzer einladen oder "
+"Benutzer zur Einladungsliste des Kanals hinzufügen oder von der "
+"Einladungsliste entfernen"
 
 msgid "kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"
 msgstr ""
-"kick &lt;Kanal&gt; &lt;Nick&gt; [Kommentar]:  Kickt einen Benutzer aus dem "
-"Kanal"
+"kick &lt;Kanal&gt; &lt;Spitzname&gt; [Kommentar]:  Kickt einen Benutzer aus "
+"dem Kanal"
 
 msgid "info [server]:  View server administrative details"
 msgstr "info [Server]:  Administrative Details des Servers ansehen"
 
 msgid "ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"
-msgstr "ban [&lt;Kanal&gt; +|-&lt;Nick&gt;]:  Verbanne Benutzer vom Kanal"
+msgstr "ban [&lt;Kanal&gt; +|-&lt;Spitzname&gt;]:  Verbanne Benutzer vom Kanal"
 
 msgid "getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"
 msgstr ""
-"getkey &lt;Nick|Server&gt;:  Öffentlichen Schlüssel der Servers oder des "
-"Benutzers abrufen"
+"getkey &lt;Spitzname|Server&gt;:  Öffentlichen Schlüssel der Servers oder "
+"des Benutzers abrufen"
 
 msgid "stats:  View server and network statistics"
 msgstr "stats:  Server- und Netzwerkstatistik ansehen"
@@ -10168,7 +10167,7 @@ msgid "Ignore buddy?"
 msgstr "Buddy ignorieren?"
 
 msgid "Invalid username or password"
-msgstr "Ungültiger Benutzername oder Passwort"
+msgstr "Benutzername oder Passwort ungültig"
 
 msgid ""
 "Your account has been locked due to too many failed login attempts.  Please "
@@ -10471,10 +10470,10 @@ msgid "Attempt to subscribe to %s,%s,%s failed"
 msgstr "Der Versuch, %s,%s,%s zu abonnieren ist gescheitert"
 
 msgid "zlocate &lt;nick&gt;: Locate user"
-msgstr "zlocate &lt;Nick&gt;: Benutzer suchen"
+msgstr "zlocate &lt;Spitzname&gt;: Benutzer suchen"
 
 msgid "zl &lt;nick&gt;: Locate user"
-msgstr "zl &lt;Nick&gt;: Benutzer suchen"
+msgstr "zl &lt;Spitzname&gt;: Benutzer suchen"
 
 msgid "instance &lt;instance&gt;: Set the instance to be used on this class"
 msgstr ""
@@ -10669,7 +10668,7 @@ msgid "Do not disturb"
 msgstr "Nicht stören"
 
 msgid "Extended away"
-msgstr "Abwesend (erweitert)"
+msgstr "Länger abwesend"
 
 msgid "Listening to music"
 msgstr "Musik hören"
@@ -11087,7 +11086,7 @@ msgid ""
 "your nickname"
 msgstr ""
 "Die Textinformation für einen Chat mit einer ungelesenen Nachricht, in der "
-"Ihr Nickname vorkommt"
+"Ihr Spitzname vorkommt"
 
 msgid "The text information for a buddy's status"
 msgstr "Die Textinformation für den Status eines Buddys"
@@ -11373,7 +11372,7 @@ msgstr "Buddy-Anzahl"
 
 #, c-format
 msgid "Idle %dd %dh %02dm"
-msgstr "Untätig %dd %dh %02dm"
+msgstr "Untätig seit %dd %dh %02dm"
 
 #, c-format
 msgid "Idle %dh %02dm"
@@ -11381,7 +11380,7 @@ msgstr "Untätig %dh %02dm"
 
 #, c-format
 msgid "Idle %dm"
-msgstr "Untätig %dm"
+msgstr "Untätig seit %dm"
 
 msgid "/Buddies/New Instant Message..."
 msgstr "/Buddys/Neue Sofortnachricht..."
@@ -12103,14 +12102,14 @@ msgstr "Kurdisch"
 msgid "Lao"
 msgstr "Laotisch"
 
-msgid "Lithuanian"
-msgstr "Litauisch"
-
 msgid "Macedonian"
 msgstr "Makedonisch"
 
 msgid "Mongolian"
 msgstr "Mongolisch"
+
+msgid "Marathi"
+msgstr "Marathi"
 
 msgid "Malay"
 msgstr "Malaiisch"
@@ -12208,6 +12207,9 @@ msgstr "Traditionelles Chinesisch"
 msgid "Amharic"
 msgstr "Amharisch"
 
+msgid "Lithuanian"
+msgstr "Litauisch"
+
 #, c-format
 msgid "About %s"
 msgstr "Über %s"
@@ -12250,7 +12252,19 @@ msgid ""
 "<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
 "primary language is <b>English</b>.  You are welcome to post in another "
 "language, but the responses may be less helpful.<br/><br/>"
-msgstr "<font size=\"4\">Hilfe von anderen Pidgin-Benutzern:</font> <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Dies ist eine <b>öffentliche</b> Mailing-Liste! (<a href=\"http://pidgin.im/pipermail/support/\">Archiv</a>)<br/>Wir können nicht bei Problemen mit Drittanbieter-Protokollen oder Plugins helfen!<br/>Die Hauptsprache dieser Liste ist <b>Englisch</b>.  Sie können gern in einer anderen Sprache schreiben, aber die Antworten könnten weniger hilfreich sein.<br/>Deutschsprachige Benutzer können auch das Portal <a href=\"http://www.pidgin-im.de/\">Pidgin-IM.de</a> nutzen.  Dort finden Sie aktuelle Informationen zu Pidgin, können mit anderen Benutzern im <a href=\"http://forum.pidgin-im.de/\">Forum</a> diskutieren und Hilfe zu Problemen finden.  Beachten Sie, dass dieses Portal unabhängig vom offiziellen Pidgin-Projekt ist.<br/><br/>"
+msgstr ""
+"<font size=\"4\">Hilfe von anderen Pidgin-Benutzern:</font> <a href=\"mailto:"
+"support@pidgin.im\">support@pidgin.im</a><br/>Dies ist eine <b>öffentliche</"
+"b> Mailing-Liste! (<a href=\"http://pidgin.im/pipermail/support/\">Archiv</"
+"a>)<br/>Wir können nicht bei Problemen mit Drittanbieter-Protokollen oder "
+"Plugins helfen!<br/>Die Hauptsprache dieser Liste ist <b>Englisch</b>.  Sie "
+"können gern in einer anderen Sprache schreiben, aber die Antworten könnten "
+"weniger hilfreich sein.<br/>Deutschsprachige Benutzer können auch das Portal "
+"<a href=\"http://www.pidgin-im.de/\">Pidgin-IM.de</a> nutzen.  Dort finden "
+"Sie aktuelle Informationen zu Pidgin, können mit anderen Benutzern im <a "
+"href=\"http://forum.pidgin-im.de/\">Forum</a> diskutieren und Hilfe zu "
+"Problemen finden.  Beachten Sie, dass dieses Portal unabhängig vom "
+"offiziellen Pidgin-Projekt ist.<br/><br/>"
 
 #, c-format
 msgid ""
@@ -13553,10 +13567,10 @@ msgstr "Allen Benutzern erlauben, mich zu kontaktieren"
 
 msgid "Allow only the users on my buddy list"
 msgstr ""
-"Nur den Benutzern in meiner Buddy-Liste erlauben mir Nachrichten zu senden"
+"Nur den Benutzern in meiner Buddy-Liste erlauben, mir Nachrichten zu senden"
 
 msgid "Allow only the users below"
-msgstr "Erlaube nur den untenstehenden Benutzern mir Nachrichten zu senden"
+msgstr "Erlaube nur den untenstehenden Benutzern, mir Nachrichten zu senden"
 
 msgid "Block all users"
 msgstr "Blockiere alle Benutzer"
@@ -14327,7 +14341,7 @@ msgstr "Verlauf"
 #. *< priority
 #. *< id
 msgid "Iconify on Away"
-msgstr "Minimieren, wenn Abwesend"
+msgstr "Minimieren, wenn abwesend"
 
 #. *< name
 #. *< version
@@ -14608,7 +14622,7 @@ msgid "Raw"
 msgstr "Raw"
 
 msgid "Lets you send raw input to text-based protocols."
-msgstr "Erlaubt Ihnen Rohdaten an textbasierte Protokolle zu senden."
+msgstr "Erlaubt Ihnen, Rohdaten an textbasierte Protokolle zu senden."
 
 msgid ""
 "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
@@ -14956,7 +14970,7 @@ msgstr "Durchlässigkeit:"
 
 #. IM Convo trans options
 msgid "IM Conversation Windows"
-msgstr "IM Gesprächsfenster"
+msgstr "IM-Gesprächsfenster"
 
 msgid "_IM window transparency"
 msgstr "_IM Fenstertransparenz"

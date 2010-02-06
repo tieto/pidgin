@@ -766,11 +766,12 @@ debug_window_new(void)
 		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
 
 		/* regex toggle button */
+		image = gtk_image_new_from_stock(GTK_STOCK_FIND, GTK_ICON_SIZE_MENU);
 		win->filter =
 			gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 									   GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 									   NULL, _("Filter"), _("Filter"),
-									   NULL, NULL,
+									   NULL, image,
 									   G_CALLBACK(regex_filter_toggled_cb),
 									   win);
 		/* we purposely disable the toggle button here in case

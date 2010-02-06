@@ -884,6 +884,8 @@ char *yahoo_html_to_codes(const char *src)
 						}
 						g_free(etag);
 					}
+				} else if (g_str_equal(tag_name, "span") || g_str_equal(tag_name, "/span")) {
+					/* Do nothing */
 				} else {
 					/* We don't know what the tag is. Send it unmodified. */
 					g_string_append(dest, tag);

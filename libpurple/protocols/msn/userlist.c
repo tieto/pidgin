@@ -119,26 +119,16 @@ msn_userlist_user_is_in_group(MsnUser *user, const char * group_id)
 	if (group_id == NULL)
 		return FALSE;
 
-	if (g_list_find_custom(user->group_ids, group_id, (GCompareFunc)strcmp))
-		return TRUE;
-
-	return FALSE;
+	return (g_list_find_custom(user->group_ids, group_id, (GCompareFunc)strcmp)) != NULL;
 }
 
 gboolean
 msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id)
 {
-	int list_op;
-
 	if (user == NULL)
 		return FALSE;
 
-	list_op = 1 << list_id;
-
-	if (user->list_op & list_op)
-		return TRUE;
-	else
-		return FALSE;
+	return (user->list_op & (1 << list_id));
 }
 
 /**************************************************************************
@@ -210,6 +200,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 
 	if (list_op & MSN_LIST_PL_OP)
 	{
+		user->authorized = TRUE;
 		got_new_entry(gc, passport, store, message);
 	}
 }
@@ -343,14 +334,10 @@ msn_userlist_find_user_with_mobile_phone(MsnUserList *userlist, const char *numb
 
 	for (l = userlist->users; l != NULL; l = l->next) {
 		MsnUser *user = (MsnUser *)l->data;
+		const char *user_number = msn_user_get_mobile_phone(user);
 
-		if (user->phone.mobile == NULL) {
-			continue;
-		}
-
-		if (!g_ascii_strcasecmp(number, user->phone.mobile)) {
+		if (user_number && !g_ascii_strcasecmp(number, user_number))
 			return user;
-		}
 	}
 
 	return NULL;

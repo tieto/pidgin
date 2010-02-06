@@ -497,17 +497,15 @@ check_for_and_do_command(PurpleConversation *conv)
 						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 					if ((prpl_info != NULL) && (prpl_info->options & OPT_PROTO_SLASH_COMMANDS_NATIVE)) {
-						char *firstspace;
-						char *slash;
+						char *spaceslash;
 
-						firstspace = strchr(cmdline, ' ');
-						if (firstspace != NULL) {
-							slash = strrchr(firstspace, '/');
-						} else {
-							slash = strchr(cmdline, '/');
-						}
+						/* If the first word in the entered text has a '/' in it, then the user
+						 * probably didn't mean it as a command. So send the text as message. */
+						spaceslash = cmdline;
+						while (*spaceslash && *spaceslash != ' ' && *spaceslash != '/')
+							spaceslash++;
 
-						if (slash == NULL) {
+						if (*spaceslash != '/') {
 							purple_conversation_write(conv, "", _("Unknown command."), PURPLE_MESSAGE_NO_LOG, time(NULL));
 							retval = TRUE;
 						}
@@ -4652,6 +4650,8 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	int max_height = total_height / 2;
 	int min_lines = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines");
 	int min_height;
+	gboolean interior_focus;
+	int focus_width;
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4677,6 +4677,13 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	 * is the beginning of a new paragraph. */
 	min_height = min_lines * (oneline.height + MAX(pad_inside, pad_top + pad_bottom));
 	height = CLAMP(height, MIN(min_height, max_height), max_height);
+
+	gtk_widget_style_get(gtkconv->entry,
+	                     "interior-focus", &interior_focus,
+	                     "focus-line-width", &focus_width,
+	                     NULL);
+	if (!interior_focus)
+		height += 2 * focus_width;
 
 	diff = height - gtkconv->entry->allocation.height;
 	if (ABS(diff) < oneline.height / 2)
@@ -5493,10 +5500,12 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 	}
 
 	/* Somebody wants to keep this conversation around, so don't time it out */
-	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
-	if (timer) {
-		purple_timeout_remove(timer);
-		purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(0));
+	if (conv) {
+		timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
+		if (timer) {
+			purple_timeout_remove(timer);
+			purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(0));
+		}
 	}
 }
 
@@ -7622,15 +7631,23 @@ account_signing_off(PurpleConnection *gc)
 	}
 }
 
+struct _status_timeout_user {
+	gchar *name;
+	PurpleAccount *account;
+};
+
 static gboolean
-update_buddy_status_timeout(PurpleBuddy *buddy)
+update_buddy_status_timeout(struct _status_timeout_user *user)
 {
 	/* To remove the signing-on/off door icon */
 	PurpleConversation *conv;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy->name, buddy->account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, user->name, user->account);
 	if (conv)
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON);
+
+	g_free(user->name);
+	g_free(user);
 
 	return FALSE;
 }
@@ -7640,6 +7657,7 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 {
 	PidginConversation *gtkconv;
 	PurpleConversation *conv;
+	struct _status_timeout_user *user;
 
 	gtkconv = get_gtkconv_with_contact(purple_buddy_get_contact(buddy));
 	if (gtkconv)
@@ -7652,8 +7670,12 @@ update_buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old, PurpleStatus 
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_MENU);
 	}
 
+	user = g_malloc(sizeof(struct _status_timeout_user));
+	user->name = g_strdup(buddy->name);
+	user->account = buddy->account;
+
 	/* In case a conversation is started after the buddy has signed-on/off */
-	purple_timeout_add_seconds(11, (GSourceFunc)update_buddy_status_timeout, buddy);
+	purple_timeout_add_seconds(11, (GSourceFunc)update_buddy_status_timeout, user);
 }
 
 static void
@@ -9484,6 +9506,24 @@ close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *la
 	return FALSE;
 }
 
+static gboolean
+gtkconv_tab_set_tip(GtkWidget *widget, GdkEventCrossing *event, PidginConversation *gtkconv)
+{
+#if GTK_CHECK_VERSION(2, 12, 0)
+#define gtk_tooltips_set_tip(tips, w, l, p)  gtk_widget_set_tooltip_text(w, l)
+#endif
+	PangoLayout *layout;
+
+	layout = gtk_label_get_layout(GTK_LABEL(gtkconv->tab_label));
+	gtk_tooltips_set_tip(gtkconv->tooltips, widget,
+			pango_layout_is_ellipsized(layout) ? gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)) : NULL,
+			NULL);
+	return FALSE;
+#if GTK_CHECK_VERSION(2, 12, 0)
+#undef gtk_tooltips_set_tip
+#endif
+}
+
 void
 pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 {
@@ -9642,6 +9682,8 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
 #endif
 	gtk_container_add(GTK_CONTAINER(ebox), gtkconv->tabby);
+	g_signal_connect(G_OBJECT(ebox), "enter-notify-event",
+			G_CALLBACK(gtkconv_tab_set_tip), gtkconv);
 
 	if (gtkconv->tab_label->parent == NULL) {
 		/* Pack if it's a new widget */

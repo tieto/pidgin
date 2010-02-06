@@ -862,6 +862,7 @@ jabber_message_xhtml_find_smileys(const char *xhtml)
 
 	for (; smileys ; smileys = g_list_delete_link(smileys, smileys)) {
 		PurpleSmiley *smiley = (PurpleSmiley *) smileys->data;
+
 		const gchar *shortcut = purple_smiley_get_shortcut(smiley);
 		const gssize len = strlen(shortcut);
 
@@ -983,36 +984,52 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 		if (found_smileys) {
 			gchar *smileyfied_xhtml = NULL;
 			const GList *iterator;
-
+			GList *valid_smileys = NULL;
+			gboolean has_too_large_smiley = FALSE;
+			
 			for (iterator = found_smileys; iterator ;
 				iterator = g_list_next(iterator)) {
-				const PurpleSmiley *smiley =
-						(PurpleSmiley *) iterator->data;
+				PurpleSmiley *smiley = (PurpleSmiley *) iterator->data;
 				const gchar *shortcut = purple_smiley_get_shortcut(smiley);
 				const JabberData *data =
 					jabber_data_find_local_by_alt(shortcut);
+				PurpleStoredImage *image = purple_smiley_get_stored_image(smiley);
 
-				/* the object has not been sent before */
-				if (!data) {
-					PurpleStoredImage *image =
-							purple_smiley_get_stored_image(smiley);
-					const gchar *ext = purple_imgstore_get_extension(image);
-					JabberStream *js = jm->js;
+				if (purple_imgstore_get_size(image) <= JABBER_DATA_MAX_SIZE) {
+					/* the object has not been sent before */
+					if (!data) {
+						const gchar *ext = purple_imgstore_get_extension(image);
+						JabberStream *js = jm->js;
 
-					JabberData *new_data =
-						jabber_data_create_from_data(purple_imgstore_get_data(image),
-							purple_imgstore_get_size(image),
-							jabber_message_get_mimetype_from_ext(ext), js);
-					purple_debug_info("jabber",
-						"cache local smiley alt = %s, cid = %s\n",
-						shortcut, jabber_data_get_cid(new_data));
-					jabber_data_associate_local(new_data, shortcut);
-				}
+						JabberData *new_data =
+							jabber_data_create_from_data(purple_imgstore_get_data(image),
+								purple_imgstore_get_size(image),
+								jabber_message_get_mimetype_from_ext(ext), js);
+						purple_debug_info("jabber",
+							"cache local smiley alt = %s, cid = %s\n",
+							shortcut, jabber_data_get_cid(new_data));
+						jabber_data_associate_local(new_data, shortcut);
+					}
+					valid_smileys = g_list_append(valid_smileys, smiley);
+				} else {
+					has_too_large_smiley = TRUE;
+					purple_debug_warning("jabber", "Refusing to send smiley %s "
+							"(too large, max is %d)\n",
+							purple_smiley_get_shortcut(smiley),
+							JABBER_DATA_MAX_SIZE);
+				}				
+			}
+
+			if (has_too_large_smiley) {
+				purple_conversation_write(conv, NULL,
+				    _("A custom smiley in the message is too large to send."),
+					PURPLE_MESSAGE_ERROR, time(NULL));
 			}
 
 			smileyfied_xhtml =
-				jabber_message_get_smileyfied_xhtml(xhtml, found_smileys);
+				jabber_message_get_smileyfied_xhtml(xhtml, valid_smileys);
 			g_list_free(found_smileys);
+			g_list_free(valid_smileys);
 
 			return smileyfied_xhtml;
 		}
@@ -1193,6 +1210,7 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	tmp = purple_utf8_strip_unprintables(msg);
 	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
 	g_free(tmp);
+
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
 	if (tmp) {
 		g_free(xhtml);
@@ -1206,7 +1224,8 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	if (!jbr || !jbr->caps.info ||
 			jabber_resource_has_capability(jbr, NS_XHTML_IM)) {
 		if (!jabber_xhtml_plain_equal(xhtml, jm->body))
-			jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'>%s</body></html>", xhtml);
+			/* Wrap the message in <p/> for great interoperability justice. */
+			jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'><p>%s</p></body></html>", xhtml);
 	}
 
 	g_free(xhtml);
@@ -1249,7 +1268,8 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	}
 
 	if (chat->xhtml && !jabber_xhtml_plain_equal(xhtml, jm->body))
-		jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'>%s</body></html>", xhtml);
+		/* Wrap the message in <p/> for greater interoperability justice. */
+		jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'><p>%s</p></body></html>", xhtml);
 
 	g_free(xhtml);
 

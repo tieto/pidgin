@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-05 19:57-0800\n"
+"POT-Creation-Date: 2010-01-13 17:44-0800\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
@@ -545,7 +545,7 @@ msgid ""
 msgstr ""
 "%s\n"
 "\n"
-"Finch не будет пытаться пересоединитьс, пока вы не исправите ошибку и "
+"Finch не будет пытаться пересоединиться, пока вы не исправите ошибку и "
 "повторно не включите учётную запись."
 
 msgid "Re-enable Account"
@@ -1769,8 +1769,8 @@ msgid ""
 "The certificate claims to be from \"%s\" instead. This could mean that you "
 "are not connecting to the service you believe you are."
 msgstr ""
-"Этот сертификат представлен \"%s\", а должен быть от \"%s\".Это может "
-"означать, что вы полключены не туда куда вы думаете."
+"Вместо этого сертификат уверяет, что он от \"%s\". Это может означать, что "
+"вы подключены не туда, куда вы верите, что подключены."
 
 #. Make messages
 #, c-format
@@ -1963,6 +1963,10 @@ msgstr "Нельзя отправить каталог."
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s не является обычным файлом. Не будет перезаписан.\n"
+
+#, fuzzy
+msgid "File is not readable."
+msgstr "Каталог недоступен для записи."
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
@@ -2969,8 +2973,8 @@ msgid ""
 "Unable to detect ActiveTCL installation. If you wish to use TCL plugins, "
 "install ActiveTCL from http://www.activestate.com\n"
 msgstr ""
-"Невозможно обнаружить установку ActiveTCL. Если вы хотите использвать модули "
-"TCL, установите ActiveTCL из http://www.activestate.com\n"
+"Невозможно обнаружить установку ActiveTCL. Если вы хотите использовать "
+"модули TCL, установите ActiveTCL из http://www.activestate.com\n"
 
 msgid ""
 "Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
@@ -3723,7 +3727,7 @@ msgid ""
 "can't use it."
 msgstr ""
 "operwall &lt;message&gt;:  Если вы не знаете, что это, вероятно вы не "
-"сможетеэто использовать."
+"сможете это использовать."
 
 msgid "operserv: Send a command to operserv"
 msgstr "operserv: Послать команду для operserv"
@@ -3855,7 +3859,7 @@ msgid "Invalid challenge from server"
 msgstr "Неверный запрос с сервера"
 
 msgid "Server thinks authentication is complete, but client does not"
-msgstr ""
+msgstr "Сервер думает, что аутентификация завершена, но клиент так не считает"
 
 msgid "SASL authentication failed"
 msgstr "Аутентификация SASL провалилась"
@@ -3866,19 +3870,19 @@ msgstr "Ошибка SASL: %s"
 
 #, fuzzy
 msgid "Unable to canonicalize username"
-msgstr "Не удаётся настроить"
+msgstr "Не удаётся конизировать имя пользователя"
 
 #, fuzzy
 msgid "Unable to canonicalize password"
-msgstr "Не удалось открыть прослушиваемый порт."
+msgstr "Не удаётся канонизировать пароль"
 
 #, fuzzy
 msgid "Malicious challenge from server"
-msgstr "Неверный запрос с сервера"
+msgstr "Злобный вызов от сервера"
 
 #, fuzzy
 msgid "Unexpected response from server"
-msgstr "Получен непредвиденный HTTP-отклик от сервера."
+msgstr "Неожиданный ответ от сервера."
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Управление соединениями BOSH прервало ваш сеанс."
@@ -3981,11 +3985,7 @@ msgstr "Ресурс"
 
 #, fuzzy
 msgid "Uptime"
-msgstr "Обновить"
-
-#, c-format
-msgid "%s"
-msgstr ""
+msgstr "Время работы"
 
 msgid "Logged Off"
 msgstr "Вышел из сети"
@@ -4013,7 +4013,8 @@ msgstr "Логотип"
 msgid ""
 "%s will no longer be able to see your status updates.  Do you want to "
 "continue?"
-msgstr "Вы удалите %s из списка собеседников. Хотите продолжить?"
+msgstr ""
+"%s больше не сможет видеть обновления вашего состояния.  Хотите продолжить?"
 
 msgid "Cancel Presence Notification"
 msgstr "Отменить уведомление о присутствии"
@@ -4184,13 +4185,6 @@ msgstr "Роли:"
 #, fuzzy
 msgid "Ping timed out"
 msgstr "Время ожидания при прозвоне истекло"
-
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-"Не могу найти замену для XMPP-методов соединения после неудачи "
-"подсоединиться напрямую."
 
 msgid "Invalid XMPP ID"
 msgstr "Неверный XMPP ID"
@@ -4646,8 +4640,9 @@ msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
 "users with a role or set users' role with the room."
 msgstr ""
-"роль &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Установите "
-"рольпользователя в комнате."
+"роль &lt;moderator|participant|visitor|none&gt; [псевдоним1]"
+"[псевдоним2] ...: Возьмите пользователей с ролью или установите роль "
+"пользователей в комнате."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
@@ -5073,7 +5068,7 @@ msgstr "Не предусмотрено"
 
 #, fuzzy
 msgid "Friendly name is changing too rapidly"
-msgstr "Дружественные изменения именни слишком быстры"
+msgstr "Дружественное имя меняется слишком быстро"
 
 #, c-format
 msgid "Server too busy"
@@ -5164,6 +5159,10 @@ msgstr "Адрес email"
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Ваше новое дружеское имя MSN слишком велико."
+
+#, fuzzy, c-format
+msgid "Set friendly name for %s."
+msgstr "Введите ваше дружеское имя."
 
 msgid "Set your friendly name."
 msgstr "Введите ваше дружеское имя."
@@ -6261,7 +6260,7 @@ msgid_plural ""
 "%d buddies were added or updated from the server (including buddies already "
 "on the server-side list)"
 msgstr[0] ""
-"Собесденик %d был добавлен или обновлён с сервера (включая собеседников, "
+"Собеседник %d был добавлен или обновлён с сервера (включая собеседников, "
 "которые уже в списке на стороне сервера)"
 msgstr[1] ""
 "Собеседники %d были добавлены или обновлены с сервера (включая собеседников, "
@@ -7228,7 +7227,7 @@ msgstr ""
 
 #, fuzzy
 msgid "The SecurID key entered is invalid"
-msgstr "Введённый ключ SecurID неверный."
+msgstr "Введённый ключ SecurID некорректный."
 
 msgid "Enter SecurID"
 msgstr "Введите SecurID"
@@ -7829,7 +7828,7 @@ msgstr "Разрешить множественные одновременные
 
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
-msgstr "Спрашиваю %s, чтобы подсоединитьсяк нам в %s:%hu для Прямого IM."
+msgstr "Спрашиваю %s, чтобы подсоединиться к нам в %s:%hu для Прямого IM."
 
 #, c-format
 msgid "Attempting to connect to %s:%hu."
@@ -9530,7 +9529,7 @@ msgid "Ping"
 msgstr "Прозвон"
 
 msgid "Ping failed"
-msgstr "Прозвон неудался"
+msgstr "Прозвон не удался"
 
 msgid "Ping reply received from server"
 msgstr "От сервера получен ответ прозвона"
@@ -12258,19 +12257,18 @@ msgstr "Курдский"
 msgid "Lao"
 msgstr "Лаосский"
 
-msgid "Lithuanian"
-msgstr "Литовский"
-
 msgid "Macedonian"
 msgstr "Македонский"
 
-#, fuzzy
 msgid "Mongolian"
 msgstr "Монгольский"
 
 #, fuzzy
+msgid "Marathi"
+msgstr "Гуджарати"
+
 msgid "Malay"
-msgstr "Мужчина"
+msgstr "Малайский"
 
 msgid "Bokmål Norwegian"
 msgstr "Букмол"
@@ -12285,7 +12283,7 @@ msgid "Norwegian Nynorsk"
 msgstr "Норвежский нюнорск"
 
 msgid "Occitan"
-msgstr "Оссетинский"
+msgstr "Осетинский"
 
 msgid "Punjabi"
 msgstr "Панджаби"
@@ -12366,6 +12364,9 @@ msgstr "Традиционный китайский"
 msgid "Amharic"
 msgstr "Амхарский"
 
+msgid "Lithuanian"
+msgstr "Литовский"
+
 #, c-format
 msgid "About %s"
 msgstr "О %s"
@@ -12412,7 +12413,7 @@ msgstr ""
 "<font size=\"4\">Помощь от других пользователей Pidgin:</font> <a href="
 "\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Это <b>публичная</b> "
 "почтовая рассылка! (<a href=\"http://pidgin.im/pipermail/support/\">архив</"
-"a>)<br/>Мы не пожем помочь по сторонним протоколам или модулям!<br/>Основной "
+"a>)<br/>Мы не можем помочь по сторонним протоколам или модулям!<br/>Основной "
 "язык этой рассылки - <b>английский</b>.  Вы, конечно, можете писать на "
 "другом языке, но ответы могут быть менее полезными.<br/><br/>"
 
@@ -13051,7 +13052,7 @@ msgid ""
 "how to get the backtrace, please read the instructions at\n"
 "%swiki/GetABacktrace\n"
 msgstr ""
-"%s %s были с ошибками сегментации и попытались просмтреть файл ядра.\n"
+"%s %s были с ошибками сегментации и попытались просмотреть файл ядра.\n"
 "Это глюк в программе и вы тут не виноваты.\n"
 "\n"
 "Если вы можете повторить возникновение ошибки, пожалуйста уведомите\n"
@@ -15211,7 +15212,7 @@ msgstr "У_стройство"
 #. *< id
 #, fuzzy
 msgid "Voice/Video Settings"
-msgstr "Изменить настройки"
+msgstr "Голосовые/видео настройки"
 
 #. *< name
 #. *< version
@@ -15220,7 +15221,7 @@ msgstr "Изменить ваш микрофон и веб-камеру."
 
 #. *< summary
 msgid "Configure microphone and webcam settings for voice/video calls."
-msgstr "Изменить настройки микрофона и веб-камеры для головых/видео звонков."
+msgstr "Изменить настройки микрофона и веб-камеры для голосовых/видео звонков."
 
 msgid "Opacity:"
 msgstr "Непрозрачность:"
@@ -15351,6 +15352,16 @@ msgstr "Отправлять и получать прямые XMPP строфы.
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Этот модуль полезен для отладки XMPP серверов или клиентов."
 
+#~ msgid "%s"
+#~ msgstr "%s"
+
+#~ msgid ""
+#~ "Unable to find alternative XMPP connection methods after failing to "
+#~ "connect directly."
+#~ msgstr ""
+#~ "Не могу найти замену для XMPP-методов соединения после неудачи "
+#~ "подсоединиться напрямую."
+
 #, fuzzy
 #~ msgid "(Default)"
 #~ msgstr "(По умолчанию)"
@@ -15405,9 +15416,9 @@ msgstr "Этот модуль полезен для отладки XMPP серв
 #~ "signature from the Certificate Authority from which it claims to have a "
 #~ "signature."
 #~ msgstr ""
-#~ "Цепочка сертификата, представленная %s, не имеет правильной "
-#~ "цифровойподписи в Авторизации Сертификатов, откуда она попыталась "
-#~ "получить подпись."
+#~ "Цепочка сертификата, представленная %s, не имеет правильной цифровой "
+#~ "подписи в Авторизации Сертификатов, откуда она попыталась получить "
+#~ "подпись."
 
 #~ msgid "Invalid certificate authority signature"
 #~ msgstr "Неверная авторская подпись сертификата"
@@ -15423,7 +15434,7 @@ msgstr "Этот модуль полезен для отладки XMPP серв
 
 #, fuzzy
 #~ msgid "Failed to open the file"
-#~ msgstr "Не удалось открыть файл '%s': %s"
+#~ msgstr "Не удалось открыть файл"
 
 #~ msgid "Your account is locked, please log in to the Yahoo! website."
 #~ msgstr "Ваша учётная запись заблокирована, войдите с web-сайта Yahoo!."

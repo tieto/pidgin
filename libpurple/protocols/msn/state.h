@@ -61,9 +61,6 @@ const char *msn_state_get_text(MsnAwayType state);
 
 void msn_set_psm(MsnSession *session);
 
-/* Parse CurrentMedia string */
-gboolean msn_parse_currentmedia(const char *cmedia, CurrentMedia *media);
-
 /* Get the CurrentMedia info from the XML node */
 char * msn_get_currentmedia(xmlnode *payloadNode);
 

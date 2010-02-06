@@ -345,17 +345,23 @@ static void
 msn_show_set_friendly_name(PurplePluginAction *action)
 {
 	PurpleConnection *gc;
+	PurpleAccount *account;
+	char *tmp;
 
 	gc = (PurpleConnection *) action->context;
+	account = purple_connection_get_account(gc);
 
-	purple_request_input(gc, NULL, _("Set your friendly name."),
+	tmp = g_strdup_printf(_("Set friendly name for %s."),
+	                      purple_account_get_username(account));
+	purple_request_input(gc, _("Set your friendly name."), tmp,
 					   _("This is the name that other MSN buddies will "
 						 "see you as."),
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_act_id),
 					   _("Cancel"), NULL,
-					   purple_connection_get_account(gc), NULL, NULL,
+					   account, NULL, NULL,
 					   gc);
+	g_free(tmp);
 }
 
 typedef struct MsnLocationData {
@@ -1655,6 +1661,8 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	const char *bname;
 	MsnAddReqData *data;
+	MsnSession *session;
+	MsnUser *user;
 
 	bname = purple_buddy_get_name(buddy);
 
@@ -1676,12 +1684,18 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	data->buddy = buddy;
 	data->group = group;
 
-	purple_request_input(gc, NULL, _("Authorization Request Message:"),
-	                     NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
-	                     _("_OK"), G_CALLBACK(finish_auth_request),
-	                     _("_Cancel"), G_CALLBACK(cancel_auth_request),
-	                     purple_connection_get_account(gc), bname, NULL,
-	                     data);
+	session = purple_connection_get_protocol_data(gc);
+	user = msn_userlist_find_user(session->userlist, bname);
+	if (user && user->authorized) {
+		finish_auth_request(data, NULL);
+	} else {
+		purple_request_input(gc, NULL, _("Authorization Request Message:"),
+		                     NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
+		                     _("_OK"), G_CALLBACK(finish_auth_request),
+		                     _("_Cancel"), G_CALLBACK(cancel_auth_request),
+		                     purple_connection_get_account(gc), bname, NULL,
+		                     data);
+	}
 }
 
 static void
@@ -2771,7 +2785,7 @@ static PurplePluginProtocolInfo prpl_info =
 	OPT_PROTO_MAIL_CHECK,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
-	{"png", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_SEND},	/* icon_spec */
+	{"png,gif", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_SEND},	/* icon_spec */
 	msn_list_icon,			/* list_icon */
 	msn_list_emblems,		/* list_emblems */
 	msn_status_text,		/* status_text */
