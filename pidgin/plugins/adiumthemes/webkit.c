@@ -39,6 +39,7 @@
 /* Purple headers */
 #include <conversation.h>
 #include <debug.h>
+#include <internal.h>
 #include <notify.h>
 #include <util.h>
 #include <version.h>
@@ -551,8 +552,15 @@ style_set_default ()
 	const char *stylepath = purple_prefs_get_string ("/plugins/gtk/adiumthemes/stylepath");
 	g_assert (cur_style_dir == NULL);
 
-	if (stylepath) 
+	if (stylepath && *stylepath)
 		styles = g_list_prepend (styles, g_strdup (stylepath));
+	else {
+		purple_notify_error(handle, _("Webkit themes"),
+			_("Can't find installed styles"),
+			_("Please install some theme and verify the installation path")); 
+
+		return;
+	}
 
 	/* pick any one that works. Note that we have first preference
 	 * for the one in the userdir */
