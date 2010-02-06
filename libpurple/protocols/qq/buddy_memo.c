@@ -119,7 +119,7 @@ static void update_buddy_memo(PurpleConnection *gc, guint32 bd_uid, gchar *alias
 
 	who = uid_to_purple_name(bd_uid);
 	buddy = purple_find_buddy(account, who);
-	if (buddy == NULL || buddy->proto_data == NULL) {
+	if (buddy == NULL || purple_buddy_get_protocol_data(buddy) == NULL) {
 		g_free(who);
 		purple_debug_info("QQ", "Error...Can NOT find %d!\n", bd_uid);
 		return;

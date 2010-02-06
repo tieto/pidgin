@@ -585,12 +585,7 @@ static void winpidgin_tray_create() {
 			 G_CALLBACK(dummy_button_cb), NULL);
 
 	image = gtk_image_new();
-#if GLIB_CHECK_VERSION(2,10,0)
 	g_object_ref_sink(image);
-#else
-	g_object_ref(image);
-	gtk_object_sink(GTK_OBJECT(image));
-#endif
 
 	osinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionEx(&osinfo);

@@ -12,7 +12,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"インストーラが既に実行されています"
 !define PIDGIN_IS_RUNNING				"Pidgin が実行されています。Pidgin を終了してから再度実行してください"
-!define GTK_INSTALLER_NEEDED			"GTK+ランタイム環境が無いかもしくはアップグレードする必要があります。$\rv${GTK_MIN_VERSION}もしくはそれ以上のGTK+ランタイムをインストールしてください。"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"次へ >"
@@ -33,14 +32,11 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"スタートメニューに Pidgin の項目を作成する"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"古いバージョンのGTK+ランタイムが見つかりました。アップグレードしますか?$\r注意: $(^Name)はアップグレードしない限り動かないでしょう。"
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Windows PidginのWebページを訪れてください。"
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"GTK+ランタイムのインストールでエラーが発生しました。"
-!define GTK_BAD_INSTALL_PATH			"あなたの入力したパスにアクセスまたは作成できません。"
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"アンインストーラはPidginのレジストリエントリを発見できませんでした。$\rおそらく別のユーザにインストールされたでしょう。"

@@ -496,7 +496,6 @@ purple_core_migrate(void)
 			if (purple_strequal(entry, "logs"))
 			{
 				char *link;
-#if GLIB_CHECK_VERSION(2,4,0)
 				err = NULL;
 
 				if ((link = g_file_read_link(name, &err)) == NULL)
@@ -512,27 +511,6 @@ purple_core_migrate(void)
 					g_free(old_user_dir);
 					return FALSE;
 				}
-#else
-				char buf[MAXPATHLEN];
-				size_t linklen;
-
-				if ((linklen = readlink(name, buf, sizeof(buf) - 1) == -1))
-				{
-					char *name_utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
-					purple_debug_error("core", "Error reading symlink %s: %s. Please report this at " PURPLE_DEVEL_WEBSITE "\n",
-					                   name_utf8, g_strerror(errno));
-					g_free(name_utf8);
-					g_free(name);
-					g_dir_close(dir);
-					g_free(status_file);
-					g_free(old_user_dir);
-					return FALSE;
-				}
-				buf[linklen] = '\0';
-
-				/* This way we don't have to GLIB_VERSION_CHECK every g_free(link) below. */
-				link = g_strdup(buf);
-#endif
 
 				logs_dir = g_build_filename(user_dir, "logs", NULL);
 
