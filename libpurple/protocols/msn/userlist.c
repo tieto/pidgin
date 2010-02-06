@@ -137,7 +137,7 @@ msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id)
 
 void
 msn_got_lst_user(MsnSession *session, MsnUser *user,
-				 int list_op, GSList *group_ids)
+				 MsnListOp list_op, GSList *group_ids)
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
@@ -334,14 +334,10 @@ msn_userlist_find_user_with_mobile_phone(MsnUserList *userlist, const char *numb
 
 	for (l = userlist->users; l != NULL; l = l->next) {
 		MsnUser *user = (MsnUser *)l->data;
+		const char *user_number = msn_user_get_mobile_phone(user);
 
-		if (!user->phone || !user->phone->mobile) {
-			continue;
-		}
-
-		if (!g_ascii_strcasecmp(number, user->phone->mobile)) {
+		if (user_number && !g_ascii_strcasecmp(number, user_number))
 			return user;
-		}
 	}
 
 	return NULL;

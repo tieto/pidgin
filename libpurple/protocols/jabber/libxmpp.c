@@ -431,7 +431,7 @@ init_plugin(PurplePlugin *plugin)
 	jabber_data_init();
 	jabber_bosh_init();
 
-	#warning implement adding and retrieving own features via IPC API
+	/* TODO: Implement adding and retrieving own features via IPC API */
 
 	jabber_ibb_init();
 	jabber_si_init();

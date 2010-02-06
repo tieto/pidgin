@@ -21,13 +21,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_TRANSACTION_H
-#define _MSN_TRANSACTION_H
+#ifndef MSN_TRANSACTION_H
+#define MSN_TRANSACTION_H
 
 typedef struct _MsnTransaction MsnTransaction;
 
-#include "command.h"
 #include "cmdproc.h"
+#include "command.h"
 
 typedef void (*MsnTransCb)(MsnCmdProc *cmdproc, MsnCommand *cmd);
 typedef void (*MsnTimeoutCb)(MsnCmdProc *cmdproc, MsnTransaction *trans);
@@ -79,4 +79,4 @@ void msn_transaction_add_cb(MsnTransaction *trans, char *answer,
 void msn_transaction_set_error_cb(MsnTransaction *trans, MsnErrorCb cb);
 void msn_transaction_set_timeout_cb(MsnTransaction *trans, MsnTimeoutCb cb);
 
-#endif /* _MSN_TRANSACTION_H */
+#endif /* MSN_TRANSACTION_H */

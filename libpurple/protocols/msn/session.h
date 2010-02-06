@@ -21,26 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_SESSION_H_
-#define _MSN_SESSION_H_
+#ifndef MSN_SESSION_H
+#define MSN_SESSION_H
 
 typedef struct _MsnSession MsnSession;
-
-#include "sslconn.h"
-
-#include "user.h"
-#include "slpcall.h"
-
-#include "notification.h"
-#include "switchboard.h"
-#include "group.h"
-
-#include "nexus.h"
-#include "httpconn.h"
-#include "oim.h"
-
-#include "userlist.h"
-#include "sync.h"
 
 /**
  * Types of errors.
@@ -55,7 +39,6 @@ typedef enum
 	MSN_ERROR_SIGN_OTHER,
 	MSN_ERROR_SERV_DOWN,
 	MSN_ERROR_SERV_UNAVAILABLE
-
 } MsnErrorType;
 
 /**
@@ -68,15 +51,25 @@ typedef enum
 	MSN_LOGIN_STEP_TRANSFER,
 	MSN_LOGIN_STEP_HANDSHAKE2,
 	MSN_LOGIN_STEP_AUTH_START,
-	MSN_LOGIN_STEP_AUTH,
 	MSN_LOGIN_STEP_GET_COOKIE,
 	MSN_LOGIN_STEP_AUTH_END,
 	MSN_LOGIN_STEP_SYN,
 	MSN_LOGIN_STEP_END
-
 } MsnLoginStep;
 
 #define MSN_LOGIN_STEPS MSN_LOGIN_STEP_END
+
+#include "group.h"
+#include "httpconn.h"
+#include "nexus.h"
+#include "notification.h"
+#include "oim.h"
+#include "slpcall.h"
+#include "sslconn.h"
+#include "switchboard.h"
+#include "sync.h"
+#include "user.h"
+#include "userlist.h"
 
 struct _MsnSession
 {
@@ -238,4 +231,4 @@ void msn_session_finish_login(MsnSession *session);
 void msn_session_report_user(MsnSession *session,const char *passport,
 							const char *msg,PurpleMessageFlags flags);
 
-#endif /* _MSN_SESSION_H_ */
+#endif /* MSN_SESSION_H */

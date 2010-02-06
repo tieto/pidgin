@@ -21,10 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_DIALOG_H_
-#define _MSN_DIALOG_H_
+#ifndef MSN_DIALOG_H
+#define MSN_DIALOG_H
 
 void msn_show_sync_issue(MsnSession *session, const char *passport,
 						 const char *group_name);
 
-#endif /* _MSN_DIALOG_H_ */
+#endif /* MSN_DIALOG_H */

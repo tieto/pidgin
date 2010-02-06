@@ -2597,6 +2597,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 	gpointer data;
 	GList *accounts = NULL, *node;
 	int active;
+	gboolean wastyping = FALSE;
 
 
 	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL(status_box->dropdown_store), &iter, path))
@@ -2609,7 +2610,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			   TYPE_COLUMN, &type,
 			   DATA_COLUMN, &data,
 			   -1);
-	if (status_box->typing != 0)
+	if ((wastyping = (status_box->typing != 0)))
 		purple_timeout_remove(status_box->typing);
 	status_box->typing = 0;
 
@@ -2633,14 +2634,18 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			pidgin_status_editor_show(FALSE,
 				purple_savedstatus_is_transient(saved_status)
 					? saved_status : NULL);
-			status_menu_refresh_iter(status_box, FALSE);
+			status_menu_refresh_iter(status_box, wastyping);
+			if (wastyping)
+				pidgin_status_box_refresh(status_box);
 			return;
 		}
 
 		if (type == PIDGIN_STATUS_BOX_TYPE_SAVED)
 		{
 			pidgin_status_window_show();
-			status_menu_refresh_iter(status_box, FALSE);
+			status_menu_refresh_iter(status_box, wastyping);
+			if (wastyping)
+				pidgin_status_box_refresh(status_box);
 			return;
 		}
 	}
