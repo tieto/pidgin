@@ -73,6 +73,14 @@ GType gtk_webview_get_type (void);
 GtkWidget* gtk_webview_new (void);
 
 /**
+ * Set the vertical adjustment for the GtkWebView.
+ *
+ * @param webview  The GtkWebView.
+ * @param vadj     The GtkAdjustment that control the webview.
+ */
+void gtk_webview_set_vadjustment(GtkWebView *webview, GtkAdjustment *vadj);
+
+/**
  * A very basic routine to append html, which can be considered
  * equivalent to a "document.write" using JavaScript.
  *
@@ -123,5 +131,13 @@ void gtk_webview_safe_execute_script (GtkWebView *webview, const char* script);
  * @return the quoted string.
  */
 char* gtk_webview_quote_js_string (const char* str);
+
+/**
+ * Scrolls the Webview to the end of its contents.
+ *
+ * @param webview The GtkWebView.
+ * @param smoth   A boolean indicating if smooth scrolling should be used.
+ */
+void gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth);
 
 #endif /* _PIDGIN_WEBVIEW_H_ */

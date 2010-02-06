@@ -4915,6 +4915,8 @@ setup_common_pane(PidginConversation *gtkconv)
         gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (webview_sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	gtkconv->webview = gtk_webview_new ();
+	gtk_webview_set_vadjustment(GTK_WEBVIEW(gtkconv->webview),
+			gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(webview_sw)));
 	gtk_container_add (GTK_CONTAINER (webview_sw), gtkconv->webview);
 	
 	gtk_widget_set_size_request(gtkconv->webview, -1, 0);

@@ -48,6 +48,9 @@ struct GtkWebViewPriv {
 	/* JS execute queue */
 	GQueue *js_queue;
 	gboolean is_loading;
+	GtkAdjustment *vadj;
+	guint scroll_src;
+	GTimer *scroll_time;
 };
 
 GtkWidget* gtk_webview_new (void)
@@ -290,6 +293,10 @@ char *gtk_webview_quote_js_string(const char *text)
 	return g_string_free (str, FALSE);
 }
 
+void gtk_webview_set_vadjustment(GtkWebView *webview, GtkAdjustment *vadj)
+{
+	webview->priv->vadj = vadj;
+}
 
 /* this is a "hack", my plan is to eventually handle this 
  * correctly using a signals and a plugin: the plugin will have
@@ -304,6 +311,7 @@ gtk_webview_append_html (GtkWebView* view, const char* html)
 	printf ("script: %s\n", script);
 	webkit_web_view_execute_script (WEBKIT_WEB_VIEW (view), script);
 	view->priv->empty = FALSE;
+	gtk_webview_scroll_to_end(view, TRUE);
 	g_free (script);
 	g_free (escaped);
 }
@@ -311,6 +319,65 @@ gtk_webview_append_html (GtkWebView* view, const char* html)
 gboolean gtk_webview_is_empty (GtkWebView *view)
 {
 	return view->priv->empty;
+}
+
+#define MAX_SCROLL_TIME 0.4 /* seconds */
+#define SCROLL_DELAY 33 /* milliseconds */
+
+/*
+ * Smoothly scroll a WebView.
+ *
+ * @return TRUE if the window needs to be scrolled further, FALSE if we're at the bottom.
+ */
+static gboolean smooth_scroll_cb(gpointer data)
+{
+	struct GtkWebViewPriv *priv = data;
+	GtkAdjustment *adj = priv->vadj;
+	gdouble max_val = adj->upper - adj->page_size;
+	gdouble scroll_val = gtk_adjustment_get_value(adj) + ((max_val - gtk_adjustment_get_value(adj)) / 3);
+
+	g_return_val_if_fail(priv->scroll_time != NULL, FALSE);
+
+	if (g_timer_elapsed(priv->scroll_time, NULL) > MAX_SCROLL_TIME || scroll_val >= max_val) {
+		/* time's up. jump to the end and kill the timer */
+		gtk_adjustment_set_value(adj, max_val);
+		g_timer_destroy(priv->scroll_time);
+		priv->scroll_time = NULL;
+		g_source_remove(priv->scroll_src);
+		priv->scroll_src = 0;
+		return FALSE;
+	}
+
+	/* scroll by 1/3rd the remaining distance */
+	gtk_adjustment_set_value(adj, scroll_val);
+	return TRUE;
+}
+
+static gboolean scroll_idle_cb(gpointer data)
+{
+	struct GtkWebViewPriv *priv = data;
+	GtkAdjustment *adj = priv->vadj;
+	if(adj) {
+		gtk_adjustment_set_value(adj, adj->upper - adj->page_size);
+	}
+	priv->scroll_src = 0;
+	return FALSE;
+}
+
+void gtk_webview_scroll_to_end(GtkWebView *webview, gboolean smooth)
+{
+	struct GtkWebViewPriv *priv = webview->priv;
+	if (priv->scroll_time)
+		g_timer_destroy(priv->scroll_time);
+	if (priv->scroll_src)
+		g_source_remove(priv->scroll_src);
+	if(smooth) {
+		priv->scroll_time = g_timer_new();
+		priv->scroll_src = g_timeout_add_full(G_PRIORITY_LOW, SCROLL_DELAY, smooth_scroll_cb, priv, NULL);
+	} else {
+		priv->scroll_time = NULL;
+		priv->scroll_src = g_idle_add_full(G_PRIORITY_LOW, scroll_idle_cb, priv, NULL);
+	}
 }
 
 GType gtk_webview_get_type (void)
