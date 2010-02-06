@@ -99,6 +99,7 @@ pidgin_blist_loader_build(const gchar *dir)
 		{NULL, NULL}
 	};
 
+	bgcolor = expanded_bgcolor = collapsed_bgcolor = contact_color = NULL;
 	expanded          = NULL;
 	collapsed         = NULL;
 	contact           = NULL;
