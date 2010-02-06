@@ -58,7 +58,7 @@ purple_coresources = \
 	media/candidate.c \
 	media/codec.c \
 	media/enum-types.c \
-	media/media.c \
+	media.c \
 	mediamanager.c \
 	mime.c \
 	nat-pmp.c \
