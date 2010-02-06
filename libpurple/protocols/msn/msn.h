@@ -109,9 +109,9 @@ typedef enum
 #define MSN_SERVER "messenger.hotmail.com"
 #define MSN_HTTPCONN_SERVER "gateway.messenger.hotmail.com"
 #define MSN_PORT 1863
-#define WLM_PROT_VER		15
+#define WLM_PROT_VER		16
 
-#define WLM_MAX_PROTOCOL	15
+#define WLM_MAX_PROTOCOL	16
 #define WLM_MIN_PROTOCOL	15
 
 #define MSN_TYPING_RECV_TIMEOUT 6
@@ -134,14 +134,13 @@ typedef enum
 /* Index into attention_types */
 #define MSN_NUDGE 0
 
-#define MSN_CLIENT_ID_VERSION      MSN_CLIENT_VER_7_0
+#define MSN_CLIENT_ID_VERSION      MSN_CLIENT_VER_9_0
 #define MSN_CLIENT_ID_CAPABILITIES (MSN_CLIENT_CAP_PACKET|MSN_CLIENT_CAP_INK_GIF|MSN_CLIENT_CAP_VOICEIM)
+#define MSN_CLIENT_ID_EXT_CAPS     (0)
 
 #define MSN_CLIENT_ID \
 	((MSN_CLIENT_ID_VERSION    << 24) | \
 	 (MSN_CLIENT_ID_CAPABILITIES))
-
-#define MSN_CLIENT_EXT_ID 0
 
 gboolean msn_email_is_valid(const char *passport);
 void msn_act_id(PurpleConnection *gc, const char *entry);

@@ -243,6 +243,12 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 		return;
 	}
 
+	/* Don't add ourselves either... */
+	if (g_str_equal(passport, purple_account_get_username(account))) {
+		g_free(passport);
+		return;
+	}
+
 	swboard->users = g_list_prepend(swboard->users, passport);
 	swboard->current_users++;
 	swboard->empty = FALSE;
@@ -265,7 +271,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 								PURPLE_CBFLAGS_NONE, TRUE);
 		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 	}
-	else if (swboard->current_users > 1 || swboard->total_users > 1)
+	else if (swboard->current_users > 1)
 	{
 		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 		if (swboard->conv == NULL ||
@@ -964,6 +970,7 @@ connect_cb(MsnServConn *servconn)
 	MsnTransaction *trans;
 	MsnCmdProc *cmdproc;
 	PurpleAccount *account;
+	char *username;
 
 	cmdproc = servconn->cmdproc;
 	g_return_if_fail(cmdproc != NULL);
@@ -972,24 +979,33 @@ connect_cb(MsnServConn *servconn)
 	swboard = cmdproc->data;
 	g_return_if_fail(swboard != NULL);
 
+	if (servconn->session->protocol_ver >= 16)
+		username = g_strdup_printf("%s;{%s}",
+		                           purple_account_get_username(account),
+		                           servconn->session->guid);
+	else
+		username = g_strdup(purple_account_get_username(account));
+
 	if (msn_switchboard_is_invited(swboard))
 	{
 		swboard->empty = FALSE;
 
 		trans = msn_transaction_new(cmdproc, "ANS", "%s %s %s",
-									purple_account_get_username(account),
+									username,
 									swboard->auth_key, swboard->session_id);
 	}
 	else
 	{
 		trans = msn_transaction_new(cmdproc, "USR", "%s %s",
-									purple_account_get_username(account),
+									username,
 									swboard->auth_key);
 	}
 
 	msn_transaction_set_error_cb(trans, ans_usr_error);
 	msn_transaction_set_data(trans, swboard);
 	msn_cmdproc_send_trans(cmdproc, trans);
+
+	g_free(username);
 }
 
 static void

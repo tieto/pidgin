@@ -364,6 +364,115 @@ msn_show_set_friendly_name(PurplePluginAction *action)
 	g_free(tmp);
 }
 
+typedef struct MsnLocationData {
+	PurpleAccount *account;
+	MsnSession *session;
+	PurpleRequestFieldGroup *group;
+} MsnLocationData;
+
+static void
+update_endpoint_cb(MsnLocationData *data, PurpleRequestFields *fields)
+{
+	PurpleAccount *account;
+	MsnSession *session;
+	const char *old_name;
+	const char *name;
+	GList *others;
+
+	session = data->session;
+	account = data->account;
+
+	/* Update the current location's name */
+	old_name = purple_account_get_string(account, "endpoint-name", NULL);
+	name = purple_request_fields_get_string(fields, "endpoint-name");
+	if (!g_str_equal(old_name, name)) {
+		purple_account_set_string(account, "endpoint-name", name);
+		msn_notification_send_uux_private_endpointdata(session);
+	}
+
+	/* Sign out other locations */
+	for (others = purple_request_field_group_get_fields(data->group);
+	     others;
+	     others = g_list_next(others)) {
+		PurpleRequestField *field = others->data;
+		if (purple_request_field_get_type(field) != PURPLE_REQUEST_FIELD_BOOLEAN)
+			continue;
+		if (purple_request_field_bool_get_value(field)) {
+			const char *id = purple_request_field_get_id(field);
+			char *user;
+			purple_debug_info("msn", "Disconnecting Endpoint %s\n", id);
+
+			user = g_strdup_printf("%s;%s", purple_account_get_username(account), id);
+			msn_notification_send_uun(session, user, MSN_UNIFIED_NOTIFICATION_MPOP, "goawyplzthxbye");
+			g_free(user);
+		}
+	}
+
+	g_free(data);
+}
+
+static void
+create_endpoint_fields(gpointer key, gpointer value, gpointer user_data)
+{
+	const char *id = key;
+	MsnUserEndpoint *ep = value;
+	MsnLocationData *data = user_data;
+	PurpleRequestField *field;
+
+	if (g_str_equal(id, data->session->guid))
+		return;
+
+	field = purple_request_field_bool_new(id, ep->name, FALSE);
+	purple_request_field_group_add_field(data->group, field);
+}
+
+static void
+msn_show_locations(PurplePluginAction *action)
+{
+	PurpleConnection *pc;
+	PurpleAccount *account;
+	MsnSession *session;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+	MsnLocationData *data;
+
+	pc = (PurpleConnection *)action->context;
+	account = purple_connection_get_account(pc);
+	session = purple_connection_get_protocol_data(pc);
+
+	fields = purple_request_fields_new();
+
+	group = purple_request_field_group_new(_("This Location"));
+	purple_request_fields_add_group(fields, group);
+	field = purple_request_field_label_new("endpoint-label", _("This is the name that identifies this location"));
+	purple_request_field_group_add_field(group, field);
+	field = purple_request_field_string_new("endpoint-name",
+	                                        _("Name"),
+	                                        purple_account_get_string(account, "endpoint-name", NULL),
+	                                        FALSE);
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+
+	group = purple_request_field_group_new(_("Other Locations"));
+	purple_request_fields_add_group(fields, group);
+	field = purple_request_field_label_new("others-label", _("You can sign out from other locations here"));
+	purple_request_field_group_add_field(group, field);
+	
+	data = g_new0(MsnLocationData, 1);
+	data->account = account;
+	data->session = session;
+	data->group = group;
+	g_hash_table_foreach(session->user->endpoints, create_endpoint_fields, data);
+
+	purple_request_fields(pc, NULL, NULL, NULL,
+	                      fields,
+	                      _("OK"), G_CALLBACK(update_endpoint_cb),
+	                      _("Cancel"), G_CALLBACK(g_free),
+	                      account, NULL, NULL,
+	                      data);
+}
+
 static void
 msn_show_set_home_phone(PurplePluginAction *action)
 {
@@ -937,6 +1046,11 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
+	act = purple_plugin_action_new(_("View Locations..."),
+	                               msn_show_locations);
+	m = g_list_append(m, act);
+	m = g_list_append(m, NULL);
+
 	act = purple_plugin_action_new(_("Set Home Phone Number..."),
 								 msn_show_set_home_phone);
 	m = g_list_append(m, act);
@@ -1070,6 +1184,10 @@ msn_login(PurpleAccount *account)
 
 	username = purple_account_get_string(account, "display-name", NULL);
 	purple_connection_set_display_name(gc, username);
+
+	if (purple_account_get_string(account, "endpoint-name", NULL) == NULL) {
+		purple_account_set_string(account, "endpoint-name", "Pidgin");
+	}
 
 	if (!msn_session_connect(session, host, port, http_method))
 		purple_connection_error_reason(gc,
