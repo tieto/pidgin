@@ -12,7 +12,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Sazker jixwe dimeþe."
 !define PIDGIN_IS_RUNNING			"Pidgin niha jixwe dimeþe. Ji Pidgin ê derkeve û careke din biceribîne."
-!define GTK_INSTALLER_NEEDED			"Derdora runtime ya GTK+ an tune an rojanekirina wê pêwîst e. $\rJi kerema xwe v${GTK_MIN_VERSION} an bilindtir a GTK+ saz bike."
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Pêþ >"
@@ -32,14 +31,11 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC   "Pidgin ê binivîse menuya destpêk"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Guhertoyeke kevn a GTK+ hatiye dîtin. Tu dixwazî bilind bikî?$\rNot: Heke tu nekî, dibe ku $(^Name) naxebite."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Were Malpera Pidgin a Windowsê"
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Di sazkirina GTK+ de çewtî derket."
-!define GTK_BAD_INSTALL_PATH			"rêya te nivîsand nayê gihiþtin an afirandin."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Raker têketiyên registry yên Pidgin nedît. $\rQey bikarhênereke din vê bername saz kir."
