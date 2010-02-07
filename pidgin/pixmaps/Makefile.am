@@ -118,8 +118,6 @@ EMBLEMS_SCALABLE = \
 		emblems/scalable/free-for-chat.svg \
 		emblems/scalable/game.svg \
 		emblems/scalable/male.svg \
-		emblems/scalable/mobile.svg \
-		emblems/scalable/music.svg \
 		emblems/scalable/not-authorized.svg \
 		emblems/scalable/qq-member.svg \
 		emblems/scalable/secure.svg \
