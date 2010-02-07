@@ -305,7 +305,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 
 				data->values = g_slist_prepend(data->values, value);
 
-				purple_request_field_list_add(field, lbl, value);
+				purple_request_field_list_add_icon(field, lbl, NULL, value);
 				if(g_list_find_custom(selected, value, (GCompareFunc)strcmp))
 					purple_request_field_list_add_selected(field, lbl);
 			}
