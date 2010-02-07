@@ -3830,7 +3830,7 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	PurplePluginProtocolInfo *prpl_info;
 	const char *name = NULL;
 	char *filename, *path;
-	PurplePresence *presence = NULL;
+	PurplePresence *p = NULL;
 	PurpleStatus *tune;
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
@@ -3841,8 +3841,8 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (PurpleBuddy*)node;
 		gtkbuddynode = node->ui_data;
-		presence = purple_buddy_get_presence(buddy);
-		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE)) {
+		p = purple_buddy_get_presence(buddy);
+		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
 			/* This emblem comes from the small emoticon set now,
 			 * to reduce duplication. */
 			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes",
@@ -3868,10 +3868,10 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 
 	/* If we came through the contact code flow above, we didn't need
 	 * to get the presence until now. */
-	if (presence == NULL)
-		presence = purple_buddy_get_presence(buddy);
+	if (p == NULL)
+		p = purple_buddy_get_presence(buddy);
 
-	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE)) {
+	if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
 		/* This emblem comes from the small emoticon set now, to reduce duplication. */
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes", "small", "mobile.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
@@ -3908,10 +3908,10 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	if (name == NULL) {
 		PurpleStatus *status;
 
-		if (!purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOOD))
+		if (!purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOOD))
 			return NULL;
 
-		status = purple_presence_get_status(presence, "mood");
+		status = purple_presence_get_status(p, "mood");
 		name = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
 		
 		if (!(name && *name))
@@ -7949,6 +7949,88 @@ disable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 	purple_account_set_enabled(account, PIDGIN_UI, FALSE);
 }
 
+static void
+edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
+{
+	PurpleRequestField *f;
+	GList *l;
+
+	f = purple_request_fields_get_field(fields, "mood");
+	l = purple_request_field_list_get_selected(f);
+
+	if (l) {
+		const char *mood = purple_request_field_list_get_data(f, l->data);
+		PurpleAccount *account = purple_connection_get_account(gc);
+
+		if (mood != NULL) {
+			purple_account_set_status(account, "mood", TRUE,
+			                          PURPLE_MOOD_NAME, mood,
+			                          NULL);
+		} else {
+			purple_account_set_status(account, "mood", FALSE, NULL);
+		}
+	}
+}
+
+static void
+set_mood_cb(GtkWidget *widget, PurpleAccount *account)
+{
+	PurplePresence *presence = purple_account_get_presence(account);
+	PurpleStatus *status = purple_presence_get_status(presence, "mood");
+	const char *current_mood;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *g;
+	PurpleRequestField *f;
+	char* na_fn;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePluginProtocolInfo *prpl_info;
+	PurpleMood *mood;
+
+	g_return_if_fail(gc->prpl != NULL);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	current_mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
+
+	fields = purple_request_fields_new();
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_list_new("mood", _("Please select your mood from the list"));
+
+	na_fn = g_build_filename("pixmaps", "pidgin", "emblems", "16", "not-authorized.png", NULL);
+
+	purple_request_field_list_add_icon(f, _("None"), na_fn, NULL);
+	if (current_mood == NULL)
+		purple_request_field_list_add_selected(f, _("None"));
+
+	g_free(na_fn);
+
+	/* TODO: rlaager wants this sorted. */
+	for (mood = prpl_info->get_moods(account);
+	     mood->mood != NULL ; mood++) {
+		char *path;
+
+		if (mood->mood == NULL || mood->description == NULL)
+			continue;
+
+		path = get_mood_icon_path(mood->mood);
+		purple_request_field_list_add_icon(f, _(mood->description),
+				path, (gpointer)mood->mood);
+		g_free(path);
+
+		if (current_mood && !strcmp(current_mood, mood->mood))
+			purple_request_field_list_add_selected(f, _(mood->description));
+	}
+	purple_request_field_group_add_field(g, f);
+
+	purple_request_fields_add_group(fields, g);
+
+	purple_request_fields(gc, _("Edit User Mood"), _("Edit User Mood"),
+                              NULL, fields,
+                              _("OK"), G_CALLBACK(edit_mood_cb),
+                              _("Cancel"), NULL,
+                              purple_connection_get_account(gc),
+                              NULL, NULL, gc);
+}
+
 void
 pidgin_blist_update_accounts_menu(void)
 {
@@ -8028,7 +8110,7 @@ pidgin_blist_update_accounts_menu(void)
 		PurpleAccount *account = NULL;
 		GdkPixbuf *pixbuf = NULL;
 		PurplePlugin *plugin = NULL;
-		PurplePluginProtocolInfo *prpl_info
+		PurplePluginProtocolInfo *prpl_info;
 
 		account = accounts->data;
 

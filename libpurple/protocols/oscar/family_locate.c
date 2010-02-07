@@ -45,7 +45,7 @@
  * But, eh.
  */
 static const struct {
-	guint32 flag;
+	guint64 flag;
 	guint8 data[16];
 } aim_caps[] = {
 
@@ -928,11 +928,11 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 			mood = aim_receive_custom_icon(od, bs, length);
 			if (mood)
-				purple_prpl_got_user_status(account, outinfo->sn, "mood",
+				purple_prpl_got_user_status(account, outinfo->bn, "mood",
 						PURPLE_MOOD_NAME, mood,
 						NULL);
 			else
-				purple_prpl_got_user_status_deactive(account, outinfo->sn, "mood");
+				purple_prpl_got_user_status_deactive(account, outinfo->bn, "mood");
 
 		} else if (type == 0x000e) {
 			/*
@@ -1093,11 +1093,11 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 						g_free(icqmood);
 
 						if (mood)
-							purple_prpl_got_user_status(account, outinfo->sn, "mood",
+							purple_prpl_got_user_status(account, outinfo->bn, "mood",
 									PURPLE_MOOD_NAME, mood,
 									NULL);
 						else
-							purple_prpl_got_user_status_deactive(account, outinfo->sn, "mood");
+							purple_prpl_got_user_status_deactive(account, outinfo->bn, "mood");
 					} break;
 				}
 
@@ -1507,11 +1507,11 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 
 		mood = aim_receive_custom_icon(od, &cbs, tlv->length);
 		if (mood)
-			purple_prpl_got_user_status(account, userinfo->sn, "mood",
+			purple_prpl_got_user_status(account, userinfo->bn, "mood",
 					PURPLE_MOOD_NAME, mood,
 					NULL);
 		else
-			purple_prpl_got_user_status_deactive(account, userinfo->sn, "mood");
+			purple_prpl_got_user_status_deactive(account, userinfo->bn, "mood");
 	}
 	aim_tlvlist_free(tlvlist);
 

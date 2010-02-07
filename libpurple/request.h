@@ -948,7 +948,6 @@ gboolean purple_request_field_list_get_multi_select(
 void *purple_request_field_list_get_data(const PurpleRequestField *field,
 									   const char *text);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_REQUEST_C_)
 /**
  * Adds an item to a list field.
  *
@@ -960,7 +959,6 @@ void *purple_request_field_list_get_data(const PurpleRequestField *field,
  */
 void purple_request_field_list_add(PurpleRequestField *field,
 								 const char *item, void *data);
-#endif
 
 /**
  * Adds an item to a list field.

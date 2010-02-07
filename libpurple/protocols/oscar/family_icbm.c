@@ -2675,10 +2675,10 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 					}
  					purple_debug_misc("oscar", "X-Status reply: %s\n", (const char*)xml);
  					account = purple_connection_get_account(od->gc);
- 					buddy = purple_find_buddy(account, sn);
+ 					buddy = purple_find_buddy(account, bn);
  					presence = purple_buddy_get_presence(buddy);
  					status = purple_presence_get_active_status(presence);
- 					purple_prpl_got_user_status(account, sn,
+ 					purple_prpl_got_user_status(account, bn,
   					    purple_status_get_id(status), "message", xml, NULL);
 		   		} else {
 			 		purple_debug_misc("oscar", "X-Status: Can't get XML reply string\n");

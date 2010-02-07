@@ -126,6 +126,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, /* get_account_text_table */
 	jabber_initiate_media,          /* initiate_media */
 	jabber_get_media_caps,                  /* get_media_caps */
+	NULL  							/* get_moods */
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)

@@ -232,7 +232,6 @@ static void purple_icons_fetch(PurpleConnection *gc);
 void oscar_set_info(PurpleConnection *gc, const char *info);
 static void oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, PurpleStatus *status);
 static void oscar_set_extendedstatus(PurpleConnection *gc);
-static void oscar_format_username(PurpleConnection *gc, const char *nick);
 static gboolean purple_ssi_rerequestdata(gpointer data);
 
 static void oscar_free_name_data(struct name_data *data) {
@@ -680,7 +679,7 @@ static gchar *oscar_caps_to_string(OscarCapability caps)
 {
 	GString *str;
 	const gchar *tmp;
-	guint bit = 1;
+	guint64 bit = 1;
 
 	str = g_string_new("");
 
@@ -801,7 +800,7 @@ static char *oscar_icqstatus(int state) {
 	else if (state & AIM_ICQ_STATE_DEPRESSION)
 		return g_strdup(_("Depression"));
 	else if (state & AIM_ICQ_STATE_ATHOME)
-		return g_strdup_(_("At home"));
+		return g_strdup(_("At home"));
 	else if (state & AIM_ICQ_STATE_ATWORK)
 		return g_strdup(_("At work"));
 	else if (state & AIM_ICQ_STATE_LUNCH)
@@ -2730,18 +2729,18 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		purple_debug_info("oscar", "Sending X-Status Reply\n");
 
 		if(args->info.rtfmsg.msgtype == 26)
-			icq_relay_xstatus(od, userinfo->sn, args->cookie);
+			icq_relay_xstatus(od, userinfo->bn, args->cookie);
 		
 		if(args->info.rtfmsg.msgtype == 1)
 		{
 			if(rtfmsg)
 			{
-				serv_got_im(gc, userinfo->sn, rtfmsg, flags,
+				serv_got_im(gc, userinfo->bn, rtfmsg, flags,
 				            time(NULL));
 			}
 			else
 			{
-				serv_got_im(gc, userinfo->sn,
+				serv_got_im(gc, userinfo->bn,
 				            args->info.rtfmsg.rtfmsg, flags,
 				            time(NULL));
 			}
@@ -5164,10 +5163,12 @@ oscar_set_status(PurpleAccount *account, PurpleStatus *status)
 	if (!purple_account_is_connected(account))
 		return;
 
+	pc = purple_account_get_connection(account);
+	od = purple_connection_get_protocol_data(pc);
+
 	/* There's no need to do the stuff below for mood updates. */
 	if (purple_status_type_get_primitive(purple_status_get_type(status)) == PURPLE_STATUS_MOOD) {
-		PurpleConnection *gc = purple_account_get_connection(account);
-		aim_locate_setcaps((OscarData *)gc->proto_data, purple_caps);
+		aim_locate_setcaps(od, purple_caps);
 		return;
 	}
 
@@ -6721,6 +6722,21 @@ static void oscar_get_icqxstatusmsg (PurpleBlistNode *node, gpointer ignore)
 	purple_debug_info("oscar",   "Manual X-Status Get From %s to %s:\n", purple_buddy_get_name(buddy), account->username);
 
 	icq_im_xstatus_request(gc->proto_data, purple_buddy_get_name(buddy));
+}
+
+static void
+oscar_get_aim_info_cb(PurpleBlistNode *node, gpointer ignore)
+{
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
+
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (PurpleBuddy *)node;
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
+
+	aim_locate_getinfoshort(purple_connection_get_protocol_data(gc),
+			purple_buddy_get_name(buddy), 0x00000003);
 }
 
 static GList *

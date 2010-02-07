@@ -379,10 +379,8 @@ typedef enum
 	OSCAR_CAPABILITY_XTRAZ                = 0x40000000,
 	OSCAR_CAPABILITY_GENERICUNKNOWN       = 0x80000000,
 #warning Fix OSCAR_CAPABILITY_LAST situation
-#if 0
 	// TODO: We're out of bits.  Rework things that depend on this or remove some capability. (Or, ensure this is a 64-bit type.)
-	OSCAR_CAPABILITY_LAST                 = 0x100000000
-#endif
+	OSCAR_CAPABILITY_LAST                 = 0x100000000	
 } OscarCapability;
 
 /*
@@ -1158,7 +1156,6 @@ guint32 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len);
 void aim_info_free(aim_userinfo_t *);
 int aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *);
 int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info);
-#endif
 PurpleMood* icq_get_purple_moods(PurpleAccount *account);
 const char* icq_get_custom_icon_description(const char *mood);
 guint8* icq_get_custom_icon_data(const char *mood);
@@ -1491,7 +1488,7 @@ int aim_tlvlist_add_8(GSList **list, const guint16 type, const guint8 value);
 int aim_tlvlist_add_16(GSList **list, const guint16 type, const guint16 value);
 int aim_tlvlist_add_32(GSList **list, const guint16 type, const guint32 value);
 int aim_tlvlist_add_str(GSList **list, const guint16 type, const char *value);
-int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps);
+int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps, const char *mood);
 int aim_tlvlist_add_userinfo(GSList **list, guint16 type, aim_userinfo_t *userinfo);
 int aim_tlvlist_add_chatroom(GSList **list, guint16 type, guint16 exchange, const char *roomname, guint16 instance);
 int aim_tlvlist_add_frozentlvlist(GSList **list, guint16 type, GSList **tl);
