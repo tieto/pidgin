@@ -505,7 +505,7 @@ pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image)
 }
 
 void
-pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer *data, gsize datasize)
+pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer data, gsize datasize)
 {
 	editor->data = data;
 	editor->datasize = datasize;
