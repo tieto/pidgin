@@ -2058,12 +2058,12 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 		if (full) {
 			PurpleStatus *status;
 
-			status = purple_presence_get_active_status(presence);
-			mood = purple_status_get_attr_string(status, "mood");
-			if(mood != NULL) {
+			status = purple_presence_get_status(presence, "mood");
+			mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
+			if(mood && *mood) {
 				const char *moodtext;
-				moodtext = purple_status_get_attr_string(status, "moodtext");
-				if(moodtext != NULL) {
+				moodtext = purple_status_get_attr_string(status, PURPLE_MOOD_COMMENT);
+				if(moodtext && *moodtext) {
 					char *moodplustext = g_strdup_printf("%s (%s)", mood, moodtext);
 
 					purple_notify_user_info_add_pair(user_info, _("Mood"), moodplustext);
@@ -2130,7 +2130,7 @@ GList *jabber_status_types(PurpleAccount *account)
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
-	types = g_list_append(types, type);
+	types = g_list_prepend(types, type);
 
 	priority_value = purple_value_new(PURPLE_TYPE_INT);
 	purple_value_set_int(priority_value, 1);
@@ -2146,7 +2146,7 @@ GList *jabber_status_types(PurpleAccount *account)
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
-	types = g_list_append(types, type);
+	types = g_list_prepend(types, type);
 
 	priority_value = purple_value_new(PURPLE_TYPE_INT);
 	purple_value_set_int(priority_value, 0);
@@ -2162,7 +2162,7 @@ GList *jabber_status_types(PurpleAccount *account)
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
-	types = g_list_append(types, type);
+	types = g_list_prepend(types, type);
 
 	priority_value = purple_value_new(PURPLE_TYPE_INT);
 	purple_value_set_int(priority_value, 0);
@@ -2178,7 +2178,7 @@ GList *jabber_status_types(PurpleAccount *account)
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), buzz_enabled,
 			NULL);
-	types = g_list_append(types, type);
+	types = g_list_prepend(types, type);
 
 	priority_value = purple_value_new(PURPLE_TYPE_INT);
 	purple_value_set_int(priority_value, 0);
@@ -2191,11 +2191,11 @@ GList *jabber_status_types(PurpleAccount *account)
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
-	types = g_list_append(types, type);
+	types = g_list_prepend(types, type);
 
 	/*
 	if(js->protocol_version == JABBER_PROTO_0_9)
-		m = g_list_append(m, _("Invisible"));
+		"Invisible"
 	*/
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
@@ -2203,7 +2203,7 @@ GList *jabber_status_types(PurpleAccount *account)
 			NULL, TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
-	types = g_list_append(types, type);
+	types = g_list_prepend(types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
 			"tune", NULL, FALSE, TRUE, TRUE,
@@ -2217,9 +2217,9 @@ GList *jabber_status_types(PurpleAccount *account)
 			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
 			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
-	types = g_list_append(types, type);
+	types = g_list_prepend(types, type);
 
-	return types;
+	return g_list_reverse(types);
 }
 
 static void

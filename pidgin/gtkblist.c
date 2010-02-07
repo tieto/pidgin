@@ -3705,7 +3705,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 
 
 		/* Offline? */
-		/* FIXME: Why is this status special-cased by the core? -- rlaager */
+		/* FIXME: Why is this status special-cased by the core? --rlaager
+		 * FIXME: Alternatively, why not have the core do all of them? --rlaager */
 		if (!PURPLE_BUDDY_IS_ONLINE(b)) {
 			purple_notify_user_info_add_pair(user_info, _("Status"), _("Offline"));
 		}
@@ -3800,6 +3801,24 @@ static GdkPixbuf * _pidgin_blist_get_cached_emblem(gchar *path) {
 	return pb;
 }
 
+static char *get_mood_icon_path(const char *mood)
+{
+	char *path;
+
+	if (!strcmp(mood, "busy")) {
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
+		                        "status", "16", "busy.png", NULL);
+	} else if (!strcmp(mood, "hiptop")) {
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
+		                        "emblems", "16", "hiptop.png", NULL);
+	} else {
+		char *filename = g_strdup_printf("%s.png", mood);
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
+		                        "emotes", "small", filename, NULL);
+		g_free(filename);
+	}
+	return path;
+}
 
 GdkPixbuf *
 pidgin_blist_get_emblem(PurpleBlistNode *node)
@@ -3811,7 +3830,7 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	PurplePluginProtocolInfo *prpl_info;
 	const char *name = NULL;
 	char *filename, *path;
-	PurplePresence *p;
+	PurplePresence *presence = NULL;
 	PurpleStatus *tune;
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
@@ -3822,16 +3841,19 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (PurpleBuddy*)node;
 		gtkbuddynode = node->ui_data;
-		p = purple_buddy_get_presence(buddy);
-		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
-			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems",
-						"16", "mobile.png", NULL);
+		presence = purple_buddy_get_presence(buddy);
+		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE)) {
+			/* This emblem comes from the small emoticon set now,
+			 * to reduce duplication. */
+			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes",
+						"small", "mobile.png", NULL);
 			return _pidgin_blist_get_cached_emblem(path);
 		}
 
 		if (((struct _pidgin_blist_node*)(node->parent->ui_data))->contact_expanded) {
-			if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"))
-				return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
+			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"))
+				return NULL;
+			return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
 		}
 	} else {
 		return NULL;
@@ -3844,9 +3866,14 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
-	p = purple_buddy_get_presence(buddy);
-	if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "mobile.png", NULL);
+	/* If we came through the contact code flow above, we didn't need
+	 * to get the presence until now. */
+	if (presence == NULL)
+		presence = purple_buddy_get_presence(buddy);
+
+	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE)) {
+		/* This emblem comes from the small emoticon set now, to reduce duplication. */
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes", "small", "mobile.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
@@ -3865,7 +3892,8 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 			return _pidgin_blist_get_cached_emblem(path);
 		}
 		/* Regular old "tune" is the only one in all protocols. */
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "music.png", NULL);
+		/* This emblem comes from the small emoticon set now, to reduce duplication. */
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes", "small", "music.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}
 
@@ -3877,13 +3905,24 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	if (prpl_info && prpl_info->list_emblem)
 		name = prpl_info->list_emblem(buddy);
 
-	if (name == NULL)
-		return NULL;
+	if (name == NULL) {
+		PurpleStatus *status;
 
-	filename = g_strdup_printf("%s.png", name);
+		if (!purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOOD))
+			return NULL;
 
-	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", filename, NULL);
-	g_free(filename);
+		status = purple_presence_get_status(presence, "mood");
+		name = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
+		
+		if (!(name && *name))
+			return NULL;
+
+		path = get_mood_icon_path(name);
+	} else {
+		filename = g_strdup_printf("%s.png", name);
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", filename, NULL);
+		g_free(filename);
+	}
 
 	/* _pidgin_blist_get_cached_emblem() assumes ownership of path */
 	return _pidgin_blist_get_cached_emblem(path);
@@ -7989,6 +8028,7 @@ pidgin_blist_update_accounts_menu(void)
 		PurpleAccount *account = NULL;
 		GdkPixbuf *pixbuf = NULL;
 		PurplePlugin *plugin = NULL;
+		PurplePluginProtocolInfo *prpl_info
 
 		account = accounts->data;
 
@@ -8028,12 +8068,38 @@ pidgin_blist_update_accounts_menu(void)
 
 		gc = purple_account_get_connection(account);
 		plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
-		if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
-			build_plugin_actions(submenu, plugin, gc);
-		} else {
-			menuitem = gtk_menu_item_new_with_label(_("No actions available"));
-			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-			gtk_widget_set_sensitive(menuitem, FALSE);
+
+		if (plugin &&
+		    (prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin)) &&
+		    PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods))
+		{
+			GList *types;
+			for (types = purple_account_get_status_types(account);
+			     types != NULL ; types = types->next)
+			{
+				PurpleStatusType *type = types->data;
+
+				if (strcmp(purple_status_type_get_id(type), "mood") != 0)
+					continue;
+
+				menuitem = gtk_menu_item_new_with_mnemonic(_("Set _Mood..."));
+				g_signal_connect(G_OBJECT(menuitem), "activate",
+					         G_CALLBACK(set_mood_cb), account);
+				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+
+				/* Be safe.  It shouldn't match more than once anyway */
+				break;
+			}
+		}
+		else
+		{
+			if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
+				build_plugin_actions(submenu, plugin, gc);
+			} else {
+				menuitem = gtk_menu_item_new_with_label(_("No actions available"));
+				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+				gtk_widget_set_sensitive(menuitem, FALSE);
+			}
 		}
 
 		pidgin_separator(submenu);
