@@ -74,7 +74,8 @@ static GSList *gtk_smileys = NULL;
 static void
 pidgin_smiley_destroy(PidginSmiley *smiley)
 {
-	g_object_set_data(G_OBJECT(smiley->smiley), "edit-dialog", NULL);
+	if (smiley->smiley)
+		g_object_set_data(G_OBJECT(smiley->smiley), "edit-dialog", NULL);
 	gtk_widget_destroy(smiley->parent);
 	g_free(smiley->filename);
 	if (smiley->custom_pixbuf)
@@ -403,7 +404,8 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 			smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
 			NULL);
 	s->parent = window;
-	g_object_set_data(G_OBJECT(smiley), "edit-dialog", window);
+	if (smiley)
+		g_object_set_data(G_OBJECT(smiley), "edit-dialog", window);
 
 	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
