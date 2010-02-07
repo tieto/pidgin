@@ -52,6 +52,7 @@ version 2.6.6 (??/??/20??):
 	* Correctly handle a multiline text field being required in a
 	  request form.  (Thanks to Florian Zeitz for finding this problem)
 	* Search friends by email-addresses in the buddy list. (Luoh Ren-Shan)
+	* Allow dropping an image on Custom Smiley window to add a new one.
 
 	Finch:
 	* Rebindable 'move-first' and 'move-last' actions for tree widgets. So
