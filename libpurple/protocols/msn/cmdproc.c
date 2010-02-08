@@ -243,41 +243,42 @@ void
 msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnMsgTypeCb cb;
-	const char *messageId = NULL;
+	const char *message_id = NULL;
 
 	/* Multi-part messages */
-	if ((messageId = msn_message_get_header_value(msg, "Message-ID")) != NULL) {
+	message_id = msn_message_get_header_value(msg, "Message-ID");
+	if (message_id != NULL) {
 		const char *chunk_text = msn_message_get_header_value(msg, "Chunks");
 		guint chunk;
 		if (chunk_text != NULL) {
 			chunk = strtol(chunk_text, NULL, 10);
-			/* 1024 chunks of ~1300 bytes is ~1MB, which seems OK to prevent 
+			/* 1024 chunks of ~1300 bytes is ~1MB, which seems OK to prevent
 			   some random client causing pidgin to hog a ton of memory.
 			   Probably should figure out the maximum that the official client
 			   actually supports, though. */
 			if (chunk > 0 && chunk < 1024) {
 				msg->total_chunks = chunk;
 				msg->received_chunks = 1;
-				g_hash_table_insert(cmdproc->multiparts, (gpointer)messageId, msn_message_ref(msg));
-				purple_debug_info("msn", "Received chunked message, messageId: '%s', total chunks: %d\n",
-				                  messageId, chunk);
+				g_hash_table_insert(cmdproc->multiparts, (gpointer)message_id, msn_message_ref(msg));
+				purple_debug_info("msn", "Received chunked message, message_id: '%s', total chunks: %d\n",
+				                  message_id, chunk);
 			} else {
-				purple_debug_error("msn", "MessageId '%s' has too many chunks: %d\n", messageId, chunk);
+				purple_debug_error("msn", "MessageId '%s' has too many chunks: %d\n", message_id, chunk);
 			}
 			return;
 		} else {
 			chunk_text = msn_message_get_header_value(msg, "Chunk");
 			if (chunk_text != NULL) {
-				MsnMessage *first = g_hash_table_lookup(cmdproc->multiparts, messageId);
+				MsnMessage *first = g_hash_table_lookup(cmdproc->multiparts, message_id);
 				chunk = strtol(chunk_text, NULL, 10);
 				if (first == NULL) {
 					purple_debug_error("msn",
-					                   "Unable to find first chunk of messageId '%s' to correspond with chunk %d.\n",
-					                   messageId, chunk+1);
+					                   "Unable to find first chunk of message_id '%s' to correspond with chunk %d.\n",
+					                   message_id, chunk+1);
 				} else if (first->received_chunks == chunk) {
 					/* Chunk is from 1 to total-1 (doesn't count first one) */
-					purple_debug_info("msn", "Received chunk %d of %d, messageId: '%s'\n",
-					                  chunk+1, first->total_chunks, messageId);
+					purple_debug_info("msn", "Received chunk %d of %d, message_id: '%s'\n",
+					                  chunk+1, first->total_chunks, message_id);
 					first->body = g_realloc(first->body, first->body_len + msg->body_len);
 					memcpy(first->body + first->body_len, msg->body, msg->body_len);
 					first->body_len += msg->body_len;
@@ -290,11 +291,11 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 						msg = first;
 				} else {
 					/* TODO: Can you legitimately receive chunks out of order? */
-					g_hash_table_remove(cmdproc->multiparts, messageId);
+					g_hash_table_remove(cmdproc->multiparts, message_id);
 					return;
 				}
 			} else {
-				purple_debug_error("msn", "Received MessageId '%s' with no chunk number!\n", messageId);
+				purple_debug_error("msn", "Received MessageId '%s' with no chunk number!\n", message_id);
 			}
 		}
 	}
@@ -314,8 +315,8 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		purple_debug_warning("msn", "Unhandled content-type '%s'\n",
 						   msn_message_get_content_type(msg));
 
-	if (messageId != NULL)
-		g_hash_table_remove(cmdproc->multiparts, messageId);
+	if (message_id != NULL)
+		g_hash_table_remove(cmdproc->multiparts, message_id);
 }
 
 void
