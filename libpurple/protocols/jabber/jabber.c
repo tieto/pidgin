@@ -2132,6 +2132,14 @@ GList *jabber_status_types(PurpleAccount *account)
 			NULL);
 	types = g_list_prepend(types, type);
 
+	
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_MOOD,
+	    "mood", NULL, TRUE, TRUE, TRUE,
+			PURPLE_MOOD_NAME, _("Mood Name"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_MOOD_COMMENT, _("Mood Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
+	types = g_list_prepend(types, type);
+
 	priority_value = purple_value_new(PURPLE_TYPE_INT);
 	purple_value_set_int(priority_value, 1);
 	buzz_enabled = purple_value_new(PURPLE_TYPE_BOOLEAN);

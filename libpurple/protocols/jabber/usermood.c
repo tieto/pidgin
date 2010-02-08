@@ -119,6 +119,10 @@ static PurpleMood moods[] = {
 	{NULL, NULL, NULL}
 };
 
+static PurpleMood empty_moods[] = {
+	{NULL, NULL, NULL}
+};
+
 static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
 	xmlnode *item = xmlnode_get_child(items, "item");
@@ -251,4 +255,18 @@ void jabber_mood_set(JabberStream *js, const char *mood, const char *text) {
 	jabber_pep_publish(js, publish);
 	/* publish is freed by jabber_pep_publish -> jabber_iq_send -> jabber_iq_free
 	   (yay for well-defined memory management rules) */
+}
+
+PurpleMood *jabber_get_moods(PurpleAccount *account)
+{
+	PurpleConnection *gc = purple_account_get_connection(account);
+	JabberStream *js = (JabberStream *) gc->proto_data;
+
+	if (js->pep) {
+		purple_debug_info("jabber", "get_moods: account supports PEP\n");
+		return moods;
+	} else {
+		purple_debug_info("jabber", "get_moods: account doesn't support PEP\n");
+		return empty_moods;
+	}
 }
