@@ -390,7 +390,7 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	msg->msnslp_header.total_size = slpmsg->size;
 
-	msn_message_set_attr(msg, "P2P-Dest", slplink->remote_user);
+	msn_message_set_header(msg, "P2P-Dest", slplink->remote_user);
 
 	msg->ack_cb = msg_ack;
 	msg->nak_cb = msg_nak;

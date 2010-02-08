@@ -511,7 +511,7 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 		body_enc = g_markup_escape_text(body_str, -1);
 		g_free(body_str);
 
-		format = msn_message_get_attr(msg, "X-MMS-IM-Format");
+		format = msn_message_get_header_value(msg, "X-MMS-IM-Format");
 		msn_parse_format(format, &pre, &post);
 		body_str = g_strdup_printf("%s%s%s", pre ? pre : "",
 								   body_enc ? body_enc : "", post ? post : "");

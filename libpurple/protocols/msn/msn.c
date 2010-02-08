@@ -1399,7 +1399,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 
 		msg = msn_message_new_plain(msgtext);
 		msg->remote_user = g_strdup(who);
-		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+		msn_message_set_header(msg, "X-MMS-IM-Format", msgformat);
 
 		g_free(msgformat);
 		g_free(msgtext);
@@ -1432,7 +1432,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			body_enc = g_markup_escape_text(body_str, -1);
 			g_free(body_str);
 
-			format = msn_message_get_attr(msg, "X-MMS-IM-Format");
+			format = msn_message_get_header_value(msg, "X-MMS-IM-Format");
 			msn_parse_format(format, &pre, &post);
 			body_str = g_strdup_printf("%s%s%s", pre ? pre :  "",
 									   body_enc ? body_enc : "", post ? post : "");
@@ -1507,7 +1507,7 @@ msn_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 	msg = msn_message_new(MSN_MSG_TYPING);
 	msn_message_set_content_type(msg, "text/x-msmsgscontrol");
 	msn_message_set_flag(msg, 'U');
-	msn_message_set_attr(msg, "TypingUser",
+	msn_message_set_header(msg, "TypingUser",
 						 purple_account_get_username(account));
 	msn_message_set_bin_data(msg, "\r\n", 2);
 
@@ -1914,7 +1914,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	}
 
 	msg = msn_message_new_plain(msgtext);
-	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+	msn_message_set_header(msg, "X-MMS-IM-Format", msgformat);
 
 	smileys = msn_msg_grab_emoticons(msg->body, username);
 	while (smileys) {

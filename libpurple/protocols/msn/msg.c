@@ -36,7 +36,7 @@ msn_message_new(MsnMsgType type)
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "message new (%p)(%d)\n", msg, type);
 
-	msg->attr_table = g_hash_table_new_full(g_str_hash, g_str_equal,
+	msg->header_table = g_hash_table_new_full(g_str_hash, g_str_equal,
 											g_free, g_free);
 
 	msn_message_ref(msg);
@@ -64,8 +64,8 @@ msn_message_destroy(MsnMessage *msg)
 	g_free(msg->content_type);
 	g_free(msg->charset);
 
-	g_hash_table_destroy(msg->attr_table);
-	g_list_free(msg->attr_list);
+	g_hash_table_destroy(msg->header_table);
+	g_list_free(msg->header_list);
 
 	g_free(msg);
 }
@@ -112,11 +112,11 @@ msn_message_new_plain(const char *message)
 
 	msg = msn_message_new(MSN_MSG_TEXT);
 	msg->retries = 1;
-	msn_message_set_attr(msg, "User-Agent", PACKAGE_NAME "/" VERSION);
+	msn_message_set_header(msg, "User-Agent", PACKAGE_NAME "/" VERSION);
 	msn_message_set_content_type(msg, "text/plain");
 	msn_message_set_charset(msg, "UTF-8");
 	msn_message_set_flag(msg, 'A');
-	msn_message_set_attr(msg, "X-MMS-IM-Format",
+	msn_message_set_header(msg, "X-MMS-IM-Format",
 						 "FN=Segoe%20UI; EF=; CO=0; CS=1;PF=0");
 
 	message_cr = purple_str_add_cr(message);
@@ -133,7 +133,7 @@ msn_message_new_msnslp(void)
 
 	msg = msn_message_new(MSN_MSG_SLP);
 
-	msn_message_set_attr(msg, "User-Agent", NULL);
+	msn_message_set_header(msg, "User-Agent", NULL);
 
 	msg->msnslp_message = TRUE;
 
@@ -169,7 +169,7 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 		g_return_if_reached();
 	}
 
-	/* Import the header. */
+	/* Extract the binary SLP header */
 	memcpy(&header, tmp, sizeof(header));
 	tmp += sizeof(header);
 
@@ -183,7 +183,7 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 	msg->msnslp_header.ack_sub_id = GUINT32_FROM_LE(header.ack_sub_id);
 	msg->msnslp_header.ack_size   = GUINT64_FROM_LE(header.ack_size);
 
-	/* Import the body. */
+	/* Extract the body */
 	body_len = len - (tmp - body);
 	/* msg->body_len = msg->msnslp_header.length; */
 
@@ -211,7 +211,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	memcpy(tmp_base, payload, payload_len);
 	tmp_base[payload_len] = '\0';
 
-	/* Parse the attributes. */
+	/* Find the end of the headers */
 	end = strstr(tmp, body_dem);
 	/* TODO? some clients use \r delimiters instead of \r\n, the official client
 	 * doesn't send such messages, but does handle receiving them. We'll just
@@ -222,8 +222,8 @@ msn_message_parse_payload(MsnMessage *msg,
 	}
 	*end = '\0';
 
+	/* Split the headers and parse each one */
 	elems = g_strsplit(tmp, line_dem, 0);
-
 	for (cur = elems; *cur != NULL; cur++)
 	{
 		const char *key, *value;
@@ -240,7 +240,7 @@ msn_message_parse_payload(MsnMessage *msg,
 			if (!strcmp(key, "boundary")) {
 				char *end = strchr(value, '\"');
 				*end = '\0';
-				msn_message_set_attr(msg, key, value);
+				msn_message_set_header(msg, key, value);
 			}
 
 			g_strfreev(tokens);
@@ -278,12 +278,11 @@ msn_message_parse_payload(MsnMessage *msg,
 		}
 		else
 		{
-			msn_message_set_attr(msg, key, value);
+			msn_message_set_header(msg, key, value);
 		}
 
 		g_strfreev(tokens);
 	}
-
 	g_strfreev(elems);
 
 	/* Proceed to the end of the "\r\n\r\n" */
@@ -306,7 +305,7 @@ msn_message_parse_payload(MsnMessage *msg,
 
 		msg->msnslp_message = TRUE;
 
-		/* Import the header. */
+		/* Extract the binary SLP header */
 		memcpy(&header, tmp, sizeof(header));
 		tmp += sizeof(header);
 
@@ -322,7 +321,7 @@ msn_message_parse_payload(MsnMessage *msg,
 
 		body_len = payload_len - (tmp - tmp_base) - sizeof(footer);
 
-		/* Import the body. */
+		/* Extract the body */
 		if (body_len > 0) {
 			msg->body_len = body_len;
 			g_free(msg->body);
@@ -332,7 +331,7 @@ msn_message_parse_payload(MsnMessage *msg,
 			tmp += body_len;
 		}
 
-		/* Import the footer. */
+		/* Extract the footer */
 		if (body_len >= 0) {
 			memcpy(&footer, tmp, sizeof(footer));
 			tmp += sizeof(footer);
@@ -348,7 +347,7 @@ msn_message_parse_payload(MsnMessage *msg,
 			memcpy(msg->body, tmp, msg->body_len);
 			msg->body[msg->body_len] = '\0';
 		}
-		
+
 		if ((!content_type || !strcmp(content_type, "text/plain"))
 			&& msg->charset == NULL) {
 			char *body = g_convert(msg->body, msg->body_len, "UTF-8",
@@ -454,13 +453,13 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 
 	n += strlen(n);
 
-	for (l = msg->attr_list; l != NULL; l = l->next)
+	for (l = msg->header_list; l != NULL; l = l->next)
 	{
 		const char *key;
 		const char *value;
 
 		key = l->data;
-		value = msn_message_get_attr(msg, key);
+		value = msn_message_get_header_value(msg, key);
 
 		g_snprintf(n, end - n, "%s: %s\r\n", key, value);
 		n += strlen(n);
@@ -610,15 +609,15 @@ msn_message_get_charset(const MsnMessage *msg)
 }
 
 void
-msn_message_set_attr(MsnMessage *msg, const char *attr, const char *value)
+msn_message_set_header(MsnMessage *msg, const char *name, const char *value)
 {
 	const char *temp;
-	char *new_attr;
+	char *new_name;
 
 	g_return_if_fail(msg != NULL);
-	g_return_if_fail(attr != NULL);
+	g_return_if_fail(name != NULL);
 
-	temp = msn_message_get_attr(msg, attr);
+	temp = msn_message_get_header_value(msg, name);
 
 	if (value == NULL)
 	{
@@ -626,37 +625,37 @@ msn_message_set_attr(MsnMessage *msg, const char *attr, const char *value)
 		{
 			GList *l;
 
-			for (l = msg->attr_list; l != NULL; l = l->next)
+			for (l = msg->header_list; l != NULL; l = l->next)
 			{
-				if (!g_ascii_strcasecmp(l->data, attr))
+				if (!g_ascii_strcasecmp(l->data, name))
 				{
-					msg->attr_list = g_list_remove(msg->attr_list, l->data);
+					msg->header_list = g_list_remove(msg->header_list, l->data);
 
 					break;
 				}
 			}
 
-			g_hash_table_remove(msg->attr_table, attr);
+			g_hash_table_remove(msg->header_table, name);
 		}
 
 		return;
 	}
 
-	new_attr = g_strdup(attr);
+	new_name = g_strdup(name);
 
-	g_hash_table_insert(msg->attr_table, new_attr, g_strdup(value));
+	g_hash_table_insert(msg->header_table, new_name, g_strdup(value));
 
 	if (temp == NULL)
-		msg->attr_list = g_list_append(msg->attr_list, new_attr);
+		msg->header_list = g_list_append(msg->header_list, new_name);
 }
 
 const char *
-msn_message_get_attr(const MsnMessage *msg, const char *attr)
+msn_message_get_header_value(const MsnMessage *msg, const char *name)
 {
 	g_return_val_if_fail(msg != NULL, NULL);
-	g_return_val_if_fail(attr != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
 
-	return g_hash_table_lookup(msg->attr_table, attr);
+	return g_hash_table_lookup(msg->header_table, name);
 }
 
 GHashTable *
@@ -741,13 +740,13 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 				   msg->content_type, msg->charset);
 	}
 
-	for (l = msg->attr_list; l; l = l->next)
+	for (l = msg->header_list; l; l = l->next)
 	{
 		char *key;
 		const char *value;
 
 		key = l->data;
-		value = msn_message_get_attr(msg, key);
+		value = msn_message_get_header_value(msg, key);
 
 		g_string_append_printf(str, "%s: %s\r\n", key, value);
 	}
@@ -840,13 +839,13 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	}
 
 #if 0
-	if ((value = msn_message_get_attr(msg, "User-Agent")) != NULL)
+	if ((value = msn_message_get_header_value(msg, "User-Agent")) != NULL)
 	{
 		purple_debug_misc("msn", "User-Agent = '%s'\n", value);
 	}
 #endif
 
-	if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL)
+	if ((value = msn_message_get_header_value(msg, "X-MMS-IM-Format")) != NULL)
 	{
 		char *pre, *post;
 
@@ -914,7 +913,7 @@ msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	gc = cmdproc->session->account->gc;
 	passport = msg->remote_user;
 
-	if (msn_message_get_attr(msg, "TypingUser") == NULL)
+	if (msn_message_get_header_value(msg, "TypingUser") == NULL)
 		return;
 
 	if (cmdproc->servconn->type == MSN_SERVCONN_SB) {

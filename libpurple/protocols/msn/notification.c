@@ -401,7 +401,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		body = msn_message_get_bin_data(msg, &body_len);
 		body_enc = g_markup_escape_text(body, body_len);
 
-		if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL)	{
+		if ((value = msn_message_get_header_value(msg, "X-MMS-IM-Format")) != NULL)	{
 			char *pre, *post;
 
 			msn_parse_format(value, &pre, &post);
@@ -415,7 +415,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		g_free(body_final);
 	}
 	if(!strcmp(content_type,"text/x-msmsgscontrol")){
-		if(msn_message_get_attr(msg, "TypingUser") != NULL){
+		if(msn_message_get_header_value(msg, "TypingUser") != NULL){
 			serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
 						PURPLE_TYPING);
 		}
@@ -2033,39 +2033,39 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		/* This isn't an official message. */
 		return;
 
-	if ((value = msn_message_get_attr(msg, "kv")) != NULL)
+	if ((value = msn_message_get_header_value(msg, "kv")) != NULL)
 	{
 		g_free(session->passport_info.kv);
 		session->passport_info.kv = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "sid")) != NULL)
+	if ((value = msn_message_get_header_value(msg, "sid")) != NULL)
 	{
 		g_free(session->passport_info.sid);
 		session->passport_info.sid = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "MSPAuth")) != NULL)
+	if ((value = msn_message_get_header_value(msg, "MSPAuth")) != NULL)
 	{
 		g_free(session->passport_info.mspauth);
 		session->passport_info.mspauth = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "ClientIP")) != NULL)
+	if ((value = msn_message_get_header_value(msg, "ClientIP")) != NULL)
 	{
 		g_free(session->passport_info.client_ip);
 		session->passport_info.client_ip = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "ClientPort")) != NULL)
+	if ((value = msn_message_get_header_value(msg, "ClientPort")) != NULL)
 	{
 		session->passport_info.client_port = ntohs(atoi(value));
 	}
 
-	if ((value = msn_message_get_attr(msg, "LoginTime")) != NULL)
+	if ((value = msn_message_get_header_value(msg, "LoginTime")) != NULL)
 		session->passport_info.sl = atol(value);
 
-	if ((value = msn_message_get_attr(msg, "EmailEnabled")) != NULL)
+	if ((value = msn_message_get_header_value(msg, "EmailEnabled")) != NULL)
 		session->passport_info.email_enabled = (gboolean)atol(value);
 
 	/*starting retrieve the contact list*/

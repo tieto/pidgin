@@ -246,8 +246,8 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *messageId = NULL;
 
 	/* Multi-part messages */
-	if ((messageId = msn_message_get_attr(msg, "Message-ID")) != NULL) {
-		const char *chunk_text = msn_message_get_attr(msg, "Chunks");
+	if ((messageId = msn_message_get_header_value(msg, "Message-ID")) != NULL) {
+		const char *chunk_text = msn_message_get_header_value(msg, "Chunks");
 		guint chunk;
 		if (chunk_text != NULL) {
 			chunk = strtol(chunk_text, NULL, 10);
@@ -266,7 +266,7 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			}
 			return;
 		} else {
-			chunk_text = msn_message_get_attr(msg, "Chunk");
+			chunk_text = msn_message_get_header_value(msg, "Chunk");
 			if (chunk_text != NULL) {
 				MsnMessage *first = g_hash_table_lookup(cmdproc->multiparts, messageId);
 				chunk = strtol(chunk_text, NULL, 10);
