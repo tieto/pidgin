@@ -686,7 +686,7 @@ debug_window_new(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/height");
 
-	win->window = pidgin_create_dialog(_("Debug Window"), 0, "debug", TRUE);
+	win->window = pidgin_create_window(_("Debug Window"), 0, "debug", TRUE);
 	purple_debug_info("gtkdebug", "Setting dimensions to %d, %d\n",
 					width, height);
 
@@ -714,7 +714,8 @@ debug_window_new(void)
 #endif /* HAVE_REGEX_H */
 
 	/* Setup the vbox */
-	vbox = pidgin_dialog_get_vbox(GTK_DIALOG(win->window));
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(win->window), vbox);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/toolbar")) {
 		/* Setup our top button bar thingie. */
