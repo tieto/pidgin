@@ -528,9 +528,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 		if (slpmsg->session_id)
 		{
-			if (slpmsg->slpcall == NULL)
-				slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
-
+			slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
 			if (slpmsg->slpcall != NULL)
 			{
 				if (slpmsg->flags == 0x20 ||
