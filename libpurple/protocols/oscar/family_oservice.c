@@ -524,9 +524,9 @@ ratechange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 			delta, rateclass->dropping_snacs, rateclass->windowsize);
 
 	if (code == AIM_RATE_CODE_LIMIT) {
-		purple_debug_warning("oscar",  _("The last action you attempted "
+		purple_debug_warning("oscar",  "The last action you attempted "
 				"could not be performed because you are over the rate "
-				"limit. Please wait 10 seconds and try again.\n"));
+				"limit. Please wait 10 seconds and try again.\n");
 	}
 
 	return 1;

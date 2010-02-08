@@ -4049,9 +4049,29 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	g_free(alias_key);
 }
 
+/**
+ * @param most_matched Used internally by this function.
+ * @param entered The partial string that the user types before hitting the
+ *        tab key.
+ * @param entered_bytes The length of entered.
+ * @param partial This is a return variable.  This will be set to a string
+ *        containing the largest common string between all matches.  This will
+ *        be inserted into the input box at the start of the word that the
+ *        user is tab completing.  For example, if a chat room contains
+ *        "AlfFan" and "AlfHater" and the user types "a<TAB>" then this will
+ *        contain "Alf"
+ * @param nick_partial Used internally by this function.  Shoudl be a
+ *        temporary buffer that is entered_bytes+1 bytes long.
+ * @param matches This is a return variable.  If the given name is a potential
+ *        match for the entered string, then add a copy of the name to this
+ *        list.  The caller is responsible for g_free'ing the data in this
+ *        list.
+ * @param name The buddy name or alias or slash command name that we're
+ *        checking for a match.
+ */
 static void
-tab_complete_process_item(int *most_matched, char *entered, gsize entered_bytes, char **partial, char *nick_partial,
-				  GList **matches, gboolean command, char *name)
+tab_complete_process_item(int *most_matched, const char *entered, gsize entered_bytes, char **partial, char *nick_partial,
+				  GList **matches, char *name)
 {
 	memcpy(nick_partial, name, entered_bytes);
 	if (purple_utf8_strcasecmp(nick_partial, entered))
@@ -4160,7 +4180,7 @@ tab_complete(PurpleConversation *conv)
 		/* Commands */
 		for (l = list; l != NULL; l = l->next) {
 			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
-									  &matches, TRUE, l->data);
+									  &matches, l->data);
 		}
 		g_list_free(list);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
@@ -4173,7 +4193,7 @@ tab_complete(PurpleConversation *conv)
 		/* Users */
 		for (; l != NULL; l = l->next) {
 			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
-									  &matches, FALSE, ((PurpleConvChatBuddy *)l->data)->name);
+									  &matches, ((PurpleConvChatBuddy *)l->data)->name);
 		}
 
 
@@ -4191,7 +4211,7 @@ tab_complete(PurpleConversation *conv)
 
 				if (name && alias && strcmp(name, alias))
 					tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
-										  &matches, FALSE, alias);
+										  &matches, alias);
 				g_free(name);
 				g_free(alias);
 
