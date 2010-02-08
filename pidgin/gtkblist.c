@@ -8150,38 +8150,36 @@ pidgin_blist_update_accounts_menu(void)
 
 		gc = purple_account_get_connection(account);
 		plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
+		prpl_info = plugin ? PURPLE_PLUGIN_PROTOCOL_INFO(plugin) : NULL;
+		
+		if (prpl_info &&
+		    (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) ||
+			 PURPLE_PLUGIN_HAS_ACTIONS(plugin))) {
+			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods)) {
+				GList *types;
+				for (types = purple_account_get_status_types(account);
+			     	types != NULL ; types = types->next) {
+					PurpleStatusType *type = types->data;
 
-		if (plugin &&
-		    (prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin)) &&
-		    PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods))
-		{
-			GList *types;
-			for (types = purple_account_get_status_types(account);
-			     types != NULL ; types = types->next)
-			{
-				PurpleStatusType *type = types->data;
+					if (strcmp(purple_status_type_get_id(type), "mood") != 0)
+						continue;
 
-				if (strcmp(purple_status_type_get_id(type), "mood") != 0)
-					continue;
+					menuitem = gtk_menu_item_new_with_mnemonic(_("Set _Mood..."));
+					g_signal_connect(G_OBJECT(menuitem), "activate",
+					         	G_CALLBACK(set_mood_cb), account);
+					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
 
-				menuitem = gtk_menu_item_new_with_mnemonic(_("Set _Mood..."));
-				g_signal_connect(G_OBJECT(menuitem), "activate",
-					         G_CALLBACK(set_mood_cb), account);
-				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-
-				/* Be safe.  It shouldn't match more than once anyway */
-				break;
+					/* Be safe.  It shouldn't match more than once anyway */
+					break;
+				}
 			}
-		}
-		else
-		{
-			if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
+			if (PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
 				build_plugin_actions(submenu, plugin, gc);
-			} else {
-				menuitem = gtk_menu_item_new_with_label(_("No actions available"));
-				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-				gtk_widget_set_sensitive(menuitem, FALSE);
 			}
+		} else {
+			menuitem = gtk_menu_item_new_with_label(_("No actions available"));
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+			gtk_widget_set_sensitive(menuitem, FALSE);
 		}
 
 		pidgin_separator(submenu);
