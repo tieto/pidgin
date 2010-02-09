@@ -7,6 +7,9 @@ version 2.6.6 (??/??/20??):
 	  to be improperly converted to XHTML.
 	* Set "controlling-mode" correctly when initializing a media session.
 	  Fixes receiving voice calls from Psi.
+	* When looking up DNS records, use the type of record returned by the
+	  server (instead of the type we asked for) to determine how to process
+	  the record.
 
 	General:
 	* Correctly disable all missing dependencies when using the
@@ -28,6 +31,10 @@ version 2.6.6 (??/??/20??):
 	* Buddies who sign in from a second location will no longer cause an
 	  unnecessary chat window to open.
 	* Support setting an animated GIF as a buddy icon.
+	* Numerous code cleanups and memory savings.
+
+	MySpace:
+	* Fix a leak and crash when retrieving buddy icons.
 
 	XMPP:
 	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
@@ -57,6 +64,24 @@ version 2.6.6 (??/??/20??):
 	* Allow dropping an image on Custom Smiley window to add a new one.
 	* Prompt for confirmation when clearing a whiteboard (doodle) session.
 	  (Kartik Mohta)
+	* Use the "hand" cursor when hovering over usernames in chat history to
+	  indicate that the username is an actionable item.
+	* Double-clicking usernames in chat history will open an IM with that
+	  user.
+	* Put an icon on the "Filter" button in the debug window.
+	* Don't treat "/messages/like/this " as commands.
+	* Explicitly mark user interaction when inserting smilies from the
+	  toolbar so "Undo" correctly removes these smilies.
+	* Clicking "New" or "Saved" in the status selector menu while typing a
+	  status message no longer keeps the status entry area stuck in "typing"
+	  mode forever.
+	* Show tooltips for ellipsized conversation tabs.  On older systems,
+	  tooltips will show for all tabs.
+	* The File Transfers and Debug Window windows are no longer created as
+	  dialogs.  These windows should now have minimize buttons in many
+	  environments in which they were previously missing (including Windows).
+	* Smiley themes with Windows line endings no longer cause theme
+	  descriptions not to be displayed in the theme selector.
 
 	Finch:
 	* Rebindable 'move-first' and 'move-last' actions for tree widgets. So
