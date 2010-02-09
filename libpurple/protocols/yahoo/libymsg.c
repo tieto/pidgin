@@ -4259,15 +4259,19 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 		validate_data_child = xmlnode_get_child(validate_data_root, "carrier");
 		carrier = xmlnode_get_data(validate_data_child);
 
-		purple_debug_info("yahoo","SMS validate data: Mobile:%s, Status:%s, Carrier:%s\n", mobile_no, status, carrier);
+		purple_debug_info("yahoo", "SMS validate data: %s\n", webdata);
 
-		if( strcmp(status, "Valid") == 0) {
-			g_hash_table_insert(yd->sms_carrier, g_strdup_printf("+%s", mobile_no), g_strdup(carrier));
-			yahoo_send_im(sms_cb_data->gc, sms_cb_data->who, sms_cb_data->what, PURPLE_MESSAGE_SEND);
-		}
-		else	{
-			g_hash_table_insert(yd->sms_carrier, g_strdup_printf("+%s", mobile_no), g_strdup("Unknown"));
-			purple_conversation_write(conv, NULL, _("Can't send SMS. Unknown mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+		if (status && g_str_equal(status, "Valid") == 0) {
+			g_hash_table_insert(yd->sms_carrier,
+					g_strdup_printf("+%s", mobile_no), g_strdup(carrier));
+			yahoo_send_im(sms_cb_data->gc, sms_cb_data->who,
+					sms_cb_data->what, PURPLE_MESSAGE_SEND);
+		} else {
+			g_hash_table_insert(yd->sms_carrier,
+					g_strdup_printf("+%s", mobile_no), g_strdup("Unknown"));
+			purple_conversation_write(conv, NULL,
+					_("Can't send SMS. Unknown mobile carrier."),
+					PURPLE_MESSAGE_SYSTEM, time(NULL));
 		}
 
 		xmlnode_free(validate_data_child);
