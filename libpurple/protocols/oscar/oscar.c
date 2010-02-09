@@ -6199,8 +6199,6 @@ const char *oscar_list_emblem(PurpleBuddy *b)
 			return "admin";
 		if (userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
 			return "bot";
-		if (userinfo->capabilities & OSCAR_CAPABILITY_HIPTOP)
-			return "hiptop";
 		if (userinfo->capabilities & OSCAR_CAPABILITY_SECUREIM)
 			return "secure";
 		if (userinfo->icqinfo.status & AIM_ICQ_STATE_BIRTHDAY)
