@@ -816,7 +816,6 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	PurpleConnection *gc;
 	const char *body;
-	char *body_str;
 	char *body_enc;
 	char *body_final;
 	size_t body_len;
@@ -826,9 +825,7 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	gc = cmdproc->session->account->gc;
 
 	body = msn_message_get_bin_data(msg, &body_len);
-	body_str = g_strndup(body, body_len);
-	body_enc = g_markup_escape_text(body_str, -1);
-	g_free(body_str);
+	body_enc = g_markup_escape_text(body, body_len);
 
 	passport = msg->remote_user;
 
