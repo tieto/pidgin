@@ -714,11 +714,11 @@ pidgin_xfer_dialog_new(void)
 	GtkWidget *window;
 	GtkWidget *vbox1, *vbox2;
 	GtkWidget *sw;
-	GtkWidget *button;
 	GtkWidget *expander;
 	GtkWidget *alignment;
 	GtkWidget *table;
 	GtkWidget *checkbox;
+	GtkWidget *bbox;
 
 	dialog = g_new0(PidginXferDialog, 1);
 	dialog->keep_open =
@@ -727,14 +727,16 @@ pidgin_xfer_dialog_new(void)
 		purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/filetransfer/clear_finished");
 
 	/* Create the window. */
-	dialog->window = window = pidgin_create_dialog(_("File Transfers"), PIDGIN_HIG_BORDER, "file transfer", TRUE);
+	dialog->window = window = pidgin_create_window(_("File Transfers"), PIDGIN_HIG_BORDER, "file transfer", TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(window), 450, 250);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Create the parent vbox for everything. */
-	vbox1 = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(window), FALSE, PIDGIN_HIG_BORDER);
+	vbox1 = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(vbox1);
+	gtk_container_add(GTK_CONTAINER(window), vbox1);
 
 	/* Create the main vbox for top half of the window. */
 	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -785,24 +787,36 @@ pidgin_xfer_dialog_new(void)
 	gtk_container_add(GTK_CONTAINER(alignment), table);
 	gtk_widget_show(table);
 
+	bbox = gtk_hbutton_box_new();
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_end(GTK_BOX(vbox1), bbox, FALSE, TRUE, 0);
+	gtk_widget_show(bbox);
+
+#define ADD_BUTTON(b, label, callback, callbackdata) do { \
+		GtkWidget *button = gtk_button_new_from_stock(label); \
+		gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0); \
+		g_signal_connect(G_OBJECT(button), "clicked", callback, callbackdata); \
+		gtk_widget_show(button); \
+		b = button; \
+	} while (0)
+
 	/* Open button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_OPEN, G_CALLBACK(open_button_cb), dialog);
-	gtk_widget_set_sensitive(button, FALSE);
-	dialog->open_button = button;
+	ADD_BUTTON(dialog->open_button, GTK_STOCK_OPEN, G_CALLBACK(open_button_cb), dialog);
+	gtk_widget_set_sensitive(dialog->open_button, FALSE);
 
 	/* Remove button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_REMOVE, G_CALLBACK(remove_button_cb), dialog);
-	gtk_widget_hide(button);
-	dialog->remove_button = button;
+	ADD_BUTTON(dialog->remove_button, GTK_STOCK_REMOVE, G_CALLBACK(remove_button_cb), dialog);
+	gtk_widget_hide(dialog->remove_button);
 
 	/* Stop button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_STOP, G_CALLBACK(stop_button_cb), dialog);
-	gtk_widget_set_sensitive(button, FALSE);
-	dialog->stop_button = button;
+	ADD_BUTTON(dialog->stop_button, GTK_STOCK_STOP, G_CALLBACK(stop_button_cb), dialog);
+	gtk_widget_set_sensitive(dialog->stop_button, FALSE);
 
 	/* Close button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_CLOSE, G_CALLBACK(close_button_cb), dialog);
-	dialog->close_button = button;
+	ADD_BUTTON(dialog->close_button, GTK_STOCK_CLOSE, G_CALLBACK(close_button_cb), dialog);
+
+#undef ADD_BUTTON
 
 #ifdef _WIN32
 	g_signal_connect(G_OBJECT(dialog->window), "show",

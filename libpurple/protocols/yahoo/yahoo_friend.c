@@ -186,6 +186,9 @@ void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case YAHOO_FEDERATION_IBM:
 			who = g_strconcat("ibm/", temp, NULL);
 			break;
+		case YAHOO_FEDERATION_PBX:
+			who = g_strconcat("pbx/", temp, NULL);
+			break;
 		case YAHOO_FEDERATION_NONE:
 			who = g_strdup(temp);
 			break;

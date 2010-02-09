@@ -541,6 +541,9 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 					case YAHOO_FEDERATION_IBM:
 						norm_bud = g_strconcat("ibm/", temp, NULL);
 						break;
+					case YAHOO_FEDERATION_PBX:
+						norm_bud = g_strconcat("pbx/", temp, NULL);
+						break;
 					case YAHOO_FEDERATION_NONE:
 						norm_bud = g_strdup(temp);
 						break;
@@ -833,6 +836,9 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 			case YAHOO_FEDERATION_IBM:
 				fed_from = g_strconcat("ibm/", from, NULL);
 				break;
+			case YAHOO_FEDERATION_PBX:
+				fed_from = g_strconcat("pbx/", from, NULL);
+				break;
 			case YAHOO_FEDERATION_NONE:
 			default:
 				break;
@@ -844,7 +850,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 			serv_got_typing_stopped(gc, fed_from);
 		
 		if (fed_from != from)
-			g_free(fed_from);			
+			g_free(fed_from);
 	
 	} else if (!g_ascii_strncasecmp(msg, "GAME", strlen("GAME"))) {
 		PurpleBuddy *bud = purple_find_buddy(account, from);
@@ -999,6 +1005,9 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 					case YAHOO_FEDERATION_IBM:
 						im->fed_from = g_strconcat("ibm/",im->from, NULL);
 						break;
+					case YAHOO_FEDERATION_PBX:
+						im->fed_from = g_strconcat("pbx/",im->from, NULL);
+						break;
 					case YAHOO_FEDERATION_NONE:
 					default:
 						im->fed_from = g_strdup(im->from);
@@ -1010,7 +1019,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			/* peer session id */
 			if (im && (pair->key == 11)) {
 				/* disconnect the peer if connected through p2p and sends wrong value for session id */
-				if( (im->fed == YAHOO_FEDERATION_NONE) && (pkt_type == YAHOO_PKT_TYPE_P2P) 
+				if( (im->fed == YAHOO_FEDERATION_NONE) && (pkt_type == YAHOO_PKT_TYPE_P2P)
 						&& (yd->session_id != strtol(pair->value, NULL, 10)) )
 				{
 					purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im->fed_from);
@@ -4256,15 +4265,19 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 		validate_data_child = xmlnode_get_child(validate_data_root, "carrier");
 		carrier = xmlnode_get_data(validate_data_child);
 
-		purple_debug_info("yahoo","SMS validate data: Mobile:%s, Status:%s, Carrier:%s\n", mobile_no, status, carrier);
+		purple_debug_info("yahoo", "SMS validate data: %s\n", webdata);
 
-		if( strcmp(status, "Valid") == 0) {
-			g_hash_table_insert(yd->sms_carrier, g_strdup_printf("+%s", mobile_no), g_strdup(carrier));
-			yahoo_send_im(sms_cb_data->gc, sms_cb_data->who, sms_cb_data->what, PURPLE_MESSAGE_SEND);
-		}
-		else	{
-			g_hash_table_insert(yd->sms_carrier, g_strdup_printf("+%s", mobile_no), g_strdup("Unknown"));
-			purple_conversation_write(conv, NULL, _("Can't send SMS. Unknown mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
+		if (status && g_str_equal(status, "Valid") == 0) {
+			g_hash_table_insert(yd->sms_carrier,
+					g_strdup_printf("+%s", mobile_no), g_strdup(carrier));
+			yahoo_send_im(sms_cb_data->gc, sms_cb_data->who,
+					sms_cb_data->what, PURPLE_MESSAGE_SEND);
+		} else {
+			g_hash_table_insert(yd->sms_carrier,
+					g_strdup_printf("+%s", mobile_no), g_strdup("Unknown"));
+			purple_conversation_write(conv, NULL,
+					_("Can't send SMS. Unknown mobile carrier."),
+					PURPLE_MESSAGE_SYSTEM, time(NULL));
 		}
 
 		xmlnode_free(validate_data_child);
@@ -4421,6 +4434,7 @@ int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, Purpl
 		case YAHOO_FEDERATION_MSN:
 		case YAHOO_FEDERATION_OCS:
 		case YAHOO_FEDERATION_IBM:
+		case YAHOO_FEDERATION_PBX:
 			fed_who += 4;
 			break;
 		case YAHOO_FEDERATION_NONE:
@@ -4521,6 +4535,7 @@ unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypi
 			case YAHOO_FEDERATION_MSN:
 			case YAHOO_FEDERATION_OCS:
 			case YAHOO_FEDERATION_IBM:
+			case YAHOO_FEDERATION_PBX:
 				fed_who += 4;
 				break;
 			case YAHOO_FEDERATION_NONE:

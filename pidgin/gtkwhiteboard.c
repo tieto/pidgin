@@ -738,12 +738,24 @@ static void pidgin_whiteboard_button_clear_press(GtkWidget *widget, gpointer dat
 {
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)(data);
 
-	pidgin_whiteboard_clear(gtkwb->wb);
+	/* Confirm whether the user really wants to clear */
+	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(gtkwb->window),
+											   GTK_DIALOG_DESTROY_WITH_PARENT,
+											   GTK_MESSAGE_QUESTION,
+											   GTK_BUTTONS_YES_NO,
+											   _("Do you really want to clear?"));
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
 
-	pidgin_whiteboard_set_canvas_as_icon(gtkwb);
+	if (response == GTK_RESPONSE_YES)
+	{
+		pidgin_whiteboard_clear(gtkwb->wb);
 
-	/* Do protocol specific clearing procedures */
-	purple_whiteboard_send_clear(gtkwb->wb);
+		pidgin_whiteboard_set_canvas_as_icon(gtkwb);
+
+		/* Do protocol specific clearing procedures */
+		purple_whiteboard_send_clear(gtkwb->wb);
+	}
 }
 
 static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data)
