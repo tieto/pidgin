@@ -62,6 +62,7 @@
 #include "roster.h"
 #include "ping.h"
 #include "si.h"
+#include "usermood.h"
 #include "xdata.h"
 #include "pep.h"
 #include "adhoccommands.h"
@@ -2062,14 +2063,27 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 			mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
 			if(mood && *mood) {
 				const char *moodtext;
+				/* find the mood */
+				PurpleMood *moods = jabber_get_moods(account);
+				const char *description = NULL;
+
+				for (; moods->mood ; moods++) {
+					if (purple_strequal(moods->mood, mood)) {
+						description = moods->description;
+						break;
+					}
+				}
+
 				moodtext = purple_status_get_attr_string(status, PURPLE_MOOD_COMMENT);
 				if(moodtext && *moodtext) {
-					char *moodplustext = g_strdup_printf("%s (%s)", mood, moodtext);
+					char *moodplustext =
+						g_strdup_printf("%s (%s)", description ? _(description) : mood, moodtext);
 
 					purple_notify_user_info_add_pair(user_info, _("Mood"), moodplustext);
 					g_free(moodplustext);
 				} else
-					purple_notify_user_info_add_pair(user_info, _("Mood"), mood);
+					purple_notify_user_info_add_pair(user_info, _("Mood"), 
+					    description ? _(description) : mood);
 			}
 			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 				PurpleStatus *tune = purple_presence_get_status(presence, "tune");
