@@ -378,6 +378,8 @@ typedef enum
 	OSCAR_CAPABILITY_NEWCAPS              = 0x20000000,
 	OSCAR_CAPABILITY_XTRAZ                = 0x40000000,
 	OSCAR_CAPABILITY_GENERICUNKNOWN       = 0x80000000,
+#warning Fix OSCAR_CAPABILITY_LAST situation
+	// TODO: We're out of bits.  Rework things that depend on this or remove some capability. (Or, ensure this is a 64-bit type.)
 	OSCAR_CAPABILITY_LAST                 = 0x100000000	
 } OscarCapability;
 
