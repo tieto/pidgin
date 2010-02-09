@@ -45,6 +45,8 @@ version 2.6.6 (??/??/20??):
 
 	Yahoo:
 	* Don't send <span> and </span> tags.  (Fartash Faghri)
+	* Support PingBox.  PingBoxes will appear as pbx/PingBoxName.  (Kartik
+	  Mohta)
 
 	Pidgin:
 	* Correctly size conversation and status box entries when the
@@ -53,6 +55,8 @@ version 2.6.6 (??/??/20??):
 	  request form.  (Thanks to Florian Zeitz for finding this problem)
 	* Search friends by email-addresses in the buddy list. (Luoh Ren-Shan)
 	* Allow dropping an image on Custom Smiley window to add a new one.
+	* Prompt for confirmation when clearing a whiteboard (doodle) session.
+	  (Kartik Mohta)
 
 	Finch:
 	* Rebindable 'move-first' and 'move-last' actions for tree widgets. So
