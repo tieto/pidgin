@@ -1,12 +1,10 @@
 # These are mood images that are NOT also used in the smiley theme.
 MOODS = \
     afraid.png \
-    amazed.png \
-    annoyed.png \
     bathing.png \
     cinema.png \
-    dissapointed.png \
-    embarressed.png \
+    disappointed.png \
+    embarrassed.png \
     internet.png \
     music.png \
     restroom.png \
