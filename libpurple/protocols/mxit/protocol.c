@@ -695,12 +695,12 @@ void mxit_send_login( struct MXitSession* session )
  *  @param to			The username of the recipient
  *  @param msg			The message text
  */
-void mxit_send_message( struct MXitSession* session, const char* to, const char* msg, gboolean parse_markup )
+void mxit_send_message( struct MXitSession* session, const char* to, const char* msg, gboolean parse_markup, gboolean is_command )
 {
 	char		data[CP_MAX_PACKET];
 	char*		markuped_msg;
 	int			datalen;
-	int			msgtype = CP_MSGTYPE_NORMAL;
+	int			msgtype = ( is_command ? CP_MSGTYPE_COMMAND : CP_MSGTYPE_NORMAL );
 
 	/* first we need to convert the markup from libPurple to MXit format */
 	if ( parse_markup )
@@ -1254,6 +1254,7 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 {
 	PurpleStatus*	status;
 	int				presence;
+	const char*		statusmsg;
 	const char*		profilelist[] = { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_HIDENUMBER, CP_PROFILE_FULLNAME,
 									CP_PROFILE_TITLE, CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_EMAIL,
 									CP_PROFILE_MOBILENR };
@@ -1272,13 +1273,21 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	/* update presence status */
 	status = purple_account_get_active_status( session->acc );
 	presence = mxit_convert_presence( purple_status_get_id( status ) );
-	if ( presence != MXIT_PRESENCE_ONLINE ) {
+	statusmsg = purple_status_get_attr_string( status, "message" );
+
+	if ( ( presence != MXIT_PRESENCE_ONLINE ) || ( statusmsg ) ) {
 		/* when logging into MXit, your default presence is online. but with the UI, one can change
 		 * the presence to whatever. in the case where its changed to a different presence setting
 		 * we need to send an update to the server, otherwise the user's presence will be out of
 		 * sync between the UI and MXit.
 		 */
-		mxit_send_presence( session, presence, purple_status_get_attr_string( status, "message" ) );
+		char* statusmsg1 = purple_markup_strip_html( statusmsg );
+		char* statusmsg2 = g_strndup( statusmsg1, CP_MAX_STATUS_MSG );
+
+		mxit_send_presence( session, presence, statusmsg2 );
+
+		g_free( statusmsg1 );
+		g_free( statusmsg2 );
 	}
 
 	/* save extra info if this is a HTTP connection */
