@@ -142,56 +142,33 @@ int winpidgin_gz_untar(const char* filename, const char* destdir) {
 
 void winpidgin_shell_execute(const char *target, const char *verb, const char *clazz) {
 
+	SHELLEXECUTEINFOW wsinfo;
+	wchar_t *w_uri, *w_verb, *w_clazz = NULL;
+
 	g_return_if_fail(target != NULL);
 	g_return_if_fail(verb != NULL);
 
-	if (G_WIN32_HAVE_WIDECHAR_API()) {
-		SHELLEXECUTEINFOW wsinfo;
-		wchar_t *w_uri, *w_verb, *w_clazz = NULL;
+	w_uri = g_utf8_to_utf16(target, -1, NULL, NULL, NULL);
+	w_verb = g_utf8_to_utf16(verb, -1, NULL, NULL, NULL);
 
-		w_uri = g_utf8_to_utf16(target, -1, NULL, NULL, NULL);
-		w_verb = g_utf8_to_utf16(verb, -1, NULL, NULL, NULL);
-
-		memset(&wsinfo, 0, sizeof(wsinfo));
-		wsinfo.cbSize = sizeof(wsinfo);
-		wsinfo.lpVerb = w_verb;
-		wsinfo.lpFile = w_uri;
-		wsinfo.nShow = SW_SHOWNORMAL;
-		if (clazz != NULL) {
-			w_clazz = g_utf8_to_utf16(clazz, -1, NULL, NULL, NULL);
-			wsinfo.fMask |= SEE_MASK_CLASSNAME;
-			wsinfo.lpClass = w_clazz;
-		}
-
-		if(!ShellExecuteExW(&wsinfo))
-			purple_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
-				target, (int) wsinfo.hInstApp);
-
-		g_free(w_uri);
-		g_free(w_verb);
-		g_free(w_clazz);
-	} else {
-		SHELLEXECUTEINFOA sinfo;
-		gchar *locale_uri;
-
-		locale_uri = g_locale_from_utf8(target, -1, NULL, NULL, NULL);
-
-		memset(&sinfo, 0, sizeof(sinfo));
-		sinfo.cbSize = sizeof(sinfo);
-		sinfo.lpVerb = verb;
-		sinfo.lpFile = locale_uri;
-		sinfo.nShow = SW_SHOWNORMAL;
-		if (clazz != NULL) {
-			sinfo.fMask |= SEE_MASK_CLASSNAME;
-			sinfo.lpClass = clazz;
-		}
-
-		if(!ShellExecuteExA(&sinfo))
-			purple_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
-				target, (int) sinfo.hInstApp);
-
-		g_free(locale_uri);
+	memset(&wsinfo, 0, sizeof(wsinfo));
+	wsinfo.cbSize = sizeof(wsinfo);
+	wsinfo.lpVerb = w_verb;
+	wsinfo.lpFile = w_uri;
+	wsinfo.nShow = SW_SHOWNORMAL;
+	if (clazz != NULL) {
+		w_clazz = g_utf8_to_utf16(clazz, -1, NULL, NULL, NULL);
+		wsinfo.fMask |= SEE_MASK_CLASSNAME;
+		wsinfo.lpClass = w_clazz;
 	}
+
+	if(!ShellExecuteExW(&wsinfo))
+		purple_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
+			target, (int) wsinfo.hInstApp);
+
+	g_free(w_uri);
+	g_free(w_verb);
+	g_free(w_clazz);
 
 }
 
@@ -406,6 +383,7 @@ winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
 }
 
 void winpidgin_init(HINSTANCE hint) {
+	FARPROC exchndl_SetLogFile;
 
 	purple_debug_info("winpidgin", "winpidgin_init start\n");
 
@@ -422,6 +400,16 @@ void winpidgin_init(HINSTANCE hint) {
 	messagewin_hwnd = winpidgin_message_window_init();
 
 	MyFlashWindowEx = (LPFNFLASHWINDOWEX) wpurple_find_and_loadproc("user32.dll", "FlashWindowEx");
+
+	exchndl_SetLogFile = wpurple_find_and_loadproc("exchndl.dll", "SetLogFile");
+	if (exchndl_SetLogFile) {
+		gchar *filename = g_build_filename(purple_user_dir(),
+			"pidgin.RPT", NULL);
+		purple_debug_info("winpidgin", "Setting exchndl.dll LogFile to %s\n",
+			filename);
+		(exchndl_SetLogFile)(filename);
+		g_free(filename);
+	}
 
 	purple_debug_info("winpidgin", "winpidgin_init end\n");
 }

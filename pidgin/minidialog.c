@@ -339,26 +339,20 @@ pidgin_mini_dialog_class_init(PidginMiniDialogClass *klass)
 
 	param_spec = g_param_spec_string("title", "title",
 		"String specifying the mini-dialog's title", NULL,
-#if GTK_CHECK_VERSION(2,8,0)
 		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
-#endif
 		G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_TITLE, param_spec);
 
 	param_spec = g_param_spec_string("description", "description",
 		"Description text for the mini-dialog, if desired", NULL,
-#if GTK_CHECK_VERSION(2,8,0)
 		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
-#endif
 		G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_DESCRIPTION, param_spec);
 
 	param_spec = g_param_spec_string("icon-name", "icon-name",
 		"String specifying the Gtk stock name of the dialog's icon",
 		NULL,
-#if GTK_CHECK_VERSION(2,8,0)
 		G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB |
-#endif
 		G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_ICON_NAME, param_spec);
 }
