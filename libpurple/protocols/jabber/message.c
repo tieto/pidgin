@@ -86,8 +86,10 @@ static void handle_chat(JabberMessage *jm)
 		PurpleConversation *conv;
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, jm->from, account);
-		if (conv)
+		if (conv && !g_str_equal(jm->from, purple_conversation_get_name(conv))) {
+			purple_debug_info("jabber", "Binding conversation to %s\n", jm->from);
 			purple_conversation_set_name(conv, jm->from);
+		}
 	}
 
 	if(!jm->xhtml && !jm->body) {

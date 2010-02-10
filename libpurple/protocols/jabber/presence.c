@@ -972,7 +972,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 				buddy_name, account);
 		if (conv) {
-			purple_debug_warning("jabber", "Changed conversation binding from %s to %s\n",
+			purple_debug_info("jabber", "Changed conversation binding from %s to %s\n",
 					purple_conversation_get_name(conv), buddy_name);
 			purple_conversation_set_name(conv, buddy_name);
 		}
