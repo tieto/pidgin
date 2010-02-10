@@ -1881,7 +1881,7 @@ void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res)
 void gnt_tree_set_column_is_binary(GntTree *tree, int col, gboolean bin)
 {
 	g_return_if_fail(col < tree->ncol);
-	set_column_flag(tree, col, GNT_TREE_COLUMN_FIXED_SIZE, bin);
+	set_column_flag(tree, col, GNT_TREE_COLUMN_BINARY_DATA, bin);
 }
 
 void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right)
