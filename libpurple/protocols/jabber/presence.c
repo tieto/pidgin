@@ -1005,6 +1005,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 			jabber_buddy_remove_resource(jb, jid->resource);
 			if((conv = jabber_find_unnormalized_conv(from, js->gc->account)))
+				/*
+				 * If a resource went offline (or the buddy unsubscribed),
+				 * send further messages to the bare JID.  (This is also
+				 * updated in message.c when receiving a message)
+				 */
 				purple_conversation_set_name(conv, buddy_name);
 
 		} else {

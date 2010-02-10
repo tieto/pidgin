@@ -73,14 +73,22 @@ static void handle_chat(JabberMessage *jm)
 	if(jabber_find_unnormalized_conv(jm->from, jm->js->gc->account)) {
 		from = g_strdup(jm->from);
 	} else  if(jid->node) {
-		if(jid->resource) {
+		if (jid->resource) {
+			/*
+			 * We received a message from a specific resource, so we probably want a
+			 * reply to go to this specific resource (i.e. bind the conversation to
+			 * this resource).
+			 *
+			 * This works because purple_conv_im_send gets the name from
+			 * purple_conversation_get_name()
+			 */
 			PurpleConversation *conv;
 
 			from = g_strdup_printf("%s@%s", jid->node, jid->domain);
 			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, jm->js->gc->account);
-			if(conv) {
+			if (conv) {
 				purple_conversation_set_name(conv, jm->from);
-				}
+			}
 			g_free(from);
 		}
 		from = g_strdup(jm->from);
