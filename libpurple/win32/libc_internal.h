@@ -141,10 +141,6 @@ int wpurple_close(int fd);
 int wpurple_gethostname(char *name, size_t size);
 
 
-#if !GLIB_CHECK_VERSION(2,8,0)
-int wpurple_g_access(const gchar *filename, int mode);
-#endif
-
 /* stdio.h */
 int wpurple_rename(const char *oldname, const char *newname);
 
