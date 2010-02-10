@@ -75,7 +75,7 @@ static void handle_chat(JabberMessage *jm)
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
-	if(jabber_find_unnormalized_conv(jm->from, account)) {
+	if(jabber_find_unnormalized_im_conv(jm->from, account)) {
 		from = g_strdup(jm->from);
 	} else  if(jid->node) {
 		if (jid->resource) {
