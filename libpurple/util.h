@@ -516,18 +516,35 @@ char *purple_markup_strip_html(const char *str);
 char *purple_markup_linkify(const char *str);
 
 /**
- * Unescapes HTML entities to their literal characters. Also translates
- * "<br>" to "\n".
- * For example "&amp;" is replaced by '&' and so on.
+ * Unescapes HTML entities to their literal characters in the text.
+ * For example "&amp;" is replaced by '&' and so on.  Also converts
+ * numerical entities (e.g. "&#38;" is also '&').
  *
- * The following named entities are supported (in addition to numerical
- * entities):
- *    "&amp;", "&lt;", "&gt;", "&copy;", "&quot;", "&reg;", "&apos;"
+ * This function currently supports the following named entities:
+ *     "&amp;", "&lt;", "&gt;", "&copy;", "&quot;", "&reg;", "&apos;"
+ *
+ * purple_unescape_html() is similar, but also converts "<br>" into "\n".
+ *
+ * @param text The string in which to unescape any HTML entities
+ *
+ * @return The text with HTML entities literalized.  You must g_free
+ *         this string when finished with it.
+ *
+ * @see purple_unescape_html()
+ * @since 2.7.0
+ */
+char *purple_unescape_text(const char *text);
+
+/**
+ * Unescapes HTML entities to their literal characters and converts
+ * "<br>" to "\n".  See purple_unescape_text() for more details.
  *
  * @param html The string in which to unescape any HTML entities
  *
  * @return The text with HTML entities literalized.  You must g_free
  *         this string when finished with it.
+ *
+ * @see purple_unescape_text()
  */
 char *purple_unescape_html(const char *html);
 
