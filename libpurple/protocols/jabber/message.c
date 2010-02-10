@@ -59,7 +59,6 @@ void jabber_message_free(JabberMessage *jm)
 static void handle_chat(JabberMessage *jm)
 {
 	JabberID *jid = jabber_id_new(jm->from);
-	char *from;
 
 	PurpleConnection *gc;
 	PurpleAccount *account;
@@ -75,30 +74,20 @@ static void handle_chat(JabberMessage *jm)
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
-	if(jabber_find_unnormalized_im_conv(jm->from, account)) {
-		from = g_strdup(jm->from);
-	} else  if(jid->node) {
-		if (jid->resource) {
-			/*
-			 * We received a message from a specific resource, so we probably want a
-			 * reply to go to this specific resource (i.e. bind the conversation to
-			 * this resource).
-			 *
-			 * This works because purple_conv_im_send gets the name from
-			 * purple_conversation_get_name()
-			 */
-			PurpleConversation *conv;
+	if (jid->resource) {
+		/*
+		 * We received a message from a specific resource, so we probably want a
+		 * reply to go to this specific resource (i.e. bind/lock the
+		 * conversation to this resource).
+		 *
+		 * This works because purple_conv_im_send gets the name from
+		 * purple_conversation_get_name()
+		 */
+		PurpleConversation *conv;
 
-			from = g_strdup_printf("%s@%s", jid->node, jid->domain);
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, account);
-			if (conv) {
-				purple_conversation_set_name(conv, jm->from);
-			}
-			g_free(from);
-		}
-		from = g_strdup(jm->from);
-	} else {
-		from = g_strdup(jid->domain);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, jm->from, account);
+		if (conv)
+			purple_conversation_set_name(conv, jm->from);
 	}
 
 	if(!jm->xhtml && !jm->body) {
@@ -110,12 +99,12 @@ static void handle_chat(JabberMessage *jm)
 		}
 
 		if(JM_STATE_COMPOSING == jm->chat_state) {
-			serv_got_typing(gc, from, 0, PURPLE_TYPING);
+			serv_got_typing(gc, jm->from, 0, PURPLE_TYPING);
 		} else if(JM_STATE_PAUSED == jm->chat_state) {
-			serv_got_typing(gc, from, 0, PURPLE_TYPED);
+			serv_got_typing(gc, jm->from, 0, PURPLE_TYPED);
 		} else if(JM_STATE_GONE == jm->chat_state) {
 			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-					from, account);
+					jm->from, account);
 			if (conv && jid->node && jid->domain) {
 				char buf[256];
 				PurpleBuddy *buddy;
@@ -140,10 +129,10 @@ static void handle_chat(JabberMessage *jm)
 					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
 			}
-			serv_got_typing_stopped(gc, from);
+			serv_got_typing_stopped(gc, jm->from);
 
 		} else {
-			serv_got_typing_stopped(gc, from);
+			serv_got_typing_stopped(gc, jm->from);
 		}
 	} else {
 		if(jbr) {
@@ -162,11 +151,9 @@ static void handle_chat(JabberMessage *jm)
 			jm->body = jabber_google_format_to_html(jm->body);
 			g_free(tmp);
 		}
-		serv_got_im(gc, from, jm->xhtml ? jm->xhtml : jm->body, 0, jm->sent);
+		serv_got_im(gc, jm->from, jm->xhtml ? jm->xhtml : jm->body, 0, jm->sent);
 	}
 
-
-	g_free(from);
 	jabber_id_free(jid);
 }
 

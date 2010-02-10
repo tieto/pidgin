@@ -63,17 +63,5 @@ gboolean jabber_resourceprep_validate(const char *);
  */
 char *jabber_saslprep(const char *);
 
-/**
- * Search for an IM conversation with this specific user (including resource).
- * This is an alternative to purple_find_conversation_with_account(), which
- * calls purple_normalize (so if a conversation was found, we'd need to compare
- * the conversation name to see if the resources match).
- *
- * This function saves a call to purple_normalize(), at the expense of
- * iterating over every open IM conversation.  For most usages, I think
- * this tradeoff is OK.
- */
-PurpleConversation *jabber_find_unnormalized_im_conv(const char *name, PurpleAccount *account);
-
 char *jabber_calculate_data_sha1sum(gconstpointer data, size_t len);
 #endif /* PURPLE_JABBER_JUTIL_H_ */
