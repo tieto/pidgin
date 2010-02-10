@@ -61,16 +61,21 @@ static void handle_chat(JabberMessage *jm)
 	JabberID *jid = jabber_id_new(jm->from);
 	char *from;
 
+	PurpleConnection *gc;
+	PurpleAccount *account;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 
 	if(!jid)
 		return;
 
+	gc = jm->js->gc;
+	account = purple_connection_get_account(gc);
+
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
-	if(jabber_find_unnormalized_conv(jm->from, jm->js->gc->account)) {
+	if(jabber_find_unnormalized_conv(jm->from, account)) {
 		from = g_strdup(jm->from);
 	} else  if(jid->node) {
 		if (jid->resource) {
@@ -85,7 +90,7 @@ static void handle_chat(JabberMessage *jm)
 			PurpleConversation *conv;
 
 			from = g_strdup_printf("%s@%s", jid->node, jid->domain);
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, jm->js->gc->account);
+			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, account);
 			if (conv) {
 				purple_conversation_set_name(conv, jm->from);
 			}
@@ -105,19 +110,19 @@ static void handle_chat(JabberMessage *jm)
 		}
 
 		if(JM_STATE_COMPOSING == jm->chat_state) {
-			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPING);
+			serv_got_typing(gc, from, 0, PURPLE_TYPING);
 		} else if(JM_STATE_PAUSED == jm->chat_state) {
-			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPED);
+			serv_got_typing(gc, from, 0, PURPLE_TYPED);
 		} else if(JM_STATE_GONE == jm->chat_state) {
 			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-					from, jm->js->gc->account);
+					from, account);
 			if (conv && jid->node && jid->domain) {
 				char buf[256];
 				PurpleBuddy *buddy;
 
 				g_snprintf(buf, sizeof(buf), "%s@%s", jid->node, jid->domain);
 
-				if ((buddy = purple_find_buddy(jm->js->gc->account, buf))) {
+				if ((buddy = purple_find_buddy(account, buf))) {
 					const char *who;
 					char *escaped;
 
@@ -135,10 +140,10 @@ static void handle_chat(JabberMessage *jm)
 					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
 			}
-			serv_got_typing_stopped(jm->js->gc, from);
+			serv_got_typing_stopped(gc, from);
 
 		} else {
-			serv_got_typing_stopped(jm->js->gc, from);
+			serv_got_typing_stopped(gc, from);
 		}
 	} else {
 		if(jbr) {
@@ -157,8 +162,7 @@ static void handle_chat(JabberMessage *jm)
 			jm->body = jabber_google_format_to_html(jm->body);
 			g_free(tmp);
 		}
-		serv_got_im(jm->js->gc, from, jm->xhtml ? jm->xhtml : jm->body, 0,
-				jm->sent);
+		serv_got_im(gc, from, jm->xhtml ? jm->xhtml : jm->body, 0, jm->sent);
 	}
 
 
