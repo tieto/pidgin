@@ -959,8 +959,24 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		/* End of DEALING WITH CHATS...about 5000 lines ago */
 	} else {
 		/* DEALING WITH CONTACT (i.e. not a chat) */
+		PurpleConversation *conv;
+
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
 									 jid->node ? "@" : "", jid->domain);
+
+		/*
+		 * Unbind/unlock from sending messages to a specific resource on
+		 * presence changes.  This is locked to a specific resource when
+		 * receiving a message (in message.c).
+		 */
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+				buddy_name, account);
+		if (conv) {
+			purple_debug_warning("jabber", "Changed conversation binding from %s to %s\n",
+					purple_conversation_get_name(conv), buddy_name);
+			purple_conversation_set_name(conv, buddy_name);
+		}
+
 		if((b = purple_find_buddy(account, buddy_name)) == NULL) {
 			if (jb != js->user_jb) {
 				purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%p)\n",
@@ -1005,17 +1021,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		if(state == JABBER_BUDDY_STATE_ERROR ||
 				(type && (g_str_equal(type, "unavailable") ||
 				          g_str_equal(type, "unsubscribed")))) {
-			PurpleConversation *conv;
-
 			jabber_buddy_remove_resource(jb, jid->resource);
-			if((conv = jabber_find_unnormalized_im_conv(from, account)))
-				/*
-				 * If a resource went offline (or the buddy unsubscribed),
-				 * send further messages to the bare JID.  (This is also
-				 * updated in message.c when receiving a message)
-				 */
-				purple_conversation_set_name(conv, buddy_name);
-
 		} else {
 			jbr = jabber_buddy_track_resource(jb, jid->resource, priority,
 					state, status);
