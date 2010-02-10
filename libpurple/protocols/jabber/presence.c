@@ -676,6 +676,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		idle += offset;
 	}
 
+	/* DEALING WITH CHATS */
 	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {
 		static int i = 1;
 
@@ -955,7 +956,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			g_free(nickname);
 			g_return_if_reached();
 		}
+		/* End of DEALING WITH CHATS...about 5000 lines ago */
 	} else {
+		/* DEALING WITH CONTACT (i.e. not a chat) */
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
 									 jid->node ? "@" : "", jid->domain);
 		if((b = purple_find_buddy(account, buddy_name)) == NULL) {
