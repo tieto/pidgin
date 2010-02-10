@@ -10,6 +10,8 @@ version 2.6.6 (??/??/20??):
 	* When looking up DNS records, use the type of record returned by the
 	  server (instead of the type we asked for) to determine how to process
 	  the record.
+	* Fix an issue with parsing XML attributes that contain "&lt;br&gt;".
+	  See ChangeLog.API for more details.
 
 	General:
 	* Correctly disable all missing dependencies when using the

@@ -7,6 +7,12 @@ version 2.6.6 (??/??/2010):
 		  purple_xfer_request_denied if an error is found when selecting
 		  a file to send. Request denied is still used when a receive
 		  request is not allowed.
+		* xmlnode_from_str now properly handles paring an attribute which
+		  contain "&lt;br&gt;", which were previously transformed into a
+		  newline character (libxml2 unescapes all entities except
+		  representations of '&', and libpurple's purple_unescape_html
+		  converts "<br>" to a newline).
+
 	Perl:
 		Changed:
 		* Corrected the package names for the PurpleProxyType and
