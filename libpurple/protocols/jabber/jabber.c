@@ -3146,7 +3146,7 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 			purple_account_get_connection(account)->proto_data;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	PurpleMediaCaps caps = PURPLE_MEDIA_CAPS_NONE;
+	PurpleMediaCaps total = PURPLE_MEDIA_CAPS_NONE;
 	gchar *resource;
 	GList *specific = NULL, *l;
 
@@ -3162,7 +3162,7 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 		/* no resources online, we're trying to get caps for someone
 		 * whose presence we're not subscribed to, or
 		 * someone who is offline. */
-		return caps;
+		return total;
 
 	} else if ((resource = jabber_get_resource(who)) != NULL) {
 		/* they've specified a resource, no need to ask or
@@ -3173,7 +3173,7 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 		if (!jbr) {
 			purple_debug_error("jabber", "jabber_get_media_caps:"
 					" Can't find resource %s\n", who);
-			return caps;
+			return total;
 		}
 
 		l = specific = g_list_prepend(specific, jbr);
@@ -3184,6 +3184,7 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 	}
 
 	for (; l; l = l->next) {
+		PurpleMediaCaps caps = PURPLE_MEDIA_CAPS_NONE;
 		jbr = l->data;
 
 		if (jabber_resource_has_capability(jbr,
@@ -3214,13 +3215,15 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 			if (jabber_resource_has_capability(jbr, NS_GOOGLE_VIDEO))
 				caps |= PURPLE_MEDIA_CAPS_AUDIO_VIDEO;
 		}
+
+		total |= caps;
 	}
 
 	if (specific) {
 		g_list_free(specific);
 	}
 
-	return caps;
+	return total;
 #else
 	return PURPLE_MEDIA_CAPS_NONE;
 #endif
