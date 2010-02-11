@@ -1,20 +1,21 @@
-# translation of pidgin.or.po to Oriya
+# translation of or.po to Oriya
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Manoj Kumar Giri <mgiri@redhat.com>, 2009, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: pidgin.or\n"
+"Project-Id-Version: or\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-06 16:30-0800\n"
-"PO-Revision-Date: 2010-02-02 17:59+0530\n"
+"POT-Creation-Date: 2010-02-10 22:30-0800\n"
+"PO-Revision-Date: 2010-02-11 11:31+0530\n"
 "Last-Translator: Manoj Kumar Giri <mgiri@redhat.com>\n"
 "Language-Team: Oriya <oriya-it@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=2; plural=(n!=1);\n"
+"\n"
 "\n"
 "\n"
 "\n"
@@ -4643,9 +4644,8 @@ msgstr "XMPP ସଂଦେଶ ତୃଟି"
 msgid "(Code %s)"
 msgstr "(ସଂକେତ %s)"
 
-#, fuzzy
 msgid "A custom smiley in the message is too large to send."
-msgstr "ସଂଦେଶ ପଠାଇବାକୁ ଅସମର୍ଥ: ସଂଦେଶ ବହୁତ ବଡ ଅଟେ ।"
+msgstr "ସଂଦେଶରେ ଥିବା ଇଚ୍ଛାରୂପଣ smiley ପଠାଇବା ପାଇଁ ଅତ୍ୟଧିକ ବଡ ଅଟେ।"
 
 msgid "XML Parse error"
 msgstr "XML ପାର୍ସ ଭୂଲ"
@@ -6628,9 +6628,9 @@ msgstr "ସରଭର ଠିକଣା"
 msgid "Server port"
 msgstr "ସରଭର ପୋର୍ଟ"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Received unexpected response from %s: %s"
-msgstr "%s ରୁ ଅପ୍ରତ୍ୟାଶିତ ଉତ୍ତର ଗ୍ରହଣ କରିଅଛି"
+msgstr "%s ରୁ ଅପ୍ରତ୍ୟାଶିତ ଉତ୍ତର ଗ୍ରହଣ କରିଅଛି: %s"
 
 #, c-format
 msgid "Received unexpected response from %s"
@@ -6649,6 +6649,13 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "%s କୁ ଅନୁରୋଧ କରିବାରେ ତ୍ରୁଟି: %s"
 
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"ସର୍ଭର ଅନୁରୋଧ କରିଥିଲା ଯେ ଆପଣ ଗୋଟିଏ CAPTCHA କୁ ସାଇନ ଇନ କରିବା ପାଇଁ ପୁରଣ କରନ୍ତୁ, କିନ୍ତୁ ଏହି "
+"କ୍ଲାଏଣ୍ଟ ବର୍ତ୍ତମାନ CAPTCHA ଗୁଡ଼ିକୁ ସମର୍ଥନ କରେନାହିଁ।"
+
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "ଏଠାରେ ବୈଧିକୃତ ହେବା ପାଇଁ AOL ଆପଣଙ୍କର ପରଦା ନାମକୁ ଅନୁମତି ଦେଇନଥାଏ"
 
@@ -6657,13 +6664,6 @@ msgstr "ଚାର୍ଟ କୋଠରୀରେ ଯୋଗଦାନ କରିପା
 
 msgid "Invalid chat room name"
 msgstr "ଅବୈଧ ଚାର୍ଟ କୋଠରୀ ନାମ"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"ଆପଣ ଚେଷ୍ଟାକରିଥିବା ଅନ୍ତିମ କାର୍ଯ୍ୟକୁ କାର୍ଯ୍ୟକାରୀ କରିହେଲା ନାହିଁ କାରଣ ଆପଣ ହାର ସୀମା ଉପରେ ଅଛନ୍ତି। "
-"ଦୟାକରି 10 ସେକଣ୍ଡ ଅପେକ୍ଷା କରନ୍ତୁ ଏବଂ ପୁଣିଥରେ ଚେଷ୍ଟାକରନ୍ତୁ।\n"
 
 msgid "Received invalid data on connection with server"
 msgstr "ସର୍ଭର ସହିତ ସଂଯୁକ୍ତ ହେବା ସମୟରେ ଅବୈଧ ତଥ୍ୟ ଗ୍ରହଣ କରିଥିଲା"
@@ -11796,9 +11796,8 @@ msgstr "ମେସୀଡୋନିୟାନ"
 msgid "Mongolian"
 msgstr "ମୋଙ୍ଗୋଲିୟାନ"
 
-#, fuzzy
 msgid "Marathi"
-msgstr "ଗୁଜୁରାଟୀ"
+msgstr "ମୋରାଠୀ"
 
 msgid "Malay"
 msgstr "ମାଳୟ"
@@ -11818,9 +11817,8 @@ msgstr "ନରୱେୟାନ ନିନୋରସ୍କ"
 msgid "Occitan"
 msgstr "ଓସିଟାନ"
 
-#, fuzzy
 msgid "Oriya"
-msgstr "ଅପେରା"
+msgstr "ଓଡ଼ିଆ"
 
 msgid "Punjabi"
 msgstr "ପଞ୍ଜାବୀ"
@@ -13522,6 +13520,9 @@ msgstr "ଧ୍ୱନି ଚଲାନ୍ତୁ (_P)"
 msgid "_Save File"
 msgstr "ଫାଇଲକୁ ସଂରକ୍ଷଣ କରନ୍ତୁ (_S)"
 
+msgid "Do you really want to clear?"
+msgstr "ଆପଣ ପ୍ରକୃତରେ ବିଲୋପ କରିବା ପାଇଁ ଚାହୁଁଛନ୍ତି କି?"
+
 msgid "Select color"
 msgstr "ରଙ୍ଗ ମନୋନୀତକର"
 
@@ -14714,6 +14715,3 @@ msgstr "ଅପ୍ରସ୍ତୁତ XMPP ପଦଗୁଡିକୁ ପଠାନ�
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "ଏହି ପ୍ଲଗଇନ XMPP ସର୍ଭରଗୁଡିକୁ କିମ୍ବା ଗ୍ରାହକଗୁଡିକୁ ତ୍ରୁଟିନିବାରଣ କରିବା ପାଇଁ ଉପଯୋଗୀ ହୋଇଥାଏ।"
-
-#~ msgid "%s"
-#~ msgstr "%s"
