@@ -458,6 +458,10 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 	jbr->caps.info = info;
 	jbr->caps.exts = exts;
 
+	purple_prpl_got_media_caps(
+			purple_connection_get_account(userdata->js->gc),
+			userdata->from);
+
 	if (info == NULL)
 		goto out;
 

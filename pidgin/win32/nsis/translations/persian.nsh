@@ -13,7 +13,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Дух²≤ДДоЕ гр чхА оя мгА гляг гсй."
 !define PIDGIN_IS_RUNNING			"хяДгЦЕ │МлМД гр чхА оя мгА гляг гсй. АьщгП гр │МлМД нгял тФо Ф оФхгяЕ сзЛ ≤ДМо."
-!define GTK_INSTALLER_NEEDED			"ЦмМь рЦгД глягЛ GTK+ Мг ФлФо Догяо Мг АгрЦ гсй гяйчга │Мог ≤До.$\rАьщгП ДснЕ ${GTK_MIN_VERSION} Мг хгАгйяЛ гр ЦмМь рЦгД² глягЛ GTK+ Дух ≤ДМо"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"хзо >"
@@ -33,8 +32,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"гМлго ЦФяо хягЛ │МлМД оя ЦДФ бшгр"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"ДснЕ² чоМЦЛ ЦмМь рЦгД глягЛ GTK+ │Мог то. бМг ЦгМАМо бД яг гяйчга оЕМо©$\rйФлЕ: $(^Name) ЦЦ≤Д гсй чхА гр гяйчга ≤гя Д≤До."
-!define GTK_WINDOWS_INCOMPATIBLE		"ФМДоФр 95/98Ч/Me хг GTKЩ+Щ ДснЕ 2.8.0 Мг лоМойя сгр░гя ДМсй. GTK+ ${GTK_INSTALL_VERSION} Дух ДнФгЕо то.$\r г░я  GTK+ ${GTK_MIN_VERSION} Мг лоМойя яг чхАгП Дух Д≤яоЕ²гМо║ Дух чьз нФгЕо то."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"ущмЕ ФхЛ │МлМД яг ххМДМо"
@@ -43,8 +40,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"мпщ ДснЕ²гЛ гр │МлМД ≤Е оя мгА мгжя Дух гсй ЦЦ≤Д ДМсй. ДснЕ лоМо хоФД мпщ ДснЕ ЦФлФо Дух ЦЛ²тФо."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"ньг ЕД░гЦ Дух ЦмМь рЦгД глягЛ GTK+Щ."
-!define GTK_BAD_INSTALL_PATH			"ЦсМяЛ ≤Е Фгяо ≤яоЕ²гМо чгхА осйясЛ Мг гМлго ДМсй."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"ЦйуоЛ²ЕгЛ ДтгДЛ гМДйяДйЛ"

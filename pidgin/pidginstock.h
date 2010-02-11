@@ -159,9 +159,10 @@
 #define PIDGIN_STOCK_TOOLBAR_VIDEO_CALL   "pidgin-video-call"
 #define PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL "pidgin-audio-video-call"
 #endif
+#define PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION	"pidgin-send-attention"
 
 /* Tray icons */
-#define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-available"
+#define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-online"
 #define PIDGIN_STOCK_TRAY_INVISIBLE	  "pidgin-tray-invisible"
 #define PIDGIN_STOCK_TRAY_AWAY	  	  "pidgin-tray-away"
 #define PIDGIN_STOCK_TRAY_BUSY            "pidgin-tray-busy"

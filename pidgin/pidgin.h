@@ -57,33 +57,6 @@
 #endif
 
 /*
- * This is backwards-compatibility code for older versions of GTK+ (< 2.4.x)
- * It defines the new wrap behavior (unknown in earlier versions)
- * as the old (slightly buggy) wrap behavior.
- * It also includes our back-ported GtkExpander
- */
-/** @cond */
-#if (!GTK_CHECK_VERSION(2,4,0))
-# define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
-# include "gtkexpander.h"
-#endif
-/** @endcond */
-
-/*
- * We include the sources for GtkComboBox and GtkCellView because
- * they don't exist in older versions of GTK+, and we use them
- * in a few places.
- */
-#if !GTK_CHECK_VERSION(2,6,0)
-#   include "gtkcellview.h"
-#   include "gtkcellviewmenuitem.h"
-#   include "pidgincombobox.h"
-#   if !GTK_CHECK_VERSION(2,4,0)
-#       include "gtkcelllayout.h"
-#   endif /* Less than GTK+ 2.4 */
-#endif /* Less than GTK+ 2.6 */
-
-/*
  * Spacings between components, as defined by the
  * GNOME Human Interface Guidelines.
  */
