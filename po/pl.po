@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin polish translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-15 17:07-0800\n"
-"PO-Revision-Date: 2010-01-14 17:22+0100\n"
+"POT-Creation-Date: 2010-02-10 20:02-0800\n"
+"PO-Revision-Date: 2010-02-10 16:27+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -4739,6 +4739,9 @@ msgstr "Błąd wiadomości XMPP"
 msgid "(Code %s)"
 msgstr "(Kod %s)"
 
+msgid "A custom smiley in the message is too large to send."
+msgstr "Własna emotikona w wiadomości jest za duża do wysłania."
+
 msgid "XML Parse error"
 msgstr "Błąd podczas przetwarzania XML"
 
@@ -6758,7 +6761,10 @@ msgstr "Adres serwera"
 msgid "Server port"
 msgstr "Port serwera"
 
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "Odebrano nieoczekiwaną odpowiedź z %s: %s"
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "Odebrano nieoczekiwaną odpowiedź z adresu %s"
@@ -6776,6 +6782,13 @@ msgstr ""
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Błąd podczas żądania adresu %s: %s"
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"Serwer zażądał wypełnienia pola CAPTCHA przed zalogowaniem, ale ten klient "
+"obecnie ich nie obsługuje."
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL nie umożliwia uwierzytelnienia nazwy użytkownika w tym miejscu"
@@ -7356,13 +7369,6 @@ msgid ""
 msgstr ""
 "[Nie można wyświetlić wiadomości od tego użytkownika, ponieważ zawiera ona "
 "nieprawidłowe znaki]."
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"Ostatnia czynność nie została wykonana, ponieważ przekroczono ograniczenie "
-"prędkości. Proszę poczekać dziesięć sekund i spróbować ponownie.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -8377,10 +8383,10 @@ msgid "Requesting captcha"
 msgstr "Żądanie CAPTCHA"
 
 msgid "Checking captcha"
-msgstr "Sprawdzanie CAPTCHA"
+msgstr "Sprawdzanie pola CAPTCHA"
 
 msgid "Failed captcha verification"
-msgstr "Sprawdzenie CAPTCHA nie powiodło się"
+msgstr "Sprawdzenie pola CAPTCHA nie powiodło się"
 
 msgid "Captcha Image"
 msgstr "Obraz CAPTCHA"
@@ -8389,7 +8395,7 @@ msgid "Enter code"
 msgstr "Proszę podać kod"
 
 msgid "QQ Captcha Verification"
-msgstr "Sprawdzanie CAPTCHA QQ"
+msgstr "Sprawdzanie pola CAPTCHA QQ"
 
 msgid "Enter the text from the image"
 msgstr "Proszę podać tekst z obrazu"
@@ -12056,6 +12062,9 @@ msgstr "norweski nynorsk"
 msgid "Occitan"
 msgstr "oksytański"
 
+msgid "Oriya"
+msgstr "orija"
+
 msgid "Punjabi"
 msgstr "pendżabski"
 
@@ -13780,6 +13789,9 @@ msgstr "O_dtwórz dźwięk"
 
 msgid "_Save File"
 msgstr "Zapi_sz plik"
+
+msgid "Do you really want to clear?"
+msgstr "Na pewno wyczyścić?"
 
 msgid "Select color"
 msgstr "Wybór koloru"
