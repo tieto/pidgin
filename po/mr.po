@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-13 17:40-0800\n"
-"PO-Revision-Date: 2010-01-04 19:37+0530\n"
+"POT-Creation-Date: 2010-02-10 20:02-0800\n"
+"PO-Revision-Date: 2010-02-10 18:27+0530\n"
 "Last-Translator: Sandeep Shedmake <sshedmak@redhat.com>\n"
 "Language-Team: Marathi <fedora-trans-mr@redhat.com>\n"
 "MIME-Version: 1.0\n"
@@ -4625,6 +4625,9 @@ msgstr "XMPP संदेश दोष"
 msgid "(Code %s)"
 msgstr "(कोड %s)"
 
+msgid "A custom smiley in the message is too large to send."
+msgstr "संदेशमधील पसंतीची स्माईली पाठवण्यासाठी खूपच मोठे आहे."
+
 msgid "XML Parse error"
 msgstr "XML दोष स्पष्ट करण्यात दोष"
 
@@ -6593,7 +6596,10 @@ msgstr "सर्व्हरचा पत्ता"
 msgid "Server port"
 msgstr "सर्व्हर पोर्ट"
 
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "%s पासून अनपेक्षीत प्रतिसाद आढळले: %s"
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "%s पासून अनपेक्षीत प्रतिसाद आढळले"
@@ -6611,6 +6617,13 @@ msgstr ""
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "%s करीता विनंती करत आहे: %s"
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"प्रवेश करण्यासाठी सर्व्हरने CAPTCHA भरून काढण्याची विनंती केली आहे, परंतु सध्या क्लाएंट "
+"CAPTCHAs करीता समर्थन पुरवत नाही."
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL पडद्यावरील नावाची ओळख पटवण्यासाठी येथे परवानगी देण्यास मनाई करतो"
@@ -7158,13 +7171,6 @@ msgid ""
 "characters.]"
 msgstr ""
 "[ह्या वापरकर्त्याकडून संदेश दाखवण्यास असमर्थ कारण त्यात अवैध अक्षरे समाविष्ट केली आहेत.]"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"मर्यादा ओलांडल्यामुळे शेवटची कृती कार्यरत होण्यास अशक्य. कृपया 10 सेकंद थांबा व पुनः प्रयत्न "
-"करा.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -11759,9 +11765,8 @@ msgstr "मेसीडोनियन"
 msgid "Mongolian"
 msgstr "मंगोलीयन"
 
-#, fuzzy
 msgid "Marathi"
-msgstr "गुजराती"
+msgstr "मराठी"
 
 msgid "Malay"
 msgstr "मलय"
@@ -11780,6 +11785,9 @@ msgstr "नार्वेजीअन नीनोर्स्क"
 
 msgid "Occitan"
 msgstr "ओक्सिटन"
+
+msgid "Oriya"
+msgstr "उडिया"
 
 msgid "Punjabi"
 msgstr "पंजाबी"
@@ -13481,6 +13489,9 @@ msgstr "आवाज चालवा (_P)"
 msgid "_Save File"
 msgstr "फाइल साठवा (_S)"
 
+msgid "Do you really want to clear?"
+msgstr "तुम्हाला नक्की नष्ट करायचे?"
+
 msgid "Select color"
 msgstr "रंग निवडा"
 
@@ -14668,6 +14679,3 @@ msgstr "कच्चे XMPP कडवी पाठवा आणि मिळव
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "हा प्लगईन डिबगिंग XMPP सर्व्हरसाठी किंवा ग्राहकांसाठी उपयुक्त ठरतो."
-
-#~ msgid "%s"
-#~ msgstr "%s"

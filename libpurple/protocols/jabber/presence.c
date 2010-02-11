@@ -506,6 +506,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	PurpleConvChatBuddyFlags flags = PURPLE_CBFLAGS_NONE;
 	gboolean delayed = FALSE;
 	const gchar *stamp = NULL; /* from <delayed/> element */
+	PurpleAccount *account;
 	PurpleBuddy *b = NULL;
 	char *buddy_name;
 	JabberBuddyState state = JABBER_BUDDY_STATE_UNKNOWN;
@@ -526,6 +527,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			"jabber-receiving-presence", js->gc, type, from, packet));
 	if (signal_return)
 		return;
+
+	account = purple_connection_get_account(js->gc);
 
 	jid = jabber_id_new(from);
 	if (jid == NULL) {
@@ -563,12 +566,10 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	} else if (g_str_equal(type, "subscribe")) {
 		struct _jabber_add_permit *jap = g_new0(struct _jabber_add_permit, 1);
 		gboolean onlist = FALSE;
-		PurpleAccount *account;
 		PurpleBuddy *buddy;
 		JabberBuddy *jb = NULL;
 		xmlnode *nick;
 
-		account = purple_connection_get_account(js->gc);
 		buddy = purple_find_buddy(account, from);
 		nick = xmlnode_get_child_with_namespace(packet, "nick", "http://jabber.org/protocol/nick");
 		if (nick)
@@ -679,6 +680,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		idle += offset;
 	}
 
+	/* DEALING WITH CHATS */
 	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {
 		static int i = 1;
 
@@ -752,7 +754,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 											" you like to configure it, or"
 											" accept the default settings?"),
 										/* Default Action */ 1,
-										purple_connection_get_account(js->gc), NULL, chat->conv,
+										account, NULL, chat->conv,
 										chat, 2,
 										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
 										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
@@ -958,13 +960,31 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			g_free(nickname);
 			g_return_if_reached();
 		}
+		/* End of DEALING WITH CHATS...about 5000 lines ago */
 	} else {
+		/* DEALING WITH CONTACT (i.e. not a chat) */
+		PurpleConversation *conv;
+
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
 									 jid->node ? "@" : "", jid->domain);
-		if((b = purple_find_buddy(js->gc->account, buddy_name)) == NULL) {
+
+		/*
+		 * Unbind/unlock from sending messages to a specific resource on
+		 * presence changes.  This is locked to a specific resource when
+		 * receiving a message (in message.c).
+		 */
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+				buddy_name, account);
+		if (conv) {
+			purple_debug_info("jabber", "Changed conversation binding from %s to %s\n",
+					purple_conversation_get_name(conv), buddy_name);
+			purple_conversation_set_name(conv, buddy_name);
+		}
+
+		if((b = purple_find_buddy(account, buddy_name)) == NULL) {
 			if (jb != js->user_jb) {
 				purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%p)\n",
-									 buddy_name, purple_account_get_username(js->gc->account), js->gc->account);
+									 buddy_name, purple_account_get_username(account), account);
 				jabber_id_free(jid);
 				g_free(avatar_hash);
 				g_free(buddy_name);
@@ -1005,12 +1025,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		if(state == JABBER_BUDDY_STATE_ERROR ||
 				(type && (g_str_equal(type, "unavailable") ||
 				          g_str_equal(type, "unsubscribed")))) {
-			PurpleConversation *conv;
-
 			jabber_buddy_remove_resource(jb, jid->resource);
-			if((conv = jabber_find_unnormalized_conv(from, js->gc->account)))
-				purple_conversation_set_name(conv, buddy_name);
-
 		} else {
 			jbr = jabber_buddy_track_resource(jb, jid->resource, priority,
 					state, status);
@@ -1023,12 +1038,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
 			jabber_google_presence_incoming(js, buddy_name, found_jbr);
-			purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, "message", found_jbr->status, NULL);
-			purple_prpl_got_user_idle(js->gc->account, buddy_name, found_jbr->idle, found_jbr->idle);
+			purple_prpl_got_user_status(account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, "message", found_jbr->status, NULL);
+			purple_prpl_got_user_idle(account, buddy_name, found_jbr->idle, found_jbr->idle);
 			if (nickname)
 				serv_got_alias(js->gc, buddy_name, nickname);
 		} else {
-			purple_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
+			purple_prpl_got_user_status(account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}
 		g_free(buddy_name);
 	}

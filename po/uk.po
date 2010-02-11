@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-13 17:31-0800\n"
-"PO-Revision-Date: 2010-01-10 15:35+0300\n"
+"POT-Creation-Date: 2010-02-10 20:02-0800\n"
+"PO-Revision-Date: 2010-02-10 11:52+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -76,7 +76,7 @@ msgid "Remember password"
 msgstr "Запам'ятати пароль"
 
 msgid "There are no protocol plugins installed."
-msgstr "Не встановлений жоден додаток протоколів."
+msgstr "Не встановлений жодний з додатків протоколів."
 
 msgid "(You probably forgot to 'make install'.)"
 msgstr "(Можливо, ви забули зробити 'make install'.)"
@@ -855,7 +855,7 @@ msgstr ""
 "журналу всі балачки\" увімкнена."
 
 msgid "No logs were found"
-msgstr "Не знайдений жоден журнал"
+msgstr "Не знайдений жодний журнал"
 
 msgid "Total log size:"
 msgstr "Загальний розмір журналу:"
@@ -2440,7 +2440,7 @@ msgid "_Set"
 msgstr "_Встановити"
 
 msgid "None of your accounts are idle."
-msgstr "Жоден з ваших облікових записів не бездіяльний."
+msgstr "Жодний з ваших облікових записів не бездіяльний."
 
 msgid "Unset Account Idle Time"
 msgstr "Обнулити час бездіяльності облікового запису"
@@ -4707,6 +4707,9 @@ msgstr "Помилка повідомлення XMPP"
 msgid "(Code %s)"
 msgstr "(Код %s)"
 
+msgid "A custom smiley in the message is too large to send."
+msgstr "Нетипова усмішка у повідомленні завелика, щоб її надіслати."
+
 msgid "XML Parse error"
 msgstr "Помилка аналізу XML"
 
@@ -5161,7 +5164,7 @@ msgid "Blocked Text for %s"
 msgstr "Заблокований текст для %s"
 
 msgid "No text is blocked for this account."
-msgstr "Жоден текст не заблокований для цього облікового запису."
+msgstr "Жодний текст не заблокований для цього облікового запису."
 
 #, c-format
 msgid ""
@@ -6253,7 +6256,7 @@ msgstr "Обробник URL посилань myim"
 
 msgid "No suitable MySpaceIM account could be found to open this myim URL."
 msgstr ""
-"Не знайдений жоден підходящий обліковий запис MySpaceIM, щоб відкрити з "
+"Не знайдений жодний підходящий обліковий запис MySpaceIM, щоб відкрити з "
 "цього посилання URL myim."
 
 msgid "Enable the proper MySpaceIM account and try again."
@@ -6726,7 +6729,10 @@ msgstr "Адреса сервера"
 msgid "Server port"
 msgstr "Порт сервера"
 
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "Отримана неочікувана відповідь від %s: %s"
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "Отримана неочікувана відповідь від %s"
@@ -6743,6 +6749,13 @@ msgstr ""
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Помилка запиту %s: %s"
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"Сервер дав запит, щоб ви заповнили CAPTCHA для входу, але цей клієнт зараз "
+"не підтримує CAPTCHA."
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL не дозволяє автентифікуватись тут з відображуваним ім'ям"
@@ -7329,13 +7342,6 @@ msgid ""
 msgstr ""
 "[Не вдається відобразити повідомлення від цього користувача, тому що воно "
 "містить недопустимі символи.]"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"Остання дія, яку ви намагалися зробити, не могла бути виконана, тому що ви "
-"перевищили поріг. Будь ласка, зачекайте 10 секунд та спробуйте знову.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -9250,7 +9256,6 @@ msgstr "Текст стану"
 msgid "Public Key Fingerprint"
 msgstr "Відбитки загальнодоступного ключа"
 
-# TODO: закінчити переклад
 msgid "Public Key Babbleprint"
 msgstr "Babbleprint загальнодоступного ключа"
 
@@ -9279,7 +9284,7 @@ msgid "Network is empty"
 msgstr "Мережа порожня"
 
 msgid "No public key was received"
-msgstr "Не був отриманий жоден загальноступний ключ"
+msgstr "Не був отриманий жодний загальноступний ключ"
 
 msgid "Server Information"
 msgstr "Відомості про сервер"
@@ -12011,6 +12016,9 @@ msgstr "Македонська"
 msgid "Mongolian"
 msgstr "Монгольська"
 
+msgid "Marathi"
+msgstr "Мараті"
+
 msgid "Malay"
 msgstr "Малайська"
 
@@ -12028,6 +12036,9 @@ msgstr "Норвезька (Нюнорск)"
 
 msgid "Occitan"
 msgstr "Оксітанська"
+
+msgid "Oriya"
+msgstr "Орія"
 
 msgid "Punjabi"
 msgstr "Пенджабі"
@@ -13740,6 +13751,9 @@ msgstr "_Відтворити звук"
 msgid "_Save File"
 msgstr "_Зберегти файл"
 
+msgid "Do you really want to clear?"
+msgstr "Ви дійсно хочете очистити?"
+
 msgid "Select color"
 msgstr "Вибрати колір"
 
@@ -14944,6 +14958,13 @@ msgstr "Надіслати та отримати сирі строфи XMPP."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Додаток корисний для зневадження серверів або клієнтів XMPP."
+
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "Остання дія, яку ви намагалися зробити, не могла бути виконана, тому що "
+#~ "ви перевищили поріг. Будь ласка, зачекайте 10 секунд та спробуйте знову.\n"
 
 #~ msgid "%s"
 #~ msgstr "%s"

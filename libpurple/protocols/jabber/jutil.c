@@ -651,25 +651,6 @@ jabber_is_own_account(JabberStream *js, const char *str)
 	return equal;
 }
 
-PurpleConversation *
-jabber_find_unnormalized_conv(const char *name, PurpleAccount *account)
-{
-	PurpleConversation *c = NULL;
-	GList *cnv;
-
-	g_return_val_if_fail(name != NULL, NULL);
-
-	for(cnv = purple_get_conversations(); cnv; cnv = cnv->next) {
-		c = (PurpleConversation*)cnv->data;
-		if(purple_conversation_get_type(c) == PURPLE_CONV_TYPE_IM &&
-				!purple_utf8_strcasecmp(name, purple_conversation_get_name(c)) &&
-				account == purple_conversation_get_account(c))
-			return c;
-	}
-
-	return NULL;
-}
-
 /* The same as purple_util_get_image_checksum, but guaranteed to remain SHA1 */
 char *
 jabber_calculate_data_sha1sum(gconstpointer data, size_t len)

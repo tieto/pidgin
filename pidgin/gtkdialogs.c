@@ -208,6 +208,7 @@ static const struct translator translators[] = {
 	{N_("Occitan"),             "oc", "Yannig Marchegay", "yannig@marchegay.org"},
 	{N_("Oriya"),               "or", "Manoj Kumar Giri", "giri.manojkr@gmail.com"},
 	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@users.sf.net"},
+	{N_("Polish"),              "pl", "Piotr Drąg", "piotrdrag@gmail.com"},
 	{N_("Polish"),              "pl", "Piotr Makowski", "pmakowski@aviary.pl"},
 	{N_("Portuguese"),          "pt", "Duarte Henriques", "duarte_henriques@myrealbox.com"},
 	{N_("Portuguese-Brazil"),   "pt_BR", "Rodrigo Luiz Marques Flores", "rodrigomarquesflores@gmail.com"},

@@ -57,6 +57,11 @@ version 2.6.6 (??/??/20??):
 	* Fix a leak and crash when retrieving buddy icons.
 
 	XMPP:
+	* Upon receipt of a presence change from a contact, send further messages
+	  to that contact's bare JID [username].  A conversation "locks" to a
+	  specific resource upon receipt of a message from that resource.
+	  Previously, it would only "unlock" when that resource went offline, or
+	  upon receipt of a message from a different resource.
 	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
 	  available when built without Cyrus SASL support.
 	* When getting info on a domain-only (server) JID, show uptime
@@ -69,6 +74,8 @@ version 2.6.6 (??/??/20??):
 	* Don't send custom smileys larger than the recommended maximum object size
 	  specified in the BoB XEP.   This prevents a client from being
 	  disconnected by servers that dislike overly-large stanzas.
+	* Fix receiving messages without markup over an Openfire BOSH connection
+	  (forcibly put the stanzas in the jabber:client namespace).
 
 	Yahoo:
 	* Don't send <span> and </span> tags.  (Fartash Faghri)
