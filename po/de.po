@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-04 11:33+0100\n"
-"PO-Revision-Date: 2010-02-04 11:32+0100\n"
+"POT-Creation-Date: 2010-02-11 21:03+0100\n"
+"PO-Revision-Date: 2010-02-11 21:02+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -6824,6 +6824,13 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Fehler beim Anfordern von %s: %s"
 
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"Der Server möchte, dass Sie ein CAPTCHA ausfüllen, um sich anzumelden, aber "
+"dieser Client unterstützt im Moment keine CAPTCHAs."
+
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL erlaubt Ihnen nicht, sich hier mit Ihrem Benutzernamen anzumelden"
 
@@ -12129,6 +12136,9 @@ msgstr "Norwegisch (Nynorsk)"
 msgid "Occitan"
 msgstr "Okzitanisch"
 
+msgid "Oriya"
+msgstr "Oriya"
+
 msgid "Punjabi"
 msgstr "Pandschabi"
 
@@ -13875,6 +13885,9 @@ msgstr "Klang _abspielen"
 
 msgid "_Save File"
 msgstr "Datei _speichern"
+
+msgid "Do you really want to clear?"
+msgstr "Wollen Sie wirklich löschen?"
 
 msgid "Select color"
 msgstr "Farbe auswählen"
