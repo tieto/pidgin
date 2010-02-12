@@ -132,9 +132,9 @@ struct _PidginBuddyList {
 	gpointer priv;                   /**< Pointer to opaque private data */
 };
 
-#define PIDGIN_BLIST(list) ((PidginBuddyList *)(list)->ui_data)
+#define PIDGIN_BLIST(list) ((PidginBuddyList *)purple_blist_get_ui_data())
 #define PIDGIN_IS_PIDGIN_BLIST(list) \
-	((list)->ui_ops == pidgin_blist_get_ui_ops())
+	(purple_blist_get_ui_ops() == pidgin_blist_get_ui_ops())
 
 /**************************************************************************
  * @name GTK+ Buddy List API

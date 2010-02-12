@@ -33,6 +33,7 @@
 #include "request.h"
 #include "pidginstock.h"
 #include "util.h"
+#include "debug.h"
 
 #include "gtkdialogs.h"
 #include "gtkimhtmltoolbar.h"
@@ -478,34 +479,18 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 	GtkTextIter iter;
 	GtkTextMark *ins;
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	if (response != GTK_RESPONSE_ACCEPT)
-#else /* FILECHOOSER */
-	if (response != GTK_RESPONSE_OK)
-#endif /* FILECHOOSER */
 	{
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-#else /* FILECHOOSER */
-	filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(widget)));
-#endif /* FILECHOOSER */
 
 	if (filename == NULL) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}
-
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	if (pidgin_check_if_dir(filename, GTK_FILE_SELECTION(widget))) {
-		g_free(filename);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
-		return;
-	}
-#endif /* FILECHOOSER */
 
 	/* The following triggers a callback that closes the widget */
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
@@ -549,7 +534,6 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 	GtkWidget *window;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->image))) {
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 		window = gtk_file_chooser_dialog_new(_("Insert Image"),
 						NULL,
 						GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -559,12 +543,6 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 		gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_ACCEPT);
 		g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(window)),
 				"response", G_CALLBACK(do_insert_image_cb), toolbar);
-#else /* FILECHOOSER */
-		window = gtk_file_selection_new(_("Insert Image"));
-		gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_OK);
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)),
-				"response", G_CALLBACK(do_insert_image_cb), toolbar);
-#endif /* FILECHOOSER */
 
 		gtk_widget_show(window);
 		toolbar->image_dialog = window;
@@ -921,6 +899,17 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
+static void send_attention_cb(GtkWidget *attention, GtkIMHtmlToolbar *toolbar)
+{
+	PurpleConversation *conv =
+		g_object_get_data(G_OBJECT(toolbar), "active_conv");
+	const gchar *who = purple_conversation_get_name(conv);
+	PurpleConnection *gc = purple_conversation_get_gc(conv);
+
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(attention), FALSE, toolbar);
+	purple_prpl_send_attention(gc, who, 0);
+}
+
 static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
 {
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->bold), buttons & GTK_IMHTML_BOLD);
@@ -1241,6 +1230,8 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
+		/*{PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, send_attention_cb, 
+			g_object_get_data(G_OBJECT(toolbar->imhtml), "attention"), _("Send Attention")},*/
 		{NULL, NULL, NULL, NULL}
 	};
 	int iter;
@@ -1258,6 +1249,13 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 			button = gtk_vseparator_new();
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	}
+	/* create the attention button (this is a bit hacky to not break ABI) */
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION);
+	g_signal_connect(G_OBJECT(button), "clicked",
+		G_CALLBACK(send_attention_cb), toolbar);
+	g_object_set_data(G_OBJECT(toolbar), "attention", button);
+	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Send Attention"), NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(toolbar), hbox, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(toolbar), "wide-view", hbox);
@@ -1306,6 +1304,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *insert_button;
 	GtkWidget *font_button;
 	GtkWidget *smiley_button;
+	GtkWidget *attention_button;
 	GtkWidget *font_menu;
 	GtkWidget *insert_menu;
 	GtkWidget *menuitem;
@@ -1447,6 +1446,35 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	g_signal_connect_swapped(G_OBJECT(smiley_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
 	gtk_widget_show_all(smiley_button);
 
+	/* Sep */
+	sep = gtk_vseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
+	gtk_widget_show_all(sep);
+
+	/* Attention */
+	attention_button = gtk_button_new();
+	gtk_button_set_relief(GTK_BUTTON(attention_button), GTK_RELIEF_NONE);
+	bbox = gtk_hbox_new(FALSE, 3);
+	gtk_container_add(GTK_CONTAINER(attention_button), bbox);
+	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, 
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
+	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
+	label = gtk_label_new_with_mnemonic(_("_Attention!"));
+	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), attention_button, FALSE, FALSE, 0);
+	g_signal_connect_swapped(G_OBJECT(attention_button), "clicked", 
+		G_CALLBACK(gtk_button_clicked),
+	    g_object_get_data(G_OBJECT(toolbar), "attention"));
+	gtk_widget_show_all(attention_button);
+	
+	g_signal_connect(G_OBJECT(g_object_get_data(G_OBJECT(toolbar), "attention")),
+	        "notify::sensitive",
+			G_CALLBACK(button_sensitiveness_changed), attention_button);
+
+	/* set attention button to be greyed out until we get a conversation */
+	gtk_widget_set_sensitive(g_object_get_data(G_OBJECT(toolbar), "attention"),
+		FALSE);
+	
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
 	gtk_widget_show(box);
@@ -1457,9 +1485,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 			G_CALLBACK(purple_prefs_trigger_callback), PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
 			NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
-#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
-#endif
 
 	gtk_widget_add_events(event, GDK_BUTTON_PRESS_MASK);
 	gtk_box_pack_start(GTK_BOX(hbox), event, TRUE, TRUE, 0);
@@ -1524,3 +1550,21 @@ void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *
 	g_free(toolbar->sml);
 	toolbar->sml = g_strdup(proto_id);
 }
+
+void gtk_imhtmltoolbar_switch_active_conversation(GtkIMHtmlToolbar *toolbar,
+	PurpleConversation *conv)
+{
+	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurplePlugin *prpl = purple_connection_get_prpl(gc);
+	GtkWidget *attention =
+		g_object_get_data(G_OBJECT(toolbar), "attention");
+
+	g_object_set_data(G_OBJECT(toolbar), "active_conv", conv);
+	
+	/* gray out attention button on protocols that don't support it
+	 for the time being it is always disabled for chats */
+	gtk_widget_set_sensitive(attention,
+		conv && prpl && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM && 
+		PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention != NULL);
+}
+

@@ -11,7 +11,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"O instalador já está a ser executado."
 !define PIDGIN_IS_RUNNING			"Uma instância do Pidgin já está a ser executada. Saia do Pidgin e tente de novo."
-!define GTK_INSTALLER_NEEDED			"O ambiente de GTK+ está ausente ou precisa de ser actualizado.$\rPor favor instale a versão v${GTK_MIN_VERSION} ou mais recente do ambiente de GTK+."
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Seguinte >"
@@ -31,14 +30,11 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC   "Criar uma entrada para o Pidgin na Barra de Iniciar"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Foi encontrada uma versão antiga do ambiente de execução GTK+. Deseja actualizá-lo?$\rNota: O $(^Name) poderá não funcionar se não o fizer."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visite a Página Web do Pidgin para Windows"
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Erro ao instalar o ambiente de execução GTK+."
-!define GTK_BAD_INSTALL_PATH			"O caminho que digitou não pode ser acedido nem criado."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"O desinstalador não encontrou entradas de registo do Pidgin.$\rÉ provável que outro utilizador tenha instalado este programa."
