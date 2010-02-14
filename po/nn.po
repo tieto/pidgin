@@ -1,16 +1,20 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: Pidgin 2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-13 17:24-0800\n"
-"PO-Revision-Date: 2010-01-07 15:35+0100\n"
+"POT-Creation-Date: 2010-02-13 23:32-0800\n"
+"PO-Revision-Date: 2010-02-12 23:52+0100\n"
 "Last-Translator: Yngve Spjeld Landro <nynorsk(a)strilen(.)net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Poedit-Bookmarks: -1,1060,1063,3712,-1,-1,-1,-1,-1,-1\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -4697,6 +4701,9 @@ msgstr "XMPP-meldingsfeil"
 msgid "(Code %s)"
 msgstr "(Kode %s)"
 
+msgid "A custom smiley in the message is too large to send."
+msgstr "Eit tilpassa smilefjes i meldinga er for stor til å kunna sendast."
+
 msgid "XML Parse error"
 msgstr "Feil i XML-tolkinga"
 
@@ -6693,7 +6700,10 @@ msgstr "Tenaradresse"
 msgid "Server port"
 msgstr "Tenarport"
 
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "Fekk uventa svar frå %s: %s"
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "Fekk uventa svar frå %s"
@@ -6710,6 +6720,13 @@ msgstr ""
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Klarte ikkje å henta %s: %s"
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"Tenaren bad deg skriva inn ein CAPTCHA for å logga deg på, men denne "
+"klienten støttar enno ikkje CAPTCHA-er."
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL tillèt ikkje at brukarnamnet ditt kan autentiserast her"
@@ -7266,14 +7283,6 @@ msgid ""
 msgstr ""
 "Klarer ikkje visa ei melding frå denne brukaren: ho inneheldt ulovlege "
 "teikn.]"
-
-# mengdegrensa?
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"Klarte ikkje å utføra den siste handlinga sidan du er over mengdegrensa. "
-"Vent i 10 sekund og prøv igjen.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -11934,6 +11943,9 @@ msgstr "Makedonsk"
 msgid "Mongolian"
 msgstr "Mongolsk"
 
+msgid "Marathi"
+msgstr "Marathi"
+
 msgid "Malay"
 msgstr "Malayisk"
 
@@ -11951,6 +11963,9 @@ msgstr "Norsk (nynorsk)"
 
 msgid "Occitan"
 msgstr "Oksitansk"
+
+msgid "Oriya"
+msgstr "Oriya"
 
 msgid "Punjabi"
 msgstr "Panjabi"
@@ -13673,6 +13688,9 @@ msgstr "_Spel lyden"
 msgid "_Save File"
 msgstr "_Lagra fila"
 
+msgid "Do you really want to clear?"
+msgstr "Vil du verkeleg tømma?"
+
 msgid "Select color"
 msgstr "Vel farge"
 
@@ -14875,6 +14893,14 @@ msgstr "Senda og ta i mot reine XMPP-blokker."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dette programtillegget er nyttig ved feilsøking av XMPP-tenarar og -klientar."
+
+# mengdegrensa?
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "Klarte ikkje å utføra den siste handlinga sidan du er over mengdegrensa. "
+#~ "Vent i 10 sekund og prøv igjen.\n"
 
 #~ msgid "%s"
 #~ msgstr "%s"
