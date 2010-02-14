@@ -1,3 +1,15 @@
+pidgin (2.4.3-4lenny6) stable-security; urgency=medium
+
+  * Disable MSN entirely, since Microsoft's servers won't work with this
+    version anyway; avoids a bunch of MSN-related holes 
+    (CVE-2010-0277, CVE-2009-3084, CVE-2009-3083) (Closes: #566775)
+  * debian/patches/38_CVE-2010-0423.patch:
+    - Fixes a remote DoS with too many custom smileys (no CVE yet?)
+  * debian/patches/39_CVE-2010-0420:
+    - Fixes a remote crash in Finch XMPP (CVE-2010-0420)
+
+ -- Ari Pollak <ari@debian.org>  Sun, 14 Feb 2010 15:33:23 -0500
+
 pidgin (2.4.3-4lenny5) stable-security; urgency=medium
 
   * Non-maintainer upload by the Security Team.
