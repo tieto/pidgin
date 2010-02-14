@@ -35,6 +35,9 @@
 #include "rtp.h"
 
 #include <string.h>
+#ifdef USE_VV
+#include <gst/gst.h>
+#endif
 
 GType
 jingle_get_type(const gchar *type)

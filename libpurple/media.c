@@ -2754,7 +2754,13 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		FsStream *fsstream = NULL;
 		const gchar *stun_ip = purple_network_get_stun_ip();
 		const gchar *turn_ip = purple_network_get_turn_ip();
-
+		guint new_num_params =
+					!stun_ip && !turn_ip ? num_params + 1 :
+					(stun_ip && is_nice) && turn_ip ?
+					num_params + 3 : num_params + 2;
+		guint next_param_index = num_params;
+		GParameter *param = g_new0(GParameter, new_num_params);
+		
 		/* check if the prpl has already specified a relay-info
 		 we need to do this to allow them to override when using non-standard
 		 TURN modes, like Google f.ex. */
@@ -2768,14 +2774,15 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 			}
 		}
 
-		if (stun_ip || (turn_ip && !got_turn_from_prpl)) {
-			guint new_num_params = 
-					(stun_ip && is_nice && turn_ip && !got_turn_from_prpl) ?
-					num_params + 2 : num_params + 1;
-			guint next_param_index = num_params;
-			GParameter *param = g_new0(GParameter, new_num_params);
-			memcpy(param, params, sizeof(GParameter) * num_params);
+		memcpy(param, params, sizeof(GParameter) * num_params);
 
+		/* set controlling mode according to direction */
+		param[next_param_index].name = "controlling-mode";
+		g_value_init(&param[next_param_index].value, G_TYPE_BOOLEAN);
+		g_value_set_boolean(&param[next_param_index].value, initiator);
+		next_param_index++;
+
+		if (stun_ip || (turn_ip && !got_turn_from_prpl)) {
 			if (stun_ip) {
 				purple_debug_info("media", 
 					"setting property stun-ip on new stream: %s\n", stun_ip);
