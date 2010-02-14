@@ -105,7 +105,6 @@ static GtkIMHtmlFuncs gtkimhtml_cbs = {
 void
 pidgin_setup_imhtml(GtkWidget *imhtml)
 {
-	PangoFontDescription *desc = NULL;
 	g_return_if_fail(imhtml != NULL);
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
 
@@ -115,15 +114,16 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 
 #ifdef _WIN32
 	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
+		PangoFontDescription *desc;
 		const char *font = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
 		desc = pango_font_description_from_string(font);
+		if (desc) {
+			gtk_widget_modify_font(imhtml, desc);
+			pango_font_description_free(desc);
+		}
 	}
 #endif
 
-	if (desc) {
-		gtk_widget_modify_font(imhtml, desc);
-		pango_font_description_free(desc);
-	}
 }
 
 static
