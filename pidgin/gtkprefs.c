@@ -1445,11 +1445,27 @@ interface_page(void)
 
 #ifdef _WIN32
 static void
+apply_custom_font(void)
+{
+	PangoFontDescription *desc = NULL;
+	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
+		const char *font = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
+		desc = pango_font_description_from_string(font);
+	}
+
+	gtk_widget_modify_font(sample_imhtml, desc);
+	if (desc)
+		pango_font_description_free(desc);
+
+}
+static void
 pidgin_custom_font_set(GtkFontButton *font_button, gpointer nul)
 {
+
 	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/custom_font",
-				gtk_font_button_get_font_name(font_button))
-;
+				gtk_font_button_get_font_name(font_button));
+
+	apply_custom_font();
 }
 #endif
 
@@ -1522,6 +1538,7 @@ conv_page(void)
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font"))
 		gtk_widget_set_sensitive(hbox, FALSE);
 	g_signal_connect(G_OBJECT(fontpref), "clicked", G_CALLBACK(pidgin_toggle_sensitive), hbox);
+	g_signal_connect(G_OBJECT(fontpref), "clicked", G_CALLBACK(apply_custom_font), hbox);
 	g_signal_connect(G_OBJECT(font_button), "font-set", G_CALLBACK(pidgin_custom_font_set), NULL);
 
 	}
