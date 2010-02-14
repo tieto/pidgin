@@ -49,6 +49,7 @@ version 2.6.6 (??/??/20??):
 	* When getting info on a domain-only (server) JID, show uptime
 	  (when given by the result of the "last query") and don't show status as
 	  offline.
+	* Fix getting info on your own JID.
 	* Wrap XHTML messages in <p>, as described in XEP-0071, for compatibility
 	  with some clients.
 	* Don't do an SRV lookup for a STUN server associated with the account
