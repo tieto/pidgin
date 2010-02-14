@@ -1546,53 +1546,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 				g_free(localecmd);
 			}
 #else /* !_WIN32 */
-			PROCESS_INFORMATION pi;
-			BOOL retval;
-			gchar *message = NULL;
-
-			memset(&pi, 0, sizeof(pi));
-
-			if (G_WIN32_HAVE_WIDECHAR_API ()) {
-				STARTUPINFOW si;
-				wchar_t *wc_cmd = g_utf8_to_utf16(command,
-						-1, NULL, NULL, NULL);
-
-				memset(&si, 0 , sizeof(si));
-				si.cb = sizeof(si);
-
-				retval = CreateProcessW(NULL, wc_cmd, NULL,
-						NULL, 0, 0, NULL, NULL,
-						&si, &pi);
-				g_free(wc_cmd);
-			} else {
-				STARTUPINFOA si;
-				char *l_cmd = g_locale_from_utf8(command,
-						-1, NULL, NULL, NULL);
-
-				memset(&si, 0 , sizeof(si));
-				si.cb = sizeof(si);
-
-				retval = CreateProcessA(NULL, l_cmd, NULL,
-						NULL, 0, 0, NULL, NULL,
-						&si, &pi);
-				g_free(l_cmd);
-			}
-
-			if (retval) {
-				CloseHandle(pi.hProcess);
-				CloseHandle(pi.hThread);
-			} else {
-				message = g_win32_error_message(GetLastError());
-			}
-
-			purple_debug_info("pounce",
-					"Pounce execute command called for: "
-					"%s\n%s%s%s",
-						command,
-						retval ? "" : "Error: ",
-						retval ? "" : message,
-						retval ? "" : "\n");
-			g_free(message);
+			winpidgin_shell_execute(command, "open", NULL);
 #endif /* !_WIN32 */
 		}
 	}

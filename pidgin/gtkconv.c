@@ -497,17 +497,15 @@ check_for_and_do_command(PurpleConversation *conv)
 						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 					if ((prpl_info != NULL) && (prpl_info->options & OPT_PROTO_SLASH_COMMANDS_NATIVE)) {
-						char *firstspace;
-						char *slash;
+						char *spaceslash;
 
-						firstspace = strchr(cmdline, ' ');
-						if (firstspace != NULL) {
-							slash = strrchr(firstspace, '/');
-						} else {
-							slash = strchr(cmdline, '/');
-						}
+						/* If the first word in the entered text has a '/' in it, then the user
+						 * probably didn't mean it as a command. So send the text as message. */
+						spaceslash = cmdline;
+						while (*spaceslash && *spaceslash != ' ' && *spaceslash != '/')
+							spaceslash++;
 
-						if (slash == NULL) {
+						if (*spaceslash != '/') {
 							purple_conversation_write(conv, "", _("Unknown command."), PURPLE_MESSAGE_NO_LOG, time(NULL));
 							retval = TRUE;
 						}
@@ -4152,9 +4150,29 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	g_free(alias_key);
 }
 
+/**
+ * @param most_matched Used internally by this function.
+ * @param entered The partial string that the user types before hitting the
+ *        tab key.
+ * @param entered_bytes The length of entered.
+ * @param partial This is a return variable.  This will be set to a string
+ *        containing the largest common string between all matches.  This will
+ *        be inserted into the input box at the start of the word that the
+ *        user is tab completing.  For example, if a chat room contains
+ *        "AlfFan" and "AlfHater" and the user types "a<TAB>" then this will
+ *        contain "Alf"
+ * @param nick_partial Used internally by this function.  Shoudl be a
+ *        temporary buffer that is entered_bytes+1 bytes long.
+ * @param matches This is a return variable.  If the given name is a potential
+ *        match for the entered string, then add a copy of the name to this
+ *        list.  The caller is responsible for g_free'ing the data in this
+ *        list.
+ * @param name The buddy name or alias or slash command name that we're
+ *        checking for a match.
+ */
 static void
-tab_complete_process_item(int *most_matched, char *entered, gsize entered_bytes, char **partial, char *nick_partial,
-				  GList **matches, gboolean command, char *name)
+tab_complete_process_item(int *most_matched, const char *entered, gsize entered_bytes, char **partial, char *nick_partial,
+				  GList **matches, char *name)
 {
 	memcpy(nick_partial, name, entered_bytes);
 	if (purple_utf8_strcasecmp(nick_partial, entered))
@@ -4263,7 +4281,7 @@ tab_complete(PurpleConversation *conv)
 		/* Commands */
 		for (l = list; l != NULL; l = l->next) {
 			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
-									  &matches, TRUE, l->data);
+									  &matches, l->data);
 		}
 		g_list_free(list);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
@@ -4276,7 +4294,7 @@ tab_complete(PurpleConversation *conv)
 		/* Users */
 		for (; l != NULL; l = l->next) {
 			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
-									  &matches, FALSE, ((PurpleConvChatBuddy *)l->data)->name);
+									  &matches, ((PurpleConvChatBuddy *)l->data)->name);
 		}
 
 
@@ -4294,7 +4312,7 @@ tab_complete(PurpleConversation *conv)
 
 				if (name && alias && strcmp(name, alias))
 					tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
-										  &matches, FALSE, alias);
+										  &matches, alias);
 				g_free(name);
 				g_free(alias);
 
@@ -4652,6 +4670,8 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	int max_height = total_height / 2;
 	int min_lines = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines");
 	int min_height;
+	gboolean interior_focus;
+	int focus_width;
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4677,6 +4697,13 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	 * is the beginning of a new paragraph. */
 	min_height = min_lines * (oneline.height + MAX(pad_inside, pad_top + pad_bottom));
 	height = CLAMP(height, MIN(min_height, max_height), max_height);
+
+	gtk_widget_style_get(gtkconv->entry,
+	                     "interior-focus", &interior_focus,
+	                     "focus-line-width", &focus_width,
+	                     NULL);
+	if (!interior_focus)
+		height += 2 * focus_width;
 
 	diff = height - gtkconv->entry->allocation.height;
 	if (ABS(diff) < oneline.height / 2)
@@ -5614,7 +5641,11 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 
 		buddyname = (tag->name) + 6;
 
-		if (btn_event->button == 2
+		if (btn_event->button == 1 &&
+				event->type == GDK_2BUTTON_PRESS) {
+			chat_do_im(PIDGIN_CONVERSATION(conv), buddyname);
+			return TRUE;
+		} else if (btn_event->button == 2
 				&& event->type == GDK_2BUTTON_PRESS) {
 			chat_do_info(PIDGIN_CONVERSATION(conv), buddyname);
 
@@ -5676,6 +5707,7 @@ static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, Purp
 					"weight", purple_find_buddy(purple_conversation_get_account(conv), who) ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
 					NULL);
 
+		g_object_set_data(G_OBJECT(buddytag), "cursor", "");
 		g_signal_connect(G_OBJECT(buddytag), "event",
 				G_CALLBACK(buddytag_event), conv);
 	}
@@ -9499,6 +9531,30 @@ close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *la
 	return FALSE;
 }
 
+static gboolean
+gtkconv_tab_set_tip(GtkWidget *widget, GdkEventCrossing *event, PidginConversation *gtkconv)
+{
+#if GTK_CHECK_VERSION(2, 12, 0)
+#define gtk_tooltips_set_tip(tips, w, l, p)  gtk_widget_set_tooltip_text(w, l)
+#endif
+/* PANGO_VERSION_CHECK macro was introduced in 1.15. So we need this double check. */
+#ifndef PANGO_VERSION_CHECK
+#define pango_layout_is_ellipsized(l) TRUE
+#elif !PANGO_VERSION_CHECK(1,16,0)
+#define pango_layout_is_ellipsized(l) TRUE
+#endif
+	PangoLayout *layout;
+
+	layout = gtk_label_get_layout(GTK_LABEL(gtkconv->tab_label));
+	gtk_tooltips_set_tip(gtkconv->tooltips, widget,
+			pango_layout_is_ellipsized(layout) ? gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)) : NULL,
+			NULL);
+	return FALSE;
+#if GTK_CHECK_VERSION(2, 12, 0)
+#undef gtk_tooltips_set_tip
+#endif
+}
+
 void
 pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 {
@@ -9657,6 +9713,8 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
 #endif
 	gtk_container_add(GTK_CONTAINER(ebox), gtkconv->tabby);
+	g_signal_connect(G_OBJECT(ebox), "enter-notify-event",
+			G_CALLBACK(gtkconv_tab_set_tip), gtkconv);
 
 	if (gtkconv->tab_label->parent == NULL) {
 		/* Pack if it's a new widget */

@@ -21,16 +21,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_UTILS_H_
-#define _MSN_UTILS_H_
+#ifndef MSN_UTILS_H
+#define MSN_UTILS_H
 
 /*encode the str to RFC2047 style*/
-char * msn_encode_mime(const char *str);
+char *msn_encode_mime(const char *str);
 
 /**
  * Generate the Random GUID
  */
-char * rand_guid(void);
+char *rand_guid(void);
 
 /**
  * Parses the MSN message formatting into a format compatible with Purple.
@@ -57,4 +57,4 @@ void msn_import_html(const char *html, char **attributes, char **message);
 void msn_parse_socket(const char *str, char **ret_host, int *ret_port);
 void msn_handle_chl(char *input, char *output);
 
-#endif /* _MSN_UTILS_H_ */
+#endif /* MSN_UTILS_H */

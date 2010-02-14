@@ -957,6 +957,45 @@ end_search_action(GntBindable *bindable, GList *list)
 	return TRUE;
 }
 
+static gboolean
+move_first_action(GntBindable *bind, GList *null)
+{
+	GntTree *tree = GNT_TREE(bind);
+	GntTreeRow *row = tree->root;
+	GntTreeRow *old = tree->current;
+	if (row && !row_matches_search(row))
+		row = get_next(row);
+	if (row) {
+		tree->current = row;
+		redraw_tree(tree);
+		if (old != tree->current)
+			tree_selection_changed(tree, old, tree->current);
+	}
+
+	return TRUE;
+}
+
+static gboolean
+move_last_action(GntBindable *bind, GList *null)
+{
+	GntTree *tree = GNT_TREE(bind);
+	GntTreeRow *old = tree->current;
+	GntTreeRow *row = tree->bottom;
+	GntTreeRow *next;
+
+	while ((next = get_next(row)))
+		row = next;
+
+	if (row) {
+		tree->current = row;
+		redraw_tree(tree);
+		if (old != tree->current)
+			tree_selection_changed(tree, old, tree->current);
+	}
+
+	return TRUE;
+}
+
 static void
 gnt_tree_set_property(GObject *obj, guint prop_id, const GValue *value,
 		GParamSpec *spec)
@@ -1076,6 +1115,10 @@ gnt_tree_class_init(GntTreeClass *klass)
 				"/", NULL);
 	gnt_bindable_class_register_action(bindable, "end-search", end_search_action,
 				"\033", NULL);
+	gnt_bindable_class_register_action(bindable, "move-first", move_first_action,
+			GNT_KEY_HOME, NULL);
+	gnt_bindable_class_register_action(bindable, "move-last", move_last_action,
+			GNT_KEY_END, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), bindable);
 	GNTDEBUG;
@@ -1838,7 +1881,7 @@ void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res)
 void gnt_tree_set_column_is_binary(GntTree *tree, int col, gboolean bin)
 {
 	g_return_if_fail(col < tree->ncol);
-	set_column_flag(tree, col, GNT_TREE_COLUMN_FIXED_SIZE, bin);
+	set_column_flag(tree, col, GNT_TREE_COLUMN_BINARY_DATA, bin);
 }
 
 void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right)

@@ -366,7 +366,7 @@ resolve(int in, int out)
 		cp += 6;
 
 		GETSHORT(dlen,cp);
-		if (query.type == T_SRV) {
+		if (type == T_SRV) {
 			GETSHORT(pref,cp);
 
 			GETSHORT(weight,cp);
@@ -386,7 +386,7 @@ resolve(int in, int out)
 			srvres->weight = weight;
 
 			ret = g_list_prepend(ret, srvres);
-		} else if (query.type == T_TXT) {
+		} else if (type == T_TXT) {
 			txtres = g_new0(PurpleTxtResponse, 1);
 			txtres->content = g_strndup((gchar*)(++cp), dlen-1);
 			ret = g_list_append(ret, txtres);

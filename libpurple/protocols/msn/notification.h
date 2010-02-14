@@ -21,27 +21,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_NOTIFICATION_H_
-#define _MSN_NOTIFICATION_H_
+#ifndef MSN_NOTIFICATION_H
+#define MSN_NOTIFICATION_H
 
-/*MSN protocol challenge info*/
+typedef struct _MsnNotification MsnNotification;
 
-/*MSNP15 challenge: WLM 8.5.1288.816*/
+/* MSN protocol challenge info */
+
+/* MSNP15 challenge: WLM 8.5.1288.816 */
 #define MSNP15_WLM_PRODUCT_KEY "ILTXC!4IXB5FB*PX"
 #define MSNP15_WLM_PRODUCT_ID "PROD0119GSJUC$18"
 
-/*MSNP13 challenge*/
+/* MSNP13 challenge */
 #define MSNP13_WLM_PRODUCT_KEY	"O4BG@C7BWLYQX?5G"
 #define MSNP13_WLM_PRODUCT_ID	"PROD01065C%ZFN6F"
 
 #define MSNP10_PRODUCT_KEY		"VT6PX?UQTM4WM%YR"
 #define MSNP10_PRODUCT_ID		"PROD0038W!61ZTF9"
 
-typedef struct _MsnNotification MsnNotification;
-
+#include "cmdproc.h"
+#include "msg.h"
 #include "session.h"
 #include "servconn.h"
-#include "cmdproc.h"
+#include "state.h"
 #include "user.h"
 
 struct _MsnNotification
@@ -60,8 +62,7 @@ struct _MsnNotification
 
 typedef void (*MsnFqyCb)(MsnSession *session, const char *passport, MsnNetwork network, gpointer data);
 
-#include "state.h"
-void uum_send_msg(MsnSession *session,MsnMessage *msg);
+void uum_send_msg(MsnSession *session, MsnMessage *msg);
 
 void msn_notification_end(void);
 void msn_notification_init(void);
@@ -93,4 +94,4 @@ void msn_notification_close(MsnNotification *notification);
 
 void msn_got_login_params(MsnSession *session, const char *ticket, const char *response);
 
-#endif /* _MSN_NOTIFICATION_H_ */
+#endif /* MSN_NOTIFICATION_H */

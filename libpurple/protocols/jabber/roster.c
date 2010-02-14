@@ -276,6 +276,12 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 	}
 #endif
 
+	if (type == JABBER_IQ_SET) {
+		JabberIq *ack = jabber_iq_new(js, JABBER_IQ_RESULT);
+		jabber_iq_set_id(ack, id);
+		jabber_iq_send(ack);
+	}
+
 	js->currently_parsing_roster_push = FALSE;
 }
 

@@ -445,6 +445,8 @@ struct _FlapConnection
 	guint16 seqnum_in; /**< The sequence number of most recently received packet. */
 	GSList *groups;
 	GSList *rateclasses; /* Contains nodes of struct rateclass. */
+	struct rateclass *default_rateclass;
+	GHashTable *rateclass_members; /* Key is family and subtype, value is pointer to the rateclass struct to use. */
 
 	GQueue *queued_snacs; /**< Contains QueuedSnacs. */
 	GQueue *queued_lowpriority_snacs; /**< Contains QueuedSnacs to send only once queued_snacs is empty */
@@ -1685,9 +1687,7 @@ struct rateclass {
 	guint32 disconnect;
 	guint32 current;
 	guint32 max;
-	guint32 delta;
 	guint8 dropping_snacs;
-	GHashTable *members; /* Key is family and subtype, value is TRUE. */
 
 	struct timeval last; /**< The time when we last sent a SNAC of this rate class. */
 };

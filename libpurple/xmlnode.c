@@ -545,6 +545,31 @@ xmlnode_to_formatted_str(const xmlnode *node, int *len)
 	return xml_with_declaration;
 }
 
+static char *purple_unescape_text(const char *in)
+{
+    GString *ret;
+    const char *c = in;
+
+    if (in == NULL)
+        return NULL;
+
+    ret = g_string_new("");
+    while (*c) {
+        int len;
+        const char *ent;
+
+        if ((ent = purple_markup_unescape_entity(c, &len)) != NULL) {
+            g_string_append(ret, ent);
+            c += len;
+        } else {
+            g_string_append_c(ret, *c);
+            c++;
+        }
+    }
+
+    return g_string_free(ret, FALSE);
+}
+
 struct _xmlnode_parser_data {
 	xmlnode *current;
 	gboolean error;
@@ -590,7 +615,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_strndup((const char *)attributes[i+3], attrib_len);
 			txt = attrib;
-			attrib = purple_unescape_html(txt);
+			attrib = purple_unescape_text(txt);
 			g_free(txt);
 			xmlnode_set_attrib_full(node, name, NULL, prefix, attrib);
 			g_free(attrib);

@@ -518,8 +518,10 @@ char *purple_markup_linkify(const char *str);
  * Unescapes HTML entities to their literal characters. Also translates
  * "<br>" to "\n".
  * For example "&amp;" is replaced by '&' and so on.
- * Actually only "&amp;", "&quot;", "&lt;" and "&gt;" are currently
- * supported.
+ *
+ * The following named entities are supported (in addition to numerical
+ * entities):
+ *    "&amp;", "&lt;", "&gt;", "&copy;", "&quot;", "&reg;", "&apos;"
  *
  * @param html The string in which to unescape any HTML entities
  *

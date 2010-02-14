@@ -1,16 +1,20 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: Pidgin 2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-29 20:30-0500\n"
-"PO-Revision-Date: 2009-11-29 10:08+0100\n"
-"Last-Translator: Yngve Spjeld Landro <nynorsk(a)strilen.net>\n"
+"POT-Creation-Date: 2010-02-13 23:32-0800\n"
+"PO-Revision-Date: 2010-02-12 23:52+0100\n"
+"Last-Translator: Yngve Spjeld Landro <nynorsk(a)strilen(.)net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Poedit-Bookmarks: -1,1060,1063,3712,-1,-1,-1,-1,-1,-1\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -1950,6 +1954,9 @@ msgstr "Ein kan ikkje senda ein katalog."
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s er ikkje ei vanleg fil. Nektar å skriva over ho.\n"
 
+msgid "File is not readable."
+msgstr "Fila kan ikkje lesast."
+
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s ønskjer å senda deg %s (%s)"
@@ -3799,6 +3806,13 @@ msgstr "Du krev kryptering, men fann inga TLS/SSL-støtte."
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Tenaren krev autentisering i klartekst over eit ukryptert samband"
 
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "Ugyldig svar frå tenaren"
+
+msgid "Server does not use any supported authentication method"
+msgstr "Tenaren nyttar ikkje ein autentiseringsmetode som er støtta "
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3810,24 +3824,33 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Autentisering i klartekst"
 
-msgid "SASL authentication failed"
-msgstr "SASL-autentiseringa feila"
-
-msgid "Invalid response from server"
-msgstr "Ugyldig svar frå tenaren"
-
-msgid "Server does not use any supported authentication method"
-msgstr "Tenaren nyttar ikkje ein autentiseringsmetode som er støtta "
-
 msgid "You require encryption, but it is not available on this server."
 msgstr "Du krev kryptering som ikkje er tilgjengeleg på denne tenaren."
 
 msgid "Invalid challenge from server"
 msgstr "Ugyldig utfordring frå tenaren"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr "Tenaren meiner autentiseringa er ferdig, men det gjer ikkje klienten"
+
+msgid "SASL authentication failed"
+msgstr "SASL-autentiseringa feila"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL-feil: %s"
+
+msgid "Unable to canonicalize username"
+msgstr "Klarte ikkje å kanonisera brukarnamnet"
+
+msgid "Unable to canonicalize password"
+msgstr "Klarte ikkje å kanonisera passordet"
+
+msgid "Malicious challenge from server"
+msgstr "Skadeleg utfordring frå tenaren"
+
+msgid "Unexpected response from server"
+msgstr "Uventa svar frå tenaren"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Styringstenaren til BOSH avslutta økta di."
@@ -3929,12 +3952,15 @@ msgstr "Prioritet"
 msgid "Resource"
 msgstr "Ressurs"
 
-#, c-format
-msgid "%s ago"
-msgstr "%s sidan"
+msgid "Uptime"
+msgstr "Oppetid"
 
 msgid "Logged Off"
 msgstr "Avlogga"
+
+#, c-format
+msgid "%s ago"
+msgstr "%s sidan"
 
 msgid "Middle Name"
 msgstr "Mellomnamn"
@@ -4125,13 +4151,6 @@ msgstr "Roller:"
 
 msgid "Ping timed out"
 msgstr "Tidsavbrot ping"
-
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-"Klarte ikkje å finna alternative XMPP-tilkoplingar etter mislykka forsøk på "
-"å kopla til direkte."
 
 msgid "Invalid XMPP ID"
 msgstr "Ugyldig XMPP-id"
@@ -4587,7 +4606,7 @@ msgstr ""
 "rolle i rommet eller lag rolla deira."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
-msgstr "invite &lt;brukar&gt; [melding]:  Invitér ein brukar til rommet."
+msgstr "invite &lt;brukar&gt; [melding]:  Inviter ein brukar til rommet."
 
 msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
 msgstr "join: &lt;rom&gt; [passord]:  gå inn i eit praterom på denne tenaren."
@@ -4631,7 +4650,7 @@ msgid "Force old (port 5223) SSL"
 msgstr "Overstyr med gammal SSL (port 5223)"
 
 msgid "Allow plaintext auth over unencrypted streams"
-msgstr "Tillat _autentisering i klartekst over ukrypterte samband"
+msgstr "Tillat autentisering i klartekst over ukrypterte samband"
 
 msgid "Connect port"
 msgstr "Tilkoplingsport"
@@ -4681,6 +4700,9 @@ msgstr "XMPP-meldingsfeil"
 #, c-format
 msgid "(Code %s)"
 msgstr "(Kode %s)"
+
+msgid "A custom smiley in the message is too large to send."
+msgstr "Eit tilpassa smilefjes i meldinga er for stor til å kunna sendast."
 
 msgid "XML Parse error"
 msgstr "Feil i XML-tolkinga"
@@ -5092,6 +5114,10 @@ msgstr "E-postadresse…"
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Det nye MSN-visingsnamnet ditt er for langt."
+
+#, c-format
+msgid "Set friendly name for %s."
+msgstr "Vel visingsnamnet til %s."
 
 msgid "Set your friendly name."
 msgstr "Vel visingsnamn."
@@ -6674,7 +6700,10 @@ msgstr "Tenaradresse"
 msgid "Server port"
 msgstr "Tenarport"
 
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "Fekk uventa svar frå %s: %s"
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "Fekk uventa svar frå %s"
@@ -6691,6 +6720,13 @@ msgstr ""
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Klarte ikkje å henta %s: %s"
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"Tenaren bad deg skriva inn ein CAPTCHA for å logga deg på, men denne "
+"klienten støttar enno ikkje CAPTCHA-er."
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL tillèt ikkje at brukarnamnet ditt kan autentiserast her"
@@ -7247,14 +7283,6 @@ msgid ""
 msgstr ""
 "Klarer ikkje visa ei melding frå denne brukaren: ho inneheldt ulovlege "
 "teikn.]"
-
-# mengdegrensa?
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"Klarte ikkje å utføra den siste handlinga sidan du er over mengdegrensa. "
-"Vent i 10 sekund og prøv igjen.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -11082,7 +11110,7 @@ msgstr "/Venner/Avsl_utt"
 
 #. Accounts menu
 msgid "/_Accounts"
-msgstr "/K_ontoar"
+msgstr "/_Kontoar"
 
 msgid "/Accounts/Manage Accounts"
 msgstr "/Kontoar/Kontobehandling"
@@ -11909,14 +11937,14 @@ msgstr "Kurdisk"
 msgid "Lao"
 msgstr "Lao"
 
-msgid "Lithuanian"
-msgstr "Litauisk"
-
 msgid "Macedonian"
 msgstr "Makedonsk"
 
 msgid "Mongolian"
 msgstr "Mongolsk"
+
+msgid "Marathi"
+msgstr "Marathi"
 
 msgid "Malay"
 msgstr "Malayisk"
@@ -11935,6 +11963,9 @@ msgstr "Norsk (nynorsk)"
 
 msgid "Occitan"
 msgstr "Oksitansk"
+
+msgid "Oriya"
+msgstr "Oriya"
 
 msgid "Punjabi"
 msgstr "Panjabi"
@@ -12013,6 +12044,9 @@ msgstr "Tradisjonell kinesisk"
 
 msgid "Amharic"
 msgstr "Amharisk"
+
+msgid "Lithuanian"
+msgstr "Litauisk"
 
 #, c-format
 msgid "About %s"
@@ -12844,7 +12878,7 @@ msgid "Becomes _idle"
 msgstr "Blir _uverksam"
 
 msgid "Is no longer i_dle"
-msgstr "Er _ikkje uverksam lenger"
+msgstr "_Ikkje er uverksam lenger"
 
 msgid "Starts _typing"
 msgstr "Begynner å _skriva"
@@ -12859,13 +12893,13 @@ msgid "Sends a _message"
 msgstr "Sender ei _melding"
 
 msgid "Ope_n an IM window"
-msgstr "Opna eit lyn_meldingsvindauge"
+msgstr "O_pna eit lynmeldingsvindauge"
 
 msgid "_Pop up a notification"
 msgstr "_Sprett opp eit varsel"
 
 msgid "Send a _message"
-msgstr "Send e_i melding"
+msgstr "Sen_d ei melding"
 
 msgid "E_xecute a command"
 msgstr "Kjø_r ein kommando"
@@ -12883,7 +12917,7 @@ msgid "Pre_view"
 msgstr "F_ørehandsvis"
 
 msgid "P_ounce only when my status is not Available"
-msgstr "Venne_overvaking berre når statusen min er Ikkje tilgjengeleg"
+msgstr "Venneovervaking berre når statusen min er \"Ikk_je tilgjengeleg\""
 
 msgid "_Recurring"
 msgstr "_Gjentakande"
@@ -13346,7 +13380,7 @@ msgid "Status / Idle"
 msgstr "Tilstand/uverksam"
 
 msgid "Themes"
-msgstr "Drakter:"
+msgstr "Drakter"
 
 msgid "Allow all users to contact me"
 msgstr "Tillat alle å kontakta meg"
@@ -13653,6 +13687,9 @@ msgstr "_Spel lyden"
 
 msgid "_Save File"
 msgstr "_Lagra fila"
+
+msgid "Do you really want to clear?"
+msgstr "Vil du verkeleg tømma?"
 
 msgid "Select color"
 msgstr "Vel farge"
@@ -14856,6 +14893,24 @@ msgstr "Senda og ta i mot reine XMPP-blokker."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dette programtillegget er nyttig ved feilsøking av XMPP-tenarar og -klientar."
+
+# mengdegrensa?
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "Klarte ikkje å utføra den siste handlinga sidan du er over mengdegrensa. "
+#~ "Vent i 10 sekund og prøv igjen.\n"
+
+#~ msgid "%s"
+#~ msgstr "%s"
+
+#~ msgid ""
+#~ "Unable to find alternative XMPP connection methods after failing to "
+#~ "connect directly."
+#~ msgstr ""
+#~ "Klarte ikkje å finna alternative XMPP-tilkoplingar etter mislykka forsøk "
+#~ "på å kopla til direkte."
 
 #~ msgid "(Default)"
 #~ msgstr "(standard)"

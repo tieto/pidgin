@@ -476,6 +476,18 @@ static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode 
 		/* jabber_process_packet might free child */
 		xmlnode *next = child->next;
 		if (child->type == XMLNODE_TYPE_TAG) {
+			const char *xmlns = xmlnode_get_namespace(child);
+			/*
+			 * Workaround for non-compliant servers that don't stamp
+			 * the right xmlns on these packets.  See #11315.
+			 */
+			if ((xmlns == NULL /* shouldn't happen, but is equally wrong */ ||
+					g_str_equal(xmlns, NS_BOSH)) &&
+				(g_str_equal(child->name, "iq") ||
+				 g_str_equal(child->name, "message") ||
+				 g_str_equal(child->name, "presence"))) {
+				xmlnode_set_namespace(child, NS_XMPP_CLIENT);
+			}
 			jabber_process_packet(js, &child);
 		}
 

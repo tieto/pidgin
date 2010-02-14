@@ -59,33 +59,37 @@ void jabber_message_free(JabberMessage *jm)
 static void handle_chat(JabberMessage *jm)
 {
 	JabberID *jid = jabber_id_new(jm->from);
-	char *from;
 
+	PurpleConnection *gc;
+	PurpleAccount *account;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 
 	if(!jid)
 		return;
 
+	gc = jm->js->gc;
+	account = purple_connection_get_account(gc);
+
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
-	if(jabber_find_unnormalized_conv(jm->from, jm->js->gc->account)) {
-		from = g_strdup(jm->from);
-	} else  if(jid->node) {
-		if(jid->resource) {
-			PurpleConversation *conv;
+	if (jid->resource) {
+		/*
+		 * We received a message from a specific resource, so we probably want a
+		 * reply to go to this specific resource (i.e. bind/lock the
+		 * conversation to this resource).
+		 *
+		 * This works because purple_conv_im_send gets the name from
+		 * purple_conversation_get_name()
+		 */
+		PurpleConversation *conv;
 
-			from = g_strdup_printf("%s@%s", jid->node, jid->domain);
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, jm->js->gc->account);
-			if(conv) {
-				purple_conversation_set_name(conv, jm->from);
-				}
-			g_free(from);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, jm->from, account);
+		if (conv && !g_str_equal(jm->from, purple_conversation_get_name(conv))) {
+			purple_debug_info("jabber", "Binding conversation to %s\n", jm->from);
+			purple_conversation_set_name(conv, jm->from);
 		}
-		from = g_strdup(jm->from);
-	} else {
-		from = g_strdup(jid->domain);
 	}
 
 	if(!jm->xhtml && !jm->body) {
@@ -97,19 +101,19 @@ static void handle_chat(JabberMessage *jm)
 		}
 
 		if(JM_STATE_COMPOSING == jm->chat_state) {
-			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPING);
+			serv_got_typing(gc, jm->from, 0, PURPLE_TYPING);
 		} else if(JM_STATE_PAUSED == jm->chat_state) {
-			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPED);
+			serv_got_typing(gc, jm->from, 0, PURPLE_TYPED);
 		} else if(JM_STATE_GONE == jm->chat_state) {
 			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-					from, jm->js->gc->account);
+					jm->from, account);
 			if (conv && jid->node && jid->domain) {
 				char buf[256];
 				PurpleBuddy *buddy;
 
 				g_snprintf(buf, sizeof(buf), "%s@%s", jid->node, jid->domain);
 
-				if ((buddy = purple_find_buddy(jm->js->gc->account, buf))) {
+				if ((buddy = purple_find_buddy(account, buf))) {
 					const char *who;
 					char *escaped;
 
@@ -127,10 +131,10 @@ static void handle_chat(JabberMessage *jm)
 					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
 			}
-			serv_got_typing_stopped(jm->js->gc, from);
+			serv_got_typing_stopped(gc, jm->from);
 
 		} else {
-			serv_got_typing_stopped(jm->js->gc, from);
+			serv_got_typing_stopped(gc, jm->from);
 		}
 	} else {
 		if(jbr) {
@@ -149,12 +153,9 @@ static void handle_chat(JabberMessage *jm)
 			jm->body = jabber_google_format_to_html(jm->body);
 			g_free(tmp);
 		}
-		serv_got_im(jm->js->gc, from, jm->xhtml ? jm->xhtml : jm->body, 0,
-				jm->sent);
+		serv_got_im(gc, jm->from, jm->xhtml ? jm->xhtml : jm->body, 0, jm->sent);
 	}
 
-
-	g_free(from);
 	jabber_id_free(jid);
 }
 
@@ -862,6 +863,7 @@ jabber_message_xhtml_find_smileys(const char *xhtml)
 
 	for (; smileys ; smileys = g_list_delete_link(smileys, smileys)) {
 		PurpleSmiley *smiley = (PurpleSmiley *) smileys->data;
+
 		const gchar *shortcut = purple_smiley_get_shortcut(smiley);
 		const gssize len = strlen(shortcut);
 
@@ -928,19 +930,12 @@ jabber_message_get_smileyfied_xhtml(const gchar *xhtml, const GList *smileys)
 }
 
 static gboolean
-jabber_conv_support_custom_smileys(const PurpleConnection *gc,
+jabber_conv_support_custom_smileys(JabberStream *js,
 								   PurpleConversation *conv,
 								   const gchar *who)
 {
-	JabberStream *js = (JabberStream *) gc->proto_data;
 	JabberBuddy *jb;
 	JabberChat *chat;
-
-	if (!js) {
-		purple_debug_error("jabber",
-			"jabber_conv_support_custom_smileys: could not find stream\n");
-		return FALSE;
-	}
 
 	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_IM:
@@ -977,42 +972,58 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, jm->to,
 			account);
 
-	if (jabber_conv_support_custom_smileys(jm->js->gc, conv, jm->to)) {
+	if (jabber_conv_support_custom_smileys(jm->js, conv, jm->to)) {
 		GList *found_smileys = jabber_message_xhtml_find_smileys(xhtml);
 
 		if (found_smileys) {
 			gchar *smileyfied_xhtml = NULL;
 			const GList *iterator;
-
+			GList *valid_smileys = NULL;
+			gboolean has_too_large_smiley = FALSE;
+			
 			for (iterator = found_smileys; iterator ;
 				iterator = g_list_next(iterator)) {
-				const PurpleSmiley *smiley =
-						(PurpleSmiley *) iterator->data;
+				PurpleSmiley *smiley = (PurpleSmiley *) iterator->data;
 				const gchar *shortcut = purple_smiley_get_shortcut(smiley);
 				const JabberData *data =
 					jabber_data_find_local_by_alt(shortcut);
+				PurpleStoredImage *image = purple_smiley_get_stored_image(smiley);
 
-				/* the object has not been sent before */
-				if (!data) {
-					PurpleStoredImage *image =
-							purple_smiley_get_stored_image(smiley);
-					const gchar *ext = purple_imgstore_get_extension(image);
-					JabberStream *js = jm->js;
+				if (purple_imgstore_get_size(image) <= JABBER_DATA_MAX_SIZE) {
+					/* the object has not been sent before */
+					if (!data) {
+						const gchar *ext = purple_imgstore_get_extension(image);
+						JabberStream *js = jm->js;
 
-					JabberData *new_data =
-						jabber_data_create_from_data(purple_imgstore_get_data(image),
-							purple_imgstore_get_size(image),
-							jabber_message_get_mimetype_from_ext(ext), js);
-					purple_debug_info("jabber",
-						"cache local smiley alt = %s, cid = %s\n",
-						shortcut, jabber_data_get_cid(new_data));
-					jabber_data_associate_local(new_data, shortcut);
-				}
+						JabberData *new_data =
+							jabber_data_create_from_data(purple_imgstore_get_data(image),
+								purple_imgstore_get_size(image),
+								jabber_message_get_mimetype_from_ext(ext), js);
+						purple_debug_info("jabber",
+							"cache local smiley alt = %s, cid = %s\n",
+							shortcut, jabber_data_get_cid(new_data));
+						jabber_data_associate_local(new_data, shortcut);
+					}
+					valid_smileys = g_list_append(valid_smileys, smiley);
+				} else {
+					has_too_large_smiley = TRUE;
+					purple_debug_warning("jabber", "Refusing to send smiley %s "
+							"(too large, max is %d)\n",
+							purple_smiley_get_shortcut(smiley),
+							JABBER_DATA_MAX_SIZE);
+				}				
+			}
+
+			if (has_too_large_smiley) {
+				purple_conversation_write(conv, NULL,
+				    _("A custom smiley in the message is too large to send."),
+					PURPLE_MESSAGE_ERROR, time(NULL));
 			}
 
 			smileyfied_xhtml =
-				jabber_message_get_smileyfied_xhtml(xhtml, found_smileys);
+				jabber_message_get_smileyfied_xhtml(xhtml, valid_smileys);
 			g_list_free(found_smileys);
+			g_list_free(valid_smileys);
 
 			return smileyfied_xhtml;
 		}
@@ -1193,6 +1204,7 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	tmp = purple_utf8_strip_unprintables(msg);
 	purple_markup_html_to_xhtml(tmp, &xhtml, &jm->body);
 	g_free(tmp);
+
 	tmp = jabber_message_smileyfy_xhtml(jm, xhtml);
 	if (tmp) {
 		g_free(xhtml);
@@ -1206,7 +1218,8 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	if (!jbr || !jbr->caps.info ||
 			jabber_resource_has_capability(jbr, NS_XHTML_IM)) {
 		if (!jabber_xhtml_plain_equal(xhtml, jm->body))
-			jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'>%s</body></html>", xhtml);
+			/* Wrap the message in <p/> for great interoperability justice. */
+			jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'><p>%s</p></body></html>", xhtml);
 	}
 
 	g_free(xhtml);
@@ -1249,7 +1262,8 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	}
 
 	if (chat->xhtml && !jabber_xhtml_plain_equal(xhtml, jm->body))
-		jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'>%s</body></html>", xhtml);
+		/* Wrap the message in <p/> for greater interoperability justice. */
+		jm->xhtml = g_strdup_printf("<html xmlns='" NS_XHTML_IM "'><body xmlns='" NS_XHTML "'><p>%s</p></body></html>", xhtml);
 
 	g_free(xhtml);
 

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-29 20:30-0500\n"
-"PO-Revision-Date: 2009-11-24 01:00+0100\n"
+"POT-Creation-Date: 2010-02-11 21:49-0800\n"
+"PO-Revision-Date: 2010-02-11 16:48+0100\n"
 "Last-Translator: Martin Srebotnjak  <miles@filmsi.net>\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
@@ -1954,6 +1954,9 @@ msgstr "Mape ni mogoče poslati."
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s ni veljavna datoteka. Plašni program je ne želi prepisati.\n"
 
+msgid "File is not readable."
+msgstr "Datoteka ni berljiva."
+
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s vam želi poslati %s (%s)"
@@ -3830,6 +3833,13 @@ msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Strežnik zahteva overovitev z navadnim besedilom preko nešifriranega toka"
 
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "Neveljaven odgovor strežnika"
+
+msgid "Server does not use any supported authentication method"
+msgstr "Strežnik ne uporablja nobene podprte metode overovitve"
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3841,24 +3851,33 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Overovitev z navadnim besedilom"
 
-msgid "SASL authentication failed"
-msgstr "Overovitev SASL ni uspela"
-
-msgid "Invalid response from server"
-msgstr "Neveljaven odgovor strežnika"
-
-msgid "Server does not use any supported authentication method"
-msgstr "Strežnik ne uporablja nobene podprte metode overovitve"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr "Zahtevate šifriranje, vendar to na tem strežniku ni na voljo."
 
 msgid "Invalid challenge from server"
-msgstr "Neveljaven poziv strežnika"
+msgstr "Neveljaven izziv strežnika"
+
+msgid "Server thinks authentication is complete, but client does not"
+msgstr "Strežnik meni, da je overovitev dokončana, odjemalec pa ne"
+
+msgid "SASL authentication failed"
+msgstr "Overovitev SASL ni uspela"
 
 #, c-format
 msgid "SASL error: %s"
 msgstr "Napaka SASL: %s"
+
+msgid "Unable to canonicalize username"
+msgstr "Uporabniškega imena ni mogoče kanonizirati"
+
+msgid "Unable to canonicalize password"
+msgstr "Gesla ni mogoče kanonizirati"
+
+msgid "Malicious challenge from server"
+msgstr "Škodljiv izziv strežnika"
+
+msgid "Unexpected response from server"
+msgstr "Nepričakovan odgovor s strežnika"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Upravitelj povezave BOSH je zaključil vašo sejo."
@@ -3958,12 +3977,15 @@ msgstr "Prednost stika"
 msgid "Resource"
 msgstr "Vir"
 
-#, c-format
-msgid "%s ago"
-msgstr "pred %s"
+msgid "Uptime"
+msgstr "Čas prisotnosti"
 
 msgid "Logged Off"
 msgstr "Se je odjavil"
+
+#, c-format
+msgid "%s ago"
+msgstr "pred %s"
 
 msgid "Middle Name"
 msgstr "Drugo ime"
@@ -4154,13 +4176,6 @@ msgstr "Vloge:"
 
 msgid "Ping timed out"
 msgstr "Časovna prekoračitev pinga"
-
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-"Po neuspehu neposredne povezave ni bilo mogoče najti drugih povezovalnih "
-"metod XMPP."
 
 msgid "Invalid XMPP ID"
 msgstr "Neveljaven ID za XMPP"
@@ -4710,6 +4725,9 @@ msgstr "Napaka sporočila XMPP"
 msgid "(Code %s)"
 msgstr "(Koda %s)"
 
+msgid "A custom smiley in the message is too large to send."
+msgstr "Smeška po meri v sporočilu ni mogoče poslati, ker je prevelik."
+
 msgid "XML Parse error"
 msgstr "Napaka pri razčlenjevanu XML"
 
@@ -5121,6 +5139,10 @@ msgstr "E-naslov ..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Vaše novo MSN poimenovanje je predolgo."
+
+#, c-format
+msgid "Set friendly name for %s."
+msgstr "Nastavite poimenovanje za %s."
 
 msgid "Set your friendly name."
 msgstr "Nastavite vaše poimenovanje."
@@ -6721,7 +6743,10 @@ msgstr "Naslov strežnika"
 msgid "Server port"
 msgstr "Vrata strežnika"
 
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "Prejet nepričakovan odgovor s strani osebe %s: %s"
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "Prejet nepričakovan odgovor s strani osebe %s"
@@ -6738,6 +6763,13 @@ msgstr ""
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Napaka pri zahtevanju %s: %s"
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"Strežnik zahteva, da za vpis prepišete besedilo s slike, vendar ta odjemalec "
+"trenutno le-tega še ne podpira."
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
@@ -7319,14 +7351,6 @@ msgid ""
 msgstr ""
 "[Ni mogoče prikazati sporočila tega uporabnika, ker vsebuje neveljavne "
 "znake.]"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"Zadnjega dejanja, ki ste ga želeli izvesti, ni bilo mogoče izvesti, ker ste "
-"prekoračili dovoljeno pogostost. Prosim počakajte 10 sekund in poskusite "
-"znova.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -11997,18 +12021,17 @@ msgstr "kurdsko"
 msgid "Lao"
 msgstr "laoško"
 
-msgid "Lithuanian"
-msgstr "litvansko"
-
 msgid "Macedonian"
 msgstr "makedonsko"
 
 msgid "Mongolian"
 msgstr "mongolsko"
 
-#, fuzzy
+msgid "Marathi"
+msgstr "maratsko"
+
 msgid "Malay"
-msgstr "Moški"
+msgstr "malajsko"
 
 msgid "Bokmål Norwegian"
 msgstr "norveško (Bokmål)"
@@ -12024,6 +12047,9 @@ msgstr "norveško (Nyorsk)"
 
 msgid "Occitan"
 msgstr "okcitansko"
+
+msgid "Oriya"
+msgstr "orijsko"
 
 msgid "Punjabi"
 msgstr "pundžabsko"
@@ -12079,9 +12105,8 @@ msgstr "tajsko"
 msgid "Turkish"
 msgstr "turško"
 
-#, fuzzy
 msgid "Ukranian"
-msgstr "armensko"
+msgstr "ukrajinsko"
 
 msgid "Urdu"
 msgstr "urdujsko"
@@ -12103,6 +12128,9 @@ msgstr "tradicionalno kitajsko"
 
 msgid "Amharic"
 msgstr "amharsko"
+
+msgid "Lithuanian"
+msgstr "litvansko"
 
 #, c-format
 msgid "About %s"
@@ -13743,6 +13771,9 @@ msgstr "_Predvajaj zvok"
 msgid "_Save File"
 msgstr "_Shrani datoteko"
 
+msgid "Do you really want to clear?"
+msgstr "Ste prepričani, da želite počistiti?"
+
 msgid "Select color"
 msgstr "Izberite barvo"
 
@@ -14952,6 +14983,21 @@ msgstr "Pošlijaj in sprejemaj surove vrstice XMPP."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ta vtičnik je uporaben za razhroščevanje strežnikov ali odjemalcev XMPP."
+
+#~ msgid ""
+#~ "Unable to find alternative XMPP connection methods after failing to "
+#~ "connect directly."
+#~ msgstr ""
+#~ "Po neuspehu neposredne povezave ni bilo mogoče najti drugih povezovalnih "
+#~ "metod XMPP."
+
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "Zadnjega dejanja, ki ste ga želeli izvesti, ni bilo mogoče izvesti, ker "
+#~ "ste prekoračili dovoljeno pogostost. Prosim počakajte 10 sekund in "
+#~ "poskusite znova.\n"
 
 #~ msgid "(Default)"
 #~ msgstr "(privzeto)"

@@ -6,14 +6,15 @@
 # Jamil Ahmed <jamil@bengalinux.org>, 2007.
 # Israt Jahan <israt@ankur.org.bd>, 2008-2009.
 # Samia Niamatullah <samia@ankur.org.bd>, 2009.
+# Sadia Afroz <sadia@ankur.org.bd>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.5.3\n"
+"Project-Id-Version: bn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 20:33-0500\n"
-"PO-Revision-Date: 2009-07-21 18:20+0700\n"
-"Last-Translator: Samia <samia@ankur.org.bd>\n"
+"POT-Creation-Date: 2010-02-11 21:45-0800\n"
+"PO-Revision-Date: 2010-02-11 02:20+0600\n"
+"Last-Translator: Sadia Afroz <sadia@ankur.org.bd>\n"
 "Language-Team: Bengali <ankur-bd-l10n@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -27,7 +28,7 @@ msgstr ""
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
 msgid "Finch"
-msgstr "Finch "
+msgstr "Finch"
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
@@ -581,7 +582,7 @@ msgstr ""
 "Finch পুনরায় সংযোগ করার চেষ্টা করবে না।"
 
 msgid "Re-enable Account"
-msgstr "একাউন্ট পুনরায় সক্রিয়করণ "
+msgstr "একাউন্ট পুনরায় সক্রিয়করণ"
 
 # ***
 msgid "No such command."
@@ -666,9 +667,9 @@ msgstr "লগ সক্রিয়করণ"
 msgid "Enable Sounds"
 msgstr "শব্দ সক্রিয়করণ"
 
-#, fuzzy
+# Translated by sadia
 msgid "You are not connected."
-msgstr "সার্ভার সংযোগটি বন্ধ করে দিয়েছে"
+msgstr "আপনি সংযুক্ত নন।"
 
 msgid "<AUTO-REPLY> "
 msgstr "<AUTO-REPLY>"
@@ -679,9 +680,9 @@ msgid_plural "List of %d users:\n"
 msgstr[0] "%d ব্যবহারকারীর তালিকা:...\n"
 msgstr[1] "%d ব্যবহারকারীগণের তালিকা:\n"
 
-#, fuzzy
+# Translated by sadia
 msgid "Supported debug options are: plugins version"
-msgstr "সমর্থিত ডিবাগ অপশন: সংস্করণ"
+msgstr "সমর্থিত ডিবাগ অপশন: প্লাগইন সংস্করণ "
 
 # ***
 msgid "No such command (in this context)."
@@ -1596,16 +1597,18 @@ msgstr ""
 "\n"
 "TinyURL  আনা হচ্ছে..."
 
+# Translated by sadia
 #, c-format
 msgid "TinyURL for above: %s"
-msgstr ""
+msgstr "উপরের জন্য TinyURL: %s"
 
+# Translated by sadia
 msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr ""
+msgstr "অনুগ্রহ করে অপেক্ষা করুন যতক্ষণ TinyURL কোন ছোট URL না দেয় ..."
 
-#, fuzzy
+# Translated by sadia
 msgid "Only create TinyURL for URLs of this length or greater"
-msgstr "শুধুমাত্র এইরকম অথবা এর চাইতে বড় দৈর্ঘ্যের URL এর জন্য TinyURL তৈরি করুন।"
+msgstr "শুধুমাত্র এতটুকু বা এর চাইতে বড় দৈর্ঘ্যের URL এর জন্য TinyURL তৈরি করা হবে "
 
 msgid "TinyURL (or other) address prefix"
 msgstr "TinyURL (অথবা অন্যান্য) ঠিকানার উপসর্গ"
@@ -1617,14 +1620,15 @@ msgstr "TinyURL"
 msgid "TinyURL plugin"
 msgstr "TinyURL প্লাগইন"
 
-#, fuzzy
+# Translated by sadia
 msgid "When receiving a message with URL(s), use TinyURL for easier copying"
 msgstr ""
-"URL সহ একটি বার্তা গ্রহন করার সময় সহজভাবে অনুলিপি করার জন্য TinyURL ব্যবহৃত হয়"
+"URL সহ কোন বার্তা গ্রহণ করার সময় সহজভাবে অনুলিপি করার জন্য TinyURL ব্যবহার করা হবে"
 
 msgid "Online"
 msgstr "অনলাইন"
 
+#. primative,						no,							id,			name
 msgid "Offline"
 msgstr "অফলাইন "
 
@@ -1733,29 +1737,30 @@ msgstr "বন্ধুগণ"
 msgid "buddy list"
 msgstr "বন্ধু তালিকা"
 
-#, fuzzy
+# Translated by sadia
 msgid "The certificate is self-signed and cannot be automatically checked."
-msgstr ""
-"\"%s\" দ্বারা উপস্থাপিত সার্টিফিকেটটি স্ব-স্বাক্ষরিত। এটি স্বয়ংক্রিয়ভাবে পরীক্ষা করা "
-"যাবে না।"
+msgstr "সার্টিফিকেটটি স্ব-স্বাক্ষরিত এবং এটি স্বয়ংক্রিয়ভাবে পরীক্ষা করা যাবে না।"
 
+# Translated by sadia
 msgid ""
 "The certificate is not trusted because no certificate that can verify it is "
 "currently trusted."
 msgstr ""
+"সার্টিফিকেটটি বিশ্বাসযোগ্য নয় কারণ যাচাই করার মত কোন বিশ্বাসযোগ্য সার্টিফিকেট "
+"বর্তমানে নেই।"
 
-#, fuzzy
+# Translated by sadia
 msgid "The certificate is not valid yet."
-msgstr "%s এর জন্য উপস্থাপিত সার্টিফিকেট চেইন কার্যকর নয়।"
+msgstr "সার্টিফিকেটটি এখনও কার্যকর করা হয়নি।"
 
-#, fuzzy
+# Translated by sadia
 msgid "The certificate has expired and should not be considered valid."
-msgstr "%s এর জন্য উপস্থাপিত সার্টিফিকেট চেইন কার্যকর নয়।"
+msgstr "সার্টিফিকেটটি মেয়াদউত্তীর্ণ এবং বৈধ হিসেবে বিবেচনা করা উচিত নয়। "
 
+# Translated by sadia
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
-#, fuzzy
 msgid "The certificate presented is not issued to this domain."
-msgstr "%s এর জন্য উপস্থাপিত সার্টিফিকেট চেইন কার্যকর নয়।"
+msgstr "উপস্থাপিত সার্টিফিকেটটি এই ডোমেইনে ইস্যুকৃত নয়।"
 
 # tithi
 msgid ""
@@ -1765,16 +1770,17 @@ msgstr ""
 "আপনার মূল সার্টিফিকেটের কোনো ডাটাবেস নেই, সুতরাং এই সার্টিফিকেটটির কার্যকারিতা "
 "পরীক্ষা করা যাবে না।"
 
-#, fuzzy
+# Translated by sadia
 msgid "The certificate chain presented is invalid."
-msgstr "%s এর জন্য উপস্থাপিত সার্টিফিকেট চেইন কার্যকর নয়।"
+msgstr "উপস্থাপিত সার্টিফিকেট চেইনটি অকার্যকর।"
 
-#, fuzzy
+# Translated by sadia
 msgid "The certificate has been revoked."
-msgstr "কল সমাপ্ত করা হয়েছে।"
+msgstr "সার্টিফিকেটটি বাতিল করা হয়েছে।"
 
+# Translated by sadia
 msgid "An unknown certificate error occurred."
-msgstr ""
+msgstr "একটি অজানা সার্টিফিকেট ত্রুটি হয়েছে।"
 
 # tithi
 msgid "(DOES NOT MATCH)"
@@ -1826,26 +1832,27 @@ msgstr "SSL সার্টিফিকেটের সত্যতা যাচ
 msgid "_View Certificate..."
 msgstr "সার্টিফিকেট প্রদর্শন... (_V)"
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid "The certificate for %s could not be validated."
-msgstr "%s এর জন্য উপস্থাপিত সার্টিফিকেট চেইন কার্যকর নয়।"
+msgstr "%s-এর সার্টিফিকেটের বৈধতা যাচাই করা যায়নি।"
 
 #. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "SSL সার্টিফিকেট ত্রুটি"
 
-#, fuzzy
+# Translated by sadia
 msgid "Unable to validate certificate"
-msgstr "প্রমাণীকরণ করতে ব্যর্থ: %s"
+msgstr "সার্টিফিকেটের বৈধতা যাচাই করতে ব্যর্থ"
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid ""
 "The certificate claims to be from \"%s\" instead. This could mean that you "
 "are not connecting to the service you believe you are."
 msgstr ""
-"সার্টিফিকেটটি দাবি করে যে এটি \"%1$s\" এর পরিবর্তে \"%2$s\" দ্বারা উপস্থাপিত "
-"হয়েছে। এর অর্থ হতে পার যে, আপনি যে সার্ভিসের সাথে সংযুক্ত বলে মনে করছেন আসলে তা "
-"নয়।"
+"সার্টিফিকেটটি দাবি করে যে এটি \"%s\" এর পরিবর্তে উপস্থাপিত হয়েছে। এর অর্থ হলো, "
+"আপনি যে সার্ভিসের সাথে নিজেকে সংযুক্ত বলে মনে করছেন আসলে তা নয়।"
 
 # tithi
 #. Make messages
@@ -1994,9 +2001,10 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr "রিসলভার প্রসেস অনুরোধের উত্তর না দিয়ে প্রস্থান করেছে"
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid "Error converting %s to punycode: %d"
-msgstr "%1$s নিরূপণে ত্রুটি: %2$d"
+msgstr "%s-কে punycode-এ রূপান্তরে ত্রুটি: %d  "
 
 # tithi
 #, c-format
@@ -2044,6 +2052,9 @@ msgstr "ডিরেক্টরি পাঠানো সম্ভব নয়।
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s কোনো স্বাভাবিক ফাইল নয়। অতিসন্তর্পণে উপরিলেখন প্রত্যাখ্যান করা হয়েছে।\n"
+
+msgid "File is not readable."
+msgstr "ফাইলটি পড়ার যোগ্য নয়।"
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
@@ -2094,20 +2105,23 @@ msgstr "%s ফাইলের স্থানান্তর সম্পন্�
 msgid "File transfer complete"
 msgstr "ফাইল স্থানান্তর সম্পন্ন"
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid "You cancelled the transfer of %s"
-msgstr "আপনি %s এর স্থানান্তর বাতিল করেছেন"
+msgstr "আপনি %s এর স্থানান্তর বাতিল করেছেন "
 
 msgid "File transfer cancelled"
 msgstr "ফাইল স্থানান্তর বাতিল করা হয়েছে"
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid "%s cancelled the transfer of %s"
-msgstr "%1$s %2$s-এর স্থানান্তর বাতিল করেছে"
+msgstr "%1$s %2$s-এর স্থানান্তর বাতিল করেছে "
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid "%s cancelled the file transfer"
-msgstr "%s ফাইল স্থানান্তর বাতিল করেছে"
+msgstr "%s ফাইল স্থানান্তর বাতিল করেছে "
 
 #, c-format
 msgid "File transfer to %s failed."
@@ -2323,34 +2337,45 @@ msgstr "<font color=\"red\"><b>ফাইল পড়া সম্ভব হয়�
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
+# Translated by sadia
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
+"কোন কোডেক পাওয়া যায়নি। GStreamer প্লাগইন প্যাকেজ থেকে কিছু GStreamer কোডেক "
+"ইনস্টল করুন। "
 
+# Translated by sadia
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
+"কোন কোডেক বাকী নেই। fs-codecs.conf-এ আপনার পছন্দের কোডেকের তালিকা অত্যন্ত "
+"সীমাবদ্ধ।"
 
-#, fuzzy
+# Translated by sadia
 msgid "A non-recoverable Farsight2 error has occurred."
-msgstr "নিম্নোক্ত ত্রুটি হয়েছে:"
+msgstr "একটি অনিরাময়যোগ্য Farsight2 ত্রুটি হয়েছে।"
 
 # tithi
-#, fuzzy
+#
+# Translated by sadia
 msgid "Conference error"
-msgstr "অধিবেশন বন্ধ"
+msgstr "অধিবেশন ত্রুটি "
 
+# Translated by sadia
 msgid "Error with your microphone"
-msgstr ""
+msgstr "আপনার মাইক্রোফোনে ত্রুটি"
 
+# Translated by sadia
 msgid "Error with your webcam"
-msgstr ""
+msgstr "আপনার ওয়েবক্যামে ত্রুটি "
 
 # tithi
-#, fuzzy, c-format
+#
+# Translated by sadia
+#, c-format
 msgid "Error creating session: %s"
-msgstr "সংযোগ তৈরিতে ত্রুটি"
+msgstr "সেশন তৈরির সময় ত্রুটি: %s"
 
 # tithi
 msgid "Error creating conference."
@@ -2620,15 +2645,18 @@ msgstr ""
 "সার্ভার হিসেবে, প্লাগইনের IPC সাপোর্ট পরীক্ষা করা হবে। এটি IPC কমান্ডগুলো নিবন্ধন "
 "করে।"
 
+# Translated by sadia
 msgid "Hide Joins/Parts"
-msgstr ""
+msgstr "যোগ দেয়া/অংশ হওয়া আড়ালে রাখা হবে"
 
+# Translated by sadia
 #. Translators: Followed by an input request a number of people
 msgid "For rooms with more than this many people"
-msgstr ""
+msgstr "এর চাইতে বেশী সংখ্যক লোকের জন্য যে ঘর"
 
+# Translated by sadia
 msgid "If user has not spoken in this many minutes"
-msgstr ""
+msgstr "যদি ব্যবহারকারী এত সময়ের মধ্যে উত্তর না দেয়"
 
 msgid "Apply hiding rules to buddies"
 msgstr "বন্ধুদের লুকানোর নিয়ম প্রয়োগ করুন"
@@ -3323,10 +3351,12 @@ msgid "Add to chat..."
 msgstr "আড্ডায় যোগ দিন..."
 
 # ***
+#. 0
 #. Global
 msgid "Available"
 msgstr "উপস্থিত"
 
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3978,6 +4008,13 @@ msgstr "আপনার এনক্রিপশন প্রয়োজন, ক�
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "একটি এনক্রিপশনবিহীন স্ট্রীমে সার্ভারের সরল-টেক্সট প্রমাণীকরণ প্রয়োজন"
 
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "সার্ভার থেকে অকার্যকর উত্তর"
+
+msgid "Server does not use any supported authentication method"
+msgstr "সার্ভার কোনো সমর্থিত প্রমাণীকরণ প্রক্রিয়া ব্যবহার করে না।"
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3991,25 +4028,39 @@ msgid "Plaintext Authentication"
 msgstr "সরল-টেক্সট প্রমাণীকরণ"
 
 # tithi
-msgid "SASL authentication failed"
-msgstr "SASL প্রমাণীকরণ ব্যর্থ"
-
-msgid "Invalid response from server"
-msgstr "সার্ভার থেকে অকার্যকর উত্তর"
-
-msgid "Server does not use any supported authentication method"
-msgstr "সার্ভার কোনো সমর্থিত প্রমাণীকরণ প্রক্রিয়া ব্যবহার করে না।"
-
-# tithi
 msgid "You require encryption, but it is not available on this server."
 msgstr "আপনার এনক্রিপশন প্রয়োজন, কিন্তু এটি এই সার্ভারটিতে নেই।"
 
 msgid "Invalid challenge from server"
 msgstr "সার্ভার থেকে অকার্যকর চ্যালেঞ্জ"
 
+# Translated by sadia
+msgid "Server thinks authentication is complete, but client does not"
+msgstr "প্রমাণীকরণ সম্পন্ন হয়েছে বলে সার্ভার মনে করছে, কিন্তু ক্লায়েন্ট মনে করছে না"
+
+# tithi
+msgid "SASL authentication failed"
+msgstr "SASL প্রমাণীকরণ ব্যর্থ"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL ত্রুটি: %s"
+
+# Translated by sadia
+msgid "Unable to canonicalize username"
+msgstr "ব্যবহারকারীর নাম অনুমোদিত করতে ব্যর্থ"
+
+# Translated by sadia
+msgid "Unable to canonicalize password"
+msgstr "পাসওয়ার্ড অনুমোদিত করতে ব্যর্থ"
+
+# Translated by sadia
+msgid "Malicious challenge from server"
+msgstr "সার্ভার থেকে বিদ্বেষপূর্ণ চ্যালেঞ্জ"
+
+# Translated by sadia
+msgid "Unexpected response from server"
+msgstr "সার্ভার থেকে অপ্রত্যাশিত উত্তর পাওয়া গেছে"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "আপনার সেশনটি BOSH সংযোগ ব্যবস্থাপক সমাপ্ত করেছে।"
@@ -4111,12 +4162,16 @@ msgstr "অগ্রাধিকার"
 msgid "Resource"
 msgstr "রিসোর্স"
 
-#, c-format
-msgid "%s ago"
-msgstr "%s আগে"
+# Translated by sadia
+msgid "Uptime"
+msgstr "আপটাইম"
 
 msgid "Logged Off"
 msgstr "লগ আউট হয়েছে"
+
+#, c-format
+msgid "%s ago"
+msgstr "%s আগে"
 
 msgid "Middle Name"
 msgstr "মধ্য নাম"
@@ -4133,13 +4188,13 @@ msgstr "ছবি"
 msgid "Logo"
 msgstr "লোগো"
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid ""
 "%s will no longer be able to see your status updates.  Do you want to "
 "continue?"
 msgstr ""
-"আপনি %s-কে আপনার বন্ধু তালিকা থেকে অপসারণ করতে পারেন।  আপনি কি অব্যাহত রাখতে "
-"চান?"
+"%s এরপর থেকে আপনার স্ট্যাটাস আপডেট আর দেখতে পাবে না। আপনি কি অগ্রসর হতে চান?"
 
 msgid "Cancel Presence Notification"
 msgstr "উপস্থিতির ঘোষণা বাতিল"
@@ -4172,6 +4227,7 @@ msgstr "লগইন"
 msgid "Log Out"
 msgstr "লগ আউট"
 
+#. 2
 msgid "Chatty"
 msgstr "আড্ডাবাজ"
 
@@ -4179,6 +4235,7 @@ msgstr "আড্ডাবাজ"
 msgid "Extended Away"
 msgstr "অনেকক্ষন যাবত অন্যত্র"
 
+#. 3
 msgid "Do Not Disturb"
 msgstr "বিরক্ত করবেন না"
 
@@ -4315,12 +4372,6 @@ msgstr "ভূমিকা:"
 msgid "Ping timed out"
 msgstr "পিং এর সময় উত্তীর্ণ হয়েছে"
 
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-"সরাসরি সংযোগ স্থাপনে ব্যর্থ হওয়ার পর বিকল্প XMPP সংযোগ প্রক্রিয়া খুঁজে পাওয়া যায়নি।"
-
 msgid "Invalid XMPP ID"
 msgstr "অকার্যকর XMPP ID"
 
@@ -4449,6 +4500,7 @@ msgstr "প্রাপক"
 msgid "None (To pending)"
 msgstr "কোনটি নয় (প্রাপক অমীমাংসিত)"
 
+#. 0
 msgid "None"
 msgstr "কোনটি নয়"
 
@@ -4785,9 +4837,9 @@ msgstr "config: একটি আড্ডার আসর কনফিগার 
 msgid "configure:  Configure a chat room."
 msgstr "configure: একটি আড্ডার আসর কনফিগার করে।"
 
-#, fuzzy
+# Translated by sadia
 msgid "part [message]:  Leave the room."
-msgstr "part [room]:  আসর ত্যাগ করুন।"
+msgstr "part [message]: আসরটি ত্যাগ করুন। "
 
 # tithi
 msgid "register:  Register with a chat room."
@@ -4808,13 +4860,14 @@ msgstr ""
 "সহকারে ব্যবহারকারী গ্রহন করুন অথবা আসরের সঙ্গে ব্যবহারকারীর অধিভুক্তি নির্ধারণ করুন।"
 
 # tithi
-#, fuzzy
+#
+# Translated by sadia
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
 "users with a role or set users' role with the room."
 msgstr ""
-"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: ভূমিকা সহকারে "
-"ব্যবহারকারী গ্রহন করুন অথবা আসরের সঙ্গে ব্যবহারকারীর ভূমিকা নির্ধারণ করুন।"
+"role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: ভূমিকা "
+"সহকারে ব্যবহারকারী গ্রহণ করা হবে অথবা ঘরটিতে ব্যবহারকারীর ভূমিকা নির্ধারণ করা হবে।"
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;user&gt; [message]: একজন ব্যবহারকারীকে আসরে আমন্ত্রণ জানান"
@@ -4918,6 +4971,9 @@ msgstr "XMPP বার্তায় ত্রুটি"
 #, c-format
 msgid "(Code %s)"
 msgstr "(কোড %s)"
+
+msgid "A custom smiley in the message is too large to send."
+msgstr "বার্তার ভিতর স্বনির্বাচিত স্মাইলিটি পাঠানোর জন্য খুবই বড়।"
 
 # tithi
 msgid "XML Parse error"
@@ -5266,9 +5322,10 @@ msgid "Not expected"
 msgstr "প্রত্যাশিত নয়"
 
 # tithi
-#, fuzzy
+#
+# Translated by sadia
 msgid "Friendly name is changing too rapidly"
-msgstr "বন্ধুসুলভ নাম খুব দ্রুত পরিবর্তিত হয়"
+msgstr "বন্ধুসুলভ নাম খুব দ্রুত পরিবর্তিত হচ্ছে"
 
 #, c-format
 msgid "Server too busy"
@@ -5367,6 +5424,11 @@ msgstr "ইমেইল ঠিকানা..."
 # tithi
 msgid "Your new MSN friendly name is too long."
 msgstr "আপনার নতুন MSN বন্ধুসুলভ নাম অতি দীর্ঘ।"
+
+# tithi
+#, c-format
+msgid "Set friendly name for %s."
+msgstr "%s এর জন্য বন্ধুসুলভ নাম নির্ধারণ করুন।"
 
 # tithi
 msgid "Set your friendly name."
@@ -5514,12 +5576,14 @@ msgstr ""
 "MSN এর জন্য SSL সমর্থন প্রয়োজন। অনুগ্রহ করে একটি সমর্থিত SSL লাইব্রেরী ইনস্টল করুন।"
 
 # tithi
-#, fuzzy, c-format
+#
+# Translated by sadia
+#, c-format
 msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be valid email addresses."
 msgstr ""
-"বন্ধু %s কে যোগ করা সম্ভব হয়নি কারণ ব্যবহারকারীর নামটি অকার্যকর। ব্যবহারকারী নাম "
+"%s বন্ধুকে সংযুক্ত করতে ব্যর্থ কারণ ব্যবহারকারীর নামটি অকার্যকর। ব্যবহারকারী নাম "
 "অবশ্যই একটি কার্যকর ইমেইল ঠিকানা হতে হবে।"
 
 msgid "Unable to Add"
@@ -5755,9 +5819,9 @@ msgstr "ব্যবহারকারী যোগ করতে ব্যর্
 msgid "Unknown error (%d)"
 msgstr "অজানা ত্রুটি (%d)"
 
-#, fuzzy
+# Translated by sadia
 msgid "Unable to remove user"
-msgstr "ব্যবহারকারী যোগ করতে ব্যর্থ"
+msgstr "ব্যবহারকারী অপসারণ করতে ব্যর্থ"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "মোবাইল বার্তাটি অনেক বড় বিধায় পাঠানো হয়নি।"
@@ -5878,10 +5942,13 @@ msgstr ""
 "আপনার ওয়েবক্যাম প্রদর্শনের জন্য %s অনুরোধ করেছেন কিন্তু এই অনুরোধটি এখনও সমর্থিত হয়নি।"
 
 # tithi
-#, fuzzy, c-format
+#
+#
+# Translated by sadia
+#, c-format
 msgid "%s invited you to view his/her webcam, but this is not yet supported."
 msgstr ""
-"আপনার ওয়েবক্যাম প্রদর্শনের জন্য %s অনুরোধ করেছেন কিন্তু এই অনুরোধটি এখনও সমর্থিত হয়নি।"
+"%s আপনাকে তার ওয়েবক্যাম দেখার জন্য অনুরোধ করেছেন, কিন্তু এটি এখনও সমর্থিত নয়।"
 
 msgid "Away From Computer"
 msgstr "কম্পিউটার থেকে দূরে"
@@ -6006,387 +6073,518 @@ msgstr "%s আপনাকে তার বন্ধু তালিকায়
 msgid "%s has removed you from his or her buddy list."
 msgstr "%s আপনাকে তার বন্ধু তালিকা থেকে অপসারণ করেছেন।"
 
+#. 1
+msgid "Angry"
+msgstr "রাগী"
+
+#. 2
+msgid "Excited"
+msgstr "উদ্দীপ্ত"
+
+# Translated by sadia
+#. 3
+msgid "Grumpy"
+msgstr "রাগান্বিত"
+
+#. 4
+msgid "Happy"
+msgstr "সুখী"
+
+# tithi
+#. 5
+msgid "In Love"
+msgstr "প্রেমময়"
+
+# tithi
+#. 6
+msgid "Invincible"
+msgstr "অজেয়"
+
+#. 7
+msgid "Sad"
+msgstr "দুঃখী"
+
+# Translated by sadia
+#. 8
+msgid "Hot"
+msgstr "উত্তেজিত"
+
+# Translated by sadia
+#. 9
+msgid "Sick"
+msgstr "অসুস্থ"
+
+#. 10
+msgid "Sleepy"
+msgstr "ঘুমন্ত"
+
+# Translated by sadia
 #. show current mood
-#, fuzzy
 msgid "Current Mood"
-msgstr "আপনার বর্তমান মনমেজাজ"
+msgstr "আপনার বর্তমান মেজাজ"
 
+# Translated by sadia
 #. add all moods to list
-#, fuzzy
 msgid "New Mood"
-msgstr "মনমেজাজ"
+msgstr "নতুন মেজাজ"
 
-#, fuzzy
+# Translated by sadia
 msgid "Change your Mood"
-msgstr "পাসওয়ার্ড পরিবর্তন"
+msgstr "আপনার মেজাজ পরিবর্তন করুন"
 
-#, fuzzy
+# Translated by sadia
 msgid "How do you feel right now?"
-msgstr "এই মূহুর্তে আমি এখানে নেই"
+msgstr "এই মূহুর্তে আপনি কেমন বোধ করছেন?"
 
+# tithi
+#
+#
+# Translated by sadia
+msgid "The PIN you entered is invalid."
+msgstr "আপনি যে PIN প্রবেশ করিয়েছেন তা অকার্যকর।"
+
+# tithi
+#
+#
+# Translated by sadia
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "আপনি যে PIN প্রবেশ করিয়েছেন তার দৈর্ঘ্য অকার্যকর [৪-১০]।"
+
+# Translated by sadia
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr "এই PIN-টি অকার্যকর। এটা শুধুমাত্র [০-৯] পর্যন্ত সংখ্যা দ্বারা গঠিত হতে হবে।"
+
+# Translated by sadia
+msgid "The two PINs you entered do not match."
+msgstr "আপনি যে দুটি PIN প্রবেশ করিয়েছেন তা মিলছে না।"
+
+# tithi
+#
+#
+# Translated by sadia
+msgid "The name you entered is invalid."
+msgstr "আপনি যে নাম প্রবেশ করিয়েছেন তা অকার্যকর।"
+
+# Translated by sadia
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr ""
+"আপনি যে জন্মদিন প্রবেশ করিয়েছেন তা অকার্যকর। সঠিক ফরম্যাট হলো: 'YYYY-MM-DD'।"
+
+# Translated by sadia
 #. show error to user
-#, fuzzy
 msgid "Profile Update Error"
-msgstr "লিখতে ত্রুটি"
+msgstr "প্রোফাইল হালনাগাদকরনে ত্রুটি "
 
 #. no profile information yet, so we cannot update
 #. (reference: "libpurple/request.h")
 msgid "Profile"
 msgstr "প্রোফাইল"
 
+# Translated by sadia
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
+"আপনার প্রোফাইলের তথ্য এখনও খুঁজে পাওয়া যায়নি। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।"
 
+# Translated by sadia
 #. pin
-#, fuzzy
 msgid "PIN"
-msgstr "UIN"
+msgstr "PIN"
 
+# Translated by sadia
 msgid "Verify PIN"
-msgstr ""
+msgstr "PIN যাচাই করা হবে"
 
+# Translated by sadia
 #. display name
-#, fuzzy
 msgid "Display Name"
-msgstr "পারিবারিক নাম"
+msgstr "নাম প্রদর্শন করা হবে"
 
+# Translated by sadia
 #. hidden
 msgid "Hide my number"
-msgstr ""
+msgstr "আমার নাম্বার লুকিয়ে রাখা হবে"
 
+# Translated by sadia
 #. mobile number
-#, fuzzy
 msgid "Mobile Number"
-msgstr "মোবাইল ফোন নম্বর"
+msgstr "মোবাইল নাম্বার"
 
-#, fuzzy
+# Translated by sadia
 msgid "Update your Profile"
-msgstr "ইয়াহু! প্রোফাইল"
+msgstr "আপনার প্রোফাইল হালনাগাদ করুন"
 
+# Translated by sadia
 msgid "Here you can update your MXit profile"
-msgstr ""
+msgstr "এখানে আপনি আপনার MXit প্রোফাইল হালনাগাদ করতে পারেন"
 
+# Translated by sadia
 msgid "View Splash"
-msgstr ""
+msgstr "স্প্ল্যাশ প্রদর্শন করা হবে"
 
+# Translated by sadia
 msgid "There is no splash-screen currently available"
-msgstr ""
+msgstr "এই মূহুর্তে কোন স্প্ল্যাশ স্ক্রীন বিদ্যমান নেই"
 
-#, fuzzy
+# Translated by sadia
 msgid "About"
-msgstr "আমার সম্পর্কে"
+msgstr "পরিচিতি"
 
+# Translated by sadia
 #. display / change mood
-#, fuzzy
 msgid "Change Mood..."
-msgstr "পাসওয়ার্ড পরিবর্তন..."
+msgstr "মেজাজ পরিবর্তন করা হবে..."
 
+# Translated by sadia
 #. display / change profile
-#, fuzzy
 msgid "Change Profile..."
-msgstr "পাসওয়ার্ড পরিবর্তন..."
+msgstr "প্রোফাইল পরিবর্তন করা হবে..."
 
+# Translated by sadia
 #. display splash-screen
-#, fuzzy
 msgid "View Splash..."
-msgstr "লগ প্রদর্শন..."
+msgstr "স্প্ল্যাশ প্রদর্শন করা হবে..."
 
+# Translated by sadia
 #. display plugin version
-#, fuzzy
 msgid "About..."
-msgstr "আমার সম্পর্কে"
+msgstr "পরিচিতি..."
 
+# Translated by sadia
 #. the file is too big
-#, fuzzy
 msgid "The file you are trying to send is too large!"
-msgstr "বার্তাটি খুবই বড়।"
+msgstr "আপনি যে ফাইলটি পাঠানোর চেষ্টা করছেন তা অত্যধিক বড়!"
 
+# Translated by sadia
 msgid ""
-"Unable to connect to the mxit HTTP server. Please check your server server "
-"settings."
+"Unable to connect to the MXit HTTP server. Please check your server settings."
 msgstr ""
+"MXit HTTP সার্ভারে সংযোগ দিতে ব্যর্থ। অনুগ্রহ করে আপনার সার্ভারের সেটিংসমূহ পরীক্ষা "
+"করুন।"
 
-#, fuzzy
+# Translated by sadia
 msgid "Logging In..."
-msgstr "লগইন হচ্ছে"
+msgstr "লগ ইন করা হচ্ছে..."
 
-#, fuzzy
+# Translated by sadia
 msgid ""
-"Unable to connect to the mxit server. Please check your server server "
-"settings."
+"Unable to connect to the MXit server. Please check your server settings."
 msgstr ""
-"সার্ভারে সংযোগ দিতে ব্যর্থ। অনুগ্রহ করে আপনি যে সার্ভারে সংযোগ দিতে চান তার ঠিকানা "
-"দিন।"
+"MXit সার্ভারে সংযোগ দিতে ব্যর্থ। অনুগ্রহ করে আপনার সার্ভারের সেটিংসমূহ পরীক্ষা করুন।"
 
-#, fuzzy
+# Translated by sadia
 msgid "Connecting..."
-msgstr "সংযুক্ত করা হচ্ছে"
+msgstr "সংযুক্ত করা হচ্ছে..."
 
+# tithi
+#
+#
+#
+# Translated by sadia
+msgid "The nick name you entered is invalid."
+msgstr "আপনি যে ডাকনামটি প্রবেশ করিয়েছেন তা অকার্যকর।"
+
+# tithi
+#
+#
+#
+#
+# Translated by sadia
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "আপনি যে PIN প্রবেশ করিয়েছেন তার দৈর্ঘ্য অকার্যকর [৭-১০]।"
+
+# Translated by sadia
 #. mxit login name
 msgid "MXit Login Name"
-msgstr ""
+msgstr "MXit-এ লগ ইন করার নাম"
 
+# Translated by sadia
 #. nick name
-#, fuzzy
 msgid "Nick Name"
-msgstr "ডাকনাম"
+msgstr "ডাকনাম "
 
+# Translated by sadia
 #. show the form to the user to complete
-#, fuzzy
 msgid "Register New MXit Account"
-msgstr "নতুন XMPP একাউন্ট নিবন্ধন"
+msgstr "নতুন MXit একাউন্টে নিবন্ধন করা হবে"
 
-#, fuzzy
+# Translated by sadia
 msgid "Please fill in the following fields:"
-msgstr "অনুগ্রহ করে, নিচের ক্ষেত্রগুলো পূরণ করুন"
+msgstr "অনুগ্রহ করে নিচের ক্ষেত্রগুলো পূরণ করুন:"
 
+# Translated by sadia
 #. no reply from the WAP site
 msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr ""
+msgstr "MXit WAP সাইটের সংযোগে ত্রুটি। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।"
 
+# Translated by sadia
 #. wapserver error
 #. server could not find the user
 msgid ""
 "MXit is currently unable to process the request. Please try again later."
 msgstr ""
+"MXit এই মূহুর্তে অনুরোধটি প্রসেস করতে ব্যর্থ। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।"
 
+# Translated by sadia
 msgid "Wrong security code entered. Please try again later."
-msgstr ""
+msgstr "ভুল নিরাপত্তা কোড প্রবেশ করানো হয়েছে। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।"
 
+# Translated by sadia
 msgid "Your session has expired. Please try again later."
-msgstr ""
+msgstr "আপনার সেশনের মেয়াদউত্তীর্ণ হয়েছে। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন। "
 
+# Translated by sadia
 msgid "Invalid country selected. Please try again."
-msgstr ""
+msgstr "অকার্যকর দেশ নির্বাচন করা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।"
 
+# Translated by sadia
 msgid "Username is not registered. Please register first."
-msgstr ""
+msgstr "ব্যবহারকারীর নাম নিবন্ধন করা নেই। অনুগ্রহ করে প্রথমে নিবন্ধন করুন।"
 
+# Translated by sadia
 msgid "Username is already registered. Please choose another username."
 msgstr ""
+"ব্যবহারকারীর নাম ইতিমধ্যেই নিবন্ধন করা হয়েছে। অনুগ্রহ করে অন্য ব্যবহারকারী নাম "
+"নির্বাচন করুন।"
 
 # tithi
-#, fuzzy
+#
+#
+#
+# Translated by sadia
 msgid "Internal error. Please try again later."
-msgstr "সার্ভার বিদ্যমান নয়; পরবর্তীতে আবার চেষ্টা করুন"
+msgstr "অভ্যন্তরীণ ত্রুটি। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।"
 
+# Translated by sadia
 msgid "You did not enter the security code"
-msgstr ""
+msgstr "আপনি কোন নিরাপত্তা কোড প্রবেশ করাননি"
 
-#, fuzzy
+# Translated by sadia
 msgid "Security Code"
-msgstr "নিরাপত্তা সক্রিয়"
+msgstr "নিরাপত্তা কোড"
 
+# Translated by sadia
 #. ask for input
-#, fuzzy
 msgid "Enter Security Code"
-msgstr "কোড দিন"
+msgstr "নিরাপত্তা কোড দিন"
 
-#, fuzzy
+# Translated by sadia
 msgid "Your Country"
-msgstr "দেশ"
+msgstr "আপনার দেশ"
 
-#, fuzzy
+# Translated by sadia
 msgid "Your Language"
-msgstr "পছন্দের ভাষা"
+msgstr "আপনার ভাষা"
 
 # tithi
+#
+#
+#
+# Translated by sadia
 #. display the form to the user and wait for his/her input
-#, fuzzy
 msgid "MXit Authorization"
-msgstr "অনুমোদন প্রয়োজন"
+msgstr "MXit অনুমোদন  "
 
+# Translated by sadia
 msgid "MXit account validation"
-msgstr ""
+msgstr "MXit একাউন্টের কার্যকারীতা"
 
-#, fuzzy
+# Translated by sadia
 msgid "Retrieving User Information..."
-msgstr "সার্ভারের তথ্য"
+msgstr "ব্যবহারকারীর তথ্য খুঁজে আনা হচ্ছে..."
 
-#, fuzzy
+# Translated by sadia
+msgid "Loading menu..."
+msgstr "মেনু লোড করা হচ্ছে..."
+
+# Translated by sadia
 msgid "Status Message"
-msgstr "প্রেরিত বার্তা"
+msgstr "স্ট্যাটাস বার্তা"
 
-#, fuzzy
+# Translated by sadia
 msgid "Hidden Number"
-msgstr "মধ্য নাম"
+msgstr "লুকানো সংখ্যা"
 
-#, fuzzy
+# Translated by sadia
 msgid "Your Mobile Number..."
-msgstr "মোবাইল ফোন নম্বর নির্ধারণ..."
+msgstr "আপনার মোবাইল নাম্বার..."
 
+# Translated by sadia
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
-#, fuzzy
 msgid "WAP Server"
-msgstr "সার্ভার"
+msgstr "WAP সার্ভার"
 
-#, fuzzy
+# Translated by sadia
 msgid "Connect via HTTP"
-msgstr "TCP দ্বারা সংযোগ করা হবে"
+msgstr "HTTP-র মাধ্যমে সংযুক্ত করা হবে"
 
+# Translated by sadia
 msgid "Enable splash-screen popup"
-msgstr ""
+msgstr "স্প্ল্যাশ স্ক্রীন পপ আপ সক্রিয় করা হবে"
 
+# Translated by sadia
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
-msgstr ""
+msgstr "আমরা MXit সংযোগ হারিয়ে ফেলেছি। অনুগ্রহ করে আবার সংযুক্ত হোন।"
 
+# Translated by sadia
 #. packet could not be queued for transmission
-#, fuzzy
 msgid "Message Send Error"
-msgstr "XMPP বার্তায় ত্রুটি"
+msgstr "বার্তা প্রেরণে ত্রুটি "
 
-#, fuzzy
+# Translated by sadia
 msgid "Unable to process your request at this time"
-msgstr "হোস্টের নাম নিরূপণ করতে ব্যর্থ"
+msgstr "এই মূহুর্তে আপনার অনুরোধটি প্রসেস করতে ব্যর্থ"
 
+# Translated by sadia
 msgid "Timeout while waiting for a response from the MXit server."
-msgstr ""
+msgstr "MXit সার্ভার থেকে উত্তর পাওয়ার জন্য অপেক্ষমাণ সময় উত্তীর্ণ।"
 
-#, fuzzy
+# Translated by sadia
 msgid "Successfully Logged In..."
-msgstr "Qun এ সফলভাবে যুক্ত হয়েছে"
+msgstr "সফলভাবে লগ ইন করা হয়েছে..."
 
-#, fuzzy
-msgid "Message Error"
-msgstr "XMPP বার্তায় ত্রুটি"
-
-msgid "Cannot perform redirect using the specified protocol"
+# tithi
+#
+#
+#
+#
+#
+# Translated by sadia
+#, c-format
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
 msgstr ""
+"%s আপনাকে একটি এনক্রিপ্টকৃত বার্তা প্রেরণ করেছে, কিন্তু এটি এই ক্লায়েন্টে সমর্থিত নয়।"
 
-#, fuzzy
+# Translated by sadia
+msgid "Message Error"
+msgstr "বার্তায় ত্রুটি"
+
+# Translated by sadia
+msgid "Cannot perform redirect using the specified protocol"
+msgstr "উল্লিখিত প্রটোকল দ্বারা রিডিরেক্ট সম্পাদন সম্ভব হচ্ছে না"
+
+# Translated by sadia
+msgid "An internal MXit server error occurred."
+msgstr "MXit সার্ভারে একটি অভ্যন্তরীণ ত্রুটি হয়েছে।"
+
+# Translated by sadia
+#, c-format
+msgid "Login error: %s (%i)"
+msgstr "লগ ইন ত্রুটি: %s (%i)"
+
+# Translated by sadia
+#, c-format
+msgid "Logout error: %s (%i)"
+msgstr "লগ আউট ত্রুটি: %s (%i)"
+
+# Translated by sadia
 msgid "Contact Error"
-msgstr "সংযোগে ত্রুটি"
+msgstr "পরিচিতি ত্রুটি "
 
-#, fuzzy
+# Translated by sadia
 msgid "Message Sending Error"
-msgstr "XMPP বার্তায় ত্রুটি"
+msgstr "বার্তা প্রেরণে ত্রুটি"
 
-#, fuzzy
+# Translated by sadia
 msgid "Status Error"
-msgstr "স্ট্রীম ত্রুটি"
+msgstr "স্ট্যাটাসে ত্রুটি"
 
-#, fuzzy
+# Translated by sadia
 msgid "Mood Error"
-msgstr "আইকন ত্রুটি"
+msgstr "ত্রুটিপূর্ণ মেজাজ  "
 
-#, fuzzy
+# Translated by sadia
 msgid "Invitation Error"
-msgstr "অনিবন্ধন ত্রুটি"
+msgstr "আমন্ত্রণে ত্রুটি"
 
-#, fuzzy
+# Translated by sadia
 msgid "Contact Removal Error"
-msgstr "সংযোগে ত্রুটি"
+msgstr "পরিচিতি অপসারণে ত্রুটি"
 
-#, fuzzy
+# Translated by sadia
 msgid "Subscription Error"
-msgstr "সাবস্ক্রিপশন"
+msgstr "সাবস্ক্রিপশন ত্রুটি "
 
-#, fuzzy
+# Translated by sadia
 msgid "Contact Update Error"
-msgstr "সংযোগে ত্রুটি"
+msgstr "পরিচিতি হালনাগাদ করনে ত্রুটি"
 
-#, fuzzy
+# Translated by sadia
 msgid "File Transfer Error"
-msgstr "ফাইল স্থানান্তর"
+msgstr "ফাইল স্থানান্তরে ত্রুটি "
 
-#, fuzzy
+# Translated by sadia
 msgid "Cannot create MultiMx room"
-msgstr "পাউন্স তৈরী করা সম্ভব হয়নি"
+msgstr "MultiMx ঘর তৈরী করা যাচ্ছে না"
 
-#, fuzzy
+# Translated by sadia
 msgid "MultiMx Invitation Error"
-msgstr "অনিবন্ধন ত্রুটি"
+msgstr "MultiMx আমন্ত্রণে ত্রুটি"
 
-#, fuzzy
+# Translated by sadia
 msgid "Profile Error"
-msgstr "লিখতে ত্রুটি"
+msgstr "প্রোফাইলে ত্রুটি"
 
+# Translated by sadia
 #. bad packet
 msgid "Invalid packet received from MXit."
-msgstr ""
+msgstr "MXit থেকে অকার্যকর প্যাকেট গ্রহণ করা হয়েছে। "
 
+# Translated by sadia
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr ""
+msgstr "MXit-তে একটি সংযোগ ত্রুটি দেখা দিয়েছে। (stage 0x01 পড়ুন)"
 
+# Translated by sadia
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr ""
+msgstr "MXit-তে একটি সংযোগ ত্রুটি দেখা দিয়েছে। (stage 0x02 পড়ুন)"
 
+# Translated by sadia
 msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr ""
+msgstr "MXit-তে একটি সংযোগ ত্রুটি দেখা দিয়েছে। (stage 0x03 পড়ুন)"
 
+# Translated by sadia
 #. malformed packet length record (too long)
 msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr ""
+msgstr "MXit-তে একটি সংযোগ ত্রুটি দেখা দিয়েছে। (stage 0x04 পড়ুন)"
 
+# Translated by sadia
 #. connection error
 msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr ""
+msgstr "MXit-তে একটি সংযোগ ত্রুটি দেখা দিয়েছে। (stage 0x05 পড়ুন)"
 
+# Translated by sadia
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr ""
+msgstr "MXit-তে একটি সংযোগ ত্রুটি দেখা দিয়েছে। (stage 0x06 পড়ুন)"
 
-msgid "Angry"
-msgstr "রাগী"
-
-msgid "Excited"
-msgstr "উত্তেজিত"
-
-#, fuzzy
-msgid "Grumpy"
-msgstr "দল"
-
-msgid "Happy"
-msgstr "সুখী"
-
-# tithi
-msgid "In Love"
-msgstr "প্রেমময়"
-
-# tithi
-msgid "Invincible"
-msgstr "অজেয়"
-
-msgid "Sad"
-msgstr "দুঃখী"
-
-#, fuzzy
-msgid "Hot"
-msgstr "হোস্ট (_H):"
-
-#, fuzzy
-msgid "Sick"
-msgstr "ডাকনাম"
-
-msgid "Sleepy"
-msgstr "ঘুমন্ত"
-
-#, fuzzy
+# Translated by sadia
 msgid "Pending"
-msgstr "পাঠানো হচ্ছে"
+msgstr "মূলতবি রয়েছে"
 
-#, fuzzy
+# Translated by sadia
 msgid "Invited"
-msgstr "আমন্ত্রণ জানান"
+msgstr "আমন্ত্রণ জানানো হয়েছে"
 
-#, fuzzy
+# Translated by sadia
 msgid "Rejected"
-msgstr "প্রত্যাখান"
+msgstr "প্রত্যাখ্যান করা হয়েছে"
 
-#, fuzzy
+# Translated by sadia
 msgid "Deleted"
-msgstr "অপসারণ"
+msgstr "মুছে ফেলা হয়েছে"
 
+# Translated by sadia
 msgid "MXit Advertising"
-msgstr ""
+msgstr "MXit প্রচারণা "
 
-#, fuzzy
+# Translated by sadia
 msgid "More Information"
-msgstr "কাজের তথ্য"
+msgstr "আরও তথ্য"
 
 # tithi
 #, c-format
@@ -6909,13 +7107,14 @@ msgstr "%s কে বার্তা পাঠাতে ব্যর্থ। �
 msgid "Unable to send message. Could not create the conference (%s)."
 msgstr "বার্তা পাঠাতে ব্যর্থ। অধিবেশন (%s) তৈরি করা সম্ভব হয়নি।"
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid ""
 "Unable to move user %s to folder %s in the server side list. Error while "
 "creating folder (%s)."
 msgstr ""
-"ব্যবহারকারী %1s কে সার্ভার প্রান্তের তালিকার %s ফোল্ডারে সরিয়ে নিতে ব্যর্থ। ফোল্ডার "
-"(%s) তৈরীর সময় ত্রুটি দেখা দিয়েছে।"
+"সার্ভার প্রান্তের তালিকায় %s ব্যবহারকারীকে %s ফোল্ডারে সরাতে ব্যর্থ। ফোল্ডার তৈরি "
+"করার সময় ত্রুটি (%s)।"
 
 #, c-format
 msgid ""
@@ -7048,10 +7247,15 @@ msgstr "সার্ভারের ঠিকানা"
 msgid "Server port"
 msgstr "সার্ভারের পোর্ট"
 
-#. Note to translators: %s in this string is a URL
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "%s থেকে অপ্রত্যাশিত উত্তর পাওয়া গেছে: %s"
+
+# Translated by sadia
+#, c-format
 msgid "Received unexpected response from %s"
-msgstr "এটি থেকে অপ্রত্যাশিত উত্তর পাওয়া গেছে।"
+msgstr "%s থেকে অপ্রত্যাশিত উত্তর পাওয়া গেছে"
 
 # tithi
 msgid ""
@@ -7061,11 +7265,19 @@ msgstr ""
 "আপনি খুব ঘনঘন সংযোগ স্থাপন এবং বিচ্ছিন্ন করছেন। দশ মিনিট অপেক্ষা করে পুনরায় চেষ্টা "
 "করুন। আপনি যদি চেষ্টা অব্যাহত রাখতে চান, আপনাকে আরও বেশী অপেক্ষা করতে হবে।"
 
+# Translated by sadia
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
-#, fuzzy, c-format
+#, c-format
 msgid "Error requesting %s: %s"
-msgstr "অনুরোধ করতে ত্রুটি"
+msgstr "%s অনুরোধে ত্রুটি: %s "
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"সাইন ইন করার জন্য সার্ভার একটি CAPTCHA অনুরোধ করছে, কিন্তু এটি বর্তমানে CAPTCHA "
+"সাপোর্ট করে না।"
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL এখানে আপনার স্ক্রিন নামের প্রমাণীকরণ অনুমোদন করে না।"
@@ -7239,47 +7451,55 @@ msgstr "কিউ পরিপূর্ণ"
 msgid "Not while on AOL"
 msgstr "AOL এ থাকা অবস্থায় নয়"
 
+# Translated by sadia
 msgid "Cannot receive IM due to parental controls"
-msgstr ""
+msgstr "অভিভাবক নিয়ন্ত্রণ ব্যবস্থার জন্য IM গ্রহণ করা যাচ্ছে না "
 
+# Translated by sadia
 msgid "Cannot send SMS without accepting terms"
-msgstr ""
+msgstr "শর্তাবলী গ্রহণ না করে SMS পাঠানো যাচ্ছে না"
 
-#, fuzzy
+# Translated by sadia
 msgid "Cannot send SMS"
-msgstr "ফাইল পাঠানো সম্ভব হয়নি"
+msgstr "SMS পাঠানো যাচ্ছে না"
 
+# Translated by sadia
 #. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
 msgid "Cannot send SMS to this country"
-msgstr "ডিরেক্টরি পাঠানো সম্ভব নয়।"
+msgstr "এই দেশটিতে SMS পাঠানো যাচ্ছে না"
 
+# Translated by sadia
 #. Undocumented
 msgid "Cannot send SMS to unknown country"
-msgstr ""
+msgstr "অজানা কোন দেশে SMS পাঠানো যাচ্ছে না"
 
+# Translated by sadia
 msgid "Bot accounts cannot initiate IMs"
-msgstr ""
+msgstr "Bot একাউন্ট IM চালু করতে পারছে না "
 
+# Translated by sadia
 msgid "Bot account cannot IM this user"
-msgstr ""
+msgstr "Bot একাউন্ট এই ব্যবহারকারীকে IM দিচ্ছে না "
 
+# Translated by sadia
 msgid "Bot account reached IM limit"
-msgstr ""
+msgstr "Bot একাউন্ট IM সীমায় পৌছে গেছে"
 
+# Translated by sadia
 msgid "Bot account reached daily IM limit"
-msgstr ""
+msgstr "Bot একাউন্ট প্রতিদিনের IM সীমায় পৌছে গেছে"
 
+# Translated by sadia
 msgid "Bot account reached monthly IM limit"
-msgstr ""
+msgstr "Bot একাউন্ট মাসিক IM সীমায় পৌছে গেছে"
 
-#, fuzzy
+# Translated by sadia
 msgid "Unable to receive offline messages"
-msgstr "বার্তা পাঠানো যায়নি।"
+msgstr "অফলাইন বার্তা গ্রহণ করতে ব্যর্থ"
 
-#, fuzzy
+# Translated by sadia
 msgid "Offline message store full"
-msgstr "অফলাইন বার্তা"
+msgstr "অফলাইন বার্তার সংগ্রহস্থল পূর্ণ"
 
 # tithi
 msgid ""
@@ -7467,15 +7687,21 @@ msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL তাৎক্ষণিক বার্তাবাহক সার্ভিস সাময়িকভাবে পাওয়া যায়না।"
 
 # tithi
+#
+#
+#
+#
+#
+# Translated by sadia
 #. username connecting too frequently
-#, fuzzy
 msgid ""
 "Your username has been connecting and disconnecting too frequently. Wait ten "
 "minutes and try again. If you continue to try, you will need to wait even "
 "longer."
 msgstr ""
-"আপনি খুব ঘনঘন সংযোগ স্থাপন এবং বিচ্ছিন্ন করছেন। দশ মিনিট অপেক্ষা করে পুনরায় চেষ্টা "
-"করুন। আপনি যদি চেষ্টা অব্যাহত রাখতে চান, আপনাকে আরও বেশী অপেক্ষা করতে হবে।"
+"আপনার ব্যবহারকারী নামটি খুব ঘনঘন সংযোগ স্থাপন এবং বিচ্ছিন্ন করছে। দশ মিনিট অপেক্ষা "
+"করে পুনরায় চেষ্টা করুন। আপনি যদি চেষ্টা অব্যাহত রাখেন, আপনাকে আরও বেশী সময় অপেক্ষা "
+"করতে হবে।"
 
 # tithi
 #. client too old
@@ -7484,15 +7710,22 @@ msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "আপনার ব্যবহৃত ক্লায়েন্ট সংস্করণটি খুব পুরনো। অনুগ্রহ করে %s এ হালনাহাদ করুন"
 
 # tithi
+#
+#
+#
+#
+#
+#
+# Translated by sadia
 #. IP address connecting too frequently
-#, fuzzy
 msgid ""
 "Your IP address has been connecting and disconnecting too frequently. Wait a "
 "minute and try again. If you continue to try, you will need to wait even "
 "longer."
 msgstr ""
-"আপনি খুব ঘনঘন সংযোগ স্থাপন এবং বিচ্ছিন্ন করছেন। কিছুক্ষন অপেক্ষা করে পুনরায় চেষ্টা "
-"করুন। আপনি যদি চেষ্টা অব্যাহত রাখতে চান, আপনাকে আরও বেশী সময় অপেক্ষা করতে হবে।"
+"আপনার IP অ্যাড্রেসটি খুব ঘনঘন সংযোগ স্থাপন এবং বিচ্ছিন্ন করছে। এক মিনিট অপেক্ষা করে "
+"পুনরায় চেষ্টা করুন। আপনি যদি চেষ্টা অব্যাহত রাখেন, আপনাকে আরও বেশী সময় অপেক্ষা "
+"করতে হবে।"
 
 # tithi
 msgid "The SecurID key entered is invalid"
@@ -7645,21 +7878,24 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "আপনি অজ্ঞাত কারণে %2$s থেকে %1$huটি বার্তা হারিয়েছেন।"
 msgstr[1] "আপনি অজ্ঞাত কারণে %2$s থেকে %1$huটি বার্তা হারিয়েছেন।"
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid "Unable to send message: %s (%s)"
-msgstr "বার্তা (%s) পাঠাতে ব্যর্থ।"
+msgstr "বার্তা পাঠাতে ব্যর্থ: %s (%s)"
 
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "বার্তা পাঠাতে ব্যর্থ: %s।"
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid "Unable to send message to %s: %s (%s)"
-msgstr "%s এ বার্তা পাঠাতে ব্যর্থ:"
+msgstr "%s-এ বার্তা পাঠাতে ব্যর্থ: %s (%s)"
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid "Unable to send message to %s: %s"
-msgstr "%s এ বার্তা পাঠাতে ব্যর্থ:"
+msgstr "%s-এ বার্তা পাঠাতে ব্যর্থ: %s"
 
 #, c-format
 msgid "User information not available: %s"
@@ -7691,14 +7927,6 @@ msgid ""
 msgstr ""
 "[এই ব্যবহারকারী থেকে একটি বার্তা প্রদর্শন করতে ব্যর্থ কারণ এটি অকার্যকর বর্ণচিহ্ন "
 "ধারণ করেছিল।]"
-
-#, fuzzy
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"আপনি সর্বশেষ যে কাজটি করার চেষ্টা করেছেন তা সম্পাদন করা যায়নি কারণ আপনি দ্রুততার "
-"সীমা অতিক্রম করেছেন। অনুগ্রহ করে ১০ সেকেন্ড অপেক্ষা করুন এবং পুনরায় চেষ্টা করুন।"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -7991,9 +8219,9 @@ msgstr ""
 msgid "C_onnect"
 msgstr "সংযোগ (_O)"
 
-#, fuzzy
+# Translated by sadia
 msgid "You closed the connection."
-msgstr "সার্ভার সংযোগটি বন্ধ করে দিয়েছে"
+msgstr "আপনি সংযোগটি বন্ধ করে দিয়েছেন।"
 
 msgid "Get AIM Info"
 msgstr "AIM তথ্য গ্রহণ"
@@ -8006,9 +8234,9 @@ msgstr "বন্ধুর মন্তব্য সম্পাদন"
 msgid "Get Status Msg"
 msgstr "অবস্থার বার্তা খুঁজুন"
 
-#, fuzzy
+# Translated by sadia
 msgid "End Direct IM Session"
-msgstr "সরাসরি IM স্থাপন করা হয়েছে"
+msgstr "সরাসরি IM সেশন সমাপ্ত করা হবে"
 
 # tithi
 msgid "Direct IM"
@@ -8553,9 +8781,14 @@ msgstr "%1$u %3$s এর জন্য %2$u Qunএ যুক্ত হতে অ�
 
 # If the localized string is intended to swap the parameters, the
 # correct syntax is "%2$u %1$u Qun blah"
-#, fuzzy, c-format
+#
+#
+#
+#
+# Translated by sadia
+#, c-format
 msgid "%u request to join Qun %u"
-msgstr "%1u %2u Qunএ যুক্ত হতে অনুরোধ করছে"
+msgstr "%u Qun %u-কে যোগ দিতে অনুরোধ করেছে"
 
 #, c-format
 msgid "Failed to join Qun %u, operated by admin %u"
@@ -8932,9 +9165,10 @@ msgstr "%1$d %2$s ফাইলটি প্রত্যাখ্যান কর
 msgid "File Send"
 msgstr "ফাইল প্রেরণ"
 
-#, fuzzy, c-format
+# Translated by sadia
+#, c-format
 msgid "%d cancelled the transfer of %s"
-msgstr "%1$d %2$s-এর স্থানান্তর বাতিল করেছে"
+msgstr "%d %s-এর স্থানান্তর বাতিল করেছে "
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -10652,8 +10886,9 @@ msgstr "আড্ডার আসরের লোক্যাল"
 msgid "Ignore conference and chatroom invitations"
 msgstr "অধিবেশন এবং আড্ডার আসরের আমন্ত্রন অগ্রাহ্য করা হবে"
 
+# Translated by sadia
 msgid "Use account proxy for SSL connections"
-msgstr ""
+msgstr "SSL সংযোগের ক্ষেত্রে একাউন্টের প্রক্সি ব্যবহার করা হবে"
 
 msgid "Chat room list URL"
 msgstr "আড্ডার আসরের তালিকার URL"
@@ -10762,27 +10997,34 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr "বন্ধুকে অগ্রাহ্য করবেন?"
 
-#, fuzzy
+# Translated by sadia
 msgid "Invalid username or password"
-msgstr "ভুল ব্যবহারকারীর নাম বা পাসওয়ার্ড"
+msgstr "ব্যবহারকারীর নাম বা পাসওয়ার্ড অকার্যকর"
 
 # tithi
-#, fuzzy
+#
+#
+#
+# Translated by sadia
 msgid ""
 "Your account has been locked due to too many failed login attempts.  Please "
 "try logging into the Yahoo! website."
 msgstr ""
-"একাউন্ট আবদ্ধ: অত্যধিকবার লগইন করার ব্যর্থ চেষ্টা। ইয়াহু! তে লগইন করলে হয়তো এটি ঠিক "
-"হবে।"
+"অত্যধিকবার লগইন করার ব্যর্থ চেষ্টার কারণে আপনার একাউন্টটি জব্দ করা হয়েছে। অনুগ্রহ "
+"করে ইয়াহু! ওয়েবসাইটে লগিং করার চেষ্টা করুন।"
 
+# Translated by sadia
 #, c-format
 msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr ""
+msgstr "অজানা ত্রুটি ৫২। পুন:সংযোগের সময় এটা নির্দিষ্ট করা উচিত। "
 
+# Translated by sadia
 msgid ""
 "Error 1013: The username you have entered is invalid.  The most common cause "
 "of this error is entering your email address instead of your Yahoo! ID."
 msgstr ""
+"ত্রুটি ১০১৩: আপনি যে ব্যবহারকারীর নাম প্রবেশ করিয়েছেন তা অকার্যকর। এই ত্রুটির প্রধান "
+"কারণ আপনি হয়ত ইয়াহু! ID-র পরিবর্তে আপনার ইমেইল ঠিকানা প্রবেশ করিয়েছেন। "
 
 # tithi
 #, c-format
@@ -10879,14 +11121,17 @@ msgstr "ব্যবহারকারীকে আড্ডায় যোগ.
 msgid "Open Inbox"
 msgstr "ইনবক্স খুলুন"
 
+# Translated by sadia
 msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr ""
+msgstr "SMS পাঠানো যাচ্ছে না। মোবাইল পরিবাহক সংগ্রহ করতে ব্যর্থ। "
 
+# Translated by sadia
 msgid "Can't send SMS. Unknown mobile carrier."
-msgstr ""
+msgstr "SMS পাঠানো যাচ্ছে না। অপরিচিত মোবাইল পরিবাহক। "
 
+# Translated by sadia
 msgid "Getting mobile carrier to send the SMS."
-msgstr ""
+msgstr "SMS-টি পাঠানোর জন্য মোবাইল পরিবাহক গ্রহণ করা হচ্ছে। "
 
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
@@ -11455,9 +11700,12 @@ msgstr ""
 "আপনার %1$s পড়ার সময় একটি ত্রুটির দেখা দেয়েছে। ফাইলটি লোড করা হয়নি, এবং পুরনো "
 "ফাইলটি %2$s~ এ নামান্তর করা হয়েছে।"
 
+# Translated by sadia
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
+"IM-এর মাধ্যমে আড্ডা দিন। যা AIM, Google Talk, Jabber/XMPP, MSN, Yahoo এবং আরও "
+"অনেক কিছু সমর্থন করে "
 
 msgid "Internet Messenger"
 msgstr "ইন্টারনেট বার্তাবাহক"
@@ -11608,9 +11856,9 @@ msgstr "বন্ধু তালিকার জন্য পটভূমির
 msgid "Layout"
 msgstr "বহির্বিন্যাস"
 
-#, fuzzy
+# Translated by sadia
 msgid "The layout of icons, name, and status of the buddy list"
-msgstr "আইকন, নাম এবং blist এর অবস্থার বহির্বিন্যাস"
+msgstr "বন্ধু তালিকার আইকন, নাম এবং স্ট্যাটাস-এর বহির্বিন্যাস"
 
 #. Group
 #. Note to translators: These two strings refer to the background color
@@ -11662,11 +11910,11 @@ msgstr "পরিচিতি টেক্সট"
 msgid "The text information for when a contact is expanded"
 msgstr "পরিচিতি প্রসারনের সময় টেক্সট তথ্য"
 
+# Translated by sadia
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is online
-#, fuzzy
 msgid "Online Text"
-msgstr "অনলাইন টেক্সট"
+msgstr "অনলাইন লেখা "
 
 msgid "The text information for when a buddy is online"
 msgstr "বন্ধু অনলাইনে থাকার সময় টেক্সট তথ্য"
@@ -11679,15 +11927,15 @@ msgstr "অন্যত্র অবস্থার টেক্সট"
 msgid "The text information for when a buddy is away"
 msgstr "বন্ধু অন্যত্র থাকার সময় টেক্সট তথ্য"
 
+# Translated by sadia
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is offline
-#, fuzzy
 msgid "Offline Text"
-msgstr "অফলাইন অবস্থার টেক্সট"
+msgstr "অফলাইন লেখা "
 
-#, fuzzy
+# Translated by sadia
 msgid "The text information for when a buddy is offline"
-msgstr "বন্ধু অফলাইনে থাকার সময় টেক্সট তথ্য"
+msgstr "কোন বন্ধু অফলাইনে থাকার সময় পাঠ্য তথ্য"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is idle
@@ -11710,11 +11958,13 @@ msgstr "বন্ধুর অপঠিত বার্তা থাকলে �
 msgid "Message (Nick Said) Text"
 msgstr "বার্তা (\"ডাকনাম\" বলেছিল) টেক্সট"
 
-#, fuzzy
+# Translated by sadia
 msgid ""
 "The text information for when a chat has an unread message that mentions "
 "your nickname"
-msgstr "একটি অপঠিত বার্তায় আপনার নাম উল্লেখ করা হলে যে লেখা প্রদর্শিত হবে"
+msgstr ""
+"আপনার ডাকনাম উল্লিখিত কোন আড্ডায় যখন কোন অপঠিত বার্তা থাকে, তখন যে পাঠ্য তথ্য "
+"প্রদর্শন করা হবে"
 
 msgid "The text information for a buddy's status"
 msgstr "বন্ধুর অবস্থার জন্য টেক্সট তথ্য "
@@ -12161,9 +12411,13 @@ msgid "_Group:"
 msgstr "দল (_G):"
 
 # tithi
-#, fuzzy
+#
+#
+#
+#
+# Translated by sadia
 msgid "Auto_join when account connects."
-msgstr "একাউন্ট অনলাইনে থাকলে স্বয়ংক্রিয় ভাবে যোগদান করা হবে।"
+msgstr "একাউন্ট সংযুক্ত হলে স্বয়ংক্রিয়ভাবে যোগ দেয়া হবে। (_j)"
 
 # tithi
 msgid "_Remain in chat after window is closed."
@@ -12280,9 +12534,9 @@ msgstr "/কথোপকথন (_C)"
 msgid "/Conversation/New Instant _Message..."
 msgstr "/কথোপকথন/নতুন বার্তা... (_M)"
 
-#, fuzzy
+# Translated by sadia
 msgid "/Conversation/Join a _Chat..."
-msgstr "/কথোপকথন/আমন্ত্রণ... (_v)"
+msgstr "/কথোপকথন/আড্ডায় যোগ দিন... (_C)"
 
 msgid "/Conversation/_Find..."
 msgstr "/কথোপকথন/খুঁজুন... (_F)"
@@ -12678,8 +12932,9 @@ msgstr "স্প্যানিশ"
 msgid "Estonian"
 msgstr "এসতোনীয়"
 
+# Translated by sadia
 msgid "Basque"
-msgstr ""
+msgstr "বস্কো"
 
 msgid "Persian"
 msgstr "পার্সীয়"
@@ -12752,14 +13007,18 @@ msgstr "কুর্দিশ"
 msgid "Lao"
 msgstr "লাও"
 
-msgid "Lithuanian"
-msgstr "লিথুনীয়"
-
 msgid "Macedonian"
 msgstr "ম্যাসেডনিয়"
 
 msgid "Mongolian"
 msgstr "মঙ্গোলীয়"
+
+msgid "Marathi"
+msgstr "মারাঠি"
+
+# Translated by sadia
+msgid "Malay"
+msgstr "মালয় (মালয়শিয়া)"
 
 # fix me tithi
 msgid "Bokmål Norwegian"
@@ -12778,6 +13037,9 @@ msgstr "নরওয়েজীয় নিনর্স্ক"
 # fix-me tithi
 msgid "Occitan"
 msgstr "ওক্কিটান"
+
+msgid "Oriya"
+msgstr "ঊড়িষ্যা"
 
 # tithi
 msgid "Punjabi"
@@ -12834,6 +13096,10 @@ msgstr "থাই"
 msgid "Turkish"
 msgstr "তুর্কি"
 
+# Translated by sadia
+msgid "Ukranian"
+msgstr "ইউক্রেনীয়"
+
 # tithi
 msgid "Urdu"
 msgstr "উর্দু"
@@ -12856,6 +13122,9 @@ msgstr "সনাতন চীনা"
 
 msgid "Amharic"
 msgstr "আমহরিক"
+
+msgid "Lithuanian"
+msgstr "লিথুনীয়"
 
 #, c-format
 msgid "About %s"
@@ -12891,6 +13160,7 @@ msgstr ""
 "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
 "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
 
+# Translated by sadia
 #, c-format
 msgid ""
 "<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
@@ -12900,6 +13170,12 @@ msgid ""
 "primary language is <b>English</b>.  You are welcome to post in another "
 "language, but the responses may be less helpful.<br/><br/>"
 msgstr ""
+"<font size=\"4\">অন্যান্য পিজিন ব্যবহারকারীর কাছ থেকে সহায়তা:</font> <a href="
+"\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>এটি একটি<b>সর্বজনীন</"
+"b> মেইলের তালিকা!(<a href=\"http://pidgin.im/pipermail/support/\">আর্কাইভ</a>)"
+"<br/>আমরা কোন ৩য় পক্ষের প্রোটোকল বা প্লাগইন দিয়ে সহায়তা করতে পারব না!<br/>এই "
+"তালিকার প্রাথমিক ভাষা হলো <b>ইংরেজী</b>। আপনি অন্যান্য ভাষাতেও আপনার মতামত "
+"প্রকাশ করতে পারেন, কিন্তু প্রতিক্রিয়াগুলো হয়ত কম সহায়ক হবে।<br/><br/>"
 
 # fix me
 #, c-format
@@ -13481,49 +13757,69 @@ msgstr "লগ ফোল্ডার ব্রাউজ (_B)"
 msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%1$s %2$s। আরও তথ্যের জন্য `%3$s -h' চেষ্টা করুন।\n"
 
+# Translated by sadia
 #, c-format
 msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 msgstr ""
+"ব্যবহার: %s [OPTION]...\n"
+"\n"
 
+# Translated by sadia
 msgid "DIR"
-msgstr ""
+msgstr "DIR"
 
+# Translated by sadia
 msgid "use DIR for config files"
-msgstr ""
+msgstr "config ফাইলের জন্য DIR ব্যবহার করা হবে"
 
+# Translated by sadia
 msgid "print debugging messages to stdout"
-msgstr ""
+msgstr "stdout-এ ডিবাগিং বার্তা মুদ্রণ করা হবে"
 
+# Translated by sadia
 msgid "force online, regardless of network status"
-msgstr ""
+msgstr "অনলাইনে তাগিদ দেয়া হবে, যদি নেটওয়ার্ক স্ট্যাটাস না দেয়া থাকে"
 
+# Translated by sadia
 msgid "display this help and exit"
-msgstr ""
+msgstr "এই সহায়িকা প্রদর্শন করা হবে এবং প্রস্থান করা হবে"
 
 # tithi
-#, fuzzy
+#
+#
+#
+#
+# Translated by sadia
 msgid "allow multiple instances"
-msgstr "একসাথে একাধিক লগইন অনুমোদন করা হবে"
+msgstr "একাধিক লগইন অনুমোদন করা হবে"
 
+# Translated by sadia
 msgid "don't automatically login"
-msgstr ""
+msgstr "স্বয়ংক্রিয়ভাবে লগইন করবেন না"
 
+# Translated by sadia
 msgid "NAME"
-msgstr ""
+msgstr "নাম"
 
+# Translated by sadia
 msgid ""
 "enable specified account(s) (optional argument NAME\n"
 "                      specifies account(s) to use, separated by commas.\n"
 "                      Without this only the first account will be enabled)."
 msgstr ""
+"উল্লিখিত একাউন্ট সক্রিয় করা হবে (ঐচ্ছিক আর্গুমেন্টের নাম\\n                      "
+"ব্যবহার করার জন্য একাউন্ট উল্লেখ করা হবে, কমা দ্বারা পৃথককৃত।"
+"\\n                      এটা ছাড়া শুধুমাত্র প্রথম একাউন্টটি সক্রিয় করা হবে)। "
 
+# Translated by sadia
 msgid "X display to use"
-msgstr ""
+msgstr "X ব্যবহারের জন্য প্রদর্শন করা হবে"
 
+# Translated by sadia
 msgid "display the current version and exit"
-msgstr ""
+msgstr "বর্তমান সংস্করণটি প্রদর্শন করা হবে এবং প্রস্থান করা হবে"
 
 #, c-format
 msgid ""
@@ -13570,8 +13866,9 @@ msgstr "%s আপনার সাথে একটি অডিও/ভিডি�
 msgid "%s wishes to start a video session with you."
 msgstr "%s আপনার সাথে একটি ভিডিও সেশন শুরু করতে চায়।"
 
+# Translated by sadia
 msgid "Incoming Call"
-msgstr ""
+msgstr "আগত কল  "
 
 msgid "_Pause"
 msgstr "বিরতি (_P)"
@@ -13786,23 +14083,25 @@ msgstr "একটি বার্তা পাঠানো হয়েছে"
 msgid "Unknown.... Please report this!"
 msgstr "অজানা... অনুগ্রহ করে এটি রিপোর্ট করুন!"
 
+# Translated by sadia
 msgid "(Custom)"
-msgstr ""
+msgstr "(স্বনির্ধারিত)"
 
-# tithi mark
-#, fuzzy
-msgid "(Default)"
-msgstr "(ডিফল্ট)"
+# tithi
+msgid "Penguin Pimps"
+msgstr "পেঙ্গুইন পিম্প"
 
+# Translated by sadia
 msgid "The default Pidgin sound theme"
-msgstr ""
+msgstr "পিজিনে পূর্বনির্ধারিত সাউন্ড থীম  "
 
-#, fuzzy
+# Translated by sadia
 msgid "The default Pidgin buddy list theme"
-msgstr "পিজিন বন্ধু তালিকার থীম সম্পাদক"
+msgstr "পিজিনে পূর্বনির্ধারিত বন্ধু তালিকার থীম  "
 
+# Translated by sadia
 msgid "The default Pidgin status icon theme"
-msgstr ""
+msgstr "পিজিনে পূর্বনির্ধারিত স্ট্যাটাস আইকন থীম"
 
 msgid "Theme failed to unpack."
 msgstr "থীম আনপ্যাক করতে ব্যর্থ হয়েছে।"
@@ -13813,19 +14112,37 @@ msgstr "থীম লোড করতে ব্যর্থ হয়েছে।"
 msgid "Theme failed to copy."
 msgstr "থীম অনুলিপি করতে ব্যর্থ হয়েছে।"
 
-# tithi
-msgid "Install Theme"
-msgstr "থীম ইনস্টল করুন"
+# Translated by sadia
+msgid "Theme Selections"
+msgstr "থীম নির্বাচন"
 
+# Translated by sadia
+#. Instructions
 msgid ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 msgstr ""
+"নিম্নোক্ত তালিকা থেকে আপনার পছন্দনীয় একটি থীম নির্বাচন করুন।\\nনতুন কোন থীম টেনে "
+"এনে থীম তালিকায় ছেড়ে দিলেই সেটা ইনস্টল হয়ে যাবে।\n"
 "আপনি যে স্মাইলি থীম ব্যবহার করতে চান তা নিম্নবর্তী তালিকা থেকে বাছাই করুন। নতুন "
 "থীম তালিকায় টেনে এনে ফেলে ইনস্টল করতে পারেন।"
 
-msgid "Icon"
-msgstr "আইকন"
+# Translated by sadia
+msgid "Buddy List Theme:"
+msgstr "বন্ধু তালিকার থীম:"
+
+# Translated by sadia
+msgid "Status Icon Theme:"
+msgstr "স্ট্যাটাস আইকনের থীম:"
+
+# Translated by sadia
+msgid "Sound Theme:"
+msgstr "সাউন্ড থীম:"
+
+# Translated by sadia
+msgid "Smiley Theme:"
+msgstr "স্মাইলি থীম:"
 
 # tithi
 msgid "Keyboard Shortcuts"
@@ -13833,10 +14150,6 @@ msgstr "কীবোর্ড শর্টকাট"
 
 msgid "Cl_ose conversations with the Escape key"
 msgstr "Escape কী চেপে কথোপকথন বন্ধ করা যাবে (_o)"
-
-#. Buddy List Themes
-msgid "Buddy List Theme"
-msgstr "বন্ধু তালিকার থীম"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -13928,10 +14241,6 @@ msgid "Font"
 msgstr "ফন্ট"
 
 # tithi
-msgid "Use document font from _theme"
-msgstr "থীম থেকে নথির ফন্ট ব্যবহার করা হবে (_t)"
-
-# tithi
 msgid "Use font from _theme"
 msgstr "থীম থেকে ফন্ট ব্যবহার করা হবে (_t)"
 
@@ -13955,17 +14264,17 @@ msgstr "প্রক্সি কনফিগারেশন প্রোগ্�
 msgid "Cannot start browser configuration program."
 msgstr "ব্রাউজার কনফিগারেশন প্রোগ্রাম শুরু করা সম্ভব হয়নি।"
 
-#, fuzzy
+# Translated by sadia
 msgid "Disabled"
-msgstr "নিষ্ক্রিয় (_D)"
+msgstr "নিষ্ক্রিয় করা হয়েছে"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr "স্বয়ংক্রিয়ভাবে সনাক্তকৃত IP ঠিকানা ব্যবহার করুন (_a): %s"
 
-#, fuzzy
+# Translated by sadia
 msgid "ST_UN server:"
-msgstr "সার্ভার: (_S)"
+msgstr "STUN সার্ভার: (_U)"
 
 # tithi
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
@@ -13981,81 +14290,33 @@ msgstr "পোর্ট"
 msgid "_Enable automatic router port forwarding"
 msgstr "স্বয়ংক্রিয় রাউটার পোর্ট ফরওয়ার্ডিং সক্রিয় করা হবে (_E)"
 
-#, fuzzy
+# Translated by sadia
 msgid "_Manually specify range of ports to listen on:"
-msgstr "যেসব পোর্টে লিসেন করা হবে তার সীমা স্বনির্ধারণ (_M)"
+msgstr "সংযোগ অব্যাহত রাখতে নিজ হাতে পোর্টের সীমা নির্ধারণ করুন: (_M)"
 
-#, fuzzy
+# Translated by sadia
 msgid "_Start:"
-msgstr "অবস্থা (_S):"
+msgstr "আরম্ভ: (_S)"
 
-#, fuzzy
+# Translated by sadia
 msgid "_End:"
-msgstr "প্রসারিত (_E)"
+msgstr "সমাপ্ত: (_E)"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr "রিলে সার্ভার (TURN)"
 
-#, fuzzy
+# Translated by sadia
 msgid "_TURN server:"
-msgstr "সার্ভার: (_S)"
+msgstr "TURN সার্ভার: (_T)"
 
-#, fuzzy
+# Translated by sadia
 msgid "Use_rname:"
-msgstr "ব্যবহারকারীর নাম:"
+msgstr "ব্যবহারকারীর নাম: (_r)"
 
-#, fuzzy
+# Translated by sadia
 msgid "Pass_word:"
-msgstr "পাসওয়ার্ড:"
-
-msgid "Proxy Server &amp; Browser"
-msgstr "প্রক্সি সার্ভার &amp; ব্রাউজার"
-
-# tithi
-msgid "<b>Proxy configuration program was not found.</b>"
-msgstr "<b>প্রক্সির কনফিগারেশন প্রোগ্রাম খুঁজে পাওয়া যায়নি।</b>"
-
-# tithi
-msgid "<b>Browser configuration program was not found.</b>"
-msgstr "<b>ব্রাউজারের কনফিগারেশন প্রোগ্রাম খুঁজে পাওয়া যায়নি।</b>"
-
-# tithi
-msgid ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
-msgstr ""
-"প্রক্সি ও ব্রাউজারের বৈশিষ্ট্যাবলী \n"
-"GNOME পছন্দসমূহে কনফিগার করা হয়েছে"
-
-msgid "Configure _Proxy"
-msgstr "প্রক্সি কনফিগারেশন  (_P)"
-
-msgid "Configure _Browser"
-msgstr "ব্রাউজার কনফিগারেশন (_B)"
-
-msgid "Proxy Server"
-msgstr "প্রক্সি সার্ভার"
-
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-#, fuzzy
-msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr "SOCKS4 প্রক্সি সম্বলিত দুরবর্তী DNS ব্যবহৃত হবে"
-
-#, fuzzy
-msgid "Proxy t_ype:"
-msgstr "প্রক্সির ধরন (_t):"
-
-msgid "No proxy"
-msgstr "কোনো প্রক্সি নেই"
-
-#, fuzzy
-msgid "P_ort:"
-msgstr "পোর্ট (_P):"
-
-#, fuzzy
-msgid "User_name:"
-msgstr "ব্যবহারকারীর নাম:"
+msgstr "পাসওয়ার্ড: (_w)"
 
 # tithi
 msgid "Seamonkey"
@@ -14097,6 +14358,23 @@ msgstr "সহায়িকা"
 msgid "Browser Selection"
 msgstr "ব্রাউজার নির্বাচন"
 
+# tithi
+#
+#
+#
+#
+#
+# Translated by sadia
+msgid "Browser preferences are configured in GNOME preferences"
+msgstr "GNOME পছন্দসমূহের মধ্যে ব্রাউজার পছন্দসমূহ কনফিগার করা হয়েছে "
+
+# tithi
+msgid "<b>Browser configuration program was not found.</b>"
+msgstr "<b>ব্রাউজারের কনফিগারেশন প্রোগ্রাম খুঁজে পাওয়া যায়নি।</b>"
+
+msgid "Configure _Browser"
+msgstr "ব্রাউজার কনফিগারেশন (_B)"
+
 msgid "_Browser:"
 msgstr "ব্রাউজার (_B):"
 
@@ -14119,6 +14397,47 @@ msgid ""
 msgstr ""
 "সহায়িকা (_M):\n"
 "(URL এর জন্য %s)"
+
+msgid "Proxy Server"
+msgstr "প্রক্সি সার্ভার"
+
+# tithi
+#
+#
+#
+#
+#
+# Translated by sadia
+msgid "Proxy preferences are configured in GNOME preferences"
+msgstr "GNOME পছন্দসমূহের মধ্যে প্রক্সি পছন্দসমূহ কনফিগার করা হয়েছে "
+
+# tithi
+msgid "<b>Proxy configuration program was not found.</b>"
+msgstr "<b>প্রক্সির কনফিগারেশন প্রোগ্রাম খুঁজে পাওয়া যায়নি।</b>"
+
+msgid "Configure _Proxy"
+msgstr "প্রক্সি কনফিগারেশন  (_P)"
+
+# Translated by sadia
+#. This is a global option that affects SOCKS4 usage even with
+#. * account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr "SOCKS4 প্রক্সি সম্বলিত দূরবর্তী DNS ব্যবহার করা হবে (_D)"
+
+# Translated by sadia
+msgid "Proxy t_ype:"
+msgstr "প্রক্সির ধরণ: (_y)"
+
+msgid "No proxy"
+msgstr "কোনো প্রক্সি নেই"
+
+# Translated by sadia
+msgid "P_ort:"
+msgstr "পোর্ট: (_o)"
+
+# Translated by sadia
+msgid "User_name:"
+msgstr "ব্যবহারকারীর নাম: (_n)"
 
 msgid "Log _format:"
 msgstr "লগ বিন্যাস (_f):"
@@ -14204,24 +14523,18 @@ msgstr "নিষ্ক্রিয় সময় দেখানো হবে (_
 msgid "Based on keyboard or mouse use"
 msgstr "কীবোর্ড বা মাউসের ব্যবহারের উপর ভিত্তি করে"
 
+msgid "_Minutes before becoming idle:"
+msgstr "নিষ্ক্রিয় হওয়ার মিনিটখানেক আগে (_M):"
+
+# Translated by sadia
+msgid "Change to this status when _idle:"
+msgstr "নিষ্ক্রিয় থাকলে এই স্ট্যাটাসে রূপান্তর করা হবে: (_i)"
+
 msgid "_Auto-reply:"
 msgstr "স্বয়ংক্রিয়-উত্তর (_A):"
 
 msgid "When both away and idle"
 msgstr "যখন অন্যত্র এবং নিষ্ক্রিয়"
-
-#. Auto-away stuff
-msgid "Auto-away"
-msgstr "স্বয়ংক্রিয়ভাবে অন্যত্র"
-
-msgid "_Minutes before becoming idle:"
-msgstr "নিষ্ক্রিয় হওয়ার মিনিটখানেক আগে (_M):"
-
-msgid "Change status when _idle"
-msgstr "নিষ্ক্রিয় থাকলে অবস্থা পরিবর্তন করা হবে (_i)"
-
-msgid "Change _status to:"
-msgstr "অবস্থা পরিবর্তন (_s):"
 
 # tithi
 #. Signon status stuff
@@ -14239,14 +14552,15 @@ msgstr "শুরুতে প্রয়োগ করার অবস্থা
 msgid "Interface"
 msgstr "ইন্টারফেস"
 
-msgid "Smiley Themes"
-msgstr "স্মাইলি থীম"
-
 msgid "Browser"
 msgstr "ব্রাউজার"
 
 msgid "Status / Idle"
 msgstr "অবস্থা / নিষ্ক্রিয়"
+
+# Translated by sadia
+msgid "Themes"
+msgstr "থীম"
 
 msgid "Allow all users to contact me"
 msgstr "সব ব্যবহারকারীকে আমার সাথে যোগাযোগের অনুমতি দেয়া হবে"
@@ -14562,6 +14876,9 @@ msgstr "শব্দ বাজানো হবে (_P)"
 msgid "_Save File"
 msgstr "ফাইল সংরক্ষণ (_S)"
 
+msgid "Do you really want to clear?"
+msgstr "আপনি কি নিশ্চিতভাবে মুছে ফেলতে চান?"
+
 msgid "Select color"
 msgstr "রং নির্বাচন"
 
@@ -14600,10 +14917,6 @@ msgstr "পিজিন টুলটিপ"
 # tithi
 msgid "Pidgin smileys"
 msgstr "পিজিন স্মাইলি"
-
-# tithi
-msgid "Penguin Pimps"
-msgstr "পেঙ্গুইন পিম্প"
 
 # tithi
 msgid "Selecting this disables graphical emoticons."
@@ -15265,6 +15578,10 @@ msgstr "GtkTreeView অনুভূমিক বিভাজন"
 msgid "Conversation Entry"
 msgstr "কথোপকথন ভুক্তি"
 
+# Translated by sadia
+msgid "Conversation History"
+msgstr "কথোপকথন ইতিহাস"
+
 msgid "Request Dialog"
 msgstr "অনুরোধের ডায়ালগ"
 
@@ -15631,38 +15948,53 @@ msgstr ""
 "এই প্লাগইন ব্যবহারকারীকে কথোপকথন এবং বার্তার টাইমস্টাম্পের বিন্যাস স্বনির্বাচন করার "
 "অনুমতি দেয়।"
 
-#, fuzzy
+# Translated by sadia
 msgid "Audio"
-msgstr "স্বয়ংক্রিয়"
+msgstr "অডিও"
 
-#, fuzzy
+# Translated by sadia
 msgid "Video"
-msgstr "ভিডিও"
+msgstr "ভিডিও "
 
+# Translated by sadia
 msgid "Output"
-msgstr ""
+msgstr "আউটপুট"
 
-#, fuzzy
+# Translated by sadia
 msgid "_Plugin"
-msgstr "প্লাগইন"
+msgstr "প্লাগইন (_P)"
 
 # tithi
-#, fuzzy
+#
+#
+#
+#
+#
+#
+# Translated by sadia
 msgid "_Device"
-msgstr "ডিভাইস"
+msgstr "ডিভাইস (_D)"
 
+# Translated by sadia
 msgid "Input"
-msgstr ""
+msgstr "ইনপুট"
 
-#, fuzzy
+# Translated by sadia
 msgid "P_lugin"
-msgstr "প্লাগইন"
+msgstr "প্লাগইন (_l)"
 
 # tithi
-#, fuzzy
+#
+#
+#
+#
+#
+#
+# Translated by sadia
 msgid "D_evice"
-msgstr "ডিভাইস"
+msgstr "ডিভাইস (_e)"
 
+# Translated by sadia
 #. *< magic
 #. *< major version
 #. *< minor version
@@ -15672,18 +16004,19 @@ msgstr "ডিভাইস"
 #. *< dependencies
 #. *< priority
 #. *< id
-#, fuzzy
 msgid "Voice/Video Settings"
-msgstr "সেটিং সম্পাদনা"
+msgstr "ভয়েস/ভিডিও সেটিংসমূহ  "
 
+# Translated by sadia
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
-msgstr ""
+msgstr "আপনার মাইক্রোফোন এবং ওয়েবক্যাম কনফিগার করুন।"
 
+# Translated by sadia
 #. *< summary
 msgid "Configure microphone and webcam settings for voice/video calls."
-msgstr ""
+msgstr "ভয়েস/ভিডিও কলের জন্য মাইক্রোফোন এবং ওয়েবক্যামের সেটিংসমূহ কনফিগার করা হবে।"
 
 msgid "Opacity:"
 msgstr "অস্বচ্ছতা:"
@@ -15749,9 +16082,15 @@ msgid "_Start %s on Windows startup"
 msgstr "উইন্ডোজ আরম্ভের সময় %s চালু করা হবে (_S)"
 
 # tithi
-#, fuzzy
+#
+#
+#
+#
+#
+#
+# Translated by sadia
 msgid "Allow multiple instances"
-msgstr "একসাথে একাধিক লগইন অনুমোদন করা হবে"
+msgstr "একাধিক লগইন অনুমোদন করা হবে"
 
 msgid "_Dockable Buddy List"
 msgstr "ডকযোগ্য বন্ধু তালিকা (_D)"
@@ -15815,6 +16154,61 @@ msgstr "নতুন XMPP স্তবক পাঠান এবং গ্রহ
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "এই প্লাগইনটি XMPP সার্ভার বা ক্লায়েন্ট ডিবাগ করার জন্য কার্যকর।"
+
+# Translated by sadia
+#~ msgid "%s"
+#~ msgstr "%s"
+
+#~ msgid ""
+#~ "Unable to find alternative XMPP connection methods after failing to "
+#~ "connect directly."
+#~ msgstr ""
+#~ "সরাসরি সংযোগ স্থাপনে ব্যর্থ হওয়ার পর বিকল্প XMPP সংযোগ প্রক্রিয়া খুঁজে পাওয়া "
+#~ "যায়নি।"
+
+# tithi
+#
+#
+#
+# Translated by sadia
+#~ msgid "CAPTCHA requested. Logging into the AIM/ICQ website may fix this."
+#~ msgstr ""
+#~ "ক্যাপচা অনুরোধ করা হয়েছে। AIM/ICQ ওয়েবসাইটে লগ ইন করা হলে হয়ত এটা নির্দিষ্ট "
+#~ "করা যেতে পারে।"
+
+# Translated by sadia
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "আপনি সর্বশেষ যে কাজটি করার চেষ্টা করেছেন তা সম্পাদন করা যায়নি কারণ আপনি "
+#~ "দ্রুততার সীমা অতিক্রম করেছেন। অনুগ্রহ করে ১০ সেকেন্ড অপেক্ষা করুন এবং পুনরায় চেষ্টা "
+#~ "করুন।\n"
+
+# tithi mark
+#, fuzzy
+#~ msgid "(Default)"
+#~ msgstr "(ডিফল্ট)"
+
+# tithi
+#~ msgid "Install Theme"
+#~ msgstr "থীম ইনস্টল করুন"
+
+#~ msgid "Icon"
+#~ msgstr "আইকন"
+
+# tithi
+#~ msgid "Use document font from _theme"
+#~ msgstr "থীম থেকে নথির ফন্ট ব্যবহার করা হবে (_t)"
+
+#~ msgid "Proxy Server &amp; Browser"
+#~ msgstr "প্রক্সি সার্ভার &amp; ব্রাউজার"
+
+#~ msgid "Auto-away"
+#~ msgstr "স্বয়ংক্রিয়ভাবে অন্যত্র"
+
+#~ msgid "Change _status to:"
+#~ msgstr "অবস্থা পরিবর্তন (_s):"
 
 # tithi
 #, fuzzy

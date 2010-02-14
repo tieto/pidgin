@@ -1144,7 +1144,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_user_set_object(user, msnobj);
 
-	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
+	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->extinfo && user->extinfo->phone_mobile && user->extinfo->phone_mobile[0] == '+');
 	msn_user_set_clientid(user, clientid);
 	msn_user_set_network(user, networkid);
 
@@ -1316,7 +1316,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 
 	clientid = strtoul(cmd->params[4], NULL, 10);
-	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
+	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->extinfo && user->extinfo->phone_mobile && user->extinfo->phone_mobile[0] == '+');
 
 	msn_user_set_clientid(user, clientid);
 	msn_user_set_network(user, networkid);
@@ -1599,6 +1599,63 @@ sbs_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	/*get the payload content*/
 }
 
+static void parse_currentmedia(MsnUser *user, const char *cmedia)
+{
+	char **cmedia_array;
+	int strings = 0;
+
+	if (!cmedia || cmedia[0] == '\0') {
+		purple_debug_info("msn", "No currentmedia string\n");
+		return;
+	}
+
+	purple_debug_info("msn", "Parsing currentmedia string: \"%s\"\n", cmedia);
+
+	cmedia_array = g_strsplit(cmedia, "\\0", 0);
+
+	/*
+	 * 0: Application
+	 * 1: 'Music'/'Games'/'Office'
+	 * 2: '1' if enabled, '0' if not
+	 * 3: Format (eg. {0} by {1})
+	 * 4: Title
+	 * If 'Music':
+	 *  5: Artist
+	 *  6: Album
+	 *  7: ?
+	 */
+#if GLIB_CHECK_VERSION(2,6,0)
+	strings  = g_strv_length(cmedia_array);
+#else
+	while (cmedia_array[++strings] != NULL);
+#endif
+
+	if (strings >= 4 && !strcmp(cmedia_array[2], "1")) {
+		if (user->extinfo == NULL)
+			user->extinfo = g_new0(MsnUserExtendedInfo, 1);
+		else {
+			g_free(user->extinfo->media_album);
+			g_free(user->extinfo->media_artist);
+			g_free(user->extinfo->media_title);
+		}
+
+		if (!strcmp(cmedia_array[1], "Music"))
+			user->extinfo->media_type = CURRENT_MEDIA_MUSIC;
+		else if (!strcmp(cmedia_array[1], "Games"))
+			user->extinfo->media_type = CURRENT_MEDIA_GAMES;
+		else if (!strcmp(cmedia_array[1], "Office"))
+			user->extinfo->media_type = CURRENT_MEDIA_OFFICE;
+		else
+			user->extinfo->media_type = CURRENT_MEDIA_UNKNOWN;
+
+		user->extinfo->media_title = g_strdup(cmedia_array[strings == 4 ? 3 : 4]);
+		user->extinfo->media_artist = strings > 5 ? g_strdup(cmedia_array[5]) : NULL;
+		user->extinfo->media_album = strings > 6 ? g_strdup(cmedia_array[6]) : NULL;
+	}
+
+	g_strfreev(cmedia_array);
+}
+
 /*
  * Get the UBX's PSM info
  * Post it to the User status
@@ -1613,7 +1670,6 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	MsnUser *user;
 	const char *passport;
 	char *psm_str, *str;
-	CurrentMedia media = {CURRENT_MEDIA_UNKNOWN, NULL, NULL, NULL};
 
 	session = cmdproc->session;
 	account = session->account;
@@ -1628,24 +1684,26 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		return;
 	}
 
+	/* Free any existing media info for this user */
+	if (user->extinfo) {
+		g_free(user->extinfo->media_album);
+		g_free(user->extinfo->media_artist);
+		g_free(user->extinfo->media_title);
+		user->extinfo->media_album = NULL;
+		user->extinfo->media_artist = NULL;
+		user->extinfo->media_title = NULL;
+	}
+
 	if (len != 0) {
 		psm_str = msn_get_psm(cmd->payload,len);
 		msn_user_set_statusline(user, psm_str);
 		g_free(psm_str);
 
 		str = msn_get_currentmedia(cmd->payload, len);
-		if (msn_parse_currentmedia(str, &media))
-			msn_user_set_currentmedia(user, &media);
-		else
-			msn_user_set_currentmedia(user, NULL);
-		g_free(media.title);
-		g_free(media.album);
-		g_free(media.artist);
+		parse_currentmedia(user, str);
 		g_free(str);
-
 	} else {
 		msn_user_set_statusline(user, NULL);
-		msn_user_set_currentmedia(user, NULL);
 	}
 
 	msn_user_update(user);

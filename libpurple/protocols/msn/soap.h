@@ -22,17 +22,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
+#ifndef MSN_SOAP_H
+#define MSN_SOAP_H
 
-#ifndef _MSN_SOAP_H
-#define _MSN_SOAP_H
-
-#include "session.h"
-#include "sslconn.h"
-#include "xmlnode.h"
+typedef struct _MsnSoapMessage MsnSoapMessage;
 
 #include <glib.h>
 
-typedef struct _MsnSoapMessage MsnSoapMessage;
+#include "xmlnode.h"
+
+#include "session.h"
+#include "sslconn.h"
+
 typedef void (*MsnSoapCallback)(MsnSoapMessage *request,
 	MsnSoapMessage *response, gpointer cb_data);
 
@@ -48,4 +49,4 @@ void msn_soap_message_send(MsnSession *session, MsnSoapMessage *message,
 	const char *host, const char *path, gboolean secure,
 	MsnSoapCallback cb, gpointer cb_data);
 
-#endif
+#endif /* MSN_SOAP_H */

@@ -21,25 +21,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_SLPCALL_H_
-#define _MSN_SLPCALL_H_
-
-#include "internal.h"
-#include "ft.h"
+#ifndef MSN_SLPCALL_H
+#define MSN_SLPCALL_H
 
 typedef struct _MsnSlpCall MsnSlpCall;
-
-#include "slplink.h"
-
-/* The official client seems to timeout slp calls after 5 minutes */
-#define MSN_SLPCALL_TIMEOUT 300
 
 typedef enum
 {
 	MSN_SLPCALL_ANY,
 	MSN_SLPCALL_DC
-
 } MsnSlpCallType;
+
+#include "internal.h"
+
+#include "ft.h"
+
+#include "slplink.h"
+
+/* The official client seems to timeout slp calls after 5 minutes */
+#define MSN_SLPCALL_TIMEOUT 300
 
 struct _MsnSlpCall
 {
@@ -95,4 +95,4 @@ void msn_slpcall_invite(MsnSlpCall *slpcall, const char *euf_guid,
 						 int app_id, const char *context);
 void msn_slpcall_close(MsnSlpCall *slpcall);
 
-#endif /* _MSN_SLPCALL_H_ */
+#endif /* MSN_SLPCALL_H */

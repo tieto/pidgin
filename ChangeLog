@@ -1,25 +1,102 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.6.6 (??/??/20??):
+	libpurple:
+	* Fix 'make check' on OS X. (David Fang)
+	* Fix a quirk in purple_markup_html_to_xhtml that caused some messages
+	  to be improperly converted to XHTML.
+	* Set "controlling-mode" correctly when initializing a media session.
+	  Fixes receiving voice calls from Psi.
+	* When looking up DNS records, use the type of record returned by the
+	  server (instead of the type we asked for) to determine how to process
+	  the record.
+	* Fix an issue with parsing XML attributes that contain "&lt;br&gt;".
+	  See ChangeLog.API for more details.
+
+	General:
+	* Correctly disable all missing dependencies when using the
+	  --disable-missing-dependencies option.  (Gabriel Schulhof)
+
 	Gadu-Gadu:
 	* Fix display of avatars after a server-side change. (Krzysztof
 	  Klinikowski)
 
+	AIM:
+	* Allow setting and displaying icons between 1x1 and 100x100 pixels.
+	  Previously only icons between 48x48 and 50x50 were allowed.
+
 	MSN:
 	* File transfer requests will no longer cause a crash if you delete the
 	  file before the other side accepts.
-	* Recieved files will no longer hold an extra lock after completion,
+	* Received files will no longer hold an extra lock after completion,
 	  meaning they can be moved or deleted without complaints from your OS.
 	* Buddies who sign in from a second location will no longer cause an
 	  unnecessary chat window to open.
 	* Support setting an animated GIF as a buddy icon.
+	* Numerous code cleanups and memory savings.
+
+	MySpace:
+	* Fix a leak and crash when retrieving buddy icons.
 
 	XMPP:
+	* Less likely to send messages to a contact's idle/inactive resource.
+	  Previously, if a message was received from a specific resource,
+	  responses would be sent to that resource until either it went offline
+	  or a message is received from another resource.  Now, messages are sent
+	  to the bare JID upon receipt of any presence change from the contact.
 	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
 	  available when built without Cyrus SASL support.
 	* When getting info on a domain-only (server) JID, show uptime
 	  (when given by the result of the "last query") and don't show status as
 	  offline.
+	* Wrap XHTML messages in <p>, as described in XEP-0071, for compatibility
+	  with some clients.
+	* Don't do an SRV lookup for a STUN server associated with the account
+	  if one is already set globally in prefs.
+	* Don't send custom smileys larger than the recommended maximum object size
+	  specified in the BoB XEP.   This prevents a client from being
+	  disconnected by servers that dislike overly-large stanzas.
+	* Fix receiving messages without markup over an Openfire BOSH connection
+	  (forcibly put the stanzas in the jabber:client namespace).
+
+	Yahoo:
+	* Don't send <span> and </span> tags.  (Fartash Faghri)
+	* Support PingBox.  PingBoxes will appear as pbx/PingBoxName.  (Kartik
+	  Mohta)
+
+	Pidgin:
+	* Correctly size conversation and status box entries when the
+	  interior-focus style property is diabled. (Gabriel Schulhof)
+	* Correctly handle a multiline text field being required in a
+	  request form.  (Thanks to Florian Zeitz for finding this problem)
+	* Search friends by email-addresses in the buddy list. (Luoh Ren-Shan)
+	* Allow dropping an image on Custom Smiley window to add a new one.
+	* Prompt for confirmation when clearing a whiteboard (doodle) session.
+	  (Kartik Mohta)
+	* Use the "hand" cursor when hovering over usernames in chat history to
+	  indicate that the username is an actionable item.
+	* Double-clicking usernames in chat history will open an IM with that
+	  user.
+	* Put an icon on the "Filter" button in the debug window.
+	* Don't treat "/messages/like/this " as commands.
+	* Explicitly mark user interaction when inserting smilies from the
+	  toolbar so "Undo" correctly removes these smilies.
+	* Clicking "New" or "Saved" in the status selector menu while typing a
+	  status message no longer keeps the status entry area stuck in "typing"
+	  mode forever.
+	* Show tooltips for ellipsized conversation tabs.  On older systems,
+	  tooltips will show for all tabs.
+	* The File Transfers and Debug Window windows are no longer created as
+	  dialogs.  These windows should now have minimize buttons in many
+	  environments in which they were previously missing (including Windows).
+	* Smiley themes with Windows line endings no longer cause theme
+	  descriptions not to be displayed in the theme selector.
+
+	Finch:
+	* Rebindable 'move-first' and 'move-last' actions for tree widgets. So
+	  it is possible to jump to the first or last entry in the buddy list
+	  (and other such lists) by pressing home or end key (defaults)
+	  respectively.
 
 version 2.6.5 (01/08/2010):
 	libpurple:

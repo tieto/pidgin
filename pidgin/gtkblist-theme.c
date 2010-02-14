@@ -133,7 +133,7 @@ copy_font_and_color(const PidginThemeFont *pair)
 	copy->font  = g_strdup(pair->font);
 	strncpy(copy->color, pair->color, sizeof(copy->color) - 1);
 	if (pair->gdkcolor)
-		copy->gdkcolor = gdk_color_copy(pair->gdkcolor);
+		copy->gdkcolor = pair->gdkcolor ? gdk_color_copy(pair->gdkcolor) : NULL;
 	return copy;
 }
 
@@ -704,7 +704,7 @@ pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, const GdkColor 
 
 	if (priv->bgcolor)
 		gdk_color_free(priv->bgcolor);
-	priv->bgcolor = gdk_color_copy(color);
+	priv->bgcolor = color ? gdk_color_copy(color) : NULL;
 }
 
 void
@@ -743,7 +743,7 @@ pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, const 
 
 	if (priv->expanded_color)
 		gdk_color_free(priv->expanded_color);
-	priv->expanded_color = gdk_color_copy(color);
+	priv->expanded_color = color ? gdk_color_copy(color) : NULL;
 }
 
 void
@@ -770,7 +770,7 @@ pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, const
 
 	if (priv->collapsed_color)
 		gdk_color_free(priv->collapsed_color);
-	priv->collapsed_color = gdk_color_copy(color);
+	priv->collapsed_color = color ? gdk_color_copy(color) : NULL;
 }
 
 void
@@ -797,7 +797,7 @@ pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, const GdkColor *co
 
 	if (priv->contact_color)
 		gdk_color_free(priv->contact_color);
-	priv->contact_color = gdk_color_copy(color);
+	priv->contact_color = color ? gdk_color_copy(color) : NULL;
 }
 
 void

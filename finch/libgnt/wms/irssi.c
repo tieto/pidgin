@@ -207,11 +207,15 @@ static gboolean
 update_conv_window_title(GntNode *node)
 {
 	char title[256];
+	int x, y;
 	snprintf(title, sizeof(title), "%d: %s",
 			GPOINTER_TO_INT(g_object_get_data(G_OBJECT(node->me), "irssi-index")) + 1,
 			GNT_BOX(node->me)->title);
+
+	getyx(node->window, y, x);
 	wbkgdset(node->window, '\0' | COLOR_PAIR(gnt_widget_has_focus(node->me) ? GNT_COLOR_TITLE : GNT_COLOR_TITLE_D));
 	mvwaddstr(node->window, 0, 0, title);
+	wmove(node->window, y, x);
 	if (!gnt_is_refugee()) {
 		update_panels();
 		doupdate();
@@ -296,10 +300,15 @@ refresh_window(GntWidget *widget, GntNode *node, Irssi *irssi)
 
 	name = gnt_widget_get_name(widget);
 	if (name && strstr(name, "conversation-window")) {
+		int cx, cy, cw, ch;
+		gnt_widget_get_position(widget, &cx, &cy);
+		gnt_widget_get_size(widget, &cw, &ch);
 		find_window_position(irssi, widget, &hor, &vert);
 		get_xywh_for_frame(irssi, hor, vert, &x, &y, &w, &h);
-		gnt_wm_move_window(GNT_WM(irssi), widget, x, y);
-		gnt_wm_resize_window(GNT_WM(irssi), widget, w, h);
+		if (x != cx || y != cy)
+			gnt_wm_move_window(GNT_WM(irssi), widget, x, y);
+		if (w != cw || h != ch)
+			gnt_wm_resize_window(GNT_WM(irssi), widget, w, h);
 	}
 }
 

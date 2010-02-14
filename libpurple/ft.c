@@ -1090,17 +1090,22 @@ do_transfer(PurpleXfer *xfer)
 		if (ui_ops && ui_ops->ui_read) {
 			gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
 			if (tmp == 0) {
+				PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+
 				/*
-				 * UI isn't ready to send data. It will call
-				 * purple_xfer_ui_ready when ready, which sets back up this
-				 * watcher.
+				 * The UI claimed it was ready, but didn't have any data for
+				 * us...  It will call purple_xfer_ui_ready when ready, which
+				 * sets back up this watcher.
 				 */
 				if (xfer->watcher != 0) {
 					purple_input_remove(xfer->watcher);
 					xfer->watcher = 0;
 				}
 
-				return;
+				/* Need to indicate the prpl is still ready... */
+				priv->ready |= PURPLE_XFER_READY_PRPL;
+
+				g_return_if_reached();
 			} else if (tmp < 0) {
 				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
 				purple_xfer_cancel_local(xfer);
@@ -1181,6 +1186,8 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 			purple_debug_misc("xfer", "prpl is ready on ft %p, waiting for UI\n", xfer);
 			return;
 		}
+
+		priv->ready = PURPLE_XFER_READY_NONE;
 	}
 
 	do_transfer(xfer);

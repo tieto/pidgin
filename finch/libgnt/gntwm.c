@@ -889,6 +889,13 @@ shift_window(GntWM *wm, GntWidget *widget, int dir)
 	all = g_list_delete_link(all, list);
 	wm->cws->list = all;
 	gnt_ws_draw_taskbar(wm->cws, FALSE);
+	if (wm->cws->ordered) {
+		GntWidget *w = wm->cws->ordered->data;
+		GntNode *node = g_hash_table_lookup(wm->nodes, w);
+		top_panel(node->panel);
+		update_panels();
+		doupdate();
+	}
 }
 
 static gboolean
@@ -1106,12 +1113,20 @@ static gboolean
 refresh_screen(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
+	GList *iter;
 
 	endwin();
 	refresh();
 
 	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, GINT_TO_POINTER(TRUE));
 	g_signal_emit(wm, signals[SIG_TERMINAL_REFRESH], 0);
+
+	for (iter = g_list_last(wm->cws->ordered); iter; iter = iter->prev) {
+		GntWidget *w = iter->data;
+		GntNode *node = g_hash_table_lookup(wm->nodes, w);
+		top_panel(node->panel);
+	}
+
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
 	update_screen(wm);
 	curs_set(0);   /* endwin resets the cursor to normal */

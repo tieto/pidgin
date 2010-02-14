@@ -884,6 +884,8 @@ char *yahoo_html_to_codes(const char *src)
 						}
 						g_free(etag);
 					}
+				} else if (g_str_equal(tag_name, "span") || g_str_equal(tag_name, "/span")) {
+					/* Do nothing */
 				} else {
 					/* We don't know what the tag is. Send it unmodified. */
 					g_string_append(dest, tag);
@@ -930,6 +932,8 @@ YahooFederation yahoo_get_federation_from_name(const char *who)
 			fed = YAHOO_FEDERATION_OCS;
 		else if (!g_ascii_strncasecmp(who, "ibm", 3))
 			fed = YAHOO_FEDERATION_IBM;
+		else if (!g_ascii_strncasecmp(who, "pbx", 3))
+			fed = YAHOO_FEDERATION_PBX;
 	}
 	return fed;
 }
