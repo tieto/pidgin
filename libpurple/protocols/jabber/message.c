@@ -930,19 +930,12 @@ jabber_message_get_smileyfied_xhtml(const gchar *xhtml, const GList *smileys)
 }
 
 static gboolean
-jabber_conv_support_custom_smileys(const PurpleConnection *gc,
+jabber_conv_support_custom_smileys(JabberStream *js,
 								   PurpleConversation *conv,
 								   const gchar *who)
 {
-	JabberStream *js = (JabberStream *) gc->proto_data;
 	JabberBuddy *jb;
 	JabberChat *chat;
-
-	if (!js) {
-		purple_debug_error("jabber",
-			"jabber_conv_support_custom_smileys: could not find stream\n");
-		return FALSE;
-	}
 
 	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_IM:
@@ -979,7 +972,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 		purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, jm->to,
 			account);
 
-	if (jabber_conv_support_custom_smileys(jm->js->gc, conv, jm->to)) {
+	if (jabber_conv_support_custom_smileys(jm->js, conv, jm->to)) {
 		GList *found_smileys = jabber_message_xhtml_find_smileys(xhtml);
 
 		if (found_smileys) {
