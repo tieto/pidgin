@@ -65,7 +65,12 @@ void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
 {
 	PurpleAccount *account;
 	PurplePresence *presence;
+	JabberBuddy *jb;
+	JabberBuddyResource *jbr;
 	const char *username;
+	JabberBuddyState state;
+	char *msg;
+	int priority;
 
 	g_return_if_fail(js->user != NULL);
 
@@ -74,29 +79,27 @@ void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
 	presence = purple_account_get_presence(account);
 	if (status == NULL)
 		status = purple_presence_get_active_status(presence);
+	purple_status_to_jabber(status, &state, &msg, &priority);
 
+	jb = js->user_jb;
+
+	if (state == JABBER_BUDDY_STATE_UNAVAILABLE ||
+			state == JABBER_BUDDY_STATE_UNKNOWN) {
+		jabber_buddy_remove_resource(jb, js->user->resource);
+	} else {
+		jbr = jabber_buddy_track_resource(jb, js->user->resource, priority,
+				state, msg);
+		jbr->idle = purple_presence_is_idle(presence) ?
+				purple_presence_get_idle_time(presence) : 0;
+	}
+
+	/*
+	 * While we need to track the status of this resource, the core
+	 * only cares if we're on our own buddy list.
+	 */
 	if (purple_find_buddy(account, username)) {
-		JabberBuddy *jb = jabber_buddy_find(js, username, TRUE);
-		JabberBuddyResource *jbr;
-		JabberBuddyState state;
-		char *msg;
-		int priority;
-
-		g_return_if_fail(jb != NULL);
-
-		purple_status_to_jabber(status, &state, &msg, &priority);
-
-		if (state == JABBER_BUDDY_STATE_UNAVAILABLE ||
-				state == JABBER_BUDDY_STATE_UNKNOWN) {
-			jabber_buddy_remove_resource(jb, js->user->resource);
-		} else {
-			jbr = jabber_buddy_track_resource(jb, js->user->resource, priority,
-					state, msg);
-			jbr->idle = purple_presence_is_idle(presence) ?
-					purple_presence_get_idle_time(presence) : 0;
-		}
-
-		if ((jbr = jabber_buddy_find_resource(jb, NULL))) {
+		jbr = jabber_buddy_find_resource(jb, NULL);
+		if (jbr) {
 			purple_prpl_got_user_status(account, username,
 					jabber_buddy_state_get_status_id(jbr->state),
 					"priority", jbr->priority,
@@ -108,8 +111,8 @@ void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
 					msg ? "message" : NULL, msg,
 					NULL);
 		}
-		g_free(msg);
 	}
+	g_free(msg);
 }
 
 void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
