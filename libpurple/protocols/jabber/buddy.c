@@ -177,48 +177,45 @@ static gint resource_compare_cb(gconstpointer a, gconstpointer b)
 JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		const char *resource)
 {
-	JabberBuddyResource *jbr = NULL;
 	GList *l;
 
-	if(!jb)
+	if (!jb)
 		return NULL;
 
-	for(l = jb->resources; l; l = l->next)
+	if (resource == NULL)
+		return jb->resources ? jb->resources->data : NULL;
+
+	for (l = jb->resources; l; l = l->next)
 	{
-		JabberBuddyResource *tmp = (JabberBuddyResource *) l->data;
-		if (!jbr && !resource) {
-			jbr = tmp;
-		} else if (!resource) {
-			if (resource_compare_cb(tmp, jbr) < 0)
-				jbr = tmp;
-		} else if(tmp->name) {
-			if(!strcmp(tmp->name, resource)) {
-				jbr = tmp;
-				break;
-			}
-		}
+		JabberBuddyResource *jbr = l->data;
+		if (g_str_equal(resource, jbr->name))
+			return jbr;
 	}
 
-	return jbr;
+	return NULL;
 }
 
 JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *resource,
 		int priority, JabberBuddyState state, const char *status)
 {
+	/* TODO: Optimization: Only reinsert if priority+state changed */
 	JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, resource);
-	if(!jbr) {
+	if (jbr) {
+		jb->resources = g_list_remove(jb->resources, jbr);
+	} else {
 		jbr = g_new0(JabberBuddyResource, 1);
 		jbr->jb = jb;
 		jbr->name = g_strdup(resource);
 		jbr->capabilities = JABBER_CAP_NONE;
 		jbr->tz_off = PURPLE_NO_TZ_OFF;
-		jb->resources = g_list_append(jb->resources, jbr);
 	}
 	jbr->priority = priority;
 	jbr->state = state;
 	g_free(jbr->status);
 	jbr->status = g_strdup(status);
 
+	jb->resources = g_list_insert_sorted(jb->resources, jbr,
+	                                     resource_compare_cb);
 	return jbr;
 }
 
@@ -802,6 +799,8 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 		jbr = jabber_buddy_find_resource(jbi->jb, resource_name);
 		add_jbr_info(jbi, resource_name, jbr);
 	} else {
+		/* TODO: This is in priority-ascending order (lowest prio first), because
+		 * everything is prepended.  Is that ok? */
 		for (resources = jbi->jb->resources; resources; resources = resources->next) {
 			jbr = resources->data;
 

@@ -31,6 +31,13 @@ typedef struct _JabberBuddy JabberBuddy;
 #include "jutil.h"
 
 struct _JabberBuddy {
+	/**
+	 * A sorted list of resources in priority descending order.
+	 * This means that the first resource in the list is the
+	 * "most available" (see resource_compare_cb in buddy.c for
+	 * details).  Don't play with this yourself, let
+	 * jabber_buddy_track_resource and jabber_buddy_remove_resource do it.
+	 */
 	GList *resources;
 	char *error_msg;
 	enum {
