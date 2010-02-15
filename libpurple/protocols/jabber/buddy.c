@@ -91,6 +91,10 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 	return jb;
 }
 
+/* Returns -1 if a is a higher priority resource than b, or is
+ * "more available" than b.  0 if they're the same, and 1 if b is
+ * higher priority/more available than a.
+ */
 static gint resource_compare_cb(gconstpointer a, gconstpointer b)
 {
 	const JabberBuddyResource *jbra = a;
@@ -98,9 +102,10 @@ static gint resource_compare_cb(gconstpointer a, gconstpointer b)
 	JabberBuddyState state_a, state_b;
 
 	if (jbra->priority != jbrb->priority)
-		return jbra->priority > jbrb->priority ? 1 : -1;
+		return jbra->priority > jbrb->priority ? -1 : 1;
 
 	/* Fold the states for easier comparison */
+	/* TODO: Differentiate online/chat and away/dnd? */
 	switch (jbra->state) {
 		case JABBER_BUDDY_STATE_ONLINE:
 		case JABBER_BUDDY_STATE_CHAT:
@@ -146,27 +151,27 @@ static gint resource_compare_cb(gconstpointer a, gconstpointer b)
 			return 0;
 		else if ((jbra->idle && !jbrb->idle) ||
 				(jbra->idle && jbrb->idle && jbra->idle < jbrb->idle))
-			return -1;
-		else
 			return 1;
+		else
+			return -1;
 	}
 
 	if (state_a == JABBER_BUDDY_STATE_ONLINE)
-		return 1;
+		return -1;
 	else if (state_a == JABBER_BUDDY_STATE_AWAY &&
 				(state_b == JABBER_BUDDY_STATE_XA ||
 				 state_b == JABBER_BUDDY_STATE_UNAVAILABLE ||
 				 state_b == JABBER_BUDDY_STATE_UNKNOWN))
-		return 1;
+		return -1;
 	else if (state_a == JABBER_BUDDY_STATE_XA &&
 				(state_b == JABBER_BUDDY_STATE_UNAVAILABLE ||
 				 state_b == JABBER_BUDDY_STATE_UNKNOWN))
-		return 1;
+		return -1;
 	else if (state_a == JABBER_BUDDY_STATE_UNAVAILABLE &&
 				state_b == JABBER_BUDDY_STATE_UNKNOWN)
-		return 1;
+		return -1;
 
-	return -1;
+	return 1;
 }
 
 JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
@@ -184,7 +189,7 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		if (!jbr && !resource) {
 			jbr = tmp;
 		} else if (!resource) {
-			if (resource_compare_cb(tmp, jbr) > 0)
+			if (resource_compare_cb(tmp, jbr) < 0)
 				jbr = tmp;
 		} else if(tmp->name) {
 			if(!strcmp(tmp->name, resource)) {
