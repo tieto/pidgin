@@ -51,6 +51,7 @@ typedef enum _PurpleSoundEventID
 	PURPLE_SOUND_CHAT_SAY,         /**< Someone else says somthing in a chat. */
 	PURPLE_SOUND_POUNCE_DEFAULT,   /**< Default sound for a buddy pounce.     */
 	PURPLE_SOUND_CHAT_NICK,        /**< Someone says your name in a chat.     */
+	PURPLE_SOUND_GOT_ATTENTION,	   /**< Got an attention					  */
 	PURPLE_NUM_SOUNDS              /**< Total number of sounds.               */
 
 } PurpleSoundEventID;

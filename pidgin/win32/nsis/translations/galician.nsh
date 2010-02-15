@@ -9,7 +9,6 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"O entorno de execución de GTK+ falta ou necesita ser actualizado.$\rPor favor, instale a versión v${GTK_MIN_VERSION} do executable GTK+ ou algunha posterior."
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Seguinte >"
@@ -23,14 +22,11 @@
 
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Atopouse unha versión antiga do executable de GTK+. ¿Desexa actualizala?$\rObservación: $(^Name) non funcionará a menos que o faga."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visite a páxina Web de Pidgin Windows"
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Erro ao instalar o executable GTK+."
-!define GTK_BAD_INSTALL_PATH			"Non se puido acceder ou crear a ruta que vd. indicou."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1         "O desinstalador non puido atopar as entradas no rexistro de Pidgin.$\rÉ probable que outro usuario instalara a aplicación."
