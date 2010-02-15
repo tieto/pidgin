@@ -160,7 +160,7 @@ purple_network_get_local_system_ip(int fd)
 	struct ifconf ifc;
 	struct ifreq *ifr;
 	struct sockaddr_in *sinptr;
-	guint32 lhost = htonl(127 * 256 * 256 * 256 + 1);
+	guint32 lhost = htonl((127 << 24) + 1); /* 127.0.0.1 */
 	long unsigned int add;
 	int source = fd;
 
@@ -204,12 +204,12 @@ GList *
 purple_network_get_all_local_system_ips(void)
 {
 	GList *result = NULL;
-	int source = source = socket(PF_INET,SOCK_STREAM, 0);
+	int source = socket(PF_INET,SOCK_STREAM, 0);
 	char buffer[1024];
 	char *tmp;
 	struct ifconf ifc;
 	struct ifreq *ifr;
-	
+
 	ifc.ifc_len = sizeof(buffer);
 	ifc.ifc_req = (struct ifreq *)buffer;
 	ioctl(source, SIOCGIFCONF, &ifc);
