@@ -24,21 +24,11 @@
 #ifndef PURPLE_JABBER_BUDDY_H_
 #define PURPLE_JABBER_BUDDY_H_
 
-typedef enum {
-	JABBER_BUDDY_STATE_UNKNOWN = -2,
-	JABBER_BUDDY_STATE_ERROR = -1,
-	JABBER_BUDDY_STATE_UNAVAILABLE = 0,
-	JABBER_BUDDY_STATE_ONLINE,
-	JABBER_BUDDY_STATE_CHAT,
-	JABBER_BUDDY_STATE_AWAY,
-	JABBER_BUDDY_STATE_XA,
-	JABBER_BUDDY_STATE_DND
-} JabberBuddyState;
-
 typedef struct _JabberBuddy JabberBuddy;
 
 #include "jabber.h"
 #include "caps.h"
+#include "jutil.h"
 
 struct _JabberBuddy {
 	GList *resources;
@@ -109,17 +99,6 @@ GList *jabber_blist_node_menu(PurpleBlistNode *node);
 void jabber_set_info(PurpleConnection *gc, const char *info);
 void jabber_setup_set_info(PurplePluginAction *action);
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
-
-/* state -> readable name */
-const char *jabber_buddy_state_get_name(JabberBuddyState state);
-/* state -> core id */
-const char *jabber_buddy_state_get_status_id(JabberBuddyState state);
-/* state -> show attr (for presence stanza) */
-const char *jabber_buddy_state_get_show(JabberBuddyState state);
-/* core id -> state */
-JabberBuddyState jabber_buddy_status_id_get_state(const char *id);
-/* show attr (presence stanza) -> state */
-JabberBuddyState jabber_buddy_show_get_state(const char *id);
 
 void jabber_user_search(JabberStream *js, const char *directory);
 void jabber_user_search_begin(PurplePluginAction *);
