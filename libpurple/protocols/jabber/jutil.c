@@ -698,7 +698,7 @@ JabberBuddyState jabber_buddy_show_get_state(const char *id)
 	g_return_val_if_fail(id != NULL, JABBER_BUDDY_STATE_UNKNOWN);
 
 	for (i = 0; i < G_N_ELEMENTS(jabber_statuses); ++i)
-		if (g_str_equal(id, jabber_statuses[i].show))
+		if (jabber_statuses[i].show && g_str_equal(id, jabber_statuses[i].show))
 			return jabber_statuses[i].state;
 
 	purple_debug_warning("jabber", "Invalid value of presence <show/> "
