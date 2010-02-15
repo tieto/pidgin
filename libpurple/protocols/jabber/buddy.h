@@ -110,10 +110,15 @@ void jabber_set_info(PurpleConnection *gc, const char *info);
 void jabber_setup_set_info(PurplePluginAction *action);
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
 
+/* state -> readable name */
 const char *jabber_buddy_state_get_name(JabberBuddyState state);
+/* state -> core id */
 const char *jabber_buddy_state_get_status_id(JabberBuddyState state);
+/* state -> show attr (for presence stanza) */
 const char *jabber_buddy_state_get_show(JabberBuddyState state);
+/* core id -> state */
 JabberBuddyState jabber_buddy_status_id_get_state(const char *id);
+/* show attr (presence stanza) -> state */
 JabberBuddyState jabber_buddy_show_get_state(const char *id);
 
 void jabber_user_search(JabberStream *js, const char *directory);
