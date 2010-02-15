@@ -951,6 +951,10 @@ jabber_login(PurpleAccount *account)
 	if (js == NULL)
 		return;
 
+	/* TODO: Remove this at some point.  Added 2010-02-14 (v2.6.6) */
+	if (g_str_equal("proxy.jabber.org", purple_account_get_string(account, "ft_proxies", "")))
+		purple_account_set_string(account, "ft_proxies", JABBER_DEFAULT_FT_PROXIES);
+
 	/*
 	 * Calculate the avatar hash for our current image so we know (when we
 	 * fetch our vCard and PEP avatar) if we should send our avatar to the

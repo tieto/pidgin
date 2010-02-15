@@ -59,6 +59,9 @@ version 2.6.6 (??/??/20??):
 	  disconnected by servers that dislike overly-large stanzas.
 	* Fix receiving messages without markup over an Openfire BOSH connection
 	  (forcibly put the stanzas in the jabber:client namespace).
+	* The default value for the file transfer proxies is automatically
+	  updated when an account connects, if it is still the old (broken)
+	  default (from 'proxy.jabber.org' to 'proxy.eu.jabber.org').
 
 	Yahoo:
 	* Don't send <span> and </span> tags.  (Fartash Faghri)

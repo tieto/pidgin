@@ -383,7 +383,7 @@ init_plugin(PurplePlugin *plugin)
 						  "ft_proxies",
 						/* TODO: Is this an acceptable default?
 						 * Also, keep this in sync as they add more servers */
-						  "proxy.eu.jabber.org");
+						  JABBER_DEFAULT_FT_PROXIES);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
 
