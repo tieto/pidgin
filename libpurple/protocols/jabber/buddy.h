@@ -97,7 +97,6 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		const char *resource);
 JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *resource,
 		int priority, JabberBuddyState state, const char *status);
-void jabber_buddy_resource_free(JabberBuddyResource *jbr);
 void jabber_buddy_remove_resource(JabberBuddy *jb, const char *resource);
 void jabber_buddy_get_info(PurpleConnection *gc, const char *who);
 

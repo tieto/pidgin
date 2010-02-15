@@ -57,6 +57,36 @@ typedef struct {
 	gchar *last_message;
 } JabberBuddyInfo;
 
+static void
+jabber_buddy_resource_free(JabberBuddyResource *jbr)
+{
+	g_return_if_fail(jbr != NULL);
+
+	jbr->jb->resources = g_list_remove(jbr->jb->resources, jbr);
+
+	while(jbr->commands) {
+		JabberAdHocCommands *cmd = jbr->commands->data;
+		g_free(cmd->jid);
+		g_free(cmd->node);
+		g_free(cmd->name);
+		g_free(cmd);
+		jbr->commands = g_list_delete_link(jbr->commands, jbr->commands);
+	}
+
+	while (jbr->caps.exts) {
+		g_free(jbr->caps.exts->data);
+		jbr->caps.exts = g_list_delete_link(jbr->caps.exts, jbr->caps.exts);
+	}
+
+	g_free(jbr->name);
+	g_free(jbr->status);
+	g_free(jbr->thread_id);
+	g_free(jbr->client.name);
+	g_free(jbr->client.version);
+	g_free(jbr->client.os);
+	g_free(jbr);
+}
+
 void jabber_buddy_free(JabberBuddy *jb)
 {
 	g_return_if_fail(jb != NULL);
@@ -217,34 +247,6 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 	jb->resources = g_list_insert_sorted(jb->resources, jbr,
 	                                     resource_compare_cb);
 	return jbr;
-}
-
-void jabber_buddy_resource_free(JabberBuddyResource *jbr)
-{
-	g_return_if_fail(jbr != NULL);
-
-	jbr->jb->resources = g_list_remove(jbr->jb->resources, jbr);
-
-	while(jbr->commands) {
-		JabberAdHocCommands *cmd = jbr->commands->data;
-		g_free(cmd->jid);
-		g_free(cmd->node);
-		g_free(cmd->name);
-		g_free(cmd);
-		jbr->commands = g_list_delete_link(jbr->commands, jbr->commands);
-	}
-
-	if (jbr->caps.exts) {
-		g_list_foreach(jbr->caps.exts, (GFunc)g_free, NULL);
-		g_list_free(jbr->caps.exts);
-	}
-	g_free(jbr->name);
-	g_free(jbr->status);
-	g_free(jbr->thread_id);
-	g_free(jbr->client.name);
-	g_free(jbr->client.version);
-	g_free(jbr->client.os);
-	g_free(jbr);
 }
 
 void jabber_buddy_remove_resource(JabberBuddy *jb, const char *resource)
