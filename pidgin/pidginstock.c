@@ -336,8 +336,7 @@ find_icon_file(PidginIconTheme *theme, const gchar *size, SizedStockIcon sized_i
 
 static void
 add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
-		const char *size, SizedStockIcon sized_icon, gboolean translucent,
-		gboolean size_wildcarded)
+		const char *size, SizedStockIcon sized_icon, gboolean translucent)
 {
 	char *filename;
 	GtkIconSource *source;
@@ -354,7 +353,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 	gtk_icon_source_set_direction(source, GTK_TEXT_DIR_LTR);
 	gtk_icon_source_set_direction_wildcarded(source, !sized_icon.rtl);
 	gtk_icon_source_set_size(source, sizeid);
-	gtk_icon_source_set_size_wildcarded(source, size_wildcarded);
+	gtk_icon_source_set_size_wildcarded(source, FALSE);
 	gtk_icon_source_set_state_wildcarded(source, TRUE);
 	gtk_icon_set_add_source(iconset, source);
 	gtk_icon_source_free(source);
@@ -364,7 +363,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 		gtk_icon_source_set_pixbuf(source, pixbuf);
 		gtk_icon_source_set_direction_wildcarded(source, TRUE);
 		gtk_icon_source_set_size(source, GTK_ICON_SIZE_MENU);
-		gtk_icon_source_set_size_wildcarded(source, size_wildcarded);
+		gtk_icon_source_set_size_wildcarded(source, FALSE);
 		gtk_icon_source_set_state_wildcarded(source, TRUE);
 		gtk_icon_set_add_source(iconset, source);
 		gtk_icon_source_free(source);
@@ -384,7 +383,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 		gtk_icon_source_set_filename(source, filename);
 		gtk_icon_source_set_direction(source, GTK_TEXT_DIR_RTL);
 		gtk_icon_source_set_size(source, sizeid);
-		gtk_icon_source_set_size_wildcarded(source, size_wildcarded);
+		gtk_icon_source_set_size_wildcarded(source, FALSE);
 		gtk_icon_source_set_state_wildcarded(source, TRUE);
 		gtk_icon_set_add_source(iconset, source);
 		g_free(filename);
@@ -440,9 +439,9 @@ pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme)
 
 #define ADD_SIZED_ICON(name, size) \
 		if (sized_status_icons[i].name) { \
-			add_sized_icon(normal, name, PIDGIN_ICON_THEME(theme), size, sized_status_icons[i], FALSE, FALSE); \
+			add_sized_icon(normal, name, PIDGIN_ICON_THEME(theme), size, sized_status_icons[i], FALSE); \
 			if (sized_status_icons[i].translucent_name) \
-				add_sized_icon(translucent, name, PIDGIN_ICON_THEME(theme), size, sized_status_icons[i], TRUE, FALSE); \
+				add_sized_icon(translucent, name, PIDGIN_ICON_THEME(theme), size, sized_status_icons[i], TRUE); \
 		}
 		ADD_SIZED_ICON(microscopic, "11");
 		ADD_SIZED_ICON(extra_small, "16");
@@ -469,9 +468,9 @@ pidgin_stock_load_status_icon_theme(PidginStatusIconTheme *theme)
 
 #define ADD_SIZED_ICON(name, size) \
 		if (sized_tray_icons[i].name) { \
-			add_sized_icon(normal, name, PIDGIN_ICON_THEME(theme), size, sized_tray_icons[i], FALSE, TRUE); \
+			add_sized_icon(normal, name, PIDGIN_ICON_THEME(theme), size, sized_tray_icons[i], FALSE); \
 			if (sized_tray_icons[i].translucent_name) \
-				add_sized_icon(translucent, name, PIDGIN_ICON_THEME(theme), size, sized_tray_icons[i], TRUE, TRUE); \
+				add_sized_icon(translucent, name, PIDGIN_ICON_THEME(theme), size, sized_tray_icons[i], TRUE); \
 		}
 		ADD_SIZED_ICON(microscopic, "11");
 		ADD_SIZED_ICON(extra_small, "16");
@@ -561,7 +560,7 @@ pidgin_stock_load_stock_icon_theme(PidginStockIconTheme *theme)
 
 #define ADD_SIZED_ICON(name, size) \
 		if (sized_stock_icons[i].name) \
-			add_sized_icon(iconset, name, PIDGIN_ICON_THEME(theme), size, sized_stock_icons[i], FALSE, FALSE);
+			add_sized_icon(iconset, name, PIDGIN_ICON_THEME(theme), size, sized_stock_icons[i], FALSE);
 		ADD_SIZED_ICON(microscopic, "11");
 		ADD_SIZED_ICON(extra_small, "16");
 		ADD_SIZED_ICON(small, "22");
