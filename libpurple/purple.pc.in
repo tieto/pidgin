@@ -6,6 +6,8 @@ datarootdir=@datarootdir@
 datadir=@datadir@
 sysconfdir=@sysconfdir@
 
+plugindir=${libdir}/purple-@PURPLE_MAJOR_VERSION@
+
 Name: libpurple
 Description: libpurple is a GLib-based instant messenger library.
 Version: @VERSION@

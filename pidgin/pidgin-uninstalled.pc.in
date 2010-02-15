@@ -9,6 +9,8 @@ sysconfdir=@sysconfdir@
 abs_srcdir=@abs_srcdir@
 abs_builddir=@abs_builddir@
 
+plugindir=${libdir}/pidgin
+
 Name: Pidgin
 Description: Pidgin is a GTK2-based instant messenger application.
 Version: @VERSION@

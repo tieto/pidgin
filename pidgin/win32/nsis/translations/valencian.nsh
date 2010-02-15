@@ -14,7 +14,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"L'instalador encara està eixecutant-se."
 !define PIDGIN_IS_RUNNING				"Una instancia de Pidgin està eixecutant-se. Ix del Pidgin i torna a intentar-ho."
-!define GTK_INSTALLER_NEEDED			"L'entorn d'eixecucio GTK+ no es troba o necessita ser actualisat.$\rPer favor instala la versio${GTK_MIN_VERSION} o superior de l'entorn GTK+"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Següent >"
@@ -34,14 +33,11 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC   		"Crear una entrada per a Pidgin en Menu Inici"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Una versio antiua de l'entorn GTK+ fon trobada. ¿Vols actualisar-la?$\rNota: $(^Name) no funcionarà si no ho fas."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visita la pagina de Pidgin per a Windows"
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Erro instalant l'entorn GTK+."
-!define GTK_BAD_INSTALL_PATH			"La ruta introduida no pot ser accedida o creada."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"El desinstalador podria no trobar les entrades del registre de Pidgin.$\rProbablement un atre usuari instalà esta aplicacio."
