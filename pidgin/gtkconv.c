@@ -3610,6 +3610,17 @@ regenerate_media_items(PidginWindow *win)
 				purple_prpl_get_media_caps(account,
 				purple_conversation_get_name(conv));
 
+#if GTK_CHECK_VERSION(2,6,0)
+		gtk_action_set_sensitive(win->audio_call,
+				caps & PURPLE_MEDIA_CAPS_AUDIO
+				? TRUE : FALSE);
+		gtk_action_set_sensitive(win->video_call,
+				caps & PURPLE_MEDIA_CAPS_VIDEO
+				? TRUE : FALSE);
+		gtk_action_set_sensitive(win->audio_video_call, 
+				caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
+				? TRUE : FALSE);
+#else
 		gtk_widget_set_sensitive(win->audio_call,
 				caps & PURPLE_MEDIA_CAPS_AUDIO
 				? TRUE : FALSE);
@@ -3619,16 +3630,29 @@ regenerate_media_items(PidginWindow *win)
 		gtk_widget_set_sensitive(win->audio_video_call, 
 				caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
 				? TRUE : FALSE);
+#endif
 	} else if (purple_conversation_get_type(conv)
 			== PURPLE_CONV_TYPE_CHAT) {
 		/* for now, don't care about chats... */
+#if GTK_CHECK_VERSION(2,6,0)
+		gtk_action_set_sensitive(win->audio_call, FALSE);
+		gtk_action_set_sensitive(win->video_call, FALSE);
+		gtk_action_set_sensitive(win->audio_video_call, FALSE);
+#else
 		gtk_widget_set_sensitive(win->audio_call, FALSE);
 		gtk_widget_set_sensitive(win->video_call, FALSE);
 		gtk_widget_set_sensitive(win->audio_video_call, FALSE);
+#endif
 	} else {
+#if GTK_CHECK_VERSION(2,6,0)
+		gtk_action_set_sensitive(win->audio_call, FALSE);
+		gtk_action_set_sensitive(win->video_call, FALSE);
+		gtk_action_set_sensitive(win->audio_video_call, FALSE);
+#else
 		gtk_widget_set_sensitive(win->audio_call, FALSE);
 		gtk_widget_set_sensitive(win->video_call, FALSE);
 		gtk_widget_set_sensitive(win->audio_video_call, FALSE);
+#endif
 	}							
 #endif
 }
@@ -10208,8 +10232,12 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 	conv_type = purple_conversation_get_type(gtkconv->active_conv);
 	index = gtk_notebook_page_num(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont);
 
+#if GTK_CHECK_VERSION(2,10,0)
+	g_object_ref_sink(G_OBJECT(gtkconv->tab_cont));
+#else
 	g_object_ref(gtkconv->tab_cont);
 	gtk_object_sink(GTK_OBJECT(gtkconv->tab_cont));
+#endif
 
 	gtk_notebook_remove_page(GTK_NOTEBOOK(win->notebook), index);
 
