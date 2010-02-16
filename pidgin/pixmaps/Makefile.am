@@ -489,45 +489,45 @@ TRAY_16 = \
 		tray/hicolor/16x16/status/pidgin-tray-away.png \
 		tray/hicolor/16x16/status/pidgin-tray-busy.png \
 		tray/hicolor/16x16/status/pidgin-tray-invisible.png \
-		tray/hicolor/16x16/status/pidgin-tray-connecting.png \
-		tray/hicolor/16x16/status/pidgin-tray-extended-away.png \
-		tray/hicolor/16x16/status/pidgin-tray-message.png \
-		tray/hicolor/16x16/status/pidgin-tray-new-im.png \
+		tray/hicolor/16x16/status/pidgin-tray-connect.png \
+		tray/hicolor/16x16/status/pidgin-tray-xa.png \
+		tray/hicolor/16x16/status/pidgin-tray-email.png \
+		tray/hicolor/16x16/status/pidgin-tray-pending.png \
 		tray/hicolor/16x16/status/pidgin-tray-offline.png \
-		tray/hicolor/16x16/status/pidgin-tray-online.png
+		tray/hicolor/16x16/status/pidgin-tray-available.png
 
 TRAY_22 = \
 		tray/hicolor/22x22/status/pidgin-tray-away.png \
 		tray/hicolor/22x22/status/pidgin-tray-busy.png \
-		tray/hicolor/22x22/status/pidgin-tray-connecting.png \
-		tray/hicolor/22x22/status/pidgin-tray-extended-away.png \
+		tray/hicolor/22x22/status/pidgin-tray-connect.png \
+		tray/hicolor/22x22/status/pidgin-tray-xa.png \
 		tray/hicolor/22x22/status/pidgin-tray-invisible.png \
-		tray/hicolor/22x22/status/pidgin-tray-message.png \
-		tray/hicolor/22x22/status/pidgin-tray-new-im.png \
+		tray/hicolor/22x22/status/pidgin-tray-email.png \
+		tray/hicolor/22x22/status/pidgin-tray-pending.png \
 		tray/hicolor/22x22/status/pidgin-tray-offline.png \
-		tray/hicolor/22x22/status/pidgin-tray-online.png
+		tray/hicolor/22x22/status/pidgin-tray-available.png
 
 TRAY_32 = \
 		tray/hicolor/32x32/status/pidgin-tray-away.png \
 		tray/hicolor/32x32/status/pidgin-tray-busy.png \
-		tray/hicolor/32x32/status/pidgin-tray-connecting.png \
-		tray/hicolor/32x32/status/pidgin-tray-extended-away.png \
+		tray/hicolor/32x32/status/pidgin-tray-connect.png \
+		tray/hicolor/32x32/status/pidgin-tray-xa.png \
 		tray/hicolor/32x32/status/pidgin-tray-invisible.png \
-		tray/hicolor/32x32/status/pidgin-tray-message.png \
-		tray/hicolor/32x32/status/pidgin-tray-new-im.png \
+		tray/hicolor/32x32/status/pidgin-tray-email.png \
+		tray/hicolor/32x32/status/pidgin-tray-pending.png \
 		tray/hicolor/32x32/status/pidgin-tray-offline.png \
-		tray/hicolor/32x32/status/pidgin-tray-online.png
+		tray/hicolor/32x32/status/pidgin-tray-available.png
 
 TRAY_48 = \
 		tray/hicolor/48x48/status/pidgin-tray-away.png \
 		tray/hicolor/48x48/status/pidgin-tray-busy.png \
-		tray/hicolor/48x48/status/pidgin-tray-connecting.png \
-		tray/hicolor/48x48/status/pidgin-tray-extended-away.png \
+		tray/hicolor/48x48/status/pidgin-tray-connect.png \
+		tray/hicolor/48x48/status/pidgin-tray-xa.png \
 		tray/hicolor/48x48/status/pidgin-tray-invisible.png \
-		tray/hicolor/48x48/status/pidgin-tray-message.png \
-		tray/hicolor/48x48/status/pidgin-tray-new-im.png \
+		tray/hicolor/48x48/status/pidgin-tray-email.png \
+		tray/hicolor/48x48/status/pidgin-tray-pending.png \
 		tray/hicolor/48x48/status/pidgin-tray-offline.png \
-		tray/hicolor/48x48/status/pidgin-tray-online.png
+		tray/hicolor/48x48/status/pidgin-tray-available.png
 
 EXTRA_DIST = \
 		edit.png			\
