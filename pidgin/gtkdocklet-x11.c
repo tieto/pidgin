@@ -40,7 +40,9 @@
 /* globals */
 static EggTrayIcon *docklet = NULL;
 static GtkWidget *image = NULL;
+#if !GTK_CHECK_VERSION(2,12,0)
 static GtkTooltips *tooltips = NULL;
+#endif
 static GdkPixbuf *blank_icon = NULL;
 static int embed_timeout = 0;
 static int docklet_height = 0;
@@ -192,6 +194,13 @@ docklet_x11_blank_icon(void)
 static void
 docklet_x11_set_tooltip(gchar *tooltip)
 {
+#if GTK_CHECK_VERSION(2,12,0)
+	if (tooltip) {
+		gtk_widget_set_tooltip_text(image->parent, tooltip);
+	} else {
+		gtk_widget_set_tooltip_text(image->parent, ""); /* NULL? */
+	}
+#else
 	if (!tooltips)
 		tooltips = gtk_tooltips_new();
 
@@ -203,6 +212,7 @@ docklet_x11_set_tooltip(gchar *tooltip)
 		gtk_tooltips_set_tip(tooltips, image->parent, "", NULL);
 		gtk_tooltips_disable(tooltips);
 	}
+#endif
 }
 
 #if GTK_CHECK_VERSION(2,2,0)
