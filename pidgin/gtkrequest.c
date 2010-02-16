@@ -85,7 +85,9 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 {
 	GtkWidget *image;
 	GdkPixbuf *pixbuf;
+#if !GTK_CHECK_VERSION(2,12,0)
 	GtkTooltips *tips;
+#endif
 
 	if (!account)
 		return;
@@ -94,8 +96,12 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 	image = gtk_image_new_from_pixbuf(pixbuf);
 	g_object_unref(G_OBJECT(pixbuf));
 
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(image, purple_account_get_username(account));
+#else
 	tips = gtk_tooltips_new();
 	gtk_tooltips_set_tip(tips, image, purple_account_get_username(account), NULL);
+#endif
 
 	if (GTK_IS_DIALOG(cont)) {
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(cont)->action_area), image, FALSE, TRUE, 0);
@@ -229,12 +235,21 @@ field_bool_cb(GtkToggleButton *button, PurpleRequestField *field)
 			gtk_toggle_button_get_active(button));
 }
 
+#if GTK_CHECK_VERSION(2,4,0)
+static void
+field_choice_menu_cb(GtkComboBox *menu, PurpleRequestField *field)
+{
+	purple_request_field_choice_set_value(field,
+			gtk_combo_box_get_active(menu));
+}
+#else
 static void
 field_choice_menu_cb(GtkOptionMenu *menu, PurpleRequestField *field)
 {
 	purple_request_field_choice_set_value(field,
 			gtk_option_menu_get_history(menu));
 }
+#endif
 
 static void
 field_choice_option_cb(GtkRadioButton *button, PurpleRequestField *field)
@@ -930,6 +945,21 @@ create_choice_field(PurpleRequestField *field)
 
 	if (num_labels > 5)
 	{
+#if GTK_CHECK_VERSION(2,4,0)
+		widget = gtk_combo_box_new_text();
+
+		for (l = labels; l != NULL; l = l->next)
+		{
+			const char *text = l->data;
+			gtk_combo_box_append_text(GTK_COMBO_BOX(widget), text);
+		}
+
+		gtk_combo_box_set_active(GTK_COMBO_BOX(widget),
+						purple_request_field_choice_get_default_value(field));
+
+		g_signal_connect(G_OBJECT(widget), "changed",
+						 G_CALLBACK(field_choice_menu_cb), field);
+#else
 		GtkWidget *menu;
 		GtkWidget *item;
 
@@ -954,6 +984,7 @@ create_choice_field(PurpleRequestField *field)
 
 		g_signal_connect(G_OBJECT(widget), "changed",
 						 G_CALLBACK(field_choice_menu_cb), field);
+#endif
 	}
 	else
 	{

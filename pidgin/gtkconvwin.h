@@ -46,8 +46,31 @@ struct _PidginWindow
 
 	struct
 	{
+/* Some necessary functions were only added in 2.6.0 */
 		GtkWidget *menubar;
 
+#if GTK_CHECK_VERSION(2,6,0)
+		GtkAction *view_log;
+
+		GtkAction *send_file;
+		GtkAction *add_pounce;
+		GtkAction *get_info;
+		GtkAction *invite;
+
+		GtkAction *alias;
+		GtkAction *block;
+		GtkAction *unblock;
+		GtkAction *add;
+		GtkAction *remove;
+
+		GtkAction *insert_link;
+		GtkAction *insert_image;
+
+		GtkAction *logging;
+		GtkAction *sounds;
+		GtkAction *show_formatting_toolbar;
+		GtkAction *show_timestamps;
+#else
 		GtkWidget *view_log;
 
 		GtkWidget *send_file;
@@ -68,6 +91,7 @@ struct _PidginWindow
 		GtkWidget *sounds;
 		GtkWidget *show_formatting_toolbar;
 		GtkWidget *show_timestamps;
+#endif
 		GtkWidget *show_icon;
 
 		GtkWidget *send_to;
@@ -76,7 +100,11 @@ struct _PidginWindow
 
 		GtkWidget *typing_icon;
 
+#if GTK_CHECK_VERSION(2,6,0)
+		GtkUIManager *ui;
+#else
 		GtkItemFactory *item_factory;
+#endif
 
 	} menu;
 
@@ -98,9 +126,15 @@ struct _PidginWindow
 	gint drag_leave_signal;
 
 	/* Media menu options. */
+#if GTK_CHECK_VERSION(2,6,0)
+	GtkAction *audio_call;
+	GtkAction *video_call;
+	GtkAction *audio_video_call;
+#else
 	GtkWidget *audio_call;
 	GtkWidget *video_call;
 	GtkWidget *audio_video_call;
+#endif
 };
 
 /*@}*/

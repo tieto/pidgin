@@ -119,7 +119,11 @@ typedef struct
 
 	gchar *original_title;
 	GtkEntry *title;
+#if GTK_CHECK_VERSION(2,4,0)
+	GtkComboBox *type;
+#else
 	GtkOptionMenu *type;
+#endif
 	GtkIMHtml *message;
 } StatusEditor;
 
@@ -780,7 +784,11 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 		return;
 	}
 
+#if GTK_CHECK_VERSION(2,4,0)
+	type = gtk_combo_box_get_active(dialog->type) + (PURPLE_STATUS_UNSET + 1);
+#else
 	type = gtk_option_menu_get_history(dialog->type) + (PURPLE_STATUS_UNSET + 1);
+#endif
 	message = gtk_imhtml_get_markup(dialog->message);
 	unformatted = purple_markup_strip_html(message);
 
@@ -874,6 +882,64 @@ editor_title_changed_cb(GtkWidget *widget, gpointer user_data)
 	gtk_widget_set_sensitive(GTK_WIDGET(dialog->save_button), (*text != '\0'));
 }
 
+#if GTK_CHECK_VERSION(2,4,0)
+
+enum {
+	STATUS_MENU_STOCK_ICON,
+	STATUS_MENU_NAME,
+	STATUS_MENU_COUNT
+};
+
+static GtkWidget *
+create_status_type_menu(PurpleStatusPrimitive type)
+{
+	int i;
+	GtkWidget *dropdown;
+	GtkListStore *store;
+	GtkTreeIter iter;
+	GtkCellRenderer *renderer;
+
+	store = gtk_list_store_new(STATUS_MENU_COUNT, G_TYPE_STRING, G_TYPE_STRING);
+
+	for (i = PURPLE_STATUS_UNSET + 1; i < PURPLE_STATUS_NUM_PRIMITIVES; i++)
+	{
+		if (i == PURPLE_STATUS_MOBILE || i == PURPLE_STATUS_TUNE)
+			/*
+			 * Special-case these.  They're intended to be independent
+			 * status types, so don't show them in the list.
+			 */
+			continue;
+
+		gtk_list_store_append(store, &iter);
+		/* TODO: how's this get the right size (since it seems to work fine)? */
+		gtk_list_store_set(store, &iter,
+		                   STATUS_MENU_STOCK_ICON, get_stock_icon_from_primitive(i),
+		                   STATUS_MENU_NAME, purple_primitive_get_name_from_type(i),
+		                   -1);
+	}
+
+	dropdown = gtk_combo_box_new_with_model(GTK_TREE_MODEL(store));
+
+	renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(dropdown), renderer, FALSE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(dropdown), renderer,
+	                               "stock-id", STATUS_MENU_STOCK_ICON,
+	                               NULL);
+
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(dropdown), renderer, TRUE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(dropdown), renderer,
+	                               "text", STATUS_MENU_NAME,
+	                               NULL);
+
+	gtk_combo_box_set_active(GTK_COMBO_BOX(dropdown),
+	                         type - (PURPLE_STATUS_UNSET + 1));
+
+	return dropdown;
+}
+
+#else
+
 static GtkWidget *
 create_stock_item(const gchar *str, const gchar *icon)
 {
@@ -881,7 +947,7 @@ create_stock_item(const gchar *str, const gchar *icon)
 	GtkWidget *label = gtk_label_new_with_mnemonic(str);
 	GtkWidget *hbox = gtk_hbox_new(FALSE, 4);
 	GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
-	GtkWidget *image = gtk_image_new_from_stock(icon, icon_size);;
+	GtkWidget *image = gtk_image_new_from_stock(icon, icon_size);
 
 	gtk_widget_show(label);
 	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
@@ -925,6 +991,8 @@ create_status_type_menu(PurpleStatusPrimitive type)
 
 	return dropdown;
 }
+
+#endif
 
 static void edit_substatus(StatusEditor *status_editor, PurpleAccount *account);
 
@@ -1191,7 +1259,11 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 		dropdown = create_status_type_menu(purple_savedstatus_get_type(saved_status));
 	else
 		dropdown = create_status_type_menu(PURPLE_STATUS_AWAY);
+#if GTK_CHECK_VERSION(2,4,0)
+	dialog->type = GTK_COMBO_BOX(dropdown);
+#else
 	dialog->type = GTK_OPTION_MENU(dropdown);
+#endif
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Status:"), sg, dropdown, TRUE, NULL);
 
 	/* Status message */
