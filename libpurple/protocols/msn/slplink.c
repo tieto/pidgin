@@ -390,7 +390,7 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	msg->msnslp_header.total_size = slpmsg->size;
 
-	msn_message_set_attr(msg, "P2P-Dest", slplink->remote_user);
+	msn_message_set_header(msg, "P2P-Dest", slplink->remote_user);
 
 	msg->ack_cb = msg_ack;
 	msg->nak_cb = msg_nak;
@@ -497,7 +497,6 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	const char *data;
 	guint64 offset;
 	gsize len;
-	PurpleXfer *xfer = NULL;
 
 	if (purple_debug_is_verbose())
 		msn_slpmsg_show(msg);
@@ -508,8 +507,11 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 	if (msg->msnslp_header.total_size < msg->msnslp_header.length)
 	{
-		purple_debug_error("msn", "This can't be good\n");
-		g_return_if_reached();
+		/* We seem to have received a bad header */
+		purple_debug_warning("msn", "Total size listed in SLP binary header "
+				"was less than length of this particular message.  This "
+				"should not happen.  Dropping message.\n");
+		return;
 	}
 
 	data = msn_message_get_bin_data(msg, &len);
@@ -526,15 +528,13 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 		if (slpmsg->session_id)
 		{
-			if (slpmsg->slpcall == NULL)
-				slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
-
+			slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
 			if (slpmsg->slpcall != NULL)
 			{
 				if (slpmsg->flags == 0x20 ||
 				    slpmsg->flags == 0x1000020 || slpmsg->flags == 0x1000030)
 				{
-					xfer = slpmsg->slpcall->xfer;
+					PurpleXfer *xfer = slpmsg->slpcall->xfer;
 					if (xfer != NULL)
 					{
 						slpmsg->ft = TRUE;
@@ -578,10 +578,9 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 	if (slpmsg->ft)
 	{
-		xfer = slpmsg->slpcall->xfer;
 		slpmsg->slpcall->u.incoming_data =
 				g_byte_array_append(slpmsg->slpcall->u.incoming_data, (const guchar *)data, len);
-		purple_xfer_prpl_ready(xfer);
+		purple_xfer_prpl_ready(slpmsg->slpcall->xfer);
 	}
 	else if (slpmsg->size && slpmsg->buffer)
 	{

@@ -109,8 +109,8 @@ struct _MsnMessage
 	MsnSlpHeader msnslp_header;
 	MsnSlpFooter msnslp_footer;
 
-	GHashTable *attr_table;
-	GList *attr_list;
+	GHashTable *header_table;
+	GList *header_list;
 
 	gboolean ack_ref;           /**< A flag that states if this message has
 								  been ref'ed for using it in a callback. */
@@ -295,24 +295,24 @@ void msn_message_set_charset(MsnMessage *msg, const char *charset);
 const char *msn_message_get_charset(const MsnMessage *msg);
 
 /**
- * Sets an attribute in a message.
+ * Sets a header in a message.
  *
- * @param msg   The message.
- * @param attr  The attribute name.
- * @param value The attribute value.
+ * @param msg    The message.
+ * @param header The header name.
+ * @param value  The header value.
  */
-void msn_message_set_attr(MsnMessage *msg, const char *attr,
+void msn_message_set_header(MsnMessage *msg, const char *name,
 						  const char *value);
 
 /**
- * Returns an attribute from a message.
+ * Returns the value of a header from a message.
  *
- * @param msg  The message.
- * @param attr The attribute.
+ * @param msg    The message.
+ * @param header The header value.
  *
  * @return The value, or @c NULL if not found.
  */
-const char *msn_message_get_attr(const MsnMessage *msg, const char *attr);
+const char *msn_message_get_header_value(const MsnMessage *msg, const char *name);
 
 /**
  * Parses the body and returns it in the form of a hashtable.
