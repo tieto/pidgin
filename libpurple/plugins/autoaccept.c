@@ -28,13 +28,7 @@
 
 /* System headers */
 #include <glib.h>
-#if GLIB_CHECK_VERSION(2,6,0)
-#	include <glib/gstdio.h>
-#else
-#	include <sys/types.h>
-#	include <sys/stat.h>
-#	define	g_mkdir mkdir
-#endif
+#include <glib/gstdio.h>
 
 /* Purple headers */
 #include <plugin.h>

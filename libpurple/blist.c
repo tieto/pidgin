@@ -1739,6 +1739,14 @@ purple_contact_destroy(PurpleContact *contact)
 	g_free(contact);
 }
 
+PurpleGroup *
+purple_contact_get_group(const PurpleContact *contact)
+{
+	g_return_val_if_fail(contact, NULL);
+
+	return (PurpleGroup *)(((PurpleBlistNode *)contact)->parent);
+}
+
 void purple_contact_set_alias(PurpleContact *contact, const char *alias)
 {
 	purple_blist_alias_contact(contact,alias);
@@ -2605,6 +2613,18 @@ PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy)
 	return buddy->presence;
 }
 
+PurpleMediaCaps purple_buddy_get_media_caps(const PurpleBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, 0);
+	return buddy->media_caps;
+}
+
+void purple_buddy_set_media_caps(PurpleBuddy *buddy, PurpleMediaCaps media_caps)
+{
+	g_return_if_fail(buddy != NULL);
+	buddy->media_caps = media_caps;
+}
+
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
 {
 	g_return_val_if_fail(buddy != NULL, NULL);
@@ -3186,6 +3206,13 @@ purple_blist_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_BLIST_NODE),
 						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "buddy-caps-changed",
+			purple_marshal_VOID__POINTER_INT_INT, NULL,
+			3, purple_value_new(PURPLE_TYPE_SUBTYPE,
+				PURPLE_SUBTYPE_BLIST_BUDDY),
+			purple_value_new(PURPLE_TYPE_INT),
+			purple_value_new(PURPLE_TYPE_INT));
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-created",
 			handle,

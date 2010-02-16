@@ -108,6 +108,7 @@ typedef enum
 
 #include "account.h"
 #include "buddyicon.h"
+#include "media.h"
 #include "status.h"
 
 /**************************************************************************/
@@ -143,6 +144,7 @@ struct _PurpleBuddy {
 	PurpleBuddyIcon *icon;                    /**< The buddy icon. */
 	PurpleAccount *account;					/**< the account this buddy belongs to */
 	PurplePresence *presence;
+	PurpleMediaCaps media_caps;		/**< The media capabilities of the buddy. */
 };
 
 /**
@@ -657,6 +659,24 @@ PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy);
 PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy);
 
 /**
+ * Gets the media caps from a buddy.
+ *
+ * @param buddy The buddy.
+ * @return      The media caps.
+ *
+ * @since 2.7.0
+ */
+PurpleMediaCaps purple_buddy_get_media_caps(const PurpleBuddy *buddy);
+
+/**
+ * Sets the media caps for a buddy.
+ *
+ * @param buddy      The PurpleBuddy.
+ * @param media_caps The PurpleMediaCaps.
+ */
+void purple_buddy_set_media_caps(PurpleBuddy *buddy, PurpleMediaCaps media_caps);
+
+/**
  * Adds a new buddy to the buddy list.
  *
  * The buddy will be inserted right after node or prepended to the
@@ -713,6 +733,16 @@ PurpleContact *purple_contact_new(void);
  * @param contact  The contact to destroy
  */
 void purple_contact_destroy(PurpleContact *contact);
+
+/**
+ * Gets the PurpleGroup from a PurpleContact
+ *
+ * @param contact  The contact
+ * @return         The group
+ *
+ * @since 2.7.0
+ */
+PurpleGroup *purple_contact_get_group(const PurpleContact *contact);
 
 /**
  * Adds a new contact to the buddy list.

@@ -57,11 +57,7 @@ switch_page(PidginWindow *win, GtkDirectionType dir)
 {
 	int count, current;
 
-#if GTK_CHECK_VERSION(2,2,0)
 	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(win->notebook));
-#else
-	count = g_list_length(GTK_NOTEBOOK(win->notebook)->children);
-#endif
 	current = gtk_notebook_get_current_page(GTK_NOTEBOOK(win->notebook));
 
 	if (dir == GTK_DIR_LEFT)

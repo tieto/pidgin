@@ -1413,10 +1413,8 @@ interface_page(void)
 					_("Bottom"), GTK_POS_BOTTOM,
 					_("Left"), GTK_POS_LEFT,
 					_("Right"), GTK_POS_RIGHT,
-#if GTK_CHECK_VERSION(2,6,0)
 					_("Left Vertical"), GTK_POS_LEFT|8,
 					_("Right Vertical"), GTK_POS_RIGHT|8,
-#endif
 					NULL);
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
@@ -1511,7 +1509,7 @@ conv_page(void)
 		PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines",
 		1, 8, NULL);
 
-#if GTK_CHECK_VERSION(2,4,0) && defined _WIN32
+#ifdef _WIN32
 	{
 	GtkWidget *fontpref, *font_button, *hbox;
 	const char *font_name;
@@ -2723,12 +2721,7 @@ away_page(void)
 static int
 prefs_notebook_add_page(const char *text, GtkWidget *page, int ind)
 {
-#if GTK_CHECK_VERSION(2,4,0)
 	return gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
-#else
-	gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
-	return gtk_notebook_page_num(GTK_NOTEBOOK(prefsnotebook), page);
-#endif
 }
 
 static void
