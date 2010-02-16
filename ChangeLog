@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.6.6 (??/??/20??):
+version 2.6.6 (02/18/2010):
 	libpurple:
 	* Fix 'make check' on OS X. (David Fang)
 	* Fix a quirk in purple_markup_html_to_xhtml that caused some messages
