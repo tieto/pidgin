@@ -61,7 +61,7 @@ docklet_x11_recreate_cb(gpointer data)
 static void
 docklet_x11_embedded_cb(GtkWidget *widget, void *data)
 {
-	purple_debug(PURPLE_DEBUG_INFO, "docklet", "embedded\n");
+	purple_debug(PURPLE_DEBUG_INFO, "docklet", "X11 embedded\n");
 
 	g_source_remove(embed_timeout);
 	embed_timeout = 0;
@@ -72,7 +72,7 @@ docklet_x11_embedded_cb(GtkWidget *widget, void *data)
 static void
 docklet_x11_destroyed_cb(GtkWidget *widget, void *data)
 {
-	purple_debug(PURPLE_DEBUG_INFO, "docklet", "destroyed\n");
+	purple_debug(PURPLE_DEBUG_INFO, "docklet", "X11 destroyed\n");
 
 	pidgin_docklet_remove();
 
@@ -254,7 +254,7 @@ docklet_x11_destroy(void)
 
 	image = NULL;
 
-	purple_debug(PURPLE_DEBUG_INFO, "docklet", "destroyed\n");
+	purple_debug(PURPLE_DEBUG_INFO, "docklet", "X11 destroyed\n");
 }
 
 static gboolean
@@ -265,7 +265,7 @@ docklet_x11_embed_timeout_cb(gpointer data)
 	 * loaded so that it can embed automatically if/when a notification
 	 * area becomes available.
 	 */
-	purple_debug_info("docklet", "failed to embed within timeout\n");
+	purple_debug_info("docklet", "X11 failed to embed within timeout\n");
 	pidgin_docklet_remove();
 
 	return FALSE;
@@ -328,7 +328,7 @@ docklet_x11_create(gboolean recreate)
 		}
 	}
 
-	purple_debug(PURPLE_DEBUG_INFO, "docklet", "created\n");
+	purple_debug(PURPLE_DEBUG_INFO, "docklet", "X11 created\n");
 }
 
 static void

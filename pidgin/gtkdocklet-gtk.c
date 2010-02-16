@@ -34,16 +34,12 @@ GtkStatusIcon *docklet = NULL;
 static void
 docklet_gtk_status_activated_cb(GtkStatusIcon *status_icon, gpointer user_data)
 {
-	purple_debug_info("docklet", "button clicked %d\n", 1);
-
 	pidgin_docklet_clicked(1); 
 }
 
 static void
 docklet_gtk_status_clicked_cb(GtkStatusIcon *status_icon, guint button, guint activate_time, gpointer user_data)
 {
-	purple_debug_info("docklet", "button clicked %d\n", button);
-
 	pidgin_docklet_clicked(button); 
 }
 
@@ -111,7 +107,7 @@ docklet_gtk_status_destroy(void)
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
 
-	purple_debug_info("docklet", "destroyed\n");
+	purple_debug_info("docklet", "GTK+ destroyed\n");
 }
 
 static void
@@ -133,7 +129,7 @@ docklet_gtk_status_create(gboolean recreate)
 
 	pidgin_docklet_embedded();
 	gtk_status_icon_set_visible(docklet, TRUE);
-	purple_debug_info("docklet", "created\n");
+	purple_debug_info("docklet", "GTK+ created\n");
 }
 
 static void
