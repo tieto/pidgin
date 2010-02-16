@@ -206,7 +206,7 @@ purple_network_get_local_system_ip(int fd)
 GList *
 purple_network_get_all_local_system_ips(void)
 {
-#ifdef HAVE_GETIFADDRS
+#if defined(HAVE_GETIFADDRS) && defined(HAVE_INET_NTOP)
 	GList *result = NULL;
 	struct ifaddrs *start, *ifa;
 	int ret;
@@ -245,7 +245,7 @@ purple_network_get_all_local_system_ips(void)
 	freeifaddrs(start);
 
 	return g_list_reverse(result);
-#else /* HAVE_GETIFADDRS */
+#else /* HAVE_GETIFADDRS && HAVE_INET_NTOP */
 	GList *result = NULL;
 	int source = socket(PF_INET,SOCK_STREAM, 0);
 	char buffer[1024];
@@ -279,7 +279,7 @@ purple_network_get_all_local_system_ips(void)
 	}
 
 	return result;
-#endif /* HAVE_GETIFADDRS */
+#endif /* HAVE_GETIFADDRS && HAVE_INET_NTOP */
 }
 
 const char *
