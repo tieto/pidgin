@@ -900,11 +900,9 @@ prefs_build_theme_combo_box(GtkListStore *store, const char *current_theme, cons
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "pixbuf", 0, NULL);
 
 	cell_rend = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "markup", 1, NULL);
-	/* TODO: We need to force a size or something, or each theme dropdown ends 
-	         up as just "..." */
-#if 0 && GTK_CHECK_VERSION(2,6,0)
+#if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(cell_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
 
@@ -1084,7 +1082,7 @@ theme_page(void)
 	g_signal_connect(G_OBJECT(prefs_blist_themes_combo_box), "changed",
 						(GCallback)prefs_set_blist_theme_cb, NULL);
 	gtk_size_group_add_widget(combo_sg, prefs_blist_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_blist_themes_combo_box, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_blist_themes_combo_box, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
 
@@ -1102,7 +1100,7 @@ theme_page(void)
 	g_signal_connect(G_OBJECT(prefs_status_themes_combo_box), "changed",
 						(GCallback)prefs_set_status_icon_theme_cb, NULL);
 	gtk_size_group_add_widget(combo_sg, prefs_status_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_status_themes_combo_box, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_status_themes_combo_box, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
 
@@ -1120,7 +1118,7 @@ theme_page(void)
 	g_signal_connect(G_OBJECT(prefs_sound_themes_combo_box), "changed",
 						(GCallback)prefs_set_sound_theme_cb, NULL);
 	gtk_size_group_add_widget(combo_sg, prefs_sound_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_sound_themes_combo_box, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_sound_themes_combo_box, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
 
@@ -1138,7 +1136,7 @@ theme_page(void)
 	g_signal_connect(G_OBJECT(prefs_smiley_themes_combo_box), "changed",
 						(GCallback)prefs_set_smiley_theme_cb, NULL);
 	gtk_size_group_add_widget(combo_sg, prefs_smiley_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_smiley_themes_combo_box, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_smiley_themes_combo_box, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
 
