@@ -102,6 +102,8 @@ version 2.6.6 (02/18/2010):
 	  descriptions not to be displayed in the theme selector.
 
 	Finch:
+	* Fix CVE-2010-0420, a possible remote crash when handling chat room
+	  buddy names.
 	* Rebindable 'move-first' and 'move-last' actions for tree widgets. So
 	  it is possible to jump to the first or last entry in the buddy list
 	  (and other such lists) by pressing home or end key (defaults)

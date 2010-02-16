@@ -1346,6 +1346,10 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, vo
 {
 	GntTreeRow *pr = NULL;
 
+	if (g_hash_table_lookup(tree->hash, key)) {
+		gnt_tree_remove(tree, key);
+	}
+
 	row->tree = tree;
 	row->key = key;
 	row->data = NULL;
