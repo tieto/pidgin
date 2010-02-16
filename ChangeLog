@@ -80,6 +80,9 @@ version 2.6.6 (??/??/20??):
 	* The default value for the file transfer proxies is automatically
 	  updated when an account connects, if it is still the old (broken)
 	  default (from 'proxy.jabber.org' to 'proxy.eu.jabber.org').
+	* Fix an issue where libpurple created duplicate buddies if the roster
+	  contains a buddy in two groups that differ only by case
+	  (e.g. "XMPP" and "xmpp") (or not at all).
 
 	Yahoo:
 	* Don't send <span> and </span> tags.  (Fartash Faghri)
