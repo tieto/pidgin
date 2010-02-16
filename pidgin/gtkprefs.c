@@ -223,16 +223,8 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 
 	g_return_val_if_fail(menuitems != NULL, NULL);
 
-#if 0 /* GTK_CHECK_VERSION(2,4,0) */
-	if(type == PURPLE_PREF_INT)
-		model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
-	else if(type == PURPLE_PREF_STRING)
-		model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
-	dropdown = gtk_combo_box_new_with_model(model);
-#else
 	dropdown = gtk_option_menu_new();
 	menu = gtk_menu_new();
-#endif
 
 	if (type == PURPLE_PREF_INT)
 		stored_int = purple_prefs_get_int(key);
@@ -910,9 +902,11 @@ prefs_build_theme_combo_box(GtkListStore *store, const char *current_theme, cons
 	cell_rend = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "markup", 1, NULL);
-/*#if GTK_CHECK_VERSION(2,6,0)
-			g_object_set(cell_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif*/
+	/* TODO: We need to force a size or something, or each theme dropdown ends 
+	         up as just "..." */
+#if 0 && GTK_CHECK_VERSION(2,6,0)
+	g_object_set(cell_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
 
 	gtk_drag_dest_set(combo_box, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP, te,
 					sizeof(te) / sizeof(GtkTargetEntry) , GDK_ACTION_COPY | GDK_ACTION_MOVE);
