@@ -32,6 +32,9 @@
 #include <netinet/in.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
+#ifdef HAVE_GETIFADDRS
+#include <ifaddrs.h>
+#endif
 #else
 #include <nspapi.h>
 #endif
@@ -203,6 +206,46 @@ purple_network_get_local_system_ip(int fd)
 GList *
 purple_network_get_all_local_system_ips(void)
 {
+#ifdef HAVE_GETIFADDRS
+	GList *result = NULL;
+	struct ifaddrs *start, *ifa;
+	int ret;
+
+	ret = getifaddrs(&start);
+	if (ret < 0) {
+		purple_debug_warning("network",
+				"getifaddrs() failed: %s\n", g_strerror(errno));
+		return NULL;
+	}
+
+	for (ifa = start; ifa; ifa = ifa->ifa_next) {
+		int family = ifa->ifa_addr ? ifa->ifa_addr->sa_family : AF_UNSPEC;
+		char host[INET6_ADDRSTRLEN];
+		const char *tmp = NULL;
+
+		if ((family != AF_INET && family != AF_INET6) || ifa->ifa_flags & IFF_LOOPBACK)
+			continue;
+
+		if (family == AF_INET)
+			tmp = inet_ntop(family, &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr, host, sizeof(host));
+		else {
+			struct sockaddr_in6 *sockaddr = (struct sockaddr_in6 *)ifa->ifa_addr;
+			/* Peer-peer link-local communication is a big TODO.  I am not sure
+			 * how communicating link-local addresses is supposed to work, and
+			 * it seems like it would require attempting the cartesian product
+			 * of the local and remote interfaces to see if any match (eww).
+			 */
+			if (!IN6_IS_ADDR_LINKLOCAL(&sockaddr->sin6_addr))
+				tmp = inet_ntop(family, &sockaddr->sin6_addr, host, sizeof(host));
+		}
+		if (tmp != NULL)
+			result = g_list_prepend(result, g_strdup(tmp));
+	}
+
+	freeifaddrs(start);
+
+	return g_list_reverse(result);
+#else /* HAVE_GETIFADDRS */
 	GList *result = NULL;
 	int source = socket(PF_INET,SOCK_STREAM, 0);
 	char buffer[1024];
@@ -222,7 +265,6 @@ purple_network_get_all_local_system_ips(void)
 		ifr = (struct ifreq *)tmp;
 		tmp += HX_SIZE_OF_IFREQ(*ifr);
 
-		/* TODO: handle IPv6 */
 		if (ifr->ifr_addr.sa_family == AF_INET) {
 			struct sockaddr_in *sinptr = (struct sockaddr_in *)&ifr->ifr_addr;
 
@@ -237,6 +279,7 @@ purple_network_get_all_local_system_ips(void)
 	}
 
 	return result;
+#endif /* HAVE_GETIFADDRS */
 }
 
 const char *
