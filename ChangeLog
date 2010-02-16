@@ -26,6 +26,8 @@ version 2.6.6 (02/18/2010):
 	  Previously only icons between 48x48 and 50x50 were allowed.
 
 	MSN:
+	* Fix CVE-2010-0277, a possible remote crash when parsing an incoming
+	  SLP message.  Discovered by Fabian Yamaguchi.
 	* File transfer requests will no longer cause a crash if you delete the
 	  file before the other side accepts.
 	* Received files will no longer hold an extra lock after completion,

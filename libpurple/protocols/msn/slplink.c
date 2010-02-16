@@ -585,15 +585,16 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	}
 	else if (slpmsg->size && slpmsg->buffer)
 	{
-		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size)
+		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size || slpmsg->offset != offset)
 		{
 			purple_debug_error("msn",
 				"Oversized slpmsg - msgsize=%lld offset=%" G_GUINT64_FORMAT " len=%" G_GSIZE_FORMAT "\n",
 				slpmsg->size, offset, len);
 			g_return_if_reached();
-		}
-		else
+		} else {
 			memcpy(slpmsg->buffer + offset, data, len);
+			slpmsg->offset += len;
+		}
 	}
 
 	if ((slpmsg->flags == 0x20 ||

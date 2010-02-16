@@ -57,7 +57,18 @@ struct _MsnSlpMessage
 	gboolean ft;
 	PurpleStoredImage *img;
 	guchar *buffer;
+
+	/**
+	 * For outgoing messages this is the number of bytes from buffer that
+	 * have already been sent out.  For incoming messages this is the
+	 * number of bytes that have been written to buffer.
+	 */
 	long long offset;
+
+	/**
+	 * This is the size of buffer, unless this is an outgoing file transfer,
+	 * in which case this is the size of the file.
+	 */
 	long long size;
 
 	GList *msgs; /**< The real messages. */
