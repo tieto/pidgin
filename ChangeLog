@@ -42,23 +42,24 @@ version 2.6.6 (??/??/20??):
 	* Less likely to send messages to a contact's idle/inactive resource.
 	  Previously, if a message was received from a specific resource,
 	  responses would be sent to that resource until either it went offline
-	  or a message is received from another resource.  Now, messages are sent
-	  to the bare JID upon receipt of any presence change from the contact.
+	  or a message is received from another resource.  Now, messages are
+	  sent to the bare JID upon receipt of any presence change from the
+	  contact.
 	* Added support for the SCRAM-SHA-1 SASL mechanism.  This is only
 	  available when built without Cyrus SASL support.
 	* When getting info on a domain-only (server) JID, show uptime
-	  (when given by the result of the "last query") and don't show status as
-	  offline.
+	  (when given by the result of the "last query") and don't show status
+	  as offline.
 	* Fix getting info on your own JID.
-	* Wrap XHTML messages in <p>, as described in XEP-0071, for compatibility
-	  with some clients.
+	* Wrap XHTML messages in <p>, as described in XEP-0071, for
+	  compatibility with some clients.
 	* Don't do an SRV lookup for a STUN server associated with the account
 	  if one is already set globally in prefs.
-	* Don't send custom smileys larger than the recommended maximum object size
-	  specified in the BoB XEP.   This prevents a client from being
+	* Don't send custom smileys larger than the recommended maximum object
+	  size specified in the BoB XEP.   This prevents a client from being
 	  disconnected by servers that dislike overly-large stanzas.
-	* Fix receiving messages without markup over an Openfire BOSH connection
-	  (forcibly put the stanzas in the jabber:client namespace).
+	* Fix receiving messages without markup over an Openfire BOSH
+	  connection (forcibly put the stanzas in the jabber:client namespace).
 	* The default value for the file transfer proxies is automatically
 	  updated when an account connects, if it is still the old (broken)
 	  default (from 'proxy.jabber.org' to 'proxy.eu.jabber.org').
@@ -95,7 +96,8 @@ version 2.6.6 (??/??/20??):
 	  tooltips will show for all tabs.
 	* The File Transfers and Debug Window windows are no longer created as
 	  dialogs.  These windows should now have minimize buttons in many
-	  environments in which they were previously missing (including Windows).
+	  environments in which they were previously missing
+	  (including Windows).
 	* Smiley themes with Windows line endings no longer cause theme
 	  descriptions not to be displayed in the theme selector.
 
@@ -131,11 +133,11 @@ version 2.6.4 (11/29/2009):
 	* Actually emit the hold signal for media calls.
 	* Fix building the GnuTLS plugin with older versions of GnuTLS.
 	* Fix DNS TXT query resolution.
-	* Don't send Proxy-Authorization headers to HTTP proxy servers until we've
-	  received a "407 Proxy Authentication Required" response from the server.
-	  (thecrux)
-	* Added "MXit" protocol plugin, supported and maintained by the MXit folks
-	  themselves (MXit Lifestyle (Pty) Ltd.)
+	* Don't send Proxy-Authorization headers to HTTP proxy servers until
+	  we've received a "407 Proxy Authentication Required" response from
+	  the server.  (thecrux)
+	* Added "MXit" protocol plugin, supported and maintained by the MXit
+	  folks themselves (MXit Lifestyle (Pty) Ltd.)
 
 	General:
 	* New 'plugins' sub-command to 'debug' command (i.e. '/debug plugins')
@@ -166,14 +168,14 @@ version 2.6.4 (11/29/2009):
 	  as it has probably been reset.
 
 	XMPP:
-	* Users connecting to Google Talk now have an "Initiate Chat" context menu
-	  option for their buddies.  (Eion Robb)
+	* Users connecting to Google Talk now have an "Initiate Chat" context
+	  menu option for their buddies.  (Eion Robb)
 	* Fix a crash when attempting to validate an invalid JID.
 	* Resolve an issue when connecting to iChat Server when no resource
 	  is specified.
 	* Try to automatically find a STUN server by using an SRV lookup on the
-	  account's domain, and use that for voice and video if found and the user
-	  didn't set one manually in prefs.
+	  account's domain, and use that for voice and video if found and the
+	  user didn't set one manually in prefs.
 	* Fix a crash when adding a buddy without an '@'.
 	* Don't show the option to send a file to a buddy if we know for certain
 	  they don't support any file transfer method supported by libpurple.
@@ -197,23 +199,23 @@ version 2.6.4 (11/29/2009):
 	* The userlist in a multiuser chat can be styled via gtkrc by using the
 	  widget name "pidgin_conv_userlist". (Heiko Schmitt)
 	* Add a hold button to the media window.
-	* Fix a bug where the conversation backlog stops scrolling in a very busy
-	  chat room.
+	* Fix a bug where the conversation backlog stops scrolling in a very
+	  busy chat room.
 	* In the Conversation "Send To" menu, offline buddies appear grayed
 	  out (but are still selectable).  Previously, only offline buddies on
 	  accounts that do not support offline messaging appeared grayed out.
 
 	Pidgin Preference and Preference Window Changes:
 	* Removed the "Use font from theme" and "Conversation Font" preferences
-	  for everyone except Windows users.  The font can be controlled from the
-	  Pidgin GTK+ Theme Control plugin.
+	  for everyone except Windows users.  The font can be controlled from
+	  the Pidgin GTK+ Theme Control plugin.
 	* Tabs in the Preferences window are now on the left side.
 	* The Browser tab is now visible for GNOME users.
 	* Added a Proxy tab shown no matter what environment Pidgin runs in.
-	* The Browser and Proxy tabs show appropriate GNOME-specific messages and
-	  allow launching the correct applications to change the relevant GNOME
-	  preferences if found.  These were previously together on the Network
-	  tab.
+	* The Browser and Proxy tabs show appropriate GNOME-specific messages
+	  and allow launching the correct applications to change the relevant
+	  GNOME preferences if found.  These were previously together on the
+	  Network tab.
 	* Moved the port range spin buttons on the Network tab to be beside the
 	  checkbox that enables/disables them.
 	* Reorganized preferences on the Status/Idle tab to have one less
@@ -223,10 +225,10 @@ version 2.6.4 (11/29/2009):
 	* Moved Buddy List Theme and Status Icon Theme selectors from Interface
 	  tab to Themes tab.
 	* Moved Sound Theme selector from Sounds tab to Themes tab.
-	* Changed the Smiley Theme selector to be consistent with the other theme
-	  selectors.
-	* Rearranged tabs such that Interface is first and all remaining tabs are
-	  alphabetized in English.
+	* Changed the Smiley Theme selector to be consistent with the other
+	  theme selectors.
+	* Rearranged tabs such that Interface is first and all remaining tabs
+	  are alphabetized in English.
 
 version 2.6.3 (10/16/2009):
 	General:
@@ -266,16 +268,17 @@ version 2.6.2 (09/05/2009):
 	  properly.  In addition, it is no longer possible to add buddies of
 	  the form "room@conference.example.net/User", where
 	  room@conference.example.net is a MUC.
-	* Don't crash when receiving "smileyfied" XHTML-IM from clients that don't
-	  support bits of binary (ie. when getting an empty <data/> in return)
+	* Don't crash when receiving "smileyfied" XHTML-IM from clients that
+	  don't support bits of binary (ie. when getting an empty <data/> in
+	  return)
 	* Fix bug where SSL/TLS was not required even though the
 	  "require SSL/TLS" preference checked when connecting to servers
 	  that use the older iq-based authentication.  (CVE-2009-3026)
 
 	Yahoo!/Yahoo! JAPAN:
-	* Accounts now have "Use account proxy for SSL connections" option.  This
-	  option force-overrides the account specific proxy settings for SSL
-	  connections only and instead uses the global proxy configuration.
+	* Accounts now have "Use account proxy for SSL connections" option.
+	  This option force-overrides the account specific proxy settings for
+	  SSL connections only and instead uses the global proxy configuration.
 
 	Finch:
 	* Properly detect libpanel on OpenBSD.  (Brad Smith)
@@ -317,8 +320,8 @@ version 2.6.0 (08/18/2009):
 	* Various memory leaks fixed as reported by Josh Mueller.
 	* Properly handle an IRC buddy appearing in multiple groups.
 	* Escape HTML entities in usernames when written with the HTML logger.
-	* Do not display MySpace status changes as incoming IMs.  (Mark Doliner and
-	  Justin Williams)
+	* Do not display MySpace status changes as incoming IMs.  (Mark Doliner
+	  and Justin Williams)
 
 	DNS:
 	* DNS servers are re-read when DNS queries fail in case the system has
@@ -329,32 +332,34 @@ version 2.6.0 (08/18/2009):
 	  address configured.
 	* Fix a leak when the UI provides its own DNS resolving UI op.
 	  (Aman Gupta)
-	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
-	* Internationalized Domain Names are supported when libpurple is compiled
-	  against the GNU IDN library.
+	* Don't fork a DNS resolver process to resolve IP addresses.
+	  (Aman Gupta)
+	* Internationalized Domain Names are supported when libpurple is
+	  compiled against the GNU IDN library.
 
 	Environment Variables:
 	* GnuTLS logging (disabled by default) can be controlled through the
 	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
 	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
 	  information.
-	* PURPLE_VERBOSE_DEBUG environment variable.  Currently, this is an "on" or
-	  "off" variable.  Set it to any value to turn it on and unset it to turn
-	  it off.  This will optionally be used to only show less useful debug
-	  information on an as-needed basis.
-	* PURPLE_LEAKCHECK_HELP environment variable.  Currently, this is an "on"
+	* PURPLE_VERBOSE_DEBUG environment variable.  Currently, this is an "on"
 	  or "off" variable.  Set it to any value to turn it on and unset it to
-	  turn it off.  This will be used to perform various actions that are
-	  useful when running libpurple inside of Valgrind or similar programs.
-	  Currently, it keeps plugins in memory, allowing Valgrind to perform
-	  symbol resolution of leak traces at shutdown.
+	  turn it off.  This will optionally be used to only show less useful
+	  debug information on an as-needed basis.
+	* PURPLE_LEAKCHECK_HELP environment variable.  Currently, this is an
+	  "on" or "off" variable.  Set it to any value to turn it on and unset
+	  it to turn it off.  This will be used to perform various actions
+	  that are useful when running libpurple inside of Valgrind or similar
+	  programs.  Currently, it keeps plugins in memory, allowing Valgrind
+	  to perform symbol resolution of leak traces at shutdown.
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
 	  "clientLogin."
 	* Fixed a bug where your away message sometimes would not get set when
 	  you first sign on.
-	* Make sure links in your away messages show up as links to other people.
+	* Make sure links in your away messages show up as links to other
+	  people.
 	* For ICQ, Never change the privacy setting specified by the user.
 
 	Gadu-Gadu:
@@ -373,15 +378,16 @@ version 2.6.0 (08/18/2009):
 	  Topper, and Elliott Sales de Andrade)
 	* Show the invite message for buddies that requested authorization
 	  from you on MSN.
-	* Support sending an invite message to buddies when requesting authorization
-	  from them on MSN.
+	* Support sending an invite message to buddies when requesting
+	  authorization from them on MSN.
 	* Timeout switchboard connections aggressively (60 seconds).
 
 	XMPP:
-	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
-	  support with GTalk and voice and video support with the GMail web
-	  client. (Mike "Maiku" Ruprecht)
-	* Added a Service Discovery Browser plugin for Pidgin. (Andrei Mozzhuhin)
+	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177),
+	  voice support with GTalk and voice and video support with the GMail
+	  web client. (Mike "Maiku" Ruprecht)
+	* Added a Service Discovery Browser plugin for Pidgin.
+	  (Andrei Mozzhuhin)
 	* Support for in-band bytestreams for file transfers (XEP-0047). (Marcus
 	  Lundblad)
 	* Support for sending and receiving attentions (equivalent to "buzz"
@@ -398,28 +404,30 @@ version 2.6.0 (08/18/2009):
 	* Better support for receiving remote users' nicknames.
 	* /affiliate and /role will now list the room members with the specified
 	  affiliation/role if possible. (Andrei Mozzhuhin)
-	* Put section breaks between resources in "Get Info" to improve readability.
-	* Silently remove invalid XML 1.0 entities (e.g. ASCII control characters)
-	  from sent messages.
+	* Put section breaks between resources in "Get Info" to improve
+	  readability.
+	* Silently remove invalid XML 1.0 entities (e.g. ASCII control
+	  characters) from sent messages.
 	* XHTML markup is only included in outgoing messages when the message
 	  contains formatting.
-	* Show when the user was last logged in when doing "Get Info" on an offline
-	  buddy, provided the server supports it.
+	* Show when the user was last logged in when doing "Get Info" on an
+	  offline buddy, provided the server supports it.
 	* Support custom smileys in MUCs (only when all participants support the
-	  "Bits of Binary" extension, and a maximum of 10 participants are in the
-	  chat to avoid getting too many fetch requests).
+	  "Bits of Binary" extension, and a maximum of 10 participants are in
+	  the chat to avoid getting too many fetch requests).
 	* Fix an issue with Jabber (pre-XMPP) servers and the user's preference
 	  to require SSL not being respected.
 	* Fix an issue where Cyrus SASL DIGEST MD5 authentication might fail if
 	  the username, password, or realm (the JID domain) contain non-ASCII
 	  characters.
-	* Show emblem for mobile, handheld, and web clients and bots (if the other
-	  client supports it).
-	* Google Talk mail notifications should now work for people for whom they
-	  inexplicably did not.  (Thanks to yukam for determining the reason)
+	* Show emblem for mobile, handheld, and web clients and bots (if the
+	  other client supports it).
+	* Google Talk mail notifications should now work for people for whom
+	  they inexplicably did not.  (Thanks to yukam for determining the
+	  reason)
 	* New XMPP and Google Talk accounts require SSL by default.
-	* Display kicks (and the reasons given) in chat rooms when an occupant is
-	  kicked.
+	* Display kicks (and the reasons given) in chat rooms when an occupant
+	  is kicked.
 	* Fix issues with case-sensitivity of XMPP roster and case-insensitive
 	  Purple groups.
 	* For contacts who advertise Entity Capabilities, only send rich text
