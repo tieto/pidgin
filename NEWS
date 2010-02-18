@@ -2,7 +2,9 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
-2.6.6 (??/??/2010):
+2.6.6 (02/18/2010):
+	Mark: This release includes some great little changes and fixes a few
+	security-related bugs.  See the ChangeLog for details.
 
 2.6.5 (01/08/2010):
 	Paul: This release fixes a pretty serious bug in the MSN code, so we're

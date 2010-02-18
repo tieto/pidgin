@@ -741,10 +741,9 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 	if (!strncmp(body, "INVITE", strlen("INVITE")))
 	{
 		char *branch;
+		char *call_id;
 		char *content;
 		char *content_type;
-
-		slpcall = msn_slpcall_new(slplink);
 
 		/* From: <msnmsgr:buddy@hotmail.com> */
 #if 0
@@ -753,7 +752,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 
 		branch = get_token(body, ";branch={", "}");
 
-		slpcall->id = get_token(body, "Call-ID: {", "}");
+		call_id = get_token(body, "Call-ID: {", "}");
 
 #if 0
 		long content_len = -1;
@@ -767,13 +766,15 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 
 		content = get_token(body, "\r\n\r\n", NULL);
 
-		if (branch && content_type && content)
+		if (branch && call_id && content_type && content)
 		{
+			slpcall = msn_slpcall_new(slplink);
+			slpcall->id = call_id;
 			got_invite(slpcall, branch, content_type, content);
 		}
 		else
 		{
-			msn_slpcall_destroy(slpcall);
+			g_free(call_id);
 			slpcall = NULL;
 		}
 
