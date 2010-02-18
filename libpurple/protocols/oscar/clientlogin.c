@@ -43,7 +43,7 @@
 #include "core.h"
 
 #define URL_CLIENT_LOGIN "https://api.screenname.aol.com/auth/clientLogin"
-#define URL_START_OSCAR_SESSION "http://api.oscar.aol.com/aim/startOSCARSession"
+#define URL_START_OSCAR_SESSION "https://api.oscar.aol.com/aim/startOSCARSession"
 
 /*
  * Using clientLogin requires a developer ID.  This key is for libpurple.
