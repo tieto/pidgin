@@ -26,9 +26,9 @@
 
 #include "internal.h"
 
-#ifdef USE_VV
 #include "backend-fs2.h"
 
+#ifdef USE_VV
 #include "backend-iface.h"
 #include "debug.h"
 #include "network.h"
