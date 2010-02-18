@@ -75,17 +75,12 @@ bin_PROGRAMS = pidgin
 
 pidgin_SOURCES = \
 	eggtrayicon.c \
-	pidgincombobox.c \
 	pidginstock.c \
 	gtkaccount.c \
 	gtkblist.c \
 	gtkblist-theme.c \
 	gtkblist-theme-loader.c \
-	gtkcelllayout.c \
 	gtkcellrendererexpander.c \
-	gtkcellrendererprogress.c \
-	gtkcellview.c \
-	gtkcellviewmenuitem.c \
 	gtkcertmgr.c \
 	gtkconn.c \
 	gtkconv.c \
@@ -93,9 +88,9 @@ pidgin_SOURCES = \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
+	gtkdocklet-gtk.c \
 	gtkdocklet-x11.c \
 	gtkeventloop.c \
-	gtkexpander.c \
 	gtkft.c \
 	gtkicon-theme.c \
 	gtkicon-theme-loader.c \
@@ -136,13 +131,8 @@ pidgin_headers = \
 	gtkblist.h \
 	gtkblist-theme.h \
 	gtkblist-theme-loader.h \
-	gtkcelllayout.h \
 	gtkcellrendererexpander.h \
-	gtkcellrendererprogress.h \
-	gtkcellview.h \
-	gtkcellviewmenuitem.h \
 	gtkcertmgr.h \
-	pidgincombobox.h \
 	gtkconn.h \
 	gtkconv.h \
 	gtkconvwin.h \
@@ -151,7 +141,6 @@ pidgin_headers = \
 	gtkdnd-hints.h \
 	gtkdocklet.h \
 	gtkeventloop.h \
-	gtkexpander.h \
 	gtkft.h \
 	gtkicon-theme.h \
 	gtkicon-theme-loader.h \

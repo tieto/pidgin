@@ -1,5 +1,36 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.7.0 (??/??/????):
+	libpurple:
+		Added:
+		* purple_account_get_name_for_display
+		* purple_buddy_get_media_caps
+		* purple_buddy_set_media_caps
+		* purple_contact_get_group
+		* purple_media_candidate_copy
+		* purple_media_codec_copy
+		* purple_media_manager_get_backend_type
+		* purple_media_manager_set_backend_type
+		* purple_network_get_all_local_system_ips, which returns all local
+		  IPs on the system.  On systems with the getifaddrs() function,
+		  this will return both IPv4 and IPv6 addresses (excluding link-local
+		  and loopback addresses).  On others, it returns just IPv4 addresses.
+		* purple_prpl_got_media_caps
+		* purple_unescape_text
+		* purple_uuid_random
+		* media_caps to the PurpleBuddy struct
+		* buddy-caps-changed blist signal
+		* ui-caps-changed media manager signal
+		* sent-attention conversation signal
+		* got-attention conversation signal
+
+	Pidgin:
+		Added:
+		* pidgin_dialogs_buildinfo (should not be used by anything but Pidgin)
+		* pidgin_dialogs_developers (should not be used by anything but Pidgin)
+		* pidgin_dialogs_translators (should not be used by anything but Pidgin)
+		* gtk_imhtmltoolbar_switch_active_conversation
+
 version 2.6.6 (02/18/2010):
 	libpurple:
 		Changed:

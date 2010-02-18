@@ -49,31 +49,6 @@ parse_from_attrib_and_find_buddy(BonjourJabberConversation *bconv, int nb_attrib
 	return FALSE;
 }
 
-static char *purple_unescape_text(const char *in)
-{
-    GString *ret;
-    const char *c = in;
-
-    if (in == NULL)
-        return NULL;
-
-    ret = g_string_new("");
-    while (*c) {
-        int len;
-        const char *ent;
-
-        if ((ent = purple_markup_unescape_entity(c, &len)) != NULL) {
-            g_string_append(ret, ent);
-            c += len;
-        } else {
-            g_string_append_c(ret, *c);
-            c++;
-        }
-    }
-
-    return g_string_free(ret, FALSE);
-}
-
 static void
 bonjour_parser_element_start_libxml(void *user_data,
 				   const xmlChar *element_name, const xmlChar *prefix, const xmlChar *namespace,

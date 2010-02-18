@@ -2302,7 +2302,27 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_UINT));
-
+	
+	purple_signal_register(handle, "sent-attention",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT,
+						 NULL, 4,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CONVERSATION),
+						 purple_value_new(PURPLE_TYPE_UINT));
+	
+	purple_signal_register(handle, "got-attention",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT,
+						 NULL, 4,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CONVERSATION),
+						 purple_value_new(PURPLE_TYPE_UINT));
+	
 	purple_signal_register(handle, "sending-im-msg",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER,
 						 NULL, 3,

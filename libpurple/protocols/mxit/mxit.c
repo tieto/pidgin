@@ -189,7 +189,11 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 
 	/* find the buddy object */
 	buddy = purple_find_buddy( session->acc, who );
-	if ( ( !buddy ) || ( !buddy->proto_data ) )
+	if ( !buddy )
+		return;
+
+	contact = purple_buddy_get_protocol_data(buddy);
+	if ( !contact )
 		return;
 
 	/* we ignore all conversations with which we have chatted with in this session */
@@ -197,7 +201,6 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 		return;
 
 	/* determite if this buddy is a MXit service */
-	contact = buddy->proto_data;
 	switch ( contact->type ) {
 		case MXIT_TYPE_BOT :
 		case MXIT_TYPE_CHATROOM :
@@ -259,7 +262,7 @@ static const char* mxit_list_icon( PurpleAccount* account, PurpleBuddy* buddy )
  */
 static const char* mxit_list_emblem( PurpleBuddy* buddy )
 {
-	struct contact*	contact = buddy->proto_data;
+	struct contact*	contact = purple_buddy_get_protocol_data(buddy);
 
 	if ( !contact )
 		return NULL;
@@ -300,7 +303,7 @@ static const char* mxit_list_emblem( PurpleBuddy* buddy )
  */
 char* mxit_status_text( PurpleBuddy* buddy )
 {
-	struct contact*	contact = buddy->proto_data;
+	struct contact*	contact = purple_buddy_get_protocol_data(buddy);
 
 	if ( !contact )
 		return NULL;
@@ -325,7 +328,7 @@ char* mxit_status_text( PurpleBuddy* buddy )
  */
 static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboolean full )
 {
-	struct contact*	contact = buddy->proto_data;
+	struct contact*	contact = purple_buddy_get_protocol_data(buddy);
 
 	if ( !contact )
 		return;
@@ -461,7 +464,7 @@ static void mxit_free_buddy( PurpleBuddy* buddy )
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_free_buddy\n" );
 
-	contact = buddy->proto_data;
+	contact = purple_buddy_get_protocol_data(buddy);
 	if ( contact ) {
 		if ( contact->statusMsg )
 			g_free( contact->statusMsg );
@@ -469,7 +472,8 @@ static void mxit_free_buddy( PurpleBuddy* buddy )
 			g_free( contact->avatarId );
 		g_free( contact );
 	}
-	buddy->proto_data = NULL;
+
+	purple_buddy_set_protocol_data(buddy, NULL);
 }
 
 

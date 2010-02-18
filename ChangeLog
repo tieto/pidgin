@@ -1,5 +1,23 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.7.0 (??/??/????):
+	General:
+	* Changed GTK+ minimum version requirement to 2.10.0.
+	* Changed GLib minimum version requirement to 2.12.0.
+
+	Pidgin:
+	* Moved the "Debugging Information" section of the About box to a
+	  "Build Information" dialog accessible on the Help menu.
+	* Moved the Developer and Crazy Patch Writer information from the About
+	  box to a "Developer Information" dialog accessible on the Help menu.
+	* Moved the Translator information from the About box to a "Translator
+	  Information" dialog accessible on the Help menu.
+	* Use GtkStatusIcon for the docklet, providing better integration in
+	  notification area.
+	* Added UI for sending attentions (buzz, nudge) on supporting protocols.
+	* Make the search dialog unobtrusive in the conversation window (by making
+	  it look and behave like the search dialog in Firefox)
+
 version 2.6.6 (02/18/2010):
 	libpurple:
 	* Fix 'make check' on OS X. (David Fang)
