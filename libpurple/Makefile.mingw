@@ -48,13 +48,8 @@ C_SRC =	\
 			idle.c \
 			imgstore.c \
 			log.c \
-			media/backend-fs2.c \
-			media/backend-iface.c \
-			media/candidate.c \
-			media/codec.c \
-			media/enum-types.c \
-			media/media.c \
 			mediamanager.c \
+			media.c \
 			mime.c \
 			nat-pmp.c \
 			network.c \
