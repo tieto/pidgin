@@ -1048,7 +1048,8 @@ gboolean jabber_chat_affiliation_list(JabberChat *chat, const char *affiliation)
 	return TRUE;
 }
 
-gboolean jabber_chat_role_user(JabberChat *chat, const char *who, const char *role)
+gboolean jabber_chat_role_user(JabberChat *chat, const char *who,
+                               const char *role, const char *why)
 {
 	char *to;
 	JabberIq *iq;
@@ -1071,6 +1072,10 @@ gboolean jabber_chat_role_user(JabberChat *chat, const char *who, const char *ro
 	item = xmlnode_new_child(query, "item");
 	xmlnode_set_attrib(item, "nick", jcm->handle);
 	xmlnode_set_attrib(item, "role", role);
+	if (why) {
+		xmlnode *reason = xmlnode_new_child(item, "reason");
+		xmlnode_insert_data(reason, why, -1);
+	}
 
 	jabber_iq_send(iq);
 
@@ -1133,37 +1138,6 @@ gboolean jabber_chat_role_list(JabberChat *chat, const char *role)
 	xmlnode_set_attrib(item, "role", role);
 
 	jabber_iq_set_callback(iq, jabber_chat_role_list_cb, GINT_TO_POINTER(chat->id));
-	jabber_iq_send(iq);
-
-	return TRUE;
-}
-
-gboolean jabber_chat_kick_user(JabberChat *chat, const char *who, const char *why)
-{
-	JabberIq *iq;
-	JabberChatMember *jcm = g_hash_table_lookup(chat->members, who);
-	char *to;
-	xmlnode *query, *item, *reason;
-
-	if(!jcm || !jcm->jid)
-		return FALSE;
-
-	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
-			"http://jabber.org/protocol/muc#admin");
-
-	to = g_strdup_printf("%s@%s", chat->room, chat->server);
-	xmlnode_set_attrib(iq->node, "to", to);
-	g_free(to);
-
-	query = xmlnode_get_child(iq->node, "query");
-	item = xmlnode_new_child(query, "item");
-	xmlnode_set_attrib(item, "jid", jcm->jid);
-	xmlnode_set_attrib(item, "role", "none");
-	if(why) {
-		reason = xmlnode_new_child(item, "reason");
-		xmlnode_insert_data(reason, why, -1);
-	}
-
 	jabber_iq_send(iq);
 
 	return TRUE;

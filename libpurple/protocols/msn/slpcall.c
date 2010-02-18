@@ -199,7 +199,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	slpcall = NULL;
 	body = slpmsg->buffer;
-	body_len = slpmsg->size;
+	body_len = slpmsg->offset;
 
 	if (slpmsg->flags == 0x0 || slpmsg->flags == 0x1000000)
 	{

@@ -63,17 +63,7 @@
 
 #include <pango/pango-font.h>
 
-/* GTK+ < 2.4.x hack, see pidgin.h for details. */
-#if (!GTK_CHECK_VERSION(2,4,0))
-#define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
-#endif
-
 #define TOOLTIP_TIMEOUT 500
-
-/* GTK+ 2.0 hack */
-#if (!GTK_CHECK_VERSION(2,2,0))
-#define gtk_widget_get_clipboard(x, y) gtk_clipboard_get(y)
-#endif
 
 static GtkTextViewClass *parent_class = NULL;
 
@@ -552,10 +542,8 @@ gtk_imhtml_tip (gpointer data)
 	gtk_window_set_title(GTK_WINDOW(imhtml->tip_window), "GtkIMHtml");
 	gtk_window_set_resizable (GTK_WINDOW (imhtml->tip_window), FALSE);
 	gtk_widget_set_name (imhtml->tip_window, "gtk-tooltips");
-#if GTK_CHECK_VERSION(2,10,0)
 	gtk_window_set_type_hint (GTK_WINDOW (imhtml->tip_window),
 		GDK_WINDOW_TYPE_HINT_TOOLTIP);
-#endif
 	g_signal_connect_swapped (G_OBJECT (imhtml->tip_window), "expose_event",
 							  G_CALLBACK (gtk_imhtml_tip_paint), imhtml);
 
@@ -759,32 +747,6 @@ gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data
 	/* propagate the event normally */
 	return FALSE;
 }
-
-#if (!GTK_CHECK_VERSION(2,2,0))
-/*
- * XXX - This should be removed eventually.
- *
- * This function exists to work around a gross bug in GtkTextView.
- * Basically, we short circuit ctrl+a and ctrl+end because they make
- * el program go boom.
- *
- * It's supposed to be fixed in gtk2.2.  You can view the bug report at
- * http://bugzilla.gnome.org/show_bug.cgi?id=107939
- */
-static gboolean
-gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data)
-{
-	if (event->state & GDK_CONTROL_MASK) {
-		switch (event->keyval) {
-			case 'a':
-			case GDK_Home:
-			case GDK_End:
-				return TRUE;
-		}
-	}
-	return FALSE;
-}
-#endif /* !(GTK+ >= 2.2.0) */
 
 static gint
 gtk_imhtml_expose_event (GtkWidget      *widget,
@@ -1700,10 +1662,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "enter-notify-event", G_CALLBACK(gtk_enter_event_notify), NULL);
-#if (!GTK_CHECK_VERSION(2,2,0))
-	/* See the comment for gtk_key_pressed_cb */
-	g_signal_connect(G_OBJECT(imhtml), "key_press_event", G_CALLBACK(gtk_key_pressed_cb), NULL);
-#endif
 	g_signal_connect(G_OBJECT(imhtml), "button_press_event", G_CALLBACK(gtk_imhtml_button_press_event), NULL);
 	g_signal_connect(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(preinsert_cb), imhtml);
 	g_signal_connect(G_OBJECT(imhtml->text_buffer), "delete_range", G_CALLBACK(delete_cb), imhtml);
@@ -2173,68 +2131,59 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	return (*len > 0);
 }
 
-GtkIMHtmlSmiley *
-gtk_imhtml_smiley_get(GtkIMHtml *imhtml,
-	const gchar *sml,
-	const gchar *text)
+static GtkIMHtmlSmiley *gtk_imhtml_smiley_get_from_tree(GtkSmileyTree *t, const gchar *text)
 {
-	GtkSmileyTree *t;
 	const gchar *x = text;
-	if (sml == NULL)
-		t = imhtml->default_smilies;
-	else
-		t = g_hash_table_lookup(imhtml->smiley_data, sml);
-
+	gchar *pos;
 
 	if (t == NULL)
-		return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
+		return NULL;
 
 	while (*x) {
-		gchar *pos;
+		if (!t->values)
+			return NULL;
 
-		if (!t->values) {
-			return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
-		}
+		pos = strchr(t->values->str, *x);
+		if (!pos)
+			return NULL;
 
-		pos = strchr (t->values->str, *x);
-		if (pos) {
-			t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
-		} else {
-			return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
-		}
+		t = t->children[GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
 		x++;
 	}
 
 	return t->image;
 }
 
-static GdkPixbufAnimation *
-gtk_smiley_get_image(GtkIMHtmlSmiley *smiley)
+GtkIMHtmlSmiley *
+gtk_imhtml_smiley_get(GtkIMHtml *imhtml, const gchar *sml, const gchar *text)
 {
-	if (!smiley->icon && smiley->file) {
-		smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
-	} else if (!smiley->icon && smiley->loader) {
-		smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
-		if (smiley->icon)
-			g_object_ref(G_OBJECT(smiley->icon));
+	GtkIMHtmlSmiley *ret;
+
+	/* Look for custom smileys first */
+	if (sml != NULL) {
+		ret = gtk_imhtml_smiley_get_from_tree(g_hash_table_lookup(imhtml->smiley_data, sml), text);
+		if (ret != NULL)
+			return ret;
 	}
 
-	return smiley->icon;
+	/* Fall back to check for default smileys */
+	return gtk_imhtml_smiley_get_from_tree(imhtml->default_smilies, text);
 }
 
 static GdkPixbufAnimation *
-gtk_smiley_tree_image (GtkIMHtml     *imhtml,
-		       const gchar   *sml,
-		       const gchar   *text)
+gtk_smiley_get_image(GtkIMHtmlSmiley *smiley)
 {
-	GtkIMHtmlSmiley *smiley;
+	if (!smiley->icon) {
+		if (smiley->file) {
+			smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
+		} else if (smiley->loader) {
+			smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
+			if (smiley->icon)
+				g_object_ref(G_OBJECT(smiley->icon));
+		}
+	}
 
-	smiley = gtk_imhtml_smiley_get(imhtml,sml,text);
-
-	if (!smiley)
-		return NULL;
-
-	return gtk_smiley_get_image(smiley);
+	return smiley->icon;
 }
 
 #define VALID_TAG(x)	do { \
@@ -2694,6 +2643,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	len = strlen(text);
 	ws = g_malloc(len + 1);
 	ws[0] = '\0';
+
+	g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg", GINT_TO_POINTER(0));
 
 	gtk_text_buffer_begin_user_action(imhtml->text_buffer);
 	while (pos < len) {
@@ -3547,6 +3498,8 @@ gtk_imhtml_delete(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end) {
 	}
 	gtk_text_buffer_delete(imhtml->text_buffer, start, end);
 
+	g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total", GINT_TO_POINTER(0));
+
 	g_object_unref(object);
 }
 
@@ -3703,22 +3656,12 @@ image_save_yes_cb(GtkIMHtmlImageSave *save, const char *filename)
 	image->filesel = NULL;
 
 	if (save->data && save->datasize) {
-#if GLIB_CHECK_VERSION(2,8,0)
 		g_file_set_contents(filename, save->data, save->datasize, &error);
-#else
-		purple_util_write_data_to_file_absolute(filename, save->data, save->datasize);
-#endif
 	} else {
 		gchar *type = NULL;
-#if GTK_CHECK_VERSION(2,2,0)
 		GSList *formats = gdk_pixbuf_get_formats();
-#else
-		char *basename = g_path_get_basename(filename);
-		char *ext = strrchr(basename, '.');
-#endif
 		char *newfilename;
 
-#if GTK_CHECK_VERSION(2,2,0)
 		while (formats) {
 			GdkPixbufFormat *format = formats->data;
 			gchar **extensions = gdk_pixbuf_format_get_extensions(format);
@@ -3745,31 +3688,14 @@ image_save_yes_cb(GtkIMHtmlImageSave *save, const char *filename)
 		}
 
 		g_slist_free(formats);
-#else
-		/* this is really ugly code, but I think it will work */
-		if (ext) {
-			ext++;
-			if (!g_ascii_strcasecmp(ext, "jpeg") || !g_ascii_strcasecmp(ext, "jpg"))
-				type = g_strdup("jpeg");
-			else if (!g_ascii_strcasecmp(ext, "png"))
-				type = g_strdup("png");
-		}
-
-		g_free(basename);
-#endif
 
 		/* If I can't find a valid type, I will just tell the user about it and then assume
 		   it's a png */
 		if (!type){
 			char *basename, *tmp;
 			char *dirname;
-#if GTK_CHECK_VERSION(2,4,0)
 			GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 							_("<span size='larger' weight='bold'>Unrecognized file type</span>\n\nDefaulting to PNG."));
-#else
-			GtkWidget *dialog = gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-							_("Unrecognized file type\n\nDefaulting to PNG."));
-#endif
 
 			g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
 			gtk_widget_show(dialog);
@@ -3798,20 +3724,14 @@ image_save_yes_cb(GtkIMHtmlImageSave *save, const char *filename)
 	}
 
 	if (error){
-#if GTK_CHECK_VERSION(2,4,0)
 		GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 				_("<span size='larger' weight='bold'>Error saving image</span>\n\n%s"), error->message);
-#else
-		GtkWidget *dialog = gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-				_("Error saving image\n\n%s"), error->message);
-#endif
 		g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
 		gtk_widget_show(dialog);
 		g_error_free(error);
 	}
 }
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
 image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImageSave *save)
 {
@@ -3825,32 +3745,6 @@ image_save_check_if_exists_cb(GtkWidget *widget, gint response, GtkIMHtmlImageSa
 	}
 
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
-#else /* FILECHOOSER */
-static void
-image_save_check_if_exists_cb(GtkWidget *button, GtkIMHtmlImageSave *save)
-{
-	gchar *filename;
-	GtkIMHtmlImage *image = (GtkIMHtmlImage *)save->image;
-
-	filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(image->filesel)));
-
-	if (g_file_test(filename, G_FILE_TEST_IS_DIR)) {
-		gchar *dirname;
-		/* append a / is needed */
-		if (filename[strlen(filename) - 1] != G_DIR_SEPARATOR) {
-			dirname = g_strconcat(filename, G_DIR_SEPARATOR_S, NULL);
-		} else {
-			dirname = g_strdup(filename);
-		}
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(image->filesel), dirname);
-		g_free(dirname);
-		g_free(filename);
-		return;
-	}
-#endif /* FILECHOOSER */
-#if 0 /* mismatched curly braces */
-	}
-#endif
 
 	/*
 	 * XXX - We should probably prompt the user to determine if they really
@@ -3868,15 +3762,6 @@ image_save_check_if_exists_cb(GtkWidget *button, GtkIMHtmlImageSave *save)
 	g_free(filename);
 }
 
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-static void
-image_save_cancel_cb(GtkIMHtmlImage *image)
-{
-	gtk_widget_destroy(image->filesel);
-	image->filesel = NULL;
-}
-#endif /* FILECHOOSER */
-
 static void
 gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 {
@@ -3887,7 +3772,6 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 		return;
 	}
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	image->filesel = gtk_file_chooser_dialog_new(_("Save Image"),
 						NULL,
 						GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -3899,17 +3783,6 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImageSave *save)
 		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(image->filesel), image->filename);
 	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(image->filesel)), "response",
 					 G_CALLBACK(image_save_check_if_exists_cb), save);
-#else /* FILECHOOSER */
-	image->filesel = gtk_file_selection_new(_("Save Image"));
-	if (image->filename != NULL)
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(image->filesel), image->filename);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)), "delete_event",
-							 G_CALLBACK(image_save_cancel_cb), image);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->cancel_button),
-							 "clicked", G_CALLBACK(image_save_cancel_cb), image);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(image->filesel)->ok_button), "clicked",
-					 G_CALLBACK(image_save_check_if_exists_cb), save);
-#endif /* FILECHOOSER */
 
 	gtk_widget_show(image->filesel);
 }
@@ -4983,12 +4856,33 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	GdkPixbufAnimation *annipixbuf = NULL;
 	GtkWidget *icon = NULL;
 	GtkTextChildAnchor *anchor = NULL;
-	char *unescaped = purple_unescape_html(smiley);
-	GtkIMHtmlSmiley *imhtml_smiley = gtk_imhtml_smiley_get(imhtml, sml, unescaped);
+	char *unescaped;
+	GtkIMHtmlSmiley *imhtml_smiley;
 	GtkWidget *ebox = NULL;
+	int numsmileys_thismsg, numsmileys_total;
+
+	/*
+	 * This GtkIMHtml has the maximum number of smileys allowed, so don't
+	 * add any more.  We do this for performance reasons, because smileys
+	 * are apparently pretty inefficient.  Hopefully we can remove this
+	 * restriction when we're using a better HTML widget.
+	 */
+	numsmileys_thismsg = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg"));
+	if (numsmileys_thismsg >= 30) {
+		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
+		return;
+	}
+	numsmileys_total = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total"));
+	if (numsmileys_total >= 300) {
+		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
+		return;
+	}
+
+	unescaped = purple_unescape_html(smiley);
+	imhtml_smiley = gtk_imhtml_smiley_get(imhtml, sml, unescaped);
 
 	if (imhtml->format_functions & GTK_IMHTML_SMILEY) {
-		annipixbuf = gtk_smiley_tree_image(imhtml, sml, unescaped);
+		annipixbuf = imhtml_smiley ? gtk_smiley_get_image(imhtml_smiley) : NULL;
 		if (annipixbuf) {
 			if (gdk_pixbuf_animation_is_static_image(annipixbuf)) {
 				pixbuf = gdk_pixbuf_animation_get_static_image(annipixbuf);
@@ -5020,9 +4914,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 
 	if (imhtml_smiley && imhtml_smiley->flags & GTK_IMHTML_SMILEY_CUSTOM) {
 		ebox = gtk_event_box_new();
-#if GTK_CHECK_VERSION(2,4,0)
 		gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
-#endif
 		gtk_widget_show(ebox);
 	}
 
@@ -5042,6 +4934,9 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		if (ebox)
 			gtk_container_add(GTK_CONTAINER(ebox), icon);
 		gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox ? ebox : icon, anchor);
+
+		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg", GINT_TO_POINTER(numsmileys_thismsg + 1));
+		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total", GINT_TO_POINTER(numsmileys_total + 1));
 	} else if (imhtml_smiley != NULL && (imhtml->format_functions & GTK_IMHTML_SMILEY)) {
 		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
 		imhtml_smiley->anchors = g_slist_append(imhtml_smiley->anchors, g_object_ref(anchor));
@@ -5054,6 +4949,9 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley), g_free);
 			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox, anchor);
 		}
+
+		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_thismsg", GINT_TO_POINTER(numsmileys_thismsg + 1));
+		g_object_set_data(G_OBJECT(imhtml), "gtkimhtml_numsmileys_total", GINT_TO_POINTER(numsmileys_total + 1));
 	} else {
 		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
 	}

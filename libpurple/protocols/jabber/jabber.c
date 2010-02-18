@@ -2721,9 +2721,10 @@ static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 		char **nicks = g_strsplit(args[1], " ", -1);
 
 		for (i = 0; nicks[i]; i++)
-			if (!jabber_chat_role_user(chat, nicks[i], args[0])) {
+			if (!jabber_chat_role_user(chat, nicks[i], args[0], NULL)) {
 				*error = g_strdup_printf(_("Unable to set role \"%s\" for user: %s"),
 										 args[0], nicks[i]);
+				g_strfreev(nicks);
 				return PURPLE_CMD_RET_FAILED;
 			}
 
@@ -2778,7 +2779,7 @@ static PurpleCmdRet jabber_cmd_chat_kick(PurpleConversation *conv,
 	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	if(!jabber_chat_kick_user(chat, args[0], args[1])) {
+	if(!jabber_chat_role_user(chat, args[0], "none", args[1])) {
 		*error = g_strdup_printf(_("Unable to kick user %s"), args[0]);
 		return PURPLE_CMD_RET_FAILED;
 	}
@@ -2880,6 +2881,11 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 {
 	JabberStream *js = conv->account->gc->proto_data;
 	const gchar *who;
+	gchar *description;
+	PurpleBuddy *buddy;
+	const char *alias;
+	PurpleAttentionType *attn = 
+		purple_get_attention_type_from_code(conv->account, 0);
 
 	if (!args || !args[0]) {
 		/* use the buddy from conversation, if it's a one-to-one conversation */
@@ -2892,27 +2898,18 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		who = args[0];
 	}
 
-	if (_jabber_send_buzz(js, who, error)) {
-		const gchar *alias;
-		gchar *str;
-		PurpleBuddy *buddy =
-			purple_find_buddy(purple_connection_get_account(conv->account->gc),
-				who);
-
-		if (buddy != NULL)
-			alias = purple_buddy_get_contact_alias(buddy);
-		else
-			alias = who;
-
-		str = g_strdup_printf(_("Buzzing %s..."), alias);
-		purple_conversation_write(conv, NULL, str,
-			PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
-		g_free(str);
-
-		return PURPLE_CMD_RET_OK;
-	} else {
-		return PURPLE_CMD_RET_FAILED;
-	}
+	buddy = purple_find_buddy(conv->account, who);
+	if (buddy != NULL)
+		alias = purple_buddy_get_contact_alias(buddy);
+	else
+		alias = who;
+	
+	description = 
+		g_strdup_printf(purple_attention_type_get_outgoing_desc(attn), alias);
+	purple_conversation_write(conv, NULL, description, 
+		PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM, time(NULL));
+	g_free(description);
+	return _jabber_send_buzz(js, who, error)  ? PURPLE_CMD_RET_OK : PURPLE_CMD_RET_FAILED;
 }
 
 GList *jabber_attention_types(PurpleAccount *account)
@@ -3519,6 +3516,9 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, jabber_video_enabled);
 	jabber_add_feature(JINGLE_TRANSPORT_RAWUDP, 0);
 	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
+
+	g_signal_connect(G_OBJECT(purple_media_manager_get()), "ui-caps-changed",
+			G_CALLBACK(jabber_caps_broadcast_change), NULL);
 #endif
 
 	jabber_auth_init();
