@@ -2131,50 +2131,56 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	return (*len > 0);
 }
 
-GtkIMHtmlSmiley *
-gtk_imhtml_smiley_get(GtkIMHtml *imhtml,
-	const gchar *sml,
-	const gchar *text)
+static GtkIMHtmlSmiley *gtk_imhtml_smiley_get_from_tree(GtkSmileyTree *t, const gchar *text)
 {
-	GtkSmileyTree *t;
 	const gchar *x = text;
-	if (sml == NULL)
-		t = imhtml->default_smilies;
-	else
-		t = g_hash_table_lookup(imhtml->smiley_data, sml);
-
+	gchar *pos;
 
 	if (t == NULL)
-		return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
+		return NULL;
 
 	while (*x) {
-		gchar *pos;
+		if (!t->values)
+			return NULL;
 
-		if (!t->values) {
-			return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
-		}
+		pos = strchr(t->values->str, *x);
+		if (!pos)
+			return NULL;
 
-		pos = strchr (t->values->str, *x);
-		if (pos) {
-			t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
-		} else {
-			return sml ? gtk_imhtml_smiley_get(imhtml, NULL, text) : NULL;
-		}
+		t = t->children[GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
 		x++;
 	}
 
 	return t->image;
 }
 
+GtkIMHtmlSmiley *
+gtk_imhtml_smiley_get(GtkIMHtml *imhtml, const gchar *sml, const gchar *text)
+{
+	GtkIMHtmlSmiley *ret;
+
+	/* Look for custom smileys first */
+	if (sml != NULL) {
+		ret = gtk_imhtml_smiley_get_from_tree(g_hash_table_lookup(imhtml->smiley_data, sml), text);
+		if (ret != NULL)
+			return ret;
+	}
+
+	/* Fall back to check for default smileys */
+	return gtk_imhtml_smiley_get_from_tree(imhtml->default_smilies, text);
+}
+
 static GdkPixbufAnimation *
 gtk_smiley_get_image(GtkIMHtmlSmiley *smiley)
 {
-	if (!smiley->icon && smiley->file) {
-		smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
-	} else if (!smiley->icon && smiley->loader) {
-		smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
-		if (smiley->icon)
-			g_object_ref(G_OBJECT(smiley->icon));
+	if (!smiley->icon) {
+		if (smiley->file) {
+			smiley->icon = gdk_pixbuf_animation_new_from_file(smiley->file, NULL);
+		} else if (smiley->loader) {
+			smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
+			if (smiley->icon)
+				g_object_ref(G_OBJECT(smiley->icon));
+		}
 	}
 
 	return smiley->icon;
