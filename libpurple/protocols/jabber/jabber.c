@@ -2724,6 +2724,7 @@ static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 			if (!jabber_chat_role_user(chat, nicks[i], args[0])) {
 				*error = g_strdup_printf(_("Unable to set role \"%s\" for user: %s"),
 										 args[0], nicks[i]);
+				g_strfreev(nicks);
 				return PURPLE_CMD_RET_FAILED;
 			}
 
