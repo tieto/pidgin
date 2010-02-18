@@ -1584,6 +1584,18 @@ create_stream(PurpleMediaBackendFs2 *self,
 	PurpleMediaBackendFs2Session *session;
 	PurpleMediaBackendFs2Stream *stream;
 	FsParticipant *participant;
+	/* check if the prpl has already specified a relay-info
+	  we need to do this to allow them to override when using non-standard
+	  TURN modes, like Google f.ex. */
+	gboolean got_turn_from_prpl = FALSE;
+	int i;
+
+	for (i = 0 ; i < num_params ; i++) {
+		if (purple_strequal(params[i].name, "relay-info")) {
+			got_turn_from_prpl = TRUE;
+			break;
+		}
+	}
 
 	memcpy(_params, params, sizeof(GParameter) * num_params);
 
@@ -1603,7 +1615,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 		++_num_params;
 	}
 
-	if (turn_ip && !strcmp("nice", transmitter)) {
+	if (turn_ip && !strcmp("nice", transmitter) && !got_turn_from_prpl) {
 		GValueArray *relay_info = g_value_array_new(0);
 		GValue value;
 		gint turn_port = purple_prefs_get_int(
