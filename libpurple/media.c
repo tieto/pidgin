@@ -2754,15 +2754,21 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		FsStream *fsstream = NULL;
 		const gchar *stun_ip = purple_network_get_stun_ip();
 		const gchar *turn_ip = purple_network_get_turn_ip();
-
-		if (stun_ip || turn_ip) {
-			guint new_num_params = 
+		guint new_num_params =
+					!stun_ip && !turn_ip ? num_params + 1 :
 					(stun_ip && is_nice) && turn_ip ?
-					num_params + 2 : num_params + 1;
-			guint next_param_index = num_params;
-			GParameter *param = g_new0(GParameter, new_num_params);
-			memcpy(param, params, sizeof(GParameter) * num_params);
+					num_params + 3 : num_params + 2;
+		guint next_param_index = num_params;
+		GParameter *param = g_new0(GParameter, new_num_params);
+		memcpy(param, params, sizeof(GParameter) * num_params);
 
+		/* set controlling mode according to direction */
+		param[next_param_index].name = "controlling-mode";
+		g_value_init(&param[next_param_index].value, G_TYPE_BOOLEAN);
+		g_value_set_boolean(&param[next_param_index].value, initiator);
+		next_param_index++;
+		
+		if (stun_ip || turn_ip) {
 			if (stun_ip) {
 				purple_debug_info("media", 
 					"setting property stun-ip on new stream: %s\n", stun_ip);
@@ -2813,20 +2819,14 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 					return FALSE;
 				}
 			}
+		}
 
-			fsstream = fs_session_new_stream(session->session,
+		fsstream = fs_session_new_stream(session->session,
 					participant, initiator == TRUE ?
 					type_direction : (type_direction &
 					FS_DIRECTION_RECV), transmitter,
 					new_num_params, param, &err);
-			g_free(param);
-		} else {
-			fsstream = fs_session_new_stream(session->session,
-					participant, initiator == TRUE ?
-					type_direction : (type_direction &
-					FS_DIRECTION_RECV), transmitter,
-					num_params, params, &err);
-		}
+		g_free(param);
 
 		if (fsstream == NULL) {
 			purple_debug_error("media",

@@ -18,6 +18,8 @@
  *  USA.
  */
 
+#include "libgadu.h"
+
 #include <sys/types.h>
 #ifndef _WIN32
 #include <sys/wait.h>
@@ -43,7 +45,6 @@
 #include <unistd.h>
 
 #include "compat.h"
-#include "libgadu.h"
 
 /*
  * gg_http_connect() // funkcja pomocnicza

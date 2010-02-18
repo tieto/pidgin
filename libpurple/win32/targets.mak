@@ -23,7 +23,7 @@ $(PIDGIN_REVISION_RAW_TXT):
 
 $(PIDGIN_REVISION_H): $(PIDGIN_REVISION_RAW_TXT)
 	if [ -f $< ]; then \
-		sed 's/^\(.\+\)$$/#define REVISION "\1"/' $< > $@; \
+		sed 's/^\(.\{1,\}\)$$/#define REVISION "\1"/' $< > $@; \
 	fi
 	[ -f $@ ] || echo "#define REVISION \"unknown\"" > $@
 

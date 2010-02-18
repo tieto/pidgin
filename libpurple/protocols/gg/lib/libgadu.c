@@ -21,6 +21,8 @@
  *  USA.
  */
 
+#include "libgadu.h"
+
 #include <sys/types.h>
 #ifndef _WIN32
 #include <sys/wait.h>
@@ -57,7 +59,6 @@
 #endif
 
 #include "compat.h"
-#include "libgadu.h"
 
 int gg_debug_level = 0;
 void (*gg_debug_handler)(int level, const char *format, va_list ap) = NULL;

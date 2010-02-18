@@ -142,12 +142,13 @@ END_TEST
 	PurpleCipherContext *context = NULL; \
 	gchar cdigest[41]; \
 	gboolean ret = FALSE; \
+	gchar *input = data; \
 	\
 	cipher = purple_ciphers_find_cipher("sha1"); \
 	context = purple_cipher_context_new(cipher, NULL); \
 	\
-	if((data)) { \
-		purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
+	if (input) { \
+		purple_cipher_context_append(context, (guchar *)input, strlen(input)); \
 	} else { \
 		gint j; \
 		guchar buff[1000]; \
@@ -202,12 +203,13 @@ END_TEST
 	PurpleCipherContext *context = NULL; \
 	gchar cdigest[65]; \
 	gboolean ret = FALSE; \
+	gchar *input = data; \
 	\
 	cipher = purple_ciphers_find_cipher("sha256"); \
 	context = purple_cipher_context_new(cipher, NULL); \
 	\
-	if((data)) { \
-		purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
+	if (input) { \
+		purple_cipher_context_append(context, (guchar *)input, strlen(input)); \
 	} else { \
 		gint j; \
 		guchar buff[1000]; \

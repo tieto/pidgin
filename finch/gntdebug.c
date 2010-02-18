@@ -23,6 +23,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include <internal.h>
+
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -35,7 +38,6 @@
 
 #include "gntdebug.h"
 #include "finch.h"
-#include <internal.h>
 #include "notify.h"
 #include "util.h"
 

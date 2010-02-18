@@ -84,6 +84,30 @@ am__objects_1 = libqq_la-buddy_info.lo libqq_la-buddy_memo.lo \
 libqq_la_OBJECTS = $(am_libqq_la_OBJECTS)
 @STATIC_QQ_FALSE@am_libqq_la_rpath = -rpath $(pkgdir)
 @STATIC_QQ_TRUE@am_libqq_la_rpath =
+@STATIC_QQ_FALSE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+libqq_tmp_la_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am__libqq_tmp_la_SOURCES_DIST = buddy_info.c buddy_info.h buddy_memo.c \
+	buddy_memo.h buddy_list.c buddy_list.h buddy_opt.c buddy_opt.h \
+	char_conv.c char_conv.h qq_crypt.c qq_crypt.h file_trans.c \
+	file_trans.h group.c group.h group_internal.c group_internal.h \
+	group_im.c group_im.h group_info.c group_info.h group_join.c \
+	group_join.h group_opt.c group_opt.h qq_define.c qq_define.h \
+	im.c im.h qq_process.c qq_process.h qq_base.c qq_base.h \
+	packet_parse.c packet_parse.h qq.c qq.h qq_network.c \
+	qq_network.h send_file.c send_file.h qq_trans.c qq_trans.h \
+	utils.c utils.h
+am__objects_2 = buddy_info.lo buddy_memo.lo buddy_list.lo buddy_opt.lo \
+	char_conv.lo qq_crypt.lo file_trans.lo group.lo \
+	group_internal.lo group_im.lo group_info.lo group_join.lo \
+	group_opt.lo qq_define.lo im.lo qq_process.lo qq_base.lo \
+	packet_parse.lo qq.lo qq_network.lo send_file.lo qq_trans.lo \
+	utils.lo
+@STATIC_QQ_FALSE@am__objects_3 = $(am__objects_2)
+@STATIC_QQ_TRUE@am__objects_3 = $(am__objects_2)
+am_libqq_tmp_la_OBJECTS = $(am__objects_3)
+libqq_tmp_la_OBJECTS = $(am_libqq_tmp_la_OBJECTS)
+@STATIC_QQ_FALSE@am_libqq_tmp_la_rpath =
+@STATIC_QQ_TRUE@am_libqq_tmp_la_rpath =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -95,8 +119,9 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libqq_la_SOURCES)
-DIST_SOURCES = $(am__libqq_la_SOURCES_DIST)
+SOURCES = $(libqq_la_SOURCES) $(libqq_tmp_la_SOURCES)
+DIST_SOURCES = $(am__libqq_la_SOURCES_DIST) \
+	$(am__libqq_tmp_la_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -124,10 +149,6 @@ CHECK_CFLAGS = @CHECK_CFLAGS@
 CHECK_LIBS = @CHECK_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DBUS_CFLAGS = @DBUS_CFLAGS@
@@ -141,9 +162,9 @@ DISTRIB_TRUE = @DISTRIB_TRUE@
 DOT = @DOT@
 DOXYGEN = @DOXYGEN@
 DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 DYNALOADER_A = @DYNALOADER_A@
 DYNAMIC_PRPLS = @DYNAMIC_PRPLS@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -163,10 +184,9 @@ EVOLUTION_ADDRESSBOOK_LIBS = @EVOLUTION_ADDRESSBOOK_LIBS@
 EXEEXT = @EXEEXT@
 EXTERNAL_LIBZEPHYR_FALSE = @EXTERNAL_LIBZEPHYR_FALSE@
 EXTERNAL_LIBZEPHYR_TRUE = @EXTERNAL_LIBZEPHYR_TRUE@
-F77 = @F77@
 FARSIGHT_CFLAGS = @FARSIGHT_CFLAGS@
 FARSIGHT_LIBS = @FARSIGHT_LIBS@
-FFLAGS = @FFLAGS@
+FGREP = @FGREP@
 GADU_CFLAGS = @GADU_CFLAGS@
 GADU_LIBS = @GADU_LIBS@
 GCONFTOOL = @GCONFTOOL@
@@ -244,6 +264,7 @@ INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
 KRB4_LDFLAGS = @KRB4_LDFLAGS@
 KRB4_LIBS = @KRB4_LIBS@
+LD = @LD@
 LDADD = @LDADD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -252,6 +273,7 @@ LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBXML_CFLAGS = @LIBXML_CFLAGS@
 LIBXML_LIBS = @LIBXML_LIBS@
+LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
@@ -265,15 +287,20 @@ MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 NETWORKMANAGER_CFLAGS = @NETWORKMANAGER_CFLAGS@
 NETWORKMANAGER_LIBS = @NETWORKMANAGER_LIBS@
+NM = @NM@
 NMEDIT = @NMEDIT@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
+OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PANGO_CFLAGS = @PANGO_CFLAGS@
 PANGO_LIBS = @PANGO_LIBS@
@@ -348,6 +375,8 @@ STRIP = @STRIP@
 TCL_CFLAGS = @TCL_CFLAGS@
 TCL_LIBS = @TCL_LIBS@
 TK_LIBS = @TK_LIBS@
+USE_CYRUS_SASL_FALSE = @USE_CYRUS_SASL_FALSE@
+USE_CYRUS_SASL_TRUE = @USE_CYRUS_SASL_TRUE@
 USE_GCONFTOOL_FALSE = @USE_GCONFTOOL_FALSE@
 USE_GCONFTOOL_TRUE = @USE_GCONFTOOL_TRUE@
 USE_GNUTLS_FALSE = @USE_GNUTLS_FALSE@
@@ -382,12 +411,9 @@ ZEPHYR_CFLAGS = @ZEPHYR_CFLAGS@
 ZEPHYR_LDFLAGS = @ZEPHYR_LDFLAGS@
 ZEPHYR_LIBS = @ZEPHYR_LIBS@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -421,6 +447,7 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
+lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -496,12 +523,19 @@ AM_CFLAGS = $(st)
 libqq_la_LDFLAGS = -module -avoid-version
 @STATIC_QQ_FALSE@st = 
 @STATIC_QQ_TRUE@st = -DPURPLE_STATIC_PRPL
-@STATIC_QQ_TRUE@noinst_LTLIBRARIES = libqq.la
+
+# For 'make check'
+@STATIC_QQ_FALSE@noinst_LTLIBRARIES = libqq_tmp.la
+
+# For 'make check'
+@STATIC_QQ_TRUE@noinst_LTLIBRARIES = libqq.la libqq_tmp.la
 @STATIC_QQ_FALSE@libqq_la_SOURCES = $(QQSOURCES)
 @STATIC_QQ_TRUE@libqq_la_SOURCES = $(QQSOURCES)
 @STATIC_QQ_TRUE@libqq_la_CFLAGS = $(AM_CFLAGS)
 @STATIC_QQ_FALSE@pkg_LTLIBRARIES = libqq.la
 @STATIC_QQ_FALSE@libqq_la_LIBADD = $(GLIB_LIBS)
+libqq_tmp_la_SOURCES = $(libqq_la_SOURCES)
+libqq_tmp_la_LIBADD = $(libqq_la_LIBADD)
 
 # QQ_BUDDY_ICON_DIR is the path where a bunch of stock icons can be
 # places for users to choose from when setting their buddy icon.  We
@@ -585,6 +619,8 @@ clean-pkgLTLIBRARIES:
 	done
 libqq.la: $(libqq_la_OBJECTS) $(libqq_la_DEPENDENCIES) 
 	$(LINK) $(am_libqq_la_rpath) $(libqq_la_LDFLAGS) $(libqq_la_OBJECTS) $(libqq_la_LIBADD) $(LIBS)
+libqq_tmp.la: $(libqq_tmp_la_OBJECTS) $(libqq_tmp_la_DEPENDENCIES) 
+	$(LINK) $(am_libqq_tmp_la_rpath) $(libqq_tmp_la_LDFLAGS) $(libqq_tmp_la_OBJECTS) $(libqq_tmp_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -592,6 +628,19 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddy_info.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddy_list.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddy_memo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddy_opt.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/char_conv.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file_trans.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_im.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_info.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_internal.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_join.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_opt.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/im.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_la-buddy_info.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_la-buddy_list.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_la-buddy_memo.Plo@am__quote@
@@ -615,6 +664,16 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_la-qq_trans.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_la-send_file.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_la-utils.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/packet_parse.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq_base.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq_crypt.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq_define.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq_network.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq_process.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq_trans.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_file.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

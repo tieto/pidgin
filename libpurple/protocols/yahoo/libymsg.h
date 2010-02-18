@@ -138,7 +138,8 @@ typedef enum {
 	YAHOO_FEDERATION_NONE = 0, /* No federation - Yahoo! network */
 	YAHOO_FEDERATION_OCS = 1,  /* LCS or OCS private networks */
 	YAHOO_FEDERATION_MSN = 2,  /* MSN or Windows Live network */
-	YAHOO_FEDERATION_IBM = 9   /* IBM/Sametime network */
+	YAHOO_FEDERATION_IBM = 9,  /* IBM/Sametime network */
+	YAHOO_FEDERATION_PBX = 100 /* Yahoo! Pingbox service */
 } YahooFederation;
 
 

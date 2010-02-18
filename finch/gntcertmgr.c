@@ -25,8 +25,8 @@
  *
  */
 
-#include "finch.h"
 #include <internal.h>
+#include "finch.h"
 
 #include "certificate.h"
 #include "debug.h"

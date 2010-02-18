@@ -366,6 +366,10 @@ pagedown = page-down
 .br
 backspace = move-parent
 .br
+home = move-first
+.br
+end = move-last
+.br
 # Following is the default binding for the context-menu
 .br
 menu = context-menu

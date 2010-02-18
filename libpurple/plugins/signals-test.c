@@ -547,6 +547,26 @@ quitting_cb(void *data)
 	purple_debug_misc("signals test", "quitting ()\n");
 }
 
+static void
+printhash(gpointer key, gpointer value, gpointer data)
+{
+	char *a = (char *)key;
+	char *b = (char *)value;
+	GString *str = (GString *)data;
+	g_string_append_printf(str, "   [%s] = [%s]\n", a, b ? b : "(null)");
+}
+
+static gboolean
+uri_handler(const char *proto, const char *cmd, GHashTable *params)
+{
+	GString *str = g_string_new("\n{\n");
+	g_hash_table_foreach(params, printhash, str);
+	g_string_append_c(str, '}');
+	purple_debug_misc("signals test", "uri handler (%s, %s, %s)\n", proto, cmd, str->str);
+	g_string_free(str, TRUE);
+	return FALSE;
+}
+
 /**************************************************************************
  * File transfer signal callbacks
  **************************************************************************/
@@ -820,6 +840,8 @@ plugin_load(PurplePlugin *plugin)
 	/* Core signals */
 	purple_signal_connect(core_handle, "quitting",
 						plugin, PURPLE_CALLBACK(quitting_cb), NULL);
+	purple_signal_connect(core_handle, "uri-handler",
+						plugin,	PURPLE_CALLBACK(uri_handler), NULL);
 
 	/* File transfer signals */
 	purple_signal_connect(ft_handle, "file-recv-accept",

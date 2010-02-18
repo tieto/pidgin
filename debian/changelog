@@ -1,3 +1,26 @@
+pidgin (2.6.6-1~bpo50+1) lenny-backports; urgency=low
+
+  * Rebuild for lenny-backports.
+  * Rebuild for lenny-backports.
+  * Changes to Build-Depends:
+    - Lowered cdbs versioned depends to 0.4.52 which is in stable.
+    - Removed versioning from libsilc-dev because the renaming was after that
+      version anyway.
+    - Removed libgstfarsight0.10-dev and call configure with --disable-vv
+      --disable-farsight, the libraries for that are too much to carry.
+  * converting back to source format 1.0. via debian/source/format
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 18 Feb 2010 21:59:19 +0100
+
+pidgin (2.6.6-1) unstable; urgency=high
+
+  * New upstream release
+    - Fixes a remote MSN SLP crash (CVE-2010-0277) (Closes: #566775)
+    - Fixes a remote Finch XMPP crash (CVE-2010-0420)
+    - Fixes a remote smiley freeze/CPU pegging DoS (CVE-2010-0423)
+
+ -- Ari Pollak <ari@debian.org>  Tue, 16 Feb 2010 16:50:02 -0500
+
 pidgin (2.6.5-2) unstable; urgency=low
 
   * debian/patches/libnssckbi_path.patch:

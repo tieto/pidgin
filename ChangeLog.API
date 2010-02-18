@@ -1,5 +1,26 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.6.6 (02/18/2010):
+	libpurple:
+		Changed:
+		* purple_xfer_cancel_local is now called instead of
+		  purple_xfer_request_denied if an error is found when selecting
+		  a file to send. Request denied is still used when a receive
+		  request is not allowed.
+		* xmlnode_from_str now properly handles paring an attribute which
+		  contain "&lt;br&gt;", which were previously transformed into a
+		  newline character (libxml2 unescapes all entities except
+		  representations of '&', and libpurple's purple_unescape_html
+		  converts "<br>" to a newline).
+
+	Perl:
+		Changed:
+		* Corrected the package names for the PurpleProxyType and
+		  PurpleLogReadFlags enums to have the correct number of colons
+		  (from Purple::ProxyType::::<type> to Purple::ProxyType::<type>
+		  and Purple::Log:ReadFlags::::<type> to
+		  Purple::Log::ReadFlags::<type>)  (Chris Foote)
+
 version 2.6.5 (01/08/2010):
 	No changes
 

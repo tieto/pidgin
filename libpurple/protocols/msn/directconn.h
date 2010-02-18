@@ -21,14 +21,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_DIRECTCONN_H_
-#define _MSN_DIRECTCONN_H_
+#ifndef MSN_DIRECTCONN_H
+#define MSN_DIRECTCONN_H
 
 typedef struct _MsnDirectConn MsnDirectConn;
 
-#include "slplink.h"
-#include "slp.h"
 #include "msg.h"
+#include "slp.h"
+#include "slplink.h"
 
 struct _MsnDirectConn
 {
@@ -58,4 +58,4 @@ void msn_directconn_parse_nonce(MsnDirectConn *directconn, const char *nonce);
 void msn_directconn_destroy(MsnDirectConn *directconn);
 void msn_directconn_send_handshake(MsnDirectConn *directconn);
 
-#endif /* _MSN_DIRECTCONN_H_ */
+#endif /* MSN_DIRECTCONN_H */

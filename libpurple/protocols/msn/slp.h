@@ -21,16 +21,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_SLP_H_
-#define _MSN_SLP_H_
+#ifndef MSN_SLP_H
+#define MSN_SLP_H
 
-#include "slpcall.h"
-#include "session.h"
 #include "internal.h"
-#include "ft.h"
 
-void msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize
-						  len, gsize offset);
+#include "ft.h"
+#include "session.h"
+#include "slpcall.h"
 
 MsnSlpCall * msn_slp_sip_recv(MsnSlpLink *slplink,
 							  const char *body);
@@ -41,8 +39,11 @@ void msn_xfer_completed_cb(MsnSlpCall *slpcall,
 						   const guchar *body, gsize size);
 
 void msn_xfer_cancel(PurpleXfer *xfer);
+gssize msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer);
+gssize msn_xfer_read(guchar **data, PurpleXfer *xfer);
+
 void msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session);
 
 void msn_queue_buddy_icon_request(MsnUser *user);
 
-#endif /* _MSN_SLP_H_ */
+#endif /* MSN_SLP_H */

@@ -263,7 +263,14 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 
 		if (buf[0] == '#' || buf[0] == '\0')
 			continue;
-
+		else {
+			int len = strlen(buf);
+			while (len && (buf[len - 1] == '\r' || buf[len - 1] == '\n'))
+				buf[--len] = '\0';
+			if (len == 0)
+				continue;
+		}
+		
 		i = buf;
 		while (isspace(*i))
 			i++;
@@ -280,25 +287,17 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 				list->smileys = g_slist_reverse(list->smileys);
 			list = child;
 		} else if (!g_ascii_strncasecmp(i, "Name=", strlen("Name="))) {
-			int len;
 			g_free(theme->name);
 			theme->name = g_strdup(i + strlen("Name="));
-			len = strlen(theme->name);
-			theme->name[len-1] = 0;
-			if(len > 2 && theme->name[len-2] == '\r')
-				theme->name[len-2] = 0;
 		} else if (!g_ascii_strncasecmp(i, "Description=", strlen("Description="))) {
 			g_free(theme->desc);
 			theme->desc = g_strdup(i + strlen("Description="));
-			theme->desc[strlen(theme->desc)-1] = 0;
 		} else if (!g_ascii_strncasecmp(i, "Icon=", strlen("Icon="))) {
 			g_free(theme->icon);
 			theme->icon = g_build_filename(dirname, i + strlen("Icon="), NULL);
-			theme->icon[strlen(theme->icon)-1] = 0;
 		} else if (!g_ascii_strncasecmp(i, "Author=", strlen("Author="))) {
 			g_free(theme->author);
 			theme->author = g_strdup(i + strlen("Author="));
-			theme->author[strlen(theme->author)-1] = 0;
 		} else if (load && list) {
 			gboolean hidden = FALSE;
 			char *sfile = NULL;
@@ -310,8 +309,8 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 			while  (*i) {
 				char l[64];
 				int li = 0;
-				while (!isspace(*i) && li < sizeof(l) - 1) {
-					if (*i == '\\' && *(i+1) != '\0' && *(i+1) != '\n' && *(i+1) != '\r')
+				while (*i && !isspace(*i) && li < sizeof(l) - 1) {
+					if (*i == '\\' && *(i+1) != '\0')
 						i++;
 					l[li++] = *(i++);
 				}

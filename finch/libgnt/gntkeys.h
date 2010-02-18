@@ -65,7 +65,7 @@ extern char *gnt_key_cright;
 #define GNT_KEY_BACKSPACE SAFE(key_backspace)
 #define GNT_KEY_DEL    SAFE(key_dc)
 #define GNT_KEY_INS    SAFE(key_ic)
-#define GNT_KEY_BACK_TAB SAFE(back_tab)
+#define GNT_KEY_BACK_TAB (back_tab ? back_tab : SAFE(key_btab))
 
 #define GNT_KEY_CTRL_A     "\001"
 #define GNT_KEY_CTRL_B     "\002"

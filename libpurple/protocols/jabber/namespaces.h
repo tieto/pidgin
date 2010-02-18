@@ -85,6 +85,9 @@
 /* XEP-0231 BoB (Bits of Binary) */
 #define NS_BOB "urn:xmpp:bob"
 
+/* XEP-0237 Roster Versioning */
+#define NS_ROSTER_VERSIONING "urn:xmpp:features:rosterver"
+
 /* Google extensions */
 #define NS_GOOGLE_CAMERA "http://www.google.com/xmpp/protocol/camera/v1"
 #define NS_GOOGLE_VIDEO "http://www.google.com/xmpp/protocol/video/v1"
@@ -92,6 +95,7 @@
 #define NS_GOOGLE_JINGLE_INFO "google:jingleinfo"
 
 #define NS_GOOGLE_MAIL_NOTIFY "google:mail:notify"
+#define NS_GOOGLE_ROSTER "google:roster"
 
 #define NS_GOOGLE_PROTOCOL_SESSION "http://www.google.com/xmpp/protocol/session"
 #define NS_GOOGLE_SESSION "http://www.google.com/session"

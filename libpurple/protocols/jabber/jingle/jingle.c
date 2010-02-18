@@ -29,11 +29,12 @@
 #include "content.h"
 #include "debug.h"
 #include "jingle.h"
-#include <string.h>
 #include "session.h"
 #include "iceudp.h"
 #include "rawudp.h"
 #include "rtp.h"
+
+#include <string.h>
 
 GType
 jingle_get_type(const gchar *type)

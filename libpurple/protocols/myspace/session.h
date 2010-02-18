@@ -54,9 +54,6 @@ typedef struct _MsimSession
 	guint inbox_handle;                 /**< The handle for the mail check timer */
 } MsimSession;
 
-/* Check if an MsimSession is valid */
-#define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)
-
 MsimSession *msim_session_new(PurpleAccount *acct);
 void msim_session_destroy(MsimSession *session);
 

@@ -60,9 +60,6 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 
 	slplink = slpmsg->slplink;
 
-	if (slpmsg->fp != NULL)
-		fclose(slpmsg->fp);
-
 	purple_imgstore_unref(slpmsg->img);
 
 	/* We don't want to free the data of the PurpleStoredImage,
@@ -96,7 +93,7 @@ msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 	/* We can only have one data source at a time. */
 	g_return_if_fail(slpmsg->buffer == NULL);
 	g_return_if_fail(slpmsg->img == NULL);
-	g_return_if_fail(slpmsg->fp == NULL);
+	g_return_if_fail(slpmsg->ft == FALSE);
 
 	if (body != NULL)
 		slpmsg->buffer = g_memdup(body, size);
@@ -112,7 +109,7 @@ msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img)
 	/* We can only have one data source at a time. */
 	g_return_if_fail(slpmsg->buffer == NULL);
 	g_return_if_fail(slpmsg->img == NULL);
-	g_return_if_fail(slpmsg->fp == NULL);
+	g_return_if_fail(slpmsg->ft == FALSE);
 
 	slpmsg->img = purple_imgstore_ref(img);
 	slpmsg->buffer = (guchar *)purple_imgstore_get_data(img);

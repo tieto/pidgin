@@ -65,11 +65,18 @@ libqq_la_CFLAGS    = $(AM_CFLAGS)
 else
 
 st =
+noinst_LTLIBRARIES =
 pkg_LTLIBRARIES  = libqq.la
 libqq_la_SOURCES = $(QQSOURCES)
 libqq_la_LIBADD  = $(GLIB_LIBS)
 
 endif
+
+# For 'make check'
+noinst_LTLIBRARIES += libqq_tmp.la
+libqq_tmp_la_SOURCES = $(libqq_la_SOURCES)
+libqq_tmp_la_LIBADD = $(libqq_la_LIBADD)
+
 
 # QQ_BUDDY_ICON_DIR is the path where a bunch of stock icons can be
 # places for users to choose from when setting their buddy icon.  We

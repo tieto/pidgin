@@ -21,12 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_OBJECT_H_
-#define _MSN_OBJECT_H_
-
-#include "imgstore.h"
-
-#include "internal.h"
+#ifndef MSN_OBJECT_H
+#define MSN_OBJECT_H
 
 typedef enum
 {
@@ -36,8 +32,11 @@ typedef enum
 	MSN_OBJECT_USERTILE   =  3, /**< UserTile (buddy icon) */
 	MSN_OBJECT_RESERVED2  =  4, /**< Reserved              */
 	MSN_OBJECT_BACKGROUND =  5  /**< Background            */
-
 } MsnObjectType;
+
+#include "internal.h"
+
+#include "imgstore.h"
 
 typedef struct
 {
@@ -51,7 +50,6 @@ typedef struct
 	char *friendly;
 	char *sha1d;
 	char *sha1c;
-
 } MsnObject;
 
 /**
@@ -239,4 +237,4 @@ PurpleStoredImage *msn_object_get_image(const MsnObject *obj);
 
 void msn_object_set_local(MsnObject *obj);
 
-#endif /* _MSN_OBJECT_H_ */
+#endif /* MSN_OBJECT_H */

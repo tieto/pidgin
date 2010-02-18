@@ -32,8 +32,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	/* The mimimum icon size below is not needed in AIM 6.0 */
-	{"gif,jpeg,bmp,ico", 48, 48, 50, 50, 7168,
-		PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY},	/* icon_spec */
+	{"gif,jpeg,bmp,ico", 0, 0, 100, 100, 7168, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 	oscar_list_icon_aim,		/* list_icon */
 	oscar_list_emblem,		/* list_emblems */
 	oscar_status_text,		/* status_text */

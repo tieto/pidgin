@@ -2541,6 +2541,8 @@ static void update_size(PidginStatusBox *status_box)
 	GdkRectangle oneline;
 	int height;
 	int pad_top, pad_inside, pad_bottom;
+	gboolean interior_focus;
+	int focus_width;
 
 	if (!status_box->imhtml_visible)
 	{
@@ -2591,6 +2593,13 @@ static void update_size(PidginStatusBox *status_box)
 	height += (pad_top + pad_bottom) * lines;
 	height += (pad_inside) * (display_lines - lines);
 
+	gtk_widget_style_get(status_box->imhtml,
+	                     "interior-focus", &interior_focus,
+	                     "focus-line-width", &focus_width,
+	                     NULL);
+	if (!interior_focus)
+		height += 2 * focus_width;
+
 	gtk_widget_set_size_request(status_box->vbox, -1, height + PIDGIN_HIG_BOX_SPACE);
 }
 
@@ -2621,6 +2630,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 	gpointer data;
 	GList *accounts = NULL, *node;
 	int active;
+	gboolean wastyping = FALSE;
 
 
 	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL(status_box->dropdown_store), &iter, path))
@@ -2633,7 +2643,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			   TYPE_COLUMN, &type,
 			   DATA_COLUMN, &data,
 			   -1);
-	if (status_box->typing != 0)
+	if ((wastyping = (status_box->typing != 0)))
 		purple_timeout_remove(status_box->typing);
 	status_box->typing = 0;
 
@@ -2657,14 +2667,18 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			pidgin_status_editor_show(FALSE,
 				purple_savedstatus_is_transient(saved_status)
 					? saved_status : NULL);
-			status_menu_refresh_iter(status_box, FALSE);
+			status_menu_refresh_iter(status_box, wastyping);
+			if (wastyping)
+				pidgin_status_box_refresh(status_box);
 			return;
 		}
 
 		if (type == PIDGIN_STATUS_BOX_TYPE_SAVED)
 		{
 			pidgin_status_window_show();
-			status_menu_refresh_iter(status_box, FALSE);
+			status_menu_refresh_iter(status_box, wastyping);
+			if (wastyping)
+				pidgin_status_box_refresh(status_box);
 			return;
 		}
 	}
