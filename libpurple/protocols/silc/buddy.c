@@ -1183,7 +1183,7 @@ silcpurple_add_buddy_select(SilcPurpleBuddyRes r, SilcDList clients)
 			   client_entry->username, *client_entry->hostname ?
 			   client_entry->hostname : "",
 			   fingerprint ? tmp2 : "");
-		purple_request_field_list_add(f, tmp, client_entry);
+		purple_request_field_list_add_icon(f, tmp, NULL, client_entry);
 		silc_free(fingerprint);
 	}
 
