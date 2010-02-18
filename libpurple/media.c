@@ -29,7 +29,6 @@
 #include "media.h"
 #include "media/backend-iface.h"
 #include "mediamanager.h"
-#include "network.h"
 
 #include "debug.h"
 
@@ -546,19 +545,7 @@ purple_media_insert_stream(PurpleMediaSession *session,
 	session->media->priv->streams =
 			g_list_append(session->media->priv->streams, media_stream);
 
-static GList *
-purple_media_candidate_list_from_fs(GList *candidates)
-{
-	GList *new_list = NULL;
-
-	for (; candidates; candidates = g_list_next(candidates)) {
-		new_list = g_list_prepend(new_list,
-				purple_media_candidate_from_fs(
-				candidates->data));
-	}
-
-	new_list = g_list_reverse(new_list);
-	return new_list;
+	return media_stream;
 }
 
 static void
