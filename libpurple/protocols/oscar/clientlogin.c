@@ -293,7 +293,11 @@ static void start_oscar_session_cb(PurpleUtilFetchUrlData *url_data, gpointer us
 static void send_start_oscar_session(OscarData *od, const char *token, const char *session_key, time_t hosttime)
 {
 	char *query_string, *signature, *url;
-	gboolean use_tls = purple_account_get_bool(purple_connection_get_account(od->gc), "use_ssl", OSCAR_DEFAULT_USE_SSL);
+	PurpleAccount *account;
+	gboolean use_tls;
+
+	account = purple_connection_get_account(od->gc);
+	use_tls = purple_account_get_bool(account, "use_ssl", OSCAR_DEFAULT_USE_SSL);
 
 	/*
 	 * Construct the GET parameters.  0x00000611 is the distid given to
@@ -317,7 +321,8 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 	g_free(signature);
 
 	/* Make the request */
-	od->url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE,
+	od->url_data = purple_util_fetch_url_request_len_with_account(account,
+			url, TRUE, NULL, FALSE, NULL, FALSE, -1,
 			start_oscar_session_cb, od);
 	g_free(url);
 }
@@ -573,8 +578,9 @@ void send_client_login(OscarData *od, const char *username)
 	g_string_free(body, TRUE);
 
 	/* Send the POST request  */
-	od->url_data = purple_util_fetch_url_request(URL_CLIENT_LOGIN,
-			TRUE, NULL, FALSE, request->str, FALSE,
+	od->url_data = purple_util_fetch_url_request_len_with_account(
+			purple_connection_get_account(gc), URL_CLIENT_LOGIN,
+			TRUE, NULL, FALSE, request->str, FALSE, -1,
 			client_login_cb, od);
 	g_string_free(request, TRUE);
 }
