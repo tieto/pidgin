@@ -118,11 +118,7 @@ typedef struct
 
 	gchar *original_title;
 	GtkEntry *title;
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkComboBox *type;
-#else
-	GtkOptionMenu *type;
-#endif
 	GtkIMHtml *message;
 } StatusEditor;
 
@@ -746,11 +742,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 		return;
 	}
 
-#if GTK_CHECK_VERSION(2,4,0)
 	type = gtk_combo_box_get_active(dialog->type) + (PURPLE_STATUS_UNSET + 1);
-#else
-	type = gtk_option_menu_get_history(dialog->type) + (PURPLE_STATUS_UNSET + 1);
-#endif
 	message = gtk_imhtml_get_markup(dialog->message);
 	unformatted = purple_markup_strip_html(message);
 
@@ -844,8 +836,6 @@ editor_title_changed_cb(GtkWidget *widget, gpointer user_data)
 	gtk_widget_set_sensitive(GTK_WIDGET(dialog->save_button), (*text != '\0'));
 }
 
-#if GTK_CHECK_VERSION(2,4,0)
-
 enum {
 	STATUS_MENU_STOCK_ICON,
 	STATUS_MENU_NAME,
@@ -899,62 +889,6 @@ create_status_type_menu(PurpleStatusPrimitive type)
 
 	return dropdown;
 }
-
-#else
-
-static GtkWidget *
-create_stock_item(const gchar *str, const gchar *icon)
-{
-	GtkWidget *menuitem = gtk_menu_item_new();
-	GtkWidget *label = gtk_label_new_with_mnemonic(str);
-	GtkWidget *hbox = gtk_hbox_new(FALSE, 4);
-	GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
-	GtkWidget *image = gtk_image_new_from_stock(icon, icon_size);
-
-	gtk_widget_show(label);
-	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-
-	gtk_container_add(GTK_CONTAINER(menuitem), hbox);
-
-	return menuitem;
-}
-
-static GtkWidget *
-create_status_type_menu(PurpleStatusPrimitive type)
-{
-	int i;
-	GtkWidget *dropdown;
-	GtkWidget *menu;
-	GtkWidget *item;
-
-	dropdown = gtk_option_menu_new();
-	menu = gtk_menu_new();
-
-	for (i = PURPLE_STATUS_UNSET + 1; i < PURPLE_STATUS_NUM_PRIMITIVES; i++)
-	{
-		if (i == PURPLE_STATUS_MOBILE || i == PURPLE_STATUS_TUNE)
-			/*
-			 * Special-case these.  They're intended to be independent
-			 * status types, so don't show them in the list.
-			 */
-			continue;
-
-		item = create_stock_item(purple_primitive_get_name_from_type(i),
-					get_stock_icon_from_primitive(i));
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	}
-
-	gtk_menu_set_active(GTK_MENU(menu), type - (PURPLE_STATUS_UNSET + 1));
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
-	gtk_widget_show_all(menu);
-
-	return dropdown;
-}
-
-#endif
 
 static void edit_substatus(StatusEditor *status_editor, PurpleAccount *account);
 
@@ -1221,11 +1155,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 		dropdown = create_status_type_menu(purple_savedstatus_get_type(saved_status));
 	else
 		dropdown = create_status_type_menu(PURPLE_STATUS_AWAY);
-#if GTK_CHECK_VERSION(2,4,0)
 	dialog->type = GTK_COMBO_BOX(dropdown);
-#else
-	dialog->type = GTK_OPTION_MENU(dropdown);
-#endif
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Status:"), sg, dropdown, TRUE, NULL);
 
 	/* Status message */
