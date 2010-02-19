@@ -177,10 +177,23 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 	code = atoi(tmp);
 	if (code != 200)
 	{
+		xmlnode *status_detail_node;
+		guint status_detail = 0;
+
+		status_detail_node = xmlnode_get_child(response_node,
+		                                       "statusDetailCode");
+		if (status_detail_node) {
+			gchar *data = xmlnode_get_data(status_detail_node);
+			if (data) {
+				status_detail = atoi(data);
+				g_free(data);
+			}
+		}
+
 		purple_debug_error("oscar", "startOSCARSession response statusCode "
 				"was %s: %s\n", tmp, response);
 
-		if (code == 401 || code == 607)
+		if ((code == 401 && status_detail != 1014) || code == 607)
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 					_("You have been connecting and disconnecting too "
