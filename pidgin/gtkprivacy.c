@@ -220,7 +220,11 @@ select_account_cb(GtkWidget *dropdown, PurpleAccount *account,
 
 	for (i = 0; i < menu_entry_count; i++) {
 		if (menu_entries[i].num == account->perm_deny) {
+#if GTK_CHECK_VERSION(2,4,0)
+			gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->type_menu), i);
+#else
 			gtk_option_menu_set_history(GTK_OPTION_MENU(dialog->type_menu), i);
+#endif
 			break;
 		}
 	}
@@ -233,10 +237,17 @@ select_account_cb(GtkWidget *dropdown, PurpleAccount *account,
  * TODO: Setting the permit/deny setting needs to go through privacy.c
  *       Even better: the privacy API needs to not suck.
  */
+#if GTK_CHECK_VERSION(2,4,0)
+static void
+type_changed_cb(GtkComboBox *combo, PidginPrivacyDialog *dialog)
+{
+	int new_type = menu_entries[gtk_combo_box_get_active(combo)].num;
+#else
 static void
 type_changed_cb(GtkOptionMenu *optmenu, PidginPrivacyDialog *dialog)
 {
 	int new_type = menu_entries[gtk_option_menu_get_history(optmenu)].num;
+#endif
 
 	dialog->account->perm_deny = new_type;
 	serv_set_permit_deny(purple_account_get_connection(dialog->account));
@@ -343,7 +354,9 @@ privacy_dialog_new(void)
 	GtkWidget *button;
 	GtkWidget *dropdown;
 	GtkWidget *label;
+#if !GTK_CHECK_VERSION(2,4,0)
 	GtkWidget *menu;
+#endif
 	int selected = 0;
 	int i;
 
@@ -372,6 +385,24 @@ privacy_dialog_new(void)
 	dialog->account = pidgin_account_option_menu_get_selected(dropdown);
 
 	/* Add the drop-down list with the allow/block types. */
+#if GTK_CHECK_VERSION(2,4,0)
+	dialog->type_menu = gtk_combo_box_new_text();
+	gtk_box_pack_start(GTK_BOX(vbox), dialog->type_menu, FALSE, FALSE, 0);
+	gtk_widget_show(dialog->type_menu);
+
+	for (i = 0; i < menu_entry_count; i++) {
+		gtk_combo_box_append_text(GTK_COMBO_BOX(dialog->type_menu),
+		                          _(menu_entries[i].text));
+
+		if (menu_entries[i].num == dialog->account->perm_deny)
+			selected = i;
+	}
+
+	gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->type_menu), selected);
+
+	g_signal_connect(G_OBJECT(dialog->type_menu), "changed",
+					 G_CALLBACK(type_changed_cb), dialog);
+#else
 	dialog->type_menu = gtk_option_menu_new();
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->type_menu, FALSE, FALSE, 0);
 	gtk_widget_show(dialog->type_menu);
@@ -391,6 +422,7 @@ privacy_dialog_new(void)
 
 	g_signal_connect(G_OBJECT(dialog->type_menu), "changed",
 					 G_CALLBACK(type_changed_cb), dialog);
+#endif
 
 	/* Build the treeview for the allow list. */
 	dialog->allow_widget = build_allow_list(dialog);
@@ -421,7 +453,11 @@ privacy_dialog_new(void)
 	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), GTK_STOCK_CLOSE, G_CALLBACK(close_cb), dialog);
 	dialog->close_button = button;
 
+#if GTK_CHECK_VERSION(2,4,0)
+	type_changed_cb(GTK_COMBO_BOX(dialog->type_menu), dialog);
+#else
 	type_changed_cb(GTK_OPTION_MENU(dialog->type_menu), dialog);
+#endif
 #if 0
 	if (dialog->account->perm_deny == PURPLE_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
