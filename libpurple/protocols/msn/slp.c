@@ -740,6 +740,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 
 	if (!strncmp(body, "INVITE", strlen("INVITE")))
 	{
+		/* This is an INVITE request */
 		char *branch;
 		char *call_id;
 		char *content;
@@ -784,6 +785,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 	}
 	else if (!strncmp(body, "MSNSLP/1.0 ", strlen("MSNSLP/1.0 ")))
 	{
+		/* This is a response */
 		char *content;
 		char *content_type;
 		/* Make sure this is "OK" */
@@ -833,6 +835,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 	}
 	else if (!strncmp(body, "BYE", strlen("BYE")))
 	{
+		/* This is a BYE request */
 		char *call_id;
 
 		call_id = get_token(body, "Call-ID: {", "}");
