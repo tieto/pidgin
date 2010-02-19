@@ -902,9 +902,7 @@ prefs_build_theme_combo_box(GtkListStore *store, const char *current_theme, cons
 	cell_rend = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "markup", 1, NULL);
-#if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(cell_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 
 	gtk_drag_dest_set(combo_box, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP, te,
 					sizeof(te) / sizeof(GtkTargetEntry) , GDK_ACTION_COPY | GDK_ACTION_MOVE);
