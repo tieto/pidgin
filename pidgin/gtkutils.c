@@ -406,13 +406,13 @@ pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
 	gtk_container_add(GTK_CONTAINER(button), bbox);
 
 	if (icon) {
-		gtk_box_pack_start(GTK_BOX(bbox), ibox, TRUE, TRUE, 0);
+		gtk_box_pack_start_defaults(GTK_BOX(bbox), ibox);
 		image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_BUTTON);
 		gtk_box_pack_end(GTK_BOX(ibox), image, FALSE, TRUE, 0);
 	}
 
 	if (text) {
-		gtk_box_pack_start(GTK_BOX(bbox), lbox, TRUE, TRUE, 0);
+		gtk_box_pack_start_defaults(GTK_BOX(bbox), lbox);
 		label = gtk_label_new(NULL);
 		gtk_label_set_text_with_mnemonic(GTK_LABEL(label), text);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), button);
@@ -892,11 +892,7 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 }
 
 gboolean
-#if GTK_CHECK_VERSION(2,4,0)
-pidgin_check_if_dir(const char *path, gpointer filesel)
-#else
 pidgin_check_if_dir(const char *path, GtkFileSelection *filesel)
-#endif
 {
 	char *dirname = NULL;
 
@@ -905,9 +901,7 @@ pidgin_check_if_dir(const char *path, GtkFileSelection *filesel)
 		if (path[strlen(path) - 1] != G_DIR_SEPARATOR) {
 			dirname = g_strconcat(path, G_DIR_SEPARATOR_S, NULL);
 		}
-#if !GTK_CHECK_VERSION(2,4,0)
 		gtk_file_selection_set_filename(filesel, (dirname != NULL) ? dirname : path);
-#endif
 		g_free(dirname);
 		return TRUE;
 	}
