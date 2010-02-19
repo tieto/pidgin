@@ -892,11 +892,7 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 }
 
 gboolean
-#if GTK_CHECK_VERSION(2,4,0)
-pidgin_check_if_dir(const char *path, gpointer filesel)
-#else
 pidgin_check_if_dir(const char *path, GtkFileSelection *filesel)
-#endif
 {
 	char *dirname = NULL;
 
@@ -905,9 +901,7 @@ pidgin_check_if_dir(const char *path, GtkFileSelection *filesel)
 		if (path[strlen(path) - 1] != G_DIR_SEPARATOR) {
 			dirname = g_strconcat(path, G_DIR_SEPARATOR_S, NULL);
 		}
-#if !GTK_CHECK_VERSION(2,4,0)
 		gtk_file_selection_set_filename(filesel, (dirname != NULL) ? dirname : path);
-#endif
 		g_free(dirname);
 		return TRUE;
 	}
