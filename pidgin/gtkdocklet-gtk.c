@@ -26,8 +26,6 @@
 #include "pidginstock.h"
 #include "gtkdocklet.h"
 
-#if GTK_CHECK_VERSION(2,10,0)
-
 /* globals */
 GtkStatusIcon *docklet = NULL;
 
@@ -155,6 +153,3 @@ docklet_ui_init(void)
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(),
 		DATADIR G_DIR_SEPARATOR_S "pixmaps" G_DIR_SEPARATOR_S "pidgin" G_DIR_SEPARATOR_S "tray");
 }
-
-#endif  /* GTK_CHECK_VERSION(2,10,0) */
-
