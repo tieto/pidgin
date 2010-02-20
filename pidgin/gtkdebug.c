@@ -744,6 +744,7 @@ debug_window_new(void)
 #ifndef HAVE_REGEX_H
 		/* Find button */
 		item = gtk_tool_button_new_from_stock(GTK_STOCK_FIND);
+		gtk_tool_item_set_is_important(item, TRUE);
 #if GTK_CHECK_VERSION(2,12,0)
 		gtk_tool_item_set_tooltip_text(item, _("Find"));
 #else
@@ -755,6 +756,7 @@ debug_window_new(void)
 
 		/* Save */
 		item = gtk_tool_button_new_from_stock(GTK_STOCK_SAVE);
+		gtk_tool_item_set_is_important(item, TRUE);
 #if GTK_CHECK_VERSION(2,12,0)
 		gtk_tool_item_set_tooltip_text(item, _("Save"));
 #else
@@ -765,6 +767,7 @@ debug_window_new(void)
 
 		/* Clear button */
 		item = gtk_tool_button_new_from_stock(GTK_STOCK_CLEAR);
+		gtk_tool_item_set_is_important(item, TRUE);
 #if GTK_CHECK_VERSION(2,12,0)
 		gtk_tool_item_set_tooltip_text(item, _("Clear"));
 #else
@@ -778,6 +781,7 @@ debug_window_new(void)
 
 		/* Pause */
 		item = gtk_toggle_tool_button_new_from_stock(PIDGIN_STOCK_PAUSE);
+		gtk_tool_item_set_is_important(item, TRUE);
 #if GTK_CHECK_VERSION(2,12,0)
 		gtk_tool_item_set_tooltip_text(item, _("Pause"));
 #else
@@ -792,7 +796,9 @@ debug_window_new(void)
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 		/* regex toggle button */
-		win->filter = GTK_WIDGET(gtk_toggle_tool_button_new_from_stock(GTK_STOCK_FIND));
+		item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_FIND);
+		gtk_tool_item_set_is_important(item, TRUE);
+		win->filter = GTK_WIDGET(item);
 		gtk_tool_button_set_label(GTK_TOOL_BUTTON(win->filter), _("Filter"));
 #if GTK_CHECK_VERSION(2,12,0)
 		gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(win->filter), _("Filter"));
