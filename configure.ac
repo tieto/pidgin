@@ -2583,6 +2583,7 @@ fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
+echo Use external libgadu.......... : $gadu_libs
 echo Install pixmaps............... : $enable_pixmaps
 echo Install translations.......... : $enable_i18n
 echo Has you....................... : yes
