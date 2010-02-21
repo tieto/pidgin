@@ -230,10 +230,10 @@ field_bool_cb(GtkToggleButton *button, PurpleRequestField *field)
 }
 
 static void
-field_choice_menu_cb(GtkOptionMenu *menu, PurpleRequestField *field)
+field_choice_menu_cb(GtkComboBox *menu, PurpleRequestField *field)
 {
 	purple_request_field_choice_set_value(field,
-			gtk_option_menu_get_history(menu));
+			gtk_combo_box_get_active(menu));
 }
 
 static void
@@ -928,26 +928,15 @@ create_choice_field(PurpleRequestField *field)
 
 	if (num_labels > 5)
 	{
-		GtkWidget *menu;
-		GtkWidget *item;
-
-		widget = gtk_option_menu_new();
-
-		menu = gtk_menu_new();
+		widget = gtk_combo_box_new_text();
 
 		for (l = labels; l != NULL; l = l->next)
 		{
 			const char *text = l->data;
-
-			item = gtk_menu_item_new_with_label(text);
-			gtk_widget_show(item);
-
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+			gtk_combo_box_append_text(GTK_COMBO_BOX(widget), text);
 		}
 
-		gtk_widget_show(menu);
-		gtk_option_menu_set_menu(GTK_OPTION_MENU(widget), menu);
-		gtk_option_menu_set_history(GTK_OPTION_MENU(widget),
+		gtk_combo_box_set_active(GTK_COMBO_BOX(widget),
 						purple_request_field_choice_get_default_value(field));
 
 		g_signal_connect(G_OBJECT(widget), "changed",
