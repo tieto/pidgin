@@ -185,7 +185,6 @@ static int purple_parse_incoming_im(OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_parse_misses     (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_clientauto (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_userinfo   (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_got_infoblock    (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_motd       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_chatnav_info     (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_conv_chat_join        (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -196,7 +195,6 @@ static int purple_email_parseupdate(OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_icon_parseicon   (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int oscar_icon_req        (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_msgack     (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_parse_ratechange (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_evilnotify (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_searcherror(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_searchreply(OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -3591,55 +3589,6 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	purple_notify_userinfo(gc, userinfo->bn, user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);
-
-	return 1;
-}
-
-static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
-{
-	PurpleConnection *gc = od->gc;
-	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleBuddy *b;
-	PurplePresence *presence;
-	PurpleStatus *status;
-	gchar *message = NULL;
-
-	va_list ap;
-	aim_userinfo_t *userinfo;
-
-	va_start(ap, fr);
-	userinfo = va_arg(ap, aim_userinfo_t *);
-	va_end(ap);
-
-	b = purple_find_buddy(account, userinfo->bn);
-	if (b == NULL)
-		return 1;
-
-	if (!oscar_util_valid_name_icq(userinfo->bn))
-	{
-		if (strcmp(purple_buddy_get_name(b), userinfo->bn) != 0)
-			serv_got_alias(gc, purple_buddy_get_name(b), userinfo->bn);
-		else
-			serv_got_alias(gc, purple_buddy_get_name(b), NULL);
-	}
-
-	presence = purple_buddy_get_presence(b);
-	status = purple_presence_get_active_status(presence);
-
-	if (purple_status_is_online(status) && !purple_status_is_available(status) &&
-			userinfo->flags & AIM_FLAG_AWAY && userinfo->away_len > 0 &&
-			userinfo->away != NULL && userinfo->away_encoding != NULL)
-	{
-		gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
-		message = oscar_encoding_to_utf8(account, charset,
-		                                 userinfo->away,
-		                                 userinfo->away_len);
-		g_free(charset);
-		purple_prpl_got_user_status(account, userinfo->bn,
-				purple_status_get_id(status),
-				"message", message, NULL);
-		g_free(message);
-	}
 
 	return 1;
 }

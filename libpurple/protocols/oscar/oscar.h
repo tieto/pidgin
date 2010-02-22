@@ -539,7 +539,6 @@ struct _OscarData
 
 	struct {
 		struct aim_userinfo_s *userinfo;
-		struct userinfo_node *requested;
 	} locate;
 
 	struct {
