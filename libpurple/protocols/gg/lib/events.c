@@ -27,16 +27,20 @@
  * \brief Obsługa zdarzeń
  */
 
+#include "libgadu.h"
+#include "libgadu-internal.h"
+
 #include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+
+#ifndef _WIN32
+#  include <sys/ioctl.h>
+#  include <sys/socket.h>
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#endif
 
 #include "compat.h"
-#include "libgadu.h"
 #include "protocol.h"
-#include "libgadu-internal.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -1534,7 +1538,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 		{
 			char buf[1024], *client, *auth;
 			int res = 0;
-			unsigned int res_size = sizeof(res);
+			socklen_t res_size = sizeof(res);
 			const char *host;
 
 			gg_debug_session(sess, GG_DEBUG_MISC, "// gg_watch_fd() GG_STATE_CONNECTING_HUB\n");
@@ -1752,7 +1756,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 		case GG_STATE_CONNECTING_GG:
 		{
 			int res = 0;
-			unsigned int res_size = sizeof(res);
+			socklen_t res_size = sizeof(res);
 
 			gg_debug_session(sess, GG_DEBUG_MISC, "// gg_watch_fd() GG_STATE_CONNECTING_GG\n");
 
@@ -2054,7 +2058,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			if (gg_dcc_ip == (unsigned long) inet_addr("255.255.255.255")) {
 				struct sockaddr_in sin;
-				unsigned int sin_len = sizeof(sin);
+				socklen_t sin_len = sizeof(sin);
 
 				gg_debug_session(sess, GG_DEBUG_MISC, "// gg_watch_fd() detecting address\n");
 

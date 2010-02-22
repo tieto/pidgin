@@ -28,22 +28,34 @@
  * \brief Główny moduł biblioteki
  */
 
+#include "libgadu.h"
+#include "libgadu-internal.h"
+
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#ifdef sun
-#  include <sys/filio.h>
+
+#ifdef _WIN32
+#  include <io.h>
+#  include <fcntl.h>
+#  include <errno.h>
+#  define SHUT_RDWR SD_BOTH
+#else
+#  include <sys/socket.h>
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#  ifdef sun
+#    include <sys/filio.h>
+#  endif
 #endif
 
 #include "compat.h"
-#include "libgadu.h"
 #include "protocol.h"
 #include "resolver.h"
-#include "libgadu-internal.h"
 
-#include <errno.h>
-#include <netdb.h>
+#ifndef _WIN32
+#  include <errno.h> /* on Win32 this is included above */
+#  include <netdb.h>
+#endif
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>

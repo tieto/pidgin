@@ -28,15 +28,21 @@
  * \brief Obsługa połączeń bezpośrednich od wersji Gadu-Gadu 7.x
  */
 
+#include "libgadu.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#ifdef sun
-#  include <sys/filio.h>
+
+#ifndef _WIN32
+#  include <sys/ioctl.h>
+#  include <sys/socket.h>
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#  ifdef sun
+#    include <sys/filio.h>
+#  endif
 #endif
+
 #include <time.h>
 
 #include <ctype.h>
@@ -49,7 +55,6 @@
 #include <unistd.h>
 
 #include "compat.h"
-#include "libgadu.h"
 
 #define gg_debug_dcc(dcc, fmt...) \
 	gg_debug_session((dcc) ? (dcc)->sess : NULL, fmt)
@@ -942,7 +947,7 @@ struct gg_event *gg_dcc7_watch_fd(struct gg_dcc7 *dcc)
 		{
 			struct sockaddr_in sin;
 			int fd, one = 1;
-			unsigned int sin_len = sizeof(sin);
+			socklen_t sin_len = sizeof(sin);
 
 			gg_debug_dcc(dcc, GG_DEBUG_MISC, "// gg_dcc7_watch_fd() GG_STATE_LISTENING\n");
 

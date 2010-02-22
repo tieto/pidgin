@@ -24,18 +24,26 @@
  * \brief Obsługa połączeń HTTP
  */
 
+#include "libgadu.h"
+
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+
+#ifndef _WIN32
+#  include <sys/socket.h>
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#endif
 
 #include "compat.h"
-#include "libgadu.h"
 #include "resolver.h"
 
 #include <ctype.h>
 #include <errno.h>
-#include <netdb.h>
+
+#ifndef _WIN32
+#  include <netdb.h>
+#endif
+
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -230,7 +238,7 @@ int gg_http_watch_fd(struct gg_http *h)
 
 	if (h->state == GG_STATE_CONNECTING) {
 		int res = 0;
-		unsigned int res_size = sizeof(res);
+		socklen_t res_size = sizeof(res);
 
 		if (h->async && (getsockopt(h->fd, SOL_SOCKET, SO_ERROR, &res, &res_size) || res)) {
 			gg_debug(GG_DEBUG_MISC, "=> http, async connection failed (errno=%d, %s)\n", (res) ? res : errno , strerror((res) ? res : errno));
@@ -249,7 +257,7 @@ int gg_http_watch_fd(struct gg_http *h)
 	}
 
 	if (h->state == GG_STATE_SENDING_QUERY) {
-		int res;
+		ssize_t res;
 
 		if ((res = write(h->fd, h->query, strlen(h->query))) < 1) {
 			gg_debug(GG_DEBUG_MISC, "=> http, write() failed (len=%d, res=%d, errno=%d)\n", strlen(h->query), res, errno);

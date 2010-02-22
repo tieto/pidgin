@@ -28,15 +28,18 @@
  * \brief Funkcje rozwiązywania nazw
  */
 
-#include <sys/wait.h>
-#include <netdb.h>
+#ifndef _WIN32
+#  include <sys/wait.h>
+#  include <netdb.h>
+#  include <signal.h>
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#endif
+
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <signal.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 #include "libgadu.h"
 #include "resolver.h"

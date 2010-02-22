@@ -47,26 +47,33 @@
  *
  * \brief Funkcje wykorzystywane przez różne moduły biblioteki
  */
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#ifdef sun
-#  include <sys/filio.h>
+
+#include "libgadu.h"
+#include "libgadu-internal.h"
+
+#ifndef _WIN32
+#  include <sys/types.h>
+#  include <sys/ioctl.h>
+#  include <sys/socket.h>
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#  ifdef sun
+#    include <sys/filio.h>
+#  endif
 #endif
 
 #include <errno.h>
 #include <fcntl.h>
-#include <netdb.h>
+
+#ifndef _WIN32
+# include <netdb.h>
+#endif
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-#include "libgadu.h"
-#include "libgadu-internal.h"
 
 /**
  * Plik, do którego będą przekazywane informacje odpluskwiania.
