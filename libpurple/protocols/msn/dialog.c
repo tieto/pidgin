@@ -34,9 +34,11 @@ typedef struct
 
 } MsnAddRemData;
 
-/* Remove the buddy referenced by the MsnAddRemData before the serverside list is changed.
- * If the buddy will be added, he'll be added back; if he will be removed, he won't be. */
-/* Actually with our MSNP14 code that isn't true yet, he won't be added back :( */
+/* Remove the buddy referenced by the MsnAddRemData before the serverside list
+ * is changed.  If the buddy will be added, he'll be added back; if he will be
+ * removed, he won't be. */
+/* Actually with our MSNP14 code that isn't true yet, he won't be added back :(
+ * */
 static void
 msn_complete_sync_issue(MsnAddRemData *data)
 {
