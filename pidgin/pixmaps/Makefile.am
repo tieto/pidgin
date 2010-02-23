@@ -203,7 +203,7 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/yin-yang.svg
 
 EMOTES_SMALL_16_SCALABLE = \
-		emotes/small/16/scalable/mobile.svg
+		emotes/small/16/scalable/mobile.svg \
 		emotes/small/16/scalable/pidgin-emotes.svg
 
 PROTOCOLS_16_SCALABLE = \
