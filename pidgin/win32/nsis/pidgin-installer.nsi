@@ -53,7 +53,7 @@ SetDateSave on
 ;Defines
 
 !define PIDGIN_NSIS_INCLUDE_PATH		"."
-!define PIDGIN_INSTALLER_DEPS			"..\..\..\..\win32-dev\pidgin-inst-deps-0.2"
+!define PIDGIN_INSTALLER_DEPS			"..\..\..\..\win32-dev\pidgin-inst-deps-20100223"
 
 ; Remove these and the stuff that uses them at some point
 !define OLD_GAIM_REG_KEY			"SOFTWARE\gaim"
