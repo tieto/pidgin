@@ -633,8 +633,9 @@ static PurplePluginProtocolInfo proto_info = {
 	NULL,					/* attention_types */
 	sizeof( PurplePluginProtocolInfo ),		/* struct_size */
 	mxit_get_text_table,	/* get_account_text_table */
-	NULL,
-	NULL
+	NULL,					/* initiate_media */
+	NULL,					/* get_media_caps */
+	NULL					/* get_moods */
 };
 
 

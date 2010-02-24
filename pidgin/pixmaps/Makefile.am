@@ -101,8 +101,6 @@ EMBLEMS_16 = \
 		emblems/16/half-operator.png \
 		emblems/16/hiptop.png \
 		emblems/16/male.png \
-		emblems/16/mobile.png \
-		emblems/16/music.png \
 		emblems/16/not-authorized.png \
 		emblems/16/operator.png \
 		emblems/16/qq-member.png \
@@ -120,8 +118,6 @@ EMBLEMS_SCALABLE = \
 		emblems/scalable/free-for-chat.svg \
 		emblems/scalable/game.svg \
 		emblems/scalable/male.svg \
-		emblems/scalable/mobile.svg \
-		emblems/scalable/music.svg \
 		emblems/scalable/not-authorized.svg \
 		emblems/scalable/qq-member.svg \
 		emblems/scalable/secure.svg \
@@ -207,6 +203,7 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/yin-yang.svg
 
 EMOTES_SMALL_16_SCALABLE = \
+		emotes/small/16/scalable/mobile.svg \
 		emotes/small/16/scalable/pidgin-emotes.svg
 
 PROTOCOLS_16_SCALABLE = \

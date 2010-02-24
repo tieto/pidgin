@@ -47,8 +47,6 @@
 #include "zlib.h"
 #include "untar.h"
 
-#include <libintl.h>
-
 #include "gtkwin32dep.h"
 #include "win32dep.h"
 #include "gtkconv.h"
@@ -64,8 +62,6 @@ HINSTANCE dll_hInstance = 0;
 HWND messagewin_hwnd;
 static int gtkwin32_handle;
 
-typedef BOOL (CALLBACK* LPFNFLASHWINDOWEX)(PFLASHWINFO);
-static LPFNFLASHWINDOWEX MyFlashWindowEx = NULL;
 static gboolean pwm_handles_connections = TRUE;
 
 
@@ -308,6 +304,7 @@ static gboolean stop_flashing(GtkWidget *widget, GdkEventFocus *event, gpointer 
 void
 winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 	GdkWindow * gdkwin;
+	FLASHWINFO info;
 
 	g_return_if_fail(window != NULL);
 
@@ -319,25 +316,19 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 	if(GDK_WINDOW_DESTROYED(gdkwin))
 		return;
 
-	if(MyFlashWindowEx) {
-		FLASHWINFO info;
-
-		memset(&info, 0, sizeof(FLASHWINFO));
-		info.cbSize = sizeof(FLASHWINFO);
-		info.hwnd = GDK_WINDOW_HWND(gdkwin);
-		if (flash) {
-			DWORD flashCount;
-			info.uCount = 3;
-			if (SystemParametersInfo(SPI_GETFOREGROUNDFLASHCOUNT, 0, &flashCount, 0))
-				info.uCount = flashCount;
-			info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
-		} else
-			info.dwFlags = FLASHW_STOP;
-		info.dwTimeout = 0;
-
-		MyFlashWindowEx(&info);
+	memset(&info, 0, sizeof(FLASHWINFO));
+	info.cbSize = sizeof(FLASHWINFO);
+	info.hwnd = GDK_WINDOW_HWND(gdkwin);
+	if (flash) {
+		DWORD flashCount;
+		info.uCount = 3;
+		if (SystemParametersInfo(SPI_GETFOREGROUNDFLASHCOUNT, 0, &flashCount, 0))
+			info.uCount = flashCount;
+		info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
 	} else
-		FlashWindow(GDK_WINDOW_HWND(gdkwin), flash);
+		info.dwFlags = FLASHW_STOP;
+	info.dwTimeout = 0;
+
 }
 
 void
@@ -399,8 +390,6 @@ void winpidgin_init(HINSTANCE hint) {
 
 	messagewin_hwnd = winpidgin_message_window_init();
 
-	MyFlashWindowEx = (LPFNFLASHWINDOWEX) wpurple_find_and_loadproc("user32.dll", "FlashWindowEx");
-
 	purple_debug_info("winpidgin", "winpidgin_init end\n");
 }
 
@@ -436,36 +425,16 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
 	return TRUE;
 }
 
-typedef HMONITOR WINAPI _MonitorFromWindow(HWND, DWORD);
-typedef BOOL WINAPI _GetMonitorInfo(HMONITOR, LPMONITORINFO);
-
 static gboolean
 get_WorkingAreaRectForWindow(HWND hwnd, RECT *workingAreaRc) {
-	static _MonitorFromWindow *the_MonitorFromWindow;
-	static _GetMonitorInfo *the_GetMonitorInfo;
-	static gboolean initialized = FALSE;
 
 	HMONITOR monitor;
 	MONITORINFO info;
 
-	if(!initialized) {
-		the_MonitorFromWindow = (_MonitorFromWindow*)
-			wpurple_find_and_loadproc("user32", "MonitorFromWindow");
-		the_GetMonitorInfo = (_GetMonitorInfo*)
-			wpurple_find_and_loadproc("user32", "GetMonitorInfoA");
-		initialized = TRUE;
-	}
-
-	if(!the_MonitorFromWindow)
-		return FALSE;
-
-	if(!the_GetMonitorInfo)
-		return FALSE;
-
-	monitor = the_MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
+	monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
 
 	info.cbSize = sizeof(info);
-	if(!the_GetMonitorInfo(monitor, &info))
+	if(!GetMonitorInfo(monitor, &info))
 		return FALSE;
 
 	CopyRect(workingAreaRc, &(info.rcWork));
