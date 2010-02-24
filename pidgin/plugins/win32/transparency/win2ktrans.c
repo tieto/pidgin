@@ -72,8 +72,6 @@ static const char *OPT_WINTRANS_BL_ONFOCUS= "/plugins/gtk/win32/wintrans/bl_soli
 static const char *OPT_WINTRANS_BL_ONTOP  = "/plugins/gtk/win32/wintrans/bl_always_on_top";
 static GSList *window_list = NULL;
 
-static BOOL (*MySetLayeredWindowAttributes)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags) = NULL;
-
 /*
  *  CODE
  */
@@ -81,31 +79,31 @@ static BOOL (*MySetLayeredWindowAttributes)(HWND hwnd, COLORREF crKey, BYTE bAlp
 /* Set window transparency level */
 static void set_wintrans(GtkWidget *window, int alpha, gboolean enabled,
 		gboolean always_on_top) {
-	if (MySetLayeredWindowAttributes) {
-		HWND hWnd = GDK_WINDOW_HWND(window->window);
-		LONG style = GetWindowLong(hWnd, GWL_EXSTYLE);
-		if (enabled) {
-			style |= WS_EX_LAYERED;
-		} else {
-			style &= ~WS_EX_LAYERED;
-		}
-		SetWindowLong(hWnd, GWL_EXSTYLE, style);
 
-
-		if (enabled) {
-			SetWindowPos(hWnd,
-				always_on_top ? HWND_TOPMOST : HWND_NOTOPMOST,
-				0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-			MySetLayeredWindowAttributes(hWnd, 0, alpha, LWA_ALPHA);
-		} else {
-			/* Ask the window and its children to repaint */
-			SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0,
-				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-
-			RedrawWindow(hWnd, NULL, NULL,
-				RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
-		}
+	HWND hWnd = GDK_WINDOW_HWND(window->window);
+	LONG style = GetWindowLong(hWnd, GWL_EXSTYLE);
+	if (enabled) {
+		style |= WS_EX_LAYERED;
+	} else {
+		style &= ~WS_EX_LAYERED;
 	}
+	SetWindowLong(hWnd, GWL_EXSTYLE, style);
+
+
+	if (enabled) {
+		SetWindowPos(hWnd,
+			always_on_top ? HWND_TOPMOST : HWND_NOTOPMOST,
+			0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+		SetLayeredWindowAttributes(hWnd, 0, alpha, LWA_ALPHA);
+	} else {
+		/* Ask the window and its children to repaint */
+		SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0,
+			SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+
+		RedrawWindow(hWnd, NULL, NULL,
+			RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+	}
+
 }
 
 /* When a conv window is focused, if we're only transparent when unfocused,
@@ -491,14 +489,6 @@ static void update_existing_convs() {
  *  EXPORTED FUNCTIONS
  */
 static gboolean plugin_load(PurplePlugin *plugin) {
-	MySetLayeredWindowAttributes = (void*) wpurple_find_and_loadproc(
-		"user32.dll", "SetLayeredWindowAttributes");
-
-	if (!MySetLayeredWindowAttributes) {
-		purple_debug_error(WINTRANS_PLUGIN_ID,
-			"SetLayeredWindowAttributes API not found (Required W2K+)\n");
-		return FALSE;
-	}
 
 	purple_signal_connect(purple_conversations_get_handle(),
 		"conversation-created", plugin,
