@@ -18,6 +18,9 @@ version 2.7.0 (??/??/????):
 	* Make the search dialog unobtrusive in the conversation window (by making
 	  it look and behave like the search dialog in Firefox)
 
+	Bonjour:
+	* Added support for IPv6. (Thanks to T_X for testing)
+
 version 2.6.6 (02/18/2010):
 	libpurple:
 	* Fix 'make check' on OS X. (David Fang)
