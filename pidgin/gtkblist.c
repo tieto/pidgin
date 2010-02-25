@@ -7828,7 +7828,7 @@ edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 		const char *mood = purple_request_field_list_get_data(f, l->data);
 		PurpleAccount *account = purple_connection_get_account(gc);
 
-		if (mood != NULL) {
+		if (mood != NULL && !purple_strequal(mood, "")) {
 			purple_account_set_status(account, "mood", TRUE,
 			                          PURPLE_MOOD_NAME, mood,
 			                          NULL);
@@ -7851,7 +7851,7 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleMood *mood;
-
+	
 	g_return_if_fail(gc->prpl != NULL);
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
@@ -7869,6 +7869,11 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 
 	g_free(na_fn);
 
+	/* first item is an empty one for unsetting the mood */
+	purple_request_field_list_add(f, "", "");
+	if (purple_strequal(current_mood, ""))
+		purple_request_field_list_add_selected(f, "");
+	
 	/* TODO: rlaager wants this sorted. */
 	for (mood = prpl_info->get_moods(account);
 	     mood->mood != NULL ; mood++) {
