@@ -1,3 +1,10 @@
+pidgin (2.6.6-2) unstable; urgency=low
+
+  * debian/patches/oscar_login.patch:
+    - Fix login problems in AIM/ICQ (Closes: #571413) 
+
+ -- Ari Pollak <ari@debian.org>  Thu, 25 Feb 2010 10:28:42 -0500
+
 pidgin (2.6.6-1) unstable; urgency=high
 
   * New upstream release
