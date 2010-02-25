@@ -375,10 +375,26 @@ winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
 }
 
 void winpidgin_init(HINSTANCE hint) {
+	FARPROC proc;
 
 	purple_debug_info("winpidgin", "winpidgin_init start\n");
 
 	exe_hInstance = hint;
+
+	proc = wpurple_find_and_loadproc("exchndl.dll", "SetLogFile");
+	if (proc) {
+		gchar *debug_dir, *locale_debug_dir;
+		
+		debug_dir = g_build_filename(purple_user_dir(), "pidgin.RPT", NULL);
+		locale_debug_dir = g_locale_from_utf8(debug_dir, -1, NULL, NULL, NULL);
+
+		purple_debug_info("winpidgin", "Setting exchndl.dll LogFile to %s\n", debug_dir);
+
+		(proc)(locale_debug_dir);
+
+		g_free(debug_dir);
+		g_free(locale_debug_dir);
+	}
 
 	/* IdleTracker Initialization */
 	if(!winpidgin_set_idlehooks())
