@@ -70,6 +70,8 @@
 #include "jingle/jingle.h"
 #include "jingle/rtp.h"
 
+#define PING_TIMEOUT 60
+
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
 static GSList *jabber_cmds = NULL;
@@ -521,9 +523,12 @@ static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
 
 void jabber_keepalive(PurpleConnection *gc)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
+	time_t now = time(NULL);
 
-	if (js->keepalive_timeout == 0) {
+	if (js->keepalive_timeout == 0 && (now - js->last_ping) >= PING_TIMEOUT) {
+		js->last_ping = now;
+
 		jabber_keepalive_ping(js);
 		js->keepalive_timeout = purple_timeout_add_seconds(120,
 				(GSourceFunc)(jabber_keepalive_timeout), gc);
