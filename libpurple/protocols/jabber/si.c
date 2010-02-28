@@ -1269,13 +1269,13 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	if (purple_xfer_get_thumbnail_data(xfer)) {
 		JabberData *thumbnail_data = 
 			jabber_data_create_from_data(purple_xfer_get_thumbnail_data(xfer),
-				purple_xfer_get_thumbnail_size(xfer), "image/jpeg", TRUE,
+				purple_xfer_get_thumbnail_size(xfer), "image/png", TRUE,
 				jsx->js);
 		xmlnode *thumbnail = xmlnode_new_child(file, "thumbnail");
 		xmlnode_set_namespace(thumbnail, NS_THUMBS);
 		xmlnode_set_attrib(thumbnail, "cid", 
 			jabber_data_get_cid(thumbnail_data));
-		xmlnode_set_attrib(thumbnail, "mime-type", "image/jpeg");
+		xmlnode_set_attrib(thumbnail, "mime-type", "image/png");
 		/* cache data */
 		jabber_data_associate_local(thumbnail_data, NULL);
 	}

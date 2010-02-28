@@ -1175,7 +1175,7 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer)
 			gsize size;
 			char *option_keys[2] = {"quality", NULL};
 			char *option_values[2] = {"75", NULL};
-			gdk_pixbuf_save_to_bufferv(thumbnail, &buffer, &size, "jpeg", 
+			gdk_pixbuf_save_to_bufferv(thumbnail, &buffer, &size, "png", 
 				option_keys, option_values, NULL);
 
 			if (buffer) {
