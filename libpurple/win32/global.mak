@@ -103,7 +103,7 @@ DLL_LD_FLAGS += -Wl,--enable-auto-image-base
 ifeq "$(origin CC)" "default"
   CC := gcc.exe
 endif
-GMSGFMT ?= $(GTK_BIN)/msgfmt
+GMSGFMT ?= $(WIN32_DEV_TOP)/gettext-0.17/bin/msgfmt
 MAKENSIS ?= makensis.exe
 MAKENSISOPT ?= /
 PERL ?= /cygdrive/c/perl/bin/perl
