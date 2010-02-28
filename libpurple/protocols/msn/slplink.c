@@ -686,7 +686,7 @@ gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 		u8 = NULL;
 	}
 
-	header.length = GUINT32_TO_LE(sizeof(MsnFileContext));
+	header.length = GUINT32_TO_LE(sizeof(MsnFileContext) - 1);
 	header.version = GUINT32_TO_LE(2); /* V.3 contains additional unnecessary data */
 	header.file_size = GUINT64_TO_LE(size);
 	header.type = GUINT32_TO_LE(1);    /* No file preview */

@@ -397,8 +397,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		header = (MsnFileContext *)purple_base64_decode(context, &bin_len);
 		if (bin_len >= sizeof(MsnFileContext) - 1 &&
-		    header->length == sizeof(MsnFileContext) - 1 &&
-		    header->version == 2) {
+			(header->version == 2 ||
+			 (header->version == 3 && header->length == sizeof(MsnFileContext) + 63))) {
 			file_size = GUINT64_FROM_LE(header->file_size);
 
 			file_name = g_convert((const gchar *)&header->file_name,
