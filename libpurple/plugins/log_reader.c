@@ -2644,7 +2644,7 @@ static void log_reader_init_prefs(void) {
 			g_free(contents);
 		}
 		g_free(path);
-#endif /* !GTK_CHECK_VERSION(2,6,0) */
+#endif /* !GLIB_CHECK_VERSION(2,6,0) */
 	} /* path */
 
 	if (!found) {

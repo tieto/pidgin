@@ -25,16 +25,8 @@
 !define PIDGIN_DESKTOP_SHORTCUT_DESC		"Utworzenie skrótu do programu Pidgin na pulpicie"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Utworzenie wpisu w menu Start dla programu Pidgin"
 
-; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Odnaleziono star¹ wersjê biblioteki GTK+. Zaktualizowaæ j¹?$\rUwaga: program $(^Name) mo¿e bez tego nie dzia³aæ."
-!define GTK_WINDOWS_INCOMPATIBLE		"Systemy Windows 95/98/Me s¹ niezgodne z bibliotek¹ GTK+ 2.8.0 lub nowsz¹. Biblioteka GTK+ ${GTK_INSTALL_VERSION} nie zostanie zainstalowana.$\rJeœli brak zainstalowanej biblioteki GTK+ ${GTK_MIN_VERSION} lub nowszej, instalacja zostanie przerwana."
-
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"OdwiedŸ stronê WWW programu Pidgin"
-
-; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"B³¹d podczas instalowania biblioteki GTK+."
-!define GTK_BAD_INSTALL_PATH			"Nie mo¿na uzyskaæ dostêpu do podanej œcie¿ki lub jej utworzyæ."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Instalator nie mo¿e odnaleŸæ wpisów w rejestrze dla programu Pidgin.$\rMo¿liwe, ¿e inny u¿ytkownik zainstalowa³ ten program."

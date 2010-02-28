@@ -166,6 +166,11 @@ struct _JabberStream
 	time_t idle;
 	time_t old_idle;
 
+	/** When we last pinged the server, so we don't ping more
+	 *  often than once every minute.
+	 */
+	time_t last_ping;
+
 	JabberID *user;
 	JabberBuddy *user_jb;
 

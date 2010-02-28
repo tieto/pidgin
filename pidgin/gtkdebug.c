@@ -250,11 +250,11 @@ clear_cb(GtkWidget *w, DebugWindow *win)
 static void
 pause_cb(GtkWidget *w, DebugWindow *win)
 {
-	win->paused = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
+	win->paused = gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(w));
 
 #ifdef HAVE_REGEX_H
 	if(!win->paused) {
-		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+		if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 			regex_filter_all(win);
 		else
 			regex_show_all(win);
@@ -445,7 +445,7 @@ regex_compile(DebugWindow *win) {
 	/* we check if the filter is on in case it was only of the options that
 	 * got changed, and not the expression.
 	 */
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+	if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 		regex_filter_all(win);
 }
 
@@ -459,9 +459,9 @@ regex_pref_filter_cb(const gchar *name, PurplePrefType type,
 	if(!win || !win->window)
 		return;
 
-	current = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter));
+	current = gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter));
 	if(active != current)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter), active);
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter), active);
 }
 
 static void
@@ -483,7 +483,7 @@ regex_pref_invert_cb(const gchar *name, PurplePrefType type,
 
 	win->invert = active;
 
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+	if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 		regex_filter_all(win);
 }
 
@@ -496,7 +496,7 @@ regex_pref_highlight_cb(const gchar *name, PurplePrefType type,
 
 	win->highlight = active;
 
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+	if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 		regex_filter_all(win);
 }
 
@@ -522,7 +522,7 @@ regex_row_changed_cb(GtkTreeModel *model, GtkTreePath *path,
 	gtk_tree_model_get(model, iter, 0, &text, 1, &level, -1);
 
 	if (level >= purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel")) {
-		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter))) {
+		if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter))) {
 			regex_match(win, text);
 		} else {
 			gtk_imhtml_append_text(GTK_IMHTML(win->text), text, 0);
@@ -546,8 +546,8 @@ regex_timer_cb(DebugWindow *win) {
 
 static void
 regex_changed_cb(GtkWidget *w, DebugWindow *win) {
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter))) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter),
+	if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter))) {
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter),
 									 FALSE);
 	}
 
@@ -561,9 +561,9 @@ static void
 regex_key_release_cb(GtkWidget *w, GdkEventKey *e, DebugWindow *win) {
 	if(e->keyval == GDK_Return &&
 	   GTK_WIDGET_IS_SENSITIVE(win->filter) &&
-	   !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+	   !gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 	{
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter), TRUE);
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter), TRUE);
 	}
 }
 
@@ -588,10 +588,10 @@ regex_popup_cb(GtkEntry *entry, GtkWidget *menu, DebugWindow *win) {
 }
 
 static void
-regex_filter_toggled_cb(GtkToggleButton *button, DebugWindow *win) {
+regex_filter_toggled_cb(GtkToggleToolButton *button, DebugWindow *win) {
 	gboolean active;
 
-	active = gtk_toggle_button_get_active(button);
+	active = gtk_toggle_tool_button_get_active(button);
 
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/debug/filter", active);
 
@@ -611,7 +611,7 @@ filter_level_pref_changed(const char *name, PurplePrefType type, gconstpointer v
 
 	if (GPOINTER_TO_INT(value) != gtk_combo_box_get_active(GTK_COMBO_BOX(win->filterlevel)))
 		gtk_combo_box_set_active(GTK_COMBO_BOX(win->filterlevel), GPOINTER_TO_INT(value));
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+	if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
 		regex_filter_all(win);
 	else
 		regex_show_all(win);
@@ -677,9 +677,12 @@ debug_window_new(void)
 	GtkWidget *vbox;
 	GtkWidget *toolbar;
 	GtkWidget *frame;
-	GtkWidget *image;
 	gint width, height;
 	void *handle;
+	GtkToolItem *item;
+#if !GTK_CHECK_VERSION(2,12,0)
+	GtkTooltips *tooltips;
+#endif
 
 	win = g_new0(DebugWindow, 1);
 
@@ -720,7 +723,12 @@ debug_window_new(void)
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/toolbar")) {
 		/* Setup our top button bar thingie. */
 		toolbar = gtk_toolbar_new();
+#if !GTK_CHECK_VERSION(2,12,0)
+		tooltips = gtk_tooltips_new();
+#endif
+#if !GTK_CHECK_VERSION(2,14,0)
 		gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
+#endif
 		gtk_toolbar_set_show_arrow(GTK_TOOLBAR(toolbar), TRUE);
 		g_signal_connect(G_OBJECT(toolbar), "button-press-event", G_CALLBACK(toolbar_context), win);
 
@@ -735,61 +743,93 @@ debug_window_new(void)
 
 #ifndef HAVE_REGEX_H
 		/* Find button */
-		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_FIND,
-		                         _("Find"), NULL, G_CALLBACK(find_cb),
-		                         win, -1);
+		item = gtk_tool_button_new_from_stock(GTK_STOCK_FIND);
+		gtk_tool_item_set_is_important(item, TRUE);
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_tool_item_set_tooltip_text(item, _("Find"));
+#else
+		gtk_tool_item_set_tooltip(item, tooltips, _("Find"), NULL);
+#endif
+		g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(find_cb), win);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 #endif /* HAVE_REGEX_H */
 
 		/* Save */
-		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_SAVE,
-		                         _("Save"), NULL, G_CALLBACK(save_cb),
-		                         win, -1);
+		item = gtk_tool_button_new_from_stock(GTK_STOCK_SAVE);
+		gtk_tool_item_set_is_important(item, TRUE);
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_tool_item_set_tooltip_text(item, _("Save"));
+#else
+		gtk_tool_item_set_tooltip(item, tooltips, _("Save"), NULL);
+#endif
+		g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(save_cb), win);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 		/* Clear button */
-		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_CLEAR,
-		                         _("Clear"), NULL, G_CALLBACK(clear_cb),
-		                         win, -1);
+		item = gtk_tool_button_new_from_stock(GTK_STOCK_CLEAR);
+		gtk_tool_item_set_is_important(item, TRUE);
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_tool_item_set_tooltip_text(item, _("Clear"));
+#else
+		gtk_tool_item_set_tooltip(item, tooltips, _("Clear"), NULL);
+#endif
+		g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(clear_cb), win);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
-		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
+		item = gtk_separator_tool_item_new();
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 		/* Pause */
-		image = gtk_image_new_from_stock(PIDGIN_STOCK_PAUSE, GTK_ICON_SIZE_MENU);
-		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-		                                    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-		                                    NULL, _("Pause"), _("Pause"),
-		                                    NULL, image,
-		                                    G_CALLBACK(pause_cb), win);
+		item = gtk_toggle_tool_button_new_from_stock(PIDGIN_STOCK_PAUSE);
+		gtk_tool_item_set_is_important(item, TRUE);
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_tool_item_set_tooltip_text(item, _("Pause"));
+#else
+		gtk_tool_item_set_tooltip(item, tooltips, _("Pause"), NULL);
+#endif
+		g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(pause_cb), win);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 #ifdef HAVE_REGEX_H
 		/* regex stuff */
-		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
+		item = gtk_separator_tool_item_new();
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 		/* regex toggle button */
-		image = gtk_image_new_from_stock(GTK_STOCK_FIND, GTK_ICON_SIZE_MENU);
-		win->filter =
-			gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-									   GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-									   NULL, _("Filter"), _("Filter"),
-									   NULL, image,
-									   G_CALLBACK(regex_filter_toggled_cb),
-									   win);
+		item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_FIND);
+		gtk_tool_item_set_is_important(item, TRUE);
+		win->filter = GTK_WIDGET(item);
+		gtk_tool_button_set_label(GTK_TOOL_BUTTON(win->filter), _("Filter"));
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(win->filter), _("Filter"));
+#else
+		gtk_tooltips_set_tip(tooltips, win->filter, _("Filter"), NULL);
+#endif
+		g_signal_connect(G_OBJECT(win->filter), "clicked", G_CALLBACK(regex_filter_toggled_cb), win);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(win->filter));
+
 		/* we purposely disable the toggle button here in case
 		 * /purple/gtk/debug/expression has an empty string.  If it does not have
 		 * an empty string, the change signal will get called and make the
 		 * toggle button sensitive.
 		 */
 		gtk_widget_set_sensitive(win->filter, FALSE);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter),
+		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter),
 									 purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/filter"));
 		purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/debug/filter",
 									regex_pref_filter_cb, win);
 
 		/* regex entry */
 		win->expression = gtk_entry_new();
-		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-								   GTK_TOOLBAR_CHILD_WIDGET, win->expression,
-								   NULL, _("Right click for more options."),
-								   NULL, NULL, NULL, NULL);
+		item = gtk_tool_item_new();
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_widget_set_tooltip_text(win->expression, _("Right click for more options."));
+#else
+		gtk_tooltips_set_tip(tooltips, win->expression, _("Right click for more options."), NULL);
+#endif
+		gtk_container_add(GTK_CONTAINER(item), GTK_WIDGET(win->expression));
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
+
 		/* this needs to be before the text is set from the pref if we want it
 		 * to colorize a stored expression.
 		 */
@@ -815,18 +855,23 @@ debug_window_new(void)
 
 #endif /* HAVE_REGEX_H */
 
-		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
+		item = gtk_separator_tool_item_new();
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
-		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-		                           GTK_TOOLBAR_CHILD_WIDGET, gtk_label_new(_("Level ")),
-		                           NULL, _("Select the debug filter level."),
-		                           NULL, NULL, NULL, NULL);
+		item = gtk_tool_item_new();
+		gtk_container_add(GTK_CONTAINER(item), gtk_label_new(_("Level ")));
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
 		win->filterlevel = gtk_combo_box_new_text();
-		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-		                           GTK_TOOLBAR_CHILD_WIDGET, win->filterlevel,
-		                           NULL, _("Select the debug filter level."),
-		                           NULL, NULL, NULL, NULL);
+		item = gtk_tool_item_new();
+#if GTK_CHECK_VERSION(2,12,0)
+		gtk_widget_set_tooltip_text(win->filterlevel, _("Select the debug filter level."));
+#else
+		gtk_tooltips_set_tip(tooltips, win->filterlevel, _("Select the debug filter level."), NULL);
+#endif
+		gtk_container_add(GTK_CONTAINER(item), win->filterlevel);
+		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
+
 		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("All"));
 		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Misc"));
 		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Info"));

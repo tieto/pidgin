@@ -9,7 +9,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Installasjonsprogrammet kjører allereie."
 !define PIDGIN_IS_RUNNING			"Pidgin kjører no. Lukk programmet og prøv igjen."
-!define GTK_INSTALLER_NEEDED			"GTK+-kjøremiljøet manglar eller treng å bli oppdatert.$\rInstaller v${GTK_MIN_VERSION} eller nyare av GTK+-kjøremiljøet"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Neste >"
@@ -28,19 +27,11 @@
 !define PIDGIN_DESKTOP_SHORTCUT_DESC		"Lag ein snarveg til Pidgin på skrivebordet"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Lag ein snarveg til Pidgin på startmenyen"
 
-; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Fann ei gammal utgåve av GTK+-kjøremiljøet. Vil du oppdatera ho?$\rMerk: $(^Name) vil kanskje ikkje fungera om du ikkje oppdaterer."
-!define GTK_WINDOWS_INCOMPATIBLE		"Windows 95/98/Me er ikkje kompatibelt med GTK+ 2.8.0 eller nyare. GTK+ ${GTK_INSTALL_VERSION} kjem ikkje til å bli installert.$\rInstallasjonen vil bli abvroten om ikkje GTK+ ${GTK_MIN_VERSION} eller nyare allereie er installert."
-
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Besøk Pidgin si nettside"
 
 ; Pidgin Section Prompts and Texts
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Klarte ikkje å avinstallera Pidgin-utgåva som er i bruk. Den nye utgåva kjem til å bli installert utan å ta vekk den gjeldande."
-
-; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Klarte ikkje å installera GTK+-kjøremiljøet."
-!define GTK_BAD_INSTALL_PATH			"Klarer ikkje å laga eller få tilgang til bana du skreiv."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"URI-referanse"

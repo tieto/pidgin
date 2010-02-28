@@ -53,7 +53,7 @@ SetDateSave on
 ;Defines
 
 !define PIDGIN_NSIS_INCLUDE_PATH		"."
-!define PIDGIN_INSTALLER_DEPS			"..\..\..\..\win32-dev\pidgin-inst-deps-0.2"
+!define PIDGIN_INSTALLER_DEPS			"..\..\..\..\win32-dev\pidgin-inst-deps-20100223"
 
 ; Remove these and the stuff that uses them at some point
 !define OLD_GAIM_REG_KEY			"SOFTWARE\gaim"
@@ -352,12 +352,11 @@ Section $(GTK_SECTION_TITLE) SecGtk
   Pop $R0
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" +2
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR) : $R1" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR) : $R2" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
 !endif
 
   SetOutPath "$INSTDIR"
-
   nsisunz::UnzipToLog $R1 "$INSTDIR"
   Pop $R0
   StrCmp $R0 "success" +2
@@ -610,17 +609,17 @@ SectionGroup /e $(PIDGIN_SPELLCHECK_SECTION_TITLE) SecSpellCheck
 SectionGroupEnd
 
 Section /o $(DEBUG_SYMBOLS_SECTION_TITLE) SecDebugSymbols
+  
   InitPluginsDir
-
-  ; We need to download and extract the debug symbols
-  StrCpy $R1 "$PLUGINSDIR\pidgin-${PIDGIN_VERSION}-dbgsym.zip"
+  StrCpy $R1 "$PLUGINSDIR\dbgsym.zip"
 !ifdef OFFLINE_INSTALLER
 
   SetOutPath $PLUGINSDIR
-  File /oname=pidgin-${PIDGIN_VERSION}-dbgsym.zip "..\..\..\..\gtk_installer\gtk-runtime-${GTK_INSTALL_VERSION}.zip"
+  File /oname=dbgsym.zip "..\..\..\pidgin-${PIDGIN_VERSION}-dbgsym.zip"
 
 !else
 
+  ; We need to download the debug symbols
   retry:
   StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=dbgsym"
   DetailPrint "Downloading Debug Symbols... ($R2)"
@@ -632,6 +631,7 @@ Section /o $(DEBUG_SYMBOLS_SECTION_TITLE) SecDebugSymbols
 
 !endif
 
+  SetOutPath "$INSTDIR"
   nsisunz::UnzipToLog $R1 "$INSTDIR"
   Pop $R0
   StrCmp $R0 "success" +2
@@ -779,7 +779,7 @@ Section Uninstall
     Delete "$INSTDIR\libsasl.dll"
     Delete "$INSTDIR\libsilc-1-1-2.dll"
     Delete "$INSTDIR\libsilcclient-1-1-2.dll"
-    Delete "$INSTDIR\libxml2.dll"
+    Delete "$INSTDIR\libxml2-2.dll"
     Delete "$INSTDIR\libymsg.dll"
     Delete "$INSTDIR\nspr4.dll"
     Delete "$INSTDIR\nss3.dll"
@@ -801,7 +801,7 @@ Section Uninstall
     ; Remove the local GTK+ copy (if we're not just upgrading)
     ${GetParameters} $R0
     ClearErrors
-    ${GetOptions} "$R3" "/KEEPGTK=" $R1
+    ${GetOptions} "$R0" "/KEEPGTK=" $R1
     IfErrors +2
     StrCmp $R1 "1" +2
     RMDir /r "$INSTDIR\Gtk"
@@ -1367,6 +1367,10 @@ FunctionEnd
 Function preWelcomePage
   Push $R0
   Push $R1
+
+!ifdef OFFLINE_INSTALLER
+    !insertmacro SelectSection ${SecDebugSymbols}
+!endif
 
   Call DoWeNeedGtk
   Pop $R0
