@@ -15,8 +15,11 @@ version 2.7.0 (??/??/????):
 	* Use GtkStatusIcon for the docklet, providing better integration in
 	  notification area.
 	* Added UI for sending attentions (buzz, nudge) on supporting protocols.
-	* Make the search dialog unobtrusive in the conversation window (by making
-	  it look and behave like the search dialog in Firefox)
+	* Make the search dialog unobtrusive in the conversation window (by
+	  making it look and behave like the search dialog in Firefox)
+	* The Recent Log Activity sort method for the Buddy List now
+	  distinguishes between no activity and a small amount of activity
+	  in the distant past.  (Greg McNew)
 
 	Bonjour:
 	* Added support for IPv6. (Thanks to T_X for testing)
