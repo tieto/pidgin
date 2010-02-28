@@ -7847,7 +7847,6 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *g;
 	PurpleRequestField *f;
-	char* na_fn;
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleMood *mood;
@@ -7861,19 +7860,10 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	g = purple_request_field_group_new(NULL);
 	f = purple_request_field_list_new("mood", _("Please select your mood from the list"));
 
-	na_fn = g_build_filename("pixmaps", "pidgin", "emblems", "16", "not-authorized.png", NULL);
-
-	purple_request_field_list_add_icon(f, _("None"), na_fn, NULL);
+	purple_request_field_list_add(f, _("None"), "");
 	if (current_mood == NULL)
 		purple_request_field_list_add_selected(f, _("None"));
 
-	g_free(na_fn);
-
-	/* first item is an empty one for unsetting the mood */
-	purple_request_field_list_add(f, "", "");
-	if (purple_strequal(current_mood, ""))
-		purple_request_field_list_add_selected(f, "");
-	
 	/* TODO: rlaager wants this sorted. */
 	for (mood = prpl_info->get_moods(account);
 	     mood->mood != NULL ; mood++) {
