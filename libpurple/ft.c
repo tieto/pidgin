@@ -1085,7 +1085,7 @@ do_transfer(PurpleXfer *xfer)
 			return;
 		}
 	} else if (xfer->type == PURPLE_XFER_SEND) {
-		size_t result;
+		size_t result = 0;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 		PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
 
@@ -1130,13 +1130,24 @@ do_transfer(PurpleXfer *xfer)
 
 			result = tmp;
 		} else {
-			buffer = g_malloc0(s);
-			result = fread(buffer, 1, s, xfer->dest_fp);
-			if (result != s) {
-				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-				purple_xfer_cancel_local(xfer);
-				g_free(buffer);
-				return;
+			gboolean read = TRUE;
+			if (priv->buffer) {
+				if (priv->buffer->len < s) {
+					s -= priv->buffer->len;
+					read = TRUE;
+				} else {
+					read = FALSE;
+				}
+			}
+			if (read) {
+				buffer = g_malloc(s);
+				result = fread(buffer, 1, s, xfer->dest_fp);
+				if (result != s) {
+					purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+					purple_xfer_cancel_local(xfer);
+					g_free(buffer);
+					return;
+				}
 			}
 		}
 	
