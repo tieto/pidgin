@@ -307,6 +307,8 @@ msg_ack(MsnMessage *msg, void *data)
 
 	slpmsg->offset += msg->msnslp_header.length;
 
+	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
+
 	if (slpmsg->offset < real_size)
 	{
 		if (slpmsg->slpcall->xfer && purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
@@ -331,8 +333,6 @@ msg_ack(MsnMessage *msg, void *data)
 			}
 		}
 	}
-
-	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
 }
 
 /* We have received the message nak. */
