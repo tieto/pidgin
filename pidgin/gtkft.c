@@ -1171,7 +1171,7 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer)
 				purple_xfer_get_local_filename(xfer), 128, 128, NULL);
 
 		if (thumbnail) {
-			gpointer *buffer = NULL;
+			gchar *buffer = NULL;
 			gsize size;
 			char *option_keys[2] = {"quality", NULL};
 			char *option_values[2] = {"75", NULL};
@@ -1179,7 +1179,8 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer)
 				option_keys, option_values, NULL);
 
 			if (buffer) {
-				purple_debug_info("pidgin", "created thumbnail of %d bytes\n",
+				purple_debug_info("pidgin",
+				                  "created thumbnail of %" G_GSIZE_FORMAT " bytes\n",
 					size);
 				purple_xfer_set_thumbnail(xfer, buffer, size);
 				g_free(buffer);
