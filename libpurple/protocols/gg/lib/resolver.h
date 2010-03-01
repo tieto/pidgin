@@ -1,8 +1,7 @@
-/* $Id: compat.h 506 2008-01-14 22:15:05Z wojtekka $ */
+/* $Id$ */
 
 /*
- *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
- *                          Robert J. Woźny <speedy@ziew.org>
+ *  (C) Copyright 2008 Wojtek Kaniewski <wojtekka@irc.pl>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -19,17 +18,13 @@
  *  USA.
  */
 
-/**
- * \file compat.h
- *
- * \brief Makra zapewniające kompatybilność API na różnych systemach
- */
+#ifndef LIBGADU_RESOLVER_H
+#define LIBGADU_RESOLVER_H
 
-#ifndef __COMPAT_H
-#define __COMPAT_H
-
-#ifdef sun
-#  define INADDR_NONE   ((in_addr_t) 0xffffffff)
+#ifndef _WIN32
+#  include <arpa/inet.h>
 #endif
 
-#endif
+int gg_gethostbyname_real(const char *hostname, struct in_addr *result, int pthread);
+
+#endif /* LIBGADU_RESOLVER_H */
