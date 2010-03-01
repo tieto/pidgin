@@ -50,13 +50,14 @@ EXTERNAL_DLLS = \
 	krb5_32.dll \
 	libgtkspell.dll \
 	libmeanwhile-1.dll \
+	libnspr4.dll \
+	libplc4.dll \
+	libplds4.dll \
 	libsasl.dll \
 	libxml2.dll \
-	nspr4.dll \
 	nss3.dll \
 	nssckbi.dll \
-	plc4.dll \
-	plds4.dll \
+	nssutil3.dll \
 	saslANONYMOUS.dll \
 	saslCRAMMD5.dll \
 	saslDIGESTMD5.dll \
@@ -67,6 +68,7 @@ EXTERNAL_DLLS = \
 	libsilcclient-1-1-2.dll \
 	smime3.dll \
 	softokn3.dll \
+	sqlite3.dll \
 	ssl3.dll
 
 #build an expression for `find` to use to ignore the above files
