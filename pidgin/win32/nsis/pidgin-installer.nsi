@@ -28,6 +28,7 @@ SetCompressor /SOLID lzma
 ShowInstDetails show
 ShowUninstDetails show
 SetDateSave on
+RequestExecutionLevel highest
 
 ; $name and $INSTDIR are set in .onInit function..
 
@@ -340,7 +341,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
 !ifdef OFFLINE_INSTALLER
 
   SetOutPath $PLUGINSDIR
-  File /oname=gtk.zip "..\..\..\..\gtk_installer\gtk-runtime-${GTK_INSTALL_VERSION}.zip"
+  File /oname=gtk.zip ".\gtk-runtime-${GTK_INSTALL_VERSION}.zip"
 
 !else
 
@@ -355,6 +356,9 @@ Section $(GTK_SECTION_TITLE) SecGtk
     MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR) : $R2" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
 !endif
+
+  ;Delete the old Gtk directory
+  RMDir /r "$INSTDIR\Gtk"
 
   SetOutPath "$INSTDIR"
   nsisunz::UnzipToLog $R1 "$INSTDIR"
