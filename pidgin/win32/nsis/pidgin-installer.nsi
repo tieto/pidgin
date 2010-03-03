@@ -28,6 +28,7 @@ SetCompressor /SOLID lzma
 ShowInstDetails show
 ShowUninstDetails show
 SetDateSave on
+RequestExecutionLevel highest
 
 ; $name and $INSTDIR are set in .onInit function..
 
@@ -340,7 +341,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
 !ifdef OFFLINE_INSTALLER
 
   SetOutPath $PLUGINSDIR
-  File /oname=gtk.zip "..\..\..\..\gtk_installer\gtk-runtime-${GTK_INSTALL_VERSION}.zip"
+  File /oname=gtk.zip ".\gtk-runtime-${GTK_INSTALL_VERSION}.zip"
 
 !else
 
@@ -355,6 +356,9 @@ Section $(GTK_SECTION_TITLE) SecGtk
     MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR) : $R2" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
 !endif
+
+  ;Delete the old Gtk directory
+  RMDir /r "$INSTDIR\Gtk"
 
   SetOutPath "$INSTDIR"
   nsisunz::UnzipToLog $R1 "$INSTDIR"
@@ -773,23 +777,25 @@ Section Uninstall
     Delete "$INSTDIR\idletrack.dll"
     Delete "$INSTDIR\libgtkspell.dll"
     Delete "$INSTDIR\libjabber.dll"
+    Delete "$INSTDIR\libnspr4.dll"
     Delete "$INSTDIR\libmeanwhile-1.dll"
     Delete "$INSTDIR\liboscar.dll"
+    Delete "$INSTDIR\libplc4.dll"
+    Delete "$INSTDIR\libplds4.dll"
     Delete "$INSTDIR\libpurple.dll"
     Delete "$INSTDIR\libsasl.dll"
     Delete "$INSTDIR\libsilc-1-1-2.dll"
     Delete "$INSTDIR\libsilcclient-1-1-2.dll"
     Delete "$INSTDIR\libxml2-2.dll"
     Delete "$INSTDIR\libymsg.dll"
-    Delete "$INSTDIR\nspr4.dll"
     Delete "$INSTDIR\nss3.dll"
+    Delete "$INSTDIR\nssutil3.dll"
     Delete "$INSTDIR\nssckbi.dll"
     Delete "$INSTDIR\pidgin.dll"
     Delete "$INSTDIR\pidgin.exe"
-    Delete "$INSTDIR\plc4.dll"
-    Delete "$INSTDIR\plds4.dll"
     Delete "$INSTDIR\smime3.dll"
     Delete "$INSTDIR\softokn3.dll"
+    Delete "$INSTDIR\sqlite3.dll"
     Delete "$INSTDIR\ssl3.dll"
     Delete "$INSTDIR\${PIDGIN_UNINST_EXE}"
     Delete "$INSTDIR\exchndl.dll"

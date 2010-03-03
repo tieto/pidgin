@@ -36,8 +36,6 @@
 #include "imgstore.h"
 #include "time.h"
 
-#include <math.h>
-
 static GSList *loggers = NULL;
 
 static PurpleLogLogger *html_logger;

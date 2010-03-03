@@ -4,6 +4,7 @@ version 2.7.0 (??/??/????):
 	* Win9x no longer supported.
 	* Crash Report files (pidgin.RPT) are now generated in the ~/.purple
 	  directory instead of the installation directory.
+	* NSS SSL Library upgraded to 3.12.5 (thanks to Berke Viktor)
 
 version 2.6.6 (02/18/2010):
 	* Installer translations for: Norwegian nynorsk

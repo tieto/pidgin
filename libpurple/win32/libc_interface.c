@@ -62,7 +62,7 @@ static char errbuf[1024];
 /* helpers */
 static int wpurple_is_socket( int fd ) {
 	int optval;
-	unsigned int optlen = sizeof(int);
+	int optlen = sizeof(int);
 
 	if( (getsockopt(fd, SOL_SOCKET, SO_TYPE, (void*)&optval, &optlen)) == SOCKET_ERROR ) {
 		int error = WSAGetLastError();
@@ -973,7 +973,7 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 
 		memset(zonename, 0, sizeof(zonename));
 		namesize = sizeof(zonename);
-		if ((r = RegQueryValueEx(key, "Std", NULL, NULL, zonename, &namesize)) != ERROR_SUCCESS)
+		if ((r = RegQueryValueEx(key, "Std", NULL, NULL, (LPBYTE)zonename, &namesize)) != ERROR_SUCCESS)
 		{
 			purple_debug_warning("wpurple", "could not query value for 'std' to identify Windows timezone: %i\n", (int) r);
 			RegCloseKey(key);
@@ -988,7 +988,7 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 		}
 		memset(zonename, 0, sizeof(zonename));
 		namesize = sizeof(zonename);
-		if ((r = RegQueryValueEx(key, "Dlt", NULL, NULL, zonename, &namesize)) != ERROR_SUCCESS)
+		if ((r = RegQueryValueEx(key, "Dlt", NULL, NULL, (LPBYTE)zonename, &namesize)) != ERROR_SUCCESS)
 		{
 			purple_debug_warning("wpurple", "could not query value for 'dlt' to identify Windows timezone: %i\n", (int) r);
 			RegCloseKey(key);
