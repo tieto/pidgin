@@ -8016,8 +8016,10 @@ pidgin_blist_update_accounts_menu(void)
 		if (prpl_info &&
 		    (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) ||
 			 PURPLE_PLUGIN_HAS_ACTIONS(plugin))) {
-			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods)) {
+			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) &&
+			    prpl_info->get_moods(account) != NULL) {
 				GList *types;
+
 				for (types = purple_account_get_status_types(account);
 			     	types != NULL ; types = types->next) {
 					PurpleStatusType *type = types->data;

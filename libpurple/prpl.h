@@ -572,7 +572,8 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * Returns an array of "PurpleMood"s, with the last one having
-	 * "mood" set to @c NULL.
+	 * "mood" set to @c NULL, or NULL if the account does not support setting
+	 * a mood.
 	 */
 	PurpleMood *(*get_moods)(PurpleAccount *account);
 };

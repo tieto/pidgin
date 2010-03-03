@@ -119,10 +119,6 @@ static PurpleMood moods[] = {
 	{NULL, NULL, NULL}
 };
 
-static PurpleMood empty_moods[] = {
-	{NULL, NULL, NULL}
-};
-
 static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
 	xmlnode *item = xmlnode_get_child(items, "item");
@@ -268,6 +264,6 @@ PurpleMood *jabber_get_moods(PurpleAccount *account)
 		return moods;
 	} else {
 		purple_debug_info("jabber", "get_moods: account doesn't support PEP\n");
-		return empty_moods;
+		return NULL;
 	}
 }
