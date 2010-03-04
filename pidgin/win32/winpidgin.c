@@ -188,6 +188,18 @@ static BOOL common_dll_prep(const TCHAR *path) {
 	return TRUE;
 }
 
+static BOOL dll_prep(const TCHAR *pidgin_dir) {
+	TCHAR path[MAX_PATH + 1];
+	path[0] = _T('\0');
+
+	if (*pidgin_dir) {
+		_sntprintf(path, sizeof(path) / sizeof(TCHAR), _T("%s\\Gtk\\bin"), pidgin_dir);
+		path[sizeof(path) / sizeof(TCHAR)] = _T('\0');
+	}
+
+	return common_dll_prep(path);
+}
+
 static void portable_mode_dll_prep(const TCHAR *pidgin_dir) {
 	/* need to be able to fit MAX_PATH + "PIDGIN_ASPELL_DIR=\\Aspell\\bin" in path2 */
 	TCHAR path[MAX_PATH + 1];
@@ -231,18 +243,6 @@ static void portable_mode_dll_prep(const TCHAR *pidgin_dir) {
 		_tcscat(path, _T("\\GTK\\bin"));
 		common_dll_prep(path);
 	}
-}
-
-static BOOL dll_prep(const TCHAR *pidgin_dir) {
-	TCHAR path[MAX_PATH + 1];
-	path[0] = _T('\0');
-
-	if (*pidgin_dir) {
-		_sntprintf(path, sizeof(path) / sizeof(TCHAR), _T("%s\\Gtk\\bin"), pidgin_dir);
-		path[sizeof(path) / sizeof(TCHAR)] = _T('\0');
-	}
-
-	return common_dll_prep(path);
 }
 
 static TCHAR* winpidgin_lcid_to_posix(LCID lcid) {
