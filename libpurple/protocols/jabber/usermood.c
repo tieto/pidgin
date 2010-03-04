@@ -256,14 +256,5 @@ void jabber_mood_set(JabberStream *js, const char *mood, const char *text) {
 
 PurpleMood *jabber_get_moods(PurpleAccount *account)
 {
-	PurpleConnection *gc = purple_account_get_connection(account);
-	JabberStream *js = (JabberStream *) gc->proto_data;
-
-	if (js->pep) {
-		purple_debug_info("jabber", "get_moods: account supports PEP\n");
-		return moods;
-	} else {
-		purple_debug_info("jabber", "get_moods: account doesn't support PEP\n");
-		return NULL;
-	}
+	return moods;
 }
