@@ -472,74 +472,74 @@ purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
 }
 
 SV *
-purple_perl_sv_from_vargs(const PurpleValue *value, va_list args, void ***copy_arg)
+purple_perl_sv_from_vargs(const PurpleValue *value, va_list *args, void ***copy_arg)
 {
 	if (purple_value_is_outgoing(value)) {
 		switch (purple_value_get_type(value)) {
 			case PURPLE_TYPE_SUBTYPE:
-				if ((*copy_arg = va_arg(args, void **)) == NULL)
+				if ((*copy_arg = va_arg(*args, void **)) == NULL)
 					return &PL_sv_undef;
 
 				return purple_perl_sv_from_subtype(value, *(void **)*copy_arg);
 
 			case PURPLE_TYPE_BOOLEAN:
-				if ((*copy_arg = (void *)va_arg(args, gboolean *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, gboolean *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(gboolean *)*copy_arg);
 
 			case PURPLE_TYPE_INT:
-				if ((*copy_arg = (void *)va_arg(args, int *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, int *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(int *)*copy_arg);
 
 			case PURPLE_TYPE_UINT:
-				if ((*copy_arg = (void *)va_arg(args, unsigned int *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, unsigned int *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVuv(*(unsigned int *)*copy_arg);
 
 			case PURPLE_TYPE_LONG:
-				if ((*copy_arg = (void *)va_arg(args, long *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, long *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(long *)*copy_arg);
 
 			case PURPLE_TYPE_ULONG:
-				if ((*copy_arg = (void *)va_arg(args,
+				if ((*copy_arg = (void *)va_arg(*args,
 												unsigned long *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVuv(*(unsigned long *)*copy_arg);
 
 			case PURPLE_TYPE_INT64:
-				if ((*copy_arg = (void *)va_arg(args, gint64 *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, gint64 *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(gint64 *)*copy_arg);
 
 			case PURPLE_TYPE_UINT64:
-				if ((*copy_arg = (void *)va_arg(args, guint64 *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, guint64 *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVuv(*(guint64 *)*copy_arg);
 
 			case PURPLE_TYPE_STRING:
-				if ((*copy_arg = (void *)va_arg(args, char **)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, char **)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVGChar(*(char **)*copy_arg);
 
 			case PURPLE_TYPE_POINTER:
-				if ((*copy_arg = va_arg(args, void **)) == NULL)
+				if ((*copy_arg = va_arg(*args, void **)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv((IV)*(void **)*copy_arg);
 
 			case PURPLE_TYPE_BOXED:
 				/* Uh.. I dunno. Try this? */
-				if ((*copy_arg = va_arg(args, void **)) == NULL)
+				if ((*copy_arg = va_arg(*args, void **)) == NULL)
 					return &PL_sv_undef;
 
 				return sv_2mortal(purple_perl_bless_object(
@@ -553,40 +553,40 @@ purple_perl_sv_from_vargs(const PurpleValue *value, va_list args, void ***copy_a
 	} else {
 		switch (purple_value_get_type(value)) {
 			case PURPLE_TYPE_SUBTYPE:
-				if ((*copy_arg = va_arg(args, void *)) == NULL)
+				if ((*copy_arg = va_arg(*args, void *)) == NULL)
 					return &PL_sv_undef;
 
 				return purple_perl_sv_from_subtype(value, *copy_arg);
 
 			case PURPLE_TYPE_BOOLEAN:
-				*copy_arg = GINT_TO_POINTER( va_arg(args, gboolean) );
+				*copy_arg = GINT_TO_POINTER( va_arg(*args, gboolean) );
 
 				return newSViv((gboolean)GPOINTER_TO_INT(*copy_arg));
 
 			case PURPLE_TYPE_INT:
-				*copy_arg = GINT_TO_POINTER( va_arg(args, int) );
+				*copy_arg = GINT_TO_POINTER( va_arg(*args, int) );
 
 				return newSViv(GPOINTER_TO_INT(*copy_arg));
 
 			case PURPLE_TYPE_UINT:
-				*copy_arg = GUINT_TO_POINTER(va_arg(args, unsigned int));
+				*copy_arg = GUINT_TO_POINTER(va_arg(*args, unsigned int));
 
 				return newSVuv(GPOINTER_TO_UINT(*copy_arg));
 
 			case PURPLE_TYPE_LONG:
-				*copy_arg = (void *)va_arg(args, long);
+				*copy_arg = (void *)va_arg(*args, long);
 
 				return newSViv((long)*copy_arg);
 
 			case PURPLE_TYPE_ULONG:
-				*copy_arg = (void *)va_arg(args, unsigned long);
+				*copy_arg = (void *)va_arg(*args, unsigned long);
 
 				return newSVuv((unsigned long)*copy_arg);
 
 			case PURPLE_TYPE_INT64:
 #if 0
 				/* XXX This yells and complains. */
-				*copy_arg = va_arg(args, gint64);
+				*copy_arg = va_arg(*args, gint64);
 
 				return newSViv(*copy_arg);
 #endif
@@ -595,27 +595,27 @@ purple_perl_sv_from_vargs(const PurpleValue *value, va_list args, void ***copy_a
 			case PURPLE_TYPE_UINT64:
 				/* XXX This also yells and complains. */
 #if 0
-				*copy_arg = (void *)va_arg(args, guint64);
+				*copy_arg = (void *)va_arg(*args, guint64);
 
 				return newSVuv(*copy_arg);
 #endif
 				break;
 
 			case PURPLE_TYPE_STRING:
-				if ((*copy_arg = (void *)va_arg(args, char *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, char *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVGChar((char *)*copy_arg);
 
 			case PURPLE_TYPE_POINTER:
-				if ((*copy_arg = (void *)va_arg(args, void *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv((IV)*copy_arg);
 
 			case PURPLE_TYPE_BOXED:
 				/* Uh.. I dunno. Try this? */
-				if ((*copy_arg = (void *)va_arg(args, void *)) == NULL)
+				if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)
 					return &PL_sv_undef;
 
 				return sv_2mortal(purple_perl_bless_object(*copy_arg,
