@@ -8017,7 +8017,7 @@ pidgin_blist_update_accounts_menu(void)
 		    (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) ||
 			 PURPLE_PLUGIN_HAS_ACTIONS(plugin))) {
 			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) &&
-			    prpl_info->get_moods(account) != NULL) {
+			    gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
 				GList *types;
 
 				for (types = purple_account_get_status_types(account);

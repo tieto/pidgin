@@ -1573,6 +1573,7 @@ oscar_login(PurpleAccount *account)
 
 	if (oscar_util_valid_name_icq((purple_account_get_username(account)))) {
 		od->icq = TRUE;
+		gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
 	} else {
 		gc->flags |= PURPLE_CONNECTION_HTML;
 		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
