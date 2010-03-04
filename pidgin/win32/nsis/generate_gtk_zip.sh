@@ -30,15 +30,12 @@ LIBPNG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libpng_1.2.39
 #Used by Cairo
 LIBPNG2="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libpng_1.4.0-1_win32.zip libpng 1.4.0-1"
 LIBTIFF="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libtiff_3.9.1-1_win32.zip libtiff 3.9.1-1"
-#PANGO="http://ftp.gnome.org/pub/gnome/binaries/win32/pango/1.22/pango_1.22.4-1_win32.zip Pango 1.22.4-1"
 PANGO="http://ftp.gnome.org/pub/gnome/binaries/win32/pango/1.26/pango_1.26.2-1_win32.zip Pango 1.26.2-1"
 ZLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/zlib-1.2.3.zip zlib 1.2.3"
 
 ALL="ATK CAIRO EXPAT FONTCONFIG FREETYPE GETTEXT GLIB GTK LIBJPEG LIBPNG LIBPNG2 LIBTIFF PANGO ZLIB"
 
-if [ ! -e $STAGE_DIR ]; then
-	mkdir $STAGE_DIR
-fi
+mkdir -p $STAGE_DIR
 cd $STAGE_DIR
 
 rm -rf $INSTALL_DIR
