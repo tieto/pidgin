@@ -7818,20 +7818,29 @@ disable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 static void
 edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	PurpleRequestField *f;
+	PurpleRequestField *mood_field, *text_field;
 	GList *l;
 
-	f = purple_request_fields_get_field(fields, "mood");
-	l = purple_request_field_list_get_selected(f);
+	mood_field = purple_request_fields_get_field(fields, "mood");
+	text_field = purple_request_fields_get_field(fields, "text");
+	l = purple_request_field_list_get_selected(mood_field);
 
 	if (l) {
-		const char *mood = purple_request_field_list_get_data(f, l->data);
+		const char *mood = purple_request_field_list_get_data(mood_field, l->data);
+		const char *text = purple_request_field_string_get_value(text_field);
 		PurpleAccount *account = purple_connection_get_account(gc);
 
 		if (mood != NULL && !purple_strequal(mood, "")) {
-			purple_account_set_status(account, "mood", TRUE,
-			                          PURPLE_MOOD_NAME, mood,
-			                          NULL);
+			if (text) {
+				purple_account_set_status(account, "mood", TRUE,
+			                          	PURPLE_MOOD_NAME, mood,
+				    				  	PURPLE_MOOD_COMMENT, text,
+			                          	NULL);
+			} else {
+				purple_account_set_status(account, "mood", TRUE,
+			                          	PURPLE_MOOD_NAME, mood,
+			                          	NULL);
+			}
 		} else {
 			purple_account_set_status(account, "mood", FALSE, NULL);
 		}
@@ -7883,6 +7892,15 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	purple_request_field_group_add_field(g, f);
 
 	purple_request_fields_add_group(fields, g);
+
+	/* if the connection allows setting a mood message */
+	if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES) {
+		g = purple_request_field_group_new(NULL);
+		f = purple_request_field_string_new("text",
+		    _("Message (optional)"), NULL, FALSE);
+		purple_request_field_group_add_field(g, f);
+		purple_request_fields_add_group(fields, g);
+	}
 
 	purple_request_fields(gc, _("Edit User Mood"), _("Edit User Mood"),
                               NULL, fields,

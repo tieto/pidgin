@@ -137,7 +137,9 @@ void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
 	if (purple_status_type_get_primitive(purple_status_get_type(status)) == PURPLE_STATUS_MOOD) {
 		const char *mood =
 			purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
-		jabber_mood_set(js, mood, NULL);
+		const char *mood_text =
+			purple_status_get_attr_string(status, PURPLE_MOOD_COMMENT);
+		jabber_mood_set(js, mood, mood_text);
 		return;
 	}
 
