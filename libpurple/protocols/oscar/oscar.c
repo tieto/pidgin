@@ -3797,7 +3797,7 @@ static int purple_conv_chat_incoming_msg(OscarData *od, FlapConnection *conn, Fl
 	if (utf8 == NULL)
 		/* The conversion failed! */
 		utf8 = g_strdup(_("[Unable to display a message from this user because it contained invalid characters.]"));
-	serv_got_chat_in(gc, ccon->id, info->bn, 0, utf8, time((time_t)NULL));
+	serv_got_chat_in(gc, ccon->id, info->bn, 0, utf8, time(NULL));
 	g_free(utf8);
 
 	return 1;
