@@ -51,14 +51,54 @@ struct _MsnCmdProc
 	void *data; /**< Extra data, like the switchboard. */
 };
 
+/**
+ * Creates a MsnCmdProc structure.
+ *
+ * @param session 	The session to associate with.
+ *
+ * @return A new MsnCmdProc structure.
+ */
 MsnCmdProc *msn_cmdproc_new(MsnSession *session);
+
+/**
+ * Destroys an MsnCmdProc.
+ *
+ * @param cmdproc 	The object structure.
+ */
 void msn_cmdproc_destroy(MsnCmdProc *cmdproc);
 
+/**
+ * Process the queued transactions.
+ *
+ * @param cmdproc 	The MsnCmdProc.
+ */
 void msn_cmdproc_process_queue(MsnCmdProc *cmdproc);
 
+/**
+ * Sends transaction using this servconn.
+ *
+ * @param cmdproc 	The MsnCmdProc to be used.
+ * @param trans 	The MsnTransaction to be sent.
+ */
 void msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans);
+
+/**
+ * Add a transaction to the queue to be processed latter.
+ *
+ * @param cmdproc 	The MsnCmdProc in which the transaction will be queued.
+ * @param trans 	The MsnTransaction to be queued.
+ */
 void msn_cmdproc_queue_trans(MsnCmdProc *cmdproc,
 							 MsnTransaction *trans);
+
+/**
+ * This function is just a wrapper that creates a MsnTransaction
+ * and send it.
+ *
+ * @param cmdproc 	The MsnCmdProc to be attached to the MsnTransaction.
+ * @param command 	The command to use in this transaction.
+ * @param format 	The payload format.
+ */
 void msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
 					  const char *format, ...);
 void msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
