@@ -1115,13 +1115,7 @@ do_transfer(PurpleXfer *xfer)
 				/* Need to indicate the prpl is still ready... */
 				priv->ready |= PURPLE_XFER_READY_PRPL;
 
-				/*
-				 * if we requested 0 bytes it's only normal that end up here 
-				 * we shouldn't return as we still have something to 
-				 * write in priv->buffer
-				 */
-				if (s != 0)
-					g_return_if_reached();
+				g_return_if_reached();
 			} else if (tmp < 0) {
 				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
 				purple_xfer_cancel_local(xfer);
