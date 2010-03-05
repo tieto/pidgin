@@ -24,7 +24,7 @@ FREETYPE="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/freetype_2.
 GETTEXT="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/gettext-runtime-0.17-1.zip Gettext 0.17-1"
 GLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/glib/2.20/glib_2.20.5-1_win32.zip Glib 2.20.5-1"
 GTK="http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.14/gtk+_2.14.7-1_win32.zip GTK+ 2.14.7-1"
-LIBJPEG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/jpeg_7-1_win32.zip libjpeg 7-1"
+LIBJPEG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/jpeg-6b-4.zip libjpeg 6b-4"
 #Used by GTK+
 LIBPNG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libpng_1.2.39-1_win32.zip libpng 1.2.39-1"
 #Used by Cairo
