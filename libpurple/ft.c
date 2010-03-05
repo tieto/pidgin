@@ -579,7 +579,7 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 	type = purple_xfer_get_type(xfer);
 	account = purple_xfer_get_account(xfer);
 
-	purple_debug_misc("xfer", "request accepted for %p\n", xfer); 
+	purple_debug_misc("xfer", "request accepted for %p\n", xfer);
 
 	if (!filename && type == PURPLE_XFER_RECEIVE) {
 		xfer->status = PURPLE_XFER_STATUS_ACCEPTED;
@@ -1145,14 +1145,14 @@ do_transfer(PurpleXfer *xfer)
 				}
 			}
 		}
-	
+
 		if (priv->buffer) {
 			priv->buffer = g_byte_array_append(priv->buffer, buffer, result);
 			g_free(buffer);
 			buffer = priv->buffer->data;
 			result = priv->buffer->len;
 		}
-	
+
 		r = purple_xfer_write(xfer, buffer, result);
 
 		if (r == -1) {
@@ -1167,12 +1167,12 @@ do_transfer(PurpleXfer *xfer)
 			 */
 			purple_xfer_increase_buffer_size(xfer);
 		} else {
-			if (ui_ops && ui_ops->data_not_sent) 
-				ui_ops->data_not_sent(xfer, buffer + r, result -r);
+			if (ui_ops && ui_ops->data_not_sent)
+				ui_ops->data_not_sent(xfer, buffer + r, result - r);
 		}
 
 		if (priv->buffer) {
-			/* 
+			/*
 			 * Remove what we wrote
 			 * If we wrote the whole buffer the byte array will be empty
 			 * Otherwise we'll kee what wasn't sent for next time.
