@@ -1088,6 +1088,7 @@ do_transfer(PurpleXfer *xfer)
 		size_t result = 0;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 		PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+		gboolean read = TRUE;
 
 		/* this is so the prpl can keep the connection open
 		   if it needs to for some odd reason. */
@@ -1099,41 +1100,41 @@ do_transfer(PurpleXfer *xfer)
 			return;
 		}
 
-		if (ui_ops && ui_ops->ui_read) {
-			gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
-			if (tmp == 0) {
-				/*
-				 * The UI claimed it was ready, but didn't have any data for
-				 * us...  It will call purple_xfer_ui_ready when ready, which
-				 * sets back up this watcher.
-				 */
-				if (xfer->watcher != 0) {
-					purple_input_remove(xfer->watcher);
-					xfer->watcher = 0;
+		if (priv->buffer) {
+			if (priv->buffer->len < s) {
+				s -= priv->buffer->len;
+				read = TRUE;
+			} else {
+				read = FALSE;
+			}
+		}
+
+		if (read) {
+			if (ui_ops && ui_ops->ui_read) {
+				gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
+				if (tmp == 0) {
+					/*
+					 * The UI claimed it was ready, but didn't have any data for
+					 * us...  It will call purple_xfer_ui_ready when ready, which
+					 * sets back up this watcher.
+					 */
+					if (xfer->watcher != 0) {
+						purple_input_remove(xfer->watcher);
+						xfer->watcher = 0;
+					}
+
+					/* Need to indicate the prpl is still ready... */
+					priv->ready |= PURPLE_XFER_READY_PRPL;
+
+					g_return_if_reached();
+				} else if (tmp < 0) {
+					purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+					purple_xfer_cancel_local(xfer);
+					return;
 				}
 
-				/* Need to indicate the prpl is still ready... */
-				priv->ready |= PURPLE_XFER_READY_PRPL;
-
-				g_return_if_reached();
-			} else if (tmp < 0) {
-				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-				purple_xfer_cancel_local(xfer);
-				return;
-			}
-
-			result = tmp;
-		} else {
-			gboolean read = TRUE;
-			if (priv->buffer) {
-				if (priv->buffer->len < s) {
-					s -= priv->buffer->len;
-					read = TRUE;
-				} else {
-					read = FALSE;
-				}
-			}
-			if (read) {
+				result = tmp;
+			} else {
 				buffer = g_malloc(s);
 				result = fread(buffer, 1, s, xfer->dest_fp);
 				if (result != s) {
