@@ -50,6 +50,7 @@ C_SRC =	\
 	lib/pubdir.c \
 	lib/pubdir50.c \
 	lib/resolver.c \
+	lib/sha1.c \
 	buddylist.c \
 	confer.c \
 	gg.c \

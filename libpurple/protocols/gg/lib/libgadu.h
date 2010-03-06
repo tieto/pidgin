@@ -179,6 +179,7 @@ typedef enum {
 	GG_RESOLVER_DEFAULT = 0,	/**< Domyślny sposób rozwiązywania nazw (jeden z poniższych) */
 	GG_RESOLVER_FORK,		/**< Rozwiązywanie nazw bazujące na procesach */
 	GG_RESOLVER_PTHREAD,		/**< Rozwiązywanie nazw bazujące na wątkach */
+	GG_RESOLVER_WIN32,
 	GG_RESOLVER_CUSTOM,		/**< Funkcje rozwiązywania nazw dostarczone przed aplikację */
 	GG_RESOLVER_INVALID = -1	/**< Nieprawidłowy sposób rozwiązywania nazw (wynik \c gg_session_get_resolver) */
 } gg_resolver_t;

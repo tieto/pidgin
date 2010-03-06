@@ -1143,13 +1143,12 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 		case GG_NOTIFY_REPLY80:
 		{
 			struct gg_notify_reply80 *n = (void*) p;
-			unsigned int length = h->length, i = 0;
+			int length = h->length, i = 0;
 
 			gg_debug_session(sess, GG_DEBUG_MISC, "// gg_watch_fd_connected() received a notify reply\n");
 
 			e->type = GG_EVENT_NOTIFY60;
 			e->event.notify60 = malloc(sizeof(*e->event.notify60));
-
 			if (!e->event.notify60) {
 				gg_debug_session(sess, GG_DEBUG_MISC, "// gg_watch_fd_connected() not enough memory for notify data\n");
 				goto fail;
@@ -1160,7 +1159,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 			while (length >= sizeof(struct gg_notify_reply80)) {
 				uint32_t descr_len;
 				char *tmp;
-
+				
 				e->event.notify60[i].uin	= gg_fix32(n->uin);
 				e->event.notify60[i].status	= gg_fix32(n->status);
 				e->event.notify60[i].remote_ip	= n->remote_ip;
@@ -1170,6 +1169,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 				e->event.notify60[i].version	= 0x00;	/* not-supported */
 				e->event.notify60[i].time	= 0;	/* not-supported */
 
+				
 				descr_len = gg_fix32(n->descr_len);
 
 				length -= sizeof(struct gg_notify_reply80);
