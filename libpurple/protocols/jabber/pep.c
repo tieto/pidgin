@@ -56,7 +56,6 @@ void jabber_pep_uninit(void) {
 
 void jabber_pep_init_actions(GList **m) {
 	/* register the PEP-specific actions */
-	jabber_mood_init_action(m);
 	jabber_nick_init_action(m);
 }
 
