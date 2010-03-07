@@ -1009,6 +1009,21 @@ purple_marshal_BOOLEAN__INT_POINTER(PurpleCallback cb, va_list args, void *data,
 }
 
 void
+purple_marshal_POINTER__POINTER(
+                                    PurpleCallback cb, va_list args, void *data,
+                                    void **return_val)
+{
+	gpointer ret_val;
+	void *arg1 = va_arg(args, void *);
+
+	ret_val = ((gpointer(*)(void *, void *))cb)(arg1, data);
+
+	if (return_val != NULL)
+		*return_val = ret_val;
+}
+
+
+void
 purple_marshal_POINTER__POINTER_INT(
                                     PurpleCallback cb, va_list args, void *data,
                                     void **return_val)
