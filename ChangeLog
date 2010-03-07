@@ -24,6 +24,14 @@ version 2.7.0 (??/??/????):
 	Bonjour:
 	* Added support for IPv6. (Thanks to T_X for testing)
 
+	Gadu-Gadu:
+	* Updated our bundled libgadu to 1.9.0-rc2 (many thanks to Krzysztof
+	  Klinikowski for the work and testing put in here!)
+
+	ICQ:
+	* X-Status (Custom ICQ status icon) support (Andrew Ivanov, Tomáš Kebert,
+	  Yuriy Yevgrafov, and trac users bob007, salieff, and nops)
+
 version 2.6.6 (02/18/2010):
 	libpurple:
 	* Fix 'make check' on OS X. (David Fang)
