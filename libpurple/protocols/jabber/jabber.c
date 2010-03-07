@@ -3315,6 +3315,29 @@ gboolean jabber_can_receive_file(PurpleConnection *gc, const char *who)
 	}
 }
 
+static void
+jabber_cmd_mood(PurpleConversation *conv,
+		const char *cmd, char **args, char **error, void *data)
+{
+	JabberStream *js = conv->account->gc->proto_data;
+
+	if (js->pep) {
+		/* if no argument was given, unset mood */
+		if (!args | !args[0]) {
+			jabber_mood_set(js, NULL, NULL);
+		} else if (!args[1]) {
+			jabber_mood_set(js, args[0], NULL);
+		} else {
+			jabber_mood_set(js, args[0], args[1]);
+		}
+	} else {
+		/* account does not support PEP, can't set a mood */
+		purple_conversation_write(conv, NULL,
+		    _("Account does not support PEP, can't set mood"),
+		    PURPLE_MESSAGE_ERROR, time(NULL));
+	}
+}
+
 void jabber_register_commands(void)
 {
 	PurpleCmdId id;
@@ -3427,6 +3450,13 @@ void jabber_register_commands(void)
 					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
 					  "prpl-jabber", jabber_cmd_buzz,
 					  _("buzz: Buzz a user to get their attention"), NULL);
+	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+
+	id = purple_cmd_register("mood", "ws", PURPLE_CMD_P_PRPL,
+	    			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
+	    			  PURPLE_CMD_FLAG_PRPL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
+	    			  "prpl-jabber", jabber_cmd_mood,
+	    			  _("mood: Set current user mood"), NULL);
 	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
 }
 
