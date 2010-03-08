@@ -13,7 +13,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"הױָ˜ההֿו ַׂ Þָב ֿׁ ַֽב ַַּׁ ַ׃Ê."
 !define PIDGIN_IS_RUNNING			"ָׁהַדו םּםה ַׂ Þָב ֿׁ ַֽב ַַּׁ ַ׃Ê. ב״Ýַנ ַׂ םּםה ־ַּׁ װזֿ ז ֿזַָׁו ׃Úל ˜הםֿ."
-!define GTK_INSTALLER_NEEDED			"דֽם״ ׂדַה ַַּׁל GTK+ םַ זּזֿ הַֿֿׁ םַ בַׂד ַ׃Ê ַׁÊÞֱַ םַֿ ˜הֿ.$\rב״Ýַנ ה׃־ו ${GTK_MIN_VERSION} םַ ַָבַÊׁל ַׂ דֽם״ ׂדַה ַַּׁל GTK+ הױָ ˜הםֿ"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"ָÚֿ >"
@@ -33,8 +32,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"ַםַּֿ דזֿׁ ַָׁל םּםה ֿׁ דהז ֲÛַׂ"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"ה׃־ו Þֿםדל דֽם״ ׂדַה ַַּׁל GTK+ םַֿ װֿ. ֲםַ דַםבםֿ ֲה ַׁ ַׁÊÞֱַ ֿוםֿ¿$\rÊזּו: $(^Name) דד˜ה ַ׃Ê Þָב ַׂ ַׁÊÞֱַ ˜ַׁ ה˜הֿ."
-!define GTK_WINDOWS_INCOMPATIBLE		"זםהֿזׂ 95/98‏/Me ַָ GTK‎+‎ ה׃־ו 2.8.0 םַ ּֿםֿÊׁ ׃ַׂַׁ הם׃Ê. GTK+ ${GTK_INSTALL_VERSION} הױָ ה־זַוֿ װֿ.$\r ַׁ  GTK+ ${GTK_MIN_VERSION} םַ ּֿםֿÊׁ ַׁ Þָבַנ הױָ ה˜ֿׁוַםֿ¡ הױָ Þ״Ú ־זַוֿ װֿ."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"ױÝֽו זָל םּםה ַׁ ָָםהםֿ"
@@ -43,8 +40,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"ֽ׀Ý ה׃־וַל ַׂ םּםה ˜ו ֿׁ ַֽב ַֽײׁ הױָ ַ׃Ê דד˜ה הם׃Ê. ה׃־ו ּֿםֿ ָֿזה ֽ׀Ý ה׃־ו דזּזֿ הױָ דלװזֿ."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"־״ַ והַד הױָ דֽם״ ׂדַה ַַּׁל GTK+‎."
-!define GTK_BAD_INSTALL_PATH			"ד׃םׁל ˜ו זַֿׁ ˜ֿׁוַםֿ Þַָב ֿ׃Êׁ׃ל םַ ַםַּֿ הם׃Ê."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"דÊױֿלוַל הװַהל ַםהÊׁהÊל"
@@ -56,29 +51,5 @@
 ; Spellcheck Section Prompts
 !define PIDGIN_SPELLCHECK_SECTION_TITLE	"װÊםַָהל Ûב״םַָל ַדבַםל"
 !define PIDGIN_SPELLCHECK_ERROR		"־״ַ והַד הױָ Ûב״םַָ ַדבַםל"
-!define PIDGIN_SPELLCHECK_DICT_ERROR		"־״ַ והַד הױָ בÛÊהַדו Ûב״םַָ ַדבַםל"
 !define PIDGIN_SPELLCHECK_SECTION_DESCRIPTION	"װÊםַָהל Ûב״םַָל ַדבַםל. (ַָׁל הױָ ַÊױַב ַםהÊׁהÊל בַׂד ַ׃Ê)"
-!define ASPELL_INSTALL_FAILED			"הױָ װ˜׃Ê ־זֿׁ"
-!define PIDGIN_SPELLCHECK_BRETON		"ָׁÊַהםַםל"
-!define PIDGIN_SPELLCHECK_CATALAN		"˜ַÊַבַה"
-!define PIDGIN_SPELLCHECK_CZECH		"˜ל"
-!define PIDGIN_SPELLCHECK_WELSH		"זםבׂל"
-!define PIDGIN_SPELLCHECK_DANISH		"ַֿהדַׁ˜ל"
-!define PIDGIN_SPELLCHECK_GERMAN		"ֲבדַהל"
-!define PIDGIN_SPELLCHECK_GREEK		"םזהַהל"
-!define PIDGIN_SPELLCHECK_ENGLISH		"ַהבם׃ל"
-!define PIDGIN_SPELLCHECK_ESPERANTO		"ַ׃ַׁהÊז"
-!define PIDGIN_SPELLCHECK_SPANISH		"ַ׃ַהםַםל"
-!define PIDGIN_SPELLCHECK_FAROESE		"Ýַׁזםל"
-!define PIDGIN_SPELLCHECK_FRENCH		"Ýַׁה׃זל"
-!define PIDGIN_SPELLCHECK_ITALIAN		"ַםÊַבםַםל"
-!define PIDGIN_SPELLCHECK_DUTCH		"ובהֿל"
-!define PIDGIN_SPELLCHECK_NORWEGIAN		"הׁזל"
-!define PIDGIN_SPELLCHECK_POLISH		"בו׃Êַהל"
-!define PIDGIN_SPELLCHECK_PORTUGUESE		"ׁÊÛַבל"
-!define PIDGIN_SPELLCHECK_ROMANIAN		"ׁזדַהםַםל"
-!define PIDGIN_SPELLCHECK_RUSSIAN		"ׁז׃ל"
-!define PIDGIN_SPELLCHECK_SLOVAK		"ַ׃בזַ˜ל"
-!define PIDGIN_SPELLCHECK_SWEDISH		"׃זֶֿל"
-!define PIDGIN_SPELLCHECK_UKRAINIAN		"ַז˜ַׁםהל"
 

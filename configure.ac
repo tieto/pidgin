@@ -43,20 +43,20 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [6])
+m4_define([purple_lt_current], [7])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [6])
-m4_define([purple_micro_version], [6])
-m4_define([purple_version_suffix], [])
+m4_define([purple_minor_version], [7])
+m4_define([purple_micro_version], [0])
+m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [6])
+m4_define([gnt_lt_current], [7])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [6])
-m4_define([gnt_micro_version], [6])
-m4_define([gnt_version_suffix], [])
+m4_define([gnt_minor_version], [7])
+m4_define([gnt_micro_version], [0])
+m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -211,6 +211,7 @@ AC_CHECK_FUNC(getaddrinfo,
 	[AC_CHECK_LIB(socket, getaddrinfo,
 		[AC_DEFINE([HAVE_GETADDRINFO]) LIBS="-lsocket -lsnl $LIBS"], , , -lnsl)])
 AC_CHECK_FUNCS(inet_ntop)
+AC_CHECK_FUNCS(getifaddrs)
 dnl Check for socklen_t (in Unix98)
 AC_MSG_CHECKING(for socklen_t)
 AC_TRY_COMPILE([
@@ -310,13 +311,13 @@ int main()
 )
 
 dnl #######################################################################
-dnl # Check for GLib 2.0 (required)
+dnl # Check for GLib 2.12 (required)
 dnl #######################################################################
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.4.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.12.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have GLib 2.4.0 or newer development headers installed to build.
+You must have GLib 2.12.0 or newer development headers installed to build.
 
 If you have these installed already you may need to install pkg-config so
 I can find them.
@@ -352,7 +353,7 @@ AC_ARG_ENABLE(consoleui, [AC_HELP_STRING([--disable-consoleui],
 	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
 
 dnl #######################################################################
-dnl # Check for GTK+ 2.0 and other things used by the GTK UI
+dnl # Check for GTK+ 2.10 and other things used by the GTK UI
 dnl #######################################################################
 AC_ARG_ENABLE(screensaver,
 	[AC_HELP_STRING([--disable-screensaver],
@@ -399,11 +400,11 @@ else
 fi
 
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.4.0], , [
+	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.10.0], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 
-You must have GTK+ 2.4.0 or newer development headers installed to compile
+You must have GTK+ 2.10.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
@@ -2393,6 +2394,30 @@ if test $ac_cv_struct_tm_gmtoff = yes; then
         AC_DEFINE(HAVE_TM_GMTOFF, 1, [Define if you have a tm_gmtoff member in struct tm])
 fi
 
+AC_CACHE_CHECK([whether va_lists can be copied by value], ac_cv_va_val_copy,[
+	AC_TRY_RUN([#include <stdarg.h>
+#include <stdlib.h>
+	void f (int i, ...) {
+	va_list args1, args2;
+	va_start (args1, i);
+	args2 = args1;
+	if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
+	  exit (1);
+	va_end (args1); va_end (args2);
+	}
+	int main() {
+	  f (0, 42);
+	  return 0;
+	}],
+	[ac_cv_va_val_copy=yes],
+	[ac_cv_va_val_copy=no],
+	[ac_cv_va_val_copy=yes])
+])
+
+if test "x$ac_cv_va_val_copy" = "xno"; then
+	AC_DEFINE(VA_COPY_AS_ARRAY, 1, ['va_lists' cannot be copied as values])
+fi
+
 dnl #######################################################################
 dnl # Check for check
 dnl #######################################################################
@@ -2491,6 +2516,8 @@ AC_OUTPUT([Makefile
 		   pidgin/Makefile
 		   pidgin/pidgin.pc
 		   pidgin/pidgin-uninstalled.pc
+		   pidgin/pidgin-2.pc
+		   pidgin/pidgin-2-uninstalled.pc
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
@@ -2508,6 +2535,8 @@ AC_OUTPUT([Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple.pc
 		   libpurple/purple-uninstalled.pc
+		   libpurple/purple-2.pc
+		   libpurple/purple-2-uninstalled.pc
 		   libpurple/plugins/Makefile
 		   libpurple/plugins/mono/Makefile
 		   libpurple/plugins/mono/api/Makefile
@@ -2578,6 +2607,7 @@ fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
+echo Use external libgadu.......... : $gadu_libs
 echo Install pixmaps............... : $enable_pixmaps
 echo Install translations.......... : $enable_i18n
 echo Has you....................... : yes

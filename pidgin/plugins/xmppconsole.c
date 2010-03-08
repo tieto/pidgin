@@ -26,9 +26,6 @@
 #include "xmlnode.h"
 
 #include "gtkimhtml.h"
-#if !GTK_CHECK_VERSION(2,4,0)
-#include "pidgincombobox.h"
-#endif
 #include "gtkutils.h"
 
 typedef struct {
@@ -624,7 +621,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 }
 
 static void
-signed_on_cb(PurpleConnection *gc)
+signing_on_cb(PurpleConnection *gc)
 {
 	if (!console)
 		return;
@@ -633,7 +630,9 @@ signed_on_cb(PurpleConnection *gc)
 	console->accounts = g_list_append(console->accounts, gc);
 	console->count++;
 
-	if (console->count > 1)
+	if (console->count == 1)
+		console->gc = gc;
+	else
 		gtk_widget_show_all(console->hbox);
 }
 
@@ -683,8 +682,8 @@ plugin_load(PurplePlugin *plugin)
 			    PURPLE_CALLBACK(xmlnode_received_cb), NULL);
 	purple_signal_connect(jabber, "jabber-sending-text", xmpp_console_handle,
 			    PURPLE_CALLBACK(xmlnode_sent_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
-			    plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signing-on",
+			    plugin, PURPLE_CALLBACK(signing_on_cb), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off",
 			    plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
 
@@ -733,9 +732,7 @@ create_console(PurplePluginAction *action)
 	GtkTextBuffer *buffer;
 	GtkWidget *toolbar;
 	GList *connections;
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkToolItem *button;
-#endif
 
 	if (console) {
 		gtk_window_present(GTK_WINDOW(console->window));
@@ -782,32 +779,17 @@ create_console(PurplePluginAction *action)
 	gtk_container_add(GTK_CONTAINER(sw), console->imhtml);
 
 	toolbar = gtk_toolbar_new();
-#if GTK_CHECK_VERSION(2,4,0)
 	button = gtk_tool_button_new(NULL, "<iq/>");
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(iq_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
-#else
-	gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "<iq/>",
-			           _("Insert an <iq/> stanza."), "foo", NULL, GTK_SIGNAL_FUNC(iq_clicked_cb), NULL);
-#endif
 
-#if GTK_CHECK_VERSION(2,4,0)
 	button = gtk_tool_button_new(NULL, "<presence/>");
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(presence_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
-#else
-	gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "<presence/>",
-			           _("Insert a <presence/> stanza."), NULL, gtk_label_new(NULL), GTK_SIGNAL_FUNC(presence_clicked_cb), NULL);
-#endif
 
-#if GTK_CHECK_VERSION(2,4,0)
 	button = gtk_tool_button_new(NULL, "<message/>");
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(message_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
-#else
-	gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "<message/>",
-			           _("Insert a <message/> stanza."), "foo", gtk_label_new(NULL), GTK_SIGNAL_FUNC(message_clicked_cb), NULL);
-#endif
 
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 

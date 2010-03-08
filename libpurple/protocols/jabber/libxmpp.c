@@ -43,6 +43,7 @@
 #include "presence.h"
 #include "google.h"
 #include "pep.h"
+#include "usermood.h"
 #include "usertune.h"
 #include "caps.h"
 #include "data.h"
@@ -126,6 +127,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, /* get_account_text_table */
 	jabber_initiate_media,          /* initiate_media */
 	jabber_get_media_caps,                  /* get_media_caps */
+	jabber_get_moods  							/* get_moods */
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)

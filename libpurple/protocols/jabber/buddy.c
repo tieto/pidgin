@@ -57,6 +57,36 @@ typedef struct {
 	gchar *last_message;
 } JabberBuddyInfo;
 
+static void
+jabber_buddy_resource_free(JabberBuddyResource *jbr)
+{
+	g_return_if_fail(jbr != NULL);
+
+	jbr->jb->resources = g_list_remove(jbr->jb->resources, jbr);
+
+	while(jbr->commands) {
+		JabberAdHocCommands *cmd = jbr->commands->data;
+		g_free(cmd->jid);
+		g_free(cmd->node);
+		g_free(cmd->name);
+		g_free(cmd);
+		jbr->commands = g_list_delete_link(jbr->commands, jbr->commands);
+	}
+
+	while (jbr->caps.exts) {
+		g_free(jbr->caps.exts->data);
+		jbr->caps.exts = g_list_delete_link(jbr->caps.exts, jbr->caps.exts);
+	}
+
+	g_free(jbr->name);
+	g_free(jbr->status);
+	g_free(jbr->thread_id);
+	g_free(jbr->client.name);
+	g_free(jbr->client.version);
+	g_free(jbr->client.os);
+	g_free(jbr);
+}
+
 void jabber_buddy_free(JabberBuddy *jb)
 {
 	g_return_if_fail(jb != NULL);
@@ -91,6 +121,10 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 	return jb;
 }
 
+/* Returns -1 if a is a higher priority resource than b, or is
+ * "more available" than b.  0 if they're the same, and 1 if b is
+ * higher priority/more available than a.
+ */
 static gint resource_compare_cb(gconstpointer a, gconstpointer b)
 {
 	const JabberBuddyResource *jbra = a;
@@ -98,9 +132,10 @@ static gint resource_compare_cb(gconstpointer a, gconstpointer b)
 	JabberBuddyState state_a, state_b;
 
 	if (jbra->priority != jbrb->priority)
-		return jbra->priority > jbrb->priority ? 1 : -1;
+		return jbra->priority > jbrb->priority ? -1 : 1;
 
 	/* Fold the states for easier comparison */
+	/* TODO: Differentiate online/chat and away/dnd? */
 	switch (jbra->state) {
 		case JABBER_BUDDY_STATE_ONLINE:
 		case JABBER_BUDDY_STATE_CHAT:
@@ -146,103 +181,72 @@ static gint resource_compare_cb(gconstpointer a, gconstpointer b)
 			return 0;
 		else if ((jbra->idle && !jbrb->idle) ||
 				(jbra->idle && jbrb->idle && jbra->idle < jbrb->idle))
-			return -1;
-		else
 			return 1;
+		else
+			return -1;
 	}
 
 	if (state_a == JABBER_BUDDY_STATE_ONLINE)
-		return 1;
+		return -1;
 	else if (state_a == JABBER_BUDDY_STATE_AWAY &&
 				(state_b == JABBER_BUDDY_STATE_XA ||
 				 state_b == JABBER_BUDDY_STATE_UNAVAILABLE ||
 				 state_b == JABBER_BUDDY_STATE_UNKNOWN))
-		return 1;
+		return -1;
 	else if (state_a == JABBER_BUDDY_STATE_XA &&
 				(state_b == JABBER_BUDDY_STATE_UNAVAILABLE ||
 				 state_b == JABBER_BUDDY_STATE_UNKNOWN))
-		return 1;
+		return -1;
 	else if (state_a == JABBER_BUDDY_STATE_UNAVAILABLE &&
 				state_b == JABBER_BUDDY_STATE_UNKNOWN)
-		return 1;
+		return -1;
 
-	return -1;
+	return 1;
 }
 
 JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		const char *resource)
 {
-	JabberBuddyResource *jbr = NULL;
 	GList *l;
 
-	if(!jb)
+	if (!jb)
 		return NULL;
 
-	for(l = jb->resources; l; l = l->next)
+	if (resource == NULL)
+		return jb->resources ? jb->resources->data : NULL;
+
+	for (l = jb->resources; l; l = l->next)
 	{
-		JabberBuddyResource *tmp = (JabberBuddyResource *) l->data;
-		if (!jbr && !resource) {
-			jbr = tmp;
-		} else if (!resource) {
-			if (resource_compare_cb(tmp, jbr) > 0)
-				jbr = tmp;
-		} else if(tmp->name) {
-			if(!strcmp(tmp->name, resource)) {
-				jbr = tmp;
-				break;
-			}
-		}
+		JabberBuddyResource *jbr = l->data;
+		if (jbr->name && g_str_equal(resource, jbr->name))
+			return jbr;
 	}
 
-	return jbr;
+	return NULL;
 }
 
 JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *resource,
 		int priority, JabberBuddyState state, const char *status)
 {
+	/* TODO: Optimization: Only reinsert if priority+state changed */
 	JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, resource);
-	if(!jbr) {
+	if (jbr) {
+		jb->resources = g_list_remove(jb->resources, jbr);
+	} else {
 		jbr = g_new0(JabberBuddyResource, 1);
 		jbr->jb = jb;
 		jbr->name = g_strdup(resource);
 		jbr->capabilities = JABBER_CAP_NONE;
 		jbr->tz_off = PURPLE_NO_TZ_OFF;
-		jb->resources = g_list_append(jb->resources, jbr);
 	}
 	jbr->priority = priority;
 	jbr->state = state;
 	g_free(jbr->status);
 	jbr->status = g_strdup(status);
 
+	jb->resources = g_list_insert_sorted(jb->resources, jbr,
+	                                     resource_compare_cb);
 	return jbr;
-}
-
-void jabber_buddy_resource_free(JabberBuddyResource *jbr)
-{
-	g_return_if_fail(jbr != NULL);
-
-	jbr->jb->resources = g_list_remove(jbr->jb->resources, jbr);
-
-	while(jbr->commands) {
-		JabberAdHocCommands *cmd = jbr->commands->data;
-		g_free(cmd->jid);
-		g_free(cmd->node);
-		g_free(cmd->name);
-		g_free(cmd);
-		jbr->commands = g_list_delete_link(jbr->commands, jbr->commands);
-	}
-
-	if (jbr->caps.exts) {
-		g_list_foreach(jbr->caps.exts, (GFunc)g_free, NULL);
-		g_list_free(jbr->caps.exts);
-	}
-	g_free(jbr->name);
-	g_free(jbr->status);
-	g_free(jbr->thread_id);
-	g_free(jbr->client.name);
-	g_free(jbr->client.version);
-	g_free(jbr->client.os);
-	g_free(jbr);
 }
 
 void jabber_buddy_remove_resource(JabberBuddy *jb, const char *resource)
@@ -797,6 +801,8 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 		jbr = jabber_buddy_find_resource(jbi->jb, resource_name);
 		add_jbr_info(jbi, resource_name, jbr);
 	} else {
+		/* TODO: This is in priority-ascending order (lowest prio first), because
+		 * everything is prepended.  Is that ok? */
 		for (resources = jbi->jb->resources; resources; resources = resources->next) {
 			jbr = resources->data;
 
@@ -1908,116 +1914,6 @@ jabber_blist_node_menu(PurpleBlistNode *node)
 	}
 }
 
-
-const char *
-jabber_buddy_state_get_name(JabberBuddyState state)
-{
-	switch(state) {
-		case JABBER_BUDDY_STATE_UNKNOWN:
-			return _("Unknown");
-		case JABBER_BUDDY_STATE_ERROR:
-			return _("Error");
-		case JABBER_BUDDY_STATE_UNAVAILABLE:
-			return _("Offline");
-		case JABBER_BUDDY_STATE_ONLINE:
-			return _("Available");
-		case JABBER_BUDDY_STATE_CHAT:
-			return _("Chatty");
-		case JABBER_BUDDY_STATE_AWAY:
-			return _("Away");
-		case JABBER_BUDDY_STATE_XA:
-			return _("Extended Away");
-		case JABBER_BUDDY_STATE_DND:
-			return _("Do Not Disturb");
-	}
-
-	return _("Unknown");
-}
-
-JabberBuddyState jabber_buddy_status_id_get_state(const char *id) {
-	if(!id)
-		return JABBER_BUDDY_STATE_UNKNOWN;
-	if(!strcmp(id, "available"))
-		return JABBER_BUDDY_STATE_ONLINE;
-	if(!strcmp(id, "freeforchat"))
-		return JABBER_BUDDY_STATE_CHAT;
-	if(!strcmp(id, "away"))
-		return JABBER_BUDDY_STATE_AWAY;
-	if(!strcmp(id, "extended_away"))
-		return JABBER_BUDDY_STATE_XA;
-	if(!strcmp(id, "dnd"))
-		return JABBER_BUDDY_STATE_DND;
-	if(!strcmp(id, "offline"))
-		return JABBER_BUDDY_STATE_UNAVAILABLE;
-	if(!strcmp(id, "error"))
-		return JABBER_BUDDY_STATE_ERROR;
-
-	return JABBER_BUDDY_STATE_UNKNOWN;
-}
-
-const struct {
-	const char *name;
-	JabberBuddyState state;
-} show_state_pairs[] = {
-	{ "available", JABBER_BUDDY_STATE_ONLINE },
-	{ "chat",      JABBER_BUDDY_STATE_CHAT },
-	{ "away",      JABBER_BUDDY_STATE_AWAY },
-	{ "xa",        JABBER_BUDDY_STATE_XA },
-	{ "dnd",       JABBER_BUDDY_STATE_DND },
-	{ "offline",   JABBER_BUDDY_STATE_UNAVAILABLE },
-	{ "error",     JABBER_BUDDY_STATE_ERROR },
-	{ NULL,        JABBER_BUDDY_STATE_UNKNOWN }
-};
-
-JabberBuddyState jabber_buddy_show_get_state(const char *id)
-{
-	int i;
-
-	g_return_val_if_fail(id != NULL, JABBER_BUDDY_STATE_UNKNOWN);
-
-	for (i = 0; show_state_pairs[i].name; ++i)
-		if (g_str_equal(id, show_state_pairs[i].name))
-			return show_state_pairs[i].state;
-
-	purple_debug_warning("jabber", "Invalid value of presence <show/> "
-	                     "attribute: %s\n", id);
-	return JABBER_BUDDY_STATE_UNKNOWN;
-}
-
-const char *
-jabber_buddy_state_get_show(JabberBuddyState state)
-{
-	int i;
-
-	for (i = 0; show_state_pairs[i].name; ++i)
-		if (state == show_state_pairs[i].state)
-			return show_state_pairs[i].name;
-
-/*	purple_debug_warning("jabber", "Unknown buddy state: %d\n", state); */
-	return NULL;
-}
-
-const char *jabber_buddy_state_get_status_id(JabberBuddyState state) {
-	switch(state) {
-		case JABBER_BUDDY_STATE_CHAT:
-			return "freeforchat";
-		case JABBER_BUDDY_STATE_AWAY:
-			return "away";
-		case JABBER_BUDDY_STATE_XA:
-			return "extended_away";
-		case JABBER_BUDDY_STATE_DND:
-			return "dnd";
-		case JABBER_BUDDY_STATE_ONLINE:
-			return "available";
-		case JABBER_BUDDY_STATE_UNKNOWN:
-			return "available";
-		case JABBER_BUDDY_STATE_ERROR:
-			return "error";
-		case JABBER_BUDDY_STATE_UNAVAILABLE:
-			return "offline";
-	}
-	return NULL;
-}
 
 static void user_search_result_add_buddy_cb(PurpleConnection *gc, GList *row, void *user_data)
 {

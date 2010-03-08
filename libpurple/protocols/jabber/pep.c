@@ -56,7 +56,6 @@ void jabber_pep_uninit(void) {
 
 void jabber_pep_init_actions(GList **m) {
 	/* register the PEP-specific actions */
-	jabber_mood_init_action(m);
 	jabber_nick_init_action(m);
 }
 
@@ -89,10 +88,11 @@ void jabber_pep_request_item(JabberStream *js, const char *to, const char *node,
 	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
 	xmlnode *pubsub, *items;
 
-	xmlnode_set_attrib(iq->node,"to",to);
-	pubsub = xmlnode_new_child(iq->node,"pubsub");
+	if (to)
+		xmlnode_set_attrib(iq->node, "to", to);
 
-	xmlnode_set_namespace(pubsub,"http://jabber.org/protocol/pubsub");
+	pubsub = xmlnode_new_child(iq->node,"pubsub");
+	xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub");
 
 	items = xmlnode_new_child(pubsub, "items");
 	xmlnode_set_attrib(items,"node",node);

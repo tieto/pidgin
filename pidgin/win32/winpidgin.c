@@ -26,33 +26,23 @@
  */
 
 /* This is for ATTACH_PARENT_PROCESS */
+#define UNICODE
+#define _UNICODE
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x501
 #endif
 #include <windows.h>
+#include <tchar.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
-/* These will hopefully be in the win32api next time it is updated - at which point, we'll remove them */
-#ifndef LANG_PERSIAN
-#define LANG_PERSIAN 0x29
-#endif
-#ifndef LANG_BOSNIAN
-#define SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_LATIN	0x05
-#define SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_CYRILLIC	0x08
-#endif
-#ifndef SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN
-#define SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN	0x04
-#endif
-#ifndef LANG_XHOSA
-#define LANG_XHOSA 0x34
-#endif
-
+#include <sys/types.h>
+#include <sys/stat.h>
+#include "config.h"
 
 typedef int (CALLBACK* LPFNPIDGINMAIN)(HINSTANCE, int, char**);
-typedef void (CALLBACK* LPFNSETDLLDIRECTORY)(LPCTSTR);
+typedef void (CALLBACK* LPFNSETDLLDIRECTORY)(LPCWSTR);
 typedef BOOL (CALLBACK* LPFNATTACHCONSOLE)(DWORD);
 
 static BOOL portable_mode = FALSE;
@@ -63,19 +53,19 @@ static BOOL portable_mode = FALSE;
 static LPFNPIDGINMAIN pidgin_main = NULL;
 static LPFNSETDLLDIRECTORY MySetDllDirectory = NULL;
 
-static const char *get_win32_error_message(DWORD err) {
-	static char err_msg[512];
+static const TCHAR *get_win32_error_message(DWORD err) {
+	static TCHAR err_msg[512];
 
 	FormatMessage(
 		FORMAT_MESSAGE_FROM_SYSTEM,
 		NULL, err,
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPTSTR) &err_msg, sizeof(err_msg), NULL);
+		(LPTSTR) &err_msg, sizeof(err_msg) / sizeof(TCHAR), NULL);
 
 	return err_msg;
 }
 
-static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len) {
+static BOOL read_reg_string(HKEY key, TCHAR *sub_key, TCHAR *val_name, LPBYTE data, LPDWORD data_len) {
 	HKEY hkey;
 	BOOL ret = FALSE;
 	LONG retv;
@@ -86,11 +76,11 @@ static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data
 						NULL, NULL, data, data_len)))
 			ret = TRUE;
 		else {
-			const char *err_msg = get_win32_error_message(retv);
+			const TCHAR *err_msg = get_win32_error_message(retv);
 
-			printf("Could not read reg key '%s' subkey '%s' value: '%s'.\nMessage: (%ld) %s\n",
-					(key == HKEY_LOCAL_MACHINE) ? "HKLM"
-					 : ((key == HKEY_CURRENT_USER) ? "HKCU" : "???"),
+			_tprintf(_T("Could not read reg key '%s' subkey '%s' value: '%s'.\nMessage: (%ld) %s\n"),
+					(key == HKEY_LOCAL_MACHINE) ? _T("HKLM")
+					 : ((key == HKEY_CURRENT_USER) ? _T("HKCU") : _T("???")),
 					sub_key, val_name, retv, err_msg);
 		}
 		RegCloseKey(hkey);
@@ -99,23 +89,36 @@ static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data
 		TCHAR szBuf[80];
 
 		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, retv, 0,
-				(LPTSTR) &szBuf, sizeof(szBuf), NULL);
-		printf("Could not open reg subkey: %s\nError: (%ld) %s\n",
+				(LPTSTR) &szBuf, sizeof(szBuf) / sizeof(TCHAR), NULL);
+		_tprintf(_T("Could not open reg subkey: %s\nError: (%ld) %s\n"),
 				sub_key, retv, szBuf);
 	}
 
 	return ret;
 }
 
-static void common_dll_prep(const char *path) {
+static BOOL common_dll_prep(const TCHAR *path) {
 	HMODULE hmod;
 	HKEY hkey;
+	struct _stat stat_buf;
+	TCHAR test_path[MAX_PATH + 1];
 
-	printf("GTK+ path found: %s\n", path);
+	_sntprintf(test_path, sizeof(test_path) / sizeof(TCHAR),
+		_T("%s\\libgtk-win32-2.0-0.dll"), path);
+	test_path[sizeof(test_path) / sizeof(TCHAR) - 1] = _T('\0');
 
-	if ((hmod = GetModuleHandle("kernel32.dll"))) {
+	if (_tstat(test_path, &stat_buf) != 0) {
+		printf("Unable to determine GTK+ path. \n"
+			"Assuming GTK+ is in the PATH.\n");
+		return FALSE;
+	}
+
+
+	_tprintf(_T("GTK+ path found: %s\n"), path);
+
+	if ((hmod = GetModuleHandle(_T("kernel32.dll")))) {
 		MySetDllDirectory = (LPFNSETDLLDIRECTORY) GetProcAddress(
-			hmod, "SetDllDirectoryA");
+			hmod, "SetDllDirectoryW");
 		if (!MySetDllDirectory)
 			printf("SetDllDirectory not supported\n");
 	} else
@@ -141,20 +144,21 @@ static void common_dll_prep(const char *path) {
 		 */
 		osinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 		GetVersionEx(&osinfo);
-		if ((osinfo.dwMajorVersion == 5 &&
-			osinfo.dwMinorVersion == 0 &&
-			strcmp(osinfo.szCSDVersion, "Service Pack 3") >= 0) ||
-			(osinfo.dwMajorVersion == 5 &&
-			osinfo.dwMinorVersion == 1 &&
-			strcmp(osinfo.szCSDVersion, "") >= 0)
+		if ((osinfo.dwMajorVersion == 5
+				&& osinfo.dwMinorVersion == 0
+				&& _tcscmp(osinfo.szCSDVersion, _T("Service Pack 3")) >= 0)
+			||
+			(osinfo.dwMajorVersion == 5
+				&& osinfo.dwMinorVersion == 1
+				&& _tcscmp(osinfo.szCSDVersion, _T("")) >= 0)
 		) {
 			DWORD regval = 1;
 			DWORD reglen = sizeof(DWORD);
 
 			printf("Using Win2k (SP3+) / WinXP (No SP)... Checking SafeDllSearch\n");
 			read_reg_string(HKEY_LOCAL_MACHINE,
-				"System\\CurrentControlSet\\Control\\Session Manager",
-				"SafeDllSearchMode",
+				_T("System\\CurrentControlSet\\Control\\Session Manager"),
+				_T("SafeDllSearchMode"),
 				(LPBYTE) &regval,
 				&reglen);
 
@@ -162,16 +166,16 @@ static void common_dll_prep(const char *path) {
 				printf("Trying to set SafeDllSearchMode to 0\n");
 				regval = 0;
 				if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-					"System\\CurrentControlSet\\Control\\Session Manager",
+					_T("System\\CurrentControlSet\\Control\\Session Manager"),
 					0,  KEY_SET_VALUE, &hkey
 				) == ERROR_SUCCESS) {
 					if (RegSetValueEx(hkey,
-						"SafeDllSearchMode", 0,
+						_T("SafeDllSearchMode"), 0,
 						REG_DWORD, (LPBYTE) &regval,
 						sizeof(DWORD)
 					) != ERROR_SUCCESS)
 						printf("Error writing SafeDllSearchMode. Error: %u\n",
-						(UINT) GetLastError());
+							(UINT) GetLastError());
 					RegCloseKey(hkey);
 				} else
 					printf("Error opening Session Manager key for writing. Error: %u\n",
@@ -180,31 +184,39 @@ static void common_dll_prep(const char *path) {
 				printf("SafeDllSearchMode is set to 0\n");
 		}/*end else*/
 	}
+
+	return TRUE;
 }
 
-static void portable_mode_dll_prep(const char *pidgin_dir) {
+static BOOL dll_prep(const TCHAR *pidgin_dir) {
+	TCHAR path[MAX_PATH + 1];
+	path[0] = _T('\0');
+
+	if (*pidgin_dir) {
+		_sntprintf(path, sizeof(path) / sizeof(TCHAR), _T("%s\\Gtk\\bin"), pidgin_dir);
+		path[sizeof(path) / sizeof(TCHAR)] = _T('\0');
+	}
+
+	return common_dll_prep(path);
+}
+
+static void portable_mode_dll_prep(const TCHAR *pidgin_dir) {
 	/* need to be able to fit MAX_PATH + "PIDGIN_ASPELL_DIR=\\Aspell\\bin" in path2 */
-	char path[MAX_PATH + 1];
-	char path2[MAX_PATH + 33];
-	const char *prev = NULL;
+	TCHAR path[MAX_PATH + 1];
+	TCHAR path2[MAX_PATH + 33];
+	const TCHAR *prev = NULL;
 
 	/* We assume that GTK+ is installed under \\path\to\Pidgin\..\GTK
 	 * First we find \\path\to
 	 */
-	if (*pidgin_dir) {
+	if (*pidgin_dir)
 		/* pidgin_dir points to \\path\to\Pidgin */
-		const char *tmp = pidgin_dir;
-
-		while ((tmp = strchr(tmp, '\\'))) {
-			prev = tmp;
-			tmp++;
-		}
-	}
+		prev = _tcsrchr(pidgin_dir, _T('\\'));
 
 	if (prev) {
 		int cnt = (prev - pidgin_dir);
-		strncpy(path, pidgin_dir, cnt);
-		path[cnt] = '\0';
+		_tcsncpy(path, pidgin_dir, cnt);
+		path[cnt] = _T('\0');
 	} else {
 		printf("Unable to determine current executable path. \n"
 			"This will prevent the settings dir from being set.\n"
@@ -213,160 +225,130 @@ static void portable_mode_dll_prep(const char *pidgin_dir) {
 	}
 
 	/* Set $HOME so that the GTK+ settings get stored in the right place */
-	_snprintf(path2, sizeof(path2), "HOME=%s", path);
-	_putenv(path2);
+	_sntprintf(path2, sizeof(path2) / sizeof(TCHAR), _T("HOME=%s"), path);
+	_tputenv(path2);
 
 	/* Set up the settings dir base to be \\path\to
 	 * The actual settings dir will be \\path\to\.purple */
-	_snprintf(path2, sizeof(path2), "PURPLEHOME=%s", path);
-	printf("Setting settings dir: %s\n", path2);
-	_putenv(path2);
+	_sntprintf(path2, sizeof(path2) / sizeof(TCHAR), _T("PURPLEHOME=%s"), path);
+	_tprintf(_T("Setting settings dir: %s\n"), path2);
+	_tputenv(path2);
 
-	_snprintf(path2, sizeof(path2), "PIDGIN_ASPELL_DIR=%s\\Aspell\\bin", path);
-	printf("%s\n", path2);
-	_putenv(path2);
+	_sntprintf(path2, sizeof(path2) / sizeof(TCHAR), _T("PIDGIN_ASPELL_DIR=%s\\Aspell\\bin"), path);
+	_tprintf(_T("%s\n"), path2);
+	_tputenv(path2);
 
-	/* set the GTK+ path to be \\path\to\GTK\bin */
-	strcat(path, "\\GTK\\bin");
-
-	common_dll_prep(path);
+	if (!dll_prep(pidgin_dir)) {
+		/* set the GTK+ path to be \\path\to\GTK\bin */
+		_tcscat(path, _T("\\GTK\\bin"));
+		common_dll_prep(path);
+	}
 }
 
-static void dll_prep() {
-	char path[MAX_PATH + 1];
-	HKEY hkey;
-	char gtkpath[MAX_PATH + 1];
-	DWORD plen;
-
-	plen = sizeof(gtkpath);
-	hkey = HKEY_CURRENT_USER;
-	if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "Path",
-			(LPBYTE) &gtkpath, &plen)) {
-		hkey = HKEY_LOCAL_MACHINE;
-		if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "Path",
-				(LPBYTE) &gtkpath, &plen)) {
-			printf("GTK+ Path Registry Key not found. "
-				"Assuming GTK+ is in the PATH.\n");
-			return;
-		}
-	}
-
-	/* this value is replaced during a successful RegQueryValueEx() */
-	plen = sizeof(path);
-	/* Determine GTK+ dll path .. */
-	if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "DllPath",
-				(LPBYTE) &path, &plen)) {
-		strcpy(path, gtkpath);
-		strcat(path, "\\bin");
-	}
-
-	common_dll_prep(path);
-}
-
-static char* winpidgin_lcid_to_posix(LCID lcid) {
-	char *posix = NULL;
+static TCHAR* winpidgin_lcid_to_posix(LCID lcid) {
+	TCHAR *posix = NULL;
 	int lang_id = PRIMARYLANGID(lcid);
 	int sub_id = SUBLANGID(lcid);
 
 	switch (lang_id) {
-		case LANG_AFRIKAANS: posix = "af"; break;
-		case LANG_ARABIC: posix = "ar"; break;
-		case LANG_AZERI: posix = "az"; break;
-		case LANG_BENGALI: posix = "bn"; break;
-		case LANG_BULGARIAN: posix = "bg"; break;
-		case LANG_CATALAN: posix = "ca"; break;
-		case LANG_CZECH: posix = "cs"; break;
-		case LANG_DANISH: posix = "da"; break;
-		case LANG_ESTONIAN: posix = "et"; break;
-		case LANG_PERSIAN: posix = "fa"; break;
-		case LANG_GERMAN: posix = "de"; break;
-		case LANG_GREEK: posix = "el"; break;
+		case LANG_AFRIKAANS: posix = _T("af"); break;
+		case LANG_ARABIC: posix = _T("ar"); break;
+		case LANG_AZERI: posix = _T("az"); break;
+		case LANG_BENGALI: posix = _T("bn"); break;
+		case LANG_BULGARIAN: posix = _T("bg"); break;
+		case LANG_CATALAN: posix = _T("ca"); break;
+		case LANG_CZECH: posix = _T("cs"); break;
+		case LANG_DANISH: posix = _T("da"); break;
+		case LANG_ESTONIAN: posix = _T("et"); break;
+		case LANG_PERSIAN: posix = _T("fa"); break;
+		case LANG_GERMAN: posix = _T("de"); break;
+		case LANG_GREEK: posix = _T("el"); break;
 		case LANG_ENGLISH:
 			switch (sub_id) {
 				case SUBLANG_ENGLISH_UK:
-					posix = "en_GB"; break;
+					posix = _T("en_GB"); break;
 				case SUBLANG_ENGLISH_AUS:
-					posix = "en_AU"; break;
+					posix = _T("en_AU"); break;
 				case SUBLANG_ENGLISH_CAN:
-					posix = "en_CA"; break;
+					posix = _T("en_CA"); break;
 				default:
-					posix = "en"; break;
+					posix = _T("en"); break;
 			}
 			break;
-		case LANG_SPANISH: posix = "es"; break;
-		case LANG_BASQUE: posix = "eu"; break;
-		case LANG_FINNISH: posix = "fi"; break;
-		case LANG_FRENCH: posix = "fr"; break;
-		case LANG_GALICIAN: posix = "gl"; break;
-		case LANG_GUJARATI: posix = "gu"; break;
-		case LANG_HEBREW: posix = "he"; break;
-		case LANG_HINDI: posix = "hi"; break;
-		case LANG_HUNGARIAN: posix = "hu"; break;
+		case LANG_SPANISH: posix = _T("es"); break;
+		case LANG_BASQUE: posix = _T("eu"); break;
+		case LANG_FINNISH: posix = _T("fi"); break;
+		case LANG_FRENCH: posix = _T("fr"); break;
+		case LANG_GALICIAN: posix = _T("gl"); break;
+		case LANG_GUJARATI: posix = _T("gu"); break;
+		case LANG_HEBREW: posix = _T("he"); break;
+		case LANG_HINDI: posix = _T("hi"); break;
+		case LANG_HUNGARIAN: posix = _T("hu"); break;
 		case LANG_ICELANDIC: break;
-		case LANG_INDONESIAN: posix = "id"; break;
-		case LANG_ITALIAN: posix = "it"; break;
-		case LANG_JAPANESE: posix = "ja"; break;
-		case LANG_GEORGIAN: posix = "ka"; break;
-		case LANG_KANNADA: posix = "kn"; break;
-		case LANG_KOREAN: posix = "ko"; break;
-		case LANG_LITHUANIAN: posix = "lt"; break;
-		case LANG_MACEDONIAN: posix = "mk"; break;
-		case LANG_DUTCH: posix = "nl"; break;
-		case LANG_NEPALI: posix = "ne"; break;
+		case LANG_INDONESIAN: posix = _T("id"); break;
+		case LANG_ITALIAN: posix = _T("it"); break;
+		case LANG_JAPANESE: posix = _T("ja"); break;
+		case LANG_GEORGIAN: posix = _T("ka"); break;
+		case LANG_KANNADA: posix = _T("kn"); break;
+		case LANG_KOREAN: posix = _T("ko"); break;
+		case LANG_LITHUANIAN: posix = _T("lt"); break;
+		case LANG_MACEDONIAN: posix = _T("mk"); break;
+		case LANG_DUTCH: posix = _T("nl"); break;
+		case LANG_NEPALI: posix = _T("ne"); break;
 		case LANG_NORWEGIAN:
 			switch (sub_id) {
 				case SUBLANG_NORWEGIAN_BOKMAL:
-					posix = "nb"; break;
+					posix = _T("nb"); break;
 				case SUBLANG_NORWEGIAN_NYNORSK:
-					posix = "nn"; break;
+					posix = _T("nn"); break;
 			}
 			break;
-		case LANG_PUNJABI: posix = "pa"; break;
-		case LANG_POLISH: posix = "pl"; break;
-		case LANG_PASHTO: posix = "ps"; break;
+		case LANG_PUNJABI: posix = _T("pa"); break;
+		case LANG_POLISH: posix = _T("pl"); break;
+		case LANG_PASHTO: posix = _T("ps"); break;
 		case LANG_PORTUGUESE:
 			switch (sub_id) {
 				case SUBLANG_PORTUGUESE_BRAZILIAN:
-					posix = "pt_BR"; break;
+					posix = _T("pt_BR"); break;
 				default:
-				posix = "pt"; break;
+				posix = _T("pt"); break;
 			}
 			break;
-		case LANG_ROMANIAN: posix = "ro"; break;
-		case LANG_RUSSIAN: posix = "ru"; break;
-		case LANG_SLOVAK: posix = "sk"; break;
-		case LANG_SLOVENIAN: posix = "sl"; break;
-		case LANG_ALBANIAN: posix = "sq"; break;
+		case LANG_ROMANIAN: posix = _T("ro"); break;
+		case LANG_RUSSIAN: posix = _T("ru"); break;
+		case LANG_SLOVAK: posix = _T("sk"); break;
+		case LANG_SLOVENIAN: posix = _T("sl"); break;
+		case LANG_ALBANIAN: posix = _T("sq"); break;
 		/* LANG_CROATIAN == LANG_SERBIAN == LANG_BOSNIAN */
 		case LANG_SERBIAN:
 			switch (sub_id) {
 				case SUBLANG_SERBIAN_LATIN:
-					posix = "sr@Latn"; break;
+					posix = _T("sr@Latn"); break;
 				case SUBLANG_SERBIAN_CYRILLIC:
-					posix = "sr"; break;
+					posix = _T("sr"); break;
 				case SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_CYRILLIC:
 				case SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_LATIN:
-					posix = "bs"; break;
+					posix = _T("bs"); break;
 				case SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN:
-					posix = "hr"; break;
+					posix = _T("hr"); break;
 			}
 			break;
-		case LANG_SWEDISH: posix = "sv"; break;
-		case LANG_TAMIL: posix = "ta"; break;
-		case LANG_TELUGU: posix = "te"; break;
-		case LANG_THAI: posix = "th"; break;
-		case LANG_TURKISH: posix = "tr"; break;
-		case LANG_UKRAINIAN: posix = "uk"; break;
-		case LANG_VIETNAMESE: posix = "vi"; break;
-		case LANG_XHOSA: posix = "xh"; break;
+		case LANG_SWEDISH: posix = _T("sv"); break;
+		case LANG_TAMIL: posix = _T("ta"); break;
+		case LANG_TELUGU: posix = _T("te"); break;
+		case LANG_THAI: posix = _T("th"); break;
+		case LANG_TURKISH: posix = _T("tr"); break;
+		case LANG_UKRAINIAN: posix = _T("uk"); break;
+		case LANG_VIETNAMESE: posix = _T("vi"); break;
+		case LANG_XHOSA: posix = _T("xh"); break;
 		case LANG_CHINESE:
 			switch (sub_id) {
 				case SUBLANG_CHINESE_SIMPLIFIED:
-					posix = "zh_CN"; break;
+					posix = _T("zh_CN"); break;
 				case SUBLANG_CHINESE_TRADITIONAL:
-					posix = "zh_TW"; break;
+					posix = _T("zh_TW"); break;
 				default:
-					posix = "zh"; break;
+					posix = _T("zh"); break;
 			}
 			break;
 		case LANG_URDU: break;
@@ -397,8 +379,8 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 	/* Deal with exceptions */
 	if (posix == NULL) {
 		switch (lcid) {
-			case 0x0455: posix = "my_MM"; break; /* Myanmar (Burmese) */
-			case 9999: posix = "ku"; break; /* Kurdish (from NSIS) */
+			case 0x0455: posix = _T("my_MM"); break; /* Myanmar (Burmese) */
+			case 9999: posix = _T("ku"); break; /* Kurdish (from NSIS) */
 		}
 	}
 
@@ -410,19 +392,19 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
    - Check NSIS Installer Language reg value
    - Use default user locale
 */
-static const char *winpidgin_get_locale() {
-	const char *locale = NULL;
+static const TCHAR *winpidgin_get_locale() {
+	const TCHAR *locale = NULL;
 	LCID lcid;
-	char data[10];
-	DWORD datalen = 10;
+	TCHAR data[10];
+	DWORD datalen = sizeof(data) / sizeof(TCHAR);
 
 	/* Check if user set PIDGINLANG env var */
-	if ((locale = getenv("PIDGINLANG")))
+	if ((locale = _tgetenv(_T("PIDGINLANG"))))
 		return locale;
 
-	if (!portable_mode && read_reg_string(HKEY_CURRENT_USER, "SOFTWARE\\pidgin",
-			"Installer Language", (LPBYTE) &data, &datalen)) {
-		if ((locale = winpidgin_lcid_to_posix(atoi(data))))
+	if (!portable_mode && read_reg_string(HKEY_CURRENT_USER, _T("SOFTWARE\\pidgin"),
+			_T("Installer Language"), (LPBYTE) &data, &datalen)) {
+		if ((locale = winpidgin_lcid_to_posix(_ttoi(data))))
 			return locale;
 	}
 
@@ -430,39 +412,39 @@ static const char *winpidgin_get_locale() {
 	if ((locale = winpidgin_lcid_to_posix(lcid)))
 		return locale;
 
-	return "en";
+	return _T("en");
 }
 
 static void winpidgin_set_locale() {
-	const char *locale = NULL;
-	char envstr[25];
+	const TCHAR *locale;
+	TCHAR envstr[25];
 
 	locale = winpidgin_get_locale();
 
-	_snprintf(envstr, 25, "LANG=%s", locale);
-	printf("Setting locale: %s\n", envstr);
-	_putenv(envstr);
+	_sntprintf(envstr, sizeof(envstr) / sizeof(TCHAR), _T("LANG=%s"), locale);
+	_tprintf(_T("Setting locale: %s\n"), envstr);
+	_tputenv(envstr);
 }
 
 
 static void winpidgin_add_stuff_to_path() {
-	char perl_path[MAX_PATH + 1];
-	char *ppath = NULL;
-	char mit_kerberos_path[MAX_PATH + 1];
-	char *mpath = NULL;
+	TCHAR perl_path[MAX_PATH + 1];
+	TCHAR *ppath = NULL;
+	TCHAR mit_kerberos_path[MAX_PATH + 1];
+	TCHAR *mpath = NULL;
 	DWORD plen;
 
 	printf("%s", "Looking for Perl... ");
 
-	plen = sizeof(perl_path);
-	if (read_reg_string(HKEY_LOCAL_MACHINE, "SOFTWARE\\Perl", "",
+	plen = sizeof(perl_path) / sizeof(TCHAR);
+	if (read_reg_string(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\Perl"), _T(""),
 			    (LPBYTE) &perl_path, &plen)) {
 		/* We *could* check for perl510.dll, but it seems unnecessary. */
-		printf("found in '%s'.\n", perl_path);
+		_tprintf(_T("found in '%s'.\n"), perl_path);
 
-		if (perl_path[strlen(perl_path) - 1] != '\\')
-			strcat(perl_path, "\\");
-		strcat(perl_path, "bin");
+		if (perl_path[_tcslen(perl_path) - 1] != _T('\\'))
+			_tcscat(perl_path, _T("\\"));
+		_tcscat(perl_path, _T("bin"));
 
 		ppath = perl_path;
 	} else
@@ -470,48 +452,47 @@ static void winpidgin_add_stuff_to_path() {
 
 	printf("%s", "Looking for MIT Kerberos... ");
 
-	plen = sizeof(mit_kerberos_path);
-	if (read_reg_string(HKEY_LOCAL_MACHINE, "SOFTWARE\\MIT\\Kerberos", "InstallDir",
+	plen = sizeof(mit_kerberos_path) / sizeof(TCHAR);
+	if (read_reg_string(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\MIT\\Kerberos"), _T("InstallDir"),
 			    (LPBYTE) &mit_kerberos_path, &plen)) {
 		/* We *could* check for gssapi32.dll */
-		printf("found in '%s'.\n", mit_kerberos_path);
+		_tprintf(_T("found in '%s'.\n"), mit_kerberos_path);
 
-		if (mit_kerberos_path[strlen(mit_kerberos_path) - 1] != '\\')
-			strcat(mit_kerberos_path, "\\");
-		strcat(mit_kerberos_path, "bin");
+		if (mit_kerberos_path[_tcslen(mit_kerberos_path) - 1] != _T('\\'))
+			_tcscat(mit_kerberos_path, _T("\\"));
+		_tcscat(mit_kerberos_path, _T("bin"));
 
 		mpath = mit_kerberos_path;
 	} else
 		printf("%s", "not found.\n");
 
 	if (ppath != NULL || mpath != NULL) {
-		const char *path = getenv("PATH");
-		BOOL add_ppath = ppath != NULL && (path == NULL || !strstr(path, ppath));
-		BOOL add_mpath = mpath != NULL && (path == NULL || !strstr(path, mpath));
-		char *newpath;
+		const TCHAR *path = _tgetenv(_T("PATH"));
+		BOOL add_ppath = ppath != NULL && (path == NULL || !_tcsstr(path, ppath));
+		BOOL add_mpath = mpath != NULL && (path == NULL || !_tcsstr(path, mpath));
+		TCHAR *newpath;
 		int newlen;
 
 		if (add_ppath || add_mpath) {
 			/* Enough to add "PATH=" + path + ";"  + ppath + ";" + mpath + \0 */
-			newlen = 6 + (path ? strlen(path) + 1 : 0);
+			newlen = 6 + (path ? _tcslen(path) + 1 : 0);
 			if (add_ppath)
-				newlen += strlen(ppath) + 1;
+				newlen += _tcslen(ppath) + 1;
 			if (add_mpath)
-				newlen += strlen(mpath) + 1;
-			newpath = malloc(newlen);
-			*newpath = '\0';
+				newlen += _tcslen(mpath) + 1;
+			newpath = malloc(newlen * sizeof(TCHAR));
 
-			_snprintf(newpath, newlen, "PATH=%s%s%s%s%s%s",
-				  path ? path : "",
-				  path ? ";" : "",
-				  add_ppath ? ppath : "",
-				  add_ppath ? ";" : "",
-				  add_mpath ? mpath : "",
-				  add_mpath ? ";" : "");
+			_sntprintf(newpath, newlen, _T("PATH=%s%s%s%s%s%s"),
+				  path ? path : _T(""),
+				  path ? _T(";") : _T(""),
+				  add_ppath ? ppath : _T(""),
+				  add_ppath ? _T(";") : _T(""),
+				  add_mpath ? mpath : _T(""),
+				  add_mpath ? _T(";") : _T(""));
 
-			printf("New PATH: %s\n", newpath);
+			_tprintf(_T("New PATH: %s\n"), newpath);
 
-			_putenv(newpath);
+			_tputenv(newpath);
 			free(newpath);
 		}
 	}
@@ -523,7 +504,7 @@ static void winpidgin_add_stuff_to_path() {
 static BOOL winpidgin_set_running(BOOL fail_if_running) {
 	HANDLE h;
 
-	if ((h = CreateMutex(NULL, FALSE, "pidgin_is_running"))) {
+	if ((h = CreateMutex(NULL, FALSE, _T("pidgin_is_running")))) {
 		DWORD err = GetLastError();
 		if (err == ERROR_ALREADY_EXISTS) {
 			if (fail_if_running) {
@@ -531,14 +512,14 @@ static BOOL winpidgin_set_running(BOOL fail_if_running) {
 
 				printf("An instance of Pidgin is already running.\n");
 
-				if((msg_win = FindWindowEx(NULL, NULL, TEXT("WinpidginMsgWinCls"), NULL)))
+				if((msg_win = FindWindowEx(NULL, NULL, _T("WinpidginMsgWinCls"), NULL)))
 					if(SendMessage(msg_win, PIDGIN_WM_FOCUS_REQUEST, (WPARAM) NULL, (LPARAM) NULL))
 						return FALSE;
 
 				/* If we get here, the focus request wasn't successful */
 
 				MessageBox(NULL,
-					"An instance of Pidgin is already running",
+					_T("An instance of Pidgin is already running"),
 					NULL, MB_OK | MB_TOPMOST);
 
 				return FALSE;
@@ -549,80 +530,98 @@ static BOOL winpidgin_set_running(BOOL fail_if_running) {
 	return TRUE;
 }
 
-#define PROTO_HANDLER_SWITCH "--protocolhandler="
+#define PROTO_HANDLER_SWITCH L"--protocolhandler="
 
-static void handle_protocol(char *cmd) {
-	char *remote_msg, *tmp1, *tmp2;
-	int len;
+static void handle_protocol(wchar_t *cmd) {
+	char *remote_msg, *utf8msg;
+	wchar_t *tmp1, *tmp2;
+	int len, wlen;
 	SIZE_T len_written;
 	HWND msg_win;
 	DWORD pid;
 	HANDLE process;
 
 	/* The start of the message */
-	tmp1 = cmd + strlen(PROTO_HANDLER_SWITCH);
+	tmp1 = cmd + wcslen(PROTO_HANDLER_SWITCH);
 
 	/* The end of the message */
-	if ((tmp2 = strchr(tmp1, ' ')))
-		len = (tmp2 - tmp1);
+	if ((tmp2 = wcschr(tmp1, L' ')))
+		wlen = (tmp2 - tmp1);
 	else
-		len = strlen(tmp1);
+		wlen = wcslen(tmp1);
+
+	if (wlen == 0) {
+		printf("No protocol message specified.\n");
+		return;
+	}
+
+	if (!(msg_win = FindWindowEx(NULL, NULL, _T("WinpidginMsgWinCls"), NULL))) {
+		printf("Unable to find an instance of Pidgin to handle protocol message.\n");
+		return;
+	}
+
+	len = WideCharToMultiByte(CP_UTF8, 0, tmp1,
+			wlen, NULL, 0, NULL, NULL);
+	if (len) {
+		utf8msg = malloc(len * sizeof(char));
+		len = WideCharToMultiByte(CP_UTF8, 0, tmp1,
+			wlen, utf8msg, len, NULL, NULL);
+	}
 
 	if (len == 0) {
 		printf("No protocol message specified.\n");
 		return;
 	}
 
-	if (!(msg_win = FindWindowEx(NULL, NULL, TEXT("WinpidginMsgWinCls"), NULL))) {
-		printf("Unable to find an instance of Pidgin to handle protocol message.\n");
-		return;
-	}
-
 	GetWindowThreadProcessId(msg_win, &pid);
 	if (!(process = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE, FALSE, pid))) {
 		DWORD dw = GetLastError();
-		const char *err_msg = get_win32_error_message(dw);
-		printf("Unable to open Pidgin process. (%u) %s\n", (UINT) dw, err_msg);
+		const TCHAR *err_msg = get_win32_error_message(dw);
+		_tprintf(_T("Unable to open Pidgin process. (%u) %s\n"), (UINT) dw, err_msg);
 		return;
 	}
 
-	printf("Trying to handle protocol message:\n'%.*s'\n", len, tmp1);
+	wprintf(L"Trying to handle protocol message:\n'%.*s'\n", wlen, tmp1);
 
-	/* MEM_COMMIT initializes the memory to zero,
-	 * so we don't need to worry that our section of tmp1 isn't nul-terminated */
+	/* MEM_COMMIT initializes the memory to zero
+	 * so we don't need to worry that our section of utf8msg isn't nul-terminated */
 	if ((remote_msg = (char*) VirtualAllocEx(process, NULL, len + 1, MEM_COMMIT, PAGE_READWRITE))) {
-		if (WriteProcessMemory(process, remote_msg, tmp1, len, &len_written)) {
-			if (!SendMessage(msg_win, PIDGIN_WM_PROTOCOL_HANDLE, len_written, (LPARAM) remote_msg))
+		if (WriteProcessMemory(process, remote_msg, utf8msg, len, &len_written)) {
+			if (!SendMessageA(msg_win, PIDGIN_WM_PROTOCOL_HANDLE, len_written, (LPARAM) remote_msg))
 				printf("Unable to send protocol message to Pidgin instance.\n");
 		} else {
 			DWORD dw = GetLastError();
-			const char *err_msg = get_win32_error_message(dw);
-			printf("Unable to write to remote memory. (%u) %s\n", (UINT) dw, err_msg);
+			const TCHAR *err_msg = get_win32_error_message(dw);
+			_tprintf(_T("Unable to write to remote memory. (%u) %s\n"), (UINT) dw, err_msg);
 		}
 
 		VirtualFreeEx(process, remote_msg, 0, MEM_RELEASE);
 	} else {
 		DWORD dw = GetLastError();
-		const char *err_msg = get_win32_error_message(dw);
-		printf("Unable to allocate remote memory. (%u) %s\n", (UINT) dw, err_msg);
+		const TCHAR *err_msg = get_win32_error_message(dw);
+		_tprintf(_T("Unable to allocate remote memory. (%u) %s\n"), (UINT) dw, err_msg);
 	}
 
 	CloseHandle(process);
+	free(utf8msg);
 }
 
 
 int _stdcall
 WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		char *lpszCmdLine, int nCmdShow) {
-	char errbuf[512];
-	char pidgin_dir[MAX_PATH];
-	char exe_name[MAX_PATH];
+	TCHAR errbuf[512];
+	TCHAR pidgin_dir[MAX_PATH];
+	TCHAR exe_name[MAX_PATH];
 	HMODULE hmod;
-	char *tmp;
-	int pidgin_argc = __argc;
-	char **pidgin_argv = __argv;
-	int i;
-	BOOL debug = FALSE, help = FALSE, version = FALSE, multiple = FALSE;
+	TCHAR *tmp;
+	wchar_t *wtmp;
+	int pidgin_argc;
+	char **pidgin_argv; /* This is in utf-8 */
+	int i, j, k;
+	BOOL debug = FALSE, help = FALSE, version = FALSE, multiple = FALSE, success;
+	LPWSTR *szArglist;
+	LPWSTR cmdLine;
 
 	/* If debug or help or version flag used, create console for output */
 	for (i = 1; i < __argc; i++) {
@@ -655,7 +654,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		 *  (_istty() doesn't work for stuff using the GUI subsystem) */
 		if (_fileno(stdout) == -1 || _fileno(stdout) == -2) {
 			LPFNATTACHCONSOLE MyAttachConsole = NULL;
-			if ((hmod = GetModuleHandle("kernel32.dll"))) {
+			if ((hmod = GetModuleHandle(_T("kernel32.dll")))) {
 				MyAttachConsole =
 					(LPFNATTACHCONSOLE)
 					GetProcAddress(hmod, "AttachConsole");
@@ -668,68 +667,104 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		}
 	}
 
+	cmdLine = GetCommandLineW();
+
 	/* If this is a protocol handler invocation, deal with it accordingly */
-	if ((tmp = strstr(lpszCmdLine, PROTO_HANDLER_SWITCH)) != NULL) {
-		handle_protocol(tmp);
+	if ((wtmp = wcsstr(cmdLine, PROTO_HANDLER_SWITCH)) != NULL) {
+		handle_protocol(wtmp);
 		return 0;
 	}
 
 	/* Load exception handler if we have it */
 	if (GetModuleFileName(NULL, pidgin_dir, MAX_PATH) != 0) {
-		char *prev = NULL;
-		tmp = pidgin_dir;
 
 		/* primitive dirname() */
-		while ((tmp = strchr(tmp, '\\'))) {
-			prev = tmp;
-			tmp++;
-		}
+		tmp = _tcsrchr(pidgin_dir, _T('\\'));
 
-		if (prev) {
-			prev[0] = '\0';
+		if (tmp) {
+			HMODULE hmod;
+			tmp[0] = _T('\0');
 
-			/* prev++ will now point to the executable file name */
-			strcpy(exe_name, prev + 1);
+			/* tmp++ will now point to the executable file name */
+			_tcscpy(exe_name, tmp + 1);
 
-			strcat(pidgin_dir, "\\exchndl.dll");
-			if (LoadLibrary(pidgin_dir))
+			_tcscat(pidgin_dir, _T("\\exchndl.dll"));
+			if ((hmod = LoadLibrary(pidgin_dir))) {
+				FARPROC proc;
+				/* exchndl.dll is built without UNICODE */
+				char debug_dir[MAX_PATH];
 				printf("Loaded exchndl.dll\n");
+				/* Temporarily override exchndl.dll's logfile
+				 * to something sane (Pidgin will override it
+				 * again when it initializes) */
+				proc = GetProcAddress(hmod, "SetLogFile");
+				if (proc) {
+					if (GetTempPathA(sizeof(debug_dir) * sizeof(char), debug_dir) != 0) {
+						strcat(debug_dir, "pidgin.RPT");
+						printf(" Setting exchndl.dll LogFile to %s\n",
+							debug_dir);
+						(proc)(debug_dir);
+					}
+				}
+				proc = GetProcAddress(hmod, "SetDebugInfoDir");
+				if (proc) {
+					char *pidgin_dir_ansi = NULL;
+					tmp[0] = _T('\0');
+#ifdef _UNICODE
+					i = WideCharToMultiByte(CP_ACP, 0, pidgin_dir,
+						-1, NULL, 0, NULL, NULL);
+					if (i != 0) {
+						pidgin_dir_ansi = malloc(i * sizeof(char));
+						i = WideCharToMultiByte(CP_ACP, 0, pidgin_dir,
+							-1, pidgin_dir_ansi, i, NULL, NULL);
+						if (i == 0) {
+							free(pidgin_dir_ansi);
+							pidgin_dir_ansi = NULL;
+						}
+					}
+#else
+					pidgin_dir_ansi = pidgin_dir;
+#endif
+					if (pidgin_dir_ansi != NULL) {
+						_snprintf(debug_dir, sizeof(debug_dir) / sizeof(char),
+							"%s\\pidgin-%s-dbgsym",
+							pidgin_dir_ansi,  VERSION);
+						debug_dir[sizeof(debug_dir) / sizeof(char) - 1] = '\0';
+						printf(" Setting exchndl.dll DebugInfoDir to %s\n",
+							debug_dir);
+						(proc)(debug_dir);
+#ifdef _UNICODE
+						free(pidgin_dir_ansi);
+#endif
+					}
+				}
 
-			prev[0] = '\0';
+			}
+
+			tmp[0] = _T('\0');
 		}
 	} else {
 		DWORD dw = GetLastError();
-		const char *err_msg = get_win32_error_message(dw);
-		_snprintf(errbuf, 512,
-			"Error getting module filename.\nError: (%u) %s",
+		const TCHAR *err_msg = get_win32_error_message(dw);
+		_sntprintf(errbuf, 512,
+			_T("Error getting module filename.\nError: (%u) %s"),
 			(UINT) dw, err_msg);
-		printf("%s\n", errbuf);
+		_tprintf(_T("%s\n"), errbuf);
 		MessageBox(NULL, errbuf, NULL, MB_OK | MB_TOPMOST);
-		pidgin_dir[0] = '\0';
+		pidgin_dir[0] = _T('\0');
 	}
 
 	/* Determine if we're running in portable mode */
-	if (strstr(lpszCmdLine, "--portable-mode")
-			|| (exe_name != NULL && strstr(exe_name, "-portable.exe"))) {
-		int i = 0, c = 0;
-
+	if (wcsstr(cmdLine, L"--portable-mode")
+			|| (exe_name != NULL && _tcsstr(exe_name, _T("-portable.exe")))) {
 		printf("Running in PORTABLE mode.\n");
 		portable_mode = TRUE;
-
-		/* Remove the --portable-mode arg from the args passed to pidgin so it doesn't choke */
-		pidgin_argv = malloc(sizeof(char*) * pidgin_argc);
-		for (; i < __argc; i++) {
-			if (strstr(__argv[i], "--portable-mode") == NULL)
-				pidgin_argv[c++] = __argv[i];
-			else
-				pidgin_argc--;
-		}
 	}
 
 	if (portable_mode)
 		portable_mode_dll_prep(pidgin_dir);
 	else if (!getenv("PIDGIN_NO_DLL_CHECK"))
-		dll_prep();
+		dll_prep(pidgin_dir);
 
 	winpidgin_set_locale();
 
@@ -741,23 +776,53 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 			return 0;
 
 	/* Now we are ready for Pidgin .. */
-	if ((hmod = LoadLibrary("pidgin.dll")))
+	if ((hmod = LoadLibrary(_T("pidgin.dll"))))
 		pidgin_main = (LPFNPIDGINMAIN) GetProcAddress(hmod, "pidgin_main");
 
 	if (!pidgin_main) {
 		DWORD dw = GetLastError();
 		BOOL mod_not_found = (dw == ERROR_MOD_NOT_FOUND || dw == ERROR_DLL_NOT_FOUND);
-		const char *err_msg = get_win32_error_message(dw);
+		const TCHAR *err_msg = get_win32_error_message(dw);
 
-		_snprintf(errbuf, 512, "Error loading pidgin.dll.\nError: (%u) %s%s%s",
+		_sntprintf(errbuf, 512, _T("Error loading pidgin.dll.\nError: (%u) %s%s%s"),
 			(UINT) dw, err_msg,
-			mod_not_found ? "\n" : "",
-			mod_not_found ? "This probably means that GTK+ can't be found." : "");
-		printf("%s\n", errbuf);
-		MessageBox(NULL, errbuf, TEXT("Error"), MB_OK | MB_TOPMOST);
+			mod_not_found ? _T("\n") : _T(""),
+			mod_not_found ? _T("This probably means that GTK+ can't be found.") : _T(""));
+		_tprintf(_T("%s\n"), errbuf);
+		MessageBox(NULL, errbuf, _T("Error"), MB_OK | MB_TOPMOST);
 
 		return 0;
 	}
+
+	/* Convert argv to utf-8*/
+	szArglist = CommandLineToArgvW(cmdLine, &j);
+	pidgin_argc = j;
+	pidgin_argv = malloc(pidgin_argc* sizeof(char*));
+	k = 0;
+	for (i = 0; i < j; i++) {
+		success = FALSE;
+		/* Remove the --portable-mode arg from the args passed to pidgin so it doesn't choke */
+		if (wcsstr(szArglist[i], L"--portable-mode") == NULL) {
+			int len = WideCharToMultiByte(CP_UTF8, 0, szArglist[i],
+				-1, NULL, 0, NULL, NULL);
+			if (len != 0) {
+				char *arg = malloc(len * sizeof(char));
+				len = WideCharToMultiByte(CP_UTF8, 0, szArglist[i],
+					-1, arg, len, NULL, NULL);
+				if (len != 0) {
+					pidgin_argv[k++] = arg;
+					success = TRUE;
+				}
+			}
+			if (!success)
+				wprintf(L"Error converting argument '%s' to UTF-8\n",
+					szArglist[i]);
+		}
+		if (!success)
+			pidgin_argc--;
+	}
+	LocalFree(szArglist);
+
 
 	return pidgin_main(hInstance, pidgin_argc, pidgin_argv);
 }

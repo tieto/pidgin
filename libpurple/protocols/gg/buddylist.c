@@ -82,7 +82,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 	gchar **users_tbl;
 	int i;
 	char *utf8buddylist = charset_convert(buddylist, "CP1250", "UTF-8");
-
+	
 	/* Don't limit the number of records in a buddylist. */
 	users_tbl = g_strsplit(utf8buddylist, "\r\n", -1);
 

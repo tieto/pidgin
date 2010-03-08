@@ -11,7 +11,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Installeren kjører allerede."
 !define PIDGIN_IS_RUNNING				"En instans av Pidgin kjører fra før. Avslutt Pidgin og prøv igjen."
-!define GTK_INSTALLER_NEEDED			"GTK+ runtime environment mangler eller trenger en oppgradering.$\rVennligst installér GTK+ v${GTK_MIN_VERSION} eller høyere"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Neste >"
@@ -31,14 +30,11 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Legg til Pidgin i Startmenyen"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"En eldre versjon av GTK+ runtime ble funnet. Ønsker du å oppgradere?$\rMerk: $(^Name) vil kanskje ikke virke hvis du ikke oppgraderer."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Besøk Pidgin for Windows' Nettside"
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"En feil oppstod ved installering av GTK+ runtime."
-!define GTK_BAD_INSTALL_PATH			"Stien du oppga kan ikke aksesseres eller lages."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Avinstalleringsprogrammet kunne ikke finne noen registeroppføring for Pidgin.$\rTrolig har en annen bruker avinstallert denne applikasjonen."
@@ -49,28 +45,4 @@
 ; Spellcheck Section Prompts
 !define PIDGIN_SPELLCHECK_SECTION_TITLE		"Støtte for stavekontroll"
 !define PIDGIN_SPELLCHECK_ERROR			"Det oppstod en feil ved installering av stavekontroll"
-!define PIDGIN_SPELLCHECK_DICT_ERROR		"Det oppstod en feil ved installering av ordboken for stavekontroll"
 !define PIDGIN_SPELLCHECK_SECTION_DESCRIPTION	"Støtte for stavekontroll. (Internettoppkobling påkrevd for installasjon)"
-!define ASPELL_INSTALL_FAILED			"Installasjonen mislyktes."
-!define PIDGIN_SPELLCHECK_BRETON			"Bretagnsk"
-!define PIDGIN_SPELLCHECK_CATALAN			"Katalansk"
-!define PIDGIN_SPELLCHECK_CZECH			"Tsjekkisk"
-!define PIDGIN_SPELLCHECK_WELSH			"Walisisk"
-!define PIDGIN_SPELLCHECK_DANISH			"Dansk"
-!define PIDGIN_SPELLCHECK_GERMAN			"Tysk"
-!define PIDGIN_SPELLCHECK_GREEK			"Gresk"
-!define PIDGIN_SPELLCHECK_ENGLISH			"Engelsk"
-!define PIDGIN_SPELLCHECK_ESPERANTO		"Esperanto"
-!define PIDGIN_SPELLCHECK_SPANISH			"Spansk"
-!define PIDGIN_SPELLCHECK_FAROESE			"Færøysk"
-!define PIDGIN_SPELLCHECK_FRENCH			"Fransk"
-!define PIDGIN_SPELLCHECK_ITALIAN			"Italiensk"
-!define PIDGIN_SPELLCHECK_DUTCH			"Nederlandsk"
-!define PIDGIN_SPELLCHECK_NORWEGIAN		"Norsk"
-!define PIDGIN_SPELLCHECK_POLISH			"Polsk"
-!define PIDGIN_SPELLCHECK_PORTUGUESE		"Portugisisk"
-!define PIDGIN_SPELLCHECK_ROMANIAN		"Rumensk"
-!define PIDGIN_SPELLCHECK_RUSSIAN			"Russisk"
-!define PIDGIN_SPELLCHECK_SLOVAK			"Slovakisk"
-!define PIDGIN_SPELLCHECK_SWEDISH			"Svensk"
-!define PIDGIN_SPELLCHECK_UKRAINIAN		"Ukrainsk"

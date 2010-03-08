@@ -1000,8 +1000,8 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 				       int status, const char *descr)
 {
 	gchar *from;
-	const char *st;
 	gchar *msg;
+	const char *st;
 	gchar *avatarurl;
 	PurpleUtilFetchUrlData *url_data;
 
@@ -1018,29 +1018,37 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 	switch (status) {
 		case GG_STATUS_NOT_AVAIL:
 		case GG_STATUS_NOT_AVAIL_DESCR:
-			st = "offline";
+			st = purple_primitive_get_id_from_type(PURPLE_STATUS_OFFLINE);
+			break;
+		case GG_STATUS_FFC:
+		case GG_STATUS_FFC_DESCR:
+			st = purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE);
 			break;
 		case GG_STATUS_AVAIL:
 		case GG_STATUS_AVAIL_DESCR:
-			st = "available";
+			st = purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE);
 			break;
 		case GG_STATUS_BUSY:
 		case GG_STATUS_BUSY_DESCR:
-			st = "away";
+			st = purple_primitive_get_id_from_type(PURPLE_STATUS_AWAY);
 			break;
+		case GG_STATUS_DND:
+		case GG_STATUS_DND_DESCR:
+			st = purple_primitive_get_id_from_type(PURPLE_STATUS_UNAVAILABLE);
 		case GG_STATUS_BLOCKED:
 			/* user is blocking us.... */
 			st = "blocked";
 			break;
 		default:
-			st = "available";
+			st = purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE);
 			purple_debug_info("gg",
 				"GG_EVENT_NOTIFY: Unknown status: %d\n", status);
 			break;
 	}
 
 	purple_debug_info("gg", "st = %s\n", st);
-	msg = charset_convert(descr, "CP1250", "UTF-8");
+	//msg = charset_convert(descr, "CP1250", "UTF-8");
+	msg = g_strdup_printf("%s", descr);
 	purple_prpl_got_user_status(purple_connection_get_account(gc),
 				  from, st, "message", msg, NULL);
 	g_free(from);
@@ -1078,6 +1086,12 @@ static const char *ggp_status_by_id(unsigned int id)
 		case GG_STATUS_AVAIL_DESCR:
 			st = _("Available");
 			break;
+		case GG_STATUS_FFC:
+		case GG_STATUS_FFC_DESCR:
+			return _("Chatty");
+		case GG_STATUS_DND:
+		case GG_STATUS_DND_DESCR:
+			return _("Do Not Disturb");
 		case GG_STATUS_BUSY:
 		case GG_STATUS_BUSY_DESCR:
 			st = _("Away");
@@ -1347,8 +1361,11 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 
 	from = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
 
+	/*
 	tmp = charset_convert((const char *)ev->event.msg.message,
 			      "CP1250", "UTF-8");
+	*/
+	tmp = g_strdup_printf("%s", ev->event.msg.message);
 	purple_str_strip_char(tmp, '\r');
 	msg = g_markup_escape_text(tmp, -1);
 	g_free(tmp);
@@ -1562,7 +1579,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 
 				purple_debug_info("gg", "notify_pre: (%d) status: %d\n",
 						ev->event.notify->uin,
-						ev->event.notify->status);
+						GG_S(ev->event.notify->status));
 
 				n = (ev->type == GG_EVENT_NOTIFY) ? ev->event.notify
 								  : ev->event.notify_descr.notify;
@@ -1573,17 +1590,17 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 
 					purple_debug_info("gg",
 						"notify: (%d) status: %d; descr: %s\n",
-						n->uin, n->status, descr ? descr : "(null)");
+						n->uin, GG_S(n->status), descr ? descr : "(null)");
 
 					ggp_generic_status_handler(gc,
-						n->uin, n->status, descr);
+						n->uin, GG_S(n->status), descr);
 				}
 			}
 			break;
 		case GG_EVENT_NOTIFY60:
 			purple_debug_info("gg",
 				"notify60_pre: (%d) status=%d; version=%d; descr=%s\n",
-				ev->event.notify60->uin, ev->event.notify60->status,
+				ev->event.notify60->uin, GG_S(ev->event.notify60->status),
 				ev->event.notify60->version,
 				ev->event.notify60->descr ? ev->event.notify60->descr : "(null)");
 
@@ -1602,7 +1619,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			break;
 		case GG_EVENT_STATUS:
 			purple_debug_info("gg", "status: (%d) status=%d; descr=%s\n",
-					ev->event.status.uin, ev->event.status.status,
+					ev->event.status.uin, GG_S(ev->event.status.status),
 					ev->event.status.descr ? ev->event.status.descr : "(null)");
 
 			ggp_generic_status_handler(gc, ev->event.status.uin,
@@ -1611,12 +1628,12 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 		case GG_EVENT_STATUS60:
 			purple_debug_info("gg",
 				"status60: (%d) status=%d; version=%d; descr=%s\n",
-				ev->event.status60.uin, ev->event.status60.status,
+				ev->event.status60.uin, GG_S(ev->event.status60.status),
 				ev->event.status60.version,
 				ev->event.status60.descr ? ev->event.status60.descr : "(null)");
 
 			ggp_generic_status_handler(gc, ev->event.status60.uin,
-				ev->event.status60.status, ev->event.status60.descr);
+				GG_S(ev->event.status60.status), ev->event.status60.descr);
 			break;
 		case GG_EVENT_USERLIST:
 	    		if (ev->event.userlist.type == GG_USERLIST_GET_REPLY) {
@@ -1829,6 +1846,16 @@ static GList *ggp_status_types(PurpleAccount *account)
 			NULL);
 	types = g_list_append(types, type);
 
+ 	/*
+	 * New statuses for GG 8.0 like PoGGadaj ze mna (not yet because 
+	 * libpurple can't support Chatty status) and Nie przeszkadzac
+	 */
+	type = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_UNAVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
+	types = g_list_append(types, type);
+	
 	/*
 	 * This status is necessary to display guys who are blocking *us*.
 	 */
@@ -1930,6 +1957,9 @@ static void ggp_login(PurpleAccount *account)
 	presence = purple_account_get_presence(account);
 	status = purple_presence_get_active_status(presence);
 
+	glp->encoding = GG_ENCODING_UTF8;
+	glp->protocol_features = (GG_FEATURE_STATUS80|GG_FEATURE_DND_FFC);
+	
 	glp->async = 1;
 	glp->status = ggp_to_gg_status(status, &glp->status_descr);
 	glp->tls = 0;
@@ -2100,8 +2130,11 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 		plain = purple_unescape_html(msg);
 	}
 
+	/*
 	tmp = charset_convert(plain, "UTF-8", "CP1250");
-
+	*/
+	tmp = g_strdup_printf("%s", plain);
+	
 	if (tmp && (format_length - sizeof(struct gg_msg_richtext))) {
 		if(gg_send_message_richtext(info->session, GG_CLASS_CHAT, ggp_str_to_uin(who), (unsigned char *)tmp, format, format_length) < 0) {
 			ret = -1;
@@ -2160,6 +2193,9 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 	} else if (strcmp(status_id, "away") == 0) {
 		new_status = GG_STATUS_BUSY;
 		new_status_descr = GG_STATUS_BUSY_DESCR;
+	} else if (strcmp(status_id, "unavailable") == 0) {
+		new_status = GG_STATUS_DND;
+		new_status_descr = GG_STATUS_DND_DESCR;
 	} else if (strcmp(status_id, "invisible") == 0) {
 		new_status = GG_STATUS_INVISIBLE;
 		new_status_descr = GG_STATUS_INVISIBLE_DESCR;
@@ -2177,9 +2213,12 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 	new_msg = purple_status_get_attr_string(status, "message");
 
 	if(new_msg) {
+		/*
 		char *tmp = purple_markup_strip_html(new_msg);
 		*msg = charset_convert(tmp, "UTF-8", "CP1250");
 		g_free(tmp);
+		*/
+		*msg = purple_markup_strip_html(new_msg);
 
 		return new_status_descr;
 	} else {
@@ -2279,7 +2318,8 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 	GGPInfo *info = gc->proto_data;
 	GGPChat *chat = NULL;
 	GList *l;
-	char *msg, *plain;
+	/* char *msg, *plain; */
+	gchar *msg;
 	uin_t *uins;
 	int count = 0;
 
@@ -2310,9 +2350,12 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 		uins[count++] = uin;
 	}
 
+	/*
 	plain = purple_unescape_html(message);
 	msg = charset_convert(plain, "UTF-8", "CP1250");
 	g_free(plain);
+	*/
+	msg = purple_unescape_html(message);
 	gg_send_message_confer(info->session, GG_CLASS_CHAT, count, uins,
 				(unsigned char *)msg);
 	g_free(msg);
@@ -2465,7 +2508,8 @@ static PurplePluginProtocolInfo prpl_info =
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL,                           /* get_account_text_table */
 	NULL,                           /* initiate_media */
-	NULL                            /* can_do_media */
+	NULL,                            /* can_do_media */
+	NULL 				/* get_moods */
 };
 
 static PurplePluginInfo info = {

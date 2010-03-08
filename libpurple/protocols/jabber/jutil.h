@@ -30,6 +30,17 @@ typedef struct _JabberID {
 	char *resource;
 } JabberID;
 
+typedef enum {
+	JABBER_BUDDY_STATE_UNKNOWN = -2,
+	JABBER_BUDDY_STATE_ERROR = -1,
+	JABBER_BUDDY_STATE_UNAVAILABLE = 0,
+	JABBER_BUDDY_STATE_ONLINE,
+	JABBER_BUDDY_STATE_CHAT,
+	JABBER_BUDDY_STATE_AWAY,
+	JABBER_BUDDY_STATE_XA,
+	JABBER_BUDDY_STATE_DND
+} JabberBuddyState;
+
 #include "jabber.h"
 
 JabberID* jabber_id_new(const char *str);
@@ -62,6 +73,17 @@ gboolean jabber_resourceprep_validate(const char *);
  *          not be normalized)
  */
 char *jabber_saslprep(const char *);
+
+/* state -> readable name */
+const char *jabber_buddy_state_get_name(JabberBuddyState state);
+/* state -> core id */
+const char *jabber_buddy_state_get_status_id(JabberBuddyState state);
+/* state -> show attr (for presence stanza) */
+const char *jabber_buddy_state_get_show(JabberBuddyState state);
+/* core id -> state */
+JabberBuddyState jabber_buddy_status_id_get_state(const char *id);
+/* show attr (presence stanza) -> state */
+JabberBuddyState jabber_buddy_show_get_state(const char *id);
 
 char *jabber_calculate_data_sha1sum(gconstpointer data, size_t len);
 #endif /* PURPLE_JABBER_JUTIL_H_ */

@@ -57,6 +57,7 @@ typedef struct _PurpleXferPrivData {
 		PURPLE_XFER_READY_UI   = 0x1,
 		PURPLE_XFER_READY_PRPL = 0x2,
 	} ready;
+	GByteArray *buffer;
 } PurpleXferPrivData;
 
 static int purple_xfer_choose_file(PurpleXfer *xfer);
@@ -65,6 +66,9 @@ static void
 purple_xfer_priv_data_destroy(gpointer data)
 {
 	PurpleXferPrivData *priv = data;
+
+	if (priv->buffer)
+		g_byte_array_free(priv->buffer, TRUE);
 
 	g_free(priv);
 }
@@ -117,13 +121,20 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 	xfer->type    = type;
 	xfer->account = account;
 	xfer->who     = g_strdup(who);
-	xfer->ui_ops  = purple_xfers_get_ui_ops();
+	xfer->ui_ops  = ui_ops = purple_xfers_get_ui_ops();
 	xfer->message = NULL;
 	xfer->current_buffer_size = FT_INITIAL_BUFFER_SIZE;
 	xfer->fd = -1;
 
 	priv = g_new0(PurpleXferPrivData, 1);
 	priv->ready = PURPLE_XFER_READY_NONE;
+
+	if (ui_ops && ui_ops->data_not_sent) {
+		/* If the ui will handle unsent data no need for buffer */
+		priv->buffer = NULL;
+	} else {
+		priv->buffer = g_byte_array_sized_new(FT_INITIAL_BUFFER_SIZE);
+	}
 
 	g_hash_table_insert(xfers_data, xfer, priv);
 
@@ -568,7 +579,7 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 	type = purple_xfer_get_type(xfer);
 	account = purple_xfer_get_account(xfer);
 
-	purple_debug_misc("xfer", "request accepted for %p\n", xfer); 
+	purple_debug_misc("xfer", "request accepted for %p\n", xfer);
 
 	if (!filename && type == PURPLE_XFER_RECEIVE) {
 		xfer->status = PURPLE_XFER_STATUS_ACCEPTED;
@@ -1074,8 +1085,10 @@ do_transfer(PurpleXfer *xfer)
 			return;
 		}
 	} else if (xfer->type == PURPLE_XFER_SEND) {
-		size_t result;
+		size_t result = 0;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
+		PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+		gboolean read = TRUE;
 
 		/* this is so the prpl can keep the connection open
 		   if it needs to for some odd reason. */
@@ -1087,65 +1100,85 @@ do_transfer(PurpleXfer *xfer)
 			return;
 		}
 
-		if (ui_ops && ui_ops->ui_read) {
-			gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
-			if (tmp == 0) {
-				PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
-
-				/*
-				 * The UI claimed it was ready, but didn't have any data for
-				 * us...  It will call purple_xfer_ui_ready when ready, which
-				 * sets back up this watcher.
-				 */
-				if (xfer->watcher != 0) {
-					purple_input_remove(xfer->watcher);
-					xfer->watcher = 0;
-				}
-
-				/* Need to indicate the prpl is still ready... */
-				priv->ready |= PURPLE_XFER_READY_PRPL;
-
-				g_return_if_reached();
-			} else if (tmp < 0) {
-				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-				purple_xfer_cancel_local(xfer);
-				return;
-			}
-
-			result = tmp;
-		} else {
-			buffer = g_malloc0(s);
-			result = fread(buffer, 1, s, xfer->dest_fp);
-			if (result != s) {
-				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-				purple_xfer_cancel_local(xfer);
-				g_free(buffer);
-				return;
+		if (priv->buffer) {
+			if (priv->buffer->len < s) {
+				s -= priv->buffer->len;
+				read = TRUE;
+			} else {
+				read = FALSE;
 			}
 		}
 
-		/* Write as much as we're allowed to. */
+		if (read) {
+			if (ui_ops && ui_ops->ui_read) {
+				gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
+				if (tmp == 0) {
+					/*
+					 * The UI claimed it was ready, but didn't have any data for
+					 * us...  It will call purple_xfer_ui_ready when ready, which
+					 * sets back up this watcher.
+					 */
+					if (xfer->watcher != 0) {
+						purple_input_remove(xfer->watcher);
+						xfer->watcher = 0;
+					}
+
+					/* Need to indicate the prpl is still ready... */
+					priv->ready |= PURPLE_XFER_READY_PRPL;
+
+					g_return_if_reached();
+				} else if (tmp < 0) {
+					purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+					purple_xfer_cancel_local(xfer);
+					return;
+				}
+
+				result = tmp;
+			} else {
+				buffer = g_malloc(s);
+				result = fread(buffer, 1, s, xfer->dest_fp);
+				if (result != s) {
+					purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+					purple_xfer_cancel_local(xfer);
+					g_free(buffer);
+					return;
+				}
+			}
+		}
+
+		if (priv->buffer) {
+			priv->buffer = g_byte_array_append(priv->buffer, buffer, result);
+			g_free(buffer);
+			buffer = priv->buffer->data;
+			result = priv->buffer->len;
+		}
+
 		r = purple_xfer_write(xfer, buffer, result);
 
 		if (r == -1) {
 			purple_xfer_cancel_remote(xfer);
 			g_free(buffer);
 			return;
-		} else if (r < result) {
-			if (ui_ops == NULL || (ui_ops->ui_read == NULL && ui_ops->ui_write == NULL)) {
-				/* We have to seek back in the file now. */
-				fseek(xfer->dest_fp, r - s, SEEK_CUR);
-			}
-			else {
-				ui_ops->data_not_sent(xfer, buffer + r, result - r);
-			}
-		} else {
+		} else if (r == result) {
 			/*
 			 * We managed to write the entire buffer.  This means our
 			 * network is fast and our buffer is too small, so make it
 			 * bigger.
 			 */
 			purple_xfer_increase_buffer_size(xfer);
+		} else {
+			if (ui_ops && ui_ops->data_not_sent)
+				ui_ops->data_not_sent(xfer, buffer + r, result - r);
+		}
+
+		if (priv->buffer) {
+			/*
+			 * Remove what we wrote
+			 * If we wrote the whole buffer the byte array will be empty
+			 * Otherwise we'll kee what wasn't sent for next time.
+			 */
+			buffer = NULL;
+			priv->buffer = g_byte_array_remove_range(priv->buffer, 0, r);
 		}
 	}
 

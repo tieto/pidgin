@@ -9,7 +9,6 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"«·„À»¯ˆ  Ì⁄„· »«·›⁄·."
 !define PIDGIN_IS_RUNNING			"»ˆœ˙Ãˆ‰ Ì⁄„· Õ«·Ì«.  „‰ ›÷·ﬂ √€·ﬁ »ˆœ˙Ã‰ À„ √⁄œ «·„Õ«Ê·…."
-!define GTK_INSTALLER_NEEDED			"»Ì∆… Ã ﬂ+ (GTK+) „›ﬁÊœ… √Ê  Õ «Ã ·· ÕœÌÀ.$\r„‰ ›÷·ﬂ À»¯ˆ  v${GTK_MIN_VERSION} √Ê √ÕœÀ „‰ »Ì∆… Ã ﬂ+"
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"«· «·Ì >"
@@ -29,8 +28,6 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"√‰‘∆ „ıœŒ·… ·»œÃ‰ ›Ì ﬁ«∆„… «»œ√"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"ÊıÃˆœ  ‰”Œ… ﬁœÌ„… „‰ »Ì∆… Ã ﬂ+. √ —Ìœ «· ÕœÌÀø$\r·«ÕŸ: ﬁœ ·« Ì⁄„· $(^Name) „«·„  ›⁄· Â–«."
-!define GTK_WINDOWS_INCOMPATIBLE		"·« Ì Ê«›ﬁ ÊÌ‰œÊ“ 95/98/Me „⁄ Ã ﬂ+ 2.8.0 √Ê √ÕœÀ.  Ã ﬂ+ ${GTK_INSTALL_VERSION} ·‰  ıÀ»¯ .$\r≈–« ·„ Ìﬂ‰ ·œÌﬂ Ã ﬂ+ ${GTK_MIN_VERSION} √Ê √ÕœÀ „À» … »«·›⁄·° ”ÌıÕ»ÿ «· À»Ì ."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"ﬁ„ »“Ì«—… ’›Õ… »œÃ‰ ⁄·Ï «·Êˆ»"
@@ -39,8 +36,6 @@
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	" ⁄–¯— ≈“«·… ‰”Œ… »œÃ‰ «·„À»¯ …. À ıÀ»¯  «·‰”Œ… «·ÕœÌÀ… »œÊ‰ ≈“«·… «·‰”Œ… «·„À»¯ … „”»ﬁ«."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Œÿ√ √À‰«¡  À»Ì  »Ì∆… Ã ﬂ+."
-!define GTK_BAD_INSTALL_PATH			"·« Ì„ﬂ‰ «·Ê’Ê· √Ê ≈‰‘«¡ «·„”«— «·–Ì Õœœ Â."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"„ ⁄«„·«  «·„”«—« "
@@ -52,29 +47,5 @@
 ; Spellcheck Section Prompts
 !define PIDGIN_SPELLCHECK_SECTION_TITLE	"œ⁄„ «· œﬁÌﬁ «·≈„·«∆Ì"
 !define PIDGIN_SPELLCHECK_ERROR		"Œÿ√ √À‰«¡  À»Ì  «· œﬁÌﬁ «·≈„·«∆Ì"
-!define PIDGIN_SPELLCHECK_DICT_ERROR		"Œÿ√ √À‰«¡  À»Ì  ﬁ«„Ê” «· œﬁÌﬁ «·≈„·«∆Ì"
 !define PIDGIN_SPELLCHECK_SECTION_DESCRIPTION	"œ⁄„ «· œﬁÌﬁ «·≈„·«∆Ì.  („ÿ·Ê» « ’«· »«·≈‰ —‰  ·· À»Ì )"
-!define ASPELL_INSTALL_FAILED			"›‘· «· À»Ì "
-!define PIDGIN_SPELLCHECK_BRETON		"Breton"
-!define PIDGIN_SPELLCHECK_CATALAN		"Catalan"
-!define PIDGIN_SPELLCHECK_CZECH		"Czech"
-!define PIDGIN_SPELLCHECK_WELSH		"Welsh"
-!define PIDGIN_SPELLCHECK_DANISH		"Danish"
-!define PIDGIN_SPELLCHECK_GERMAN		"German"
-!define PIDGIN_SPELLCHECK_GREEK		"Greek"
-!define PIDGIN_SPELLCHECK_ENGLISH		"English"
-!define PIDGIN_SPELLCHECK_ESPERANTO		"Esperanto"
-!define PIDGIN_SPELLCHECK_SPANISH		"Spanish"
-!define PIDGIN_SPELLCHECK_FAROESE		"Faroese"
-!define PIDGIN_SPELLCHECK_FRENCH		"French"
-!define PIDGIN_SPELLCHECK_ITALIAN		"Italian"
-!define PIDGIN_SPELLCHECK_DUTCH		"Dutch"
-!define PIDGIN_SPELLCHECK_NORWEGIAN		"Norwegian"
-!define PIDGIN_SPELLCHECK_POLISH		"Polish"
-!define PIDGIN_SPELLCHECK_PORTUGUESE		"Portuguese"
-!define PIDGIN_SPELLCHECK_ROMANIAN		"Romanian"
-!define PIDGIN_SPELLCHECK_RUSSIAN		"Russian"
-!define PIDGIN_SPELLCHECK_SLOVAK		"Slovak"
-!define PIDGIN_SPELLCHECK_SWEDISH		"Swedish"
-!define PIDGIN_SPELLCHECK_UKRAINIAN		"Ukrainian"
 

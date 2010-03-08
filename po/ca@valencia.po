@@ -3,7 +3,7 @@
 # Copyright (C) unknown, Robert Millan <zeratul2@wanadoo.es>
 # Copyright (C) December 2003 (from 2003-12-12 until 2003-12-18),
 #               January (2004-01-07,12), Xan <dxpublica@telefonica.net>
-# Copyright (c) 2004, 2005, 2006, 2007, 2008, 2009
+# Copyright (c) 2004, 2005, 2006, 2007, 2008, 2009, 2010
 #               Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-28 18:48+0100\n"
-"PO-Revision-Date: 2009-11-28 21:57+0100\n"
+"POT-Creation-Date: 2010-02-16 09:18+0100\n"
+"PO-Revision-Date: 2010-02-16 23:08+0100\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -66,7 +66,7 @@ msgstr ""
 "Forma d'ús: %s [OPCIÓ]...\n"
 "\n"
 "  -c, --config=DIR    utilitza DIR per als fitxers de configuració\n"
-"  -d, --debug         mostra missatges de depuració a la eixida d'error\n"
+"  -d, --debug         mostra missatges de depuració a l'eixida d'error\n"
 "                      estàndard \n"
 "  -h, --help          mostra esta ajuda i ix\n"
 "  -n, --nologin       no entra automàticament\n"
@@ -1987,6 +1987,9 @@ msgstr "No es pot enviar un directori."
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s no és un fitxer normal, no se sobreescriurà.\n"
 
+msgid "File is not readable."
+msgstr "No ha estat possible llegir el fitxer."
+
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s vos vol enviar %s (%s)"
@@ -2337,7 +2340,7 @@ msgid "Set Autoaccept Setting"
 msgstr "Estableix el paràmetre d'acceptació automàtica"
 
 msgid "_Save"
-msgstr "De_sa"
+msgstr "Al_ça"
 
 msgid "_Cancel"
 msgstr "_Cancel·la"
@@ -2680,11 +2683,11 @@ msgid ""
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
 msgstr ""
-"Quan es visualitzin els registres, este connector inclourà registres "
+"Quan es visualitzen els registres, este connector inclourà registres "
 "d'altres clients de MI. De moment, es poden incloure els d'Adium, MSN "
 "Messenger, aMSN, i Trillian.\n"
 "\n"
-"Avís: este connector encara està en desenvolupament i pot ser que es pengi."
+"Avís: este connector encara està en desenvolupament i pot ser que es penge."
 
 msgid "Mono Plugin Loader"
 msgstr "Carregador de connectors Mono"
@@ -3845,6 +3848,13 @@ msgstr ""
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "El servidor requereix autenticació de text sobre un flux no xifrat"
 
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "La resposta del servidor no és vàlida"
+
+msgid "Server does not use any supported authentication method"
+msgstr "No hi ha cap mètode d'autenticació compatible amb este servidor"
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3856,24 +3866,34 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Autenticació de text"
 
-msgid "SASL authentication failed"
-msgstr "Ha fallat l'autenticació SASL"
-
-msgid "Invalid response from server"
-msgstr "La resposta del servidor no és vàlida"
-
-msgid "Server does not use any supported authentication method"
-msgstr "No hi ha cap mètode d'autenticació compatible amb este servidor"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr "Requeriu xifratge, però no està disponible en este servidor."
 
 msgid "Invalid challenge from server"
 msgstr "Repte del servidor invàlid"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr "El servidor creu que s'ha completat l'autenticació, però el client no"
+
+msgid "SASL authentication failed"
+msgstr "Ha fallat l'autenticació SASL"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "Error SASL: %s"
+
+# FIXME: canonicalize -> normalitzar (josep)
+msgid "Unable to canonicalize username"
+msgstr "No s'ha pogut normalitzar el nom d'usuari"
+
+msgid "Unable to canonicalize password"
+msgstr "No s'ha pogut normalitzar la contrasenya"
+
+msgid "Malicious challenge from server"
+msgstr "Desafiament malició del servidor"
+
+msgid "Unexpected response from server"
+msgstr "S'ha rebut una resposta inesperada del servidor"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "El gestor de connexions BOSH ha tancat la connexió."
@@ -3975,12 +3995,16 @@ msgstr "Prioritat"
 msgid "Resource"
 msgstr "Recurs"
 
-#, c-format
-msgid "%s ago"
-msgstr "fa %s"
+# FIXME
+msgid "Uptime"
+msgstr "Temps connectat"
 
 msgid "Logged Off"
 msgstr "Desconnectat"
+
+#, c-format
+msgid "%s ago"
+msgstr "fa %s"
 
 # Segons la viquipèdia
 msgid "Middle Name"
@@ -4171,13 +4195,6 @@ msgstr "Rols:"
 
 msgid "Ping timed out"
 msgstr "S'ha esgitat el temps d'espera (ping)"
-
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-"No s'ha pogut trobar cap mètode alternatiu de connexió XMPP després de no "
-"haver pogut connectar directament."
 
 msgid "Invalid XMPP ID"
 msgstr "ID de l'XMPP invàlid"
@@ -4734,6 +4751,11 @@ msgstr "Missatge d'error de l'XMPP"
 msgid "(Code %s)"
 msgstr "(Codi %s)"
 
+msgid "A custom smiley in the message is too large to send."
+msgstr ""
+"No es pot enviar una de les emoticones personalitzades del missatge atès que "
+"és massa llarga."
+
 msgid "XML Parse error"
 msgstr "Error en l'anàlisi de l'XML"
 
@@ -4776,13 +4798,13 @@ msgid "Kicked (%s)"
 msgstr "Vos han fet fora (%s)"
 
 msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr ""
+msgstr "S'ha produit un error en el fluxe de transferència de dades en banda\n"
 
 msgid "Transfer was closed."
 msgstr "La transferència s'ha tancat."
 
 msgid "Failed to open in-band bytestream"
-msgstr ""
+msgstr "No s'ha pogut obrir el fluxe de transferència de dades en banda"
 
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
@@ -5133,21 +5155,25 @@ msgstr ""
 "no està implementat."
 
 msgid "Nudge"
-msgstr "Donar un colp de colze"
+msgstr "Donar un cop de colze"
 
 #, c-format
 msgid "%s has nudged you!"
-msgstr "%s vos ha donat un colp de colze!"
+msgstr "%s vos ha donat un cop de colze!"
 
 #, c-format
 msgid "Nudging %s..."
-msgstr "S'està donant un colp de colze a %s..."
+msgstr "S'està donant un cop de colze a %s..."
 
 msgid "Email Address..."
 msgstr "Correu electrònic..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "El vostre nom amistós nou d'MSN és massa llarg."
+
+#, c-format
+msgid "Set friendly name for %s."
+msgstr "Establiu el nom amistós de %s."
 
 msgid "Set your friendly name."
 msgstr "Establiu el vostre nom amistós."
@@ -5483,7 +5509,7 @@ msgid "Show custom smileys"
 msgstr "Mostra emoticones personalitzades"
 
 msgid "nudge: nudge a user to get their attention"
-msgstr "nudge: doneu un colp de colze a un usuari perquè vos pare atenció"
+msgstr "nudge: doneu un cop de colze a un usuari perquè vos pare atenció"
 
 msgid "Windows Live ID authentication:Unable to connect"
 msgstr "Autenticació amb el Windows Live ID: no s'ha pogut connectar"
@@ -5493,7 +5519,7 @@ msgstr "Autenticació amb el Windows Live ID: la resposta no és vàlida"
 
 #, c-format
 msgid "%s just sent you a Nudge!"
-msgstr "%s vos ha donat un colp de colze!"
+msgstr "%s vos ha donat un cop de colze!"
 
 msgid "The following users are missing from your addressbook"
 msgstr "Manquen estos usuaris a la vostra llista d'amics"
@@ -6346,7 +6372,7 @@ msgid "This username is available. Would you like to set it?"
 msgstr "Este nom d'usuari està disponible. Voleu fer-lo servir?"
 
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr "Una vegada l'hagueu establit no el podreu canviar!"
+msgstr "Un cop l'hagueu establit no el podreu canviar!"
 
 msgid "MySpaceIM - Please Set a Username"
 msgstr "MySpaceIM - Establiu un nom d'usuari"
@@ -6771,7 +6797,10 @@ msgstr "Adreça del servidor"
 msgid "Server port"
 msgstr "Port en el servidor"
 
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "S'ha rebut una resposta inesperada de %s: %s"
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "S'ha rebut una resposta inesperada de %s"
@@ -6789,6 +6818,13 @@ msgstr ""
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "S'ha produït un error en sol·licitar %s: %s"
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"El servidor requereix que ompliu el CAPTCHA per poder entrar, però este "
+"client encara no permet l'ús de CAPTCHA."
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL no permet que vos autentiqueu amb este nom d'usuari ací"
@@ -7351,13 +7387,6 @@ msgid ""
 msgstr ""
 "[No s'ha pogut mostrar el missatge d'este usuari perquè contenia caràcters "
 "invàlids.]"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"No s'ha pogut realitzar la darrera acció que havíeu intentat perquè esteu "
-"per sobre del límit. Espereu 10 segons i torneu-ho a provar.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -9495,10 +9524,10 @@ msgid "Online Services"
 msgstr "Serveis en línia"
 
 msgid "Let others see what services you are using"
-msgstr "Permet que els altres vegin quins serveis feu servir"
+msgstr "Permet que els altres vegen quins serveis feu servir"
 
 msgid "Let others see what computer you are using"
-msgstr "Permet que els altres vegin quin ordinador feu servir"
+msgstr "Permet que els altres vegen quin ordinador feu servir"
 
 msgid "Your VCard File"
 msgstr "El fitxer de la vostra VCard"
@@ -9514,7 +9543,7 @@ msgid ""
 "information. Please fill the information you would like other users to see "
 "about yourself."
 msgstr ""
-"Podeu permetre que altres usuaris vegin informació sobre el vostre estat en "
+"Podeu permetre que altres usuaris vegen informació sobre el vostre estat en "
 "línia, així com informació personal. Empleneu la informació que vulgueu que "
 "altres usuaris puguen veure."
 
@@ -10877,7 +10906,7 @@ msgid "_Basic"
 msgstr "_Bàsic"
 
 msgid "Create _this new account on the server"
-msgstr "Crea _aquest compte nou al servidor"
+msgstr "Crea _este compte nou al servidor"
 
 msgid "P_roxy"
 msgstr "Servidor _intermediari"
@@ -12040,14 +12069,14 @@ msgstr "Kurd"
 msgid "Lao"
 msgstr "Lasià"
 
-msgid "Lithuanian"
-msgstr "Lituà"
-
 msgid "Macedonian"
 msgstr "Macedoni"
 
 msgid "Mongolian"
 msgstr "Mongol"
+
+msgid "Marathi"
+msgstr "Marathi"
 
 msgid "Malay"
 msgstr "Malai"
@@ -12066,6 +12095,9 @@ msgstr "Noruec (Nynorsk)"
 
 msgid "Occitan"
 msgstr "Occità"
+
+msgid "Oriya"
+msgstr "Oriya"
 
 msgid "Punjabi"
 msgstr "Punjabi"
@@ -12147,6 +12179,9 @@ msgstr "Xinés tradicional"
 
 msgid "Amharic"
 msgstr "Amhàric"
+
+msgid "Lithuanian"
+msgstr "Lituà"
 
 #, c-format
 msgid "About %s"
@@ -12780,7 +12815,7 @@ msgid "use DIR for config files"
 msgstr "empra DIR per a fitxers de configuració"
 
 msgid "print debugging messages to stdout"
-msgstr "escriu missatges de depuració a la eixida estàndard"
+msgstr "escriu missatges de depuració a l'eixida estàndard"
 
 msgid "force online, regardless of network status"
 msgstr "força estar en línia, independentment de l'estat de la xarxa"
@@ -13815,6 +13850,10 @@ msgstr "_Reprodueix un so"
 
 msgid "_Save File"
 msgstr "Al_ça el fitxer"
+
+# Nota: com que és una pissarra, fem servir esborrar.
+msgid "Do you really want to clear?"
+msgstr "Esteu segur que voleu esborrar-ho?"
 
 msgid "Select color"
 msgstr "Seleccioneu un color"
@@ -15035,6 +15074,20 @@ msgstr "Envia i rep blocs XMPP en brut."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Este connector és útil per a depurar servidors i clients XMPP."
+
+#~ msgid ""
+#~ "Unable to find alternative XMPP connection methods after failing to "
+#~ "connect directly."
+#~ msgstr ""
+#~ "No s'ha pogut trobar cap mètode alternatiu de connexió XMPP després de no "
+#~ "haver pogut connectar directament."
+
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "No s'ha pogut realitzar la darrera acció que havíeu intentat perquè esteu "
+#~ "per sobre del límit. Espereu 10 segons i torneu-ho a provar.\n"
 
 #~ msgid "(Default)"
 #~ msgstr "(Predeterminat)"

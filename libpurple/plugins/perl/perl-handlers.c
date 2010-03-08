@@ -298,7 +298,11 @@ perl_signal_cb(va_list args, void *data)
 
 	for (i = 0; i < value_count; i++) {
 		sv_args[i] = purple_perl_sv_from_vargs(values[i],
-		                                       args,
+#ifdef VA_COPY_AS_ARRAY
+		                                       (va_list*)args,
+#else
+		                                       (va_list*)&args,
+#endif
 		                                       &copy_args[i]);
 
 		XPUSHs(sv_args[i]);
