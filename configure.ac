@@ -1476,12 +1476,15 @@ if test "_$pythonpath" != _ ; then
 	PY_MAJOR=`$pythonpath -c 'import sys ; print sys.version[0:2]'`
 	changequote([, ])dnl
 	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h -a "$PY_MAJOR" = "2."; then
+		AC_MSG_RESULT()
 		AC_CHECK_LIB(pthread, pthread_create, )
 		AC_CHECK_LIB(util, openpty, )
 		AC_CHECK_LIB(db, dbopen, )
 		PY_LIBS="-L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config -lpython$PY_VERSION"
 		PY_CFLAGS="-I$PY_PREFIX/include/python$PY_VERSION"
 		AC_DEFINE(USE_PYTHON, [1], [Define if python headers are available.])
+		dnl Because the above AC_CHECK_LIB get in the way...
+		AC_MSG_CHECKING(for Python compile flags)
 		AC_MSG_RESULT(ok)
 	else
 		AC_MSG_RESULT([Can't find Python.h])
