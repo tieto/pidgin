@@ -2142,6 +2142,7 @@ if test "$enable_tcl" = yes; then
 		if test -f $dir/tclConfig.sh; then
 			TCLCONFIG=$dir/tclConfig.sh
 			AC_MSG_RESULT([yes ($TCLCONFIG)])
+			break
 		fi
 	done
 	if test "$TCLCONFIG" = "no"; then
@@ -2212,6 +2213,7 @@ if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
 		if test -f $dir/tkConfig.sh; then
 			TKCONFIG=$dir/tkConfig.sh
 			AC_MSG_RESULT([yes ($TKCONFIG)])
+			break
 		fi
 	done
 	if test "$TKCONFIG" = "no"; then
