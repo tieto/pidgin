@@ -3315,7 +3315,7 @@ gboolean jabber_can_receive_file(PurpleConnection *gc, const char *who)
 	}
 }
 
-static void
+static PurpleCmdRet
 jabber_cmd_mood(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
@@ -3335,7 +3335,10 @@ jabber_cmd_mood(PurpleConversation *conv,
 		purple_conversation_write(conv, NULL,
 		    _("Account does not support PEP, can't set mood"),
 		    PURPLE_MESSAGE_ERROR, time(NULL));
+		return PURPLE_CMD_RET_FAILED;
 	}
+
+	return PURPLE_CMD_STATUS_OK;
 }
 
 void jabber_register_commands(void)
