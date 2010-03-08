@@ -32,6 +32,11 @@ version 2.7.0 (??/??/????):
 	* X-Status (Custom ICQ status icon) support (Andrew Ivanov, Tomáš Kebert,
 	  Yuriy Yevgrafov, and trac users bob007, salieff, and nops)
 
+	XMPP:
+	* Direct messages to a specific resource only upon receipt of a message
+	  with content (as opposed to a typing notification, etc).  (Thanks to
+	  rjoly for testing)
+
 version 2.6.6 (02/18/2010):
 	libpurple:
 	* Fix 'make check' on OS X. (David Fang)
