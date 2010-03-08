@@ -152,7 +152,7 @@ dnl AM_GLIB_GNU_GETTEXT found it.
 
 if test x$MSGFMT = xno -o x$MSGFMT$GMSGFMT$INTLTOOL_MSGFMT = x
 then
-	AC_ERROR([
+	AC_MSG_ERROR([
 
 The msgfmt command is required to build libpurple.  If it is installed
 on your system, ensure that it is in your path.  If it is not, install
@@ -198,11 +198,11 @@ AC_CHECK_FUNCS(getopt_long,,
 
 dnl Check for inet_aton
 AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, ,
-				         [AC_ERROR(inet_aton not found)])])
+				         [AC_MSG_ERROR([inet_aton not found])])])
 AC_CHECK_LIB(resolv, __res_query)
 AC_CHECK_LIB(nsl, gethostent)
 AC_CHECK_FUNC(socket, ,
-	[AC_CHECK_LIB(socket, socket, , [AC_ERROR([socket not found])])])
+	[AC_CHECK_LIB(socket, socket, , [AC_MSG_ERROR([socket not found])])])
 dnl If all goes well, by this point the previous two checks will have
 dnl pulled in -lsocket and -lnsl if we need them.
 AC_CHECK_FUNC(getaddrinfo,
@@ -2286,7 +2286,7 @@ if test "x$enable_cyrus_sasl" = "xyes" ; then
 			SASL_LIBS=-"lsasl2"
 		], [
 			AM_CONDITIONAL(USE_CYRUS_SASL, false)
-			AC_ERROR(Cyrus SASL library not found)
+			AC_MSG_ERROR([Cyrus SASL library not found])
 		])
 else
 	AM_CONDITIONAL(USE_CYRUS_SASL, false)
@@ -2319,7 +2319,7 @@ if test "$kerberos" != "no" ; then
 			[KRB4_LIBS="-lkrb4 -ldes425 -lkrb5 -lk5crypto -lcom_err"],
 			[AC_CHECK_LIB(krb, krb_rd_req,
 				[KRB4_LIBS="-lkrb -ldes"],
-				[AC_ERROR(Kerberos 4 libraries not found)],
+				[AC_MSG_ERROR([Kerberos 4 libraries not found])],
 				-ldes)],
 			-ldes425 -lkrb5 -lk5crypto -lcom_err)
 	orig_LIBS="$LIBS"
@@ -2353,7 +2353,7 @@ if test "$zephyr" != "no" ; then
 	LDFLAGS="$LDFLAGS $ZEPHYR_LDFLAGS"
 	AC_CHECK_LIB(zephyr, ZInitialize,
 		[ZEPHYR_LIBS="-lzephyr"],
-		[AC_ERROR(Zephyr libraries not found)],
+		[AC_MSG_ERROR([Zephyr libraries not found])],
 		-lzephyr)
 	orig_LIBS="$LIBS"
 	LIBS="$orig_LIBS"
