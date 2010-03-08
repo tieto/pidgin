@@ -72,8 +72,8 @@ spaces and run configure again.
 ])
 fi
 
-AC_CANONICAL_SYSTEM
-AM_CONFIG_HEADER(config.h)
+AC_CANONICAL_HOST
+AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([1.9 -Wno-portability dist-bzip2])
 
 PURPLE_MAJOR_VERSION=purple_major_version
@@ -168,9 +168,6 @@ MSGFMT=/path/to/msgfmt ./configure ...
 ])
 fi
 
-dnl we don't use autobreak on cygwin!!
-dnl AC_CYGWIN
-
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
@@ -214,19 +211,18 @@ AC_CHECK_FUNCS(inet_ntop)
 AC_CHECK_FUNCS(getifaddrs)
 dnl Check for socklen_t (in Unix98)
 AC_MSG_CHECKING(for socklen_t)
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 	#include <sys/types.h>
 	#include <sys/socket.h>
 	socklen_t x;
-], [],
-[
+]], [[]])], [
 	AC_MSG_RESULT(yes)
 ], [
-	AC_TRY_COMPILE([
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 		#include <sys/types.h>
 		#include <sys/socket.h>
 		int accept(int, struct sockaddr *, size_t *);
-	], [], [
+	]], [[]])], [
 		AC_MSG_RESULT(size_t)
 		AC_DEFINE(socklen_t, size_t, [socklen_t size])
 	], [
@@ -249,7 +245,7 @@ dnl FreeBSD doesn't have libdl, dlopen is provided by libc
 AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
 AC_MSG_CHECKING(for fileno())
-AC_TRY_RUN([
+AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 
 int main(int argc, char *argv[])
@@ -260,7 +256,7 @@ int main(int argc, char *argv[])
 
 	return !(fd > 0);
 }
-], [
+]])], [
 	AC_MSG_RESULT(yes)
 	AC_DEFINE([HAVE_FILENO], [1],
 	          [Define to 1 if your stdio has int fileno(FILE *).])
@@ -273,7 +269,7 @@ int main(int argc, char *argv[])
 ])
 
 AC_MSG_CHECKING(for the %z format string in strftime())
-AC_TRY_RUN([
+AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
@@ -297,7 +293,7 @@ int main()
 	         (buf[4] >= '0' && buf[4] <= '9')
 	        );
 }
-], [
+]])], [
 	AC_MSG_RESULT(yes)
 	AC_DEFINE([HAVE_STRFTIME_Z_FORMAT], [1],
 		[Define to 1 if you have a strftime() that supports the %z format string.])
@@ -307,8 +303,7 @@ int main()
 	# Fallback for Cross Compiling...
 	# This will enable the compatibility code.
 	AC_MSG_RESULT(no)
-]
-)
+])
 
 dnl #######################################################################
 dnl # Check for GLib 2.12 (required)
@@ -458,10 +453,10 @@ Use --without-x if you do not need X11 support.
 			if test "x$XSS_LIBS" != "x"; then
 				oldCPPFLAGS="$CPPFLAGS"
 				CPPFLAGS="$CPPFLAGS $x_incpath_add"
-				AC_TRY_COMPILE([
+				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 					#include <X11/Xlib.h>
 					#include <X11/extensions/scrnsaver.h>
-					], [], [], [enable_screensaver=no])
+					]], [[]])], [], [enable_screensaver=no])
 				CPPFLAGS="$oldCPPFLAGS"
 			else
 				enable_screensaver=no
@@ -648,14 +643,14 @@ if test "x$enable_consoleui" = "xyes"; then
 			f="$location/ncurses.h"
 			AC_CHECK_HEADER($f,[
 				AC_MSG_CHECKING([if $f supports wide characters])
-				AC_TRY_COMPILE([
+				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 					#define _XOPEN_SOURCE_EXTENDED
 					#include <$f>
-				], [
+				]], [[
 					#ifndef get_wch
 					# error get_wch not found!
 					#endif
-				], [
+				]])], [
 					dir=$location
 					if test x"$dir" != x"." ; then
 						GNT_CFLAGS="-I$dir/"
@@ -997,10 +992,10 @@ elif test "x$silc10client" = "xyes"; then
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
 		AC_MSG_CHECKING(for silcmime.h)
-		AC_TRY_COMPILE([
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <silcincludes.h>
 #include <silcmime.h>
-		], [], [
+		]], [[]])], [
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_SILCMIME_H, 1, [Define if we have silcmime.h])
 		], [
@@ -1049,11 +1044,11 @@ if test "x$gadu_libs" = "xyes"; then
 	AC_MSG_CHECKING(for libgadu GPL compatibility)
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
-	AC_TRY_COMPILE([#include <libgadu.h>], [
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
 #if defined(__GG_LIBGADU_HAVE_OPENSSL) || defined(GG_CONFIG_HAVE_OPENSSL)
 #error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
 #endif
-	], [
+	]])], [
 		AC_MSG_RESULT(yes)
 		AC_DEFINE([HAVE_LIBGADU], [1],
 			[Define to 1 if you have libgadu.])
@@ -1281,9 +1276,9 @@ if test "x$GCC" = "xyes"; then
 		orig_CFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS $newflag"
 		AC_MSG_CHECKING(for $newflag option to gcc)
-		AC_TRY_COMPILE([], [
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
 			int main() {return 0;}
-		], [
+		]])], [
 			AC_MSG_RESULT(yes)
 			CFLAGS="$orig_CFLAGS"
 			DEBUG_CFLAGS="$DEBUG_CFLAGS $newflag"
@@ -1295,7 +1290,7 @@ if test "x$GCC" = "xyes"; then
 
 	if test "x$enable_fortify" = "xyes"; then
 		AC_MSG_CHECKING(for FORTIFY_SOURCE support)
-		AC_TRY_COMPILE([#include <features.h>], [
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <features.h>]], [[
 			int main() {
 			#if !(__GNUC_PREREQ (4, 1) \
 				|| (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (4, 0)) \
@@ -1307,7 +1302,7 @@ if test "x$GCC" = "xyes"; then
 			#endif
 				return 0;
 			}
-		], [
+		]])], [
 			AC_MSG_RESULT(yes)
 			DEBUG_CFLAGS="$DEBUG_CFLAGS -Wp,-D_FORTIFY_SOURCE=2"
 		], [
@@ -2169,8 +2164,8 @@ Use --disable-tcl if you do not need Tcl scripting support.
 			CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC -I$TCL_PREFIX/include"
 			oldLIBS=$LIBS
 			LIBS="$LIBS $TCL_LIB_SPEC"
-			AC_TRY_LINK([#include <tcl.h>],
-				[Tcl_Interp *interp=NULL; Tcl_Init(interp)],
+			AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <tcl.h>]],
+				[[Tcl_Interp *interp=NULL; Tcl_Init(interp)]])],
 				[AC_MSG_RESULT([yes]);enable_tcl=yes],
 				[AC_MSG_RESULT([no]);enable_tcl=no])
 			CPPFLAGS="$oldCPPFLAGS"
@@ -2233,8 +2228,8 @@ Use --disable-tk if you do not need Tk scripting support.
 		CPPFLAGS="$CPPFLAGS $TCL_CFLAGS"
 		oldLIBS=$LIBS
 		LIBS="$LIBS $TCL_LIB_SPEC $TK_LIB_SPEC"
-		AC_TRY_LINK([#include <tk.h>],
-				[Tcl_Interp *interp=NULL; Tcl_Init(interp); Tk_Init(interp);],
+		AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <tk.h>]],
+				[[Tcl_Interp *interp=NULL; Tcl_Init(interp); Tk_Init(interp);]])],
 				[AC_MSG_RESULT([yes]);enable_tk=yes],
 				[AC_MSG_RESULT([no]);enable_tk=no])
 		CPPFLAGS="$oldCPPFLAGS"
@@ -2384,18 +2379,18 @@ AC_CHECK_HEADERS(sys/socket.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
 AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
-        AC_TRY_COMPILE([
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
                 #include <time.h>
-        ], [
+        ]], [[
                 struct tm tm;
                 tm.tm_gmtoff = 1;
-        ], ac_cv_struct_tm_gmtoff=yes, ac_cv_struct_tm_gmtoff=no))
+        ]])], [ac_cv_struct_tm_gmtoff=yes], [ac_cv_struct_tm_gmtoff=no]))
 if test $ac_cv_struct_tm_gmtoff = yes; then
         AC_DEFINE(HAVE_TM_GMTOFF, 1, [Define if you have a tm_gmtoff member in struct tm])
 fi
 
 AC_CACHE_CHECK([whether va_lists can be copied by value], ac_cv_va_val_copy,[
-	AC_TRY_RUN([#include <stdarg.h>
+	AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdarg.h>
 #include <stdlib.h>
 	void f (int i, ...) {
 	va_list args1, args2;
@@ -2408,7 +2403,7 @@ AC_CACHE_CHECK([whether va_lists can be copied by value], ac_cv_va_val_copy,[
 	int main() {
 	  f (0, 42);
 	  return 0;
-	}],
+	}]])],
 	[ac_cv_va_val_copy=yes],
 	[ac_cv_va_val_copy=no],
 	[ac_cv_va_val_copy=yes])
@@ -2506,7 +2501,7 @@ fi
 
 AM_CONDITIONAL(PURPLE_AVAILABLE, true)
 
-AC_OUTPUT([Makefile
+AC_CONFIG_FILES([Makefile
 		   Doxyfile
 		   doc/Makefile
 		   doc/pidgin.1
@@ -2579,6 +2574,7 @@ AC_OUTPUT([Makefile
 		   po/Makefile.in
 		   pidgin.spec
 		  ])
+AC_OUTPUT
 
 echo
 echo $PACKAGE $VERSION
