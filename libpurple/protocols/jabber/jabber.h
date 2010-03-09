@@ -105,9 +105,9 @@ struct _JabberStream
 	xmlParserCtxt *context;
 	xmlnode *current;
 
-	enum {
-		JABBER_PROTO_0_9,
-		JABBER_PROTO_1_0
+	struct {
+		guint8 major;
+		guint8 minor;
 	} protocol_version;
 
 	JabberSaslMech *auth_mech;

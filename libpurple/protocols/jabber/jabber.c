@@ -870,7 +870,8 @@ jabber_stream_new(PurpleAccount *account)
 	js->old_length = 0;
 	js->keepalive_timeout = 0;
 	/* Set the default protocol version to 1.0. Overridden in parser.c. */
-	js->protocol_version = JABBER_PROTO_1_0;
+	js->protocol_version.major = 1;
+	js->protocol_version.minor = 0;
 	js->sessions = NULL;
 	js->stun_ip = NULL;
 	js->stun_port = 0;
