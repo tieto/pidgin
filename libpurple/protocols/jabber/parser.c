@@ -55,7 +55,6 @@ jabber_parser_element_start_libxml(void *user_data,
 
 				js->protocol_version.major = atoi(attrib);
 				js->protocol_version.minor = dot ? atoi(dot + 1) : 0;
-				g_free(attrib);
 
 				/* TODO: Check this against the spec; I'm not sure if the check
 				 * against minor is accurate.
@@ -64,6 +63,12 @@ jabber_parser_element_start_libxml(void *user_data,
 					purple_connection_error_reason(js->gc,
 							PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
 							_("XMPP Version Mismatch"));
+
+				if (js->protocol_version.major == 0 && js->protocol_version.minor != 9) {
+					purple_debug_warning("jabber", "Treating version %s as 0.9 for backward "
+					                     "compatibility\n", attrib);
+				}
+				g_free(attrib);
 			} else if(!xmlStrcmp(attributes[i], (xmlChar*) "id")) {
 				g_free(js->stream_id);
 				js->stream_id = attrib;
