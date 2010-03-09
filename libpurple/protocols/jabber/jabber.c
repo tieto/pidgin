@@ -3539,6 +3539,36 @@ jabber_do_init(void)
 	const gchar *type = "pc"; /* default client type, if unknown or
 								unspecified */
 	const gchar *ui_name = NULL;
+#ifdef HAVE_CYRUS_SASL
+	/* We really really only want to do this once per process */
+	static gboolean sasl_initialized = FALSE;
+#ifdef _WIN32
+	UINT old_error_mode;
+	gchar *sasldir;
+#endif
+	int ret;
+#endif
+
+	/* XXX - If any other plugin wants SASL this won't be good ... */
+#ifdef HAVE_CYRUS_SASL
+	if (!sasl_initialized) {
+		sasl_initialized = TRUE;
+#ifdef _WIN32
+		sasldir = g_build_filename(wpurple_install_dir(), "sasl2", NULL);
+		sasl_set_path(SASL_PATH_TYPE_PLUGIN, sasldir);
+		g_free(sasldir);
+		/* Suppress error popups for failing to load sasl plugins */
+		old_error_mode = SetErrorMode(SEM_FAILCRITICALERRORS);
+#endif
+		if ((ret = sasl_client_init(NULL)) != SASL_OK) {
+			purple_debug_error("xmpp", "Error (%d) initializing SASL.\n", ret);
+		}
+#ifdef _WIN32
+		/* Restore the original error mode */
+		SetErrorMode(old_error_mode);
+#endif
+	}
+#endif
 
 	jabber_cmds = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, cmds_free_func);
 
