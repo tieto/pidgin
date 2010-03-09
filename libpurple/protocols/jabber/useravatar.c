@@ -239,16 +239,12 @@ do_got_own_avatar_cb(JabberStream *js, const char *from, xmlnode *items)
 
 void jabber_avatar_fetch_mine(JabberStream *js)
 {
-	char *jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-
 	if (js->initial_avatar_hash) {
-		jabber_pep_request_item(js, jid, NS_AVATAR_0_12_METADATA, NULL,
+		jabber_pep_request_item(js, NULL, NS_AVATAR_0_12_METADATA, NULL,
 		                        do_got_own_avatar_0_12_cb);
-		jabber_pep_request_item(js, jid, NS_AVATAR_1_1_METADATA, NULL,
+		jabber_pep_request_item(js, NULL, NS_AVATAR_1_1_METADATA, NULL,
 		                        do_got_own_avatar_cb);
 	}
-
-	g_free(jid);
 }
 
 typedef struct _JabberBuddyAvatarUpdateURLInfo {

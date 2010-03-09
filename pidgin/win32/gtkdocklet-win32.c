@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02111-1301, USA.
  */
-
+#define _WIN32_IE 0x0500
 #include <windows.h>
 #include <gdk/gdkwin32.h>
 #include <gdk/gdk.h>
@@ -51,7 +51,7 @@ static GtkWidget *image = NULL;
 /* This is used to trigger click events on so they appear to GTK+ as if they are triggered by input */
 static GtkWidget *dummy_button = NULL;
 static GtkWidget *dummy_window = NULL;
-static NOTIFYICONDATA _nicon_data;
+static NOTIFYICONDATAW _nicon_data;
 
 static gboolean dummy_button_cb(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
 	pidgin_docklet_clicked(event->button);
@@ -64,7 +64,7 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 	switch(msg) {
 	case WM_CREATE:
 		purple_debug_info("docklet", "WM_CREATE\n");
-		taskbarRestartMsg = RegisterWindowMessage("TaskbarCreated");
+		taskbarRestartMsg = RegisterWindowMessageW(L"TaskbarCreated");
 		break;
 
 	case WM_TIMER:
@@ -114,7 +114,7 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 		if (msg == taskbarRestartMsg) {
 			/* explorer crashed and left us hanging...
 			   This will put the systray icon back in it's place, when it restarts */
-			Shell_NotifyIcon(NIM_ADD, &_nicon_data);
+			Shell_NotifyIconW(NIM_ADD, &_nicon_data);
 		}
 		break;
 	}/* end switch */
@@ -124,10 +124,10 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 
 /* Create hidden window to process systray messages */
 static HWND systray_create_hiddenwin() {
-	WNDCLASSEX wcex;
-	LPCTSTR wname;
+	WNDCLASSEXW wcex;
+	wchar_t *wname;
 
-	wname = TEXT("WinpidginSystrayWinCls");
+	wname = L"WinpidginSystrayWinCls";
 
 	wcex.cbSize = sizeof(wcex);
 	wcex.style		= 0;
@@ -142,22 +142,25 @@ static HWND systray_create_hiddenwin() {
 	wcex.lpszClassName	= wname;
 	wcex.hIconSm		= NULL;
 
-	RegisterClassEx(&wcex);
+	RegisterClassExW(&wcex);
 
 	/* Create the window */
-	return (CreateWindow(wname, "", 0, 0, 0, 0, 0, GetDesktopWindow(), NULL, winpidgin_exe_hinstance(), 0));
+	return (CreateWindowW(wname, L"", 0, 0, 0, 0, 0, GetDesktopWindow(), NULL, winpidgin_exe_hinstance(), 0));
 }
 
 static void systray_init_icon(HWND hWnd) {
+	wchar_t *w;
 	ZeroMemory(&_nicon_data, sizeof(_nicon_data));
-	_nicon_data.cbSize = sizeof(NOTIFYICONDATA);
+	_nicon_data.cbSize = sizeof(NOTIFYICONDATAW);
 	_nicon_data.hWnd = hWnd;
 	_nicon_data.uID = 0;
 	_nicon_data.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	_nicon_data.uCallbackMessage = WM_TRAYMESSAGE;
 	_nicon_data.hIcon = NULL;
-	lstrcpy(_nicon_data.szTip, PIDGIN_NAME);
-	Shell_NotifyIcon(NIM_ADD, &_nicon_data);
+	w = g_utf8_to_utf16(PIDGIN_NAME, -1, NULL, NULL, NULL);
+	wcsncpy(_nicon_data.szTip, w, sizeof(_nicon_data.szTip) / sizeof(wchar_t));
+	g_free(w);
+	Shell_NotifyIconW(NIM_ADD, &_nicon_data);
 	pidgin_docklet_embedded();
 }
 
@@ -486,11 +489,11 @@ static void systray_change_icon(HICON hicon) {
 	g_return_if_fail(hicon != NULL);
 
 	_nicon_data.hIcon = hicon;
-	Shell_NotifyIcon(NIM_MODIFY, &_nicon_data);
+	Shell_NotifyIconW(NIM_MODIFY, &_nicon_data);
 }
 
 static void systray_remove_nid(void) {
-	Shell_NotifyIcon(NIM_DELETE, &_nicon_data);
+	Shell_NotifyIconW(NIM_DELETE, &_nicon_data);
 }
 
 static void winpidgin_tray_update_icon(PurpleStatusPrimitive status,
@@ -547,19 +550,19 @@ static void winpidgin_tray_update_icon(PurpleStatusPrimitive status,
 
 static void winpidgin_tray_blank_icon() {
 	_nicon_data.hIcon = NULL;
-	Shell_NotifyIcon(NIM_MODIFY, &_nicon_data);
+	Shell_NotifyIconW(NIM_MODIFY, &_nicon_data);
 }
 
 static void winpidgin_tray_set_tooltip(gchar *tooltip) {
-	if (tooltip) {
-		char *locenc = NULL;
-		locenc = g_locale_from_utf8(tooltip, -1, NULL, NULL, NULL);
-		lstrcpyn(_nicon_data.szTip, locenc, sizeof(_nicon_data.szTip) / sizeof(TCHAR));
-		g_free(locenc);
-	} else {
-		lstrcpy(_nicon_data.szTip, PIDGIN_NAME);
-	}
-	Shell_NotifyIcon(NIM_MODIFY, &_nicon_data);
+	const char *value = tooltip;
+	wchar_t *w;
+	if (value == NULL) {
+		value = PIDGIN_NAME;
+	}	
+	w = g_utf8_to_utf16(value, -1, NULL, NULL, NULL);
+	wcsncpy(_nicon_data.szTip, w, sizeof(_nicon_data.szTip) / sizeof(wchar_t));
+	g_free(w);
+	Shell_NotifyIconW(NIM_MODIFY, &_nicon_data);
 }
 
 static void winpidgin_tray_minimize(PidginBuddyList *gtkblist) {

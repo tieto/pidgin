@@ -119,10 +119,6 @@ static PurpleMood moods[] = {
 	{NULL, NULL, NULL}
 };
 
-static PurpleMood empty_moods[] = {
-	{NULL, NULL, NULL}
-};
-
 static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
 	xmlnode *item = xmlnode_get_child(items, "item");
@@ -174,68 +170,6 @@ void jabber_mood_init(void) {
 	jabber_pep_register_handler("http://jabber.org/protocol/mood", jabber_mood_cb);
 }
 
-static void do_mood_set_from_fields(PurpleConnection *gc, PurpleRequestFields *fields) {
-	JabberStream *js;
-	const int max_mood_idx = sizeof(moods) / sizeof(moods[0]) - 1;
-	int selected_mood = purple_request_fields_get_choice(fields, "mood");
-
-	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
-		purple_debug_error("jabber", "Unable to set mood; account offline.\n");
-		return;
-	}
-
-	js = gc->proto_data;
-
-	if (selected_mood < 0 || selected_mood >= max_mood_idx) {
-		purple_debug_error("jabber", "Invalid mood index (%d) selected.\n", selected_mood);
-		return;
-	}
-
-	jabber_mood_set(js, moods[selected_mood].mood, purple_request_fields_get_string(fields, "text"));
-}
-
-static void do_mood_set_mood(PurplePluginAction *action) {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
-
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
-	int i;
-
-	fields = purple_request_fields_new();
-	group = purple_request_field_group_new(NULL);
-	purple_request_fields_add_group(fields, group);
-
-	field = purple_request_field_choice_new("mood",
-											_("Mood"), 0);
-
-	for(i = 0; moods[i].mood; ++i)
-		purple_request_field_choice_add(field, _(moods[i].description));
-
-	purple_request_field_set_required(field, TRUE);
-	purple_request_field_group_add_field(group, field);
-
-	field = purple_request_field_string_new("text",
-											_("Description"), NULL,
-											FALSE);
-	purple_request_field_group_add_field(group, field);
-
-	purple_request_fields(gc, _("Edit User Mood"),
-						  _("Edit User Mood"),
-						  _("Please select your mood from the list."),
-						  fields,
-						  _("Set"), G_CALLBACK(do_mood_set_from_fields),
-						  _("Cancel"), NULL,
-						  purple_connection_get_account(gc), NULL, NULL,
-						  gc);
-
-}
-
-void jabber_mood_init_action(GList **m) {
-	PurplePluginAction *act = purple_plugin_action_new(_("Set Mood..."), do_mood_set_mood);
-	*m = g_list_append(*m, act);
-}
-
 void jabber_mood_set(JabberStream *js, const char *mood, const char *text) {
 	xmlnode *publish, *moodnode;
 
@@ -260,14 +194,5 @@ void jabber_mood_set(JabberStream *js, const char *mood, const char *text) {
 
 PurpleMood *jabber_get_moods(PurpleAccount *account)
 {
-	PurpleConnection *gc = purple_account_get_connection(account);
-	JabberStream *js = (JabberStream *) gc->proto_data;
-
-	if (js->pep) {
-		purple_debug_info("jabber", "get_moods: account supports PEP\n");
-		return moods;
-	} else {
-		purple_debug_info("jabber", "get_moods: account doesn't support PEP\n");
-		return empty_moods;
-	}
+	return moods;
 }

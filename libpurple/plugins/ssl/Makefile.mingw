@@ -15,14 +15,16 @@ TARGET_NSS = ssl-nss
 
 NEEDED_DLLS = \
 			$(NSS_TOP)/lib/freebl3.dll \
+			$(NSS_TOP)/lib/libnspr4.dll \
+			$(NSS_TOP)/lib/libplc4.dll \
+			$(NSS_TOP)/lib/libplds4.dll \
 			$(NSS_TOP)/lib/nss3.dll \
 			$(NSS_TOP)/lib/nssckbi.dll \
-			$(NSS_TOP)/lib/softokn3.dll \
+			$(NSS_TOP)/lib/nssutil3.dll \
 			$(NSS_TOP)/lib/smime3.dll \
-			$(NSS_TOP)/lib/ssl3.dll \
-			$(NSPR_TOP)/lib/nspr4.dll \
-			$(NSPR_TOP)/lib/plc4.dll \
-			$(NSPR_TOP)/lib/plds4.dll
+			$(NSS_TOP)/lib/softokn3.dll \
+                        $(NSS_TOP)/lib/sqlite3.dll \
+			$(NSS_TOP)/lib/ssl3.dll 
 
 ##
 ## INCLUDE PATHS
@@ -34,13 +36,11 @@ INCLUDE_PATHS +=	-I. \
 			-I$(PURPLE_TOP) \
 			-I$(PURPLE_TOP)/win32 \
 			-I$(PIDGIN_TREE_TOP) \
-			-I$(NSS_TOP)/include \
-			-I$(NSPR_TOP)/include
+			-I$(NSS_TOP)/include
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
-			-L$(NSS_TOP)/lib \
-			-L$(NSPR_TOP)/lib
+			-L$(NSS_TOP)/lib
 
 ##
 ##  SOURCES, OBJECTS

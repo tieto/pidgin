@@ -15,11 +15,27 @@ version 2.7.0 (??/??/????):
 	* Use GtkStatusIcon for the docklet, providing better integration in
 	  notification area.
 	* Added UI for sending attentions (buzz, nudge) on supporting protocols.
-	* Make the search dialog unobtrusive in the conversation window (by making
-	  it look and behave like the search dialog in Firefox)
+	* Make the search dialog unobtrusive in the conversation window (by
+	  making it look and behave like the search dialog in Firefox)
+	* The Recent Log Activity sort method for the Buddy List now
+	  distinguishes between no activity and a small amount of activity
+	  in the distant past.  (Greg McNew)
 
 	Bonjour:
 	* Added support for IPv6. (Thanks to T_X for testing)
+
+	Gadu-Gadu:
+	* Updated our bundled libgadu to 1.9.0-rc2 (many thanks to Krzysztof
+	  Klinikowski for the work and testing put in here!)
+
+	ICQ:
+	* X-Status (Custom ICQ status icon) support (Andrew Ivanov, Tomáš Kebert,
+	  Yuriy Yevgrafov, and trac users bob007, salieff, and nops)
+
+	XMPP:
+	* Direct messages to a specific resource only upon receipt of a message
+	  with content (as opposed to a typing notification, etc).  (Thanks to
+	  rjoly for testing)
 
 version 2.6.6 (02/18/2010):
 	libpurple:

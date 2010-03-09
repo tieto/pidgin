@@ -4,72 +4,46 @@ ak,GH,ak_GH,Akan (Ghana),ak_GH.zip
 sq,AL,sq_AL,Albanian (Albania),sq_AL.zip
 bg,BG,bg_BG,Bulgarian (Bulgaria),bg_BG.zip
 ca,ES,ca_ES,Catalan (Spain),ca_ES.zip
+cop,EG,cop_EG,Coptic (Egypt),cop_EG.zip
 hr,HR,hr_HR,Croatian (Croatia),hr_HR.zip
 cs,CZ,cs_CZ,Czech (Czech Republic),cs_CZ.zip
 da,DK,da_DK,Danish (Denmark),da_DK.zip
 nl,NL,nl_NL,Dutch (Netherlands),nl_NL.zip
 nl,NL,nl_med,Dutch Medical (Netherlands),nl_med.zip
-nl,BE,nl_NL,Dutch (Belgium),nl_NL.zip
-nl,BE,nl_NL,Dutch Medical (Belgium),nl_NL.zip
 en,AU,en_AU,English (Australia),en_AU.zip
 en,CA,en_CA,English (Canada),en_CA.zip
 en,NZ,en_NZ,English (New Zealand),en_NZ.zip
 en,ZA,en_ZA,English (South Africa),en_ZA.zip
 en,GB,en_GB,English (United Kingdom),en_GB.zip
 en,US,en_US,English (United States),en_US.zip
-cop,EG,cop_EG,Coptic (Egypt),cop_EG.zip
 eo,ANY,eo_l3,Esperanto,eo.zip
 et,EE,et_EE,Estonian (Estonia),et_EE.zip
 fo,FO,fo_FO,Faroese (Faroe Islands),fo_FO.zip
-fr,BE,fr_FR,Français Réforme 1990 & Classique (Belgium),fr_FR_1-3-2.zip
-fr,CA,fr_FR,Français Réforme 1990 & Classique (Canada),fr_FR_1-3-2.zip
-fr,FR,fr_FR,Français Réforme 1990 & Classique (France),fr_FR_1-3-2.zip
-fr,LU,fr_FR,Français Réforme 1990 & Classique (Luxembourg),fr_FR_1-3-2.zip
-fr,MC,fr_FR,Français Réforme 1990 & Classique (Monaco),fr_FR_1-3-2.zip
-fr,CH,fr_FR,Français Réforme 1990 & Classique (Switzerland),fr_FR_1-3-2.zip
-fr,BE,fr_FR-classique,Français Classique (Belgium),fr_FR-classique_1-3-2.zip
-fr,CA,fr_FR-classique,Français Classique (Canada),fr_FR-classique_1-3-2.zip
-fr,FR,fr_FR-classique,Français Classique (France),fr_FR-classique_1-3-2.zip
-fr,LU,fr_FR-classique,Français Classique (Luxembourg),fr_FR-classique_1-3-2.zip
-fr,MC,fr_FR-classique,Français Classique (Monaco),fr_FR-classique_1-3-2.zip
-fr,CH,fr_FR-classique,Français Classique  (Switzerland),fr_FR-classique_1-3-2.zip
-fr,BE,fr_FR-1990,Français Réforme 1990 (Belgium),fr_FR-1990_1-3-2.zip
-fr,CA,fr_FR-1990,Français Réforme 1990 (Canada),fr_FR-1990_1-3-2.zip
-fr,FR,fr_FR-1990,Français Réforme 1990 (France),fr_FR-1990_1-3-2.zip
-fr,LU,fr_FR-1990,Français Réforme 1990 (Luxembourg),fr_FR-1990_1-3-2.zip
-fr,MC,fr_FR-1990,Français Réforme 1990 (Monaco),fr_FR-1990_1-3-2.zip
-fr,CH,fr_FR-1990,Français Réforme 1990 (Switzerland),fr_FR-1990_1-3-2.zip
+fr,FR,fr_FR-classique,Fran�ais Classique,fr_FR-classique_1-3-2.zip
+fr,FR,fr_FR-1990,Fran�ais R�forme 1990,fr_FR-1990_1-3-2.zip
+fr,FR,fr_FR,Fran�ais R�forme 1990 & Classique,fr_FR_1-3-2.zip
 fy,NL,fy_NL,Frisian (Netherlands),fy_NL.zip
 gl,ES,gl_ES,Galician (Spain),gl_ES.zip
 gsc,FR,gsc_FR,Gascon (France),gsc_FR.zip
-de,AT,de_DE,German (Austria Base),de_DE.zip
 de,AT,de_AT,German (Austria Extension),de_AT.zip
 de,AT,de_AT_frami,German (Austria) neu 08/2006 (frami),de_AT_frami.zip
 de,DE,de_DE,German (Germany),de_DE.zip
 de,DE,de_DE_frami,German (Germany) neu 08/2006 (frami),de_DE_frami.zip
-de,LI,de_CH,German (Liechtenstein),de_CH.zip
-de,LI,de_CH_frami,German (Liechtenstein) neu 08/2006 (frami),de_CH_frami.zip
-de,LU,de_DE,German (Luxembourg),de_DE.zip
-de,LU,de_DE_frami,German (Luxembourg) neu 08/2006 (frami),de_DE_frami.zip
 de,CH,de_CH,German (Switzerland),de_CH.zip
 de,CT,de_CH_frami,German (Switzerland) neu 08/2006 (frami),de_CH_frami.zip
 el,GR,el_GR,Greek (Greece),el_GR.zip
 gu,IN,gu_IN,Gujarati (India),gu_IN.zip
-gd,GB,gd_GB,Scots Gaelic (Scotland),gd_GB.zip
 he,IL,he_IL,Hebrew (Israel),he_IL.zip
 hil,PH,hil_PH,Hiligaynon (Philippines),hil_PH.zip
 hu,HU,hu_HU,Hungarian (Hungary),hu_HU.zip
 hu,HU,hu_HU_comb,Hungarian (Hungary) collected compounds,hu_HU_comb.zip
 id,ID,id_ID,Indonesian (Indonesia),id_ID.zip
-ia,ANY,ia_ANY,Interlingua (ANY locale),ia_ANY.zip
 ga,IE,ga_IE,Irish (Ireland),ga_IE.zip
 it,IT,it_IT,Italian (Italy),it_IT.zip
-it,CH,it_IT,Italian (Switzerland),it_IT.zip
 sw,KE,sw_KE,Kiswahili (Africa),sw_KE.zip
-lv,LV,lv_LV,Latvian (Latvia),lv_LV.zip
 ku,TR,ku_TR,Kurdish (Turkey),ku_TR.zip
-ku,TR,ku_TR,Kurdish (Syria),ku_TR.zip
-it,IT,la,Latin (for x-register),la.zip
+it,IT,la,Latin,la.zip
+lv,LV,lv_LV,Latvian (Latvia),lv_LV.zip
 lt,LT,lt_LT,Lithuanian (Lithuania),lt_LT.zip
 mk,MK,mk_MK,Macedonian (Macedonia),mk_MK.zip
 ms,MY,ms_MY,Malay (Malaysia),ms_MY.zip
@@ -89,6 +63,7 @@ ro,RO,ro_RO,Romanian (Romania),ro_RO.zip
 ru,RU,ru_RU,Russian (Russia),ru_RU.zip
 ru,RU,ru_RU_ye,Russian_ye (Russia),ru_RU_ye.zip
 ru,RU,ru_RU_yo,Russian_yo (Russia),ru_RU_yo.zip
+gd,GB,gd_GB,Scots Gaelic (Scotland),gd_GB.zip
 tn,ZA,tn_ZA,Setswana (Africa),tn_ZA.zip
 sk,SK,sk_SK,Slovak (Slovakia),sk_SK.zip
 sl,SI,sl_SI,Slovenian (Slovenia),sl_SI.zip
@@ -104,7 +79,6 @@ es,DO,es_DO,Spanish (Dominican Republic),es_DO.zip
 es,EC,es_EC,Spanish (Ecuador),es_EC.zip
 es,SV,es_SV,Spanish (El Salvador),es_SV.zip
 es,GT,es_GT,Spanish (Guatemala),es_GT.zip
-es,HN,es_HN,Spanish (Honduras),es_HN.zip
 es,MX,es_MX,Spanish (Mexico),es_MX.zip
 es,NI,es_NI,Spanish (Nicaragua),es_NI.zip
 es,PA,es_PA,Spanish (Panama),es_PA.zip
@@ -118,8 +92,7 @@ ss,ZA,ss_ZA,Swati (South Africa),ss_ZA.zip
 sv,SE,sv_SE,Swedish (Sweden),sv_SE.zip
 ts,ZA,ts_ZA,Tsonga (South Africa),ts_ZA.zip
 uk,UA,uk_UA,Ukrainian (Ukraine),uk_UA.zip
-ur,IN,ur_PK,Urdu (India),ur_PK.zip
-ur,PK,ur_PK,Urdu (Pakistan),ur_PK.zip
+ur,PK,ur_PK,Urdu,ur_PK.zip
 ve,ZA,ve_ZA,Venda (South Africa),ve_ZA.zip
 vi,VN,vi_VN,Vietnamese (Viet-Nam),vi_VN.zip
 cy,GB,cy_GB,Welsh (Wales),cy_GB.zip

@@ -369,7 +369,7 @@ static gboolean do_login(PurpleConnection *gc) {
 	const char *pass = purple_connection_get_password(gc);
 
 	if (pass && *pass) {
-		buf = irc_format(irc, "vv", "PASS", pass);
+		buf = irc_format(irc, "v:", "PASS", pass);
 		if (irc_send(irc, buf) < 0) {
 			g_free(buf);
 			return FALSE;

@@ -2394,6 +2394,30 @@ if test $ac_cv_struct_tm_gmtoff = yes; then
         AC_DEFINE(HAVE_TM_GMTOFF, 1, [Define if you have a tm_gmtoff member in struct tm])
 fi
 
+AC_CACHE_CHECK([whether va_lists can be copied by value], ac_cv_va_val_copy,[
+	AC_TRY_RUN([#include <stdarg.h>
+#include <stdlib.h>
+	void f (int i, ...) {
+	va_list args1, args2;
+	va_start (args1, i);
+	args2 = args1;
+	if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
+	  exit (1);
+	va_end (args1); va_end (args2);
+	}
+	int main() {
+	  f (0, 42);
+	  return 0;
+	}],
+	[ac_cv_va_val_copy=yes],
+	[ac_cv_va_val_copy=no],
+	[ac_cv_va_val_copy=yes])
+])
+
+if test "x$ac_cv_va_val_copy" = "xno"; then
+	AC_DEFINE(VA_COPY_AS_ARRAY, 1, ['va_lists' cannot be copied as values])
+fi
+
 dnl #######################################################################
 dnl # Check for check
 dnl #######################################################################
@@ -2583,6 +2607,7 @@ fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
+echo Use external libgadu.......... : $gadu_libs
 echo Install pixmaps............... : $enable_pixmaps
 echo Install translations.......... : $enable_i18n
 echo Has you....................... : yes

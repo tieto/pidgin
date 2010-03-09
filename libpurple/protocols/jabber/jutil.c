@@ -302,7 +302,7 @@ char *jabber_saslprep(const char *in)
 	const guchar *c;
 
 	c = (const guchar *)in;
-	while (*c) {
+	for ( ; *c; ++c) {
 		if (*c > 0x7f ||
 				(*c < 0x20 && *c != '\t' && *c != '\n' && *c != '\r'))
 			return NULL;

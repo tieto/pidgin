@@ -622,7 +622,7 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 	type = purple_xfer_get_type(xfer);
 	account = purple_xfer_get_account(xfer);
 
-	purple_debug_misc("xfer", "request accepted for %p\n", xfer); 
+	purple_debug_misc("xfer", "request accepted for %p\n", xfer);
 
 	if (!filename && type == PURPLE_XFER_RECEIVE) {
 		xfer->status = PURPLE_XFER_STATUS_ACCEPTED;
@@ -1128,9 +1128,10 @@ do_transfer(PurpleXfer *xfer)
 			return;
 		}
 	} else if (xfer->type == PURPLE_XFER_SEND) {
-		size_t result;
+		size_t result = 0;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 		PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+		gboolean read = TRUE;
 
 		/* this is so the prpl can keep the connection open
 		   if it needs to for some odd reason. */
@@ -1142,54 +1143,59 @@ do_transfer(PurpleXfer *xfer)
 			return;
 		}
 
-		if (ui_ops && ui_ops->ui_read) {
-			gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
-			if (tmp == 0) {
-				/*
-				 * The UI claimed it was ready, but didn't have any data for
-				 * us...  It will call purple_xfer_ui_ready when ready, which
-				 * sets back up this watcher.
-				 */
-				if (xfer->watcher != 0) {
-					purple_input_remove(xfer->watcher);
-					xfer->watcher = 0;
-				}
-
-				/* Need to indicate the prpl is still ready... */
-				priv->ready |= PURPLE_XFER_READY_PRPL;
-
-				/*
-				 * if we requested 0 bytes it's only normal that end up here 
-				 * we shouldn't return as we still have something to 
-				 * write in priv->buffer
-				 */
-				if (s != 0)
-					g_return_if_reached();
-			} else if (tmp < 0) {
-				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-				purple_xfer_cancel_local(xfer);
-				return;
-			}
-
-			result = tmp;
-		} else {
-			buffer = g_malloc0(s);
-			result = fread(buffer, 1, s, xfer->dest_fp);
-			if (result != s) {
-				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-				purple_xfer_cancel_local(xfer);
-				g_free(buffer);
-				return;
+		if (priv->buffer) {
+			if (priv->buffer->len < s) {
+				s -= priv->buffer->len;
+				read = TRUE;
+			} else {
+				read = FALSE;
 			}
 		}
-	
+
+		if (read) {
+			if (ui_ops && ui_ops->ui_read) {
+				gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
+				if (tmp == 0) {
+					/*
+					 * The UI claimed it was ready, but didn't have any data for
+					 * us...  It will call purple_xfer_ui_ready when ready, which
+					 * sets back up this watcher.
+					 */
+					if (xfer->watcher != 0) {
+						purple_input_remove(xfer->watcher);
+						xfer->watcher = 0;
+					}
+
+					/* Need to indicate the prpl is still ready... */
+					priv->ready |= PURPLE_XFER_READY_PRPL;
+
+					g_return_if_reached();
+				} else if (tmp < 0) {
+					purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+					purple_xfer_cancel_local(xfer);
+					return;
+				}
+
+				result = tmp;
+			} else {
+				buffer = g_malloc(s);
+				result = fread(buffer, 1, s, xfer->dest_fp);
+				if (result != s) {
+					purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+					purple_xfer_cancel_local(xfer);
+					g_free(buffer);
+					return;
+				}
+			}
+		}
+
 		if (priv->buffer) {
 			priv->buffer = g_byte_array_append(priv->buffer, buffer, result);
 			g_free(buffer);
 			buffer = priv->buffer->data;
 			result = priv->buffer->len;
 		}
-	
+
 		r = purple_xfer_write(xfer, buffer, result);
 
 		if (r == -1) {
@@ -1204,12 +1210,12 @@ do_transfer(PurpleXfer *xfer)
 			 */
 			purple_xfer_increase_buffer_size(xfer);
 		} else {
-			if (ui_ops && ui_ops->data_not_sent) 
-				ui_ops->data_not_sent(xfer, buffer + r, result -r);
+			if (ui_ops && ui_ops->data_not_sent)
+				ui_ops->data_not_sent(xfer, buffer + r, result - r);
 		}
 
 		if (priv->buffer) {
-			/* 
+			/*
 			 * Remove what we wrote
 			 * If we wrote the whole buffer the byte array will be empty
 			 * Otherwise we'll kee what wasn't sent for next time.

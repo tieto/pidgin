@@ -21,6 +21,7 @@ EXTRA_DIST = \
 		win32/winpidgin.c \
 		win32/wspell.c \
 		win32/wspell.h \
+		win32/nsis/generate_gtk_zip.sh \
 		win32/nsis/pixmaps/pidgin-header.bmp \
 		win32/nsis/pixmaps/pidgin-intro.bmp \
 		win32/nsis/pixmaps/pidgin-install.ico \

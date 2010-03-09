@@ -218,7 +218,7 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 	for (l = jb->resources; l; l = l->next)
 	{
 		JabberBuddyResource *jbr = l->data;
-		if (g_str_equal(resource, jbr->name))
+		if (jbr->name && g_str_equal(resource, jbr->name))
 			return jbr;
 	}
 
