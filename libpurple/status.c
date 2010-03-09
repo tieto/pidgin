@@ -137,6 +137,7 @@ static int primitive_scores[] =
 	-200,   /* extended away            */
 	-400,   /* mobile                   */
 	0,      /* tune                     */
+	0,      /* mood                     */
 	-10,    /* idle, special case.      */
 	-5,     /* idle time, special case. */
 	10      /* Offline messageable      */
@@ -157,15 +158,16 @@ static struct PurpleStatusPrimitiveMap
 
 } const status_primitive_map[] =
 {
-	{ PURPLE_STATUS_UNSET,           "unset",           N_("Unset")           },
-	{ PURPLE_STATUS_OFFLINE,         "offline",         N_("Offline")         },
-	{ PURPLE_STATUS_AVAILABLE,       "available",       N_("Available")       },
-	{ PURPLE_STATUS_UNAVAILABLE,     "unavailable",     N_("Do not disturb")     },
-	{ PURPLE_STATUS_INVISIBLE,       "invisible",       N_("Invisible")       },
-	{ PURPLE_STATUS_AWAY,            "away",            N_("Away")            },
-	{ PURPLE_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended away")   },
-	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")          },
-	{ PURPLE_STATUS_TUNE,            "tune",            N_("Listening to music") }
+	{ PURPLE_STATUS_UNSET,           "unset",           N_("Unset")               },
+	{ PURPLE_STATUS_OFFLINE,         "offline",         N_("Offline")             },
+	{ PURPLE_STATUS_AVAILABLE,       "available",       N_("Available")           },
+	{ PURPLE_STATUS_UNAVAILABLE,     "unavailable",     N_("Do not disturb")      },
+	{ PURPLE_STATUS_INVISIBLE,       "invisible",       N_("Invisible")           },
+	{ PURPLE_STATUS_AWAY,            "away",            N_("Away")                },
+	{ PURPLE_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended away")       },
+	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")              },
+	{ PURPLE_STATUS_TUNE,            "tune",            N_("Listening to music"), },
+	{ PURPLE_STATUS_MOOD,            "mood",            N_("Feeling")             },
 };
 
 const char *

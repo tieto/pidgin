@@ -28,6 +28,7 @@ SetCompressor /SOLID lzma
 ShowInstDetails show
 ShowUninstDetails show
 SetDateSave on
+RequestExecutionLevel highest
 
 ; $name and $INSTDIR are set in .onInit function..
 
@@ -53,7 +54,6 @@ SetDateSave on
 ;Defines
 
 !define PIDGIN_NSIS_INCLUDE_PATH		"."
-!define PIDGIN_INSTALLER_DEPS			"..\..\..\..\win32-dev\pidgin-inst-deps-0.2"
 
 ; Remove these and the stuff that uses them at some point
 !define OLD_GAIM_REG_KEY			"SOFTWARE\gaim"
@@ -71,8 +71,8 @@ SetDateSave on
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl510.dll"
 
-!define ASPELL_REG_KEY				"SOFTWARE\Aspell"
 !define DOWNLOADER_URL				"http://pidgin.im/win32/download_redir.php"
+!define SPELL_DOWNLOAD_URL			"http://ftp.services.openoffice.org/pub/OpenOffice.org/contrib/dictionaries"
 
 !define MEMENTO_REGISTRY_ROOT			HKLM
 !define MEMENTO_REGISTRY_KEY			"${PIDGIN_UNINSTALL_KEY}"
@@ -302,7 +302,7 @@ Section -SecUninstallOldPidgin
           IfErrors uninstall_problem
             ; Ready to uninstall..
             ClearErrors
-            ExecWait '"$TEMP\$R6" /S /KEEPGTK=1 _?=$R1'
+            ExecWait '"$TEMP\$R6" /S /UPGRADE=1 _?=$R1'
             IfErrors exec_error
               Delete "$TEMP\$R6"
             Goto done
@@ -340,7 +340,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
 !ifdef OFFLINE_INSTALLER
 
   SetOutPath $PLUGINSDIR
-  File /oname=gtk.zip "..\..\..\..\gtk_installer\gtk-runtime-${GTK_INSTALL_VERSION}.zip"
+  File /oname=gtk.zip ".\gtk-runtime-${GTK_INSTALL_VERSION}.zip"
 
 !else
 
@@ -352,12 +352,14 @@ Section $(GTK_SECTION_TITLE) SecGtk
   Pop $R0
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" +2
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR) : $R1" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR) : $R2" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
 !endif
 
-  SetOutPath "$INSTDIR"
+  ;Delete the old Gtk directory
+  RMDir /r "$INSTDIR\Gtk"
 
+  SetOutPath "$INSTDIR"
   nsisunz::UnzipToLog $R1 "$INSTDIR"
   Pop $R0
   StrCmp $R0 "success" +2
@@ -415,7 +417,6 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     Delete "$INSTDIR\plugins\libjabber.dll"
 
     File /r /x locale ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
-    File "${PIDGIN_INSTALLER_DEPS}\exchndl.dll"
 
     ; Check if Perl is installed, if so add it to the AppPaths
     ReadRegStr $R2 HKLM ${PERL_REG_KEY} ""
@@ -505,7 +506,7 @@ SectionGroupEnd
 !macro LANG_SECTION lang
   ${MementoUnselectedSection} "${lang}" SecLang_${lang}
     SetOutPath "$INSTDIR\locale\${lang}\LC_MESSAGES"
-    File /oname=pidgin.mo "..\..\..\${PIDGIN_INSTALL_DIR}\locale\${lang}\LC_MESSAGES\pidgin.mo"
+    File "..\..\..\${PIDGIN_INSTALL_DIR}\locale\${lang}\LC_MESSAGES\*.mo"
     SetOutPath "$INSTDIR"
   ${MementoSectionEnd}
 !macroend
@@ -518,109 +519,29 @@ ${MementoSectionDone}
 ;--------------------------------
 ;Spell Checking
 
-SectionGroup /e $(PIDGIN_SPELLCHECK_SECTION_TITLE) SecSpellCheck
-  Section /o $(PIDGIN_SPELLCHECK_BRETON) SecSpellCheckBreton
-    Push ${SecSpellCheckBreton}
-    Call InstallAspellAndDict
+!macro SPELLCHECK_SECTION lang lang_name lang_file
+  Section /o "${lang_name}" SecSpell_${lang}
+    Push ${lang_file}
+    Push ${lang}
+    Call InstallDict
   SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_CATALAN) SecSpellCheckCatalan
-    Push ${SecSpellCheckCatalan}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_CZECH) SecSpellCheckCzech
-    Push ${SecSpellCheckCzech}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_WELSH) SecSpellCheckWelsh
-    Push ${SecSpellCheckWelsh}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_DANISH) SecSpellCheckDanish
-    Push ${SecSpellCheckDanish}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_GERMAN) SecSpellCheckGerman
-    Push ${SecSpellCheckGerman}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_GREEK) SecSpellCheckGreek
-    Push ${SecSpellCheckGreek}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_ENGLISH) SecSpellCheckEnglish
-    Push ${SecSpellCheckEnglish}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_ESPERANTO) SecSpellCheckEsperanto
-    Push ${SecSpellCheckEsperanto}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_SPANISH) SecSpellCheckSpanish
-    Push ${SecSpellCheckSpanish}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_FAROESE) SecSpellCheckFaroese
-    Push ${SecSpellCheckFaroese}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_FRENCH) SecSpellCheckFrench
-    Push ${SecSpellCheckFrench}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_ITALIAN) SecSpellCheckItalian
-    Push ${SecSpellCheckItalian}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_DUTCH) SecSpellCheckDutch
-    Push ${SecSpellCheckDutch}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_NORWEGIAN) SecSpellCheckNorwegian
-    Push ${SecSpellCheckNorwegian}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_POLISH) SecSpellCheckPolish
-    Push ${SecSpellCheckPolish}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_PORTUGUESE) SecSpellCheckPortuguese
-    Push ${SecSpellCheckPortuguese}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_ROMANIAN) SecSpellCheckRomanian
-    Push ${SecSpellCheckRomanian}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_RUSSIAN) SecSpellCheckRussian
-    Push ${SecSpellCheckRussian}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_SLOVAK) SecSpellCheckSlovak
-    Push ${SecSpellCheckSlovak}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_SWEDISH) SecSpellCheckSwedish
-    Push ${SecSpellCheckSwedish}
-    Call InstallAspellAndDict
-  SectionEnd
-  Section /o $(PIDGIN_SPELLCHECK_UKRAINIAN) SecSpellCheckUkrainian
-    Push ${SecSpellCheckUkrainian}
-    Call InstallAspellAndDict
-  SectionEnd
+!macroend
+SectionGroup $(PIDGIN_SPELLCHECK_SECTION_TITLE) SecSpellCheck
+  !include "pidgin-spellcheck.nsh"
 SectionGroupEnd
 
 Section /o $(DEBUG_SYMBOLS_SECTION_TITLE) SecDebugSymbols
+  
   InitPluginsDir
-
-  ; We need to download and extract the debug symbols
-  StrCpy $R1 "$PLUGINSDIR\pidgin-${PIDGIN_VERSION}-dbgsym.zip"
+  StrCpy $R1 "$PLUGINSDIR\dbgsym.zip"
 !ifdef OFFLINE_INSTALLER
 
   SetOutPath $PLUGINSDIR
-  File /oname=pidgin-${PIDGIN_VERSION}-dbgsym.zip "..\..\..\..\gtk_installer\gtk-runtime-${GTK_INSTALL_VERSION}.zip"
+  File /oname=dbgsym.zip "..\..\..\pidgin-${PIDGIN_VERSION}-dbgsym.zip"
 
 !else
 
+  ; We need to download the debug symbols
   retry:
   StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=dbgsym"
   DetailPrint "Downloading Debug Symbols... ($R2)"
@@ -632,6 +553,7 @@ Section /o $(DEBUG_SYMBOLS_SECTION_TITLE) SecDebugSymbols
 
 !endif
 
+  SetOutPath "$INSTDIR"
   nsisunz::UnzipToLog $R1 "$INSTDIR"
   Pop $R0
   StrCmp $R0 "success" +2
@@ -769,27 +691,36 @@ Section Uninstall
     Delete "$INSTDIR\sounds\purple\send.wav"
     RMDir "$INSTDIR\sounds\purple"
     RMDir "$INSTDIR\sounds"
+    Delete "$INSTDIR\spellcheck\libenchant.dll"
+    Delete "$INSTDIR\spellcheck\libgtkspell-0.dll"
+    Delete "$INSTDIR\spellcheck\lib\enchant\libenchant_aspell.dll"
+    Delete "$INSTDIR\spellcheck\lib\enchant\libenchant_ispell.dll"
+    Delete "$INSTDIR\spellcheck\lib\enchant\libenchant_myspell.dll"
+    RMDir "$INSTDIR\spellcheck\lib\enchant"
+    RMDir "$INSTDIR\spellcheck\lib"
+    RMDir "$INSTDIR\spellcheck"
     Delete "$INSTDIR\freebl3.dll"
     Delete "$INSTDIR\idletrack.dll"
-    Delete "$INSTDIR\libgtkspell.dll"
     Delete "$INSTDIR\libjabber.dll"
+    Delete "$INSTDIR\libnspr4.dll"
     Delete "$INSTDIR\libmeanwhile-1.dll"
     Delete "$INSTDIR\liboscar.dll"
+    Delete "$INSTDIR\libplc4.dll"
+    Delete "$INSTDIR\libplds4.dll"
     Delete "$INSTDIR\libpurple.dll"
     Delete "$INSTDIR\libsasl.dll"
     Delete "$INSTDIR\libsilc-1-1-2.dll"
     Delete "$INSTDIR\libsilcclient-1-1-2.dll"
-    Delete "$INSTDIR\libxml2.dll"
+    Delete "$INSTDIR\libxml2-2.dll"
     Delete "$INSTDIR\libymsg.dll"
-    Delete "$INSTDIR\nspr4.dll"
     Delete "$INSTDIR\nss3.dll"
+    Delete "$INSTDIR\nssutil3.dll"
     Delete "$INSTDIR\nssckbi.dll"
     Delete "$INSTDIR\pidgin.dll"
     Delete "$INSTDIR\pidgin.exe"
-    Delete "$INSTDIR\plc4.dll"
-    Delete "$INSTDIR\plds4.dll"
     Delete "$INSTDIR\smime3.dll"
     Delete "$INSTDIR\softokn3.dll"
+    Delete "$INSTDIR\sqlite3.dll"
     Delete "$INSTDIR\ssl3.dll"
     Delete "$INSTDIR\${PIDGIN_UNINST_EXE}"
     Delete "$INSTDIR\exchndl.dll"
@@ -801,10 +732,13 @@ Section Uninstall
     ; Remove the local GTK+ copy (if we're not just upgrading)
     ${GetParameters} $R0
     ClearErrors
-    ${GetOptions} "$R3" "/KEEPGTK=" $R1
+    ${GetOptions} "$R0" "/UPGRADE=" $R1
     IfErrors +2
-    StrCmp $R1 "1" +2
+    StrCmp $R1 "1" upgrade_done
     RMDir /r "$INSTDIR\Gtk"
+    ; Remove the downloaded spellcheck dictionaries (if we're not just upgrading)
+    RMDir /r "$INSTDIR\spellcheck"
+    upgrade_done:
 
     ;Try to remove Pidgin install dir (only if empty)
     RMDir "$INSTDIR"
@@ -843,50 +777,7 @@ SectionEnd ; end of uninstall section
 
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheck} \
         $(PIDGIN_SPELLCHECK_SECTION_DESCRIPTION)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckBreton} \
-        "$(PIDGIN_SPELLCHECK_BRETON) (862kb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckCatalan} \
-        "$(PIDGIN_SPELLCHECK_CATALAN) (3.9Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckCzech} \
-        "$(PIDGIN_SPELLCHECK_CZECH) (17Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckWelsh} \
-        "$(PIDGIN_SPELLCHECK_WELSH) (4.2Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckDanish} \
-        "$(PIDGIN_SPELLCHECK_DANISH) (6.9Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckGerman} \
-        "$(PIDGIN_SPELLCHECK_GERMAN) (5.4Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckGreek} \
-        "$(PIDGIN_SPELLCHECK_GREEK) (7.1Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckEnglish} \
-        "$(PIDGIN_SPELLCHECK_ENGLISH) (2.3Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckEsperanto} \
-        "$(PIDGIN_SPELLCHECK_ESPERANTO) (5.7Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSpanish} \
-        "$(PIDGIN_SPELLCHECK_SPANISH) (7.0Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckFaroese} \
-        "$(PIDGIN_SPELLCHECK_FAROESE) (913kb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckFrench} \
-        "$(PIDGIN_SPELLCHECK_FRENCH) (9.3Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckItalian} \
-        "$(PIDGIN_SPELLCHECK_ITALIAN) (770kb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckDutch} \
-        "$(PIDGIN_SPELLCHECK_DUTCH) (3.7Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckNorwegian} \
-        "$(PIDGIN_SPELLCHECK_NORWEGIAN) (3.2Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckPolish} \
-        "$(PIDGIN_SPELLCHECK_POLISH) (9.3Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckPortuguese} \
-        "$(PIDGIN_SPELLCHECK_PORTUGUESE) (5.5Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckRomanian} \
-        "$(PIDGIN_SPELLCHECK_ROMANIAN) (906kb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckRussian} \
-        "$(PIDGIN_SPELLCHECK_RUSSIAN) (11Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSlovak} \
-        "$(PIDGIN_SPELLCHECK_SLOVAK) (8.0Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSwedish} \
-        "$(PIDGIN_SPELLCHECK_SWEDISH) (2.2Mb)"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckUkrainian} \
-        "$(PIDGIN_SPELLCHECK_UKRAINIAN) (12Mb)"
+
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
@@ -1233,12 +1124,6 @@ Function .onInit
 
   ${MementoSectionRestore}
 
-  !insertmacro SetSectionFlag ${SecSpellCheck} ${SF_RO}
-  !insertmacro UnselectSection ${SecSpellCheck}
-
-  ;Mark the dictionaries that are already installed as readonly
-  Call SelectAndDisableInstalledDictionaries
-
   ;Preselect the URI handlers as appropriate
   Call SelectURIHandlerSelections
 
@@ -1337,6 +1222,10 @@ Function .onInit
     StrCpy $INSTDIR "$R2\Pidgin"
 
   instdir_done:
+
+  ;Mark the dictionaries that are already installed as readonly
+  Call SelectAndDisableInstalledDictionaries
+
 ;LogSet on
   Pop $R3
   Pop $R2
@@ -1368,6 +1257,10 @@ Function preWelcomePage
   Push $R0
   Push $R1
 
+!ifdef OFFLINE_INSTALLER
+    !insertmacro SelectSection ${SecDebugSymbols}
+!endif
+
   Call DoWeNeedGtk
   Pop $R0
   IntCmp $R0 1 done gtk_not_mandatory
@@ -1389,234 +1282,72 @@ FunctionEnd
 ; Convert the a Section index to the language code
 ; Push the section index onto the stack and pop off the language code after the call
 ; This will set the error code, if no match is found
-Function GetLangCodeForSection
-  ClearErrors
-  Push $R0
-  Exch
-  Pop $R0 ;This is the section index
-
-  IntCmp $R0 ${SecSpellCheckBreton} 0 +3 +3
-  StrCpy $R0 "br"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckCatalan} 0 +3 +3
-  StrCpy $R0 "ca"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckCzech} 0 +3 +3
-  StrCpy $R0 "cs"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckWelsh} 0 +3 +3
-  StrCpy $R0 "cy"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckDanish} 0 +3 +3
-  StrCpy $R0 "da"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckGerman} 0 +3 +3
-  StrCpy $R0 "de"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckGreek} 0 +3 +3
-  StrCpy $R0 "el"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckEnglish} 0 +3 +3
-  StrCpy $R0 "en"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckEsperanto} 0 +3 +3
-  StrCpy $R0 "eo"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckSpanish} 0 +3 +3
-  StrCpy $R0 "es"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckFaroese} 0 +3 +3
-  StrCpy $R0 "fo"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckFrench} 0 +3 +3
-  StrCpy $R0 "fr"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckItalian} 0 +3 +3
-  StrCpy $R0 "it"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckDutch} 0 +3 +3
-  StrCpy $R0 "nl"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckNorwegian} 0 +3 +3
-  StrCpy $R0 "no"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckPolish} 0 +3 +3
-  StrCpy $R0 "pl"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckPortuguese} 0 +3 +3
-  StrCpy $R0 "pt"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckRomanian} 0 +3 +3
-  StrCpy $R0 "ro"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckRussian} 0 +3 +3
-  StrCpy $R0 "ru"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckSlovak} 0 +3 +3
-  StrCpy $R0 "sk"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckSwedish} 0 +3 +3
-  StrCpy $R0 "sv"
-  Goto done
-  IntCmp $R0 ${SecSpellCheckUkrainian} 0 +3 +3
-  StrCpy $R0 "uk"
-  Goto done
-
-  SetErrors
-
-  done:
-  Exch $R0
-FunctionEnd ;GetLangCodeForSection
 
 ; Select and Disable any Sections that have currently installed dictionaries
-Function SelectAndDisableInstalledDictionaries
-  Push $R0
-  Push $R1
-  Push $R2
-
-  ; Start with the first language dictionary
-  IntOp $R0 ${SecSpellCheck} + 1
-
-  start:
-  ; If it is the end of the section group, stop
+!macro CHECK_SPELLCHECK_SECTION lang
+  ;Advance to the next (correct) section index
+  IntOp $R0 $R0 + 1
+  IfFileExists "$INSTDIR\spellcheck\share\enchant\myspell\${lang}.dic" 0 done_${lang}
   SectionGetFlags $R0 $R1
-  IntOp $R2 $R1 & ${SF_SECGRPEND}
-  IntCmp $R2 ${SF_SECGRPEND} done
-
-  Push $R0
-  Call GetLangCodeForSection
-  Pop $R2
-  IfErrors end_loop
-  ReadRegStr $R2 HKLM "${ASPELL_REG_KEY}-$R2" "" ; Check that the dictionary is installed
-  StrCmp $R2 "" end_loop ; If it isn't installed, skip to the next item
   IntOp $R1 $R1 | ${SF_RO} ; Mark Readonly
   IntOp $R1 $R1 | ${SF_SELECTED} ; Select
   SectionSetFlags $R0 $R1
+  done_${lang}:
+!macroend
+Function SelectAndDisableInstalledDictionaries
+  Push $R0
+  Push $R1
 
-  end_loop:
-  IntOp $R0 $R0 + 1 ;Advance to the next section
-  Goto start
+  !insertmacro SetSectionFlag ${SecSpellCheck} ${SF_RO}
+  !insertmacro UnselectSection ${SecSpellCheck}
 
-  done:
-  Pop $R2
+  IntOp $R0 ${SecSpellCheck} + 0
+  !include "pidgin-spellcheck-preselect.nsh"
+
   Pop $R1
   Pop $R0
 FunctionEnd
 
-Function InstallAspellAndDict
+Function InstallDict
   Push $R0
   Exch
-  Call GetLangCodeForSection
   Pop $R0 ;This is the language code
   Push $R1
+  Exch 2
+  Pop $R1 ;This is the language file
+  Push $R2
+  Push $R3
+
+  ClearErrors
+  IfFileExists "$INSTDIR\spellcheck\share\enchant\myspell\$R0.dic" installed
 
   InitPluginsDir
 
-  IfErrors done ; We weren't able to convert the section to lang code
-
+  ; We need to download and install dictionary
+  StrCpy $R2 "$PLUGINSDIR\$R1"
+  StrCpy $R3 "${SPELL_DOWNLOAD_URL}/$R1"
+  DetailPrint "Downloading the $R0 Dictionary... ($R3)"
   retry:
-    Call InstallAspell
-    Pop $R1
-    StrCmp $R1 "" +3
-    StrCmp $R1 "cancel" done
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_SPELLCHECK_ERROR) : $R1" /SD IDCANCEL IDRETRY retry IDCANCEL done
-
-  retry_dict:
-    Push $R0
-    Call InstallAspellDictionary
-    Pop $R1
-    StrCmp $R1 "" +3
-    StrCmp $R1 "cancel" done
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_SPELLCHECK_DICT_ERROR) : $R1" /SD IDCANCEL IDRETRY retry_dict
-
-  done:
-
-  Pop $R1
-  Pop $R0
-FunctionEnd
-
-Function InstallAspell
-  Push $R0
-  Push $R1
-  Push $R2
-
-  check:
-  ClearErrors
-  ReadRegDWORD $R0 HKLM ${ASPELL_REG_KEY} "AspellVersion"
-  IntCmp $R0 15 installed
-
-  ; If this is the check after installation, don't infinite loop on failure
-  StrCmp $R1 "$PLUGINSDIR\aspell_installer.exe" 0 +3
-    StrCpy $R0 $(ASPELL_INSTALL_FAILED)
-    Goto done
-
-  ; We need to download and install aspell
-  StrCpy $R1 "$PLUGINSDIR\aspell_installer.exe"
-  StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=aspell_core"
-  DetailPrint "Downloading Aspell... ($R2)"
-  NSISdl::download /TIMEOUT=10000 $R2 $R1
-  Pop $R0
-  StrCmp $R0 "success" +2
-    Goto done
-  ExecWait '"$R1"'
-  Delete $R1
-  Goto check ; Check that it is now installed correctly
-
-  installed: ;Aspell is currently installed, no error message
-    DetailPrint "Aspell is installed"
-    StrCpy $R0 ''
-
-  done:
-  Pop $R2
-  Pop $R1
-  Exch $R0
-FunctionEnd
-
-Function InstallAspellDictionary
-  Push $R0
-  Exch
-  Pop $R0 ;This is the language code
-  Push $R1
-  Push $R2
-  Push $R3
-  Push $R4
-
-  check:
-  ClearErrors
-  ReadRegStr $R2 HKLM "${ASPELL_REG_KEY}-$R0" ""
-  StrCmp $R2 "" 0 installed
-
-  ; If this is the check after installation, don't infinite loop on failure
-  StrCmp $R1 "$PLUGINSDIR\aspell_dict-$R0.exe" 0 +3
-    StrCpy $R0 $(ASPELL_INSTALL_FAILED)
-    Goto done
-
-  ; We need to download and install aspell
-  StrCpy $R1 "$PLUGINSDIR\aspell_dict-$R0.exe"
-  StrCpy $R3 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=lang_$R0"
-  DetailPrint "Downloading the Aspell $R0 Dictionary... ($R3)"
-  NSISdl::download /TIMEOUT=10000 $R3 $R1
+  NSISdl::download /TIMEOUT=10000 "$R3" "$R2"
   Pop $R3
+  StrCmp $R3 "cancel" done
   StrCmp $R3 "success" +3
-    StrCpy $R0 $R3
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_SPELLCHECK_ERROR) : $R3" /SD IDCANCEL IDRETRY retry IDCANCEL done
     Goto done
-  ; Use a specific temporary $OUTDIR for each dictionary because the installer doesn't clean up after itself
-  StrCpy $R4 "$OUTDIR"
-  SetOutPath "$PLUGINSDIR\aspell_dict-$R0"
-  ExecWait '"$R1"'
-  SetOutPath "$R4"
-  RMDir /r "$PLUGINSDIR\aspell_dict-$R0"
-  Delete $R1
-  Goto check ; Check that it is now installed correctly
+  SetOutPath "$INSTDIR\spellcheck\share\enchant\myspell"
+  nsisunz::UnzipToLog "$R2" "$OUTDIR"
+  SetOutPath "$INSTDIR"
+  Pop $R3
+  StrCmp $R3 "success" installed
+    DetailPrint "$R3" ;print error message to log
+    Goto done
 
   installed: ;The dictionary is currently installed, no error message
-    DetailPrint "Aspell $R0 Dictionary is installed"
-    StrCpy $R0 ''
+    DetailPrint "$R0 Dictionary is installed"
 
   done:
-  Pop $R4
   Pop $R3
   Pop $R2
-  Pop $R1
-  Exch $R0
+  Pop $R0
+  Exch $R1
 FunctionEnd

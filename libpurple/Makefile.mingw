@@ -8,7 +8,7 @@ PIDGIN_TREE_TOP := ..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libpurple
-NEEDED_DLLS = $(LIBXML2_TOP)/bin/libxml2.dll
+NEEDED_DLLS = $(LIBXML2_TOP)/bin/libxml2-2.dll
 
 ##
 ## INCLUDE PATHS
@@ -20,7 +20,7 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(LIBXML2_TOP)/include
+			-I$(LIBXML2_TOP)/include/libxml2
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(LIBXML2_TOP)/lib

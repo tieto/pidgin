@@ -575,7 +575,7 @@ setup_tree(PidginXferDialog *dialog)
 
 	/* Build the tree model */
 	/* Transfer type, Progress Bar, Filename, Size, Remaining */
-	model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_DOUBLE,
+	model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_INT,
 							   G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
 							   G_TYPE_POINTER);
 	dialog->model = model;
@@ -609,7 +609,7 @@ setup_tree(PidginXferDialog *dialog)
 	/* Progress bar column */
 	renderer = gtk_cell_renderer_progress_new();
 	column = gtk_tree_view_column_new_with_attributes(_("Progress"), renderer,
-				"percentage", COLUMN_PROGRESS, NULL);
+				"value", COLUMN_PROGRESS, NULL);
 	gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(column), TRUE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), column);
 
@@ -906,7 +906,7 @@ pidgin_xfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 	lfilename = utf8;
 	gtk_list_store_set(dialog->model, &data->iter,
 					   COLUMN_STATUS, pixbuf,
-					   COLUMN_PROGRESS, 0.0,
+					   COLUMN_PROGRESS, 0,
 					   COLUMN_FILENAME, (type == PURPLE_XFER_RECEIVE)
 					                     ? purple_xfer_get_filename(xfer)
 							     : lfilename,
@@ -1039,7 +1039,7 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
 
 	gtk_list_store_set(xfer_dialog->model, &data->iter,
-					   COLUMN_PROGRESS, purple_xfer_get_progress(xfer),
+					   COLUMN_PROGRESS, (gint)(purple_xfer_get_progress(xfer) * 100),
 					   COLUMN_SIZE, size_str,
 					   COLUMN_REMAINING, remaining_str,
 					   -1);

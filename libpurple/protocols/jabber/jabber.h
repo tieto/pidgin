@@ -166,6 +166,11 @@ struct _JabberStream
 	time_t idle;
 	time_t old_idle;
 
+	/** When we last pinged the server, so we don't ping more
+	 *  often than once every minute.
+	 */
+	time_t last_ping;
+
 	JabberID *user;
 	JabberBuddy *user_jb;
 
@@ -376,10 +381,7 @@ gboolean jabber_initiate_media(PurpleAccount *account, const char *who,
 PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who);
 gboolean jabber_can_receive_file(PurpleConnection *gc, const gchar *who);
 
-void jabber_register_commands(void);
-void jabber_unregister_commands(void);
-
-void jabber_init_plugin(PurplePlugin *plugin);
-void jabber_uninit_plugin(PurplePlugin *plugin);
+void jabber_plugin_init(PurplePlugin *plugin);
+void jabber_plugin_uninit(PurplePlugin *plugin);
 
 #endif /* PURPLE_JABBER_H_ */

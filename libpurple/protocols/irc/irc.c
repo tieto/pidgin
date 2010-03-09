@@ -369,7 +369,7 @@ static gboolean do_login(PurpleConnection *gc) {
 	const char *pass = purple_connection_get_password(gc);
 
 	if (pass && *pass) {
-		buf = irc_format(irc, "vv", "PASS", pass);
+		buf = irc_format(irc, "v:", "PASS", pass);
 		if (irc_send(irc, buf) < 0) {
 			g_free(buf);
 			return FALSE;
@@ -944,7 +944,8 @@ static PurplePluginProtocolInfo prpl_info =
 	sizeof(PurplePluginProtocolInfo),    /* struct_size */
 	NULL,                    /* get_account_text_table */
 	NULL,                    /* initiate_media */
-	NULL					 /* can_do_media */
+	NULL,					 /* get_media_caps */
+	NULL					 /* get_moods */
 };
 
 static gboolean load_plugin (PurplePlugin *plugin) {

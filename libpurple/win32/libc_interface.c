@@ -33,6 +33,7 @@
 #include "libc_internal.h"
 #include <glib/gstdio.h>
 
+/** This is redefined here because we can't include internal.h */
 #ifdef ENABLE_NLS
 #  include <locale.h>
 #  include <libintl.h>
@@ -61,7 +62,7 @@ static char errbuf[1024];
 /* helpers */
 static int wpurple_is_socket( int fd ) {
 	int optval;
-	unsigned int optlen = sizeof(int);
+	int optlen = sizeof(int);
 
 	if( (getsockopt(fd, SOL_SOCKET, SO_TYPE, (void*)&optval, &optlen)) == SOCKET_ERROR ) {
 		int error = WSAGetLastError();
@@ -972,7 +973,7 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 
 		memset(zonename, 0, sizeof(zonename));
 		namesize = sizeof(zonename);
-		if ((r = RegQueryValueEx(key, "Std", NULL, NULL, zonename, &namesize)) != ERROR_SUCCESS)
+		if ((r = RegQueryValueEx(key, "Std", NULL, NULL, (LPBYTE)zonename, &namesize)) != ERROR_SUCCESS)
 		{
 			purple_debug_warning("wpurple", "could not query value for 'std' to identify Windows timezone: %i\n", (int) r);
 			RegCloseKey(key);
@@ -987,7 +988,7 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 		}
 		memset(zonename, 0, sizeof(zonename));
 		namesize = sizeof(zonename);
-		if ((r = RegQueryValueEx(key, "Dlt", NULL, NULL, zonename, &namesize)) != ERROR_SUCCESS)
+		if ((r = RegQueryValueEx(key, "Dlt", NULL, NULL, (LPBYTE)zonename, &namesize)) != ERROR_SUCCESS)
 		{
 			purple_debug_warning("wpurple", "could not query value for 'dlt' to identify Windows timezone: %i\n", (int) r);
 			RegCloseKey(key);
@@ -1047,29 +1048,12 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
 	return "";
 }
 
+int wpurple_g_access (const gchar *filename, int mode);
 /**
- * g_access:
- * @filename: a pathname in the GLib file name encoding (UTF-8 on Windows)
- * @mode: as in access()
- *
- * A wrapper for the POSIX access() function. This function is used to
- * test a pathname for one or several of read, write or execute
- * permissions, or just existence. On Windows, the underlying access()
- * function in the C library only checks the READONLY attribute, and
- * does not look at the ACL at all. Software that needs to handle file
- * permissions on Windows more exactly should use the Win32 API.
- *
- * See the C library manual for more details about access().
- *
- * Returns: zero if the pathname refers to an existing file system
- * object that has all the tested permissions, or -1 otherwise or on
- * error.
- *
- * Since: 2.8
+ * @deprecated - remove for 3.0.0
  */
 int
-wpurple_g_access (const gchar *filename,
-	  int          mode)
+wpurple_g_access (const gchar *filename, int mode)
 {
 	return g_access(filename, mode);
 }

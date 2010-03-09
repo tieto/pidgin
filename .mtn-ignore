@@ -38,7 +38,10 @@ pidgin.desktop$
 pidgin.spec$
 pidgin-.*.tar.gz
 pidgin-.*.tar.bz2
+pidgin-*.*.*-dbgsym$
+pidgin-*.*.*-dbgsym.zip$
 pidgin-*.*.*-win32bin$
+pidgin-*.*.*-win32-bin.zip$
 pidgin/pidgin$
 pidgin/pixmaps/emotes/default/24/theme
 pidgin/pixmaps/emotes/none/theme
@@ -48,6 +51,9 @@ pidgin/plugins/perl/common/Makefile.PL$
 pidgin/plugins/perl/common/Makefile.old
 pidgin/win32/pidgin_dll_rc.rc$
 pidgin/win32/pidgin_exe_rc.rc$
+pidgin/win32/nsis/gtk-runtime-*.*.*.*.zip
+pidgin/win32/nsis/gtk_runtime_stage$
+pidgin/win32/nsis/pidgin-translations.nsh$
 install-sh
 libpurple/dbus-bindings.c
 libpurple/dbus-signals.c

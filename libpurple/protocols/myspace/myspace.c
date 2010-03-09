@@ -3093,7 +3093,8 @@ static PurplePluginProtocolInfo prpl_info = {
 	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	msim_get_account_text_table,              /* get_account_text_table */
 	NULL,                   /* initiate_media */
-	NULL                    /* can_do_media */
+	NULL,                   /* get_media_caps */
+	NULL                    /* get_moods */
 };
 
 /**

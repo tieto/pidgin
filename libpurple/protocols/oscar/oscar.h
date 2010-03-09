@@ -375,8 +375,12 @@ typedef enum
 	OSCAR_CAPABILITY_CAMERA               = 0x04000000,
 	OSCAR_CAPABILITY_ICHAT_SCREENSHARE    = 0x08000000,
 	OSCAR_CAPABILITY_TYPING               = 0x10000000,
-	OSCAR_CAPABILITY_GENERICUNKNOWN       = 0x20000000,
-	OSCAR_CAPABILITY_LAST                 = 0x40000000
+	OSCAR_CAPABILITY_NEWCAPS              = 0x20000000,
+	OSCAR_CAPABILITY_XTRAZ                = 0x40000000,
+	OSCAR_CAPABILITY_GENERICUNKNOWN       = 0x80000000,
+#warning Fix OSCAR_CAPABILITY_LAST situation
+	// TODO: We're out of bits.  Rework things that depend on this or remove some capability. (Or, ensure this is a 64-bit type.)
+	OSCAR_CAPABILITY_LAST                 = 0x100000000	
 } OscarCapability;
 
 /*
@@ -572,6 +576,12 @@ struct _OscarData
 #define AIM_ICQ_STATE_BUSY              0x00000010
 #define AIM_ICQ_STATE_CHAT              0x00000020
 #define AIM_ICQ_STATE_INVISIBLE         0x00000100
+#define AIM_ICQ_STATE_EVIL              0x00003000
+#define AIM_ICQ_STATE_DEPRESSION        0x00004000
+#define AIM_ICQ_STATE_ATHOME            0x00005000
+#define AIM_ICQ_STATE_ATWORK            0x00006000
+#define AIM_ICQ_STATE_LUNCH             0x00002001
+#define AIM_ICQ_STATE_EVIL              0x00003000
 #define AIM_ICQ_STATE_WEBAWARE          0x00010000
 #define AIM_ICQ_STATE_HIDEIP            0x00020000
 #define AIM_ICQ_STATE_BIRTHDAY          0x00080000
@@ -1012,7 +1022,8 @@ struct aim_incomingim_ch4_args
 /* 0x0008 */ int aim_im_warn(OscarData *od, FlapConnection *conn, const char *destbn, guint32 flags);
 /* 0x000b */ int aim_im_denytransfer(OscarData *od, const char *bn, const guchar *cookie, guint16 code);
 /* 0x0010 */ int aim_im_reqofflinemsgs(OscarData *od);
-/* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 channel, const char *bn, guint16 event);
+/* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2);
+/* 0x000b */ int icq_relay_xstatus (OscarData *od, const char *sn, const guchar* cookie);
 void aim_icbm_makecookie(guchar* cookie);
 gchar *oscar_encoding_extract(const char *encoding);
 gchar *oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char *text, int textlen);
@@ -1144,8 +1155,10 @@ guint32 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len);
 void aim_info_free(aim_userinfo_t *);
 int aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *);
 int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info);
-
-
+PurpleMood* icq_get_purple_moods(PurpleAccount *account);
+const char* icq_get_custom_icon_description(const char *mood);
+guint8* icq_get_custom_icon_data(const char *mood);
+int icq_im_xstatus_request(OscarData *od, const char *sn);
 
 /* 0x0003 - family_buddy.c */
 /* 0x0002 */ void aim_buddylist_reqrights(OscarData *, FlapConnection *);
@@ -1474,7 +1487,7 @@ int aim_tlvlist_add_8(GSList **list, const guint16 type, const guint8 value);
 int aim_tlvlist_add_16(GSList **list, const guint16 type, const guint16 value);
 int aim_tlvlist_add_32(GSList **list, const guint16 type, const guint32 value);
 int aim_tlvlist_add_str(GSList **list, const guint16 type, const char *value);
-int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps);
+int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps, const char *mood);
 int aim_tlvlist_add_userinfo(GSList **list, guint16 type, aim_userinfo_t *userinfo);
 int aim_tlvlist_add_chatroom(GSList **list, guint16 type, guint16 exchange, const char *roomname, guint16 instance);
 int aim_tlvlist_add_frozentlvlist(GSList **list, guint16 type, GSList **tl);

@@ -97,7 +97,7 @@ static BOOL read_reg_string(HKEY key, TCHAR *sub_key, TCHAR *val_name, LPBYTE da
 	return ret;
 }
 
-static void common_dll_prep(const TCHAR *path) {
+static BOOL common_dll_prep(const TCHAR *path) {
 	HMODULE hmod;
 	HKEY hkey;
 	struct _stat stat_buf;
@@ -110,7 +110,7 @@ static void common_dll_prep(const TCHAR *path) {
 	if (_tstat(test_path, &stat_buf) != 0) {
 		printf("Unable to determine GTK+ path. \n"
 			"Assuming GTK+ is in the PATH.\n");
-		return;
+		return FALSE;
 	}
 
 
@@ -184,6 +184,20 @@ static void common_dll_prep(const TCHAR *path) {
 				printf("SafeDllSearchMode is set to 0\n");
 		}/*end else*/
 	}
+
+	return TRUE;
+}
+
+static BOOL dll_prep(const TCHAR *pidgin_dir) {
+	TCHAR path[MAX_PATH + 1];
+	path[0] = _T('\0');
+
+	if (*pidgin_dir) {
+		_sntprintf(path, sizeof(path) / sizeof(TCHAR), _T("%s\\Gtk\\bin"), pidgin_dir);
+		path[sizeof(path) / sizeof(TCHAR)] = _T('\0');
+	}
+
+	return common_dll_prep(path);
 }
 
 static void portable_mode_dll_prep(const TCHAR *pidgin_dir) {
@@ -224,22 +238,11 @@ static void portable_mode_dll_prep(const TCHAR *pidgin_dir) {
 	_tprintf(_T("%s\n"), path2);
 	_tputenv(path2);
 
-	/* set the GTK+ path to be \\path\to\GTK\bin */
-	_tcscat(path, _T("\\GTK\\bin"));
-
-	common_dll_prep(path);
-}
-
-static void dll_prep(const TCHAR *pidgin_dir) {
-	TCHAR gtk_path[MAX_PATH + 1];
-	gtk_path[0] = _T('\0');
-
-	if (*pidgin_dir) {
-		_sntprintf(gtk_path, sizeof(gtk_path) / sizeof(TCHAR), _T("%s\\Gtk\\bin"), pidgin_dir);
-		gtk_path[sizeof(gtk_path) / sizeof(TCHAR)] = _T('\0');
+	if (!dll_prep(pidgin_dir)) {
+		/* set the GTK+ path to be \\path\to\GTK\bin */
+		_tcscat(path, _T("\\GTK\\bin"));
+		common_dll_prep(path);
 	}
-
-	common_dll_prep(gtk_path);
 }
 
 static TCHAR* winpidgin_lcid_to_posix(LCID lcid) {

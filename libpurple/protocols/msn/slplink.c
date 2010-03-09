@@ -307,6 +307,8 @@ msg_ack(MsnMessage *msg, void *data)
 
 	slpmsg->offset += msg->msnslp_header.length;
 
+	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
+
 	if (slpmsg->offset < real_size)
 	{
 		if (slpmsg->slpcall->xfer && purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
@@ -331,8 +333,6 @@ msg_ack(MsnMessage *msg, void *data)
 			}
 		}
 	}
-
-	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
 }
 
 /* We have received the message nak. */
@@ -658,74 +658,51 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	}
 }
 
-typedef struct
-{
-	guint32 length;
-	guint32 unk1;
-	guint32 file_size;
-	guint32 unk2;
-	guint32 unk3;
-} MsnContextHeader;
-
-#define MAX_FILE_NAME_LEN 0x226
-
 static gchar *
 gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 {
 	gsize size = 0;
-	MsnContextHeader header;
+	MsnFileContext header;
 	gchar *u8 = NULL;
-	guchar *base;
-	guchar *n;
 	gchar *ret;
 	gunichar2 *uni = NULL;
 	glong currentChar = 0;
-	glong uni_len = 0;
-	gsize len;
+	glong len = 0;
 
 	size = purple_xfer_get_size(xfer);
 
-	if(!file_name) {
+	if (!file_name) {
 		gchar *basename = g_path_get_basename(file_path);
 		u8 = purple_utf8_try_convert(basename);
 		g_free(basename);
 		file_name = u8;
 	}
 
-	uni = g_utf8_to_utf16(file_name, -1, NULL, &uni_len, NULL);
+	uni = g_utf8_to_utf16(file_name, -1, NULL, &len, NULL);
 
-	if(u8) {
+	if (u8) {
 		g_free(u8);
 		file_name = NULL;
 		u8 = NULL;
 	}
 
-	len = sizeof(MsnContextHeader) + MAX_FILE_NAME_LEN + 4;
+	header.length = GUINT32_TO_LE(sizeof(MsnFileContext) - 1);
+	header.version = GUINT32_TO_LE(2); /* V.3 contains additional unnecessary data */
+	header.file_size = GUINT64_TO_LE(size);
+	header.type = GUINT32_TO_LE(1);    /* No file preview */
 
-	header.length = GUINT32_TO_LE(len);
-	header.unk1 = GUINT32_TO_LE(2);
-	header.file_size = GUINT32_TO_LE(size);
-	header.unk2 = GUINT32_TO_LE(0);
-	header.unk3 = GUINT32_TO_LE(0);
-
-	base = g_malloc(len + 1);
-	n = base;
-
-	memcpy(n, &header, sizeof(MsnContextHeader));
-	n += sizeof(MsnContextHeader);
-
-	memset(n, 0x00, MAX_FILE_NAME_LEN);
-	for(currentChar = 0; currentChar < uni_len; currentChar++) {
-		*((gunichar2 *)n + currentChar) = GUINT16_TO_LE(uni[currentChar]);
+	len = MIN(len, MAX_FILE_NAME_LEN);
+	for (currentChar = 0; currentChar < len; currentChar++) {
+		header.file_name[currentChar] = GUINT16_TO_LE(uni[currentChar]);
 	}
-	n += MAX_FILE_NAME_LEN;
+	memset(&header.file_name[currentChar], 0x00, (MAX_FILE_NAME_LEN - currentChar) * 2);
 
-	memset(n, 0xFF, 4);
-	n += 4;
+	memset(&header.unknown1, 0, sizeof(header.unknown1));
+	header.unknown2 = GUINT32_TO_LE(0xffffffff);
+	header.preview[0] = '\0';
 
 	g_free(uni);
-	ret = purple_base64_encode(base, len);
-	g_free(base);
+	ret = purple_base64_encode((const guchar *)&header, sizeof(MsnFileContext));
 	return ret;
 }
 

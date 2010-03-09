@@ -145,6 +145,7 @@ libpurple/protocols/novell/nmuser.c
 libpurple/protocols/novell/novell.c
 libpurple/protocols/oscar/clientlogin.c
 libpurple/protocols/oscar/family_chatnav.c
+libpurple/protocols/oscar/family_locate.c
 libpurple/protocols/oscar/flap_connection.c
 libpurple/protocols/oscar/libaim.c
 libpurple/protocols/oscar/libicq.c
@@ -213,14 +214,12 @@ pidgin/eggtrayicon.c
 pidgin/gtkaccount.c
 pidgin/gtkblist-theme.c
 pidgin/gtkblist.c
-pidgin/gtkcellview.c
 pidgin/gtkcertmgr.c
 pidgin/gtkconn.c
 pidgin/gtkconv.c
 pidgin/gtkdebug.c
 pidgin/gtkdialogs.c
 pidgin/gtkdocklet.c
-pidgin/gtkexpander.c
 pidgin/gtkft.c
 pidgin/gtkimhtml.c
 pidgin/gtkimhtmltoolbar.c
@@ -241,7 +240,6 @@ pidgin/gtkstatusbox.c
 pidgin/gtkutils.c
 pidgin/gtkwhiteboard.c
 pidgin/pidgin.h
-pidgin/pidgincombobox.c
 pidgin/pidginstock.c
 pidgin/pidgintooltip.c
 pidgin/pixmaps/emotes/default/24/default.theme.in

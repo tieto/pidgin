@@ -43,6 +43,7 @@
 #include "presence.h"
 #include "google.h"
 #include "pep.h"
+#include "usermood.h"
 #include "usertune.h"
 #include "caps.h"
 #include "data.h"
@@ -126,108 +127,19 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, /* get_account_text_table */
 	jabber_initiate_media,          /* initiate_media */
 	jabber_get_media_caps,                  /* get_media_caps */
+	jabber_get_moods  							/* get_moods */
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)
 {
-	purple_signal_register(plugin, "jabber-receiving-xmlnode",
-			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new_outgoing(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
-
-	purple_signal_register(plugin, "jabber-sending-xmlnode",
-			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new_outgoing(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
-
-	/*
-	 * Do not remove this or the plugin will fail. Completely. You have been
-	 * warned!
-	 */
-	purple_signal_connect_priority(plugin, "jabber-sending-xmlnode",
-			plugin, PURPLE_CALLBACK(jabber_send_signal_cb),
-			NULL, PURPLE_SIGNAL_PRIORITY_HIGHEST);
-
-	purple_signal_register(plugin, "jabber-sending-text",
-			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
-
-	purple_signal_register(plugin, "jabber-receiving-message",
-			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER_POINTER,
-			purple_value_new(PURPLE_TYPE_BOOLEAN), 6,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new(PURPLE_TYPE_STRING), /* type */
-			purple_value_new(PURPLE_TYPE_STRING), /* id */
-			purple_value_new(PURPLE_TYPE_STRING), /* from */
-			purple_value_new(PURPLE_TYPE_STRING), /* to */
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
-
-	purple_signal_register(plugin, "jabber-receiving-iq",
-			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
-			purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new(PURPLE_TYPE_STRING), /* type */
-			purple_value_new(PURPLE_TYPE_STRING), /* id */
-			purple_value_new(PURPLE_TYPE_STRING), /* from */
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
-
-	purple_signal_register(plugin, "jabber-watched-iq",
-			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
-			purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new(PURPLE_TYPE_STRING), /* type */
-			purple_value_new(PURPLE_TYPE_STRING), /* id */
-			purple_value_new(PURPLE_TYPE_STRING), /* from */
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE)); /* child */
-
-	/* Modifying these? Look at jabber_init_plugin for the ipc versions */
-	purple_signal_register(plugin, "jabber-register-namespace-watcher",
-			purple_marshal_VOID__POINTER_POINTER,
-			NULL, 2,
-			purple_value_new(PURPLE_TYPE_STRING),  /* node */
-			purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
-
-	purple_signal_register(plugin, "jabber-unregister-namespace-watcher",
-			purple_marshal_VOID__POINTER_POINTER,
-			NULL, 2,
-			purple_value_new(PURPLE_TYPE_STRING),  /* node */
-			purple_value_new(PURPLE_TYPE_STRING)); /* namespace */
-
-	purple_signal_connect(plugin, "jabber-register-namespace-watcher",
-			plugin, PURPLE_CALLBACK(jabber_iq_signal_register), NULL);
-	purple_signal_connect(plugin, "jabber-unregister-namespace-watcher",
-			plugin, PURPLE_CALLBACK(jabber_iq_signal_unregister), NULL);
-
-	purple_signal_register(plugin, "jabber-receiving-presence",
-			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER,
-			purple_value_new(PURPLE_TYPE_BOOLEAN), 4,
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
-			purple_value_new(PURPLE_TYPE_STRING), /* type */
-			purple_value_new(PURPLE_TYPE_STRING), /* from */
-			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
+	jabber_plugin_init(plugin);
 
 	return TRUE;
 }
 
 static gboolean unload_plugin(PurplePlugin *plugin)
 {
-	purple_signals_unregister_by_instance(plugin);
-
-	/* reverse order of init_plugin */
-	jabber_bosh_uninit();
-	jabber_data_uninit();
-	jabber_si_uninit();
-	jabber_ibb_uninit();
-	/* PEP things should be uninit via jabber_pep_uninit, not here */
-	jabber_pep_uninit();
-	jabber_caps_uninit();
-	jabber_iq_uninit();
-
-	jabber_unregister_commands();
-
-	/* Stay on target...stay on target... Almost there... */
-	jabber_uninit_plugin(plugin);
+	jabber_plugin_uninit(plugin);
 
 	return TRUE;
 }
@@ -400,7 +312,6 @@ init_plugin(PurplePlugin *plugin)
 		option);
 
 	my_protocol = plugin;
-	jabber_init_plugin(plugin);
 
 	purple_prefs_remove("/plugins/prpl/jabber");
 
@@ -421,20 +332,6 @@ init_plugin(PurplePlugin *plugin)
 	SetErrorMode(old_error_mode);
 #endif
 #endif
-	jabber_register_commands();
-
-	/* reverse order of unload_plugin */
-	jabber_iq_init();
-	jabber_caps_init();
-	/* PEP things should be init via jabber_pep_init, not here */
-	jabber_pep_init();
-	jabber_data_init();
-	jabber_bosh_init();
-
-	/* TODO: Implement adding and retrieving own features via IPC API */
-
-	jabber_ibb_init();
-	jabber_si_init();
 
 	purple_signal_connect(purple_get_core(), "uri-handler", plugin,
 		PURPLE_CALLBACK(xmpp_uri_handler), NULL);

@@ -129,18 +129,13 @@ wpurple_gethostname( name, size )
 wpurple_gettimeofday( timeval, timezone )
 
 /* stdio.h */
+#undef snprintf
 #define snprintf _snprintf
+#undef vsnprintf
 #define vsnprintf _vsnprintf
 
 #define rename( oldname, newname ) \
 wpurple_rename( oldname, newname )
-
-#ifdef g_rename
-# undef g_rename
-#endif
-/* This is necessary because we want rename on win32 to be able to overwrite an existing file, it is done in internal.h if GLib < 2.6*/
-#define g_rename(oldname, newname) \
-wpurple_rename(oldname, newname)
 
 /* sys/stat.h */
 #define fchmod(a,b)

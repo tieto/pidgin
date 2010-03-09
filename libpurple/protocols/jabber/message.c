@@ -74,24 +74,6 @@ static void handle_chat(JabberMessage *jm)
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
-	if (jid->resource) {
-		/*
-		 * We received a message from a specific resource, so we probably want a
-		 * reply to go to this specific resource (i.e. bind/lock the
-		 * conversation to this resource).
-		 *
-		 * This works because purple_conv_im_send gets the name from
-		 * purple_conversation_get_name()
-		 */
-		PurpleConversation *conv;
-
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, jm->from, account);
-		if (conv && !g_str_equal(jm->from, purple_conversation_get_name(conv))) {
-			purple_debug_info("jabber", "Binding conversation to %s\n", jm->from);
-			purple_conversation_set_name(conv, jm->from);
-		}
-	}
-
 	if(!jm->xhtml && !jm->body) {
 		if (jbr) {
 			if (jm->chat_state != JM_STATE_NONE)
@@ -137,6 +119,28 @@ static void handle_chat(JabberMessage *jm)
 			serv_got_typing_stopped(gc, jm->from);
 		}
 	} else {
+		if (jid->resource) {
+			/*
+			 * We received a message from a specific resource, so
+			 * we probably want a reply to go to this specific
+			 * resource (i.e. bind/lock the conversation to this
+			 * resource).
+			 *
+			 * This works because purple_conv_im_send gets the name
+			 * from purple_conversation_get_name()
+			 */
+			PurpleConversation *conv;
+
+			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+			                                             jm->from, account);
+			if (conv && !g_str_equal(jm->from,
+			                         purple_conversation_get_name(conv))) {
+				purple_debug_info("jabber", "Binding conversation to %s\n",
+				                  jm->from);
+				purple_conversation_set_name(conv, jm->from);
+			}
+		}
+
 		if(jbr) {
 			if (jm->chat_state != JM_STATE_NONE)
 				jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;

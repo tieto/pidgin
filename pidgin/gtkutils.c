@@ -406,13 +406,13 @@ pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
 	gtk_container_add(GTK_CONTAINER(button), bbox);
 
 	if (icon) {
-		gtk_box_pack_start_defaults(GTK_BOX(bbox), ibox);
+		gtk_box_pack_start(GTK_BOX(bbox), ibox, TRUE, TRUE, 0);
 		image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_BUTTON);
 		gtk_box_pack_end(GTK_BOX(ibox), image, FALSE, TRUE, 0);
 	}
 
 	if (text) {
-		gtk_box_pack_start_defaults(GTK_BOX(bbox), lbox);
+		gtk_box_pack_start(GTK_BOX(bbox), lbox, TRUE, TRUE, 0);
 		label = gtk_label_new(NULL);
 		gtk_label_set_text_with_mnemonic(GTK_LABEL(label), text);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), button);
