@@ -74,7 +74,8 @@
 
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
-static GSList *jabber_cmds = NULL;
+
+static GHashTable *jabber_cmds = NULL; /* PurplePlugin * => GSList of ids */
 
 static gint plugin_ref = 0;
 
@@ -3343,40 +3344,41 @@ jabber_cmd_mood(PurpleConversation *conv,
 	}
 }
 
-void jabber_register_commands(void)
+static void jabber_register_commands(PurplePlugin *plugin)
 {
+	GSList *commands = NULL;
 	PurpleCmdId id;
 	id = purple_cmd_register("config", "", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_config,
 	                  _("config:  Configure a chat room."), NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("configure", "", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_config,
 	                  _("configure:  Configure a chat room."), NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("nick", "s", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_nick,
 	                  _("nick &lt;new nickname&gt;:  Change your nickname."),
 	                  NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("part", "s", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
 	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_part, _("part [message]:  Leave the room."),
 	                  NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("register", "", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_register,
 	                  _("register:  Register with a chat room."), NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	/* XXX: there needs to be a core /topic cmd, methinks */
 	id = purple_cmd_register("topic", "s", PURPLE_CMD_P_PRPL,
@@ -3385,7 +3387,7 @@ void jabber_register_commands(void)
 	                  jabber_cmd_chat_topic,
 	                  _("topic [new topic]:  View or change the topic."),
 	                  NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("ban", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
@@ -3393,7 +3395,7 @@ void jabber_register_commands(void)
 	                  jabber_cmd_chat_ban,
 	                  _("ban &lt;user&gt; [reason]:  Ban a user from the room."),
 	                  NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("affiliate", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
@@ -3401,7 +3403,7 @@ void jabber_register_commands(void)
 	                  jabber_cmd_chat_affiliate,
 	                  _("affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get the users with an affiliation or set users' affiliation with the room."),
 	                  NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("role", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
@@ -3409,7 +3411,7 @@ void jabber_register_commands(void)
 	                  jabber_cmd_chat_role,
 	                  _("role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the users with a role or set users' role with the room."),
 	                  NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("invite", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
@@ -3417,7 +3419,7 @@ void jabber_register_commands(void)
 	                  jabber_cmd_chat_invite,
 	                  _("invite &lt;user&gt; [message]:  Invite a user to the room."),
 	                  NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("join", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
@@ -3425,7 +3427,7 @@ void jabber_register_commands(void)
 	                  jabber_cmd_chat_join,
 	                  _("join: &lt;room&gt; [password]:  Join a chat on this server."),
 	                  NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("kick", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
@@ -3433,14 +3435,14 @@ void jabber_register_commands(void)
 	                  jabber_cmd_chat_kick,
 	                  _("kick &lt;user&gt; [reason]:  Kick a user from the room."),
 	                  NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("msg", "ws", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_msg,
 	                  _("msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."),
 	                  NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("ping", "w", PURPLE_CMD_P_PRPL,
 					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
@@ -3448,29 +3450,37 @@ void jabber_register_commands(void)
 					  "prpl-jabber", jabber_cmd_ping,
 					  _("ping &lt;jid&gt;:	Ping a user/component/server."),
 					  NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("buzz", "w", PURPLE_CMD_P_PRPL,
 					  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY |
 					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
 					  "prpl-jabber", jabber_cmd_buzz,
 					  _("buzz: Buzz a user to get their attention"), NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	id = purple_cmd_register("mood", "ws", PURPLE_CMD_P_PRPL,
 	    			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
 	    			  PURPLE_CMD_FLAG_PRPL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
 	    			  "prpl-jabber", jabber_cmd_mood,
 	    			  _("mood: Set current user mood"), NULL);
-	jabber_cmds = g_slist_prepend(jabber_cmds, GUINT_TO_POINTER(id));
+	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
+
+	g_hash_table_insert(jabber_cmds, plugin, commands);
 }
 
-void jabber_unregister_commands(void)
+static void cmds_free_func(gpointer value)
 {
-	while (jabber_cmds != NULL) {
-		purple_cmd_unregister(GPOINTER_TO_UINT(jabber_cmds->data));
-		jabber_cmds = g_slist_delete_link(jabber_cmds, jabber_cmds);
+	GSList *commands = value;
+	while (commands) {
+		purple_cmd_unregister(GPOINTER_TO_UINT(commands->data));
+		commands = g_slist_delete_link(commands, commands);
 	}
+}
+
+static void jabber_unregister_commands(PurplePlugin *plugin)
+{
+	g_hash_table_remove(jabber_cmds, plugin);
 }
 
 /* IPC functions */
@@ -3529,6 +3539,8 @@ jabber_do_init(void)
 	const gchar *type = "pc"; /* default client type, if unknown or
 								unspecified */
 	const gchar *ui_name = NULL;
+
+	jabber_cmds = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, cmds_free_func);
 
 	ui_type = ui_info ? g_hash_table_lookup(ui_info, "client_type") : NULL;
 	if (ui_type) {
@@ -3592,9 +3604,6 @@ jabber_do_init(void)
 			G_CALLBACK(jabber_caps_broadcast_change), NULL);
 #endif
 
-	/* TODO: This needs to be per-plugin */
-	jabber_register_commands();
-
 	/* reverse order of unload_plugin */
 	jabber_iq_init();
 	jabber_caps_init();
@@ -3625,12 +3634,12 @@ jabber_do_uninit(void)
 	jabber_presence_uninit();
 	jabber_iq_uninit();
 
-	/* TODO: This needs to be per-main plugin */
-	jabber_unregister_commands();
-
 	jabber_auth_uninit();
 	jabber_features_destroy();
 	jabber_identities_destroy();
+
+	g_hash_table_destroy(jabber_cmds);
+	jabber_cmds = NULL;
 }
 
 void jabber_plugin_init(PurplePlugin *plugin)
@@ -3639,6 +3648,8 @@ void jabber_plugin_init(PurplePlugin *plugin)
 
 	if (plugin_ref == 1)
 		jabber_do_init();
+
+	jabber_register_commands(plugin);
 
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
@@ -3751,6 +3762,8 @@ void jabber_plugin_uninit(PurplePlugin *plugin)
 
 	purple_signals_unregister_by_instance(plugin);
 	purple_plugin_ipc_unregister_all(plugin);
+
+	jabber_unregister_commands(plugin);
 
 	--plugin_ref;
 	if (plugin_ref == 0)
