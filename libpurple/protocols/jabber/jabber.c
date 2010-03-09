@@ -3636,6 +3636,7 @@ jabber_do_init(void)
 
 	/* reverse order of unload_plugin */
 	jabber_iq_init();
+	jabber_presence_init();
 	jabber_caps_init();
 	/* PEP things should be init via jabber_pep_init, not here */
 	jabber_pep_init();
