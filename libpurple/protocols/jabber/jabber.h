@@ -379,7 +379,7 @@ gboolean jabber_can_receive_file(PurpleConnection *gc, const gchar *who);
 void jabber_register_commands(void);
 void jabber_unregister_commands(void);
 
-void jabber_init_plugin(PurplePlugin *plugin);
-void jabber_uninit_plugin(PurplePlugin *plugin);
+void jabber_plugin_init(PurplePlugin *plugin);
+void jabber_plugin_uninit(PurplePlugin *plugin);
 
 #endif /* PURPLE_JABBER_H_ */
