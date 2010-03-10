@@ -304,12 +304,15 @@ out_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 void
 msn_notification_close(MsnNotification *notification)
 {
+	MsnTransaction *trans;
+
 	g_return_if_fail(notification != NULL);
 
 	if (!notification->in_use)
 		return;
 
-	msn_cmdproc_send_quick(notification->cmdproc, "OUT", NULL, NULL);
+	trans = msn_transaction_new(notification->cmdproc, "OUT", NULL, NULL);
+	msn_cmdproc_send_trans(notification->cmdproc, trans);
 
 	msn_notification_disconnect(notification);
 }

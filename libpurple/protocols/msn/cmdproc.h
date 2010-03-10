@@ -91,9 +91,6 @@ void msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans);
 void msn_cmdproc_queue_trans(MsnCmdProc *cmdproc,
 							 MsnTransaction *trans);
 
-void msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
-							const char *format, ...);
-
 void msn_cmdproc_process_msg(MsnCmdProc *cmdproc,
 							 MsnMessage *msg);
 void msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd);

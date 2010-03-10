@@ -155,48 +155,6 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 }
 
 void
-msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
-					   const char *format, ...)
-{
-	MsnServConn *servconn;
-	char *data;
-	char *params = NULL;
-	va_list arg;
-	size_t len;
-
-	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(command != NULL);
-
-	servconn = cmdproc->servconn;
-
-	if (!servconn->connected)
-		return;
-
-	if (format != NULL)
-	{
-		va_start(arg, format);
-		params = g_strdup_vprintf(format, arg);
-		va_end(arg);
-	}
-
-	if (params != NULL)
-		data = g_strdup_printf("%s %s\r\n", command, params);
-	else
-		data = g_strdup_printf("%s\r\n", command);
-
-	g_free(params);
-
-	len = strlen(data);
-
-	show_debug_cmd(cmdproc, FALSE, data);
-
-	msn_servconn_write(servconn, data, len);
-
-	g_free(data);
-}
-
-
-void
 msn_cmdproc_process_payload(MsnCmdProc *cmdproc, char *payload,
 							int payload_len)
 {

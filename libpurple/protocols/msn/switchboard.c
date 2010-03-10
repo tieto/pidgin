@@ -1223,8 +1223,10 @@ msn_switchboard_close(MsnSwitchBoard *swboard)
 			 !swboard->session->connected)
 	{
 		MsnCmdProc *cmdproc;
+		MsnTransaction *trans;
 		cmdproc = swboard->cmdproc;
-		msn_cmdproc_send_quick(cmdproc, "OUT", NULL, NULL);
+		trans = msn_transaction_new(cmdproc, "OUT", NULL, NULL);
+		msn_cmdproc_send_trans(cmdproc, trans);
 
 		msn_switchboard_destroy(swboard);
 	}

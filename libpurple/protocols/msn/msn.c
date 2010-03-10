@@ -1962,6 +1962,7 @@ static void
 msn_keepalive(PurpleConnection *gc)
 {
 	MsnSession *session;
+	MsnTransaction *trans;
 
 	session = gc->proto_data;
 
@@ -1971,7 +1972,8 @@ msn_keepalive(PurpleConnection *gc)
 
 		cmdproc = session->notification->cmdproc;
 
-		msn_cmdproc_send_quick(cmdproc, "PNG", NULL, NULL);
+		trans = msn_transaction_new(cmdproc, "PNG", NULL, NULL);
+		msn_cmdproc_send_trans(cmdproc, trans);
 	}
 }
 
