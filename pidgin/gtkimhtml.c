@@ -191,7 +191,7 @@ clipboard_win32_to_html(char *clipboard) {
 
 	purple_debug_info("imhtml clipboard", "from clipboard: %s\n", clipboard);
 
-	fd = g_fopen("e:\\purplecb.txt", "wb");
+	fd = g_fopen("c:\\purplecb.txt", "wb");
 	fprintf(fd, "%s", clipboard);
 	fclose(fd);
 #endif
@@ -1188,6 +1188,14 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		memcpy(text, selection_data->data, selection_data->length);
 	}
 
+#ifdef _WIN32
+	if (gtk_selection_data_get_data_type(selection_data) == gdk_atom_intern("HTML Format", FALSE)) {
+		char *tmp = clipboard_win32_to_html(text);
+		g_free(text);
+		text = tmp;
+	}
+#endif
+
 	if (selection_data->length >= 2 &&
 		(*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe)) {
 		/* This is UTF-16 */
@@ -1247,13 +1255,16 @@ static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 #ifdef _WIN32
 	/* If we're on windows, let's see if we can get data from the HTML Format
 	   clipboard before we try to paste from the GTK buffer */
-	if (!clipboard_paste_html_win32(imhtml))
-#endif
-	{
+	if (!clipboard_paste_html_win32(imhtml)) {
+		GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
+		gtk_clipboard_request_text(clipboard, paste_plaintext_received_cb, imhtml);
+
+	}
+#else
 	GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
 	gtk_clipboard_request_contents(clipboard, gdk_atom_intern("text/html", FALSE),
 				       paste_received_cb, imhtml);
-	}
+#endif
 	g_signal_stop_emission_by_name(imhtml, "paste-clipboard");
 }
 
@@ -1679,8 +1690,10 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect_after(G_OBJECT(imhtml), "realize", G_CALLBACK(imhtml_realized_remove_primary), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "unrealize", G_CALLBACK(imhtml_destroy_add_primary), NULL);
 
+#ifndef _WIN32
 	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set",
 		               G_CALLBACK(mark_set_so_update_selection_cb), imhtml);
+#endif
 
 	gtk_widget_add_events(GTK_WIDGET(imhtml),
 			GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK);

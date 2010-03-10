@@ -542,7 +542,7 @@ purple_upnp_discover_udp_read(gpointer data, gint sock, PurpleInputCondition con
 		len = recv(dd->fd, buf,
 			sizeof(buf) - 1, 0);
 
-		if(len > 0) {
+		if(len >= 0) {
 			buf[len] = '\0';
 			break;
 		} else if(errno != EINTR) {

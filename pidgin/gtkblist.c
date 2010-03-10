@@ -2660,39 +2660,30 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 
 /* Altered from do_colorshift in gnome-panel */
 static void
-do_alphashift (GdkPixbuf *dest, GdkPixbuf *src, int shift)
+do_alphashift(GdkPixbuf *pixbuf, int shift)
 {
 	gint i, j;
-	gint width, height, has_alpha, srcrowstride, destrowstride;
-	guchar *target_pixels;
-	guchar *original_pixels;
-	guchar *pixsrc;
-	guchar *pixdest;
+	gint width, height, padding;
+	guchar *pixels;
 	int val;
-	guchar a;
 
-	has_alpha = gdk_pixbuf_get_has_alpha (src);
-	if (!has_alpha)
+	if (!gdk_pixbuf_get_has_alpha(pixbuf))
 	  return;
 
-	width = gdk_pixbuf_get_width (src);
-	height = gdk_pixbuf_get_height (src);
-	srcrowstride = gdk_pixbuf_get_rowstride (src);
-	destrowstride = gdk_pixbuf_get_rowstride (dest);
-	target_pixels = gdk_pixbuf_get_pixels (dest);
-	original_pixels = gdk_pixbuf_get_pixels (src);
+	width = gdk_pixbuf_get_width(pixbuf);
+	height = gdk_pixbuf_get_height(pixbuf);
+	padding = gdk_pixbuf_get_rowstride(pixbuf) - width * 4;
+	pixels = gdk_pixbuf_get_pixels(pixbuf);
 
 	for (i = 0; i < height; i++) {
-		pixdest = target_pixels + i*destrowstride;
-		pixsrc = original_pixels + i*srcrowstride;
 		for (j = 0; j < width; j++) {
-			*(pixdest++) = *(pixsrc++);
-			*(pixdest++) = *(pixsrc++);
-			*(pixdest++) = *(pixsrc++);
-			a = *(pixsrc++);
-			val = a - shift;
-			*(pixdest++) = CLAMP(val, 0, 255);
+			pixels++;
+			pixels++;
+			pixels++;
+			val = *pixels - shift;
+			*(pixels++) = CLAMP(val, 0, 255);
 		}
+		pixels += padding;
 	}
 }
 
@@ -6367,7 +6358,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 		g_object_ref(G_OBJECT(gtkblist->empty_avatar));
 		avatar = gtkblist->empty_avatar;
 	} else if ((!PURPLE_BUDDY_IS_ONLINE(buddy) || purple_presence_is_idle(presence))) {
-		do_alphashift(avatar, avatar, 77);
+		do_alphashift(avatar, 77);
 	}
 
 	emblem = pidgin_blist_get_emblem((PurpleBlistNode*) buddy);
@@ -7827,20 +7818,29 @@ disable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 static void
 edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	PurpleRequestField *f;
+	PurpleRequestField *mood_field, *text_field;
 	GList *l;
 
-	f = purple_request_fields_get_field(fields, "mood");
-	l = purple_request_field_list_get_selected(f);
+	mood_field = purple_request_fields_get_field(fields, "mood");
+	text_field = purple_request_fields_get_field(fields, "text");
+	l = purple_request_field_list_get_selected(mood_field);
 
 	if (l) {
-		const char *mood = purple_request_field_list_get_data(f, l->data);
+		const char *mood = purple_request_field_list_get_data(mood_field, l->data);
+		const char *text = purple_request_field_string_get_value(text_field);
 		PurpleAccount *account = purple_connection_get_account(gc);
 
-		if (mood != NULL) {
-			purple_account_set_status(account, "mood", TRUE,
-			                          PURPLE_MOOD_NAME, mood,
-			                          NULL);
+		if (mood != NULL && !purple_strequal(mood, "")) {
+			if (text) {
+				purple_account_set_status(account, "mood", TRUE,
+			                          	PURPLE_MOOD_NAME, mood,
+				    				  	PURPLE_MOOD_COMMENT, text,
+			                          	NULL);
+			} else {
+				purple_account_set_status(account, "mood", TRUE,
+			                          	PURPLE_MOOD_NAME, mood,
+			                          	NULL);
+			}
 		} else {
 			purple_account_set_status(account, "mood", FALSE, NULL);
 		}
@@ -7856,11 +7856,10 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *g;
 	PurpleRequestField *f;
-	char* na_fn;
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleMood *mood;
-
+	
 	g_return_if_fail(gc->prpl != NULL);
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
@@ -7870,13 +7869,9 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	g = purple_request_field_group_new(NULL);
 	f = purple_request_field_list_new("mood", _("Please select your mood from the list"));
 
-	na_fn = g_build_filename("pixmaps", "pidgin", "emblems", "16", "not-authorized.png", NULL);
-
-	purple_request_field_list_add_icon(f, _("None"), na_fn, NULL);
+	purple_request_field_list_add(f, _("None"), "");
 	if (current_mood == NULL)
 		purple_request_field_list_add_selected(f, _("None"));
-
-	g_free(na_fn);
 
 	/* TODO: rlaager wants this sorted. */
 	for (mood = prpl_info->get_moods(account);
@@ -7897,6 +7892,15 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 	purple_request_field_group_add_field(g, f);
 
 	purple_request_fields_add_group(fields, g);
+
+	/* if the connection allows setting a mood message */
+	if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES) {
+		g = purple_request_field_group_new(NULL);
+		f = purple_request_field_string_new("text",
+		    _("Message (optional)"), NULL, FALSE);
+		purple_request_field_group_add_field(g, f);
+		purple_request_fields_add_group(fields, g);
+	}
 
 	purple_request_fields(gc, _("Edit User Mood"), _("Edit User Mood"),
                               NULL, fields,
@@ -8030,8 +8034,10 @@ pidgin_blist_update_accounts_menu(void)
 		if (prpl_info &&
 		    (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) ||
 			 PURPLE_PLUGIN_HAS_ACTIONS(plugin))) {
-			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods)) {
+			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) &&
+			    gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
 				GList *types;
+
 				for (types = purple_account_get_status_types(account);
 			     	types != NULL ; types = types->next) {
 					PurpleStatusType *type = types->data;

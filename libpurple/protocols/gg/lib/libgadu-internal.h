@@ -1,8 +1,7 @@
-/* $Id: compat.h 506 2008-01-14 22:15:05Z wojtekka $ */
+/* $Id$ */
 
 /*
- *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
- *                          Robert J. Woźny <speedy@ziew.org>
+ *  (C) Copyright 2009 Jakub Zawadzki <darkjames@darkjames.ath.cx>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License Version
@@ -19,17 +18,13 @@
  *  USA.
  */
 
-/**
- * \file compat.h
- *
- * \brief Makra zapewniające kompatybilność API na różnych systemach
- */
+#ifndef LIBGADU_INTERNAL_H
+#define LIBGADU_INTERNAL_H
 
-#ifndef __COMPAT_H
-#define __COMPAT_H
+#include "libgadu.h"
 
-#ifdef sun
-#  define INADDR_NONE   ((in_addr_t) 0xffffffff)
-#endif
+char *gg_cp_to_utf8(const char *b);
+char *gg_utf8_to_cp(const char *b);
+int gg_pubdir50_handle_reply_sess(struct gg_session *sess, struct gg_event *e, const char *packet, int length);
 
-#endif
+#endif /* LIBGADU_INTERNAL_H */

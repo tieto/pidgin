@@ -1,4 +1,4 @@
-/* $Id: obsolete.c 16856 2006-08-19 01:13:25Z evands $ */
+/* $Id: obsolete.c 854 2009-10-12 21:06:28Z wojtekka $ */
 
 /*
  *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -14,15 +14,22 @@
  *
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301,
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,
  *  USA.
  */
 
-/*
- * Plik zawiera deklaracje funkcji, kt�re s� ju� nieaktualne ze wzgl�du
- * na zmiany w protokole, ale s� wymagane przez aplikacje linkowane ze
- * starszymi wersjami bibliotek.
+/**
+ * \file obsolete.c
+ *
+ * \brief Nieaktualne funkcje
+ *
+ * Plik zawiera definicje funkcji, które są już nieaktualne ze względu
+ * na zmiany w protokole. Programy konsolidowane ze starszych wersjami
+ * bibliotek powinny nadal mieć możliwość działania, mimo ograniczonej
+ * funkcjonalności.
  */
+
+/** \cond obsolete */
 
 #include <errno.h>
 
@@ -205,3 +212,25 @@ void gg_change_info_request_free(struct gg_change_info_request *r)
 {
 
 }
+
+int gg_resolve(int *fd, int *pid, const char *hostname)
+{
+	return -1;
+}
+
+void gg_resolve_pthread_cleanup(void *arg, int kill)
+{
+
+}
+
+int gg_resolve_pthread(int *fd, void **resolver, const char *hostname)
+{
+	return -1;
+}
+
+int gg_pubdir50_handle_reply(struct gg_event *e, const char *packet, int length)
+{
+	return -1;
+}
+
+/** \endcond */

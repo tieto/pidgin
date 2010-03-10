@@ -218,7 +218,7 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 	for (l = jb->resources; l; l = l->next)
 	{
 		JabberBuddyResource *jbr = l->data;
-		if (g_str_equal(resource, jbr->name))
+		if (jbr->name && g_str_equal(resource, jbr->name))
 			return jbr;
 	}
 
@@ -1824,7 +1824,8 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 	if(!jb)
 		return m;
 
-	if (js->protocol_version == JABBER_PROTO_0_9 && jb != js->user_jb) {
+	if (js->protocol_version.major == 0 && js->protocol_version.minor == 9 &&
+			jb != js->user_jb) {
 		if(jb->invisible & JABBER_INVIS_BUDDY) {
 			act = purple_menu_action_new(_("Un-hide From"),
 			                           PURPLE_CALLBACK(jabber_buddy_make_visible),

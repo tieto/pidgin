@@ -621,7 +621,7 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 }
 
 static void
-signed_on_cb(PurpleConnection *gc)
+signing_on_cb(PurpleConnection *gc)
 {
 	if (!console)
 		return;
@@ -630,7 +630,9 @@ signed_on_cb(PurpleConnection *gc)
 	console->accounts = g_list_append(console->accounts, gc);
 	console->count++;
 
-	if (console->count > 1)
+	if (console->count == 1)
+		console->gc = gc;
+	else
 		gtk_widget_show_all(console->hbox);
 }
 
@@ -680,8 +682,8 @@ plugin_load(PurplePlugin *plugin)
 			    PURPLE_CALLBACK(xmlnode_received_cb), NULL);
 	purple_signal_connect(jabber, "jabber-sending-text", xmpp_console_handle,
 			    PURPLE_CALLBACK(xmlnode_sent_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
-			    plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signing-on",
+			    plugin, PURPLE_CALLBACK(signing_on_cb), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off",
 			    plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
 

@@ -270,37 +270,30 @@ find_file(const char *dir, const char *base)
 
 /* Altered from do_colorshift in gnome-panel */
 static void
-do_alphashift(GdkPixbuf *dest, GdkPixbuf *src)
+do_alphashift(GdkPixbuf *pixbuf)
 {
 	gint i, j;
-	gint width, height, has_alpha, srcrowstride, destrowstride;
-	guchar *target_pixels;
-	guchar *original_pixels;
-	guchar *pixsrc;
-	guchar *pixdest;
+	gint width, height, padding;
+	guchar *pixels;
 	guchar a;
 
-	has_alpha = gdk_pixbuf_get_has_alpha (src);
-	if (!has_alpha)
+	if (!gdk_pixbuf_get_has_alpha(pixbuf))
 		return;
 
-	width = gdk_pixbuf_get_width (src);
-	height = gdk_pixbuf_get_height (src);
-	srcrowstride = gdk_pixbuf_get_rowstride (src);
-	destrowstride = gdk_pixbuf_get_rowstride (dest);
-	target_pixels = gdk_pixbuf_get_pixels (dest);
-	original_pixels = gdk_pixbuf_get_pixels (src);
+	width = gdk_pixbuf_get_width(pixbuf);
+	height = gdk_pixbuf_get_height(pixbuf);
+	padding = gdk_pixbuf_get_rowstride(pixbuf) - width * 4;
+	pixels = gdk_pixbuf_get_pixels(pixbuf);
 
 	for (i = 0; i < height; i++) {
-		pixdest = target_pixels + i*destrowstride;
-		pixsrc = original_pixels + i*srcrowstride;
 		for (j = 0; j < width; j++) {
-			*(pixdest++) = *(pixsrc++);
-			*(pixdest++) = *(pixsrc++);
-			*(pixdest++) = *(pixsrc++);
-			a = *(pixsrc++);
-			*(pixdest++) = a / 2;
+			pixels++;
+			pixels++;
+			pixels++;
+			a = *(pixels);
+			*(pixels++) = a / 2;
 		}
+		pixels += padding;
 	}
 }
 
@@ -348,7 +341,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 	g_return_if_fail(filename != NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	if (translucent)
-		do_alphashift(pixbuf, pixbuf);
+		do_alphashift(pixbuf);
 
 	source = gtk_icon_source_new();
 	gtk_icon_source_set_pixbuf(source, pixbuf);
@@ -378,7 +371,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 		g_return_if_fail(filename != NULL);
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 		if (translucent)
-			do_alphashift(pixbuf, pixbuf);
+			do_alphashift(pixbuf);
 
 		source = gtk_icon_source_new();
 		gtk_icon_source_set_pixbuf(source, pixbuf);
