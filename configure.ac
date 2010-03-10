@@ -1091,6 +1091,10 @@ fi
 
 AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
 
+if test "x$gadu_libs" = "x"; then
+	gadu_libs=no
+fi
+
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)
 
