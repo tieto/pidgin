@@ -27,6 +27,7 @@ version 2.7.0 (??/??/????):
 	Gadu-Gadu:
 	* Updated our bundled libgadu to 1.9.0-rc2 (many thanks to Krzysztof
 	  Klinikowski for the work and testing put in here!)
+	* Minimum requirement for external libgadu is now also 1.9.0-rc2.
 
 	ICQ:
 	* X-Status (Custom ICQ status icon) support (Andrew Ivanov, Tomáš Kebert,

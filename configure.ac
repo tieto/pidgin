@@ -72,8 +72,8 @@ spaces and run configure again.
 ])
 fi
 
-AC_CANONICAL_SYSTEM
-AM_CONFIG_HEADER(config.h)
+AC_CANONICAL_HOST
+AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([1.9 -Wno-portability dist-bzip2])
 
 PURPLE_MAJOR_VERSION=purple_major_version
@@ -152,7 +152,7 @@ dnl AM_GLIB_GNU_GETTEXT found it.
 
 if test x$MSGFMT = xno -o x$MSGFMT$GMSGFMT$INTLTOOL_MSGFMT = x
 then
-	AC_ERROR([
+	AC_MSG_ERROR([
 
 The msgfmt command is required to build libpurple.  If it is installed
 on your system, ensure that it is in your path.  If it is not, install
@@ -167,9 +167,6 @@ configure again, like this:
 MSGFMT=/path/to/msgfmt ./configure ...
 ])
 fi
-
-dnl we don't use autobreak on cygwin!!
-dnl AC_CYGWIN
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -198,11 +195,11 @@ AC_CHECK_FUNCS(getopt_long,,
 
 dnl Check for inet_aton
 AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, ,
-				         [AC_ERROR(inet_aton not found)])])
+				         [AC_MSG_ERROR([inet_aton not found])])])
 AC_CHECK_LIB(resolv, __res_query)
 AC_CHECK_LIB(nsl, gethostent)
 AC_CHECK_FUNC(socket, ,
-	[AC_CHECK_LIB(socket, socket, , [AC_ERROR([socket not found])])])
+	[AC_CHECK_LIB(socket, socket, , [AC_MSG_ERROR([socket not found])])])
 dnl If all goes well, by this point the previous two checks will have
 dnl pulled in -lsocket and -lnsl if we need them.
 AC_CHECK_FUNC(getaddrinfo,
@@ -214,19 +211,18 @@ AC_CHECK_FUNCS(inet_ntop)
 AC_CHECK_FUNCS(getifaddrs)
 dnl Check for socklen_t (in Unix98)
 AC_MSG_CHECKING(for socklen_t)
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 	#include <sys/types.h>
 	#include <sys/socket.h>
 	socklen_t x;
-], [],
-[
+]], [[]])], [
 	AC_MSG_RESULT(yes)
 ], [
-	AC_TRY_COMPILE([
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 		#include <sys/types.h>
 		#include <sys/socket.h>
 		int accept(int, struct sockaddr *, size_t *);
-	], [], [
+	]], [[]])], [
 		AC_MSG_RESULT(size_t)
 		AC_DEFINE(socklen_t, size_t, [socklen_t size])
 	], [
@@ -249,7 +245,7 @@ dnl FreeBSD doesn't have libdl, dlopen is provided by libc
 AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
 AC_MSG_CHECKING(for fileno())
-AC_TRY_RUN([
+AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 
 int main(int argc, char *argv[])
@@ -260,7 +256,7 @@ int main(int argc, char *argv[])
 
 	return !(fd > 0);
 }
-], [
+]])], [
 	AC_MSG_RESULT(yes)
 	AC_DEFINE([HAVE_FILENO], [1],
 	          [Define to 1 if your stdio has int fileno(FILE *).])
@@ -273,7 +269,7 @@ int main(int argc, char *argv[])
 ])
 
 AC_MSG_CHECKING(for the %z format string in strftime())
-AC_TRY_RUN([
+AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
@@ -297,7 +293,7 @@ int main()
 	         (buf[4] >= '0' && buf[4] <= '9')
 	        );
 }
-], [
+]])], [
 	AC_MSG_RESULT(yes)
 	AC_DEFINE([HAVE_STRFTIME_Z_FORMAT], [1],
 		[Define to 1 if you have a strftime() that supports the %z format string.])
@@ -307,8 +303,7 @@ int main()
 	# Fallback for Cross Compiling...
 	# This will enable the compatibility code.
 	AC_MSG_RESULT(no)
-]
-)
+])
 
 dnl #######################################################################
 dnl # Check for GLib 2.12 (required)
@@ -458,10 +453,10 @@ Use --without-x if you do not need X11 support.
 			if test "x$XSS_LIBS" != "x"; then
 				oldCPPFLAGS="$CPPFLAGS"
 				CPPFLAGS="$CPPFLAGS $x_incpath_add"
-				AC_TRY_COMPILE([
+				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 					#include <X11/Xlib.h>
 					#include <X11/extensions/scrnsaver.h>
-					], [], [], [enable_screensaver=no])
+					]], [[]])], [], [enable_screensaver=no])
 				CPPFLAGS="$oldCPPFLAGS"
 			else
 				enable_screensaver=no
@@ -648,14 +643,14 @@ if test "x$enable_consoleui" = "xyes"; then
 			f="$location/ncurses.h"
 			AC_CHECK_HEADER($f,[
 				AC_MSG_CHECKING([if $f supports wide characters])
-				AC_TRY_COMPILE([
+				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 					#define _XOPEN_SOURCE_EXTENDED
 					#include <$f>
-				], [
+				]], [[
 					#ifndef get_wch
 					# error get_wch not found!
 					#endif
-				], [
+				]])], [
 					dir=$location
 					if test x"$dir" != x"." ; then
 						GNT_CFLAGS="-I$dir/"
@@ -997,10 +992,10 @@ elif test "x$silc10client" = "xyes"; then
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
 		AC_MSG_CHECKING(for silcmime.h)
-		AC_TRY_COMPILE([
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <silcincludes.h>
 #include <silcmime.h>
-		], [], [
+		]], [[]])], [
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_SILCMIME_H, 1, [Define if we have silcmime.h])
 		], [
@@ -1022,7 +1017,7 @@ else
 	gadu_manual_check="no"
 fi
 if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, libgadu, [
+	PKG_CHECK_MODULES(GADU, [libgadu >= 1.9.0-rc2], [
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
@@ -1049,14 +1044,33 @@ if test "x$gadu_libs" = "xyes"; then
 	AC_MSG_CHECKING(for libgadu GPL compatibility)
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
-	AC_TRY_COMPILE([#include <libgadu.h>], [
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
 #if defined(__GG_LIBGADU_HAVE_OPENSSL) || defined(GG_CONFIG_HAVE_OPENSSL)
 #error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
 #endif
-	], [
-		AC_MSG_RESULT(yes)
-		AC_DEFINE([HAVE_LIBGADU], [1],
-			[Define to 1 if you have libgadu.])
+	]])], [
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
+#if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
+#error "Your libgadu version is too old. libpurple requires 1.9.0-rc2 or higher."
+#endif
+		]])], [
+			AC_MSG_RESULT(yes)
+			AC_DEFINE([HAVE_LIBGADU], [1],
+				[Define to 1 if you have libgadu.])
+		], [
+			AC_MSG_RESULT(no)
+			echo
+			echo
+			echo "Your supplied copy of libgadu is too old."
+			echo "Install version 1.9.0-rc2 or newer."
+			echo "Then rerun this ./configure"
+			echo
+			echo "Falling back to using our own copy of libgadu"
+			echo
+			GADU_LIBS=""
+			GADU_CFLAGS=""
+			gadu_libs=no
+		])
 	], [
 		AC_MSG_RESULT(no)
 		echo
@@ -1080,9 +1094,6 @@ AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)
 
-# change the next line to not make MSNP15 the default (s/disable/enable/; s/yes/no/;)
-AC_ARG_ENABLE(msnp15,[AC_HELP_STRING([--disable-msnp15], [Disable the newer MSNP15 protocol])],enable_msnp15=$enableval,enable_msnp15=yes)
-
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 DYNAMIC_PRPLS=all
@@ -1099,9 +1110,6 @@ if test "x$have_meanwhile" != "xyes" ; then
 fi
 if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
-fi
-if test "x$enable_msnp15" != "xyes" ; then
-	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/msn/msnp9/'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc/silc10/'`
@@ -1133,8 +1141,6 @@ for i in $STATIC_PRPLS ; do
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
 		elif test "x$i" = "xsilc10"; then
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libsilcpurple.la"
-		elif test "x$i" = "xmsnp9"; then
-			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libmsn.la"
 		else
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.la"
 		fi
@@ -1147,7 +1153,6 @@ for i in $STATIC_PRPLS ; do
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
 		msn)		static_msn=yes ;;
-		msnp9)		static_msn=yes ;;
 		myspace)	static_myspace=yes ;;
 		mxit)		static_mxit=yes ;;
 		novell)		static_novell=yes ;;
@@ -1193,9 +1198,6 @@ fi
 if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
 fi
-if test "x$enable_msnp15" != "xyes" ; then
-	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/msn/msnp9/'`
-fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc/silc10/'`
 fi
@@ -1210,7 +1212,6 @@ for i in $DYNAMIC_PRPLS ; do
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
 		msn)		dynamic_msn=yes ;;
-		msnp9)		dynamic_msn=yes ;;
 		myspace)	dynamic_myspace=yes ;;
 		mxit)		dynamic_mxit=yes ;;
 		novell)		dynamic_novell=yes ;;
@@ -1281,9 +1282,9 @@ if test "x$GCC" = "xyes"; then
 		orig_CFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS $newflag"
 		AC_MSG_CHECKING(for $newflag option to gcc)
-		AC_TRY_COMPILE([], [
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
 			int main() {return 0;}
-		], [
+		]])], [
 			AC_MSG_RESULT(yes)
 			CFLAGS="$orig_CFLAGS"
 			DEBUG_CFLAGS="$DEBUG_CFLAGS $newflag"
@@ -1295,7 +1296,7 @@ if test "x$GCC" = "xyes"; then
 
 	if test "x$enable_fortify" = "xyes"; then
 		AC_MSG_CHECKING(for FORTIFY_SOURCE support)
-		AC_TRY_COMPILE([#include <features.h>], [
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <features.h>]], [[
 			int main() {
 			#if !(__GNUC_PREREQ (4, 1) \
 				|| (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (4, 0)) \
@@ -1307,7 +1308,7 @@ if test "x$GCC" = "xyes"; then
 			#endif
 				return 0;
 			}
-		], [
+		]])], [
 			AC_MSG_RESULT(yes)
 			DEBUG_CFLAGS="$DEBUG_CFLAGS -Wp,-D_FORTIFY_SOURCE=2"
 		], [
@@ -1481,12 +1482,15 @@ if test "_$pythonpath" != _ ; then
 	PY_MAJOR=`$pythonpath -c 'import sys ; print sys.version[0:2]'`
 	changequote([, ])dnl
 	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h -a "$PY_MAJOR" = "2."; then
+		AC_MSG_RESULT()
 		AC_CHECK_LIB(pthread, pthread_create, )
 		AC_CHECK_LIB(util, openpty, )
 		AC_CHECK_LIB(db, dbopen, )
 		PY_LIBS="-L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config -lpython$PY_VERSION"
 		PY_CFLAGS="-I$PY_PREFIX/include/python$PY_VERSION"
 		AC_DEFINE(USE_PYTHON, [1], [Define if python headers are available.])
+		dnl Because the above AC_CHECK_LIB get in the way...
+		AC_MSG_CHECKING(for Python compile flags)
 		AC_MSG_RESULT(ok)
 	else
 		AC_MSG_RESULT([Can't find Python.h])
@@ -2144,6 +2148,7 @@ if test "$enable_tcl" = yes; then
 		if test -f $dir/tclConfig.sh; then
 			TCLCONFIG=$dir/tclConfig.sh
 			AC_MSG_RESULT([yes ($TCLCONFIG)])
+			break
 		fi
 	done
 	if test "$TCLCONFIG" = "no"; then
@@ -2169,8 +2174,8 @@ Use --disable-tcl if you do not need Tcl scripting support.
 			CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC -I$TCL_PREFIX/include"
 			oldLIBS=$LIBS
 			LIBS="$LIBS $TCL_LIB_SPEC"
-			AC_TRY_LINK([#include <tcl.h>],
-				[Tcl_Interp *interp=NULL; Tcl_Init(interp)],
+			AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <tcl.h>]],
+				[[Tcl_Interp *interp=NULL; Tcl_Init(interp)]])],
 				[AC_MSG_RESULT([yes]);enable_tcl=yes],
 				[AC_MSG_RESULT([no]);enable_tcl=no])
 			CPPFLAGS="$oldCPPFLAGS"
@@ -2214,6 +2219,7 @@ if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
 		if test -f $dir/tkConfig.sh; then
 			TKCONFIG=$dir/tkConfig.sh
 			AC_MSG_RESULT([yes ($TKCONFIG)])
+			break
 		fi
 	done
 	if test "$TKCONFIG" = "no"; then
@@ -2233,8 +2239,8 @@ Use --disable-tk if you do not need Tk scripting support.
 		CPPFLAGS="$CPPFLAGS $TCL_CFLAGS"
 		oldLIBS=$LIBS
 		LIBS="$LIBS $TCL_LIB_SPEC $TK_LIB_SPEC"
-		AC_TRY_LINK([#include <tk.h>],
-				[Tcl_Interp *interp=NULL; Tcl_Init(interp); Tk_Init(interp);],
+		AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <tk.h>]],
+				[[Tcl_Interp *interp=NULL; Tcl_Init(interp); Tk_Init(interp);]])],
 				[AC_MSG_RESULT([yes]);enable_tk=yes],
 				[AC_MSG_RESULT([no]);enable_tk=no])
 		CPPFLAGS="$oldCPPFLAGS"
@@ -2286,7 +2292,7 @@ if test "x$enable_cyrus_sasl" = "xyes" ; then
 			SASL_LIBS=-"lsasl2"
 		], [
 			AM_CONDITIONAL(USE_CYRUS_SASL, false)
-			AC_ERROR(Cyrus SASL library not found)
+			AC_MSG_ERROR([Cyrus SASL library not found])
 		])
 else
 	AM_CONDITIONAL(USE_CYRUS_SASL, false)
@@ -2319,7 +2325,7 @@ if test "$kerberos" != "no" ; then
 			[KRB4_LIBS="-lkrb4 -ldes425 -lkrb5 -lk5crypto -lcom_err"],
 			[AC_CHECK_LIB(krb, krb_rd_req,
 				[KRB4_LIBS="-lkrb -ldes"],
-				[AC_ERROR(Kerberos 4 libraries not found)],
+				[AC_MSG_ERROR([Kerberos 4 libraries not found])],
 				-ldes)],
 			-ldes425 -lkrb5 -lk5crypto -lcom_err)
 	orig_LIBS="$LIBS"
@@ -2353,7 +2359,7 @@ if test "$zephyr" != "no" ; then
 	LDFLAGS="$LDFLAGS $ZEPHYR_LDFLAGS"
 	AC_CHECK_LIB(zephyr, ZInitialize,
 		[ZEPHYR_LIBS="-lzephyr"],
-		[AC_ERROR(Zephyr libraries not found)],
+		[AC_MSG_ERROR([Zephyr libraries not found])],
 		-lzephyr)
 	orig_LIBS="$LIBS"
 	LIBS="$orig_LIBS"
@@ -2384,18 +2390,18 @@ AC_CHECK_HEADERS(sys/socket.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
 AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
-        AC_TRY_COMPILE([
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
                 #include <time.h>
-        ], [
+        ]], [[
                 struct tm tm;
                 tm.tm_gmtoff = 1;
-        ], ac_cv_struct_tm_gmtoff=yes, ac_cv_struct_tm_gmtoff=no))
+        ]])], [ac_cv_struct_tm_gmtoff=yes], [ac_cv_struct_tm_gmtoff=no]))
 if test $ac_cv_struct_tm_gmtoff = yes; then
         AC_DEFINE(HAVE_TM_GMTOFF, 1, [Define if you have a tm_gmtoff member in struct tm])
 fi
 
 AC_CACHE_CHECK([whether va_lists can be copied by value], ac_cv_va_val_copy,[
-	AC_TRY_RUN([#include <stdarg.h>
+	AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdarg.h>
 #include <stdlib.h>
 	void f (int i, ...) {
 	va_list args1, args2;
@@ -2408,7 +2414,7 @@ AC_CACHE_CHECK([whether va_lists can be copied by value], ac_cv_va_val_copy,[
 	int main() {
 	  f (0, 42);
 	  return 0;
-	}],
+	}]])],
 	[ac_cv_va_val_copy=yes],
 	[ac_cv_va_val_copy=no],
 	[ac_cv_va_val_copy=yes])
@@ -2506,7 +2512,7 @@ fi
 
 AM_CONDITIONAL(PURPLE_AVAILABLE, true)
 
-AC_OUTPUT([Makefile
+AC_CONFIG_FILES([Makefile
 		   Doxyfile
 		   doc/Makefile
 		   doc/pidgin.1
@@ -2552,7 +2558,6 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/irc/Makefile
 		   libpurple/protocols/jabber/Makefile
 		   libpurple/protocols/msn/Makefile
-		   libpurple/protocols/msnp9/Makefile
 		   libpurple/protocols/myspace/Makefile
 		   libpurple/protocols/mxit/Makefile
 		   libpurple/protocols/novell/Makefile
@@ -2579,6 +2584,7 @@ AC_OUTPUT([Makefile
 		   po/Makefile.in
 		   pidgin.spec
 		  ])
+AC_OUTPUT
 
 echo
 echo $PACKAGE $VERSION

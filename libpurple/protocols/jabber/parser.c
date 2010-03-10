@@ -44,14 +44,28 @@ jabber_parser_element_start_libxml(void *user_data,
 	if(!element_name) {
 		return;
 	} else if(!xmlStrcmp(element_name, (xmlChar*) "stream")) {
-		js->protocol_version = JABBER_PROTO_0_9;
+		js->protocol_version.major = 0;
+		js->protocol_version.minor = 9;
 		for(i=0; i < nb_attributes * 5; i += 5) {
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_strndup((gchar *)attributes[i+3], attrib_len);
 
-			if(!xmlStrcmp(attributes[i], (xmlChar*) "version")
-					&& !strcmp(attrib, "1.0")) {
-				js->protocol_version = JABBER_PROTO_1_0;
+			if(!xmlStrcmp(attributes[i], (xmlChar*) "version")) {
+				const char *dot = strchr(attrib, '.');
+
+				js->protocol_version.major = atoi(attrib);
+				js->protocol_version.minor = dot ? atoi(dot + 1) : 0;
+
+				if (js->protocol_version.major > 1)
+					/* TODO: Send <unsupported-version/> error */
+					purple_connection_error_reason(js->gc,
+							PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
+							_("XMPP Version Mismatch"));
+
+				if (js->protocol_version.major == 0 && js->protocol_version.minor != 9) {
+					purple_debug_warning("jabber", "Treating version %s as 0.9 for backward "
+					                     "compatibility\n", attrib);
+				}
 				g_free(attrib);
 			} else if(!xmlStrcmp(attributes[i], (xmlChar*) "id")) {
 				g_free(js->stream_id);
@@ -255,7 +269,8 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 		}
 	}
 
-	if (js->protocol_version == JABBER_PROTO_0_9 && !js->gc->disconnect_timeout &&
+	if (js->protocol_version.major == 0 && js->protocol_version.minor == 9 &&
+			!js->gc->disconnect_timeout &&
 			(js->state == JABBER_STREAM_INITIALIZING ||
 			 js->state == JABBER_STREAM_INITIALIZING_ENCRYPTION)) {
 		/*
