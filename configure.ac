@@ -1049,9 +1049,28 @@ if test "x$gadu_libs" = "xyes"; then
 #error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
 #endif
 	]])], [
-		AC_MSG_RESULT(yes)
-		AC_DEFINE([HAVE_LIBGADU], [1],
-			[Define to 1 if you have libgadu.])
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
+#if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
+#error "Your libgadu version is too old. libpurple requires 1.9.0-rc2 or higher."
+#endif
+		]])], [
+			AC_MSG_RESULT(yes)
+			AC_DEFINE([HAVE_LIBGADU], [1],
+				[Define to 1 if you have libgadu.])
+		], [
+			AC_MSG_RESULT(no)
+			echo
+			echo
+			echo "Your supplied copy of libgadu is too old."
+			echo "Install version 1.9.0-rc2 or newer."
+			echo "Then rerun this ./configure"
+			echo
+			echo "Falling back to using our own copy of libgadu"
+			echo
+			GADU_LIBS=""
+			GADU_CFLAGS=""
+			gadu_libs=no
+		])
 	], [
 		AC_MSG_RESULT(no)
 		echo
