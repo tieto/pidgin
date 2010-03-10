@@ -521,7 +521,7 @@ static void boot_response_cb(PurpleBOSHConnection *conn, xmlnode *node) {
 	}
 
 	if (version) {
-		const char *dot = strstr(version, ".");
+		const char *dot = strchr(version, '.');
 		int major, minor = 0;
 
 		purple_debug_info("jabber", "BOSH connection manager version %s\n", version);

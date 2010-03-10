@@ -39,7 +39,7 @@ jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type
 	JabberStream *js)
 {
 	JabberData *data = g_new0(JabberData, 1);
-	gchar *checksum = purple_util_get_image_checksum(rawdata, size);
+	gchar *checksum = jabber_calculate_data_sha1sum(rawdata, size);
 	gchar cid[256];
 
 	g_snprintf(cid, sizeof(cid), "sha1+%s@bob.xmpp.org", checksum);

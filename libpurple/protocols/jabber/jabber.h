@@ -105,9 +105,9 @@ struct _JabberStream
 	xmlParserCtxt *context;
 	xmlnode *current;
 
-	enum {
-		JABBER_PROTO_0_9,
-		JABBER_PROTO_1_0
+	struct {
+		guint8 major;
+		guint8 minor;
 	} protocol_version;
 
 	JabberSaslMech *auth_mech;
@@ -376,10 +376,7 @@ gboolean jabber_initiate_media(PurpleAccount *account, const char *who,
 PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who);
 gboolean jabber_can_receive_file(PurpleConnection *gc, const gchar *who);
 
-void jabber_register_commands(void);
-void jabber_unregister_commands(void);
-
-void jabber_init_plugin(PurplePlugin *plugin);
-void jabber_uninit_plugin(PurplePlugin *plugin);
+void jabber_plugin_init(PurplePlugin *plugin);
+void jabber_plugin_uninit(PurplePlugin *plugin);
 
 #endif /* PURPLE_JABBER_H_ */
