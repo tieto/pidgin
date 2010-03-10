@@ -201,6 +201,7 @@ msn_change_status(MsnSession *session)
 {
 	PurpleAccount *account;
 	MsnCmdProc *cmdproc;
+	MsnTransaction *trans;
 	MsnUser *user;
 	MsnObject *msnobj;
 	const char *state_text;
@@ -245,9 +246,9 @@ msn_change_status(MsnSession *session)
 	if (msnobj == NULL)
 	{
 		if (session->protocol_ver >= 16)
-			msn_cmdproc_send(cmdproc, "CHG", "%s %u:%02u 0", state_text, caps, MSN_CLIENT_ID_EXT_CAPS);
+			trans = msn_transaction_new(cmdproc, "CHG", "%s %u:%02u 0", state_text, caps, MSN_CLIENT_ID_EXT_CAPS);
 		else
-			msn_cmdproc_send(cmdproc, "CHG", "%s %d", state_text, caps);
+			trans = msn_transaction_new(cmdproc, "CHG", "%s %d", state_text, caps);
 	}
 	else
 	{
@@ -256,14 +257,16 @@ msn_change_status(MsnSession *session)
 		msnobj_str = msn_object_to_string(msnobj);
 
 		if (session->protocol_ver >= 16)
-			msn_cmdproc_send(cmdproc, "CHG", "%s %u:%02u %s", state_text,
+			trans = msn_transaction_new(cmdproc, "CHG", "%s %u:%02u %s", state_text,
 							 caps, MSN_CLIENT_ID_EXT_CAPS, purple_url_encode(msnobj_str));
 		else
-			msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state_text,
+			trans = msn_transaction_new(cmdproc, "CHG", "%s %d %s", state_text,
 							 caps, purple_url_encode(msnobj_str));
 
 		g_free(msnobj_str);
 	}
+
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 const char *

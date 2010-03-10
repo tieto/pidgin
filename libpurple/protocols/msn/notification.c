@@ -93,6 +93,7 @@ connect_cb(MsnServConn *servconn)
 {
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
+	MsnTransaction *trans;
 	PurpleAccount *account;
 	GString *vers;
 	const char *ver_str;
@@ -118,7 +119,8 @@ connect_cb(MsnServConn *servconn)
 
 	/* Skip the initial space */
 	ver_str = (vers->str + 1);
-	msn_cmdproc_send(cmdproc, "VER", "%s", ver_str);
+	trans = msn_transaction_new(cmdproc, "VER", "%s", ver_str);
+	msn_cmdproc_send_trans(cmdproc, trans);
 
 	g_string_free(vers, TRUE);
 }
@@ -157,25 +159,30 @@ void
 msn_got_login_params(MsnSession *session, const char *ticket, const char *response)
 {
 	MsnCmdProc *cmdproc;
+	MsnTransaction *trans;
 
 	cmdproc = session->notification->cmdproc;
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_END);
 
 	if (session->protocol_ver >= 16)
-		msn_cmdproc_send(cmdproc, "USR", "SSO S %s %s %s", ticket, response, session->guid);
+		trans = msn_transaction_new(cmdproc, "USR", "SSO S %s %s %s", ticket, response, session->guid);
 	else
-		msn_cmdproc_send(cmdproc, "USR", "SSO S %s %s", ticket, response);
+		trans = msn_transaction_new(cmdproc, "USR", "SSO S %s %s", ticket, response);
+
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 static void
 cvr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	PurpleAccount *account;
+	MsnTransaction *trans;
 
 	account = cmdproc->session->account;
 
-	msn_cmdproc_send(cmdproc, "USR", "SSO I %s", purple_account_get_username(account));
+	trans = msn_transaction_new(cmdproc, "USR", "SSO I %s", purple_account_get_username(account));
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 static void
@@ -235,6 +242,7 @@ static void
 ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
+	MsnTransaction *trans;
 	PurpleAccount *account;
 	gboolean protocol_supported = FALSE;
 	int proto_ver;
@@ -271,9 +279,10 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * reference of http://www.microsoft.com/globaldev/reference/oslocversion.mspx
 	 * to see the Local ID
 	 */
-	msn_cmdproc_send(cmdproc, "CVR",
+	trans = msn_transaction_new(cmdproc, "CVR",
 					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1302 BC01 %s",
 					 purple_account_get_username(account));
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 /**************************************************************************

@@ -91,16 +91,6 @@ void msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans);
 void msn_cmdproc_queue_trans(MsnCmdProc *cmdproc,
 							 MsnTransaction *trans);
 
-/**
- * This function is just a wrapper that creates a MsnTransaction
- * and send it.
- *
- * @param cmdproc 	The MsnCmdProc to be attached to the MsnTransaction.
- * @param command 	The command to use in this transaction.
- * @param format 	The payload format.
- */
-void msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
-					  const char *format, ...);
 void msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
 							const char *format, ...);
 

@@ -195,33 +195,6 @@ msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
 	g_free(data);
 }
 
-void
-msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
-				 const char *format, ...)
-{
-	MsnTransaction *trans;
-	va_list arg;
-
-	g_return_if_fail(cmdproc != NULL);
-	g_return_if_fail(command != NULL);
-
-	if (!cmdproc->servconn->connected)
-		return;
-
-	trans = g_new0(MsnTransaction, 1);
-
-	trans->cmdproc = cmdproc;
-	trans->command = g_strdup(command);
-
-	if (format != NULL)
-	{
-		va_start(arg, format);
-		trans->params = g_strdup_vprintf(format, arg);
-		va_end(arg);
-	}
-
-	msn_cmdproc_send_trans(cmdproc, trans);
-}
 
 void
 msn_cmdproc_process_payload(MsnCmdProc *cmdproc, char *payload,

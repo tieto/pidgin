@@ -200,6 +200,7 @@ msn_act_id(PurpleConnection *gc, const char *entry)
 {
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
+	MsnTransaction *trans;
 	PurpleAccount *account;
 	const char *alias;
 
@@ -227,7 +228,9 @@ msn_act_id(PurpleConnection *gc, const char *entry)
 		alias = purple_url_encode(purple_account_get_username(account));
 	}
 
-	msn_cmdproc_send(cmdproc, "PRP", "MFN %s", alias);
+	trans = msn_transaction_new(cmdproc, "PRP", "MFN %s", alias);
+
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 static void
@@ -235,19 +238,21 @@ msn_set_prp(PurpleConnection *gc, const char *type, const char *entry)
 {
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
+	MsnTransaction *trans;
 
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 
 	if (entry == NULL || *entry == '\0')
 	{
-		msn_cmdproc_send(cmdproc, "PRP", "%s", type);
+		trans = msn_transaction_new(cmdproc, "PRP", "%s", type);
 	}
 	else
 	{
-		msn_cmdproc_send(cmdproc, "PRP", "%s %s", type,
+		trans = msn_transaction_new(cmdproc, "PRP", "%s %s", type,
 						 purple_url_encode(entry));
 	}
+		msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 static void
@@ -643,6 +648,7 @@ msn_send_privacy(PurpleConnection *gc)
 	PurpleAccount *account;
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
+	MsnTransaction *trans;
 
 	account = purple_connection_get_account(gc);
 	session = gc->proto_data;
@@ -650,9 +656,11 @@ msn_send_privacy(PurpleConnection *gc)
 
 	if (account->perm_deny == PURPLE_PRIVACY_ALLOW_ALL ||
 	    account->perm_deny == PURPLE_PRIVACY_DENY_USERS)
-		msn_cmdproc_send(cmdproc, "BLP", "%s", "AL");
+		trans = msn_transaction_new(cmdproc, "BLP", "%s", "AL");
 	else
-		msn_cmdproc_send(cmdproc, "BLP", "%s", "BL");
+		trans = msn_transaction_new(cmdproc, "BLP", "%s", "BL");
+
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 static void
