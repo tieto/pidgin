@@ -33,6 +33,10 @@ version 2.7.0 (??/??/????):
 	* X-Status (Custom ICQ status icon) support (Andrew Ivanov, Tomáš Kebert,
 	  Yuriy Yevgrafov, and trac users bob007, salieff, and nops)
 
+	MSN:
+	* Support for version 9 of the MSN protocol has been removed.  This
+	  version is no longer supported on the servers.
+
 	XMPP:
 	* Direct messages to a specific resource only upon receipt of a message
 	  with content (as opposed to a typing notification, etc).  (Thanks to
