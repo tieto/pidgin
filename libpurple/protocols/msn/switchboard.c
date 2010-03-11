@@ -1225,7 +1225,8 @@ msn_switchboard_close(MsnSwitchBoard *swboard)
 		MsnCmdProc *cmdproc;
 		MsnTransaction *trans;
 		cmdproc = swboard->cmdproc;
-		trans = msn_transaction_new(cmdproc, "OUT", NULL, NULL);
+		trans = msn_transaction_new(cmdproc, "OUT", NULL);
+		msn_transaction_set_send_trId(trans, FALSE);
 		msn_cmdproc_send_trans(cmdproc, trans);
 
 		msn_switchboard_destroy(swboard);

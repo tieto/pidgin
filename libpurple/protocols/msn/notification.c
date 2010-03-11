@@ -312,6 +312,7 @@ msn_notification_close(MsnNotification *notification)
 		return;
 
 	trans = msn_transaction_new(notification->cmdproc, "OUT", NULL, NULL);
+	msn_transaction_set_send_trId(trans, FALSE);
 	msn_cmdproc_send_trans(notification->cmdproc, trans);
 
 	msn_notification_disconnect(notification);

@@ -41,6 +41,7 @@ struct _MsnTransaction
 {
 	MsnCmdProc *cmdproc;
 	unsigned int trId;
+	gboolean send_trId;
 
 	char *command;
 	char *params;
@@ -74,6 +75,7 @@ void msn_transaction_set_payload(MsnTransaction *trans,
 								 const char *payload, int payload_len);
 void msn_transaction_set_data(MsnTransaction *trans, void *data);
 void msn_transaction_set_data_free(MsnTransaction *trans, GDestroyNotify fn);
+void msn_transaction_set_send_trId(MsnTransaction  *trans, gboolean send);
 void msn_transaction_add_cb(MsnTransaction *trans, char *answer,
 							MsnTransCb cb);
 void msn_transaction_set_error_cb(MsnTransaction *trans, MsnErrorCb cb);
