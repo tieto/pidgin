@@ -32,6 +32,8 @@ version 2.7.0 (??/??/????):
 	ICQ:
 	* X-Status (Custom ICQ status icon) support (Andrew Ivanov, Tomáš Kebert,
 	  Yuriy Yevgrafov, and trac users bob007, salieff, and nops)
+	* Allow setting and displaying icons between 1x1 and 100x100 pixels.
+	  Previously only icons between 48x48 and 52x64 were allowed.
 
 	MSN:
 	* Support for version 9 of the MSN protocol has been removed.  This
