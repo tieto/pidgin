@@ -1,6 +1,7 @@
 version 2.7.0 (??/??/????):
-	* Minimum required GTK+ version increased to 2.14.0
+	* Updated GTK+ to 2.16.6
 	* Private GTK+ Runtime now used (GTK+ Installer no longer supported)
+	* Minimum required GTK+ version increased to 2.14.0
 	* Win9x no longer supported.
 	* Crash Report files (pidgin.RPT) are now generated in the ~/.purple
 	  directory instead of the installation directory.

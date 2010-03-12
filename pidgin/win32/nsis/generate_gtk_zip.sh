@@ -14,26 +14,21 @@ INSTALL_DIR=Gtk
 CONTENTS_FILE=$INSTALL_DIR/CONTENTS
 
 #This needs to be changed every time there is any sort of change.
-BUNDLE_VERSION=2.14.7.0
+BUNDLE_VERSION=2.16.6.0
 
-ATK="http://ftp.gnome.org/pub/gnome/binaries/win32/atk/1.24/atk_1.24.0-1_win32.zip ATK 1.24.0-1"
+ATK="http://ftp.acc.umu.se/pub/gnome/binaries/win32/atk/1.26/atk_1.26.0-1_win32.zip ATK 1.26.0-1"
 CAIRO="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/cairo_1.8.10-1_win32.zip Cairo 1.8.10-1"
 EXPAT="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/expat_2.0.1-1_win32.zip Expat 2.0.1-1"
 FONTCONFIG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/fontconfig_2.8.0-2_win32.zip Fontconfig 2.8.0-2"
 FREETYPE="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/freetype_2.3.11-2_win32.zip Freetype 2.3.11-2"
 GETTEXT="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/gettext-runtime-0.17-1.zip Gettext 0.17-1"
 GLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/glib/2.20/glib_2.20.5-1_win32.zip Glib 2.20.5-1"
-GTK="http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.14/gtk+_2.14.7-1_win32.zip GTK+ 2.14.7-1"
-LIBJPEG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/jpeg-6b-4.zip libjpeg 6b-4"
-#Used by GTK+
-LIBPNG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libpng_1.2.39-1_win32.zip libpng 1.2.39-1"
-#Used by Cairo
-LIBPNG2="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libpng_1.4.0-1_win32.zip libpng 1.4.0-1"
-LIBTIFF="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libtiff_3.9.1-1_win32.zip libtiff 3.9.1-1"
+GTK="http://ftp.acc.umu.se/pub/gnome/binaries/win32/gtk+/2.16/gtk+_2.16.6-2_win32.zip GTK+ 2.16.6-2"
+LIBPNG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libpng_1.4.0-1_win32.zip libpng 1.4.0-1"
 PANGO="http://ftp.gnome.org/pub/gnome/binaries/win32/pango/1.26/pango_1.26.2-1_win32.zip Pango 1.26.2-1"
 ZLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/zlib-1.2.3.zip zlib 1.2.3"
 
-ALL="ATK CAIRO EXPAT FONTCONFIG FREETYPE GETTEXT GLIB GTK LIBJPEG LIBPNG LIBPNG2 LIBTIFF PANGO ZLIB"
+ALL="ATK CAIRO EXPAT FONTCONFIG FREETYPE GETTEXT GLIB GTK LIBPNG PANGO ZLIB"
 
 mkdir -p $STAGE_DIR
 cd $STAGE_DIR
