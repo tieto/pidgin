@@ -13,7 +13,6 @@ DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
 
 TARGET = Purple
 AUTOSPLIT = lib/auto/Purple/autosplit.ix
-EXTUTILS ?= C:/perl/lib/ExtUtils
 PERL_PLUGIN_TOP := ..
 
 ##
