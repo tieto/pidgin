@@ -54,9 +54,40 @@ struct _MsnCommand
 	void *payload_cbdata;
 };
 
+/**
+ * Create a command object from the incoming string and ref it.
+ *
+ * @param string 	The incoming string.
+ *
+ * @return 			A MsnCommand object.
+ */
 MsnCommand *msn_command_from_string(const char *string);
+
+
+/**
+ * Destroy a MsnCommand object. If it's being used by someone else,
+ * it just unref the object and return.
+ *
+ * @param cmd 	The MsnCommand to be destroyed.
+ */
 void msn_command_destroy(MsnCommand *cmd);
+
+/**
+ * Add 1 to the ref count.
+ *
+ * @param cmd 	The MsnCommand to be ref.
+ *
+ * @return 		The ref command.
+ */
 MsnCommand *msn_command_ref(MsnCommand *cmd);
+
+/**
+ * Substrac 1 to the ref count. If the count goes to 0, destroy it.
+ *
+ * @param cmd	The MsnCommand to be unref.
+ *
+ * @return 		The ref command.
+ */
 MsnCommand *msn_command_unref(MsnCommand *cmd);
 
 #endif /* MSN_COMMAND_H */
