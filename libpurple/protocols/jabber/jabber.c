@@ -86,6 +86,11 @@ static void jabber_stream_init(JabberStream *js)
 {
 	char *open_stream;
 
+	if (js->stream_id) {
+		g_free(js->stream_id);
+		js->stream_id = NULL;
+	}
+
 	open_stream = g_strdup_printf("<stream:stream to='%s' "
 				          "xmlns='" NS_XMPP_CLIENT "' "
 						  "xmlns:stream='" NS_XMPP_STREAMS "' "
