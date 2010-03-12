@@ -21,13 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include "error.h"
 #include "msn.h"
 #include "msnutils.h"
 #include "session.h"
 #include "notification.h"
 #include "oim.h"
-
-#include "dialog.h"
 
 MsnSession *
 msn_session_new(PurpleAccount *account)
@@ -301,7 +300,7 @@ msn_session_sync_users(MsnSession *session)
 			if (!found) {
 				if ((remote_user == NULL) || !(remote_user->list_op & MSN_LIST_FL_OP)) {
 					/* The user is not on the server list */
-					msn_show_sync_issue(session, buddy_name, group_name);
+					msn_error_sync_issue(session, buddy_name, group_name);
 				} else {
 					/* The user is not in that group on the server list */
 					to_remove = g_list_prepend(to_remove, buddy);
