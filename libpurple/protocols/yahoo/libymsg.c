@@ -1854,6 +1854,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 		return;
 	}
 	else if (len > 0 && ret_data && *ret_data) {
+		PurpleAccount *account = purple_connection_get_account(gc);
 		gchar **split_data = g_strsplit(ret_data, "\r\n", -1);
 		int totalelements = 0;
 		int response_no = -1;
@@ -1861,12 +1862,12 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 
 		totalelements = g_strv_length(split_data);
 
-		if(totalelements == 1) {
+		if(totalelements == 1) { /* Received an error code */
 			response_no = strtol(split_data[0], NULL, 10);
-		} else if(totalelements == 2 || totalelements == 3 ) {
+		} else if(totalelements == 2 || totalelements == 3 ) { /* received valid data */
 			response_no = strtol(split_data[0], NULL, 10);
 			token = g_strdup(split_data[1] + strlen("ymsgr="));
-		} else { /* It looks like a transparent proxy has returned an invalid document */
+		} else { /* It looks like a transparent proxy has returned a document we don't want */
 			response_no = -1;
 		}
 
@@ -1886,8 +1887,8 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 				case 1212:
 					/* Password incorrect */
 					/* Set password to NULL. Avoids account locking. Brings dialog to enter password if clicked on Re-enable account */
-					if (!purple_account_get_remember_password(purple_connection_get_account(gc)))
-						purple_account_set_password(purple_connection_get_account(gc), NULL);
+					if (!purple_account_get_remember_password(account))
+						purple_account_set_password(account, NULL);
 					error_reason = g_strdup(_("Incorrect password"));
 					error = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 					break;
@@ -1929,7 +1930,6 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 		else {
 			/* OK to login, correct information provided */
 			PurpleUtilFetchUrlData *url_data = NULL;
-			PurpleAccount *account = purple_connection_get_account(gc);
 			char *url = NULL;
 			gboolean yahoojp = yahoo_is_japan(account);
 			gboolean proxy_ssl = purple_account_get_bool(account, "proxy_ssl", FALSE);
