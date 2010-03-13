@@ -1973,7 +1973,7 @@ msn_keepalive(PurpleConnection *gc)
 		cmdproc = session->notification->cmdproc;
 
 		trans = msn_transaction_new(cmdproc, "PNG", NULL);
-		msn_transaction_set_send_trId(trans, FALSE);
+		msn_transaction_set_saveable(trans, FALSE);
 		msn_cmdproc_send_trans(cmdproc, trans);
 	}
 }
