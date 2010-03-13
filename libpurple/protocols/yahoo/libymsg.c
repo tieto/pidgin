@@ -1861,11 +1861,13 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 
 		totalelements = g_strv_length(split_data);
 
-		if(totalelements == 1)
+		if(totalelements == 1) {
 			response_no = strtol(split_data[0], NULL, 10);
-		else if(totalelements >= 2) {
+		} else if(totalelements == 2 || totalelements == 3 ) {
 			response_no = strtol(split_data[0], NULL, 10);
 			token = g_strdup(split_data[1] + strlen("ymsgr="));
+		} else { /* It looks like a transparent proxy has returned an invalid document */
+			response_no = -1;
 		}
 
 		g_strfreev(split_data);
