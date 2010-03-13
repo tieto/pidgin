@@ -252,7 +252,7 @@ msn_set_prp(PurpleConnection *gc, const char *type, const char *entry)
 		trans = msn_transaction_new(cmdproc, "PRP", "%s %s", type,
 						 purple_url_encode(entry));
 	}
-		msn_cmdproc_send_trans(cmdproc, trans);
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 static void

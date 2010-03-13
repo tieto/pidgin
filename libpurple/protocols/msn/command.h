@@ -63,17 +63,16 @@ struct _MsnCommand
  */
 MsnCommand *msn_command_from_string(const char *string);
 
-
 /**
- * Destroy a MsnCommand object. If it's being used by someone else,
- * it just unref the object and return.
+ * Destroy a MsnCommand object if its ref count is zero, otherwise
+ * just unref it.
  *
  * @param cmd 	The MsnCommand to be destroyed.
  */
 void msn_command_destroy(MsnCommand *cmd);
 
 /**
- * Add 1 to the ref count.
+ * Increment the ref count.
  *
  * @param cmd 	The MsnCommand to be ref.
  *
@@ -82,7 +81,7 @@ void msn_command_destroy(MsnCommand *cmd);
 MsnCommand *msn_command_ref(MsnCommand *cmd);
 
 /**
- * Substrac 1 to the ref count. If the count goes to 0, destroy it.
+ * Decrement the ref count. If the count goes to 0, destroy it.
  *
  * @param cmd	The MsnCommand to be unref.
  *
