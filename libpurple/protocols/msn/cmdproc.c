@@ -122,7 +122,8 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 		return;
 	}
 
-	msn_history_add(cmdproc->history, trans);
+	if (trans->send_trId)
+		msn_history_add(cmdproc->history, trans);
 
 	data = msn_transaction_to_string(trans);
 
