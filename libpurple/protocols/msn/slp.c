@@ -422,6 +422,11 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			xfer->data = slpcall;
 
+			if (header->type == 0 && bin_len >= sizeof(MsnFileContext)) {
+				purple_xfer_set_thumbnail(xfer, &header->preview,
+				                          bin_len - sizeof(MsnFileContext));
+			}
+
 			purple_xfer_request(xfer);
 		}
 		g_free(header);

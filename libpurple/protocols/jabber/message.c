@@ -1002,7 +1002,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 						JabberData *new_data =
 							jabber_data_create_from_data(purple_imgstore_get_data(image),
 								purple_imgstore_get_size(image),
-								jabber_message_get_mimetype_from_ext(ext), js);
+								jabber_message_get_mimetype_from_ext(ext), FALSE, js);
 						purple_debug_info("jabber",
 							"cache local smiley alt = %s, cid = %s\n",
 							shortcut, jabber_data_get_cid(new_data));
