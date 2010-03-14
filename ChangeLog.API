@@ -23,6 +23,7 @@ version 2.7.0 (??/??/????):
 		* ui-caps-changed media manager signal
 		* sent-attention conversation signal
 		* got-attention conversation signal
+		* PurpleMood struct in status.h
 
 	Pidgin:
 		Added:

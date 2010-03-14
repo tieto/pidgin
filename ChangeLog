@@ -20,6 +20,8 @@ version 2.7.0 (??/??/????):
 	* The Recent Log Activity sort method for the Buddy List now
 	  distinguishes between no activity and a small amount of activity
 	  in the distant past.  (Greg McNew)
+	* Added a menu set mood globally for all mood-supporting accounts
+	  (currently XMPP and ICQ).
 
 	Bonjour:
 	* Added support for IPv6. (Thanks to T_X for testing)
