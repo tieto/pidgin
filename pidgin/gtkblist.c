@@ -3384,6 +3384,253 @@ toggle_debug(void)
 			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"));
 }
 
+static char *get_mood_icon_path(const char *mood)
+{
+	char *path;
+
+	if (!strcmp(mood, "busy")) {
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
+		                        "status", "16", "busy.png", NULL);
+	} else if (!strcmp(mood, "hiptop")) {
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
+		                        "emblems", "16", "hiptop.png", NULL);
+	} else {
+		char *filename = g_strdup_printf("%s.png", mood);
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
+		                        "emotes", "small", filename, NULL);
+		g_free(filename);
+	}
+	return path;
+}
+
+static void
+update_status_with_mood(PurpleAccount *account, const gchar *mood,
+    const gchar *text)
+{
+	if (mood != NULL && !purple_strequal(mood, "")) {
+		if (text) {
+			purple_account_set_status(account, "mood", TRUE,
+			                          PURPLE_MOOD_NAME, mood,
+				    				  PURPLE_MOOD_COMMENT, text,
+			                          NULL);
+		} else {
+			purple_account_set_status(account, "mood", TRUE,
+			                          PURPLE_MOOD_NAME, mood,
+			                          NULL);
+		}
+	} else {
+		purple_account_set_status(account, "mood", FALSE, NULL);
+	}
+}
+
+static void
+edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
+{
+	PurpleRequestField *mood_field, *text_field;
+	GList *l;
+
+	mood_field = purple_request_fields_get_field(fields, "mood");
+	text_field = purple_request_fields_get_field(fields, "text");
+	l = purple_request_field_list_get_selected(mood_field);
+
+	if (l) {
+		const char *mood = purple_request_field_list_get_data(mood_field, l->data);
+		const char *text = purple_request_field_string_get_value(text_field);
+
+		if (gc) {
+			PurpleAccount *account = purple_connection_get_account(gc);
+
+			update_status_with_mood(account, mood, text);
+		} else {
+			GList *accounts = purple_accounts_get_all_active();
+
+			for (; accounts ; accounts = g_list_delete_link(accounts, accounts)) {
+				PurpleAccount *account = (PurpleAccount *) accounts->data;
+				PurpleConnection *gc = purple_account_get_connection(account);
+
+				if (gc->flags && PURPLE_CONNECTION_SUPPORT_MOODS) {
+					update_status_with_mood(account, mood, text);
+				}
+			}
+		}
+	}
+}
+	
+static void
+global_moods_for_each(gpointer key, gpointer value, gpointer user_data)
+{
+	GList **out_moods = (GList **) user_data;
+	PurpleMood *mood = (PurpleMood *) value;
+	
+	*out_moods = g_list_append(*out_moods, mood);
+}
+
+static PurpleMood *
+get_global_moods(void)
+{
+	GHashTable *global_moods =
+		g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	GHashTable *mood_counts =
+		g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	GList *accounts = purple_accounts_get_all_active();
+	PurpleMood *result = NULL;
+	GList *out_moods = NULL;
+	int i = 0;
+	int num_accounts = 0;
+	
+	for (; accounts ; accounts = g_list_delete_link(accounts, accounts)) {
+		PurpleAccount *account = (PurpleAccount *) accounts->data;
+		PurpleConnection *gc = purple_account_get_connection(account);
+
+		if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
+			PurplePluginProtocolInfo *prpl_info =
+				PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+			PurpleMood *mood = NULL;
+			
+			for (mood = prpl_info->get_moods(account) ;
+			    mood->mood != NULL ; mood++) {
+				int mood_count =
+						GPOINTER_TO_INT(g_hash_table_lookup(mood_counts, mood->mood));
+
+				if (!g_hash_table_lookup(global_moods, mood->mood)) {
+					g_hash_table_insert(global_moods, g_strdup(mood->mood), mood);
+				}
+				g_hash_table_insert(mood_counts, g_strdup(mood->mood),
+				    GINT_TO_POINTER(mood_count + 1));
+			}
+
+			num_accounts++;
+		}
+	}
+
+	g_hash_table_foreach(global_moods, global_moods_for_each, &out_moods);
+	result = g_new0(PurpleMood, g_hash_table_size(global_moods) + 1);
+
+	while (out_moods) {
+		PurpleMood *mood = (PurpleMood *) out_moods->data;
+		int in_num_accounts = 
+			GPOINTER_TO_INT(g_hash_table_lookup(mood_counts, mood->mood));
+
+		if (in_num_accounts == num_accounts) {
+			/* mood is present in all accounts supporting moods */
+			result[i].mood = mood->mood;
+			result[i].description = mood->description;
+			i++;
+		}
+		out_moods = g_list_delete_link(out_moods, out_moods);
+	}
+
+	g_hash_table_destroy(global_moods);
+	g_hash_table_destroy(mood_counts);
+
+	return result;
+}
+
+/* get current set mood for all mood-supporting accounts, or NULL if not set
+ or not set to the same on all */
+static const gchar *
+get_global_mood_status(void)
+{
+	GList *accounts = purple_accounts_get_all_active();
+	const gchar *found_mood = NULL;
+	
+	for (; accounts ; accounts = g_list_delete_link(accounts, accounts)) {
+		PurpleAccount *account = (PurpleAccount *) accounts->data;
+
+		if (purple_account_get_connection(account)->flags &
+		    PURPLE_CONNECTION_SUPPORT_MOODS) {
+			PurplePresence *presence = purple_account_get_presence(account);
+			PurpleStatus *status = purple_presence_get_status(presence, "mood");
+			const gchar *curr_mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
+
+			if (found_mood != NULL && !purple_strequal(curr_mood, found_mood)) {
+				/* found a different mood */
+				found_mood = NULL;
+				break;
+			} else {
+				found_mood = curr_mood;
+			}
+		}
+	}
+
+	return found_mood;
+}
+
+static void
+set_mood_cb(GtkWidget *widget, PurpleAccount *account)
+{
+	const char *current_mood;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *g;
+	PurpleRequestField *f;
+	PurpleConnection *gc = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleMood *mood;
+	PurpleMood *global_moods = get_global_moods();
+	
+	if (account) {
+		PurplePresence *presence = purple_account_get_presence(account);
+		PurpleStatus *status = purple_presence_get_status(presence, "mood");
+		gc = purple_account_get_connection(account);
+		g_return_if_fail(gc->prpl != NULL);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		current_mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
+	} else {
+		current_mood = get_global_mood_status();
+	}
+
+	fields = purple_request_fields_new();
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_list_new("mood", _("Please select your mood from the list"));
+
+	purple_request_field_list_add(f, _("None"), "");
+	if (current_mood == NULL)
+		purple_request_field_list_add_selected(f, _("None"));
+
+	/* TODO: rlaager wants this sorted. */
+	for (mood = account ? prpl_info->get_moods(account) : global_moods;
+	     mood->mood != NULL ; mood++) {
+		char *path;
+
+		if (mood->mood == NULL || mood->description == NULL)
+			continue;
+
+		path = get_mood_icon_path(mood->mood);
+		purple_request_field_list_add_icon(f, _(mood->description),
+				path, (gpointer)mood->mood);
+		g_free(path);
+
+		if (current_mood && !strcmp(current_mood, mood->mood))
+			purple_request_field_list_add_selected(f, _(mood->description));
+	}
+	purple_request_field_group_add_field(g, f);
+
+	purple_request_fields_add_group(fields, g);
+
+	/* if the connection allows setting a mood message */
+	if (gc && (gc->flags & PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES)) {
+		g = purple_request_field_group_new(NULL);
+		f = purple_request_field_string_new("text",
+		    _("Message (optional)"), NULL, FALSE);
+		purple_request_field_group_add_field(g, f);
+		purple_request_fields_add_group(fields, g);
+	}
+
+	purple_request_fields(gc, _("Edit User Mood"), _("Edit User Mood"),
+                              NULL, fields,
+                              _("OK"), G_CALLBACK(edit_mood_cb),
+                              _("Cancel"), NULL,
+                              gc ? purple_connection_get_account(gc) : NULL,
+                              NULL, NULL, gc);
+
+	g_free(global_moods);
+}
+
+static void
+set_mood_show(void)
+{
+	set_mood_cb(NULL, NULL);
+}
 
 /***************************************************
  *            Crap                                 *
@@ -3423,6 +3670,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 2, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
+	{ N_("/Tools/Set _Mood"), "<CTL>M", set_mood_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
@@ -3752,25 +4000,6 @@ static GdkPixbuf * _pidgin_blist_get_cached_emblem(gchar *path) {
 	}
 
 	return pb;
-}
-
-static char *get_mood_icon_path(const char *mood)
-{
-	char *path;
-
-	if (!strcmp(mood, "busy")) {
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
-		                        "status", "16", "busy.png", NULL);
-	} else if (!strcmp(mood, "hiptop")) {
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
-		                        "emblems", "16", "hiptop.png", NULL);
-	} else {
-		char *filename = g_strdup_printf("%s.png", mood);
-		path = g_build_filename(DATADIR, "pixmaps", "pidgin",
-		                        "emotes", "small", filename, NULL);
-		g_free(filename);
-	}
-	return path;
 }
 
 GdkPixbuf *
@@ -7815,100 +8044,7 @@ disable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 	purple_account_set_enabled(account, PIDGIN_UI, FALSE);
 }
 
-static void
-edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
-{
-	PurpleRequestField *mood_field, *text_field;
-	GList *l;
 
-	mood_field = purple_request_fields_get_field(fields, "mood");
-	text_field = purple_request_fields_get_field(fields, "text");
-	l = purple_request_field_list_get_selected(mood_field);
-
-	if (l) {
-		const char *mood = purple_request_field_list_get_data(mood_field, l->data);
-		const char *text = purple_request_field_string_get_value(text_field);
-		PurpleAccount *account = purple_connection_get_account(gc);
-
-		if (mood != NULL && !purple_strequal(mood, "")) {
-			if (text) {
-				purple_account_set_status(account, "mood", TRUE,
-			                          	PURPLE_MOOD_NAME, mood,
-				    				  	PURPLE_MOOD_COMMENT, text,
-			                          	NULL);
-			} else {
-				purple_account_set_status(account, "mood", TRUE,
-			                          	PURPLE_MOOD_NAME, mood,
-			                          	NULL);
-			}
-		} else {
-			purple_account_set_status(account, "mood", FALSE, NULL);
-		}
-	}
-}
-
-static void
-set_mood_cb(GtkWidget *widget, PurpleAccount *account)
-{
-	PurplePresence *presence = purple_account_get_presence(account);
-	PurpleStatus *status = purple_presence_get_status(presence, "mood");
-	const char *current_mood;
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *g;
-	PurpleRequestField *f;
-	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePluginProtocolInfo *prpl_info;
-	PurpleMood *mood;
-	
-	g_return_if_fail(gc->prpl != NULL);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	current_mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
-
-	fields = purple_request_fields_new();
-	g = purple_request_field_group_new(NULL);
-	f = purple_request_field_list_new("mood", _("Please select your mood from the list"));
-
-	purple_request_field_list_add(f, _("None"), "");
-	if (current_mood == NULL)
-		purple_request_field_list_add_selected(f, _("None"));
-
-	/* TODO: rlaager wants this sorted. */
-	for (mood = prpl_info->get_moods(account);
-	     mood->mood != NULL ; mood++) {
-		char *path;
-
-		if (mood->mood == NULL || mood->description == NULL)
-			continue;
-
-		path = get_mood_icon_path(mood->mood);
-		purple_request_field_list_add_icon(f, _(mood->description),
-				path, (gpointer)mood->mood);
-		g_free(path);
-
-		if (current_mood && !strcmp(current_mood, mood->mood))
-			purple_request_field_list_add_selected(f, _(mood->description));
-	}
-	purple_request_field_group_add_field(g, f);
-
-	purple_request_fields_add_group(fields, g);
-
-	/* if the connection allows setting a mood message */
-	if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES) {
-		g = purple_request_field_group_new(NULL);
-		f = purple_request_field_string_new("text",
-		    _("Message (optional)"), NULL, FALSE);
-		purple_request_field_group_add_field(g, f);
-		purple_request_fields_add_group(fields, g);
-	}
-
-	purple_request_fields(gc, _("Edit User Mood"), _("Edit User Mood"),
-                              NULL, fields,
-                              _("OK"), G_CALLBACK(edit_mood_cb),
-                              _("Cancel"), NULL,
-                              purple_connection_get_account(gc),
-                              NULL, NULL, gc);
-}
 
 void
 pidgin_blist_update_accounts_menu(void)
