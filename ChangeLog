@@ -32,8 +32,10 @@ version 2.7.0 (??/??/????):
 	* Minimum requirement for external libgadu is now also 1.9.0-rc2.
 
 	ICQ:
-	* X-Status (Custom ICQ status icon) support (Andrew Ivanov, Tomáš Kebert,
-	  Yuriy Yevgrafov, and trac users bob007, salieff, and nops)
+	* X-Status (Custom ICQ status icon) support.  Since most of the icons
+	  available reflect moods, this is labeled "Set Mood" on the Accounts->ICQ
+	  Account menu. (Andrew Ivanov, Tomáš Kebert, Yuriy Yevgrafov, and trac
+	  users bob007, salieff, and nops)
 	* Allow setting and displaying icons between 1x1 and 100x100 pixels.
 	  Previously only icons between 48x48 and 52x64 were allowed.
 
