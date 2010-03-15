@@ -1,14 +1,15 @@
 version 2.7.0 (??/??/????):
 	* Updated GTK+ to 2.16.6
 	* Private GTK+ Runtime now used (GTK+ Installer no longer supported)
-	* Minimum required GTK+ version increased to 2.14.0
+	* Minimum required GTK+ version increased to 2.14.7
 	* Win9x no longer supported.
 	* Crash Report files (pidgin.RPT) are now generated in the ~/.purple
 	  directory instead of the installation directory.
 	* NSS SSL Library upgraded to 3.12.5 (thanks to Berke Viktor)
 	* GtkSpell upgraded to 2.0.16, changing the spellchecking backend to
 	  enchant.  This means that myspell and hunspell (OpenOffice)
-	  dictionaries can be used (previously used aspell dictionaries won't).
+	  dictionaries can be used (previous versions' aspell dictionaries
+	  will not work).
 
 version 2.6.6 (02/18/2010):
 	* Installer translations for: Norwegian nynorsk
