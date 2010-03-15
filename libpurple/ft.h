@@ -189,6 +189,7 @@ struct _PurpleXfer
 
 	gpointer thumbnail_data;		/**< thumbnail image */
 	gsize thumbnail_size;
+	gchar *thumbnail_mimetype;
 };
 
 #ifdef __cplusplus
@@ -711,16 +712,25 @@ const void *purple_xfer_get_thumbnail_data(const PurpleXfer *xfer);
  */
 gsize purple_xfer_get_thumbnail_size(const PurpleXfer *xfer);
 
-
+/**
+ * Gets the mimetype of the thumbnail preview for a transfer
+ *
+ * @param xfer The file transfer to get the mimetype for
+ * @return The mimetype of the thumbnail, or @c NULL if not thumbnail is set
+ */
+const gchar *purple_xfer_get_thumbnail_mimetype(const PurpleXfer *xfer);
+	
+	
 /**
  * Sets the thumbnail data for a transfer
  *
  * @param xfer The file transfer to set the data for
  * @param thumbnail A pointer to the thumbnail data, this will be copied
  * @param size The size in bytes of the passed in thumbnail data
+ * @param mimetype The mimetype of the generated thumbnail
  */
 void purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
-	gsize size);
+	gsize size, const gchar *mimetype);
 
 /**
  * Prepare a thumbnail for a transfer (if the UI supports it)

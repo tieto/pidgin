@@ -1163,29 +1163,75 @@ pidgin_xfer_cancel_remote(PurpleXfer *xfer)
 static void
 pidgin_xfer_add_thumbnail(PurpleXfer *xfer)
 {
+	PurpleAccount *account = purple_xfer_get_account(xfer);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	const char *thumbnail_format = prpl_info->thumbnail_spec.format;
+	
 	purple_debug_info("pidgin", "creating thumbnail for transfer\n");
 
-	if (purple_xfer_get_size(xfer) <= PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL) {
+	if (thumbnail_format != NULL &&
+	    purple_xfer_get_size(xfer) <= PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL) {
 		GdkPixbuf *thumbnail = 
 			gdk_pixbuf_new_from_file_at_size(
 				purple_xfer_get_local_filename(xfer), 128, 128, NULL);
 
 		if (thumbnail) {
+			gchar **formats = g_strsplit(thumbnail_format, ",", 0);
 			gchar *buffer = NULL;
 			gsize size;
-			char *option_keys[2] = {"compression", NULL};
-			char *option_values[2] = {"9", NULL};
-			gdk_pixbuf_save_to_bufferv(thumbnail, &buffer, &size, "png", 
+			char *option_keys[2] = {NULL, NULL};
+			char *option_values[2] = {NULL, NULL};
+			gboolean supports_jpeg = FALSE;
+			gboolean supports_png = FALSE;
+			int i;
+			gchar *format = NULL;
+			
+			for (i = 0 ; formats[i] ; i++) {
+				if (purple_strequal(formats[i], "jpeg")) {
+					supports_jpeg = TRUE;
+				} else if (purple_strequal(formats[i], "png")) {
+					supports_png = TRUE;
+				}
+			}
+
+			/* prefer JPEG, then PNG, otherwise try the first format given
+			 by the PRPL without options */
+			if (supports_jpeg) {
+				purple_debug_info("pidgin", "creating JPEG thumbnail\n");
+				option_keys[0] = "quality";
+				option_keys[1] = NULL;
+				option_values[0] = "90";
+				option_values[1] = NULL;
+				format = "jpeg";
+			} else if (supports_png) {
+				purple_debug_info("pidgin", "creating PNG thumbnail\n");
+				option_keys[0] = "compression";
+				option_keys[1] = NULL;
+				option_values[0] = "9";
+				option_values[1] = NULL;
+				format = "png";
+			} else {
+				purple_debug_info("pidgin",
+				    "creating thumbnail of format %s as demanded by PRPL\n",
+				    formats[0]);
+				format = formats[0];
+			}
+
+			gdk_pixbuf_save_to_bufferv(thumbnail, &buffer, &size, format, 
 				option_keys, option_values, NULL);
 
 			if (buffer) {
+				const gchar *mimetype = g_strdup_printf("image/%s", format);
 				purple_debug_info("pidgin",
 				                  "created thumbnail of %" G_GSIZE_FORMAT " bytes\n",
 					size);
-				purple_xfer_set_thumbnail(xfer, buffer, size);
+				purple_xfer_set_thumbnail(xfer, buffer, size, mimetype);
 				g_free(buffer);
+				g_free(mimetype);
 			}
 			g_object_unref(thumbnail);
+			g_strfreev(formats);
 		}
 	}
 }

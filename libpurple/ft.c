@@ -179,6 +179,7 @@ purple_xfer_destroy(PurpleXfer *xfer)
 
 	g_hash_table_remove(xfers_data, xfer);
 	g_free(xfer->thumbnail_data);
+	g_free(xfer->thumbnail_mimetype);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(xfer);
 	xfers = g_list_remove(xfers, xfer);
@@ -1630,13 +1631,20 @@ purple_xfer_get_thumbnail_size(const PurpleXfer *xfer)
 	return xfer->thumbnail_size;
 }
 
+const gchar *
+purple_xfer_get_thumbnail_mimetype(const PurpleXfer *xfer)
+{
+	return xfer->thumbnail_mimetype;
+}
+
 void
 purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
-	gsize size)
+	gsize size, const gchar *mimetype)
 {
 	if (thumbnail && size > 0) {
 		xfer->thumbnail_data = g_memdup(thumbnail, size);
 		xfer->thumbnail_size = size;
+		xfer->thumbnail_mimetype = g_strdup(mimetype);
 	}
 }
 

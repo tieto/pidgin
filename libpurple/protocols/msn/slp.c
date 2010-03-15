@@ -424,7 +424,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			if (header->type == 0 && bin_len >= sizeof(MsnFileContext)) {
 				purple_xfer_set_thumbnail(xfer, &header->preview,
-				                          bin_len - sizeof(MsnFileContext));
+				                          bin_len - sizeof(MsnFileContext),
+				    					  "image/png");
 			}
 
 			purple_xfer_request(xfer);

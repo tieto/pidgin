@@ -52,6 +52,13 @@ typedef enum {
 typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 
 /**
+ * A description of a file transfer thumbnail specification.
+ * This tells the UI if and what image formats the prpl support for file
+ * transfer thumbnails.
+ */
+typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
+
+/**
  * This \#define exists just to make it easier to fill out the buddy icon
  * field in the prpl info struct for protocols that couldn't care less.
  */
@@ -91,6 +98,14 @@ struct _PurpleBuddyIconSpec {
 	PurpleIconScaleRules scale_rules;  /**< How to stretch this icon */
 };
 
+/** @copydoc PurpleThumbnailSpec */
+struct _PurpleThumbnailSpec {
+	/** This is a comma-delimited list of image formats or @c NULL if the
+	 *  prpl does not support file transfer thumbnails
+	 */
+	char *format;
+};
+	
 /** Represents an entry containing information that must be supplied by the
  *  user when joining a chat.
  */
@@ -575,6 +590,11 @@ struct _PurplePluginProtocolInfo
 	 * "mood" set to @c NULL.
 	 */
 	PurpleMood *(*get_moods)(PurpleAccount *account);
+
+	/**
+	 * File transfer thumbnail spec
+	 */
+	PurpleThumbnailSpec thumbnail_spec;
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \

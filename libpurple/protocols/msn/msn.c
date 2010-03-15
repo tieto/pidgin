@@ -2733,7 +2733,8 @@ static PurplePluginProtocolInfo prpl_info =
 	msn_get_account_text_table,             /* get_account_text_table */
 	NULL,                                   /* initiate_media */
 	NULL,                                   /* get_media_caps */
-	NULL                                    /* get_moods */
+	NULL,                                    /* get_moods */
+	{"png"}					/* file transfer thumbnail spec */
 };
 
 static PurplePluginInfo info =

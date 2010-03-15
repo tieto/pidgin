@@ -1267,15 +1267,16 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 
 	/* add thumbnail, if appropriate */
 	if (purple_xfer_get_thumbnail_data(xfer)) {
-		JabberData *thumbnail_data = 
+		const gchar *mimetype = purple_xfer_get_thumbnail_mimetype(xfer);
+		JabberData *thumbnail_data =
 			jabber_data_create_from_data(purple_xfer_get_thumbnail_data(xfer),
-				purple_xfer_get_thumbnail_size(xfer), "image/png", TRUE,
+				purple_xfer_get_thumbnail_size(xfer), mimetype, TRUE,
 				jsx->js);
 		xmlnode *thumbnail = xmlnode_new_child(file, "thumbnail");
 		xmlnode_set_namespace(thumbnail, NS_THUMBS);
 		xmlnode_set_attrib(thumbnail, "cid", 
 			jabber_data_get_cid(thumbnail_data));
-		xmlnode_set_attrib(thumbnail, "mime-type", "image/png");
+		xmlnode_set_attrib(thumbnail, "mime-type", mimetype);
 		/* cache data */
 		jabber_data_associate_local(thumbnail_data, NULL);
 	}
@@ -1671,7 +1672,7 @@ jabber_si_thumbnail_cb(JabberStream *js, const char *from, JabberIqType type,
 
 		if (data) {
 			purple_xfer_set_thumbnail(xfer, jabber_data_get_data(data),
-				jabber_data_get_size(data));
+				jabber_data_get_size(data), jabber_data_get_type(data));
 			jabber_data_destroy(data);
 		}
 	} else if (item_not_found) {
