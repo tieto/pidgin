@@ -198,9 +198,9 @@ static BOOL dll_prep(const wchar_t *pidgin_dir) {
 }
 
 static void portable_mode_dll_prep(const wchar_t *pidgin_dir) {
-	/* need to be able to fit MAX_PATH + "PIDGIN_ASPELL_DIR=\\Aspell\\bin" in path2 */
+	/* need to be able to fit MAX_PATH + "PURPLEHOME=" in path2 */
 	wchar_t path[MAX_PATH + 1];
-	wchar_t path2[MAX_PATH + 33];
+	wchar_t path2[MAX_PATH + 12];
 	const wchar_t *prev = NULL;
 
 	/* We assume that GTK+ is installed under \\path\to\Pidgin\..\GTK
@@ -229,10 +229,6 @@ static void portable_mode_dll_prep(const wchar_t *pidgin_dir) {
 	 * The actual settings dir will be \\path\to\.purple */
 	_snwprintf(path2, sizeof(path2) / sizeof(wchar_t), L"PURPLEHOME=%s", path);
 	wprintf(L"Setting settings dir: %s\n", path2);
-	_wputenv(path2);
-
-	_snwprintf(path2, sizeof(path2) / sizeof(wchar_t), L"PIDGIN_ASPELL_DIR=%s\\Aspell\\bin", path);
-	wprintf(L"%s\n", path2);
 	_wputenv(path2);
 
 	if (!dll_prep(pidgin_dir)) {

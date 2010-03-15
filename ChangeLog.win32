@@ -7,8 +7,8 @@ version 2.7.0 (??/??/????):
 	  directory instead of the installation directory.
 	* NSS SSL Library upgraded to 3.12.5 (thanks to Berke Viktor)
 	* GtkSpell upgraded to 2.0.16, changing the spellchecking backend to
-	  enchant.  This means that myspell, hunspell (OpenOffice) and existing
-	  aspell dictionaries can be used.
+	  enchant.  This means that myspell and hunspell (OpenOffice)
+	  dictionaries can be used (previously used aspell dictionaries won't).
 
 version 2.6.6 (02/18/2010):
 	* Installer translations for: Norwegian nynorsk
