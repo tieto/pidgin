@@ -47,13 +47,15 @@ EXTERNAL_DLLS = \
 	k5sprt32.dll \
 	krb5_32.dll \
 	libenchant.dll \
+	libenchant_ispell.dll \
+	libenchant_myspell.dll \
 	libgtkspell-0.dll \
 	libmeanwhile-1.dll \
 	libnspr4.dll \
 	libplc4.dll \
 	libplds4.dll \
 	libsasl.dll \
-	libxml2.dll \
+	libxml2-2.dll \
 	nss3.dll \
 	nssckbi.dll \
 	nssutil3.dll \
@@ -150,7 +152,7 @@ debug_symbols_zip: install
 installers: installer installer_offline debug_symbols_zip installer_zip
 
 Doxyfile.mingw: Doxyfile.in
-	sed -e "s/@PACKAGE@/pidgin/" -e "s/@VERSION@/$(PIDGIN_VERSION)/" -e "s/@top_srcdir@/$(PIDGIN_TREE_TOP)/g" -e "s/@enable_dot@/NO/" Doxyfile.in > Doxyfile.mingw
+	sed -e "s/@PACKAGE@/pidgin/" -e "s/@VERSION@/$(PIDGIN_VERSION)/" -e "s/@top_srcdir@/$(PIDGIN_TREE_TOP)/g" -e "s/@enable_dot@/NO/" $< > $@
 
 docs: Doxyfile.mingw
 	@echo "Running doxygen..."
