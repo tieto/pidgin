@@ -673,7 +673,7 @@ gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 
 	size = purple_xfer_get_size(xfer);
 
-	purple_xfer_prepare_thumbnail(xfer);
+	purple_xfer_prepare_thumbnail(xfer, "png");
 
 	if (!file_name) {
 		gchar *basename = g_path_get_basename(file_path);

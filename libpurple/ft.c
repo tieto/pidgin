@@ -1649,10 +1649,10 @@ purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
 }
 
 void
-purple_xfer_prepare_thumbnail(PurpleXfer *xfer)
+purple_xfer_prepare_thumbnail(PurpleXfer *xfer, const gchar *formats)
 {
 	if (xfer->ui_ops->add_thumbnail) {
-		xfer->ui_ops->add_thumbnail(xfer);
+		xfer->ui_ops->add_thumbnail(xfer, formats);
 	}
 }
 

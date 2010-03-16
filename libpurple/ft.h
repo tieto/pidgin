@@ -125,7 +125,7 @@ typedef struct
 	 *
 	 * @param xfer   The file transfer structure
 	 */
-	void (*add_thumbnail)(PurpleXfer *xfer);
+	void (*add_thumbnail)(PurpleXfer *xfer, const gchar *formats);
 } PurpleXferUiOps;
 
 /**
@@ -737,8 +737,10 @@ void purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
  * will be no-op in case the UI doesn't implement thumbnail creation
  *
  * @param xfer The file transfer to create a thumbnail for
+ * @param formats A comma-separated list of mimetypes for image formats
+ *	 	  the protocols can use for thumbnails.
  */
-void purple_xfer_prepare_thumbnail(PurpleXfer *xfer);
+void purple_xfer_prepare_thumbnail(PurpleXfer *xfer, const gchar *formats);
 
 
 /*@}*/

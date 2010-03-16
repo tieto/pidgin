@@ -97,14 +97,6 @@ struct _PurpleBuddyIconSpec {
 	size_t max_filesize;               /**< Maximum size in bytes */
 	PurpleIconScaleRules scale_rules;  /**< How to stretch this icon */
 };
-
-/** @copydoc PurpleThumbnailSpec */
-struct _PurpleThumbnailSpec {
-	/** This is a comma-delimited list of image formats or @c NULL if the
-	 *  prpl does not support file transfer thumbnails
-	 */
-	char *format;
-};
 	
 /** Represents an entry containing information that must be supplied by the
  *  user when joining a chat.
@@ -590,11 +582,6 @@ struct _PurplePluginProtocolInfo
 	 * "mood" set to @c NULL.
 	 */
 	PurpleMood *(*get_moods)(PurpleAccount *account);
-
-	/**
-	 * File transfer thumbnail spec
-	 */
-	PurpleThumbnailSpec thumbnail_spec;
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
