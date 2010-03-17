@@ -112,6 +112,13 @@ struct _JabberStream
 
 	JabberSaslMech *auth_mech;
 	gpointer auth_mech_data;
+	
+	/**
+	 * The header from the opening <stream/> tag.  This being NULL is treated
+	 * as a special condition in the parsing code (signifying the next
+	 * stanza started is an opening stream tag), and its being missing on
+	 * the stream header is treated as a fatal error.
+	 */
 	char *stream_id;
 	JabberStreamState state;
 

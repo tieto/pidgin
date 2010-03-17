@@ -86,6 +86,11 @@ static void jabber_stream_init(JabberStream *js)
 {
 	char *open_stream;
 
+	if (js->stream_id) {
+		g_free(js->stream_id);
+		js->stream_id = NULL;
+	}
+
 	open_stream = g_strdup_printf("<stream:stream to='%s' "
 				          "xmlns='" NS_XMPP_CLIENT "' "
 						  "xmlns:stream='" NS_XMPP_STREAMS "' "
@@ -261,6 +266,7 @@ static void tls_init(JabberStream *js);
 
 void jabber_process_packet(JabberStream *js, xmlnode **packet)
 {
+	const char *name;
 	const char *xmlns;
 
 	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-receiving-xmlnode", js->gc, packet);
@@ -269,6 +275,7 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 	if(NULL == *packet)
 		return;
 
+	name = (*packet)->name;
 	xmlns = xmlnode_get_namespace(*packet);
 
 	if(!strcmp((*packet)->name, "iq")) {
@@ -277,30 +284,30 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 		jabber_presence_parse(js, *packet);
 	} else if(!strcmp((*packet)->name, "message")) {
 		jabber_message_parse(js, *packet);
-	} else if(!strcmp((*packet)->name, "stream:features")) {
-		jabber_stream_features_parse(js, *packet);
-	} else if (!strcmp((*packet)->name, "features") && xmlns &&
-		   !strcmp(xmlns, NS_XMPP_STREAMS)) {
-		jabber_stream_features_parse(js, *packet);
-	} else if(!strcmp((*packet)->name, "stream:error") ||
-			 (!strcmp((*packet)->name, "error") && xmlns &&
-				!strcmp(xmlns, NS_XMPP_STREAMS)))
-	{
-		jabber_stream_handle_error(js, *packet);
-	} else if(!strcmp((*packet)->name, "challenge")) {
-		if(js->state == JABBER_STREAM_AUTHENTICATING)
-			jabber_auth_handle_challenge(js, *packet);
-	} else if(!strcmp((*packet)->name, "success")) {
-		if(js->state == JABBER_STREAM_AUTHENTICATING)
-			jabber_auth_handle_success(js, *packet);
-	} else if(!strcmp((*packet)->name, "failure")) {
-		if(js->state == JABBER_STREAM_AUTHENTICATING)
-			jabber_auth_handle_failure(js, *packet);
-	} else if(!strcmp((*packet)->name, "proceed")) {
-		if (js->state == JABBER_STREAM_INITIALIZING_ENCRYPTION && !js->gsc)
-			tls_init(js);
-		else
-			purple_debug_warning("jabber", "Ignoring spurious <proceed/>\n");
+	} else if (purple_strequal(xmlns, NS_XMPP_STREAMS)) {
+		if (g_str_equal(name, "features"))
+			jabber_stream_features_parse(js, *packet);
+		else if (g_str_equal(name, "error"))
+			jabber_stream_handle_error(js, *packet);
+	} else if (purple_strequal(xmlns, NS_XMPP_SASL)) {
+		if (js->state != JABBER_STREAM_AUTHENTICATING)
+			purple_debug_warning("jabber", "Ignoring spurious SASL stanza %s\n", name);
+		else {
+			if (g_str_equal(name, "challenge"))
+				jabber_auth_handle_challenge(js, *packet);
+			else if (g_str_equal(name, "success"))
+				jabber_auth_handle_success(js, *packet);
+			else if (g_str_equal(name, "failure"))
+				jabber_auth_handle_failure(js, *packet);
+		}
+	} else if (purple_strequal(xmlns, NS_XMPP_TLS)) {
+		if (js->state != JABBER_STREAM_INITIALIZING_ENCRYPTION || js->gsc)
+			purple_debug_warning("jabber", "Ignoring spurious %s\n", name);
+		else {
+			if (g_str_equal(name, "proceed"))
+				tls_init(js);
+			/* TODO: Handle <failure/>, I guess? */
+		}
 	} else {
 		purple_debug_warning("jabber", "Unknown packet: %s\n", (*packet)->name);
 	}
