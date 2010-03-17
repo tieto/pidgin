@@ -538,7 +538,7 @@ out:
 	g_free(userdata);
 }
 
-gboolean
+static gboolean
 handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet)
 {
 	static int i = 1;
@@ -792,7 +792,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 	return TRUE;
 }
 
-gboolean
+static gboolean
 handle_presence_contact(JabberStream *js, JabberPresence *presence)
 {
 	JabberBuddyResource *jbr;
