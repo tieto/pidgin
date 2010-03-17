@@ -66,6 +66,10 @@ msn_slpcall_new(MsnSlpLink *slplink)
 
 	slpcall->slplink = slplink;
 
+	slpcall->wait_for_socket = FALSE;
+	slpcall->xfer = NULL;
+	slpcall->branch = NULL;
+
 	msn_slplink_add_slpcall(slplink, slpcall);
 
 	slpcall->timer = purple_timeout_add_seconds(MSN_SLPCALL_TIMEOUT, msn_slpcall_timeout, slpcall);

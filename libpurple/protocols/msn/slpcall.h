@@ -64,13 +64,15 @@ struct _MsnSlpCall
 	gboolean started; /**< A flag that states if this slpcall's session has
 						been initiated. */
 
+	gboolean wait_for_socket;
+
 	void (*progress_cb)(MsnSlpCall *slpcall,
 						gsize total_length, gsize len, gsize offset);
 	void (*session_init_cb)(MsnSlpCall *slpcall);
 
 	/* Can be checksum, or smile */
 	char *data_info;
-
+	
 	PurpleXfer *xfer;
 	union {
 		GByteArray *incoming_data;

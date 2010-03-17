@@ -1100,7 +1100,8 @@ void
 msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	GHashTable *body;
-	const gchar *guid;
+	const gchar *command;
+	const gchar *cookie;
 	gboolean accepted = FALSE;
 
 	g_return_if_fail(cmdproc != NULL);
@@ -1113,59 +1114,75 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				"Unable to parse invite msg body.\n");
 		return;
 	}
+	
+	/*
+	 * GUID is NOT always present but Invitation-Command and Invitation-Cookie
+	 * are mandatory.
+	 */
+	command = g_hash_table_lookup(body, "Invitation-Command");
+	cookie = g_hash_table_lookup(body, "Invitation-Cookie");
 
-	guid = g_hash_table_lookup(body, "Application-GUID");
+	if (command == NULL || cookie == NULL) {
+		purple_debug_warning("msn",
+			"Invalid invitation message: "
+			"either Invitation-Command or Invitation-Cookie is missing or invaild"
+		);
+		return;
 
-	if (guid == NULL) {
-		const gchar *cmd = g_hash_table_lookup(
-				body, "Invitation-Command");
+	} else if (!strcmp(command, "INVITE")) {
 
-		if (cmd && !strcmp(cmd, "CANCEL")) {
-			const gchar *code = g_hash_table_lookup(
-					body, "Cancel-Code");
-			purple_debug_info("msn",
-					"MSMSGS invitation cancelled: %s.\n",
-					code ? code : "no reason given");
-		} else
-			purple_debug_warning("msn", "Invite msg missing "
-					"Application-GUID.\n");
+		const gchar	*guid = g_hash_table_lookup(body, "Application-GUID");
+	
+		if (guid == NULL) {
+			const gchar *cmd = g_hash_table_lookup(
+					body, "Invitation-Command");
 
-		accepted = TRUE;
+			if (cmd && !strcmp(cmd, "CANCEL")) {
+				const gchar *code = g_hash_table_lookup(
+						body, "Cancel-Code");
+				purple_debug_info("msn",
+						"MSMSGS invitation cancelled: %s.\n",
+						code ? code : "no reason given");
+			} else
+				purple_debug_warning("msn", "Invite msg missing "
+						"Application-GUID.\n");
 
-	} else if (!strcmp(guid, "{02D3C01F-BF30-4825-A83A-DE7AF41648AA}")) {
-		purple_debug_info("msn", "Computer call\n");
+			accepted = TRUE;
 
-		if (cmdproc->session) {
-			PurpleConversation *conv = NULL;
-			gchar *from = msg->remote_user;
-			gchar *buf = NULL;
+		} else if (!strcmp(guid, MSN_FT_GUID)) {
 
-			if (from)
-				conv = purple_find_conversation_with_account(
-						PURPLE_CONV_TYPE_IM, from,
-						cmdproc->session->account);
-			if (conv)
-				buf = g_strdup_printf(
-						_("%s sent you a voice chat "
-						"invite, which is not yet "
-						"supported."), from);
-			if (buf) {
-				purple_conversation_write(conv, NULL, buf,
-						PURPLE_MESSAGE_SYSTEM |
-						PURPLE_MESSAGE_NOTIFY,
-						time(NULL));
-				g_free(buf);
+		} else if (!strcmp(guid, "{02D3C01F-BF30-4825-A83A-DE7AF41648AA}")) {
+			purple_debug_info("msn", "Computer call\n");
+
+			if (cmdproc->session) {
+				PurpleConversation *conv = NULL;
+				gchar *from = msg->remote_user;
+				gchar *buf = NULL;
+
+				if (from)
+					conv = purple_find_conversation_with_account(
+							PURPLE_CONV_TYPE_IM, from,
+							cmdproc->session->account);
+				if (conv)
+					buf = g_strdup_printf(
+							_("%s sent you a voice chat "
+							"invite, which is not yet "
+							"supported."), from);
+				if (buf) {
+					purple_conversation_write(conv, NULL, buf,
+							PURPLE_MESSAGE_SYSTEM |
+							PURPLE_MESSAGE_NOTIFY,
+							time(NULL));
+					g_free(buf);
+				}
 			}
+		} else {
+			const gchar *application = g_hash_table_lookup(body, "Application-Name");
+			purple_debug_warning("msn", "Unhandled invite msg with GUID %s: %s.\n",
+					     guid, application ? application : "(null)");
 		}
-	} else {
-		const gchar *application = g_hash_table_lookup(body, "Application-Name");
-		purple_debug_warning("msn", "Unhandled invite msg with GUID %s: %s.\n",
-		                     guid, application ? application : "(null)");
-	}
-
-	if (!accepted) {
-		const gchar *cookie = g_hash_table_lookup(body, "Invitation-Cookie");
-		if (cookie) {
+		
+		if (!accepted) {
 			MsnSwitchBoard *swboard = cmdproc->data;
 			char *text;
 			MsnMessage *cancel;
@@ -1176,15 +1193,21 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			msn_message_set_flag(cancel, 'U');
 
 			text = g_strdup_printf("Invitation-Command: CANCEL\r\n"
-			                       "Invitation-Cookie: %s\r\n"
-			                       "Cancel-Code: REJECT_NOT_INSTALLED\r\n",
-			                       cookie);
+					       "Invitation-Cookie: %s\r\n"
+					       "Cancel-Code: REJECT_NOT_INSTALLED\r\n",
+					       cookie);
 			msn_message_set_bin_data(cancel, text, strlen(text));
 			g_free(text);
 
 			msn_switchboard_send_msg(swboard, cancel, TRUE);
 			msn_message_destroy(cancel);
 		}
+
+	} else {
+		/*
+		 * Some other already estabilished invitation session.
+		 * Can be retrieved by Invitation-Cookie.
+		 */
 	}
 
 	g_hash_table_destroy(body);
