@@ -422,10 +422,10 @@ msn_dc_parse_binary_header(MsnDirectConn *dc)
 	h->ack_size = GUINT64_FROM_LE(h->ack_size);
 }
 
-static gchar*
+static const gchar *
 msn_dc_serialize_binary_header(MsnDirectConn *dc) {
 	MsnSlpHeader h;
-	gchar bin_header[DC_PACKET_HEADER_SIZE];
+	static gchar bin_header[DC_PACKET_HEADER_SIZE];
 
 	g_return_val_if_fail(dc != NULL, NULL);
 
@@ -686,7 +686,7 @@ static void
 msn_dc_send_handshake(MsnDirectConn *dc)
 {
 	MsnDirectConnPacket *p;
-	gchar *h;
+	const gchar *h;
 	guint32 l;
 
 	g_return_if_fail(dc != NULL);
@@ -718,7 +718,7 @@ static void
 msn_dc_send_handshake_reply(MsnDirectConn *dc)
 {
 	MsnDirectConnPacket *p;
-	gchar *h;
+	const gchar *h;
 	guint32 l;
 
 	g_return_if_fail(dc != NULL);
