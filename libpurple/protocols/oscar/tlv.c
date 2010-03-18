@@ -407,7 +407,7 @@ int aim_tlvlist_add_str(GSList **list, const guint16 type, const char *value)
  * @param caps Bitfield of capability flags to send
  * @return The size of the value added.
  */
-int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps, const char *mood)
+int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint64 caps, const char *mood)
 {
 	guint8 buf[256]; /* TODO: Don't use a fixed length buffer */
 	ByteStream bs;

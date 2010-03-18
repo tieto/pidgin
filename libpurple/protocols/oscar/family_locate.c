@@ -577,10 +577,10 @@ aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *bn) {
 	return NULL;
 }
 
-guint32
+guint64
 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len)
 {
-	guint32 flags = 0;
+	guint64 flags = 0;
 	int offset;
 
 	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x10) {
@@ -637,10 +637,10 @@ aim_receive_custom_icon(OscarData *od, ByteStream *bs, int len)
 	return result;
 }
 
-guint32
+guint64
 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len)
 {
-	guint32 flags = 0;
+	guint64 flags = 0;
 	int offset;
 
 	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x02) {
@@ -667,7 +667,7 @@ aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len)
 }
 
 int
-byte_stream_putcaps(ByteStream *bs, guint32 caps)
+byte_stream_putcaps(ByteStream *bs, guint64 caps)
 {
 	int i;
 
@@ -1400,7 +1400,7 @@ aim_locate_setprofile(OscarData *od,
  * Subtype 0x0004 - Set your client's capabilities.
  */
 int
-aim_locate_setcaps(OscarData *od, guint32 caps)
+aim_locate_setcaps(OscarData *od, guint64 caps)
 {
 	FlapConnection *conn;
 	PurpleAccount *account = purple_connection_get_account(od->gc);

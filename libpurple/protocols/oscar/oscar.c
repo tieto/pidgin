@@ -71,9 +71,18 @@
 
 #define OSCAR_CONNECT_STEPS 6
 
-static OscarCapability purple_caps = (OSCAR_CAPABILITY_CHAT | OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM |
-									  OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_UNICODE | OSCAR_CAPABILITY_INTEROPERATE |
-									  OSCAR_CAPABILITY_SHORTCAPS | OSCAR_CAPABILITY_TYPING |  OSCAR_CAPABILITY_ICQSERVERRELAY | OSCAR_CAPABILITY_NEWCAPS | OSCAR_CAPABILITY_XTRAZ);
+static guint64 purple_caps =
+	OSCAR_CAPABILITY_CHAT
+		| OSCAR_CAPABILITY_BUDDYICON
+		| OSCAR_CAPABILITY_DIRECTIM
+		| OSCAR_CAPABILITY_SENDFILE
+		| OSCAR_CAPABILITY_UNICODE
+		| OSCAR_CAPABILITY_INTEROPERATE
+		| OSCAR_CAPABILITY_SHORTCAPS
+		| OSCAR_CAPABILITY_TYPING
+		| OSCAR_CAPABILITY_ICQSERVERRELAY
+		| OSCAR_CAPABILITY_NEWCAPS
+		| OSCAR_CAPABILITY_XTRAZ;
 
 static guint8 features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static guint8 features_icq[] = {0x01, 0x06};
@@ -673,7 +682,7 @@ purple_str_sub_away_formatters(const char *str, const char *name)
 	return g_string_free(cpy, FALSE);
 }
 
-static gchar *oscar_caps_to_string(OscarCapability caps)
+static gchar *oscar_caps_to_string(guint64 caps)
 {
 	GString *str;
 	const gchar *tmp;
