@@ -5807,28 +5807,34 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	return 1;
 }
 
-static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
+static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
+{
 	PurpleConnection *gc = od->gc;
 	va_list ap;
-	char *bn;
-	char *msg;
+	const char *bn;
+	const char *msg;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	gchar *reason = NULL;
 	struct name_data *data;
 	PurpleBuddy *buddy;
 
 	va_start(ap, fr);
-	bn = va_arg(ap, char *);
-	msg = va_arg(ap, char *);
+	bn = va_arg(ap, const char *);
+	msg = va_arg(ap, const char *);
 	va_end(ap);
 
 	purple_debug_info("oscar",
-			   "ssi: received authorization request from %s\n", bn);
+			"ssi: received authorization request from %s\n", bn);
 
 	buddy = purple_find_buddy(account, bn);
 
-	if (msg != NULL)
-		reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_LATIN_1, 0x0000, msg, strlen(msg));
+	if (!msg) {
+		purple_debug_warning("oscar", "Received auth request from %s with "
+				"empty message\n", bn);
+	} else if (!g_utf8_validate(msg, -1, NULL)) {
+		purple_debug_warning("oscar", "Received auth request from %s with "
+				"invalid UTF-8 message\n", bn);
+		msg = NULL;
+	}
 
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
@@ -5837,9 +5843,8 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 
 	purple_account_request_authorization(account, bn, NULL,
 			(buddy ? purple_buddy_get_alias_only(buddy) : NULL),
-			reason, buddy != NULL, purple_auth_grant,
+			msg, buddy != NULL, purple_auth_grant,
 			purple_auth_dontgrant_msgprompt, data);
-	g_free(reason);
 
 	return 1;
 }
