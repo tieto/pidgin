@@ -37,11 +37,11 @@ typedef struct _MsnDirectConn MsnDirectConn;
 
 typedef enum
 {
-	DC_STATE_CLOSED,		/*< No socket opened yet */
-	DC_STATE_FOO,			/*< Waiting for FOO message */
-	DC_STATE_HANDSHAKE,		/*< Waiting for handshake message */
-	DC_STATE_HANDSHAKE_REPLY,	/*< Waiting for handshake reply message */
-	DC_STATE_ESTABILISHED		/*< Handshake complete */
+	DC_STATE_CLOSED,            /*< No socket opened yet */
+	DC_STATE_FOO,               /*< Waiting for FOO message */
+	DC_STATE_HANDSHAKE,         /*< Waiting for handshake message */
+	DC_STATE_HANDSHAKE_REPLY,   /*< Waiting for handshake reply message */
+	DC_STATE_ESTABLISHED        /*< Handshake complete */
 } MsnDirectConnState;
 
 typedef enum
@@ -56,52 +56,52 @@ typedef enum
 typedef struct _MsnDirectConnPacket MsnDirectConnPacket;
 
 struct _MsnDirectConnPacket {
-	guint32		length;
-	guchar		*data;
+	guint32     length;
+	guchar      *data;
 
-	void		(*sent_cb)(struct _MsnDirectConnPacket*);
-	MsnMessage	*msg;
+	void        (*sent_cb)(struct _MsnDirectConnPacket*);
+	MsnMessage  *msg;
 };
 
 struct _MsnDirectConn
 {
-	MsnDirectConnState	state;			/**< Direct connection status */
-	MsnSlpLink 		*slplink;		/**< The slplink using this direct connection */
-	MsnSlpCall		*slpcall;		/**< The slpcall which initiated the direct connection */
-	char			*msg_body;		/**< The body of message sent by send_connection_info_msg_cb */
-	MsnSlpMessage		*prev_ack;		/**< The saved SLP ACK message */
+	MsnDirectConnState  state;      /**< Direct connection status */
+	MsnSlpLink          *slplink;   /**< The slplink using this direct connection */
+	MsnSlpCall          *slpcall;   /**< The slpcall which initiated the direct connection */
+	char                *msg_body;  /**< The body of message sent by send_connection_info_msg_cb */
+	MsnSlpMessage       *prev_ack;  /**< The saved SLP ACK message */
 
-	guchar			nonce[16];		/**< The nonce used for direct connection handshake */
-	gchar			nonce_hash[37];		/**< The hash of nonce */
+	guchar  nonce[16];      /**< The nonce used for direct connection handshake */
+	gchar   nonce_hash[37]; /**< The hash of nonce */
 
-	PurpleNetworkListenData	*listen_data;		/**< The pending socket creation request */
-	PurpleProxyConnectData	*connect_data;		/**< The pending connection attempt */
-	int			listenfd;		/**< The socket we're listening for incoming connections */
-	guint			listenfd_handle;	/**< The timeout handle for incoming connection */
-	guint			connect_timeout_handle;	/**< The timeout handle for outgoing connection */
+	PurpleNetworkListenData *listen_data;           /**< The pending socket creation request */
+	PurpleProxyConnectData  *connect_data;          /**< The pending connection attempt */
+	int                     listenfd;               /**< The socket we're listening for incoming connections */
+	guint                   listenfd_handle;        /**< The timeout handle for incoming connection */
+	guint                   connect_timeout_handle; /**< The timeout handle for outgoing connection */
 
-	int			fd;			/**< The direct connection socket */
-	guint			recv_handle;		/**< The incoming data callback handle */
-	guint			send_handle;		/**< The outgoing data callback handle */
+	int     fd;             /**< The direct connection socket */
+	guint   recv_handle;    /**< The incoming data callback handle */
+	guint   send_handle;    /**< The outgoing data callback handle */
 
-	gchar			*in_buffer;		/**< The receive buffer */
-	int			in_size;		/**< The receive buffer size */
-	int			in_pos;			/**< The first free position in receive buffer */
-	GQueue			*out_queue;		/**< The outgoing packet queue */
-	int			msg_pos;		/**< The position of next byte to be sent in the actual packet */
+	gchar   *in_buffer; /**< The receive buffer */
+	int     in_size;    /**< The receive buffer size */
+	int     in_pos;     /**< The first free position in receive buffer */
+	GQueue  *out_queue; /**< The outgoing packet queue */
+	int     msg_pos;    /**< The position of next byte to be sent in the actual packet */
 
-	MsnSlpHeader		header;			/**< SLP header for parsing / serializing */
+	MsnSlpHeader    header; /**< SLP header for parsing / serializing */
 
-							/**< The callback used for sending information to the peer about the opened scoket */
-	void			(*send_connection_info_msg_cb)(struct _MsnDirectConn*);
+	/** The callback used for sending information to the peer about the opened socket */
+	void (*send_connection_info_msg_cb)(MsnDirectConn *);
 
-	gchar			*ext_ip;		/**< Our external IP address */
-	int			ext_port;		/**< Our external port */
+	gchar   *ext_ip;    /**< Our external IP address */
+	int     ext_port;   /**< Our external port */
 
-	guint			timeout_handle;
-	gboolean		progress;
+	guint       timeout_handle;
+	gboolean    progress;
 
-	//int			num_calls;		/**< The number of slpcalls using this direct connection */
+	//int   num_calls;  /**< The number of slpcalls using this direct connection */
 };
 
 #define DC_CONNECT_TIMEOUT 	5
@@ -114,9 +114,9 @@ void
 msn_dc_enqueue_msg(MsnDirectConn *dc, MsnMessage *msg);
 
 /*
- * Creates initializes and returns a new MsnDirectConn structure.
+ * Creates, initializes, and returns a new MsnDirectConn structure.
  */
-MsnDirectConn*
+MsnDirectConn *
 msn_dc_new(MsnSlpCall *slplink);
 
 /*
@@ -170,7 +170,7 @@ msn_dc_outgoing_connection_timeout_cb(gpointer data);
 
 /*
  * This callback will be called when the listening socket is successfully
- * created and it's parameters (IP/port) are available.
+ * created and its parameters (IP/port) are available.
  */
 void
 msn_dc_listen_socket_created_cb(int listenfd, gpointer data);

@@ -157,7 +157,7 @@ msn_slplink_add_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 	slplink->slp_calls = g_list_append(slplink->slp_calls, slpcall);
 
 	/*
-	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABILISHED)
+	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABLISHED)
 		msn_dc_ref(slplink->dc);
 	*/
 }
@@ -166,7 +166,7 @@ void
 msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 {
 	/*
-	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABILISHED)
+	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABLISHED)
 		msn_dc_unref(slplink->dc);
 	*/
 
@@ -219,7 +219,7 @@ msn_slplink_find_slp_call_with_session_id(MsnSlpLink *slplink, long id)
 static void
 msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
-	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABILISHED)
+	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABLISHED)
 	{
 		msn_dc_enqueue_msg(slplink->dc, msg);
 	}

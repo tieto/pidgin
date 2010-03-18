@@ -794,7 +794,7 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 
 		/* TODO: Check! */
 		msn_dc_send_handshake_reply(dc);
-		dc->state = DC_STATE_ESTABILISHED;
+		dc->state = DC_STATE_ESTABLISHED;
 
 		msn_slpcall_session_init(dc->slpcall);
 		dc->slpcall = NULL;
@@ -803,13 +803,13 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 
 	case DC_STATE_HANDSHAKE_REPLY:
 		/* TODO: Check! */
-		dc->state = DC_STATE_ESTABILISHED;
+		dc->state = DC_STATE_ESTABLISHED;
 
 		msn_slpcall_session_init(dc->slpcall);
 		dc->slpcall = NULL;
 		break;
 
-	case DC_STATE_ESTABILISHED:
+	case DC_STATE_ESTABLISHED:
 		msn_slplink_process_msg(
 			dc->slplink,
 			&dc->header,
@@ -952,7 +952,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 
 		purple_debug_warning("msn", "msn_dc_recv_cb: recv error\n");
 
-		if(dc->state != DC_STATE_ESTABILISHED)
+		if(dc->state != DC_STATE_ESTABLISHED)
 			msn_dc_fallback_to_p2p(dc);
 		else
 			msn_dc_destroy(dc);
@@ -962,7 +962,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		/* EOF. Remote side closed connection. */
 		purple_debug_info("msn", "msn_dc_recv_cb: recv EOF\n");
 
-		if(dc->state != DC_STATE_ESTABILISHED)
+		if(dc->state != DC_STATE_ESTABLISHED)
 			msn_dc_fallback_to_p2p(dc);
 		else
 			msn_dc_destroy(dc);
