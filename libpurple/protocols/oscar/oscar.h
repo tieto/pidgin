@@ -944,7 +944,7 @@ struct _IcbmArgsCh2
 {
 	guint16 status;
 	guchar cookie[8];
-	int type; /* One of the OSCAR_CAPABILITY_ constants */
+	guint64 type; /* One of the OSCAR_CAPABILITY_ constants */
 	const char *proxyip;
 	const char *clientip;
 	const char *verifiedip;
@@ -1705,7 +1705,7 @@ IcbmCookie *aim_uncachecookie(OscarData *od, guint8 *cookie, int type);
 IcbmCookie *aim_mkcookie(guint8 *, int, void *);
 IcbmCookie *aim_checkcookie(OscarData *, const unsigned char *, const int);
 int aim_freecookie(OscarData *od, IcbmCookie *cookie);
-int aim_msgcookie_gettype(int type);
+int aim_msgcookie_gettype(guint64 type);
 int aim_cookie_free(OscarData *od, IcbmCookie *cookie);
 
 int aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo);

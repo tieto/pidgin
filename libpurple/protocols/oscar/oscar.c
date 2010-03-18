@@ -2615,8 +2615,9 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	if (args == NULL)
 		return 0;
 
-	purple_debug_misc("oscar", "Incoming rendezvous message of type %u, "
-			"user %s, status %hu\n", args->type, userinfo->bn, args->status);
+	purple_debug_misc("oscar", "Incoming rendezvous message of type %"
+			G_GUINT64_FORMAT ", user %s, status %hu\n",
+			args->type, userinfo->bn, args->status);
 
 	if (args->msg != NULL)
 	{
@@ -2756,8 +2757,8 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	}
 	else
 	{
-		purple_debug_error("oscar", "Unknown request class %hu\n",
-				args->type);
+		purple_debug_error("oscar", "Unknown request class %"
+				G_GUINT64_FORMAT "\n", args->type);
 	}
 
 	g_free(message);
