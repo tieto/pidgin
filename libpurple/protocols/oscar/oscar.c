@@ -2720,7 +2720,6 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	{
 		purple_debug_info("oscar", "Got an ICQ Server Relay message of "
 				"type %d\n", args->info.rtfmsg.msgtype);
-		purple_debug_info("oscar", "Sending X-Status Reply\n");
 
 		if (args->info.rtfmsg.msgtype == 1)
 		{
@@ -2736,11 +2735,13 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 					if (g_utf8_validate(args->info.rtfmsg.rtfmsg, strlen(args->info.rtfmsg.rtfmsg), NULL))
 						rtfmsg = g_strdup(args->info.rtfmsg.rtfmsg);
 				}
-				if (rtfmsg)
+				if (rtfmsg) {
 					serv_got_im(gc, userinfo->bn, rtfmsg, flags, time(NULL));
-				g_free(rtfmsg);
+					g_free(rtfmsg);
+				}
 			}
-		} else if(args->info.rtfmsg.msgtype == 26)
+		} else if (args->info.rtfmsg.msgtype == 26)
+			purple_debug_info("oscar", "Sending X-Status Reply\n");
 			icq_relay_xstatus(od, userinfo->bn, args->cookie);
 
 	}
