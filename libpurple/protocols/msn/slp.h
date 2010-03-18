@@ -54,7 +54,7 @@ MsnSlpCall * msn_slp_sip_recv(MsnSlpLink *slplink,
 void
 msn_slp_send_ok(MsnSlpCall *slpcall, const char *branch,
 		const char *type, const char *content);
-		
+
 void
 msn_slp_send_decline(MsnSlpCall *slpcall, const char *branch,
 			 const char *type, const char *content);

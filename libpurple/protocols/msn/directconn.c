@@ -49,7 +49,7 @@ msn_dc_generate_nonce(MsnDirectConn *dc)
 	PurpleCipherContext	*context = NULL;
 	static guchar		digest[20];
 	int			i;
-	
+
 	guint32			g1;
 	guint16			g2;
 	guint16			g3;
@@ -57,7 +57,7 @@ msn_dc_generate_nonce(MsnDirectConn *dc)
 
 	cipher = purple_ciphers_find_cipher("sha1");
 	g_return_if_fail(cipher != NULL);
-	
+
 	for (i = 0; i < 16; i++)
 		dc->nonce[i] = rand() & 0xff;
 
@@ -68,16 +68,16 @@ msn_dc_generate_nonce(MsnDirectConn *dc)
 
 	g1 = *((guint32*)(digest + 0));
 	g1 = GUINT32_FROM_LE(g1);
-	
+
 	g2 = *((guint16*)(digest + 4));
 	g2 = GUINT16_FROM_LE(g2);
-	
+
 	g3 = *((guint16*)(digest + 6));
 	g3 = GUINT32_FROM_LE(g3);
-	
+
 	g4 = *((guint64*)(digest + 8));
 	g4 = GUINT64_FROM_BE(g4);
-	
+
 	g_sprintf(
 		dc->nonce_hash,
 		"%08X-%04X-%04X-%04X-%08X%04X",
@@ -108,7 +108,7 @@ msn_dc_destroy_packet(MsnDirectConnPacket *p)
 {
 	if (p->data)
 		g_free(p->data);
-	
+
 	if (p->msg)
 		msn_message_unref(p->msg);
 
@@ -123,7 +123,7 @@ msn_dc_new(MsnSlpCall *slpcall)
 	purple_debug_info("msn", "msn_dc_new\n");
 
 	g_return_val_if_fail(slpcall != NULL, NULL);
-	
+
 	dc = g_new0(MsnDirectConn, 1);
 
 	dc->slplink = slpcall->slplink;
@@ -163,16 +163,16 @@ void
 msn_dc_destroy(MsnDirectConn *dc)
 {
 	MsnSlpLink	*slplink;
-	
+
 	purple_debug_info("msn", "msn_dc_destroy\n");
-	
+
 	g_return_if_fail(dc != NULL);
 
 	slplink = dc->slplink;
 
 	if (dc->slpcall != NULL)
 		dc->slpcall->wait_for_socket = FALSE;
-	
+
 	slplink->dc = NULL;
 
 	if (slplink->swboard == NULL)
@@ -182,7 +182,7 @@ msn_dc_destroy(MsnDirectConn *dc)
 		g_free(dc->msg_body);
 		dc->msg_body = NULL;
 	}
-	
+
 	if (dc->prev_ack) {
 		msn_slpmsg_destroy(dc->prev_ack);
 		dc->prev_ack = NULL;
@@ -192,38 +192,38 @@ msn_dc_destroy(MsnDirectConn *dc)
 		purple_network_listen_cancel(dc->listen_data);
 		dc->listen_data = NULL;
 	}
-	
+
 	if (dc->connect_data != NULL) {
 		purple_proxy_connect_cancel(dc->connect_data);
 		dc->connect_data = NULL;
 	}
-	
+
 	if (dc->listenfd != -1) {
 		purple_network_remove_port_mapping(dc->listenfd);
 		close(dc->listenfd);
 		dc->listenfd = -1;
 	}
-	
+
 	if (dc->listenfd_handle != 0) {
 		purple_timeout_remove(dc->listenfd_handle);
 		dc->listenfd_handle = 0;
 	}
-	
+
 	if (dc->connect_timeout_handle != 0) {
 		purple_timeout_remove(dc->connect_timeout_handle);
 		dc->connect_timeout_handle = 0;
 	}
-	
+
 	if (dc->fd != -1) {
 		close(dc->fd);
 		dc->fd = -1;
 	}
-	
+
 	if (dc->send_handle != 0) {
 		purple_input_remove(dc->send_handle);
 		dc->send_handle = 0;
 	}
-	
+
 	if (dc->recv_handle != 0) {
 		purple_input_remove(dc->recv_handle);
 		dc->recv_handle = 0;
@@ -233,7 +233,7 @@ msn_dc_destroy(MsnDirectConn *dc)
 		g_free(dc->in_buffer);
 		dc->in_buffer = NULL;
 	}
-	
+
 	if (dc->out_queue != NULL) {
 		while (!g_queue_is_empty(dc->out_queue))
 			msn_dc_destroy_packet( g_queue_pop_head(dc->out_queue) );
@@ -268,7 +268,7 @@ msn_dc_unref(MsnDirectConn *dc)
 {
 	g_return_if_fail(dc != NULL);
 
-	
+
 	if (dc->num_calls > 0) {
 		dc->num_calls--;
 	}
@@ -281,7 +281,7 @@ msn_dc_send_invite(MsnDirectConn *dc)
 	MsnSlpCall	*slpcall;
 	MsnSlpMessage	*msg;
 	gchar		*header;
-	
+
 	purple_debug_info("msn", "msn_dc_send_invite\n");
 
 	g_return_if_fail(dc != NULL);
@@ -293,7 +293,7 @@ msn_dc_send_invite(MsnDirectConn *dc)
 		"INVITE MSNMSGR:%s MSNSLP/1.0",
 		slpcall->slplink->remote_user
 	);
-	
+
 	msg = msn_slpmsg_sip_new(
 		slpcall,
 		0,
@@ -313,9 +313,9 @@ void
 msn_dc_send_ok(MsnDirectConn *dc)
 {
 	purple_debug_info("msn", "msn_dc_send_ok\n");
-	
+
 	g_return_if_fail(dc != NULL);
-	
+
 	msn_slp_send_ok(dc->slpcall, dc->slpcall->branch,
 		"application/x-msnmsgr-transrespbody", dc->msg_body);
 	g_free(dc->msg_body);
@@ -332,17 +332,17 @@ msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 {
 	MsnSlpCall	*slpcall;
 	PurpleXfer	*xfer;
-	
+
 	purple_debug_info("msn", "msn_dc_try_fallback_to_p2p\n");
-	
+
 	g_return_if_fail(dc != NULL);
 
 	slpcall = dc->slpcall;
 	g_return_if_fail(slpcall != NULL);
-	
+
 	xfer = slpcall->xfer;
 	g_return_if_fail(xfer != NULL);
-		
+
 	msn_dc_destroy(dc);
 
 	msn_slpcall_session_init(slpcall);
@@ -359,7 +359,7 @@ msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 		slpcall->end_cb = NULL;
 		slpcall->progress_cb = NULL;
 		slpcall->cb = NULL;
-	
+
 		if (fail_local)
 			purple_xfer_cancel_local(xfer);
 		else
@@ -371,7 +371,7 @@ msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 		slpcall->end_cb = NULL;
 		slpcall->progress_cb = NULL;
 		slpcall->cb = NULL;
-		
+
 		if (fail_local)
 			purple_xfer_cancel_local(xfer);
 		else
@@ -396,7 +396,7 @@ msn_dc_parse_binary_header(MsnDirectConn *dc)
 
 	memcpy(&h->session_id, buffer + DC_SESSION_ID_OFFS, sizeof(h->session_id));
 	h->session_id = GUINT32_FROM_LE(h->session_id);
-	
+
 	memcpy(&h->id, buffer + DC_SEQ_ID_OFFS, sizeof(h->id));
 	h->id = GUINT32_FROM_LE(h->id);
 
@@ -426,14 +426,14 @@ static gchar*
 msn_dc_serialize_binary_header(MsnDirectConn *dc) {
 	static MsnSlpHeader		h;
 	static gchar			bin_header[DC_PACKET_HEADER_SIZE];
-	
+
 	g_return_val_if_fail(dc != NULL, NULL);
 
 	memcpy(&h, &dc->header, sizeof(h));
 
 	h.session_id = GUINT32_TO_LE(h.session_id);
 	memcpy(bin_header + DC_SESSION_ID_OFFS, &h.session_id, sizeof(h.session_id));
-	
+
 	h.id = GUINT32_TO_LE(h.id);
 	memcpy(bin_header + DC_SEQ_ID_OFFS, &h.id, sizeof(h.id));
 
@@ -469,19 +469,19 @@ msn_dc_send_bye(MsnDirectConn *dc)
 	PurpleAccount	*account;
 	char		*body;
 	int		body_len;
-	
+
 	purple_debug_info("msn", "msn_dc_send_bye\n");
-	
+
 	g_return_if_fail(dc != NULL);
 	g_return_if_fail(dc->slpcall != NULL);
 
 	slplink = dc->slpcall->slplink;
 	account = slplink->session->account;
-	
+
 	dc->header.session_id = 0;
 	dc->header.id = dc->slpcall->slplink->slp_seq_id++;
-	dc->header.offset = 0; 
-	
+	dc->header.offset = 0;
+
 	body = g_strdup_printf(
 		"BYE MSNMSGR:%s MSNSLP/1.0\r\n"
 		"To: <msnmsgr:%s>\r\n"
@@ -517,7 +517,7 @@ static void
 msn_dc_send_ack(MsnDirectConn *dc)
 {
 	g_return_if_fail(dc != NULL);
-	
+
 	dc->header.session_id = 0;
 	dc->header.ack_sub_id = dc->header.ack_id;
 	dc->header.ack_id = dc->header.id;
@@ -534,7 +534,7 @@ static void
 msn_dc_send_data_ack(MsnDirectConn *dc)
 {
 	g_return_if_fail(dc != NULL);
-	
+
 	dc->header.session_id = dc->slpcall->session_id;
 	dc->header.ack_sub_id = dc->header.ack_id;
 	dc->header.ack_id = dc->header.id;
@@ -552,9 +552,9 @@ msn_dc_xfer_send_cancel(PurpleXfer *xfer)
 {
 	MsnSlpCall	*slpcall;
 	MsnDirectConn	*dc;
-	
+
 	purple_debug_info("msn", "msn_dc_xfer_send_cancel\n");
-	
+
 	g_return_if_fail(xfer != NULL);
 
 	slpcall = xfer->data;
@@ -562,7 +562,7 @@ msn_dc_xfer_send_cancel(PurpleXfer *xfer)
 
 	dc = slpcall->dc;
 	g_return_if_fail(dc != NULL);
-	
+
 	switch (dc->state) {
 	case DC_STATE_TRANSFER:
 		msn_dc_send_bye(dc);
@@ -580,7 +580,7 @@ msn_dc_xfer_recv_cancel(PurpleXfer *xfer)
 {
 	MsnSlpCall	*slpcall;
 	MsnDirectConn	*dc;
-	
+
 	purple_debug_info("msn", "msn_dc_xfer_recv_cancel\n");
 
 	g_return_if_fail(xfer != NULL);
@@ -614,7 +614,7 @@ msn_dc_send_cb(gpointer data, gint fd, PurpleInputCondition cond)
 
 	g_return_if_fail(dc != NULL);
 	g_return_if_fail(fd != -1);
-	
+
 	if(g_queue_is_empty(dc->out_queue)) {
 		if (dc->send_handle != 0) {
 			purple_input_remove(dc->send_handle);
@@ -645,7 +645,7 @@ msn_dc_send_cb(gpointer data, gint fd, PurpleInputCondition cond)
 
 		g_queue_pop_head(dc->out_queue);
 		msn_dc_destroy_packet(p);
-		
+
 		dc->msg_pos = 0;
 	}
 }
@@ -654,7 +654,7 @@ static void
 msn_dc_enqueue_packet(MsnDirectConn *dc, MsnDirectConnPacket *p)
 {
 	gboolean			was_empty;
-	
+
 	was_empty = g_queue_is_empty(dc->out_queue);
 	g_queue_push_tail(dc->out_queue, p);
 
@@ -668,9 +668,9 @@ static void
 msn_dc_send_foo(MsnDirectConn *dc)
 {
 	MsnDirectConnPacket	*p;
-	
+
 	purple_debug_info("msn", "msn_dc_send_foo\n");
-	
+
 	g_return_if_fail(dc != NULL);
 
 	p = msn_dc_new_packet();
@@ -699,7 +699,7 @@ msn_dc_send_handshake(MsnDirectConn *dc)
 	l = DC_PACKET_HEADER_SIZE;
 	l = GUINT32_TO_LE(l);
 	memcpy(p->data, &l, 4);
-	
+
 	dc->header.session_id = 0;
 	dc->header.id = dc->slpcall->slplink->slp_seq_id++;
 	dc->header.offset = 0;
@@ -716,7 +716,7 @@ msn_dc_send_handshake(MsnDirectConn *dc)
 
 static void
 msn_dc_send_handshake_reply(MsnDirectConn *dc)
-{	
+{
 	MsnDirectConnPacket	*p;
 	gchar			*h;
 	guint32			l;
@@ -731,7 +731,7 @@ msn_dc_send_handshake_reply(MsnDirectConn *dc)
 	l = DC_PACKET_HEADER_SIZE;
 	l = GUINT32_TO_LE(l);
 	memcpy(p->data, &l, 4);
-	
+
 	dc->header.id = dc->slpcall->slplink->slp_seq_id++;
 	dc->header.length = 0;
 
@@ -800,16 +800,16 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 		dc->slpcall = NULL;
 		break;
 		}
-	
+
 	case DC_STATE_HANDSHAKE_REPLY:
 		/* TODO: Check! */
 		dc->state = DC_STATE_ESTABILISHED;
-		
+
 		msn_slpcall_session_init(dc->slpcall);
 		dc->slpcall = NULL;
 		break;
 
-	case DC_STATE_ESTABILISHED: 
+	case DC_STATE_ESTABILISHED:
 		msn_slplink_process_msg(
 			dc->slplink,
 			&dc->header,
@@ -835,7 +835,7 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 		if (packet_length < DC_PACKET_HEADER_SIZE)
 			return DC_TRANSFER_FALLBACK;
 
-		/* 
+		/*
 		 * TODO: MSN Messenger 7.0 sends BYE with flags 0x0000000 so we'll get rid of
 		 * 0x1000000 bit but file data is always sent with flags 0x1000030 in both
 		 * MSN Messenger and Live.*/
@@ -856,7 +856,7 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 			file_size = purple_xfer_get_size(xfer);
 
 			/* Packet sanity checks */
-			if (	h->session_id != dc->slpcall->session_id || 
+			if (	h->session_id != dc->slpcall->session_id ||
 				h->offset >= file_size ||
 				h->total_size != file_size ||
 				h->length != packet_length - DC_PACKET_HEADER_SIZE ||
@@ -876,7 +876,7 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 
 			xfer->bytes_sent = (h->offset + h->length);
 			xfer->bytes_remaining = h->total_size - xfer->bytes_sent;
-		
+
 			purple_xfer_update_progress(xfer);
 
 			if (xfer->bytes_remaining == 0) {
@@ -887,11 +887,11 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 			}
 			break;
 		default:
-			/* 
+			/*
 			 * TODO: Packet with unknown flags. Should we ACK these?
 			 */
 			msn_dc_send_ack(dc);
-			
+
 			purple_debug_warning(
 				"msn",
 				"msn_dc_recv_process_packet_cb: received packet with unknown flags: 0x%08x\n",
@@ -914,7 +914,7 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 			break;
 
 		default:
-			/* 
+			/*
 			 * TODO: Packet with unknown flags. Should we ACK these?
 			 */
 			msn_dc_send_ack(dc);
@@ -938,13 +938,13 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	int		free_buf_space;
 	int		bytes_received;
 	guint32		packet_length;
-	
+
 	g_return_if_fail(data != NULL);
 	g_return_if_fail(fd != -1);
 
 	dc = data;
 	free_buf_space = dc->in_size - dc->in_pos;
-		
+
 	bytes_received = recv(fd, dc->in_buffer + dc->in_pos, free_buf_space, 0);
 	if (bytes_received < 0) {
 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
@@ -961,14 +961,14 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	} else if (bytes_received == 0) {
 		/* EOF. Remote side closed connection. */
 		purple_debug_info("msn", "msn_dc_recv_cb: recv EOF\n");
-		
+
 		if(dc->state != DC_STATE_ESTABILISHED)
 			msn_dc_fallback_to_p2p(dc);
 		else
 			msn_dc_destroy(dc);
 		return;
 	}
-	
+
 	dc->progress = TRUE;
 
 	dc->in_pos += bytes_received;
@@ -977,7 +977,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	while (dc->in_pos >= 4) {
 		packet_length = *((guint32*)dc->in_buffer);
 		packet_length = GUINT32_FROM_LE(packet_length);
-		
+
 		if (packet_length > DC_MAX_PACKET_SIZE) {
 			/* Oversized packet */
 			purple_debug_warning("msn", "msn_dc_recv_cb: oversized packet received\n");
@@ -987,7 +987,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		/* Wait for the whole packet to arrive */
 		if (dc->in_pos < 4 + packet_length)
 			return;
-	
+
 		if (dc->state != DC_STATE_FOO) {
 			msn_dc_parse_binary_header(dc);
 		}
@@ -1000,7 +1000,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 			purple_debug_warning("msn", "msn_dc_recv_cb: packet processing error, fall back to p2p\n");
 			msn_dc_fallback_to_p2p(dc);
 			return;
-		
+
 		}
 
 		if (dc->in_pos > packet_length + 4) {
@@ -1027,12 +1027,12 @@ msn_dc_send_next_packet(MsnDirectConn *dc)
 
 	PurpleXfer	*xfer;
 	int		bytes_read;
-	
+
 	g_return_val_if_fail(dc != NULL, FALSE);
 	g_return_val_if_fail(dc->slpcall != NULL, FALSE);
 
 	xfer = dc->slpcall->xfer;
-	
+
 	bytes_read = fread(dc->buffer, 1, DC_MAX_BODY_SIZE, xfer->dest_fp);
 
 	if (bytes_read > 0) {
@@ -1052,10 +1052,10 @@ msn_dc_send_next_packet(MsnDirectConn *dc)
 		xfer->bytes_sent += bytes_read;
 		xfer->bytes_remaining -= bytes_read;
 		purple_xfer_update_progress(xfer);
-		
+
 		if (xfer->bytes_remaining == 0) {
 			purple_xfer_set_completed(xfer, TRUE);
-			
+
 			/* Increment seq. ID for the next BYE message */
 			dc->slpcall->slplink->slp_seq_id++;
 			dc->state = DC_STATE_DATA_ACK;
@@ -1074,7 +1074,7 @@ static int
 msn_dc_send_process_packet_cb(MsnDirectConn *dc, guint32 packet_length)
 {
 	g_return_val_if_fail(dc != NULL, DC_TRANSFER_CANCELLED);
-	
+
 	switch (dc->state) {
 	case DC_STATE_FOO: {
 		if (packet_length != 4)
@@ -1094,7 +1094,7 @@ msn_dc_send_process_packet_cb(MsnDirectConn *dc, guint32 packet_length)
 		/* TODO: Check! */
 		msn_dc_send_handshake_reply(dc);
 		dc->state = DC_STATE_TRANSFER;
-		
+
 		purple_xfer_set_request_denied_fnc(dc->slpcall->xfer, msn_dc_xfer_send_cancel);
 		purple_xfer_set_cancel_send_fnc(dc->slpcall->xfer, msn_dc_xfer_send_cancel);
 		purple_xfer_set_end_fnc(dc->slpcall->xfer, msn_dc_xfer_end);
@@ -1106,7 +1106,7 @@ msn_dc_send_process_packet_cb(MsnDirectConn *dc, guint32 packet_length)
 		/* TODO: Check! */
 		dc->state = DC_STATE_TRANSFER;
 		break;
-		
+
 	case DC_STATE_TRANSFER: {
 		switch (dc->header.flags) {
 		case 0x0000000:
@@ -1143,7 +1143,7 @@ static gboolean
 msn_dc_timeout(gpointer data)
 {
 	MsnDirectConn	*dc = data;
-	
+
 	g_return_val_if_fail(dc != NULL, FALSE);
 
 	if (dc->progress)
@@ -1158,7 +1158,7 @@ static void
 msn_dc_init(MsnDirectConn *dc)
 {
 	g_return_if_fail(dc != NULL);
-	
+
 	dc->in_size = DC_MAX_PACKET_SIZE + 4;
 	dc->in_pos = 0;
 	dc->in_buffer = g_malloc(dc->in_size);
@@ -1175,7 +1175,7 @@ msn_dc_connected_to_peer_cb(gpointer data, gint fd, const gchar *error_msg)
 	MsnDirectConn	*dc;
 
 	purple_debug_info("msn", "msn_dc_connected_to_peer_cb\n");
-	
+
 	g_return_if_fail(data != NULL);
 
 	dc = data;
@@ -1183,7 +1183,7 @@ msn_dc_connected_to_peer_cb(gpointer data, gint fd, const gchar *error_msg)
 	dc->connect_data = NULL;
 	purple_timeout_remove(dc->connect_timeout_handle);
 	dc->connect_timeout_handle = 0;
-	
+
 	dc->fd = fd;
 	if (dc->fd != -1) {
 		msn_dc_init(dc);
@@ -1193,7 +1193,7 @@ msn_dc_connected_to_peer_cb(gpointer data, gint fd, const gchar *error_msg)
 	}
 }
 
-/* 
+/*
  * This callback will be called when we're the server
  * and nobody has connected us in DC_CONNECT_TIMEOUT seconds
  */
@@ -1201,15 +1201,15 @@ static gboolean
 msn_dc_incoming_connection_timeout_cb(gpointer data) {
 	MsnDirectConn	*dc = data;
 	MsnSlpCall	*slpcall = dc->slpcall;
-	
+
 	purple_debug_info("msn", "msn_dc_incoming_connection_timeout_cb\n");
-	
+
 	dc = data;
 	g_return_val_if_fail(dc != NULL, FALSE);
 
 	slpcall = dc->slpcall;
 	g_return_val_if_fail(slpcall != NULL, FALSE);
-	
+
 	if (dc->listen_data != NULL) {
 		purple_network_listen_cancel(dc->listen_data);
 		dc->listen_data = NULL;
@@ -1241,11 +1241,11 @@ gboolean
 msn_dc_outgoing_connection_timeout_cb(gpointer data)
 {
 	MsnDirectConn	*dc = data;
-	
+
 	purple_debug_info("msn", "msn_dc_outgoing_connection_timeout_cb\n");
 
 	g_return_val_if_fail(dc != NULL, FALSE);
-	
+
 	if (dc->connect_timeout_handle != 0) {
 		purple_timeout_remove(dc->connect_timeout_handle);
 		dc->connect_timeout_handle = 0;
@@ -1293,7 +1293,7 @@ msn_dc_outgoing_connection_timeout_cb(gpointer data)
 	return FALSE;
 }
 
-/* 
+/*
  * This callback will be called when we're the server
  * and somebody has connected to us in DC_CONNECT_TIMEOUT seconds.
  */
@@ -1301,11 +1301,11 @@ static void
 msn_dc_incoming_connection_cb(gpointer data, gint listenfd, PurpleInputCondition cond)
 {
 	MsnDirectConn	*dc = data;
-	
+
 	purple_debug_info("msn", "msn_dc_incoming_connection_cb\n");
 
 	g_return_if_fail(dc != NULL);
-	
+
 	if (dc->connect_timeout_handle != 0) {
 		purple_timeout_remove(dc->connect_timeout_handle);
 		dc->connect_timeout_handle = 0;
@@ -1315,7 +1315,7 @@ msn_dc_incoming_connection_cb(gpointer data, gint listenfd, PurpleInputCondition
 		purple_input_remove(dc->listenfd_handle);
 		dc->listenfd_handle = 0;
 	}
-	
+
 	dc->fd = accept(listenfd, NULL, 0);
 
 	purple_network_remove_port_mapping(dc->listenfd);
@@ -1334,9 +1334,9 @@ msn_dc_listen_socket_created_cb(int listenfd, gpointer data)
 	MsnDirectConn		*dc = data;
 
 	purple_debug_info("msn", "msn_dc_listen_socket_created_cb\n");
-	
+
 	g_return_if_fail(dc != NULL);
-	
+
 	dc->listen_data = NULL;
 
 	if (listenfd != -1) {

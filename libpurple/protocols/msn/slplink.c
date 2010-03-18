@@ -169,7 +169,7 @@ msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABILISHED)
 		msn_dc_unref(slplink->dc);
 	*/
-	
+
 	slplink->slp_calls = g_list_remove(slplink->slp_calls, slpcall);
 
 	/* The slplink has no slpcalls in it, release it from MSN_SB_FLAG_FT.
@@ -645,14 +645,14 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *d
 	{
 		/* All the pieces of the slpmsg have been received */
 		MsnSlpCall *slpcall;
-	
+
 		slpcall = msn_slp_process_msg(slplink, slpmsg);
 
 		if (slpcall == NULL) {
 			msn_slpmsg_destroy(slpmsg);
 			return;
 		}
-		
+
 		purple_debug_info("msn", "msn_slplink_process_msg: slpmsg complete\n");
 
 		/*if (!slpcall->wasted) {*/
@@ -666,12 +666,12 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *d
 					msn_directconn_send_handshake(directconn);
 #endif
 			}
-			else if (slpmsg->flags == 0x00 || slpmsg->flags == 0x1000000 ||  
-				 slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||  
+			else if (slpmsg->flags == 0x00 || slpmsg->flags == 0x1000000 ||
+				 slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||
 				 slpmsg->flags == 0x1000030)
 			{
 				/* Release all the messages and send the ACK */
-			
+
 				if (slpcall != NULL && slpcall->wait_for_socket) {
 					/*
 					 * Save ack for later because we have to send
@@ -679,13 +679,13 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *d
 					 * invitation before ACK but the listening socket isn't
 					 * created yet.
 					 */
-					
+
 					purple_debug_info("msn", "msn_slplink_process_msg: save ACK\n");
-					
+
 					slpcall->slplink->dc->prev_ack = msn_slplink_create_ack(slplink, header);
 				} else {
 					purple_debug_info("msn", "msn_slplink_process_msg: send ACK\n");
-					
+
 					msn_slplink_send_ack(slplink, header);
 					msn_slplink_send_queued_slpmsgs(slplink);
 				}

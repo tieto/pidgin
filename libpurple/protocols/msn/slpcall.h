@@ -72,7 +72,7 @@ struct _MsnSlpCall
 
 	/* Can be checksum, or smile */
 	char *data_info;
-	
+
 	PurpleXfer *xfer;
 	union {
 		GByteArray *incoming_data;

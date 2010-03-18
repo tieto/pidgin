@@ -91,7 +91,7 @@ struct _MsnDirectConn
 	int			msg_pos;		/**< The position of next byte to be sent in the actual packet */
 
 	MsnSlpHeader		header;			/**< SLP header for parsing / serializing */
-	
+
 							/**< The callback used for sending information to the peer about the opened scoket */
 	void			(*send_connection_info_msg_cb)(struct _MsnDirectConn*);
 

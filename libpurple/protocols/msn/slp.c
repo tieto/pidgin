@@ -113,7 +113,7 @@ msn_xfer_cancel(PurpleXfer *xfer)
 
 	slpcall = xfer->data;
 
-	
+
 	if (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL)
 	{
 		if (slpcall->started)
@@ -329,19 +329,19 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 	/* A direct connection negotiation response */
 	char		*bridge;
 	MsnDirectConn	*dc = slpcall->slplink->dc;
-	
+
 	purple_debug_info("msn", "process_transresp\n");
-	
+
 	g_return_val_if_fail(dc != NULL, FALSE);
-	g_return_val_if_fail(dc->state == DC_STATE_CLOSED, FALSE); 
+	g_return_val_if_fail(dc->state == DC_STATE_CLOSED, FALSE);
 
 	bridge = get_token(content, "Bridge: ", "\r\n");
 	if(bridge && strcmp(bridge, "TCPv1") == 0) {
 		/* Ok, the client supports direct TCP connection */
-		
+
 		if (dc->listen_data != NULL || dc->listenfd != -1) {
 			if (dc->listen_data != NULL) {
-				/* 
+				/*
 				 * We'll listen for incoming connections but
 				 * the listening socket isn't ready yet so we cannot
 				 * send the INVITE packet now. Put the slpcall into waiting mode
@@ -678,14 +678,14 @@ got_invite(MsnSlpCall *slpcall,
 	{
 		/* A direct connection negotiation request */
 		char		*bridges;
-			
+
 		purple_debug_info("msn", "got_invite: transreqbody received\n");
-		
+
 		g_return_if_fail(slpcall->xfer != NULL);
 
 		/* Don't do anything if we already have a direct connection */
 		g_return_if_fail(slpcall->slplink->dc == NULL);
-		
+
 		bridges = get_token(content, "Bridges: ", "\r\n");
 		if(bridges && strstr(bridges, "TCPv1") != NULL) {
 			/*
@@ -706,9 +706,9 @@ got_invite(MsnSlpCall *slpcall,
 
 			if (dc->listen_data == NULL) {
 				/* Listen socket creation failed */
-				
+
 				purple_debug_info("msn", "got_invite: listening failed\n");
-				
+
 				content = g_strdup(
 					"Bridge: TCPv1\r\n"
 					"Listening: false\r\n"
@@ -720,20 +720,20 @@ got_invite(MsnSlpCall *slpcall,
 				g_free(content);
 
 			} else {
-				/* 
+				/*
 				 * Listen socket created successfully.
 				 * Don't send anything here because we don't know the parameters
 				 * of the created socket yet. msn_dc_send_ok will be called from
 				 * the callback function: dc_listen_socket_created_cb
 				 */
 				purple_debug_info("msn", "got_invite: listening socket created\n");
-			
+
 				dc->send_connection_info_msg_cb = msn_dc_send_ok;
 				slpcall->wait_for_socket = TRUE;
 			}
 
 		} else {
-			/* 
+			/*
 			 * Invalid direct connect invitation or
 			 * TCP connection is not supported.
 			 */
@@ -743,7 +743,7 @@ got_invite(MsnSlpCall *slpcall,
 	{
 		/* A direct connection negotiation response */
 		g_return_if_fail(slpcall->xfer != NULL);
-		
+
 		msn_slp_process_transresp(slpcall, content);
 #if 0
 		char *ip_addrs;
@@ -790,16 +790,16 @@ got_ok(MsnSlpCall *slpcall,
 		g_return_if_fail(slpcall->xfer != NULL);
 
 		if(slpcall->slplink->dc != NULL) {
-			/* 
+			/*
 			 * If we already have an estabilished direct connection
 			 * then just start the transfer.
 			 */
 			msn_slpcall_session_init(slpcall);
 			return;
 		}
-		
+
 		/* Try direct file transfer by sending a second INVITE */
-		
+
 		dc = msn_dc_new(slpcall);
 		slpcall->branch = rand_guid();
 
@@ -809,7 +809,7 @@ got_ok(MsnSlpCall *slpcall,
 			msn_dc_listen_socket_created_cb,
 			dc
 		);
-			
+
 		header = g_strdup_printf(
 			"INVITE MSNMSGR:%s MSNSLP/1.0",
 			slpcall->slplink->remote_user
@@ -834,9 +834,9 @@ got_ok(MsnSlpCall *slpcall,
 
 		} else {
 			/* Listen socket created successfully. */
-			
+
 			purple_debug_info("msn", "got_ok: listening socket created\n");
-			
+
 			content = g_strdup_printf(
 				"Bridges: TCPv1\r\n"
 				"NetID: 0\r\n"
@@ -849,7 +849,7 @@ got_ok(MsnSlpCall *slpcall,
 				dc->nonce_hash
 			);
 		}
-		
+
 		msg = msn_slpmsg_sip_new(
 			slpcall,
 			0,
@@ -906,7 +906,7 @@ got_ok(MsnSlpCall *slpcall,
 			msn_slpcall_session_init(slpcall);
 		}
 #else
-		/* 
+		/*
 		 * Removed because it messes up direct connection by
 		 * starting p2p transfer
 		 */
