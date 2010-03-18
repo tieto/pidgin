@@ -47,7 +47,7 @@ msn_dc_generate_nonce(MsnDirectConn *dc)
 {
 	PurpleCipher        *cipher = NULL;
 	PurpleCipherContext *context = NULL;
-	static guchar digest[20];
+	guchar digest[20];
 	int i;
 
 	guint32 g1;
@@ -424,8 +424,8 @@ msn_dc_parse_binary_header(MsnDirectConn *dc)
 
 static gchar*
 msn_dc_serialize_binary_header(MsnDirectConn *dc) {
-	static MsnSlpHeader h;
-	static gchar bin_header[DC_PACKET_HEADER_SIZE];
+	MsnSlpHeader h;
+	gchar bin_header[DC_PACKET_HEADER_SIZE];
 
 	g_return_val_if_fail(dc != NULL, NULL);
 
