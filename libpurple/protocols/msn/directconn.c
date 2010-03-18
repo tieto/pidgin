@@ -47,46 +47,30 @@ msn_dc_generate_nonce(MsnDirectConn *dc)
 {
 	PurpleCipher        *cipher = NULL;
 	PurpleCipherContext *context = NULL;
-	guchar digest[20];
+	guint32 *nonce;
 	int i;
-
-	guint32 g1;
-	guint16 g2;
-	guint16 g3;
-	guint64 g4;
+	guchar digest[20];
 
 	cipher = purple_ciphers_find_cipher("sha1");
 	g_return_if_fail(cipher != NULL);
 
-	for (i = 0; i < 16; i++)
-		dc->nonce[i] = rand() & 0xff;
+	nonce = (guint32 *)&dc->nonce;
+	for (i = 0; i < 4; i++)
+		nonce[i] = rand();
 
 	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, dc->nonce, 16);
-	purple_cipher_context_digest(context, 20, digest, NULL);
+	purple_cipher_context_append(context, dc->nonce, sizeof(dc->nonce));
+	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	purple_cipher_context_destroy(context);
 
-	g1 = *((guint32*)(digest + 0));
-	g1 = GUINT32_FROM_LE(g1);
-
-	g2 = *((guint16*)(digest + 4));
-	g2 = GUINT16_FROM_LE(g2);
-
-	g3 = *((guint16*)(digest + 6));
-	g3 = GUINT32_FROM_LE(g3);
-
-	g4 = *((guint64*)(digest + 8));
-	g4 = GUINT64_FROM_BE(g4);
-
-	g_sprintf(
-		dc->nonce_hash,
-		"%08X-%04X-%04X-%04X-%08X%04X",
-		g1,
-		g2,
-		g3,
-		(guint16)(g4 >> 48),
-		(guint32)((g4 >> 16) & 0xffffffff),
-		(guint16)(g4 & 0xffff)
+	g_sprintf(dc->nonce_hash,
+	          "%08X-%04X-%04X-%04X-%08X%04X",
+	          GUINT32_FROM_LE(*((guint32 *)(digest + 0))),
+	          GUINT16_FROM_LE(*((guint16 *)(digest + 4))),
+	          GUINT16_FROM_LE(*((guint16 *)(digest + 6))),
+	          GUINT16_FROM_BE(*((guint16 *)(digest + 8))),
+	          GUINT32_FROM_BE(*((guint32 *)(digest + 10))),
+	          GUINT16_FROM_BE(*((guint16 *)(digest + 14)))
 	);
 }
 
