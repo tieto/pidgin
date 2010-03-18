@@ -27,20 +27,24 @@
 #include "slp.h"
 #include "slpmsg.h"
 
-#define DC_SESSION_ID_OFFS	0
-#define DC_SEQ_ID_OFFS		4
-#define DC_DATA_OFFSET_OFFS	8
-#define DC_TOTAL_DATA_SIZE_OFFS	16
-#define DC_MESSAGE_LENGTH_OFFS	24
-#define DC_FLAGS_OFFS		28
-#define DC_ACK_ID_OFFS		32
-#define DC_ACK_UID_OFFS		36
-#define DC_ACK_DATA_SIZE_OFFS	40
-#define DC_MESSAGE_BODY_OFFS	48
+#pragma pack(push,1)
+typedef struct {
+	guint32 session_id;
+	guint32 seq_id;
+	guint64 offset;
+	guint64 total_size;
+	guint32 length;
+	guint32 flags;
+	guint32 ack_id;
+	guint32 ack_uid;
+	guint64 ack_size;
+/*	guint8  body[1]; */
+} MsnDcContext;
+#pragma pack(pop)
 
-#define DC_PACKET_HEADER_SIZE	48
-#define DC_MAX_BODY_SIZE	1352
-#define DC_MAX_PACKET_SIZE 	(DC_PACKET_HEADER_SIZE + DC_MAX_BODY_SIZE)
+#define DC_PACKET_HEADER_SIZE sizeof(MsnDcContext)
+#define DC_MAX_BODY_SIZE      1352
+#define DC_MAX_PACKET_SIZE    (DC_PACKET_HEADER_SIZE + DC_MAX_BODY_SIZE)
 
 static void
 msn_dc_generate_nonce(MsnDirectConn *dc)
@@ -370,79 +374,45 @@ static void
 msn_dc_parse_binary_header(MsnDirectConn *dc)
 {
 	MsnSlpHeader *h;
-	gchar *buffer;
+	MsnDcContext *context;
 
 	g_return_if_fail(dc != NULL);
 
 	h = &dc->header;
 	/* Skip packet size */
-	buffer = dc->in_buffer + 4;
+	context = (MsnDcContext *)(dc->in_buffer + 4);
 
-	memcpy(&h->session_id, buffer + DC_SESSION_ID_OFFS, sizeof(h->session_id));
-	h->session_id = GUINT32_FROM_LE(h->session_id);
-
-	memcpy(&h->id, buffer + DC_SEQ_ID_OFFS, sizeof(h->id));
-	h->id = GUINT32_FROM_LE(h->id);
-
-	memcpy(&h->offset, buffer + DC_DATA_OFFSET_OFFS, sizeof(h->offset));
-	h->offset = GUINT64_FROM_LE(h->offset);
-
-	memcpy(&h->total_size, buffer + DC_TOTAL_DATA_SIZE_OFFS, sizeof(h->total_size));
-	h->total_size = GUINT64_FROM_LE(h->total_size);
-
-	memcpy(&h->length, buffer + DC_MESSAGE_LENGTH_OFFS, sizeof(h->length));
-	h->length = GUINT32_FROM_LE(h->length);
-
-	memcpy(&h->flags, buffer + DC_FLAGS_OFFS, sizeof(h->flags));
-	h->flags = GUINT32_FROM_LE(h->flags);
-
-	memcpy(&h->ack_id, buffer + DC_ACK_ID_OFFS, sizeof(h->ack_id));
-	h->ack_id = GUINT32_FROM_LE(h->ack_id);
-
-	memcpy(&h->ack_sub_id, buffer + DC_ACK_UID_OFFS, sizeof(h->ack_sub_id));
-	h->ack_sub_id = GUINT32_FROM_LE(h->ack_sub_id);
-
-	memcpy(&h->ack_size, buffer + DC_ACK_DATA_SIZE_OFFS, sizeof(h->ack_size));
-	h->ack_size = GUINT64_FROM_LE(h->ack_size);
+	h->session_id = GUINT32_FROM_LE(context->session_id);
+	h->id = GUINT32_FROM_LE(context->seq_id);
+	h->offset = GUINT64_FROM_LE(context->offset);
+	h->total_size = GUINT64_FROM_LE(context->total_size);
+	h->length = GUINT32_FROM_LE(context->length);
+	h->flags = GUINT32_FROM_LE(context->flags);
+	h->ack_id = GUINT32_FROM_LE(context->ack_id);
+	h->ack_sub_id = GUINT32_FROM_LE(context->ack_uid);
+	h->ack_size = GUINT64_FROM_LE(context->ack_size);
 }
 
 static const gchar *
 msn_dc_serialize_binary_header(MsnDirectConn *dc) {
-	MsnSlpHeader h;
-	static gchar bin_header[DC_PACKET_HEADER_SIZE];
+	MsnSlpHeader *h;
+	static MsnDcContext bin_header;
 
 	g_return_val_if_fail(dc != NULL, NULL);
 
-	memcpy(&h, &dc->header, sizeof(h));
+	h = &dc->header;
 
-	h.session_id = GUINT32_TO_LE(h.session_id);
-	memcpy(bin_header + DC_SESSION_ID_OFFS, &h.session_id, sizeof(h.session_id));
+	bin_header.session_id = GUINT32_TO_LE(h->session_id);
+	bin_header.seq_id = GUINT32_TO_LE(h->id);
+	bin_header.offset = GUINT64_TO_LE(h->offset);
+	bin_header.total_size = GUINT64_TO_LE(h->total_size);
+	bin_header.length = GUINT32_TO_LE(h->length);
+	bin_header.flags = GUINT32_TO_LE(h->flags);
+	bin_header.ack_id = GUINT32_TO_LE(h->ack_id);
+	bin_header.ack_uid = GUINT32_TO_LE(h->ack_sub_id);
+	bin_header.ack_size = GUINT64_TO_LE(h->ack_size);
 
-	h.id = GUINT32_TO_LE(h.id);
-	memcpy(bin_header + DC_SEQ_ID_OFFS, &h.id, sizeof(h.id));
-
-	h.offset = GUINT64_TO_LE(h.offset);
-	memcpy(bin_header + DC_DATA_OFFSET_OFFS, &h.offset, sizeof(h.offset));
-
-	h.total_size = GUINT64_TO_LE(h.total_size);
-	memcpy(bin_header + DC_TOTAL_DATA_SIZE_OFFS, &h.total_size, sizeof(h.total_size));
-
-	h.length = GUINT32_TO_LE(h.length);
-	memcpy(bin_header + DC_MESSAGE_LENGTH_OFFS, &h.length, sizeof(h.length));
-
-	h.flags = GUINT32_TO_LE(h.flags);
-	memcpy(bin_header + DC_FLAGS_OFFS, &h.flags, sizeof(h.flags));
-
-	h.ack_id = GUINT32_TO_LE(h.ack_id);
-	memcpy(bin_header + DC_ACK_ID_OFFS, &h.ack_id, sizeof(h.ack_id));
-
-	h.ack_sub_id = GUINT32_TO_LE(h.ack_sub_id);
-	memcpy(bin_header + DC_ACK_UID_OFFS, &h.ack_sub_id, sizeof(h.ack_sub_id));
-
-	h.ack_size = GUINT64_TO_LE(h.ack_size);
-	memcpy(bin_header + DC_ACK_DATA_SIZE_OFFS, &h.ack_size, sizeof(h.ack_size));
-
-	return bin_header;
+	return (const gchar *)&bin_header;
 }
 
 /*
@@ -693,7 +663,7 @@ msn_dc_send_handshake(MsnDirectConn *dc)
 
 	h = msn_dc_serialize_binary_header(dc);
 	memcpy(p->data + 4, h, DC_PACKET_HEADER_SIZE);
-	memcpy(p->data + 4 + DC_ACK_ID_OFFS, dc->nonce, 16);
+	memcpy(p->data + 4 + offsetof(MsnDcContext, ack_id), dc->nonce, 16);
 
 	msn_dc_enqueue_packet(dc, p);
 }
@@ -721,7 +691,7 @@ msn_dc_send_handshake_reply(MsnDirectConn *dc)
 
 	h = msn_dc_serialize_binary_header(dc);
 	memcpy(p->data + 4, h, DC_PACKET_HEADER_SIZE);
-	memcpy(p->data + 4 + DC_ACK_ID_OFFS, dc->nonce, 16);
+	memcpy(p->data + 4 + offsetof(MsnDcContext, ack_id), dc->nonce, 16);
 
 	msn_dc_enqueue_packet(dc, p);
 }
