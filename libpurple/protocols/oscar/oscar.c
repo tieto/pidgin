@@ -2603,7 +2603,6 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	PurpleAccount *account;
 	PurpleMessageFlags flags = 0;
 	char *message = NULL;
-	char *rtfmsg = NULL;
 
 	g_return_val_if_fail(od != NULL, 0);
 	g_return_val_if_fail(od->gc != NULL, 0);
@@ -2634,20 +2633,6 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		}
 	}
 
-	if (args->info.rtfmsg.rtfmsg != NULL)
-	{
-		if (args->encoding != NULL)
-		{
-			char *encoding = NULL;
-			encoding = oscar_encoding_extract(args->encoding);
-			rtfmsg = oscar_encoding_to_utf8(account, encoding, args->info.rtfmsg.rtfmsg,
-			                                 strlen(args->info.rtfmsg.rtfmsg));
-			g_free(encoding);
-		} else {
-			if (g_utf8_validate(args->info.rtfmsg.rtfmsg, strlen(args->info.rtfmsg.rtfmsg), NULL))
-				rtfmsg = g_strdup(args->info.rtfmsg.rtfmsg);
-		}
-	}
 	if (args->type & OSCAR_CAPABILITY_CHAT)
 	{
 		char *encoding, *utf8name, *tmp;
@@ -2737,23 +2722,27 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				"type %d\n", args->info.rtfmsg.msgtype);
 		purple_debug_info("oscar", "Sending X-Status Reply\n");
 
-		if(args->info.rtfmsg.msgtype == 26)
-			icq_relay_xstatus(od, userinfo->bn, args->cookie);
-		
-		if(args->info.rtfmsg.msgtype == 1)
+		if (args->info.rtfmsg.msgtype == 1)
 		{
-			if(rtfmsg)
+			if (args->info.rtfmsg.rtfmsg != NULL)
 			{
-				serv_got_im(gc, userinfo->bn, rtfmsg, flags,
-				            time(NULL));
+				char *rtfmsg = NULL;
+				if (args->encoding != NULL) {
+					char *encoding = oscar_encoding_extract(args->encoding);
+					rtfmsg = oscar_encoding_to_utf8(account, encoding,
+							args->info.rtfmsg.rtfmsg, strlen(args->info.rtfmsg.rtfmsg));
+					g_free(encoding);
+				} else {
+					if (g_utf8_validate(args->info.rtfmsg.rtfmsg, strlen(args->info.rtfmsg.rtfmsg), NULL))
+						rtfmsg = g_strdup(args->info.rtfmsg.rtfmsg);
+				}
+				if (rtfmsg)
+					serv_got_im(gc, userinfo->bn, rtfmsg, flags, time(NULL));
+				g_free(rtfmsg);
 			}
-			else
-			{
-				serv_got_im(gc, userinfo->bn,
-				            args->info.rtfmsg.rtfmsg, flags,
-				            time(NULL));
-			}
-		}
+		} else if(args->info.rtfmsg.msgtype == 26)
+			icq_relay_xstatus(od, userinfo->bn, args->cookie);
+
 	}
 	else
 	{
