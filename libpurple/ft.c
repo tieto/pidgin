@@ -58,6 +58,10 @@ typedef struct _PurpleXferPrivData {
 		PURPLE_XFER_READY_PRPL = 0x2,
 	} ready;
 	GByteArray *buffer;
+
+	gpointer thumbnail_data;		/**< thumbnail image */
+	gsize thumbnail_size;
+	gchar *thumbnail_mimetype;
 } PurpleXferPrivData;
 
 static int purple_xfer_choose_file(PurpleXfer *xfer);
@@ -69,6 +73,12 @@ purple_xfer_priv_data_destroy(gpointer data)
 
 	if (priv->buffer)
 		g_byte_array_free(priv->buffer, TRUE);
+
+	if (priv->thumbnail_data)
+		g_free(priv->thumbnail_data);
+
+	if (priv->thumbnail_mimetype)
+		g_free(priv->thumbnail_mimetype);
 
 	g_free(priv);
 }
@@ -178,8 +188,6 @@ purple_xfer_destroy(PurpleXfer *xfer)
 	g_free(xfer->local_filename);
 
 	g_hash_table_remove(xfers_data, xfer);
-	g_free(xfer->thumbnail_data);
-	g_free(xfer->thumbnail_mimetype);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(xfer);
 	xfers = g_list_remove(xfers, xfer);
@@ -1622,29 +1630,37 @@ purple_xfer_update_progress(PurpleXfer *xfer)
 const void *
 purple_xfer_get_thumbnail_data(const PurpleXfer *xfer)
 {
-	return xfer->thumbnail_data;
+	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+
+	return priv->thumbnail_data;
 }
 
 gsize
 purple_xfer_get_thumbnail_size(const PurpleXfer *xfer)
 {
-	return xfer->thumbnail_size;
+	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+
+	return priv->thumbnail_size;
 }
 
 const gchar *
 purple_xfer_get_thumbnail_mimetype(const PurpleXfer *xfer)
 {
-	return xfer->thumbnail_mimetype;
+	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+
+	return priv->thumbnail_mimetype;
 }
 
 void
 purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
 	gsize size, const gchar *mimetype)
 {
+	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+
 	if (thumbnail && size > 0) {
-		xfer->thumbnail_data = g_memdup(thumbnail, size);
-		xfer->thumbnail_size = size;
-		xfer->thumbnail_mimetype = g_strdup(mimetype);
+		priv->thumbnail_data = g_memdup(thumbnail, size);
+		priv->thumbnail_size = size;
+		priv->thumbnail_mimetype = g_strdup(mimetype);
 	}
 }
 

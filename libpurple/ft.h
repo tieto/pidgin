@@ -186,10 +186,6 @@ struct _PurpleXfer
 	void *ui_data;                    /**< UI-specific data.       */
 
 	void *data;                       /**< prpl-specific data.     */
-
-	gpointer thumbnail_data;		/**< thumbnail image */
-	gsize thumbnail_size;
-	gchar *thumbnail_mimetype;
 };
 
 #ifdef __cplusplus
