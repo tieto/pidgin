@@ -47,6 +47,8 @@ version 2.7.0 (??/??/????):
 	* Direct messages to a specific resource only upon receipt of a message
 	  with content (as opposed to a typing notification, etc).  (Thanks to
 	  rjoly for testing)
+	* When sending data using in-band-bytestreams, interpret the block-size
+	  attribute as the size of the BASE64-encoded representation of the data.
 
 	Yahoo:
 	* Attempt to better handle transparent proxies interfering with HTTP-based
