@@ -179,7 +179,7 @@ int aim_cookie_free(OscarData *od, IcbmCookie *cookie)
 }
 
 /* XXX I hate switch */
-int aim_msgcookie_gettype(int type)
+int aim_msgcookie_gettype(guint64 type)
 {
 	/* XXX: hokey-assed. needs fixed. */
 	switch(type) {

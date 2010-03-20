@@ -157,6 +157,12 @@ jabber_ibb_session_set_block_size(JabberIBBSession *sess, gsize size)
 	}
 }
 
+gsize
+jabber_ibb_session_get_max_data_size(const JabberIBBSession *sess)
+{
+	return (gsize) floor((sess->block_size - 2) * (float) 3 / 4);
+}
+
 gpointer
 jabber_ibb_session_get_user_data(JabberIBBSession *sess)
 {
@@ -321,7 +327,7 @@ jabber_ibb_session_send_data(JabberIBBSession *sess, gconstpointer data,
 	if (state != JABBER_IBB_SESSION_OPENED) {
 		purple_debug_error("jabber",
 			"trying to send data on a non-open IBB session\n");
-	} else if (size > jabber_ibb_session_get_block_size(sess)) {
+	} else if (size > jabber_ibb_session_get_max_data_size(sess)) {
 		purple_debug_error("jabber",
 			"trying to send a too large packet in the IBB session\n");
 	} else {
@@ -416,6 +422,10 @@ jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
 						purple_debug_info("jabber",
 							"got %" G_GSIZE_FORMAT " bytes of data on IBB stream\n",
 							size);
+						/* we accept other clients to send up to block-size
+						 of _unencoded_ data, since there's been some confusions
+						 regarding the interpretation of this attribute
+						 (including previous versions of libpurple) */
 						if (size > jabber_ibb_session_get_block_size(sess)) {
 							purple_debug_error("jabber",
 								"IBB: received a too large packet\n");

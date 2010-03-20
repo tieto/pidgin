@@ -70,8 +70,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
-#define HEADLINE_CLOSE_SIZE 11
-
 typedef struct
 {
 	PurpleAccount *account;
@@ -4983,58 +4981,16 @@ gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, PidginBuddyList 
 }
 
 static gboolean
-headline_hover_close(int x, int y)
-{
-	GtkWidget *w = gtkblist->headline_hbox;
-	if (x <= w->allocation.width && x >= w->allocation.width - HEADLINE_CLOSE_SIZE &&
-			y >= 0 && y <= HEADLINE_CLOSE_SIZE)
-		return TRUE;
-	return FALSE;
-}
-
-static gboolean
 headline_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, PidginBuddyList *gtkblist)
 {
 	gdk_window_set_cursor(widget->window, gtkblist->hand_cursor);
-
-	if (gtkblist->headline_close) {
-		gdk_draw_pixbuf(widget->window, NULL, gtkblist->headline_close,
-					0, 0,
-					widget->allocation.width - 2 - HEADLINE_CLOSE_SIZE, 2,
-					HEADLINE_CLOSE_SIZE, HEADLINE_CLOSE_SIZE,
-					GDK_RGB_DITHER_NONE, 0, 0);
-		gtk_paint_focus(widget->style, widget->window, GTK_STATE_PRELIGHT,
-				NULL, widget, NULL,
-				widget->allocation.width - HEADLINE_CLOSE_SIZE - 3, 1,
-				HEADLINE_CLOSE_SIZE + 2, HEADLINE_CLOSE_SIZE + 2);
-	}
-
 	return FALSE;
 }
-
-#if 0
-static gboolean
-headline_box_motion_cb(GtkWidget *widget, GdkEventMotion *event, PidginBuddyList *gtkblist)
-{
-	purple_debug_fatal("motion", "%d %d\n", (int)event->x, (int)event->y);
-	if (headline_hover_close((int)event->x, (int)event->y))
-		gtk_paint_focus(widget->style, widget->window, GTK_STATE_PRELIGHT,
-				NULL, widget, NULL,
-				widget->allocation.width - HEADLINE_CLOSE_SIZE - 3, 1,
-				HEADLINE_CLOSE_SIZE + 2, HEADLINE_CLOSE_SIZE + 2);
-	return FALSE;
-}
-#endif
 
 static gboolean
 headline_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, PidginBuddyList *gtkblist)
 {
 	gdk_window_set_cursor(widget->window, gtkblist->arrow_cursor);
-	if (gtkblist->headline_close) {
-		GdkRectangle rect = {widget->allocation.width - 3 - HEADLINE_CLOSE_SIZE, 1,
-				HEADLINE_CLOSE_SIZE + 2, HEADLINE_CLOSE_SIZE + 2};
-		gdk_window_invalidate_rect(widget->window, &rect, TRUE);
-	}
 	return FALSE;
 }
 
@@ -5057,10 +5013,17 @@ headline_click_callback(gpointer unused)
 }
 
 static gboolean
+headline_close_press_cb(GtkButton *button, PidginBuddyList *gtkblist)
+{
+	gtk_widget_hide(gtkblist->headline_hbox);
+	return FALSE;
+}
+
+static gboolean
 headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginBuddyList *gtkblist)
 {
 	gtk_widget_hide(gtkblist->headline_hbox);
-	if (gtkblist->headline_callback && !headline_hover_close((int)event->x, (int)event->y))
+	if (gtkblist->headline_callback)
 		g_idle_add(headline_click_callback, NULL);
 	else {
 		if (gtkblist->headline_destroy)
@@ -5812,6 +5775,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	GtkWidget *sw;
 	GtkWidget *sep;
 	GtkWidget *label;
+	GtkWidget *close;
 	char *pretty, *tmp;
 	const char *theme_name;
 	GtkAccelGroup *accel_group;
@@ -5945,16 +5909,18 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
+	/* Close button. */
+	close = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	close = pidgin_create_small_button(close);
+	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), close, FALSE, FALSE, 0);
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(close, _("Close"));
+#endif
+	g_signal_connect(close, "clicked", G_CALLBACK(headline_close_press_cb), gtkblist);
+
 	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(headline_box_enter_cb), gtkblist);
 	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(headline_box_leave_cb), gtkblist);
 	g_signal_connect(G_OBJECT(ebox), "button-press-event", G_CALLBACK(headline_box_press_cb), gtkblist);
-#if 0
-	/* I couldn't get this to work. The idea was to draw the focus-border only
-	 * when hovering over the close image. So for now, the focus-border is
-	 * always there. -- sad */
-	gtk_widget_set_events(ebox, gtk_widget_get_events(ebox) | GDK_POINTER_MOTION_HINT_MASK);
-	g_signal_connect(G_OBJECT(ebox), "motion-notify-event", G_CALLBACK(headline_box_motion_cb), gtkblist);
-#endif
 
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
@@ -6949,7 +6915,7 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	purple_signals_disconnect_by_handle(gtkblist);
 
 	if (gtkblist->headline_close)
-		g_object_unref(G_OBJECT(gtkblist->headline_close));
+		gdk_pixbuf_unref(gtkblist->headline_close);
 
 	gtk_widget_destroy(gtkblist->window);
 

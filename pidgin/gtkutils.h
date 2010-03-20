@@ -109,6 +109,16 @@ void pidgin_setup_imhtml(GtkWidget *imhtml);
 GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
 
 /**
+ * Creates a small button
+ *
+ * @param  image   A button image.
+ *
+ * @return   A GtkButton created from the image.
+ * @since 2.7.0
+ */
+GtkWidget *pidgin_create_small_button(GtkWidget *image);
+
+/**
  * Creates a new window
  *
  * @param title        The window title, or @c NULL
