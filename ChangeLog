@@ -4,6 +4,8 @@ version 2.7.0 (??/??/????):
 	General:
 	* Changed GTK+ minimum version requirement to 2.10.0.
 	* Changed GLib minimum version requirement to 2.12.0.
+	* Using the --disable-nls argument to configre now works properly. You
+	  will no longer be forced to have intltool to configure and build.
 
 	Pidgin:
 	* Moved the "Debugging Information" section of the About box to a
