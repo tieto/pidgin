@@ -5921,13 +5921,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(headline_box_enter_cb), gtkblist);
 	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(headline_box_leave_cb), gtkblist);
 	g_signal_connect(G_OBJECT(ebox), "button-press-event", G_CALLBACK(headline_box_press_cb), gtkblist);
-#if 0
-	/* I couldn't get this to work. The idea was to draw the focus-border only
-	 * when hovering over the close image. So for now, the focus-border is
-	 * always there. -- sad */
-	gtk_widget_set_events(ebox, gtk_widget_get_events(ebox) | GDK_POINTER_MOTION_HINT_MASK);
-	g_signal_connect(G_OBJECT(ebox), "motion-notify-event", G_CALLBACK(headline_box_motion_cb), gtkblist);
-#endif
 
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
