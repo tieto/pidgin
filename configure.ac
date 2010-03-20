@@ -2645,7 +2645,13 @@ fi
 if test "x$enable_pixmaps" = "xno" ; then
 	echo
 	echo Warning: You have disabled the installation of pixmap data, but Pidgin
-	echo still requires installed pixmaps.  Be sure you know what you\'re doing.
+	echo still requires installed pixmaps.  Be sure you know what you are doing.
+fi
+if test "x$enable_i18n" = "xno" ; then
+	echo
+	echo Warning: You have disabled the building and intallation of translation
+	echo data.  This will prevent building pidgin.desktop and the GConf schemas.
+	echo Be sure you know what you are doing.
 fi
 echo
 echo configure complete, now type \'make\'
