@@ -229,7 +229,7 @@ close_this_sucker(gpointer data)
 }
 
 static gboolean
-close_conv_cb(GtkWidget *w, GdkEventButton *dontuse, PidginConversation *gtkconv)
+close_conv_cb(GtkButton *button, PidginConversation *gtkconv)
 {
 	/* We are going to destroy the conversations immediately only if the 'close immediately'
 	 * preference is selected. Otherwise, close the conversation after a reasonable timeout
@@ -1325,7 +1325,7 @@ menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
 
-	close_conv_cb(NULL, NULL, PIDGIN_CONVERSATION(pidgin_conv_window_get_active_conversation(win)));
+	close_conv_cb(NULL, PIDGIN_CONVERSATION(pidgin_conv_window_get_active_conversation(win)));
 }
 
 static void
@@ -8677,7 +8677,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 			return FALSE;
 
 		gtkconv = pidgin_conv_window_get_gtkconv_at_index(win, tab_clicked);
-		close_conv_cb(NULL, NULL, gtkconv);
+		close_conv_cb(NULL, gtkconv);
 		return TRUE;
 	}
 
@@ -8945,7 +8945,7 @@ close_others_cb(GtkWidget *w, GObject *menu)
 
 		if (gconv != gtkconv)
 		{
-			close_conv_cb(NULL, NULL, gconv);
+			close_conv_cb(NULL, gconv);
 		}
 	}
 }
@@ -8957,7 +8957,7 @@ static void close_tab_cb(GtkWidget *w, GObject *menu)
 	gtkconv = g_object_get_data(menu, "clicked_tab");
 
 	if (gtkconv)
-		close_conv_cb(NULL, NULL, gtkconv);
+		close_conv_cb(NULL, gtkconv);
 }
 
 static gboolean
@@ -9421,7 +9421,7 @@ pidgin_conv_window_destroy(PidginWindow *win)
 	if (win->gtkconvs) {
 		while (win->gtkconvs) {
 			gboolean last = (win->gtkconvs->next == NULL);
-			close_conv_cb(NULL, NULL, win->gtkconvs->data);
+			close_conv_cb(NULL, win->gtkconvs->data);
 			if (last)
 				break;
 		}
@@ -9495,6 +9495,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	GtkWidget *tab_cont = gtkconv->tab_cont;
 	PurpleConversationType conv_type;
 	const gchar *tmp_lab;
+	GtkWidget *close_image;
 
 	conv_type = purple_conversation_get_type(conv);
 
@@ -9506,12 +9507,12 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 
 	/* Close button. */
-	gtkconv->close = create_close_button();
+	close_image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	gtkconv->close = pidgin_create_small_button(close_image);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
 	                     _("Close conversation"), NULL);
 
-	g_signal_connect(G_OBJECT(gtkconv->close), "button-press-event",
-			 G_CALLBACK(close_conv_cb), gtkconv);
+	g_signal_connect(gtkconv->close, "clicked", G_CALLBACK (close_conv_cb), gtkconv);
 
 	/* Status icon. */
 	gtkconv->icon = gtk_image_new();

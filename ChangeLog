@@ -22,6 +22,7 @@ version 2.7.0 (??/??/????):
 	  in the distant past.  (Greg McNew)
 	* Added a menu set mood globally for all mood-supporting accounts
 	  (currently XMPP and ICQ).
+	* Use standard (but small) GTK+ buttons instead of custom "X" symbol.
 
 	Bonjour:
 	* Added support for IPv6. (Thanks to T_X for testing)

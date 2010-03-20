@@ -153,6 +153,31 @@ pidgin_create_window(const char *title, guint border_width, const char *role, gb
 }
 
 GtkWidget *
+pidgin_create_small_button(GtkWidget *image)
+{
+	GtkWidget *button;
+	GtkRcStyle *rcstyle;
+
+	button = gtk_button_new();
+	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+
+	/* don't allow focus on the close button */
+	gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
+
+	/* make it as small as possible */
+	rcstyle = gtk_rc_style_new();
+	rcstyle->xthickness = rcstyle->ythickness = 0;
+	gtk_widget_modify_style(button, rcstyle);
+	gtk_rc_style_unref(rcstyle);
+
+	gtk_widget_show(image);
+
+	gtk_container_add(GTK_CONTAINER(button), image);
+
+	return button;
+}
+
+GtkWidget *
 pidgin_create_dialog(const char *title, guint border_width, const char *role, gboolean resizable)
 {
 	GtkWindow *wnd = NULL;
