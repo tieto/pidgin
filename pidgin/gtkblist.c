@@ -5904,17 +5904,19 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			  NULL);
 	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
 
+	gtkblist->headline_close = gtk_widget_render_icon(ebox, GTK_STOCK_CLOSE,
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC), NULL);
 	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
 	/* Close button. */
 	close = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-	gtkblist->headline_close = pidgin_create_small_button(close);
-	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_close, FALSE, FALSE, 0);
+	close = pidgin_create_small_button(close);
+	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), close, FALSE, FALSE, 0);
 #if GTK_CHECK_VERSION(2,12,0)
-	gtk_widget_set_tooltip_text(gtkblist->headline_close, _("Close"));
+	gtk_widget_set_tooltip_text(close, _("Close"));
 #endif
-	g_signal_connect(gtkblist->headline_close, "clicked", G_CALLBACK(headline_close_press_cb), gtkblist);
+	g_signal_connect(close, "clicked", G_CALLBACK(headline_close_press_cb), gtkblist);
 
 	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(headline_box_enter_cb), gtkblist);
 	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(headline_box_leave_cb), gtkblist);
@@ -6918,6 +6920,9 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	g_return_if_fail(list->ui_data == gtkblist);
 
 	purple_signals_disconnect_by_handle(gtkblist);
+
+	if (gtkblist->headline_close)
+		gdk_pixbuf_unref(gtkblist->headline_close);
 
 	gtk_widget_destroy(gtkblist->window);
 
