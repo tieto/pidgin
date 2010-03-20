@@ -112,61 +112,8 @@ AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
-AC_PROG_INTLTOOL
 PKG_PROG_PKG_CONFIG
 AC_FUNC_ALLOCA
-GETTEXT_PACKAGE=pidgin
-AC_SUBST(GETTEXT_PACKAGE)
-
-
-# before gettexting, in case iconv matters
-case "$host_os" in
-darwin*)
-	AC_CHECK_LIB(resolv, res_query)
-
-	AC_CHECK_HEADER(CoreFoundation/CoreFoundation.h, [
-		AC_CHECK_HEADER(IOKit/IOKitLib.h, [
-			AC_DEFINE(HAVE_IOKIT, 1, [Define if we have IOKit])
-			LIBS="$LIBS -framework IOKit -framework CoreFoundation"
-		], [])
-	], [])
-
-	AC_MSG_CHECKING([for fink])
-	if test -d /sw; then
-		AC_MSG_RESULT([found, adding /sw to search paths])
-		CPPFLAGS="$CPPFLAGS -I/sw/include"
-		LDFLAGS="$LDFLAGS -L/sw/lib"
-	else
-		AC_MSG_RESULT([not found])
-	fi
-	;;
-*)
-	;;
-esac
-
-ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mk mn mr ms_MY my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
-AM_GLIB_GNU_GETTEXT
-
-dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
-dnl AM_GLIB_GNU_GETTEXT found it.
-
-if test x$MSGFMT = xno -o x$MSGFMT$GMSGFMT$INTLTOOL_MSGFMT = x
-then
-	AC_MSG_ERROR([
-
-The msgfmt command is required to build libpurple.  If it is installed
-on your system, ensure that it is in your path.  If it is not, install
-GNU gettext to continue.
-
-If you have msgfmt installed, but for some reason this error message
-is still displayed, you have encountered what appears to be a bug in
-third-party configure macros.  Try setting the MSGFMT environment
-variable to the absolute path to your msgfmt binary and trying
-configure again, like this:
-
-MSGFMT=/path/to/msgfmt ./configure ...
-])
-fi
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -304,6 +251,67 @@ int main()
 	# This will enable the compatibility code.
 	AC_MSG_RESULT(no)
 ])
+
+dnl #######################################################################
+dnl # Disable creation and installation of translation files
+dnl #######################################################################
+AC_ARG_ENABLE(nls, AC_HELP_STRING([--disable-nls], [disable installation of translation files]), enable_i18n="$enableval", enable_i18n=yes)
+
+if test x$enable_i18n = xyes; then
+	AC_PROG_INTLTOOL
+	GETTEXT_PACKAGE=pidgin
+	AC_SUBST(GETTEXT_PACKAGE)
+
+
+	# before gettexting, in case iconv matters
+	case "$host_os" in
+	darwin*)
+		AC_CHECK_LIB(resolv, res_query)
+
+		AC_CHECK_HEADER(CoreFoundation/CoreFoundation.h, [
+			AC_CHECK_HEADER(IOKit/IOKitLib.h, [
+				AC_DEFINE(HAVE_IOKIT, 1, [Define if we have IOKit])
+				LIBS="$LIBS -framework IOKit -framework CoreFoundation"
+			], [])
+		], [])
+
+		AC_MSG_CHECKING([for fink])
+		if test -d /sw; then
+			AC_MSG_RESULT([found, adding /sw to search paths])
+			CPPFLAGS="$CPPFLAGS -I/sw/include"
+			LDFLAGS="$LDFLAGS -L/sw/lib"
+		else
+			AC_MSG_RESULT([not found])
+		fi
+		;;
+	*)
+		;;
+	esac
+
+	ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mk mn mr ms_MY my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
+	AM_GLIB_GNU_GETTEXT
+
+	dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
+	dnl AM_GLIB_GNU_GETTEXT found it.
+
+	if test x$MSGFMT = xno -o x$MSGFMT$GMSGFMT$INTLTOOL_MSGFMT = x
+	then
+		AC_MSG_ERROR([
+
+The msgfmt command is required to build libpurple.  If it is installed
+on your system, ensure that it is in your path.  If it is not, install
+GNU gettext to continue.
+
+If you have msgfmt installed, but for some reason this error message
+is still displayed, you have encountered what appears to be a bug in
+third-party configure macros.  Try setting the MSGFMT environment
+variable to the absolute path to your msgfmt binary and trying
+configure again, like this:
+
+MSGFMT=/path/to/msgfmt ./configure ...
+	])
+	fi
+fi #enable_i18n
 
 dnl #######################################################################
 dnl # Check for GLib 2.12 (required)
@@ -2442,11 +2450,6 @@ dnl #######################################################################
 AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--disable-pixmaps-install], [disable installation of pixmap files - Pidgin still needs them!]), enable_pixmaps="$enableval", enable_pixmaps=yes)
 
 AM_CONDITIONAL(INSTALL_PIXMAPS, test "x$enable_pixmaps" = "xyes")
-
-dnl #######################################################################
-dnl # Disable installation of translation files
-dnl #######################################################################
-AC_ARG_ENABLE(nls, AC_HELP_STRING([--disable-nls], [disable installation of translation files]), enable_i18n="$enableval", enable_i18n=yes)
 
 AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 
