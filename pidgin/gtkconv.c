@@ -4824,52 +4824,6 @@ pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int 
 	return FALSE;
 }
 
-/* Close button {{{ */
-static gboolean
-close_button_left_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
-{
-	static GdkCursor *ptr = NULL;
-	if (ptr == NULL) {
-		ptr = gdk_cursor_new(GDK_LEFT_PTR);
-	}
-
-	gtk_label_set_markup(label, "×");
-	gdk_window_set_cursor(event->window, ptr);
-	return FALSE;
-}
-
-static gboolean
-close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
-{
-	static GdkCursor *hand = NULL;
-	if (hand == NULL) {
-		hand = gdk_cursor_new(GDK_HAND2);
-	}
-
-	gtk_label_set_markup(label, "<u>×</u>");
-	gdk_window_set_cursor(event->window, hand);
-	return FALSE;
-}
-
-static GtkWidget *
-create_close_button(void)
-{
-	GtkWidget *ebox = gtk_event_box_new();
-	GtkWidget *close_image;
-
-	gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
-	gtk_widget_set_events(ebox, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
-	close_image = gtk_label_new("×");
-	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(close_button_entered_cb), close_image);
-	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(close_button_left_cb), close_image);
-	gtk_widget_show(close_image);
-	gtk_container_add(GTK_CONTAINER(ebox), close_image);
-
-	return ebox;
-}
-
-/* }}} */
-
 /* Quick Find {{{ */
 static gboolean
 pidgin_conv_end_quickfind(PidginConversation *gtkconv)
@@ -4912,11 +4866,12 @@ static void
 pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 {
 	GtkWidget *widget = gtk_hbox_new(FALSE, 0);
-	GtkWidget *label, *entry, *close;
+	GtkWidget *label, *entry, *close, *image;
 
 	gtk_box_pack_start(GTK_BOX(container), widget, FALSE, FALSE, 0);
 
-	close = create_close_button();
+	image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	close = pidgin_create_small_button(image);
 	gtk_box_pack_start(GTK_BOX(widget), close, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, close,
 	                     _("Close Find bar"), NULL);
