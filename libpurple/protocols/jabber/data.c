@@ -209,7 +209,7 @@ jabber_data_request_cb(JabberStream *js, const char *from,
 		JabberData *data = jabber_data_create_from_xml(data_element);
 
 		if (data) {
-			if (ephemeral) {
+			if (!ephemeral) {
 				jabber_data_associate_remote(data);
 			}
 			/* TODO: validate hash */
