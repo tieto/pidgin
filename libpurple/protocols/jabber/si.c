@@ -1663,27 +1663,17 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 }
 
 static void
-jabber_si_thumbnail_cb(JabberStream *js, const char *from, JabberIqType type, 
-	const char *id, xmlnode *packet, gpointer data)
+jabber_si_thumbnail_cb(JabberData *data, gchar *alt, gpointer userdata)
 {
-	PurpleXfer *xfer = (PurpleXfer *) data;
-	xmlnode *data_element = xmlnode_get_child(packet, "data");
-	xmlnode *item_not_found = xmlnode_get_child(packet, "item-not-found");
+	PurpleXfer *xfer = (PurpleXfer *) userdata;
 
-	if (data_element) {
-		JabberData *data = jabber_data_create_from_xml(data_element);
-
-		if (data) {
-			purple_xfer_set_thumbnail(xfer, jabber_data_get_data(data),
-				jabber_data_get_size(data), jabber_data_get_type(data));
-			jabber_data_destroy(data);
-		}
-	} else if (item_not_found) {
-		purple_debug_info("jabber",
-			"Responder didn't recognize requested data\n");
-	} else {
-		purple_debug_error("jabber", "Unknown response to data request\n");
+	if (data) {
+		purple_xfer_set_thumbnail(xfer, jabber_data_get_data(data),
+			jabber_data_get_size(data), jabber_data_get_type(data));
+		/* data is ephemeral, get rid of now (the xfer re-owned the thumbnail */
+		jabber_data_destroy(data);
 	}
+
 	purple_xfer_request(xfer);
 }
 
@@ -1782,16 +1772,8 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 		NS_THUMBS))) {
 		const char *cid = xmlnode_get_attrib(thumbnail, "cid");
 		if (cid) {
-			JabberIq *request = 
-				jabber_iq_new(jsx->js, JABBER_IQ_GET);
-
-			purple_debug_info("jabber", "got file thumbnail, request it\n");
-			xmlnode_insert_child(request->node, 
-				jabber_data_get_xml_request(cid));
-			xmlnode_set_attrib(request->node, "to", 
-				purple_xfer_get_remote_user(xfer));
-			jabber_iq_set_callback(request, jabber_si_thumbnail_cb, xfer);
-			jabber_iq_send(request);
+			jabber_data_request(js, cid, purple_xfer_get_remote_user(xfer),
+			    NULL, TRUE, jabber_si_thumbnail_cb, xfer);
 		} else {
 			purple_xfer_request(xfer);
 		}
