@@ -26,6 +26,7 @@
 #include "internal.h"
 #include "pidgin.h"
 
+#include "debug.h"
 #include "prefs.h"
 #include "util.h"
 
@@ -592,9 +593,11 @@ pidgin_request_choice(const char *title, const char *primary,
 }
 
 static void *
-pidgin_request_action(const char *title, const char *primary,
+pidgin_request_action_with_icon(const char *title, const char *primary,
 						const char *secondary, int default_action,
-					    PurpleAccount *account, const char *who, PurpleConversation *conv,
+					    PurpleAccount *account, const char *who, 
+						PurpleConversation *conv, gconstpointer icon_data,
+						gsize icon_size,
 						void *user_data, size_t action_count, va_list actions)
 {
 	PidginRequestData *data;
@@ -602,7 +605,7 @@ pidgin_request_action(const char *title, const char *primary,
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	GtkWidget *img;
+	GtkWidget *img = NULL;
 	void **buttons;
 	char *label_text;
 	char *primary_esc, *secondary_esc;
@@ -659,8 +662,25 @@ pidgin_request_action(const char *title, const char *primary,
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+	if (icon_data) {
+		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+		GdkPixbuf *pixbuf = NULL;
+		if (gdk_pixbuf_loader_write(loader, icon_data, icon_size, NULL)) {
+			pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+			if (pixbuf) {
+				img = gtk_image_new_from_pixbuf(pixbuf);
+			}
+		} else {
+			purple_debug_info("pidgin", "failed to parse dialog icon\n");
+		}
+		gdk_pixbuf_loader_close(loader, NULL);
+		g_object_unref(loader);
+	}
+	
+	if (!img) {
+		img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
 				       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+	}
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -710,6 +730,16 @@ pidgin_request_action(const char *title, const char *primary,
 	gtk_widget_show_all(dialog);
 
 	return data;
+}
+
+static void *
+pidgin_request_action(const char *title, const char *primary,
+						const char *secondary, int default_action,
+					    PurpleAccount *account, const char *who, PurpleConversation *conv,
+						void *user_data, size_t action_count, va_list actions)
+{
+	pidgin_request_action_with_icon(title, primary, secondary, default_action,
+		account, who, conv, NULL, 0, user_data, action_count, actions);
 }
 
 static void
@@ -1699,7 +1729,7 @@ static PurpleRequestUiOps ops =
 	pidgin_request_file,
 	pidgin_close_request,
 	pidgin_request_folder,
-	NULL,
+	pidgin_request_action_with_icon,
 	NULL,
 	NULL,
 	NULL

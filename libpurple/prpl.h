@@ -52,6 +52,13 @@ typedef enum {
 typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 
 /**
+ * A description of a file transfer thumbnail specification.
+ * This tells the UI if and what image formats the prpl support for file
+ * transfer thumbnails.
+ */
+typedef struct _PurpleThumbnailSpec PurpleThumbnailSpec;
+
+/**
  * This \#define exists just to make it easier to fill out the buddy icon
  * field in the prpl info struct for protocols that couldn't care less.
  */
@@ -90,7 +97,7 @@ struct _PurpleBuddyIconSpec {
 	size_t max_filesize;               /**< Maximum size in bytes */
 	PurpleIconScaleRules scale_rules;  /**< How to stretch this icon */
 };
-
+	
 /** Represents an entry containing information that must be supplied by the
  *  user when joining a chat.
  */
