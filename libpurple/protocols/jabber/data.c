@@ -165,7 +165,7 @@ jabber_data_get_xhtml_im(const JabberData *data, const gchar *alt)
 	return img;
 }
 
-xmlnode *
+static xmlnode *
 jabber_data_get_xml_request(const gchar *cid)
 {
 	xmlnode *tag = xmlnode_new("data");
@@ -174,6 +174,70 @@ jabber_data_get_xml_request(const gchar *cid)
 	xmlnode_set_attrib(tag, "cid", cid);
 
 	return tag;
+}
+
+
+typedef struct {
+	gpointer userdata;
+	gchar *alt;
+	gboolean ephemeral;
+	JabberDataRequestCallback *cb;
+} JabberDataRequestData;
+
+static void
+jabber_data_request_cb(JabberStream *js, const char *from,
+	JabberIqType type, const char *id, xmlnode *packet, gpointer data)
+{
+	JabberDataRequestData *request_data = (JabberDataRequestData *) data;
+	gpointer userdata = request_data->userdata;
+	gchar *alt = request_data->alt;
+	gboolean ephemeral = request_data->ephemeral;
+	JabberDataRequestCallback *cb = request_data->cb;
+	
+	xmlnode *data_element = xmlnode_get_child(packet, "data");
+	xmlnode *item_not_found = xmlnode_get_child(packet, "item-not-found");
+
+	/* did we get a data element as result? */
+	if (data_element && type == JABBER_IQ_RESULT) {
+		JabberData *data = jabber_data_create_from_xml(data_element);
+
+		if (data) {
+			if (ephemeral) {
+				jabber_data_associate_remote(data);
+			}
+			/* TODO: validate hash */
+			cb(data, alt, userdata);
+		}
+	} else if (item_not_found) {
+		purple_debug_info("jabber",
+			"Responder didn't recognize requested data\n");
+		cb(NULL, alt, userdata);
+	} else {
+		purple_debug_error("jabber", "Unknown response to data request\n");
+		cb(NULL, alt, userdata);
+	}
+
+	g_free(request_data);
+}
+
+void
+jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who, 
+    gchar *alt, gboolean ephemeral, JabberDataRequestCallback cb,
+    gpointer userdata)
+{
+	JabberIq *request = jabber_iq_new(js, JABBER_IQ_GET);
+	xmlnode *data_request = jabber_data_get_xml_request(cid);
+	JabberDataRequestData *data = g_new0(JabberDataRequestData, 1);
+
+	data->userdata = userdata;
+	data->alt = alt;
+	data->ephemeral = ephemeral;
+	data->cb = cb;
+	
+	xmlnode_set_attrib(request->node, "to", who);
+	jabber_iq_set_callback(request, jabber_data_request_cb, data);
+	xmlnode_insert_child(request->node, data_request);
+	jabber_iq_send(request);
 }
 
 const JabberData *

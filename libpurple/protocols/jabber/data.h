@@ -28,12 +28,17 @@
 
 #define JABBER_DATA_MAX_SIZE 8192
 
+
 typedef struct {
 	char *cid;
 	char *type;
 	gsize size;
 	gpointer data;
 } JabberData;
+
+typedef void (JabberDataRequestCallback)(JabberData *data, gchar *alt,
+    gpointer userdata);
+
 
 /* creates a JabberData instance from raw data */
 JabberData *jabber_data_create_from_data(gconstpointer data, gsize size,
@@ -55,9 +60,9 @@ xmlnode *jabber_data_get_xml_definition(const JabberData *data);
 /* returns an XHTML-IM "img" tag given a data instance */
 xmlnode *jabber_data_get_xhtml_im(const JabberData *data, const gchar *alt);
 
-/* returns a data request element (to be included in an iq stanza) for requesting
-  data */
-xmlnode *jabber_data_get_xml_request(const gchar *cid);
+void jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who, 
+    gchar *alt, gboolean ephemeral, JabberDataRequestCallback cb,
+    gpointer userdata);
 
 /* lookup functions */
 const JabberData *jabber_data_find_local_by_alt(const gchar *alt);

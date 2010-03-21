@@ -479,64 +479,21 @@ jabber_message_add_remote_smileys(const xmlnode *message)
 	}
 }
 
-/* used in the function below to supply a conversation and shortcut for a
- smiley */
-typedef struct {
-	PurpleConversation *conv;
-	gchar *alt;
-} JabberDataRef;
-
 static void
-jabber_message_get_data_cb(JabberStream *js, const char *from,
-                           JabberIqType type, const char *id,
-                           xmlnode *packet, gpointer data)
+jabber_message_request_data_cb(JabberData *data, gchar *alt,
+    gpointer userdata)
 {
-	JabberDataRef *ref = (JabberDataRef *) data;
-	PurpleConversation *conv = ref->conv;
-	const gchar *alt = ref->alt;
-	xmlnode *data_element = xmlnode_get_child(packet, "data");
-	xmlnode *item_not_found = xmlnode_get_child(packet, "item-not-found");
+	PurpleConversation *conv = (PurpleConversation *) userdata;
 
-	/* did we get a data element as result? */
-	if (data_element && type == JABBER_IQ_RESULT) {
-		JabberData *data = jabber_data_create_from_xml(data_element);
-
-		if (data) {
-			jabber_data_associate_remote(data);
-			purple_conv_custom_smiley_write(conv, alt,
-											jabber_data_get_data(data),
-											jabber_data_get_size(data));
-			purple_conv_custom_smiley_close(conv, alt);
-		}
-
-	} else if (item_not_found) {
-		purple_debug_info("jabber",
-			"Responder didn't recognize requested data\n");
-	} else {
-		purple_debug_error("jabber", "Unknown response to data request\n");
+	if (data) {
+		purple_conv_custom_smiley_write(conv, alt,
+										jabber_data_get_data(data),
+										jabber_data_get_size(data));
+		purple_conv_custom_smiley_close(conv, alt);
 	}
-	g_free(ref->alt);
-	g_free(ref);
+
+	g_free(alt);
 }
-
-static void
-jabber_message_send_data_request(JabberStream *js, PurpleConversation *conv,
-								 const gchar *cid, const gchar *who,
-								 const gchar *alt)
-{
-	JabberIq *request = jabber_iq_new(js, JABBER_IQ_GET);
-	JabberDataRef *ref = g_new0(JabberDataRef, 1);
-	xmlnode *data_request = jabber_data_get_xml_request(cid);
-
-	xmlnode_set_attrib(request->node, "to", who);
-	ref->conv = conv;
-	ref->alt = g_strdup(alt);
-	jabber_iq_set_callback(request, jabber_message_get_data_cb, ref);
-	xmlnode_insert_child(request->node, data_request);
-
-	jabber_iq_send(request);
-}
-
 
 void jabber_message_parse(JabberStream *js, xmlnode *packet)
 {
@@ -693,7 +650,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				for (; conv && smiley_refs ; smiley_refs = g_list_delete_link(smiley_refs, smiley_refs)) {
 					JabberSmileyRef *ref = (JabberSmileyRef *) smiley_refs->data;
 					const gchar *cid = ref->cid;
-					const gchar *alt = ref->alt;
+					gchar *alt = g_strdup(ref->alt);
 
 					purple_debug_info("jabber",
 						"about to add custom smiley %s to the conv\n", alt);
@@ -713,8 +670,8 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 							/* we need to request the smiley (data) */
 							purple_debug_info("jabber",
 								"data is unknown, need to request it\n");
-							jabber_message_send_data_request(js, conv, cid, from,
-								alt);
+							jabber_data_request(js, cid, from, alt, FALSE,
+							    jabber_message_request_data_cb, conv);
 						}
 					}
 					g_free(ref->cid);
