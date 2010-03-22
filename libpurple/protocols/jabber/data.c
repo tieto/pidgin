@@ -39,7 +39,7 @@ jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type
 	JabberStream *js)
 {
 	JabberData *data = g_new0(JabberData, 1);
-	gchar *checksum = jabber_calculate_data_sha1sum(rawdata, size);
+	gchar *checksum = jabber_calculate_data_hash(rawdata, size, "sha1");
 	gchar cid[256];
 
 	g_snprintf(cid, sizeof(cid), "sha1+%s@bob.xmpp.org", checksum);
@@ -53,6 +53,69 @@ jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type
 
 	return data;
 }
+
+
+static gboolean
+jabber_data_has_valid_hash(const JabberData *data)
+{
+	const gchar *cid = jabber_data_get_cid(data);
+	gchar **cid_parts = g_strsplit(cid, "@", -1);
+	gchar **iter;
+	int num_parts = 0;
+
+	purple_debug_info("jabber", "validating BoB hash %s\n", cid);
+	
+	for (iter = cid_parts; *iter != NULL ; iter++) {
+		num_parts++;
+	}
+
+	if (num_parts == 2 && purple_strequal(cid_parts[1], "bob.xmpp.org")) {
+		gchar **sub_parts = g_strsplit(cid_parts[0], "+", -1);
+
+		num_parts = 0;
+		for (iter = sub_parts ; *iter != NULL ; iter++) {
+			num_parts++;
+		}
+
+		if (num_parts == 2) {
+			const gchar *hash_algo = sub_parts[0];
+			const gchar *hash_value = sub_parts[1];
+			gchar *digest =
+				jabber_calculate_data_hash(jabber_data_get_data(data),
+				    jabber_data_get_size(data), hash_algo);
+
+			purple_debug_info("jabber", "BoB expecting hash: %s\n", digest);
+			
+			if (digest) {
+				gboolean result = purple_strequal(digest, hash_value);
+
+				if (!result) {
+					purple_debug_error("jabber", "invalid BoB hash\n");
+				}
+				g_free(digest);
+				return result;
+			} else {
+				purple_debug_info("jabber", "unknown BoB hash algo\n");
+				return FALSE;
+			}
+		} else {
+			return TRUE;
+		}
+	} else {
+		return TRUE;
+	}
+}
+
+static void
+jabber_data_delete(gpointer cbdata)
+{
+	JabberData *data = cbdata;
+	g_free(data->cid);
+	g_free(data->type);
+	g_free(data->data);
+	g_free(data);
+}
+
 
 JabberData *
 jabber_data_create_from_xml(xmlnode *tag)
@@ -96,18 +159,12 @@ jabber_data_create_from_xml(xmlnode *tag)
 	data->cid = g_strdup(cid);
 	data->type = g_strdup(type);
 
+	if (!jabber_data_has_valid_hash(data)) {
+		jabber_data_delete(data);
+		return NULL;
+	}
+
 	return data;
-}
-
-
-static void
-jabber_data_delete(gpointer cbdata)
-{
-	JabberData *data = cbdata;
-	g_free(data->cid);
-	g_free(data->type);
-	g_free(data->data);
-	g_free(data);
 }
 
 const char *
@@ -205,8 +262,12 @@ jabber_data_request_cb(JabberStream *js, const char *from,
 			if (!ephemeral) {
 				jabber_data_associate_remote(data);
 			}
-			/* TODO: validate hash */
 			cb(data, alt, userdata);
+		} else {
+			/* could not validate hash when creating data from XML */
+			purple_debug_info("jabber",
+			    "hash validation failed on requested BoB object\n");
+			cb(NULL, alt, userdata);
 		}
 	} else if (item_not_found) {
 		purple_debug_info("jabber",

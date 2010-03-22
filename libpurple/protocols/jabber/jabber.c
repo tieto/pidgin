@@ -980,8 +980,8 @@ jabber_login(PurpleAccount *account)
 	image = purple_buddy_icons_find_account_icon(account);
 	if (image != NULL) {
 		js->initial_avatar_hash =
-			jabber_calculate_data_sha1sum(purple_imgstore_get_data(image),
-					purple_imgstore_get_size(image));
+			jabber_calculate_data_hash(purple_imgstore_get_data(image),
+					purple_imgstore_get_size(image), "sha1");
 		purple_imgstore_unref(image);
 	}
 

@@ -516,7 +516,8 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		binval = xmlnode_new_child(photo, "BINVAL");
 		enc = purple_base64_encode(avatar_data, avatar_len);
 
-		js->avatar_hash = jabber_calculate_data_sha1sum(avatar_data, avatar_len);
+		js->avatar_hash =
+			jabber_calculate_data_hash(avatar_data, avatar_len, "sha1");
 
 		xmlnode_insert_data(binval, enc, -1);
 		g_free(enc);
@@ -936,7 +937,7 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 			g_free(bintext);
 
 			if (data) {
-				vcard_hash = jabber_calculate_data_sha1sum(data, size);
+				vcard_hash = jabber_calculate_data_hash(data, size, "sha1");
 				g_free(data);
 			}
 		}
@@ -1185,7 +1186,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 
 						purple_notify_user_info_add_pair(user_info, (photo ? _("Photo") : _("Logo")), img_text);
 
-						hash = jabber_calculate_data_sha1sum(data, size);
+						hash = jabber_calculate_data_hash(data, size, "sha1");
 						purple_buddy_icons_set_for_user(account, bare_jid, data, size, hash);
 						g_free(hash);
 						g_free(img_text);

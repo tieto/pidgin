@@ -457,7 +457,7 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 
 			data = purple_base64_decode(text, &size);
 			if (data) {
-				gchar *hash = jabber_calculate_data_sha1sum(data, size);
+				gchar *hash = jabber_calculate_data_hash(data, size, "sha1");
 				purple_buddy_icons_set_for_user(js->gc->account, from, data,
 				                                size, hash);
 				g_free(hash);
