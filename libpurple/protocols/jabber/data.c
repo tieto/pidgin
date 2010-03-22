@@ -168,17 +168,6 @@ jabber_data_create_from_xml(xmlnode *tag)
 	return data;
 }
 
-
-static void
-jabber_data_delete(gpointer cbdata)
-{
-	JabberData *data = cbdata;
-	g_free(data->cid);
-	g_free(data->type);
-	g_free(data->data);
-	g_free(data);
-}
-
 void
 jabber_data_destroy(JabberData *data)
 {
