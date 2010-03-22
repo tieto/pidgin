@@ -31,6 +31,7 @@ version 2.7.0 (??/??/????):
 		* pidgin_dialogs_developers (should not be used by anything but Pidgin)
 		* pidgin_dialogs_translators (should not be used by anything but Pidgin)
 		* gtk_imhtmltoolbar_switch_active_conversation
+		* 'paste' signal for GtkIMHtml (more in gtkimhtml-signals.dox)
 
 version 2.6.6 (02/18/2010):
 	libpurple:
