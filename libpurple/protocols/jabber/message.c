@@ -474,7 +474,10 @@ jabber_message_add_remote_smileys(const xmlnode *message)
 		if (!data && cid != NULL) {
 			/* we haven't cached this already, let's add it */
 			JabberData *new_data = jabber_data_create_from_xml(data_tag);
-			jabber_data_associate_remote(new_data);
+
+			if (new_data) {
+				jabber_data_associate_remote(new_data);
+			}
 		}
 	}
 }

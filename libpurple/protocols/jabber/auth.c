@@ -287,7 +287,7 @@ static void auth_old_cb(JabberStream *js, const char *from,
 
 			x = xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
-			hash = jabber_calculate_data_sha1sum(s, strlen(s));
+			hash = jabber_calculate_data_hash(s, strlen(s), "sha1");
 			xmlnode_insert_data(x, hash, -1);
 			g_free(hash);
 			g_free(s);

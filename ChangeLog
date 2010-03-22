@@ -4,6 +4,8 @@ version 2.7.0 (??/??/????):
 	General:
 	* Changed GTK+ minimum version requirement to 2.10.0.
 	* Changed GLib minimum version requirement to 2.12.0.
+	* Using the --disable-nls argument to configre now works properly. You
+	  will no longer be forced to have intltool to configure and build.
 
 	Pidgin:
 	* Moved the "Debugging Information" section of the About box to a
@@ -23,6 +25,9 @@ version 2.7.0 (??/??/????):
 	* Added a menu set mood globally for all mood-supporting accounts
 	  (currently XMPP and ICQ).
 	* Use standard (but small) GTK+ buttons instead of custom "X" symbol.
+	* Default binding of Ctrl+Shift+v to 'Paste as Plain Text' in
+	  conversation windows. This can be changed in .gtkrc-2.0. For example,
+	  Ctrl+v can be bound to 'Paste as Plain Text' by default.
 
 	Bonjour:
 	* Added support for IPv6. (Thanks to T_X for testing)
@@ -50,6 +55,7 @@ version 2.7.0 (??/??/????):
 	  rjoly for testing)
 	* When sending data using in-band-bytestreams, interpret the block-size
 	  attribute as the size of the BASE64-encoded representation of the data.
+	* Validate the hash on incoming BoB data objects (for custom smileys etc.).
 
 	Yahoo:
 	* Attempt to better handle transparent proxies interfering with HTTP-based
