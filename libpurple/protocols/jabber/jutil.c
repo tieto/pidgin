@@ -733,7 +733,7 @@ jabber_calculate_data_hash(gconstpointer data, size_t len,
     const gchar *hash_algo)
 {
 	PurpleCipherContext *context;
-	static gchar digest[41];
+	static gchar digest[129]; /* 512 bits hex + \0 */
 
 	context = purple_cipher_context_new_by_name(hash_algo, NULL);
 	if (context == NULL)
