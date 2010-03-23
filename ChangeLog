@@ -55,7 +55,9 @@ version 2.7.0 (??/??/????):
 	  rjoly for testing)
 	* When sending data using in-band-bytestreams, interpret the block-size
 	  attribute as the size of the BASE64-encoded representation of the data.
-	* Validate the hash on incoming BoB data objects (for custom smileys etc.).
+	* Validate the hash on incoming BoB data objects (for custom smileys etc.),
+	  cache based per JID when the CID is not a valid hash (as specified by the
+	  BoB XEP).
 
 	Yahoo:
 	* Attempt to better handle transparent proxies interfering with HTTP-based
