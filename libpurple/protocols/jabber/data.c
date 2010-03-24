@@ -314,7 +314,6 @@ jabber_data_find_remote_by_cid(JabberStream *js, const gchar *who,
     const gchar *cid)
 {
 	const JabberData *data = g_hash_table_lookup(remote_data_by_cid, cid);
-	purple_debug_info("jabber", "lookup remote smiley with cid = %s\n", cid);
 	purple_debug_info("jabber", "lookup remote data object with cid = %s\n", cid);
 
 	if (data == NULL) {
