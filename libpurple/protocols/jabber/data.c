@@ -36,7 +36,7 @@ static GHashTable *remote_data_by_cid = NULL;
 
 JabberData *
 jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type,
-	JabberStream *js)
+	gboolean ephemeral, JabberStream *js)
 {
 	JabberData *data = g_new0(JabberData, 1);
 	gchar *checksum = jabber_calculate_data_hash(rawdata, size, "sha1");
@@ -48,6 +48,7 @@ jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type
 	data->cid = g_strdup(cid);
 	data->type = g_strdup(type);
 	data->size = size;
+	data->ephemeral = ephemeral;
 
 	data->data = g_memdup(rawdata, size);
 
@@ -108,6 +109,12 @@ jabber_data_create_from_xml(xmlnode *tag)
 	data->type = g_strdup(type);
 
 	return data;
+}
+
+void
+jabber_data_destroy(JabberData *data)
+{
+	jabber_data_delete(data);
 }
 
 const char *
@@ -291,14 +298,14 @@ jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who,
 const JabberData *
 jabber_data_find_local_by_alt(const gchar *alt)
 {
-	purple_debug_info("jabber", "looking up local smiley with alt = %s\n", alt);
+	purple_debug_info("jabber", "looking up local data object with alt = %s\n", alt);
 	return g_hash_table_lookup(local_data_by_alt, alt);
 }
 
 const JabberData *
 jabber_data_find_local_by_cid(const gchar *cid)
 {
-	purple_debug_info("jabber", "lookup local smiley with cid = %s\n", cid);
+	purple_debug_info("jabber", "lookup local data object with cid = %s\n", cid);
 	return g_hash_table_lookup(local_data_by_cid, cid);
 }
 
@@ -308,6 +315,7 @@ jabber_data_find_remote_by_cid(JabberStream *js, const gchar *who,
 {
 	const JabberData *data = g_hash_table_lookup(remote_data_by_cid, cid);
 	purple_debug_info("jabber", "lookup remote smiley with cid = %s\n", cid);
+	purple_debug_info("jabber", "lookup remote data object with cid = %s\n", cid);
 
 	if (data == NULL) {
 		gchar *jid_cid =
@@ -325,9 +333,10 @@ jabber_data_find_remote_by_cid(JabberStream *js, const gchar *who,
 void
 jabber_data_associate_local(JabberData *data, const gchar *alt)
 {
-	purple_debug_info("jabber", "associating local smiley\n alt = %s, cid = %s\n",
-		alt, jabber_data_get_cid(data));
-	g_hash_table_insert(local_data_by_alt, g_strdup(alt), data);
+	purple_debug_info("jabber", "associating local data object\n alt = %s, cid = %s\n",
+		alt , jabber_data_get_cid(data));
+	if (alt)
+		g_hash_table_insert(local_data_by_alt, g_strdup(alt), data);
 	g_hash_table_insert(local_data_by_cid, g_strdup(jabber_data_get_cid(data)),
 		data);
 }
@@ -373,6 +382,11 @@ jabber_data_parse(JabberStream *js, const char *who, JabberIqType type,
 		xmlnode_set_attrib(result->node, "id", id);
 		xmlnode_insert_child(result->node,
 							 jabber_data_get_xml_definition(data));
+		/* if the data object is temporary, destroy it and remove the references
+		 to it */
+		if (data->ephemeral) {
+			g_hash_table_remove(local_data_by_cid, cid);
+		}
 	}
 	jabber_iq_send(result);
 }

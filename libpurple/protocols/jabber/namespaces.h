@@ -89,6 +89,9 @@
 /* XEP-0237 Roster Versioning */
 #define NS_ROSTER_VERSIONING "urn:xmpp:features:rosterver"
 
+/* XEP-0264 File Transfer Thumbnails (Thumbs) */
+#define NS_THUMBS "urn:xmpp:thumbs:0"
+
 /* Google extensions */
 #define NS_GOOGLE_CAMERA "http://www.google.com/xmpp/protocol/camera/v1"
 #define NS_GOOGLE_VIDEO "http://www.google.com/xmpp/protocol/video/v1"
