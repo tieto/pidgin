@@ -3490,7 +3490,10 @@ get_global_moods(void)
 			PurplePluginProtocolInfo *prpl_info =
 				PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 			PurpleMood *mood = NULL;
-			
+
+			/* PURPLE_CONNECTION_SUPPORT_MOODS would not be set if the prpl doesn't
+			 * have get_moods, so using PURPLE_PROTOCOL_PLUGIN_HAS_FUNC isn't necessary
+			 * here */
 			for (mood = prpl_info->get_moods(account) ;
 			    mood->mood != NULL ; mood++) {
 				int mood_count =
@@ -3592,6 +3595,9 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 		purple_request_field_list_add_selected(f, _("None"));
 
 	/* TODO: rlaager wants this sorted. */
+	/* The connection is checked for PURPLE_CONNECTION_SUPPORT_MOODS flag before
+	 * this function is called for a non-null account. So using
+	 * PURPLE_PROTOCOL_PLUGIN_HAS_FUNC isn't necessary here */
 	for (mood = account ? prpl_info->get_moods(account) : global_moods;
 	     mood->mood != NULL ; mood++) {
 		char *path;
@@ -8158,22 +8164,12 @@ pidgin_blist_update_accounts_menu(void)
 			 PURPLE_PLUGIN_HAS_ACTIONS(plugin))) {
 			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) &&
 			    gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
-				GList *types;
 
-				for (types = purple_account_get_status_types(account);
-			     	types != NULL ; types = types->next) {
-					PurpleStatusType *type = types->data;
-
-					if (strcmp(purple_status_type_get_id(type), "mood") != 0)
-						continue;
-
+				if (purple_account_get_status(account, "mood")) {
 					menuitem = gtk_menu_item_new_with_mnemonic(_("Set _Mood..."));
 					g_signal_connect(G_OBJECT(menuitem), "activate",
 					         	G_CALLBACK(set_mood_cb), account);
 					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-
-					/* Be safe.  It shouldn't match more than once anyway */
-					break;
 				}
 			}
 			if (PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
