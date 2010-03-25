@@ -4271,7 +4271,12 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	else
 		name = purple_buddy_get_alias(b);
 
-	nametext = g_markup_escape_text(name, strlen(name));
+	/* Raise a contact pre-draw signal here.  THe callback will return an
+	 * escaped version of the name. */
+	nametext = purple_signal_emit_return_1(pidgin_blist_get_handle(), "drawing-buddy", b);
+
+	if(!nametext)
+		nametext = g_markup_escape_text(name, strlen(name));
 
 	presence = purple_buddy_get_presence(b);
 
@@ -7595,10 +7600,19 @@ void pidgin_blist_init(void)
 	                     purple_value_new_outgoing(PURPLE_TYPE_BOXED, "GString *"),
 	                     purple_value_new(PURPLE_TYPE_BOOLEAN));
 
+	purple_signal_register(gtk_blist_handle, "drawing-buddy",
+						purple_marshal_POINTER__POINTER,
+						purple_value_new(PURPLE_TYPE_STRING), 1,
+						purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_BLIST_BUDDY));
 
-	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
-	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
-	purple_signal_connect(purple_blist_get_handle(), "buddy-privacy-changed", gtk_blist_handle, PURPLE_CALLBACK(pidgin_blist_update_privacy_cb), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on",
+			gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off",
+			gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-privacy-changed",
+			gtk_blist_handle, PURPLE_CALLBACK(pidgin_blist_update_privacy_cb), NULL);
+
 }
 
 void

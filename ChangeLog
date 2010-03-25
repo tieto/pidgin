@@ -28,6 +28,8 @@ version 2.7.0 (??/??/????):
 	* Default binding of Ctrl+Shift+v to 'Paste as Plain Text' in
 	  conversation windows. This can be changed in .gtkrc-2.0. For example,
 	  Ctrl+v can be bound to 'Paste as Plain Text' by default.
+	* Plugins can now handle markup in buddy names by attaching to the signal
+	  "drawing-buddy".
 
 	Bonjour:
 	* Added support for IPv6. (Thanks to T_X for testing)
