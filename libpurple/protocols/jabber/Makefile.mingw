@@ -55,7 +55,12 @@ C_SRC =	\
 			chat.c \
 			data.c \
 			disco.c \
-			google.c \
+			google/gmail.c \
+			google/google.c \
+			google/google_presence.c \
+			google/google_roster.c \
+			google/google_session.c \
+			google/jingleinfo.c \
 			ibb.c \
 			iq.c \
 			jabber.c \

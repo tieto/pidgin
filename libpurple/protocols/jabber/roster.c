@@ -27,7 +27,8 @@
 
 #include "buddy.h"
 #include "chat.h"
-#include "google.h"
+#include "google/google.h"
+#include "google/google_roster.h"
 #include "presence.h"
 #include "roster.h"
 #include "iq.h"

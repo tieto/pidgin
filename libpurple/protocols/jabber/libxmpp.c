@@ -41,7 +41,7 @@
 #include "si.h"
 #include "message.h"
 #include "presence.h"
-#include "google.h"
+#include "google/google.h"
 #include "pep.h"
 #include "usermood.h"
 #include "usertune.h"

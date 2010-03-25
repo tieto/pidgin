@@ -26,8 +26,18 @@ JABBERSOURCES = \
 			  data.h \
 			  disco.c \
 			  disco.h \
-			  google.c \
-			  google.h \
+			  google/gmail.c \
+			  google/gmail.h \
+			  google/google.c \
+			  google/google.h \
+			  google/google_presence.c \
+			  google/google_presence.h \
+			  google/google_roster.c \
+			  google/google_roster.h \
+			  google/google_session.c \
+			  google/google_session.h \
+			  google/jingleinfo.c \
+			  google/jingleinfo.h \
 			  ibb.c \
 			  ibb.h \
 			  iq.c \

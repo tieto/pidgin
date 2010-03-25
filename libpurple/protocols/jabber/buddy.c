@@ -38,7 +38,7 @@
 #include "xdata.h"
 #include "pep.h"
 #include "adhoccommands.h"
-#include "google.h"
+#include "google/google.h"
 
 typedef struct {
 	long idle_seconds;

@@ -34,7 +34,8 @@
 
 #include "buddy.h"
 #include "chat.h"
-#include "google.h"
+#include "google/google.h"
+#include "google/google_presence.h"
 #include "presence.h"
 #include "iq.h"
 #include "jutil.h"
