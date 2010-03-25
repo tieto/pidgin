@@ -118,7 +118,6 @@ typedef struct
 	PidginMiniDialog *signed_on_elsewhere;
 
 	PidginBlistTheme *current_theme;
-
 } PidginBuddyListPrivate;
 
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
@@ -3405,7 +3404,7 @@ static void
 update_status_with_mood(PurpleAccount *account, const gchar *mood,
     const gchar *text)
 {
-	if (mood != NULL && !purple_strequal(mood, "")) {
+	if (mood && *mood) {
 		if (text) {
 			purple_account_set_status(account, "mood", TRUE,
 			                          PURPLE_MOOD_NAME, mood,
@@ -3424,19 +3423,26 @@ update_status_with_mood(PurpleAccount *account, const gchar *mood,
 static void
 edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	PurpleRequestField *mood_field, *text_field;
+	PurpleRequestField *mood_field;
 	GList *l;
 
 	mood_field = purple_request_fields_get_field(fields, "mood");
-	text_field = purple_request_fields_get_field(fields, "text");
 	l = purple_request_field_list_get_selected(mood_field);
 
 	if (l) {
 		const char *mood = purple_request_field_list_get_data(mood_field, l->data);
-		const char *text = purple_request_field_string_get_value(text_field);
 
 		if (gc) {
+			const char *text;
 			PurpleAccount *account = purple_connection_get_account(gc);
+
+			if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES) {
+				PurpleRequestField *text_field;
+				text_field = purple_request_fields_get_field(fields, "text");
+				text = purple_request_field_string_get_value(text_field);
+			} else {
+				text = NULL;
+			}
 
 			update_status_with_mood(account, mood, text);
 		} else {
@@ -3446,8 +3452,8 @@ edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 				PurpleAccount *account = (PurpleAccount *) accounts->data;
 				PurpleConnection *gc = purple_account_get_connection(account);
 
-				if (gc->flags && PURPLE_CONNECTION_SUPPORT_MOODS) {
-					update_status_with_mood(account, mood, text);
+				if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
+					update_status_with_mood(account, mood, NULL);
 				}
 			}
 		}
@@ -3467,9 +3473,9 @@ static PurpleMood *
 get_global_moods(void)
 {
 	GHashTable *global_moods =
-		g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+		g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 	GHashTable *mood_counts =
-		g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+		g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 	GList *accounts = purple_accounts_get_all_active();
 	PurpleMood *result = NULL;
 	GList *out_moods = NULL;
@@ -3491,9 +3497,9 @@ get_global_moods(void)
 						GPOINTER_TO_INT(g_hash_table_lookup(mood_counts, mood->mood));
 
 				if (!g_hash_table_lookup(global_moods, mood->mood)) {
-					g_hash_table_insert(global_moods, g_strdup(mood->mood), mood);
+					g_hash_table_insert(global_moods, (gpointer)mood->mood, mood);
 				}
-				g_hash_table_insert(mood_counts, g_strdup(mood->mood),
+				g_hash_table_insert(mood_counts, (gpointer)mood->mood,
 				    GINT_TO_POINTER(mood_count + 1));
 			}
 
