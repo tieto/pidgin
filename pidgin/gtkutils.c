@@ -2395,7 +2395,6 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 		GError *error = NULL;
 		GdkPixbuf *scale;
 		gboolean success = FALSE;
-		char *filename = NULL;
 
 		g_strfreev(pixbuf_formats);
 
@@ -2425,35 +2424,26 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 		}
 
 		for (i = 0; prpl_formats[i]; i++) {
-			FILE *fp;
-
-			g_free(filename);
-			fp = purple_mkstemp(&filename, TRUE);
-			if (!fp)
-			{
-				g_free(filename);
-				return NULL;
-			}
-			fclose(fp);
-
-			purple_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
+			purple_debug_info("buddyicon", "Converting buddy icon to %s\n", prpl_formats[i]);
 			/* The "compression" param wasn't supported until gdk-pixbuf 2.8.
 			 * Using it in previous versions causes the save to fail (and an assert message).  */
 			if ((gdk_pixbuf_major_version > 2 || (gdk_pixbuf_major_version == 2
 						&& gdk_pixbuf_minor_version >= 8))
 					&& strcmp(prpl_formats[i], "png") == 0) {
-				if (gdk_pixbuf_save(pixbuf, filename, prpl_formats[i],
-						&error, "compression", "9", NULL)) {
+				if (gdk_pixbuf_save_to_buffer(pixbuf, &contents, &length,
+						prpl_formats[i], &error, "compression", "9", NULL))
+				{
 					success = TRUE;
 					break;
 				}
-			} else if (gdk_pixbuf_save(pixbuf, filename, prpl_formats[i],
-					&error, NULL)) {
+			} else if (gdk_pixbuf_save_to_buffer(pixbuf, &contents, &length,
+					prpl_formats[i], &error, NULL))
+			{
 				success = TRUE;
 				break;
 			}
 
-			/* The NULL checking is necessary due to this bug:
+			/* The NULL checking of error is necessary due to this bug:
 			 * http://bugzilla.gnome.org/show_bug.cgi?id=405539 */
 			purple_debug_warning("buddyicon", "Could not convert to %s: %s\n", prpl_formats[i],
 				(error && error->message) ? error->message : "Unknown error");
@@ -2464,24 +2454,8 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 		g_object_unref(G_OBJECT(pixbuf));
 		if (!success) {
 			purple_debug_error("buddyicon", "Could not convert icon to usable format.\n");
-			g_free(filename);
 			return NULL;
 		}
-
-		contents = NULL;
-		if (!g_file_get_contents(filename, &contents, &length, NULL))
-		{
-			purple_debug_error("buddyicon",
-					"Could not read '%s', which we just wrote to disk.\n",
-					filename);
-
-			g_free(contents);
-			g_free(filename);
-			return NULL;
-		}
-
-		g_unlink(filename);
-		g_free(filename);
 	}
 
 	/* Check the image size */
