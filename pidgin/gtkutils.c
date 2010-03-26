@@ -2427,9 +2427,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 			purple_debug_info("buddyicon", "Converting buddy icon to %s\n", prpl_formats[i]);
 			/* The "compression" param wasn't supported until gdk-pixbuf 2.8.
 			 * Using it in previous versions causes the save to fail (and an assert message).  */
-			if ((gdk_pixbuf_major_version > 2 || (gdk_pixbuf_major_version == 2
-						&& gdk_pixbuf_minor_version >= 8))
-					&& strcmp(prpl_formats[i], "png") == 0) {
+			if (g_str_equal(prpl_formats[i], "png")) {
 				if (gdk_pixbuf_save_to_buffer(pixbuf, &contents, &length,
 						prpl_formats[i], &error, "compression", "9", NULL))
 				{
