@@ -105,7 +105,7 @@ endif
 GMSGFMT ?= $(WIN32_DEV_TOP)/gettext-0.17/bin/msgfmt
 MAKENSIS ?= makensis.exe
 MAKENSISOPT ?= /
-PERL ?= /cygdrive/c/perl/bin/perl
+PERL ?= perl
 WINDRES ?= windres
 STRIP ?= strip
 

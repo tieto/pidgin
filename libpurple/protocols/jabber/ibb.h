@@ -107,6 +107,10 @@ JabberIBBSessionState jabber_ibb_session_get_state(const JabberIBBSession *sess)
 gsize jabber_ibb_session_get_block_size(const JabberIBBSession *sess);
 void jabber_ibb_session_set_block_size(JabberIBBSession *sess, gsize size);
 
+/* get maximum size data block to send (in bytes) 
+ (before encoded to BASE64) */ 
+gsize jabber_ibb_session_get_max_data_size(const JabberIBBSession *sess);
+
 gpointer jabber_ibb_session_get_user_data(JabberIBBSession *sess);
 
 /* handle incoming packet */

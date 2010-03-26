@@ -76,7 +76,6 @@ static const struct developer developers[] = {
 	{"John 'rekkanoryo' Bailey",           N_("bug master"),      NULL},
 	{"Ethan 'Paco-Paco' Blanton",          NULL,                  NULL},
 	{"Hylke Bons",                         N_("artist"),          "hylkebons@gmail.com"},
-	{"Thomas Butter",                      NULL,                  NULL},
 	/* feel free to not translate this */
 	{N_("Ka-Hing Cheung"),                 NULL,                  NULL},
 	{"Sadrul Habib Chowdhury",             NULL,                  NULL},
@@ -87,8 +86,6 @@ static const struct developer developers[] = {
 	{"Richard 'rlaager' Laager",           NULL,                  "rlaager@pidgin.im"},
 	{"Sulabh 'sulabh_m' Mahajan",          NULL,                  NULL},
 	{"Richard 'wabz' Nelson",              NULL,                  NULL},
-	{"Christopher 'siege' O'Brien",        NULL,                  "taliesein@users.sf.net"},
-	{"Bartosz Oler",                       NULL,                  NULL},
 	{"Etan 'deryni' Reisner",              NULL,                  NULL},
 	{"Tim 'marv' Ringenbach",              NULL,                  NULL},
 	{"Michael 'Maiku' Ruprecht",           N_("voice and video"), NULL},
@@ -114,12 +111,15 @@ static const struct developer patch_writers[] = {
 /* Order: Alphabetical by Last Name */
 static const struct developer retired_developers[] = {
 	{"Herman Bloggs",               N_("win32 port"),          "herman@bluedigits.com"},
+	{"Thomas Butter",               NULL,                      NULL},
 	{"Jim Duchek",                  N_("maintainer"),          "jim@linuxpimps.com"},
 	{"Rob Flynn",                   N_("maintainer"),          NULL},
 	{"Adam Fritzler",               N_("libfaim maintainer"),  NULL},
 	{"Christian 'ChipX86' Hammond", N_("webmaster"),           NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",                   N_("hacker and designated driver [lazy bum]"), NULL},
+	{"Christopher 'siege' O'Brien", NULL,                      "taliesein@users.sf.net"},
+	{"Bartosz Oler",                NULL,                      NULL},
 	{"Megan 'Cae' Schneider",       N_("support/QA"),          NULL},
 	{"Jim Seymour",                 N_("XMPP"),                NULL},
 	{"Mark Spencer",                N_("original author"),     "markster@marko.net"},

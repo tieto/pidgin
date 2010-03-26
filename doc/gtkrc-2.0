@@ -81,6 +81,12 @@ binding "my-bindings"
 	bind "<alt>F2" { "format_toggle" (2) }
 # Ctrl-alt-shift-f3 toggles underline
 	bind "<ctrl><alt><shift>F3" { "format_toggle" (4) }
+
+# Ctrl-v to paste as plain text
+	bind "<ctrl>v" { "paste" ("text") }
+
+# Ctrl-Shift-v for normal 'Paste'
+	bind "<ctrl><shift>v" { "paste" ("html") }
 }
   
 widget "*pidgin_conv_entry" binding "my-bindings"

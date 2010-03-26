@@ -845,19 +845,18 @@ static GList* jabber_caps_xdata_get_fields(const xmlnode *x)
 	return fields;
 }
 
-static GString*
-jabber_caps_verification_append(GString *verification, const gchar *str)
+static void 
+append_escaped_string(PurpleCipherContext *context, const gchar *str)
 {
 	char *tmp = g_markup_escape_text(str, -1);
-	verification = g_string_append(verification, tmp);
+	purple_cipher_context_append(context, (const guchar *)tmp, strlen(tmp));
 	g_free(tmp);
-	return g_string_append_c(verification, '<');
+	purple_cipher_context_append(context, (const guchar *)"<", 1);
 }
 
 gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 {
 	GList *node;
-	GString *verification;
 	PurpleCipherContext *context;
 	guint8 checksum[20];
 	gsize checksum_size = 20;
@@ -871,24 +870,26 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 	info->features = g_list_sort(info->features, (GCompareFunc)strcmp);
 	info->forms = g_list_sort(info->forms, jabber_xdata_compare);
 
-	verification = g_string_new("");
-
-	/* concat identities to the verification string */
+	/* Add identities to the hash data */
 	for (node = info->identities; node; node = node->next) {
 		JabberIdentity *id = (JabberIdentity*)node->data;
 		char *category = g_markup_escape_text(id->category, -1);
 		char *type = g_markup_escape_text(id->type, -1);
 		char *lang = NULL;
 		char *name = NULL;
+		char *tmp;
 
 		if (id->lang)
 			lang = g_markup_escape_text(id->lang, -1);
 		if (id->name)
 			name = g_markup_escape_text(id->name, -1);
 
-		g_string_append_printf(verification, "%s/%s/%s/%s<", category,
-		        type, lang ? lang : "", name ? name : "");
+		tmp = g_strconcat(category, "/", type, "/", lang ? lang : "",
+		                  "/", name ? name : "", "<", NULL);
 
+		purple_cipher_context_append(context, (const guchar *)tmp, strlen(tmp));
+
+		g_free(tmp);
 		g_free(category);
 		g_free(type);
 		g_free(lang);
@@ -897,7 +898,7 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 
 	/* concat features to the verification string */
 	for (node = info->features; node; node = node->next) {
-		verification = jabber_caps_verification_append(verification, node->data);
+		append_escaped_string(context, node->data);
 	}
 
 	/* concat x-data forms to the verification string */
@@ -907,19 +908,19 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 		GList *fields = jabber_caps_xdata_get_fields(data);
 
 		/* append FORM_TYPE's field value to the verification string */
-		verification = jabber_caps_verification_append(verification, formtype);
+		append_escaped_string(context, formtype);
 		g_free(formtype);
 
 		while (fields) {
 			GList *value;
 			JabberDataFormField *field = (JabberDataFormField*)fields->data;
 
-			if (strcmp(field->var, "FORM_TYPE")) {
+			if (!g_str_equal(field->var, "FORM_TYPE")) {
 				/* Append the "var" attribute */
-				verification = jabber_caps_verification_append(verification, field->var);
+				append_escaped_string(context, field->var);
 				/* Append <value/> elements' cdata */
-				for(value = field->values; value; value = value->next) {
-					verification = jabber_caps_verification_append(verification, value->data);
+				for (value = field->values; value; value = value->next) {
+					append_escaped_string(context, value->data);
 					g_free(value->data);
 				}
 			}
@@ -932,12 +933,9 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 	}
 
 	/* generate hash */
-	purple_cipher_context_append(context, (guchar*)verification->str, verification->len);
-
-	success = purple_cipher_context_digest(context, verification->len,
+	success = purple_cipher_context_digest(context, checksum_size,
 	                                       checksum, &checksum_size);
 
-	g_string_free(verification, TRUE);
 	purple_cipher_context_destroy(context);
 
 	return (success ? purple_base64_encode(checksum, checksum_size) : NULL);

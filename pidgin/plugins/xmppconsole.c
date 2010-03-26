@@ -845,7 +845,7 @@ static PurplePluginInfo info =
 	                                              /**  summary        */
 	N_("Send and receive raw XMPP stanzas."),
 	                                              /**  description    */
-	N_("This plugin is useful for debbuging XMPP servers or clients."),
+	N_("This plugin is useful for debugging XMPP servers or clients."),
 	"Sean Egan <seanegan@gmail.com>",             /**< author         */
 	PURPLE_WEBSITE,                               /**< homepage       */
 

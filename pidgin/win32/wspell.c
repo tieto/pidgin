@@ -95,41 +95,6 @@ static void load_gtkspell() {
 	SetErrorMode(old_error_mode);
 }
 
-static void lookup_aspell_path() {
-	const char *tmp;
-	gchar *aspell_path;
-
-	if ((tmp = g_getenv("PIDGIN_ASPELL_DIR")))
-		aspell_path = g_strdup(tmp);
-	else
-		aspell_path = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, "Software\\Aspell", "Path");
-
-	if (aspell_path != NULL) {
-		char *tmp = g_build_filename(aspell_path, "aspell-15.dll", NULL);
-		if (g_file_test(tmp, G_FILE_TEST_EXISTS)) {
-			const char *path = g_getenv("PATH");
-			purple_debug_info("wspell", "Found Aspell in %s\n", aspell_path);
-
-			g_free(tmp);
-
-			tmp = g_strdup_printf("%s%s%s", (path ? path : ""),
-					(path ? G_SEARCHPATH_SEPARATOR_S : ""),
-					aspell_path);
-
-			g_setenv("PATH", tmp, TRUE);
-
-		} else
-			purple_debug_warning("wspell", "Couldn't find aspell-15.dll\n");
-
-		g_free(tmp);
-		g_free(aspell_path);
-	} else
-		purple_debug_warning("wspell", "Aspell installation not found (this isn't necessarily a problem)\n");
-}
-
 void winpidgin_spell_init() {
-	/* We keep doing the aspell path thing so that previously installed dictionaries still work */
-	lookup_aspell_path();
-
 	load_gtkspell();
 }

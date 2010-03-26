@@ -12,7 +12,6 @@ GCCWARNINGS += -Wno-comment -Wno-unused -Wno-nested-externs
 DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
 
 TARGET = Pidgin
-EXTUTILS ?= C:/perl/lib/ExtUtils
 
 ##
 ## INCLUDE PATHS

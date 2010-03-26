@@ -149,8 +149,9 @@ void jabber_avatar_set(JabberStream *js, PurpleStoredImage *img)
 			char *lengthstring, *widthstring, *heightstring;
 
 			/* compute the sha1 hash */
-			char *hash = jabber_calculate_data_sha1sum(purple_imgstore_get_data(img),
-			                                           purple_imgstore_get_size(img));
+			char *hash = jabber_calculate_data_hash(purple_imgstore_get_data(img),
+			                                        purple_imgstore_get_size(img),
+			    									"sha1");
 			char *base64avatar = purple_base64_encode(purple_imgstore_get_data(img),
 			                                          purple_imgstore_get_size(img));
 

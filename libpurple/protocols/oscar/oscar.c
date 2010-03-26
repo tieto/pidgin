@@ -71,9 +71,18 @@
 
 #define OSCAR_CONNECT_STEPS 6
 
-static OscarCapability purple_caps = (OSCAR_CAPABILITY_CHAT | OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM |
-									  OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_UNICODE | OSCAR_CAPABILITY_INTEROPERATE |
-									  OSCAR_CAPABILITY_SHORTCAPS | OSCAR_CAPABILITY_TYPING |  OSCAR_CAPABILITY_ICQSERVERRELAY | OSCAR_CAPABILITY_NEWCAPS | OSCAR_CAPABILITY_XTRAZ);
+static guint64 purple_caps =
+	OSCAR_CAPABILITY_CHAT
+		| OSCAR_CAPABILITY_BUDDYICON
+		| OSCAR_CAPABILITY_DIRECTIM
+		| OSCAR_CAPABILITY_SENDFILE
+		| OSCAR_CAPABILITY_UNICODE
+		| OSCAR_CAPABILITY_INTEROPERATE
+		| OSCAR_CAPABILITY_SHORTCAPS
+		| OSCAR_CAPABILITY_TYPING
+		| OSCAR_CAPABILITY_ICQSERVERRELAY
+		| OSCAR_CAPABILITY_NEWCAPS
+		| OSCAR_CAPABILITY_XTRAZ;
 
 static guint8 features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static guint8 features_icq[] = {0x01, 0x06};
@@ -471,7 +480,7 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcebn,
 		charsetstr1 = "UTF-8";
 		charsetstr2 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	}
-	
+
 	purple_debug_info("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%" G_GSIZE_FORMAT ", choice1=%s, choice2=%s, choice3=%s\n",
 					  charset, charsubset, datalen, charsetstr1, charsetstr2, (charsetstr3 ? charsetstr3 : ""));
 
@@ -673,7 +682,7 @@ purple_str_sub_away_formatters(const char *str, const char *name)
 	return g_string_free(cpy, FALSE);
 }
 
-static gchar *oscar_caps_to_string(OscarCapability caps)
+static gchar *oscar_caps_to_string(guint64 caps)
 {
 	GString *str;
 	const gchar *tmp;
@@ -2594,7 +2603,6 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	PurpleAccount *account;
 	PurpleMessageFlags flags = 0;
 	char *message = NULL;
-	char *rtfmsg = NULL;
 
 	g_return_val_if_fail(od != NULL, 0);
 	g_return_val_if_fail(od->gc != NULL, 0);
@@ -2606,8 +2614,9 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	if (args == NULL)
 		return 0;
 
-	purple_debug_misc("oscar", "Incoming rendezvous message of type %u, "
-			"user %s, status %hu\n", args->type, userinfo->bn, args->status);
+	purple_debug_misc("oscar", "Incoming rendezvous message of type %"
+			G_GUINT64_FORMAT ", user %s, status %hu\n",
+			args->type, userinfo->bn, args->status);
 
 	if (args->msg != NULL)
 	{
@@ -2624,20 +2633,6 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		}
 	}
 
-	if (args->info.rtfmsg.rtfmsg != NULL)
-	{
-		if (args->encoding != NULL)
-		{
-			char *encoding = NULL;
-			encoding = oscar_encoding_extract(args->encoding);
-			rtfmsg = oscar_encoding_to_utf8(account, encoding, args->info.rtfmsg.rtfmsg,
-			                                 strlen(args->info.rtfmsg.rtfmsg));
-			g_free(encoding);
-		} else {
-			if (g_utf8_validate(args->info.rtfmsg.rtfmsg, strlen(args->info.rtfmsg.rtfmsg), NULL))
-				rtfmsg = g_strdup(args->info.rtfmsg.rtfmsg);
-		}
-	}
 	if (args->type & OSCAR_CAPABILITY_CHAT)
 	{
 		char *encoding, *utf8name, *tmp;
@@ -2725,30 +2720,35 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	{
 		purple_debug_info("oscar", "Got an ICQ Server Relay message of "
 				"type %d\n", args->info.rtfmsg.msgtype);
-		purple_debug_info("oscar", "Sending X-Status Reply\n");
 
-		if(args->info.rtfmsg.msgtype == 26)
-			icq_relay_xstatus(od, userinfo->bn, args->cookie);
-		
-		if(args->info.rtfmsg.msgtype == 1)
+		if (args->info.rtfmsg.msgtype == 1)
 		{
-			if(rtfmsg)
+			if (args->info.rtfmsg.rtfmsg != NULL)
 			{
-				serv_got_im(gc, userinfo->bn, rtfmsg, flags,
-				            time(NULL));
+				char *rtfmsg = NULL;
+				if (args->encoding != NULL) {
+					char *encoding = oscar_encoding_extract(args->encoding);
+					rtfmsg = oscar_encoding_to_utf8(account, encoding,
+							args->info.rtfmsg.rtfmsg, strlen(args->info.rtfmsg.rtfmsg));
+					g_free(encoding);
+				} else {
+					if (g_utf8_validate(args->info.rtfmsg.rtfmsg, strlen(args->info.rtfmsg.rtfmsg), NULL))
+						rtfmsg = g_strdup(args->info.rtfmsg.rtfmsg);
+				}
+				if (rtfmsg) {
+					serv_got_im(gc, userinfo->bn, rtfmsg, flags, time(NULL));
+					g_free(rtfmsg);
+				}
 			}
-			else
-			{
-				serv_got_im(gc, userinfo->bn,
-				            args->info.rtfmsg.rtfmsg, flags,
-				            time(NULL));
-			}
-		}
+		} else if (args->info.rtfmsg.msgtype == 26)
+			purple_debug_info("oscar", "Sending X-Status Reply\n");
+			icq_relay_xstatus(od, userinfo->bn, args->cookie);
+
 	}
 	else
 	{
-		purple_debug_error("oscar", "Unknown request class %hu\n",
-				args->type);
+		purple_debug_error("oscar", "Unknown request class %"
+				G_GUINT64_FORMAT "\n", args->type);
 	}
 
 	g_free(message);
@@ -3331,9 +3331,9 @@ static int purple_parse_clientauto_ch4(OscarData *od, char *who, guint16 reason,
 			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
 			statusmsg = oscar_icqstatus(state);
 			splitmsg = g_strsplit(msg, "\r\n", 0);
-			
+
 			user_info = purple_notify_user_info_new();
-				
+
 			purple_notify_user_info_add_pair(user_info, _("UIN"), who);
 			purple_notify_user_info_add_pair(user_info, _("Status"), statusmsg);
 			purple_notify_user_info_add_section_break(user_info);
@@ -4758,8 +4758,8 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		img = purple_buddy_icons_find_account_icon(account);
 		if (img) {
 			gconstpointer data = purple_imgstore_get_data(img);
-			args.iconlen   = purple_imgstore_get_size(img);
-			args.iconsum   = aimutil_iconsum(data, args.iconlen);
+			args.iconlen = purple_imgstore_get_size(img);
+			args.iconsum = aimutil_iconsum(data, args.iconlen);
 			args.iconstamp = purple_buddy_icons_get_account_icon_timestamp(account);
 
 			if ((args.iconlen != bi->ico_me_len) || (args.iconsum != bi->ico_me_csum) || (args.iconstamp != bi->ico_me_time)) {
@@ -5368,7 +5368,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	{ /* If not in server list then prune from local list */
 		GSList *cur, *next;
 		GSList *buddies = purple_find_buddies(account, NULL);
-		
+
 		/* Buddies */
 		cur = NULL;
 
@@ -5807,28 +5807,34 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	return 1;
 }
 
-static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
+static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
+{
 	PurpleConnection *gc = od->gc;
 	va_list ap;
-	char *bn;
-	char *msg;
+	const char *bn;
+	const char *msg;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	gchar *reason = NULL;
 	struct name_data *data;
 	PurpleBuddy *buddy;
 
 	va_start(ap, fr);
-	bn = va_arg(ap, char *);
-	msg = va_arg(ap, char *);
+	bn = va_arg(ap, const char *);
+	msg = va_arg(ap, const char *);
 	va_end(ap);
 
 	purple_debug_info("oscar",
-			   "ssi: received authorization request from %s\n", bn);
+			"ssi: received authorization request from %s\n", bn);
 
 	buddy = purple_find_buddy(account, bn);
 
-	if (msg != NULL)
-		reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_LATIN_1, 0x0000, msg, strlen(msg));
+	if (!msg) {
+		purple_debug_warning("oscar", "Received auth request from %s with "
+				"empty message\n", bn);
+	} else if (!g_utf8_validate(msg, -1, NULL)) {
+		purple_debug_warning("oscar", "Received auth request from %s with "
+				"invalid UTF-8 message\n", bn);
+		msg = NULL;
+	}
 
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
@@ -5837,9 +5843,8 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 
 	purple_account_request_authorization(account, bn, NULL,
 			(buddy ? purple_buddy_get_alias_only(buddy) : NULL),
-			reason, buddy != NULL, purple_auth_grant,
+			msg, buddy != NULL, purple_auth_grant,
 			purple_auth_dontgrant_msgprompt, data);
-	g_free(reason);
 
 	return 1;
 }
@@ -6389,7 +6394,7 @@ oscar_status_types(PurpleAccount *account)
 				purple_value_new(PURPLE_TYPE_STRING), NULL);
 
 	status_types = g_list_prepend(status_types, type);
-	
+
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 									 OSCAR_STATUS_ID_EVIL,
 									 _("Evil"), TRUE, is_icq, FALSE,
@@ -6651,23 +6656,22 @@ oscar_close_directim(gpointer object, gpointer ignored)
 		 * window. Let the user know that we canceled the Direct IM. */
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
 		purple_conversation_write(conv, NULL, _("You closed the connection."),
-		                          PURPLE_MESSAGE_SYSTEM, time(NULL));
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
 }
 
-static void oscar_get_icqxstatusmsg (PurpleBlistNode *node, gpointer ignore)
+static void oscar_get_icqxstatusmsg(PurpleBlistNode *node, gpointer ignore)
 {
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	
-	
+
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
 	gc = purple_account_get_connection(buddy->account);
 	account = purple_connection_get_account(gc);
-	purple_debug_info("oscar",   "Manual X-Status Get From %s to %s:\n", purple_buddy_get_name(buddy), account->username);
+	purple_debug_info("oscar", "Manual X-Status Get From %s to %s:\n", purple_buddy_get_name(buddy), account->username);
 
 	icq_im_xstatus_request(gc->proto_data, purple_buddy_get_name(buddy));
 }

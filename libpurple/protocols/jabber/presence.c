@@ -457,7 +457,7 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 
 			data = purple_base64_decode(text, &size);
 			if (data) {
-				gchar *hash = jabber_calculate_data_sha1sum(data, size);
+				gchar *hash = jabber_calculate_data_hash(data, size, "sha1");
 				purple_buddy_icons_set_for_user(js->gc->account, from, data,
 				                                size, hash);
 				g_free(hash);
@@ -538,7 +538,7 @@ out:
 	g_free(userdata);
 }
 
-gboolean
+static gboolean
 handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet)
 {
 	static int i = 1;
@@ -670,7 +670,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 		if (chat->muc) {
 			if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(110)))
 				is_our_resource = TRUE;
-			
+
 			if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(301))) {
 				/* XXX: We got banned.  YAY! (No GIR, that's bad) */
 			}
@@ -744,15 +744,15 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 
 				g_free(reason);
 			}
-			
+
 			if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(321))) {
 				/* XXX: removed due to an affiliation change */
 			}
-			
+
 			if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(322))) {
 				/* XXX: removed because room is now members-only */
 			}
-			
+
 			if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(332))) {
 				/* XXX: removed due to system shutdown */
 			}
@@ -792,7 +792,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 	return TRUE;
 }
 
-gboolean
+static gboolean
 handle_presence_contact(JabberStream *js, JabberPresence *presence)
 {
 	JabberBuddyResource *jbr;
@@ -996,7 +996,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		JabberPresenceHandler *pih;
 		if (child->type != XMLNODE_TYPE_TAG)
 			continue;
-	
+
 		key = g_strdup_printf("%s %s", child->name, xmlnode_get_namespace(child));
 		pih = g_hash_table_lookup(presence_handlers, key);
 		g_free(key);
@@ -1052,11 +1052,15 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	}
 
 out:
-	g_free(presence.nickname);
+	while (presence.chat_info.codes)
+		presence.chat_info.codes =
+			g_slist_delete_link(presence.chat_info.codes,
+			                    presence.chat_info.codes);
+
 	g_free(presence.status);
-	jabber_id_free(presence.jid_from);
-	g_free(presence.nickname);
 	g_free(presence.vcard_avatar_hash);
+	g_free(presence.nickname);
+	jabber_id_free(presence.jid_from);
 }
 
 void jabber_presence_subscription_set(JabberStream *js, const char *who, const char *type)
