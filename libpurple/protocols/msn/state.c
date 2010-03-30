@@ -162,7 +162,7 @@ create_media_string(PurplePresence *presence)
 /* set the MSN's PSM info,Currently Read from the status Line
  * Thanks for Cris Code
  */
-void
+static void
 msn_set_psm(MsnSession *session)
 {
 	PurpleAccount *account;

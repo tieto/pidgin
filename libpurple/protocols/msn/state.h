@@ -58,8 +58,6 @@ const char *msn_away_get_text(MsnAwayType type);
 
 const char *msn_state_get_text(MsnAwayType state);
 
-void msn_set_psm(MsnSession *session);
-
 /* Get the CurrentMedia info from the XML node */
 char *msn_get_currentmedia(xmlnode *payloadNode);
 
