@@ -181,50 +181,48 @@ jabber_data_has_valid_hash(const JabberData *data)
 {
 	const gchar *cid = jabber_data_get_cid(data);
 	gchar **cid_parts = g_strsplit(cid, "@", -1);
-	gchar **iter;
-	int num_parts = 0;
+	guint num_cid_parts = 0;
+	gboolean ret = FALSE;
 
-	purple_debug_info("jabber", "validating BoB hash %s\n", cid);
-	
-	for (iter = cid_parts; *iter != NULL ; iter++) {
-		num_parts++;
-	}
+	if (cid_parts)
+		num_cid_parts = g_strv_length(cid_parts);
 
-	if (num_parts == 2 && purple_strequal(cid_parts[1], "bob.xmpp.org")) {
+	if (num_cid_parts == 2 && purple_strequal(cid_parts[1], "bob.xmpp.org")) {
 		gchar **sub_parts = g_strsplit(cid_parts[0], "+", -1);
+		guint num_sub_parts = 0;
 
-		num_parts = 0;
-		for (iter = sub_parts ; *iter != NULL ; iter++) {
-			num_parts++;
-		}
+		if (sub_parts)
+			num_sub_parts = g_strv_length(sub_parts);
 
-		if (num_parts == 2) {
+		if (num_sub_parts == 2) {
 			const gchar *hash_algo = sub_parts[0];
 			const gchar *hash_value = sub_parts[1];
 			gchar *digest =
 				jabber_calculate_data_hash(jabber_data_get_data(data),
 				    jabber_data_get_size(data), hash_algo);
-			
+
 			if (digest) {
-				gboolean result = purple_strequal(digest, hash_value);
+				ret = purple_strequal(digest, hash_value);
 
-				purple_debug_info("jabber", "BoB expecting hash: %s\n", digest);
+				if (!ret)
+					purple_debug_warning("jabber", "Unable to validate BoB "
+					                     "hash; expecting %s, got %s\n",
+					                     cid, digest);
 
-				if (!result) {
-					purple_debug_error("jabber", "invalid BoB hash\n");
-				}
 				g_free(digest);
-				return result;
 			} else {
-				purple_debug_info("jabber", "unknown BoB hash algo\n");
-				return FALSE;
+				purple_debug_warning("jabber", "Unable to validate BoB hash; "
+				                     "unknown hash algorithm %s\n", hash_algo);
 			}
 		} else {
-			return FALSE;
+			purple_debug_warning("jabber", "Malformed BoB CID\n");
 		}
-	} else {
-		return FALSE;
+
+		g_strfreev(sub_parts);
 	}
+
+	g_strfreev(cid_parts);
+	return ret;
 }
 
 
