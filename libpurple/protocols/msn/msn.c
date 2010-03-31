@@ -43,7 +43,6 @@
 #include "msg.h"
 #include "switchboard.h"
 #include "notification.h"
-#include "sync.h"
 #include "slplink.h"
 
 #if PHOTO_SUPPORT
@@ -2712,7 +2711,6 @@ static gboolean msn_load(PurplePlugin *plugin)
 {
 	msn_notification_init();
 	msn_switchboard_init();
-	msn_sync_init();
 
 	return TRUE;
 }
@@ -2721,7 +2719,6 @@ static gboolean msn_unload(PurplePlugin *plugin)
 {
 	msn_notification_end();
 	msn_switchboard_end();
-	msn_sync_end();
 
 	return TRUE;
 }

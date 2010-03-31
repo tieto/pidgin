@@ -74,9 +74,6 @@ msn_session_destroy(MsnSession *session)
 	while (session->switches != NULL)
 		msn_switchboard_destroy(session->switches->data);
 
-	if (session->sync != NULL)
-		msn_sync_destroy(session->sync);
-
 	if (session->oim != NULL)
 		msn_oim_destroy(session->oim);
 

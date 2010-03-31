@@ -31,7 +31,6 @@
 #include "page.h"
 
 #include "userlist.h"
-#include "sync.h"
 #include "slplink.h"
 
 static MsnTable *cbs_table;

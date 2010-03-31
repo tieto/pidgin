@@ -52,8 +52,6 @@ MSNSOURCES = \
 	state.h \
 	switchboard.c \
 	switchboard.h \
-	sync.c \
-	sync.h \
 	table.c \
 	table.h \
 	transaction.c \

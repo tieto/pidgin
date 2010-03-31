@@ -67,7 +67,6 @@ typedef enum
 #include "slpcall.h"
 #include "sslconn.h"
 #include "switchboard.h"
-#include "sync.h"
 #include "user.h"
 #include "userlist.h"
 
@@ -89,7 +88,6 @@ struct _MsnSession
 	MsnNotification *notification;
 	MsnNexus        *nexus;
 	MsnOim          *oim;
-	MsnSync         *sync;
 	MsnUserList     *userlist;
 	char            *abch_cachekey;
 
