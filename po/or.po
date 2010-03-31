@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: or\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-10 22:30-0800\n"
+"POT-Creation-Date: 2010-03-29 00:17-0700\n"
 "PO-Revision-Date: 2010-02-11 11:31+0530\n"
 "Last-Translator: Manoj Kumar Giri <mgiri@redhat.com>\n"
 "Language-Team: Oriya <oriya-it@googlegroups.com>\n"
@@ -2189,21 +2189,18 @@ msgstr "କୋଣସି କଡେକ ବଳିନାହିଁ। fs-codecs.conf 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "ଗୋଟିଏ ପୁନରାବର୍ତ୍ତୀ-ଅଯୋଗ୍ୟ Farsight2 ତ୍ରୁଟି ଘଟିଛି।"
 
-msgid "Conference error"
-msgstr "ଆଲୋଚନା ତ୍ରୁଟି"
-
 msgid "Error with your microphone"
 msgstr "ଆପଣଙ୍କର ମାଇକ୍ରୋଫୋନରେ ତ୍ରୁଟି ଅଛି"
 
 msgid "Error with your webcam"
 msgstr "ଆପଣଙ୍କର ୱେବକ୍ୟାମରେ ତ୍ରୁଟି ଅଛି"
 
+msgid "Conference error"
+msgstr "ଆଲୋଚନା ତ୍ରୁଟି"
+
 #, c-format
 msgid "Error creating session: %s"
 msgstr "ଅଧିବେଶନ ନିର୍ମାଣ କରିବାରେ ତ୍ରୁଟି: %s"
-
-msgid "Error creating conference."
-msgstr "ଆଲୋଚନା ପ୍ରସ୍ତୁତ କରିବାରେ ତ୍ରୁଟି।"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -2968,18 +2965,6 @@ msgstr "%s ସଂଭାଷଣ ବନ୍ଦ କରିଛି"
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "ସଂଦେଶ ପଠାଇବାକୁ ଅସମର୍ଥ, ସଂଭାଷଣ ଆରମ୍ଭ ହୋଇ ପାରିଲା ନାହିଁ ୤"
 
-#, c-format
-msgid "Unable to create socket: %s"
-msgstr "ସକେଟ ନିର୍ମାଣ କରିବାରେ ଅସମର୍ଥ: %s"
-
-#, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "ସକେଟକୁ ପୋର୍ଟରେ ବାନ୍ଧିବାରେ ଅସମର୍ଥ: %s"
-
-#, c-format
-msgid "Unable to listen on socket: %s"
-msgstr "ସକେଟରେ ଶୁଣିବାରେ ଅସମର୍ଥ: %s"
-
 msgid "Error communicating with local mDNSResponder."
 msgstr "ସ୍ଥାନୀୟ mDNSResponder ସହିତ ଯୋଗାଯୋଗ କରିବାରେ ତ୍ରୁଟି।"
 
@@ -3135,6 +3120,14 @@ msgstr "ଚାଟକୁ ୟୋଗ କର ..."
 #. Global
 msgid "Available"
 msgstr "ଉପଲବ୍ଧ"
+
+#. 2
+msgid "Chatty"
+msgstr "ଚାଟୀ"
+
+#. 3
+msgid "Do Not Disturb"
+msgstr "ବିରକ୍ତ କର ନାହିଁ"
 
 #. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
@@ -3956,17 +3949,6 @@ msgstr "ଲଗଇନ"
 msgid "Log Out"
 msgstr "ଲଗଆଉଟ କରନ୍ତୁ"
 
-#. 2
-msgid "Chatty"
-msgstr "ଚାଟୀ"
-
-msgid "Extended Away"
-msgstr "ଦୂର ବିସ୍ତୃତ ହୋଇଛି"
-
-#. 3
-msgid "Do Not Disturb"
-msgstr "ବିରକ୍ତ କର ନାହିଁ"
-
 msgid "JID"
 msgstr "JID"
 
@@ -4233,6 +4215,14 @@ msgstr "ଭାବନା ପାଠ୍ୟ"
 msgid "Allow Buzz"
 msgstr "ବଜକୁ ଅନୁମତି ଦିଅନ୍ତୁ"
 
+#, fuzzy
+msgid "Mood Name"
+msgstr "ମଧ୍ଯନାମ"
+
+#, fuzzy
+msgid "Mood Comment"
+msgstr "ବନ୍ଧୁ ମନ୍ତବ୍ଯ"
+
 msgid "Tune Artist"
 msgstr "କଳାକାରକୁ ସମତାଳ କରନ୍ତୁ"
 
@@ -4477,10 +4467,6 @@ msgstr ""
 "ଗୁଞ୍ଜନ କରିବାରେ ଅସମର୍ଥ, କାରଣ %s ଏହାକୁ ସମର୍ଥନ କରେନାହିଁ କିମ୍ବା ବର୍ତ୍ତମାନ ଗୁଞ୍ଜନ ଗ୍ରହଣ କରିବା ପାଇଁ "
 "ଇଚ୍ଛାକରୁନାହିଁ।"
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr "ଗୁଞ୍ଜନକରୁଅଛି %s..."
-
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
@@ -4489,6 +4475,10 @@ msgstr "ଗୁଞ୍ଜନ"
 #, c-format
 msgid "%s has buzzed you!"
 msgstr "%s ଆପଣଙ୍କୁ ଗୁଞ୍ଜନ ଦେଇଛି!"
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr "ଗୁଞ୍ଜନକରୁଅଛି %s..."
 
 #, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4517,6 +4507,10 @@ msgstr "ଗୋଟିଏ ଉତ୍ସ ବାଛନ୍ତୁ"
 
 msgid "Initiate Media"
 msgstr "ମେଡିଆ ଆରମ୍ଭ କରନ୍ତୁ"
+
+#, fuzzy
+msgid "Account does not support PEP, can't set mood"
+msgstr "ଏହି ପ୍ରୋଟକଲ ଚାଟ ରୁମକୁ ସମର୍ଥନ କରେନି୤"
 
 msgid "config:  Configure a chat room."
 msgstr "କନଫିଗର: ଏକ ଚାଟ ରୁମ କନଫିଗର କର୤"
@@ -4570,6 +4564,13 @@ msgstr "ping &lt;jid&gt;:\tଗୋଟିଏ ଚାଳକ/ଉପାଦାନ/ସ�
 
 msgid "buzz: Buzz a user to get their attention"
 msgstr "ବଜ୍ଜ: ସେମାନଙ୍କର ଧ୍ଯାନ ଆକର୍ଷଣ କରିବାକୁ ଜଣେ ଉପୟୋଗକର୍ତ୍ତାଙ୍କୁ ବଜ୍ଜ କର"
+
+#, fuzzy
+msgid "mood: Set current user mood"
+msgstr "ସଠିକ ଉପୟୋଗ କର୍ତ୍ତା ମନୋନୀତ କର"
+
+msgid "Extended Away"
+msgstr "ଦୂର ବିସ୍ତୃତ ହୋଇଛି"
 
 #. *< type
 #. *< ui_requirement
@@ -4647,11 +4648,17 @@ msgstr "(ସଂକେତ %s)"
 msgid "A custom smiley in the message is too large to send."
 msgstr "ସଂଦେଶରେ ଥିବା ଇଚ୍ଛାରୂପଣ smiley ପଠାଇବା ପାଇଁ ଅତ୍ୟଧିକ ବଡ ଅଟେ।"
 
+msgid "XMPP stream header missing"
+msgstr ""
+
+msgid "XMPP Version Mismatch"
+msgstr ""
+
+msgid "XMPP stream missing ID"
+msgstr ""
+
 msgid "XML Parse error"
 msgstr "XML ପାର୍ସ ଭୂଲ"
-
-msgid "Unknown Error in presence"
-msgstr "ଅଜ୍ଞାତ ତୃଟି ଉପସ୍ଥିତ ଅଛି"
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4688,6 +4695,9 @@ msgstr "ଆପଣଙ୍କୁ ବାହାର କରିଦିଆଯାଇଛି:
 msgid "Kicked (%s)"
 msgstr "ବାହାର କରିଦିଆଯାଇଛି (%s)"
 
+msgid "Unknown Error in presence"
+msgstr "ଅଜ୍ଞାତ ତୃଟି ଉପସ୍ଥିତ ଅଛି"
+
 msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "ଇନ-ବ୍ୟାଣ୍ଡ ବାଇଟ ଧାରା ପରିବହନ ଉପରେ ଗୋଟିଏ ତ୍ରୁଟି ଘଟିଲା\n"
 
@@ -4720,17 +4730,320 @@ msgstr "%s ପାଖକୁ ଫାଇଲ ପଠାଇବାରେ ଅସମର୍
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "ଦୟାକରି %s ର ଉତ୍ସକୁ ବାଛନ୍ତୁ ଯାହା ପାଖକୁ ଆପଣ ଗୋଟିଏ ଫାଇଲ ପଠାଇବା ପାଇଁ ଇଚ୍ଛାକରୁଛନ୍ତି"
 
-msgid "Edit User Mood"
-msgstr "ଚାଳକ ଭାବନାକୁ ସମ୍ପାଦନ କରନ୍ତୁ"
+#, fuzzy
+msgid "Afraid"
+msgstr "ଆରବୀ"
 
-msgid "Please select your mood from the list."
-msgstr "ତାଲିକାରୁ ଆପଣଙ୍କର ଭାବନାକୁ ଦୟାକରି ବାଛନ୍ତୁ।"
+#, fuzzy
+msgid "Amazed"
+msgstr "ଲଜ୍ଜିତ"
 
-msgid "Set"
-msgstr "ସେଟକର"
+#, fuzzy
+msgid "Amorous"
+msgstr "ଗୌରବାନ୍ବିତ"
 
-msgid "Set Mood..."
-msgstr "ଭାବନା ସେଟ କରନ୍ତୁ..."
+#. 1
+msgid "Angry"
+msgstr "କ୍ରୋଧିତ"
+
+#, fuzzy
+msgid "Annoyed"
+msgstr "ନିଷେଧ "
+
+msgid "Anxious"
+msgstr "ଉତ୍କଣ୍ଠିତ"
+
+#, fuzzy
+msgid "Aroused"
+msgstr "ତୁମେ ପଠାଅ"
+
+msgid "Ashamed"
+msgstr "ଲଜ୍ଜିତ"
+
+msgid "Bored"
+msgstr "ବିରକ୍ତ"
+
+#, fuzzy
+msgid "Brave"
+msgstr "ସଂରକ୍ଷଣ କରନ୍ତୁ"
+
+#, fuzzy
+msgid "Calm"
+msgstr "ରାଜ୍ଯ"
+
+#, fuzzy
+msgid "Cautious"
+msgstr "ଚାଟଗୁଡିକ"
+
+#, fuzzy
+msgid "Cold"
+msgstr "ମୋଟା"
+
+#, fuzzy
+msgid "Confident"
+msgstr "ବିରୋଧ"
+
+#, fuzzy
+msgid "Confused"
+msgstr "ଆଗକୁ ବଢନ୍ତୁ"
+
+#, fuzzy
+msgid "Contemplative"
+msgstr "ସମ୍ପର୍କ"
+
+#, fuzzy
+msgid "Contented"
+msgstr "ସଂଯୋଗିତ"
+
+#, fuzzy
+msgid "Cranky"
+msgstr "କମ୍ପାନୀ"
+
+msgid "Crazy"
+msgstr ""
+
+#, fuzzy
+msgid "Creative"
+msgstr "ସୃଷ୍ଟି କର"
+
+#, fuzzy
+msgid "Curious"
+msgstr "ଗୌରବାନ୍ବିତ"
+
+#, fuzzy
+msgid "Dejected"
+msgstr "ଅସ୍ବୀକାର କରାହୋଇଥିବା"
+
+#, fuzzy
+msgid "Depressed"
+msgstr "ଅପସାରିତ"
+
+#, fuzzy
+msgid "Disappointed"
+msgstr "ସଂଯୋଗ ବିଛିନ୍ନ ହୋଇଛି।"
+
+msgid "Disgusted"
+msgstr ""
+
+#, fuzzy
+msgid "Dismayed"
+msgstr "ନିଷ୍କ୍ରିୟ"
+
+#, fuzzy
+msgid "Distracted"
+msgstr "ବିଚ୍ଛିନ୍ନ"
+
+msgid "Embarrassed"
+msgstr ""
+
+#, fuzzy
+msgid "Envious"
+msgstr "ଉତ୍କଣ୍ଠିତ"
+
+#. 2
+msgid "Excited"
+msgstr "ଉତ୍ତେଜିତ"
+
+#, fuzzy
+msgid "Flirtatious"
+msgstr "ଗୌରବାନ୍ବିତ"
+
+#, fuzzy
+msgid "Frustrated"
+msgstr "ପ୍ରଥମ ନାମ"
+
+msgid "Grateful"
+msgstr ""
+
+#, fuzzy
+msgid "Grieving"
+msgstr "କାଢ଼ୁଅଛି..."
+
+#. 3
+msgid "Grumpy"
+msgstr "Grumpy"
+
+#, fuzzy
+msgid "Guilty"
+msgstr "ନଗର"
+
+#. 4
+msgid "Happy"
+msgstr "ଖୁସି"
+
+msgid "Hopeful"
+msgstr ""
+
+#. 8
+msgid "Hot"
+msgstr "ଉଷ୍ଣ"
+
+msgid "Humbled"
+msgstr ""
+
+msgid "Humiliated"
+msgstr ""
+
+#, fuzzy
+msgid "Hungry"
+msgstr "କ୍ରୋଧିତ"
+
+#, fuzzy
+msgid "Hurt"
+msgstr "ବ୍ଯଙ୍ଗ-ଥଟ୍ଟା"
+
+msgid "Impressed"
+msgstr ""
+
+#, fuzzy
+msgid "In awe"
+msgstr "ପ୍ରେମରେ"
+
+msgid "In love"
+msgstr "ପ୍ରେମ ରେ"
+
+#, fuzzy
+msgid "Indignant"
+msgstr "ଇଣ୍ଡୋନେସିଆନ"
+
+#, fuzzy
+msgid "Interested"
+msgstr "ଆଗ୍ରହଗୁଡିକ"
+
+#, fuzzy
+msgid "Intoxicated"
+msgstr "ଆମନ୍ତ୍ରିତ ହୋଇଛି"
+
+#. 6
+msgid "Invincible"
+msgstr "ଅଜେଯ"
+
+msgid "Jealous"
+msgstr "ଇର୍ଷା"
+
+#, fuzzy
+msgid "Lonely"
+msgstr "ମାଙ୍କଡ"
+
+#, fuzzy
+msgid "Lost"
+msgstr "ଉଚ୍ଚତମ ଶବ୍ଦକାରୀ"
+
+msgid "Lucky"
+msgstr ""
+
+#, fuzzy
+msgid "Mean"
+msgstr "ଜର୍ମାନ"
+
+#, fuzzy
+msgid "Moody"
+msgstr "ଭାବ"
+
+msgid "Nervous"
+msgstr ""
+
+#, fuzzy
+msgid "Neutral"
+msgstr "ବିସ୍ତୃତ ବିବରଣୀ"
+
+#, fuzzy
+msgid "Offended"
+msgstr "ଅଫଲାଇନ"
+
+msgid "Outraged"
+msgstr ""
+
+#, fuzzy
+msgid "Playful"
+msgstr "ବଜାଅ"
+
+#, fuzzy
+msgid "Proud"
+msgstr "ଶବ୍ଦକାରୀ"
+
+#, fuzzy
+msgid "Relaxed"
+msgstr "ପ୍ରକୃତ ନାମ"
+
+#, fuzzy
+msgid "Relieved"
+msgstr "ପ୍ର୍ରାପ୍ତ ହେଲା "
+
+#, fuzzy
+msgid "Remorseful"
+msgstr "ହଟାଅ"
+
+#, fuzzy
+msgid "Restless"
+msgstr "ରେଜିଷ୍ଟର "
+
+#. 7
+msgid "Sad"
+msgstr "ଦୁଃଖିତ"
+
+#, fuzzy
+msgid "Sarcastic"
+msgstr "ମୋରାଠୀ"
+
+msgid "Satisfied"
+msgstr ""
+
+#, fuzzy
+msgid "Serious"
+msgstr "ଗୌରବାନ୍ବିତ"
+
+#, fuzzy
+msgid "Shocked"
+msgstr "ଅବରୋଧିତ"
+
+msgid "Shy"
+msgstr ""
+
+#. 9
+msgid "Sick"
+msgstr "ଦୁର୍ବଳ"
+
+#. 10
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "ନିଦ୍ରିତ"
+
+msgid "Spontaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Stressed"
+msgstr "ଗତି"
+
+#, fuzzy
+msgid "Strong"
+msgstr "ଗୀତ"
+
+msgid "Surprised"
+msgstr ""
+
+msgid "Thankful"
+msgstr ""
+
+msgid "Thirsty"
+msgstr ""
+
+#, fuzzy
+msgid "Tired"
+msgstr "ନିଆଁ"
+
+#, fuzzy
+msgid "Undefined"
+msgstr "ରେଖାଙ୍କିତ"
+
+#, fuzzy
+msgid "Weak"
+msgstr "ହ୍ୱାକ"
+
+#, fuzzy
+msgid "Worried"
+msgstr "ବିରକ୍ତ"
 
 msgid "Set User Nickname"
 msgstr "ଚାଳକ ଉପନାମ ସେଟ କରନ୍ତୁ"
@@ -4744,6 +5057,9 @@ msgid ""
 msgstr ""
 "ଏହି ସୂଚନା ଆପଣଙ୍କ ସମ୍ପର୍କ ତାଲିକାରେ ଥିବା ସମସ୍ତ ସମ୍ପର୍କଗୁଡ଼ିକ ପାଇଁ ଦୃଶ୍ୟମାନ ହେବ, ତେଣୁ କିଛି ସଠିକ "
 "ବାଛନ୍ତୁ।"
+
+msgid "Set"
+msgstr "ସେଟକର"
 
 msgid "Set Nickname..."
 msgstr "ଉପନାମ ସେଟ କରନ୍ତୁ..."
@@ -4786,217 +5102,165 @@ msgid ""
 msgstr ""
 "%s ସ୍ଥାନୀଯ ସୂଚୀରେ ଅଛି କିନ୍ତୁ ସରଭର ସୂଚୀରେ ନାହିଁ ୤ ଆପଣ ଏହି ବନ୍ଧୁଙ୍କୁ ୟୋଗ କରିବାକୁ ଚାହାଁନ୍ତି କି ?"
 
-#, c-format
 msgid "Unable to parse message"
 msgstr "ପାର୍ସ ସଂଦେଶ ପାଇଁ ଅସମର୍ଥ"
 
-#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "ପଦବିନ୍ଯାସ ତୃଟି (ସମ୍ଭବତଃ ଏକ ଗ୍ରାହକ ବଗ୍)"
 
-#, c-format
 msgid "Invalid email address"
 msgstr "ଅବୈଧ ଇମେଲ ଠିକଣା"
 
-#, c-format
 msgid "User does not exist"
 msgstr "ଉପୟୋଗକର୍ତ୍ତା ଅସ୍ତିତ୍ବରେ ନାହିଁ"
 
-#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "ସଂପୂର୍ଣ୍ଣ ୟୋଗ୍ଯ ପରିସର ନାମ ବିଲୁପ୍ତ ହୋଇଛି "
 
-#, c-format
 msgid "Already logged in"
 msgstr "ପୂର୍ବରୁ ଲଗ-ଇନ ହୋଇଛି"
 
-#, c-format
 msgid "Invalid username"
 msgstr "ଅବୈଧ ଚାଳକନାମ"
 
-#, c-format
 msgid "Invalid friendly name"
 msgstr "ଅମାନ୍ଯ ବନ୍ଧୁଭାବାପନ୍ନ ନାମ"
 
-#, c-format
 msgid "List full"
 msgstr " ତାଲିକା ସଂପୂର୍ଣ୍ଣ"
 
-#, c-format
 msgid "Already there"
 msgstr "ପୂର୍ବରୁ ଅଛି"
 
-#, c-format
 msgid "Not on list"
 msgstr "ତାଲିକାରେ ନାହିଁ"
 
-#, c-format
 msgid "User is offline"
 msgstr "ଉପୟୋଗକର୍ତ୍ତା  ଅଫଲାଇନ୍ ଅଛନ୍ତି"
 
-#, c-format
 msgid "Already in the mode"
 msgstr "ପୂର୍ବରୁ ମୋଡରେ ଅଛି"
 
-#, c-format
 msgid "Already in opposite list"
 msgstr "ପୂର୍ବରୁ ବିପରୀତ ତାଲିକାରେ ଅଛି"
 
-#, c-format
 msgid "Too many groups"
 msgstr "ବହୁତ ଗୁଡିଏ ସମୂହ"
 
-#, c-format
 msgid "Invalid group"
 msgstr "ଅମାନ୍ଯ ସମୂହ"
 
-#, c-format
 msgid "User not in group"
 msgstr "ଉପୟୋଗକର୍ତ୍ତା  ସମୂହରେ ନାହିଁ"
 
-#, c-format
 msgid "Group name too long"
 msgstr "ସମୂହର ନାମ ବହୁତ ଲମ୍ବା"
 
-#, c-format
 msgid "Cannot remove group zero"
 msgstr "ଶୂନ୍ଯ ସମୂହ ହଟେଇ ହେବ ନାହିଁ"
 
-#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "ଏକ ଉପୟୋଗକର୍ତ୍ତାକୁ ଏକ ସମୂହ ସହିତ ୟୋଗ କରିବାକୁ ଚେଷ୍ଟା କରାଗଲା ୟାହା ବିଦ୍ଯମାନ ନାହିଁ ୤"
 
-#, c-format
 msgid "Switchboard failed"
 msgstr "ସୁଇଚବୋର୍ଡ ବିଫଳ"
 
-#, c-format
 msgid "Notify transfer failed"
 msgstr "ବିଜ୍ଞପ୍ତି ସ୍ଥାନାନ୍ତରଣ ବିଫଳ ହେଲା"
 
-#, c-format
 msgid "Required fields missing"
 msgstr "ଆବଶ୍ଯକ କ୍ଷେତ୍ର ଅନୁପସ୍ଥିତ ଅଛି"
 
-#, c-format
 msgid "Too many hits to a FND"
 msgstr "ବହୁତ ଅଧିକ ହିଟ ଗୁଡିକ FND "
 
-#, c-format
 msgid "Not logged in"
 msgstr "ଲଗଡ-ଇନ୍ ନାହିଁ"
 
-#, c-format
 msgid "Service temporarily unavailable"
 msgstr "ସେବା ଅସ୍ଥାଯୀରୂପେ ଅନୁପଲବ୍ଧ"
 
-#, c-format
 msgid "Database server error"
 msgstr "ତଥ୍ଯସଂଚଯ ସରଭର ତ୍ରୁଟି"
 
-#, c-format
 msgid "Command disabled"
 msgstr "ଆଦେଶ ଅସମର୍ଥ ହୋଇଛି"
 
-#, c-format
 msgid "File operation error"
 msgstr "ଫାଇଲ ସଂଚାଳକ ତ୍ରୁଟି"
 
-#, c-format
 msgid "Memory allocation error"
 msgstr "ସ୍ମୃତିଶକ୍ତି ବିଭାଜନ ତ୍ରୁଟି"
 
-#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "CHL ଭୂଲ ମୂଲ୍ଯ ସରଭରକୁ ପଠାୟାଇଛି"
 
-#, c-format
 msgid "Server busy"
 msgstr "ସରଭର ବ୍ଯସ୍ତ ଅଛି"
 
-#, c-format
 msgid "Server unavailable"
 msgstr "ସରଭର ଉପଲବ୍ଧ ନାହିଁ"
 
-#, c-format
 msgid "Peer notification server down"
 msgstr "ସମକକ୍ଷ ବିଜ୍ଞାପନ ସର୍ଭର ଅଚଳ"
 
-#, c-format
 msgid "Database connect error"
 msgstr "ତଥ୍ଯସଂଟଯ ସଂୟୋଗ ତ୍ରୁଟି"
 
-#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "ସରଭର ଖରାପ ହୋଉଛି (ଜାହାଜ ତ୍ଯାଗ କର)୤"
 
-#, c-format
 msgid "Error creating connection"
 msgstr "ସଂୟୋଗ ସୃଷ୍ଟି କରିବାରେ ତ୍ରୁଟି"
 
-#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "CVR ପାରାମିଟର ହୁଏତ ଅଜ୍ଞାତ ଅଥବା ଅସ୍ବୀକୃତ"
 
-#, c-format
 msgid "Unable to write"
 msgstr "ଲେଖିବାକୁ ଅସମର୍ଥ"
 
-#, c-format
 msgid "Session overload"
 msgstr "ଅଧିବେଶନ ଓଭରଲୋଡ"
 
-#, c-format
 msgid "User is too active"
 msgstr "ଉପୟୋଗକର୍ତ୍ତା ଅଧିକ କାର୍ୟ୍ଯରତ ଅଛି"
 
-#, c-format
 msgid "Too many sessions"
 msgstr "ବହୁତ ଅଧିକ ଅଧିବେଶନ"
 
-#, c-format
 msgid "Passport not verified"
 msgstr "ପାସପୋର୍ଟ ପ୍ରମାଣିତ ହୋଇ ନାହିଁ"
 
-#, c-format
 msgid "Bad friend file"
 msgstr "ଖରାପ ବନ୍ଧୁ ଫାଇଲ"
 
-#, c-format
 msgid "Not expected"
 msgstr "ଅପ୍ରତୀକ୍ଷିତ"
 
 msgid "Friendly name is changing too rapidly"
 msgstr "ସହଜମୟ ନାମଟି ବାରମ୍ବାର ପରିବର୍ତ୍ତନ ହେଉଛି"
 
-#, c-format
 msgid "Server too busy"
 msgstr "ସରଭର ବହୁତ ବ୍ଯସ୍ତ ଅଛି"
 
-#, c-format
 msgid "Authentication failed"
 msgstr "ବୈଧିକରଣ ବିଫଳ"
 
-#, c-format
 msgid "Not allowed when offline"
 msgstr "ଅଫ-ଲାଇନ୍ ଥିବା ବେଳେ ଅସ୍ବୀକୃତ"
 
-#, c-format
 msgid "Not accepting new users"
 msgstr "ନୂଆ ଉପୟୋଗକର୍ତ୍ତା ଗ୍ରହଣ କରୁ ନାହିଁ"
 
-#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "ପିଲାଙ୍କ ପାସପୋର୍ଟ ମା'ବାପାଙ୍କ ଅନୁମତି ବିନା"
 
-#, c-format
 msgid "Passport account not yet verified"
 msgstr "ପାସପୋର୍ଟ ଆକାଉଣ୍ଟ ଏୟାଏଁ ପ୍ରମାଣିତ ହୋଇ ନାହିଁ"
 
 msgid "Passport account suspended"
 msgstr "ପାସପୋର୍ଟ ଖାତା ନିଲମ୍ବିତ ହୋଇଛି"
 
-#, c-format
 msgid "Bad ticket"
 msgstr "ମନ୍ଦ ଟିକେଟ"
 
@@ -5397,10 +5661,6 @@ msgstr "Windows ଜୀବନ୍ତ ID ବୈଧିକରଣ:ସଂଯୋଗ କ�
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "Windows ଜୀବନ୍ତ ID ବୈଧିକରଣ:ଅବୈଧ ଉତ୍ତର"
 
-#, c-format
-msgid "%s just sent you a Nudge!"
-msgstr "%s ବର୍ତ୍ତମାନ ଗୋଟିଏ ନଡଜ ଆପଣଙ୍କୁ ପଠାଗଲା!"
-
 msgid "The following users are missing from your addressbook"
 msgstr "ନିମ୍ନଲିଖିତ ଚାଳକମାନେ ଆପଣଙ୍କ ଠିକଣାପୁସ୍ତକରୁ ହଜିଯାଇଛନ୍ତି"
 
@@ -5582,116 +5842,9 @@ msgstr "ଆପଣ ଏହି ସାଥୀକୁ ଠିକଣା ପୁସ୍ତ�
 msgid "The username specified is invalid."
 msgstr "ଉଲ୍ଲିଖିତ ଠିକଣା ନାମଟି ଅବୈଧ ଅଟେ।"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr "ବନ୍ଧୁତା ନାମ ବହୁତ ଶୀଘ୍ର ପରିବର୍ତ୍ତନ ହୋଉଛି"
-
-msgid "This Hotmail account may not be active."
-msgstr "ଏହି ହଟମେଲ ଆକାଉଣ୍ଟ ହୁଏତ ସକ୍ରିଯ ନୁହଁ ୤"
-
-msgid "Profile URL"
-msgstr "URL ପ୍ରୋଫାଇଲ"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "MSN Protocol Plugin"
-msgstr "MSN ପ୍ରୋଟକଲ ପ୍ଲଗ-ଇନ୍"
-
-#, c-format
-msgid "%s is not a valid group."
-msgstr "%s ଏକ ମାନ୍ଯ ସମୂହ ନୁହେଁ୤"
-
-msgid "Unknown error."
-msgstr "ଅଜଣା ତ୍ରୁଟି"
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr " %s (%s) ରେ %s "
-
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "ଉପୟୋଗକର୍ତ୍ତା ୟୋଗ କରିବାକୁ ଅସମର୍ଥ %s (%s) "
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "%sରେ ଉପୟୋଗକର୍ତ୍ତାଙ୍କୁ ଅବରୋଧ କରିବାକୁ ଅସମର୍ଥ (%s)୤"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "%s ରେ ଉରୟୋଗକର୍ତ୍ତାଙ୍କୁ ଅନୁମତି ଦେବାକୁ ଅସମର୍ଥ (%s)୤"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s ୟୋଗ କରିହେଲା ନାହିଁ କାରଣ ଆପଣଙ୍କର ବନ୍ଧୁ ତାଲିକା ପୂର୍ଣ୍ଣ ଅଛି୤"
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s ଏକ ମାନ୍ଯ ପାସପୋର୍ଟ ଆକାଉଣ୍ଟ ନୁହଁ୤"
-
-msgid "Service Temporarily Unavailable."
-msgstr "ସେବା ଅସ୍ଥାଯୀ ଭାବରେ ଅନୁପଲବ୍ଧ ଅଛି ୤"
-
-msgid "Unable to rename group"
-msgstr "ସମୂହକୁ ପୁନଃନାମକରଣ କରିବାକୁ ଅସମର୍ଥ "
-
-msgid "Unable to delete group"
-msgstr "ସମୂହକୁ ବିଲୋପ କରିବାକୁ ଅସମର୍ଥ"
-
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s ତାଙ୍କର ବନ୍ଧୁ ତାଲିକାରେ ଆପଣଙ୍କୁ ୟୋଗ କରାୟାଇଛି ୤"
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s ତାଙ୍କର ବନ୍ଧୁ ତାଲିକାରୁ ଆପଣଙ୍କୁ ହଟେଇ ଦିଆୟାଇଛି ୤"
-
-#. 1
-msgid "Angry"
-msgstr "କ୍ରୋଧିତ"
-
-#. 2
-msgid "Excited"
-msgstr "ଉତ୍ତେଜିତ"
-
-#. 3
-msgid "Grumpy"
-msgstr "Grumpy"
-
-#. 4
-msgid "Happy"
-msgstr "ଖୁସି"
-
 #. 5
 msgid "In Love"
 msgstr "ପ୍ରେମରେ"
-
-#. 6
-msgid "Invincible"
-msgstr "ଅଜେଯ"
-
-#. 7
-msgid "Sad"
-msgstr "ଦୁଃଖିତ"
-
-#. 8
-msgid "Hot"
-msgstr "ଉଷ୍ଣ"
-
-#. 9
-msgid "Sick"
-msgstr "ଦୁର୍ବଳ"
-
-#. 10
-msgid "Sleepy"
-msgstr "ନିଦ୍ରିତ"
 
 #. show current mood
 msgid "Current Mood"
@@ -6665,6 +6818,106 @@ msgstr "ଚାର୍ଟ କୋଠରୀରେ ଯୋଗଦାନ କରିପା
 msgid "Invalid chat room name"
 msgstr "ଅବୈଧ ଚାର୍ଟ କୋଠରୀ ନାମ"
 
+msgid "Thinking"
+msgstr ""
+
+#, fuzzy
+msgid "Shopping"
+msgstr "ଟାଇପ କରିବା ବନ୍ଦ କରେ"
+
+#, fuzzy
+msgid "Questioning"
+msgstr "ପ୍ରଶ୍ନ ସଂଳାପ"
+
+#, fuzzy
+msgid "Eating"
+msgstr "ପୃଷ୍ଠା କର"
+
+#, fuzzy
+msgid "Watching a movie"
+msgstr "ଗୋଟିଏ ଖେଳ ଖେଳୁଅଛି"
+
+msgid "Typing"
+msgstr "ଟାଇପ କରୁଛି"
+
+#, fuzzy
+msgid "At the office"
+msgstr "କାର୍ୟ୍ଯାଳଯରେ ନାହିଁ"
+
+msgid "Taking a bath"
+msgstr ""
+
+msgid "Watching TV"
+msgstr ""
+
+#, fuzzy
+msgid "Having fun"
+msgstr "ସଂଯୋଗ ଛିନ୍ନ କରନ୍ତୁ"
+
+#, fuzzy
+msgid "Sleeping"
+msgstr "ନିଦ୍ରିତ"
+
+msgid "Using a PDA"
+msgstr ""
+
+#, fuzzy
+msgid "Meeting friends"
+msgstr "IM ସାଥୀମାନେ"
+
+#, fuzzy
+msgid "On the phone"
+msgstr "ଫୋନରେ"
+
+#, fuzzy
+msgid "Surfing"
+msgstr "ପୁନଃପୌନିକ"
+
+#. "I am mobile." / "John is mobile."
+msgid "Mobile"
+msgstr "ମୋବାଇଲ"
+
+msgid "Searching the web"
+msgstr ""
+
+msgid "At a party"
+msgstr ""
+
+msgid "Having Coffee"
+msgstr ""
+
+#. Playing video games
+#, fuzzy
+msgid "Gaming"
+msgstr "ମିଥୁନ"
+
+msgid "Browsing the web"
+msgstr ""
+
+#, fuzzy
+msgid "Smoking"
+msgstr "ଗୀତ"
+
+#, fuzzy
+msgid "Writing"
+msgstr "କାର୍ୟ୍ଯ କରୁଛି "
+
+#. Drinking [Alcohol]
+#, fuzzy
+msgid "Drinking"
+msgstr "କାର୍ୟ୍ଯ କରୁଛି "
+
+msgid "Listening to music"
+msgstr "ସଙ୍ଗୀତ ଶୁଣୁଅଛି"
+
+#, fuzzy
+msgid "Studying"
+msgstr "ପଠାଉଛି"
+
+#, fuzzy
+msgid "In the restroom"
+msgstr "ଆଗ୍ରହଗୁଡିକ"
+
 msgid "Received invalid data on connection with server"
 msgstr "ସର୍ଭର ସହିତ ସଂଯୁକ୍ତ ହେବା ସମୟରେ ଅବୈଧ ତଥ୍ୟ ଗ୍ରହଣ କରିଥିଲା"
 
@@ -6875,6 +7128,9 @@ msgstr "ଫାଇଲ ପ୍ରାପ୍ତ କର"
 msgid "Games"
 msgstr "ଖେଳ"
 
+msgid "ICQ Xtraz"
+msgstr ""
+
 msgid "Add-Ins"
 msgstr "ଭିତରେ- ୟୋଗ କର"
 
@@ -6940,6 +7196,26 @@ msgstr "ଉଏବ୍ ସଚେତନ"
 
 msgid "Invisible"
 msgstr "ଅଦୃଶ୍ଯ"
+
+#, fuzzy
+msgid "Evil"
+msgstr "ଇ-ଡାକ"
+
+#, fuzzy
+msgid "Depression"
+msgstr "ବ୍ରୁତ୍ତି"
+
+#, fuzzy
+msgid "At home"
+msgstr "ମୋ ବିଷୟରେ"
+
+#, fuzzy
+msgid "At work"
+msgstr "ନେଟୱର୍କ"
+
+#, fuzzy
+msgid "At lunch"
+msgstr "ମଧ୍ଯାହ୍ନଭୋଜନ ପାଇଁ ବାହାରେ"
 
 msgid "IP Address"
 msgstr "ଆଇ.ପି. ଠିକଣା"
@@ -7435,6 +7711,10 @@ msgstr "ଆପଣଙ୍କର IMଚିତ୍ର ପଠାୟାଇ ନଥିଲ�
 msgid "iTunes Music Store Link"
 msgstr "iTunes ସଂଗୀତ ସଂରକ୍ଷଣ ଲିଙ୍କ"
 
+#, fuzzy
+msgid "Lunch"
+msgstr "ଫିଞ୍ଚ"
+
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "%s ପାଇଁ ବନ୍ଧୁ ମନ୍ତବ୍ଯ"
@@ -7466,7 +7746,8 @@ msgstr "AIM ସୂଚନା ପ୍ରାପ୍ତ କର"
 msgid "Edit Buddy Comment"
 msgstr "ବନ୍ଧୁ ମନ୍ତବ୍ଯ ସଂପାଦନା କର "
 
-msgid "Get Status Msg"
+#, fuzzy
+msgid "Get X-Status Msg"
 msgstr "ସ୍ଥିତି ସଂଦେଶ ପ୍ରାପ୍ତ କର"
 
 msgid "End Direct IM Session"
@@ -7744,9 +8025,6 @@ msgstr "ଅପଡେଟ କର"
 
 msgid "Could not change buddy information."
 msgstr "ସାଥୀ ସୂଚନାକୁ ପରିବର୍ତ୍ତନ କରିପାରିଲା ନାହିଁ।"
-
-msgid "Mobile"
-msgstr "ମୋବାଇଲ"
 
 msgid "Note"
 msgstr "ଟିପ୍ପଣୀ"
@@ -8776,18 +9054,6 @@ msgstr "ଅଧିକ ସକ୍ରିଯ"
 msgid "Robot"
 msgstr "ରୋବୋଟ"
 
-msgid "Jealous"
-msgstr "ଇର୍ଷା"
-
-msgid "Ashamed"
-msgstr "ଲଜ୍ଜିତ"
-
-msgid "Bored"
-msgstr "ବିରକ୍ତ"
-
-msgid "Anxious"
-msgstr "ଉତ୍କଣ୍ଠିତ"
-
 msgid "User Modes"
 msgstr "ଉପୟୋଗକର୍ତ୍ତା ମୋଡଗୁଡିକ"
 
@@ -9278,9 +9544,6 @@ msgstr "ଆପଣଙ୍କର ଚଳିତ ଭାବ"
 #, c-format
 msgid "Normal"
 msgstr "ସାଧାରଣ"
-
-msgid "In love"
-msgstr "ପ୍ରେମ ରେ"
 
 msgid ""
 "\n"
@@ -10273,6 +10536,10 @@ msgid "Exposure"
 msgstr "ଅନାବୃତ"
 
 #, c-format
+msgid "Unable to create socket: %s"
+msgstr "ସକେଟ ନିର୍ମାଣ କରିବାରେ ଅସମର୍ଥ: %s"
+
+#, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "HTTP ପ୍ରକ୍ସିରୁ ଉତ୍ତର ବିଶ୍ଳେଷଣ କରିବାରେ ଅସମର୍ଥ: %s"
 
@@ -10374,8 +10641,9 @@ msgstr "ବାଧା ଦିଅନ୍ତୁ ନାହିଁ"
 msgid "Extended away"
 msgstr "ଅନୁଲମ୍ବିତ ଦୂରତା"
 
-msgid "Listening to music"
-msgstr "ସଙ୍ଗୀତ ଶୁଣୁଅଛି"
+#, fuzzy
+msgid "Feeling"
+msgstr "ଗ୍ରହଣ କରୁଅଛି"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -10917,6 +11185,17 @@ msgstr ""
 msgid "Unknown node type"
 msgstr "ଅଜଣା ନୋଡ଼ ପ୍ରକାର"
 
+#, fuzzy
+msgid "Please select your mood from the list"
+msgstr "ତାଲିକାରୁ ଆପଣଙ୍କର ଭାବନାକୁ ଦୟାକରି ବାଛନ୍ତୁ।"
+
+#, fuzzy
+msgid "Message (optional)"
+msgstr "ଉପନାମ (ବୈକଳ୍ପିକ)"
+
+msgid "Edit User Mood"
+msgstr "ଚାଳକ ଭାବନାକୁ ସମ୍ପାଦନ କରନ୍ତୁ"
+
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_ ବନ୍ଧୁଗଣ"
@@ -10995,6 +11274,10 @@ msgstr "/ଟୁଲଗୁଡିକ/ ପସନ୍ଦଗୁଡିକ"
 msgid "/Tools/Pr_ivacy"
 msgstr "/ଟୁଲଗୁଡିକ/ ଗୋପନୀଯତା"
 
+#, fuzzy
+msgid "/Tools/Set _Mood"
+msgstr "/ଟୁଲଗୁଡିକ/ସିଷ୍ଟମ _ଲଗ"
+
 msgid "/Tools/_File Transfers"
 msgstr "/ଟୁଲଗୁଡିକ/_ ଫାଇଲ ସ୍ଥାନାନ୍ତରଣ"
 
@@ -11014,8 +11297,20 @@ msgstr "/_ସାହାୟ୍ଯ"
 msgid "/Help/Online _Help"
 msgstr "/ସାହାୟ୍ଯ/ଅନ ଲାଇନ _ସାହାୟ୍ଯ"
 
+#, fuzzy
+msgid "/Help/_Build Information"
+msgstr "ବନ୍ଧୁ ସୂଚନା"
+
 msgid "/Help/_Debug Window"
 msgstr "/ସାହାୟ୍ଯ/ _ଡିବଗ ଉଇଣ୍ଡୋ"
+
+#, fuzzy
+msgid "/Help/De_veloper Information"
+msgstr "ସେବକ ସୂଚନା"
+
+#, fuzzy
+msgid "/Help/_Translator Information"
+msgstr "ବ୍ଯକ୍ତିଗତ ସୂଚନା"
 
 msgid "/Help/_About"
 msgstr "/ସାହାୟ୍ଯ/_ସମ୍ବନ୍ଧରେ"
@@ -11243,6 +11538,10 @@ msgstr "<ପରପଲପ୍ରମୁଖ>/ଆକାଉଣ୍ଟସ/"
 msgid "_Edit Account"
 msgstr "_ଆକାଉଣ୍ଟ ସମ୍ପାଦନ କର"
 
+#, fuzzy
+msgid "Set _Mood..."
+msgstr "ଭାବନା ସେଟ କରନ୍ତୁ..."
+
 msgid "No actions available"
 msgstr "କାର୍ୟ୍ଯ ଉପଲବ୍ଧ ନାହିଁ"
 
@@ -11287,12 +11586,6 @@ msgstr "<h1> %s ସହିତ ସଂଭାଷଣ</h1>\n"
 
 msgid "Save Conversation"
 msgstr "ସଂଭାଷଣ ସଂଚଯ କର"
-
-msgid "Find"
-msgstr "ଖୋଜନ୍ତୁ"
-
-msgid "_Search for:"
-msgstr "ଏଥିପାଇଁ ସନ୍ଧାନ କରନ୍ତୁ (_S):"
 
 msgid "Un-Ignore"
 msgstr "ଅବହେଳା କରନି"
@@ -11366,6 +11659,10 @@ msgstr "/ବାର୍ତ୍ତାଳାପ/ମେଡିଆ/ଧ୍ୱନି\\/ଭ
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/ସଂଭାଷଣ/ ଫାଇଲ ପଠାଅ..."
+
+#, fuzzy
+msgid "/Conversation/Get _Attention"
+msgstr "/ସଂଭାଷଣ/ ସୂଚନା ପ୍ରାପ୍ତ କର"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/ସଂଭାଷଣ/ୟୋଗ କର _ ବନ୍ଧୁ ପାଉନସ..."
@@ -11448,6 +11745,10 @@ msgstr "/ବାର୍ତ୍ତାଳାପ/ମେଡିଆ/ଧ୍ୱନି\\/ଭ
 msgid "/Conversation/Send File..."
 msgstr "/ସଂଭାଷଣ/ଫାଇଲ ପଠାଅ..."
 
+#, fuzzy
+msgid "/Conversation/Get Attention"
+msgstr "/ସଂଭାଷଣ/ ସୂଚନା ପ୍ରାପ୍ତ କର"
+
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/ସଂଭାଷଣ/ବନ୍ଧୁ ପାଉନସ ୟୋଗ କର..."
 
@@ -11512,14 +11813,19 @@ msgstr "ପଠାନ୍ତୁ (_S)"
 msgid "0 people in room"
 msgstr " ରୁମରେ 0 ବ୍ଯକ୍ତି"
 
+#, fuzzy
+msgid "Close Find bar"
+msgstr "ଏହି ଟାବକୁ ବନ୍ଦ କର"
+
+#, fuzzy
+msgid "Find:"
+msgstr "ଖୋଜନ୍ତୁ"
+
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "କୋଠରୀରେ %d ବ୍ଯକ୍ତି"
 msgstr[1] "କୋଠରୀରେ %d ବ୍ଯକ୍ତି"
-
-msgid "Typing"
-msgstr "ଟାଇପ କରୁଛି"
 
 msgid "Stopped Typing"
 msgstr "ଟାଇପ କରିବା ବନ୍ଦ ହେଲା"
@@ -11571,6 +11877,12 @@ msgstr "ସମୂହ ଦ୍ବାରା "
 
 msgid "By account"
 msgstr "ଆକାଉଣ୍ଟ ଦ୍ବାରା"
+
+msgid "Find"
+msgstr "ଖୋଜନ୍ତୁ"
+
+msgid "_Search for:"
+msgstr "ଏଥିପାଇଁ ସନ୍ଧାନ କରନ୍ତୁ (_S):"
 
 msgid "Save Debug Log"
 msgstr "ଡିବଗ ଲଗ ସଂଚଯ କର"
@@ -11901,21 +12213,14 @@ msgstr "ଆମ୍ହାରିକ"
 msgid "Lithuanian"
 msgstr "ଲିଥୁଆନିଆନ"
 
-#, c-format
-msgid "About %s"
-msgstr "%s ବିଷୟରେ"
-
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with %"
+"s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s ଟି ଗୋଟିଏ ଆଲେଖିକ ଏକକାଂଶ କ୍ଲାଏଣ୍ଟ ଆଧାରିତ libpurple ସନ୍ଦେଶ ପଠାଇଥାଏ ଯାହାକି AIM, MSN, "
 "Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
@@ -11928,20 +12233,21 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 msgstr ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
-"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
-"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
-"primary language is <b>English</b>.  You are welcome to post in another "
-"language, but the responses may be less helpful.<br/><br/>"
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 msgstr ""
 "<font size=\"4\">ଅନ୍ୟ Pidgin ଚାଳକମାନଙ୍କ ପାଖରୁ ସହାୟତା:</font> <a href=\"mailto:"
 "support@pidgin.im\">support@pidgin.im</a><br/>ଏହା ଗୋଟିଏ <b>ସାର୍ବଜନୀନ</b> ମେଲ "
@@ -11951,14 +12257,17 @@ msgstr ""
 "ଉତ୍ତରଗୁଡ଼ିକ ସ୍ୱଳ୍ପ ସହାୟକ ହୋଇପାରେ।<br/><br/>"
 
 #, c-format
-msgid ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr ""
-"<FONT SIZE=\"4\">IRC ଚ୍ୟାନେଲ:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid "About %s"
+msgstr "%s ବିଷୟରେ"
 
-#, c-format
-msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-msgstr "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#, fuzzy
+msgid "Build Information"
+msgstr "ବନ୍ଧୁ ସୂଚନା"
+
+#. End of not to be translated section
+#, fuzzy, c-format
+msgid "%s Build Information"
+msgstr "ବନ୍ଧୁ ସୂଚନା"
 
 msgid "Current Developers"
 msgstr "ଚଳିତ ବିକାଶକାରୀ"
@@ -11972,14 +12281,19 @@ msgstr "କାର୍ୟ୍ଯନିବୃତ ବିକାଶକର୍ତ୍ତ�
 msgid "Retired Crazy Patch Writers"
 msgstr "କ୍ଳାନ୍ତ ଜଟିଳ ପ୍ୟାଚ ଲେଖକମାନେ"
 
+#, fuzzy, c-format
+msgid "%s Developer Information"
+msgstr "ସେବକ ସୂଚନା"
+
 msgid "Current Translators"
 msgstr "ବର୍ତ୍ତମାନର ଅନୁବାଦକସବୁ"
 
 msgid "Past Translators"
 msgstr "ପୂର୍ବର ଅନୁବାଦକସବୁ"
 
-msgid "Debugging Information"
-msgstr "ସୂଚନାକୁ ଦୋଷଶୂନ୍ଯ କରୁଛି"
+#, fuzzy, c-format
+msgid "%s Translator Information"
+msgstr "ଅଧିକ ସୂଚନା"
 
 msgid "_Name"
 msgstr "_ନାମ"
@@ -12264,15 +12578,6 @@ msgstr ""
 "\n"
 "  PNG ରେ ଡିଫଲଟ କରାୟାଉଛି ।"
 
-msgid ""
-"Unrecognized file type\n"
-"\n"
-"Defaulting to PNG."
-msgstr ""
-"ଅଚିହ୍ନା ଫାଇଲ୍ ପ୍ରକାର \n"
-"\n"
-"  PNG ରେ ଡିଫଲଟ କରାୟାଉଛି ।"
-
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -12282,16 +12587,6 @@ msgstr ""
 "<span size='larger' weight='bold'>ତ୍ରୁଟି ସଂରକ୍ଷଣ ପ୍ରତିଛବି</span>\n"
 "\n"
 "%s"
-
-#, c-format
-msgid ""
-"Error saving image\n"
-"\n"
-"%s"
-msgstr ""
-"ତୃଟି ସଂଚୟ କରୁଥିବା ଚିତ୍ର\n"
-"\n"
-" %s"
 
 msgid "Save Image"
 msgstr "ପ୍ରତିଛବିକୁ ସଂରକ୍ଷଣ କରନ୍ତୁ"
@@ -12399,6 +12694,10 @@ msgstr "IM ପ୍ରତିଛବିକୁ ଭର୍ତ୍ତିକରନ୍ତ�
 msgid "Insert Smiley"
 msgstr "Smiley କୁ ଭର୍ତ୍ତି କରନ୍ତୁ"
 
+#, fuzzy
+msgid "Send Attention"
+msgstr "ପଠାନ୍ତୁ ବଟନ"
+
 msgid "<b>_Bold</b>"
 msgstr "<b>ଗାଢ଼ (_B)</b>"
 
@@ -12443,6 +12742,9 @@ msgstr "ଭୂସମାନ୍ତରାଳ ନିୟମ (_H)"
 
 msgid "_Smile!"
 msgstr "Smile! (_S)"
+
+msgid "_Attention!"
+msgstr ""
 
 msgid "Log Deletion Failed"
 msgstr "ଲଗ ଅପସାରଣ ବିଫଳ ହୋଇଛି"
@@ -13372,6 +13674,10 @@ msgstr "ସଂକ୍ଷିପ୍ତ ପଥ ପାଠ୍ୟ"
 msgid "Custom Smiley Manager"
 msgstr "Smiley ପରିଚାଳକଙ୍କୁ ଇଚ୍ଛାରୂପଣ କରନ୍ତୁ"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "ସକ୍ରିୟଣ ଆବଶ୍ୟକ"
+
 msgid "Select Buddy Icon"
 msgstr "ସାଥୀ ଚିତ୍ର ସଂକେତ ଚୟନ କରନ୍ତୁ"
 
@@ -13450,10 +13756,13 @@ msgstr ""
 "ଆପଣ ଏହି ସଂଦେଶରେ ଏହି ଚିତ୍ରକୁ ଭର୍ତ୍ତି କରିପାରିବେ, କିମ୍ବା ଏହି ଉପୟୋଗକର୍ତ୍ତାଙ୍କ ପାଇଁ ଏହାକୁ ବନ୍ଧୁ ଆଇକନ "
 "ପରି ଉପୟୋଗ କରନ୍ତୁ ୤"
 
-#. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-#. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-#. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-#. * Probably not.  I'll just give an error and return.
+#. I don't know if we really want to do anything here.  Most of
+#. * the desktop item types are crap like "MIME Type" (I have no
+#. * clue how that would be a desktop item) and "Comment"...
+#. * nothing we can really send.  The only logical one is
+#. * "Application," but do we really want to send a binary and
+#. * nothing else? Probably not.  I'll just give an error and
+#. * return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 msgid "Cannot send launcher"
 msgstr "ଆରମ୍ଭକାରୀ ପଠାଇ ପାରିବେ ନାହିଁ"
@@ -13484,17 +13793,6 @@ msgstr "ଆଇକନ ତୃଟି"
 
 msgid "Could not set icon"
 msgstr "ଆଇକନ ସେଟ୍ ହୋଇ ପାରିଲା ନାହିଁ "
-
-#, c-format
-msgid "Failed to open file '%s': %s"
-msgstr "'%s' ଫାଇଲ ଖୋଲିବାରେ ଅସଫଳ: %s"
-
-#, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr ""
-"'%s' ଚିତ୍ର ଫାଇଲ ଧାରଣ କରିବାରେ ଅସଫଳ: କାରଣ ଜଣା ନାହିଁ, ସମ୍ଭବତଃ ଏହା ଗୋଟିଏ ତୃଟିଯୁକ୍ତ ଚିତ୍ର ଫାଇଲ "
-"ଅଟେ"
 
 msgid "_Open Link"
 msgstr "ସଂଯୋଗକୁ ଖୋଲନ୍ତୁ (_O)"
@@ -14697,15 +14995,6 @@ msgstr "ଆକାଉଣ୍ଟ:"
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr "<font color='#777777'>XMPP ସହିତ ସଂଯୋଗ ହୋଇ ନାହିଁ</font>"
 
-msgid "Insert an <iq/> stanza."
-msgstr "ଏକ <iq/> ପଦ ପ୍ରବିଷ୍ଟ କରନ୍ତୁ।"
-
-msgid "Insert a <presence/> stanza."
-msgstr "ଏକ <presence/> ପଦ ପ୍ରବିଷ୍ଟ କରନ୍ତୁ।"
-
-msgid "Insert a <message/> stanza."
-msgstr "ଏକ <message/> ପଦ ପ୍ରବିଷ୍ଟ କରନ୍ତୁ।"
-
 #. *< name
 #. *< version
 #. *  summary
@@ -14713,5 +15002,124 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "ଅପ୍ରସ୍ତୁତ XMPP ପଦଗୁଡିକୁ ପଠାନ୍ତୁ ଏବଂ ପ୍ରାପ୍ତ କରନ୍ତୁ।"
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+#, fuzzy
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "ଏହି ପ୍ଲଗଇନ XMPP ସର୍ଭରଗୁଡିକୁ କିମ୍ବା ଗ୍ରାହକଗୁଡିକୁ ତ୍ରୁଟିନିବାରଣ କରିବା ପାଇଁ ଉପଯୋଗୀ ହୋଇଥାଏ।"
+
+#~ msgid "Error creating conference."
+#~ msgstr "ଆଲୋଚନା ପ୍ରସ୍ତୁତ କରିବାରେ ତ୍ରୁଟି।"
+
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "ସକେଟକୁ ପୋର୍ଟରେ ବାନ୍ଧିବାରେ ଅସମର୍ଥ: %s"
+
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr "ସକେଟରେ ଶୁଣିବାରେ ଅସମର୍ଥ: %s"
+
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "%s ବର୍ତ୍ତମାନ ଗୋଟିଏ ନଡଜ ଆପଣଙ୍କୁ ପଠାଗଲା!"
+
+#~ msgid "Friendly name changes too rapidly"
+#~ msgstr "ବନ୍ଧୁତା ନାମ ବହୁତ ଶୀଘ୍ର ପରିବର୍ତ୍ତନ ହୋଉଛି"
+
+#~ msgid "This Hotmail account may not be active."
+#~ msgstr "ଏହି ହଟମେଲ ଆକାଉଣ୍ଟ ହୁଏତ ସକ୍ରିଯ ନୁହଁ ୤"
+
+#~ msgid "Profile URL"
+#~ msgstr "URL ପ୍ରୋଫାଇଲ"
+
+#~ msgid "MSN Protocol Plugin"
+#~ msgstr "MSN ପ୍ରୋଟକଲ ପ୍ଲଗ-ଇନ୍"
+
+#~ msgid "%s is not a valid group."
+#~ msgstr "%s ଏକ ମାନ୍ଯ ସମୂହ ନୁହେଁ୤"
+
+#~ msgid "Unknown error."
+#~ msgstr "ଅଜଣା ତ୍ରୁଟି"
+
+#~ msgid "%s on %s (%s)"
+#~ msgstr " %s (%s) ରେ %s "
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "ଉପୟୋଗକର୍ତ୍ତା ୟୋଗ କରିବାକୁ ଅସମର୍ଥ %s (%s) "
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "%sରେ ଉପୟୋଗକର୍ତ୍ତାଙ୍କୁ ଅବରୋଧ କରିବାକୁ ଅସମର୍ଥ (%s)୤"
+
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "%s ରେ ଉରୟୋଗକର୍ତ୍ତାଙ୍କୁ ଅନୁମତି ଦେବାକୁ ଅସମର୍ଥ (%s)୤"
+
+#~ msgid "%s could not be added because your buddy list is full."
+#~ msgstr "%s ୟୋଗ କରିହେଲା ନାହିଁ କାରଣ ଆପଣଙ୍କର ବନ୍ଧୁ ତାଲିକା ପୂର୍ଣ୍ଣ ଅଛି୤"
+
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%s ଏକ ମାନ୍ଯ ପାସପୋର୍ଟ ଆକାଉଣ୍ଟ ନୁହଁ୤"
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "ସେବା ଅସ୍ଥାଯୀ ଭାବରେ ଅନୁପଲବ୍ଧ ଅଛି ୤"
+
+#~ msgid "Unable to rename group"
+#~ msgstr "ସମୂହକୁ ପୁନଃନାମକରଣ କରିବାକୁ ଅସମର୍ଥ "
+
+#~ msgid "Unable to delete group"
+#~ msgstr "ସମୂହକୁ ବିଲୋପ କରିବାକୁ ଅସମର୍ଥ"
+
+#~ msgid "%s has added you to his or her buddy list."
+#~ msgstr "%s ତାଙ୍କର ବନ୍ଧୁ ତାଲିକାରେ ଆପଣଙ୍କୁ ୟୋଗ କରାୟାଇଛି ୤"
+
+#~ msgid "%s has removed you from his or her buddy list."
+#~ msgstr "%s ତାଙ୍କର ବନ୍ଧୁ ତାଲିକାରୁ ଆପଣଙ୍କୁ ହଟେଇ ଦିଆୟାଇଛି ୤"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">IRC ଚ୍ୟାନେଲ:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+
+#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+
+#~ msgid "Debugging Information"
+#~ msgstr "ସୂଚନାକୁ ଦୋଷଶୂନ୍ଯ କରୁଛି"
+
+#~ msgid ""
+#~ "Unrecognized file type\n"
+#~ "\n"
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "ଅଚିହ୍ନା ଫାଇଲ୍ ପ୍ରକାର \n"
+#~ "\n"
+#~ "  PNG ରେ ଡିଫଲଟ କରାୟାଉଛି ।"
+
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "ତୃଟି ସଂଚୟ କରୁଥିବା ଚିତ୍ର\n"
+#~ "\n"
+#~ " %s"
+
+#~ msgid "Failed to open file '%s': %s"
+#~ msgstr "'%s' ଫାଇଲ ଖୋଲିବାରେ ଅସଫଳ: %s"
+
+#~ msgid ""
+#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
+#~ msgstr ""
+#~ "'%s' ଚିତ୍ର ଫାଇଲ ଧାରଣ କରିବାରେ ଅସଫଳ: କାରଣ ଜଣା ନାହିଁ, ସମ୍ଭବତଃ ଏହା ଗୋଟିଏ ତୃଟିଯୁକ୍ତ ଚିତ୍ର "
+#~ "ଫାଇଲ ଅଟେ"
+
+#~ msgid "Insert an <iq/> stanza."
+#~ msgstr "ଏକ <iq/> ପଦ ପ୍ରବିଷ୍ଟ କରନ୍ତୁ।"
+
+#~ msgid "Insert a <presence/> stanza."
+#~ msgstr "ଏକ <presence/> ପଦ ପ୍ରବିଷ୍ଟ କରନ୍ତୁ।"
+
+#~ msgid "Insert a <message/> stanza."
+#~ msgstr "ଏକ <message/> ପଦ ପ୍ରବିଷ୍ଟ କରନ୍ତୁ।"
