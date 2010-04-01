@@ -40,7 +40,15 @@ typedef struct
 
 #define PURPLE_SSL_GNUTLS_DATA(gsc) ((PurpleSslGnutlsData *)gsc->private_data)
 
-static gnutls_certificate_client_credentials xcred;
+static gnutls_certificate_client_credentials xcred = NULL;
+
+#ifdef HAVE_GNUTLS_PRIORITY_FUNCS
+/* Priority strings.  The default one is, well, the default (and is always set).
+ * The hash table is of the form hostname => priority (both char *)
+ */
+static char *default_priority = NULL;
+static GHashTable *host_priorities = NULL;
+#endif
 
 static void
 ssl_gnutls_log(int level, const char *str)
@@ -53,6 +61,7 @@ static void
 ssl_gnutls_init_gnutls(void)
 {
 	const char *debug_level;
+	const char *host_priorities_str;
 
 	/* Configure GnuTLS to use glib memory management */
 	/* I expect that this isn't really necessary, but it may prevent
@@ -82,6 +91,60 @@ ssl_gnutls_init_gnutls(void)
 		gnutls_global_set_log_function(ssl_gnutls_log);
 	}
 
+	/* Expected format: host=priority;host2=priority;*=priority
+	 * where "*" is used to override the default priority string for
+	 * libpurple.
+	 */
+	host_priorities_str = g_getenv("PURPLE_GNUTLS_PRIORITIES");
+	if (host_priorities_str) {
+#ifndef HAVE_GNUTLS_PRIORITY_FUNCS
+		purple_debug_warning("gnutls", "Warning, PURPLE_GNUTLS_PRIORITIES "
+		                     "environment variable set, but we were built "
+		                     "against an older GnuTLS that doesn't support "
+		                     "this. :-(");
+#else /* HAVE_GNUTLS_PRIORITY_FUNCS */
+		char **entries = g_strsplit(host_priorities_str, ";", -1);
+		guint i;
+
+		host_priorities = g_hash_table_new_full(g_str_hash, g_str_equal,
+		                                        g_free, g_free);
+
+		for (i = 0; entries[i]; ++i) {
+			char *host = entries[i];
+			char *equals = strchr(host, '=');
+			char *prio_str;
+
+			if (equals) {
+				*equals = '\0';
+				prio_str = equals + 1;
+
+				/* Empty? */
+				if (*prio_str == '\0') {
+					purple_debug_warning("gnutls", "Ignoring empty priority "
+					                               "string for %s\n", host);
+				} else {
+					/* TODO: Validate each of these and complain */
+					if (g_str_equal(host, "*")) {
+						/* Override the default priority */
+						g_free(default_priority);
+						default_priority = g_strdup(prio_str);
+					} else
+						g_hash_table_insert(host_priorities, g_strdup(host),
+						                    g_strdup(prio_str));
+				}
+			}
+		}
+
+		g_strfreev(entries);
+#endif /* HAVE_GNUTLS_PRIORITY_FUNCS */
+	}
+
+#ifdef HAVE_GNUTLS_PRIORITY_FUNCS
+	/* Make sure we set have a default priority! */
+	if (!default_priority)
+		default_priority = g_strdup("NORMAL:%SSL3_RECORD_VERSION");
+#endif /* HAVE_GNUTLS_PRIORITY_FUNCS */
+
 	gnutls_global_init();
 
 	gnutls_certificate_allocate_credentials(&xcred);
@@ -103,6 +166,17 @@ ssl_gnutls_uninit(void)
 	gnutls_global_deinit();
 
 	gnutls_certificate_free_credentials(xcred);
+	xcred = NULL;
+
+#ifdef HAVE_GNUTLS_PRIORITY_FUNCS
+	if (host_priorities) {
+		g_hash_table_destroy(host_priorities);
+		host_priorities = NULL;
+	}
+
+	g_free(default_priority);
+	default_priority = NULL;
+#endif
 }
 
 static void
@@ -280,9 +354,27 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 
 	gnutls_init(&gnutls_data->session, GNUTLS_CLIENT);
 #ifdef HAVE_GNUTLS_PRIORITY_FUNCS
-	if (gnutls_priority_set_direct(gnutls_data->session,
-		                             "NORMAL:%SSL3_RECORD_VERSION", NULL))
-		gnutls_priority_set_direct(gnutls_data->session, "NORMAL", NULL);
+	{
+		const char *prio_str = NULL;
+
+		/* Let's see if someone has specified a specific priority */
+		if (gsc->host && host_priorities)
+			prio_str = g_hash_table_lookup(host_priorities, gsc->host);
+
+		/* If not, let's use the default! */
+		if (!prio_str)
+			prio_str = default_priority;
+
+		/* TODO: Use a gnutls_priority_t cache, so this doesn't require three levels! */
+		/* The logic here is to try the specified string, fall back to the default
+		 * (which may also be user-specified), and if *that* doesn't work, fall back
+		 * to the default default (which I'm not sure is necessary, but whatever).
+		 */
+		if (gnutls_priority_set_direct(gnutls_data->session,
+		                               prio_str, NULL))
+			if (gnutls_priority_set_direct(gnutls_data->session, default_priority, NULL))
+				gnutls_priority_set_direct(gnutls_data->session, "NORMAL", NULL);
+	}
 #else
 	gnutls_set_default_priority(gnutls_data->session);
 #endif
