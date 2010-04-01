@@ -682,7 +682,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 					nick = xmlnode_get_attrib(presence->chat_info.item, "nick");
 
 				/* nick change */
-				if (nick) {
+				if (!nick) {
 					purple_debug_warning("jabber", "Chat presence indicating a nick change, but no new nickname!\n");
 				} else {
 					nick_change = TRUE;
