@@ -36,6 +36,7 @@ typedef struct
 {
 	gnutls_session session;
 	guint handshake_handler;
+	guint handshake_timer;
 } PurpleSslGnutlsData;
 
 #define PURPLE_SSL_GNUTLS_DATA(gsc) ((PurpleSslGnutlsData *)gsc->private_data)
@@ -367,6 +368,19 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 
 }
 
+static gboolean
+start_handshake_cb(gpointer data)
+{
+	PurpleSslConnection *gsc = data;
+	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
+
+	purple_debug_info("gnutls", "Starting handshake with %s\n", gsc->host);
+
+	gnutls_data->handshake_timer = 0;
+
+	ssl_gnutls_handshake_cb(gsc, gsc->fd, PURPLE_INPUT_READ);
+	return FALSE;
+}
 
 static void
 ssl_gnutls_connect(PurpleSslConnection *gsc)
@@ -410,10 +424,8 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 	gnutls_data->handshake_handler = purple_input_add(gsc->fd,
 		PURPLE_INPUT_READ, ssl_gnutls_handshake_cb, gsc);
 
-	purple_debug_info("gnutls", "Starting handshake with %s\n", gsc->host);
-
 	/* Orborde asks: Why are we configuring a callback, then
-	   immediately calling it?
+	   (almost) immediately calling it?
 
 	   Answer: gnutls_handshake (up in handshake_cb) needs to be called
 	   once in order to get the ball rolling on the SSL connection.
@@ -424,7 +436,8 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 	   and subsequent calls, we'll just fire the callback immediately to
 	   accomplish this.
 	*/
-	ssl_gnutls_handshake_cb(gsc, gsc->fd, PURPLE_INPUT_READ);
+	gnutls_data->handshake_timer = purple_timeout_add(0, start_handshake_cb,
+	                                                  gsc);
 }
 
 static void
@@ -437,6 +450,8 @@ ssl_gnutls_close(PurpleSslConnection *gsc)
 
 	if(gnutls_data->handshake_handler)
 		purple_input_remove(gnutls_data->handshake_handler);
+	if (gnutls_data->handshake_timer)
+		purple_timeout_remove(gnutls_data->handshake_timer);
 
 	gnutls_bye(gnutls_data->session, GNUTLS_SHUT_RDWR);
 

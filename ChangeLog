@@ -6,6 +6,9 @@ version 2.7.0 (??/??/????):
 	* Changed GLib minimum version requirement to 2.12.0.
 	* Using the --disable-nls argument to configre now works properly. You
 	  will no longer be forced to have intltool to configure and build.
+	* Fix two related crashes in the GnuTLS and NSS plugins when they
+	  suffer internal errors immediately upon attempting to establish
+	  an SSL connection.
 	* Added support for PURPLE_GNUTLS_PRIORITIES environment variable.
 	  This can be used to specify GnuTLS priorities on a per-host basis.
 	  The format is "host=priority;host2=priority;...".  The default
