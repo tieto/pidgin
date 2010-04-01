@@ -6,6 +6,12 @@ version 2.7.0 (??/??/????):
 	* Changed GLib minimum version requirement to 2.12.0.
 	* Using the --disable-nls argument to configre now works properly. You
 	  will no longer be forced to have intltool to configure and build.
+	* Added support for PURPLE_GNUTLS_PRIORITIES environment variable.
+	  This can be used to specify GnuTLS priorities on a per-host basis.
+	  The format is "host=priority;host2=priority;...".  The default
+	  priority can be overridden by using "*" as the host.  See the
+	  GnuTLS manual for documentation on the format of the priority
+	  strings.
 
 	Pidgin:
 	* Moved the "Debugging Information" section of the About box to a
