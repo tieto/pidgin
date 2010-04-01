@@ -43,10 +43,15 @@ typedef struct
 static gnutls_certificate_client_credentials xcred = NULL;
 
 #ifdef HAVE_GNUTLS_PRIORITY_FUNCS
-/* Priority strings.  The default one is, well, the default (and is always set).
- * The hash table is of the form hostname => priority (both char *)
+/* Priority strings.  The default one is, well, the default (and is always
+ * set).  The hash table is of the form hostname => priority (both
+ * char *).
+ *
+ * We only use a gnutls_priority_t for the default on the assumption that
+ * that's the more common case.  Improvement patches (like matching on
+ * subdomains) welcome.
  */
-static char *default_priority = NULL;
+static gnutls_priority_t default_priority = NULL;
 static GHashTable *host_priorities = NULL;
 #endif
 
@@ -104,6 +109,7 @@ ssl_gnutls_init_gnutls(void)
 		                     "this. :-(");
 #else /* HAVE_GNUTLS_PRIORITY_FUNCS */
 		char **entries = g_strsplit(host_priorities_str, ";", -1);
+		char *default_priority_str = NULL;
 		guint i;
 
 		host_priorities = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -126,13 +132,27 @@ ssl_gnutls_init_gnutls(void)
 					/* TODO: Validate each of these and complain */
 					if (g_str_equal(host, "*")) {
 						/* Override the default priority */
-						g_free(default_priority);
-						default_priority = g_strdup(prio_str);
+						g_free(default_priority_str);
+						default_priority_str = g_strdup(prio_str);
 					} else
 						g_hash_table_insert(host_priorities, g_strdup(host),
 						                    g_strdup(prio_str));
 				}
 			}
+		}
+
+		if (default_priority_str) {
+			if (gnutls_priority_init(&default_priority, default_priority_str, NULL)) {
+				purple_debug_warning("gnutls", "Unable to set default priority to %s\n",
+				                     default_priority_str);
+				/* Versions of GnuTLS as of 2.8.6 (2010-03-31) don't free/NULL
+				 * this on error.
+				 */
+				gnutls_free(default_priority);
+				default_priority = NULL;
+			}
+
+			g_free(default_priority_str);
 		}
 
 		g_strfreev(entries);
@@ -141,8 +161,13 @@ ssl_gnutls_init_gnutls(void)
 
 #ifdef HAVE_GNUTLS_PRIORITY_FUNCS
 	/* Make sure we set have a default priority! */
-	if (!default_priority)
-		default_priority = g_strdup("NORMAL:%SSL3_RECORD_VERSION");
+	if (!default_priority) {
+		if (gnutls_priority_init(&default_priority, "NORMAL:%SSL3_RECORD_VERSION", NULL)) {
+			/* See comment above about memory leak */
+			gnutls_free(default_priority);
+			gnutls_priority_init(&default_priority, "NORMAL", NULL);
+		}
+	}
 #endif /* HAVE_GNUTLS_PRIORITY_FUNCS */
 
 	gnutls_global_init();
@@ -174,7 +199,7 @@ ssl_gnutls_uninit(void)
 		host_priorities = NULL;
 	}
 
-	g_free(default_priority);
+	gnutls_priority_deinit(default_priority);
 	default_priority = NULL;
 #endif
 }
@@ -356,24 +381,19 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 #ifdef HAVE_GNUTLS_PRIORITY_FUNCS
 	{
 		const char *prio_str = NULL;
+		gboolean set = FALSE;
 
 		/* Let's see if someone has specified a specific priority */
 		if (gsc->host && host_priorities)
 			prio_str = g_hash_table_lookup(host_priorities, gsc->host);
 
-		/* If not, let's use the default! */
-		if (!prio_str)
-			prio_str = default_priority;
+		if (prio_str)
+			set = (GNUTLS_E_SUCCESS ==
+					gnutls_priority_set_direct(gnutls_data->session, prio_str,
+				                               NULL));
 
-		/* TODO: Use a gnutls_priority_t cache, so this doesn't require three levels! */
-		/* The logic here is to try the specified string, fall back to the default
-		 * (which may also be user-specified), and if *that* doesn't work, fall back
-		 * to the default default (which I'm not sure is necessary, but whatever).
-		 */
-		if (gnutls_priority_set_direct(gnutls_data->session,
-		                               prio_str, NULL))
-			if (gnutls_priority_set_direct(gnutls_data->session, default_priority, NULL))
-				gnutls_priority_set_direct(gnutls_data->session, "NORMAL", NULL);
+		if (!set)
+			gnutls_priority_set(gnutls_data->session, default_priority);
 	}
 #else
 	gnutls_set_default_priority(gnutls_data->session);
