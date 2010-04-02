@@ -1458,7 +1458,7 @@ _sync_privacy_lists(NMUser *user)
 		for (node = rem_list; node; node = node->next) {
 			purple_privacy_permit_remove(gc->account, (char *)node->data, TRUE);
 		}
-		g_free(rem_list);
+		g_slist_free(rem_list);
 		rem_list = NULL;
 	}
 
