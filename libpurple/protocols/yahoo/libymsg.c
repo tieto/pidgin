@@ -3451,17 +3451,6 @@ yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 }
 #endif /* TRY_WEBMESSENGER_LOGIN */
 
-static void yahoo_server_check(PurpleAccount *account)
-{
-	const char *server;
-
-	server = purple_account_get_string(account, "server", YAHOO_PAGER_HOST);
-
-	if (*server == '\0' || g_str_equal(server, "scs.yahoo.com") ||
-			g_str_equal(server, "scs.msg.yahoo.com"))
-		purple_account_set_string(account, "server", YAHOO_PAGER_HOST);
-}
-
 static void yahoo_picture_check(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
@@ -3516,12 +3505,69 @@ static int get_yahoo_status_from_purple_status(PurpleStatus *status)
 	}
 }
 
+static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
+		gpointer user_data, const gchar *url_text, gsize len, const gchar *error_message)
+{
+	YahooData *yd = user_data;
+	PurpleConnection *gc = yd->gc;
+	PurpleAccount *a = purple_connection_get_account(gc);
+	gchar **strings = NULL, *cs_server = NULL;
+	int port = 0;
+
+	if(error_message != NULL) {
+		purple_debug_error("yahoo", "Login failed.  Unable to retrieve server "
+				"info: %s\n", error_message);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Unable to retrieve server information"));
+		return;
+	}
+
+	if(len == 0) {
+		purple_debug_error("yahoo", "Login failed.  Unable to retrieve server "
+				"info: Server did not return any useful data.\n");
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Unable to retrieve server information"));
+		return;
+	}
+
+	strings = g_strsplit(url_text, "\n", -1);
+
+	if(g_strv_length(strings) > 1) {
+		if(g_ascii_strncasecmp(strings[1], "CS_IP_ADDRESS=", 14) == 0) {
+			cs_server = g_strdup(&strings[1][14]);
+			purple_debug_info("yahoo", "Got CS IP address: %s\n", cs_server);
+		} else {
+			purple_debug_error("yahoo", "Login failed.  Unable to retrieve "
+					"server info: The server returned information, but it was "
+					"not in the ""expected format.\n");
+		}
+	} else {
+		purple_debug_error("yahoo", "Login failed.  Unable to retrieve server "
+				"info: The server returned information, but it was not in the "
+				"expected format.\n");
+	}
+
+	g_strfreev(strings);
+
+	if(cs_server) { /* got an address; get on with connecting */
+		port = purple_account_get_int(a, "port", YAHOO_PAGER_PORT);
+
+		if(purple_proxy_connect(gc, a, cs_server, port, yahoo_got_connected, gc) == NULL)
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+							_("Unable to connect"));
+	} else {
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Unable to retrieve server information"));
+	}
+
+	g_free(cs_server);
+}
+
 void yahoo_login(PurpleAccount *account) {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	YahooData *yd = gc->proto_data = g_new0(YahooData, 1);
 	PurpleStatus *status = purple_account_get_active_status(account);
-	const char *server = NULL;
-	int pager_port = 0;
+	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
 
 	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC;
 
@@ -3530,6 +3576,7 @@ void yahoo_login(PurpleAccount *account) {
 	purple_connection_set_display_name(gc, purple_account_get_username(account));
 
 	yd->gc = gc;
+	yd->jp = yahoo_is_japan(account);
 	yd->yahoo_local_p2p_server_fd = -1;
 	yd->fd = -1;
 	yd->txhandler = 0;
@@ -3548,18 +3595,17 @@ void yahoo_login(PurpleAccount *account) {
 	yd->last_keepalive = yd->last_ping = time(NULL);
 
 	yd->current_status = get_yahoo_status_from_purple_status(status);
-	yd->jp = yahoo_is_japan(account);
 
-	yahoo_server_check(account);
 	yahoo_picture_check(account);
 
-	server = purple_account_get_string(account, "server",
-					yd->jp ? YAHOOJP_PAGER_HOST : YAHOO_PAGER_HOST);
-	pager_port = purple_account_get_int(account, "port", YAHOO_PAGER_PORT);
-
-	if (purple_proxy_connect(gc, account, server, pager_port, yahoo_got_connected, gc) == NULL)
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-						_("Unable to connect"));
+	/* Get the pager server.  Actually start connecting in the callback since we
+	 * must have the contents of the HTTP response to proceed. */
+	purple_util_fetch_url_request_len_with_account(
+			purple_connection_get_account(gc),
+			yd->jp ? YAHOOJP_PAGER_HOST_REQ_URL : YAHOO_PAGER_HOST_REQ_URL,
+			use_whole_url ? TRUE : FALSE,
+			YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
+			yahoo_got_pager_server, yd);
 
 	return;
 }
