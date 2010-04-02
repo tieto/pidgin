@@ -5,11 +5,11 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
-"PO-Revision-Date: 2010-02-12 23:52+0100\n"
-"Last-Translator: Yngve Spjeld Landro <nynorsk(a)strilen(.)net>\n"
+"POT-Creation-Date: 2010-04-01 19:19-0700\n"
+"PO-Revision-Date: 2010-03-03 03:58+0100\n"
+"Last-Translator: Yngve Spjeld Landro <nynorsk@landro.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4270,13 +4270,12 @@ msgstr "Sinnsstemningstekst"
 msgid "Allow Buzz"
 msgstr "Tillat alarm"
 
-#, fuzzy
+# -namn?
 msgid "Mood Name"
-msgstr "Mellomnamn"
+msgstr "Sinnsstemningsnamn"
 
-#, fuzzy
 msgid "Mood Comment"
-msgstr "Vennenotat"
+msgstr "Sinnsstemningsmerknad"
 
 msgid "Tune Artist"
 msgstr "Låtartist"
@@ -4788,32 +4787,27 @@ msgstr "Klarte ikkje å senda fila til %s. Abonnerer ikkje på brukarnærvær"
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "Vel kva for ressurs av %s du ønskjer å senda fila til"
 
-#, fuzzy
 msgid "Afraid"
-msgstr "Arabisk"
+msgstr "Redd"
 
-#, fuzzy
 msgid "Amazed"
-msgstr "Skamfull"
+msgstr "Forbløffa"
 
-#, fuzzy
 msgid "Amorous"
-msgstr "Strålande"
+msgstr "Amorøs"
 
 #. 1
 msgid "Angry"
 msgstr "Sint"
 
-#, fuzzy
 msgid "Annoyed"
-msgstr "Utestengt"
+msgstr "Irritert"
 
 msgid "Anxious"
 msgstr "Ivrig"
 
-#, fuzzy
 msgid "Aroused"
-msgstr "Du sender"
+msgstr "Oppglødd"
 
 msgid "Ashamed"
 msgstr "Skamfull"
@@ -4821,157 +4815,131 @@ msgstr "Skamfull"
 msgid "Bored"
 msgstr "Keier meg"
 
-#, fuzzy
 msgid "Brave"
-msgstr "Lagra"
+msgstr "Modig"
 
-#, fuzzy
 msgid "Calm"
-msgstr "Domene"
+msgstr "Roleg"
 
-#, fuzzy
 msgid "Cautious"
-msgstr "Prat"
+msgstr "Forsiktig"
 
-#, fuzzy
 msgid "Cold"
-msgstr "Feit"
+msgstr "Kald"
 
-#, fuzzy
 msgid "Confident"
-msgstr "Konflikt"
+msgstr "Trygg"
 
-#, fuzzy
 msgid "Confused"
-msgstr "Hald fram"
+msgstr "Forvirra"
 
-#, fuzzy
 msgid "Contemplative"
-msgstr "Kontakt"
+msgstr "Ettertenksam"
 
-#, fuzzy
 msgid "Contented"
-msgstr "Tilkopla"
+msgstr "Tilfreds"
 
-#, fuzzy
 msgid "Cranky"
-msgstr "Firma"
+msgstr "Irritabel"
 
 msgid "Crazy"
-msgstr ""
+msgstr "Galen"
 
-#, fuzzy
 msgid "Creative"
-msgstr "Lag"
+msgstr "Kreativ"
 
-#, fuzzy
 msgid "Curious"
-msgstr "Strålande"
+msgstr "Nyfiken"
 
-#, fuzzy
 msgid "Dejected"
-msgstr "Avvist"
+msgstr "Motlaus"
 
-#, fuzzy
 msgid "Depressed"
-msgstr "Sletta"
+msgstr "Deprimert"
 
-#, fuzzy
 msgid "Disappointed"
-msgstr "Fråkopla."
+msgstr "Skuffa"
 
 msgid "Disgusted"
-msgstr ""
+msgstr "Forferda"
 
-#, fuzzy
 msgid "Dismayed"
-msgstr "Slått av"
+msgstr "Motlaus"
 
-#, fuzzy
 msgid "Distracted"
-msgstr "Fråkopla"
+msgstr "Distré"
 
 msgid "Embarrassed"
-msgstr ""
+msgstr "Flau"
 
-#, fuzzy
 msgid "Envious"
-msgstr "Ivrig"
+msgstr "Misunneleg"
 
 #. 2
 msgid "Excited"
 msgstr "Oppglødd"
 
-#, fuzzy
 msgid "Flirtatious"
-msgstr "Strålande"
+msgstr "Flørtande"
 
-#, fuzzy
 msgid "Frustrated"
-msgstr "Fornamn"
+msgstr "Frustrert"
 
 msgid "Grateful"
-msgstr ""
+msgstr "Takknemleg"
 
-#, fuzzy
 msgid "Grieving"
-msgstr "Hentar…"
+msgstr "Sørgjer"
 
 # Grinete?
 #. 3
 msgid "Grumpy"
 msgstr "Sur"
 
-#, fuzzy
 msgid "Guilty"
-msgstr "By"
+msgstr "Skuldig"
 
 #. 4
 msgid "Happy"
 msgstr "Glad"
 
 msgid "Hopeful"
-msgstr ""
+msgstr "Håpefull"
 
 #. 8
 msgid "Hot"
 msgstr "Heit"
 
 msgid "Humbled"
-msgstr ""
+msgstr "Nedtrykt"
 
 msgid "Humiliated"
-msgstr ""
+msgstr "Audmjuka"
 
-#, fuzzy
 msgid "Hungry"
-msgstr "Sint"
+msgstr "Svolten"
 
-#, fuzzy
 msgid "Hurt"
-msgstr "Humor"
+msgstr "Såra"
 
 msgid "Impressed"
-msgstr ""
+msgstr "Imponert"
 
-#, fuzzy
 msgid "In awe"
-msgstr "Forelska"
+msgstr "I ærefrykt"
 
 msgid "In love"
 msgstr "Forelska"
 
-#, fuzzy
 msgid "Indignant"
-msgstr "Indonesisk"
+msgstr "Indignert"
 
-#, fuzzy
 msgid "Interested"
-msgstr "Interesser"
+msgstr "Interessert"
 
-#, fuzzy
+# Berusa?
 msgid "Intoxicated"
-msgstr "Invitert"
+msgstr "Forgifta"
 
 #. 6
 msgid "Invincible"
@@ -4980,84 +4948,69 @@ msgstr "Uovervinneleg"
 msgid "Jealous"
 msgstr "Misunneleg"
 
-#, fuzzy
 msgid "Lonely"
-msgstr "Apa"
+msgstr "Einsam"
 
-#, fuzzy
 msgid "Lost"
-msgstr "Høgast"
+msgstr "Fortapt"
 
 msgid "Lucky"
-msgstr ""
+msgstr "Heldig"
 
-#, fuzzy
 msgid "Mean"
-msgstr "Tysk"
+msgstr "Stygg"
 
-#, fuzzy
 msgid "Moody"
-msgstr "Sinnsstemning"
+msgstr "Humørsjuk"
 
 msgid "Nervous"
-msgstr ""
+msgstr "Nervøs"
 
-#, fuzzy
 msgid "Neutral"
-msgstr "Detalj"
+msgstr "Nøytral"
 
-#, fuzzy
 msgid "Offended"
-msgstr "Fråkopla"
+msgstr "Fornærma"
 
 msgid "Outraged"
-msgstr ""
+msgstr "Opprørt"
 
-#, fuzzy
 msgid "Playful"
-msgstr "Spel"
+msgstr "Leikande"
 
-#, fuzzy
 msgid "Proud"
-msgstr "Høg"
+msgstr "Stolt"
 
-#, fuzzy
 msgid "Relaxed"
-msgstr "Eigentleg namn"
+msgstr "Avslappa"
 
-#, fuzzy
 msgid "Relieved"
-msgstr "Motteke"
+msgstr "Letta"
 
-#, fuzzy
 msgid "Remorseful"
-msgstr "Fjern"
+msgstr "Angrande"
 
-#, fuzzy
 msgid "Restless"
-msgstr "Registrer"
+msgstr "Uroleg"
 
 #. 7
 msgid "Sad"
 msgstr "Trist"
 
-#, fuzzy
 msgid "Sarcastic"
-msgstr "Marathi"
+msgstr "Sarkastisk"
 
 msgid "Satisfied"
-msgstr ""
+msgstr "Tilfreds"
 
-#, fuzzy
 msgid "Serious"
-msgstr "Strålande"
+msgstr "Alvorleg"
 
-#, fuzzy
 msgid "Shocked"
-msgstr "Blokkert"
+msgstr "Sjokkert"
 
 msgid "Shy"
-msgstr ""
+msgstr "Sky"
 
 #. 9
 msgid "Sick"
@@ -5069,40 +5022,34 @@ msgid "Sleepy"
 msgstr "Søvnig"
 
 msgid "Spontaneous"
-msgstr ""
+msgstr "Spontan"
 
-#, fuzzy
 msgid "Stressed"
-msgstr "Fart"
+msgstr "Stressa"
 
-#, fuzzy
 msgid "Strong"
-msgstr "Song"
+msgstr "Sterk"
 
 msgid "Surprised"
-msgstr ""
+msgstr "Overraska"
 
 msgid "Thankful"
-msgstr ""
+msgstr "Takksam"
 
 msgid "Thirsty"
-msgstr ""
+msgstr "Tørst"
 
-#, fuzzy
 msgid "Tired"
-msgstr "Fire"
+msgstr "Trøytt"
 
-#, fuzzy
 msgid "Undefined"
-msgstr "Understreka"
+msgstr "Udefinert"
 
-#, fuzzy
 msgid "Weak"
-msgstr "Kilevink"
+msgstr "Svak"
 
-#, fuzzy
 msgid "Worried"
-msgstr "Keier meg"
+msgstr "Bekymra"
 
 msgid "Set User Nickname"
 msgstr "Vel brukarnamn"
@@ -6182,7 +6129,7 @@ msgid "Status Error"
 msgstr "Statusfeil"
 
 msgid "Mood Error"
-msgstr "Sinnsstemnings-feil"
+msgstr "Sinnsstemningsfeil"
 
 msgid "Invitation Error"
 msgstr "Invitasjonsfeil"
@@ -6252,7 +6199,7 @@ msgid "MXit Advertising"
 msgstr "MXit-annonsering"
 
 msgid "More Information"
-msgstr "Fleire opplsyningar"
+msgstr "Fleire opplysningar"
 
 #, c-format
 msgid "No such user: %s"
@@ -6891,106 +6838,89 @@ msgid "Invalid chat room name"
 msgstr "Ugyldig prateromsnamn"
 
 msgid "Thinking"
-msgstr ""
+msgstr "Tenkjer"
 
-#, fuzzy
 msgid "Shopping"
-msgstr "Stoppar å skriva"
+msgstr "Handlar"
 
 # Vindauge eller meldingsvindauge?
-#, fuzzy
 msgid "Questioning"
-msgstr "Spørjevindauge"
+msgstr "Spørjande"
 
-#, fuzzy
 msgid "Eating"
-msgstr "Søking"
+msgstr "Et"
 
-#, fuzzy
 msgid "Watching a movie"
-msgstr "Speler eit spel"
+msgstr "Ser ein film"
 
 msgid "Typing"
 msgstr "Skriv"
 
-#, fuzzy
 msgid "At the office"
-msgstr "Ikkje på kontoret"
+msgstr "På kontoret"
 
 msgid "Taking a bath"
-msgstr ""
+msgstr "Tek eit bad"
 
 msgid "Watching TV"
-msgstr ""
+msgstr "Ser på TV"
 
-#, fuzzy
 msgid "Having fun"
-msgstr "Legg på"
+msgstr "Har det gøy"
 
-#, fuzzy
 msgid "Sleeping"
-msgstr "Søvnig"
+msgstr "Søv"
 
 msgid "Using a PDA"
-msgstr ""
+msgstr "Bruker ein PDA"
 
-#, fuzzy
 msgid "Meeting friends"
-msgstr "Lynmeldingsvenner"
+msgstr "Møter venner"
 
-#, fuzzy
 msgid "On the phone"
-msgstr "Taler i  telefonen"
+msgstr "Taler i telefonen"
 
-# Regelmessig?
-#, fuzzy
 msgid "Surfing"
-msgstr "Gjentakande"
+msgstr "Surfar"
 
 #. "I am mobile." / "John is mobile."
 msgid "Mobile"
 msgstr "Mobil"
 
 msgid "Searching the web"
-msgstr ""
+msgstr "Søkjer på nettet"
 
 msgid "At a party"
-msgstr ""
+msgstr "I eit selskap"
 
 msgid "Having Coffee"
-msgstr ""
+msgstr "Tek ein kopp kaffi"
 
 #. Playing video games
-#, fuzzy
 msgid "Gaming"
-msgstr "Tvillingane"
+msgstr "Speler"
 
 msgid "Browsing the web"
-msgstr ""
+msgstr "Er på nettet"
 
-#, fuzzy
 msgid "Smoking"
-msgstr "Song"
+msgstr "Røykjer"
 
-#, fuzzy
 msgid "Writing"
-msgstr "Arbeider"
+msgstr "Skriv"
 
 #. Drinking [Alcohol]
-#, fuzzy
 msgid "Drinking"
-msgstr "Arbeider"
+msgstr "Drikk"
 
 msgid "Listening to music"
 msgstr "Lyttar til musikk"
 
-#, fuzzy
 msgid "Studying"
-msgstr "Sender"
+msgstr "Studerer"
 
-#, fuzzy
 msgid "In the restroom"
-msgstr "Interesser"
+msgstr "Er på badet"
 
 msgid "Received invalid data on connection with server"
 msgstr "Det kom ugyldige data frå sambandet med tenaren"
@@ -7204,7 +7134,7 @@ msgid "Games"
 msgstr "Spel"
 
 msgid "ICQ Xtraz"
-msgstr ""
+msgstr "ICQ Xtraz"
 
 msgid "Add-Ins"
 msgstr "Tillegg"
@@ -7272,25 +7202,20 @@ msgstr "Nettmedviten"
 msgid "Invisible"
 msgstr "Usynleg"
 
-#, fuzzy
 msgid "Evil"
-msgstr "E-post"
+msgstr "Vond"
 
-#, fuzzy
 msgid "Depression"
-msgstr "Yrke"
+msgstr "Depresjon"
 
-#, fuzzy
 msgid "At home"
-msgstr "Om meg"
+msgstr "Heime"
 
-#, fuzzy
 msgid "At work"
-msgstr "Nettverk"
+msgstr "På arbeid"
 
-#, fuzzy
 msgid "At lunch"
-msgstr "Er ute til lunsj"
+msgstr "Er til lunsj"
 
 msgid "IP Address"
 msgstr "IP-adresse"
@@ -7803,9 +7728,8 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr "Lenkje til iTunes Music Store"
 
-#, fuzzy
 msgid "Lunch"
-msgstr "Finch"
+msgstr "Lunsj"
 
 #, c-format
 msgid "Buddy Comment for %s"
@@ -7838,9 +7762,8 @@ msgstr "Hent _AIM-informasjon"
 msgid "Edit Buddy Comment"
 msgstr "Endra vennemerknad"
 
-#, fuzzy
 msgid "Get X-Status Msg"
-msgstr "Hent statusmelding"
+msgstr "Hent X-statusmelding"
 
 msgid "End Direct IM Session"
 msgstr "Avslutt direktelynmeldingsøkta"
@@ -10175,7 +10098,7 @@ msgid "Chat room locale"
 msgstr "Pratero_mslokalitet"
 
 msgid "Ignore conference and chatroom invitations"
-msgstr "_Ignorer konferanse- og prateromsinvitasjonar"
+msgstr "Ignorer konferanse- og prateromsinvitasjonar"
 
 msgid "Use account proxy for SSL connections"
 msgstr "Bruk kontomellomtenar for SSL-sambanda"
@@ -10782,9 +10705,8 @@ msgstr "Ikkje forstyrr meg"
 msgid "Extended away"
 msgstr "Utvida vekke"
 
-#, fuzzy
 msgid "Feeling"
-msgstr "Tek i mot"
+msgstr "Føler"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -11329,9 +11251,8 @@ msgstr "Du kan ikkje leggja til vennen med den kontoen du nyttar no."
 msgid "Unknown node type"
 msgstr "Ukjend nodetype"
 
-#, fuzzy
 msgid "Please select your mood from the list"
-msgstr "Vel sinnsstemninga di frå lista."
+msgstr "Vel sinnsstemninga di frå lista"
 
 #, fuzzy
 msgid "Message (optional)"
@@ -11442,20 +11363,17 @@ msgstr "/_Hjelp"
 msgid "/Help/Online _Help"
 msgstr "/Hjelp/_Hjelp på nettet"
 
-#, fuzzy
 msgid "/Help/_Build Information"
-msgstr "Venneopplysningar"
+msgstr "/Hjelp/_Utgåveopplysningar"
 
 msgid "/Help/_Debug Window"
 msgstr "/Hjelp/_Feilsøkingsvindauge"
 
-#, fuzzy
 msgid "/Help/De_veloper Information"
-msgstr "Tenaropplysningar"
+msgstr "/Hjelp/Ut_viklaropplysningar"
 
-#, fuzzy
 msgid "/Help/_Translator Information"
-msgstr "Personleg informasjon"
+msgstr "/Hjelp/_Omsetjaropplysningar"
 
 msgid "/Help/_About"
 msgstr "/Hjelp/_Om"
@@ -11682,9 +11600,8 @@ msgstr "<PurpleMain>/Kontoar/"
 msgid "_Edit Account"
 msgstr "_Endra konto"
 
-#, fuzzy
 msgid "Set _Mood..."
-msgstr "Vel sinnsstemning…"
+msgstr "Vel _sinnsstemning…"
 
 msgid "No actions available"
 msgstr "Ingen tilgjengelege handlingar"
@@ -11806,9 +11723,8 @@ msgstr "/Samtale/Media/Lyd\\/_Biletsamtale"
 msgid "/Conversation/Se_nd File..."
 msgstr "/Samtale/S_end fil…"
 
-#, fuzzy
 msgid "/Conversation/Get _Attention"
-msgstr "/Samtale/Hent info"
+msgstr "/Samtale/Få _merksemd"
 
 # var: /Samtale/Legg til _vennevarsling…
 msgid "/Conversation/Add Buddy _Pounce..."
@@ -11892,9 +11808,8 @@ msgstr "/Samtale/Media/Lyd\\/Biletsamtale"
 msgid "/Conversation/Send File..."
 msgstr "/Samtale/Send fil…"
 
-#, fuzzy
 msgid "/Conversation/Get Attention"
-msgstr "/Samtale/Hent info"
+msgstr "/Samtale/Få merksemd"
 
 # var: /Samtale/Legg til vennevarsling…
 msgid "/Conversation/Add Buddy Pounce..."
@@ -11961,13 +11876,11 @@ msgstr "_Send"
 msgid "0 people in room"
 msgstr "0 personar i rommet"
 
-#, fuzzy
 msgid "Close Find bar"
-msgstr "Lukk denne fana"
+msgstr "Lukk søkjelinja"
 
-#, fuzzy
 msgid "Find:"
-msgstr "Finn"
+msgstr "Søk:"
 
 #, c-format
 msgid "%d person in room"
@@ -12137,6 +12050,10 @@ msgid "Bulgarian"
 msgstr "Bulgarsk"
 
 msgid "Bengali"
+msgstr "Bengali"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Bengali"
 
 msgid "Bosnian"
@@ -12362,7 +12279,7 @@ msgstr "Amharisk"
 msgid "Lithuanian"
 msgstr "Litauisk"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s is a messaging client based on libpurple which is capable of connecting "
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
@@ -12371,15 +12288,12 @@ msgid ""
 "copyrighted by its contributors, a list of whom is also distributed with %"
 "s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
-"%s er ein grafisk, modulær meldingsklient basert på libpurple som er i stand "
-"til å kopla seg opp mot AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu og QQ - alle på "
-"éin gong. Han er skriven ved å nytta GTK+.<BR><BR>Du kan endra og "
-"vidareformidla programmet i samsvar med vilkåra i GPL (utgåve 2 eller "
-"seinare). Ein kopi av GPL ligg i fila 'COPYING' som kjem saman med %s.  "
-"Opphavsretten til %s ligg hos bidragsytarane. Sjå i fila 'COPYRIGHT' for ei "
-"fullstendig liste over bidragsytarar. Programmet kjem utan noka som helst "
-"form for garanti.<BR><BR>"
+"%s er ein meldingsklient basert på libpurple som er i stand til å kopla seg "
+"opp mot fleire meldingstenester samstundes. %s er skriven i C ved å nytta GTK"
+"+. %s er gjeven ut og kan endrast og vidareformidlast i samsvar med vilkåra "
+"i GPL (utgåve 2 eller seinare). Ein kopi av GPL-avtalen kjem saman med %s. "
+"Opphavsretten til %s ligg hos bidragsytarane. %s har ei fullstendig liste "
+"over desse. %s kjem utan noka som helst form for garanti.<BR><BR>"
 
 #, c-format
 msgid ""
@@ -12388,8 +12302,12 @@ msgid ""
 "Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
 "im<BR><BR>"
 msgstr ""
+"<FONT SIZE=\"4\"><B>Kjekke ressursar</B></FONT><BR>\t<A HREF=\"%s"
+"\">Nettstad</A><BR>\t<A HREF=\"%s\">Ofte stilte spørsmål</A><BR>\tIRC-kanal: "
+"#pidgin on irc.freenode.net<BR>\tXMPP fleirbrukarprat (MUC): "
+"devel@conference.pidgin.im<BR><BR>"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12399,25 +12317,26 @@ msgid ""
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\">Hjelp frå andre Pidgin-brukarar:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>Dette er ei <b>open</b> "
-"postliste. (<a href=\"http://pidgin.im/pipermail/support/\">arkiv</a>)<br/"
-">Vi kan ikkje hjelpa med tredjepart-protokollar eller -programtillegg.<br/"
-">Lista sitt primærspråk er  <b>engelsk</b>. Du kan skriva på eit anna språk, "
-"men då vil du kanskje ikkje få den hjelpa du treng.<br/><br/>"
+"<font size=\"4\"><b>Du kan få hjelp frå andre Pidgin-brukarar</b></font> ved "
+"å senda ei e-postmelding til <a href=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</a><br/>Dette er ei <b>open</b> postliste (<a href="
+"\"http://pidgin.im/pipermail/support/\">archive</a>).<br/>Vi kan ikkje "
+"hjelpa med tredjepart-protokollar eller -programtillegg.<br/>Lista sitt "
+"primærspråk er  <b>engelsk</b>. Du kan skriva på eit anna språk, men då vil "
+"du kanskje ikkje få den hjelpa du treng.<br/>"
 
 #, c-format
 msgid "About %s"
 msgstr "Om %s"
 
-#, fuzzy
 msgid "Build Information"
-msgstr "Venneopplysningar"
+msgstr "Utgåvestegsopplysningar"
 
+# ???
 #. End of not to be translated section
-#, fuzzy, c-format
+#, c-format
 msgid "%s Build Information"
-msgstr "Venneopplysningar"
+msgstr "%s utgåvestegsopplysningar"
 
 msgid "Current Developers"
 msgstr "Noverande utviklarar"
@@ -12431,9 +12350,9 @@ msgstr "Tidlegare utviklarar"
 msgid "Retired Crazy Patch Writers"
 msgstr "Pensjonerte, pasjonerte rettarar"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Developer Information"
-msgstr "Tenaropplysningar"
+msgstr "%s utviklaropplysningar"
 
 msgid "Current Translators"
 msgstr "Noverande omsetjarar"
@@ -12441,9 +12360,9 @@ msgstr "Noverande omsetjarar"
 msgid "Past Translators"
 msgstr "Tidlegare omsetjarar"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Translator Information"
-msgstr "Fleire opplsyningar"
+msgstr "%s omsetjaropplysningar"
 
 msgid "_Name"
 msgstr "_Namn"
@@ -12852,9 +12771,8 @@ msgstr "Legg til lynmeldingsbilete"
 msgid "Insert Smiley"
 msgstr "Legg til smilefjes"
 
-#, fuzzy
 msgid "Send Attention"
-msgstr "Send-knapp"
+msgstr "Send merksemd"
 
 msgid "<b>_Bold</b>"
 msgstr "<b>_Feit</b>"
@@ -12903,7 +12821,7 @@ msgid "_Smile!"
 msgstr "Smile_fjes"
 
 msgid "_Attention!"
-msgstr ""
+msgstr "_NB!"
 
 msgid "Log Deletion Failed"
 msgstr "Klarte ikkje å sletta loggen"
@@ -13843,9 +13761,8 @@ msgstr "Snarvegstekst"
 msgid "Custom Smiley Manager"
 msgstr "Smilefjesbehandling"
 
-#, fuzzy
 msgid "Attention received"
-msgstr "Må slåast på"
+msgstr "Motteke merksemd"
 
 msgid "Select Buddy Icon"
 msgstr "Vel venneikon"
@@ -15185,17 +15102,11 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Dette programtillegget er nyttig ved feilsøking av XMPP-tenarar og -klientar."
 
-#~ msgid "Error creating conference."
-#~ msgstr "Klarte ikkje å laga konferansen"
+#~ msgid "Please select your mood from the list."
+#~ msgstr "Vel sinnsstemninga di frå lista."
 
-#~ msgid "Unable to bind socket to port: %s"
-#~ msgstr "Klarte ikkje å knyta endepunktet til porten: %s"
-
-#~ msgid "Unable to listen on socket: %s"
-#~ msgstr "Klarte ikkje å lytta på endepunktet: %s"
-
-#~ msgid "%s just sent you a Nudge!"
-#~ msgstr "%s har nettopp sendt deg ein dytt!"
+#~ msgid "Set Mood..."
+#~ msgstr "Vel sinnsstemning…"
 
 #~ msgid "Friendly name changes too rapidly"
 #~ msgstr "Endrar visingsnamnet for ofte"
@@ -15247,6 +15158,21 @@ msgstr ""
 
 #~ msgid "%s has removed you from his or her buddy list."
 #~ msgstr "%s har fjerna deg frå vennelista si."
+
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "Klarte ikkje å knyta endepunktet til porten: %s"
+
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr "Klarte ikkje å lytta på endepunktet: %s"
+
+#~ msgid "In_love"
+#~ msgstr "Forelska"
+
+#~ msgid "Error creating conference."
+#~ msgstr "Klarte ikkje å laga konferansen"
+
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "%s har nettopp sendt deg ein dytt!"
 
 #~ msgid ""
 #~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
