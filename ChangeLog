@@ -81,6 +81,10 @@ version 2.7.0 (??/??/????):
 	* Retrieve the pager server address from Yahoo!'s servers directly.
 	* Removed the "Pager server" account option, as it is no longer needed.
 
+	Finch:
+	* New action 'history-search', with default binding ctrl+r, to search
+	  the entered string in the input history.
+
 version 2.6.6 (02/18/2010):
 	libpurple:
 	* Fix 'make check' on OS X. (David Fang)
