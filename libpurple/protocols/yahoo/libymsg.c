@@ -1894,7 +1894,8 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 					break;
 				case 1213:
 					/* security lock from too many failed login attempts */
-					error_reason = g_strdup(_("Account locked: Too many failed login attempts.  Logging into the Yahoo! website may fix this."));
+					error_reason = g_strdup(_("Account locked: Too many failed login "
+								"attempts.  Logging into the Yahoo! website may fix this."));
 					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 					break;
 				case 1235:
@@ -1903,9 +1904,16 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 					error = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 					break;
 				case 1214:
-				case 1236:
 					/* indicates a lock of some description */
-					error_reason = g_strdup(_("Account locked: Unknown reason.  Logging into the Yahoo! website may fix this."));
+					error_reason = g_strdup(_("Account locked: Unknown reason.  Logging "
+								"into the Yahoo! website may fix this."));
+					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
+					break;
+				case 1236:
+					/* indicates a lock due to logging in too frequently */
+					error_reason = g_strdup(_("Account locked: You have been logging in too "
+								"frequently.  Wait a few minutes before trying to connect "
+								"again.  Logging into the Yahoo! website may help."));
 					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 					break;
 				case 100:
