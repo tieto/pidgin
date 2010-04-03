@@ -73,6 +73,8 @@ version 2.7.0 (??/??/????):
 	* Validate the hash on incoming BoB data objects (for custom smileys etc.),
 	  cache based per JID when the CID is not a valid hash (as specified by the
 	  BoB XEP).
+	* Present a better error message when authentication fails while trying
+	  to connect to Facebook.  (David Reiss, Facebook)
 
 	Yahoo/Yahoo JAPAN:
 	* Attempt to better handle transparent proxies interfering with HTTP-based
