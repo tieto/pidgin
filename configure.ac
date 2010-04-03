@@ -1463,7 +1463,7 @@ if test x"$enable_dbus" = "xyes" ; then
 			done
 
 			if test -z $DBUS_SERVICES_DIR ; then
-				AC_MSG_ERROR([D-Bus services directory was not found!  Please use --with-dbus-services and specify it's location.])
+				AC_MSG_ERROR([D-Bus services directory was not found!  Please use --with-dbus-services and specify its location.])
 			fi
 		else
 			DBUS_SERVICES_DIR="$datadir/dbus-1/services"
