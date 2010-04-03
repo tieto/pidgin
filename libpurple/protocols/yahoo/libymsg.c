@@ -3512,54 +3512,46 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 	PurpleConnection *gc = yd->gc;
 	PurpleAccount *a = purple_connection_get_account(gc);
 	gchar **strings = NULL, *cs_server = NULL;
-	int port = 0;
+	int port = 0, stringslen = 0;
 
-	if(error_message != NULL) {
-		purple_debug_error("yahoo", "Login failed.  Unable to retrieve server "
-				"info: %s\n", error_message);
+	if(error_message != NULL || len == 0) {
+		purple_debug_error("yahoo", "Unable to retrieve server info. %"
+				G_GSIZE_FORMAT " bytes retrieved with error message: %s\n", len,
+				error_message ? error_message : "(null)");
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unable to retrieve server information"));
-		return;
-	}
-
-	if(len == 0) {
-		purple_debug_error("yahoo", "Login failed.  Unable to retrieve server "
-				"info: Server did not return any useful data.\n");
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unable to retrieve server information"));
-		return;
-	}
-
-	strings = g_strsplit(url_text, "\n", -1);
-
-	if(g_strv_length(strings) > 1) {
-		if(g_ascii_strncasecmp(strings[1], "CS_IP_ADDRESS=", 14) == 0) {
-			cs_server = g_strdup(&strings[1][14]);
-			purple_debug_info("yahoo", "Got CS IP address: %s\n", cs_server);
-		} else {
-			purple_debug_error("yahoo", "Login failed.  Unable to retrieve "
-					"server info: The server returned information, but it was "
-					"not in the ""expected format.\n");
-		}
+				_("Unable to connect: The server returned an empty response."));
 	} else {
-		purple_debug_error("yahoo", "Login failed.  Unable to retrieve server "
-				"info: The server returned information, but it was not in the "
-				"expected format.\n");
+		strings = g_strsplit(url_text, "\n", -1);
+
+		if((stringslen = g_strv_length(strings)) > 1) {
+			int i;
+
+			for(i = 0; i < stringslen; i++) {
+				if(g_ascii_strncasecmp(strings[i], "COLO_CAPACITY=", 14) == 0) {
+					purple_debug_info("yahoo", "Got COLO Capacity: %s\n", &(strings[i][14]));
+				} else if(g_ascii_strncasecmp(strings[i], "CS_IP_ADDRESS=", 14) == 0) {
+					cs_server = g_strdup(&strings[i][14]);
+					purple_debug_info("yahoo", "Got CS IP address: %s\n", cs_server);
+				}
+			}
+		}
+
+		if(cs_server) { /* got an address; get on with connecting */
+			port = purple_account_get_int(a, "port", YAHOO_PAGER_PORT);
+
+			if(purple_proxy_connect(gc, a, cs_server, port, yahoo_got_connected, gc) == NULL)
+				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+								_("Unable to connect"));
+		} else {
+			purple_debug_error("yahoo", "No CS address retrieved!  Server "
+					"response:\n%s\n", url_text ? url_text : "(null)");
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+					_("Unable to connect: The server's response did not contain "
+						"the necessary information"));
+		}
 	}
 
 	g_strfreev(strings);
-
-	if(cs_server) { /* got an address; get on with connecting */
-		port = purple_account_get_int(a, "port", YAHOO_PAGER_PORT);
-
-		if(purple_proxy_connect(gc, a, cs_server, port, yahoo_got_connected, gc) == NULL)
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-							_("Unable to connect"));
-	} else {
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unable to retrieve server information"));
-	}
-
 	g_free(cs_server);
 }
 
