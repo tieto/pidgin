@@ -1031,9 +1031,9 @@ msn_status_types(PurpleAccount *account)
 
 	status = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
 			"tune", NULL, FALSE, TRUE, TRUE,
-			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ALBUM, _("Album"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
 			"game", _("Game Title"), purple_value_new(PURPLE_TYPE_STRING),
 			"office", _("Office Title"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);

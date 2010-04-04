@@ -1185,6 +1185,9 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 		for (l = buddies; l; l = l->next) {
 			BonjourBuddy *bb = purple_buddy_get_protocol_data((PurpleBuddy*) l->data);
 			if (bb != NULL) {
+				/* Any ongoing connection attempt is cancelled
+				 * by _purple_connection_destroy */
+				bb->conversation->connect_data = NULL;
 				bonjour_jabber_close_conversation(bb->conversation);
 				bb->conversation = NULL;
 			}

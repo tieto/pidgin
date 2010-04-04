@@ -95,6 +95,7 @@ libpurple/protocols/jabber/bosh.c
 libpurple/protocols/jabber/buddy.c
 libpurple/protocols/jabber/chat.c
 libpurple/protocols/jabber/jabber.c
+libpurple/protocols/jabber/jutil.c
 libpurple/protocols/jabber/libxmpp.c
 libpurple/protocols/jabber/message.c
 libpurple/protocols/jabber/parser.c

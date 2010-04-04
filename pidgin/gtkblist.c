@@ -2229,8 +2229,8 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 		return FALSE;
 	}
 
-	add_buddies_from_vcard("prpl-oscar",  group, aims,    alias);
-	add_buddies_from_vcard("prpl-oscar",  group, icqs,    alias);
+	add_buddies_from_vcard("prpl-aim",    group, aims,    alias);
+	add_buddies_from_vcard("prpl-icq",    group, icqs,    alias);
 	add_buddies_from_vcard("prpl-yahoo",  group, yahoos,  alias);
 	add_buddies_from_vcard("prpl-msn",    group, msns,    alias);
 	add_buddies_from_vcard("prpl-jabber", group, jabbers, alias);

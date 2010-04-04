@@ -1957,13 +1957,14 @@ purple_markup_strip_html(const char *str)
 					}
 				}
 
-				/* Check for tags which should be mapped to newline */
-				else if (g_ascii_strncasecmp(str2 + i, "<p>", 3) == 0
-				 || g_ascii_strncasecmp(str2 + i, "<tr", 3) == 0
+				/* Check for tags which should be mapped to newline (but ignore some of
+				 * the tags at the beginning of the text) */
+				else if ((j && (g_ascii_strncasecmp(str2 + i, "<p>", 3) == 0
+				              || g_ascii_strncasecmp(str2 + i, "<tr", 3) == 0
+				              || g_ascii_strncasecmp(str2 + i, "<hr", 3) == 0
+				              || g_ascii_strncasecmp(str2 + i, "<li", 3) == 0
+				              || g_ascii_strncasecmp(str2 + i, "<div", 4) == 0))
 				 || g_ascii_strncasecmp(str2 + i, "<br", 3) == 0
-				 || g_ascii_strncasecmp(str2 + i, "<hr", 3) == 0
-				 || g_ascii_strncasecmp(str2 + i, "<li", 3) == 0
-				 || g_ascii_strncasecmp(str2 + i, "<div", 4) == 0
 				 || g_ascii_strncasecmp(str2 + i, "</table>", 8) == 0)
 				{
 					str2[j++] = '\n';

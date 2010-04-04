@@ -51,7 +51,7 @@ typedef struct
 	PRFileDesc *fd;
 	PRFileDesc *in;
 	guint handshake_handler;
-
+	guint handshake_timer;
 } PurpleSslNssData;
 
 #define PURPLE_SSL_NSS_DATA(gsc) ((PurpleSslNssData *)gsc->private_data)
@@ -235,6 +235,7 @@ ssl_nss_init(void)
 static void
 ssl_nss_uninit(void)
 {
+	NSS_Shutdown();
 	PR_Cleanup();
 
 	_nss_methods = NULL;
@@ -368,6 +369,18 @@ ssl_nss_handshake_cb(gpointer data, int fd, PurpleInputCondition cond)
 	}
 }
 
+static gboolean
+start_handshake_cb(gpointer data)
+{
+	PurpleSslConnection *gsc = data;
+	PurpleSslNssData *nss_data = PURPLE_SSL_NSS_DATA(gsc);
+
+	nss_data->handshake_timer = 0;
+
+	ssl_nss_handshake_cb(gsc, gsc->fd, PURPLE_INPUT_READ);
+	return FALSE;
+}
+
 static void
 ssl_nss_connect(PurpleSslConnection *gsc)
 {
@@ -438,7 +451,7 @@ ssl_nss_connect(PurpleSslConnection *gsc)
 	nss_data->handshake_handler = purple_input_add(gsc->fd,
 		PURPLE_INPUT_READ, ssl_nss_handshake_cb, gsc);
 
-	ssl_nss_handshake_cb(gsc, gsc->fd, PURPLE_INPUT_READ);
+	nss_data->handshake_timer = purple_timeout_add(0, start_handshake_cb, gsc);
 }
 
 static void
@@ -459,6 +472,9 @@ ssl_nss_close(PurpleSslConnection *gsc)
 
 	if (nss_data->handshake_handler)
 		purple_input_remove(nss_data->handshake_handler);
+
+	if (nss_data->handshake_timer)
+		purple_timeout_remove(nss_data->handshake_timer);
 
 	g_free(nss_data);
 	gsc->private_data = NULL;
@@ -530,7 +546,7 @@ static PurpleCertificateScheme x509_nss;
 /** Imports a PEM-formatted X.509 certificate from the specified file.
  * @param filename Filename to import from. Format is PEM
  *
- * @return A newly allocated Certificate structure of the x509_gnutls scheme
+ * @return A newly allocated Certificate structure of the x509_nss scheme
  */
 static PurpleCertificate *
 x509_import_from_file(const gchar *filename)
@@ -575,6 +591,60 @@ x509_import_from_file(const gchar *filename)
 	return crt;
 }
 
+/** Imports a number of PEM-formatted X.509 certificates from the specified file.
+ * @param filename Filename to import from. Format is PEM
+ *
+ * @return A GSList of newly allocated Certificate structures of the x509_nss scheme
+ */
+static GSList *
+x509_importcerts_from_file(const gchar *filename)
+{
+	gchar *rawcert, *begin, *end;
+	gsize len = 0;
+	GSList *crts = NULL;
+	CERTCertificate *crt_dat;
+	PurpleCertificate *crt;
+
+	g_return_val_if_fail(filename != NULL, NULL);
+
+	purple_debug_info("nss/x509",
+			  "Loading certificate from %s\n",
+			  filename);
+
+	/* Load the raw data up */
+	if (!g_file_get_contents(filename,
+				 &rawcert, &len,
+				 NULL)) {
+		purple_debug_error("nss/x509", "Unable to read certificate file.\n");
+		return NULL;
+	}
+
+	if (len == 0) {
+		purple_debug_error("nss/x509",
+				"Certificate file has no contents!\n");
+		if (rawcert)
+			g_free(rawcert);
+		return NULL;
+	}
+
+	begin = rawcert;
+	while((end = strstr(begin, "-----END CERTIFICATE-----")) != NULL) {
+		end += sizeof("-----END CERTIFICATE-----")-1;
+		/* Decode the certificate */
+		crt_dat = CERT_DecodeCertFromPackage(begin, (end-begin));
+
+		g_return_val_if_fail(crt_dat != NULL, NULL);
+
+		crt = g_new0(PurpleCertificate, 1);
+		crt->scheme = &x509_nss;
+		crt->data = crt_dat;
+		crts = g_slist_prepend(crts, crt);
+		begin = end;
+	}
+	g_free(rawcert);
+
+	return crts;
+}
 /**
  * Exports a PEM-formatted X.509 certificate to the specified file.
  * @param filename Filename to export to. Format will be PEM
@@ -874,8 +944,8 @@ static PurpleCertificateScheme x509_nss = {
 	x509_common_name,                /* Subject name */
 	x509_check_name,                 /* Check subject name */
 	x509_times,                      /* Activation/Expiration time */
+	x509_importcerts_from_file,      /* Multiple certificate import function */
 
-	NULL,
 	NULL,
 	NULL,
 	NULL

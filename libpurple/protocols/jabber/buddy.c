@@ -362,7 +362,7 @@ struct vcard_template {
 	{N_("Email"),              "USERID",    "EMAIL"},
 	{N_("Organization Name"),  "ORGNAME",   "ORG"},
 	{N_("Organization Unit"),  "ORGUNIT",   "ORG"},
-	{N_("Title"),              "TITLE",     NULL},
+	{N_("Job Title"),          "TITLE",     NULL},
 	{N_("Role"),               "ROLE",      NULL},
 	{N_("Birthday"),           "BDAY",      NULL},
 	{N_("Description"),        "DESC",      NULL},
@@ -1160,7 +1160,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 					g_free(text2);
 				}
 			} else if(text && !strcmp(child->name, "TITLE")) {
-				purple_notify_user_info_add_pair(user_info, _("Title"), text);
+				purple_notify_user_info_add_pair(user_info, _("Job Title"), text);
 			} else if(text && !strcmp(child->name, "ROLE")) {
 				purple_notify_user_info_add_pair(user_info, _("Role"), text);
 			} else if(text && !strcmp(child->name, "DESC")) {

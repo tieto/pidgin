@@ -29,7 +29,7 @@
 #include "cmds.h"
 #include "prpl.h"
 
-#define YAHOO_PAGER_HOST "scsa.msg.yahoo.com"
+#define YAHOO_PAGER_HOST_REQ_URL "http://vcs1.msg.yahoo.com/capacity"
 #define YAHOO_PAGER_PORT 5050
 #define YAHOO_PAGER_PORT_P2P 5101
 #define YAHOO_LOGIN_URL "https://login.yahoo.com/config/pwtoken_login?src=ymsgr&ts=&token=%s"
@@ -44,9 +44,9 @@
 #define YAHOO_XFER_RELAY_PORT 80
 #define YAHOO_ROOMLIST_URL "http://insider.msg.yahoo.com/ycontent/"
 #define YAHOO_ROOMLIST_LOCALE "us"
-/* really we should get the list of servers from
- http://update.messenger.yahoo.co.jp/servers.html */
-#define YAHOOJP_PAGER_HOST "cs.yahoo.co.jp"
+
+/* Yahoo! JAPAN stuff */
+#define YAHOOJP_PAGER_HOST_REQ_URL "http://cs1.msg.vip.ogk.yahoo.co.jp/capacity"
 #define YAHOOJP_TOKEN_URL "https://login.yahoo.co.jp/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s"
 #define YAHOOJP_LOGIN_URL "https://login.yahoo.co.jp/config/pwtoken_login?src=ymsgr&ts=&token=%s"
 #define YAHOOJP_PROFILE_URL "http://profiles.yahoo.co.jp/"

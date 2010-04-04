@@ -24,6 +24,9 @@ version 2.7.0 (??/??/????):
 		* sent-attention conversation signal
 		* got-attention conversation signal
 		* PurpleMood struct in status.h
+		* purple_certificates_import for importing multiple certificates from
+		  a single file (and corresponding import_certificates member of
+		  PurpleCertificateScheme struct)
 
 	Pidgin:
 		Added:

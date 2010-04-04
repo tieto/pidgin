@@ -6,6 +6,18 @@ version 2.7.0 (??/??/????):
 	* Changed GLib minimum version requirement to 2.12.0.
 	* Using the --disable-nls argument to configre now works properly. You
 	  will no longer be forced to have intltool to configure and build.
+	* Fix two related crashes in the GnuTLS and NSS plugins when they
+	  suffer internal errors immediately upon attempting to establish
+	  an SSL connection.
+	* Fix NSS to work when reinitialized after being used.  (Thanks to
+	  Ludovico Cavedon for the testcase)
+	* Added support for PURPLE_GNUTLS_PRIORITIES environment variable.
+	  This can be used to specify GnuTLS priorities on a per-host basis.
+	  The format is "host=priority;host2=priority;...".  The default
+	  priority can be overridden by using "*" as the host.  See the
+	  GnuTLS manual for documentation on the format of the priority
+	  strings.
+	* Fix autoconf detection of Python.  (Brad Smith)
 
 	Pidgin:
 	* Moved the "Debugging Information" section of the About box to a
@@ -30,6 +42,8 @@ version 2.7.0 (??/??/????):
 	  Ctrl+v can be bound to 'Paste as Plain Text' by default.
 	* Plugins can now handle markup in buddy names by attaching to the signal
 	  "drawing-buddy". (Daniele Ricci, Andrea Piccinelli)
+	* Be more accommodating when scaling down large images for use as
+	  buddy icons.
 
 	Bonjour:
 	* Added support for IPv6. (Thanks to T_X for testing)
@@ -60,11 +74,19 @@ version 2.7.0 (??/??/????):
 	* Validate the hash on incoming BoB data objects (for custom smileys etc.),
 	  cache based per JID when the CID is not a valid hash (as specified by the
 	  BoB XEP).
+	* Present a better error message when authentication fails while trying
+	  to connect to Facebook.  (David Reiss, Facebook)
 
-	Yahoo:
+	Yahoo/Yahoo JAPAN:
 	* Attempt to better handle transparent proxies interfering with HTTP-based
 	  login.
 	* Fix handling of P2P packets, thus fixing the loss of some messages.
+	* Retrieve the pager server address from Yahoo!'s servers directly.
+	* Removed the "Pager server" account option, as it is no longer needed.
+
+	Finch:
+	* New action 'history-search', with default binding ctrl+r, to search
+	  the entered string in the input history.
 
 version 2.6.6 (02/18/2010):
 	libpurple:
