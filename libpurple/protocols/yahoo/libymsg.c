@@ -1736,6 +1736,8 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 				244, yd->jp ? YAHOOJP_CLIENT_VERSION_ID : YAHOO_CLIENT_VERSION_ID,
 				2, name,
 				2, "1",
+				/* Should send key 59, value of bcookie here--need to fetch it first! */
+				98, purple_account_get_string(account, "room_list_locale", yd->jp ? "jp" : "us"),
 				135, yd->jp ? YAHOOJP_CLIENT_VERSION : YAHOO_CLIENT_VERSION);
 
 	if (yd->picture_checksum)
@@ -3529,7 +3531,7 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unable to connect: The server returned an empty response."));
 	} else {
-		strings = g_strsplit(url_text, "\n", -1);
+		strings = g_strsplit(url_text, "\r\n", -1);
 
 		if((stringslen = g_strv_length(strings)) > 1) {
 			int i;
