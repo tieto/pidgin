@@ -1402,7 +1402,7 @@ AC_ARG_WITH([python],
 						   [which python interpreter to use for dbus code generation]),
 			PYTHON=$withval)
 
-if test "x$enable_dbus" = "xyes" ; then
+if test "x$enable_dbus" = "xyes" || test "x$enable_consoleui" = "xyes" ; then
 	if test -z "$PYTHON" -o "x$PYTHON" = "xyes"; then
 		AC_PATH_PROG([PYTHON], [python], [no])
 	fi
@@ -1411,9 +1411,7 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_MSG_WARN([python interpreter not found in your path])
 		enable_dbus=no
 	fi
-fi
 
-if test "x$enable_dbus" = "xyes" ; then
 	if $PYTHON -c "import sys; sys.exit(sys.version[[:3]] >= '2.4')" ; then
 		AC_MSG_WARN([python version >= 2.4 required])
 		enable_dbus=no
@@ -1484,14 +1482,13 @@ AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
 
 dnl Check for Python headers (currently useful only for libgnt)
 dnl (Thanks to XChat)
-AC_PATH_PROG(pythonpath, python)
-if test "_$pythonpath" != _ ; then
+if test "x$enable_consoleui" = "xyes" -a ! -z "$PYTHON" -a x"$PYTHON" != x"no" ; then
 	AC_MSG_CHECKING(for Python compile flags)
-	PY_PREFIX=`$pythonpath -c 'import sys ; print sys.prefix'`
-	PY_EXEC_PREFIX=`$pythonpath -c 'import sys ; print sys.exec_prefix'`
+	PY_PREFIX=`$PYTHON -c 'import sys ; print sys.prefix'`
+	PY_EXEC_PREFIX=`$PYTHON -c 'import sys ; print sys.exec_prefix'`
 	changequote(<<, >>)dnl
-	PY_VERSION=`$pythonpath -c 'import sys ; print sys.version[0:3]'`
-	PY_MAJOR=`$pythonpath -c 'import sys ; print sys.version[0:2]'`
+	PY_VERSION=`$PYTHON -c 'import sys ; print sys.version[0:3]'`
+	PY_MAJOR=`$PYTHON -c 'import sys ; print sys.version[0:2]'`
 	changequote([, ])dnl
 	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h -a "$PY_MAJOR" = "2."; then
 		AC_MSG_RESULT()

@@ -17,6 +17,7 @@ version 2.7.0 (??/??/????):
 	  priority can be overridden by using "*" as the host.  See the
 	  GnuTLS manual for documentation on the format of the priority
 	  strings.
+	* Fix autoconf detection of Python.  (Brad Smith)
 
 	Pidgin:
 	* Moved the "Debugging Information" section of the About box to a
