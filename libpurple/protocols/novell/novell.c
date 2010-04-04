@@ -1494,7 +1494,7 @@ _map_property_tag(const char *tag)
 	else if (strcmp(tag, "personalTitle") == 0)
 		return _("Personal Title");
 	else if (strcmp(tag, "Title") == 0)
-		return _("Title");
+		return _("Job Title");
 	else if (strcmp(tag, "mailstop") == 0)
 		return _("Mailstop");
 	else if (strcmp(tag, "Internet EMail Address") == 0)
