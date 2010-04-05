@@ -1785,6 +1785,11 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 			crumb = g_strdup(split_data[1] + strlen("crumb="));
 			yd->cookie_y = g_strdup(split_data[2] + strlen("Y="));
 			yd->cookie_t = g_strdup(split_data[3] + strlen("T="));
+
+			if(purple_debug_is_unsafe())
+				purple_debug_info("yahoo", "Got crumb, Y cookie, and T "
+						"cookie:\ncrumb=%s\nY=%s\nT=%s\n", crumb, yd->cookie_y,
+						yd->cookie_t);
 		}
 
 		g_strfreev(split_data);
