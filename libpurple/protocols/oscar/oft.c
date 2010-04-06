@@ -496,6 +496,15 @@ peer_oft_recv_frame_resume(PeerConnection *conn, OftFrame *frame)
 static void
 peer_oft_recv_frame_done(PeerConnection *conn, OftFrame *frame)
 {
+	/*
+	 * The core ft code sets the xfer to completed automatically if we've
+	 * sent all bytes to the other user.  But this function can be called
+	 * even if we haven't sent all bytes to the other user (in the case
+	 * where the user already has this file on their computer and the
+	 * checksum matches).
+	 */
+	purple_xfer_set_completed(conn->xfer, TRUE);
+
 	purple_input_remove(conn->watcher_incoming);
 	conn->watcher_incoming = 0;
 	conn->xfer->fd = conn->fd;
