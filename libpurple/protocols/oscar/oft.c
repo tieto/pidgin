@@ -503,7 +503,8 @@ peer_oft_recv_frame_done(PeerConnection *conn, OftFrame *frame)
 	 * where the user already has this file on their computer and the
 	 * checksum matches).
 	 */
-	purple_xfer_set_completed(conn->xfer, TRUE);
+	if (!purple_xfer_is_completed(conn->xfer))
+		purple_xfer_set_completed(conn->xfer, TRUE);
 
 	purple_input_remove(conn->watcher_incoming);
 	conn->watcher_incoming = 0;
