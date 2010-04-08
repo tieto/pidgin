@@ -83,6 +83,9 @@ version 2.7.0 (??/??/????):
 	* Fix handling of P2P packets, thus fixing the loss of some messages.
 	* Retrieve the pager server address from Yahoo!'s servers directly.
 	* Removed the "Pager server" account option, as it is no longer needed.
+	* The authentication code is now less order-sensitive with the components
+	  of the server's response.
+	* The authentication process now acts more like the official client.
 
 	Finch:
 	* New action 'history-search', with default binding ctrl+r, to search
