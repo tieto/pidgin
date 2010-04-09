@@ -67,11 +67,13 @@ void jabber_data_request(JabberStream *js, const gchar *cid, const gchar *who,
 /* lookup functions */
 const JabberData *jabber_data_find_local_by_alt(const gchar *alt);
 const JabberData *jabber_data_find_local_by_cid(const gchar *cid);
-const JabberData *jabber_data_find_remote_by_cid(const gchar *cid);
+const JabberData *jabber_data_find_remote_by_cid(JabberStream *js,
+    const gchar *who, const gchar *cid);
 
 /* store data objects */
 void jabber_data_associate_local(JabberData *data, const gchar *alt);
-void jabber_data_associate_remote(JabberData *data);
+void jabber_data_associate_remote(JabberStream *js, const gchar *who,
+    JabberData *data);
 
 /* handles iq requests */
 void jabber_data_parse(JabberStream *js, const char *who, JabberIqType type,

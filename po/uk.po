@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-10 20:02-0800\n"
+"POT-Creation-Date: 2010-03-29 00:17-0700\n"
 "PO-Revision-Date: 2010-02-10 11:52+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
@@ -2231,21 +2231,18 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Сталася невиправна помилка Farsight2."
 
-msgid "Conference error"
-msgstr "Помилка конференції"
-
 msgid "Error with your microphone"
 msgstr "Помилка мікрофона"
 
 msgid "Error with your webcam"
 msgstr "Помилка веб-камери"
 
+msgid "Conference error"
+msgstr "Помилка конференції"
+
 #, c-format
 msgid "Error creating session: %s"
 msgstr "Помилка створення сеансу: %s"
-
-msgid "Error creating conference."
-msgstr "Помилка створенні конференції."
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -3019,18 +3016,6 @@ msgstr "%s закрив розмову."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Не вдається відправити повідомлення, розмова не може бути розпочата."
 
-#, c-format
-msgid "Unable to create socket: %s"
-msgstr "Не вдалося створити сокет: %s"
-
-#, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "Не вдалося зв'язати сокет з портом: %s"
-
-#, c-format
-msgid "Unable to listen on socket: %s"
-msgstr "Не вдалося слухати сокет: %s"
-
 msgid "Error communicating with local mDNSResponder."
 msgstr "Помилка обміну з місцевим mDNSResponder."
 
@@ -3184,6 +3169,14 @@ msgstr "Додати до балачки..."
 #. Global
 msgid "Available"
 msgstr "Доступний"
+
+#. 2
+msgid "Chatty"
+msgstr "Готовий балакати"
+
+#. 3
+msgid "Do Not Disturb"
+msgstr "Не турбувати"
 
 #. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
@@ -4014,17 +4007,6 @@ msgstr "Вхід"
 msgid "Log Out"
 msgstr "Вихід"
 
-#. 2
-msgid "Chatty"
-msgstr "Готовий балакати"
-
-msgid "Extended Away"
-msgstr "Розширений стан \"Відійшов\""
-
-#. 3
-msgid "Do Not Disturb"
-msgstr "Не турбувати"
-
 msgid "JID"
 msgstr "JID"
 
@@ -4292,6 +4274,14 @@ msgstr "Настрій"
 msgid "Allow Buzz"
 msgstr "Дозволити плітки"
 
+#, fuzzy
+msgid "Mood Name"
+msgstr "Прізвище"
+
+#, fuzzy
+msgid "Mood Comment"
+msgstr "Коментар користувача"
+
 msgid "Tune Artist"
 msgstr "Налаштувати виконавця"
 
@@ -4536,10 +4526,6 @@ msgstr ""
 "Не можливо пліткувати, тому що %s не підтримує цього або не бажає зараз "
 "отримувати плітки."
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr "Пліткує %s..."
-
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
@@ -4548,6 +4534,10 @@ msgstr "Пліткувати"
 #, c-format
 msgid "%s has buzzed you!"
 msgstr "%s напліткував про вас!"
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr "Пліткує %s..."
 
 #, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4577,6 +4567,10 @@ msgstr "Виберіть ресурс"
 
 msgid "Initiate Media"
 msgstr "Розпочати медіа"
+
+#, fuzzy
+msgid "Account does not support PEP, can't set mood"
+msgstr "Цей протокол не підтримує кімнати балачок."
 
 msgid "config:  Configure a chat room."
 msgstr "config: Налаштувати кімнату балачки."
@@ -4633,6 +4627,13 @@ msgstr "ping &lt;jid&gt;:\tПінг користувача, компонента
 
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: пліткувати про користувача, щоб привернути його увагу"
+
+#, fuzzy
+msgid "mood: Set current user mood"
+msgstr "Виберіть коректного користувача"
+
+msgid "Extended Away"
+msgstr "Розширений стан \"Відійшов\""
 
 #. *< type
 #. *< ui_requirement
@@ -4710,11 +4711,17 @@ msgstr "(Код %s)"
 msgid "A custom smiley in the message is too large to send."
 msgstr "Нетипова усмішка у повідомленні завелика, щоб її надіслати."
 
+msgid "XMPP stream header missing"
+msgstr ""
+
+msgid "XMPP Version Mismatch"
+msgstr ""
+
+msgid "XMPP stream missing ID"
+msgstr ""
+
 msgid "XML Parse error"
 msgstr "Помилка аналізу XML"
-
-msgid "Unknown Error in presence"
-msgstr "Невідома помилка стану присутності"
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4751,6 +4758,9 @@ msgstr "Вас викинули: (%s)"
 msgid "Kicked (%s)"
 msgstr "Викинутий (%s)"
 
+msgid "Unknown Error in presence"
+msgstr "Невідома помилка стану присутності"
+
 # http://xmpp.org/extensions/xep-0047.html
 msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "Сталася помилка передавання внутрішнього потоку даних (IBB)\n"
@@ -4786,17 +4796,320 @@ msgstr "Не вдалося надіслати файл до %s, не підпи
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "Будь ласка, виберіть ресурс %s, до якого ви хочете надіслати файл"
 
-msgid "Edit User Mood"
-msgstr "Редагувати настрій користувача"
+#, fuzzy
+msgid "Afraid"
+msgstr "Арабська"
 
-msgid "Please select your mood from the list."
-msgstr "Будь ласка, виберіть ваш настрій з переліку."
+#, fuzzy
+msgid "Amazed"
+msgstr "Присоромлений"
 
-msgid "Set"
-msgstr "Встановити"
+#, fuzzy
+msgid "Amorous"
+msgstr "Чудовий"
 
-msgid "Set Mood..."
-msgstr "Встановити настрій..."
+#. 1
+msgid "Angry"
+msgstr "Розлючений"
+
+#, fuzzy
+msgid "Annoyed"
+msgstr "Заборонено"
+
+msgid "Anxious"
+msgstr "Стурбований"
+
+#, fuzzy
+msgid "Aroused"
+msgstr "Надсилається"
+
+msgid "Ashamed"
+msgstr "Присоромлений"
+
+msgid "Bored"
+msgstr "Нудьгуючий"
+
+#, fuzzy
+msgid "Brave"
+msgstr "Зберегти"
+
+#, fuzzy
+msgid "Calm"
+msgstr "Сфера"
+
+#, fuzzy
+msgid "Cautious"
+msgstr "Балачки"
+
+#, fuzzy
+msgid "Cold"
+msgstr "Жирний"
+
+#, fuzzy
+msgid "Confident"
+msgstr "Конфлікт"
+
+#, fuzzy
+msgid "Confused"
+msgstr "Продовжити"
+
+#, fuzzy
+msgid "Contemplative"
+msgstr "Контакт"
+
+#, fuzzy
+msgid "Contented"
+msgstr "З'єднаний"
+
+#, fuzzy
+msgid "Cranky"
+msgstr "Компанія"
+
+msgid "Crazy"
+msgstr ""
+
+#, fuzzy
+msgid "Creative"
+msgstr "Створити"
+
+#, fuzzy
+msgid "Curious"
+msgstr "Чудовий"
+
+#, fuzzy
+msgid "Dejected"
+msgstr "Відхилений"
+
+#, fuzzy
+msgid "Depressed"
+msgstr "Видалений"
+
+#, fuzzy
+msgid "Disappointed"
+msgstr "Від'єднано."
+
+msgid "Disgusted"
+msgstr ""
+
+#, fuzzy
+msgid "Dismayed"
+msgstr "Вимкнений"
+
+#, fuzzy
+msgid "Distracted"
+msgstr "Незалежний"
+
+msgid "Embarrassed"
+msgstr ""
+
+#, fuzzy
+msgid "Envious"
+msgstr "Стурбований"
+
+#. 2
+msgid "Excited"
+msgstr "Схвильований"
+
+#, fuzzy
+msgid "Flirtatious"
+msgstr "Чудовий"
+
+#, fuzzy
+msgid "Frustrated"
+msgstr "Ім'я"
+
+msgid "Grateful"
+msgstr ""
+
+#, fuzzy
+msgid "Grieving"
+msgstr "Отримання..."
+
+#. 3
+msgid "Grumpy"
+msgstr "Сердитий"
+
+#, fuzzy
+msgid "Guilty"
+msgstr "Місто"
+
+#. 4
+msgid "Happy"
+msgstr "Щасливий"
+
+msgid "Hopeful"
+msgstr ""
+
+#. 8
+msgid "Hot"
+msgstr "Гарячий"
+
+msgid "Humbled"
+msgstr ""
+
+msgid "Humiliated"
+msgstr ""
+
+#, fuzzy
+msgid "Hungry"
+msgstr "Розлючений"
+
+#, fuzzy
+msgid "Hurt"
+msgstr "Гумор"
+
+msgid "Impressed"
+msgstr ""
+
+#, fuzzy
+msgid "In awe"
+msgstr "Закоханий"
+
+msgid "In love"
+msgstr "Закоханий"
+
+#, fuzzy
+msgid "Indignant"
+msgstr "Індонезійська"
+
+#, fuzzy
+msgid "Interested"
+msgstr "Зацікавленості"
+
+#, fuzzy
+msgid "Intoxicated"
+msgstr "Запрошений"
+
+#. 6
+msgid "Invincible"
+msgstr "Непереможний"
+
+msgid "Jealous"
+msgstr "Ревнивий"
+
+#, fuzzy
+msgid "Lonely"
+msgstr "Мавпа"
+
+#, fuzzy
+msgid "Lost"
+msgstr "Найгучніше"
+
+msgid "Lucky"
+msgstr ""
+
+#, fuzzy
+msgid "Mean"
+msgstr "Німецька"
+
+#, fuzzy
+msgid "Moody"
+msgstr "Настрій"
+
+msgid "Nervous"
+msgstr ""
+
+#, fuzzy
+msgid "Neutral"
+msgstr "Подробиці"
+
+#, fuzzy
+msgid "Offended"
+msgstr "Поза мережею"
+
+msgid "Outraged"
+msgstr ""
+
+#, fuzzy
+msgid "Playful"
+msgstr "Відтворення"
+
+#, fuzzy
+msgid "Proud"
+msgstr "Гучно"
+
+#, fuzzy
+msgid "Relaxed"
+msgstr "Справжнє ім'я"
+
+#, fuzzy
+msgid "Relieved"
+msgstr "Отримані"
+
+#, fuzzy
+msgid "Remorseful"
+msgstr "Видалити"
+
+#, fuzzy
+msgid "Restless"
+msgstr "Зареєструвати"
+
+#. 7
+msgid "Sad"
+msgstr "Сумний"
+
+#, fuzzy
+msgid "Sarcastic"
+msgstr "Мараті"
+
+msgid "Satisfied"
+msgstr ""
+
+#, fuzzy
+msgid "Serious"
+msgstr "Чудовий"
+
+#, fuzzy
+msgid "Shocked"
+msgstr "Заблокований"
+
+msgid "Shy"
+msgstr ""
+
+#. 9
+msgid "Sick"
+msgstr "Хворий"
+
+#. 10
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "Сонливий"
+
+msgid "Spontaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Stressed"
+msgstr "Швидкість"
+
+#, fuzzy
+msgid "Strong"
+msgstr "Пісня"
+
+msgid "Surprised"
+msgstr ""
+
+msgid "Thankful"
+msgstr ""
+
+msgid "Thirsty"
+msgstr ""
+
+#, fuzzy
+msgid "Tired"
+msgstr "Fire"
+
+#, fuzzy
+msgid "Undefined"
+msgstr "Підкреслений"
+
+#, fuzzy
+msgid "Weak"
+msgstr "Стукнути"
+
+#, fuzzy
+msgid "Worried"
+msgstr "Нудьгуючий"
 
 msgid "Set User Nickname"
 msgstr "Встановити прізвисько користувача"
@@ -4810,6 +5123,9 @@ msgid ""
 msgstr ""
 "Ці відомості видимі всім контактам з вашого переліку контактів, тому "
 "виберіть щось прийнятне."
+
+msgid "Set"
+msgstr "Встановити"
 
 msgid "Set Nickname..."
 msgstr "Встановити прізвисько..."
@@ -4853,217 +5169,165 @@ msgstr ""
 "%s є у локальному переліку, але відсутній у переліку сервера. Хочете додати "
 "цей контакт?"
 
-#, c-format
 msgid "Unable to parse message"
 msgstr "Не вдається розібрати повідомлення"
 
-#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "Синтаксична помилка (можливо, помилка клієнта)"
 
-#, c-format
 msgid "Invalid email address"
 msgstr "Неправильна електронна адреса"
 
-#, c-format
 msgid "User does not exist"
 msgstr "Користувач не існує"
 
-#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "Не вистачає повної назви домену"
 
-#, c-format
 msgid "Already logged in"
 msgstr "Вже увійшов"
 
-#, c-format
 msgid "Invalid username"
 msgstr "Неправильне ім'я користувача"
 
-#, c-format
 msgid "Invalid friendly name"
 msgstr "Неправильне дружнє ім'я"
 
-#, c-format
 msgid "List full"
 msgstr "Перелік переповнений"
 
-#, c-format
 msgid "Already there"
 msgstr "Вже там"
 
-#, c-format
 msgid "Not on list"
 msgstr "Не в переліку"
 
-#, c-format
 msgid "User is offline"
 msgstr "Користувач не у мережі"
 
-#, c-format
 msgid "Already in the mode"
 msgstr "Вже у цьому режимі"
 
-#, c-format
 msgid "Already in opposite list"
 msgstr "Вже у протилежному переліку"
 
-#, c-format
 msgid "Too many groups"
 msgstr "Занадто багато груп"
 
-#, c-format
 msgid "Invalid group"
 msgstr "Неправильна група"
 
-#, c-format
 msgid "User not in group"
 msgstr "Користувач не у групі"
 
-#, c-format
 msgid "Group name too long"
 msgstr "Назва групи занадто велика"
 
-#, c-format
 msgid "Cannot remove group zero"
 msgstr "Не можна видалити нульову групу"
 
-#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "Спроба додати контакт неіснуючу групу"
 
-#, c-format
 msgid "Switchboard failed"
 msgstr "Помилка панелі перемикання"
 
-#, c-format
 msgid "Notify transfer failed"
 msgstr "Помилка передачі сповіщення"
 
-#, c-format
 msgid "Required fields missing"
 msgstr "Пропущені необхідні поля"
 
-#, c-format
 msgid "Too many hits to a FND"
 msgstr "Надто багато попадань у FND"
 
-#, c-format
 msgid "Not logged in"
 msgstr "Не у мережі"
 
-#, c-format
 msgid "Service temporarily unavailable"
 msgstr "Послуга тимчасово недоступна"
 
-#, c-format
 msgid "Database server error"
 msgstr "Помилка сервера бази даних"
 
-#, c-format
 msgid "Command disabled"
 msgstr "Команда відключена"
 
-#, c-format
 msgid "File operation error"
 msgstr "Помилка при роботі з файлом"
 
-#, c-format
 msgid "Memory allocation error"
 msgstr "Помилка при розподілі пам'яті"
 
-#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "На сервер відправлено неправильне значення CHL"
 
-#, c-format
 msgid "Server busy"
 msgstr "Сервер зайнятий"
 
-#, c-format
 msgid "Server unavailable"
 msgstr "Сервер недоступний"
 
-#, c-format
 msgid "Peer notification server down"
 msgstr "Сервер сповіщення контактів вимкнений"
 
-#, c-format
 msgid "Database connect error"
 msgstr "Помилка при з'єднанні з базою даних"
 
-#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "Сервер вимкнений (залиште корабель)"
 
-#, c-format
 msgid "Error creating connection"
 msgstr "Помилка при створенні з'єднання"
 
-#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "Параметри CVR невідомі або недопустимі"
 
-#, c-format
 msgid "Unable to write"
 msgstr "Не вдається записати"
 
-#, c-format
 msgid "Session overload"
 msgstr "Перевантаження сеансу"
 
-#, c-format
 msgid "User is too active"
 msgstr "Користувач занадто активний"
 
-#, c-format
 msgid "Too many sessions"
 msgstr "Занадто багато сеансів"
 
-#, c-format
 msgid "Passport not verified"
 msgstr "Паспорт не перевірений"
 
-#, c-format
 msgid "Bad friend file"
 msgstr "Неправильний дружній файл"
 
-#, c-format
 msgid "Not expected"
 msgstr "Не передбачено"
 
 msgid "Friendly name is changing too rapidly"
 msgstr "Дружнє ім'я змінюється занадто швидко"
 
-#, c-format
 msgid "Server too busy"
 msgstr "Сервер занадто зайнятий"
 
-#, c-format
 msgid "Authentication failed"
 msgstr "Автентифікація завершилась невдало"
 
-#, c-format
 msgid "Not allowed when offline"
 msgstr "Не допускається не у мережі"
 
-#, c-format
 msgid "Not accepting new users"
 msgstr "Нові користувачі не приймаються"
 
-#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "Дитячий паспорт без батьківської згоди"
 
-#, c-format
 msgid "Passport account not yet verified"
 msgstr "Паспортний обліковий запис ще не підтверджений"
 
 msgid "Passport account suspended"
 msgstr "Обліковий запис Passport призупинений"
 
-#, c-format
 msgid "Bad ticket"
 msgstr "Неправильний білет"
 
@@ -5471,10 +5735,6 @@ msgstr "Автентифікація Windows Live ID: не вдається з'�
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "Автентифікація Windows Live ID: неправильна відповідь"
 
-#, c-format
-msgid "%s just sent you a Nudge!"
-msgstr "%s щойно підштовхнув вас!"
-
 msgid "The following users are missing from your addressbook"
 msgstr "Наступні користувачі відсутні у вашій адресній книзі"
 
@@ -5662,116 +5922,9 @@ msgstr "Хочете також видалити цей контакт з адр
 msgid "The username specified is invalid."
 msgstr "Вказане ім'я користувача неправильне."
 
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr "Дружнє ім'я змінюється занадто швидко"
-
-msgid "This Hotmail account may not be active."
-msgstr "Обліковий запис Hotmail може бути неактивним."
-
-msgid "Profile URL"
-msgstr "URL профілю"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "MSN Protocol Plugin"
-msgstr "Додаток протоколу MSN"
-
-#, c-format
-msgid "%s is not a valid group."
-msgstr "%s не є правильною назвою групи."
-
-msgid "Unknown error."
-msgstr "Невідома помилка."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s на %s (%s)"
-
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Не вдається додати користувача %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Не вдається заблокувати користувача %s (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Не вдається дозволити користувача %s (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "Не вдається додати %s, тому що перелік контактів повний."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s не є допустимим паспортним обліковим записом."
-
-msgid "Service Temporarily Unavailable."
-msgstr "Сервіс тимчасово недоступний."
-
-msgid "Unable to rename group"
-msgstr "Не вдається змінити назву групи"
-
-msgid "Unable to delete group"
-msgstr "Не вдається видалити групу"
-
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s додав вас до своєї адресної книги."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s вилучив вас зі своєї адресної книги."
-
-#. 1
-msgid "Angry"
-msgstr "Розлючений"
-
-#. 2
-msgid "Excited"
-msgstr "Схвильований"
-
-#. 3
-msgid "Grumpy"
-msgstr "Сердитий"
-
-#. 4
-msgid "Happy"
-msgstr "Щасливий"
-
 #. 5
 msgid "In Love"
 msgstr "Закоханий"
-
-#. 6
-msgid "Invincible"
-msgstr "Непереможний"
-
-#. 7
-msgid "Sad"
-msgstr "Сумний"
-
-#. 8
-msgid "Hot"
-msgstr "Гарячий"
-
-#. 9
-msgid "Sick"
-msgstr "Хворий"
-
-#. 10
-msgid "Sleepy"
-msgstr "Сонливий"
 
 #. show current mood
 msgid "Current Mood"
@@ -6766,6 +6919,106 @@ msgstr "Не вдалося приєднатися до кімнати бала�
 msgid "Invalid chat room name"
 msgstr "Неправильна назва кімнати балачки"
 
+msgid "Thinking"
+msgstr ""
+
+#, fuzzy
+msgid "Shopping"
+msgstr "Закінчив писати"
+
+#, fuzzy
+msgid "Questioning"
+msgstr "Діалог запитання"
+
+#, fuzzy
+msgid "Eating"
+msgstr "Пейджер"
+
+#, fuzzy
+msgid "Watching a movie"
+msgstr "Граю у гру"
+
+msgid "Typing"
+msgstr "Пише"
+
+#, fuzzy
+msgid "At the office"
+msgstr "Не в офісі"
+
+msgid "Taking a bath"
+msgstr ""
+
+msgid "Watching TV"
+msgstr ""
+
+#, fuzzy
+msgid "Having fun"
+msgstr "Завершити"
+
+#, fuzzy
+msgid "Sleeping"
+msgstr "Сонливий"
+
+msgid "Using a PDA"
+msgstr ""
+
+#, fuzzy
+msgid "Meeting friends"
+msgstr "Друзі по балачкам миттєвими повідомленнями"
+
+#, fuzzy
+msgid "On the phone"
+msgstr "Розмовляю по телефону"
+
+#, fuzzy
+msgid "Surfing"
+msgstr "Періодичний"
+
+#. "I am mobile." / "John is mobile."
+msgid "Mobile"
+msgstr "Мобільний"
+
+msgid "Searching the web"
+msgstr ""
+
+msgid "At a party"
+msgstr ""
+
+msgid "Having Coffee"
+msgstr ""
+
+#. Playing video games
+#, fuzzy
+msgid "Gaming"
+msgstr "Близнюки"
+
+msgid "Browsing the web"
+msgstr ""
+
+#, fuzzy
+msgid "Smoking"
+msgstr "Пісня"
+
+#, fuzzy
+msgid "Writing"
+msgstr "Працюю"
+
+#. Drinking [Alcohol]
+#, fuzzy
+msgid "Drinking"
+msgstr "Працюю"
+
+msgid "Listening to music"
+msgstr "Слухаю музику"
+
+#, fuzzy
+msgid "Studying"
+msgstr "Надсилання"
+
+#, fuzzy
+msgid "In the restroom"
+msgstr "Зацікавленості"
+
 msgid "Received invalid data on connection with server"
 msgstr "Отримані неправильні дані під час з'єдання з сервером"
 
@@ -6982,6 +7235,9 @@ msgstr "Отримання файлу"
 msgid "Games"
 msgstr "Ігри"
 
+msgid "ICQ Xtraz"
+msgstr ""
+
 msgid "Add-Ins"
 msgstr "Доповнення"
 
@@ -7047,6 +7303,26 @@ msgstr "Підтримується Web"
 
 msgid "Invisible"
 msgstr "Невидимий"
+
+#, fuzzy
+msgid "Evil"
+msgstr "Ел.пошта"
+
+#, fuzzy
+msgid "Depression"
+msgstr "Фах"
+
+#, fuzzy
+msgid "At home"
+msgstr "Про мене"
+
+#, fuzzy
+msgid "At work"
+msgstr "Мережа"
+
+#, fuzzy
+msgid "At lunch"
+msgstr "Відійшов на обід"
 
 msgid "IP Address"
 msgstr "IP Адреса"
@@ -7586,6 +7862,10 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr "Посилання до музичної крамниці iTunes"
 
+#, fuzzy
+msgid "Lunch"
+msgstr "Finch"
+
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "Коментар користувача для %s"
@@ -7617,7 +7897,8 @@ msgstr "Отримати відомості AIM"
 msgid "Edit Buddy Comment"
 msgstr "Змінити коментар користувача"
 
-msgid "Get Status Msg"
+#, fuzzy
+msgid "Get X-Status Msg"
 msgstr "Отримати повідомлення про стан"
 
 msgid "End Direct IM Session"
@@ -7897,9 +8178,6 @@ msgstr "Оновити"
 
 msgid "Could not change buddy information."
 msgstr "Не вдається змінити відомість про контакт."
-
-msgid "Mobile"
-msgstr "Мобільний"
 
 msgid "Note"
 msgstr "Примітки"
@@ -8935,18 +9213,6 @@ msgstr "Гіперактивний"
 msgid "Robot"
 msgstr "Робот"
 
-msgid "Jealous"
-msgstr "Ревнивий"
-
-msgid "Ashamed"
-msgstr "Присоромлений"
-
-msgid "Bored"
-msgstr "Нудьгуючий"
-
-msgid "Anxious"
-msgstr "Стурбований"
-
 msgid "User Modes"
 msgstr "Режими користувача"
 
@@ -9444,9 +9710,6 @@ msgstr "Ваш поточний настрій"
 #, c-format
 msgid "Normal"
 msgstr "Нормально"
-
-msgid "In love"
-msgstr "Закоханий"
 
 msgid ""
 "\n"
@@ -10475,6 +10738,10 @@ msgid "Exposure"
 msgstr "Викриття"
 
 #, c-format
+msgid "Unable to create socket: %s"
+msgstr "Не вдалося створити сокет: %s"
+
+#, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "Не вдалося розібрати відповідь від проксі HTTP: %s"
 
@@ -10576,8 +10843,9 @@ msgstr "Не турбувати"
 msgid "Extended away"
 msgstr "Розширений стан \"Відійшов\""
 
-msgid "Listening to music"
-msgstr "Слухаю музику"
+#, fuzzy
+msgid "Feeling"
+msgstr "Отримання"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -11130,6 +11398,17 @@ msgstr ""
 msgid "Unknown node type"
 msgstr "Невідомий тип вузла"
 
+#, fuzzy
+msgid "Please select your mood from the list"
+msgstr "Будь ласка, виберіть ваш настрій з переліку."
+
+#, fuzzy
+msgid "Message (optional)"
+msgstr "Прізвисько (не обов'язково)"
+
+msgid "Edit User Mood"
+msgstr "Редагувати настрій користувача"
+
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Контакти"
@@ -11208,6 +11487,10 @@ msgstr "/Засоби/_Налаштування"
 msgid "/Tools/Pr_ivacy"
 msgstr "/Засоби/_Конфіденційність"
 
+#, fuzzy
+msgid "/Tools/Set _Mood"
+msgstr "/Засоби/Системний _журнал"
+
 msgid "/Tools/_File Transfers"
 msgstr "/Засоби/Передавання _файлів"
 
@@ -11227,8 +11510,20 @@ msgstr "/_Довідка"
 msgid "/Help/Online _Help"
 msgstr "/Довідка/Довідка у _мережі"
 
+#, fuzzy
+msgid "/Help/_Build Information"
+msgstr "Відомості про користувача"
+
 msgid "/Help/_Debug Window"
 msgstr "/Довідка/Вікно _зневадження"
+
+#, fuzzy
+msgid "/Help/De_veloper Information"
+msgstr "Відомості про сервер"
+
+#, fuzzy
+msgid "/Help/_Translator Information"
+msgstr "Особисті відомості"
 
 msgid "/Help/_About"
 msgstr "/Довідка/_Про програму"
@@ -11460,6 +11755,10 @@ msgstr "<PurpleMain>/Обл. записи/"
 msgid "_Edit Account"
 msgstr "_Редагувати обліковий запис"
 
+#, fuzzy
+msgid "Set _Mood..."
+msgstr "Встановити настрій..."
+
 msgid "No actions available"
 msgstr "Немає доступних дій"
 
@@ -11506,12 +11805,6 @@ msgstr "<h1>Розмова з %s</h1>\n"
 
 msgid "Save Conversation"
 msgstr "Зберегти розмову"
-
-msgid "Find"
-msgstr "Знайти"
-
-msgid "_Search for:"
-msgstr "_Шукати:"
 
 msgid "Un-Ignore"
 msgstr "Не ігнорувати"
@@ -11585,6 +11878,10 @@ msgstr "/Розмова/Медіа/_Аудіо\\/Відеовиклик"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Розмова/Наді_слати файл..."
+
+#, fuzzy
+msgid "/Conversation/Get _Attention"
+msgstr "/Розмова/Отримати відомості"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Розмова/Додати _правило стеження..."
@@ -11667,6 +11964,10 @@ msgstr "/Розмова/Аудіо та відеовиклик"
 msgid "/Conversation/Send File..."
 msgstr "/Розмова/Надіслати файл..."
 
+#, fuzzy
+msgid "/Conversation/Get Attention"
+msgstr "/Розмова/Отримати відомості"
+
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Розмова/Додати правило стеження..."
 
@@ -11731,15 +12032,20 @@ msgstr "_Надіслати"
 msgid "0 people in room"
 msgstr "0 користувачів у кімнаті"
 
+#, fuzzy
+msgid "Close Find bar"
+msgstr "Закрити цю вкладку"
+
+#, fuzzy
+msgid "Find:"
+msgstr "Знайти"
+
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d користувач у кімнаті"
 msgstr[1] "%d користувача у кімнаті"
 msgstr[2] "%d користувачів у кімнаті"
-
-msgid "Typing"
-msgstr "Пише"
 
 msgid "Stopped Typing"
 msgstr "Закінчив писати"
@@ -11791,6 +12097,12 @@ msgstr "за групою"
 
 msgid "By account"
 msgstr "за обліковим записом"
+
+msgid "Find"
+msgstr "Знайти"
+
+msgid "_Search for:"
+msgstr "_Шукати:"
 
 msgid "Save Debug Log"
 msgstr "Зберегти відомості зневадження до журналу"
@@ -12121,21 +12433,14 @@ msgstr "Амхарська"
 msgid "Lithuanian"
 msgstr "Литовська"
 
-#, c-format
-msgid "About %s"
-msgstr "Про %s"
-
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with %"
+"s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s - це графічний модульний клієнт обміну миттєвими повідомленнями, який "
 "оснований на бібліотеці libpurple, що здатна з'єднуватись з AIM, MSN, "
@@ -12149,20 +12454,21 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 msgstr ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
-"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
-"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
-"primary language is <b>English</b>.  You are welcome to post in another "
-"language, but the responses may be less helpful.<br/><br/>"
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 msgstr ""
 "<font size=\"4\">Допомога від інших користувачів Pidgin:</font> <a href="
 "\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Це "
@@ -12172,13 +12478,17 @@ msgstr ""
 "писати іншою мовою, але відповіді можуть бути не такими корисними.<br/><br/>"
 
 #, c-format
-msgid ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">Канал IRC:</FONT> #pidgin на irc.freenode.net<BR><BR>"
+msgid "About %s"
+msgstr "Про %s"
 
-#, c-format
-msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-msgstr "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#, fuzzy
+msgid "Build Information"
+msgstr "Відомості про користувача"
+
+#. End of not to be translated section
+#, fuzzy, c-format
+msgid "%s Build Information"
+msgstr "Відомості про користувача"
 
 msgid "Current Developers"
 msgstr "Поточні розробники"
@@ -12192,14 +12502,19 @@ msgstr "Колишні розробники"
 msgid "Retired Crazy Patch Writers"
 msgstr "Одержимі автори латок"
 
+#, fuzzy, c-format
+msgid "%s Developer Information"
+msgstr "Відомості про сервер"
+
 msgid "Current Translators"
 msgstr "Поточні перекладачі"
 
 msgid "Past Translators"
 msgstr "Попередні перекладачі"
 
-msgid "Debugging Information"
-msgstr "Відомості зневадження"
+#, fuzzy, c-format
+msgid "%s Translator Information"
+msgstr "Більше відомостей"
 
 msgid "_Name"
 msgstr "_Ім'я"
@@ -12490,15 +12805,6 @@ msgstr ""
 "\n"
 "Вважається, що PNG."
 
-msgid ""
-"Unrecognized file type\n"
-"\n"
-"Defaulting to PNG."
-msgstr ""
-"Невідомий тип файлу\n"
-"\n"
-"Вважається, що PNG."
-
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -12506,16 +12812,6 @@ msgid ""
 "%s"
 msgstr ""
 "<span size='larger' weight='bold'>Помилка збереження зображення</span>\n"
-"\n"
-"%s"
-
-#, c-format
-msgid ""
-"Error saving image\n"
-"\n"
-"%s"
-msgstr ""
-"Помилка збереження зображення\n"
 "\n"
 "%s"
 
@@ -12624,6 +12920,10 @@ msgstr "Вставити зображення"
 msgid "Insert Smiley"
 msgstr "Вставити усмішку"
 
+#, fuzzy
+msgid "Send Attention"
+msgstr "Кнопка \"Надіслати\""
+
 msgid "<b>_Bold</b>"
 msgstr "<b>_Жирний</b>"
 
@@ -12668,6 +12968,9 @@ msgstr "_Горизонтальна прокрутка"
 
 msgid "_Smile!"
 msgstr "_Усмішка!"
+
+msgid "_Attention!"
+msgstr ""
 
 msgid "Log Deletion Failed"
 msgstr "Помилка видалення журналу"
@@ -13604,6 +13907,10 @@ msgstr "Текст скорочення"
 msgid "Custom Smiley Manager"
 msgstr "Керування нетиповими усмішками"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "Необхідна активація"
+
 msgid "Select Buddy Icon"
 msgstr "Виберіть значок контакту"
 
@@ -13681,10 +13988,13 @@ msgstr ""
 "Ви можете вставити це зображення у повідомлення або використати як значок "
 "контакту для цього користувача"
 
-#. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-#. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-#. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-#. * Probably not.  I'll just give an error and return.
+#. I don't know if we really want to do anything here.  Most of
+#. * the desktop item types are crap like "MIME Type" (I have no
+#. * clue how that would be a desktop item) and "Comment"...
+#. * nothing we can really send.  The only logical one is
+#. * "Application," but do we really want to send a binary and
+#. * nothing else? Probably not.  I'll just give an error and
+#. * return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 msgid "Cannot send launcher"
 msgstr "Не вдалося надіслати пускач"
@@ -13715,17 +14025,6 @@ msgstr "Помилка значка"
 
 msgid "Could not set icon"
 msgstr "Не вдається встановити значок"
-
-#, c-format
-msgid "Failed to open file '%s': %s"
-msgstr "Не вдається відкрити файл '%s': %s"
-
-#, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr ""
-"Помилка завантаження зображення '%s': причина невідома, можливо, пошкоджений "
-"файл зображення"
 
 msgid "_Open Link"
 msgstr "_Відкривати посилання"
@@ -14940,15 +15239,6 @@ msgstr "Обліковий запис: "
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr "<font color='#777777'>Не з'єднаний з XMPP</font>"
 
-msgid "Insert an <iq/> stanza."
-msgstr "Вставити строфу <iq/>."
-
-msgid "Insert a <presence/> stanza."
-msgstr "Вставити строфу <presence/>."
-
-msgid "Insert a <message/> stanza."
-msgstr "Вставити строфу <message/>."
-
 #. *< name
 #. *< version
 #. *  summary
@@ -14956,8 +15246,127 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "Надіслати та отримати сирі строфи XMPP."
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+#, fuzzy
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Додаток корисний для зневадження серверів або клієнтів XMPP."
+
+#~ msgid "Error creating conference."
+#~ msgstr "Помилка створенні конференції."
+
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "Не вдалося зв'язати сокет з портом: %s"
+
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr "Не вдалося слухати сокет: %s"
+
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "%s щойно підштовхнув вас!"
+
+#~ msgid "Friendly name changes too rapidly"
+#~ msgstr "Дружнє ім'я змінюється занадто швидко"
+
+#~ msgid "This Hotmail account may not be active."
+#~ msgstr "Обліковий запис Hotmail може бути неактивним."
+
+#~ msgid "Profile URL"
+#~ msgstr "URL профілю"
+
+#~ msgid "MSN Protocol Plugin"
+#~ msgstr "Додаток протоколу MSN"
+
+#~ msgid "%s is not a valid group."
+#~ msgstr "%s не є правильною назвою групи."
+
+#~ msgid "Unknown error."
+#~ msgstr "Невідома помилка."
+
+#~ msgid "%s on %s (%s)"
+#~ msgstr "%s на %s (%s)"
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "Не вдається додати користувача %s (%s)"
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "Не вдається заблокувати користувача %s (%s)"
+
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "Не вдається дозволити користувача %s (%s)"
+
+#~ msgid "%s could not be added because your buddy list is full."
+#~ msgstr "Не вдається додати %s, тому що перелік контактів повний."
+
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%s не є допустимим паспортним обліковим записом."
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "Сервіс тимчасово недоступний."
+
+#~ msgid "Unable to rename group"
+#~ msgstr "Не вдається змінити назву групи"
+
+#~ msgid "Unable to delete group"
+#~ msgstr "Не вдається видалити групу"
+
+#~ msgid "%s has added you to his or her buddy list."
+#~ msgstr "%s додав вас до своєї адресної книги."
+
+#~ msgid "%s has removed you from his or her buddy list."
+#~ msgstr "%s вилучив вас зі своєї адресної книги."
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">Канал IRC:</FONT> #pidgin на irc.freenode.net<BR><BR>"
+
+#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+
+#~ msgid "Debugging Information"
+#~ msgstr "Відомості зневадження"
+
+#~ msgid ""
+#~ "Unrecognized file type\n"
+#~ "\n"
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "Невідомий тип файлу\n"
+#~ "\n"
+#~ "Вважається, що PNG."
+
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Помилка збереження зображення\n"
+#~ "\n"
+#~ "%s"
+
+#~ msgid "Failed to open file '%s': %s"
+#~ msgstr "Не вдається відкрити файл '%s': %s"
+
+#~ msgid ""
+#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
+#~ msgstr ""
+#~ "Помилка завантаження зображення '%s': причина невідома, можливо, "
+#~ "пошкоджений файл зображення"
+
+#~ msgid "Insert an <iq/> stanza."
+#~ msgstr "Вставити строфу <iq/>."
+
+#~ msgid "Insert a <presence/> stanza."
+#~ msgstr "Вставити строфу <presence/>."
+
+#~ msgid "Insert a <message/> stanza."
+#~ msgstr "Вставити строфу <message/>."
 
 #~ msgid ""
 #~ "The last action you attempted could not be performed because you are over "

@@ -28,7 +28,7 @@ use Purple;
 	my $TEST_GROUP		= "perlTestGroup";
 	my $TEST_NAME	 	= "perlTestName";
 	my $TEST_ALIAS	 	= "perlTestAlias";
-	my $PROTOCOL_ID 	= "prpl-oscar";
+	my $PROTOCOL_ID 	= "prpl-aim";
 
 sub foo {
 	$frame = Purple::PluginPref::Frame->new();

@@ -462,21 +462,22 @@ jabber_message_xml_to_string_strip_img_smileys(xmlnode *xhtml)
 }
 
 static void
-jabber_message_add_remote_smileys(const xmlnode *message)
+jabber_message_add_remote_smileys(JabberStream *js, const gchar *who,
+    const xmlnode *message)
 {
 	xmlnode *data_tag;
 	for (data_tag = xmlnode_get_child_with_namespace(message, "data", NS_BOB) ;
 		 data_tag ;
 		 data_tag = xmlnode_get_next_twin(data_tag)) {
 		const gchar *cid = xmlnode_get_attrib(data_tag, "cid");
-		const JabberData *data = jabber_data_find_remote_by_cid(cid);
+		const JabberData *data = jabber_data_find_remote_by_cid(js, who, cid);
 
 		if (!data && cid != NULL) {
 			/* we haven't cached this already, let's add it */
 			JabberData *new_data = jabber_data_create_from_xml(data_tag);
 
 			if (new_data) {
-				jabber_data_associate_remote(new_data);
+				jabber_data_associate_remote(js, who, new_data);
 			}
 		}
 	}
@@ -634,7 +635,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					}
 
 					/* process any newly provided smileys */
-					jabber_message_add_remote_smileys(packet);
+					jabber_message_add_remote_smileys(js, to, packet);
 				}
 
 				/* reformat xhtml so that img tags with a "cid:" src gets
@@ -660,7 +661,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					if (purple_conv_custom_smiley_add(conv, alt, "cid", cid,
 						    TRUE)) {
 						const JabberData *data =
-								jabber_data_find_remote_by_cid(cid);
+								jabber_data_find_remote_by_cid(js, from, cid);
 						/* if data is already known, we write it immediatly */
 						if (data) {
 							purple_debug_info("jabber",

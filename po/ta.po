@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-07 09:29-0800\n"
+"POT-Creation-Date: 2010-03-29 00:17-0700\n"
 "PO-Revision-Date: 2010-01-05 14:58+0530\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -2207,21 +2207,18 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "ஒரு கண்டுபிடிக்கப்படாத Farsight2 பிழை ஏற்பட்டுவிட்டது."
 
-msgid "Conference error"
-msgstr "கலந்துரையாடல் பிழை"
-
 msgid "Error with your microphone"
 msgstr "உங்கள் மைக்ரோ ஃபோனுடன் பிழை"
 
 msgid "Error with your webcam"
 msgstr "உங்கள் வெப்கேம்முடன் பிழை"
 
+msgid "Conference error"
+msgstr "கலந்துரையாடல் பிழை"
+
 #, c-format
 msgid "Error creating session: %s"
 msgstr "அமர்வு உருவாக்குவதில் பிழை: %s"
-
-msgid "Error creating conference."
-msgstr "உரையாடலை உருவாக்குவதில் பிழை."
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -2989,18 +2986,6 @@ msgstr "%s உரையாடலை முடித்துவிட்டா�
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "செய்திகளை அனுப்ப முடியவில்லை. உரையாடலை துவக்க முடியாது."
 
-#, c-format
-msgid "Unable to create socket: %s"
-msgstr "சாக்கெட்டில் உருவாக்க முடியவில்லை: %s"
-
-#, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "துறைக்கு சாக்கெட்டை பிணைக்க முடியவில்லை: %s"
-
-#, c-format
-msgid "Unable to listen on socket: %s"
-msgstr "சாக்கெட்டில் கவனிக்க முடியவில்லை: %s"
-
 msgid "Error communicating with local mDNSResponder."
 msgstr "உள்ளமை mDNSR பதிலாளியுடன் பிழையை அனுப்புகிறது."
 
@@ -3155,6 +3140,14 @@ msgstr "அரட்டையுடன் சேர்..."
 #. Global
 msgid "Available"
 msgstr "அரட்டைக்குத் தயாராக இருக்கிறேன்"
+
+#. 2
+msgid "Chatty"
+msgstr "வாயாடி"
+
+#. 3
+msgid "Do Not Disturb"
+msgstr "தொந்தரவு செய்ய வேண்டாம்"
 
 #. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
@@ -3982,17 +3975,6 @@ msgstr "உட்புகு"
 msgid "Log Out"
 msgstr "வெளியேறு"
 
-#. 2
-msgid "Chatty"
-msgstr "வாயாடி"
-
-msgid "Extended Away"
-msgstr "வெளியே சென்றது நீட்டிக்கப்பட்டது"
-
-#. 3
-msgid "Do Not Disturb"
-msgstr "தொந்தரவு செய்ய வேண்டாம்"
-
 msgid "JID"
 msgstr "ஜேஐடி (JID)"
 
@@ -4259,6 +4241,14 @@ msgstr "மன நிலை உரை"
 msgid "Allow Buzz"
 msgstr "பஸ்ஸை அனுமதி"
 
+#, fuzzy
+msgid "Mood Name"
+msgstr "நடுப் பெயர்"
+
+#, fuzzy
+msgid "Mood Comment"
+msgstr "நண்பர் விமரிசனம்"
+
 msgid "Tune Artist"
 msgstr "டியூன் ஆர்டிஸ்ட்"
 
@@ -4503,10 +4493,6 @@ msgstr ""
 "பஸ்ஸை செய்ய முடியவில்லை, ஏனெனில் %s ஆனது துணைபுரியவில்லை அல்லது இப்போது பஸ்ஸை பெற "
 "விரும்பாமல் இருக்கலாம்."
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr "பஸ்ஸிங் %s..."
-
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
@@ -4515,6 +4501,10 @@ msgstr "பஸ்"
 #, c-format
 msgid "%s has buzzed you!"
 msgstr "%s ஆனது உங்களை பஸ்டு செய்தது!"
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr "பஸ்ஸிங் %s..."
 
 #, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4544,6 +4534,10 @@ msgstr "ஒரு மறுதீர்வை தேர்ந்தெடு"
 
 msgid "Initiate Media"
 msgstr "ஊடகத்தை துவக்கு"
+
+#, fuzzy
+msgid "Account does not support PEP, can't set mood"
+msgstr "இந்த நெறிமுறை அரட்டை அறைகளை ஆதரிக்கவில்லை."
 
 msgid "config:  Configure a chat room."
 msgstr "config: அரட்டை அறையை வரையறு."
@@ -4596,6 +4590,13 @@ msgstr "பிங் &lt;jid&gt;:\tஒரு பயனரை பிங் செ
 
 msgid "buzz: Buzz a user to get their attention"
 msgstr "குறுகுறுப்பு: தொடர்பாளரின் கவனத்தை பெற குறுகுறுப்பு செய்யுங்கள்"
+
+#, fuzzy
+msgid "mood: Set current user mood"
+msgstr "சரியான பயனரை தேர்வு செய்"
+
+msgid "Extended Away"
+msgstr "வெளியே சென்றது நீட்டிக்கப்பட்டது"
 
 #. *< type
 #. *< ui_requirement
@@ -4674,11 +4675,17 @@ msgstr " (குறியீடு %s)"
 msgid "A custom smiley in the message is too large to send."
 msgstr "தகவல் அனுப்ப இயலவில்லை: தகவல் மிக நீளமாக உள்ளது."
 
+msgid "XMPP stream header missing"
+msgstr ""
+
+msgid "XMPP Version Mismatch"
+msgstr ""
+
+msgid "XMPP stream missing ID"
+msgstr ""
+
 msgid "XML Parse error"
 msgstr "எக்ஸ்எம்எல் பகுப்பதில் பிழை"
-
-msgid "Unknown Error in presence"
-msgstr "இருப்பில் தெரியாத பிழை"
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4715,6 +4722,9 @@ msgstr "நீங்கள் உதைக்கப்பட்டீர்க�
 msgid "Kicked (%s)"
 msgstr "உதைக்கப்பட்டது (%s)"
 
+msgid "Unknown Error in presence"
+msgstr "இருப்பில் தெரியாத பிழை"
+
 msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "பிணைப்பினுள்  bytestreamஐ இடாமற்றும் போது ஒரு பிழை ஏற்பட்டுவிட்டது\n"
 
@@ -4747,17 +4757,320 @@ msgstr "%s க்கு கோப்பை அனுப்ப முடியவ
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "நீங்கள் ஒரு கோப்பை அனுப்ப விரும்பிய %sக்கு மறுதீர்வை தேர்ந்தெடு"
 
-msgid "Edit User Mood"
-msgstr "பயனர் மனநிலையை திருத்து"
+#, fuzzy
+msgid "Afraid"
+msgstr "அராபிக்"
 
-msgid "Please select your mood from the list."
-msgstr "பட்டியலிருந்து உங்கள் மனநிலையை தேர்ந்தெடு."
+#, fuzzy
+msgid "Amazed"
+msgstr "அவமானப் படும்"
 
-msgid "Set"
-msgstr "அமை"
+#, fuzzy
+msgid "Amorous"
+msgstr "புகழ்பெற்ற"
 
-msgid "Set Mood..."
-msgstr "மனநிலையை அமை..."
+#. 1
+msgid "Angry"
+msgstr "கோபம்"
+
+#, fuzzy
+msgid "Annoyed"
+msgstr "தடுக்கப்பட்டது"
+
+msgid "Anxious"
+msgstr "பதட்டத்தில்"
+
+#, fuzzy
+msgid "Aroused"
+msgstr "நீங்கள் அனுப்ப"
+
+msgid "Ashamed"
+msgstr "அவமானப் படும்"
+
+msgid "Bored"
+msgstr "போரடிக்குது"
+
+#, fuzzy
+msgid "Brave"
+msgstr "சேமிக்கவும்"
+
+#, fuzzy
+msgid "Calm"
+msgstr "ஆளும் தளம்"
+
+#, fuzzy
+msgid "Cautious"
+msgstr "அரட்டைகள்"
+
+#, fuzzy
+msgid "Cold"
+msgstr "தடிமனான"
+
+#, fuzzy
+msgid "Confident"
+msgstr "முரண்பாடு"
+
+#, fuzzy
+msgid "Confused"
+msgstr "தொடர்"
+
+#, fuzzy
+msgid "Contemplative"
+msgstr "தொடர்பு"
+
+#, fuzzy
+msgid "Contented"
+msgstr "இணைக்கப்பட்டது"
+
+#, fuzzy
+msgid "Cranky"
+msgstr "நிறுவனம்"
+
+msgid "Crazy"
+msgstr ""
+
+#, fuzzy
+msgid "Creative"
+msgstr "உருவாக்குக"
+
+#, fuzzy
+msgid "Curious"
+msgstr "புகழ்பெற்ற"
+
+#, fuzzy
+msgid "Dejected"
+msgstr "மறுக்கப்பட்டது"
+
+#, fuzzy
+msgid "Depressed"
+msgstr "அழிக்கப்பட்டது"
+
+#, fuzzy
+msgid "Disappointed"
+msgstr "இணைப்பு துண்டிக்கப்பட்டது."
+
+msgid "Disgusted"
+msgstr ""
+
+#, fuzzy
+msgid "Dismayed"
+msgstr "செயல்நீக்கு"
+
+#, fuzzy
+msgid "Distracted"
+msgstr "பிரிக்கப் பட்ட"
+
+msgid "Embarrassed"
+msgstr ""
+
+#, fuzzy
+msgid "Envious"
+msgstr "பதட்டத்தில்"
+
+#. 2
+msgid "Excited"
+msgstr "பரபரப்பான"
+
+#, fuzzy
+msgid "Flirtatious"
+msgstr "புகழ்பெற்ற"
+
+#, fuzzy
+msgid "Frustrated"
+msgstr "முதற் பெயர்"
+
+msgid "Grateful"
+msgstr ""
+
+#, fuzzy
+msgid "Grieving"
+msgstr "திரும்ப எடுக்கிறது..."
+
+#. 3
+msgid "Grumpy"
+msgstr "ஏறுமாறான"
+
+#, fuzzy
+msgid "Guilty"
+msgstr "நகரம்"
+
+#. 4
+msgid "Happy"
+msgstr "மகிழ்ச்சி"
+
+msgid "Hopeful"
+msgstr ""
+
+#. 8
+msgid "Hot"
+msgstr "சூடான"
+
+msgid "Humbled"
+msgstr ""
+
+msgid "Humiliated"
+msgstr ""
+
+#, fuzzy
+msgid "Hungry"
+msgstr "கோபம்"
+
+#, fuzzy
+msgid "Hurt"
+msgstr "நகைச்சுவை"
+
+msgid "Impressed"
+msgstr ""
+
+#, fuzzy
+msgid "In awe"
+msgstr "காதலில்"
+
+msgid "In love"
+msgstr "ஐ லவ் ஐஎம்"
+
+#, fuzzy
+msgid "Indignant"
+msgstr "இந்தோனேஷியன்"
+
+#, fuzzy
+msgid "Interested"
+msgstr "பொழுதுபோக்கு மற்றும் விருப்பங்கள்"
+
+#, fuzzy
+msgid "Intoxicated"
+msgstr "அழைக்கப்பட்டது"
+
+#. 6
+msgid "Invincible"
+msgstr "தோற்கடிக்க முடியாத"
+
+msgid "Jealous"
+msgstr "பொறாமை பிடித்த"
+
+#, fuzzy
+msgid "Lonely"
+msgstr "குரங்கு"
+
+#, fuzzy
+msgid "Lost"
+msgstr "மிகமிக சத்தமான"
+
+msgid "Lucky"
+msgstr ""
+
+#, fuzzy
+msgid "Mean"
+msgstr "ஜெர்மன்"
+
+#, fuzzy
+msgid "Moody"
+msgstr "மன நிலை"
+
+msgid "Nervous"
+msgstr ""
+
+#, fuzzy
+msgid "Neutral"
+msgstr "விவரம்"
+
+#, fuzzy
+msgid "Offended"
+msgstr "இணைப்பு விலகி"
+
+msgid "Outraged"
+msgstr ""
+
+#, fuzzy
+msgid "Playful"
+msgstr "இயக்கு"
+
+#, fuzzy
+msgid "Proud"
+msgstr "சத்தமான"
+
+#, fuzzy
+msgid "Relaxed"
+msgstr "இயற் பெயர்"
+
+#, fuzzy
+msgid "Relieved"
+msgstr "பெறப்பட்டது"
+
+#, fuzzy
+msgid "Remorseful"
+msgstr "நீக்குக"
+
+#, fuzzy
+msgid "Restless"
+msgstr "பதிவு"
+
+#. 7
+msgid "Sad"
+msgstr "சோகம்"
+
+#, fuzzy
+msgid "Sarcastic"
+msgstr "குஜராத்தி"
+
+msgid "Satisfied"
+msgstr ""
+
+#, fuzzy
+msgid "Serious"
+msgstr "புகழ்பெற்ற"
+
+#, fuzzy
+msgid "Shocked"
+msgstr "தடுக்கப்பட்டது"
+
+msgid "Shy"
+msgstr ""
+
+#. 9
+msgid "Sick"
+msgstr "நோயுற்ற"
+
+#. 10
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "தூக்க கலக்கம்"
+
+msgid "Spontaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Stressed"
+msgstr "வேகம்:"
+
+#, fuzzy
+msgid "Strong"
+msgstr "பாட்டு"
+
+msgid "Surprised"
+msgstr ""
+
+msgid "Thankful"
+msgstr ""
+
+msgid "Thirsty"
+msgstr ""
+
+#, fuzzy
+msgid "Tired"
+msgstr "ஃபயர்"
+
+#, fuzzy
+msgid "Undefined"
+msgstr "அடிக்கோடிட்ட"
+
+#, fuzzy
+msgid "Weak"
+msgstr "களைப்படைதல்"
+
+#, fuzzy
+msgid "Worried"
+msgstr "போரடிக்குது"
 
 msgid "Set User Nickname"
 msgstr "பயனர் புனைப்பெயரை அமை"
@@ -4771,6 +5084,9 @@ msgid ""
 msgstr ""
 "உங்கள் தொடர்பு பட்டியலில் உள்ள அனைத்து தொடர்புகளையும் இந்த தகவல் பார்க்ககூடியது, எனவே "
 "பொருத்தமான சிலவற்றை தேர்ந்தெடு."
+
+msgid "Set"
+msgstr "அமை"
 
 msgid "Set Nickname..."
 msgstr "புனைப்பெயரை அமை..."
@@ -4813,217 +5129,165 @@ msgid ""
 msgstr ""
 "உள் பட்டியலில் %s உள்ளார். ஆனால் சேவையக பட்டியலில் இல்லை. இந்த நண்பரை சேர்க்க வேண்டுமா?"
 
-#, c-format
 msgid "Unable to parse message"
 msgstr "தகவலை அலகிட இயலவில்லை"
 
-#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "Syntax பிழை (அநேகமாக ஒரு வாடிக்கையாளர் பிழையாக இருக்கலாம்)"
 
-#, c-format
 msgid "Invalid email address"
 msgstr "செல்லாத மின்னஞ்சல் முகவரி"
 
-#, c-format
 msgid "User does not exist"
 msgstr "பயனாளர் இல்லை"
 
-#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "முழுதும் தகுதியான டொமைன் பெயர் விடுபட்டுள்ளது"
 
-#, c-format
 msgid "Already logged in"
 msgstr "ஏற்கனவே உள்நுழையப்பட்டிருக்கிறது"
 
-#, c-format
 msgid "Invalid username"
 msgstr "தவறான பயனர்பெயர்"
 
-#, c-format
 msgid "Invalid friendly name"
 msgstr "தவறான தோழமை பெயர்"
 
-#, c-format
 msgid "List full"
 msgstr "பட்டியல் நிரம்பியது"
 
-#, c-format
 msgid "Already there"
 msgstr "ஏற்கனவே உள்ளது"
 
-#, c-format
 msgid "Not on list"
 msgstr "பட்டியலில் இல்லை"
 
-#, c-format
 msgid "User is offline"
 msgstr "பயனாளர் வலையிலிருந்து விலகி உள்ளார்"
 
-#, c-format
 msgid "Already in the mode"
 msgstr "ஏற்கனவே அந்த முறையில் உள்ளது"
 
-#, c-format
 msgid "Already in opposite list"
 msgstr "ஏற்கனவே எதிர் பட்டியலில் உள்ளது"
 
-#, c-format
 msgid "Too many groups"
 msgstr "நிறைய குழுக்கள்"
 
-#, c-format
 msgid "Invalid group"
 msgstr "செல்லாத குழு"
 
-#, c-format
 msgid "User not in group"
 msgstr "பயனாளர் குழுவில் இல்லை"
 
-#, c-format
 msgid "Group name too long"
 msgstr "குழுப்பெயர் மிக நீளமானது"
 
-#, c-format
 msgid "Cannot remove group zero"
 msgstr "குழு பூஜ்ஜியத்தை நீக்க முடியவில்லை"
 
-#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "இல்லாத குழுவில் ஒரு பயனரை சேர்க்க விழைந்தது"
 
-#, c-format
 msgid "Switchboard failed"
 msgstr "விசைப் பலகை தவறியது"
 
-#, c-format
 msgid "Notify transfer failed"
 msgstr "பரிமாற்றத்தை அறிவிக்க முடியவில்லை"
 
-#, c-format
 msgid "Required fields missing"
 msgstr "தேவைப்பட்ட புலங்கள் தொலைந்துள்ளன"
 
-#, c-format
 msgid "Too many hits to a FND"
 msgstr "எப்என்டி க்கு பல மேற்பட்ட இடிகள்"
 
-#, c-format
 msgid "Not logged in"
 msgstr "நுழைந்திருக்கவில்லை"
 
-#, c-format
 msgid "Service temporarily unavailable"
 msgstr "சேவை தற்காலிகமாக கிடைக்கப்பெறவில்லை"
 
-#, c-format
 msgid "Database server error"
 msgstr "தரவுதள சேவையகம் பிழை"
 
-#, c-format
 msgid "Command disabled"
 msgstr "கட்டளை இயலாமையாக்கப்பட்டது"
 
-#, c-format
 msgid "File operation error"
 msgstr "கோப்பு இயக்கம் பிழை"
 
-#, c-format
 msgid "Memory allocation error"
 msgstr "நினைவகம் ஆக்கிரமிப்பில் பிழை"
 
-#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "தவறான சிஹெச்எல் மதிப்பு சேவையகத்துக்கு அனுப்பப்பட்டது"
 
-#, c-format
 msgid "Server busy"
 msgstr "சேவையகம் மும்முரமாக இருக்கிறது"
 
-#, c-format
 msgid "Server unavailable"
 msgstr "சேவையகம் கிடைக்கவில்லை"
 
-#, c-format
 msgid "Peer notification server down"
 msgstr "பீர் அறிக்கை சேவகன் செயலிழந்தது"
 
-#, c-format
 msgid "Database connect error"
 msgstr "தரவுதள இணைப்பு பிழை"
 
-#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "சேவையகம் நிறுத்தப்படுகிறது (கைவிடப்பட்டது)"
 
-#, c-format
 msgid "Error creating connection"
 msgstr "இணைப்பை உருவாக்குவதில் பிழை"
 
-#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "சிவிஆர் அளபுருக்கள் தெரியவில்லை அல்லது அனுமதிக்கப்படவில்லை"
 
-#, c-format
 msgid "Unable to write"
 msgstr "எழுத இயலவில்லை"
 
-#, c-format
 msgid "Session overload"
 msgstr "நிகழ்வு பளு மிகுதியானது"
 
-#, c-format
 msgid "User is too active"
 msgstr "பயனாளர் மிக சுறுசுறுப்பாக உள்ளார்"
 
-#, c-format
 msgid "Too many sessions"
 msgstr "பல நிகழ்வுகள்"
 
-#, c-format
 msgid "Passport not verified"
 msgstr "பாஸ்போர்ட் சரிபார்க்கப்படவில்லை"
 
-#, c-format
 msgid "Bad friend file"
 msgstr "கெட்ட நண்பர் கோப்பு"
 
-#, c-format
 msgid "Not expected"
 msgstr "எதிர்பாராத"
 
 msgid "Friendly name is changing too rapidly"
 msgstr "மிக விரைவாக நட்புப் பெயர் மாற்றுகிறது"
 
-#, c-format
 msgid "Server too busy"
 msgstr "சேவையகம் மிக மும்முரமாக இருக்கிறது"
 
-#, c-format
 msgid "Authentication failed"
 msgstr "அனுமதியாக்கல் தவறியது"
 
-#, c-format
 msgid "Not allowed when offline"
 msgstr "இணைப்பற்றபொழுது அனுமதிக்கப்படாது"
 
-#, c-format
 msgid "Not accepting new users"
 msgstr "புதிய பயனாளர்களை ஏற்கமறுக்கிறது"
 
-#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "பெற்றோர் இசைவற்ற குழந்தையின் பாஸ்போர்ட்"
 
-#, c-format
 msgid "Passport account not yet verified"
 msgstr "பாஸ்போர்ட் கணக்கு இன்னும் சரிபார்க்கப்படவில்லை"
 
 msgid "Passport account suspended"
 msgstr "பாஸ்போர்ட் கணக்கு விலக்கப்பட்டது"
 
-#, c-format
 msgid "Bad ticket"
 msgstr "கெட்ட அனுமதிச்சீட்டு"
 
@@ -5426,10 +5690,6 @@ msgstr "விண்டோஸ் லைவ் ID அங்கீகாரம்:
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "விண்டோஸ் லைவ் ID அங்கீகாரம்:தவறான பதில்"
 
-#, c-format
-msgid "%s just sent you a Nudge!"
-msgstr "%s உங்களுக்கு ஒரு சீண்டல் அனுப்பியுள்ளார்!"
-
 msgid "The following users are missing from your addressbook"
 msgstr "உங்கள் முகவரி புத்தகத்திலிருந்து பின்வரும் பயனர்கள் விடுபட்டுள்ளனர்"
 
@@ -5612,116 +5872,9 @@ msgstr "இந்த நண்பரை உங்கள் முகவரி �
 msgid "The username specified is invalid."
 msgstr "குறிப்பிட்ட பயனர்பெயர் தவறானது."
 
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr "நட்புப் பெயர் அடிக்கடி மாறுகிறது"
-
-msgid "This Hotmail account may not be active."
-msgstr "இந்த ஹாட்மெய்ல் கணக்கு இயக்கத்தில் இல்லை."
-
-msgid "Profile URL"
-msgstr "குறுந்தொகுப்பு யுஆர்எல் "
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "MSN Protocol Plugin"
-msgstr "MSN நெறிமுறை செருகி"
-
-#, c-format
-msgid "%s is not a valid group."
-msgstr "%s என்பது செல்லாத குழு."
-
-msgid "Unknown error."
-msgstr "தெரியாத பிழை."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s - இதன் மீது %s (%s)"
-
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "%s மீது பயனாளரை சேர்க்க இயலவில்லை (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "%s  மீது பயனாளரை தடுக்க இயலவில்லை (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "%s  மீது பயனாளரை அனுமதிக்க இயலவில்லை (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%s சேர்க்க முடியாது ஏனென்றால் உங்களது நண்பர் பட்டியல் நிரம்பியுள்ளது."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s என்பது செல்லாத பாஸ்போர்ட் கணக்கு."
-
-msgid "Service Temporarily Unavailable."
-msgstr "தற்காலிகமாக சேவை இல்லை."
-
-msgid "Unable to rename group"
-msgstr "குழுப்பெயரை மாற்ற இயலவில்லை."
-
-msgid "Unable to delete group"
-msgstr "குழவை நீக்க இயலவில்லை"
-
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s அவரது நண்பர் பட்டியலில் உங்களை சேர்த்துள்ளார்."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s அவரது நண்பர் பட்டியலில் இருந்து உங்களை நீக்கியுள்ளார்."
-
-#. 1
-msgid "Angry"
-msgstr "கோபம்"
-
-#. 2
-msgid "Excited"
-msgstr "பரபரப்பான"
-
-#. 3
-msgid "Grumpy"
-msgstr "ஏறுமாறான"
-
-#. 4
-msgid "Happy"
-msgstr "மகிழ்ச்சி"
-
 #. 5
 msgid "In Love"
 msgstr "காதலில்"
-
-#. 6
-msgid "Invincible"
-msgstr "தோற்கடிக்க முடியாத"
-
-#. 7
-msgid "Sad"
-msgstr "சோகம்"
-
-#. 8
-msgid "Hot"
-msgstr "சூடான"
-
-#. 9
-msgid "Sick"
-msgstr "நோயுற்ற"
-
-#. 10
-msgid "Sleepy"
-msgstr "தூக்க கலக்கம்"
 
 #. show current mood
 msgid "Current Mood"
@@ -6696,6 +6849,106 @@ msgstr "அரட்டை அறையில் சேர்க்க முட
 msgid "Invalid chat room name"
 msgstr "தவறான அரட்டை அறைப்பெயர்"
 
+msgid "Thinking"
+msgstr ""
+
+#, fuzzy
+msgid "Shopping"
+msgstr "டைப் செய்வதை நிறுத்துகிறது"
+
+#, fuzzy
+msgid "Questioning"
+msgstr "உரையாடல் கேள்வி "
+
+#, fuzzy
+msgid "Eating"
+msgstr "அழைப்பு"
+
+#, fuzzy
+msgid "Watching a movie"
+msgstr "ஒரு விசையாட்டை விளையாடுகிறது"
+
+msgid "Typing"
+msgstr "தட்டச்சிடல்"
+
+#, fuzzy
+msgid "At the office"
+msgstr "அலுவலகத்தில் இல்லை"
+
+msgid "Taking a bath"
+msgstr ""
+
+msgid "Watching TV"
+msgstr ""
+
+#, fuzzy
+msgid "Having fun"
+msgstr "துணிடித்தல்"
+
+#, fuzzy
+msgid "Sleeping"
+msgstr "தூக்க கலக்கம்"
+
+msgid "Using a PDA"
+msgstr ""
+
+#, fuzzy
+msgid "Meeting friends"
+msgstr "IM நண்பர்கள்"
+
+#, fuzzy
+msgid "On the phone"
+msgstr "தொலைபேசியில்"
+
+#, fuzzy
+msgid "Surfing"
+msgstr "மீண்டும் மீண்டும் நிகழும்"
+
+#. "I am mobile." / "John is mobile."
+msgid "Mobile"
+msgstr "அலை பேசி"
+
+msgid "Searching the web"
+msgstr ""
+
+msgid "At a party"
+msgstr ""
+
+msgid "Having Coffee"
+msgstr ""
+
+#. Playing video games
+#, fuzzy
+msgid "Gaming"
+msgstr "பயனர் பெயர்"
+
+msgid "Browsing the web"
+msgstr ""
+
+#, fuzzy
+msgid "Smoking"
+msgstr "பாட்டு"
+
+#, fuzzy
+msgid "Writing"
+msgstr "பணிபுரிகிறது"
+
+#. Drinking [Alcohol]
+#, fuzzy
+msgid "Drinking"
+msgstr "பணிபுரிகிறது"
+
+msgid "Listening to music"
+msgstr "இசையை கவனிக்கிறது"
+
+#, fuzzy
+msgid "Studying"
+msgstr "அனுப்புகிறது"
+
+#, fuzzy
+msgid "In the restroom"
+msgstr "பொழுதுபோக்கு மற்றும் விருப்பங்கள்"
+
 msgid "Received invalid data on connection with server"
 msgstr "சேவையகத்துடன் இணைப்பில் தவறான தரவு பெறப்பட்டது"
 
@@ -6907,6 +7160,9 @@ msgstr "கோப்பை கொண்டு வருக"
 msgid "Games"
 msgstr "விளையாட்டுகள்"
 
+msgid "ICQ Xtraz"
+msgstr ""
+
 msgid "Add-Ins"
 msgstr "Add-Ins (சேர்ப்புகள்)"
 
@@ -6972,6 +7228,26 @@ msgstr "வலை உணர்வுள்ள"
 
 msgid "Invisible"
 msgstr "காணமுடியாத"
+
+#, fuzzy
+msgid "Evil"
+msgstr "மின்னஞ்சல்"
+
+#, fuzzy
+msgid "Depression"
+msgstr "வேலை"
+
+#, fuzzy
+msgid "At home"
+msgstr "என்னைப் பற்றி"
+
+#, fuzzy
+msgid "At work"
+msgstr "வலையமைப்பு"
+
+#, fuzzy
+msgid "At lunch"
+msgstr "உணவிற்காக வெளியே"
 
 msgid "IP Address"
 msgstr "ஐபி முகவரிகள்"
@@ -7480,6 +7756,10 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr "iடியூன்கள் மியூசிக் சேகரிப்பு இணைப்பு"
 
+#, fuzzy
+msgid "Lunch"
+msgstr "பின்ச்"
+
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "%s க்கு நண்பர் குறிப்பு"
@@ -7511,7 +7791,8 @@ msgstr "AIM தகவலை பெறவும்"
 msgid "Edit Buddy Comment"
 msgstr "நண்பர் குறிப்பை திருத்து"
 
-msgid "Get Status Msg"
+#, fuzzy
+msgid "Get X-Status Msg"
 msgstr "நிலை தகவலை பெறு"
 
 msgid "End Direct IM Session"
@@ -7790,9 +8071,6 @@ msgstr "புதுப்பி"
 
 msgid "Could not change buddy information."
 msgstr "நண்பர் தகவலை மாற்ற முடியவில்லை."
-
-msgid "Mobile"
-msgstr "அலை பேசி"
 
 msgid "Note"
 msgstr "குறிப்பு"
@@ -8821,18 +9099,6 @@ msgstr "அதீத செயல்பாடு"
 msgid "Robot"
 msgstr "ரோபோ"
 
-msgid "Jealous"
-msgstr "பொறாமை பிடித்த"
-
-msgid "Ashamed"
-msgstr "அவமானப் படும்"
-
-msgid "Bored"
-msgstr "போரடிக்குது"
-
-msgid "Anxious"
-msgstr "பதட்டத்தில்"
-
 msgid "User Modes"
 msgstr "பயன்பாட்டாளர் வகைகள்"
 
@@ -9324,9 +9590,6 @@ msgstr "உங்களது தற்போதைய மனநிலை"
 #, c-format
 msgid "Normal"
 msgstr "இயல்பான"
-
-msgid "In love"
-msgstr "ஐ லவ் ஐஎம்"
 
 msgid ""
 "\n"
@@ -10334,6 +10597,10 @@ msgid "Exposure"
 msgstr "வெளிக்காட்டல்"
 
 #, c-format
+msgid "Unable to create socket: %s"
+msgstr "சாக்கெட்டில் உருவாக்க முடியவில்லை: %s"
+
+#, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "HTTP ப்ராக்ஸியிலிருந்து பதிலை பகுக்க முடியவில்லை: %s"
 
@@ -10435,8 +10702,9 @@ msgstr "தொந்தரவு செய்ய வேண்டாம்"
 msgid "Extended away"
 msgstr "அப்பால் நீட்டப்பட்டது"
 
-msgid "Listening to music"
-msgstr "இசையை கவனிக்கிறது"
+#, fuzzy
+msgid "Feeling"
+msgstr "பெறுகிறது"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -10978,6 +11246,17 @@ msgstr "தோழரை சேர்ப்பதற்கு ஏதுவான 
 msgid "Unknown node type"
 msgstr "தெரியாத முடிச்சு வகை"
 
+#, fuzzy
+msgid "Please select your mood from the list"
+msgstr "பட்டியலிருந்து உங்கள் மனநிலையை தேர்ந்தெடு."
+
+#, fuzzy
+msgid "Message (optional)"
+msgstr "மாறாக (விரும்பினால்)"
+
+msgid "Edit User Mood"
+msgstr "பயனர் மனநிலையை திருத்து"
+
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_நண்பர்கள்"
@@ -11056,6 +11335,10 @@ msgstr "/கருவிகள்/_ம முன்னுரிமைகள்"
 msgid "/Tools/Pr_ivacy"
 msgstr "/கருவிகள்/_தனிமை"
 
+#, fuzzy
+msgid "/Tools/Set _Mood"
+msgstr "/கருவிகள்/அமைப்பு _ல லாக் பதிவு"
+
 msgid "/Tools/_File Transfers"
 msgstr "/கருவிகள்/_க கோப்பு பரிமாற்றங்கள்"
 
@@ -11075,8 +11358,20 @@ msgstr "/_உதவி"
 msgid "/Help/Online _Help"
 msgstr "/உதவி/வலை இணைப்பில் _உதவி"
 
+#, fuzzy
+msgid "/Help/_Build Information"
+msgstr "நண்பர் பற்றிய தகவல்"
+
 msgid "/Help/_Debug Window"
 msgstr "/உதவி/_வ வழு அறிதல் சாளரம்"
+
+#, fuzzy
+msgid "/Help/De_veloper Information"
+msgstr "சேவையகம் தகவல்"
+
+#, fuzzy
+msgid "/Help/_Translator Information"
+msgstr "அந்தரங்க தகவல்"
 
 msgid "/Help/_About"
 msgstr "/உதவி/_பற்றி"
@@ -11305,6 +11600,10 @@ msgstr "<PurpleMain>/கணக்குகள்/"
 msgid "_Edit Account"
 msgstr "கணக்கை _த திருத்துக"
 
+#, fuzzy
+msgid "Set _Mood..."
+msgstr "மனநிலையை அமை..."
+
 msgid "No actions available"
 msgstr "எந்த செயல்பாடும் இல்லை"
 
@@ -11349,12 +11648,6 @@ msgstr "<h1>%s உடன் உரையாடல்</h1>\n"
 
 msgid "Save Conversation"
 msgstr "உரையாடலை சேமிக்க"
-
-msgid "Find"
-msgstr "தேடுக"
-
-msgid "_Search for:"
-msgstr "இதற்காக _த தேடுக:"
 
 msgid "Un-Ignore"
 msgstr "தவிர்க்காதே"
@@ -11428,6 +11721,10 @@ msgstr "/உரையாடல்/ஊடகம்/ஆடியோ\\/வீடி
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/உரையாடல்/கோப்பை _அனுப்பு..."
+
+#, fuzzy
+msgid "/Conversation/Get _Attention"
+msgstr "/உரையாடல்/தகவல் பெறு"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/உரையாடல்/நண்பர் _நிமித்தச் செயலை சேர்"
@@ -11510,6 +11807,10 @@ msgstr "/உரையாடல்/ஊடகம்/ஆடியோ\\/வீடி
 msgid "/Conversation/Send File..."
 msgstr "/உரையாடல்/கோப்பை அனுப்பு..."
 
+#, fuzzy
+msgid "/Conversation/Get Attention"
+msgstr "/உரையாடல்/தகவல் பெறு"
+
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/உரையாடல்/நண்பர் நிமித்தச் செயலை சேர்..."
 
@@ -11574,14 +11875,19 @@ msgstr "_அனுப்பு"
 msgid "0 people in room"
 msgstr "அறையில் 0 மக்கள்"
 
+#, fuzzy
+msgid "Close Find bar"
+msgstr "இந்த கீற்றை மூடு"
+
+#, fuzzy
+msgid "Find:"
+msgstr "தேடுக"
+
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d நபர் அறையில்"
 msgstr[1] "%d நபர்கள் அறையில்"
-
-msgid "Typing"
-msgstr "தட்டச்சிடல்"
 
 msgid "Stopped Typing"
 msgstr "தட்டச்சிடல் நிறுத்தப்பட்டது"
@@ -11633,6 +11939,12 @@ msgstr "குழுவால்"
 
 msgid "By account"
 msgstr "கணக்கால்"
+
+msgid "Find"
+msgstr "தேடுக"
+
+msgid "_Search for:"
+msgstr "இதற்காக _த தேடுக:"
 
 msgid "Save Debug Log"
 msgstr "பிழையறி பதிவை சேமி"
@@ -11965,22 +12277,15 @@ msgstr "அம்ஹாரிக்"
 msgid "Lithuanian"
 msgstr "லித்துனியன்"
 
-#, c-format
-msgid "About %s"
-msgstr "%sஐ பற்றி"
-
 # , c-format
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with %"
+"s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s is a graphical modular messaging client based on libpurple which is "
 "capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
@@ -11994,20 +12299,21 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 msgstr ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
-"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
-"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
-"primary language is <b>English</b>.  You are welcome to post in another "
-"language, but the responses may be less helpful.<br/><br/>"
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 msgstr ""
 "<font size=\"4\">மற்ற பிட்ஜின் பயனர்களிடமிருந்து உதவி:</font> <a href=\"mailto:"
 "support@pidgin.im\">support@pidgin.im</a><br/>இது ஒரு <b>பொதுவான</b> "
@@ -12017,14 +12323,17 @@ msgstr ""
 "நீங்கள் வரவேற்கப்படுகிறீர்கள், ஆனால் பதில்கள் குறைந்த உதவியாக உள்ளது.<br/><br/>"
 
 #, c-format
-msgid ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid "About %s"
+msgstr "%sஐ பற்றி"
 
-#, c-format
-msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-msgstr "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#, fuzzy
+msgid "Build Information"
+msgstr "நண்பர் பற்றிய தகவல்"
+
+#. End of not to be translated section
+#, fuzzy, c-format
+msgid "%s Build Information"
+msgstr "நண்பர் பற்றிய தகவல்"
 
 msgid "Current Developers"
 msgstr "நடப்பு உருவாக்கியவர்கள்"
@@ -12038,14 +12347,19 @@ msgstr "ஒய்வுபெற்ற உருவாக்காளர்க�
 msgid "Retired Crazy Patch Writers"
 msgstr "ஒதுக்கிய க்ரைஸி பேட்ச் எழுத்தாளர்கள்"
 
+#, fuzzy, c-format
+msgid "%s Developer Information"
+msgstr "சேவையகம் தகவல்"
+
 msgid "Current Translators"
 msgstr "தற்போதைய மொழிபெயர்ப்பாளர்கள்"
 
 msgid "Past Translators"
 msgstr "முந்தைய மொழிபெயர்ப்பாளர்கள்"
 
-msgid "Debugging Information"
-msgstr "பிழையறிதல் தகவல்"
+#, fuzzy, c-format
+msgid "%s Translator Information"
+msgstr "மேலும் தகவல்"
 
 msgid "_Name"
 msgstr "_ப பெயர்"
@@ -12336,15 +12650,6 @@ msgstr ""
 "\n"
 "பிஎன்ஜி க்கு மாற்றுகிறது."
 
-msgid ""
-"Unrecognized file type\n"
-"\n"
-"Defaulting to PNG."
-msgstr ""
-"அறியமுடியாத கோப்பு வகை\n"
-"\n"
-"பிஎன்ஜி க்கு மாற்றுகிறது."
-
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -12352,16 +12657,6 @@ msgid ""
 "%s"
 msgstr ""
 "<span size='larger' weight='bold'>படத்தை சேமிப்பதில் பிழை</span>\n"
-"\n"
-"%s"
-
-#, c-format
-msgid ""
-"Error saving image\n"
-"\n"
-"%s"
-msgstr ""
-"படத்தை சேமிப்பதில் பிழை\n"
 "\n"
 "%s"
 
@@ -12472,6 +12767,10 @@ msgstr "IM படத்தை நுழை"
 msgid "Insert Smiley"
 msgstr "ஸ்மைலியை நுழை"
 
+#, fuzzy
+msgid "Send Attention"
+msgstr "பொத்தானை அனுப்பு"
+
 msgid "<b>_Bold</b>"
 msgstr "<b>தடிமனான (_B)</b>"
 
@@ -12516,6 +12815,9 @@ msgstr "கிடைமட்ட விதி (_H)"
 
 msgid "_Smile!"
 msgstr "சிரி (_S)!"
+
+msgid "_Attention!"
+msgstr ""
 
 msgid "Log Deletion Failed"
 msgstr "பதிவை அழிக்க முடியவில்லை"
@@ -13447,6 +13749,10 @@ msgstr "குறுக்குவழி உரை"
 msgid "Custom Smiley Manager"
 msgstr "தனிபயன் ஸ்மைலி மேலாளர்"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "செயல்பாடு தேவைப்படுகிறது"
+
 msgid "Select Buddy Icon"
 msgstr "நண்பரை சின்னத்தை தேர்ந்தெடு"
 
@@ -13526,10 +13832,13 @@ msgstr ""
 "நீங்கள் இந்த படத்தை இந்த தகவலில் கோர்க்கலாம், அல்லது இந்த பயனாளருக்கான நண்பர் குறும்படமாக "
 "பயன்படுத்தலாம்."
 
-#. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-#. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-#. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-#. * Probably not.  I'll just give an error and return.
+#. I don't know if we really want to do anything here.  Most of
+#. * the desktop item types are crap like "MIME Type" (I have no
+#. * clue how that would be a desktop item) and "Comment"...
+#. * nothing we can really send.  The only logical one is
+#. * "Application," but do we really want to send a binary and
+#. * nothing else? Probably not.  I'll just give an error and
+#. * return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 msgid "Cannot send launcher"
 msgstr "வெளியீட்டாளரை அனுப்ப முடியவில்லை"
@@ -13562,16 +13871,6 @@ msgstr "சின்ன பிழை"
 msgid "Could not set icon"
 msgstr "சின்னத்தை அமைக்க முடியவில்லை"
 
-#, c-format
-msgid "Failed to open file '%s': %s"
-msgstr "கோப்பு '%s'ஐ திறக்க முடியவில்லை: %s"
-
-#, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr ""
-"'%s' படத்தை ஏற்ற முடியவில்லை: காரணம் தெரியவில்லை, அநேகமாய் ஒரு ஒழுங்கில்லாத படக் கோப்பு"
-
 msgid "_Open Link"
 msgstr "இணைப்பை திற(_O)"
 
@@ -13595,6 +13894,10 @@ msgstr "ஒலியை இயக்கு (_P)"
 
 msgid "_Save File"
 msgstr "கோப்பை சேமி (_S)"
+
+#, fuzzy
+msgid "Do you really want to clear?"
+msgstr "உறுதியாக %s யை அழிக்கலாமா?"
 
 msgid "Select color"
 msgstr "நிறம் தேர்வு செய்க"
@@ -14775,15 +15078,6 @@ msgstr "கணக்கு:"
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr "<font color='#777777'>XMPPஉடன் இணைக்கபடவில்லை</font>"
 
-msgid "Insert an <iq/> stanza."
-msgstr "ஒரு <iq/> சான்டஸாவில் நுழை."
-
-msgid "Insert a <presence/> stanza."
-msgstr "ஒரு <presence/> சான்டஸாவில் நுழை."
-
-msgid "Insert a <message/> stanza."
-msgstr "ஒரு <message/> பத்தியை உள்நுழை."
-
 #. *< name
 #. *< version
 #. *  summary
@@ -14791,9 +15085,128 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "திறமையற்ற XMPP பத்திகளை அனுப்பு மற்றும் பெறு."
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+#, fuzzy
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "பிழைதிருத்தி XMPP சேவையகங்கள் அல்லது வாடிக்கையாளருக்காக இந்த செருகி பயன்படுகிறது."
+
+#~ msgid "Error creating conference."
+#~ msgstr "உரையாடலை உருவாக்குவதில் பிழை."
+
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "துறைக்கு சாக்கெட்டை பிணைக்க முடியவில்லை: %s"
+
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr "சாக்கெட்டில் கவனிக்க முடியவில்லை: %s"
+
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "%s உங்களுக்கு ஒரு சீண்டல் அனுப்பியுள்ளார்!"
+
+#~ msgid "Friendly name changes too rapidly"
+#~ msgstr "நட்புப் பெயர் அடிக்கடி மாறுகிறது"
+
+#~ msgid "This Hotmail account may not be active."
+#~ msgstr "இந்த ஹாட்மெய்ல் கணக்கு இயக்கத்தில் இல்லை."
+
+#~ msgid "Profile URL"
+#~ msgstr "குறுந்தொகுப்பு யுஆர்எல் "
+
+#~ msgid "MSN Protocol Plugin"
+#~ msgstr "MSN நெறிமுறை செருகி"
+
+#~ msgid "%s is not a valid group."
+#~ msgstr "%s என்பது செல்லாத குழு."
+
+#~ msgid "Unknown error."
+#~ msgstr "தெரியாத பிழை."
+
+#~ msgid "%s on %s (%s)"
+#~ msgstr "%s - இதன் மீது %s (%s)"
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "%s மீது பயனாளரை சேர்க்க இயலவில்லை (%s)"
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "%s  மீது பயனாளரை தடுக்க இயலவில்லை (%s)"
+
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "%s  மீது பயனாளரை அனுமதிக்க இயலவில்லை (%s)"
+
+#~ msgid "%s could not be added because your buddy list is full."
+#~ msgstr "%s சேர்க்க முடியாது ஏனென்றால் உங்களது நண்பர் பட்டியல் நிரம்பியுள்ளது."
+
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%s என்பது செல்லாத பாஸ்போர்ட் கணக்கு."
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "தற்காலிகமாக சேவை இல்லை."
+
+#~ msgid "Unable to rename group"
+#~ msgstr "குழுப்பெயரை மாற்ற இயலவில்லை."
+
+#~ msgid "Unable to delete group"
+#~ msgstr "குழவை நீக்க இயலவில்லை"
+
+#~ msgid "%s has added you to his or her buddy list."
+#~ msgstr "%s அவரது நண்பர் பட்டியலில் உங்களை சேர்த்துள்ளார்."
+
+#~ msgid "%s has removed you from his or her buddy list."
+#~ msgstr "%s அவரது நண்பர் பட்டியலில் இருந்து உங்களை நீக்கியுள்ளார்."
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
+#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+
+#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#~ msgstr ""
+#~ "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+
+#~ msgid "Debugging Information"
+#~ msgstr "பிழையறிதல் தகவல்"
+
+#~ msgid ""
+#~ "Unrecognized file type\n"
+#~ "\n"
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "அறியமுடியாத கோப்பு வகை\n"
+#~ "\n"
+#~ "பிஎன்ஜி க்கு மாற்றுகிறது."
+
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "படத்தை சேமிப்பதில் பிழை\n"
+#~ "\n"
+#~ "%s"
+
+#~ msgid "Failed to open file '%s': %s"
+#~ msgstr "கோப்பு '%s'ஐ திறக்க முடியவில்லை: %s"
+
+#~ msgid ""
+#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
+#~ msgstr ""
+#~ "'%s' படத்தை ஏற்ற முடியவில்லை: காரணம் தெரியவில்லை, அநேகமாய் ஒரு ஒழுங்கில்லாத படக் "
+#~ "கோப்பு"
+
+#~ msgid "Insert an <iq/> stanza."
+#~ msgstr "ஒரு <iq/> சான்டஸாவில் நுழை."
+
+#~ msgid "Insert a <presence/> stanza."
+#~ msgstr "ஒரு <presence/> சான்டஸாவில் நுழை."
+
+#~ msgid "Insert a <message/> stanza."
+#~ msgstr "ஒரு <message/> பத்தியை உள்நுழை."
 
 #~ msgid "%s"
 #~ msgstr "%s"
@@ -15071,10 +15484,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "User Browsing"
 #~ msgstr "பயன்பாட்டாளர் வகைகள்"
-
-#, fuzzy
-#~ msgid "User Gaming"
-#~ msgstr "பயனர் பெயர்"
 
 #, fuzzy
 #~ msgid "User Viewing"
@@ -15446,10 +15855,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Update information"
 #~ msgstr "பயனரின் தகவல்"
-
-#, fuzzy
-#~ msgid "Successed:"
-#~ msgstr "வேகம்:"
 
 #, fuzzy
 #~ msgid "Invalid QQ Face"

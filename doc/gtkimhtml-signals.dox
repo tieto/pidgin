@@ -6,7 +6,7 @@
   @signal format_function_clear
   @signal format_function_toggle
   @signal format_function_update
-  @paste
+  @signal paste
  @endsignals
 
  @see gtkimhtml.h

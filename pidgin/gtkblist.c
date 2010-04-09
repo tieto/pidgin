@@ -118,7 +118,6 @@ typedef struct
 	PidginMiniDialog *signed_on_elsewhere;
 
 	PidginBlistTheme *current_theme;
-
 } PidginBuddyListPrivate;
 
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
@@ -2230,8 +2229,8 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 		return FALSE;
 	}
 
-	add_buddies_from_vcard("prpl-oscar",  group, aims,    alias);
-	add_buddies_from_vcard("prpl-oscar",  group, icqs,    alias);
+	add_buddies_from_vcard("prpl-aim",    group, aims,    alias);
+	add_buddies_from_vcard("prpl-icq",    group, icqs,    alias);
 	add_buddies_from_vcard("prpl-yahoo",  group, yahoos,  alias);
 	add_buddies_from_vcard("prpl-msn",    group, msns,    alias);
 	add_buddies_from_vcard("prpl-jabber", group, jabbers, alias);
@@ -3405,7 +3404,7 @@ static void
 update_status_with_mood(PurpleAccount *account, const gchar *mood,
     const gchar *text)
 {
-	if (mood != NULL && !purple_strequal(mood, "")) {
+	if (mood && *mood) {
 		if (text) {
 			purple_account_set_status(account, "mood", TRUE,
 			                          PURPLE_MOOD_NAME, mood,
@@ -3424,19 +3423,26 @@ update_status_with_mood(PurpleAccount *account, const gchar *mood,
 static void
 edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	PurpleRequestField *mood_field, *text_field;
+	PurpleRequestField *mood_field;
 	GList *l;
 
 	mood_field = purple_request_fields_get_field(fields, "mood");
-	text_field = purple_request_fields_get_field(fields, "text");
 	l = purple_request_field_list_get_selected(mood_field);
 
 	if (l) {
 		const char *mood = purple_request_field_list_get_data(mood_field, l->data);
-		const char *text = purple_request_field_string_get_value(text_field);
 
 		if (gc) {
+			const char *text;
 			PurpleAccount *account = purple_connection_get_account(gc);
+
+			if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES) {
+				PurpleRequestField *text_field;
+				text_field = purple_request_fields_get_field(fields, "text");
+				text = purple_request_field_string_get_value(text_field);
+			} else {
+				text = NULL;
+			}
 
 			update_status_with_mood(account, mood, text);
 		} else {
@@ -3446,8 +3452,8 @@ edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 				PurpleAccount *account = (PurpleAccount *) accounts->data;
 				PurpleConnection *gc = purple_account_get_connection(account);
 
-				if (gc->flags && PURPLE_CONNECTION_SUPPORT_MOODS) {
-					update_status_with_mood(account, mood, text);
+				if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
+					update_status_with_mood(account, mood, NULL);
 				}
 			}
 		}
@@ -3467,9 +3473,9 @@ static PurpleMood *
 get_global_moods(void)
 {
 	GHashTable *global_moods =
-		g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+		g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 	GHashTable *mood_counts =
-		g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+		g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 	GList *accounts = purple_accounts_get_all_active();
 	PurpleMood *result = NULL;
 	GList *out_moods = NULL;
@@ -3484,16 +3490,19 @@ get_global_moods(void)
 			PurplePluginProtocolInfo *prpl_info =
 				PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 			PurpleMood *mood = NULL;
-			
+
+			/* PURPLE_CONNECTION_SUPPORT_MOODS would not be set if the prpl doesn't
+			 * have get_moods, so using PURPLE_PROTOCOL_PLUGIN_HAS_FUNC isn't necessary
+			 * here */
 			for (mood = prpl_info->get_moods(account) ;
 			    mood->mood != NULL ; mood++) {
 				int mood_count =
 						GPOINTER_TO_INT(g_hash_table_lookup(mood_counts, mood->mood));
 
 				if (!g_hash_table_lookup(global_moods, mood->mood)) {
-					g_hash_table_insert(global_moods, g_strdup(mood->mood), mood);
+					g_hash_table_insert(global_moods, (gpointer)mood->mood, mood);
 				}
-				g_hash_table_insert(mood_counts, g_strdup(mood->mood),
+				g_hash_table_insert(mood_counts, (gpointer)mood->mood,
 				    GINT_TO_POINTER(mood_count + 1));
 			}
 
@@ -3586,6 +3595,9 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 		purple_request_field_list_add_selected(f, _("None"));
 
 	/* TODO: rlaager wants this sorted. */
+	/* The connection is checked for PURPLE_CONNECTION_SUPPORT_MOODS flag before
+	 * this function is called for a non-null account. So using
+	 * PURPLE_PROTOCOL_PLUGIN_HAS_FUNC isn't necessary here */
 	for (mood = account ? prpl_info->get_moods(account) : global_moods;
 	     mood->mood != NULL ; mood++) {
 		char *path;
@@ -4271,7 +4283,12 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	else
 		name = purple_buddy_get_alias(b);
 
-	nametext = g_markup_escape_text(name, strlen(name));
+	/* Raise a contact pre-draw signal here.  THe callback will return an
+	 * escaped version of the name. */
+	nametext = purple_signal_emit_return_1(pidgin_blist_get_handle(), "drawing-buddy", b);
+
+	if(!nametext)
+		nametext = g_markup_escape_text(name, strlen(name));
 
 	presence = purple_buddy_get_presence(b);
 
@@ -7595,10 +7612,19 @@ void pidgin_blist_init(void)
 	                     purple_value_new_outgoing(PURPLE_TYPE_BOXED, "GString *"),
 	                     purple_value_new(PURPLE_TYPE_BOOLEAN));
 
+	purple_signal_register(gtk_blist_handle, "drawing-buddy",
+						purple_marshal_POINTER__POINTER,
+						purple_value_new(PURPLE_TYPE_STRING), 1,
+						purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_BLIST_BUDDY));
 
-	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
-	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
-	purple_signal_connect(purple_blist_get_handle(), "buddy-privacy-changed", gtk_blist_handle, PURPLE_CALLBACK(pidgin_blist_update_privacy_cb), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on",
+			gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off",
+			gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-privacy-changed",
+			gtk_blist_handle, PURPLE_CALLBACK(pidgin_blist_update_privacy_cb), NULL);
+
 }
 
 void
@@ -8138,22 +8164,12 @@ pidgin_blist_update_accounts_menu(void)
 			 PURPLE_PLUGIN_HAS_ACTIONS(plugin))) {
 			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods) &&
 			    gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
-				GList *types;
 
-				for (types = purple_account_get_status_types(account);
-			     	types != NULL ; types = types->next) {
-					PurpleStatusType *type = types->data;
-
-					if (strcmp(purple_status_type_get_id(type), "mood") != 0)
-						continue;
-
+				if (purple_account_get_status(account, "mood")) {
 					menuitem = gtk_menu_item_new_with_mnemonic(_("Set _Mood..."));
 					g_signal_connect(G_OBJECT(menuitem), "activate",
 					         	G_CALLBACK(set_mood_cb), account);
 					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-
-					/* Be safe.  It shouldn't match more than once anyway */
-					break;
 				}
 			}
 			if (PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
