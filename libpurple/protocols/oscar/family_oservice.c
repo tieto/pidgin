@@ -1120,7 +1120,7 @@ aim_parse_extstatus(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 		case 0x0002: { /* available message */
 			/* there is a second length that is just for the message */
 			char *msg = byte_stream_getstr(bs, byte_stream_get16(bs));
-			ret = userfunc(od, conn, frame, msg);
+			ret = userfunc(od, conn, frame, type, msg);
 			g_free(msg);
 			} break;
 		}
