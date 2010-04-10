@@ -1773,7 +1773,7 @@ static gchar *yahoo_auth16_get_cookie_b(gchar *headers)
 				tmp = &splits[i][14];
 				sem = strchr(tmp, ';');
 
-				if(tmp != NULL) {
+				if (sem != NULL) {
 					tmp2 = g_strndup(tmp, sem - tmp);
 					purple_debug_info("yahoo", "Got needed part of B cookie: %s\n",
 							tmp2 ? tmp2 : "(null)");
@@ -1783,6 +1783,7 @@ static gchar *yahoo_auth16_get_cookie_b(gchar *headers)
 		}
 	}
 
+	g_strfreev(splits);
 	return tmp2;
 }
 
