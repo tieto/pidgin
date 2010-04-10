@@ -515,8 +515,12 @@ static void client_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data
 
 	if (error_message != NULL || len == 0) {
 		gchar *tmp;
-		tmp = g_strdup_printf(_("Error requesting %s: %s"),
-				URL_CLIENT_LOGIN, error_message);
+		if (error_message != NULL)
+			tmp = g_strdup_printf(_("Error requesting %s: %s"),
+					URL_CLIENT_LOGIN, error_message);
+		else
+			tmp = g_strdup_printf(_("Error requesting %s"),
+					URL_CLIENT_LOGIN);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
