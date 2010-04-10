@@ -3,7 +3,7 @@
 # Copyright (C) unknown, Robert Millan <zeratul2@wanadoo.es>
 # Copyright (C) December 2003 (from 2003-12-12 until 2003-12-18),
 #               January (2004-01-07,12), Xan <dxpublica@telefonica.net>
-# Copyright (c) 2004, 2005, 2006, 2007, 2008, 2009
+# Copyright (c) 2004, 2005, 2006, 2007, 2008, 2009, 2010
 #               Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:12-0700\n"
-"PO-Revision-Date: 2010-02-16 23:08+0100\n"
+"POT-Creation-Date: 2010-04-07 21:58+0200\n"
+"PO-Revision-Date: 2010-04-09 09:06+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -1387,8 +1387,6 @@ msgstr "Estat de la supressió"
 msgid "Saved Statuses"
 msgstr "Estats desats"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "Títol"
 
@@ -3953,6 +3951,11 @@ msgstr "Nom de l'organització"
 msgid "Organization Unit"
 msgstr "Secció de l'organització"
 
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "Títol de la feina"
+
 msgid "Role"
 msgstr "Rol"
 
@@ -4315,15 +4318,18 @@ msgstr "Text sobre l'estat d'ànim"
 msgid "Allow Buzz"
 msgstr "Permet les botzines"
 
-# Segons la viquipèdia
-#, fuzzy
 msgid "Mood Name"
-msgstr "Nom del mig"
+msgstr ""
 
-#, fuzzy
 msgid "Mood Comment"
-msgstr "Comentari de l'amic"
+msgstr ""
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "Artista de la melodia"
 
@@ -4616,9 +4622,8 @@ msgstr "Seleccioneu un recurs"
 msgid "Initiate Media"
 msgstr "Inicia el medi"
 
-#, fuzzy
 msgid "Account does not support PEP, can't set mood"
-msgstr "Aquest protocol no implementa sales de xat."
+msgstr "Aquest protocol no implementa PEP, no es pot establir l'estat d'ànim."
 
 msgid "config:  Configure a chat room."
 msgstr "config:  configura la sala de xat."
@@ -4673,9 +4678,8 @@ msgstr "ping &lt;jid&gt;:\tfa ping a un usuari/component/servidor."
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: fa sonar una botzina a un usuari per tal de que us pari atenció"
 
-#, fuzzy
 msgid "mood: Set current user mood"
-msgstr "Seleccioneu l'usuari correcte"
+msgstr "modd: estableix l'estat d'ànim de l'usuari"
 
 msgid "Extended Away"
 msgstr "Absent des de fa una bona estona"
@@ -4759,13 +4763,13 @@ msgstr ""
 "és massa llarga."
 
 msgid "XMPP stream header missing"
-msgstr ""
+msgstr "Falta la capçalera del flux XMPP"
 
 msgid "XMPP Version Mismatch"
-msgstr ""
+msgstr "Les versions del XMPP no coincideixen"
 
 msgid "XMPP stream missing ID"
-msgstr ""
+msgstr "Manca l'ID del fluxe XMPP"
 
 msgid "XML Parse error"
 msgstr "Error en l'anàlisi de l'XML"
@@ -4845,25 +4849,21 @@ msgstr ""
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "Escolliu a quin recurs de %s voleu enviar un fitxer"
 
-#, fuzzy
 msgid "Afraid"
-msgstr "Àrab"
+msgstr "Espantat"
 
-#, fuzzy
 msgid "Amazed"
-msgstr "Avergonyit"
+msgstr "Al·lucinant"
 
-#, fuzzy
 msgid "Amorous"
-msgstr "Gloriós"
+msgstr "Amorós"
 
 #. 1
 msgid "Angry"
 msgstr "Enfadat"
 
-#, fuzzy
 msgid "Annoyed"
-msgstr "Bandejat"
+msgstr "Emprenyat"
 
 msgid "Anxious"
 msgstr "Ansiós"
@@ -4878,21 +4878,18 @@ msgstr "Avergonyit"
 msgid "Bored"
 msgstr "Avorrit"
 
-#, fuzzy
 msgid "Brave"
-msgstr "Desa"
+msgstr "Brau"
 
-#, fuzzy
 msgid "Calm"
-msgstr "Regne"
+msgstr "Calmat"
 
 #, fuzzy
 msgid "Cautious"
 msgstr "Xats"
 
-#, fuzzy
 msgid "Cold"
-msgstr "Negreta"
+msgstr "Fred"
 
 #, fuzzy
 msgid "Confident"
@@ -4914,29 +4911,24 @@ msgstr "Connectat"
 msgid "Cranky"
 msgstr "Empresa"
 
-#, fuzzy
 msgid "Crazy"
-msgstr "Crazychat"
+msgstr "Boig"
 
-#, fuzzy
 msgid "Creative"
-msgstr "Crea"
+msgstr "Creatiu"
 
-#, fuzzy
 msgid "Curious"
-msgstr "Gloriós"
+msgstr "Curiós"
 
 #, fuzzy
 msgid "Dejected"
 msgstr "Rebutjat"
 
-#, fuzzy
 msgid "Depressed"
-msgstr "Suprimit"
+msgstr "Deprimit"
 
-#, fuzzy
 msgid "Disappointed"
-msgstr "Desconnectat."
+msgstr "Decebut"
 
 msgid "Disgusted"
 msgstr ""
@@ -4945,12 +4937,11 @@ msgstr ""
 msgid "Dismayed"
 msgstr "Inhabilitat"
 
-#, fuzzy
 msgid "Distracted"
-msgstr "Separat"
+msgstr "Distret"
 
 msgid "Embarrassed"
-msgstr ""
+msgstr "Avergonyit"
 
 #, fuzzy
 msgid "Envious"
@@ -4964,12 +4955,11 @@ msgstr "Excitat"
 msgid "Flirtatious"
 msgstr "Gloriós"
 
-#, fuzzy
 msgid "Frustrated"
-msgstr "Nom"
+msgstr "Frustrat"
 
 msgid "Grateful"
-msgstr ""
+msgstr "Agraït"
 
 #, fuzzy
 msgid "Grieving"
@@ -4979,16 +4969,15 @@ msgstr "S'està recuperant..."
 msgid "Grumpy"
 msgstr "Rondinaire"
 
-#, fuzzy
 msgid "Guilty"
-msgstr "Ciutat"
+msgstr "Culpable"
 
 #. 4
 msgid "Happy"
 msgstr "Content"
 
 msgid "Hopeful"
-msgstr ""
+msgstr "Esperançat"
 
 #. 8
 msgid "Hot"
@@ -4998,18 +4987,16 @@ msgid "Humbled"
 msgstr ""
 
 msgid "Humiliated"
-msgstr ""
+msgstr "Humiliat"
 
-#, fuzzy
 msgid "Hungry"
-msgstr "Enfadat"
+msgstr "Afamat"
 
-#, fuzzy
 msgid "Hurt"
-msgstr "Humor"
+msgstr "Ferit"
 
 msgid "Impressed"
-msgstr ""
+msgstr "Impressionat"
 
 #, fuzzy
 msgid "In awe"
@@ -5018,17 +5005,14 @@ msgstr "Enamorat"
 msgid "In love"
 msgstr "Enamorat"
 
-#, fuzzy
 msgid "Indignant"
-msgstr "Indonesi"
+msgstr "Indignant"
 
-#, fuzzy
 msgid "Interested"
-msgstr "Interessos"
+msgstr "Interessat"
 
-#, fuzzy
 msgid "Intoxicated"
-msgstr "Convidat"
+msgstr "Intoxicat"
 
 #. 6
 msgid "Invincible"
@@ -5037,84 +5021,70 @@ msgstr "Invencible"
 msgid "Jealous"
 msgstr "Gelós"
 
-#, fuzzy
 msgid "Lonely"
-msgstr "Mico"
+msgstr "Sol"
 
-#, fuzzy
 msgid "Lost"
-msgstr "El més alt"
+msgstr "Perdut"
 
 msgid "Lucky"
-msgstr ""
+msgstr "Sortós"
 
-#, fuzzy
 msgid "Mean"
-msgstr "Alemany"
+msgstr "Malèvol"
 
-#, fuzzy
 msgid "Moody"
-msgstr "Estat d'ànim"
+msgstr "Animat"
 
 msgid "Nervous"
-msgstr ""
+msgstr "Nerviós"
 
-#, fuzzy
 msgid "Neutral"
-msgstr "Detalls"
+msgstr "Neutral"
 
-#, fuzzy
 msgid "Offended"
-msgstr "Fora de línia"
+msgstr "Ofès"
 
 msgid "Outraged"
-msgstr ""
+msgstr "Enrabiat"
 
-#, fuzzy
 msgid "Playful"
-msgstr "Reprodueix"
+msgstr "Juganer"
 
-#, fuzzy
 msgid "Proud"
-msgstr "Alt"
+msgstr "Orgullós"
 
-#, fuzzy
 msgid "Relaxed"
-msgstr "Nom real"
+msgstr "Relaxat"
 
-#, fuzzy
 msgid "Relieved"
-msgstr "Rebuts"
+msgstr "Alleujat"
 
-#, fuzzy
 msgid "Remorseful"
-msgstr "Suprimeix"
+msgstr "Amb remordiments"
 
-#, fuzzy
 msgid "Restless"
-msgstr "Registra"
+msgstr "Neguitós"
 
 #. 7
 msgid "Sad"
 msgstr "Trist"
 
-#, fuzzy
 msgid "Sarcastic"
-msgstr "Marathi"
+msgstr "Sarcàstic"
 
 msgid "Satisfied"
-msgstr ""
+msgstr "Satisfet"
 
-#, fuzzy
 msgid "Serious"
-msgstr "Gloriós"
+msgstr "Seriós"
 
 #, fuzzy
 msgid "Shocked"
 msgstr "Blocat"
 
 msgid "Shy"
-msgstr ""
+msgstr "Vergonyós"
 
 #. 9
 msgid "Sick"
@@ -5126,41 +5096,34 @@ msgid "Sleepy"
 msgstr "Endormiscat"
 
 msgid "Spontaneous"
-msgstr ""
+msgstr "Espontani"
 
-#, fuzzy
 msgid "Stressed"
-msgstr "Velocitat"
+msgstr "Estressat"
 
-#, fuzzy
 msgid "Strong"
-msgstr "Cançó"
+msgstr "Fort"
 
-#, fuzzy
 msgid "Surprised"
-msgstr "morrejat"
+msgstr "Sorprès"
 
 msgid "Thankful"
-msgstr ""
+msgstr "Agraït"
 
 msgid "Thirsty"
-msgstr ""
+msgstr "Assedegat"
 
-#, fuzzy
 msgid "Tired"
-msgstr "Fire"
+msgstr "Cansat"
 
-#, fuzzy
 msgid "Undefined"
-msgstr "Subratllat"
+msgstr "Indefinit"
 
-#, fuzzy
 msgid "Weak"
-msgstr "Bufetejar"
+msgstr "Decandit"
 
-#, fuzzy
 msgid "Worried"
-msgstr "Avorrit"
+msgstr "Preocupat"
 
 msgid "Set User Nickname"
 msgstr "Estableix el sobrenom de l'usuari"
@@ -5525,18 +5488,6 @@ msgstr "Al telèfon"
 msgid "Out to Lunch"
 msgstr "A fora dinant"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Artista"
-
-msgid "Album"
-msgstr "Àlbum"
-
 msgid "Game Title"
 msgstr "Títol del joc"
 
@@ -5683,9 +5634,6 @@ msgstr "Aniversari"
 #. Business
 msgid "Work"
 msgstr "Feina"
-
-msgid "Job Title"
-msgstr "Títol de la feina"
 
 msgid "Company"
 msgstr "Empresa"
@@ -6992,103 +6940,86 @@ msgid "Invalid chat room name"
 msgstr "El nom de sala de xat no és vàlid"
 
 msgid "Thinking"
-msgstr ""
+msgstr "Pensant"
 
-#, fuzzy
 msgid "Shopping"
-msgstr "Pari d'escriure"
+msgstr "Comprant"
 
-#, fuzzy
 msgid "Questioning"
-msgstr "Diàleg de pregunta"
+msgstr "Preguntant"
 
-#, fuzzy
 msgid "Eating"
-msgstr "Radiomissatgeria"
+msgstr "Menjant"
 
-#, fuzzy
 msgid "Watching a movie"
-msgstr "Jugant a un joc"
+msgstr "Mirant una pel·lícula"
 
 msgid "Typing"
 msgstr "Teclejant"
 
-#, fuzzy
 msgid "At the office"
-msgstr "Fora de l'oficina"
+msgstr "A l'oficina"
 
 msgid "Taking a bath"
 msgstr ""
 
 msgid "Watching TV"
-msgstr ""
+msgstr "Mirant la tele"
 
-#, fuzzy
 msgid "Having fun"
-msgstr "Penja"
+msgstr "Passant-ho bé"
 
-#, fuzzy
 msgid "Sleeping"
-msgstr "Endormiscat"
+msgstr "Dormint"
 
 msgid "Using a PDA"
-msgstr ""
+msgstr "Emprant el PDA"
 
-#, fuzzy
 msgid "Meeting friends"
-msgstr "Amics de MI"
+msgstr "Amb amics"
 
-#, fuzzy
 msgid "On the phone"
 msgstr "Al telèfon"
 
-#, fuzzy
 msgid "Surfing"
-msgstr "Recurrent"
+msgstr "Navegant"
 
 #. "I am mobile." / "John is mobile."
 msgid "Mobile"
 msgstr "Mòbil"
 
-#, fuzzy
 msgid "Searching the web"
-msgstr "Avisa l'usuari"
+msgstr "Cercant a la web"
 
-#, fuzzy
 msgid "At a party"
-msgstr "Port d'autorització"
+msgstr "En una festa"
 
 msgid "Having Coffee"
-msgstr ""
+msgstr "Prenent un cafè"
 
 #. Playing video games
-#, fuzzy
 msgid "Gaming"
-msgstr "Jocs d'usuari"
+msgstr "Jugant"
 
 msgid "Browsing the web"
-msgstr ""
+msgstr "Navegant la web"
 
-#, fuzzy
 msgid "Smoking"
-msgstr "Cançó"
+msgstr "Fumant"
 
-#, fuzzy
 msgid "Writing"
-msgstr "Treballant"
+msgstr "Escrivint"
 
 #. Drinking [Alcohol]
-#, fuzzy
 msgid "Drinking"
-msgstr "Treballant"
+msgstr "Bevent"
 
 # És un estat, com "fora de línia", etc. (josep)
 msgid "Listening to music"
 msgstr "Escoltant música"
 
-#, fuzzy
 msgid "Studying"
-msgstr "S'està enviant"
+msgstr "Estudiant"
 
 #, fuzzy
 msgid "In the restroom"
@@ -7309,7 +7240,7 @@ msgid "Games"
 msgstr "Jocs"
 
 msgid "ICQ Xtraz"
-msgstr ""
+msgstr "ICQ Xtraz"
 
 msgid "Add-Ins"
 msgstr "Afegits"
@@ -8361,6 +8292,11 @@ msgstr "Demanant"
 
 msgid "Admin"
 msgstr "Administrador"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Llista de sales"
 
 msgid "Notice"
 msgstr "Avís"
@@ -10274,9 +10210,6 @@ msgstr "ID de Yahoo..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "Connector per al protocol Yahoo!"
 
-msgid "Pager server"
-msgstr "Servidor de cercapersones"
-
 msgid "Pager port"
 msgstr "Port per al cercapersones"
 
@@ -10299,12 +10232,6 @@ msgstr "Empra un compte per al servidor intermediàri per a connexions SSL"
 
 msgid "Chat room list URL"
 msgstr "URL de la llista de sales de xat"
-
-msgid "Yahoo Chat server"
-msgstr "Servidor de xat de Yahoo"
-
-msgid "Yahoo Chat port"
-msgstr "Port del xat de Yahoo"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "ID de Yahoo del Japó..."
@@ -10374,6 +10301,15 @@ msgid ""
 msgstr ""
 "El compte està blocat, però no se'n coneix el motiu. Això es pot solucionar "
 "entrant al web de Yahoo!"
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
+msgstr ""
+"El compte està blocat perquè s'ha intentat entrar massa cops. Això es pot "
+"solucionar entrant al web de Yahoo!"
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10453,6 +10389,16 @@ msgstr "S'ha perdut la connexió amb %s: %s"
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "No s'ha pogut establir una connexió amb %s: %s"
+
+msgid "Unable to connect: The server returned an empty response."
+msgstr "No s'ha pogut connectar: el servidor ha retornat una resposta buida."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
+"No s'ha pogut connectar: el servidor ha retornat una resposta que no conté "
+"la informació necessària"
 
 msgid "Not at Home"
 msgstr "Fora de casa"
@@ -12274,6 +12220,9 @@ msgstr "Búlgar"
 msgid "Bengali"
 msgstr "Bengalí"
 
+msgid "Bengali-India"
+msgstr "Bengalí (Ìndia)"
+
 msgid "Bosnian"
 msgstr "Bosnià"
 
@@ -12527,6 +12476,9 @@ msgid ""
 "Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
 "im<BR><BR>"
 msgstr ""
+"<FONT SIZE=\"4\"><B>Recursos útils</B></FONT><BR>\t<A HREF=\"%s\">Lloc web</"
+"A><BR>\t<A HREF=\"%s\">Preguntes més freqüents</A><BR>\tCanal d'IRC: #pidgin "
+"a irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
 #, fuzzy, c-format
 msgid ""
@@ -15369,6 +15321,21 @@ msgstr "Envia i rep blocs XMPP en brut."
 #, fuzzy
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
+
+#~ msgid "Artist"
+#~ msgstr "Artista"
+
+#~ msgid "Album"
+#~ msgstr "Àlbum"
+
+#~ msgid "Pager server"
+#~ msgstr "Servidor de cercapersones"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Servidor de xat de Yahoo"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Port del xat de Yahoo"
 
 #~ msgid "Error creating conference."
 #~ msgstr "S'ha produït un error en crear la conferència."
