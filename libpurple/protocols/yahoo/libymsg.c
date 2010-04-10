@@ -3742,6 +3742,7 @@ void yahoo_close(PurpleConnection *gc) {
 
 	g_free(yd->cookie_y);
 	g_free(yd->cookie_t);
+	g_free(yd->cookie_b);
 
 	if (yd->txhandler)
 		purple_input_remove(yd->txhandler);
