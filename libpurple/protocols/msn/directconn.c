@@ -111,7 +111,7 @@ msn_dc_new(MsnSlpCall *slpcall)
 
 	dc = g_new0(MsnDirectConn, 1);
 
-	if (purple_debug_if_verbose())
+	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "msn_dc_new %p\n", dc);
 
 	dc->slplink = slpcall->slplink;
