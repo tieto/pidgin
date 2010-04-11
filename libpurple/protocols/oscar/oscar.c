@@ -202,7 +202,6 @@ static int purple_conv_chat_info_update (OscarData *, FlapConnection *, FlapFram
 static int purple_conv_chat_incoming_msg(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_email_parseupdate(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_icon_parseicon   (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int oscar_icon_req        (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_msgack     (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_evilnotify (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_searcherror(OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -1562,7 +1561,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x0001, purple_parse_genericerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x000f, purple_selfinfo, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x001f, purple_memrequest, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x0021, oscar_icon_req,0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_REDIRECT, purple_handle_redirect, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_MOTD, purple_parse_motd, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_EVIL, purple_parse_evilnotify, 0);
@@ -6241,64 +6239,6 @@ char *oscar_status_text(PurpleBuddy *b)
 	}
 
 	return ret;
-}
-
-
-static int oscar_icon_req(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
-	va_list ap;
-	guint16 type;
-	guint8 flags = 0, length = 0;
-	guchar *md5 = NULL;
-
-	va_start(ap, fr);
-	type = va_arg(ap, int);
-
-	switch(type) {
-		case 0x0000:
-		case 0x0001: {
-			flags = va_arg(ap, int);
-			length = va_arg(ap, int);
-			md5 = va_arg(ap, guchar *);
-
-			if ((flags == 0x00) || (flags == 0x41)) {
-				if (!flap_connection_getbytype(od, SNAC_FAMILY_BART) && !od->iconconnecting) {
-					od->iconconnecting = TRUE;
-					od->set_icon = TRUE;
-					aim_srv_requestnew(od, SNAC_FAMILY_BART);
-				} else {
-					PurpleAccount *account = purple_connection_get_account(gc);
-					PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
-					if (img == NULL) {
-						aim_ssi_delicon(od);
-					} else {
-
-						purple_debug_info("oscar",
-										"Uploading icon to icon server\n");
-						aim_bart_upload(od, purple_imgstore_get_data(img),
-						                purple_imgstore_get_size(img));
-						purple_imgstore_unref(img);
-					}
-				}
-			} else if (flags == 0x81) {
-				PurpleAccount *account = purple_connection_get_account(gc);
-				PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
-				if (img == NULL)
-					aim_ssi_delicon(od);
-				else {
-					aim_ssi_seticon(od, md5, length);
-					purple_imgstore_unref(img);
-				}
-			}
-		} break;
-
-		case 0x0002: { /* We just set an "available" message? */
-		} break;
-	}
-
-	va_end(ap);
-
-	return 0;
 }
 
 void oscar_set_permit_deny(PurpleConnection *gc) {
