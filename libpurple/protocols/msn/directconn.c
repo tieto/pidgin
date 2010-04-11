@@ -79,7 +79,7 @@ msn_dc_generate_nonce(MsnDirectConn *dc)
 }
 
 static MsnDirectConnPacket*
-msn_dc_new_packet()
+msn_dc_new_packet(void)
 {
 	MsnDirectConnPacket	*p;
 
@@ -103,16 +103,17 @@ msn_dc_destroy_packet(MsnDirectConnPacket *p)
 	g_free(p);
 }
 
-MsnDirectConn*
+MsnDirectConn *
 msn_dc_new(MsnSlpCall *slpcall)
 {
 	MsnDirectConn *dc;
 
-	purple_debug_info("msn", "msn_dc_new\n");
-
 	g_return_val_if_fail(slpcall != NULL, NULL);
 
 	dc = g_new0(MsnDirectConn, 1);
+
+	if (purple_debug_if_verbose())
+		purple_debug_info("msn", "msn_dc_new %p\n", dc);
 
 	dc->slplink = slpcall->slplink;
 	dc->slpcall = slpcall;
@@ -152,7 +153,8 @@ msn_dc_destroy(MsnDirectConn *dc)
 {
 	MsnSlpLink *slplink;
 
-	purple_debug_info("msn", "msn_dc_destroy\n");
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "msn_dc_destroy %p\n", dc);
 
 	g_return_if_fail(dc != NULL);
 
@@ -270,7 +272,8 @@ msn_dc_send_invite(MsnDirectConn *dc)
 	MsnSlpMessage *msg;
 	gchar *header;
 
-	purple_debug_info("msn", "msn_dc_send_invite\n");
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "msn_dc_send_invite %p\n", dc);
 
 	g_return_if_fail(dc != NULL);
 
@@ -300,7 +303,8 @@ msn_dc_send_invite(MsnDirectConn *dc)
 void
 msn_dc_send_ok(MsnDirectConn *dc)
 {
-	purple_debug_info("msn", "msn_dc_send_ok\n");
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "msn_dc_send_ok %p\n", dc);
 
 	g_return_if_fail(dc != NULL);
 
@@ -321,7 +325,7 @@ msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 	MsnSlpCall *slpcall;
 	PurpleXfer *xfer;
 
-	purple_debug_info("msn", "msn_dc_try_fallback_to_p2p\n");
+	purple_debug_info("msn", "msn_dc_try_fallback_to_p2p %p\n", dc);
 
 	g_return_if_fail(dc != NULL);
 
@@ -424,7 +428,8 @@ msn_dc_send_bye(MsnDirectConn *dc)
 	char *body;
 	int body_len;
 
-	purple_debug_info("msn", "msn_dc_send_bye\n");
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "msn_dc_send_bye %p\n", dc);
 
 	g_return_if_fail(dc != NULL);
 	g_return_if_fail(dc->slpcall != NULL);
@@ -623,7 +628,8 @@ msn_dc_send_foo(MsnDirectConn *dc)
 {
 	MsnDirectConnPacket	*p;
 
-	purple_debug_info("msn", "msn_dc_send_foo\n");
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "msn_dc_send_foo %p\n", dc);
 
 	g_return_if_fail(dc != NULL);
 
@@ -1126,13 +1132,12 @@ msn_dc_init(MsnDirectConn *dc)
 void
 msn_dc_connected_to_peer_cb(gpointer data, gint fd, const gchar *error_msg)
 {
-	MsnDirectConn *dc;
+	MsnDirectConn *dc = data;
 
-	purple_debug_info("msn", "msn_dc_connected_to_peer_cb\n");
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "msn_dc_connected_to_peer_cb %p\n", dc);
 
-	g_return_if_fail(data != NULL);
-
-	dc = data;
+	g_return_if_fail(dc != NULL);
 
 	dc->connect_data = NULL;
 	purple_timeout_remove(dc->connect_timeout_handle);
@@ -1156,9 +1161,9 @@ msn_dc_incoming_connection_timeout_cb(gpointer data) {
 	MsnDirectConn *dc = data;
 	MsnSlpCall *slpcall = dc->slpcall;
 
-	purple_debug_info("msn", "msn_dc_incoming_connection_timeout_cb\n");
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "msn_dc_incoming_connection_timeout_cb %p\n", dc);
 
-	dc = data;
 	g_return_val_if_fail(dc != NULL, FALSE);
 
 	slpcall = dc->slpcall;
@@ -1196,7 +1201,7 @@ msn_dc_outgoing_connection_timeout_cb(gpointer data)
 {
 	MsnDirectConn *dc = data;
 
-	purple_debug_info("msn", "msn_dc_outgoing_connection_timeout_cb\n");
+	purple_debug_info("msn", "msn_dc_outgoing_connection_timeout_cb %p\n", dc);
 
 	g_return_val_if_fail(dc != NULL, FALSE);
 
@@ -1256,7 +1261,8 @@ msn_dc_incoming_connection_cb(gpointer data, gint listenfd, PurpleInputCondition
 {
 	MsnDirectConn *dc = data;
 
-	purple_debug_info("msn", "msn_dc_incoming_connection_cb\n");
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "msn_dc_incoming_connection_cb %p\n", dc);
 
 	g_return_if_fail(dc != NULL);
 
@@ -1287,7 +1293,8 @@ msn_dc_listen_socket_created_cb(int listenfd, gpointer data)
 {
 	MsnDirectConn *dc = data;
 
-	purple_debug_info("msn", "msn_dc_listen_socket_created_cb\n");
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "msn_dc_listen_socket_created_cb %p\n", dc);
 
 	g_return_if_fail(dc != NULL);
 
