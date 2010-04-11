@@ -94,8 +94,7 @@ msn_dc_new_packet(void)
 static void
 msn_dc_destroy_packet(MsnDirectConnPacket *p)
 {
-	if (p->data)
-		g_free(p->data);
+	g_free(p->data);
 
 	if (p->msg)
 		msn_message_unref(p->msg);
@@ -647,7 +646,7 @@ msn_dc_send_handshake(MsnDirectConn *dc)
 {
 	MsnDirectConnPacket *p;
 	const gchar *h;
-	guint32 l;
+	guint32 len;
 
 	g_return_if_fail(dc != NULL);
 
@@ -656,9 +655,8 @@ msn_dc_send_handshake(MsnDirectConn *dc)
 	p->length = 4 + DC_PACKET_HEADER_SIZE;
 	p->data = g_malloc(p->length);
 
-	l = DC_PACKET_HEADER_SIZE;
-	l = GUINT32_TO_LE(l);
-	memcpy(p->data, &l, 4);
+	len = GUINT32_TO_LE(DC_PACKET_HEADER_SIZE);
+	memcpy(p->data, &len, 4);
 
 	dc->header.session_id = 0;
 	dc->header.id = dc->slpcall->slplink->slp_seq_id++;
@@ -679,7 +677,7 @@ msn_dc_send_handshake_reply(MsnDirectConn *dc)
 {
 	MsnDirectConnPacket *p;
 	const gchar *h;
-	guint32 l;
+	guint32 len;
 
 	g_return_if_fail(dc != NULL);
 
@@ -688,9 +686,8 @@ msn_dc_send_handshake_reply(MsnDirectConn *dc)
 	p->length = 4 + DC_PACKET_HEADER_SIZE;
 	p->data = g_malloc(p->length);
 
-	l = DC_PACKET_HEADER_SIZE;
-	l = GUINT32_TO_LE(l);
-	memcpy(p->data, &l, 4);
+	len = GUINT32_TO_LE(DC_PACKET_HEADER_SIZE);
+	memcpy(p->data, &len, 4);
 
 	dc->header.id = dc->slpcall->slplink->slp_seq_id++;
 	dc->header.length = 0;
@@ -724,8 +721,7 @@ msn_dc_enqueue_msg(MsnDirectConn *dc, MsnMessage *msg)
 	memcpy(p->data + 4 + DC_PACKET_HEADER_SIZE, msg->body, msg->body_len);
 
 	p->sent_cb = msn_dc_send_packet_cb;
-	p->msg = msg;
-	msn_message_ref(msg);
+	p->msg = msn_message_ref(msg);
 
 	msn_dc_enqueue_packet(dc, p);
 }
@@ -739,16 +735,15 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 	case DC_STATE_CLOSED:
 		break;
 
-	case DC_STATE_FOO: {
+	case DC_STATE_FOO:
 		/* FOO message is always 4 bytes long */
 		if (packet_length != 4 || memcmp(dc->in_buffer, "\4\0\0\0foo", 8) != 0)
 			return DC_PROCESS_FALLBACK;
 
 		dc->state = DC_STATE_HANDSHAKE;
 		break;
-		}
 
-	case DC_STATE_HANDSHAKE: {
+	case DC_STATE_HANDSHAKE:
 		if (packet_length != DC_PACKET_HEADER_SIZE)
 			return DC_PROCESS_FALLBACK;
 
@@ -759,7 +754,6 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 		msn_slpcall_session_init(dc->slpcall);
 		dc->slpcall = NULL;
 		break;
-		}
 
 	case DC_STATE_HANDSHAKE_REPLY:
 		/* TODO: Check! */
