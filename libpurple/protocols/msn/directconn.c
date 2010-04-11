@@ -78,7 +78,7 @@ msn_dc_generate_nonce(MsnDirectConn *dc)
 	);
 }
 
-static MsnDirectConnPacket*
+static MsnDirectConnPacket *
 msn_dc_new_packet(void)
 {
 	MsnDirectConnPacket	*p;
