@@ -3,6 +3,10 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.7.0 (??/??/????):
 	libpurple:
 		Added:
+		* Account signals (see account-signals.dox); useful for D-Bus
+		   * account-signed-on
+		   * account-signed-off
+		   * account-connection-error
 		* purple_account_get_name_for_display
 		* purple_buddy_get_media_caps
 		* purple_buddy_set_media_caps
