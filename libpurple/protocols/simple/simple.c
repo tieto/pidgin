@@ -1653,6 +1653,7 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 		}
 		purple_debug(PURPLE_DEBUG_MISC, "simple", "in process response response: %d\n", msg->response);
 		process_input_message(sip, msg);
+		sipmsg_free(msg);
 	} else {
 		purple_debug(PURPLE_DEBUG_MISC, "simple", "received a incomplete sip msg: %s\n", conn->inbuf);
 	}
@@ -1671,6 +1672,7 @@ static void simple_udp_process(gpointer data, gint source, PurpleInputCondition 
 		purple_debug_info("simple", "\n\nreceived - %s\n######\n%s\n#######\n\n", ctime(&currtime), buffer);
 		msg = sipmsg_parse_msg(buffer);
 		if(msg) process_input_message(sip, msg);
+		sipmsg_free(msg);
 	}
 }
 
@@ -2021,6 +2023,9 @@ static void simple_close(PurpleConnection *gc)
 	g_free(sip->proxy.target);
 	g_free(sip->proxy.realm);
 	g_free(sip->proxy.digest_session_key);
+	g_free(sip->status);
+	g_hash_table_destroy(sip->buddies);
+	g_free(sip->regcallid);
 	g_free(sip->publish_etag);
 	if (sip->txbuf)
 		purple_circ_buffer_destroy(sip->txbuf);
