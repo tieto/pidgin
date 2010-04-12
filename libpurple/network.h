@@ -123,8 +123,8 @@ const char *purple_network_get_my_ip(int fd);
  * The default value is TRUE
  *
  * @param map_external Should the open port be mapped externally?
- * @deprecated In 3.0.0 a boolean will be added to the above functions to
- *             perform the same function.
+ * @deprecated In 3.0.0 a boolean will be added to the functions mentioned
+ *             above to perform the same function.
  * @since 2.3.0
  */
 void purple_network_listen_map_external(gboolean map_external);
