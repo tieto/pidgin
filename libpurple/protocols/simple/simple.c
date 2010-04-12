@@ -2026,6 +2026,8 @@ static void simple_close(PurpleConnection *gc)
 	g_free(sip->status);
 	g_hash_table_destroy(sip->buddies);
 	g_free(sip->regcallid);
+	while (sip->transactions)
+		transactions_remove(sip, sip->transactions->data);
 	g_free(sip->publish_etag);
 	if (sip->txbuf)
 		purple_circ_buffer_destroy(sip->txbuf);
