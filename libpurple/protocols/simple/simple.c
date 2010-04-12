@@ -1663,7 +1663,7 @@ static void simple_udp_process(gpointer data, gint source, PurpleInputCondition 
 	struct simple_account_data *sip = gc->proto_data;
 	struct sipmsg *msg;
 	int len;
-	time_t currtime;
+	time_t currtime = time(NULL);
 
 	static char buffer[65536];
 	if((len = recv(source, buffer, sizeof(buffer) - 1, 0)) > 0) {
@@ -1777,10 +1777,14 @@ static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
 		return;
 	}
 
+	/*
+	 * TODO: Is it correct to set sip->fd to the listenfd?  For the TCP
+	 *       listener we set sip->listenfd, but maybe UDP is different?
+	 *       Maybe we use the same fd for outgoing data or something?
+	 */
 	sip->fd = listenfd;
 
 	sip->listenport = purple_network_get_port_from_fd(sip->fd);
-	sip->listenfd = sip->fd;
 
 	sip->listenpa = purple_input_add(sip->fd, PURPLE_INPUT_READ, simple_udp_process, sip->gc);
 
@@ -1982,6 +1986,14 @@ static void simple_close(PurpleConnection *gc)
 	}
 	connection_free_all(sip);
 
+	if (sip->listenpa)
+		purple_input_remove(sip->listenpa);
+	if (sip->tx_handler)
+		purple_input_remove(sip->tx_handler);
+	if (sip->resendtimeout)
+		purple_timeout_remove(sip->resendtimeout);
+	if (sip->registertimeout)
+		purple_timeout_remove(sip->registertimeout);
 	if (sip->query_data != NULL)
 		purple_dnsquery_destroy(sip->query_data);
 
@@ -1990,6 +2002,11 @@ static void simple_close(PurpleConnection *gc)
 
 	if (sip->listen_data != NULL)
 		purple_network_listen_cancel(sip->listen_data);
+
+	if (sip->fd >= 0)
+		close(sip->fd);
+	if (sip->listenfd >= 0)
+		close(sip->listenfd);
 
 	g_free(sip->servername);
 	g_free(sip->username);
@@ -2008,14 +2025,6 @@ static void simple_close(PurpleConnection *gc)
 	if (sip->txbuf)
 		purple_circ_buffer_destroy(sip->txbuf);
 	g_free(sip->realhostname);
-	if (sip->listenpa)
-		purple_input_remove(sip->listenpa);
-	if (sip->tx_handler)
-		purple_input_remove(sip->tx_handler);
-	if (sip->resendtimeout)
-		purple_timeout_remove(sip->resendtimeout);
-	if (sip->registertimeout)
-		purple_timeout_remove(sip->registertimeout);
 
 	g_free(sip);
 	gc->proto_data = NULL;
