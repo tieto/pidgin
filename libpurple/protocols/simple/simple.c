@@ -1965,54 +1965,59 @@ static void simple_close(PurpleConnection *gc)
 {
 	struct simple_account_data *sip = gc->proto_data;
 
-	if(sip) {
-		/* unregister */
-		if (sip->registerstatus == SIMPLE_REGISTER_COMPLETE)
-		{
-			g_hash_table_foreach(sip->buddies,
-				(GHFunc)simple_unsubscribe,
-				(gpointer)sip);
+	if (!sip)
+		return;
 
-			if(purple_account_get_bool(sip->account,
-						   "dopublish", TRUE))
-				send_closed_publish(sip);
+	/* unregister */
+	if (sip->registerstatus == SIMPLE_REGISTER_COMPLETE)
+	{
+		g_hash_table_foreach(sip->buddies,
+			(GHFunc)simple_unsubscribe,
+			(gpointer)sip);
 
-			do_register_exp(sip, 0);
-		}
-		connection_free_all(sip);
+		if (purple_account_get_bool(sip->account, "dopublish", TRUE))
+			send_closed_publish(sip);
 
-		if (sip->query_data != NULL)
-			purple_dnsquery_destroy(sip->query_data);
-
-		if (sip->srv_query_data != NULL)
-			purple_srv_cancel(sip->srv_query_data);
-
-		if (sip->listen_data != NULL)
-			purple_network_listen_cancel(sip->listen_data);
-
-		g_free(sip->servername);
-		g_free(sip->username);
-		g_free(sip->password);
-		g_free(sip->registrar.nonce);
-		g_free(sip->registrar.opaque);
-		g_free(sip->registrar.target);
-		g_free(sip->registrar.realm);
-		g_free(sip->registrar.digest_session_key);
-		g_free(sip->proxy.nonce);
-		g_free(sip->proxy.opaque);
-		g_free(sip->proxy.target);
-		g_free(sip->proxy.realm);
-		g_free(sip->proxy.digest_session_key);
-		g_free(sip->publish_etag);
-		if(sip->txbuf)
-			purple_circ_buffer_destroy(sip->txbuf);
-		g_free(sip->realhostname);
-		if(sip->listenpa) purple_input_remove(sip->listenpa);
-		if(sip->tx_handler) purple_input_remove(sip->tx_handler);
-		if(sip->resendtimeout) purple_timeout_remove(sip->resendtimeout);
-		if(sip->registertimeout) purple_timeout_remove(sip->registertimeout);
+		do_register_exp(sip, 0);
 	}
-	g_free(gc->proto_data);
+	connection_free_all(sip);
+
+	if (sip->query_data != NULL)
+		purple_dnsquery_destroy(sip->query_data);
+
+	if (sip->srv_query_data != NULL)
+		purple_srv_cancel(sip->srv_query_data);
+
+	if (sip->listen_data != NULL)
+		purple_network_listen_cancel(sip->listen_data);
+
+	g_free(sip->servername);
+	g_free(sip->username);
+	g_free(sip->password);
+	g_free(sip->registrar.nonce);
+	g_free(sip->registrar.opaque);
+	g_free(sip->registrar.target);
+	g_free(sip->registrar.realm);
+	g_free(sip->registrar.digest_session_key);
+	g_free(sip->proxy.nonce);
+	g_free(sip->proxy.opaque);
+	g_free(sip->proxy.target);
+	g_free(sip->proxy.realm);
+	g_free(sip->proxy.digest_session_key);
+	g_free(sip->publish_etag);
+	if (sip->txbuf)
+		purple_circ_buffer_destroy(sip->txbuf);
+	g_free(sip->realhostname);
+	if (sip->listenpa)
+		purple_input_remove(sip->listenpa);
+	if (sip->tx_handler)
+		purple_input_remove(sip->tx_handler);
+	if (sip->resendtimeout)
+		purple_timeout_remove(sip->resendtimeout);
+	if (sip->registertimeout)
+		purple_timeout_remove(sip->registertimeout);
+
+	g_free(sip);
 	gc->proto_data = NULL;
 }
 
