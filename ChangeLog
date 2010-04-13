@@ -55,13 +55,17 @@ version 2.7.0 (??/??/????):
 	  Klinikowski for the work and testing put in here!)
 	* Minimum requirement for external libgadu is now also 1.9.0-rc2.
 
-	ICQ:
+	AIM and ICQ:
 	* X-Status (Custom ICQ status icon) support.  Since most of the icons
 	  available reflect moods, this is labeled "Set Mood" on the Accounts->ICQ
 	  Account menu. (Andrew Ivanov, Tomáš Kebert, Yuriy Yevgrafov, and trac
 	  users bob007, salieff, and nops)
-	* Allow setting and displaying icons between 1x1 and 100x100 pixels.
-	  Previously only icons between 48x48 and 52x64 were allowed.
+	* Allow setting and displaying icons between 1x1 and 100x100 pixels for
+	  ICQ.  Previously only icons between 48x48 and 52x64 were allowed.
+	* When using the clientLogin authentication method, prompt for a
+	  password on reconnect when "Remember Password" is not checked and
+	  authentication fails due to an incorrect password.  (This is the same
+	  behavior as the legacy authentication method)
 
 	MSN:
 	* Support for version 9 of the MSN protocol has been removed.  This
