@@ -412,7 +412,8 @@ void *gg_recv_packet(struct gg_session *sess)
 {
 	struct gg_header h;
 	char *buf = NULL;
-	int ret = 0, offset, size = 0;
+	int ret = 0;
+	unsigned int offset, size = 0;
 
 	gg_debug_session(sess, GG_DEBUG_FUNCTION, "** gg_recv_packet(%p);\n", sess);
 
@@ -609,7 +610,7 @@ int gg_send_packet(struct gg_session *sess, int type, ...)
 	h->length = gg_fix32(tmp_length - sizeof(struct gg_header));
 
 	if ((gg_debug_level & GG_DEBUG_DUMP)) {
-		int i;
+		unsigned int i;
 
 		gg_debug_session(sess, GG_DEBUG_DUMP, "// gg_send_packet(0x%.2x)", gg_fix32(h->type));
 		for (i = 0; i < tmp_length; ++i)

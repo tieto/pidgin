@@ -1143,7 +1143,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 		case GG_NOTIFY_REPLY80:
 		{
 			struct gg_notify_reply80 *n = (void*) p;
-			int length = h->length, i = 0;
+			unsigned int length = h->length, i = 0;
 
 			gg_debug_session(sess, GG_DEBUG_MISC, "// gg_watch_fd_connected() received a notify reply\n");
 
