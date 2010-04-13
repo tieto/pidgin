@@ -122,7 +122,11 @@ menu_cb(GtkWidget *item, gpointer data)
 			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 			NULL);
 	g_signal_connect_after(G_OBJECT(dialog), "response", G_CALLBACK(gtk_widget_destroy), dialog);
+#if GTK_CHECK_VERSION(2,14,0)
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), frame);
+#else
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), frame);
+#endif
 	gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
 	gtk_window_set_title(GTK_WINDOW(dialog), _(purple_plugin_get_name(plugin)));
 	gtk_widget_show_all(dialog);
@@ -141,8 +145,13 @@ textview_emission_hook(GSignalInvocationHint *hint, guint n_params,
 	if (!GTK_IS_IMHTML(view))
 		return TRUE;
 
+#if GTK_CHECK_VERSION(2,14,0)
+	if (!gdk_window_get_pointer(gtk_widget_get_window(GTK_WIDGET(view)), &cx, &cy, NULL))
+		return TRUE;
+#else
 	if (!gdk_window_get_pointer(GTK_WIDGET(view)->window, &cx, &cy, NULL))
 		return TRUE;
+#endif
 
 	buffer = gtk_text_view_get_buffer(view);
 
