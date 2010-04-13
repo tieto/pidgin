@@ -3484,6 +3484,9 @@ void pidgin_utils_init(void)
 	                    "GtkWidget::focus-line-width = 0\n"
 	                    "xthickness = 0\n"
 	                    "ythickness = 0\n"
+	                    "GtkContainer::border-width = 0\n"
+	                    "GtkButton::inner-border = {0, 0, 0, 0}\n"
+	                    "GtkButton::default-border = {0, 0, 0, 0}\n"
 	                    "}\n"
 	                    "widget \"*.pidgin-small-close-button\" style \"pidgin-small-close-button\"");
 
