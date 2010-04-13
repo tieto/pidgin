@@ -44,6 +44,8 @@ version 2.7.0 (??/??/????):
 	  "drawing-buddy". (Daniele Ricci, Andrea Piccinelli)
 	* Be more accommodating when scaling down large images for use as
 	  buddy icons.
+	* The 'Message Timestamp Formats' plugin allows changing the timestamp
+	  format from the timestamps' context menu in conversation log.
 
 	Bonjour:
 	* Added support for IPv6. (Thanks to T_X for testing)
