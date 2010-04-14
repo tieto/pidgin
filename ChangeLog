@@ -36,7 +36,6 @@ version 2.7.0 (??/??/????):
 	  in the distant past.  (Greg McNew)
 	* Added a menu set mood globally for all mood-supporting accounts
 	  (currently XMPP and ICQ).
-	* Use standard (but small) GTK+ buttons instead of custom "X" symbol.
 	* Default binding of Ctrl+Shift+v to 'Paste as Plain Text' in
 	  conversation windows. This can be changed in .gtkrc-2.0. For example,
 	  Ctrl+v can be bound to 'Paste as Plain Text' by default.
