@@ -201,7 +201,6 @@ libpurple/util.c
 libpurple/win32/libc_interface.c
 libpurple/xmlnode.c
 pidgin.desktop.in
-pidgin/eggtrayicon.c
 pidgin/gtkaccount.c
 pidgin/gtkblist-theme.c
 pidgin/gtkblist.c
