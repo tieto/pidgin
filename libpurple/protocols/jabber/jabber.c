@@ -166,6 +166,8 @@ static void jabber_bind_result_cb(JabberStream *js, const char *from,
 		char *msg = jabber_parse_error(js, packet, &reason);
 		purple_connection_error_reason(js->gc, reason, msg);
 		g_free(msg);
+
+		return;
 	}
 
 	jabber_session_init(js);
