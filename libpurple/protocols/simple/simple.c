@@ -1671,8 +1671,10 @@ static void simple_udp_process(gpointer data, gint source, PurpleInputCondition 
 		buffer[len] = '\0';
 		purple_debug_info("simple", "\n\nreceived - %s\n######\n%s\n#######\n\n", ctime(&currtime), buffer);
 		msg = sipmsg_parse_msg(buffer);
-		if(msg) process_input_message(sip, msg);
-		sipmsg_free(msg);
+		if (msg) {
+			process_input_message(sip, msg);
+			sipmsg_free(msg);
+		}
 	}
 }
 
