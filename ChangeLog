@@ -65,6 +65,7 @@ version 2.7.0 (??/??/????):
 	  password on reconnect when "Remember Password" is not checked and
 	  authentication fails due to an incorrect password.  (This is the same
 	  behavior as the legacy authentication method)
+	* Support sending and receiving HTML-formatted messages for ICQ.
 
 	MSN:
 	* Support for version 9 of the MSN protocol has been removed.  This

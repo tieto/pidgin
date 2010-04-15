@@ -274,6 +274,7 @@ static int aim_im_paraminfo(OscarData *od, FlapConnection *conn, aim_module_t *m
 			| AIM_IMPARAM_FLAG_MISSED_CALLS_ENABLED
 			| AIM_IMPARAM_FLAG_EVENTS_ALLOWED
 			| AIM_IMPARAM_FLAG_SMS_SUPPORTED
+			| AIM_IMPARAM_FLAG_SEND_ME_HTML_FOR_ICQ
 			| AIM_IMPARAM_FLAG_OFFLINE_MSGS_ALLOWED;
 	params.maxmsglen = 8000;
 	params.minmsginterval = 0;
