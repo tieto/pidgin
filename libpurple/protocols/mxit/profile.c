@@ -128,7 +128,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	purple_notify_user_info_add_section_break( info );
 
 	/* optional information */
-	purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
+	purple_notify_user_info_add_pair( info, _( "Job Title" ), profile->title );
 	purple_notify_user_info_add_pair( info, _( "First Name" ), profile->firstname );
 	purple_notify_user_info_add_pair( info, _( "Last Name" ), profile->lastname );
 	purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );

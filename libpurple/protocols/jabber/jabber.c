@@ -844,6 +844,14 @@ jabber_stream_new(PurpleAccount *account)
 		return NULL;
 	}
 
+	if (!js->user->node || *(js->user->node) == '\0') {
+		purple_connection_error_reason(gc,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+			_("Invalid XMPP ID. Username portion must be set."));
+		/* Destroying the connection will free the JabberStream */
+		return NULL;
+	}
+
 	if (!js->user->domain || *(js->user->domain) == '\0') {
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,

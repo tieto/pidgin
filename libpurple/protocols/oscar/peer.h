@@ -45,7 +45,7 @@ typedef struct _PeerConnection        PeerConnection;
 #define PEER_TYPE_PROMPT 0x0101 /* "I am going to send you this file, is that ok?" */
 #define PEER_TYPE_RESUMEACCEPT 0x0106 /* We are accepting the resume */
 #define PEER_TYPE_ACK 0x0202 /* "Yes, it is ok for you to send me that file" */
-#define PEER_TYPE_DONE 0x0204 /* "I received that file with no problems, thanks a bunch" */
+#define PEER_TYPE_DONE 0x0204 /* "I received that file with no problems" or "I already have that file, great!" */
 #define PEER_TYPE_RESUME 0x0205 /* Resume transferring, sent by whoever receives */
 #define PEER_TYPE_RESUMEACK 0x0207 /* Our resume accept was ACKed */
 

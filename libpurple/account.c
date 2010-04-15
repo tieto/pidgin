@@ -2510,6 +2510,19 @@ signed_on_cb(PurpleConnection *gc,
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	purple_account_clear_current_error(account);
+
+	purple_signal_emit(purple_accounts_get_handle(), "account-signed-on",
+	                   account);
+}
+
+static void
+signed_off_cb(PurpleConnection *gc,
+              gpointer unused)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+
+	purple_signal_emit(purple_accounts_get_handle(), "account-signed-off",
+	                   account);
 }
 
 static void
@@ -2560,6 +2573,9 @@ connection_error_cb(PurpleConnection *gc,
 	err->description = g_strdup(description);
 
 	set_current_error(account, err);
+
+	purple_signal_emit(purple_accounts_get_handle(), "account-connection-error",
+	                   account, type, description);
 }
 
 const PurpleConnectionErrorInfo *
@@ -2901,8 +2917,27 @@ purple_accounts_init(void)
 	                       purple_value_new(PURPLE_TYPE_POINTER),
 	                       purple_value_new(PURPLE_TYPE_POINTER));
 
+	purple_signal_register(handle, "account-signed-on",
+	                       purple_marshal_VOID__POINTER, NULL, 1,
+	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                        PURPLE_SUBTYPE_ACCOUNT));
+
+	purple_signal_register(handle, "account-signed-off",
+	                       purple_marshal_VOID__POINTER, NULL, 1,
+	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                        PURPLE_SUBTYPE_ACCOUNT));
+
+	purple_signal_register(handle, "account-connection-error",
+	                       purple_marshal_VOID__POINTER_INT_POINTER, NULL, 3,
+	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                        PURPLE_SUBTYPE_ACCOUNT),
+	                       purple_value_new(PURPLE_TYPE_ENUM),
+	                       purple_value_new(PURPLE_TYPE_STRING));
+
 	purple_signal_connect(conn_handle, "signed-on", handle,
 	                      PURPLE_CALLBACK(signed_on_cb), NULL);
+	purple_signal_connect(conn_handle, "signed-off", handle,
+	                      PURPLE_CALLBACK(signed_off_cb), NULL);
 	purple_signal_connect(conn_handle, "connection-error", handle,
 	                      PURPLE_CALLBACK(connection_error_cb), NULL);
 

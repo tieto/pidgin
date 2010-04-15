@@ -288,7 +288,7 @@ if test x$enable_i18n = xyes; then
 		;;
 	esac
 
-	ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mk mn mr ms_MY my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
+	ALL_LINGUAS="af am ar az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mk mn mr ms_MY my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 	AM_GLIB_GNU_GETTEXT
 
 	dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -1402,7 +1402,7 @@ AC_ARG_WITH([python],
 						   [which python interpreter to use for dbus code generation]),
 			PYTHON=$withval)
 
-if test "x$enable_dbus" = "xyes" ; then
+if test "x$enable_dbus" = "xyes" || test "x$enable_consoleui" = "xyes" ; then
 	if test -z "$PYTHON" -o "x$PYTHON" = "xyes"; then
 		AC_PATH_PROG([PYTHON], [python], [no])
 	fi
@@ -1411,9 +1411,7 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_MSG_WARN([python interpreter not found in your path])
 		enable_dbus=no
 	fi
-fi
 
-if test "x$enable_dbus" = "xyes" ; then
 	if $PYTHON -c "import sys; sys.exit(sys.version[[:3]] >= '2.4')" ; then
 		AC_MSG_WARN([python version >= 2.4 required])
 		enable_dbus=no
@@ -1463,7 +1461,7 @@ if test x"$enable_dbus" = "xyes" ; then
 			done
 
 			if test -z $DBUS_SERVICES_DIR ; then
-				AC_MSG_ERROR([D-Bus services directory was not found!  Please use --with-dbus-services and specify it's location.])
+				AC_MSG_ERROR([D-Bus services directory was not found!  Please use --with-dbus-services and specify its location.])
 			fi
 		else
 			DBUS_SERVICES_DIR="$datadir/dbus-1/services"
@@ -1484,14 +1482,13 @@ AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
 
 dnl Check for Python headers (currently useful only for libgnt)
 dnl (Thanks to XChat)
-AC_PATH_PROG(pythonpath, python)
-if test "_$pythonpath" != _ ; then
+if test "x$enable_consoleui" = "xyes" -a ! -z "$PYTHON" -a x"$PYTHON" != x"no" ; then
 	AC_MSG_CHECKING(for Python compile flags)
-	PY_PREFIX=`$pythonpath -c 'import sys ; print sys.prefix'`
-	PY_EXEC_PREFIX=`$pythonpath -c 'import sys ; print sys.exec_prefix'`
+	PY_PREFIX=`$PYTHON -c 'import sys ; print sys.prefix'`
+	PY_EXEC_PREFIX=`$PYTHON -c 'import sys ; print sys.exec_prefix'`
 	changequote(<<, >>)dnl
-	PY_VERSION=`$pythonpath -c 'import sys ; print sys.version[0:3]'`
-	PY_MAJOR=`$pythonpath -c 'import sys ; print sys.version[0:2]'`
+	PY_VERSION=`$PYTHON -c 'import sys ; print sys.version[0:3]'`
+	PY_MAJOR=`$PYTHON -c 'import sys ; print sys.version[0:2]'`
 	changequote([, ])dnl
 	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h -a "$PY_MAJOR" = "2."; then
 		AC_MSG_RESULT()

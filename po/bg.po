@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin-1.30\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 20:33-0500\n"
+"POT-Creation-Date: 2010-03-29 00:12-0700\n"
 "PO-Revision-Date: 2007-02-12 00:46+0200\n"
 "Last-Translator: Vladimir \"Kaladan\" Petkov <kaladan@gmail.com>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -1628,6 +1628,7 @@ msgstr ""
 msgid "Online"
 msgstr "Включен"
 
+#. primative,						no,							id,			name
 msgid "Offline"
 msgstr "Изключен"
 
@@ -2024,6 +2025,10 @@ msgstr "Папката не може да бъде изпратена."
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr ""
 
+#, fuzzy
+msgid "File is not readable."
+msgstr "Чата в %s не е достъпен."
+
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s иска да ви изпрати %s (%s)"
@@ -2267,22 +2272,18 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Получи се непозната грешка при влизането: %s."
 
-#, fuzzy
-msgid "Conference error"
-msgstr "Конференцията е прекъсната"
-
 msgid "Error with your microphone"
 msgstr ""
 
 msgid "Error with your webcam"
 msgstr ""
 
+#, fuzzy
+msgid "Conference error"
+msgstr "Конференцията е прекъсната"
+
 #, fuzzy, c-format
 msgid "Error creating session: %s"
-msgstr "Грешка при установяването на връзката"
-
-#, fuzzy
-msgid "Error creating conference."
 msgstr "Грешка при установяването на връзката"
 
 #, c-format
@@ -3062,18 +3063,6 @@ msgstr "%s затвори прозореца за разговор."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Съобщението не може да бъде изпратено: Твърде е голямо."
 
-#, fuzzy, c-format
-msgid "Unable to create socket: %s"
-msgstr "Грешка при създаване на сокет"
-
-#, fuzzy, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "Грешка при създаване на сокет"
-
-#, fuzzy, c-format
-msgid "Unable to listen on socket: %s"
-msgstr "Грешка при създаване на сокет"
-
 #, fuzzy
 msgid "Error communicating with local mDNSResponder."
 msgstr "Грешка при комуникацията с Gadu-Gadu сървъра"
@@ -3233,10 +3222,20 @@ msgstr "Избор на шрифт"
 msgid "Add to chat..."
 msgstr "Добавяне към разговор..."
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "На разположение"
 
+#. 2
+msgid "Chatty"
+msgstr ""
+
+#. 3
+msgid "Do Not Disturb"
+msgstr "Не ме безпокойте"
+
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3833,6 +3832,14 @@ msgstr "Сървърът изисква TLS или SSL за влизане. Ня
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Сървърът изисква парола в чист текст през некодирана връзка"
 
+#. This should never happen!
+#, fuzzy
+msgid "Invalid response from server"
+msgstr "Неправилен отговор от сървъра."
+
+msgid "Server does not use any supported authentication method"
+msgstr "Сървърът не използва никой поддържан метод за идентификация"
+
 #, fuzzy, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3844,26 +3851,38 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Парола в чист текст"
 
-#, fuzzy
-msgid "SASL authentication failed"
-msgstr "Неуспешна идентификация"
-
-#, fuzzy
-msgid "Invalid response from server"
-msgstr "Неправилен отговор от сървъра."
-
-msgid "Server does not use any supported authentication method"
-msgstr "Сървърът не използва никой поддържан метод за идентификация"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
 
 msgid "Invalid challenge from server"
 msgstr ""
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "Неуспешна идентификация"
+
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "Грешка при четенето"
+
+#, fuzzy
+msgid "Unable to canonicalize username"
+msgstr "Невъзможност за настройка"
+
+#, fuzzy
+msgid "Unable to canonicalize password"
+msgstr "Pidgin не може да отвори порт за слушане."
+
+#, fuzzy
+msgid "Malicious challenge from server"
+msgstr "Неправилен отговор от сървъра."
+
+#, fuzzy
+msgid "Unexpected response from server"
+msgstr "Неправилен отговор от сървъра."
 
 msgid "The BOSH connection manager terminated your session."
 msgstr ""
@@ -3970,13 +3989,17 @@ msgstr "Приоритет"
 msgid "Resource"
 msgstr "Име на ресурса"
 
-#, c-format
-msgid "%s ago"
-msgstr ""
+#, fuzzy
+msgid "Uptime"
+msgstr "Последно актуализиране"
 
 #, fuzzy
 msgid "Logged Off"
 msgstr "Вече сте свързан в"
+
+#, c-format
+msgid "%s ago"
+msgstr ""
 
 msgid "Middle Name"
 msgstr "Второ име"
@@ -4028,15 +4051,6 @@ msgstr "Вече сте свързан в"
 #, fuzzy
 msgid "Log Out"
 msgstr "Записване на всички _разговори"
-
-msgid "Chatty"
-msgstr ""
-
-msgid "Extended Away"
-msgstr "Продължително състояние „Няма ме“"
-
-msgid "Do Not Disturb"
-msgstr "Не ме безпокойте"
 
 msgid "JID"
 msgstr ""
@@ -4175,11 +4189,6 @@ msgstr "Описание на длъжността"
 msgid "Ping timed out"
 msgstr "Обикновен текст"
 
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-
 #, fuzzy
 msgid "Invalid XMPP ID"
 msgstr "Невалиден ID"
@@ -4312,6 +4321,7 @@ msgstr "До"
 msgid "None (To pending)"
 msgstr ""
 
+#. 0
 msgid "None"
 msgstr "Няма"
 
@@ -4326,6 +4336,14 @@ msgstr "Настроение"
 #, fuzzy
 msgid "Allow Buzz"
 msgstr "Разрешаване"
+
+#, fuzzy
+msgid "Mood Name"
+msgstr "Второ име"
+
+#, fuzzy
+msgid "Mood Comment"
+msgstr "Коментар за приятел"
 
 msgid "Tune Artist"
 msgstr ""
@@ -4574,10 +4592,6 @@ msgid ""
 "buzzes now."
 msgstr ""
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr ""
-
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
@@ -4586,6 +4600,10 @@ msgstr ""
 #, fuzzy, c-format
 msgid "%s has buzzed you!"
 msgstr "%s влезе в (%s)"
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr ""
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4617,6 +4635,9 @@ msgstr "Избор на файл"
 #, fuzzy
 msgid "Initiate Media"
 msgstr "Покана за раз_говор"
+
+msgid "Account does not support PEP, can't set mood"
+msgstr ""
 
 #, fuzzy
 msgid "config:  Configure a chat room."
@@ -4666,6 +4687,13 @@ msgstr ""
 
 msgid "buzz: Buzz a user to get their attention"
 msgstr ""
+
+#, fuzzy
+msgid "mood: Set current user mood"
+msgstr "Избор на правилен потребител"
+
+msgid "Extended Away"
+msgstr "Продължително състояние „Няма ме“"
 
 #. *< type
 #. *< ui_requirement
@@ -4745,11 +4773,21 @@ msgstr "Грешка в Jabber-съобщение"
 msgid "(Code %s)"
 msgstr " (Код %s)"
 
+#, fuzzy
+msgid "A custom smiley in the message is too large to send."
+msgstr "Съобщението не може да бъде изпратено: Твърде е голямо."
+
+msgid "XMPP stream header missing"
+msgstr ""
+
+msgid "XMPP Version Mismatch"
+msgstr ""
+
+msgid "XMPP stream missing ID"
+msgstr ""
+
 msgid "XML Parse error"
 msgstr "Грешка при обработката на XML"
-
-msgid "Unknown Error in presence"
-msgstr ""
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4787,6 +4825,9 @@ msgstr "%s ви изрита: (%s)"
 msgid "Kicked (%s)"
 msgstr "Изритан от %s (%s)"
 
+msgid "Unknown Error in presence"
+msgstr ""
+
 #, fuzzy
 msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "Получи се грешка при отварянето на файла."
@@ -4823,19 +4864,317 @@ msgstr ""
 "Моля, въведете име на лицето, за което искате да видите повече информация."
 
 #, fuzzy
-msgid "Edit User Mood"
-msgstr "Режими на потребителя"
+msgid "Afraid"
+msgstr "етиопски"
 
-msgid "Please select your mood from the list."
+#, fuzzy
+msgid "Amazed"
+msgstr "Засрамен"
+
+msgid "Amorous"
+msgstr ""
+
+#. 1
+msgid "Angry"
+msgstr "Гневен"
+
+#, fuzzy
+msgid "Annoyed"
+msgstr "Забранено"
+
+msgid "Anxious"
+msgstr "Загрижен"
+
+#, fuzzy
+msgid "Aroused"
+msgstr "Изпращате"
+
+msgid "Ashamed"
+msgstr "Засрамен"
+
+msgid "Bored"
+msgstr "Отегчен"
+
+#, fuzzy
+msgid "Brave"
+msgstr "Запазване"
+
+#, fuzzy
+msgid "Calm"
+msgstr "Истинско име"
+
+#, fuzzy
+msgid "Cautious"
+msgstr "Разговори"
+
+#, fuzzy
+msgid "Cold"
+msgstr "Получерен"
+
+#, fuzzy
+msgid "Confident"
+msgstr "Конфликт"
+
+#, fuzzy
+msgid "Confused"
+msgstr "Свързване"
+
+#, fuzzy
+msgid "Contemplative"
+msgstr "Данни за абонамента"
+
+#, fuzzy
+msgid "Contented"
+msgstr "Свързване"
+
+#, fuzzy
+msgid "Cranky"
+msgstr "Фирма"
+
+msgid "Crazy"
 msgstr ""
 
 #, fuzzy
-msgid "Set"
-msgstr "_Задаване"
+msgid "Creative"
+msgstr "Създаване"
+
+msgid "Curious"
+msgstr ""
 
 #, fuzzy
-msgid "Set Mood..."
-msgstr "Запазен..."
+msgid "Dejected"
+msgstr "Изчистване"
+
+#, fuzzy
+msgid "Depressed"
+msgstr "Изтриване"
+
+#, fuzzy
+msgid "Disappointed"
+msgstr "Изключен."
+
+msgid "Disgusted"
+msgstr ""
+
+#, fuzzy
+msgid "Dismayed"
+msgstr "_Деактивиране"
+
+#, fuzzy
+msgid "Distracted"
+msgstr "Откачен"
+
+msgid "Embarrassed"
+msgstr ""
+
+#, fuzzy
+msgid "Envious"
+msgstr "Загрижен"
+
+#. 2
+msgid "Excited"
+msgstr "Развълнуван"
+
+msgid "Flirtatious"
+msgstr ""
+
+#, fuzzy
+msgid "Frustrated"
+msgstr "Първо име"
+
+msgid "Grateful"
+msgstr ""
+
+#, fuzzy
+msgid "Grieving"
+msgstr "Потребителят пише..."
+
+#. 3
+#, fuzzy
+msgid "Grumpy"
+msgstr "Група:"
+
+#, fuzzy
+msgid "Guilty"
+msgstr "Град"
+
+#. 4
+msgid "Happy"
+msgstr "Щастлив"
+
+msgid "Hopeful"
+msgstr ""
+
+#. 8
+#, fuzzy
+msgid "Hot"
+msgstr "_Адрес:"
+
+msgid "Humbled"
+msgstr ""
+
+msgid "Humiliated"
+msgstr ""
+
+#, fuzzy
+msgid "Hungry"
+msgstr "Гневен"
+
+msgid "Hurt"
+msgstr ""
+
+msgid "Impressed"
+msgstr ""
+
+#, fuzzy
+msgid "In awe"
+msgstr "Влюбен"
+
+#, fuzzy
+msgid "In love"
+msgstr "Влюбен"
+
+#, fuzzy
+msgid "Indignant"
+msgstr "македонски"
+
+#, fuzzy
+msgid "Interested"
+msgstr "Обръщане"
+
+#, fuzzy
+msgid "Intoxicated"
+msgstr "Покана"
+
+#. 6
+msgid "Invincible"
+msgstr "Неуязвим"
+
+msgid "Jealous"
+msgstr "Ревнив"
+
+#, fuzzy
+msgid "Lonely"
+msgstr "Заминал"
+
+#, fuzzy
+msgid "Lost"
+msgstr "Най-шумно"
+
+msgid "Lucky"
+msgstr ""
+
+#, fuzzy
+msgid "Mean"
+msgstr "немски"
+
+#, fuzzy
+msgid "Moody"
+msgstr "Настроение"
+
+msgid "Nervous"
+msgstr ""
+
+#, fuzzy
+msgid "Neutral"
+msgstr "Стандартните настройки на GNOME"
+
+#, fuzzy
+msgid "Offended"
+msgstr "Изключен"
+
+msgid "Outraged"
+msgstr ""
+
+#, fuzzy
+msgid "Playful"
+msgstr "Игра"
+
+#, fuzzy
+msgid "Proud"
+msgstr "Шумно"
+
+#, fuzzy
+msgid "Relaxed"
+msgstr "Истинско име"
+
+#, fuzzy
+msgid "Relieved"
+msgstr "Непрочетени съобщения"
+
+#, fuzzy
+msgid "Remorseful"
+msgstr "Премахване"
+
+#, fuzzy
+msgid "Restless"
+msgstr "Регистрация"
+
+#. 7
+msgid "Sad"
+msgstr "Тъжен"
+
+msgid "Sarcastic"
+msgstr ""
+
+msgid "Satisfied"
+msgstr ""
+
+#, fuzzy
+msgid "Serious"
+msgstr "Звуци"
+
+#, fuzzy
+msgid "Shocked"
+msgstr "Блокиран"
+
+msgid "Shy"
+msgstr ""
+
+#. 9
+#, fuzzy
+msgid "Sick"
+msgstr "Потребителско име"
+
+#. 10
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "Сънлив"
+
+msgid "Spontaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Stressed"
+msgstr "Скорост:"
+
+#, fuzzy
+msgid "Strong"
+msgstr "Звуци"
+
+msgid "Surprised"
+msgstr ""
+
+msgid "Thankful"
+msgstr ""
+
+msgid "Thirsty"
+msgstr ""
+
+#, fuzzy
+msgid "Tired"
+msgstr "Огън"
+
+#, fuzzy
+msgid "Undefined"
+msgstr "Подчертаване"
+
+msgid "Weak"
+msgstr ""
+
+#, fuzzy
+msgid "Worried"
+msgstr "Отегчен"
 
 #, fuzzy
 msgid "Set User Nickname"
@@ -4849,6 +5188,10 @@ msgid ""
 "This information is visible to all contacts on your contact list, so choose "
 "something appropriate."
 msgstr ""
+
+#, fuzzy
+msgid "Set"
+msgstr "_Задаване"
 
 #, fuzzy
 msgid "Set Nickname..."
@@ -4892,210 +5235,167 @@ msgid ""
 "to be added?"
 msgstr ""
 
-#, c-format
 msgid "Unable to parse message"
 msgstr "Съобщението не може да бъде прегледано"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Syntax Error (probably a client bug)"
 msgstr "Синтактична грешка (вероятно бъг в Pidgin)"
 
-#, c-format
 msgid "Invalid email address"
 msgstr "Неправилен адрес на е-поща"
 
-#, c-format
 msgid "User does not exist"
 msgstr "Няма такъв потребител"
 
-#, c-format
 msgid "Fully qualified domain name missing"
 msgstr ""
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Already logged in"
 msgstr "Вече сте свързан в"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Invalid username"
 msgstr "Невалидно потребителско име"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Invalid friendly name"
 msgstr "Прякорът не правилен"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "List full"
 msgstr "Списъкът е пълен"
 
-#, c-format
 msgid "Already there"
 msgstr "Вече е там"
 
-#, c-format
 msgid "Not on list"
 msgstr "Не е в списъка"
 
-#, c-format
 msgid "User is offline"
 msgstr "Потребителят е изключен"
 
-#, c-format
 msgid "Already in the mode"
 msgstr "Режимът вече е включен"
 
-#, c-format
 msgid "Already in opposite list"
 msgstr "Вече е в противоположен списък"
 
-#, c-format
 msgid "Too many groups"
 msgstr "Твърде много групи"
 
-#, c-format
 msgid "Invalid group"
 msgstr "Невалидна група"
 
-#, c-format
 msgid "User not in group"
 msgstr "Потребителят не е в групата"
 
-#, c-format
 msgid "Group name too long"
 msgstr "Името на групата е твърде дълго"
 
-#, c-format
 msgid "Cannot remove group zero"
 msgstr ""
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "Опит за добавяне в несъществуваща група"
 
-#, c-format
 msgid "Switchboard failed"
 msgstr ""
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Notify transfer failed"
 msgstr "Преноса на файла е неуспешен"
 
-#, c-format
 msgid "Required fields missing"
 msgstr "Липсват нужни полета"
 
-#, c-format
 msgid "Too many hits to a FND"
 msgstr ""
 
-#, c-format
 msgid "Not logged in"
 msgstr "Не сте свързан с"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Service temporarily unavailable"
 msgstr "Временно услугата не е налична"
 
-#, c-format
 msgid "Database server error"
 msgstr "Грешка в сървъра с база данни"
 
-#, c-format
 msgid "Command disabled"
 msgstr "Командата е изключена"
 
-#, c-format
 msgid "File operation error"
 msgstr ""
 
-#, c-format
 msgid "Memory allocation error"
 msgstr ""
 
-#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr ""
 
-#, c-format
 msgid "Server busy"
 msgstr "Сървърът е зает"
 
-#, c-format
 msgid "Server unavailable"
 msgstr "Сървърът не е наличен"
 
-#, c-format
 msgid "Peer notification server down"
 msgstr ""
 
-#, c-format
 msgid "Database connect error"
 msgstr "Грешка при връзката с база данни"
 
-#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr ""
 
-#, c-format
 msgid "Error creating connection"
 msgstr "Грешка при установяването на връзката"
 
-#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr ""
 
-#, c-format
 msgid "Unable to write"
 msgstr "Записът е невъзможен"
 
-#, c-format
 msgid "Session overload"
 msgstr "Сесията е претоварена"
 
-#, c-format
 msgid "User is too active"
 msgstr "Потребителят е твърде активен"
 
-#, c-format
 msgid "Too many sessions"
 msgstr "Твърде много сесии"
 
-#, c-format
 msgid "Passport not verified"
 msgstr "Паспортът не е проверен"
 
-#, c-format
 msgid "Bad friend file"
 msgstr "Лош файл"
 
-#, c-format
 msgid "Not expected"
 msgstr "Неочакван"
 
 msgid "Friendly name is changing too rapidly"
 msgstr ""
 
-#, c-format
 msgid "Server too busy"
 msgstr "Сървърът е претоварен"
 
-#, c-format
 msgid "Authentication failed"
 msgstr "Неуспешна идентификация"
 
-#, c-format
 msgid "Not allowed when offline"
 msgstr "Не е разрешено при състояние „Изключен“"
 
-#, c-format
 msgid "Not accepting new users"
 msgstr "Не приема нови потребители"
 
-#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "Детски паспорт без родителско съгласие"
 
-#, c-format
 msgid "Passport account not yet verified"
 msgstr ""
 
@@ -5103,7 +5403,6 @@ msgstr ""
 msgid "Passport account suspended"
 msgstr "Абонаментът временно спрян."
 
-#, c-format
 msgid "Bad ticket"
 msgstr "Лош билет"
 
@@ -5160,6 +5459,10 @@ msgstr "Е-поща"
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Потребителското име, което сте си избрали е твърде дълго."
+
+#, fuzzy, c-format
+msgid "Set friendly name for %s."
+msgstr "Име или номер в ICQ"
 
 msgid "Set your friendly name."
 msgstr ""
@@ -5533,10 +5836,6 @@ msgstr "Неуспешна идентификация"
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "Неуспешна идентификация"
 
-#, fuzzy, c-format
-msgid "%s just sent you a Nudge!"
-msgstr "%s иска да ви изпрати файл"
-
 msgid "The following users are missing from your addressbook"
 msgstr ""
 
@@ -5707,77 +6006,9 @@ msgstr "Искате ли да добавите този потребител к
 msgid "The username specified is invalid."
 msgstr "Новото форматиране е неправилно."
 
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr ""
-
-msgid "This Hotmail account may not be active."
-msgstr ""
-
-msgid "Profile URL"
-msgstr "URL на профил"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-#, fuzzy
-msgid "MSN Protocol Plugin"
-msgstr "Приставка за протокола AIM/ICQ"
-
-#, c-format
-msgid "%s is not a valid group."
-msgstr "%s не е валидна група."
-
-msgid "Unknown error."
-msgstr "Непозната грешка:"
-
-#, fuzzy, c-format
-msgid "%s on %s (%s)"
-msgstr "%s иска да ви изпрати %s (%s)"
-
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Неуспех при добавянето на потребител в %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Неуспех при блокирането на потребител в %s (%s)"
-
-#, fuzzy, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Файлът %s не може да бъде записан."
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr ""
-
-#, fuzzy, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s е невалидно име на сървър"
-
-msgid "Service Temporarily Unavailable."
-msgstr "Временно услугата не е налична."
-
-msgid "Unable to rename group"
-msgstr "Групата не може да бъде преименувана"
-
-msgid "Unable to delete group"
-msgstr "Неуспех при изтриването на групата"
-
-#, fuzzy, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "Потребителят %s (%s) иска да добави %s в списъка с приятелите си."
-
-#, fuzzy, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "Потребителят %s (%s) иска да добави %s в списъка с приятелите си."
+#. 5
+msgid "In Love"
+msgstr "Влюбен"
 
 #. show current mood
 #, fuzzy
@@ -5796,6 +6027,29 @@ msgstr "Смяна на парола"
 #, fuzzy
 msgid "How do you feel right now?"
 msgstr "В момента не съм тук"
+
+#, fuzzy
+msgid "The PIN you entered is invalid."
+msgstr "Новото форматиране е неправилно."
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Новото форматиране е неправилно."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr ""
+
+#, fuzzy
+msgid "The two PINs you entered do not match."
+msgstr "Новите пароли не съвпадат."
+
+#, fuzzy
+msgid "The name you entered is invalid."
+msgstr "Новото форматиране е неправилно."
+
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr ""
 
 #. show error to user
 #, fuzzy
@@ -5875,10 +6129,11 @@ msgstr "Относно Pidgin"
 msgid "The file you are trying to send is too large!"
 msgstr "Съобщението е твърде голямо."
 
+#, fuzzy
 msgid ""
-"Unable to connect to the mxit HTTP server. Please check your server server "
-"settings."
+"Unable to connect to the MXit HTTP server. Please check your server settings."
 msgstr ""
+"Моля, напишете името на потребителя, на когото искате да забраните достъпа."
 
 #, fuzzy
 msgid "Logging In..."
@@ -5886,14 +6141,21 @@ msgstr "Записване в дневник"
 
 #, fuzzy
 msgid ""
-"Unable to connect to the mxit server. Please check your server server "
-"settings."
+"Unable to connect to the MXit server. Please check your server settings."
 msgstr ""
 "Моля, напишете името на потребителя, на когото искате да забраните достъпа."
 
 #, fuzzy
 msgid "Connecting..."
 msgstr "Свързване"
+
+#, fuzzy
+msgid "The nick name you entered is invalid."
+msgstr "Новото форматиране е неправилно."
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "Новото форматиране е неправилно."
 
 #. mxit login name
 msgid "MXit Login Name"
@@ -5974,6 +6236,10 @@ msgid "Retrieving User Information..."
 msgstr "Данни за сървъра"
 
 #, fuzzy
+msgid "Loading menu..."
+msgstr "Записване в дневник"
+
+#, fuzzy
 msgid "Status Message"
 msgstr "Изпращане на _съобщение"
 
@@ -6018,12 +6284,29 @@ msgstr ""
 msgid "Successfully Logged In..."
 msgstr "Телефонен номер"
 
+#, c-format
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
+msgstr ""
+
 #, fuzzy
 msgid "Message Error"
 msgstr "Грешка в Jabber-съобщение"
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
+
+#, fuzzy
+msgid "An internal MXit server error occurred."
+msgstr "Получи се непозната грешка при влизането: %s."
+
+#, fuzzy, c-format
+msgid "Login error: %s (%i)"
+msgstr "Грешка при четенето"
+
+#, fuzzy, c-format
+msgid "Logout error: %s (%i)"
+msgstr "Грешка при четенето"
 
 #, fuzzy
 msgid "Contact Error"
@@ -6099,39 +6382,6 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
-
-msgid "Angry"
-msgstr "Гневен"
-
-msgid "Excited"
-msgstr "Развълнуван"
-
-#, fuzzy
-msgid "Grumpy"
-msgstr "Група:"
-
-msgid "Happy"
-msgstr "Щастлив"
-
-msgid "In Love"
-msgstr "Влюбен"
-
-msgid "Invincible"
-msgstr "Неуязвим"
-
-msgid "Sad"
-msgstr "Тъжен"
-
-#, fuzzy
-msgid "Hot"
-msgstr "_Адрес:"
-
-#, fuzzy
-msgid "Sick"
-msgstr "Потребителско име"
-
-msgid "Sleepy"
-msgstr "Сънлив"
 
 #, fuzzy
 msgid "Pending"
@@ -6775,7 +7025,10 @@ msgstr "Сървър"
 msgid "Server port"
 msgstr "Порт"
 
-#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "Неправилен отговор от сървъра."
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s"
 msgstr "Неправилен отговор от сървъра."
@@ -6794,6 +7047,11 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Грешка при установяването на връзката"
 
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
@@ -6804,6 +7062,104 @@ msgstr "Неуспех при свързването"
 #, fuzzy
 msgid "Invalid chat room name"
 msgstr "Невалидно име на стая"
+
+msgid "Thinking"
+msgstr ""
+
+#, fuzzy
+msgid "Shopping"
+msgstr "Събеседникът _престана да пише"
+
+#, fuzzy
+msgid "Questioning"
+msgstr "Отговорът е отказан"
+
+#, fuzzy
+msgid "Eating"
+msgstr "Страниране"
+
+msgid "Watching a movie"
+msgstr ""
+
+msgid "Typing"
+msgstr "Пише"
+
+#, fuzzy
+msgid "At the office"
+msgstr "Не е в офиса"
+
+msgid "Taking a bath"
+msgstr ""
+
+msgid "Watching TV"
+msgstr ""
+
+msgid "Having fun"
+msgstr ""
+
+#, fuzzy
+msgid "Sleeping"
+msgstr "Сънлив"
+
+msgid "Using a PDA"
+msgstr ""
+
+#, fuzzy
+msgid "Meeting friends"
+msgstr "_IM прозорци"
+
+#, fuzzy
+msgid "On the phone"
+msgstr "На телефона"
+
+msgid "Surfing"
+msgstr ""
+
+#. "I am mobile." / "John is mobile."
+#, fuzzy
+msgid "Mobile"
+msgstr "Длъжност"
+
+msgid "Searching the web"
+msgstr ""
+
+msgid "At a party"
+msgstr ""
+
+msgid "Having Coffee"
+msgstr ""
+
+#. Playing video games
+#, fuzzy
+msgid "Gaming"
+msgstr "Потребителско име"
+
+msgid "Browsing the web"
+msgstr ""
+
+#, fuzzy
+msgid "Smoking"
+msgstr "Звуци"
+
+#, fuzzy
+msgid "Writing"
+msgstr "Нива на предупреждение"
+
+#. Drinking [Alcohol]
+#, fuzzy
+msgid "Drinking"
+msgstr "Нива на предупреждение"
+
+msgid "Listening to music"
+msgstr ""
+
+#, fuzzy
+msgid "Studying"
+msgstr "_Изпращане"
+
+#, fuzzy
+msgid "In the restroom"
+msgstr "Обръщане"
 
 #, fuzzy
 msgid "Received invalid data on connection with server"
@@ -7019,6 +7375,9 @@ msgstr "Приемане на файл"
 msgid "Games"
 msgstr "Игри"
 
+msgid "ICQ Xtraz"
+msgstr ""
+
 msgid "Add-Ins"
 msgstr ""
 
@@ -7085,6 +7444,26 @@ msgstr ""
 
 msgid "Invisible"
 msgstr "Невидим"
+
+#, fuzzy
+msgid "Evil"
+msgstr "Е-поща"
+
+#, fuzzy
+msgid "Depression"
+msgstr "Позиция"
+
+#, fuzzy
+msgid "At home"
+msgstr "Относно Pidgin"
+
+#, fuzzy
+msgid "At work"
+msgstr "Мрежа"
+
+#, fuzzy
+msgid "At lunch"
+msgstr "На обяд"
 
 msgid "IP Address"
 msgstr "IP адрес"
@@ -7353,11 +7732,6 @@ msgid ""
 "characters.]"
 msgstr "Вие пропуснахте %hu съобщение от %s, тъй като то беше невалидно."
 
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr ""
@@ -7601,6 +7975,10 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr ""
 
+#, fuzzy
+msgid "Lunch"
+msgstr "френски"
+
 #, fuzzy, c-format
 msgid "Buddy Comment for %s"
 msgstr "Коментар:"
@@ -7633,7 +8011,8 @@ msgstr "Показване на данни"
 msgid "Edit Buddy Comment"
 msgstr "Редактиране на коментар"
 
-msgid "Get Status Msg"
+#, fuzzy
+msgid "Get X-Status Msg"
 msgstr "Преглед на съобщението за състояние"
 
 #, fuzzy
@@ -7954,10 +8333,6 @@ msgstr "Последно актуализиране"
 #, fuzzy
 msgid "Could not change buddy information."
 msgstr "Въведете име на потребител"
-
-#, fuzzy
-msgid "Mobile"
-msgstr "Длъжност"
 
 msgid "Note"
 msgstr "Бележка"
@@ -9051,18 +9426,6 @@ msgstr "Хипер активен"
 msgid "Robot"
 msgstr "Робот"
 
-msgid "Jealous"
-msgstr "Ревнив"
-
-msgid "Ashamed"
-msgstr "Засрамен"
-
-msgid "Bored"
-msgstr "Отегчен"
-
-msgid "Anxious"
-msgstr "Загрижен"
-
 msgid "User Modes"
 msgstr "Режими на потребителя"
 
@@ -9550,10 +9913,6 @@ msgstr "Текущото ви настроение"
 #, c-format
 msgid "Normal"
 msgstr "Нормално"
-
-#, fuzzy
-msgid "In love"
-msgstr "Влюбен"
 
 msgid ""
 "\n"
@@ -10582,6 +10941,10 @@ msgid "Exposure"
 msgstr ""
 
 #, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr "Грешка при създаване на сокет"
+
+#, fuzzy, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "Съобщението не може да бъде изпратено: %s"
 
@@ -10691,8 +11054,9 @@ msgstr "Не ме безпокойте"
 msgid "Extended away"
 msgstr "Продължително състояние „Няма ме“"
 
-msgid "Listening to music"
-msgstr ""
+#, fuzzy
+msgid "Feeling"
+msgstr "Остава"
 
 #, fuzzy, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -11255,6 +11619,18 @@ msgstr "Не сте включени с абонамент, който може 
 msgid "Unknown node type"
 msgstr "Неизвестна грешка %d"
 
+#, fuzzy
+msgid "Please select your mood from the list"
+msgstr "Въведете новата парола"
+
+#, fuzzy
+msgid "Message (optional)"
+msgstr "Псевдоним на контакт"
+
+#, fuzzy
+msgid "Edit User Mood"
+msgstr "Режими на потребителя"
+
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Познати"
@@ -11343,6 +11719,10 @@ msgstr "/Инструменти/На_стройки"
 msgid "/Tools/Pr_ivacy"
 msgstr "/Инструменти/_Уединение"
 
+#, fuzzy
+msgid "/Tools/Set _Mood"
+msgstr "/Инструменти/Дневника на системата"
+
 msgid "/Tools/_File Transfers"
 msgstr "/Инструменти/Пренос на _файлове"
 
@@ -11362,8 +11742,20 @@ msgstr "/_Помощ"
 msgid "/Help/Online _Help"
 msgstr "/Помощ/Ръководство"
 
+#, fuzzy
+msgid "/Help/_Build Information"
+msgstr "Данни за потребителя"
+
 msgid "/Help/_Debug Window"
 msgstr "/Помощ/Прозорец за _грешки"
+
+#, fuzzy
+msgid "/Help/De_veloper Information"
+msgstr "Данни за сървъра"
+
+#, fuzzy
+msgid "/Help/_Translator Information"
+msgstr "Лични данни"
 
 msgid "/Help/_About"
 msgstr "/Помощ/_Относно програмата"
@@ -11611,6 +12003,10 @@ msgstr "/Акаунти"
 msgid "_Edit Account"
 msgstr "_Редактиране на акаунт"
 
+#, fuzzy
+msgid "Set _Mood..."
+msgstr "Запазен..."
+
 msgid "No actions available"
 msgstr "Няма възможни действия"
 
@@ -11657,12 +12053,6 @@ msgstr "<h1>Разговор с %s</h1>\n"
 
 msgid "Save Conversation"
 msgstr "Запазване на разговора"
-
-msgid "Find"
-msgstr "Търсене"
-
-msgid "_Search for:"
-msgstr "_Търсене за:"
 
 msgid "Un-Ignore"
 msgstr "Махане на игнорирането"
@@ -11745,6 +12135,10 @@ msgstr "/Разговор/Преглед на _история"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Разговор/Изпращане _на файл..."
+
+#, fuzzy
+msgid "/Conversation/Get _Attention"
+msgstr "/Разговори/Показване на данни"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr ""
@@ -11835,6 +12229,10 @@ msgstr "/Разговор/Затвар_яне"
 msgid "/Conversation/Send File..."
 msgstr "/Разговори/Изпращане на файл..."
 
+#, fuzzy
+msgid "/Conversation/Get Attention"
+msgstr "/Разговори/Показване на данни"
+
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr ""
 
@@ -11899,14 +12297,19 @@ msgstr "_Изпращане"
 msgid "0 people in room"
 msgstr "В стаята има 0 потребители"
 
+#, fuzzy
+msgid "Close Find bar"
+msgstr "Затваряне на _подпрозорците"
+
+#, fuzzy
+msgid "Find:"
+msgstr "Търсене"
+
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d човек в стаята"
 msgstr[1] "%d човека в стаята"
-
-msgid "Typing"
-msgstr "Пише"
 
 #, fuzzy
 msgid "Stopped Typing"
@@ -11967,6 +12370,12 @@ msgstr "По групи"
 
 msgid "By account"
 msgstr "По абонаменти"
+
+msgid "Find"
+msgstr "Търсене"
+
+msgid "_Search for:"
+msgstr "_Търсене за:"
 
 msgid "Save Debug Log"
 msgstr ""
@@ -12204,15 +12613,20 @@ msgstr "кюрдски"
 msgid "Lao"
 msgstr ""
 
-msgid "Lithuanian"
-msgstr "литовски"
-
 msgid "Macedonian"
 msgstr "македонски"
 
 #, fuzzy
 msgid "Mongolian"
 msgstr "македонски"
+
+#, fuzzy
+msgid "Marathi"
+msgstr "Адрес"
+
+#, fuzzy
+msgid "Malay"
+msgstr "Мъжки"
 
 #, fuzzy
 msgid "Bokmål Norwegian"
@@ -12231,6 +12645,10 @@ msgstr "норвежки"
 
 msgid "Occitan"
 msgstr ""
+
+#, fuzzy
+msgid "Oriya"
+msgstr "Opera"
 
 msgid "Punjabi"
 msgstr ""
@@ -12290,6 +12708,10 @@ msgstr "тамил"
 msgid "Turkish"
 msgstr "кюрдски"
 
+#, fuzzy
+msgid "Ukranian"
+msgstr "румънски"
+
 msgid "Urdu"
 msgstr ""
 
@@ -12311,21 +12733,17 @@ msgstr "класически китайски"
 msgid "Amharic"
 msgstr "етиопски"
 
-#, fuzzy, c-format
-msgid "About %s"
-msgstr "Относно Pidgin"
+msgid "Lithuanian"
+msgstr "литовски"
 
 #, fuzzy, c-format
 msgid ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with %"
+"s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "Pidgin програма за изпращане на съобщения чрез протоколите AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, и "
@@ -12338,28 +12756,35 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 msgstr ""
 
 #, c-format
 msgid ""
-"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
-"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
-"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
-"primary language is <b>English</b>.  You are welcome to post in another "
-"language, but the responses may be less helpful.<br/><br/>"
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 msgstr ""
 
 #, fuzzy, c-format
-msgid ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin на irc.freenode.net<BR><BR>"
+msgid "About %s"
+msgstr "Относно Pidgin"
 
+#, fuzzy
+msgid "Build Information"
+msgstr "Данни за потребителя"
+
+#. End of not to be translated section
 #, fuzzy, c-format
-msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin на irc.freenode.net<BR><BR>"
+msgid "%s Build Information"
+msgstr "Данни за потребителя"
 
 msgid "Current Developers"
 msgstr "Текущи разработчици"
@@ -12374,14 +12799,19 @@ msgstr "Оттеглили се разработчици"
 msgid "Retired Crazy Patch Writers"
 msgstr "Луди писачи на кръпки"
 
+#, fuzzy, c-format
+msgid "%s Developer Information"
+msgstr "Данни за сървъра"
+
 msgid "Current Translators"
 msgstr "Настоящи преводачи"
 
 msgid "Past Translators"
 msgstr "Минали преводачи"
 
-msgid "Debugging Information"
-msgstr "Информация за проследяване на грешки"
+#, fuzzy, c-format
+msgid "%s Translator Information"
+msgstr "Служебна информация"
 
 msgid "_Name"
 msgstr "_Име"
@@ -12696,12 +13126,6 @@ msgid ""
 "Defaulting to PNG."
 msgstr ""
 
-msgid ""
-"Unrecognized file type\n"
-"\n"
-"Defaulting to PNG."
-msgstr ""
-
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -12710,16 +13134,6 @@ msgid ""
 msgstr ""
 "<span weight='bold' size='larger'>Грешка при запазване на изображението</"
 "span>\n"
-"\n"
-"%s"
-
-#, c-format
-msgid ""
-"Error saving image\n"
-"\n"
-"%s"
-msgstr ""
-"Грешка при запазването на изображението\n"
 "\n"
 "%s"
 
@@ -12839,6 +13253,10 @@ msgid "Insert Smiley"
 msgstr "Вмъкване на усмивка"
 
 #, fuzzy
+msgid "Send Attention"
+msgstr "_Изпращане до"
+
+#, fuzzy
 msgid "<b>_Bold</b>"
 msgstr "Парола:"
 
@@ -12897,6 +13315,9 @@ msgstr ""
 #, fuzzy
 msgid "_Smile!"
 msgstr "Усмивка!"
+
+msgid "_Attention!"
+msgstr ""
 
 #, fuzzy
 msgid "Log Deletion Failed"
@@ -13260,9 +13681,8 @@ msgstr ""
 msgid "(Custom)"
 msgstr ""
 
-#, fuzzy
-msgid "(Default)"
-msgstr "Стандартните настройки на GNOME"
+msgid "Penguin Pimps"
+msgstr ""
 
 msgid "The default Pidgin sound theme"
 msgstr ""
@@ -13284,18 +13704,34 @@ msgstr "Неуспех при зареждането на изображение
 msgid "Theme failed to copy."
 msgstr ""
 
-msgid "Install Theme"
-msgstr ""
+#, fuzzy
+msgid "Theme Selections"
+msgstr "Избор на браузър"
 
+#. Instructions
+#, fuzzy
 msgid ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 msgstr ""
 "Избор на група от емотикони, които бихте искали да използвате от листа. Нови "
 "групи могат да бъдат добавяни чрез влачене и пускане в същия лист."
 
-msgid "Icon"
-msgstr "Икона"
+#, fuzzy
+msgid "Buddy List Theme:"
+msgstr "Списък с приятели"
+
+#, fuzzy
+msgid "Status Icon Theme:"
+msgstr "Състояние за %s"
+
+msgid "Sound Theme:"
+msgstr ""
+
+#, fuzzy
+msgid "Smiley Theme:"
+msgstr "Теми на усмивките"
 
 msgid "Keyboard Shortcuts"
 msgstr ""
@@ -13303,11 +13739,6 @@ msgstr ""
 #, fuzzy
 msgid "Cl_ose conversations with the Escape key"
 msgstr "Разговори с %s"
-
-#. Buddy List Themes
-#, fuzzy
-msgid "Buddy List Theme"
-msgstr "Списък с приятели"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -13405,9 +13836,6 @@ msgstr ""
 msgid "Font"
 msgstr "Шрифтове"
 
-msgid "Use document font from _theme"
-msgstr ""
-
 msgid "Use font from _theme"
 msgstr ""
 
@@ -13483,51 +13911,6 @@ msgstr "Потребителско _име:"
 msgid "Pass_word:"
 msgstr "Парола:"
 
-#, fuzzy
-msgid "Proxy Server &amp; Browser"
-msgstr "Сървър-посредник"
-
-msgid "<b>Proxy configuration program was not found.</b>"
-msgstr ""
-
-msgid "<b>Browser configuration program was not found.</b>"
-msgstr ""
-
-msgid ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
-msgstr ""
-
-#, fuzzy
-msgid "Configure _Proxy"
-msgstr "_Настройване на стая"
-
-#, fuzzy
-msgid "Configure _Browser"
-msgstr "_Настройване на стая"
-
-msgid "Proxy Server"
-msgstr "Сървър-посредник"
-
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr ""
-
-#, fuzzy
-msgid "Proxy t_ype:"
-msgstr "_Вид сървър-посредник:"
-
-msgid "No proxy"
-msgstr "Без сървър-посредник"
-
-#, fuzzy
-msgid "P_ort:"
-msgstr "_Порт:"
-
-#, fuzzy
-msgid "User_name:"
-msgstr "Потребителско _име:"
-
 msgid "Seamonkey"
 msgstr ""
 
@@ -13568,6 +13951,16 @@ msgstr "Ръчно"
 msgid "Browser Selection"
 msgstr "Избор на браузър"
 
+msgid "Browser preferences are configured in GNOME preferences"
+msgstr ""
+
+msgid "<b>Browser configuration program was not found.</b>"
+msgstr ""
+
+#, fuzzy
+msgid "Configure _Browser"
+msgstr "_Настройване на стая"
+
 msgid "_Browser:"
 msgstr "_Браузър:"
 
@@ -13590,6 +13983,39 @@ msgid ""
 msgstr ""
 "_Ръчно:\n"
 "(%s за URL)"
+
+msgid "Proxy Server"
+msgstr "Сървър-посредник"
+
+msgid "Proxy preferences are configured in GNOME preferences"
+msgstr ""
+
+msgid "<b>Proxy configuration program was not found.</b>"
+msgstr ""
+
+#, fuzzy
+msgid "Configure _Proxy"
+msgstr "_Настройване на стая"
+
+#. This is a global option that affects SOCKS4 usage even with
+#. * account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "_Вид сървър-посредник:"
+
+msgid "No proxy"
+msgstr "Без сървър-посредник"
+
+#, fuzzy
+msgid "P_ort:"
+msgstr "_Порт:"
+
+#, fuzzy
+msgid "User_name:"
+msgstr "Потребителско _име:"
 
 msgid "Log _format:"
 msgstr "_Форматиране на дневника:"
@@ -13681,28 +14107,20 @@ msgstr "Показване на _времето на бездействие"
 msgid "Based on keyboard or mouse use"
 msgstr ""
 
+#, fuzzy
+msgid "_Minutes before becoming idle:"
+msgstr "_Минути преди преминаване в състояние „Няма ме“:"
+
+#, fuzzy
+msgid "Change to this status when _idle:"
+msgstr "Преминаване в състояние „Няма ме“ след активно състояние „Бездействам“"
+
 msgid "_Auto-reply:"
 msgstr "_Автоматичен отговор:"
 
 #, fuzzy
 msgid "When both away and idle"
 msgstr "Преминаване в състояние „Няма ме“ след активно състояние „Бездействам“"
-
-#. Auto-away stuff
-msgid "Auto-away"
-msgstr "Автоматично преминаване в „Няма ме“"
-
-#, fuzzy
-msgid "_Minutes before becoming idle:"
-msgstr "_Минути преди преминаване в състояние „Няма ме“:"
-
-#, fuzzy
-msgid "Change status when _idle"
-msgstr "Преминаване в състояние „Няма ме“ след активно състояние „Бездействам“"
-
-#, fuzzy
-msgid "Change _status to:"
-msgstr "Промяна на адреса До:"
 
 #. Signon status stuff
 #, fuzzy
@@ -13719,15 +14137,16 @@ msgstr ""
 msgid "Interface"
 msgstr "Цветове на интерфейса"
 
-msgid "Smiley Themes"
-msgstr "Теми на усмивките"
-
 msgid "Browser"
 msgstr "Браузър"
 
 #, fuzzy
 msgid "Status / Idle"
 msgstr "Състояние"
+
+#, fuzzy
+msgid "Themes"
+msgstr "Теми на усмивките"
 
 msgid "Allow all users to contact me"
 msgstr "Разрешавам на всички потребители да се свързват с мен"
@@ -13899,6 +14318,10 @@ msgid "Custom Smiley Manager"
 msgstr ""
 
 #, fuzzy
+msgid "Attention received"
+msgstr "Изисква се регистрация"
+
+#, fuzzy
 msgid "Select Buddy Icon"
 msgstr "Избор на приятел"
 
@@ -13977,10 +14400,13 @@ msgid ""
 "this user"
 msgstr "Искате ли да запишете новия на негово място?"
 
-#. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-#. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-#. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-#. * Probably not.  I'll just give an error and return.
+#. I don't know if we really want to do anything here.  Most of
+#. * the desktop item types are crap like "MIME Type" (I have no
+#. * clue how that would be a desktop item) and "Comment"...
+#. * nothing we can really send.  The only logical one is
+#. * "Application," but do we really want to send a binary and
+#. * nothing else? Probably not.  I'll just give an error and
+#. * return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 msgid "Cannot send launcher"
 msgstr "Неуспех при изпращането на стартер"
@@ -14012,15 +14438,6 @@ msgstr "Непозната грешка"
 msgid "Could not set icon"
 msgstr "Невъзможност за изпращане"
 
-#, fuzzy, c-format
-msgid "Failed to open file '%s': %s"
-msgstr "Неуспешно запазване на изображение: %s\n"
-
-#, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr ""
-
 #, fuzzy
 msgid "_Open Link"
 msgstr "_Отваряне на връзката в:"
@@ -14050,6 +14467,10 @@ msgstr "Изпълнение на звук"
 #, fuzzy
 msgid "_Save File"
 msgstr "Запазване на файл..."
+
+#, fuzzy
+msgid "Do you really want to clear?"
+msgstr "Сигурни ли сте, че искате да изтриете %s?"
 
 #, fuzzy
 msgid "Select color"
@@ -14092,9 +14513,6 @@ msgid "Pidgin Tooltip"
 msgstr "Ping"
 
 msgid "Pidgin smileys"
-msgstr ""
-
-msgid "Penguin Pimps"
 msgstr ""
 
 msgid "Selecting this disables graphical emoticons."
@@ -14760,6 +15178,10 @@ msgid "Conversation Entry"
 msgstr "Разговори"
 
 #, fuzzy
+msgid "Conversation History"
+msgstr "Разговори"
+
+#, fuzzy
 msgid "Request Dialog"
 msgstr "Отговорът е отказан"
 
@@ -15312,16 +15734,6 @@ msgstr "Акаунт:"
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr ""
 
-msgid "Insert an <iq/> stanza."
-msgstr ""
-
-msgid "Insert a <presence/> stanza."
-msgstr ""
-
-#, fuzzy
-msgid "Insert a <message/> stanza."
-msgstr "Вмъкване в съобщение"
-
 #. *< name
 #. *< version
 #. *  summary
@@ -15329,8 +15741,119 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr ""
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Error creating conference."
+#~ msgstr "Грешка при установяването на връзката"
+
+#, fuzzy
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "Грешка при създаване на сокет"
+
+#, fuzzy
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr "Грешка при създаване на сокет"
+
+#, fuzzy
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "%s иска да ви изпрати файл"
+
+#~ msgid "Profile URL"
+#~ msgstr "URL на профил"
+
+#, fuzzy
+#~ msgid "MSN Protocol Plugin"
+#~ msgstr "Приставка за протокола AIM/ICQ"
+
+#~ msgid "%s is not a valid group."
+#~ msgstr "%s не е валидна група."
+
+#~ msgid "Unknown error."
+#~ msgstr "Непозната грешка:"
+
+#, fuzzy
+#~ msgid "%s on %s (%s)"
+#~ msgstr "%s иска да ви изпрати %s (%s)"
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "Неуспех при добавянето на потребител в %s (%s)"
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "Неуспех при блокирането на потребител в %s (%s)"
+
+#, fuzzy
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "Файлът %s не може да бъде записан."
+
+#, fuzzy
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%s е невалидно име на сървър"
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "Временно услугата не е налична."
+
+#~ msgid "Unable to rename group"
+#~ msgstr "Групата не може да бъде преименувана"
+
+#~ msgid "Unable to delete group"
+#~ msgstr "Неуспех при изтриването на групата"
+
+#, fuzzy
+#~ msgid "%s has added you to his or her buddy list."
+#~ msgstr "Потребителят %s (%s) иска да добави %s в списъка с приятелите си."
+
+#, fuzzy
+#~ msgid "%s has removed you from his or her buddy list."
+#~ msgstr "Потребителят %s (%s) иска да добави %s в списъка с приятелите си."
+
+#, fuzzy
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin на irc.freenode.net<BR><BR>"
+
+#, fuzzy
+#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin на irc.freenode.net<BR><BR>"
+
+#~ msgid "Debugging Information"
+#~ msgstr "Информация за проследяване на грешки"
+
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Грешка при запазването на изображението\n"
+#~ "\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "(Default)"
+#~ msgstr "Стандартните настройки на GNOME"
+
+#~ msgid "Icon"
+#~ msgstr "Икона"
+
+#, fuzzy
+#~ msgid "Proxy Server &amp; Browser"
+#~ msgstr "Сървър-посредник"
+
+#~ msgid "Auto-away"
+#~ msgstr "Автоматично преминаване в „Няма ме“"
+
+#, fuzzy
+#~ msgid "Change _status to:"
+#~ msgstr "Промяна на адреса До:"
+
+#, fuzzy
+#~ msgid "Failed to open file '%s': %s"
+#~ msgstr "Неуспешно запазване на изображение: %s\n"
+
+#, fuzzy
+#~ msgid "Insert a <message/> stanza."
+#~ msgstr "Вмъкване в съобщение"
 
 #~ msgid "_Start port:"
 #~ msgstr "_Начален порт:"
@@ -15504,10 +16027,6 @@ msgstr ""
 #~ msgstr "Режими на потребителя"
 
 #, fuzzy
-#~ msgid "User Gaming"
-#~ msgstr "Потребителско име"
-
-#, fuzzy
 #~ msgid "User Viewing"
 #~ msgstr "Ограничение на потребителите"
 
@@ -15646,10 +16165,6 @@ msgstr ""
 #~ msgstr "IM прозорци за разговор"
 
 #, fuzzy
-#~ msgid "Please select an image for the smiley."
-#~ msgstr "Въведете новата парола"
-
-#, fuzzy
 #~ msgid "Activate which ID?"
 #~ msgstr "Активиране на коя идентификация?"
 
@@ -15724,9 +16239,6 @@ msgstr ""
 
 #~ msgid "%s not currently logged in."
 #~ msgstr "%s в момента не е свързан."
-
-#~ msgid "Chat in %s is not available."
-#~ msgstr "Чата в %s не е достъпен."
 
 #~ msgid "You are sending messages too fast to %s."
 #~ msgstr "Изпращате твърде бързо съобщения към %s."
@@ -15843,10 +16355,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Update information"
 #~ msgstr "Данни за потребителя"
-
-#, fuzzy
-#~ msgid "Successed:"
-#~ msgstr "Скорост:"
 
 #, fuzzy
 #~ msgid "Invalid QQ Face"
@@ -16200,10 +16708,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Display Statistics"
 #~ msgstr "Статистика за сървъра"
-
-#, fuzzy
-#~ msgid "Conversation History"
-#~ msgstr "Разговори"
 
 #~ msgid "Log Viewer"
 #~ msgstr "Преглед на дневника"

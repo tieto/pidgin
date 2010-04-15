@@ -683,7 +683,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	g_slist_free(buddies);
 
 	if (mbba->matched_buddies == NULL) {
-		purple_debug_info("bonjour", "We don't like invisible buddies, this is not a superheros comic\n");
+		purple_debug_info("bonjour", "We don't like invisible buddies, this is not a superheroes comic\n");
 		g_free(mbba);
 		close(client_socket);
 		return;

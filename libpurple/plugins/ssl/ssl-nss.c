@@ -51,7 +51,7 @@ typedef struct
 	PRFileDesc *fd;
 	PRFileDesc *in;
 	guint handshake_handler;
-
+	guint handshake_timer;
 } PurpleSslNssData;
 
 #define PURPLE_SSL_NSS_DATA(gsc) ((PurpleSslNssData *)gsc->private_data)
@@ -235,6 +235,7 @@ ssl_nss_init(void)
 static void
 ssl_nss_uninit(void)
 {
+	NSS_Shutdown();
 	PR_Cleanup();
 
 	_nss_methods = NULL;
@@ -368,6 +369,18 @@ ssl_nss_handshake_cb(gpointer data, int fd, PurpleInputCondition cond)
 	}
 }
 
+static gboolean
+start_handshake_cb(gpointer data)
+{
+	PurpleSslConnection *gsc = data;
+	PurpleSslNssData *nss_data = PURPLE_SSL_NSS_DATA(gsc);
+
+	nss_data->handshake_timer = 0;
+
+	ssl_nss_handshake_cb(gsc, gsc->fd, PURPLE_INPUT_READ);
+	return FALSE;
+}
+
 static void
 ssl_nss_connect(PurpleSslConnection *gsc)
 {
@@ -438,7 +451,7 @@ ssl_nss_connect(PurpleSslConnection *gsc)
 	nss_data->handshake_handler = purple_input_add(gsc->fd,
 		PURPLE_INPUT_READ, ssl_nss_handshake_cb, gsc);
 
-	ssl_nss_handshake_cb(gsc, gsc->fd, PURPLE_INPUT_READ);
+	nss_data->handshake_timer = purple_timeout_add(0, start_handshake_cb, gsc);
 }
 
 static void
@@ -459,6 +472,9 @@ ssl_nss_close(PurpleSslConnection *gsc)
 
 	if (nss_data->handshake_handler)
 		purple_input_remove(nss_data->handshake_handler);
+
+	if (nss_data->handshake_timer)
+		purple_timeout_remove(nss_data->handshake_timer);
 
 	g_free(nss_data);
 	gsc->private_data = NULL;

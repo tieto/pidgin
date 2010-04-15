@@ -714,6 +714,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 		x509_singleuse_verify_cb );
 
 	/* Cleanup */
+	g_free(cn);
 	g_free(primary);
 	g_free(secondary);
 	g_free(sha_asc);
@@ -859,6 +860,7 @@ x509_ca_lazy_init(void)
 					purple_debug_info("certificate/x509/ca",
 							  "Loaded %s from %s\n",
 							  name ? name : "(unknown)", fullpath);
+					g_free(name);
 				} else {
 					purple_debug_error("certificate/x509/ca",
 							  "Failed to load certificate from %s\n",
@@ -1535,6 +1537,7 @@ x509_tls_cached_check_subject_name(PurpleCertificateVerificationRequest *vrq,
 				  "Name mismatch: Certificate given for %s "
 				  "has a name of %s\n",
 				  vrq->subject_name, sn);
+		g_free(sn);
 	}
 
 	x509_tls_cached_complete(vrq, flags);
