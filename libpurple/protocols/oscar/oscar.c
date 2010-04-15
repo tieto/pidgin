@@ -2494,8 +2494,15 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	 *
 	 * Note: There *may* be some clients which send messages as HTML formatted -
 	 *       they need to be special-cased somehow.
+	 *
+	 * Update: Newer ICQ clients have started sending IMs as HTML.  We can
+	 * distinguish HTML IMs from non-HTML IMs by looking at the features.  If
+	 * the features are "0x 01 06" then the message is plain text.  If the
+	 * features are "0x 01" then the message is HTML.
 	 */
-	if (od->icq && oscar_util_valid_name_icq(userinfo->bn)) {
+	if (od->icq && oscar_util_valid_name_icq(userinfo->bn)
+			&& (args->featureslen != 1 || args->features[0] != 0x01))
+	{
 		/* being recevied by ICQ from ICQ - escape HTML so it is displayed as sent */
 		gchar *tmp2 = g_markup_escape_text(tmp, -1);
 		g_free(tmp);
@@ -4731,6 +4738,10 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			   encoded" (and instead, assumes them to be UTF-8).
 			   For more details, see SF issue 1179452.
 			*/
+			/*
+			 * WTF?  Why would we want to send messages as "ANSI" when we
+			 * could use UTF-8?
+			 */
 			if (buddy && PURPLE_BUDDY_IS_ONLINE(buddy)) {
 				args.features = features_icq;
 				args.featureslen = sizeof(features_icq);
