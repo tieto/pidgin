@@ -72,8 +72,8 @@ using perl @c print commands.
 sub plugin_load {
 	$plugin = shift;
 
-	# Testing was done using Oscar, but this should work regardless of the protocol chosen
-	my $protocol = "prpl-oscar";
+	# Testing was done using AIM, but this should work regardless of the protocol chosen
+	my $protocol = "prpl-aim";
 	my $account_name = "test";
 
 	# Create a new Account
@@ -149,7 +149,7 @@ keep the naming consistent with the C API.
 sub plugin_load {
 	my $plugin = shift;
 
-	my $protocol = "prpl-oscar";
+	my $protocol = "prpl-aim";
 	my $account_name = "test";
 
 	# This is how we get an account to use in the following tests.  You should replace the username
@@ -232,7 +232,7 @@ To use any of the Pidgin:: functionality, you will need to add the following to 
 @code
 sub plugin_load {
 	my $plugin = shift;
-	my $protocol = "prpl-oscar";
+	my $protocol = "prpl-aim";
 	my $account_name = "test";
 
 	$account = Purple::Accounts::find($account_name, $protocol);
