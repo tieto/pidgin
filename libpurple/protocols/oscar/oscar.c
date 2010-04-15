@@ -85,8 +85,7 @@ static guint64 purple_caps =
 		| OSCAR_CAPABILITY_XTRAZ;
 
 static guint8 features_aim[] = {0x01, 0x01, 0x01, 0x02};
-static guint8 features_icq[] = {0x01, 0x06};
-static guint8 features_icq_offline[] = {0x01};
+static guint8 features_icq[] = {0x01};
 static guint8 ck[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 struct create_room {
@@ -1578,11 +1577,11 @@ oscar_login(PurpleAccount *account)
 		return;
 	}
 
+	gc->flags |= PURPLE_CONNECTION_HTML;
 	if (oscar_util_valid_name_icq((purple_account_get_username(account)))) {
 		od->icq = TRUE;
 		gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
 	} else {
-		gc->flags |= PURPLE_CONNECTION_HTML;
 		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
 	}
 
@@ -4731,24 +4730,8 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			args.flags |= AIM_IMFLAGS_OFFLINE;
 
 		if (od->icq) {
-			/* We have to present different "features" (whose meaning
-			   is unclear and are merely a result of protocol inspection)
-			   to offline ICQ buddies. Otherwise, the official
-			   ICQ client doesn't treat those messages as being "ANSI-
-			   encoded" (and instead, assumes them to be UTF-8).
-			   For more details, see SF issue 1179452.
-			*/
-			/*
-			 * WTF?  Why would we want to send messages as "ANSI" when we
-			 * could use UTF-8?
-			 */
-			if (buddy && PURPLE_BUDDY_IS_ONLINE(buddy)) {
-				args.features = features_icq;
-				args.featureslen = sizeof(features_icq);
-			} else {
-				args.features = features_icq_offline;
-				args.featureslen = sizeof(features_icq_offline);
-			}
+			args.features = features_icq;
+			args.featureslen = sizeof(features_icq);
 		} else {
 			args.features = features_aim;
 			args.featureslen = sizeof(features_aim);
@@ -4798,25 +4781,11 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 
 		args.destbn = name;
 
-		/*
-		 * If we're IMing an SMS user or an ICQ user from an ICQ account, then strip HTML.
-		 */
 		if (oscar_util_valid_name_sms(name)) {
-			/* Messaging an SMS (mobile) user */
+			/* Messaging an SMS (mobile) user--strip HTML */
 			tmp2 = purple_markup_strip_html(tmp1);
 			is_html = FALSE;
-		} else if (od->icq) {
-			if (oscar_util_valid_name_icq(name)) {
-				/* From ICQ to ICQ */
-				tmp2 = purple_markup_strip_html(tmp1);
-				is_html = FALSE;
-			} else {
-				/* From ICQ to AIM */
-				tmp2 = g_strdup(tmp1);
-				is_html = TRUE;
-			}
 		} else {
-			/* From AIM to AIM and AIM to ICQ */
 			tmp2 = g_strdup(tmp1);
 			is_html = TRUE;
 		}
