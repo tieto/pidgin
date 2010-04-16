@@ -1709,6 +1709,14 @@ purple_account_set_proxy_info(PurpleAccount *account, PurpleProxyInfo *info)
 }
 
 void
+purple_account_set_privacy_type(PurpleAccount *account, PurplePrivacyType privacy_type)
+{
+	g_return_if_fail(account != NULL);
+
+	account->perm_deny = privacy_type;
+}
+
+void
 purple_account_set_status_types(PurpleAccount *account, GList *status_types)
 {
 	g_return_if_fail(account != NULL);
@@ -2103,6 +2111,14 @@ purple_account_get_proxy_info(const PurpleAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	return account->proxy_info;
+}
+
+PurplePrivacyType
+purple_account_get_privacy_type(const PurpleAccount *account)
+{
+	g_return_val_if_fail(account != NULL, PURPLE_PRIVACY_ALLOW_ALL);
+
+	return account->perm_deny;
 }
 
 PurpleStatus *

@@ -8,6 +8,8 @@ version 2.7.0 (??/??/????):
 		   * account-signed-off
 		   * account-connection-error
 		* purple_account_get_name_for_display
+		* purple_account_get_privacy_type
+		* purple_account_set_privacy_type
 		* purple_buddy_get_media_caps
 		* purple_buddy_set_media_caps
 		* purple_contact_get_group
