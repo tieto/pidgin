@@ -746,7 +746,21 @@ void aim_ads_requestads(OscarData *od, FlapConnection *conn);
 #define AIM_IMPARAM_FLAG_EVENTS_ALLOWED         0x00000008
 #define AIM_IMPARAM_FLAG_SMS_SUPPORTED          0x00000010
 #define AIM_IMPARAM_FLAG_OFFLINE_MSGS_ALLOWED   0x00000100
-#define AIM_IMPARAM_FLAG_SEND_ME_HTML_FOR_ICQ   0x00000400
+
+/**
+ * This flag tells the server that we always send HTML in messages
+ * sent from an ICQ account to an ICQ account.  (If this flag is
+ * not sent then plaintext is sent ICQ<-->ICQ (HTML is sent in all
+ * other cases)).
+ *
+ * If we send an HTML message to an old client that doesn't support
+ * HTML messages, then the oscar servers will merrily strip the HTML
+ * for us.
+ *
+ * When we receive an IM we look at the features on the ICBM to
+ * determine if the message is HTML or plaintext.
+ */
+#define AIM_IMPARAM_FLAG_USE_HTML_FOR_ICQ       0x00000400
 
 /* This is what the server will give you if you don't set them yourself. */
 /* This is probably out of date. */
