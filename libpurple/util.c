@@ -2986,8 +2986,9 @@ purple_fd_get_ip(int fd)
 		struct sockaddr_in *ipv4 = (struct sockaddr_in *)&addr;
 		struct in_addr addr = ipv4->sin_addr;
 		return g_strdup(inet_ntoa(addr));
-	} else if (family == AF_INET6) {
-#ifdef HAVE_INET_NTOP
+	}
+#if defined(AF_INET6) && defined(HAVE_INET_NTOP)
+	else if (family == AF_INET6) {
 		struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)&addr;
 		struct in6_addr addr = ipv6->sin6_addr;
 		char host[INET6_ADDRSTRLEN];
@@ -2995,11 +2996,8 @@ purple_fd_get_ip(int fd)
 
 		tmp = inet_ntop(family, &addr, host, sizeof(host));
 		return g_strdup(tmp);
-#else /* HAVE_INET_NTOP */
-		/* TODO: Patches welcome...I guess? */
-		return NULL;
-#endif
 	}
+#endif
 
 	return NULL;
 }
