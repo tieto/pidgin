@@ -2971,17 +2971,37 @@ purple_running_osx(void)
 char *
 purple_fd_get_ip(int fd)
 {
-	struct sockaddr addr;
+	struct sockaddr_storage addr;
 	socklen_t namelen = sizeof(addr);
-	struct in_addr in;
+	int family;
 
 	g_return_val_if_fail(fd != 0, NULL);
 
-	if (getsockname(fd, &addr, &namelen))
+	if (getsockname(fd, (struct sockaddr *)&addr, &namelen))
 		return NULL;
 
-	in = ((struct sockaddr_in *)&addr)->sin_addr;
-	return g_strdup(inet_ntoa(in));
+	family = ((struct sockaddr *)&addr)->sa_family;
+
+	if (family == AF_INET) {
+		struct sockaddr_in *ipv4 = (struct sockaddr_in *)&addr;
+		struct in_addr addr = ipv4->sin_addr;
+		return g_strdup(inet_ntoa(addr));
+	} else if (family == AF_INET6) {
+#ifdef HAVE_INET_NTOP
+		struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)&addr;
+		struct in6_addr addr = ipv6->sin6_addr;
+		char host[INET6_ADDRSTRLEN];
+		const char *tmp;
+
+		tmp = inet_ntop(family, &addr, host, sizeof(host));
+		return g_strdup(tmp);
+#else /* HAVE_INET_NTOP */
+		/* TODO: Patches welcome...I guess? */
+		return NULL;
+#endif
+	}
+
+	return NULL;
 }
 
 
