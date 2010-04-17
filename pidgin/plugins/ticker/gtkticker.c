@@ -343,7 +343,7 @@ static void gtk_ticker_realize (GtkWidget *widget)
 
 	window = gdk_window_new (gtk_widget_get_parent_window (widget),
 			&attributes, attributes_mask);
-#if GTK_CHECK_VERSION(2,14,0)
+#if GTK_CHECK_VERSION(2,18,0)
 	gtk_widget_set_window (widget, window);
 #else
 	widget->window = window;
