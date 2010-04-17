@@ -1540,7 +1540,8 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->avatar_hash);
 	g_free(js->caps_hash);
 
-	purple_circ_buffer_destroy(js->write_buffer);
+	if (js->write_buffer)
+		purple_circ_buffer_destroy(js->write_buffer);
 	if(js->writeh)
 		purple_input_remove(js->writeh);
 	if (js->auth_mech && js->auth_mech->dispose)

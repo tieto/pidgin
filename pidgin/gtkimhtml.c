@@ -1185,8 +1185,14 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		printf("\n");
 		}
 #endif
-		text = g_malloc(selection_data->length);
+
+		text = g_malloc(selection_data->length + 1);
 		memcpy(text, selection_data->data, selection_data->length);
+		/* Make sure the paste data is null-terminated.  Given that
+		 * we're passed length (but assume later that it is
+		 * null-terminated), this seems sensible to me.
+		 */
+		text[selection_data->length] = '\0';
 	}
 
 #ifdef _WIN32

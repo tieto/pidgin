@@ -2969,33 +2969,38 @@ purple_running_osx(void)
 #endif
 }
 
+typedef union purple_sockaddr {
+	struct sockaddr         sa;
+	struct sockaddr_in      sa_in;
+#if defined(AF_INET6)
+	struct sockaddr_in6     sa_in6;
+#endif
+	struct sockaddr_storage sa_stor;
+} PurpleSockaddr;
+
 char *
 purple_fd_get_ip(int fd)
 {
-	struct sockaddr_storage addr;
+	PurpleSockaddr addr;
 	socklen_t namelen = sizeof(addr);
 	int family;
 
 	g_return_val_if_fail(fd != 0, NULL);
 
-	if (getsockname(fd, (struct sockaddr *)&addr, &namelen))
+	if (getsockname(fd, &(addr.sa), &namelen))
 		return NULL;
 
-	family = ((struct sockaddr *)&addr)->sa_family;
+	family = addr.sa.sa_family;
 
 	if (family == AF_INET) {
-		struct sockaddr_in *ipv4 = (struct sockaddr_in *)&addr;
-		struct in_addr addr = ipv4->sin_addr;
-		return g_strdup(inet_ntoa(addr));
+		return g_strdup(inet_ntoa(addr.sa_in.sin_addr));
 	}
 #if defined(AF_INET6) && defined(HAVE_INET_NTOP)
 	else if (family == AF_INET6) {
-		struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)&addr;
-		struct in6_addr addr = ipv6->sin6_addr;
 		char host[INET6_ADDRSTRLEN];
 		const char *tmp;
 
-		tmp = inet_ntop(family, &addr, host, sizeof(host));
+		tmp = inet_ntop(family, &(addr.sa_in6.sin6_addr), host, sizeof(host));
 		return g_strdup(tmp);
 	}
 #endif
@@ -3006,22 +3011,22 @@ purple_fd_get_ip(int fd)
 int
 purple_socket_get_family(int fd)
 {
-	struct sockaddr_storage addr;
+	PurpleSockaddr addr;
 	socklen_t len = sizeof(addr);
 
 	g_return_val_if_fail(fd >= 0, -1);
 
-	if (getsockname(fd, (struct sockaddr *)&addr, &len))
+	if (getsockname(fd, &(addr.sa), &len))
 		return -1;
 
-	return ((struct sockaddr *)&addr)->sa_family;
+	return addr.sa.sa_family;
 }
 
 gboolean
 purple_socket_speaks_ipv4(int fd)
 {
 	int family;
-	
+
 	g_return_val_if_fail(fd >= 0, FALSE);
 
 	family = purple_socket_get_family(fd);
