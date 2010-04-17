@@ -824,7 +824,8 @@ char *purple_fd_get_ip(int fd);
  *
  * @param fd The socket file descriptor.
  *
- * @return The address family of the socket (AF_INET, AF_INET6, etc)
+ * @return The address family of the socket (AF_INET, AF_INET6, etc) or -1
+ *         on error.
  * @since 2.7.0
  */
 int purple_socket_get_family(int fd);
