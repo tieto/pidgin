@@ -586,6 +586,7 @@ purple_utf8_strftime(const char *format, const struct tm *tm)
 	{
 		purple_debug_error("util", "Format conversion failed in purple_utf8_strftime(): %s\n", err->message);
 		g_error_free(err);
+		err = NULL;
 		locale = g_strdup(format);
 	}
 
