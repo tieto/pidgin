@@ -45,6 +45,8 @@ version 2.7.0 (??/??/????):
 	  buddy icons.
 	* The 'Message Timestamp Formats' plugin allows changing the timestamp
 	  format from the timestamps' context menu in conversation log.
+	* Fix pastes from Chrome (rich-text pastes and probably URLs
+	  having garbage appended to them)
 
 	Bonjour:
 	* Added support for IPv6. (Thanks to T_X for testing)
