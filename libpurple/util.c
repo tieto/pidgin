@@ -3002,6 +3002,47 @@ purple_fd_get_ip(int fd)
 	return NULL;
 }
 
+int
+purple_socket_get_family(int fd)
+{
+	struct sockaddr_storage addr;
+	socklen_t len = sizeof(addr);
+
+	g_return_val_if_fail(fd >= 0, -1);
+
+	if (getsockname(fd, (struct sockaddr *)&addr, &len))
+		return -1;
+
+	return ((struct sockaddr *)&addr)->sa_family;
+}
+
+gboolean
+purple_socket_speaks_ipv4(int fd)
+{
+	int family;
+	
+	g_return_val_if_fail(fd >= 0, FALSE);
+
+	family = purple_socket_get_family(fd);
+
+	switch (family) {
+	case AF_INET:
+		return TRUE;
+#if defined(IPV6_V6ONLY)
+	case AF_INET6:
+	{
+		int val = 0;
+		guint len = sizeof(val);
+
+		if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &val, &len) != 0)
+			return FALSE;
+		return !val;
+	}
+#endif
+	default:
+		return FALSE;
+	}
+}
 
 /**************************************************************************
  * String Functions

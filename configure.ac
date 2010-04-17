@@ -184,6 +184,12 @@ AC_CHECK_MEMBER([struct sockaddr.sa_len],
 	[Define if struct sockaddr has an sa_len member])],[:],
 	[#include <sys/socket.h>])
 
+dnl Check for v6-only sockets
+AC_CHECK_DECL([IPV6_V6ONLY],
+	[AC_DEFINE([HAVE_IPV6_V6ONLY],[1],
+	[Define if the IPV6_V6ONLY setsockopt option exists])],
+	[], [#include <netinet/in.h>])
+
 dnl to prevent the g_stat()/g_unlink() crash,
 dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
 AC_SYS_LARGEFILE

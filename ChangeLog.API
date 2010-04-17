@@ -19,7 +19,15 @@ version 2.7.0 (??/??/????):
 		  IPs on the system.  On systems with the getifaddrs() function,
 		  this will return both IPv4 and IPv6 addresses (excluding link-local
 		  and loopback addresses).  On others, it returns just IPv4 addresses.
+		* purple_network_listen_family and
+		  purple_network_listen_range_family.  These will replace the
+		  versions without _family in 3.0.0 and allow the caller to
+		  specifically request either an IPv4 or IPv6 socket.  IPv6 is
+		  only supported if the getaddrinfo() function is available
+		  at build-time (not the case on Windows, currently).
 		* purple_prpl_got_media_caps
+		* purple_socket_get_family
+		* purple_socket_speaks_ipv4
 		* purple_unescape_text
 		* purple_uuid_random
 		* media_caps to the PurpleBuddy struct

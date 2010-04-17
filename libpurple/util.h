@@ -819,6 +819,28 @@ gboolean purple_running_osx(void);
  */
 char *purple_fd_get_ip(int fd);
 
+/**
+ * Returns the address family of a socket.
+ *
+ * @param fd The socket file descriptor.
+ *
+ * @return The address family of the socket (AF_INET, AF_INET6, etc)
+ * @since 2.7.0
+ */
+int purple_socket_get_family(int fd);
+
+/**
+ * Returns TRUE if a socket is capable of speaking IPv4.
+ *
+ * This is the case for IPv4 sockets and, on some systems, IPv6 sockets
+ * (due to the IPv4-mapped address functionality).
+ *
+ * @param fd The socket file descriptor
+ * @return TRUE if a socket can speak IPv4.
+ * @since 2.7.0
+ */
+gboolean purple_socket_speaks_ipv4(int fd);
+
 /*@}*/
 
 
