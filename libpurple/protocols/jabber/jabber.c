@@ -3687,6 +3687,11 @@ jabber_do_uninit(void)
 	jabber_presence_uninit();
 	jabber_iq_uninit();
 
+#ifdef USE_VV
+	g_signal_handlers_disconnect_by_func(G_OBJECT(purple_media_manager_get()),
+			G_CALLBACK(jabber_caps_broadcast_change), NULL);
+#endif
+
 	jabber_auth_uninit();
 	jabber_features_destroy();
 	jabber_identities_destroy();
