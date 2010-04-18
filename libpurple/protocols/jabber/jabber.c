@@ -842,6 +842,7 @@ jabber_stream_new(PurpleAccount *account)
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
+		g_free(user);
 		/* Destroying the connection will free the JabberStream */
 		return NULL;
 	}
@@ -850,6 +851,7 @@ jabber_stream_new(PurpleAccount *account)
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Username portion must be set."));
+		g_free(user);
 		/* Destroying the connection will free the JabberStream */
 		return NULL;
 	}
@@ -858,6 +860,7 @@ jabber_stream_new(PurpleAccount *account)
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
+		g_free(user);
 		/* Destroying the connection will free the JabberStream */
 		return NULL;
 	}
