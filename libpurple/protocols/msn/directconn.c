@@ -616,7 +616,7 @@ msn_dc_send_foo(MsnDirectConn *dc)
 	p = msn_dc_new_packet();
 
 	p->length = 8;
-	p->data = (guchar*)g_strdup("\4\0\0\0foo");
+	p->data = g_memdup("\4\0\0\0foo", 8);
 	p->sent_cb = NULL;
 
 	msn_dc_enqueue_packet(dc, p);
