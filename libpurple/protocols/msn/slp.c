@@ -667,7 +667,8 @@ got_invite(MsnSlpCall *slpcall,
 		g_return_if_fail(slpcall->xfer != NULL);
 
 		/* Don't do anything if we already have a direct connection */
-		g_return_if_fail(slpcall->slplink->dc == NULL);
+		if (slpcall->slplink->dc != NULL)
+			return;
 
 		bridges = get_token(content, "Bridges: ", "\r\n");
 		if(bridges && strstr(bridges, "TCPv1") != NULL) {
