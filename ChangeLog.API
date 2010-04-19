@@ -42,6 +42,7 @@ version 2.7.0 (??/??/????):
 		* purple_certificates_import for importing multiple
 		  certificates from a single file (and corresponding
 		  import_certificates member of PurpleCertificateScheme struct)
+		* autojoin connection signal 
 
 	Pidgin:
 		Added:
@@ -59,7 +60,7 @@ version 2.6.6 (02/18/2010):
 		  purple_xfer_request_denied if an error is found when selecting
 		  a file to send. Request denied is still used when a receive
 		  request is not allowed.
-		* xmlnode_from_str now properly handles paring an attribute which
+		* xmlnode_from_str now properly handles parsing an attribute which
 		  contain "&lt;br&gt;", which were previously transformed into a
 		  newline character (libxml2 unescapes all entities except
 		  representations of '&', and libpurple's purple_unescape_html
