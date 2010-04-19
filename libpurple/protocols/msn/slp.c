@@ -327,8 +327,9 @@ static gboolean
 msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 {
 	/* A direct connection negotiation response */
-	char		*bridge;
-	MsnDirectConn	*dc = slpcall->slplink->dc;
+	char *bridge;
+	MsnDirectConn *dc = slpcall->slplink->dc;
+	gboolean result = FALSE;
 
 	purple_debug_info("msn", "process_transresp\n");
 
@@ -336,7 +337,7 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 	g_return_val_if_fail(dc->state == DC_STATE_CLOSED, FALSE);
 
 	bridge = get_token(content, "Bridge: ", "\r\n");
-	if(bridge && strcmp(bridge, "TCPv1") == 0) {
+	if (bridge && !strcmp(bridge, "TCPv1")) {
 		/* Ok, the client supports direct TCP connection */
 
 		if (dc->listen_data != NULL || dc->listenfd != -1) {
@@ -354,15 +355,13 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 				msn_dc_send_invite(dc);
 			}
 
-			return TRUE;
-
 		} else {
 			/*
 			 * We should connect to the client so parse
 			 * IP/port from response.
 			 */
-			char		*ip, *port_str;
-			int		port = 0;
+			char *ip, *port_str;
+			int port = 0;
 
 			/* Save external IP/port for later use. We'll try local connection first. */
 			dc->ext_ip = get_token(content, "IPv4External-Addrs: ", "\r\n");
@@ -397,18 +396,13 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 						msn_dc_outgoing_connection_timeout_cb,
 						dc
 					);
-					return TRUE;
-
 				} else {
 					/*
 					 * Connection failed
 					 * Try external IP/port (if specified)
 					 */
 					msn_dc_outgoing_connection_timeout_cb(dc);
-					return TRUE;
 				}
-
-				g_free(ip);
 
 			} else {
 				/*
@@ -416,12 +410,12 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 				 * Try external IP/port (if specified)
 				 */
 				msn_dc_outgoing_connection_timeout_cb(dc);
-				return TRUE;
 			}
 
-			if (ip)
-				g_free(ip);
+			g_free(ip);
 		}
+
+		result = TRUE;
 
 	} else {
 		/*
@@ -430,10 +424,9 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 		 */
 	}
 
-	if (bridge)
-		g_free(bridge);
+	g_free(bridge);
 
-	return FALSE;
+	return result;
 }
 
 static void
