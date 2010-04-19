@@ -88,9 +88,9 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 
 	/* If it linked us is because its looking for trouble */
 	while (swboard->slplinks != NULL) {
-		/* Destroy only those slplinks which use the switchboard */
-		MsnSlpLink	*slplink = swboard->slplinks->data;
+		MsnSlpLink *slplink = swboard->slplinks->data;
 
+		/* Destroy only those slplinks which use the switchboard */
 		if (slplink->dc == NULL)
 			msn_slplink_destroy(slplink);
 		else {

@@ -37,13 +37,6 @@
 /* ms to delay between sending buddy icon requests to the server. */
 #define BUDDY_ICON_DELAY 20
 
-/*
-static void msn_slp_send_ok(MsnSlpCall *slpcall, const char *branch,
-					const char *type, const char *content);
-
-static void msn_slp_send_decline(MsnSlpCall *slpcall, const char *branch,
-						 const char *type, const char *content);
-*/
 static void request_user_display(MsnUser *user);
 
 
@@ -112,7 +105,6 @@ msn_xfer_cancel(PurpleXfer *xfer)
 	g_return_if_fail(xfer->data != NULL);
 
 	slpcall = xfer->data;
-
 
 	if (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL)
 	{
@@ -190,8 +182,6 @@ msn_xfer_read(guchar **data, PurpleXfer *xfer)
 void
 msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session)
 {
-	purple_debug_info("msn", "msn_xfer_end_cb\n");
-
 	if ((purple_xfer_get_status(slpcall->xfer) != PURPLE_XFER_STATUS_DONE) &&
 		(purple_xfer_get_status(slpcall->xfer) != PURPLE_XFER_STATUS_CANCEL_REMOTE) &&
 		(purple_xfer_get_status(slpcall->xfer) != PURPLE_XFER_STATUS_CANCEL_LOCAL))
@@ -670,7 +660,7 @@ got_invite(MsnSlpCall *slpcall,
 	else if (!strcmp(type, "application/x-msnmsgr-transreqbody"))
 	{
 		/* A direct connection negotiation request */
-		char		*bridges;
+		char *bridges;
 
 		purple_debug_info("msn", "got_invite: transreqbody received\n");
 
@@ -685,8 +675,8 @@ got_invite(MsnSlpCall *slpcall,
 			 * Ok, the client supports direct TCP connection
 			 * Try to create a listening port
 			 */
-			char		*content;
-			MsnDirectConn	*dc;
+			char *content;
+			MsnDirectConn *dc;
 
 			dc = msn_dc_new(slpcall);
 
@@ -738,31 +728,6 @@ got_invite(MsnSlpCall *slpcall,
 		g_return_if_fail(slpcall->xfer != NULL);
 
 		msn_slp_process_transresp(slpcall, content);
-#if 0
-		char *ip_addrs;
-		char *temp;
-		char *nonce;
-		int port;
-
-		nonce = get_token(content, "Nonce: {", "}\r\n");
-		if (ip_addrs == NULL)
-			return;
-
-		ip_addrs = get_token(content, "IPv4Internal-Addrs: ", "\r\n");
-
-		temp = get_token(content, "IPv4Internal-Port: ", "\r\n");
-		if (temp != NULL)
-			port = atoi(temp);
-		else
-			port = -1;
-		g_free(temp);
-
-		if (port > 0)
-			got_transresp(slpcall, nonce, ip_addrs, port);
-
-		g_free(nonce);
-		g_free(ip_addrs);
-#endif
 	}
 }
 
@@ -775,16 +740,16 @@ got_ok(MsnSlpCall *slpcall,
 
 	if (!strcmp(type, "application/x-msnmsgr-sessionreqbody"))
 	{
-		char		*content;
-		char		*header;
-		MsnSlpMessage	*msg;
-		MsnDirectConn	*dc;
+		char *content;
+		char *header;
+		MsnSlpMessage *msg;
+		MsnDirectConn *dc;
 
 		g_return_if_fail(slpcall->xfer != NULL);
 
-		if(slpcall->slplink->dc != NULL) {
+		if (slpcall->slplink->dc != NULL) {
 			/*
-			 * If we already have an estabilished direct connection
+			 * If we already have an established direct connection
 			 * then just start the transfer.
 			 */
 			msn_slpcall_session_init(slpcall);
@@ -855,57 +820,13 @@ got_ok(MsnSlpCall *slpcall,
 		g_free(content);
 
 		msn_slplink_queue_slpmsg(slpcall->slplink, msg);
-#if 0
-		if (slpcall->type == MSN_SLPCALL_DC)
-		{
-			/* First let's try a DirectConnection. */
 
-			MsnSlpLink *slplink;
-			MsnSlpMessage *slpmsg;
-			char *header;
-			char *content;
-			char *branch;
-
-			slplink = slpcall->slplink;
-
-			branch = rand_guid();
-
-			content = g_strdup_printf(
-				"Bridges: TRUDPv1 TCPv1\r\n"
-				"NetID: 0\r\n"
-				"Conn-Type: Direct-Connect\r\n"
-				"UPnPNat: false\r\n"
-				"ICF: false\r\n"
-			);
-
-			header = g_strdup_printf("INVITE MSNMSGR:%s MSNSLP/1.0",
-									 slplink->remote_user);
-
-			slpmsg = msn_slp_sipmsg_new(slpcall, 0, header, branch,
-										"application/x-msnmsgr-transreqbody",
-										content);
-
-			slpmsg->info = "SLP INVITE";
-			slpmsg->text_body = TRUE;
-			msn_slplink_send_slpmsg(slplink, slpmsg);
-
-			g_free(header);
-			g_free(content);
-
-			g_free(branch);
-		}
-		else
-		{
-			msn_slpcall_session_init(slpcall);
-		}
-#else
 		/*
 		 * Removed because it messes up direct connection by
 		 * starting p2p transfer
 		 */
 
 		/* msn_slpcall_session_init(slpcall); */
-#endif
 	}
 	else if (!strcmp(type, "application/x-msnmsgr-transreqbody"))
 	{
@@ -915,31 +836,6 @@ got_ok(MsnSlpCall *slpcall,
 	else if (!strcmp(type, "application/x-msnmsgr-transrespbody"))
 	{
 		msn_slp_process_transresp(slpcall, content);
-#if 0
-		char *ip_addrs;
-		char *temp;
-		char *nonce;
-		int port;
-
-		nonce = get_token(content, "Nonce: {", "}\r\n");
-		if (ip_addrs == NULL)
-			return;
-
-		ip_addrs = get_token(content, "IPv4Internal-Addrs: ", "\r\n");
-
-		temp = get_token(content, "IPv4Internal-Port: ", "\r\n");
-		if (temp != NULL)
-			port = atoi(temp);
-		else
-			port = -1;
-		g_free(temp);
-
-		if (port > 0)
-			got_transresp(slpcall, nonce, ip_addrs, port);
-
-		g_free(nonce);
-		g_free(ip_addrs);
-#endif
 	}
 }
 

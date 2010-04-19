@@ -439,10 +439,10 @@ msn_slplink_send_queued_slpmsgs(MsnSlpLink *slplink)
 	}
 }
 
-static MsnSlpMessage*
+static MsnSlpMessage *
 msn_slplink_create_ack(MsnSlpLink *slplink, MsnSlpHeader *header)
 {
-	MsnSlpMessage	*slpmsg;
+	MsnSlpMessage *slpmsg;
 
 	slpmsg = msn_slpmsg_new(slplink);
 
@@ -461,18 +461,6 @@ static void
 msn_slplink_send_ack(MsnSlpLink *slplink, MsnSlpHeader *header)
 {
 	MsnSlpMessage *slpmsg = msn_slplink_create_ack(slplink, header);
-
-	/*
-	slpmsg = msn_slpmsg_new(slplink);
-
-	slpmsg->session_id = msg->msnslp_header.session_id;
-	slpmsg->size       = msg->msnslp_header.total_size;
-	slpmsg->flags      = 0x02;
-	slpmsg->ack_id     = msg->msnslp_header.id;
-	slpmsg->ack_sub_id = msg->msnslp_header.ack_id;
-	slpmsg->ack_size   = msg->msnslp_header.total_size;
-	slpmsg->info = "SLP ACK";
-	*/
 
 	msn_slplink_send_slpmsg(slplink, slpmsg);
 	msn_slpmsg_destroy(slpmsg);
@@ -525,20 +513,11 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *d
 	guint64 offset;
 	PurpleXfer *xfer = NULL;
 
-	/*
-	if (purple_debug_is_verbose())
-		msn_slpmsg_show(msg);
-	*/
-
-#ifdef MSN_DEBUG_SLP_FILES
-#endif
 	if (header->total_size < header->length)
 	{
 		purple_debug_error("msn", "This can't be good\n");
 		g_return_if_reached();
 	}
-
-	/* data = msn_message_get_bin_data(msg, &len); */
 
 	offset = header->offset;
 
@@ -655,46 +634,43 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *d
 
 		purple_debug_info("msn", "msn_slplink_process_msg: slpmsg complete\n");
 
-		/*if (!slpcall->wasted) {*/
-			if (slpmsg->flags == 0x100)
-			{
+		if (/* !slpcall->wasted && */ slpmsg->flags == 0x100)
+		{
 #if 0
-				MsnDirectConn *directconn;
+			MsnDirectConn *directconn;
 
-				directconn = slplink->directconn;
-				if (!directconn->acked)
-					msn_directconn_send_handshake(directconn);
+			directconn = slplink->directconn;
+			if (!directconn->acked)
+				msn_directconn_send_handshake(directconn);
 #endif
+		}
+		else if (slpmsg->flags == 0x00 || slpmsg->flags == 0x1000000 ||
+		         slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||
+		         slpmsg->flags == 0x1000030)
+		{
+			/* Release all the messages and send the ACK */
+
+			if (slpcall->wait_for_socket) {
+				/*
+				 * Save ack for later because we have to send
+				 * a 200 OK message to the previous direct connect
+				 * invitation before ACK but the listening socket isn't
+				 * created yet.
+				 */
+				purple_debug_info("msn", "msn_slplink_process_msg: save ACK\n");
+
+				slpcall->slplink->dc->prev_ack = msn_slplink_create_ack(slplink, header);
+			} else if (!slpcall->wasted) {
+				purple_debug_info("msn", "msn_slplink_process_msg: send ACK\n");
+
+				msn_slplink_send_ack(slplink, header);
+				msn_slplink_send_queued_slpmsgs(slplink);
 			}
-			else if (slpmsg->flags == 0x00 || slpmsg->flags == 0x1000000 ||
-				 slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||
-				 slpmsg->flags == 0x1000030)
-			{
-				/* Release all the messages and send the ACK */
-
-				if (slpcall != NULL && slpcall->wait_for_socket) {
-					/*
-					 * Save ack for later because we have to send
-					 * a 200 OK message to the previous direct connect
-					 * invitation before ACK but the listening socket isn't
-					 * created yet.
-					 */
-
-					purple_debug_info("msn", "msn_slplink_process_msg: save ACK\n");
-
-					slpcall->slplink->dc->prev_ack = msn_slplink_create_ack(slplink, header);
-				} else {
-					purple_debug_info("msn", "msn_slplink_process_msg: send ACK\n");
-
-					msn_slplink_send_ack(slplink, header);
-					msn_slplink_send_queued_slpmsgs(slplink);
-				}
-			}
-		/*}*/
+		}
 
 		msn_slpmsg_destroy(slpmsg);
 
-		if (slpcall != NULL && !slpcall->wait_for_socket && slpcall->wasted)
+		if (!slpcall->wait_for_socket && slpcall->wasted)
 			msn_slpcall_destroy(slpcall);
 	}
 }
