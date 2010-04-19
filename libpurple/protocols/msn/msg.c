@@ -1124,28 +1124,24 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if (command == NULL || cookie == NULL) {
 		purple_debug_warning("msn",
-			"Invalid invitation message: "
-			"either Invitation-Command or Invitation-Cookie is missing or invaild"
+			"Invalid invitation message: either Invitation-Command "
+			"or Invitation-Cookie is missing or invalid.\n"
 		);
 		return;
 
 	} else if (!strcmp(command, "INVITE")) {
-
 		const gchar	*guid = g_hash_table_lookup(body, "Application-GUID");
 	
 		if (guid == NULL) {
-			const gchar *cmd = g_hash_table_lookup(
-					body, "Invitation-Command");
-
-			if (cmd && !strcmp(cmd, "CANCEL")) {
+			if (!strcmp(command, "CANCEL")) {
 				const gchar *code = g_hash_table_lookup(
 						body, "Cancel-Code");
 				purple_debug_info("msn",
 						"MSMSGS invitation cancelled: %s.\n",
 						code ? code : "no reason given");
 			} else
-				purple_debug_warning("msn", "Invite msg missing "
-						"Application-GUID.\n");
+				purple_debug_warning("msn",
+				                     "Invite msg missing Application-GUID.\n");
 
 			accepted = TRUE;
 
@@ -1179,7 +1175,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		} else {
 			const gchar *application = g_hash_table_lookup(body, "Application-Name");
 			purple_debug_warning("msn", "Unhandled invite msg with GUID %s: %s.\n",
-					     guid, application ? application : "(null)");
+			                     guid, application ? application : "(null)");
 		}
 		
 		if (!accepted) {
@@ -1193,9 +1189,9 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			msn_message_set_flag(cancel, 'U');
 
 			text = g_strdup_printf("Invitation-Command: CANCEL\r\n"
-					       "Invitation-Cookie: %s\r\n"
-					       "Cancel-Code: REJECT_NOT_INSTALLED\r\n",
-					       cookie);
+			                       "Invitation-Cookie: %s\r\n"
+			                       "Cancel-Code: REJECT_NOT_INSTALLED\r\n",
+			                       cookie);
 			msn_message_set_bin_data(cancel, text, strlen(text));
 			g_free(text);
 
@@ -1205,7 +1201,7 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	} else {
 		/*
-		 * Some other already estabilished invitation session.
+		 * Some other already established invitation session.
 		 * Can be retrieved by Invitation-Cookie.
 		 */
 	}
