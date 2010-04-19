@@ -167,61 +167,46 @@ msn_dc_destroy(MsnDirectConn *dc)
 	if (slplink->swboard == NULL)
 		msn_slplink_destroy(slplink);
 
-	if (dc->msg_body != NULL) {
-		g_free(dc->msg_body);
-		dc->msg_body = NULL;
-	}
+	g_free(dc->msg_body);
 
 	if (dc->prev_ack) {
 		msn_slpmsg_destroy(dc->prev_ack);
-		dc->prev_ack = NULL;
 	}
 
 	if (dc->listen_data != NULL) {
 		purple_network_listen_cancel(dc->listen_data);
-		dc->listen_data = NULL;
 	}
 
 	if (dc->connect_data != NULL) {
 		purple_proxy_connect_cancel(dc->connect_data);
-		dc->connect_data = NULL;
 	}
 
 	if (dc->listenfd != -1) {
 		purple_network_remove_port_mapping(dc->listenfd);
 		close(dc->listenfd);
-		dc->listenfd = -1;
 	}
 
 	if (dc->listenfd_handle != 0) {
 		purple_timeout_remove(dc->listenfd_handle);
-		dc->listenfd_handle = 0;
 	}
 
 	if (dc->connect_timeout_handle != 0) {
 		purple_timeout_remove(dc->connect_timeout_handle);
-		dc->connect_timeout_handle = 0;
 	}
 
 	if (dc->fd != -1) {
 		close(dc->fd);
-		dc->fd = -1;
 	}
 
 	if (dc->send_handle != 0) {
 		purple_input_remove(dc->send_handle);
-		dc->send_handle = 0;
 	}
 
 	if (dc->recv_handle != 0) {
 		purple_input_remove(dc->recv_handle);
-		dc->recv_handle = 0;
 	}
 
-	if (dc->in_buffer != NULL) {
-		g_free(dc->in_buffer);
-		dc->in_buffer = NULL;
-	}
+	g_free(dc->in_buffer);
 
 	if (dc->out_queue != NULL) {
 		while (!g_queue_is_empty(dc->out_queue))
@@ -230,14 +215,10 @@ msn_dc_destroy(MsnDirectConn *dc)
 		g_queue_free(dc->out_queue);
 	}
 
-	if (dc->ext_ip != NULL) {
-		g_free(dc->ext_ip);
-		dc->ext_ip = NULL;
-	}
+	g_free(dc->ext_ip);
 
 	if (dc->timeout_handle != 0) {
 		purple_timeout_remove(dc->timeout_handle);
-		dc->timeout_handle = 0;
 	}
 
 	g_free(dc);
@@ -573,7 +554,7 @@ msn_dc_send_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	g_return_if_fail(dc != NULL);
 	g_return_if_fail(fd != -1);
 
-	if(g_queue_is_empty(dc->out_queue)) {
+	if (g_queue_is_empty(dc->out_queue)) {
 		if (dc->send_handle != 0) {
 			purple_input_remove(dc->send_handle);
 			dc->send_handle = 0;
@@ -1295,9 +1276,9 @@ msn_dc_listen_socket_created_cb(int listenfd, gpointer data)
 	dc->listen_data = NULL;
 
 	if (listenfd != -1) {
-		const char	*ext_ip;
-		const char	*int_ip;
-		int		port;
+		const char *ext_ip;
+		const char *int_ip;
+		int port;
 
 		ext_ip = purple_network_get_my_ip(listenfd);
 		int_ip = purple_network_get_local_system_ip(listenfd);
