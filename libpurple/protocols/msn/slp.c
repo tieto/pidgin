@@ -204,34 +204,6 @@ msn_xfer_completed_cb(MsnSlpCall *slpcall, const guchar *body,
  * SLP Control
  **************************************************************************/
 
-#if 0
-static void
-got_transresp(MsnSlpCall *slpcall, const char *nonce,
-			  const char *ips_str, int port)
-{
-	MsnDirectConn *directconn;
-	char **ip_addrs, **c;
-
-	directconn = msn_directconn_new(slpcall->slplink);
-
-	directconn->initial_call = slpcall;
-
-	/* msn_directconn_parse_nonce(directconn, nonce); */
-	directconn->nonce = g_strdup(nonce);
-
-	ip_addrs = g_strsplit(ips_str, " ", -1);
-
-	for (c = ip_addrs; *c != NULL; c++)
-	{
-		purple_debug_info("msn", "ip_addr = %s\n", *c);
-		if (msn_directconn_connect(directconn, *c, port))
-			break;
-	}
-
-	g_strfreev(ip_addrs);
-}
-#endif
-
 void
 msn_slp_send_ok(MsnSlpCall *slpcall, const char *branch,
 		const char *type, const char *content)
@@ -671,12 +643,11 @@ got_invite(MsnSlpCall *slpcall,
 			return;
 
 		bridges = get_token(content, "Bridges: ", "\r\n");
-		if(bridges && strstr(bridges, "TCPv1") != NULL) {
+		if (bridges && strstr(bridges, "TCPv1") != NULL) {
 			/*
 			 * Ok, the client supports direct TCP connection
 			 * Try to create a listening port
 			 */
-			char *content;
 			MsnDirectConn *dc;
 
 			dc = msn_dc_new(slpcall);
@@ -693,15 +664,12 @@ got_invite(MsnSlpCall *slpcall,
 
 				purple_debug_info("msn", "got_invite: listening failed\n");
 
-				content = g_strdup(
+				msn_slp_send_ok(slpcall, branch,
+					"application/x-msnmsgr-transrespbody",
 					"Bridge: TCPv1\r\n"
 					"Listening: false\r\n"
 					"Hashed-Nonce: {00000000-0000-0000-0000-000000000000}\r\n"
-					"\r\n"
-				);
-				msn_slp_send_ok(slpcall, branch,
-					"application/x-msnmsgr-transrespbody", content);
-				g_free(content);
+					"\r\n");
 
 			} else {
 				/*
