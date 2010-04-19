@@ -1797,13 +1797,13 @@ AC_SUBST(GNUTLS_CFLAGS)
 AC_SUBST(GNUTLS_LIBS)
 
 if test "x$enable_gnutls" = "xyes"; then
-	AC_MSG_CHECKING(for gnutls_priority_set_direct)
+	AC_MSG_CHECKING(for gnutls_priority_set_direct and gnutls_priority_set)
 	LIBS_save="$LIBS"
 	LIBS="$LIBS $GNUTLS_LIBS"
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
-                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);]])],
+                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL); gnutls_priority_set(s, NULL);]])],
 	               [AC_DEFINE([HAVE_GNUTLS_PRIORITY_FUNCS], 1,
                                   [Define if your gnutls has gnutls_priority_set_direct and friends])
 	                AC_MSG_RESULT(yes)],
