@@ -33,6 +33,8 @@
   @signal chat-left
   @signal chat-topic-changed
   @signal conversation-extended-menu
+  @signal sent-attention
+  @signal got-attention
  @endsignals
 
  @see conversation.h
