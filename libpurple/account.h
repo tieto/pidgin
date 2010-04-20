@@ -418,6 +418,8 @@ void purple_account_set_proxy_info(PurpleAccount *account, PurpleProxyInfo *info
  *
  * @param account      The account.
  * @param privacy_type The privacy type.
+ *
+ * @since 2.7.0
  */
 void purple_account_set_privacy_type(PurpleAccount *account, PurplePrivacyType privacy_type);
 
@@ -696,6 +698,8 @@ PurpleProxyInfo *purple_account_get_proxy_info(const PurpleAccount *account);
  * @param account   The account.
  *
  * @return The privacy type.
+ *
+ * @since 2.7.0
  */
 PurplePrivacyType purple_account_get_privacy_type(const PurpleAccount *account);
 
