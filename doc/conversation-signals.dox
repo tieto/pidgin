@@ -35,6 +35,8 @@
   @signal conversation-extended-menu
   @signal sent-attention
   @signal got-attention
+  @signal buddy-caps-changed
+  @signal ui-caps-changed
  @endsignals
 
  @see conversation.h
