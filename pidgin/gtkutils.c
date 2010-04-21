@@ -2507,7 +2507,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 		new_height = orig_height * scale_factor;
 		g_object_unref(G_OBJECT(pixbuf));
 		pixbuf = gdk_pixbuf_scale_simple(original, new_width, new_height, GDK_INTERP_HYPER);
-	} while (new_width > 10 || new_height > 10);
+	} while ((new_width > 10 || new_height > 10) && new_width > spec->min_width && new_height > spec->min_height);
 	g_strfreev(prpl_formats);
 	g_object_unref(G_OBJECT(pixbuf));
 	g_object_unref(G_OBJECT(original));
