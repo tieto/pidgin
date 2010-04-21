@@ -71,6 +71,10 @@
 #include "jingle/rtp.h"
 
 #define PING_TIMEOUT 60
+/* Send a whitespace keepalive to the server if we haven't sent
+ * anything in the last 120 seconds
+ */
+#define DEFAULT_INACTIVITY_TIME 120
 
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
@@ -362,6 +366,9 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 
 	if (len == -1)
 		len = strlen(data);
+
+	if (js->state == JABBER_STREAM_CONNECTED)
+		jabber_stream_restart_inactivity_timer(js);
 
 	if (js->writeh == 0)
 		ret = jabber_do_send(js, data, len);
@@ -889,6 +896,7 @@ jabber_stream_new(PurpleAccount *account)
 	js->write_buffer = purple_circ_buffer_new(512);
 	js->old_length = 0;
 	js->keepalive_timeout = 0;
+	js->max_inactivity = DEFAULT_INACTIVITY_TIME;
 	/* Set the default protocol version to 1.0. Overridden in parser.c. */
 	js->protocol_version.major = 1;
 	js->protocol_version.minor = 0;
@@ -1583,6 +1591,8 @@ void jabber_close(PurpleConnection *gc)
 
 	if (js->keepalive_timeout != 0)
 		purple_timeout_remove(js->keepalive_timeout);
+	if (js->inactivity_timer != 0)
+		purple_timeout_remove(js->inactivity_timer);
 
 	g_free(js->srv_rec);
 	js->srv_rec = NULL;
@@ -1634,6 +1644,9 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_CONNECTED:
 			/* Send initial presence */
 			jabber_presence_send(js, TRUE);
+			/* Start up the inactivity timer */
+			jabber_stream_restart_inactivity_timer(js);
+
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 			break;
 	}
@@ -1920,6 +1933,38 @@ gboolean jabber_stream_is_ssl(JabberStream *js)
 {
 	return (js->bosh && jabber_bosh_connection_is_ssl(js->bosh)) ||
 	       (!js->bosh && js->gsc);
+}
+
+static gboolean
+inactivity_cb(gpointer data)
+{
+	JabberStream *js = data;
+
+	/* We want whatever is sent to set this.  It's okay because
+	 * the eventloop unsets it via the return FALSE.
+	 */
+	js->inactivity_timer = 0;
+
+	if (js->bosh)
+		jabber_bosh_connection_send_keepalive(js->bosh);
+	else
+		jabber_send_raw(js, "\t", 1);
+
+	return FALSE;
+}
+
+void jabber_stream_restart_inactivity_timer(JabberStream *js)
+{
+	if (js->inactivity_timer != 0) {
+		purple_timeout_remove(js->inactivity_timer);
+		js->inactivity_timer = 0;
+	}
+
+	g_return_if_fail(js->max_inactivity > 0);
+
+	js->inactivity_timer =
+		purple_timeout_add_seconds(js->max_inactivity,
+		                           inactivity_cb, js);
 }
 
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b)

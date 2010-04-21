@@ -35,6 +35,7 @@ PurpleBOSHConnection* jabber_bosh_connection_init(JabberStream *js, const char *
 void jabber_bosh_connection_destroy(PurpleBOSHConnection *conn);
 
 gboolean jabber_bosh_connection_is_ssl(PurpleBOSHConnection *conn);
+void jabber_bosh_connection_send_keepalive(PurpleBOSHConnection *conn);
 
 void jabber_bosh_connection_connect(PurpleBOSHConnection *conn);
 void jabber_bosh_connection_close(PurpleBOSHConnection *conn);

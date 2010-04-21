@@ -84,6 +84,10 @@ version 2.7.0 (??/??/????):
 	  BoB XEP).
 	* Present a better error message when authentication fails while trying
 	  to connect to Facebook.  (David Reiss, Facebook)
+	* Send whitespace keepalives if we haven't sent data in a while (2
+	  minutes).  This fixes an issue with Openfire disconnecting a
+	  libpurple-baesd client that has just been quiet for about 6
+	  minutes.
 
 	Yahoo/Yahoo JAPAN:
 	* Attempt to better handle transparent proxies interfering with HTTP-based
