@@ -1034,6 +1034,7 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 		case GG_STATUS_DND:
 		case GG_STATUS_DND_DESCR:
 			st = purple_primitive_get_id_from_type(PURPLE_STATUS_UNAVAILABLE);
+			break;
 		case GG_STATUS_BLOCKED:
 			/* user is blocking us.... */
 			st = "blocked";
