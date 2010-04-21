@@ -2469,7 +2469,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 					break;
 				}
 
-				if (spec->max_filesize == 0 || length < spec->max_filesize) {
+				if (spec->max_filesize == 0 || length <= spec->max_filesize) {
 					/* We were able to save the image as this image type and
 					   have it be within the size constraints.  Great!  Return
 					   the image. */
