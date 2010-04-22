@@ -357,7 +357,7 @@ msn_show_set_friendly_name(PurplePluginAction *action)
 
 	tmp = g_strdup_printf(_("Set friendly name for %s."),
 	                      purple_account_get_username(account));
-	purple_request_input(gc, _("Set your friendly name."), tmp,
+	purple_request_input(gc, _("Set Friendly Name"), tmp,
 					   _("This is the name that other MSN buddies will "
 						 "see you as."),
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
