@@ -18,6 +18,8 @@ version 2.7.0 (??/??/????):
 	  GnuTLS manual for documentation on the format of the priority
 	  strings.
 	* Fix autoconf detection of Python.  (Brad Smith)
+	* Fix a crash when a Windows proxy (in IE) does not have a port.
+	  (Marten Klencke)
 
 	Pidgin:
 	* Moved the "Debugging Information" section of the About box to a
