@@ -255,6 +255,8 @@ struct _JabberStream
 
 	/* A purple timeout tag for the keepalive */
 	guint keepalive_timeout;
+	guint max_inactivity;
+	guint inactivity_timer;
 
 	PurpleSrvResponse *srv_rec;
 	guint srv_rec_idx;
@@ -348,6 +350,13 @@ void jabber_add_identity(const gchar *category, const gchar *type, const gchar *
  * members in its own data structure.
  */
 gboolean jabber_stream_is_ssl(JabberStream *js);
+
+/**
+ * Restart the "we haven't sent anything in a while and should send
+ * something or the server will kick us off" timer (obviously
+ * called when sending something.  It's exposed for BOSH.)
+ */
+void jabber_stream_restart_inactivity_timer(JabberStream *js);
 
 /** PRPL functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);

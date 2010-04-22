@@ -3,6 +3,7 @@
  @signals
   @signal signing-on
   @signal signed-on
+  @signal autojoin
   @signal signing-off
   @signal signed-off
   @signal connection-error
@@ -28,6 +29,22 @@ void (*signed_on)(PurpleConnection *gc);
   @signaldesc
    Emitted when a connection has signed on.
   @param gc The connection that has signed on.
+ @endsignaldef
+
+ @signaldef autojoin
+  @signalproto
+gboolean (*autojoin)(PurpleConnection *gc);
+  @endsignalproto
+  @signaldesc
+   Emitted when a connection has signed on, after the signed-on signal, to
+   signal UIs to autojoin chats if they wish.  UIs should connect to this
+   with @c PURPLE_SIGNAL_PRIORITY_HIGHEST to allow plugins to block this
+   signal before the UI sees it and then re-emit it later.
+  @param gc The connection that has signed on.
+  @return @c TRUE if the signal was handled or @c FALSE otherwise.  In
+          practice, the return value is irrelevant, as it really only
+          exists so plugins can block the UI's autojoin.
+  @since 2.7.0
  @endsignaldef
 
  @signaldef signing-off

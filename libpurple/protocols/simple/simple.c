@@ -1653,6 +1653,7 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 		}
 		purple_debug(PURPLE_DEBUG_MISC, "simple", "in process response response: %d\n", msg->response);
 		process_input_message(sip, msg);
+		sipmsg_free(msg);
 	} else {
 		purple_debug(PURPLE_DEBUG_MISC, "simple", "received a incomplete sip msg: %s\n", conn->inbuf);
 	}
@@ -1663,14 +1664,17 @@ static void simple_udp_process(gpointer data, gint source, PurpleInputCondition 
 	struct simple_account_data *sip = gc->proto_data;
 	struct sipmsg *msg;
 	int len;
-	time_t currtime;
+	time_t currtime = time(NULL);
 
 	static char buffer[65536];
 	if((len = recv(source, buffer, sizeof(buffer) - 1, 0)) > 0) {
 		buffer[len] = '\0';
 		purple_debug_info("simple", "\n\nreceived - %s\n######\n%s\n#######\n\n", ctime(&currtime), buffer);
 		msg = sipmsg_parse_msg(buffer);
-		if(msg) process_input_message(sip, msg);
+		if (msg) {
+			process_input_message(sip, msg);
+			sipmsg_free(msg);
+		}
 	}
 }
 
@@ -1777,10 +1781,14 @@ static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
 		return;
 	}
 
+	/*
+	 * TODO: Is it correct to set sip->fd to the listenfd?  For the TCP
+	 *       listener we set sip->listenfd, but maybe UDP is different?
+	 *       Maybe we use the same fd for outgoing data or something?
+	 */
 	sip->fd = listenfd;
 
 	sip->listenport = purple_network_get_port_from_fd(sip->fd);
-	sip->listenfd = sip->fd;
 
 	sip->listenpa = purple_input_add(sip->fd, PURPLE_INPUT_READ, simple_udp_process, sip->gc);
 
@@ -1965,54 +1973,69 @@ static void simple_close(PurpleConnection *gc)
 {
 	struct simple_account_data *sip = gc->proto_data;
 
-	if(sip) {
-		/* unregister */
-		if (sip->registerstatus == SIMPLE_REGISTER_COMPLETE)
-		{
-			g_hash_table_foreach(sip->buddies,
-				(GHFunc)simple_unsubscribe,
-				(gpointer)sip);
+	if (!sip)
+		return;
 
-			if(purple_account_get_bool(sip->account,
-						   "dopublish", TRUE))
-				send_closed_publish(sip);
+	/* unregister */
+	if (sip->registerstatus == SIMPLE_REGISTER_COMPLETE)
+	{
+		g_hash_table_foreach(sip->buddies,
+			(GHFunc)simple_unsubscribe,
+			(gpointer)sip);
 
-			do_register_exp(sip, 0);
-		}
-		connection_free_all(sip);
+		if (purple_account_get_bool(sip->account, "dopublish", TRUE))
+			send_closed_publish(sip);
 
-		if (sip->query_data != NULL)
-			purple_dnsquery_destroy(sip->query_data);
-
-		if (sip->srv_query_data != NULL)
-			purple_srv_cancel(sip->srv_query_data);
-
-		if (sip->listen_data != NULL)
-			purple_network_listen_cancel(sip->listen_data);
-
-		g_free(sip->servername);
-		g_free(sip->username);
-		g_free(sip->password);
-		g_free(sip->registrar.nonce);
-		g_free(sip->registrar.opaque);
-		g_free(sip->registrar.target);
-		g_free(sip->registrar.realm);
-		g_free(sip->registrar.digest_session_key);
-		g_free(sip->proxy.nonce);
-		g_free(sip->proxy.opaque);
-		g_free(sip->proxy.target);
-		g_free(sip->proxy.realm);
-		g_free(sip->proxy.digest_session_key);
-		g_free(sip->publish_etag);
-		if(sip->txbuf)
-			purple_circ_buffer_destroy(sip->txbuf);
-		g_free(sip->realhostname);
-		if(sip->listenpa) purple_input_remove(sip->listenpa);
-		if(sip->tx_handler) purple_input_remove(sip->tx_handler);
-		if(sip->resendtimeout) purple_timeout_remove(sip->resendtimeout);
-		if(sip->registertimeout) purple_timeout_remove(sip->registertimeout);
+		do_register_exp(sip, 0);
 	}
-	g_free(gc->proto_data);
+	connection_free_all(sip);
+
+	if (sip->listenpa)
+		purple_input_remove(sip->listenpa);
+	if (sip->tx_handler)
+		purple_input_remove(sip->tx_handler);
+	if (sip->resendtimeout)
+		purple_timeout_remove(sip->resendtimeout);
+	if (sip->registertimeout)
+		purple_timeout_remove(sip->registertimeout);
+	if (sip->query_data != NULL)
+		purple_dnsquery_destroy(sip->query_data);
+
+	if (sip->srv_query_data != NULL)
+		purple_srv_cancel(sip->srv_query_data);
+
+	if (sip->listen_data != NULL)
+		purple_network_listen_cancel(sip->listen_data);
+
+	if (sip->fd >= 0)
+		close(sip->fd);
+	if (sip->listenfd >= 0)
+		close(sip->listenfd);
+
+	g_free(sip->servername);
+	g_free(sip->username);
+	g_free(sip->password);
+	g_free(sip->registrar.nonce);
+	g_free(sip->registrar.opaque);
+	g_free(sip->registrar.target);
+	g_free(sip->registrar.realm);
+	g_free(sip->registrar.digest_session_key);
+	g_free(sip->proxy.nonce);
+	g_free(sip->proxy.opaque);
+	g_free(sip->proxy.target);
+	g_free(sip->proxy.realm);
+	g_free(sip->proxy.digest_session_key);
+	g_free(sip->status);
+	g_hash_table_destroy(sip->buddies);
+	g_free(sip->regcallid);
+	while (sip->transactions)
+		transactions_remove(sip, sip->transactions->data);
+	g_free(sip->publish_etag);
+	if (sip->txbuf)
+		purple_circ_buffer_destroy(sip->txbuf);
+	g_free(sip->realhostname);
+
+	g_free(sip);
 	gc->proto_data = NULL;
 }
 

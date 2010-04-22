@@ -1727,24 +1727,64 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 	purple_debug_info("yahoo", "yahoo status: %d\n", yd->current_status);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP, yd->current_status, yd->session_id);
 	
-	yahoo_packet_hash(pkt, "sssssssss",
-				1, name,
-				0, name,
-				277, yd->cookie_y,
-				278, yd->cookie_t,
-				307, base64_string,
-				244, yd->jp ? YAHOOJP_CLIENT_VERSION_ID : YAHOO_CLIENT_VERSION_ID,
-				2, name,
-				2, "1",
-				/* Should send key 59, value of bcookie here--need to fetch it first! */
-				98, purple_account_get_string(account, "room_list_locale", yd->jp ? "jp" : "us"),
-				135, yd->jp ? YAHOOJP_CLIENT_VERSION : YAHOO_CLIENT_VERSION);
+	if(yd->cookie_b) { /* send B cookie if we have it */
+		yahoo_packet_hash(pkt, "ssssssssss",
+					1, name,
+					0, name,
+					277, yd->cookie_y,
+					278, yd->cookie_t,
+					307, base64_string,
+					244, yd->jp ? YAHOOJP_CLIENT_VERSION_ID : YAHOO_CLIENT_VERSION_ID,
+					2, name,
+					2, "1",
+					59, yd->cookie_b,
+					98, purple_account_get_string(account, "room_list_locale", yd->jp ? "jp" : "us"),
+					135, yd->jp ? YAHOOJP_CLIENT_VERSION : YAHOO_CLIENT_VERSION);
+	} else { /* don't try to send an empty B cookie - the server will be mad */
+		yahoo_packet_hash(pkt, "sssssssss",
+					1, name,
+					0, name,
+					277, yd->cookie_y,
+					278, yd->cookie_t,
+					307, base64_string,
+					244, yd->jp ? YAHOOJP_CLIENT_VERSION_ID : YAHOO_CLIENT_VERSION_ID,
+					2, name,
+					2, "1",
+					98, purple_account_get_string(account, "room_list_locale", yd->jp ? "jp" : "us"),
+					135, yd->jp ? YAHOOJP_CLIENT_VERSION : YAHOO_CLIENT_VERSION);
+	}
 
 	if (yd->picture_checksum)
 		yahoo_packet_hash_int(pkt, 192, yd->picture_checksum);
 	yahoo_packet_send_and_free(pkt, yd);
 
 	purple_cipher_context_destroy(md5_ctx);
+}
+
+static gchar *yahoo_auth16_get_cookie_b(gchar *headers)
+{
+	gchar **splits = g_strsplit(headers, "\r\n", -1);
+	gchar *tmp = NULL, *tmp2 = NULL, *sem = NULL;
+	int elements = g_strv_length(splits), i;
+
+	if(elements > 1) {
+		for(i = 0; i < elements; i++) {
+			if(g_ascii_strncasecmp(splits[i], "Set-Cookie: B=", 14) == 0) {
+				tmp = &splits[i][14];
+				sem = strchr(tmp, ';');
+
+				if (sem != NULL) {
+					tmp2 = g_strndup(tmp, sem - tmp);
+					purple_debug_info("yahoo", "Got needed part of B cookie: %s\n",
+							tmp2 ? tmp2 : "(null)");
+					break;
+				}
+			}
+		}
+	}
+
+	g_strfreev(splits);
+	return tmp2;
 }
 
 static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_data, const gchar *ret_data, size_t len, const gchar *error_message)
@@ -1772,21 +1812,56 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 		return;
 	}
 	else if (len > 0 && ret_data && *ret_data) {
-		gchar **split_data = g_strsplit(ret_data, "\r\n", -1);
+		gchar **splits = g_strsplit(ret_data, "\r\n\r\n", -1), **split_data = NULL;
 		int totalelements = 0;
 		int response_no = -1;
 		char *crumb = NULL;
 		char *crypt = NULL;
-
-		totalelements = g_strv_length(split_data);
-
-		if (totalelements >= 4) {
-			response_no = strtol(split_data[0], NULL, 10);
-			crumb = g_strdup(split_data[1] + strlen("crumb="));
-			yd->cookie_y = g_strdup(split_data[2] + strlen("Y="));
-			yd->cookie_t = g_strdup(split_data[3] + strlen("T="));
+		
+		if(g_strv_length(splits) > 1) {
+			yd->cookie_b = yahoo_auth16_get_cookie_b(splits[0]);
+			split_data = g_strsplit(splits[1], "\r\n", -1);
+			totalelements = g_strv_length(split_data);
 		}
 
+		if (totalelements >= 4) {
+			int i;
+
+			for(i = 0; i < totalelements; i++) {
+				/* I'm not exactly a fan of the magic numbers, but it's obvious,
+				 * so no sense in wasting a bajillion vars or calls to strlen */
+
+				if(g_ascii_isdigit(split_data[i][0])) {
+					/* if the current line and the next line both start with numbers,
+					 * the current line is the length of the body, so skip.  If not,
+					 * then the current line is the response code from the login process. */
+					if(!g_ascii_isdigit(split_data[i + 1][0])) {
+						response_no = strtol(split_data[i], NULL, 10);
+						purple_debug_info("yahoo", "Got auth16 stage 2 response code: %d\n",
+								response_no);
+					}
+				} else if(strncmp(split_data[i], "crumb=", 6) == 0) {
+					crumb = g_strdup(&split_data[i][6]);
+
+					if(purple_debug_is_unsafe())
+						purple_debug_info("yahoo", "Got crumb: %s\n", crumb);
+
+				} else if(strncmp(split_data[i], "Y=", 2) == 0) {
+					yd->cookie_y = g_strdup(&split_data[i][2]);
+
+					if(purple_debug_is_unsafe())
+						purple_debug_info("yahoo", "Got Y cookie: %s\n", yd->cookie_y);
+
+				} else if(strncmp(split_data[i], "T=", 2) == 0) {
+					yd->cookie_t = g_strdup(&split_data[i][2]);
+
+					if(purple_debug_is_unsafe())
+						purple_debug_info("yahoo", "Got T cookie: %s\n", yd->cookie_t);
+				}
+			}
+		}
+
+		g_strfreev(splits);
 		g_strfreev(split_data);
 
 		if(response_no != 0) {
@@ -1947,7 +2022,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 			url = g_strdup_printf(yahoojp ? YAHOOJP_LOGIN_URL : YAHOO_LOGIN_URL, token);
 			url_data = purple_util_fetch_url_request_len_with_account(
 					proxy_ssl ? account : NULL, url, TRUE, YAHOO_CLIENT_USERAGENT,
-					TRUE, NULL, FALSE, -1, yahoo_auth16_stage2, auth_data);
+					TRUE, NULL, TRUE, -1, yahoo_auth16_stage2, auth_data);
 			g_free(url);
 			g_free(token);
 		}
@@ -2688,6 +2763,7 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	p2p_data->connection_type = YAHOO_P2P_WE_ARE_SERVER;
 	p2p_data->source = -1;
 
+	/* FIXME: Shouldn't this deal with the PurpleNetworkListenData* */
 	purple_network_listen(YAHOO_PAGER_PORT_P2P, SOCK_STREAM, yahoo_p2p_server_listen_cb, p2p_data);
 
 	g_free(base64_ip);
@@ -3668,6 +3744,7 @@ void yahoo_close(PurpleConnection *gc) {
 
 	g_free(yd->cookie_y);
 	g_free(yd->cookie_t);
+	g_free(yd->cookie_b);
 
 	if (yd->txhandler)
 		purple_input_remove(yd->txhandler);

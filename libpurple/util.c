@@ -586,6 +586,7 @@ purple_utf8_strftime(const char *format, const struct tm *tm)
 	{
 		purple_debug_error("util", "Format conversion failed in purple_utf8_strftime(): %s\n", err->message);
 		g_error_free(err);
+		err = NULL;
 		locale = g_strdup(format);
 	}
 
@@ -2968,22 +2969,86 @@ purple_running_osx(void)
 #endif
 }
 
+typedef union purple_sockaddr {
+	struct sockaddr         sa;
+	struct sockaddr_in      sa_in;
+#if defined(AF_INET6)
+	struct sockaddr_in6     sa_in6;
+#endif
+	struct sockaddr_storage sa_stor;
+} PurpleSockaddr;
+
 char *
 purple_fd_get_ip(int fd)
 {
-	struct sockaddr addr;
+	PurpleSockaddr addr;
 	socklen_t namelen = sizeof(addr);
-	struct in_addr in;
+	int family;
 
 	g_return_val_if_fail(fd != 0, NULL);
 
-	if (getsockname(fd, &addr, &namelen))
+	if (getsockname(fd, &(addr.sa), &namelen))
 		return NULL;
 
-	in = ((struct sockaddr_in *)&addr)->sin_addr;
-	return g_strdup(inet_ntoa(in));
+	family = addr.sa.sa_family;
+
+	if (family == AF_INET) {
+		return g_strdup(inet_ntoa(addr.sa_in.sin_addr));
+	}
+#if defined(AF_INET6) && defined(HAVE_INET_NTOP)
+	else if (family == AF_INET6) {
+		char host[INET6_ADDRSTRLEN];
+		const char *tmp;
+
+		tmp = inet_ntop(family, &(addr.sa_in6.sin6_addr), host, sizeof(host));
+		return g_strdup(tmp);
+	}
+#endif
+
+	return NULL;
 }
 
+int
+purple_socket_get_family(int fd)
+{
+	PurpleSockaddr addr;
+	socklen_t len = sizeof(addr);
+
+	g_return_val_if_fail(fd >= 0, -1);
+
+	if (getsockname(fd, &(addr.sa), &len))
+		return -1;
+
+	return addr.sa.sa_family;
+}
+
+gboolean
+purple_socket_speaks_ipv4(int fd)
+{
+	int family;
+
+	g_return_val_if_fail(fd >= 0, FALSE);
+
+	family = purple_socket_get_family(fd);
+
+	switch (family) {
+	case AF_INET:
+		return TRUE;
+#if defined(IPV6_V6ONLY)
+	case AF_INET6:
+	{
+		int val = 0;
+		guint len = sizeof(val);
+
+		if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &val, &len) != 0)
+			return FALSE;
+		return !val;
+	}
+#endif
+	default:
+		return FALSE;
+	}
+}
 
 /**************************************************************************
  * String Functions

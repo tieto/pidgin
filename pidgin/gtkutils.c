@@ -2469,7 +2469,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 					break;
 				}
 
-				if (spec->max_filesize == 0 || length < spec->max_filesize) {
+				if (spec->max_filesize == 0 || length <= spec->max_filesize) {
 					/* We were able to save the image as this image type and
 					   have it be within the size constraints.  Great!  Return
 					   the image. */
@@ -2507,7 +2507,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 		new_height = orig_height * scale_factor;
 		g_object_unref(G_OBJECT(pixbuf));
 		pixbuf = gdk_pixbuf_scale_simple(original, new_width, new_height, GDK_INTERP_HYPER);
-	} while (new_width > 10 || new_height > 10);
+	} while ((new_width > 10 || new_height > 10) && new_width > spec->min_width && new_height > spec->min_height);
 	g_strfreev(prpl_formats);
 	g_object_unref(G_OBJECT(pixbuf));
 	g_object_unref(G_OBJECT(original));
@@ -3484,6 +3484,9 @@ void pidgin_utils_init(void)
 	                    "GtkWidget::focus-line-width = 0\n"
 	                    "xthickness = 0\n"
 	                    "ythickness = 0\n"
+	                    "GtkContainer::border-width = 0\n"
+	                    "GtkButton::inner-border = {0, 0, 0, 0}\n"
+	                    "GtkButton::default-border = {0, 0, 0, 0}\n"
 	                    "}\n"
 	                    "widget \"*.pidgin-small-close-button\" style \"pidgin-small-close-button\"");
 

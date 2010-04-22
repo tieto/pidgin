@@ -184,6 +184,12 @@ AC_CHECK_MEMBER([struct sockaddr.sa_len],
 	[Define if struct sockaddr has an sa_len member])],[:],
 	[#include <sys/socket.h>])
 
+dnl Check for v6-only sockets
+AC_CHECK_DECL([IPV6_V6ONLY],
+	[AC_DEFINE([HAVE_IPV6_V6ONLY],[1],
+	[Define if the IPV6_V6ONLY setsockopt option exists])],
+	[], [#include <netinet/in.h>])
+
 dnl to prevent the g_stat()/g_unlink() crash,
 dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
 AC_SYS_LARGEFILE
@@ -1791,13 +1797,13 @@ AC_SUBST(GNUTLS_CFLAGS)
 AC_SUBST(GNUTLS_LIBS)
 
 if test "x$enable_gnutls" = "xyes"; then
-	AC_MSG_CHECKING(for gnutls_priority_set_direct)
+	AC_MSG_CHECKING(for gnutls_priority_set_direct and gnutls_priority_set)
 	LIBS_save="$LIBS"
 	LIBS="$LIBS $GNUTLS_LIBS"
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
-                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL);]])],
+                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL); gnutls_priority_set(s, NULL);]])],
 	               [AC_DEFINE([HAVE_GNUTLS_PRIORITY_FUNCS], 1,
                                   [Define if your gnutls has gnutls_priority_set_direct and friends])
 	                AC_MSG_RESULT(yes)],

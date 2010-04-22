@@ -177,7 +177,7 @@ int aim_icq_changepasswd(OscarData *od, const char *passwd)
 	byte_stream_putle16(&bs, snacid); /* eh. */
 	byte_stream_putle16(&bs, 0x042e); /* shrug. */
 	byte_stream_putle16(&bs, passwdlen+1);
-	byte_stream_putstr(&bs, passwd);
+	byte_stream_putraw(&bs, (const guint8 *)passwd, passwdlen);
 	byte_stream_putle8(&bs, '\0');
 
 	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);

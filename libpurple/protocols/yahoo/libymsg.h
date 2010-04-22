@@ -220,6 +220,7 @@ typedef struct {
 	gsize auth_written;
 	char *cookie_y;
 	char *cookie_t;
+	char *cookie_b;
 	int session_id;
 	gboolean jp;
 	gboolean wm; /* connected w/ web messenger method */

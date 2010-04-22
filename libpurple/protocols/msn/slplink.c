@@ -78,7 +78,7 @@ msn_slplink_new(MsnSession *session, const char *username)
 	session->slplinks =
 		g_list_append(session->slplinks, slplink);
 
-	return slplink;
+	return msn_slplink_ref(slplink);
 }
 
 void
@@ -93,6 +93,11 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	if (slplink->swboard != NULL)
 		slplink->swboard->slplinks = g_list_remove(slplink->swboard->slplinks, slplink);
+
+	if (slplink->refs > 1) {
+		slplink->refs--;
+		return;
+	}
 
 	session = slplink->session;
 
@@ -112,6 +117,31 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 	g_free(slplink->remote_user);
 
 	g_free(slplink);
+}
+
+MsnSlpLink *
+msn_slplink_ref(MsnSlpLink *slplink)
+{
+	g_return_val_if_fail(slplink != NULL, NULL);
+
+	slplink->refs++;
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slplink ref (%p)[%d]\n", slplink, slplink->refs);
+
+	return slplink;
+}
+
+void
+msn_slplink_unref(MsnSlpLink *slplink)
+{
+	g_return_if_fail(slplink != NULL);
+
+	slplink->refs--;
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slplink unref (%p)[%d]\n", slplink, slplink->refs);
+
+	if (slplink->refs == 0)
+		msn_slplink_destroy(slplink);
 }
 
 MsnSlpLink *

@@ -7461,7 +7461,7 @@ PidginBuddyList *pidgin_blist_get_default_gtk_blist()
 	return gtkblist;
 }
 
-static void account_signon_cb(PurpleConnection *gc, gpointer z)
+static gboolean autojoin_cb(PurpleConnection *gc, gpointer data)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleBlistNode *gnode, *cnode;
@@ -7487,6 +7487,9 @@ static void account_signon_cb(PurpleConnection *gc, gpointer z)
 				serv_join_chat(gc, chat->components);
 		}
 	}
+
+	/* Stop processing; we handled the autojoins. */
+	return TRUE;
 }
 
 void *
@@ -7563,10 +7566,6 @@ void pidgin_blist_init(void)
 
 	cached_emblems = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
-						gtk_blist_handle, PURPLE_CALLBACK(account_signon_cb),
-						NULL);
-
 	/* Initialize prefs */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/blist");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons", TRUE);
@@ -7625,6 +7624,9 @@ void pidgin_blist_init(void)
 	purple_signal_connect(purple_blist_get_handle(), "buddy-privacy-changed",
 			gtk_blist_handle, PURPLE_CALLBACK(pidgin_blist_update_privacy_cb), NULL);
 
+	purple_signal_connect_priority(purple_connections_get_handle(), "autojoin",
+	                               gtk_blist_handle, PURPLE_CALLBACK(autojoin_cb),
+	                               NULL, PURPLE_SIGNAL_PRIORITY_HIGHEST);
 }
 
 void
@@ -7739,7 +7741,6 @@ static void sort_method_alphabetical(PurpleBlistNode *node, PurpleBuddyList *bli
 		sort_method_none(node, blist, groupiter, cur, iter);
 		return;
 	}
-
 
 	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
 		gtk_tree_store_insert(gtkblist->treemodel, iter, &groupiter, 0);

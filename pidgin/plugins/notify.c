@@ -547,7 +547,11 @@ handle_count_xprop(PidginWindow *purplewin)
 	}
 
 	count = count_messages(purplewin);
+#if GTK_CHECK_VERSION(2,14,0)
+	gdkwin = gtk_widget_get_window(window);
+#else
 	gdkwin = window->window;
+#endif
 
 	gdk_property_change(gdkwin, _PurpleUnseenCount, _Cardinal, 32,
 	                    GDK_PROP_MODE_REPLACE, (guchar *) &count, 1);

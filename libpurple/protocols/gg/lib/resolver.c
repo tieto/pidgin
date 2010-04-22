@@ -585,7 +585,7 @@ cleanup:
  *                  danych
  * \param force Flaga usuwania zasobów przed zakończeniem działania
  */
-void gg_resolver_fork_cleanup(void **priv_data, int force)
+static void gg_resolver_fork_cleanup(void **priv_data, int force)
 {
 	struct gg_resolver_fork_data *data;
 

@@ -997,7 +997,7 @@ static PurpleRoomlist *nullprpl_roomlist_get_list(PurpleConnection *gc) {
 
     /* This cast is OK because this list is only staying around for the life
      * of this function and none of the conversations are being deleted
-	 * in that timespan. */
+     * in that timespan. */
     seen_ids = g_list_prepend(seen_ids, (char *)name); /* no, it's new. */
     purple_debug_info("nullprpl", "%s (%d), ", name, id);
 
@@ -1117,10 +1117,10 @@ static PurplePluginProtocolInfo prpl_info =
   NULL,                                /* send_attention */
   NULL,                                /* get_attention_types */
   sizeof(PurplePluginProtocolInfo),    /* struct_size */
-  NULL,				       /* get_account_text_table */
+  NULL,                                /* get_account_text_table */
   NULL,                                /* initiate_media */
   NULL,                                /* get_media_caps */
-  NULL				       /* get_moods */
+  NULL                                 /* get_moods */
 };
 
 static void nullprpl_init(PurplePlugin *plugin)

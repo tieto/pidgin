@@ -75,7 +75,6 @@ SUBDIRS = pixmaps plugins
 bin_PROGRAMS = pidgin
 
 pidgin_SOURCES = \
-	eggtrayicon.c \
 	pidginstock.c \
 	gtkaccount.c \
 	gtkblist.c \
@@ -126,7 +125,6 @@ pidgin_SOURCES = \
 	pidgintooltip.c
 
 pidgin_headers = \
-	eggtrayicon.h \
 	gtkaccount.h \
 	gtkblist.h \
 	gtkblist-theme.h \
