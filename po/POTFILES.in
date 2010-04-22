@@ -106,7 +106,6 @@ libpurple/protocols/jabber/usermood.c
 libpurple/protocols/jabber/usernick.c
 libpurple/protocols/jabber/xdata.c
 libpurple/protocols/msn/contact.c
-libpurple/protocols/msn/dialog.c
 libpurple/protocols/msn/error.c
 libpurple/protocols/msn/group.h
 libpurple/protocols/msn/msg.c
