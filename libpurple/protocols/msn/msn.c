@@ -1202,7 +1202,10 @@ msn_login(PurpleAccount *account)
 	purple_connection_set_display_name(gc, username);
 
 	if (purple_account_get_string(account, "endpoint-name", NULL) == NULL) {
-		purple_account_set_string(account, "endpoint-name", "Pidgin");
+		GHashTable *ui_info = purple_core_get_ui_info();
+		const gchar *ui_name = ui_info ? g_hash_table_lookup(ui_info, "name") : NULL;
+		purple_account_set_string(account, "endpoint-name",
+				ui_name && *ui_name ? ui_name : PACKAGE_NAME);
 	}
 
 	if (!msn_session_connect(session, host, port, http_method))
