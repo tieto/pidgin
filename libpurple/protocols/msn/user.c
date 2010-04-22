@@ -230,7 +230,6 @@ msn_user_set_uid(MsnUser *user, const char *uid)
 static void
 free_user_endpoint(MsnUserEndpoint *data)
 {
-	g_free(data->id);
 	g_free(data->name);
 	g_free(data);
 }
@@ -255,7 +254,6 @@ msn_user_set_endpoint_data(MsnUser *user, const char *input, MsnUserEndpoint *da
 	new = g_hash_table_lookup(user->endpoints, endpoint);
 	if (!new) {
 		new = g_new0(MsnUserEndpoint, 1);
-		new->id = g_strdup(endpoint);
 		g_hash_table_insert(user->endpoints, g_strdup(endpoint), new);
 	}
 
