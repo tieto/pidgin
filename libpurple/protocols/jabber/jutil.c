@@ -728,17 +728,17 @@ jabber_buddy_state_get_status_id(JabberBuddyState state)
 	return NULL;
 }
 
-/* The same as purple_util_get_image_checksum, but guaranteed to remain SHA1 */
 char *
-jabber_calculate_data_sha1sum(gconstpointer data, size_t len)
+jabber_calculate_data_hash(gconstpointer data, size_t len, 
+    const gchar *hash_algo)
 {
 	PurpleCipherContext *context;
-	static gchar digest[41];
+	static gchar digest[129]; /* 512 bits hex + \0 */
 
-	context = purple_cipher_context_new_by_name("sha1", NULL);
+	context = purple_cipher_context_new_by_name(hash_algo, NULL);
 	if (context == NULL)
 	{
-		purple_debug_error("jabber", "Could not find sha1 cipher\n");
+		purple_debug_error("jabber", "Could not find %s cipher\n", hash_algo);
 		g_return_val_if_reached(NULL);
 	}
 
@@ -746,7 +746,8 @@ jabber_calculate_data_sha1sum(gconstpointer data, size_t len)
 	purple_cipher_context_append(context, data, len);
 	if (!purple_cipher_context_digest_to_str(context, sizeof(digest), digest, NULL))
 	{
-		purple_debug_error("jabber", "Failed to get SHA-1 digest.\n");
+		purple_debug_error("jabber", "Failed to get digest for %s cipher.\n",
+		    hash_algo);
 		g_return_val_if_reached(NULL);
 	}
 	purple_cipher_context_destroy(context);

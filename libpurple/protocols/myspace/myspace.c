@@ -503,8 +503,8 @@ msim_status_types(PurpleAccount *acct)
 			TRUE,                   /* should be user_settable some day */
 			TRUE,                   /* independent */
 
-			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 
 	types = g_list_append(types, status);

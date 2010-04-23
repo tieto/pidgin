@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-18 15:01+0200\n"
+"POT-Creation-Date: 2010-03-29 00:12-0700\n"
 "PO-Revision-Date: 2010-02-18 15:01+0200\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
@@ -3005,18 +3005,6 @@ msgstr "%s on sulkenut keskustelun."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Viestiä ei voi lähettää, keskustelua ei voi aloittaa."
 
-#, c-format
-msgid "Unable to create socket: %s"
-msgstr "Pistokkeen luonti epäonnistui: %s"
-
-#, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "Pistoketta ei voi liittää porttiin: %s"
-
-#, c-format
-msgid "Unable to listen on socket: %s"
-msgstr "Pistokkeen kuuntelu epäonnistui: %s"
-
 msgid "Error communicating with local mDNSResponder."
 msgstr "Virhe viestittäessä paikallisen mDNSResponderin kanssa."
 
@@ -3170,6 +3158,14 @@ msgstr "Lisää ryhmäkeskusteluun..."
 #. Global
 msgid "Available"
 msgstr "Tavoitettavissa"
+
+#. 2
+msgid "Chatty"
+msgstr "Juttelutuulella"
+
+#. 3
+msgid "Do Not Disturb"
+msgstr "Älä häiritse"
 
 #. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
@@ -4268,13 +4264,13 @@ msgstr "Mielialan teksti"
 msgid "Allow Buzz"
 msgstr "Salli äänimerkki"
 
-#. 2
-msgid "Chatty"
-msgstr "Juttelutuulella"
+#, fuzzy
+msgid "Mood Name"
+msgstr "Muut etunimet"
 
-#. 3
-msgid "Do Not Disturb"
-msgstr "Älä häiritse"
+#, fuzzy
+msgid "Mood Comment"
+msgstr "Tuttavakommentti"
 
 msgid "Tune Artist"
 msgstr "Kappaleen esittäjä"
@@ -4563,6 +4559,10 @@ msgstr "Valitse sijainti"
 msgid "Initiate Media"
 msgstr "Aloita median käyttö"
 
+#, fuzzy
+msgid "Account does not support PEP, can't set mood"
+msgstr "Tämä yhteyskäytäntö ei tue keskusteluhuoneita."
+
 msgid "config:  Configure a chat room."
 msgstr "config: Konfiguroi ryhmäkeskusteluhuone."
 
@@ -4615,6 +4615,13 @@ msgstr "ping &lt;jid&gt;:\tPingaa käyttäjää/komponenttia/palvelinta."
 
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: Tööttää tuttavalle äänimerkki huomion saamiseksi"
+
+#, fuzzy
+msgid "mood: Set current user mood"
+msgstr "Valitse oikea käyttäjä"
+
+msgid "Extended Away"
+msgstr "Pidennetty poissaolo"
 
 #. *< type
 #. *< ui_requirement
@@ -4693,11 +4700,17 @@ msgstr "(Koodi %s)"
 msgid "A custom smiley in the message is too large to send."
 msgstr "Viestiä ei voi lähettää: viesti on liian suuri."
 
+msgid "XMPP stream header missing"
+msgstr ""
+
+msgid "XMPP Version Mismatch"
+msgstr ""
+
+msgid "XMPP stream missing ID"
+msgstr ""
+
 msgid "XML Parse error"
 msgstr "Virhe XML-jäsennyksessä"
-
-msgid "Unknown Error in presence"
-msgstr "Tuntematon virhe tavoitettavuudessa"
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4734,6 +4747,9 @@ msgstr "Sinut on potkaistu kanavalta: (%s)"
 msgid "Kicked (%s)"
 msgstr "Potkaisi (%s)"
 
+msgid "Unknown Error in presence"
+msgstr "Tuntematon virhe tavoitettavuudessa"
+
 msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "Kaistansisäisessä tavuvirtasiirrossa tapahtui virhe\n"
 
@@ -4768,17 +4784,321 @@ msgstr ""
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "Valitse käyttäjän %s sijainti johon haluat lähettää tiedoston"
 
-msgid "Edit User Mood"
-msgstr "Muuta käyttäjän mielialaa"
+#, fuzzy
+msgid "Afraid"
+msgstr "arabia"
 
-msgid "Please select your mood from the list."
-msgstr "Valitse mielialasi luettelosta."
+#, fuzzy
+msgid "Amazed"
+msgstr "Häpeää"
 
-msgid "Set"
-msgstr "Aseta"
+#, fuzzy
+msgid "Amorous"
+msgstr "Loistokas"
 
-msgid "Set Mood..."
-msgstr "Aseta mieliala..."
+#. 1
+msgid "Angry"
+msgstr "Vihainen"
+
+#, fuzzy
+msgid "Annoyed"
+msgstr "Estetty"
+
+msgid "Anxious"
+msgstr "Levoton"
+
+#, fuzzy
+msgid "Aroused"
+msgstr "Lähetetty"
+
+msgid "Ashamed"
+msgstr "Häpeää"
+
+msgid "Bored"
+msgstr "Tylsistynyt"
+
+#, fuzzy
+msgid "Brave"
+msgstr "Tallenna"
+
+#, fuzzy
+msgid "Calm"
+msgstr "Alue (realm)"
+
+#, fuzzy
+msgid "Cautious"
+msgstr "Ryhmäkeskustelut"
+
+#, fuzzy
+msgid "Cold"
+msgstr "Lihavoi"
+
+#, fuzzy
+msgid "Confident"
+msgstr "Ristiriita"
+
+#, fuzzy
+msgid "Confused"
+msgstr "Jatka"
+
+#, fuzzy
+msgid "Contemplative"
+msgstr "Yhteystieto"
+
+#, fuzzy
+msgid "Contented"
+msgstr "Yhdistetty"
+
+#, fuzzy
+msgid "Cranky"
+msgstr "Yritys"
+
+#, fuzzy
+msgid "Crazy"
+msgstr "Hassujuttelu"
+
+#, fuzzy
+msgid "Creative"
+msgstr "Aloita"
+
+#, fuzzy
+msgid "Curious"
+msgstr "Loistokas"
+
+#, fuzzy
+msgid "Dejected"
+msgstr "Kieltäydy"
+
+#, fuzzy
+msgid "Depressed"
+msgstr "Poistettu"
+
+#, fuzzy
+msgid "Disappointed"
+msgstr "Yhteys katkennut."
+
+msgid "Disgusted"
+msgstr ""
+
+#, fuzzy
+msgid "Dismayed"
+msgstr "Poissa käytöstä"
+
+#, fuzzy
+msgid "Distracted"
+msgstr "Irrotettu"
+
+msgid "Embarrassed"
+msgstr ""
+
+#, fuzzy
+msgid "Envious"
+msgstr "Levoton"
+
+#. 2
+msgid "Excited"
+msgstr "Innostunut"
+
+#, fuzzy
+msgid "Flirtatious"
+msgstr "Loistokas"
+
+#, fuzzy
+msgid "Frustrated"
+msgstr "Etunimi"
+
+msgid "Grateful"
+msgstr ""
+
+#, fuzzy
+msgid "Grieving"
+msgstr "Haetaan..."
+
+#. 3
+msgid "Grumpy"
+msgstr "Äreä"
+
+#, fuzzy
+msgid "Guilty"
+msgstr "Paikkakunta"
+
+#. 4
+msgid "Happy"
+msgstr "Onnellinen"
+
+msgid "Hopeful"
+msgstr ""
+
+#. 8
+msgid "Hot"
+msgstr "Tulinen"
+
+msgid "Humbled"
+msgstr ""
+
+msgid "Humiliated"
+msgstr ""
+
+#, fuzzy
+msgid "Hungry"
+msgstr "Vihainen"
+
+#, fuzzy
+msgid "Hurt"
+msgstr "Huumorintaju"
+
+msgid "Impressed"
+msgstr ""
+
+#, fuzzy
+msgid "In awe"
+msgstr "Rakastunut"
+
+msgid "In love"
+msgstr "Rakastunut"
+
+#, fuzzy
+msgid "Indignant"
+msgstr "indonesia"
+
+#, fuzzy
+msgid "Interested"
+msgstr "Kiinnostukset"
+
+#, fuzzy
+msgid "Intoxicated"
+msgstr "Kutsu"
+
+#. 6
+msgid "Invincible"
+msgstr "Haavoittumaton"
+
+msgid "Jealous"
+msgstr "Mustasukkainen"
+
+#, fuzzy
+msgid "Lonely"
+msgstr "apina"
+
+#, fuzzy
+msgid "Lost"
+msgstr "Äänekkäin"
+
+msgid "Lucky"
+msgstr ""
+
+#, fuzzy
+msgid "Mean"
+msgstr "saksa"
+
+#, fuzzy
+msgid "Moody"
+msgstr "Mieliala"
+
+msgid "Nervous"
+msgstr ""
+
+#, fuzzy
+msgid "Neutral"
+msgstr "Yksityiskohdat"
+
+#, fuzzy
+msgid "Offended"
+msgstr "Poissa linjoilta"
+
+msgid "Outraged"
+msgstr ""
+
+#, fuzzy
+msgid "Playful"
+msgstr "Soita"
+
+#, fuzzy
+msgid "Proud"
+msgstr "Äänekäs"
+
+#, fuzzy
+msgid "Relaxed"
+msgstr "Oikea nimi"
+
+#, fuzzy
+msgid "Relieved"
+msgstr "Vastaanotettu"
+
+#, fuzzy
+msgid "Remorseful"
+msgstr "Poista"
+
+#, fuzzy
+msgid "Restless"
+msgstr "Rekisteröi"
+
+#. 7
+msgid "Sad"
+msgstr "Surullinen"
+
+#, fuzzy
+msgid "Sarcastic"
+msgstr "gudžarati"
+
+msgid "Satisfied"
+msgstr ""
+
+#, fuzzy
+msgid "Serious"
+msgstr "Loistokas"
+
+#, fuzzy
+msgid "Shocked"
+msgstr "Estetty"
+
+msgid "Shy"
+msgstr ""
+
+#. 9
+msgid "Sick"
+msgstr "Kipeä"
+
+#. 10
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "Unelias"
+
+msgid "Spontaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Stressed"
+msgstr "Onnistui:"
+
+#, fuzzy
+msgid "Strong"
+msgstr "Kappale"
+
+msgid "Surprised"
+msgstr ""
+
+msgid "Thankful"
+msgstr ""
+
+msgid "Thirsty"
+msgstr ""
+
+#, fuzzy
+msgid "Tired"
+msgstr "Fire"
+
+#, fuzzy
+msgid "Undefined"
+msgstr "Alleviivaa"
+
+#, fuzzy
+msgid "Weak"
+msgstr "Mätkäytä"
+
+#, fuzzy
+msgid "Worried"
+msgstr "Tylsistynyt"
 
 msgid "Set User Nickname"
 msgstr "Aseta käyttäjän kutsumanimi"
@@ -4792,6 +5112,9 @@ msgid ""
 msgstr ""
 "Tämä tieto on näkyvillä kaikille yhteystietoluettelossa oleville "
 "yhteystiedoille, joten valitse jotain soveliasta."
+
+msgid "Set"
+msgstr "Aseta"
 
 msgid "Set Nickname..."
 msgstr "Aseta kutsumanimi..."
@@ -4835,217 +5158,165 @@ msgstr ""
 "%s paikallisella tuttavissa mutta ei palvelimen. Haluatko että tämä tuttava "
 "lisätään?"
 
-#, c-format
 msgid "Unable to parse message"
 msgstr "Viestin jäsennys epäonnistui"
 
-#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "Syntaksivirhe (todennäköisesti ohjelmistovirhe)"
 
-#, c-format
 msgid "Invalid email address"
 msgstr "Epäkelpo sähköpostiosoite"
 
-#, c-format
 msgid "User does not exist"
 msgstr "Käyttäjää ei ole"
 
-#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "Täysin kelvollinen verkkoalueen nimi puuttuu"
 
-#, c-format
 msgid "Already logged in"
 msgstr "Olet jo kirjautuneena sisään"
 
-#, c-format
 msgid "Invalid username"
 msgstr "Epäkelpo käyttäjänimi."
 
-#, c-format
 msgid "Invalid friendly name"
 msgstr "Epäkelpo lempinimi"
 
-#, c-format
 msgid "List full"
 msgstr "Lista täynnä"
 
-#, c-format
 msgid "Already there"
 msgstr "On jo siellä"
 
-#, c-format
 msgid "Not on list"
 msgstr "Ei tuttavissa"
 
-#, c-format
 msgid "User is offline"
 msgstr "Käyttäjä on poissa linjoilta"
 
-#, c-format
 msgid "Already in the mode"
 msgstr "Olet jo kyseisessä tilassa"
 
-#, c-format
 msgid "Already in opposite list"
 msgstr "On jo vastakkaisessa listassa"
 
-#, c-format
 msgid "Too many groups"
 msgstr "Liian monta ryhmää"
 
-#, c-format
 msgid "Invalid group"
 msgstr "Epäkelpo ryhmä"
 
-#, c-format
 msgid "User not in group"
 msgstr "Käyttäjä ei ole ryhmässä"
 
-#, c-format
 msgid "Group name too long"
 msgstr "Ryhmän nimi liian pitkä"
 
-#, c-format
 msgid "Cannot remove group zero"
 msgstr "Ryhmää nolla ei voi poistaa"
 
-#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "Yritettiin lisätä käyttäjää ryhmään jota ei ole"
 
-#, c-format
 msgid "Switchboard failed"
 msgstr "Kytkentä epäonnistui"
 
-#, c-format
 msgid "Notify transfer failed"
 msgstr "Siirrosta tiedottaminen epäonnistui"
 
-#, c-format
 msgid "Required fields missing"
 msgstr "Vaadittuja kenttiä puuttuu"
 
-#, c-format
 msgid "Too many hits to a FND"
 msgstr "Liian monta osumaa FND:hen"
 
-#, c-format
 msgid "Not logged in"
 msgstr "Et ole kirjautunut sisään."
 
-#, c-format
 msgid "Service temporarily unavailable"
 msgstr "Palvelu ei tilapäisesti ole käytettävissä"
 
-#, c-format
 msgid "Database server error"
 msgstr "Tietokantapalvelimen virhe"
 
-#, c-format
 msgid "Command disabled"
 msgstr "Komento poistettu käytöstä"
 
-#, c-format
 msgid "File operation error"
 msgstr "Tiedostotoiminnossa virhe"
 
-#, c-format
 msgid "Memory allocation error"
 msgstr "Muistin varaamisessa virhe"
 
-#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "Väärä CHL-arvo lähetetty palvelimelle"
 
-#, c-format
 msgid "Server busy"
 msgstr "Palvelimella ruuhkaa"
 
-#, c-format
 msgid "Server unavailable"
 msgstr "Palvelin on tavoittamattomissa"
 
-#, c-format
 msgid "Peer notification server down"
 msgstr "Vastapään ilmoituspalvelin ei toiminnassa"
 
-#, c-format
 msgid "Database connect error"
 msgstr "Tietokantayhteysvirhe"
 
-#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "Palvelin on poistumassa toiminnasta (jättäkää laiva)"
 
-#, c-format
 msgid "Error creating connection"
 msgstr "Virhe luotaessa yhteyttä"
 
-#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "CVR-parametrit ovat joko tuntemattomat tai ne eivät ole sallittuja"
 
-#, c-format
 msgid "Unable to write"
 msgstr "Ei kyetty kirjoittamaan"
 
-#, c-format
 msgid "Session overload"
 msgstr "Istunnon ylikuormitus"
 
-#, c-format
 msgid "User is too active"
 msgstr "Käyttäjä on liian aktiivinen"
 
-#, c-format
 msgid "Too many sessions"
 msgstr "Liian monta istuntoa"
 
-#, c-format
 msgid "Passport not verified"
 msgstr "Passport-tiliä ei ole varmistettu"
 
-#, c-format
 msgid "Bad friend file"
 msgstr "Virheellinen tuttavatiedosto"
 
-#, c-format
 msgid "Not expected"
 msgstr "Odottamaton"
 
 msgid "Friendly name is changing too rapidly"
 msgstr "Tuttavanimi vaihtuu liian usein"
 
-#, c-format
 msgid "Server too busy"
 msgstr "Palvelimella liikaa ruuhkaa "
 
-#, c-format
 msgid "Authentication failed"
 msgstr "Todennus epäonnistui"
 
-#, c-format
 msgid "Not allowed when offline"
 msgstr "Ei sallittu kun poissa linjoilta"
 
-#, c-format
 msgid "Not accepting new users"
 msgstr "Ei ota vastaan uusia käyttäjiä"
 
-#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "Kids Passport - ilman vanhempien hyväksyntää"
 
-#, c-format
 msgid "Passport account not yet verified"
 msgstr "Passport-tiliä ei ole verifioitu"
 
 msgid "Passport account suspended"
 msgstr "Passport-tili jäädytetty"
 
-#, c-format
 msgid "Bad ticket"
 msgstr "Bad ticket"
 
@@ -5631,116 +5902,9 @@ msgstr "Haluatko poistaa tämän tuttavan myös osoitekirjastasi?"
 msgid "The username specified is invalid."
 msgstr "Syötetty käyttäjänimi on virheellinen."
 
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr "Tuttavanimi vaihtuu liian usein"
-
-msgid "This Hotmail account may not be active."
-msgstr "Tämä Hotmail-tili ei välttämättä ole aktiivinen."
-
-msgid "Profile URL"
-msgstr "Profiilin URL"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "MSN Protocol Plugin"
-msgstr "MSN-yhteyskäytäntöliitännäinen"
-
-#, c-format
-msgid "%s is not a valid group."
-msgstr "%s ei ole kelvollinen ryhmä."
-
-msgid "Unknown error."
-msgstr "Tuntematon virhe."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s tilillä %s (%s)"
-
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Käyttäjää ei voi lisätä %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Ei voi estää käyttäjää %s (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Käyttäjää ei voi sallia %s (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "Käyttäjää %s ei voi lisätä koska tuttavia on liikaa."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s ei ole kelvollinen passport-tili"
-
-msgid "Service Temporarily Unavailable."
-msgstr "Palvelu ei tilapäisesti ole käytettävissä."
-
-msgid "Unable to rename group"
-msgstr "Ryhmän uudelleen nimeäminen epäonnistui"
-
-msgid "Unable to delete group"
-msgstr "Ryhmää ei voi poistaa"
-
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "Käyttäjä %s on lisännyt sinut tuttaviinsa."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s on poistanut sinut tuttavistaan."
-
-#. 1
-msgid "Angry"
-msgstr "Vihainen"
-
-#. 2
-msgid "Excited"
-msgstr "Innostunut"
-
-#. 3
-msgid "Grumpy"
-msgstr "Äreä"
-
-#. 4
-msgid "Happy"
-msgstr "Onnellinen"
-
 #. 5
 msgid "In Love"
 msgstr "Rakastunut"
-
-#. 6
-msgid "Invincible"
-msgstr "Haavoittumaton"
-
-#. 7
-msgid "Sad"
-msgstr "Surullinen"
-
-#. 8
-msgid "Hot"
-msgstr "Tulinen"
-
-#. 9
-msgid "Sick"
-msgstr "Kipeä"
-
-#. 10
-msgid "Sleepy"
-msgstr "Unelias"
 
 #. show current mood
 msgid "Current Mood"
@@ -6775,6 +6939,108 @@ msgstr "Keskusteluhuoneeseen ei voi liittyä"
 msgid "Invalid chat room name"
 msgstr "Epäkelpo keskusteluhuoneen nimi"
 
+msgid "Thinking"
+msgstr ""
+
+#, fuzzy
+msgid "Shopping"
+msgstr "lopettaa kirjoittamisen"
+
+#, fuzzy
+msgid "Questioning"
+msgstr "Kysymysvalintaikkuna"
+
+#, fuzzy
+msgid "Eating"
+msgstr "Kaukohaku"
+
+#, fuzzy
+msgid "Watching a movie"
+msgstr "Pelaamassa peliä"
+
+msgid "Typing"
+msgstr "Kirjoittaa"
+
+#, fuzzy
+msgid "At the office"
+msgstr "Poissa toimistolta"
+
+msgid "Taking a bath"
+msgstr ""
+
+msgid "Watching TV"
+msgstr ""
+
+#, fuzzy
+msgid "Having fun"
+msgstr "Katkaise"
+
+#, fuzzy
+msgid "Sleeping"
+msgstr "Unelias"
+
+msgid "Using a PDA"
+msgstr ""
+
+#, fuzzy
+msgid "Meeting friends"
+msgstr "Pikaviestikaverit"
+
+#, fuzzy
+msgid "On the phone"
+msgstr "Puhelimessa"
+
+#, fuzzy
+msgid "Surfing"
+msgstr "Toistuva"
+
+#. "I am mobile." / "John is mobile."
+msgid "Mobile"
+msgstr "Liikkeellä"
+
+#, fuzzy
+msgid "Searching the web"
+msgstr "Varoita käyttäjää"
+
+#, fuzzy
+msgid "At a party"
+msgstr "Portti"
+
+msgid "Having Coffee"
+msgstr ""
+
+#. Playing video games
+#, fuzzy
+msgid "Gaming"
+msgstr "Käyttäjä pelaa"
+
+msgid "Browsing the web"
+msgstr ""
+
+#, fuzzy
+msgid "Smoking"
+msgstr "Kappale"
+
+#, fuzzy
+msgid "Writing"
+msgstr "Tekee töitä"
+
+#. Drinking [Alcohol]
+#, fuzzy
+msgid "Drinking"
+msgstr "Tekee töitä"
+
+msgid "Listening to music"
+msgstr "Kuuntelee musiikkia"
+
+#, fuzzy
+msgid "Studying"
+msgstr "Lähetetään"
+
+#, fuzzy
+msgid "In the restroom"
+msgstr "Kiinnostukset"
+
 msgid "Received invalid data on connection with server"
 msgstr "Palvelimeen yhdistettäessä vastaanotettiin virheellisiä tietoja"
 
@@ -6991,6 +7257,9 @@ msgstr "Vastaanota tiedosto"
 msgid "Games"
 msgstr "Pelit"
 
+msgid "ICQ Xtraz"
+msgstr ""
+
 msgid "Add-Ins"
 msgstr "Lisäykset"
 
@@ -7056,6 +7325,26 @@ msgstr "Net-tietoinen"
 
 msgid "Invisible"
 msgstr "Näkymätön"
+
+#, fuzzy
+msgid "Evil"
+msgstr "Sähköposti"
+
+#, fuzzy
+msgid "Depression"
+msgstr "Ammatti"
+
+#, fuzzy
+msgid "At home"
+msgstr "Omat tiedot"
+
+#, fuzzy
+msgid "At work"
+msgstr "Verkko"
+
+#, fuzzy
+msgid "At lunch"
+msgstr "Lounaalla"
 
 msgid "IP Address"
 msgstr "IP-osoite"
@@ -7567,6 +7856,10 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr "iTunes-musiikkikauppalinkki"
 
+#, fuzzy
+msgid "Lunch"
+msgstr "Finch"
+
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "Tuttavakommentti käyttäjälle %s"
@@ -7598,7 +7891,8 @@ msgstr "Hae AIM-tiedot"
 msgid "Edit Buddy Comment"
 msgstr "Muokkaa kommenttia"
 
-msgid "Get Status Msg"
+#, fuzzy
+msgid "Get X-Status Msg"
 msgstr "Hae tilaviesti"
 
 msgid "End Direct IM Session"
@@ -7881,9 +8175,6 @@ msgstr "Päivitä"
 
 msgid "Could not change buddy information."
 msgstr "Tuttavan tietojen muuttaminen ei onnistunut."
-
-msgid "Mobile"
-msgstr "Liikkeellä"
 
 msgid "Note"
 msgstr "Huomautus"
@@ -8917,18 +9208,6 @@ msgstr "Hyperaktiivinen"
 msgid "Robot"
 msgstr "Robotti"
 
-msgid "Jealous"
-msgstr "Mustasukkainen"
-
-msgid "Ashamed"
-msgstr "Häpeää"
-
-msgid "Bored"
-msgstr "Tylsistynyt"
-
-msgid "Anxious"
-msgstr "Levoton"
-
 msgid "User Modes"
 msgstr "Käyttäjätilat"
 
@@ -9423,9 +9702,6 @@ msgstr "Tämänhetkinen mielialasi"
 #, c-format
 msgid "Normal"
 msgstr "Normaali"
-
-msgid "In love"
-msgstr "Rakastunut"
 
 msgid ""
 "\n"
@@ -10439,6 +10715,10 @@ msgid "Exposure"
 msgstr "Altistus"
 
 #, c-format
+msgid "Unable to create socket: %s"
+msgstr "Pistokkeen luonti epäonnistui: %s"
+
+#, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "Vastausta HTTP-välipalvelimelta ei voi jäsentää: %s"
 
@@ -10540,8 +10820,9 @@ msgstr "Älä häiritse"
 msgid "Extended away"
 msgstr "Pidennetty poissaolo"
 
-msgid "Listening to music"
-msgstr "Kuuntelee musiikkia"
+#, fuzzy
+msgid "Feeling"
+msgstr "Vastaanotetaan"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -11082,6 +11363,17 @@ msgstr ""
 msgid "Unknown node type"
 msgstr "Tuntematon solmutyyppi"
 
+#, fuzzy
+msgid "Please select your mood from the list"
+msgstr "Valitse mielialasi luettelosta."
+
+#, fuzzy
+msgid "Message (optional)"
+msgstr "Lempinimi (valinnainen) "
+
+msgid "Edit User Mood"
+msgstr "Muuta käyttäjän mielialaa"
+
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Tuttavat"
@@ -11159,6 +11451,10 @@ msgstr "/Työkalut/A_setukset"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/Työkalut/Yks_ityisyys"
+
+#, fuzzy
+msgid "/Tools/Set _Mood"
+msgstr "/Työkalut/Järjestelmä_loki"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Työkalut/_Tiedostonsiirrot..."
@@ -11419,6 +11715,10 @@ msgstr "<PurpleMain>/Käyttäjätilit/"
 
 msgid "_Edit Account"
 msgstr "_Muokkaa käyttäjätiliä"
+
+#, fuzzy
+msgid "Set _Mood..."
+msgstr "Aseta mieliala..."
 
 msgid "No actions available"
 msgstr "Ei toimintoja saatavilla."
@@ -11702,9 +12002,6 @@ msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d ihminen huoneessa"
 msgstr[1] "%d ihmistä huoneessa"
-
-msgid "Typing"
-msgstr "Kirjoittaa"
 
 msgid "Stopped Typing"
 msgstr "Lopetti kirjoittamisen"
@@ -14571,9 +14868,6 @@ msgstr "Tekstin korvaus"
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr "Korvaa lähetettävän tekstin käyttäjän määritelmän mukaan."
 
-msgid "Extended Away"
-msgstr "Pidennetty poissaolo"
-
 msgid "Just logged in"
 msgstr "Juuri kirjautunut sisään"
 
@@ -14916,10 +15210,68 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "Lähetä ja vastaanota XMPP-raakalohkoja."
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+#, fuzzy
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
+
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "Pistoketta ei voi liittää porttiin: %s"
+
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr "Pistokkeen kuuntelu epäonnistui: %s"
+
+#~ msgid "Friendly name changes too rapidly"
+#~ msgstr "Tuttavanimi vaihtuu liian usein"
+
+#~ msgid "This Hotmail account may not be active."
+#~ msgstr "Tämä Hotmail-tili ei välttämättä ole aktiivinen."
+
+#~ msgid "Profile URL"
+#~ msgstr "Profiilin URL"
+
+#~ msgid "MSN Protocol Plugin"
+#~ msgstr "MSN-yhteyskäytäntöliitännäinen"
+
+#~ msgid "%s is not a valid group."
+#~ msgstr "%s ei ole kelvollinen ryhmä."
+
+#~ msgid "Unknown error."
+#~ msgstr "Tuntematon virhe."
+
+#~ msgid "%s on %s (%s)"
+#~ msgstr "%s tilillä %s (%s)"
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "Käyttäjää ei voi lisätä %s (%s)"
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "Ei voi estää käyttäjää %s (%s)"
+
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "Käyttäjää ei voi sallia %s (%s)"
+
+#~ msgid "%s could not be added because your buddy list is full."
+#~ msgstr "Käyttäjää %s ei voi lisätä koska tuttavia on liikaa."
+
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%s ei ole kelvollinen passport-tili"
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "Palvelu ei tilapäisesti ole käytettävissä."
+
+#~ msgid "Unable to rename group"
+#~ msgstr "Ryhmän uudelleen nimeäminen epäonnistui"
+
+#~ msgid "Unable to delete group"
+#~ msgstr "Ryhmää ei voi poistaa"
+
+#~ msgid "%s has added you to his or her buddy list."
+#~ msgstr "Käyttäjä %s on lisännyt sinut tuttaviinsa."
+
+#~ msgid "%s has removed you from his or her buddy list."
+#~ msgstr "%s on poistanut sinut tuttavistaan."
 
 #~ msgid "Error creating conference."
 #~ msgstr "Virhe luotaessa konferenssia."
@@ -15313,9 +15665,6 @@ msgstr ""
 
 #~ msgid "User Browsing"
 #~ msgstr "Käyttäjä selaa"
-
-#~ msgid "User Gaming"
-#~ msgstr "Käyttäjä pelaa"
 
 #~ msgid "User Viewing"
 #~ msgstr "Käyttäjä katselee"
@@ -15717,9 +16066,6 @@ msgstr ""
 
 #~ msgid "Update information"
 #~ msgstr "Päivitä tiedot"
-
-#~ msgid "Successed:"
-#~ msgstr "Onnistui:"
 
 #~ msgid ""
 #~ "Setting custom faces is not currently supported. Please choose an image "
@@ -16788,9 +17134,6 @@ msgstr ""
 #~ msgid "Away / Idle"
 #~ msgstr "Poissa/joutenolot"
 
-#~ msgid "Crazychat"
-#~ msgstr "Hassujuttelu"
-
 #~ msgid "Plugin to establish a Crazychat session."
 #~ msgstr "Hassujutteluistunnot mahdollistava liitännäinen."
 
@@ -16926,9 +17269,6 @@ msgstr ""
 #~ msgid "Auth host"
 #~ msgstr "Kirjautumispalvelin"
 
-#~ msgid "Auth port"
-#~ msgstr "Portti"
-
 #~ msgid "TOC host"
 #~ msgstr "TOC-isäntä"
 
@@ -16988,9 +17328,6 @@ msgstr ""
 
 #~ msgid "Error launching <b>%s</b>: %s"
 #~ msgstr "Virhe käynnistettäessä <b>%s</b>: %s"
-
-#~ msgid "Realname"
-#~ msgstr "Oikea nimi"
 
 #~ msgid "EMail"
 #~ msgstr "Sähköposti"
@@ -17434,9 +17771,6 @@ msgstr ""
 #~ msgid "Summary"
 #~ msgstr "Yhteenveto"
 
-#~ msgid "Out of the office"
-#~ msgstr "Poissa toimistolta"
-
 #~ msgid "Slightly less boring default"
 #~ msgstr "Hieman vähemmän tylsä oletusviesti"
 
@@ -17719,9 +18053,6 @@ msgstr ""
 
 #~ msgid "/Conversation/Warn..."
 #~ msgstr "/Keskustelu/Varoita..."
-
-#~ msgid "Warn the user"
-#~ msgstr "Varoita käyttäjää"
 
 #~ msgid "Send a file to the user"
 #~ msgstr "Lähetä tiedosto käyttäjälle"

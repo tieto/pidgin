@@ -301,11 +301,17 @@ jabber_scram_feed_parser(JabberScramData *data, gchar *in, gchar **out)
 #endif
 
 		ret = jabber_scram_calc_proofs(data, salt, iterations);
-		if (!ret)
+
+		g_string_free(salt, TRUE);
+		salt = NULL;
+		if (!ret) {
+			g_free(nonce);
 			return FALSE;
+		}
 
 		proof = purple_base64_encode((guchar *)data->client_proof->str, data->client_proof->len);
 		*out = g_strdup_printf("c=%s,r=%s,p=%s", "biws", nonce, proof);
+		g_free(nonce);
 		g_free(proof);
 	} else if (data->step == 2) {
 		gchar *server_sig, *enc_server_sig;
@@ -419,7 +425,7 @@ scram_handle_challenge(JabberStream *js, xmlnode *challenge, xmlnode **out, char
 {
 	JabberScramData *data = js->auth_mech_data;
 	xmlnode *reply;
-	gchar *enc_in, *dec_in;
+	gchar *enc_in, *dec_in = NULL;
 	gchar *enc_out = NULL, *dec_out = NULL;
 	gsize len;
 	JabberSaslState state = JABBER_SASL_STATE_FAIL;
@@ -434,7 +440,6 @@ scram_handle_challenge(JabberStream *js, xmlnode *challenge, xmlnode **out, char
 	}
 
 	dec_in = (gchar *)purple_base64_decode(enc_in, &len);
-	g_free(enc_in);
 	if (!dec_in || len != strlen(dec_in)) {
 		/* Danger afoot; SCRAM shouldn't contain NUL bytes */
 		reply = xmlnode_new("abort");
@@ -468,6 +473,8 @@ scram_handle_challenge(JabberStream *js, xmlnode *challenge, xmlnode **out, char
 	state = JABBER_SASL_STATE_CONTINUE;
 
 out:
+	g_free(enc_in);
+	g_free(dec_in);
 	g_free(enc_out);
 	g_free(dec_out);
 
@@ -506,11 +513,13 @@ scram_handle_success(JabberStream *js, xmlnode *packet, char **error)
 	purple_debug_misc("jabber", "decoded success: %s\n", dec_in);
 
 	if (!jabber_scram_feed_parser(data, dec_in, &dec_out) || dec_out != NULL) {
+		g_free(dec_in);
 		g_free(dec_out);
 		*error = g_strdup(_("Invalid challenge from server"));
 		return JABBER_SASL_STATE_FAIL;
 	}
 
+	g_free(dec_in);
 	/* Hooray */
 	return JABBER_SASL_STATE_OK;
 }

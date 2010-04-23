@@ -407,7 +407,7 @@ msn_session_set_login_step(MsnSession *session, MsnLoginStep step)
 
 	/* Prevent the connection progress going backwards, eg. if we get
 	 * transferred several times during login */
-	if (session->login_step > step)
+	if (session->login_step >= step)
 		return;
 
 	/* If we're already logged in, we're probably here because of a

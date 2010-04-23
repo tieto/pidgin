@@ -289,7 +289,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 				jsx->js->user->node, jsx->js->user->domain, jsx->js->user->resource);
 
 		/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
-		hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
+		hash = jabber_calculate_data_hash(dstaddr, strlen(dstaddr), "sha1");
 
 		jsx->connect_data = purple_proxy_connect_socks5(NULL, jsx->gpi,
 				hash, 0,
@@ -474,7 +474,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 			jsx->js->user->resource, xfer->who);
 
 	/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
-	hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
+	hash = jabber_calculate_data_hash(dstaddr, strlen(dstaddr), "sha1");
 
 	if(strncmp(hash, jsx->rxqueue + 5, 40) ||
 			jsx->rxqueue[45] != 0x00 || jsx->rxqueue[46] != 0x00) {
@@ -1075,6 +1075,9 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, const char *who, const char *id,
 				jabber_si_xfer_ibb_error_cb);
 
 			jsx->ibb_session = sess;
+			/* we handle up to block-size bytes of decoded data, to handle
+			 clients interpreting the block-size attribute as that
+			 (see also remark in ibb.c) */
 			jsx->ibb_buffer =
 				purple_circ_buffer_new(jabber_ibb_session_get_block_size(sess));
 
@@ -1103,8 +1106,8 @@ jabber_si_xfer_ibb_write(const guchar *buffer, size_t len, PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 	JabberIBBSession *sess = jsx->ibb_session;
-	gsize packet_size = len < jabber_ibb_session_get_block_size(sess) ?
-		len : jabber_ibb_session_get_block_size(sess);
+	gsize packet_size = len < jabber_ibb_session_get_max_data_size(sess) ?
+		len : jabber_ibb_session_get_max_data_size(sess);
 
 	jabber_ibb_session_send_data(sess, buffer, packet_size);
 
@@ -1170,7 +1173,7 @@ jabber_si_xfer_ibb_send_init(JabberStream *js, PurpleXfer *xfer)
 		purple_xfer_set_write_fnc(xfer, jabber_si_xfer_ibb_write);
 
 		jsx->ibb_buffer =
-			purple_circ_buffer_new(jabber_ibb_session_get_block_size(jsx->ibb_session));
+			purple_circ_buffer_new(jabber_ibb_session_get_max_data_size(jsx->ibb_session));
 
 		/* open the IBB session */
 		jabber_ibb_session_open(jsx->ibb_session);

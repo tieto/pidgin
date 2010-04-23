@@ -152,6 +152,7 @@ enum {
 	MESSAGE_SEND,
 	UNDO,
 	REDO,
+	PASTE,
 	LAST_SIGNAL
 };
 static guint signals [LAST_SIGNAL] = { 0 };
@@ -1184,8 +1185,14 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		printf("\n");
 		}
 #endif
-		text = g_malloc(selection_data->length);
+
+		text = g_malloc(selection_data->length + 1);
 		memcpy(text, selection_data->data, selection_data->length);
+		/* Make sure the paste data is null-terminated.  Given that
+		 * we're passed length (but assume later that it is
+		 * null-terminated), this seems sensible to me.
+		 */
+		text[selection_data->length] = '\0';
 	}
 
 #ifdef _WIN32
@@ -1341,6 +1348,15 @@ gtk_imhtml_redo(GtkIMHtml *imhtml)
 static gboolean imhtml_message_send(GtkIMHtml *imhtml)
 {
 	return FALSE;
+}
+
+static void
+imhtml_paste_cb(GtkIMHtml *imhtml, const char *str)
+{
+	if (!str || !*str || !strcmp(str, "html"))
+		g_signal_emit_by_name(imhtml, "paste_clipboard");
+	else if (!strcmp(str, "text"))
+		paste_unformatted_cb(NULL, imhtml);
 }
 
 static void imhtml_toggle_format(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons)
@@ -1513,24 +1529,31 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 					     NULL,
 					     0, g_cclosure_marshal_VOID__VOID,
 					     G_TYPE_NONE, 0);
-        signals [UNDO] = g_signal_new ("undo",
-                        		      G_TYPE_FROM_CLASS (klass),
-		                              G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                		              G_STRUCT_OFFSET (GtkIMHtmlClass, undo),
-		                              NULL,
-		                              NULL,
-                		              gtksourceview_marshal_VOID__VOID,
-		                              G_TYPE_NONE,
-		                              0);
-        signals [REDO] = g_signal_new ("redo",
-                        		      G_TYPE_FROM_CLASS (klass),
-		                              G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-		                              G_STRUCT_OFFSET (GtkIMHtmlClass, redo),
-		                              NULL,
-		                              NULL,
-		                              gtksourceview_marshal_VOID__VOID,
-		                              G_TYPE_NONE,
-		                              0);
+	signals[PASTE] = g_signal_new("paste",
+					     G_TYPE_FROM_CLASS(gobject_class),
+					     G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+						 0,
+					     NULL,
+					     0, g_cclosure_marshal_VOID__STRING,
+					     G_TYPE_NONE, 1, G_TYPE_STRING);
+	signals [UNDO] = g_signal_new ("undo",
+			G_TYPE_FROM_CLASS (klass),
+			G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			G_STRUCT_OFFSET (GtkIMHtmlClass, undo),
+			NULL,
+			NULL,
+			gtksourceview_marshal_VOID__VOID,
+			G_TYPE_NONE,
+			0);
+	signals [REDO] = g_signal_new ("redo",
+			G_TYPE_FROM_CLASS (klass),
+			G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+			G_STRUCT_OFFSET (GtkIMHtmlClass, redo),
+			NULL,
+			NULL,
+			gtksourceview_marshal_VOID__VOID,
+			G_TYPE_NONE,
+			0);
 
 
 
@@ -1615,10 +1638,10 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gtk_binding_entry_add_signal (binding_set, GDK_r, GDK_CONTROL_MASK, "format_function_clear", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KP_Enter, 0, "message_send", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_Return, 0, "message_send", 0);
-        gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK, "undo", 0);
-        gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "redo", 0);
-        gtk_binding_entry_add_signal (binding_set, GDK_F14, 0, "undo", 0);
-
+	gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK, "undo", 0);
+	gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "redo", 0);
+	gtk_binding_entry_add_signal (binding_set, GDK_F14, 0, "undo", 0);
+	gtk_binding_entry_add_signal(binding_set, GDK_v, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "paste", 1, G_TYPE_STRING, "text");
 }
 
 static void gtk_imhtml_init (GtkIMHtml *imhtml)
@@ -1689,6 +1712,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "paste-clipboard", G_CALLBACK(paste_clipboard_cb), NULL);
 	g_signal_connect_after(G_OBJECT(imhtml), "realize", G_CALLBACK(imhtml_realized_remove_primary), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "unrealize", G_CALLBACK(imhtml_destroy_add_primary), NULL);
+	g_signal_connect(G_OBJECT(imhtml), "paste", G_CALLBACK(imhtml_paste_cb), NULL);
 
 #ifndef _WIN32
 	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set",

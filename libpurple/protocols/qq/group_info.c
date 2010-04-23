@@ -138,7 +138,8 @@ static void room_info_display(PurpleConnection *gc, qq_room_data *rmd)
 
 	room_info = purple_notify_user_info_new();
 
-	purple_notify_user_info_add_pair(room_info, _("Title"), rmd->title_utf8);
+	/* XXX: Should this be "Topic"? */
+	purple_notify_user_info_add_pair(room_info, _("Room Title"), rmd->title_utf8);
 	purple_notify_user_info_add_pair(room_info, _("Notice"), rmd->notice_utf8);
 	purple_notify_user_info_add_pair(room_info, _("Detail"), rmd->desc_utf8);
 

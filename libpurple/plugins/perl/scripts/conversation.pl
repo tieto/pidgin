@@ -30,7 +30,7 @@ use Purple;
 	my $TEST_GROUP		= "UConn Buddies";
 	my $TEST_NAME	 	= "johnhkelm";
 	my $TEST_ALIAS	 	= "John Kelm";
-	my $PROTOCOL_ID 	= "prpl-oscar";
+	my $PROTOCOL_ID 	= "prpl-aim";
 
 
 sub plugin_init { 
