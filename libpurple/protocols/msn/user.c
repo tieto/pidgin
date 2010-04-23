@@ -27,6 +27,7 @@
 
 static void free_user_endpoint(MsnUserEndpoint *data)
 {
+	g_free(data->id);
 	g_free(data->name);
 	g_free(data);
 }
