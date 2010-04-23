@@ -679,6 +679,8 @@ got_invite(MsnSlpCall *slpcall,
 			 * TCP connection is not supported.
 			 */
 		}
+
+		g_free(bridges);
 	}
 	else if (!strcmp(type, "application/x-msnmsgr-transrespbody"))
 	{
@@ -827,6 +829,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 
 		content = get_token(body, "\r\n\r\n", NULL);
 
+		slpcall = NULL;
 		if (branch && call_id)
 		{
 			slpcall = msn_slplink_find_slp_call(slplink, call_id);
@@ -838,21 +841,12 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 			else if (content_type && content)
 			{
 				slpcall = msn_slpcall_new(slplink);
-				slpcall->id = call_id;
+				slpcall->id = g_strdup(call_id);
 				got_invite(slpcall, branch, content_type, content);
 			}
-			else
-			{
-				g_free(call_id);
-				slpcall = NULL;
-			}
-		}
-		else
-		{
-			g_free(call_id);
-			slpcall = NULL;
 		}
 
+		g_free(call_id);
 		g_free(branch);
 		g_free(content_type);
 		g_free(content);
