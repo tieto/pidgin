@@ -1117,6 +1117,8 @@ append_proto_menu(GntMenu *menu, PurpleConnection *gc, PurpleBlistNode *node)
 			list = g_list_delete_link(list, list))
 	{
 		PurpleMenuAction *act = (PurpleMenuAction *) list->data;
+		if (!act)
+			continue;
 		act->data = node;
 		gnt_append_menu_action(menu, act, NULL);
 		g_signal_connect_swapped(G_OBJECT(menu), "destroy",
