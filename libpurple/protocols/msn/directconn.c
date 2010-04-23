@@ -76,6 +76,9 @@ msn_dc_generate_nonce(MsnDirectConn *dc)
 	          GUINT32_FROM_BE(*((guint32 *)(digest + 10))),
 	          GUINT16_FROM_BE(*((guint16 *)(digest + 14)))
 	);
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "DC %p generated nonce %s\n", dc, dc->nonce_hash);
 }
 
 static MsnDirectConnPacket *
@@ -682,6 +685,53 @@ msn_dc_send_handshake_reply(MsnDirectConn *dc)
 	msn_dc_enqueue_packet(dc, p);
 }
 
+static gboolean
+msn_dc_verify_handshake(MsnDirectConn *dc, guint32 packet_length)
+{
+	PurpleCipherContext *context;
+	PurpleCipher *cipher;
+	guchar nonce[16];
+	guchar digest[20];
+	gchar  nonce_hash[37];
+
+	if (packet_length != DC_PACKET_HEADER_SIZE)
+		return FALSE;
+
+	memcpy(nonce, dc->in_buffer + 4 + offsetof(MsnDcContext, ack_id), 16);
+
+	cipher = purple_ciphers_find_cipher("sha1");
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, nonce, sizeof(nonce));
+	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_destroy(context);
+
+	g_sprintf(nonce_hash,
+	          "%08X-%04X-%04X-%04X-%08X%04X",
+	          GUINT32_FROM_LE(*((guint32 *)(digest + 0))),
+	          GUINT16_FROM_LE(*((guint16 *)(digest + 4))),
+	          GUINT16_FROM_LE(*((guint16 *)(digest + 6))),
+	          GUINT16_FROM_BE(*((guint16 *)(digest + 8))),
+	          GUINT32_FROM_BE(*((guint32 *)(digest + 10))),
+	          GUINT16_FROM_BE(*((guint16 *)(digest + 14)))
+	);
+
+	if (g_str_equal(dc->remote_nonce, nonce_hash)) {
+		purple_debug_info("msn",
+				"Received nonce %s from buddy request "
+				"and calculated nonce %s from DC attempt. "
+				"Nonces match, allowing direct connection\n",
+				dc->remote_nonce, nonce_hash);
+		return TRUE;
+	} else {
+		purple_debug_warning("msn",
+				"Received nonce %s from buddy request "
+				"and calculated nonce %s from DC attempt. "
+				"Nonces don't match, ignoring direct connection\n",
+				dc->remote_nonce, nonce_hash);
+		return TRUE;
+	}
+}
+
 static void
 msn_dc_send_packet_cb(MsnDirectConnPacket *p)
 {
@@ -727,10 +777,9 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 		break;
 
 	case DC_STATE_HANDSHAKE:
-		if (packet_length != DC_PACKET_HEADER_SIZE)
+		if (!msn_dc_verify_handshake(dc, packet_length))
 			return DC_PROCESS_FALLBACK;
 
-		/* TODO: Check! */
 		msn_dc_send_handshake_reply(dc);
 		dc->state = DC_STATE_ESTABLISHED;
 
@@ -739,7 +788,9 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 		break;
 
 	case DC_STATE_HANDSHAKE_REPLY:
-		/* TODO: Check! */
+		if (!msn_dc_verify_handshake(dc, packet_length))
+			return DC_PROCESS_FALLBACK;
+
 		dc->state = DC_STATE_ESTABLISHED;
 
 		msn_slpcall_session_init(dc->slpcall);

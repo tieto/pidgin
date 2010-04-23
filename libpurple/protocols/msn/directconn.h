@@ -71,8 +71,9 @@ struct _MsnDirectConn
 	char                *msg_body;  /**< The body of message sent by send_connection_info_msg_cb */
 	MsnSlpMessage       *prev_ack;  /**< The saved SLP ACK message */
 
-	guchar  nonce[16];      /**< The nonce used for direct connection handshake */
-	gchar   nonce_hash[37]; /**< The hash of nonce */
+	guchar  nonce[16];          /**< The nonce used for direct connection handshake */
+	gchar   nonce_hash[37];     /**< The hash of nonce */
+	gchar   remote_nonce[37];   /**< The remote side's nonce */
 
 	PurpleNetworkListenData *listen_data;           /**< The pending socket creation request */
 	PurpleProxyConnectData  *connect_data;          /**< The pending connection attempt */

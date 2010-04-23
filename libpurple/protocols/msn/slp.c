@@ -281,6 +281,7 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 {
 	/* A direct connection negotiation response */
 	char *bridge;
+	char *nonce;
 	MsnDirectConn *dc = slpcall->slplink->dc;
 	gboolean result = FALSE;
 
@@ -290,8 +291,12 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 	g_return_val_if_fail(dc->state == DC_STATE_CLOSED, FALSE);
 
 	bridge = get_token(content, "Bridge: ", "\r\n");
-	if (bridge && !strcmp(bridge, "TCPv1")) {
+	nonce = get_token(content, "Hashed-Nonce: {", "}\r\n");
+	if (nonce && bridge && !strcmp(bridge, "TCPv1")) {
 		/* Ok, the client supports direct TCP connection */
+
+		strncpy(dc->remote_nonce, nonce, 36);
+		dc->remote_nonce[36] = '\0';
 
 		if (dc->listen_data != NULL || dc->listenfd != -1) {
 			if (dc->listen_data != NULL) {
@@ -377,6 +382,7 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 		 */
 	}
 
+	g_free(nonce);
 	g_free(bridge);
 
 	return result;
@@ -624,6 +630,7 @@ got_invite(MsnSlpCall *slpcall,
 	{
 		/* A direct connection negotiation request */
 		char *bridges;
+		char *nonce;
 
 		purple_debug_info("msn", "got_invite: transreqbody received\n");
 
@@ -632,7 +639,8 @@ got_invite(MsnSlpCall *slpcall,
 			return;
 
 		bridges = get_token(content, "Bridges: ", "\r\n");
-		if (bridges && strstr(bridges, "TCPv1") != NULL) {
+		nonce = get_token(content, "Hashed-Nonce: {", "}\r\n");
+		if (nonce && bridges && strstr(bridges, "TCPv1") != NULL) {
 			/*
 			 * Ok, the client supports direct TCP connection
 			 * Try to create a listening port
@@ -640,6 +648,8 @@ got_invite(MsnSlpCall *slpcall,
 			MsnDirectConn *dc;
 
 			dc = msn_dc_new(slpcall);
+			strncpy(dc->remote_nonce, nonce, 36);
+			dc->remote_nonce[36] = '\0';
 
 			dc->listen_data = purple_network_listen_range(
 				0, 0,
@@ -680,6 +690,7 @@ got_invite(MsnSlpCall *slpcall,
 			 */
 		}
 
+		g_free(nonce);
 		g_free(bridges);
 	}
 	else if (!strcmp(type, "application/x-msnmsgr-transrespbody"))
