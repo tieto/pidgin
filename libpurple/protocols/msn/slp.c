@@ -222,15 +222,6 @@ msn_slp_send_ok(MsnSlpCall *slpcall, const char *branch,
 	slpmsg->text_body = TRUE;
 
 	msn_slplink_queue_slpmsg(slplink, slpmsg);
-
-	/*
-	 * TODO: Removed because it interferes with
-	 * direct file transfer. If we're sending some file
-	 * then this call initiates a p2p file transfer which is
-	 * undesirable.
-	 */
-
-	/* msn_slpcall_session_init(slpcall); */
 }
 
 void
@@ -636,8 +627,6 @@ got_invite(MsnSlpCall *slpcall,
 
 		purple_debug_info("msn", "got_invite: transreqbody received\n");
 
-		g_return_if_fail(slpcall->xfer != NULL);
-
 		/* Don't do anything if we already have a direct connection */
 		if (slpcall->slplink->dc != NULL)
 			return;
@@ -694,8 +683,6 @@ got_invite(MsnSlpCall *slpcall,
 	else if (!strcmp(type, "application/x-msnmsgr-transrespbody"))
 	{
 		/* A direct connection negotiation response */
-		g_return_if_fail(slpcall->xfer != NULL);
-
 		msn_slp_process_transresp(slpcall, content);
 	}
 }
@@ -713,8 +700,6 @@ got_ok(MsnSlpCall *slpcall,
 		char *header;
 		MsnSlpMessage *msg;
 		MsnDirectConn *dc;
-
-		g_return_if_fail(slpcall->xfer != NULL);
 
 		if (slpcall->slplink->dc != NULL) {
 			/*
@@ -791,13 +776,6 @@ got_ok(MsnSlpCall *slpcall,
 		g_free(content);
 
 		msn_slplink_queue_slpmsg(slpcall->slplink, msg);
-
-		/*
-		 * Removed because it messes up direct connection by
-		 * starting p2p transfer
-		 */
-
-		/* msn_slpcall_session_init(slpcall); */
 	}
 	else if (!strcmp(type, "application/x-msnmsgr-transreqbody"))
 	{
