@@ -83,7 +83,7 @@ struct _MsnUser
 	char *friendly_name;    /**< The friendly name.             */
 
 	char *uid;              /*< User ID                         */
-	GHashTable *endpoints;  /*< Endpoint-specific data          */
+	GSList *endpoints;      /*< Endpoint-specific data          */
 
 	const char *status;     /**< The state of the user.         */
 	char *statusline;       /**< The state of the user.         */
@@ -122,10 +122,11 @@ struct _MsnUser
  * A specific user endpoint.
  */
 typedef struct MsnUserEndpoint {
-	char *name;				/**< The client's endpoint's name      */
-	int type;				/**< The client's endpoint type        */
+	char *id;               /**< The client's endpoint ID          */
+	char *name;             /**< The client's endpoint's name      */
+	int type;               /**< The client's endpoint type        */
 	guint clientid;         /**< The client's ID                   */
-	guint extcaps;			/**< The client's extended capabilites */
+	guint extcaps;          /**< The client's extended capabilites */
 
 } MsnUserEndpoint;
 

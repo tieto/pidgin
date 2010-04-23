@@ -416,21 +416,6 @@ update_endpoint_cb(MsnLocationData *data, PurpleRequestFields *fields)
 }
 
 static void
-create_endpoint_fields(gpointer key, gpointer value, gpointer user_data)
-{
-	const char *id = key;
-	MsnUserEndpoint *ep = value;
-	MsnLocationData *data = user_data;
-	PurpleRequestField *field;
-
-	if (g_str_equal(id, data->session->guid))
-		return;
-
-	field = purple_request_field_bool_new(id, ep->name, FALSE);
-	purple_request_field_group_add_field(data->group, field);
-}
-
-static void
 msn_show_locations(PurplePluginAction *action)
 {
 	PurpleConnection *pc;
@@ -439,6 +424,7 @@ msn_show_locations(PurplePluginAction *action)
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
+	GSList *l;
 	MsnLocationData *data;
 
 	pc = (PurpleConnection *)action->context;
@@ -462,12 +448,22 @@ msn_show_locations(PurplePluginAction *action)
 	purple_request_fields_add_group(fields, group);
 	field = purple_request_field_label_new("others-label", _("You can sign out from other locations here"));
 	purple_request_field_group_add_field(group, field);
-	
+
+	for (l = session->user->endpoints; l; l = l->next) {
+		MsnUserEndpoint *ep = l->data;
+
+		if (g_str_equal(ep->id, session->guid))
+			/* Don't add myself to the list */
+			continue;
+
+		field = purple_request_field_bool_new(ep->id, ep->name, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+
 	data = g_new0(MsnLocationData, 1);
 	data->account = account;
 	data->session = session;
 	data->group = group;
-	g_hash_table_foreach(session->user->endpoints, create_endpoint_fields, data);
 
 	purple_request_fields(pc, NULL, NULL, NULL,
 	                      fields,
