@@ -785,6 +785,8 @@ got_ok(MsnSlpCall *slpcall,
 			"application/x-msnmsgr-transreqbody",
 			content
 		);
+		msg->info = "DC INVITE";
+		msg->text_body = TRUE;
 		g_free(header);
 		g_free(content);
 

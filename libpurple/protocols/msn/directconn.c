@@ -273,6 +273,8 @@ msn_dc_send_invite(MsnDirectConn *dc)
 		"application/x-msnmsgr-transrespbody",
 		dc->msg_body
 	);
+	msg->info = "DC INVITE";
+	msg->text_body = TRUE;
 	g_free(header);
 	g_free(dc->msg_body);
 	dc->msg_body = NULL;
