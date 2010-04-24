@@ -53,6 +53,13 @@ typedef enum
 
 } MsnDirectConnProcessResult;
 
+typedef enum
+{
+	DC_NONCE_PLAIN,     /**< No hashing */
+	DC_NONCE_SHA1       /**< First 16 bytes of SHA1 of nonce */
+
+} MsnDirectConnNonceType;
+
 typedef struct _MsnDirectConnPacket MsnDirectConnPacket;
 
 struct _MsnDirectConnPacket {
@@ -71,9 +78,10 @@ struct _MsnDirectConn
 	char                *msg_body;  /**< The body of message sent by send_connection_info_msg_cb */
 	MsnSlpMessage       *prev_ack;  /**< The saved SLP ACK message */
 
-	guchar  nonce[16];          /**< The nonce used for direct connection handshake */
-	gchar   nonce_hash[37];     /**< The hash of nonce */
-	gchar   remote_nonce[37];   /**< The remote side's nonce */
+	MsnDirectConnNonceType nonce_type;         /**< The type of nonce hashing */
+	guchar                 nonce[16];          /**< The nonce used for handshake */
+	gchar                  nonce_hash[37];     /**< The hash of nonce */
+	gchar                  remote_nonce[37];   /**< The remote side's nonce */
 
 	PurpleNetworkListenData *listen_data;           /**< The pending socket creation request */
 	PurpleProxyConnectData  *connect_data;          /**< The pending connection attempt */

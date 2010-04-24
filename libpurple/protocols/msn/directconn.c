@@ -49,23 +49,23 @@ typedef struct {
 static void
 msn_dc_generate_nonce(MsnDirectConn *dc)
 {
-	PurpleCipher        *cipher = NULL;
-	PurpleCipherContext *context = NULL;
 	guint32 *nonce;
 	int i;
 	guchar digest[20];
-
-	cipher = purple_ciphers_find_cipher("sha1");
-	g_return_if_fail(cipher != NULL);
 
 	nonce = (guint32 *)&dc->nonce;
 	for (i = 0; i < 4; i++)
 		nonce[i] = rand();
 
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, dc->nonce, sizeof(dc->nonce));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	if (dc->nonce_type == DC_NONCE_SHA1) {
+		PurpleCipher *cipher = purple_ciphers_find_cipher("sha1");
+		PurpleCipherContext *context = purple_cipher_context_new(cipher, NULL);
+		purple_cipher_context_append(context, dc->nonce, sizeof(dc->nonce));
+		purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+		purple_cipher_context_destroy(context);
+	} else if (dc->nonce_type == DC_NONCE_PLAIN) {
+		memcpy(digest, nonce, 16);
+	}
 
 	g_sprintf(dc->nonce_hash,
 	          "%08X-%04X-%04X-%04X-%08X%04X",
@@ -145,6 +145,8 @@ msn_dc_new(MsnSlpCall *slpcall)
 	dc->progress = FALSE;
 	//dc->num_calls = 1;
 
+	/* TODO: Probably should set this based on buddy caps */
+	dc->nonce_type = DC_NONCE_PLAIN;
 	msn_dc_generate_nonce(dc);
 
 	return dc;
@@ -699,11 +701,15 @@ msn_dc_verify_handshake(MsnDirectConn *dc, guint32 packet_length)
 
 	memcpy(nonce, dc->in_buffer + 4 + offsetof(MsnDcContext, ack_id), 16);
 
-	cipher = purple_ciphers_find_cipher("sha1");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, nonce, sizeof(nonce));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	if (dc->nonce_type == DC_NONCE_SHA1) {
+		cipher = purple_ciphers_find_cipher("sha1");
+		context = purple_cipher_context_new(cipher, NULL);
+		purple_cipher_context_append(context, nonce, sizeof(nonce));
+		purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+		purple_cipher_context_destroy(context);
+	} else if (dc->nonce_type == DC_NONCE_PLAIN) {
+		memcpy(digest, nonce, 16);
+	}
 
 	g_sprintf(nonce_hash,
 	          "%08X-%04X-%04X-%04X-%08X%04X",
@@ -1354,13 +1360,14 @@ msn_dc_listen_socket_created_cb(int listenfd, gpointer data)
 			dc->msg_body = g_strdup_printf(
 				"Bridge: TCPv1\r\n"
 				"Listening: true\r\n"
-				"Hashed-Nonce: {%s}\r\n"
+				"%sNonce: {%s}\r\n"
 				"IPv4External-Addrs: %s\r\n"
 				"IPv4External-Port: %d\r\n"
 				"IPv4Internal-Addrs: %s\r\n"
 				"IPv4Internal-Port: %d\r\n"
 				"\r\n",
 
+				dc->nonce_type != DC_NONCE_PLAIN ? "Hashed-" : "",
 				dc->nonce_hash,
 				ext_ip,
 				port,
@@ -1372,11 +1379,12 @@ msn_dc_listen_socket_created_cb(int listenfd, gpointer data)
 			dc->msg_body = g_strdup_printf(
 				"Bridge: TCPv1\r\n"
 				"Listening: true\r\n"
-				"Hashed-Nonce: {%s}\r\n"
+				"%sNonce: {%s}\r\n"
 				"IPv4External-Addrs: %s\r\n"
 				"IPv4External-Port: %d\r\n"
 				"\r\n",
 
+				dc->nonce_type != DC_NONCE_PLAIN ? "Hashed-" : "",
 				dc->nonce_hash,
 				ext_ip,
 				port

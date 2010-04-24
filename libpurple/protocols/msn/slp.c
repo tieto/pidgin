@@ -631,6 +631,7 @@ got_invite(MsnSlpCall *slpcall,
 		/* A direct connection negotiation request */
 		char *bridges;
 		char *nonce;
+		MsnDirectConnNonceType ntype;
 
 		purple_debug_info("msn", "got_invite: transreqbody received\n");
 
@@ -640,6 +641,12 @@ got_invite(MsnSlpCall *slpcall,
 
 		bridges = get_token(content, "Bridges: ", "\r\n");
 		nonce = get_token(content, "Hashed-Nonce: {", "}\r\n");
+		if (nonce) {
+			ntype = DC_NONCE_SHA1;
+		} else {
+			nonce = get_token(content, "Nonce: {", "}\r\n");
+			ntype = DC_NONCE_PLAIN;
+		}
 		if (nonce && bridges && strstr(bridges, "TCPv1") != NULL) {
 			/*
 			 * Ok, the client supports direct TCP connection
@@ -648,6 +655,7 @@ got_invite(MsnSlpCall *slpcall,
 			MsnDirectConn *dc;
 
 			dc = msn_dc_new(slpcall);
+			dc->nonce_type = ntype;
 			strncpy(dc->remote_nonce, nonce, 36);
 			dc->remote_nonce[36] = '\0';
 
@@ -663,12 +671,20 @@ got_invite(MsnSlpCall *slpcall,
 
 				purple_debug_info("msn", "got_invite: listening failed\n");
 
-				msn_slp_send_ok(slpcall, branch,
-					"application/x-msnmsgr-transrespbody",
-					"Bridge: TCPv1\r\n"
-					"Listening: false\r\n"
-					"Hashed-Nonce: {00000000-0000-0000-0000-000000000000}\r\n"
-					"\r\n");
+				if (dc->nonce_type != DC_NONCE_PLAIN)
+					msn_slp_send_ok(slpcall, branch,
+						"application/x-msnmsgr-transrespbody",
+						"Bridge: TCPv1\r\n"
+						"Listening: false\r\n"
+						"Hashed-Nonce: {00000000-0000-0000-0000-000000000000}\r\n"
+						"\r\n");
+				else
+					msn_slp_send_ok(slpcall, branch,
+						"application/x-msnmsgr-transrespbody",
+						"Bridge: TCPv1\r\n"
+						"Listening: false\r\n"
+						"Nonce: {00000000-0000-0000-0000-000000000000}\r\n"
+						"\r\n");
 
 			} else {
 				/*
@@ -750,10 +766,11 @@ got_ok(MsnSlpCall *slpcall,
 				"Conn-Type: IP-Restrict-NAT\r\n"
 				"UPnPNat: false\r\n"
 				"ICF: false\r\n"
-				"Hashed-Nonce: {%s}\r\n"
+				"%sNonce: {%s}\r\n"
 				"\r\n",
 
 				rand() % G_MAXUINT32,
+				dc->nonce_type != DC_NONCE_PLAIN ? "Hashed-" : "",
 				dc->nonce_hash
 			);
 
@@ -768,9 +785,10 @@ got_ok(MsnSlpCall *slpcall,
 				"Conn-Type: Direct-Connect\r\n"
 				"UPnPNat: false\r\n"
 				"ICF: false\r\n"
-				"Hashed-Nonce: {%s}\r\n"
+				"%sNonce: {%s}\r\n"
 				"\r\n",
 
+				dc->nonce_type != DC_NONCE_PLAIN ? "Hashed-" : "",
 				dc->nonce_hash
 			);
 		}
