@@ -729,18 +729,25 @@ got_ok(MsnSlpCall *slpcall,
 		char *header;
 		MsnSlpMessage *msg;
 		MsnDirectConn *dc;
+		MsnUser *user;
 
 		if (slpcall->slplink->dc != NULL) {
-			/*
-			 * If we already have an established direct connection
+			/* If we already have an established direct connection
 			 * then just start the transfer.
 			 */
 			msn_slpcall_session_init(slpcall);
 			return;
 		}
 
-		/* Try direct file transfer by sending a second INVITE */
+		user = msn_userlist_find_user(slpcall->slplink->session->userlist,
+		                              slpcall->slplink->remote_user);
+		if (!(user->clientid & 0xF0000000))	{
+			/* Just start a normal SB transfer. */
+			msn_slpcall_session_init(slpcall);
+			return;
+		}
 
+		/* Try direct file transfer by sending a second INVITE */
 		dc = msn_dc_new(slpcall);
 		slpcall->branch = rand_guid();
 
