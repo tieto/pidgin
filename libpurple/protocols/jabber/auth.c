@@ -208,6 +208,11 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		}
 	}
 
+	while (mechanisms) {
+		g_free(mechanisms->data);
+		mechanisms = g_slist_delete_link(mechanisms, mechanisms);
+	}
+
 	if (js->auth_mech == NULL) {
 		/* Found no good mechanisms... */
 		purple_connection_error_reason(js->gc,

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 20:35-0500\n"
+"POT-Creation-Date: 2010-03-29 00:17-0700\n"
 "PO-Revision-Date: 2005-06-17 23:22-0800\n"
 "Last-Translator: \n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1511,6 +1511,7 @@ msgstr ""
 msgid "Online"
 msgstr "Онлайн"
 
+#. primative,						no,							id,			name
 msgid "Offline"
 msgstr "Оффлайн"
 
@@ -1893,6 +1894,10 @@ msgstr "Хавтасыг илгээх боломжгүй."
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr ""
 
+#, fuzzy
+msgid "File is not readable."
+msgstr "Хавтас бичигдэх боломжгүй байна."
+
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s тан руу %s (%s) илгээхийг хүсэж байна"
@@ -2143,22 +2148,18 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Дараах алдаанууд гарсан:"
 
-#, fuzzy
-msgid "Conference error"
-msgstr "Хэлэлцүүлэгийг хаасан"
-
 msgid "Error with your microphone"
 msgstr ""
 
 msgid "Error with your webcam"
 msgstr ""
 
+#, fuzzy
+msgid "Conference error"
+msgstr "Хэлэлцүүлэгийг хаасан"
+
 #, fuzzy, c-format
 msgid "Error creating session: %s"
-msgstr "Холболт үүсгэх алдаа"
-
-#, fuzzy
-msgid "Error creating conference."
 msgstr "Холболт үүсгэх алдаа"
 
 #, c-format
@@ -2898,22 +2899,6 @@ msgstr "%s харилцааг хаасан."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Харилцааг эхлүүлэхгүй бол, мессежийг илгээх боломжгүй."
 
-#, fuzzy, c-format
-msgid "Unable to create socket: %s"
-msgstr ""
-"Сокет үүсгэх боломжгүй:\n"
-"%s"
-
-#, fuzzy, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "%s харилцагчийг хориглох боломжгүй"
-
-#, fuzzy, c-format
-msgid "Unable to listen on socket: %s"
-msgstr ""
-"Сокет үүсгэх боломжгүй:\n"
-"%s"
-
 msgid "Error communicating with local mDNSResponder."
 msgstr ""
 
@@ -3065,10 +3050,20 @@ msgstr "Харилцагчийн чатыг сонгох: %s"
 msgid "Add to chat..."
 msgstr "Чатад нэмэх..."
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "Онлайн"
 
+#. 2
+msgid "Chatty"
+msgstr ""
+
+#. 3
+msgid "Do Not Disturb"
+msgstr ""
+
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3664,6 +3659,14 @@ msgstr "Кодчилол шаардлагатай, гэхдээ ямар ч TLS/
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
+#. This should never happen!
+#, fuzzy
+msgid "Invalid response from server"
+msgstr "Алдаа: серверийн буруу PONG "
+
+msgid "Server does not use any supported authentication method"
+msgstr ""
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3673,26 +3676,38 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr ""
 
-#, fuzzy
-msgid "SASL authentication failed"
-msgstr "SSL Холболт амжилтгүй болсон"
-
-#, fuzzy
-msgid "Invalid response from server"
-msgstr "Алдаа: серверийн буруу PONG "
-
-msgid "Server does not use any supported authentication method"
-msgstr ""
-
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
 
 msgid "Invalid challenge from server"
 msgstr ""
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "SSL Холболт амжилтгүй болсон"
+
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "SASL алдаа"
+
+#, fuzzy
+msgid "Unable to canonicalize username"
+msgstr "Тохиргоо хийх боломжгүй"
+
+#, fuzzy
+msgid "Unable to canonicalize password"
+msgstr "Файл нээх боломжгүй."
+
+#, fuzzy
+msgid "Malicious challenge from server"
+msgstr "Алдаа: серверийн буруу PONG "
+
+#, fuzzy
+msgid "Unexpected response from server"
+msgstr "Алдаа: серверийн буруу PONG "
 
 msgid "The BOSH connection manager terminated your session."
 msgstr ""
@@ -3800,13 +3815,17 @@ msgstr ""
 msgid "Resource"
 msgstr ""
 
-#, c-format
-msgid "%s ago"
-msgstr ""
+#, fuzzy
+msgid "Uptime"
+msgstr "Сүүлийн Шинэчлэл"
 
 #, fuzzy
 msgid "Logged Off"
 msgstr "Мессенжерээс гарах"
+
+#, c-format
+msgid "%s ago"
+msgstr ""
 
 msgid "Middle Name"
 msgstr ""
@@ -3854,15 +3873,6 @@ msgid "Log In"
 msgstr ""
 
 msgid "Log Out"
-msgstr ""
-
-msgid "Chatty"
-msgstr ""
-
-msgid "Extended Away"
-msgstr ""
-
-msgid "Do Not Disturb"
 msgstr ""
 
 msgid "JID"
@@ -3997,11 +4007,6 @@ msgstr "Үүрэг"
 msgid "Ping timed out"
 msgstr "Холболтын хугацаа дууссан."
 
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-
 msgid "Invalid XMPP ID"
 msgstr "Буруу  XMPP ID"
 
@@ -4124,6 +4129,7 @@ msgstr "Рүү"
 msgid "None (To pending)"
 msgstr ""
 
+#. 0
 msgid "None"
 msgstr ""
 
@@ -4136,6 +4142,14 @@ msgstr ""
 
 msgid "Allow Buzz"
 msgstr ""
+
+#, fuzzy
+msgid "Mood Name"
+msgstr "Бүлгийн нэр"
+
+#, fuzzy
+msgid "Mood Comment"
+msgstr "Харилцагчийн Тайлбар"
 
 msgid "Tune Artist"
 msgstr "Ая зохиогч"
@@ -4379,10 +4393,6 @@ msgid ""
 "buzzes now."
 msgstr ""
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr ""
-
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
@@ -4390,6 +4400,10 @@ msgstr ""
 
 #, c-format
 msgid "%s has buzzed you!"
+msgstr ""
+
+#, c-format
+msgid "Buzzing %s..."
 msgstr ""
 
 #, fuzzy, c-format
@@ -4419,6 +4433,10 @@ msgstr "Нөөц Сонгох"
 #, fuzzy
 msgid "Initiate Media"
 msgstr "Чатыг эхлүүлэх"
+
+#, fuzzy
+msgid "Account does not support PEP, can't set mood"
+msgstr "Энэ протокол чат өрөөг дэмжихгүй байна."
 
 msgid "config:  Configure a chat room."
 msgstr "config:  Чат өрөөг тохируулах."
@@ -4470,6 +4488,13 @@ msgid "ping &lt;jid&gt;:\tPing a user/component/server."
 msgstr ""
 
 msgid "buzz: Buzz a user to get their attention"
+msgstr ""
+
+#, fuzzy
+msgid "mood: Set current user mood"
+msgstr "Зөв хэрэглэгчийг сонго"
+
+msgid "Extended Away"
 msgstr ""
 
 #. *< type
@@ -4545,10 +4570,20 @@ msgstr "XMPP Мессежийн Алдаа"
 msgid "(Code %s)"
 msgstr "(Код %s)"
 
-msgid "XML Parse error"
+#, fuzzy
+msgid "A custom smiley in the message is too large to send."
+msgstr "Мессежийг илгээх боломжгүй: Энэ мессеж хэтэрхий урт байна."
+
+msgid "XMPP stream header missing"
 msgstr ""
 
-msgid "Unknown Error in presence"
+msgid "XMPP Version Mismatch"
+msgstr ""
+
+msgid "XMPP stream missing ID"
+msgstr ""
+
+msgid "XML Parse error"
 msgstr ""
 
 #, c-format
@@ -4587,6 +4622,9 @@ msgstr "%s таныг нэмсэн"
 msgid "Kicked (%s)"
 msgstr " (%s)"
 
+msgid "Unknown Error in presence"
+msgstr ""
+
 #, fuzzy
 msgid "An error occurred on the in-band bytestream transfer\n"
 msgstr "Файл нээхэд алдаа гарлаа"
@@ -4623,17 +4661,316 @@ msgstr ""
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr ""
 
-msgid "Edit User Mood"
+#, fuzzy
+msgid "Afraid"
+msgstr "Араб хэл"
+
+#, fuzzy
+msgid "Amazed"
+msgstr "Ичсэн"
+
+msgid "Amorous"
 msgstr ""
 
-msgid "Please select your mood from the list."
-msgstr "Жагсаалтаас өөрийн төлөвийг сонго."
+#. 1
+msgid "Angry"
+msgstr "Ууртай"
 
-msgid "Set"
-msgstr "Тохируулах"
+#, fuzzy
+msgid "Annoyed"
+msgstr "Хэн нэгэн"
 
-msgid "Set Mood..."
-msgstr "Төлөвийг Тохируулах..."
+msgid "Anxious"
+msgstr "Санаа зовоосон"
+
+#, fuzzy
+msgid "Aroused"
+msgstr "Та илгээж байна"
+
+msgid "Ashamed"
+msgstr "Ичсэн"
+
+msgid "Bored"
+msgstr "Ядарсан"
+
+#, fuzzy
+msgid "Brave"
+msgstr "Хадгалах"
+
+#, fuzzy
+msgid "Calm"
+msgstr "Цуцлах"
+
+#, fuzzy
+msgid "Cautious"
+msgstr "Чат"
+
+#, fuzzy
+msgid "Cold"
+msgstr "Тод"
+
+#, fuzzy
+msgid "Confident"
+msgstr "Клиент"
+
+#, fuzzy
+msgid "Confused"
+msgstr "Үргэлжлүүлэх"
+
+#, fuzzy
+msgid "Contemplative"
+msgstr "Бусад нь чатаар байхад"
+
+#, fuzzy
+msgid "Contented"
+msgstr "Холбогдсон"
+
+#, fuzzy
+msgid "Cranky"
+msgstr "Компани"
+
+msgid "Crazy"
+msgstr ""
+
+#, fuzzy
+msgid "Creative"
+msgstr "Үүсгэх"
+
+msgid "Curious"
+msgstr ""
+
+#, fuzzy
+msgid "Dejected"
+msgstr "Татгалзах"
+
+#, fuzzy
+msgid "Depressed"
+msgstr "Устгах"
+
+#, fuzzy
+msgid "Disappointed"
+msgstr "Холболтоос тасарсан."
+
+msgid "Disgusted"
+msgstr ""
+
+#, fuzzy
+msgid "Dismayed"
+msgstr "Хүчингүй болгох"
+
+#, fuzzy
+msgid "Distracted"
+msgstr "Салгасан"
+
+msgid "Embarrassed"
+msgstr ""
+
+#, fuzzy
+msgid "Envious"
+msgstr "Санаа зовоосон"
+
+#. 2
+msgid "Excited"
+msgstr "Баярлуулах"
+
+msgid "Flirtatious"
+msgstr ""
+
+#, fuzzy
+msgid "Frustrated"
+msgstr "Өөрийн нэр"
+
+msgid "Grateful"
+msgstr ""
+
+#, fuzzy
+msgid "Grieving"
+msgstr "Хайж байна..."
+
+#. 3
+#, fuzzy
+msgid "Grumpy"
+msgstr "Бүлэг"
+
+#, fuzzy
+msgid "Guilty"
+msgstr "Хот"
+
+#. 4
+msgid "Happy"
+msgstr "Аж жаргалтай"
+
+msgid "Hopeful"
+msgstr ""
+
+#. 8
+#, fuzzy
+msgid "Hot"
+msgstr "Хост:"
+
+msgid "Humbled"
+msgstr ""
+
+msgid "Humiliated"
+msgstr ""
+
+#, fuzzy
+msgid "Hungry"
+msgstr "Ууртай"
+
+#, fuzzy
+msgid "Hurt"
+msgstr "Хошин шог"
+
+msgid "Impressed"
+msgstr ""
+
+#, fuzzy
+msgid "In awe"
+msgstr "Хайртай"
+
+msgid "In love"
+msgstr "Хайртай"
+
+#, fuzzy
+msgid "Indignant"
+msgstr "Индонези хэл"
+
+#, fuzzy
+msgid "Interested"
+msgstr "Сонирхол"
+
+#, fuzzy
+msgid "Intoxicated"
+msgstr "Урих"
+
+#. 6
+msgid "Invincible"
+msgstr "Дийлдэшгүй"
+
+msgid "Jealous"
+msgstr "Атаархуу"
+
+msgid "Lonely"
+msgstr ""
+
+#, fuzzy
+msgid "Lost"
+msgstr "Хамгийн чанга"
+
+msgid "Lucky"
+msgstr ""
+
+#, fuzzy
+msgid "Mean"
+msgstr "Герман хэл"
+
+#, fuzzy
+msgid "Moody"
+msgstr "Өөрчлөх"
+
+msgid "Nervous"
+msgstr ""
+
+#, fuzzy
+msgid "Neutral"
+msgstr "Дефолт"
+
+#, fuzzy
+msgid "Offended"
+msgstr "Оффлайн"
+
+msgid "Outraged"
+msgstr ""
+
+#, fuzzy
+msgid "Playful"
+msgstr "Тоглуулах"
+
+#, fuzzy
+msgid "Proud"
+msgstr "Чанга"
+
+#, fuzzy
+msgid "Relaxed"
+msgstr "Жинхэнэ нэр"
+
+#, fuzzy
+msgid "Relieved"
+msgstr "Хүлээж авсан"
+
+#, fuzzy
+msgid "Remorseful"
+msgstr "Устгах"
+
+#, fuzzy
+msgid "Restless"
+msgstr "Бүртгүүлэх"
+
+#. 7
+msgid "Sad"
+msgstr "Уйтгартай"
+
+msgid "Sarcastic"
+msgstr ""
+
+msgid "Satisfied"
+msgstr ""
+
+#, fuzzy
+msgid "Serious"
+msgstr "Дуу"
+
+#, fuzzy
+msgid "Shocked"
+msgstr "Хаагдсан"
+
+msgid "Shy"
+msgstr ""
+
+#. 9
+msgid "Sick"
+msgstr ""
+
+#. 10
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "Нойрмог"
+
+msgid "Spontaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Stressed"
+msgstr "Хурд:"
+
+#, fuzzy
+msgid "Strong"
+msgstr "Дуу"
+
+msgid "Surprised"
+msgstr ""
+
+msgid "Thankful"
+msgstr ""
+
+msgid "Thirsty"
+msgstr ""
+
+#, fuzzy
+msgid "Tired"
+msgstr "Файрбөд"
+
+#, fuzzy
+msgid "Undefined"
+msgstr "Доогуур зураастай"
+
+msgid "Weak"
+msgstr ""
+
+#, fuzzy
+msgid "Worried"
+msgstr "Ядарсан"
 
 msgid "Set User Nickname"
 msgstr "Харилцагчидад хоч нэр өгөх"
@@ -4645,6 +4982,9 @@ msgid ""
 "This information is visible to all contacts on your contact list, so choose "
 "something appropriate."
 msgstr ""
+
+msgid "Set"
+msgstr "Тохируулах"
 
 msgid "Set Nickname..."
 msgstr "Хоч нэр өгөх..."
@@ -4687,210 +5027,159 @@ msgstr ""
 "%s нь серверийн жагсаалтанд биш, локал жагсаалтанд байна. Энэ харилцагчийг "
 "нэмэхийг хүсэж байна уу?"
 
-#, c-format
 msgid "Unable to parse message"
 msgstr ""
 
-#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "Програмчлалын хэлний бичлэгийн алдаа"
 
-#, c-format
 msgid "Invalid email address"
 msgstr "Мэйл хаяг буруу"
 
-#, c-format
 msgid "User does not exist"
 msgstr "Харилцагч үүсээгүй байна"
 
-#, c-format
 msgid "Fully qualified domain name missing"
 msgstr ""
 
-#, c-format
 msgid "Already logged in"
 msgstr ""
 
-#, c-format
 msgid "Invalid username"
 msgstr "Хэрэглэгчийн нэр буруу"
 
-#, c-format
 msgid "Invalid friendly name"
 msgstr "Нөхөрсөг нэр буруу"
 
-#, c-format
 msgid "List full"
 msgstr "Жагсаалт дүүрэн байна"
 
-#, c-format
 msgid "Already there"
 msgstr "Тэнд байгаа"
 
-#, c-format
 msgid "Not on list"
 msgstr "Жагсаалтанд байхгүй"
 
-#, c-format
 msgid "User is offline"
 msgstr "Харилцагч оффлайн байна"
 
-#, c-format
 msgid "Already in the mode"
 msgstr ""
 
-#, c-format
 msgid "Already in opposite list"
 msgstr "Эсрэг жагсаалтанд"
 
-#, c-format
 msgid "Too many groups"
 msgstr "Хэтэрхий олон бүлэг"
 
-#, c-format
 msgid "Invalid group"
 msgstr "Бүлэг буруу"
 
-#, c-format
 msgid "User not in group"
 msgstr "Бүлэгт харилцагч байхгүй байна"
 
-#, c-format
 msgid "Group name too long"
 msgstr "Бүлгийн нэр хэтэрхий урт байна"
 
-#, c-format
 msgid "Cannot remove group zero"
 msgstr "Тэг бүлгийг устгаж болохгүй"
 
-#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr ""
 
-#, c-format
 msgid "Switchboard failed"
 msgstr ""
 
-#, c-format
 msgid "Notify transfer failed"
 msgstr "Шилжүүлэлт ажилтгүй болсоныг мэдэгдэх"
 
-#, c-format
 msgid "Required fields missing"
 msgstr "Шаардлагатай талбарууд орхигдсон"
 
-#, c-format
 msgid "Too many hits to a FND"
 msgstr ""
 
-#, c-format
 msgid "Not logged in"
 msgstr ""
 
-#, c-format
 msgid "Service temporarily unavailable"
 msgstr "Үйлчилгээ түр хугацаагаар ажиллахгүй байна"
 
-#, c-format
 msgid "Database server error"
 msgstr "Өгөгдлийн баазын алдаа"
 
-#, c-format
 msgid "Command disabled"
 msgstr "Командыг идэвхгүй болгосон"
 
-#, c-format
 msgid "File operation error"
 msgstr "Файл удирдах алдаа"
 
-#, c-format
 msgid "Memory allocation error"
 msgstr "Санах ойн хувирлалтын алдаа"
 
-#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "Буруу CHL утгыг серверт илгээсэн"
 
-#, c-format
 msgid "Server busy"
 msgstr "Сервер ачаалалтай байна"
 
-#, c-format
 msgid "Server unavailable"
 msgstr "Сервер одоогоор бэлэн биш байна"
 
-#, c-format
 msgid "Peer notification server down"
 msgstr ""
 
-#, c-format
 msgid "Database connect error"
 msgstr "Өгөгдлийн баазад холбогдох алдаа"
 
-#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr ""
 
-#, c-format
 msgid "Error creating connection"
 msgstr "Холболт үүсгэх алдаа"
 
-#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr ""
 
-#, c-format
 msgid "Unable to write"
 msgstr "Бичих боломжгүй"
 
-#, c-format
 msgid "Session overload"
 msgstr ""
 
-#, c-format
 msgid "User is too active"
 msgstr ""
 
-#, c-format
 msgid "Too many sessions"
 msgstr ""
 
-#, c-format
 msgid "Passport not verified"
 msgstr "Нууц үгийг баталгаажуулаагүй"
 
-#, c-format
 msgid "Bad friend file"
 msgstr "Найзын буруу файл"
 
-#, c-format
 msgid "Not expected"
 msgstr ""
 
 msgid "Friendly name is changing too rapidly"
 msgstr ""
 
-#, c-format
 msgid "Server too busy"
 msgstr "Сервер маш ачаалалтай байна"
 
-#, c-format
 msgid "Authentication failed"
 msgstr ""
 
-#, c-format
 msgid "Not allowed when offline"
 msgstr "Оффлайн үед зөвшөөрөхгүй"
 
-#, c-format
 msgid "Not accepting new users"
 msgstr ""
 
-#, c-format
 msgid "Kids Passport without parental consent"
 msgstr ""
 
-#, c-format
 msgid "Passport account not yet verified"
 msgstr ""
 
@@ -4898,7 +5187,6 @@ msgstr ""
 msgid "Passport account suspended"
 msgstr "Таны бүртгэлийг одоогоор түр зогссон байна."
 
-#, c-format
 msgid "Bad ticket"
 msgstr ""
 
@@ -4953,6 +5241,10 @@ msgstr "Мэйл хаяг..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Set friendly name for %s."
+msgstr "Нөхөрсөг нэрээ оруулах."
 
 msgid "Set your friendly name."
 msgstr "Нөхөрсөг нэрээ оруулах."
@@ -5294,10 +5586,6 @@ msgstr ""
 msgid "Windows Live ID authentication:Invalid response"
 msgstr ""
 
-#, c-format
-msgid "%s just sent you a Nudge!"
-msgstr ""
-
 msgid "The following users are missing from your addressbook"
 msgstr ""
 
@@ -5470,76 +5758,9 @@ msgstr "Харилцагчийн жагсаалтанд энэ харилцаг�
 msgid "The username specified is invalid."
 msgstr ""
 
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr ""
-
-msgid "This Hotmail account may not be active."
-msgstr ""
-
-msgid "Profile URL"
-msgstr ""
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "MSN Protocol Plugin"
-msgstr ""
-
-#, c-format
-msgid "%s is not a valid group."
-msgstr ""
-
-msgid "Unknown error."
-msgstr "Үл мэдэгдэх алдаа."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s (%s) ийн тухай %s "
-
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "%s (%s)д харилцагч нэмэх боломжгүй"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "%s (%s)д харилцагч нэмэх боломжгүй"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "%s (%s)д харилцагчийг зөвшөөрөх боломжгүй"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "Таны харилцагчийн жагсаалт дүүрсэн учраас %sийг нэмэж чадсангүй."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s нь буруу бүртгэл байна."
-
-msgid "Service Temporarily Unavailable."
-msgstr "Үйлчилгээ түр хугацаагаар ажиллахгүй байгаа"
-
-msgid "Unable to rename group"
-msgstr "Бүлгийн нэр өөрчилөх боломжгүй"
-
-msgid "Unable to delete group"
-msgstr "Бүлэг устгах боломжгүй"
-
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr ""
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr ""
+#. 5
+msgid "In Love"
+msgstr "Хайртай"
 
 #. show current mood
 #, fuzzy
@@ -5558,6 +5779,29 @@ msgstr "Нууц үгийг өөрчлөх"
 #, fuzzy
 msgid "How do you feel right now?"
 msgstr "Би одоогоор энд байхгүй байна"
+
+#, fuzzy
+msgid "The PIN you entered is invalid."
+msgstr "Оруулсан SecurID түлхүүр буруу байна."
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Оруулсан SecurID түлхүүр буруу байна."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr ""
+
+#, fuzzy
+msgid "The two PINs you entered do not match."
+msgstr "Шинэ нууц үг тохирохгүй байна"
+
+#, fuzzy
+msgid "The name you entered is invalid."
+msgstr "Оруулсан SecurID түлхүүр буруу байна."
+
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr ""
 
 #. show error to user
 #, fuzzy
@@ -5635,10 +5879,10 @@ msgstr "%s ийн талаар"
 msgid "The file you are trying to send is too large!"
 msgstr "Мессеж хэтэрхий урт байна."
 
+#, fuzzy
 msgid ""
-"Unable to connect to the mxit HTTP server. Please check your server server "
-"settings."
-msgstr ""
+"Unable to connect to the MXit HTTP server. Please check your server settings."
+msgstr "Хаахыг хүсэж байгаа харилцагчийн нэрийг оруул."
 
 #, fuzzy
 msgid "Logging In..."
@@ -5646,13 +5890,20 @@ msgstr "Архивжуулалт"
 
 #, fuzzy
 msgid ""
-"Unable to connect to the mxit server. Please check your server server "
-"settings."
+"Unable to connect to the MXit server. Please check your server settings."
 msgstr "Хаахыг хүсэж байгаа харилцагчийн нэрийг оруул."
 
 #, fuzzy
 msgid "Connecting..."
 msgstr "Серверт холбогдох"
+
+#, fuzzy
+msgid "The nick name you entered is invalid."
+msgstr "Оруулсан SecurID түлхүүр буруу байна."
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "Оруулсан SecurID түлхүүр буруу байна."
 
 #. mxit login name
 msgid "MXit Login Name"
@@ -5734,6 +5985,10 @@ msgid "Retrieving User Information..."
 msgstr "Серверийн Мэдээлэл"
 
 #, fuzzy
+msgid "Loading menu..."
+msgstr "Архивжуулалт"
+
+#, fuzzy
 msgid "Status Message"
 msgstr "Илгээгдсэн Мессеж"
 
@@ -5778,12 +6033,29 @@ msgstr ""
 msgid "Successfully Logged In..."
 msgstr "Qun гишүүнийг амжилттай шинэчлэлээ."
 
+#, c-format
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
+msgstr ""
+
 #, fuzzy
 msgid "Message Error"
 msgstr "XMPP Мессежийн Алдаа"
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
+
+#, fuzzy
+msgid "An internal MXit server error occurred."
+msgstr "Дараах алдаанууд гарсан:"
+
+#, fuzzy, c-format
+msgid "Login error: %s (%i)"
+msgstr "SASL алдаа"
+
+#, fuzzy, c-format
+msgid "Logout error: %s (%i)"
+msgstr "SASL алдаа"
 
 #, fuzzy
 msgid "Contact Error"
@@ -5859,38 +6131,6 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
-
-msgid "Angry"
-msgstr "Ууртай"
-
-msgid "Excited"
-msgstr "Баярлуулах"
-
-#, fuzzy
-msgid "Grumpy"
-msgstr "Бүлэг"
-
-msgid "Happy"
-msgstr "Аж жаргалтай"
-
-msgid "In Love"
-msgstr "Хайртай"
-
-msgid "Invincible"
-msgstr "Дийлдэшгүй"
-
-msgid "Sad"
-msgstr "Уйтгартай"
-
-#, fuzzy
-msgid "Hot"
-msgstr "Хост:"
-
-msgid "Sick"
-msgstr ""
-
-msgid "Sleepy"
-msgstr "Нойрмог"
 
 #, fuzzy
 msgid "Pending"
@@ -6501,7 +6741,10 @@ msgstr "Серверийн хаяг"
 msgid "Server port"
 msgstr "Серверийн порт"
 
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr ""
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr ""
@@ -6517,6 +6760,11 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "%s ажилуулахад алдаа гарлаа"
 
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
@@ -6525,6 +6773,103 @@ msgstr "Чат өрөөнд холбогдох боломжгүй"
 
 msgid "Invalid chat room name"
 msgstr "Буруу чат өрөөний нэр"
+
+msgid "Thinking"
+msgstr ""
+
+#, fuzzy
+msgid "Shopping"
+msgstr "Бичихээ больсон"
+
+#, fuzzy
+msgid "Questioning"
+msgstr "Буруу хүсэлт"
+
+#, fuzzy
+msgid "Eating"
+msgstr "Анхааруулга"
+
+msgid "Watching a movie"
+msgstr ""
+
+msgid "Typing"
+msgstr "Бичиж байна"
+
+#, fuzzy
+msgid "At the office"
+msgstr "Өрөөндөө байхгүй байна"
+
+msgid "Taking a bath"
+msgstr ""
+
+msgid "Watching TV"
+msgstr ""
+
+msgid "Having fun"
+msgstr ""
+
+#, fuzzy
+msgid "Sleeping"
+msgstr "Нойрмог"
+
+msgid "Using a PDA"
+msgstr ""
+
+#, fuzzy
+msgid "Meeting friends"
+msgstr "Ping команд би"
+
+#, fuzzy
+msgid "On the phone"
+msgstr "Утасаар ярьж байна"
+
+msgid "Surfing"
+msgstr ""
+
+#. "I am mobile." / "John is mobile."
+msgid "Mobile"
+msgstr "Гар утас"
+
+msgid "Searching the web"
+msgstr ""
+
+msgid "At a party"
+msgstr ""
+
+msgid "Having Coffee"
+msgstr ""
+
+#. Playing video games
+#, fuzzy
+msgid "Gaming"
+msgstr "Анхааруулга"
+
+msgid "Browsing the web"
+msgstr ""
+
+#, fuzzy
+msgid "Smoking"
+msgstr "Дуу"
+
+#, fuzzy
+msgid "Writing"
+msgstr "Ажил"
+
+#. Drinking [Alcohol]
+#, fuzzy
+msgid "Drinking"
+msgstr "Ажил"
+
+msgid "Listening to music"
+msgstr "Хөгжим сонсох"
+
+#, fuzzy
+msgid "Studying"
+msgstr "Илгээж байна"
+
+#, fuzzy
+msgid "In the restroom"
+msgstr "Сонирхол"
 
 #, fuzzy
 msgid "Received invalid data on connection with server"
@@ -6742,6 +7087,9 @@ msgstr "Файл Авах"
 msgid "Games"
 msgstr "Тоглоом"
 
+msgid "ICQ Xtraz"
+msgstr ""
+
 msgid "Add-Ins"
 msgstr ""
 
@@ -6807,6 +7155,26 @@ msgstr ""
 
 msgid "Invisible"
 msgstr "Харагдахгүй"
+
+#, fuzzy
+msgid "Evil"
+msgstr "Э-мэйл"
+
+#, fuzzy
+msgid "Depression"
+msgstr "Мэргэжил"
+
+#, fuzzy
+msgid "At home"
+msgstr "%s ийн талаар"
+
+#, fuzzy
+msgid "At work"
+msgstr "Сүлжээ"
+
+#, fuzzy
+msgid "At lunch"
+msgstr "Үдийн цайндаа явсан"
 
 msgid "IP Address"
 msgstr "IP Хаяг"
@@ -7067,11 +7435,6 @@ msgid ""
 "characters.]"
 msgstr ""
 
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr ""
@@ -7284,6 +7647,10 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr ""
 
+#, fuzzy
+msgid "Lunch"
+msgstr "Финч"
+
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr " %s ийн Харилцагчийн Тайлбар"
@@ -7314,8 +7681,9 @@ msgstr "AIM мэдээлэл авах"
 msgid "Edit Buddy Comment"
 msgstr "Харилцагчийн Тайлбарыг Засварлах"
 
-msgid "Get Status Msg"
-msgstr ""
+#, fuzzy
+msgid "Get X-Status Msg"
+msgstr "Илгээгдсэн Мессеж"
 
 msgid "End Direct IM Session"
 msgstr ""
@@ -7599,9 +7967,6 @@ msgstr "Сүүлийн Шинэчлэл"
 #, fuzzy
 msgid "Could not change buddy information."
 msgstr "Харилцагчийн мэдээллийг оруулна уу."
-
-msgid "Mobile"
-msgstr "Гар утас"
 
 msgid "Note"
 msgstr "Тэмдэглэл"
@@ -8662,18 +9027,6 @@ msgstr ""
 msgid "Robot"
 msgstr "Автомат"
 
-msgid "Jealous"
-msgstr "Атаархуу"
-
-msgid "Ashamed"
-msgstr "Ичсэн"
-
-msgid "Bored"
-msgstr "Ядарсан"
-
-msgid "Anxious"
-msgstr "Санаа зовоосон"
-
 msgid "User Modes"
 msgstr "Хэрэглэгчийн горим"
 
@@ -9141,9 +9494,6 @@ msgstr ""
 #, c-format
 msgid "Normal"
 msgstr "Хэвийн"
-
-msgid "In love"
-msgstr "Хайртай"
 
 msgid ""
 "\n"
@@ -10120,6 +10470,12 @@ msgid "Exposure"
 msgstr ""
 
 #, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr ""
+"Сокет үүсгэх боломжгүй:\n"
+"%s"
+
+#, fuzzy, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "%s рүү мессеж илгээх боломжгүй."
 
@@ -10221,8 +10577,9 @@ msgstr "Битгий саад бол"
 msgid "Extended away"
 msgstr ""
 
-msgid "Listening to music"
-msgstr "Хөгжим сонсох"
+#, fuzzy
+msgid "Feeling"
+msgstr "Хүлээж авч байна"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -10770,6 +11127,17 @@ msgstr ""
 msgid "Unknown node type"
 msgstr ""
 
+#, fuzzy
+msgid "Please select your mood from the list"
+msgstr "Жагсаалтаас өөрийн төлөвийг сонго."
+
+#, fuzzy
+msgid "Message (optional)"
+msgstr "Өөр нэр (заавал шаардлагагүй)"
+
+msgid "Edit User Mood"
+msgstr ""
+
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/Харилцагч"
@@ -10850,6 +11218,10 @@ msgstr "/Хэрэгсэл/Тохиргоо"
 msgid "/Tools/Pr_ivacy"
 msgstr "/Хэрэгсэл/Эрх"
 
+#, fuzzy
+msgid "/Tools/Set _Mood"
+msgstr "/Хэрэгсэл/Системийн Архив"
+
 msgid "/Tools/_File Transfers"
 msgstr "/Хэрэгсэл/Файл Шилжүүлэлт"
 
@@ -10869,8 +11241,20 @@ msgstr "/Тусламж"
 msgid "/Help/Online _Help"
 msgstr "/Тусламж/Онлайн Тусламж"
 
+#, fuzzy
+msgid "/Help/_Build Information"
+msgstr "Харилцагчийн Мэдээлэл"
+
 msgid "/Help/_Debug Window"
 msgstr ""
+
+#, fuzzy
+msgid "/Help/De_veloper Information"
+msgstr "Серверийн Мэдээлэл"
+
+#, fuzzy
+msgid "/Help/_Translator Information"
+msgstr "Хувийн мэдээлэл"
 
 msgid "/Help/_About"
 msgstr "/Тусламж/Пизини Тухай"
@@ -11096,6 +11480,10 @@ msgstr "<PurpleMain>/Бүртгэл/"
 msgid "_Edit Account"
 msgstr "Бүртгэл засварлах"
 
+#, fuzzy
+msgid "Set _Mood..."
+msgstr "Төлөвийг Тохируулах..."
+
 msgid "No actions available"
 msgstr "Ямар ч үйлдэл хийх боломжгүй"
 
@@ -11141,12 +11529,6 @@ msgstr "<h1>%s тэй харилцах</h1>\n"
 
 msgid "Save Conversation"
 msgstr "Харилцааг хадгалах"
-
-msgid "Find"
-msgstr "Хайх"
-
-msgid "_Search for:"
-msgstr "Хайх:"
 
 msgid "Un-Ignore"
 msgstr "Зөвшөөрөх"
@@ -11226,6 +11608,10 @@ msgstr "/Харилцаа/Архив Үзэх"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Харилцаа/Файл Илгээх..."
+
+#, fuzzy
+msgid "/Conversation/Get _Attention"
+msgstr "/Харилцаа/Мэдээлэл Авах"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Харилцаа/Харилцагчийн Сануулга Нэмэх..."
@@ -11311,6 +11697,10 @@ msgstr "/Харилцаа/Дэлгэрэнгүй"
 msgid "/Conversation/Send File..."
 msgstr "/Харилцаа/Файл илгээх..."
 
+#, fuzzy
+msgid "/Conversation/Get Attention"
+msgstr "/Харилцаа/Мэдээлэл Авах"
+
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Харилцаа/Харилцагчийн Сануулга Нэмэх..."
 
@@ -11375,14 +11765,19 @@ msgstr "Илгээх"
 msgid "0 people in room"
 msgstr "Өрөөнд  0 хүн байна "
 
+#, fuzzy
+msgid "Close Find bar"
+msgstr "Энэ табыг хаах"
+
+#, fuzzy
+msgid "Find:"
+msgstr "Хайх"
+
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] ""
 msgstr[1] ""
-
-msgid "Typing"
-msgstr "Бичиж байна"
 
 msgid "Stopped Typing"
 msgstr "Бичихээ больсон"
@@ -11434,6 +11829,12 @@ msgstr "Бүлгээр"
 
 msgid "By account"
 msgstr "Харилцагчаар"
+
+msgid "Find"
+msgstr "Хайх"
+
+msgid "_Search for:"
+msgstr "Хайх:"
 
 msgid "Save Debug Log"
 msgstr ""
@@ -11657,15 +12058,20 @@ msgstr "Курди хэл"
 msgid "Lao"
 msgstr "Лаос хэл"
 
-msgid "Lithuanian"
-msgstr "Литви хэл"
-
 msgid "Macedonian"
 msgstr "Македони хэл"
 
 #, fuzzy
 msgid "Mongolian"
 msgstr "Македони хэл"
+
+#, fuzzy
+msgid "Marathi"
+msgstr "Гужарати хэл"
+
+#, fuzzy
+msgid "Malay"
+msgstr "эр"
 
 msgid "Bokmål Norwegian"
 msgstr "Норвеги хэл"
@@ -11681,6 +12087,10 @@ msgstr ""
 
 msgid "Occitan"
 msgstr "Окситан хэл"
+
+#, fuzzy
+msgid "Oriya"
+msgstr "Опера"
 
 msgid "Punjabi"
 msgstr "Пунжаби хэл"
@@ -11736,6 +12146,10 @@ msgstr "Тай хэл"
 msgid "Turkish"
 msgstr "Турк хэл"
 
+#, fuzzy
+msgid "Ukranian"
+msgstr "Румын хэл"
+
 msgid "Urdu"
 msgstr "Урду хэл"
 
@@ -11757,47 +12171,50 @@ msgstr "Уламжлалт Хятад хэл "
 msgid "Amharic"
 msgstr "Араб хэл"
 
+msgid "Lithuanian"
+msgstr "Литви хэл"
+
+#, c-format
+msgid ""
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with %"
+"s.  There is no warranty for %s.<BR><BR>"
+msgstr ""
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
+msgstr ""
+
+#, c-format
+msgid ""
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
+msgstr ""
+
 #, c-format
 msgid "About %s"
 msgstr "%s ийн талаар"
 
-#, c-format
-msgid ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
-msgstr ""
+#, fuzzy
+msgid "Build Information"
+msgstr "Харилцагчийн Мэдээлэл"
 
-#, c-format
-msgid ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
-msgstr ""
-
-#, c-format
-msgid ""
-"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
-"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
-"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
-"primary language is <b>English</b>.  You are welcome to post in another "
-"language, but the responses may be less helpful.<br/><br/>"
-msgstr ""
-
+#. End of not to be translated section
 #, fuzzy, c-format
-msgid ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-
-#, fuzzy, c-format
-msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+msgid "%s Build Information"
+msgstr "Харилцагчийн Мэдээлэл"
 
 msgid "Current Developers"
 msgstr "Одоогийн Хөгжүүлэгчид"
@@ -11811,14 +12228,19 @@ msgstr "Өмнөх Хөгжүүлэгчид"
 msgid "Retired Crazy Patch Writers"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "%s Developer Information"
+msgstr "Серверийн Мэдээлэл"
+
 msgid "Current Translators"
 msgstr "Одоогийн орчуулагч нар"
 
 msgid "Past Translators"
 msgstr "Өмнөх орчуулагч нар"
 
-msgid "Debugging Information"
-msgstr ""
+#, fuzzy, c-format
+msgid "%s Translator Information"
+msgstr "Ажлын газрын танилцуулга"
 
 msgid "_Name"
 msgstr "Нэр"
@@ -12102,15 +12524,6 @@ msgstr ""
 "\n"
 "Defaulting to PNG."
 
-msgid ""
-"Unrecognized file type\n"
-"\n"
-"Defaulting to PNG."
-msgstr ""
-"Танигдахгүй файлын төрөл\n"
-"\n"
-"Defaulting to PNG."
-
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -12118,16 +12531,6 @@ msgid ""
 "%s"
 msgstr ""
 "<span size='larger' weight='bold'>Зураг хадгалах алдаа</span>\n"
-"\n"
-"%s"
-
-#, c-format
-msgid ""
-"Error saving image\n"
-"\n"
-"%s"
-msgstr ""
-"Зураг хадгалах алдаа\n"
 "\n"
 "%s"
 
@@ -12235,6 +12638,10 @@ msgstr "Зураг оруулах"
 msgid "Insert Smiley"
 msgstr ""
 
+#, fuzzy
+msgid "Send Attention"
+msgstr "Илгээх Товч"
+
 msgid "<b>_Bold</b>"
 msgstr "<b>Тод</b>"
 
@@ -12279,6 +12686,9 @@ msgstr "Хөндлөн шугам"
 
 msgid "_Smile!"
 msgstr "Инээмсэглэ!"
+
+msgid "_Attention!"
+msgstr ""
 
 msgid "Log Deletion Failed"
 msgstr "Архив устгалт амжилтгүй боллоо"
@@ -12625,9 +13035,8 @@ msgstr ""
 msgid "(Custom)"
 msgstr ""
 
-#, fuzzy
-msgid "(Default)"
-msgstr "Дефолт"
+msgid "Penguin Pimps"
+msgstr ""
 
 msgid "The default Pidgin sound theme"
 msgstr ""
@@ -12649,27 +13058,36 @@ msgstr "Зураг ачаалах амжилтгүй боллоо"
 msgid "Theme failed to copy."
 msgstr ""
 
-msgid "Install Theme"
-msgstr ""
+#, fuzzy
+msgid "Theme Selections"
+msgstr "Браузер сонгох"
 
+#. Instructions
 msgid ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 msgstr ""
 
-msgid "Icon"
-msgstr "Дүрс зураг"
+#, fuzzy
+msgid "Buddy List Theme:"
+msgstr "Харилцагчийн жагсаалт"
+
+#, fuzzy
+msgid "Status Icon Theme:"
+msgstr "%s ийн төлөв"
+
+msgid "Sound Theme:"
+msgstr ""
+
+msgid "Smiley Theme:"
+msgstr ""
 
 msgid "Keyboard Shortcuts"
 msgstr "Товчны хослол"
 
 msgid "Cl_ose conversations with the Escape key"
 msgstr "Esc товчоор харилцааг хаах"
-
-#. Buddy List Themes
-#, fuzzy
-msgid "Buddy List Theme"
-msgstr "Харилцагчийн жагсаалт"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -12758,9 +13176,6 @@ msgstr ""
 msgid "Font"
 msgstr "Фонт"
 
-msgid "Use document font from _theme"
-msgstr ""
-
 msgid "Use font from _theme"
 msgstr ""
 
@@ -12835,48 +13250,6 @@ msgstr "Хэрэглэгчийн нэр"
 msgid "Pass_word:"
 msgstr "Нууц үг"
 
-msgid "Proxy Server &amp; Browser"
-msgstr "Proxy Server &amp; Браузер"
-
-msgid "<b>Proxy configuration program was not found.</b>"
-msgstr "<b>Прокси тохиргоо хийх програм олдсонгүй.</b>"
-
-msgid "<b>Browser configuration program was not found.</b>"
-msgstr "<b>Браузерийн тохиргоо хийх програм олдсонгүй.</b>"
-
-msgid ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
-msgstr ""
-
-msgid "Configure _Proxy"
-msgstr "Проксиг тохируулах"
-
-msgid "Configure _Browser"
-msgstr "Браузерыг тохируулах"
-
-msgid "Proxy Server"
-msgstr "Прокси Сервер"
-
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr ""
-
-#, fuzzy
-msgid "Proxy t_ype:"
-msgstr "Проксийн төрөл:"
-
-msgid "No proxy"
-msgstr "Ямар ч прокси байхгүй"
-
-#, fuzzy
-msgid "P_ort:"
-msgstr "Порт:"
-
-#, fuzzy
-msgid "User_name:"
-msgstr "Хэрэглэгчийн нэр"
-
 msgid "Seamonkey"
 msgstr "Seamonkey"
 
@@ -12916,6 +13289,15 @@ msgstr "Маниул"
 msgid "Browser Selection"
 msgstr "Браузер сонгох"
 
+msgid "Browser preferences are configured in GNOME preferences"
+msgstr ""
+
+msgid "<b>Browser configuration program was not found.</b>"
+msgstr "<b>Браузерийн тохиргоо хийх програм олдсонгүй.</b>"
+
+msgid "Configure _Browser"
+msgstr "Браузерыг тохируулах"
+
 msgid "_Browser:"
 msgstr "Браузер:"
 
@@ -12938,6 +13320,38 @@ msgid ""
 msgstr ""
 "Заавар:\n"
 "(%s for URL)"
+
+msgid "Proxy Server"
+msgstr "Прокси Сервер"
+
+msgid "Proxy preferences are configured in GNOME preferences"
+msgstr ""
+
+msgid "<b>Proxy configuration program was not found.</b>"
+msgstr "<b>Прокси тохиргоо хийх програм олдсонгүй.</b>"
+
+msgid "Configure _Proxy"
+msgstr "Проксиг тохируулах"
+
+#. This is a global option that affects SOCKS4 usage even with
+#. * account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "Проксийн төрөл:"
+
+msgid "No proxy"
+msgstr "Ямар ч прокси байхгүй"
+
+#, fuzzy
+msgid "P_ort:"
+msgstr "Порт:"
+
+#, fuzzy
+msgid "User_name:"
+msgstr "Хэрэглэгчийн нэр"
 
 msgid "Log _format:"
 msgstr "Архивын формат:"
@@ -13025,24 +13439,18 @@ msgstr "Идэвхгүй байгаа хугацааны мэдээлэл:"
 msgid "Based on keyboard or mouse use"
 msgstr "Гар эсвэл хулганы хэрэглээнд суурилсан"
 
+msgid "_Minutes before becoming idle:"
+msgstr "Идэвхгүй болохын өмнөх минут:"
+
+#, fuzzy
+msgid "Change to this status when _idle:"
+msgstr "Идэвхгүй болоход төлөвийг өөрчлөх"
+
 msgid "_Auto-reply:"
 msgstr "Автоматаар хариулах:"
 
 msgid "When both away and idle"
 msgstr "Гарах болон идэвхгүй болоход"
-
-#. Auto-away stuff
-msgid "Auto-away"
-msgstr ""
-
-msgid "_Minutes before becoming idle:"
-msgstr "Идэвхгүй болохын өмнөх минут:"
-
-msgid "Change status when _idle"
-msgstr "Идэвхгүй болоход төлөвийг өөрчлөх"
-
-msgid "Change _status to:"
-msgstr "Төлөв өөрчлөх:"
 
 #. Signon status stuff
 msgid "Status at Startup"
@@ -13057,14 +13465,15 @@ msgstr "Эхлүүлэх төлөв:"
 msgid "Interface"
 msgstr "Интерфэйс"
 
-msgid "Smiley Themes"
-msgstr ""
-
 msgid "Browser"
 msgstr "Браузер"
 
 msgid "Status / Idle"
 msgstr "Төлөв "
+
+#, fuzzy
+msgid "Themes"
+msgstr "Шалгах"
 
 msgid "Allow all users to contact me"
 msgstr "Надтай харилцахыг бүх хэрэглэгчид зөвшөөрөх"
@@ -13224,6 +13633,9 @@ msgstr "Товчны хослол"
 msgid "Custom Smiley Manager"
 msgstr ""
 
+msgid "Attention received"
+msgstr ""
+
 #, fuzzy
 msgid "Select Buddy Icon"
 msgstr "Харилцагч Сонгох"
@@ -13298,10 +13710,13 @@ msgid ""
 "this user"
 msgstr "Энэ зургийг мессежинд оруулж болно."
 
-#. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-#. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-#. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-#. * Probably not.  I'll just give an error and return.
+#. I don't know if we really want to do anything here.  Most of
+#. * the desktop item types are crap like "MIME Type" (I have no
+#. * clue how that would be a desktop item) and "Comment"...
+#. * nothing we can really send.  The only logical one is
+#. * "Application," but do we really want to send a binary and
+#. * nothing else? Probably not.  I'll just give an error and
+#. * return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 msgid "Cannot send launcher"
 msgstr ""
@@ -13331,15 +13746,6 @@ msgstr "Дүрс зурагны алдаа"
 msgid "Could not set icon"
 msgstr "Дүрс зургийг тохируулж чадсангүй"
 
-#, c-format
-msgid "Failed to open file '%s': %s"
-msgstr ""
-
-#, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr ""
-
 #, fuzzy
 msgid "_Open Link"
 msgstr "Холбоосыг Нээх:"
@@ -13368,6 +13774,10 @@ msgstr "Дуу тоглуулах"
 #, fuzzy
 msgid "_Save File"
 msgstr "Файлыг Хадгалах"
+
+#, fuzzy
+msgid "Do you really want to clear?"
+msgstr "%s устгахдаа итгэлтэй байн уу?"
 
 msgid "Select color"
 msgstr "Өнгийг сонгох"
@@ -13408,9 +13818,6 @@ msgid "Pidgin Tooltip"
 msgstr ""
 
 msgid "Pidgin smileys"
-msgstr ""
-
-msgid "Penguin Pimps"
 msgstr ""
 
 msgid "Selecting this disables graphical emoticons."
@@ -14033,6 +14440,10 @@ msgstr ""
 msgid "Conversation Entry"
 msgstr ""
 
+#, fuzzy
+msgid "Conversation History"
+msgstr "Харилцаа"
+
 msgid "Request Dialog"
 msgstr ""
 
@@ -14544,15 +14955,6 @@ msgstr "Бүртгэл:"
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr ""
 
-msgid "Insert an <iq/> stanza."
-msgstr ""
-
-msgid "Insert a <presence/> stanza."
-msgstr ""
-
-msgid "Insert a <message/> stanza."
-msgstr ""
-
 #. *< name
 #. *< version
 #. *  summary
@@ -14560,8 +14962,92 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr ""
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Error creating conference."
+#~ msgstr "Холболт үүсгэх алдаа"
+
+#, fuzzy
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "%s харилцагчийг хориглох боломжгүй"
+
+#, fuzzy
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr ""
+#~ "Сокет үүсгэх боломжгүй:\n"
+#~ "%s"
+
+#~ msgid "Unknown error."
+#~ msgstr "Үл мэдэгдэх алдаа."
+
+#~ msgid "%s on %s (%s)"
+#~ msgstr "%s (%s) ийн тухай %s "
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "%s (%s)д харилцагч нэмэх боломжгүй"
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "%s (%s)д харилцагч нэмэх боломжгүй"
+
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "%s (%s)д харилцагчийг зөвшөөрөх боломжгүй"
+
+#~ msgid "%s could not be added because your buddy list is full."
+#~ msgstr "Таны харилцагчийн жагсаалт дүүрсэн учраас %sийг нэмэж чадсангүй."
+
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%s нь буруу бүртгэл байна."
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "Үйлчилгээ түр хугацаагаар ажиллахгүй байгаа"
+
+#~ msgid "Unable to rename group"
+#~ msgstr "Бүлгийн нэр өөрчилөх боломжгүй"
+
+#~ msgid "Unable to delete group"
+#~ msgstr "Бүлэг устгах боломжгүй"
+
+#, fuzzy
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+
+#, fuzzy
+#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+
+#~ msgid ""
+#~ "Unrecognized file type\n"
+#~ "\n"
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "Танигдахгүй файлын төрөл\n"
+#~ "\n"
+#~ "Defaulting to PNG."
+
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Зураг хадгалах алдаа\n"
+#~ "\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "(Default)"
+#~ msgstr "Дефолт"
+
+#~ msgid "Icon"
+#~ msgstr "Дүрс зураг"
+
+#~ msgid "Proxy Server &amp; Browser"
+#~ msgstr "Proxy Server &amp; Браузер"
+
+#~ msgid "Change _status to:"
+#~ msgstr "Төлөв өөрчлөх:"
 
 #~ msgid "Send instant messages over multiple protocols"
 #~ msgstr "Олон протоколоор мессеж илгээх"
@@ -14872,10 +15358,6 @@ msgstr ""
 
 #~ msgid "Blood Type"
 #~ msgstr "Цусны төрөл"
-
-#, fuzzy
-#~ msgid "Successed:"
-#~ msgstr "Хурд:"
 
 #~ msgid "You rejected %d's request"
 #~ msgstr "%d ийн хүсэлтийг татгалзсан"

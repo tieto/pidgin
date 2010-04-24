@@ -819,6 +819,29 @@ gboolean purple_running_osx(void);
  */
 char *purple_fd_get_ip(int fd);
 
+/**
+ * Returns the address family of a socket.
+ *
+ * @param fd The socket file descriptor.
+ *
+ * @return The address family of the socket (AF_INET, AF_INET6, etc) or -1
+ *         on error.
+ * @since 2.7.0
+ */
+int purple_socket_get_family(int fd);
+
+/**
+ * Returns TRUE if a socket is capable of speaking IPv4.
+ *
+ * This is the case for IPv4 sockets and, on some systems, IPv6 sockets
+ * (due to the IPv4-mapped address functionality).
+ *
+ * @param fd The socket file descriptor
+ * @return TRUE if a socket can speak IPv4.
+ * @since 2.7.0
+ */
+gboolean purple_socket_speaks_ipv4(int fd);
+
 /*@}*/
 
 
@@ -1429,6 +1452,10 @@ const char *purple_escape_filename(const char *str);
 /**
  * This is added temporarily to assist the split of oscar into aim and icq.
  * This should not be used by plugins.
+ *
+ * @deprecated This function should not be used in new code and should be
+ *             removed in 3.0.0.  The aim/icq prpl split happened a long
+ *             time ago, and we don't need to keep migrating old data.
  */
 const char *_purple_oscar_convert(const char *act, const char *protocol);
 

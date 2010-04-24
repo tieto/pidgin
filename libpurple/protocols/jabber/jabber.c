@@ -166,6 +166,8 @@ static void jabber_bind_result_cb(JabberStream *js, const char *from,
 		char *msg = jabber_parse_error(js, packet, &reason);
 		purple_connection_error_reason(js->gc, reason, msg);
 		g_free(msg);
+
+		return;
 	}
 
 	jabber_session_init(js);
@@ -840,6 +842,16 @@ jabber_stream_new(PurpleAccount *account)
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
+		g_free(user);
+		/* Destroying the connection will free the JabberStream */
+		return NULL;
+	}
+
+	if (!js->user->node || *(js->user->node) == '\0') {
+		purple_connection_error_reason(gc,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+			_("Invalid XMPP ID. Username portion must be set."));
+		g_free(user);
 		/* Destroying the connection will free the JabberStream */
 		return NULL;
 	}
@@ -848,6 +860,7 @@ jabber_stream_new(PurpleAccount *account)
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
+		g_free(user);
 		/* Destroying the connection will free the JabberStream */
 		return NULL;
 	}
@@ -1530,7 +1543,8 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->avatar_hash);
 	g_free(js->caps_hash);
 
-	purple_circ_buffer_destroy(js->write_buffer);
+	if (js->write_buffer)
+		purple_circ_buffer_destroy(js->write_buffer);
 	if(js->writeh)
 		purple_input_remove(js->writeh);
 	if (js->auth_mech && js->auth_mech->dispose)
@@ -3672,6 +3686,11 @@ jabber_do_uninit(void)
 	jabber_caps_uninit();
 	jabber_presence_uninit();
 	jabber_iq_uninit();
+
+#ifdef USE_VV
+	g_signal_handlers_disconnect_by_func(G_OBJECT(purple_media_manager_get()),
+			G_CALLBACK(jabber_caps_broadcast_change), NULL);
+#endif
 
 	jabber_auth_uninit();
 	jabber_features_destroy();

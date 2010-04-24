@@ -1458,7 +1458,7 @@ _sync_privacy_lists(NMUser *user)
 		for (node = rem_list; node; node = node->next) {
 			purple_privacy_permit_remove(gc->account, (char *)node->data, TRUE);
 		}
-		g_free(rem_list);
+		g_slist_free(rem_list);
 		rem_list = NULL;
 	}
 
@@ -1494,7 +1494,7 @@ _map_property_tag(const char *tag)
 	else if (strcmp(tag, "personalTitle") == 0)
 		return _("Personal Title");
 	else if (strcmp(tag, "Title") == 0)
-		return _("Title");
+		return _("Job Title");
 	else if (strcmp(tag, "mailstop") == 0)
 		return _("Mailstop");
 	else if (strcmp(tag, "Internet EMail Address") == 0)

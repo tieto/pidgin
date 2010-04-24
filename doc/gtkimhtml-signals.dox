@@ -63,7 +63,7 @@ void (*format_function_update)(GtkIMHtml *imhtml, gpointer data);
  	@signalproto
 void (*paste) (GtkIMHtml *imhtml, char *format)
 	@endsignalproto
-	@signaldef Emitted when paste from the clipboard is requested.
+	@signaldesc Emitted when paste from the clipboard is requested.
 	@param imhtml  The GtkIMHtml emitting the signal.
 	@param format  If 'text', then the formatting of the clipboard content
 	               will be removed before pasting. If empty or 'html', then

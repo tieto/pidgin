@@ -428,6 +428,9 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 				"was %d (%d): %s\n", status_code, status_detail_code, response);
 
 		if (status_code == 330 && status_detail_code == 3011) {
+			PurpleAccount *account = purple_connection_get_account(gc);
+			if (!purple_account_get_remember_password(account))
+				purple_account_set_password(account, NULL);
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 					_("Incorrect password"));
@@ -515,8 +518,12 @@ static void client_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data
 
 	if (error_message != NULL || len == 0) {
 		gchar *tmp;
-		tmp = g_strdup_printf(_("Error requesting %s: %s"),
-				URL_CLIENT_LOGIN, error_message);
+		if (error_message != NULL)
+			tmp = g_strdup_printf(_("Error requesting %s: %s"),
+					URL_CLIENT_LOGIN, error_message);
+		else
+			tmp = g_strdup_printf(_("Error requesting %s"),
+					URL_CLIENT_LOGIN);
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);

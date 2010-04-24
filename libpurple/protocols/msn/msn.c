@@ -589,6 +589,14 @@ t_msn_xfer_init(PurpleXfer *xfer)
 {
 	MsnSlpLink *slplink = xfer->data;
 	msn_slplink_request_ft(slplink, xfer);
+	msn_slplink_unref(slplink);
+}
+
+static void
+t_msn_xfer_cancel_send(PurpleXfer *xfer)
+{
+	MsnSlpLink *slplink = xfer->data;
+	msn_slplink_unref(slplink);
 }
 
 static PurpleXfer*
@@ -603,9 +611,10 @@ msn_new_xfer(PurpleConnection *gc, const char *who)
 
 	g_return_val_if_fail(xfer != NULL, NULL);
 
-	xfer->data = msn_session_get_slplink(session, who);
+	xfer->data = msn_slplink_ref(msn_session_get_slplink(session, who));
 
 	purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
+	purple_xfer_set_cancel_send_fnc(xfer, t_msn_xfer_cancel_send);
 
 	return xfer;
 }
@@ -915,9 +924,9 @@ msn_status_types(PurpleAccount *account)
 
 	status = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
 			"tune", NULL, FALSE, TRUE, TRUE,
-			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ALBUM, _("Album"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
 			"game", _("Game Title"), purple_value_new(PURPLE_TYPE_STRING),
 			"office", _("Office Title"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);

@@ -682,7 +682,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 					nick = xmlnode_get_attrib(presence->chat_info.item, "nick");
 
 				/* nick change */
-				if (nick) {
+				if (!nick) {
 					purple_debug_warning("jabber", "Chat presence indicating a nick change, but no new nickname!\n");
 				} else {
 					nick_change = TRUE;
@@ -823,6 +823,7 @@ handle_presence_contact(JabberStream *js, JabberPresence *presence)
 		if (presence->jb != js->user_jb) {
 			purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%p)\n",
 					buddy_name, purple_account_get_username(account), account);
+			g_free(buddy_name);
 			return FALSE;
 		} else {
 			/* this is a different resource of our own account. Resume even when this account isn't on our blist */

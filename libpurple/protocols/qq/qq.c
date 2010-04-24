@@ -221,6 +221,9 @@ static void qq_close(PurpleConnection *gc)
 		qd->connect_watcher = 0;
 	}
 
+	/* This is cancelled by _purple_connection_destroy */
+	qd->conn_data = NULL;
+
 	qq_disconnect(gc);
 
 	if (qd->redirect) g_free(qd->redirect);

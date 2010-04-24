@@ -1000,7 +1000,6 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 				       int status, const char *descr)
 {
 	gchar *from;
-	gchar *msg;
 	const char *st;
 	gchar *avatarurl;
 	PurpleUtilFetchUrlData *url_data;
@@ -1048,11 +1047,14 @@ static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 
 	purple_debug_info("gg", "st = %s\n", st);
 	//msg = charset_convert(descr, "CP1250", "UTF-8");
-	msg = g_strdup_printf("%s", descr);
-	purple_prpl_got_user_status(purple_connection_get_account(gc),
-				  from, st, "message", msg, NULL);
+	if (descr == NULL) {
+		purple_prpl_got_user_status(purple_connection_get_account(gc),
+		      from, st, NULL);
+	} else {
+		purple_prpl_got_user_status(purple_connection_get_account(gc),
+		    from, st, "message", descr, NULL);
+	}
 	g_free(from);
-	g_free(msg);
 }
 
 static void ggp_sr_close_cb(gpointer user_data)
@@ -1608,12 +1610,12 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 				purple_debug_info("gg",
 					"notify60: (%d) status=%d; version=%d; descr=%s\n",
 					ev->event.notify60[i].uin,
-					ev->event.notify60[i].status,
+					GG_S(ev->event.notify60[i].status),
 					ev->event.notify60[i].version,
 					ev->event.notify60[i].descr ? ev->event.notify60[i].descr : "(null)");
 
 				ggp_generic_status_handler(gc, ev->event.notify60[i].uin,
-					ev->event.notify60[i].status,
+					GG_S(ev->event.notify60[i].status),
 					ev->event.notify60[i].descr);
 			}
 			break;
@@ -1623,7 +1625,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 					ev->event.status.descr ? ev->event.status.descr : "(null)");
 
 			ggp_generic_status_handler(gc, ev->event.status.uin,
-				ev->event.status.status, ev->event.status.descr);
+				GG_S(ev->event.status.status), ev->event.status.descr);
 			break;
 		case GG_EVENT_STATUS60:
 			purple_debug_info("gg",

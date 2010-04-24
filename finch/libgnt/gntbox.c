@@ -422,7 +422,7 @@ gnt_box_confirm_size(GntWidget *widget, int width, int height)
 
 		gnt_widget_get_size(wid, &w, &h);
 
-		if (wid != last && !child && gnt_widget_confirm_size(wid, w - wchange, h - hchange)) {
+		if (wid != last && !child && w > 0 && h > 0 && gnt_widget_confirm_size(wid, w - wchange, h - hchange)) {
 			child = wid;
 			break;
 		}
@@ -441,6 +441,9 @@ gnt_box_confirm_size(GntWidget *widget, int width, int height)
 		for (iter = box->list; iter; iter = iter->next) {
 			GntWidget *wid = iter->data;
 			int w, h;
+
+			if (wid == child)
+				continue;
 
 			gnt_widget_get_size(wid, &w, &h);
 			if (box->vertical) {

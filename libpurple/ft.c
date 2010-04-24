@@ -57,6 +57,8 @@ typedef struct _PurpleXferPrivData {
 		PURPLE_XFER_READY_UI   = 0x1,
 		PURPLE_XFER_READY_PRPL = 0x2,
 	} ready;
+
+	/* TODO: Should really use a PurpleCircBuffer for this. */
 	GByteArray *buffer;
 
 	gpointer thumbnail_data;		/**< thumbnail image */
@@ -1199,7 +1201,7 @@ do_transfer(PurpleXfer *xfer)
 		}
 
 		if (priv->buffer) {
-			priv->buffer = g_byte_array_append(priv->buffer, buffer, result);
+			g_byte_array_append(priv->buffer, buffer, result);
 			g_free(buffer);
 			buffer = priv->buffer->data;
 			result = priv->buffer->len;
@@ -1209,7 +1211,10 @@ do_transfer(PurpleXfer *xfer)
 
 		if (r == -1) {
 			purple_xfer_cancel_remote(xfer);
-			g_free(buffer);
+			if (!priv->buffer)
+				/* We don't free buffer if priv->buffer is set, because in
+				   that case buffer doesn't belong to us. */
+				g_free(buffer);
 			return;
 		} else if (r == result) {
 			/*
@@ -1227,10 +1232,10 @@ do_transfer(PurpleXfer *xfer)
 			/*
 			 * Remove what we wrote
 			 * If we wrote the whole buffer the byte array will be empty
-			 * Otherwise we'll kee what wasn't sent for next time.
+			 * Otherwise we'll keep what wasn't sent for next time.
 			 */
 			buffer = NULL;
-			priv->buffer = g_byte_array_remove_range(priv->buffer, 0, r);
+			g_byte_array_remove_range(priv->buffer, 0, r);
 		}
 	}
 

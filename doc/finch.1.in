@@ -348,6 +348,16 @@ a-f = cursor-next-word
 a-d = delete-next-word
 .br
 c-v = clipboard-paste
+.br
+c-p = history-prev
+.br
+c-n = history-next
+.br
+c-r = history-search
+.br
+c-up = history-prev
+.br
+c-down = history-next
 
 .br
 [GntTree::binding]

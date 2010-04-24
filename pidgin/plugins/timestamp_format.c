@@ -8,6 +8,7 @@
 
 #include "gtkconv.h"
 #include "gtkplugin.h"
+#include "gtkimhtml.h"
 
 #include <time.h>
 
@@ -108,19 +109,101 @@ static char *log_timestamp_cb(PurpleLog *log, time_t t, gboolean show_date, gpoi
 	return timestamp_cb_common(log->conv, t, show_date, force, dates, FALSE);
 }
 
+static void
+menu_cb(GtkWidget *item, gpointer data)
+{
+	PurplePlugin *plugin = data;
+	GtkWidget *frame = pidgin_plugin_get_config_frame(plugin), *dialog;
+	if (!frame)
+		return;
+
+	dialog = gtk_dialog_new_with_buttons(PIDGIN_ALERT_TITLE, NULL,
+			GTK_DIALOG_NO_SEPARATOR | GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+			NULL);
+	g_signal_connect_after(G_OBJECT(dialog), "response", G_CALLBACK(gtk_widget_destroy), dialog);
+#if GTK_CHECK_VERSION(2,14,0)
+	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), frame);
+#else
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), frame);
+#endif
+	gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
+	gtk_window_set_title(GTK_WINDOW(dialog), _(purple_plugin_get_name(plugin)));
+	gtk_widget_show_all(dialog);
+}
+
+static gboolean
+textview_emission_hook(GSignalInvocationHint *hint, guint n_params,
+		const GValue *pvalues, gpointer data)
+{
+	GtkTextView *view = GTK_TEXT_VIEW(g_value_get_object(pvalues));
+	GtkWidget *menu, *item;
+	GtkTextBuffer *buffer;
+	GtkTextIter cursor;
+	int cx, cy, bx, by;
+
+	if (!GTK_IS_IMHTML(view))
+		return TRUE;
+
+#if GTK_CHECK_VERSION(2,14,0)
+	if (!gdk_window_get_pointer(gtk_widget_get_window(GTK_WIDGET(view)), &cx, &cy, NULL))
+		return TRUE;
+#else
+	if (!gdk_window_get_pointer(GTK_WIDGET(view)->window, &cx, &cy, NULL))
+		return TRUE;
+#endif
+
+	buffer = gtk_text_view_get_buffer(view);
+
+	gtk_text_view_window_to_buffer_coords(view, GTK_TEXT_WINDOW_TEXT, cx, cy, &bx, &by);
+	gtk_text_view_get_iter_at_location(view, &cursor, bx, by);
+	if (!gtk_text_iter_has_tag(&cursor,
+				gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(buffer), "comment")))
+		return TRUE;
+
+	menu = g_value_get_object(&pvalues[1]);
+
+	item = gtk_menu_item_new_with_label(_("Timestamp Format Options"));
+	gtk_widget_show_all(item);
+	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(menu_cb), data);
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), item, 0);
+
+	item = gtk_separator_menu_item_new();
+	gtk_widget_show(item);
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), item, 1);
+
+	return TRUE;
+}
+
+static guint signal_id;
+static gulong hook_id;
+
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
+	gpointer klass = NULL;
+
 	purple_signal_connect(pidgin_conversations_get_handle(), "conversation-timestamp",
 	                    plugin, PURPLE_CALLBACK(conversation_timestamp_cb), NULL);
 	purple_signal_connect(purple_log_get_handle(), "log-timestamp",
 	                    plugin, PURPLE_CALLBACK(log_timestamp_cb), NULL);
+
+	klass = g_type_class_ref(GTK_TYPE_TEXT_VIEW);
+
+	/* In 3.0.0, use purple_g_signal_connect_flags */
+	g_signal_parse_name("populate_popup", GTK_TYPE_TEXT_VIEW, &signal_id, NULL, FALSE);
+	hook_id = g_signal_add_emission_hook(signal_id, 0, textview_emission_hook,
+			plugin, NULL);
+
+	g_type_class_unref(klass);
+
 	return TRUE;
 }
 
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
+	g_signal_remove_emission_hook(signal_id, hook_id);
 	return TRUE;
 }
 

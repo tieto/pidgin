@@ -4866,12 +4866,11 @@ static void
 pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 {
 	GtkWidget *widget = gtk_hbox_new(FALSE, 0);
-	GtkWidget *label, *entry, *close, *image;
+	GtkWidget *label, *entry, *close;
 
 	gtk_box_pack_start(GTK_BOX(container), widget, FALSE, FALSE, 0);
 
-	image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-	close = pidgin_create_small_button(image);
+	close = pidgin_create_small_button(gtk_label_new("×"));
 	gtk_box_pack_start(GTK_BOX(widget), close, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, close,
 	                     _("Close Find bar"), NULL);
@@ -9450,7 +9449,6 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	GtkWidget *tab_cont = gtkconv->tab_cont;
 	PurpleConversationType conv_type;
 	const gchar *tmp_lab;
-	GtkWidget *close_image;
 
 	conv_type = purple_conversation_get_type(conv);
 
@@ -9462,8 +9460,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 
 	/* Close button. */
-	close_image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-	gtkconv->close = pidgin_create_small_button(close_image);
+	gtkconv->close = pidgin_create_small_button(gtk_label_new("×"));
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
 	                     _("Close conversation"), NULL);
 
