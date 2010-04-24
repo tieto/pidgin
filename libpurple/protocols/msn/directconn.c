@@ -47,27 +47,22 @@ typedef struct {
 #define DC_MAX_PACKET_SIZE    (DC_PACKET_HEADER_SIZE + DC_MAX_BODY_SIZE)
 
 static void
-msn_dc_generate_nonce(MsnDirectConn *dc)
+msn_dc_calculate_nonce_hash(MsnDirectConnNonceType type,
+                            const guchar nonce[16], gchar nonce_hash[37])
 {
-	guint32 *nonce;
-	int i;
 	guchar digest[20];
 
-	nonce = (guint32 *)&dc->nonce;
-	for (i = 0; i < 4; i++)
-		nonce[i] = rand();
-
-	if (dc->nonce_type == DC_NONCE_SHA1) {
+	if (type == DC_NONCE_SHA1) {
 		PurpleCipher *cipher = purple_ciphers_find_cipher("sha1");
 		PurpleCipherContext *context = purple_cipher_context_new(cipher, NULL);
-		purple_cipher_context_append(context, dc->nonce, sizeof(dc->nonce));
+		purple_cipher_context_append(context, nonce, sizeof(nonce));
 		purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
 		purple_cipher_context_destroy(context);
-	} else if (dc->nonce_type == DC_NONCE_PLAIN) {
+	} else if (type == DC_NONCE_PLAIN) {
 		memcpy(digest, nonce, 16);
 	}
 
-	g_sprintf(dc->nonce_hash,
+	g_sprintf(nonce_hash,
 	          "%08X-%04X-%04X-%04X-%08X%04X",
 	          GUINT32_FROM_LE(*((guint32 *)(digest + 0))),
 	          GUINT16_FROM_LE(*((guint16 *)(digest + 4))),
@@ -76,6 +71,19 @@ msn_dc_generate_nonce(MsnDirectConn *dc)
 	          GUINT32_FROM_BE(*((guint32 *)(digest + 10))),
 	          GUINT16_FROM_BE(*((guint16 *)(digest + 14)))
 	);
+}
+
+static void
+msn_dc_generate_nonce(MsnDirectConn *dc)
+{
+	guint32 *nonce;
+	int i;
+
+	nonce = (guint32 *)&dc->nonce;
+	for (i = 0; i < 4; i++)
+		nonce[i] = rand();
+
+	msn_dc_calculate_nonce_hash(dc->nonce_type, dc->nonce, dc->nonce_hash);
 
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "DC %p generated nonce %s\n", dc, dc->nonce_hash);
@@ -690,10 +698,7 @@ msn_dc_send_handshake_reply(MsnDirectConn *dc)
 static gboolean
 msn_dc_verify_handshake(MsnDirectConn *dc, guint32 packet_length)
 {
-	PurpleCipherContext *context;
-	PurpleCipher *cipher;
 	guchar nonce[16];
-	guchar digest[20];
 	gchar  nonce_hash[37];
 
 	if (packet_length != DC_PACKET_HEADER_SIZE)
@@ -701,25 +706,7 @@ msn_dc_verify_handshake(MsnDirectConn *dc, guint32 packet_length)
 
 	memcpy(nonce, dc->in_buffer + 4 + offsetof(MsnDcContext, ack_id), 16);
 
-	if (dc->nonce_type == DC_NONCE_SHA1) {
-		cipher = purple_ciphers_find_cipher("sha1");
-		context = purple_cipher_context_new(cipher, NULL);
-		purple_cipher_context_append(context, nonce, sizeof(nonce));
-		purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-		purple_cipher_context_destroy(context);
-	} else if (dc->nonce_type == DC_NONCE_PLAIN) {
-		memcpy(digest, nonce, 16);
-	}
-
-	g_sprintf(nonce_hash,
-	          "%08X-%04X-%04X-%04X-%08X%04X",
-	          GUINT32_FROM_LE(*((guint32 *)(digest + 0))),
-	          GUINT16_FROM_LE(*((guint16 *)(digest + 4))),
-	          GUINT16_FROM_LE(*((guint16 *)(digest + 6))),
-	          GUINT16_FROM_BE(*((guint16 *)(digest + 8))),
-	          GUINT32_FROM_BE(*((guint32 *)(digest + 10))),
-	          GUINT16_FROM_BE(*((guint16 *)(digest + 14)))
-	);
+	msn_dc_calculate_nonce_hash(dc->nonce_type, nonce, nonce_hash);
 
 	if (g_str_equal(dc->remote_nonce, nonce_hash)) {
 		purple_debug_info("msn",
