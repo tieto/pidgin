@@ -47,6 +47,8 @@ version 2.7.0 (??/??/????):
 	  buddy icons.
 	* The 'Message Timestamp Formats' plugin allows changing the timestamp
 	  format from the timestamps' context menu in conversation log.
+	* The 'Message Timestamp Formats' plugin allows forcing 12-hour
+	  timestamps.  (Jonathan Maltz)
 	* Fix pastes from Chrome (rich-text pastes and probably URLs
 	  having garbage appended to them)
 
