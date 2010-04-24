@@ -626,8 +626,6 @@ msn_dc_send_foo(MsnDirectConn *dc)
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "msn_dc_send_foo %p\n", dc);
 
-	g_return_if_fail(dc != NULL);
-
 	p = msn_dc_new_packet();
 
 	p->length = 8;
@@ -643,8 +641,6 @@ msn_dc_send_handshake(MsnDirectConn *dc)
 	MsnDirectConnPacket *p;
 	const gchar *h;
 	guint32 len;
-
-	g_return_if_fail(dc != NULL);
 
 	p = msn_dc_new_packet();
 
@@ -674,8 +670,6 @@ msn_dc_send_handshake_reply(MsnDirectConn *dc)
 	MsnDirectConnPacket *p;
 	const gchar *h;
 	guint32 len;
-
-	g_return_if_fail(dc != NULL);
 
 	p = msn_dc_new_packet();
 
