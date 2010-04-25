@@ -309,7 +309,7 @@ init_plugin(PurplePlugin *plugin)
 		   "/plugins/gtk/timestamp_format/force_24hr"))
 			purple_prefs_add_string("/plugins/gtk/timestamp_format/force", "force24");
 		else
-			purple_prefs_add_string("/plugins/gtk/timestamp_format/force", "force12");
+			purple_prefs_add_string("/plugins/gtk/timestamp_format/force", "default");
 	}
 	else
 		purple_prefs_add_string("/plugins/gtk/timestamp_format/force", "default");
