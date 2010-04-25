@@ -1176,36 +1176,27 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 			gsize size;
 			char *option_keys[2] = {NULL, NULL};
 			char *option_values[2] = {NULL, NULL};
-			gboolean supports_jpeg = FALSE;
-			gboolean supports_png = FALSE;
 			int i;
 			gchar *format = NULL;
 			
-			for (i = 0 ; formats_split[i] ; i++) {
+			for (i = 0; formats_split[i]; i++) {
 				if (purple_strequal(formats_split[i], "jpeg")) {
-					supports_jpeg = TRUE;
+					purple_debug_info("pidgin", "creating JPEG thumbnail\n");
+					option_keys[0] = "quality";
+					option_values[0] = "90";
+					format = "jpeg";
+					break;
 				} else if (purple_strequal(formats_split[i], "png")) {
-					supports_png = TRUE;
+					purple_debug_info("pidgin", "creating PNG thumbnail\n");
+					option_keys[0] = "compression";
+					option_values[0] = "9";
+					format = "png";
+					break;
 				}
 			}
 
-			/* prefer JPEG, then PNG, otherwise try the first format given
-			 by the PRPL without options */
-			if (supports_jpeg) {
-				purple_debug_info("pidgin", "creating JPEG thumbnail\n");
-				option_keys[0] = "quality";
-				option_keys[1] = NULL;
-				option_values[0] = "90";
-				option_values[1] = NULL;
-				format = "jpeg";
-			} else if (supports_png) {
-				purple_debug_info("pidgin", "creating PNG thumbnail\n");
-				option_keys[0] = "compression";
-				option_keys[1] = NULL;
-				option_values[0] = "9";
-				option_values[1] = NULL;
-				format = "png";
-			} else {
+			/* Try the first format given by the PRPL without options */
+			if (format == NULL) {
 				purple_debug_info("pidgin",
 				    "creating thumbnail of format %s as demanded by PRPL\n",
 				    formats_split[0]);
@@ -1216,7 +1207,7 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 				option_keys, option_values, NULL);
 
 			if (buffer) {
-				const gchar *mimetype = g_strdup_printf("image/%s", format);				
+				gchar *mimetype = g_strdup_printf("image/%s", format);				
 				purple_debug_info("pidgin",
 				                  "created thumbnail of %" G_GSIZE_FORMAT " bytes\n",
 					size);
