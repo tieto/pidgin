@@ -90,14 +90,13 @@ msn_dc_generate_nonce(MsnDirectConn *dc)
 }
 
 static MsnDirectConnPacket *
-msn_dc_new_packet(void)
+msn_dc_new_packet(guint32 length)
 {
 	MsnDirectConnPacket	*p;
 
 	p = g_new0(MsnDirectConnPacket, 1);
-	p->data = NULL;
-	p->sent_cb = NULL;
-	p->msg = NULL;
+	p->length = length + 4;
+	p->data = g_malloc(length);
 
 	return p;
 }
@@ -146,7 +145,7 @@ msn_dc_new(MsnSlpCall *slpcall)
 	dc->state = DC_STATE_CLOSED;
 	dc->in_buffer = NULL;
 	dc->out_queue = g_queue_new();
-	dc->msg_pos = 0;
+	dc->msg_pos = -1;
 	dc->send_connection_info_msg_cb = NULL;
 	dc->ext_ip = NULL;
 	dc->timeout_handle = 0;
@@ -578,8 +577,23 @@ msn_dc_send_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	}
 
 	p = g_queue_peek_head(dc->out_queue);
-	bytes_to_send = p->length - dc->msg_pos;
 
+	if (dc->msg_pos < 0) {
+		/* First we send the length of the packet */
+		guint32 len = GUINT32_TO_LE(p->length);
+		bytes_sent = send(fd, &len, 4, 0);
+		if (bytes_sent < 0) {
+			if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+				return;
+
+			purple_debug_warning("msn", "msn_dc_send_cb: send error\n");
+			msn_dc_destroy(dc);
+			return;
+		}
+		dc->msg_pos = 0;
+	}
+
+	bytes_to_send = p->length - dc->msg_pos;
 	bytes_sent = send(fd, p->data, bytes_to_send, 0);
 	if (bytes_sent < 0) {
 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
@@ -600,7 +614,7 @@ msn_dc_send_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		g_queue_pop_head(dc->out_queue);
 		msn_dc_destroy_packet(p);
 
-		dc->msg_pos = 0;
+		dc->msg_pos = -1;
 	}
 }
 
@@ -626,11 +640,9 @@ msn_dc_send_foo(MsnDirectConn *dc)
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "msn_dc_send_foo %p\n", dc);
 
-	p = msn_dc_new_packet();
+	p = msn_dc_new_packet(4);
 
-	p->length = 8;
-	p->data = g_memdup("\4\0\0\0foo", 8);
-	p->sent_cb = NULL;
+	memcpy(p->data, "foo\0", 4);
 
 	msn_dc_enqueue_packet(dc, p);
 }
@@ -640,15 +652,8 @@ msn_dc_send_handshake(MsnDirectConn *dc)
 {
 	MsnDirectConnPacket *p;
 	const gchar *h;
-	guint32 len;
 
-	p = msn_dc_new_packet();
-
-	p->length = 4 + DC_PACKET_HEADER_SIZE;
-	p->data = g_malloc(p->length);
-
-	len = GUINT32_TO_LE(DC_PACKET_HEADER_SIZE);
-	memcpy(p->data, &len, 4);
+	p = msn_dc_new_packet(DC_PACKET_HEADER_SIZE);
 
 	dc->header.session_id = 0;
 	dc->header.id = dc->slpcall->slplink->slp_seq_id++;
@@ -658,8 +663,8 @@ msn_dc_send_handshake(MsnDirectConn *dc)
 	dc->header.flags = 0x100;
 
 	h = msn_dc_serialize_binary_header(dc);
-	memcpy(p->data + 4, h, DC_PACKET_HEADER_SIZE);
-	memcpy(p->data + 4 + offsetof(MsnDcContext, ack_id), dc->nonce, 16);
+	memcpy(p->data, h, DC_PACKET_HEADER_SIZE);
+	memcpy(p->data + offsetof(MsnDcContext, ack_id), dc->nonce, 16);
 
 	msn_dc_enqueue_packet(dc, p);
 }
@@ -669,22 +674,15 @@ msn_dc_send_handshake_reply(MsnDirectConn *dc)
 {
 	MsnDirectConnPacket *p;
 	const gchar *h;
-	guint32 len;
 
-	p = msn_dc_new_packet();
-
-	p->length = 4 + DC_PACKET_HEADER_SIZE;
-	p->data = g_malloc(p->length);
-
-	len = GUINT32_TO_LE(DC_PACKET_HEADER_SIZE);
-	memcpy(p->data, &len, 4);
+	p = msn_dc_new_packet(DC_PACKET_HEADER_SIZE);
 
 	dc->header.id = dc->slpcall->slplink->slp_seq_id++;
 	dc->header.length = 0;
 
 	h = msn_dc_serialize_binary_header(dc);
-	memcpy(p->data + 4, h, DC_PACKET_HEADER_SIZE);
-	memcpy(p->data + 4 + offsetof(MsnDcContext, ack_id), dc->nonce, 16);
+	memcpy(p->data, h, DC_PACKET_HEADER_SIZE);
+	memcpy(p->data + offsetof(MsnDcContext, ack_id), dc->nonce, 16);
 
 	msn_dc_enqueue_packet(dc, p);
 }
@@ -729,16 +727,14 @@ msn_dc_send_packet_cb(MsnDirectConnPacket *p)
 void
 msn_dc_enqueue_msg(MsnDirectConn *dc, MsnMessage *msg)
 {
-	MsnDirectConnPacket *p = msn_dc_new_packet();
-	guint32 length = msg->body_len + DC_PACKET_HEADER_SIZE;
+	MsnDirectConnPacket *p;
+	guint32 length;
 
-	p->length = 4 + length;
-	p->data = g_malloc(p->length);
+	length = msg->body_len + DC_PACKET_HEADER_SIZE;
+	p = msn_dc_new_packet(length);
 
-	length = GUINT32_TO_LE(length);
-	memcpy(p->data, &length, 4);
-	memcpy(p->data + 4, &msg->msnslp_header, DC_PACKET_HEADER_SIZE);
-	memcpy(p->data + 4 + DC_PACKET_HEADER_SIZE, msg->body, msg->body_len);
+	memcpy(p->data, &msg->msnslp_header, DC_PACKET_HEADER_SIZE);
+	memcpy(p->data + DC_PACKET_HEADER_SIZE, msg->body, msg->body_len);
 
 	p->sent_cb = msn_dc_send_packet_cb;
 	p->msg = msn_message_ref(msg);
