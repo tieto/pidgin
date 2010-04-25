@@ -242,8 +242,8 @@ typedef struct
 	                        const char *secondary, int default_action,
 	                        PurpleAccount *account, const char *who,
 	                        PurpleConversation *conv, 
-							gconstpointer icon_data, gsize icon_size,
-							void *user_data,
+	                        gconstpointer icon_data, gsize icon_size,
+	                        void *user_data,
 	                        size_t action_count, va_list actions);
 
 	void (*_purple_reserved1)(void);

@@ -97,7 +97,7 @@ struct _PurpleBuddyIconSpec {
 	size_t max_filesize;               /**< Maximum size in bytes */
 	PurpleIconScaleRules scale_rules;  /**< How to stretch this icon */
 };
-	
+
 /** Represents an entry containing information that must be supplied by the
  *  user when joining a chat.
  */
