@@ -715,7 +715,7 @@ msn_dc_verify_handshake(MsnDirectConn *dc, guint32 packet_length)
 				"and calculated nonce %s from DC attempt. "
 				"Nonces don't match, ignoring direct connection\n",
 				dc->remote_nonce, nonce_hash);
-		return TRUE;
+		return FALSE;
 	}
 }
 
