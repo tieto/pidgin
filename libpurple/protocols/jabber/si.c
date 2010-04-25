@@ -32,6 +32,7 @@
 #include "notify.h"
 
 #include "buddy.h"
+#include "data.h"
 #include "disco.h"
 #include "jabber.h"
 #include "ibb.h"
@@ -1246,9 +1247,12 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	JabberIq *iq;
 	xmlnode *si, *file, *feature, *x, *field, *option, *value;
 	char buf[32];
+	gconstpointer thumb;
+	gsize thumb_size;
 
 	xfer->filename = g_path_get_basename(xfer->local_filename);
-
+	purple_xfer_prepare_thumbnail(xfer, "jpeg,png");
+	
 	iq = jabber_iq_new(jsx->js, JABBER_IQ_SET);
 	xmlnode_set_attrib(iq->node, "to", xfer->who);
 	si = xmlnode_new_child(iq->node, "si");
@@ -1266,6 +1270,21 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	xmlnode_set_attrib(file, "size", buf);
 	/* maybe later we'll do hash and date attribs */
 
+	/* add thumbnail, if appropriate */
+	if ((thumb = purple_xfer_get_thumbnail(xfer, &thumb_size))) {
+		const gchar *mimetype = purple_xfer_get_thumbnail_mimetype(xfer);
+		JabberData *thumbnail_data =
+			jabber_data_create_from_data(thumb, thumb_size,
+				mimetype, TRUE, jsx->js);
+		xmlnode *thumbnail = xmlnode_new_child(file, "thumbnail");
+		xmlnode_set_namespace(thumbnail, NS_THUMBS);
+		xmlnode_set_attrib(thumbnail, "cid", 
+			jabber_data_get_cid(thumbnail_data));
+		xmlnode_set_attrib(thumbnail, "mime-type", mimetype);
+		/* cache data */
+		jabber_data_associate_local(thumbnail_data, NULL);
+	}
+						  
 	feature = xmlnode_new_child(si, "feature");
 	xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
 	x = xmlnode_new_child(feature, "x");
@@ -1644,12 +1663,27 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 		purple_xfer_request(xfer);
 }
 
+static void
+jabber_si_thumbnail_cb(JabberData *data, gchar *alt, gpointer userdata)
+{
+	PurpleXfer *xfer = (PurpleXfer *) userdata;
+
+	if (data) {
+		purple_xfer_set_thumbnail(xfer, jabber_data_get_data(data),
+			jabber_data_get_size(data), jabber_data_get_type(data));
+		/* data is ephemeral, get rid of now (the xfer re-owned the thumbnail */
+		jabber_data_destroy(data);
+	}
+
+	purple_xfer_request(xfer);
+}
+
 void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
                      const char *id, xmlnode *si)
 {
 	JabberSIXfer *jsx;
 	PurpleXfer *xfer;
-	xmlnode *file, *feature, *x, *field, *option, *value;
+	xmlnode *file, *feature, *x, *field, *option, *value, *thumbnail;
 	const char *stream_id, *filename, *filesize_c, *profile;
 	size_t filesize = 0;
 
@@ -1731,10 +1765,22 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	purple_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
 	purple_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
 	purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
-
+				   
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
 
-	purple_xfer_request(xfer);
+	/* if there is a thumbnail, we should request it... */
+	if ((thumbnail = xmlnode_get_child_with_namespace(file, "thumbnail",
+		NS_THUMBS))) {
+		const char *cid = xmlnode_get_attrib(thumbnail, "cid");
+		if (cid) {
+			jabber_data_request(js, cid, purple_xfer_get_remote_user(xfer),
+			    NULL, TRUE, jabber_si_thumbnail_cb, xfer);
+		} else {
+			purple_xfer_request(xfer);
+		}
+	} else {
+		purple_xfer_request(xfer);
+	}
 }
 
 void
