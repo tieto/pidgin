@@ -970,14 +970,13 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 static void 
 got_wink_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 {
-	FILE *f;
+	FILE *f = NULL;
 	char *path = NULL;
 	const char *who = slpcall->slplink->remote_user;
 	purple_debug_info("msn", "Received wink from %s\n", who);
 
-	if ((f = purple_mkstemp(&path, TRUE))) {
-		fwrite(data, size, 1, f);
-		fclose(f);
+	if ((f = purple_mkstemp(&path, TRUE)) &&
+	    (fwrite(data, size, 1, f) == size)) {
 		datacast_inform_user(slpcall->slplink->swboard,
 		                     who,
 		                     _("%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"),
@@ -988,21 +987,22 @@ got_wink_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 		                     who,
 		                     _("%s sent a wink, but it could not be saved"),
 		                     NULL);
-	} 
+	}
+	if (f)
+		fclose(f);
 	g_free(path);
 }
 
 static void 
 got_voiceclip_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 {
-	FILE *f;
+	FILE *f = NULL;
 	char *path = NULL;
 	const char *who = slpcall->slplink->remote_user;
 	purple_debug_info("msn", "Received voice clip from %s\n", who);
 
-	if ((f = purple_mkstemp(&path, TRUE))) {
-		fwrite(data, size, 1, f);
-		fclose(f);
+	if ((f = purple_mkstemp(&path, TRUE)) &&
+	    (fwrite(data, size, 1, f) == size)) {
 		datacast_inform_user(slpcall->slplink->swboard,
 		                     who,
 		                     _("%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"),
@@ -1013,7 +1013,9 @@ got_voiceclip_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 		                     who,
 		                     _("%s sent a voice clip, but it could not be saved"),
 		                     NULL);
-	} 
+	}
+	if (f)
+		fclose(f);
 	g_free(path);
 }
 
