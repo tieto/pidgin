@@ -1163,7 +1163,7 @@ pidgin_xfer_cancel_remote(PurpleXfer *xfer)
 static void
 pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 {	
-	purple_debug_info("pidgin", "creating thumbnail for transfer\n");
+	purple_debug_info("ft", "creating thumbnail for transfer\n");
 
 	if (purple_xfer_get_size(xfer) <= PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL) {
 		GdkPixbuf *thumbnail = 
@@ -1181,13 +1181,13 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 			
 			for (i = 0; formats_split[i]; i++) {
 				if (purple_strequal(formats_split[i], "jpeg")) {
-					purple_debug_info("pidgin", "creating JPEG thumbnail\n");
+					purple_debug_info("ft", "creating JPEG thumbnail\n");
 					option_keys[0] = "quality";
 					option_values[0] = "90";
 					format = "jpeg";
 					break;
 				} else if (purple_strequal(formats_split[i], "png")) {
-					purple_debug_info("pidgin", "creating PNG thumbnail\n");
+					purple_debug_info("ft", "creating PNG thumbnail\n");
 					option_keys[0] = "compression";
 					option_values[0] = "9";
 					format = "png";
@@ -1197,7 +1197,7 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 
 			/* Try the first format given by the PRPL without options */
 			if (format == NULL) {
-				purple_debug_info("pidgin",
+				purple_debug_info("ft",
 				    "creating thumbnail of format %s as demanded by PRPL\n",
 				    formats_split[0]);
 				format = formats_split[0];
@@ -1208,7 +1208,7 @@ pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
 
 			if (buffer) {
 				gchar *mimetype = g_strdup_printf("image/%s", format);				
-				purple_debug_info("pidgin",
+				purple_debug_info("ft",
 				                  "created thumbnail of %" G_GSIZE_FORMAT " bytes\n",
 					size);
 				purple_xfer_set_thumbnail(xfer, buffer, size, mimetype);
