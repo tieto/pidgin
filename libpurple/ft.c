@@ -76,11 +76,9 @@ purple_xfer_priv_data_destroy(gpointer data)
 	if (priv->buffer)
 		g_byte_array_free(priv->buffer, TRUE);
 
-	if (priv->thumbnail_data)
-		g_free(priv->thumbnail_data);
+	g_free(priv->thumbnail_data);
 
-	if (priv->thumbnail_mimetype)
-		g_free(priv->thumbnail_mimetype);
+	g_free(priv->thumbnail_mimetype);
 
 	g_free(priv);
 }
@@ -283,7 +281,7 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 	PurpleConversation *conv = NULL;
 	PurpleMessageFlags flags = PURPLE_MESSAGE_SYSTEM;
 	char *escaped;
-	const gpointer *thumbnail_data = purple_xfer_get_thumbnail_data(xfer);
+	gconstpointer thumbnail_data = purple_xfer_get_thumbnail_data(xfer);
 
 	g_return_if_fail(xfer != NULL);
 	g_return_if_fail(message != NULL);
@@ -306,7 +304,7 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 		int id = purple_imgstore_add_with_id(data, size, NULL);
 
 		message_with_img = 
-			g_strdup_printf("<img id='%d'/> %s", id, escaped);
+			g_strdup_printf("<img id='%d'> %s", id, escaped);
 		purple_conversation_write(conv, NULL, message_with_img, flags, 
 			time(NULL));
 		purple_imgstore_unref_by_id(id);
@@ -324,7 +322,7 @@ purple_xfer_conversation_write(PurpleXfer *xfer, gchar *message,
 	purple_xfer_conversation_write_internal(xfer, message, is_error, FALSE);
 }
 
-/* maybe this one should be exported puplically? */
+/* maybe this one should be exported publically? */
 static void
 purple_xfer_conversation_write_with_thumbnail(PurpleXfer *xfer,
 	const gchar *message)
@@ -1662,10 +1660,17 @@ purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
 {
 	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
 
+	g_free(priv->thumbnail_data);
+	g_free(priv->thumbnail_mimetype);
+
 	if (thumbnail && size > 0) {
 		priv->thumbnail_data = g_memdup(thumbnail, size);
 		priv->thumbnail_size = size;
 		priv->thumbnail_mimetype = g_strdup(mimetype);
+	} else {
+		priv->thumbnail_data = NULL;
+		priv->thumbnail_size = 0;
+		priv->thumbnail_mimetype = NULL;
 	}
 }
 
