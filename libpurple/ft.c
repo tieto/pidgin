@@ -281,10 +281,13 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 	PurpleConversation *conv = NULL;
 	PurpleMessageFlags flags = PURPLE_MESSAGE_SYSTEM;
 	char *escaped;
-	gconstpointer thumbnail_data = purple_xfer_get_thumbnail_data(xfer);
+	gconstpointer thumbnail_data;
+	gsize size;
 
 	g_return_if_fail(xfer != NULL);
 	g_return_if_fail(message != NULL);
+
+	thumbnail_data = purple_xfer_get_thumbnail(xfer, &size);
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, xfer->who,
 											   purple_xfer_get_account(xfer));
@@ -299,7 +302,6 @@ purple_xfer_conversation_write_internal(PurpleXfer *xfer,
 
 	if (print_thumbnail && thumbnail_data) {
 		gchar *message_with_img;
-		gsize size = purple_xfer_get_thumbnail_size(xfer);
 		gpointer data = g_memdup(thumbnail_data, size); 
 		int id = purple_imgstore_add_with_id(data, size, NULL);
 
@@ -489,6 +491,8 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 {
 	char *buf, *size_buf;
 	size_t size;
+	gconstpointer thumb;
+	gsize thumb_size;
 
 	/* If we have already accepted the request, ask the destination file
 	   name directly */
@@ -514,11 +518,10 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 			serv_got_im(purple_account_get_connection(xfer->account),
 								 xfer->who, xfer->message, 0, time(NULL));
 
-		if (purple_xfer_get_thumbnail_data(xfer)) {
+		if ((thumb = purple_xfer_get_thumbnail(xfer, &thumb_size))) {
 			purple_request_accept_cancel_with_icon(xfer, NULL, buf, NULL,
 				PURPLE_DEFAULT_ACTION_NONE, xfer->account, xfer->who, NULL,
-				purple_xfer_get_thumbnail_data(xfer),
-				purple_xfer_get_thumbnail_size(xfer), xfer, 
+				thumb, thumb_size, xfer, 
 				G_CALLBACK(purple_xfer_choose_file),
 				G_CALLBACK(cancel_recv_cb));
 		} else {
@@ -1630,20 +1633,15 @@ purple_xfer_update_progress(PurpleXfer *xfer)
 		ui_ops->update_progress(xfer, purple_xfer_get_progress(xfer));
 }
 
-const void *
-purple_xfer_get_thumbnail_data(const PurpleXfer *xfer)
+gconstpointer
+purple_xfer_get_thumbnail(const PurpleXfer *xfer, gsize *len)
 {
 	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+
+	if (len)
+		*len = priv->thumbnail_size;
 
 	return priv->thumbnail_data;
-}
-
-gsize
-purple_xfer_get_thumbnail_size(const PurpleXfer *xfer)
-{
-	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
-
-	return priv->thumbnail_size;
 }
 
 const gchar *

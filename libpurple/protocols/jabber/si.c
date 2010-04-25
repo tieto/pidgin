@@ -1247,6 +1247,8 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	JabberIq *iq;
 	xmlnode *si, *file, *feature, *x, *field, *option, *value;
 	char buf[32];
+	gconstpointer thumb;
+	gsize thumb_size;
 
 	xfer->filename = g_path_get_basename(xfer->local_filename);
 	purple_xfer_prepare_thumbnail(xfer, "jpeg,png");
@@ -1269,12 +1271,11 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	/* maybe later we'll do hash and date attribs */
 
 	/* add thumbnail, if appropriate */
-	if (purple_xfer_get_thumbnail_data(xfer)) {
+	if ((thumb = purple_xfer_get_thumbnail(xfer, &thumb_size))) {
 		const gchar *mimetype = purple_xfer_get_thumbnail_mimetype(xfer);
 		JabberData *thumbnail_data =
-			jabber_data_create_from_data(purple_xfer_get_thumbnail_data(xfer),
-				purple_xfer_get_thumbnail_size(xfer), mimetype, TRUE,
-				jsx->js);
+			jabber_data_create_from_data(thumb, thumb_size,
+				mimetype, TRUE, jsx->js);
 		xmlnode *thumbnail = xmlnode_new_child(file, "thumbnail");
 		xmlnode_set_namespace(thumbnail, NS_THUMBS);
 		xmlnode_set_attrib(thumbnail, "cid", 

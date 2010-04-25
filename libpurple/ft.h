@@ -696,17 +696,11 @@ void purple_xfer_prpl_ready(PurpleXfer *xfer);
  * Gets the thumbnail data for a transfer
  *
  * @param xfer The file transfer to get the thumbnail for
+ * @param len  If not @c NULL, the length of the thumbnail data returned
+ *             will be set in the location pointed to by this.
  * @return The thumbnail data, or NULL if there is no thumbnail
  */
-const void *purple_xfer_get_thumbnail_data(const PurpleXfer *xfer);
-
-/**
- * Gets the thumbnail size for a transfer
- *
- * @param xfer The file transfer to get the thumbnail size for
- * @return The size, in bytes of the file transfer's thumbnail
- */
-gsize purple_xfer_get_thumbnail_size(const PurpleXfer *xfer);
+gconstpointer purple_xfer_get_thumbnail(const PurpleXfer *xfer, gsize *len);
 
 /**
  * Gets the mimetype of the thumbnail preview for a transfer

@@ -720,11 +720,7 @@ gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 		u8 = NULL;
 	}
 
-	preview = purple_xfer_get_thumbnail_data(xfer);
-	if (preview)
-		preview_len = purple_xfer_get_thumbnail_size(xfer);
-	else
-		preview_len = 0;
+	preview = purple_xfer_get_thumbnail(xfer, &preview_len);
 	header = g_malloc(sizeof(MsnFileContext) + preview_len);
 
 	header->length = GUINT32_TO_LE(sizeof(MsnFileContext) - 1);
