@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-07 21:58+0200\n"
-"PO-Revision-Date: 2010-04-09 09:06+0200\n"
+"POT-Creation-Date: 2010-04-26 18:32+0200\n"
+"PO-Revision-Date: 2010-04-26 19:11+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -4184,10 +4184,13 @@ msgstr "S'ha esgitat el temps d'espera (ping)"
 msgid "Invalid XMPP ID"
 msgstr "ID de l'XMPP invàlid"
 
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "L'ID de l'XMPP no és vàlid. Cal especificar el nom d'usuari."
+
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "L'ID de l'XMPP no és vàlid. Cal especificar un domini."
 
-# FIX
+# FIXME
 msgid "Malformed BOSH URL"
 msgstr "L'URL BOSH està malmès"
 
@@ -4884,20 +4887,17 @@ msgstr "Brau"
 msgid "Calm"
 msgstr "Calmat"
 
-#, fuzzy
 msgid "Cautious"
-msgstr "Xats"
+msgstr "Prudent"
 
 msgid "Cold"
 msgstr "Fred"
 
-#, fuzzy
 msgid "Confident"
-msgstr "Conflicte"
+msgstr "Amb confiança"
 
-#, fuzzy
 msgid "Confused"
-msgstr "_Configura"
+msgstr "Confós"
 
 #, fuzzy
 msgid "Contemplative"
@@ -4943,9 +4943,8 @@ msgstr "Distret"
 msgid "Embarrassed"
 msgstr "Avergonyit"
 
-#, fuzzy
 msgid "Envious"
-msgstr "Ansiós"
+msgstr "Envejós"
 
 #. 2
 msgid "Excited"
@@ -5079,9 +5078,8 @@ msgstr "Satisfet"
 msgid "Serious"
 msgstr "Seriós"
 
-#, fuzzy
 msgid "Shocked"
-msgstr "Blocat"
+msgstr "En estat de xoc"
 
 msgid "Shy"
 msgstr "Vergonyós"
@@ -6933,6 +6931,10 @@ msgstr ""
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL no permet que us autentiqueu amb aquest nom d'usuari aquí"
 
+#, c-format
+msgid "Error requesting %s"
+msgstr "S'ha produït un error en sol·licitar %s"
+
 msgid "Could not join chat room"
 msgstr "No s'ha pogut entrar a la sala de xat"
 
@@ -7021,9 +7023,8 @@ msgstr "Escoltant música"
 msgid "Studying"
 msgstr "Estudiant"
 
-#, fuzzy
 msgid "In the restroom"
-msgstr "Interessos"
+msgstr "Al lavabo"
 
 msgid "Received invalid data on connection with server"
 msgstr "S'han rebut dades invàlides a la connexió amb el servidor"
@@ -7308,25 +7309,20 @@ msgstr "Conscient de la web"
 msgid "Invisible"
 msgstr "Invisible"
 
-#, fuzzy
 msgid "Evil"
-msgstr "Correu electrònic"
+msgstr "Maliciós"
 
-#, fuzzy
 msgid "Depression"
-msgstr "Professió"
+msgstr "Depressió"
 
-#, fuzzy
 msgid "At home"
-msgstr "Quant a mi"
+msgstr "A casa"
 
-#, fuzzy
 msgid "At work"
-msgstr "Xarxa"
+msgstr "A la feina"
 
-#, fuzzy
 msgid "At lunch"
-msgstr "A fora dinant"
+msgstr "Dinant"
 
 msgid "IP Address"
 msgstr "Adreça IP"
@@ -7841,9 +7837,8 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr "Enllaç al magatzem de música iTunes"
 
-#, fuzzy
 msgid "Lunch"
-msgstr "Finch"
+msgstr "Dinar"
 
 #, c-format
 msgid "Buddy Comment for %s"
@@ -8293,10 +8288,10 @@ msgstr "Demanant"
 msgid "Admin"
 msgstr "Administrador"
 
+# FIXME
 #. XXX: Should this be "Topic"?
-#, fuzzy
 msgid "Room Title"
-msgstr "Llista de sales"
+msgstr "Nom de la sala"
 
 msgid "Notice"
 msgstr "Avís"
@@ -10303,13 +10298,13 @@ msgstr ""
 "entrant al web de Yahoo!"
 
 #. indicates a lock due to logging in too frequently
-#, fuzzy
 msgid ""
 "Account locked: You have been logging in too frequently.  Wait a few minutes "
 "before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
-"El compte està blocat perquè s'ha intentat entrar massa cops. Això es pot "
-"solucionar entrant al web de Yahoo!"
+"El compte està blocat perquè s'ha intentat entrar massa cops. Espereu uns "
+"minuts abans de tornar-ho a intentar. Potser també es pot solucionar entrant "
+"al web de Yahoo!"
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10856,9 +10851,8 @@ msgstr "No molesteu"
 msgid "Extended away"
 msgstr "Absent durant una bona estona"
 
-#, fuzzy
 msgid "Feeling"
-msgstr "S'està rebent"
+msgstr "Estat d'ànim"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -11030,12 +11024,6 @@ msgstr "Missatger d'Internet"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Missatger d'Internet Pidgin"
-
-msgid "Orientation"
-msgstr "Orientació"
-
-msgid "The orientation of the tray."
-msgstr "Orientació de l'àrea de notificació."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11406,13 +11394,11 @@ msgstr "No esteu connectat amb cap protocol que permeti afegir aquest amic."
 msgid "Unknown node type"
 msgstr "Codi d'error desconegut"
 
-#, fuzzy
 msgid "Please select your mood from the list"
-msgstr "Seleccioneu l'estat d'ànim de la llista."
+msgstr "Seleccioneu l'estat d'ànim de la llista"
 
-#, fuzzy
 msgid "Message (optional)"
-msgstr "Àlies (opcional)"
+msgstr "Missatge (opcional)"
 
 msgid "Edit User Mood"
 msgstr "Edita l'estat d'ànim"
@@ -11496,9 +11482,8 @@ msgstr "/Eines/Pre_ferències"
 msgid "/Tools/Pr_ivacy"
 msgstr "/Eines/_Privadesa"
 
-#, fuzzy
 msgid "/Tools/Set _Mood"
-msgstr "/Eines/_Registre del sistema"
+msgstr "/Eines/Esta_bleix l'estat d'ànim"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Eines/_Transferència de fitxers"
@@ -11519,20 +11504,17 @@ msgstr "/A_juda"
 msgid "/Help/Online _Help"
 msgstr "/Ajuda/A_juda en línia"
 
-#, fuzzy
 msgid "/Help/_Build Information"
-msgstr "Informació sobre l'amic"
+msgstr "/Ajuda/Informació sobre el _muntatge"
 
 msgid "/Help/_Debug Window"
 msgstr "/Ajuda/Finestra de _depuració"
 
-#, fuzzy
 msgid "/Help/De_veloper Information"
-msgstr "Informació del servidor"
+msgstr "/Ajuda/Informació sobre els d_esenvolupadors"
 
-#, fuzzy
 msgid "/Help/_Translator Information"
-msgstr "Informació personal"
+msgstr "/Ajuda/Informació sobre els _traductors"
 
 msgid "/Help/_About"
 msgstr "/Ajuda/_Quant a"
@@ -11761,9 +11743,8 @@ msgstr "<PurpleMain>/Comptes/"
 msgid "_Edit Account"
 msgstr "_Edita el compte"
 
-#, fuzzy
 msgid "Set _Mood..."
-msgstr "Estableix l'estat d'ànim..."
+msgstr "Estableix l'_estat d'ànim..."
 
 msgid "No actions available"
 msgstr "No hi ha accions disponibles"
@@ -12037,13 +12018,11 @@ msgstr "_Envia"
 msgid "0 people in room"
 msgstr "No hi ha ningú a la sala"
 
-#, fuzzy
 msgid "Close Find bar"
-msgstr "Tanca aquesta pestanya"
+msgstr "Tanca la barra de cerca"
 
-#, fuzzy
 msgid "Find:"
-msgstr "Cerca"
+msgstr "Cerca:"
 
 #, c-format
 msgid "%d person in room"
@@ -12449,7 +12428,7 @@ msgstr "Amhàric"
 msgid "Lithuanian"
 msgstr "Lituà"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s is a messaging client based on libpurple which is capable of connecting "
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
@@ -12458,16 +12437,14 @@ msgid ""
 "copyrighted by its contributors, a list of whom is also distributed with %"
 "s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
-"El %s és un client de missatgeria instantània modular basat en libpurple, "
-"que permet utilitzar els protocols AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, "
-"SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, "
-"Gadu-Gadu, i QQ, tots alhora. Utilitza la biblioteca de programació GTK+."
-"<BR><BR>Podeu modificar i redistribuir el programa sota els termes de la GPL "
-"(versió 2 o posterior). Hi ha una còpia de la GPL dins del fitxer «COPYING» "
-"que es distribueix amb el %s. Els drets d'autor del %s pertanyen als seus "
-"col·laboradors. El fitxer «COPYRIGHT» conté una llista completa de tots els "
-"contribuïdors. No us proporcionem cap mena de garantia amb aquest programa."
-"<BR><BR>"
+"El %s és un client de missatgeria basat en libpurple que permet connectar-"
+"vos a diferents serveis de missatgeria instantània al mateix temps. El %s "
+"està escrit en C i la biblioteca de programació GTK+. El %s es distribueix "
+"sota llicència GPL 2 (o posterior), i per tant podeu modificar-lo i "
+"redistribuir-lo d'acord amb aquesta llicència. Amb el %s es distribueix una "
+"còpia de la GPL. El %s és copyright de tothom que hi ha contribuït, la "
+"llista de col·laboradors també es distribueix amb el %s. No es proporciona "
+"cap mena de garantia amb el %s.<BR><BR>"
 
 #, c-format
 msgid ""
@@ -12480,7 +12457,7 @@ msgstr ""
 "A><BR>\t<A HREF=\"%s\">Preguntes més freqüents</A><BR>\tCanal d'IRC: #pidgin "
 "a irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12490,26 +12467,25 @@ msgid ""
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\">Ajuda d'altres usuaris del Pidgin:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>Aquesta és una llista de "
-"correu <b>pública</b>. (<a href=\"http://pidgin.im/pipermail/support/"
+"<font size=\"4\"><b>Ajuda d'altres usuaris del Pidgin</b>:</font> <a href="
+"\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Aquesta és una llista "
+"de correu <b>pública</b>. (<a href=\"http://pidgin.im/pipermail/support/"
 "\">arxiu</a>)<br/>No us podem ajudar amb connectors d'altres proveïdors.<br/"
-">En aquesta llista s'hi empra principalment l'<b>anglès</b>.  Podeu escriure-"
+">En aquesta llista s'hi empra principalment l'<b>anglès</b>. Podeu escriure-"
 "hi en un altre idioma, però és possible que les respostes no siguin de gaire "
-"ajuda.<br/><br/>"
+"ajuda.<br/>"
 
 #, c-format
 msgid "About %s"
 msgstr "Quant al %s"
 
-#, fuzzy
 msgid "Build Information"
-msgstr "Informació sobre l'amic"
+msgstr "Informació sobre el muntatge"
 
 #. End of not to be translated section
-#, fuzzy, c-format
+#, c-format
 msgid "%s Build Information"
-msgstr "Informació sobre l'amic"
+msgstr "Informació sobre el muntatge del %s"
 
 msgid "Current Developers"
 msgstr "Desenvolupadors actuals"
@@ -12523,9 +12499,9 @@ msgstr "Desenvolupadors retirats"
 msgid "Retired Crazy Patch Writers"
 msgstr "Escriptors de pedaços retirats"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Developer Information"
-msgstr "Informació del servidor"
+msgstr "Informació sobre els desenvolupadors del %s"
 
 msgid "Current Translators"
 msgstr "Traductors actuals"
@@ -12533,9 +12509,9 @@ msgstr "Traductors actuals"
 msgid "Past Translators"
 msgstr "Antics traductors"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Translator Information"
-msgstr "Més informació"
+msgstr "Informació sobre els traductors del %s"
 
 msgid "_Name"
 msgstr "_Nom"
@@ -15113,8 +15089,17 @@ msgid "Timestamp Format Options"
 msgstr "Opcions del format de les marques horàries"
 
 #, c-format
-msgid "_Force 24-hour time format"
-msgstr "_Força el format de 24 hores"
+msgid "_Force timestamp format:"
+msgstr "_Format de les marques horàries:"
+
+msgid "Use system default"
+msgstr "Predeterminat del sistema"
+
+msgid "12 hour time format"
+msgstr "12 hores"
+
+msgid "24 hour time format"
+msgstr "24 hores"
 
 msgid "Show dates in..."
 msgstr "Mostra dates a..."
@@ -15318,9 +15303,14 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "Envia i rep blocs XMPP en brut."
 
 #. *  description
-#, fuzzy
 msgid "This plugin is useful for debugging XMPP servers or clients."
-msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
+msgstr "Aquest connector és útil per a depurar servidors o clients XMPP."
+
+#~ msgid "Orientation"
+#~ msgstr "Orientació"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Orientació de l'àrea de notificació."
 
 #~ msgid "Artist"
 #~ msgstr "Artista"
