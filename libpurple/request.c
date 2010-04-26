@@ -1385,7 +1385,7 @@ purple_request_action_varg_with_icon(void *handle, const char *title,
 
 	ops = purple_request_get_ui_ops();
 
-	if (ops != NULL && ops->request_action != NULL) {
+	if (ops != NULL && ops->request_action_with_icon != NULL) {
 		PurpleRequestInfo *info;
 
 		info            = g_new0(PurpleRequestInfo, 1);
