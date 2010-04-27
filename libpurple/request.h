@@ -1403,6 +1403,7 @@ void *purple_request_action_varg(void *handle, const char *title,
 /**
  * Version of purple_request_action() supplying an image for the UI to 
  * optionally display as an icon in the dialog; see its documentation
+ * @since 2.7.0
  */
 void *purple_request_action_with_icon(void *handle, const char *title, 
 	const char *primary, const char *secondary, int default_action, 
@@ -1413,6 +1414,7 @@ void *purple_request_action_with_icon(void *handle, const char *title,
 /**
  * <tt>va_list</tt> version of purple_request_action_with_icon(); 
  * see its documentation.
+ * @since 2.7.0
  */
 void *purple_request_action_varg_with_icon(void *handle, const char *title,
 	const char *primary, const char *secondary, int default_action,

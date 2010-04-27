@@ -33,6 +33,12 @@ version 2.7.0 (??/??/????):
 		* purple_socket_speaks_ipv4
 		* purple_unescape_text
 		* purple_uuid_random
+		* purple_xfer_get_thumbnail
+		* purple_xfer_get_thumbnail_mimetype
+		* purple_xfer_set_thumbnail
+		* purple_xfer_prepare_thumbnail
+		* purple_request_action_with_icon
+		* purple_request_action_varg_with_icon
 		* media_caps to the PurpleBuddy struct
 		* buddy-caps-changed blist signal
 		* ui-caps-changed media manager signal

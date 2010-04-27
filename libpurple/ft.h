@@ -699,6 +699,7 @@ void purple_xfer_prpl_ready(PurpleXfer *xfer);
  * @param len  If not @c NULL, the length of the thumbnail data returned
  *             will be set in the location pointed to by this.
  * @return The thumbnail data, or NULL if there is no thumbnail
+ * @since 2.7.0
  */
 gconstpointer purple_xfer_get_thumbnail(const PurpleXfer *xfer, gsize *len);
 
@@ -707,6 +708,7 @@ gconstpointer purple_xfer_get_thumbnail(const PurpleXfer *xfer, gsize *len);
  *
  * @param xfer The file transfer to get the mimetype for
  * @return The mimetype of the thumbnail, or @c NULL if not thumbnail is set
+ * @since 2.7.0
  */
 const gchar *purple_xfer_get_thumbnail_mimetype(const PurpleXfer *xfer);
 	
@@ -718,6 +720,7 @@ const gchar *purple_xfer_get_thumbnail_mimetype(const PurpleXfer *xfer);
  * @param thumbnail A pointer to the thumbnail data, this will be copied
  * @param size The size in bytes of the passed in thumbnail data
  * @param mimetype The mimetype of the generated thumbnail
+ * @since 2.7.0
  */
 void purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
 	gsize size, const gchar *mimetype);
@@ -729,6 +732,7 @@ void purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
  * @param xfer The file transfer to create a thumbnail for
  * @param formats A comma-separated list of mimetypes for image formats
  *	 	  the protocols can use for thumbnails.
+ * @since 2.7.0
  */
 void purple_xfer_prepare_thumbnail(PurpleXfer *xfer, const gchar *formats);
 
