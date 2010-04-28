@@ -1,3 +1,9 @@
+pidgin (2.4.3-4lenny7) stable-security; urgency=low
+
+  * I forgot to explicitly enable the zephyr prpl (Closes: #579601) 
+
+ -- Ari Pollak <ari@debian.org>  Wed, 28 Apr 2010 19:49:59 -0400
+
 pidgin (2.4.3-4lenny6) stable-security; urgency=medium
 
   * Disable MSN entirely, since Microsoft's servers won't work with this
