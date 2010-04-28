@@ -1790,6 +1790,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 		purple_xfer_request(xfer);
 	}
 #else
+	thumbnail = NULL; /* Silence warning */
 	purple_xfer_request(xfer);
 #endif
 }
