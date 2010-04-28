@@ -50,7 +50,9 @@ version 2.7.0 (??/??/????):
 	* The 'Message Timestamp Formats' plugin allows forcing 12-hour
 	  timestamps.  (Jonathan Maltz)
 	* Fix pastes from Chrome (rich-text pastes and probably URLs
-	  having garbage appended to them)
+	  having garbage appended to them).
+	* Show file transfer thumbnails for images on supporting protocols
+	  (currently only supported on MSN).
 
 	Bonjour:
 	* Added support for IPv6. (Thanks to T_X for testing)
@@ -76,6 +78,7 @@ version 2.7.0 (??/??/????):
 	MSN:
 	* Support for version 9 of the MSN protocol has been removed.  This
 	  version is no longer supported on the servers.
+	* Support file transfer thumbnails (previews) for images.
 
 	XMPP:
 	* Direct messages to a specific resource only upon receipt of a message

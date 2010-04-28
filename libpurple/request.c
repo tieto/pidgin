@@ -1317,6 +1317,29 @@ purple_request_action(void *handle, const char *title, const char *primary,
 }
 
 void *
+purple_request_action_with_icon(void *handle, const char *title, 
+					const char *primary,
+					const char *secondary, int default_action,
+					PurpleAccount *account, const char *who, 
+					PurpleConversation *conv, gconstpointer icon_data,
+					gsize icon_size, void *user_data, size_t action_count, ...)
+{
+	void *ui_handle;
+	va_list args;
+
+	g_return_val_if_fail(action_count > 0, NULL);
+
+	va_start(args, action_count);
+	ui_handle = purple_request_action_varg_with_icon(handle, title, primary, 
+		secondary, default_action, account, who, conv, icon_data, icon_size,
+		user_data, action_count, args);
+	va_end(args);
+
+	return ui_handle;
+}
+
+
+void *
 purple_request_action_varg(void *handle, const char *title,
 						 const char *primary, const char *secondary,
 						 int default_action,
@@ -1346,6 +1369,41 @@ purple_request_action_varg(void *handle, const char *title,
 
 	return NULL;
 }
+
+void *
+purple_request_action_varg_with_icon(void *handle, const char *title,
+						 const char *primary, const char *secondary,
+						 int default_action,
+						 PurpleAccount *account, const char *who, 
+						 PurpleConversation *conv, gconstpointer icon_data,
+						 gsize icon_size,
+						 void *user_data, size_t action_count, va_list actions)
+{
+	PurpleRequestUiOps *ops;
+
+	g_return_val_if_fail(action_count > 0, NULL);
+
+	ops = purple_request_get_ui_ops();
+
+	if (ops != NULL && ops->request_action_with_icon != NULL) {
+		PurpleRequestInfo *info;
+
+		info            = g_new0(PurpleRequestInfo, 1);
+		info->type      = PURPLE_REQUEST_ACTION;
+		info->handle    = handle;
+		info->ui_handle = ops->request_action_with_icon(title, primary, secondary,
+											  default_action, account, who, conv,
+											  icon_data, icon_size,
+											  user_data, action_count, actions);
+
+		handles = g_list_append(handles, info);
+
+		return info->ui_handle;
+	}
+
+	return NULL;
+}
+
 
 void *
 purple_request_fields(void *handle, const char *title, const char *primary,

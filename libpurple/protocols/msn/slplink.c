@@ -692,14 +692,18 @@ static gchar *
 gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 {
 	gsize size = 0;
-	MsnFileContext header;
+	MsnFileContext *header;
 	gchar *u8 = NULL;
 	gchar *ret;
 	gunichar2 *uni = NULL;
 	glong currentChar = 0;
 	glong len = 0;
+	const char *preview;
+	gsize preview_len;
 
 	size = purple_xfer_get_size(xfer);
+
+	purple_xfer_prepare_thumbnail(xfer, "png");
 
 	if (!file_name) {
 		gchar *basename = g_path_get_basename(file_path);
@@ -716,23 +720,33 @@ gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 		u8 = NULL;
 	}
 
-	header.length = GUINT32_TO_LE(sizeof(MsnFileContext) - 1);
-	header.version = GUINT32_TO_LE(2); /* V.3 contains additional unnecessary data */
-	header.file_size = GUINT64_TO_LE(size);
-	header.type = GUINT32_TO_LE(1);    /* No file preview */
+	preview = purple_xfer_get_thumbnail(xfer, &preview_len);
+	header = g_malloc(sizeof(MsnFileContext) + preview_len);
+
+	header->length = GUINT32_TO_LE(sizeof(MsnFileContext) - 1);
+	header->version = GUINT32_TO_LE(2); /* V.3 contains additional unnecessary data */
+	header->file_size = GUINT64_TO_LE(size);
+	if (preview)
+		header->type = GUINT32_TO_LE(0);
+	else
+		header->type = GUINT32_TO_LE(1);
 
 	len = MIN(len, MAX_FILE_NAME_LEN);
 	for (currentChar = 0; currentChar < len; currentChar++) {
-		header.file_name[currentChar] = GUINT16_TO_LE(uni[currentChar]);
+		header->file_name[currentChar] = GUINT16_TO_LE(uni[currentChar]);
 	}
-	memset(&header.file_name[currentChar], 0x00, (MAX_FILE_NAME_LEN - currentChar) * 2);
+	memset(&header->file_name[currentChar], 0x00, (MAX_FILE_NAME_LEN - currentChar) * 2);
 
-	memset(&header.unknown1, 0, sizeof(header.unknown1));
-	header.unknown2 = GUINT32_TO_LE(0xffffffff);
-	header.preview[0] = '\0';
+	memset(&header->unknown1, 0, sizeof(header->unknown1));
+	header->unknown2 = GUINT32_TO_LE(0xffffffff);
+	if (preview) {
+		memcpy(&header->preview, preview, preview_len);
+	}
+	header->preview[preview_len] = '\0';
 
 	g_free(uni);
-	ret = purple_base64_encode((const guchar *)&header, sizeof(MsnFileContext));
+	ret = purple_base64_encode((const guchar *)header, sizeof(MsnFileContext) + preview_len);
+	g_free(header);
 	return ret;
 }
 
