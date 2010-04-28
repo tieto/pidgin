@@ -40,6 +40,7 @@
 #include "si.h"
 
 #define STREAMHOST_CONNECT_TIMEOUT 15
+#define ENABLE_FT_THUMBNAILS 0
 
 typedef struct _JabberSIXfer {
 	JabberStream *js;
@@ -1247,11 +1248,13 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	JabberIq *iq;
 	xmlnode *si, *file, *feature, *x, *field, *option, *value;
 	char buf[32];
+#if ENABLE_FT_THUMBNAILS
 	gconstpointer thumb;
 	gsize thumb_size;
 
-	xfer->filename = g_path_get_basename(xfer->local_filename);
 	purple_xfer_prepare_thumbnail(xfer, "jpeg,png");
+#endif
+	xfer->filename = g_path_get_basename(xfer->local_filename);
 	
 	iq = jabber_iq_new(jsx->js, JABBER_IQ_SET);
 	xmlnode_set_attrib(iq->node, "to", xfer->who);
@@ -1270,6 +1273,7 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	xmlnode_set_attrib(file, "size", buf);
 	/* maybe later we'll do hash and date attribs */
 
+#if ENABLE_FT_THUMBNAILS
 	/* add thumbnail, if appropriate */
 	if ((thumb = purple_xfer_get_thumbnail(xfer, &thumb_size))) {
 		const gchar *mimetype = purple_xfer_get_thumbnail_mimetype(xfer);
@@ -1284,6 +1288,7 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 		/* cache data */
 		jabber_data_associate_local(thumbnail_data, NULL);
 	}
+#endif
 						  
 	feature = xmlnode_new_child(si, "feature");
 	xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
@@ -1663,6 +1668,7 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 		purple_xfer_request(xfer);
 }
 
+#if ENABLE_FT_THUMBNAILS
 static void
 jabber_si_thumbnail_cb(JabberData *data, gchar *alt, gpointer userdata)
 {
@@ -1677,6 +1683,7 @@ jabber_si_thumbnail_cb(JabberData *data, gchar *alt, gpointer userdata)
 
 	purple_xfer_request(xfer);
 }
+#endif
 
 void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
                      const char *id, xmlnode *si)
@@ -1768,6 +1775,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 				   
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
 
+#if ENABLE_FT_THUMBNAILS
 	/* if there is a thumbnail, we should request it... */
 	if ((thumbnail = xmlnode_get_child_with_namespace(file, "thumbnail",
 		NS_THUMBS))) {
@@ -1781,6 +1789,9 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	} else {
 		purple_xfer_request(xfer);
 	}
+#else
+	purple_xfer_request(xfer);
+#endif
 }
 
 void
