@@ -1601,12 +1601,6 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			}
 			break;
 		case GG_EVENT_NOTIFY60:
-			purple_debug_info("gg",
-				"notify60_pre: (%d) status=%d; version=%d; descr=%s\n",
-				ev->event.notify60->uin, GG_S(ev->event.notify60->status),
-				ev->event.notify60->version,
-				ev->event.notify60->descr ? ev->event.notify60->descr : "(null)");
-
 			for (i = 0; ev->event.notify60[i].uin; i++) {
 				purple_debug_info("gg",
 					"notify60: (%d) status=%d; version=%d; descr=%s\n",
