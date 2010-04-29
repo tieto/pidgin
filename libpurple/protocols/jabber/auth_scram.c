@@ -47,6 +47,32 @@ static const JabberScramHash *mech_to_hash(const char *mech)
 	g_return_val_if_reached(NULL);
 }
 
+static const struct {
+	const char *error;
+	const char *meaning;
+} server_errors[] = {
+	{ "invalid-encoding",
+		N_("Invalid Encoding")},
+	{ "extensions-not-supported",
+		N_("Unsupported Extension") },
+	{ "channel-bindings-dont-match",
+		N_("Channel Bindings don't match; possible MITM") },
+	{ "server-does-support-channel-binding",
+		N_("Server does support channel binding; possible MITM") },
+	{ "channel-binding-not-supported",
+		N_("Server does not support channel binding") },
+	{ "unsupported-channel-binding-type",
+		N_("Unsupported channel binding method") },
+	{ "unknown-user",
+		N_("User not found") },
+	{ "invalid-username-encoding",
+		N_("Invalid Username Encoding") },
+	{ "no-resources",
+		N_("Resource Constraint") },
+	{ "other-error",
+		N_("Unknown Error") }
+};
+
 guchar *jabber_scram_hi(const JabberScramHash *hash, const GString *str,
                         GString *salt, guint iterations)
 {
