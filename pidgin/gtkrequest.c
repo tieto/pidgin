@@ -738,8 +738,9 @@ pidgin_request_action(const char *title, const char *primary,
 					    PurpleAccount *account, const char *who, PurpleConversation *conv,
 						void *user_data, size_t action_count, va_list actions)
 {
-	pidgin_request_action_with_icon(title, primary, secondary, default_action,
-		account, who, conv, NULL, 0, user_data, action_count, actions);
+	return pidgin_request_action_with_icon(title, primary, secondary,
+		default_action, account, who, conv, NULL, 0, user_data, action_count,
+		actions);
 }
 
 static void
