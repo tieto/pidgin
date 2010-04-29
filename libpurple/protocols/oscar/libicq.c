@@ -109,6 +109,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* initiate_media */
 	NULL,					/* can_do_media */
 	oscar_get_purple_moods, /* get_moods */
+	NULL,					/* set_public_alias */
+	NULL					/* get_public_alias */
 };
 
 static PurplePluginInfo info =

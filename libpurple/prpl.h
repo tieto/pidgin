@@ -580,8 +580,48 @@ struct _PurplePluginProtocolInfo
 	/**
 	 * Returns an array of "PurpleMood"s, with the last one having
 	 * "mood" set to @c NULL.
+	 * @since 2.7.0
 	 */
 	PurpleMood *(*get_moods)(PurpleAccount *account);
+
+	/**
+	 * Set the user's "friendly name" (or alias or nickname or
+	 * whatever term you want to call it) on the server.  The
+	 * protocol plugin should call success_cb or failure_cb
+	 * *asynchronously* (if it knows immediately that the set will fail,
+	 * call one of the callbacks from an idle/0-second timeout) depending
+	 * on if the nickname is set successfully.
+	 *
+	 * @param gc    The connection for which to set an alias
+	 * @param alias The new server-side alias/nickname for this account,
+	 *              or NULL to unset the alias/nickname (or return it to
+	 *              a protocol-specific "default").
+	 * @param success_cb Callback to be called if the public alias is set
+	 * @param failure_cb Callback to be called if setting the public alias
+	 *                   fails
+	 * @see purple_account_set_public_alias
+	 * @since 2.7.0
+	 */
+	void (*set_public_alias)(PurpleConnection *gc, const char *alias,
+	                         PurpleSetPublicAliasSuccessCallback success_cb,
+	                         PurpleSetPublicAliasFailureCallback failure_cb);
+	/**
+	 * Retrieve the user's "friendly name" as set on the server.
+	 * The protocol plugin should call success_cb or failure_cb
+	 * *asynchronously* (even if it knows immediately that the set will fail,
+	 * call one of the callbacks from an idle/0-second timeout) depending
+	 * on if the nickname is retrieved.
+	 *
+	 * @param gc    The connection for which to retireve the alias
+	 * @param success_cb Callback to be called with the retrieved alias
+	 * @param failure_cb Callback to be called if the prpl is unable to
+	 *                   retrieve the alias
+	 * @see purple_account_get_public_alias
+	 * @since 2.7.0
+	 */
+	void (*get_public_alias)(PurpleConnection *gc,
+	                         PurpleSetPublicAliasSuccessCallback success_cb,
+	                         PurpleSetPublicAliasFailureCallback failure_cb);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \

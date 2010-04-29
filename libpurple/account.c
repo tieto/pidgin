@@ -1782,6 +1782,92 @@ purple_account_set_status_list(PurpleAccount *account, const char *status_id,
 	schedule_accounts_save();
 }
 
+struct public_alias_closure
+{
+	PurpleAccount *account;
+	gpointer failure_cb;
+};
+
+static gboolean
+set_public_alias_unsupported(gpointer data)
+{
+	struct public_alias_closure *closure = data;
+	PurpleSetPublicAliasFailureCallback failure_cb = closure->failure_cb;
+
+	failure_cb(closure->account,
+	           _("This protocol does not support setting a public alias."));
+	g_free(closure);
+
+	return FALSE;
+}
+
+void
+purple_account_set_public_alias(PurpleAccount *account,
+		const char *alias, PurpleSetPublicAliasSuccessCallback success_cb,
+		PurpleSetPublicAliasFailureCallback failure_cb)
+{
+	PurpleConnection *gc;
+	PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(purple_account_is_connected(account));
+
+	gc = purple_account_get_connection(account);
+	prpl = purple_connection_get_prpl(gc);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, set_public_alias))
+		prpl_info->set_public_alias(gc, alias, success_cb, failure_cb);
+	else {
+		struct public_alias_closure *closure =
+				g_new0(struct public_alias_closure, 1);
+		closure->account = account;
+		closure->failure_cb = failure_cb;
+		purple_timeout_add(0, set_public_alias_unsupported, closure);
+	}
+}
+
+static gboolean
+get_public_alias_unsupported(gpointer data)
+{
+	struct public_alias_closure *closure = data;
+	PurpleGetPublicAliasFailureCallback failure_cb = closure->failure_cb;
+
+	failure_cb(closure->account,
+	           _("This protocol does not support fetching the public alias."));
+	g_free(closure);
+
+	return FALSE;
+}
+
+void
+purple_account_get_public_alias(PurpleAccount *account,
+		PurpleGetPublicAliasSuccessCallback success_cb,
+		PurpleGetPublicAliasFailureCallback failure_cb)
+{
+	PurpleConnection *gc;
+	PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(purple_account_is_connected(account));
+
+	gc = purple_account_get_connection(account);
+	prpl = purple_connection_get_prpl(gc);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_public_alias))
+		prpl_info->get_public_alias(gc, success_cb, failure_cb);
+	else {
+		struct public_alias_closure *closure =
+				g_new0(struct public_alias_closure, 1);
+		closure->account = account;
+		closure->failure_cb = failure_cb;
+		purple_timeout_add(0, get_public_alias_unsupported, closure);
+	}
+}
+
 void
 purple_account_clear_settings(PurpleAccount *account)
 {
