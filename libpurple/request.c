@@ -1330,7 +1330,7 @@ purple_request_action_with_icon(void *handle, const char *title,
 	g_return_val_if_fail(action_count > 0, NULL);
 
 	va_start(args, action_count);
-	ui_handle = purple_request_action_varg_with_icon(handle, title, primary, 
+	ui_handle = purple_request_action_with_icon_varg(handle, title, primary, 
 		secondary, default_action, account, who, conv, icon_data, icon_size,
 		user_data, action_count, args);
 	va_end(args);
@@ -1371,7 +1371,7 @@ purple_request_action_varg(void *handle, const char *title,
 }
 
 void *
-purple_request_action_varg_with_icon(void *handle, const char *title,
+purple_request_action_with_icon_varg(void *handle, const char *title,
 						 const char *primary, const char *secondary,
 						 int default_action,
 						 PurpleAccount *account, const char *who, 
