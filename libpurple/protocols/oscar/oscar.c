@@ -3534,7 +3534,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	PurpleConnection *gc = od->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleNotifyUserInfo *user_info;
-	gchar *tmp = NULL, *info_utf8 = NULL;
+	gchar *tmp = NULL, *info_utf8 = NULL, *base_profile_url = NULL;
 	va_list ap;
 	aim_userinfo_t *userinfo;
 
@@ -3587,8 +3587,9 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	}
 
 	purple_notify_user_info_add_section_break(user_info);
-	tmp = g_strdup_printf("<a href=\"http://profiles.aim.com/%s\">%s</a>",
-			purple_normalize(account, userinfo->bn), _("View web profile"));
+	base_profile_url = oscar_util_valid_name_icq(userinfo->bn) ? "http://www.icq.com/people" : "http://profiles.aim.com";
+	tmp = g_strdup_printf("<a href=\"%s/%s\">%s</a>",
+			base_profile_url, purple_normalize(account, userinfo->bn), _("View web profile"));
 	purple_notify_user_info_add_pair(user_info, NULL, tmp);
 	g_free(tmp);
 
