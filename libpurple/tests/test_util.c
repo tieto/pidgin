@@ -131,6 +131,10 @@ START_TEST(test_utf8_strip_unprintables)
 #endif
 	/* \t, \n, \r, space */
 	assert_string_equal_free("ab \tcd\nef\r   ", purple_utf8_strip_unprintables("ab \tcd\nef\r   "));
+	/* ASCII control characters (stripped) */
+	assert_string_equal_free(" aaaa ", purple_utf8_strip_unprintables(
+				"\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0E\x0F\x10 aaaa "
+				"\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"));
 	/* Basic ASCII */
 	assert_string_equal_free("Foobar", purple_utf8_strip_unprintables("Foobar"));
 	/* 0xE000 - 0xFFFD (UTF-8 encoded) */
