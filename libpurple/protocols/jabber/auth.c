@@ -45,35 +45,6 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
                                JabberIqType type, const char *id,
                                xmlnode *packet, gpointer data);
 
-gboolean
-jabber_process_starttls(JabberStream *js, xmlnode *packet)
-{
-	PurpleAccount *account;
-	xmlnode *starttls;
-
-	account = purple_connection_get_account(js->gc);
-
-	if((starttls = xmlnode_get_child(packet, "starttls"))) {
-		if(purple_ssl_is_supported()) {
-			jabber_send_raw(js,
-					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
-			return TRUE;
-		} else if(xmlnode_get_child(starttls, "required")) {
-			purple_connection_error_reason(js->gc,
-				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("Server requires TLS/SSL, but no TLS/SSL support was found."));
-			return TRUE;
-		} else if(purple_account_get_bool(account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS)) {
-			purple_connection_error_reason(js->gc,
-				 PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("You require encryption, but no TLS/SSL support was found."));
-			return TRUE;
-		}
-	}
-
-	return FALSE;
-}
-
 static void finish_plaintext_authentication(JabberStream *js)
 {
 	JabberIq *iq;

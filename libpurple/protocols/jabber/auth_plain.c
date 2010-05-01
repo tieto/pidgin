@@ -47,9 +47,9 @@ static xmlnode *finish_plaintext_authentication(JabberStream *js)
 	}
 
 	response = g_string_new("");
-	response = g_string_append_len(response, "\0", 1);
+	response = g_string_append_c(response, '\0');
 	response = g_string_append(response, js->user->node);
-	response = g_string_append_len(response, "\0", 1);
+	response = g_string_append_c(response, '\0');
 	response = g_string_append(response,
 			purple_connection_get_password(js->gc));
 
