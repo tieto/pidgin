@@ -364,8 +364,7 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 	int ret;
 	gboolean success = TRUE;
 
-	if (len == -1)
-		len = strlen(data);
+	g_return_val_if_fail(len > 0, FALSE);
 
 	if (js->state == JABBER_STREAM_CONNECTED)
 		jabber_stream_restart_inactivity_timer(js);
@@ -409,6 +408,12 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 
 void jabber_send_raw(JabberStream *js, const char *data, int len)
 {
+	PurpleConnection *gc;
+	PurpleAccount *account;
+
+	gc = js->gc;
+	account = purple_connection_get_account(gc);
+
 	/* because printing a tab to debug every minute gets old */
 	if(strcmp(data, "\t")) {
 		const char *username;
@@ -436,9 +441,9 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 			*data_start = '\0';
 		}
 
-		username = purple_connection_get_display_name(js->gc);
+		username = purple_connection_get_display_name(gc);
 		if (!username)
-			username = purple_account_get_username(purple_connection_get_account(js->gc));
+			username = purple_account_get_username(account);
 
 		purple_debug_misc("jabber", "Sending%s (%s): %s%s%s\n",
 				jabber_stream_is_ssl(js) ? " (ssl)" : "", username,
@@ -449,9 +454,12 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		g_free(text);
 	}
 
-	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-sending-text", js->gc, &data);
+	purple_signal_emit(purple_connection_get_prpl(gc), "jabber-sending-text", gc, &data);
 	if (data == NULL)
 		return;
+
+	if (len == -1)
+		len = strlen(data);
 
 	/* If we've got a security layer, we need to encode the data,
 	 * splitting it on the maximum buffer length negotiated */
@@ -462,28 +470,40 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		if (!js->gsc && js->fd<0)
 			g_return_if_reached();
 
-		if (len == -1)
-			len = strlen(data);
-
 		while (pos < len) {
 			int towrite;
 			const char *out;
 			unsigned olen;
+			int rc;
 
 			towrite = MIN((len - pos), js->sasl_maxbuf);
 
-			sasl_encode(js->sasl, &data[pos], towrite, &out, &olen);
+			rc = sasl_encode(js->sasl, &data[pos], towrite,
+			                 &out, &olen);
+			if (rc != SASL_OK) {
+				gchar *error =
+					g_strdup_printf(_("SASL error: %s"),
+						sasl_errdetail(js->sasl));
+				purple_debug_error("jabber",
+					"sasl_encode error %d: %s\n", rc,
+					sasl_errdetail(js->sasl));
+				purple_connection_error_reason(gc,
+					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+					error);
+				g_free(error);
+				return;
+			}
 			pos += towrite;
 
+			/* do_jabber_send_raw returns FALSE when it throws a
+			 * connection error.
+			 */
 			if (!do_jabber_send_raw(js, out, olen))
 				break;
 		}
 		return;
 	}
 #endif
-
-	if (len == -1)
-		len = strlen(data);
 
 	if (js->bosh)
 		jabber_bosh_connection_send_raw(js->bosh, data);
@@ -493,7 +513,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
 {
-	JabberStream *js = (JabberStream*)gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	jabber_send_raw(js, buf, len);
 	return len;
 }
@@ -597,7 +617,7 @@ static void
 jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 {
 	PurpleConnection *gc = data;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 	int len;
 	static char buf[4096];
 
@@ -607,14 +627,26 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
 		gc->last_received = time(NULL);
 #ifdef HAVE_CYRUS_SASL
-		if (js->sasl_maxbuf>0) {
+		if (js->sasl_maxbuf > 0) {
 			const char *out;
 			unsigned int olen;
-			sasl_decode(js->sasl, buf, len, &out, &olen);
-			if (olen>0) {
+			int rc;
+
+			rc = sasl_decode(js->sasl, buf, len, &out, &olen);
+			if (rc != SASL_OK) {
+				gchar *error =
+					g_strdup_printf(_("SASL error: %s"),
+						sasl_errdetail(js->sasl));
+				purple_debug_error("jabber",
+					"sasl_decode_error %d: %s\n", rc,
+					sasl_errdetail(js->sasl));
+				purple_connection_error_reason(gc,
+					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+					error);
+			} else if (olen > 0) {
 				purple_debug_info("jabber", "RecvSASL (%u): %s\n", olen, out);
-				jabber_parser_process(js,out,olen);
-				if(js->reinit)
+				jabber_parser_process(js, out, olen);
+				if (js->reinit)
 					jabber_stream_init(js);
 			}
 			return;
