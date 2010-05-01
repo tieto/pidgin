@@ -237,7 +237,7 @@ typedef struct
 	                        PurpleAccount *account, const char *who,
 	                        PurpleConversation *conv, void *user_data);
 
-	/** @see purple_request_action_varg_with_icon(). */
+	/** @see purple_request_action_with_icon_varg(). */
 	void *(*request_action_with_icon)(const char *title, const char *primary,
 	                        const char *secondary, int default_action,
 	                        PurpleAccount *account, const char *who,
@@ -1416,7 +1416,7 @@ void *purple_request_action_with_icon(void *handle, const char *title,
  * see its documentation.
  * @since 2.7.0
  */
-void *purple_request_action_varg_with_icon(void *handle, const char *title,
+void *purple_request_action_with_icon_varg(void *handle, const char *title,
 	const char *primary, const char *secondary, int default_action,
 	PurpleAccount *account, const char *who, PurpleConversation *conv,
 	gconstpointer icon_data, gsize icon_size,
