@@ -96,6 +96,11 @@ version 2.7.0 (??/??/????):
 	  minutes).  This fixes an issue with Openfire disconnecting a
 	  libpurple-baesd client that has just been quiet for about 6
 	  minutes.
+	* Only support Google Talk's JID Domain Discovery extension
+	  (allowing a user to log in with "@gmail.com" or "@googlemail.com"
+	  interchangeably) for those two domains.  This change was made
+	  due to interoperability issues with some BOSH Connection Managers
+	  and namespaced attributes.
 
 	Yahoo/Yahoo JAPAN:
 	* Attempt to better handle transparent proxies interfering with

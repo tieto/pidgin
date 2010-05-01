@@ -314,8 +314,11 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 		xmlnode_set_namespace(auth, NS_XMPP_SASL);
 		xmlnode_set_attrib(auth, "mechanism", js->current_mech);
 
-		xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
-		xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
+		if (g_str_equal(js->user->domain, "gmail.com") ||
+				g_str_equal(js->user->domain, "googlemail.com")) {
+			xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
+			xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
+		}
 
 		if (clientout) {
 			if (coutlen == 0) {
