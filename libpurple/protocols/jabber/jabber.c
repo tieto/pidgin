@@ -460,7 +460,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		int pos = 0;
 
 		if (!js->gsc && js->fd<0)
-			return;
+			g_return_if_reached();
 
 		if (len == -1)
 			len = strlen(data);
