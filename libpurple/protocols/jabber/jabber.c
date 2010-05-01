@@ -210,6 +210,35 @@ static char *jabber_prep_resource(char *input) {
 	return purple_strreplace(input, "__HOSTNAME__", hostname);
 }
 
+static gboolean
+jabber_process_starttls(JabberStream *js, xmlnode *packet)
+{
+	PurpleAccount *account;
+	xmlnode *starttls;
+
+	account = purple_connection_get_account(js->gc);
+
+	if((starttls = xmlnode_get_child(packet, "starttls"))) {
+		if(purple_ssl_is_supported()) {
+			jabber_send_raw(js,
+					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
+			return TRUE;
+		} else if(xmlnode_get_child(starttls, "required")) {
+			purple_connection_error_reason(js->gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("Server requires TLS/SSL, but no TLS/SSL support was found."));
+			return TRUE;
+		} else if(purple_account_get_bool(account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS)) {
+			purple_connection_error_reason(js->gc,
+				 PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("You require encryption, but no TLS/SSL support was found."));
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 {
 	if(xmlnode_get_child(packet, "starttls")) {
