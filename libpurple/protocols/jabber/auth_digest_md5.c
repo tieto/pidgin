@@ -281,6 +281,7 @@ static void
 digest_md5_dispose(JabberStream *js)
 {
 	g_free(js->auth_mech_data);
+	js->auth_mech_data = NULL;
 }
 
 static JabberSaslMech digest_md5_mech = {
