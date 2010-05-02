@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-01 21:53+0200\n"
-"PO-Revision-Date: 2010-05-01 21:50+0200\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2010-05-02 11:15+0200\n"
+"PO-Revision-Date: 2010-05-02 11:15+0200\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1656,7 +1656,8 @@ msgid "Set User Info"
 msgstr "Benutzer-Info setzen"
 
 msgid "This protocol does not support setting a public alias."
-msgstr "Dieses Protokoll unterstützt das Setzen öffentlicher Aliase."
+msgstr ""
+"Dieses Protokoll unterstützt das Setzen eines öffentlichen Alias nicht."
 
 msgid "This protocol does not support fetching the public alias."
 msgstr ""
@@ -3816,15 +3817,6 @@ msgstr "Ad Hoc-Kommando gescheitert"
 msgid "execute"
 msgstr "Ausführen"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-"Der Server benötigt TLS/SSL, es wurde aber kein TLS/SSL-Support gefunden."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-"Sie fordern Verschlüsselung, aber es wurde keine TLS/SSL-Unterstützung "
-"gefunden."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Der Server erfordert eine Klartext-Authentifizierung über einen "
@@ -3892,7 +3884,7 @@ msgid "Server does not support channel binding"
 msgstr "Server unterstützt keine Kanalbindung"
 
 msgid "Unsupported channel binding method"
-msgstr "Nicht unterstützte Kanalbindungsmethode"
+msgstr "Nicht-unterstützte Kanalbindungsmethode"
 
 msgid "User not found"
 msgstr "Benutzer nicht gefunden"
@@ -3901,7 +3893,7 @@ msgid "Invalid Username Encoding"
 msgstr "Ungültig Kodierung des Benutzernamens"
 
 msgid "Resource Constraint"
-msgstr "Eingeschränkte Ressourcen"
+msgstr "Ressourcen-Einschränkung"
 
 msgid "Unable to canonicalize username"
 msgstr "Benutzername konnte nicht in Normalform gebracht werden"
@@ -4207,6 +4199,15 @@ msgstr "Keine Benutzer gefunden"
 
 msgid "Roles:"
 msgstr "Rollen:"
+
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+"Der Server benötigt TLS/SSL, es wurde aber kein TLS/SSL-Support gefunden."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+"Sie fordern Verschlüsselung, aber es wurde keine TLS/SSL-Unterstützung "
+"gefunden."
 
 msgid "Ping timed out"
 msgstr "Ping-Zeitüberschreitung"
@@ -4888,7 +4889,7 @@ msgid "Amazed"
 msgstr "Verblüfft"
 
 msgid "Amorous"
-msgstr "Glorreich"
+msgstr "Sinnlich"
 
 #. 1
 msgid "Angry"
@@ -7353,7 +7354,7 @@ msgid "At home"
 msgstr "Zu Hause"
 
 msgid "At work"
-msgstr "Auf Arbeit"
+msgstr "Bei der Arbeit"
 
 msgid "At lunch"
 msgstr "Zur Mittagspause"
@@ -11470,7 +11471,7 @@ msgid "Unknown node type"
 msgstr "Unbekannter Knotentyp"
 
 msgid "Please select your mood from the list"
-msgstr "Bitte setzen Sie Ihre Stimmung aus der Liste"
+msgstr "Bitte wählen Sie Ihre Stimmung aus der Liste"
 
 msgid "Message (optional)"
 msgstr "Nachricht (optional)"
@@ -11588,7 +11589,7 @@ msgid "/Help/De_veloper Information"
 msgstr "/Hilfe/_Entwickler-Informationen"
 
 msgid "/Help/_Translator Information"
-msgstr "/Hilfe/Ü_bersetzer Informationen"
+msgstr "/Hilfe/Ü_bersetzer-Informationen"
 
 msgid "/Help/_About"
 msgstr "/Hilfe/Ü_ber"
@@ -12095,13 +12096,11 @@ msgstr "Ab_schicken"
 msgid "0 people in room"
 msgstr "0 Personen im Raum"
 
-#, fuzzy
 msgid "Close Find bar"
-msgstr "Diesen Reiter schließen"
+msgstr "Suchleiste schließen"
 
-#, fuzzy
 msgid "Find:"
-msgstr "Suchen"
+msgstr "Suchen:"
 
 #, c-format
 msgid "%d person in room"
@@ -12274,7 +12273,6 @@ msgstr "Bulgarisch"
 msgid "Bengali"
 msgstr "Bengalisch"
 
-#, fuzzy
 msgid "Bengali-India"
 msgstr "Bengalisch"
 
@@ -12554,9 +12552,8 @@ msgstr ""
 msgid "About %s"
 msgstr "Über %s"
 
-#, fuzzy
 msgid "Build Information"
-msgstr "Buddy-Information"
+msgstr "Build-Informationen"
 
 #. End of not to be translated section
 #, fuzzy, c-format
@@ -15159,15 +15156,14 @@ msgstr "Zeitstempelformat-Optionen"
 msgid "_Force timestamp format:"
 msgstr "_Erzwinge Zeitformat:"
 
-#, fuzzy
 msgid "Use system default"
-msgstr "Desktop-Standard"
+msgstr "System-Vorgabe verwenden"
 
 msgid "12 hour time format"
-msgstr "12-Stunden Zeitformat"
+msgstr "12-Stunden-Zeitformat"
 
 msgid "24 hour time format"
-msgstr "24-Stunden Zeitformat"
+msgstr "24-Stunden-Zeitformat"
 
 msgid "Show dates in..."
 msgstr "Zeige Datumsangaben in..."
