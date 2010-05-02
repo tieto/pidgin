@@ -74,6 +74,8 @@ version 2.7.0 (??/??/????):
 	  authentication fails due to an incorrect password.  (This is the same
 	  behavior as the legacy authentication method)
 	* Support sending and receiving HTML-formatted messages for ICQ.
+	* Use the proper URL for "View web profile" link for ICQ buddies.
+	  (Alexander Nartov)
 
 	MSN:
 	* Support for version 9 of the MSN protocol has been removed.  This
