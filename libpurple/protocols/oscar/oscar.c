@@ -1234,7 +1234,7 @@ connection_common_established_cb(FlapConnection *conn)
 	else
 	{
 		if (purple_account_get_bool(account, "use_clientlogin", OSCAR_DEFAULT_USE_CLIENTLOGIN))
-		{3
+		{
 			ClientInfo aiminfo = CLIENTINFO_PURPLE_AIM;
 			ClientInfo icqinfo = CLIENTINFO_PURPLE_ICQ;
 			flap_connection_send_version_with_cookie_and_clientinfo(od,
