@@ -924,8 +924,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		goto out;
 	}
 
-	presence.chat = jabber_chat_find(js, presence.jid_from->node,
-	                                 presence.jid_from->domain);
+	if (presence.jid_from->node)
+		presence.chat = jabber_chat_find(js, presence.jid_from->node,
+		                                 presence.jid_from->domain);
 	if(presence.jb->error_msg) {
 		g_free(presence.jb->error_msg);
 		presence.jb->error_msg = NULL;
