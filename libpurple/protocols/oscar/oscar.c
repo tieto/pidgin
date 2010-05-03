@@ -1234,7 +1234,7 @@ connection_common_established_cb(FlapConnection *conn)
 	else
 	{
 		if (purple_account_get_bool(account, "use_clientlogin", OSCAR_DEFAULT_USE_CLIENTLOGIN))
-		{
+		{3
 			ClientInfo aiminfo = CLIENTINFO_PURPLE_AIM;
 			ClientInfo icqinfo = CLIENTINFO_PURPLE_ICQ;
 			flap_connection_send_version_with_cookie_and_clientinfo(od,
@@ -2484,32 +2484,6 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 		curpart = curpart->next;
 	}
 	tmp = g_string_free(message, FALSE);
-
-	/*
-	 * If the message is from an ICQ user and to an ICQ user then escape any HTML,
-	 * because HTML is not sent over ICQ as a means to format a message.
-	 * So any HTML we receive is intended to be displayed.  Also, \r\n must be
-	 * replaced with <br>
-	 *
-	 * Note: There *may* be some clients which send messages as HTML formatted -
-	 *       they need to be special-cased somehow.
-	 *
-	 * Update: Newer ICQ clients have started sending IMs as HTML.  We can
-	 * distinguish HTML IMs from non-HTML IMs by looking at the features.  If
-	 * the features are "0x 01 06" then the message is plain text.  If the
-	 * features are "0x 01" then the message is HTML.
-	 */
-	if (od->icq && oscar_util_valid_name_icq(userinfo->bn)
-			&& (args->featureslen != 1 || args->features[0] != 0x01))
-	{
-		/* being recevied by ICQ from ICQ - escape HTML so it is displayed as sent */
-		gchar *tmp2 = g_markup_escape_text(tmp, -1);
-		g_free(tmp);
-		tmp = tmp2;
-		tmp2 = purple_strreplace(tmp, "\r\n", "<br>");
-		g_free(tmp);
-		tmp = tmp2;
-	}
 
 	/*
 	 * Convert iChat color tags to normal font tags.
@@ -4787,7 +4761,8 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			tmp2 = purple_markup_strip_html(tmp1);
 			is_html = FALSE;
 		} else {
-			tmp2 = g_strdup(tmp1);
+			/* ICQ 6 wants its HTML wrapped in these tags. Oblige it. */
+			tmp2 = g_strdup_printf("<HTML><BODY>%s</BODY></HTML>", tmp1);
 			is_html = TRUE;
 		}
 		g_free(tmp1);
