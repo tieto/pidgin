@@ -259,6 +259,7 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 				/* Fatal errors. Give up and go home */
 			case SASL_BADPARAM:
 			case SASL_NOMEM:
+				*error = g_strdup(_("SASL authentication failed"));
 				break;
 
 				/* For everything else, fail the mechanism and try again */
@@ -317,7 +318,6 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 		*reply = auth;
 		return JABBER_SASL_STATE_CONTINUE;
 	} else {
-		*error = g_strdup(_("SASL authentication failed"));
 		return JABBER_SASL_STATE_FAIL;
 	}
 }
