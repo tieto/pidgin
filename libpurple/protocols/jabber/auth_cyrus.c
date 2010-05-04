@@ -391,17 +391,6 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 			continue;
 		}
 
-		/* Don't include Google Talk's X-GOOGLE-TOKEN mechanism
-		 * or Facebook Chat's X-FACEBOOK-PLATFORM mechansim,
-		 * as we will not support them and including them gives a false fall-back
-		 * to other mechs offerred, leading to incorrect error handling.
-		 */
-		if (g_str_equal(mech_name, "X-GOOGLE-TOKEN")
-				|| g_str_equal(mech_name, "X-FACEBOOK-PLATFORM") ) {
-			g_free(mech_name);
-			continue;
-		}
-
 		g_string_append(js->sasl_mechs, mech_name);
 		g_string_append_c(js->sasl_mechs, ' ');
 		g_free(mech_name);
