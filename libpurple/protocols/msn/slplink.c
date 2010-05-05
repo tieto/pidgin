@@ -101,10 +101,8 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	session = slplink->session;
 
-#if 0
-	if (slplink->directconn != NULL)
-		msn_directconn_destroy(slplink->directconn);
-#endif
+	if (slplink->dc != NULL)
+		msn_dc_destroy(slplink->dc);
 
 	while (slplink->slp_calls != NULL)
 		msn_slpcall_destroy(slplink->slp_calls->data);
