@@ -276,13 +276,50 @@ find_valid_emoticon(PurpleAccount *account, const char *path)
 	return NULL;
 }
 
+static char *
+parse_dc_nonce(const char *content, MsnDirectConnNonceType *ntype)
+{
+	char *nonce;
+
+	*ntype = DC_NONCE_UNKNOWN;
+
+	nonce = get_token(content, "Hashed-Nonce: {", "}\r\n");
+	if (nonce) {
+		*ntype = DC_NONCE_SHA1;
+	} else {
+		guint32 n1, n5;
+		guint16 n2, n3, n4, n6;
+		nonce = get_token(content, "Nonce: {", "}\r\n");
+		*ntype = DC_NONCE_PLAIN;
+		if (sscanf(nonce, "%08x-%04hx-%04hx-%04hx-%08x%04hx",
+		           &n1, &n2, &n3, &n4, &n5, &n6) == 6) {
+			g_free(nonce);
+			nonce = g_malloc(16);
+			*(guint32 *)(nonce +  0) = GUINT32_TO_LE(n1);
+			*(guint16 *)(nonce +  4) = GUINT16_TO_LE(n2);
+			*(guint16 *)(nonce +  6) = GUINT16_TO_LE(n3);
+			*(guint16 *)(nonce +  8) = GUINT16_TO_BE(n4);
+			*(guint32 *)(nonce + 10) = GUINT32_TO_BE(n5);
+			*(guint16 *)(nonce + 14) = GUINT16_TO_BE(n6);
+		} else {
+			/* Invalid nonce, so ignore request */
+			g_free(nonce);
+			nonce = NULL;
+		}
+	}
+
+	return nonce;
+}
+
 static gboolean
 msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 {
 	/* A direct connection negotiation response */
 	char *bridge;
 	char *nonce;
+	char *listening;
 	MsnDirectConn *dc = slpcall->slplink->dc;
+	MsnDirectConnNonceType ntype;
 	gboolean result = FALSE;
 
 	purple_debug_info("msn", "process_transresp\n");
@@ -291,14 +328,18 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 	g_return_val_if_fail(dc->state == DC_STATE_CLOSED, FALSE);
 
 	bridge = get_token(content, "Bridge: ", "\r\n");
-	nonce = get_token(content, "Hashed-Nonce: {", "}\r\n");
-	if (nonce && bridge && !strcmp(bridge, "TCPv1")) {
+	nonce = parse_dc_nonce(content, &ntype);
+	listening = get_token(content, "Listening: ", "\r\n");
+	if (listening && bridge && !strcmp(bridge, "TCPv1")) {
 		/* Ok, the client supports direct TCP connection */
 
-		strncpy(dc->remote_nonce, nonce, 36);
-		dc->remote_nonce[36] = '\0';
+		/* We always need this. */
+		if (ntype == DC_NONCE_SHA1) {
+			strncpy(dc->remote_nonce, nonce, 36);
+			dc->remote_nonce[36] = '\0';
+		}
 
-		if (dc->listen_data != NULL || dc->listenfd != -1) {
+		if (!strcasecmp(listening, "false")) {
 			if (dc->listen_data != NULL) {
 				/*
 				 * We'll listen for incoming connections but
@@ -308,9 +349,13 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 				 */
 				slpcall->wait_for_socket = TRUE;
 
-			} else {
+			} else if (dc->listenfd != -1) {
 				/* The listening socket is ready. Send the INVITE here. */
 				msn_dc_send_invite(dc);
+
+			} else {
+				/* We weren't able to create a listener either. Use SB. */
+				msn_dc_fallback_to_p2p(dc);
 			}
 
 		} else {
@@ -320,6 +365,30 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 			 */
 			char *ip, *port_str;
 			int port = 0;
+
+			if (ntype == DC_NONCE_PLAIN) {
+				/* Only needed for listening side. */
+				memcpy(dc->nonce, nonce, 16);
+			}
+
+			/* Cancel any listen attempts because we don't need them. */
+			if (dc->listenfd_handle != 0) {
+				purple_input_remove(dc->listenfd_handle);
+				dc->listenfd_handle = 0;
+			}
+			if (dc->connect_timeout_handle != 0) {
+				purple_timeout_remove(dc->connect_timeout_handle);
+				dc->connect_timeout_handle = 0;
+			}
+			if (dc->listenfd != -1) {
+				purple_network_remove_port_mapping(dc->listenfd);
+				close(dc->listenfd);
+				dc->listenfd = -1;
+			}
+			if (dc->listen_data != NULL) {
+				purple_network_listen_cancel(dc->listen_data);
+				dc->listen_data = NULL;
+			}
 
 			/* Save external IP/port for later use. We'll try local connection first. */
 			dc->ext_ip = get_token(content, "IPv4External-Addrs: ", "\r\n");
@@ -382,6 +451,7 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 		 */
 	}
 
+	g_free(listening);
 	g_free(nonce);
 	g_free(bridge);
 
@@ -640,13 +710,7 @@ got_invite(MsnSlpCall *slpcall,
 			return;
 
 		bridges = get_token(content, "Bridges: ", "\r\n");
-		nonce = get_token(content, "Hashed-Nonce: {", "}\r\n");
-		if (nonce) {
-			ntype = DC_NONCE_SHA1;
-		} else {
-			nonce = get_token(content, "Nonce: {", "}\r\n");
-			ntype = DC_NONCE_PLAIN;
-		}
+		nonce = parse_dc_nonce(content, &ntype);
 		if (nonce && bridges && strstr(bridges, "TCPv1") != NULL) {
 			/*
 			 * Ok, the client supports direct TCP connection
@@ -655,9 +719,16 @@ got_invite(MsnSlpCall *slpcall,
 			MsnDirectConn *dc;
 
 			dc = msn_dc_new(slpcall);
-			dc->nonce_type = ntype;
-			strncpy(dc->remote_nonce, nonce, 36);
-			dc->remote_nonce[36] = '\0';
+			if (ntype == DC_NONCE_PLAIN) {
+				/* There is only one nonce for plain auth. */
+				dc->nonce_type = ntype;
+				memcpy(dc->nonce, nonce, 16);
+			} else if (ntype == DC_NONCE_SHA1) {
+				/* Each side has a nonce in SHA1 auth. */
+				dc->nonce_type = ntype;
+				strncpy(dc->remote_nonce, nonce, 36);
+				dc->remote_nonce[36] = '\0';
+			}
 
 			dc->listen_data = purple_network_listen_range(
 				0, 0,
@@ -727,6 +798,7 @@ got_ok(MsnSlpCall *slpcall,
 	{
 		char *content;
 		char *header;
+		char *nonce = NULL;
 		MsnSlpMessage *msg;
 		MsnDirectConn *dc;
 		MsnUser *user;
@@ -763,6 +835,9 @@ got_ok(MsnSlpCall *slpcall,
 			slpcall->slplink->remote_user
 		);
 
+		if (dc->nonce_type == DC_NONCE_SHA1)
+			nonce = g_strdup_printf("Hashed-Nonce: {%s}\r\n", dc->nonce_hash);
+
 		if (dc->listen_data == NULL) {
 			/* Listen socket creation failed */
 			purple_debug_info("msn", "got_ok: listening failed\n");
@@ -773,17 +848,15 @@ got_ok(MsnSlpCall *slpcall,
 				"Conn-Type: IP-Restrict-NAT\r\n"
 				"UPnPNat: false\r\n"
 				"ICF: false\r\n"
-				"%sNonce: {%s}\r\n"
+				"%s"
 				"\r\n",
 
 				rand() % G_MAXUINT32,
-				dc->nonce_type != DC_NONCE_PLAIN ? "Hashed-" : "",
-				dc->nonce_hash
+				nonce ? nonce : ""
 			);
 
 		} else {
 			/* Listen socket created successfully. */
-
 			purple_debug_info("msn", "got_ok: listening socket created\n");
 
 			content = g_strdup_printf(
@@ -792,11 +865,10 @@ got_ok(MsnSlpCall *slpcall,
 				"Conn-Type: Direct-Connect\r\n"
 				"UPnPNat: false\r\n"
 				"ICF: false\r\n"
-				"%sNonce: {%s}\r\n"
+				"%s"
 				"\r\n",
 
-				dc->nonce_type != DC_NONCE_PLAIN ? "Hashed-" : "",
-				dc->nonce_hash
+				nonce ? nonce : ""
 			);
 		}
 
@@ -810,6 +882,7 @@ got_ok(MsnSlpCall *slpcall,
 		);
 		msg->info = "DC INVITE";
 		msg->text_body = TRUE;
+		g_free(nonce);
 		g_free(header);
 		g_free(content);
 

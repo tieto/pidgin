@@ -663,23 +663,39 @@ msn_dc_verify_handshake(MsnDirectConn *dc, guint32 packet_length)
 
 	memcpy(nonce, dc->in_buffer + 4 + offsetof(MsnDcContext, ack_id), 16);
 
-	msn_dc_calculate_nonce_hash(dc->nonce_type, nonce, nonce_hash);
+	if (dc->nonce_type == DC_NONCE_PLAIN) {
+		if (memcmp(dc->nonce, nonce, 16) == 0) {
+			purple_debug_info("msn",
+					"Nonce from buddy request and nonce from DC attempt match, "
+					"allowing direct connection\n");
+			return TRUE;
+		} else {
+			purple_debug_warning("msn",
+					"Nonce from buddy request and nonce from DC attempt "
+					"don't match, ignoring direct connection\n");
+			return FALSE;
+		}
 
-	if (g_str_equal(dc->remote_nonce, nonce_hash)) {
-		purple_debug_info("msn",
-				"Received nonce %s from buddy request "
-				"and calculated nonce %s from DC attempt. "
-				"Nonces match, allowing direct connection\n",
-				dc->remote_nonce, nonce_hash);
-		return TRUE;
-	} else {
-		purple_debug_warning("msn",
-				"Received nonce %s from buddy request "
-				"and calculated nonce %s from DC attempt. "
-				"Nonces don't match, ignoring direct connection\n",
-				dc->remote_nonce, nonce_hash);
+	} else if (dc->nonce_type == DC_NONCE_SHA1) {
+		msn_dc_calculate_nonce_hash(dc->nonce_type, nonce, nonce_hash);
+
+		if (g_str_equal(dc->remote_nonce, nonce_hash)) {
+			purple_debug_info("msn",
+					"Received nonce %s from buddy request "
+					"and calculated nonce %s from DC attempt. "
+					"Nonces match, allowing direct connection\n",
+					dc->remote_nonce, nonce_hash);
+			return TRUE;
+		} else {
+			purple_debug_warning("msn",
+					"Received nonce %s from buddy request "
+					"and calculated nonce %s from DC attempt. "
+					"Nonces don't match, ignoring direct connection\n",
+					dc->remote_nonce, nonce_hash);
+			return FALSE;
+		}
+	} else
 		return FALSE;
-	}
 }
 
 static void
