@@ -556,7 +556,7 @@ msn_dc_send_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	}
 
 	bytes_to_send = p->length - dc->msg_pos;
-	bytes_sent = send(fd, p->data, bytes_to_send, 0);
+	bytes_sent = send(fd, p->data + dc->msg_pos, bytes_to_send, 0);
 	if (bytes_sent < 0) {
 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 			return;
