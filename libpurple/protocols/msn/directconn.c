@@ -610,10 +610,22 @@ msn_dc_send_foo(MsnDirectConn *dc)
 }
 
 static void
+msn_dc_send_handshake_with_nonce(MsnDirectConn *dc, MsnDirectConnPacket *p)
+{
+	const gchar *h;
+
+	h = msn_dc_serialize_binary_header(dc);
+	memcpy(p->data, h, DC_PACKET_HEADER_SIZE);
+
+	memcpy(p->data + offsetof(MsnDcContext, ack_id), dc->nonce, 16);
+
+	msn_dc_enqueue_packet(dc, p);
+}
+
+static void
 msn_dc_send_handshake(MsnDirectConn *dc)
 {
 	MsnDirectConnPacket *p;
-	const gchar *h;
 
 	p = msn_dc_new_packet(DC_PACKET_HEADER_SIZE);
 
@@ -624,29 +636,20 @@ msn_dc_send_handshake(MsnDirectConn *dc)
 	dc->header.length = 0;
 	dc->header.flags = 0x100;
 
-	h = msn_dc_serialize_binary_header(dc);
-	memcpy(p->data, h, DC_PACKET_HEADER_SIZE);
-	memcpy(p->data + offsetof(MsnDcContext, ack_id), dc->nonce, 16);
-
-	msn_dc_enqueue_packet(dc, p);
+	msn_dc_send_handshake_with_nonce(dc, p);
 }
 
 static void
 msn_dc_send_handshake_reply(MsnDirectConn *dc)
 {
 	MsnDirectConnPacket *p;
-	const gchar *h;
 
 	p = msn_dc_new_packet(DC_PACKET_HEADER_SIZE);
 
 	dc->header.id = dc->slpcall->slplink->slp_seq_id++;
 	dc->header.length = 0;
 
-	h = msn_dc_serialize_binary_header(dc);
-	memcpy(p->data, h, DC_PACKET_HEADER_SIZE);
-	memcpy(p->data + offsetof(MsnDcContext, ack_id), dc->nonce, 16);
-
-	msn_dc_enqueue_packet(dc, p);
+	msn_dc_send_handshake_with_nonce(dc, p);
 }
 
 static gboolean
