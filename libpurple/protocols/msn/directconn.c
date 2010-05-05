@@ -313,11 +313,10 @@ msn_dc_send_ok(MsnDirectConn *dc)
 	msn_slplink_send_queued_slpmsgs(dc->slpcall->slplink);
 }
 
-static void
+void
 msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 {
 	MsnSlpCall *slpcall;
-	PurpleXfer *xfer;
 
 	purple_debug_info("msn", "msn_dc_try_fallback_to_p2p %p\n", dc);
 
@@ -326,46 +325,9 @@ msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 	slpcall = dc->slpcall;
 	g_return_if_fail(slpcall != NULL);
 
-	xfer = slpcall->xfer;
-	g_return_if_fail(xfer != NULL);
-
 	msn_dc_destroy(dc);
 
 	msn_slpcall_session_init(slpcall);
-
-	/*
-	switch (purple_xfer_get_status(xfer)) {
-	case PURPLE_XFER_STATUS_NOT_STARTED:
-	case PURPLE_XFER_STATUS_ACCEPTED:
-		msn_slpcall_session_init(slpcall);
-		break;
-
-	case PURPLE_XFER_STATUS_STARTED:
-		slpcall->session_init_cb = NULL;
-		slpcall->end_cb = NULL;
-		slpcall->progress_cb = NULL;
-		slpcall->cb = NULL;
-
-		if (fail_local)
-			purple_xfer_cancel_local(xfer);
-		else
-			purple_xfer_cancel_remote(xfer);
-		break;
-
-	default:
-		slpcall->session_init_cb = NULL;
-		slpcall->end_cb = NULL;
-		slpcall->progress_cb = NULL;
-		slpcall->cb = NULL;
-
-		if (fail_local)
-			purple_xfer_cancel_local(xfer);
-		else
-			purple_xfer_cancel_remote(xfer);
-
-		break;
-	}
-	*/
 }
 
 static void

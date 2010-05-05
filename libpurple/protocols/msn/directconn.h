@@ -55,6 +55,7 @@ typedef enum
 
 typedef enum
 {
+	DC_NONCE_UNKNOWN,	/**< Invalid scheme */
 	DC_NONCE_PLAIN,     /**< No hashing */
 	DC_NONCE_SHA1       /**< First 16 bytes of SHA1 of nonce */
 
@@ -134,6 +135,13 @@ msn_dc_new(MsnSlpCall *slplink);
  */
 void
 msn_dc_destroy(MsnDirectConn *dc);
+
+/*
+ * Fallback to switchboard connection. Used when neither side is able to
+ * create a listening socket.
+ */
+void
+msn_dc_fallback_to_p2p(MsnDirectConn *dc);
 
 /*
  * Increases the slpcall counter in DC. The direct connection remains open
