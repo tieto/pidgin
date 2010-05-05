@@ -252,29 +252,14 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 					g_free(msg);
 					return JABBER_SASL_STATE_CONTINUE;
 
-				} else {
-					/* We have no mechs which can work.
-					 * Try falling back on the old jabber:iq:auth method. We get here if the server supports
-					 * one or more sasl mechs, we are compiled with cyrus-sasl support, but we support or can connect with none of
-					 * the offerred mechs. jabberd 2.0 w/ SASL and Apple's iChat Server 10.5 both handle and expect
-					 * jabber:iq:auth in this situation.  iChat Server in particular offers SASL GSSAPI by default, which is often
-					 * not configured on the client side, and expects a fallback to jabber:iq:auth when it (predictably) fails.
-					 *
-					 * Note: xep-0078 points out that using jabber:iq:auth after a sasl failure is wrong. However,
-					 * I believe this refers to actual authentication failure, not a simple lack of concordant mechanisms.
-					 * Doing otherwise means that simply compiling with SASL support renders the client unable to connect to servers
-					 * which would connect without issue otherwise. -evands
-					 */
-					js->auth_mech = NULL;
-					jabber_auth_start_old(js);
-					return JABBER_SASL_STATE_CONTINUE;
 				}
-				/* not reached */
+
 				break;
 
 				/* Fatal errors. Give up and go home */
 			case SASL_BADPARAM:
 			case SASL_NOMEM:
+				*error = g_strdup(_("SASL authentication failed"));
 				break;
 
 				/* For everything else, fail the mechanism and try again */
@@ -333,7 +318,6 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 		*reply = auth;
 		return JABBER_SASL_STATE_CONTINUE;
 	} else {
-		*error = g_strdup(_("SASL authentication failed"));
 		return JABBER_SASL_STATE_FAIL;
 	}
 }
@@ -403,17 +387,6 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 		char *mech_name = xmlnode_get_data(mechnode);
 
 		if (!mech_name || !*mech_name) {
-			g_free(mech_name);
-			continue;
-		}
-
-		/* Don't include Google Talk's X-GOOGLE-TOKEN mechanism
-		 * or Facebook Chat's X-FACEBOOK-PLATFORM mechansim,
-		 * as we will not support them and including them gives a false fall-back
-		 * to other mechs offerred, leading to incorrect error handling.
-		 */
-		if (g_str_equal(mech_name, "X-GOOGLE-TOKEN")
-				|| g_str_equal(mech_name, "X-FACEBOOK-PLATFORM") ) {
 			g_free(mech_name);
 			continue;
 		}
@@ -545,6 +518,25 @@ jabber_cyrus_handle_failure(JabberStream *js, xmlnode *packet,
 			sasl_dispose(&js->sasl);
 
 			return jabber_auth_start_cyrus(js, reply, error);
+
+		} else if ((js->auth_fail_count == 1) && 
+				   (js->current_mech && g_str_equal(js->current_mech, "GSSAPI"))) {
+			/* If we tried GSSAPI first, it failed, and it was the only method we had to try, try jabber:iq:auth
+			 * for compatibility with iChat 10.5 Server.
+			 *
+			 * iChat Server 10.5  offers SASL GSSAPI by default, which is often
+			 * not configured on the client side, and expects a fallback to jabber:iq:auth when it (predictably) fails.
+			 *
+			 * Note: xep-0078 points out that using jabber:iq:auth after a sasl failure is wrong. However,
+			 * I believe this refers to actual authentication failure, not a simple lack of concordant mechanisms.
+			 * Doing otherwise means that simply compiling with SASL support renders the client unable to connect to servers
+			 * which would connect without issue otherwise. -evands
+			 */
+			sasl_dispose(&js->sasl);
+			js->sasl = NULL;
+			js->auth_mech = NULL;
+			jabber_auth_start_old(js);
+			return JABBER_SASL_STATE_CONTINUE;
 		}
 	}
 

@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-02 11:15+0200\n"
-"PO-Revision-Date: 2010-05-02 11:15+0200\n"
+"POT-Creation-Date: 2010-05-04 19:40+0200\n"
+"PO-Revision-Date: 2010-05-04 19:40+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -7930,9 +7930,8 @@ msgstr "AIM-Info"
 msgid "Edit Buddy Comment"
 msgstr "Buddy-Kommentar bearbeiten"
 
-#, fuzzy
 msgid "Get X-Status Msg"
-msgstr "Abwesenheitsmitteilung abrufen"
+msgstr "X-Status-Nachricht abrufen"
 
 msgid "End Direct IM Session"
 msgstr "Direkt-IM-Sitzung beenden"
@@ -10364,13 +10363,13 @@ msgstr ""
 "Sie sich auf der Yahoo!-Webseite anmelden."
 
 #. indicates a lock due to logging in too frequently
-#, fuzzy
 msgid ""
 "Account locked: You have been logging in too frequently.  Wait a few minutes "
 "before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
-"Konto gesperrt: Zu viele fehlgeschlagene Login-Versuche. Eventuell können "
-"Sie dies beheben, wenn Sie sich auf der Yahoo!-Webseite anmelden."
+"Konto gesperrt: Zu viele fehlgeschlagene Login-Versuche. Warten Sie einige "
+"Minuten bevor Sie erneut versuchen sich zu verbinden. Eventuell können Sie "
+"dies beheben, wenn Sie sich auf der Yahoo!-Webseite anmelden."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10452,16 +10451,15 @@ msgstr "Verbindung zu %s verloren: %s"
 msgid "Unable to establish a connection with %s: %s"
 msgstr "Die Verbindung mit %s konnte nicht hergestellt werden: %s"
 
-#, fuzzy
 msgid "Unable to connect: The server returned an empty response."
-msgstr ""
-"Kann keine Verbindung zum MXit-Server herstellen. Bitte überprüfen Sie Ihre "
-"Server-Einstellungen."
+msgstr "Verbindung fehlgeschlagen: Der Server lieferte eine leere Antwort."
 
 msgid ""
 "Unable to connect: The server's response did not contain the necessary "
 "information"
 msgstr ""
+"Verbindung fehlgeschlagen: Die Antwort des Servers enthielt die nötigen "
+"Informationen nicht"
 
 msgid "Not at Home"
 msgstr "Nicht zu Hause"
@@ -11943,9 +11941,8 @@ msgstr "/Unterhaltung/Medien/A_udio-\\/Video-Anruf"
 msgid "/Conversation/Se_nd File..."
 msgstr "/Unterhaltung/Datei _senden..."
 
-#, fuzzy
 msgid "/Conversation/Get _Attention"
-msgstr "/Unterhaltung/Info abrufen"
+msgstr "/Unterhaltung/_Aufmerksamkeit erregen"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Unterhaltung/_Buddy-Alarm hinzufügen..."
@@ -12028,9 +12025,8 @@ msgstr "/Unterhaltung/Medien/Audio-\\/Video-Anruf"
 msgid "/Conversation/Send File..."
 msgstr "/Unterhaltung/Datei senden ..."
 
-#, fuzzy
 msgid "/Conversation/Get Attention"
-msgstr "/Unterhaltung/Info abrufen"
+msgstr "/Unterhaltung/Aufmerksamkeit erregen"
 
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Unterhaltung/Buddy-Alarm hinzufügen..."
@@ -12498,7 +12494,7 @@ msgstr "Amharisch"
 msgid "Lithuanian"
 msgstr "Litauisch"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s is a messaging client based on libpurple which is capable of connecting "
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
@@ -12507,15 +12503,14 @@ msgid ""
 "copyrighted by its contributors, a list of whom is also distributed with %"
 "s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
-"%s ist ein grafischer modularer Nachrichtendienst, basierend auf libpurple, "
-"der AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, "
-"Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu und QQ gleichzeitig "
-"unterstützt.  Er wird mit GTK+ entwickelt.<BR><BR>Sie können das Programm "
-"nach den Bedingungen der GPL (Version 2 oder später) modifizieren und "
-"weitergeben.  Eine Kopie der GPL ist in der Datei 'COPYING' enthalten, die "
-"mit %s ausgeliefert wird.  %s wird von seinen Mitwirkenden urheberrechtlich "
-"geschützt.  Die Datei 'COPYRIGHT' enthält die komplette Liste der "
-"Mitwirkenden.  Wir übernehmen keine Haftung für dieses Programm.<BR><BR>"
+"%s ist ein Nachrichtendienst, basierend auf libpurple, der die Verbindung zu "
+"mehreren Nachrichtendiensten gleichzeitig unterstützt.  %s wird mit C und GTK"
+"+ entwickelt.  %s ist nach den Bedingungen der GPL (Version 2 oder später) "
+"freigegeben und darf gemäß dieser bearbeitet und weiter verbreitet werden.  "
+"Eine Kopie der GPL wird mit %s ausgeliefert.  %s wird von seinen "
+"Mitwirkenden urheberrechtlich geschützt.  Eine komplette Liste der "
+"Mitwirkenden wird mit %s ausgeliefert.  Wir übernehmen keine Haftung für %s."
+"<BR><BR>"
 
 #, c-format
 msgid ""
@@ -12524,8 +12519,12 @@ msgid ""
 "Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
 "im<BR><BR>"
 msgstr ""
+"<FONT SIZE=\"4\"><B>Hilfreiche Quellen</B></FONT><BR>\t<A HREF=\"%s"
+"\">Webseite</A><BR>\t<A HREF=\"%s\">Häufig gestellte Fragen (FAQ)</A><BR>"
+"\tIRC-Channel: #pidgin auf irc.freenode.net<BR>\tXMPP-MUC: devel@conference."
+"pidgin.im<BR><BR>"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12535,18 +12534,19 @@ msgid ""
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\">Hilfe von anderen Pidgin-Benutzern:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>Dies ist eine <b>öffentliche</"
-"b> Mailing-Liste! (<a href=\"http://pidgin.im/pipermail/support/\">Archiv</"
-"a>)<br/>Wir können nicht bei Problemen mit Drittanbieter-Protokollen oder "
-"Plugins helfen!<br/>Die Hauptsprache dieser Liste ist <b>Englisch</b>.  Sie "
-"können gern in einer anderen Sprache schreiben, aber die Antworten könnten "
-"weniger hilfreich sein.<br/>Deutschsprachige Benutzer können auch das Portal "
-"<a href=\"http://www.pidgin-im.de/\">Pidgin-IM.de</a> nutzen.  Dort finden "
-"Sie aktuelle Informationen zu Pidgin, können mit anderen Benutzern im <a "
-"href=\"http://forum.pidgin-im.de/\">Forum</a> diskutieren und Hilfe zu "
-"Problemen finden.  Beachten Sie, dass dieses Portal unabhängig vom "
-"offiziellen Pidgin-Projekt ist.<br/><br/>"
+"<font size=\"4\"><b>Hilfe von anderen Pidgin-Benutzern</b></font> erhält man "
+"per E-Mail an <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">Dies ist eine <b>öffentliche</b> Mailing-Liste! (<a href=\"http://pidgin.im/"
+"pipermail/support/\">Archiv</a>)<br/>Wir können nicht bei Problemen mit "
+"Drittanbieter-Protokollen oder Plugins helfen!<br/>Die Hauptsprache dieser "
+"Liste ist <b>Englisch</b>.  Sie können gern in einer anderen Sprache "
+"schreiben, aber die Antworten könnten weniger hilfreich sein.<br/"
+">Deutschsprachige Benutzer können auch das Portal <a href=\"http://www."
+"pidgin-im.de/\">Pidgin-IM.de</a> nutzen.  Dort finden Sie aktuelle "
+"Informationen zu Pidgin, können mit anderen Benutzern im <a href=\"http://"
+"forum.pidgin-im.de/\">Forum</a> diskutieren und Hilfe zu Problemen finden.  "
+"Beachten Sie, dass dieses Portal unabhängig vom offiziellen Pidgin-Projekt "
+"ist.<br/><br/>"
 
 #, c-format
 msgid "About %s"
@@ -12556,9 +12556,9 @@ msgid "Build Information"
 msgstr "Build-Informationen"
 
 #. End of not to be translated section
-#, fuzzy, c-format
+#, c-format
 msgid "%s Build Information"
-msgstr "Buddy-Information"
+msgstr "%s-Build-Informationen"
 
 msgid "Current Developers"
 msgstr "Aktuelle Entwickler"
@@ -12572,9 +12572,9 @@ msgstr "Zurückgetretene Entwickler"
 msgid "Retired Crazy Patch Writers"
 msgstr "Zurückgetretene verrückte Patchschreiber"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Developer Information"
-msgstr "Serverinformation"
+msgstr "%s-Entwickler-Informationen"
 
 msgid "Current Translators"
 msgstr "Aktuelle Übersetzer"
@@ -12582,9 +12582,9 @@ msgstr "Aktuelle Übersetzer"
 msgid "Past Translators"
 msgstr "Frühere Übersetzer"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Translator Information"
-msgstr "Mehr Informationen"
+msgstr "%s-Übersetzer-Informationen"
 
 msgid "_Name"
 msgstr "_Name"
@@ -12835,7 +12835,7 @@ msgstr ""
 "Farbe, mit der der Name in einer empfangenen Nachricht dargestellt wird."
 
 msgid "\"Attention\" Name Color"
-msgstr "Farbe des Absendernamens für „Achtung“-Nachrichten"
+msgstr "Farbe des Absendernamens für „Aufmerksamkeits“-Nachrichten"
 
 msgid "Color to draw the name of a message you received containing your name."
 msgstr ""
@@ -13006,9 +13006,8 @@ msgstr "IM-Bild einfügen"
 msgid "Insert Smiley"
 msgstr "Smiley einfügen"
 
-#, fuzzy
 msgid "Send Attention"
-msgstr "Senden-Knopf"
+msgstr "Aufmerksamkeitsgesuch senden"
 
 msgid "<b>_Bold</b>"
 msgstr "<b>_Fett</b>"
@@ -13056,7 +13055,7 @@ msgid "_Smile!"
 msgstr "_Lächeln!"
 
 msgid "_Attention!"
-msgstr "_Achtung!"
+msgstr "_Aufmerksamkeit!"
 
 msgid "Log Deletion Failed"
 msgstr "Löschen des Mitschnitts fehlgeschlagen"
@@ -14004,9 +14003,8 @@ msgstr "Verknüpfter Text"
 msgid "Custom Smiley Manager"
 msgstr "Verwaltung für benutzerdefinierte Smileys"
 
-#, fuzzy
 msgid "Attention received"
-msgstr "Aktivierung erforderlich"
+msgstr "Aufmerksamkeitsgesuch erhalten"
 
 msgid "Select Buddy Icon"
 msgstr "Buddy-Icon auswählen"
