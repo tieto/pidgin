@@ -43,7 +43,7 @@ typedef struct {
 #pragma pack(pop)
 
 #define DC_PACKET_HEADER_SIZE sizeof(MsnDcContext)
-#define DC_MAX_BODY_SIZE      1352
+#define DC_MAX_BODY_SIZE      8*1024
 #define DC_MAX_PACKET_SIZE    (DC_PACKET_HEADER_SIZE + DC_MAX_BODY_SIZE)
 
 static void
@@ -682,8 +682,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 
 	/* Wait for packet length */
 	while (dc->in_pos >= 4) {
-		packet_length = *((guint32*)dc->in_buffer);
-		packet_length = GUINT32_FROM_LE(packet_length);
+		packet_length = GUINT32_FROM_LE(*((guint32*)dc->in_buffer));
 
 		if (packet_length > DC_MAX_PACKET_SIZE) {
 			/* Oversized packet */
