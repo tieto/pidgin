@@ -95,7 +95,7 @@ msn_dc_new_packet(guint32 length)
 	MsnDirectConnPacket	*p;
 
 	p = g_new0(MsnDirectConnPacket, 1);
-	p->length = length + 4;
+	p->length = length;
 	p->data = g_malloc(length);
 
 	return p;
