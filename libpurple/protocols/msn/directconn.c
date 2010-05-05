@@ -710,7 +710,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		}
 
 		if (dc->in_pos > packet_length + 4) {
-			memcpy(dc->in_buffer, dc->in_buffer + 4 + packet_length, dc->in_pos - packet_length - 4);
+			g_memmove(dc->in_buffer, dc->in_buffer + 4 + packet_length, dc->in_pos - packet_length - 4);
 		}
 
 		dc->in_pos -= packet_length + 4;
