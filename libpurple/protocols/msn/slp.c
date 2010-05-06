@@ -813,7 +813,7 @@ got_ok(MsnSlpCall *slpcall,
 
 		user = msn_userlist_find_user(slpcall->slplink->session->userlist,
 		                              slpcall->slplink->remote_user);
-		if (!(user->clientid & 0xF0000000))	{
+		if (!user || !(user->clientid & 0xF0000000))	{
 			/* Just start a normal SB transfer. */
 			msn_slpcall_session_init(slpcall);
 			return;
