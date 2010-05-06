@@ -777,7 +777,7 @@ msn_dc_connected_to_peer_cb(gpointer data, gint fd, const gchar *error_msg)
 static gboolean
 msn_dc_incoming_connection_timeout_cb(gpointer data) {
 	MsnDirectConn *dc = data;
-	MsnSlpCall *slpcall = dc->slpcall;
+	MsnSlpCall *slpcall;
 
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "msn_dc_incoming_connection_timeout_cb %p\n", dc);
@@ -785,7 +785,6 @@ msn_dc_incoming_connection_timeout_cb(gpointer data) {
 	g_return_val_if_fail(dc != NULL, FALSE);
 
 	slpcall = dc->slpcall;
-	g_return_val_if_fail(slpcall != NULL, FALSE);
 
 	if (dc->listen_data != NULL) {
 		purple_network_listen_cancel(dc->listen_data);
@@ -803,9 +802,12 @@ msn_dc_incoming_connection_timeout_cb(gpointer data) {
 		dc->listenfd = -1;
 	}
 
+	dc->connect_timeout_handle = 0;
 	msn_dc_destroy(dc);
-	/* Start p2p file transfer */
-	msn_slpcall_session_init(slpcall);
+
+	/* Start p2p file transfer, if possible */
+	if (slpcall)
+		msn_slpcall_session_init(slpcall);
 
 	return FALSE;
 }
