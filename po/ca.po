@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-04 22:47+0200\n"
-"PO-Revision-Date: 2010-05-04 23:17+0200\n"
+"POT-Creation-Date: 2010-05-06 07:36+0200\n"
+"PO-Revision-Date: 2010-05-06 07:37+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -643,7 +643,6 @@ msgstr "Envia a"
 msgid "Conversation"
 msgstr "Conversa"
 
-# FIXME ?
 msgid "Clear Scrollback"
 msgstr "Neteja la finestra"
 
@@ -1060,7 +1059,6 @@ msgstr "Avís nou per a l'amic"
 msgid "Edit Buddy Pounce"
 msgstr "Edita l'avís per a l'amic"
 
-# FIXME
 msgid "Pounce Who"
 msgstr "Avisa dels Who"
 
@@ -1512,7 +1510,6 @@ msgstr "Notifica amb un missatge emergent quan"
 msgid "Beep too!"
 msgstr "Fes pip també!"
 
-# FIXME
 msgid "Set URGENT for the terminal window."
 msgstr "Estableix URGENT per a la finestra del terminal."
 
@@ -2770,7 +2767,6 @@ msgstr "No ho demanis, desa-ho sempre en un avís."
 msgid "One Time Password"
 msgstr "Contrasenya d'un sol ús"
 
-# FIXME ?
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -3888,7 +3884,7 @@ msgid ""
 "The server does support channel binding, but did not appear to advertise "
 "it.  This indicates a likely MITM attack"
 msgstr ""
-"Aques servidor permet vincular canals, tot i que no ho havia anunciat. Això "
+"Aquest servidor permet vincular canals, tot i que no ho havia anunciat. Això "
 "podria ser indicatiu d'un atac informàtic \"man-in-the-middle\""
 
 msgid "Server does not support channel binding"
@@ -4855,7 +4851,7 @@ msgid "Unknown Error in presence"
 msgstr "Error desconegut en la presència"
 
 msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "S'ha produit un error en el fluxe de transferència de dades en banda\n"
+msgstr "S'ha produït un error en el flux de transferència de dades en banda\n"
 
 msgid "Transfer was closed."
 msgstr "La transferència s'ha tancat."
@@ -4911,7 +4907,7 @@ msgid "Anxious"
 msgstr "Ansiós"
 
 msgid "Aroused"
-msgstr ""
+msgstr "Animat"
 
 msgid "Ashamed"
 msgstr "Avergonyit"
@@ -4944,7 +4940,7 @@ msgid "Contented"
 msgstr "Acontentat"
 
 msgid "Cranky"
-msgstr ""
+msgstr "Empipat"
 
 msgid "Crazy"
 msgstr "Boig"
@@ -5014,7 +5010,7 @@ msgid "Hot"
 msgstr "Calent"
 
 msgid "Humbled"
-msgstr ""
+msgstr "Avergonyit"
 
 msgid "Humiliated"
 msgstr "Humiliat"
@@ -5063,7 +5059,7 @@ msgid "Mean"
 msgstr "Malèvol"
 
 msgid "Moody"
-msgstr "Animat"
+msgstr "Llunàtic"
 
 msgid "Nervous"
 msgstr "Nerviós"
@@ -9995,7 +9991,7 @@ msgid "Block IMs without Key Exchange"
 msgstr "Bloca la MI sense intercanvi de claus"
 
 msgid "Block messages to whiteboard"
-msgstr "Bloca els misstges a la pissarra"
+msgstr "Bloca els missatges a la pissarra"
 
 msgid "Automatically open whiteboard"
 msgstr "Obre la pissarra automàticament"
@@ -10249,7 +10245,7 @@ msgid "Ignore conference and chatroom invitations"
 msgstr "Bloca invitacions a conferències i sales de xat"
 
 msgid "Use account proxy for SSL connections"
-msgstr "Empra un compte per al servidor intermediàri per a connexions SSL"
+msgstr "Empra un compte per al servidor intermediari per a connexions SSL"
 
 msgid "Chat room list URL"
 msgstr "URL de la llista de sales de xat"
@@ -13085,7 +13081,6 @@ msgstr "força estar en línia, independentment de l'estat de la xarxa"
 msgid "display this help and exit"
 msgstr "mostra aquesta ajuda i surt"
 
-# FIXME: entrades/registres?
 msgid "allow multiple instances"
 msgstr "permet diverses instàncies"
 
@@ -13264,7 +13259,6 @@ msgstr "Seleccioneu un fitxer"
 msgid "Modify Buddy Pounce"
 msgstr "Modifica l'avís per a l'amic"
 
-# FIXME
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
 msgstr "Avisa dels Whom"
@@ -13674,7 +13668,7 @@ msgstr "Configura el _servidor intermediari"
 #. This is a global option that affects SOCKS4 usage even with
 #. * account-specific proxy settings
 msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr "Empra _DNS remot amb servidors intermediàris SOCKS4"
+msgstr "Empra _DNS remot amb servidors intermediaris SOCKS4"
 
 msgid "Proxy t_ype:"
 msgstr "_Tipus de servidor intermediari:"
