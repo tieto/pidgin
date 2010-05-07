@@ -81,6 +81,8 @@ version 2.7.0 (??/??/????):
 	* Support for version 9 of the MSN protocol has been removed.  This
 	  version is no longer supported on the servers.
 	* Support file transfer thumbnails (previews) for images.
+	* Support for direct connections, enabling faster file transfers,
+	  smiley and buddy icon loading.  (Gábor Szuromi)
 
 	XMPP:
 	* Direct messages to a specific resource only upon receipt of a message
