@@ -825,10 +825,7 @@ msn_dc_outgoing_connection_timeout_cb(gpointer data)
 
 	g_return_val_if_fail(dc != NULL, FALSE);
 
-	if (dc->connect_timeout_handle != 0) {
-		purple_timeout_remove(dc->connect_timeout_handle);
-		dc->connect_timeout_handle = 0;
-	}
+	dc->connect_timeout_handle = 0;
 
 	if (dc->connect_data != NULL) {
 		purple_proxy_connect_cancel(dc->connect_data);
@@ -859,14 +856,15 @@ msn_dc_outgoing_connection_timeout_cb(gpointer data)
 
 	} else {
 		/*
-		 * Both internal and external connection attempts are failed.
+		 * Both internal and external connection attempts failed.
 		 * Fall back to p2p transfer.
 		 */
-		MsnSlpCall	*slpcall = dc->slpcall;
+		MsnSlpCall *slpcall = dc->slpcall;
 
 		msn_dc_destroy(dc);
-		/* Start p2p file transfer */
-		msn_slpcall_session_init(slpcall);
+		/* Start p2p file transfer, if possible */
+		if (slpcall)
+			msn_slpcall_session_init(slpcall);
 	}
 
 	return FALSE;
