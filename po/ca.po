@@ -34,7 +34,7 @@ msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-05-06 07:36+0200\n"
-"PO-Revision-Date: 2010-05-06 07:37+0200\n"
+"PO-Revision-Date: 2010-05-08 16:11+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -5025,7 +5025,7 @@ msgid "Impressed"
 msgstr "Impressionat"
 
 msgid "In awe"
-msgstr ""
+msgstr "Reverent"
 
 msgid "In love"
 msgstr "Enamorat"
@@ -9981,8 +9981,9 @@ msgstr "Codi"
 msgid "HMAC"
 msgstr "HMAC"
 
+# FIXME: Calc de la versió castellana
 msgid "Use Perfect Forward Secrecy"
-msgstr ""
+msgstr "Empra «confidencialitat directa perfecta»"
 
 msgid "Public key authentication"
 msgstr "Autenticació per clau pública"
