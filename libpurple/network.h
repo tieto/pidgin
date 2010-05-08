@@ -90,8 +90,8 @@ const char *purple_network_get_local_system_ip(int fd);
 /**
  * Returns all IP addresses of the local system.
  *
- * @note The caller must free this list, this function currently only
- *       handles IPv4 addresses
+ * @note The caller must free this list.  If libpurple was built with
+ *       support for it, this function also enumerates IPv6 addresses.
  * @since 2.7.0
  *
  * @return A list of local IP addresses.
