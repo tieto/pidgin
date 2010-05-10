@@ -237,10 +237,18 @@ typedef struct
 	                        PurpleAccount *account, const char *who,
 	                        PurpleConversation *conv, void *user_data);
 
+	/** @see purple_request_action_with_icon_varg(). */
+	void *(*request_action_with_icon)(const char *title, const char *primary,
+	                        const char *secondary, int default_action,
+	                        PurpleAccount *account, const char *who,
+	                        PurpleConversation *conv, 
+	                        gconstpointer icon_data, gsize icon_size,
+	                        void *user_data,
+	                        size_t action_count, va_list actions);
+
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 } PurpleRequestUiOps;
 
 typedef void (*PurpleRequestInputCb)(void *, const char *);
@@ -1393,6 +1401,29 @@ void *purple_request_action_varg(void *handle, const char *title,
 	void *user_data, size_t action_count, va_list actions);
 
 /**
+ * Version of purple_request_action() supplying an image for the UI to 
+ * optionally display as an icon in the dialog; see its documentation
+ * @since 2.7.0
+ */
+void *purple_request_action_with_icon(void *handle, const char *title, 
+	const char *primary, const char *secondary, int default_action, 
+	PurpleAccount *account, const char *who, PurpleConversation *conv, 
+	gconstpointer icon_data, gsize icon_size, void *user_data, 
+	size_t action_count, ...);
+
+/**
+ * <tt>va_list</tt> version of purple_request_action_with_icon(); 
+ * see its documentation.
+ * @since 2.7.0
+ */
+void *purple_request_action_with_icon_varg(void *handle, const char *title,
+	const char *primary, const char *secondary, int default_action,
+	PurpleAccount *account, const char *who, PurpleConversation *conv,
+	gconstpointer icon_data, gsize icon_size,
+	void *user_data, size_t action_count, va_list actions);
+
+
+/**
  * Displays groups of fields for the user to fill in.
  *
  * @param handle      The plugin or connection handle.  For some things this
@@ -1474,6 +1505,19 @@ void purple_request_close_with_handle(void *handle);
 								   user_data, accept_cb, cancel_cb) \
 	purple_request_action((handle), (title), (primary), (secondary), \
 						(default_action), account, who, conv, (user_data), 2, \
+						_("_Accept"), (accept_cb), _("_Cancel"), (cancel_cb))
+
+/**
+ * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel 
+ * buttons.
+ */
+#define purple_request_accept_cancel_with_icon(handle, title, primary, secondary, \
+								   default_action, account, who, conv, \
+								   icon_data, icon_size, \
+								   user_data, accept_cb, cancel_cb) \
+	purple_request_action_with_icon((handle), (title), (primary), (secondary), \
+						(default_action), account, who, conv, icon_data, icon_size, \
+						(user_data), 2, \
 						_("_Accept"), (accept_cb), _("_Cancel"), (cancel_cb))
 
 /**

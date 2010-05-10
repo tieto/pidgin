@@ -587,6 +587,7 @@ msn_notification_dump_contact(MsnSession *session)
 	int payload_len;
 	int adl_count = 0;
 	int fqy_count = 0;
+	PurpleConnection *pc;
 	const char *display_name;
 
 	adl_node = xmlnode_new("ml");
@@ -693,11 +694,12 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode_free(adl_node);
 	xmlnode_free(fqy_node);
 
-	display_name = purple_connection_get_display_name(session->account->gc);
+	pc = purple_account_get_connection(session->account);
+	display_name = purple_connection_get_display_name(pc);
 	if (display_name
 	    && strcmp(display_name,
 		      purple_account_get_username(session->account))) {
-		msn_act_id(session->account->gc, display_name);
+		msn_set_public_alias(pc, display_name, NULL, NULL);
 	}
 
 }
@@ -1344,11 +1346,11 @@ static void
 prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session = cmdproc->session;
-	const char *type, *value, *friendlyname;
+	const char *type, *value;
 
 	g_return_if_fail(cmd->param_count >= 3);
 
-	type  = cmd->params[2];
+	type = cmd->params[2];
 
 	if (cmd->param_count == 4)
 	{
@@ -1368,19 +1370,6 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			msn_user_set_work_phone(session->user, NULL);
 		else if (!strcmp(type, "PHM"))
 			msn_user_set_mobile_phone(session->user, NULL);
-		else {
-			type = cmd->params[1];
-			if (!strcmp(type, "MFN")) {
-				friendlyname = purple_url_decode(cmd->params[2]);
-
-				msn_update_contact(session, "Me", MSN_UPDATE_DISPLAY, friendlyname);
-
-				purple_connection_set_display_name(
-					purple_account_get_connection(session->account),
-					friendlyname);
-				purple_account_set_string(session->account, "display-name", friendlyname);
-			}
-		}
 	}
 }
 

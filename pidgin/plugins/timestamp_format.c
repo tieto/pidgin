@@ -12,6 +12,17 @@
 
 #include <time.h>
 
+static const char *format_12hour_hour(const struct tm *tm)
+{
+	static char hr[3];
+	int hour = tm->tm_hour % 12;
+	if (hour == 0)
+		hour = 12;
+
+	g_snprintf(hr, sizeof(hr), "%d", hour);
+	return hr;
+}
+
 static PurplePluginPrefFrame *
 get_plugin_pref_frame(PurplePlugin *plugin)
 {
@@ -24,10 +35,14 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	ppref = purple_plugin_pref_new_with_label(_("Timestamp Format Options"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
-	tmp = g_strdup_printf(_("_Force 24-hour time format"));
+	tmp = g_strdup_printf(_("_Force timestamp format:"));
 	ppref = purple_plugin_pref_new_with_name_and_label(
-			"/plugins/gtk/timestamp_format/force_24hr",
+			"/plugins/gtk/timestamp_format/force",
 			tmp);
+	purple_plugin_pref_set_type(ppref, PURPLE_PLUGIN_PREF_CHOICE);
+	purple_plugin_pref_add_choice(ppref, _("Use system default"), "default");
+	purple_plugin_pref_add_choice(ppref, _("12 hour time format"), "force12");
+	purple_plugin_pref_add_choice(ppref, _("24 hour time format"), "force24");
 	purple_plugin_pref_frame_add(frame, ppref);
 	g_free(tmp);
 
@@ -58,27 +73,50 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 static char *timestamp_cb_common(PurpleConversation *conv,
                                  time_t t,
                                  gboolean show_date,
-                                 gboolean force,
+                                 const char *force,
                                  const char *dates,
 								 gboolean parens)
 {
+	struct tm *tm;
+
 	g_return_val_if_fail(dates != NULL, NULL);
+
+	tm = localtime(&t);
 
 	if (show_date ||
 	    !strcmp(dates, "always") ||
 	    (conv != NULL && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT && !strcmp(dates, "chats")))
 	{
-		struct tm *tm = localtime(&t);
-		if (force)
+		if (g_str_equal(force, "force24"))
 			return g_strdup_printf("%s%s%s", parens ? "(" : "", purple_utf8_strftime("%Y-%m-%d %H:%M:%S", tm), parens ? ")" : "");
-		else
+		else if (g_str_equal(force, "force12")) {
+			char *date = g_strdup_printf("%s", purple_utf8_strftime("%Y-%m-%d ", tm));
+			char *remtime = g_strdup_printf("%s", purple_utf8_strftime(":%M:%S %p", tm));
+			const char *hour = format_12hour_hour(tm);
+			char *output;
+
+			output = g_strdup_printf("%s%s%s%s%s",
+			                         parens ? "(" : "", date,
+									 hour, remtime, parens ? ")" : "");
+
+			g_free(date);
+			g_free(remtime);
+
+			return output;
+		} else
 			return g_strdup_printf("%s%s%s", parens ? "(" : "", purple_date_format_long(tm), parens ? ")" : "");
 	}
 
-	if (force)
-	{
-		struct tm *tm = localtime(&t);
+	if (g_str_equal(force, "force24"))
 		return g_strdup_printf("%s%s%s", parens ? "(" : "", purple_utf8_strftime("%H:%M:%S", tm), parens ? ")" : "");
+	else if (g_str_equal(force, "force12")) {
+		const char *hour = format_12hour_hour(tm);
+		char *remtime = g_strdup_printf("%s", purple_utf8_strftime(":%M:%S %p", tm));
+		char *output = g_strdup_printf("%s%s%s%s", parens ? "(" : "", hour, remtime, parens ? ")" : "");
+
+		g_free(remtime);
+
+		return output;
 	}
 
 	return NULL;
@@ -87,8 +125,8 @@ static char *timestamp_cb_common(PurpleConversation *conv,
 static char *conversation_timestamp_cb(PurpleConversation *conv,
                                        time_t t, gboolean show_date, gpointer data)
 {
-	gboolean force = purple_prefs_get_bool(
-				"/plugins/gtk/timestamp_format/force_24hr");
+	const char *force = purple_prefs_get_string(
+				"/plugins/gtk/timestamp_format/force");
 	const char *dates = purple_prefs_get_string(
 				"/plugins/gtk/timestamp_format/use_dates/conversation");
 
@@ -99,8 +137,8 @@ static char *conversation_timestamp_cb(PurpleConversation *conv,
 
 static char *log_timestamp_cb(PurpleLog *log, time_t t, gboolean show_date, gpointer data)
 {
-	gboolean force = purple_prefs_get_bool(
-				"/plugins/gtk/timestamp_format/force_24hr");
+	const char *force = purple_prefs_get_string(
+				"/plugins/gtk/timestamp_format/force");
 	const char *dates = purple_prefs_get_string(
 				"/plugins/gtk/timestamp_format/use_dates/log");
 
@@ -264,7 +302,17 @@ init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_none("/plugins/gtk");
 	purple_prefs_add_none("/plugins/gtk/timestamp_format");
 
-	purple_prefs_add_bool("/plugins/gtk/timestamp_format/force_24hr", TRUE);
+	if (!purple_prefs_exists("/plugins/gtk/timestamp_format/force") &&
+	    purple_prefs_exists("/plugins/gtk/timestamp_format/force_24hr"))
+	{
+		if (purple_prefs_get_bool(
+		   "/plugins/gtk/timestamp_format/force_24hr"))
+			purple_prefs_add_string("/plugins/gtk/timestamp_format/force", "force24");
+		else
+			purple_prefs_add_string("/plugins/gtk/timestamp_format/force", "default");
+	}
+	else
+		purple_prefs_add_string("/plugins/gtk/timestamp_format/force", "default");
 
 	purple_prefs_add_none("/plugins/gtk/timestamp_format/use_dates");
 	purple_prefs_add_string("/plugins/gtk/timestamp_format/use_dates/conversation", "automatic");

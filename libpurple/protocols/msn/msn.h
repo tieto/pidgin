@@ -143,7 +143,10 @@ typedef enum
 	 (MSN_CLIENT_ID_CAPABILITIES))
 
 gboolean msn_email_is_valid(const char *passport);
-void msn_act_id(PurpleConnection *gc, const char *entry);
+void
+msn_set_public_alias(PurpleConnection *gc, const char *alias,
+                     PurpleSetPublicAliasSuccessCallback success_cb,
+                     PurpleSetPublicAliasFailureCallback failure_cb);
 void msn_send_privacy(PurpleConnection *gc);
 void msn_send_im_message(MsnSession *session, MsnMessage *msg);
 

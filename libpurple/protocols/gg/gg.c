@@ -1601,12 +1601,6 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			}
 			break;
 		case GG_EVENT_NOTIFY60:
-			purple_debug_info("gg",
-				"notify60_pre: (%d) status=%d; version=%d; descr=%s\n",
-				ev->event.notify60->uin, GG_S(ev->event.notify60->status),
-				ev->event.notify60->version,
-				ev->event.notify60->descr ? ev->event.notify60->descr : "(null)");
-
 			for (i = 0; ev->event.notify60[i].uin; i++) {
 				purple_debug_info("gg",
 					"notify60: (%d) status=%d; version=%d; descr=%s\n",
@@ -1737,7 +1731,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 							  ggp_callback_recv, gc);
 				
 				ggp_buddylist_send(gc);
-				purple_connection_update_progress(gc, _("Connected"), 2, 2);
+				purple_connection_update_progress(gc, _("Connected"), 1, 2);
 				purple_connection_set_state(gc, PURPLE_CONNECTED);
 			}
 			break;
@@ -1990,7 +1984,7 @@ static void ggp_login(PurpleAccount *account)
 		purple_debug_info("gg", "Trying to retrieve address from gg appmsg service\n");
 
 	info->session = gg_login(glp);
-	purple_connection_update_progress(gc, _("Connecting"), 1, 2); 			
+	purple_connection_update_progress(gc, _("Connecting"), 0, 2); 			
 	if (info->session == NULL) {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -2512,7 +2506,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                           /* get_account_text_table */
 	NULL,                           /* initiate_media */
 	NULL,                            /* can_do_media */
-	NULL 				/* get_moods */
+	NULL,				/* get_moods */
+	NULL,				/* set_public_alias */
+	NULL				/* get_public_alias */
 };
 
 static PurplePluginInfo info = {

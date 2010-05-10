@@ -1266,6 +1266,15 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	purple_connection_update_progress( session->con, _( "Successfully Logged In..." ), 3, 4 );
 	purple_connection_set_state( session->con, PURPLE_CONNECTED );
 
+	/* save extra info if this is a HTTP connection */
+	if ( session->http ) {
+		/* save the http server to use for this session */
+		g_strlcpy( session->http_server, records[1]->fields[3]->data, sizeof( session->http_server ) );
+
+		/* save the session id */
+		session->http_sesid = atoi( records[0]->fields[0]->data );
+	}
+
 	/* display the current splash-screen */
 	if ( splash_popup_enabled( session ) )
 		splash_display( session );
@@ -1288,15 +1297,6 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 
 		g_free( statusmsg1 );
 		g_free( statusmsg2 );
-	}
-
-	/* save extra info if this is a HTTP connection */
-	if ( session->http ) {
-		/* save the http server to use for this session */
-		g_strlcpy( session->http_server, records[1]->fields[3]->data, sizeof( session->http_server ) );
-
-		/* save the session id */
-		session->http_sesid = atoi( records[0]->fields[0]->data );
 	}
 
 	/* retrieve our MXit profile */

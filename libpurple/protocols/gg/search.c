@@ -207,7 +207,7 @@ char *ggp_search_get_result(gg_pubdir50_t res, int num, const char *field)
 {
 	char *tmp;
 
-	tmp = charset_convert(gg_pubdir50_get(res, num, field), "CP1250", "UTF-8");
+	tmp = g_strdup(gg_pubdir50_get(res, num, field));
 
 	return (tmp == NULL) ? g_strdup("") : tmp;
 }
