@@ -195,39 +195,164 @@ msn_cmd_nudge(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **
 	return PURPLE_CMD_RET_OK;
 }
 
+struct public_alias_closure
+{
+	PurpleAccount *account;
+	gpointer success_cb;
+	gpointer failure_cb;
+};
+
+static gboolean
+set_public_alias_length_error(gpointer data)
+{
+	struct public_alias_closure *closure = data;
+	PurpleSetPublicAliasFailureCallback failure_cb = closure->failure_cb;
+
+	failure_cb(closure->account, _("Your new MSN friendly name is too long."));
+	g_free(closure);
+
+	return FALSE;
+}
+
+static void
+prp_success_cb(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	const char *type, *friendlyname;
+	struct public_alias_closure *closure;
+	
+	g_return_if_fail(cmd->param_count >= 3);
+	type = cmd->params[1];
+	g_return_if_fail(!strcmp(type, "MFN"));
+
+	closure = cmd->trans->data;
+	friendlyname = purple_url_decode(cmd->params[2]);
+
+	msn_update_contact(cmdproc->session, "Me", MSN_UPDATE_DISPLAY, friendlyname);
+
+	purple_connection_set_display_name(
+		purple_account_get_connection(closure->account),
+		friendlyname);
+	purple_account_set_string(closure->account, "display-name", friendlyname);
+
+	if (closure->success_cb) {
+		PurpleSetPublicAliasSuccessCallback success_cb = closure->success_cb;
+		success_cb(closure->account, friendlyname);
+	}
+}
+
+static void
+prp_error_cb(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
+{
+	struct public_alias_closure *closure = trans->data;
+	PurpleSetPublicAliasFailureCallback failure_cb = closure->failure_cb;
+	gboolean debug;
+	const char *error_text;
+
+	error_text = msn_error_get_text(error, &debug);
+	failure_cb(closure->account, error_text);
+}
+
+static void
+prp_timeout_cb(MsnCmdProc *cmdproc, MsnTransaction *trans)
+{
+	struct public_alias_closure *closure = trans->data;
+	PurpleSetPublicAliasFailureCallback failure_cb = closure->failure_cb;
+	failure_cb(closure->account, _("Connection Timeout"));
+}
+
 void
-msn_act_id(PurpleConnection *gc, const char *entry)
+msn_set_public_alias(PurpleConnection *pc, const char *alias,
+                     PurpleSetPublicAliasSuccessCallback success_cb,
+                     PurpleSetPublicAliasFailureCallback failure_cb)
 {
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
 	PurpleAccount *account;
-	const char *alias;
+	const char *real_alias;
+	MsnTransaction *trans;
+	struct public_alias_closure *closure;
 
-	session = gc->proto_data;
+	session = purple_connection_get_protocol_data(pc);
 	cmdproc = session->notification->cmdproc;
-	account = purple_connection_get_account(gc);
+	account = purple_connection_get_account(pc);
 
-	if (entry && *entry)
+	if (alias && *alias)
 	{
-		char *tmp = g_strdup(entry);
-		alias = purple_url_encode(g_strstrip(tmp));
+		char *tmp = g_strdup(alias);
+		real_alias = purple_url_encode(g_strstrip(tmp));
 		g_free(tmp);
 	}
 	else
-		alias = "";
+		real_alias = "";
 
-	if (strlen(alias) > BUDDY_ALIAS_MAXLEN)
+	if (strlen(real_alias) > BUDDY_ALIAS_MAXLEN)
 	{
-		purple_notify_error(gc, NULL,
-						  _("Your new MSN friendly name is too long."), NULL);
+		if (failure_cb) {
+			struct public_alias_closure *closure =
+				g_new0(struct public_alias_closure, 1);
+			closure->account = account;
+			closure->failure_cb = failure_cb;
+			purple_timeout_add(0, set_public_alias_length_error, closure);
+		} else {
+			purple_notify_error(pc, NULL,
+			                    _("Your new MSN friendly name is too long."),
+			                    NULL);
+		}
 		return;
 	}
 
-	if (*alias == '\0') {
-		alias = purple_url_encode(purple_account_get_username(account));
+	if (*real_alias == '\0') {
+		real_alias = purple_url_encode(purple_account_get_username(account));
 	}
 
-	msn_cmdproc_send(cmdproc, "PRP", "MFN %s", alias);
+	closure = g_new0(struct public_alias_closure, 1);
+	closure->account = account;
+	closure->success_cb = success_cb;
+	closure->failure_cb = failure_cb;
+
+	trans = msn_transaction_new(cmdproc, "PRP", "MFN %s", real_alias);
+	msn_transaction_set_data(trans, closure);
+	msn_transaction_set_data_free(trans, g_free);
+	msn_transaction_add_cb(trans, "PRP", prp_success_cb);
+	if (failure_cb) {
+		msn_transaction_set_error_cb(trans, prp_error_cb);
+		msn_transaction_set_timeout_cb(trans, prp_timeout_cb);
+	}
+	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
+static gboolean
+get_public_alias_cb(gpointer data)
+{
+	struct public_alias_closure *closure = data;
+	PurpleGetPublicAliasSuccessCallback success_cb = closure->success_cb;
+	const char *alias;
+
+	alias = purple_account_get_string(closure->account, "display-name",
+	                                  purple_account_get_username(closure->account));
+	success_cb(closure->account, alias);
+	g_free(closure);
+
+	return FALSE;
+}
+
+static void
+msn_get_public_alias(PurpleConnection *pc,
+                     PurpleGetPublicAliasSuccessCallback success_cb,
+                     PurpleGetPublicAliasFailureCallback failure_cb)
+{
+	struct public_alias_closure *closure = g_new0(struct public_alias_closure, 1);
+	PurpleAccount *account = purple_connection_get_account(pc);
+
+	closure->account = account;
+	closure->success_cb = success_cb;
+	purple_timeout_add(0, get_public_alias_cb, closure);
+}
+
+static void
+msn_act_id(PurpleConnection *gc, const char *entry)
+{
+	msn_set_public_alias(gc, entry, NULL, NULL);
 }
 
 static void
@@ -2743,8 +2868,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                               /* initiate_media */
 	NULL,                               /* get_media_caps */
 	NULL,                               /* get_moods */
-	NULL,                               /* set_public_alias */
-	NULL                                /* get_public_alias */
+	msn_set_public_alias,               /* set_public_alias */
+	msn_get_public_alias                /* get_public_alias */
 };
 
 static PurplePluginInfo info =
