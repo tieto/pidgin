@@ -35,89 +35,6 @@
 #include	"profile.h"
 
 
-/* MXit Moods */
-static const char*	moods[] = {
-	/* 0 */		N_("None"),
-	/* 1 */		N_("Angry"),
-	/* 2 */		N_("Excited"),
-	/* 3 */		N_("Grumpy"),
-	/* 4 */		N_("Happy"),
-	/* 5 */		N_("In Love"),
-	/* 6 */		N_("Invincible"),
-	/* 7 */		N_("Sad"),
-	/* 8 */		N_("Hot"),
-	/* 9 */		N_("Sick"),
-	/* 10 */	N_("Sleepy")
-};
-
-
-/*------------------------------------------------------------------------
- * The user has selected to change their current mood.
- *
- *  @param gc		The connection object
- *  @param fields	The fields from the request pop-up
- */
-static void mxit_cb_set_mood( PurpleConnection* gc, PurpleRequestFields* fields )
-{
-	struct MXitSession*		session	= (struct MXitSession*) gc->proto_data;
-	int						mood	= purple_request_fields_get_choice( fields, "mood" );
-
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_set_mood (%i)\n", mood );
-
-	if ( !PURPLE_CONNECTION_IS_VALID( gc ) ) {
-		purple_debug_error( MXIT_PLUGIN_ID, "Unable to set mood; account offline.\n" );
-		return;
-	}
-
-	/* Save the new mood in session */
-	session->mood = mood;
-
-	/* now send the update to MXit */
-	mxit_send_mood( session, mood );
-}
-
-
-/*------------------------------------------------------------------------
- * Create and display the mood selection window to the user.
- *
- *  @param action	The action object
- */
-static void mxit_cb_action_mood( PurplePluginAction* action )
-{
-	PurpleConnection*			gc		= (PurpleConnection*) action->context;
-	struct MXitSession*			session	= (struct MXitSession*) gc->proto_data;
-
-	PurpleRequestFields*		fields	= NULL;
-	PurpleRequestFieldGroup*	group	= NULL;
-	PurpleRequestField*			field	= NULL;
-	unsigned int				i		= 0;
-
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_cb_action_mood\n" );
-
-	fields = purple_request_fields_new();
-	group = purple_request_field_group_new( NULL );
-	purple_request_fields_add_group( fields, group );
-
-	/* show current mood */
-	field = purple_request_field_string_new( "current", _( "Current Mood" ), _( moods[session->mood] ), FALSE );
-	purple_request_field_string_set_editable( field, FALSE );	/* current mood field is not editable */
-	purple_request_field_group_add_field( group, field );
-
-	/* add all moods to list */
-	field = purple_request_field_choice_new( "mood", _( "New Mood" ), 0 );
-	for ( i = 0; i < ARRAY_SIZE( moods ); i++ ) {
-		purple_request_field_choice_add( field, _( moods[i] ) );
-	}
-	purple_request_field_set_required( field, TRUE );
-	purple_request_field_choice_set_default_value( field, session->mood );
-	purple_request_field_group_add_field( group, field );
-
-	/* (reference: "libpurple/request.h") */
-	purple_request_fields( gc, _( "Mood" ), _( "Change your Mood" ), _( "How do you feel right now?" ), fields, _( "Set" ),
-			G_CALLBACK( mxit_cb_set_mood ), _( "Cancel" ), NULL, purple_connection_get_account( gc ), NULL, NULL, gc );
-}
-
-
 /*------------------------------------------------------------------------
  * The user has selected to change their profile.
  *
@@ -408,10 +325,6 @@ GList* mxit_actions( PurplePlugin* plugin, gpointer context )
 {
 	PurplePluginAction*		action	= NULL;
 	GList*					m		= NULL;
-
-	/* display / change mood */
-	action = purple_plugin_action_new( _( "Change Mood..." ), mxit_cb_action_mood );
-	m = g_list_append( m, action );
 
 	/* display / change profile */
 	action = purple_plugin_action_new( _( "Change Profile..." ), mxit_cb_action_profile );

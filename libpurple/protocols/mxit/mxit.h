@@ -151,7 +151,6 @@ struct MXitSession {
 
 	/* personal (profile) */
 	struct MXitProfile*	profile;					/* user's profile information */
-	int					mood;						/* user's current mood */
 
 	/* libpurple */
 	PurpleAccount*		acc;						/* pointer to the libpurple internal account struct */

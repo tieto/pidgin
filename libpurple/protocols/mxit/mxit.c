@@ -434,9 +434,7 @@ static void mxit_set_status( PurpleAccount* account, PurpleStatus* status )
 			return;
 		}
 
-		/* Save the new mood in session */
-		session->mood = mood;
-
+		/* update mood state */
 		mxit_send_mood( session, mood );
 		return;
 	}
