@@ -12,6 +12,10 @@ Our development blog is available at: http://planet.pidgin.im
 	file transfer preview (thumbnails) support (only on MSN so far),
 	plus a lot of bug fixes. Enjoy!
 
+	Paul: Yay, a new release!  I don't think I added very much useful to
+	this release, other than fixing a paste bug from Chrome (no weird
+	characters appended to the end of your URI).  Enjoy!
+
 2.6.6 (02/18/2010):
 	Mark: This release includes some great little changes and fixes a few
 	security-related bugs.  See the ChangeLog for details.
