@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-09 16:11+0200\n"
-"PO-Revision-Date: 2010-05-09 16:05+0200\n"
+"POT-Creation-Date: 2010-05-11 17:11+0200\n"
+"PO-Revision-Date: 2010-05-11 17:11+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12260,6 +12260,9 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Arabisch"
 
+msgid "Assamese"
+msgstr "Assamesisch"
+
 msgid "Belarusian Latin"
 msgstr "Weißrussisch (Latin)"
 
@@ -12267,10 +12270,10 @@ msgid "Bulgarian"
 msgstr "Bulgarisch"
 
 msgid "Bengali"
-msgstr "Bengalisch"
+msgstr "Bengali"
 
 msgid "Bengali-India"
-msgstr "Bengalisch"
+msgstr "Bengali-Indien"
 
 msgid "Bosnian"
 msgstr "Bosnisch"
@@ -12386,6 +12389,9 @@ msgstr "Laotisch"
 msgid "Macedonian"
 msgstr "Makedonisch"
 
+msgid "Malayalam"
+msgstr "Malayalam"
+
 msgid "Mongolian"
 msgstr "Mongolisch"
 
@@ -12426,7 +12432,7 @@ msgid "Portuguese-Brazil"
 msgstr "Portugiesisch (Brasilien)"
 
 msgid "Pashto"
-msgstr "Paschtunisch"
+msgstr "Paschtu"
 
 msgid "Romanian"
 msgstr "Rumänisch"
@@ -12456,7 +12462,7 @@ msgid "Swahili"
 msgstr "Swahili"
 
 msgid "Tamil"
-msgstr "Tamilisch"
+msgstr "Tamil"
 
 msgid "Telugu"
 msgstr "Telugu"
