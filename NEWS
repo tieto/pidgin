@@ -2,6 +2,11 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.7.0 (05/11/2010):
+	John: We FINALLY got the ICQ X-Status stuff merged in!  And a few other
+	patches that have been sitting on Trac forever.  Couple that with some
+	new features and we have an excellent release for all of you!
+
 2.6.6 (02/18/2010):
 	Mark: This release includes some great little changes and fixes a few
 	security-related bugs.  See the ChangeLog for details.
