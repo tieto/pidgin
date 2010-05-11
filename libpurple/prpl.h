@@ -608,7 +608,7 @@ struct _PurplePluginProtocolInfo
 	/**
 	 * Retrieve the user's "friendly name" as set on the server.
 	 * The protocol plugin should call success_cb or failure_cb
-	 * *asynchronously* (even if it knows immediately that the set will fail,
+	 * *asynchronously* (even if it knows immediately that the get will fail,
 	 * call one of the callbacks from an idle/0-second timeout) depending
 	 * on if the nickname is retrieved.
 	 *
@@ -620,8 +620,8 @@ struct _PurplePluginProtocolInfo
 	 * @since 2.7.0
 	 */
 	void (*get_public_alias)(PurpleConnection *gc,
-	                         PurpleSetPublicAliasSuccessCallback success_cb,
-	                         PurpleSetPublicAliasFailureCallback failure_cb);
+	                         PurpleGetPublicAliasSuccessCallback success_cb,
+	                         PurpleGetPublicAliasFailureCallback failure_cb);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
