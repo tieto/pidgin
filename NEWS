@@ -7,6 +7,11 @@ Our development blog is available at: http://planet.pidgin.im
 	patches that have been sitting on Trac forever.  Couple that with some
 	new features and we have an excellent release for all of you!
 
+	Marcus: Finally time for a major release again, seems like it took quite
+	a while this time. But then again, there is some new features in there, like
+	file transfer preview (thumbnails) support (only on MSN so far),
+	plus a lot of bug fixes. Enjoy!
+
 2.6.6 (02/18/2010):
 	Mark: This release includes some great little changes and fixes a few
 	security-related bugs.  See the ChangeLog for details.
