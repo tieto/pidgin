@@ -8,18 +8,24 @@ Our development blog is available at: http://planet.pidgin.im
 	new features and we have an excellent release for all of you!
 
 	Marcus: Finally time for a major release again, seems like it took
-	quite a while this time. But then again, there is some new features
+	quite a while this time.  But then again, there are some new features
 	in there, like file transfer preview (thumbnails) support (only on MSN
-	so far), plus a lot of bug fixes. Enjoy!
+	so far), plus a lot of bug fixes.  Enjoy!
 
 	Paul: Yay, a new release!  I don't think I added very much useful to
 	this release, other than fixing a paste bug from Chrome (no weird
 	characters appended to the end of your URI).  Enjoy!
 
-	Jorge: This is my first NEWS! I'm not sure I added something nice to this
-	release. I know it took a lot of time to bring this one out, however I'm
-	really exited by this release. I hope everyone likes the new features this
-	release brings on.
+	Jorge: This is my first NEWS!  I'm not sure I added something nice to
+	this release.  I know it took a lot of time to bring this one out,
+	however I'm really excited by this release.  I hope everyone likes the
+	new features this release brings.
+
+	Elliott: This release took so long, I had to go check the ChangeLog
+	just to see what happened.  I doubt many people will notice, but we
+	dropped support for many old things, like GTK+<2.10 and MSNP9.  In more
+	exciting news, we have file transfer previews on MSN, and support for
+	setting moods on ICQ and XMPP (which has been waiting forever.)
 
 2.6.6 (02/18/2010):
 	Mark: This release includes some great little changes and fixes a few
