@@ -92,6 +92,9 @@ static void* mxit_link_click( const char* link64 )
 		goto skip;
 	con = purple_account_get_connection( account );
 
+//	/* determine if it's a command-response to send */
+//	is_command = g_str_has_prefix( parts[4], "::type=reply|" );
+
 	/* send click message back to MXit */
 	mxit_send_message( con->proto_data, parts[3], parts[4], FALSE, is_command );
 
@@ -418,6 +421,26 @@ static void mxit_set_status( PurpleAccount* account, PurpleStatus* status )
 	char*					statusmsg1;
 	char*					statusmsg2;
 
+	/* Handle mood changes */
+	if (purple_status_type_get_primitive(purple_status_get_type(status)) == PURPLE_STATUS_MOOD) {
+		const char* moodid = purple_status_get_attr_string( status, PURPLE_MOOD_NAME );
+		int mood;
+
+		/* convert the purple mood to a mxit mood */
+		mood = mxit_convert_mood( moodid );
+		if ( mood < 0 ) {
+			/* error, mood not found */
+			purple_debug_info( MXIT_PLUGIN_ID, "Mood status NOT found! (id = %s)\n", moodid );
+			return;
+		}
+
+		/* Save the new mood in session */
+		session->mood = mood;
+
+		mxit_send_mood( session, mood );
+		return;
+	}
+
 	/* get the status id (reference: "libpurple/status.h") */
 	statusid = purple_status_get_id( status );
 
@@ -635,7 +658,7 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_get_text_table,	/* get_account_text_table */
 	NULL,					/* initiate_media */
 	NULL,					/* get_media_caps */
-	NULL,					/* get_moods */
+	mxit_get_moods,			/* get_moods */
 	NULL,					/* set_public_alias */
 	NULL					/* get_public_alias */
 };
