@@ -1,4 +1,4 @@
-version 2.7.0 (??/??/????):
+version 2.7.0 (05/12/2010):
 	* Updated GTK+ to 2.16.6
 	* Private GTK+ Runtime now used (GTK+ Installer no longer supported)
 	* Minimum required GTK+ version increased to 2.14.7
