@@ -4593,12 +4593,22 @@ purple_utf8_strip_unprintables(const gchar *str)
 	}
 
 	workstr = iter = g_new(gchar, strlen(str) + 1);
-	for ( ; *str; ++str) {
-		guchar c = *str;
-		if (c >= 0x20 || c == '\t' || c == '\n' || c == '\r') {
-			*iter = c;
-			++iter;
+	while (*str) {
+		gunichar ch = g_utf8_get_char(str);
+		gchar *next = g_utf8_next_char(str);
+		/*
+		 * Char ::= #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] |
+		 *          [#x10000-#x10FFFF]
+		 */
+		if ((ch == '\t' || ch == '\n' || ch == '\r') ||
+				(ch >= 0x20 && ch <= 0xD7FF) ||
+				(ch >= 0xE000 && ch <= 0xFFFD) ||
+				(ch >= 0x10000 && ch <= 0x10FFFF)) {
+			memcpy(iter, str, next - str);
+			iter += (next - str);
 		}
+
+		str = next;
 	}
 
 	/* nul-terminate the new string */

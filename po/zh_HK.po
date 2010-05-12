@@ -1,4 +1,4 @@
-# NOTE: This file is generated from zh_TW.po by mkzhhk.pl,v 1.24 2010/02/15 23:14:17 acli Exp
+# NOTE: This file is generated from zh_TW.po by mkzhhk.pl,v 1.25 2010/05/10 05:50:52 acli Exp
 # ---
 # Pidgin's Traditional Chinese translation
 # Copyright (C) 2002-2010, Paladin R. Liu <paladin@ms1.hinet.net>
@@ -8,7 +8,7 @@
 # LINE NUMBERS (LINES BEGINNING WITH #:) IN THIS FILE.
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.619 2010/02/15 23:14:17 acli Exp $
+# $InternalId: zh_TW.po,v 1.631 2010/05/10 05:49:24 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -60,10 +60,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.6.6\n"
+"Project-Id-Version: Pidgin 2.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
-"PO-Revision-Date: 2010-02-14 03:06-0400\n"
+"POT-Creation-Date: 2010-05-02 09:58-0400\n"
+"PO-Revision-Date: 2010-05-03 03:02-0400\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
 "MIME-Version: 1.0\n"
@@ -702,7 +702,7 @@ msgid "Enable Sounds"
 msgstr "啟動音效"
 
 msgid "You are not connected."
-msgstr "連線成功。"
+msgstr "尚未連線。"
 
 msgid "<AUTO-REPLY> "
 msgstr "<自動回應> "
@@ -1431,8 +1431,6 @@ msgid "Saved Statuses"
 msgstr "狀態清單"
 
 # FIXME 原文一詞兩義，根本無法翻譯
-#. title
-#. optional information
 msgid "Title"
 msgstr "職銜"
 
@@ -1731,6 +1729,12 @@ msgstr "更改 %s 的個人資料"
 
 msgid "Set User Info"
 msgstr "設定使用者資訊"
+
+msgid "This protocol does not support setting a public alias."
+msgstr "這個通訊協定不支援設定公開別名。"
+
+msgid "This protocol does not support fetching the public alias."
+msgstr "這個通訊協定不支援讀取公開別名。"
 
 # XXX 問題：
 # XXX gtk/gtkft.c - 「Unknown」是一指一個未能計算的數值，譯「未知」較好
@@ -3890,12 +3894,6 @@ msgstr "臨時指令失敗"
 msgid "execute"
 msgstr "執行"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "伺服器要求使用 TLS/SSL，但找不到 TLS/SSL 支援。"
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "你要求加密，但找不到 TLS/SSL 支援。"
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "伺服器需要經由未經加密的串流進行明文認證"
 
@@ -3931,6 +3929,43 @@ msgstr "SASL 認證失敗"
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL 錯誤：%s"
+
+msgid "Invalid Encoding"
+msgstr "編碼無效"
+
+msgid "Unsupported Extension"
+msgstr "不支援的擴充功能"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+"伺服器送出非預期的回應，這個情況有可能表示你正在遭受中間人攻擊 (MITM attack)"
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+"伺服器支援頻道繫結，但似乎沒有廣播這項功能，這個情況很可能表示你正在遭受中間"
+"人攻擊 (MITM attack)"
+
+msgid "Server does not support channel binding"
+msgstr "伺服器不支援頻道繫結"
+
+msgid "Unsupported channel binding method"
+msgstr "不支援的頻道繫結方法"
+
+msgid "User not found"
+msgstr "找不到該使用者"
+
+msgid "Invalid Username Encoding"
+msgstr "帳號編碼無效"
+
+# NOTE Jabber 協定 Stream Error 的一種，即 <resource-constraint/>
+# NOTE 在這裏的 Resource 一詞與登入時使用者所用的 Resource 一詞意義並不相同
+# NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
+msgid "Resource Constraint"
+msgstr "伺服器資源短缺"
 
 msgid "Unable to canonicalize username"
 msgstr "無法把帳號轉成正則形態"
@@ -4008,6 +4043,11 @@ msgstr "所屬機構"
 
 msgid "Organization Unit"
 msgstr "所屬部門"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "職銜"
 
 msgid "Role"
 msgstr "職責"
@@ -4249,11 +4289,20 @@ msgstr "找不到任何使用者"
 msgid "Roles:"
 msgstr "身份："
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "伺服器要求使用 TLS/SSL，但找不到 TLS/SSL 支援。"
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "你要求加密，但找不到 TLS/SSL 支援。"
+
 msgid "Ping timed out"
 msgstr "Ping逾時"
 
 msgid "Invalid XMPP ID"
 msgstr "XMPP 帳號無效"
+
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "XMPP 帳號無效，使用者名稱部分是必須設定的。"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "XMPP 帳號無效，域名是必須設定的。"
@@ -4400,16 +4449,18 @@ msgstr "情緒描述"
 msgid "Allow Buzz"
 msgstr "允許「嗶」功能"
 
-# NOTE: 法、德文均譯「第二個名」，芬蘭文譯「其他名」，日文音譯了事
-# NOTE: 在網上幾間台灣大學寫「英文別名」，現套用，也跟芬蘭文PO檔處理手法相同
-#, fuzzy
 msgid "Mood Name"
-msgstr "英文別名"
+msgstr "情緒名稱"
 
-#, fuzzy
 msgid "Mood Comment"
-msgstr "好友備註"
+msgstr "情緒備註"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "樂手名稱"
 
@@ -4626,12 +4677,6 @@ msgstr "違反了服務政策"
 msgid "Remote Connection Failed"
 msgstr "無法連線至認證所需的遠端資源"
 
-# NOTE Jabber 協定 Stream Error 的一種，即 <resource-constraint/>
-# NOTE 在這裏的 Resource 一詞與登入時使用者所用的 Resource 一詞意義並不相同
-# NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
-msgid "Resource Constraint"
-msgstr "伺服器資源短缺"
-
 # NOTE Jabber 協定 xmpp-core 中 Stream Error 的一種，即 <restricted-xml/>
 # NOTE 見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-18.html
 msgid "Restricted XML"
@@ -4765,9 +4810,8 @@ msgstr "選擇一個 Resource"
 msgid "Initiate Media"
 msgstr "媒體通話"
 
-#, fuzzy
 msgid "Account does not support PEP, can't set mood"
-msgstr "這個通訊協定不支援聊天室。"
+msgstr "這個帳號不支援 PEP，所以無法設定情緒。"
 
 msgid "config:  Configure a chat room."
 msgstr "config：設定一個聊天室"
@@ -4822,9 +4866,8 @@ msgstr "ping &lt;jid&gt;：Ping 一個使用者/組件/伺服器。"
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: 給好友一個「嗶」引他（她）注意"
 
-#, fuzzy
 msgid "mood: Set current user mood"
-msgstr "選擇正確的使用者"
+msgstr "mood: 設定目前的使用者情緒"
 
 msgid "Extended Away"
 msgstr "長時間離開"
@@ -4907,13 +4950,13 @@ msgid "A custom smiley in the message is too large to send."
 msgstr "訊息中含有一個因檔案大小超過上限而無法送出的自選表情。"
 
 msgid "XMPP stream header missing"
-msgstr ""
+msgstr "找不到 XMPP 串流標頭"
 
 msgid "XMPP Version Mismatch"
-msgstr ""
+msgstr "XMPP 版本不符"
 
 msgid "XMPP stream missing ID"
-msgstr ""
+msgstr "XMPP 串流中找不到識別符"
 
 msgid "XML Parse error"
 msgstr "XML 分析錯誤"
@@ -4989,330 +5032,370 @@ msgstr "無法傳送檔案至 %s，因為未有訂閱對方的狀態資訊"
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "請指定檔案應該傳送至 %s 的那一個 Resource"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準（感謝德文翻譯員 Bjoern Voigt 指點）
 msgid "Afraid"
-msgstr "阿拉伯文"
+msgstr "害怕"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Amazed"
-msgstr "慚愧"
+msgstr "驚訝"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Amorous"
-msgstr "光宗耀祖"
+msgstr "動情"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 #. 1
 msgid "Angry"
 msgstr "憤怒"
 
-# FIXME 這是暫譯
-# NOTE 譯文更動 by Paladin
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Annoyed"
-msgstr "被禁止"
+msgstr "煩厭"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Anxious"
 msgstr "憂慮"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Aroused"
-msgstr "將會送出"
+msgstr "興奮"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Ashamed"
 msgstr "慚愧"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Bored"
 msgstr "發悶"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Brave"
-msgstr "儲存"
+msgstr "勇敢"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Calm"
-msgstr "域名"
+msgstr "平靜"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Cautious"
-msgstr "聊天"
+msgstr "謹慎"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# NOTE 表示覺得人們對你漠不關心，而不是你對別人漠不關心
 msgid "Cold"
-msgstr "粗體"
+msgstr "被人冷落"
 
-#  NOTE Jabber 錯誤 <conflict/>，表示已透過同一名稱或在同一位址，以相同的 Resource
-#  NOTE（大概係指登入用的使用者自定字串）或工作階段登入，以致無法存取
-#  NOTE 詳見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-23.txt
-#  NOTE 譯文更動 by Ambrose
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Confident"
-msgstr "名稱或位址衝突"
+msgstr "自信"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Confused"
-msgstr "繼續"
+msgstr "困惑"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Contemplative"
-msgstr "好友"
+msgstr "靜思中"
 
-# TODO 要覆查 - 20061027
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Contented"
-msgstr "已連結"
+msgstr "滿意"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Cranky"
-msgstr "公司名稱"
+msgstr "心煩意亂"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# XXX  譯文有待改進，但按標準定義譯文必須同時有「對周圍發生的事件覺得失控」和「情緒失控」（極度興）兩種意義
 msgid "Crazy"
-msgstr ""
+msgstr "失控"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Creative"
-msgstr "建立"
+msgstr "有創意"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Curious"
-msgstr "光宗耀祖"
+msgstr "好奇"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Dejected"
-msgstr "已拒絕"
+msgstr "意氣消沉"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Depressed"
-msgstr "已刪除"
+msgstr "抑鬱"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Disappointed"
-msgstr "停止連線。"
+msgstr "失望"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Disgusted"
-msgstr ""
+msgstr "嘔心"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Dismayed"
-msgstr "停用"
+msgstr "失去勇氣"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Distracted"
-msgstr "暫停連線"
+msgstr "分心"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Embarrassed"
-msgstr ""
+msgstr "羞恥"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Envious"
-msgstr "憂慮"
+msgstr "嫉妒"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 #. 2
 msgid "Excited"
 msgstr "興奮"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# XXX  譯文有待改進 20100509 acli
 msgid "Flirtatious"
-msgstr "光宗耀祖"
+msgstr "風騷"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# XXX  譯文有待改進 20100509 acli
 msgid "Frustrated"
-msgstr "名"
+msgstr "受挫"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Grateful"
-msgstr ""
+msgstr "感恩"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Grieving"
-msgstr "讀取中..."
+msgstr "悲痛"
 
+# NOTE XMPP/MXIT 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 # XXX 譯文有待改進 - 20091126 acli
 #. 3
 msgid "Grumpy"
 msgstr "暴躁"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Guilty"
-msgstr "城市"
+msgstr "內疚"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 #. 4
 msgid "Happy"
 msgstr "開心"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Hopeful"
-msgstr ""
+msgstr "滿懷希望"
 
-# XXX 原文瞹眛，譯文可能有錯 =P  - acli 20091127
+# NOTE XMPP/MXIT 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# NOTE 按 XMPP 標準這是溫度上令人不舒服的熱，不是熱情
 #. 8
 msgid "Hot"
-msgstr "火熱"
+msgstr "熱"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# XXX  譯文有待改進，但按標準定義譯文必須同時有「謙遜」和「自卑」兩種意義
 msgid "Humbled"
-msgstr ""
+msgstr "自覺卑微"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Humiliated"
-msgstr ""
+msgstr "被人侮辱"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Hungry"
-msgstr "憤怒"
+msgstr "肚餓"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Hurt"
-msgstr "幽默"
+msgstr "受傷"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# FIXME 譯文有待改進 acli 20100509
 msgid "Impressed"
-msgstr ""
+msgstr "印象良好"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "In awe"
-msgstr "戀愛中"
+msgstr "敬畏"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# FIXME 按標準定義，這可以是戀愛，也可以只是喜歡
 msgid "In love"
 msgstr "戀愛中"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Indignant"
-msgstr "印尼文"
+msgstr "憤慨"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Interested"
-msgstr "興趣"
+msgstr "有興趣"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Intoxicated"
-msgstr "已邀請"
+msgstr "喝醉了"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 #. 6
 msgid "Invincible"
 msgstr "無敵"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Jealous"
 msgstr "嫉妒"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Lonely"
-msgstr ""
+msgstr "寂寞"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# NOTE 按標準定義，譯文必須同時有「迷路」和「迷惘」兩種意義
 msgid "Lost"
-msgstr "最大聲"
+msgstr "迷失"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Lucky"
-msgstr ""
+msgstr "幸運"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Mean"
-msgstr "德文"
+msgstr "充滿惡意"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Moody"
-msgstr "心情"
+msgstr "情緒不穩定"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Nervous"
-msgstr ""
+msgstr "神經質"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Neutral"
-msgstr "細節"
+msgstr "心情平淡"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# FIXME 譯文沒有包括標準內指定的全部字義! - acli 20100509
 msgid "Offended"
-msgstr "離線"
+msgstr "受辱"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# FIXME 譯文有待改進 acli 20100509
 msgid "Outraged"
-msgstr ""
+msgstr "忿怒"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# FIXME 譯文有待改進 acli 20100509
 msgid "Playful"
-msgstr "播放"
+msgstr "調皮"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Proud"
-msgstr "大聲"
+msgstr "驕傲"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Relaxed"
-msgstr "姓名"
+msgstr "輕鬆"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Relieved"
-msgstr "已收到"
+msgstr "鬆一口氣"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Remorseful"
-msgstr "移除"
+msgstr "懊悔"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# FIXME 按標準定義，譯文應同時有「沒有休息」、「無法安靜」、「不舒服」和「無法入睡」數種意義
 msgid "Restless"
-msgstr "註冊"
+msgstr "無法安靜"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 #. 7
 msgid "Sad"
 msgstr "憂愁"
 
-#  NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?keyword=marathi&qrytype=en&x=15&y=4
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Sarcastic"
-msgstr "馬拉提文"
+msgstr "諷刺"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Satisfied"
-msgstr ""
+msgstr "滿意"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Serious"
-msgstr "光宗耀祖"
+msgstr "嚴肅"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# FIXME 譯文有待改進 acli 20100509
 msgid "Shocked"
-msgstr "封鎖"
+msgstr "大吃一驚"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# FIXME 按標準定義，譯文應同時有「膽怯」和「害羞」兩種意義
 msgid "Shy"
-msgstr ""
+msgstr "膽怯/害羞"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 #. 9
 msgid "Sick"
 msgstr "生病"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 #. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "想睡"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# NOTE Spontaneous 是「自發」，但標準定義竟然是「沒有計劃」
 msgid "Spontaneous"
-msgstr ""
+msgstr "隨意"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Stressed"
-msgstr "成功："
+msgstr "有壓力"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# FIXME 譯文有待改進，但按標準定義，譯文必須同時有「體力上」和「心力上」強的兩種意義 - acli 20100509
 msgid "Strong"
-msgstr "歌曲"
+msgstr "強"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Surprised"
-msgstr ""
+msgstr "驚奇"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Thankful"
-msgstr ""
+msgstr "滿心感謝"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Thirsty"
-msgstr ""
+msgstr "口渴"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Tired"
-msgstr "Fire"
+msgstr "疲倦"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+# NOTE 這解「在標準內未有列舉的其他情緒」，不是「沒有設定情緒」
 msgid "Undefined"
-msgstr "底線"
+msgstr "其他情緒"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Weak"
-msgstr "拳打"
+msgstr "虛弱"
 
-#, fuzzy
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 msgid "Worried"
-msgstr "發悶"
+msgstr "擔心"
 
 #  XXX may be wrong
 msgid "Set User Nickname"
@@ -5692,18 +5775,6 @@ msgstr "電話中"
 msgid "Out to Lunch"
 msgstr "外出用餐"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "樂手名稱"
-
-msgid "Album"
-msgstr "專輯名稱"
-
 msgid "Game Title"
 msgstr "遊戲名稱"
 
@@ -5851,9 +5922,6 @@ msgstr "週年紀念日"
 #. Business
 msgid "Work"
 msgstr "工作資料"
-
-msgid "Job Title"
-msgstr "職銜"
 
 msgid "Company"
 msgstr "公司名稱"
@@ -6871,9 +6939,6 @@ msgstr "密碼已過期"
 msgid "Incorrect password"
 msgstr "密碼錯誤"
 
-msgid "User not found"
-msgstr "找不到該使用者"
-
 msgid "Account has been disabled"
 msgstr "帳號已被停用"
 
@@ -7127,115 +7192,106 @@ msgstr "伺服器表示登入前必須完成圖片驗證，但這用戶端尚未
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL 不允許你的帳號在這裏登入"
 
+# NOTE 單寫「要求 %s」好像有些怪 - acli 20090902
+#, c-format
+msgid "Error requesting %s"
+msgstr "要求讀取 %s 途中發生了錯誤"
+
 msgid "Could not join chat room"
 msgstr "無法加入聊天室"
 
 msgid "Invalid chat room name"
 msgstr "聊天室名稱無效"
 
+# XXX 這是什麼？ - acli 20100510
 msgid "Thinking"
-msgstr ""
+msgstr "思想中"
 
-#, fuzzy
 msgid "Shopping"
-msgstr "停止輸入"
+msgstr "正在購物"
 
-#  XXX 這譯文絶對有問題，但想不到怎樣譯較好 - ambrose 20090730
-#, fuzzy
+# XXX 這是什麼？ - acli 20100510
 msgid "Questioning"
-msgstr "提問視窗"
+msgstr "提問中"
 
-#, fuzzy
 msgid "Eating"
-msgstr "傳呼"
+msgstr "正在吃東西"
 
-#, fuzzy
 msgid "Watching a movie"
-msgstr "正在玩遊戲"
+msgstr "正在看電影"
 
 msgid "Typing"
 msgstr "輸入中"
 
-#, fuzzy
 msgid "At the office"
-msgstr "不在辦公室"
+msgstr "在辦公室"
 
 msgid "Taking a bath"
-msgstr ""
+msgstr "在洗澡"
 
 msgid "Watching TV"
-msgstr ""
+msgstr "在看電視"
 
-# NOTE 這是按鈕上的標籤
-#, fuzzy
+# XXX Having fun 是指正在玩樂、尋開心、或在做一些令人覺得很開心的事（例如和朋友一起聊天很開心，甚至做義工令你很開心……）
 msgid "Having fun"
-msgstr "掛斷"
+msgstr "開心中"
 
-#, fuzzy
 msgid "Sleeping"
-msgstr "想睡"
+msgstr "在睡覺"
 
 msgid "Using a PDA"
-msgstr ""
+msgstr "正在用電子手帳"
 
-#  NOTE 這是群組名稱
-#, fuzzy
 msgid "Meeting friends"
-msgstr "即時訊息的好友"
+msgstr "正在跟朋友一起"
 
-#, fuzzy
 msgid "On the phone"
 msgstr "電話中"
 
-#, fuzzy
+# XXX 這和「Browsing the web」有什麼分別？？難道真是在滑浪？？ acli 20100509
 msgid "Surfing"
-msgstr "重覆發生"
+msgstr "在瀏覽網頁"
 
 #. "I am mobile." / "John is mobile."
 msgid "Mobile"
 msgstr "使用流動通訊器材"
 
 msgid "Searching the web"
-msgstr ""
+msgstr "在網上搜尋中"
 
 msgid "At a party"
-msgstr ""
+msgstr "在派對中"
 
 msgid "Having Coffee"
-msgstr ""
+msgstr "正在喝咖啡"
 
+# XXX obviously needs improvement - acli 20100503
 #. Playing video games
-#, fuzzy
 msgid "Gaming"
-msgstr "雙子座"
+msgstr "正在玩圖像遊戲"
 
+# XXX 這和「Surfing」有什麼分別？？ acli 20100509
 msgid "Browsing the web"
-msgstr ""
+msgstr "在瀏覽網頁"
 
-#, fuzzy
 msgid "Smoking"
-msgstr "歌曲"
+msgstr "正在抽煙"
 
-#, fuzzy
 msgid "Writing"
-msgstr "正在工作"
+msgstr "正在寫作"
 
 #. Drinking [Alcohol]
-#, fuzzy
 msgid "Drinking"
-msgstr "正在工作"
+msgstr "正在喝酒"
 
 msgid "Listening to music"
 msgstr "聽音樂中"
 
-# NOTE 譯文改動 by c9s (http://developer.pidgin.im/ticket/7917) - 20090226 acli
-#, fuzzy
 msgid "Studying"
-msgstr "傳送中"
+msgstr "正在溫習"
 
-#, fuzzy
 msgid "In the restroom"
-msgstr "興趣"
+msgstr "正在上廁所"
 
 msgid "Received invalid data on connection with server"
 msgstr "連線至伺服器時收到無效的資料"
@@ -7537,23 +7593,20 @@ msgstr "允許其他使用者在網絡上查看你目前的狀態"
 msgid "Invisible"
 msgstr "隱身"
 
-#, fuzzy
+# XXX 這是什麼?? - acli 20100510
 msgid "Evil"
-msgstr "電子郵件"
+msgstr "邪惡"
 
-#, fuzzy
+# XXX 這是什麼?? - acli 20100510
 msgid "Depression"
-msgstr "專業"
+msgstr "抑鬱"
 
-#, fuzzy
 msgid "At home"
-msgstr "關於我"
+msgstr "在家"
 
-#, fuzzy
 msgid "At work"
-msgstr "網絡"
+msgstr "工作中"
 
-#, fuzzy
 msgid "At lunch"
 msgstr "外出用餐"
 
@@ -8050,10 +8103,8 @@ msgstr "無法傳送即時訊息圖像；AIM 聊天並不支援即時訊息圖�
 msgid "iTunes Music Store Link"
 msgstr "iTunes Store 網站連結"
 
-#  NOTE Untranslated
-#, fuzzy
 msgid "Lunch"
-msgstr "Finch"
+msgstr "午飯"
 
 #, c-format
 msgid "Buddy Comment for %s"
@@ -8084,9 +8135,8 @@ msgstr "取得 AIM 資訊"
 msgid "Edit Buddy Comment"
 msgstr "編輯好友備註"
 
-#, fuzzy
 msgid "Get X-Status Msg"
-msgstr "取得狀態訊息"
+msgstr "取得 X-Status 訊息"
 
 # XXX 譯「工作階段」好像很奇怪，可能跟 cnscode.org.tw 譯「會談」反而好一點？？
 msgid "End Direct IM Session"
@@ -8515,6 +8565,10 @@ msgstr "請求中"
 msgid "Admin"
 msgstr "管理人"
 
+#. XXX: Should this be "Topic"?
+msgid "Room Title"
+msgstr "聊天室名稱"
+
 msgid "Notice"
 msgstr "通知"
 
@@ -8646,6 +8700,7 @@ msgstr " TCP"
 msgid " FromMobile"
 msgstr " 使用流動通訊器材"
 
+# NOTE 根據cnscode.org.tw, 大陸「綁定」= 台灣「繫結」
 msgid " BindMobile"
 msgstr " 綁定流動通訊器材"
 
@@ -10461,9 +10516,6 @@ msgstr "Yahoo 帳號"
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo 協定模組"
 
-msgid "Pager server"
-msgstr "傳呼伺服器"
-
 msgid "Pager port"
 msgstr "傳呼系統通訊埠"
 
@@ -10485,12 +10537,6 @@ msgstr "使用 SSL 連線時，使用帳號的代理伺服器"
 
 msgid "Chat room list URL"
 msgstr "聊天室清單所在網址"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo 聊天伺服器"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo 聊天室通訊埠"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Yahoo JAPAN 帳號..."
@@ -10555,6 +10601,14 @@ msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
 msgstr "帳號已被封鎖：原因不明。登入 Yahoo 網站或許可以解除封鎖。"
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
+msgstr ""
+"帳號已被封鎖：登入太過頻繁。請等待幾分鐘後再行重試。登入 Yahoo 網站或許可以解"
+"除封鎖。"
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10628,6 +10682,14 @@ msgstr "與 %s 之間的連線突然中斷：%s"
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "無法與 %s 建立連線：%s"
+
+msgid "Unable to connect: The server returned an empty response."
+msgstr "無法連線：伺服器送出了空白的回應。"
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr "無法連線：伺服器送出的回應不包含必要的資訊。"
 
 msgid "Not at Home"
 msgstr "不在家"
@@ -11030,7 +11092,7 @@ msgstr "要求 %s 的注意中..."
 
 #, c-format
 msgid "%s has requested your attention!"
-msgstr "%s 要求你注意！"
+msgstr "%s 要求你注意一下！"
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
@@ -11043,6 +11105,10 @@ msgstr "否(_N)"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
+#.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
 #.
 msgid "_Accept"
 msgstr "接受(_A)"
@@ -11116,10 +11182,9 @@ msgstr "請勿打擾"
 msgid "Extended away"
 msgstr "長時間離開"
 
-# XXX 20080508 acli
-#, fuzzy
+# XXX 20100503 acli 這是什麼？？？
 msgid "Feeling"
-msgstr "接收中"
+msgstr "感覺"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -11291,13 +11356,6 @@ msgstr "網絡即時通"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin 網絡即時通"
-
-msgid "Orientation"
-msgstr "方向"
-
-#  NOTE: stolen from eggcups' zh_TW.po
-msgid "The orientation of the tray."
-msgstr "系統匣方向"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11673,14 +11731,11 @@ msgstr "你並未登入任何一個可供你新增哪個好友的通訊協定。
 msgid "Unknown node type"
 msgstr "節點類別不明"
 
-#, fuzzy
 msgid "Please select your mood from the list"
-msgstr "請從列表選擇你目前的情緒。"
+msgstr "請從列表選擇你目前的情緒"
 
-# NOTE 譯文改動 by c9s (http://developer.pidgin.im/ticket/7917) - 20090226 acli
-#, fuzzy
 msgid "Message (optional)"
-msgstr "別名（選用）"
+msgstr "訊息（選用）"
 
 msgid "Edit User Mood"
 msgstr "編輯使用者情緒"
@@ -11764,9 +11819,8 @@ msgstr "/工具/偏好設定(_E)"
 msgid "/Tools/Pr_ivacy"
 msgstr "/工具/私隱設定(_I)"
 
-#, fuzzy
 msgid "/Tools/Set _Mood"
-msgstr "/工具/系統日誌(_L)"
+msgstr "/工具/設定情緒(_M)"
 
 msgid "/Tools/_File Transfers"
 msgstr "/工具/檔案傳輸(_F)"
@@ -11787,20 +11841,17 @@ msgstr "/說明(_H)"
 msgid "/Help/Online _Help"
 msgstr "/說明/網上說明(_H)"
 
-#, fuzzy
 msgid "/Help/_Build Information"
-msgstr "好友資訊"
+msgstr "/說明/版本建置資訊(_B)"
 
 msgid "/Help/_Debug Window"
 msgstr "/說明/除錯視窗(_D)"
 
-#, fuzzy
 msgid "/Help/De_veloper Information"
-msgstr "伺服器資訊"
+msgstr "/說明/開發者名單(_V)"
 
-#, fuzzy
 msgid "/Help/_Translator Information"
-msgstr "個人資料"
+msgstr "/說明/譯者名單(_T)"
 
 msgid "/Help/_About"
 msgstr "/說明/關於(_A)"
@@ -12030,9 +12081,8 @@ msgstr "<PurpleMain>/帳號/"
 msgid "_Edit Account"
 msgstr "編輯帳號(_E)"
 
-#, fuzzy
 msgid "Set _Mood..."
-msgstr "設定情緒..."
+msgstr "設定情緒(_M)..."
 
 #  NOTE 這不是「不允許」而是「沒有」，尤其是在新的「模組相關指令」清單，
 #  NOTE 譯成「不允許」會非常怪
@@ -12162,9 +12212,9 @@ msgstr "/交談/媒體/語音／視像通話(_C)"
 msgid "/Conversation/Se_nd File..."
 msgstr "/交談/傳送檔案(_N)..."
 
-#, fuzzy
+# XXX 譯文有待改進 acli 20100509
 msgid "/Conversation/Get _Attention"
-msgstr "/交談/取得資訊"
+msgstr "/交談/取得注意(_A)"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/交談/新增好友狀態捕捉(_P)..."
@@ -12248,9 +12298,9 @@ msgstr "/交談/媒體/語音／視像通話"
 msgid "/Conversation/Send File..."
 msgstr "/交談/傳送檔案..."
 
-#, fuzzy
+# XXX 譯文有待改進 acli 20100509
 msgid "/Conversation/Get Attention"
-msgstr "/交談/取得資訊"
+msgstr "/交談/取得注意"
 
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/交談/新增好友狀態捕捉..."
@@ -12316,13 +12366,13 @@ msgstr "傳送(_S)"
 msgid "0 people in room"
 msgstr "沒有人在這個房間"
 
-#, fuzzy
+# XXX 這是Firefox的譯文，其實我覺得「bar」譯成「欄位」較好 =P
 msgid "Close Find bar"
-msgstr "關閉這個分頁"
+msgstr "關閉文字尋找列"
 
-#, fuzzy
+# XXX 如上
 msgid "Find:"
-msgstr "搜尋"
+msgstr "尋找："
 
 #, c-format
 msgid "%d person in room"
@@ -12397,7 +12447,6 @@ msgid "Invert"
 msgstr "反向"
 
 # XXX TODO 我非常討厭把「Highlight」譯成「高亮度」，但譯文可以改進 - Ambrose 20061029
-# XXX flagged "有保安功能？" by c9s (http://developer.pidgin.im/ticket/7917), need to verify - 20090226 acli
 # NOTE 譯文改動 by c9s
 msgid "Highlight matches"
 msgstr "標示比對字串"
@@ -12510,6 +12559,9 @@ msgstr "保加利亞文"
 
 msgid "Bengali"
 msgstr "孟加拉文"
+
+msgid "Bengali-India"
+msgstr "印式孟加拉文"
 
 # NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=B&page=2
 # NOTE 港譯「波斯尼亞」，台一般譯「波士尼亞」
@@ -12777,7 +12829,9 @@ msgstr "阿姆哈拉文"
 msgid "Lithuanian"
 msgstr "立陶宛文"
 
-#, fuzzy, c-format
+# XXX 要校對一下這個 - 20100503 acli
+# NOTE 所有 %s 都是 PIDGIN_NAME，沒有檔名
+#, c-format
 msgid ""
 "%s is a messaging client based on libpurple which is capable of connecting "
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
@@ -12786,13 +12840,10 @@ msgid ""
 "copyrighted by its contributors, a list of whom is also distributed with %"
 "s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
-"%s 是一個以 libpurple 為基礎的GUI模組化訊息程式，它同時提供 AIM、MSN、"
-"Yahoo!、XMPP、ICQ、IRC、SILC、SIP/SIMPLE、Novell GroupWise、Lotus Sametime、"
-"Bonjour、Zephyr、MySpaceIM、Gadu-Gadu 及 QQ 等功能。<BR><BR>倘若你希望修改或"
-"發佈這個程式，只需按照 GPL（第二版或較新版本）條款即可；%s 內已附有一份 GPL, "
-"收錄在名為「COPYING」的檔案之內。%s 是有版權的著作，版權歸全部貢獻者共同所"
-"有，貢獻者芳名詳列在「COPYRIGHT」檔案內。本程式恕不提供任何功能上的保證。"
-"<BR><BR>"
+"%s 是一個以 C、GTK+ 和 libpurple 為基礎的 GUI 訊息程式，提供同時連線至多種訊"
+"息服務的功能。%s 以 GPL（第二版或較新版本）發放，倘若你希望修改或發佈 %s，只"
+"需按照 GPL 條款即可。%s 是有版權的著作，版權歸全部貢獻者共同所有。%s 內已附有"
+"一份 GPL 和一份貢獻者名單。%s%0.0s 恕不提供任何功能上的保證。<BR><BR>"
 
 #, c-format
 msgid ""
@@ -12801,8 +12852,11 @@ msgid ""
 "Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
 "im<BR><BR>"
 msgstr ""
+"<FONT SIZE=\"4\"><B>支援：</B></FONT><BR>\t<A HREF=\"%s\">官方網站</A><BR>"
+"\t<A HREF=\"%s\">常見問題</A><BR>\tIRC 頻道：irc.freenode.net 上的 #pidgin 頻"
+"道<BR>\tXMPP 聊天室：devel@conference.pidgin.im<BR><BR>"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12812,24 +12866,24 @@ msgid ""
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\">其他 Pidgin 使用者提供的支援：</font><a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>這是個<b>公開的</b>郵件論壇！"
-"（<a href=\"http://pidgin.im/pipermail/support/\">論壇存檔</a>）<br/>本論壇恕"
-"不為第三者開發的模組（包括通訊協定模組）提供任何支援！<br/>發帖請以<b>英文</"
-"b>為主；以中文或其他語文發帖亦可，但收到的回覆未必有用。<br/><br/>"
+"如果希望獲得<font size=\"4\">其他 Pidgin 使用者提供的支援</font>，可電郵至<a "
+"href=\"mailto:support@pidgin.im\">support@pidgin.im</a>。<br/>這是個<b>公開的"
+"</b>郵件論壇！（<a href=\"http://pidgin.im/pipermail/support/\">論壇存檔請點"
+"擊這裏</a>）<br/>本論壇恕不為第三者開發的模組（包括通訊協定模組）提供任何支"
+"援！<br/>發帖請以<b>英文</b>為主；以中文或其他語文發帖亦可，但收到的回覆未必"
+"有用。<br/>"
 
 #, c-format
 msgid "About %s"
 msgstr "關於 %s"
 
-#, fuzzy
 msgid "Build Information"
-msgstr "好友資訊"
+msgstr "版本建置資訊"
 
 #. End of not to be translated section
-#, fuzzy, c-format
+#, c-format
 msgid "%s Build Information"
-msgstr "好友資訊"
+msgstr "這個 %s 的版本建置資訊"
 
 msgid "Current Developers"
 msgstr "現任開發者"
@@ -12848,9 +12902,9 @@ msgstr "前任開發者"
 msgid "Retired Crazy Patch Writers"
 msgstr "前任的狂熱模組作者"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Developer Information"
-msgstr "伺服器資訊"
+msgstr "%s 開發者名單"
 
 msgid "Current Translators"
 msgstr "現任譯者"
@@ -12858,9 +12912,9 @@ msgstr "現任譯者"
 msgid "Past Translators"
 msgstr "前任譯者"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Translator Information"
-msgstr "更多資訊"
+msgstr "%s 譯者名單"
 
 # NOTE 只能譯「名稱」，因為同時解作「人名」及「模組名稱」
 msgid "_Name"
@@ -13281,9 +13335,9 @@ msgstr "插入圖像"
 msgid "Insert Smiley"
 msgstr "插入表情"
 
-#, fuzzy
+# XXX 譯文有待改進 acli 20100509
 msgid "Send Attention"
-msgstr "「傳送」按紐"
+msgstr "取得注意"
 
 msgid "<b>_Bold</b>"
 msgstr "<b>粗體(_B)</b>"
@@ -13334,7 +13388,7 @@ msgid "_Smile!"
 msgstr "笑一個(_S)！"
 
 msgid "_Attention!"
-msgstr ""
+msgstr "注意！(_A)"
 
 msgid "Log Deletion Failed"
 msgstr "日誌刪除失敗"
@@ -14268,9 +14322,9 @@ msgstr "捷徑文字"
 msgid "Custom Smiley Manager"
 msgstr "自選表情管理"
 
-#, fuzzy
+# XXX 譯文有待改進 acli 20100509
 msgid "Attention received"
-msgstr "必須先啟動帳號"
+msgstr "對方要求注意"
 
 msgid "Select Buddy Icon"
 msgstr "選擇好友圖示"
@@ -15451,8 +15505,17 @@ msgid "Timestamp Format Options"
 msgstr "時間戳記格式選項"
 
 #, c-format
-msgid "_Force 24-hour time format"
-msgstr "強制使用24小時制時間格式(_F)"
+msgid "_Force timestamp format:"
+msgstr "強制使用的時間格式(_F)"
+
+msgid "Use system default"
+msgstr "系統預設值"
+
+msgid "12 hour time format"
+msgstr "12小時制時間格式"
+
+msgid "24 hour time format"
+msgstr "24小時制時間格式"
 
 msgid "Show dates in..."
 msgstr "顯示日期於..."
@@ -15651,7 +15714,6 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "送出、讀取未加工的 XMPP 段落。"
 
 #. *  description
-#, fuzzy
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
@@ -15665,11 +15727,17 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #~ msgid "Unable to listen on socket: %s"
 #~ msgstr "無法監聽 Socket：%s"
 
+#~ msgid "Artist"
+#~ msgstr "樂手名稱"
+
+#~ msgid "Album"
+#~ msgstr "專輯名稱"
+
 #~ msgid "%s just sent you a Nudge!"
-#~ msgstr "%s 在呼叫你！"
+#~ msgstr "%s 在呼叫您！"
 
 #~ msgid "Friendly name changes too rapidly"
-#~ msgstr "網名的更改過於急速"
+#~ msgstr "暱稱的變更過於急速"
 
 #~ msgid "This Hotmail account may not be active."
 #~ msgstr "這個Hotmail帳號可能尚未被啟動。"
@@ -15681,7 +15749,7 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #~ msgstr "MSN 協定模組"
 
 #~ msgid "%s is not a valid group."
-#~ msgstr "%s 不是一個有效的羣組。"
+#~ msgstr "%s 不是一個有效的群組。"
 
 #~ msgid "Unknown error."
 #~ msgstr "未知錯誤。"
@@ -15715,16 +15783,32 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #~ msgstr "暫時無法提供服務"
 
 #~ msgid "Unable to rename group"
-#~ msgstr "無法更改羣組名稱"
+#~ msgstr "無法更改群組名稱"
 
 #~ msgid "Unable to delete group"
-#~ msgstr "無法移除羣組"
+#~ msgstr "無法移除群組"
 
 #~ msgid "%s has added you to his or her buddy list."
-#~ msgstr "%s 將你加入他（她）的好友清單。"
+#~ msgstr "%s 將您加入他（她）的好友清單。"
 
 #~ msgid "%s has removed you from his or her buddy list."
-#~ msgstr "%s 將你從他（她）的好友清單中移除。"
+#~ msgstr "%s 將您從他（她）的好友清單中移除。"
+
+#~ msgid "Pager server"
+#~ msgstr "傳呼伺服器"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo 聊天伺服器"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo 聊天室通訊埠"
+
+#~ msgid "Orientation"
+#~ msgstr "方向"
+
+#  NOTE: stolen from eggcups' zh_TW.po
+#~ msgid "The orientation of the tray."
+#~ msgstr "系統匣方向"
 
 #~ msgid ""
 #~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
@@ -15762,7 +15846,7 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #~ "\n"
 #~ "%s"
 #~ msgstr ""
-#~ "儲存圖像錯誤\n"
+#~ "儲存影像錯誤\n"
 #~ "\n"
 #~ "%s"
 
@@ -15771,7 +15855,7 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
 #~ msgid ""
 #~ "Failed to load image '%s': reason not known, probably a corrupt image file"
-#~ msgstr "無法載入圖像「%s」，原因不明，大概是圖像檔已損壞"
+#~ msgstr "無法載入影像「%s」，原因不明，大概是影像檔已損壞"
 
 #  NOTE Jabber 的「stanza」譯「段落」，下同
 #~ msgid "Insert an <iq/> stanza."

@@ -40,13 +40,16 @@ static xmlnode *finish_plaintext_authentication(JabberStream *js)
 	auth = xmlnode_new("auth");
 	xmlnode_set_namespace(auth, NS_XMPP_SASL);
 
-	xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
-	xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
+	if (g_str_equal(js->user->domain, "gmail.com") ||
+			g_str_equal(js->user->domain, "googlemail.com")) {
+		xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
+		xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
+	}
 
 	response = g_string_new("");
-	response = g_string_append_len(response, "\0", 1);
+	response = g_string_append_c(response, '\0');
 	response = g_string_append(response, js->user->node);
-	response = g_string_append_len(response, "\0", 1);
+	response = g_string_append_c(response, '\0');
 	response = g_string_append(response,
 			purple_connection_get_password(js->gc));
 

@@ -344,6 +344,7 @@ msg_ack(MsnMessage *msg, void *data)
 		if (slpmsg->slpcall->xfer && purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
 		{
 			slpmsg->slpcall->xfer_msg = slpmsg;
+			msn_message_ref(msg);
 			purple_xfer_prpl_ready(slpmsg->slpcall->xfer);
 		}
 		else
@@ -382,6 +383,7 @@ static void
 msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	MsnMessage *msg;
+	const char *passport;
 
 	slpmsg->msg = msg = msn_message_new_msnslp();
 
@@ -420,7 +422,8 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	msg->msnslp_header.total_size = slpmsg->size;
 
-	msn_message_set_attr(msg, "P2P-Dest", slplink->remote_user);
+	passport = purple_normalize(slplink->session->account, slplink->remote_user);
+	msn_message_set_attr(msg, "P2P-Dest", passport);
 
 	msg->ack_cb = msg_ack;
 	msg->nak_cb = msg_nak;
