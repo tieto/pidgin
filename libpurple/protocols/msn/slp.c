@@ -938,6 +938,8 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	conv = swboard->conv;
 
 	body = msn_message_get_bin_data(msg, &body_len);
+	if (!body || !body_len)
+		return;
 	body_str = g_strndup(body, body_len);
 
 	/* MSN Messenger 7 may send more than one MSNObject in a single message...
