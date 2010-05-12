@@ -230,7 +230,6 @@ static void member_removed(struct MXitSession* session, struct multimx* multimx,
 static void member_kicked(struct MXitSession* session, struct multimx* multimx, const char* nickname)
 {
 	PurpleConversation *convo;
-	gboolean isMe = FALSE;
 
 	purple_debug_info(MXIT_PLUGIN_ID, "member_kicked: '%s'\n", nickname);
 
