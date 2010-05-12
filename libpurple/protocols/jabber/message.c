@@ -1250,7 +1250,14 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 
 	g_free(resource);
 
-	if (!jbr || (jbr->chat_states == JABBER_CHAT_STATES_UNSUPPORTED))
+	/* We know this entity doesn't support chat states */
+	if (jbr && jbr->chat_states == JABBER_CHAT_STATES_UNSUPPORTED)
+		return 0;
+
+	/* *If* we don't have presence /and/ the buddy can't see our
+	 * presence, don't send typing notifications.
+	 */
+	if (!jbr && !(jb->subscription & JABBER_SUB_FROM))
 		return 0;
 
 	/* TODO: figure out threading */
