@@ -41,6 +41,7 @@ struct multimx {
 	char	roomname[MXIT_CP_MAX_ALIAS_LEN];	/* name of the room */
 	char	roomid[MXIT_CP_MAX_JID_LEN];		/* internal JID for room */
 	int		chatid;								/* libpurple chat ID */
+	char*	nickname;							/* our nickname in the room */
 	short	state;								/* state */
 };
 
