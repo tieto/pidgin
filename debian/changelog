@@ -1,16 +1,3 @@
-pidgin (2.7.0-1~bpo50+1) lenny-backports; urgency=low
-
-  * Rebuild for lenny-backports.
-  * Changes to Build-Depends:
-    - Lowered cdbs versioned depends to 0.4.52 which is in stable.
-    - Removed versioning from libsilc-dev because the renaming was after that
-      version anyway.
-    - Removed libgstfarsight0.10-dev and call configure with --disable-vv
-      --disable-farsight, the libraries for that are too much to carry.
-  * converting back to source format 1.0. via debian/source/format
-
- -- Jan Wagner <waja@cyconet.org>  Tue, 18 May 2010 09:13:02 +0200
-
 pidgin (2.7.0-1) unstable; urgency=medium
 
   * New upstream release
