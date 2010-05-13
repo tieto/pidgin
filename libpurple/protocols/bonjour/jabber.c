@@ -1184,7 +1184,7 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 		buddies = purple_find_buddies(jdata->account, NULL);
 		for (l = buddies; l; l = l->next) {
 			BonjourBuddy *bb = purple_buddy_get_protocol_data((PurpleBuddy*) l->data);
-			if (bb != NULL) {
+			if (bb && bb->conversation) {
 				/* Any ongoing connection attempt is cancelled
 				 * by _purple_connection_destroy */
 				bb->conversation->connect_data = NULL;
