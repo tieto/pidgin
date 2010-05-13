@@ -72,6 +72,9 @@
 #define		MXIT_CF_EXT_MARKUP		0x040000
 #define		MXIT_CF_PLAIN_PWD		0x080000
 #define		MXIT_CF_NO_GATEWAYS		0x100000
+#define		MXIT_CF_NO_AVATARS		0x200000
+#define		MXIT_CF_GAMING			0x400000
+#define		MXIT_CF_GAMING_UPDATE	0x800000
 
 /* Client features supported by this implementation */
 #define		MXIT_CP_FEATURES		( MXIT_CF_FILE_TRANSFER | MXIT_CF_FILE_ACCESS | MXIT_CF_AUDIO | MXIT_CF_MARKUP | MXIT_CF_EXT_MARKUP | MXIT_CF_NO_GATEWAYS | MXIT_CF_IMAGES | MXIT_CF_COMMANDS | MXIT_CF_VIBES | MXIT_CF_MIDP2 )
@@ -126,6 +129,7 @@
 #define		CP_CMD_MEDIA			0x001B					/* (27) get multimedia message */
 #define		CP_CMD_SPLASHCLICK		0x001F					/* (31) splash-screen clickthrough */
 #define		CP_CMD_STATUS			0x0020					/* (32) set shown presence & status */
+#define		CP_CMD_MSGEVENT			0x0023					/* (35) Raise message event */ 
 #define		CP_CMD_MOOD				0x0029					/* (41) set mood */
 #define		CP_CMD_KICK				0x002B					/* (43) login kick */
 #define		CP_CMD_GRPCHAT_CREATE	0x002C					/* (44) create new groupchat */
@@ -147,6 +151,8 @@
 #define		RX_STATE_PROC			0x03					/* process read data */
 
 /* message flags */
+#define		CP_MSG_NOTIFY_DELIVERY	0x0002					/* request delivery notification */
+#define		CP_MSG_NOTIFY_READ		0x0004					/* request read notification */
 #define		CP_MSG_ENCRYPTED		0x0010					/* message is encrypted */
 #define		CP_MSG_MARKUP			0x0200					/* message may contain markup */
 #define		CP_MSG_EMOTICON			0x0400					/* message may contain custom emoticons */
@@ -164,6 +170,9 @@
 #define		CP_MSGTYPE_FORM			0x06					/* mxit custom form */
 #define		CP_MSGTYPE_COMMAND		0x07					/* mxit command */
 
+/* message event types */
+#define		CP_MSGEVENT_DELIVERED	0x02					/* message was delivered */
+#define		CP_MSGEVENT_DISPLAYED	0x04					/* message was viewed */
 
 /* extended profile attribute fields */
 #define		CP_PROFILE_BIRTHDATE	"birthdate"				/* Birthdate (String - ISO 8601 format) */
@@ -284,6 +293,7 @@ void mxit_send_allow_sub( struct MXitSession* session, const char* username, con
 void mxit_send_deny_sub( struct MXitSession* session, const char* username );
 void mxit_send_update_contact( struct MXitSession* session, const char* username, const char* alias, const char* groupname );
 void mxit_send_splashclick( struct MXitSession* session, const char* splashid );
+void mxit_send_msgevent( struct MXitSession* session, const char* to, const char* id, int event);
 
 void mxit_send_file( struct MXitSession* session, const char* username, const char* filename, const unsigned char* buf, int buflen );
 void mxit_send_file_reject( struct MXitSession* session, const char* fileid );
