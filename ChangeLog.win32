@@ -1,4 +1,6 @@
 version 2.7.1 (??/??/????):
+	* Fix a regression introduced in 2.7.0 that caused Window Flashing not
+	  to work.
 
 version 2.7.0 (05/12/2010):
 	* Updated GTK+ to 2.16.6
