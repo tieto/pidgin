@@ -25,6 +25,7 @@ EXTRA_DIST = \
 		win32/nsis/pixmaps/pidgin-header.bmp \
 		win32/nsis/pixmaps/pidgin-intro.bmp \
 		win32/nsis/pixmaps/pidgin-install.ico \
+		win32/nsis/available.lst \
 		win32/nsis/pidgin-installer.nsi \
 		win32/nsis/pidgin-plugin.nsh \
 		win32/nsis/langmacros.nsh \
