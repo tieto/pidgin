@@ -1,6 +1,8 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.0 (??/??/????):
+version 2.7.1 (??/??/????):
+
+version 2.7.0 (05/12/2010):
 	libpurple:
 		Added:
 		* Account signals (see account-signals.dox); useful for D-Bus

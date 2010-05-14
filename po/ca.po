@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-06 07:36+0200\n"
-"PO-Revision-Date: 2010-05-08 16:11+0200\n"
+"POT-Creation-Date: 2010-05-11 22:08+0200\n"
+"PO-Revision-Date: 2010-05-11 22:10+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -12215,6 +12215,9 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Àrab"
 
+msgid "Assamese"
+msgstr "Assamès"
+
 msgid "Belarusian Latin"
 msgstr "Bielorús (llatí)"
 
@@ -12341,6 +12344,9 @@ msgstr "Lasià"
 
 msgid "Macedonian"
 msgstr "Macedoni"
+
+msgid "Malayalam"
+msgstr "Malaiàlam"
 
 msgid "Mongolian"
 msgstr "Mongol"

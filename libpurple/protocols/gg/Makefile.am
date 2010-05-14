@@ -9,6 +9,7 @@ EXTRA_DIST = \
 	lib/http.c \
 	lib/libgadu.c \
 	lib/libgadu-config.h \
+	lib/libgadu-internal.h \
 	lib/libgadu.h \
 	lib/obsolete.c \
 	lib/protocol.h \
@@ -30,6 +31,7 @@ INTGGSOURCES = \
 	lib/http.c \
 	lib/libgadu.c \
 	lib/libgadu-config.h \
+	lib/libgadu-internal.h \
 	lib/libgadu.h \
 	lib/obsolete.c \
 	lib/protocol.h \
