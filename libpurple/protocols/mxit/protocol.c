@@ -962,6 +962,31 @@ void mxit_send_splashclick( struct MXitSession* session, const char* splashid )
 
 
 /*------------------------------------------------------------------------
+ * Send a message event packet.
+ *
+ *  @param session		The MXit session object
+ *  @param to           The username of the original sender (ie, recipient of the event)
+ *  @param id			The identifier of the event (received in message)
+ *  @param event		Identified the type of event
+ */
+void mxit_send_msgevent( struct MXitSession* session, const char* to, const char* id, int event)
+{
+	char		data[CP_MAX_PACKET];
+	int			datalen;
+
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_send_msgevent: to=%s id=%s event=%i\n", to, id, event );
+
+	/* convert the packet to a byte stream */
+	datalen = sprintf( data,	"ms=%s%c%s%c%i",		/* "ms"=contactAddress \1 id \1 event */
+								to, CP_FLD_TERM, id, CP_FLD_TERM, event
+	);
+
+	/* queue packet for transmission */
+	mxit_queue_packet( session, data, datalen, CP_CMD_MSGEVENT );
+}
+
+
+/*------------------------------------------------------------------------
  * Send packet to create a MultiMX room.
  *
  *  @param session		The MXit session object
@@ -1266,6 +1291,15 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	purple_connection_update_progress( session->con, _( "Successfully Logged In..." ), 3, 4 );
 	purple_connection_set_state( session->con, PURPLE_CONNECTED );
 
+	/* save extra info if this is a HTTP connection */
+	if ( session->http ) {
+		/* save the http server to use for this session */
+		g_strlcpy( session->http_server, records[1]->fields[3]->data, sizeof( session->http_server ) );
+
+		/* save the session id */
+		session->http_sesid = atoi( records[0]->fields[0]->data );
+	}
+
 	/* display the current splash-screen */
 	if ( splash_popup_enabled( session ) )
 		splash_display( session );
@@ -1288,15 +1322,6 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 
 		g_free( statusmsg1 );
 		g_free( statusmsg2 );
-	}
-
-	/* save extra info if this is a HTTP connection */
-	if ( session->http ) {
-		/* save the http server to use for this session */
-		g_strlcpy( session->http_server, records[1]->fields[3]->data, sizeof( session->http_server ) );
-
-		/* save the session id */
-		session->http_sesid = atoi( records[0]->fields[0]->data );
 	}
 
 	/* retrieve our MXit profile */
@@ -1353,6 +1378,12 @@ static void mxit_parse_cmd_message( struct MXitSession* session, struct record**
 		g_snprintf( msg, sizeof( msg ), _( "%s sent you an encrypted message, but it is not supported on this client." ), name );
 		mxit_popup( PURPLE_NOTIFY_MSG_WARNING, _( "Message Error" ), msg );
 		return;
+	}
+
+	if ( msgflags & CP_MSG_NOTIFY_DELIVERY ) {
+		/* delivery notification is requested */
+		if ( records[0]->fcount >= 4 )
+			mxit_send_msgevent( session, records[0]->fields[0]->data, records[0]->fields[3]->data, CP_MSGEVENT_DELIVERED );
 	}
 
 	/* create and initialise new markup struct */
@@ -1917,6 +1948,8 @@ static int process_success_response( struct MXitSession* session, struct rx_pack
 				/* profile update */
 		case CP_CMD_SPLASHCLICK :
 				/* splash-screen clickthrough */
+		case CP_CMD_MSGEVENT :
+				/* event message */
 				break;
 
 		default :
@@ -2020,6 +2053,7 @@ static int process_error_response( struct MXitSession* session, struct rx_packet
 				mxit_popup( PURPLE_NOTIFY_MSG_WARNING, _( "Profile Error" ), _( errdesc ) );
 				break;
 		case CP_CMD_SPLASHCLICK :
+		case CP_CMD_MSGEVENT :
 				/* ignore error */
 				break;
 		case CP_CMD_PING :

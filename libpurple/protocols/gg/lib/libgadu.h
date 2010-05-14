@@ -1245,8 +1245,8 @@ struct gg_http *gg_change_passwd2(uin_t uin, const char *passwd, const char *new
 struct gg_http *gg_change_passwd3(uin_t uin, const char *passwd, const char *newpasswd, const char *qa, int async) GG_DEPRECATED;
 
 int gg_resolve(int *fd, int *pid, const char *hostname) GG_DEPRECATED;
-void gg_resolve_pthread_cleanup(void *arg, int kill) GG_DEPRECATED;
 int gg_resolve_pthread(int *fd, void **resolver, const char *hostname) GG_DEPRECATED;
+void gg_resolve_pthread_cleanup(void *arg, int kill) GG_DEPRECATED;
 
 struct gg_change_info_request {
 	char *first_name;

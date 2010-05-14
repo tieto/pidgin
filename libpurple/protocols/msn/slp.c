@@ -154,6 +154,7 @@ msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer)
 	slpcall->u.outgoing.len = len;
 	slpcall->u.outgoing.data = data;
 	msn_slplink_send_msgpart(slpcall->slplink, slpcall->xfer_msg);
+	msn_message_unref(slpcall->xfer_msg->msg);
 	return MIN(1202, len);
 }
 
@@ -937,6 +938,8 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	conv = swboard->conv;
 
 	body = msn_message_get_bin_data(msg, &body_len);
+	if (!body || !body_len)
+		return;
 	body_str = g_strndup(body, body_len);
 
 	/* MSN Messenger 7 may send more than one MSNObject in a single message...

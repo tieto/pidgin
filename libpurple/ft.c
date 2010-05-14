@@ -521,7 +521,7 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 		if ((thumb = purple_xfer_get_thumbnail(xfer, &thumb_size))) {
 			purple_request_accept_cancel_with_icon(xfer, NULL, buf, NULL,
 				PURPLE_DEFAULT_ACTION_NONE, xfer->account, xfer->who, NULL,
-				thumb, thumb_size, xfer, 
+				thumb, thumb_size, xfer,
 				G_CALLBACK(purple_xfer_choose_file),
 				G_CALLBACK(cancel_recv_cb));
 		} else {

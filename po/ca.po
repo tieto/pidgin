@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-26 18:32+0200\n"
-"PO-Revision-Date: 2010-04-26 19:11+0200\n"
+"POT-Creation-Date: 2010-05-11 22:08+0200\n"
+"PO-Revision-Date: 2010-05-11 22:10+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -643,7 +643,6 @@ msgstr "Envia a"
 msgid "Conversation"
 msgstr "Conversa"
 
-# FIXME ?
 msgid "Clear Scrollback"
 msgstr "Neteja la finestra"
 
@@ -1060,7 +1059,6 @@ msgstr "Avís nou per a l'amic"
 msgid "Edit Buddy Pounce"
 msgstr "Edita l'avís per a l'amic"
 
-# FIXME
 msgid "Pounce Who"
 msgstr "Avisa dels Who"
 
@@ -1512,7 +1510,6 @@ msgstr "Notifica amb un missatge emergent quan"
 msgid "Beep too!"
 msgstr "Fes pip també!"
 
-# FIXME
 msgid "Set URGENT for the terminal window."
 msgstr "Estableix URGENT per a la finestra del terminal."
 
@@ -1680,6 +1677,12 @@ msgstr "Canvia la informació d'usuari de %s"
 
 msgid "Set User Info"
 msgstr "Estableix les dades d'usuari"
+
+msgid "This protocol does not support setting a public alias."
+msgstr "Aquest protocol no permet establir un àlies pulic."
+
+msgid "This protocol does not support fetching the public alias."
+msgstr "Aquest protocol no permet aconseguir l'àlies públic."
 
 msgid "Unknown"
 msgstr "Desconegut"
@@ -2764,7 +2767,6 @@ msgstr "No ho demanis, desa-ho sempre en un avís."
 msgid "One Time Password"
 msgstr "Contrasenya d'un sol ús"
 
-# FIXME ?
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -3827,15 +3829,6 @@ msgstr "Ha fallat l'ordre «Ad-Hoc»"
 msgid "execute"
 msgstr "executa"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-"El servidor requereix TLS/SSL per entrar, però no s'ha trobat cap "
-"implementació de TLS/SSL."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-"Heu requerit que es xifri, però no s'ha trobat cap implementació de TLS/SSL."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "El servidor requereix autenticació de text sobre un flux no xifrat"
 
@@ -3872,6 +3865,43 @@ msgstr "Ha fallat l'autenticació SASL"
 #, c-format
 msgid "SASL error: %s"
 msgstr "Error SASL: %s"
+
+msgid "Invalid Encoding"
+msgstr "La condició no és vàlida"
+
+msgid "Unsupported Extension"
+msgstr "Aquesta extensió no està implementada"
+
+# MitM: Man-in-the-middle... segons wiki: intermediari
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+"S'ha rebut una resposta inesperada del servidor. Això podria indicar un "
+"possible atac informàtic \"man-in-the-middle\""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+"Aquest servidor permet vincular canals, tot i que no ho havia anunciat. Això "
+"podria ser indicatiu d'un atac informàtic \"man-in-the-middle\""
+
+msgid "Server does not support channel binding"
+msgstr "El servidor no permet vincular canals"
+
+msgid "Unsupported channel binding method"
+msgstr "Aquest mètode de vinculació de canals no està implementat"
+
+msgid "User not found"
+msgstr "No s'ha trobat l'usuari"
+
+msgid "Invalid Username Encoding"
+msgstr "La codificació del nom d'usuari no és vàlida"
+
+# Mirar com es traduïa 'Constraint variables'
+msgid "Resource Constraint"
+msgstr "Restriccions del recurs"
 
 # FIXME: canonicalize -> normalitzar (josep)
 msgid "Unable to canonicalize username"
@@ -4178,6 +4208,15 @@ msgstr "No s'ha trobat cap usuari"
 msgid "Roles:"
 msgstr "Rols:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+"El servidor requereix TLS/SSL per entrar, però no s'ha trobat cap "
+"implementació de TLS/SSL."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+"Heu requerit que es xifri, però no s'ha trobat cap implementació de TLS/SSL."
+
 msgid "Ping timed out"
 msgstr "S'ha esgitat el temps d'espera (ping)"
 
@@ -4322,10 +4361,10 @@ msgid "Allow Buzz"
 msgstr "Permet les botzines"
 
 msgid "Mood Name"
-msgstr ""
+msgstr "Nom de l'estat d'ànim"
 
 msgid "Mood Comment"
-msgstr ""
+msgstr "Comentari sobre l'estat d'ànim"
 
 #. primitive
 #. ID
@@ -4503,10 +4542,6 @@ msgstr "Violació de la política"
 
 msgid "Remote Connection Failed"
 msgstr "Ha fallat la connexió remota"
-
-# Mirar com es traduïa 'Constraint variables'
-msgid "Resource Constraint"
-msgstr "Restriccions del recurs"
 
 msgid "Restricted XML"
 msgstr "XML restringit"
@@ -4816,7 +4851,7 @@ msgid "Unknown Error in presence"
 msgstr "Error desconegut en la presència"
 
 msgid "An error occurred on the in-band bytestream transfer\n"
-msgstr "S'ha produit un error en el fluxe de transferència de dades en banda\n"
+msgstr "S'ha produït un error en el flux de transferència de dades en banda\n"
 
 msgid "Transfer was closed."
 msgstr "La transferència s'ha tancat."
@@ -4871,9 +4906,8 @@ msgstr "Emprenyat"
 msgid "Anxious"
 msgstr "Ansiós"
 
-#, fuzzy
 msgid "Aroused"
-msgstr "S'enviarà"
+msgstr "Animat"
 
 msgid "Ashamed"
 msgstr "Avergonyit"
@@ -4899,17 +4933,14 @@ msgstr "Amb confiança"
 msgid "Confused"
 msgstr "Confós"
 
-#, fuzzy
 msgid "Contemplative"
-msgstr "Contacte"
+msgstr "Contemplatiu"
 
-#, fuzzy
 msgid "Contented"
-msgstr "Connectat"
+msgstr "Acontentat"
 
-#, fuzzy
 msgid "Cranky"
-msgstr "Empresa"
+msgstr "Empipat"
 
 msgid "Crazy"
 msgstr "Boig"
@@ -4920,9 +4951,8 @@ msgstr "Creatiu"
 msgid "Curious"
 msgstr "Curiós"
 
-#, fuzzy
 msgid "Dejected"
-msgstr "Rebutjat"
+msgstr "Enfonsat"
 
 msgid "Depressed"
 msgstr "Deprimit"
@@ -4931,11 +4961,10 @@ msgid "Disappointed"
 msgstr "Decebut"
 
 msgid "Disgusted"
-msgstr ""
+msgstr "Repugnat"
 
-#, fuzzy
 msgid "Dismayed"
-msgstr "Inhabilitat"
+msgstr "Descoratjat"
 
 msgid "Distracted"
 msgstr "Distret"
@@ -4950,9 +4979,8 @@ msgstr "Envejós"
 msgid "Excited"
 msgstr "Excitat"
 
-#, fuzzy
 msgid "Flirtatious"
-msgstr "Gloriós"
+msgstr "Amb ganes de flirtar"
 
 msgid "Frustrated"
 msgstr "Frustrat"
@@ -4960,9 +4988,8 @@ msgstr "Frustrat"
 msgid "Grateful"
 msgstr "Agraït"
 
-#, fuzzy
 msgid "Grieving"
-msgstr "S'està recuperant..."
+msgstr "De dol"
 
 #. 3
 msgid "Grumpy"
@@ -4983,7 +5010,7 @@ msgid "Hot"
 msgstr "Calent"
 
 msgid "Humbled"
-msgstr ""
+msgstr "Avergonyit"
 
 msgid "Humiliated"
 msgstr "Humiliat"
@@ -4997,9 +5024,8 @@ msgstr "Ferit"
 msgid "Impressed"
 msgstr "Impressionat"
 
-#, fuzzy
 msgid "In awe"
-msgstr "Enamorat"
+msgstr "Reverent"
 
 msgid "In love"
 msgstr "Enamorat"
@@ -5033,7 +5059,7 @@ msgid "Mean"
 msgstr "Malèvol"
 
 msgid "Moody"
-msgstr "Animat"
+msgstr "Llunàtic"
 
 msgid "Nervous"
 msgstr "Nerviós"
@@ -6660,9 +6686,6 @@ msgstr "La contrasenya ha caducat"
 msgid "Incorrect password"
 msgstr "La contrasenya no és correcta"
 
-msgid "User not found"
-msgstr "No s'ha trobat l'usuari"
-
 msgid "Account has been disabled"
 msgstr "S'ha inhabilitat el compte"
 
@@ -6963,7 +6986,7 @@ msgid "At the office"
 msgstr "A l'oficina"
 
 msgid "Taking a bath"
-msgstr ""
+msgstr "Prenent un bany"
 
 msgid "Watching TV"
 msgstr "Mirant la tele"
@@ -7871,9 +7894,8 @@ msgstr "Obtén informació de AIM"
 msgid "Edit Buddy Comment"
 msgstr "Edita el comentari sobre l'amic"
 
-#, fuzzy
 msgid "Get X-Status Msg"
-msgstr "Aconsegueix el missatge d'estat"
+msgstr "Aconsegueix el missatge d'estat X"
 
 msgid "End Direct IM Session"
 msgstr "Finalitzar la sessió de MI directa"
@@ -9959,8 +9981,9 @@ msgstr "Codi"
 msgid "HMAC"
 msgstr "HMAC"
 
+# FIXME: Calc de la versió castellana
 msgid "Use Perfect Forward Secrecy"
-msgstr ""
+msgstr "Empra «confidencialitat directa perfecta»"
 
 msgid "Public key authentication"
 msgstr "Autenticació per clau pública"
@@ -9969,7 +9992,7 @@ msgid "Block IMs without Key Exchange"
 msgstr "Bloca la MI sense intercanvi de claus"
 
 msgid "Block messages to whiteboard"
-msgstr "Bloca els misstges a la pissarra"
+msgstr "Bloca els missatges a la pissarra"
 
 msgid "Automatically open whiteboard"
 msgstr "Obre la pissarra automàticament"
@@ -10223,7 +10246,7 @@ msgid "Ignore conference and chatroom invitations"
 msgstr "Bloca invitacions a conferències i sales de xat"
 
 msgid "Use account proxy for SSL connections"
-msgstr "Empra un compte per al servidor intermediàri per a connexions SSL"
+msgstr "Empra un compte per al servidor intermediari per a connexions SSL"
 
 msgid "Chat room list URL"
 msgstr "URL de la llista de sales de xat"
@@ -10784,6 +10807,10 @@ msgstr "_No"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
+#.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
 #.
 msgid "_Accept"
 msgstr "_Accepta"
@@ -11865,15 +11892,14 @@ msgstr "/Conversa/Medi/Tru_cada d'àudio i vídeo"
 msgid "/Conversation/Se_nd File..."
 msgstr "/Conversa/Envia un _fitxer..."
 
-#, fuzzy
 msgid "/Conversation/Get _Attention"
-msgstr "/Conversa/Aconsegueix informació"
+msgstr "/Conversa/Aconseg_ueix atenció"
 
 msgid "/Conversation/Add Buddy _Pounce..."
-msgstr "/Conversa/Afegeix un a_vís per a l'amic..."
+msgstr "/Conversa/Afe_geix un avís per a l'amic..."
 
 msgid "/Conversation/_Get Info"
-msgstr "/Conversa/_Aconsegueix informació"
+msgstr "/Conversa/Aconsegueix inf_ormació"
 
 msgid "/Conversation/In_vite..."
 msgstr "/Conversa/Con_vida..."
@@ -11888,16 +11914,16 @@ msgid "/Conversation/_Block..."
 msgstr "/Conversa/_Bloca..."
 
 msgid "/Conversation/_Unblock..."
-msgstr "/Conversa/_Desbloca..."
+msgstr "/Conversa/Desb_loca..."
 
 msgid "/Conversation/_Add..."
 msgstr "/Conversa/_Afegeix..."
 
 msgid "/Conversation/_Remove..."
-msgstr "/Conversa/Sup_rimeix..."
+msgstr "/Conversa/_Suprimeix..."
 
 msgid "/Conversation/Insert Lin_k..."
-msgstr "/Conversa/Insereix un _enllaç..."
+msgstr "/Conversa/Insereix _un enllaç..."
 
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/Conversa/Insereix una _imatge..."
@@ -11950,9 +11976,8 @@ msgstr "/Conversa/Medi/Trucada d'àudio i vídeo"
 msgid "/Conversation/Send File..."
 msgstr "/Conversa/Envia un fitxer..."
 
-#, fuzzy
 msgid "/Conversation/Get Attention"
-msgstr "/Conversa/Aconsegueix informació"
+msgstr "/Conversa/Aconsegueix atenció"
 
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Conversa/Afegeix avís per a l'amic..."
@@ -12190,6 +12215,9 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Àrab"
 
+msgid "Assamese"
+msgstr "Assamès"
+
 msgid "Belarusian Latin"
 msgstr "Bielorús (llatí)"
 
@@ -12316,6 +12344,9 @@ msgstr "Lasià"
 
 msgid "Macedonian"
 msgstr "Macedoni"
+
+msgid "Malayalam"
+msgstr "Malaiàlam"
 
 msgid "Mongolian"
 msgstr "Mongol"
@@ -12930,9 +12961,8 @@ msgstr "Insereix una imatge de MI"
 msgid "Insert Smiley"
 msgstr "Insereix una emoticona"
 
-#, fuzzy
 msgid "Send Attention"
-msgstr "Alerta!"
+msgstr "Envia atenció"
 
 msgid "<b>_Bold</b>"
 msgstr "<b>_Negreta</b>"
@@ -12980,9 +13010,8 @@ msgstr "Línia _horitzontal"
 msgid "_Smile!"
 msgstr "_Somrieu!"
 
-#, fuzzy
 msgid "_Attention!"
-msgstr "Alerta!"
+msgstr "_Atenció!"
 
 msgid "Log Deletion Failed"
 msgstr "No s'ha pogut suprimir el registre"
@@ -13059,7 +13088,6 @@ msgstr "força estar en línia, independentment de l'estat de la xarxa"
 msgid "display this help and exit"
 msgstr "mostra aquesta ajuda i surt"
 
-# FIXME: entrades/registres?
 msgid "allow multiple instances"
 msgstr "permet diverses instàncies"
 
@@ -13238,7 +13266,6 @@ msgstr "Seleccioneu un fitxer"
 msgid "Modify Buddy Pounce"
 msgstr "Modifica l'avís per a l'amic"
 
-# FIXME
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
 msgstr "Avisa dels Whom"
@@ -13648,7 +13675,7 @@ msgstr "Configura el _servidor intermediari"
 #. This is a global option that affects SOCKS4 usage even with
 #. * account-specific proxy settings
 msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr "Empra _DNS remot amb servidors intermediàris SOCKS4"
+msgstr "Empra _DNS remot amb servidors intermediaris SOCKS4"
 
 msgid "Proxy t_ype:"
 msgstr "_Tipus de servidor intermediari:"
@@ -13936,9 +13963,8 @@ msgstr "Drecera"
 msgid "Custom Smiley Manager"
 msgstr "Gestor d'emoticones personalitzades"
 
-#, fuzzy
 msgid "Attention received"
-msgstr "Cal activació"
+msgstr "S'ha rebut una alerta"
 
 msgid "Select Buddy Icon"
 msgstr "Seleccioneu una icona per a l'amic"
@@ -16910,9 +16936,6 @@ msgstr "Aquest connector és útil per a depurar servidors o clients XMPP."
 
 #~ msgid "_Deny"
 #~ msgstr "_Denega"
-
-#~ msgid "Invalid Username"
-#~ msgstr "El nom d'usuari no és vàlid"
 
 #~ msgid "<b>Alias:</b> %s<br>"
 #~ msgstr "<b>Àlies:</b> %s<br>"

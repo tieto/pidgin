@@ -5,7 +5,10 @@ MOODS = \
     cinema.png \
     disappointed.png \
     embarrassed.png \
+    grumpy.png \
+    hot.png \
     internet.png \
+    invincible.png \
     music.png \
     restroom.png \
     search.png \

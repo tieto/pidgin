@@ -415,7 +415,7 @@ fi
 %doc PLUGIN_HOWTO
 
 %dir %{_includedir}/libpurple
-%{_includedir}/libpurple/*.h
+%{_includedir}/libpurple/*
 %{_libdir}/libpurple.so
 %{_libdir}/pkgconfig/purple.pc
 %{_datadir}/aclocal/purple.m4
@@ -470,6 +470,9 @@ fi
 %endif
 
 %changelog
+* Thu May 13 2010 Stu Tomlinson <stu@nosnilmot.com>
+- Include all libpurple headers in libpurple-devel
+
 * Sat Sep 05 2009 Stu Tomlinson <stu@nosnilmot.com>
 - Disable Voice & Video unless --with vv is used
 - Add BuildRequires for libidn-devel

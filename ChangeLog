@@ -1,11 +1,19 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.0 (??/??/????):
+version 2.7.1 (??/??/????):
+	Bonjour:
+	* Fix a crash on disconnect.
+
+	MSN:
+	* Fix unnecessary bandwidth consumption for buddy icon requests when
+	  buddies have capital letters in their passport addresses.
+
+version 2.7.0 (05/12/2010):
 	General:
 	* Changed GTK+ minimum version requirement to 2.10.0.
 	* Changed GLib minimum version requirement to 2.12.0.
-	* Using the --disable-nls argument to configre now works properly. You
-	  will no longer be forced to have intltool to configure and build.
+	* Using the --disable-nls argument to configure now works properly.
+	  You will no longer be forced to have intltool to configure and build.
 	* Fix two related crashes in the GnuTLS and NSS plugins when they
 	  suffer internal errors immediately upon attempting to establish
 	  an SSL connection.
@@ -74,11 +82,14 @@ version 2.7.0 (??/??/????):
 	  authentication fails due to an incorrect password.  (This is the same
 	  behavior as the legacy authentication method)
 	* Support sending and receiving HTML-formatted messages for ICQ.
+	* Use the proper URL for "View web profile" link for ICQ buddies.
+	  (Alexander Nartov)
 
 	MSN:
 	* Support for version 9 of the MSN protocol has been removed.  This
 	  version is no longer supported on the servers.
 	* Support file transfer thumbnails (previews) for images.
+	* Fix CVE-2010-1624 (custom emoticon remote crash).
 
 	XMPP:
 	* Direct messages to a specific resource only upon receipt of a message
@@ -96,6 +107,11 @@ version 2.7.0 (??/??/????):
 	  minutes).  This fixes an issue with Openfire disconnecting a
 	  libpurple-baesd client that has just been quiet for about 6
 	  minutes.
+	* Only support Google Talk's JID Domain Discovery extension
+	  (allowing a user to log in with "@gmail.com" or "@googlemail.com"
+	  interchangeably) for those two domains.  This change was made
+	  due to interoperability issues with some BOSH Connection Managers
+	  and namespaced attributes.
 
 	Yahoo/Yahoo JAPAN:
 	* Attempt to better handle transparent proxies interfering with

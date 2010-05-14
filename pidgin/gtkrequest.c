@@ -668,6 +668,23 @@ pidgin_request_action_with_icon(const char *title, const char *primary,
 		if (gdk_pixbuf_loader_write(loader, icon_data, icon_size, NULL)) {
 			pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
 			if (pixbuf) {
+				/* scale the image if it is too large */
+				int width = gdk_pixbuf_get_width(pixbuf);
+				int height = gdk_pixbuf_get_height(pixbuf);
+				if (width > 128 || height > 128) {
+					int scaled_width = width > height ? 128 : (128 * width) / height;
+					int scaled_height = height > width ? 128 : (128 * height) / width;
+					GdkPixbuf *scaled =
+							gdk_pixbuf_scale_simple(pixbuf, scaled_width, scaled_height,
+							    GDK_INTERP_BILINEAR);
+
+					purple_debug_info("pidgin",
+					    "dialog icon was too large, scale it down\n");
+					if (scaled) {
+						g_object_unref(pixbuf);
+						pixbuf = scaled;
+					}
+				}
 				img = gtk_image_new_from_pixbuf(pixbuf);
 			}
 		} else {
