@@ -4,6 +4,9 @@ version 2.7.1 (??/??/????):
 	Bonjour:
 	* Fix a crash on disconnect.
 
+	ICQ:
+	* Fix bug that caused HTML to be displayed in incoming messages.
+
 	MSN:
 	* Fix unnecessary bandwidth consumption for buddy icon requests when
 	  buddies have capital letters in their passport addresses.
