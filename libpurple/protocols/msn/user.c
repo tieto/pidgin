@@ -632,3 +632,29 @@ msn_user_is_capable(MsnUser *user, char *endpoint, guint capability, guint extca
 
 	return (user->clientid & capability) && (user->extcaps & extcap);
 }
+
+/**************************************************************************
+ * Utility functions
+ **************************************************************************/
+
+gboolean
+msn_user_is_in_group(MsnUser *user, const char * group_id)
+{
+	if (user == NULL)
+		return FALSE;
+
+	if (group_id == NULL)
+		return FALSE;
+
+	return (g_list_find_custom(user->group_ids, group_id, (GCompareFunc)strcmp)) != NULL;
+}
+
+gboolean
+msn_user_is_in_list(MsnUser *user, MsnListId list_id)
+{
+	if (user == NULL)
+		return FALSE;
+
+	return (user->list_op & (1 << list_id));
+}
+
