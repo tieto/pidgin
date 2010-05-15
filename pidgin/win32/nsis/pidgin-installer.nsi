@@ -8,8 +8,9 @@
 ;--------------------------------
 ;Global Variables
 Var name
-Var ISSILENT
 Var STARTUP_RUN_KEY
+Var CURRENT_GTK_STATE
+Var WARNED_GTK_STATE
 
 ;--------------------------------
 ;Configuration
@@ -351,7 +352,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
   Pop $R0
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" +2
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR) : $R2" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
 !endif
 
@@ -548,7 +549,7 @@ Section /o $(DEBUG_SYMBOLS_SECTION_TITLE) SecDebugSymbols
   Pop $R0
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" +2
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_DEBUGSYMBOLS_ERROR) : $R2" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_DEBUGSYMBOLS_ERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
 !endif
 
@@ -1154,12 +1155,6 @@ Function .onInit
   ;Reset ShellVarContext because we may have changed it
   SetShellVarContext "current"
 
-  StrCpy $ISSILENT "/S"
-  ; GTK installer has two silent states - one with Message boxes, one without
-  ; If pidgin installer was run silently, we want to supress gtk installer msg boxes.
-  IfSilent 0 +2
-    StrCpy $ISSILENT "/NOUI"
-
   ClearErrors
   ${GetOptions} "$R3" "/L=" $R1
   IfErrors +3
@@ -1263,9 +1258,11 @@ Function preWelcomePage
 !endif
 
   Call DoWeNeedGtk
-  Pop $R0
-  IntCmp $R0 1 done gtk_not_mandatory
-    ; Make the GTK+ Section RO if it is required.
+  Pop $CURRENT_GTK_STATE
+  StrCpy $WARNED_GTK_STATE "0"
+  IntCmp $CURRENT_GTK_STATE 1 done gtk_not_mandatory
+    ; Make the GTK+ Section RO if it is required. (it is required only if you have an existing version that is too old)
+    StrCmp $CURRENT_GTK_STATE "2" 0 done
     !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
     Goto done
   gtk_not_mandatory:
@@ -1276,6 +1273,29 @@ Function preWelcomePage
   Pop $R1
   Pop $R0
 FunctionEnd
+
+; If the GTK+ Section has been unselected and there isn't a compatible GTK+ already, confirm
+Function .onSelChange
+  Push $R0
+
+  SectionGetFlags ${SecGtk} $R0
+  IntOp $R0 $R0 & ${SF_SELECTED}
+  ; If the Gtk Section is currently selected, reset the "Warned" flag
+  StrCmp $R0 "${SF_SELECTED}" 0 +3
+  StrCpy $WARNED_GTK_STATE "0"
+  Goto done
+
+  ; If we've already warned the user, don't warn them again
+  StrCmp $WARNED_GTK_STATE "1" done
+  IntCmp $CURRENT_GTK_STATE 1 done done 0
+  StrCpy $WARNED_GTK_STATE "1"
+  MessageBox MB_YESNO $(PIDGIN_PROMPT_FORCE_NO_GTK) /SD IDNO IDYES done
+  !insertmacro SelectSection ${SecGtk}
+
+  done:
+  Pop $R0
+FunctionEnd
+
 
 ; Convert the current $LANGUAGE to a language code that we can use for translation mo selection
 ; If there's a better way to do this, I'd love to know it
@@ -1429,6 +1449,7 @@ Function InstallDict
   Pop $R1 ;This is the language file
   Push $R2
   Push $R3
+  Push $R4
 
   ClearErrors
   IfFileExists "$INSTDIR\spellcheck\share\enchant\myspell\$R0.dic" installed
@@ -1441,10 +1462,10 @@ Function InstallDict
   DetailPrint "Downloading the $R0 Dictionary... ($R3)"
   retry:
   NSISdl::download /TIMEOUT=10000 "$R3" "$R2"
-  Pop $R3
-  StrCmp $R3 "cancel" done
-  StrCmp $R3 "success" +3
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_SPELLCHECK_ERROR) : $R3" /SD IDCANCEL IDRETRY retry IDCANCEL done
+  Pop $R4
+  StrCmp $R4 "cancel" done
+  StrCmp $R4 "success" +3
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_SPELLCHECK_ERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
     Goto done
   SetOutPath "$INSTDIR\spellcheck\share\enchant\myspell"
   nsisunz::UnzipToLog "$R2" "$OUTDIR"
@@ -1458,6 +1479,7 @@ Function InstallDict
     DetailPrint "$R0 Dictionary is installed"
 
   done:
+  Pop $R4
   Pop $R3
   Pop $R2
   Pop $R0
