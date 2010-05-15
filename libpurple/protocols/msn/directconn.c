@@ -724,12 +724,14 @@ msn_dc_timeout(gpointer data)
 
 	g_return_val_if_fail(dc != NULL, FALSE);
 
-	if (dc->progress)
+	if (dc->progress) {
 		dc->progress = FALSE;
-	else
+		return TRUE;
+	} else {
+		dc->timeout_handle = 0;
 		msn_dc_destroy(dc);
-
-	return TRUE;
+		return FALSE;
+	}
 }
 
 static void
