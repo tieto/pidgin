@@ -115,6 +115,9 @@ AC_PROG_INSTALL
 PKG_PROG_PKG_CONFIG
 AC_FUNC_ALLOCA
 
+dnl Check for Sun compiler
+AC_CHECK_DECL([__SUNPRO_C], [SUNCC="yes"], [SUNCC="no"])
+
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
@@ -1336,6 +1339,10 @@ if test "x$GCC" = "xyes"; then
 
 	DEBUG_CFLAGS="-Wall $DEBUG_CFLAGS"
 	CFLAGS="-g $CFLAGS"
+fi
+
+if test "x$SUNCC" = "xyes"; then
+        CFLAGS="-features=extensions" 
 fi
 AC_SUBST(CFLAGS)
 
