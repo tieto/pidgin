@@ -942,6 +942,9 @@ chat_account_filter_func(PurpleAccount *account)
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
+	if (gc == NULL)
+		return FALSE;
+
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	return (prpl_info->chat_info != NULL);
