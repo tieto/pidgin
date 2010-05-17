@@ -107,7 +107,8 @@ docklet_gtk_status_destroy(void)
 	g_return_if_fail(docklet != NULL);
 
 	pidgin_docklet_remove();
-	
+
+	gtk_status_icon_set_visible(docklet, FALSE);
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
 
