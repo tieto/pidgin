@@ -323,11 +323,11 @@ msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 	g_return_if_fail(dc != NULL);
 
 	slpcall = dc->slpcall;
-	g_return_if_fail(slpcall != NULL);
 
 	msn_dc_destroy(dc);
 
-	msn_slpcall_session_init(slpcall);
+	if (slpcall)
+		msn_slpcall_session_init(slpcall);
 }
 
 static void
@@ -805,11 +805,7 @@ msn_dc_incoming_connection_timeout_cb(gpointer data) {
 	}
 
 	dc->connect_timeout_handle = 0;
-	msn_dc_destroy(dc);
-
-	/* Start p2p file transfer, if possible */
-	if (slpcall)
-		msn_slpcall_session_init(slpcall);
+	msn_dc_fallback_to_p2p(dc);
 
 	return FALSE;
 }
@@ -867,12 +863,7 @@ msn_dc_outgoing_connection_timeout_cb(gpointer data)
 		 * Both internal and external connection attempts failed.
 		 * Fall back to p2p transfer.
 		 */
-		MsnSlpCall *slpcall = dc->slpcall;
-
-		msn_dc_destroy(dc);
-		/* Start p2p file transfer, if possible */
-		if (slpcall)
-			msn_slpcall_session_init(slpcall);
+		msn_dc_fallback_to_p2p(dc);
 	}
 
 	return FALSE;
