@@ -271,3 +271,4 @@ pidgin/plugins/vvconfig.c
 pidgin/plugins/win32/transparency/win2ktrans.c
 pidgin/plugins/win32/winprefs/winprefs.c
 pidgin/plugins/xmppconsole.c
+pidgin/win32/nsis/nsis_translations.desktop.in
