@@ -851,7 +851,7 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 	}
 
 	if (!convo) {
-		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Recieved a KICK for unknown channel %s\n", args[0]);
+		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Received a KICK for unknown channel %s\n", args[0]);
 		g_free(nick);
 		return;
 	}

@@ -1317,7 +1317,7 @@ static int outgoingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 	channel = byte_stream_get16(bs);
 
 	if (channel != 0x01) {
-		purple_debug_misc("oscar", "icbm: ICBM recieved on unsupported channel.  Ignoring. (chan = %04x)\n", channel);
+		purple_debug_misc("oscar", "icbm: ICBM received on unsupported channel.  Ignoring. (chan = %04x)\n", channel);
 		return 0;
 	}
 
