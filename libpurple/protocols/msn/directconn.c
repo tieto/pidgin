@@ -854,6 +854,12 @@ msn_dc_outgoing_connection_timeout_cb(gpointer data)
 				msn_dc_outgoing_connection_timeout_cb,
 				dc
 			);
+		} else {
+			/*
+			 * Connection failed
+			 * Fall back to P2P transfer
+			 */
+			msn_dc_outgoing_connection_timeout_cb(dc);
 		}
 
 	} else {
