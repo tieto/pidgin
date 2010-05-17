@@ -199,7 +199,7 @@ msn_dc_destroy(MsnDirectConn *dc)
 	}
 
 	if (dc->listenfd_handle != 0) {
-		purple_timeout_remove(dc->listenfd_handle);
+		purple_input_remove(dc->listenfd_handle);
 	}
 
 	if (dc->connect_timeout_handle != 0) {
@@ -794,7 +794,7 @@ msn_dc_incoming_connection_timeout_cb(gpointer data) {
 	}
 
 	if (dc->listenfd_handle != 0) {
-		purple_timeout_remove(dc->listenfd_handle);
+		purple_input_remove(dc->listenfd_handle);
 		dc->listenfd_handle = 0;
 	}
 
