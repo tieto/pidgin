@@ -316,6 +316,7 @@ msn_dc_send_ok(MsnDirectConn *dc)
 void
 msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 {
+	MsnSlpLink *slplink;
 	MsnSlpCall *slpcall;
 
 	purple_debug_info("msn", "msn_dc_try_fallback_to_p2p %p\n", dc);
@@ -323,11 +324,13 @@ msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 	g_return_if_fail(dc != NULL);
 
 	slpcall = dc->slpcall;
+	slplink = msn_slplink_ref(dc->slplink);
 
 	msn_dc_destroy(dc);
 
 	if (slpcall)
 		msn_slpcall_session_init(slpcall);
+	msn_slplink_unref(slplink);
 }
 
 static void
