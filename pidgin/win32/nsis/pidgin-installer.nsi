@@ -8,9 +8,9 @@
 ;--------------------------------
 ;Global Variables
 Var name
-Var ISSILENT
 Var STARTUP_RUN_KEY
-Var SPELLCHECK_SEL
+Var CURRENT_GTK_STATE
+Var WARNED_GTK_STATE
 
 ;--------------------------------
 ;Configuration
@@ -352,7 +352,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
   Pop $R0
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" +2
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR) : $R2" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
 !endif
 
@@ -549,7 +549,7 @@ Section /o $(DEBUG_SYMBOLS_SECTION_TITLE) SecDebugSymbols
   Pop $R0
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" +2
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_DEBUGSYMBOLS_ERROR) : $R2" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_DEBUGSYMBOLS_ERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
 !endif
 
@@ -595,7 +595,7 @@ Section Uninstall
     DeleteRegValue HKCU "${STARTUP_RUN_KEY}" "Pidgin"
     DeleteRegValue HKLM "${STARTUP_RUN_KEY}" "Pidgin"
     ; Remove Language preference info
-    DeleteRegValue HKCU "${PIDGIN_REG_KEY}" "Installer Language"
+    DeleteRegValue HKCU "${PIDGIN_REG_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
 
     ; Remove any URI handlers
     ; I can't think of an easy way to maintain a list in a single place
@@ -1109,18 +1109,17 @@ Function .onInit
   Call RunCheck
 
   StrCpy $name "Pidgin ${PIDGIN_VERSION}"
-  StrCpy $SPELLCHECK_SEL ""
 
   ;Try to copy the old Gaim installer Lang Reg. key
   ;(remove it after we're done to prevent this being done more than once)
   ClearErrors
-  ReadRegStr $R0 HKCU "${PIDGIN_REG_KEY}" "Installer Language"
+  ReadRegStr $R0 HKCU "${PIDGIN_REG_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
   IfErrors 0 +5
   ClearErrors
-  ReadRegStr $R0 HKCU "${OLD_GAIM_REG_KEY}" "Installer Language"
+  ReadRegStr $R0 HKCU "${OLD_GAIM_REG_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
   IfErrors +3
-  DeleteRegValue HKCU "${OLD_GAIM_REG_KEY}" "Installer Language"
-  WriteRegStr HKCU "${PIDGIN_REG_KEY}" "Installer Language" "$R0"
+  DeleteRegValue HKCU "${OLD_GAIM_REG_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
+  WriteRegStr HKCU "${PIDGIN_REG_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" "$R0"
 
   ${MementoSectionRestore}
 
@@ -1130,7 +1129,7 @@ Function .onInit
   ;Preselect the "shortcuts" checkboxes according to the previous installation
   ClearErrors
   ;Make sure that there was a previous installation
-  ReadRegStr $R0 HKCU "${PIDGIN_REG_KEY}" "Installer Language"
+  ReadRegStr $R0 HKCU "${PIDGIN_REG_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
   IfErrors done_preselecting_shortcuts
     ;Does the Desktop shortcut exist?
     GetFileTime "$DESKTOP\Pidgin.lnk" $R0 $R0
@@ -1155,12 +1154,6 @@ Function .onInit
   done_preselecting_shortcuts:
   ;Reset ShellVarContext because we may have changed it
   SetShellVarContext "current"
-
-  StrCpy $ISSILENT "/S"
-  ; GTK installer has two silent states - one with Message boxes, one without
-  ; If pidgin installer was run silently, we want to supress gtk installer msg boxes.
-  IfSilent 0 +2
-    StrCpy $ISSILENT "/NOUI"
 
   ClearErrors
   ${GetOptions} "$R3" "/L=" $R1
@@ -1222,11 +1215,14 @@ Function .onInit
     StrCpy $INSTDIR "$R2\Pidgin"
 
   instdir_done:
+;LogSet on
+
+  ; Try to select a translation and a dictionary for the currently selected Language
+  Call SelectTranslationForCurrentLanguage
 
   ;Mark the dictionaries that are already installed as readonly
   Call SelectAndDisableInstalledDictionaries
 
-;LogSet on
   Pop $R3
   Pop $R2
   Pop $R1
@@ -1262,9 +1258,11 @@ Function preWelcomePage
 !endif
 
   Call DoWeNeedGtk
-  Pop $R0
-  IntCmp $R0 1 done gtk_not_mandatory
-    ; Make the GTK+ Section RO if it is required.
+  Pop $CURRENT_GTK_STATE
+  StrCpy $WARNED_GTK_STATE "0"
+  IntCmp $CURRENT_GTK_STATE 1 done gtk_not_mandatory
+    ; Make the GTK+ Section RO if it is required. (it is required only if you have an existing version that is too old)
+    StrCmp $CURRENT_GTK_STATE "2" 0 done
     !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
     Goto done
   gtk_not_mandatory:
@@ -1276,12 +1274,146 @@ Function preWelcomePage
   Pop $R0
 FunctionEnd
 
+; If the GTK+ Section has been unselected and there isn't a compatible GTK+ already, confirm
+Function .onSelChange
+  Push $R0
+
+  SectionGetFlags ${SecGtk} $R0
+  IntOp $R0 $R0 & ${SF_SELECTED}
+  ; If the Gtk Section is currently selected, reset the "Warned" flag
+  StrCmp $R0 "${SF_SELECTED}" 0 +3
+  StrCpy $WARNED_GTK_STATE "0"
+  Goto done
+
+  ; If we've already warned the user, don't warn them again
+  StrCmp $WARNED_GTK_STATE "1" done
+  IntCmp $CURRENT_GTK_STATE 1 done done 0
+  StrCpy $WARNED_GTK_STATE "1"
+  MessageBox MB_YESNO $(PIDGIN_PROMPT_FORCE_NO_GTK) /SD IDNO IDYES done
+  !insertmacro SelectSection ${SecGtk}
+
+  done:
+  Pop $R0
+FunctionEnd
+
+
+; Convert the current $LANGUAGE to a language code that we can use for translation mo selection
+; If there's a better way to do this, I'd love to know it
+Function SelectTranslationForCurrentLanguage
+
+  StrCmp "$LANGUAGE" "1078" 0 sq
+  !insertmacro SelectSection ${SecLang_af}
+  Goto done
+  sq: StrCmp "$LANGUAGE" "1052" 0 ar
+  !insertmacro SelectSection ${SecLang_sq}
+  Goto done
+  ar: StrCmp "$LANGUAGE" "1025" 0 eu
+  !insertmacro SelectSection ${SecLang_ar}
+  Goto done
+  eu: StrCmp "$LANGUAGE" "1069" 0 bg
+  !insertmacro SelectSection ${SecLang_eu}
+  Goto done
+  bg: StrCmp "$LANGUAGE" "1026" 0 ca 
+  !insertmacro SelectSection ${SecLang_bg}
+  Goto done
+  ca: StrCmp "$LANGUAGE" "1027" 0 cs
+  !insertmacro SelectSection ${SecLang_ca}
+  Goto done
+  cs: StrCmp "$LANGUAGE" "1029" 0 da 
+  !insertmacro SelectSection ${SecLang_cs}
+  Goto done
+  da: StrCmp "$LANGUAGE" "1030" 0 nl
+  !insertmacro SelectSection ${SecLang_da}
+  Goto done
+  nl: StrCmp "$LANGUAGE" "1043" 0 fa
+  !insertmacro SelectSection ${SecLang_nl}
+  Goto done
+  ;We have several English translations, but we don't have a way of guessing, so we don't choose one
+  ;en: StrCmp "$LANGUAGE" "1033" 0 +3
+  ;!insertmacro SelectSection ${SecLang_en_??}
+  ;Goto done
+  fa: StrCmp "$LANGUAGE" "1065" 0 fi
+  !insertmacro SelectSection ${SecLang_fa}
+  Goto done
+  fi: StrCmp "$LANGUAGE" "1035" 0 fr
+  !insertmacro SelectSection ${SecLang_fi}
+  Goto done
+  fr: StrCmp "$LANGUAGE" "1036" 0 de
+  !insertmacro SelectSection ${SecLang_fr}
+  Goto done
+  de: StrCmp "$LANGUAGE" "1031" 0 he
+  !insertmacro SelectSection ${SecLang_de}
+  Goto done
+  he: StrCmp "$LANGUAGE" "1037" 0 hu
+  !insertmacro SelectSection ${SecLang_he}
+  Goto done
+  hu: StrCmp "$LANGUAGE" "1038" 0 it
+  !insertmacro SelectSection ${SecLang_hu}
+  Goto done
+  it: StrCmp "$LANGUAGE" "1040" 0 ja
+  !insertmacro SelectSection ${SecLang_it}
+  Goto done
+  ja: StrCmp "$LANGUAGE" "1041" 0 ko
+  !insertmacro SelectSection ${SecLang_ja}
+  Goto done
+  ko: StrCmp "$LANGUAGE" "1042" 0 ku
+  !insertmacro SelectSection ${SecLang_ko}
+  Goto done
+  ku: StrCmp "$LANGUAGE" "9999" 0 lt
+  !insertmacro SelectSection ${SecLang_ku}
+  Goto done
+  lt: StrCmp "$LANGUAGE" "1063" 0 nb
+  !insertmacro SelectSection ${SecLang_lt}
+  Goto done
+  nb: StrCmp "$LANGUAGE" "1044" 0 nn
+  !insertmacro SelectSection ${SecLang_nb}
+  Goto done
+  nn: StrCmp "$LANGUAGE" "2068" 0 pl
+  !insertmacro SelectSection ${SecLang_nn}
+  Goto done
+  pl: StrCmp "$LANGUAGE" "1045" 0 pt
+  !insertmacro SelectSection ${SecLang_pl}
+  Goto done
+  pt: StrCmp "$LANGUAGE" "2070" 0 pt_BR
+  !insertmacro SelectSection ${SecLang_pt}
+  Goto done
+  pt_BR: StrCmp "$LANGUAGE" "1046" 0 ro
+  !insertmacro SelectSection ${SecLang_pt_BR}
+  Goto done
+  ro: StrCmp "$LANGUAGE" "1048" 0 ru
+  !insertmacro SelectSection ${SecLang_ro}
+  Goto done
+  ru: StrCmp "$LANGUAGE" "1049" 0 sr
+  !insertmacro SelectSection ${SecLang_ru}
+  Goto done
+  sr: StrCmp "$LANGUAGE" "3098" 0 zh_CN
+  !insertmacro SelectSection ${SecLang_sr}
+  Goto done
+  zh_CN: StrCmp "$LANGUAGE" "2052" 0 sk
+  !insertmacro SelectSection ${SecLang_zh_CN}
+  Goto done
+  sk: StrCmp "$LANGUAGE" "1051" 0 sl
+  !insertmacro SelectSection ${SecLang_sk}
+  Goto done
+  sl: StrCmp "$LANGUAGE" "1060" 0 es
+  !insertmacro SelectSection ${SecLang_sl}
+  Goto done
+  es: StrCmp "$LANGUAGE" "1034" 0 sv
+  !insertmacro SelectSection ${SecLang_es}
+  Goto done
+  sv: StrCmp "$LANGUAGE" "1053" 0 zh_TW
+  !insertmacro SelectSection ${SecLang_sv}
+  Goto done
+  zh_TW: StrCmp "$LANGUAGE" "1028" 0 done
+  !insertmacro SelectSection ${SecLang_zh_TW}
+  Goto done
+
+  done:
+FunctionEnd
+
+
 ; SpellChecker Related Functions
 ;-------------------------------
-
-; Convert the a Section index to the language code
-; Push the section index onto the stack and pop off the language code after the call
-; This will set the error code, if no match is found
 
 ; Select and Disable any Sections that have currently installed dictionaries
 !macro CHECK_SPELLCHECK_SECTION lang
@@ -1317,6 +1449,7 @@ Function InstallDict
   Pop $R1 ;This is the language file
   Push $R2
   Push $R3
+  Push $R4
 
   ClearErrors
   IfFileExists "$INSTDIR\spellcheck\share\enchant\myspell\$R0.dic" installed
@@ -1329,10 +1462,10 @@ Function InstallDict
   DetailPrint "Downloading the $R0 Dictionary... ($R3)"
   retry:
   NSISdl::download /TIMEOUT=10000 "$R3" "$R2"
-  Pop $R3
-  StrCmp $R3 "cancel" done
-  StrCmp $R3 "success" +3
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_SPELLCHECK_ERROR) : $R3" /SD IDCANCEL IDRETRY retry IDCANCEL done
+  Pop $R4
+  StrCmp $R4 "cancel" done
+  StrCmp $R4 "success" +3
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_SPELLCHECK_ERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
     Goto done
   SetOutPath "$INSTDIR\spellcheck\share\enchant\myspell"
   nsisunz::UnzipToLog "$R2" "$OUTDIR"
@@ -1346,6 +1479,7 @@ Function InstallDict
     DetailPrint "$R0 Dictionary is installed"
 
   done:
+  Pop $R4
   Pop $R3
   Pop $R2
   Pop $R0

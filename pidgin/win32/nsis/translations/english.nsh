@@ -44,6 +44,8 @@
 
 ; GTK+ Section Prompts
 
+!insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_PROMPT_FORCE_NO_GTK		"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be already present).$\rAre you sure you want to skip installing the GTK+ Runtime?"
+
 ; URL Handler section
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING URI_HANDLERS_SECTION_TITLE		"URI Handlers"
 
@@ -53,10 +55,10 @@
 
 ; Spellcheck Section Prompts
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_SPELLCHECK_SECTION_TITLE	"Spellchecking Support"
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_SPELLCHECK_ERROR		"Error Installing Spellchecking"
+!insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_SPELLCHECK_ERROR		"Error Installing Spellchecking ($R3).$\rIf retrying fails, manual installation instructions are at: http://d.pidgin.im/wiki/Installing%20Pidgin#manual_win32_spellcheck_installation"
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_SPELLCHECK_SECTION_DESCRIPTION	"Support for Spellchecking.  (Internet connection required for installation)"
 
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_DEBUGSYMBOLS_ERROR		"Error Installing Debug Symbols"
+!insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_DEBUGSYMBOLS_ERROR		"Error Installing Debug Symbols ($R2)"
 
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_GTK_DOWNLOAD_ERROR		"Error Downloading the GTK+ Runtime"
+!insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_GTK_DOWNLOAD_ERROR		"Error Downloading the GTK+ Runtime ($R2).$\rThis is required for Pidgin to function; if retrying fails, you may need to use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 
