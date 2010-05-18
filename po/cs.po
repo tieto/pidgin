@@ -15056,10 +15056,10 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "K použití $(^Name) se vztahuje GPL licence. Licence je zde uvedena pouze pro Vaší informaci. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Multi-platform GUI toolkit používaný Pidginem"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -15067,7 +15067,7 @@ msgid ""
 msgstr ""
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Základní soubory a DLL pro Pidgin"
 
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
@@ -15095,7 +15095,7 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "Verze runtime GTK+"
+msgstr "GTK+ Runtime Environment (nutné)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15103,12 +15103,11 @@ msgstr "Umístění"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "Další >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin Internet Messenger"
+msgstr "Pidgin Instant Messaging Client (nutné)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15144,7 +15143,7 @@ msgstr "Přezdívka \"%s\" se již používá"
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Odinstalční proces nemůže najít záznamy pro Pidgin v registrech.$\\rPravděpodobně instalaci této aplikace provedl jiný uživatel."
 
 #. URL Handler section
 #, fuzzy
@@ -15159,12 +15158,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Navštívit Pidgin Web Page"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Nemáte oprávnění k odinstalaci této aplikace."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Current Mood"

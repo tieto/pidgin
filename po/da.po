@@ -15494,10 +15494,10 @@ msgstr ""
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) er frigivet under GPL licensen. Licensen er kun medtaget her til generel orientering. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Et multi-platform grafisk interface udviklingsværktøj, bruges af Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -15505,7 +15505,7 @@ msgid ""
 msgstr ""
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Basale Pidgin filer og biblioteker"
 
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
@@ -15541,7 +15541,7 @@ msgstr "Beliggenhed"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "Næste >"
 
 #. Components Page
 #, fuzzy
@@ -15574,20 +15574,18 @@ msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "Dette samtalenavn eksisterer allerede"
+msgstr ""
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Afinstallationen kunne ikke finde Pidgin i registreringsdatabasen.$\\rMuligvis har en anden bruger installeret programmet."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "myim URL-håndtering"
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -15597,12 +15595,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Besøg Pidgin's hjemmeside"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Du har ikke tilladelse til at afinstallere dette program."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Artist"

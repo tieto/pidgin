@@ -15261,31 +15261,30 @@ msgstr ""
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) are licenţă GPL (GNU Public License). Licenţa este inclusă aici doar pentru scopuri informative. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Un mediu de dezvoltare multiplatformă utilizat de Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "O instanţă a programului Pidgin este deja pornită. Închideţi-o şi încercaţi din nou."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Fişiere Pidgin şi dll-uri"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "Creează o intrare Pidgin în meniul Start"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "Creează iconiţe Pidgin pe Desktop"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Implicit"
+msgstr "Desktop"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15298,8 +15297,9 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr ""
+msgstr "Mediu GTK+ (obligatoriu)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15307,12 +15307,11 @@ msgstr "Loc"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "Înainte >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Mesagerul Pidgin"
+msgstr "Client de mesagerie instant (obligatoriu)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15321,39 +15320,35 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Combinație de semne"
+msgstr "Scurtături"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "Scurtături pentru pornirea Pidgin"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
 msgstr ""
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "Pornire"
+msgstr "Meniu Start"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "Pseudonimul „%s” este deja utilizat."
+msgstr "Instalarea este deja pornită."
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Programul de dezinstalare nu a găsit intrări Pidgin în regiştri.$\\rProbabil un alt utilizator a instalat această aplicaţie."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "Gestionare URL myim"
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -15363,12 +15358,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Vizitaţi pagina de web Pidgin"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Nu aveţi drepturile de acces necesare dezinstalării acestei aplicaţii."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Current Mood"

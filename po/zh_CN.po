@@ -14716,31 +14716,30 @@ msgstr "此插件用于调试 XMPP 服务器或客户端。"
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) 以 GPL 许可发布。在此提供此许可仅为参考。$_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Pidgin 所用的多平台 GUI 工具包"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "Pidgin 的实例正在运行中。请退出 Pidgin 然后再试一次。"
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Pidgin 核心文件和 DLLs"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "在开始菜单中创建 Pidgin 的快捷方式"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "在桌面上创建 Pidgin 的快捷方式"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "桌面默认值"
+msgstr "桌面"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -14755,7 +14754,7 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ 运行时刻版本"
+msgstr "GTK+ 运行时刻环境(必需)"
 
 #, fuzzy
 msgid "Localizations"
@@ -14763,12 +14762,11 @@ msgstr "位置"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "下一步 >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin 互联网通讯程序"
+msgstr "Pidgin 即时通讯程序(必需)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -14777,16 +14775,15 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
 msgstr "快捷方式"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "启动 Pidgin 的快捷方式"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "拼写检查支持"
 
 #, fuzzy
 msgid "Start Menu"
@@ -14794,22 +14791,20 @@ msgstr "启动"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "拼写检查支持。(安装需要连接到 Internet)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "昵称“%s”已被使用。"
+msgstr "安装程序已经运行。"
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "卸载程序找不到 Pidgin 的注册表项目。$\\r可能是另外的用户安装了此程序。"
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "昵称(_H)："
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -14819,12 +14814,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "浏览 Pidgin 网页"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "您没有权限卸载此程序。"
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Artist"

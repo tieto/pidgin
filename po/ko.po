@@ -15742,7 +15742,7 @@ msgid ""
 msgstr ""
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "가임이 사용하는 멀티 플랫폼 GUI 툴킷"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -15750,7 +15750,7 @@ msgid ""
 msgstr ""
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "가임의 코어 파일과 dll"
 
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
@@ -15778,7 +15778,7 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ 런타임 버전"
+msgstr "GTK+ 런타임 환경 (필수)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15789,9 +15789,8 @@ msgid "Next >"
 msgstr ""
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin 인터넷 메신저"
+msgstr "가임 메신저 (필수)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15819,20 +15818,18 @@ msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "이 대화명은 이미 사용 중입니다."
+msgstr ""
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "언인스톨러가 가임의 레지스트리 엔트리를 찾을 수 없습니다.$\\r이 프로그램을 다른 유저 권한으로 설치한 것 같습니다."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "핸들(_H):"
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -15845,9 +15842,13 @@ msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "이 프로그램을 제거할 수 있는 권한이 없습니다."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy

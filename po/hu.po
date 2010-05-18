@@ -15195,31 +15195,30 @@ msgstr ""
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "A $(^Name) a GNU General Public License (GPL) alatt kerül terjesztésre. Az itt olvasható licenc csak tájékoztatási célt szolgál. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "A Pidgin által használt többplatformos grafikus eszközkészlet"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "Jelenleg fut a Pidgin egy példánya. Lépjen ki a Pidginból és azután próbálja újra."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Pidgin fájlok és dll-ek"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "Start Menü bejegyzés létrehozása a Pidginhez"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "Parancsikon létrehozása a Pidginhez az asztalon"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Asztali környezet alapértelmezése"
+msgstr "Asztal"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15232,8 +15231,9 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr ""
+msgstr "GTK+ futtató környezet (szükséges)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15241,12 +15241,11 @@ msgstr "Hely"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "Tovább >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin üzenetküldő"
+msgstr "Pidgin azonnali üzenő kliens (szükséges)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15255,54 +15254,54 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Billentyűparancs"
+msgstr "Parancsikonok"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "Parancsikonok a Pidgin indításához"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "Helyesírás-ellenőrzés támogatása"
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "Indítás"
+msgstr "Start Menü"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "Helyesírás-ellenőrzés támogatása. (Internetkapcsolat szükséges a telepítéshez)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "A becenév („%s”) már használatban van."
+msgstr "A telepítő már fut."
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Az eltávolító nem találta a Pidgin registry bejegyzéseket.$\\rValószínüleg egy másik felhasználó telepítette az alkalmazást."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "myim URL kezelő"
+msgstr "URI kezelők"
 
 #. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
-msgstr ""
+msgstr "A Pidgin jelenleg telepített változata nem távolítható el. Az új verzió a jelenleg telepített verzió eltávolítása nélkül kerül telepítésre. "
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "A Pidgin weboldalának felkeresése"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Nincs jogosultsága az alkalmazás eltávolításához."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Current Mood"

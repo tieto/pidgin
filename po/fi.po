@@ -15267,31 +15267,30 @@ msgstr ""
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) on julkaistu GPL-lisenssin alla. Lisenssi esitetään tässä vain tiedotuksena. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Pidginin käyttämä monialustainen käyttöliittymäkirjasto"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "Pidgin on tällä hetkellä käynnissä. Poistu Pidginistä ja yritä uudelleen."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Pidginin ytimen tiedostot ja kirjastot"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "Tee Pidgin-pikakuvake käynnistysvalikkoon"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "Tee Pidgin-pikakuvake työpöydälle"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Työpöydän oletus"
+msgstr "Työpöytä"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15306,21 +15305,19 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ Runtime -versio"
+msgstr "Ajonaikainen GTK-ympäristö (vaaditaan)"
 
 #, fuzzy
 msgid "Localizations"
 msgstr "Sijainti"
 
 #. License Page
-#, fuzzy
 msgid "Next >"
-msgstr "Teksti"
+msgstr "Seuraava >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin-pikaviestin"
+msgstr "Pidgin-pikaviestin (vaaditaan)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15329,39 +15326,35 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Oikotie"
+msgstr "Pikakuvakkeet"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "Pikakuvakkeet Pidginin käynnistämiseksi"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "Oikolukutuki"
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "Käynnistys"
+msgstr "Käynnistysvalikko"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "Tuki oikoluvulle.  (Asennukseen tarvitaan Internet-yhteys)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "Kutsumanimi ”%s” on jo käytössä."
+msgstr "Asennusohjelma on jo käynnissä."
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Asennuksen poistaja ei löytänyt rekisteristä tietoja Pidginista.$\\rOn todennäköistä että joku muu käyttäjä on asentanut ohjelman."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "myim-URL-käsittelijä"
+msgstr "URI-käsittelijät"
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -15371,12 +15364,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Vieraile Pidginin WWW-sivustolla"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Artist"

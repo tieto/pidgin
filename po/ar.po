@@ -15561,31 +15561,30 @@ msgstr "تفيد هذه الملحقة في تنقيح خواديم و عملا�
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) يخضع لرخصة جنو العموميّة العامة (GPL). الرخصة المعطاة هنا لغرض الإعلام فقط. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "عدّة واجهة رسوميّة متعددة المنصات، يستخدمها بِدْجِن."
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "بِدْجِن يعمل حاليا.  من فضلك أغلق بِدْجن ثم أعد المحاولة."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr " و ملفات لُب بِدْجِن dll"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "أنشئ مُدخلة لبدجن في قائمة ابدأ"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "أنشئ اختصارا لبِدْجِن على سطح المكتب"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "مبدئي سطح المكتب"
+msgstr "سطح المكتب"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15598,9 +15597,8 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
-#, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "نسخة جتك+"
+msgstr "بيئة جتك+ (مطلوبة إن لم تكن موجودة)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15608,12 +15606,11 @@ msgstr "الموضع"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "التالي >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "مرسال الإنترنت بِدْجِن"
+msgstr "عميل التراسل الفوري بِدْجِن (مطلوب)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15622,54 +15619,55 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
-msgstr "اختصار"
+msgstr "الاختصارات"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "اختصارات لبدأ بِدْجِن"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "دعم التدقيق الإملائي"
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "بدء التشغيل"
+msgstr "قائمة ابدأ"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "دعم التدقيق الإملائي.  (مطلوب اتصال بالإنترنت للتثبيت)"
 
 #, fuzzy
 msgid "The installer is already running."
-msgstr "اسم الدردشة هذا مستخدم بالفعلً"
+msgstr "المثبِّت يعمل بالفعل."
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "لم يُعثر المثبت على خانات السجل الخاصة ببدجن.$\\rغالبا ثبت هذا البرنامج مستخدم آخر."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "معالج مسارات myim"
+msgstr "متعاملات المسارات"
 
 #. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
-msgstr ""
+msgstr "تعذّر إزالة نسخة بدجن المثبّتة. ثتُثبّت النسخة الحديثة بدون إزالة النسخة المثبّتة مسبقا."
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "قم بزيارة صفحة بدجن على الوِب"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "لا تملك الصلاحيات لتثبيت هذا التطبيق."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Artist"

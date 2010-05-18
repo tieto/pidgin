@@ -15782,7 +15782,7 @@ msgid ""
 msgstr ""
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Мултиплатфорен кит за графичен изглед, използван от Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -15790,7 +15790,7 @@ msgid ""
 msgstr ""
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Файлове на ядрото на Pidgin и библиотеки"
 
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
@@ -15829,9 +15829,8 @@ msgid "Next >"
 msgstr ""
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Бързи съобщения"
+msgstr "Pidgin Клиент за Бързи Съобщения (изисква се)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15867,7 +15866,7 @@ msgstr "Това име вече се използва от някой друг"
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Деисталатоа не може да намери записи в регистъра за Pidgin.$\\rВероятно е бил инсталиран от друг потребител."
 
 #. URL Handler section
 msgid "URI Handlers"
@@ -15884,9 +15883,13 @@ msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Нямате права да деинсталирате тази програма."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy

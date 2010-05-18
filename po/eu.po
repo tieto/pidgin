@@ -15333,31 +15333,30 @@ msgstr "XMPP zerbitzariak edo bezeroak arazteko erabilgarria da plugin hau."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "GNU Lizentzia Orokor Publikopean (GPL) argitaratzen da $(^Name). Informatzeko helburu soilarekin aurkezten da hemen lizentzia. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Plataforma anitzeko GUI tresna-sorta, Pidgin-ek erabilia"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "Pidgin istantzia bat dago martxan. Pidgin itxi eta berriro saiatu."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Funtsezko Pidgin fitxategi eta dll-ak"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "Pidgin-entzako lasterbidea Abio-Menuan"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "Pidgin-entzako lasterbidea Mahaigainean"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Mahaigainaren Lehenetsia"
+msgstr "Mahaigaina"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15372,7 +15371,7 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ Exekuzio-Denborako Bertsioa"
+msgstr "GTK+ exekuzio ingurunea (beharrezkoa)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15380,12 +15379,11 @@ msgstr "Kokalekua"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "Jarraitu >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin Internet-Mezularia"
+msgstr "Pidgin Istanteko Mezularitza Bezeroa (beharrezkoa)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15394,54 +15392,54 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Lasterbidea"
+msgstr "Lasterbideak"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "Pidgin abiarazteko lasterbideak"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "Zuzentzaile Ortografikoa"
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "Abioa"
+msgstr "Abio-menua"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "Zuzentzaile Ortografikoa.  (Internet konexioa behar du instalatzeko)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "Erabilpean dago jadanik \"%s\" ezizena."
+msgstr "Instalatzailea martxan dago."
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Ezin izan dira Pidgin-en erregistro-sarrerak aurkitu.$\\rZiurrenik, beste erabiltzaile batek instalatu zuen aplikazio hau."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "myim URL-kudeatzailea"
+msgstr "URI Kudeatzaileak"
 
 #. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
-msgstr ""
+msgstr "Ezin izan da jadanik instalatuta zegoen Pidgin bertsioa kendu. Aurreko bertsioa kendu gabe instalatuko da bertsio berria."
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Pidgin Webgunera etorri"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Ez daukazu aplikazio hau kentzeko baimenik."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Artist"

@@ -15745,31 +15745,30 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) تحت مجوز عمومى همگانى گنو (GPL) منتشر شده است. اين مجوز تنها براى اطلاع‌رسانى اينجا ارائه شده است. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "جعبه‌ابزار رابط کاربر گرافيکى چند بسترى که پيجين از آن استفاده مى‌کند"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "برنامه پيجين از قبل در حال اجرا است. لطفاً از پيجين خارج شود و دوباره سعى کنيد."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "پرونده‌ها و DLLهاى اصلى پيجين"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "ايجاد مورد براى پيجين در منو آغاز"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "ايجاد ميان‌بُر به پيجين روى روميزى"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "_پذیرش پیش‌فرض‌ها"
+msgstr "روميزى"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15784,21 +15783,19 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "نسخهٔ دارای GTK+ در زمان اجرا"
+msgstr "محيط زمان اجراى GTK+‎ (اگر وجود ندارد اجبارى است)"
 
 #, fuzzy
 msgid "Localizations"
 msgstr "مکان"
 
 #. License Page
-#, fuzzy
 msgid "Next >"
-msgstr "متن"
+msgstr "بعد >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "پیغام‌رسان اینترنتی پیجین"
+msgstr "کارگير پيغام‌رسان اينترنتى پيجين (اجبارى)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15812,49 +15809,50 @@ msgid "Shortcuts"
 msgstr "میانبرها"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "ميان‌بُرهاى راه‌اندازى پيجين"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "پشتيبانى غلط‌يابى املايى"
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "راه‌اندازی"
+msgstr "منوى آغاز"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "پشتيبانى غلط‌يابى املايى. (براى نصب اتصال اينترنتى لازم است)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "این نام گپ از قبل وجود دارد"
+msgstr "نصب‌کننده از قبل در حال اجرا است."
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "حذف‌کننده نمى‌تواند مداخل registery پيچين را پيدا کند.$\\r ممکن است کاربر ديگرى اين برنامه را نصب کرده باشد."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "_دست‌گیره:"
+msgstr "متصدى‌هاى نشانى اينترنتى"
 
 #. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
-msgstr ""
+msgstr "حذف نسخه‌اى از پيجين که در حال حاضر نصب است ممکن نيست. نسخه جديد بدون حذف نسخه موجود نصب مى‌شود."
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "صفحه وبى پيجين را ببينيد"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "شما اجازه لازم براى حذف اين برنامه را نداريد."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy

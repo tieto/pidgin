@@ -15114,31 +15114,30 @@ msgstr "Tento modul je vhodný na ladenie XMPP serverov alebo klientov."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) je vydaný pod GPL licenciou. Táto licencia je len pre informačné účely. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Multiplatformové GUI nástroje, používané Pidgin-om"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "Pidgin je práve spustený. Vypnite ho a skúste znova."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Jadro Pidgin-u a nevyhnutné DLL súbory"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "Vytvoriť odkaz na Pidgin v Štart Menu"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "Vytvoriť zástupcu pre Pidgin na pracovnej ploche"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Predvolené prostredia"
+msgstr "Plocha"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15153,7 +15152,7 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "Verzia GTK+ Runtime"
+msgstr "GTK+ Runtime prostredie (nevyhnutné)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15161,12 +15160,11 @@ msgstr "Lokalita"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "Ďalej >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Internetový komunikátor Pidgin"
+msgstr "Pidgin Instant Messaging Klient (nevyhnutné)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15175,39 +15173,35 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Skratka"
+msgstr "Zástupcovia"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "Zástupcovia pre Pidgin"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "Podpora kontroly pravopisu"
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "Spustenie"
+msgstr "Štart Menu"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "Podpora kontroly pravopisu (Nutné pripojenie k Internetu)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "Prezývka \"%s\" je už obsadená."
+msgstr "Inštalácia je už spustená"
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Inštalátoru sa nepodarilo nájsť položky v registri pre Pidgin.$\\rJe možné, že túto aplikáciu nainštaloval iný používateľ."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "myim URL handler"
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -15217,12 +15211,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Navštíviť webstránku Windows Pidgin"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Current Mood"

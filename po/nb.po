@@ -15211,31 +15211,30 @@ msgstr ""
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) er utgitt under GPL (GNU General Public License). Lisensen er oppgitt her kun med henblikk på informasjon. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Et GUI-verktøy for flere ulike plattformer, brukes av Pidgin."
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "En instans av Pidgin kjører fra før. Avslutt Pidgin og prøv igjen."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Pidgins kjernefiler og dll'er"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "Legg til Pidgin i Startmenyen"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "Lag en snarvei til Pidgin på Skrivebordet"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Skrivebordsstandard"
+msgstr "Skrivebord"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15250,7 +15249,7 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "Versjon av GTK+ kjøremiljø "
+msgstr "GTK+ Runtime Environment (obligatorisk)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15258,12 +15257,11 @@ msgstr "Sted"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "Neste >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin Lynmeldingsklient"
+msgstr "Pidgin Hurtigmeldingsklient (obligatorisk)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15272,39 +15270,35 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Snarvei"
+msgstr "Snarveier"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "Snarveier for å starte Pidgin"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "Støtte for stavekontroll"
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "Oppstart"
+msgstr "Startmeny"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "Støtte for stavekontroll. (Internettoppkobling påkrevd for installasjon)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "Kallenavnet «%s» er allerede i bruk"
+msgstr "Installeren kjører allerede."
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Avinstalleringsprogrammet kunne ikke finne noen registeroppføring for Pidgin.$\\rTrolig har en annen bruker avinstallert denne applikasjonen."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "myim URL behandler"
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -15314,12 +15308,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Besøk Pidgin for Windows' Nettside"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Du har ikke rettigheter til å avinstallere denne applikasjonen."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Artist"

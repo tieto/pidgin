@@ -15821,7 +15821,7 @@ msgid ""
 msgstr ""
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Një grup mjetesh shumëplatformësh për GUI, përdorur nga Pidgin-i"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -15829,7 +15829,7 @@ msgid ""
 msgstr ""
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Kartela dhe dll bazë të Pidgin-it"
 
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
@@ -15840,9 +15840,8 @@ msgstr ""
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Parazgjedhje Desktopi"
+msgstr ""
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15857,7 +15856,7 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "Version GTK+ Runtime"
+msgstr "GTK+ Runtime Environment (i nevojshëm)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15865,12 +15864,11 @@ msgstr "Vendndodhje"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "Më tej >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin Internet Messenger"
+msgstr "Klient Shkëmbimi Mesazhesh të Atypëratyshëm Pidgin (i nevojshëm)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15899,15 +15897,14 @@ msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "Nofka \"%s\" është duke u përdorur ndërkohë."
+msgstr ""
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Çinstaluesi nuk gjeti dot zëra regjistri për Pidgin-in.$\\rKa mundësi që këtë zbatim ta ketë instaluar një tjetër përdorues."
 
 #. URL Handler section
 #, fuzzy
@@ -15922,12 +15919,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Vizitoni Faqen Web të Pidgin-it"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Nuk keni leje të çinstaloni këtë zbatim."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Current Mood"

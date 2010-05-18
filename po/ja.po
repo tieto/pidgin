@@ -15790,31 +15790,30 @@ msgstr ""
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name)はGPLライセンスの元でリリースされています。ライセンスはここに参考のためだけに提供されています。 $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Pidginの使っているマルチプラットフォームGUIツールキット"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "Pidgin が実行されています。Pidgin を終了してから再度実行してください"
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Pidginの核となるファイルとdll"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "スタートメニューに Pidgin の項目を作成する"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "デスクトップに Pidgin のショートカットを作成する"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "デフォルト値を適用する(_A)"
+msgstr "デスクトップ"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15829,7 +15828,7 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ ラインタイムのバージョン"
+msgstr "GTK+ Runtime Environment (必須)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15837,12 +15836,11 @@ msgstr "場所"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "次へ >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin インターネット・メッセンジャー"
+msgstr "Pidginインスタントメッセンジャ (必須)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15851,39 +15849,35 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
-msgstr "ポート番号"
+msgstr "ショートカット"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "Pidgin を実行するためのショートカット"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "スペルチェックのサポート"
 
-#, fuzzy
 msgid "Start Menu"
 msgstr "スタートアップ"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "スペルチェックのサポート  (インターネット接続がインストールに必要です)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "そのチャット名は既に使用されています。"
+msgstr "インストーラが既に実行されています"
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "アンインストーラはPidginのレジストリエントリを発見できませんでした。$\\rおそらく別のユーザにインストールされたでしょう。"
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "ハンドル(_H):"
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -15893,12 +15887,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "PidginのWebページを訪れてください。"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "あなたはこのアプリケーションをアンインストールする権限を持っていません。"
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy

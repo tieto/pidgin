@@ -15574,15 +15574,15 @@ msgid ""
 msgstr ""
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Een multi-platform gebruikersinterface, gebruikt door Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "Pidgin wordt op dit moment uitgevoerd. Sluit Pidgin af en start de installatie opnieuw."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Pidgin hoofdbestanden en dlls"
 
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
@@ -15610,7 +15610,7 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ Runtime-versie"
+msgstr "GTK+ runtime-omgeving (vereist)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15618,12 +15618,11 @@ msgstr "Locatie"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "Volgende >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidgin Internet Messenger"
+msgstr "Pidgin Instant Messaging Client (vereist)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15641,30 +15640,27 @@ msgstr ""
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "Spellingscontrole"
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "Opstarten"
+msgstr ""
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "Ondersteuning voor spellingscontrole. (Internetverbinding nodig voor installatie)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "De bijnaam \"%s\" bestaat al"
+msgstr "Er is al een installatie actief."
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Het verwijderingsprogramma voor Pidgin kon geen register-ingangen voor Pidgin vinden.$\\rWaarschijnlijk heeft een andere gebruiker het programma geïnstalleerd."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "myim URL afhandelaar"
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -15674,12 +15670,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Neem een kijkje op de Pidgin webpagina"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "U mag dit programma niet verwijderen."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Artist"

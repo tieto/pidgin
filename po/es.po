@@ -15507,10 +15507,10 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) se distribuye bajo la licencia GPL. Esta licencia se incluye aquí sólo con propósito informativo: $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Una suite de herramientas GUI multiplataforma, utilizada por Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -15518,7 +15518,7 @@ msgid ""
 msgstr ""
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Ficheros y dlls principales de Core"
 
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
@@ -15529,9 +15529,8 @@ msgstr ""
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Valores por omisión del escritorio"
+msgstr ""
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15544,8 +15543,9 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr ""
+msgstr "Entorno de ejecución de GTK+ (necesario)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15553,12 +15553,11 @@ msgstr "Ubicación"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "Siguiente >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Cliente de mensajería de Internet Pidgin"
+msgstr "Cliente de mensajería instantánea de Pidgin (necesario)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15594,7 +15593,7 @@ msgstr "Ya se está utilizando el apodo \"%s\"."
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "El desinstalador no pudo encontrar las entradas en el registro de Pidgin.$\\rEs probable que otro usuario instalara la aplicación."
 
 #. URL Handler section
 #, fuzzy
@@ -15609,12 +15608,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Visite la página Web de Pidgin"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "No tiene permisos para desinstalar esta aplicación."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Artist"

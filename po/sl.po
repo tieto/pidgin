@@ -15218,31 +15218,30 @@ msgstr ""
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) je izdan pod licenco GPL. Ta licenca je tu na voljo le v informativne namene. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Večplatformna orodjarna GUI, ki jo uporablja Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "Trenutno že teče ena različica Pidgina. Prosimo, zaprite aplikacijo in poskusite znova."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Temeljne datoteke in knjižnice za Pidgin"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "Ustvari izbiro Pidgin v meniju Start"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "Ustvari bližnjico za Pidgin na namizju"b
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Privzeto za namizje"
+msgstr "Namizje"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15255,8 +15254,9 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr ""
+msgstr "Izvajalno okolje GTK+ (zahtevano)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15264,12 +15264,11 @@ msgstr "Lokacija"
 
 #. License Page
 msgid "Next >"
-msgstr ""
+msgstr "Naprej >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Spletni sel Pidgin"
+msgstr "Pidgin - odjemalec za klepet (zahtevano)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15278,54 +15277,54 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Tipke za bližnjico"
+msgstr "Tipke za bližnjice"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "Bližnjice za zagon Pidgina"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "Podpora preverjanja črkovanja"
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "Zagon"
+msgstr "Začetni meni"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "Podpora preverjanja črkovanja.  (Za namestitev je potrebna spletna povezava)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "Vzdevek \"%s\" že obstaja."
+msgstr "Nameščanje že poteka."
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Vnosov za Pidgin v registru ni mogoče najti.$\\rNajverjetneje je ta program namestil drug uporabnik."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "Upravljač za URL-je \"myim\""
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
-msgstr ""
+msgstr "Trenutno nameščene različice Pidgina ni mogoče odstraniti. Nova različica bo nameščena brez odstranitve trenutno nameščene različice."
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Obiščite spletno stran Pidgin"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Za odstranitev programa nimate ustreznih pravic."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Current Mood"

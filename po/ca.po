@@ -15305,31 +15305,30 @@ msgstr "Aquest connector és útil per a depurar servidors o clients XMPP."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) és distribuït sota llicència GPL. Podeu consultar la llicència, només per proposits informatius, aquí.  $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Una eina IGU multiplataforma, utilitzada per Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "Hi ha una instància del Pidgin executant-se. Surt del Pidgin i torna a intentar-ho."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Fitxers i dlls del nucli de Pidgin"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "Crear una entrada Pidgin al Menu Inici"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "Afegir un enllaç directe al Pidgin a l'Escriptori"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Valor predeterminat de l'escriptori"
+msgstr "Escriptori"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15344,21 +15343,19 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "Versió del mòdul d'execució de GTK+"
+msgstr "Entorn d'Execució GTK+ (necessari)"
 
 #, fuzzy
 msgid "Localizations"
 msgstr "Ubicació"
 
 #. License Page
-#, fuzzy
 msgid "Next >"
-msgstr "Text"
+msgstr "Següent >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Missatger d'Internet Pidgin"
+msgstr "Client Pidgin de Missatgeria Instantània (necessari)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15367,39 +15364,35 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Drecera"
+msgstr "Enllaços directes"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "Enllaços directes per iniciar el Pidgin"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "Suport a la Verificació de l'Ortografia "
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "Inicialització"
+msgstr "Menu Inici"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "Suport per a Verificació de l'Ortografia.  (és necesaria connexió a internet per dur a terme la instal.lació)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "Ja hi ha algú amb el sobrenom «%s»."
+msgstr "L'instal.lador encara està executant-se."
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "L'instal.lador podria no trobar les entrades del registre de Pidgin.$\\rProbablement un altre usuari ha instal.lat aquesta aplicació."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "Gestor d'URL myim"
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -15409,12 +15402,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Visita la pàgina web de Pidgin per Windows"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "No tens permís per desinstal.lar aquesta aplicació."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Current Mood"

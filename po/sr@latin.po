@@ -15506,7 +15506,7 @@ msgid ""
 msgstr ""
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Skup oruđa za grafičko okruženje, za više platformi, koristi ga Pidgin "
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -15514,7 +15514,7 @@ msgid ""
 msgstr ""
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Osnovne Pidgin datoteke i dinamičke biblioteke"
 
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
@@ -15525,9 +15525,8 @@ msgstr ""
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Podrazumevano na sitemu"
+msgstr ""
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15542,7 +15541,7 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+ biblioteka izdanje"
+msgstr "GTK+ okolina za izvršavanje (neophodno)"
 
 #, fuzzy
 msgid "Localizations"
@@ -15553,9 +15552,8 @@ msgid "Next >"
 msgstr ""
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Pidžin Internet pismonoša"
+msgstr "Pidgin klijent za brze poruke (neophodno)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15591,12 +15589,11 @@ msgstr "Ovo ime ćaskanja je već zauzeto"
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Program za uklanjanje instalacije ne može da pronađe stavke registra za Pidgin.$\\rVerovatno je ovu aplikaciju instalirao drugi korisnik."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "Rukovodilac adresa Mog svemira"
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -15609,9 +15606,13 @@ msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Nemate ovlašćenja za deinstalaciju ove aplikacije."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #~ msgid "Artist"

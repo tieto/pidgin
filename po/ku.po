@@ -15779,31 +15779,30 @@ msgstr ""
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr ""
+msgstr "$(^Name) bin lîsansa Lîsansa Gelempera Gistî ya GNU (GPL) hatiye weşandin. Ji bo agahî, ev lîsans li vir tê xwendin. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr ""
+msgstr "Paketa amûrên GUI ji bo gelek platforman, ji hêla Pidgin tê bikaranîn."
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "Pidgin niha jixwe dimeşe. Ji Pidgin ê derkeve û careke din biceribîne."
 
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr "Dosiyên cevherî ya Pidgin û dll"
 
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "Pidgin ê binivîse menuya destpêk"
 
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "rêya kin a Pidgin di sermasêyê de çêke"
 
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
-#, fuzzy
 msgid "Desktop"
-msgstr "Yê Heyî Bipejirîne"
+msgstr "Sermasê"
 
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
@@ -15818,21 +15817,19 @@ msgstr ""
 
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
-msgstr "Guhertoya GTK+Runtime"
+msgstr "GTK+ Runtime Environment (pêwîst)"
 
 #, fuzzy
 msgid "Localizations"
 msgstr "Cih"
 
 #. License Page
-#, fuzzy
 msgid "Next >"
-msgstr "Deq"
+msgstr "Pêş >"
 
 #. Components Page
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "Peyamnêra înternetê"
+msgstr "Pidgin Instant Messaging Client (pêwîst)"
 
 #. GTK+ Section Prompts
 msgid ""
@@ -15841,39 +15838,35 @@ msgid ""
 "Runtime?"
 msgstr ""
 
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Kurterê"
+msgstr "Riyên kin"
 
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "rêya kin a ji bo destpêkirina Pidgin"
 
 #. Spellcheck Section Prompts
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "Desteka kontrola rastnivîsê"
 
-#, fuzzy
 msgid "Start Menu"
-msgstr "Destpêkirin"
+msgstr "Menuya destpêkê"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "Desteka kontrola rastnivîsê.  (Ji bo sazkirinê înternet pêwîst e)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "Vî navê sohbetê vêga dixebite"
+msgstr "Sazker jixwe dimeşe."
 
 #. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ""
+msgstr "Raker têketiyên registry yên Pidgin nedît. $\\rQey bikarhênereke din vê bername saz kir."
 
 #. URL Handler section
-#, fuzzy
 msgid "URI Handlers"
-msgstr "_Vatinî:"
+msgstr ""
 
 #. Pidgin Section Prompts and Texts
 msgid ""
@@ -15883,12 +15876,16 @@ msgstr ""
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr "Were Malpera Pidgin"
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr "Destûra te ji bo rakirina vê bernameyê tune."
 
-msgid "spellcheck_faq"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy
