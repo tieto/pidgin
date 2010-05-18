@@ -78,7 +78,7 @@ msn_slplink_new(MsnSession *session, const char *username)
 	session->slplinks =
 		g_list_append(session->slplinks, slplink);
 
-	return slplink;
+	return msn_slplink_ref(slplink);
 }
 
 void
@@ -93,6 +93,11 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	if (slplink->swboard != NULL)
 		slplink->swboard->slplinks = g_list_remove(slplink->swboard->slplinks, slplink);
+
+	if (slplink->refs > 1) {
+		slplink->refs--;
+		return;
+	}
 
 	session = slplink->session;
 
@@ -112,6 +117,31 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 	g_free(slplink->remote_user);
 
 	g_free(slplink);
+}
+
+MsnSlpLink *
+msn_slplink_ref(MsnSlpLink *slplink)
+{
+	g_return_val_if_fail(slplink != NULL, NULL);
+
+	slplink->refs++;
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slplink ref (%p)[%d]\n", slplink, slplink->refs);
+
+	return slplink;
+}
+
+void
+msn_slplink_unref(MsnSlpLink *slplink)
+{
+	g_return_if_fail(slplink != NULL);
+
+	slplink->refs--;
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "slplink unref (%p)[%d]\n", slplink, slplink->refs);
+
+	if (slplink->refs == 0)
+		msn_slplink_destroy(slplink);
 }
 
 MsnSlpLink *
@@ -307,11 +337,14 @@ msg_ack(MsnMessage *msg, void *data)
 
 	slpmsg->offset += msg->msnslp_header.length;
 
+	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
+
 	if (slpmsg->offset < real_size)
 	{
 		if (slpmsg->slpcall->xfer && purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
 		{
 			slpmsg->slpcall->xfer_msg = slpmsg;
+			msn_message_ref(msg);
 			purple_xfer_prpl_ready(slpmsg->slpcall->xfer);
 		}
 		else
@@ -331,8 +364,6 @@ msg_ack(MsnMessage *msg, void *data)
 			}
 		}
 	}
-
-	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
 }
 
 /* We have received the message nak. */
@@ -352,6 +383,7 @@ static void
 msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	MsnMessage *msg;
+	const char *passport;
 
 	slpmsg->msg = msg = msn_message_new_msnslp();
 
@@ -390,7 +422,8 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	msg->msnslp_header.total_size = slpmsg->size;
 
-	msn_message_set_attr(msg, "P2P-Dest", slplink->remote_user);
+	passport = purple_normalize(slplink->session->account, slplink->remote_user);
+	msn_message_set_attr(msg, "P2P-Dest", passport);
 
 	msg->ack_cb = msg_ack;
 	msg->nak_cb = msg_nak;
@@ -658,74 +691,65 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	}
 }
 
-typedef struct
-{
-	guint32 length;
-	guint32 unk1;
-	guint32 file_size;
-	guint32 unk2;
-	guint32 unk3;
-} MsnContextHeader;
-
-#define MAX_FILE_NAME_LEN 0x226
-
 static gchar *
 gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
 {
 	gsize size = 0;
-	MsnContextHeader header;
+	MsnFileContext *header;
 	gchar *u8 = NULL;
-	guchar *base;
-	guchar *n;
 	gchar *ret;
 	gunichar2 *uni = NULL;
 	glong currentChar = 0;
-	glong uni_len = 0;
-	gsize len;
+	glong len = 0;
+	const char *preview;
+	gsize preview_len;
 
 	size = purple_xfer_get_size(xfer);
 
-	if(!file_name) {
+	purple_xfer_prepare_thumbnail(xfer, "png");
+
+	if (!file_name) {
 		gchar *basename = g_path_get_basename(file_path);
 		u8 = purple_utf8_try_convert(basename);
 		g_free(basename);
 		file_name = u8;
 	}
 
-	uni = g_utf8_to_utf16(file_name, -1, NULL, &uni_len, NULL);
+	uni = g_utf8_to_utf16(file_name, -1, NULL, &len, NULL);
 
-	if(u8) {
+	if (u8) {
 		g_free(u8);
 		file_name = NULL;
 		u8 = NULL;
 	}
 
-	len = sizeof(MsnContextHeader) + MAX_FILE_NAME_LEN + 4;
+	preview = purple_xfer_get_thumbnail(xfer, &preview_len);
+	header = g_malloc(sizeof(MsnFileContext) + preview_len);
 
-	header.length = GUINT32_TO_LE(len);
-	header.unk1 = GUINT32_TO_LE(2);
-	header.file_size = GUINT32_TO_LE(size);
-	header.unk2 = GUINT32_TO_LE(0);
-	header.unk3 = GUINT32_TO_LE(0);
+	header->length = GUINT32_TO_LE(sizeof(MsnFileContext) - 1);
+	header->version = GUINT32_TO_LE(2); /* V.3 contains additional unnecessary data */
+	header->file_size = GUINT64_TO_LE(size);
+	if (preview)
+		header->type = GUINT32_TO_LE(0);
+	else
+		header->type = GUINT32_TO_LE(1);
 
-	base = g_malloc(len + 1);
-	n = base;
-
-	memcpy(n, &header, sizeof(MsnContextHeader));
-	n += sizeof(MsnContextHeader);
-
-	memset(n, 0x00, MAX_FILE_NAME_LEN);
-	for(currentChar = 0; currentChar < uni_len; currentChar++) {
-		*((gunichar2 *)n + currentChar) = GUINT16_TO_LE(uni[currentChar]);
+	len = MIN(len, MAX_FILE_NAME_LEN);
+	for (currentChar = 0; currentChar < len; currentChar++) {
+		header->file_name[currentChar] = GUINT16_TO_LE(uni[currentChar]);
 	}
-	n += MAX_FILE_NAME_LEN;
+	memset(&header->file_name[currentChar], 0x00, (MAX_FILE_NAME_LEN - currentChar) * 2);
 
-	memset(n, 0xFF, 4);
-	n += 4;
+	memset(&header->unknown1, 0, sizeof(header->unknown1));
+	header->unknown2 = GUINT32_TO_LE(0xffffffff);
+	if (preview) {
+		memcpy(&header->preview, preview, preview_len);
+	}
+	header->preview[preview_len] = '\0';
 
 	g_free(uni);
-	ret = purple_base64_encode(base, len);
-	g_free(base);
+	ret = purple_base64_encode((const guchar *)header, sizeof(MsnFileContext) + preview_len);
+	g_free(header);
 	return ret;
 }
 

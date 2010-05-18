@@ -223,16 +223,8 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 
 	g_return_val_if_fail(menuitems != NULL, NULL);
 
-#if 0 /* GTK_CHECK_VERSION(2,4,0) */
-	if(type == PURPLE_PREF_INT)
-		model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
-	else if(type == PURPLE_PREF_STRING)
-		model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
-	dropdown = gtk_combo_box_new_with_model(model);
-#else
 	dropdown = gtk_option_menu_new();
 	menu = gtk_menu_new();
-#endif
 
 	if (type == PURPLE_PREF_INT)
 		stored_int = purple_prefs_get_int(key);
@@ -908,11 +900,9 @@ prefs_build_theme_combo_box(GtkListStore *store, const char *current_theme, cons
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "pixbuf", 0, NULL);
 
 	cell_rend = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT (combo_box), cell_rend, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), cell_rend, "markup", 1, NULL);
-/*#if GTK_CHECK_VERSION(2,6,0)
-			g_object_set(cell_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif*/
+	g_object_set(cell_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 
 	gtk_drag_dest_set(combo_box, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP, te,
 					sizeof(te) / sizeof(GtkTargetEntry) , GDK_ACTION_COPY | GDK_ACTION_MOVE);
@@ -1090,7 +1080,7 @@ theme_page(void)
 	g_signal_connect(G_OBJECT(prefs_blist_themes_combo_box), "changed",
 						(GCallback)prefs_set_blist_theme_cb, NULL);
 	gtk_size_group_add_widget(combo_sg, prefs_blist_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_blist_themes_combo_box, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_blist_themes_combo_box, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
 
@@ -1108,7 +1098,7 @@ theme_page(void)
 	g_signal_connect(G_OBJECT(prefs_status_themes_combo_box), "changed",
 						(GCallback)prefs_set_status_icon_theme_cb, NULL);
 	gtk_size_group_add_widget(combo_sg, prefs_status_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_status_themes_combo_box, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_status_themes_combo_box, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
 
@@ -1126,7 +1116,7 @@ theme_page(void)
 	g_signal_connect(G_OBJECT(prefs_sound_themes_combo_box), "changed",
 						(GCallback)prefs_set_sound_theme_cb, NULL);
 	gtk_size_group_add_widget(combo_sg, prefs_sound_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_sound_themes_combo_box, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_sound_themes_combo_box, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
 
@@ -1144,7 +1134,7 @@ theme_page(void)
 	g_signal_connect(G_OBJECT(prefs_smiley_themes_combo_box), "changed",
 						(GCallback)prefs_set_smiley_theme_cb, NULL);
 	gtk_size_group_add_widget(combo_sg, prefs_smiley_themes_combo_box);
-	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_smiley_themes_combo_box, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(themesel_hbox), prefs_smiley_themes_combo_box, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), themesel_hbox, FALSE, FALSE, 0);
 
@@ -1419,10 +1409,8 @@ interface_page(void)
 					_("Bottom"), GTK_POS_BOTTOM,
 					_("Left"), GTK_POS_LEFT,
 					_("Right"), GTK_POS_RIGHT,
-#if GTK_CHECK_VERSION(2,6,0)
 					_("Left Vertical"), GTK_POS_LEFT|8,
 					_("Right Vertical"), GTK_POS_RIGHT|8,
-#endif
 					NULL);
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
@@ -1517,7 +1505,7 @@ conv_page(void)
 		PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines",
 		1, 8, NULL);
 
-#if GTK_CHECK_VERSION(2,4,0) && defined _WIN32
+#ifdef _WIN32
 	{
 	GtkWidget *fontpref, *font_button, *hbox;
 	const char *font_name;
@@ -2729,12 +2717,7 @@ away_page(void)
 static int
 prefs_notebook_add_page(const char *text, GtkWidget *page, int ind)
 {
-#if GTK_CHECK_VERSION(2,4,0)
 	return gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
-#else
-	gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
-	return gtk_notebook_page_num(GTK_NOTEBOOK(prefsnotebook), page);
-#endif
 }
 
 static void

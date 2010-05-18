@@ -379,11 +379,16 @@ _proxy_fill_hostinfo(PurpleProxyInfo *info, char *host, int default_port)
 	char *d;
 
 	d = g_strrstr(host, ":");
-	if (d)
+	if (d) {
 		*d = '\0';
-	d++;
-	if (*d)
-		sscanf(d, "%d", &port);
+
+		d++;
+		if (*d)
+			sscanf(d, "%d", &port);
+
+		if (port == 0)
+			port = default_port;
+	}
 
 	purple_proxy_info_set_host(info, host);
 	purple_proxy_info_set_port(info, port);

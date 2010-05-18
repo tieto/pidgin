@@ -115,9 +115,9 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 
 	buddy = purple_find_buddy( session->acc, username );
 	if ( buddy ) {
-		purple_notify_user_info_add_pair( info, _( "Alias" ), buddy->alias );
+		purple_notify_user_info_add_pair( info, _( "Alias" ), purple_buddy_get_alias( buddy ) );
 		purple_notify_user_info_add_section_break( info );
-		contact = buddy->proto_data;
+		contact = purple_buddy_get_protocol_data(buddy);
 	}
 
 	purple_notify_user_info_add_pair( info, _( "Nick Name" ), profile->nickname );
@@ -128,7 +128,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	purple_notify_user_info_add_section_break( info );
 
 	/* optional information */
-	purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
+	purple_notify_user_info_add_pair( info, _( "Job Title" ), profile->title );
 	purple_notify_user_info_add_pair( info, _( "First Name" ), profile->firstname );
 	purple_notify_user_info_add_pair( info, _( "Last Name" ), profile->lastname );
 	purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );

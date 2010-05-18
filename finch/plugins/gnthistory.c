@@ -158,7 +158,7 @@ history_prefs_check(PurplePlugin *plugin)
 		while (list) {
 			const char *label = _(list->data);
 			list = g_list_delete_link(list, list);
-			purple_request_field_list_add(field, label, list->data);
+			purple_request_field_list_add_icon(field, label, NULL, list->data);
 			if (system && strcmp(system, list->data) == 0)
 				purple_request_field_list_add_selected(field, label);
 			list = g_list_delete_link(list, list);

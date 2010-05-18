@@ -273,7 +273,7 @@ void mxit_send_poll( struct MXitSession* session );
 
 void mxit_send_presence( struct MXitSession* session, int presence, const char* statusmsg );
 void mxit_send_mood( struct MXitSession* session, int mood );
-void mxit_send_message( struct MXitSession* session, const char* to, const char* msg, gboolean parse_markup );
+void mxit_send_message( struct MXitSession* session, const char* to, const char* msg, gboolean parse_markup, gboolean is_command );
 
 void mxit_send_extprofile_update( struct MXitSession* session, const char* password, unsigned int nr_attrib, const char* attributes );
 void mxit_send_extprofile_request( struct MXitSession* session, const char* username, unsigned int nr_attrib, const char* attribute[] );

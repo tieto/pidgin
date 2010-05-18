@@ -431,9 +431,7 @@ int main(int argc, char *argv[])
 	g_thread_init(NULL);
 
 	g_set_prgname("Finch");
-#if GLIB_CHECK_VERSION(2,2,0)
 	g_set_application_name(_("Finch"));
-#endif
 
 	if (gnt_start(&argc, &argv)) {
 		gnt_main();

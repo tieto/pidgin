@@ -1,3 +1,28 @@
+pidgin (2.7.0-1~bpo50+1) lenny-backports; urgency=low
+
+  * Rebuild for lenny-backports.
+  * Changes to Build-Depends:
+    - Lowered cdbs versioned depends to 0.4.52 which is in stable.
+    - Removed versioning from libsilc-dev because the renaming was after that
+      version anyway.
+    - Removed libgstfarsight0.10-dev and call configure with --disable-vv
+      --disable-farsight, the libraries for that are too much to carry.
+  * converting back to source format 1.0. via debian/source/format
+
+ -- Jan Wagner <waja@cyconet.org>  Tue, 18 May 2010 09:13:02 +0200
+
+pidgin (2.7.0-1) unstable; urgency=medium
+
+  * New upstream release
+    - Fixes an MSN emoticon DoS (CVE-2010-1624)
+    - Fixes ICQ encoding problems with cyrillic (Closes: #571928)
+    - Fixes notification icon transparency (Closes: #566631)
+    - Fixes ICQ icon size limits (Closes: #570482)
+    - Fixes NSS problem on libpurple reload (Closes: #573065)
+    - Fixes double-free if ssl handshake fails with XMPP (Closes: #573068)
+
+ -- Ari Pollak <ari@debian.org>  Wed, 12 May 2010 23:29:21 -0400
+
 pidgin (2.6.6-2) unstable; urgency=low
 
   * debian/patches/oscar_login.patch:

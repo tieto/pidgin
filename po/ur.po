@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Urdu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 20:36-0500\n"
+"POT-Creation-Date: 2010-03-29 00:17-0700\n"
 "PO-Revision-Date: 2007-11-14 14:00+0530\n"
 "Last-Translator: RKVS Raman <raman@cdacbangalore.in>\n"
 "Language-Team: C-DAC,Gist,Urdu Team / BharateeyaOO.o <info.gist@cdac.in / "
@@ -1611,6 +1611,7 @@ msgstr ""
 msgid "Online"
 msgstr "آن لائن"
 
+#. primative,						no,							id,			name
 msgid "Offline"
 msgstr " آف لائن  "
 
@@ -2002,6 +2003,10 @@ msgstr "ڈائریکٹری  بھیج نہیں سکتا۔"
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%sمستقل فائل نہیں ہے۔بزدلی سے اسے اوور رائٹ کرنے سے انکار کررہا ہے۔\n"
 
+#, fuzzy
+msgid "File is not readable."
+msgstr " ڈائریكٹری لكھنے كے قابل نہیں ہے۔"
+
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s آپ کو  %s بھیجنا چاہتا ہے(%s )"
@@ -2270,22 +2275,18 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "سائن پر نا معلوم خامی واقع ہوگئی:%s۔"
 
-#, fuzzy
-msgid "Conference error"
-msgstr "كانفرنس بندہوئی"
-
 msgid "Error with your microphone"
 msgstr ""
 
 msgid "Error with your webcam"
 msgstr ""
 
+#, fuzzy
+msgid "Conference error"
+msgstr "كانفرنس بندہوئی"
+
 #, fuzzy, c-format
 msgid "Error creating session: %s"
-msgstr "خامی رابطہ قائم کررہی ہے"
-
-#, fuzzy
-msgid "Error creating conference."
 msgstr "خامی رابطہ قائم کررہی ہے"
 
 #, c-format
@@ -3065,18 +3066,6 @@ msgstr "%sنےگفتگوبند كردی۔"
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "پیام بھیجا نہیں جاسكا،گفتگو شروع نہیں ہو سكی۔"
 
-#, fuzzy, c-format
-msgid "Unable to create socket: %s"
-msgstr "ساكیٹ كی تخلیق  نا ممكن :n%s"
-
-#, fuzzy, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "ساكیٹ كوپورٹ كےلیےباندھ نہیں سكا"
-
-#, fuzzy, c-format
-msgid "Unable to listen on socket: %s"
-msgstr "ساكیٹ كی تخلیق  نا ممكن :n%s"
-
 #, fuzzy
 msgid "Error communicating with local mDNSResponder."
 msgstr "سرور کے ساتھ رابطہ کرنے میں خامی"
@@ -3232,10 +3221,20 @@ msgstr "بڈی کے لئے گفتگو منتخب کریں:%s"
 msgid "Add to chat..."
 msgstr "گفتگو میں ملاؤ۔۔۔"
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "دستیاب"
 
+#. 2
+msgid "Chatty"
+msgstr "باتونی"
+
+#. 3
+msgid "Do Not Disturb"
+msgstr "ڈسٹرب مت کرو"
+
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3875,6 +3874,14 @@ msgstr "سرور کو ضرورت ہے TLS/SSL لاگ ان کے لئے۔  کوئ�
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "سرور کو ان اینکریپٹیڈ اسٹریم پر سادہ متن تصدیق کی ضرورت ہے "
 
+#. This should never happen!
+#, fuzzy
+msgid "Invalid response from server"
+msgstr "سرور سے غیر معتبر رد عمل۔"
+
+msgid "Server does not use any supported authentication method"
+msgstr "سرور کوئی مستند طریقے کا تعاون استعمال نہیں کرتا"
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3885,26 +3892,38 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "سادہ متن تصدیق"
 
-#, fuzzy
-msgid "SASL authentication failed"
-msgstr "تصدیق نا کام"
-
-#, fuzzy
-msgid "Invalid response from server"
-msgstr "سرور سے غیر معتبر رد عمل۔"
-
-msgid "Server does not use any supported authentication method"
-msgstr "سرور کوئی مستند طریقے کا تعاون استعمال نہیں کرتا"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
 
 msgid "Invalid challenge from server"
 msgstr "سرور سے غیر معتبر چیلینج"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "تصدیق نا کام"
+
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "SASL خامی"
+
+#, fuzzy
+msgid "Unable to canonicalize username"
+msgstr "وضع کرنے میں نا قابل"
+
+#, fuzzy
+msgid "Unable to canonicalize password"
+msgstr "گائم سننے والے پورٹ کھول نہیں سکا۔"
+
+#, fuzzy
+msgid "Malicious challenge from server"
+msgstr "سرور سے غیر معتبر چیلینج"
+
+#, fuzzy
+msgid "Unexpected response from server"
+msgstr "غیر قبول   HTTP رسپانس سرور سے وصول كیا جاتا ہے۔"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr ""
@@ -4016,13 +4035,17 @@ msgstr "ترجیح"
 msgid "Resource"
 msgstr "ماخذ"
 
-#, c-format
-msgid "%s ago"
-msgstr ""
+#, fuzzy
+msgid "Uptime"
+msgstr "آخری اپ ڈیٹ"
 
 #, fuzzy
 msgid "Logged Off"
 msgstr "لاگڈ ان"
+
+#, c-format
+msgid "%s ago"
+msgstr ""
 
 msgid "Middle Name"
 msgstr "درمیانی نام"
@@ -4072,15 +4095,6 @@ msgstr "لاگڈ ان"
 #, fuzzy
 msgid "Log Out"
 msgstr "لاگ چیٹس"
-
-msgid "Chatty"
-msgstr "باتونی"
-
-msgid "Extended Away"
-msgstr " "
-
-msgid "Do Not Disturb"
-msgstr "ڈسٹرب مت کرو"
 
 msgid "JID"
 msgstr "JID"
@@ -4219,11 +4233,6 @@ msgstr "رول"
 msgid "Ping timed out"
 msgstr "سادہ متن"
 
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-
 #, fuzzy
 msgid "Invalid XMPP ID"
 msgstr "IDغیر معتبر"
@@ -4356,6 +4365,7 @@ msgstr "کو"
 msgid "None (To pending)"
 msgstr "کوئی نہیں(پینڈینک کے لئے)"
 
+#. 0
 msgid "None"
 msgstr "کوئی نہیں"
 
@@ -4370,6 +4380,14 @@ msgstr "بلڈ ٹائپ"
 #, fuzzy
 msgid "Allow Buzz"
 msgstr "اجازت دو"
+
+#, fuzzy
+msgid "Mood Name"
+msgstr "درمیانی نام"
+
+#, fuzzy
+msgid "Mood Comment"
+msgstr "بڈی رائے"
 
 msgid "Tune Artist"
 msgstr ""
@@ -4617,11 +4635,6 @@ msgid ""
 "buzzes now."
 msgstr "آواز بجانے میں نا قابل کیونکہ منتخب کی گئی فائل(%s)موجود نہیں ہے۔"
 
-# msgstr "%s has added you [%s]"
-#, c-format
-msgid "Buzzing %s..."
-msgstr ""
-
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 #, fuzzy
@@ -4630,6 +4643,11 @@ msgstr "Buzz!!"
 
 #, c-format
 msgid "%s has buzzed you!"
+msgstr ""
+
+# msgstr "%s has added you [%s]"
+#, c-format
+msgid "Buzzing %s..."
 msgstr ""
 
 #, fuzzy, c-format
@@ -4663,6 +4681,10 @@ msgstr "فائل منتخب کرو"
 #, fuzzy
 msgid "Initiate Media"
 msgstr "ابتدائی - گفتگو"
+
+#, fuzzy
+msgid "Account does not support PEP, can't set mood"
+msgstr "یہ پروٹوکالس کمرہ گفتگو کو تعاون نہیں دیتا۔"
 
 msgid "config:  Configure a chat room."
 msgstr "وضع:کمرہ گفتگو کو ہیئت دو۔"
@@ -4720,6 +4742,13 @@ msgstr ""
 
 msgid "buzz: Buzz a user to get their attention"
 msgstr "بز:صارف كی توجہ حاصل كرنےكےلیےبزكریں"
+
+#, fuzzy
+msgid "mood: Set current user mood"
+msgstr "درست صارف منتخب کرو"
+
+msgid "Extended Away"
+msgstr " "
 
 #. *< type
 #. *< ui_requirement
@@ -4800,11 +4829,21 @@ msgstr "مہمل  پیام خامی"
 msgid "(Code %s)"
 msgstr " (کوڈ %s)"
 
+#, fuzzy
+msgid "A custom smiley in the message is too large to send."
+msgstr "پیام بھیجنے میں ناقابل:پیام بہت بڑا ہے۔"
+
+msgid "XMPP stream header missing"
+msgstr ""
+
+msgid "XMPP Version Mismatch"
+msgstr ""
+
+msgid "XMPP stream missing ID"
+msgstr ""
+
 msgid "XML Parse error"
 msgstr "XMLتصریف خامی"
-
-msgid "Unknown Error in presence"
-msgstr "حال میں نامعلوم خامی"
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4841,6 +4880,9 @@ msgstr "آپ  کو%s: (%s)کے ذریعے ٹھوکر ماری گئی۔"
 #, fuzzy, c-format
 msgid "Kicked (%s)"
 msgstr " %s (%s)کے ذریعے ٹھوکر ماری گئی"
+
+msgid "Unknown Error in presence"
+msgstr "حال میں نامعلوم خامی"
 
 #, fuzzy
 msgid "An error occurred on the in-band bytestream transfer\n"
@@ -4879,19 +4921,320 @@ msgstr ""
 "کرے گے۔"
 
 #, fuzzy
-msgid "Edit User Mood"
-msgstr "صارف موڈس"
+msgid "Afraid"
+msgstr "عربی"
 
-msgid "Please select your mood from the list."
+#, fuzzy
+msgid "Amazed"
+msgstr "شرمندہ"
+
+#, fuzzy
+msgid "Amorous"
+msgstr "گلوریس"
+
+#. 1
+msgid "Angry"
+msgstr "غصہ"
+
+#, fuzzy
+msgid "Annoyed"
+msgstr "روک دیا گیا"
+
+msgid "Anxious"
+msgstr "متفکر"
+
+#, fuzzy
+msgid "Aroused"
+msgstr "آپ بھیجيں"
+
+msgid "Ashamed"
+msgstr "شرمندہ"
+
+msgid "Bored"
+msgstr "اکتاہٹ"
+
+#, fuzzy
+msgid "Brave"
+msgstr "محفوظ کرو"
+
+#, fuzzy
+msgid "Calm"
+msgstr "Realm"
+
+#, fuzzy
+msgid "Cautious"
+msgstr "گفتگو"
+
+#, fuzzy
+msgid "Cold"
+msgstr "جلی"
+
+#, fuzzy
+msgid "Confident"
+msgstr "جھگڑا"
+
+#, fuzzy
+msgid "Confused"
+msgstr "جاری"
+
+#, fuzzy
+msgid "Contemplative"
+msgstr "معلومات سے رابطہ كیجیے"
+
+#, fuzzy
+msgid "Contented"
+msgstr "كنیكٹ كیا گیا"
+
+#, fuzzy
+msgid "Cranky"
+msgstr "ادارہ"
+
+msgid "Crazy"
 msgstr ""
 
 #, fuzzy
-msgid "Set"
-msgstr "سیٹ کرو"
+msgid "Creative"
+msgstr "تخلیق كریں"
 
 #, fuzzy
-msgid "Set Mood..."
-msgstr "فولڈ ر منتخب كریں۔۔۔"
+msgid "Curious"
+msgstr "گلوریس"
+
+#, fuzzy
+msgid "Dejected"
+msgstr "ریجیكٹ"
+
+#, fuzzy
+msgid "Depressed"
+msgstr "خارج کرو"
+
+#, fuzzy
+msgid "Disappointed"
+msgstr "منقطع کیا گیا۔"
+
+msgid "Disgusted"
+msgstr ""
+
+#, fuzzy
+msgid "Dismayed"
+msgstr "_نااہل"
+
+#, fuzzy
+msgid "Distracted"
+msgstr "علیحدہ کرو"
+
+msgid "Embarrassed"
+msgstr ""
+
+#, fuzzy
+msgid "Envious"
+msgstr "متفکر"
+
+#. 2
+msgid "Excited"
+msgstr "پر جوش "
+
+#, fuzzy
+msgid "Flirtatious"
+msgstr "گلوریس"
+
+#, fuzzy
+msgid "Frustrated"
+msgstr "ابتدائی نام"
+
+msgid "Grateful"
+msgstr ""
+
+#, fuzzy
+msgid "Grieving"
+msgstr "گروپ"
+
+#. 3
+#, fuzzy
+msgid "Grumpy"
+msgstr "گروپ"
+
+#, fuzzy
+msgid "Guilty"
+msgstr "شہر"
+
+#. 4
+msgid "Happy"
+msgstr "خوش"
+
+msgid "Hopeful"
+msgstr ""
+
+#. 8
+#, fuzzy
+msgid "Hot"
+msgstr "_ ہوسٹ:"
+
+msgid "Humbled"
+msgstr ""
+
+msgid "Humiliated"
+msgstr ""
+
+#, fuzzy
+msgid "Hungry"
+msgstr "غصہ"
+
+#, fuzzy
+msgid "Hurt"
+msgstr "مذاق"
+
+msgid "Impressed"
+msgstr ""
+
+#, fuzzy
+msgid "In awe"
+msgstr "محبت میں"
+
+msgid "In love"
+msgstr "محبت میں"
+
+#, fuzzy
+msgid "Indignant"
+msgstr "میسی ڈونین"
+
+#, fuzzy
+msgid "Interested"
+msgstr "دلچسپیاں"
+
+#, fuzzy
+msgid "Intoxicated"
+msgstr "مدعوكریں"
+
+#. 6
+msgid "Invincible"
+msgstr " نا قابل فتح"
+
+msgid "Jealous"
+msgstr "حسد"
+
+#, fuzzy
+msgid "Lonely"
+msgstr "بندر"
+
+#, fuzzy
+msgid "Lost"
+msgstr "بہت ہی زیادہ زورسے"
+
+msgid "Lucky"
+msgstr ""
+
+#, fuzzy
+msgid "Mean"
+msgstr "جرمنی"
+
+#, fuzzy
+msgid "Moody"
+msgstr "موڈ"
+
+msgid "Nervous"
+msgstr ""
+
+#, fuzzy
+msgid "Neutral"
+msgstr "ڈی فا لٹ"
+
+#, fuzzy
+msgid "Offended"
+msgstr " آف لائن  "
+
+msgid "Outraged"
+msgstr ""
+
+#, fuzzy
+msgid "Playful"
+msgstr "بجاو"
+
+#, fuzzy
+msgid "Proud"
+msgstr "زور سے"
+
+#, fuzzy
+msgid "Relaxed"
+msgstr "اصل نام"
+
+#, fuzzy
+msgid "Relieved"
+msgstr "میسیج بھیجو"
+
+#, fuzzy
+msgid "Remorseful"
+msgstr "نکالو"
+
+#, fuzzy
+msgid "Restless"
+msgstr "رجسٹر"
+
+#. 7
+msgid "Sad"
+msgstr "غمگین"
+
+msgid "Sarcastic"
+msgstr ""
+
+msgid "Satisfied"
+msgstr ""
+
+#, fuzzy
+msgid "Serious"
+msgstr "گلوریس"
+
+#, fuzzy
+msgid "Shocked"
+msgstr "بلاک کیا گیا"
+
+msgid "Shy"
+msgstr ""
+
+#. 9
+#, fuzzy
+msgid "Sick"
+msgstr "نک"
+
+#. 10
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "نیند"
+
+msgid "Spontaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Stressed"
+msgstr "رفتار:"
+
+#, fuzzy
+msgid "Strong"
+msgstr "_سارٹ کررہا ہے:"
+
+msgid "Surprised"
+msgstr ""
+
+msgid "Thankful"
+msgstr ""
+
+msgid "Thirsty"
+msgstr ""
+
+#, fuzzy
+msgid "Tired"
+msgstr "فائر"
+
+#, fuzzy
+msgid "Undefined"
+msgstr "خط کشیدہ"
+
+msgid "Weak"
+msgstr ""
+
+#, fuzzy
+msgid "Worried"
+msgstr "اکتاہٹ"
 
 msgid "Set User Nickname"
 msgstr ""
@@ -4903,6 +5246,10 @@ msgid ""
 "This information is visible to all contacts on your contact list, so choose "
 "something appropriate."
 msgstr ""
+
+#, fuzzy
+msgid "Set"
+msgstr "سیٹ کرو"
 
 #, fuzzy
 msgid "Set Nickname..."
@@ -4950,183 +5297,140 @@ msgstr ""
 "%sلوکل لسٹ پر   ہے لیکن سرور لسٹ پر نہیں۔کیا آپ اس بڈی کو شامل کرنا چاہتے "
 "ہیں؟"
 
-#, c-format
 msgid "Unable to parse message"
 msgstr "پیام  کی تصریف میں ناقابل"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Syntax Error (probably a client bug)"
 msgstr "سیٹیکس خامی (شاید گائم بگ)"
 
-#, c-format
 msgid "Invalid email address"
 msgstr "غیرمعتبرe-maiپتہ"
 
-#, c-format
 msgid "User does not exist"
 msgstr "صارف موجود نہیں"
 
-#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "مكمل كوالیفائیڈ ڈومین نام گم شدہ ہے"
 
-#, c-format
 msgid "Already logged in"
 msgstr "پہلے ہی سے لاگ ان"
 
-#, fuzzy, c-format
+#, fuzzy
 msgid "Invalid username"
 msgstr "نا درست نام "
 
-#, c-format
 msgid "Invalid friendly name"
 msgstr "نا درست فرینڈلی نام "
 
-#, c-format
 msgid "List full"
 msgstr "فہرست مكمل"
 
-#, c-format
 msgid "Already there"
 msgstr "پہلے سے وہاں "
 
-#, c-format
 msgid "Not on list"
 msgstr "فہرست پر نہیں"
 
-#, c-format
 msgid "User is offline"
 msgstr "صارف آف لائن ہے"
 
-#, c-format
 msgid "Already in the mode"
 msgstr "پہلے سے موڈ میں"
 
-#, c-format
 msgid "Already in opposite list"
 msgstr "پہلے سے سامنے کی لسٹ میں "
 
-#, c-format
 msgid "Too many groups"
 msgstr "بہت زیادہ  گروپس"
 
-#, c-format
 msgid "Invalid group"
 msgstr "غیر معتبر گروپ"
 
-#, c-format
 msgid "User not in group"
 msgstr "صارف گروپ میں نہیں"
 
-#, c-format
 msgid "Group name too long"
 msgstr "گروپ نام بہت طویل "
 
-#, c-format
 msgid "Cannot remove group zero"
 msgstr "گروپ صفر نکال نہیں سکتا"
 
-#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "صارف كو گروپ میں شامل كرنے كی كوشش كی جوخارج نہیں ہوتاہے"
 
-#, c-format
 msgid "Switchboard failed"
 msgstr "سوئچ بورڈ ناکام"
 
-#, c-format
 msgid "Notify transfer failed"
 msgstr "نوٹیفائے ٹرانسفر نا كامیاب"
 
-#, c-format
 msgid "Required fields missing"
 msgstr "گمشدہ شعبے کی ضرورت تھی"
 
-#, c-format
 msgid "Too many hits to a FND"
 msgstr "FNDکو بہت زیادہ ہٹس"
 
-#, c-format
 msgid "Not logged in"
 msgstr "لاگڈ ان نہیں"
 
-#, c-format
 msgid "Service temporarily unavailable"
 msgstr "سرویس عارضی طورپر  غیر دستیاب"
 
-#, c-format
 msgid "Database server error"
 msgstr "ڈاٹا بیس سرور خامی"
 
-#, c-format
 msgid "Command disabled"
 msgstr "خامی نا قابل ہوئي"
 
-#, c-format
 msgid "File operation error"
 msgstr "فائل آپریشن خامی"
 
-#, c-format
 msgid "Memory allocation error"
 msgstr "میمری ایلوکیشن خامی"
 
-#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "سرور کو غلط  CHL قیمت بھیجی گئی"
 
-#, c-format
 msgid "Server busy"
 msgstr "سرور مصروف"
 
-#, c-format
 msgid "Server unavailable"
 msgstr "سرور غیر دستیاب"
 
-#, c-format
 msgid "Peer notification server down"
 msgstr "پیر نوٹیفیكیشن سرور ڈاؤن"
 
-#, c-format
 msgid "Database connect error"
 msgstr "ڈاٹا بیس کنیکٹ خامی"
 
-#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "سرور نیچے جارہا ہے(آزاد جہاز)"
 
-#, c-format
 msgid "Error creating connection"
 msgstr "خامی رابطہ قائم کررہی ہے"
 
-#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "CVR پیرامیٹر ز یا تو نامعلوم ہے یا اجازت نہیں دی گئی ہے"
 
-#, c-format
 msgid "Unable to write"
 msgstr "لکھنے میں ناقابل"
 
-#, c-format
 msgid "Session overload"
 msgstr "سیشن اوور لوڈ"
 
-#, c-format
 msgid "User is too active"
 msgstr "صارف بہت فعال ہے"
 
-#, c-format
 msgid "Too many sessions"
 msgstr "بہت زیدہ سیشنس"
 
-#, c-format
 msgid "Passport not verified"
 msgstr "پاسپورٹ کی تصدیق نہیں ہوئی"
 
-#, c-format
 msgid "Bad friend file"
 msgstr "خراب دوستانہ فائل"
 
-#, c-format
 msgid "Not expected"
 msgstr "توقع نہیں"
 
@@ -5134,27 +5438,21 @@ msgstr "توقع نہیں"
 msgid "Friendly name is changing too rapidly"
 msgstr "دوستانہ نام بہت جلدی تبدیل ہوتا ہے"
 
-#, c-format
 msgid "Server too busy"
 msgstr "سرور بہت مصروف "
 
-#, c-format
 msgid "Authentication failed"
 msgstr "تصدیق نا کام"
 
-#, c-format
 msgid "Not allowed when offline"
 msgstr "جب آف لائن ہو تو اجازت نہیں تھی"
 
-#, c-format
 msgid "Not accepting new users"
 msgstr "نئے صارفین قبول نہیں کررہا ہے"
 
-#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "بچوں کا پاسپورٹ  بغیر والدین کے اجازت کے"
 
-#, c-format
 msgid "Passport account not yet verified"
 msgstr "پاسپورٹ اکاؤنٹ ابھی تک تصدیق نہیں کیا گیا"
 
@@ -5162,7 +5460,6 @@ msgstr "پاسپورٹ اکاؤنٹ ابھی تک تصدیق نہیں کیا گ�
 msgid "Passport account suspended"
 msgstr "پاسپورٹ اکاؤنٹ ابھی تک تصدیق نہیں کیا گیا"
 
-#, c-format
 msgid "Bad ticket"
 msgstr "خراب ٹکٹ"
 
@@ -5220,6 +5517,10 @@ msgstr "ای میل ایڈریس"
 
 msgid "Your new MSN friendly name is too long."
 msgstr "آپ کا MSNدوستانہ نام بہت طویل ہے۔"
+
+#, fuzzy, c-format
+msgid "Set friendly name for %s."
+msgstr "اپنا دوستانہ نام   سیٹ کرو۔"
 
 msgid "Set your friendly name."
 msgstr "اپنا دوستانہ نام   سیٹ کرو۔"
@@ -5582,10 +5883,6 @@ msgstr ""
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "عام تصدیق ناکام ہوئي!"
 
-#, c-format
-msgid "%s just sent you a Nudge!"
-msgstr "%sنے ابھی آپ کو نج بھیجا!"
-
 #, fuzzy
 msgid "The following users are missing from your addressbook"
 msgstr "مندرجہ ذیل آپ کے تلاش کے نتائج ہیں"
@@ -5776,76 +6073,9 @@ msgstr "کیا آپ اس بڈی کو اپنی بڈی لسٹ میں شامل کر
 msgid "The username specified is invalid."
 msgstr "مخصوص کیا گيا اسکرین نام معتبرنہیں ہے۔"
 
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr "دوستانہ نام بہت جلدی تبدیل ہوتا ہے"
-
-msgid "This Hotmail account may not be active."
-msgstr "یہ ہاٹ میل اکاؤنٹ  شاید فعال نہیں ہو سکتا۔"
-
-msgid "Profile URL"
-msgstr "پرو فائل URL"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "MSN Protocol Plugin"
-msgstr "MSN  پروٹو کال پلگ ان"
-
-#, c-format
-msgid "%s is not a valid group."
-msgstr "%s معتبر گروپ نہیں ہے۔"
-
-msgid "Unknown error."
-msgstr "نا معلوم خامی۔"
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s پر %s (%s)"
-
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr " %s (%s)پرصارف شامل کرنے میں نا قابل "
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr " %s (%s) پر صارف کو بلاک کرنے میں نا قابل"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr " %s (%s)پر صارف کو اجازت دینے میں  ناقابل"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "%sملا نہیں سکا کیو نکہ آپ کی بڈی فہرست فل ہوگئی ہے۔"
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%sمعتبر پاسپورٹ اکاؤنٹ نہیں ہے۔"
-
-msgid "Service Temporarily Unavailable."
-msgstr "سروس عارضی طورپرغیردستیاب ہے۔"
-
-msgid "Unable to rename group"
-msgstr "گروپ کو دوبارہ نام  دینے میں ناقابل"
-
-msgid "Unable to delete group"
-msgstr "گروپ کو خارج  کرنے میں ناقابل"
-
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%sنے آپ كواپنی بڈی لسٹ میں شامل كردیا۔"
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%sنے آپ كواپنی بڈی لسٹ سےخارج كردیا۔"
+#. 5
+msgid "In Love"
+msgstr "محبت میں"
 
 #. show current mood
 #, fuzzy
@@ -5864,6 +6094,29 @@ msgstr "خفیہ لفظ تبدیل کرو"
 #, fuzzy
 msgid "How do you feel right now?"
 msgstr "میں فی الحال یہاں پر نہیں ہوں"
+
+#, fuzzy
+msgid "The PIN you entered is invalid."
+msgstr "داخل کی گئی سیکیور IDکلید غیر معتبر ہے۔"
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "داخل کی گئی سیکیور IDکلید غیر معتبر ہے۔"
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr ""
+
+#, fuzzy
+msgid "The two PINs you entered do not match."
+msgstr "نیا خفیہ لفظ میل نہیں کھاتا۔"
+
+#, fuzzy
+msgid "The name you entered is invalid."
+msgstr "داخل کی گئی سیکیور IDکلید غیر معتبر ہے۔"
+
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr ""
 
 #. show error to user
 #, fuzzy
@@ -5942,10 +6195,12 @@ msgstr "Adium"
 msgid "The file you are trying to send is too large!"
 msgstr "پیام بہت بڑا ہے۔"
 
+#, fuzzy
 msgid ""
-"Unable to connect to the mxit HTTP server. Please check your server server "
-"settings."
+"Unable to connect to the MXit HTTP server. Please check your server settings."
 msgstr ""
+"سرور سے کنیکٹ ہونے میں ناقابل۔براہ کرم سرور کا ایڈریس داخل کریں  جس سےآپ "
+"کنیکٹ ہونا چاہتے ہیں۔"
 
 #, fuzzy
 msgid "Logging In..."
@@ -5953,8 +6208,7 @@ msgstr "لاگینگ"
 
 #, fuzzy
 msgid ""
-"Unable to connect to the mxit server. Please check your server server "
-"settings."
+"Unable to connect to the MXit server. Please check your server settings."
 msgstr ""
 "سرور سے کنیکٹ ہونے میں ناقابل۔براہ کرم سرور کا ایڈریس داخل کریں  جس سےآپ "
 "کنیکٹ ہونا چاہتے ہیں۔"
@@ -5962,6 +6216,14 @@ msgstr ""
 #, fuzzy
 msgid "Connecting..."
 msgstr "کنیکٹ کررہا ہے"
+
+#, fuzzy
+msgid "The nick name you entered is invalid."
+msgstr "داخل کی گئی سیکیور IDکلید غیر معتبر ہے۔"
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "داخل کی گئی سیکیور IDکلید غیر معتبر ہے۔"
 
 #. mxit login name
 msgid "MXit Login Name"
@@ -6043,6 +6305,10 @@ msgid "Retrieving User Information..."
 msgstr "سرور معلومات"
 
 #, fuzzy
+msgid "Loading menu..."
+msgstr "لاگینگ"
+
+#, fuzzy
 msgid "Status Message"
 msgstr "میسیج بھیجو"
 
@@ -6087,12 +6353,29 @@ msgstr ""
 msgid "Successfully Logged In..."
 msgstr "آپ نے كامیابی سے Qun  كی تخلیق كی ہے"
 
+#, c-format
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
+msgstr ""
+
 #, fuzzy
 msgid "Message Error"
 msgstr "مہمل  پیام خامی"
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
+
+#, fuzzy
+msgid "An internal MXit server error occurred."
+msgstr "سائن پر نا معلوم خامی واقع ہوگئی:%s۔"
+
+#, fuzzy, c-format
+msgid "Login error: %s (%i)"
+msgstr "SASL خامی"
+
+#, fuzzy, c-format
+msgid "Logout error: %s (%i)"
+msgstr "SASL خامی"
 
 #, fuzzy
 msgid "Contact Error"
@@ -6168,39 +6451,6 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
-
-msgid "Angry"
-msgstr "غصہ"
-
-msgid "Excited"
-msgstr "پر جوش "
-
-#, fuzzy
-msgid "Grumpy"
-msgstr "گروپ"
-
-msgid "Happy"
-msgstr "خوش"
-
-msgid "In Love"
-msgstr "محبت میں"
-
-msgid "Invincible"
-msgstr " نا قابل فتح"
-
-msgid "Sad"
-msgstr "غمگین"
-
-#, fuzzy
-msgid "Hot"
-msgstr "_ ہوسٹ:"
-
-#, fuzzy
-msgid "Sick"
-msgstr "نک"
-
-msgid "Sleepy"
-msgstr "نیند"
 
 #, fuzzy
 msgid "Pending"
@@ -6848,7 +7098,10 @@ msgstr "سرور ایڈریس"
 msgid "Server port"
 msgstr "سرور پورٹ"
 
-#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "غیر قبول   HTTP رسپانس سرور سے وصول كیا جاتا ہے۔"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s"
 msgstr "غیر قبول   HTTP رسپانس سرور سے وصول كیا جاتا ہے۔"
@@ -6867,6 +7120,11 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "خامی رابطہ قائم کررہی ہے"
 
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
 
@@ -6877,6 +7135,106 @@ msgstr "كنیكٹ نہیں ہوسكا"
 #, fuzzy
 msgid "Invalid chat room name"
 msgstr "غیر معتبر کمرہ نام"
+
+msgid "Thinking"
+msgstr ""
+
+#, fuzzy
+msgid "Shopping"
+msgstr "Stops t_yping"
+
+#, fuzzy
+msgid "Questioning"
+msgstr "درخواست ڈائیلاگ"
+
+#, fuzzy
+msgid "Eating"
+msgstr "پیگینگ"
+
+msgid "Watching a movie"
+msgstr ""
+
+# msgstr[0] "%d فرد کمرے میں"
+msgid "Typing"
+msgstr "ٹائپینگ   "
+
+#, fuzzy
+msgid "At the office"
+msgstr "آفس میں نہیں"
+
+msgid "Taking a bath"
+msgstr ""
+
+msgid "Watching TV"
+msgstr ""
+
+msgid "Having fun"
+msgstr ""
+
+#, fuzzy
+msgid "Sleeping"
+msgstr "نیند"
+
+msgid "Using a PDA"
+msgstr ""
+
+# msgstr "ہاسٹ سے کنیکٹ نہیں ہو سکا"
+#, fuzzy
+msgid "Meeting friends"
+msgstr "_IM ونڈوز"
+
+#, fuzzy
+msgid "On the phone"
+msgstr "فون پر"
+
+#, fuzzy
+msgid "Surfing"
+msgstr "تكرار"
+
+#. "I am mobile." / "John is mobile."
+msgid "Mobile"
+msgstr "موبائل"
+
+msgid "Searching the web"
+msgstr ""
+
+msgid "At a party"
+msgstr ""
+
+msgid "Having Coffee"
+msgstr ""
+
+#. Playing video games
+#, fuzzy
+msgid "Gaming"
+msgstr "صارف كا نام"
+
+msgid "Browsing the web"
+msgstr ""
+
+#, fuzzy
+msgid "Smoking"
+msgstr "_سارٹ کررہا ہے:"
+
+#, fuzzy
+msgid "Writing"
+msgstr "كام"
+
+#. Drinking [Alcohol]
+#, fuzzy
+msgid "Drinking"
+msgstr "كام"
+
+msgid "Listening to music"
+msgstr ""
+
+#, fuzzy
+msgid "Studying"
+msgstr "بھیجو"
+
+#, fuzzy
+msgid "In the restroom"
+msgstr "دلچسپیاں"
 
 #, fuzzy
 msgid "Received invalid data on connection with server"
@@ -7094,6 +7452,9 @@ msgstr "فائل لو"
 msgid "Games"
 msgstr "کھیل"
 
+msgid "ICQ Xtraz"
+msgstr ""
+
 msgid "Add-Ins"
 msgstr "ایڈ - انس"
 
@@ -7160,6 +7521,26 @@ msgstr "ویب خبر داری"
 
 msgid "Invisible"
 msgstr "اوجھل"
+
+#, fuzzy
+msgid "Evil"
+msgstr "ای- میل"
+
+#, fuzzy
+msgid "Depression"
+msgstr "پیشہ"
+
+#, fuzzy
+msgid "At home"
+msgstr "Adium"
+
+#, fuzzy
+msgid "At work"
+msgstr "نیٹ ورک"
+
+#, fuzzy
+msgid "At lunch"
+msgstr "كھانے كے لیے باہر"
 
 msgid "IP Address"
 msgstr "IP ایڈریس"
@@ -7438,14 +7819,6 @@ msgstr ""
 "[اس صارف سے پیام ڈسپلے کرنے میں ناقابل کیونکہ  یہ غیر معتبر الفاظ سے وابستہ "
 "ہے۔]"
 
-#, fuzzy
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"آپ نے آخری کوشش کیا ہوا ایکشن پرفارم نہیں ہوسکاکیونکہ آپ قیمت کی حد سے اوپر "
-"ہیں۔ براہ کرم 10سیکنڈس تک انظار کریں اور دوبارہ کوشش کریں۔"
-
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "آپ کمرہ گفتگو%sسے منقطع کئے جا چکے ہیں۔"
@@ -7691,6 +8064,10 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr ""
 
+#, fuzzy
+msgid "Lunch"
+msgstr "فرانسیسی"
+
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "%sکے لئے بڈی رائے"
@@ -7724,7 +8101,8 @@ msgstr "AIM معلومات حاصل كریں"
 msgid "Edit Buddy Comment"
 msgstr "بڈی رائے مرتب کریں"
 
-msgid "Get Status Msg"
+#, fuzzy
+msgid "Get X-Status Msg"
 msgstr "اسٹیٹس Msg حاصل کرو"
 
 #, fuzzy
@@ -8028,9 +8406,6 @@ msgstr "آخری اپ ڈیٹ"
 #, fuzzy
 msgid "Could not change buddy information."
 msgstr "براہ كرم بڈی معلومات داخل كیجیے۔"
-
-msgid "Mobile"
-msgstr "موبائل"
 
 msgid "Note"
 msgstr "نوٹ"
@@ -9130,18 +9505,6 @@ msgstr "ہائپر فعال"
 msgid "Robot"
 msgstr "روبوٹ"
 
-msgid "Jealous"
-msgstr "حسد"
-
-msgid "Ashamed"
-msgstr "شرمندہ"
-
-msgid "Bored"
-msgstr "اکتاہٹ"
-
-msgid "Anxious"
-msgstr "متفکر"
-
 msgid "User Modes"
 msgstr "صارف موڈس"
 
@@ -9642,9 +10005,6 @@ msgstr "آپ کا حالیہ  موڈ"
 #, c-format
 msgid "Normal"
 msgstr "عام"
-
-msgid "In love"
-msgstr "محبت میں"
 
 msgid ""
 "\n"
@@ -10669,6 +11029,10 @@ msgid "Exposure"
 msgstr "انکشاف"
 
 #, fuzzy, c-format
+msgid "Unable to create socket: %s"
+msgstr "ساكیٹ كی تخلیق  نا ممكن :n%s"
+
+#, fuzzy, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "HTTP پراكسی سے پارس ریفرینس  نا ممكن :%s\n"
 
@@ -10783,8 +11147,9 @@ msgstr "ڈسٹرب مت کرو"
 msgid "Extended away"
 msgstr " "
 
-msgid "Listening to music"
-msgstr ""
+#, fuzzy
+msgid "Feeling"
+msgstr "باقی "
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -11362,6 +11727,18 @@ msgstr ""
 msgid "Unknown node type"
 msgstr "نا معلوم خامی کوڈ%d"
 
+#, fuzzy
+msgid "Please select your mood from the list"
+msgstr " براہ كرم اسٹیٹس كے لیے ایك نا خالی عنوان داخل كیجیے۰"
+
+#, fuzzy
+msgid "Message (optional)"
+msgstr "عرفیت رابطہ"
+
+#, fuzzy
+msgid "Edit User Mood"
+msgstr "صارف موڈس"
+
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Buddies"
@@ -11449,6 +11826,10 @@ msgstr "/ٹولس/ترجیحات"
 msgid "/Tools/Pr_ivacy"
 msgstr "/ٹولس/پرایوسی"
 
+#, fuzzy
+msgid "/Tools/Set _Mood"
+msgstr "/Tools/System _Log"
+
 msgid "/Tools/_File Transfers"
 msgstr "/ٹولس/ _فائل ٹرانسفرس"
 
@@ -11468,8 +11849,20 @@ msgstr "/_مدد"
 msgid "/Help/Online _Help"
 msgstr "/مدد/آن لائن _مدد"
 
+#, fuzzy
+msgid "/Help/_Build Information"
+msgstr "بڈی معلومات"
+
 msgid "/Help/_Debug Window"
 msgstr "/ٹولس/ _ڈی بگ ونڈو"
+
+#, fuzzy
+msgid "/Help/De_veloper Information"
+msgstr "سرور معلومات"
+
+#, fuzzy
+msgid "/Help/_Translator Information"
+msgstr "ذاتی معلومات"
 
 msgid "/Help/_About"
 msgstr "/مدد/کے بارے میں_  "
@@ -11716,6 +12109,10 @@ msgstr "<PidginMain>/Accounts/"
 msgid "_Edit Account"
 msgstr "_اكاؤنٹ مرتب كریں"
 
+#, fuzzy
+msgid "Set _Mood..."
+msgstr "فولڈ ر منتخب كریں۔۔۔"
+
 msgid "No actions available"
 msgstr "کوئی ایکشنس دستیاب نہیں"
 
@@ -11763,12 +12160,6 @@ msgstr "<h1>مکالمے کے ساتھ %s</h1>\n"
 
 msgid "Save Conversation"
 msgstr "مکالمہ محفوظ کرو"
-
-msgid "Find"
-msgstr "تلاش کرو"
-
-msgid "_Search for:"
-msgstr "_ کےلئےتلاش کرو:"
 
 msgid "Un-Ignore"
 msgstr "نظر انداز نہ کرو"
@@ -11849,6 +12240,10 @@ msgstr "/مکالمہ/لاگ_منظر..."
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/مکالمہ/فائل بھیجو..."
+
+#, fuzzy
+msgid "/Conversation/Get _Attention"
+msgstr "/مکالمہ/معلومات لو"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/مکالمہ/بڈی ملاؤ _پاؤنس..."
@@ -11936,6 +12331,10 @@ msgstr "/گفتگو/مزید"
 msgid "/Conversation/Send File..."
 msgstr "/مکالمہ/فائل بھیجو۔۔۔"
 
+#, fuzzy
+msgid "/Conversation/Get Attention"
+msgstr "/مکالمہ/معلومات لو"
+
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/مکالمہ/بڈی پانس ملاؤ..."
 
@@ -12000,15 +12399,19 @@ msgstr "_بھیجو"
 msgid "0 people in room"
 msgstr "0 لوگ کمرہ میں"
 
+#, fuzzy
+msgid "Close Find bar"
+msgstr "یہ  ٹیب بندكریں"
+
+#, fuzzy
+msgid "Find:"
+msgstr "تلاش کرو"
+
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] ""
 msgstr[1] ""
-
-# msgstr[0] "%d فرد کمرے میں"
-msgid "Typing"
-msgstr "ٹائپینگ   "
 
 msgid "Stopped Typing"
 msgstr "ٹائپینگ رك گئی"
@@ -12061,6 +12464,12 @@ msgstr "گروپ میں"
 
 msgid "By account"
 msgstr "اکاونٹ سے"
+
+msgid "Find"
+msgstr "تلاش کرو"
+
+msgid "_Search for:"
+msgstr "_ کےلئےتلاش کرو:"
 
 msgid "Save Debug Log"
 msgstr "ڈی بگ لاگ محفوظ کرو"
@@ -12288,15 +12697,20 @@ msgstr "كرڈش"
 msgid "Lao"
 msgstr "برج اسد"
 
-msgid "Lithuanian"
-msgstr "لتھو نین"
-
 msgid "Macedonian"
 msgstr "میسی ڈونین"
 
 #, fuzzy
 msgid "Mongolian"
 msgstr "میسی ڈونین"
+
+#, fuzzy
+msgid "Marathi"
+msgstr "گجراتی"
+
+#, fuzzy
+msgid "Malay"
+msgstr "مرد"
 
 #, fuzzy
 msgid "Bokmål Norwegian"
@@ -12314,6 +12728,10 @@ msgstr "نارویائی"
 
 msgid "Occitan"
 msgstr ""
+
+#, fuzzy
+msgid "Oriya"
+msgstr "آپیرا"
 
 msgid "Punjabi"
 msgstr ""
@@ -12371,6 +12789,10 @@ msgstr "تھائی"
 msgid "Turkish"
 msgstr "تركی"
 
+#, fuzzy
+msgid "Ukranian"
+msgstr "رومینیائی"
+
 msgid "Urdu"
 msgstr ""
 
@@ -12392,50 +12814,50 @@ msgstr "رسمی چینی"
 msgid "Amharic"
 msgstr "Amharic"
 
+msgid "Lithuanian"
+msgstr "لتھو نین"
+
+#, c-format
+msgid ""
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with %"
+"s.  There is no warranty for %s.<BR><BR>"
+msgstr ""
+
+#, c-format
+msgid ""
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
+msgstr ""
+
+#, c-format
+msgid ""
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
+msgstr ""
+
 #, c-format
 msgid "About %s"
 msgstr ""
 
-# msgstr "گائم کےبارےمیں"
-#, c-format
-msgid ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
-msgstr ""
+#, fuzzy
+msgid "Build Information"
+msgstr "بڈی معلومات"
 
-#, c-format
-msgid ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
-msgstr ""
-
-#, c-format
-msgid ""
-"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
-"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
-"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
-"primary language is <b>English</b>.  You are welcome to post in another "
-"language, but the responses may be less helpful.<br/><br/>"
-msgstr ""
-
-# msgstr "گائم AIM, MSN, Yahoo!,  كو استعمال كرتے ہوئے ایك ماڈیولر میسیجینگ كلائںٹ  كیبل ہے ۔Jabber, ICQ, IRC, SILC, SIP/SIMPLE, ناول  گروپ وائس، لوٹس مشابہ ٹائم،بونزور، زیفیر،گڈو گڈو، اورQQایك بار میں ۔یہ GTK+.<BR><BR> استعمال كرتے ہوئے لكھا جاتا ہے  آپ ترمیم كرینگے  اور  پروگرام كوGPL شرطوں كے ماتحٹ دوبارہ تقسیم كرینگے (version 2 or later).GPLكی ایك كاپی  'COPYING' فائل میں ركھتی ہے گائم سے تقسیم كی جاتی ہے۔ گائم  اسے شراكت داروں سے   كاپی رائٹیڈ ہے ۔ شراكت داروں كی مكمل فہرست كے لیے   گائم كی 'COPYRIGHT'   فائل دیكھیے۔ ہم اس پروگرام كے لیے كوئي وارنٹی مہیا نہیں كرتے ہیں ۔<BR><BR>"
+#. End of not to be translated section
 #, fuzzy, c-format
-msgid ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
-
-# msgstr "گائم AIM, MSN, Yahoo!,  كو استعمال كرتے ہوئے ایك ماڈیولر میسیجینگ كلائںٹ  كیبل ہے ۔Jabber, ICQ, IRC, SILC, SIP/SIMPLE, ناول  گروپ وائس، لوٹس مشابہ ٹائم،بونزور، زیفیر،گڈو گڈو، اورQQایك بار میں ۔یہ GTK+.<BR><BR> استعمال كرتے ہوئے لكھا جاتا ہے  آپ ترمیم كرینگے  اور  پروگرام كوGPL شرطوں كے ماتحٹ دوبارہ تقسیم كرینگے (version 2 or later).GPLكی ایك كاپی  'COPYING' فائل میں ركھتی ہے گائم سے تقسیم كی جاتی ہے۔ گائم  اسے شراكت داروں سے   كاپی رائٹیڈ ہے ۔ شراكت داروں كی مكمل فہرست كے لیے   گائم كی 'COPYRIGHT'   فائل دیكھیے۔ ہم اس پروگرام كے لیے كوئي وارنٹی مہیا نہیں كرتے ہیں ۔<BR><BR>"
-#, fuzzy, c-format
-msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
+msgid "%s Build Information"
+msgstr "بڈی معلومات"
 
 msgid "Current Developers"
 msgstr "حالیہ تكمیل كار"
@@ -12450,14 +12872,19 @@ msgstr "رئٹائرڈ تکمیل کار"
 msgid "Retired Crazy Patch Writers"
 msgstr "کریزی پيچ رائٹرز"
 
+#, fuzzy, c-format
+msgid "%s Developer Information"
+msgstr "سرور معلومات"
+
 msgid "Current Translators"
 msgstr "حالیہ مترجمین"
 
 msgid "Past Translators"
 msgstr "گذرےہوئےمترجمین"
 
-msgid "Debugging Information"
-msgstr "ڈی بگینگ معلومات"
+#, fuzzy, c-format
+msgid "%s Translator Information"
+msgstr "کام کی معلومات"
 
 msgid "_Name"
 msgstr "نام"
@@ -12765,15 +13192,6 @@ msgstr ""
 "\n"
 "کو ڈی فالٹینگ PNG "
 
-msgid ""
-"Unrecognized file type\n"
-"\n"
-"Defaulting to PNG."
-msgstr ""
-"نہ پہچانی گئی فائل ٹائپ\n"
-"\n"
-"کو ڈی فالیٹنگ PNG"
-
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -12781,16 +13199,6 @@ msgid ""
 "%s"
 msgstr ""
 "<اسپین سائز='بڑا' وزن='جلی'>خامی محفوظ کررہا ہے امیج</اسپین>\n"
-"\n"
-"%s"
-
-#, c-format
-msgid ""
-"Error saving image\n"
-"\n"
-"%s"
-msgstr ""
-"خامی امیج محفوظ کررہا ہے\n"
 "\n"
 "%s"
 
@@ -12906,6 +13314,10 @@ msgid "Insert Smiley"
 msgstr "اسمائلی داخل کرو"
 
 #, fuzzy
+msgid "Send Attention"
+msgstr "_کو بھیجو"
+
+#, fuzzy
 msgid "<b>_Bold</b>"
 msgstr "<b>پا سورڈ:</b>"
 
@@ -12963,6 +13375,9 @@ msgstr ""
 #, fuzzy
 msgid "_Smile!"
 msgstr "مسکرایئے!"
+
+msgid "_Attention!"
+msgstr ""
 
 #, fuzzy
 msgid "Log Deletion Failed"
@@ -13324,9 +13739,8 @@ msgstr "نا معلوم پانس واقعہ۔ براہ کرم اس کی رپور
 msgid "(Custom)"
 msgstr ""
 
-#, fuzzy
-msgid "(Default)"
-msgstr "ڈی فا لٹ"
+msgid "Penguin Pimps"
+msgstr ""
 
 msgid "The default Pidgin sound theme"
 msgstr ""
@@ -13350,18 +13764,34 @@ msgstr "اسماںلی تھیم ان پیك كرنے میں ناكام"
 msgid "Theme failed to copy."
 msgstr "اسماںلی تھیم ان پیك كرنے میں ناكام"
 
-msgid "Install Theme"
-msgstr ""
+#, fuzzy
+msgid "Theme Selections"
+msgstr "براؤزر انتخاب"
 
+#. Instructions
+#, fuzzy
 msgid ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 msgstr ""
 "اسمائلی تھیم منتخب کریں جو آپ نیچے کی فہرست سے استعمال کرنا چاہتے ہیں۔ نئی "
 "تھیمس کو تھیمس فہرست کو کھیچنے اور گرانے ذریعےانسٹال کی جا سکتی ہے ۔"
 
-msgid "Icon"
-msgstr "آئیکن"
+#, fuzzy
+msgid "Buddy List Theme:"
+msgstr "دوست فہرست"
+
+#, fuzzy
+msgid "Status Icon Theme:"
+msgstr " %sكےلیےاسٹیٹس"
+
+msgid "Sound Theme:"
+msgstr ""
+
+#, fuzzy
+msgid "Smiley Theme:"
+msgstr "مسکراتی تھیمس"
 
 msgid "Keyboard Shortcuts"
 msgstr ""
@@ -13369,11 +13799,6 @@ msgstr ""
 #, fuzzy
 msgid "Cl_ose conversations with the Escape key"
 msgstr "کے ساتھ مکالمہ %s"
-
-#. Buddy List Themes
-#, fuzzy
-msgid "Buddy List Theme"
-msgstr "دوست فہرست"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -13465,9 +13890,6 @@ msgstr ""
 msgid "Font"
 msgstr "فانٹس"
 
-msgid "Use document font from _theme"
-msgstr ""
-
 msgid "Use font from _theme"
 msgstr ""
 
@@ -13545,51 +13967,6 @@ msgstr "_ صارف کا نام:"
 msgid "Pass_word:"
 msgstr ":خفیہ لفظ"
 
-#, fuzzy
-msgid "Proxy Server &amp; Browser"
-msgstr "پروکسی سرور"
-
-msgid "<b>Proxy configuration program was not found.</b>"
-msgstr ""
-
-msgid "<b>Browser configuration program was not found.</b>"
-msgstr ""
-
-msgid ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
-msgstr ""
-
-#, fuzzy
-msgid "Configure _Proxy"
-msgstr "وضع کمرہ"
-
-#, fuzzy
-msgid "Configure _Browser"
-msgstr "وضع کمرہ"
-
-msgid "Proxy Server"
-msgstr "پروکسی سرور"
-
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr ""
-
-#, fuzzy
-msgid "Proxy t_ype:"
-msgstr "پراکسی - ٹائپ:"
-
-msgid "No proxy"
-msgstr "_پروکسی نہیں"
-
-#, fuzzy
-msgid "P_ort:"
-msgstr "_ پورٹ:"
-
-#, fuzzy
-msgid "User_name:"
-msgstr "_ صارف کا نام:"
-
 msgid "Seamonkey"
 msgstr "سی مونكی"
 
@@ -13630,6 +14007,16 @@ msgstr "مینیوول"
 msgid "Browser Selection"
 msgstr "براؤزر انتخاب"
 
+msgid "Browser preferences are configured in GNOME preferences"
+msgstr ""
+
+msgid "<b>Browser configuration program was not found.</b>"
+msgstr ""
+
+#, fuzzy
+msgid "Configure _Browser"
+msgstr "وضع کمرہ"
+
 msgid "_Browser:"
 msgstr "_براؤزر:"
 
@@ -13652,6 +14039,39 @@ msgid ""
 msgstr ""
 "_مینیوول:\n"
 "(%s کے لئۓ URL)"
+
+msgid "Proxy Server"
+msgstr "پروکسی سرور"
+
+msgid "Proxy preferences are configured in GNOME preferences"
+msgstr ""
+
+msgid "<b>Proxy configuration program was not found.</b>"
+msgstr ""
+
+#, fuzzy
+msgid "Configure _Proxy"
+msgstr "وضع کمرہ"
+
+#. This is a global option that affects SOCKS4 usage even with
+#. * account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "پراکسی - ٹائپ:"
+
+msgid "No proxy"
+msgstr "_پروکسی نہیں"
+
+#, fuzzy
+msgid "P_ort:"
+msgstr "_ پورٹ:"
+
+#, fuzzy
+msgid "User_name:"
+msgstr "_ صارف کا نام:"
 
 msgid "Log _format:"
 msgstr "Log _format:"
@@ -13741,25 +14161,19 @@ msgstr "_رپورٹ بیكاروقت"
 msgid "Based on keyboard or mouse use"
 msgstr "كی بورڈ یا ماؤس كے استعمال پرمنحصرہے"
 
+#, fuzzy
+msgid "_Minutes before becoming idle:"
+msgstr "سیٹینگ کرنے سے پہلے منٹس:"
+
+#, fuzzy
+msgid "Change to this status when _idle:"
+msgstr "اسٹیٹس تبدیل كریںwhen _idle"
+
 msgid "_Auto-reply:"
 msgstr "_خود کار- جوابی کاروائی:"
 
 msgid "When both away and idle"
 msgstr "جب دونوں دور اور سست ہو"
-
-#. Auto-away stuff
-msgid "Auto-away"
-msgstr "خود کار_دور"
-
-#, fuzzy
-msgid "_Minutes before becoming idle:"
-msgstr "سیٹینگ کرنے سے پہلے منٹس:"
-
-msgid "Change status when _idle"
-msgstr "اسٹیٹس تبدیل كریںwhen _idle"
-
-msgid "Change _status to:"
-msgstr "كےلیےاسٹیٹس_تبدیل كریں"
 
 #. Signon status stuff
 msgid "Status at Startup"
@@ -13774,14 +14188,15 @@ msgstr "Status to a_pply at startup:"
 msgid "Interface"
 msgstr "انٹرفیس"
 
-msgid "Smiley Themes"
-msgstr "مسکراتی تھیمس"
-
 msgid "Browser"
 msgstr "براؤزر"
 
 msgid "Status / Idle"
 msgstr "اسٹیٹس/ Idle"
+
+#, fuzzy
+msgid "Themes"
+msgstr "مسکراتی تھیمس"
 
 msgid "Allow all users to contact me"
 msgstr "صارفین کو اجازت دیں کہ وہ مجھ سے رابطہ کریں"
@@ -13950,6 +14365,10 @@ msgid "Custom Smiley Manager"
 msgstr ""
 
 #, fuzzy
+msgid "Attention received"
+msgstr "رجسٹریشن کی ضروت تھی"
+
+#, fuzzy
 msgid "Select Buddy Icon"
 msgstr "بڈی منتخب کرو"
 
@@ -14040,10 +14459,13 @@ msgstr ""
 # * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
 # * Probably not.  I'll just give an error and return.
 # The original patch sent the icon used by the launcher.  That's probably wrong
-#. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-#. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-#. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-#. * Probably not.  I'll just give an error and return.
+#. I don't know if we really want to do anything here.  Most of
+#. * the desktop item types are crap like "MIME Type" (I have no
+#. * clue how that would be a desktop item) and "Comment"...
+#. * nothing we can really send.  The only logical one is
+#. * "Application," but do we really want to send a binary and
+#. * nothing else? Probably not.  I'll just give an error and
+#. * return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 msgid "Cannot send launcher"
 msgstr "لاؤنچر کو نہیں بھیج سکتے"
@@ -14076,15 +14498,6 @@ msgstr "ٹوکن خامی"
 msgid "Could not set icon"
 msgstr "نہیں بھیج سکا"
 
-#, c-format
-msgid "Failed to open file '%s': %s"
-msgstr " '%s': %s كو كھولنا نا كامیاب"
-
-#, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr "امیج لوڈ كرنا نا  كامیاب '%s':  وجوہات نہیں ملی،  شاید كرپٹ امیج فائل"
-
 #, fuzzy
 msgid "_Open Link"
 msgstr "_میں لنک کھولو:"
@@ -14113,6 +14526,10 @@ msgstr "آواز بجاؤ"
 #, fuzzy
 msgid "_Save File"
 msgstr "فائل محفوظ كریں"
+
+#, fuzzy
+msgid "Do you really want to clear?"
+msgstr "کیا آپ واقعی %sخارج کرنا چاہتے ہیں؟"
 
 msgid "Select color"
 msgstr "رنگ منتخب كریں"
@@ -14191,9 +14608,6 @@ msgid "Pidgin Tooltip"
 msgstr "پیگینگ"
 
 msgid "Pidgin smileys"
-msgstr ""
-
-msgid "Penguin Pimps"
 msgstr ""
 
 msgid "Selecting this disables graphical emoticons."
@@ -14857,6 +15271,10 @@ msgstr "Gtkٹری وئیو عمودی علاحدگی"
 msgid "Conversation Entry"
 msgstr "مکالمہ داخلہ "
 
+#, fuzzy
+msgid "Conversation History"
+msgstr "مکالمہ داخلہ "
+
 msgid "Request Dialog"
 msgstr "درخواست ڈائیلاگ"
 
@@ -15402,16 +15820,6 @@ msgstr "اکاؤنٹ:"
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr ""
 
-msgid "Insert an <iq/> stanza."
-msgstr ""
-
-msgid "Insert a <presence/> stanza."
-msgstr ""
-
-#, fuzzy
-msgid "Insert a <message/> stanza."
-msgstr "پیام میں داخل کرو"
-
 #. *< name
 #. *< version
 #. *  summary
@@ -15419,8 +15827,143 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr ""
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Error creating conference."
+#~ msgstr "خامی رابطہ قائم کررہی ہے"
+
+#, fuzzy
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "ساكیٹ كوپورٹ كےلیےباندھ نہیں سكا"
+
+#, fuzzy
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr "ساكیٹ كی تخلیق  نا ممكن :n%s"
+
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "%sنے ابھی آپ کو نج بھیجا!"
+
+#~ msgid "Friendly name changes too rapidly"
+#~ msgstr "دوستانہ نام بہت جلدی تبدیل ہوتا ہے"
+
+#~ msgid "This Hotmail account may not be active."
+#~ msgstr "یہ ہاٹ میل اکاؤنٹ  شاید فعال نہیں ہو سکتا۔"
+
+#~ msgid "Profile URL"
+#~ msgstr "پرو فائل URL"
+
+#~ msgid "MSN Protocol Plugin"
+#~ msgstr "MSN  پروٹو کال پلگ ان"
+
+#~ msgid "%s is not a valid group."
+#~ msgstr "%s معتبر گروپ نہیں ہے۔"
+
+#~ msgid "Unknown error."
+#~ msgstr "نا معلوم خامی۔"
+
+#~ msgid "%s on %s (%s)"
+#~ msgstr "%s پر %s (%s)"
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr " %s (%s)پرصارف شامل کرنے میں نا قابل "
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr " %s (%s) پر صارف کو بلاک کرنے میں نا قابل"
+
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr " %s (%s)پر صارف کو اجازت دینے میں  ناقابل"
+
+#~ msgid "%s could not be added because your buddy list is full."
+#~ msgstr "%sملا نہیں سکا کیو نکہ آپ کی بڈی فہرست فل ہوگئی ہے۔"
+
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%sمعتبر پاسپورٹ اکاؤنٹ نہیں ہے۔"
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "سروس عارضی طورپرغیردستیاب ہے۔"
+
+#~ msgid "Unable to rename group"
+#~ msgstr "گروپ کو دوبارہ نام  دینے میں ناقابل"
+
+#~ msgid "Unable to delete group"
+#~ msgstr "گروپ کو خارج  کرنے میں ناقابل"
+
+#~ msgid "%s has added you to his or her buddy list."
+#~ msgstr "%sنے آپ كواپنی بڈی لسٹ میں شامل كردیا۔"
+
+#~ msgid "%s has removed you from his or her buddy list."
+#~ msgstr "%sنے آپ كواپنی بڈی لسٹ سےخارج كردیا۔"
+
+#, fuzzy
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "آپ نے آخری کوشش کیا ہوا ایکشن پرفارم نہیں ہوسکاکیونکہ آپ قیمت کی حد سے "
+#~ "اوپر ہیں۔ براہ کرم 10سیکنڈس تک انظار کریں اور دوبارہ کوشش کریں۔"
+
+# msgstr "گائم AIM, MSN, Yahoo!,  كو استعمال كرتے ہوئے ایك ماڈیولر میسیجینگ كلائںٹ  كیبل ہے ۔Jabber, ICQ, IRC, SILC, SIP/SIMPLE, ناول  گروپ وائس، لوٹس مشابہ ٹائم،بونزور، زیفیر،گڈو گڈو، اورQQایك بار میں ۔یہ GTK+.<BR><BR> استعمال كرتے ہوئے لكھا جاتا ہے  آپ ترمیم كرینگے  اور  پروگرام كوGPL شرطوں كے ماتحٹ دوبارہ تقسیم كرینگے (version 2 or later).GPLكی ایك كاپی  'COPYING' فائل میں ركھتی ہے گائم سے تقسیم كی جاتی ہے۔ گائم  اسے شراكت داروں سے   كاپی رائٹیڈ ہے ۔ شراكت داروں كی مكمل فہرست كے لیے   گائم كی 'COPYRIGHT'   فائل دیكھیے۔ ہم اس پروگرام كے لیے كوئي وارنٹی مہیا نہیں كرتے ہیں ۔<BR><BR>"
+#, fuzzy
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
+
+# msgstr "گائم AIM, MSN, Yahoo!,  كو استعمال كرتے ہوئے ایك ماڈیولر میسیجینگ كلائںٹ  كیبل ہے ۔Jabber, ICQ, IRC, SILC, SIP/SIMPLE, ناول  گروپ وائس، لوٹس مشابہ ٹائم،بونزور، زیفیر،گڈو گڈو، اورQQایك بار میں ۔یہ GTK+.<BR><BR> استعمال كرتے ہوئے لكھا جاتا ہے  آپ ترمیم كرینگے  اور  پروگرام كوGPL شرطوں كے ماتحٹ دوبارہ تقسیم كرینگے (version 2 or later).GPLكی ایك كاپی  'COPYING' فائل میں ركھتی ہے گائم سے تقسیم كی جاتی ہے۔ گائم  اسے شراكت داروں سے   كاپی رائٹیڈ ہے ۔ شراكت داروں كی مكمل فہرست كے لیے   گائم كی 'COPYRIGHT'   فائل دیكھیے۔ ہم اس پروگرام كے لیے كوئي وارنٹی مہیا نہیں كرتے ہیں ۔<BR><BR>"
+#, fuzzy
+#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
+
+#~ msgid "Debugging Information"
+#~ msgstr "ڈی بگینگ معلومات"
+
+#~ msgid ""
+#~ "Unrecognized file type\n"
+#~ "\n"
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "نہ پہچانی گئی فائل ٹائپ\n"
+#~ "\n"
+#~ "کو ڈی فالیٹنگ PNG"
+
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "خامی امیج محفوظ کررہا ہے\n"
+#~ "\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "(Default)"
+#~ msgstr "ڈی فا لٹ"
+
+#~ msgid "Icon"
+#~ msgstr "آئیکن"
+
+#, fuzzy
+#~ msgid "Proxy Server &amp; Browser"
+#~ msgstr "پروکسی سرور"
+
+#~ msgid "Auto-away"
+#~ msgstr "خود کار_دور"
+
+#~ msgid "Change _status to:"
+#~ msgstr "كےلیےاسٹیٹس_تبدیل كریں"
+
+#~ msgid "Failed to open file '%s': %s"
+#~ msgstr " '%s': %s كو كھولنا نا كامیاب"
+
+#~ msgid ""
+#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
+#~ msgstr ""
+#~ "امیج لوڈ كرنا نا  كامیاب '%s':  وجوہات نہیں ملی،  شاید كرپٹ امیج فائل"
+
+#, fuzzy
+#~ msgid "Insert a <message/> stanza."
+#~ msgstr "پیام میں داخل کرو"
 
 #~ msgid "Send instant messages over multiple protocols"
 #~ msgstr "متعددپروٹوكالزپر فوری پیامات بھجیں"
@@ -15669,10 +16212,6 @@ msgstr ""
 #~ msgstr "صارف موڈس"
 
 #, fuzzy
-#~ msgid "User Gaming"
-#~ msgstr "صارف كا نام"
-
-#, fuzzy
 #~ msgid "User Viewing"
 #~ msgstr "صارف حد"
 
@@ -15789,10 +16328,6 @@ msgstr ""
 
 #~ msgid "Conversation Window Hiding"
 #~ msgstr "گفتگو ونڈو چھپارہا ہے"
-
-#, fuzzy
-#~ msgid "Please select an image for the smiley."
-#~ msgstr " براہ كرم اسٹیٹس كے لیے ایك نا خالی عنوان داخل كیجیے۰"
 
 #, fuzzy
 #~ msgid "Activate which ID?"
@@ -16032,10 +16567,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Update information"
 #~ msgstr "میری معلومات كو  اپ ڈیٹ كرو"
-
-#, fuzzy
-#~ msgid "Successed:"
-#~ msgstr "رفتار:"
 
 # msgstr "آپ كسٹم فیس سیٹ كرنے كی كوشش كررہے ہیں ۔ گائم  جاری طورپر صرف معیاری فیسیس كو اجازت دیتا ہے۔ براہ كرم ایك امیج منتخب كیجیے"
 #~ msgid "Invalid QQ Face"

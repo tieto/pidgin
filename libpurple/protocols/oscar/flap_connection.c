@@ -364,6 +364,12 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 		conn->connect_data = NULL;
 	}
 
+	if (conn->gsc != NULL && conn->gsc->connect_data != NULL)
+	{
+		purple_ssl_close(conn->gsc);
+		conn->gsc = NULL;
+	}
+
 	if (conn->new_conn_data != NULL)
 	{
 		if (conn->type == SNAC_FAMILY_CHAT)

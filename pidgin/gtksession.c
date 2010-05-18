@@ -163,10 +163,8 @@ static gchar **session_make_command(gchar *client_id, gchar *config_dir) {
 		ret[j++] = g_strdup(config_dir);
 	}
 
-#if GTK_CHECK_VERSION(2,2,0)
 	ret[j++] = g_strdup("--display");
 	ret[j++] = g_strdup((gchar *)gdk_display_get_name(gdk_display_get_default()));
-#endif
 
 	ret[j++] = NULL;
 

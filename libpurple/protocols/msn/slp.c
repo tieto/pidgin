@@ -154,6 +154,7 @@ msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer)
 	slpcall->u.outgoing.len = len;
 	slpcall->u.outgoing.data = data;
 	msn_slplink_send_msgpart(slpcall->slplink, slpcall->xfer_msg);
+	msn_message_unref(slpcall->xfer_msg->msg);
 	return MIN(1202, len);
 }
 
@@ -308,8 +309,6 @@ find_valid_emoticon(PurpleAccount *account, const char *path)
 	return NULL;
 }
 
-#define MAX_FILE_NAME_LEN 0x226
-
 static void
 got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			   const char *euf_guid, const char *context)
@@ -382,7 +381,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		/* File Transfer */
 		PurpleAccount *account;
 		PurpleXfer *xfer;
-		char *bin;
+		MsnFileContext *header;
 		gsize bin_len;
 		guint32 file_size;
 		char *file_name;
@@ -396,15 +395,17 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		xfer = purple_xfer_new(account, PURPLE_XFER_RECEIVE,
 							 slpcall->slplink->remote_user);
-		if (xfer)
-		{
-			bin = (char *)purple_base64_decode(context, &bin_len);
-			file_size = GUINT32_FROM_LE(*(gsize *)(bin + 8));
 
-			file_name = g_convert(bin + 20, MAX_FILE_NAME_LEN, "UTF-8", "UTF-16LE",
+		header = (MsnFileContext *)purple_base64_decode(context, &bin_len);
+		if (bin_len >= sizeof(MsnFileContext) - 1 &&
+			(header->version == 2 ||
+			 (header->version == 3 && header->length == sizeof(MsnFileContext) + 63))) {
+			file_size = GUINT64_FROM_LE(header->file_size);
+
+			file_name = g_convert((const gchar *)&header->file_name,
+			                      MAX_FILE_NAME_LEN * 2,
+			                      "UTF-8", "UTF-16LE",
 			                      NULL, NULL, NULL);
-
-			g_free(bin);
 
 			purple_xfer_set_filename(xfer, file_name ? file_name : "");
 			g_free(file_name);
@@ -422,8 +423,15 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			xfer->data = slpcall;
 
+			if (header->type == 0 && bin_len >= sizeof(MsnFileContext)) {
+				purple_xfer_set_thumbnail(xfer, &header->preview,
+				                          bin_len - sizeof(MsnFileContext),
+				    					  "image/png");
+			}
+
 			purple_xfer_request(xfer);
 		}
+		g_free(header);
 
 		accepted = TRUE;
 
@@ -930,6 +938,8 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	conv = swboard->conv;
 
 	body = msn_message_get_bin_data(msg, &body_len);
+	if (!body || !body_len)
+		return;
 	body_str = g_strndup(body, body_len);
 
 	/* MSN Messenger 7 may send more than one MSNObject in a single message...

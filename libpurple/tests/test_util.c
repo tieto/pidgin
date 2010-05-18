@@ -121,6 +121,37 @@ START_TEST(test_markup_html_to_xhtml)
 }
 END_TEST
 
+START_TEST(test_utf8_strip_unprintables)
+{
+	fail_unless(NULL == purple_utf8_strip_unprintables(NULL));
+	/* invalid UTF-8 */
+#if 0
+	/* disabled because make check fails on an assertion */
+	fail_unless(NULL == purple_utf8_strip_unprintables("abc\x80\x7f"));
+#endif
+	/* \t, \n, \r, space */
+	assert_string_equal_free("ab \tcd\nef\r   ", purple_utf8_strip_unprintables("ab \tcd\nef\r   "));
+	/* ASCII control characters (stripped) */
+	assert_string_equal_free(" aaaa ", purple_utf8_strip_unprintables(
+				"\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0E\x0F\x10 aaaa "
+				"\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"));
+	/* Basic ASCII */
+	assert_string_equal_free("Foobar", purple_utf8_strip_unprintables("Foobar"));
+	/* 0xE000 - 0xFFFD (UTF-8 encoded) */
+	/* U+F1F7 */
+	assert_string_equal_free("aaaa\xef\x87\xb7", purple_utf8_strip_unprintables("aaaa\xef\x87\xb7"));
+#if 0
+	/* disabled because make check fails on an assertion */
+	/* U+DB80 (Private Use High Surrogate, First) -- should be stripped */
+	assert_string_equal_free("aaaa", purple_utf8_strip_unprintables("aaaa\xed\xa0\x80"));
+	/* U+FFFE (should be stripped) */
+	assert_string_equal_free("aaaa", purple_utf8_strip_unprintables("aaaa\xef\xbf\xbe"));
+#endif
+	/* U+FEFF (should not be stripped) */
+	assert_string_equal_free("aaaa\xef\xbb\xbf", purple_utf8_strip_unprintables("aaaa\xef\xbb\xbf"));
+}
+END_TEST
+
 START_TEST(test_mime_decode_field)
 {
 	gchar *result = purple_mime_decode_field("=?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?=");
@@ -166,6 +197,10 @@ util_suite(void)
 
 	tc = tcase_create("Markup");
 	tcase_add_test(tc, test_markup_html_to_xhtml);
+	suite_add_tcase(s, tc);
+
+	tc = tcase_create("Stripping Unparseables");
+	tcase_add_test(tc, test_utf8_strip_unprintables);
 	suite_add_tcase(s, tc);
 
 	tc = tcase_create("MIME");

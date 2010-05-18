@@ -49,7 +49,7 @@ void pidgin_docklet_init(void);
 void pidgin_docklet_uninit(void);
 void*pidgin_docklet_get_handle(void);
 
-/* function in gtkdocklet-{x11,win32}.c */
+/* function in gtkdocklet-{gtk,x11,win32}.c */
 void docklet_ui_init(void);
 
 #endif /* _GTKDOCKLET_H_ */

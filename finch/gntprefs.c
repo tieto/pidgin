@@ -171,7 +171,7 @@ get_pref_field(Prefs *prefs)
 				default:
 					break;
 			}
-			purple_request_field_list_add(field, data, iter->data);
+			purple_request_field_list_add_icon(field, data, NULL, iter->data);
 			if (select)
 				purple_request_field_list_add_selected(field, data);
 		}

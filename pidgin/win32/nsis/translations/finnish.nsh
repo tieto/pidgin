@@ -13,7 +13,6 @@
 ; Startup checks
 !define INSTALLER_IS_RUNNING			"Asennusohjelma on jo käynnissä."
 !define PIDGIN_IS_RUNNING			"Pidgin on tällä hetkellä käynnissä. Poistu Pidginistä ja yritä uudelleen."
-!define GTK_INSTALLER_NEEDED			"Ajonaikainen GTK+-ympäristö joko puuttuu tai tarvitsee päivitystä.$\rOle hyvä ja asenna v${GTK_MIN_VERSION} tai uudempi ajonaikainen GTK+-ympäristö."
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Seuraava >"
@@ -33,14 +32,11 @@
 !define PIDGIN_STARTMENU_SHORTCUT_DESC   	"Tee Pidgin-pikakuvake käynnistysvalikkoon"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Vanha versio ajonaikaisesta GTK+-ympäristöstä löytynyt. Tahdotko päivittää?$\rHuomio: $(^Name) ei välttämättä toimi mikäli jätät päivittämättä."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Vieraile Pidginin WWW-sivustolla"
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"Virhe asennettaessa ajonaikaista GTK+-ympäristöä."
-!define GTK_BAD_INSTALL_PATH			"Antamasi polku ei toimi tai sitä ei voi luoda."
 
 ; URL Handler section
 !define URI_HANDLERS_SECTION_TITLE		"URI-käsittelijät"
@@ -52,29 +48,5 @@
 ; Spellcheck Section Prompts
 !define PIDGIN_SPELLCHECK_SECTION_TITLE		"Oikolukutuki"
 !define PIDGIN_SPELLCHECK_ERROR			"Virhe asennettaessa oikolukua"
-!define PIDGIN_SPELLCHECK_DICT_ERROR		"Virhe asennettaessa oikoluvun sanakirjaa"
 !define PIDGIN_SPELLCHECK_SECTION_DESCRIPTION	"Tuki oikoluvulle.  (Asennukseen tarvitaan Internet-yhteys)"
-!define ASPELL_INSTALL_FAILED			"Asennus epäonnistui"
-!define PIDGIN_SPELLCHECK_BRETON		"bretoni"
-!define PIDGIN_SPELLCHECK_CATALAN		"katalaani"
-!define PIDGIN_SPELLCHECK_CZECH		"tshekki"
-!define PIDGIN_SPELLCHECK_WELSH		"kymri"
-!define PIDGIN_SPELLCHECK_DANISH		"tanska"
-!define PIDGIN_SPELLCHECK_GERMAN		"saksa"
-!define PIDGIN_SPELLCHECK_GREEK		"kreikka"
-!define PIDGIN_SPELLCHECK_ENGLISH		"englanti"
-!define PIDGIN_SPELLCHECK_ESPERANTO		"esperanto"
-!define PIDGIN_SPELLCHECK_SPANISH		"espanja"
-!define PIDGIN_SPELLCHECK_FAROESE		"fääri"
-!define PIDGIN_SPELLCHECK_FRENCH		"ranska"
-!define PIDGIN_SPELLCHECK_ITALIAN		"italia"
-!define PIDGIN_SPELLCHECK_DUTCH		"hollanti"
-!define PIDGIN_SPELLCHECK_NORWEGIAN		"norja"
-!define PIDGIN_SPELLCHECK_POLISH		"puola"
-!define PIDGIN_SPELLCHECK_PORTUGUESE		"portugali"
-!define PIDGIN_SPELLCHECK_ROMANIAN		"romania"
-!define PIDGIN_SPELLCHECK_RUSSIAN		"venäjä"
-!define PIDGIN_SPELLCHECK_SLOVAK		"slovakia"
-!define PIDGIN_SPELLCHECK_SWEDISH		"ruotsi"
-!define PIDGIN_SPELLCHECK_UKRAINIAN		"ukraina"
 

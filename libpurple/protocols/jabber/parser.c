@@ -31,31 +31,6 @@
 #include "util.h"
 #include "xmlnode.h"
 
-static char *purple_unescape_text(const char *in)
-{
-    GString *ret;
-    const char *c = in;
-
-    if (in == NULL)
-        return NULL;
-
-    ret = g_string_new("");
-    while (*c) {
-        int len;
-        const char *ent;
-
-        if ((ent = purple_markup_unescape_entity(c, &len)) != NULL) {
-            g_string_append(ret, ent);
-            c += len;
-        } else {
-            g_string_append_c(ret, *c);
-            c++;
-        }
-    }
-
-    return g_string_free(ret, FALSE);
-}
-
 static void
 jabber_parser_element_start_libxml(void *user_data,
 				   const xmlChar *element_name, const xmlChar *prefix, const xmlChar *namespace,
@@ -68,15 +43,47 @@ jabber_parser_element_start_libxml(void *user_data,
 
 	if(!element_name) {
 		return;
-	} else if(!xmlStrcmp(element_name, (xmlChar*) "stream")) {
-		js->protocol_version = JABBER_PROTO_0_9;
-		for(i=0; i < nb_attributes * 5; i += 5) {
+	} else if (js->stream_id == NULL) {
+		/* Sanity checking! */
+		if (0 != xmlStrcmp(element_name, (xmlChar *) "stream") ||
+				0 != xmlStrcmp(namespace, (xmlChar *) NS_XMPP_STREAMS)) {
+			/* We were expecting a <stream:stream/> opening stanza, but
+			 * didn't get it. Bad!
+			 */
+			purple_debug_error("jabber", "Expecting stream header, got %s with "
+			                   "xmlns %s\n", element_name, namespace);
+			purple_connection_error_reason(js->gc,
+					PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
+					_("XMPP stream header missing"));
+			return;
+		}
+
+		js->protocol_version.major = 0;
+		js->protocol_version.minor = 9;
+
+		for (i = 0; i < nb_attributes * 5; i += 5) {
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_strndup((gchar *)attributes[i+3], attrib_len);
 
-			if(!xmlStrcmp(attributes[i], (xmlChar*) "version")
-					&& !strcmp(attrib, "1.0")) {
-				js->protocol_version = JABBER_PROTO_1_0;
+			if(!xmlStrcmp(attributes[i], (xmlChar*) "version")) {
+				const char *dot = strchr(attrib, '.');
+
+				js->protocol_version.major = atoi(attrib);
+				js->protocol_version.minor = dot ? atoi(dot + 1) : 0;
+
+				if (js->protocol_version.major > 1) {
+					/* TODO: Send <unsupported-version/> error */
+					purple_connection_error_reason(js->gc,
+							PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
+							_("XMPP Version Mismatch"));
+					g_free(attrib);
+					return;
+				}
+
+				if (js->protocol_version.major == 0 && js->protocol_version.minor != 9) {
+					purple_debug_warning("jabber", "Treating version %s as 0.9 for backward "
+					                     "compatibility\n", attrib);
+				}
 				g_free(attrib);
 			} else if(!xmlStrcmp(attributes[i], (xmlChar*) "id")) {
 				g_free(js->stream_id);
@@ -85,6 +92,11 @@ jabber_parser_element_start_libxml(void *user_data,
 				g_free(attrib);
 			}
 		}
+
+		if (js->stream_id == NULL)
+			purple_connection_error_reason(js->gc,
+					PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
+					_("XMPP stream missing ID"));
 	} else {
 
 		if(js->current)
@@ -280,7 +292,8 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 		}
 	}
 
-	if (js->protocol_version == JABBER_PROTO_0_9 && !js->gc->disconnect_timeout &&
+	if (js->protocol_version.major == 0 && js->protocol_version.minor == 9 &&
+			!js->gc->disconnect_timeout &&
 			(js->state == JABBER_STREAM_INITIALIZING ||
 			 js->state == JABBER_STREAM_INITIALIZING_ENCRYPTION)) {
 		/*

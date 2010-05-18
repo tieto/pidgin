@@ -30,6 +30,7 @@
 #include "prpl.h"
 #include "version.h"
 #include "notify.h"
+#include "status.h"
 
 #define OSCAR_DEFAULT_LOGIN_SERVER "login.messaging.aol.com"
 #define OSCAR_DEFAULT_LOGIN_PORT 5190
@@ -51,6 +52,7 @@
 #ifdef _WIN32
 const char *oscar_get_locale_charset(void);
 #endif
+PurpleMood* oscar_get_purple_moods(PurpleAccount *account);
 const char *oscar_list_icon_icq(PurpleAccount *a, PurpleBuddy *b);
 const char *oscar_list_icon_aim(PurpleAccount *a, PurpleBuddy *b);
 const char* oscar_list_emblem(PurpleBuddy *b);

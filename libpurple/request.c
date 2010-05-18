@@ -850,13 +850,40 @@ void
 purple_request_field_list_add(PurpleRequestField *field, const char *item,
 							void *data)
 {
+	purple_request_field_list_add_icon(field, item, NULL, data);
+}
+
+void
+purple_request_field_list_add_icon(PurpleRequestField *field, const char *item, const char* icon_path,
+							void *data)
+{
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(item  != NULL);
 	g_return_if_fail(data  != NULL);
 	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
 
-	field->u.list.items = g_list_append(field->u.list.items, g_strdup(item));
+	if (icon_path)
+	{
+		if (field->u.list.icons == NULL)
+		{
+			GList *l;
+			for (l = field->u.list.items ; l != NULL ; l = l->next)
+			{
+				/* Order doesn't matter, because we're just
+				 * filing in blank items.  So, we use
+				 * g_list_prepend() because it's faster. */
+				field->u.list.icons = g_list_prepend(field->u.list.icons, NULL);
+			}
+		}
+		field->u.list.icons = g_list_append(field->u.list.icons, g_strdup(icon_path));
+	}
+	else if (field->u.list.icons)
+	{
+		/* Keep this even with the items list. */
+		field->u.list.icons = g_list_append(field->u.list.icons, NULL);
+	}
 
+	field->u.list.items = g_list_append(field->u.list.items, g_strdup(item));
 	g_hash_table_insert(field->u.list.item_data, g_strdup(item), data);
 }
 
@@ -960,6 +987,15 @@ purple_request_field_list_get_items(const PurpleRequestField *field)
 	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, NULL);
 
 	return field->u.list.items;
+}
+
+GList *
+purple_request_field_list_get_icons(const PurpleRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, NULL);
+
+	return field->u.list.icons;
 }
 
 PurpleRequestField *
@@ -1281,6 +1317,29 @@ purple_request_action(void *handle, const char *title, const char *primary,
 }
 
 void *
+purple_request_action_with_icon(void *handle, const char *title, 
+					const char *primary,
+					const char *secondary, int default_action,
+					PurpleAccount *account, const char *who, 
+					PurpleConversation *conv, gconstpointer icon_data,
+					gsize icon_size, void *user_data, size_t action_count, ...)
+{
+	void *ui_handle;
+	va_list args;
+
+	g_return_val_if_fail(action_count > 0, NULL);
+
+	va_start(args, action_count);
+	ui_handle = purple_request_action_with_icon_varg(handle, title, primary, 
+		secondary, default_action, account, who, conv, icon_data, icon_size,
+		user_data, action_count, args);
+	va_end(args);
+
+	return ui_handle;
+}
+
+
+void *
 purple_request_action_varg(void *handle, const char *title,
 						 const char *primary, const char *secondary,
 						 int default_action,
@@ -1310,6 +1369,41 @@ purple_request_action_varg(void *handle, const char *title,
 
 	return NULL;
 }
+
+void *
+purple_request_action_with_icon_varg(void *handle, const char *title,
+						 const char *primary, const char *secondary,
+						 int default_action,
+						 PurpleAccount *account, const char *who, 
+						 PurpleConversation *conv, gconstpointer icon_data,
+						 gsize icon_size,
+						 void *user_data, size_t action_count, va_list actions)
+{
+	PurpleRequestUiOps *ops;
+
+	g_return_val_if_fail(action_count > 0, NULL);
+
+	ops = purple_request_get_ui_ops();
+
+	if (ops != NULL && ops->request_action_with_icon != NULL) {
+		PurpleRequestInfo *info;
+
+		info            = g_new0(PurpleRequestInfo, 1);
+		info->type      = PURPLE_REQUEST_ACTION;
+		info->handle    = handle;
+		info->ui_handle = ops->request_action_with_icon(title, primary, secondary,
+											  default_action, account, who, conv,
+											  icon_data, icon_size,
+											  user_data, action_count, actions);
+
+		handles = g_list_append(handles, info);
+
+		return info->ui_handle;
+	}
+
+	return NULL;
+}
+
 
 void *
 purple_request_fields(void *handle, const char *title, const char *primary,
