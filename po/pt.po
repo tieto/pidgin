@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:53-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2005-03-14 17:23+0000\n"
 "Last-Translator: Duarte Henriques <duarte.henriques@gmail.com>\n"
 "Language-Team: \n"
@@ -16085,15 +16085,21 @@ msgstr ""
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr "$(^Name) está disponível sob a licença GNU General Public License (GPL). O texto da licença é fornecido aqui meramente a título informativo. $_CLICK"
+msgstr ""
+"$(^Name) está disponível sob a licença GNU General Public License (GPL). O "
+"texto da licença é fornecido aqui meramente a título informativo. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Um conjunto de ferramentas de interface gráfica multi-plataforma, usado pelo Pidgin"
+msgstr ""
+"Um conjunto de ferramentas de interface gráfica multi-plataforma, usado pelo "
+"Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr "Uma instância do Pidgin já está a ser executada. Saia do Pidgin e tente de novo."
+msgstr ""
+"Uma instância do Pidgin já está a ser executada. Saia do Pidgin e tente de "
+"novo."
 
 msgid "Core Pidgin files and dlls"
 msgstr "Ficheiros e bibliotecas principais do Pidgin"
@@ -16119,6 +16125,13 @@ msgstr ""
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy
@@ -16168,7 +16181,9 @@ msgstr "O instalador já está a ser executado."
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr "O desinstalador não encontrou entradas de registo do Pidgin.$\\rÉ provável que outro utilizador tenha instalado este programa."
+msgstr ""
+"O desinstalador não encontrou entradas de registo do Pidgin.$\\rÉ provável "
+"que outro utilizador tenha instalado este programa."
 
 #. URL Handler section
 msgid "URI Handlers"
@@ -16186,13 +16201,6 @@ msgstr "Visite a Página Web do Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Não tem permissão para desinstalar este programa."
-
-#, no-c-format
-msgid ""
-"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
-msgstr ""
 
 #, fuzzy
 #~ msgid "Artist"

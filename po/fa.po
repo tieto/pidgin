@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 1.5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:54-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2007-04-10 20:37+0330\n"
 "Last-Translator: Elnaz Sarbar <elnaz@farsiweb.info>\n"
 "Language-Team: Persian\n"
@@ -15745,7 +15745,9 @@ msgstr "این متصل‌شونده‌ برای اشکال‌زدایی کار�
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr "$(^Name) تحت مجوز عمومى همگانى گنو (GPL) منتشر شده است. اين مجوز تنها براى اطلاع‌رسانى اينجا ارائه شده است. $_CLICK"
+msgstr ""
+"$(^Name) تحت مجوز عمومى همگانى گنو (GPL) منتشر شده است. اين مجوز تنها براى "
+"اطلاع‌رسانى اينجا ارائه شده است. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "جعبه‌ابزار رابط کاربر گرافيکى چند بسترى که پيجين از آن استفاده مى‌کند"
@@ -15753,7 +15755,9 @@ msgstr "جعبه‌ابزار رابط کاربر گرافيکى چند بستر
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr "برنامه پيجين از قبل در حال اجرا است. لطفاً از پيجين خارج شود و دوباره سعى کنيد."
+msgstr ""
+"برنامه پيجين از قبل در حال اجرا است. لطفاً از پيجين خارج شود و دوباره سعى "
+"کنيد."
 
 msgid "Core Pidgin files and dlls"
 msgstr "پرونده‌ها و DLLهاى اصلى پيجين"
@@ -15779,6 +15783,13 @@ msgstr ""
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy
@@ -15829,7 +15840,9 @@ msgstr "نصب‌کننده از قبل در حال اجرا است."
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr "حذف‌کننده نمى‌تواند مداخل registery پيچين را پيدا کند.$\\r ممکن است کاربر ديگرى اين برنامه را نصب کرده باشد."
+msgstr ""
+"حذف‌کننده نمى‌تواند مداخل registery پيچين را پيدا کند.$\\r ممکن است کاربر "
+"ديگرى اين برنامه را نصب کرده باشد."
 
 #. URL Handler section
 msgid "URI Handlers"
@@ -15839,7 +15852,9 @@ msgstr "متصدى‌هاى نشانى اينترنتى"
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
-msgstr "حذف نسخه‌اى از پيجين که در حال حاضر نصب است ممکن نيست. نسخه جديد بدون حذف نسخه موجود نصب مى‌شود."
+msgstr ""
+"حذف نسخه‌اى از پيجين که در حال حاضر نصب است ممکن نيست. نسخه جديد بدون حذف "
+"نسخه موجود نصب مى‌شود."
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
@@ -15847,13 +15862,6 @@ msgstr "صفحه وبى پيجين را ببينيد"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "شما اجازه لازم براى حذف اين برنامه را نداريد."
-
-#, no-c-format
-msgid ""
-"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
-msgstr ""
 
 #, fuzzy
 #~ msgid "Artist"

@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:53-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2010-02-11 12:17+0100\n"
 "Last-Translator: Hans Fredrik Nordhaug <hans@nordhaug.priv.no>\n"
 "Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.ui.no>\n"
@@ -15211,7 +15211,9 @@ msgstr ""
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr "$(^Name) er utgitt under GPL (GNU General Public License). Lisensen er oppgitt her kun med henblikk på informasjon. $_CLICK"
+msgstr ""
+"$(^Name) er utgitt under GPL (GNU General Public License). Lisensen er "
+"oppgitt her kun med henblikk på informasjon. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "Et GUI-verktøy for flere ulike plattformer, brukes av Pidgin."
@@ -15245,6 +15247,13 @@ msgstr ""
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy
@@ -15285,7 +15294,8 @@ msgstr "Startmeny"
 
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr "Støtte for stavekontroll. (Internettoppkobling påkrevd for installasjon)"
+msgstr ""
+"Støtte for stavekontroll. (Internettoppkobling påkrevd for installasjon)"
 
 msgid "The installer is already running."
 msgstr "Installeren kjører allerede."
@@ -15294,7 +15304,9 @@ msgstr "Installeren kjører allerede."
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr "Avinstalleringsprogrammet kunne ikke finne noen registeroppføring for Pidgin.$\\rTrolig har en annen bruker avinstallert denne applikasjonen."
+msgstr ""
+"Avinstalleringsprogrammet kunne ikke finne noen registeroppføring for Pidgin."
+"$\\rTrolig har en annen bruker avinstallert denne applikasjonen."
 
 #. URL Handler section
 msgid "URI Handlers"
@@ -15312,13 +15324,6 @@ msgstr "Besøk Pidgin for Windows' Nettside"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikke rettigheter til å avinstallere denne applikasjonen."
-
-#, no-c-format
-msgid ""
-"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
-msgstr ""
 
 #~ msgid "Artist"
 #~ msgstr "Artist"

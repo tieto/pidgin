@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:53-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2007-09-09 11:54+0100\n"
 "Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
@@ -15506,7 +15506,8 @@ msgid ""
 msgstr ""
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Skup oruđa za grafičko okruženje, za više platformi, koristi ga Pidgin "
+msgstr ""
+"Skup oruđa za grafičko okruženje, za više platformi, koristi ga Pidgin "
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -15537,6 +15538,13 @@ msgstr ""
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy
@@ -15589,7 +15597,9 @@ msgstr "Ovo ime ćaskanja je već zauzeto"
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr "Program za uklanjanje instalacije ne može da pronađe stavke registra za Pidgin.$\\rVerovatno je ovu aplikaciju instalirao drugi korisnik."
+msgstr ""
+"Program za uklanjanje instalacije ne može da pronađe stavke registra za "
+"Pidgin.$\\rVerovatno je ovu aplikaciju instalirao drugi korisnik."
 
 #. URL Handler section
 msgid "URI Handlers"
@@ -15607,13 +15617,6 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemate ovlašćenja za deinstalaciju ove aplikacije."
-
-#, no-c-format
-msgid ""
-"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
-msgstr ""
 
 #~ msgid "Artist"
 #~ msgstr "Izvođač"

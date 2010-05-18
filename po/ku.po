@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:52-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2007-02-26 09:48+0000\n"
 "Last-Translator: Erdal Ronahi <erdal.ronahi@gmail.com>\n"
 "Language-Team: Kurdish <gnu-ku-wergerandin@lists.sourceforge.net>\n"
@@ -15779,7 +15779,9 @@ msgstr ""
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr "$(^Name) bin lîsansa Lîsansa Gelempera Gistî ya GNU (GPL) hatiye weşandin. Ji bo agahî, ev lîsans li vir tê xwendin. $_CLICK"
+msgstr ""
+"$(^Name) bin lîsansa Lîsansa Gelempera Gistî ya GNU (GPL) hatiye weşandin. "
+"Ji bo agahî, ev lîsans li vir tê xwendin. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "Paketa amûrên GUI ji bo gelek platforman, ji hêla Pidgin tê bikaranîn."
@@ -15813,6 +15815,13 @@ msgstr ""
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy
@@ -15862,7 +15871,9 @@ msgstr "Sazker jixwe dimeşe."
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr "Raker têketiyên registry yên Pidgin nedît. $\\rQey bikarhênereke din vê bername saz kir."
+msgstr ""
+"Raker têketiyên registry yên Pidgin nedît. $\\rQey bikarhênereke din vê "
+"bername saz kir."
 
 #. URL Handler section
 msgid "URI Handlers"
@@ -15880,13 +15891,6 @@ msgstr "Were Malpera Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Destûra te ji bo rakirina vê bernameyê tune."
-
-#, no-c-format
-msgid ""
-"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
-msgstr ""
 
 #, fuzzy
 #~ msgid "Artist"
