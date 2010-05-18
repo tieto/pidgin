@@ -508,6 +508,9 @@ send_file_cb(MsnSlpCall *slpcall)
 	PurpleXfer *xfer;
 
 	xfer = (PurpleXfer *)slpcall->xfer;
+	if (purple_xfer_get_status(xfer) >= PURPLE_XFER_STATUS_STARTED)
+		return;
+
 	purple_xfer_ref(xfer);
 	purple_xfer_start(xfer, -1, NULL, 0);
 	if (purple_xfer_get_status(xfer) != PURPLE_XFER_STATUS_STARTED) {
