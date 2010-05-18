@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:53-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2010-05-04 19:13+0100\n"
 "Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -15056,7 +15056,9 @@ msgstr "Tento zásuvný modul je užitečný pro ladění serverů nebo klientů
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr "K použití $(^Name) se vztahuje GPL licence. Licence je zde uvedena pouze pro Vaší informaci. $_CLICK"
+msgstr ""
+"K použití $(^Name) se vztahuje GPL licence. Licence je zde uvedena pouze pro "
+"Vaší informaci. $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "Multi-platform GUI toolkit používaný Pidginem"
@@ -15091,6 +15093,13 @@ msgstr ""
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy
@@ -15143,7 +15152,9 @@ msgstr "Přezdívka \"%s\" se již používá"
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr "Odinstalční proces nemůže najít záznamy pro Pidgin v registrech.$\\rPravděpodobně instalaci této aplikace provedl jiný uživatel."
+msgstr ""
+"Odinstalční proces nemůže najít záznamy pro Pidgin v registrech.$"
+"\\rPravděpodobně instalaci této aplikace provedl jiný uživatel."
 
 #. URL Handler section
 #, fuzzy
@@ -15162,13 +15173,6 @@ msgstr "Navštívit Pidgin Web Page"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemáte oprávnění k odinstalaci této aplikace."
-
-#, no-c-format
-msgid ""
-"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
-msgstr ""
 
 #~ msgid "Current Mood"
 #~ msgstr "Momentální nálada"

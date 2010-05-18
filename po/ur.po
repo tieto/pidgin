@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Urdu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:52-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2007-11-14 14:00+0530\n"
 "Last-Translator: RKVS Raman <raman@cdacbangalore.in>\n"
 "Language-Team: C-DAC,Gist,Urdu Team / BharateeyaOO.o <info.gist@cdac.in / "
@@ -15909,6 +15909,13 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ رن ٹائم ورجن"
@@ -15978,9 +15985,6 @@ msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
-
-msgid "spellcheck_faq"
 msgstr ""
 
 #, fuzzy

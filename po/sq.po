@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:53-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2010-05-03 11:41+0200\n"
 "Last-Translator: Besnik Bleta <besnik@programeshqip.org>\n"
 "Language-Team: Albanian <besnik@programeshqip.org>\n"
@@ -15854,6 +15854,13 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ Runtime Environment (i nevojshëm)"
@@ -15904,7 +15911,9 @@ msgstr ""
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr "Çinstaluesi nuk gjeti dot zëra regjistri për Pidgin-in.$\\rKa mundësi që këtë zbatim ta ketë instaluar një tjetër përdorues."
+msgstr ""
+"Çinstaluesi nuk gjeti dot zëra regjistri për Pidgin-in.$\\rKa mundësi që "
+"këtë zbatim ta ketë instaluar një tjetër përdorues."
 
 #. URL Handler section
 #, fuzzy
@@ -15923,13 +15932,6 @@ msgstr "Vizitoni Faqen Web të Pidgin-it"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nuk keni leje të çinstaloni këtë zbatim."
-
-#, no-c-format
-msgid ""
-"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
-msgstr ""
 
 #~ msgid "Current Mood"
 #~ msgstr "Humori i Çastit"

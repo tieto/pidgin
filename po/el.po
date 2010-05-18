@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin[el]\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:52-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2009-07-16 16:48+0300\n"
 "Last-Translator: Bouklis Panos <panos@echidna-band.com>\n"
 "Language-Team: Greek <i18ngr@lists.hellug.gr>\n"
@@ -15452,6 +15452,13 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "Έκδοση GTK+ Runtime"
@@ -15520,9 +15527,6 @@ msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
-
-msgid "spellcheck_faq"
 msgstr ""
 
 #~ msgid "Artist"

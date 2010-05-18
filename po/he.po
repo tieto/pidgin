@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:53-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2010-02-15 19:51+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at google's mail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
@@ -14920,7 +14920,8 @@ msgstr "תוסף זה שימושי לניפוי באגים בשרתים ולקו
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
-msgstr "$(^Name) .הרישיון נמצא כאן בשביל מידע בלבד .GPL משוחרר תחת רישיון $_CLICK"
+msgstr ""
+"$(^Name) .הרישיון נמצא כאן בשביל מידע בלבד .GPL משוחרר תחת רישיון $_CLICK"
 
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "מולטי-פלטפורמי, בו נעזר פידג'ין GUI כלי"
@@ -14954,6 +14955,13 @@ msgstr ""
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #, fuzzy
@@ -15003,7 +15011,9 @@ msgstr "תוכנת ההתקנה כבר רצה."
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
-msgstr ".GTK+ ההתקנה לא מצאה את הרישומים של$\\r.יכול להיות שמשמתמש אחר התקין את התוכנה הזאת"
+msgstr ""
+".GTK+ ההתקנה לא מצאה את הרישומים של$\\r.יכול להיות שמשמתמש אחר התקין את "
+"התוכנה הזאת"
 
 #. URL Handler section
 msgid "URI Handlers"
@@ -15013,7 +15023,9 @@ msgstr "מנהלי URI"
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
-msgstr "לא מסוגל להסיר את הגירסא המותקנת של פידג'ין. הגירסא החדשה תותקן ללא הסרת הגרסא המותקנת."
+msgstr ""
+"לא מסוגל להסיר את הגירסא המותקנת של פידג'ין. הגירסא החדשה תותקן ללא הסרת "
+"הגרסא המותקנת."
 
 #. Installer Finish Page
 msgid "Visit the Pidgin Web Page"
@@ -15021,13 +15033,6 @@ msgstr ".Pidginבקרו באתר של "
 
 msgid "You do not have permission to uninstall this application."
 msgstr ".אין לך זכות למחוק תוכנה זאת"
-
-#, no-c-format
-msgid ""
-"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
-msgstr ""
 
 #~ msgid "Artist"
 #~ msgstr "אמן"

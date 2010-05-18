@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:53-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2010-01-13 01:15+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -14752,6 +14752,13 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ 运行时刻环境(必需)"
@@ -14818,13 +14825,6 @@ msgstr "浏览 Pidgin 网页"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "您没有权限卸载此程序。"
-
-#, no-c-format
-msgid ""
-"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
-msgstr ""
 
 #~ msgid "Artist"
 #~ msgstr "美工"

@@ -37,7 +37,7 @@ _URI_HANDLERS_SECTION_TITLE=URI Handlers
 
 #Spellcheck Section Prompts
 _PIDGIN_SPELLCHECK_SECTION_TITLE=Spellchecking Support
-_PIDGIN_SPELLCHECK_ERROR=Error Installing Spellchecking ($R3).$\rIf retrying fails, manual installation instructions are at: http://pidgin.im/win32/download_redir.php?dl_pkg=spellcheck_faq
+_PIDGIN_SPELLCHECK_ERROR=Error Installing Spellchecking ($R3).$\rIf retrying fails, manual installation instructions are at: http://developer.pidgin.im/wiki/Installing%20Pidgin#manual_win32_spellcheck_installation
 _PIDGIN_SPELLCHECK_SECTION_DESCRIPTION=Support for Spellchecking.  (Internet connection required for installation)
 
 _PIDGIN_DEBUGSYMBOLS_ERROR=Error Installing Debug Symbols ($R2).$\rIf retrying fails, you may need to use the 'Offline Installer' from http://pidgin.im/download/windows/ .
