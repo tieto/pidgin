@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0beta6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-05-17 20:53-0400\n"
 "PO-Revision-Date: 2007-03-14 13:08+0500\n"
 "Last-Translator: Kashif Masood <masudmails@yahoo.com>\n"
 "Language-Team: Pashto\n"
@@ -1353,8 +1353,6 @@ msgstr ""
 msgid "Saved Statuses"
 msgstr ""
 
-#. title
-#. optional information
 msgid "Title"
 msgstr ""
 
@@ -1640,6 +1638,12 @@ msgstr "د %s کاروونکی معلومات بدلون"
 
 msgid "Set User Info"
 msgstr "کاروونکی معلومات ورکه"
+
+msgid "This protocol does not support setting a public alias."
+msgstr ""
+
+msgid "This protocol does not support fetching the public alias."
+msgstr ""
 
 msgid "Unknown"
 msgstr "نااشنا"
@@ -3665,12 +3669,6 @@ msgstr ""
 msgid "execute"
 msgstr "اوبسه"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
@@ -3707,6 +3705,42 @@ msgstr "کره کول ناکام شو"
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "خادم"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "باطل کمکی نوم"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "بې ملاتړه خونديګون"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "خادم پته"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "بې ملاتړه خونديګون"
+
+msgid "User not found"
+msgstr ""
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "باطل نوم"
+
+msgid "Resource Constraint"
+msgstr "د څوري محدودول"
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3794,6 +3828,11 @@ msgstr ""
 
 msgid "Organization Unit"
 msgstr ""
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "دنده عنوان"
 
 msgid "Role"
 msgstr ""
@@ -4017,6 +4056,12 @@ msgstr "غږونه"
 msgid "Roles:"
 msgstr ""
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+
 #, fuzzy
 msgid "Ping timed out"
 msgstr "رابطه ناکامه شوه"
@@ -4024,6 +4069,9 @@ msgstr "رابطه ناکامه شوه"
 #, fuzzy
 msgid "Invalid XMPP ID"
 msgstr "باطل هویت"
+
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr ""
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
@@ -4127,7 +4175,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr ""
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "طبیعت"
 
@@ -4149,7 +4196,6 @@ msgstr ""
 msgid "None (To pending)"
 msgstr ""
 
-#. 0
 msgid "None"
 msgstr "هیڅ نه"
 
@@ -4173,6 +4219,12 @@ msgstr "طبیعت"
 msgid "Mood Comment"
 msgstr "د ملګری تبصره:"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4345,9 +4397,6 @@ msgstr ""
 
 msgid "Remote Connection Failed"
 msgstr "د لیری رابطه ناکامه شوه"
-
-msgid "Resource Constraint"
-msgstr "د څوري محدودول"
 
 msgid "Restricted XML"
 msgstr ""
@@ -4692,7 +4741,6 @@ msgstr "شرمېدلی"
 msgid "Amorous"
 msgstr ""
 
-#. 1
 msgid "Angry"
 msgstr "په غوسه"
 
@@ -4789,7 +4837,6 @@ msgstr ""
 msgid "Envious"
 msgstr "اندېښمن"
 
-#. 2
 msgid "Excited"
 msgstr "پارېدلی"
 
@@ -4807,7 +4854,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "ډاله"
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "ډاله"
@@ -4816,14 +4862,12 @@ msgstr "ډاله"
 msgid "Guilty"
 msgstr "ښار"
 
-#. 4
 msgid "Happy"
 msgstr "خوشاله"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 msgid "Hot"
 msgstr ""
 
@@ -4862,7 +4906,6 @@ msgstr "مخ"
 msgid "Intoxicated"
 msgstr "بلل"
 
-#. 6
 msgid "Invincible"
 msgstr "نه مغلوب کیدونکی"
 
@@ -4925,7 +4968,6 @@ msgstr "خوځول"
 msgid "Restless"
 msgstr "ثبت کول"
 
-#. 7
 msgid "Sad"
 msgstr "خپه"
 
@@ -4946,12 +4988,10 @@ msgstr "مانع کړی"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "کمکی نوم"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "خوبجن"
@@ -5354,20 +5394,6 @@ msgstr ""
 msgid "Out to Lunch"
 msgstr ""
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-#, fuzzy
-msgid "Artist"
-msgstr "حمل"
-
-#, fuzzy
-msgid "Album"
-msgstr "اډیام"
-
 #, fuzzy
 msgid "Game Title"
 msgstr "دنده عنوان"
@@ -5515,9 +5541,6 @@ msgstr ""
 #. Business
 msgid "Work"
 msgstr "کار"
-
-msgid "Job Title"
-msgstr "دنده عنوان"
 
 msgid "Company"
 msgstr "شرکت"
@@ -5780,28 +5803,6 @@ msgstr ""
 msgid "The username specified is invalid."
 msgstr ""
 
-#. 5
-msgid "In Love"
-msgstr "مینه لرل"
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "اوسنی پټ ټکی"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "د کاروونکی حالتونه"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "پټ ټکی بدلول"
-
-#, fuzzy
-msgid "How do you feel right now?"
-msgstr "زه اوس دلته نه يم"
-
 msgid "The PIN you entered is invalid."
 msgstr ""
 
@@ -5872,11 +5873,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "ګېم باره کې"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "پټ ټکی بدلول..."
 
 #. display / change profile
 #, fuzzy
@@ -6145,6 +6141,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "مینه لرل"
 
 #, fuzzy
 msgid "Pending"
@@ -6554,9 +6553,6 @@ msgstr ""
 msgid "Incorrect password"
 msgstr ""
 
-msgid "User not found"
-msgstr ""
-
 msgid "Account has been disabled"
 msgstr ""
 
@@ -6794,6 +6790,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "پاتی دی"
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -8118,6 +8118,11 @@ msgstr "پاتی دی"
 #, fuzzy
 msgid "Admin"
 msgstr "اډیام"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "د کوټه فهرست"
 
 #, fuzzy
 msgid "Notice"
@@ -9965,9 +9970,6 @@ msgstr "د یاهو هویت"
 msgid "Yahoo! Protocol Plugin"
 msgstr "د بانجوړ نښلولي"
 
-msgid "Pager server"
-msgstr ""
-
 msgid "Pager port"
 msgstr ""
 
@@ -9988,12 +9990,6 @@ msgstr ""
 
 msgid "Chat room list URL"
 msgstr "د ګپ شپو کوټی فهرست ارل"
-
-msgid "Yahoo Chat server"
-msgstr "د ياهو د ګپ شپ خادم"
-
-msgid "Yahoo Chat port"
-msgstr ""
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -10054,6 +10050,12 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 
 #. username or password missing
@@ -10128,6 +10130,17 @@ msgid "Unable to establish a connection with %s: %s"
 msgstr ""
 "د خادم سره رابطه نه و شوه:\n"
 "%s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+"د کره کولو خادم سره رابطه نه و شوه\n"
+"%s"
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "په کور شی نه یم"
@@ -10489,6 +10502,10 @@ msgstr "نه"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "قبلول"
 
@@ -10725,12 +10742,6 @@ msgstr "د انترنت زری"
 #, fuzzy
 msgid "Pidgin Internet Messenger"
 msgstr "د انترنت زری"
-
-msgid "Orientation"
-msgstr ""
-
-msgid "The orientation of the tray."
-msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11936,6 +11947,10 @@ msgstr ""
 msgid "Arabic"
 msgstr "عربي"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "شرمېدلی"
+
 msgid "Belarusian Latin"
 msgstr ""
 
@@ -11943,6 +11958,10 @@ msgid "Bulgarian"
 msgstr "بلغاري"
 
 msgid "Bengali"
+msgstr "بنګالي"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "بنګالي"
 
 msgid "Bosnian"
@@ -12063,6 +12082,10 @@ msgstr "اسد"
 
 msgid "Macedonian"
 msgstr ""
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "نر"
 
 msgid "Mongolian"
 msgstr ""
@@ -14797,7 +14820,17 @@ msgid "Timestamp Format Options"
 msgstr ""
 
 #, c-format
-msgid "_Force 24-hour time format"
+msgid "_Force timestamp format:"
+msgstr ""
+
+#, fuzzy
+msgid "Use system default"
+msgstr "اوبسه"
+
+msgid "12 hour time format"
+msgstr ""
+
+msgid "24 hour time format"
 msgstr ""
 
 msgid "Show dates in..."
@@ -14999,6 +15032,148 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
+
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "اوبسه"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#, fuzzy
+msgid "Localizations"
+msgstr "ځای"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "د انترنت زری"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "ملاتړلی"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "د پیل نیټه"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+msgid "The installer is already running."
+msgstr ""
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+msgid "URI Handlers"
+msgstr ""
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#, fuzzy
+#~ msgid "Artist"
+#~ msgstr "حمل"
+
+#, fuzzy
+#~ msgid "Album"
+#~ msgstr "اډیام"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "اوسنی پټ ټکی"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "د کاروونکی حالتونه"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "پټ ټکی بدلول"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "زه اوس دلته نه يم"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "پټ ټکی بدلول..."
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "د ياهو د ګپ شپ خادم"
 
 #, fuzzy
 #~ msgid "Error creating conference."

@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-05-17 20:52-0400\n"
 "PO-Revision-Date: 2008-05-09 01:31+0200\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
@@ -1291,8 +1291,6 @@ msgstr ""
 msgid "Saved Statuses"
 msgstr ""
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "Títol"
 
@@ -1572,6 +1570,12 @@ msgid "Change user information for %s"
 msgstr ""
 
 msgid "Set User Info"
+msgstr ""
+
+msgid "This protocol does not support setting a public alias."
+msgstr ""
+
+msgid "This protocol does not support fetching the public alias."
 msgstr ""
 
 msgid "Unknown"
@@ -3576,12 +3580,6 @@ msgstr ""
 msgid "execute"
 msgstr "executar"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
@@ -3616,6 +3614,39 @@ msgstr "L'autentificacion a abocat"
 
 #, c-format
 msgid "SASL error: %s"
+msgstr ""
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "L'expression es pas valida"
+
+msgid "Unsupported Extension"
+msgstr ""
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+msgid "Server does not support channel binding"
+msgstr ""
+
+msgid "Unsupported channel binding method"
+msgstr ""
+
+msgid "User not found"
+msgstr "Utilizaire pas trobat"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "L'expression es pas valida"
+
+msgid "Resource Constraint"
 msgstr ""
 
 #, fuzzy
@@ -3694,6 +3725,11 @@ msgid "Organization Name"
 msgstr ""
 
 msgid "Organization Unit"
+msgstr ""
+
+#. title
+#. optional information
+msgid "Job Title"
 msgstr ""
 
 msgid "Role"
@@ -3916,11 +3952,20 @@ msgstr "Utilizaire pas trobat"
 msgid "Roles:"
 msgstr "Ròtle"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+
 #, fuzzy
 msgid "Ping timed out"
 msgstr "Connectat"
 
 msgid "Invalid XMPP ID"
+msgstr ""
+
+msgid "Invalid XMPP ID. Username portion must be set."
 msgstr ""
 
 msgid "Invalid XMPP ID. Domain must be set."
@@ -4019,7 +4064,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr ""
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr ""
 
@@ -4041,7 +4085,6 @@ msgstr "A"
 msgid "None (To pending)"
 msgstr ""
 
-#. 0
 msgid "None"
 msgstr "Pas cap"
 
@@ -4063,6 +4106,12 @@ msgstr "Nom de grop"
 msgid "Mood Comment"
 msgstr "Entresenhas"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4231,9 +4280,6 @@ msgid "Policy Violation"
 msgstr ""
 
 msgid "Remote Connection Failed"
-msgstr ""
-
-msgid "Resource Constraint"
 msgstr ""
 
 msgid "Restricted XML"
@@ -4570,7 +4616,6 @@ msgstr "Animar"
 msgid "Amorous"
 msgstr ""
 
-#. 1
 msgid "Angry"
 msgstr ""
 
@@ -4664,7 +4709,6 @@ msgstr ""
 msgid "Envious"
 msgstr ""
 
-#. 2
 msgid "Excited"
 msgstr ""
 
@@ -4681,7 +4725,6 @@ msgstr ""
 msgid "Grieving"
 msgstr ""
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "Grop"
@@ -4690,14 +4733,12 @@ msgstr "Grop"
 msgid "Guilty"
 msgstr "Ciutat"
 
-#. 4
 msgid "Happy"
 msgstr ""
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "_Òste :"
@@ -4736,7 +4777,6 @@ msgstr "Interfaç"
 msgid "Intoxicated"
 msgstr "Convidar"
 
-#. 6
 msgid "Invincible"
 msgstr ""
 
@@ -4800,7 +4840,6 @@ msgstr "Suprimir"
 msgid "Restless"
 msgstr "Enregistrar"
 
-#. 7
 msgid "Sad"
 msgstr ""
 
@@ -4820,12 +4859,10 @@ msgstr ""
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "Escais"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr ""
@@ -5216,18 +5253,6 @@ msgstr ""
 msgid "Out to Lunch"
 msgstr ""
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Artista"
-
-msgid "Album"
-msgstr "Albom"
-
 #, fuzzy
 msgid "Game Title"
 msgstr "Títol"
@@ -5374,9 +5399,6 @@ msgstr "Aniversari"
 #. Business
 msgid "Work"
 msgstr "Professional"
-
-msgid "Job Title"
-msgstr ""
 
 msgid "Company"
 msgstr "Entrepresa"
@@ -5630,26 +5652,6 @@ msgstr ""
 msgid "The username specified is invalid."
 msgstr ""
 
-#. 5
-msgid "In Love"
-msgstr ""
-
-#. show current mood
-msgid "Current Mood"
-msgstr ""
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "Mot de pas novèl"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "Modificar lo mot de pas"
-
-msgid "How do you feel right now?"
-msgstr ""
-
 msgid "The PIN you entered is invalid."
 msgstr ""
 
@@ -5718,11 +5720,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "A prepaus de %s"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "Modificar lo mot de pas"
 
 #. display / change profile
 msgid "Change Profile..."
@@ -5975,6 +5972,9 @@ msgstr ""
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "In Love"
 msgstr ""
 
 #, fuzzy
@@ -6365,9 +6365,6 @@ msgstr ""
 msgid "Incorrect password"
 msgstr ""
 
-msgid "User not found"
-msgstr "Utilizaire pas trobat"
-
 msgid "Account has been disabled"
 msgstr ""
 
@@ -6604,6 +6601,10 @@ msgid ""
 msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
+msgstr ""
+
+#, c-format
+msgid "Error requesting %s"
 msgstr ""
 
 msgid "Could not join chat room"
@@ -7900,6 +7901,11 @@ msgstr ""
 
 msgid "Admin"
 msgstr ""
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Títol"
 
 #, fuzzy
 msgid "Notice"
@@ -9726,9 +9732,6 @@ msgstr ""
 msgid "Yahoo! Protocol Plugin"
 msgstr "Protocòl"
 
-msgid "Pager server"
-msgstr ""
-
 msgid "Pager port"
 msgstr ""
 
@@ -9748,12 +9751,6 @@ msgid "Use account proxy for SSL connections"
 msgstr ""
 
 msgid "Chat room list URL"
-msgstr ""
-
-msgid "Yahoo Chat server"
-msgstr ""
-
-msgid "Yahoo Chat port"
 msgstr ""
 
 msgid "Yahoo JAPAN ID..."
@@ -9814,6 +9811,12 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 
 #. username or password missing
@@ -9882,6 +9885,14 @@ msgstr "Connectat"
 
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
+msgstr ""
+
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
 msgstr ""
 
 msgid "Not at Home"
@@ -10241,6 +10252,10 @@ msgstr "_Non"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Acceptar"
 
@@ -10472,12 +10487,6 @@ msgstr ""
 
 msgid "Pidgin Internet Messenger"
 msgstr ""
-
-msgid "Orientation"
-msgstr "Orientacion"
-
-msgid "The orientation of the tray."
-msgstr "L'orientacion de la zòna de notificacion."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11626,6 +11635,10 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Arab"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Jòcs"
+
 msgid "Belarusian Latin"
 msgstr "Bielorus latin"
 
@@ -11633,6 +11646,10 @@ msgid "Bulgarian"
 msgstr "Bulgar"
 
 msgid "Bengali"
+msgstr "Bengalí"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Bengalí"
 
 msgid "Bosnian"
@@ -11751,6 +11768,10 @@ msgstr "Laossian"
 
 msgid "Macedonian"
 msgstr "Macedonian"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Òme"
 
 #, fuzzy
 msgid "Mongolian"
@@ -14415,7 +14436,16 @@ msgid "Timestamp Format Options"
 msgstr ""
 
 #, c-format
-msgid "_Force 24-hour time format"
+msgid "_Force timestamp format:"
+msgstr ""
+
+msgid "Use system default"
+msgstr ""
+
+msgid "12 hour time format"
+msgstr ""
+
+msgid "24 hour time format"
 msgstr ""
 
 msgid "Show dates in..."
@@ -14616,6 +14646,139 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
+
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+msgid "Desktop"
+msgstr ""
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Emplaçament"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr ""
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Ordenar"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "Data de debuta"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+msgid "The installer is already running."
+msgstr ""
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+msgid "URI Handlers"
+msgstr ""
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#~ msgid "Artist"
+#~ msgstr "Artista"
+
+#~ msgid "Album"
+#~ msgstr "Albom"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Mot de pas novèl"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Modificar lo mot de pas"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "Modificar lo mot de pas"
+
+#~ msgid "Orientation"
+#~ msgstr "Orientacion"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "L'orientacion de la zòna de notificacion."
 
 #~ msgid "Unknown error."
 #~ msgstr "Error desconeguda."

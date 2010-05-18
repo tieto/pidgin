@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin-2.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-11 00:58+0300\n"
+"POT-Creation-Date: 2010-05-17 20:53-0400\n"
 "PO-Revision-Date: 2010-05-11 00:25+0300\n"
 "Last-Translator: Mișu Moldovan <dumol@gnome.org>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
@@ -4294,7 +4294,6 @@ msgstr "Serverul nu permite blocarea"
 msgid "Not Authorized"
 msgstr "Neautorizat"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Dispoziție"
 
@@ -4316,7 +4315,6 @@ msgstr "Destinatar"
 msgid "None (To pending)"
 msgstr "Niciunul (în așteptare)"
 
-#. 0
 msgid "None"
 msgstr "Fără"
 
@@ -4860,7 +4858,6 @@ msgstr "Uluit"
 msgid "Amorous"
 msgstr "Drăgăstos"
 
-#. 1
 msgid "Angry"
 msgstr "Supărat"
 
@@ -4939,7 +4936,6 @@ msgstr "Rușinat"
 msgid "Envious"
 msgstr "Invidios"
 
-#. 2
 msgid "Excited"
 msgstr "Entuziast"
 
@@ -4955,21 +4951,18 @@ msgstr "Recunoscător"
 msgid "Grieving"
 msgstr "Îndurerat"
 
-#. 3
 msgid "Grumpy"
 msgstr "Morocănos"
 
 msgid "Guilty"
 msgstr "Vinovat"
 
-#. 4
 msgid "Happy"
 msgstr "Fericit"
 
 msgid "Hopeful"
 msgstr "Încrezător"
 
-#. 8
 msgid "Hot"
 msgstr "Încins"
 
@@ -5003,7 +4996,6 @@ msgstr "Interesat"
 msgid "Intoxicated"
 msgstr "Intoxicat"
 
-#. 6
 msgid "Invincible"
 msgstr "Invincibil"
 
@@ -5055,7 +5047,6 @@ msgstr "Pocăit"
 msgid "Restless"
 msgstr "Neobosit"
 
-#. 7
 msgid "Sad"
 msgstr "Trist"
 
@@ -5074,11 +5065,9 @@ msgstr "Șocat"
 msgid "Shy"
 msgstr "Timid"
 
-#. 9
 msgid "Sick"
 msgstr "Bolnav"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Adormit"
@@ -5910,24 +5899,6 @@ msgstr "Doriți să ștergeți acest contact din lista de contacte?"
 msgid "The username specified is invalid."
 msgstr "Numele de utilizator specificat este nevalid."
 
-#. 5
-msgid "In Love"
-msgstr "Îndrăgostit"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "Dispoziție curentă"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "Dispoziție nouă"
-
-msgid "Change your Mood"
-msgstr "Schimbați-vă dispoziția"
-
-msgid "How do you feel right now?"
-msgstr "Cum vă simțiți pe moment?"
-
 msgid "The PIN you entered is invalid."
 msgstr "PIN-ul introdus este nevalid."
 
@@ -6000,10 +5971,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "Despre mine"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "Schimbare dispoziție..."
 
 #. display / change profile
 #, fuzzy
@@ -6281,6 +6248,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "Îndrăgostit"
 
 #, fuzzy
 msgid "Pending"
@@ -12213,6 +12183,10 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Arabă"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Rușinat"
+
 msgid "Belarusian Latin"
 msgstr "Bielorusă (alfabet latin)"
 
@@ -12338,6 +12312,10 @@ msgstr "Lao"
 
 msgid "Macedonian"
 msgstr "Macedoneană"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Malay"
 
 msgid "Mongolian"
 msgstr "Mongoleză"
@@ -15279,3 +15257,131 @@ msgstr "Trimitere și primire blocuri XMPP brute"
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Acest modul poate fi utilizat pentru depanarea serverelor și clienților XMPP."
+
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "Implicit"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Loc"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Mesagerul Pidgin"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Combinație de semne"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "Pornire"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Pseudonimul „%s” este deja utilizat."
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "Gestionare URL myim"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#~ msgid "Current Mood"
+#~ msgstr "Dispoziție curentă"
+
+#~ msgid "New Mood"
+#~ msgstr "Dispoziție nouă"
+
+#~ msgid "Change your Mood"
+#~ msgstr "Schimbați-vă dispoziția"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "Cum vă simțiți pe moment?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "Schimbare dispoziție..."

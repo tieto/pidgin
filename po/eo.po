@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:12-0700\n"
+"POT-Creation-Date: 2010-05-17 20:53-0400\n"
 "PO-Revision-Date: 2009-08-16 20:26+0200\n"
 "Last-Translator: Stéphane Fillod <fillods@users.sourceforge.net>\n"
 "Language-Team: Esperanto <kde-i18n-eo@kde.org>\n"
@@ -1308,8 +1308,6 @@ msgstr "Forigu Staton"
 msgid "Saved Statuses"
 msgstr "Konservitaj Statoj"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "Titolon"
 
@@ -1591,6 +1589,12 @@ msgstr "Ŝanĝu uzanto-informon de %s"
 
 msgid "Set User Info"
 msgstr "Difini Uzanto Informon"
+
+msgid "This protocol does not support setting a public alias."
+msgstr ""
+
+msgid "This protocol does not support fetching the public alias."
+msgstr ""
 
 msgid "Unknown"
 msgstr "Nekonata"
@@ -3625,12 +3629,6 @@ msgstr ""
 msgid "execute"
 msgstr "ruligi"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
@@ -3665,6 +3663,40 @@ msgstr "SASL aŭtentokontrolo malsukcesis"
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL eraro: %s"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Malvalida karesnomo"
+
+msgid "Unsupported Extension"
+msgstr ""
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Servilo ne ekzistas"
+
+msgid "Unsupported channel binding method"
+msgstr ""
+
+msgid "User not found"
+msgstr ""
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Malvalida uzantnomo"
+
+msgid "Resource Constraint"
+msgstr ""
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3746,6 +3778,11 @@ msgstr "Organizacio nomo"
 
 msgid "Organization Unit"
 msgstr "Organizacio Unito"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "Laboro Titolo"
 
 msgid "Role"
 msgstr "Rolo"
@@ -3963,11 +4000,20 @@ msgstr "Neniu uzanto trovita"
 msgid "Roles:"
 msgstr "Roloj:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+
 msgid "Ping timed out"
 msgstr ""
 
 msgid "Invalid XMPP ID"
 msgstr "Malvalida XMPP ID"
+
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr ""
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
@@ -4066,7 +4112,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "Malpermesita"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Etoso"
 
@@ -4088,7 +4133,6 @@ msgstr "Al"
 msgid "None (To pending)"
 msgstr "Nenio (Al atendante)"
 
-#. 0
 msgid "None"
 msgstr "Nenio"
 
@@ -4110,6 +4154,12 @@ msgstr "Meza Nomo"
 msgid "Mood Comment"
 msgstr "Kunul Komento"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4278,9 +4328,6 @@ msgid "Policy Violation"
 msgstr ""
 
 msgid "Remote Connection Failed"
-msgstr ""
-
-msgid "Resource Constraint"
 msgstr ""
 
 msgid "Restricted XML"
@@ -4619,7 +4666,6 @@ msgstr "Animaciigi"
 msgid "Amorous"
 msgstr "Glora"
 
-#. 1
 msgid "Angry"
 msgstr ""
 
@@ -4716,7 +4762,6 @@ msgstr ""
 msgid "Envious"
 msgstr ""
 
-#. 2
 msgid "Excited"
 msgstr ""
 
@@ -4735,7 +4780,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "Ricevante..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "Grupo"
@@ -4744,14 +4788,12 @@ msgstr "Grupo"
 msgid "Guilty"
 msgstr "Urbo"
 
-#. 4
 msgid "Happy"
 msgstr ""
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "_Retnodo:"
@@ -4791,7 +4833,6 @@ msgstr "Interesiĝoj"
 msgid "Intoxicated"
 msgstr "Invitu"
 
-#. 6
 msgid "Invincible"
 msgstr ""
 
@@ -4855,7 +4896,6 @@ msgstr "Forigu"
 msgid "Restless"
 msgstr "Registru"
 
-#. 7
 msgid "Sad"
 msgstr ""
 
@@ -4876,12 +4916,10 @@ msgstr "Blokita"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "Karesnomo"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr ""
@@ -5270,18 +5308,6 @@ msgstr "Telefonante"
 msgid "Out to Lunch"
 msgstr "Ekstere Tagmanĝanten"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Artisto"
-
-msgid "Album"
-msgstr "Albumo"
-
 msgid "Game Title"
 msgstr "Ludo Titolo"
 
@@ -5426,9 +5452,6 @@ msgstr "Naskiĝdato"
 #. Business
 msgid "Work"
 msgstr "Laboro"
-
-msgid "Job Title"
-msgstr "Laboro Titolo"
 
 msgid "Company"
 msgstr "Kompanio"
@@ -5682,28 +5705,6 @@ msgstr "Ĉu vi volas forigi tiun kunul el via adresaro ankaŭ?"
 msgid "The username specified is invalid."
 msgstr "La enigita uzantnomo malvalidas."
 
-#. 5
-msgid "In Love"
-msgstr ""
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "Aktuale ĉe"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "Uzanto Agordo"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "Ŝanĝu staton al"
-
-#, fuzzy
-msgid "How do you feel right now?"
-msgstr "Mi ne estas tie nun"
-
 #, fuzzy
 msgid "The PIN you entered is invalid."
 msgstr "La enigita SecurID malvalidas."
@@ -5778,11 +5779,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "Pri mi"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "Ŝanĝu pasvorton..."
 
 #. display / change profile
 #, fuzzy
@@ -6049,6 +6045,9 @@ msgstr ""
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "In Love"
 msgstr ""
 
 #, fuzzy
@@ -6438,9 +6437,6 @@ msgstr ""
 msgid "Incorrect password"
 msgstr "Misa pasvorto"
 
-msgid "User not found"
-msgstr ""
-
 msgid "Account has been disabled"
 msgstr ""
 
@@ -6681,6 +6677,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "Eraro skribante al %s: %s"
 
 msgid "Could not join chat room"
 msgstr "Ne povis aliĝi babilejon"
@@ -7972,6 +7972,11 @@ msgstr ""
 
 msgid "Admin"
 msgstr ""
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Babilejoj Listo"
 
 msgid "Notice"
 msgstr ""
@@ -9762,9 +9767,6 @@ msgstr "Yahoo ID..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo! Protokol-Kromaĵo"
 
-msgid "Pager server"
-msgstr "Paĝila servilo"
-
 msgid "Pager port"
 msgstr "Paĝila pordo"
 
@@ -9785,12 +9787,6 @@ msgstr ""
 
 msgid "Chat room list URL"
 msgstr "Babilejolisto URL"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo Babil servilo"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo Babilo pordo"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Yahoo JAPANA ID..."
@@ -9849,6 +9845,12 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 
 #. username or password missing
@@ -9917,6 +9919,15 @@ msgstr "Perdis konekton kun %s: %s"
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "Ne eblas konekti kun %s: %s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr "Ne povis konekti al aŭtentokontrolo servilo: %s"
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "Malhejme"
@@ -10275,6 +10286,10 @@ msgstr "_Ne"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Akceptu"
 
@@ -10507,12 +10522,6 @@ msgstr "Interreta Mesaĝilo"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Piĝin Interreta Mesaĝilo"
-
-msgid "Orientation"
-msgstr "Orientiĝo"
-
-msgid "The orientation of the tray."
-msgstr "La oientiĝo de la pleto."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11663,6 +11672,10 @@ msgstr "Afrikansa"
 msgid "Arabic"
 msgstr "Araba"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Ludoj"
+
 msgid "Belarusian Latin"
 msgstr "Belorusa Latina"
 
@@ -11670,6 +11683,10 @@ msgid "Bulgarian"
 msgstr "Bulgara"
 
 msgid "Bengali"
+msgstr "Bengala"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Bengala"
 
 msgid "Bosnian"
@@ -11785,6 +11802,10 @@ msgstr "Laŭa"
 
 msgid "Macedonian"
 msgstr "Makedona"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Malina"
 
 msgid "Mongolian"
 msgstr "Mongola"
@@ -14454,8 +14475,20 @@ msgstr "Montru iChat-stilajn tempomarkojn ĉiuj N minutoj."
 msgid "Timestamp Format Options"
 msgstr "Tempomarko Formato Opcioj"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "_Devigi 24-horan tempoformaton"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Labortablo Aprioro"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "_Devigi 24-horan tempoformaton"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "_Devigi 24-horan tempoformaton"
 
 msgid "Show dates in..."
@@ -14659,6 +14692,161 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "Labortablo Aprioro"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Rultempa Versio"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Loko"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Piĝin Interreta Mesaĝilo"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Ligilo"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "Eko"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Tiu karesnomo \"%s\" jam estas uzata."
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "_Tenilo:"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#~ msgid "Artist"
+#~ msgstr "Artisto"
+
+#~ msgid "Album"
+#~ msgstr "Albumo"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Aktuale ĉe"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Uzanto Agordo"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Ŝanĝu staton al"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "Mi ne estas tie nun"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "Ŝanĝu pasvorton..."
+
+#~ msgid "Pager server"
+#~ msgstr "Paĝila servilo"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo Babil servilo"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo Babilo pordo"
+
+#~ msgid "Orientation"
+#~ msgstr "Orientiĝo"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "La oientiĝo de la pleto."
+
 #~ msgid "Error creating conference."
 #~ msgstr "Eraro kreante konferencon."
 
@@ -14773,9 +14961,6 @@ msgstr ""
 
 #~ msgid "_User:"
 #~ msgstr "_Uzanto:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ Rultempa Versio"
 
 #~ msgid "Calling ... "
 #~ msgstr "Alvokante..."

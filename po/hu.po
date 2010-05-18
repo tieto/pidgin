@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-08 00:53+0200\n"
+"POT-Creation-Date: 2010-05-17 20:52-0400\n"
 "PO-Revision-Date: 2010-05-08 00:52+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome at fsf dot hu>\n"
@@ -4284,7 +4284,6 @@ msgstr "A kiszolgáló nem támogatja a blokkolást"
 msgid "Not Authorized"
 msgstr "Nem engedélyezett"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Hangulat"
 
@@ -4306,7 +4305,6 @@ msgstr "Címzett"
 msgid "None (To pending)"
 msgstr "Senki (Címzett függőben)"
 
-#. 0
 msgid "None"
 msgstr "Nincs"
 
@@ -4855,7 +4853,6 @@ msgstr "Lenyűgözött"
 msgid "Amorous"
 msgstr "Szerelmes"
 
-#. 1
 msgid "Angry"
 msgstr "Dühös"
 
@@ -4934,7 +4931,6 @@ msgstr "Feszélyezett"
 msgid "Envious"
 msgstr "Irigy"
 
-#. 2
 msgid "Excited"
 msgstr "Érdeklődő"
 
@@ -4950,21 +4946,18 @@ msgstr "Hálás"
 msgid "Grieving"
 msgstr "Szomorkodó"
 
-#. 3
 msgid "Grumpy"
 msgstr "Rosszkedvű"
 
 msgid "Guilty"
 msgstr "Bűnös"
 
-#. 4
 msgid "Happy"
 msgstr "Boldog"
 
 msgid "Hopeful"
 msgstr "Reménykedő"
 
-#. 8
 msgid "Hot"
 msgstr "Forró"
 
@@ -4998,7 +4991,6 @@ msgstr "Érdeklődő"
 msgid "Intoxicated"
 msgstr "Részeg"
 
-#. 6
 msgid "Invincible"
 msgstr "Legyőzhetetlen"
 
@@ -5050,7 +5042,6 @@ msgstr "Bűnbánó"
 msgid "Restless"
 msgstr "Nyugtalan"
 
-#. 7
 msgid "Sad"
 msgstr "Szomorú"
 
@@ -5069,11 +5060,9 @@ msgstr "Megdöbbent"
 msgid "Shy"
 msgstr "Félénk"
 
-#. 9
 msgid "Sick"
 msgstr "Beteg"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Álmos"
@@ -5902,24 +5891,6 @@ msgstr "Törölni kívánja a partnert a címjegyzékéből is?"
 msgid "The username specified is invalid."
 msgstr "A megadott felhasználónév érvénytelen."
 
-#. 5
-msgid "In Love"
-msgstr "Szerelmes"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "Jelenlegi hangulat"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "Új hangulat"
-
-msgid "Change your Mood"
-msgstr "Hangulat módosítása"
-
-msgid "How do you feel right now?"
-msgstr "Hogy érzi magát?"
-
 msgid "The PIN you entered is invalid."
 msgstr "A megadott PIN érvénytelen."
 
@@ -5984,10 +5955,6 @@ msgstr "Nem érhető el indítókép"
 
 msgid "About"
 msgstr "Névjegy"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "Hangulat módosítása…"
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6223,6 +6190,9 @@ msgstr "Kapcsolathiba történt a MXit-tel. (olvasási állapot: 0x05)"
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "Kapcsolathiba történt a MXit-tel. (olvasási állapot: 0x06)"
+
+msgid "In Love"
+msgstr "Szerelmes"
 
 msgid "Pending"
 msgstr "Függőben"
@@ -12144,6 +12114,10 @@ msgstr "afrikaans"
 msgid "Arabic"
 msgstr "arab"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Megszégyenült"
+
 msgid "Belarusian Latin"
 msgstr "Fehérorosz latin"
 
@@ -12269,6 +12243,10 @@ msgstr "lao"
 
 msgid "Macedonian"
 msgstr "macedón"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Maláj"
 
 msgid "Mongolian"
 msgstr "Mongol"
@@ -15213,3 +15191,131 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Ez a bővítmény XMPP kiszolgálókban vagy kliensekben végzett hibakereséshez "
 "hasznos."
+
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "Asztali környezet alapértelmezése"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Hely"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin üzenetküldő"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Billentyűparancs"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "Indítás"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "A becenév („%s”) már használatban van."
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim URL kezelő"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#~ msgid "Current Mood"
+#~ msgstr "Jelenlegi hangulat"
+
+#~ msgid "New Mood"
+#~ msgstr "Új hangulat"
+
+#~ msgid "Change your Mood"
+#~ msgstr "Hangulat módosítása"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "Hogy érzi magát?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "Hangulat módosítása…"

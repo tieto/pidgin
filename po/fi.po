@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:12-0700\n"
+"POT-Creation-Date: 2010-05-17 20:53-0400\n"
 "PO-Revision-Date: 2010-02-18 15:01+0200\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
@@ -1352,8 +1352,6 @@ msgstr "Poista tila"
 msgid "Saved Statuses"
 msgstr "Tallennetut tilat"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "Otsikko"
 
@@ -1646,6 +1644,14 @@ msgstr "Vaihda käyttäjätietoja - %s"
 
 msgid "Set User Info"
 msgstr "Aseta käyttäjätiedot"
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Tämä yhteyskäytäntö ei tue keskusteluhuoneita."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Tämä yhteyskäytäntö ei tue keskusteluhuoneita."
 
 msgid "Unknown"
 msgstr "Tuntematon"
@@ -3782,12 +3788,6 @@ msgstr "Ad-Hoc-komento epäonnistui"
 msgid "execute"
 msgstr "suorita"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Palvelin vaatii TSL/SSL-tuen, mutta TLS/SSL-tukea ei löydy."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Salausta vaadittu, mutta TLS/SSL-tukea ei löydy."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Palvelin vaatii salaamattoman tunnistautumisen salaamattoman yhteyden yli"
@@ -3825,6 +3825,42 @@ msgstr "SASL-todennus epäonnistui"
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL-virhe: %s"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Epäkelpo syötetila"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Versiota ei tueta"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Palvelin ei tue estämistä"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Merkistöä ei tueta"
+
+msgid "User not found"
+msgstr "Käyttäjää ei löydy"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Epäkelpo käyttäjänimi"
+
+msgid "Resource Constraint"
+msgstr "Sijaintirajoite"
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3906,6 +3942,11 @@ msgstr "Organisaation nimi"
 
 msgid "Organization Unit"
 msgstr "Organisaatioyksikkö"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "Tehtävänimike"
 
 msgid "Role"
 msgstr "Asema"
@@ -4126,11 +4167,21 @@ msgstr "Käyttäjiä ei löytynyt"
 msgid "Roles:"
 msgstr "Roolit:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "Palvelin vaatii TSL/SSL-tuen, mutta TLS/SSL-tukea ei löydy."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Salausta vaadittu, mutta TLS/SSL-tukea ei löydy."
+
 msgid "Ping timed out"
 msgstr "Pingin aikakatkaisu"
 
 msgid "Invalid XMPP ID"
 msgstr "Epäkelpo XMPP-ID"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Epäkelpo XMPP-ID. Verkkoalue pitää olla asetettu."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Epäkelpo XMPP-ID. Verkkoalue pitää olla asetettu."
@@ -4228,7 +4279,6 @@ msgstr "Palvelin ei tue estämistä"
 msgid "Not Authorized"
 msgstr "Ei valtuuksia"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Mieliala"
 
@@ -4250,7 +4300,6 @@ msgstr "vain sinulta"
 msgid "None (To pending)"
 msgstr "Ei mitään (odottaa lupaa)"
 
-#. 0
 msgid "None"
 msgstr "Ei mitään"
 
@@ -4272,6 +4321,12 @@ msgstr "Muut etunimet"
 msgid "Mood Comment"
 msgstr "Tuttavakommentti"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "Kappaleen esittäjä"
 
@@ -4441,9 +4496,6 @@ msgstr "Menettelykäytäntörikkomus"
 
 msgid "Remote Connection Failed"
 msgstr "Etäyhteydessä yhteydessä virhe"
-
-msgid "Resource Constraint"
-msgstr "Sijaintirajoite"
 
 msgid "Restricted XML"
 msgstr "Rajoitettu XML"
@@ -4796,7 +4848,6 @@ msgstr "Häpeää"
 msgid "Amorous"
 msgstr "Loistokas"
 
-#. 1
 msgid "Angry"
 msgstr "Vihainen"
 
@@ -4895,7 +4946,6 @@ msgstr ""
 msgid "Envious"
 msgstr "Levoton"
 
-#. 2
 msgid "Excited"
 msgstr "Innostunut"
 
@@ -4914,7 +4964,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "Haetaan..."
 
-#. 3
 msgid "Grumpy"
 msgstr "Äreä"
 
@@ -4922,14 +4971,12 @@ msgstr "Äreä"
 msgid "Guilty"
 msgstr "Paikkakunta"
 
-#. 4
 msgid "Happy"
 msgstr "Onnellinen"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 msgid "Hot"
 msgstr "Tulinen"
 
@@ -4969,7 +5016,6 @@ msgstr "Kiinnostukset"
 msgid "Intoxicated"
 msgstr "Kutsu"
 
-#. 6
 msgid "Invincible"
 msgstr "Haavoittumaton"
 
@@ -5033,7 +5079,6 @@ msgstr "Poista"
 msgid "Restless"
 msgstr "Rekisteröi"
 
-#. 7
 msgid "Sad"
 msgstr "Surullinen"
 
@@ -5055,11 +5100,9 @@ msgstr "Estetty"
 msgid "Shy"
 msgstr ""
 
-#. 9
 msgid "Sick"
 msgstr "Kipeä"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Unelias"
@@ -5463,18 +5506,6 @@ msgstr "Puhelimessa"
 msgid "Out to Lunch"
 msgstr "Lounaalla"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Esittäjä"
-
-msgid "Album"
-msgstr "Levy"
-
 msgid "Game Title"
 msgstr "Pelin nimi"
 
@@ -5621,9 +5652,6 @@ msgstr "Vuosipäivä"
 #. Business
 msgid "Work"
 msgstr "Työ"
-
-msgid "Job Title"
-msgstr "Tehtävänimike"
 
 msgid "Company"
 msgstr "Yritys"
@@ -5902,24 +5930,6 @@ msgstr "Haluatko poistaa tämän tuttavan myös osoitekirjastasi?"
 msgid "The username specified is invalid."
 msgstr "Syötetty käyttäjänimi on virheellinen."
 
-#. 5
-msgid "In Love"
-msgstr "Rakastunut"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "Tämänhetkinen mieliala"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "Uusi mieliala"
-
-msgid "Change your Mood"
-msgstr "Vaihda mielialaa"
-
-msgid "How do you feel right now?"
-msgstr "Kuinka voit nyt?"
-
 #, fuzzy
 msgid "The PIN you entered is invalid."
 msgstr "Syötetty SecurID-avain on virheellinen"
@@ -5990,10 +6000,6 @@ msgstr "Ryhmäkeskustelu ei ole parhaillaan käytettävissä"
 #, fuzzy
 msgid "About"
 msgstr "Omat tiedot"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "Vaihda mielialaa..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6276,6 +6282,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "Rakastunut"
 
 #, fuzzy
 msgid "Pending"
@@ -6674,9 +6683,6 @@ msgstr "Salasana vanhentunut"
 msgid "Incorrect password"
 msgstr "Virheellinen salasana"
 
-msgid "User not found"
-msgstr "Käyttäjää ei löydy"
-
 msgid "Account has been disabled"
 msgstr "Käyttäjätili on poistettu käytöstä"
 
@@ -6932,6 +6938,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL ei salli näyttönimen todentamista tätä kautta"
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "Virhe pyydettäessä %s: %s"
 
 msgid "Could not join chat room"
 msgstr "Keskusteluhuoneeseen ei voi liittyä"
@@ -8304,6 +8314,11 @@ msgstr "Pyydetään"
 
 msgid "Admin"
 msgstr "Ylläpitäjä"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Huoneluettelo"
 
 msgid "Notice"
 msgstr "Huomautus"
@@ -10198,9 +10213,6 @@ msgstr "Yahoo ID..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo!-yhteyskäytäntöliitännäinen"
 
-msgid "Pager server"
-msgstr "Hakulaitepalvelin"
-
 msgid "Pager port"
 msgstr "Hakulaiteportti"
 
@@ -10221,12 +10233,6 @@ msgstr "Käytä tilin välipalvelinta SSL-yhteyksissä"
 
 msgid "Chat room list URL"
 msgstr "Keskusteluhuoneluettelon URL"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo-ryhmäkeskustelupalvelin"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo-ryhmäkeskustelupalvelimen portti"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Yahoo JAPAN ID..."
@@ -10293,6 +10299,15 @@ msgid ""
 msgstr ""
 "Käyttäjätili lukittu: tuntematon syy. Yahoo!-WWW-sivustolle kirjautuminen "
 "saatta korjata tämän."
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
+msgstr ""
+"Käyttäjätili lukittu: liian monta epäonnistuttu kirjautumisyritystä. Yahoo!-"
+"WWW-sivustolle kirjautuminen saatta korjata tämän."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10372,6 +10387,17 @@ msgstr "Yhteys palvelimeen %s katkesi: %s"
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "Yhteyttä palvelimeen %s ei voi muodostaa: %s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+"Palvelimeen ei voi yhdistää. Ole hyvä, syötä palvelimen osoite jolle haluat "
+"yhdistää."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "Poissa kotoa"
@@ -10754,6 +10780,10 @@ msgstr "_Ei"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Hyväksy"
 
@@ -10990,12 +11020,6 @@ msgstr "Pikaviestin"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin-pikaviestin"
-
-msgid "Orientation"
-msgstr "Asento"
-
-msgid "The orientation of the tray."
-msgstr "Ilmoitusalueen asento."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12159,6 +12183,10 @@ msgstr "afrikaans"
 msgid "Arabic"
 msgstr "arabia"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Häpeää"
+
 msgid "Belarusian Latin"
 msgstr "valkovenäjä latinalainen"
 
@@ -12166,6 +12194,10 @@ msgid "Bulgarian"
 msgstr "bulgaria"
 
 msgid "Bengali"
+msgstr "bengali"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "bengali"
 
 msgid "Bosnian"
@@ -12281,6 +12313,10 @@ msgstr "lao"
 
 msgid "Macedonian"
 msgstr "makedonia"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Mies"
 
 msgid "Mongolian"
 msgstr "mongolia"
@@ -15001,8 +15037,20 @@ msgstr "Näytä iChat-tyyliset aikaleimat N minuutin välein."
 msgid "Timestamp Format Options"
 msgstr "Aikaleiman muotoiluasetukset"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "_Pakota 24 tunnin aikamuoto"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Työpöydän oletus"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "_Pakota 24 tunnin aikamuoto"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "_Pakota 24 tunnin aikamuoto"
 
 msgid "Show dates in..."
@@ -15216,6 +15264,157 @@ msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "Työpöydän oletus"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime -versio"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Sijainti"
+
+#. License Page
+#, fuzzy
+msgid "Next >"
+msgstr "Teksti"
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin-pikaviestin"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Oikotie"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "Käynnistys"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Kutsumanimi ”%s” on jo käytössä."
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim-URL-käsittelijä"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#~ msgid "Artist"
+#~ msgstr "Esittäjä"
+
+#~ msgid "Album"
+#~ msgstr "Levy"
+
+#~ msgid "Current Mood"
+#~ msgstr "Tämänhetkinen mieliala"
+
+#~ msgid "New Mood"
+#~ msgstr "Uusi mieliala"
+
+#~ msgid "Change your Mood"
+#~ msgstr "Vaihda mielialaa"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "Kuinka voit nyt?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "Vaihda mielialaa..."
+
+#~ msgid "Pager server"
+#~ msgstr "Hakulaitepalvelin"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo-ryhmäkeskustelupalvelin"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo-ryhmäkeskustelupalvelimen portti"
+
+#~ msgid "Orientation"
+#~ msgstr "Asento"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Ilmoitusalueen asento."
+
 #~ msgid "Unable to bind socket to port: %s"
 #~ msgstr "Pistoketta ei voi liittää porttiin: %s"
 
@@ -15388,9 +15587,6 @@ msgstr ""
 
 #~ msgid "_User:"
 #~ msgstr "_Käyttäjä:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ Runtime -versio"
 
 #~ msgid "Without this only the first account will be enabled)."
 #~ msgstr "Ilman tätä vain ensimmäinen tili otetaan käyttöön)."
@@ -17068,9 +17264,6 @@ msgstr ""
 #~ msgid "_Deny"
 #~ msgstr "_Kiellä"
 
-#~ msgid "Invalid Username"
-#~ msgstr "Epäkelpo käyttäjänimi"
-
 #~ msgid "The user %s (%s) wants to add %s to his or her buddy list."
 #~ msgstr "Käyttäjä %s (%s) haluaa lisätä käyttäjän %s tuttavalistalleen."
 
@@ -18139,9 +18332,6 @@ msgstr ""
 
 #~ msgid "Show _buttons as:"
 #~ msgstr "Näytä _painikkeissa:"
-
-#~ msgid "Text"
-#~ msgstr "Teksti"
 
 #~ msgid "Pictures and text"
 #~ msgstr "Kuvat ja teksti"

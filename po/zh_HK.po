@@ -62,7 +62,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-02 09:58-0400\n"
+"POT-Creation-Date: 2010-05-17 20:52-0400\n"
 "PO-Revision-Date: 2010-05-03 03:02-0400\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
@@ -4401,7 +4401,6 @@ msgstr "伺服器不支援封鎖"
 msgid "Not Authorized"
 msgstr "未認證"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "心情"
 
@@ -4433,7 +4432,6 @@ msgstr "發出狀態資訊通知"
 msgid "None (To pending)"
 msgstr "無，等待認證發出狀態資訊通知"
 
-#. 0
 msgid "None"
 msgstr "無"
 
@@ -5045,7 +5043,6 @@ msgid "Amorous"
 msgstr "動情"
 
 # NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
-#. 1
 msgid "Angry"
 msgstr "憤怒"
 
@@ -5152,7 +5149,6 @@ msgid "Envious"
 msgstr "嫉妒"
 
 # NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
-#. 2
 msgid "Excited"
 msgstr "興奮"
 
@@ -5176,7 +5172,6 @@ msgstr "悲痛"
 
 # NOTE XMPP/MXIT 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 # XXX 譯文有待改進 - 20091126 acli
-#. 3
 msgid "Grumpy"
 msgstr "暴躁"
 
@@ -5185,7 +5180,6 @@ msgid "Guilty"
 msgstr "內疚"
 
 # NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
-#. 4
 msgid "Happy"
 msgstr "開心"
 
@@ -5195,7 +5189,6 @@ msgstr "滿懷希望"
 
 # NOTE XMPP/MXIT 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
 # NOTE 按 XMPP 標準這是溫度上令人不舒服的熱，不是熱情
-#. 8
 msgid "Hot"
 msgstr "熱"
 
@@ -5243,7 +5236,6 @@ msgid "Intoxicated"
 msgstr "喝醉了"
 
 # NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
-#. 6
 msgid "Invincible"
 msgstr "無敵"
 
@@ -5317,7 +5309,6 @@ msgid "Restless"
 msgstr "無法安靜"
 
 # NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
-#. 7
 msgid "Sad"
 msgstr "憂愁"
 
@@ -5344,12 +5335,10 @@ msgid "Shy"
 msgstr "膽怯/害羞"
 
 # NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
-#. 9
 msgid "Sick"
 msgstr "生病"
 
 # NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "想睡"
@@ -6201,24 +6190,6 @@ msgstr "你要將好友自通訊錄中刪除嗎？"
 msgid "The username specified is invalid."
 msgstr "你所輸入的帳號無效。"
 
-#. 5
-msgid "In Love"
-msgstr "戀愛中"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "目前的心情"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "新心情"
-
-msgid "Change your Mood"
-msgstr "修改心情"
-
-msgid "How do you feel right now?"
-msgstr "你現在覺得怎樣？"
-
 msgid "The PIN you entered is invalid."
 msgstr "你所輸入的密碼無效。"
 
@@ -6284,10 +6255,6 @@ msgstr "目前沒有可用的啟動畫面"
 
 msgid "About"
 msgstr "關於此模組"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "修改心情..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6531,6 +6498,9 @@ msgstr "（在讀取階段 0x05 時）MXit 發生連線錯誤"
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "（在讀取階段 0x06 時）MXit 發生連線錯誤"
+
+msgid "In Love"
+msgstr "戀愛中"
 
 msgid "Pending"
 msgstr "等候中"
@@ -12550,6 +12520,11 @@ msgstr "阿非利堪文"
 msgid "Arabic"
 msgstr "阿拉伯文"
 
+# NOTE XMPP 情緒值，譯文的準確性應以 http://xmpp.org/extensions/xep-0107.html 為準
+#, fuzzy
+msgid "Assamese"
+msgstr "慚愧"
+
 #  NOTE「Latin」係指譯文以「拉丁字母」（而非西里爾字母）書寫，中譯可以省略 - acli 20070918
 msgid "Belarusian Latin"
 msgstr "白俄羅斯文"
@@ -12698,6 +12673,10 @@ msgstr "寮國文"
 #  NOTE「馬其頓文」是一種東歐語文，跟希臘的馬其頓並無關係
 msgid "Macedonian"
 msgstr "馬其頓文"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "馬來文"
 
 msgid "Mongolian"
 msgstr "蒙古文"
@@ -15717,6 +15696,136 @@ msgstr "送出、讀取未加工的 XMPP 段落。"
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "桌面預設值"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime 版本"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "所在位置"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin 網絡即時通"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "捷徑"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "啟動"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "網名「%s」已在使用中。"
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#  NOTE 這似乎是視窗標題
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim 網址處理器"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#~ msgid "Current Mood"
+#~ msgstr "目前的心情"
+
+#~ msgid "New Mood"
+#~ msgstr "新心情"
+
+#~ msgid "Change your Mood"
+#~ msgstr "修改心情"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "你現在覺得怎樣？"
+
+#~ msgid "Change Mood..."
+#~ msgstr "修改心情..."
+
 # FIXME 譯文有待改進 - acli 20090731
 #~ msgid "Error creating conference."
 #~ msgstr "建立會議失敗。"
@@ -15917,9 +16026,6 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 
 #~ msgid "Change _status to:"
 #~ msgstr "更改狀態為(_S)："
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ Runtime 版本"
 
 #~ msgid "Calling ... "
 #~ msgstr "撥打中..."

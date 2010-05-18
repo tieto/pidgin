@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0 CVS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-05-17 20:52-0400\n"
 "PO-Revision-Date: 2006-02-05 23:19+0100\n"
 "Last-Translator: Ubuntu Georgian Translators <>\n"
 "Language-Team: Georgian <ka@li.org>\n"
@@ -1394,8 +1394,6 @@ msgstr "წაშლა"
 msgid "Saved Statuses"
 msgstr "შენახული სტატუსები"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "სათაური"
 
@@ -1694,6 +1692,14 @@ msgstr "ინფორმაციის შეცვლა %s მომხმ�
 
 msgid "Set User Info"
 msgstr ""
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "ეს პროტოკოლს არ ააქ chat-ოთახების მხარდაჭერა."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "ეს პროტოკოლს არ ააქ chat-ოთახების მხარდაჭერა."
 
 msgid "Unknown"
 msgstr "უცნობი"
@@ -3762,12 +3768,6 @@ msgstr "ბრძანება გაუქმებულია"
 msgid "execute"
 msgstr "მოულოდნელი"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
@@ -3804,6 +3804,42 @@ msgstr "აუტენტიფიკაცია ვერ მოხერხ�
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "SASL შეცდომა"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "კავშირის დასრულება"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "კოდირება"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "მომხმარებელი არ არსებობს"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "კოდირება"
+
+msgid "User not found"
+msgstr "ვერ ვიპოვე მომხმარებელი"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "არასწორი"
+
+msgid "Resource Constraint"
+msgstr ""
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3888,6 +3924,11 @@ msgstr "ორგანიზაციის სახელი"
 
 msgid "Organization Unit"
 msgstr "დანაყოფი"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "პროფესია"
 
 msgid "Role"
 msgstr "როლი"
@@ -4115,6 +4156,12 @@ msgstr "ვერ ვიპოვე პროტოკოლები"
 msgid "Roles:"
 msgstr "როლი"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+
 #, fuzzy
 msgid "Ping timed out"
 msgstr "ტექსტი"
@@ -4122,6 +4169,9 @@ msgstr "ტექსტი"
 #, fuzzy
 msgid "Invalid XMPP ID"
 msgstr "არასწორი ID"
+
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr ""
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
@@ -4232,7 +4282,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "ავტორიზაცია"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr ""
 
@@ -4255,7 +4304,6 @@ msgstr "ვის"
 msgid "None (To pending)"
 msgstr ""
 
-#. 0
 msgid "None"
 msgstr "არაფერი"
 
@@ -4279,6 +4327,12 @@ msgstr "ოჯახური სახელი"
 msgid "Mood Comment"
 msgstr "ანგარიშის პარამეტრების შეცვლა"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4451,9 +4505,6 @@ msgid "Policy Violation"
 msgstr ""
 
 msgid "Remote Connection Failed"
-msgstr ""
-
-msgid "Resource Constraint"
 msgstr ""
 
 msgid "Restricted XML"
@@ -4811,7 +4862,6 @@ msgstr "ანიმირება"
 msgid "Amorous"
 msgstr ""
 
-#. 1
 msgid "Angry"
 msgstr "გაბრაზებული"
 
@@ -4906,7 +4956,6 @@ msgstr ""
 msgid "Envious"
 msgstr ""
 
-#. 2
 msgid "Excited"
 msgstr "აღფრთოვანებული"
 
@@ -4924,7 +4973,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "მომხმარებელი კრიფავს..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "ჯგუფი:"
@@ -4933,14 +4981,12 @@ msgstr "ჯგუფი:"
 msgid "Guilty"
 msgstr "ქალაქი"
 
-#. 4
 msgid "Happy"
 msgstr "ბედნიერი"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "_ჰოსტი:"
@@ -4981,7 +5027,6 @@ msgstr "_ჩამატება"
 msgid "Intoxicated"
 msgstr "დაპატიჟება"
 
-#. 6
 msgid "Invincible"
 msgstr ""
 
@@ -5045,7 +5090,6 @@ msgstr "წაშლა"
 msgid "Restless"
 msgstr "რესგისტრაცია"
 
-#. 7
 msgid "Sad"
 msgstr "მოწყენილი"
 
@@ -5066,12 +5110,10 @@ msgstr "დაბლოკილია"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "მეტსახელი"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr ""
@@ -5481,19 +5523,6 @@ msgstr "ტელეფონზე"
 msgid "Out to Lunch"
 msgstr "საჭმელად გასული"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-#, fuzzy
-msgid "Artist"
-msgstr "მისამართი"
-
-msgid "Album"
-msgstr ""
-
 #, fuzzy
 msgid "Game Title"
 msgstr "სათაური"
@@ -5653,9 +5682,6 @@ msgstr ""
 #. Business
 msgid "Work"
 msgstr ""
-
-msgid "Job Title"
-msgstr "პროფესია"
 
 msgid "Company"
 msgstr "კომპანია"
@@ -5922,27 +5948,6 @@ msgstr ""
 msgid "The username specified is invalid."
 msgstr ""
 
-#. 5
-msgid "In Love"
-msgstr "შეყვარებული"
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "შენახულია..."
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "მომხმარებლის ოთახები"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "შეცვალე პაროლი"
-
-msgid "How do you feel right now?"
-msgstr ""
-
 msgid "The PIN you entered is invalid."
 msgstr ""
 
@@ -6014,11 +6019,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "Pidgin-ის შესახებ"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "პაროლის შეცვლა..."
 
 #. display / change profile
 #, fuzzy
@@ -6286,6 +6286,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "შეყვარებული"
 
 #, fuzzy
 msgid "Pending"
@@ -6701,9 +6704,6 @@ msgstr "პაროლს ვადა გაუვიდა"
 msgid "Incorrect password"
 msgstr "არასწორი პაროლი."
 
-msgid "User not found"
-msgstr "ვერ ვიპოვე მომხმარებელი"
-
 #, fuzzy
 msgid "Account has been disabled"
 msgstr "ანგარიში გამორთულია"
@@ -6942,6 +6942,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "შეცდომა პროფაილის ჩამოტანისას"
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -8292,6 +8296,11 @@ msgstr "პრივატი"
 
 msgid "Admin"
 msgstr ""
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "ოთახების სია"
 
 #, fuzzy
 msgid "Notice"
@@ -10169,10 +10178,6 @@ msgstr "Yahoo! ID"
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo პროტოკოლის პლაგინი"
 
-#, fuzzy
-msgid "Pager server"
-msgstr "პროქსი სერვერი"
-
 msgid "Pager port"
 msgstr ""
 
@@ -10194,13 +10199,6 @@ msgstr ""
 
 msgid "Chat room list URL"
 msgstr ""
-
-msgid "Yahoo Chat server"
-msgstr ""
-
-#, fuzzy
-msgid "Yahoo Chat port"
-msgstr "Yahoo იაპონია"
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -10262,6 +10260,12 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 
 #. username or password missing
@@ -10333,6 +10337,15 @@ msgstr "საუბარი %s-თან"
 #, fuzzy, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "შეუძლებელია სერვერთან დაკავშირება"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr "არ ვარ დაკავშირებული სერვერთან."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr ""
@@ -10697,6 +10710,10 @@ msgstr "არა"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_აქცეპტირება"
 
@@ -10935,12 +10952,6 @@ msgstr "მოკლე-შეტყობინება"
 
 msgid "Pidgin Internet Messenger"
 msgstr ""
-
-msgid "Orientation"
-msgstr "ორიენტაცია"
-
-msgid "The orientation of the tray."
-msgstr "პანელური ნახატის ორიენტაცია."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12176,6 +12187,10 @@ msgstr ""
 msgid "Arabic"
 msgstr ""
 
+#, fuzzy
+msgid "Assamese"
+msgstr "თამაში"
+
 msgid "Belarusian Latin"
 msgstr ""
 
@@ -12183,6 +12198,10 @@ msgid "Bulgarian"
 msgstr "ბულგარული"
 
 msgid "Bengali"
+msgstr "ბენგალი"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "ბენგალი"
 
 msgid "Bosnian"
@@ -12306,6 +12325,10 @@ msgstr ""
 
 msgid "Macedonian"
 msgstr "მაკედონიური"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "მამრობითი"
 
 #, fuzzy
 msgid "Mongolian"
@@ -15123,8 +15146,18 @@ msgstr ""
 msgid "Timestamp Format Options"
 msgstr "დროის შტამპის ფორმატის ოფციები"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "შეტყობინების დროის შტამპის ფორმატები"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "წაშლა"
+
+msgid "12 hour time format"
+msgstr ""
+
+msgid "24 hour time format"
 msgstr ""
 
 msgid "Show dates in..."
@@ -15332,6 +15365,151 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "წაშლა"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ ვერსია"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "ადგილმდებარეობა"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr ""
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "პორტი"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "ჩართვის დროს"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+msgid "The installer is already running."
+msgstr ""
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+msgid "URI Handlers"
+msgstr ""
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#, fuzzy
+#~ msgid "Artist"
+#~ msgstr "მისამართი"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "შენახულია..."
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "მომხმარებლის ოთახები"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "შეცვალე პაროლი"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "პაროლის შეცვლა..."
+
+#, fuzzy
+#~ msgid "Pager server"
+#~ msgstr "პროქსი სერვერი"
+
+#, fuzzy
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo იაპონია"
+
+#~ msgid "Orientation"
+#~ msgstr "ორიენტაცია"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "პანელური ნახატის ორიენტაცია."
+
 #, fuzzy
 #~ msgid "Error creating conference."
 #~ msgstr "ვერ ვქმნი კონფერენციას (%s)."
@@ -15408,10 +15586,6 @@ msgstr ""
 
 #~ msgid "_User:"
 #~ msgstr "_მომხმარებელი:"
-
-#, fuzzy
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ ვერსია"
 
 #, fuzzy
 #~ msgid "Calling ... "

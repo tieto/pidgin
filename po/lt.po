@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-05-17 20:52-0400\n"
 "PO-Revision-Date: 2009-08-30 15:07+0200\n"
 "Last-Translator: Laurynas Biveinis <laurynas.biveinis@gmail.com>\n"
 "Language-Team:\n"
@@ -1388,8 +1388,6 @@ msgstr "Pašalinti būseną"
 msgid "Saved Statuses"
 msgstr "Išsaugotos būsenos"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "Pavadinimas"
 
@@ -1684,6 +1682,14 @@ msgstr "Pakeisti vartotojo %s informaciją"
 
 msgid "Set User Info"
 msgstr "Nustatyti vartotojo informaciją"
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Šis protokolas nepalaiko pokalbių kambarių."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Šis protokolas nepalaiko pokalbių kambarių."
 
 msgid "Unknown"
 msgstr "Nežinoma"
@@ -3898,13 +3904,6 @@ msgstr "Specialios (ad hoc) komandos klaida"
 msgid "execute"
 msgstr "vykdyti"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-"Serveris reikalauja TLS/SSL prisijungimui, bet TLS/SSL palaikymas nerastas."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Jūs reikalaujate šifravimo, bet TLS/SSL palaikymas nerastas."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Serveris reikalauja tapatybės nustatymo grynu tekstu nekoduojamame duomenų "
@@ -3943,6 +3942,42 @@ msgstr "SASL atpažinimas nepavyko"
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL klaida: %s"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Neteisinga įvesties sąlyga"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Nepalaikoma versija"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Serveris nepalaiko blokavimo"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Nepalaikoma koduotė"
+
+msgid "User not found"
+msgstr "Vartotojas nerastas"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Neteisingas vardas"
+
+msgid "Resource Constraint"
+msgstr "Išteklių apribojimas"
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -4025,6 +4060,11 @@ msgstr "Organizacijos pavadinimas"
 
 msgid "Organization Unit"
 msgstr "Organizacijos padalinys"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "Pareigos"
 
 msgid "Role"
 msgstr "Pareigos"
@@ -4249,11 +4289,22 @@ msgstr "Naudotojų nerasta"
 msgid "Roles:"
 msgstr "Vaidmenys:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+"Serveris reikalauja TLS/SSL prisijungimui, bet TLS/SSL palaikymas nerastas."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Jūs reikalaujate šifravimo, bet TLS/SSL palaikymas nerastas."
+
 msgid "Ping timed out"
 msgstr "Baigėsi skimbtelėjimo laukimo laikas"
 
 msgid "Invalid XMPP ID"
 msgstr "Neteisingas XMPP ID"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Neteisingas XMPP ID.  Sritis privalo būti nustatyta."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Neteisingas XMPP ID.  Sritis privalo būti nustatyta."
@@ -4352,7 +4403,6 @@ msgstr "Serveris nepalaiko blokavimo"
 msgid "Not Authorized"
 msgstr "Prieiga nesuteikta"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Nuotaika"
 
@@ -4374,7 +4424,6 @@ msgstr "bičiulio patvirtinta"
 msgid "None (To pending)"
 msgstr "Jokia (laukiama patvirtinimo iš bičiulio)"
 
-#. 0
 msgid "None"
 msgstr "niekaip"
 
@@ -4396,6 +4445,12 @@ msgstr "Antras vardas"
 msgid "Mood Comment"
 msgstr "Bičiulio komentaras"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "Dainos atlikėjas"
 
@@ -4565,9 +4620,6 @@ msgstr "Taisyklių pažeidimas"
 
 msgid "Remote Connection Failed"
 msgstr "Nuotolinė jungtis nepavyko"
-
-msgid "Resource Constraint"
-msgstr "Išteklių apribojimas"
 
 msgid "Restricted XML"
 msgstr "Apribotas XML"
@@ -4929,7 +4981,6 @@ msgstr "Susigėdęs"
 msgid "Amorous"
 msgstr "Šlovingas"
 
-#. 1
 msgid "Angry"
 msgstr "Piktas"
 
@@ -5027,7 +5078,6 @@ msgstr ""
 msgid "Envious"
 msgstr "Neramus"
 
-#. 2
 msgid "Excited"
 msgstr "Susijaudinęs"
 
@@ -5046,7 +5096,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "Išrenkama..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "Grupė"
@@ -5055,14 +5104,12 @@ msgstr "Grupė"
 msgid "Guilty"
 msgstr "Miestas"
 
-#. 4
 msgid "Happy"
 msgstr "Laimingas"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "_Mazgas:"
@@ -5104,7 +5151,6 @@ msgstr "Pomėgiai"
 msgid "Intoxicated"
 msgstr "Pakviesti"
 
-#. 6
 msgid "Invincible"
 msgstr "Nenugalimas"
 
@@ -5168,7 +5214,6 @@ msgstr "Pašalinti"
 msgid "Restless"
 msgstr "Registruotis"
 
-#. 7
 msgid "Sad"
 msgstr "Liūdnas"
 
@@ -5190,12 +5235,10 @@ msgstr "Blokuotas"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "Vardas"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Mieguistas"
@@ -5599,18 +5642,6 @@ msgstr "kalba telefonu"
 msgid "Out to Lunch"
 msgstr "išėjęs papietauti"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Dailininkas"
-
-msgid "Album"
-msgstr "Albumas"
-
 msgid "Game Title"
 msgstr "Žaidimo pavadinimas"
 
@@ -5762,9 +5793,6 @@ msgstr "Sukaktis"
 #. Business
 msgid "Work"
 msgstr "Darbas"
-
-msgid "Job Title"
-msgstr "Pareigos"
 
 msgid "Company"
 msgstr "Kompanija"
@@ -6050,28 +6078,6 @@ msgstr "Ar norite pašalinti šį bičiulį taip pat ir iš adresų knygos?"
 msgid "The username specified is invalid."
 msgstr "Nurodytas neteisingas vardas."
 
-#. 5
-msgid "In Love"
-msgstr "Įsimylėjęs"
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "Jūsų dabartinė nuotaika"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "Nuotaika"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "Pakeisti slaptažodį"
-
-#, fuzzy
-msgid "How do you feel right now?"
-msgstr "Manęs čia nėra šiuo metu"
-
 #, fuzzy
 msgid "The PIN you entered is invalid."
 msgstr "Įvestas SecurID raktas yra neteisingas."
@@ -6146,11 +6152,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "Apie mane"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "Pakeisti slaptažodį..."
 
 #. display / change profile
 #, fuzzy
@@ -6429,6 +6430,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "Įsimylėjęs"
 
 #  Build the Send As menu
 #, fuzzy
@@ -6835,9 +6839,6 @@ msgstr "Slaptažodžio galiojimo laikas pasibaigė"
 msgid "Incorrect password"
 msgstr "Neteisingas slaptažodis"
 
-msgid "User not found"
-msgstr "Vartotojas nerastas"
-
 msgid "Account has been disabled"
 msgstr "Neveiksni paskyra"
 
@@ -7094,6 +7095,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL neleidžia jūsų vardui prisijungti"
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "Užklausos %s metu gauta klaida: %s"
 
 msgid "Could not join chat room"
 msgstr "Nepavyko prisijungti prie pokalbių kambario"
@@ -8531,6 +8536,11 @@ msgstr "Prašoma"
 
 msgid "Admin"
 msgstr "Administratorius"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Kambarių sąrašas"
 
 msgid "Notice"
 msgstr "Pastaba"
@@ -10483,9 +10493,6 @@ msgstr "Yahoo ID..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo! protokolo papildinys"
 
-msgid "Pager server"
-msgstr "Pranešimų gaviklio serveris"
-
 msgid "Pager port"
 msgstr "Pranešimų gaviklio prievadas"
 
@@ -10506,12 +10513,6 @@ msgstr "Naudoti paskyros tarpininko serverį SSL jungtims"
 
 msgid "Chat room list URL"
 msgstr "Pokalbių kambarių sąrašo URL"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo pokalbių serveris"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo pokalbių serverio prievadas"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Yahoo Japonija ID..."
@@ -10580,6 +10581,15 @@ msgid ""
 msgstr ""
 "Paskyra užblokuota dėl nežinomos priežasties.  Prisijungimas prie Yahoo! "
 "svetainės galbūt tai pataisys."
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
+msgstr ""
+"Paskyra užblokuota: per daug nepavykusių bandymų prisijungti.  Prisijungimas "
+"prie Yahoo! svetainės galbūt tai pataisys."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10658,6 +10668,17 @@ msgstr "Prarasta jungtis su %s: %s"
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "Nepavyko prisijungti prie serverio %s: %s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+"Negalima prisijungti prie servrio.  Prašome įvesti serverio, prie kurio "
+"norite prisijungti, adresą."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "Ne namie"
@@ -11045,6 +11066,10 @@ msgstr "_Ne"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Priimti"
 
@@ -11288,12 +11313,6 @@ msgstr "Pokalbiai internete"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin pokalbiai internete"
-
-msgid "Orientation"
-msgstr "Orientacija"
-
-msgid "The orientation of the tray."
-msgstr "Juostelės orientacija"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12502,6 +12521,10 @@ msgstr "Būrų kalba"
 msgid "Arabic"
 msgstr "Arabų kalba"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Susigėdęs"
+
 msgid "Belarusian Latin"
 msgstr "Baltarusų kalba lotynu abėcėle"
 
@@ -12509,6 +12532,10 @@ msgid "Bulgarian"
 msgstr "Bulgarų kalba"
 
 msgid "Bengali"
+msgstr "Bengalų kalba"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Bengalų kalba"
 
 msgid "Bosnian"
@@ -12624,6 +12651,10 @@ msgstr "Laosiečių kalba"
 
 msgid "Macedonian"
 msgstr "Makedoniečių kalba"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Vyras"
 
 msgid "Mongolian"
 msgstr "Mongolų kalba"
@@ -15543,8 +15574,20 @@ msgstr "Kas N minučių rodo iChat stiliaus laiko žymes"
 msgid "Timestamp Format Options"
 msgstr "Laiko žymių formato parinktys"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "_Būtinai naudoti 24 valandų laiko formatą"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Darbalaukio numatytasis"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "_Būtinai naudoti 24 valandų laiko formatą"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "_Būtinai naudoti 24 valandų laiko formatą"
 
 msgid "Show dates in..."
@@ -15763,6 +15806,163 @@ msgstr "Siųsti ir gauti neapdorotas XMPP strofas."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Šis papildinys naudingas XMPP serverių ir klientų derinimui."
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "Darbalaukio numatytasis"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ vykdymo laiko bibliotekos versija"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Vietovė"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin pokalbiai internete"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Klavišų seka"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#  Autostart
+#  Autostart
+#, fuzzy
+msgid "Start Menu"
+msgstr "Paleidimas"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Pokalbių kambario vardas „%s“ jau užimtas."
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim URL doroklė"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#~ msgid "Artist"
+#~ msgstr "Dailininkas"
+
+#~ msgid "Album"
+#~ msgstr "Albumas"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Jūsų dabartinė nuotaika"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Nuotaika"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Pakeisti slaptažodį"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "Manęs čia nėra šiuo metu"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "Pakeisti slaptažodį..."
+
+#~ msgid "Pager server"
+#~ msgstr "Pranešimų gaviklio serveris"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo pokalbių serveris"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo pokalbių serverio prievadas"
+
+#~ msgid "Orientation"
+#~ msgstr "Orientacija"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Juostelės orientacija"
+
 #~ msgid "Error creating conference."
 #~ msgstr "Konferencijos sukūrimo klaida."
 
@@ -15937,9 +16137,6 @@ msgstr "Šis papildinys naudingas XMPP serverių ir klientų derinimui."
 
 #~ msgid "_User:"
 #~ msgstr "_Vartotojas:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ vykdymo laiko bibliotekos versija"
 
 #~ msgid "Without this only the first account will be enabled)."
 #~ msgstr "Be šio argumento bus aktyvuota pirmoji paskyra)."

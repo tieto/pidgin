@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-05-17 20:53-0400\n"
 "PO-Revision-Date: 2006-04-04 15:35+0700\n"
 "Last-Translator: Isriya Paireepairit <markpeak@gmail.com>\n"
 "Language-Team: Thai <l10n@opentle.org>\n"
@@ -1401,8 +1401,6 @@ msgstr "ลบ"
 msgid "Saved Statuses"
 msgstr "สถานะที่เคยบันทึกไว้"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "ชื่อ"
 
@@ -1699,6 +1697,12 @@ msgid "Change user information for %s"
 msgstr "เปลี่ยนข้อมูลผู้ใช้ของ %s"
 
 msgid "Set User Info"
+msgstr ""
+
+msgid "This protocol does not support setting a public alias."
+msgstr ""
+
+msgid "This protocol does not support fetching the public alias."
 msgstr ""
 
 msgid "Unknown"
@@ -3743,12 +3747,6 @@ msgstr ""
 msgid "execute"
 msgstr "ลบ"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 
@@ -3785,6 +3783,40 @@ msgstr "เชื่อมต่อล้มเหลว"
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "เซิร์ฟเวอร์"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "รหัสภาษา"
+
+msgid "Unsupported Extension"
+msgstr ""
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "ที่อยู่เซิร์ฟเวอร์"
+
+msgid "Unsupported channel binding method"
+msgstr ""
+
+msgid "User not found"
+msgstr ""
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "ชื่อผู้ใช้ไม่ถูกต้อง"
+
+msgid "Resource Constraint"
+msgstr ""
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3868,6 +3900,11 @@ msgstr "องค์กร"
 
 msgid "Organization Unit"
 msgstr "หน่วยงานภายใน"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "ตำแหน่ง"
 
 msgid "Role"
 msgstr "ตำแหน่ง"
@@ -4095,11 +4132,20 @@ msgstr "ไม่มีบันทึก"
 msgid "Roles:"
 msgstr "ตำแหน่ง"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+
 #, fuzzy
 msgid "Ping timed out"
 msgstr "ข้อความปกติ"
 
 msgid "Invalid XMPP ID"
+msgstr ""
+
+msgid "Invalid XMPP ID. Username portion must be set."
 msgstr ""
 
 msgid "Invalid XMPP ID. Domain must be set."
@@ -4204,7 +4250,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr ""
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr ""
 
@@ -4226,7 +4271,6 @@ msgstr "ถึง"
 msgid "None (To pending)"
 msgstr ""
 
-#. 0
 msgid "None"
 msgstr ""
 
@@ -4249,6 +4293,12 @@ msgstr "ชื่อกลาง"
 msgid "Mood Comment"
 msgstr "แก้ไขบัญชีผู้ใช้"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4419,9 +4469,6 @@ msgid "Policy Violation"
 msgstr ""
 
 msgid "Remote Connection Failed"
-msgstr ""
-
-msgid "Resource Constraint"
 msgstr ""
 
 msgid "Restricted XML"
@@ -4766,7 +4813,6 @@ msgstr ""
 msgid "Amorous"
 msgstr ""
 
-#. 1
 msgid "Angry"
 msgstr ""
 
@@ -4859,7 +4905,6 @@ msgstr ""
 msgid "Envious"
 msgstr ""
 
-#. 2
 msgid "Excited"
 msgstr ""
 
@@ -4877,7 +4922,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "คู่สนทนากำลังพิมพ์..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "กลุ่ม:"
@@ -4886,14 +4930,12 @@ msgstr "กลุ่ม:"
 msgid "Guilty"
 msgstr "เมือง"
 
-#. 4
 msgid "Happy"
 msgstr ""
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "โ_ฮสต์:"
@@ -4931,7 +4973,6 @@ msgstr "ความสนใจ"
 msgid "Intoxicated"
 msgstr "เ_ชิญ"
 
-#. 6
 msgid "Invincible"
 msgstr ""
 
@@ -4995,7 +5036,6 @@ msgstr "ลบคู่สนทนา"
 msgid "Restless"
 msgstr "ลงทะเบียน"
 
-#. 7
 msgid "Sad"
 msgstr ""
 
@@ -5016,11 +5056,9 @@ msgstr "ถูกบล็อค"
 msgid "Shy"
 msgstr ""
 
-#. 9
 msgid "Sick"
 msgstr ""
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr ""
@@ -5424,19 +5462,6 @@ msgstr "ติดสาย"
 msgid "Out to Lunch"
 msgstr "พักกลางวัน"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-#, fuzzy
-msgid "Artist"
-msgstr "ที่อยู่"
-
-msgid "Album"
-msgstr ""
-
 #, fuzzy
 msgid "Game Title"
 msgstr "ชื่อ"
@@ -5588,9 +5613,6 @@ msgstr ""
 #, fuzzy
 msgid "Work"
 msgstr "IM ที่ทำงาน"
-
-msgid "Job Title"
-msgstr "ตำแหน่ง"
 
 msgid "Company"
 msgstr "บริษัท"
@@ -5852,28 +5874,6 @@ msgstr ""
 msgid "The username specified is invalid."
 msgstr ""
 
-#. 5
-msgid "In Love"
-msgstr ""
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "เลือกโฟลเดอร์..."
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "เลือกโฟลเดอร์..."
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "เปลี่ยน_สถานะเป็น:"
-
-#, fuzzy
-msgid "How do you feel right now?"
-msgstr "ตอนนี้ฉันไม่อยู่ที่เครื่อง"
-
 msgid "The PIN you entered is invalid."
 msgstr ""
 
@@ -5944,11 +5944,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "เกี่ยวกับ Pidgin"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "เปลี่ยนรหัสผ่าน..."
 
 #. display / change profile
 #, fuzzy
@@ -6212,6 +6207,9 @@ msgstr ""
 
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
+msgstr ""
+
+msgid "In Love"
 msgstr ""
 
 #, fuzzy
@@ -6619,9 +6617,6 @@ msgstr ""
 msgid "Incorrect password"
 msgstr "รหัสผ่านใหม่"
 
-msgid "User not found"
-msgstr ""
-
 msgid "Account has been disabled"
 msgstr ""
 
@@ -6859,6 +6854,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "เกิดปัญหาในการอ่านแฟ้มประวัติ"
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -8195,6 +8194,11 @@ msgstr "เหลืออีก"
 
 msgid "Admin"
 msgstr ""
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "รายชื่อห้อง"
 
 #, fuzzy
 msgid "Notice"
@@ -10056,10 +10060,6 @@ msgstr "เลือก..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "ปลั๊กอิน Jabber"
 
-#, fuzzy
-msgid "Pager server"
-msgstr "เซิร์ฟเวอร์พร็อกซี"
-
 msgid "Pager port"
 msgstr ""
 
@@ -10080,12 +10080,6 @@ msgid "Use account proxy for SSL connections"
 msgstr ""
 
 msgid "Chat room list URL"
-msgstr ""
-
-msgid "Yahoo Chat server"
-msgstr ""
-
-msgid "Yahoo Chat port"
 msgstr ""
 
 #, fuzzy
@@ -10147,6 +10141,12 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 
 #. username or password missing
@@ -10217,6 +10217,15 @@ msgstr "บันทึกการสนทนากับ %s"
 #, fuzzy, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "บันทึกการสนทนากับ %s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr "ไม่สามารถติดต่อไปยังโฮสต์ได้"
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr ""
@@ -10581,6 +10590,10 @@ msgstr "ไม่"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_ตอบรับ"
 
@@ -10823,12 +10836,6 @@ msgstr "โปรแกรมข้อความด่วน"
 #, fuzzy
 msgid "Pidgin Internet Messenger"
 msgstr "โปรแกรมข้อความด่วน"
-
-msgid "Orientation"
-msgstr ""
-
-msgid "The orientation of the tray."
-msgstr ""
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12056,6 +12063,10 @@ msgstr ""
 msgid "Arabic"
 msgstr ""
 
+#, fuzzy
+msgid "Assamese"
+msgstr "ข้อความถูกส่ง"
+
 msgid "Belarusian Latin"
 msgstr ""
 
@@ -12063,6 +12074,9 @@ msgid "Bulgarian"
 msgstr ""
 
 msgid "Bengali"
+msgstr ""
+
+msgid "Bengali-India"
 msgstr ""
 
 msgid "Bosnian"
@@ -12181,6 +12195,10 @@ msgstr ""
 
 msgid "Macedonian"
 msgstr ""
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "ชาย"
 
 msgid "Mongolian"
 msgstr ""
@@ -14964,7 +14982,17 @@ msgid "Timestamp Format Options"
 msgstr ""
 
 #, c-format
-msgid "_Force 24-hour time format"
+msgid "_Force timestamp format:"
+msgstr ""
+
+#, fuzzy
+msgid "Use system default"
+msgstr "ค่าปริยายของ GNOME"
+
+msgid "12 hour time format"
+msgstr ""
+
+msgid "24 hour time format"
 msgstr ""
 
 msgid "Show dates in..."
@@ -15166,6 +15194,145 @@ msgstr ""
 #. *  description
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
+
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "ค่าปริยายของ GNOME"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#, fuzzy
+msgid "Localizations"
+msgstr "นามแฝง:"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "โปรแกรมข้อความด่วน"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "พอร์ต"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "รัฐ"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+msgid "The installer is already running."
+msgstr ""
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+msgid "URI Handlers"
+msgstr ""
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#, fuzzy
+#~ msgid "Artist"
+#~ msgstr "ที่อยู่"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "เลือกโฟลเดอร์..."
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "เลือกโฟลเดอร์..."
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "เปลี่ยน_สถานะเป็น:"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "ตอนนี้ฉันไม่อยู่ที่เครื่อง"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "เปลี่ยนรหัสผ่าน..."
+
+#, fuzzy
+#~ msgid "Pager server"
+#~ msgstr "เซิร์ฟเวอร์พร็อกซี"
 
 #, fuzzy
 #~ msgid "Error creating conference."

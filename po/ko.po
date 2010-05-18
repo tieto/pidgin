@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-05-17 20:52-0400\n"
 "PO-Revision-Date: 2007-10-01 16:15+0900\n"
 "Last-Translator: sushizang <sushizang@empal.com>\n"
 "Language-Team: GTP Korean <gnome-kr-translation@gnome.or.kr>\n"
@@ -1411,8 +1411,6 @@ msgstr "상태 삭제"
 msgid "Saved Statuses"
 msgstr "저장된 상태"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "제목"
 
@@ -1707,6 +1705,14 @@ msgstr "%s 의 사용자 정보 변경"
 
 msgid "Set User Info"
 msgstr "사용자 정보 설정"
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "이 프로토콜에서는 대화실을 지원하지 않습니다."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "이 프로토콜에서는 대화실을 지원하지 않습니다."
 
 msgid "Unknown"
 msgstr "알 수 없음"
@@ -3851,18 +3857,6 @@ msgstr "명령을 사용할 수 없습니다."
 msgid "execute"
 msgstr "예상치 못한 데이터"
 
-#, fuzzy
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-"로그인하기 위해 서버가 TLS/SSL 을 요구해 왔지만, TLS/SSL 은 지원되지 않습니"
-"다."
-
-#, fuzzy
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-"로그인하기 위해 서버가 TLS/SSL 을 요구해 왔지만, TLS/SSL 은 지원되지 않습니"
-"다."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "암호화 되어 있지 않은 스트림을 통한 문자열은 인증이 필요합니다."
 
@@ -3901,6 +3895,42 @@ msgstr "인증에 실패했습니다."
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "SASL 오류"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "최종 접속 조정 중"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "지원되지 않는 버전"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "서버는 지원하고 있는 인증 방식을 이용하지 않습니다."
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "지원되지 않는 인코딩"
+
+msgid "User not found"
+msgstr "사용자를 찾을 수 없습니다."
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "이름이 잘못되었습니다."
+
+msgid "Resource Constraint"
+msgstr "자원 제한"
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3990,6 +4020,11 @@ msgstr "조직명"
 
 msgid "Organization Unit"
 msgstr "부서"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "직위"
 
 msgid "Role"
 msgstr "직위"
@@ -4220,12 +4255,27 @@ msgid "Roles:"
 msgstr "직위"
 
 #, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+"로그인하기 위해 서버가 TLS/SSL 을 요구해 왔지만, TLS/SSL 은 지원되지 않습니"
+"다."
+
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+"로그인하기 위해 서버가 TLS/SSL 을 요구해 왔지만, TLS/SSL 은 지원되지 않습니"
+"다."
+
+#, fuzzy
 msgid "Ping timed out"
 msgstr "일반 문자열"
 
 #, fuzzy
 msgid "Invalid XMPP ID"
 msgstr "잘못된 ID"
+
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr ""
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
@@ -4333,7 +4383,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "인증되어 있지 않습니다."
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "기분"
 
@@ -4355,7 +4404,6 @@ msgstr "To"
 msgid "None (To pending)"
 msgstr "None (To pending)"
 
-#. 0
 msgid "None"
 msgstr "없음"
 
@@ -4379,6 +4427,12 @@ msgstr "가운데 이름"
 msgid "Mood Comment"
 msgstr "친구의 코멘트"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4552,9 +4606,6 @@ msgstr "정책 위반"
 
 msgid "Remote Connection Failed"
 msgstr "리모트 접속이 끊어졌습니다."
-
-msgid "Resource Constraint"
-msgstr "자원 제한"
 
 msgid "Restricted XML"
 msgstr "제한된 XML"
@@ -4926,7 +4977,6 @@ msgstr "부끄러움"
 msgid "Amorous"
 msgstr "Glorious"
 
-#. 1
 msgid "Angry"
 msgstr "언짢음"
 
@@ -5024,7 +5074,6 @@ msgstr ""
 msgid "Envious"
 msgstr "걱정됨"
 
-#. 2
 msgid "Excited"
 msgstr "흥분됨"
 
@@ -5043,7 +5092,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "사용자가 무언가를 입력하고 있습니다..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "그룹"
@@ -5052,14 +5100,12 @@ msgstr "그룹"
 msgid "Guilty"
 msgstr "도시"
 
-#. 4
 msgid "Happy"
 msgstr "행복함"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "호스트명(_H):"
@@ -5100,7 +5146,6 @@ msgstr "취미"
 msgid "Intoxicated"
 msgstr "초대"
 
-#. 6
 msgid "Invincible"
 msgstr "무적"
 
@@ -5164,7 +5209,6 @@ msgstr "삭제"
 msgid "Restless"
 msgstr "등록"
 
-#. 7
 msgid "Sad"
 msgstr "슬픔"
 
@@ -5185,12 +5229,10 @@ msgstr "내가 거부됨"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "별명"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "취침"
@@ -5606,20 +5648,6 @@ msgstr "전화 중입니다."
 msgid "Out to Lunch"
 msgstr "점심 식사 중입니다."
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-#, fuzzy
-msgid "Artist"
-msgstr "양치기자리"
-
-#, fuzzy
-msgid "Album"
-msgstr "Adium"
-
 #, fuzzy
 msgid "Game Title"
 msgstr "제목"
@@ -5770,9 +5798,6 @@ msgstr "기념일"
 #. Business
 msgid "Work"
 msgstr "직종"
-
-msgid "Job Title"
-msgstr "직위"
 
 msgid "Company"
 msgstr "회사"
@@ -6059,28 +6084,6 @@ msgstr "이 상대를 친구 목록에 추가하시겠습니까?"
 msgid "The username specified is invalid."
 msgstr "지정한 아이디가 잘못되었습니다."
 
-#. 5
-msgid "In Love"
-msgstr "연애"
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "현재의 기분"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "사용자 모드"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "비밀번호 변경"
-
-#, fuzzy
-msgid "How do you feel right now?"
-msgstr "지금 자리에 없습니다."
-
 #, fuzzy
 msgid "The PIN you entered is invalid."
 msgstr "입력한 보안 ID 키는 잘못되었습니다."
@@ -6155,11 +6158,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "%s 정보"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "비밀번호 변경..."
 
 #. display / change profile
 #, fuzzy
@@ -6433,6 +6431,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "연애"
 
 #, fuzzy
 msgid "Pending"
@@ -6854,9 +6855,6 @@ msgstr "비밀번호 유효기간이 만료되었습니다."
 msgid "Incorrect password"
 msgstr "비밀번호가 틀립니다."
 
-msgid "User not found"
-msgstr "사용자를 찾을 수 없습니다."
-
 msgid "Account has been disabled"
 msgstr "계정이 사용이 금지되었습니다."
 
@@ -7108,6 +7106,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "%s 을(를) 해석하는 중 오류"
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -8510,6 +8512,11 @@ msgstr "질문 창의 글꼴"
 #, fuzzy
 msgid "Admin"
 msgstr "Adium"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "대화실 목록"
 
 #, fuzzy
 msgid "Notice"
@@ -10466,9 +10473,6 @@ msgstr "Yahoo! ID"
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo! 프로토콜 플러그인"
 
-msgid "Pager server"
-msgstr "호출기 서버"
-
 msgid "Pager port"
 msgstr "호출기 포트"
 
@@ -10489,12 +10493,6 @@ msgstr ""
 
 msgid "Chat room list URL"
 msgstr "대화실 URL 목록"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo 대화 서버"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo 대화 포트 번호"
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -10564,6 +10562,15 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+"알 수 없는 오류 번호 %d 입니다. Yahoo! 웹사이트로 로그인하면 해결될 수도 있습"
+"니다."
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 "알 수 없는 오류 번호 %d 입니다. Yahoo! 웹사이트로 로그인하면 해결될 수도 있습"
 "니다."
@@ -10653,6 +10660,15 @@ msgid "Unable to establish a connection with %s: %s"
 msgstr ""
 "서버와의 접속을 확립하지 못했습니다:\n"
 "%s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr "서버에 접속할 수 없습니다. 접속할 서버의 주소를 입력해 주십시오."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "집에 없음"
@@ -11041,6 +11057,10 @@ msgstr "아니오(_N)"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "허가(_A)"
 
@@ -11281,12 +11301,6 @@ msgstr "인터넷 메신저"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin 인터넷 메신저"
-
-msgid "Orientation"
-msgstr "방향"
-
-msgid "The orientation of the tray."
-msgstr "트레이의 방향입니다."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12510,6 +12524,10 @@ msgstr ""
 msgid "Arabic"
 msgstr "아라비아어"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "부끄러움"
+
 msgid "Belarusian Latin"
 msgstr ""
 
@@ -12517,6 +12535,10 @@ msgid "Bulgarian"
 msgstr "불가리아어"
 
 msgid "Bengali"
+msgstr "벵갈어"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "벵갈어"
 
 msgid "Bosnian"
@@ -12640,6 +12662,10 @@ msgstr "사자자리"
 
 msgid "Macedonian"
 msgstr "마케도니아어"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "남"
 
 #, fuzzy
 msgid "Mongolian"
@@ -15486,8 +15512,20 @@ msgstr "iChat 형식의 타임스탬프를 N분 마다 대화에 삽입합니다
 msgid "Timestamp Format Options"
 msgstr "타임스탬프 서식 설정"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "강제적으로 24-시간제 적용(_F)"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "기본값 적용(_A)"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "강제적으로 24-시간제 적용(_F)"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "강제적으로 24-시간제 적용(_F)"
 
 msgid "Show dates in..."
@@ -15698,6 +15736,163 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "이것은 XMPP 서버 또는 클라이언트를 디버그 할 때에 편리한 플러그인입니다."
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "기본값 적용(_A)"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ 런타임 버전"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "위치"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin 인터넷 메신저"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "상태 문자"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "시작"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "이 대화명은 이미 사용 중입니다."
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "핸들(_H):"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#, fuzzy
+#~ msgid "Artist"
+#~ msgstr "양치기자리"
+
+#, fuzzy
+#~ msgid "Album"
+#~ msgstr "Adium"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "현재의 기분"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "사용자 모드"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "비밀번호 변경"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "지금 자리에 없습니다."
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "비밀번호 변경..."
+
+#~ msgid "Pager server"
+#~ msgstr "호출기 서버"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo 대화 서버"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo 대화 포트 번호"
+
+#~ msgid "Orientation"
+#~ msgstr "방향"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "트레이의 방향입니다."
+
 #, fuzzy
 #~ msgid "Error creating conference."
 #~ msgstr "접속 생성 중 오류"
@@ -15855,9 +16050,6 @@ msgstr ""
 
 #~ msgid "_User:"
 #~ msgstr "사용자명(_U):"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ 런타임 버전"
 
 #, fuzzy
 #~ msgid "Calling ... "

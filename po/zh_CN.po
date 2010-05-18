@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-05-17 20:53-0400\n"
 "PO-Revision-Date: 2010-01-13 01:15+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -1318,8 +1318,6 @@ msgstr "删除状态"
 msgid "Saved Statuses"
 msgstr "已存状态"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "标题"
 
@@ -1604,6 +1602,14 @@ msgstr "更改 %s 的用户信息"
 
 msgid "Set User Info"
 msgstr "设置用户信息"
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "此协议不支持聊天室。"
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "此协议不支持聊天室。"
 
 msgid "Unknown"
 msgstr "未知"
@@ -3643,12 +3649,6 @@ msgstr "Ad-Hoc 命令失败"
 msgid "execute"
 msgstr "执行"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "服务器需要 TLS/SSL 才能登录。未找到 TLS/SSL 支持。"
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "您要求 TLS/SSL 登录，但未找到 TLS/SSL 支持。"
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "服务器需要在不加密流上使用纯文本验证"
 
@@ -3683,6 +3683,42 @@ msgstr "认证失败"
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL 错误：%s"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "无效的输入条件"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "不支持的版本"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "服务器未使用任何支持的身份验证方法"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "不支持的编码"
+
+msgid "User not found"
+msgstr "用户未找到"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "无效用户名"
+
+msgid "Resource Constraint"
+msgstr "资源约束"
 
 msgid "Unable to canonicalize username"
 msgstr "无法对用户名进行规范化处理"
@@ -3761,6 +3797,11 @@ msgstr "组织名称"
 
 msgid "Organization Unit"
 msgstr "组织单元"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "职称"
 
 msgid "Role"
 msgstr "职务"
@@ -3979,11 +4020,21 @@ msgstr "未找到匹配的用户"
 msgid "Roles:"
 msgstr "职务："
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "服务器需要 TLS/SSL 才能登录。未找到 TLS/SSL 支持。"
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "您要求 TLS/SSL 登录，但未找到 TLS/SSL 支持。"
+
 msgid "Ping timed out"
 msgstr "Ping 超时"
 
 msgid "Invalid XMPP ID"
 msgstr "无效 XMPP ID"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "无效的 XMPP ID。您必须设置有效的域名。"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "无效的 XMPP ID。您必须设置有效的域名。"
@@ -4081,7 +4132,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "未认证"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "心情"
 
@@ -4103,7 +4153,6 @@ msgstr "到"
 msgid "None (To pending)"
 msgstr "无(待推迟)"
 
-#. 0
 msgid "None"
 msgstr "无"
 
@@ -4125,6 +4174,12 @@ msgstr "教名"
 msgid "Mood Comment"
 msgstr "好友注释"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "歌曲艺术家"
 
@@ -4294,9 +4349,6 @@ msgstr "违背策略"
 
 msgid "Remote Connection Failed"
 msgstr "远程连接失败"
-
-msgid "Resource Constraint"
-msgstr "资源约束"
 
 msgid "Restricted XML"
 msgstr "限制的 XML"
@@ -4636,7 +4688,6 @@ msgstr "害羞"
 msgid "Amorous"
 msgstr "显赫"
 
-#. 1
 msgid "Angry"
 msgstr "生气"
 
@@ -4734,7 +4785,6 @@ msgstr ""
 msgid "Envious"
 msgstr "饥渴"
 
-#. 2
 msgid "Excited"
 msgstr "激动"
 
@@ -4753,7 +4803,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "正在获取..."
 
-#. 3
 msgid "Grumpy"
 msgstr "暴躁"
 
@@ -4761,14 +4810,12 @@ msgstr "暴躁"
 msgid "Guilty"
 msgstr "城市"
 
-#. 4
 msgid "Happy"
 msgstr "高兴"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 msgid "Hot"
 msgstr "热情"
 
@@ -4808,7 +4855,6 @@ msgstr "兴趣"
 msgid "Intoxicated"
 msgstr "已邀请"
 
-#. 6
 msgid "Invincible"
 msgstr "无敌"
 
@@ -4872,7 +4918,6 @@ msgstr "删除"
 msgid "Restless"
 msgstr "注册"
 
-#. 7
 msgid "Sad"
 msgstr "郁闷"
 
@@ -4893,11 +4938,9 @@ msgstr "被屏蔽"
 msgid "Shy"
 msgstr ""
 
-#. 9
 msgid "Sick"
 msgstr "生病"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "困倦"
@@ -5289,18 +5332,6 @@ msgstr "接听电话"
 msgid "Out to Lunch"
 msgstr "外出就餐"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "美工"
-
-msgid "Album"
-msgstr "相册"
-
 msgid "Game Title"
 msgstr "游戏标题"
 
@@ -5445,9 +5476,6 @@ msgstr "纪念日"
 #. Business
 msgid "Work"
 msgstr "工作"
-
-msgid "Job Title"
-msgstr "职称"
 
 msgid "Company"
 msgstr "公司"
@@ -5707,24 +5735,6 @@ msgstr "您是否要将这个好友也从通讯录中删除？"
 msgid "The username specified is invalid."
 msgstr "指定的用户名无效。"
 
-#. 5
-msgid "In Love"
-msgstr "热恋"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "当前心情"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "用户心情"
-
-msgid "Change your Mood"
-msgstr "更改心情状态"
-
-msgid "How do you feel right now?"
-msgstr "您心情如何？"
-
 msgid "The PIN you entered is invalid."
 msgstr "您输入的 PIN 无效。"
 
@@ -5791,10 +5801,6 @@ msgstr "现在没有可用的飞溅屏幕"
 
 msgid "About"
 msgstr "关于"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "更改心情..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6025,6 +6031,9 @@ msgstr "连接错误。(读取等级 0x05)"
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "连接错误。(读取等级 0x06)"
+
+msgid "In Love"
+msgstr "热恋"
 
 msgid "Pending"
 msgstr "正在等待"
@@ -6409,9 +6418,6 @@ msgstr "密码已过期"
 msgid "Incorrect password"
 msgstr "密码不对"
 
-msgid "User not found"
-msgstr "用户未找到"
-
 msgid "Account has been disabled"
 msgstr "帐号已经被禁用"
 
@@ -6654,6 +6660,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL 不允许通过此站点认证您的屏幕名称。"
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "请求 %s 时出错：%s"
 
 msgid "Could not join chat room"
 msgstr "无法进入聊天室"
@@ -7962,6 +7972,11 @@ msgstr "正在发送请求"
 
 msgid "Admin"
 msgstr "管理员"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "聊天室列表"
 
 msgid "Notice"
 msgstr "公告"
@@ -9806,9 +9821,6 @@ msgstr "Yahoo ID..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo 协议插件"
 
-msgid "Pager server"
-msgstr "寻呼服务器"
-
 msgid "Pager port"
 msgstr "寻呼端口"
 
@@ -9829,12 +9841,6 @@ msgstr ""
 
 msgid "Chat room list URL"
 msgstr "聊天聊天室列表 URL"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo 聊天服务器"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo 聊天端口"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Yahoo ID..."
@@ -9893,6 +9899,13 @@ msgstr "位置错误号 %d。登录到 Yahoo! 网站可能修复。"
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr "位置错误号 %d。登录到 Yahoo! 网站可能修复。"
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr "位置错误号 %d。登录到 Yahoo! 网站可能修复。"
 
 #. username or password missing
@@ -9965,6 +9978,15 @@ msgstr ""
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "无法与 %s 建立连接：%s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr "无法连接到 MXit 服务器。请检查您的服务器设置。"
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "不在家"
@@ -10331,6 +10353,10 @@ msgstr "否(_N)"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "接受(_A)"
 
@@ -10557,12 +10583,6 @@ msgstr "互联网通讯程序"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin 互联网通讯程序"
-
-msgid "Orientation"
-msgstr "方向"
-
-msgid "The orientation of the tray."
-msgstr "托盘的方向。"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11712,6 +11732,10 @@ msgstr "南非荷兰语"
 msgid "Arabic"
 msgstr "阿拉伯语"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "害羞"
+
 msgid "Belarusian Latin"
 msgstr "白俄罗斯拉丁语"
 
@@ -11719,6 +11743,10 @@ msgid "Bulgarian"
 msgstr "保加利亚语"
 
 msgid "Bengali"
+msgstr "孟加拉语"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "孟加拉语"
 
 msgid "Bosnian"
@@ -11834,6 +11862,10 @@ msgstr "老挝语"
 
 msgid "Macedonian"
 msgstr "马其顿语"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "马来语"
 
 msgid "Mongolian"
 msgstr "蒙古语"
@@ -14468,8 +14500,20 @@ msgstr "每 N 分钟显示一次 iChat 风格的时间戳。"
 msgid "Timestamp Format Options"
 msgstr "时间戳格式选项"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "强制24小时制时间格式(_F)"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "桌面默认值"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "强制24小时制时间格式(_F)"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "强制24小时制时间格式(_F)"
 
 msgid "Show dates in..."
@@ -14669,6 +14713,156 @@ msgstr "发送和接受原始 XMPP 节。"
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "此插件用于调试 XMPP 服务器或客户端。"
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "桌面默认值"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ 运行时刻版本"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "位置"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin 互联网通讯程序"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "快捷方式"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "启动"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "昵称“%s”已被使用。"
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "昵称(_H)："
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#~ msgid "Artist"
+#~ msgstr "美工"
+
+#~ msgid "Album"
+#~ msgstr "相册"
+
+#~ msgid "Current Mood"
+#~ msgstr "当前心情"
+
+#~ msgid "New Mood"
+#~ msgstr "用户心情"
+
+#~ msgid "Change your Mood"
+#~ msgstr "更改心情状态"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "您心情如何？"
+
+#~ msgid "Change Mood..."
+#~ msgstr "更改心情..."
+
+#~ msgid "Pager server"
+#~ msgstr "寻呼服务器"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo 聊天服务器"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo 聊天端口"
+
+#~ msgid "Orientation"
+#~ msgstr "方向"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "托盘的方向。"
+
 #~ msgid "Error creating conference."
 #~ msgstr "创建会议出错"
 
@@ -14824,9 +15018,6 @@ msgstr "此插件用于调试 XMPP 服务器或客户端。"
 
 #~ msgid "_User:"
 #~ msgstr "用户(_U)："
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ 运行时刻版本"
 
 #~ msgid "Calling ... "
 #~ msgstr "正在呼叫..."

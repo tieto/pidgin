@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:12-0700\n"
+"POT-Creation-Date: 2010-05-17 20:52-0400\n"
 "PO-Revision-Date: 2008-03-29 21:08+0200\n"
 "Last-Translator: YOUR NAME <E-MAIL@ADDRESS>\n"
 "Language-Team: Belarusian Latin <be-latin.open-tran.eu>\n"
@@ -1353,8 +1353,6 @@ msgstr "Vydali status"
 msgid "Saved Statuses"
 msgstr "Zachavanyja statusy"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "Nazva"
 
@@ -1644,6 +1642,14 @@ msgstr "Źmiani źviestki karystalnika dla %s"
 
 msgid "Set User Info"
 msgstr "Akreśl źviestki karystalnika"
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Hety pratakoł nie padtrymvaje pakojaŭ dla hutarki."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Hety pratakoł nie padtrymvaje pakojaŭ dla hutarki."
 
 msgid "Unknown"
 msgstr "Nieviadomy"
@@ -3809,14 +3815,6 @@ msgstr "Niaŭdałaje vykanańnie zahadu Ad-Hoc"
 msgid "execute"
 msgstr "vykanaj"
 
-#, fuzzy
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Server vymahaje TLS/SSL, kab uvajści. Niama padtrymki TLS/SSL."
-
-#, fuzzy
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Ty vymahaješ šyfravańnia, ale padtrymki TLS/SSL niama."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Server vymahaje aŭtaryzacyju prostym tekstam praz niešyfravany kanał"
 
@@ -3855,6 +3853,42 @@ msgstr "Pamyłka aŭtaryzacyi"
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "Pamyłka SASL"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Niapravilnaja ŭmova ŭvodu"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Niepadtrymanaja versija"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Server nie ŭžyvaje nivodzin z padtrymanych metadaŭ aŭtaryzacyi"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Niepadtrymanaje kadavańnie"
+
+msgid "User not found"
+msgstr "Karystalnik nia znojdzieny"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Niapravilnaja nazva"
+
+msgid "Resource Constraint"
+msgstr "Abmiežavańnie resursu"
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3944,6 +3978,11 @@ msgstr "Nazva arhanizacyi"
 
 msgid "Organization Unit"
 msgstr "Addzieł arhanizacyi"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "Pasada"
 
 msgid "Role"
 msgstr "Rola"
@@ -4172,11 +4211,23 @@ msgid "Roles:"
 msgstr "Rola"
 
 #, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "Server vymahaje TLS/SSL, kab uvajści. Niama padtrymki TLS/SSL."
+
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Ty vymahaješ šyfravańnia, ale padtrymki TLS/SSL niama."
+
+#, fuzzy
 msgid "Ping timed out"
 msgstr "Termin čakańnia pingu"
 
 msgid "Invalid XMPP ID"
 msgstr "Niapravilny XMPP ID"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Niapravilny XMPP ID. Treba akreślić damen."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Niapravilny XMPP ID. Treba akreślić damen."
@@ -4275,7 +4326,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "Nie aŭtaryzavany"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Nastroj"
 
@@ -4297,7 +4347,6 @@ msgstr "Da"
 msgid "None (To pending)"
 msgstr "Niama (Razhladajecca)"
 
-#. 0
 msgid "None"
 msgstr "Niama"
 
@@ -4319,6 +4368,12 @@ msgstr "Siaredniaje imia"
 msgid "Mood Comment"
 msgstr "Kamentar siabra"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "Vykanaŭca pieśni"
 
@@ -4488,9 +4543,6 @@ msgstr "Parušeńnie praviłaŭ"
 
 msgid "Remote Connection Failed"
 msgstr "Pamyłka addalenaha spałučeńnia"
-
-msgid "Resource Constraint"
-msgstr "Abmiežavańnie resursu"
 
 msgid "Restricted XML"
 msgstr "Abmiežavany XML"
@@ -4849,7 +4901,6 @@ msgstr "Zasaromleny"
 msgid "Amorous"
 msgstr "Słavuty"
 
-#. 1
 msgid "Angry"
 msgstr "Zły"
 
@@ -4947,7 +4998,6 @@ msgstr ""
 msgid "Envious"
 msgstr "Niespakojny"
 
-#. 2
 msgid "Excited"
 msgstr "Uschvalavany"
 
@@ -4966,7 +5016,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "Atrymańnie..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "Hrupa"
@@ -4975,14 +5024,12 @@ msgstr "Hrupa"
 msgid "Guilty"
 msgstr "Horad"
 
-#. 4
 msgid "Happy"
 msgstr "Ščaślivy"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "_Host:"
@@ -5023,7 +5070,6 @@ msgstr "Zacikaŭlenaści"
 msgid "Intoxicated"
 msgstr "Zaprasi"
 
-#. 6
 msgid "Invincible"
 msgstr "Nieadolny"
 
@@ -5087,7 +5133,6 @@ msgstr "Vydali"
 msgid "Restless"
 msgstr "Zarehistruj"
 
-#. 7
 msgid "Sad"
 msgstr "Markotny"
 
@@ -5108,12 +5153,10 @@ msgstr "Zablakavany"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "Mianuška"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Sonny"
@@ -5522,18 +5565,6 @@ msgstr "Razmaŭlaju pa telefonie"
 msgid "Out to Lunch"
 msgstr "Adyjšoŭ pajeści"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Vykanaŭca"
-
-msgid "Album"
-msgstr "Albom"
-
 #, fuzzy
 msgid "Game Title"
 msgstr "Nazva pieśni"
@@ -5686,9 +5717,6 @@ msgstr "Jubilej"
 #. Business
 msgid "Work"
 msgstr "Praca"
-
-msgid "Job Title"
-msgstr "Pasada"
 
 msgid "Company"
 msgstr "Kampanija"
@@ -5988,28 +6016,6 @@ msgstr "Chočaš dadać hetaha siabra da svajho śpisu siabroŭ?"
 msgid "The username specified is invalid."
 msgstr "Akreślenaja nazva karystalnika niapravilnaja."
 
-#. 5
-msgid "In Love"
-msgstr "Zakachany"
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "Tvoj ciapierašni nastroj"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "Nastroj karystalnika"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "Źmiani parol"
-
-#, fuzzy
-msgid "How do you feel right now?"
-msgstr "Ja nia tut"
-
 #, fuzzy
 msgid "The PIN you entered is invalid."
 msgstr "Akreśleny kluč SecurID niapravilny."
@@ -6084,11 +6090,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "Ab %s"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "Źmiani parol..."
 
 #. display / change profile
 #, fuzzy
@@ -6367,6 +6368,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "Zakachany"
 
 #, fuzzy
 msgid "Pending"
@@ -6772,9 +6776,6 @@ msgstr "Parol sastareŭ"
 msgid "Incorrect password"
 msgstr "Niapravilny parol"
 
-msgid "User not found"
-msgstr "Karystalnik nia znojdzieny"
-
 msgid "Account has been disabled"
 msgstr "Kont adklučany"
 
@@ -7033,6 +7034,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "Pamyłka zapytu znaku ŭvachodu"
 
 msgid "Could not join chat room"
 msgstr "Niemahčyma dałučycca da hutarki ŭ pakoi"
@@ -8466,6 +8471,11 @@ msgstr "Dyjaloh zapytu"
 #, fuzzy
 msgid "Admin"
 msgstr "Adium"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Śpis pakojaŭ"
 
 #, fuzzy
 msgid "Notice"
@@ -10421,9 +10431,6 @@ msgstr "Yahoo! ID"
 msgid "Yahoo! Protocol Plugin"
 msgstr "Plugin pratakołu Yahoo"
 
-msgid "Pager server"
-msgstr "Server pagera"
-
 msgid "Pager port"
 msgstr "Port pagera"
 
@@ -10444,12 +10451,6 @@ msgstr ""
 
 msgid "Chat room list URL"
 msgstr "Spasyłka na śpis pakojaŭ hutarak"
-
-msgid "Yahoo Chat server"
-msgstr "Server hutarak Yahoo"
-
-msgid "Yahoo Chat port"
-msgstr "Port hutarak Yahoo"
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -10517,6 +10518,15 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+"Numar %d nieviadomaj pamyłki. Naviedvańnie sajtu Yahoo! moža vypravić hetuju "
+"prablemu."
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 "Numar %d nieviadomaj pamyłki. Naviedvańnie sajtu Yahoo! moža vypravić hetuju "
 "prablemu."
@@ -10603,6 +10613,17 @@ msgid "Unable to establish a connection with %s: %s"
 msgstr ""
 "Niemahčyma spałučycca z serveram:\n"
 "%s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+"Niemahčyma spałučycca z serveram. Akreśl adras servera, ź jakim chočaš "
+"spałučycca."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "Nia doma"
@@ -10992,6 +11013,10 @@ msgstr "_Nie"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Pryjmi"
 
@@ -11237,12 +11262,6 @@ msgstr "Internet-kamunikatar"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Internet-kamunikatar Pidgin"
-
-msgid "Orientation"
-msgstr "Aryjentacyja"
-
-msgid "The orientation of the tray."
-msgstr "Aryjentacyja treju."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12452,6 +12471,10 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Arabskaja"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Zasaromleny"
+
 msgid "Belarusian Latin"
 msgstr "Biełaruskaja łacinka"
 
@@ -12459,6 +12482,10 @@ msgid "Bulgarian"
 msgstr "Baŭharskaja"
 
 msgid "Bengali"
+msgstr "Benhalskaja"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Benhalskaja"
 
 msgid "Bosnian"
@@ -12577,6 +12604,10 @@ msgstr "Laoskaja"
 
 msgid "Macedonian"
 msgstr "Makiedonskaja"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Mužčynski"
 
 #, fuzzy
 msgid "Mongolian"
@@ -15422,8 +15453,20 @@ msgstr "Pakazvaj adbitki času ŭ styli iChat kožnyja N chvilin."
 msgid "Timestamp Format Options"
 msgstr "Opcyi farmatavańnia adbitkaŭ času"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "_Prymusova ŭžyvaj 24-hadzinny farmat času"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Zmoŭčany ŭ asiarodździ"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "_Prymusova ŭžyvaj 24-hadzinny farmat času"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "_Prymusova ŭžyvaj 24-hadzinny farmat času"
 
 msgid "Show dates in..."
@@ -15636,6 +15679,161 @@ msgstr "Dasyłaj i atrymvaj suvoryja strofy XMPP."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Hety plugin užyvajecca dziela debugavańnia serveraŭ i klijentaŭ XMPP."
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "Zmoŭčany ŭ asiarodździ"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "Versija GTK+"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Raźmiaščeńnie"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Internet-kamunikatar Pidgin"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Paradkuj"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "Uruchamleńnie"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Hetaja nazva hutarki ŭžo zaniataja"
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "Adčynieńnie spasyłak myim"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#~ msgid "Artist"
+#~ msgstr "Vykanaŭca"
+
+#~ msgid "Album"
+#~ msgstr "Albom"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Tvoj ciapierašni nastroj"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Nastroj karystalnika"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Źmiani parol"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "Ja nia tut"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "Źmiani parol..."
+
+#~ msgid "Pager server"
+#~ msgstr "Server pagera"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Server hutarak Yahoo"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Port hutarak Yahoo"
+
+#~ msgid "Orientation"
+#~ msgstr "Aryjentacyja"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Aryjentacyja treju."
+
 #, fuzzy
 #~ msgid "Error creating conference."
 #~ msgstr "Pamyłka stvareńnia spałučeńnia"
@@ -15797,9 +15995,6 @@ msgstr "Hety plugin užyvajecca dziela debugavańnia serveraŭ i klijentaŭ XMPP
 
 #~ msgid "_User:"
 #~ msgstr "_Karystalnik:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "Versija GTK+"
 
 #, fuzzy
 #~ msgid "Calling ... "

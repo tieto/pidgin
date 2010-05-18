@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-11 17:11+0200\n"
+"POT-Creation-Date: 2010-05-17 20:53-0400\n"
 "PO-Revision-Date: 2010-05-11 17:11+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
@@ -4318,7 +4318,6 @@ msgstr "Server unterstützt kein Blockieren"
 msgid "Not Authorized"
 msgstr "Nicht autorisiert"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Stimmung"
 
@@ -4340,7 +4339,6 @@ msgstr "Ausstehend"
 msgid "None (To pending)"
 msgstr "Keine (ausgehend unbestätigt)"
 
-#. 0
 msgid "None"
 msgstr "Keine"
 
@@ -4891,7 +4889,6 @@ msgstr "Verblüfft"
 msgid "Amorous"
 msgstr "Sinnlich"
 
-#. 1
 msgid "Angry"
 msgstr "Verärgert"
 
@@ -4970,7 +4967,6 @@ msgstr "Verlegen"
 msgid "Envious"
 msgstr "Neidisch"
 
-#. 2
 msgid "Excited"
 msgstr "Aufgeregt"
 
@@ -4987,21 +4983,18 @@ msgstr "Dankbar, erkenntlich"
 msgid "Grieving"
 msgstr "Trauernd"
 
-#. 3
 msgid "Grumpy"
 msgstr "Brummig"
 
 msgid "Guilty"
 msgstr "Schuldig"
 
-#. 4
 msgid "Happy"
 msgstr "Erfreut"
 
 msgid "Hopeful"
 msgstr "Hoffnungsvoll"
 
-#. 8
 msgid "Hot"
 msgstr "Heiß"
 
@@ -5035,7 +5028,6 @@ msgstr "Interessiert"
 msgid "Intoxicated"
 msgstr "Betrunken"
 
-#. 6
 msgid "Invincible"
 msgstr "Unbesiegbar"
 
@@ -5087,7 +5079,6 @@ msgstr "Reumütig"
 msgid "Restless"
 msgstr "Ruhelos"
 
-#. 7
 msgid "Sad"
 msgstr "Traurig"
 
@@ -5106,11 +5097,9 @@ msgstr "Schockiert"
 msgid "Shy"
 msgstr "Schüchtern"
 
-#. 9
 msgid "Sick"
 msgstr "Krank"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Schläfrig"
@@ -5959,24 +5948,6 @@ msgstr "Möchten Sie diesen Buddy außerdem aus Ihrem Adressbuch löschen?"
 msgid "The username specified is invalid."
 msgstr "Der angegebene Benutzername ist ungültig."
 
-#. 5
-msgid "In Love"
-msgstr "Verliebt"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "Momentane Stimmung"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "Neue Stimmung"
-
-msgid "Change your Mood"
-msgstr "Ihre Stimmung ändern"
-
-msgid "How do you feel right now?"
-msgstr "Wie fühlen Sie sich gerade?"
-
 msgid "The PIN you entered is invalid."
 msgstr "Der eingegebene PIN ist ungültig."
 
@@ -6045,10 +6016,6 @@ msgstr "Es gibt gerade keinen Startbildschirm"
 
 msgid "About"
 msgstr "Info"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "Stimmung ändern..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6296,6 +6263,9 @@ msgstr "Ein MXit-Verbindungsfehler trat auf. (Lesephase 0x05)"
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "Ein MXit-Verbindungsfehler trat auf. (Lesephase 0x05)"
+
+msgid "In Love"
+msgstr "Verliebt"
 
 msgid "Pending"
 msgstr "Ausstehend"
@@ -15371,6 +15341,134 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
+
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "Desktop-Standard"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Ort"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin Internet-Sofortnachrichtendienst"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Tastenkombination"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "Start"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Der Spitzname „%s“ existiert bereits."
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim-URL-Behandlungsroutine"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#~ msgid "Current Mood"
+#~ msgstr "Momentane Stimmung"
+
+#~ msgid "New Mood"
+#~ msgstr "Neue Stimmung"
+
+#~ msgid "Change your Mood"
+#~ msgstr "Ihre Stimmung ändern"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "Wie fühlen Sie sich gerade?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "Stimmung ändern..."
 
 #~ msgid "Artist"
 #~ msgstr "Interpret"

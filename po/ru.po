@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-08 19:19-0700\n"
+"POT-Creation-Date: 2010-05-17 20:54-0400\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
@@ -1648,6 +1648,14 @@ msgstr "Изменить пользовательскую информацию �
 
 msgid "Set User Info"
 msgstr "Установить пользовательскую информацию"
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Этот протокол не поддерживает чаты."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Этот протокол не поддерживает чаты."
 
 msgid "Unknown"
 msgstr "Неизвестно"
@@ -3798,12 +3806,6 @@ msgstr "Команда Ad-Hoc не удалась"
 msgid "execute"
 msgstr "выполнить"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Сервер требует TLS/SSL, но поддержка TLS/SSL не была найдена."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Вы требуете шифрования, но поддержка TLS/SSL не найдена."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Сервер требует аутентификацию простым текстом через нешифрованный поток"
@@ -3841,6 +3843,42 @@ msgstr "Аутентификация SASL провалилась"
 #, c-format
 msgid "SASL error: %s"
 msgstr "Ошибка SASL: %s"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Неверное состояние ввода"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Неподдерживаемая версия"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Сервер не поддерживает блокировку"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Неподдерживаемая кодировка"
+
+msgid "User not found"
+msgstr "Пользователь не найден"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Неверное имя пользователя"
+
+msgid "Resource Constraint"
+msgstr "Недостаток ресурсов"
 
 msgid "Unable to canonicalize username"
 msgstr "Не удаётся утвердить это имя пользователя"
@@ -4145,11 +4183,21 @@ msgstr "Пользователей не найдено"
 msgid "Roles:"
 msgstr "Роли:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "Сервер требует TLS/SSL, но поддержка TLS/SSL не была найдена."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Вы требуете шифрования, но поддержка TLS/SSL не найдена."
+
 msgid "Ping timed out"
 msgstr "Время ожидания истекло"
 
 msgid "Invalid XMPP ID"
 msgstr "Неверный XMPP ID"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Неверный XMPP ID. Должен быть задан домен."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Неверный XMPP ID. Должен быть задан домен."
@@ -4248,7 +4296,6 @@ msgstr "Сервер не поддерживает блокировку"
 msgid "Not Authorized"
 msgstr "Не авторизован"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Настроение"
 
@@ -4270,7 +4317,6 @@ msgstr "Для"
 msgid "None (To pending)"
 msgstr "Нет (Ожидать)"
 
-#. 0
 msgid "None"
 msgstr "Нет"
 
@@ -4468,9 +4514,6 @@ msgstr "Нарушение правил"
 msgid "Remote Connection Failed"
 msgstr "Не удалось установить удалённое соединение"
 
-msgid "Resource Constraint"
-msgstr "Недостаток ресурсов"
-
 msgid "Restricted XML"
 msgstr "Ограниченный XML"
 
@@ -4667,21 +4710,6 @@ msgstr "Модуль протокола XMPP"
 msgid "Domain"
 msgstr "Домен"
 
-#, fuzzy
-msgid "Require STARTTLS"
-msgstr "Требовать SSL/TLS"
-
-#, fuzzy
-msgid "Require old (port 5223) SSL"
-msgstr "Принудительно использовать старый (порт 5223) SSL"
-
-msgid "Use STARTTLS (if available)"
-msgstr ""
-
-#, fuzzy
-msgid "SSL/TLS"
-msgstr "Требовать SSL/TLS"
-
 msgid "Require SSL/TLS"
 msgstr "Требовать SSL/TLS"
 
@@ -4839,7 +4867,6 @@ msgstr "Стыдящийся"
 msgid "Amorous"
 msgstr "Великолепный"
 
-#. 1
 msgid "Angry"
 msgstr "Рассерженный"
 
@@ -4937,7 +4964,6 @@ msgstr ""
 msgid "Envious"
 msgstr "Озабоченный"
 
-#. 2
 msgid "Excited"
 msgstr "Возбуждённый"
 
@@ -4956,7 +4982,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "Загрузка..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "Группа"
@@ -4965,14 +4990,12 @@ msgstr "Группа"
 msgid "Guilty"
 msgstr "Город"
 
-#. 4
 msgid "Happy"
 msgstr "Счастливый"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "_Узел:"
@@ -5013,7 +5036,6 @@ msgstr "Интересы"
 msgid "Intoxicated"
 msgstr "Приглашено"
 
-#. 6
 msgid "Invincible"
 msgstr "Непобедимый"
 
@@ -5077,7 +5099,6 @@ msgstr "Удалить"
 msgid "Restless"
 msgstr "Зарегистрировать"
 
-#. 7
 msgid "Sad"
 msgstr "Печальный"
 
@@ -5099,12 +5120,10 @@ msgstr "Заблокирован"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "Больной"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Сонный"
@@ -5961,24 +5980,6 @@ msgstr "Вы хотите удалить также и этого собесед
 msgid "The username specified is invalid."
 msgstr "Указанное имя пользователя некорректно."
 
-#. 5
-msgid "In Love"
-msgstr "Влюблённый"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "Настроение сейчас"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "Новое настроение"
-
-msgid "Change your Mood"
-msgstr "Изменить ваше настроение"
-
-msgid "How do you feel right now?"
-msgstr "Как вы сейчас?"
-
 msgid "The PIN you entered is invalid."
 msgstr "Введённый PIN-код неправильный."
 
@@ -6044,10 +6045,6 @@ msgstr "Сейчас нет доступных экранов-заставок"
 
 msgid "About"
 msgstr "Про"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "Изменить настроение..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6301,6 +6298,9 @@ msgstr "Возникла ошибка соединения с MXit. (этап ч
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x06)"
+
+msgid "In Love"
+msgstr "Влюблённый"
 
 #, fuzzy
 msgid "Pending"
@@ -6706,9 +6706,6 @@ msgstr "Срок действия пароля истёк"
 msgid "Incorrect password"
 msgstr "Неправильный пароль"
 
-msgid "User not found"
-msgstr "Пользователь не найден"
-
 msgid "Account has been disabled"
 msgstr "Учётная запись была отключена"
 
@@ -6969,6 +6966,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL не позволяет вашему экранному имени аутентифицироваться здесь"
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "Ошибка запроса %s: %s"
 
 msgid "Could not join chat room"
 msgstr "Не удалось присоединиться к комнате чата"
@@ -10915,6 +10916,10 @@ msgstr "_Нет"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Принять"
 
@@ -11159,12 +11164,6 @@ msgstr "Клиент обмена мгновенными сообщениями"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Клиент обмена мгновенными сообщениями Pidgin"
-
-msgid "Orientation"
-msgstr "Ориентация"
-
-msgid "The orientation of the tray."
-msgstr "Ориентация лотка."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12345,6 +12344,10 @@ msgstr "Африкаанс"
 msgid "Arabic"
 msgstr "Арабский"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Стыдящийся"
+
 msgid "Belarusian Latin"
 msgstr "Белорусская латиница"
 
@@ -12471,6 +12474,10 @@ msgstr "Лаосский"
 
 msgid "Macedonian"
 msgstr "Македонский"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Малайский"
 
 msgid "Mongolian"
 msgstr "Монгольский"
@@ -15230,8 +15237,20 @@ msgstr "Выводит отметки времени в стиле iChat каж�
 msgid "Timestamp Format Options"
 msgstr "Параметры формата времени"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "_Принудительно использовать 24-часовой формат времени"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Используемый по умолчанию"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "_Принудительно использовать 24-часовой формат времени"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "_Принудительно использовать 24-часовой формат времени"
 
 msgid "Show dates in..."
@@ -15442,6 +15461,153 @@ msgstr "Отправлять и получать прямые XMPP строфы.
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Этот модуль полезен для отладки XMPP серверов или клиентов."
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "Используемый по умолчанию"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "Версия GTK+"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Местоположение"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Клиент обмена мгновенными сообщениями Pidgin"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Сочетание клавиш"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "Загрузка"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Псевдоним \"%s\" уже используется."
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "Ссылка на адрес myim"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+msgid "spellcheck_faq"
+msgstr ""
+
+#, fuzzy
+#~ msgid "Require STARTTLS"
+#~ msgstr "Требовать SSL/TLS"
+
+#, fuzzy
+#~ msgid "Require old (port 5223) SSL"
+#~ msgstr "Принудительно использовать старый (порт 5223) SSL"
+
+#, fuzzy
+#~ msgid "SSL/TLS"
+#~ msgstr "Требовать SSL/TLS"
+
+#~ msgid "Current Mood"
+#~ msgstr "Настроение сейчас"
+
+#~ msgid "New Mood"
+#~ msgstr "Новое настроение"
+
+#~ msgid "Change your Mood"
+#~ msgstr "Изменить ваше настроение"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "Как вы сейчас?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "Изменить настроение..."
+
+#~ msgid "Orientation"
+#~ msgstr "Ориентация"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Ориентация лотка."
+
 #~ msgid "Artist"
 #~ msgstr "Художник"
 
@@ -15634,9 +15800,6 @@ msgstr "Этот модуль полезен для отладки XMPP серв
 
 #~ msgid "_User:"
 #~ msgstr "_Пользователь:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "Версия GTK+"
 
 #~ msgid "Calling ... "
 #~ msgstr "Идёт вызов ... "
