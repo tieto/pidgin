@@ -115,7 +115,7 @@ my %localeNames = (
   "it" =>	["Italian", "WINDOWS-1252"],
   "ja" =>	["Japanese", "CP932"],
 #  "ka" =>	["Georgian", "UTF-8"],
-  "ko" =>	["Korean", "MSCP949"],
+  "ko" =>	["Korean", "CP949"],
   "ku" =>	["Kurdish", "WINDOWS-1254"],
   "lt" =>	["Lithuanian", "WINDOWS-1257"],
   "mk" =>	["Macedonian", "WINDOWS-1251"],
@@ -139,7 +139,7 @@ my %localeNames = (
 #  "so" =>	["Somali", "UTF-8"],
   "sq" =>	["Albanian", "WINDOWS-1252"],
   "sr" =>	["Serbian", "WINDOWS-1251"],
-  "sr@latin" =>	["SerbianLatin", "WINDOWS-1250"],
+  "sr\@latin" =>	["SerbianLatin", "WINDOWS-1250"],
   "sv" =>	["Swedish", "WINDOWS-1252"],
 #  "ta" =>	["Tamil", "UTF-8"],
   "th" =>	["Thai", "WINDOWS-874"],
@@ -219,7 +219,7 @@ $gcomprisLanguages .= '
   !ifndef "${LABEL}"
     !define "${LABEL}" "${VALUE}"
     !ifdef INSERT_DEFAULT
-      !warning "${LANG} lang file mising ${LABEL}, using default.."
+      !warning "${LANG} lang file missing ${LABEL}, using default..."
     !endif
   !endif
 !macroend
@@ -332,18 +332,18 @@ foreach my $lang (@localeKeys) {
 	}
 	# English keys are the reference.
 	# If not found they are inserted
-	if ( ! $found )
-	{
-	    print DESC "$result{'en'}{$keyEn}";
-	}
+	#if ( ! $found )
+	#{
+	#    print DESC "$result{'en'}{$keyEn}";
+	#}
     }
     close DESC;
 
     # iconv conversion
-    system("iconv -f UTF-8 -t $localeNames{$lang}[1] $tmp_dir/$lang.nsh.utf8 -o $tmp_dir/$lang.nsh");
+    system("iconv -f UTF-8 -t $localeNames{$lang}[1] $tmp_dir/$lang.nsh.utf8 > $tmp_dir/$lang.nsh");
     if ($? ne 0)
     {
-	print("ERROR: Failed to run: iconv -f UTF-8 -t $localeNames{$lang}[1] $lang.nsh.utf8 -o $lang.nsh\n");
+	die("ERROR: Failed to run: iconv -f UTF-8 -t $localeNames{$lang}[1] $lang.nsh.utf8 > $lang.nsh\n");
     }
     #`rm $tmp_dir/$lang.nsh.utf8`;
 
