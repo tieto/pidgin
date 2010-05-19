@@ -107,8 +107,8 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
   !define MUI_HEADERIMAGE_BITMAP		".\pixmaps\pidgin-header.bmp"
 
   ; Alter License section
-  !define MUI_LICENSEPAGE_BUTTON		$(PIDGIN_LICENSE_BUTTON)
-  !define MUI_LICENSEPAGE_TEXT_BOTTOM		$(PIDGIN_LICENSE_BOTTOM_TEXT)
+  !define MUI_LICENSEPAGE_BUTTON		$(PIDGINLICENSEBUTTON)
+  !define MUI_LICENSEPAGE_TEXT_BOTTOM		$(PIDGINLICENSEBOTTOMTEXT)
 
   !define MUI_LANGDLL_REGISTRY_ROOT "HKCU"
   !define MUI_LANGDLL_REGISTRY_KEY ${PIDGIN_REG_KEY}
@@ -121,7 +121,7 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
   !define MUI_FINISHPAGE_NOAUTOCLOSE
   !define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
-  !define MUI_FINISHPAGE_LINK			$(PIDGIN_FINISH_VISIT_WEB_SITE)
+  !define MUI_FINISHPAGE_LINK			$(PIDGINFINISHVISITWEBSITE)
   !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im"
 
 ;--------------------------------
@@ -146,89 +146,7 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
 ;--------------------------------
 ;Languages
 
-  ;; English goes first because its the default. The rest are
-  ;; in alphabetical order (at least the strings actually displayed
-  ;; will be).
-
-  !insertmacro MUI_LANGUAGE "English"
-
-  !insertmacro MUI_LANGUAGE "Afrikaans"
-  !insertmacro MUI_LANGUAGE "Albanian"
-  !insertmacro MUI_LANGUAGE "Arabic"
-  !insertmacro MUI_LANGUAGE "Basque"
-  !insertmacro MUI_LANGUAGE "Bulgarian"
-  !insertmacro MUI_LANGUAGE "Catalan"
-  !insertmacro MUI_LANGUAGE "Czech"
-  !insertmacro MUI_LANGUAGE "Danish"
-  !insertmacro MUI_LANGUAGE "SimpChinese"
-  !insertmacro MUI_LANGUAGE "TradChinese"
-  !insertmacro MUI_LANGUAGE "German"
-  !insertmacro MUI_LANGUAGE "Spanish"
-  !insertmacro MUI_LANGUAGE "Farsi"
-  !insertmacro MUI_LANGUAGE "Finnish"
-  !insertmacro MUI_LANGUAGE "French"
-  !insertmacro MUI_LANGUAGE "Hebrew"
-  !insertmacro MUI_LANGUAGE "Italian"
-  !insertmacro MUI_LANGUAGE "Japanese"
-  !insertmacro MUI_LANGUAGE "Korean"
-  !insertmacro MUI_LANGUAGE "Kurdish"
-  !insertmacro MUI_LANGUAGE "Lithuanian"
-  !insertmacro MUI_LANGUAGE "Hungarian"
-  !insertmacro MUI_LANGUAGE "Dutch"
-  !insertmacro MUI_LANGUAGE "Norwegian"
-  !insertmacro MUI_LANGUAGE "NorwegianNynorsk"
-  !insertmacro MUI_LANGUAGE "Polish"
-  !insertmacro MUI_LANGUAGE "PortugueseBR"
-  !insertmacro MUI_LANGUAGE "Portuguese"
-  !insertmacro MUI_LANGUAGE "Romanian"
-  !insertmacro MUI_LANGUAGE "Russian"
-  !insertmacro MUI_LANGUAGE "Serbian"
-  !insertmacro MUI_LANGUAGE "Slovak"
-  !insertmacro MUI_LANGUAGE "Slovenian"
-  !insertmacro MUI_LANGUAGE "Swedish"
-
-;--------------------------------
-;Translations
-
-  !define PIDGIN_DEFAULT_LANGFILE "${PIDGIN_NSIS_INCLUDE_PATH}\translations\english.nsh"
-
   !include "${PIDGIN_NSIS_INCLUDE_PATH}\langmacros.nsh"
-
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "AFRIKAANS"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\afrikaans.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ALBANIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\albanian.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ARABIC"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\arabic.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "BASQUE"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\basque.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "BULGARIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\bulgarian.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "CATALAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\catalan.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "CZECH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\czech.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "DANISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\danish.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "DUTCH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\dutch.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ENGLISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\english.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "FARSI"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\persian.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "FINNISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\finnish.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "FRENCH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\french.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "GERMAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\german.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "HEBREW"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\hebrew.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "HUNGARIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\hungarian.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ITALIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\italian.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "JAPANESE"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\japanese.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "KOREAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\korean.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "KURDISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\kurdish.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "LITHUANIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\lithuanian.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "NORWEGIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\norwegian.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "NORWEGIANNYNORSK"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\norwegian_nynorsk.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "POLISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\polish.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "PORTUGUESE"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\portuguese.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "PORTUGUESEBR"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\portuguese-br.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ROMANIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\romanian.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "RUSSIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\russian.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SERBIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\serbian-latin.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SIMPCHINESE"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\simp-chinese.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SLOVAK"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\slovak.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SLOVENIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\slovenian.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SPANISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\spanish.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SWEDISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\swedish.nsh"
-  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "TRADCHINESE"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\trad-chinese.nsh"
 
 ;--------------------------------
 ;Reserve Files
@@ -324,7 +242,7 @@ Section -SecUninstallOldPidgin
 
         uninstall_problem:
           ; We can't uninstall.  Either the user must manually uninstall or we ignore and reinstall over it.
-          MessageBox MB_OKCANCEL $(PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL) /SD IDOK IDOK done
+          MessageBox MB_OKCANCEL $(PIDGINPROMPTCONTINUEWITHOUTUNINSTALL) /SD IDOK IDOK done
           Quit
   done:
 SectionEnd
@@ -333,7 +251,7 @@ SectionEnd
 ;--------------------------------
 ;GTK+ Runtime Install Section
 
-Section $(GTK_SECTION_TITLE) SecGtk
+Section $(GTKSECTIONTITLE) SecGtk
 
   InitPluginsDir
   StrCpy $R1 "$PLUGINSDIR\gtk.zip"
@@ -352,7 +270,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
   Pop $R0
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" +2
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_GTK_DOWNLOAD_ERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGINGTKDOWNLOADERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
 !endif
 
@@ -371,7 +289,7 @@ SectionEnd ; end of GTK+ section
 ;--------------------------------
 ;Pidgin Install Section
 
-Section $(PIDGIN_SECTION_TITLE) SecPidgin
+Section $(PIDGINSECTIONTITLE) SecPidgin
   SectionIn 1 RO
 
   ; Check install rights..
@@ -470,13 +388,13 @@ SectionEnd ; end of default Pidgin section
 ;--------------------------------
 ;Shortcuts
 
-SectionGroup /e $(PIDGIN_SHORTCUTS_SECTION_TITLE) SecShortcuts
-  Section /o $(PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE) SecDesktopShortcut
+SectionGroup /e $(PIDGINSHORTCUTSSECTIONTITLE) SecShortcuts
+  Section /o $(PIDGINDESKTOPSHORTCUTSECTIONTITLE) SecDesktopShortcut
     SetOverwrite on
     CreateShortCut "$DESKTOP\Pidgin.lnk" "$INSTDIR\pidgin.exe"
     SetOverwrite off
   SectionEnd
-  Section $(PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE) SecStartMenuShortcut
+  Section $(PIDGINSTARTMENUSHORTCUTSECTIONTITLE) SecStartMenuShortcut
     SetOverwrite on
     CreateShortCut "$SMPROGRAMS\Pidgin.lnk" "$INSTDIR\pidgin.exe"
     SetOverwrite off
@@ -492,7 +410,7 @@ SectionGroupEnd
     Call RegisterURIHandler
   SectionEnd
 !macroend
-SectionGroup /e $(URI_HANDLERS_SECTION_TITLE) SecURIHandlers
+SectionGroup /e $(URIHANDLERSSECTIONTITLE) SecURIHandlers
   !insertmacro URI_SECTION "aim"
   !insertmacro URI_SECTION "msnim"
   !insertmacro URI_SECTION "myim"
@@ -510,7 +428,7 @@ SectionGroupEnd
     SetOutPath "$INSTDIR"
   ${MementoSectionEnd}
 !macroend
-SectionGroup $(TRANSLATIONS_SECTION_TITLE) SecTranslations
+SectionGroup $(TRANSLATIONSSECTIONTITLE) SecTranslations
   # pidgin-translations is generated based on the contents of the locale directory
   !include "pidgin-translations.nsh"
 SectionGroupEnd
@@ -526,11 +444,11 @@ ${MementoSectionDone}
     Call InstallDict
   SectionEnd
 !macroend
-SectionGroup $(PIDGIN_SPELLCHECK_SECTION_TITLE) SecSpellCheck
+SectionGroup $(PIDGINSPELLCHECKSECTIONTITLE) SecSpellCheck
   !include "pidgin-spellcheck.nsh"
 SectionGroupEnd
 
-Section /o $(DEBUG_SYMBOLS_SECTION_TITLE) SecDebugSymbols
+Section /o $(DEBUGSYMBOLSSECTIONTITLE) SecDebugSymbols
   
   InitPluginsDir
   StrCpy $R1 "$PLUGINSDIR\dbgsym.zip"
@@ -549,7 +467,7 @@ Section /o $(DEBUG_SYMBOLS_SECTION_TITLE) SecDebugSymbols
   Pop $R0
   StrCmp $R0 "cancel" done
   StrCmp $R0 "success" +2
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_DEBUGSYMBOLS_ERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGINDEBUGSYMBOLSERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
 !endif
 
@@ -750,11 +668,11 @@ Section Uninstall
     Goto done
 
   cant_uninstall:
-    MessageBox MB_OK $(un.PIDGIN_UNINSTALL_ERROR_1) /SD IDOK
+    MessageBox MB_OK $(PIDGINUNINSTALLERROR1) /SD IDOK
     Quit
 
   no_rights:
-    MessageBox MB_OK $(un.PIDGIN_UNINSTALL_ERROR_2) /SD IDOK
+    MessageBox MB_OK $(PIDGINUNINSTALLERROR2) /SD IDOK
     Quit
 
   done:
@@ -764,19 +682,19 @@ SectionEnd ; end of uninstall section
 ;Descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPidgin} \
-        $(PIDGIN_SECTION_DESCRIPTION)
+        $(PIDGINSECTIONDESCRIPTION)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtk} \
-        $(GTK_SECTION_DESCRIPTION)
+        $(GTKSECTIONDESCRIPTION)
 
   !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} \
-        $(PIDGIN_SHORTCUTS_SECTION_DESCRIPTION)
+        $(PIDGINSHORTCUTSSECTIONDESCRIPTION)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDesktopShortcut} \
-        $(PIDGIN_DESKTOP_SHORTCUT_DESC)
+        $(PIDGINDESKTOPSHORTCUTDESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecStartMenuShortcut} \
-        $(PIDGIN_STARTMENU_SHORTCUT_DESC)
+        $(PIDGINSTARTMENUSHORTCUTDESC)
 
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheck} \
-        $(PIDGIN_SPELLCHECK_SECTION_DESCRIPTION)
+        $(PIDGINSPELLCHECKSECTIONDESCRIPTION)
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
@@ -1068,7 +986,7 @@ Function ${UN}RunCheck
   System::Call 'kernel32::CreateMutexA(i 0, i 0, t "pidgin_is_running") i .R1 ?e'
   Pop $R0
   IntCmp $R0 0 +3 ;This could check for ERROR_ALREADY_EXISTS(183), but lets just assume
-    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(PIDGIN_IS_RUNNING) /SD IDCANCEL IDRETRY retry_runcheck
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(PIDGINISRUNNING) /SD IDCANCEL IDRETRY retry_runcheck
     Abort
 
   ; Close the Handle (If we don't do this, the uninstaller called from within will fail)
@@ -1098,7 +1016,7 @@ Function .onInit
   System::Call 'kernel32::CreateMutexA(i 0, i 0, t "pidgin_installer_running") i .R1 ?e'
   Pop $R0
   IntCmp $R0 0 +3 ;This could check for ERROR_ALREADY_EXISTS(183), but lets just assume
-    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING) /SD IDCANCEL IDRETRY retry_runcheck
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(INSTALLERISRUNNING) /SD IDCANCEL IDRETRY retry_runcheck
     Abort
 
   ; Allow installer to run even if pidgin is running via "/NOPIDGINRUNCHECK=1"
@@ -1289,128 +1207,16 @@ Function .onSelChange
   StrCmp $WARNED_GTK_STATE "1" done
   IntCmp $CURRENT_GTK_STATE 1 done done 0
   StrCpy $WARNED_GTK_STATE "1"
-  MessageBox MB_YESNO $(PIDGIN_PROMPT_FORCE_NO_GTK) /SD IDNO IDYES done
+  MessageBox MB_YESNO $(PIDGINPROMPTFORCENOGTK) /SD IDNO IDYES done
   !insertmacro SelectSection ${SecGtk}
 
   done:
   Pop $R0
 FunctionEnd
 
-
-; Convert the current $LANGUAGE to a language code that we can use for translation mo selection
-; If there's a better way to do this, I'd love to know it
 Function SelectTranslationForCurrentLanguage
-
-  StrCmp "$LANGUAGE" "1078" 0 sq
-  !insertmacro SelectSection ${SecLang_af}
-  Goto done
-  sq: StrCmp "$LANGUAGE" "1052" 0 ar
-  !insertmacro SelectSection ${SecLang_sq}
-  Goto done
-  ar: StrCmp "$LANGUAGE" "1025" 0 eu
-  !insertmacro SelectSection ${SecLang_ar}
-  Goto done
-  eu: StrCmp "$LANGUAGE" "1069" 0 bg
-  !insertmacro SelectSection ${SecLang_eu}
-  Goto done
-  bg: StrCmp "$LANGUAGE" "1026" 0 ca 
-  !insertmacro SelectSection ${SecLang_bg}
-  Goto done
-  ca: StrCmp "$LANGUAGE" "1027" 0 cs
-  !insertmacro SelectSection ${SecLang_ca}
-  Goto done
-  cs: StrCmp "$LANGUAGE" "1029" 0 da 
-  !insertmacro SelectSection ${SecLang_cs}
-  Goto done
-  da: StrCmp "$LANGUAGE" "1030" 0 nl
-  !insertmacro SelectSection ${SecLang_da}
-  Goto done
-  nl: StrCmp "$LANGUAGE" "1043" 0 fa
-  !insertmacro SelectSection ${SecLang_nl}
-  Goto done
-  ;We have several English translations, but we don't have a way of guessing, so we don't choose one
-  ;en: StrCmp "$LANGUAGE" "1033" 0 +3
-  ;!insertmacro SelectSection ${SecLang_en_??}
-  ;Goto done
-  fa: StrCmp "$LANGUAGE" "1065" 0 fi
-  !insertmacro SelectSection ${SecLang_fa}
-  Goto done
-  fi: StrCmp "$LANGUAGE" "1035" 0 fr
-  !insertmacro SelectSection ${SecLang_fi}
-  Goto done
-  fr: StrCmp "$LANGUAGE" "1036" 0 de
-  !insertmacro SelectSection ${SecLang_fr}
-  Goto done
-  de: StrCmp "$LANGUAGE" "1031" 0 he
-  !insertmacro SelectSection ${SecLang_de}
-  Goto done
-  he: StrCmp "$LANGUAGE" "1037" 0 hu
-  !insertmacro SelectSection ${SecLang_he}
-  Goto done
-  hu: StrCmp "$LANGUAGE" "1038" 0 it
-  !insertmacro SelectSection ${SecLang_hu}
-  Goto done
-  it: StrCmp "$LANGUAGE" "1040" 0 ja
-  !insertmacro SelectSection ${SecLang_it}
-  Goto done
-  ja: StrCmp "$LANGUAGE" "1041" 0 ko
-  !insertmacro SelectSection ${SecLang_ja}
-  Goto done
-  ko: StrCmp "$LANGUAGE" "1042" 0 ku
-  !insertmacro SelectSection ${SecLang_ko}
-  Goto done
-  ku: StrCmp "$LANGUAGE" "9999" 0 lt
-  !insertmacro SelectSection ${SecLang_ku}
-  Goto done
-  lt: StrCmp "$LANGUAGE" "1063" 0 nb
-  !insertmacro SelectSection ${SecLang_lt}
-  Goto done
-  nb: StrCmp "$LANGUAGE" "1044" 0 nn
-  !insertmacro SelectSection ${SecLang_nb}
-  Goto done
-  nn: StrCmp "$LANGUAGE" "2068" 0 pl
-  !insertmacro SelectSection ${SecLang_nn}
-  Goto done
-  pl: StrCmp "$LANGUAGE" "1045" 0 pt
-  !insertmacro SelectSection ${SecLang_pl}
-  Goto done
-  pt: StrCmp "$LANGUAGE" "2070" 0 pt_BR
-  !insertmacro SelectSection ${SecLang_pt}
-  Goto done
-  pt_BR: StrCmp "$LANGUAGE" "1046" 0 ro
-  !insertmacro SelectSection ${SecLang_pt_BR}
-  Goto done
-  ro: StrCmp "$LANGUAGE" "1048" 0 ru
-  !insertmacro SelectSection ${SecLang_ro}
-  Goto done
-  ru: StrCmp "$LANGUAGE" "1049" 0 sr
-  !insertmacro SelectSection ${SecLang_ru}
-  Goto done
-  sr: StrCmp "$LANGUAGE" "3098" 0 zh_CN
-  !insertmacro SelectSection ${SecLang_sr}
-  Goto done
-  zh_CN: StrCmp "$LANGUAGE" "2052" 0 sk
-  !insertmacro SelectSection ${SecLang_zh_CN}
-  Goto done
-  sk: StrCmp "$LANGUAGE" "1051" 0 sl
-  !insertmacro SelectSection ${SecLang_sk}
-  Goto done
-  sl: StrCmp "$LANGUAGE" "1060" 0 es
-  !insertmacro SelectSection ${SecLang_sl}
-  Goto done
-  es: StrCmp "$LANGUAGE" "1034" 0 sv
-  !insertmacro SelectSection ${SecLang_es}
-  Goto done
-  sv: StrCmp "$LANGUAGE" "1053" 0 zh_TW
-  !insertmacro SelectSection ${SecLang_sv}
-  Goto done
-  zh_TW: StrCmp "$LANGUAGE" "1028" 0 done
-  !insertmacro SelectSection ${SecLang_zh_TW}
-  Goto done
-
-  done:
+!insertmacro SELECT_TRANSLATION_FUNCTION
 FunctionEnd
-
 
 ; SpellChecker Related Functions
 ;-------------------------------
@@ -1465,7 +1271,7 @@ Function InstallDict
   Pop $R4
   StrCmp $R4 "cancel" done
   StrCmp $R4 "success" +3
-    MessageBox MB_RETRYCANCEL "$(PIDGIN_SPELLCHECK_ERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGINSPELLCHECKERROR)" /SD IDCANCEL IDRETRY retry IDCANCEL done
     Goto done
   SetOutPath "$INSTDIR\spellcheck\share\enchant\myspell"
   nsisunz::UnzipToLog "$R2" "$OUTDIR"

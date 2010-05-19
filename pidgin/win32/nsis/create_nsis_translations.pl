@@ -288,6 +288,18 @@ $gcomprisLanguages .= "  !insertmacro GCOMPRIS_MACRO_INCLUDE_LANGFILE".
     " \"ENGLISH\"".
    " \"\${GCOMPRIS_NSIS_INCLUDE_PATH}\\translations\\en.nsh\"\n";
 
+my $selectTranslationFunction = '
+!macro SELECT_TRANSLATION_SECTION LANG_NAME LANG_CODE
+  StrCmp "$LANGUAGE" "${LANG_${LANG_NAME}}" 0 end_${LANG_CODE}
+  !insertmacro SelectSection ${SecLang_${LANG_CODE}}
+  Goto done
+  end_${LANG_CODE}:
+!macroend
+; Convert the current $LANGUAGE to a language code that we can use for translation mo selection
+; If there\'s a better way to do this, I\'d love to know it
+!macro SELECT_TRANSLATION_FUNCTION
+';
+
 #
 # Two pass are needed:
 # - create the utf8 file
@@ -331,9 +343,11 @@ foreach my $lang (@localeKeys) {
         $gcomprisLanguages .= "  !insertmacro GCOMPRIS_MACRO_INCLUDE_LANGFILE".
             " \"". uc($localeNames{$lang}[0]) . "\"".
             " \"\${GCOMPRIS_NSIS_INCLUDE_PATH}\\translations\\$lang.nsh\"\n";
+        $selectTranslationFunction .= "  !insertmacro SELECT_TRANSLATION_SECTION".
+            " \"" . uc($localeNames{$lang}[0]) . "\" \"$lang\"\n";
     } else {
         print "Ignoring language $lang because it is less than 50% translated ($found_key_count of $total_key_count).\n";
-        continue;
+        next;
     }
 
 
@@ -347,6 +361,11 @@ foreach my $lang (@localeKeys) {
 
 }
 
+$selectTranslationFunction .= '
+done:
+!macroend
+';
+
 # We have all the data, let's replace it
 my $gcomprisInstaller;
 open (MYFILE, $installer);
@@ -356,6 +375,7 @@ while (<MYFILE>) {
 	print "Processing \@INSERT_TRANSLATIONS\@\n";
 	$gcomprisInstaller .= $muiLanguages;
 	$gcomprisInstaller .= $gcomprisLanguages;
+	$gcomprisInstaller .= $selectTranslationFunction;
     }
     else
     {
