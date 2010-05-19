@@ -77,7 +77,7 @@ DESKTOP_FILE=pidgin.desktop
 
 if ENABLE_GTK
 appsdir = $(datadir)/applications
-apps_in_files = pidgin.desktop.in pidgin/win32/nsis/nsis_installer.desktop.in
+apps_in_files = pidgin.desktop.in
 apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 GTK_DIR=pidgin
