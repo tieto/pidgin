@@ -3487,29 +3487,31 @@ get_global_moods(void)
 	
 	for (; accounts ; accounts = g_list_delete_link(accounts, accounts)) {
 		PurpleAccount *account = (PurpleAccount *) accounts->data;
-		PurpleConnection *gc = purple_account_get_connection(account);
+		if (purple_account_is_connected(account)) {
+			PurpleConnection *gc = purple_account_get_connection(account);
 
-		if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
-			PurplePluginProtocolInfo *prpl_info =
-				PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-			PurpleMood *mood = NULL;
+			if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
+				PurplePluginProtocolInfo *prpl_info =
+					PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+				PurpleMood *mood = NULL;
 
-			/* PURPLE_CONNECTION_SUPPORT_MOODS would not be set if the prpl doesn't
-			 * have get_moods, so using PURPLE_PROTOCOL_PLUGIN_HAS_FUNC isn't necessary
-			 * here */
-			for (mood = prpl_info->get_moods(account) ;
-			    mood->mood != NULL ; mood++) {
-				int mood_count =
-						GPOINTER_TO_INT(g_hash_table_lookup(mood_counts, mood->mood));
+				/* PURPLE_CONNECTION_SUPPORT_MOODS would not be set if the prpl doesn't
+				 * have get_moods, so using PURPLE_PROTOCOL_PLUGIN_HAS_FUNC isn't necessary
+				 * here */
+				for (mood = prpl_info->get_moods(account) ;
+				    mood->mood != NULL ; mood++) {
+					int mood_count =
+							GPOINTER_TO_INT(g_hash_table_lookup(mood_counts, mood->mood));
 
-				if (!g_hash_table_lookup(global_moods, mood->mood)) {
-					g_hash_table_insert(global_moods, (gpointer)mood->mood, mood);
+					if (!g_hash_table_lookup(global_moods, mood->mood)) {
+						g_hash_table_insert(global_moods, (gpointer)mood->mood, mood);
+					}
+					g_hash_table_insert(mood_counts, (gpointer)mood->mood,
+					    GINT_TO_POINTER(mood_count + 1));
 				}
-				g_hash_table_insert(mood_counts, (gpointer)mood->mood,
-				    GINT_TO_POINTER(mood_count + 1));
-			}
 
-			num_accounts++;
+				num_accounts++;
+			}
 		}
 	}
 
@@ -3547,8 +3549,9 @@ get_global_mood_status(void)
 	for (; accounts ; accounts = g_list_delete_link(accounts, accounts)) {
 		PurpleAccount *account = (PurpleAccount *) accounts->data;
 
-		if (purple_account_get_connection(account)->flags &
-		    PURPLE_CONNECTION_SUPPORT_MOODS) {
+		if (purple_account_is_connected(account) &&
+		    (purple_account_get_connection(account)->flags &
+		     PURPLE_CONNECTION_SUPPORT_MOODS)) {
 			PurplePresence *presence = purple_account_get_presence(account);
 			PurpleStatus *status = purple_presence_get_status(presence, "mood");
 			const gchar *curr_mood = purple_status_get_attr_string(status, PURPLE_MOOD_NAME);
