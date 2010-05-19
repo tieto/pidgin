@@ -252,7 +252,7 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	purple_request_field_group_add_field( group, field );
 
 	/* title */
-	field = purple_request_field_string_new( "title", _( "Job Title" ), profile->title, FALSE );
+	field = purple_request_field_string_new( "title", _( "Title" ), profile->title, FALSE );
 	purple_request_field_group_add_field( group, field );
 
 	/* first name */
