@@ -1582,7 +1582,16 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_parse_cmd_extprofile: profile for '%s'\n", mxitId );
 
-	profile = g_new0( struct MXitProfile, 1 );
+	if ( records[0]->fields[0]->len == 0 ) {
+		/* no MXitId provided, so this must be our own profile information */
+		if ( session->profile == NULL )
+			session->profile = g_new0( struct MXitProfile, 1 );
+		profile = session->profile;
+	}
+	else {
+		/* is a buddy's profile */
+		profile = g_new0( struct MXitProfile, 1 );
+	}
 
 	/* set the count for attributes */
 	count = atoi( records[0]->fields[1]->data );
@@ -1657,17 +1666,9 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 		}
 	}
 
-	if ( records[0]->fields[0]->len == 0 ) {
-		/* no MXit id provided, so this must be our own profile information */
-		if ( session->profile )
-			g_free( session->profile );
-		session->profile = profile;
-	}
-	else {
-		/* display other user's profile */
+	/* if this is not our profile, just display it */
+	if ( profile != session->profile ) {
 		mxit_show_profile( session, mxitId, profile );
-
-		/* cleanup */
 		g_free( profile );
 	}
 }
