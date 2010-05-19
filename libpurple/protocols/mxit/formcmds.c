@@ -42,7 +42,7 @@
 typedef enum
 {
 	MXIT_CMD_UNKNOWN = 0,		/* Unknown command */
-	MXIT_CMD_CLRSCR,			/* Clear screen (clrmsgscreen) */
+	MXIT_CMD_CLEAR,				/* Clear (clear) */
 	MXIT_CMD_SENDSMS,			/* Send SMS (sendsms) */
 	MXIT_CMD_REPLY,				/* Reply (reply) */
 	MXIT_CMD_PLATREQ,			/* Platform Request (platreq) */
@@ -138,8 +138,8 @@ static MXitCommandType command_type(GHashTable* hash)
 			type = g_hash_table_lookup(hash, "type");
 			if (type == NULL)								/* no command provided */
 				return MXIT_CMD_UNKNOWN;
-			else if (strcmp(type, "clrmsgscreen") == 0)		/* clear the screen */
-				return MXIT_CMD_CLRSCR;
+			else if (strcmp(type, "clear") == 0)			/* clear */
+				return MXIT_CMD_CLEAR;
 			else if (strcmp(type, "sendsms") == 0)			/* send an SMS */
 				return MXIT_CMD_SENDSMS;
 			else if (strcmp(type, "reply") == 0)			/* list of options */
@@ -205,22 +205,30 @@ static GHashTable* command_tokenize(char* cmd)
 
 
 /*------------------------------------------------------------------------
- * Process a ClearScreen MXit command.
+ * Process a Clear MXit command.
+ * [::op=cmd|type=clear|clearmsgscreen=true|auto=true|id=12345:]
  *
  *  @param session			The MXit session object
  *  @param from				The sender of the message.
  */
-static void command_clearscreen(struct MXitSession* session, const char* from)
+static void command_clear(struct MXitSession* session, const char* from, GHashTable* hash)
 {
 	PurpleConversation *conv;
+	char* clearmsgscreen;
 
-    conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, session->acc);
-    if (conv == NULL) {
-        purple_debug_error(MXIT_PLUGIN_ID, _( "Conversation with '%s' not found\n" ), from);
-        return;
-    }
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, session->acc);
+	if (conv == NULL) {
+		purple_debug_error(MXIT_PLUGIN_ID, _( "Conversation with '%s' not found\n" ), from);
+		return;
+	}
 
-	purple_conversation_clear_message_history(conv);			// TODO: This doesn't actually clear the screen.
+	clearmsgscreen = g_hash_table_lookup(hash, "clearmsgscreen");
+	if ( (clearmsgscreen) && (strcmp(clearmsgscreen, "true") == 0) ) {
+		/* this is a command to clear the chat screen */
+		purple_debug_info(MXIT_PLUGIN_ID, "Clear the screen\n");
+
+		purple_conversation_clear_message_history(conv);			// TODO: This doesn't actually clear the screen.
+	}
 }
 
 
@@ -366,8 +374,8 @@ int mxit_parse_command(struct RXMsgData* mx, char* message)
 			MXitCommandType type = command_type(hash);
 
 			switch (type) {
-				case MXIT_CMD_CLRSCR :
-					command_clearscreen(mx->session, mx->from);
+				case MXIT_CMD_CLEAR :
+					command_clear(mx->session, mx->from, hash);
 					break;
 				case MXIT_CMD_REPLY :
 					command_reply(mx, hash);
