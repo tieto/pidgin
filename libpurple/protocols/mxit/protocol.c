@@ -1647,6 +1647,10 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 			/* mobile number */
 			g_strlcpy( profile->mobilenr, fvalue, sizeof( profile->mobilenr ) );
 		}
+		else if ( strcmp( CP_PROFILE_REGCOUNTRY, fname ) == 0 ) {
+			/* registered country */
+			g_strlcpy( profile->regcountry, fvalue, sizeof( profile->regcountry ) );
+		}
 		else {
 			/* invalid profile attribute */
 			purple_debug_error( MXIT_PLUGIN_ID, "Invalid profile attribute received '%s' \n", fname );

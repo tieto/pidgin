@@ -188,6 +188,7 @@
 #define		CP_PROFILE_LASTNAME		"lastname"				/* Last name (UTF8 String) */
 #define		CP_PROFILE_EMAIL		"email"					/* Email address (UTF8 String) */
 #define		CP_PROFILE_MOBILENR		"mobilenumber"			/* Mobile Number (UTF8 String) */
+#define		CP_PROFILE_REGCOUNTRY	"registeredcountry"		/* Registered Country Code (UTF8 String) */
 
 /* extended profile field types */
 #define		CP_PROF_TYPE_BOOL		0x02					/* boolean profile attribute type */

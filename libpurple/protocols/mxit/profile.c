@@ -123,13 +123,14 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 	purple_notify_user_info_add_pair( info, _( "Nick Name" ), profile->nickname );
 	purple_notify_user_info_add_pair( info, _( "Birthday" ), profile->birthday );
 	purple_notify_user_info_add_pair( info, _( "Gender" ), profile->male ? _( "Male" ) : _( "Female" ) );
-	purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+//	purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
 
 	/* optional information */
 //	purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 	purple_notify_user_info_add_pair( info, _( "First Name" ), profile->firstname );
 	purple_notify_user_info_add_pair( info, _( "Last Name" ), profile->lastname );
 //	purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
+	purple_notify_user_info_add_pair( info, _( "Country" ), profile->regcountry );
 
 	purple_notify_user_info_add_section_break( info );
 
@@ -149,6 +150,10 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 
 		/* subscription type */
 		purple_notify_user_info_add_pair( info, _( "Subscription" ), mxit_convert_subtype_to_name( contact->subtype ) );
+
+		/* hidden number */
+		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), ( contact->flags & MXIT_CFLAG_HIDDEN ) ? _( "Yes" ) : _( "No" ) );
+
 	}
 
 	purple_notify_userinfo( session->con, username, info, NULL, NULL );
