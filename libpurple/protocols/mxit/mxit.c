@@ -92,8 +92,8 @@ static void* mxit_link_click( const char* link64 )
 		goto skip;
 	con = purple_account_get_connection( account );
 
-//	/* determine if it's a command-response to send */
-//	is_command = g_str_has_prefix( parts[4], "::type=reply|" );
+	/* determine if it's a command-response to send */
+	is_command = g_str_has_prefix( parts[4], "::type=reply|" );
 
 	/* send click message back to MXit */
 	mxit_send_message( con->proto_data, parts[3], parts[4], FALSE, is_command );
