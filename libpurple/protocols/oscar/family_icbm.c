@@ -193,9 +193,10 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, reason, errcode, bn);
 
-	if (snac2)
+	if (snac2) {
 		g_free(snac2->data);
-	g_free(snac2);
+		g_free(snac2);
+	}
 
 	return ret;
 }
