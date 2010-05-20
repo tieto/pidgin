@@ -53,6 +53,25 @@
 
 #include "util.h"
 
+static const char * const errcodereason[] = {
+	N_("Invalid error"),
+	N_("Not logged in"),
+	N_("Cannot receive IM due to parental controls"),
+	N_("Cannot send SMS without accepting terms"),
+	N_("Cannot send SMS"), /* SMS_WITHOUT_DISCLAIMER is weird */
+	N_("Cannot send SMS to this country"),
+	N_("Unknown error"), /* Undocumented */
+	N_("Unknown error"), /* Undocumented */
+	N_("Cannot send SMS to unknown country"),
+	N_("Bot accounts cannot initiate IMs"),
+	N_("Bot account cannot IM this user"),
+	N_("Bot account reached IM limit"),
+	N_("Bot account reached daily IM limit"),
+	N_("Bot account reached monthly IM limit"),
+	N_("Unable to receive offline messages"),
+	N_("Offline message store full")
+};
+static const int errcodereasonlen = G_N_ELEMENTS(errcodereason);
 
 /**
  * Add a standard ICBM header to the given bstream with the given
@@ -157,14 +176,19 @@ guint16 aim_im_fingerprint(const guint8 *msghdr, int len)
 static int
 error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	int ret = 0;
-	aim_rxcallback_t userfunc;
 	aim_snac_t *snac2;
 	guint16 reason, errcode = 0;
-	char *bn;
+	const char *bn;
 	GSList *tlvlist;
+	PurpleConnection *gc = od->gc;
+#ifdef TODOFT
+	PurpleXfer *xfer;
+#endif
+	const char *reason_str;
+	char *buf;
 
-	if (!(snac2 = aim_remsnac(od, snac->id))) {
+	snac2 = aim_remsnac(od, snac->id);
+	if (!snac2) {
 		purple_debug_misc("oscar", "icbm error: received response from unknown request!\n");
 		return 1;
 	}
@@ -176,8 +200,11 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 		return 1;
 	}
 
-	if (!(bn = snac2->data)) {
+	/* Data is assumed to be the destination bn */
+	bn = snac2->data;
+	if (!bn || bn[0] == '\0') {
 		purple_debug_misc("oscar", "icbm error: received response from request without a buddy name!\n");
+		g_free(snac2->data);
 		g_free(snac2);
 		return 1;
 	}
@@ -189,16 +216,46 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 		errcode = aim_tlv_get16(tlvlist, 0x0008, 1);
 	aim_tlvlist_free(tlvlist);
 
-	/* Notify the user that the message wasn't delivered */
-	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, reason, errcode, bn);
+	purple_debug_error("oscar",
+			   "Message error with bn %s and reason %hu and errcode %hu\n",
+				(bn != NULL ? bn : ""), reason, errcode);
 
-	if (snac2) {
-		g_free(snac2->data);
-		g_free(snac2);
+#ifdef TODOFT
+	/* If this was a file transfer request, bn is a cookie */
+	if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, bn))) {
+		purple_xfer_cancel_remote(xfer);
+		return 1;
 	}
+#endif
 
-	return ret;
+	/* Notify the user that the message wasn't delivered */
+	reason_str = oscar_get_msgerr_reason(reason);
+	if (errcode != 0 && errcode < errcodereasonlen)
+		buf = g_strdup_printf(_("Unable to send message: %s (%s)"), reason_str,
+		                      _(errcodereason[errcode]));
+	else
+		buf = g_strdup_printf(_("Unable to send message: %s"), reason_str);
+
+	if (!purple_conv_present_error(bn, purple_connection_get_account(gc), buf)) {
+		g_free(buf);
+		if (errcode != 0 && errcode < errcodereasonlen)
+			buf = g_strdup_printf(_("Unable to send message to %s: %s (%s)"),
+			                      bn ? bn : "(unknown)", reason_str,
+			                      _(errcodereason[errcode]));
+		else
+			buf = g_strdup_printf(_("Unable to send message to %s: %s"),
+			                      bn ? bn : "(unknown)", reason_str);
+		purple_notify_error(od->gc, NULL, buf, reason_str);
+	}
+	g_free(buf);
+
+
+
+
+	g_free(snac2->data);
+	g_free(snac2);
+
+	return 1;
 }
 
 /**
