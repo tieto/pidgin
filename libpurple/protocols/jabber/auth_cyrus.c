@@ -399,6 +399,7 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
                    xmlnode **reply, char **error)
 {
 	xmlnode *mechnode;
+	JabberSaslState ret;
 
 	js->sasl_mechs = g_string_new("");
 
@@ -418,7 +419,16 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 	}
 
 	jabber_sasl_build_callbacks(js);
-	return jabber_auth_start_cyrus(js, reply, error);
+	ret = jabber_auth_start_cyrus(js, reply, error);
+
+	/*
+	 * Triggered if no overlap between server and client
+	 * supported mechanisms.
+	 */
+	if (ret == JABBER_SASL_STATE_FAIL && *error == NULL)
+		*error = g_strdup(_("No authentication mechanisms in common with server"));
+
+	return ret;
 }
 
 static JabberSaslState
