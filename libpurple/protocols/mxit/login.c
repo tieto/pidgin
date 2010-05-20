@@ -67,7 +67,7 @@ static struct MXitSession* mxit_create_object( PurpleAccount* account )
 	/* configure the connection (reference: "libpurple/connection.h") */
 	con = purple_account_get_connection( account );
 	con->proto_data = session;
-	con->flags |= PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_HTML;
+	con->flags |= PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_SUPPORT_MOODS;
 	session->con = con;
 
 	/* add account */
