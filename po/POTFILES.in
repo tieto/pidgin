@@ -136,6 +136,7 @@ libpurple/protocols/novell/nmuser.c
 libpurple/protocols/novell/novell.c
 libpurple/protocols/oscar/clientlogin.c
 libpurple/protocols/oscar/family_chatnav.c
+libpurple/protocols/oscar/family_icbm.c
 libpurple/protocols/oscar/family_locate.c
 libpurple/protocols/oscar/flap_connection.c
 libpurple/protocols/oscar/libaim.c
