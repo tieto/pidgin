@@ -63,7 +63,7 @@
 /* Plugin details */
 #define		MXIT_PLUGIN_ID				"prpl-loubserp-mxit"
 #define		MXIT_PLUGIN_NAME			"MXit"
-#define		MXIT_PLUGIN_VERSION			"2.3.0"
+#define		MXIT_PLUGIN_VERSION			"2.4.0"
 #define		MXIT_PLUGIN_EMAIL			"Pieter Loubser <libpurple@mxit.com>"
 #define		MXIT_PLUGIN_WWW				"http://www.mxit.com"
 #define		MXIT_PLUGIN_SUMMARY			"MXit Protocol Plugin"
