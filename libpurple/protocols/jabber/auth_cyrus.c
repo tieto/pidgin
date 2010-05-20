@@ -426,7 +426,7 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 	 * supported mechanisms.
 	 */
 	if (ret == JABBER_SASL_STATE_FAIL && *error == NULL)
-		*error = g_strdup(_("No authentication mechanisms in common with server"));
+		*error = g_strdup(_("Server does not use any supported authentication method"));
 
 	return ret;
 }
