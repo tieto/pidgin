@@ -1150,15 +1150,8 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		const gchar	*guid = g_hash_table_lookup(body, "Application-GUID");
 	
 		if (guid == NULL) {
-			if (!strcmp(command, "CANCEL")) {
-				const gchar *code = g_hash_table_lookup(
-						body, "Cancel-Code");
-				purple_debug_info("msn",
-						"MSMSGS invitation cancelled: %s.\n",
-						code ? code : "no reason given");
-			} else
-				purple_debug_warning("msn",
-				                     "Invite msg missing Application-GUID.\n");
+			purple_debug_warning("msn",
+			                     "Invite msg missing Application-GUID.\n");
 
 			accepted = TRUE;
 
@@ -1215,6 +1208,11 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			msn_switchboard_send_msg(swboard, cancel, TRUE);
 			msn_message_destroy(cancel);
 		}
+
+	} else if (!strcmp(command, "CANCEL")) {
+		const gchar *code = g_hash_table_lookup(body, "Cancel-Code");
+		purple_debug_info("msn", "MSMSGS invitation cancelled: %s.\n",
+		                  code ? code : "no reason given");
 
 	} else {
 		/*
