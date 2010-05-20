@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-20 11:56-0700\n"
+"POT-Creation-Date: 2010-05-20 14:09-0700\n"
 "PO-Revision-Date: 2010-05-10 15:36+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at g mail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
+"Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -11969,13 +11970,13 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s הינה תוכנת הודעות המבוססת על libpurple ומסוגלת להתחבר למספר שירותי הודעות "
 "בו-זמנית.  %s נכתבה בשפת C ובעזרת GTK+.  %s יצאה לאור, וניתן לערוך ולהפיץ "
-"אותה, תחת תנאי הרשיון GPL גרסה 2 (והלאה).  יש העתק של הרישיון GPL המופץ עם %"
-"s.  %s מוגנת תחת זכויות יוצריה, אשר רשימתם גם היא מופצת עם %s.  אין אחריות "
+"אותה, תחת תנאי הרשיון GPL גרסה 2 (והלאה).  יש העתק של הרישיון GPL המופץ עם "
+"%s.  %s מוגנת תחת זכויות יוצריה, אשר רשימתם גם היא מופצת עם %s.  אין אחריות "
 "עבור %s.<BR><BR>"
 
 #, c-format
@@ -12504,14 +12505,14 @@ msgstr "האם ברצונך למחוק את רישום השיחה עם %s שהת
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr "האם ברצונך למחוק את רישום השיחה ב- %s שהתחיל ב- %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "האם ברצונך למחוק את רישום יומן המערכת שהחל ב- %s?"
 
 msgid "Delete Log?"
@@ -14741,32 +14742,32 @@ msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
+"$(^Name) .הרישיון נמצא כאן בשביל מידע בלבד .GPL משוחרר תחת רישיון $_CLICK"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr ""
+msgstr "עותק של פידג'ין כבר רץ. יש לסגור את פידג'ין ולנסות שנית."
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
-msgstr ""
+msgstr ".בסיסיים DLL-ו Pidgin קבצי"
 
 #. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
-msgstr ""
+msgstr "צור קיצור-דרך עבור פידג'ין בתפריט ההתחל"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr ""
+msgstr "צור קיצור-דרך עבור פידג'ין על שולחן העבודה"
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Desktop"
-msgstr "ברירות המחדל בשולחן העבודה"
+msgstr "שולחן העבודה"
 
 #. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
@@ -14785,13 +14786,13 @@ msgstr ""
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
 #. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
-msgstr ""
+msgstr "(חובה) .GTK+ סביבת"
 
 #. Installer Subsection Text
 #, fuzzy
@@ -14800,12 +14801,11 @@ msgstr "מיקום"
 
 #. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
-msgstr ""
+msgstr "הבא >"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
-msgstr "פידג'ין למסרים באינטרנט"
+msgstr "(חובה) .Pidgin תוכנת"
 
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
@@ -14814,53 +14814,56 @@ msgid ""
 msgstr ""
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Shortcuts"
-msgstr "קיצור-דרך"
+msgstr "קיצורי דרך"
 
 #. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
-msgstr ""
+msgstr "קיצורי-דרך להפעלת פידג'ין"
 
 #. Installer Subsection Text
 msgid "Spellchecking Support"
-msgstr ""
+msgstr "תמיכה בבדיקות איות"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Start Menu"
-msgstr "הפעלה"
+msgstr "תפריט ההתחל"
 
 #. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr ""
+msgstr "תמיכה עבור בדיקות איות (דורש חיבור אינטרנט להתקנה)"
 
-#, fuzzy
 msgid "The installer is already running."
-msgstr "הכינו \"%s\" כבר בשימוש."
+msgstr "תוכנת ההתקנה כבר רצה."
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
+".GTK+ ההתקנה לא מצאה את הרישומים של$\\r.יכול להיות שמשמתמש אחר התקין את "
+"התוכנה הזאת"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "URI Handlers"
-msgstr "מטפל בכתובות myim"
+msgstr "מנהלי URI"
 
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
+"לא מסוגל להסיר את הגירסא המותקנת של פידג'ין. הגירסא החדשה תותקן ללא הסרת "
+"הגרסא המותקנת."
 
 #. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr ""
+msgstr ".Pidginבקרו באתר של "
 
 msgid "You do not have permission to uninstall this application."
-msgstr ""
+msgstr ".אין לך זכות למחוק תוכנה זאת"
+
+#~ msgid "A multi-platform GUI toolkit, used by Pidgin"
+#~ msgstr "מולטי-פלטפורמי, בו נעזר פידג'ין GUI כלי"
 
 #~ msgid "Current Mood"
 #~ msgstr "מצב הרוח הנוכחי"
