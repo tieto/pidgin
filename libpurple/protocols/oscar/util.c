@@ -35,6 +35,40 @@
 #include "win32dep.h"
 #endif
 
+static const char * const msgerrreason[] = {
+	N_("Invalid error"),
+	N_("Invalid SNAC"),
+	N_("Rate to host"),
+	N_("Rate to client"),
+	N_("Not logged in"),
+	N_("Service unavailable"),
+	N_("Service not defined"),
+	N_("Obsolete SNAC"),
+	N_("Not supported by host"),
+	N_("Not supported by client"),
+	N_("Refused by client"),
+	N_("Reply too big"),
+	N_("Responses lost"),
+	N_("Request denied"),
+	N_("Busted SNAC payload"),
+	N_("Insufficient rights"),
+	N_("In local permit/deny"),
+	N_("Warning level too high (sender)"),
+	N_("Warning level too high (receiver)"),
+	N_("User temporarily unavailable"),
+	N_("No match"),
+	N_("List overflow"),
+	N_("Request ambiguous"),
+	N_("Queue full"),
+	N_("Not while on AOL")
+};
+static const int msgerrreasonlen = G_N_ELEMENTS(msgerrreason);
+
+const char *oscar_get_msgerr_reason(size_t reason)
+{
+	return (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason");
+}
+
 int oscar_get_ui_info_int(const char *str, int default_value)
 {
 	GHashTable *ui_info;

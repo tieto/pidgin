@@ -252,6 +252,25 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 					g_free(msg);
 					return JABBER_SASL_STATE_CONTINUE;
 
+				} else
+					js->auth_fail_count++;
+
+				if (js->auth_fail_count == 1 &&
+					(js->sasl_mechs->str && g_str_equal(js->sasl_mechs->str, "GSSAPI"))) {
+					/* If we tried GSSAPI first, it failed, and it was the only method we had to try, try jabber:iq:auth
+					 * for compatibility with iChat 10.5 Server and other jabberd based servers.
+					 *
+					 * iChat Server 10.5 and certain other corporate servers offer SASL GSSAPI by default, which is often
+					 * not configured on the client side, and expects a fallback to jabber:iq:auth when it (predictably) fails.
+					 *
+					 * Note: xep-0078 points out that using jabber:iq:auth after a sasl failure is wrong. However,
+					 * I believe this refers to actual authentication failure, not a simple lack of concordant mechanisms.
+					 * Doing otherwise means that simply compiling with SASL support renders the client unable to connect to servers
+					 * which would connect without issue otherwise. -evands
+					 */
+					js->auth_mech = NULL;
+					jabber_auth_start_old(js);
+					return JABBER_SASL_STATE_CONTINUE;					
 				}
 
 				break;
@@ -265,6 +284,8 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 				/* For everything else, fail the mechanism and try again */
 			default:
 				purple_debug_info("sasl", "sasl_state is %d, failing the mech and trying again\n", js->sasl_state);
+
+				js->auth_fail_count++;
 
 				/*
 				 * DAA: is this right?
@@ -378,6 +399,7 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
                    xmlnode **reply, char **error)
 {
 	xmlnode *mechnode;
+	JabberSaslState ret;
 
 	js->sasl_mechs = g_string_new("");
 
@@ -397,7 +419,16 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 	}
 
 	jabber_sasl_build_callbacks(js);
-	return jabber_auth_start_cyrus(js, reply, error);
+	ret = jabber_auth_start_cyrus(js, reply, error);
+
+	/*
+	 * Triggered if no overlap between server and client
+	 * supported mechanisms.
+	 */
+	if (ret == JABBER_SASL_STATE_FAIL && *error == NULL)
+		*error = g_strdup(_("No authentication mechanisms in common with server"));
+
+	return ret;
 }
 
 static JabberSaslState
@@ -522,9 +553,9 @@ jabber_cyrus_handle_failure(JabberStream *js, xmlnode *packet,
 		} else if ((js->auth_fail_count == 1) && 
 				   (js->current_mech && g_str_equal(js->current_mech, "GSSAPI"))) {
 			/* If we tried GSSAPI first, it failed, and it was the only method we had to try, try jabber:iq:auth
-			 * for compatibility with iChat 10.5 Server.
+			 * for compatibility with iChat 10.5 Server and other jabberd based servers.
 			 *
-			 * iChat Server 10.5  offers SASL GSSAPI by default, which is often
+			 * iChat Server 10.5 and certain other corporate servers offer SASL GSSAPI by default, which is often
 			 * not configured on the client side, and expects a fallback to jabber:iq:auth when it (predictably) fails.
 			 *
 			 * Note: xep-0078 points out that using jabber:iq:auth after a sasl failure is wrong. However,

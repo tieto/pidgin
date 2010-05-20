@@ -1308,12 +1308,17 @@ struct purple_parse_tag {
 #define ALLOW_TAG_ALT(x, y) if(!g_ascii_strncasecmp(c, "<" x " ", strlen("<" x " "))) { \
 						const char *o = c + strlen("<" x); \
 						const char *p = NULL, *q = NULL, *r = NULL; \
+						/* o = iterating over full tag \
+						 * p = > (end of tag) \
+						 * q = start of quoted bit \
+						 * r = < inside tag \
+						 */ \
 						GString *innards = g_string_new(""); \
 						while(o && *o) { \
 							if(!q && (*o == '\"' || *o == '\'') ) { \
 								q = o; \
 							} else if(q) { \
-								if(*o == *q) { \
+								if(*o == *q) { /* end of quoted bit */ \
 									char *unescaped = g_strndup(q+1, o-q-1); \
 									char *escaped = g_markup_escape_text(unescaped, -1); \
 									g_string_append_printf(innards, "%c%s%c", *q, escaped, *q); \
@@ -1333,7 +1338,7 @@ struct purple_parse_tag {
 							} \
 							o++; \
 						} \
-						if(p && !r) { \
+						if(p && !r) { /* got an end of tag and no other < earlier */\
 							if(*(p-1) != '/') { \
 								struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1); \
 								pt->src_tag = x; \
@@ -1346,7 +1351,7 @@ struct purple_parse_tag {
 								xhtml = g_string_append_c(xhtml, '>'); \
 							} \
 							c = p + 1; \
-						} else { \
+						} else { /* got end of tag with earlier < *or* didn't get anything */ \
 							if(xhtml) \
 								xhtml = g_string_append(xhtml, "&lt;"); \
 							if(plain) \

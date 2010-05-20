@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2007-11-09 00:33+0200\n"
 "Last-Translator: Serdar Soytetir <tulliana@gmail.com>\n"
 "Language-Team:  <tr@li.org>\n"
@@ -1362,8 +1362,6 @@ msgstr "Durumu Sil"
 msgid "Saved Statuses"
 msgstr "Kaydedilmiş Durumlar"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "Başlık"
 
@@ -1656,6 +1654,14 @@ msgstr "%s için kullanıcı bilgilerini değiştir"
 
 msgid "Set User Info"
 msgstr "Kullanıcı Bilgisini Değiştir"
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Bu protokol sohbet odalarını desteklemiyor."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Bu protokol sohbet odalarını desteklemiyor."
 
 msgid "Unknown"
 msgstr "Bilinmeyen"
@@ -3767,16 +3773,6 @@ msgstr "Ad-Hoc Komutu Başarısız"
 msgid "execute"
 msgstr "çalıştır"
 
-#, fuzzy
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-"Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği bulunamadı."
-
-#, fuzzy
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-"Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği bulunamadı."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Sunucu şifrelenmemiş bir bağlantı üzerinden normal metin ile kimlik "
@@ -3815,6 +3811,42 @@ msgstr "Kimlik denetimi başarısız"
 #, fuzzy, c-format
 msgid "SASL error: %s"
 msgstr "SASL hatası"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Geçersiz girdi durumu"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Desteklenmeyen Sürüm"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Sunucu bir kimlik doğrulama yöntemi kulanmıyor"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Geçersiz Kodlama"
+
+msgid "User not found"
+msgstr "Kullanıcı bulunamadı"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Geçersiz ad"
+
+msgid "Resource Constraint"
+msgstr "Kaynak Kısıtlaması"
 
 #, fuzzy
 msgid "Unable to canonicalize username"
@@ -3904,6 +3936,11 @@ msgstr "Organizasyon Adı"
 
 msgid "Organization Unit"
 msgstr "Organizasyon Ünitesi"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "İşi"
 
 msgid "Role"
 msgstr "Rol"
@@ -4131,11 +4168,25 @@ msgid "Roles:"
 msgstr "Rol"
 
 #, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+"Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği bulunamadı."
+
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+"Bu sunucu bağlanmak için TLS/SSL gerektirir. Hiç TLS/SSL desteği bulunamadı."
+
+#, fuzzy
 msgid "Ping timed out"
 msgstr "Düz metin"
 
 msgid "Invalid XMPP ID"
 msgstr "Geçersiz XMPP Kimliği"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Geçersiz XMPP Kimliği. Alan adı ayarlanmalı."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Geçersiz XMPP Kimliği. Alan adı ayarlanmalı."
@@ -4234,7 +4285,6 @@ msgstr ""
 msgid "Not Authorized"
 msgstr "Yetki Verilmemiş"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Ruh Hali"
 
@@ -4256,7 +4306,6 @@ msgstr "Kime"
 msgid "None (To pending)"
 msgstr "Hiçbiri (bekletiliyor)"
 
-#. 0
 msgid "None"
 msgstr "Hiçbiri"
 
@@ -4278,6 +4327,12 @@ msgstr "İkinci İsim"
 msgid "Mood Comment"
 msgstr "Kişi Hakkında Yorum"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4447,9 +4502,6 @@ msgstr "Politika İhlâli"
 
 msgid "Remote Connection Failed"
 msgstr "Uzak Bağlantı Başarısız"
-
-msgid "Resource Constraint"
-msgstr "Kaynak Kısıtlaması"
 
 msgid "Restricted XML"
 msgstr "Kısıtlanmış XML"
@@ -4812,7 +4864,6 @@ msgstr "Mahçup"
 msgid "Amorous"
 msgstr "Harika"
 
-#. 1
 msgid "Angry"
 msgstr "Kızgın"
 
@@ -4910,7 +4961,6 @@ msgstr ""
 msgid "Envious"
 msgstr "Sıkıntılı"
 
-#. 2
 msgid "Excited"
 msgstr "Heyecanlı"
 
@@ -4929,7 +4979,6 @@ msgstr ""
 msgid "Grieving"
 msgstr "Alınıyor..."
 
-#. 3
 #, fuzzy
 msgid "Grumpy"
 msgstr "Grup"
@@ -4938,14 +4987,12 @@ msgstr "Grup"
 msgid "Guilty"
 msgstr "Şehir"
 
-#. 4
 msgid "Happy"
 msgstr "Mutlu"
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 #, fuzzy
 msgid "Hot"
 msgstr "_Host"
@@ -4986,7 +5033,6 @@ msgstr "İlgiler"
 msgid "Intoxicated"
 msgstr "Davet Et"
 
-#. 6
 msgid "Invincible"
 msgstr "Yenilmez"
 
@@ -5050,7 +5096,6 @@ msgstr "Kaldır"
 msgid "Restless"
 msgstr "Kayıt Ol"
 
-#. 7
 msgid "Sad"
 msgstr "Üzgün"
 
@@ -5071,12 +5116,10 @@ msgstr "Engellenmiş"
 msgid "Shy"
 msgstr ""
 
-#. 9
 #, fuzzy
 msgid "Sick"
 msgstr "Takma isim"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Uykulu"
@@ -5478,20 +5521,6 @@ msgstr "Telefonda"
 msgid "Out to Lunch"
 msgstr "Yemekte"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-#, fuzzy
-msgid "Artist"
-msgstr "Sanatçılar"
-
-#, fuzzy
-msgid "Album"
-msgstr "Adium"
-
 #, fuzzy
 msgid "Game Title"
 msgstr "Başlık"
@@ -5641,9 +5670,6 @@ msgstr "Yıldönümü"
 #. Business
 msgid "Work"
 msgstr "İş"
-
-msgid "Job Title"
-msgstr "İşi"
 
 msgid "Company"
 msgstr "Şirket"
@@ -5922,28 +5948,6 @@ msgstr "Bunu arkadaş listenize eklemek istiyor musunuz?"
 msgid "The username specified is invalid."
 msgstr "Belirlenen görüntü adı geçersiz."
 
-#. 5
-msgid "In Love"
-msgstr "Aşık"
-
-#. show current mood
-#, fuzzy
-msgid "Current Mood"
-msgstr "Ruh Haliniz"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "Kullanıcı Modu"
-
-#, fuzzy
-msgid "Change your Mood"
-msgstr "Parola Değiştir"
-
-#, fuzzy
-msgid "How do you feel right now?"
-msgstr "Şu anda burada değilim"
-
 #, fuzzy
 msgid "The PIN you entered is invalid."
 msgstr "Girilen SecurID anahtarı geçersiz."
@@ -6018,11 +6022,6 @@ msgstr ""
 #, fuzzy
 msgid "About"
 msgstr "%s Hakkında"
-
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "Parola değiştir..."
 
 #. display / change profile
 #, fuzzy
@@ -6296,6 +6295,9 @@ msgstr ""
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
+
+msgid "In Love"
+msgstr "Aşık"
 
 #, fuzzy
 msgid "Pending"
@@ -6691,9 +6693,6 @@ msgstr "Şifre süresi bitmiş"
 msgid "Incorrect password"
 msgstr "Yanlış parola"
 
-msgid "User not found"
-msgstr "Kullanıcı bulunamadı"
-
 msgid "Account has been disabled"
 msgstr "Hesap kapatılmıştır"
 
@@ -6947,6 +6946,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "%s çözümleme hatası"
 
 #, fuzzy
 msgid "Could not join chat room"
@@ -8337,6 +8340,11 @@ msgstr "İstek Diyaloğu"
 #, fuzzy
 msgid "Admin"
 msgstr "Adium"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Oda Listesi"
 
 #, fuzzy
 msgid "Notice"
@@ -10244,9 +10252,6 @@ msgstr "Yahoo! ID"
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo Protokol Eklentisi"
 
-msgid "Pager server"
-msgstr "Çağrı cihazı sunucusu"
-
 msgid "Pager port"
 msgstr "Çağrı cihazı portu"
 
@@ -10267,12 +10272,6 @@ msgstr ""
 
 msgid "Chat room list URL"
 msgstr "Sohbet Odası Listesi URL"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo Sohbet sunucusu"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo Sohbet portu"
 
 #, fuzzy
 msgid "Yahoo JAPAN ID..."
@@ -10336,6 +10335,13 @@ msgstr "Kullanıcı hesabınız kilitlendi, lütfen Yahoo! sitesine giriş yapı
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr "Kullanıcı hesabınız kilitlendi, lütfen Yahoo! sitesine giriş yapın."
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr "Kullanıcı hesabınız kilitlendi, lütfen Yahoo! sitesine giriş yapın."
 
 #. username or password missing
@@ -10415,6 +10421,15 @@ msgid "Unable to establish a connection with %s: %s"
 msgstr ""
 "Sunucu ile bağlantı sağlanamadı:\n"
 "%s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr "Sunucuya bağlanılamadı. Lütfen bağlanmak istediğiniz adresi giriniz."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "Evde Değil"
@@ -10790,6 +10805,10 @@ msgstr "_Hayır"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Kabul Et"
 
@@ -11023,12 +11042,6 @@ msgstr "İnternet Mesajlaşma Aracı"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin İnternet Mesajlaşma Aracı"
-
-msgid "Orientation"
-msgstr "Uyum"
-
-msgid "The orientation of the tray."
-msgstr "Sistem çekmecesi uyumu."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12240,6 +12253,10 @@ msgstr "Afrikaanca (Hollanda Lehçesi)"
 msgid "Arabic"
 msgstr "Arapça"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Mahçup"
+
 msgid "Belarusian Latin"
 msgstr "Belarusça Latin"
 
@@ -12247,6 +12264,10 @@ msgid "Bulgarian"
 msgstr "Bulgarca"
 
 msgid "Bengali"
+msgstr "Bengal Dili"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Bengal Dili"
 
 msgid "Bosnian"
@@ -12365,6 +12386,10 @@ msgstr "Lao"
 
 msgid "Macedonian"
 msgstr "Makedonca"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr " Bay"
 
 #, fuzzy
 msgid "Mongolian"
@@ -15194,8 +15219,20 @@ msgstr "iChat gibi her N dakikada bir zaman etiketleri göster."
 msgid "Timestamp Format Options"
 msgstr "Zaman Etiketi Biçemi Seçenekleri"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "24 saat _biçemini zorla"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Varsayılanları _Kabul Et"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "24 saat _biçemini zorla"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "24 saat _biçemini zorla"
 
 msgid "Show dates in..."
@@ -15408,6 +15445,167 @@ msgstr ""
 "Bu eklenti XMPP sunucularının ve istemcilerinin hatalarını ayıklamak için "
 "kullanışlıdır."
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "Varsayılanları _Kabul Et"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime Sürümü"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Konum"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin İnternet Mesajlaşma Aracı"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Sırala"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "Başlangıç"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "Bu sohbet adı zaten kullanımda"
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim adres yakalayıcı"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+#, fuzzy
+#~ msgid "Artist"
+#~ msgstr "Sanatçılar"
+
+#, fuzzy
+#~ msgid "Album"
+#~ msgstr "Adium"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Ruh Haliniz"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Kullanıcı Modu"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Parola Değiştir"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "Şu anda burada değilim"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "Parola değiştir..."
+
+#~ msgid "Pager server"
+#~ msgstr "Çağrı cihazı sunucusu"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo Sohbet sunucusu"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo Sohbet portu"
+
+#~ msgid "Orientation"
+#~ msgstr "Uyum"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Sistem çekmecesi uyumu."
+
 #, fuzzy
 #~ msgid "Error creating conference."
 #~ msgstr "Bağlantı oluşturma hatası"
@@ -15565,9 +15763,6 @@ msgstr ""
 
 #~ msgid "_User:"
 #~ msgstr "_Kullanıcı:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ Runtime Sürümü"
 
 #, fuzzy
 #~ msgid "Calling ... "

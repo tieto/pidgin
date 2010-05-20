@@ -54,6 +54,11 @@ pidgin/win32/pidgin_exe_rc.rc$
 pidgin/win32/nsis/gtk-runtime-*.*.*.*.zip
 pidgin/win32/nsis/gtk_runtime_stage$
 pidgin/win32/nsis/pidgin-translations.nsh$
+pidgin/win32/nsis/langmacros.nsh
+pidgin/win32/nsis/nsis_translations.desktop
+pidgin/win32/nsis/pidgin-spellcheck-preselect.nsh
+pidgin/win32/nsis/pidgin-spellcheck.nsh
+pidgin/win32/nsis/translations
 install-sh
 libpurple/dbus-bindings.c
 libpurple/dbus-signals.c

@@ -128,55 +128,6 @@ struct name_data {
 	gchar *nick;
 };
 
-static const char * const msgerrreason[] = {
-	N_("Invalid error"),
-	N_("Invalid SNAC"),
-	N_("Rate to host"),
-	N_("Rate to client"),
-	N_("Not logged in"),
-	N_("Service unavailable"),
-	N_("Service not defined"),
-	N_("Obsolete SNAC"),
-	N_("Not supported by host"),
-	N_("Not supported by client"),
-	N_("Refused by client"),
-	N_("Reply too big"),
-	N_("Responses lost"),
-	N_("Request denied"),
-	N_("Busted SNAC payload"),
-	N_("Insufficient rights"),
-	N_("In local permit/deny"),
-	N_("Warning level too high (sender)"),
-	N_("Warning level too high (receiver)"),
-	N_("User temporarily unavailable"),
-	N_("No match"),
-	N_("List overflow"),
-	N_("Request ambiguous"),
-	N_("Queue full"),
-	N_("Not while on AOL")
-};
-static const int msgerrreasonlen = G_N_ELEMENTS(msgerrreason);
-
-static const char * const errcodereason[] = {
-	N_("Invalid error"),
-	N_("Not logged in"),
-	N_("Cannot receive IM due to parental controls"),
-	N_("Cannot send SMS without accepting terms"),
-	N_("Cannot send SMS"), /* SMS_WITHOUT_DISCLAIMER is weird */
-	N_("Cannot send SMS to this country"),
-	N_("Unknown error"), /* Undocumented */
-	N_("Unknown error"), /* Undocumented */
-	N_("Cannot send SMS to unknown country"),
-	N_("Bot accounts cannot initiate IMs"),
-	N_("Bot account cannot IM this user"),
-	N_("Bot account reached IM limit"),
-	N_("Bot account reached daily IM limit"),
-	N_("Bot account reached monthly IM limit"),
-	N_("Unable to receive offline messages"),
-	N_("Offline message store full")
-};
-static const int errcodereasonlen = G_N_ELEMENTS(errcodereason);
-
 /* All the libfaim->purple callback functions */
 
 /* Only used when connecting with the old-style BUCP login */
@@ -207,7 +158,6 @@ static int purple_parse_searcherror(OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_parse_searchreply(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_bosrights        (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_connerr          (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_parse_msgerr     (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_mtn        (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_locaterights(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_buddyrights(OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -1545,7 +1495,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_INCOMING, purple_parse_incoming_im, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_MISSEDCALL, purple_parse_misses, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_CLIENTAUTORESP, purple_parse_clientauto, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_ERROR, purple_parse_msgerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_MTN, purple_parse_mtn, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_ACK, purple_parse_msgack, 0);
 #ifdef OLDSTYLE_ICQ_OFFLINEMSGS
@@ -3371,67 +3320,8 @@ static int purple_parse_genericerr(OscarData *od, FlapConnection *conn, FlapFram
 	reason = (guint16) va_arg(ap, unsigned int);
 	va_end(ap);
 
-	purple_debug_error("oscar",
-			   "snac threw error (reason 0x%04hx: %s)\n", reason,
-			   (reason < msgerrreasonlen) ? msgerrreason[reason] : "unknown");
-	return 1;
-}
-
-static int purple_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
-#ifdef TODOFT
-	OscarData *od = purple_connection_get_protocol_data(gc);
-	PurpleXfer *xfer;
-#endif
-	va_list ap;
-	guint16 reason, errcode;
-	char *data, *reason_str, *buf;
-
-	va_start(ap, fr);
-	reason = (guint16)va_arg(ap, unsigned int);
-	errcode = (guint16)va_arg(ap, unsigned int);
-	data = va_arg(ap, char *);
-	va_end(ap);
-
-	purple_debug_error("oscar",
-			   "Message error with data %s and reason %hu and errcode %hu\n",
-				(data != NULL ? data : ""), reason, errcode);
-
-	if ((data == NULL) || (*data == '\0'))
-		/* We can't do anything if data is empty */
-		return 1;
-
-#ifdef TODOFT
-	/* If this was a file transfer request, data is a cookie */
-	if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, data))) {
-		purple_xfer_cancel_remote(xfer);
-		return 1;
-	}
-#endif
-
-	/* Data is assumed to be the destination bn */
-
-	reason_str = g_strdup((reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason"));
-	if (errcode != 0 && errcode < errcodereasonlen)
-		buf = g_strdup_printf(_("Unable to send message: %s (%s)"), reason_str,
-		                      _(errcodereason[errcode]));
-	else
-		buf = g_strdup_printf(_("Unable to send message: %s"), reason_str);
-
-	if (!purple_conv_present_error(data, purple_connection_get_account(gc), buf)) {
-		g_free(buf);
-		if (errcode != 0 && errcode < errcodereasonlen)
-			buf = g_strdup_printf(_("Unable to send message to %s: %s (%s)"),
-			                      data ? data : "(unknown)", reason_str,
-			                      _(errcodereason[errcode]));
-		else
-			buf = g_strdup_printf(_("Unable to send message to %s: %s"),
-			                      data ? data : "(unknown)", reason_str);
-		purple_notify_error(od->gc, NULL, buf, reason_str);
-	}
-	g_free(buf);
-	g_free(reason_str);
-
+	purple_debug_error("oscar", "snac threw error (reason 0x%04hx: %s)\n",
+			reason, oscar_get_msgerr_reason(reason));
 	return 1;
 }
 
@@ -3494,7 +3384,7 @@ static int purple_parse_locerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 		return 1;
 
 	user_info = purple_notify_user_info_new();
-	buf = g_strdup_printf(_("User information not available: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
+	buf = g_strdup_printf(_("User information not available: %s"), oscar_get_msgerr_reason(reason));
 	purple_notify_user_info_add_pair(user_info, NULL, buf);
 	purple_notify_userinfo(od->gc, destn, user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);

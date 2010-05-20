@@ -6,6 +6,7 @@ version 2.7.1 (??/??/????):
 
 	Pidgin:
 	* Restore the tray icon's blinking functionality.
+	* Fix a crash setting moods when an account is disconnected.
 
 	Bonjour:
 	* Fix a crash on disconnect.

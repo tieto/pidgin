@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-04 09:57-0400\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2010-05-05 19:21+0100\n"
 "Last-Translator: loptosko <loptosko@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -3816,8 +3816,7 @@ msgstr "Nepodporované rozšírenie"
 msgid ""
 "Unexpected response from the server.  This may indicate a possible MITM "
 "attack"
-msgstr ""
-"Neočakávaná odpoveď zo servera. Môže to naznačovať MITM útok"
+msgstr "Neočakávaná odpoveď zo servera. Môže to naznačovať MITM útok"
 
 msgid ""
 "The server does support channel binding, but did not appear to advertise "
@@ -4258,7 +4257,6 @@ msgstr "Server nepodporuje blokovanie"
 msgid "Not Authorized"
 msgstr "Neautorizovaný"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Nálada"
 
@@ -4280,7 +4278,6 @@ msgstr "Pre"
 msgid "None (To pending)"
 msgstr "Žiadny (Čaká sa)"
 
-#. 0
 msgid "None"
 msgstr "Žiadne"
 
@@ -4823,7 +4820,6 @@ msgstr "Užasnutý"
 msgid "Amorous"
 msgstr "Zamilovaný"
 
-#. 1
 msgid "Angry"
 msgstr "Nahnevaný"
 
@@ -4902,7 +4898,6 @@ msgstr "Rozpačitý"
 msgid "Envious"
 msgstr "Závistlivý"
 
-#. 2
 msgid "Excited"
 msgstr "Vzrušený"
 
@@ -4918,21 +4913,18 @@ msgstr "Vďačný"
 msgid "Grieving"
 msgstr "Trúchlenie"
 
-#. 3
 msgid "Grumpy"
 msgstr "Mrzutý"
 
 msgid "Guilty"
 msgstr "Vinný"
 
-#. 4
 msgid "Happy"
 msgstr "Veselý"
 
 msgid "Hopeful"
 msgstr "Sľubný"
 
-#. 8
 msgid "Hot"
 msgstr "Horlivý"
 
@@ -4966,7 +4958,6 @@ msgstr "Zaujatý"
 msgid "Intoxicated"
 msgstr "Pod vplyvom"
 
-#. 6
 msgid "Invincible"
 msgstr "Neprekonateľný"
 
@@ -5018,7 +5009,6 @@ msgstr "Utrápený"
 msgid "Restless"
 msgstr "Nepokojný"
 
-#. 7
 msgid "Sad"
 msgstr "Smutný"
 
@@ -5037,11 +5027,9 @@ msgstr "Šokovaný"
 msgid "Shy"
 msgstr "Hamblivý"
 
-#. 9
 msgid "Sick"
 msgstr "Chorý"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Ospalý"
@@ -5860,24 +5848,6 @@ msgstr "Chcete tohoto priateľa odstrániť aj z vášho adresára?"
 msgid "The username specified is invalid."
 msgstr "Dané používateľské meno je chybné."
 
-#. 5
-msgid "In Love"
-msgstr "Zaľúbený"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "Aktuálna nálada"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "Nová nálada"
-
-msgid "Change your Mood"
-msgstr "Zmeniť vašu náladu"
-
-msgid "How do you feel right now?"
-msgstr "Ako sa práve cítite?"
-
 msgid "The PIN you entered is invalid."
 msgstr "Zadaný PIN je neplatný"
 
@@ -5942,10 +5912,6 @@ msgstr "Nie je dostupná žiadna úvodná obrazovka"
 
 msgid "About"
 msgstr "O module"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "Zmeniť náladu..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6183,6 +6149,9 @@ msgstr "Na MXit sa vyskytla chyba pripojenia. (štádium čítania 0x05)"
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "Na MXit sa vyskytla chyba pripojenia. (štádium čítania 0x06)"
+
+msgid "In Love"
+msgstr "Zaľúbený"
 
 msgid "Pending"
 msgstr "Čaká sa"
@@ -10200,8 +10169,8 @@ msgid ""
 "Account locked: You have been logging in too frequently.  Wait a few minutes "
 "before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
-"Účet zamknutý: Veľa neúspešných pokusov o prihlásenie. Počkajte pár minút "
-"do ďalšieho prihlasovania.  Pomôcť môže prihlásenie sa na stránku Yahoo!."
+"Účet zamknutý: Veľa neúspešných pokusov o prihlásenie. Počkajte pár minút do "
+"ďalšieho prihlasovania.  Pomôcť môže prihlásenie sa na stránku Yahoo!."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10288,8 +10257,7 @@ msgid ""
 "Unable to connect: The server's response did not contain the necessary "
 "information"
 msgstr ""
-"Nepodarilo sa pripojiť: Odpoveď serveru neobsahovala potrebné "
-"informácie"
+"Nepodarilo sa pripojiť: Odpoveď serveru neobsahovala potrebné informácie"
 
 msgid "Not at Home"
 msgstr "Nie som doma"
@@ -12081,6 +12049,10 @@ msgstr "afrikánčina"
 msgid "Arabic"
 msgstr "arabčina"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Zahanbený"
+
 msgid "Belarusian Latin"
 msgstr "bieloruština, latinka"
 
@@ -12207,6 +12179,10 @@ msgstr "laoština"
 msgid "Macedonian"
 msgstr "macedónčina"
 
+#, fuzzy
+msgid "Malayalam"
+msgstr "malajčina"
+
 msgid "Mongolian"
 msgstr "mongolčina"
 
@@ -12324,9 +12300,9 @@ msgid ""
 "copyrighted by its contributors, a list of whom is also distributed with %"
 "s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
-"Program %s je komunikačný klient založený na knižnici libpurple, ktorý podporuje "
-"viaceré komunikačné služby súčastne.  Program %s je vytvorený v jazyku C s "
-"pomocou knižnice GTK+. Program %s môžete upravovať a distribuovať "
+"Program %s je komunikačný klient založený na knižnici libpurple, ktorý "
+"podporuje viaceré komunikačné služby súčastne.  Program %s je vytvorený v "
+"jazyku C s pomocou knižnice GTK+. Program %s môžete upravovať a distribuovať "
 "podľa podmienok licencie GPL vo verzii 2 (alebo novšej).  Kópia licencie GPL "
 "je dodávaná spolu s programom %s.  Vlastníkmi autorských práv programu %s sú "
 "jeho prispievatelia, ktorých zoznam je tiež dodávaný s programom %s. Na %s "
@@ -12354,12 +12330,13 @@ msgid ""
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\"><b>Pomoc od ostatných používateľov programu Pidgin</b></font>"
-" je dostupná mailom na <a href=\"mailto:support@pidgin.im\">support@pidgin.im"
-"</a><br/>Toto je <b>verejný</b> poštový zoznam! (<a href=\"http://pidgin.im/pipermail/support/"
-"\">archív</a>)<br/>Nemôžeme pomôcť s modulmi ani s protokolmi tretích strán!<br/"
-">Hlavný jazyk tohoto zoznamu je <b>Angličtina</b>.  Ste vítaní prispievať v "
-"inom jazyku, ale odpovede nemusia byť také užitočné.<br/><br/>"
+"<font size=\"4\"><b>Pomoc od ostatných používateľov programu Pidgin</b></"
+"font> je dostupná mailom na <a href=\"mailto:support@pidgin.im"
+"\">support@pidgin.im</a><br/>Toto je <b>verejný</b> poštový zoznam! (<a href="
+"\"http://pidgin.im/pipermail/support/\">archív</a>)<br/>Nemôžeme pomôcť s "
+"modulmi ani s protokolmi tretích strán!<br/>Hlavný jazyk tohoto zoznamu je "
+"<b>Angličtina</b>.  Ste vítaní prispievať v inom jazyku, ale odpovede "
+"nemusia byť také užitočné.<br/><br/>"
 
 #, c-format
 msgid "About %s"
@@ -15134,6 +15111,137 @@ msgstr "Odosielanie a prijímanie nespracovaných XMPP slôh."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Tento modul je vhodný na ladenie XMPP serverov alebo klientov."
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+"$(^Name) je vydaný pod GPL licenciou. Táto licencia je len pre informačné "
+"účely. $_CLICK"
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Multiplatformové GUI nástroje, používané Pidgin-om"
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Pidgin je práve spustený. Vypnite ho a skúste znova."
+
+msgid "Core Pidgin files and dlls"
+msgstr "Jadro Pidgin-u a nevyhnutné DLL súbory"
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Vytvoriť odkaz na Pidgin v Štart Menu"
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr "Vytvoriť zástupcu pre Pidgin na pracovnej ploche"
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+msgid "Desktop"
+msgstr "Plocha"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ Runtime prostredie (nevyhnutné)"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Lokalita"
+
+#. License Page
+msgid "Next >"
+msgstr "Ďalej >"
+
+#. Components Page
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin Instant Messaging Klient (nevyhnutné)"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+msgid "Shortcuts"
+msgstr "Zástupcovia"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr "Zástupcovia pre Pidgin"
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr "Podpora kontroly pravopisu"
+
+msgid "Start Menu"
+msgstr "Štart Menu"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr "Podpora kontroly pravopisu (Nutné pripojenie k Internetu)"
+
+msgid "The installer is already running."
+msgstr "Inštalácia je už spustená"
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+"Inštalátoru sa nepodarilo nájsť položky v registri pre Pidgin.$\\rJe možné, "
+"že túto aplikáciu nainštaloval iný používateľ."
+
+#. URL Handler section
+msgid "URI Handlers"
+msgstr ""
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Navštíviť webstránku Windows Pidgin"
+
+msgid "You do not have permission to uninstall this application."
+msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
+
+#~ msgid "Current Mood"
+#~ msgstr "Aktuálna nálada"
+
+#~ msgid "New Mood"
+#~ msgstr "Nová nálada"
+
+#~ msgid "Change your Mood"
+#~ msgstr "Zmeniť vašu náladu"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "Ako sa práve cítite?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "Zmeniť náladu..."
+
 #~ msgid "Artist"
 #~ msgstr "Interpret"
 
@@ -15349,9 +15457,6 @@ msgstr "Tento modul je vhodný na ladenie XMPP serverov alebo klientov."
 
 #~ msgid "_User:"
 #~ msgstr "Po_užívateľ:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "Verzia GTK+ Runtime"
 
 #~ msgid "Without this only the first account will be enabled)."
 #~ msgstr "Inak bude zapnutý len prvý účet)."
