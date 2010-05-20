@@ -1,3 +1,9 @@
+pidgin (2.7.0-3) unstable; urgency=low
+
+  * Apply patch from upstream to fix a crash in OSCAR (Closes: #582163)
+
+ -- Ari Pollak <ari@debian.org>  Wed, 19 May 2010 23:23:03 -0400
+
 pidgin (2.7.0-2) unstable; urgency=low
 
   * Disable gevolution plugin for now since it's more important to get a new
