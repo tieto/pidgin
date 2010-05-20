@@ -166,20 +166,20 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 
 	if (!(snac2 = aim_remsnac(od, snac->id))) {
 		purple_debug_misc("oscar", "icbm error: received response from unknown request!\n");
-		return 0;
+		return 1;
 	}
 
 	if (snac2->family != SNAC_FAMILY_ICBM) {
 		purple_debug_misc("oscar", "icbm error: received response from invalid request! %d\n", snac2->family);
 		g_free(snac2->data);
 		g_free(snac2);
-		return 0;
+		return 1;
 	}
 
 	if (!(bn = snac2->data)) {
 		purple_debug_misc("oscar", "icbm error: received response from request without a buddy name!\n");
 		g_free(snac2);
-		return 0;
+		return 1;
 	}
 
 	reason = byte_stream_get16(bs);
