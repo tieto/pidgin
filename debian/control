@@ -8,7 +8,6 @@ Build-Depends: cdbs (>= 0.4.53), debhelper (>= 7), intltool,
  libnss3-dev (>= 3.11.7), tcl-dev, tk-dev, libgstreamer0.10-dev,
  libgtkspell-dev, libltdl3-dev, libperl-dev,
  libstartup-notification0-dev, libzephyr-dev, libxml2-dev,
- libebook1.2-dev, libedata-book1.2-dev, libcamel1.2-dev,
  libdbus-glib-1-dev, dbus, python (>= 2.4), libavahi-client-dev,
  libavahi-glib-dev, libxml-parser-perl, libncursesw5-dev, libsasl2-dev,
  xsltproc, doxygen, libsilc-dev (>= 1.1.1), libgstfarsight0.10-dev (>= 0.0.9),
@@ -54,8 +53,6 @@ Description: graphical multi-protocol instant messaging client for X
   * gnome-panel | kdebase-workspace-bin | docker:
     - To use the system tray icon functionality (minimizing to an icon, having
       the icon blink when there are new messages, etc.)
-  * evolution-data-server:
-    - For interfacing with an Evolution address book
   * libsqlite3-0:
     - To use Contact Availability Prediction plugin
 

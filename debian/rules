@@ -9,7 +9,7 @@ include /usr/share/cdbs/1/rules/utils.mk
 DEB_BUILDDIR = $(DEB_SRCDIR)/build
 
 LDFLAGS = -Wl,--as-needed
-DEB_CONFIGURE_EXTRA_FLAGS = --enable-gevolution \
+DEB_CONFIGURE_EXTRA_FLAGS = --disable-gevolution \
 	    --enable-cap --with-system-ssl-certs=/etc/ssl/certs \
 	    --enable-perl --with-zephyr=/usr --enable-dbus --enable-gnutls=no \
 	    --enable-nss=yes --enable-cyrus-sasl --enable-vv --enable-farsight \
@@ -24,7 +24,7 @@ endif
 DEB_INSTALL_DOCS_ALL := -XAUTHORS -XNEWS -XREADME
 
 DEB_DH_MAKESHLIBS_ARGS_pidgin := -V -X/usr/lib/pidgin
-DEB_DH_SHLIBDEPS_ARGS_pidgin := -X/usr/lib/pidgin/gevolution.so -X/usr/lib/pidgin/cap.so -- -dSuggests debian/pidgin/usr/lib/pidgin/cap.so -dDepends
+DEB_DH_SHLIBDEPS_ARGS_pidgin := -X/usr/lib/pidgin/cap.so -- -dSuggests debian/pidgin/usr/lib/pidgin/cap.so -dDepends
 DEB_PERL_INCLUDE_pidgin := /usr/lib/pidgin/perl
 
 # finch package
