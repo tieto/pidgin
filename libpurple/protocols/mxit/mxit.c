@@ -352,6 +352,10 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 	if ( contact->subtype != 0 )
 		purple_notify_user_info_add_pair( info, _( "Subscription" ), mxit_convert_subtype_to_name( contact->subtype ) );
 
+	/* rejection message */
+	if ( ( contact->subtype == MXIT_SUBTYPE_REJECTED ) && ( contact->msg != NULL ) )
+		purple_notify_user_info_add_pair( info, _( "Rejection Message" ), contact->msg );
+
 	/* hidden number */
 	if ( contact->flags & MXIT_CFLAG_HIDDEN )
 		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), _( "Yes" ) );
@@ -491,6 +495,8 @@ static void mxit_free_buddy( PurpleBuddy* buddy )
 			g_free( contact->statusMsg );
 		if ( contact->avatarId )
 			g_free( contact->avatarId );
+		if ( contact->msg )
+			g_free( contact->msg );
 		g_free( contact );
 	}
 

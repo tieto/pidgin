@@ -672,10 +672,12 @@ void mxit_send_login( struct MXitSession* session )
 	/* convert the packet to a byte stream */
 	datalen = sprintf( data,	"ms=%s%c%s%c%i%c"			/* "ms"=password\1version\1getContacts\1 */
 								"%s%c%s%c%i%c"				/* capabilities\1dc\1features\1 */
-								"%s%c%s",					/* dialingcode\1locale */
+								"%s%c%s%c"					/* dialingcode\1locale\1 */
+								"%i%c%i%c%i",				/* maxReplyLen\1protocolVer\1lastRosterUpdate */
 								session->encpwd, CP_FLD_TERM, MXIT_CP_VERSION, CP_FLD_TERM, 1, CP_FLD_TERM,
 								MXIT_CP_CAP, CP_FLD_TERM, session->distcode, CP_FLD_TERM, MXIT_CP_FEATURES, CP_FLD_TERM,
-								session->dialcode, CP_FLD_TERM, locale
+								session->dialcode, CP_FLD_TERM, locale, CP_FLD_TERM,
+								CP_MAX_FILESIZE, CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
 	);
 
 	/* include "custom resource" information */
@@ -1513,9 +1515,13 @@ static void mxit_parse_cmd_contact( struct MXitSession* session, struct record**
 		contact->mood = atoi( rec->fields[5]->data );
 
 		if ( rec->fcount > 6 ) {
-			/* added in protocol 5.9.0 - flags & subtype */
+			/* added in protocol 5.9 - flags & subtype */
 			contact->flags = atoi( rec->fields[6]->data );
 			contact->subtype = rec->fields[7]->data[0];
+		}
+		if ( rec->fcount > 8 ) {
+			/* added in protocol 6.0 - reject message */
+			contact->msg = g_strdup( rec->fields[8]->data );
 		}
 
 		/* add the contact to the buddy list */
