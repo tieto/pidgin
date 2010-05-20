@@ -318,6 +318,7 @@ msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 {
 	MsnSlpLink *slplink;
 	MsnSlpCall *slpcall;
+	GQueue *queue = NULL;
 
 	purple_debug_info("msn", "msn_dc_try_fallback_to_p2p %p\n", dc);
 
@@ -325,11 +326,24 @@ msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 
 	slpcall = dc->slpcall;
 	slplink = msn_slplink_ref(dc->slplink);
+	if (slpcall && !g_queue_is_empty(dc->out_queue)) {
+		queue = dc->out_queue;
+		dc->out_queue = NULL;
+	}
 
 	msn_dc_destroy(dc);
 
-	if (slpcall)
+	if (slpcall) {
 		msn_slpcall_session_init(slpcall);
+		if (queue) {
+			while (!g_queue_is_empty(queue)) {
+				MsnDirectConnPacket *p = g_queue_pop_head(queue);
+				msn_slplink_send_msg(slplink, p->msg);
+				msn_dc_destroy_packet(p);
+			}
+			g_queue_free(queue);
+		}
+	}
 	msn_slplink_unref(slplink);
 }
 
