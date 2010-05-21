@@ -791,7 +791,7 @@ msn_dc_connected_to_peer_cb(gpointer data, gint fd, const gchar *error_msg)
 
 /*
  * This callback will be called when we're the server
- * and nobody has connected us in DC_CONNECT_TIMEOUT seconds
+ * and nobody has connected us in DC_INCOMING_TIMEOUT seconds
  */
 static gboolean
 msn_dc_incoming_connection_timeout_cb(gpointer data) {
@@ -829,7 +829,7 @@ msn_dc_incoming_connection_timeout_cb(gpointer data) {
 
 /*
  * This callback will be called when we're unable to connect to
- * the remote host in DC_CONNECT_TIMEOUT seconds.
+ * the remote host in DC_OUTGOING_TIMEOUT seconds.
  */
 gboolean
 msn_dc_outgoing_connection_timeout_cb(gpointer data)
@@ -863,7 +863,7 @@ msn_dc_outgoing_connection_timeout_cb(gpointer data)
 
 		if (dc->connect_data) {
 			dc->connect_timeout_handle = purple_timeout_add_seconds(
-				DC_CONNECT_TIMEOUT,
+				DC_OUTGOING_TIMEOUT,
 				msn_dc_outgoing_connection_timeout_cb,
 				dc
 			);
@@ -888,7 +888,7 @@ msn_dc_outgoing_connection_timeout_cb(gpointer data)
 
 /*
  * This callback will be called when we're the server
- * and somebody has connected to us in DC_CONNECT_TIMEOUT seconds.
+ * and somebody has connected to us in DC_INCOMING_TIMEOUT seconds.
  */
 static void
 msn_dc_incoming_connection_cb(gpointer data, gint listenfd, PurpleInputCondition cond)
@@ -951,7 +951,7 @@ msn_dc_listen_socket_created_cb(int listenfd, gpointer data)
 			dc
 		);
 		dc->connect_timeout_handle = purple_timeout_add_seconds(
-			DC_CONNECT_TIMEOUT * 2, /* Internal + external connection attempts */
+			DC_INCOMING_TIMEOUT,
 			msn_dc_incoming_connection_timeout_cb,
 			dc
 		);

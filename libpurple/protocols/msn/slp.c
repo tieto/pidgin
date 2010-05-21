@@ -424,7 +424,7 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 				if (dc->connect_data) {
 					/* Add connect timeout handle */
 					dc->connect_timeout_handle = purple_timeout_add_seconds(
-						DC_CONNECT_TIMEOUT,
+						DC_OUTGOING_TIMEOUT,
 						msn_dc_outgoing_connection_timeout_cb,
 						dc
 					);

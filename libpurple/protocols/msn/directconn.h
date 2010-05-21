@@ -114,8 +114,12 @@ struct _MsnDirectConn
 	//int   num_calls;  /**< The number of slpcalls using this direct connection */
 };
 
-#define DC_CONNECT_TIMEOUT 	5
-#define DC_TIMEOUT 		60
+/* Outgoing attempt */
+#define DC_OUTGOING_TIMEOUT (5)
+/* Time for internal + external connection attempts */
+#define DC_INCOMING_TIMEOUT (DC_OUTGOING_TIMEOUT * 3)
+/* Timeout for lack of activity */
+#define DC_TIMEOUT          (60)
 
 /*
  * Queues an MSN message to be sent via direct connection.
