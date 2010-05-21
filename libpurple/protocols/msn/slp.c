@@ -325,6 +325,10 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 
 	purple_debug_info("msn", "process_transresp\n");
 
+	/* Direct connections are disabled. */
+	if (!purple_account_get_bool(slpcall->slplink->session->account, "direct_connect", TRUE))
+		return FALSE;
+
 	g_return_val_if_fail(dc != NULL, FALSE);
 	g_return_val_if_fail(dc->state == DC_STATE_CLOSED, FALSE);
 
@@ -712,8 +716,21 @@ got_invite(MsnSlpCall *slpcall,
 
 		purple_debug_info("msn", "got_invite: transreqbody received\n");
 
+		/* Direct connections may be disabled. */
+		if (!purple_account_get_bool(slplink->session->account, "direct_connect", TRUE)) {
+			msn_slp_send_ok(slpcall, branch,
+				"application/x-msnmsgr-transrespbody",
+				"Bridge: TCPv1\r\n"
+				"Listening: false\r\n"
+				"Nonce: {00000000-0000-0000-0000-000000000000}\r\n"
+				"\r\n");
+			msn_slpcall_session_init(slpcall);
+
+			return;
+		}
+
 		/* Don't do anything if we already have a direct connection */
-		if (slpcall->slplink->dc != NULL)
+		if (slplink->dc != NULL)
 			return;
 
 		bridges = get_token(content, "Bridges: ", "\r\n");
@@ -806,9 +823,16 @@ got_ok(MsnSlpCall *slpcall,
 		char *content;
 		char *header;
 		char *nonce = NULL;
+		MsnSession *session = slpcall->slplink->session;
 		MsnSlpMessage *msg;
 		MsnDirectConn *dc;
 		MsnUser *user;
+
+		if (!purple_account_get_bool(session->account, "direct_connect", TRUE)) {
+			/* Don't attempt a direct connection if disabled. */
+			msn_slpcall_session_init(slpcall);
+			return;
+		}
 
 		if (slpcall->slplink->dc != NULL) {
 			/* If we already have an established direct connection
@@ -818,7 +842,7 @@ got_ok(MsnSlpCall *slpcall,
 			return;
 		}
 
-		user = msn_userlist_find_user(slpcall->slplink->session->userlist,
+		user = msn_userlist_find_user(session->userlist,
 		                              slpcall->slplink->remote_user);
 		if (!user || !(user->clientid & 0xF0000000))	{
 			/* Just start a normal SB transfer. */
