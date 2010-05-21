@@ -291,9 +291,10 @@ parse_dc_nonce(const char *content, MsnDirectConnNonceType *ntype)
 		guint32 n1, n5;
 		guint16 n2, n3, n4, n6;
 		nonce = get_token(content, "Nonce: {", "}\r\n");
-		*ntype = DC_NONCE_PLAIN;
-		if (sscanf(nonce, "%08x-%04hx-%04hx-%04hx-%08x%04hx",
+		if (nonce
+		 && sscanf(nonce, "%08x-%04hx-%04hx-%04hx-%08x%04hx",
 		           &n1, &n2, &n3, &n4, &n5, &n6) == 6) {
+			*ntype = DC_NONCE_PLAIN;
 			g_free(nonce);
 			nonce = g_malloc(16);
 			*(guint32 *)(nonce +  0) = GUINT32_TO_LE(n1);
