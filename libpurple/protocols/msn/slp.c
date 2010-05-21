@@ -34,7 +34,7 @@
 
 #include "smiley.h"
 
-/* ms to delay between sending buddy icon requests to the server. */
+/* seconds to delay between sending buddy icon requests to the server. */
 #define BUDDY_ICON_DELAY 20
 
 static void request_user_display(MsnUser *user);
