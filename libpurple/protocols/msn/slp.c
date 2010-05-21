@@ -312,7 +312,7 @@ parse_dc_nonce(const char *content, MsnDirectConnNonceType *ntype)
 	return nonce;
 }
 
-static gboolean
+static void
 msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 {
 	/* A direct connection negotiation response */
@@ -321,16 +321,15 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 	char *listening;
 	MsnDirectConn *dc = slpcall->slplink->dc;
 	MsnDirectConnNonceType ntype;
-	gboolean result = FALSE;
 
 	purple_debug_info("msn", "process_transresp\n");
 
 	/* Direct connections are disabled. */
 	if (!purple_account_get_bool(slpcall->slplink->session->account, "direct_connect", TRUE))
-		return FALSE;
+		return;
 
-	g_return_val_if_fail(dc != NULL, FALSE);
-	g_return_val_if_fail(dc->state == DC_STATE_CLOSED, FALSE);
+	g_return_if_fail(dc != NULL);
+	g_return_if_fail(dc->state == DC_STATE_CLOSED);
 
 	bridge = get_token(content, "Bridge: ", "\r\n");
 	nonce = parse_dc_nonce(content, &ntype);
@@ -447,8 +446,6 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 			g_free(ip);
 		}
 
-		result = TRUE;
-
 	} else {
 		/*
 		 * Invalid direct connect invitation or
@@ -460,7 +457,7 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 	g_free(nonce);
 	g_free(bridge);
 
-	return result;
+	return;
 }
 
 static void
