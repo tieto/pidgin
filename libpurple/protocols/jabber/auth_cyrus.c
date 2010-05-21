@@ -270,7 +270,7 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 					 */
 					js->auth_mech = NULL;
 					jabber_auth_start_old(js);
-					return JABBER_SASL_STATE_CONTINUE;					
+					return JABBER_SASL_STATE_CONTINUE;
 				}
 
 				break;
