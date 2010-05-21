@@ -75,6 +75,8 @@ EXTERNAL_DLLS = \
 #build an expression for `find` to use to ignore the above files
 EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))
 
+include $(PIDGIN_COMMON_RULES)
+
 .PHONY: all docs install installer installer_offline installer_zip debug_symbols_zip installers clean uninstall create_release_install_dir generate_installer_includes $(PIDGIN_REVISION_H) $(PIDGIN_REVISION_RAW_TXT)
 
 all: $(PIDGIN_CONFIG_H) $(PIDGIN_REVISION_H)
@@ -101,7 +103,7 @@ endif
 pidgin/win32/nsis/gtk-runtime-$(GTK_BUNDLE_VERSION).zip:
 	pidgin/win32/nsis/generate_gtk_zip.sh `pwd`
 
-generate_installer_includes: create_release_install_dir pidgin/win32/nsis/gtk-runtime-$(GTK_BUNDLE_VERSION).zip debug_symbols_zip
+generate_installer_includes: create_release_install_dir pidgin/win32/nsis/gtk-runtime-$(GTK_BUNDLE_VERSION).zip debug_symbols_zip $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/nsis_translations.desktop
 	rm -f pidgin/win32/nsis/pidgin-translations.nsh pidgin/win32/nsis/pidgin-spellcheck.nsh pidgin/win32/nsis/pidgin-spellcheck-preselect.nsh
 	find $(STRIPPED_RELEASE_DIR)/locale -maxdepth 1 -mindepth 1 \
 	 -exec basename {} ';' \
@@ -119,6 +121,13 @@ generate_installer_includes: create_release_install_dir pidgin/win32/nsis/gtk-ru
 	 -e "s/ \"[^\"]*\"\ \"[^\"]*\"[\t\ ]*$$//" | \
          iconv -f utf-8 -t latin1 \
         > pidgin/win32/nsis/pidgin-spellcheck-preselect.nsh
+	#Generate the Installer translations
+	echo "!define GCOMPRIS_NSIS_INCLUDE_PATH \".\"" > $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/langmacros.nsh
+	echo "@INSERT_TRANSLATIONS@" >> $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/langmacros.nsh
+	$(PERL) $(PIDGIN_TREE_TOP)/pidgin/win32/nsis/create_nsis_translations.pl \
+		$(PIDGIN_TREE_TOP)/pidgin/win32/nsis/nsis_translations.desktop \
+		$(PIDGIN_TREE_TOP)/pidgin/win32/nsis/langmacros.nsh \
+		$(PIDGIN_TREE_TOP)/pidgin/win32/nsis/translations
 
 create_release_install_dir: install
 	rm -rf $(STRIPPED_RELEASE_DIR)

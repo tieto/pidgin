@@ -1185,7 +1185,7 @@ void mxit_send_file_received( struct MXitSession* session, const char* fileid, s
 		return;
 	}
 
-	set_chunk_type( chunk, CP_CHUNK_RECIEVED );
+	set_chunk_type( chunk, CP_CHUNK_RECEIVED );
 	set_chunk_length( chunk, size );
 	datalen += MXIT_CHUNK_HEADER_SIZE + size;
 
@@ -1798,7 +1798,7 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 			/* this is a ack for a file send. no action is required */
 			break;
 
-		case CP_CHUNK_RECIEVED :
+		case CP_CHUNK_RECEIVED :
 			/* this is a ack for a file received. no action is required */
 			break;
 

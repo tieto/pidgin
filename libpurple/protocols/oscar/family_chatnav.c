@@ -37,7 +37,8 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	guint16 error, chatnav_error;
 	GSList *tlvlist;
 
-	if (!(snac2 = aim_remsnac(od, snac->id))) {
+	snac2 = aim_remsnac(od, snac->id);
+	if (!snac2) {
 		purple_debug_warning("oscar", "chatnav error: received response to unknown request (%08x)\n", snac->id);
 		return 0;
 	}
@@ -67,8 +68,7 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 		ret = 1;
 	}
 
-	if (snac2)
-		g_free(snac2->data);
+	g_free(snac2->data);
 	g_free(snac2);
 
 	return ret;

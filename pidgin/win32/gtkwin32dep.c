@@ -327,6 +327,7 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 		info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
 	} else
 		info.dwFlags = FLASHW_STOP;
+	FlashWindowEx(&info);
 	info.dwTimeout = 0;
 
 }

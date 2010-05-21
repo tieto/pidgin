@@ -1,6 +1,19 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.1 (??/??/????):
+	General:
+	* Build fixes on OpenSolaris.  (Brian Lu)
+
+	Pidgin:
+	* Restore the tray icon's blinking functionality.
+	* Fix a crash setting moods when an account is disconnected.
+
+	Bonjour:
+	* Fix a crash on disconnect.
+
+	ICQ:
+	* Fix bug that caused HTML to be displayed in incoming messages.
+
 	MSN:
 	* Fix unnecessary bandwidth consumption for buddy icon requests when
 	  buddies have capital letters in their passport addresses.

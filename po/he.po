@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-29 00:17-0700\n"
-"PO-Revision-Date: 2010-02-15 19:51+0200\n"
-"Last-Translator: Shalom Craimer <scraimer at google's mail dot com>\n"
+"POT-Creation-Date: 2010-05-20 14:09-0700\n"
+"PO-Revision-Date: 2010-05-10 15:36+0200\n"
+"Last-Translator: Shalom Craimer <scraimer at g mail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
+"Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1324,8 +1325,6 @@ msgstr "מחק מצב"
 msgid "Saved Statuses"
 msgstr "סטטוסים נשמרו"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "תואר"
 
@@ -1611,6 +1610,12 @@ msgstr "שנה פרטי משתמש עבור %s"
 msgid "Set User Info"
 msgstr "מידע כללי על המשתמש"
 
+msgid "This protocol does not support setting a public alias."
+msgstr "פרוטוקול זה אינו תומך בקביעת שמות נוספים פומביים."
+
+msgid "This protocol does not support fetching the public alias."
+msgstr "פרוטוקול זה אינו תומך בשליפת שמות נוספים פומביים."
+
 msgid "Unknown"
 msgstr "לא ידוע"
 
@@ -1862,7 +1867,6 @@ msgstr "שגיאה בהמרת %s אל punycode: %d"
 msgid "Thread creation failure: %s"
 msgstr "כשל בעת יצירת חוט-תהליך חדש: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "סיבה לא ידועה"
 
@@ -3694,12 +3698,6 @@ msgstr "פקודה זמנית נכשלה"
 msgid "execute"
 msgstr "הפעל"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "השרת דורש TLS/SSL להתחברות, אך לא נמצאה תמיכה ל-TLS/SSL."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "הגדרת דרישה להצפנה, אך לא נמצאה תמיכה ב-TLS/SSL."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "השרת דורש אימות לא מוצפן מעל תקשורת לא מוצפנת"
 
@@ -3734,6 +3732,39 @@ msgstr "אימות SASL נכשל"
 #, c-format
 msgid "SASL error: %s"
 msgstr "שגיאת SASL: %s"
+
+msgid "Invalid Encoding"
+msgstr "קידוד לא תקין"
+
+msgid "Unsupported Extension"
+msgstr "תוסף לא-נתמך"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr "התקבלה תשובה לא-צפוייה מהשרת. ייתכן וזה מעיד על התקפת MITM."
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+"השרת תומך בלכידת ערוצים, אך נראה כי אינו מפרסם זאת. זה כנראה מעיד על תקיפת "
+"MITM."
+
+msgid "Server does not support channel binding"
+msgstr "השרת לא תומך בלכידת ערוצים"
+
+msgid "Unsupported channel binding method"
+msgstr "אין תמיכה בתצורת הלכידה של ערוצים המבוקשת"
+
+msgid "User not found"
+msgstr "המשתמש לא נמצא"
+
+msgid "Invalid Username Encoding"
+msgstr "קידוד לא חוקי של שם המשתמש"
+
+msgid "Resource Constraint"
+msgstr "הגבלת משאבים"
 
 msgid "Unable to canonicalize username"
 msgstr "לא ניתן לפרק את שם המשתמש"
@@ -3811,6 +3842,11 @@ msgstr "שם האירגון"
 
 msgid "Organization Unit"
 msgstr "מחלקה"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "תואר"
 
 msgid "Role"
 msgstr "תפקיד"
@@ -4029,11 +4065,20 @@ msgstr "לא נמצאו משתמשים"
 msgid "Roles:"
 msgstr "תפקידים:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "השרת דורש TLS/SSL להתחברות, אך לא נמצאה תמיכה ל-TLS/SSL."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "הגדרת דרישה להצפנה, אך לא נמצאה תמיכה ב-TLS/SSL."
+
 msgid "Ping timed out"
 msgstr "פינג לא חזר בזמן"
 
 msgid "Invalid XMPP ID"
 msgstr "מזהה XMPP לא תקין"
+
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "זיהוי XMPP שגוי. חובה לקבוע את ערך שם-המשתמש."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "מזהה XMPP שגוי. יש להגדיר את הדומיין."
@@ -4131,7 +4176,6 @@ msgstr "השרת לא תומך בחסימה"
 msgid "Not Authorized"
 msgstr "לא מורשה"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "מצב רוח"
 
@@ -4153,7 +4197,6 @@ msgstr "אל"
 msgid "None (To pending)"
 msgstr "אין (אל מושהה)"
 
-#. 0
 msgid "None"
 msgstr "ללא"
 
@@ -4167,14 +4210,18 @@ msgstr "טקסט מצב-רוח"
 msgid "Allow Buzz"
 msgstr "אפשר זימזום"
 
-#, fuzzy
 msgid "Mood Name"
-msgstr "שם אמצעי"
+msgstr "שם מצב-הרוח"
 
-#, fuzzy
 msgid "Mood Comment"
-msgstr "הערת איש קשר"
+msgstr "הערת מצב-הרוח"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "אמן השיר"
 
@@ -4345,9 +4392,6 @@ msgstr "חילול ההסכם"
 msgid "Remote Connection Failed"
 msgstr "שגיאת תקשורת בצד המרוחק"
 
-msgid "Resource Constraint"
-msgstr "הגבלת משאבים"
-
 msgid "Restricted XML"
 msgstr "XML מוגבל"
 
@@ -4457,9 +4501,8 @@ msgstr "יש לבחור משאב"
 msgid "Initiate Media"
 msgstr "יזום מדיה"
 
-#, fuzzy
 msgid "Account does not support PEP, can't set mood"
-msgstr "פרוטוקול זה אינו תומך בחדרי צ'אט"
+msgstr "חשבון זה אינו תומך PEP, לא ניתן לקבוע את מצב-הרוח"
 
 msgid "config:  Configure a chat room."
 msgstr "config:  קבע הגדרות חדר צ'אט."
@@ -4512,9 +4555,8 @@ msgstr "ping &lt;jid&gt;:\tשלח פינג אל משתמש/רכיב/שרת."
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: שלח זימזום למשתמש כדי להשיג את תשומת ליבם"
 
-#, fuzzy
 msgid "mood: Set current user mood"
-msgstr "בחר/י משתמש נכון"
+msgstr "mood: לקביעת מצב-רוח המשתמש"
 
 msgid "Extended Away"
 msgstr "העדרות ממושכת"
@@ -4596,13 +4638,13 @@ msgid "A custom smiley in the message is too large to send."
 msgstr "החייכן שלך גדול מכדי להישלח בתוך ההודעה."
 
 msgid "XMPP stream header missing"
-msgstr ""
+msgstr "חסרה תחילית stream XMPP"
 
 msgid "XMPP Version Mismatch"
-msgstr ""
+msgstr "גירסא לא נכונה של XMPP"
 
 msgid "XMPP stream missing ID"
-msgstr ""
+msgstr "חסרה מספר-זיהוי של stream XMPP"
 
 msgid "XML Parse error"
 msgstr "שגיאת פיענוח XML"
@@ -4676,32 +4718,26 @@ msgstr "לא ניתן לשלוח את הקובץ אל %s, אינך רשומ/ה �
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "יש לבחור את המשאב של %s אליו ברצונך לשלוח קובץ"
 
-#, fuzzy
 msgid "Afraid"
-msgstr "ערבית"
+msgstr "פחד"
 
-#, fuzzy
 msgid "Amazed"
-msgstr "מבוייש"
+msgstr "תדהמה"
 
-#, fuzzy
 msgid "Amorous"
-msgstr "מרומם"
+msgstr "אהבה"
 
-#. 1
 msgid "Angry"
 msgstr "כועס"
 
-#, fuzzy
 msgid "Annoyed"
-msgstr "חסום"
+msgstr "עצבנות"
 
 msgid "Anxious"
 msgstr "לחוץ"
 
-#, fuzzy
 msgid "Aroused"
-msgstr "אתה שולח"
+msgstr "גירוי"
 
 msgid "Ashamed"
 msgstr "מבוייש"
@@ -4709,287 +4745,231 @@ msgstr "מבוייש"
 msgid "Bored"
 msgstr "משועמם"
 
-#, fuzzy
 msgid "Brave"
-msgstr "שמור"
+msgstr "אומץ"
 
-#, fuzzy
 msgid "Calm"
-msgstr "איזור"
+msgstr "רוגע"
 
-#, fuzzy
 msgid "Cautious"
-msgstr "שיחות"
+msgstr "זהירות"
 
-#, fuzzy
 msgid "Cold"
-msgstr "מודגש"
+msgstr "קר"
 
-#, fuzzy
 msgid "Confident"
-msgstr "התנגשות"
+msgstr "מלא ביטחון"
 
-#, fuzzy
 msgid "Confused"
-msgstr "המשך"
+msgstr "בילבול"
 
-#, fuzzy
 msgid "Contemplative"
-msgstr "איש הקשר"
+msgstr "הירהורים"
 
-#, fuzzy
 msgid "Contented"
-msgstr "מחובר"
+msgstr "שביעות רצון"
 
-#, fuzzy
 msgid "Cranky"
-msgstr "חברה"
+msgstr "קיטורים"
 
 msgid "Crazy"
-msgstr ""
+msgstr "שיגעון"
 
-#, fuzzy
 msgid "Creative"
-msgstr "צור"
+msgstr "יצירתיות"
 
-#, fuzzy
 msgid "Curious"
-msgstr "מרומם"
+msgstr "סקרנות"
 
-#, fuzzy
 msgid "Dejected"
-msgstr "נדחה"
+msgstr "נידחיות"
 
-#, fuzzy
 msgid "Depressed"
-msgstr "מחוק"
+msgstr "דיכאון"
 
-#, fuzzy
 msgid "Disappointed"
-msgstr "מנותק."
+msgstr "אכזבה"
 
 msgid "Disgusted"
-msgstr ""
+msgstr "גועל"
 
-#, fuzzy
 msgid "Dismayed"
-msgstr "כבוי"
+msgstr "עצב לא צפוי"
 
-#, fuzzy
 msgid "Distracted"
-msgstr "מנותק"
+msgstr "היסח הדעת"
 
 msgid "Embarrassed"
-msgstr ""
+msgstr "מבוכה"
 
-#, fuzzy
 msgid "Envious"
-msgstr "לחוץ"
+msgstr "קינאה"
 
-#. 2
 msgid "Excited"
 msgstr "נלהב"
 
-#, fuzzy
 msgid "Flirtatious"
-msgstr "מרומם"
+msgstr "פלירטוט"
 
-#, fuzzy
 msgid "Frustrated"
-msgstr "שם פרטי"
+msgstr "תיסכול"
 
 msgid "Grateful"
-msgstr ""
+msgstr "מלא-תודה"
 
-#, fuzzy
 msgid "Grieving"
-msgstr "שולף..."
+msgstr "אבל"
 
-#. 3
 msgid "Grumpy"
 msgstr "עצבני"
 
-#, fuzzy
 msgid "Guilty"
-msgstr "עיר"
+msgstr "אשמה"
 
-#. 4
 msgid "Happy"
 msgstr "שמח"
 
 msgid "Hopeful"
-msgstr ""
+msgstr "מלא-תקווה"
 
-#. 8
 msgid "Hot"
 msgstr "חם"
 
 msgid "Humbled"
-msgstr ""
+msgstr "צניעות"
 
 msgid "Humiliated"
-msgstr ""
+msgstr "השפלה"
 
-#, fuzzy
 msgid "Hungry"
-msgstr "כועס"
+msgstr "רעב"
 
-#, fuzzy
 msgid "Hurt"
-msgstr "הומור"
+msgstr "כאב"
 
 msgid "Impressed"
-msgstr ""
+msgstr "התרשמות"
 
-#, fuzzy
 msgid "In awe"
-msgstr "מאוהב"
+msgstr "פליאה"
 
 msgid "In love"
 msgstr "מאוהב"
 
-#, fuzzy
 msgid "Indignant"
-msgstr "אינדונזית"
+msgstr "גאווה נפגעה"
 
-#, fuzzy
 msgid "Interested"
-msgstr "תחומי עניין"
+msgstr "עניין"
 
-#, fuzzy
 msgid "Intoxicated"
-msgstr "הוזמן"
+msgstr "שיכרות"
 
-#. 6
 msgid "Invincible"
 msgstr "בלתי מנוצח"
 
 msgid "Jealous"
 msgstr "מקנא"
 
-#, fuzzy
 msgid "Lonely"
-msgstr "קוף"
+msgstr "בדידות"
 
-#, fuzzy
 msgid "Lost"
-msgstr "הכי רועש"
+msgstr "אבוד"
 
 msgid "Lucky"
-msgstr ""
+msgstr "בר-מזל"
 
-#, fuzzy
 msgid "Mean"
-msgstr "גרמנית"
+msgstr "נבזיות"
 
-#, fuzzy
 msgid "Moody"
-msgstr "מצב רוח"
+msgstr "אין מצב רוח"
 
 msgid "Nervous"
-msgstr ""
+msgstr "עצבניות"
 
-#, fuzzy
 msgid "Neutral"
-msgstr "פרטים"
+msgstr "ניטרלי"
 
-#, fuzzy
 msgid "Offended"
-msgstr "מנותק"
+msgstr "עלבון"
 
 msgid "Outraged"
-msgstr ""
+msgstr "התלהמות"
 
-#, fuzzy
 msgid "Playful"
-msgstr "נגן"
+msgstr "משחקיות"
 
-#, fuzzy
 msgid "Proud"
-msgstr "רועש"
+msgstr "גאווה"
 
-#, fuzzy
 msgid "Relaxed"
-msgstr "שם אמיתי"
+msgstr "רגיעה"
 
-#, fuzzy
 msgid "Relieved"
-msgstr "נתקבלו"
+msgstr "הורדת לחץ"
 
-#, fuzzy
 msgid "Remorseful"
-msgstr "הסר"
+msgstr "חרטה"
 
-#, fuzzy
 msgid "Restless"
-msgstr "הרשם"
+msgstr "חוסר-מנוחה"
 
-#. 7
 msgid "Sad"
 msgstr "עצוב"
 
-#, fuzzy
 msgid "Sarcastic"
-msgstr "מרטהי"
+msgstr "ציני"
 
 msgid "Satisfied"
-msgstr ""
+msgstr "שבעות רצון"
 
-#, fuzzy
 msgid "Serious"
-msgstr "מרומם"
+msgstr "רצינות"
 
-#, fuzzy
 msgid "Shocked"
-msgstr "חסום"
+msgstr "הלם"
 
 msgid "Shy"
-msgstr ""
+msgstr "ביישנות"
 
-#. 9
 msgid "Sick"
 msgstr "חולה"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "ישנוני"
 
 msgid "Spontaneous"
-msgstr ""
+msgstr "ספונטני"
 
-#, fuzzy
 msgid "Stressed"
-msgstr "מהירות"
+msgstr "לחץ"
 
-#, fuzzy
 msgid "Strong"
-msgstr "שיר"
+msgstr "כוח"
 
 msgid "Surprised"
-msgstr ""
+msgstr "הפתעה"
 
 msgid "Thankful"
-msgstr ""
+msgstr "תודה"
 
 msgid "Thirsty"
-msgstr ""
+msgstr "צימאון"
 
-#, fuzzy
 msgid "Tired"
-msgstr "Fire"
+msgstr "עייפות"
 
-#, fuzzy
 msgid "Undefined"
-msgstr "קו תחתון"
+msgstr "לא מוגדר"
 
-#, fuzzy
 msgid "Weak"
-msgstr "כאפה"
+msgstr "חולשה"
 
-#, fuzzy
 msgid "Worried"
-msgstr "משועמם"
+msgstr "דאגה"
 
 msgid "Set User Nickname"
 msgstr "קבע כינוי משתמש"
@@ -5345,18 +5325,6 @@ msgstr "משוחח בטלפון"
 msgid "Out to Lunch"
 msgstr "יצא לאכול"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "אמן"
-
-msgid "Album"
-msgstr "אלבום"
-
 msgid "Game Title"
 msgstr "שם המשחק"
 
@@ -5503,9 +5471,6 @@ msgstr "יום נישואין"
 #. Business
 msgid "Work"
 msgstr "בעבודה"
-
-msgid "Job Title"
-msgstr "תואר"
 
 msgid "Company"
 msgstr "חברה"
@@ -5775,24 +5740,6 @@ msgstr "האם ברצונך גם למחוק את המשתמש הזה מפנקס 
 msgid "The username specified is invalid."
 msgstr "שם המשתמש שהוזן אינו חוקי."
 
-#. 5
-msgid "In Love"
-msgstr "מאוהב"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "מצב הרוח הנוכחי"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "מצב-רוח חדש"
-
-msgid "Change your Mood"
-msgstr "שנה את מצב הרוח שלך"
-
-msgid "How do you feel right now?"
-msgstr "איך את/ה מרגיש/ה עכשיו?"
-
 msgid "The PIN you entered is invalid."
 msgstr "ה-PIN שהזנת אינו חוקי."
 
@@ -5857,10 +5804,6 @@ msgstr "אין חלון-הקדמה זמין כרגע"
 
 msgid "About"
 msgstr "אודות"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "שינוי מצב-רוח..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6092,6 +6035,9 @@ msgstr "אירעה שגיאה בחיבור אל MXit. (שלב קריאה 0x05)"
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "אירעה שגיאה בחיבור אל MXit. (שלב קריאה 0x06)"
+
+msgid "In Love"
+msgstr "מאוהב"
 
 msgid "Pending"
 msgstr "ממתין"
@@ -6484,9 +6430,6 @@ msgstr "פג תוקף סיסמתך"
 msgid "Incorrect password"
 msgstr "סיסמה לא נכונה"
 
-msgid "User not found"
-msgstr "המשתמש לא נמצא"
-
 msgid "Account has been disabled"
 msgstr "החשבון בוטל"
 
@@ -6736,111 +6679,156 @@ msgstr ""
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL אינם מאפשרים לאמת את שם המשתמש שלך כאן"
 
+#, c-format
+msgid "Error requesting %s"
+msgstr "שגיאה בבקשת %s"
+
 msgid "Could not join chat room"
 msgstr "לא ניתן להתחבר אל חדר הצ'אט"
 
 msgid "Invalid chat room name"
 msgstr "שם החדר אינו תקף"
 
+msgid "Invalid error"
+msgstr "מספר שגיאה לא תקף."
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "לא ניתן לקבל הודעות עקב הגבלות הורים"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "לא ניתן לשלוח SMS ללא קבלת התנאים"
+
+msgid "Cannot send SMS"
+msgstr "לא מסוגל לשלוח SMS"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "לא מסוגל לשלוח SMS לארץ זו"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "לא ניתן לשלוח SMS למדינה לא מוכרת"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "חשבון רובוטי לא יכולים ליזום שיחות"
+
+msgid "Bot account cannot IM this user"
+msgstr "חשבון רובוטי לא יכולים לשלוח הודעה למשתמש זה"
+
+msgid "Bot account reached IM limit"
+msgstr "החשבון רובוטי עבר את מכסת ההודעות"
+
+msgid "Bot account reached daily IM limit"
+msgstr "החשבון רובוטי עבר את מכסת ההודעות היומית"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "החשבון רובוטי עבר את מכסת ההודעות החודשית"
+
+msgid "Unable to receive offline messages"
+msgstr "לא ניתן לקבל הודעות לא-מקוונות"
+
+msgid "Offline message store full"
+msgstr "איזור אחסון ההודעות הלא-מקוונות הינו מלא"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "לא ניתן לשלוח הודעה %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "לא ניתן לשלוח הודעה: %s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "לא ניתן לשלוח הודעה אל %s: %s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "לא ניתן לשלוח הודעה אל %s: %s"
+
 msgid "Thinking"
-msgstr ""
+msgstr "מחשבה"
 
-#, fuzzy
 msgid "Shopping"
-msgstr "מפסיק/ה להקליד הודעה"
+msgstr "קניות"
 
-#, fuzzy
 msgid "Questioning"
-msgstr "חלון שאלה"
+msgstr "תהייה"
 
-#, fuzzy
 msgid "Eating"
-msgstr "מדפדף"
+msgstr "אוכל"
 
-#, fuzzy
 msgid "Watching a movie"
-msgstr "באמצע משחק"
+msgstr "באמצע סרט"
 
 msgid "Typing"
 msgstr "מקליד/ה"
 
-#, fuzzy
 msgid "At the office"
-msgstr "לא נמצא במשרד"
+msgstr "במשרד"
 
 msgid "Taking a bath"
-msgstr ""
+msgstr "רחצה באמבט"
 
 msgid "Watching TV"
-msgstr ""
+msgstr "צפייה בטלויזיה"
 
-#, fuzzy
 msgid "Having fun"
-msgstr "התנתק"
+msgstr "בכיף"
 
-#, fuzzy
 msgid "Sleeping"
-msgstr "ישנוני"
+msgstr "שינה"
 
 msgid "Using a PDA"
-msgstr ""
+msgstr "שימוש במחשב כף-יד"
 
-#, fuzzy
 msgid "Meeting friends"
-msgstr "חברי בהודעות מידיות"
+msgstr "במפגש עם חברים"
 
-#, fuzzy
 msgid "On the phone"
-msgstr "משוחח בטלפון"
+msgstr "בטלפון"
 
-#, fuzzy
 msgid "Surfing"
-msgstr "חוזר"
+msgstr "גלישה"
 
 #. "I am mobile." / "John is mobile."
 msgid "Mobile"
 msgstr "נייד"
 
 msgid "Searching the web"
-msgstr ""
+msgstr "חיפוש באינטרנט"
 
 msgid "At a party"
-msgstr ""
+msgstr "במסיבה"
 
 msgid "Having Coffee"
-msgstr ""
+msgstr "שתיית קפה"
 
 #. Playing video games
-#, fuzzy
 msgid "Gaming"
-msgstr "תאומים"
+msgstr "משחקים"
 
 msgid "Browsing the web"
-msgstr ""
+msgstr "דפדוף באינטרנט"
 
-#, fuzzy
 msgid "Smoking"
-msgstr "שיר"
+msgstr "עישון"
 
-#, fuzzy
 msgid "Writing"
-msgstr "עובד"
+msgstr "כתיבה"
 
 #. Drinking [Alcohol]
-#, fuzzy
 msgid "Drinking"
-msgstr "עובד"
+msgstr "שותה"
 
 msgid "Listening to music"
 msgstr "מקשיב/ה למוזיקה"
 
-#, fuzzy
 msgid "Studying"
-msgstr "שליחה"
+msgstr "לימודים"
 
-#, fuzzy
 msgid "In the restroom"
-msgstr "תחומי עניין"
+msgstr "בשירותים"
 
 msgid "Received invalid data on connection with server"
 msgstr "התקבל מידע שגוי בעת חיבור עם השרת."
@@ -6908,116 +6896,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "הקובץ %s הינו %s, שהוא גדול מהגודל המירבי של %s."
 
-msgid "Invalid error"
-msgstr "מספר שגיאה לא תקף."
-
-msgid "Invalid SNAC"
-msgstr "SNAC לא תקף"
-
-msgid "Rate to host"
-msgstr "דירוג למארח"
-
-msgid "Rate to client"
-msgstr "דירוג ללקוח"
-
-msgid "Service unavailable"
-msgstr "השירות אינו זמין"
-
-msgid "Service not defined"
-msgstr "שירות אינו מוגדר"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC מיושן"
-
-msgid "Not supported by host"
-msgstr "לא נתמך על-ידי השרת"
-
-msgid "Not supported by client"
-msgstr "לא נתמך על-ידי הלקוח"
-
-msgid "Refused by client"
-msgstr "החיבור נדחה על ידי הלקוח."
-
-msgid "Reply too big"
-msgstr "המענה גדול מדיי"
-
-msgid "Responses lost"
-msgstr "אבדו המשובים"
-
-msgid "Request denied"
-msgstr "הבקשה נדחית"
-
-msgid "Busted SNAC payload"
-msgstr "מידע פגום ב-SNAC"
-
-msgid "Insufficient rights"
-msgstr "אין די הרשאות"
-
-msgid "In local permit/deny"
-msgstr "באישור/שלילה מקומיים"
-
-msgid "Warning level too high (sender)"
-msgstr "רמת אזהרה גבוהה מדי (שולח("
-
-msgid "Warning level too high (receiver)"
-msgstr "רמת אזהרה גבוהה מדי (מקבל)"
-
-msgid "User temporarily unavailable"
-msgstr "המשתמש אינו זמין כרגע"
-
-msgid "No match"
-msgstr "אין התאמה"
-
-msgid "List overflow"
-msgstr "גלישת מגבולות הרשימה"
-
-msgid "Request ambiguous"
-msgstr "בקשה לא ברורה"
-
-msgid "Queue full"
-msgstr "התור מלא"
-
-msgid "Not while on AOL"
-msgstr "לא בזמן שהות ב-AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "לא ניתן לקבל הודעות עקב הגבלות הורים"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "לא ניתן לשלוח SMS ללא קבלת התנאים"
-
-msgid "Cannot send SMS"
-msgstr "לא מסוגל לשלוח SMS"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "לא מסוגל לשלוח SMS לארץ זו"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "לא ניתן לשלוח SMS למדינה לא מוכרת"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "חשבון רובוטי לא יכולים ליזום שיחות"
-
-msgid "Bot account cannot IM this user"
-msgstr "חשבון רובוטי לא יכולים לשלוח הודעה למשתמש זה"
-
-msgid "Bot account reached IM limit"
-msgstr "החשבון רובוטי עבר את מכסת ההודעות"
-
-msgid "Bot account reached daily IM limit"
-msgstr "החשבון רובוטי עבר את מכסת ההודעות היומית"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "החשבון רובוטי עבר את מכסת ההודעות החודשית"
-
-msgid "Unable to receive offline messages"
-msgstr "לא ניתן לקבל הודעות לא-מקוונות"
-
-msgid "Offline message store full"
-msgstr "איזור אחסון ההודעות הלא-מקוונות הינו מלא"
-
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
 "is probably using a different encoding than expected.  If you know what "
@@ -7053,7 +6931,7 @@ msgid "Games"
 msgstr "משחקים"
 
 msgid "ICQ Xtraz"
-msgstr ""
+msgstr "ICQ Xtraz"
 
 msgid "Add-Ins"
 msgstr "תוספות"
@@ -7121,25 +6999,20 @@ msgstr "מודע רשת"
 msgid "Invisible"
 msgstr "בלתי נראה"
 
-#, fuzzy
 msgid "Evil"
-msgstr "דואר"
+msgstr "רוע-לב"
 
-#, fuzzy
 msgid "Depression"
-msgstr "מקצוע"
+msgstr "דיכאון"
 
-#, fuzzy
 msgid "At home"
-msgstr "אודותי"
+msgstr "בבית"
 
-#, fuzzy
 msgid "At work"
-msgstr "רשת"
+msgstr "בעבודה"
 
-#, fuzzy
 msgid "At lunch"
-msgstr "יצא לאכול"
+msgstr "בארוחת-צהריים"
 
 msgid "IP Address"
 msgstr "כתובת IP"
@@ -7360,27 +7233,8 @@ msgstr[0] "פספסת %hu הודעה מאת %s מסיבה לא ידועה."
 msgstr[1] "פספסת %hu הודעות מאת %s מסיבה לא ידועה."
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "לא ניתן לשלוח הודעה %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "לא ניתן לשלוח הודעה: %s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "לא ניתן לשלוח הודעה אל %s: %s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "לא ניתן לשלוח הודעה אל %s: %s"
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "מידע על המשתמש אינו זמין: %s"
-
-msgid "Unknown reason."
-msgstr "סיבה לא ידועה."
 
 msgid "Online Since"
 msgstr "מחובר מאז"
@@ -7623,9 +7477,8 @@ msgstr "הודעת התמונה לא נשלחה. לא ניתן לשלוח תמו
 msgid "iTunes Music Store Link"
 msgstr "לינק לחנות המוזיקה iTunes"
 
-#, fuzzy
 msgid "Lunch"
-msgstr "פינץ'"
+msgstr "ארוחת-צהריים"
 
 #, c-format
 msgid "Buddy Comment for %s"
@@ -7658,9 +7511,8 @@ msgstr "הצג פרטי AIM"
 msgid "Edit Buddy Comment"
 msgstr "ערוך הערת איש קשר"
 
-#, fuzzy
 msgid "Get X-Status Msg"
-msgstr "הורד הודעת מצב"
+msgstr "שלוף הודעת X-Status"
 
 msgid "End Direct IM Session"
 msgstr "סיים חיבור IM ישיר"
@@ -8067,6 +7919,10 @@ msgstr "מבקש"
 
 msgid "Admin"
 msgstr "מנהל"
+
+#. XXX: Should this be "Topic"?
+msgid "Room Title"
+msgstr "כותרת החדר"
 
 msgid "Notice"
 msgstr "הודעה"
@@ -9939,9 +9795,6 @@ msgstr "Yahoo ID..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "תוסף פרוטוקול Yahoo!"
 
-msgid "Pager server"
-msgstr "שרת ה-Pager"
-
 msgid "Pager port"
 msgstr "יציאת Pager"
 
@@ -9962,12 +9815,6 @@ msgstr "השתמש בחשבון שרת-תיווך עבור חיבורי SSL"
 
 msgid "Chat room list URL"
 msgstr "מיקום של רשימת חדרי הצ'אט"
-
-msgid "Yahoo Chat server"
-msgstr "שרת צ'אט של Yahoo"
-
-msgid "Yahoo Chat port"
-msgstr "כניסת שרת Yahoo"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Yahoo יפן ID"
@@ -10031,6 +9878,14 @@ msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
 msgstr "החשבון נעול: סיבה לא ידועה. התחברות באתר Yahoo! אולי תתקן את זה."
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
+msgstr ""
+"החשבון ננעל: ניסית להתחבר בתדירות גבוהה מדי.  יש לחכות כמה דקות לפני ניסיון "
+"ההתחברות הבא.  כניסה לאתר של Yahoo! אולי תועיל."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10105,6 +9960,14 @@ msgstr "אבד החיבור עם %s: %s"
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "לא ניתן ליצור חיבור עם %s: %s"
+
+msgid "Unable to connect: The server returned an empty response."
+msgstr "לא ניתן להתחבר: השרת השיב בתשובה ריקה."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr "לא ניתן להתחבר: תשובת השרת לא הכילה את הנתונים הנחוצים"
 
 msgid "Not at Home"
 msgstr "לא נמצא בבית"
@@ -10474,6 +10337,10 @@ msgstr "ל_א"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "א_שר"
 
@@ -10540,9 +10407,8 @@ msgstr "נא לא להפריע"
 msgid "Extended away"
 msgstr "העדרות ממושכת"
 
-#, fuzzy
 msgid "Feeling"
-msgstr "קבלה"
+msgstr "ההרגשה שלי"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -10711,12 +10577,6 @@ msgstr "למסרים באינטרנט"
 
 msgid "Pidgin Internet Messenger"
 msgstr "פידג'ין למסרים באינטרנט"
-
-msgid "Orientation"
-msgstr "כיוון"
-
-msgid "The orientation of the tray."
-msgstr "כיוון מגש המערכת"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11079,13 +10939,11 @@ msgstr "אינך מחובר/ת כרגע עם החשבון שמסוגל להוס�
 msgid "Unknown node type"
 msgstr "נקודה-ברשת מסוג לא מוכר"
 
-#, fuzzy
 msgid "Please select your mood from the list"
-msgstr "יש לבחור את מצב הרוח שלך מהרשימה."
+msgstr "יש לבחור את מצב הרוח שלך מהרשימה"
 
-#, fuzzy
 msgid "Message (optional)"
-msgstr "שם נוסף (לא חובה)"
+msgstr "הודעה (לא חובה)"
 
 msgid "Edit User Mood"
 msgstr "קבע מצב-רוח משתמש"
@@ -11168,9 +11026,8 @@ msgstr "/כלים/_העדפות"
 msgid "/Tools/Pr_ivacy"
 msgstr "/כלים/_פרטיות"
 
-#, fuzzy
 msgid "/Tools/Set _Mood"
-msgstr "/כלים/דו\"ח המערכת"
+msgstr "/כלים/קבע מצב-ר_וח"
 
 msgid "/Tools/_File Transfers"
 msgstr "/כלים/העברת _קבצים..."
@@ -11191,20 +11048,17 @@ msgstr "/_עזרה"
 msgid "/Help/Online _Help"
 msgstr "/עזרה/עזרה מקוונת"
 
-#, fuzzy
 msgid "/Help/_Build Information"
-msgstr "מידע עבור איש הקשר"
+msgstr "/עזרה/_גירסת תוכנה"
 
 msgid "/Help/_Debug Window"
 msgstr "/עזרה/_חלון ניפוי באגים"
 
-#, fuzzy
 msgid "/Help/De_veloper Information"
-msgstr "מידע על השרת"
+msgstr "/עזרה/פרטי מפת_חים"
 
-#, fuzzy
 msgid "/Help/_Translator Information"
-msgstr "מידע אישי"
+msgstr "/עזרה/פרטי מתר_גמים"
 
 msgid "/Help/_About"
 msgstr "/עזרה/_אודות"
@@ -11429,7 +11283,6 @@ msgstr "<PurpleMain>/חשבונות/"
 msgid "_Edit Account"
 msgstr "_ערוך חשבון"
 
-#, fuzzy
 msgid "Set _Mood..."
 msgstr "קבע מצב-רוח..."
 
@@ -11551,9 +11404,8 @@ msgstr "/שיחת ו_ידאו/\\קול/שיחה/מדיה"
 msgid "/Conversation/Se_nd File..."
 msgstr "/שיחה/ש_לח קובץ..."
 
-#, fuzzy
 msgid "/Conversation/Get _Attention"
-msgstr "/שיחה/הצג מידע"
+msgstr "/שיחה/הסב תשומת _לב"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/שיחה/הוסף פ_עולת תגובה..."
@@ -11636,9 +11488,8 @@ msgstr "/שיחת וידאו/\\קול/שיחה/מדיה"
 msgid "/Conversation/Send File..."
 msgstr "/שיחה/שלח קובץ..."
 
-#, fuzzy
 msgid "/Conversation/Get Attention"
-msgstr "/שיחה/הצג מידע"
+msgstr "/שיחה/הסב תשומת לב"
 
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/שיחה/הוסף פעולת תגובה לאירועי איש קשר..."
@@ -11704,13 +11555,11 @@ msgstr "ש_לח"
 msgid "0 people in room"
 msgstr "0 אנשים בחדר זה"
 
-#, fuzzy
 msgid "Close Find bar"
-msgstr "סגור טאב זה"
+msgstr "סגור סרגל חיפוש"
 
-#, fuzzy
 msgid "Find:"
-msgstr "חפש"
+msgstr "חפש:"
 
 #, c-format
 msgid "%d person in room"
@@ -11873,6 +11722,10 @@ msgstr "אפריקאנס"
 msgid "Arabic"
 msgstr "ערבית"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "מבוייש"
+
 msgid "Belarusian Latin"
 msgstr "לטינית בלארוסית"
 
@@ -11881,6 +11734,9 @@ msgstr "בולגרית"
 
 msgid "Bengali"
 msgstr "בנגאלית"
+
+msgid "Bengali-India"
+msgstr "בנגאלית-הודו"
 
 msgid "Bosnian"
 msgstr "בוסנית"
@@ -11996,6 +11852,10 @@ msgstr "לאית"
 msgid "Macedonian"
 msgstr "מקדונית"
 
+#, fuzzy
+msgid "Malayalam"
+msgstr "מאלאית"
+
 msgid "Mongolian"
 msgstr "מונגולית"
 
@@ -12104,23 +11964,20 @@ msgstr "אמהרית"
 msgid "Lithuanian"
 msgstr "ליטואנית"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s is a messaging client based on libpurple which is capable of connecting "
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
-"%s הינה תוכנת שליחת הודעות מיידיות גרפית מודולרית מבוססת libpurple אשר לבצע "
-"חיבורים אל AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novel "
-"GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, QQ ובכולם "
-"בו- זמנית. התוכנה נכתבה בעזרת GTK+.<BR><BR>מותר לערוך שינויים ולהפיץ את "
-"התוכנה תחת הנחיות רישיון הGPL (גרסא 2 והלאה). יותר). העתק של ה-GPL מוכל בתוך "
-"הקובץ 'COPYING' המופץ עם %s. %s היא תחת זכויות המפתחים והתורמים לפיתוח. ראה "
-"את הקובץ 'COPYRIGHT' לרשימה מלאה של התורמים. איננו מספקים שום אחריות לתוכנה "
-"זו.<BR><BR>"
+"%s הינה תוכנת הודעות המבוססת על libpurple ומסוגלת להתחבר למספר שירותי הודעות "
+"בו-זמנית.  %s נכתבה בשפת C ובעזרת GTK+.  %s יצאה לאור, וניתן לערוך ולהפיץ "
+"אותה, תחת תנאי הרשיון GPL גרסה 2 (והלאה).  יש העתק של הרישיון GPL המופץ עם "
+"%s.  %s מוגנת תחת זכויות יוצריה, אשר רשימתם גם היא מופצת עם %s.  אין אחריות "
+"עבור %s.<BR><BR>"
 
 #, c-format
 msgid ""
@@ -12129,8 +11986,11 @@ msgid ""
 "Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
 "im<BR><BR>"
 msgstr ""
+"<FONT SIZE=\"4\"><B>משאבי ידע</B></FONT><BR>\t<A HREF=\"%s\">אתר אינטרנט</"
+"A><BR>\t<A HREF=\"%s\">שאלות נפוצות</A><BR>\tערוץ IRC: #pidgin on irc."
+"freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
@@ -12140,24 +12000,24 @@ msgid ""
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\">עזרה ממשתמשי פידג'ין אחרים:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>זוהי רשימת תפוצה<b>פומבית</b>! "
-"(<a href=\"http://pidgin.im/pipermail/support/\">ארכיון</a>)<br/>אנחנו לא "
-"מסוגלים לעזור עם תוספים מצד-שלישי!<br/>השפה השולטת בה היא <b>אנגלית</b>.  "
-"מותר לשלוח הודעות גם בשפות אחרות, אבל ייתכן והתגובות יעזרו לך פחות.<br/><br/>"
+"<font size=\"4\"><b>עזרה ממשתמשי פידג'ין אחרים</b></font> ניתן לקבל באימייל "
+"<a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>זוהי רשימת "
+"תפוצה <b>פומבית</b>! (<a href=\"http://pidgin.im/pipermail/support/"
+"\">archive</a>)<br/>אנו לא מסוגלים לעזור עם בעיות בתוספים או בתוספים של צד "
+"שלישי!<br/> השפה השולטה כאן היא <b>אנגלית</b>. אתם מוזמנים לכתוב הודעות "
+"בשפות אחרות, אבל ייתכן והתשובות שתקבלו יהיו פחות משביעות-רצון.<br/>"
 
 #, c-format
 msgid "About %s"
 msgstr "אודות %s"
 
-#, fuzzy
 msgid "Build Information"
-msgstr "מידע עבור איש הקשר"
+msgstr "פרטי גרסת תוכנה"
 
 #. End of not to be translated section
-#, fuzzy, c-format
+#, c-format
 msgid "%s Build Information"
-msgstr "מידע עבור איש הקשר"
+msgstr "%s פרטי גרסת תוכנה"
 
 msgid "Current Developers"
 msgstr "מפתחים"
@@ -12171,9 +12031,9 @@ msgstr "מפתחים שתרמו בעבר"
 msgid "Retired Crazy Patch Writers"
 msgstr "מחברי תיקונים מטורפים בדימוס"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Developer Information"
-msgstr "מידע על השרת"
+msgstr "%s פרטי מפתח"
 
 msgid "Current Translators"
 msgstr "מתרגמים פעילים"
@@ -12181,9 +12041,9 @@ msgstr "מתרגמים פעילים"
 msgid "Past Translators"
 msgstr "מתרגמים לשעבר"
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Translator Information"
-msgstr "מידע נוסף"
+msgstr "%s פרטי מתרגם"
 
 msgid "_Name"
 msgstr "שם_"
@@ -12580,9 +12440,8 @@ msgstr "הכנס תמונת-הודעה מיידית"
 msgid "Insert Smiley"
 msgstr "הכנס חיוכון"
 
-#, fuzzy
 msgid "Send Attention"
-msgstr "כפתור שליחה"
+msgstr "שליחת בקשת תשומת-לב"
 
 msgid "<b>_Bold</b>"
 msgstr "<b>מ_ודגש:</b>"
@@ -12630,7 +12489,7 @@ msgid "_Smile!"
 msgstr "חייך!"
 
 msgid "_Attention!"
-msgstr ""
+msgstr "תשומת-לב!"
 
 msgid "Log Deletion Failed"
 msgstr "מחיקת יומן-הרישום נכשלה"
@@ -12646,14 +12505,14 @@ msgstr "האם ברצונך למחוק את רישום השיחה עם %s שהת
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr "האם ברצונך למחוק את רישום השיחה ב- %s שהתחיל ב- %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "האם ברצונך למחוק את רישום יומן המערכת שהחל ב- %s?"
 
 msgid "Delete Log?"
@@ -13554,9 +13413,8 @@ msgstr "טקסט לקיצור-דרך"
 msgid "Custom Smiley Manager"
 msgstr "מנהל החייכנים שלך"
 
-#, fuzzy
 msgid "Attention received"
-msgstr "נדרשת הפעלה"
+msgstr "תשומת-לב התקבלה"
 
 msgid "Select Buddy Icon"
 msgstr "בחירת תמונה עבור חבר"
@@ -14669,8 +14527,17 @@ msgid "Timestamp Format Options"
 msgstr "אפשרויות חותמת-זמן"
 
 #, c-format
-msgid "_Force 24-hour time format"
-msgstr " אלץ שימוש בחותמת-זמן על בסיס 24-שעות"
+msgid "_Force timestamp format:"
+msgstr " אלץ שימוש בחותמת-זמן:"
+
+msgid "Use system default"
+msgstr "השתמש בברירות המחדל של מערכת ההפעלה"
+
+msgid "12 hour time format"
+msgstr "תצוגת שעה בתצורת 12 שעות"
+
+msgid "24 hour time format"
+msgstr "תצוגת שעה בתצורת 24 שעות"
 
 msgid "Show dates in..."
 msgstr "הצג תאריכים ב..."
@@ -14867,9 +14734,244 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "שלח וקבל סטנזות XMPP גולמיות."
 
 #. *  description
-#, fuzzy
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "תוסף זה שימושי לניפוי באגים בשרתים ולקוחות של XMPP."
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+"$(^Name) .הרישיון נמצא כאן בשביל מידע בלבד .GPL משוחרר תחת רישיון $_CLICK"
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "עותק של פידג'ין כבר רץ. יש לסגור את פידג'ין ולנסות שנית."
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr ".בסיסיים DLL-ו Pidgin קבצי"
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "צור קיצור-דרך עבור פידג'ין בתפריט ההתחל"
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr "צור קיצור-דרך עבור פידג'ין על שולחן העבודה"
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Desktop"
+msgstr "שולחן העבודה"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "GTK+ Runtime (required if not present)"
+msgstr "(חובה) .GTK+ סביבת"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "מיקום"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "הבא >"
+
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "(חובה) .Pidgin תוכנת"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Shortcuts"
+msgstr "קיצורי דרך"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr "קיצורי-דרך להפעלת פידג'ין"
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "תמיכה בבדיקות איות"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr "תפריט ההתחל"
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr "תמיכה עבור בדיקות איות (דורש חיבור אינטרנט להתקנה)"
+
+msgid "The installer is already running."
+msgstr "תוכנת ההתקנה כבר רצה."
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+".GTK+ ההתקנה לא מצאה את הרישומים של$\\r.יכול להיות שמשמתמש אחר התקין את "
+"התוכנה הזאת"
+
+#. Installer Subsection Text
+msgid "URI Handlers"
+msgstr "מנהלי URI"
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"לא מסוגל להסיר את הגירסא המותקנת של פידג'ין. הגירסא החדשה תותקן ללא הסרת "
+"הגרסא המותקנת."
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ".Pidginבקרו באתר של "
+
+msgid "You do not have permission to uninstall this application."
+msgstr ".אין לך זכות למחוק תוכנה זאת"
+
+#~ msgid "A multi-platform GUI toolkit, used by Pidgin"
+#~ msgstr "מולטי-פלטפורמי, בו נעזר פידג'ין GUI כלי"
+
+#~ msgid "Current Mood"
+#~ msgstr "מצב הרוח הנוכחי"
+
+#~ msgid "New Mood"
+#~ msgstr "מצב-רוח חדש"
+
+#~ msgid "Change your Mood"
+#~ msgstr "שנה את מצב הרוח שלך"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "איך את/ה מרגיש/ה עכשיו?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "שינוי מצב-רוח..."
+
+#~ msgid "Invalid SNAC"
+#~ msgstr "SNAC לא תקף"
+
+#~ msgid "Rate to host"
+#~ msgstr "דירוג למארח"
+
+#~ msgid "Rate to client"
+#~ msgstr "דירוג ללקוח"
+
+#~ msgid "Service unavailable"
+#~ msgstr "השירות אינו זמין"
+
+#~ msgid "Service not defined"
+#~ msgstr "שירות אינו מוגדר"
+
+#~ msgid "Obsolete SNAC"
+#~ msgstr "SNAC מיושן"
+
+#~ msgid "Not supported by host"
+#~ msgstr "לא נתמך על-ידי השרת"
+
+#~ msgid "Not supported by client"
+#~ msgstr "לא נתמך על-ידי הלקוח"
+
+#~ msgid "Refused by client"
+#~ msgstr "החיבור נדחה על ידי הלקוח."
+
+#~ msgid "Reply too big"
+#~ msgstr "המענה גדול מדיי"
+
+#~ msgid "Responses lost"
+#~ msgstr "אבדו המשובים"
+
+#~ msgid "Request denied"
+#~ msgstr "הבקשה נדחית"
+
+#~ msgid "Busted SNAC payload"
+#~ msgstr "מידע פגום ב-SNAC"
+
+#~ msgid "Insufficient rights"
+#~ msgstr "אין די הרשאות"
+
+#~ msgid "In local permit/deny"
+#~ msgstr "באישור/שלילה מקומיים"
+
+#~ msgid "Warning level too high (sender)"
+#~ msgstr "רמת אזהרה גבוהה מדי (שולח("
+
+#~ msgid "Warning level too high (receiver)"
+#~ msgstr "רמת אזהרה גבוהה מדי (מקבל)"
+
+#~ msgid "User temporarily unavailable"
+#~ msgstr "המשתמש אינו זמין כרגע"
+
+#~ msgid "No match"
+#~ msgstr "אין התאמה"
+
+#~ msgid "List overflow"
+#~ msgstr "גלישת מגבולות הרשימה"
+
+#~ msgid "Request ambiguous"
+#~ msgstr "בקשה לא ברורה"
+
+#~ msgid "Queue full"
+#~ msgstr "התור מלא"
+
+#~ msgid "Not while on AOL"
+#~ msgstr "לא בזמן שהות ב-AOL"
+
+#~ msgid "Unknown reason."
+#~ msgstr "סיבה לא ידועה."
+
+#~ msgid "Artist"
+#~ msgstr "אמן"
+
+#~ msgid "Album"
+#~ msgstr "אלבום"
+
+#~ msgid "Pager server"
+#~ msgstr "שרת ה-Pager"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "שרת צ'אט של Yahoo"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "כניסת שרת Yahoo"
+
+#~ msgid "Orientation"
+#~ msgstr "כיוון"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "כיוון מגש המערכת"
 
 #~ msgid "Error creating conference."
 #~ msgstr "שגיאה ביצירת שיחת הועידה."
