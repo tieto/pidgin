@@ -733,7 +733,7 @@ got_invite(MsnSlpCall *slpcall,
 
 		bridges = get_token(content, "Bridges: ", "\r\n");
 		nonce = parse_dc_nonce(content, &ntype);
-		if (nonce && bridges && strstr(bridges, "TCPv1") != NULL) {
+		if (bridges && strstr(bridges, "TCPv1") != NULL) {
 			/*
 			 * Ok, the client supports direct TCP connection
 			 * Try to create a listening port
