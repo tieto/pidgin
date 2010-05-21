@@ -92,8 +92,8 @@ static void* mxit_link_click( const char* link64 )
 		goto skip;
 	con = purple_account_get_connection( account );
 
-//	/* determine if it's a command-response to send */
-//	is_command = g_str_has_prefix( parts[4], "::type=reply|" );
+	/* determine if it's a command-response to send */
+	is_command = g_str_has_prefix( parts[4], "::type=reply|" );
 
 	/* send click message back to MXit */
 	mxit_send_message( con->proto_data, parts[3], parts[4], FALSE, is_command );
@@ -352,6 +352,10 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 	if ( contact->subtype != 0 )
 		purple_notify_user_info_add_pair( info, _( "Subscription" ), mxit_convert_subtype_to_name( contact->subtype ) );
 
+	/* rejection message */
+	if ( ( contact->subtype == MXIT_SUBTYPE_REJECTED ) && ( contact->msg != NULL ) )
+		purple_notify_user_info_add_pair( info, _( "Rejection Message" ), contact->msg );
+
 	/* hidden number */
 	if ( contact->flags & MXIT_CFLAG_HIDDEN )
 		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), _( "Yes" ) );
@@ -491,6 +495,8 @@ static void mxit_free_buddy( PurpleBuddy* buddy )
 			g_free( contact->statusMsg );
 		if ( contact->avatarId )
 			g_free( contact->avatarId );
+		if ( contact->msg )
+			g_free( contact->msg );
 		g_free( contact );
 	}
 
@@ -552,8 +558,8 @@ static void mxit_set_buddy_icon( PurpleConnection *gc, PurpleStoredImage *img )
 static void mxit_get_info( PurpleConnection *gc, const char *who )
 {
 	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
-	const char*				profilelist[]	= { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_HIDENUMBER, CP_PROFILE_FULLNAME,
-												CP_PROFILE_TITLE, CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_EMAIL };
+	const char*				profilelist[]	= { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME,
+												CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY };
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_info: '%s'\n", who );
 

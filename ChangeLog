@@ -20,6 +20,10 @@ version 2.7.1 (??/??/????):
 	* Support for direct connections, enabling faster file transfers,
 	  smiley and buddy icon loading.  (Gábor Szuromi)
 
+	XMPP:
+	* Allow connecting to servers that advertise EXTERNAL (broken in
+	  2.7.0)
+
 version 2.7.0 (05/12/2010):
 	General:
 	* Changed GTK+ minimum version requirement to 2.10.0.

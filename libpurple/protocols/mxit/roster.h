@@ -105,7 +105,7 @@ struct contact {
 	short		presence;							/* presence state */
 	short		subtype;							/* subscription type */
 
-	char*		msg;								/* invite message */
+	char*		msg;								/* invite/rejection message */
 
 	char		customMood[16];						/* custom mood */
 	char*		statusMsg;							/* status message */

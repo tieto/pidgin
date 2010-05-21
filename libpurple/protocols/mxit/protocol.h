@@ -85,11 +85,12 @@
 
 /* MXit client version */
 #define		MXIT_CP_DISTCODE		"P"						/* client distribution code (magic, do not touch!) */
-#define		MXIT_CP_RELEASE			"5.9.0"					/* client protocol release version supported */
+#define		MXIT_CP_RELEASE			"5.9.0"					/* client version */
 #define		MXIT_CP_ARCH			"Y"						/* client architecture series (Y not for Yoda but for PC-client) */
 #define		MXIT_CLIENT_ID			"LP"					/* client ID as specified by MXit */
 #define		MXIT_CP_PLATFORM		"PURPLE"				/* client platform */
 #define		MXIT_CP_VERSION			MXIT_CP_DISTCODE"-"MXIT_CP_RELEASE"-"MXIT_CP_ARCH"-"MXIT_CP_PLATFORM
+#define		MXIT_CP_PROTO_VESION	60						/* client protocol version */
 
 /* set operating system name */
 #if defined( __APPLE__ )
@@ -188,6 +189,7 @@
 #define		CP_PROFILE_LASTNAME		"lastname"				/* Last name (UTF8 String) */
 #define		CP_PROFILE_EMAIL		"email"					/* Email address (UTF8 String) */
 #define		CP_PROFILE_MOBILENR		"mobilenumber"			/* Mobile Number (UTF8 String) */
+#define		CP_PROFILE_REGCOUNTRY	"registeredcountry"		/* Registered Country Code (UTF8 String) */
 
 /* extended profile field types */
 #define		CP_PROF_TYPE_BOOL		0x02					/* boolean profile attribute type */
