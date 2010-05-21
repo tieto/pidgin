@@ -150,7 +150,7 @@ msn_dc_new(MsnSlpCall *slpcall)
 	dc->ext_ip = NULL;
 	dc->timeout_handle = 0;
 	dc->progress = FALSE;
-	//dc->num_calls = 1;
+	/*dc->num_calls = 1;*/
 
 	/* TODO: Probably should set this based on buddy caps */
 	dc->nonce_type = DC_NONCE_PLAIN;

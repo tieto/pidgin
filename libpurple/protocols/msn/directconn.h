@@ -111,7 +111,7 @@ struct _MsnDirectConn
 	guint       timeout_handle;
 	gboolean    progress;
 
-	//int   num_calls;  /**< The number of slpcalls using this direct connection */
+	/*int   num_calls;*/  /**< The number of slpcalls using this direct connection */
 };
 
 /* Outgoing attempt */
