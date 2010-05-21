@@ -953,6 +953,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 			{
 				g_free(slpcall->branch);
 				slpcall->branch = g_strdup(branch);
+				got_invite(slpcall, branch, content_type, content);
 			}
 			else if (content_type && content)
 			{
