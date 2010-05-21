@@ -18,6 +18,10 @@ version 2.7.1 (??/??/????):
 	* Fix unnecessary bandwidth consumption for buddy icon requests when
 	  buddies have capital letters in their passport addresses.
 
+	XMPP:
+	* Allow connecting to servers that advertise EXTERNAL (broken in
+	  2.7.0)
+
 version 2.7.0 (05/12/2010):
 	General:
 	* Changed GTK+ minimum version requirement to 2.10.0.
