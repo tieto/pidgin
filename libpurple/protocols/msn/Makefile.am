@@ -12,6 +12,8 @@ MSNSOURCES = \
 	command.h \
 	contact.c\
 	contact.h\
+	directconn.c \
+	directconn.h \
 	error.c \
 	error.h \
 	group.c \

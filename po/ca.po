@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-06 07:36+0200\n"
-"PO-Revision-Date: 2010-05-08 16:11+0200\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"PO-Revision-Date: 2010-05-11 22:10+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -4323,7 +4323,6 @@ msgstr "El servidor no permet blocar"
 msgid "Not Authorized"
 msgstr "No autoritzat"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Estat d'ànim"
 
@@ -4346,7 +4345,6 @@ msgstr "A"
 msgid "None (To pending)"
 msgstr "Cap (a pendent)"
 
-#. 0
 msgid "None"
 msgstr "Cap"
 
@@ -4896,7 +4894,6 @@ msgstr "Al·lucinant"
 msgid "Amorous"
 msgstr "Amorós"
 
-#. 1
 msgid "Angry"
 msgstr "Enfadat"
 
@@ -4975,7 +4972,6 @@ msgstr "Avergonyit"
 msgid "Envious"
 msgstr "Envejós"
 
-#. 2
 msgid "Excited"
 msgstr "Excitat"
 
@@ -4991,21 +4987,18 @@ msgstr "Agraït"
 msgid "Grieving"
 msgstr "De dol"
 
-#. 3
 msgid "Grumpy"
 msgstr "Rondinaire"
 
 msgid "Guilty"
 msgstr "Culpable"
 
-#. 4
 msgid "Happy"
 msgstr "Content"
 
 msgid "Hopeful"
 msgstr "Esperançat"
 
-#. 8
 msgid "Hot"
 msgstr "Calent"
 
@@ -5039,7 +5032,6 @@ msgstr "Interessat"
 msgid "Intoxicated"
 msgstr "Intoxicat"
 
-#. 6
 msgid "Invincible"
 msgstr "Invencible"
 
@@ -5091,7 +5083,6 @@ msgstr "Amb remordiments"
 msgid "Restless"
 msgstr "Neguitós"
 
-#. 7
 msgid "Sad"
 msgstr "Trist"
 
@@ -5110,11 +5101,9 @@ msgstr "En estat de xoc"
 msgid "Shy"
 msgstr "Vergonyós"
 
-#. 9
 msgid "Sick"
 msgstr "Malalt"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Endormiscat"
@@ -5952,24 +5941,6 @@ msgstr "Voleu suprimir aquest amic de la vostra llista d'amics també?"
 msgid "The username specified is invalid."
 msgstr "El nom d'usuari especificat no és vàlid."
 
-#. 5
-msgid "In Love"
-msgstr "Enamorat"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "Estat d'ànim actual"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "Nou estat d'ànim"
-
-msgid "Change your Mood"
-msgstr "Canvieu el vostre estat d'ànim"
-
-msgid "How do you feel right now?"
-msgstr "Com us trobeu ara mateix?"
-
 msgid "The PIN you entered is invalid."
 msgstr "El PIN que heu introduït no és vàlid."
 
@@ -6038,10 +6009,6 @@ msgstr "No hi ha cap pantalla de presentació disponible"
 
 msgid "About"
 msgstr "Quant a"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "Canvia l'estat d'ànim..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6282,6 +6249,9 @@ msgstr "S'ha produït un error de connexió a MXit. (read stage 0x05)"
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "S'ha produït un error de connexió a MXit. (read stage 0x06)"
+
+msgid "In Love"
+msgstr "Enamorat"
 
 msgid "Pending"
 msgstr "Pendent"
@@ -12215,6 +12185,9 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Àrab"
 
+msgid "Assamese"
+msgstr "Assamès"
+
 msgid "Belarusian Latin"
 msgstr "Bielorús (llatí)"
 
@@ -12341,6 +12314,9 @@ msgstr "Lasià"
 
 msgid "Macedonian"
 msgstr "Macedoni"
+
+msgid "Malayalam"
+msgstr "Malaiàlam"
 
 msgid "Mongolian"
 msgstr "Mongol"
@@ -15326,6 +15302,141 @@ msgstr "Envia i rep blocs XMPP en brut."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Aquest connector és útil per a depurar servidors o clients XMPP."
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+"$(^Name) és distribuït sota llicència GPL. Podeu consultar la llicència, "
+"només per proposits informatius, aquí.  $_CLICK"
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Una eina IGU multiplataforma, utilitzada per Pidgin"
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+"Hi ha una instància del Pidgin executant-se. Surt del Pidgin i torna a "
+"intentar-ho."
+
+msgid "Core Pidgin files and dlls"
+msgstr "Fitxers i dlls del nucli de Pidgin"
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Crear una entrada Pidgin al Menu Inici"
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr "Afegir un enllaç directe al Pidgin a l'Escriptori"
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+msgid "Desktop"
+msgstr "Escriptori"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "Entorn d'Execució GTK+ (necessari)"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "Ubicació"
+
+#. License Page
+msgid "Next >"
+msgstr "Següent >"
+
+#. Components Page
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Client Pidgin de Missatgeria Instantània (necessari)"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+msgid "Shortcuts"
+msgstr "Enllaços directes"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr "Enllaços directes per iniciar el Pidgin"
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr "Suport a la Verificació de l'Ortografia "
+
+msgid "Start Menu"
+msgstr "Menu Inici"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+"Suport per a Verificació de l'Ortografia.  (és necesaria connexió a internet "
+"per dur a terme la instal.lació)"
+
+msgid "The installer is already running."
+msgstr "L'instal.lador encara està executant-se."
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+"L'instal.lador podria no trobar les entrades del registre de Pidgin.$"
+"\\rProbablement un altre usuari ha instal.lat aquesta aplicació."
+
+#. URL Handler section
+msgid "URI Handlers"
+msgstr ""
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Visita la pàgina web de Pidgin per Windows"
+
+msgid "You do not have permission to uninstall this application."
+msgstr "No tens permís per desinstal.lar aquesta aplicació."
+
+#~ msgid "Current Mood"
+#~ msgstr "Estat d'ànim actual"
+
+#~ msgid "New Mood"
+#~ msgstr "Nou estat d'ànim"
+
+#~ msgid "Change your Mood"
+#~ msgstr "Canvieu el vostre estat d'ànim"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "Com us trobeu ara mateix?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "Canvia l'estat d'ànim..."
+
 #~ msgid "Orientation"
 #~ msgstr "Orientació"
 
@@ -15512,9 +15623,6 @@ msgstr "Aquest connector és útil per a depurar servidors o clients XMPP."
 
 #~ msgid "_User:"
 #~ msgstr "_Usuari:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "Versió del mòdul d'execució de GTK+"
 
 #~ msgid "Calling ... "
 #~ msgstr "S'està trucant..."
@@ -17838,9 +17946,6 @@ msgstr "Aquest connector és útil per a depurar servidors o clients XMPP."
 
 #~ msgid "Show _buttons as:"
 #~ msgstr "Mostra els _botons com a:"
-
-#~ msgid "Text"
-#~ msgstr "Text"
 
 #~ msgid "Pictures and text"
 #~ msgstr "Imatges i text"

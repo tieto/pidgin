@@ -70,7 +70,6 @@ bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 			buddy = (PurpleBuddy *) bnode;
 			if (purple_buddy_get_account(buddy) != account)
 				continue;
-			purple_prpl_got_user_status(account, purple_buddy_get_name(buddy), "offline", NULL);
 			purple_account_remove_buddy(account, buddy, NULL);
 			purple_blist_remove_buddy(buddy);
 		}
@@ -172,7 +171,9 @@ bonjour_close(PurpleConnection *connection)
 		g_free(bd->jabber_data);
 	}
 
-	/* Delete the bonjour group */
+	/* Delete the bonjour group
+	 * (purple_blist_remove_group will bail out if the group isn't empty)
+	 */
 	if (bonjour_group != NULL)
 		purple_blist_remove_group(bonjour_group);
 

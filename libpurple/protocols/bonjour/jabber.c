@@ -386,7 +386,7 @@ static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
 	BonjourBuddy *bb = NULL;
 	const gchar *name = bconv->pb ? purple_buddy_get_name(bconv->pb) : "(unknown)";
 
-	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", name);
+	purple_debug_info("bonjour", "Received conversation close notification from %s.\n", name);
 
 	if(bconv->pb != NULL)
 		bb = purple_buddy_get_protocol_data(bconv->pb);
@@ -582,7 +582,7 @@ static gboolean bonjour_jabber_send_stream_init(BonjourJabberConversation *bconv
 }
 
 /* This gets called when we've successfully sent our <stream:stream />
- * AND when we've recieved a <stream:stream /> */
+ * AND when we've received a <stream:stream /> */
 void bonjour_jabber_stream_started(BonjourJabberConversation *bconv) {
 
 	if (bconv->sent_stream_start == NOT_SENT && !bonjour_jabber_send_stream_init(bconv, bconv->socket)) {
@@ -1184,7 +1184,7 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 		buddies = purple_find_buddies(jdata->account, NULL);
 		for (l = buddies; l; l = l->next) {
 			BonjourBuddy *bb = purple_buddy_get_protocol_data((PurpleBuddy*) l->data);
-			if (bb != NULL) {
+			if (bb && bb->conversation) {
 				/* Any ongoing connection attempt is cancelled
 				 * by _purple_connection_destroy */
 				bb->conversation->connect_data = NULL;

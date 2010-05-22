@@ -1,6 +1,30 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.0 (??/??/????):
+version 2.7.1 (??/??/????):
+	General:
+	* Build fixes on OpenSolaris.  (Brian Lu)
+
+	Pidgin:
+	* Restore the tray icon's blinking functionality.
+	* Fix a crash setting moods when an account is disconnected.
+
+	Bonjour:
+	* Fix a crash on disconnect.
+
+	ICQ:
+	* Fix bug that caused HTML to be displayed in incoming messages.
+
+	MSN:
+	* Fix unnecessary bandwidth consumption for buddy icon requests when
+	  buddies have capital letters in their passport addresses.
+	* Support for direct connections, enabling faster file transfers,
+	  smiley and buddy icon loading.  (Gábor Szuromi)
+
+	XMPP:
+	* Allow connecting to servers that advertise EXTERNAL (broken in
+	  2.7.0)
+
+version 2.7.0 (05/12/2010):
 	General:
 	* Changed GTK+ minimum version requirement to 2.10.0.
 	* Changed GLib minimum version requirement to 2.12.0.
@@ -81,6 +105,7 @@ version 2.7.0 (??/??/????):
 	* Support for version 9 of the MSN protocol has been removed.  This
 	  version is no longer supported on the servers.
 	* Support file transfer thumbnails (previews) for images.
+	* Fix CVE-2010-1624 (custom emoticon remote crash).
 
 	XMPP:
 	* Direct messages to a specific resource only upon receipt of a message

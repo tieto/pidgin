@@ -135,6 +135,7 @@ libpurple/protocols/novell/nmuser.c
 libpurple/protocols/novell/novell.c
 libpurple/protocols/oscar/clientlogin.c
 libpurple/protocols/oscar/family_chatnav.c
+libpurple/protocols/oscar/family_icbm.c
 libpurple/protocols/oscar/family_locate.c
 libpurple/protocols/oscar/flap_connection.c
 libpurple/protocols/oscar/libaim.c
@@ -270,3 +271,4 @@ pidgin/plugins/vvconfig.c
 pidgin/plugins/win32/transparency/win2ktrans.c
 pidgin/plugins/win32/winprefs/winprefs.c
 pidgin/plugins/xmppconsole.c
+pidgin/win32/nsis/nsis_translations.desktop.in

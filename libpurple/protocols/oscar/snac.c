@@ -56,11 +56,9 @@ aim_snacid_t aim_cachesnac(OscarData *od, const guint16 family, const guint16 ty
 	snac.type = type;
 	snac.flags = flags;
 
-	if (datalen) {
-		if (!(snac.data = g_malloc(datalen)))
-			return 0; /* er... */
-		memcpy(snac.data, data, datalen);
-	} else
+	if (datalen)
+		snac.data = g_memdup(data, datalen);
+	else
 		snac.data = NULL;
 
 	return aim_newsnac(od, &snac);
@@ -78,9 +76,7 @@ aim_snacid_t aim_newsnac(OscarData *od, aim_snac_t *newsnac)
 	if (!newsnac)
 		return 0;
 
-	if (!(snac = g_malloc(sizeof(aim_snac_t))))
-		return 0;
-	memcpy(snac, newsnac, sizeof(aim_snac_t));
+	snac = g_memdup(newsnac, sizeof(aim_snac_t));
 	snac->issuetime = time(NULL);
 
 	index = snac->id % FAIM_SNAC_HASH_SIZE;

@@ -5,16 +5,16 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 19:19-0700\n"
-"PO-Revision-Date: 2010-03-03 03:58+0100\n"
-"Last-Translator: Yngve Spjeld Landro <nynorsk@landro.net>\n"
-"Language-Team: \n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"PO-Revision-Date: 2010-05-01 19:08+0200\n"
+"Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
+"Language-Team:  <>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -1356,8 +1356,6 @@ msgstr "Slett tilstand"
 msgid "Saved Statuses"
 msgstr "Lagra tilstandar"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "Tittel"
 
@@ -1652,6 +1650,12 @@ msgstr "Endra brukaropplysningane til %s"
 
 msgid "Set User Info"
 msgstr "Skriv inn brukaropplysningar"
+
+msgid "This protocol does not support setting a public alias."
+msgstr "Protokollen kan ikkje nytta offentlege aliasar."
+
+msgid "This protocol does not support fetching the public alias."
+msgstr "Protokollen kan ikkje nytta offentlege aliasar."
 
 msgid "Unknown"
 msgstr "Ukjend"
@@ -3790,12 +3794,6 @@ msgstr "Ad hoc-kommandoen feila"
 msgid "execute"
 msgstr "utfør"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "Tenaren krev TLS/SSL, men fann inga TLS/SSL-støtte."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "Du krev kryptering, men fann inga TLS/SSL-støtte."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Tenaren krev autentisering i klartekst over eit ukryptert samband"
 
@@ -3832,6 +3830,40 @@ msgstr "SASL-autentiseringa feila"
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL-feil: %s"
+
+msgid "Invalid Encoding"
+msgstr "Ugyldig koding"
+
+msgid "Unsupported Extension"
+msgstr "Kan ikkje nytta utvidinga"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+"Uventa svar frå tenaren. Dette kan tyda på eit mogleg svindelangrep (MITM)."
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+"Tenaren kan nytta kanalbinding, men han ser ikkje ut til å fortelja om det. "
+"Dette kan tyda på eit mogleg svindelangrep (MITM)."
+
+msgid "Server does not support channel binding"
+msgstr "Tenaren kan ikkje bruka kanalbinding"
+
+msgid "Unsupported channel binding method"
+msgstr "Kanalbindingsmetoden kan ikkje nyttast"
+
+msgid "User not found"
+msgstr "Fann ikkje brukaren"
+
+msgid "Invalid Username Encoding"
+msgstr "Ugyldig brukarnamnkoding"
+
+msgid "Resource Constraint"
+msgstr "Ressursavgrensing"
 
 msgid "Unable to canonicalize username"
 msgstr "Klarte ikkje å kanonisera brukarnamnet"
@@ -3909,6 +3941,11 @@ msgstr "Organisasjonsnamn"
 
 msgid "Organization Unit"
 msgstr "Organisasjonseining"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "Jobbtittel"
 
 msgid "Role"
 msgstr "Stilling"
@@ -4131,11 +4168,20 @@ msgstr "Fann ingen brukarar"
 msgid "Roles:"
 msgstr "Roller:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "Tenaren krev TLS/SSL, men fann inga TLS/SSL-støtte."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "Du krev kryptering, men fann inga TLS/SSL-støtte."
+
 msgid "Ping timed out"
 msgstr "Tidsavbrot ping"
 
 msgid "Invalid XMPP ID"
 msgstr "Ugyldig XMPP-id"
+
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Ugyldig XMPP-ID. Brukarnamndelen må vera vald."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Ulovleg XMPP-id. Domene må vera vald."
@@ -4233,7 +4279,6 @@ msgstr "Tenaren støttar ikkje blokkering"
 msgid "Not Authorized"
 msgstr "Ikkje godkjent"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Sinnsstemning"
 
@@ -4256,7 +4301,6 @@ msgstr "Til"
 msgid "None (To pending)"
 msgstr "Ingen (ventande)"
 
-#. 0
 msgid "None"
 msgstr "Ingen"
 
@@ -4277,6 +4321,12 @@ msgstr "Sinnsstemningsnamn"
 msgid "Mood Comment"
 msgstr "Sinnsstemningsmerknad"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "Låtartist"
 
@@ -4447,9 +4497,6 @@ msgstr "Framgangsmåtebrot"
 msgid "Remote Connection Failed"
 msgstr "Feil i fjerntilkoplinga"
 
-msgid "Resource Constraint"
-msgstr "Ressursavgrensing"
-
 msgid "Restricted XML"
 msgstr "Avgrensa XML"
 
@@ -4561,9 +4608,8 @@ msgstr "Vel ein ressurs"
 msgid "Initiate Media"
 msgstr "Klargjer media"
 
-#, fuzzy
 msgid "Account does not support PEP, can't set mood"
-msgstr "Protokollen støttar ikkje praterom."
+msgstr "Kontoen støttar ikkje PEP, klarer ikkje å lagra sinnsstemninga"
 
 msgid "config:  Configure a chat room."
 msgstr "config:  Endra prateromsinnstillingane."
@@ -4619,9 +4665,8 @@ msgstr "ping &lt;jid&gt;:\tPing ein brukar/komponent/tenar."
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: send ein alarm til ein brukar for å merksemda hans"
 
-#, fuzzy
 msgid "mood: Set current user mood"
-msgstr "Vel rett brukar"
+msgstr "mood: lagra den noverande brukarsinnsstemninga"
 
 msgid "Extended Away"
 msgstr "Utvida vekke"
@@ -4705,13 +4750,13 @@ msgid "A custom smiley in the message is too large to send."
 msgstr "Eit tilpassa smilefjes i meldinga er for stor til å kunna sendast."
 
 msgid "XMPP stream header missing"
-msgstr ""
+msgstr "Manglar hovudet til XMPP-straumen"
 
 msgid "XMPP Version Mismatch"
-msgstr ""
+msgstr "XMPP-utgåvene samsvarer ikkje"
 
 msgid "XMPP stream missing ID"
-msgstr ""
+msgstr "Manglar ID-en til XMPP-straumen"
 
 msgid "XML Parse error"
 msgstr "Feil i XML-tolkinga"
@@ -4796,7 +4841,6 @@ msgstr "Forbløffa"
 msgid "Amorous"
 msgstr "Amorøs"
 
-#. 1
 msgid "Angry"
 msgstr "Sint"
 
@@ -4875,7 +4919,6 @@ msgstr "Flau"
 msgid "Envious"
 msgstr "Misunneleg"
 
-#. 2
 msgid "Excited"
 msgstr "Oppglødd"
 
@@ -4892,21 +4935,18 @@ msgid "Grieving"
 msgstr "Sørgjer"
 
 # Grinete?
-#. 3
 msgid "Grumpy"
 msgstr "Sur"
 
 msgid "Guilty"
 msgstr "Skuldig"
 
-#. 4
 msgid "Happy"
 msgstr "Glad"
 
 msgid "Hopeful"
 msgstr "Håpefull"
 
-#. 8
 msgid "Hot"
 msgstr "Heit"
 
@@ -4941,7 +4981,6 @@ msgstr "Interessert"
 msgid "Intoxicated"
 msgstr "Forgifta"
 
-#. 6
 msgid "Invincible"
 msgstr "Uovervinneleg"
 
@@ -4993,7 +5032,6 @@ msgstr "Angrande"
 msgid "Restless"
 msgstr "Uroleg"
 
-#. 7
 msgid "Sad"
 msgstr "Trist"
 
@@ -5012,11 +5050,9 @@ msgstr "Sjokkert"
 msgid "Shy"
 msgstr "Sky"
 
-#. 9
 msgid "Sick"
 msgstr "Sjuk"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "Søvnig"
@@ -5413,18 +5449,6 @@ msgstr "Taler i  telefonen"
 msgid "Out to Lunch"
 msgstr "Er ute til lunsj"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Kunstnar"
-
-msgid "Album"
-msgstr "Album"
-
 msgid "Game Title"
 msgstr "Speltittel"
 
@@ -5573,9 +5597,6 @@ msgstr "Jubileum"
 #. Business
 msgid "Work"
 msgstr "Arbeid"
-
-msgid "Job Title"
-msgstr "Jobbtittel"
 
 msgid "Company"
 msgstr "Firma"
@@ -5855,24 +5876,6 @@ msgstr "Vil du sletta denne vennen frå adresseboka di òg?"
 msgid "The username specified is invalid."
 msgstr "Det oppgjevne brukarnamnet er ugyldig."
 
-#. 5
-msgid "In Love"
-msgstr "Forelska"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "Sinnsstemninga no"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "Ny sinnsstemning"
-
-msgid "Change your Mood"
-msgstr "Endra sinnsstemninga di"
-
-msgid "How do you feel right now?"
-msgstr "Korleis kjenner du deg nett no?"
-
 msgid "The PIN you entered is invalid."
 msgstr "Du skreiv inn ein ugyldig PIN."
 
@@ -5938,10 +5941,6 @@ msgstr "Ikkje noko oppstartsvindage er tilgjengeleg no"
 
 msgid "About"
 msgstr "Om"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "Endra sinnsstemninga…"
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6182,6 +6181,9 @@ msgstr "Det oppstod ein feil i sambandet mot MXit. (lesefase 0x05)"
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "Det oppstod ein feil i sambandet mot MXit. (lesefase 0x06)"
+
+msgid "In Love"
+msgstr "Forelska"
 
 msgid "Pending"
 msgstr "Ventar"
@@ -6577,9 +6579,6 @@ msgstr "Passordet er utgått"
 msgid "Incorrect password"
 msgstr "Feil passord"
 
-msgid "User not found"
-msgstr "Fann ikkje brukaren"
-
 msgid "Account has been disabled"
 msgstr "Kontoen er ikkje i bruk"
 
@@ -6830,6 +6829,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL tillèt ikkje at brukarnamnet ditt kan autentiserast her"
+
+#, c-format
+msgid "Error requesting %s"
+msgstr "Klarte ikkje å spørja etter %s"
 
 msgid "Could not join chat room"
 msgstr "Klarte ikkje å bli med i praterommet"
@@ -8172,6 +8175,10 @@ msgstr "Spør etter"
 
 msgid "Admin"
 msgstr "Admin"
+
+#. XXX: Should this be "Topic"?
+msgid "Room Title"
+msgstr "Romtittel"
 
 msgid "Notice"
 msgstr "Merk"
@@ -10082,9 +10089,6 @@ msgstr "Yahoo-ID …"
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo-protokolltillegg"
 
-msgid "Pager server"
-msgstr "Søkjetenestetenar"
-
 msgid "Pager port"
 msgstr "S_økjeport"
 
@@ -10105,12 +10109,6 @@ msgstr "Bruk kontomellomtenar for SSL-sambanda"
 
 msgid "Chat room list URL"
 msgstr "Prateromslisteadresse"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo pratetenar"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo prateport"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Yahoo JAPAN-id…"
@@ -10180,6 +10178,15 @@ msgid ""
 msgstr ""
 "Kontoen er låst av ukjent grunn. Du kan kanskje løysa problemet ved å logga "
 "deg på Yahoo! sin nettstad."
+
+#. indicates a lock due to logging in too frequently
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
+msgstr ""
+"Kontoen er låst: du har logga deg på for ofte. Vent nokre minutt før du "
+"prøver å kopla deg til igjen. Du kan kanskje løysa problemet ved å logga deg "
+"på Yahoo! sin nettstad."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10258,6 +10265,16 @@ msgstr "Mista sambandet med %s: %s"
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "Klarte ikkje å kopla til %s: %s"
+
+msgid "Unable to connect: The server returned an empty response."
+msgstr "Klarer ikkje å kopla til: tenaren gav attende eit tomt svar."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
+"Klarer ikkje å kopla til: svaret til tenaren inneheldt ikkje dei nødvendige "
+"opplysningane"
 
 msgid "Not at Home"
 msgstr "Ikkje heime"
@@ -10639,6 +10656,10 @@ msgstr "_Nei"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "_Godta"
 
@@ -10685,7 +10706,7 @@ msgid "Stored Image. (that'll have to do for now)"
 msgstr "Lagra bilete (det får halda no)."
 
 msgid "SSL Connection Failed"
-msgstr "SSL_sambandet feila"
+msgstr "SSL-sambandet feila"
 
 msgid "SSL Handshake Failed"
 msgstr "SSL-protokollsjekken feila"
@@ -10876,12 +10897,6 @@ msgstr "Lynmeldingsklient"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internett meldingsklient"
-
-msgid "Orientation"
-msgstr "Orientering"
-
-msgid "The orientation of the tray."
-msgstr "Panelorienteringa."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11254,9 +11269,8 @@ msgstr "Ukjend nodetype"
 msgid "Please select your mood from the list"
 msgstr "Vel sinnsstemninga di frå lista"
 
-#, fuzzy
 msgid "Message (optional)"
-msgstr "Kallenamn (valfritt)"
+msgstr "Melding (valfri)"
 
 msgid "Edit User Mood"
 msgstr "Endra brukarsinnsstemninga"
@@ -11340,9 +11354,8 @@ msgstr "/Verktøy/_Innstillingar"
 msgid "/Tools/Pr_ivacy"
 msgstr "/Verktøy/_Personvern"
 
-#, fuzzy
 msgid "/Tools/Set _Mood"
-msgstr "/Verktøy/System_logg"
+msgstr "/Verktøy/_Bestem sinnstilstand"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Verktøy/_Filoverføringar"
@@ -12043,6 +12056,10 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Arabisk"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Skamfull"
+
 msgid "Belarusian Latin"
 msgstr "Kviterussisk latinsk"
 
@@ -12052,9 +12069,8 @@ msgstr "Bulgarsk"
 msgid "Bengali"
 msgstr "Bengali"
 
-#, fuzzy
 msgid "Bengali-India"
-msgstr "Bengali"
+msgstr "Bengali (India)"
 
 msgid "Bosnian"
 msgstr "Bosnisk"
@@ -12170,6 +12186,10 @@ msgstr "Lao"
 
 msgid "Macedonian"
 msgstr "Makedonsk"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "Malayisk"
 
 msgid "Mongolian"
 msgstr "Mongolsk"
@@ -13134,6 +13154,7 @@ msgstr "_Bla gjennom…"
 msgid "Br_owse..."
 msgstr "Bl_a gjennom…"
 
+# kanskje endra sidan "F_ørehandsvis" òg gjeld lydar?
 msgid "Pre_view"
 msgstr "F_ørehandsvis"
 
@@ -14894,8 +14915,17 @@ msgid "Timestamp Format Options"
 msgstr "Formateringsval for tidsstempel"
 
 #, c-format
-msgid "_Force 24-hour time format"
-msgstr "_Tving 24h tidsformat"
+msgid "_Force timestamp format:"
+msgstr "_Tving tidsstempelformatet:"
+
+msgid "Use system default"
+msgstr "Bruk systemstandard"
+
+msgid "12 hour time format"
+msgstr "12-timars tidsformat"
+
+msgid "24 hour time format"
+msgstr "24-timars tidsformat"
 
 msgid "Show dates in..."
 msgstr "Vis datoar i…"
@@ -15097,398 +15127,162 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "Senda og ta i mot reine XMPP-blokker."
 
 #. *  description
-#, fuzzy
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Dette programtillegget er nyttig ved feilsøking av XMPP-tenarar og -klientar."
 
-#~ msgid "Please select your mood from the list."
-#~ msgstr "Vel sinnsstemninga di frå lista."
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+"$(^Name) blir utgjeve med ein GNU General Public License (GPL). Lisensen er "
+"berre gjeven her for opplysningsformål. $_CLICK"
 
-#~ msgid "Set Mood..."
-#~ msgstr "Vel sinnsstemning…"
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+"Ei grafisk brukargrensesnittverktøykasse på fleire plattformer som Pidgin "
+"nyttar"
 
-#~ msgid "Friendly name changes too rapidly"
-#~ msgstr "Endrar visingsnamnet for ofte"
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr "Pidgin kjører no. Lukk programmet og prøv igjen."
 
-#~ msgid "This Hotmail account may not be active."
-#~ msgstr "Denne Hotmail-kontoen er kanskje ikkje i bruk."
+msgid "Core Pidgin files and dlls"
+msgstr "Pidgin programfiler og DLL-ar"
 
-#~ msgid "Profile URL"
-#~ msgstr "Profiladresse"
+msgid "Create a Start Menu entry for Pidgin"
+msgstr "Lag ein snarveg til Pidgin på startmenyen"
 
-#~ msgid "MSN Protocol Plugin"
-#~ msgstr "MSN-protokolltillegg"
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr "Lag ein snarveg til Pidgin på skrivebordet"
 
-#~ msgid "%s is not a valid group."
-#~ msgstr "%s er ikkje ei gyldig gruppe."
-
-#~ msgid "Unknown error."
-#~ msgstr "Ukjend feil."
-
-#~ msgid "%s on %s (%s)"
-#~ msgstr "%s på %s (%s)"
-
-#~ msgid "Unable to add user on %s (%s)"
-#~ msgstr "Klarte ikkje å leggja til brukaren på %s (%s)"
-
-#~ msgid "Unable to block user on %s (%s)"
-#~ msgstr "Klarte ikkje å blokkera brukaren på %s (%s)"
-
-#~ msgid "Unable to permit user on %s (%s)"
-#~ msgstr "Klarte ikkje å tillata brukaren på %s (%s)"
-
-#~ msgid "%s could not be added because your buddy list is full."
-#~ msgstr "Klarte ikkje å leggja til %s fordi vennelista di er full."
-
-#~ msgid "%s is not a valid passport account."
-#~ msgstr "%s er ikkje ein gyldig Passport-konto."
-
-#~ msgid "Service Temporarily Unavailable."
-#~ msgstr "Tenesta er mellombels utilgjengeleg."
-
-#~ msgid "Unable to rename group"
-#~ msgstr "Klarte ikkje å endra namnet til gruppa"
-
-#~ msgid "Unable to delete group"
-#~ msgstr "Klarer ikkje å sletta gruppa"
-
-#~ msgid "%s has added you to his or her buddy list."
-#~ msgstr "%s har lagt deg til i vennelista si."
-
-#~ msgid "%s has removed you from his or her buddy list."
-#~ msgstr "%s har fjerna deg frå vennelista si."
-
-#~ msgid "Unable to bind socket to port: %s"
-#~ msgstr "Klarte ikkje å knyta endepunktet til porten: %s"
-
-#~ msgid "Unable to listen on socket: %s"
-#~ msgstr "Klarte ikkje å lytta på endepunktet: %s"
-
-#~ msgid "In_love"
-#~ msgstr "Forelska"
-
-#~ msgid "Error creating conference."
-#~ msgstr "Klarte ikkje å laga konferansen"
-
-#~ msgid "%s just sent you a Nudge!"
-#~ msgstr "%s har nettopp sendt deg ein dytt!"
-
-#~ msgid ""
-#~ "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
-#~ msgstr ""
-#~ "<FONT SIZE=\"4\">OSS:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-#~ "\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
-
-#~ msgid ""
-#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-#~ msgstr ""
-#~ "<FONT SIZE=\"4\">IRC-kanal:</FONT> #pidgin på irc.freenode.net<BR><BR>"
-
-#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-#~ msgstr ""
-#~ "<FONT SIZE=\"4\">XMPP fleirbrukarprat (MUC):</FONT> devel@conference."
-#~ "pidgin.im<BR><BR>"
-
-#~ msgid "Debugging Information"
-#~ msgstr "Feilsøkingsinformasjon "
-
-#~ msgid ""
-#~ "Unrecognized file type\n"
-#~ "\n"
-#~ "Defaulting to PNG."
-#~ msgstr ""
-#~ "Ukjend filtype\n"
-#~ "\n"
-#~ "Nyttar standardtypen PNG."
-
-#~ msgid ""
-#~ "Error saving image\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Klarte ikkje å lagra biletet\n"
-#~ "\n"
-#~ "%s"
-
-#~ msgid "Failed to open file '%s': %s"
-#~ msgstr "Klarte ikkje å opna fila '%s': %s"
-
-#~ msgid ""
-#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
-#~ msgstr ""
-#~ "Klarte ikkje å lasta biletet '%s': grunnen er ikkje kjend, men er truleg "
-#~ "grunna ei øydelagt biletfil"
-
-#~ msgid "Insert an <iq/> stanza."
-#~ msgstr "Set inn ei <iq/>-blokk."
-
-#~ msgid "Insert a <presence/> stanza."
-#~ msgstr "Set inn ei <presence/>-blokk."
-
-#~ msgid "Insert a <message/> stanza."
-#~ msgstr "Set inn ei <message/>-blokk."
-
-# mengdegrensa?
-#~ msgid ""
-#~ "The last action you attempted could not be performed because you are over "
-#~ "the rate limit. Please wait 10 seconds and try again.\n"
-#~ msgstr ""
-#~ "Klarte ikkje å utføra den siste handlinga sidan du er over mengdegrensa. "
-#~ "Vent i 10 sekund og prøv igjen.\n"
-
-#~ msgid "%s"
-#~ msgstr "%s"
-
-#~ msgid ""
-#~ "Unable to find alternative XMPP connection methods after failing to "
-#~ "connect directly."
-#~ msgstr ""
-#~ "Klarte ikkje å finna alternative XMPP-tilkoplingar etter mislykka forsøk "
-#~ "på å kopla til direkte."
-
-#~ msgid "(Default)"
-#~ msgstr "(standard)"
-
-#~ msgid "Install Theme"
-#~ msgstr "Installer drakta"
-
-#~ msgid "Icon"
-#~ msgstr "Ikon"
-
-#~ msgid "Use document font from _theme"
-#~ msgstr "Bruk dokumentskrifttype frå _drakta"
-
-#~ msgid "Proxy Server &amp; Browser"
-#~ msgstr "Mellomtenar &amp; nettlesar"
-
-#~ msgid "Auto-away"
-#~ msgstr "Automatisk vekke"
-
-#~ msgid "Change _status to:"
-#~ msgstr "Endra _tilstand til:"
-
-#~ msgid "Send instant messages over multiple protocols"
-#~ msgstr "Send lynmeldingar over fleire protokollar"
-
-#~ msgid "_Start port:"
-#~ msgstr "_Startport:"
-
-#~ msgid "_End port:"
-#~ msgstr "Sluttp_ort:"
-
-#~ msgid "_User:"
-#~ msgstr "Br_ukar:"
-
-# ?
-#~ msgid "The root certificate this one claims to be issued by is unknown."
-#~ msgstr "Pidgin kjenner ikkje til utferdaren av rotsertifikatet."
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ kjøremiljøutgåve"
-
-#~ msgid "Without this only the first account will be enabled)."
-#~ msgstr "Utan dette vil berre den første kontoen bli slått på)."
-
-#~ msgid "Invalid certificate chain"
-#~ msgstr "Ugyldig sertifikatkjede"
-
-#~ msgid ""
-#~ "The certificate chain presented by %s does not have a valid digital "
-#~ "signature from the Certificate Authority from which it claims to have a "
-#~ "signature."
-#~ msgstr ""
-#~ "Sertifikatkjeda presentert av %s har ingen gyldig digital signatur frå "
-#~ "sertifikatautoriteten han viser til. "
-
-#~ msgid "Invalid certificate authority signature"
-#~ msgstr "Ugyldig sertifikatautoritetssignatur"
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
 
 #, fuzzy
-#~ msgid "Failed to validate expiration time for %s"
-#~ msgstr "Klarte ikkje å velja cmodes for %s"
+msgid "Desktop"
+msgstr "Skrivebordet"
 
-#~ msgid "Calling ... "
-#~ msgstr "Ringjer…"
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
 
-#~ msgid "Join/Part Hiding Configuration"
-#~ msgstr "Innstilling for å skjula bli med-/forlat-tilstandar"
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
 
-#~ msgid "Minimum Room Size"
-#~ msgstr "Minste romstorleik"
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
 
-#~ msgid "User Inactivity Timeout (in minutes)"
-#~ msgstr "Tidsgrense for uverksame brukarar (i minutt)"
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+-kjøremiljø (påkravd om det ikkje er til stades no)"
 
-#~ msgid "Failed to open the file"
-#~ msgstr "Klarte ikkje å opna fila"
+#, fuzzy
+msgid "Localizations"
+msgstr "Stad"
 
-#~ msgid "Your account is locked, please log in to the Yahoo! website."
-#~ msgstr "Kontoen din er låst. Bruk Yahoo! sin nettstad for å logga deg på."
+#. License Page
+msgid "Next >"
+msgstr "Neste >"
 
-#~ msgid "Euskera(Basque)"
-#~ msgstr "Baskisk"
+#. Components Page
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin lynmeldingsklient (påkravd)"
 
-#~ msgid ""
-#~ "<FONT SIZE=\"4\">Help via e-mail:</FONT> <A HREF=\"mailto:support@pidgin."
-#~ "im\">support@pidgin.im</A><BR/><BR/>"
-#~ msgstr ""
-#~ "<FONT SIZE=\"4\">Hjelp per e-post:</FONT> <A HREF=\"mailto:support@pidgin."
-#~ "im\">support@pidgin.im</A><BR/><BR/>"
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
 
-#~ msgid ""
-#~ "%s %s\n"
-#~ "Usage: %s [OPTION]...\n"
-#~ "\n"
-#~ "  -c, --config=DIR    use DIR for config files\n"
-#~ "  -d, --debug         print debugging messages to stdout\n"
-#~ "  -f, --force-online  force online, regardless of network status\n"
-#~ "  -h, --help          display this help and exit\n"
-#~ "  -m, --multiple      do not ensure single instance\n"
-#~ "  -n, --nologin       don't automatically login\n"
-#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
-#~ "NAME\n"
-#~ "                      specifies account(s) to use, separated by commas.\n"
-#~ "                      Without this only the first account will be "
-#~ "enabled).\n"
-#~ "  --display=DISPLAY   X display to use\n"
-#~ "  -v, --version       display the current version and exit\n"
-#~ msgstr ""
-#~ "%s %s\n"
-#~ "Bruk: %s [VAL]…\n"
-#~ "\n"
-#~ "  -c, --config=DIR    bruk DIR for innstillingsfilene\n"
-#~ "  -d, --debug         skriv ut feilsøkingsmeldingar til standard utkanal\n"
-#~ "  -f, --force-online  slå på tilkopling, uavhengig av nettverksstatus\n"
-#~ "  -h, --help          vis denne hjelpa og avslutt\n"
-#~ "  -m, --multiple      avgrens ikkje til berre éin instans\n"
-#~ "  -n, --nologin       logg ikkje automatisk på\n"
-#~ "  -l, --login[=NAMN] automatisk pålogging (valfritt argument NAMN "
-#~ "spesifiserer\n"
-#~ "                      konto(ar) å bruka, skilde med komma.\n"
-#~ "                      Utan denne vil berre den første kontoen bli teken i "
-#~ "bruk).    --display=DISPLAY   kva for X-skjerm som skal nyttast \n"
-#~ " -v, --version       vis noverande utgåve og avslutt\n"
+msgid "Shortcuts"
+msgstr "Snarvegar"
 
-#~ msgid ""
-#~ "%s %s\n"
-#~ "Usage: %s [OPTION]...\n"
-#~ "\n"
-#~ "  -c, --config=DIR    use DIR for config files\n"
-#~ "  -d, --debug         print debugging messages to stdout\n"
-#~ "  -f, --force-online  force online, regardless of network status\n"
-#~ "  -h, --help          display this help and exit\n"
-#~ "  -m, --multiple      do not ensure single instance\n"
-#~ "  -n, --nologin       don't automatically login\n"
-#~ "  -l, --login[=NAME]  enable specified account(s) (optional argument "
-#~ "NAME\n"
-#~ "                      specifies account(s) to use, separated by commas.\n"
-#~ "                      Without this only the first account will be "
-#~ "enabled).\n"
-#~ "  -v, --version       display the current version and exit\n"
-#~ msgstr ""
-#~ "%s %s\n"
-#~ "Bruk: %s [VAL]…\n"
-#~ "\n"
-#~ "  -c, --config=DIR    bruk DIR for innstillingsfilene\n"
-#~ "  -d, --debug         skriv ut feilsøkingsmeldingar til standard utkanal\n"
-#~ "  -f, --force-online  slå på tilkopling, uavhengig av nettverksstatus\n"
-#~ "  -h, --help          vis denne hjelpa og avslutt\n"
-#~ "  -m, --multiple      avgrens ikkje til berre éin instans\n"
-#~ "  -n, --nologin       logg ikkje automatisk på\n"
-#~ "  -l, --login[=NAMN] slå på spesifisert(e) konto(ar) (valfritt argument "
-#~ "NAMN spesifiserer\n"
-#~ "                       konto(ar) å bruka, skilde med komma.\n"
-#~ "                       Utan denne vil berre den første kontoen bli teken "
-#~ "i bruk).  -v, --version       vis noverande utgåve og avslutt\n"
+msgid "Shortcuts for starting Pidgin"
+msgstr "Snarvegar for å starta Pidgin"
 
-#~ msgid "_Resume"
-#~ msgstr "_Hald fram"
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr "Stavekontrollhjelp"
 
-#~ msgid "Malformed BOSH Connect Server"
-#~ msgstr "BOSH-tilkoplingstenaren er ikkje velforma"
+msgid "Start Menu"
+msgstr "Startmenyen"
 
-#~ msgid "Unable to not load SILC key pair"
-#~ msgstr "Klarte ikkje å lasta SILC-nøkkelparet"
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr "Stavekontrollhjelp (treng internettsamband for å installera)."
 
-#~ msgid ""
-#~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
-#~ msgstr ""
-#~ "%s har avvist konferanseinvitasjonen din til rommet \"%s\" grunna \"%s\"."
+msgid "The installer is already running."
+msgstr "Installasjonsprogrammet kjører allereie."
 
-#~ msgid "Invitation Rejected"
-#~ msgstr "Invitasjonen avvist"
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+"Avinstallasjonsprogrammet fann ikkje registerpostar for Pidgin.$\\rTruleg "
+"har ein annan brukar installert denne applikasjonen."
 
-#~ msgid "_Proxy"
-#~ msgstr "_Mellomlager"
+#. URL Handler section
+msgid "URI Handlers"
+msgstr "URI-referanse"
 
-#~ msgid "Cannot open socket"
-#~ msgstr "Klarte ikkje å opna endepunkt"
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+"Klarte ikkje å avinstallera Pidgin-utgåva som er i bruk. Den nye utgåva kjem "
+"til å bli installert utan å ta vekk den gjeldande."
 
-#~ msgid "Could not listen on socket"
-#~ msgstr "Klarte ikkje å lytta til endepunktet"
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Besøk Pidgin si nettside"
 
-#~ msgid "Unable to read socket"
-#~ msgstr "Klarte ikkje å lesa endepunkt"
+msgid "You do not have permission to uninstall this application."
+msgstr "Du har ikkje løyve til å kunna avinstallera denne applikasjonen."
 
-#~ msgid "Connection failed."
-#~ msgstr "Tilkoplinga feila."
+#~ msgid "Current Mood"
+#~ msgstr "Sinnsstemninga no"
 
-#~ msgid "Server has disconnected"
-#~ msgstr "Tenaren har kopla frå"
+#~ msgid "New Mood"
+#~ msgstr "Ny sinnsstemning"
 
-#~ msgid "Couldn't create socket"
-#~ msgstr "Klarte ikkje å laga endepunkt"
+#~ msgid "Change your Mood"
+#~ msgstr "Endra sinnsstemninga di"
 
-#~ msgid "Couldn't connect to host"
-#~ msgstr "Klarte ikkje å kopla til verten"
+#~ msgid "How do you feel right now?"
+#~ msgstr "Korleis kjenner du deg nett no?"
 
-#~ msgid "Read error"
-#~ msgstr "Lesefeil"
+#~ msgid "Change Mood..."
+#~ msgstr "Endra sinnsstemninga…"
 
-#~ msgid ""
-#~ "Could not establish a connection with the server:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Klarte ikkje å laga eit samband til tenaren:\n"
-#~ "%s"
+#~ msgid "Orientation"
+#~ msgstr "Orientering"
 
-#~ msgid "Write error"
-#~ msgstr "Skrivefeil"
+#~ msgid "The orientation of the tray."
+#~ msgstr "Panelorienteringa."
 
-#~ msgid "Last Activity"
-#~ msgstr "Siste aktivitet"
+#~ msgid "Artist"
+#~ msgstr "Kunstnar"
 
-#~ msgid "Service Discovery Info"
-#~ msgstr "Tenesteoppdagingsinfo"
+#~ msgid "Album"
+#~ msgstr "Album"
 
-#~ msgid "Service Discovery Items"
-#~ msgstr "Tenesteoppdagingselement"
+#~ msgid "Pager server"
+#~ msgstr "Søkjetenestetenar"
 
-#~ msgid "Extended Stanza Addressing"
-#~ msgstr "Utvida blokkadressering"
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo pratetenar"
 
-#~ msgid "Multi-User Chat"
-#~ msgstr "Fleirbrukarprat"
-
-#~ msgid "Multi-User Chat Extended Presence Information"
-#~ msgstr "Utvida nærvereopplysningar fleirbrukarsamtale"
-
-#~ msgid "In-Band Bytestreams"
-#~ msgstr "Samtidssamband"
-
-#~ msgid "Ad-Hoc Commands"
-#~ msgstr "Ad hoc-kommandoar"
-
-#~ msgid "PubSub Service"
-#~ msgstr "PubSub-teneste"
-
-#~ msgid "SOCKS5 Bytestreams"
-#~ msgstr "SOCKS5 bytesamband"
-
-#~ msgid "Out of Band Data"
-#~ msgstr "Eksterne data"
-
-#~ msgid "XHTML-IM"
-#~ msgstr "XHTML-IM"
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo prateport"

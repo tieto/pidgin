@@ -42,7 +42,7 @@
 #define		CP_CHUNK_OFFER				0x06		/* (6) offer file */
 #define		CP_CHUNK_REJECT				0x07		/* (7) reject file */
 #define		CP_CHUNK_GET				0x08		/* (8) get file */
-#define		CP_CHUNK_RECIEVED			0x09		/* (9) received file */
+#define		CP_CHUNK_RECEIVED			0x09		/* (9) received file */
 #define		CP_CHUNK_DIRECT_SND			0x0A		/* (10) send file direct */
 #define		CP_CHUNK_DIRECT_FWD			0x0B		/* (11) forward file direct */
 #define		CP_CHUNK_SKIN				0x0C		/* (12) MXit client skin */

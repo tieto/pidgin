@@ -120,9 +120,10 @@ generror(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, error, snac2 ? snac2->data : NULL);
 
-	if (snac2)
+	if (snac2) {
 		g_free(snac2->data);
-	g_free(snac2);
+		g_free(snac2);
+	}
 
 	return ret;
 }

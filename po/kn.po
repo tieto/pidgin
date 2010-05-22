@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-01 19:18-0700\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2010-02-26 12:08+0530\n"
 "Last-Translator: Shankar Prasad <svenkate@redhat.com>\n"
 "Language-Team: American English <>\n"
@@ -1357,8 +1357,6 @@ msgstr "ಸ್ಥಿತಿಯನ್ನು ಅಳಿಸಿಹಾಕಿ"
 msgid "Saved Statuses"
 msgstr "ಉಳಿಸಿದ ಸ್ಥಿತಿಗಳು"
 
-#. title
-#. optional information
 msgid "Title"
 msgstr "ಶೀರ್ಷಿಕೆ"
 
@@ -1650,6 +1648,14 @@ msgstr "%s ಬಳಕೆದಾರ ಮಾಹಿತಿ ಬದಲಾಯಿಸಿ"
 
 msgid "Set User Info"
 msgstr "ಬಳಕೆದಾರ ಮಾಹಿತಿ  ಬರೆಯಿರಿ"
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "ಈ ಪ್ರೋಟೋಕಾಲ್ ಮಾತುಕತೆ ಕೋಣೆಗಳನ್ನು ಅಳವಡಿಸಿಲ್ಲ"
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "ಈ ಪ್ರೋಟೋಕಾಲ್ ಮಾತುಕತೆ ಕೋಣೆಗಳನ್ನು ಅಳವಡಿಸಿಲ್ಲ"
 
 msgid "Unknown"
 msgstr "ಗೊತ್ತಿಲ್ಲದ"
@@ -3807,13 +3813,6 @@ msgstr "ತಾತ್ಕಾಲಿಕ ಆದೇಶವು ವಿಫಲಗೊಂಡ�
 msgid "execute"
 msgstr "ಕಾರ್ಯಗತಗೊಳಿಸು"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "ಪರಿಚಾರಕಕ್ಕೆ TLS/SSL ನ ಅಗತ್ಯವಿದೆ, ಆದರೆ ಯಾವುದೆ TLS/SSL ಬೆಂಬಲವು ಕಂಡುಬಂದಿಲ್ಲ."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-"ನಿಮಗೆ ಯಾವುದೆ ಗೂಢಲಿಪೀಕರಣದ ಅಗತ್ಯವಿರುವಿಲ್ಲ, ಆದರೆ TLS/SSL ಬೆಂಬಲವು ಕಂಡುಬಂದಿಲ್ಲ."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "ಪರಿಚಾರಕಕ್ಕಾಗಿ ಒಂದು ಗೂಢಲಿಪೀಕರಿಸದೆ ಇರುವ ಸ್ಟ್ರೀಮ್‌ನ ಮೂಲಕ ಸರಳಪಠ್ಯ ದೃಢೀಕರಣದ ಅಗತ್ಯವಿದೆ"
@@ -3853,6 +3852,43 @@ msgstr "SASL ಧೃಡೀಕರಣ ವಿಫಲಗೊಂಡಿದೆ"
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL ದೋಷ: %s"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "ತಪ್ಪು  ಇನ್‌ಪುಟ್ ಸ್ಥಿತಿ"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "ಬೆಂಬಲವಿರದ ಆವೃತ್ತಿ"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "ನಿಷೇಧಿಸುವುದನ್ನು ಪರಿಚಾರಕವು ಬೆಂಬಲಿಸುವುದಿಲ್ಲ"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "ಬೆಂಬಲವಿರದ ಎನ್ಕೋಡಿಂಗ್ "
+
+msgid "User not found"
+msgstr "ಬಳಕೆದಾರ ಸಿಗಲಿಲ್ಲ"
+
+# , c-format
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "ತಪ್ಪು ಬಳಕೆದಾರಹೆಸರು"
+
+msgid "Resource Constraint"
+msgstr "ಸಂಪನ್ಮೂಲ ಮಿತಿ"
 
 msgid "Unable to canonicalize username"
 msgstr "ಬಳಕೆದಾರ ಹೆಸರನ್ನು ಮಾನಕವಾಗಿಸಲು ಆಗಲಿಲ್ಲ"
@@ -3931,6 +3967,11 @@ msgstr "ಸಂಸ್ಥೆ ಹೆಸರು"
 
 msgid "Organization Unit"
 msgstr "ಸಂಸ್ಥೆಯ ಘಟಕ"
+
+#. title
+#. optional information
+msgid "Job Title"
+msgstr "ಹುದ್ದೆ"
 
 msgid "Role"
 msgstr "ಪಾತ್ರ"
@@ -4152,11 +4193,22 @@ msgstr "ಯಾವುದೆ ಬಳಕೆದಾರರು ಕಂಡುಬಂದಿ�
 msgid "Roles:"
 msgstr "ಪಾತ್ರಗಳು:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "ಪರಿಚಾರಕಕ್ಕೆ TLS/SSL ನ ಅಗತ್ಯವಿದೆ, ಆದರೆ ಯಾವುದೆ TLS/SSL ಬೆಂಬಲವು ಕಂಡುಬಂದಿಲ್ಲ."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+"ನಿಮಗೆ ಯಾವುದೆ ಗೂಢಲಿಪೀಕರಣದ ಅಗತ್ಯವಿರುವಿಲ್ಲ, ಆದರೆ TLS/SSL ಬೆಂಬಲವು ಕಂಡುಬಂದಿಲ್ಲ."
+
 msgid "Ping timed out"
 msgstr "ಪಿಂಗ್‌ನ ಕಾಲಾವಧಿ ಮೀರಿದೆ"
 
 msgid "Invalid XMPP ID"
 msgstr "ಅಮಾನ್ಯವಾದ XMPP ಐಡಿ"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "ಅಮಾನ್ಯವಾದ XMPP ID. ಡೊಮೈನನ್ನು ಸೂಚಿಸಬೇಕು."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "ಅಮಾನ್ಯವಾದ XMPP ID. ಡೊಮೈನನ್ನು ಸೂಚಿಸಬೇಕು."
@@ -4258,7 +4310,6 @@ msgstr "ನಿಷೇಧಿಸುವುದನ್ನು ಪರಿಚಾರಕವ�
 msgid "Not Authorized"
 msgstr "ಅಧಿಕಾರ ಪಡೆದಿಲ್ಲ"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "ಲಹರಿ"
 
@@ -4280,7 +4331,6 @@ msgstr "ಗೆ"
 msgid "None (To pending)"
 msgstr "ಏನೂ ಇಲ್ಲ (ಬಾಕಿ ಇರುವ)"
 
-#. 0
 msgid "None"
 msgstr "ಏನೂ ಇಲ್ಲ"
 
@@ -4300,6 +4350,12 @@ msgstr "ಲಹರಿಯ ಹೆಸರು"
 msgid "Mood Comment"
 msgstr "ಲಹರಿಯ ಅಭಿಪ್ರಾಯ"
 
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "ರಾಗದ ಕಲಾವಿದ"
 
@@ -4469,9 +4525,6 @@ msgstr "ನೀತಿ ಉಲ್ಲಂಘನೆ"
 
 msgid "Remote Connection Failed"
 msgstr "ದೂರ ಸಂಪರ್ಕ ವಿಫಲ"
-
-msgid "Resource Constraint"
-msgstr "ಸಂಪನ್ಮೂಲ ಮಿತಿ"
 
 msgid "Restricted XML"
 msgstr "ನಿರ್ಬಂಧಿತ  XML"
@@ -4823,7 +4876,6 @@ msgstr "ಆಶ್ಚರ್ಯಗೊಂಡ"
 msgid "Amorous"
 msgstr "ಒಲುಮೆಯ"
 
-#. 1
 msgid "Angry"
 msgstr "ಕುಪಿತ"
 
@@ -4903,7 +4955,6 @@ msgstr "ಮುಜುಗರಗೊಂಡ"
 msgid "Envious"
 msgstr "ಅಸೂಯೆಗೊಂಡ"
 
-#. 2
 msgid "Excited"
 msgstr "ಉತ್ತೇಜಿತ"
 
@@ -4919,21 +4970,18 @@ msgstr "ಕೃತಜ್ಞ"
 msgid "Grieving"
 msgstr "ಮರುಗುವ"
 
-#. 3
 msgid "Grumpy"
 msgstr "ಸಿಡುಕು"
 
 msgid "Guilty"
 msgstr "ತಪ್ಪುಮಾಡಿದ"
 
-#. 4
 msgid "Happy"
 msgstr "ಹರ್ಷಚಿತ್ತ"
 
 msgid "Hopeful"
 msgstr "ಆಶಾವಾದಿ"
 
-#. 8
 msgid "Hot"
 msgstr "ಹಾಟ್"
 
@@ -4968,7 +5016,6 @@ msgstr "ಆಸಕ್ತಿಯ"
 msgid "Intoxicated"
 msgstr "ಪರವಶಗೊಂಡ"
 
-#. 6
 msgid "Invincible"
 msgstr "ಅದಮ್ಯ"
 
@@ -5020,7 +5067,6 @@ msgstr "ಪಶ್ಚಾತಾಪ"
 msgid "Restless"
 msgstr "ಚಡಪಡಿಸುವ"
 
-#. 7
 msgid "Sad"
 msgstr "ದುಃಖಿತ"
 
@@ -5039,11 +5085,9 @@ msgstr "ದಂಗು ಬಡಿದ"
 msgid "Shy"
 msgstr "ನಾಚಿಕೆಗೊಂಡ"
 
-#. 9
 msgid "Sick"
 msgstr "ರೋಗಗ್ರಸ್ತ"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "ನಿದ್ದೆ!"
@@ -5447,18 +5491,6 @@ msgstr "ದೂರವಾಣಿಯಲ್ಲಿ  ಮಾತನಾಡುತ್ತ"
 msgid "Out to Lunch"
 msgstr "ಊಟಕ್ಕಾಗಿ  ಹೊರಗೆ "
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "ಕಲಾವಿದ"
-
-msgid "Album"
-msgstr "ಆಲ್ಬಂ"
-
 msgid "Game Title"
 msgstr "ಆಟದ ಶೀರ್ಷಿಕೆ"
 
@@ -5606,9 +5638,6 @@ msgstr "ವಾರ್ಷಿಕೋತ್ಸವ"
 #. Business
 msgid "Work"
 msgstr "ಕೆಲಸ"
-
-msgid "Job Title"
-msgstr "ಹುದ್ದೆ"
 
 msgid "Company"
 msgstr "ಸಂಸ್ಥೆ"
@@ -5894,24 +5923,6 @@ msgstr "ವಿಳಾಸಪುಸ್ತಕದಿಂದ ಈ ಗೆಳೆಯನ ಸ
 msgid "The username specified is invalid."
 msgstr "ಸೂಚಿಸಲಾದ ಬಳಕೆದಾರ ಹೆಸರು ತಪ್ಪಾಗಿದೆ."
 
-#. 5
-msgid "In Love"
-msgstr "ಪ್ರೇಮಪಾಶದಲ್ಲಿ"
-
-#. show current mood
-msgid "Current Mood"
-msgstr "ಸದ್ಯದ ಭಾವಲಹರಿ"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "ಹೊಸ ಲಹರಿ"
-
-msgid "Change your Mood"
-msgstr "ನಿಮ್ಮ ಮೂಡನ್ನು ಬದಲಿಸಿ"
-
-msgid "How do you feel right now?"
-msgstr "ನಿಮಗೆ ಈಗ ಹೇಗೆ ಅನಿಸುತ್ತಿದೆ?"
-
 msgid "The PIN you entered is invalid."
 msgstr "ನೀವು ನಮೂದಿಸಿದ PIN ತಪ್ಪಾಗಿದೆ."
 
@@ -5979,10 +5990,6 @@ msgstr "ಪ್ರಸಕ್ತ ಯಾವುದೆ ಎರಚು ತೆರೆಯು
 
 msgid "About"
 msgstr "ಇದರ ಕುರಿತು"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "ಲಹರಿಯನ್ನು ಬದಲಾಯಿಸಿ..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6225,6 +6232,9 @@ msgstr "MXit ಗೆ ಒಂದು ಸಂಪರ್ಕ ದೋಷ ಉಂಟಾಗಿ
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "MXit ಗೆ ಒಂದು ಸಂಪರ್ಕ ದೋಷ ಉಂಟಾಗಿದೆ. (ಓದಿದ ಹಂತ 0x06)"
+
+msgid "In Love"
+msgstr "ಪ್ರೇಮಪಾಶದಲ್ಲಿ"
 
 msgid "Pending"
 msgstr "ಬಾಕಿ ಇರುವ"
@@ -6623,9 +6633,6 @@ msgstr "ಗುಪ್ತಪದ ಹಳಸಿದೆ! "
 msgid "Incorrect password"
 msgstr "ತಪ್ಪು ಗುಪ್ತಪದ"
 
-msgid "User not found"
-msgstr "ಬಳಕೆದಾರ ಸಿಗಲಿಲ್ಲ"
-
 msgid "Account has been disabled"
 msgstr "ಖಾತೆಯನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ"
 
@@ -6884,6 +6891,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "ನಿಮ್ಮ ತೆರೆಯ ಹೆಸರನ್ನು ಇಲ್ಲಿ ದೃಢೀಕರಿಸುವುದನ್ನು AOL ಅನುಮತಿಸುವುದಿಲ್ಲ"
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "%s ಕ್ಕೆ ಮನವಿ ಸಲ್ಲಿಸುವಲ್ಲಿ ದೋಷ: %s"
 
 msgid "Could not join chat room"
 msgstr "ಮಾತುಕತೆ ಕೋಣೆಯನ್ನು ಸೇರಲಾಗಲಿಲ್ಲ"
@@ -8248,6 +8259,11 @@ msgstr "ಕೋರಿಕೆ"
 
 msgid "Admin"
 msgstr "ವ್ಯವಸ್ಥಾಪಕ"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "ಕೋಣೆಗಳ ಪಟ್ಟಿ"
 
 msgid "Notice"
 msgstr "ಸೂಚನೆ"
@@ -10159,9 +10175,6 @@ msgstr "Yahoo ID..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo! ಪ್ರೋಟೋಕಾಲ್ ಪ್ಲಗ್ಗಿನ್ನು"
 
-msgid "Pager server"
-msgstr "ಪೇಜರ್ ಪರಿಚಾರಕ"
-
 msgid "Pager port"
 msgstr "ಪೇಜರ್ ಸಂಪರ್ಕಸ್ಥಾನ"
 
@@ -10182,12 +10195,6 @@ msgstr "SSL ಸಂಪರ್ಕಗಳಿಗೆ ಖಾತೆ ಪ್ರಾಕ್ಸ
 
 msgid "Chat room list URL"
 msgstr "ಮಾತುಕತೆಕೋಣೆಗಳ ಪಟ್ಟಿಯ  URL"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo  ಮಾತುಕತೆಯ ಪರಿಚಾರಕ(ಸರ್ವರ್‍)"
-
-msgid "Yahoo Chat port"
-msgstr "Yahoo  ಮಾತುಕತೆಯ ಪೋರ್ಟ್"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Yahoo JAPAN ID..."
@@ -10256,6 +10263,15 @@ msgid ""
 msgstr ""
 "ಖಾತೆಯನ್ನು ಲಾಕ್ ಮಾಡಲಾಗಿದೆ: ಗೊತ್ತಿಲ್ಲದ ದೋಷ. Yahoo! ತಾಣಕ್ಕೆ ಪ್ರವೇಶಿಸುವುದರಿಂದ ಇದನ್ನು "
 "ಸರಿಪಡಿಸಬಹುದು."
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
+msgstr ""
+"ಖಾತೆಯನ್ನು ಲಾಕ್ ಮಾಡಲಾಗಿದೆ: ಬಹಳಷ್ಟು ಬಾರಿ ಪ್ರವೇಶಿಸಲು ಪ್ರಯತ್ನಿಸಲಾಗಿದೆ. Yahoo! ತಾಣಕ್ಕೆ "
+"ಪ್ರವೇಶಿಸುವುದರಿಂದ ಇದನ್ನು ಸರಿಪಡಿಸಬಹುದು."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -10333,6 +10349,17 @@ msgstr "%s ರವರೊಂದಿಗಿನ ಸಂಪರ್ಕವು ಕಡಿದ�
 #, c-format
 msgid "Unable to establish a connection with %s: %s"
 msgstr "%s ದೊಂದಿಗೆ ಸಂಪರ್ಕ ಸಾಧಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ: %s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+"MXit ಪರಿಚಾರಕ(ಸರ್ವರ್) ಅನ್ನು ಸಂಪರ್ಕಿಸಲು ಸಾಧ್ಯವಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಪರಿಚಾರಕದ "
+"ಸಿದ್ಧತೆಗಳನ್ನು ಪರಿಶೀಲಿಸಿ."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "ಮನೆಯಲ್ಲಿಲ್ಲ"
@@ -10716,6 +10743,10 @@ msgstr "ಇಲ್ಲ(_N)"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "ಸ್ವೀಕರಿಸು(_A)"
 
@@ -10953,12 +10984,6 @@ msgstr "ಇಂಟರ್ನೆಟ್ ಮೆಸ್ಸೆಂಜರ್ "
 
 msgid "Pidgin Internet Messenger"
 msgstr "ಪಿಜಿನ್ ಇಂಟರ್ನೆಟ್ ಮೆಸೆಂಜರ್"
-
-msgid "Orientation"
-msgstr "ನಿಲುವು"
-
-msgid "The orientation of the tray."
-msgstr "ಟ್ರೇಯ ನಿಲುವು."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -12118,6 +12143,10 @@ msgstr "ಆಫ್ರಿಕಾನಸ್"
 msgid "Arabic"
 msgstr "ಅರೇಬಿಕ್"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "ನಾಚಿಕೆ"
+
 msgid "Belarusian Latin"
 msgstr "ಬೆಲಾರುಸಿಯನ್ ಲ್ಯಾಟಿನ್"
 
@@ -12244,6 +12273,10 @@ msgstr "ಲಾವೋ"
 
 msgid "Macedonian"
 msgstr "ಮ್ಯಾಕೆಡೊನಿಯನ್"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "ಮಲಯ"
 
 msgid "Mongolian"
 msgstr "ಮಂಗೋಲಿಯನ್"
@@ -14970,8 +15003,22 @@ msgid "Timestamp Format Options"
 msgstr "ಸಮಯಮುದ್ರೆ ಸ್ವರೂಪದ ಆಯ್ಕೆಗಳು"
 
 # , c-format
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "೨೪ ಗಂಟೆ ಸಮಯಸ್ವರೂಪವನ್ನು ಬಲವಂತವಾಗಿ ಸೂಚಿಸಿ(_F)"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "ಗಣಕ ಪೂರ್ವನಿಯೋಜಿತ"
+
+# , c-format
+#, fuzzy
+msgid "12 hour time format"
+msgstr "೨೪ ಗಂಟೆ ಸಮಯಸ್ವರೂಪವನ್ನು ಬಲವಂತವಾಗಿ ಸೂಚಿಸಿ(_F)"
+
+# , c-format
+#, fuzzy
+msgid "24 hour time format"
 msgstr "೨೪ ಗಂಟೆ ಸಮಯಸ್ವರೂಪವನ್ನು ಬಲವಂತವಾಗಿ ಸೂಚಿಸಿ(_F)"
 
 msgid "Show dates in..."
@@ -15179,6 +15226,160 @@ msgstr ""
 "XMPP ಪರಿಚಾರಕಗಳಿಗಾಗಿ ಅಥವ ಕ್ಲೈಂಟುಗಳಿಗಾಗಿ ದೋಷ ನಿವಾರಣೆ ಮಾಡುವಲ್ಲಿ ಈ ಪ್ಲಗ್‌ಇನ್ "
 "ಸಹಾಯಕವಾಗುತ್ತದೆ."
 
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "ಗಣಕ ಪೂರ್ವನಿಯೋಜಿತ"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ ರನ್‍ಟೈಂ ಆವೃತ್ತಿ"
+
+#, fuzzy
+msgid "Localizations"
+msgstr "ಸ್ಥಳ"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "ಪಿಜಿನ್ ಇಂಟರ್ನೆಟ್ ಮೆಸೆಂಜರ್"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "ಶಾರ್ಟ್-ಕಟ್"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "ಪ್ರಾರಂಭ"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "\"%s\" ಎಂದ ಅಡ್ಡಹೆಸರು ಆಗಲೇ ಬಳಕೆಯಲ್ಲಿದೆ."
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim URL ಹ್ಯಾಂಡ್ಲರ್"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+#~ msgid "Artist"
+#~ msgstr "ಕಲಾವಿದ"
+
+#~ msgid "Album"
+#~ msgstr "ಆಲ್ಬಂ"
+
+#~ msgid "Current Mood"
+#~ msgstr "ಸದ್ಯದ ಭಾವಲಹರಿ"
+
+#~ msgid "New Mood"
+#~ msgstr "ಹೊಸ ಲಹರಿ"
+
+#~ msgid "Change your Mood"
+#~ msgstr "ನಿಮ್ಮ ಮೂಡನ್ನು ಬದಲಿಸಿ"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "ನಿಮಗೆ ಈಗ ಹೇಗೆ ಅನಿಸುತ್ತಿದೆ?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "ಲಹರಿಯನ್ನು ಬದಲಾಯಿಸಿ..."
+
+#~ msgid "Pager server"
+#~ msgstr "ಪೇಜರ್ ಪರಿಚಾರಕ"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo  ಮಾತುಕತೆಯ ಪರಿಚಾರಕ(ಸರ್ವರ್‍)"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Yahoo  ಮಾತುಕತೆಯ ಪೋರ್ಟ್"
+
+#~ msgid "Orientation"
+#~ msgstr "ನಿಲುವು"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "ಟ್ರೇಯ ನಿಲುವು."
+
 #~ msgid "In_love"
 #~ msgstr "ಪ್ರೇಮದಲ್ಲಿ(_l)"
 
@@ -15329,9 +15530,6 @@ msgstr ""
 
 #~ msgid "_User:"
 #~ msgstr "ಬಳಕೆದಾರ(U)"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ ರನ್‍ಟೈಂ ಆವೃತ್ತಿ"
 
 #, fuzzy
 #~ msgid "Calling ... "
