@@ -232,7 +232,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	return 0;
 }
 
-int aim_icq_getalias(OscarData *od, const char *uin)
+int aim_icq_getalias(OscarData *od, const char *uin, gboolean for_auth_request, char *auth_request_reason)
 {
 	FlapConnection *conn;
 	ByteStream bs;
@@ -274,6 +274,8 @@ int aim_icq_getalias(OscarData *od, const char *uin)
 	info->reqid = snacid;
 	info->uin = atoi(uin);
 	info->next = od->icq_info;
+	info->for_auth_request = for_auth_request;
+	info->auth_request_reason = g_strdup(auth_request_reason);
 	od->icq_info = info;
 
 	return 0;

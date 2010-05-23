@@ -2895,7 +2895,6 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 		case 0x06: { /* Someone requested authorization */
 			if (i >= 6) {
-				struct name_data *data = g_new(struct name_data, 1);
 				gchar *bn = g_strdup_printf("%u", args->uin);
 				gchar *reason = NULL;
 
@@ -2905,14 +2904,8 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				purple_debug_info("oscar",
 						   "Received an authorization request from UIN %u\n",
 						   args->uin);
-				data->gc = gc;
-				data->name = bn;
-				data->nick = NULL;
-
-				purple_account_request_authorization(account, bn, NULL, NULL,
-						reason, purple_find_buddy(account, bn) != NULL,
-						purple_auth_grant,
-						purple_auth_dontgrant_msgprompt, data);
+				aim_icq_getalias(od, bn, TRUE, reason);
+				g_free(bn);
 				g_free(reason);
 			}
 		} break;
@@ -4210,15 +4203,28 @@ static int purple_icqalias(OscarData *od, FlapConnection *conn, FlapFrame *fr, .
 	info = va_arg(ap, struct aim_icq_info *);
 	va_end(ap);
 
-	if (info->uin && info->nick && info->nick[0] && (utf8 = oscar_utf8_try_convert(account, od, info->nick))) {
-		g_snprintf(who, sizeof(who), "%u", info->uin);
-		serv_got_alias(gc, who, utf8);
-		if ((b = purple_find_buddy(account, who))) {
-			purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", utf8);
+	if (info->nick[0] && (utf8 = oscar_utf8_try_convert(account, od, info->nick))) {
+		if (info->for_auth_request) {
+			struct name_data *data = g_new(struct name_data, 1);
+
+			data->gc = gc;
+			data->name = g_strdup_printf("%u", info->uin);
+			data->nick = utf8;
+
+			purple_account_request_authorization(account, data->name, NULL, data->nick,
+				info->auth_request_reason, purple_find_buddy(account, data->name) != NULL,
+				purple_auth_grant, purple_auth_dontgrant_msgprompt, data);
+		} else {
+			g_snprintf(who, sizeof(who), "%u", info->uin);
+			serv_got_alias(gc, who, utf8);
+			if ((b = purple_find_buddy(account, who))) {
+				purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", utf8);
+			}
+			g_free(utf8);
 		}
-		g_free(utf8);
 	}
 
+	g_free(info->auth_request_reason);
 	return 1;
 }
 
@@ -5029,7 +5035,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 
 	/* XXX - Should this be done from AIM accounts, as well? */
 	if (od->icq)
-		aim_icq_getalias(od, bname);
+		aim_icq_getalias(od, bname, FALSE, NULL);
 }
 
 void oscar_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
@@ -5653,23 +5659,17 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 
 static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
-	PurpleConnection *gc = od->gc;
 	va_list ap;
 	const char *bn;
-	const char *msg;
-	PurpleAccount *account = purple_connection_get_account(gc);
-	struct name_data *data;
-	PurpleBuddy *buddy;
+	char *msg;
 
 	va_start(ap, fr);
 	bn = va_arg(ap, const char *);
-	msg = va_arg(ap, const char *);
+	msg = va_arg(ap, char *);
 	va_end(ap);
 
 	purple_debug_info("oscar",
 			"ssi: received authorization request from %s\n", bn);
-
-	buddy = purple_find_buddy(account, bn);
 
 	if (!msg) {
 		purple_debug_warning("oscar", "Received auth request from %s with "
@@ -5680,16 +5680,7 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 		msg = NULL;
 	}
 
-	data = g_new(struct name_data, 1);
-	data->gc = gc;
-	data->name = g_strdup(bn);
-	data->nick = (buddy ? g_strdup(purple_buddy_get_alias_only(buddy)) : NULL);
-
-	purple_account_request_authorization(account, bn, NULL,
-			(buddy ? purple_buddy_get_alias_only(buddy) : NULL),
-			msg, buddy != NULL, purple_auth_grant,
-			purple_auth_dontgrant_msgprompt, data);
-
+	aim_icq_getalias(od, bn, TRUE, msg);
 	return 1;
 }
 

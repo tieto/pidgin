@@ -1416,6 +1416,9 @@ struct aim_icq_info
 	/* status note info */
 	guint8 icbm_cookie[8];
 	char *status_note_title;
+
+	gboolean for_auth_request;
+	char *auth_request_reason;
 };
 
 #ifdef OLDSTYLE_ICQ_OFFLINEMSGS
@@ -1425,7 +1428,7 @@ int aim_icq_ackofflinemsgs(OscarData *od);
 int aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware);
 int aim_icq_changepasswd(OscarData *od, const char *passwd);
 int aim_icq_getsimpleinfo(OscarData *od, const char *uin);
-int aim_icq_getalias(OscarData *od, const char *uin);
+int aim_icq_getalias(OscarData *od, const char *uin, gboolean for_auth_request, char *auth_request_reason);
 int aim_icq_getallinfo(OscarData *od, const char *uin);
 int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias);
 
