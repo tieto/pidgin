@@ -811,11 +811,11 @@ static void captcha_request_destory(qq_captcha_request *captcha_req)
 static void captcha_input_cancel_cb(qq_captcha_request *captcha_req,
 		PurpleRequestFields *fields)
 {
-	captcha_request_destory(captcha_req);
-
 	purple_connection_error_reason(captcha_req->gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 			_("Failed captcha verification"));
+
+	captcha_request_destory(captcha_req);
 }
 
 static void captcha_input_ok_cb(qq_captcha_request *captcha_req,
