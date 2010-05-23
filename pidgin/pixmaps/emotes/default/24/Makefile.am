@@ -27,6 +27,7 @@ SMILEYS = \
     car.png \
     cat.png \
     chicken.png \
+    chilli.png \
     cigarette.png \
     clap.png \
     clock.png \
@@ -109,6 +110,7 @@ SMILEYS = \
     moneymouth.png \
     monkey.png \
     moon.png \
+    mrgreen.png \
     msn-away.png \
     msn-busy.png \
     msn_online.png \

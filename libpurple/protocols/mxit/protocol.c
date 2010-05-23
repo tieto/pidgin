@@ -672,10 +672,12 @@ void mxit_send_login( struct MXitSession* session )
 	/* convert the packet to a byte stream */
 	datalen = sprintf( data,	"ms=%s%c%s%c%i%c"			/* "ms"=password\1version\1getContacts\1 */
 								"%s%c%s%c%i%c"				/* capabilities\1dc\1features\1 */
-								"%s%c%s",					/* dialingcode\1locale */
+								"%s%c%s%c"					/* dialingcode\1locale\1 */
+								"%i%c%i%c%i",				/* maxReplyLen\1protocolVer\1lastRosterUpdate */
 								session->encpwd, CP_FLD_TERM, MXIT_CP_VERSION, CP_FLD_TERM, 1, CP_FLD_TERM,
 								MXIT_CP_CAP, CP_FLD_TERM, session->distcode, CP_FLD_TERM, MXIT_CP_FEATURES, CP_FLD_TERM,
-								session->dialcode, CP_FLD_TERM, locale
+								session->dialcode, CP_FLD_TERM, locale, CP_FLD_TERM,
+								CP_MAX_FILESIZE, CP_FLD_TERM, MXIT_CP_PROTO_VESION, CP_FLD_TERM, 0
 	);
 
 	/* include "custom resource" information */
@@ -1300,6 +1302,10 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 		session->http_sesid = atoi( records[0]->fields[0]->data );
 	}
 
+	/* extract MXitId (from protocol 5.9) */
+	if ( records[1]->fcount >= 9 )
+		session->mxitId = g_strdup( records[1]->fields[8]->data );
+
 	/* display the current splash-screen */
 	if ( splash_popup_enabled( session ) )
 		splash_display( session );
@@ -1513,9 +1519,13 @@ static void mxit_parse_cmd_contact( struct MXitSession* session, struct record**
 		contact->mood = atoi( rec->fields[5]->data );
 
 		if ( rec->fcount > 6 ) {
-			/* added in protocol 5.9.0 - flags & subtype */
+			/* added in protocol 5.9 - flags & subtype */
 			contact->flags = atoi( rec->fields[6]->data );
 			contact->subtype = rec->fields[7]->data[0];
+		}
+		if ( rec->fcount > 8 ) {
+			/* added in protocol 6.0 - reject message */
+			contact->msg = g_strdup( rec->fields[8]->data );
 		}
 
 		/* add the contact to the buddy list */
@@ -1582,7 +1592,16 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_parse_cmd_extprofile: profile for '%s'\n", mxitId );
 
-	profile = g_new0( struct MXitProfile, 1 );
+	if ( records[0]->fields[0]->len == 0 ) {
+		/* no MXitId provided, so this must be our own profile information */
+		if ( session->profile == NULL )
+			session->profile = g_new0( struct MXitProfile, 1 );
+		profile = session->profile;
+	}
+	else {
+		/* is a buddy's profile */
+		profile = g_new0( struct MXitProfile, 1 );
+	}
 
 	/* set the count for attributes */
 	count = atoi( records[0]->fields[1]->data );
@@ -1647,23 +1666,19 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 			/* mobile number */
 			g_strlcpy( profile->mobilenr, fvalue, sizeof( profile->mobilenr ) );
 		}
+		else if ( strcmp( CP_PROFILE_REGCOUNTRY, fname ) == 0 ) {
+			/* registered country */
+			g_strlcpy( profile->regcountry, fvalue, sizeof( profile->regcountry ) );
+		}
 		else {
 			/* invalid profile attribute */
 			purple_debug_error( MXIT_PLUGIN_ID, "Invalid profile attribute received '%s' \n", fname );
 		}
 	}
 
-	if ( records[0]->fields[0]->len == 0 ) {
-		/* no MXit id provided, so this must be our own profile information */
-		if ( session->profile )
-			g_free( session->profile );
-		session->profile = profile;
-	}
-	else {
-		/* display other user's profile */
+	/* if this is not our profile, just display it */
+	if ( profile != session->profile ) {
 		mxit_show_profile( session, mxitId, profile );
-
-		/* cleanup */
 		g_free( profile );
 	}
 }
@@ -2472,6 +2487,8 @@ void mxit_close_connection( struct MXitSession* session )
 	mxit_free_emoticon_cache( session );
 
 	/* free allocated memory */
+	if ( session->mxitId )
+		g_free( session->mxitId );
 	g_free( session->encpwd );
 	session->encpwd = NULL;
 

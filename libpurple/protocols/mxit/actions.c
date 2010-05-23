@@ -225,6 +225,13 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	group = purple_request_field_group_new( NULL );
 	purple_request_fields_add_group( fields, group );
 
+	/* mxitId (read-only) */
+	if ( session->mxitId ) {
+		field = purple_request_field_string_new( "mxitid", _( "Your MXitId" ), session->mxitId, FALSE );
+		purple_request_field_string_set_editable( field, FALSE );
+		purple_request_field_group_add_field( group, field );
+	}
+
 	/* pin */
 	field = purple_request_field_string_new( "pin", _( "PIN" ), session->acc->password, FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
@@ -252,7 +259,7 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	purple_request_field_group_add_field( group, field );
 
 	/* title */
-	field = purple_request_field_string_new( "title", _( "Job Title" ), profile->title, FALSE );
+	field = purple_request_field_string_new( "title", _( "Title" ), profile->title, FALSE );
 	purple_request_field_group_add_field( group, field );
 
 	/* first name */
@@ -304,11 +311,12 @@ static void mxit_cb_action_about( PurplePluginAction* action )
 	char	version[256];
 
 	g_snprintf( version, sizeof( version ), "MXit libPurple Plugin v%s\n"
-											"MXit Client Protocol v%s\n\n"
+											"MXit Client Protocol v%i.%i\n\n"
 											"Author:\nPieter Loubser\n\n"
 											"Contributors:\nAndrew Victor\n\n"
 											"Testers:\nBraeme Le Roux\n\n",
-											MXIT_PLUGIN_VERSION, MXIT_CP_RELEASE );
+											MXIT_PLUGIN_VERSION,
+											( MXIT_CP_PROTO_VESION / 10 ), ( MXIT_CP_PROTO_VESION % 10 ) );
 
 	mxit_popup( PURPLE_NOTIFY_MSG_INFO, _( "About" ), version );
 }

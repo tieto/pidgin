@@ -2936,6 +2936,11 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
+	option = purple_account_option_bool_new(_("Allow direct connections"),
+										  "direct_connect", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+
 	purple_cmd_register("nudge", "", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                 "prpl-msn", msn_cmd_nudge,

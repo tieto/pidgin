@@ -270,7 +270,7 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 					 */
 					js->auth_mech = NULL;
 					jabber_auth_start_old(js);
-					return JABBER_SASL_STATE_CONTINUE;					
+					return JABBER_SASL_STATE_CONTINUE;
 				}
 
 				break;
@@ -399,6 +399,7 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
                    xmlnode **reply, char **error)
 {
 	xmlnode *mechnode;
+	JabberSaslState ret;
 
 	js->sasl_mechs = g_string_new("");
 
@@ -407,7 +408,8 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 	{
 		char *mech_name = xmlnode_get_data(mechnode);
 
-		if (!mech_name || !*mech_name) {
+		if (!mech_name || !*mech_name ||
+				g_str_equal(mech_name, "EXTERNAL")) {
 			g_free(mech_name);
 			continue;
 		}
@@ -418,7 +420,16 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 	}
 
 	jabber_sasl_build_callbacks(js);
-	return jabber_auth_start_cyrus(js, reply, error);
+	ret = jabber_auth_start_cyrus(js, reply, error);
+
+	/*
+	 * Triggered if no overlap between server and client
+	 * supported mechanisms.
+	 */
+	if (ret == JABBER_SASL_STATE_FAIL && *error == NULL)
+		*error = g_strdup(_("Server does not use any supported authentication method"));
+
+	return ret;
 }
 
 static JabberSaslState
@@ -540,7 +551,7 @@ jabber_cyrus_handle_failure(JabberStream *js, xmlnode *packet,
 
 			return jabber_auth_start_cyrus(js, reply, error);
 
-		} else if ((js->auth_fail_count == 1) && 
+		} else if ((js->auth_fail_count == 1) &&
 				   (js->current_mech && g_str_equal(js->current_mech, "GSSAPI"))) {
 			/* If we tried GSSAPI first, it failed, and it was the only method we had to try, try jabber:iq:auth
 			 * for compatibility with iChat 10.5 Server and other jabberd based servers.
