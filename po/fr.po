@@ -15279,7 +15279,7 @@ msgid ""
 "Runtime?"
 msgstr ""
 "Pidgin a besoin d'une version compatible des bibliothèques GTK+ (qui n'a pas "
-"l'air d'être présente sur votre système).$\\Êtes-vous sûr de ne pas vouloir "
+"l'air d'être présente sur votre système).$\\rÊtes-vous sûr de ne pas vouloir "
 "installer ces bibliothèques ?"
 
 #. Installer Subsection Text
