@@ -322,7 +322,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 #endif
 
 	slpmsg->msgs =
-		g_list_append(slpmsg->msgs, msg);
+		g_list_append(slpmsg->msgs, msn_message_ref(msg));
 	msn_slplink_send_msg(slplink, msg);
 
 	if ((slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||
@@ -381,6 +381,8 @@ msg_ack(MsnMessage *msg, void *data)
 			}
 		}
 	}
+
+	msn_message_unref(msg);
 }
 
 /* We have received the message nak. */
@@ -394,6 +396,7 @@ msg_nak(MsnMessage *msg, void *data)
 	msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
 
 	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
+	msn_message_unref(msg);
 }
 
 static void
