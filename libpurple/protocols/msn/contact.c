@@ -30,6 +30,7 @@
 #include "group.h"
 #include "soap.h"
 #include "nexus.h"
+#include "user.h"
 
 const char *MsnSoapPartnerScenarioText[] =
 {
@@ -1167,7 +1168,7 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
 		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
 
-		if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
+		if (msn_user_is_in_list(user, MSN_LIST_PL)) {
 			msn_del_contact_from_list(state->session, NULL, state->who, MSN_LIST_PL);
 			return;
 		}
