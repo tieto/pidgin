@@ -46,7 +46,7 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	msn_user_set_passport(user, passport);
 	msn_user_set_friendly_name(user, friendly_name);
 
-	return user;
+	return msn_user_ref(user);
 }
 
 /*destroy a user object*/
@@ -54,6 +54,11 @@ void
 msn_user_destroy(MsnUser *user)
 {
 	g_return_if_fail(user != NULL);
+
+	if (user->refcount > 1) {
+		msn_user_unref(user);
+		return;
+	}
 
 	while (user->endpoints != NULL) {
 		free_user_endpoint(user->endpoints->data);
@@ -92,6 +97,27 @@ msn_user_destroy(MsnUser *user)
 	g_free(user->invite_message);
 
 	g_free(user);
+}
+
+MsnUser *
+msn_user_ref(MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, NULL);
+
+	user->refcount++;
+
+	return user;
+}
+
+void
+msn_user_unref(MsnUser *user)
+{
+	g_return_if_fail(user != NULL);
+
+	user->refcount--;
+
+	if(user->refcount == 0)
+		msn_user_destroy(user);
 }
 
 void

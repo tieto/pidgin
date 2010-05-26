@@ -79,6 +79,8 @@ struct _MsnUser
 {
 	MsnUserList *userlist;
 
+	guint8 refcount;        /**< The reference count of this object */
+
 	char *passport;         /**< The passport account.          */
 	char *friendly_name;    /**< The friendly name.             */
 
@@ -154,6 +156,23 @@ MsnUser *msn_user_new(MsnUserList *userlist, const char *passport,
  */
 void msn_user_destroy(MsnUser *user);
 
+/**
+ * Increment the reference count.
+ *
+ * @param user 	The user.
+ *
+ * @return 		user.
+ */
+MsnUser *
+msn_user_ref(MsnUser *user);
+
+/**
+ * Decrement the reference count.
+ *
+ * @param user 	The user
+ */
+void
+msn_user_unref(MsnUser *user);
 
 /**
  * Updates the user.
