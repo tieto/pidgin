@@ -163,16 +163,14 @@ void msn_user_destroy(MsnUser *user);
  *
  * @return 		user.
  */
-MsnUser *
-msn_user_ref(MsnUser *user);
+MsnUser *msn_user_ref(MsnUser *user);
 
 /**
  * Decrement the reference count.
  *
  * @param user 	The user
  */
-void
-msn_user_unref(MsnUser *user);
+void msn_user_unref(MsnUser *user);
 
 /**
  * Updates the user.
