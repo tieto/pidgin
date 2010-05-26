@@ -101,8 +101,11 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	session = slplink->session;
 
-	if (slplink->dc != NULL)
+	if (slplink->dc != NULL) {
+		slplink->dc->slplink = NULL;
 		msn_dc_destroy(slplink->dc);
+		slplink->dc = NULL;
+	}
 
 	while (slplink->slp_calls != NULL)
 		msn_slpcall_destroy(slplink->slp_calls->data);
@@ -203,12 +206,16 @@ msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 	/* The slplink has no slpcalls in it, release it from MSN_SB_FLAG_FT.
 	 * If nothing else is using it then this might cause swboard to be
 	 * destroyed. */
-	if (slplink->slp_calls == NULL && slplink->swboard != NULL)
+	if (slplink->slp_calls == NULL && slplink->swboard != NULL) {
 		msn_switchboard_release(slplink->swboard, MSN_SB_FLAG_FT);
+		slplink->swboard = NULL;
+	}
 
 	/* The slplink has no slpcalls in it, release it from the DC. */
-	if (slplink->slp_calls == NULL && slplink->dc != NULL)
+	if (slplink->slp_calls == NULL && slplink->dc != NULL) {
 		msn_dc_destroy(slplink->dc);
+		slplink->dc = NULL;
+	}
 }
 
 MsnSlpCall *
@@ -315,7 +322,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 #endif
 
 	slpmsg->msgs =
-		g_list_append(slpmsg->msgs, msg);
+		g_list_append(slpmsg->msgs, msn_message_ref(msg));
 	msn_slplink_send_msg(slplink, msg);
 
 	if ((slpmsg->flags == 0x20 || slpmsg->flags == 0x1000020 ||
@@ -374,6 +381,8 @@ msg_ack(MsnMessage *msg, void *data)
 			}
 		}
 	}
+
+	msn_message_unref(msg);
 }
 
 /* We have received the message nak. */
@@ -387,6 +396,7 @@ msg_nak(MsnMessage *msg, void *data)
 	msn_slplink_send_msgpart(slpmsg->slplink, slpmsg);
 
 	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
+	msn_message_unref(msg);
 }
 
 static void

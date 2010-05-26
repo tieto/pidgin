@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-20 12:11+0200\n"
-"PO-Revision-Date: 2010-05-20 12:08+0200\n"
+"POT-Creation-Date: 2010-05-26 10:42+0200\n"
+"PO-Revision-Date: 2010-05-26 10:42+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1360,6 +1360,7 @@ msgstr "Status löschen"
 msgid "Saved Statuses"
 msgstr "Gespeicherter Status"
 
+#. title
 msgid "Title"
 msgstr "Titel"
 
@@ -3205,6 +3206,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Vorname"
 
@@ -3957,6 +3961,7 @@ msgstr "Region"
 msgid "Postal Code"
 msgstr "Postleitzahl"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Land"
 
@@ -3971,8 +3976,6 @@ msgstr "Name der Organisation"
 msgid "Organization Unit"
 msgstr "Organisationseinheit"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Beruf"
 
@@ -5736,6 +5739,9 @@ msgstr "HTTP-Methoden-Server"
 msgid "Show custom smileys"
 msgstr "Zeige benutzerdefinierte Smileys"
 
+msgid "Allow direct connections"
+msgstr "Erlaube direkte Verbindungen"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: Einen Kontakt anstoßen, um seine Aufmerksamkeit zu erhalten"
 
@@ -5982,6 +5988,9 @@ msgstr ""
 "Ihre Profil-Informationen wurden noch nicht abgerufen. Bitte versuchen Sie "
 "es später noch einmal."
 
+msgid "Your MXitId"
+msgstr "Ihre MXit-ID"
+
 #. pin
 msgid "PIN"
 msgstr "PIN"
@@ -6141,6 +6150,10 @@ msgstr "Lade das Menü..."
 msgid "Status Message"
 msgstr "Status-Nachricht"
 
+msgid "Rejection Message"
+msgstr "Ablehnungsnachricht"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "Versteckte Nummer"
 
@@ -15277,6 +15290,10 @@ msgstr ""
 "$(^Name) wird unter der GNU General Public License (GPL) veröffentlicht. Die "
 "Lizenz dient hier nur der Information. $_CLICK"
 
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Ein Multi-Plattform-GUI-Toolkit, verwendet von Pidgin"
+
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
@@ -15485,9 +15502,6 @@ msgstr "Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
 
 #~ msgid "Unknown reason."
 #~ msgstr "Unbekannter Grund."
-
-#~ msgid "A multi-platform GUI toolkit, used by Pidgin"
-#~ msgstr "Ein Multi-Plattform-GUI-Toolkit, verwendet von Pidgin"
 
 #~ msgid "Current Mood"
 #~ msgstr "Momentane Stimmung"

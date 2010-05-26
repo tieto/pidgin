@@ -169,15 +169,15 @@ msn_dc_destroy(MsnDirectConn *dc)
 
 	g_return_if_fail(dc != NULL);
 
-	slplink = dc->slplink;
-
 	if (dc->slpcall != NULL)
 		dc->slpcall->wait_for_socket = FALSE;
 
-	slplink->dc = NULL;
-
-	if (slplink->swboard == NULL)
-		msn_slplink_destroy(slplink);
+	slplink = dc->slplink;
+	if (slplink) {
+		slplink->dc = NULL;
+		if (slplink->swboard == NULL)
+			msn_slplink_destroy(slplink);
+	}
 
 	g_free(dc->msg_body);
 
