@@ -482,6 +482,8 @@ TRAY_16_ICO = \
 		tray/16/message_4bit.ico \
 		tray/16/offline_4bit.ico
 
+TRAY_THEME =	tray/hicolor/index.theme
+
 TRAY_16 = \
 		tray/hicolor/16x16/status/pidgin-tray-away.png \
 		tray/hicolor/16x16/status/pidgin-tray-busy.png \
@@ -584,6 +586,7 @@ nobase_dist_pidginpixmap_DATA = \
 		$(TOOLBAR_22) \
 		$(TOOLBAR_32) \
 		$(TOOLBAR_48) \
+		$(TRAY_THEME) \
 		$(TRAY_16) \
 		$(TRAY_16_ICO) \
 		$(TRAY_22) \
