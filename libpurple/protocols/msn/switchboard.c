@@ -124,6 +124,7 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	g_free(swboard->session_id);
 
 	for (; swboard->users; swboard->users = g_list_delete_link(swboard->users, swboard->users))
+		msn_user_unref(swboard->users->data);
 
 	session = swboard->session;
 	session->switches = g_list_remove(session->switches, swboard);
@@ -261,9 +262,6 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	userlist = swboard->session->userlist;
 	msnuser = msn_userlist_find_user(userlist, passport);
 
-	if (!msnuser)
-		purple_debug_error("msn","User %s is not on our list.\n", passport);
-
 	/* Don't add multiple endpoints to the conversation. */
 	if (g_list_find_custom(swboard->users, passport, (GCompareFunc)user_passport_cmp)) {
 		g_free(passport);
@@ -276,6 +274,12 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 		return;
 	}
 	
+	if (!msnuser) {
+		purple_debug_info("msn","User %s is not on our list.\n", passport);
+		msnuser = msn_user_new(userlist, passport, NULL);
+	} else
+		msn_user_ref(msnuser);
+
 	g_free(passport);
 
 	swboard->users = g_list_prepend(swboard->users, msnuser);
