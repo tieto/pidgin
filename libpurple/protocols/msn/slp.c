@@ -928,6 +928,17 @@ got_ok(MsnSlpCall *slpcall,
 	}
 }
 
+static void
+got_error(MsnSlpCall *slpcall,
+          const char *error, const char *type, const char *content)
+{
+	/* It's not valid. Kill this off. */
+	purple_debug_error("msn", "Received non-OK result: %s\n",
+	                   error ? error : "Unknown");
+
+	slpcall->wasted = TRUE;
+}
+
 MsnSlpCall *
 msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 {
@@ -1004,37 +1015,30 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 
 		g_return_val_if_fail(slpcall != NULL, NULL);
 
+		content_type = get_token(body, "Content-Type: ", "\r\n");
+
+		content = get_token(body, "\r\n\r\n", NULL);
+
 		if (strncmp(status, "200 OK", 6))
 		{
-			/* It's not valid. Kill this off. */
-			char temp[32];
+			char *error = NULL;
 			const char *c;
 
 			/* Eww */
 			if ((c = strchr(status, '\r')) || (c = strchr(status, '\n')) ||
 				(c = strchr(status, '\0')))
 			{
-				size_t offset =  c - status;
-				if (offset >= sizeof(temp))
-					offset = sizeof(temp) - 1;
-
-				strncpy(temp, status, offset);
-				temp[offset] = '\0';
+				size_t len = c - status;
+				error = g_strndup(status, len);
 			}
 
-			purple_debug_error("msn", "Received non-OK result: %s\n", temp);
+			got_error(slpcall, error, content_type, content);
+			g_free(error);
 
-			slpcall->wasted = TRUE;
-
-			/* msn_slpcall_destroy(slpcall); */
-			return slpcall;
+		} else {
+			/* Everything's just dandy */
+			got_ok(slpcall, content_type, content);
 		}
-
-		content_type = get_token(body, "Content-Type: ", "\r\n");
-
-		content = get_token(body, "\r\n\r\n", NULL);
-
-		got_ok(slpcall, content_type, content);
 
 		g_free(content_type);
 		g_free(content);
