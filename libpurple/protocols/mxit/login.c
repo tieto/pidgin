@@ -333,13 +333,15 @@ static void mxit_register_view( struct MXitSession* session )
 	purple_request_field_string_set_editable( field, FALSE );
 	purple_request_field_group_add_field( group, field );
 
-	/* nick name */
+	/* nick name (required) */
 	field = purple_request_field_string_new( "nickname", _( "Nick Name" ), profile->nickname, FALSE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
-	/* birthday */
+	/* birthday (required) */
 	field = purple_request_field_string_new( "bday", _( "Birthday" ), profile->birthday, FALSE );
 	purple_request_field_string_set_default_value( field, "YYYY-MM-DD" );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* gender */
@@ -348,12 +350,14 @@ static void mxit_register_view( struct MXitSession* session )
 	purple_request_field_choice_add( field, _( "Male" ) );			/* 1 */
 	purple_request_field_group_add_field( group, field );
 
-	/* pin */
+	/* pin (required) */
 	field = purple_request_field_string_new( "pin", _( "PIN" ), profile->pin, FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 	field = purple_request_field_string_new( "pin2", _( "Verify PIN" ), "", FALSE );
 	purple_request_field_string_set_masked( field, TRUE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* show the form to the user to complete */
@@ -636,8 +640,9 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 	field = purple_request_field_image_new( "capcha", _( "Security Code" ), (gchar*) logindata->captcha, logindata->captcha_size );
 	purple_request_field_group_add_field( group, field );
 
-	/* ask for input */
+	/* ask for input (required) */
 	field = purple_request_field_string_new( "code", _( "Enter Security Code" ), NULL, FALSE );
+	purple_request_field_set_required( field, TRUE );
 	purple_request_field_group_add_field( group, field );
 
 	/* choose your country, but be careful, we already know your IP! ;-) */
