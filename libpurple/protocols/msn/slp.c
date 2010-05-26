@@ -360,7 +360,7 @@ msn_slp_process_transresp(MsnSlpCall *slpcall, const char *content)
 
 			} else {
 				/* We weren't able to create a listener either. Use SB. */
-				msn_dc_fallback_to_p2p(dc);
+				msn_dc_fallback_to_sb(dc);
 			}
 
 		} else {
@@ -939,7 +939,7 @@ got_error(MsnSlpCall *slpcall,
 	if (type && !strcmp(type, "application/x-msnmsgr-transreqbody")) {
 		MsnDirectConn *dc = slpcall->slplink->dc;
 		if (dc) {
-			msn_dc_fallback_to_p2p(dc);
+			msn_dc_fallback_to_sb(dc);
 			return;
 		}
 	}
