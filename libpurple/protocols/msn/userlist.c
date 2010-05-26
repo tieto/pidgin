@@ -107,31 +107,6 @@ got_new_entry(PurpleConnection *gc, const char *passport, const char *friendly, 
 }
 
 /**************************************************************************
- * Utility functions
- **************************************************************************/
-
-gboolean
-msn_userlist_user_is_in_group(MsnUser *user, const char * group_id)
-{
-	if (user == NULL)
-		return FALSE;
-
-	if (group_id == NULL)
-		return FALSE;
-
-	return (g_list_find_custom(user->group_ids, group_id, (GCompareFunc)strcmp)) != NULL;
-}
-
-gboolean
-msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id)
-{
-	if (user == NULL)
-		return FALSE;
-
-	return (user->list_op & (1 << list_id));
-}
-
-/**************************************************************************
  * Server functions
  **************************************************************************/
 
@@ -503,7 +478,7 @@ msn_userlist_rem_buddy_from_list(MsnUserList *userlist, const char *who,
 
 	g_return_if_fail(user != NULL);
 
-	if ( !msn_userlist_user_is_in_list(user, list_id)) {
+	if ( !msn_user_is_in_list(user, list_id)) {
 		list = lists[list_id];
 		purple_debug_info("msn", "User %s is not in list %s, not removing.\n", who, list);
 		return;
@@ -569,13 +544,13 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 
 	user = msn_userlist_find_add_user(userlist, who, who);
 
-	if ( msn_userlist_user_is_in_list(user, MSN_LIST_FL) ) {
+	if ( msn_user_is_in_list(user, MSN_LIST_FL) ) {
 
 		purple_debug_info("msn", "User %s already exists\n", who);
 
 		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
 
-		if (msn_userlist_user_is_in_group(user, group_id)) {
+		if (msn_user_is_in_group(user, group_id)) {
 			purple_debug_info("msn", "User %s is already in group %s, returning\n", who, new_group_name);
 			msn_callback_state_free(state);
 			return;
@@ -604,7 +579,7 @@ msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 	user = msn_userlist_find_add_user(userlist, who, who);
 
 	/* First we're going to check if it's already there. */
-	if (msn_userlist_user_is_in_list(user, list_id))
+	if (msn_user_is_in_list(user, list_id))
 	{
 		list = lists[list_id];
 		purple_debug_info("msn", "User '%s' is already in list: %s\n", who, list);

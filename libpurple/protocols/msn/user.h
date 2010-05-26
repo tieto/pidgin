@@ -406,6 +406,30 @@ guint msn_user_get_clientid(const MsnUser *user);
  */
 guint msn_user_get_extcaps(const MsnUser *user);
 
+/**************************************************************************
+ * Utility functions
+ **************************************************************************/
+
+
+/**
+ * Check if the user is part of the group.
+ *
+ * @param user 		The user we are asking group membership.
+ * @param group_id 	The group where the user may be in.
+ * 
+ * @return TRUE if user is part of the group. Otherwise, FALSE.
+ */
+gboolean msn_user_is_in_group(MsnUser *user, const char * group_id);
+
+/**
+ * Check if user is on list.
+ *
+ * @param user 		The user we are asking list membership.
+ * @param list_id 	The list where the user may be in.
+ *
+ * @return TRUE if the user is on the list, else FALSE.
+ */
+gboolean msn_user_is_in_list(MsnUser *user, MsnListId list_id);
 /**
  * Returns the network id for a user.
  *

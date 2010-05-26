@@ -52,9 +52,6 @@ struct _MsnUserList
 
 };
 
-gboolean msn_userlist_user_is_in_group(MsnUser *user, const char * group_id);
-gboolean msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id);
-
 void msn_got_lst_user(MsnSession *session, MsnUser *user,
 					  MsnListOp list_op, GSList *group_ids);
 
