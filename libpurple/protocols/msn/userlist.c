@@ -210,7 +210,7 @@ msn_userlist_destroy(MsnUserList *userlist)
 	/*destroy userlist*/
 	for (l = userlist->users; l != NULL; l = l->next)
 	{
-		msn_user_destroy(l->data);
+		msn_user_unref(l->data);
 	}
 	g_list_free(userlist->users);
 

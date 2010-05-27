@@ -50,7 +50,7 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 }
 
 /*destroy a user object*/
-void
+static void
 msn_user_destroy(MsnUser *user)
 {
 	g_return_if_fail(user != NULL);

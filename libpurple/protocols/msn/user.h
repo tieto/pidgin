@@ -150,13 +150,6 @@ MsnUser *msn_user_new(MsnUserList *userlist, const char *passport,
 					  const char *friendly_name);
 
 /**
- * Destroys a user structure.
- *
- * @param user The user to destroy.
- */
-void msn_user_destroy(MsnUser *user);
-
-/**
  * Increment the reference count.
  *
  * @param user 	The user.

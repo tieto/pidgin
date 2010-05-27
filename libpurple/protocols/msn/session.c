@@ -81,7 +81,7 @@ msn_session_destroy(MsnSession *session)
 		msn_nexus_destroy(session->nexus);
 
 	if (session->user != NULL)
-		msn_user_destroy(session->user);
+		msn_user_unref(session->user);
 
 	if (session->notification != NULL)
 		msn_notification_destroy(session->notification);

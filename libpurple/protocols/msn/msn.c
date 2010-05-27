@@ -1700,7 +1700,7 @@ add_pending_buddy(MsnSession *session,
 		MsnUser *user2 = msn_userlist_find_user(userlist, who);
 		if (user2 != NULL) {
 			/* User already in userlist, so just update it. */
-			msn_user_destroy(user);
+			msn_user_unref(user);
 			user = user2;
 		} else {
 			msn_userlist_add_user(userlist, user);
@@ -1720,7 +1720,7 @@ add_pending_buddy(MsnSession *session,
 
 		/* Remove from local list */
 		purple_blist_remove_buddy(buddy);
-		msn_user_destroy(user);
+		msn_user_unref(user);
 	}
 	g_free(group);
 }
