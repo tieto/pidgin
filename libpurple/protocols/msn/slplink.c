@@ -91,8 +91,10 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	g_return_if_fail(slplink != NULL);
 
-	if (slplink->swboard != NULL)
+	if (slplink->swboard != NULL) {
 		slplink->swboard->slplinks = g_list_remove(slplink->swboard->slplinks, slplink);
+		slplink->swboard = NULL;
+	}
 
 	if (slplink->refs > 1) {
 		slplink->refs--;
