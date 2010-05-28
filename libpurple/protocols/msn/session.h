@@ -59,13 +59,10 @@ typedef enum
 
 #define MSN_LOGIN_STEPS MSN_LOGIN_STEP_END
 
-#include "group.h"
-#include "httpconn.h"
 #include "nexus.h"
 #include "notification.h"
 #include "oim.h"
 #include "slpcall.h"
-#include "sslconn.h"
 #include "switchboard.h"
 #include "user.h"
 #include "userlist.h"
