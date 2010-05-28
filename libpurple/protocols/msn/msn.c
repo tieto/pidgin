@@ -23,6 +23,8 @@
  */
 #define PHOTO_SUPPORT 1
 
+#include "internal.h"
+
 #include "debug.h"
 #include "request.h"
 
