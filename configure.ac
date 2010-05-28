@@ -1344,7 +1344,7 @@ if test "x$GCC" = "xyes"; then
 fi
 
 if test "x$SUNCC" = "xyes"; then
-        CFLAGS="-features=extensions" 
+        CFLAGS="$CFLAGS -features=extensions" 
 fi
 AC_SUBST(CFLAGS)
 
