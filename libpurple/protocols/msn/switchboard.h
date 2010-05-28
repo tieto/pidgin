@@ -54,8 +54,6 @@ typedef enum
 #include "msg.h"
 #include "servconn.h"
 #include "session.h"
-#include "slplink.h"
-#include "user.h"
 
 /**
  * A switchboard.

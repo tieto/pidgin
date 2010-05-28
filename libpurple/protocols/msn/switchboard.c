@@ -26,6 +26,8 @@
 
 #include "msnutils.h"
 #include "switchboard.h"
+#include "slplink.h"
+#include "user.h"
 #include "userlist.h"
 
 static MsnTable *cbs_table;
