@@ -587,11 +587,32 @@ nobase_dist_pidginpixmap_DATA = \
 		$(TOOLBAR_32) \
 		$(TOOLBAR_48) \
 		$(TRAY_THEME) \
+		$(TRAY_16_ICO)
+if ENABLE_TRAYCOMPAT
+# Install in a location compatible with hicolor-icon-theme 0.9
+
+pidginpixmaptray16dir = $(datadir)/pixmaps/pidgin/tray/hicolor/16x16/actions
+dist_pidginpixmaptray16_DATA = $(TRAY_16)
+
+pidginpixmaptray22dir = $(datadir)/pixmaps/pidgin/tray/hicolor/22x22/actions
+dist_pidginpixmaptray22_DATA = $(TRAY_22)
+
+pidginpixmaptray32dir = $(datadir)/pixmaps/pidgin/tray/hicolor/32x32/actions
+dist_pidginpixmaptray32_DATA = $(TRAY_32)
+
+pidginpixmaptray48dir = $(datadir)/pixmaps/pidgin/tray/hicolor/48x48/actions
+dist_pidginpixmaptray48_DATA = $(TRAY_48)
+
+else
+# Install in the "correct" locations
+
+nobase_dist_pidginpixmap_DATA += \
 		$(TRAY_16) \
 		$(TRAY_16_ICO) \
 		$(TRAY_22) \
 		$(TRAY_32) \
 		$(TRAY_48)
+endif
 
 nobase_dist_pidginicons_DATA = \
 		$(ICONS_16) \

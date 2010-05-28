@@ -3,6 +3,9 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.7.1 (??/??/????):
 	General:
 	* Build fixes on OpenSolaris.  (Brian Lu)
+	* Add configure option --enable-trayicon-compat which installs tray
+	  icons into directories that are compatible with older versions of
+	  hicolor-icon-theme (0.9).
 
 	Pidgin:
 	* Restore the tray icon's blinking functionality.
