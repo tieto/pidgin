@@ -34,8 +34,6 @@ typedef enum
 
 #include "internal.h"
 
-#include "ft.h"
-
 #include "slplink.h"
 
 /* The official client seems to timeout slp calls after 5 minutes */

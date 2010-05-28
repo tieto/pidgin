@@ -26,8 +26,6 @@
 
 typedef struct _MsnSlpLink MsnSlpLink;
 
-#include "ft.h"
-
 #include "directconn.h"
 #include "session.h"
 #include "slpcall.h"

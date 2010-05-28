@@ -26,7 +26,6 @@
 
 #include "internal.h"
 
-#include "ft.h"
 #include "session.h"
 #include "slpcall.h"
 
