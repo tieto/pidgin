@@ -85,9 +85,6 @@ typedef enum
 
 #include "servconn.h"
 #include "sslconn.h"
-#include "util.h"
-
-#include "ft.h"
 
 #include "msg.h"
 
