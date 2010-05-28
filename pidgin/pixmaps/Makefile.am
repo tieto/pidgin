@@ -608,7 +608,6 @@ else
 
 nobase_dist_pidginpixmap_DATA += \
 		$(TRAY_16) \
-		$(TRAY_16_ICO) \
 		$(TRAY_22) \
 		$(TRAY_32) \
 		$(TRAY_48)
