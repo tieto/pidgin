@@ -588,9 +588,14 @@ gboolean qq_process_keep_alive_2008(guint8 *data, gint data_len, PurpleConnectio
 		inet_ntoa(qd->my_ip), qd->my_port);
 
 	tm_local = localtime(&server_time);
-	purple_debug_info("QQ", "Server time: %d-%d-%d, %d:%d:%d\n",
-			(1900 +tm_local->tm_year), (1 + tm_local->tm_mon), tm_local->tm_mday,
-			tm_local->tm_hour, tm_local->tm_min, tm_local->tm_sec);
+
+	if (tm_local != NULL)
+		purple_debug_info("QQ", "Server time: %d-%d-%d, %d:%d:%d\n",
+				(1900 +tm_local->tm_year), (1 + tm_local->tm_mon), tm_local->tm_mday,
+				tm_local->tm_hour, tm_local->tm_min, tm_local->tm_sec);
+	else
+		purple_debug_error("QQ", "Server time could not be parsed\n");
+
 	return TRUE;
 }
 
