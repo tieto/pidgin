@@ -23,10 +23,10 @@
  */
 
 #include "internal.h"
+#include "debug.h"
 
 #include "core.h"
 
-#include "msn.h"
 #include "notification.h"
 #include "state.h"
 

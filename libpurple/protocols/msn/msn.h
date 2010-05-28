@@ -83,18 +83,6 @@ typedef enum
 
 #include "internal.h"
 
-#include "account.h"
-#include "accountopt.h"
-#include "blist.h"
-#include "connection.h"
-#include "conversation.h"
-#include "debug.h"
-#include "cipher.h"
-#include "notify.h"
-#include "privacy.h"
-#include "proxy.h"
-#include "prpl.h"
-#include "request.h"
 #include "servconn.h"
 #include "sslconn.h"
 #include "util.h"

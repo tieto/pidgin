@@ -23,7 +23,9 @@
  */
 #define PHOTO_SUPPORT 1
 
-#include "msn.h"
+#include "debug.h"
+#include "request.h"
+
 #include "accountopt.h"
 #include "contact.h"
 #include "msg.h"
