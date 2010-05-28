@@ -42,6 +42,7 @@
 #include "msnutils.h"
 #include "version.h"
 
+#include "error.h"
 #include "msg.h"
 #include "switchboard.h"
 #include "notification.h"

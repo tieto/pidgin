@@ -25,6 +25,7 @@
 #include "debug.h"
 
 #include "cmdproc.h"
+#include "error.h"
 
 MsnCmdProc *
 msn_cmdproc_new(MsnSession *session)
