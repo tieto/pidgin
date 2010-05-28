@@ -105,7 +105,7 @@
 /* Client session flags */
 #define		MXIT_FLAG_CONNECTED			0x01		/* established connection to the server */
 #define		MXIT_FLAG_LOGGEDIN			0x02		/* user currently logged in */
-#define		MXIT_FLAG_FIRSTROSTER		0x04		/* set to true once the first roster update has been recevied and processed */
+#define		MXIT_FLAG_FIRSTROSTER		0x04		/* set to true once the first roster update has been received and processed */
 
 
 /* define this to enable the link clicking support */

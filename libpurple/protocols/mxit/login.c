@@ -637,7 +637,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 
 	/* add the captcha */
 	logindata->captcha = purple_base64_decode( parts[3], &logindata->captcha_size );
-	field = purple_request_field_image_new( "capcha", _( "Security Code" ), (gchar*) logindata->captcha, logindata->captcha_size );
+	field = purple_request_field_image_new( "captcha", _( "Security Code" ), (gchar*) logindata->captcha, logindata->captcha_size );
 	purple_request_field_group_add_field( group, field );
 
 	/* ask for input (required) */
@@ -659,7 +659,7 @@ static void mxit_cb_clientinfo1( PurpleUtilFetchUrlData* url_data, gpointer user
 		}
 		purple_request_field_list_add( field, country[1], g_strdup( country[0] ) );
 		if ( strcmp( country[1], parts[6] ) == 0 ) {
-			/* based on the user's ip, this is his current country code, so we default to it */
+			/* based on the user's IP, this is his current country code, so we default to it */
 			purple_request_field_list_add_selected( field, country[1] );
 		}
 		g_strfreev( country );
