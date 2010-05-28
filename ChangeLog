@@ -17,10 +17,16 @@ version 2.7.1 (??/??/????):
 	MSN:
 	* Fix unnecessary bandwidth consumption for buddy icon requests when
 	  buddies have capital letters in their passport addresses.
+	* Support for direct connections, enabling faster file transfers,
+	  smiley and buddy icon loading.  (Gábor Szuromi)
 
 	XMPP:
 	* Allow connecting to servers that advertise EXTERNAL (broken in
 	  2.7.0)
+
+	Windows-Specific Changes:
+	* Fix a regression introduced in 2.7.0 that caused Window Flashing not
+	  to work.
 
 version 2.7.0 (05/12/2010):
 	General:
@@ -140,6 +146,21 @@ version 2.7.0 (05/12/2010):
 	Finch:
 	* New action 'history-search', with default binding ctrl+r, to search
 	  the entered string in the input history.
+
+	Windows-Specific Changes
+	* Updated GTK+ to 2.16.6
+	* Private GTK+ Runtime now used (GTK+ Installer no longer supported)
+	* Minimum required GTK+ version increased to 2.14.7
+	* Windows 95, Windows 98, Windows 98 Second Edition, Windows ME
+	  (Millennium Edition), and Windows NT 4.0 longer supported due to GTK+
+	  requirements changes.
+	* Crash Report files (pidgin.RPT) are now generated in the ~/.purple
+	  directory instead of the installation directory.
+	* NSS SSL Library upgraded to 3.12.5 (thanks to Berke Viktor)
+	* GtkSpell upgraded to 2.0.16, changing the spellchecking backend to
+	  enchant.  This means that myspell and hunspell (OpenOffice)
+	  dictionaries can be used (previous versions' aspell dictionaries
+	  will not work).
 
 version 2.6.6 (02/18/2010):
 	libpurple:

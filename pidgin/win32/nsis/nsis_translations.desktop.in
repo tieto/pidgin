@@ -29,6 +29,8 @@ _PIDGINSHORTCUTSSECTIONDESCRIPTION=Shortcuts for starting Pidgin
 _PIDGINDESKTOPSHORTCUTDESC=Create a shortcut to Pidgin on the Desktop
 #Installer Subsection Detailed Description
 _PIDGINSTARTMENUSHORTCUTDESC=Create a Start Menu entry for Pidgin
+#Installer Subsection Detailed Description
+_GTKSECTIONDESCRIPTION=A multi-platform GUI toolkit, used by Pidgin
 #Installer Subsection Text
 _DEBUGSYMBOLSSECTIONTITLE=Debug Symbols (for reporting crashes)
 

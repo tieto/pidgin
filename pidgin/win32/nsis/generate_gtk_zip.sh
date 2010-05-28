@@ -45,14 +45,15 @@ function download_and_extract {
 	FILE=$(basename $URL)
 	if [ ! -e $FILE ]; then
 		echo Downloading $NAME
-		wget $URL
+		wget $URL || return 1
 	fi
 	EXTENSION=${FILE##*.}
 	#This is an OpenSuSE build service RPM
 	if [ $EXTENSION == 'rpm' ]; then
+		echo "Generating zip from $FILE"
 		FILE=$(../rpm2zip.sh $FILE)
 	fi
-	unzip -q $FILE -d $INSTALL_DIR
+	unzip -q $FILE -d $INSTALL_DIR || exit 1
 	echo "$NAME" >> $CONTENTS_FILE
 }
 
@@ -77,4 +78,6 @@ done
 
 #Generate zip file to be included in installer
 zip -9 -r ../gtk-runtime-$BUNDLE_VERSION.zip Gtk
+
+exit 0
 
