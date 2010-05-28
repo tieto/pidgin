@@ -74,7 +74,6 @@ typedef enum
 #include "internal.h"
 
 #include "session.h"
-#include "sslconn.h"
 
 #include "msg.h"
 
