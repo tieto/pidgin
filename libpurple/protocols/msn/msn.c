@@ -117,29 +117,6 @@ msn_normalize(const PurpleAccount *account, const char *str)
 	return buf;
 }
 
-gboolean
-msn_email_is_valid(const char *passport)
-{
-	if (purple_email_is_valid(passport)) {
-		/* Special characters aren't allowed in domains, so only go to '@' */
-		while (*passport != '@') {
-			if (*passport == '/')
-				return FALSE;
-			else if (*passport == '?')
-				return FALSE;
-			else if (*passport == '=')
-				return FALSE;
-			/* MSN also doesn't like colons, but that's checked already */
-
-			passport++;
-		}
-
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 static gboolean
 msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 {

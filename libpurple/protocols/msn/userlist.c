@@ -26,6 +26,7 @@
 #include "request.h"
 
 #include "msn.h"
+#include "msnutils.h"
 #include "userlist.h"
 
 #include "contact.h"

@@ -474,6 +474,29 @@ msn_parse_socket(const char *str, char **ret_host, int *ret_port)
 	*ret_port = port;
 }
 
+gboolean
+msn_email_is_valid(const char *passport)
+{
+	if (purple_email_is_valid(passport)) {
+		/* Special characters aren't allowed in domains, so only go to '@' */
+		while (*passport != '@') {
+			if (*passport == '/')
+				return FALSE;
+			else if (*passport == '?')
+				return FALSE;
+			else if (*passport == '=')
+				return FALSE;
+			/* MSN also doesn't like colons, but that's checked already */
+
+			passport++;
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 /***************************************************************************
  * MSN Challenge Computing Function
  ***************************************************************************/

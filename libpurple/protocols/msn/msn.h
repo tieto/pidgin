@@ -117,7 +117,6 @@ typedef enum
 	((MSN_CLIENT_ID_VERSION    << 24) | \
 	 (MSN_CLIENT_ID_CAPABILITIES))
 
-gboolean msn_email_is_valid(const char *passport);
 void
 msn_set_public_alias(PurpleConnection *gc, const char *alias,
                      PurpleSetPublicAliasSuccessCallback success_cb,

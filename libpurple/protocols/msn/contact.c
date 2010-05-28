@@ -29,6 +29,7 @@
 #include "contact.h"
 #include "xmlnode.h"
 #include "group.h"
+#include "msnutils.h"
 #include "soap.h"
 #include "nexus.h"
 #include "user.h"
