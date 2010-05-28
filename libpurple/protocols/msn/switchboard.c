@@ -24,14 +24,9 @@
 
 #include "debug.h"
 
-#include "msn.h"
-#include "prefs.h"
-#include "switchboard.h"
-#include "notification.h"
-#include "userlist.h"
 #include "msnutils.h"
-
-#include "error.h"
+#include "switchboard.h"
+#include "userlist.h"
 
 static MsnTable *cbs_table;
 

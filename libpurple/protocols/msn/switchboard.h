@@ -50,10 +50,10 @@ typedef enum
 	MSN_SB_FLAG_FT = 0x02  /**< This switchboard is being used for file transfer. */
 } MsnSBFlag;
 
-#include "conversation.h"
-
+#include "cmdproc.h"
 #include "msg.h"
 #include "servconn.h"
+#include "session.h"
 #include "slplink.h"
 #include "user.h"
 
