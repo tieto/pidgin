@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.1 (??/??/????):
+version 2.7.1 (??/??/2010):
 	General:
 	* Build fixes on OpenSolaris.  (Brian Lu)
 	* Add configure option --enable-trayicon-compat which installs tray
@@ -32,13 +32,13 @@ version 2.7.1 (??/??/????):
 	  API.
 	* Add the standard MXit emoticons.
 	* Improve the handling of users being kicked from MultiMX rooms.
-	* MXit doesn't allow you to see your buddies Email Address or Title,
+	* MXit doesn't allow you to see your buddy's Email Address or Title,
 	  so remove those two fields from the "Buddy Information" page.
 	* Show buddy's Registration Country in their profile.
 	* Increment protocol version to v6.0
 	* If an invite you sent was rejected with a reason, display that
 	  message in the buddy tooltip.
-	* Capcha value is a required field during account activation.
+	* CAPTCHA value is a required field during account activation.
 	  (Resolves issue on Maemo)
 	* When your avatar image is changed, don't forget the user's profile
 	  information.
