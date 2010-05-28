@@ -288,11 +288,11 @@ parse_dc_nonce(const char *content, MsnDirectConnNonceType *ntype)
 	if (nonce) {
 		*ntype = DC_NONCE_SHA1;
 	} else {
-		guint32 n1, n5;
-		guint16 n2, n3, n4, n6;
+		guint32 n1, n6;
+		guint16 n2, n3, n4, n5;
 		nonce = get_token(content, "Nonce: {", "}\r\n");
 		if (nonce
-		 && sscanf(nonce, "%08x-%04hx-%04hx-%04hx-%08x%04hx",
+		 && sscanf(nonce, "%08x-%04hx-%04hx-%04hx-%04hx%08x",
 		           &n1, &n2, &n3, &n4, &n5, &n6) == 6) {
 			*ntype = DC_NONCE_PLAIN;
 			g_free(nonce);
@@ -301,8 +301,8 @@ parse_dc_nonce(const char *content, MsnDirectConnNonceType *ntype)
 			*(guint16 *)(nonce +  4) = GUINT16_TO_LE(n2);
 			*(guint16 *)(nonce +  6) = GUINT16_TO_LE(n3);
 			*(guint16 *)(nonce +  8) = GUINT16_TO_BE(n4);
-			*(guint32 *)(nonce + 10) = GUINT32_TO_BE(n5);
-			*(guint16 *)(nonce + 14) = GUINT16_TO_BE(n6);
+			*(guint16 *)(nonce + 10) = GUINT16_TO_BE(n5);
+			*(guint32 *)(nonce + 12) = GUINT32_TO_BE(n6);
 		} else {
 			/* Invalid nonce, so ignore request */
 			g_free(nonce);
