@@ -50,6 +50,7 @@ static void
 msn_dc_calculate_nonce_hash(MsnDirectConnNonceType type,
                             const guchar nonce[16], gchar nonce_hash[37])
 {
+	guint32 *tmp;
 	guchar digest[20];
 
 	if (type == DC_NONCE_SHA1) {
@@ -62,9 +63,13 @@ msn_dc_calculate_nonce_hash(MsnDirectConnNonceType type,
 		memcpy(digest, nonce, 16);
 	}
 
+	/* TODO: Somebody please tell me why this first one causes a warning,
+	         but the others don't! */
+	tmp = (guint32 *)&digest[0];
+
 	g_sprintf(nonce_hash,
 	          "%08X-%04X-%04X-%04X-%08X%04X",
-	          GUINT32_FROM_LE(*((guint32 *)(digest + 0))),
+	          GUINT32_FROM_LE(*tmp),
 	          GUINT16_FROM_LE(*((guint16 *)(digest + 4))),
 	          GUINT16_FROM_LE(*((guint16 *)(digest + 6))),
 	          GUINT16_FROM_BE(*((guint16 *)(digest + 8))),
