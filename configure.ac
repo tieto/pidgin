@@ -322,6 +322,8 @@ MSGFMT=/path/to/msgfmt ./configure ...
 	fi
 fi #enable_i18n
 
+AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
+
 dnl #######################################################################
 dnl # Check for GLib 2.12 (required)
 dnl #######################################################################
@@ -2464,8 +2466,6 @@ AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--disable-pixmaps-install], [disa
 
 AM_CONDITIONAL(INSTALL_PIXMAPS, test "x$enable_pixmaps" = "xyes")
 
-AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
-
 dnl #######################################################################
 dnl # Check for Doxygen and dot (part of GraphViz)
 dnl #######################################################################
@@ -2662,7 +2662,7 @@ if test "x$enable_pixmaps" = "xno" ; then
 fi
 if test "x$enable_i18n" = "xno" ; then
 	echo
-	echo Warning: You have disabled the building and intallation of translation
+	echo Warning: You have disabled the building and installation of translation
 	echo data.  This will prevent building pidgin.desktop and the GConf schemas.
 	echo Be sure you know what you are doing.
 fi
