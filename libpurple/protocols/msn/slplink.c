@@ -215,6 +215,7 @@ msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 
 	/* The slplink has no slpcalls in it, release it from the DC. */
 	if (slplink->slp_calls == NULL && slplink->dc != NULL) {
+		slplink->dc->slplink = NULL;
 		msn_dc_destroy(slplink->dc);
 		slplink->dc = NULL;
 	}
