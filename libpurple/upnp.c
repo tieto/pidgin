@@ -919,7 +919,8 @@ void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove *ar)
 	GSList *l;
 
 	/* Remove ar from discovery_callbacks if present; it was inserted after a cb.
-	 * The same cb may be in the list multple times, so be careful to remove the one assocaited with ar. */
+	 * The same cb may be in the list multiple times, so be careful to remove
+	 * the one associated with ar. */
 	l  = discovery_callbacks;
 	while (l)
 	{
