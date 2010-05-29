@@ -209,6 +209,7 @@ msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 	 * If nothing else is using it then this might cause swboard to be
 	 * destroyed. */
 	if (slplink->slp_calls == NULL && slplink->swboard != NULL) {
+		slplink->swboard->slplinks = g_list_remove(slplink->swboard->slplinks, slplink);
 		msn_switchboard_release(slplink->swboard, MSN_SB_FLAG_FT);
 		slplink->swboard = NULL;
 	}
