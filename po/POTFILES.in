@@ -125,6 +125,7 @@ libpurple/protocols/mxit/filexfer.c
 libpurple/protocols/mxit/http.c
 libpurple/protocols/mxit/login.c
 libpurple/protocols/mxit/mxit.c
+libpurple/protocols/mxit/multimx.c
 libpurple/protocols/mxit/profile.c
 libpurple/protocols/mxit/protocol.c
 libpurple/protocols/mxit/roster.c
@@ -145,6 +146,7 @@ libpurple/protocols/oscar/odc.c
 libpurple/protocols/oscar/oft.c
 libpurple/protocols/oscar/oscar.c
 libpurple/protocols/oscar/peer.c
+libpurple/protocols/oscar/util.c
 libpurple/protocols/qq/buddy_info.c
 libpurple/protocols/qq/buddy_list.c
 libpurple/protocols/qq/buddy_memo.c
