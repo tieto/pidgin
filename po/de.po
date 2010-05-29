@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-26 10:42+0200\n"
-"PO-Revision-Date: 2010-05-26 10:42+0200\n"
+"POT-Creation-Date: 2010-05-29 17:30+0200\n"
+"PO-Revision-Date: 2010-05-29 17:30+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -717,7 +717,7 @@ msgid "debugwin: Show the debug window."
 msgstr "debugwin: Das Debugging-Fenster anzeigen."
 
 msgid "prefs: Show the preference window."
-msgstr "prefs: Das Einstellungs-Fenster anzeigen."
+msgstr "prefs: Das Einstellungsfenster anzeigen."
 
 msgid "statuses: Show the savedstatuses window."
 msgstr "statuses: Das Fenster mit gespeicherten Status-Infos anzeigen."
@@ -842,7 +842,7 @@ msgid ""
 "log\" preference is enabled."
 msgstr ""
 "Systemereignisse werden nur mitgeschnitten, wenn die Option „Schneide alle "
-"Statusveränderungen im System-Mitschnitt mit“ aktiviert ist."
+"Statusveränderungen im Systemmitschnitt mit“ aktiviert ist."
 
 msgid ""
 "Instant messages will only be logged if the \"Log all instant messages\" "
@@ -879,7 +879,7 @@ msgid "All Conversations"
 msgstr "Alle Unterhaltungen"
 
 msgid "System Log"
-msgstr "System-Mitschnitt"
+msgstr "Systemmitschnitt"
 
 msgid "Calling..."
 msgstr "Anrufen..."
@@ -1420,7 +1420,7 @@ msgid "Sounds"
 msgstr "Klänge"
 
 msgid "Statuses"
-msgstr "Status-Meldungen"
+msgstr "Statusmeldungen"
 
 msgid "Error loading the plugin."
 msgstr "Beim Laden des Plugins traten Fehler auf."
@@ -2248,7 +2248,7 @@ msgid "Error with your webcam"
 msgstr "Fehler mit Ihrer Webcam"
 
 msgid "Conference error"
-msgstr "Konferenz-Fehler"
+msgstr "Konferenzfehler"
 
 #, c-format
 msgid "Error creating session: %s"
@@ -3983,6 +3983,7 @@ msgid "Role"
 msgstr "Funktion"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Geburtstag"
 
@@ -5976,7 +5977,7 @@ msgstr ""
 
 #. show error to user
 msgid "Profile Update Error"
-msgstr "Profil-Aktualisierungs-Fehler"
+msgstr "Profil-Aktualisierungsfehler"
 
 #. no profile information yet, so we cannot update
 #. (reference: "libpurple/request.h")
@@ -5992,6 +5993,7 @@ msgid "Your MXitId"
 msgstr "Ihre MXit-ID"
 
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -6069,7 +6071,7 @@ msgstr "Die eingegebene PIN hat eine ungültige Länge [7-10]."
 msgid "MXit Login Name"
 msgstr "MXit-Login-Name"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "Spitzname"
 
@@ -6124,7 +6126,7 @@ msgstr "Sie haben den Sicherheitscode nicht eingegeben"
 msgid "Security Code"
 msgstr "Sicherheitscode"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Geben Sie den Sicherheitscode ein"
 
@@ -11475,7 +11477,7 @@ msgid "/Tools/R_oom List"
 msgstr "/Werkzeuge/Chat_räume"
 
 msgid "/Tools/System _Log"
-msgstr "/Werkzeuge/_System-Mitschnitt"
+msgstr "/Werkzeuge/_Systemmitschnitt"
 
 msgid "/Tools/Mute _Sounds"
 msgstr "/Werkzeuge/S_tummschalten"
@@ -11595,7 +11597,7 @@ msgid "By status"
 msgstr "Nach Status"
 
 msgid "By recent log activity"
-msgstr "Nach letzter Mitschnitts-Aktivität"
+msgstr "Nach letzter Mitschnittsaktivität"
 
 #, c-format
 msgid "%s disconnected"
@@ -12704,7 +12706,7 @@ msgstr "_Entferne komplette Übertragungen"
 
 #. "Download Details" arrow
 msgid "File transfer _details"
-msgstr "Dateiübertragungs-_Details"
+msgstr "Dateiübertragungs_details"
 
 msgid "Paste as Plain _Text"
 msgstr "Einfügen als normaler _Text"
@@ -12759,17 +12761,17 @@ msgstr ""
 "enthält."
 
 msgid "Action Message Name Color"
-msgstr "Farbe des Absendernamens für Aktions-Nachrichten"
+msgstr "Farbe des Absendernamens für Aktionsnachrichten"
 
 msgid "Color to draw the name of an action message."
-msgstr "Farbe, mit der der Name in einer Aktions-Nachricht dargestellt wird."
+msgstr "Farbe, mit der der Name in einer Aktionsnachricht dargestellt wird."
 
 msgid "Action Message Name Color for Whispered Message"
-msgstr "Farbe des Absendernamens für geflüsterte Aktions-Nachrichten"
+msgstr "Farbe des Absendernamens für geflüsterte Aktionsnachrichten"
 
 msgid "Color to draw the name of a whispered action message."
 msgstr ""
-"Farbe, mit der der Name in einer geflüsterten Aktions-Nachricht dargestellt "
+"Farbe, mit der der Name in einer geflüsterten Aktionsnachricht dargestellt "
 "wird."
 
 msgid "Whisper Message Name Color"
@@ -13000,8 +13002,7 @@ msgid ""
 "Are you sure you want to permanently delete the system log which started at %"
 "s?"
 msgstr ""
-"Wollen Sie wirklich den System-Mitschnitt, gestartet am %s, permanent "
-"löschen?"
+"Wollen Sie wirklich den Systemmitschnitt, gestartet am %s, permanent löschen?"
 
 msgid "Delete Log?"
 msgstr "Mitschnitt löschen?"
@@ -13637,7 +13638,7 @@ msgid "User_name:"
 msgstr "Benutzer_name:"
 
 msgid "Log _format:"
-msgstr "Mitschnitt-_Format:"
+msgstr "Mitschnitt_format:"
 
 msgid "Log all _instant messages"
 msgstr "_Schneide alle Sofortnachrichten mit"
@@ -13646,7 +13647,7 @@ msgid "Log all c_hats"
 msgstr "Alle C_hats mitschneiden"
 
 msgid "Log all _status changes to system log"
-msgstr "Sch_neide alle Statusveränderungen im System-Mitschnitt mit"
+msgstr "Sch_neide alle Statusveränderungen im Systemmitschnitt mit"
 
 msgid "Sound Selection"
 msgstr "Klang-Auswahl"
@@ -14144,12 +14145,12 @@ msgstr "Schwellwert:"
 #. *< priority
 #. *< id
 msgid "Contact Availability Prediction"
-msgstr "Kontakt-Verfügbarkeits-Vorhersage"
+msgstr "Kontakt-Verfügbarkeitsvorhersage"
 
 #. *< name
 #. *< version
 msgid "Contact Availability Prediction plugin."
-msgstr "Kontakt-Verfügbarkeits-Vorhersage-Plugin."
+msgstr "Kontakt-Verfügbarkeitsvorhersage-Plugin."
 
 #. *  summary
 msgid "Displays statistical information about your buddies' availability"
@@ -14889,7 +14890,7 @@ msgid "The specified word already exists in the correction list."
 msgstr "Das angegebene Wort ist bereits in der Korrekturliste enthalten."
 
 msgid "Text Replacements"
-msgstr "Text-Ersetzung"
+msgstr "Textersetzung"
 
 msgid "You type"
 msgstr "Sie tippen"
@@ -15092,7 +15093,7 @@ msgid "For delayed messages and in chats"
 msgstr "Für verzögerte Nachrichten in Chats"
 
 msgid "_Message Logs:"
-msgstr "Nachrichten-_Mitschnitt:"
+msgstr "Nachrichten_mitschnitt:"
 
 #. *< type
 #. *< ui_requirement
