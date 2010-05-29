@@ -1342,19 +1342,6 @@ int aim_ssi_delicon(OscarData *od);
 #define AIM_ICQ_INFO_UNKNOWN	0x100
 #define AIM_ICQ_INFO_HAVEALL	0x1ff
 
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-struct aim_icq_offlinemsg
-{
-	guint32 sender;
-	guint16 year;
-	guint8 month, day, hour, minute;
-	guint8 type;
-	guint8 flags;
-	char *msg;
-	int msglen;
-};
-#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
-
 struct aim_icq_info
 {
 	guint16 reqid;
@@ -1421,10 +1408,6 @@ struct aim_icq_info
 	char *auth_request_reason;
 };
 
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-int aim_icq_reqofflinemsgs(OscarData *od);
-int aim_icq_ackofflinemsgs(OscarData *od);
-#endif
 int aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware);
 int aim_icq_changepasswd(OscarData *od, const char *passwd);
 int aim_icq_getsimpleinfo(OscarData *od, const char *uin);

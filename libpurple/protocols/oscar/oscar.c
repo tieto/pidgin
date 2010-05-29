@@ -165,10 +165,6 @@ static int purple_parse_locerr     (OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_parse_genericerr (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_memrequest       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_selfinfo         (OscarData *, FlapConnection *, FlapFrame *, ...);
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-static int purple_offlinemsg       (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_offlinemsgdone   (OscarData *, FlapConnection *, FlapFrame *, ...);
-#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 static int purple_icqalias         (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_icqinfo          (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_popup            (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -1497,10 +1493,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_CLIENTAUTORESP, purple_parse_clientauto, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_MTN, purple_parse_mtn, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_ACK, purple_parse_msgack, 0);
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSG, purple_offlinemsg, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSGCOMPLETE, purple_offlinemsgdone, 0);
-#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_ALIAS, purple_icqalias, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_INFO, purple_icqinfo, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_RIGHTSINFO, purple_parse_locaterights, 0);
@@ -3980,9 +3972,6 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	aim_srv_setidle(od, !purple_presence_is_idle(presence) ? 0 : time(NULL) - purple_presence_get_idle_time(presence));
 
 	if (od->icq) {
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-		aim_icq_reqofflinemsgs(od);
-#endif
 		oscar_set_extendedstatus(gc);
 		aim_icq_setsecurity(od,
 			purple_account_get_bool(account, "authorization", OSCAR_DEFAULT_AUTHORIZATION),
@@ -4014,37 +4003,6 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 
 	return 1;
 }
-
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-static int purple_offlinemsg(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	va_list ap;
-	struct aim_icq_offlinemsg *msg;
-	struct aim_incomingim_ch4_args args;
-	time_t t;
-
-	va_start(ap, fr);
-	msg = va_arg(ap, struct aim_icq_offlinemsg *);
-	va_end(ap);
-
-	purple_debug_info("oscar",
-			   "Received offline message.  Converting to channel 4 ICBM...\n");
-	args.uin = msg->sender;
-	args.type = msg->type;
-	args.flags = msg->flags;
-	args.msglen = msg->msglen;
-	args.msg = msg->msg;
-	t = purple_time_build(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
-	incomingim_chan4(od, conn, NULL, &args, t);
-
-	return 1;
-}
-
-static int purple_offlinemsgdone(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
-{
-	aim_icq_ackofflinemsgs(od);
-	return 1;
-}
-#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 
 static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {

@@ -25,76 +25,6 @@
 
 #include "oscar.h"
 
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-int aim_icq_reqofflinemsgs(OscarData *od)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-	int bslen;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
-		return -EINVAL;
-
-	purple_debug_info("oscar", "Requesting offline messages\n");
-
-	bslen = 2 + 4 + 2 + 2;
-
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
-
-	/* For simplicity, don't bother using a tlvlist */
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putuid(&bs, od);
-	byte_stream_putle16(&bs, 0x003c); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-
-int aim_icq_ackofflinemsgs(OscarData *od)
-{
-	ByteStream bs;
-	FlapFrame *frame;
-	aim_snacid_t snacid;
-	int bslen;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
-		return -EINVAL;
-
-	purple_debug_info("oscar", "Acknowledged receipt of offline messages\n");
-
-	bslen = 2 + 4 + 2 + 2;
-
-	byte_stream_new(&bs, 4 + bslen);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
-
-	/* For simplicity, don't bother using a tlvlist */
-	byte_stream_put16(&bs, 0x0001);
-	byte_stream_put16(&bs, bslen);
-
-	byte_stream_putle16(&bs, bslen - 2);
-	byte_stream_putuid(&bs, od);
-	byte_stream_putle16(&bs, 0x003e); /* I command thee. */
-	byte_stream_putle16(&bs, snacid); /* eh. */
-
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	return 0;
-}
-#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
-
 int
 aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware)
 {
@@ -522,37 +452,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 	purple_debug_misc("oscar", "icq response: %d bytes, %u, 0x%04x, 0x%04x\n", cmdlen, ouruin, cmd, reqid);
 
-	if (cmd == 0x0041) { /* offline message */
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-		struct aim_icq_offlinemsg msg;
-		aim_rxcallback_t userfunc;
-
-		memset(&msg, 0, sizeof(msg));
-
-		msg.sender = byte_stream_getle32(&qbs);
-		msg.year = byte_stream_getle16(&qbs);
-		msg.month = byte_stream_getle8(&qbs);
-		msg.day = byte_stream_getle8(&qbs);
-		msg.hour = byte_stream_getle8(&qbs);
-		msg.minute = byte_stream_getle8(&qbs);
-		msg.type = byte_stream_getle8(&qbs);
-		msg.flags = byte_stream_getle8(&qbs);
-		msg.msglen = byte_stream_getle16(&qbs);
-		msg.msg = byte_stream_getstr(&qbs, msg.msglen);
-
-		if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSG)))
-			ret = userfunc(od, conn, frame, &msg);
-
-		g_free(msg.msg);
-
-	} else if (cmd == 0x0042) {
-		aim_rxcallback_t userfunc;
-
-		if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSGCOMPLETE)))
-			ret = userfunc(od, conn, frame);
-#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
-
-	} else if (cmd == 0x07da) { /* information */
+	if (cmd == 0x07da) { /* information */
 		guint16 subtype;
 		struct aim_icq_info *info;
 		aim_rxcallback_t userfunc;
