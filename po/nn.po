@@ -1,16 +1,12 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin\n"
+"Project-Id-Version: gtranslator\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
-"PO-Revision-Date: 2010-05-01 19:08+0200\n"
+"POT-Creation-Date: 2010-05-29 21:04-0400\n"
+"PO-Revision-Date: 2010-05-27 13:33+0100\n"
 "Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
-"Language-Team:  <>\n"
+"Language-Team: Norwegian Nynorsk <l10n@landro.net>\n"
+"Language: nn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1356,6 +1352,7 @@ msgstr "Slett tilstand"
 msgid "Saved Statuses"
 msgstr "Lagra tilstandar"
 
+#. title
 msgid "Title"
 msgstr "Tittel"
 
@@ -1917,7 +1914,6 @@ msgstr "Konverteringa av %s til punycode feila: %d"
 msgid "Thread creation failure: %s"
 msgstr "Klarte ikkje å laga tråd: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Ukjend årsak"
 
@@ -2409,7 +2405,7 @@ msgstr "DBus-døme"
 #. *  summary
 #. *  description
 msgid "DBus Plugin Example"
-msgstr "DBus-tilleggdøme"
+msgstr "DBus-tilleggsdøme"
 
 #. *< type
 #. *< ui_requirement
@@ -3189,6 +3185,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Førenamn"
 
@@ -3928,6 +3927,7 @@ msgstr "Fylke/region"
 msgid "Postal Code"
 msgstr "Postnummer"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Land"
 
@@ -3942,8 +3942,6 @@ msgstr "Organisasjonsnamn"
 msgid "Organization Unit"
 msgstr "Organisasjonseining"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Jobbtittel"
 
@@ -3951,6 +3949,7 @@ msgid "Role"
 msgstr "Stilling"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Fødselsdag"
 
@@ -5685,6 +5684,9 @@ msgstr "HTTP-metode-tenar"
 msgid "Show custom smileys"
 msgstr "Vis eigne smilefjes"
 
+msgid "Allow direct connections"
+msgstr "Tillat direkte samband"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: dytta til ein brukar for å få merksemda hans/hennar"
 
@@ -5908,7 +5910,11 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Profilopplysningane dine er ikkje henta enno. Prøv igjen seinare."
 
+msgid "Your MXitId"
+msgstr "MXit-ID-en din"
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -5985,7 +5991,7 @@ msgstr "PIN-en du skreiv nyttar ei ulovleg lengd [7-10]."
 msgid "MXit Login Name"
 msgstr "Påloggingsnamn MXit"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "Kallenamn"
 
@@ -6030,7 +6036,7 @@ msgstr "Du skreiv ikkje inn tryggleikskoden"
 msgid "Security Code"
 msgstr "Tryggleikskode"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Skriv inn tryggleikskoden"
 
@@ -6056,6 +6062,10 @@ msgstr "Lastar menyen…"
 msgid "Status Message"
 msgstr "Statusmelding"
 
+msgid "Rejection Message"
+msgstr "Avvisingsmelding"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "Skjult nummer"
 
@@ -6073,6 +6083,19 @@ msgstr "Kopla til over HTTP"
 # ? treng gjennomsyn
 msgid "Enable splash-screen popup"
 msgstr "Bruk oppstartsvindauge"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Du er blitt sparka ut av: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Ugyldig autentiseringsmelding"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Rom:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6282,8 +6305,8 @@ msgid ""
 "of %d.  Please shorten your password at http://profileedit.myspace.com/index."
 "cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
-"%s Passordet ditt er på %zu teikn, som er lengre enn største lengda som er %"
-"d. Gjer passordet ditt kortare på nettsida http://profileedit.myspace.com/"
+"%s Passordet ditt er på %zu teikn, som er lengre enn største lengda som er "
+"%d. Gjer passordet ditt kortare på nettsida http://profileedit.myspace.com/"
 "index.cfm?fuseaction=accountSettings.changePassword og prøv på nytt."
 
 msgid "Incorrect username or password"
@@ -6840,6 +6863,64 @@ msgstr "Klarte ikkje å bli med i praterommet"
 msgid "Invalid chat room name"
 msgstr "Ugyldig prateromsnamn"
 
+msgid "Invalid error"
+msgstr "Ugyldig feil"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "Får ikkje ta i mot lynmeldingar grunna foreldrekontrollreglar"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "Kan ikkje senda teksmeldingar utan godkjenning av vilkåra"
+
+# tekstmeldinga? SMS-en?
+msgid "Cannot send SMS"
+msgstr "Klarer ikkje å senda meldinga"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "Kan ikkje senda meldingar til dette landet"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "Kan ikkje senda meldingar til ukjente land"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Bot-kontoar kan ikkje setja i gang lynmeldingar"
+
+msgid "Bot account cannot IM this user"
+msgstr "Bot-kontoen kan ikkje senda lynmelding til denne brukaren"
+
+msgid "Bot account reached IM limit"
+msgstr "Bot-kontoen har nådd lynmeldingsgrensa"
+
+msgid "Bot account reached daily IM limit"
+msgstr "Bot-kontoen har nådd dagsgrensa for lynmeldingar"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "Bot-kontoen har nådd månadsgrensa for lynmeldingar"
+
+msgid "Unable to receive offline messages"
+msgstr "Klarer ikkje å ta i mot fråkopla meldingar"
+
+msgid "Offline message store full"
+msgstr "Fråkopla meldingslager er fullt"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Klarer ikkje å senda meldinga: %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Klarer ikkje å senda melding: %s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Klarer ikkje å senda meldinga til %s: %s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Klarer ikkje å senda meldinga til %s: %s"
+
 msgid "Thinking"
 msgstr "Tenkjer"
 
@@ -6990,117 +7071,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Fila %s er %s, noko som er større enn høgste storleik av %s."
-
-msgid "Invalid error"
-msgstr "Ugyldig feil"
-
-msgid "Invalid SNAC"
-msgstr "Ugyldig SNAC"
-
-msgid "Rate to host"
-msgstr "Fart mot vert"
-
-msgid "Rate to client"
-msgstr "Fart mot klient"
-
-msgid "Service unavailable"
-msgstr "Tenesta er utilgjengeleg"
-
-msgid "Service not defined"
-msgstr "Tenesta er ikkje definert"
-
-msgid "Obsolete SNAC"
-msgstr "Forelda SNAC"
-
-msgid "Not supported by host"
-msgstr "Ikkje støtta av verten"
-
-msgid "Not supported by client"
-msgstr "Ikkje støtta av klienten"
-
-msgid "Refused by client"
-msgstr "Avvist av klienten"
-
-msgid "Reply too big"
-msgstr "Svaret er for stort"
-
-msgid "Responses lost"
-msgstr "Tapte svar"
-
-msgid "Request denied"
-msgstr "Førsepurnad avvist"
-
-msgid "Busted SNAC payload"
-msgstr "Ødelagt SNAC-pakkeinnhald"
-
-msgid "Insufficient rights"
-msgstr "Ikkje nok rettar"
-
-msgid "In local permit/deny"
-msgstr "I lokal tilgangs-/forbodsliste"
-
-msgid "Warning level too high (sender)"
-msgstr "For høgt åtvaringsnivå (sendar)"
-
-msgid "Warning level too high (receiver)"
-msgstr "For høgt åtvaringsnivå (mottakar)"
-
-msgid "User temporarily unavailable"
-msgstr "Brukaren er mellombels utilgjengeleg"
-
-msgid "No match"
-msgstr "Ikkje noko samsvar"
-
-msgid "List overflow"
-msgstr "Lista er full"
-
-msgid "Request ambiguous"
-msgstr "Uklar førespurnad"
-
-msgid "Queue full"
-msgstr "Køen er full"
-
-msgid "Not while on AOL"
-msgstr "Ikkje når pålogga AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "Får ikkje ta i mot lynmeldingar grunna foreldrekontrollreglar"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "Kan ikkje senda teksmeldingar utan godkjenning av vilkåra"
-
-# tekstmeldinga? SMS-en?
-msgid "Cannot send SMS"
-msgstr "Klarer ikkje å senda meldinga"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "Kan ikkje senda meldingar til dette landet"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "Kan ikkje senda meldingar til ukjente land"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "Bot-kontoar kan ikkje setja i gang lynmeldingar"
-
-msgid "Bot account cannot IM this user"
-msgstr "Bot-kontoen kan ikkje senda lynmelding til denne brukaren"
-
-msgid "Bot account reached IM limit"
-msgstr "Bot-kontoen har nådd lynmeldingsgrensa"
-
-msgid "Bot account reached daily IM limit"
-msgstr "Bot-kontoen har nådd dagsgrensa for lynmeldingar"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "Bot-kontoen har nådd månadsgrensa for lynmeldingar"
-
-msgid "Unable to receive offline messages"
-msgstr "Klarer ikkje å ta i mot fråkopla meldingar"
-
-msgid "Offline message store full"
-msgstr "Fråkopla meldingslager er fullt"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7448,27 +7418,8 @@ msgstr[0] "Du fekk ikkje %hu melding frå %s av uviss årsak."
 msgstr[1] "Du fekk ikkje %hu meldingar frå %s av uviss årsak."
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Klarer ikkje å senda meldinga: %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Klarer ikkje å senda melding: %s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Klarer ikkje å senda meldinga til %s: %s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Klarer ikkje å senda meldinga til %s: %s"
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "Brukarinformasjon er ikkje tilgjengeleg: %s"
-
-msgid "Unknown reason."
-msgstr "Ukjend årsak."
 
 msgid "Online Since"
 msgstr "Tilkopla sidan"
@@ -7893,6 +7844,75 @@ msgstr ""
 "Dette krev ei direktetilkopling mellom dei to datamaskinene og er nødvendig "
 "for lynmeldingsbilete. Fordi IP-adressa vil bli avslørt, blir dette sett på "
 "som ein tryggleiksrisiko."
+
+msgid "Invalid SNAC"
+msgstr "Ugyldig SNAC"
+
+msgid "Rate to host"
+msgstr "Fart mot vert"
+
+msgid "Rate to client"
+msgstr "Fart mot klient"
+
+msgid "Service unavailable"
+msgstr "Tenesta er utilgjengeleg"
+
+msgid "Service not defined"
+msgstr "Tenesta er ikkje definert"
+
+msgid "Obsolete SNAC"
+msgstr "Forelda SNAC"
+
+msgid "Not supported by host"
+msgstr "Ikkje støtta av verten"
+
+msgid "Not supported by client"
+msgstr "Ikkje støtta av klienten"
+
+msgid "Refused by client"
+msgstr "Avvist av klienten"
+
+msgid "Reply too big"
+msgstr "Svaret er for stort"
+
+msgid "Responses lost"
+msgstr "Tapte svar"
+
+msgid "Request denied"
+msgstr "Førsepurnad avvist"
+
+msgid "Busted SNAC payload"
+msgstr "Ødelagt SNAC-pakkeinnhald"
+
+msgid "Insufficient rights"
+msgstr "Ikkje nok rettar"
+
+msgid "In local permit/deny"
+msgstr "I lokal tilgangs-/forbodsliste"
+
+msgid "Warning level too high (sender)"
+msgstr "For høgt åtvaringsnivå (sendar)"
+
+msgid "Warning level too high (receiver)"
+msgstr "For høgt åtvaringsnivå (mottakar)"
+
+msgid "User temporarily unavailable"
+msgstr "Brukaren er mellombels utilgjengeleg"
+
+msgid "No match"
+msgstr "Ikkje noko samsvar"
+
+msgid "List overflow"
+msgstr "Lista er full"
+
+msgid "Request ambiguous"
+msgstr "Uklar førespurnad"
+
+msgid "Queue full"
+msgstr "Køen er full"
+
+msgid "Not while on AOL"
+msgstr "Ikkje når pålogga AOL"
 
 msgid "Aquarius"
 msgstr "Vassmannen"
@@ -12056,9 +12076,8 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Arabisk"
 
-#, fuzzy
 msgid "Assamese"
-msgstr "Skamfull"
+msgstr "Assamesisk"
 
 msgid "Belarusian Latin"
 msgstr "Kviterussisk latinsk"
@@ -12187,9 +12206,8 @@ msgstr "Lao"
 msgid "Macedonian"
 msgstr "Makedonsk"
 
-#, fuzzy
 msgid "Malayalam"
-msgstr "Malayisk"
+msgstr "Malayalam"
 
 msgid "Mongolian"
 msgstr "Mongolsk"
@@ -12305,8 +12323,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s er ein meldingsklient basert på libpurple som er i stand til å kopla seg "
 "opp mot fleire meldingstenester samstundes. %s er skriven i C ved å nytta GTK"
@@ -12859,16 +12877,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Er du sikker på at du vil permanent sletta loggen over pratinga i %s som "
 "starta %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "Er du sikker på at du for alltid vil sletta systemloggen som starta på %s?"
 
@@ -15131,125 +15149,149 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Dette programtillegget er nyttig ved feilsøking av XMPP-tenarar og -klientar."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
-"$(^Name) blir utgjeve med ein GNU General Public License (GPL). Lisensen er "
-"berre gjeven her for opplysningsformål. $_CLICK"
+"$(^Name) er utgjeve i samsvar med vilkåra i GNU General Public License "
+"(GPL). Lisensen blir  berre vist her for å opplysa. $_CLICK"
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
-"Ei grafisk brukargrensesnittverktøykasse på fleire plattformer som Pidgin "
-"nyttar"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
-msgstr "Pidgin kjører no. Lukk programmet og prøv igjen."
+msgstr "Pidgin kjører allereie. Avslutt Pidgin og prøv på nytt."
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
-msgstr "Pidgin programfiler og DLL-ar"
+msgstr "Pidgin kjerne- og biblioteksfiler"
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
-msgstr "Lag ein snarveg til Pidgin på startmenyen"
+msgstr "Før opp Pidgin i startmenyen"
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Lag ein snarveg til Pidgin på skrivebordet"
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
-msgstr ""
+msgstr "Feilsøkingssymbol (for å rapportera krasjar)"
 
-#, fuzzy
+#. Installer Subsection Text
 msgid "Desktop"
-msgstr "Skrivebordet"
+msgstr "Skrivebord"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
+"Klarte ikkje å lasta ned GTK+-kjøremiljøet ($R2).$\\rUtan dette vil ikkje "
+"Pidgin verka. Om du prøver igjen og det framleis feilar, kan du kanskje "
+"nytta 'den fråkopla installasjonen' frå http://pidgin.im/download/windows/ ."
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
+"Klarte ikkje å installera feilsøkingssymbola ($R2).$\\rOm du prøver igjen og "
+"det framleis feilar, kan du kanskje nytta 'den fråkopla installasjonen' frå "
+"http://pidgin.im/download/windows/ ."
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
+"Klarte ikkje å installera stavekontrollen ($R3).$\\rOm du prøver igjen og "
+"det framleis feilar, finn du instruksar om manuell installasjon på: http://"
+"developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 
+#. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
-msgstr "GTK+-kjøremiljø (påkravd om det ikkje er til stades no)"
+msgstr "GTK+-kjøremiljø (krevst om det ikkje allereie er til stades)"
 
-#, fuzzy
+#. Installer Subsection Text
 msgid "Localizations"
-msgstr "Stad"
+msgstr "Lokaliseringar"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "Neste >"
 
-#. Components Page
+#. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Pidgin lynmeldingsklient (påkravd)"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
+"Pidgin krev eit kompatibelt GTK+-kjøremiljø som no ikkje verkar vera til "
+"stades.$\\rEr du sikker på at du ikkje vil installera GTK+-kjøremiljøet?"
 
+#. Installer Subsection Text
 msgid "Shortcuts"
 msgstr "Snarvegar"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr "Snarvegar for å starta Pidgin"
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
-msgstr "Stavekontrollhjelp"
+msgstr "Stavekontrollstøtte"
 
+#. Installer Subsection Text
 msgid "Start Menu"
-msgstr "Startmenyen"
+msgstr "Startmeny"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
-msgstr "Stavekontrollhjelp (treng internettsamband for å installera)."
+msgstr "Stavekontrollstøtte (krev internettsamband under installasjonen)."
 
 msgid "The installer is already running."
 msgstr "Installasjonsprogrammet kjører allereie."
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
-"Avinstallasjonsprogrammet fann ikkje registerpostar for Pidgin.$\\rTruleg "
-"har ein annan brukar installert denne applikasjonen."
+"Avinstalleraren fann ingen registerpostar for Pidgin.$\\rDet kan henda at "
+"ein annan brukar installerte programmet."
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
-msgstr "URI-referanse"
+msgstr "Adressehandterarar"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
-"Klarte ikkje å avinstallera Pidgin-utgåva som er i bruk. Den nye utgåva kjem "
-"til å bli installert utan å ta vekk den gjeldande."
+"Klarer ikkje å avinstallera den gjeldande utgåva av Pidgin. Den nye utgåva "
+"vil bli installert utan at den gamle blir fjerna."
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
-msgstr "Besøk Pidgin si nettside"
+msgstr "Besøk Pidgin sin nettstad"
 
 msgid "You do not have permission to uninstall this application."
-msgstr "Du har ikkje løyve til å kunna avinstallera denne applikasjonen."
+msgstr "Du har ikkje rettar til å avinstallera dette programmet."
+
+#~ msgid "Unknown reason."
+#~ msgstr "Ukjend årsak."
 
 #~ msgid "Current Mood"
 #~ msgstr "Sinnsstemninga no"
