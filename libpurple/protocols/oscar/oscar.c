@@ -115,7 +115,6 @@ static int purple_connerr          (OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_parse_mtn        (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_locaterights(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_buddyrights(OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_parse_locerr     (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_genericerr (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_memrequest       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_selfinfo         (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -1029,7 +1028,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_MTN, purple_parse_mtn, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_ACK, purple_parse_msgack, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_RIGHTSINFO, purple_parse_locaterights, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_ERROR, purple_parse_locerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x0001, purple_parse_genericerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x000f, purple_selfinfo, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x001f, purple_memrequest, 0);
@@ -2762,27 +2760,6 @@ static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 		} break;
 	}
 
-	return 1;
-}
-
-/*
- * We get this error when there was an error in the locate family.  This
- * happens when you request info of someone who is offline.
- */
-static int purple_parse_locerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	va_list ap;
-	guint16 reason;
-	char *destn;
-
-	va_start(ap, fr);
-	reason = (guint16) va_arg(ap, unsigned int);
-	destn = va_arg(ap, char *);
-	va_end(ap);
-
-	if (destn == NULL)
-		return 1;
-
-	oscar_user_info_display_error(od, reason, destn);
 	return 1;
 }
 
