@@ -6,6 +6,7 @@ EXTRA_DIST = \
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 OSCARSOURCES = \
+	authorization.c     \
 	bstream.c           \
 	clientlogin.c       \
 	family_admin.c      \
@@ -44,6 +45,7 @@ OSCARSOURCES = \
 	snac.c              \
 	snactypes.h         \
 	tlv.c               \
+	userinfo.c          \
 	util.c
 
 AM_CFLAGS = $(st)

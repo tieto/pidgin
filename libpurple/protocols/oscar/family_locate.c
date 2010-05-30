@@ -1470,7 +1470,6 @@ static int
 userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
-	aim_rxcallback_t userfunc;
 	aim_userinfo_t *userinfo, *userinfo2;
 	GSList *tlvlist;
 	aim_tlv_t *tlv = NULL;
@@ -1522,8 +1521,7 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	g_free(userinfo);
 
 	/* Show the info to the user */
-	if (userinfo2 != NULL && ((userfunc = aim_callhandler(od, snac->family, snac->subtype))))
-		ret = userfunc(od, conn, frame, userinfo2);
+	oscar_user_info_display_aim(od, userinfo2);
 
 	return ret;
 }

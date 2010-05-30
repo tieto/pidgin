@@ -311,6 +311,31 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	return 0;
 }
 
+static int
+gotalias(OscarData *od, struct aim_icq_info *info)
+{
+	PurpleConnection *gc = od->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	gchar who[16], *utf8;
+	PurpleBuddy *b;
+
+	if (info->nick[0] && (utf8 = oscar_utf8_try_convert(account, od, info->nick))) {
+		if (info->for_auth_request) {
+			oscar_auth_recvrequest(gc, g_strdup_printf("%u", info->uin), utf8, info->auth_request_reason);
+		} else {
+			g_snprintf(who, sizeof(who), "%u", info->uin);
+			serv_got_alias(gc, who, utf8);
+			if ((b = purple_find_buddy(account, who))) {
+				purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", utf8);
+			}
+			g_free(utf8);
+		}
+	}
+
+	g_free(info->auth_request_reason);
+	return 1;
+}
+
 static void aim_icq_freeinfo(struct aim_icq_info *info) {
 	int i;
 
@@ -378,7 +403,6 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	if (cmd == 0x07da) { /* information */
 		guint16 subtype;
 		struct aim_icq_info *info;
-		aim_rxcallback_t userfunc;
 
 		subtype = byte_stream_getle16(&qbs);
 		byte_stream_advance(&qbs, 1); /* 0x0a */
@@ -659,12 +683,10 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 		if (!(snac->flags & 0x0001)) {
 			if (subtype != 0x0104)
-				if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_INFO)))
-					ret = userfunc(od, conn, frame, info);
+				oscar_user_info_display_icq(od, info);
 
 			if (info->uin && info->nick)
-				if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_ALIAS)))
-					ret = userfunc(od, conn, frame, info);
+				gotalias(od, info);
 
 			if (od->icq_info == info) {
 				od->icq_info = info->next;
