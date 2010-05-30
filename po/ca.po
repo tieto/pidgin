@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-25 21:38+0200\n"
-"PO-Revision-Date: 2010-05-25 21:51+0200\n"
+"POT-Creation-Date: 2010-05-30 16:10+0200\n"
+"PO-Revision-Date: 2010-05-30 16:10+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -3992,6 +3992,7 @@ msgid "Role"
 msgstr "Rol"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Data de naixement"
 
@@ -5985,6 +5986,7 @@ msgid "Your MXitId"
 msgstr "El vostre MXitID"
 
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -6060,7 +6062,7 @@ msgstr "La llargada del PIN que heu introduït no és vàlida [4-10]."
 msgid "MXit Login Name"
 msgstr "Nom d'usuari de MXit"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "Sobrenom"
 
@@ -6109,7 +6111,7 @@ msgstr "No heu introduït codi de seguretat"
 msgid "Security Code"
 msgstr "Codi de seguretat"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Introduïu el codi de seguretat"
 
@@ -6156,6 +6158,16 @@ msgstr "Connecta amb HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Habilita la pantalla de presentació emergent"
+
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr "Us han fet fora d'aquest MultiMX."
+
+msgid "was kicked"
+msgstr "ha estat fet fora"
+
+msgid "_Room Name:"
+msgstr "Nom de la _Sala:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7934,6 +7946,75 @@ msgstr ""
 "Això requereix la connexió directa entre els dos ordinadors, ja que és "
 "necessari per poder enviar imatges instantànies. Atès que es revelarà la "
 "vostra adreça IP, això es pot considerar un risc de privadesa."
+
+msgid "Invalid SNAC"
+msgstr "SNAC invàlid"
+
+msgid "Rate to host"
+msgstr "Velocitat cap a l'ordinador"
+
+msgid "Rate to client"
+msgstr "Velocitat cap al client"
+
+msgid "Service unavailable"
+msgstr "Servei no disponible"
+
+msgid "Service not defined"
+msgstr "Servei no definit"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC obsolet"
+
+msgid "Not supported by host"
+msgstr "El servidor no ho permet"
+
+msgid "Not supported by client"
+msgstr "El client no ho permet"
+
+msgid "Refused by client"
+msgstr "Rebutjat pel client"
+
+msgid "Reply too big"
+msgstr "Resposta massa gran"
+
+msgid "Responses lost"
+msgstr "S'han perdut respostes"
+
+msgid "Request denied"
+msgstr "Petició denegada"
+
+msgid "Busted SNAC payload"
+msgstr "Càrrega SNAC malmesa"
+
+msgid "Insufficient rights"
+msgstr "Drets insuficients"
+
+msgid "In local permit/deny"
+msgstr "En la llista de permès/denegat local"
+
+msgid "Warning level too high (sender)"
+msgstr "Nivell d'avís massa alt (remitent)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Nivell d'avís massa alt (receptor)"
+
+msgid "User temporarily unavailable"
+msgstr "Usuari no disponible temporalment"
+
+msgid "No match"
+msgstr "Cap coincidència"
+
+msgid "List overflow"
+msgstr "Sobreeiximent de la llista"
+
+msgid "Request ambiguous"
+msgstr "Petició ambigua"
+
+msgid "Queue full"
+msgstr "Cua plena"
+
+msgid "Not while on AOL"
+msgstr "No es pot fer mentre estigui a AOL"
 
 msgid "Aquarius"
 msgstr "Aquari"
@@ -15388,75 +15469,6 @@ msgstr "Visita la pàgina web de Pidgin per Windows"
 msgid "You do not have permission to uninstall this application."
 msgstr "No tens permís per desinstal.lar aquesta aplicació."
 
-#~ msgid "Invalid SNAC"
-#~ msgstr "SNAC invàlid"
-
-#~ msgid "Rate to host"
-#~ msgstr "Velocitat cap a l'ordinador"
-
-#~ msgid "Rate to client"
-#~ msgstr "Velocitat cap al client"
-
-#~ msgid "Service unavailable"
-#~ msgstr "Servei no disponible"
-
-#~ msgid "Service not defined"
-#~ msgstr "Servei no definit"
-
-#~ msgid "Obsolete SNAC"
-#~ msgstr "SNAC obsolet"
-
-#~ msgid "Not supported by host"
-#~ msgstr "El servidor no ho permet"
-
-#~ msgid "Not supported by client"
-#~ msgstr "El client no ho permet"
-
-#~ msgid "Refused by client"
-#~ msgstr "Rebutjat pel client"
-
-#~ msgid "Reply too big"
-#~ msgstr "Resposta massa gran"
-
-#~ msgid "Responses lost"
-#~ msgstr "S'han perdut respostes"
-
-#~ msgid "Request denied"
-#~ msgstr "Petició denegada"
-
-#~ msgid "Busted SNAC payload"
-#~ msgstr "Càrrega SNAC malmesa"
-
-#~ msgid "Insufficient rights"
-#~ msgstr "Drets insuficients"
-
-#~ msgid "In local permit/deny"
-#~ msgstr "En la llista de permès/denegat local"
-
-#~ msgid "Warning level too high (sender)"
-#~ msgstr "Nivell d'avís massa alt (remitent)"
-
-#~ msgid "Warning level too high (receiver)"
-#~ msgstr "Nivell d'avís massa alt (receptor)"
-
-#~ msgid "User temporarily unavailable"
-#~ msgstr "Usuari no disponible temporalment"
-
-#~ msgid "No match"
-#~ msgstr "Cap coincidència"
-
-#~ msgid "List overflow"
-#~ msgstr "Sobreeiximent de la llista"
-
-#~ msgid "Request ambiguous"
-#~ msgstr "Petició ambigua"
-
-#~ msgid "Queue full"
-#~ msgstr "Cua plena"
-
-#~ msgid "Not while on AOL"
-#~ msgstr "No es pot fer mentre estigui a AOL"
-
 #~ msgid "Unknown reason."
 #~ msgstr "Motiu desconegut."
 
@@ -16629,9 +16641,6 @@ msgstr "No tens permís per desinstal.lar aquesta aplicació."
 
 #~ msgid "You have just sent a Nudge!"
 #~ msgstr "Acabeu d'enviar un cop de colze!"
-
-#~ msgid "whacked"
-#~ msgstr "bufetejat"
 
 #~ msgid "torched"
 #~ msgstr "encès"
