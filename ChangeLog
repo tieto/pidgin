@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.1 (??/??/2010):
+version 2.7.1 (05/29/2010):
 	General:
 	* Build fixes on OpenSolaris.  (Brian Lu)
 	* Add configure option --enable-trayicon-compat which installs tray
