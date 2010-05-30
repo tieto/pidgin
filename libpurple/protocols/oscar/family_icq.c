@@ -25,6 +25,102 @@
 
 #include "oscar.h"
 
+#define AIM_ICQ_INFO_REQUEST 0x04b2
+#define AIM_ICQ_ALIAS_REQUEST 0x04ba
+
+static
+int compare_icq_infos(gconstpointer a, gconstpointer b)
+{
+	const struct aim_icq_info* aa = a;
+	const guint16* bb = b;
+	return aa->reqid - *bb;
+}
+
+static void aim_icq_freeinfo(struct aim_icq_info *info) {
+	int i;
+
+	if (!info)
+		return;
+	g_free(info->nick);
+	g_free(info->first);
+	g_free(info->last);
+	g_free(info->email);
+	g_free(info->homecity);
+	g_free(info->homestate);
+	g_free(info->homephone);
+	g_free(info->homefax);
+	g_free(info->homeaddr);
+	g_free(info->mobile);
+	g_free(info->homezip);
+	g_free(info->personalwebpage);
+	if (info->email2)
+		for (i = 0; i < info->numaddresses; i++)
+			g_free(info->email2[i]);
+	g_free(info->email2);
+	g_free(info->workcity);
+	g_free(info->workstate);
+	g_free(info->workphone);
+	g_free(info->workfax);
+	g_free(info->workaddr);
+	g_free(info->workzip);
+	g_free(info->workcompany);
+	g_free(info->workdivision);
+	g_free(info->workposition);
+	g_free(info->workwebpage);
+	g_free(info->info);
+	g_free(info->status_note_title);
+	g_free(info->auth_request_reason);
+}
+
+static
+int error(OscarData *od, aim_modsnac_t *error_snac, ByteStream *bs)
+{
+	aim_snac_t *original_snac = aim_remsnac(od, error_snac->id);
+	guint16 *request_type;
+	GSList *original_info_ptr;
+	struct aim_icq_info *original_info;
+	guint16 reason;
+	gchar *uin;
+
+	if (!original_snac || (original_snac->family != SNAC_FAMILY_ICQ) || !original_snac->data) {
+		purple_debug_misc("oscar", "icq: the original snac for the error packet was not found");
+		g_free(original_snac);
+		return 0;
+	}
+	
+	request_type = original_snac->data;
+	original_info_ptr = g_slist_find_custom(od->icq_info, &original_snac->id, compare_icq_infos);
+	original_info = original_info_ptr->data;
+	
+	if (!original_info_ptr) {
+		purple_debug_misc("oscar", "icq: the request info for the error packet was not found");
+		g_free(original_snac);
+		return 0;
+	}
+	
+	reason = byte_stream_get16(bs);
+	uin = g_strdup_printf("%u", original_info->uin);
+	switch (*request_type) {
+		case AIM_ICQ_INFO_REQUEST:
+			oscar_user_info_display_error(od, reason, uin);
+			break;
+		case AIM_ICQ_ALIAS_REQUEST:
+			/* Couldn't retrieve an alias for the buddy requesting authorization; have to make do with UIN only. */
+			if (original_info->for_auth_request)
+				oscar_auth_recvrequest(od->gc, uin, NULL, original_info->auth_request_reason);
+			break;
+		default:
+			purple_debug_misc("oscar", "icq: got an error packet with unknown request type %u", *request_type);
+			break;
+	}
+
+	aim_icq_freeinfo(original_info);
+	od->icq_info = g_slist_remove(od->icq_info, original_info_ptr);
+	g_free(original_snac->data);
+	g_free(original_snac);
+	return 1;
+}
+
 int
 aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware)
 {
@@ -124,6 +220,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	aim_snacid_t snacid;
 	int bslen;
 	struct aim_icq_info *info;
+	guint16 request_type = AIM_ICQ_INFO_REQUEST;
 
 	if (!uin || uin[0] < '0' || uin[0] > '9')
 		return -EINVAL;
@@ -135,7 +232,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, &request_type, sizeof(request_type));
 
 	/* For simplicity, don't bother using a tlvlist */
 	byte_stream_put16(&bs, 0x0001);
@@ -145,7 +242,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
-	byte_stream_putle16(&bs, 0x04b2); /* shrug. */
+	byte_stream_putle16(&bs, request_type); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
 	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
@@ -156,8 +253,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
 	info->reqid = snacid;
 	info->uin = atoi(uin);
-	info->next = od->icq_info;
-	od->icq_info = info;
+	od->icq_info = g_slist_prepend(od->icq_info, info);
 
 	return 0;
 }
@@ -169,6 +265,7 @@ int aim_icq_getalias(OscarData *od, const char *uin, gboolean for_auth_request, 
 	aim_snacid_t snacid;
 	int bslen;
 	struct aim_icq_info *info;
+	guint16 request_type = AIM_ICQ_ALIAS_REQUEST;
 
 	if (!uin || uin[0] < '0' || uin[0] > '9')
 		return -EINVAL;
@@ -182,7 +279,7 @@ int aim_icq_getalias(OscarData *od, const char *uin, gboolean for_auth_request, 
 
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, &request_type, sizeof(request_type));
 
 	/* For simplicity, don't bother using a tlvlist */
 	byte_stream_put16(&bs, 0x0001);
@@ -192,7 +289,7 @@ int aim_icq_getalias(OscarData *od, const char *uin, gboolean for_auth_request, 
 	byte_stream_putuid(&bs, od);
 	byte_stream_putle16(&bs, 0x07d0); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
-	byte_stream_putle16(&bs, 0x04ba); /* shrug. */
+	byte_stream_putle16(&bs, request_type); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
 	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
@@ -203,10 +300,9 @@ int aim_icq_getalias(OscarData *od, const char *uin, gboolean for_auth_request, 
 	info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
 	info->reqid = snacid;
 	info->uin = atoi(uin);
-	info->next = od->icq_info;
 	info->for_auth_request = for_auth_request;
 	info->auth_request_reason = g_strdup(auth_request_reason);
-	od->icq_info = info;
+	od->icq_info = g_slist_prepend(od->icq_info, info);
 
 	return 0;
 }
@@ -331,54 +427,15 @@ gotalias(OscarData *od, struct aim_icq_info *info)
 			g_free(utf8);
 		}
 	}
-
-	g_free(info->auth_request_reason);
 	return 1;
-}
-
-static void aim_icq_freeinfo(struct aim_icq_info *info) {
-	int i;
-
-	if (!info)
-		return;
-	g_free(info->nick);
-	g_free(info->first);
-	g_free(info->last);
-	g_free(info->email);
-	g_free(info->homecity);
-	g_free(info->homestate);
-	g_free(info->homephone);
-	g_free(info->homefax);
-	g_free(info->homeaddr);
-	g_free(info->mobile);
-	g_free(info->homezip);
-	g_free(info->personalwebpage);
-	if (info->email2)
-		for (i = 0; i < info->numaddresses; i++)
-			g_free(info->email2[i]);
-	g_free(info->email2);
-	g_free(info->workcity);
-	g_free(info->workstate);
-	g_free(info->workphone);
-	g_free(info->workfax);
-	g_free(info->workaddr);
-	g_free(info->workzip);
-	g_free(info->workcompany);
-	g_free(info->workdivision);
-	g_free(info->workposition);
-	g_free(info->workwebpage);
-	g_free(info->info);
-	g_free(info->status_note_title);
-	g_free(info);
 }
 
 /**
  * Subtype 0x0003 - Response to SNAC_FAMILY_ICQ/0x002, contains an ICQesque packet.
  */
 static int
-icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
+icqresponse(OscarData *od, aim_modsnac_t *snac, ByteStream *bs)
 {
-	int ret = 0;
 	GSList *tlvlist;
 	aim_tlv_t *datatlv;
 	ByteStream qbs;
@@ -402,20 +459,21 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 	if (cmd == 0x07da) { /* information */
 		guint16 subtype;
+		GSList *info_ptr;
 		struct aim_icq_info *info;
 
 		subtype = byte_stream_getle16(&qbs);
 		byte_stream_advance(&qbs, 1); /* 0x0a */
 
 		/* find other data from the same request */
-		for (info = od->icq_info; info && (info->reqid != reqid); info = info->next);
-		if (!info) {
-			info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
-			info->reqid = reqid;
-			info->next = od->icq_info;
-			od->icq_info = info;
+		info_ptr = g_slist_find_custom(od->icq_info, &reqid, compare_icq_infos);
+		if (!info_ptr) {
+			struct aim_icq_info *new_info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
+			new_info->reqid = reqid;
+			info_ptr = od->icq_info = g_slist_prepend(od->icq_info, new_info);
 		}
 
+		info = info_ptr->data;
 		switch (subtype) {
 		case 0x00a0: { /* hide ip status */
 			/* nothing */
@@ -667,8 +725,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 				memcpy(&info->icbm_cookie, cookie, 8);
 
-				info->next = od->icq_info;
-				od->icq_info = info;
+				od->icq_info = g_slist_prepend(od->icq_info, info);
 
 				flap_connection_send_snac_with_priority(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs, FALSE);
 
@@ -688,28 +745,23 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 			if (info->uin && info->nick)
 				gotalias(od, info);
 
-			if (od->icq_info == info) {
-				od->icq_info = info->next;
-			} else {
-				struct aim_icq_info *cur;
-				for (cur=od->icq_info; (cur->next && (cur->next!=info)); cur=cur->next);
-				if (cur->next)
-					cur->next = cur->next->next;
-			}
 			aim_icq_freeinfo(info);
+			od->icq_info = g_slist_remove(od->icq_info, info);
 		}
 	}
 
 	aim_tlvlist_free(tlvlist);
 
-	return ret;
+	return 1;
 }
 
 static int
 snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	if (snac->subtype == 0x0003)
-		return icqresponse(od, conn, mod, frame, snac, bs);
+	if (snac->subtype == 0x0001)
+		return error(od, snac, bs);
+	else if (snac->subtype == 0x0003)
+		return icqresponse(od, snac, bs);
 
 	return 0;
 }
@@ -717,15 +769,10 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 static void
 icq_shutdown(OscarData *od, aim_module_t *mod)
 {
-	struct aim_icq_info *del;
-
-	while (od->icq_info) {
-		del = od->icq_info;
-		od->icq_info = od->icq_info->next;
-		aim_icq_freeinfo(del);
-	}
-
-	return;
+	GSList *cur;
+	for (cur = od->icq_info; cur; cur = cur->next)
+		aim_icq_freeinfo(cur->data);
+	g_slist_free(od->icq_info);
 }
 
 int

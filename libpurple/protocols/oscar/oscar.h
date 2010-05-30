@@ -542,7 +542,7 @@ struct _OscarData
 	 */
 
 	IcbmCookie *msgcookies;
-	struct aim_icq_info *icq_info;
+	GSList *icq_info;
 
 	/** Only used when connecting with the old-style BUCP login. */
 	struct aim_authresp_info *authinfo;
@@ -1413,9 +1413,6 @@ struct aim_icq_info
 	/* email (0x00eb) */
 	guint16 numaddresses;
 	char **email2;
-
-	/* we keep track of these in a linked list because we're 1337 */
-	struct aim_icq_info *next;
 
 	/* status note info */
 	guint8 icbm_cookie[8];

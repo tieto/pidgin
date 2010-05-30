@@ -369,7 +369,7 @@ oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *us
 }
 
 void
-oscar_user_info_display_error(OscarData *od, guint16 error_reason, char *buddy)
+oscar_user_info_display_error(OscarData *od, guint16 error_reason, gchar *buddy)
 {
 	PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
 	gchar *buf = g_strdup_printf(_("User information not available: %s"), oscar_get_msgerr_reason(error_reason));
@@ -395,7 +395,7 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 
 	if (!info->uin)
 		return;
-	
+
 	user_info = purple_notify_user_info_new();
 
 	g_snprintf(who, sizeof(who), "%u", info->uin);
