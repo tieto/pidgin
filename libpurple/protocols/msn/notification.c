@@ -1572,7 +1572,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	PurpleAccount *account;
 	MsnUser *user;
 	const char *passport;
-	char *psm_str, *str;
+	char *str;
 
 	session = cmdproc->session;
 	account = session->account;
@@ -1580,7 +1580,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	passport = cmd->params[0];
 	user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) {
-		char *str = g_strndup(payload, len);
+		str = g_strndup(payload, len);
 		purple_debug_info("msn", "unknown user %s, payload is %s\n",
 			passport, str);
 		g_free(str);
@@ -1598,9 +1598,9 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	}
 
 	if (len != 0) {
-		psm_str = msn_get_psm(cmd->payload,len);
-		msn_user_set_statusline(user, psm_str);
-		g_free(psm_str);
+		str = msn_get_psm(cmd->payload,len);
+		msn_user_set_statusline(user, str);
+		g_free(str);
 
 		str = msn_get_currentmedia(cmd->payload, len);
 		parse_currentmedia(user, str);
