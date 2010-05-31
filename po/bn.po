@@ -13,10 +13,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:15-0400\n"
 "PO-Revision-Date: 2010-05-02 02:20+0600\n"
 "Last-Translator: Israt Jahan <israt@ankur.org.bd>\n"
 "Language-Team: Bengali <ankur-bd-l10n@googlegroups.com>\n"
+"Language: bn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1409,6 +1410,7 @@ msgstr "অবস্থা মুছে ফেলুন"
 msgid "Saved Statuses"
 msgstr "সংরক্ষিত অবস্থা"
 
+#. title
 msgid "Title"
 msgstr "শিরোনাম"
 
@@ -2013,7 +2015,6 @@ msgstr "%s-কে punycode-এ রূপান্তরে ত্রুটি: %
 msgid "Thread creation failure: %s"
 msgstr "থ্রেড তৈরি করতে ব্যর্থ: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "অজানা কারণ"
 
@@ -3361,6 +3362,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "প্রথম নাম"
 
@@ -4135,6 +4139,7 @@ msgstr "এলাকা"
 msgid "Postal Code"
 msgstr "পোস্টাল কোড"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "দেশ"
 
@@ -4150,8 +4155,6 @@ msgid "Organization Unit"
 msgstr "সংগঠনের বিভাগ"
 
 # tithi
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "পদমর্যাদা"
 
@@ -4159,6 +4162,7 @@ msgid "Role"
 msgstr "ভূমিকা"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "জন্মদিন"
 
@@ -6096,6 +6100,10 @@ msgstr "HTTP পদ্ধতির সার্ভার"
 msgid "Show custom smileys"
 msgstr "স্বনির্বাচিত স্মাইলি দেখানো হবে"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "সংযোগ তৈরী করতে ব্যর্থ"
+
 # fix -me tithi
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: ব্যবহারকারীদের মনোযোগ পেতে তাদেরকে ধাক্কা দিন"
@@ -6353,8 +6361,12 @@ msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 "আপনার প্রোফাইলের তথ্য এখনও খুঁজে পাওয়া যায়নি। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।"
 
+msgid "Your MXitId"
+msgstr ""
+
 # Translated by sadia
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -6461,7 +6473,7 @@ msgid "MXit Login Name"
 msgstr "MXit-এ লগ ইন করার নাম"
 
 # Translated by sadia
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "ডাকনাম "
 
@@ -6526,7 +6538,7 @@ msgid "Security Code"
 msgstr "নিরাপত্তা কোড"
 
 # Translated by sadia
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "নিরাপত্তা কোড দিন"
 
@@ -6563,7 +6575,12 @@ msgstr "মেনু লোড করা হচ্ছে..."
 msgid "Status Message"
 msgstr "স্ট্যাটাস বার্তা"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "গৃহীত বার্তা"
+
 # Translated by sadia
+#. hidden number
 msgid "Hidden Number"
 msgstr "লুকানো সংখ্যা"
 
@@ -6584,6 +6601,21 @@ msgstr "HTTP-র মাধ্যমে সংযুক্ত করা হবে
 # Translated by sadia
 msgid "Enable splash-screen popup"
 msgstr "স্প্ল্যাশ স্ক্রীন পপ আপ সক্রিয় করা হবে"
+
+# Kick =  তিরস্কার
+# OR  পদাঘাত
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "আপনাকে তিরস্কার করা হয়েছে: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "ত্রুটিযুক্ত টিকেট"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "আসর (_R):"
 
 # Translated by sadia
 #. we must have lost the connection, so terminate it so that we can reconnect
@@ -7458,6 +7490,78 @@ msgstr "আড্ডার আসরে যুক্ত হওয়া সম্�
 msgid "Invalid chat room name"
 msgstr "অকার্যকর আড্ডার আসরের নাম"
 
+msgid "Invalid error"
+msgstr "অকার্যকর ত্রুটি"
+
+# Translated by sadia
+msgid "Cannot receive IM due to parental controls"
+msgstr "অভিভাবক নিয়ন্ত্রণ ব্যবস্থার জন্য IM গ্রহণ করা যাচ্ছে না "
+
+# Translated by sadia
+msgid "Cannot send SMS without accepting terms"
+msgstr "শর্তাবলী গ্রহণ না করে SMS পাঠানো যাচ্ছে না"
+
+# Translated by sadia
+msgid "Cannot send SMS"
+msgstr "SMS পাঠানো যাচ্ছে না"
+
+# Translated by sadia
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "এই দেশটিতে SMS পাঠানো যাচ্ছে না"
+
+# Translated by sadia
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "অজানা কোন দেশে SMS পাঠানো যাচ্ছে না"
+
+# Translated by sadia
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Bot অ্যাকাউন্ট IM চালু করতে পারছে না "
+
+# Translated by sadia
+msgid "Bot account cannot IM this user"
+msgstr "Bot অ্যাকাউন্ট এই ব্যবহারকারীকে IM দিচ্ছে না "
+
+# Translated by sadia
+msgid "Bot account reached IM limit"
+msgstr "Bot অ্যাকাউন্ট IM সীমায় পৌছে গেছে"
+
+# Translated by sadia
+msgid "Bot account reached daily IM limit"
+msgstr "Bot অ্যাকাউন্ট প্রতিদিনের IM সীমায় পৌছে গেছে"
+
+# Translated by sadia
+msgid "Bot account reached monthly IM limit"
+msgstr "Bot অ্যাকাউন্ট মাসিক IM সীমায় পৌছে গেছে"
+
+# Translated by sadia
+msgid "Unable to receive offline messages"
+msgstr "অফলাইন বার্তা গ্রহণ করতে ব্যর্থ"
+
+# Translated by sadia
+msgid "Offline message store full"
+msgstr "অফলাইন বার্তার সংগ্রহস্থল পূর্ণ"
+
+# Translated by sadia
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "বার্তা পাঠাতে ব্যর্থ: %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "বার্তা পাঠাতে ব্যর্থ: %s।"
+
+# Translated by sadia
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%s-এ বার্তা পাঠাতে ব্যর্থ: %s (%s)"
+
+# Translated by sadia
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "%s-এ বার্তা পাঠাতে ব্যর্থ: %s"
+
 # snigdha
 msgid "Thinking"
 msgstr "চিন্তা করছে"
@@ -7638,146 +7742,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "ফাইল %1$s হলো %2$s, যা সর্বোচ্চ আকার %3$s থেকে বেশী।"
-
-msgid "Invalid error"
-msgstr "অকার্যকর ত্রুটি"
-
-msgid "Invalid SNAC"
-msgstr "অকার্যকর SNAC"
-
-# tithi
-msgid "Rate to host"
-msgstr "হোস্টে পাঠানোর হার"
-
-# tithi
-msgid "Rate to client"
-msgstr "ক্লায়েন্টে পাঠানোর হার"
-
-msgid "Service unavailable"
-msgstr "সার্ভিস বিদ্যমান নয়"
-
-# tithi
-msgid "Service not defined"
-msgstr "সেবা নির্ধারিত নয়"
-
-# tithi
-msgid "Obsolete SNAC"
-msgstr "অপ্রচলিত SNAC"
-
-# tithi
-msgid "Not supported by host"
-msgstr "হোস্ট দ্বারা সমর্থিত নয়"
-
-# tithi
-msgid "Not supported by client"
-msgstr "ক্লায়েন্ট দ্বারা সমর্থিত নয়"
-
-# tithi
-msgid "Refused by client"
-msgstr "ক্লায়েন্ট দ্বারা প্রত্যাখ্যাত"
-
-# tithi
-msgid "Reply too big"
-msgstr "অতিরিক্ত বড় উত্তর"
-
-# tithi
-msgid "Responses lost"
-msgstr "প্রতিক্রিয়া হারিয়ে গেছে"
-
-msgid "Request denied"
-msgstr "অনুরোধ প্রত্যাখ্যাত"
-
-# tithi
-msgid "Busted SNAC payload"
-msgstr "ব্যর্থ SNAC পেলোড"
-
-# tithi
-msgid "Insufficient rights"
-msgstr "অপর্যাপ্ত অধিকার"
-
-# tithi
-msgid "In local permit/deny"
-msgstr "স্থানীয় অনুমতি/অস্বীকারে"
-
-# tithi
-msgid "Warning level too high (sender)"
-msgstr "সতর্কতা স্তর খুব উচ্চ (প্রেরক)"
-
-# tithi
-msgid "Warning level too high (receiver)"
-msgstr "সতর্কতা স্তর খুব উচ্চ (গ্রাহক)"
-
-# tithi
-msgid "User temporarily unavailable"
-msgstr "ব্যবহারকারীকে সাময়িকভাবে পাওয়া যায়না"
-
-# tithi
-msgid "No match"
-msgstr "কোনো মিল নেই"
-
-# tithi
-msgid "List overflow"
-msgstr "লিস্ট ওভার‌ফ্লো"
-
-msgid "Request ambiguous"
-msgstr "অনুরোধ অস্পষ্ট"
-
-# tithi
-msgid "Queue full"
-msgstr "কিউ পরিপূর্ণ"
-
-msgid "Not while on AOL"
-msgstr "AOL এ থাকা অবস্থায় নয়"
-
-# Translated by sadia
-msgid "Cannot receive IM due to parental controls"
-msgstr "অভিভাবক নিয়ন্ত্রণ ব্যবস্থার জন্য IM গ্রহণ করা যাচ্ছে না "
-
-# Translated by sadia
-msgid "Cannot send SMS without accepting terms"
-msgstr "শর্তাবলী গ্রহণ না করে SMS পাঠানো যাচ্ছে না"
-
-# Translated by sadia
-msgid "Cannot send SMS"
-msgstr "SMS পাঠানো যাচ্ছে না"
-
-# Translated by sadia
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "এই দেশটিতে SMS পাঠানো যাচ্ছে না"
-
-# Translated by sadia
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "অজানা কোন দেশে SMS পাঠানো যাচ্ছে না"
-
-# Translated by sadia
-msgid "Bot accounts cannot initiate IMs"
-msgstr "Bot অ্যাকাউন্ট IM চালু করতে পারছে না "
-
-# Translated by sadia
-msgid "Bot account cannot IM this user"
-msgstr "Bot অ্যাকাউন্ট এই ব্যবহারকারীকে IM দিচ্ছে না "
-
-# Translated by sadia
-msgid "Bot account reached IM limit"
-msgstr "Bot অ্যাকাউন্ট IM সীমায় পৌছে গেছে"
-
-# Translated by sadia
-msgid "Bot account reached daily IM limit"
-msgstr "Bot অ্যাকাউন্ট প্রতিদিনের IM সীমায় পৌছে গেছে"
-
-# Translated by sadia
-msgid "Bot account reached monthly IM limit"
-msgstr "Bot অ্যাকাউন্ট মাসিক IM সীমায় পৌছে গেছে"
-
-# Translated by sadia
-msgid "Unable to receive offline messages"
-msgstr "অফলাইন বার্তা গ্রহণ করতে ব্যর্থ"
-
-# Translated by sadia
-msgid "Offline message store full"
-msgstr "অফলাইন বার্তার সংগ্রহস্থল পূর্ণ"
 
 # tithi
 msgid ""
@@ -8181,31 +8145,9 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "আপনি অজ্ঞাত কারণে %2$s থেকে %1$huটি বার্তা হারিয়েছেন।"
 msgstr[1] "আপনি অজ্ঞাত কারণে %2$s থেকে %1$huটি বার্তা হারিয়েছেন।"
 
-# Translated by sadia
-#, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "বার্তা পাঠাতে ব্যর্থ: %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "বার্তা পাঠাতে ব্যর্থ: %s।"
-
-# Translated by sadia
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "%s-এ বার্তা পাঠাতে ব্যর্থ: %s (%s)"
-
-# Translated by sadia
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "%s-এ বার্তা পাঠাতে ব্যর্থ: %s"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "ব্যবহারকারীর তথ্য পাওয়া যাচ্ছে না: %s"
-
-msgid "Unknown reason."
-msgstr "অজ্ঞাত কারণ।"
 
 msgid "Online Since"
 msgstr "যখন থেকে অনলাইনে"
@@ -8688,6 +8630,93 @@ msgid ""
 msgstr ""
 "এটির জন্য দুটি কম্পিউটারের মধ্যে সরাসরি সংযোগ প্রয়োজন যা কিনা IM এর ছবির জন্য "
 "আবশ্যক। যেহেতু আপনার IP ঠিকানা প্রকাশিত হবে, তাই এতে গোপনীয়তার ঝুঁকি থাকতে পারে।"
+
+msgid "Invalid SNAC"
+msgstr "অকার্যকর SNAC"
+
+# tithi
+msgid "Rate to host"
+msgstr "হোস্টে পাঠানোর হার"
+
+# tithi
+msgid "Rate to client"
+msgstr "ক্লায়েন্টে পাঠানোর হার"
+
+msgid "Service unavailable"
+msgstr "সার্ভিস বিদ্যমান নয়"
+
+# tithi
+msgid "Service not defined"
+msgstr "সেবা নির্ধারিত নয়"
+
+# tithi
+msgid "Obsolete SNAC"
+msgstr "অপ্রচলিত SNAC"
+
+# tithi
+msgid "Not supported by host"
+msgstr "হোস্ট দ্বারা সমর্থিত নয়"
+
+# tithi
+msgid "Not supported by client"
+msgstr "ক্লায়েন্ট দ্বারা সমর্থিত নয়"
+
+# tithi
+msgid "Refused by client"
+msgstr "ক্লায়েন্ট দ্বারা প্রত্যাখ্যাত"
+
+# tithi
+msgid "Reply too big"
+msgstr "অতিরিক্ত বড় উত্তর"
+
+# tithi
+msgid "Responses lost"
+msgstr "প্রতিক্রিয়া হারিয়ে গেছে"
+
+msgid "Request denied"
+msgstr "অনুরোধ প্রত্যাখ্যাত"
+
+# tithi
+msgid "Busted SNAC payload"
+msgstr "ব্যর্থ SNAC পেলোড"
+
+# tithi
+msgid "Insufficient rights"
+msgstr "অপর্যাপ্ত অধিকার"
+
+# tithi
+msgid "In local permit/deny"
+msgstr "স্থানীয় অনুমতি/অস্বীকারে"
+
+# tithi
+msgid "Warning level too high (sender)"
+msgstr "সতর্কতা স্তর খুব উচ্চ (প্রেরক)"
+
+# tithi
+msgid "Warning level too high (receiver)"
+msgstr "সতর্কতা স্তর খুব উচ্চ (গ্রাহক)"
+
+# tithi
+msgid "User temporarily unavailable"
+msgstr "ব্যবহারকারীকে সাময়িকভাবে পাওয়া যায়না"
+
+# tithi
+msgid "No match"
+msgstr "কোনো মিল নেই"
+
+# tithi
+msgid "List overflow"
+msgstr "লিস্ট ওভার‌ফ্লো"
+
+msgid "Request ambiguous"
+msgstr "অনুরোধ অস্পষ্ট"
+
+# tithi
+msgid "Queue full"
+msgstr "কিউ পরিপূর্ণ"
+
+msgid "Not while on AOL"
+msgstr "AOL এ থাকা অবস্থায় নয়"
 
 # tithi
 msgid "Aquarius"
@@ -13495,8 +13524,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s একটি লিবপারপেল ভিত্তিক বার্তা ক্লায়েন্ট যা একই সাথে বার্তা সেবার সাথে যুক্ত হতে "
 "পারে। %s GTK+ব্যবহার করে C তে লেখা হয়। %s মুক্তি পেয়েছে, GPLসংস্করণ 2 (অথবা "
@@ -14079,16 +14108,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "আপনি কি নিশ্চিতভাবে %1$s এ %2$s এ শুরু হওয়া কথোপকথনের লগ স্থায়ীভাবে মুছে ফেলতে "
 "চান?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "আপনি কি নিশ্চিতভাবে %s এ শুরু হওয়া সিস্টেম লগ স্থায়ীভাবে মুছে ফেলতে চান?"
 
 msgid "Delete Log?"
@@ -16506,11 +16535,13 @@ msgstr "নতুন XMPP স্তবক পাঠান এবং গ্রহ
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "এই প্লাগইনটি XMPP সার্ভার বা ক্লায়েন্ট ডিবাগ করার জন্য কার্যকর।"
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
@@ -16519,78 +16550,91 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "পূর্বনির্ধারিত ডেস্কটপ "
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "স্থান"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr ""
 
-#. Components Page
+#. Installer Subsection Text
 #, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "পিজিন ইন্টারনেট বার্তাবাহক"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "শর্টকাট"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "আরম্ভ"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -16599,30 +16643,31 @@ msgstr ""
 msgid "The installer is already running."
 msgstr "\"%s\" ডাকনামটি ইতোমধ্যেই ব্যবহৃত হয়েছে।"
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
 # tithi
-#. URL Handler section
+#. Installer Subsection Text
 #, fuzzy
 msgid "URI Handlers"
 msgstr "myim URL হ্যান্ডলার"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Unknown reason."
+#~ msgstr "অজ্ঞাত কারণ।"
 
 # Translated by sadia
 #~ msgid "Current Mood"

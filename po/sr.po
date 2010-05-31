@@ -13,10 +13,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2007-09-09 11:54+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
+"Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1340,6 +1341,7 @@ msgstr "Стање брисања"
 msgid "Saved Statuses"
 msgstr "Сачувана стања"
 
+#. title
 msgid "Title"
 msgstr "Титула"
 
@@ -1899,7 +1901,6 @@ msgstr "Грешка pri решавању %s: %d"
 msgid "Thread creation failure: %s"
 msgstr "Неуспело прављење нити: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Непознат разлог"
 
@@ -3159,6 +3160,9 @@ msgid "UIN"
 msgstr "Кориснички број"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Име"
 
@@ -3922,6 +3926,7 @@ msgstr "Област"
 msgid "Postal Code"
 msgstr "Поштански број"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Држава"
 
@@ -3936,8 +3941,6 @@ msgstr "Назив организације"
 msgid "Organization Unit"
 msgstr "Одељење у организацији"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Титула"
 
@@ -3947,6 +3950,7 @@ msgid "Role"
 msgstr "Улога"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Рођендан"
 
@@ -5766,6 +5770,10 @@ msgstr "Сервер HTTP режима"
 msgid "Show custom smileys"
 msgstr "Прикажи произвољне смешке"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Не могу да успоставим нову везу."
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: потапшај другара да би привукао његову пажњу"
 
@@ -6006,7 +6014,11 @@ msgstr "Профил"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "Кориснички број"
@@ -6099,7 +6111,7 @@ msgstr "Унети SecurID кључ је неисправан."
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 #, fuzzy
 msgid "Nick Name"
 msgstr "Надимак"
@@ -6149,7 +6161,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "Безбедност укључена"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "Унесите код"
@@ -6182,11 +6194,16 @@ msgstr "Повезујем се"
 msgid "Status Message"
 msgstr "Послате поруке"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "Примљене поруке"
+
 # Овде је некада стајало 'име оца'. Код нас је средње име углавном име
 # оца, али то дефинитивно не мора да буде случај на другим местима. Нпр
 # у Холандији је врло уобичајено да људи имају по 4-5 имена; увек се зна
 # које је прво, званично, име али свако може да изабере било које од њих
 # као омиљено. Онда се тако представља, тако га зову пријатељи итд.
+#. hidden number
 #, fuzzy
 msgid "Hidden Number"
 msgstr "Средње име"
@@ -6207,6 +6224,19 @@ msgstr "Повежи се помоћу ТЦП-а"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Избацио Вас је %s: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Неисправна карта"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Соба:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6999,6 +7029,67 @@ msgstr "Не могу да се повежем на причаоницу"
 msgid "Invalid chat room name"
 msgstr "Неисправно име причаонице"
 
+msgid "Invalid error"
+msgstr "Неисправна грешка (!!!)"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Не могу да пошаљем датотеку"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Не могу да пошаљем директоријум."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Не могу да пошаљем поруку."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Порука ван мреже"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Не могу да пошаљем поруку. (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Не могу да пошаљем поруку: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Не могу да пошаљем поруку за %s:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Не могу да пошаљем поруку за %s:"
+
 msgid "Thinking"
 msgstr ""
 
@@ -7163,120 +7254,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Датотека %s је %s, што је веће од максималне величине од %s."
-
-msgid "Invalid error"
-msgstr "Неисправна грешка (!!!)"
-
-msgid "Invalid SNAC"
-msgstr "Неисправан SNAC"
-
-msgid "Rate to host"
-msgstr "Брзина према серверу"
-
-msgid "Rate to client"
-msgstr "Брзина према клијенту"
-
-msgid "Service unavailable"
-msgstr "Услуга је недоступна"
-
-msgid "Service not defined"
-msgstr "Услуга није установљена"
-
-msgid "Obsolete SNAC"
-msgstr "Превазиђени SNAC"
-
-msgid "Not supported by host"
-msgstr "Домаћин не подржава"
-
-msgid "Not supported by client"
-msgstr "Програм не подржава"
-
-msgid "Refused by client"
-msgstr "Програм је одбио"
-
-msgid "Reply too big"
-msgstr "Одговор је предугачак"
-
-msgid "Responses lost"
-msgstr "Одговори су изгубљени"
-
-msgid "Request denied"
-msgstr "Захтев је одбијен"
-
-msgid "Busted SNAC payload"
-msgstr "Упропашћен је SNAC користан пакет"
-
-msgid "Insufficient rights"
-msgstr "Недовољно овлашћења"
-
-msgid "In local permit/deny"
-msgstr "Дозволи/забрани у локалу"
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "Корисник привремено недоступан"
-
-msgid "No match"
-msgstr "Нема поклапања"
-
-msgid "List overflow"
-msgstr "Прекорачење списка"
-
-msgid "Request ambiguous"
-msgstr "Захтев је двосмислен"
-
-msgid "Queue full"
-msgstr "Ред је пун"
-
-msgid "Not while on AOL"
-msgstr "Не док је на АОЛ-у"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "Не могу да пошаљем датотеку"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Не могу да пошаљем директоријум."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "Не могу да пошаљем поруку."
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "Порука ван мреже"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7642,28 +7619,9 @@ msgstr[1] "Пропустили сте %hu поруке од %s из непоз�
 msgstr[2] "Пропустили сте %hu порука од %s из непознатих разлога."
 msgstr[3] "Пропустили сте %hu поруку од %s из непознатих разлога."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Не могу да пошаљем поруку. (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Не могу да пошаљем поруку: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Не могу да пошаљем поруку за %s:"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Не могу да пошаљем поруку за %s:"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "Подаци о кориснику %s недоступни:"
-
-msgid "Unknown reason."
-msgstr "Непознат разлог."
 
 msgid "Online Since"
 msgstr "На вези од"
@@ -8105,6 +8063,75 @@ msgstr ""
 "Ово захтева непосредну везу између два рачунара и неопходно је за слање "
 "слика. Пошто ће се Ваша ИП адреса приказати, ово се може сматрати "
 "нарушавањем приватности."
+
+msgid "Invalid SNAC"
+msgstr "Неисправан SNAC"
+
+msgid "Rate to host"
+msgstr "Брзина према серверу"
+
+msgid "Rate to client"
+msgstr "Брзина према клијенту"
+
+msgid "Service unavailable"
+msgstr "Услуга је недоступна"
+
+msgid "Service not defined"
+msgstr "Услуга није установљена"
+
+msgid "Obsolete SNAC"
+msgstr "Превазиђени SNAC"
+
+msgid "Not supported by host"
+msgstr "Домаћин не подржава"
+
+msgid "Not supported by client"
+msgstr "Програм не подржава"
+
+msgid "Refused by client"
+msgstr "Програм је одбио"
+
+msgid "Reply too big"
+msgstr "Одговор је предугачак"
+
+msgid "Responses lost"
+msgstr "Одговори су изгубљени"
+
+msgid "Request denied"
+msgstr "Захтев је одбијен"
+
+msgid "Busted SNAC payload"
+msgstr "Упропашћен је SNAC користан пакет"
+
+msgid "Insufficient rights"
+msgstr "Недовољно овлашћења"
+
+msgid "In local permit/deny"
+msgstr "Дозволи/забрани у локалу"
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "Корисник привремено недоступан"
+
+msgid "No match"
+msgstr "Нема поклапања"
+
+msgid "List overflow"
+msgstr "Прекорачење списка"
+
+msgid "Request ambiguous"
+msgstr "Захтев је двосмислен"
+
+msgid "Queue full"
+msgstr "Ред је пун"
+
+msgid "Not while on AOL"
+msgstr "Не док је на АОЛ-у"
 
 msgid "Aquarius"
 msgstr "Водолија"
@@ -11242,8 +11269,8 @@ msgid ""
 msgstr ""
 "<span size='larger' weight='bold'>Добродошли у %s!</span>\n"
 "\n"
-"Још увек немате подешених налога за брзе поруке. Да би почели повезивање са %"
-"s изаберите дугме <b>Додај...</b> и подесите ваш први налог. Уколико желите "
+"Још увек немате подешених налога за брзе поруке. Да би почели повезивање са "
+"%s изаберите дугме <b>Додај...</b> и подесите ваш први налог. Уколико желите "
 "да се %s повеже на више налога за брзие поруке, идите поново на <b>Додај...</"
 "b> и подесите налоге.\n"
 "\n"
@@ -12582,8 +12609,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s је надоградив графички програм за разговоре кога покреће libpurple "
 "способан за повезивање са АИМ, МСН, Јаху, ICQ, ИРЦ, SILC, SIP/SIMPLE, Новел "
@@ -13132,16 +13159,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Да ли сте сигурни да желите да трајно обришете овај дневник разговора у %s "
 "који је започет %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "Да ли сте сигурни да желите обрисати системски дневник започет %s?"
 
 msgid "Delete Log?"
@@ -15483,11 +15510,13 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Овај додатак је користан за уклањање грешака Џабер сервера или програма"
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
@@ -15496,79 +15525,92 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "Подразумевано на ситему"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "ГТК+ библиотека издање"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "Место"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr ""
 
-#. Components Page
+#. Installer Subsection Text
 #, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Пиџин Интернет писмоноша"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "Стање"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "Покретање"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15577,29 +15619,30 @@ msgstr ""
 msgid "The installer is already running."
 msgstr "Ово име ћаскања је већ заузето"
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. URL Handler section
+#. Installer Subsection Text
 #, fuzzy
 msgid "URI Handlers"
 msgstr "Руководилац адреса Мог свемира"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Unknown reason."
+#~ msgstr "Непознат разлог."
 
 #~ msgid "Artist"
 #~ msgstr "Извођач"
@@ -16483,8 +16526,8 @@ msgstr ""
 #~ "Setting custom faces is not currently supported. Please choose an image "
 #~ "from %s."
 #~ msgstr ""
-#~ "Избор произвољних сличица тренутно није подржан. Изаберите неку слику са %"
-#~ "s."
+#~ "Избор произвољних сличица тренутно није подржан. Изаберите неку слику са "
+#~ "%s."
 
 #~ msgid "Invalid QQ Face"
 #~ msgstr "Лоша QQ сличица"

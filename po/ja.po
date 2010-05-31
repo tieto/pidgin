@@ -10,10 +10,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2007-06-30 14:57+0900\n"
 "Last-Translator: Takeshi AIHANA <takeshi.aihana@gmail.com>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1388,6 +1389,7 @@ msgstr "状態の削除"
 msgid "Saved Statuses"
 msgstr "保存した状態"
 
+#. title
 msgid "Title"
 msgstr "題名"
 
@@ -1940,7 +1942,6 @@ msgstr "%s を解決する際にエラー: %d"
 msgid "Thread creation failure: %s"
 msgstr "スレッドの生成に失敗しました: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "原因は不明です"
 
@@ -3219,6 +3220,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "名"
 
@@ -3987,6 +3991,7 @@ msgstr "州"
 msgid "Postal Code"
 msgstr "郵便番号"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "国"
 
@@ -4001,8 +4006,6 @@ msgstr "組織名"
 msgid "Organization Unit"
 msgstr "担当部署"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "肩書"
 
@@ -4010,6 +4013,7 @@ msgid "Role"
 msgstr "役職"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "誕生日"
 
@@ -5868,6 +5872,10 @@ msgstr "IPC のテスト用サーバ"
 msgid "Show custom smileys"
 msgstr "独自のスマイリーを表示する"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "新しい接続を開けません"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "合図: ユーザに向けて警告音を鳴らす"
 
@@ -6104,7 +6112,11 @@ msgstr "プロフィール"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -6193,7 +6205,7 @@ msgstr "入力したセキュア ID 鍵は不正です。"
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 #, fuzzy
 msgid "Nick Name"
 msgstr "ニックネーム"
@@ -6243,7 +6255,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "セキュリティは有効"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "パスワードの入力"
@@ -6277,6 +6289,11 @@ msgid "Status Message"
 msgstr "送信したメッセージ"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "受信したメッセージ"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "ミドル・ネーム"
 
@@ -6296,6 +6313,19 @@ msgstr "接続中です"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "あなたは %s に蹴られました: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "おかしなチケットです"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "ルーム(_R):"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7108,6 +7138,67 @@ msgstr "接続できませんでした"
 msgid "Invalid chat room name"
 msgstr "不正なルーム名"
 
+msgid "Invalid error"
+msgstr "不正なエラー"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "ファイルを送信できません"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "フォルダは送信できません。"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "メッセージを送信できません"
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "オフラインのメッセージ"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "メッセージ (%s) を送信できません"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "メッセージを送信できません: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%s さんへメッセージを送信できません"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "%s さんへメッセージを送信できません"
+
 msgid "Thinking"
 msgstr ""
 
@@ -7271,120 +7362,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "ファイル %s は %s です (%s の最大サイズを超えています)"
-
-msgid "Invalid error"
-msgstr "不正なエラー"
-
-msgid "Invalid SNAC"
-msgstr "不正な SNAC"
-
-msgid "Rate to host"
-msgstr "ホストの速度"
-
-msgid "Rate to client"
-msgstr "クライアントの速度"
-
-msgid "Service unavailable"
-msgstr "サービスが利用できません"
-
-msgid "Service not defined"
-msgstr "サービスが定義されていません"
-
-msgid "Obsolete SNAC"
-msgstr "旧式の SNAC"
-
-msgid "Not supported by host"
-msgstr "ホストではサポートしていません"
-
-msgid "Not supported by client"
-msgstr "クライアントではサポートしていません"
-
-msgid "Refused by client"
-msgstr "クライアントに拒否されました"
-
-msgid "Reply too big"
-msgstr "返信が大きすぎます"
-
-msgid "Responses lost"
-msgstr "応答がありません"
-
-msgid "Request denied"
-msgstr "リクエストが拒否されました"
-
-msgid "Busted SNAC payload"
-msgstr "SNAC 格納エリアが壊れました"
-
-msgid "Insufficient rights"
-msgstr "不十分な要求です"
-
-msgid "In local permit/deny"
-msgstr "局所的な許可/不許可"
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "ユーザが一時的に無効です"
-
-msgid "No match"
-msgstr "マッチしません"
-
-msgid "List overflow"
-msgstr "リスト溢れ"
-
-msgid "Request ambiguous"
-msgstr "要求が曖昧です"
-
-msgid "Queue full"
-msgstr "キューが一杯です"
-
-msgid "Not while on AOL"
-msgstr "AOL に居る時はできません"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "ファイルを送信できません"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "フォルダは送信できません。"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "メッセージを送信できません"
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "オフラインのメッセージ"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7758,28 +7735,9 @@ msgstr[1] ""
 "原因は不明ですが、%2$s さんからの %1$hu 個のメッセージを受け取れませんでし"
 "た。"
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "メッセージ (%s) を送信できません"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "メッセージを送信できません: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "%s さんへメッセージを送信できません"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "%s さんへメッセージを送信できません"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "ユーザ情報は有効ではありません: %s"
-
-msgid "Unknown reason."
-msgstr "原因は不明です"
 
 msgid "Online Since"
 msgstr "サイン・インした日時"
@@ -8203,6 +8161,75 @@ msgstr ""
 "これを行うには 2 台のコンピュータを直接接続しなければならず、IM 画像に必要で"
 "す。IP アドレスが明らかになるので、プライバシーに対するリスクが発生するかもし"
 "れません。"
+
+msgid "Invalid SNAC"
+msgstr "不正な SNAC"
+
+msgid "Rate to host"
+msgstr "ホストの速度"
+
+msgid "Rate to client"
+msgstr "クライアントの速度"
+
+msgid "Service unavailable"
+msgstr "サービスが利用できません"
+
+msgid "Service not defined"
+msgstr "サービスが定義されていません"
+
+msgid "Obsolete SNAC"
+msgstr "旧式の SNAC"
+
+msgid "Not supported by host"
+msgstr "ホストではサポートしていません"
+
+msgid "Not supported by client"
+msgstr "クライアントではサポートしていません"
+
+msgid "Refused by client"
+msgstr "クライアントに拒否されました"
+
+msgid "Reply too big"
+msgstr "返信が大きすぎます"
+
+msgid "Responses lost"
+msgstr "応答がありません"
+
+msgid "Request denied"
+msgstr "リクエストが拒否されました"
+
+msgid "Busted SNAC payload"
+msgstr "SNAC 格納エリアが壊れました"
+
+msgid "Insufficient rights"
+msgstr "不十分な要求です"
+
+msgid "In local permit/deny"
+msgstr "局所的な許可/不許可"
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "ユーザが一時的に無効です"
+
+msgid "No match"
+msgstr "マッチしません"
+
+msgid "List overflow"
+msgstr "リスト溢れ"
+
+msgid "Request ambiguous"
+msgstr "要求が曖昧です"
+
+msgid "Queue full"
+msgstr "キューが一杯です"
+
+msgid "Not while on AOL"
+msgstr "AOL に居る時はできません"
 
 msgid "Aquarius"
 msgstr "水瓶座"
@@ -12808,8 +12835,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s は AIM、MSN、Yahoo!、XMPP、ICQ、IRC、SILC、SIP/SIMPLE、Novell GroupWise、"
 "Lotus Sametime、Bonjour、Zephyr、Gadu-Gadu、QQ といったプロトコルを全て同時に"
@@ -13391,14 +13418,14 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr "%s で %s から記録し始めた会話ログを完全に削除してもよろしいですか？"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "%s から記録し始めたシステム・ログを完全に削除してもよろしいですか？"
 
 #, fuzzy
@@ -15787,6 +15814,7 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "これは XMPP サービスやクライアントをデバッグする際に便利なプラグインです。"
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15794,6 +15822,7 @@ msgstr ""
 "$(^Name)はGPLライセンスの元でリリースされています。ライセンスはここに参考のた"
 "めだけに提供されています。 $_CLICK"
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "Pidginの使っているマルチプラットフォームGUIツールキット"
 
@@ -15802,75 +15831,88 @@ msgid ""
 "again."
 msgstr "Pidgin が実行されています。Pidgin を終了してから再度実行してください"
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Pidginの核となるファイルとdll"
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr "スタートメニューに Pidgin の項目を作成する"
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "デスクトップに Pidgin のショートカットを作成する"
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Desktop"
 msgstr "デスクトップ"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ Runtime Environment (必須)"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "場所"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "次へ >"
 
-#. Components Page
+#. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Pidginインスタントメッセンジャ (必須)"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Shortcuts"
 msgstr "ショートカット"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr "Pidgin を実行するためのショートカット"
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr "スペルチェックのサポート"
 
+#. Installer Subsection Text
 msgid "Start Menu"
 msgstr "スタートアップ"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "スペルチェックのサポート  (インターネット接続がインストールに必要です)"
@@ -15878,7 +15920,6 @@ msgstr "スペルチェックのサポート  (インターネット接続がイ
 msgid "The installer is already running."
 msgstr "インストーラが既に実行されています"
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
@@ -15886,23 +15927,25 @@ msgstr ""
 "アンインストーラはPidginのレジストリエントリを発見できませんでした。$\\rおそ"
 "らく別のユーザにインストールされたでしょう。"
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
 msgstr ""
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr "PidginのWebページを訪れてください。"
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 "あなたはこのアプリケーションをアンインストールする権限を持っていません。"
+
+#~ msgid "Unknown reason."
+#~ msgstr "原因は不明です"
 
 #, fuzzy
 #~ msgid "Artist"

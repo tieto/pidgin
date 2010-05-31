@@ -5,10 +5,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2009-04-16 22:24+0300\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@lists.kde.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1347,6 +1348,7 @@ msgstr "Futa mwenyeji"
 msgid "Saved Statuses"
 msgstr ""
 
+#. title
 msgid "Title"
 msgstr "Jina"
 
@@ -1897,7 +1899,6 @@ msgstr "Hitilafu kwenye utengenezaji wa saraka:"
 msgid "Thread creation failure: %s"
 msgstr ""
 
-#. Data is assumed to be the destination bn
 #, fuzzy
 msgid "Unknown reason"
 msgstr "Hitilafu isiyojulikana"
@@ -3125,6 +3126,9 @@ msgid "UIN"
 msgstr "UID"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 #, fuzzy
 msgid "First Name"
 msgstr "Ukurasa wa kwanza"
@@ -3856,6 +3860,7 @@ msgstr "Reunion"
 msgid "Postal Code"
 msgstr ""
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 #, fuzzy
 msgid "Country"
 msgstr "Hesabu"
@@ -3873,8 +3878,6 @@ msgstr "Jumuiya(J)"
 msgid "Organization Unit"
 msgstr "Jumuiya(J)"
 
-#. title
-#. optional information
 #, fuzzy
 msgid "Job Title"
 msgstr "Cheo cha &kazi:"
@@ -3883,6 +3886,7 @@ msgid "Role"
 msgstr ""
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr ""
 
@@ -5718,6 +5722,10 @@ msgstr ""
 msgid "Show custom smileys"
 msgstr ""
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Haikuweza kuunganishwa"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr ""
 
@@ -5928,7 +5936,11 @@ msgstr ""
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UID"
@@ -6014,7 +6026,7 @@ msgstr "Nambari mstari iliyoingizwa ni batili."
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 #, fuzzy
 msgid "Nick Name"
 msgstr "Jina la mtumiaji"
@@ -6061,7 +6073,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "Levo ya Usalama"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr ""
 
@@ -6093,6 +6105,11 @@ msgid "Status Message"
 msgstr "Jumbe za tahadhari"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "Jumbe za tahadhari"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "Jina la Moduli:"
 
@@ -6111,6 +6128,17 @@ msgstr "Inaunganisha…"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+msgid "You have been kicked from this MultiMX."
+msgstr ""
+
+msgid "was kicked"
+msgstr ""
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "Jina la Moduli:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6885,6 +6913,67 @@ msgstr ""
 msgid "Invalid chat room name"
 msgstr ""
 
+#, fuzzy
+msgid "Invalid error"
+msgstr "Kizuizi batili"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "\"Haikuweza kupakia: \""
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr ""
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Haiwezi kuongeza moduli"
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Hifadhi ya nje ya Mkondo"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Haiwezi kuongeza moduli"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Haiwezi kuongeza moduli"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Haiwezi kuongeza moduli"
+
 msgid "Thinking"
 msgstr ""
 
@@ -7047,123 +7136,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
-
-#, fuzzy
-msgid "Invalid error"
-msgstr "Kizuizi batili"
-
-#, fuzzy
-msgid "Invalid SNAC"
-msgstr "Kizuizi batili"
-
-msgid "Rate to host"
-msgstr ""
-
-msgid "Rate to client"
-msgstr ""
-
-msgid "Service unavailable"
-msgstr ""
-
-msgid "Service not defined"
-msgstr ""
-
-msgid "Obsolete SNAC"
-msgstr ""
-
-msgid "Not supported by host"
-msgstr ""
-
-msgid "Not supported by client"
-msgstr ""
-
-msgid "Refused by client"
-msgstr ""
-
-msgid "Reply too big"
-msgstr ""
-
-msgid "Responses lost"
-msgstr ""
-
-#, fuzzy
-msgid "Request denied"
-msgstr "Ufikio umekataliwa"
-
-msgid "Busted SNAC payload"
-msgstr ""
-
-msgid "Insufficient rights"
-msgstr ""
-
-msgid "In local permit/deny"
-msgstr ""
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr ""
-
-#, fuzzy
-msgid "No match"
-msgstr "%S oanisho"
-
-msgid "List overflow"
-msgstr ""
-
-msgid "Request ambiguous"
-msgstr ""
-
-msgid "Queue full"
-msgstr ""
-
-msgid "Not while on AOL"
-msgstr ""
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "\"Haikuweza kupakia: \""
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr ""
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "Haiwezi kuongeza moduli"
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "Hifadhi ya nje ya Mkondo"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7491,29 +7463,9 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 msgstr[1] ""
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Haiwezi kuongeza moduli"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr ""
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Haiwezi kuongeza moduli"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Haiwezi kuongeza moduli"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr ""
-
-#, fuzzy
-msgid "Unknown reason."
-msgstr "Hitilafu isiyojulikana"
 
 msgid "Online Since"
 msgstr ""
@@ -7901,6 +7853,78 @@ msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
 "considered a privacy risk."
+msgstr ""
+
+#, fuzzy
+msgid "Invalid SNAC"
+msgstr "Kizuizi batili"
+
+msgid "Rate to host"
+msgstr ""
+
+msgid "Rate to client"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr ""
+
+msgid "Service not defined"
+msgstr ""
+
+msgid "Obsolete SNAC"
+msgstr ""
+
+msgid "Not supported by host"
+msgstr ""
+
+msgid "Not supported by client"
+msgstr ""
+
+msgid "Refused by client"
+msgstr ""
+
+msgid "Reply too big"
+msgstr ""
+
+msgid "Responses lost"
+msgstr ""
+
+#, fuzzy
+msgid "Request denied"
+msgstr "Ufikio umekataliwa"
+
+msgid "Busted SNAC payload"
+msgstr ""
+
+msgid "Insufficient rights"
+msgstr ""
+
+msgid "In local permit/deny"
+msgstr ""
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr ""
+
+#, fuzzy
+msgid "No match"
+msgstr "%S oanisho"
+
+msgid "List overflow"
+msgstr ""
+
+msgid "Request ambiguous"
+msgstr ""
+
+msgid "Queue full"
+msgstr ""
+
+msgid "Not while on AOL"
 msgstr ""
 
 msgid "Aquarius"
@@ -12328,8 +12352,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 
 #, c-format
@@ -12863,14 +12887,14 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 
 #, fuzzy
@@ -15165,11 +15189,13 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
@@ -15178,77 +15204,90 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "Rejesha Misingi"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "Mahali"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr ""
 
-#. Components Page
+#. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr ""
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "Uwekaji wa Mikato"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "Kila unapoanzisha"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15256,28 +15295,30 @@ msgstr ""
 msgid "The installer is already running."
 msgstr ""
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
 msgstr ""
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Unknown reason."
+#~ msgstr "Hitilafu isiyojulikana"
 
 #, fuzzy
 #~ msgid "Current Mood"

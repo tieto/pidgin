@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2009-08-29 14:35-0300\n"
 "Last-Translator: Rodrigo Luiz Marques Flores <mail@rodrigoflores.org>\n"
 "Language-Team: Rodrigo Luiz Marques Flores <mail@rodrigoflores.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1353,6 +1354,7 @@ msgstr "Excluir status"
 msgid "Saved Statuses"
 msgstr "Status salvos"
 
+#. title
 msgid "Title"
 msgstr "Título"
 
@@ -1913,7 +1915,6 @@ msgstr "Erro ao resolver %s: %d"
 msgid "Thread creation failure: %s"
 msgstr "Falha ao criar thread: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Motivo desconhecido"
 
@@ -3209,6 +3210,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Nome"
 
@@ -3957,6 +3961,7 @@ msgstr "Região"
 msgid "Postal Code"
 msgstr "Código postal (CEP)"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "País"
 
@@ -3971,8 +3976,6 @@ msgstr "Nome da organização"
 msgid "Organization Unit"
 msgstr "Grupo de trabalho"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Título de trabalho"
 
@@ -3980,6 +3983,7 @@ msgid "Role"
 msgstr "Função"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Data de nascimento"
 
@@ -5791,6 +5795,10 @@ msgstr "Servidor do método HTTP"
 msgid "Show custom smileys"
 msgstr "Exibir emoticons personalizados"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Não foi possível criar conexão."
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: chama a atenção do usuário"
 
@@ -6026,7 +6034,11 @@ msgstr "Perfil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -6119,7 +6131,7 @@ msgstr "A chave SecurID digitada é inválida"
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 #, fuzzy
 msgid "Nick Name"
 msgstr "Apelido"
@@ -6169,7 +6181,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "Segurança ativada"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "Digite o código"
@@ -6203,6 +6215,11 @@ msgid "Status Message"
 msgstr "Mensagens enviadas"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "Mensagens recebidas"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "Nome do meio"
 
@@ -6222,6 +6239,19 @@ msgstr "Conectar usando TCP"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Você foi expulso: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Bilhete inválido"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "Sa_la:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7018,6 +7048,67 @@ msgstr "Não foi possível entrar na sala de bate-papo"
 msgid "Invalid chat room name"
 msgstr "Nome de sala de bate-papo inválido"
 
+msgid "Invalid error"
+msgstr "Erro inválido"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Não foi possível enviar o arquivo"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Não foi possível enviar um diretório."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Não foi possível enviar mensagem."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Mensagem desconectada"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Não foi possível enviar mensagem (%s)."
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Não foi possível enviar mensagem: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Não foi possível enviar mensagem para %s:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Não foi possível enviar mensagem para %s:"
+
 msgid "Thinking"
 msgstr ""
 
@@ -7183,120 +7274,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "O arquivo %s tem %s, o que é maior que o tamanho máximo de %s."
-
-msgid "Invalid error"
-msgstr "Erro inválido"
-
-msgid "Invalid SNAC"
-msgstr "SNAC inválido"
-
-msgid "Rate to host"
-msgstr "Taxa para host"
-
-msgid "Rate to client"
-msgstr "Taxa para cliente"
-
-msgid "Service unavailable"
-msgstr "Serviço indisponível"
-
-msgid "Service not defined"
-msgstr "Serviço não definido"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC obsoleto"
-
-msgid "Not supported by host"
-msgstr "Não suportado pelo host"
-
-msgid "Not supported by client"
-msgstr "Não suportado pelo cliente"
-
-msgid "Refused by client"
-msgstr "Recusado pelo cliente"
-
-msgid "Reply too big"
-msgstr "Resposta muito extensa"
-
-msgid "Responses lost"
-msgstr "Respostas perdidas"
-
-msgid "Request denied"
-msgstr "Requisição negada"
-
-msgid "Busted SNAC payload"
-msgstr "Carga de SNAC excedida"
-
-msgid "Insufficient rights"
-msgstr "Direitos insuficientes"
-
-msgid "In local permit/deny"
-msgstr "Na lista local de usuários permitidos/bloqueados"
-
-msgid "Warning level too high (sender)"
-msgstr "Nível de avisos muito alto (remetente)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Nível de avisos muito alto (destinatário)"
-
-msgid "User temporarily unavailable"
-msgstr "Usuário temporariamente indisponível"
-
-msgid "No match"
-msgstr "Nenhum resultado"
-
-msgid "List overflow"
-msgstr "Limite de tamanho da lista excedido"
-
-msgid "Request ambiguous"
-msgstr "Requisição ambígua"
-
-msgid "Queue full"
-msgstr "Fila cheia"
-
-msgid "Not while on AOL"
-msgstr "Não enquanto estiver na AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "Não foi possível enviar o arquivo"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Não foi possível enviar um diretório."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "Não foi possível enviar mensagem."
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "Mensagem desconectada"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7503,8 +7480,8 @@ msgstr ""
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
-"A versão do cliente que você está usando é velha demais. Favor atualizar em %"
-"s"
+"A versão do cliente que você está usando é velha demais. Favor atualizar em "
+"%s"
 
 #. IP address connecting too frequently
 #, fuzzy
@@ -7660,28 +7637,9 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Você perdeu %hu mensagem de %s por um motivo desconhecido."
 msgstr[1] "Você perdeu %hu mensagens de %s por um motivo desconhecido."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Não foi possível enviar mensagem (%s)."
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Não foi possível enviar mensagem: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Não foi possível enviar mensagem para %s:"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Não foi possível enviar mensagem para %s:"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "Informação do usuário indisponível: %s"
-
-msgid "Unknown reason."
-msgstr "Motivo desconhecido."
 
 msgid "Online Since"
 msgstr "Conectado desde"
@@ -8112,6 +8070,75 @@ msgstr ""
 "Isto requer uma conexão direta entre os dois computadores e é necessário "
 "para mensagens instantâneas com imagens. Por revelar seu IP, isto pode ser "
 "considerado um risco de privacidade."
+
+msgid "Invalid SNAC"
+msgstr "SNAC inválido"
+
+msgid "Rate to host"
+msgstr "Taxa para host"
+
+msgid "Rate to client"
+msgstr "Taxa para cliente"
+
+msgid "Service unavailable"
+msgstr "Serviço indisponível"
+
+msgid "Service not defined"
+msgstr "Serviço não definido"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC obsoleto"
+
+msgid "Not supported by host"
+msgstr "Não suportado pelo host"
+
+msgid "Not supported by client"
+msgstr "Não suportado pelo cliente"
+
+msgid "Refused by client"
+msgstr "Recusado pelo cliente"
+
+msgid "Reply too big"
+msgstr "Resposta muito extensa"
+
+msgid "Responses lost"
+msgstr "Respostas perdidas"
+
+msgid "Request denied"
+msgstr "Requisição negada"
+
+msgid "Busted SNAC payload"
+msgstr "Carga de SNAC excedida"
+
+msgid "Insufficient rights"
+msgstr "Direitos insuficientes"
+
+msgid "In local permit/deny"
+msgstr "Na lista local de usuários permitidos/bloqueados"
+
+msgid "Warning level too high (sender)"
+msgstr "Nível de avisos muito alto (remetente)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Nível de avisos muito alto (destinatário)"
+
+msgid "User temporarily unavailable"
+msgstr "Usuário temporariamente indisponível"
+
+msgid "No match"
+msgstr "Nenhum resultado"
+
+msgid "List overflow"
+msgstr "Limite de tamanho da lista excedido"
+
+msgid "Request ambiguous"
+msgstr "Requisição ambígua"
+
+msgid "Queue full"
+msgstr "Fila cheia"
+
+msgid "Not while on AOL"
+msgstr "Não enquanto estiver na AOL"
 
 msgid "Aquarius"
 msgstr "Aquário"
@@ -12541,8 +12568,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "O %s é um cliente de mensagens modular capaz de usar o AIM, MSN, Yahoo!, "
 "XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, "
@@ -13096,16 +13123,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Você tem certeza de que deseja remover permanentemente o registro da "
 "conversa em %s, que começou às %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "Você tem certeza de que deseja remover permanentemente o registro do sistema "
 "que começou às %s?"
@@ -15417,6 +15444,7 @@ msgstr "Envia e recebe comandos (stanzas) do XMPP puros."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Este plug-in é útil para depurar servidores ou clientes XMPP."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15424,6 +15452,7 @@ msgstr ""
 "$(^Name) é distribuído sob a licença GPL. Esta licença é disponibilizada "
 "aqui apenas para fins informativos. $_CLICK"
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 "Um conjunto de ferramentas multi-plataforma para interface do usuário, usado "
@@ -15435,77 +15464,90 @@ msgid ""
 msgstr ""
 "Uma instância do Pidgin está em execução. Feche o Pidgin e tente novamente."
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Arquivos e bibliotecas principais do Pidgin"
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr "Crie uma entrada no Menu Iniciar para o Pidgin"
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Crie um atalho para o Pidgin na Área de Trabalho"
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Desktop"
 msgstr "Área de Trabalho"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "Ambiente de tempo de execução do GTK+ (requerido)"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "Localização"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "Avançar >"
 
-#. Components Page
+#. Installer Subsection Text
 #, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Cliente de mensagens instantâneas Pidgin (requerido)"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "Atalhos"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr "Atalhos para iniciar o Pidgin"
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr "Suporte a verificação ortográfica"
 
+#. Installer Subsection Text
 msgid "Start Menu"
 msgstr "Menu Iniciar"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15515,7 +15557,6 @@ msgstr ""
 msgid "The installer is already running."
 msgstr "O instalador já está em execução."
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
@@ -15523,11 +15564,10 @@ msgstr ""
 "O desinstalador não pôde encontrar entradas de registro do Pidgin.$\\rÉ "
 "provável que outro usuário tenha instalado esta aplicação."
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
 msgstr "Handlers para endereços"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
@@ -15536,12 +15576,15 @@ msgstr ""
 "atualmente. A nova versão será instalada sem que a versão antiga seja "
 "removida."
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr "Visite a página da web do Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Você não tem permissão para desinstalar essa aplicação."
+
+#~ msgid "Unknown reason."
+#~ msgstr "Motivo desconhecido."
 
 #~ msgid "Artist"
 #~ msgstr "Artista"
@@ -16382,8 +16425,8 @@ msgstr "Você não tem permissão para desinstalar essa aplicação."
 #~ "fixed.  Check %s for updates."
 #~ msgstr ""
 #~ "Você pode ser desconectado num curto período de tempo. Você pode querer "
-#~ "usar o TOC até que isso esteja corrigido. Verifique por atualizações em %"
-#~ "s."
+#~ "usar o TOC até que isso esteja corrigido. Verifique por atualizações em "
+#~ "%s."
 
 #~ msgid "_Flash window when chat messages are received"
 #~ msgstr "_Piscar a janela quando mensagens de bate-papo forem recebidas"
@@ -16395,8 +16438,8 @@ msgstr "Você não tem permissão para desinstalar essa aplicação."
 #~ "Conexão com o servidor perdida (não houve recepção de dados no último %d "
 #~ "segundo)"
 #~ msgstr[1] ""
-#~ "Conexão com o servidor perdida (não houve recepção de dados nos últimos %"
-#~ "d segundos)"
+#~ "Conexão com o servidor perdida (não houve recepção de dados nos últimos "
+#~ "%d segundos)"
 
 #~ msgid "Add buddy Q&A"
 #~ msgstr "Adicionar amigo Q&A"

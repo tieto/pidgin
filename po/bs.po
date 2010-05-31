@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:15-0400\n"
 "PO-Revision-Date: 2005-10-27 16:55-0400\n"
 "Last-Translator: Lejla Hadialic <lejlah@gmail.com>\n"
 "Language-Team: bs <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1425,6 +1426,7 @@ msgstr "Online status"
 msgid "Saved Statuses"
 msgstr "Statistike servera"
 
+#. title
 msgid "Title"
 msgstr "Titula"
 
@@ -1998,7 +2000,6 @@ msgstr ""
 msgid "Thread creation failure: %s"
 msgstr "Neuspjeh autentikacije"
 
-#. Data is assumed to be the destination bn
 #, fuzzy
 msgid "Unknown reason"
 msgstr "Nepoznat razlog."
@@ -3291,6 +3292,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Ime"
 
@@ -4079,6 +4083,7 @@ msgstr "Regija"
 msgid "Postal Code"
 msgstr "Poštanski broj"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Država"
 
@@ -4093,8 +4098,6 @@ msgstr "Ime organizacije"
 msgid "Organization Unit"
 msgstr "Organizacijska jedinica"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Poslovna titula"
 
@@ -4102,6 +4105,7 @@ msgid "Role"
 msgstr "Uloga"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Rodendan"
 
@@ -6004,6 +6008,10 @@ msgid "Show custom smileys"
 msgstr "Pokaži korisnicke detalje"
 
 #, fuzzy
+msgid "Allow direct connections"
+msgstr "Nije moguce kreirati novu konekciju."
+
+#, fuzzy
 msgid "nudge: nudge a user to get their attention"
 msgstr "buzz: ZZZZujanje kontaktu, za dobijanje njegove pažnje"
 
@@ -6240,7 +6248,11 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -6334,7 +6346,7 @@ msgstr "Ukucani SecurID je pogrešan."
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 #, fuzzy
 msgid "Nick Name"
 msgstr "Nadimak"
@@ -6392,7 +6404,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "Sigurnost omogucena"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "Promjeni lozinku"
@@ -6426,6 +6438,11 @@ msgid "Status Message"
 msgstr "Pošalji poruku"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "Pošalji poruku"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "Srednje ime"
 
@@ -6445,6 +6462,19 @@ msgstr "Spajanje"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Izbaceni ste od %s: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Loša karta"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "Soba:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7057,8 +7087,8 @@ msgstr "Nije moguce banovati korisnika %s"
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
 msgstr ""
-"Nije moguce poslati poruku. Neuspio pokušaj dobivanja detalja o korisniku (%"
-"s)."
+"Nije moguce poslati poruku. Neuspio pokušaj dobivanja detalja o korisniku "
+"(%s)."
 
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
@@ -7258,6 +7288,67 @@ msgstr "Nemoguce spajanje"
 msgid "Invalid chat room name"
 msgstr "Pogrešno ime sobe"
 
+msgid "Invalid error"
+msgstr "Nevažeca greška"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Nemoguce poslati datoteku"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Nemoguce poslati direktorij."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Nije moguce poslati poruku."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Offline"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Nije moguce poslati poruku (%s)."
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Nije moguce poslati poruku: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Nije moguce poslati poruku za %s:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Nije moguce poslati poruku za %s:"
+
 msgid "Thinking"
 msgstr ""
 
@@ -7429,120 +7520,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
-
-msgid "Invalid error"
-msgstr "Nevažeca greška"
-
-msgid "Invalid SNAC"
-msgstr "Pogrešan SNAC"
-
-msgid "Rate to host"
-msgstr "Preporuci hostu"
-
-msgid "Rate to client"
-msgstr "Preporuci klijentu"
-
-msgid "Service unavailable"
-msgstr "Servis nedostupan"
-
-msgid "Service not defined"
-msgstr "Servis nije definisan"
-
-msgid "Obsolete SNAC"
-msgstr "Zastarjeli SNAC"
-
-msgid "Not supported by host"
-msgstr "Host ne podržava"
-
-msgid "Not supported by client"
-msgstr "Klijent ne podržava"
-
-msgid "Refused by client"
-msgstr "Odbijeno od klijenta"
-
-msgid "Reply too big"
-msgstr "Odgovor prevelik"
-
-msgid "Responses lost"
-msgstr "Odgovori izgubljeni"
-
-msgid "Request denied"
-msgstr "Zahtjev odbijen"
-
-msgid "Busted SNAC payload"
-msgstr "Uništeni SNAC podaci"
-
-msgid "Insufficient rights"
-msgstr "Nedovoljna prava"
-
-msgid "In local permit/deny"
-msgstr "U lokalnoj dozvoljenoj/zabranjenoj listi"
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "Korisnik trenutno nedostupan"
-
-msgid "No match"
-msgstr "Nema poklapanja"
-
-msgid "List overflow"
-msgstr "Lista preplavljena"
-
-msgid "Request ambiguous"
-msgstr "Zahtjev nejasan"
-
-msgid "Queue full"
-msgstr "Popunjen red cekanja"
-
-msgid "Not while on AOL"
-msgstr "Ne dok na AOL-u"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "Nemoguce poslati datoteku"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Nemoguce poslati direktorij."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "Nije moguce poslati poruku."
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "Offline"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7898,28 +7875,9 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Propustili ste %hu poruku od %s iz nepoznatog razloga."
 msgstr[1] "Propustili ste %hu poruke od %s iz nepoznatog razloga."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Nije moguce poslati poruku (%s)."
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Nije moguce poslati poruku: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Nije moguce poslati poruku za %s:"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Nije moguce poslati poruku za %s:"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "Korisnicke informacije nisu dostupne: %s"
-
-msgid "Unknown reason."
-msgstr "Nepoznat razlog."
 
 msgid "Online Since"
 msgstr "Prijavljen vec"
@@ -8364,6 +8322,75 @@ msgstr ""
 "Ovo zahtjeva direktnu konekciju izmedu dva kompjutera i neophodno je za IM "
 "slike. Vaša IP adresa ce biti otkrivena, to se može smatrati rizikom za Vašu "
 "privatnost."
+
+msgid "Invalid SNAC"
+msgstr "Pogrešan SNAC"
+
+msgid "Rate to host"
+msgstr "Preporuci hostu"
+
+msgid "Rate to client"
+msgstr "Preporuci klijentu"
+
+msgid "Service unavailable"
+msgstr "Servis nedostupan"
+
+msgid "Service not defined"
+msgstr "Servis nije definisan"
+
+msgid "Obsolete SNAC"
+msgstr "Zastarjeli SNAC"
+
+msgid "Not supported by host"
+msgstr "Host ne podržava"
+
+msgid "Not supported by client"
+msgstr "Klijent ne podržava"
+
+msgid "Refused by client"
+msgstr "Odbijeno od klijenta"
+
+msgid "Reply too big"
+msgstr "Odgovor prevelik"
+
+msgid "Responses lost"
+msgstr "Odgovori izgubljeni"
+
+msgid "Request denied"
+msgstr "Zahtjev odbijen"
+
+msgid "Busted SNAC payload"
+msgstr "Uništeni SNAC podaci"
+
+msgid "Insufficient rights"
+msgstr "Nedovoljna prava"
+
+msgid "In local permit/deny"
+msgstr "U lokalnoj dozvoljenoj/zabranjenoj listi"
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "Korisnik trenutno nedostupan"
+
+msgid "No match"
+msgstr "Nema poklapanja"
+
+msgid "List overflow"
+msgstr "Lista preplavljena"
+
+msgid "Request ambiguous"
+msgstr "Zahtjev nejasan"
+
+msgid "Queue full"
+msgstr "Popunjen red cekanja"
+
+msgid "Not while on AOL"
+msgstr "Ne dok na AOL-u"
 
 msgid "Aquarius"
 msgstr ""
@@ -10881,8 +10908,8 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr ""
-"Nije bilo moguce dodati prijatelja %s u grupu %s na listu servera account-a %"
-"s."
+"Nije bilo moguce dodati prijatelja %s u grupu %s na listu servera account-a "
+"%s."
 
 #, fuzzy
 msgid "Unable to add buddy to server list"
@@ -13132,8 +13159,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 
 #, c-format
@@ -13713,14 +13740,14 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 
 #, fuzzy, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "Da li ste sigurni da hocete da odstranite poruku o odsutnosti \"%s\"?"
 
 #, fuzzy
@@ -16194,11 +16221,13 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
@@ -16207,79 +16236,92 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "Prihvati standardne postavke"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ Runtime verzija"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "Lokacija"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr ""
 
-#. Components Page
+#. Installer Subsection Text
 #, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Instant Messagers"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "Kratica"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "Start"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -16288,29 +16330,30 @@ msgstr ""
 msgid "The installer is already running."
 msgstr "Ta datoteka vec postoji"
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. URL Handler section
+#. Installer Subsection Text
 #, fuzzy
 msgid "URI Handlers"
 msgstr "_Kratica:"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Unknown reason."
+#~ msgstr "Nepoznat razlog."
 
 #, fuzzy
 #~ msgid "Artist"
@@ -18329,8 +18372,8 @@ msgstr ""
 #~ msgid ""
 #~ "Unable to read message from server: %s.  Command is %hd, length is %hd."
 #~ msgstr ""
-#~ "Nije moguce procitati poruku sa servera: %s. Komanda je %hd, dužina je %"
-#~ "hd."
+#~ "Nije moguce procitati poruku sa servera: %s. Komanda je %hd, dužina je "
+#~ "%hd."
 
 #~ msgid "users: %s, files: %s, size: %sGB"
 #~ msgstr "korisnici: %s, datoteke: %s, velicina: %sGB"
