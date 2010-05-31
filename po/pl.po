@@ -15321,7 +15321,7 @@ msgid ""
 msgstr ""
 "Błąd podczas pobierania biblioteki GTK+ ($R2).$\\rJest ona wymagana do "
 "działania programu Pidgin. Jeśli ponowienie się nie powiedzie, być może "
-"należy użyć \"Instalatora w trybie offline\" ze strony http://pidgin.im/"
+"należy użyć 'Instalatora w trybie offline' ze strony http://pidgin.im/"
 "download/windows/ ."
 
 #. $R2 will display the URL that the Debug Symbols failed to download from
@@ -15330,7 +15330,7 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 "Błąd podczas pobierania symboli debugowania ($R2).$\\rJeśli ponowienie się "
-"nie powiedzie, być może należy użyć \"Instalatora w trybie offline\" ze "
+"nie powiedzie, być może należy użyć 'Instalatora w trybie offline' ze "
 "strony http://pidgin.im/download/windows/ ."
 
 #. $R3 will display the URL that the Dictionary failed to download from

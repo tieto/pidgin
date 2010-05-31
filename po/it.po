@@ -15330,7 +15330,7 @@ msgid ""
 msgstr ""
 "Errore nello scaricamento del runtime GTK+ ($R2).$\\rIl runtime è necessario "
 "per far funzionare Pidgin; se il problema persiste, potresti provare ad "
-"usare l'installatore \"offline\" disponibile su http://pidgin.im/download/"
+"usare l'installatore 'offline' disponibile su http://pidgin.im/download/"
 "windows/ ."
 
 #. $R2 will display the URL that the Debug Symbols failed to download from
@@ -15339,7 +15339,7 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 "Errore nell'installazione dei simboli di debug ($R2).$\\rSe il problema "
-"persiste, potresti provare ad usare l'installatore \"offline\" disponibile "
+"persiste, potresti provare ad usare l'installatore 'offline' disponibile "
 "su http://pidgin.im/download/windows/ ."
 
 #. $R3 will display the URL that the Dictionary failed to download from
