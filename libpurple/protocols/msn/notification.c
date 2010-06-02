@@ -1610,11 +1610,6 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		msn_user_set_statusline(user, NULL);
 	}
 
-	if (user->extinfo && user->extinfo->media_type == CURRENT_MEDIA_UNKNOWN) {
-		g_free(user->extinfo);
-		user->extinfo = NULL;
-	}
-
 	msn_user_update(user);
 }
 
