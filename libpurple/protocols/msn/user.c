@@ -21,7 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "debug.h"
+
 #include "user.h"
 #include "slp.h"
 
@@ -46,14 +49,19 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	msn_user_set_passport(user, passport);
 	msn_user_set_friendly_name(user, friendly_name);
 
-	return user;
+	return msn_user_ref(user);
 }
 
 /*destroy a user object*/
-void
+static void
 msn_user_destroy(MsnUser *user)
 {
 	g_return_if_fail(user != NULL);
+
+	if (user->refcount > 1) {
+		msn_user_unref(user);
+		return;
+	}
 
 	while (user->endpoints != NULL) {
 		free_user_endpoint(user->endpoints->data);
@@ -92,6 +100,27 @@ msn_user_destroy(MsnUser *user)
 	g_free(user->invite_message);
 
 	g_free(user);
+}
+
+MsnUser *
+msn_user_ref(MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, NULL);
+
+	user->refcount++;
+
+	return user;
+}
+
+void
+msn_user_unref(MsnUser *user)
+{
+	g_return_if_fail(user != NULL);
+
+	user->refcount--;
+
+	if(user->refcount == 0)
+		msn_user_destroy(user);
 }
 
 void
@@ -632,3 +661,29 @@ msn_user_is_capable(MsnUser *user, char *endpoint, guint capability, guint extca
 
 	return (user->clientid & capability) && (user->extcaps & extcap);
 }
+
+/**************************************************************************
+ * Utility functions
+ **************************************************************************/
+
+gboolean
+msn_user_is_in_group(MsnUser *user, const char * group_id)
+{
+	if (user == NULL)
+		return FALSE;
+
+	if (group_id == NULL)
+		return FALSE;
+
+	return (g_list_find_custom(user->group_ids, group_id, (GCompareFunc)strcmp)) != NULL;
+}
+
+gboolean
+msn_user_is_in_list(MsnUser *user, MsnListId list_id)
+{
+	if (user == NULL)
+		return FALSE;
+
+	return (user->list_op & (1 << list_id));
+}
+

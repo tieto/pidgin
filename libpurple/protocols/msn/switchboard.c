@@ -21,13 +21,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
-#include "prefs.h"
-#include "switchboard.h"
-#include "notification.h"
-#include "msnutils.h"
 
-#include "error.h"
+#include "internal.h"
+#include "debug.h"
+
+#include "msnutils.h"
+#include "switchboard.h"
+#include "slplink.h"
+#include "user.h"
+#include "userlist.h"
 
 static MsnTable *cbs_table;
 
@@ -123,7 +125,7 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	g_free(swboard->session_id);
 
 	for (; swboard->users; swboard->users = g_list_delete_link(swboard->users, swboard->users))
-		g_free(swboard->users->data);
+		msn_user_unref(swboard->users->data);
 
 	session = swboard->session;
 	session->switches = g_list_remove(session->switches, swboard);
@@ -226,11 +228,23 @@ send_clientcaps(MsnSwitchBoard *swboard)
 	msn_message_destroy(msg);
 }
 
+static int
+user_passport_cmp(MsnUser *user, const char *passport)
+{
+	const char *pass;
+
+	pass = msn_user_get_passport(user);
+
+	return strcmp(pass, passport);
+}
+
 static void
 msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 {
 	MsnCmdProc *cmdproc;
 	PurpleAccount *account;
+	MsnUserList *userlist;
+	MsnUser *msnuser;
 	char *semicolon;
 	char *passport;
 
@@ -246,8 +260,11 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	else
 		passport = g_strdup(user);
 
+	userlist = swboard->session->userlist;
+	msnuser = msn_userlist_find_user(userlist, passport);
+
 	/* Don't add multiple endpoints to the conversation. */
-	if (g_list_find_custom(swboard->users, passport, (GCompareFunc)strcmp)) {
+	if (g_list_find_custom(swboard->users, passport, (GCompareFunc)user_passport_cmp)) {
 		g_free(passport);
 		return;
 	}
@@ -257,8 +274,16 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 		g_free(passport);
 		return;
 	}
+	
+	if (!msnuser) {
+		purple_debug_info("msn","User %s is not on our list.\n", passport);
+		msnuser = msn_user_new(userlist, passport, NULL);
+	} else
+		msn_user_ref(msnuser);
 
-	swboard->users = g_list_prepend(swboard->users, passport);
+	g_free(passport);
+
+	swboard->users = g_list_prepend(swboard->users, msnuser);
 	swboard->current_users++;
 	swboard->empty = FALSE;
 
@@ -276,7 +301,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	if ((swboard->conv != NULL) &&
 		(purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
 	{
-		purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv), user, NULL,
+		purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv), msnuser->passport, NULL,
 								PURPLE_CBFLAGS_NONE, TRUE);
 		msn_servconn_set_idle_timeout(swboard->servconn, 0);
 	}
@@ -304,8 +329,9 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 			for (l = swboard->users; l != NULL; l = l->next)
 			{
 				const char *tmp_user;
+				user = l->data;
 
-				tmp_user = l->data;
+				tmp_user = msnuser->passport;
 
 				purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
 										tmp_user, NULL, PURPLE_CBFLAGS_NONE, TRUE);
@@ -322,7 +348,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	else if (swboard->conv == NULL)
 	{
 		swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-															user, account);
+															msnuser->passport, account);
 	}
 	else
 	{

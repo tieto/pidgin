@@ -21,6 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "internal.h"
+#include "debug.h"
+
 #include "msn.h"
 #include "msg.h"
 #include "msnutils.h"
@@ -883,8 +887,9 @@ msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				swboard->flag |= MSN_SB_FLAG_IM;
 			}
 		}
-		else
+		else if (!g_str_equal(passport, purple_account_get_username(gc->account)))
 		{
+			/* Don't im ourselves ... */
 			serv_got_im(gc, passport, body_final, 0, time(NULL));
 			if (swboard->conv == NULL)
 			{

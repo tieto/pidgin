@@ -64,6 +64,15 @@ void msn_import_html(const char *html, char **attributes, char **message);
 void msn_parse_socket(const char *str, char **ret_host, int *ret_port);
 
 /**
+ * Verify if the email is a vaild passport.
+ *
+ * @param passport 	The email
+ *
+ * @return True if it is a valid passport, else FALSE
+ */
+gboolean msn_email_is_valid(const char *passport);
+
+/**
  * Handle MSN Challenge Computation
  * This algorithm references
  * http://imfreedom.org/wiki/index.php/MSN:NS/Challenges

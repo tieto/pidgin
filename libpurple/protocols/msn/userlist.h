@@ -35,6 +35,16 @@ typedef enum
 	MSN_LIST_PL  /**< Pending list */
 } MsnListId;
 
+typedef enum
+{
+	MSN_LIST_FL_OP = 0x01,
+	MSN_LIST_AL_OP = 0x02,
+	MSN_LIST_BL_OP = 0x04,
+	MSN_LIST_RL_OP = 0x08,
+	MSN_LIST_PL_OP = 0x10
+} MsnListOp;
+#define MSN_LIST_OP_MASK	0x07
+
 #include "group.h"
 #include "msn.h"
 #include "user.h"
@@ -51,9 +61,6 @@ struct _MsnUserList
 	guint buddy_icon_request_timer;
 
 };
-
-gboolean msn_userlist_user_is_in_group(MsnUser *user, const char * group_id);
-gboolean msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id);
 
 void msn_got_lst_user(MsnSession *session, MsnUser *user,
 					  MsnListOp list_op, GSList *group_ids);

@@ -21,7 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "debug.h"
+
 #include "slp.h"
 #include "slpcall.h"
 #include "slpmsg.h"
@@ -515,7 +518,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			/* DATA */
 			slpmsg = msn_slpmsg_new(slplink);
 			slpmsg->slpcall = slpcall;
-			slpmsg->flags = 0x20;
+			slpmsg->flags = SLP_HF_MSN_OBJ_DATA;
 			slpmsg->info = "SLP DATA";
 			msn_slpmsg_set_image(slpmsg, img);
 			msn_slplink_queue_slpmsg(slplink, slpmsg);

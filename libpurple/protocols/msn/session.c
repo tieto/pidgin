@@ -21,8 +21,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "internal.h"
+#include "debug.h"
+
 #include "error.h"
-#include "msn.h"
 #include "msnutils.h"
 #include "session.h"
 #include "notification.h"
@@ -81,7 +84,7 @@ msn_session_destroy(MsnSession *session)
 		msn_nexus_destroy(session->nexus);
 
 	if (session->user != NULL)
-		msn_user_destroy(session->user);
+		msn_user_unref(session->user);
 
 	if (session->notification != NULL)
 		msn_notification_destroy(session->notification);

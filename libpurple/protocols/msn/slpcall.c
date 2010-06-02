@@ -21,7 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "debug.h"
+
 #include "msnutils.h"
 #include "slpcall.h"
 
@@ -201,7 +204,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	body = slpmsg->buffer;
 	body_len = slpmsg->offset;
 
-	if (slpmsg->flags == 0x0 || slpmsg->flags == 0x1000000)
+	if (slpmsg->flags == SLP_HF_NO_FLAG || slpmsg->flags == SLP_HF_WML2009_COMP)
 	{
 		char *body_str;
 
@@ -262,9 +265,9 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		}
 		g_free(body_str);
 	}
-	else if (slpmsg->flags == 0x20 ||
-	         slpmsg->flags == 0x1000020 ||
-	         slpmsg->flags == 0x1000030)
+	else if (slpmsg->flags == SLP_HF_MSN_OBJ_DATA ||
+	         slpmsg->flags == SLP_HF_WML2009_COMP & SLP_HF_MSN_OBJ_DATA ||
+	         slpmsg->flags == SLP_HF_FILE_DATA)
 	{
 		slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
 
@@ -290,7 +293,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			msn_slpcall_session_init(slpcall);
 	}
 #endif
-	else if (slpmsg->flags == 0x2)
+	else if (slpmsg->flags == SLP_HF_ACK)
 	{
 		/* Acknowledgement of previous message. Don't do anything currently. */
 	}

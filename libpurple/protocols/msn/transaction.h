@@ -24,6 +24,8 @@
 #ifndef MSN_TRANSACTION_H
 #define MSN_TRANSACTION_H
 
+#include "internal.h"
+
 typedef struct _MsnTransaction MsnTransaction;
 
 #include "cmdproc.h"

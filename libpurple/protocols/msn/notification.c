@@ -21,17 +21,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "cipher.h"
 #include "core.h"
+#include "debug.h"
+
 #include "notification.h"
+
 #include "contact.h"
-#include "state.h"
 #include "error.h"
 #include "msnutils.h"
-#include "page.h"
-
+#include "state.h"
 #include "userlist.h"
-#include "slplink.h"
 
 static MsnTable *cbs_table;
 

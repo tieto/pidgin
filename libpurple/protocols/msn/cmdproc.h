@@ -27,7 +27,6 @@
 typedef struct _MsnCmdProc MsnCmdProc;
 
 #include "command.h"
-#include "error.h"
 #include "history.h"
 #include "servconn.h"
 #include "session.h"
