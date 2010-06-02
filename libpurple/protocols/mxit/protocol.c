@@ -520,7 +520,7 @@ gboolean mxit_manage_queue( gpointer user_data )
 		/* we are still waiting for an outstanding ACK from the MXit server */
 		if ( session->last_tx <= time( NULL ) - MXIT_ACK_TIMEOUT ) {
 			/* ack timeout! so we close the connection here */
-			purple_debug_info( MXIT_PLUGIN_ID, "mxit_manage_queue: Timeout awaiting ACK for command '%X'\n", session->outack );
+			purple_debug_info( MXIT_PLUGIN_ID, "mxit_manage_queue: Timeout awaiting ACK for command '%i'\n", session->outack );
 			purple_connection_error( session->con, _( "Timeout while waiting for a response from the MXit server." ) );
 		}
 		return TRUE;
