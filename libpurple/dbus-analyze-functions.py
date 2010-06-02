@@ -170,7 +170,7 @@ class Binding:
                 return self.inputpurplestructure(type, name)
 
             # special case for *_get_data functions, be careful here...
-            elif (type[0] == "size_t") and (name == "len"):
+            elif (type[0] == "size_t" or type[0] == "gsize") and name == "len":
                 return self.inputgetdata(type, name)
             
             # unknown pointers are always replaced with NULL

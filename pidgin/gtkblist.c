@@ -3455,7 +3455,7 @@ edit_mood_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 				PurpleAccount *account = (PurpleAccount *) accounts->data;
 				PurpleConnection *gc = purple_account_get_connection(account);
 
-				if (gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
+				if (gc && gc->flags & PURPLE_CONNECTION_SUPPORT_MOODS) {
 					update_status_with_mood(account, mood, NULL);
 				}
 			}
