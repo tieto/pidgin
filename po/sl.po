@@ -6,12 +6,13 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.6\n"
+"Project-Id-Version: Pidgin 2.7.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
-"PO-Revision-Date: 2010-04-30 16:02+0100\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
+"PO-Revision-Date: 2010-05-22 11:26+0100\n"
 "Last-Translator: Martin Srebotnjak  <miles@filmsi.net>\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1360,6 +1361,7 @@ msgstr "Izbriši stanje"
 msgid "Saved Statuses"
 msgstr "Shranjena stanja"
 
+#. title
 msgid "Title"
 msgstr "Naziv"
 
@@ -1917,7 +1919,6 @@ msgstr "Napaka pri pretvarjanju %s v punycode: %d"
 msgid "Thread creation failure: %s"
 msgstr "Napaka pri ustvarjanju niti: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Neznan razlog"
 
@@ -3212,6 +3213,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Ime"
 
@@ -3952,6 +3956,7 @@ msgstr "Regija"
 msgid "Postal Code"
 msgstr "Poštna številka"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Država"
 
@@ -3966,8 +3971,6 @@ msgstr "Ime organizacije"
 msgid "Organization Unit"
 msgstr "Enota organizacije"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Naziv službe"
 
@@ -3975,6 +3978,7 @@ msgid "Role"
 msgstr "Funkcija"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Rojstni dan"
 
@@ -5712,6 +5716,9 @@ msgstr "Strežnik metode HTTP"
 msgid "Show custom smileys"
 msgstr "Pokaži smejčke po meri ..."
 
+msgid "Allow direct connections"
+msgstr "Dovoli neposredne povezave"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: Dregnite prijatelja, da vas bo opazil"
 
@@ -5943,7 +5950,11 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Podatki o vašem profilu še niso pridobljen. Poskusite znova kasneje."
 
+msgid "Your MXitId"
+msgstr "Vaš MXitId"
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -6021,7 +6032,7 @@ msgstr "Vneseni PIN ni veljavne dolžine [7-10]."
 msgid "MXit Login Name"
 msgstr "Prijavno ime MXit"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "Vzdevek"
 
@@ -6067,7 +6078,7 @@ msgstr "Niste vnesli varnostne kode."
 msgid "Security Code"
 msgstr "Varnostna koda"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Vnesite varnostno kodo"
 
@@ -6093,6 +6104,10 @@ msgstr "Nalaganje menija ..."
 msgid "Status Message"
 msgstr "Sporočilo stanja"
 
+msgid "Rejection Message"
+msgstr "Sporočilo zavrnitve"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "Skrita številka"
 
@@ -6109,6 +6124,19 @@ msgstr "Poveži prek HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Omogoči pozdravno okno ob zagonu"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Brcnjeni ste bili: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Napačna vstopnica"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Soba:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6882,6 +6910,64 @@ msgstr "Pogovorni sobi se ni mogoče pridružiti"
 msgid "Invalid chat room name"
 msgstr "Neveljavno ime sobe"
 
+msgid "Invalid error"
+msgstr "Neveljavna napaka"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "Sporočila ne morete prejeti zaradi starševskega nadzora"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "SMS ni mogoče poslati brez sprejetja pogojev"
+
+msgid "Cannot send SMS"
+msgstr "Ni mogoče poslati SMS-a"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "SMS-a v to državo ni mogoče poslati."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "SMS ni mogoče poslati v neznano državo"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Računi bot ne morejo začeti klepetov"
+
+msgid "Bot account cannot IM this user"
+msgstr "Račun bot ne more klepetati s tem uporabnikom"
+
+msgid "Bot account reached IM limit"
+msgstr "Račun bot je dosegel številsko omejitev sporočil"
+
+msgid "Bot account reached daily IM limit"
+msgstr "Račun bot je dosegel dnevno omejitev sporočil"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "Račun bot je dosegel mesečno omejitev sporočil"
+
+msgid "Unable to receive offline messages"
+msgstr "Sporočil stanja nepovezanosti ni mogoče prejemati."
+
+msgid "Offline message store full"
+msgstr "Shramba sporočil ob nepovezanosti je polna"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Sporočila ni mogoče poslati: %s (%s)"
+
+#  Data is assumed to be the destination sn
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Ni moč poslati sporočila: %s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Ni moč poslati sporočila k %s: %s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Ni moč poslati sporočila k %s: %s"
+
 msgid "Thinking"
 msgstr "Razmišlja"
 
@@ -7032,116 +7118,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Datoteka %s je %s, kar je več od največje velikosti za %s."
-
-msgid "Invalid error"
-msgstr "Neveljavna napaka"
-
-msgid "Invalid SNAC"
-msgstr "Neveljaven SNAC"
-
-msgid "Rate to host"
-msgstr "Prenos do gostitelja"
-
-msgid "Rate to client"
-msgstr "Prenos do odjemalca"
-
-msgid "Service unavailable"
-msgstr "Storitev ni dostopna"
-
-msgid "Service not defined"
-msgstr "Storitev nedefinirana"
-
-msgid "Obsolete SNAC"
-msgstr "Zastarel SNAC"
-
-msgid "Not supported by host"
-msgstr "Gostitelj ne podpira"
-
-msgid "Not supported by client"
-msgstr "Odjemalec ne podpira"
-
-msgid "Refused by client"
-msgstr "Odjemalec je zavrnil"
-
-msgid "Reply too big"
-msgstr "Odgovor prevelik"
-
-msgid "Responses lost"
-msgstr "Odgovori so se izgubili"
-
-msgid "Request denied"
-msgstr "Zahteva zavrnjena"
-
-msgid "Busted SNAC payload"
-msgstr "Odkrit SNAC podatek"
-
-msgid "Insufficient rights"
-msgstr "Premalo pravic"
-
-msgid "In local permit/deny"
-msgstr "V lokalnem dovoljenju/prepovedi"
-
-msgid "Warning level too high (sender)"
-msgstr "Raven opozoril previsoka (pošiljatelj)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Raven opozoril previsoka (prejemnik)"
-
-msgid "User temporarily unavailable"
-msgstr "Uporabnik začasno ni dostopen"
-
-msgid "No match"
-msgstr "Ni zadetka"
-
-msgid "List overflow"
-msgstr "Prekoračitev seznama"
-
-msgid "Request ambiguous"
-msgstr "Zahteva nejasna"
-
-msgid "Queue full"
-msgstr "Čakalna vrsta je polna"
-
-msgid "Not while on AOL"
-msgstr "Na omrežju AOL ni dovoljeno"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "Sporočila ne morete prejeti zaradi starševskega nadzora"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "SMS ni mogoče poslati brez sprejetja pogojev"
-
-msgid "Cannot send SMS"
-msgstr "Ni mogoče poslati SMS-a"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "SMS-a v to državo ni mogoče poslati."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "SMS ni mogoče poslati v neznano državo"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "Računi bot ne morejo začeti klepetov"
-
-msgid "Bot account cannot IM this user"
-msgstr "Račun bot ne more klepetati s tem uporabnikom"
-
-msgid "Bot account reached IM limit"
-msgstr "Račun bot je dosegel številsko omejitev sporočil"
-
-msgid "Bot account reached daily IM limit"
-msgstr "Račun bot je dosegel dnevno omejitev sporočil"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "Račun bot je dosegel mesečno omejitev sporočil"
-
-msgid "Unable to receive offline messages"
-msgstr "Sporočil stanja nepovezanosti ni mogoče prejemati."
-
-msgid "Offline message store full"
-msgstr "Shramba sporočil ob nepovezanosti je polna"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7511,28 +7487,8 @@ msgstr[2] "Spregledali ste %hu sporočili od %s, ker sta bili neveljavni."
 msgstr[3] "Spregledali ste %hu sporočila od %s, ker so bila neveljavna."
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Sporočila ni mogoče poslati: %s (%s)"
-
-#  Data is assumed to be the destination sn
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Ni moč poslati sporočila: %s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Ni moč poslati sporočila k %s: %s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Ni moč poslati sporočila k %s: %s"
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "Podatki o uporabniku niso dostopni: %s"
-
-msgid "Unknown reason."
-msgstr "Neznan vzrok."
 
 msgid "Online Since"
 msgstr "Na zvezi od"
@@ -7972,6 +7928,88 @@ msgstr ""
 "To zahteva neposredno povezavo med dvema računalnikoma in je nujno potrebno "
 "za sporočanje s slikami. Ker bo razkrit naslov IP, sodi ta povezava med "
 "tveganja zasebnosti."
+
+#, fuzzy
+msgid "Invalid SNAC"
+msgstr "Neveljaven ID"
+
+#, fuzzy
+msgid "Rate to host"
+msgstr "Povabi na klepet"
+
+#, fuzzy
+msgid "Rate to client"
+msgstr "Nazadnje znani odjemalec"
+
+#, fuzzy
+msgid "Service unavailable"
+msgstr "Storitev ni dostopna"
+
+#, fuzzy
+msgid "Service not defined"
+msgstr "Konference ni mogoče najti"
+
+msgid "Obsolete SNAC"
+msgstr ""
+
+#, fuzzy
+msgid "Not supported by host"
+msgstr "Ni podprto"
+
+#, fuzzy
+msgid "Not supported by client"
+msgstr "Ni podprto"
+
+msgid "Refused by client"
+msgstr ""
+
+msgid "Reply too big"
+msgstr ""
+
+#, fuzzy
+msgid "Responses lost"
+msgstr "Verjetnost odgovora:"
+
+#, fuzzy
+msgid "Request denied"
+msgstr "Zahteva v teku"
+
+msgid "Busted SNAC payload"
+msgstr ""
+
+msgid "Insufficient rights"
+msgstr ""
+
+msgid "In local permit/deny"
+msgstr ""
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+#, fuzzy
+msgid "User temporarily unavailable"
+msgstr "Storitev trenutno ni na voljo"
+
+#, fuzzy
+msgid "No match"
+msgstr "Ni zadetkov"
+
+#, fuzzy
+msgid "List overflow"
+msgstr "Seznam poln"
+
+#, fuzzy
+msgid "Request ambiguous"
+msgstr "Zahteva v teku"
+
+msgid "Queue full"
+msgstr ""
+
+msgid "Not while on AOL"
+msgstr ""
 
 msgid "Aquarius"
 msgstr "Vodnar"
@@ -10301,8 +10339,8 @@ msgstr ""
 #, c-format
 msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr ""
-"Prijatelja %s ni mogoče dodati v skupino %s na seznamu strežnikov za račun %"
-"s."
+"Prijatelja %s ni mogoče dodati v skupino %s na seznamu strežnikov za račun "
+"%s."
 
 msgid "Unable to add buddy to server list"
 msgstr "Prijatelja ni mogoče dodati ne seznam strežnikov"
@@ -10691,8 +10729,8 @@ msgstr "Napaka pri povezavi na posredovalni strežnik HTTP %d"
 #, c-format
 msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr ""
-"Dostop zavrnjen: posredovalni strežnik HTTP ne dovoljuje preusmerjanja vrat %"
-"d"
+"Dostop zavrnjen: posredovalni strežnik HTTP ne dovoljuje preusmerjanja vrat "
+"%d"
 
 #, c-format
 msgid "Error resolving %s"
@@ -12135,9 +12173,8 @@ msgstr "afrikansko"
 msgid "Arabic"
 msgstr "arabsko"
 
-#, fuzzy
 msgid "Assamese"
-msgstr "Osramočen"
+msgstr "asamsko"
 
 msgid "Belarusian Latin"
 msgstr "belorusko (latinica)"
@@ -12265,9 +12302,8 @@ msgstr "laoško"
 msgid "Macedonian"
 msgstr "makedonsko"
 
-#, fuzzy
 msgid "Malayalam"
-msgstr "malajsko"
+msgstr "malajalamsko"
 
 msgid "Mongolian"
 msgstr "mongolsko"
@@ -12383,8 +12419,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s je odjemalec za neposredno sporočanje, ki se lahko hkrati povezuje z več "
 "storitvami sporočanja. %s je napisan v jeziku C s pomočjo Gtk+. %s je izdan "
@@ -12935,16 +12971,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Ste prepričani, da želite povsem izbrisati dnevnik klepeta v %s, ki se je "
 "pričel ob %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "Ste prepričani, da želite povsem izbrisati sistemski dnevnik, ki se je "
 "pričel ob %s?"
@@ -15215,6 +15251,7 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Ta vtičnik je uporaben za razhroščevanje strežnikov ali odjemalcev XMPP."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15222,8 +15259,9 @@ msgstr ""
 "$(^Name) je izdan pod licenco GPL. Ta licenca je tu na voljo le v "
 "informativne namene. $_CLICK"
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
-msgstr "Večplatformna orodjarna GUI, ki jo uporablja Pidgin"
+msgstr ""
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -15232,75 +15270,97 @@ msgstr ""
 "Trenutno že teče ena različica Pidgina. Prosimo, zaprite aplikacijo in "
 "poskusite znova."
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Temeljne datoteke in knjižnice za Pidgin"
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr "Ustvari izbiro Pidgin v meniju Start"
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Ustvari bližnjico za Pidgin na namizju"
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
-msgstr ""
+msgstr "Simboli razhroščevanja (za poročanje o sesutjih)"
 
+#. Installer Subsection Text
 msgid "Desktop"
 msgstr "Namizje"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
+"Napaka pri prenašanju izvajalnega okolja GTK+ ($R2).$\\rTa je potreben za "
+"delovanje Pidgina; če ponoven poskus ne uspe, boste morali uporabiti 'polni "
+"namestitveni paket' z naslova http://pidgin.im/download/windows/"
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
+"Napaka pri nameščanju simbolov razhroščevanja ($R2).$\\rČe ponoven poskus ne "
+"uspe, boste morali uporabiti 'polni namestitveni paket' z naslova http://"
+"pidgin.im/download/windows/"
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
+"Napaka pri nameščanju preverjanja črkovanja ($R3).$\\rČe ponovni poskus ne "
+"uspe, najdete navodila za ročno namestitev na naslovu: http://developer."
+"pidgin.im/wiki/Installing%20Pidgin#manual_win32_spellcheck_installation"
 
-#, fuzzy
+#. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
-msgstr "Izvajalno okolje GTK+ (zahtevano)"
+msgstr "Izvajalno okolje GTK+ (obvezno, če manjka)"
 
-#, fuzzy
+#. Installer Subsection Text
 msgid "Localizations"
-msgstr "Lokacija"
+msgstr "Lokalizacije"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "Naprej >"
 
-#. Components Page
+#. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Pidgin - odjemalec za klepet (zahtevano)"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
+"Pidgin potrebuje združljivo izvajalno okolje GTK+ (ki očitno ni na voljo).$"
+"\\rSte prepričani, da želite preskočiti nameščanje izvajalnega okolja GTK+?"
 
+#. Installer Subsection Text
 msgid "Shortcuts"
 msgstr "Tipke za bližnjice"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr "Bližnjice za zagon Pidgina"
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr "Podpora preverjanja črkovanja"
 
+#. Installer Subsection Text
 msgid "Start Menu"
 msgstr "Začetni meni"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15309,7 +15369,6 @@ msgstr ""
 msgid "The installer is already running."
 msgstr "Nameščanje že poteka."
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
@@ -15317,11 +15376,10 @@ msgstr ""
 "Vnosov za Pidgin v registru ni mogoče najti.$\\rNajverjetneje je ta program "
 "namestil drug uporabnik."
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
-msgstr ""
+msgstr "Upravljalnik URI"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
@@ -15329,24 +15387,9 @@ msgstr ""
 "Trenutno nameščene različice Pidgina ni mogoče odstraniti. Nova različica bo "
 "nameščena brez odstranitve trenutno nameščene različice."
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr "Obiščite spletno stran Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Za odstranitev programa nimate ustreznih pravic."
-
-#~ msgid "Current Mood"
-#~ msgstr "Trenutno razpoloženje"
-
-#~ msgid "New Mood"
-#~ msgstr "Novo razpoloženje"
-
-#~ msgid "Change your Mood"
-#~ msgstr "Spremeni razpoloženje"
-
-#~ msgid "How do you feel right now?"
-#~ msgstr "Kako se počutite?"
-
-#~ msgid "Change Mood..."
-#~ msgstr "Spremeni razpoloženje ..."

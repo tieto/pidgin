@@ -10,10 +10,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:15-0400\n"
 "PO-Revision-Date: 2010-02-18 15:01+0200\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1352,6 +1353,7 @@ msgstr "Poista tila"
 msgid "Saved Statuses"
 msgstr "Tallennetut tilat"
 
+#. title
 msgid "Title"
 msgstr "Otsikko"
 
@@ -1907,7 +1909,6 @@ msgstr "Virhe selvitettäessä %s: %d"
 msgid "Thread creation failure: %s"
 msgstr "Säikeen luonti epäonnistui: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Tuntematon syy"
 
@@ -3184,6 +3185,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Etunimi"
 
@@ -3929,6 +3933,7 @@ msgstr "Seutu"
 msgid "Postal Code"
 msgstr "Postinumero"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Maa"
 
@@ -3943,8 +3948,6 @@ msgstr "Organisaation nimi"
 msgid "Organization Unit"
 msgstr "Organisaatioyksikkö"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Tehtävänimike"
 
@@ -3952,6 +3955,7 @@ msgid "Role"
 msgstr "Asema"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Syntymäpäivä"
 
@@ -5740,6 +5744,10 @@ msgstr "HTTP-yhteystavan palvelin"
 msgid "Show custom smileys"
 msgstr "Näytä itse tehdyt / lisätyt hymiöt"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Yhteyden luominen epäonnistui"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: tönäise tuttavaa huomion saamiseksi"
 
@@ -5965,7 +5973,11 @@ msgstr "Profiili"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -6051,7 +6063,7 @@ msgstr "Syötetty SecurID-avain on virheellinen"
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "Kutsumanimi"
 
@@ -6108,7 +6120,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "Turvatoimet käytössä"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "Syötä koodi"
@@ -6143,6 +6155,11 @@ msgid "Status Message"
 msgstr "Tilaviesti"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "Vastaanotetut viestit"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "Muut etunimet"
 
@@ -6162,6 +6179,19 @@ msgstr "Yhdistetään käyttäen TCP:tä"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Sinut on potkaistu kanavalta: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Bad ticket"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Huone:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 #, fuzzy
@@ -6949,6 +6979,66 @@ msgstr "Keskusteluhuoneeseen ei voi liittyä"
 msgid "Invalid chat room name"
 msgstr "Epäkelpo keskusteluhuoneen nimi"
 
+msgid "Invalid error"
+msgstr "Epäkelpo virhe"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+msgid "Cannot send SMS"
+msgstr "Tekstiviestin (SMS) lähetys ei onnistu"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Kansiota ei voi lähettää."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Viestiä ei voi lähettää."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Yhteydetön viesti"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Viestiä ei voi lähettää: %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Viestiä ei voi lähettää: %s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Viestiä ei voi lähettää käyttäjälle %s: %s (%s)."
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Viestiä ei voi lähettää käyttäjälle %s: %s"
+
 msgid "Thinking"
 msgstr ""
 
@@ -7117,119 +7207,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
 "Tiedosto %s on kooltaan %s, mikä on enemmän kuin suurin sallittu koko %s."
-
-msgid "Invalid error"
-msgstr "Epäkelpo virhe"
-
-msgid "Invalid SNAC"
-msgstr "Epäkelpo SNAC"
-
-msgid "Rate to host"
-msgstr "Nopeus isäntään"
-
-msgid "Rate to client"
-msgstr "Nopeus asiakasohjelmaan"
-
-msgid "Service unavailable"
-msgstr "Palvelu ei ole käytettävissä"
-
-msgid "Service not defined"
-msgstr "Palvelua ei määritelty"
-
-msgid "Obsolete SNAC"
-msgstr "Vanhentunut SNAC"
-
-msgid "Not supported by host"
-msgstr "Ei tuettu verkkoisännässä"
-
-msgid "Not supported by client"
-msgstr "Ei tuettu asiakasohjelmassa"
-
-msgid "Refused by client"
-msgstr "Asiakasohjelma torjui"
-
-msgid "Reply too big"
-msgstr "Vastaus liian suuri"
-
-msgid "Responses lost"
-msgstr "Vastaukset menetetty"
-
-msgid "Request denied"
-msgstr "Pyyntö evätty"
-
-msgid "Busted SNAC payload"
-msgstr "Rikkoutunut SNAC-data"
-
-msgid "Insufficient rights"
-msgstr "Liian vähän oikeuksia"
-
-msgid "In local permit/deny"
-msgstr "Paikallisessa sallittujen/estettyjen listassa"
-
-msgid "Warning level too high (sender)"
-msgstr "Varoitustaso liian korkea (lähettäjä)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Varoitustaso liian korkea (vastaanottaja)"
-
-msgid "User temporarily unavailable"
-msgstr "Käyttäjä ei tilapäisesti saatavilla."
-
-msgid "No match"
-msgstr "Ei tuloksia"
-
-msgid "List overflow"
-msgstr "Lista-ylivuoto"
-
-msgid "Request ambiguous"
-msgstr "Pyyntö ei ole yksiselitteinen"
-
-msgid "Queue full"
-msgstr "Jono täynnä"
-
-msgid "Not while on AOL"
-msgstr "Ei kun AOL on käytössä"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-msgid "Cannot send SMS"
-msgstr "Tekstiviestin (SMS) lähetys ei onnistu"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Kansiota ei voi lähettää."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "Viestiä ei voi lähettää."
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "Yhteydetön viesti"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7582,27 +7559,8 @@ msgstr[0] "Et saanut %hu viestiä %s:lta tuntemattomasta syystä."
 msgstr[1] "Et saanut %hu viestiä %s:lta tuntemattomasta syystä."
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Viestiä ei voi lähettää: %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Viestiä ei voi lähettää: %s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Viestiä ei voi lähettää käyttäjälle %s: %s (%s)."
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Viestiä ei voi lähettää käyttäjälle %s: %s"
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "Käyttäjätiedot eivät ole saatavilla: %s"
-
-msgid "Unknown reason."
-msgstr "Tuntematon syy."
 
 msgid "Online Since"
 msgstr "Kirjautunut"
@@ -8032,6 +7990,75 @@ msgstr ""
 "Tämä toiminto vaatii suoran yhteyden koneiden välillä mutta on tarpeellinen "
 "lähetettäessä kuvia. Koska IP-osoitteesi paljastuu, tätä voi pitää "
 "yksityisyysriskinä."
+
+msgid "Invalid SNAC"
+msgstr "Epäkelpo SNAC"
+
+msgid "Rate to host"
+msgstr "Nopeus isäntään"
+
+msgid "Rate to client"
+msgstr "Nopeus asiakasohjelmaan"
+
+msgid "Service unavailable"
+msgstr "Palvelu ei ole käytettävissä"
+
+msgid "Service not defined"
+msgstr "Palvelua ei määritelty"
+
+msgid "Obsolete SNAC"
+msgstr "Vanhentunut SNAC"
+
+msgid "Not supported by host"
+msgstr "Ei tuettu verkkoisännässä"
+
+msgid "Not supported by client"
+msgstr "Ei tuettu asiakasohjelmassa"
+
+msgid "Refused by client"
+msgstr "Asiakasohjelma torjui"
+
+msgid "Reply too big"
+msgstr "Vastaus liian suuri"
+
+msgid "Responses lost"
+msgstr "Vastaukset menetetty"
+
+msgid "Request denied"
+msgstr "Pyyntö evätty"
+
+msgid "Busted SNAC payload"
+msgstr "Rikkoutunut SNAC-data"
+
+msgid "Insufficient rights"
+msgstr "Liian vähän oikeuksia"
+
+msgid "In local permit/deny"
+msgstr "Paikallisessa sallittujen/estettyjen listassa"
+
+msgid "Warning level too high (sender)"
+msgstr "Varoitustaso liian korkea (lähettäjä)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Varoitustaso liian korkea (vastaanottaja)"
+
+msgid "User temporarily unavailable"
+msgstr "Käyttäjä ei tilapäisesti saatavilla."
+
+msgid "No match"
+msgstr "Ei tuloksia"
+
+msgid "List overflow"
+msgstr "Lista-ylivuoto"
+
+msgid "Request ambiguous"
+msgstr "Pyyntö ei ole yksiselitteinen"
+
+msgid "Queue full"
+msgstr "Jono täynnä"
+
+msgid "Not while on AOL"
+msgstr "Ei kun AOL on käytössä"
 
 msgid "Aquarius"
 msgstr "vesimies"
@@ -12436,8 +12463,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s on graafinen libpurple-kirjastoon perustuva pikaviestinsovellus, joka "
 "kykenee samanaikaisesti yhdistämään useisiin eri viestinpalveluihin. %s on "
@@ -12974,20 +13001,20 @@ msgid ""
 "Are you sure you want to permanently delete the log of the conversation with "
 "%s which started at %s?"
 msgstr ""
-"Haluatko varmasti poistaa käyttäjän %s kanssa käydyn viestilokin joka alkoi %"
-"s?"
+"Haluatko varmasti poistaa käyttäjän %s kanssa käydyn viestilokin joka alkoi "
+"%s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Haluatko varmasti poistaa kohteessa %s käydyn viestilokin joka alkoi %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "Haluatko varmasti poistaa järjestelmälokin joka alkoi %s?"
 
 msgid "Delete Log?"
@@ -15264,6 +15291,7 @@ msgstr ""
 "Tätä liitännäistä voidaan käyttää XMPP-palvelimien tai -asiakasohjelmien "
 "virheenjäljitykseen."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15271,6 +15299,7 @@ msgstr ""
 "$(^Name) on julkaistu GPL-lisenssin alla. Lisenssi esitetään tässä vain "
 "tiedotuksena. $_CLICK"
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "Pidginin käyttämä monialustainen käyttöliittymäkirjasto"
 
@@ -15280,75 +15309,88 @@ msgid ""
 msgstr ""
 "Pidgin on tällä hetkellä käynnissä. Poistu Pidginistä ja yritä uudelleen."
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Pidginin ytimen tiedostot ja kirjastot"
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr "Tee Pidgin-pikakuvake käynnistysvalikkoon"
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Tee Pidgin-pikakuvake työpöydälle"
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Desktop"
 msgstr "Työpöytä"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "Ajonaikainen GTK-ympäristö (vaaditaan)"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "Sijainti"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "Seuraava >"
 
-#. Components Page
+#. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Pidgin-pikaviestin (vaaditaan)"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Shortcuts"
 msgstr "Pikakuvakkeet"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr "Pikakuvakkeet Pidginin käynnistämiseksi"
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr "Oikolukutuki"
 
+#. Installer Subsection Text
 msgid "Start Menu"
 msgstr "Käynnistysvalikko"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "Tuki oikoluvulle.  (Asennukseen tarvitaan Internet-yhteys)"
@@ -15356,7 +15398,6 @@ msgstr "Tuki oikoluvulle.  (Asennukseen tarvitaan Internet-yhteys)"
 msgid "The installer is already running."
 msgstr "Asennusohjelma on jo käynnissä."
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
@@ -15364,22 +15405,24 @@ msgstr ""
 "Asennuksen poistaja ei löytänyt rekisteristä tietoja Pidginista.$\\rOn "
 "todennäköistä että joku muu käyttäjä on asentanut ohjelman."
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
 msgstr "URI-käsittelijät"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr "Vieraile Pidginin WWW-sivustolla"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
+
+#~ msgid "Unknown reason."
+#~ msgstr "Tuntematon syy."
 
 #~ msgid "Artist"
 #~ msgstr "Esittäjä"
@@ -17432,8 +17475,8 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ msgid ""
 #~ "Unable to read message from server: %s.  Command is %hd, length is %hd."
 #~ msgstr ""
-#~ "Palvelimelta ei kyetty lukemaan viestiä: %s.  Komento on %hd, pituus on %"
-#~ "hd."
+#~ "Palvelimelta ei kyetty lukemaan viestiä: %s.  Komento on %hd, pituus on "
+#~ "%hd."
 
 #~ msgid "users: %s, files: %s, size: %sGB"
 #~ msgstr "käyttäjiä: %s, tiedostoja: %s, koko: %sGt"
@@ -17458,8 +17501,8 @@ msgstr "Sinulla ei ole valtuuksia poistaa ohjelmaa."
 #~ "Unable to play sound because the configured sound command could not be "
 #~ "launched: %s"
 #~ msgstr ""
-#~ "Ei voitu soittaa ääntä, koska asetettua äänikomentoa ei voitu suorittaa: %"
-#~ "s"
+#~ "Ei voitu soittaa ääntä, koska asetettua äänikomentoa ei voitu suorittaa: "
+#~ "%s"
 
 #~ msgid "Auth host"
 #~ msgstr "Kirjautumispalvelin"

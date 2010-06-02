@@ -1,8 +1,13 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.1 (??/??/????):
+version 2.7.2 (??/??/????):
+
+version 2.7.1 (05/29/2010):
 	General:
 	* Build fixes on OpenSolaris.  (Brian Lu)
+	* Add configure option --enable-trayicon-compat which installs tray
+	  icons into directories that are compatible with older versions of
+	  hicolor-icon-theme (0.9).
 
 	Pidgin:
 	* Restore the tray icon's blinking functionality.
@@ -23,6 +28,22 @@ version 2.7.1 (??/??/????):
 	XMPP:
 	* Allow connecting to servers that advertise EXTERNAL (broken in
 	  2.7.0)
+
+	MXit:
+	* Replace the MXit-specific mood management with the new standard Moods
+	  API.
+	* Add the standard MXit emoticons.
+	* Improve the handling of users being kicked from MultiMX rooms.
+	* MXit doesn't allow you to see your buddy's Email Address or Title,
+	  so remove those two fields from the "Buddy Information" page.
+	* Show buddy's Registration Country in their profile.
+	* Increment protocol version to v6.0
+	* If an invite you sent was rejected with a reason, display that
+	  message in the buddy tooltip.
+	* CAPTCHA value is a required field during account activation.
+	  (Resolves issue on Maemo)
+	* When your avatar image is changed, don't forget the user's profile
+	  information.
 
 	Windows-Specific Changes:
 	* Fix a regression introduced in 2.7.0 that caused Window Flashing not

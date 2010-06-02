@@ -91,8 +91,10 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	g_return_if_fail(slplink != NULL);
 
-	if (slplink->swboard != NULL)
+	if (slplink->swboard != NULL) {
 		slplink->swboard->slplinks = g_list_remove(slplink->swboard->slplinks, slplink);
+		slplink->swboard = NULL;
+	}
 
 	if (slplink->refs > 1) {
 		slplink->refs--;
@@ -207,12 +209,14 @@ msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 	 * If nothing else is using it then this might cause swboard to be
 	 * destroyed. */
 	if (slplink->slp_calls == NULL && slplink->swboard != NULL) {
+		slplink->swboard->slplinks = g_list_remove(slplink->swboard->slplinks, slplink);
 		msn_switchboard_release(slplink->swboard, MSN_SB_FLAG_FT);
 		slplink->swboard = NULL;
 	}
 
 	/* The slplink has no slpcalls in it, release it from the DC. */
 	if (slplink->slp_calls == NULL && slplink->dc != NULL) {
+		slplink->dc->slplink = NULL;
 		msn_dc_destroy(slplink->dc);
 		slplink->dc = NULL;
 	}

@@ -63,13 +63,28 @@ msn_dc_calculate_nonce_hash(MsnDirectConnNonceType type,
 	}
 
 	g_sprintf(nonce_hash,
-	          "%08X-%04X-%04X-%04X-%08X%04X",
-	          GUINT32_FROM_LE(*((guint32 *)(digest + 0))),
-	          GUINT16_FROM_LE(*((guint16 *)(digest + 4))),
-	          GUINT16_FROM_LE(*((guint16 *)(digest + 6))),
-	          GUINT16_FROM_BE(*((guint16 *)(digest + 8))),
-	          GUINT32_FROM_BE(*((guint32 *)(digest + 10))),
-	          GUINT16_FROM_BE(*((guint16 *)(digest + 14)))
+	          "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+
+	          digest[3],
+	          digest[2],
+	          digest[1],
+	          digest[0],
+
+	          digest[5],
+	          digest[4],
+
+	          digest[7],
+	          digest[6],
+
+	          digest[8],
+	          digest[9],
+
+	          digest[10],
+	          digest[11],
+	          digest[12],
+	          digest[13],
+	          digest[14],
+	          digest[15]
 	);
 }
 
@@ -314,13 +329,13 @@ msn_dc_send_ok(MsnDirectConn *dc)
 }
 
 void
-msn_dc_fallback_to_p2p(MsnDirectConn *dc)
+msn_dc_fallback_to_sb(MsnDirectConn *dc)
 {
 	MsnSlpLink *slplink;
 	MsnSlpCall *slpcall;
 	GQueue *queue = NULL;
 
-	purple_debug_info("msn", "msn_dc_try_fallback_to_p2p %p\n", dc);
+	purple_debug_info("msn", "msn_dc_fallback_to_sb %p\n", dc);
 
 	g_return_if_fail(dc != NULL);
 
@@ -677,7 +692,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		purple_debug_warning("msn", "msn_dc_recv_cb: recv error\n");
 
 		if(dc->state != DC_STATE_ESTABLISHED)
-			msn_dc_fallback_to_p2p(dc);
+			msn_dc_fallback_to_sb(dc);
 		else
 			msn_dc_destroy(dc);
 		return;
@@ -687,7 +702,7 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		purple_debug_info("msn", "msn_dc_recv_cb: recv EOF\n");
 
 		if(dc->state != DC_STATE_ESTABLISHED)
-			msn_dc_fallback_to_p2p(dc);
+			msn_dc_fallback_to_sb(dc);
 		else
 			msn_dc_destroy(dc);
 		return;
@@ -720,8 +735,8 @@ msn_dc_recv_cb(gpointer data, gint fd, PurpleInputCondition cond)
 			return;
 
 		case DC_PROCESS_FALLBACK:
-			purple_debug_warning("msn", "msn_dc_recv_cb: packet processing error, fall back to p2p\n");
-			msn_dc_fallback_to_p2p(dc);
+			purple_debug_warning("msn", "msn_dc_recv_cb: packet processing error, fall back to SB\n");
+			msn_dc_fallback_to_sb(dc);
 			return;
 
 		}
@@ -822,7 +837,7 @@ msn_dc_incoming_connection_timeout_cb(gpointer data) {
 	}
 
 	dc->connect_timeout_handle = 0;
-	msn_dc_fallback_to_p2p(dc);
+	msn_dc_fallback_to_sb(dc);
 
 	return FALSE;
 }
@@ -870,7 +885,7 @@ msn_dc_outgoing_connection_timeout_cb(gpointer data)
 		} else {
 			/*
 			 * Connection failed
-			 * Fall back to P2P transfer
+			 * Fall back to SB transfer
 			 */
 			msn_dc_outgoing_connection_timeout_cb(dc);
 		}
@@ -878,9 +893,9 @@ msn_dc_outgoing_connection_timeout_cb(gpointer data)
 	} else {
 		/*
 		 * Both internal and external connection attempts failed.
-		 * Fall back to p2p transfer.
+		 * Fall back to SB transfer.
 		 */
-		msn_dc_fallback_to_p2p(dc);
+		msn_dc_fallback_to_sb(dc);
 	}
 
 	return FALSE;

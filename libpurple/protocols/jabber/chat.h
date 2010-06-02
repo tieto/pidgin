@@ -102,8 +102,6 @@ gboolean jabber_chat_affiliation_list(JabberChat *chat, const char *affiliation)
 gboolean jabber_chat_role_user(JabberChat *chat, const char *who,
 		const char *role, const char *why);
 gboolean jabber_chat_role_list(JabberChat *chat, const char *role);
-gboolean jabber_chat_kick_user(JabberChat *chat, const char *who,
-		const char *why);
 
 PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc);
 void jabber_roomlist_cancel(PurpleRoomlist *list);

@@ -1722,6 +1722,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		user->extinfo->media_album = NULL;
 		user->extinfo->media_artist = NULL;
 		user->extinfo->media_title = NULL;
+		user->extinfo->media_type = CURRENT_MEDIA_UNKNOWN;
 	}
 
 	if (len != 0) {
@@ -1749,6 +1750,11 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	} else {
 		msn_user_set_statusline(user, NULL);
+	}
+
+	if (user->extinfo && user->extinfo->media_type == CURRENT_MEDIA_UNKNOWN) {
+		g_free(user->extinfo);
+		user->extinfo = NULL;
 	}
 
 	msn_user_update(user);

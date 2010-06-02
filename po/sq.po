@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2010-05-03 11:41+0200\n"
 "Last-Translator: Besnik Bleta <besnik@programeshqip.org>\n"
 "Language-Team: Albanian <besnik@programeshqip.org>\n"
+"Language: sq\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1378,6 +1379,7 @@ msgstr "Fshije Gjendjen"
 msgid "Saved Statuses"
 msgstr "Gjendje të Ruajtura"
 
+#. title
 msgid "Title"
 msgstr "Titull"
 
@@ -1948,7 +1950,6 @@ msgstr "Gabim gjatë shndërrimit të %s në \"punycode\": %d"
 msgid "Thread creation failure: %s"
 msgstr "Dështim krijimi rrjedhe: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Arsye e panjohur"
 
@@ -3380,6 +3381,9 @@ msgstr "UIN"
 
 #  First Name
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Emër"
 
@@ -4156,6 +4160,7 @@ msgid "Postal Code"
 msgstr "Kod Postal"
 
 #  Country
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Vend"
 
@@ -4170,8 +4175,6 @@ msgstr "Emër Organizmi"
 msgid "Organization Unit"
 msgstr "Njësi Organizative"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Vend Pune"
 
@@ -4179,6 +4182,7 @@ msgid "Role"
 msgstr "Rol"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Ditëlindje"
 
@@ -5973,6 +5977,10 @@ msgstr "Metodë Shërbyesi HTTP"
 msgid "Show custom smileys"
 msgstr "Shfaq emotikone vetjake"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "I pazoti të krijojë lidhje"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: preke një përdorues me bërryl për t'i tërhequr vëmendjen"
 
@@ -6170,8 +6178,8 @@ msgstr "PIN-i që dhatë ka gjatësi të pavlefshme [4-10]."
 
 msgid "The PIN is invalid. It should only consist of digits [0-9]."
 msgstr ""
-"PIN-i që dhatë është i pavlefshëm. Do të duhej të përbëhej prej shifrash [0-"
-"9]."
+"PIN-i që dhatë është i pavlefshëm. Do të duhej të përbëhej prej shifrash "
+"[0-9]."
 
 msgid "The two PINs you entered do not match."
 msgstr "Dy PIN-et që dhatë nuk përputhen."
@@ -6197,7 +6205,11 @@ msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 "Të dhënat e profilit tuaj nuk janë marrë ende. Ju lutem,, riprovoni më vonë."
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -6282,7 +6294,7 @@ msgstr "PIN-i që dhatë ka gjatë të pavlefshme [7-10]."
 msgid "MXit Login Name"
 msgstr "Emër Hyrjeje MXit"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "Nofkë"
 
@@ -6334,7 +6346,7 @@ msgid "Security Code"
 msgstr "Kod Sigurie"
 
 #  if (js->protocol_options & CHANGE_PASSWORD) {
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Jepni Kodin e Sigurisë"
 
@@ -6361,6 +6373,11 @@ msgstr "Po ngarkohet menuja"
 msgid "Status Message"
 msgstr "Mesazh Gjendjeje"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "Mesazhe të Marrë"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "Numër i Fshehur"
 
@@ -6378,6 +6395,19 @@ msgstr "Lidhu përmes HTTP-je"
 
 msgid "Enable splash-screen popup"
 msgstr "Aktivizo flluskën e siglës"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Jeni përzënë: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Biletë e pavlefshme"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Dhomë:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7171,6 +7201,67 @@ msgstr "Nuk u bë dot futja në dhomën e fjalosjes"
 msgid "Invalid chat room name"
 msgstr "U dha emër i pavlefshëm dhome fjalosjeje."
 
+msgid "Invalid error"
+msgstr "Gabim i pavlefshëm"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "Nuk mund të marrë IM, për shkak kontrollesh prindërore"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "Nuk mund të dërgojë SMS pa u pranuar kushtet"
+
+msgid "Cannot send SMS"
+msgstr "Nuk mund të dërgoj SMS"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "Nuk mund të dërgojë SMS te ky vend"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "Nuk mund të dërgojë SMS te një vend i panjohur"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Llogarira bot nuk mund të nisin IM-ra"
+
+msgid "Bot account cannot IM this user"
+msgstr "Llogaria bot nuk mund t'i dërgojë IM këtij përdoruesi"
+
+msgid "Bot account reached IM limit"
+msgstr "Llogaria bot mbërriti në kufijtë IM"
+
+msgid "Bot account reached daily IM limit"
+msgstr "Llogaria bot mbërriti në kufijtë ditorë IM"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "Llogaria bot mbërriti në kufijtë mujorë IM"
+
+msgid "Unable to receive offline messages"
+msgstr "I pazoti të marrë mesazhe \"offline\""
+
+msgid "Offline message store full"
+msgstr "Depo mesazhesh \"offline\" plot"
+
+#  TODO: Improve this! message to who or for what conference?
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "I pazoti të dërgojë mesazh: %s (%s)"
+
+#  TODO: Improve this! message to who or for what conference?
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "I pazoti të dërgojë mesazh: %s"
+
+#  TODO: Improve this! message to who or for what conference?
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "I pazoti të dërgojë mesazh te %s: %s (%s)"
+
+#  TODO: Improve this! message to who or for what conference?
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "I pazoti të dërgojë mesazh te %s: %s"
+
 msgid "Thinking"
 msgstr "Duke u menduar"
 
@@ -7342,116 +7433,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
 "Kartela %s është %s, çka i bie më e madhe se sa madhësia maksimum prej %s."
-
-msgid "Invalid error"
-msgstr "Gabim i pavlefshëm"
-
-msgid "Invalid SNAC"
-msgstr "SNAC i pavlefshëm"
-
-msgid "Rate to host"
-msgstr "Klasifiko sipas strehe"
-
-msgid "Rate to client"
-msgstr "Klasifiko sipas klienti"
-
-msgid "Service unavailable"
-msgstr "Shërbim i pamundur"
-
-msgid "Service not defined"
-msgstr "Shërbim i papërcaktuar"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC i vjetëruar"
-
-msgid "Not supported by host"
-msgstr "I pambuluar nga streha"
-
-msgid "Not supported by client"
-msgstr "I pambuluar nga klienti"
-
-msgid "Refused by client"
-msgstr "I papranuar nga klienti"
-
-msgid "Reply too big"
-msgstr "Përgjigje shumë e madhe"
-
-msgid "Responses lost"
-msgstr "Përgjigje të humbura"
-
-msgid "Request denied"
-msgstr "Kërkesë e hedhur tej"
-
-msgid "Busted SNAC payload"
-msgstr ""
-
-msgid "Insufficient rights"
-msgstr "Të drejta të pamjaftueshme"
-
-msgid "In local permit/deny"
-msgstr "Në lejo/moho vendore"
-
-msgid "Warning level too high (sender)"
-msgstr "Shkallë sinjalizimi shumë e lartë (dërguesi)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Shkallë sinjalizimi shumë e lartë (marrësi)"
-
-msgid "User temporarily unavailable"
-msgstr "Përdorues përkohësisht jo i mundshëm"
-
-msgid "No match"
-msgstr "Pa përputhje"
-
-msgid "List overflow"
-msgstr "List overflow"
-
-msgid "Request ambiguous"
-msgstr "Kërkesë e dykuptimtë"
-
-msgid "Queue full"
-msgstr "Radha plot"
-
-msgid "Not while on AOL"
-msgstr "Jo kur jeni në AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "Nuk mund të marrë IM, për shkak kontrollesh prindërore"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "Nuk mund të dërgojë SMS pa u pranuar kushtet"
-
-msgid "Cannot send SMS"
-msgstr "Nuk mund të dërgoj SMS"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "Nuk mund të dërgojë SMS te ky vend"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "Nuk mund të dërgojë SMS te një vend i panjohur"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "Llogarira bot nuk mund të nisin IM-ra"
-
-msgid "Bot account cannot IM this user"
-msgstr "Llogaria bot nuk mund t'i dërgojë IM këtij përdoruesi"
-
-msgid "Bot account reached IM limit"
-msgstr "Llogaria bot mbërriti në kufijtë IM"
-
-msgid "Bot account reached daily IM limit"
-msgstr "Llogaria bot mbërriti në kufijtë ditorë IM"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "Llogaria bot mbërriti në kufijtë mujorë IM"
-
-msgid "Unable to receive offline messages"
-msgstr "I pazoti të marrë mesazhe \"offline\""
-
-msgid "Offline message store full"
-msgstr "Depo mesazhesh \"offline\" plot"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7811,32 +7792,9 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Humbët %hu mesazh prej %s për një arsye të panjohur."
 msgstr[1] "Humbët %hu mesazhe prej %s për një arsye të panjohur."
 
-#  TODO: Improve this! message to who or for what conference?
-#, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "I pazoti të dërgojë mesazh: %s (%s)"
-
-#  TODO: Improve this! message to who or for what conference?
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "I pazoti të dërgojë mesazh: %s"
-
-#  TODO: Improve this! message to who or for what conference?
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "I pazoti të dërgojë mesazh te %s: %s (%s)"
-
-#  TODO: Improve this! message to who or for what conference?
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "I pazoti të dërgojë mesazh te %s: %s"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "Të dhëna përdoruesi jo të mundshme: %s"
-
-msgid "Unknown reason."
-msgstr "Arsye e panjohur."
 
 msgid "Online Since"
 msgstr "I lidhur që Prej"
@@ -8269,6 +8227,75 @@ msgstr ""
 "Kjo lyp një lidhje të drejtpërdrejtë mes dy kompjuterave dhe është e "
 "nevojshme për figura MA.  Ngaqë do të nxirret sheshit vendndodhja juaj IP, "
 "kjo mund të merret si rrezik vetësie."
+
+msgid "Invalid SNAC"
+msgstr "SNAC i pavlefshëm"
+
+msgid "Rate to host"
+msgstr "Klasifiko sipas strehe"
+
+msgid "Rate to client"
+msgstr "Klasifiko sipas klienti"
+
+msgid "Service unavailable"
+msgstr "Shërbim i pamundur"
+
+msgid "Service not defined"
+msgstr "Shërbim i papërcaktuar"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC i vjetëruar"
+
+msgid "Not supported by host"
+msgstr "I pambuluar nga streha"
+
+msgid "Not supported by client"
+msgstr "I pambuluar nga klienti"
+
+msgid "Refused by client"
+msgstr "I papranuar nga klienti"
+
+msgid "Reply too big"
+msgstr "Përgjigje shumë e madhe"
+
+msgid "Responses lost"
+msgstr "Përgjigje të humbura"
+
+msgid "Request denied"
+msgstr "Kërkesë e hedhur tej"
+
+msgid "Busted SNAC payload"
+msgstr ""
+
+msgid "Insufficient rights"
+msgstr "Të drejta të pamjaftueshme"
+
+msgid "In local permit/deny"
+msgstr "Në lejo/moho vendore"
+
+msgid "Warning level too high (sender)"
+msgstr "Shkallë sinjalizimi shumë e lartë (dërguesi)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Shkallë sinjalizimi shumë e lartë (marrësi)"
+
+msgid "User temporarily unavailable"
+msgstr "Përdorues përkohësisht jo i mundshëm"
+
+msgid "No match"
+msgstr "Pa përputhje"
+
+msgid "List overflow"
+msgstr "List overflow"
+
+msgid "Request ambiguous"
+msgstr "Kërkesë e dykuptimtë"
+
+msgid "Queue full"
+msgstr "Radha plot"
+
+msgid "Not while on AOL"
+msgstr "Jo kur jeni në AOL"
 
 msgid "Aquarius"
 msgstr "Ujori"
@@ -10643,8 +10670,8 @@ msgid ""
 "Check %s for updates."
 msgstr ""
 "Shërbyesi Yahoo ka kërkuar përdorimin e një metode mirëfilltësimi të "
-"papranuar.  Ka gjasa të mos arrini dot të hyni me sukses te Yahoo.  Shihni %"
-"s për përditësime."
+"papranuar.  Ka gjasa të mos arrini dot të hyni me sukses te Yahoo.  Shihni "
+"%s për përditësime."
 
 msgid "Failed Yahoo! Authentication"
 msgstr "Mirëfilltësim Yahoo! i Dështuar"
@@ -12791,8 +12818,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s është një klient shkëmbimi mesazhesh, i bazuar në libpurple e që është i "
 "aftë të lidhet njëherazi me disa shërbime shkëmbimi mesazhesh.  %s është "
@@ -13352,16 +13379,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Jeni i sigurt se doni të fshihet përgjithmonë regjistrimi i bashkëbisedimit "
 "te %s i cili filloi më %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "Jeni të sigurt se doni të fshihet përgjithmonë regjistri i sistemit i znë "
 "fill më %s?"
@@ -15815,11 +15842,13 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Kjo shtojcë është e dobishme për diagnostikim shërbyesish apo klientësh XMPP."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "Një grup mjetesh shumëplatformësh për GUI, përdorur nga Pidgin-i"
 
@@ -15828,78 +15857,91 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Kartela dhe dll bazë të Pidgin-it"
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Desktop"
 msgstr ""
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ Runtime Environment (i nevojshëm)"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "Vendndodhje"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "Më tej >"
 
-#. Components Page
+#. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Klient Shkëmbimi Mesazhesh të Atypëratyshëm Pidgin (i nevojshëm)"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "Shkurtore"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
 #  Autostart
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "Nisje"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15907,7 +15949,6 @@ msgstr ""
 msgid "The installer is already running."
 msgstr ""
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
@@ -15915,23 +15956,25 @@ msgstr ""
 "Çinstaluesi nuk gjeti dot zëra regjistri për Pidgin-in.$\\rKa mundësi që "
 "këtë zbatim ta ketë instaluar një tjetër përdorues."
 
-#. URL Handler section
+#. Installer Subsection Text
 #, fuzzy
 msgid "URI Handlers"
 msgstr "Trajtues URL-je myim"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr "Vizitoni Faqen Web të Pidgin-it"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nuk keni leje të çinstaloni këtë zbatim."
+
+#~ msgid "Unknown reason."
+#~ msgstr "Arsye e panjohur."
 
 #~ msgid "Current Mood"
 #~ msgstr "Humori i Çastit"
