@@ -20,7 +20,7 @@
  *
  */
 
-/* libicq is the ICQ protocol plugin. It is linked against liboscarcommon,
+/* libicq is the ICQ protocol plugin. It is linked against liboscar,
  * which contains all the shared implementation code with libaim
  */
 
