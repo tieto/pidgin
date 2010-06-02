@@ -518,7 +518,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			/* DATA */
 			slpmsg = msn_slpmsg_new(slplink);
 			slpmsg->slpcall = slpcall;
-			slpmsg->flags = 0x20;
+			slpmsg->flags = SLP_HF_MSN_OBJ_DATA;
 			slpmsg->info = "SLP DATA";
 			msn_slpmsg_set_image(slpmsg, img);
 			msn_slplink_queue_slpmsg(slplink, slpmsg);
