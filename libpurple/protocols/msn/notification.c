@@ -23,19 +23,17 @@
  */
 
 #include "internal.h"
-#include "debug.h"
 #include "cipher.h"
-
 #include "core.h"
+#include "debug.h"
+
 #include "notification.h"
+
 #include "contact.h"
-#include "state.h"
 #include "error.h"
 #include "msnutils.h"
-#include "page.h"
-
+#include "state.h"
 #include "userlist.h"
-#include "slplink.h"
 
 static MsnTable *cbs_table;
 
