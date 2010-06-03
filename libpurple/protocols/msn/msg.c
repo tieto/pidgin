@@ -163,7 +163,7 @@ msn_message_new_nudge(void)
 void
 msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 {
-	MsnSlpHeader header;
+	MsnP2PBinaryHeader header;
 	const char *tmp;
 	int body_len;
 
@@ -298,7 +298,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	if (content_type != NULL &&
 		!strcmp(content_type, "application/x-msnmsgrp2p"))
 	{
-		MsnSlpHeader header;
+		MsnP2PBinaryHeader header;
 		MsnSlpFooter footer;
 		int body_len;
 
@@ -384,7 +384,7 @@ msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd)
 char *
 msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size)
 {
-	MsnSlpHeader header;
+	MsnP2PBinaryHeader header;
 
 	char *tmp, *base;
 	const void *body;
@@ -475,7 +475,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 
 	if (msg->msnslp_message)
 	{
-		MsnSlpHeader header;
+		MsnP2PBinaryHeader header;
 		MsnSlpFooter footer;
 
 		header.session_id = GUINT32_TO_LE(msg->msnslp_header.session_id);

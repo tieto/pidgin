@@ -58,6 +58,7 @@ typedef enum
 #include "session.h"
 #include "transaction.h"
 #include "user.h"
+#include "p2p.h"
 
 typedef void (*MsnMsgCb)(MsnMessage *, void *data);
 
@@ -66,19 +67,6 @@ typedef void (*MsnMsgCb)(MsnMessage *, void *data);
 
 #define MSG_OIM_BODY_DEM	"\n\n"
 #define MSG_OIM_LINE_DEM	"\n"
-
-typedef struct
-{
-	guint32 session_id;
-	guint32 id;
-	guint64 offset;
-	guint64 total_size;
-	guint32 length;
-	guint32 flags;
-	guint32 ack_id;
-	guint32 ack_sub_id;
-	guint64 ack_size;
-} MsnSlpHeader;
 
 typedef struct
 {
@@ -106,7 +94,7 @@ struct _MsnMessage
 	guint total_chunks;   /**< How many chunks in this multi-part message */
 	guint received_chunks; /**< How many chunks we've received so far */
 
-	MsnSlpHeader msnslp_header;
+	MsnP2PBinaryHeader msnslp_header;
 	MsnSlpFooter msnslp_footer;
 
 	GHashTable *header_table;

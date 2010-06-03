@@ -340,7 +340,7 @@ msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 static void
 msn_dc_parse_binary_header(MsnDirectConn *dc)
 {
-	MsnSlpHeader *h;
+	MsnP2PBinaryHeader *h;
 	MsnP2PBinaryHeader *context;
 
 	g_return_if_fail(dc != NULL);
@@ -362,7 +362,7 @@ msn_dc_parse_binary_header(MsnDirectConn *dc)
 
 static const gchar *
 msn_dc_serialize_binary_header(MsnDirectConn *dc) {
-	MsnSlpHeader *h;
+	MsnP2PBinaryHeader *h;
 	static MsnP2PBinaryHeader bin_header;
 
 	g_return_val_if_fail(dc != NULL, NULL);
