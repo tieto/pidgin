@@ -2163,7 +2163,7 @@ purple_markup_linkify(const char *text)
 					if (t - c == 7) {
 						break;
 					}
-					if (*(t - 1) == '.')
+					if (t > text && *(t - 1) == '.')
 						t--;
 					if ((d = strstr(c + 7, "?")) != NULL && d < t)
 						url_buf = g_strndup(c + 7, d - c - 7);
@@ -2183,10 +2183,7 @@ purple_markup_linkify(const char *text)
 					c = t;
 					break;
 				}
-				if (!t)
-					break;
 				t++;
-
 			}
 		} else if (c != text && (*c == '@')) {
 			int flag;
