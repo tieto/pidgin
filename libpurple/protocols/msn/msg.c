@@ -299,7 +299,7 @@ msn_message_parse_payload(MsnMessage *msg,
 		!strcmp(content_type, "application/x-msnmsgrp2p"))
 	{
 		MsnP2PBinaryHeader header;
-		MsnSlpFooter footer;
+		MsnP2PFooter footer;
 		int body_len;
 
 		if (payload_len - (tmp - tmp_base) < sizeof(header)) {
@@ -476,7 +476,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 	if (msg->msnslp_message)
 	{
 		MsnP2PBinaryHeader header;
-		MsnSlpFooter footer;
+		MsnP2PFooter footer;
 
 		header.session_id = GUINT32_TO_LE(msg->msnslp_header.session_id);
 		header.id         = GUINT32_TO_LE(msg->msnslp_header.id);

@@ -18,6 +18,11 @@ typedef struct {
 } MsnP2PBinaryHeader;
 #pragma pack(pop)
 
+typedef struct
+{
+	guint32 value;
+} MsnP2PFooter;
+
 typedef enum
 {
 	P2P_NO_FLAG         = 0x0,        /**< No flags specified */

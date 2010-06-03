@@ -68,11 +68,6 @@ typedef void (*MsnMsgCb)(MsnMessage *, void *data);
 #define MSG_OIM_BODY_DEM	"\n\n"
 #define MSG_OIM_LINE_DEM	"\n"
 
-typedef struct
-{
-	guint32 value;
-} MsnSlpFooter;
-
 /**
  * A message.
  */
@@ -95,7 +90,7 @@ struct _MsnMessage
 	guint received_chunks; /**< How many chunks we've received so far */
 
 	MsnP2PBinaryHeader msnslp_header;
-	MsnSlpFooter msnslp_footer;
+	MsnP2PFooter msnslp_footer;
 
 	GHashTable *header_table;
 	GList *header_list;
