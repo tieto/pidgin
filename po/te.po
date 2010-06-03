@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-08 19:22-0700\n"
+"POT-Creation-Date: 2010-05-17 23:18-0400\n"
 "PO-Revision-Date: 2010-03-25 15:56+0530\n"
 "Last-Translator: Krishna Babu K <kkrothap@redhat.com>\n"
 "Language-Team: Telugu <en@li.org>\n"
@@ -1616,6 +1616,14 @@ msgstr "%s కోసం వినియోగదారు సమాచారా�
 
 msgid "Set User Info"
 msgstr "వినియోగదారు సమాచారాన్ని సెట్ చేయండి"
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "ఈ ప్రొటోకాల్ చాట్‌ గదులను మద్దతు్ చేయదు."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "ఈ ప్రొటోకాల్ చాట్‌ గదులను మద్దతు్ చేయదు."
 
 msgid "Unknown"
 msgstr "తెలియని"
@@ -3700,12 +3708,6 @@ msgstr "Ad-Hoc ఆదేశము విఫలమైంది"
 msgid "execute"
 msgstr "నిర్వర్తించు"
 
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr "సర్వర్‌కు TLS/SSL అవసరము, అయితే యే TLS/SSL మద్దతు కనబడలేదు."
-
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr "మీకు ఎన్క్రిప్షన్ అవసరము, అయితే యే TLS/SSL మద్దతు కనబడలేదు."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "సర్వర్‌కు సంకేతభాషకన్నా సరళమైన భాషతోకూడిన పదాలు అవసరం."
 
@@ -3742,6 +3744,42 @@ msgstr "SASL ధృవీకరణ విఫలమైంది"
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL దోషము: %s"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "చెల్లని యిన్పుట్ అనుసంధానము"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "మద్దతుులేని వెర్షన్ "
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "సేవిక బ్లాకింగ్‌ను మద్దితించుటలేదు"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "మద్దతుులేని ఎన్‌కోడింగ్"
+
+msgid "User not found"
+msgstr "వినియోగదారుడు కనబడలేదు"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "చెల్లుని వినియోగదారిపేరు"
+
+msgid "Resource Constraint"
+msgstr "మూలాధారానికి ఆటంకం "
 
 msgid "Unable to canonicalize username"
 msgstr "వినియోగదారిపేరును సూత్రబద్దం సాధ్యపడదు"
@@ -4042,11 +4080,21 @@ msgstr "ఏ వినియోగదారు కనిపించలేదు"
 msgid "Roles:"
 msgstr "పాత్రలు:"
 
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr "సర్వర్‌కు TLS/SSL అవసరము, అయితే యే TLS/SSL మద్దతు కనబడలేదు."
+
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr "మీకు ఎన్క్రిప్షన్ అవసరము, అయితే యే TLS/SSL మద్దతు కనబడలేదు."
+
 msgid "Ping timed out"
 msgstr "పింగ్ సమయం ముగిసింది"
 
 msgid "Invalid XMPP ID"
 msgstr "చెల్లని XMPP ID"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "చెల్లని XMPP ID. డొమైన్ తప్పక అమర్చవలెను."
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "చెల్లని XMPP ID. డొమైన్ తప్పక అమర్చవలెను."
@@ -4144,7 +4192,6 @@ msgstr "సేవిక బ్లాకింగ్‌ను మద్దిత�
 msgid "Not Authorized"
 msgstr "ప్రమాణీకరణ జరగలేదు "
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "స్వభావం "
 
@@ -4166,7 +4213,6 @@ msgstr "కు"
 msgid "None (To pending)"
 msgstr "ఎవరూ లేరు (To pending)"
 
-#. 0
 msgid "None"
 msgstr "ఏదీ కాదు"
 
@@ -4362,9 +4408,6 @@ msgstr "విధాన ఉల్లంఘన "
 msgid "Remote Connection Failed"
 msgstr "రిమోట్ కనెక్షన్ వైఫల్యం "
 
-msgid "Resource Constraint"
-msgstr "మూలాధారానికి ఆటంకం "
-
 msgid "Restricted XML"
 msgstr "నియంత్రిత XML"
 
@@ -4554,21 +4597,6 @@ msgstr "XMPP ప్రొటోకాల్ ప్లగిన్"
 msgid "Domain"
 msgstr "డొమైన్"
 
-#, fuzzy
-msgid "Require STARTTLS"
-msgstr "SSL/TLS అవసరము"
-
-#, fuzzy
-msgid "Require old (port 5223) SSL"
-msgstr "Force old (port 5223) SSL"
-
-msgid "Use STARTTLS (if available)"
-msgstr ""
-
-#, fuzzy
-msgid "SSL/TLS"
-msgstr "SSL/TLS అవసరము"
-
 msgid "Require SSL/TLS"
 msgstr "SSL/TLS అవసరము"
 
@@ -4717,7 +4745,6 @@ msgstr ""
 msgid "Amorous"
 msgstr ""
 
-#. 1
 msgid "Angry"
 msgstr "కోపము "
 
@@ -4796,7 +4823,6 @@ msgstr ""
 msgid "Envious"
 msgstr ""
 
-#. 2
 msgid "Excited"
 msgstr "ఉత్సాహముతో "
 
@@ -4812,21 +4838,18 @@ msgstr ""
 msgid "Grieving"
 msgstr ""
 
-#. 3
 msgid "Grumpy"
 msgstr "గ్రుమ్పి"
 
 msgid "Guilty"
 msgstr ""
 
-#. 4
 msgid "Happy"
 msgstr "సంతోషం "
 
 msgid "Hopeful"
 msgstr ""
 
-#. 8
 msgid "Hot"
 msgstr "హాట్"
 
@@ -4860,7 +4883,6 @@ msgstr ""
 msgid "Intoxicated"
 msgstr ""
 
-#. 6
 msgid "Invincible"
 msgstr "అజేయమైన "
 
@@ -4912,7 +4934,6 @@ msgstr ""
 msgid "Restless"
 msgstr ""
 
-#. 7
 msgid "Sad"
 msgstr "దుఃఖము "
 
@@ -4931,11 +4952,9 @@ msgstr ""
 msgid "Shy"
 msgstr ""
 
-#. 9
 msgid "Sick"
 msgstr "సిక్"
 
-#. 10
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "నిద్రతో"
@@ -5738,24 +5757,6 @@ msgstr "మీరు ఈ మిత్రుని మీ చిరునామ�
 msgid "The username specified is invalid."
 msgstr "సూచించిన వినియోగదారిపేరుకు విలువలేదు."
 
-#. 5
-msgid "In Love"
-msgstr "ప్రేమతో "
-
-#. show current mood
-msgid "Current Mood"
-msgstr "ప్రస్తుత మూడ్"
-
-#. add all moods to list
-msgid "New Mood"
-msgstr "కొత్త మూడ్"
-
-msgid "Change your Mood"
-msgstr "మీ మూడ్‌ను మార్చండి"
-
-msgid "How do you feel right now?"
-msgstr "మీకు ప్రస్తుతం యేలా వుంది?"
-
 msgid "The PIN you entered is invalid."
 msgstr "మీరు ప్రవేశపెట్టిన PIN చెల్లనిది."
 
@@ -5820,10 +5821,6 @@ msgstr "అక్కడ యెటువంటి స్ప్లాష్-స్
 
 msgid "About"
 msgstr "గురించి"
-
-#. display / change mood
-msgid "Change Mood..."
-msgstr "మూడ్‌ను మార్చుము..."
 
 #. display / change profile
 msgid "Change Profile..."
@@ -6054,6 +6051,9 @@ msgstr "MXitకు వొక అనుసంధానము యెదురై�
 #. connection closed
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr "MXitకు వొక అనుసంధానము యెదురైంది. (0x06 స్టేజీ చదువుము)"
+
+msgid "In Love"
+msgstr "ప్రేమతో "
 
 msgid "Pending"
 msgstr "వాయిదావున్న"
@@ -6447,9 +6447,6 @@ msgstr "పాస్‌వర్డ్ కాలం ముగిసినది.
 msgid "Incorrect password"
 msgstr "సరికాని సంకేతపదము"
 
-msgid "User not found"
-msgstr "వినియోగదారుడు కనబడలేదు"
-
 msgid "Account has been disabled"
 msgstr "ఖాతా అచేతనము అయినది"
 
@@ -6700,6 +6697,10 @@ msgstr ""
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "మీ స్క్రీన్‌పేరును ఇక్కడ దృవీకరించుటకు AOL అనుమతించదు"
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "%sను అభ్యర్ధించుటలో దోషము: %s"
 
 msgid "Could not join chat room"
 msgstr "చాట్ రూమ్‌నకు చేరలేక పోతోంది"
@@ -10433,6 +10434,10 @@ msgstr "వద్దు (_N)"
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
+#.
 msgid "_Accept"
 msgstr "అంగీకరించు (_A)"
 
@@ -10669,12 +10674,6 @@ msgstr "ఇంటర్నెట్ మెసెంజర్"
 
 msgid "Pidgin Internet Messenger"
 msgstr "పిడ్జిన్ ఇంటర్నెట్ మెసెంజర్"
-
-msgid "Orientation"
-msgstr "పునశ్ఛరణ"
-
-msgid "The orientation of the tray."
-msgstr "ట్రే దిశ"
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11821,6 +11820,10 @@ msgstr "ఆఫ్రికాన్స్"
 msgid "Arabic"
 msgstr "అరబిక్"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "సిగ్గుపడిన"
+
 msgid "Belarusian Latin"
 msgstr "బెలూరూసియన్ లాటిన్"
 
@@ -11947,6 +11950,10 @@ msgstr "లావో"
 
 msgid "Macedonian"
 msgstr "Macedonian"
+
+#, fuzzy
+msgid "Malayalam"
+msgstr "మలయ"
 
 msgid "Mongolian"
 msgstr "మంగోలియన్"
@@ -14607,8 +14614,20 @@ msgstr "ఐచాట్-స్టైల్ టైమ్ స్టాంపుల
 msgid "Timestamp Format Options"
 msgstr "టైమ్ స్టాంప్ ఫార్మాట్ అవకాశాలు"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "24-గంటల సమయ విధానాన్ని అనుకరించు (_F)"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "డెస్కుటాప్ అప్రమేయం"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "24-గంటల సమయ విధానాన్ని అనుకరించు (_F)"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "24-గంటల సమయ విధానాన్ని అనుకరించు (_F)"
 
 msgid "Show dates in..."
@@ -14808,6 +14827,156 @@ msgstr "కొత్త raw XMPP స్టాంజాలను పంపిం�
 #. *  description
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
+
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr ""
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+
+msgid "Core Pidgin files and dlls"
+msgstr ""
+
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#, fuzzy
+msgid "Desktop"
+msgstr "డెస్కుటాప్ అప్రమేయం"
+
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+msgid "GTK+ Runtime (required if not present)"
+msgstr ""
+
+#, fuzzy
+msgid "Localizations"
+msgstr "స్థానం"
+
+#. License Page
+msgid "Next >"
+msgstr ""
+
+#. Components Page
+#, fuzzy
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "పిడ్జిన్ ఇంటర్నెట్ మెసెంజర్"
+
+#. GTK+ Section Prompts
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#, fuzzy
+msgid "Shortcuts"
+msgstr "లఘువు"
+
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Spellcheck Section Prompts
+msgid "Spellchecking Support"
+msgstr ""
+
+#, fuzzy
+msgid "Start Menu"
+msgstr "ప్రారంభము"
+
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+
+#, fuzzy
+msgid "The installer is already running."
+msgstr "ముద్దుపేరు \"%s\" యిప్పటికే వుపయోగించబడింది."
+
+#. Uninstall Section Prompts
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+
+#. URL Handler section
+#, fuzzy
+msgid "URI Handlers"
+msgstr "myim URL సంభాలిక"
+
+#. Pidgin Section Prompts and Texts
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr ""
+
+msgid "You do not have permission to uninstall this application."
+msgstr ""
+
+#, fuzzy
+#~ msgid "Require STARTTLS"
+#~ msgstr "SSL/TLS అవసరము"
+
+#, fuzzy
+#~ msgid "Require old (port 5223) SSL"
+#~ msgstr "Force old (port 5223) SSL"
+
+#, fuzzy
+#~ msgid "SSL/TLS"
+#~ msgstr "SSL/TLS అవసరము"
+
+#~ msgid "Current Mood"
+#~ msgstr "ప్రస్తుత మూడ్"
+
+#~ msgid "New Mood"
+#~ msgstr "కొత్త మూడ్"
+
+#~ msgid "Change your Mood"
+#~ msgstr "మీ మూడ్‌ను మార్చండి"
+
+#~ msgid "How do you feel right now?"
+#~ msgstr "మీకు ప్రస్తుతం యేలా వుంది?"
+
+#~ msgid "Change Mood..."
+#~ msgstr "మూడ్‌ను మార్చుము..."
+
+#~ msgid "Orientation"
+#~ msgstr "పునశ్ఛరణ"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "ట్రే దిశ"
 
 #~ msgid "Artist"
 #~ msgstr "కళాకారి"

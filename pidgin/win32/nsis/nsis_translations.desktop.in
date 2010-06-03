@@ -1,0 +1,62 @@
+[Desktop Entry]
+Encoding=UTF-8
+
+_INSTALLERISRUNNING=The installer is already running.
+_PIDGINISRUNNING=An instance of Pidgin is currently running.  Please exit Pidgin and try again.
+
+# "Next >" appears on a button on the License Page of the Installer
+_PIDGINLICENSEBUTTON=Next >
+# $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+_PIDGINLICENSEBOTTOMTEXT=$(^Name) is released under the GNU General Public License (GPL). The license is provided here for information purposes only. $_CLICK
+
+#Installer Subsection Text
+_PIDGINSECTIONTITLE=Pidgin Instant Messaging Client (required)
+#Installer Subsection Text
+_GTKSECTIONTITLE=GTK+ Runtime (required if not present)
+#Installer Subsection Text
+_PIDGINSHORTCUTSSECTIONTITLE=Shortcuts
+#Installer Subsection Text
+_PIDGINDESKTOPSHORTCUTSECTIONTITLE=Desktop
+#Installer Subsection Text
+_PIDGINSTARTMENUSHORTCUTSECTIONTITLE=Start Menu
+#Installer Subsection Text
+_TRANSLATIONSSECTIONTITLE=Localizations
+#Installer Subsection Detailed Description
+_PIDGINSECTIONDESCRIPTION=Core Pidgin files and dlls
+#Installer Subsection Detailed Description
+_PIDGINSHORTCUTSSECTIONDESCRIPTION=Shortcuts for starting Pidgin
+#Installer Subsection Detailed Description
+_PIDGINDESKTOPSHORTCUTDESC=Create a shortcut to Pidgin on the Desktop
+#Installer Subsection Detailed Description
+_PIDGINSTARTMENUSHORTCUTDESC=Create a Start Menu entry for Pidgin
+#Installer Subsection Detailed Description
+_GTKSECTIONDESCRIPTION=A multi-platform GUI toolkit, used by Pidgin
+#Installer Subsection Text
+_DEBUGSYMBOLSSECTIONTITLE=Debug Symbols (for reporting crashes)
+
+# Text displayed on Installer Finish Page
+_PIDGINFINISHVISITWEBSITE=Visit the Pidgin Web Page
+
+_PIDGINPROMPTCONTINUEWITHOUTUNINSTALL=Unable to uninstall the currently installed version of Pidgin. The new version will be installed without removing the currently installed version.
+
+_PIDGINPROMPTFORCENOGTK=Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be already present).$\rAre you sure you want to skip installing the GTK+ Runtime?
+
+#Installer Subsection Text
+_URIHANDLERSSECTIONTITLE=URI Handlers
+
+#Installer Subsection Text
+_PIDGINSPELLCHECKSECTIONTITLE=Spellchecking Support
+# $R3 will display the URL that the Dictionary failed to download from
+_PIDGINSPELLCHECKERROR=Error Installing Spellchecking ($R3).$\rIf retrying fails, manual installation instructions are at: http://developer.pidgin.im/wiki/Installing%20Pidgin#manual_win32_spellcheck_installation
+#Installer Subsection Detailed Description
+_PIDGINSPELLCHECKSECTIONDESCRIPTION=Support for Spellchecking.  (Internet connection required for installation)
+
+# $R2 will display the URL that the Debug Symbols failed to download from
+_PIDGINDEBUGSYMBOLSERROR=Error Installing Debug Symbols ($R2).$\rIf retrying fails, you may need to use the 'Offline Installer' from http://pidgin.im/download/windows/ .
+
+# $R2 will display the URL that the GTK+ Runtime failed to download from
+_PIDGINGTKDOWNLOADERROR=Error Downloading the GTK+ Runtime ($R2).$\rThis is required for Pidgin to function; if retrying fails, you may need to use the 'Offline Installer' from http://pidgin.im/download/windows/ .
+
+_PIDGINUNINSTALLERROR1=The uninstaller could not find registry entries for Pidgin.$\rIt is likely that another user installed this application.
+_PIDGINUNINSTALLERROR2=You do not have permission to uninstall this application.
+

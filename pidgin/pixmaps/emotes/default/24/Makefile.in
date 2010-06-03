@@ -206,6 +206,8 @@ PERL = @PERL@
 PERL_CFLAGS = @PERL_CFLAGS@
 PERL_LIBS = @PERL_LIBS@
 PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PLUGINS_DEFINE = @PLUGINS_DEFINE@
 POFILES = @POFILES@
 POSUB = @POSUB@
@@ -341,6 +343,7 @@ SMILEYS = \
     car.png \
     cat.png \
     chicken.png \
+    chilli.png \
     cigarette.png \
     clap.png \
     clock.png \
@@ -423,6 +426,7 @@ SMILEYS = \
     moneymouth.png \
     monkey.png \
     moon.png \
+    mrgreen.png \
     msn-away.png \
     msn-busy.png \
     msn_online.png \

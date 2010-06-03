@@ -36,11 +36,20 @@
 
 #include "gevolution.h"
 
+#if 0
+/* These are private headers that we probably should never have been
+ * including. Maybe very early versions of e-d-s required this?
+ *
+ * also, bonobo has gone away as of e-d-s 2.29.1, and this plugin still
+ * seems to work even on e-d-s 1.10.3 without us touching it.
+ * Maybe it's not really working though. I'm sure we'll find out.
+ */
 #include <libedata-book/Evolution-DataServer-Addressbook.h>
 
 #include <libedata-book/e-data-book-factory.h>
 /* TODO: bonobo is going away eventually, we'll need to find an alternative */
 #include <bonobo/bonobo-main.h>
+#endif
 
 #include <glib.h>
 
@@ -227,12 +236,12 @@ menu_item_send_mail_activate_cb(PurpleBlistNode *node, gpointer user_data)
 		char *app = g_find_program_in_path("evolution");
 		if (app != NULL)
 		{
-			char *command_line = g_strdup_printf("%s mailto:%s", app, mail);
-			char *quoted = g_shell_quote(command_line);
+			char *quoted = g_shell_quote(mail);
+			char *command_line = g_strdup_printf("%s mailto:%s", app, quoted);
 			g_free(app);
 			g_free(mail);
 
-			g_spawn_command_line_async(quoted, NULL);
+			g_spawn_command_line_async(command_line, NULL);
 			g_free(command_line);
 			g_free(quoted);
 		}
@@ -326,7 +335,9 @@ load_timeout(gpointer data)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
+#if 0
 	bonobo_activate();
+#endif
 
 	backup_blist_ui_ops = purple_blist_get_ui_ops();
 
@@ -372,7 +383,9 @@ plugin_unload(PurplePlugin *plugin)
 static void
 plugin_destroy(PurplePlugin *plugin)
 {
+#if 0
 	bonobo_debug_shutdown();
+#endif
 }
 
 static void
@@ -575,14 +588,20 @@ init_plugin(PurplePlugin *plugin)
 	 *
 	 * So, in conclusion, this is an evil hack, but it doesn't harm anything
 	 * and it works.
+	 *
+	 * And for some reason it's needed even when we don't init bonobo ourselves
+	 * at all, so the above explanation is suspect. This is required even with
+	 * e-d-s >= 2.29.1 where bonobo is no longer in the picture.
 	 */
 	g_module_make_resident(plugin->handle);
 
+#if 0
 	if (!bonobo_init_full(NULL, NULL, bonobo_activation_orb_get(),
 						  CORBA_OBJECT_NIL, CORBA_OBJECT_NIL))
 	{
 		purple_debug_error("evolution", "Unable to initialize bonobo.\n");
 	}
+#endif
 }
 
 PURPLE_INIT_PLUGIN(gevolution, init_plugin, info)

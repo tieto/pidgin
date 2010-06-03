@@ -1787,23 +1787,17 @@ static gchar *yahoo_auth16_get_cookie_b(gchar *headers)
 	return tmp2;
 }
 
-static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_data, const gchar *ret_data, size_t len, const gchar *error_message)
+static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *ret_data, size_t len, const gchar *error_message)
 {
 	struct yahoo_auth_data *auth_data = user_data;
 	PurpleConnection *gc = auth_data->gc;
-	YahooData *yd;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	gboolean try_login_on_error = FALSE;
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage2\n");
 
-	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
-		g_free(auth_data->seed);
-		g_free(auth_data);
-		g_return_if_reached();
-	}
-
-	yd = (YahooData *)gc->proto_data;
-
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+	
 	if (error_message != NULL) {
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve stage 2 url: %s\n", error_message);
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
@@ -1910,18 +1904,15 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 	g_free(auth_data);
 }
 
-static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user_data, const gchar *ret_data, size_t len, const gchar *error_message)
+static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *ret_data, size_t len, const gchar *error_message)
 {
 	struct yahoo_auth_data *auth_data = user_data;
 	PurpleConnection *gc = auth_data->gc;
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage1_cb\n");
 
-	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
-		g_free(auth_data->seed);
-		g_free(auth_data);
-		g_return_if_reached();
-	}
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	if (error_message != NULL) {
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve login url: %s\n", error_message);
@@ -2023,6 +2014,8 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 			url_data = purple_util_fetch_url_request_len_with_account(
 					proxy_ssl ? account : NULL, url, TRUE, YAHOO_CLIENT_USERAGENT,
 					TRUE, NULL, TRUE, -1, yahoo_auth16_stage2, auth_data);
+			if (url_data)
+				yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 			g_free(url);
 			g_free(token);
 		}
@@ -2031,6 +2024,7 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 
 static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 {
+	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleUtilFetchUrlData *url_data = NULL;
 	struct yahoo_auth_data *auth_data = NULL;
@@ -2062,6 +2056,8 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 			proxy_ssl ? account : NULL, url, TRUE,
 			YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
 			yahoo_auth16_stage1_cb, auth_data);
+	if (url_data)
+		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 
 	g_free(url);
 }
@@ -3600,6 +3596,8 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 	gchar **strings = NULL, *cs_server = NULL;
 	int port = 0, stringslen = 0;
 
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+
 	if(error_message != NULL || len == 0) {
 		purple_debug_error("yahoo", "Unable to retrieve server info. %"
 				G_GSIZE_FORMAT " bytes retrieved with error message: %s\n", len,
@@ -3646,6 +3644,7 @@ void yahoo_login(PurpleAccount *account) {
 	YahooData *yd = gc->proto_data = g_new0(YahooData, 1);
 	PurpleStatus *status = purple_account_get_active_status(account);
 	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
+	PurpleUtilFetchUrlData *url_data;
 
 	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC;
 
@@ -3678,12 +3677,14 @@ void yahoo_login(PurpleAccount *account) {
 
 	/* Get the pager server.  Actually start connecting in the callback since we
 	 * must have the contents of the HTTP response to proceed. */
-	purple_util_fetch_url_request_len_with_account(
+	url_data = purple_util_fetch_url_request_len_with_account(
 			purple_connection_get_account(gc),
 			yd->jp ? YAHOOJP_PAGER_HOST_REQ_URL : YAHOO_PAGER_HOST_REQ_URL,
 			use_whole_url ? TRUE : FALSE,
 			YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
 			yahoo_got_pager_server, yd);
+	if (url_data)
+		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 
 	return;
 }
@@ -4373,6 +4374,8 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
 
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+
 	if (error_message != NULL) {
 		purple_conversation_write(conv, NULL, _("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));
 
@@ -4466,7 +4469,9 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	g_free(request);
 	g_free(validate_request_str);
 
-	if (!url_data) {
+	if (url_data)
+		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+	else {
 		PurpleAccount *account = purple_connection_get_account(gc);
 		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
 		purple_conversation_write(conv, NULL, _("Can't send SMS. Unable to obtain mobile carrier."), PURPLE_MESSAGE_SYSTEM, time(NULL));

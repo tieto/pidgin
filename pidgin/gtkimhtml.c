@@ -1262,7 +1262,7 @@ static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 #ifdef _WIN32
 	/* If we're on windows, let's see if we can get data from the HTML Format
 	   clipboard before we try to paste from the GTK buffer */
-	if (!clipboard_paste_html_win32(imhtml)) {
+	if (!clipboard_paste_html_win32(imhtml) && gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml))) {
 		GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
 		gtk_clipboard_request_text(clipboard, paste_plaintext_received_cb, imhtml);
 

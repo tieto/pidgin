@@ -22,48 +22,15 @@ EXTRA_DIST = \
 		win32/wspell.c \
 		win32/wspell.h \
 		win32/nsis/generate_gtk_zip.sh \
+		win32/nsis/rpm2zip.sh \
 		win32/nsis/pixmaps/pidgin-header.bmp \
 		win32/nsis/pixmaps/pidgin-intro.bmp \
 		win32/nsis/pixmaps/pidgin-install.ico \
+		win32/nsis/available.lst \
 		win32/nsis/pidgin-installer.nsi \
 		win32/nsis/pidgin-plugin.nsh \
-		win32/nsis/langmacros.nsh \
-		win32/nsis/translations/afrikaans.nsh \
-		win32/nsis/translations/albanian.nsh \
-		win32/nsis/translations/arabic.nsh \
-		win32/nsis/translations/basque.nsh \
-		win32/nsis/translations/bulgarian.nsh \
-		win32/nsis/translations/catalan.nsh \
-		win32/nsis/translations/czech.nsh \
-		win32/nsis/translations/danish.nsh \
-		win32/nsis/translations/dutch.nsh \
-		win32/nsis/translations/english.nsh \
-		win32/nsis/translations/finnish.nsh \
-		win32/nsis/translations/french.nsh \
-		win32/nsis/translations/german.nsh \
-		win32/nsis/translations/hebrew.nsh \
-		win32/nsis/translations/hungarian.nsh \
-		win32/nsis/translations/italian.nsh \
-		win32/nsis/translations/japanese.nsh \
-		win32/nsis/translations/korean.nsh \
-		win32/nsis/translations/kurdish.nsh \
-		win32/nsis/translations/lithuanian.nsh \
-		win32/nsis/translations/norwegian.nsh \
-		win32/nsis/translations/norwegian_nynorsk.nsh \
-		win32/nsis/translations/persian.nsh \
-		win32/nsis/translations/polish.nsh \
-		win32/nsis/translations/portuguese.nsh \
-		win32/nsis/translations/portuguese-br.nsh \
-		win32/nsis/translations/romanian.nsh \
-		win32/nsis/translations/russian.nsh \
-		win32/nsis/translations/serbian-latin.nsh \
-		win32/nsis/translations/simp-chinese.nsh \
-		win32/nsis/translations/slovak.nsh \
-		win32/nsis/translations/slovenian.nsh \
-		win32/nsis/translations/spanish.nsh \
-		win32/nsis/translations/swedish.nsh \
-		win32/nsis/translations/trad-chinese.nsh \
-		win32/nsis/translations/vietnamese.nsh
+		win32/nsis/create_nsis_translations.pl \
+		win32/nsis/nsis_translations.desktop.in
 
 if ENABLE_GTK
 

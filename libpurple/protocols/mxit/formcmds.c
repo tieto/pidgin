@@ -42,7 +42,7 @@
 typedef enum
 {
 	MXIT_CMD_UNKNOWN = 0,		/* Unknown command */
-	MXIT_CMD_CLRSCR,			/* Clear screen (clrmsgscreen) */
+	MXIT_CMD_CLEAR,				/* Clear (clear) */
 	MXIT_CMD_SENDSMS,			/* Send SMS (sendsms) */
 	MXIT_CMD_REPLY,				/* Reply (reply) */
 	MXIT_CMD_PLATREQ,			/* Platform Request (platreq) */
@@ -138,8 +138,8 @@ static MXitCommandType command_type(GHashTable* hash)
 			type = g_hash_table_lookup(hash, "type");
 			if (type == NULL)								/* no command provided */
 				return MXIT_CMD_UNKNOWN;
-			else if (strcmp(type, "clrmsgscreen") == 0)		/* clear the screen */
-				return MXIT_CMD_CLRSCR;
+			else if (strcmp(type, "clear") == 0)			/* clear */
+				return MXIT_CMD_CLEAR;
 			else if (strcmp(type, "sendsms") == 0)			/* send an SMS */
 				return MXIT_CMD_SENDSMS;
 			else if (strcmp(type, "reply") == 0)			/* list of options */
@@ -205,27 +205,38 @@ static GHashTable* command_tokenize(char* cmd)
 
 
 /*------------------------------------------------------------------------
- * Process a ClearScreen MXit command.
+ * Process a Clear MXit command.
+ *  [::op=cmd|type=clear|clearmsgscreen=true|auto=true|id=12345:]
  *
- *  @param session			The MXit session object
- *  @param from				The sender of the message.
+ *  @param session		The MXit session object
+ *  @param from			The sender of the message.
+ *  @param hash			The MXit command <key,value> map
  */
-static void command_clearscreen(struct MXitSession* session, const char* from)
+static void command_clear(struct MXitSession* session, const char* from, GHashTable* hash)
 {
 	PurpleConversation *conv;
+	char* clearmsgscreen;
 
-    conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, session->acc);
-    if (conv == NULL) {
-        purple_debug_error(MXIT_PLUGIN_ID, _( "Conversation with '%s' not found\n" ), from);
-        return;
-    }
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, session->acc);
+	if (conv == NULL) {
+		purple_debug_error(MXIT_PLUGIN_ID, _( "Conversation with '%s' not found\n" ), from);
+		return;
+	}
 
-	purple_conversation_clear_message_history(conv);			// TODO: This doesn't actually clear the screen.
+	clearmsgscreen = g_hash_table_lookup(hash, "clearmsgscreen");
+	if ( (clearmsgscreen) && (strcmp(clearmsgscreen, "true") == 0) ) {
+		/* this is a command to clear the chat screen */
+		purple_debug_info(MXIT_PLUGIN_ID, "Clear the screen\n");
+
+		purple_conversation_clear_message_history(conv);			// TODO: This doesn't actually clear the screen.
+	}
 }
 
 
 /*------------------------------------------------------------------------
  * Process a Reply MXit command.
+ *  [::op=cmd|type=reply|replymsg=back|selmsg=b) Back|id=12345:]
+ *  [::op=cmd|nm=rep|type=reply|replymsg=back|selmsg=b) Back|id=12345:]
  *
  *  @param mx			The received message data object
  *  @param hash			The MXit command <key,value> map
@@ -234,10 +245,21 @@ static void command_reply(struct RXMsgData* mx, GHashTable* hash)
 {
 	char* replymsg;
 	char* selmsg;
+	char* nm;
 
 	selmsg = g_hash_table_lookup(hash, "selmsg");			/* find the selection message */
 	replymsg = g_hash_table_lookup(hash, "replymsg");		/* find the reply message */
-	if ((selmsg) && (replymsg)) {
+	nm = g_hash_table_lookup(hash, "nm");					/* name parameter */
+	if ((selmsg) && (replymsg) && (nm)) {
+		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
+		gchar*	replycmd = g_strdup_printf("::type=reply|nm=%s|res=%s|err=0:", nm, replymsg);
+
+		mxit_add_html_link( mx, replycmd, seltext );
+
+		g_free(seltext);
+		g_free(replycmd);
+	}
+	else if ((selmsg) && (replymsg)) {
 		gchar*	seltext = g_markup_escape_text(purple_url_decode(selmsg), -1);
 
 		mxit_add_html_link( mx, purple_url_decode(replymsg), seltext );
@@ -366,8 +388,8 @@ int mxit_parse_command(struct RXMsgData* mx, char* message)
 			MXitCommandType type = command_type(hash);
 
 			switch (type) {
-				case MXIT_CMD_CLRSCR :
-					command_clearscreen(mx->session, mx->from);
+				case MXIT_CMD_CLEAR :
+					command_clear(mx->session, mx->from, hash);
 					break;
 				case MXIT_CMD_REPLY :
 					command_reply(mx, hash);

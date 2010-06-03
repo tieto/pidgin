@@ -2,7 +2,8 @@ Source: pidgin
 Section: net
 Priority: optional
 Maintainer: Ari Pollak <ari@debian.org>
-Build-Depends: cdbs (>= 0.4.53), debhelper (>= 7), intltool,
+Uploaders: Jan Wagner <waja@cyconet.org> 
+Build-Depends: cdbs (>= 0.4.52), debhelper (>= 7), intltool,
  libgtk2.0-dev (>= 2.10.0), libxss-dev, libmeanwhile-dev,
  libgadu-dev (>= 1:1.6+20060215),
  libnss3-dev (>= 3.11.7), tcl-dev, tk-dev, libgstreamer0.10-dev,
@@ -10,7 +11,7 @@ Build-Depends: cdbs (>= 0.4.53), debhelper (>= 7), intltool,
  libstartup-notification0-dev, libzephyr-dev, libxml2-dev,
  libdbus-glib-1-dev, dbus, python (>= 2.4), libavahi-client-dev,
  libavahi-glib-dev, libxml-parser-perl, libncursesw5-dev, libsasl2-dev,
- xsltproc, doxygen, libsilc-dev (>= 1.1.1), libgstfarsight0.10-dev (>= 0.0.9),
+ xsltproc, doxygen, libsilc-dev,
  libgstreamer-plugins-base0.10-dev,
  network-manager-dev (>= 0.5.0) [!kfreebsd-i386 !kfreebsd-amd64 !hurd-i386],
  libsqlite3-dev (>= 3.3), libidn11-dev, ca-certificates
@@ -30,8 +31,8 @@ Description: multi-protocol instant messaging library
  libpurple is a library intended to be used by programmers seeking
  to write an IM client that connects to many IM networks.
  Currently supported are:
- AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP, Napster, Zephyr, Gadu-Gadu, Bonjour,
- Groupwise, Sametime, SILC, SIMPLE, QQ, and MySpaceIM. 
+ AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP/Google Talk, Napster, Zephyr, Gadu-Gadu,
+ Bonjour, Groupwise, Sametime, SILC, SIMPLE, QQ, MySpaceIM, and MXit. 
  .
  Some extra packages are suggested to use increased functionality:
   * tcl8.4, tk8.4:
@@ -45,9 +46,10 @@ Replaces: gaim (<< 1:2.0.0+beta6-3), pidgin-data (<< 2.4.0-1)
 Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
 Suggests: gnome-panel (>= 2.1) | kdebase-workspace-bin | docker, evolution-data-server (>= 1.10.0), ${shlibs:Suggests}
 Description: graphical multi-protocol instant messaging client for X
- Pidgin is a graphical, modular Instant Messaging client capable of using
- AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP, Napster, Zephyr, Gadu-Gadu, Bonjour,
- Groupwise, Sametime, SILC, SIMPLE, QQ, and MySpaceIM all at once.
+ Pidgin is a graphical, modular instant messaging client capable of using
+ multiple networks at once. Currently supported are:
+ AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP/Google Talk, Napster, Zephyr, Gadu-Gadu,
+ Bonjour, Groupwise, Sametime, SILC, SIMPLE, QQ, MySpaceIM, and MXit. 
  .
  Some extra packages are suggested to use increased functionality:
   * gnome-panel | kdebase-workspace-bin | docker:
@@ -97,8 +99,9 @@ Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:U
 Suggests:  ${shlibs:Suggests}
 Description: text-based multi-protocol instant messaging client
  Finch is a text/console-based, modular instant messaging client capable of
- using AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP, Napster, Zephyr, Gadu-Gadu,
- Bonjour, Groupwise, Sametime, SILC, SIMPLE, QQ, and MySpaceIM all at once.
+ using multiple networks at once. Currently supported are:
+ AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP/Google Talk, Napster, Zephyr, Gadu-Gadu,
+ Bonjour, Groupwise, Sametime, SILC, SIMPLE, QQ, MySpaceIM, and MXit. 
  .
  Some extra packages are suggested to use increased functionality:
   * libx11-6

@@ -87,8 +87,17 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 		purple_timeout_remove(swboard->reconn_timeout_h);
 
 	/* If it linked us is because its looking for trouble */
-	while (swboard->slplinks != NULL)
-		msn_slplink_destroy(swboard->slplinks->data);
+	while (swboard->slplinks != NULL) {
+		MsnSlpLink *slplink = swboard->slplinks->data;
+
+		/* Destroy only those slplinks which use the switchboard */
+		if (slplink->dc == NULL)
+			msn_slplink_destroy(slplink);
+		else {
+			swboard->slplinks = g_list_remove(swboard->slplinks, slplink);
+			slplink->swboard = NULL;
+		}
+	}
 
 	/* Destroy the message queue */
 	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL)

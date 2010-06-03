@@ -81,6 +81,12 @@ GList* mxit_status_types( PurpleAccount* account )
 		statuslist = g_list_append( statuslist, type );
 	}
 
+	/* add Mood option */
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_MOOD, "mood", NULL, FALSE, TRUE, TRUE,
+		PURPLE_MOOD_NAME, _("Mood Name"), purple_value_new( PURPLE_TYPE_STRING ),
+		NULL);
+	statuslist = g_list_append( statuslist, type );
+
 	return statuslist;
 }
 
@@ -126,6 +132,57 @@ const char* mxit_convert_presence_to_name( short no )
 /*========================================================================================================================
  * Moods
  */
+
+/* moods (reference: libpurple/status.h) */
+static PurpleMood mxit_moods[] = {
+	{"angry",		N_("Angry"),		NULL},
+	{"excited",		N_("Excited"),		NULL},
+	{"grumpy",		N_("Grumpy"),		NULL},
+	{"happy",		N_("Happy"),		NULL},
+	{"in_love",		N_("In love"),		NULL},
+	{"invincible",	N_("Invincible"),	NULL},
+	{"sad",			N_("Sad"),			NULL},
+	{"hot",			N_("Hot"),			NULL},
+	{"sick",		N_("Sick"),			NULL},
+	{"sleepy",		N_("Sleepy"),		NULL},
+	/* Mark the last record. */
+	{ NULL, NULL, NULL }
+};
+
+
+/*------------------------------------------------------------------------
+ * Returns the MXit mood code, given the unique mood ID.
+ *
+ *  @param id		The mood ID
+ *  @return			The MXit mood code
+ */
+int mxit_convert_mood( const char* id )
+{
+	unsigned int	i;
+
+	/* Mood is being unset */
+	if ( id == NULL )
+		return MXIT_MOOD_NONE;
+
+	for ( i = 0; i < ARRAY_SIZE( mxit_moods ) - 1; i++ ) {
+		if ( strcmp( mxit_moods[i].mood, id ) == 0 )	/* mood found! */
+			return i + 1;		/* because MXIT_MOOD_NONE is 0 */
+	}
+
+	return -1;
+}
+
+
+/*------------------------------------------------------------------------
+ * Return the list of MXit-supported moods.
+ *
+ *  @param account	The MXit account object
+ */
+PurpleMood* mxit_get_moods(PurpleAccount *account)
+{
+	return mxit_moods;
+}
+
 
 /*------------------------------------------------------------------------
  * Returns the MXit mood as a string, given the MXit mood's ID.
@@ -259,6 +316,12 @@ static PurpleBuddy* mxit_update_buddy_group( struct MXitSession* session, Purple
 			else
 				purple_prpl_got_user_status( session->acc, newbuddy->name, mxit_statuses[contact->presence].id, NULL );
 
+			/* update the buddy's mood */
+			if ( contact->mood == MXIT_MOOD_NONE )
+				purple_prpl_got_user_status_deactive( session->acc, newbuddy->name, "mood" );
+			else
+				purple_prpl_got_user_status( session->acc, newbuddy->name, "mood", PURPLE_MOOD_NAME, mxit_moods[contact->mood-1].mood, NULL );
+
 			/* update avatar */
 			if ( contact->avatarId ) {
 				mxit_get_avatar( session, newbuddy->name, contact->avatarId );
@@ -346,6 +409,12 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
 
 	/* update the buddy's status (reference: "libpurple/prpl.h") */
 	purple_prpl_got_user_status( session->acc, contact->username, mxit_statuses[contact->presence].id, NULL );
+
+	/* update the buddy's mood */
+	if ( contact->mood == MXIT_MOOD_NONE )
+		purple_prpl_got_user_status_deactive( session->acc, contact->username, "mood" );
+	else
+		purple_prpl_got_user_status( session->acc, contact->username, "mood", PURPLE_MOOD_NAME, mxit_moods[contact->mood-1].mood, NULL );
 }
 
 
@@ -388,6 +457,10 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 	contact->presence = presence;	
 	contact->mood = mood;
 
+	/* validate mood */
+	if (( contact->mood < MXIT_MOOD_NONE ) || ( contact->mood > MXIT_MOOD_SLEEPY ))
+		contact->mood = MXIT_MOOD_NONE;
+
 	g_strlcpy( contact->customMood, customMood, sizeof( contact->customMood ) );
 	// TODO: Download custom mood frame.
 
@@ -419,6 +492,12 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 		purple_prpl_got_user_status( session->acc, username, mxit_statuses[contact->presence].id, "message", contact->statusMsg, NULL );
 	else
 		purple_prpl_got_user_status( session->acc, username, mxit_statuses[contact->presence].id, NULL );
+
+	/* update the buddy's mood */
+	if ( contact->mood == MXIT_MOOD_NONE )
+		purple_prpl_got_user_status_deactive( session->acc, username, "mood" );
+	else
+		purple_prpl_got_user_status( session->acc, username, "mood", PURPLE_MOOD_NAME, mxit_moods[contact->mood-1].mood, NULL );
 }
 
 

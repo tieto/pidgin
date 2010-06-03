@@ -3,8 +3,8 @@
 
 PIDGIN_BASE=$1
 
-if [ ! -e $PIDGIN_BASE/ChangeLog.win32 ]; then
-	echo `basename $0` must must have the pidgin base dir specified as a parameter.
+if [ ! -e $PIDGIN_BASE/ChangeLog ]; then
+	echo $(basename $0) must must have the pidgin base dir specified as a parameter.
 	exit 1
 fi
 
@@ -42,12 +42,18 @@ echo Bundle Version $BUNDLE_VERSION > $CONTENTS_FILE
 function download_and_extract {
 	URL=${1%%\ *}
 	NAME=${1#*\ }
-	FILE=`basename $URL`
+	FILE=$(basename $URL)
 	if [ ! -e $FILE ]; then
 		echo Downloading $NAME
-		wget $URL
+		wget $URL || return 1
 	fi
-	unzip -q $FILE -d $INSTALL_DIR
+	EXTENSION=${FILE##*.}
+	#This is an OpenSuSE build service RPM
+	if [ $EXTENSION == 'rpm' ]; then
+		echo "Generating zip from $FILE"
+		FILE=$(../rpm2zip.sh $FILE)
+	fi
+	unzip -q $FILE -d $INSTALL_DIR || exit 1
 	echo "$NAME" >> $CONTENTS_FILE
 }
 
@@ -63,13 +69,15 @@ echo gtk-theme-name = \"MS-Windows\" > $INSTALL_DIR/etc/gtk-2.0/gtkrc
 #Blow away translations that we don't have in Pidgin
 for LOCALE_DIR in $INSTALL_DIR/share/locale/*
 do
-	LOCALE=`basename $LOCALE_DIR`
+	LOCALE=$(basename $LOCALE_DIR)
 	if [ ! -e $PIDGIN_BASE/po/$LOCALE.po ]; then
-		echo Remove $LOCALE translation as it is missing from Pidgin
+		echo Removing $LOCALE translation as it is missing from Pidgin
 		rm -r $LOCALE_DIR
 	fi
 done
 
 #Generate zip file to be included in installer
 zip -9 -r ../gtk-runtime-$BUNDLE_VERSION.zip Gtk
+
+exit 0
 

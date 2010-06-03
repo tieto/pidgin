@@ -1,3 +1,24 @@
+pidgin (2.7.1-1~bpo50+1) lenny-backports; urgency=low
+
+  * Rebuild for lenny-backports.
+  * Changes to Build-Depends:
+    - Lowered cdbs versioned depends to 0.4.52 which is in stable.
+    - Removed versioning from libsilc-dev because the renaming was after that
+      version anyway.
+    - Removed libgstfarsight0.10-dev and call configure with --disable-vv
+      --disable-farsight, the libraries for that are too much to carry.
+  * Converting back to source format 1.0. via debian/source/format
+  * Remove empty "debian/tmp/etc/gconf" from debian/pidgin.install
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 03 Jun 2010 16:03:25 +0200
+
+pidgin (2.7.1-1) unstable; urgency=low
+
+  * New upstream release
+    - Fixes ICQ messages coming in with full HTML (Closes: #583710)
+
+ -- Ari Pollak <ari@debian.org>  Sun, 30 May 2010 00:00:37 -0400
+
 pidgin (2.7.0-3) unstable; urgency=low
 
   * Apply patch from upstream to fix a crash in OSCAR (Closes: #582163)
