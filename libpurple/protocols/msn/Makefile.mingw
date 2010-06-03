@@ -52,6 +52,7 @@ C_SRC =			cmdproc.c \
 			notification.c \
 			object.c \
 			oim.c\
+			p2p.c \
 			page.c \
 			servconn.c \
 			session.c \
