@@ -2147,6 +2147,8 @@ purple_markup_linkify(const char *text)
 			c = process_link(ret, text, c, 6, "", inside_paren);
 		} else if (!g_ascii_strncasecmp(c, "sftp://", 7)) {
 			c = process_link(ret, text, c, 7, "", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "file://", 7)) {
+			c = process_link(ret, text, c, 7, "", inside_paren);
 		} else if (!g_ascii_strncasecmp(c, "www.", 4) && c[4] != '.' && (c == text || badchar(c[-1]) || badentity(c-1))) {
 			c = process_link(ret, text, c, 4, "http://", inside_paren);
 		} else if (!g_ascii_strncasecmp(c, "ftp.", 4) && c[4] != '.' && (c == text || badchar(c[-1]) || badentity(c-1))) {
