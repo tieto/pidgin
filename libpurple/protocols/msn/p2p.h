@@ -42,5 +42,10 @@ typedef enum
 
 #define P2P_PACKET_HEADER_SIZE sizeof(MsnP2PHeader)
 
+MsnP2PHeader *
+msn_p2p_header_from_wire(MsnP2PHeader *wire);
+
+MsnP2PHeader *
+msn_p2p_header_to_wire(MsnP2PHeader *header);
 
 #endif /* MSN_P2P_H */
