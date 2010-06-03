@@ -340,14 +340,14 @@ msn_dc_fallback_to_p2p(MsnDirectConn *dc)
 static void
 msn_dc_parse_binary_header(MsnDirectConn *dc)
 {
-	MsnP2PBinaryHeader *h;
-	MsnP2PBinaryHeader *context;
+	MsnP2PHeader *h;
+	MsnP2PHeader *context;
 
 	g_return_if_fail(dc != NULL);
 
 	h = &dc->header;
 	/* Skip packet size */
-	context = (MsnP2PBinaryHeader *)(dc->in_buffer + 4);
+	context = (MsnP2PHeader *)(dc->in_buffer + 4);
 
 	h->session_id = GUINT32_FROM_LE(context->session_id);
 	h->id = GUINT32_FROM_LE(context->id);
@@ -362,8 +362,8 @@ msn_dc_parse_binary_header(MsnDirectConn *dc)
 
 static const gchar *
 msn_dc_serialize_binary_header(MsnDirectConn *dc) {
-	MsnP2PBinaryHeader *h;
-	static MsnP2PBinaryHeader bin_header;
+	MsnP2PHeader *h;
+	static MsnP2PHeader bin_header;
 
 	g_return_val_if_fail(dc != NULL, NULL);
 
@@ -480,7 +480,7 @@ msn_dc_send_handshake_with_nonce(MsnDirectConn *dc, MsnDirectConnPacket *p)
 	h = msn_dc_serialize_binary_header(dc);
 	memcpy(p->data, h, P2P_PACKET_HEADER_SIZE);
 
-	memcpy(p->data + offsetof(MsnP2PBinaryHeader, ack_id), dc->nonce, 16);
+	memcpy(p->data + offsetof(MsnP2PHeader, ack_id), dc->nonce, 16);
 
 	msn_dc_enqueue_packet(dc, p);
 }
@@ -524,7 +524,7 @@ msn_dc_verify_handshake(MsnDirectConn *dc, guint32 packet_length)
 	if (packet_length != P2P_PACKET_HEADER_SIZE)
 		return FALSE;
 
-	memcpy(nonce, dc->in_buffer + 4 + offsetof(MsnP2PBinaryHeader, ack_id), 16);
+	memcpy(nonce, dc->in_buffer + 4 + offsetof(MsnP2PHeader, ack_id), 16);
 
 	if (dc->nonce_type == DC_NONCE_PLAIN) {
 		if (memcmp(dc->nonce, nonce, 16) == 0) {

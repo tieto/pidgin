@@ -100,7 +100,7 @@ struct _MsnDirectConn
 	GQueue  *out_queue; /**< The outgoing packet queue */
 	int     msg_pos;    /**< The position of next byte to be sent in the actual packet */
 
-	MsnP2PBinaryHeader    header; /**< SLP header for parsing / serializing */
+	MsnP2PHeader    header; /**< SLP header for parsing / serializing */
 
 	/** The callback used for sending information to the peer about the opened socket */
 	void (*send_connection_info_msg_cb)(MsnDirectConn *);

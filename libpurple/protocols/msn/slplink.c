@@ -493,7 +493,7 @@ msn_slplink_send_queued_slpmsgs(MsnSlpLink *slplink)
 }
 
 static MsnSlpMessage *
-msn_slplink_create_ack(MsnSlpLink *slplink, MsnP2PBinaryHeader *header)
+msn_slplink_create_ack(MsnSlpLink *slplink, MsnP2PHeader *header)
 {
 	MsnSlpMessage *slpmsg;
 
@@ -511,7 +511,7 @@ msn_slplink_create_ack(MsnSlpLink *slplink, MsnP2PBinaryHeader *header)
 }
 
 static void
-msn_slplink_send_ack(MsnSlpLink *slplink, MsnP2PBinaryHeader *header)
+msn_slplink_send_ack(MsnSlpLink *slplink, MsnP2PHeader *header)
 {
 	MsnSlpMessage *slpmsg = msn_slplink_create_ack(slplink, header);
 
@@ -563,7 +563,7 @@ msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
 }
 
 void
-msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PBinaryHeader *header, const char *data, gsize len)
+msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *data, gsize len)
 {
 	MsnSlpMessage *slpmsg;
 	guint64 offset;

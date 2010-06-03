@@ -89,7 +89,7 @@ struct _MsnMessage
 	guint total_chunks;   /**< How many chunks in this multi-part message */
 	guint received_chunks; /**< How many chunks we've received so far */
 
-	MsnP2PBinaryHeader msnslp_header;
+	MsnP2PHeader msnslp_header;
 	MsnP2PFooter msnslp_footer;
 
 	GHashTable *header_table;

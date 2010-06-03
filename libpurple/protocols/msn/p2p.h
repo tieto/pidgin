@@ -15,7 +15,7 @@ typedef struct {
 	guint32 ack_sub_id;
 	guint64 ack_size;
 /*	guint8  body[1]; */
-} MsnP2PBinaryHeader;
+} MsnP2PHeader;
 #pragma pack(pop)
 
 typedef struct
@@ -40,7 +40,7 @@ typedef enum
  * #7180
  */
 
-#define P2P_PACKET_HEADER_SIZE sizeof(MsnP2PBinaryHeader)
+#define P2P_PACKET_HEADER_SIZE sizeof(MsnP2PHeader)
 
 
 #endif /* MSN_P2P_H */
