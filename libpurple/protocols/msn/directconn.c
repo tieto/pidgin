@@ -350,13 +350,13 @@ msn_dc_parse_binary_header(MsnDirectConn *dc)
 	context = (MsnP2PBinaryHeader *)(dc->in_buffer + 4);
 
 	h->session_id = GUINT32_FROM_LE(context->session_id);
-	h->id = GUINT32_FROM_LE(context->seq_id);
+	h->id = GUINT32_FROM_LE(context->id);
 	h->offset = GUINT64_FROM_LE(context->offset);
 	h->total_size = GUINT64_FROM_LE(context->total_size);
 	h->length = GUINT32_FROM_LE(context->length);
 	h->flags = GUINT32_FROM_LE(context->flags);
 	h->ack_id = GUINT32_FROM_LE(context->ack_id);
-	h->ack_sub_id = GUINT32_FROM_LE(context->ack_uid);
+	h->ack_sub_id = GUINT32_FROM_LE(context->ack_sub_id);
 	h->ack_size = GUINT64_FROM_LE(context->ack_size);
 }
 
@@ -370,13 +370,13 @@ msn_dc_serialize_binary_header(MsnDirectConn *dc) {
 	h = &dc->header;
 
 	bin_header.session_id = GUINT32_TO_LE(h->session_id);
-	bin_header.seq_id = GUINT32_TO_LE(h->id);
+	bin_header.id = GUINT32_TO_LE(h->id);
 	bin_header.offset = GUINT64_TO_LE(h->offset);
 	bin_header.total_size = GUINT64_TO_LE(h->total_size);
 	bin_header.length = GUINT32_TO_LE(h->length);
 	bin_header.flags = GUINT32_TO_LE(h->flags);
 	bin_header.ack_id = GUINT32_TO_LE(h->ack_id);
-	bin_header.ack_uid = GUINT32_TO_LE(h->ack_sub_id);
+	bin_header.ack_sub_id = GUINT32_TO_LE(h->ack_sub_id);
 	bin_header.ack_size = GUINT64_TO_LE(h->ack_size);
 
 	return (const gchar *)&bin_header;
