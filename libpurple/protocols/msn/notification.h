@@ -28,6 +28,10 @@ typedef struct _MsnNotification MsnNotification;
 
 /* MSN protocol challenge info */
 
+/* MSNP18 challenge: WLM Version 2009 (Build 14.0.8089.726) */
+#define MSNP18_WLM_PRODUCT_KEY "C1BX{V4W}Q3*10SM"
+#define MSNP18_WLM_PRODUCT_ID "PROD0120PW!CCV9@"
+
 /* MSNP15 challenge: WLM 8.5.1288.816 */
 #define MSNP15_WLM_PRODUCT_KEY "ILTXC!4IXB5FB*PX"
 #define MSNP15_WLM_PRODUCT_ID "PROD0119GSJUC$18"
