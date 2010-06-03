@@ -107,7 +107,7 @@ generate_installer_includes: create_release_install_dir pidgin/win32/nsis/gtk-ru
 	rm -f pidgin/win32/nsis/pidgin-translations.nsh pidgin/win32/nsis/pidgin-spellcheck.nsh pidgin/win32/nsis/pidgin-spellcheck-preselect.nsh
 	find $(STRIPPED_RELEASE_DIR)/locale -maxdepth 1 -mindepth 1 \
 	 -exec basename {} ';' \
-	 | sed -e s/^/\!insertmacro\ LANG_SECTION\ \"/ -e s/$$/\"/ \
+	 | LC_ALL=C sort | sed -e s/^/\!insertmacro\ LANG_SECTION\ \"/ -e s/$$/\"/ \
 	 > pidgin/win32/nsis/pidgin-translations.nsh
 	#Convert the available.lst lines to "!insertmacro SPELLCHECK_SECTION lang lang_name lang_file"
 	sed -e "/^#/d" -e "s/^[^,]\{1,\},[^,]\{1,\},/\"/" \
