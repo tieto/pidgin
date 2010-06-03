@@ -1225,8 +1225,6 @@ aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
 static int
 error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	int ret = 0;
-	aim_rxcallback_t userfunc;
 	aim_snac_t *snac2;
 	guint16 reason;
 	char *bn;
@@ -1253,14 +1251,12 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 
 	reason = byte_stream_get16(bs);
 
-	/* Notify the user that we do not have info for this buddy */
-	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, reason, bn);
+	oscar_user_info_display_error(od, reason, bn);
 
 	g_free(snac2->data);
 	g_free(snac2);
 
-	return ret;
+	return 1;
 }
 
 /*
@@ -1470,7 +1466,6 @@ static int
 userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
-	aim_rxcallback_t userfunc;
 	aim_userinfo_t *userinfo, *userinfo2;
 	GSList *tlvlist;
 	aim_tlv_t *tlv = NULL;
@@ -1522,8 +1517,7 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	g_free(userinfo);
 
 	/* Show the info to the user */
-	if (userinfo2 != NULL && ((userfunc = aim_callhandler(od, snac->family, snac->subtype))))
-		ret = userfunc(od, conn, frame, userinfo2);
+	oscar_user_info_display_aim(od, userinfo2);
 
 	return ret;
 }

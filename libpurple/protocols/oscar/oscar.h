@@ -378,6 +378,22 @@ typedef enum
 #define OSCAR_CAPABILITY_GENERICUNKNOWN        0x0000000080000000LL
 #define OSCAR_CAPABILITY_LAST                  0x0000000100000000LL
 
+#define OSCAR_STATUS_ID_INVISIBLE   "invisible"
+#define OSCAR_STATUS_ID_OFFLINE     "offline"
+#define OSCAR_STATUS_ID_AVAILABLE   "available"
+#define OSCAR_STATUS_ID_AWAY        "away"
+#define OSCAR_STATUS_ID_DND         "dnd"
+#define OSCAR_STATUS_ID_NA          "na"
+#define OSCAR_STATUS_ID_OCCUPIED    "occupied"
+#define OSCAR_STATUS_ID_FREE4CHAT   "free4chat"
+#define OSCAR_STATUS_ID_CUSTOM      "custom"
+#define OSCAR_STATUS_ID_MOBILE	    "mobile"
+#define OSCAR_STATUS_ID_EVIL        "evil"
+#define OSCAR_STATUS_ID_DEPRESSION	 "depression"
+#define OSCAR_STATUS_ID_ATHOME      "athome"
+#define OSCAR_STATUS_ID_ATWORK      "atwork"
+#define OSCAR_STATUS_ID_LUNCH       "lunch"
+
 /*
  * Byte Stream type. Sort of.
  *
@@ -526,7 +542,7 @@ struct _OscarData
 	 */
 
 	IcbmCookie *msgcookies;
-	struct aim_icq_info *icq_info;
+	GSList *icq_info;
 
 	/** Only used when connecting with the old-style BUCP login. */
 	struct aim_authresp_info *authinfo;
@@ -1036,6 +1052,7 @@ struct aim_incomingim_ch4_args
 void aim_icbm_makecookie(guchar* cookie);
 gchar *oscar_encoding_extract(const char *encoding);
 gchar *oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char *text, int textlen);
+gchar *oscar_utf8_try_convert(PurpleAccount *account, OscarData *od, const gchar *msg);
 gchar *purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcebn, guint16 charset, guint16 charsubset, const gchar *data, gsize datalen);
 
 
@@ -1342,19 +1359,6 @@ int aim_ssi_delicon(OscarData *od);
 #define AIM_ICQ_INFO_UNKNOWN	0x100
 #define AIM_ICQ_INFO_HAVEALL	0x1ff
 
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-struct aim_icq_offlinemsg
-{
-	guint32 sender;
-	guint16 year;
-	guint8 month, day, hour, minute;
-	guint8 type;
-	guint8 flags;
-	char *msg;
-	int msglen;
-};
-#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
-
 struct aim_icq_info
 {
 	guint16 reqid;
@@ -1410,22 +1414,17 @@ struct aim_icq_info
 	guint16 numaddresses;
 	char **email2;
 
-	/* we keep track of these in a linked list because we're 1337 */
-	struct aim_icq_info *next;
-
 	/* status note info */
 	guint8 icbm_cookie[8];
 	char *status_note_title;
+
+	gboolean for_auth_request;
+	char *auth_request_reason;
 };
 
-#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
-int aim_icq_reqofflinemsgs(OscarData *od);
-int aim_icq_ackofflinemsgs(OscarData *od);
-#endif
 int aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware);
 int aim_icq_changepasswd(OscarData *od, const char *passwd);
-int aim_icq_getsimpleinfo(OscarData *od, const char *uin);
-int aim_icq_getalias(OscarData *od, const char *uin);
+int aim_icq_getalias(OscarData *od, const char *uin, gboolean for_auth_request, char *auth_request_reason);
 int aim_icq_getallinfo(OscarData *od, const char *uin);
 int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias);
 
@@ -1573,7 +1572,7 @@ gboolean oscar_util_valid_name(const char *bn);
 gboolean oscar_util_valid_name_icq(const char *bn);
 gboolean oscar_util_valid_name_sms(const char *bn);
 int oscar_util_name_compare(const char *bn1, const char *bn2);
-
+gchar *oscar_util_format_string(const char *str, const char *name);
 
 
 
@@ -1726,6 +1725,45 @@ int aim_cookie_free(OscarData *od, IcbmCookie *cookie);
 int aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo);
 
 void flap_connection_destroy_chat(OscarData *od, FlapConnection *conn);
+
+/* userinfo.c - displaying user information */
+
+void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo, gboolean strip_html_tags);
+void oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo);
+void oscar_user_info_display_error(OscarData *od, guint16 error_reason, char *buddy);
+void oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info);
+void oscar_user_info_display_aim(OscarData *od, aim_userinfo_t *userinfo);
+
+/* authorization.c - OSCAR authorization requests */
+void oscar_auth_sendrequest(PurpleConnection *gc, const char *name);
+void oscar_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored);
+void oscar_auth_recvrequest(PurpleConnection *gc, gchar *name, gchar *nick, gchar *reason);
+
+struct buddyinfo
+{
+	gboolean typingnot;
+	guint32 ipaddr;
+
+	unsigned long ico_me_len;
+	unsigned long ico_me_csum;
+	time_t ico_me_time;
+	gboolean ico_informed;
+
+	unsigned long ico_len;
+	unsigned long ico_csum;
+	time_t ico_time;
+	gboolean ico_need;
+	gboolean ico_sent;
+};
+
+struct name_data
+{
+	PurpleConnection *gc;
+	gchar *name;
+	gchar *nick;
+};
+
+void oscar_free_name_data(struct name_data *data);
 
 #ifdef __cplusplus
 }

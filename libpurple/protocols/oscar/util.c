@@ -38,8 +38,8 @@
 static const char * const msgerrreason[] = {
 	N_("Invalid error"),
 	N_("Invalid SNAC"),
-	N_("Rate to host"),
-	N_("Rate to client"),
+	N_("Server rate limit exceeded"),
+	N_("Client rate limit exceeded"),
 	N_("Not logged in"),
 	N_("Service unavailable"),
 	N_("Service not defined"),
@@ -322,4 +322,68 @@ oscar_util_name_compare(const char *name1, const char *name2)
 	} while ((*name1 != '\0') && name1++ && name2++);
 
 	return 0;
+}
+
+/**
+ * Looks for %n, %d, or %t in a string, and replaces them with the
+ * specified name, date, and time, respectively.
+ *
+ * @param str  The string that may contain the special variables.
+ * @param name The sender name.
+ *
+ * @return A newly allocated string where the special variables are
+ *         expanded.  This should be g_free'd by the caller.
+ */
+gchar *
+oscar_util_format_string(const char *str, const char *name)
+{
+	char *c;
+	GString *cpy;
+	time_t t;
+	struct tm *tme;
+
+	g_return_val_if_fail(str  != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
+	/* Create an empty GString that is hopefully big enough for most messages */
+	cpy = g_string_sized_new(1024);
+
+	t = time(NULL);
+	tme = localtime(&t);
+
+	c = (char *)str;
+	while (*c) {
+		switch (*c) {
+		case '%':
+			if (*(c + 1)) {
+				switch (*(c + 1)) {
+				case 'n':
+					/* append name */
+					g_string_append(cpy, name);
+					c++;
+					break;
+				case 'd':
+					/* append date */
+					g_string_append(cpy, purple_date_format_short(tme));
+					c++;
+					break;
+				case 't':
+					/* append time */
+					g_string_append(cpy, purple_time_format(tme));
+					c++;
+					break;
+				default:
+					g_string_append_c(cpy, *c);
+				}
+			} else {
+				g_string_append_c(cpy, *c);
+			}
+			break;
+		default:
+			g_string_append_c(cpy, *c);
+		}
+		c++;
+	}
+
+	return g_string_free(cpy, FALSE);
 }
