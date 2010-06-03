@@ -30,6 +30,7 @@
 
 #include "switchboard.h"
 #include "slp.h"
+#include "p2p.h"
 
 #ifdef MSN_DEBUG_SLP_FILES
 static int m_sc = 0;
@@ -294,7 +295,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	 * reusing the same one all the time. */
 	msg = slpmsg->msg;
 
-	real_size = (slpmsg->flags == SLP_HF_ACK) ? 0 : slpmsg->size;
+	real_size = (slpmsg->flags == P2P_ACK) ? 0 : slpmsg->size;
 
 	if (slpmsg->offset < real_size)
 	{
@@ -329,9 +330,9 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		g_list_append(slpmsg->msgs, msn_message_ref(msg));
 	msn_slplink_send_msg(slplink, msg);
 
-	if ((slpmsg->flags == SLP_HF_MSN_OBJ_DATA || 
-	     slpmsg->flags == (SLP_HF_WML2009_COMP & SLP_HF_MSN_OBJ_DATA) ||
-	     slpmsg->flags == SLP_HF_FILE_DATA) &&
+	if ((slpmsg->flags == P2P_MSN_OBJ_DATA || 
+	     slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+	     slpmsg->flags == P2P_FILE_DATA) &&
 		(slpmsg->slpcall != NULL))
 	{
 		slpmsg->slpcall->progress = TRUE;
@@ -355,7 +356,7 @@ msg_ack(MsnMessage *msg, void *data)
 
 	slpmsg = data;
 
-	real_size = (slpmsg->flags == SLP_HF_ACK) ? 0 : slpmsg->size;
+	real_size = (slpmsg->flags == P2P_ACK) ? 0 : slpmsg->size;
 
 	slpmsg->offset += msg->msnslp_header.length;
 
@@ -375,9 +376,9 @@ msg_ack(MsnMessage *msg, void *data)
 	else
 	{
 		/* The whole message has been sent */
-		if (slpmsg->flags == SLP_HF_MSN_OBJ_DATA ||
-	        slpmsg->flags == (SLP_HF_WML2009_COMP & SLP_HF_MSN_OBJ_DATA) ||
-	        slpmsg->flags == SLP_HF_FILE_DATA) 
+		if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
+	        slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+	        slpmsg->flags == P2P_FILE_DATA) 
 		{
 			if (slpmsg->slpcall != NULL)
 			{
@@ -413,21 +414,21 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	slpmsg->msg = msg = msn_message_new_msnslp();
 
-	if (slpmsg->flags == SLP_HF_NO_FLAG)
+	if (slpmsg->flags == P2P_NO_FLAG)
 	{
 		msg->msnslp_header.session_id = slpmsg->session_id;
 		msg->msnslp_header.ack_id = rand() % 0xFFFFFF00;
 	}
-	else if (slpmsg->flags == SLP_HF_ACK)
+	else if (slpmsg->flags == P2P_ACK)
 	{
 		msg->msnslp_header.session_id = slpmsg->session_id;
 		msg->msnslp_header.ack_id = slpmsg->ack_id;
 		msg->msnslp_header.ack_size = slpmsg->ack_size;
 		msg->msnslp_header.ack_sub_id = slpmsg->ack_sub_id;
 	}
-	else if (slpmsg->flags == SLP_HF_MSN_OBJ_DATA ||
-	         slpmsg->flags == (SLP_HF_WML2009_COMP & SLP_HF_MSN_OBJ_DATA) ||
-	         slpmsg->flags == SLP_HF_FILE_DATA)
+	else if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
+	         slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+	         slpmsg->flags == P2P_FILE_DATA)
 	{
 		MsnSlpCall *slpcall;
 		slpcall = slpmsg->slpcall;
@@ -500,7 +501,7 @@ msn_slplink_create_ack(MsnSlpLink *slplink, MsnSlpHeader *header)
 
 	slpmsg->session_id = header->session_id;
 	slpmsg->size       = header->total_size;
-	slpmsg->flags      = SLP_HF_ACK;
+	slpmsg->flags      = P2P_ACK;
 	slpmsg->ack_id     = header->id;
 	slpmsg->ack_sub_id = header->ack_id;
 	slpmsg->ack_size   = header->total_size;
@@ -538,7 +539,7 @@ send_file_cb(MsnSlpCall *slpcall)
 
 	slpmsg = msn_slpmsg_new(slpcall->slplink);
 	slpmsg->slpcall = slpcall;
-	slpmsg->flags = SLP_HF_FILE_DATA;
+	slpmsg->flags = P2P_FILE_DATA;
 	slpmsg->info = "SLP FILE";
 	slpmsg->size = purple_xfer_get_size(xfer);
 
@@ -591,9 +592,9 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *d
 			slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
 			if (slpmsg->slpcall != NULL)
 			{
-				if (slpmsg->flags == SLP_HF_MSN_OBJ_DATA ||
-					slpmsg->flags == (SLP_HF_WML2009_COMP & SLP_HF_MSN_OBJ_DATA) ||
-					slpmsg->flags == SLP_HF_FILE_DATA)
+				if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
+					slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+					slpmsg->flags == P2P_FILE_DATA)
 				{
 					PurpleXfer *xfer = slpmsg->slpcall->xfer;
 					if (xfer != NULL)
@@ -657,9 +658,9 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *d
 		}
 	}
 
-	if ((slpmsg->flags == SLP_HF_MSN_OBJ_DATA ||
-		slpmsg->flags == (SLP_HF_WML2009_COMP & SLP_HF_MSN_OBJ_DATA) ||
-		slpmsg->flags == SLP_HF_FILE_DATA) &&
+	if ((slpmsg->flags == P2P_MSN_OBJ_DATA ||
+		slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+		slpmsg->flags == P2P_FILE_DATA) &&
 		(slpmsg->slpcall != NULL))
 	{
 		slpmsg->slpcall->progress = TRUE;
@@ -700,10 +701,10 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *d
 				msn_directconn_send_handshake(directconn);
 #endif
 		}
-		else if (slpmsg->flags == SLP_HF_NO_FLAG || slpmsg->flags == SLP_HF_WML2009_COMP ||
-			slpmsg->flags == SLP_HF_MSN_OBJ_DATA ||
-			slpmsg->flags == (SLP_HF_WML2009_COMP & SLP_HF_MSN_OBJ_DATA) ||
-			slpmsg->flags == SLP_HF_FILE_DATA)
+		else if (slpmsg->flags == P2P_NO_FLAG || slpmsg->flags == P2P_WML2009_COMP ||
+			slpmsg->flags == P2P_MSN_OBJ_DATA ||
+			slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+			slpmsg->flags == P2P_FILE_DATA)
 		{
 			/* Release all the messages and send the ACK */
 
