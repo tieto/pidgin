@@ -4856,6 +4856,13 @@ purple_escape_filename(const char *str)
 			}
 		}
 	}
+#ifdef _WIN32
+	/* File/Directory names in windows cannot end in periods/spaces.
+	 * http://msdn.microsoft.com/en-us/library/aa365247%28VS.85%29.aspx
+	 */
+	while (j > 0 && (buf[j - 1] == '.' || buf[j - 1] == ' '))
+		j--;
+#endif
 	buf[j] = '\0';
 
 	return buf;
