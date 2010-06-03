@@ -2053,6 +2053,45 @@ badentity(const char *c)
 	return FALSE;
 }
 
+static const char *
+process_link(GString *ret,
+		const char *start, const char *c,
+		int matchlen,
+		const char *urlprefix,
+		int inside_paren)
+{
+	char *url_buf, *tmpurlbuf;
+	const char *t;
+
+	for (t = c;; t++) {
+		if (!badchar(*t) && !badentity(t))
+			continue;
+
+		if (t - c == matchlen)
+			break;
+
+		if (*t == ',' && *(t + 1) != ' ') {
+			continue;
+		}
+
+		if (t > start && *(t - 1) == '.')
+			t--;
+		if (t > start && *(t - 1) == ')' && inside_paren > 0)
+			t--;
+
+		url_buf = g_strndup(c, t - c);
+		tmpurlbuf = purple_unescape_html(url_buf);
+		g_string_append_printf(ret, "<A HREF=\"%s%s\">%s</A>",
+				urlprefix,
+				tmpurlbuf, url_buf);
+		g_free(tmpurlbuf);
+		g_free(url_buf);
+		return t;
+	}
+
+	return c;
+}
+
 char *
 purple_markup_linkify(const char *text)
 {
@@ -2100,129 +2139,20 @@ purple_markup_linkify(const char *text)
 						break;
 				}
 			}
-		} else if ((*c=='h') && (!g_ascii_strncasecmp(c, "http://", 7) ||
-					(!g_ascii_strncasecmp(c, "https://", 8)))) {
-			t = c;
-			while (1) {
-				if (badchar(*t) || badentity(t)) {
-
-					if ((!g_ascii_strncasecmp(c, "http://", 7) && (t - c == 7)) ||
-						(!g_ascii_strncasecmp(c, "https://", 8) && (t - c == 8))) {
-						break;
-					}
-
-					if (*(t) == ',' && (*(t + 1) != ' ')) {
-						t++;
-						continue;
-					}
-
-					if (*(t - 1) == '.')
-						t--;
-					if ((*(t - 1) == ')' && (inside_paren > 0))) {
-						t--;
-					}
-
-					url_buf = g_strndup(c, t - c);
-					tmpurlbuf = purple_unescape_html(url_buf);
-					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							tmpurlbuf, url_buf);
-					g_free(url_buf);
-					g_free(tmpurlbuf);
-					c = t;
-					break;
-				}
-				t++;
-
-			}
-		} else if (!g_ascii_strncasecmp(c, "www.", 4) && (c == text || badchar(c[-1]) || badentity(c-1))) {
-			if (c[4] != '.') {
-				t = c;
-				while (1) {
-					if (badchar(*t) || badentity(t)) {
-						if (t - c == 4) {
-							break;
-						}
-
-						if (*(t) == ',' && (*(t + 1) != ' ')) {
-							t++;
-							continue;
-						}
-
-						if (*(t - 1) == '.')
-							t--;
-						if ((*(t - 1) == ')' && (inside_paren > 0))) {
-							t--;
-						}
-						url_buf = g_strndup(c, t - c);
-						tmpurlbuf = purple_unescape_html(url_buf);
-						g_string_append_printf(ret,
-								"<A HREF=\"http://%s\">%s</A>", tmpurlbuf,
-								url_buf);
-						g_free(url_buf);
-						g_free(tmpurlbuf);
-						c = t;
-						break;
-					}
-					t++;
-				}
-			}
-		} else if (!g_ascii_strncasecmp(c, "ftp://", 6) || !g_ascii_strncasecmp(c, "sftp://", 7)) {
-			t = c;
-			while (1) {
-				if (badchar(*t) || badentity(t)) {
-
-					if ((!g_ascii_strncasecmp(c, "ftp://", 6) && (t - c == 6)) ||
-						(!g_ascii_strncasecmp(c, "sftp://", 7) && (t - c == 7))) {
-						break;
-					}
-
-					if (*(t - 1) == '.')
-						t--;
-					if ((*(t - 1) == ')' && (inside_paren > 0))) {
-						t--;
-					}
-					url_buf = g_strndup(c, t - c);
-					tmpurlbuf = purple_unescape_html(url_buf);
-					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							tmpurlbuf, url_buf);
-					g_free(url_buf);
-					g_free(tmpurlbuf);
-					c = t;
-					break;
-				}
-				if (!t)
-					break;
-				t++;
-
-			}
-		} else if (!g_ascii_strncasecmp(c, "ftp.", 4) && (c == text || badchar(c[-1]) || badentity(c-1))) {
-			if (c[4] != '.') {
-				t = c;
-				while (1) {
-					if (badchar(*t) || badentity(t)) {
-						if (t - c == 4) {
-							break;
-						}
-						if (*(t - 1) == '.')
-							t--;
-						if ((*(t - 1) == ')' && (inside_paren > 0))) {
-							t--;
-						}
-						url_buf = g_strndup(c, t - c);
-						tmpurlbuf = purple_unescape_html(url_buf);
-						g_string_append_printf(ret,
-								"<A HREF=\"ftp://%s\">%s</A>", tmpurlbuf,
-								url_buf);
-						g_free(url_buf);
-						g_free(tmpurlbuf);
-						c = t;
-						break;
-					}
-					if (!t)
-						break;
-					t++;
-				}
-			}
+		} else if (!g_ascii_strncasecmp(c, "http://", 7)) {
+			c = process_link(ret, text, c, 7, "", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "https://", 8)) {
+			c = process_link(ret, text, c, 8, "", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "ftp://", 6)) {
+			c = process_link(ret, text, c, 6, "", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "sftp://", 7)) {
+			c = process_link(ret, text, c, 7, "", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "www.", 4) && c[4] != '.' && (c == text || badchar(c[-1]) || badentity(c-1))) {
+			c = process_link(ret, text, c, 4, "http://", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "ftp.", 4) && c[4] != '.' && (c == text || badchar(c[-1]) || badentity(c-1))) {
+			c = process_link(ret, text, c, 4, "ftp://", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "xmpp:", 5) && (c == text || badchar(c[-1]) || badentity(c-1))) {
+			c = process_link(ret, text, c, 5, "", inside_paren);
 		} else if (!g_ascii_strncasecmp(c, "mailto:", 7)) {
 			t = c;
 			while (1) {
@@ -2253,39 +2183,6 @@ purple_markup_linkify(const char *text)
 				}
 				if (!t)
 					break;
-				t++;
-
-			}
-		} else if ((*c=='x') && (!g_ascii_strncasecmp(c, "xmpp:", 5)) &&
-				   (c == text || badchar(c[-1]) || badentity(c-1))) {
-			t = c;
-			while (1) {
-				if (badchar(*t) || badentity(t)) {
-
-					if (t - c == 5) {
-						break;
-					}
-
-					if (*(t) == ',' && (*(t + 1) != ' ')) {
-						t++;
-						continue;
-					}
-
-					if (*(t - 1) == '.')
-						t--;
-					if ((*(t - 1) == ')' && (inside_paren > 0))) {
-						t--;
-					}
-
-					url_buf = g_strndup(c, t - c);
-					tmpurlbuf = purple_unescape_html(url_buf);
-					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							tmpurlbuf, url_buf);
-					g_free(url_buf);
-					g_free(tmpurlbuf);
-					c = t;
-					break;
-				}
 				t++;
 
 			}
@@ -4960,7 +4857,6 @@ purple_escape_filename(const char *str)
 			}
 		}
 	}
-
 	buf[j] = '\0';
 
 	return buf;
