@@ -1,7 +1,6 @@
 #ifndef MSN_P2P_H
 #define MSN_P2P_H
 
-#include "msg.h"
 
 #pragma pack(push,1)
 typedef struct {
