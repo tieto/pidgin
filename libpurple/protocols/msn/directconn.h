@@ -34,6 +34,7 @@ typedef struct _MsnDirectConn MsnDirectConn;
 #include "slp.h"
 #include "slplink.h"
 #include "slpmsg.h"
+#include "p2p.h"
 
 typedef enum
 {
