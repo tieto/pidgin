@@ -1,4 +1,6 @@
-#include "p2p->h"
+#include "internal.h"
+
+#include "p2p.h"
 
 MsnP2PHeader *
 msn_p2p_header_from_wire(MsnP2PHeader *wire)
@@ -25,7 +27,7 @@ msn_p2p_header_to_wire(MsnP2PHeader *header)
 {
 	MsnP2PHeader *wire;
 	
-	g_new(MsnP2PHeader, 1);
+	wire = g_new(MsnP2PHeader, 1);
 
 	wire->session_id = GUINT32_TO_LE(header->session_id);
 	wire->id         = GUINT32_TO_LE(header->id);
@@ -36,6 +38,8 @@ msn_p2p_header_to_wire(MsnP2PHeader *header)
 	wire->ack_id     = GUINT32_TO_LE(header->ack_id);
 	wire->ack_sub_id = GUINT32_TO_LE(header->ack_sub_id);
 	wire->ack_size   = GUINT64_TO_LE(header->ack_size);
+
+	return wire;
 
 }
 
