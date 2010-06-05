@@ -331,7 +331,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	msn_slplink_send_msg(slplink, msg);
 
 	if ((slpmsg->flags == P2P_MSN_OBJ_DATA || 
-	     slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+	     slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
 	     slpmsg->flags == P2P_FILE_DATA) &&
 		(slpmsg->slpcall != NULL))
 	{
@@ -377,7 +377,7 @@ msg_ack(MsnMessage *msg, void *data)
 	{
 		/* The whole message has been sent */
 		if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
-	        slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+	        slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
 	        slpmsg->flags == P2P_FILE_DATA) 
 		{
 			if (slpmsg->slpcall != NULL)
@@ -427,7 +427,7 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		msg->msnslp_header.ack_sub_id = slpmsg->ack_sub_id;
 	}
 	else if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
-	         slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+	         slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
 	         slpmsg->flags == P2P_FILE_DATA)
 	{
 		MsnSlpCall *slpcall;
@@ -593,7 +593,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *d
 			if (slpmsg->slpcall != NULL)
 			{
 				if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
-					slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+					slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
 					slpmsg->flags == P2P_FILE_DATA)
 				{
 					PurpleXfer *xfer = slpmsg->slpcall->xfer;
@@ -659,7 +659,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *d
 	}
 
 	if ((slpmsg->flags == P2P_MSN_OBJ_DATA ||
-		slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+		slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
 		slpmsg->flags == P2P_FILE_DATA) &&
 		(slpmsg->slpcall != NULL))
 	{
@@ -703,7 +703,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *d
 		}
 		else if (slpmsg->flags == P2P_NO_FLAG || slpmsg->flags == P2P_WML2009_COMP ||
 			slpmsg->flags == P2P_MSN_OBJ_DATA ||
-			slpmsg->flags == (P2P_WML2009_COMP & P2P_MSN_OBJ_DATA) ||
+			slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
 			slpmsg->flags == P2P_FILE_DATA)
 		{
 			/* Release all the messages and send the ACK */
