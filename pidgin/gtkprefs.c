@@ -196,13 +196,12 @@ dropdown_set(GObject *w, const char *key)
 	int int_value;
 	gboolean bool_value;
 	PurplePrefType type;
-
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkTreeIter iter;
 	GtkTreeModel *tree_model;
 
 	tree_model = gtk_combo_box_get_model(GTK_COMBO_BOX(w));
-	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(w), &iter);
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(w), &iter))
+		return;
 
 	type = GPOINTER_TO_INT(g_object_get_data(w, "type"));
 
@@ -227,24 +226,6 @@ dropdown_set(GObject *w, const char *key)
 
 		purple_prefs_set_bool(key, bool_value);
 	}
-#else
-	type = GPOINTER_TO_INT(g_object_get_data(w, "type"));
-
-	if (type == PURPLE_PREF_INT) {
-		int_value = GPOINTER_TO_INT(g_object_get_data(w, "value"));
-
-		purple_prefs_set_int(key, int_value);
-	}
-	else if (type == PURPLE_PREF_STRING) {
-		str_value = (const char *)g_object_get_data(w, "value");
-
-		purple_prefs_set_string(key, str_value);
-	}
-	else if (type == PURPLE_PREF_BOOLEAN) {
-		bool_value = (gboolean)GPOINTER_TO_INT(g_object_get_data(w, "value"));
-		purple_prefs_set_bool(key, bool_value);
-	}
-#endif
 }
 
 GtkWidget *
@@ -260,7 +241,6 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	int         int_value  = 0;
 	const char *str_value  = NULL;
 	gboolean    bool_value = FALSE;
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkListStore *store;
 	GtkTreeIter iter;
 	GtkTreeIter active;
@@ -332,62 +312,6 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 
 	g_signal_connect(G_OBJECT(dropdown), "changed",
 	                 G_CALLBACK(dropdown_set), (char *)key);
-
-#else
-	GtkWidget  *opt, *menu;
-	int         o = 0;
-
-	g_return_val_if_fail(menuitems != NULL, NULL);
-
-	dropdown = gtk_option_menu_new();
-	menu = gtk_menu_new();
-
-	if (type == PURPLE_PREF_INT)
-		stored_int = purple_prefs_get_int(key);
-	else if (type == PURPLE_PREF_STRING)
-		stored_str = purple_prefs_get_string(key);
-	else if (type == PURPLE_PREF_BOOLEAN)
-		stored_bool = purple_prefs_get_bool(key);
-
-	while (menuitems != NULL && (text = (char *)menuitems->data) != NULL) {
-		menuitems = g_list_next(menuitems);
-		g_return_val_if_fail(menuitems != NULL, NULL);
-
-		opt = gtk_menu_item_new_with_label(text);
-
-		g_object_set_data(G_OBJECT(opt), "type", GINT_TO_POINTER(type));
-		g_object_set_data(G_OBJECT(opt), "value", menuitems->data);
-
-		if (type == PURPLE_PREF_INT)
-			int_value = GPOINTER_TO_INT(menuitems->data);
-		else if (type == PURPLE_PREF_STRING)
-			str_value = (const char *)menuitems->data;
-		else if (type == PURPLE_PREF_BOOLEAN)
-			bool_value = (gboolean)GPOINTER_TO_INT(menuitems->data);
-
-		g_signal_connect(G_OBJECT(opt), "activate",
-						 G_CALLBACK(dropdown_set), (char *)key);
-
-		gtk_widget_show(opt);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
-
-		if ((type == PURPLE_PREF_INT && stored_int == int_value) ||
-			(type == PURPLE_PREF_STRING && stored_str != NULL &&
-			 !strcmp(stored_str, str_value)) ||
-			(type == PURPLE_PREF_BOOLEAN &&
-			 (stored_bool == bool_value))) {
-
-			gtk_menu_set_active(GTK_MENU(menu), o);
-		}
-
-		menuitems = g_list_next(menuitems);
-
-		o++;
-	}
-
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
-
-#endif
 
 	pidgin_add_widget_to_vbox(GTK_BOX(box), title, NULL, dropdown, FALSE, &label);
 
