@@ -6,11 +6,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Urdu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2007-11-14 14:00+0530\n"
 "Last-Translator: RKVS Raman <raman@cdacbangalore.in>\n"
 "Language-Team: C-DAC,Gist,Urdu Team / BharateeyaOO.o <info.gist@cdac.in / "
 "bharateeyaoo@ncb.ernet.in>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1413,6 +1414,7 @@ msgstr "اسٹیٹس خارج كیجیے"
 msgid "Saved Statuses"
 msgstr "حالات محفوظ کئے گئے"
 
+#. title
 msgid "Title"
 msgstr "عنوان"
 
@@ -1968,7 +1970,6 @@ msgstr "خامی دوبارہ حل كررہا ہے%s: %d"
 msgid "Thread creation failure: %s"
 msgstr "تھریڈ كی تخلیق نا كامیاب: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "نا معلوم وجہ"
 
@@ -3251,6 +3252,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "ابتدائی نام"
 
@@ -4018,6 +4022,7 @@ msgstr "  ریاست"
 msgid "Postal Code"
 msgstr "پوسٹل کوڈ"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "ملک"
 
@@ -4032,8 +4037,6 @@ msgstr "تنظیم کا نام"
 msgid "Organization Unit"
 msgstr "تنظیم یونٹ"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "جاب عنوان"
 
@@ -4041,6 +4044,7 @@ msgid "Role"
 msgstr "رول"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "سالگرہ"
 
@@ -5690,8 +5694,8 @@ msgstr "موبائل کو بھیجو"
 #, fuzzy
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
-"MSNکےلئےSSLتعاون کی ضرورت ہے۔براہ کرم تعاون دیا گیا SSLکتب خانہ انسٹال "
-"کریں۔مزید معلومات کے لئے دیکھیے http://Pidgin.sf.net/faq-ssl.php "
+"MSNکےلئےSSLتعاون کی ضرورت ہے۔براہ کرم تعاون دیا گیا SSLکتب خانہ انسٹال کریں۔"
+"مزید معلومات کے لئے دیکھیے http://Pidgin.sf.net/faq-ssl.php "
 
 #, fuzzy, c-format
 msgid ""
@@ -5897,6 +5901,10 @@ msgstr "HTTPطریقہ استعمال کرو"
 
 msgid "Show custom smileys"
 msgstr "كسٹم اسمائلیز دكھائیں"
+
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "رابطہ تخلیق میں نااہل"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr "نج:صارف كی توجہ دلانےكےلیے اسےنج كریں"
@@ -6134,7 +6142,11 @@ msgstr "پروفائل"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -6227,7 +6239,7 @@ msgstr "داخل کی گئی سیکیور IDکلید غیر معتبر ہے۔"
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 #, fuzzy
 msgid "Nick Name"
 msgstr "عرفیتی نام"
@@ -6277,7 +6289,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "حفاظتی قابل کی گئی"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "خفیہ لفظ داخل کرو"
@@ -6311,6 +6323,11 @@ msgid "Status Message"
 msgstr "میسیج بھیجو"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "میسیج بھیجو"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "درمیانی نام"
 
@@ -6330,6 +6347,19 @@ msgstr "کنیکٹ کررہا ہے"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "آپ  کو%s: (%s)کے ذریعے ٹھوکر ماری گئی۔"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "خراب ٹکٹ"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "کمرہ:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7138,6 +7168,68 @@ msgstr "كنیكٹ نہیں ہوسكا"
 msgid "Invalid chat room name"
 msgstr "غیر معتبر کمرہ نام"
 
+msgid "Invalid error"
+msgstr "غیر معتبر خامی"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "فائل نہیں بھیج سکتا"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "ڈائریکٹری  بھیج نہیں سکتا۔"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "پیام بھیجنے میں ناقابل۔"
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "آف لائن"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "پیام بھیجنے میں ناقابل (%s)۔"
+
+# Data is assumed to be the destination sn
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "پیام بھیجنے میں نا قابل:   %s "
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr " %sکو پیام بھیجنے میں ناقابل:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr " %sکو پیام بھیجنے میں ناقابل:"
+
 msgid "Thinking"
 msgstr ""
 
@@ -7305,120 +7397,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "فائل%s%sہے، جو %s كی سب سے زیادہ سائز سے بڑی ہے۔"
-
-msgid "Invalid error"
-msgstr "غیر معتبر خامی"
-
-msgid "Invalid SNAC"
-msgstr "غیر معتبر SNAC"
-
-msgid "Rate to host"
-msgstr "ہوسٹ کے لئے قیمت"
-
-msgid "Rate to client"
-msgstr "کلائنٹ کے لئے قیمت"
-
-msgid "Service unavailable"
-msgstr "سرو س غیر دستیاب "
-
-msgid "Service not defined"
-msgstr "سروس غیر متعینہ"
-
-msgid "Obsolete SNAC"
-msgstr "یقینی  SNAC"
-
-msgid "Not supported by host"
-msgstr "ہوسٹ کے ذریعے غیر معاون"
-
-msgid "Not supported by client"
-msgstr "کلائنٹ کے ذریعے غیر معاون"
-
-msgid "Refused by client"
-msgstr "کلائنٹ  کے ذریعے رد کیا گیا"
-
-msgid "Reply too big"
-msgstr "جوابی کاروائی بہت بڑی"
-
-msgid "Responses lost"
-msgstr "رد عمل کھو گئے"
-
-msgid "Request denied"
-msgstr "درخواست انکار کی گئی"
-
-msgid "Busted SNAC payload"
-msgstr "بسٹیڈ  SNACپے لوڈ"
-
-msgid "Insufficient rights"
-msgstr "ناکافی حقوق"
-
-msgid "In local permit/deny"
-msgstr "لوکل میں اجازت دیں / انکار کریں"
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "صارف عارضی طورپر غیر دستیاب"
-
-msgid "No match"
-msgstr "کوئی مماثلت نہیں"
-
-msgid "List overflow"
-msgstr "فہرست اوور فلو"
-
-msgid "Request ambiguous"
-msgstr "درخواست غیر واضح"
-
-msgid "Queue full"
-msgstr "قطار فل"
-
-msgid "Not while on AOL"
-msgstr "AOLکے دوران نہیں"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "فائل نہیں بھیج سکتا"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "ڈائریکٹری  بھیج نہیں سکتا۔"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "پیام بھیجنے میں ناقابل۔"
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "آف لائن"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7777,29 +7755,9 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] " آپ نے نا معلوم وجہ کےلئے %2$sسے%1$hu پیام مس کردیا ۔"
 msgstr[1] " آپ نے نا معلوم وجہ کےلئے %2$sسے%1$hu پیامات مس کردیئے ۔"
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "پیام بھیجنے میں ناقابل (%s)۔"
-
-# Data is assumed to be the destination sn
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "پیام بھیجنے میں نا قابل:   %s "
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr " %sکو پیام بھیجنے میں ناقابل:"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr " %sکو پیام بھیجنے میں ناقابل:"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "صارف معلومات دستیاب  نہیں: %s"
-
-msgid "Unknown reason."
-msgstr "نامعلوم وجہ۔"
 
 msgid "Online Since"
 msgstr "آن لائن جب تک "
@@ -8085,8 +8043,8 @@ msgid ""
 "Because this reveals your IP address, it may be considered a security risk.  "
 "Do you wish to continue?"
 msgstr ""
-"چونكہ یہ آپ كا IPایڈریس افشاں كردیتاہے،اس سےآپ كی سیكیورٹی كو خطرہ "
-"ہوسكتاہے۔كیاآپ جاری ركھناچاہتےہیں؟"
+"چونكہ یہ آپ كا IPایڈریس افشاں كردیتاہے،اس سےآپ كی سیكیورٹی كو خطرہ ہوسكتاہے۔"
+"كیاآپ جاری ركھناچاہتےہیں؟"
 
 #, fuzzy
 msgid "C_onnect"
@@ -8238,6 +8196,75 @@ msgstr ""
 "اس کو دو کمپیوٹر کے درمیان براہ راست کنیکشن کی ضرورت ہے اور  IMامیجیز کے لئے "
 "ضروری ہے۔چونکہ آپ کا IP ایڈریس ظاہر کیا جائے گا، یہ ذاتی خطرے کے طور پر فرض "
 "کیا جا سکتا ہے۔"
+
+msgid "Invalid SNAC"
+msgstr "غیر معتبر SNAC"
+
+msgid "Rate to host"
+msgstr "ہوسٹ کے لئے قیمت"
+
+msgid "Rate to client"
+msgstr "کلائنٹ کے لئے قیمت"
+
+msgid "Service unavailable"
+msgstr "سرو س غیر دستیاب "
+
+msgid "Service not defined"
+msgstr "سروس غیر متعینہ"
+
+msgid "Obsolete SNAC"
+msgstr "یقینی  SNAC"
+
+msgid "Not supported by host"
+msgstr "ہوسٹ کے ذریعے غیر معاون"
+
+msgid "Not supported by client"
+msgstr "کلائنٹ کے ذریعے غیر معاون"
+
+msgid "Refused by client"
+msgstr "کلائنٹ  کے ذریعے رد کیا گیا"
+
+msgid "Reply too big"
+msgstr "جوابی کاروائی بہت بڑی"
+
+msgid "Responses lost"
+msgstr "رد عمل کھو گئے"
+
+msgid "Request denied"
+msgstr "درخواست انکار کی گئی"
+
+msgid "Busted SNAC payload"
+msgstr "بسٹیڈ  SNACپے لوڈ"
+
+msgid "Insufficient rights"
+msgstr "ناکافی حقوق"
+
+msgid "In local permit/deny"
+msgstr "لوکل میں اجازت دیں / انکار کریں"
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "صارف عارضی طورپر غیر دستیاب"
+
+msgid "No match"
+msgstr "کوئی مماثلت نہیں"
+
+msgid "List overflow"
+msgstr "فہرست اوور فلو"
+
+msgid "Request ambiguous"
+msgstr "درخواست غیر واضح"
+
+msgid "Queue full"
+msgstr "قطار فل"
+
+msgid "Not while on AOL"
+msgstr "AOLکے دوران نہیں"
 
 msgid "Aquarius"
 msgstr "برج دلو"
@@ -10984,8 +11011,8 @@ msgid ""
 "zci &lt;class&gt; &lt;instance&gt;: Send a message to &lt;<i>class</i>,"
 "<i>instance</i>,*&gt;"
 msgstr ""
-"zci &یہ؛کلاس&g؛ &lt؛مثال&gt؛:کو پیام بھیجو   &یہ؛<i>کلاس</i>،<i>مثال</"
-"i>،*&gt;"
+"zci &یہ؛کلاس&g؛ &lt؛مثال&gt؛:کو پیام بھیجو   &یہ؛<i>کلاس</i>،<i>مثال</i>،"
+"*&gt;"
 
 msgid ""
 "zcir &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;"
@@ -12850,8 +12877,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 
 #, c-format
@@ -13421,14 +13448,14 @@ msgstr "كیا آپ واقعی %s for %sپرجھپٹنا خارج كرناچاہ
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr "كیا آپ واقعی %s for %sپرجھپٹنا خارج كرناچاہتےہیں؟"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 
 #, fuzzy
@@ -15869,11 +15896,13 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
@@ -15882,79 +15911,92 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "ـڈیفالٹس قبول كریں"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ رن ٹائم ورجن"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "مقام"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr ""
 
-#. Components Page
+#. Installer Subsection Text
 #, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "ا نٹرنیٹ میسینجر"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "پورٹ"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "شروع کرو"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15963,29 +16005,30 @@ msgstr ""
 msgid "The installer is already running."
 msgstr "یہ گفتگو نام پہلے سے استعمال میں"
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. URL Handler section
+#. Installer Subsection Text
 #, fuzzy
 msgid "URI Handlers"
 msgstr "ہینڈل:"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Unknown reason."
+#~ msgstr "نامعلوم وجہ۔"
 
 #, fuzzy
 #~ msgid "Artist"

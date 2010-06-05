@@ -20,7 +20,7 @@
  *
  */
 
-/* libaim is the AIM protocol plugin. It is linked against liboscarcommon,
+/* libaim is the AIM protocol plugin. It is linked against liboscar,
  * which contains all the shared implementation code with libicq
  */
 

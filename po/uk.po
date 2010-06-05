@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-29 20:59-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2010-05-24 22:50+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
@@ -15252,7 +15252,7 @@ msgstr "Основні файли Pidgin та dll"
 
 #. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
-msgstr "Створити запис у меню \"Пуск\" для Pidgin"
+msgstr "Створити запис у меню 'Пуск' для Pidgin"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
@@ -15274,7 +15274,7 @@ msgid ""
 msgstr ""
 "Помилка звантаження the GTK+ Runtime ($R2).$\\rЦе необхідно для роботи "
 "Pidgin; якщо спроби будуть марними, можливо, необхідно буде скористатися "
-"встановлювачем \"Offline Installer\" з http://pidgin.im/download/windows/ ."
+"встановлювачем 'Offline Installer' з http://pidgin.im/download/windows/ ."
 
 #. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
@@ -15334,7 +15334,7 @@ msgstr "Підтримка перевірки правопису"
 
 #. Installer Subsection Text
 msgid "Start Menu"
-msgstr "Меню \"Пуск\""
+msgstr "Меню 'Пуск'"
 
 #. Installer Subsection Detailed Description
 msgid ""

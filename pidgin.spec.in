@@ -241,7 +241,8 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_with_mono:--enable-mono} \
                                     %{?_with_sasl:--enable-cyrus-sasl} \
                                     %{?_without_tcl:--disable-tcl} \
-                                    %{?_without_text:--disable-consoleui}
+                                    %{?_without_text:--disable-consoleui} \
+                                    %{?_with_trayiconcompat:--enable-trayicon-compat}
 
 make %{?_smp_mflags} LIBTOOL=/usr/bin/libtool
 
@@ -470,6 +471,10 @@ fi
 %endif
 
 %changelog
+* Wed Jun 02 2010 Stu Tomlinson <stu@nosnilmot.com>
+- add an option to build RPMs using --enable-trayicon-compat
+  (--with trayiconcompat)
+
 * Thu May 13 2010 Stu Tomlinson <stu@nosnilmot.com>
 - Include all libpurple headers in libpurple-devel
 

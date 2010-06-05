@@ -10,10 +10,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2010-01-13 01:15+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1318,6 +1319,7 @@ msgstr "删除状态"
 msgid "Saved Statuses"
 msgstr "已存状态"
 
+#. title
 msgid "Title"
 msgstr "标题"
 
@@ -1862,7 +1864,6 @@ msgstr "转换 %s 为微代码时出错：%d"
 msgid "Thread creation failure: %s"
 msgstr "创建线程失败：%s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "未知原因"
 
@@ -3077,6 +3078,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "名"
 
@@ -3784,6 +3788,7 @@ msgstr "区域"
 msgid "Postal Code"
 msgstr "邮政编码"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "国家"
 
@@ -3798,8 +3803,6 @@ msgstr "组织名称"
 msgid "Organization Unit"
 msgstr "组织单元"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "职称"
 
@@ -3807,6 +3810,7 @@ msgid "Role"
 msgstr "职务"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "生日"
 
@@ -5562,6 +5566,10 @@ msgstr "HTTP 方式服务器"
 msgid "Show custom smileys"
 msgstr "显示自定义如下："
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "无法创建连接"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge：向用户发送闪屏振动，以便引起他的注意"
 
@@ -5768,7 +5776,11 @@ msgstr "个人资料"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "尚未检索到您的个人资料信息，请稍后重试。"
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -5842,7 +5854,7 @@ msgstr "您输入的 PIN 长度无效 [7-10]。"
 msgid "MXit Login Name"
 msgstr "MXit 登录名称"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "昵称"
 
@@ -5887,7 +5899,7 @@ msgstr "您没有输入安全码"
 msgid "Security Code"
 msgstr "安全码"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "输入安全码"
 
@@ -5913,6 +5925,11 @@ msgstr "正在载入菜单..."
 msgid "Status Message"
 msgstr "状态消息"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "收到的消息"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "隐藏号码"
 
@@ -5929,6 +5946,19 @@ msgstr "通过 HTTP 连接"
 
 msgid "Enable splash-screen popup"
 msgstr "启用飞溅屏幕"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "您已被踢出 (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "无效的票证"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "聊天室(_R)："
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6671,6 +6701,63 @@ msgstr "无法进入聊天室"
 msgid "Invalid chat room name"
 msgstr "无效的聊天室名称"
 
+msgid "Invalid error"
+msgstr "无效错误"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "由于家长控制，无法接收聊天请求"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "接受许可协议前不能发送短信息"
+
+msgid "Cannot send SMS"
+msgstr "无法发送短信息"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "无法向此国家发送短信息"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "无法向未知国家发送短信息"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+msgid "Unable to receive offline messages"
+msgstr "无法接收离线消息"
+
+msgid "Offline message store full"
+msgstr "完整储存离线消息"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "无法发送消息：%s (%s)。"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "无法发送消息：%s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "无法给 %s 发送消息：%s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "无法给 %s 发送消息：%s"
+
 msgid "Thinking"
 msgstr ""
 
@@ -6834,116 +6921,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
-
-msgid "Invalid error"
-msgstr "无效错误"
-
-msgid "Invalid SNAC"
-msgstr "无效 SNAC"
-
-msgid "Rate to host"
-msgstr "主机等级"
-
-msgid "Rate to client"
-msgstr "客户等级"
-
-msgid "Service unavailable"
-msgstr "服务不可用"
-
-msgid "Service not defined"
-msgstr "服务未定义"
-
-msgid "Obsolete SNAC"
-msgstr "废旧 SNAC"
-
-msgid "Not supported by host"
-msgstr "主机不支持"
-
-msgid "Not supported by client"
-msgstr "客户不支持"
-
-msgid "Refused by client"
-msgstr "客户拒绝"
-
-msgid "Reply too big"
-msgstr "回复太大"
-
-msgid "Responses lost"
-msgstr "响应丢失"
-
-msgid "Request denied"
-msgstr "请求被禁止"
-
-msgid "Busted SNAC payload"
-msgstr "SNAC 有效负载激增"
-
-msgid "Insufficient rights"
-msgstr "权限不够"
-
-msgid "In local permit/deny"
-msgstr "本地许可/禁止"
-
-msgid "Warning level too high (sender)"
-msgstr "发送者警告级别过高"
-
-msgid "Warning level too high (receiver)"
-msgstr "接收者警告级别过高"
-
-msgid "User temporarily unavailable"
-msgstr "用户临时不可用"
-
-msgid "No match"
-msgstr "无匹配"
-
-msgid "List overflow"
-msgstr "列表溢出"
-
-msgid "Request ambiguous"
-msgstr "请求含糊"
-
-msgid "Queue full"
-msgstr "队列满"
-
-msgid "Not while on AOL"
-msgstr "不位于 AOL 上"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "由于家长控制，无法接收聊天请求"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "接受许可协议前不能发送短信息"
-
-msgid "Cannot send SMS"
-msgstr "无法发送短信息"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "无法向此国家发送短信息"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "无法向未知国家发送短信息"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-msgid "Unable to receive offline messages"
-msgstr "无法接收离线消息"
-
-msgid "Offline message store full"
-msgstr "完整储存离线消息"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7279,27 +7256,8 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "无法发送消息：%s (%s)。"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "无法发送消息：%s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "无法给 %s 发送消息：%s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "无法给 %s 发送消息：%s"
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "用户信息不可用：%s"
-
-msgid "Unknown reason."
-msgstr "未知原因。"
 
 msgid "Online Since"
 msgstr "上线时间"
@@ -7690,6 +7648,75 @@ msgid ""
 msgstr ""
 "现在需要在两台计算机之间建立直接连接，这对于即时传送图像是必要的。但是这将暴"
 "露您的 IP 地址，所以可能造成潜在的隐私风险。"
+
+msgid "Invalid SNAC"
+msgstr "无效 SNAC"
+
+msgid "Rate to host"
+msgstr "主机等级"
+
+msgid "Rate to client"
+msgstr "客户等级"
+
+msgid "Service unavailable"
+msgstr "服务不可用"
+
+msgid "Service not defined"
+msgstr "服务未定义"
+
+msgid "Obsolete SNAC"
+msgstr "废旧 SNAC"
+
+msgid "Not supported by host"
+msgstr "主机不支持"
+
+msgid "Not supported by client"
+msgstr "客户不支持"
+
+msgid "Refused by client"
+msgstr "客户拒绝"
+
+msgid "Reply too big"
+msgstr "回复太大"
+
+msgid "Responses lost"
+msgstr "响应丢失"
+
+msgid "Request denied"
+msgstr "请求被禁止"
+
+msgid "Busted SNAC payload"
+msgstr "SNAC 有效负载激增"
+
+msgid "Insufficient rights"
+msgstr "权限不够"
+
+msgid "In local permit/deny"
+msgstr "本地许可/禁止"
+
+msgid "Warning level too high (sender)"
+msgstr "发送者警告级别过高"
+
+msgid "Warning level too high (receiver)"
+msgstr "接收者警告级别过高"
+
+msgid "User temporarily unavailable"
+msgstr "用户临时不可用"
+
+msgid "No match"
+msgstr "无匹配"
+
+msgid "List overflow"
+msgstr "列表溢出"
+
+msgid "Request ambiguous"
+msgstr "请求含糊"
+
+msgid "Queue full"
+msgstr "队列满"
+
+msgid "Not while on AOL"
+msgstr "不位于 AOL 上"
 
 msgid "Aquarius"
 msgstr "水瓶座"
@@ -11983,8 +12010,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s 是一个基于 libpurple 的图形化模块消息客户端，支持同时连接到 AIM、MSN、"
 "Yahoo!、XMPP、ICQ、IRC、SILC、SIP/SIMPLE、Novell GroupWise、Lotus Sametime、"
@@ -12510,14 +12537,14 @@ msgstr "您真的想要永久删除自 %2$s 起与 %1$s 的聊天记录吗？"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr "您真的想要永久删除自 %2$s 起在 %1$s 的对话聊天记录吗？"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "您真的想要永久删除自 %s 起的系统日志吗？"
 
 msgid "Delete Log?"
@@ -14713,11 +14740,13 @@ msgstr "发送和接受原始 XMPP 节。"
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "此插件用于调试 XMPP 服务器或客户端。"
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr "$(^Name) 以 GPL 许可发布。在此提供此许可仅为参考。$_CLICK"
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "Pidgin 所用的多平台 GUI 工具包"
 
@@ -14726,76 +14755,89 @@ msgid ""
 "again."
 msgstr "Pidgin 的实例正在运行中。请退出 Pidgin 然后再试一次。"
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Pidgin 核心文件和 DLLs"
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr "在开始菜单中创建 Pidgin 的快捷方式"
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "在桌面上创建 Pidgin 的快捷方式"
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Desktop"
 msgstr "桌面"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ 运行时刻环境(必需)"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "位置"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "下一步 >"
 
-#. Components Page
+#. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Pidgin 即时通讯程序(必需)"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Shortcuts"
 msgstr "快捷方式"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr "启动 Pidgin 的快捷方式"
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr "拼写检查支持"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "启动"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "拼写检查支持。(安装需要连接到 Internet)"
@@ -14803,28 +14845,29 @@ msgstr "拼写检查支持。(安装需要连接到 Internet)"
 msgid "The installer is already running."
 msgstr "安装程序已经运行。"
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr "卸载程序找不到 Pidgin 的注册表项目。$\\r可能是另外的用户安装了此程序。"
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
 msgstr ""
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr "浏览 Pidgin 网页"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "您没有权限卸载此程序。"
+
+#~ msgid "Unknown reason."
+#~ msgstr "未知原因。"
 
 #~ msgid "Artist"
 #~ msgstr "美工"
