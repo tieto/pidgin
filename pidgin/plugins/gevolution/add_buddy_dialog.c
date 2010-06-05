@@ -314,13 +314,11 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 		}
 		else
 		{
-			add_ims(dialog, contact, name, aims,    "prpl-oscar");
 			add_ims(dialog, contact, name, aims,    "prpl-aim");
 			add_ims(dialog, contact, name, jabbers, "prpl-jabber");
 			add_ims(dialog, contact, name, yahoos,  "prpl-yahoo");
 			add_ims(dialog, contact, name, msns,    "prpl-msn");
 			add_ims(dialog, contact, name, icqs,    "prpl-icq");
-			add_ims(dialog, contact, name, icqs,    "prpl-oscar");
 			add_ims(dialog, contact, name, novells, "prpl-novell");
 		}
 	}
@@ -399,12 +397,10 @@ search_changed_cb(GtkEntry *entry, GevoAddBuddyDialog *dialog)
 		else
 		{
 			add_ims(dialog, contact, name, aims,    "prpl-aim");
-			add_ims(dialog, contact, name, aims,    "prpl-oscar");
 			add_ims(dialog, contact, name, jabbers, "prpl-jabber");
 			add_ims(dialog, contact, name, yahoos,  "prpl-yahoo");
 			add_ims(dialog, contact, name, msns,    "prpl-msn");
 			add_ims(dialog, contact, name, icqs,    "prpl-icq");
-			add_ims(dialog, contact, name, icqs,    "prpl-oscar");
 			add_ims(dialog, contact, name, novells, "prpl-novell");
 		}
 	}
@@ -550,19 +546,11 @@ gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 	gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->addrbooks_combo), 0);
 
 	/* Group box */
-	hbox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new(_("Group:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
 	dialog->group_combo =
-		pidgin_text_combo_box_entry_new(NULL, gevo_get_groups());
-	gtk_box_pack_start(GTK_BOX(hbox), dialog->group_combo, TRUE, TRUE, 0);
-	gtk_widget_show(dialog->group_combo);
+		pidgin_text_combo_box_entry_new(group, gevo_get_groups());
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Group:"), NULL,
+							  dialog->group_combo, TRUE, NULL);
+	gtk_widget_show_all(dialog->group_combo);
 
 	/* Cool. Now we only have a little left... */
 

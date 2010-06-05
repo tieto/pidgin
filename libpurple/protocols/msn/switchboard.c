@@ -87,8 +87,17 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 		purple_timeout_remove(swboard->reconn_timeout_h);
 
 	/* If it linked us is because its looking for trouble */
-	while (swboard->slplinks != NULL)
-		msn_slplink_destroy(swboard->slplinks->data);
+	while (swboard->slplinks != NULL) {
+		MsnSlpLink *slplink = swboard->slplinks->data;
+
+		/* Destroy only those slplinks which use the switchboard */
+		if (slplink->dc == NULL)
+			msn_slplink_destroy(slplink);
+		else {
+			swboard->slplinks = g_list_remove(swboard->slplinks, slplink);
+			slplink->swboard = NULL;
+		}
+	}
 
 	/* Destroy the message queue */
 	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL)
@@ -937,7 +946,7 @@ msn_switchboard_show_ink(MsnSwitchBoard *swboard, const char *passport,
 	}
 
 	imgid = purple_imgstore_add_with_id(image_data, image_len, NULL);
-	image_msg = g_strdup_printf("<IMG ID='%d'/>", imgid);
+	image_msg = g_strdup_printf("<IMG ID='%d'>", imgid);
 
 	if (swboard->current_users > 1 ||
 		((swboard->conv != NULL) &&

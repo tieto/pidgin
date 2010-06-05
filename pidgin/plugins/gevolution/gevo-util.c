@@ -99,23 +99,7 @@ gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy)
 
 	protocol_id = purple_account_get_protocol_id(account);
 
-	if (!strcmp(protocol_id, "prpl-oscar"))
-	{
-		PurpleConnection *gc;
-		PurplePluginProtocolInfo *prpl_info;
-
-		gc = purple_account_get_connection(account);
-
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-		if (!strcmp("aim", prpl_info->list_icon(account, buddy)))
-		{
-			protocol_field = E_CONTACT_IM_AIM;
-		}
-		else
-			protocol_field = E_CONTACT_IM_ICQ;
-	}
-	else if (!strcmp(protocol_id, "prpl-aim"))
+	if (!strcmp(protocol_id, "prpl-aim"))
 		protocol_field = E_CONTACT_IM_AIM;
 	else if (!strcmp(protocol_id, "prpl-icq"))
 		protocol_field = E_CONTACT_IM_ICQ;

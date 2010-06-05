@@ -45,35 +45,6 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
                                JabberIqType type, const char *id,
                                xmlnode *packet, gpointer data);
 
-gboolean
-jabber_process_starttls(JabberStream *js, xmlnode *packet)
-{
-	PurpleAccount *account;
-	xmlnode *starttls;
-
-	account = purple_connection_get_account(js->gc);
-
-	if((starttls = xmlnode_get_child(packet, "starttls"))) {
-		if(purple_ssl_is_supported()) {
-			jabber_send_raw(js,
-					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
-			return TRUE;
-		} else if(xmlnode_get_child(starttls, "required")) {
-			purple_connection_error_reason(js->gc,
-				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("Server requires TLS/SSL, but no TLS/SSL support was found."));
-			return TRUE;
-		} else if(purple_account_get_bool(account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS)) {
-			purple_connection_error_reason(js->gc,
-				 PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("You require encryption, but no TLS/SSL support was found."));
-			return TRUE;
-		}
-	}
-
-	return FALSE;
-}
-
 static void finish_plaintext_authentication(JabberStream *js)
 {
 	JabberIq *iq;
@@ -187,7 +158,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 
 		if (mech_name && *mech_name)
 			mechanisms = g_slist_prepend(mechanisms, mech_name);
-		else if (mech_name)
+		else
 			g_free(mech_name);
 
 	}
@@ -206,6 +177,11 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 			js->auth_mech = possible;
 			break;
 		}
+	}
+
+	while (mechanisms) {
+		g_free(mechanisms->data);
+		mechanisms = g_slist_delete_link(mechanisms, mechanisms);
 	}
 
 	if (js->auth_mech == NULL) {
@@ -287,7 +263,7 @@ static void auth_old_cb(JabberStream *js, const char *from,
 
 			x = xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
-			hash = jabber_calculate_data_sha1sum(s, strlen(s));
+			hash = jabber_calculate_data_hash(s, strlen(s), "sha1");
 			xmlnode_insert_data(x, hash, -1);
 			g_free(hash);
 			g_free(s);

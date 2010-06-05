@@ -71,20 +71,25 @@ packages:
 	gpg --verify pidgin-$(PACKAGE_VERSION).tar.gz.asc pidgin-$(PACKAGE_VERSION).tar.gz
 	gpg --verify pidgin-$(PACKAGE_VERSION).tar.bz2.asc pidgin-$(PACKAGE_VERSION).tar.bz2
 
+if INSTALL_I18N
+PO_DIR=po
+DESKTOP_FILE=pidgin.desktop
+
 if ENABLE_GTK
 appsdir = $(datadir)/applications
 apps_in_files = pidgin.desktop.in
 apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
+endif #ENABLE_GTK
+
+endif #INSTALL_I18N
+
+if ENABLE_GTK
 GTK_DIR=pidgin
 endif
 
 if ENABLE_GNT
 GNT_DIR=finch
-endif
-
-if INSTALL_I18N
-PO_DIR=po
 endif
 
 # This is phony, so that we always try to rebuild it.  If it succeeds
@@ -131,7 +136,7 @@ if HAVE_DOXYGEN
 if HAVE_XSLTPROC
 	@echo "Generating devhelp index..."
 	@xsltproc $(top_srcdir)/doxy2devhelp.xsl doc/xml/index.xml > doc/html/pidgin.devhelp
-	@echo "(Symlink doc/html to ~/.local/share/gtk-doc/html/pidgin to make devhelp see the documentation)"
+	@echo "(Symlink $$(pwd)/doc/html to ~/.local/share/gtk-doc/html/pidgin to make devhelp see the documentation)"
 else
 	@echo "Not generating devhelp index: xsltproc was not found by configure"
 endif
@@ -146,5 +151,5 @@ endif
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Purple.3pm
 
-DISTCLEANFILES= pidgin.desktop libpurple/gconf/purple.schemas intltool-extract \
+DISTCLEANFILES= $(DESKTOP_FILE) libpurple/gconf/purple.schemas intltool-extract \
 			intltool-merge intltool-update

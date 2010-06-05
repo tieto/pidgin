@@ -9,6 +9,7 @@ typedef struct group *Purple__Group;
 #include <glib.h>
 #ifdef _WIN32
 #undef pipe
+#undef STRINGIFY
 #endif
 #include <EXTERN.h>
 #include <perl.h>

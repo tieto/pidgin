@@ -586,6 +586,7 @@ purple_utf8_strftime(const char *format, const struct tm *tm)
 	{
 		purple_debug_error("util", "Format conversion failed in purple_utf8_strftime(): %s\n", err->message);
 		g_error_free(err);
+		err = NULL;
 		locale = g_strdup(format);
 	}
 
@@ -1307,12 +1308,17 @@ struct purple_parse_tag {
 #define ALLOW_TAG_ALT(x, y) if(!g_ascii_strncasecmp(c, "<" x " ", strlen("<" x " "))) { \
 						const char *o = c + strlen("<" x); \
 						const char *p = NULL, *q = NULL, *r = NULL; \
+						/* o = iterating over full tag \
+						 * p = > (end of tag) \
+						 * q = start of quoted bit \
+						 * r = < inside tag \
+						 */ \
 						GString *innards = g_string_new(""); \
 						while(o && *o) { \
 							if(!q && (*o == '\"' || *o == '\'') ) { \
 								q = o; \
 							} else if(q) { \
-								if(*o == *q) { \
+								if(*o == *q) { /* end of quoted bit */ \
 									char *unescaped = g_strndup(q+1, o-q-1); \
 									char *escaped = g_markup_escape_text(unescaped, -1); \
 									g_string_append_printf(innards, "%c%s%c", *q, escaped, *q); \
@@ -1332,7 +1338,7 @@ struct purple_parse_tag {
 							} \
 							o++; \
 						} \
-						if(p && !r) { \
+						if(p && !r) { /* got an end of tag and no other < earlier */\
 							if(*(p-1) != '/') { \
 								struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1); \
 								pt->src_tag = x; \
@@ -1345,7 +1351,7 @@ struct purple_parse_tag {
 								xhtml = g_string_append_c(xhtml, '>'); \
 							} \
 							c = p + 1; \
-						} else { \
+						} else { /* got end of tag with earlier < *or* didn't get anything */ \
 							if(xhtml) \
 								xhtml = g_string_append(xhtml, "&lt;"); \
 							if(plain) \
@@ -1957,13 +1963,14 @@ purple_markup_strip_html(const char *str)
 					}
 				}
 
-				/* Check for tags which should be mapped to newline */
-				else if (g_ascii_strncasecmp(str2 + i, "<p>", 3) == 0
-				 || g_ascii_strncasecmp(str2 + i, "<tr", 3) == 0
+				/* Check for tags which should be mapped to newline (but ignore some of
+				 * the tags at the beginning of the text) */
+				else if ((j && (g_ascii_strncasecmp(str2 + i, "<p>", 3) == 0
+				              || g_ascii_strncasecmp(str2 + i, "<tr", 3) == 0
+				              || g_ascii_strncasecmp(str2 + i, "<hr", 3) == 0
+				              || g_ascii_strncasecmp(str2 + i, "<li", 3) == 0
+				              || g_ascii_strncasecmp(str2 + i, "<div", 4) == 0))
 				 || g_ascii_strncasecmp(str2 + i, "<br", 3) == 0
-				 || g_ascii_strncasecmp(str2 + i, "<hr", 3) == 0
-				 || g_ascii_strncasecmp(str2 + i, "<li", 3) == 0
-				 || g_ascii_strncasecmp(str2 + i, "<div", 4) == 0
 				 || g_ascii_strncasecmp(str2 + i, "</table>", 8) == 0)
 				{
 					str2[j++] = '\n';
@@ -2046,6 +2053,45 @@ badentity(const char *c)
 	return FALSE;
 }
 
+static const char *
+process_link(GString *ret,
+		const char *start, const char *c,
+		int matchlen,
+		const char *urlprefix,
+		int inside_paren)
+{
+	char *url_buf, *tmpurlbuf;
+	const char *t;
+
+	for (t = c;; t++) {
+		if (!badchar(*t) && !badentity(t))
+			continue;
+
+		if (t - c == matchlen)
+			break;
+
+		if (*t == ',' && *(t + 1) != ' ') {
+			continue;
+		}
+
+		if (t > start && *(t - 1) == '.')
+			t--;
+		if (t > start && *(t - 1) == ')' && inside_paren > 0)
+			t--;
+
+		url_buf = g_strndup(c, t - c);
+		tmpurlbuf = purple_unescape_html(url_buf);
+		g_string_append_printf(ret, "<A HREF=\"%s%s\">%s</A>",
+				urlprefix,
+				tmpurlbuf, url_buf);
+		g_free(tmpurlbuf);
+		g_free(url_buf);
+		return t;
+	}
+
+	return c;
+}
+
 char *
 purple_markup_linkify(const char *text)
 {
@@ -2093,129 +2139,22 @@ purple_markup_linkify(const char *text)
 						break;
 				}
 			}
-		} else if ((*c=='h') && (!g_ascii_strncasecmp(c, "http://", 7) ||
-					(!g_ascii_strncasecmp(c, "https://", 8)))) {
-			t = c;
-			while (1) {
-				if (badchar(*t) || badentity(t)) {
-
-					if ((!g_ascii_strncasecmp(c, "http://", 7) && (t - c == 7)) ||
-						(!g_ascii_strncasecmp(c, "https://", 8) && (t - c == 8))) {
-						break;
-					}
-
-					if (*(t) == ',' && (*(t + 1) != ' ')) {
-						t++;
-						continue;
-					}
-
-					if (*(t - 1) == '.')
-						t--;
-					if ((*(t - 1) == ')' && (inside_paren > 0))) {
-						t--;
-					}
-
-					url_buf = g_strndup(c, t - c);
-					tmpurlbuf = purple_unescape_html(url_buf);
-					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							tmpurlbuf, url_buf);
-					g_free(url_buf);
-					g_free(tmpurlbuf);
-					c = t;
-					break;
-				}
-				t++;
-
-			}
-		} else if (!g_ascii_strncasecmp(c, "www.", 4) && (c == text || badchar(c[-1]) || badentity(c-1))) {
-			if (c[4] != '.') {
-				t = c;
-				while (1) {
-					if (badchar(*t) || badentity(t)) {
-						if (t - c == 4) {
-							break;
-						}
-
-						if (*(t) == ',' && (*(t + 1) != ' ')) {
-							t++;
-							continue;
-						}
-
-						if (*(t - 1) == '.')
-							t--;
-						if ((*(t - 1) == ')' && (inside_paren > 0))) {
-							t--;
-						}
-						url_buf = g_strndup(c, t - c);
-						tmpurlbuf = purple_unescape_html(url_buf);
-						g_string_append_printf(ret,
-								"<A HREF=\"http://%s\">%s</A>", tmpurlbuf,
-								url_buf);
-						g_free(url_buf);
-						g_free(tmpurlbuf);
-						c = t;
-						break;
-					}
-					t++;
-				}
-			}
-		} else if (!g_ascii_strncasecmp(c, "ftp://", 6) || !g_ascii_strncasecmp(c, "sftp://", 7)) {
-			t = c;
-			while (1) {
-				if (badchar(*t) || badentity(t)) {
-
-					if ((!g_ascii_strncasecmp(c, "ftp://", 6) && (t - c == 6)) ||
-						(!g_ascii_strncasecmp(c, "sftp://", 7) && (t - c == 7))) {
-						break;
-					}
-
-					if (*(t - 1) == '.')
-						t--;
-					if ((*(t - 1) == ')' && (inside_paren > 0))) {
-						t--;
-					}
-					url_buf = g_strndup(c, t - c);
-					tmpurlbuf = purple_unescape_html(url_buf);
-					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							tmpurlbuf, url_buf);
-					g_free(url_buf);
-					g_free(tmpurlbuf);
-					c = t;
-					break;
-				}
-				if (!t)
-					break;
-				t++;
-
-			}
-		} else if (!g_ascii_strncasecmp(c, "ftp.", 4) && (c == text || badchar(c[-1]) || badentity(c-1))) {
-			if (c[4] != '.') {
-				t = c;
-				while (1) {
-					if (badchar(*t) || badentity(t)) {
-						if (t - c == 4) {
-							break;
-						}
-						if (*(t - 1) == '.')
-							t--;
-						if ((*(t - 1) == ')' && (inside_paren > 0))) {
-							t--;
-						}
-						url_buf = g_strndup(c, t - c);
-						tmpurlbuf = purple_unescape_html(url_buf);
-						g_string_append_printf(ret,
-								"<A HREF=\"ftp://%s\">%s</A>", tmpurlbuf,
-								url_buf);
-						g_free(url_buf);
-						g_free(tmpurlbuf);
-						c = t;
-						break;
-					}
-					if (!t)
-						break;
-					t++;
-				}
-			}
+		} else if (!g_ascii_strncasecmp(c, "http://", 7)) {
+			c = process_link(ret, text, c, 7, "", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "https://", 8)) {
+			c = process_link(ret, text, c, 8, "", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "ftp://", 6)) {
+			c = process_link(ret, text, c, 6, "", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "sftp://", 7)) {
+			c = process_link(ret, text, c, 7, "", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "file://", 7)) {
+			c = process_link(ret, text, c, 7, "", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "www.", 4) && c[4] != '.' && (c == text || badchar(c[-1]) || badentity(c-1))) {
+			c = process_link(ret, text, c, 4, "http://", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "ftp.", 4) && c[4] != '.' && (c == text || badchar(c[-1]) || badentity(c-1))) {
+			c = process_link(ret, text, c, 4, "ftp://", inside_paren);
+		} else if (!g_ascii_strncasecmp(c, "xmpp:", 5) && (c == text || badchar(c[-1]) || badentity(c-1))) {
+			c = process_link(ret, text, c, 5, "", inside_paren);
 		} else if (!g_ascii_strncasecmp(c, "mailto:", 7)) {
 			t = c;
 			while (1) {
@@ -2224,7 +2163,7 @@ purple_markup_linkify(const char *text)
 					if (t - c == 7) {
 						break;
 					}
-					if (*(t - 1) == '.')
+					if (t > text && *(t - 1) == '.')
 						t--;
 					if ((d = strstr(c + 7, "?")) != NULL && d < t)
 						url_buf = g_strndup(c + 7, d - c - 7);
@@ -2244,43 +2183,7 @@ purple_markup_linkify(const char *text)
 					c = t;
 					break;
 				}
-				if (!t)
-					break;
 				t++;
-
-			}
-		} else if ((*c=='x') && (!g_ascii_strncasecmp(c, "xmpp:", 5)) &&
-				   (c == text || badchar(c[-1]) || badentity(c-1))) {
-			t = c;
-			while (1) {
-				if (badchar(*t) || badentity(t)) {
-
-					if (t - c == 5) {
-						break;
-					}
-
-					if (*(t) == ',' && (*(t + 1) != ' ')) {
-						t++;
-						continue;
-					}
-
-					if (*(t - 1) == '.')
-						t--;
-					if ((*(t - 1) == ')' && (inside_paren > 0))) {
-						t--;
-					}
-
-					url_buf = g_strndup(c, t - c);
-					tmpurlbuf = purple_unescape_html(url_buf);
-					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
-							tmpurlbuf, url_buf);
-					g_free(url_buf);
-					g_free(tmpurlbuf);
-					c = t;
-					break;
-				}
-				t++;
-
 			}
 		} else if (c != text && (*c == '@')) {
 			int flag;
@@ -2967,22 +2870,86 @@ purple_running_osx(void)
 #endif
 }
 
+typedef union purple_sockaddr {
+	struct sockaddr         sa;
+	struct sockaddr_in      sa_in;
+#if defined(AF_INET6)
+	struct sockaddr_in6     sa_in6;
+#endif
+	struct sockaddr_storage sa_stor;
+} PurpleSockaddr;
+
 char *
 purple_fd_get_ip(int fd)
 {
-	struct sockaddr addr;
+	PurpleSockaddr addr;
 	socklen_t namelen = sizeof(addr);
-	struct in_addr in;
+	int family;
 
 	g_return_val_if_fail(fd != 0, NULL);
 
-	if (getsockname(fd, &addr, &namelen))
+	if (getsockname(fd, &(addr.sa), &namelen))
 		return NULL;
 
-	in = ((struct sockaddr_in *)&addr)->sin_addr;
-	return g_strdup(inet_ntoa(in));
+	family = addr.sa.sa_family;
+
+	if (family == AF_INET) {
+		return g_strdup(inet_ntoa(addr.sa_in.sin_addr));
+	}
+#if defined(AF_INET6) && defined(HAVE_INET_NTOP)
+	else if (family == AF_INET6) {
+		char host[INET6_ADDRSTRLEN];
+		const char *tmp;
+
+		tmp = inet_ntop(family, &(addr.sa_in6.sin6_addr), host, sizeof(host));
+		return g_strdup(tmp);
+	}
+#endif
+
+	return NULL;
 }
 
+int
+purple_socket_get_family(int fd)
+{
+	PurpleSockaddr addr;
+	socklen_t len = sizeof(addr);
+
+	g_return_val_if_fail(fd >= 0, -1);
+
+	if (getsockname(fd, &(addr.sa), &len))
+		return -1;
+
+	return addr.sa.sa_family;
+}
+
+gboolean
+purple_socket_speaks_ipv4(int fd)
+{
+	int family;
+
+	g_return_val_if_fail(fd >= 0, FALSE);
+
+	family = purple_socket_get_family(fd);
+
+	switch (family) {
+	case AF_INET:
+		return TRUE;
+#if defined(IPV6_V6ONLY)
+	case AF_INET6:
+	{
+		int val = 0;
+		guint len = sizeof(val);
+
+		if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &val, &len) != 0)
+			return FALSE;
+		return !val;
+	}
+#endif
+	default:
+		return FALSE;
+	}
+}
 
 /**************************************************************************
  * String Functions
@@ -4527,12 +4494,22 @@ purple_utf8_strip_unprintables(const gchar *str)
 	}
 
 	workstr = iter = g_new(gchar, strlen(str) + 1);
-	for ( ; *str; ++str) {
-		guchar c = *str;
-		if (c >= 0x20 || c == '\t' || c == '\n' || c == '\r') {
-			*iter = c;
-			++iter;
+	while (*str) {
+		gunichar ch = g_utf8_get_char(str);
+		gchar *next = g_utf8_next_char(str);
+		/*
+		 * Char ::= #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] |
+		 *          [#x10000-#x10FFFF]
+		 */
+		if ((ch == '\t' || ch == '\n' || ch == '\r') ||
+				(ch >= 0x20 && ch <= 0xD7FF) ||
+				(ch >= 0xE000 && ch <= 0xFFFD) ||
+				(ch >= 0x10000 && ch <= 0x10FFFF)) {
+			memcpy(iter, str, next - str);
+			iter += (next - str);
 		}
+
+		str = next;
 	}
 
 	/* nul-terminate the new string */
@@ -4879,7 +4856,13 @@ purple_escape_filename(const char *str)
 			}
 		}
 	}
-
+#ifdef _WIN32
+	/* File/Directory names in windows cannot end in periods/spaces.
+	 * http://msdn.microsoft.com/en-us/library/aa365247%28VS.85%29.aspx
+	 */
+	while (j > 0 && (buf[j - 1] == '.' || buf[j - 1] == ' '))
+		j--;
+#endif
 	buf[j] = '\0';
 
 	return buf;

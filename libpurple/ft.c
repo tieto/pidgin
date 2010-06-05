@@ -57,7 +57,13 @@ typedef struct _PurpleXferPrivData {
 		PURPLE_XFER_READY_UI   = 0x1,
 		PURPLE_XFER_READY_PRPL = 0x2,
 	} ready;
+
+	/* TODO: Should really use a PurpleCircBuffer for this. */
 	GByteArray *buffer;
+
+	gpointer thumbnail_data;		/**< thumbnail image */
+	gsize thumbnail_size;
+	gchar *thumbnail_mimetype;
 } PurpleXferPrivData;
 
 static int purple_xfer_choose_file(PurpleXfer *xfer);
@@ -69,6 +75,10 @@ purple_xfer_priv_data_destroy(gpointer data)
 
 	if (priv->buffer)
 		g_byte_array_free(priv->buffer, TRUE);
+
+	g_free(priv->thumbnail_data);
+
+	g_free(priv->thumbnail_mimetype);
 
 	g_free(priv);
 }
@@ -264,14 +274,20 @@ purple_xfer_set_status(PurpleXfer *xfer, PurpleXferStatusType status)
 	}
 }
 
-void purple_xfer_conversation_write(PurpleXfer *xfer, char *message, gboolean is_error)
+static void 
+purple_xfer_conversation_write_internal(PurpleXfer *xfer,
+	const char *message, gboolean is_error, gboolean print_thumbnail)
 {
 	PurpleConversation *conv = NULL;
 	PurpleMessageFlags flags = PURPLE_MESSAGE_SYSTEM;
 	char *escaped;
+	gconstpointer thumbnail_data;
+	gsize size;
 
 	g_return_if_fail(xfer != NULL);
 	g_return_if_fail(message != NULL);
+
+	thumbnail_data = purple_xfer_get_thumbnail(xfer, &size);
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, xfer->who,
 											   purple_xfer_get_account(xfer));
@@ -284,9 +300,38 @@ void purple_xfer_conversation_write(PurpleXfer *xfer, char *message, gboolean is
 	if (is_error)
 		flags |= PURPLE_MESSAGE_ERROR;
 
-	purple_conversation_write(conv, NULL, escaped, flags, time(NULL));
+	if (print_thumbnail && thumbnail_data) {
+		gchar *message_with_img;
+		gpointer data = g_memdup(thumbnail_data, size); 
+		int id = purple_imgstore_add_with_id(data, size, NULL);
+
+		message_with_img = 
+			g_strdup_printf("<img id='%d'> %s", id, escaped);
+		purple_conversation_write(conv, NULL, message_with_img, flags, 
+			time(NULL));
+		purple_imgstore_unref_by_id(id);
+		g_free(message_with_img);
+	} else {
+		purple_conversation_write(conv, NULL, escaped, flags, time(NULL));
+	}
 	g_free(escaped);
 }
+
+void
+purple_xfer_conversation_write(PurpleXfer *xfer, gchar *message,
+	gboolean is_error)
+{
+	purple_xfer_conversation_write_internal(xfer, message, is_error, FALSE);
+}
+
+/* maybe this one should be exported publically? */
+static void
+purple_xfer_conversation_write_with_thumbnail(PurpleXfer *xfer,
+	const gchar *message)
+{
+	purple_xfer_conversation_write_internal(xfer, message, FALSE, TRUE);
+}
+
 
 static void purple_xfer_show_file_error(PurpleXfer *xfer, const char *filename)
 {
@@ -446,6 +491,8 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 {
 	char *buf, *size_buf;
 	size_t size;
+	gconstpointer thumb;
+	gsize thumb_size;
 
 	/* If we have already accepted the request, ask the destination file
 	   name directly */
@@ -471,13 +518,19 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 			serv_got_im(purple_account_get_connection(xfer->account),
 								 xfer->who, xfer->message, 0, time(NULL));
 
-		purple_request_accept_cancel(xfer, NULL, buf, NULL,
-								  PURPLE_DEFAULT_ACTION_NONE,
-								  xfer->account, xfer->who, NULL,
-								  xfer,
-								  G_CALLBACK(purple_xfer_choose_file),
-								  G_CALLBACK(cancel_recv_cb));
-
+		if ((thumb = purple_xfer_get_thumbnail(xfer, &thumb_size))) {
+			purple_request_accept_cancel_with_icon(xfer, NULL, buf, NULL,
+				PURPLE_DEFAULT_ACTION_NONE, xfer->account, xfer->who, NULL,
+				thumb, thumb_size, xfer,
+				G_CALLBACK(purple_xfer_choose_file),
+				G_CALLBACK(cancel_recv_cb));
+		} else {
+			purple_request_accept_cancel(xfer, NULL, buf, NULL,
+				PURPLE_DEFAULT_ACTION_NONE, xfer->account, xfer->who, NULL,
+				xfer, G_CALLBACK(purple_xfer_choose_file),
+				G_CALLBACK(cancel_recv_cb));
+		}
+			
 		g_free(buf);
 	} else
 		purple_xfer_choose_file(xfer);
@@ -545,10 +598,12 @@ purple_xfer_request(PurpleXfer *xfer)
 		{
 			gchar* message = NULL;
 			PurpleBuddy *buddy = purple_find_buddy(xfer->account, xfer->who);
+
 			message = g_strdup_printf(_("%s is offering to send file %s"),
 				buddy ? purple_buddy_get_alias(buddy) : xfer->who, purple_xfer_get_filename(xfer));
-			purple_xfer_conversation_write(xfer, message, FALSE);
+			purple_xfer_conversation_write_with_thumbnail(xfer, message);
 			g_free(message);
+
 			/* Ask for a filename to save to if it's not already given by a plugin */
 			if (xfer->local_filename == NULL)
 				purple_xfer_ask_recv(xfer);
@@ -579,7 +634,7 @@ purple_xfer_request_accepted(PurpleXfer *xfer, const char *filename)
 	type = purple_xfer_get_type(xfer);
 	account = purple_xfer_get_account(xfer);
 
-	purple_debug_misc("xfer", "request accepted for %p\n", xfer); 
+	purple_debug_misc("xfer", "request accepted for %p\n", xfer);
 
 	if (!filename && type == PURPLE_XFER_RECEIVE) {
 		xfer->status = PURPLE_XFER_STATUS_ACCEPTED;
@@ -1085,9 +1140,10 @@ do_transfer(PurpleXfer *xfer)
 			return;
 		}
 	} else if (xfer->type == PURPLE_XFER_SEND) {
-		size_t result;
+		size_t result = 0;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 		PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+		gboolean read = TRUE;
 
 		/* this is so the prpl can keep the connection open
 		   if it needs to for some odd reason. */
@@ -1099,59 +1155,67 @@ do_transfer(PurpleXfer *xfer)
 			return;
 		}
 
-		if (ui_ops && ui_ops->ui_read) {
-			gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
-			if (tmp == 0) {
-				/*
-				 * The UI claimed it was ready, but didn't have any data for
-				 * us...  It will call purple_xfer_ui_ready when ready, which
-				 * sets back up this watcher.
-				 */
-				if (xfer->watcher != 0) {
-					purple_input_remove(xfer->watcher);
-					xfer->watcher = 0;
-				}
-
-				/* Need to indicate the prpl is still ready... */
-				priv->ready |= PURPLE_XFER_READY_PRPL;
-
-				/*
-				 * if we requested 0 bytes it's only normal that end up here 
-				 * we shouldn't return as we still have something to 
-				 * write in priv->buffer
-				 */
-				if (s != 0)
-					g_return_if_reached();
-			} else if (tmp < 0) {
-				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-				purple_xfer_cancel_local(xfer);
-				return;
-			}
-
-			result = tmp;
-		} else {
-			buffer = g_malloc0(s);
-			result = fread(buffer, 1, s, xfer->dest_fp);
-			if (result != s) {
-				purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
-				purple_xfer_cancel_local(xfer);
-				g_free(buffer);
-				return;
+		if (priv->buffer) {
+			if (priv->buffer->len < s) {
+				s -= priv->buffer->len;
+				read = TRUE;
+			} else {
+				read = FALSE;
 			}
 		}
-	
+
+		if (read) {
+			if (ui_ops && ui_ops->ui_read) {
+				gssize tmp = ui_ops->ui_read(xfer, &buffer, s);
+				if (tmp == 0) {
+					/*
+					 * The UI claimed it was ready, but didn't have any data for
+					 * us...  It will call purple_xfer_ui_ready when ready, which
+					 * sets back up this watcher.
+					 */
+					if (xfer->watcher != 0) {
+						purple_input_remove(xfer->watcher);
+						xfer->watcher = 0;
+					}
+
+					/* Need to indicate the prpl is still ready... */
+					priv->ready |= PURPLE_XFER_READY_PRPL;
+
+					g_return_if_reached();
+				} else if (tmp < 0) {
+					purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+					purple_xfer_cancel_local(xfer);
+					return;
+				}
+
+				result = tmp;
+			} else {
+				buffer = g_malloc(s);
+				result = fread(buffer, 1, s, xfer->dest_fp);
+				if (result != s) {
+					purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+					purple_xfer_cancel_local(xfer);
+					g_free(buffer);
+					return;
+				}
+			}
+		}
+
 		if (priv->buffer) {
-			priv->buffer = g_byte_array_append(priv->buffer, buffer, result);
+			g_byte_array_append(priv->buffer, buffer, result);
 			g_free(buffer);
 			buffer = priv->buffer->data;
 			result = priv->buffer->len;
 		}
-	
+
 		r = purple_xfer_write(xfer, buffer, result);
 
 		if (r == -1) {
 			purple_xfer_cancel_remote(xfer);
-			g_free(buffer);
+			if (!priv->buffer)
+				/* We don't free buffer if priv->buffer is set, because in
+				   that case buffer doesn't belong to us. */
+				g_free(buffer);
 			return;
 		} else if (r == result) {
 			/*
@@ -1161,18 +1225,18 @@ do_transfer(PurpleXfer *xfer)
 			 */
 			purple_xfer_increase_buffer_size(xfer);
 		} else {
-			if (ui_ops && ui_ops->data_not_sent) 
-				ui_ops->data_not_sent(xfer, buffer + r, result -r);
+			if (ui_ops && ui_ops->data_not_sent)
+				ui_ops->data_not_sent(xfer, buffer + r, result - r);
 		}
 
 		if (priv->buffer) {
-			/* 
+			/*
 			 * Remove what we wrote
 			 * If we wrote the whole buffer the byte array will be empty
-			 * Otherwise we'll kee what wasn't sent for next time.
+			 * Otherwise we'll keep what wasn't sent for next time.
 			 */
 			buffer = NULL;
-			priv->buffer = g_byte_array_remove_range(priv->buffer, 0, r);
+			g_byte_array_remove_range(priv->buffer, 0, r);
 		}
 	}
 
@@ -1569,6 +1633,52 @@ purple_xfer_update_progress(PurpleXfer *xfer)
 		ui_ops->update_progress(xfer, purple_xfer_get_progress(xfer));
 }
 
+gconstpointer
+purple_xfer_get_thumbnail(const PurpleXfer *xfer, gsize *len)
+{
+	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+
+	if (len)
+		*len = priv->thumbnail_size;
+
+	return priv->thumbnail_data;
+}
+
+const gchar *
+purple_xfer_get_thumbnail_mimetype(const PurpleXfer *xfer)
+{
+	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+
+	return priv->thumbnail_mimetype;
+}
+
+void
+purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
+	gsize size, const gchar *mimetype)
+{
+	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+
+	g_free(priv->thumbnail_data);
+	g_free(priv->thumbnail_mimetype);
+
+	if (thumbnail && size > 0) {
+		priv->thumbnail_data = g_memdup(thumbnail, size);
+		priv->thumbnail_size = size;
+		priv->thumbnail_mimetype = g_strdup(mimetype);
+	} else {
+		priv->thumbnail_data = NULL;
+		priv->thumbnail_size = 0;
+		priv->thumbnail_mimetype = NULL;
+	}
+}
+
+void
+purple_xfer_prepare_thumbnail(PurpleXfer *xfer, const gchar *formats)
+{
+	if (xfer->ui_ops->add_thumbnail) {
+		xfer->ui_ops->add_thumbnail(xfer, formats);
+	}
+}
 
 /**************************************************************************
  * File Transfer Subsystem API

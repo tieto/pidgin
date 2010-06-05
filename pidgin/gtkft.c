@@ -40,6 +40,9 @@
 #define PIDGINXFER(xfer) \
 	(PidginXferUiData *)(xfer)->ui_data
 
+/* the maximum size of files we will try to make a thumbnail for */
+#define PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL 10 * 1024 * 1024
+
 struct _PidginXferDialog
 {
 	gboolean keep_open;
@@ -575,7 +578,7 @@ setup_tree(PidginXferDialog *dialog)
 
 	/* Build the tree model */
 	/* Transfer type, Progress Bar, Filename, Size, Remaining */
-	model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_DOUBLE,
+	model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_INT,
 							   G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
 							   G_TYPE_POINTER);
 	dialog->model = model;
@@ -609,7 +612,7 @@ setup_tree(PidginXferDialog *dialog)
 	/* Progress bar column */
 	renderer = gtk_cell_renderer_progress_new();
 	column = gtk_tree_view_column_new_with_attributes(_("Progress"), renderer,
-				"percentage", COLUMN_PROGRESS, NULL);
+				"value", COLUMN_PROGRESS, NULL);
 	gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(column), TRUE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), column);
 
@@ -906,7 +909,7 @@ pidgin_xfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 	lfilename = utf8;
 	gtk_list_store_set(dialog->model, &data->iter,
 					   COLUMN_STATUS, pixbuf,
-					   COLUMN_PROGRESS, 0.0,
+					   COLUMN_PROGRESS, 0,
 					   COLUMN_FILENAME, (type == PURPLE_XFER_RECEIVE)
 					                     ? purple_xfer_get_filename(xfer)
 							     : lfilename,
@@ -1039,7 +1042,7 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
 
 	gtk_list_store_set(xfer_dialog->model, &data->iter,
-					   COLUMN_PROGRESS, purple_xfer_get_progress(xfer),
+					   COLUMN_PROGRESS, (gint)(purple_xfer_get_progress(xfer) * 100),
 					   COLUMN_SIZE, size_str,
 					   COLUMN_REMAINING, remaining_str,
 					   -1);
@@ -1157,6 +1160,67 @@ pidgin_xfer_cancel_remote(PurpleXfer *xfer)
 		pidgin_xfer_dialog_cancel_xfer(xfer_dialog, xfer);
 }
 
+static void
+pidgin_xfer_add_thumbnail(PurpleXfer *xfer, const gchar *formats)
+{	
+	purple_debug_info("ft", "creating thumbnail for transfer\n");
+
+	if (purple_xfer_get_size(xfer) <= PIDGIN_XFER_MAX_SIZE_IMAGE_THUMBNAIL) {
+		GdkPixbuf *thumbnail = 
+			gdk_pixbuf_new_from_file_at_size(
+				purple_xfer_get_local_filename(xfer), 128, 128, NULL);
+
+		if (thumbnail) {
+			gchar **formats_split = g_strsplit(formats, ",", 0);
+			gchar *buffer = NULL;
+			gsize size;
+			char *option_keys[2] = {NULL, NULL};
+			char *option_values[2] = {NULL, NULL};
+			int i;
+			gchar *format = NULL;
+			
+			for (i = 0; formats_split[i]; i++) {
+				if (purple_strequal(formats_split[i], "jpeg")) {
+					purple_debug_info("ft", "creating JPEG thumbnail\n");
+					option_keys[0] = "quality";
+					option_values[0] = "90";
+					format = "jpeg";
+					break;
+				} else if (purple_strequal(formats_split[i], "png")) {
+					purple_debug_info("ft", "creating PNG thumbnail\n");
+					option_keys[0] = "compression";
+					option_values[0] = "9";
+					format = "png";
+					break;
+				}
+			}
+
+			/* Try the first format given by the PRPL without options */
+			if (format == NULL) {
+				purple_debug_info("ft",
+				    "creating thumbnail of format %s as demanded by PRPL\n",
+				    formats_split[0]);
+				format = formats_split[0];
+			}
+
+			gdk_pixbuf_save_to_bufferv(thumbnail, &buffer, &size, format, 
+				option_keys, option_values, NULL);
+
+			if (buffer) {
+				gchar *mimetype = g_strdup_printf("image/%s", format);				
+				purple_debug_info("ft",
+				                  "created thumbnail of %" G_GSIZE_FORMAT " bytes\n",
+					size);
+				purple_xfer_set_thumbnail(xfer, buffer, size, mimetype);
+				g_free(buffer);
+				g_free(mimetype);
+			}
+			g_object_unref(thumbnail);
+			g_strfreev(formats_split);
+		}
+	}
+}
+
 static PurpleXferUiOps ops =
 {
 	pidgin_xfer_new_xfer,
@@ -1168,7 +1232,7 @@ static PurpleXferUiOps ops =
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	pidgin_xfer_add_thumbnail
 };
 
 /**************************************************************************

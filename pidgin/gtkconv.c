@@ -231,7 +231,7 @@ close_this_sucker(gpointer data)
 }
 
 static gboolean
-close_conv_cb(GtkWidget *w, GdkEventButton *dontuse, PidginConversation *gtkconv)
+close_conv_cb(GtkButton *button, PidginConversation *gtkconv)
 {
 	/* We are going to destroy the conversations immediately only if the 'close immediately'
 	 * preference is selected. Otherwise, close the conversation after a reasonable timeout
@@ -281,6 +281,15 @@ default_formatize(PidginConversation *c)
 {
 	PurpleConversation *conv = c->active_conv;
 	gtk_imhtml_setup_entry(GTK_IMHTML(c->entry), conv->features);
+}
+
+static void
+conversation_entry_clear(PidginConversation *gtkconv)
+{
+	GtkIMHtml *imhtml = GTK_IMHTML(gtkconv->entry);
+	gtk_source_undo_manager_begin_not_undoable_action(imhtml->undo_manager);
+	gtk_imhtml_clear(imhtml);
+	gtk_source_undo_manager_end_not_undoable_action(imhtml->undo_manager);
 }
 
 static void
@@ -559,7 +568,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	account = purple_conversation_get_account(conv);
 
 	if (check_for_and_do_command(conv)) {
-		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+		conversation_entry_clear(gtkconv);
 		return;
 	}
 
@@ -614,7 +623,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	g_free(clean);
 	g_free(buf);
 
-	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+	conversation_entry_clear(gtkconv);
 	gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
 }
 
@@ -1413,7 +1422,7 @@ menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
 
-	close_conv_cb(NULL, NULL, PIDGIN_CONVERSATION(pidgin_conv_window_get_active_conversation(win)));
+	close_conv_cb(NULL, PIDGIN_CONVERSATION(pidgin_conv_window_get_active_conversation(win)));
 }
 
 static void
@@ -5230,52 +5239,6 @@ pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int 
 	return FALSE;
 }
 
-/* Close button {{{ */
-static gboolean
-close_button_left_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
-{
-	static GdkCursor *ptr = NULL;
-	if (ptr == NULL) {
-		ptr = gdk_cursor_new(GDK_LEFT_PTR);
-	}
-
-	gtk_label_set_markup(label, "×");
-	gdk_window_set_cursor(event->window, ptr);
-	return FALSE;
-}
-
-static gboolean
-close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
-{
-	static GdkCursor *hand = NULL;
-	if (hand == NULL) {
-		hand = gdk_cursor_new(GDK_HAND2);
-	}
-
-	gtk_label_set_markup(label, "<u>×</u>");
-	gdk_window_set_cursor(event->window, hand);
-	return FALSE;
-}
-
-static GtkWidget *
-create_close_button(void)
-{
-	GtkWidget *ebox = gtk_event_box_new();
-	GtkWidget *close_image;
-
-	gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
-	gtk_widget_set_events(ebox, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
-	close_image = gtk_label_new("×");
-	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(close_button_entered_cb), close_image);
-	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(close_button_left_cb), close_image);
-	gtk_widget_show(close_image);
-	gtk_container_add(GTK_CONTAINER(ebox), close_image);
-
-	return ebox;
-}
-
-/* }}} */
-
 /* Quick Find {{{ */
 static gboolean
 pidgin_conv_end_quickfind(PidginConversation *gtkconv)
@@ -5322,7 +5285,7 @@ pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 
 	gtk_box_pack_start(GTK_BOX(container), widget, FALSE, FALSE, 0);
 
-	close = create_close_button();
+	close = pidgin_create_small_button(gtk_label_new("×"));
 	gtk_box_pack_start(GTK_BOX(widget), close, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, close,
 	                     _("Close Find bar"), NULL);
@@ -9127,7 +9090,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 			return FALSE;
 
 		gtkconv = pidgin_conv_window_get_gtkconv_at_index(win, tab_clicked);
-		close_conv_cb(NULL, NULL, gtkconv);
+		close_conv_cb(NULL, gtkconv);
 		return TRUE;
 	}
 
@@ -9395,7 +9358,7 @@ close_others_cb(GtkWidget *w, GObject *menu)
 
 		if (gconv != gtkconv)
 		{
-			close_conv_cb(NULL, NULL, gconv);
+			close_conv_cb(NULL, gconv);
 		}
 	}
 }
@@ -9407,7 +9370,7 @@ static void close_tab_cb(GtkWidget *w, GObject *menu)
 	gtkconv = g_object_get_data(menu, "clicked_tab");
 
 	if (gtkconv)
-		close_conv_cb(NULL, NULL, gtkconv);
+		close_conv_cb(NULL, gtkconv);
 }
 
 static gboolean
@@ -9888,7 +9851,7 @@ pidgin_conv_window_destroy(PidginWindow *win)
 	if (win->gtkconvs) {
 		while (win->gtkconvs) {
 			gboolean last = (win->gtkconvs->next == NULL);
-			close_conv_cb(NULL, NULL, win->gtkconvs->data);
+			close_conv_cb(NULL, win->gtkconvs->data);
 			if (last)
 				break;
 		}
@@ -9977,7 +9940,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 
 	/* Close button. */
-	gtkconv->close = create_close_button();
+	gtkconv->close = pidgin_create_small_button(gtk_label_new("×"));
 #if GTK_CHECK_VERSION(2,12,0)
 	gtk_widget_set_tooltip_text(gtkconv->close, _("Close conversation"));
 #else
@@ -9985,8 +9948,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	                     _("Close conversation"), NULL);
 #endif
 
-	g_signal_connect(G_OBJECT(gtkconv->close), "button-press-event",
-			 G_CALLBACK(close_conv_cb), gtkconv);
+	g_signal_connect(gtkconv->close, "clicked", G_CALLBACK (close_conv_cb), gtkconv);
 
 	/* Status icon. */
 	gtkconv->icon = gtk_image_new();

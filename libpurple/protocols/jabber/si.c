@@ -32,6 +32,7 @@
 #include "notify.h"
 
 #include "buddy.h"
+#include "data.h"
 #include "disco.h"
 #include "jabber.h"
 #include "ibb.h"
@@ -39,6 +40,7 @@
 #include "si.h"
 
 #define STREAMHOST_CONNECT_TIMEOUT 15
+#define ENABLE_FT_THUMBNAILS 0
 
 typedef struct _JabberSIXfer {
 	JabberStream *js;
@@ -289,7 +291,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 				jsx->js->user->node, jsx->js->user->domain, jsx->js->user->resource);
 
 		/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
-		hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
+		hash = jabber_calculate_data_hash(dstaddr, strlen(dstaddr), "sha1");
 
 		jsx->connect_data = purple_proxy_connect_socks5(NULL, jsx->gpi,
 				hash, 0,
@@ -474,7 +476,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 			jsx->js->user->resource, xfer->who);
 
 	/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
-	hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
+	hash = jabber_calculate_data_hash(dstaddr, strlen(dstaddr), "sha1");
 
 	if(strncmp(hash, jsx->rxqueue + 5, 40) ||
 			jsx->rxqueue[45] != 0x00 || jsx->rxqueue[46] != 0x00) {
@@ -1075,6 +1077,9 @@ jabber_si_xfer_ibb_open_cb(JabberStream *js, const char *who, const char *id,
 				jabber_si_xfer_ibb_error_cb);
 
 			jsx->ibb_session = sess;
+			/* we handle up to block-size bytes of decoded data, to handle
+			 clients interpreting the block-size attribute as that
+			 (see also remark in ibb.c) */
 			jsx->ibb_buffer =
 				purple_circ_buffer_new(jabber_ibb_session_get_block_size(sess));
 
@@ -1103,8 +1108,8 @@ jabber_si_xfer_ibb_write(const guchar *buffer, size_t len, PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 	JabberIBBSession *sess = jsx->ibb_session;
-	gsize packet_size = len < jabber_ibb_session_get_block_size(sess) ?
-		len : jabber_ibb_session_get_block_size(sess);
+	gsize packet_size = len < jabber_ibb_session_get_max_data_size(sess) ?
+		len : jabber_ibb_session_get_max_data_size(sess);
 
 	jabber_ibb_session_send_data(sess, buffer, packet_size);
 
@@ -1170,7 +1175,7 @@ jabber_si_xfer_ibb_send_init(JabberStream *js, PurpleXfer *xfer)
 		purple_xfer_set_write_fnc(xfer, jabber_si_xfer_ibb_write);
 
 		jsx->ibb_buffer =
-			purple_circ_buffer_new(jabber_ibb_session_get_block_size(jsx->ibb_session));
+			purple_circ_buffer_new(jabber_ibb_session_get_max_data_size(jsx->ibb_session));
 
 		/* open the IBB session */
 		jabber_ibb_session_open(jsx->ibb_session);
@@ -1243,9 +1248,14 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	JabberIq *iq;
 	xmlnode *si, *file, *feature, *x, *field, *option, *value;
 	char buf[32];
+#if ENABLE_FT_THUMBNAILS
+	gconstpointer thumb;
+	gsize thumb_size;
 
+	purple_xfer_prepare_thumbnail(xfer, "jpeg,png");
+#endif
 	xfer->filename = g_path_get_basename(xfer->local_filename);
-
+	
 	iq = jabber_iq_new(jsx->js, JABBER_IQ_SET);
 	xmlnode_set_attrib(iq->node, "to", xfer->who);
 	si = xmlnode_new_child(iq->node, "si");
@@ -1263,6 +1273,23 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	xmlnode_set_attrib(file, "size", buf);
 	/* maybe later we'll do hash and date attribs */
 
+#if ENABLE_FT_THUMBNAILS
+	/* add thumbnail, if appropriate */
+	if ((thumb = purple_xfer_get_thumbnail(xfer, &thumb_size))) {
+		const gchar *mimetype = purple_xfer_get_thumbnail_mimetype(xfer);
+		JabberData *thumbnail_data =
+			jabber_data_create_from_data(thumb, thumb_size,
+				mimetype, TRUE, jsx->js);
+		xmlnode *thumbnail = xmlnode_new_child(file, "thumbnail");
+		xmlnode_set_namespace(thumbnail, NS_THUMBS);
+		xmlnode_set_attrib(thumbnail, "cid", 
+			jabber_data_get_cid(thumbnail_data));
+		xmlnode_set_attrib(thumbnail, "mime-type", mimetype);
+		/* cache data */
+		jabber_data_associate_local(thumbnail_data, NULL);
+	}
+#endif
+						  
 	feature = xmlnode_new_child(si, "feature");
 	xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
 	x = xmlnode_new_child(feature, "x");
@@ -1641,12 +1668,29 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 		purple_xfer_request(xfer);
 }
 
+#if ENABLE_FT_THUMBNAILS
+static void
+jabber_si_thumbnail_cb(JabberData *data, gchar *alt, gpointer userdata)
+{
+	PurpleXfer *xfer = (PurpleXfer *) userdata;
+
+	if (data) {
+		purple_xfer_set_thumbnail(xfer, jabber_data_get_data(data),
+			jabber_data_get_size(data), jabber_data_get_type(data));
+		/* data is ephemeral, get rid of now (the xfer re-owned the thumbnail */
+		jabber_data_destroy(data);
+	}
+
+	purple_xfer_request(xfer);
+}
+#endif
+
 void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
                      const char *id, xmlnode *si)
 {
 	JabberSIXfer *jsx;
 	PurpleXfer *xfer;
-	xmlnode *file, *feature, *x, *field, *option, *value;
+	xmlnode *file, *feature, *x, *field, *option, *value, *thumbnail;
 	const char *stream_id, *filename, *filesize_c, *profile;
 	size_t filesize = 0;
 
@@ -1728,10 +1772,27 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	purple_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
 	purple_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
 	purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
-
+				   
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
 
+#if ENABLE_FT_THUMBNAILS
+	/* if there is a thumbnail, we should request it... */
+	if ((thumbnail = xmlnode_get_child_with_namespace(file, "thumbnail",
+		NS_THUMBS))) {
+		const char *cid = xmlnode_get_attrib(thumbnail, "cid");
+		if (cid) {
+			jabber_data_request(js, cid, purple_xfer_get_remote_user(xfer),
+			    NULL, TRUE, jabber_si_thumbnail_cb, xfer);
+		} else {
+			purple_xfer_request(xfer);
+		}
+	} else {
+		purple_xfer_request(xfer);
+	}
+#else
+	thumbnail = NULL; /* Silence warning */
 	purple_xfer_request(xfer);
+#endif
 }
 
 void

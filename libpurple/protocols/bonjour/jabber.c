@@ -44,6 +44,11 @@
 #endif
 #include <fcntl.h>
 
+#ifdef HAVE_GETIFADDRS
+#include <ifaddrs.h>
+#endif
+
+
 #include "network.h"
 #include "eventloop.h"
 #include "connection.h"
@@ -381,7 +386,7 @@ static void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
 	BonjourBuddy *bb = NULL;
 	const gchar *name = bconv->pb ? purple_buddy_get_name(bconv->pb) : "(unknown)";
 
-	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", name);
+	purple_debug_info("bonjour", "Received conversation close notification from %s.\n", name);
 
 	if(bconv->pb != NULL)
 		bb = purple_buddy_get_protocol_data(bconv->pb);
@@ -577,7 +582,7 @@ static gboolean bonjour_jabber_send_stream_init(BonjourJabberConversation *bconv
 }
 
 /* This gets called when we've successfully sent our <stream:stream />
- * AND when we've recieved a <stream:stream /> */
+ * AND when we've received a <stream:stream /> */
 void bonjour_jabber_stream_started(BonjourJabberConversation *bconv) {
 
 	if (bconv->sent_stream_start == NOT_SENT && !bonjour_jabber_send_stream_init(bconv, bconv->socket)) {
@@ -623,15 +628,22 @@ void bonjour_jabber_stream_started(BonjourJabberConversation *bconv) {
 
 }
 
+#ifndef INET6_ADDRSTRLEN
+#define INET6_ADDRSTRLEN 46
+#endif
+
 static void
 _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition condition)
 {
 	BonjourJabber *jdata = data;
-	struct sockaddr_in their_addr; /* connector's address information */
-	socklen_t sin_size = sizeof(struct sockaddr);
+	struct sockaddr_storage their_addr; /* connector's address information */
+	socklen_t sin_size = sizeof(struct sockaddr_storage);
 	int client_socket;
 	int flags;
-	char *address_text = NULL;
+#ifdef HAVE_INET_NTOP
+	char addrstr[INET6_ADDRSTRLEN];
+#endif
+	const char *address_text;
 	struct _match_buddies_by_address_t *mbba;
 	BonjourJabberConversation *bconv;
 	GSList *buddies;
@@ -640,7 +652,9 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	if (condition != PURPLE_INPUT_READ)
 		return;
 
-	if ((client_socket = accept(server_socket, (struct sockaddr *)&their_addr, &sin_size)) == -1)
+	memset(&their_addr, 0, sin_size);
+
+	if ((client_socket = accept(server_socket, (struct sockaddr*)&their_addr, &sin_size)) == -1)
 		return;
 
 	flags = fcntl(client_socket, F_GETFL);
@@ -650,7 +664,16 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 #endif
 
 	/* Look for the buddy that has opened the conversation and fill information */
-	address_text = inet_ntoa(their_addr.sin_addr);
+#ifdef HAVE_INET_NTOP
+	if (their_addr.ss_family == AF_INET6)
+		address_text = inet_ntop(their_addr.ss_family, &((struct sockaddr_in6 *)&their_addr)->sin6_addr,
+			addrstr, sizeof(addrstr));
+	else
+		address_text = inet_ntop(their_addr.ss_family, &((struct sockaddr_in *)&their_addr)->sin_addr,
+			addrstr, sizeof(addrstr));
+#else
+	address_text = inet_ntoa(((struct sockaddr_in *)&their_addr)->sin_addr);
+#endif
 	purple_debug_info("bonjour", "Received incoming connection from %s.\n", address_text);
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
 	mbba->address = address_text;
@@ -660,7 +683,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	g_slist_free(buddies);
 
 	if (mbba->matched_buddies == NULL) {
-		purple_debug_info("bonjour", "We don't like invisible buddies, this is not a superheros comic\n");
+		purple_debug_info("bonjour", "We don't like invisible buddies, this is not a superheroes comic\n");
 		g_free(mbba);
 		close(client_socket);
 		return;
@@ -680,52 +703,42 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 }
 
-gint
-bonjour_jabber_start(BonjourJabber *jdata)
+static int
+start_serversocket_listening(int port, int socket, struct sockaddr *addr, size_t addr_size, gboolean ip6, gboolean allow_port_fallback)
 {
-	struct sockaddr_in my_addr;
+	int ret_port = port;
 
-	/* Open a listening socket for incoming conversations */
-	jdata->socket = socket(PF_INET, SOCK_STREAM, 0);
-	if (jdata->socket < 0) {
-		gchar *buf = g_strdup_printf(_("Unable to create socket: %s"),
-				g_strerror(errno));
-		purple_connection_error_reason(jdata->account->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, buf);
-		g_free(buf);
-		return -1;
-	}
-
-	memset(&my_addr, 0, sizeof(struct sockaddr_in));
-	my_addr.sin_family = AF_INET;
+	purple_debug_info("bonjour", "Attempting to bind IPv%d socket to port %d.\n", ip6 ? 6 : 4, port);
 
 	/* Try to use the specified port - if it isn't available, use a random port */
-	my_addr.sin_port = htons(jdata->port);
-	if (bind(jdata->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0)
-	{
+	if (bind(socket, addr, addr_size) != 0) {
+
 		purple_debug_info("bonjour", "Unable to bind to specified "
-				"port %i: %s\n", jdata->port, g_strerror(errno));
-		my_addr.sin_port = 0;
-		if (bind(jdata->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0)
-		{
-			gchar *buf = g_strdup_printf(_("Unable to bind socket "
-					"to port: %s"), g_strerror(errno));
-			purple_connection_error_reason(jdata->account->gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, buf);
-			g_free(buf);
+				"port %i: %s\n", port, g_strerror(errno));
+
+		if (!allow_port_fallback) {
+			purple_debug_warning("bonjour", "Not attempting random port assignment.\n");
 			return -1;
 		}
-		jdata->port = purple_network_get_port_from_fd(jdata->socket);
+#ifdef PF_INET6
+		if (ip6)
+			((struct sockaddr_in6 *) addr)->sin6_port = 0;
+		else
+#endif
+		((struct sockaddr_in *) addr)->sin_port = 0;
+
+		if (bind(socket, addr, addr_size) != 0) {
+			purple_debug_error("bonjour", "Unable to bind IPv%d socket to port: %s\n", ip6 ? 6 : 4, g_strerror(errno));
+			return -1;
+		}
+		ret_port = purple_network_get_port_from_fd(socket);
 	}
 
+	purple_debug_info("bonjour", "Bound IPv%d socket to port %d.\n", ip6 ? 6 : 4, ret_port);
+
 	/* Attempt to listen on the bound socket */
-	if (listen(jdata->socket, 10) != 0)
-	{
-		gchar *buf = g_strdup_printf(_("Unable to listen on socket: %s"),
-				g_strerror(errno));
-		purple_connection_error_reason(jdata->account->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, buf);
-		g_free(buf);
+	if (listen(socket, 10) != 0) {
+		purple_debug_error("bonjour", "Unable to listen on IPv%d socket: %s\n", ip6 ? 6 : 4, g_strerror(errno));
 		return -1;
 	}
 
@@ -739,8 +752,66 @@ bonjour_jabber_start(BonjourJabber *jdata)
 	}
 #endif
 
-	/* Open a watcher in the socket we have just opened */
-	jdata->watcher_id = purple_input_add(jdata->socket, PURPLE_INPUT_READ, _server_socket_handler, jdata);
+	return ret_port;
+}
+
+gint
+bonjour_jabber_start(BonjourJabber *jdata)
+{
+	int ipv6_port = -1, ipv4_port = -1;
+
+	/* Open a listening socket for incoming conversations */
+#ifdef PF_INET6
+	jdata->socket6 = socket(PF_INET6, SOCK_STREAM, 0);
+#endif
+	jdata->socket = socket(PF_INET, SOCK_STREAM, 0);
+	if (jdata->socket == -1 && jdata->socket6 == -1) {
+		purple_debug_error("bonjour", "Unable to create socket: %s",
+				g_strerror(errno));
+		return -1;
+	}
+
+#ifdef PF_INET6
+	if (jdata->socket6 != -1) {
+		struct sockaddr_in6 addr6;
+	        memset(&addr6, 0, sizeof(addr6));
+		addr6.sin6_family = AF_INET6;
+		addr6.sin6_port = htons(jdata->port);
+      		addr6.sin6_addr = in6addr_any;
+		ipv6_port = start_serversocket_listening(jdata->port, jdata->socket6, (struct sockaddr *) &addr6, sizeof(addr6), TRUE, TRUE);
+		/* Open a watcher in the socket we have just opened */
+		if (ipv6_port > 0) {
+			jdata->watcher_id6 = purple_input_add(jdata->socket6, PURPLE_INPUT_READ, _server_socket_handler, jdata);
+			jdata->port = ipv6_port;
+		} else {
+			purple_debug_error("bonjour", "Failed to start listening on IPv6 socket.\n");
+			close(jdata->socket6);
+			jdata->socket6 = -1;
+		}
+	}
+#endif
+	if (jdata->socket != -1) {
+		struct sockaddr_in addr4;
+		memset(&addr4, 0, sizeof(addr4));
+		addr4.sin_family = AF_INET;
+		addr4.sin_port = htons(jdata->port);
+		ipv4_port = start_serversocket_listening(jdata->port, jdata->socket, (struct sockaddr *) &addr4, sizeof(addr4), FALSE, ipv6_port != -1);
+		/* Open a watcher in the socket we have just opened */
+		if (ipv4_port > 0) {
+			jdata->watcher_id = purple_input_add(jdata->socket, PURPLE_INPUT_READ, _server_socket_handler, jdata);
+			jdata->port = ipv4_port;
+		} else {
+			purple_debug_error("bonjour", "Failed to start listening on IPv4 socket.\n");
+			close(jdata->socket);
+			jdata->socket = -1;
+		}
+	}
+
+	if (!(ipv6_port > 0 || ipv4_port > 0)) {
+		purple_debug_error("bonjour", "Unable to listen on socket: %s",
+				g_strerror(errno));
+		return -1;
+	}
 
 	return jdata->port;
 }
@@ -1101,6 +1172,10 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 		close(jdata->socket);
 	if (jdata->watcher_id > 0)
 		purple_input_remove(jdata->watcher_id);
+	if (jdata->socket6 >= 0)
+		close(jdata->socket6);
+	if (jdata->watcher_id6 > 0)
+		purple_input_remove(jdata->watcher_id6);
 
 	/* Close all the conversation sockets and remove all the watchers after sending end streams */
 	if (jdata->account->gc != NULL) {
@@ -1109,7 +1184,10 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 		buddies = purple_find_buddies(jdata->account, NULL);
 		for (l = buddies; l; l = l->next) {
 			BonjourBuddy *bb = purple_buddy_get_protocol_data((PurpleBuddy*) l->data);
-			if (bb != NULL) {
+			if (bb && bb->conversation) {
+				/* Any ongoing connection attempt is cancelled
+				 * by _purple_connection_destroy */
+				bb->conversation->connect_data = NULL;
 				bonjour_jabber_close_conversation(bb->conversation);
 				bb->conversation = NULL;
 			}
@@ -1234,58 +1312,97 @@ xep_iq_send_and_free(XepIq *iq)
 	return (ret >= 0) ? 0 : -1;
 }
 
-/* This returns a ';' delimited string containing all non-localhost IPs */
-const char *
-purple_network_get_my_ip_ext2(int fd)
+/* This returns a list containing all non-localhost IPs */
+GSList *
+bonjour_jabber_get_local_ips(int fd)
 {
-	char buffer[1024];
-	static char ip_ext[17 * 10];
+	GSList *ips = NULL;
+	const char *address_text;
+	int ret;
+
+#ifdef HAVE_GETIFADDRS /* This is required for IPv6 */
+	{
+	struct ifaddrs *ifap, *ifa;
+	struct sockaddr *addr;
+	char addrstr[INET6_ADDRSTRLEN];
+
+	ret = getifaddrs(&ifap);
+	if (ret != 0) {
+		const char *error = g_strerror(errno);
+		purple_debug_error("bonjour", "getifaddrs() error: %s\n", error ? error : "(null)");
+		return NULL;
+	}
+
+	for (ifa = ifap; ifa != NULL; ifa = ifa->ifa_next) {
+		if (!(ifa->ifa_flags & IFF_RUNNING) || (ifa->ifa_flags & IFF_LOOPBACK) || ifa->ifa_addr == NULL)
+			continue;
+
+		addr = ifa->ifa_addr;
+		address_text = NULL;
+		switch (addr->sa_family) {
+			case AF_INET:
+				address_text = inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
+					addrstr, sizeof(addrstr));
+				break;
+#ifdef PF_INET6
+			case AF_INET6:
+				address_text = inet_ntop(addr->sa_family, &((struct sockaddr_in6 *)addr)->sin6_addr,
+					addrstr, sizeof(addrstr));
+				break;
+#endif
+		}
+
+		if (address_text != NULL) {
+			if (addr->sa_family == AF_INET)
+				ips = g_slist_append(ips, g_strdup(address_text));
+			else
+				ips = g_slist_prepend(ips, g_strdup(address_text));
+		}
+	}
+
+	freeifaddrs(ifap);
+
+	}
+#else
+	{
 	char *tmp;
-	char *tip;
 	struct ifconf ifc;
 	struct ifreq *ifr;
+	char buffer[1024];
 	struct sockaddr_in *sinptr;
-	guint32 lhost = htonl(127 * 256 * 256 * 256 + 1);
-	long unsigned int add;
 	int source = fd;
-	int len, count = 0;
 
 	if (fd < 0)
 		source = socket(PF_INET, SOCK_STREAM, 0);
 
 	ifc.ifc_len = sizeof(buffer);
 	ifc.ifc_req = (struct ifreq *)buffer;
-	ioctl(source, SIOCGIFCONF, &ifc);
+	ret = ioctl(source, SIOCGIFCONF, &ifc);
 
 	if (fd < 0)
 		close(source);
 
-	memset(ip_ext, 0, sizeof(ip_ext));
-	memcpy(ip_ext, "0.0.0.0", 7);
+	if (ret < 0) {
+		const char *error = g_strerror(errno);
+		purple_debug_error("bonjour", "ioctl(SIOCGIFCONF) error: %s\n", error ? error : "(null)");
+		return NULL;
+	}
+
 	tmp = buffer;
-	tip = ip_ext;
-	while (tmp < buffer + ifc.ifc_len && count < 10)
-	{
+	while (tmp < buffer + ifc.ifc_len) {
 		ifr = (struct ifreq *)tmp;
 		tmp += HX_SIZE_OF_IFREQ(*ifr);
 
-		if (ifr->ifr_addr.sa_family == AF_INET)
-		{
+		if (ifr->ifr_addr.sa_family == AF_INET) {
 			sinptr = (struct sockaddr_in *)&ifr->ifr_addr;
-			if (sinptr->sin_addr.s_addr != lhost)
-			{
-				add = ntohl(sinptr->sin_addr.s_addr);
-				len = g_snprintf(tip, 17, "%lu.%lu.%lu.%lu;",
-					((add >> 24) & 255),
-					((add >> 16) & 255),
-					((add >> 8) & 255),
-					add & 255);
-				tip = &tip[len];
-				count++;
-				continue;
+			if ((ntohl(sinptr->sin_addr.s_addr) >> 24) != 127) {
+				address_text = inet_ntoa(sinptr->sin_addr);
+				ips = g_slist_prepend(ips, g_strdup(address_text));
 			}
-		}
+ 		}
 	}
+	}
+#endif
 
-	return ip_ext;
+	return ips;
 }

@@ -567,6 +567,7 @@ msn_notification_dump_contact(MsnSession *session)
 	int payload_len;
 	int adl_count = 0;
 	int fqy_count = 0;
+	PurpleConnection *pc;
 	const char *display_name;
 
 	adl_node = xmlnode_new("ml");
@@ -673,11 +674,12 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode_free(adl_node);
 	xmlnode_free(fqy_node);
 
-	display_name = purple_connection_get_display_name(session->account->gc);
+	pc = purple_account_get_connection(session->account);
+	display_name = purple_connection_get_display_name(pc);
 	if (display_name
 	    && strcmp(display_name,
 		      purple_account_get_username(session->account))) {
-		msn_act_id(session->account->gc, display_name);
+		msn_set_public_alias(pc, display_name, NULL, NULL);
 	}
 
 }
@@ -983,19 +985,12 @@ qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 fln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	MsnSlpLink *slplink;
 	MsnUser *user;
 
 	/* Tell libpurple that the user has signed off */
 	user = msn_userlist_find_user(cmdproc->session->userlist, cmd->params[0]);
 	msn_user_set_state(user, NULL);
 	msn_user_update(user);
-
-	/* If we have an open MsnSlpLink with the user then close it */
-	slplink = msn_session_find_slplink(cmdproc->session, cmd->params[0]);
-	if (slplink != NULL)
-		msn_slplink_destroy(slplink);
-
 }
 
 static void
@@ -1299,11 +1294,11 @@ static void
 prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session = cmdproc->session;
-	const char *type, *value, *friendlyname;
+	const char *type, *value;
 
 	g_return_if_fail(cmd->param_count >= 3);
 
-	type  = cmd->params[2];
+	type = cmd->params[2];
 
 	if (cmd->param_count == 4)
 	{
@@ -1323,19 +1318,6 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			msn_user_set_work_phone(session->user, NULL);
 		else if (!strcmp(type, "PHM"))
 			msn_user_set_mobile_phone(session->user, NULL);
-		else {
-			type = cmd->params[1];
-			if (!strcmp(type, "MFN")) {
-				friendlyname = purple_url_decode(cmd->params[2]);
-
-				msn_update_contact(session, "Me", MSN_UPDATE_DISPLAY, friendlyname);
-
-				purple_connection_set_display_name(
-					purple_account_get_connection(session->account),
-					friendlyname);
-				purple_account_set_string(session->account, "display-name", friendlyname);
-			}
-		}
 	}
 }
 
@@ -1590,7 +1572,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	PurpleAccount *account;
 	MsnUser *user;
 	const char *passport;
-	char *psm_str, *str;
+	char *str;
 
 	session = cmdproc->session;
 	account = session->account;
@@ -1598,7 +1580,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	passport = cmd->params[0];
 	user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) {
-		char *str = g_strndup(payload, len);
+		str = g_strndup(payload, len);
 		purple_debug_info("msn", "unknown user %s, payload is %s\n",
 			passport, str);
 		g_free(str);
@@ -1613,12 +1595,13 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		user->extinfo->media_album = NULL;
 		user->extinfo->media_artist = NULL;
 		user->extinfo->media_title = NULL;
+		user->extinfo->media_type = CURRENT_MEDIA_UNKNOWN;
 	}
 
 	if (len != 0) {
-		psm_str = msn_get_psm(cmd->payload,len);
-		msn_user_set_statusline(user, psm_str);
-		g_free(psm_str);
+		str = msn_get_psm(cmd->payload,len);
+		msn_user_set_statusline(user, str);
+		g_free(str);
 
 		str = msn_get_currentmedia(cmd->payload, len);
 		parse_currentmedia(user, str);

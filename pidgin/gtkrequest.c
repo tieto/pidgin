@@ -26,6 +26,7 @@
 #include "internal.h"
 #include "pidgin.h"
 
+#include "debug.h"
 #include "prefs.h"
 #include "util.h"
 
@@ -598,9 +599,11 @@ pidgin_request_choice(const char *title, const char *primary,
 }
 
 static void *
-pidgin_request_action(const char *title, const char *primary,
+pidgin_request_action_with_icon(const char *title, const char *primary,
 						const char *secondary, int default_action,
-					    PurpleAccount *account, const char *who, PurpleConversation *conv,
+					    PurpleAccount *account, const char *who, 
+						PurpleConversation *conv, gconstpointer icon_data,
+						gsize icon_size,
 						void *user_data, size_t action_count, va_list actions)
 {
 	PidginRequestData *data;
@@ -608,7 +611,7 @@ pidgin_request_action(const char *title, const char *primary,
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	GtkWidget *img;
+	GtkWidget *img = NULL;
 	void **buttons;
 	char *label_text;
 	char *primary_esc, *secondary_esc;
@@ -665,8 +668,42 @@ pidgin_request_action(const char *title, const char *primary,
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+	if (icon_data) {
+		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+		GdkPixbuf *pixbuf = NULL;
+		if (gdk_pixbuf_loader_write(loader, icon_data, icon_size, NULL)) {
+			pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+			if (pixbuf) {
+				/* scale the image if it is too large */
+				int width = gdk_pixbuf_get_width(pixbuf);
+				int height = gdk_pixbuf_get_height(pixbuf);
+				if (width > 128 || height > 128) {
+					int scaled_width = width > height ? 128 : (128 * width) / height;
+					int scaled_height = height > width ? 128 : (128 * height) / width;
+					GdkPixbuf *scaled =
+							gdk_pixbuf_scale_simple(pixbuf, scaled_width, scaled_height,
+							    GDK_INTERP_BILINEAR);
+
+					purple_debug_info("pidgin",
+					    "dialog icon was too large, scale it down\n");
+					if (scaled) {
+						g_object_unref(pixbuf);
+						pixbuf = scaled;
+					}
+				}
+				img = gtk_image_new_from_pixbuf(pixbuf);
+			}
+		} else {
+			purple_debug_info("pidgin", "failed to parse dialog icon\n");
+		}
+		gdk_pixbuf_loader_close(loader, NULL);
+		g_object_unref(loader);
+	}
+	
+	if (!img) {
+		img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
 				       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
+	}
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -716,6 +753,17 @@ pidgin_request_action(const char *title, const char *primary,
 	gtk_widget_show_all(dialog);
 
 	return data;
+}
+
+static void *
+pidgin_request_action(const char *title, const char *primary,
+						const char *secondary, int default_action,
+					    PurpleAccount *account, const char *who, PurpleConversation *conv,
+						void *user_data, size_t action_count, va_list actions)
+{
+	return pidgin_request_action_with_icon(title, primary, secondary,
+		default_action, account, who, conv, NULL, 0, user_data, action_count,
+		actions);
 }
 
 static void
@@ -1059,6 +1107,9 @@ create_list_field(PurpleRequestField *field)
 	GtkTreeViewColumn *column;
 	GtkTreeIter iter;
 	GList *l;
+	GList *icons = NULL;
+
+	icons = purple_request_field_list_get_icons(field);
 
 	/* Create the scrolled window */
 	sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1070,7 +1121,10 @@ create_list_field(PurpleRequestField *field)
 	gtk_widget_show(sw);
 
 	/* Create the list store */
-	store = gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING);
+	if (icons)
+		store = gtk_list_store_new(3, G_TYPE_POINTER, G_TYPE_STRING, GDK_TYPE_PIXBUF);
+	else
+		store = gtk_list_store_new(2, G_TYPE_POINTER, G_TYPE_STRING);
 
 	/* Create the tree view */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
@@ -1089,13 +1143,38 @@ create_list_field(PurpleRequestField *field)
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text", 1);
 
+	if (icons)
+	{
+		renderer = gtk_cell_renderer_pixbuf_new();
+		gtk_tree_view_column_pack_start(column, renderer, TRUE);
+		gtk_tree_view_column_add_attribute(column, renderer, "pixbuf", 2);
+
+		gtk_widget_set_size_request(treeview, 200, 400);
+	}
+
 	for (l = purple_request_field_list_get_items(field); l != NULL; l = l->next)
 	{
 		const char *text = (const char *)l->data;
 
 		gtk_list_store_append(store, &iter);
 
-		gtk_list_store_set(store, &iter,
+		if (icons)
+		{
+			const char *icon_path = (const char *)icons->data;
+			GdkPixbuf* pixbuf = NULL;
+
+			if (icon_path)
+				pixbuf = gdk_pixbuf_new_from_file(icon_path, NULL);
+
+			gtk_list_store_set(store, &iter,
+						   0, purple_request_field_list_get_data(field, text),
+						   1, text,
+						   2, pixbuf,
+						   -1);
+			icons = icons->next;
+		}
+		else
+			gtk_list_store_set(store, &iter,
 						   0, purple_request_field_list_get_data(field, text),
 						   1, text,
 						   -1);
@@ -1674,7 +1753,7 @@ static PurpleRequestUiOps ops =
 	pidgin_request_file,
 	pidgin_close_request,
 	pidgin_request_folder,
-	NULL,
+	pidgin_request_action_with_icon,
 	NULL,
 	NULL,
 	NULL

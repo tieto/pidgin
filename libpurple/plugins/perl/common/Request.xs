@@ -380,6 +380,13 @@ purple_request_field_list_add(field, item, data)
 	void * data
 
 void
+purple_request_field_list_add_icon(field, item, icon_path, data)
+	Purple::Request::Field field
+	const char *item
+	const char *icon_path
+	void * data
+
+void
 purple_request_field_list_add_selected(field, item)
 	Purple::Request::Field field
 	const char *item

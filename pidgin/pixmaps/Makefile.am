@@ -101,8 +101,6 @@ EMBLEMS_16 = \
 		emblems/16/half-operator.png \
 		emblems/16/hiptop.png \
 		emblems/16/male.png \
-		emblems/16/mobile.png \
-		emblems/16/music.png \
 		emblems/16/not-authorized.png \
 		emblems/16/operator.png \
 		emblems/16/qq-member.png \
@@ -120,8 +118,6 @@ EMBLEMS_SCALABLE = \
 		emblems/scalable/free-for-chat.svg \
 		emblems/scalable/game.svg \
 		emblems/scalable/male.svg \
-		emblems/scalable/mobile.svg \
-		emblems/scalable/music.svg \
 		emblems/scalable/not-authorized.svg \
 		emblems/scalable/qq-member.svg \
 		emblems/scalable/secure.svg \
@@ -207,6 +203,7 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/yin-yang.svg
 
 EMOTES_SMALL_16_SCALABLE = \
+		emotes/small/16/scalable/mobile.svg \
 		emotes/small/16/scalable/pidgin-emotes.svg
 
 PROTOCOLS_16_SCALABLE = \
@@ -485,6 +482,8 @@ TRAY_16_ICO = \
 		tray/16/message_4bit.ico \
 		tray/16/offline_4bit.ico
 
+TRAY_THEME =	tray/hicolor/index.theme
+
 TRAY_16 = \
 		tray/hicolor/16x16/status/pidgin-tray-away.png \
 		tray/hicolor/16x16/status/pidgin-tray-busy.png \
@@ -587,11 +586,32 @@ nobase_dist_pidginpixmap_DATA = \
 		$(TOOLBAR_22) \
 		$(TOOLBAR_32) \
 		$(TOOLBAR_48) \
+		$(TRAY_THEME) \
+		$(TRAY_16_ICO)
+if ENABLE_TRAYCOMPAT
+# Install in a location compatible with hicolor-icon-theme 0.9
+
+pidginpixmaptray16dir = $(datadir)/pixmaps/pidgin/tray/hicolor/16x16/actions
+dist_pidginpixmaptray16_DATA = $(TRAY_16)
+
+pidginpixmaptray22dir = $(datadir)/pixmaps/pidgin/tray/hicolor/22x22/actions
+dist_pidginpixmaptray22_DATA = $(TRAY_22)
+
+pidginpixmaptray32dir = $(datadir)/pixmaps/pidgin/tray/hicolor/32x32/actions
+dist_pidginpixmaptray32_DATA = $(TRAY_32)
+
+pidginpixmaptray48dir = $(datadir)/pixmaps/pidgin/tray/hicolor/48x48/actions
+dist_pidginpixmaptray48_DATA = $(TRAY_48)
+
+else
+# Install in the "correct" locations
+
+nobase_dist_pidginpixmap_DATA += \
 		$(TRAY_16) \
-		$(TRAY_16_ICO) \
 		$(TRAY_22) \
 		$(TRAY_32) \
 		$(TRAY_48)
+endif
 
 nobase_dist_pidginicons_DATA = \
 		$(ICONS_16) \

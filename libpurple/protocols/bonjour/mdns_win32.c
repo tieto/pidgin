@@ -251,7 +251,7 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 
 static void DNSSD_API
 _mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode,
-    const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void *context)
+    const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const unsigned char *txtRecord, void *context)
 {
 	ResolveCallbackArgs *args = (ResolveCallbackArgs*) context;
 	Win32BuddyImplData *idata = args->bb->mdns_impl_data;

@@ -848,7 +848,14 @@ create_status_type_menu(PurpleStatusPrimitive type)
 
 	for (i = PURPLE_STATUS_UNSET + 1; i < PURPLE_STATUS_NUM_PRIMITIVES; i++)
 	{
-		if (i == PURPLE_STATUS_MOBILE || i == PURPLE_STATUS_TUNE)
+		/* Someone should fix this for 3.0.0.  The independent boolean
+		 * should probably be set on the status type, not the status.
+		 * I guess that would prevent third party plugins from creating
+		 * independent statuses?
+		 */
+		if (i == PURPLE_STATUS_MOBILE ||
+		    i == PURPLE_STATUS_MOOD ||
+		    i == PURPLE_STATUS_TUNE)
 			/*
 			 * Special-case these.  They're intended to be independent
 			 * status types, so don't show them in the list.

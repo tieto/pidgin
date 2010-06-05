@@ -10,10 +10,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-14 20:35-0500\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2009-07-20 12:53+0100\n"
 "Last-Translator: Daniël Heres <danielheres@gmail.com>\n"
 "Language-Team: Dutch <nl@li.org>\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1350,7 +1351,6 @@ msgid "Saved Statuses"
 msgstr "Opgeslagen statussen"
 
 #. title
-#. optional information
 msgid "Title"
 msgstr "Titel"
 
@@ -1554,6 +1554,7 @@ msgstr ""
 msgid "Online"
 msgstr "Online"
 
+#. primative,						no,							id,			name
 msgid "Offline"
 msgstr "Offline "
 
@@ -1647,6 +1648,14 @@ msgstr "Gebruikersinformatie aanpassen voor %s"
 
 msgid "Set User Info"
 msgstr "Gebruikersinfo instellen"
+
+#, fuzzy
+msgid "This protocol does not support setting a public alias."
+msgstr "Dit protocol heeft geen ondersteuning voor chatruimtes."
+
+#, fuzzy
+msgid "This protocol does not support fetching the public alias."
+msgstr "Dit protocol heeft geen ondersteuning voor chatruimtes."
 
 msgid "Unknown"
 msgstr "Onbekend"
@@ -1919,7 +1928,6 @@ msgstr "Fout bij opzoeken van %s: %d"
 msgid "Thread creation failure: %s"
 msgstr "Aanmaken thread mislukt: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Reden onbekend"
 
@@ -1960,6 +1968,10 @@ msgstr "Kan geen map sturen."
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr ""
 "%s is geen normaal bestand. Het wordt geweigerd dit te overschrijven.\n"
+
+#, fuzzy
+msgid "File is not readable."
+msgstr "Map is niet beschrijfbaar."
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
@@ -2245,22 +2257,18 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Onbekende aanmeldingsfout: %s."
 
-#, fuzzy
-msgid "Conference error"
-msgstr "Conferentie afgesloten"
-
 msgid "Error with your microphone"
 msgstr ""
 
 msgid "Error with your webcam"
 msgstr ""
 
+#, fuzzy
+msgid "Conference error"
+msgstr "Conferentie afgesloten"
+
 #, fuzzy, c-format
 msgid "Error creating session: %s"
-msgstr "Fout bij maken verbinding"
-
-#, fuzzy
-msgid "Error creating conference."
 msgstr "Fout bij maken verbinding"
 
 #, c-format
@@ -3059,18 +3067,6 @@ msgstr "%s heeft het gesprek gesloten."
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Kan het bericht niet verzenden. Kan geen gesprek starten."
 
-#, c-format
-msgid "Unable to create socket: %s"
-msgstr "Kan geen socket aanmaken: %s"
-
-#, c-format
-msgid "Unable to bind socket to port: %s"
-msgstr "Kan socket niet koppelen aan poort: %s"
-
-#, c-format
-msgid "Unable to listen on socket: %s"
-msgstr "Kan niet aan socket luisteren: %s"
-
 msgid "Error communicating with local mDNSResponder."
 msgstr "Fout bij het communiceren met lokale mDNSResponder"
 
@@ -3219,10 +3215,20 @@ msgstr "Kies een chatgesprek voor het contact: %s"
 msgid "Add to chat..."
 msgstr "Toevoegen aan chatgesprek..."
 
+#. 0
 #. Global
 msgid "Available"
 msgstr "Beschikbaar"
 
+#. 2
+msgid "Chatty"
+msgstr "Chatgraag"
+
+#. 3
+msgid "Do Not Disturb"
+msgstr "Niet storen"
+
+#. 1
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
@@ -3233,6 +3239,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Voornaam"
 
@@ -3844,22 +3853,17 @@ msgstr "Ad-Hoc opdracht mislukt"
 msgid "execute"
 msgstr "uitvoeren"
 
-#, fuzzy
-msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
-msgstr ""
-"Server vereist TLS/SSL voor aanmelding. Geen ondersteuning voor TLS/SSL "
-"gevonden."
-
-#, fuzzy
-msgid "You require encryption, but no TLS/SSL support was found."
-msgstr ""
-"Server vereist versleuteling, maar er is geen ondersteuning voor TLS/SSL "
-"gevonden."
-
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Server vereist een identificatie via tekstaanmelding via een ongecodeerde "
 "datastroom"
+
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "Ongeldig antwoord van server"
+
+msgid "Server does not use any supported authentication method"
+msgstr "Server gebruikt geen van de ondersteunde identificatiemethoden"
 
 #, c-format
 msgid ""
@@ -3872,25 +3876,74 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Tekstaanmelding"
 
-#, fuzzy
-msgid "SASL authentication failed"
-msgstr "Identificatie mislukt"
-
-msgid "Invalid response from server"
-msgstr "Ongeldig antwoord van server"
-
-msgid "Server does not use any supported authentication method"
-msgstr "Server gebruikt geen van de ondersteunde identificatiemethoden"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr "Je hebt encryptie nodig, maar het is niet mogelijk op deze server."
 
 msgid "Invalid challenge from server"
 msgstr "Ongeldige vraag van server"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+
+#, fuzzy
+msgid "SASL authentication failed"
+msgstr "Identificatie mislukt"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL-fout: %s"
+
+#, fuzzy
+msgid "Invalid Encoding"
+msgstr "Ongeldige invoer voorwaarde"
+
+#, fuzzy
+msgid "Unsupported Extension"
+msgstr "Versie niet ondersteund"
+
+msgid ""
+"Unexpected response from the server.  This may indicate a possible MITM "
+"attack"
+msgstr ""
+
+msgid ""
+"The server does support channel binding, but did not appear to advertise "
+"it.  This indicates a likely MITM attack"
+msgstr ""
+
+#, fuzzy
+msgid "Server does not support channel binding"
+msgstr "Server ondersteunt blokkeren niet"
+
+#, fuzzy
+msgid "Unsupported channel binding method"
+msgstr "Codering niet ondersteund"
+
+msgid "User not found"
+msgstr "Gebruiker niet gevonden"
+
+#, fuzzy
+msgid "Invalid Username Encoding"
+msgstr "Ongeldige gebruikersnaam."
+
+msgid "Resource Constraint"
+msgstr "Beperkte bronnen beschikbaar"
+
+#, fuzzy
+msgid "Unable to canonicalize username"
+msgstr "Kan niet configureren"
+
+#, fuzzy
+msgid "Unable to canonicalize password"
+msgstr "Kon geen poort openen om te luisteren."
+
+#, fuzzy
+msgid "Malicious challenge from server"
+msgstr "Ongeldige vraag van server"
+
+#, fuzzy
+msgid "Unexpected response from server"
+msgstr "Onverwacht HTTP-antwoord van de server ontvangen"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr ""
@@ -3949,6 +4002,7 @@ msgstr "Regio"
 msgid "Postal Code"
 msgstr "Postcode"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Land"
 
@@ -3963,10 +4017,14 @@ msgstr "Organisatie"
 msgid "Organization Unit"
 msgstr "Afdeling"
 
+msgid "Job Title"
+msgstr "Functieomschrijving"
+
 msgid "Role"
 msgstr "Rol"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Geboortedatum"
 
@@ -3998,12 +4056,16 @@ msgstr "Prioriteit"
 msgid "Resource"
 msgstr "Hulpmiddel"
 
-#, c-format
-msgid "%s ago"
-msgstr "%s geleden"
+#, fuzzy
+msgid "Uptime"
+msgstr "Bijwerken"
 
 msgid "Logged Off"
 msgstr "UItgelogd"
+
+#, c-format
+msgid "%s ago"
+msgstr "%s geleden"
 
 msgid "Middle Name"
 msgstr "Tweede naam"
@@ -4053,15 +4115,6 @@ msgstr "Inloggen"
 
 msgid "Log Out"
 msgstr "Afmelden"
-
-msgid "Chatty"
-msgstr "Chatgraag"
-
-msgid "Extended Away"
-msgstr "Lang weg"
-
-msgid "Do Not Disturb"
-msgstr "Niet storen"
 
 msgid "JID"
 msgstr "JID"
@@ -4190,16 +4243,27 @@ msgstr "Geen gebruikers gevonden"
 msgid "Roles:"
 msgstr "Rollen:"
 
+#, fuzzy
+msgid "Server requires TLS/SSL, but no TLS/SSL support was found."
+msgstr ""
+"Server vereist TLS/SSL voor aanmelding. Geen ondersteuning voor TLS/SSL "
+"gevonden."
+
+#, fuzzy
+msgid "You require encryption, but no TLS/SSL support was found."
+msgstr ""
+"Server vereist versleuteling, maar er is geen ondersteuning voor TLS/SSL "
+"gevonden."
+
 msgid "Ping timed out"
 msgstr "Ping verlopen"
 
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-
 msgid "Invalid XMPP ID"
 msgstr "Ongeldig XMPP-ID"
+
+#, fuzzy
+msgid "Invalid XMPP ID. Username portion must be set."
+msgstr "Ongeldige XMPP ID. Domein moet ingesteld worden"
 
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Ongeldige XMPP ID. Domein moet ingesteld worden"
@@ -4298,7 +4362,6 @@ msgstr "Server ondersteunt blokkeren niet"
 msgid "Not Authorized"
 msgstr "Geen toestemming"
 
-#. (reference: "libpurple/request.h")
 msgid "Mood"
 msgstr "Stemming"
 
@@ -4333,6 +4396,20 @@ msgstr "Humeur-tekst"
 msgid "Allow Buzz"
 msgstr "Trillen Toestaan"
 
+#, fuzzy
+msgid "Mood Name"
+msgstr "Tweede naam"
+
+#, fuzzy
+msgid "Mood Comment"
+msgstr "Contactopmerking"
+
+#. primitive
+#. ID
+#. name - use default
+#. saveable
+#. should be user_settable some day
+#. independent
 msgid "Tune Artist"
 msgstr "Artiest"
 
@@ -4503,9 +4580,6 @@ msgstr "Schending van beleid"
 msgid "Remote Connection Failed"
 msgstr "Verbinding mislukt"
 
-msgid "Resource Constraint"
-msgstr "Beperkte bronnen beschikbaar"
-
 msgid "Restricted XML"
 msgstr "Strikte XML"
 
@@ -4575,10 +4649,6 @@ msgid ""
 "buzzes now."
 msgstr "Trillen niet mogelijk, omdat de gebruiker %s het niet ondersteund."
 
-#, c-format
-msgid "Buzzing %s..."
-msgstr "%s trillen..."
-
 #. Yahoo only supports one attention command: the 'buzz'.
 #. This is index number YAHOO_BUZZ.
 msgid "Buzz"
@@ -4587,6 +4657,10 @@ msgstr "Trill"
 #, c-format
 msgid "%s has buzzed you!"
 msgstr "%s heeft je laten trillen!"
+
+#, c-format
+msgid "Buzzing %s..."
+msgstr "%s trillen..."
 
 #, fuzzy, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4616,6 +4690,10 @@ msgstr "Kies een bron"
 
 msgid "Initiate Media"
 msgstr "Media opstarten"
+
+#, fuzzy
+msgid "Account does not support PEP, can't set mood"
+msgstr "Dit protocol heeft geen ondersteuning voor chatruimtes."
 
 msgid "config:  Configure a chat room."
 msgstr "config:  Chatruimte instellen"
@@ -4676,6 +4754,13 @@ msgstr "ping &lt;jid&gt;:\tPing een gebruiker/component/server."
 
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: Een contact buzzen om de aandacht te krijgen"
+
+#, fuzzy
+msgid "mood: Set current user mood"
+msgstr "Kies juiste gebruiker"
+
+msgid "Extended Away"
+msgstr "Lang weg"
 
 #. *< type
 #. *< ui_requirement
@@ -4750,11 +4835,21 @@ msgstr "XMPP Bericht-fout"
 msgid "(Code %s)"
 msgstr "(Code %s)"
 
+#, fuzzy
+msgid "A custom smiley in the message is too large to send."
+msgstr "Kan het bericht niet verzenden. Het bericht is te groot."
+
+msgid "XMPP stream header missing"
+msgstr ""
+
+msgid "XMPP Version Mismatch"
+msgstr ""
+
+msgid "XMPP stream missing ID"
+msgstr ""
+
 msgid "XML Parse error"
 msgstr "XML analysefout"
-
-msgid "Unknown Error in presence"
-msgstr "Onbekende fout in aanwezigheid"
 
 #, c-format
 msgid "Error joining chat %s"
@@ -4790,6 +4885,9 @@ msgstr "Je bent eruit gegooid:(%s)"
 #, c-format
 msgid "Kicked (%s)"
 msgstr "Eruit gegooid (%s)"
+
+msgid "Unknown Error in presence"
+msgstr "Onbekende fout in aanwezigheid"
 
 #, fuzzy
 msgid "An error occurred on the in-band bytestream transfer\n"
@@ -4828,17 +4926,313 @@ msgstr ""
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "Geef de bron van %s naar degene wie je een bestand wil sturen"
 
-msgid "Edit User Mood"
-msgstr "Humeur instellen"
+#, fuzzy
+msgid "Afraid"
+msgstr "Arabisch"
 
-msgid "Please select your mood from the list."
-msgstr "Selecteer je humeur uit de lijst"
+#, fuzzy
+msgid "Amazed"
+msgstr "Beschaamd"
 
-msgid "Set"
-msgstr "Instellen"
+#, fuzzy
+msgid "Amorous"
+msgstr "Glorieus"
 
-msgid "Set Mood..."
-msgstr "Humeur instellen..."
+msgid "Angry"
+msgstr "Boos"
+
+#, fuzzy
+msgid "Annoyed"
+msgstr "Verbannen"
+
+msgid "Anxious"
+msgstr "Angstig"
+
+#, fuzzy
+msgid "Aroused"
+msgstr "Je stuurt"
+
+msgid "Ashamed"
+msgstr "Beschaamd"
+
+msgid "Bored"
+msgstr "Verveeld"
+
+#, fuzzy
+msgid "Brave"
+msgstr "Opslaan"
+
+#, fuzzy
+msgid "Calm"
+msgstr "Gebied"
+
+#, fuzzy
+msgid "Cautious"
+msgstr "Chats"
+
+#, fuzzy
+msgid "Cold"
+msgstr "Vet"
+
+#, fuzzy
+msgid "Confident"
+msgstr "Conflict"
+
+#, fuzzy
+msgid "Confused"
+msgstr "Doorgaan"
+
+#, fuzzy
+msgid "Contemplative"
+msgstr "Contact"
+
+#, fuzzy
+msgid "Contented"
+msgstr "Verbonden"
+
+#, fuzzy
+msgid "Cranky"
+msgstr "Bedrijf"
+
+msgid "Crazy"
+msgstr ""
+
+#, fuzzy
+msgid "Creative"
+msgstr "Aanmaken"
+
+#, fuzzy
+msgid "Curious"
+msgstr "Glorieus"
+
+#, fuzzy
+msgid "Dejected"
+msgstr "Weigeren"
+
+#, fuzzy
+msgid "Depressed"
+msgstr "Verwijderen"
+
+#, fuzzy
+msgid "Disappointed"
+msgstr "Verbinding verbroken"
+
+msgid "Disgusted"
+msgstr ""
+
+#, fuzzy
+msgid "Dismayed"
+msgstr "_Uitzetten"
+
+#, fuzzy
+msgid "Distracted"
+msgstr "Losgekoppeld"
+
+msgid "Embarrassed"
+msgstr ""
+
+#, fuzzy
+msgid "Envious"
+msgstr "Angstig"
+
+msgid "Excited"
+msgstr "Opgewonden"
+
+#, fuzzy
+msgid "Flirtatious"
+msgstr "Glorieus"
+
+#, fuzzy
+msgid "Frustrated"
+msgstr "Voornaam"
+
+msgid "Grateful"
+msgstr ""
+
+#, fuzzy
+msgid "Grieving"
+msgstr "Ophalen..."
+
+#, fuzzy
+msgid "Grumpy"
+msgstr "Groep"
+
+#, fuzzy
+msgid "Guilty"
+msgstr "Stad"
+
+msgid "Happy"
+msgstr "Blij"
+
+msgid "Hopeful"
+msgstr ""
+
+#, fuzzy
+msgid "Hot"
+msgstr "_Host:"
+
+msgid "Humbled"
+msgstr ""
+
+msgid "Humiliated"
+msgstr ""
+
+#, fuzzy
+msgid "Hungry"
+msgstr "Boos"
+
+#, fuzzy
+msgid "Hurt"
+msgstr "Humor"
+
+msgid "Impressed"
+msgstr ""
+
+#, fuzzy
+msgid "In awe"
+msgstr "Verliefd"
+
+msgid "In love"
+msgstr "Verliefd"
+
+#, fuzzy
+msgid "Indignant"
+msgstr "Indonesisch"
+
+#, fuzzy
+msgid "Interested"
+msgstr "Interesses"
+
+#, fuzzy
+msgid "Intoxicated"
+msgstr "Uitnodigen"
+
+msgid "Invincible"
+msgstr "Onoverwinnelijk"
+
+msgid "Jealous"
+msgstr "Jaloers"
+
+#, fuzzy
+msgid "Lonely"
+msgstr "Aap"
+
+#, fuzzy
+msgid "Lost"
+msgstr "Hardst"
+
+msgid "Lucky"
+msgstr ""
+
+#, fuzzy
+msgid "Mean"
+msgstr "Duits"
+
+#, fuzzy
+msgid "Moody"
+msgstr "Stemming"
+
+msgid "Nervous"
+msgstr ""
+
+#, fuzzy
+msgid "Neutral"
+msgstr "Detail"
+
+#, fuzzy
+msgid "Offended"
+msgstr "Offline "
+
+msgid "Outraged"
+msgstr ""
+
+#, fuzzy
+msgid "Playful"
+msgstr "Afspelen"
+
+#, fuzzy
+msgid "Proud"
+msgstr "Hard"
+
+#, fuzzy
+msgid "Relaxed"
+msgstr "Echte naam"
+
+#, fuzzy
+msgid "Relieved"
+msgstr "Ontvangen"
+
+#, fuzzy
+msgid "Remorseful"
+msgstr "Verwijderen"
+
+#, fuzzy
+msgid "Restless"
+msgstr "Registreren"
+
+msgid "Sad"
+msgstr "Verdrietig"
+
+msgid "Sarcastic"
+msgstr ""
+
+msgid "Satisfied"
+msgstr ""
+
+#, fuzzy
+msgid "Serious"
+msgstr "Glorieus"
+
+#, fuzzy
+msgid "Shocked"
+msgstr "Geblokkeerd"
+
+msgid "Shy"
+msgstr ""
+
+#, fuzzy
+msgid "Sick"
+msgstr "Bijnaam"
+
+#. Sleepy / Tired
+msgid "Sleepy"
+msgstr "Slaperig"
+
+msgid "Spontaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Stressed"
+msgstr "Geslaagd:"
+
+#, fuzzy
+msgid "Strong"
+msgstr "Liedje"
+
+msgid "Surprised"
+msgstr ""
+
+msgid "Thankful"
+msgstr ""
+
+msgid "Thirsty"
+msgstr ""
+
+#, fuzzy
+msgid "Tired"
+msgstr "Brand"
+
+#, fuzzy
+msgid "Undefined"
+msgstr "Onderstrepen"
+
+#, fuzzy
+msgid "Weak"
+msgstr "Afranselen"
+
+#, fuzzy
+msgid "Worried"
+msgstr "Verveeld"
 
 msgid "Set User Nickname"
 msgstr "Bijnaam instellen"
@@ -4852,6 +5246,9 @@ msgid ""
 msgstr ""
 "Deze informatie is zichtbaar voor alle contacten in je contactenlijst, dus "
 "kies iets passends."
+
+msgid "Set"
+msgstr "Instellen"
 
 msgid "Set Nickname..."
 msgstr "Bijnaam instellen..."
@@ -4894,183 +5291,138 @@ msgid ""
 msgstr ""
 "%s is op de lokale lijst, maar niet op de serverlijst. Wilt u deze toevoegen?"
 
-#, c-format
 msgid "Unable to parse message"
 msgstr "Kan het bericht niet analyseren"
 
-#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "Syntaxfout (waarschijnlijk een client-bug)"
 
-#, c-format
 msgid "Invalid email address"
 msgstr "Ongeldig e-mailadres"
 
-#, c-format
 msgid "User does not exist"
 msgstr "Gebruiker bestaat niet"
 
-#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "Geen geldige domeinnaam aanwezig"
 
-#, c-format
 msgid "Already logged in"
 msgstr "Al aangemeld"
 
-#, c-format
 msgid "Invalid username"
 msgstr "Ongeldige gebruikersnaam."
 
-#, c-format
 msgid "Invalid friendly name"
 msgstr "Ongeldige bijnaam"
 
-#, c-format
 msgid "List full"
 msgstr "Lijst is vol"
 
-#, c-format
 msgid "Already there"
 msgstr "Staat er al"
 
-#, c-format
 msgid "Not on list"
 msgstr "Niet in de lijst"
 
-#, c-format
 msgid "User is offline"
 msgstr "Gebruiker is off-line"
 
-#, c-format
 msgid "Already in the mode"
 msgstr "Reeds in die modus"
 
-#, c-format
 msgid "Already in opposite list"
 msgstr "Reeds in de tegenovergestelde lijst"
 
-#, c-format
 msgid "Too many groups"
 msgstr "Te veel groepen"
 
-#, c-format
 msgid "Invalid group"
 msgstr "Ongeldige groep"
 
-#, c-format
 msgid "User not in group"
 msgstr "Gebruiker niet in groep"
 
-#, c-format
 msgid "Group name too long"
 msgstr "Groepsnaam is te lang"
 
-#, c-format
 msgid "Cannot remove group zero"
 msgstr "Kan groep nul niet verwijderen"
 
-#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "Probeerde een contact aan een niet bestaande groep toe te voegen"
 
-#, c-format
 msgid "Switchboard failed"
 msgstr "Schakelserver fout"
 
-#, c-format
 msgid "Notify transfer failed"
 msgstr "Melding overzetten mislukt"
 
-#, c-format
 msgid "Required fields missing"
 msgstr "Niet alle verplichte velden zijn ingevuld"
 
-#, c-format
 msgid "Too many hits to a FND"
 msgstr "Te veel resultaten bij zoekopdracht"
 
-#, c-format
 msgid "Not logged in"
 msgstr "Niet aangemeld"
 
-#, c-format
 msgid "Service temporarily unavailable"
 msgstr "Service momenteel niet toegankelijk"
 
-#, c-format
 msgid "Database server error"
 msgstr "Database-server fout"
 
-#, c-format
 msgid "Command disabled"
 msgstr "Opdracht uitgeschakeld"
 
-#, c-format
 msgid "File operation error"
 msgstr "Bestandsfout"
 
-#, c-format
 msgid "Memory allocation error"
 msgstr "Geheugenfout"
 
-#, c-format
 msgid "Wrong CHL value sent to server"
 msgstr "Verkeerde CHL-waarde naar server gestuurd"
 
-#, c-format
 msgid "Server busy"
 msgstr "Server bezig"
 
-#, c-format
 msgid "Server unavailable"
 msgstr "Server niet beschikbaar"
 
-#, c-format
 msgid "Peer notification server down"
 msgstr "Meldingsserver is off-line"
 
-#, c-format
 msgid "Database connect error"
 msgstr "Database verbindingsprobleem"
 
-#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "Server wordt uitgeschakeld (verlaat het schip!)"
 
-#, c-format
 msgid "Error creating connection"
 msgstr "Fout bij maken verbinding"
 
-#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "CVR-parameters zijn onbekend of niet toegestaan"
 
-#, c-format
 msgid "Unable to write"
 msgstr "Kan niet schrijven"
 
-#, c-format
 msgid "Session overload"
 msgstr "Sessie-overload"
 
-#, c-format
 msgid "User is too active"
 msgstr "Gebruiker is te actief"
 
-#, c-format
 msgid "Too many sessions"
 msgstr "Te veel sessies"
 
-#, c-format
 msgid "Passport not verified"
 msgstr "Passport niet geverifieerd"
 
-#, c-format
 msgid "Bad friend file"
 msgstr "Onbegrijpelijk contactenbestand"
 
-#, c-format
 msgid "Not expected"
 msgstr "Niet verwacht"
 
@@ -5078,34 +5430,27 @@ msgstr "Niet verwacht"
 msgid "Friendly name is changing too rapidly"
 msgstr "Bijnaam verandert te snel"
 
-#, c-format
 msgid "Server too busy"
 msgstr "Server te druk bezig"
 
-#, c-format
 msgid "Authentication failed"
 msgstr "Identificatie mislukt"
 
-#, c-format
 msgid "Not allowed when offline"
 msgstr "Niet toegestaan tijdens off-line-status"
 
-#, c-format
 msgid "Not accepting new users"
 msgstr "Nieuwe gebruikers worden niet geaccepteerd"
 
-#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "Kinderpaspoort zonder toezegging van ouder"
 
-#, c-format
 msgid "Passport account not yet verified"
 msgstr "Passport-account nog niet geverifieerd"
 
 msgid "Passport account suspended"
 msgstr "Passport-account onderbroken"
 
-#, c-format
 msgid "Bad ticket"
 msgstr "Slecht ticket"
 
@@ -5165,6 +5510,10 @@ msgstr "E-mailadres ..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Uw nieuwe MSN-bijnaam is te lang."
+
+#, fuzzy, c-format
+msgid "Set friendly name for %s."
+msgstr "Bijnaam instellen."
 
 msgid "Set your friendly name."
 msgstr "Bijnaam instellen."
@@ -5248,18 +5597,6 @@ msgstr "Aan de telefoon"
 
 msgid "Out to Lunch"
 msgstr "Lunchen"
-
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
-msgid "Artist"
-msgstr "Artiest"
-
-msgid "Album"
-msgstr "Album"
 
 msgid "Game Title"
 msgstr "Game-titel"
@@ -5409,9 +5746,6 @@ msgstr "Verjaardag"
 msgid "Work"
 msgstr "Werk"
 
-msgid "Job Title"
-msgstr "Functieomschrijving"
-
 msgid "Company"
 msgstr "Bedrijf"
 
@@ -5500,6 +5834,10 @@ msgstr "HTTP-methode server"
 msgid "Show custom smileys"
 msgstr "Eigen smiley's weergeven"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Kan geen nieuwe verbinding maken"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: Een contact een duwtje geven om de aandacht te krijgen"
 
@@ -5508,10 +5846,6 @@ msgstr "Windows Live ID authentication: Aanmelden niet mogelijk"
 
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "Windows Live ID autenticatie: ongeldig antwoord."
-
-#, c-format
-msgid "%s just sent you a Nudge!"
-msgstr "%s heeft u zojuist een duwtje gegeven!"
 
 #, fuzzy
 msgid "The following users are missing from your addressbook"
@@ -5704,94 +6038,28 @@ msgstr "Dit contact ook verwijderen uit adresboek?"
 msgid "The username specified is invalid."
 msgstr "Ingevoerde gebruikersnaam is ongeldig."
 
-#, c-format
-msgid "Friendly name changes too rapidly"
-msgstr "Bijnaam verandert te snel"
-
-msgid "This Hotmail account may not be active."
-msgstr "Dit Hotmail-account is misschien niet in gebruik."
-
-msgid "Profile URL"
-msgstr "Profiel-URL"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "MSN Protocol Plugin"
-msgstr "MSN-protocol-plug-in"
-
-#, c-format
-msgid "%s is not a valid group."
-msgstr "%s is geen geldige groep."
-
-msgid "Unknown error."
-msgstr "Onbekende fout."
-
-#, c-format
-msgid "%s on %s (%s)"
-msgstr "%s op %s (%s)"
-
-#, c-format
-msgid "Unable to add user on %s (%s)"
-msgstr "Kan gebruiker niet toevoegen op %s (%s)"
-
-#, c-format
-msgid "Unable to block user on %s (%s)"
-msgstr "Kan gebruiker niet blokkeren op %s (%s)"
-
-#, c-format
-msgid "Unable to permit user on %s (%s)"
-msgstr "Kan gebruiker geen toestemming geven op %s (%s)"
-
-#, c-format
-msgid "%s could not be added because your buddy list is full."
-msgstr "Kan %s niet toevoegen omdat uw contactenlijst vol is."
-
-#, c-format
-msgid "%s is not a valid passport account."
-msgstr "%s is geen geldig passport-account."
-
-msgid "Service Temporarily Unavailable."
-msgstr "Service momenteel niet beschikbaar."
-
-msgid "Unable to rename group"
-msgstr "Kan groep niet hernoemen"
-
-msgid "Unable to delete group"
-msgstr "Kan groep niet verwijderen"
-
-#, c-format
-msgid "%s has added you to his or her buddy list."
-msgstr "%s heeft u aan zijn/haar contactenlijst toegevoegd."
-
-#, c-format
-msgid "%s has removed you from his or her buddy list."
-msgstr "%s heeft u van zijn/haar contactenlijst verwijderd."
-
-#. show current mood
 #, fuzzy
-msgid "Current Mood"
-msgstr "Uw huidige stemming"
-
-#. add all moods to list
-#, fuzzy
-msgid "New Mood"
-msgstr "Humeur gebruiker"
+msgid "The PIN you entered is invalid."
+msgstr "Ingevoerde SecurID sleutel is ongeldig."
 
 #, fuzzy
-msgid "Change your Mood"
-msgstr "Wachtwoord veranderen"
+msgid "The PIN you entered has an invalid length [4-10]."
+msgstr "Ingevoerde SecurID sleutel is ongeldig."
+
+msgid "The PIN is invalid. It should only consist of digits [0-9]."
+msgstr ""
 
 #, fuzzy
-msgid "How do you feel right now?"
-msgstr "Ik ben er even niet"
+msgid "The two PINs you entered do not match."
+msgstr "Nieuwe wachtwoorden zijn niet gelijk."
+
+#, fuzzy
+msgid "The name you entered is invalid."
+msgstr "Ingevoerde SecurID sleutel is ongeldig."
+
+msgid ""
+"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
+msgstr ""
 
 #. show error to user
 #, fuzzy
@@ -5806,7 +6074,11 @@ msgstr "Profiel"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -5845,11 +6117,6 @@ msgstr ""
 msgid "About"
 msgstr "Over mij"
 
-#. display / change mood
-#, fuzzy
-msgid "Change Mood..."
-msgstr "Wachtwoord wijzigen..."
-
 #. display / change profile
 #, fuzzy
 msgid "Change Profile..."
@@ -5870,10 +6137,12 @@ msgstr "Over mij"
 msgid "The file you are trying to send is too large!"
 msgstr "Afwezigheidsbericht te groot."
 
+#, fuzzy
 msgid ""
-"Unable to connect to the mxit HTTP server. Please check your server server "
-"settings."
+"Unable to connect to the MXit HTTP server. Please check your server settings."
 msgstr ""
+"Kan geen verbinding makenmet server. Geef de naam op van de server waarmee u "
+"contact wilt maken."
 
 #, fuzzy
 msgid "Logging In..."
@@ -5881,8 +6150,7 @@ msgstr "Aanmelden"
 
 #, fuzzy
 msgid ""
-"Unable to connect to the mxit server. Please check your server server "
-"settings."
+"Unable to connect to the MXit server. Please check your server settings."
 msgstr ""
 "Kan geen verbinding makenmet server. Geef de naam op van de server waarmee u "
 "contact wilt maken."
@@ -5891,11 +6159,19 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Verbinding wordt gemaakt"
 
+#, fuzzy
+msgid "The nick name you entered is invalid."
+msgstr "Ingevoerde SecurID sleutel is ongeldig."
+
+#, fuzzy
+msgid "The PIN you entered has an invalid length [7-10]."
+msgstr "Ingevoerde SecurID sleutel is ongeldig."
+
 #. mxit login name
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 #, fuzzy
 msgid "Nick Name"
 msgstr "Bijnaam"
@@ -5946,7 +6222,7 @@ msgid "Security Code"
 msgstr "Beveiliging ingeschakeld"
 
 # wachtwoord invoeren
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "Voer code in"
@@ -5972,9 +6248,18 @@ msgid "Retrieving User Information..."
 msgstr "Server-informatie"
 
 #, fuzzy
+msgid "Loading menu..."
+msgstr "Aanmelden"
+
+#, fuzzy
 msgid "Status Message"
 msgstr "Verzonden berichten"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "Ontvangen berichten"
+
+#. hidden number
 #, fuzzy
 msgid "Hidden Number"
 msgstr "Tweede naam"
@@ -5996,6 +6281,19 @@ msgstr "Verbinding met behulp van TCP"
 msgid "Enable splash-screen popup"
 msgstr ""
 
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Je bent eruit gegooid:(%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Slecht ticket"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Ruimte:"
+
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
 msgstr ""
@@ -6016,12 +6314,31 @@ msgstr ""
 msgid "Successfully Logged In..."
 msgstr "Succesvol aan Qun deelgenmen"
 
+#, fuzzy, c-format
+msgid ""
+"%s sent you an encrypted message, but it is not supported on this client."
+msgstr ""
+"%s verzond je een uitnodiging voor een webcam, wat nog niet wordt "
+"ondersteund."
+
 #, fuzzy
 msgid "Message Error"
 msgstr "XMPP Bericht-fout"
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
+
+#, fuzzy
+msgid "An internal MXit server error occurred."
+msgstr "Onbekende aanmeldingsfout: %s."
+
+#, fuzzy, c-format
+msgid "Login error: %s (%i)"
+msgstr "SASL-fout: %s"
+
+#, fuzzy, c-format
+msgid "Logout error: %s (%i)"
+msgstr "SASL-fout: %s"
 
 #, fuzzy
 msgid "Contact Error"
@@ -6098,38 +6415,8 @@ msgstr ""
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
 
-msgid "Angry"
-msgstr "Boos"
-
-msgid "Excited"
-msgstr "Opgewonden"
-
-#, fuzzy
-msgid "Grumpy"
-msgstr "Groep"
-
-msgid "Happy"
-msgstr "Blij"
-
 msgid "In Love"
 msgstr "Verliefd"
-
-msgid "Invincible"
-msgstr "Onoverwinnelijk"
-
-msgid "Sad"
-msgstr "Verdrietig"
-
-#, fuzzy
-msgid "Hot"
-msgstr "_Host:"
-
-#, fuzzy
-msgid "Sick"
-msgstr "Bijnaam"
-
-msgid "Sleepy"
-msgstr "Slaperig"
 
 #, fuzzy
 msgid "Pending"
@@ -6535,9 +6822,6 @@ msgstr "Wachtwoord verlopen"
 msgid "Incorrect password"
 msgstr "Ongeldig wachtwoord"
 
-msgid "User not found"
-msgstr "Gebruiker niet gevonden"
-
 msgid "Account has been disabled"
 msgstr "Account is uitgeschakeld"
 
@@ -6608,8 +6892,8 @@ msgstr "Kan niet inloggen: %s"
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
 msgstr ""
-"Kan het bericht niet verzenden. Kan geen gegevens over gebruiker opvragen (%"
-"s)."
+"Kan het bericht niet verzenden. Kan geen gegevens over gebruiker opvragen "
+"(%s)."
 
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
@@ -6769,7 +7053,10 @@ msgstr "Server-adres"
 msgid "Server port"
 msgstr "Server-poort"
 
-#. Note to translators: %s in this string is a URL
+#, fuzzy, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "Onverwacht HTTP-antwoord van de server ontvangen"
+
 #, fuzzy, c-format
 msgid "Received unexpected response from %s"
 msgstr "Onverwacht HTTP-antwoord van de server ontvangen"
@@ -6787,14 +7074,184 @@ msgstr ""
 msgid "Error requesting %s: %s"
 msgstr "Fout oplossing %s"
 
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Error requesting %s"
+msgstr "Fout oplossing %s"
 
 msgid "Could not join chat room"
 msgstr "Kon gesprek-ruimte niet binnenkomen"
 
 msgid "Invalid chat room name"
 msgstr "Ongeldige naam voor ruimte"
+
+msgid "Invalid error"
+msgstr "Ongeldige fout"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Kan bestand niet verzenden"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Kan geen map sturen."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Kan het bericht niet verzenden."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Off-line bericht"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Kan het bericht niet verzenden (%s)."
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Kan het bericht niet verzenden: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Kan het bericht niet verzenden aan %s:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Kan het bericht niet verzenden aan %s:"
+
+msgid "Thinking"
+msgstr ""
+
+#, fuzzy
+msgid "Shopping"
+msgstr "...stopt met typen"
+
+#, fuzzy
+msgid "Questioning"
+msgstr "Dialoogvenster voor vragen"
+
+#, fuzzy
+msgid "Eating"
+msgstr "Semafoon"
+
+#, fuzzy
+msgid "Watching a movie"
+msgstr "Speelt een spelletje"
+
+msgid "Typing"
+msgstr "Typen"
+
+#, fuzzy
+msgid "At the office"
+msgstr "Niet op kantoor"
+
+msgid "Taking a bath"
+msgstr ""
+
+msgid "Watching TV"
+msgstr ""
+
+#, fuzzy
+msgid "Having fun"
+msgstr "Ophangen"
+
+#, fuzzy
+msgid "Sleeping"
+msgstr "Slaperig"
+
+msgid "Using a PDA"
+msgstr ""
+
+#, fuzzy
+msgid "Meeting friends"
+msgstr "Chat-vrienden"
+
+#, fuzzy
+msgid "On the phone"
+msgstr "Aan de telefoon"
+
+#, fuzzy
+msgid "Surfing"
+msgstr "Herhalend"
+
+#. "I am mobile." / "John is mobile."
+msgid "Mobile"
+msgstr "Mobiel"
+
+msgid "Searching the web"
+msgstr ""
+
+msgid "At a party"
+msgstr ""
+
+msgid "Having Coffee"
+msgstr ""
+
+#. Playing video games
+#, fuzzy
+msgid "Gaming"
+msgstr "Gamende gebruiker"
+
+msgid "Browsing the web"
+msgstr ""
+
+#, fuzzy
+msgid "Smoking"
+msgstr "Liedje"
+
+#, fuzzy
+msgid "Writing"
+msgstr "Werken"
+
+#. Drinking [Alcohol]
+#, fuzzy
+msgid "Drinking"
+msgstr "Werken"
+
+msgid "Listening to music"
+msgstr "Luisteren naar muziek"
+
+#, fuzzy
+msgid "Studying"
+msgstr "Verzenden"
+
+#, fuzzy
+msgid "In the restroom"
+msgstr "Interesses"
 
 #, fuzzy
 msgid "Received invalid data on connection with server"
@@ -6864,120 +7321,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Bestand %s is %s, welke is groter dan de maximale grootte van %s."
 
-msgid "Invalid error"
-msgstr "Ongeldige fout"
-
-msgid "Invalid SNAC"
-msgstr "Ongeldige SNAC"
-
-msgid "Rate to host"
-msgstr "Frequentie naar host"
-
-msgid "Rate to client"
-msgstr "Frequentie naar cliÃ«nt"
-
-msgid "Service unavailable"
-msgstr "Service niet beschikbaar"
-
-msgid "Service not defined"
-msgstr "Service niet gedefinieerd"
-
-msgid "Obsolete SNAC"
-msgstr "Verouderde SNAC"
-
-msgid "Not supported by host"
-msgstr "Niet ondersteund door host"
-
-msgid "Not supported by client"
-msgstr "Niet ondersteund door cliënt"
-
-msgid "Refused by client"
-msgstr "Gewegerd door cliënt"
-
-msgid "Reply too big"
-msgstr "Antwoord te groot"
-
-msgid "Responses lost"
-msgstr "Reacties verloren"
-
-msgid "Request denied"
-msgstr "Aanvraag geweigerd"
-
-msgid "Busted SNAC payload"
-msgstr "SNAC bagage kapot"
-
-msgid "Insufficient rights"
-msgstr "Niet genoeg rechten"
-
-msgid "In local permit/deny"
-msgstr "In lokale toestaan/weigeren"
-
-msgid "Warning level too high (sender)"
-msgstr "Waarschuwingsniveau te hoog (verzender)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Waarschuwingsniveau te hoog (ontvanger)"
-
-msgid "User temporarily unavailable"
-msgstr "Gebruiker tijdelijk niet beschikbaar"
-
-msgid "No match"
-msgstr "Geen overeenkomstige resultaten"
-
-msgid "List overflow"
-msgstr "Te grote lijst"
-
-msgid "Request ambiguous"
-msgstr "Dubieuze aanvraag"
-
-msgid "Queue full"
-msgstr "Wachtrij vol"
-
-msgid "Not while on AOL"
-msgstr "Niet tijdens AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "Kan bestand niet verzenden"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Kan geen map sturen."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "Kan het bericht niet verzenden."
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "Off-line bericht"
-
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
 "is probably using a different encoding than expected.  If you know what "
@@ -7017,6 +7360,9 @@ msgstr "Bestanden ophalen"
 
 msgid "Games"
 msgstr "Spelletjes"
+
+msgid "ICQ Xtraz"
+msgstr ""
 
 msgid "Add-Ins"
 msgstr "Extra's"
@@ -7083,6 +7429,26 @@ msgstr "Zichtbaar op web"
 
 msgid "Invisible"
 msgstr "Onzichtbaar"
+
+#, fuzzy
+msgid "Evil"
+msgstr "E-mail"
+
+#, fuzzy
+msgid "Depression"
+msgstr "Baan"
+
+#, fuzzy
+msgid "At home"
+msgstr "Over mij"
+
+#, fuzzy
+msgid "At work"
+msgstr "Netwerk"
+
+#, fuzzy
+msgid "At lunch"
+msgstr "Lunchen"
 
 msgid "IP Address"
 msgstr "IP-adres"
@@ -7327,28 +7693,9 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "%hu bericht van %s is niet overgekomen om een onbekende reden."
 msgstr[1] "%hu berichten van %s zijn niet overgekomen om een onbekende reden."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Kan het bericht niet verzenden (%s)."
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Kan het bericht niet verzenden: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Kan het bericht niet verzenden aan %s:"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Kan het bericht niet verzenden aan %s:"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "Gebruikersinformatie niet beschikbaar: %s"
-
-msgid "Unknown reason."
-msgstr "Onbekende reden."
 
 msgid "Online Since"
 msgstr "Online sinds"
@@ -7367,14 +7714,6 @@ msgid ""
 "[Unable to display a message from this user because it contained invalid "
 "characters.]"
 msgstr "[kan bericht niet weergeven omdat deze ongeldige tekens bevat.]"
-
-#, fuzzy
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"Uw laatste actie is niet gebeurd omdat uw snelheid te hoog ligt. Wacht 10 "
-"seconden en probeer het dan nogmaals."
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -7621,6 +7960,10 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr "iTunes Music Store-link"
 
+#, fuzzy
+msgid "Lunch"
+msgstr "Finch"
+
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "Contactopmerking voor %s"
@@ -7653,7 +7996,8 @@ msgstr "AIM-info ophalen"
 msgid "Edit Buddy Comment"
 msgstr "Opmerking bewerken"
 
-msgid "Get Status Msg"
+#, fuzzy
+msgid "Get X-Status Msg"
 msgstr "Statusbericht tonen"
 
 #, fuzzy
@@ -7784,6 +8128,75 @@ msgstr ""
 "Dit vereist een directe verbinding tussen de twee computers (nodig voor "
 "afbeeldingen via chatberichten). Dit zou als een inbreuk op de privacy "
 "beschouwd kunnen worden omdat de ander dan uw IP-adres te weten komt."
+
+msgid "Invalid SNAC"
+msgstr "Ongeldige SNAC"
+
+msgid "Rate to host"
+msgstr "Frequentie naar host"
+
+msgid "Rate to client"
+msgstr "Frequentie naar cliÃ«nt"
+
+msgid "Service unavailable"
+msgstr "Service niet beschikbaar"
+
+msgid "Service not defined"
+msgstr "Service niet gedefinieerd"
+
+msgid "Obsolete SNAC"
+msgstr "Verouderde SNAC"
+
+msgid "Not supported by host"
+msgstr "Niet ondersteund door host"
+
+msgid "Not supported by client"
+msgstr "Niet ondersteund door cliënt"
+
+msgid "Refused by client"
+msgstr "Gewegerd door cliënt"
+
+msgid "Reply too big"
+msgstr "Antwoord te groot"
+
+msgid "Responses lost"
+msgstr "Reacties verloren"
+
+msgid "Request denied"
+msgstr "Aanvraag geweigerd"
+
+msgid "Busted SNAC payload"
+msgstr "SNAC bagage kapot"
+
+msgid "Insufficient rights"
+msgstr "Niet genoeg rechten"
+
+msgid "In local permit/deny"
+msgstr "In lokale toestaan/weigeren"
+
+msgid "Warning level too high (sender)"
+msgstr "Waarschuwingsniveau te hoog (verzender)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Waarschuwingsniveau te hoog (ontvanger)"
+
+msgid "User temporarily unavailable"
+msgstr "Gebruiker tijdelijk niet beschikbaar"
+
+msgid "No match"
+msgstr "Geen overeenkomstige resultaten"
+
+msgid "List overflow"
+msgstr "Te grote lijst"
+
+msgid "Request ambiguous"
+msgstr "Dubieuze aanvraag"
+
+msgid "Queue full"
+msgstr "Wachtrij vol"
+
+msgid "Not while on AOL"
+msgstr "Niet tijdens AOL"
 
 msgid "Aquarius"
 msgstr "Waterman"
@@ -7941,9 +8354,6 @@ msgstr "Bijwerken"
 msgid "Could not change buddy information."
 msgstr "Contactinformatie veranderen."
 
-msgid "Mobile"
-msgstr "Mobiel"
-
 msgid "Note"
 msgstr "Opmerking"
 
@@ -8079,6 +8489,11 @@ msgstr "Aanvragen"
 
 msgid "Admin"
 msgstr "Beheerder"
+
+#. XXX: Should this be "Topic"?
+#, fuzzy
+msgid "Room Title"
+msgstr "Lijst van ruimtes"
 
 msgid "Notice"
 msgstr "Opmerking"
@@ -8992,18 +9407,6 @@ msgstr "Hyperactief"
 msgid "Robot"
 msgstr "Robot"
 
-msgid "Jealous"
-msgstr "Jaloers"
-
-msgid "Ashamed"
-msgstr "Beschaamd"
-
-msgid "Bored"
-msgstr "Verveeld"
-
-msgid "Anxious"
-msgstr "Angstig"
-
 msgid "User Modes"
 msgstr "Gebruikersmodi"
 
@@ -9503,9 +9906,6 @@ msgstr "Uw huidige stemming"
 #, c-format
 msgid "Normal"
 msgstr "Normaal"
-
-msgid "In love"
-msgstr "Verliefd"
 
 msgid ""
 "\n"
@@ -10024,9 +10424,6 @@ msgstr "Yahoo! ID..."
 msgid "Yahoo! Protocol Plugin"
 msgstr "Yahoo-protocol-plug-in"
 
-msgid "Pager server"
-msgstr "Semafoonserver"
-
 msgid "Pager port"
 msgstr "Semafoon-poort"
 
@@ -10047,12 +10444,6 @@ msgstr ""
 
 msgid "Chat room list URL"
 msgstr "URL voor lijst van ruimtes"
-
-msgid "Yahoo Chat server"
-msgstr "Yahoo chatserver"
-
-msgid "Yahoo Chat port"
-msgstr "Chatpoort Yahoo"
 
 msgid "Yahoo JAPAN ID..."
 msgstr "Yahoo JAPAN ID..."
@@ -10121,6 +10512,15 @@ msgstr ""
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
+msgstr ""
+"Onbekende fout %d. Aanmelden via de Yahoo! website zou dit probleem op "
+"kunnen lossen."
+
+#. indicates a lock due to logging in too frequently
+#, fuzzy
+msgid ""
+"Account locked: You have been logging in too frequently.  Wait a few minutes "
+"before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
 "Onbekende fout %d. Aanmelden via de Yahoo! website zou dit probleem op "
 "kunnen lossen."
@@ -10211,6 +10611,17 @@ msgid "Unable to establish a connection with %s: %s"
 msgstr ""
 "Kan geen verbinding maken met de server:\n"
 "%s"
+
+#, fuzzy
+msgid "Unable to connect: The server returned an empty response."
+msgstr ""
+"Kan geen verbinding makenmet server. Geef de naam op van de server waarmee u "
+"contact wilt maken."
+
+msgid ""
+"Unable to connect: The server's response did not contain the necessary "
+"information"
+msgstr ""
 
 msgid "Not at Home"
 msgstr "Niet thuis"
@@ -10554,6 +10965,10 @@ msgstr "Gebied"
 msgid "Exposure"
 msgstr "Ontmaskering"
 
+#, c-format
+msgid "Unable to create socket: %s"
+msgstr "Kan geen socket aanmaken: %s"
+
 #, fuzzy, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
 msgstr "Kan antwoord van HTTP-proxy niet parsen: %s\n"
@@ -10589,6 +11004,10 @@ msgstr "_Nee"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
+#.
+#. *
+#. * A wrapper for purple_request_action_with_icon() that uses Accept and Cancel
+#. * buttons.
 #.
 msgid "_Accept"
 msgstr "_Accepteren"
@@ -10656,8 +11075,9 @@ msgstr "Niet storen"
 msgid "Extended away"
 msgstr "Uitgebreide weg"
 
-msgid "Listening to music"
-msgstr "Luisteren naar muziek"
+#, fuzzy
+msgid "Feeling"
+msgstr "Ontvangen"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -10826,12 +11246,6 @@ msgstr "Expresberichten"
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internet Messenger"
 
-msgid "Orientation"
-msgstr "Oriëntatie"
-
-msgid "The orientation of the tray."
-msgstr "De oriëntatie van het systeemvak."
-
 #. Build the login options frame.
 msgid "Login Options"
 msgstr "Aanmeldopties"
@@ -10946,8 +11360,8 @@ msgstr ""
 "<span size='larger' weight='bold'>Welkom bij %s!</span>\n"
 "\n"
 "Je hebt geen accounts ingeschakeld. Om een verbinding te starten met %s druk "
-"op de <b>Toevoegen</b>-knop hieronder en stel je eerste account in. Als je %"
-"s meerdere accounts wil laten onthouden, druk opnieuw op <b>Toevoegen</b>om "
+"op de <b>Toevoegen</b>-knop hieronder en stel je eerste account in. Als je "
+"%s meerdere accounts wil laten onthouden, druk opnieuw op <b>Toevoegen</b>om "
 "ze allemaal in te stellen.\n"
 "\n"
 "Je kan dit venster opnieuw gebruiken om accounts toe te voegen, te bewerken "
@@ -11203,6 +11617,17 @@ msgstr ""
 msgid "Unknown node type"
 msgstr "Onbekende node-type"
 
+#, fuzzy
+msgid "Please select your mood from the list"
+msgstr "Selecteer je humeur uit de lijst"
+
+#, fuzzy
+msgid "Message (optional)"
+msgstr "Alias (optioneel)"
+
+msgid "Edit User Mood"
+msgstr "Humeur instellen"
+
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Contacten"
@@ -11281,6 +11706,10 @@ msgstr "/Extra/_Voorkeuren"
 msgid "/Tools/Pr_ivacy"
 msgstr "/Extra/Pr_ivacy"
 
+#, fuzzy
+msgid "/Tools/Set _Mood"
+msgstr "/Extra/_Systeemlogboek"
+
 msgid "/Tools/_File Transfers"
 msgstr "/Extra/_Bestandsoverdrachten"
 
@@ -11300,8 +11729,20 @@ msgstr "/_Hulp"
 msgid "/Help/Online _Help"
 msgstr "/Hulp/Online _hulp"
 
+#, fuzzy
+msgid "/Help/_Build Information"
+msgstr "Contactinformatie"
+
 msgid "/Help/_Debug Window"
 msgstr "/Hulp/_Debugvenster"
+
+#, fuzzy
+msgid "/Help/De_veloper Information"
+msgstr "Server-informatie"
+
+#, fuzzy
+msgid "/Help/_Translator Information"
+msgstr "Persoonlijke informatie"
 
 msgid "/Help/_About"
 msgstr "/Hulp/_Info"
@@ -11534,6 +11975,10 @@ msgstr "<PurpleMain>/Accounts/"
 msgid "_Edit Account"
 msgstr "_Account bewerken"
 
+#, fuzzy
+msgid "Set _Mood..."
+msgstr "Humeur instellen..."
+
 msgid "No actions available"
 msgstr "Geen acties beschikbaar"
 
@@ -11582,12 +12027,6 @@ msgstr "<h1>Gesprek met %s</h1>\n"
 
 msgid "Save Conversation"
 msgstr "Gesprek opslaan"
-
-msgid "Find"
-msgstr "Zoeken"
-
-msgid "_Search for:"
-msgstr "_Zoekopdracht:"
 
 msgid "Un-Ignore"
 msgstr "Negeren opheffen"
@@ -11662,6 +12101,10 @@ msgstr "/Gesprek/Media/Audio\\/Videogesprek"
 
 msgid "/Conversation/Se_nd File..."
 msgstr "/Gesprek/Bestand ver_zenden..."
+
+#, fuzzy
+msgid "/Conversation/Get _Attention"
+msgstr "/Gesprek/Info opvragen"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Gesprek/_Contactalarm toevoegen..."
@@ -11744,6 +12187,10 @@ msgstr "/Gesprek/Media/Audio\\/Videogesprek"
 msgid "/Conversation/Send File..."
 msgstr "/Gesprek/Bestand verzenden..."
 
+#, fuzzy
+msgid "/Conversation/Get Attention"
+msgstr "/Gesprek/Info opvragen"
+
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Gesprek/Contactalarm toevoegen..."
 
@@ -11809,14 +12256,21 @@ msgstr "Ver_sturen"
 msgid "0 people in room"
 msgstr "0 personen in ruimte"
 
+# src/bookmarks_editor.c:945
+# src/menubar.c:91
+#, fuzzy
+msgid "Close Find bar"
+msgstr "Dit tabblad sluiten"
+
+#, fuzzy
+msgid "Find:"
+msgstr "Zoeken"
+
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d persoon in ruimte"
 msgstr[1] "%d personen in ruimte"
-
-msgid "Typing"
-msgstr "Typen"
 
 msgid "Stopped Typing"
 msgstr "Gestopt met typen"
@@ -11870,6 +12324,12 @@ msgstr "Op groep"
 
 msgid "By account"
 msgstr "Op account"
+
+msgid "Find"
+msgstr "Zoeken"
+
+msgid "_Search for:"
+msgstr "_Zoekopdracht:"
 
 msgid "Save Debug Log"
 msgstr "Debug-logboek opslaan"
@@ -11970,6 +12430,10 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Arabisch"
 
+#, fuzzy
+msgid "Assamese"
+msgstr "Beschaamd"
+
 msgid "Belarusian Latin"
 msgstr "Witrussisch Latijn"
 
@@ -11977,6 +12441,10 @@ msgid "Bulgarian"
 msgstr "Bulgaars"
 
 msgid "Bengali"
+msgstr "Bengaals"
+
+#, fuzzy
+msgid "Bengali-India"
 msgstr "Bengaals"
 
 msgid "Bosnian"
@@ -12090,14 +12558,23 @@ msgstr "Koerdisch"
 msgid "Lao"
 msgstr "Laotiaans"
 
-msgid "Lithuanian"
-msgstr "Litouws"
-
 msgid "Macedonian"
 msgstr "Macedonisch"
 
+#, fuzzy
+msgid "Malayalam"
+msgstr "Man"
+
 msgid "Mongolian"
 msgstr "Mongools"
+
+#, fuzzy
+msgid "Marathi"
+msgstr "Gujarati"
+
+#, fuzzy
+msgid "Malay"
+msgstr "Man"
 
 msgid "Bokmål Norwegian"
 msgstr "Noors"
@@ -12113,6 +12590,10 @@ msgstr "Noors"
 
 msgid "Occitan"
 msgstr "Occitaans"
+
+#, fuzzy
+msgid "Oriya"
+msgstr "Opera"
 
 msgid "Punjabi"
 msgstr "Punjabi"
@@ -12170,6 +12651,10 @@ msgstr "Thais"
 msgid "Turkish"
 msgstr "Turks"
 
+#, fuzzy
+msgid "Ukranian"
+msgstr "Armeens"
+
 msgid "Urdu"
 msgstr "Urdu"
 
@@ -12191,21 +12676,17 @@ msgstr "Traditioneel Chinees"
 msgid "Amharic"
 msgstr "Amharic"
 
-#, c-format
-msgid "About %s"
-msgstr "Over %s"
+msgid "Lithuanian"
+msgstr "Litouws"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"%s is a graphical modular messaging client based on libpurple which is "
-"capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
-"Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
-"QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
-"redistribute the program under the terms of the GPL (version 2 or later).  A "
-"copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
-"is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
-"complete list of contributors.  We provide no warranty for this program."
-"<BR><BR>"
+"%s is a messaging client based on libpurple which is capable of connecting "
+"to multiple messaging services at once.  %s is written in C using GTK+.  %s "
+"is released, and may be modified and redistributed,  under the terms of the "
+"GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s is een grafisch modulair programma voor chatberichten en kan "
 "tegelijkertijd gebruik maken van de netwerken: AIM, MSN, Yahoo!, XMPP, ICQ, "
@@ -12220,28 +12701,35 @@ msgstr ""
 
 #, c-format
 msgid ""
-"<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\"http://developer.pidgin.im/wiki/FAQ"
-"\">http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>"
+"<FONT SIZE=\"4\"><B>Helpful Resources</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Frequently Asked Questions</A><BR>\tIRC "
+"Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
+"im<BR><BR>"
 msgstr ""
 
 #, c-format
 msgid ""
-"<font size=\"4\">Help from other Pidgin users:</font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a><br/>This is a <b>public</b> "
-"mailing list! (<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)"
-"<br/>We can't help with 3rd party protocols or plugins!<br/>This list's "
-"primary language is <b>English</b>.  You are welcome to post in another "
-"language, but the responses may be less helpful.<br/><br/>"
+"<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
+"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
+">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"support/\">archive</a>)<br/>We can't help with third-party protocols or "
+"plugins!<br/>This list's primary language is <b>English</b>.  You are "
+"welcome to post in another language, but the responses may be less helpful."
+"<br/>"
 msgstr ""
 
-#, fuzzy, c-format
-msgid ""
-"<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin op irc.freenode.net<BR><BR>"
+#, c-format
+msgid "About %s"
+msgstr "Over %s"
 
+#, fuzzy
+msgid "Build Information"
+msgstr "Contactinformatie"
+
+#. End of not to be translated section
 #, fuzzy, c-format
-msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin op irc.freenode.net<BR><BR>"
+msgid "%s Build Information"
+msgstr "Contactinformatie"
 
 msgid "Current Developers"
 msgstr "Huidige ontwikkelaars"
@@ -12255,14 +12743,19 @@ msgstr "Gestopte ontwikkelaars"
 msgid "Retired Crazy Patch Writers"
 msgstr "Gestoorde Patch-schrijvers"
 
+#, fuzzy, c-format
+msgid "%s Developer Information"
+msgstr "Server-informatie"
+
 msgid "Current Translators"
 msgstr "Huidige vertalers"
 
 msgid "Past Translators"
 msgstr "Gestopte vertalers"
 
-msgid "Debugging Information"
-msgstr "Debuginformatie"
+#, fuzzy, c-format
+msgid "%s Translator Information"
+msgstr "Werkinformatie"
 
 msgid "_Name"
 msgstr "_Naam"
@@ -12560,15 +13053,6 @@ msgstr ""
 "\n"
 "PNG wordt gebruikt."
 
-msgid ""
-"Unrecognized file type\n"
-"\n"
-"Defaulting to PNG."
-msgstr ""
-"Onbekend bestandstype\n"
-"\n"
-"PNG wordt gebruikt."
-
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -12576,16 +13060,6 @@ msgid ""
 "%s"
 msgstr ""
 "<span size='larger' weight='bold'>Fout bij opslaan afbeelding</span>\n"
-"\n"
-"%s"
-
-#, c-format
-msgid ""
-"Error saving image\n"
-"\n"
-"%s"
-msgstr ""
-"Fout bij opslaan afbeelding\n"
 "\n"
 "%s"
 
@@ -12696,6 +13170,10 @@ msgstr "Afbeelding invoegen"
 msgid "Insert Smiley"
 msgstr "Smiley invoegen"
 
+#, fuzzy
+msgid "Send Attention"
+msgstr "Verzendknop"
+
 msgid "<b>_Bold</b>"
 msgstr "<b>_Vet: </b>"
 
@@ -12741,6 +13219,9 @@ msgstr "_Horizontale streep"
 msgid "_Smile!"
 msgstr "L_achen!"
 
+msgid "_Attention!"
+msgstr ""
+
 msgid "Log Deletion Failed"
 msgstr "Logboek verwijderen mislukt"
 
@@ -12752,21 +13233,21 @@ msgid ""
 "Are you sure you want to permanently delete the log of the conversation with "
 "%s which started at %s?"
 msgstr ""
-"Weet je zeker dat je het logboek van het gesprek in met %s  dat startte op %"
-"s permanent wilt verwijderen?"
+"Weet je zeker dat je het logboek van het gesprek in met %s  dat startte op "
+"%s permanent wilt verwijderen?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Weet je zeker dat je het logboek van het gesprek in %s  dat startte op %s "
 "permanent wilt verwijderen?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "Weet je zeker dat je het systeem-logboek dat startte op %s permanent wilt "
 "verwijderen?"
@@ -13103,9 +13584,8 @@ msgstr "Onbekend... Rapporteer dit alsjeblieft!"
 msgid "(Custom)"
 msgstr ""
 
-#, fuzzy
-msgid "(Default)"
-msgstr "(standaard)"
+msgid "Penguin Pimps"
+msgstr "Pinguin-pimper"
 
 msgid "The default Pidgin sound theme"
 msgstr ""
@@ -13126,28 +13606,40 @@ msgstr "Kan thema niet laden."
 msgid "Theme failed to copy."
 msgstr "Kan thema niet kopiëren."
 
-msgid "Install Theme"
-msgstr "Installeer thema"
+#, fuzzy
+msgid "Theme Selections"
+msgstr "Browser-selectie"
 
+#. Instructions
+#, fuzzy
 msgid ""
-"Select a smiley theme that you would like to use from the list below. New "
-"themes can be installed by dragging and dropping them onto the theme list."
+"Select a theme that you would like to use from the lists below.\n"
+"New themes can be installed by dragging and dropping them onto the theme "
+"list."
 msgstr ""
 "Kies een smileythema uit de lijst. U kunt nieuwe thema's installeren door "
 "deze naar de lijst te slepen."
 
-msgid "Icon"
-msgstr "Pictogram"
+#, fuzzy
+msgid "Buddy List Theme:"
+msgstr "Thema contactenlijst"
+
+#, fuzzy
+msgid "Status Icon Theme:"
+msgstr "Status-pictogrammen"
+
+msgid "Sound Theme:"
+msgstr ""
+
+#, fuzzy
+msgid "Smiley Theme:"
+msgstr "Smiley-thema's"
 
 msgid "Keyboard Shortcuts"
 msgstr "Sneltoetsen"
 
 msgid "Cl_ose conversations with the Escape key"
 msgstr "_Sluit gesprekken af met de Escape toets"
-
-#. Buddy List Themes
-msgid "Buddy List Theme"
-msgstr "Thema contactenlijst"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -13235,9 +13727,6 @@ msgstr "Minimale invoerhoogte in regels:"
 msgid "Font"
 msgstr "Lettertype"
 
-msgid "Use document font from _theme"
-msgstr "Gebruik lettertype uit _thema"
-
 msgid "Use font from _theme"
 msgstr "Gebruik lettertype van thema"
 
@@ -13312,50 +13801,6 @@ msgstr "Gebruikersnaam:"
 msgid "Pass_word:"
 msgstr "Wachtwoord: "
 
-msgid "Proxy Server &amp; Browser"
-msgstr "Proxy-server &amp; browser"
-
-msgid "<b>Proxy configuration program was not found.</b>"
-msgstr "<b>Proxy-configuratie programma werd niet gevonden.</b>"
-
-msgid "<b>Browser configuration program was not found.</b>"
-msgstr "<b>Programma voor browser-instellingen werd niet gevonden.</b>"
-
-msgid ""
-"Proxy & Browser preferences are configured\n"
-"in GNOME Preferences"
-msgstr ""
-"Proxy- en browser-voorkeuren zijn ingesteld\n"
-"in GNOME-instellingen"
-
-msgid "Configure _Proxy"
-msgstr "_Proxy-instellingen veranderen"
-
-msgid "Configure _Browser"
-msgstr "_Browser instellen"
-
-msgid "Proxy Server"
-msgstr "Proxy-server"
-
-#. This is a global option that affects SOCKS4 usage even with account-specific proxy settings
-msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr ""
-
-#, fuzzy
-msgid "Proxy t_ype:"
-msgstr "Proxy_type:"
-
-msgid "No proxy"
-msgstr "Geen proxy"
-
-#, fuzzy
-msgid "P_ort:"
-msgstr "_Poort:"
-
-#, fuzzy
-msgid "User_name:"
-msgstr "Gebruikersnaam:"
-
 msgid "Seamonkey"
 msgstr "Seamonkey"
 
@@ -13395,6 +13840,18 @@ msgstr "Handmatig"
 msgid "Browser Selection"
 msgstr "Browser-selectie"
 
+#, fuzzy
+msgid "Browser preferences are configured in GNOME preferences"
+msgstr ""
+"Proxy- en browser-voorkeuren zijn ingesteld\n"
+"in GNOME-instellingen"
+
+msgid "<b>Browser configuration program was not found.</b>"
+msgstr "<b>Programma voor browser-instellingen werd niet gevonden.</b>"
+
+msgid "Configure _Browser"
+msgstr "_Browser instellen"
+
 msgid "_Browser:"
 msgstr "_Browser:"
 
@@ -13417,6 +13874,41 @@ msgid ""
 msgstr ""
 "_Handmatig:\n"
 "(%s voor URL)"
+
+msgid "Proxy Server"
+msgstr "Proxy-server"
+
+#, fuzzy
+msgid "Proxy preferences are configured in GNOME preferences"
+msgstr ""
+"Proxy- en browser-voorkeuren zijn ingesteld\n"
+"in GNOME-instellingen"
+
+msgid "<b>Proxy configuration program was not found.</b>"
+msgstr "<b>Proxy-configuratie programma werd niet gevonden.</b>"
+
+msgid "Configure _Proxy"
+msgstr "_Proxy-instellingen veranderen"
+
+#. This is a global option that affects SOCKS4 usage even with
+#. * account-specific proxy settings
+msgid "Use remote _DNS with SOCKS4 proxies"
+msgstr ""
+
+#, fuzzy
+msgid "Proxy t_ype:"
+msgstr "Proxy_type:"
+
+msgid "No proxy"
+msgstr "Geen proxy"
+
+#, fuzzy
+msgid "P_ort:"
+msgstr "_Poort:"
+
+#, fuzzy
+msgid "User_name:"
+msgstr "Gebruikersnaam:"
 
 msgid "Log _format:"
 msgstr "Logboekop_maak:"
@@ -13501,24 +13993,18 @@ msgstr "Bijhouden van activiteit:"
 msgid "Based on keyboard or mouse use"
 msgstr "Activiteit van toetsenbord en muis"
 
+msgid "_Minutes before becoming idle:"
+msgstr "_Minuten voor inactief worden:"
+
+#, fuzzy
+msgid "Change to this status when _idle:"
+msgstr "Status op afwezig zetten _wanneer ik inactief ben"
+
 msgid "_Auto-reply:"
 msgstr "_Automatisch antwoord:"
 
 msgid "When both away and idle"
 msgstr "Bij afwezigheid en inactiviteit"
-
-#. Auto-away stuff
-msgid "Auto-away"
-msgstr "Automatisch afwezig"
-
-msgid "_Minutes before becoming idle:"
-msgstr "_Minuten voor inactief worden:"
-
-msgid "Change status when _idle"
-msgstr "Status op afwezig zetten _wanneer ik inactief ben"
-
-msgid "Change _status to:"
-msgstr "_Status veranderen in: "
 
 #. Signon status stuff
 msgid "Status at Startup"
@@ -13533,14 +14019,15 @@ msgstr "Te gebruiken _status bij opstarten:"
 msgid "Interface"
 msgstr "Interface"
 
-msgid "Smiley Themes"
-msgstr "Smiley-thema's"
-
 msgid "Browser"
 msgstr "Browser"
 
 msgid "Status / Idle"
 msgstr "Status / inactief"
+
+#, fuzzy
+msgid "Themes"
+msgstr "Smiley-thema's"
 
 msgid "Allow all users to contact me"
 msgstr "Alle gebruikers mogen contact met mij leggen"
@@ -13701,6 +14188,10 @@ msgstr "Tekst snelkoppeling"
 msgid "Custom Smiley Manager"
 msgstr "Eigen smileys beheren"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "Activatie vereist"
+
 msgid "Select Buddy Icon"
 msgstr "Pictogram contact selecteren"
 
@@ -13780,10 +14271,13 @@ msgstr ""
 "U kunt deze afbeelding in dit gesprek invoegen, of als pictogram gebruiken "
 "voor deze gebruiker."
 
-#. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
-#. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
-#. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
-#. * Probably not.  I'll just give an error and return.
+#. I don't know if we really want to do anything here.  Most of
+#. * the desktop item types are crap like "MIME Type" (I have no
+#. * clue how that would be a desktop item) and "Comment"...
+#. * nothing we can really send.  The only logical one is
+#. * "Application," but do we really want to send a binary and
+#. * nothing else? Probably not.  I'll just give an error and
+#. * return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 msgid "Cannot send launcher"
 msgstr "Kan starter niet sturen"
@@ -13816,17 +14310,6 @@ msgstr "Pictogramfout"
 msgid "Could not set icon"
 msgstr "Kan plaatje niet instellen"
 
-#, c-format
-msgid "Failed to open file '%s': %s"
-msgstr "Kan bestand '%s' niet openen: %s"
-
-#, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr ""
-"kan afbeelding '%s' niet laden: reden onbekend, waarschijnlijk een kapotte "
-"afbeelding"
-
 msgid "_Open Link"
 msgstr "Koppeling _openen"
 
@@ -13850,6 +14333,10 @@ msgstr "Geluid afs_pelen"
 
 msgid "_Save File"
 msgstr "Bestand op_slaan"
+
+#, fuzzy
+msgid "Do you really want to clear?"
+msgstr "Wil je %s echt verwijderen?"
 
 msgid "Select color"
 msgstr "Selecteer kleur"
@@ -13888,9 +14375,6 @@ msgstr "Pidgin-tooltip"
 
 msgid "Pidgin smileys"
 msgstr "Pidgin-smileys"
-
-msgid "Penguin Pimps"
-msgstr "Pinguin-pimper"
 
 msgid "Selecting this disables graphical emoticons."
 msgstr "Als je dit selecteert, schakel je graphische emoticons uit."
@@ -14554,6 +15038,10 @@ msgstr "GtkTreeView horizontale scheiding"
 msgid "Conversation Entry"
 msgstr "Tekstinvoer gesprek"
 
+#, fuzzy
+msgid "Conversation History"
+msgstr "Tekstinvoer gesprek"
+
 msgid "Request Dialog"
 msgstr "Vraag"
 
@@ -14871,8 +15359,20 @@ msgstr "Voegt op iChat-achtige manier iedere N minuten de tijd toe."
 msgid "Timestamp Format Options"
 msgstr "Instellingen tijdsweergave"
 
-#, c-format
-msgid "_Force 24-hour time format"
+#, fuzzy, c-format
+msgid "_Force timestamp format:"
+msgstr "24-uurs weergave _gebruiken"
+
+#, fuzzy
+msgid "Use system default"
+msgstr "Desktop standaard"
+
+#, fuzzy
+msgid "12 hour time format"
+msgstr "24-uurs weergave _gebruiken"
+
+#, fuzzy
+msgid "24 hour time format"
 msgstr "24-uurs weergave _gebruiken"
 
 msgid "Show dates in..."
@@ -15084,15 +15584,6 @@ msgstr "Account:"
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr "<font color='#777777'>Niet verbonden met XMPP</font>"
 
-msgid "Insert an <iq/> stanza."
-msgstr "Voeg een <iq/> stanza toe."
-
-msgid "Insert a <presence/> stanza."
-msgstr "Voeg een <presence/> stanza toe."
-
-msgid "Insert a <message/> stanza."
-msgstr "Voeg een <message/> stanza in."
-
 #. *< name
 #. *< version
 #. *  summary
@@ -15100,8 +15591,329 @@ msgid "Send and receive raw XMPP stanzas."
 msgstr "Verstuur en ontvang ruwe XMPP stanza's."
 
 #. *  description
-msgid "This plugin is useful for debbuging XMPP servers or clients."
+#, fuzzy
+msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Deze plug-in is handig voor het debuggen van XMPP servers of clienten."
+
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
+msgid ""
+"$(^Name) is released under the GNU General Public License (GPL). The license "
+"is provided here for information purposes only. $_CLICK"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "Een multi-platform gebruikersinterface, gebruikt door Pidgin"
+
+msgid ""
+"An instance of Pidgin is currently running.  Please exit Pidgin and try "
+"again."
+msgstr ""
+"Pidgin wordt op dit moment uitgevoerd. Sluit Pidgin af en start de "
+"installatie opnieuw."
+
+#. Installer Subsection Detailed Description
+msgid "Core Pidgin files and dlls"
+msgstr "Pidgin hoofdbestanden en dlls"
+
+#. Installer Subsection Detailed Description
+msgid "Create a Start Menu entry for Pidgin"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid "Create a shortcut to Pidgin on the Desktop"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Debug Symbols (for reporting crashes)"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Desktop"
+msgstr "Desktop standaard"
+
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
+msgid ""
+"Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
+"function; if retrying fails, you may need to use the 'Offline Installer' "
+"from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R2 will display the URL that the Debug Symbols failed to download from
+msgid ""
+"Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
+"use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
+msgstr ""
+
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "GTK+ Runtime (required if not present)"
+msgstr "GTK+ runtime-omgeving (vereist)"
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Localizations"
+msgstr "Locatie"
+
+#. "Next >" appears on a button on the License Page of the Installer
+msgid "Next >"
+msgstr "Volgende >"
+
+#. Installer Subsection Text
+msgid "Pidgin Instant Messaging Client (required)"
+msgstr "Pidgin Instant Messaging Client (vereist)"
+
+msgid ""
+"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
+"already present).$\\rAre you sure you want to skip installing the GTK+ "
+"Runtime?"
+msgstr ""
+
+#. Installer Subsection Text
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Snelkoppeling"
+
+#. Installer Subsection Detailed Description
+msgid "Shortcuts for starting Pidgin"
+msgstr ""
+
+#. Installer Subsection Text
+msgid "Spellchecking Support"
+msgstr "Spellingscontrole"
+
+#. Installer Subsection Text
+msgid "Start Menu"
+msgstr ""
+
+#. Installer Subsection Detailed Description
+msgid ""
+"Support for Spellchecking.  (Internet connection required for installation)"
+msgstr ""
+"Ondersteuning voor spellingscontrole. (Internetverbinding nodig voor "
+"installatie)"
+
+msgid "The installer is already running."
+msgstr "Er is al een installatie actief."
+
+msgid ""
+"The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
+"that another user installed this application."
+msgstr ""
+"Het verwijderingsprogramma voor Pidgin kon geen register-ingangen voor "
+"Pidgin vinden.$\\rWaarschijnlijk heeft een andere gebruiker het programma "
+"geïnstalleerd."
+
+#. Installer Subsection Text
+msgid "URI Handlers"
+msgstr ""
+
+msgid ""
+"Unable to uninstall the currently installed version of Pidgin. The new "
+"version will be installed without removing the currently installed version."
+msgstr ""
+
+#. Text displayed on Installer Finish Page
+msgid "Visit the Pidgin Web Page"
+msgstr "Neem een kijkje op de Pidgin webpagina"
+
+msgid "You do not have permission to uninstall this application."
+msgstr "U mag dit programma niet verwijderen."
+
+#~ msgid "Unknown reason."
+#~ msgstr "Onbekende reden."
+
+#~ msgid "Artist"
+#~ msgstr "Artiest"
+
+#~ msgid "Album"
+#~ msgstr "Album"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Uw huidige stemming"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Humeur gebruiker"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Wachtwoord veranderen"
+
+#, fuzzy
+#~ msgid "How do you feel right now?"
+#~ msgstr "Ik ben er even niet"
+
+#, fuzzy
+#~ msgid "Change Mood..."
+#~ msgstr "Wachtwoord wijzigen..."
+
+#~ msgid "Pager server"
+#~ msgstr "Semafoonserver"
+
+#~ msgid "Yahoo Chat server"
+#~ msgstr "Yahoo chatserver"
+
+#~ msgid "Yahoo Chat port"
+#~ msgstr "Chatpoort Yahoo"
+
+#~ msgid "Orientation"
+#~ msgstr "Oriëntatie"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "De oriëntatie van het systeemvak."
+
+#, fuzzy
+#~ msgid "Error creating conference."
+#~ msgstr "Fout bij maken verbinding"
+
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "Kan socket niet koppelen aan poort: %s"
+
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr "Kan niet aan socket luisteren: %s"
+
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "%s heeft u zojuist een duwtje gegeven!"
+
+#~ msgid "Friendly name changes too rapidly"
+#~ msgstr "Bijnaam verandert te snel"
+
+#~ msgid "This Hotmail account may not be active."
+#~ msgstr "Dit Hotmail-account is misschien niet in gebruik."
+
+#~ msgid "Profile URL"
+#~ msgstr "Profiel-URL"
+
+#~ msgid "MSN Protocol Plugin"
+#~ msgstr "MSN-protocol-plug-in"
+
+#~ msgid "%s is not a valid group."
+#~ msgstr "%s is geen geldige groep."
+
+#~ msgid "Unknown error."
+#~ msgstr "Onbekende fout."
+
+#~ msgid "%s on %s (%s)"
+#~ msgstr "%s op %s (%s)"
+
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "Kan gebruiker niet toevoegen op %s (%s)"
+
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "Kan gebruiker niet blokkeren op %s (%s)"
+
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "Kan gebruiker geen toestemming geven op %s (%s)"
+
+#~ msgid "%s could not be added because your buddy list is full."
+#~ msgstr "Kan %s niet toevoegen omdat uw contactenlijst vol is."
+
+#~ msgid "%s is not a valid passport account."
+#~ msgstr "%s is geen geldig passport-account."
+
+#~ msgid "Service Temporarily Unavailable."
+#~ msgstr "Service momenteel niet beschikbaar."
+
+#~ msgid "Unable to rename group"
+#~ msgstr "Kan groep niet hernoemen"
+
+#~ msgid "Unable to delete group"
+#~ msgstr "Kan groep niet verwijderen"
+
+#~ msgid "%s has added you to his or her buddy list."
+#~ msgstr "%s heeft u aan zijn/haar contactenlijst toegevoegd."
+
+#~ msgid "%s has removed you from his or her buddy list."
+#~ msgstr "%s heeft u van zijn/haar contactenlijst verwijderd."
+
+#, fuzzy
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "Uw laatste actie is niet gebeurd omdat uw snelheid te hoog ligt. Wacht 10 "
+#~ "seconden en probeer het dan nogmaals."
+
+#, fuzzy
+#~ msgid ""
+#~ "<FONT SIZE=\"4\">IRC Channel:</FONT> #pidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin op irc.freenode.net<BR><BR>"
+
+#, fuzzy
+#~ msgid "<FONT SIZE=\"4\">XMPP MUC:</FONT> devel@conference.pidgin.im<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin op irc.freenode.net<BR><BR>"
+
+#~ msgid "Debugging Information"
+#~ msgstr "Debuginformatie"
+
+#~ msgid ""
+#~ "Unrecognized file type\n"
+#~ "\n"
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "Onbekend bestandstype\n"
+#~ "\n"
+#~ "PNG wordt gebruikt."
+
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Fout bij opslaan afbeelding\n"
+#~ "\n"
+#~ "%s"
+
+#, fuzzy
+#~ msgid "(Default)"
+#~ msgstr "(standaard)"
+
+#~ msgid "Install Theme"
+#~ msgstr "Installeer thema"
+
+#~ msgid "Icon"
+#~ msgstr "Pictogram"
+
+#~ msgid "Use document font from _theme"
+#~ msgstr "Gebruik lettertype uit _thema"
+
+#~ msgid "Proxy Server &amp; Browser"
+#~ msgstr "Proxy-server &amp; browser"
+
+#~ msgid "Auto-away"
+#~ msgstr "Automatisch afwezig"
+
+#~ msgid "Change _status to:"
+#~ msgstr "_Status veranderen in: "
+
+#~ msgid "Failed to open file '%s': %s"
+#~ msgstr "Kan bestand '%s' niet openen: %s"
+
+#~ msgid ""
+#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
+#~ msgstr ""
+#~ "kan afbeelding '%s' niet laden: reden onbekend, waarschijnlijk een "
+#~ "kapotte afbeelding"
+
+#~ msgid "Insert an <iq/> stanza."
+#~ msgstr "Voeg een <iq/> stanza toe."
+
+#~ msgid "Insert a <presence/> stanza."
+#~ msgstr "Voeg een <presence/> stanza toe."
+
+#~ msgid "Insert a <message/> stanza."
+#~ msgstr "Voeg een <message/> stanza in."
 
 #~ msgid "Send instant messages over multiple protocols"
 #~ msgstr "Stuur chatberichten over verschillende diensten."
@@ -15114,9 +15926,6 @@ msgstr "Deze plug-in is handig voor het debuggen van XMPP servers of clienten."
 
 #~ msgid "_User:"
 #~ msgstr "_Gebruiker:"
-
-#~ msgid "GTK+ Runtime Version"
-#~ msgstr "GTK+ Runtime-versie"
 
 #~ msgid "Calling ... "
 #~ msgstr "Bellen..."
@@ -15372,9 +16181,6 @@ msgstr "Deze plug-in is handig voor het debuggen van XMPP servers of clienten."
 
 #~ msgid "User Browsing"
 #~ msgstr "Browsende gebruiker"
-
-#~ msgid "User Gaming"
-#~ msgstr "Gamende gebruiker"
 
 #~ msgid "User Viewing"
 #~ msgstr "Kijkende gebruiker"
@@ -15770,9 +16576,6 @@ msgstr "Deze plug-in is handig voor het debuggen van XMPP servers of clienten."
 
 #~ msgid "Update information"
 #~ msgstr "Informatie bijwerken"
-
-#~ msgid "Successed:"
-#~ msgstr "Geslaagd:"
 
 #~ msgid ""
 #~ "Setting custom faces is not currently supported. Please choose an image "

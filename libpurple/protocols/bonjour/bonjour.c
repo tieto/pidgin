@@ -70,7 +70,6 @@ bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 			buddy = (PurpleBuddy *) bnode;
 			if (purple_buddy_get_account(buddy) != account)
 				continue;
-			purple_prpl_got_user_status(account, purple_buddy_get_name(buddy), "offline", NULL);
 			purple_account_remove_buddy(account, buddy, NULL);
 			purple_blist_remove_buddy(buddy);
 		}
@@ -101,6 +100,8 @@ bonjour_login(PurpleAccount *account)
 
 	/* Start waiting for jabber connections (iChat style) */
 	bd->jabber_data = g_new0(BonjourJabber, 1);
+	bd->jabber_data->socket = -1;
+	bd->jabber_data->socket6 = -1;
 	bd->jabber_data->port = purple_account_get_int(account, "port", BONJOUR_DEFAULT_PORT);
 	bd->jabber_data->account = account;
 
@@ -170,7 +171,9 @@ bonjour_close(PurpleConnection *connection)
 		g_free(bd->jabber_data);
 	}
 
-	/* Delete the bonjour group */
+	/* Delete the bonjour group
+	 * (purple_blist_remove_group will bail out if the group isn't empty)
+	 */
 	if (bonjour_group != NULL)
 		purple_blist_remove_group(bonjour_group);
 
@@ -525,7 +528,10 @@ static PurplePluginProtocolInfo prpl_info =
 	sizeof(PurplePluginProtocolInfo),                        /* struct_size */
 	NULL,                                                    /* get_account_text_table */
 	NULL,                                                    /* initiate_media */
-	NULL                                                     /* can_do_media */
+	NULL,                                                    /* get_media_caps */
+	NULL,                                                    /* get_moods */
+	NULL,                                                    /* set_public_alias */
+	NULL                                                     /* get_public_alias */
 };
 
 static PurplePluginInfo info =

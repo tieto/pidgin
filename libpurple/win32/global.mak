@@ -10,15 +10,14 @@
 
 # Locations of our various dependencies
 WIN32_DEV_TOP ?= $(PIDGIN_TREE_TOP)/../win32-dev
-ASPELL_TOP ?= $(WIN32_DEV_TOP)/aspell-dev-0-50-3-3
-GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.11-daa1
+GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.16
+ENCHANT_TOP ?= $(WIN32_DEV_TOP)/enchant_1.5.0-2_win32
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk_2_0-2.14
 GTK_BIN ?= $(GTK_TOP)/bin
 BONJOUR_TOP ?= $(WIN32_DEV_TOP)/Bonjour_SDK
-LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.7.3
+LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.7.4
 MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0.2_daa2
-NSPR_TOP ?= $(WIN32_DEV_TOP)/nspr-4.6.4
-NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.11.4
+NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.12.5-nspr-4.8.2
 PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl-5.10.0
 SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.8
 TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
@@ -103,12 +102,13 @@ DLL_LD_FLAGS += -Wl,--enable-auto-image-base
 ifeq "$(origin CC)" "default"
   CC := gcc.exe
 endif
-GMSGFMT ?= $(GTK_BIN)/msgfmt
+GMSGFMT ?= $(WIN32_DEV_TOP)/gettext-0.17/bin/msgfmt
 MAKENSIS ?= makensis.exe
 MAKENSISOPT ?= /
-PERL ?= /cygdrive/c/perl/bin/perl
+PERL ?= perl
 WINDRES ?= windres
 STRIP ?= strip
+INTLTOOL_MERGE ?= $(WIN32_DEV_TOP)/intltool_0.40.4-1_win32/bin/intltool-merge
 
 PIDGIN_COMMON_RULES := $(PURPLE_TOP)/win32/rules.mak
 PIDGIN_COMMON_TARGETS := $(PURPLE_TOP)/win32/targets.mak

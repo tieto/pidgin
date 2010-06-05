@@ -49,6 +49,9 @@ static void toggle_button_set_active_block(GtkToggleButton *button,
 										   gboolean is_active,
 										   GtkIMHtmlToolbar *toolbar);
 
+static gboolean
+gtk_imhtmltoolbar_popup_menu(GtkWidget *widget,
+		GdkEventButton *event, GtkIMHtmlToolbar *toolbar);
 
 static void do_bold(GtkWidget *bold, GtkIMHtmlToolbar *toolbar)
 {
@@ -1106,6 +1109,16 @@ menu_position_func (GtkMenu           *menu,
 		*y -= widget->allocation.height;
 }
 
+static gboolean
+button_activate_on_click(GtkWidget *button, GdkEventButton *event, GtkIMHtmlToolbar *toolbar)
+{
+	if (event->button == 1 && GTK_IS_TOGGLE_BUTTON(button))
+		gtk_widget_activate(button);
+	else if (event->button == 3)
+		return gtk_imhtmltoolbar_popup_menu(button, event, toolbar);
+	return FALSE;
+}
+
 static void pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu)
 {
 	gtk_widget_show_all(GTK_WIDGET(menu));
@@ -1251,6 +1264,7 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 	for (iter = 0; buttons[iter].stock; iter++) {
 		if (buttons[iter].stock[0]) {
 			button = pidgin_pixbuf_toolbar_button_from_stock(buttons[iter].stock);
+			g_signal_connect(G_OBJECT(button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
 			g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(buttons[iter].callback), toolbar);
 			*(buttons[iter].button) = button;
@@ -1265,6 +1279,7 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 	}
 	/* create the attention button (this is a bit hacky to not break ABI) */
 	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION);
+	g_signal_connect(G_OBJECT(button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
 	g_signal_connect(G_OBJECT(button), "clicked",
 		G_CALLBACK(send_attention_cb), toolbar);
 	g_object_set_data(G_OBJECT(toolbar), "attention", button);
@@ -1398,7 +1413,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 		gtk_container_foreach(GTK_CONTAINER(menuitem), (GtkCallback)enable_markup, NULL);
 	}
 
-	g_signal_connect_swapped(G_OBJECT(font_button), "button-press-event", G_CALLBACK(gtk_widget_activate), font_button);
+	g_signal_connect(G_OBJECT(font_button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
 	g_signal_connect(G_OBJECT(font_button), "activate", G_CALLBACK(pidgin_menu_clicked), font_menu);
 	g_signal_connect(G_OBJECT(font_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), font_button);
 
@@ -1439,7 +1454,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
 	toolbar->insert_hr = menuitem;
 
-	g_signal_connect_swapped(G_OBJECT(insert_button), "button-press-event", G_CALLBACK(gtk_widget_activate), insert_button);
+	g_signal_connect(G_OBJECT(insert_button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
 	g_signal_connect(G_OBJECT(insert_button), "activate", G_CALLBACK(pidgin_menu_clicked), insert_menu);
 	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);
 	toolbar->sml = NULL;
@@ -1459,6 +1474,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	label = gtk_label_new_with_mnemonic(_("_Smile!"));
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), smiley_button, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(smiley_button), "button-press-event", G_CALLBACK(button_activate_on_click), toolbar);
 	g_signal_connect_swapped(G_OBJECT(smiley_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
 	gtk_widget_show_all(smiley_button);
 

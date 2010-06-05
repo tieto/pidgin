@@ -9,8 +9,6 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
 
-NEEDED_DLLS = $(GTKSPELL_TOP)/gtkspell/libgtkspell.dll
-
 ##
 ## VARIABLE DEFINITIONS
 ##
@@ -43,14 +41,12 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/include/cairo \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(GTKSPELL_TOP) \
-			-I$(ASPELL_TOP)/include
+			-I$(GTKSPELL_TOP)/include/gtkspell-2.0
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
 			-L$(PIDGIN_TOP) \
-			-L$(PIDGIN_IDLETRACK_TOP) \
-			-L$(ASPELL_TOP)/lib
+			-L$(PIDGIN_IDLETRACK_TOP)
 
 ##
 ##  SOURCES, OBJECTS
@@ -151,7 +147,6 @@ win32/pidgin_exe_rc.rc: win32/pidgin_exe_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 
 install_shallow: $(PIDGIN_INSTALL_DIR) $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
 	cp $(EXE_TARGET).exe $(PIDGIN_TARGET).dll $(PIDGIN_INSTALL_DIR)
-	cp $(NEEDED_DLLS) $(PIDGIN_INSTALL_DIR)
 
 install: install_shallow all
 	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) install
@@ -167,7 +162,7 @@ $(EXE_OBJECTS) $(PIDGIN_OBJECTS): $(PIDGIN_CONFIG_H)
 $(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a: $(PURPLE_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(PIDGIN_OBJECTS)
 	$(CC) -shared $(PIDGIN_OBJECTS) $(LIB_PATHS) $(PIDGIN_LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(PIDGIN_TARGET).def,--out-implib,$(PIDGIN_TARGET).dll.a -o $(PIDGIN_TARGET).dll
 
-$(EXE_TARGET).exe: $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(EXE_OBJECTS)
+$(EXE_TARGET).exe: $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(EXE_OBJECTS) $(PIDGIN_TARGET).dll
 	$(CC) $(LDFLAGS) $(EXE_OBJECTS) -o $(EXE_TARGET).exe
 
 ##

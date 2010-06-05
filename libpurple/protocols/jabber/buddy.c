@@ -218,7 +218,7 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 	for (l = jb->resources; l; l = l->next)
 	{
 		JabberBuddyResource *jbr = l->data;
-		if (g_str_equal(resource, jbr->name))
+		if (jbr->name && g_str_equal(resource, jbr->name))
 			return jbr;
 	}
 
@@ -362,7 +362,7 @@ struct vcard_template {
 	{N_("Email"),              "USERID",    "EMAIL"},
 	{N_("Organization Name"),  "ORGNAME",   "ORG"},
 	{N_("Organization Unit"),  "ORGUNIT",   "ORG"},
-	{N_("Title"),              "TITLE",     NULL},
+	{N_("Job Title"),          "TITLE",     NULL},
 	{N_("Role"),               "ROLE",      NULL},
 	{N_("Birthday"),           "BDAY",      NULL},
 	{N_("Description"),        "DESC",      NULL},
@@ -516,7 +516,8 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		binval = xmlnode_new_child(photo, "BINVAL");
 		enc = purple_base64_encode(avatar_data, avatar_len);
 
-		js->avatar_hash = jabber_calculate_data_sha1sum(avatar_data, avatar_len);
+		js->avatar_hash =
+			jabber_calculate_data_hash(avatar_data, avatar_len, "sha1");
 
 		xmlnode_insert_data(binval, enc, -1);
 		g_free(enc);
@@ -936,7 +937,7 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 			g_free(bintext);
 
 			if (data) {
-				vcard_hash = jabber_calculate_data_sha1sum(data, size);
+				vcard_hash = jabber_calculate_data_hash(data, size, "sha1");
 				g_free(data);
 			}
 		}
@@ -1159,7 +1160,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 					g_free(text2);
 				}
 			} else if(text && !strcmp(child->name, "TITLE")) {
-				purple_notify_user_info_add_pair(user_info, _("Title"), text);
+				purple_notify_user_info_add_pair(user_info, _("Job Title"), text);
 			} else if(text && !strcmp(child->name, "ROLE")) {
 				purple_notify_user_info_add_pair(user_info, _("Role"), text);
 			} else if(text && !strcmp(child->name, "DESC")) {
@@ -1185,7 +1186,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 
 						purple_notify_user_info_add_pair(user_info, (photo ? _("Photo") : _("Logo")), img_text);
 
-						hash = jabber_calculate_data_sha1sum(data, size);
+						hash = jabber_calculate_data_hash(data, size, "sha1");
 						purple_buddy_icons_set_for_user(account, bare_jid, data, size, hash);
 						g_free(hash);
 						g_free(img_text);
@@ -1824,7 +1825,8 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 	if(!jb)
 		return m;
 
-	if (js->protocol_version == JABBER_PROTO_0_9 && jb != js->user_jb) {
+	if (js->protocol_version.major == 0 && js->protocol_version.minor == 9 &&
+			jb != js->user_jb) {
 		if(jb->invisible & JABBER_INVIS_BUDDY) {
 			act = purple_menu_action_new(_("Un-hide From"),
 			                           PURPLE_CALLBACK(jabber_buddy_make_visible),

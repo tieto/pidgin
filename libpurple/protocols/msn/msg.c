@@ -939,8 +939,11 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 	char *username, *str;
 	PurpleAccount *account;
 	PurpleBuddy *b;
+	PurpleConnection *pc;
+	gboolean chat;
 
 	account = swboard->session->account;
+	pc = purple_account_get_connection(account);
 
 	if ((b = purple_find_buddy(account, who)) != NULL)
 		username = g_markup_escape_text(purple_buddy_get_alias(b), -1);
@@ -949,8 +952,14 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 	str = g_strdup_printf(msg, username, filename);
 	g_free(username);
 
+	swboard->flag |= MSN_SB_FLAG_IM;
+	if (swboard->current_users > 1)
+		chat = TRUE;
+	else
+		chat = FALSE;
+
 	if (swboard->conv == NULL) {
-		if (swboard->current_users > 1) 
+		if (chat) 
 			swboard->conv = purple_find_chat(account->gc, swboard->chat_id);
 		else {
 			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
@@ -959,9 +968,15 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 				swboard->conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
 		}
 	}
-	swboard->flag |= MSN_SB_FLAG_IM;
 
-	purple_conversation_write(swboard->conv, NULL, str, PURPLE_MESSAGE_SYSTEM, time(NULL));
+	if (chat)
+		serv_got_chat_in(pc,
+		                 purple_conv_chat_get_id(PURPLE_CONV_CHAT(swboard->conv)),
+		                 who, PURPLE_MESSAGE_RECV|PURPLE_MESSAGE_SYSTEM, str,
+		                 time(NULL));
+	else
+		serv_got_im(pc, who, str, PURPLE_MESSAGE_RECV|PURPLE_MESSAGE_SYSTEM,
+		            time(NULL));
 	g_free(str);
 
 }
@@ -970,14 +985,13 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 static void 
 got_wink_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 {
-	FILE *f;
+	FILE *f = NULL;
 	char *path = NULL;
 	const char *who = slpcall->slplink->remote_user;
 	purple_debug_info("msn", "Received wink from %s\n", who);
 
-	if ((f = purple_mkstemp(&path, TRUE))) {
-		fwrite(data, size, 1, f);
-		fclose(f);
+	if ((f = purple_mkstemp(&path, TRUE)) &&
+	    (fwrite(data, 1, size, f) == size)) {
 		datacast_inform_user(slpcall->slplink->swboard,
 		                     who,
 		                     _("%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"),
@@ -988,21 +1002,22 @@ got_wink_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 		                     who,
 		                     _("%s sent a wink, but it could not be saved"),
 		                     NULL);
-	} 
+	}
+	if (f)
+		fclose(f);
 	g_free(path);
 }
 
 static void 
 got_voiceclip_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 {
-	FILE *f;
+	FILE *f = NULL;
 	char *path = NULL;
 	const char *who = slpcall->slplink->remote_user;
 	purple_debug_info("msn", "Received voice clip from %s\n", who);
 
-	if ((f = purple_mkstemp(&path, TRUE))) {
-		fwrite(data, size, 1, f);
-		fclose(f);
+	if ((f = purple_mkstemp(&path, TRUE)) &&
+	    (fwrite(data, 1, size, f) == size)) {
 		datacast_inform_user(slpcall->slplink->swboard,
 		                     who,
 		                     _("%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"),
@@ -1013,7 +1028,9 @@ got_voiceclip_cb(MsnSlpCall *slpcall, const guchar *data, gsize size)
 		                     who,
 		                     _("%s sent a voice clip, but it could not be saved"),
 		                     NULL);
-	} 
+	}
+	if (f)
+		fclose(f);
 	g_free(path);
 }
 
@@ -1100,7 +1117,8 @@ void
 msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	GHashTable *body;
-	const gchar *guid;
+	const gchar *command;
+	const gchar *cookie;
 	gboolean accepted = FALSE;
 
 	g_return_if_fail(cmdproc != NULL);
@@ -1113,59 +1131,64 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				"Unable to parse invite msg body.\n");
 		return;
 	}
+	
+	/*
+	 * GUID is NOT always present but Invitation-Command and Invitation-Cookie
+	 * are mandatory.
+	 */
+	command = g_hash_table_lookup(body, "Invitation-Command");
+	cookie = g_hash_table_lookup(body, "Invitation-Cookie");
 
-	guid = g_hash_table_lookup(body, "Application-GUID");
+	if (command == NULL || cookie == NULL) {
+		purple_debug_warning("msn",
+			"Invalid invitation message: either Invitation-Command "
+			"or Invitation-Cookie is missing or invalid.\n"
+		);
+		return;
 
-	if (guid == NULL) {
-		const gchar *cmd = g_hash_table_lookup(
-				body, "Invitation-Command");
+	} else if (!strcmp(command, "INVITE")) {
+		const gchar	*guid = g_hash_table_lookup(body, "Application-GUID");
+	
+		if (guid == NULL) {
+			purple_debug_warning("msn",
+			                     "Invite msg missing Application-GUID.\n");
 
-		if (cmd && !strcmp(cmd, "CANCEL")) {
-			const gchar *code = g_hash_table_lookup(
-					body, "Cancel-Code");
-			purple_debug_info("msn",
-					"MSMSGS invitation cancelled: %s.\n",
-					code ? code : "no reason given");
-		} else
-			purple_debug_warning("msn", "Invite msg missing "
-					"Application-GUID.\n");
+			accepted = TRUE;
 
-		accepted = TRUE;
+		} else if (!strcmp(guid, MSN_FT_GUID)) {
 
-	} else if (!strcmp(guid, "{02D3C01F-BF30-4825-A83A-DE7AF41648AA}")) {
-		purple_debug_info("msn", "Computer call\n");
+		} else if (!strcmp(guid, "{02D3C01F-BF30-4825-A83A-DE7AF41648AA}")) {
+			purple_debug_info("msn", "Computer call\n");
 
-		if (cmdproc->session) {
-			PurpleConversation *conv = NULL;
-			gchar *from = msg->remote_user;
-			gchar *buf = NULL;
+			if (cmdproc->session) {
+				PurpleConversation *conv = NULL;
+				gchar *from = msg->remote_user;
+				gchar *buf = NULL;
 
-			if (from)
-				conv = purple_find_conversation_with_account(
-						PURPLE_CONV_TYPE_IM, from,
-						cmdproc->session->account);
-			if (conv)
-				buf = g_strdup_printf(
-						_("%s sent you a voice chat "
-						"invite, which is not yet "
-						"supported."), from);
-			if (buf) {
-				purple_conversation_write(conv, NULL, buf,
-						PURPLE_MESSAGE_SYSTEM |
-						PURPLE_MESSAGE_NOTIFY,
-						time(NULL));
-				g_free(buf);
+				if (from)
+					conv = purple_find_conversation_with_account(
+							PURPLE_CONV_TYPE_IM, from,
+							cmdproc->session->account);
+				if (conv)
+					buf = g_strdup_printf(
+							_("%s sent you a voice chat "
+							"invite, which is not yet "
+							"supported."), from);
+				if (buf) {
+					purple_conversation_write(conv, NULL, buf,
+							PURPLE_MESSAGE_SYSTEM |
+							PURPLE_MESSAGE_NOTIFY,
+							time(NULL));
+					g_free(buf);
+				}
 			}
+		} else {
+			const gchar *application = g_hash_table_lookup(body, "Application-Name");
+			purple_debug_warning("msn", "Unhandled invite msg with GUID %s: %s.\n",
+			                     guid, application ? application : "(null)");
 		}
-	} else {
-		const gchar *application = g_hash_table_lookup(body, "Application-Name");
-		purple_debug_warning("msn", "Unhandled invite msg with GUID %s: %s.\n",
-		                     guid, application ? application : "(null)");
-	}
-
-	if (!accepted) {
-		const gchar *cookie = g_hash_table_lookup(body, "Invitation-Cookie");
-		if (cookie) {
+		
+		if (!accepted) {
 			MsnSwitchBoard *swboard = cmdproc->data;
 			char *text;
 			MsnMessage *cancel;
@@ -1185,6 +1208,17 @@ msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			msn_switchboard_send_msg(swboard, cancel, TRUE);
 			msn_message_destroy(cancel);
 		}
+
+	} else if (!strcmp(command, "CANCEL")) {
+		const gchar *code = g_hash_table_lookup(body, "Cancel-Code");
+		purple_debug_info("msn", "MSMSGS invitation cancelled: %s.\n",
+		                  code ? code : "no reason given");
+
+	} else {
+		/*
+		 * Some other already established invitation session.
+		 * Can be retrieved by Invitation-Cookie.
+		 */
 	}
 
 	g_hash_table_destroy(body);

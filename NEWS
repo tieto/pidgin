@@ -2,6 +2,46 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.7.1 (05/29/2010):
+	Elliott: Hey, I'm first!  How did that happen?!  Maybe because of the
+	interesting changes in this release.  Sure there were quite a few bug
+	fixes, but I know what you've all been waiting for is the direct
+	connections in MSN.  Trust me, it's really really fast!!
+
+	John: Whoa, short turnaround for us.  This is just 17 days after our
+	previous release!  This fixes a number of bugs that you've all been
+	reporting a ton of duplicate tickets about and even gives you the new
+	direct connection file transfer support for MSN.  Enjoy!
+	
+	Marcus: Quite a bit quicker to get this release out, compared with the
+	previous one :).  Fixes a number of bugs, and I'm sure the MSN direct
+	connections will please many users.  Enjoy!
+
+2.7.0 (05/12/2010):
+	John: We FINALLY got the ICQ X-Status stuff merged in!  And a few other
+	patches that have been sitting on Trac forever.  Couple that with some
+	new features and we have an excellent release for all of you!
+
+	Marcus: Finally time for a new release, seems like it took
+	quite a while this time.  But then again, there are some new features
+	in there, like file transfer preview (thumbnails) support (only on MSN
+	so far), plus a lot of bug fixes.  Enjoy!
+
+	Paul: Yay, a new release!  I don't think I added very much useful to
+	this release, other than fixing a paste bug from Chrome (no weird
+	characters appended to the end of your URI).  Enjoy!
+
+	Jorge: This is my first NEWS!  I'm not sure I added something nice
+	to this release.  I know it took a lot of time to bring this one
+	out, however I'm really excited by this release.  I hope everyone
+	likes the new features this release brings.
+
+	Elliott: This release took so long, I had to go check the ChangeLog
+	just to see what happened.  I doubt many people will notice, but we
+	dropped support for many old things, like GTK+<2.10 and MSNP9.  In more
+	exciting news, we have file transfer previews on MSN, and support for
+	setting moods on ICQ and XMPP (which has been waiting forever.)
+
 2.6.6 (02/18/2010):
 	Mark: This release includes some great little changes and fixes a few
 	security-related bugs.  See the ChangeLog for details.

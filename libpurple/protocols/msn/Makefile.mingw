@@ -41,6 +41,7 @@ C_SRC =			cmdproc.c \
 			command.c \
 			contact.c\
 			dialog.c \
+			directconn.c \
 			error.c \
 			group.c \
 			history.c \

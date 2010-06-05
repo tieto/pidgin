@@ -1,9 +1,74 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.0 (??/??/????):
+version 2.7.2 (??/??/????):
+
+version 2.7.1 (05/29/2010):
+	General:
+	* Build fixes on OpenSolaris.  (Brian Lu)
+	* Add configure option --enable-trayicon-compat which installs tray
+	  icons into directories that are compatible with older versions of
+	  hicolor-icon-theme (0.9).
+
+	Pidgin:
+	* Restore the tray icon's blinking functionality.
+	* Fix a crash setting moods when an account is disconnected.
+
+	Bonjour:
+	* Fix a crash on disconnect.
+
+	ICQ:
+	* Fix bug that caused HTML to be displayed in incoming messages.
+
+	MSN:
+	* Fix unnecessary bandwidth consumption for buddy icon requests when
+	  buddies have capital letters in their passport addresses.
+	* Support for direct connections, enabling faster file transfers,
+	  smiley and buddy icon loading.  (Gábor Szuromi)
+
+	XMPP:
+	* Allow connecting to servers that advertise EXTERNAL (broken in
+	  2.7.0)
+
+	MXit:
+	* Replace the MXit-specific mood management with the new standard Moods
+	  API.
+	* Add the standard MXit emoticons.
+	* Improve the handling of users being kicked from MultiMX rooms.
+	* MXit doesn't allow you to see your buddy's Email Address or Title,
+	  so remove those two fields from the "Buddy Information" page.
+	* Show buddy's Registration Country in their profile.
+	* Increment protocol version to v6.0
+	* If an invite you sent was rejected with a reason, display that
+	  message in the buddy tooltip.
+	* CAPTCHA value is a required field during account activation.
+	  (Resolves issue on Maemo)
+	* When your avatar image is changed, don't forget the user's profile
+	  information.
+
+	Windows-Specific Changes:
+	* Fix a regression introduced in 2.7.0 that caused Window Flashing not
+	  to work.
+
+version 2.7.0 (05/12/2010):
 	General:
 	* Changed GTK+ minimum version requirement to 2.10.0.
 	* Changed GLib minimum version requirement to 2.12.0.
+	* Using the --disable-nls argument to configure now works properly.
+	  You will no longer be forced to have intltool to configure and build.
+	* Fix two related crashes in the GnuTLS and NSS plugins when they
+	  suffer internal errors immediately upon attempting to establish
+	  an SSL connection.
+	* Fix NSS to work when reinitialized after being used.  (Thanks to
+	  Ludovico Cavedon for the testcase)
+	* Added support for PURPLE_GNUTLS_PRIORITIES environment variable.
+	  This can be used to specify GnuTLS priorities on a per-host basis.
+	  The format is "host=priority;host2=priority;...".  The default
+	  priority can be overridden by using "*" as the host.  See the
+	  GnuTLS manual for documentation on the format of the priority
+	  strings.
+	* Fix autoconf detection of Python.  (Brad Smith)
+	* Fix a crash when a Windows proxy (from IE) does not have a port.
+	  (Marten Klencke)
 
 	Pidgin:
 	* Moved the "Debugging Information" section of the About box to a
@@ -15,8 +80,108 @@ version 2.7.0 (??/??/????):
 	* Use GtkStatusIcon for the docklet, providing better integration in
 	  notification area.
 	* Added UI for sending attentions (buzz, nudge) on supporting protocols.
-	* Make the search dialog unobtrusive in the conversation window (by making
-	  it look and behave like the search dialog in Firefox)
+	* Make the search dialog unobtrusive in the conversation window (by
+	  making it look and behave like the search dialog in Firefox)
+	* The Recent Log Activity sort method for the Buddy List now
+	  distinguishes between no activity and a small amount of activity
+	  in the distant past.  (Greg McNew)
+	* Added a menu set mood globally for all mood-supporting accounts
+	  (currently XMPP and ICQ).
+	* Default binding of Ctrl+Shift+v to 'Paste as Plain Text' in
+	  conversation windows. This can be changed in .gtkrc-2.0. For example,
+	  Ctrl+v can be bound to 'Paste as Plain Text' by default.
+	* Plugins can now handle markup in buddy names by attaching to the
+	  "drawing-buddy" signal. (Daniele Ricci, Andrea Piccinelli)
+	* Be more accommodating when scaling down large images for use as
+	  buddy icons.
+	* The 'Message Timestamp Formats' plugin allows changing the timestamp
+	  format from the timestamps' context menu in conversation log.
+	* The 'Message Timestamp Formats' plugin allows forcing 12-hour
+	  timestamps.  (Jonathan Maltz)
+	* Fix pastes from Chrome (rich-text pastes and probably URLs
+	  having garbage appended to them).
+	* Show file transfer thumbnails for images on supporting protocols
+	  (currently only supported on MSN).
+
+	Bonjour:
+	* Added support for IPv6. (Thanks to T_X for testing)
+
+	Gadu-Gadu:
+	* Updated our bundled libgadu to 1.9.0-rc2 (many thanks to Krzysztof
+	  Klinikowski for the work and testing put in here!)
+	* Minimum requirement for external libgadu is now also 1.9.0-rc2.
+
+	AIM and ICQ:
+	* X-Status (Custom ICQ status icon) support.  Since most of the icons
+	  available reflect moods, this is labeled "Set Mood" on the
+	  Accounts->ICQ Account menu. (Andrew Ivanov, Tomáš Kebert,
+	  Yuriy Yevgrafov, and trac users bob007, salieff, and nops)
+	* Allow setting and displaying icons between 1x1 and 100x100 pixels for
+	  ICQ.  Previously only icons between 48x48 and 52x64 were allowed.
+	* When using the clientLogin authentication method, prompt for a
+	  password on reconnect when "Remember Password" is not checked and
+	  authentication fails due to an incorrect password.  (This is the same
+	  behavior as the legacy authentication method)
+	* Support sending and receiving HTML-formatted messages for ICQ.
+	* Use the proper URL for "View web profile" link for ICQ buddies.
+	  (Alexander Nartov)
+
+	MSN:
+	* Support for version 9 of the MSN protocol has been removed.  This
+	  version is no longer supported on the servers.
+	* Support file transfer thumbnails (previews) for images.
+	* Fix CVE-2010-1624 (custom emoticon remote crash).
+
+	XMPP:
+	* Direct messages to a specific resource only upon receipt of a message
+	  with content (as opposed to a typing notification, etc).  (Thanks to
+	  rjoly for testing)
+	* Present a better error message when authentication fails while trying
+	  to connect to Facebook.  (David Reiss, Facebook)
+	* When sending data using in-band-bytestreams, interpret the block-size
+	  attribute as the size of the BASE64-encoded representation of the
+	  data.
+	* Validate the hash on incoming BoB data objects (for custom smileys
+	  etc.), cache based per JID when the CID is not a valid hash (as
+	  specified by the BoB XEP).
+	* Send whitespace keepalives if we haven't sent data in a while (2
+	  minutes).  This fixes an issue with Openfire disconnecting a
+	  libpurple-baesd client that has just been quiet for about 6
+	  minutes.
+	* Only support Google Talk's JID Domain Discovery extension
+	  (allowing a user to log in with "@gmail.com" or "@googlemail.com"
+	  interchangeably) for those two domains.  This change was made
+	  due to interoperability issues with some BOSH Connection Managers
+	  and namespaced attributes.
+
+	Yahoo/Yahoo JAPAN:
+	* Attempt to better handle transparent proxies interfering with
+	  HTTP-based login.
+	* Fix handling of P2P packets, thus fixing the loss of some messages.
+	* Retrieve the pager server address from Yahoo!'s servers directly.
+	* Removed the "Pager server" account option, as it is no longer needed.
+	* The authentication code is now less order-sensitive with the
+	  components of the server's response.
+	* The authentication process now acts more like the official client.
+
+	Finch:
+	* New action 'history-search', with default binding ctrl+r, to search
+	  the entered string in the input history.
+
+	Windows-Specific Changes
+	* Updated GTK+ to 2.16.6
+	* Private GTK+ Runtime now used (GTK+ Installer no longer supported)
+	* Minimum required GTK+ version increased to 2.14.7
+	* Windows 95, Windows 98, Windows 98 Second Edition, Windows ME
+	  (Millennium Edition), and Windows NT 4.0 longer supported due to GTK+
+	  requirements changes.
+	* Crash Report files (pidgin.RPT) are now generated in the ~/.purple
+	  directory instead of the installation directory.
+	* NSS SSL Library upgraded to 3.12.5 (thanks to Berke Viktor)
+	* GtkSpell upgraded to 2.0.16, changing the spellchecking backend to
+	  enchant.  This means that myspell and hunspell (OpenOffice)
+	  dictionaries can be used (previous versions' aspell dictionaries
+	  will not work).
 
 version 2.6.6 (02/18/2010):
 	libpurple:

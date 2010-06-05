@@ -92,6 +92,9 @@ static void* mxit_link_click( const char* link64 )
 		goto skip;
 	con = purple_account_get_connection( account );
 
+	/* determine if it's a command-response to send */
+	is_command = g_str_has_prefix( parts[4], "::type=reply|" );
+
 	/* send click message back to MXit */
 	mxit_send_message( con->proto_data, parts[3], parts[4], FALSE, is_command );
 
@@ -349,6 +352,10 @@ static void mxit_tooltip( PurpleBuddy* buddy, PurpleNotifyUserInfo* info, gboole
 	if ( contact->subtype != 0 )
 		purple_notify_user_info_add_pair( info, _( "Subscription" ), mxit_convert_subtype_to_name( contact->subtype ) );
 
+	/* rejection message */
+	if ( ( contact->subtype == MXIT_SUBTYPE_REJECTED ) && ( contact->msg != NULL ) )
+		purple_notify_user_info_add_pair( info, _( "Rejection Message" ), contact->msg );
+
 	/* hidden number */
 	if ( contact->flags & MXIT_CFLAG_HIDDEN )
 		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), _( "Yes" ) );
@@ -418,6 +425,24 @@ static void mxit_set_status( PurpleAccount* account, PurpleStatus* status )
 	char*					statusmsg1;
 	char*					statusmsg2;
 
+	/* Handle mood changes */
+	if (purple_status_type_get_primitive(purple_status_get_type(status)) == PURPLE_STATUS_MOOD) {
+		const char* moodid = purple_status_get_attr_string( status, PURPLE_MOOD_NAME );
+		int mood;
+
+		/* convert the purple mood to a mxit mood */
+		mood = mxit_convert_mood( moodid );
+		if ( mood < 0 ) {
+			/* error, mood not found */
+			purple_debug_info( MXIT_PLUGIN_ID, "Mood status NOT found! (id = %s)\n", moodid );
+			return;
+		}
+
+		/* update mood state */
+		mxit_send_mood( session, mood );
+		return;
+	}
+
 	/* get the status id (reference: "libpurple/status.h") */
 	statusid = purple_status_get_id( status );
 
@@ -470,6 +495,8 @@ static void mxit_free_buddy( PurpleBuddy* buddy )
 			g_free( contact->statusMsg );
 		if ( contact->avatarId )
 			g_free( contact->avatarId );
+		if ( contact->msg )
+			g_free( contact->msg );
 		g_free( contact );
 	}
 
@@ -531,8 +558,8 @@ static void mxit_set_buddy_icon( PurpleConnection *gc, PurpleStoredImage *img )
 static void mxit_get_info( PurpleConnection *gc, const char *who )
 {
 	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
-	const char*				profilelist[]	= { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_HIDENUMBER, CP_PROFILE_FULLNAME,
-												CP_PROFILE_TITLE, CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_EMAIL };
+	const char*				profilelist[]	= { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME,
+												CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY };
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_info: '%s'\n", who );
 
@@ -633,8 +660,11 @@ static PurplePluginProtocolInfo proto_info = {
 	NULL,					/* attention_types */
 	sizeof( PurplePluginProtocolInfo ),		/* struct_size */
 	mxit_get_text_table,	/* get_account_text_table */
-	NULL,
-	NULL
+	NULL,					/* initiate_media */
+	NULL,					/* get_media_caps */
+	mxit_get_moods,			/* get_moods */
+	NULL,					/* set_public_alias */
+	NULL					/* get_public_alias */
 };
 
 

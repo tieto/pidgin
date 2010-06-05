@@ -105,7 +105,7 @@ struct contact {
 	short		presence;							/* presence state */
 	short		subtype;							/* subscription type */
 
-	char*		msg;								/* invite message */
+	char*		msg;								/* invite/rejection message */
 
 	char		customMood[16];						/* custom mood */
 	char*		statusMsg;							/* status message */
@@ -119,6 +119,7 @@ const char* mxit_convert_presence_to_name( short no );
 const char* mxit_convert_subtype_to_name( short subtype );
 
 /* Moods */
+int mxit_convert_mood( const char* id );
 const char* mxit_convert_mood_to_name( short id );
 
 /* MXit Protocol callbacks */
@@ -134,6 +135,7 @@ void mxit_remove_buddy( PurpleConnection* gc, PurpleBuddy* buddy, PurpleGroup* g
 void mxit_buddy_alias( PurpleConnection* gc, const char* who, const char* alias );
 void mxit_buddy_group( PurpleConnection* gc, const char* who, const char* old_group, const char* new_group );
 void mxit_rename_group( PurpleConnection* gc, const char* old_name, PurpleGroup* group, GList* moved_buddies );
+PurpleMood* mxit_get_moods(PurpleAccount *account);
 
 
 #endif		/* _MXIT_ROSTER_H_ */

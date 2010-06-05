@@ -1,4 +1,6 @@
 /*
+ * purple - Jabber Service Discovery
+ *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -11,11 +13,12 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
+ * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ *
  */
 
 #ifndef PURPLE_JABBER_IBB_H_
@@ -106,6 +109,10 @@ JabberIBBSessionState jabber_ibb_session_get_state(const JabberIBBSession *sess)
 
 gsize jabber_ibb_session_get_block_size(const JabberIBBSession *sess);
 void jabber_ibb_session_set_block_size(JabberIBBSession *sess, gsize size);
+
+/* get maximum size data block to send (in bytes) 
+ (before encoded to BASE64) */ 
+gsize jabber_ibb_session_get_max_data_size(const JabberIBBSession *sess);
 
 gpointer jabber_ibb_session_get_user_data(JabberIBBSession *sess);
 

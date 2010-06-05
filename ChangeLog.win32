@@ -1,9 +1,20 @@
-version 2.7.0 (??/??/????):
-	* Minimum required GTK+ version increased to 2.14.0
+Starting with Pidgin version 2.7.1, this ChangeLog file will no longer be
+updated.  It will be kept in the source tree for historical reasons only.
+
+version 2.7.0 (05/12/2010):
+	* Updated GTK+ to 2.16.6
 	* Private GTK+ Runtime now used (GTK+ Installer no longer supported)
-	* Win9x no longer supported.
+	* Minimum required GTK+ version increased to 2.14.7
+	* Windows 95, Windows 98, Windows 98 Second Edition, Windows ME
+	  (Millennium Edition), and Windows NT 4.0 longer supported due to GTK+
+	  requirements changes.
 	* Crash Report files (pidgin.RPT) are now generated in the ~/.purple
 	  directory instead of the installation directory.
+	* NSS SSL Library upgraded to 3.12.5 (thanks to Berke Viktor)
+	* GtkSpell upgraded to 2.0.16, changing the spellchecking backend to
+	  enchant.  This means that myspell and hunspell (OpenOffice)
+	  dictionaries can be used (previous versions' aspell dictionaries
+	  will not work).
 
 version 2.6.6 (02/18/2010):
 	* Installer translations for: Norwegian nynorsk

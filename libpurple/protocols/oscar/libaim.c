@@ -20,7 +20,7 @@
  *
  */
 
-/* libaim is the AIM protocol plugin. It is linked against liboscarcommon,
+/* libaim is the AIM protocol plugin. It is linked against liboscar,
  * which contains all the shared implementation code with libicq
  */
 
@@ -31,7 +31,6 @@ static PurplePluginProtocolInfo prpl_info =
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
-	/* The mimimum icon size below is not needed in AIM 6.0 */
 	{"gif,jpeg,bmp,ico", 0, 0, 100, 100, 7168, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 	oscar_list_icon_aim,		/* list_icon */
 	oscar_list_emblem,		/* list_emblems */
@@ -97,7 +96,10 @@ static PurplePluginProtocolInfo prpl_info =
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL,					/* get_account_text_table */
 	NULL,					/* initiate_media */
-	NULL					/* can_do_media */
+	NULL,					/* get_media_caps */
+	NULL,					/* get_moods */
+	NULL,					/* set_public_alias */
+	NULL					/* get_public_alias */
 };
 
 static PurplePluginInfo info =
