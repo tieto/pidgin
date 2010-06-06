@@ -34,6 +34,8 @@ MSNSOURCES = \
 	object.h \
 	oim.c\
 	oim.h\
+	p2p.c \
+	p2p.h \
 	page.c \
 	page.h \
 	servconn.c \

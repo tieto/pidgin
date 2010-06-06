@@ -81,7 +81,7 @@ void msn_slplink_queue_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
 void msn_slplink_send_slpmsg(MsnSlpLink *slplink,
 							 MsnSlpMessage *slpmsg);
 void msn_slplink_send_queued_slpmsgs(MsnSlpLink *slplink);
-void msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpHeader *header, const char *data, gsize len);
+void msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *data, gsize len);
 void msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer);
 
 void msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg);

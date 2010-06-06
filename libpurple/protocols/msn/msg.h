@@ -58,6 +58,7 @@ typedef enum
 #include "session.h"
 #include "transaction.h"
 #include "user.h"
+#include "p2p.h"
 
 typedef void (*MsnMsgCb)(MsnMessage *, void *data);
 
@@ -66,41 +67,6 @@ typedef void (*MsnMsgCb)(MsnMessage *, void *data);
 
 #define MSG_OIM_BODY_DEM	"\n\n"
 #define MSG_OIM_LINE_DEM	"\n"
-
-typedef enum
-{
-	SLP_HF_NO_FLAG         = 0x0,        /**< No flags specified */
-	SLP_HF_OUT_OF_ORDER    = 0x1,        /**< Chunk out-of-order */
-	SLP_HF_ACK             = 0x2,        /**< Acknowledgement */
-	SLP_HF_PENDING_INVITE  = 0x4,        /**< There is a pending invite */
-	SLP_HF_BINARY_ERROR    = 0x8,        /**< Error on the binary level */
-	SLP_HF_MSN_OBJ_DATA    = 0x20,       /**< MsnObject data */
-	SLP_HF_WML2009_COMP    = 0x1000000,  /**< Compatibility with WLM 2009 */
-	SLP_HF_FILE_DATA       = 0x1000030   /**< File transfer data */
-} SlpHeaderFlag;
-/* Info From:
- * http://msnpiki.msnfanatic.com/index.php/MSNC:P2Pv1_Headers#Flags
- * http://trac.kmess.org/changeset/ba04d0c825769d23370511031c47f6be75fe9b86
- * #7180
- */
-
-typedef struct
-{
-	guint32 session_id;
-	guint32 id;
-	guint64 offset;
-	guint64 total_size;
-	guint32 length;
-	guint32 flags;
-	guint32 ack_id;
-	guint32 ack_sub_id;
-	guint64 ack_size;
-} MsnSlpHeader;
-
-typedef struct
-{
-	guint32 value;
-} MsnSlpFooter;
 
 /**
  * A message.
@@ -123,8 +89,8 @@ struct _MsnMessage
 	guint total_chunks;   /**< How many chunks in this multi-part message */
 	guint received_chunks; /**< How many chunks we've received so far */
 
-	MsnSlpHeader msnslp_header;
-	MsnSlpFooter msnslp_footer;
+	MsnP2PHeader msnslp_header;
+	MsnP2PFooter msnslp_footer;
 
 	GHashTable *header_table;
 	GList *header_list;

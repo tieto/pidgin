@@ -29,6 +29,7 @@
 #include "slpcall.h"
 
 #include "slp.h"
+#include "p2p.h"
 
 /**************************************************************************
  * Main
@@ -204,7 +205,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	body = slpmsg->buffer;
 	body_len = slpmsg->offset;
 
-	if (slpmsg->flags == SLP_HF_NO_FLAG || slpmsg->flags == SLP_HF_WML2009_COMP)
+	if (slpmsg->flags == P2P_NO_FLAG || slpmsg->flags == P2P_WML2009_COMP)
 	{
 		char *body_str;
 
@@ -265,9 +266,9 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		}
 		g_free(body_str);
 	}
-	else if (slpmsg->flags == SLP_HF_MSN_OBJ_DATA ||
-	         slpmsg->flags == SLP_HF_WML2009_COMP & SLP_HF_MSN_OBJ_DATA ||
-	         slpmsg->flags == SLP_HF_FILE_DATA)
+	else if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
+	         slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
+	         slpmsg->flags == P2P_FILE_DATA)
 	{
 		slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
 
@@ -293,7 +294,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			msn_slpcall_session_init(slpcall);
 	}
 #endif
-	else if (slpmsg->flags == SLP_HF_ACK)
+	else if (slpmsg->flags == P2P_ACK)
 	{
 		/* Acknowledgement of previous message. Don't do anything currently. */
 	}

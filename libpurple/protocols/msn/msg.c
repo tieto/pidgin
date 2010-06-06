@@ -28,6 +28,7 @@
 #include "msn.h"
 #include "msg.h"
 #include "msnutils.h"
+#include "p2p.h"
 
 MsnMessage *
 msn_message_new(MsnMsgType type)
@@ -163,29 +164,26 @@ msn_message_new_nudge(void)
 void
 msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 {
-	MsnSlpHeader header;
+	MsnP2PHeader *header;
+	MsnP2PHeader wire;
 	const char *tmp;
 	int body_len;
 
 	tmp = body;
 
-	if (len < sizeof(header)) {
+	if (len < sizeof(wire)) {
 		g_return_if_reached();
 	}
 
 	/* Extract the binary SLP header */
-	memcpy(&header, tmp, sizeof(header));
-	tmp += sizeof(header);
+	memcpy(&wire, tmp, sizeof(wire));
+	tmp += sizeof(wire);
 
-	msg->msnslp_header.session_id = GUINT32_FROM_LE(header.session_id);
-	msg->msnslp_header.id         = GUINT32_FROM_LE(header.id);
-	msg->msnslp_header.offset     = GUINT64_FROM_LE(header.offset);
-	msg->msnslp_header.total_size = GUINT64_FROM_LE(header.total_size);
-	msg->msnslp_header.length     = GUINT32_FROM_LE(header.length);
-	msg->msnslp_header.flags      = GUINT32_FROM_LE(header.flags);
-	msg->msnslp_header.ack_id     = GUINT32_FROM_LE(header.ack_id);
-	msg->msnslp_header.ack_sub_id = GUINT32_FROM_LE(header.ack_sub_id);
-	msg->msnslp_header.ack_size   = GUINT64_FROM_LE(header.ack_size);
+	header = msn_p2p_header_from_wire(&wire);
+
+	memcpy(&msg->msnslp_header, (char*)header, sizeof(*header));
+
+	g_free(header);
 
 	/* Extract the body */
 	body_len = len - (tmp - body);
@@ -298,8 +296,9 @@ msn_message_parse_payload(MsnMessage *msg,
 	if (content_type != NULL &&
 		!strcmp(content_type, "application/x-msnmsgrp2p"))
 	{
-		MsnSlpHeader header;
-		MsnSlpFooter footer;
+		MsnP2PHeader *header;
+		MsnP2PHeader wire;
+		MsnP2PFooter footer;
 		int body_len;
 
 		if (payload_len - (tmp - tmp_base) < sizeof(header)) {
@@ -310,18 +309,14 @@ msn_message_parse_payload(MsnMessage *msg,
 		msg->msnslp_message = TRUE;
 
 		/* Extract the binary SLP header */
-		memcpy(&header, tmp, sizeof(header));
-		tmp += sizeof(header);
+		memcpy(&wire, tmp, sizeof(wire));
+		tmp += sizeof(wire);
 
-		msg->msnslp_header.session_id = GUINT32_FROM_LE(header.session_id);
-		msg->msnslp_header.id         = GUINT32_FROM_LE(header.id);
-		msg->msnslp_header.offset     = GUINT64_FROM_LE(header.offset);
-		msg->msnslp_header.total_size = GUINT64_FROM_LE(header.total_size);
-		msg->msnslp_header.length     = GUINT32_FROM_LE(header.length);
-		msg->msnslp_header.flags      = GUINT32_FROM_LE(header.flags);
-		msg->msnslp_header.ack_id     = GUINT32_FROM_LE(header.ack_id);
-		msg->msnslp_header.ack_sub_id = GUINT32_FROM_LE(header.ack_sub_id);
-		msg->msnslp_header.ack_size   = GUINT64_FROM_LE(header.ack_size);
+		header = msn_p2p_header_from_wire(&wire);
+
+		memcpy(&msg->msnslp_header, (char*)header, sizeof(*header));
+
+		g_free(header);
 
 		body_len = payload_len - (tmp - tmp_base) - sizeof(footer);
 
@@ -384,7 +379,7 @@ msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd)
 char *
 msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size)
 {
-	MsnSlpHeader header;
+	MsnP2PHeader *header;
 
 	char *tmp, *base;
 	const void *body;
@@ -398,18 +393,12 @@ msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size)
 
 	body = msn_message_get_bin_data(msg, &body_len);
 
-	header.session_id = GUINT32_TO_LE(msg->msnslp_header.session_id);
-	header.id         = GUINT32_TO_LE(msg->msnslp_header.id);
-	header.offset     = GUINT64_TO_LE(msg->msnslp_header.offset);
-	header.total_size = GUINT64_TO_LE(msg->msnslp_header.total_size);
-	header.length     = GUINT32_TO_LE(msg->msnslp_header.length);
-	header.flags      = GUINT32_TO_LE(msg->msnslp_header.flags);
-	header.ack_id     = GUINT32_TO_LE(msg->msnslp_header.ack_id);
-	header.ack_sub_id = GUINT32_TO_LE(msg->msnslp_header.ack_sub_id);
-	header.ack_size   = GUINT64_TO_LE(msg->msnslp_header.ack_size);
+	header = msn_p2p_header_to_wire(&(msg->msnslp_header));
 
-	memcpy(tmp, &header, 48);
+	memcpy(tmp, header, 48);
 	tmp += 48;
+
+	g_free(header);
 
 	if (body != NULL)
 	{
@@ -475,21 +464,15 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 
 	if (msg->msnslp_message)
 	{
-		MsnSlpHeader header;
-		MsnSlpFooter footer;
+		MsnP2PHeader *header;
+		MsnP2PFooter footer;
 
-		header.session_id = GUINT32_TO_LE(msg->msnslp_header.session_id);
-		header.id         = GUINT32_TO_LE(msg->msnslp_header.id);
-		header.offset     = GUINT64_TO_LE(msg->msnslp_header.offset);
-		header.total_size = GUINT64_TO_LE(msg->msnslp_header.total_size);
-		header.length     = GUINT32_TO_LE(msg->msnslp_header.length);
-		header.flags      = GUINT32_TO_LE(msg->msnslp_header.flags);
-		header.ack_id     = GUINT32_TO_LE(msg->msnslp_header.ack_id);
-		header.ack_sub_id = GUINT32_TO_LE(msg->msnslp_header.ack_sub_id);
-		header.ack_size   = GUINT64_TO_LE(msg->msnslp_header.ack_size);
+		header = msn_p2p_header_to_wire(&(msg->msnslp_header));
 
-		memcpy(n, &header, 48);
+		memcpy(n, header, 48);
 		n += 48;
+
+		g_free(header);
 
 		if (body != NULL)
 		{
