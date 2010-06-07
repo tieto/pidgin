@@ -911,6 +911,7 @@ static void send_attention_cb(GtkWidget *attention, GtkIMHtmlToolbar *toolbar)
 
 	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(attention), FALSE, toolbar);
 	purple_prpl_send_attention(gc, who, 0);
+	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
 static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
