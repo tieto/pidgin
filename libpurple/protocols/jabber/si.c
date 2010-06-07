@@ -40,7 +40,7 @@
 #include "si.h"
 
 #define STREAMHOST_CONNECT_TIMEOUT 15
-#define ENABLE_FT_THUMBNAILS 1
+#define ENABLE_FT_THUMBNAILS 0
 
 typedef struct _JabberSIXfer {
 	JabberStream *js;
