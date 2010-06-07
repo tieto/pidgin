@@ -1244,8 +1244,6 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
-		/*{PIDGIN_STOCK_TOOLBAR_SEND_ATTENTION, send_attention_cb, 
-			g_object_get_data(G_OBJECT(toolbar->imhtml), "attention"), _("Send Attention")},*/
 		{NULL, NULL, NULL, NULL}
 	};
 	int iter;
