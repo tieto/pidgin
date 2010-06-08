@@ -47,4 +47,10 @@ msn_p2p_header_from_wire(MsnP2PHeader *wire);
 MsnP2PHeader *
 msn_p2p_header_to_wire(MsnP2PHeader *header);
 
+MsnP2PFooter *
+msn_p2p_footer_from_wire(MsnP2PFooter *wire);
+
+MsnP2PFooter *
+msn_p2p_footer_to_wire(MsnP2PFooter *footer);
+
 #endif /* MSN_P2P_H */

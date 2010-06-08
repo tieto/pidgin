@@ -43,3 +43,27 @@ msn_p2p_header_to_wire(MsnP2PHeader *header)
 
 }
 
+MsnP2PFooter *
+msn_p2p_footer_from_wire(MsnP2PFooter *wire)
+{
+	MsnP2PFooter *footer;
+
+	footer = g_new(MsnP2PFooter, 1);
+
+	footer->value = GUINT32_FROM_BE(wire->value);
+
+	return footer;
+}
+
+MsnP2PFooter *
+msn_p2p_footer_to_wire(MsnP2PFooter *footer)
+{
+	MsnP2PFooter *wire;
+
+	wire = g_new(MsnP2PFooter, 1);
+
+	wire->value = GUINT32_TO_BE(footer->value);
+
+	return wire;
+}
+
