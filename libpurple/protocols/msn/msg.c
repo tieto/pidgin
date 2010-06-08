@@ -28,7 +28,7 @@
 #include "msn.h"
 #include "msg.h"
 #include "msnutils.h"
-#include "p2p.h"
+#include "slpmsg.h"
 
 MsnMessage *
 msn_message_new(MsnMsgType type)
@@ -161,6 +161,7 @@ msn_message_new_nudge(void)
 	return msg;
 }
 
+#if 0
 void
 msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 {
@@ -197,6 +198,7 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 		tmp += body_len;
 	}
 }
+#endif
 
 void
 msn_message_parse_payload(MsnMessage *msg,
@@ -294,7 +296,12 @@ msn_message_parse_payload(MsnMessage *msg,
 	content_type = msn_message_get_content_type(msg);
 
 	if (content_type != NULL &&
-		!strcmp(content_type, "application/x-msnmsgrp2p"))
+		!strcmp(content_type, "application/x-msnmsgrp2p")) {
+		msg->msnslp_message = TRUE;
+		msg->slpmsg = msn_slpmsg_new_from_data(tmp, payload_len - (tmp - tmp_base));
+	}
+
+#if 0
 	{
 		MsnP2PHeader *header;
 		MsnP2PHeader wire;
@@ -339,6 +346,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	}
 	else
 	{
+#endif
 		if (payload_len - (tmp - tmp_base) > 0) {
 			msg->body_len = payload_len - (tmp - tmp_base);
 			g_free(msg->body);
@@ -355,7 +363,9 @@ msn_message_parse_payload(MsnMessage *msg,
 			msg->body = body;
 			msg->charset = g_strdup("UTF-8");
 		}
+#if 0
 	}
+#endif
 
 	g_free(tmp_base);
 }
@@ -379,6 +389,7 @@ msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd)
 char *
 msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size)
 {
+#if 0
 	MsnP2PHeader *header;
 
 	char *tmp, *base;
@@ -410,6 +421,11 @@ msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size)
 		*ret_size = tmp - base;
 
 	return base;
+#endif
+	char *tmp;
+
+	tmp = msn_slpmsg_serialize(msg->slpmsg, ret_size);
+	return tmp;
 }
 
 char *
@@ -464,6 +480,14 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 
 	if (msg->msnslp_message)
 	{
+		size_t siz;
+		char *body;
+		
+		body = msn_slpmsg_serialize(msg->slpmsg, &siz);
+
+		memcpy(n, body, siz);
+		n += siz;
+#if 0
 		MsnP2PHeader *header;
 		MsnP2PFooter footer;
 
@@ -485,6 +509,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 
 		memcpy(n, &footer, 4);
 		n += 4;
+#endif
 	}
 	else
 	{
@@ -744,15 +769,15 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 
 	if (msg->msnslp_message)
 	{
-		g_string_append_printf(str, "Session ID: %u\r\n", msg->msnslp_header.session_id);
-		g_string_append_printf(str, "ID:         %u\r\n", msg->msnslp_header.id);
-		g_string_append_printf(str, "Offset:     %" G_GUINT64_FORMAT "\r\n", msg->msnslp_header.offset);
-		g_string_append_printf(str, "Total size: %" G_GUINT64_FORMAT "\r\n", msg->msnslp_header.total_size);
-		g_string_append_printf(str, "Length:     %u\r\n", msg->msnslp_header.length);
-		g_string_append_printf(str, "Flags:      0x%x\r\n", msg->msnslp_header.flags);
-		g_string_append_printf(str, "ACK ID:     %u\r\n", msg->msnslp_header.ack_id);
-		g_string_append_printf(str, "SUB ID:     %u\r\n", msg->msnslp_header.ack_sub_id);
-		g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", msg->msnslp_header.ack_size);
+		g_string_append_printf(str, "Session ID: %u\r\n", msg->slpmsg->header->session_id);
+		g_string_append_printf(str, "ID:         %u\r\n", msg->slpmsg->header->id);
+		g_string_append_printf(str, "Offset:     %" G_GUINT64_FORMAT "\r\n", msg->slpmsg->header->offset);
+		g_string_append_printf(str, "Total size: %" G_GUINT64_FORMAT "\r\n", msg->slpmsg->header->total_size);
+		g_string_append_printf(str, "Length:     %u\r\n", msg->slpmsg->header->length);
+		g_string_append_printf(str, "Flags:      0x%x\r\n", msg->slpmsg->header->flags);
+		g_string_append_printf(str, "ACK ID:     %u\r\n", msg->slpmsg->header->ack_id);
+		g_string_append_printf(str, "SUB ID:     %u\r\n", msg->slpmsg->header->ack_sub_id);
+		g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", msg->slpmsg->header->ack_size);
 
 		if (purple_debug_is_verbose() && body != NULL)
 		{
@@ -779,7 +804,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 			}
 		}
 
-		g_string_append_printf(str, "Footer:     %u\r\n", msg->msnslp_footer.value);
+		g_string_append_printf(str, "Footer:     %u\r\n", msg->slpmsg->footer->value);
 	}
 	else
 	{
