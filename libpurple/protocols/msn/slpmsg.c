@@ -42,10 +42,13 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
 
-	slpmsg->slplink = slplink;
+	if (slplink) {
+		slpmsg->slplink = slplink;
 
-	slplink->slp_msgs =
-		g_list_append(slplink->slp_msgs, slpmsg);
+		slplink->slp_msgs =
+			g_list_append(slplink->slp_msgs, slpmsg);
+	} else
+		slpmsg->slplink = NULL;
 
 	slpmsg->header = NULL;
 	slpmsg->footer = NULL;

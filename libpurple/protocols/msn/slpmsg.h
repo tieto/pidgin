@@ -88,6 +88,7 @@ struct _MsnSlpMessage
  * Creates a new slp message
  *
  * @param slplink The slplink through which this slp message will be sent.
+ * If it's set to NULL, it is a temporary SlpMessage.
  * @return The created slp message.
  */
 MsnSlpMessage *msn_slpmsg_new(MsnSlpLink *slplink);
