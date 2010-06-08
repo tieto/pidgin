@@ -58,7 +58,7 @@ typedef enum
 #include "session.h"
 #include "transaction.h"
 #include "user.h"
-#include "p2p.h"
+#include "slpmsg.h"
 
 typedef void (*MsnMsgCb)(MsnMessage *, void *data);
 
@@ -78,6 +78,7 @@ struct _MsnMessage
 	MsnMsgType type;
 
 	gboolean msnslp_message;
+	MsnSlpMessage *slpmsg;
 
 	char *remote_user;
 	char flag;
@@ -88,9 +89,6 @@ struct _MsnMessage
 	gsize body_len;
 	guint total_chunks;   /**< How many chunks in this multi-part message */
 	guint received_chunks; /**< How many chunks we've received so far */
-
-	MsnP2PHeader msnslp_header;
-	MsnP2PFooter msnslp_footer;
 
 	GHashTable *header_table;
 	GList *header_list;

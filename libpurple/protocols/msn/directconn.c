@@ -548,7 +548,7 @@ msn_dc_enqueue_msg(MsnDirectConn *dc, MsnMessage *msg)
 	length = msg->body_len + P2P_PACKET_HEADER_SIZE;
 	p = msn_dc_new_packet(length);
 
-	memcpy(p->data, &msg->msnslp_header, P2P_PACKET_HEADER_SIZE);
+	memcpy(p->data, msg->slpmsg->header, P2P_PACKET_HEADER_SIZE);
 	memcpy(p->data + P2P_PACKET_HEADER_SIZE, msg->body, msg->body_len);
 
 	p->sent_cb = msn_dc_send_packet_cb;

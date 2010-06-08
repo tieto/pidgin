@@ -319,8 +319,8 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			msn_message_set_bin_data(msg, slpmsg->buffer + slpmsg->offset, len);
 		}
 
-		msg->msnslp_header.offset = slpmsg->offset;
-		msg->msnslp_header.length = len;
+		slpmsg->header->offset = slpmsg->offset;
+		slpmsg->header->length = len;
 	}
 
 	if (purple_debug_is_verbose())
@@ -362,7 +362,7 @@ msg_ack(MsnMessage *msg, void *data)
 
 	real_size = (slpmsg->flags == P2P_ACK) ? 0 : slpmsg->size;
 
-	slpmsg->offset += msg->msnslp_header.length;
+	slpmsg->offset += msg->slpmsg->header->length;
 
 	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
 
@@ -418,17 +418,21 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	slpmsg->msg = msg = msn_message_new_msnslp();
 
+	msg->slpmsg = slpmsg;
+	msg->slpmsg->header = g_new0(MsnP2PHeader, 1);
+	msg->slpmsg->footer = g_new0(MsnP2PFooter, 1);
+
 	if (slpmsg->flags == P2P_NO_FLAG)
 	{
-		msg->msnslp_header.session_id = slpmsg->session_id;
-		msg->msnslp_header.ack_id = rand() % 0xFFFFFF00;
+		msg->slpmsg->header->session_id = slpmsg->session_id;
+		msg->slpmsg->header->ack_id = rand() % 0xFFFFFF00;
 	}
 	else if (slpmsg->flags == P2P_ACK)
 	{
-		msg->msnslp_header.session_id = slpmsg->session_id;
-		msg->msnslp_header.ack_id = slpmsg->ack_id;
-		msg->msnslp_header.ack_size = slpmsg->ack_size;
-		msg->msnslp_header.ack_sub_id = slpmsg->ack_sub_id;
+		msg->slpmsg->header->session_id = slpmsg->session_id;
+		msg->slpmsg->header->ack_id = slpmsg->ack_id;
+		msg->slpmsg->header->ack_size = slpmsg->ack_size;
+		msg->slpmsg->header->ack_sub_id = slpmsg->ack_sub_id;
 	}
 	else if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
 	         slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
@@ -438,21 +442,21 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		slpcall = slpmsg->slpcall;
 
 		g_return_if_fail(slpcall != NULL);
-		msg->msnslp_header.session_id = slpcall->session_id;
-		msg->msnslp_footer.value = slpcall->app_id;
-		msg->msnslp_header.ack_id = rand() % 0xFFFFFF00;
+		msg->slpmsg->header->session_id = slpcall->session_id;
+		msg->slpmsg->footer->value = slpcall->app_id;
+		msg->slpmsg->header->ack_id = rand() % 0xFFFFFF00;
 	}
 	else if (slpmsg->flags == 0x100)
 	{
-		msg->msnslp_header.ack_id     = slpmsg->ack_id;
-		msg->msnslp_header.ack_sub_id = slpmsg->ack_sub_id;
-		msg->msnslp_header.ack_size   = slpmsg->ack_size;
+		msg->slpmsg->header->ack_id     = slpmsg->ack_id;
+		msg->slpmsg->header->ack_sub_id = slpmsg->ack_sub_id;
+		msg->slpmsg->header->ack_size   = slpmsg->ack_size;
 	}
 
-	msg->msnslp_header.id = slpmsg->id;
-	msg->msnslp_header.flags = slpmsg->flags;
+	msg->slpmsg->header->id = slpmsg->id;
+	msg->slpmsg->header->flags = (guint32)slpmsg->flags;
 
-	msg->msnslp_header.total_size = slpmsg->size;
+	msg->slpmsg->header->total_size = slpmsg->size;
 
 	passport = purple_normalize(slplink->session->account, slplink->remote_user);
 	msn_message_set_header(msg, "P2P-Dest", passport);

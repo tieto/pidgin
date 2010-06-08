@@ -1112,7 +1112,7 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	data = msn_message_get_bin_data(msg, &len);
 
-	msn_slplink_process_msg(slplink, &msg->msnslp_header, data, len);
+	msn_slplink_process_msg(slplink, msg->slpmsg->header, data, len);
 }
 
 static void
