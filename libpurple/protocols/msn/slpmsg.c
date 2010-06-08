@@ -56,6 +56,41 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 	return slpmsg;
 }
 
+MsnSlpMessage *msn_slpmsg_new_from_data(const char *data, size_t data_len)
+{
+	MsnSlpMessage *slpmsg;
+	MsnP2PHeader *header;
+	const char *tmp;
+	int body_len;
+
+	tmp = data;
+	slpmsg = msn_slpmsg_new(NULL);
+
+	if (data_len < sizeof(*header)) {
+		return NULL;
+	}
+
+	/* Extract the binary SLP header */
+	slpmsg->header = msn_p2p_header_from_wire((MsnP2PHeader*)tmp);
+
+	/* Extract the body */
+	body_len = data_len - (tmp - data);
+	/* msg->body_len = msg->msnslp_header.length; */
+
+	if (body_len > 0) {
+		slpmsg->size = body_len;
+		slpmsg->buffer = g_malloc(body_len);
+		memcpy(slpmsg->buffer, tmp, body_len);
+		tmp += body_len;
+	}
+
+	/* Extract the footer */
+	if (body_len >= 0) 
+		slpmsg->footer = msn_p2p_footer_from_wire((MsnP2PFooter*)tmp);
+
+	return slpmsg;
+}
+
 void
 msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 {
@@ -217,4 +252,37 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 	g_free(body);
 
 	return slpmsg;
+}
+
+char *msn_slpmsg_serialize(MsnSlpMessage *slpmsg, size_t *ret_size)
+{
+	MsnP2PHeader *header;
+	MsnP2PFooter *footer;
+	char *base;
+	char *tmp;
+	size_t siz;
+
+	base = g_malloc(P2P_PACKET_HEADER_SIZE + slpmsg->size + sizeof(MsnP2PFooter));
+	tmp = base;
+
+	header = msn_p2p_header_to_wire(slpmsg->header);
+	footer = msn_p2p_footer_to_wire(slpmsg->footer);
+
+	siz = sizeof(MsnP2PHeader);
+	/* Copy header */
+	memcpy(tmp, (char*)header, siz);
+	tmp += siz;
+
+	/* Copy body */
+	memcpy(tmp, slpmsg->buffer, slpmsg->size);
+	tmp += slpmsg->size;
+
+	/* Copy footer */
+	siz = sizeof(MsnP2PFooter);
+	memcpy(tmp, (char*)footer, siz);
+	tmp += siz;
+
+	*ret_size = tmp - base;
+
+	return base;
 }

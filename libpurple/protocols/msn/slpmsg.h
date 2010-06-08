@@ -94,6 +94,16 @@ struct _MsnSlpMessage
 MsnSlpMessage *msn_slpmsg_new(MsnSlpLink *slplink);
 
 /**
+ * Creates a MsnSlpMessage without a MsnSlpLink by parsing the raw data.
+ *
+ * @param data 		The raw data with the slp message.
+ * @param data_len 	The len of the data
+ *
+ * @return The createed slp message.
+ */
+MsnSlpMessage *msn_slpmsg_new_from_data(const char *data, size_t data_len);
+
+/**
  * Destroys a slp message
  *
  * @param slpmsg The slp message to destory.
@@ -112,5 +122,15 @@ MsnSlpMessage * msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 								   const char *content);
 
 void msn_slpmsg_show(MsnMessage *msg);
+
+/**
+ * Serialize the MsnSlpMessage in a way it can be used to be transmited
+ *
+ * @param slpmsg 	The MsnSlpMessage.
+ * @param ret_size 	The size of the buffer cointaining the message.
+ *
+ * @return a buffer with the serialized data.
+ */
+char *msn_slpmsg_serialize(MsnSlpMessage *slpmsg, size_t *ret_size);
 
 #endif /* _MSN_SLPMSG_H_ */
