@@ -45,6 +45,9 @@ struct _MsnSlpMessage
 	MsnSlpLink *slplink; /**< The slplink through which this slp message is being sent. */
 	MsnSession *session;
 
+	MsnP2PHeader *header;
+	MsnP2PFooter *footer;
+
 	long session_id;
 	long id;
 	long ack_id;

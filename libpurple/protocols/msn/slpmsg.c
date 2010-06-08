@@ -47,6 +47,9 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 	slplink->slp_msgs =
 		g_list_append(slplink->slp_msgs, slpmsg);
 
+	slpmsg->header = NULL;
+	slpmsg->footer = NULL;
+
 	return slpmsg;
 }
 
@@ -85,6 +88,9 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	}
 
 	slplink->slp_msgs = g_list_remove(slplink->slp_msgs, slpmsg);
+
+	g_free(slpmsg->header);
+	g_free(slpmsg->footer);
 
 	g_free(slpmsg);
 }
