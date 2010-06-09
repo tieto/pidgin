@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.2 (??/??/????):
+	Finch:
+	* Rebindable suggest-next-page and suggest-prev-page actions for
+	  textboxes (GntEntry) to scroll through list of suggestions.
 
 version 2.7.1 (05/29/2010):
 	General:
