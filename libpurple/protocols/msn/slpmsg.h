@@ -32,6 +32,7 @@ typedef struct _MsnSlpMessage MsnSlpMessage;
 #include "slplink.h"
 #include "session.h"
 #include "msg.h"
+#include "p2p.h"
 
 #include "slp.h"
 
