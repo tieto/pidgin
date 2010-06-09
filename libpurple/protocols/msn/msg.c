@@ -161,45 +161,6 @@ msn_message_new_nudge(void)
 	return msg;
 }
 
-#if 0
-void
-msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
-{
-	MsnP2PHeader *header;
-	MsnP2PHeader wire;
-	const char *tmp;
-	int body_len;
-
-	tmp = body;
-
-	if (len < sizeof(wire)) {
-		g_return_if_reached();
-	}
-
-	/* Extract the binary SLP header */
-	memcpy(&wire, tmp, sizeof(wire));
-	tmp += sizeof(wire);
-
-	header = msn_p2p_header_from_wire(&wire);
-
-	memcpy(&msg->msnslp_header, (char*)header, sizeof(*header));
-
-	g_free(header);
-
-	/* Extract the body */
-	body_len = len - (tmp - body);
-	/* msg->body_len = msg->msnslp_header.length; */
-
-	if (body_len > 0) {
-		msg->body_len = len - (tmp - body);
-		msg->body = g_malloc(msg->body_len + 1);
-		memcpy(msg->body, tmp, msg->body_len);
-		msg->body[msg->body_len] = '\0';
-		tmp += body_len;
-	}
-}
-#endif
-
 void
 msn_message_parse_payload(MsnMessage *msg,
 						  const char *payload, size_t payload_len,
@@ -301,71 +262,22 @@ msn_message_parse_payload(MsnMessage *msg,
 		msg->slpmsg = msn_slpmsg_new_from_data(tmp, payload_len - (tmp - tmp_base));
 	}
 
-#if 0
-	{
-		MsnP2PHeader *header;
-		MsnP2PHeader wire;
-		MsnP2PFooter footer;
-		int body_len;
-
-		if (payload_len - (tmp - tmp_base) < sizeof(header)) {
-			g_free(tmp_base);
-			g_return_if_reached();
-		}
-
-		msg->msnslp_message = TRUE;
-
-		/* Extract the binary SLP header */
-		memcpy(&wire, tmp, sizeof(wire));
-		tmp += sizeof(wire);
-
-		header = msn_p2p_header_from_wire(&wire);
-
-		memcpy(&msg->msnslp_header, (char*)header, sizeof(*header));
-
-		g_free(header);
-
-		body_len = payload_len - (tmp - tmp_base) - sizeof(footer);
-
-		/* Extract the body */
-		if (body_len > 0) {
-			msg->body_len = body_len;
-			g_free(msg->body);
-			msg->body = g_malloc(msg->body_len + 1);
-			memcpy(msg->body, tmp, msg->body_len);
-			msg->body[msg->body_len] = '\0';
-			tmp += body_len;
-		}
-
-		/* Extract the footer */
-		if (body_len >= 0) {
-			memcpy(&footer, tmp, sizeof(footer));
-			tmp += sizeof(footer);
-			msg->msnslp_footer.value = GUINT32_FROM_BE(footer.value);
-		}
+	if (payload_len - (tmp - tmp_base) > 0) {
+		msg->body_len = payload_len - (tmp - tmp_base);
+		g_free(msg->body);
+		msg->body = g_malloc(msg->body_len + 1);
+		memcpy(msg->body, tmp, msg->body_len);
+		msg->body[msg->body_len] = '\0';
 	}
-	else
-	{
-#endif
-		if (payload_len - (tmp - tmp_base) > 0) {
-			msg->body_len = payload_len - (tmp - tmp_base);
-			g_free(msg->body);
-			msg->body = g_malloc(msg->body_len + 1);
-			memcpy(msg->body, tmp, msg->body_len);
-			msg->body[msg->body_len] = '\0';
-		}
 
-		if ((!content_type || !strcmp(content_type, "text/plain"))
+	if ((!content_type || !strcmp(content_type, "text/plain"))
 			&& msg->charset == NULL) {
-			char *body = g_convert(msg->body, msg->body_len, "UTF-8",
-			                       "ISO-8859-1", NULL, &msg->body_len, NULL);
-			g_free(msg->body);
-			msg->body = body;
-			msg->charset = g_strdup("UTF-8");
-		}
-#if 0
+		char *body = g_convert(msg->body, msg->body_len, "UTF-8",
+				"ISO-8859-1", NULL, &msg->body_len, NULL);
+		g_free(msg->body);
+		msg->body = body;
+		msg->charset = g_strdup("UTF-8");
 	}
-#endif
 
 	g_free(tmp_base);
 }
@@ -389,39 +301,6 @@ msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd)
 char *
 msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size)
 {
-#if 0
-	MsnP2PHeader *header;
-
-	char *tmp, *base;
-	const void *body;
-	size_t len, body_len;
-
-	g_return_val_if_fail(msg != NULL, NULL);
-
-	len = MSN_BUF_LEN;
-
-	base = tmp = g_malloc(len + 1);
-
-	body = msn_message_get_bin_data(msg, &body_len);
-
-	header = msn_p2p_header_to_wire(&(msg->msnslp_header));
-
-	memcpy(tmp, header, 48);
-	tmp += 48;
-
-	g_free(header);
-
-	if (body != NULL)
-	{
-		memcpy(tmp, body, body_len);
-		tmp += body_len;
-	}
-
-	if (ret_size != NULL)
-		*ret_size = tmp - base;
-
-	return base;
-#endif
 	char *tmp;
 
 	tmp = msn_slpmsg_serialize(msg->slpmsg, ret_size);
@@ -487,29 +366,6 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 
 		memcpy(n, body, siz);
 		n += siz;
-#if 0
-		MsnP2PHeader *header;
-		MsnP2PFooter footer;
-
-		header = msn_p2p_header_to_wire(&(msg->msnslp_header));
-
-		memcpy(n, header, 48);
-		n += 48;
-
-		g_free(header);
-
-		if (body != NULL)
-		{
-			memcpy(n, body, body_len);
-
-			n += body_len;
-		}
-
-		footer.value = GUINT32_TO_BE(msg->msnslp_footer.value);
-
-		memcpy(n, &footer, 4);
-		n += 4;
-#endif
 	}
 	else
 	{

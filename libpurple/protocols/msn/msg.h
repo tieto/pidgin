@@ -307,9 +307,6 @@ GHashTable *msn_message_get_hashtable_from_body(const MsnMessage *msg);
 void msn_message_show_readable(MsnMessage *msg, const char *info,
 							   gboolean text_body);
 
-void msn_message_parse_slp_body(MsnMessage *msg, const char *body,
-								size_t len);
-
 char *msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size);
 
 char *msn_message_to_string(MsnMessage *msg);
