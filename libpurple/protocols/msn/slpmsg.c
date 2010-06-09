@@ -176,14 +176,14 @@ msn_slpmsg_show(MsnMessage *msg)
 
 	switch (flags)
 	{
-		case 0x0:
+		case P2P_NO_FLAG :
 			info = "SLP CONTROL";
 			text = TRUE;
 			break;
-		case 0x2:
+		case P2P_ACK:
 			info = "SLP ACK"; break;
-		case 0x20:
-		case 0x1000030:
+		case P2P_MSN_OBJ_DATA:
+		case P2P_FILE_DATA:
 			info = "SLP DATA"; break;
 		default:
 			info = "SLP UNKNOWN"; break;
