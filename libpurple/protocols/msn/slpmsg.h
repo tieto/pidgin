@@ -129,6 +129,15 @@ MsnSlpMessage * msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 								   const char *content_type,
 								   const char *content);
 
+/**
+ * Create a new SLP Ack message
+ *
+ * @param header the value of the header in this slpmsg.
+ *
+ * @return A new SlpMessage with ACK headers
+ */
+MsnSlpMessage *msn_slpmsg_new_ack(MsnP2PHeader *header);
+
 void msn_slpmsg_show(MsnMessage *msg);
 
 /**

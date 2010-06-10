@@ -505,15 +505,8 @@ msn_slplink_create_ack(MsnSlpLink *slplink, MsnP2PHeader *header)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_new(slplink);
-
-	slpmsg->session_id = header->session_id;
-	slpmsg->size       = header->total_size;
-	slpmsg->flags      = P2P_ACK;
-	slpmsg->ack_id     = header->id;
-	slpmsg->ack_sub_id = header->ack_id;
-	slpmsg->ack_size   = header->total_size;
-	slpmsg->info = "SLP ACK";
+	slpmsg = msn_slpmsg_new_ack(header);
+	msn_slpmsg_set_slplink(slpmsg, slplink);
 
 	return slpmsg;
 }

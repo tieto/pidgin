@@ -263,6 +263,23 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 	return slpmsg;
 }
 
+MsnSlpMessage *msn_slpmsg_new_ack(MsnP2PHeader *header)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = msn_slpmsg_new(NULL);
+
+	slpmsg->session_id = header->session_id;
+	slpmsg->size       = header->total_size;
+	slpmsg->flags      = P2P_ACK;
+	slpmsg->ack_id     = header->id;
+	slpmsg->ack_sub_id = header->ack_id;
+	slpmsg->ack_size   = header->total_size;
+	slpmsg->info = "SLP ACK";
+
+	return slpmsg;
+}
+
 char *msn_slpmsg_serialize(MsnSlpMessage *slpmsg, size_t *ret_size)
 {
 	MsnP2PHeader *header;
