@@ -4590,7 +4590,7 @@ sign_on_off_cb(PurpleConnection *gc, PurpleBuddyList *blist)
 }
 
 static void
-plugin_changed_cb(PurplePlugin *p, gpointer *data)
+plugin_changed_cb(PurplePlugin *p, gpointer data)
 {
 	pidgin_blist_update_plugin_actions();
 }
