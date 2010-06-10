@@ -42,12 +42,9 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 	if (purple_debug_is_verbose())
 		purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
 
-	if (slplink) {
-		slpmsg->slplink = slplink;
-
-		slplink->slp_msgs =
-			g_list_append(slplink->slp_msgs, slpmsg);
-	} else
+	if (slplink) 
+		msn_slpmsg_set_slplink(slpmsg, slplink);
+	else
 		slpmsg->slplink = NULL;
 
 	slpmsg->header = NULL;
@@ -131,6 +128,18 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	g_free(slpmsg->footer);
 
 	g_free(slpmsg);
+}
+
+void
+msn_slpmsg_set_slplink(MsnSlpMessage *slpmsg, MsnSlpLink *slplink)
+{
+	g_return_if_fail(slplink != NULL);
+
+	slpmsg->slplink = slplink;
+
+	slplink->slp_msgs =
+		g_list_append(slplink->slp_msgs, slpmsg);
+
 }
 
 void

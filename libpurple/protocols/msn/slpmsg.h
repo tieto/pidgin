@@ -111,6 +111,13 @@ MsnSlpMessage *msn_slpmsg_new_from_data(const char *data, size_t data_len);
  */
 void msn_slpmsg_destroy(MsnSlpMessage *slpmsg);
 
+/**
+ * Relate this SlpMessage with an existing SlpLink
+ *
+ * @param slplink 	The SlpLink that will send this message.
+ */
+void msn_slpmsg_set_slplink(MsnSlpMessage *slpmsg, MsnSlpLink *slplink);
+
 void msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 						 long long size);
 void msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img);
