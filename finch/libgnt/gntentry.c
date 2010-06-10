@@ -579,6 +579,28 @@ suggest_prev(GntBindable *bind, GList *null)
 }
 
 static gboolean
+suggest_next_page(GntBindable *bind, GList *null)
+{
+	GntEntry *entry = GNT_ENTRY(bind);
+	if (entry->ddown) {
+		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "page-down", NULL);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
+suggest_prev_page(GntBindable *bind, GList *null)
+{
+	GntEntry *entry = GNT_ENTRY(bind);
+	if (entry->ddown) {
+		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "page-up", NULL);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
 del_to_home(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
@@ -986,6 +1008,10 @@ gnt_entry_class_init(GntEntryClass *klass)
 				GNT_KEY_DOWN, NULL);
 	gnt_bindable_class_register_action(bindable, "suggest-prev", suggest_prev,
 				GNT_KEY_UP, NULL);
+	gnt_bindable_class_register_action(bindable, "suggest-next-page", suggest_next_page,
+				GNT_KEY_PGDOWN, NULL);
+	gnt_bindable_class_register_action(bindable, "suggest-prev-page", suggest_prev_page,
+				GNT_KEY_PGUP, NULL);
 	gnt_bindable_class_register_action(bindable, "history-next", history_next,
 				GNT_KEY_CTRL_DOWN, NULL);
 	gnt_bindable_class_register_action(bindable, "history-prev", history_prev,

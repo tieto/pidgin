@@ -339,6 +339,10 @@ down = suggest-next
 .br
 up = suggest-prev
 .br
+page-down = suggest-next-page
+.br
+page-up = suggest-prev-page
+.br
 c-w = delete-prev-word
 .br
 a-b = cursor-prev-word
