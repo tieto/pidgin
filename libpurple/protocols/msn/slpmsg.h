@@ -136,7 +136,7 @@ MsnSlpMessage * msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
  *
  * @return A new SlpMessage with ACK headers
  */
-MsnSlpMessage *msn_slpmsg_new_ack(MsnP2PHeader *header);
+MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PHeader *header);
 
 /**
  * Create a new SLP message for MsnObject data.
@@ -146,7 +146,7 @@ MsnSlpMessage *msn_slpmsg_new_ack(MsnP2PHeader *header);
  *
  * @return A new SlpMessage with MsnObject info.
  */
-MsnSlpMessage *msn_slpmsg_new_obj(MsnSlpCall *slpcall, PurpleStoredImage *img);
+MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleStoredImage *img);
 
 /**
  * Create a new SLP message for data preparation.
@@ -155,7 +155,7 @@ MsnSlpMessage *msn_slpmsg_new_obj(MsnSlpCall *slpcall, PurpleStoredImage *img);
  * 
  * @return A new SlpMessage with data preparation info.
  */
-MsnSlpMessage *msn_slpmsg_new_dataprep(MsnSlpCall *slpcall);
+MsnSlpMessage *msn_slpmsg_dataprep_new(MsnSlpCall *slpcall);
 
 /**
  * Create a new SLP message for File transfer.
@@ -165,7 +165,7 @@ MsnSlpMessage *msn_slpmsg_new_dataprep(MsnSlpCall *slpcall);
  *
  * @return A new SlpMessage with the file transfer info.
  */
-MsnSlpMessage *msn_slpmsg_new_file(MsnSlpCall *slpcall, size_t size);
+MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, size_t size);
 
 void msn_slpmsg_show(MsnMessage *msg);
 

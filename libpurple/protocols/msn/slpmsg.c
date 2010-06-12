@@ -263,7 +263,7 @@ msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 	return slpmsg;
 }
 
-MsnSlpMessage *msn_slpmsg_new_ack(MsnP2PHeader *header)
+MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PHeader *header)
 {
 	MsnSlpMessage *slpmsg;
 
@@ -280,7 +280,7 @@ MsnSlpMessage *msn_slpmsg_new_ack(MsnP2PHeader *header)
 	return slpmsg;
 }
 
-MsnSlpMessage *msn_slpmsg_new_obj(MsnSlpCall *slpcall,PurpleStoredImage *img)
+MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleStoredImage *img)
 {
 	MsnSlpMessage *slpmsg;
 
@@ -294,7 +294,7 @@ MsnSlpMessage *msn_slpmsg_new_obj(MsnSlpCall *slpcall,PurpleStoredImage *img)
 	return slpmsg;
 }
 
-MsnSlpMessage *msn_slpmsg_new_dataprep(MsnSlpCall *slpcall)
+MsnSlpMessage *msn_slpmsg_dataprep_new(MsnSlpCall *slpcall)
 {
 	MsnSlpMessage *slpmsg;
 
@@ -308,7 +308,7 @@ MsnSlpMessage *msn_slpmsg_new_dataprep(MsnSlpCall *slpcall)
 
 }
 
-MsnSlpMessage *msn_slpmsg_new_file(MsnSlpCall *slpcall, size_t size)
+MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, size_t size)
 {
 	MsnSlpMessage *slpmsg;
 

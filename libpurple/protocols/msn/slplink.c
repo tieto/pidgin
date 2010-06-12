@@ -505,7 +505,7 @@ msn_slplink_create_ack(MsnSlpLink *slplink, MsnP2PHeader *header)
 {
 	MsnSlpMessage *slpmsg;
 
-	slpmsg = msn_slpmsg_new_ack(header);
+	slpmsg = msn_slpmsg_ack_new(header);
 	msn_slpmsg_set_slplink(slpmsg, slplink);
 
 	return slpmsg;
@@ -538,7 +538,7 @@ send_file_cb(MsnSlpCall *slpcall)
 	}
 	purple_xfer_unref(xfer);
 
-	slpmsg = msn_slpmsg_new_file(slpcall, purple_xfer_get_size(xfer));
+	slpmsg = msn_slpmsg_file_new(slpcall, purple_xfer_get_size(xfer));
 	msn_slpmsg_set_slplink(slpmsg, slpcall->slplink);
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
