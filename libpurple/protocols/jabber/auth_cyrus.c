@@ -408,6 +408,12 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 	{
 		char *mech_name = xmlnode_get_data(mechnode);
 
+		/* Ignore blank mechanisms and EXTERNAL.  External isn't
+		 * supported, and Cyrus SASL's mechanism returns
+		 * SASL_NOMECH when the caller (us) doesn't configure it.
+		 * Except SASL_NOMECH is supposed to mean "no concordant
+		 * mechanisms"...  Easiest just to blacklist it (for now).
+		 */
 		if (!mech_name || !*mech_name ||
 				g_str_equal(mech_name, "EXTERNAL")) {
 			g_free(mech_name);
