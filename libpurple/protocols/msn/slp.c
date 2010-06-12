@@ -509,19 +509,13 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		if (img != NULL) {
 			/* DATA PREP */
-			slpmsg = msn_slpmsg_new(slplink);
-			slpmsg->slpcall = slpcall;
-			slpmsg->session_id = slpcall->session_id;
-			msn_slpmsg_set_body(slpmsg, NULL, 4);
-			slpmsg->info = "SLP DATA PREP";
+			slpmsg = msn_slpmsg_new_dataprep(slpcall);
+			msn_slpmsg_set_slplink(slpmsg, slplink);
 			msn_slplink_queue_slpmsg(slplink, slpmsg);
 
 			/* DATA */
-			slpmsg = msn_slpmsg_new(slplink);
-			slpmsg->slpcall = slpcall;
-			slpmsg->flags = P2P_MSN_OBJ_DATA;
-			slpmsg->info = "SLP DATA";
-			msn_slpmsg_set_image(slpmsg, img);
+			slpmsg = msn_slpmsg_new_obj(slpcall, img);
+			msn_slpmsg_set_slplink(slpmsg, slplink);
 			msn_slplink_queue_slpmsg(slplink, slpmsg);
 			purple_imgstore_unref(img);
 

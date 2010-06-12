@@ -138,6 +138,35 @@ MsnSlpMessage * msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
  */
 MsnSlpMessage *msn_slpmsg_new_ack(MsnP2PHeader *header);
 
+/**
+ * Create a new SLP message for MsnObject data.
+ *
+ * @param slpcall 	The slpcall that manages this message.
+ * @param img 		The image to be sent in this message.
+ *
+ * @return A new SlpMessage with MsnObject info.
+ */
+MsnSlpMessage *msn_slpmsg_new_obj(MsnSlpCall *slpcall, PurpleStoredImage *img);
+
+/**
+ * Create a new SLP message for data preparation.
+ *
+ * @param slpcall 	The slpcall that manages this message.
+ * 
+ * @return A new SlpMessage with data preparation info.
+ */
+MsnSlpMessage *msn_slpmsg_new_dataprep(MsnSlpCall *slpcall);
+
+/**
+ * Create a new SLP message for File transfer.
+ *
+ * @param slpcall 	The slpcall that manages this message.
+ * @param size 		The size of the file being transsmited.
+ *
+ * @return A new SlpMessage with the file transfer info.
+ */
+MsnSlpMessage *msn_slpmsg_new_file(MsnSlpCall *slpcall, size_t size);
+
 void msn_slpmsg_show(MsnMessage *msg);
 
 /**

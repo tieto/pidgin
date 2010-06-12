@@ -280,6 +280,48 @@ MsnSlpMessage *msn_slpmsg_new_ack(MsnP2PHeader *header)
 	return slpmsg;
 }
 
+MsnSlpMessage *msn_slpmsg_new_obj(MsnSlpCall *slpcall,PurpleStoredImage *img)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = msn_slpmsg_new(NULL);
+	slpmsg->slpcall = slpcall;
+	slpmsg->flags = P2P_MSN_OBJ_DATA;
+	slpmsg->info = "SLP DATA";
+
+	msn_slpmsg_set_image(slpmsg, img);
+
+	return slpmsg;
+}
+
+MsnSlpMessage *msn_slpmsg_new_dataprep(MsnSlpCall *slpcall)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = msn_slpmsg_new(NULL);
+	slpmsg->slpcall = slpcall;
+	slpmsg->session_id = slpcall->session_id;
+	msn_slpmsg_set_body(slpmsg, NULL, 4);
+	slpmsg->info = "SLP DATA PREP";
+
+	return slpmsg;
+
+}
+
+MsnSlpMessage *msn_slpmsg_new_file(MsnSlpCall *slpcall, size_t size)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = msn_slpmsg_new(NULL);
+
+	slpmsg->slpcall = slpcall;
+	slpmsg->flags = P2P_FILE_DATA;
+	slpmsg->info = "SLP FILE";
+	slpmsg->size = size;
+
+	return slpmsg;
+}
+
 char *msn_slpmsg_serialize(MsnSlpMessage *slpmsg, size_t *ret_size)
 {
 	MsnP2PHeader *header;

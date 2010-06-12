@@ -538,11 +538,8 @@ send_file_cb(MsnSlpCall *slpcall)
 	}
 	purple_xfer_unref(xfer);
 
-	slpmsg = msn_slpmsg_new(slpcall->slplink);
-	slpmsg->slpcall = slpcall;
-	slpmsg->flags = P2P_FILE_DATA;
-	slpmsg->info = "SLP FILE";
-	slpmsg->size = purple_xfer_get_size(xfer);
+	slpmsg = msn_slpmsg_new_file(slpcall, purple_xfer_get_size(xfer));
+	msn_slpmsg_set_slplink(slpmsg, slpcall->slplink);
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
 }
