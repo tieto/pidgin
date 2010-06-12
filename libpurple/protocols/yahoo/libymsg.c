@@ -3644,6 +3644,7 @@ void yahoo_login(PurpleAccount *account) {
 	YahooData *yd = gc->proto_data = g_new0(YahooData, 1);
 	PurpleStatus *status = purple_account_get_active_status(account);
 	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
+	gboolean proxy_ssl = purple_account_get_bool(account, "proxy_ssl", FALSE);
 	PurpleUtilFetchUrlData *url_data;
 
 	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC;
@@ -3678,7 +3679,7 @@ void yahoo_login(PurpleAccount *account) {
 	/* Get the pager server.  Actually start connecting in the callback since we
 	 * must have the contents of the HTTP response to proceed. */
 	url_data = purple_util_fetch_url_request_len_with_account(
-			purple_connection_get_account(gc),
+			proxy_ssl ? purple_connection_get_account(gc) : NULL,
 			yd->jp ? YAHOOJP_PAGER_HOST_REQ_URL : YAHOO_PAGER_HOST_REQ_URL,
 			use_whole_url ? TRUE : FALSE,
 			YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
