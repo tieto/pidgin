@@ -11,6 +11,10 @@ version 2.7.2 (??/??/????):
 	* Rebindable suggest-next-page and suggest-prev-page actions for
 	  textboxes (GntEntry) to scroll through list of suggestions.
 
+	XMPP:
+	* Allow connecting to servers that only advertise GSSAPI and expect
+	  a fallback to legacy IQ authentication (broken in 2.7.0).
+
 version 2.7.1 (05/29/2010):
 	General:
 	* Build fixes on OpenSolaris.  (Brian Lu)
