@@ -256,7 +256,7 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 					js->auth_fail_count++;
 
 				if (js->auth_fail_count == 1 &&
-					(js->sasl_mechs->str && g_str_equal(js->sasl_mechs->str, "GSSAPI "))) {
+					(js->sasl_mechs->str && g_str_equal(js->sasl_mechs->str, "GSSAPI"))) {
 					/* If we tried GSSAPI first, it failed, and it was the only method we had to try, try jabber:iq:auth
 					 * for compatibility with iChat 10.5 Server and other jabberd based servers.
 					 *
@@ -418,6 +418,10 @@ jabber_cyrus_start(JabberStream *js, xmlnode *mechanisms,
 		g_string_append_c(js->sasl_mechs, ' ');
 		g_free(mech_name);
 	}
+
+	/* Strip off the trailing ' ' */
+	if (js->sasl_mechs->len > 1)
+		g_string_truncate(js->sasl_mechs, js->sasl_mechs->len - 1);
 
 	jabber_sasl_build_callbacks(js);
 	ret = jabber_auth_start_cyrus(js, reply, error);
