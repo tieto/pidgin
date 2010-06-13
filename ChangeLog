@@ -2,7 +2,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.2 (??/??/????):
 	libpurple:
-	* Fix the TURN server setting to work again since the media refactor.
+	* Fix the TURN server settings (broken in 2.7.0).
 
 	Pidgin:
 	* Re-focus the input area after clicking the attention toolbar button.
