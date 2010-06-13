@@ -3602,8 +3602,17 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 		purple_debug_error("yahoo", "Unable to retrieve server info. %"
 				G_GSIZE_FORMAT " bytes retrieved with error message: %s\n", len,
 				error_message ? error_message : "(null)");
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unable to connect: The server returned an empty response."));
+
+		if(yahoo_is_japan(a)) { /* We don't know fallback hosts for Yahoo Japan :( */
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+					_("Unable to connect: The server returned an empty response."));
+		} else {
+				if(purple_proxy_connect(gc, a, YAHOO_PAGER_HOST_FALLBACK, port,
+							yahoo_got_connected, gc) == NULL) {
+					purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+							_("Unable to connect"));
+				}
+		}
 	} else {
 		strings = g_strsplit(url_text, "\r\n", -1);
 
@@ -3629,9 +3638,17 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 		} else {
 			purple_debug_error("yahoo", "No CS address retrieved!  Server "
 					"response:\n%s\n", url_text ? url_text : "(null)");
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-					_("Unable to connect: The server's response did not contain "
-						"the necessary information"));
+
+			if(yahoo_is_japan(a)) { /* We don't know fallback hosts for Yahoo Japan :( */
+				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+						_("Unable to connect: The server's response did not contain "
+							"the necessary information"));
+			} else
+				if(purple_proxy_connect(gc, a, YAHOO_PAGER_HOST_FALLBACK, port,
+							yahoo_got_connected, gc) == NULL) {
+					purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+							_("Unable to connect"));
+				}
 		}
 	}
 
