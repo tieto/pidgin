@@ -3594,7 +3594,8 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 	PurpleConnection *gc = yd->gc;
 	PurpleAccount *a = purple_connection_get_account(gc);
 	gchar **strings = NULL, *cs_server = NULL;
-	int port = 0, stringslen = 0;
+	int port = purple_account_get_int(a, "port", YAHOO_PAGER_PORT);
+	int stringslen = 0;
 
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
@@ -3630,8 +3631,6 @@ static void yahoo_got_pager_server(PurpleUtilFetchUrlData *url_data,
 		}
 
 		if(cs_server) { /* got an address; get on with connecting */
-			port = purple_account_get_int(a, "port", YAHOO_PAGER_PORT);
-
 			if(purple_proxy_connect(gc, a, cs_server, port, yahoo_got_connected, gc) == NULL)
 				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 								_("Unable to connect"));
@@ -3699,7 +3698,7 @@ void yahoo_login(PurpleAccount *account) {
 			proxy_ssl ? purple_connection_get_account(gc) : NULL,
 			yd->jp ? YAHOOJP_PAGER_HOST_REQ_URL : YAHOO_PAGER_HOST_REQ_URL,
 			use_whole_url ? TRUE : FALSE,
-			YAHOO_CLIENT_USERAGENT, TRUE, NULL, FALSE, -1,
+			YAHOO_CLIENT_USERAGENT, FALSE, NULL, FALSE, -1,
 			yahoo_got_pager_server, yd);
 	if (url_data)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
