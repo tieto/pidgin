@@ -151,7 +151,7 @@ struct MXitSession {
 
 	/* personal (profile) */
 	struct MXitProfile*	profile;					/* user's profile information */
-	char*				mxitId;						/* the user's MXitId */
+	char*				uid;						/* the user's UID */
 
 	/* libpurple */
 	PurpleAccount*		acc;						/* pointer to the libpurple internal account struct */

@@ -1304,7 +1304,7 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 
 	/* extract MXitId (from protocol 5.9) */
 	if ( records[1]->fcount >= 9 )
-		session->mxitId = g_strdup( records[1]->fields[8]->data );
+		session->uid = g_strdup( records[1]->fields[8]->data );
 
 	/* display the current splash-screen */
 	if ( splash_popup_enabled( session ) )
@@ -2487,8 +2487,8 @@ void mxit_close_connection( struct MXitSession* session )
 	mxit_free_emoticon_cache( session );
 
 	/* free allocated memory */
-	if ( session->mxitId )
-		g_free( session->mxitId );
+	if ( session->uid )
+		g_free( session->uid );
 	g_free( session->encpwd );
 	session->encpwd = NULL;
 
