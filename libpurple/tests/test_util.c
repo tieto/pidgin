@@ -67,10 +67,11 @@ START_TEST(test_util_text_strip_mnemonic)
 END_TEST
 
 /*
- * Lists of valid and invalid email addresses comes from
+ * Many of the valid and invalid email addresses lised below are from
  * http://fightingforalostcause.net/misc/2006/compare-email-regex.php
  */
 const char *valid_emails[] = {
+	"purple-devel@lists.sf.net",
 	"l3tt3rsAndNumb3rs@domain.com",
 	"has-dash@domain.com",
 	"hasApostrophe.o'leary@domain.org",
@@ -93,6 +94,13 @@ const char *valid_emails[] = {
 };
 
 const char *invalid_emails[] = {
+	"purple-devel@@lists.sf.net",
+	"purple@devel@lists.sf.net",
+	"purple-devel@list..sf.net",
+	"purple-devel",
+	"purple-devel@",
+	"@lists.sf.net",
+	"totally bogus",
 	"missingDomain@.com",
 	"@missingLocal.org",
 	"missingatSign.net",
@@ -116,16 +124,6 @@ const char *invalid_emails[] = {
 START_TEST(test_util_email_is_valid)
 {
 	size_t i;
-
-	fail_unless(purple_email_is_valid("purple-devel@lists.sf.net"));
-	fail_if(purple_email_is_valid("purple-devel@@lists.sf.net"));
-	fail_if(purple_email_is_valid("purple@devel@lists.sf.net"));
-	fail_if(purple_email_is_valid("purple-devel@list..sf.net"));
-	fail_if(purple_email_is_valid("purple-devel"));
-	fail_if(purple_email_is_valid("purple-devel@"));
-	fail_if(purple_email_is_valid("@lists.sf.net"));
-	fail_if(purple_email_is_valid(""));
-	fail_if(purple_email_is_valid("totally bogus"));
 
 	for (i = 0; i < G_N_ELEMENTS(valid_emails); i++)
 		fail_unless(purple_email_is_valid(valid_emails[i]), "Email address was: %s", valid_emails[i]);
