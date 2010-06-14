@@ -28,6 +28,7 @@
 #include "core.h"
 #include "debug.h"
 #include "notify.h"
+#include "ntlm.h"
 #include "prpl.h"
 #include "prefs.h"
 #include "util.h"
@@ -69,6 +70,7 @@ struct _PurpleUtilFetchUrlData
 	unsigned long data_len;
 	gssize max_len;
 	gboolean chunked;
+	PurpleAccount *account;
 };
 
 static char *custom_user_dir = NULL;
@@ -3619,11 +3621,11 @@ parse_redirect(const char *data, size_t data_len,
 
 	if (purple_strcasestr(new_url, "https://") != NULL) {
 		gfud->is_ssl = TRUE;
-		gfud->ssl_connection = purple_ssl_connect(NULL,
+		gfud->ssl_connection = purple_ssl_connect(gfud->account,
 				gfud->website.address, gfud->website.port,
 				ssl_url_fetch_connect_cb, ssl_url_fetch_error_cb, gfud);
 	} else {
-		gfud->connect_data = purple_proxy_connect(NULL, NULL,
+		gfud->connect_data = purple_proxy_connect(NULL, gfud->account,
 				gfud->website.address, gfud->website.port,
 				url_fetch_connect_cb, gfud);
 	}
@@ -3915,36 +3917,68 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	gfud = data;
 
-	if (gfud->request == NULL)
-	{
+	if (gfud->request == NULL) {
+
+		PurpleProxyInfo *gpi = purple_proxy_get_setup(gfud->account);
+		GString *request_str = g_string_new(NULL);
+
+		g_string_append_printf(request_str, "GET %s%s HTTP/%s\r\n"
+						    "Connection: close\r\n",
+			(gfud->full ? "" : "/"),
+			(gfud->full ? (gfud->url ? gfud->url : "") : (gfud->website.page ? gfud->website.page : "")),
+			(gfud->http11 ? "1.1" : "1.0"));
+
+		if (gfud->user_agent)
+			g_string_append_printf(request_str, "User-Agent: %s\r\n", gfud->user_agent);
+
 		/* Host header is not forbidden in HTTP/1.0 requests, and HTTP/1.1
 		 * clients must know how to handle the "chunked" transfer encoding.
 		 * Purple doesn't know how to handle "chunked", so should always send
 		 * the Host header regardless, to get around some observed problems
 		 */
-		if (gfud->user_agent) {
-			gfud->request = g_strdup_printf(
-				"GET %s%s HTTP/%s\r\n"
-				"Connection: close\r\n"
-				"User-Agent: %s\r\n"
-				"Accept: */*\r\n"
-				"Host: %s\r\n\r\n",
-				(gfud->full ? "" : "/"),
-				(gfud->full ? (gfud->url ? gfud->url : "") : (gfud->website.page ? gfud->website.page : "")),
-				(gfud->http11 ? "1.1" : "1.0"),
-				(gfud->user_agent ? gfud->user_agent : ""),
-				(gfud->website.address ? gfud->website.address : ""));
-		} else {
-			gfud->request = g_strdup_printf(
-				"GET %s%s HTTP/%s\r\n"
-				"Connection: close\r\n"
-				"Accept: */*\r\n"
-				"Host: %s\r\n\r\n",
-				(gfud->full ? "" : "/"),
-				(gfud->full ? (gfud->url ? gfud->url : "") : (gfud->website.page ? gfud->website.page : "")),
-				(gfud->http11 ? "1.1" : "1.0"),
-				(gfud->website.address ? gfud->website.address : ""));
+		g_string_append_printf(request_str, "Accept: */*\r\n"
+						    "Host: %s\r\n",
+			(gfud->website.address ? gfud->website.address : ""));
+
+		if (purple_proxy_info_get_username(gpi) != NULL
+				&& (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_USE_ENVVAR
+					|| purple_proxy_info_get_type(gpi) == PURPLE_PROXY_HTTP)) {
+			/* This chunk of code was copied from proxy.c http_start_connect_tunneling()
+			 * This is really a temporary hack - we need a more complete proxy handling solution,
+			 * so I didn't think it was worthwhile to refactor for reuse
+			 */ 
+			char *t1, *t2, *ntlm_type1;
+			char hostname[256];
+			int ret;
+	
+			ret = gethostname(hostname, sizeof(hostname));
+			hostname[sizeof(hostname) - 1] = '\0';
+			if (ret < 0 || hostname[0] == '\0') {
+				purple_debug_warning("util", "proxy - gethostname() failed -- is your hostname set?");
+				strcpy(hostname, "localhost");
+			}
+	
+			t1 = g_strdup_printf("%s:%s",
+				purple_proxy_info_get_username(gpi),
+				purple_proxy_info_get_password(gpi) ?
+					purple_proxy_info_get_password(gpi) : "");
+			t2 = purple_base64_encode((const guchar *)t1, strlen(t1));
+			g_free(t1);
+	
+			ntlm_type1 = purple_ntlm_gen_type1(hostname, "");
+	
+			g_string_append_printf(request_str,
+				"Proxy-Authorization: Basic %s\r\n"
+				"Proxy-Authorization: NTLM %s\r\n"
+				"Proxy-Connection: Keep-Alive\r\n",
+				t2, ntlm_type1);
+			g_free(ntlm_type1);
+			g_free(t2);
 		}
+
+		g_string_append(request_str, "\r\n");
+
+		gfud->request = g_string_free(request_str, FALSE);
 	}
 
 	if(purple_debug_is_unsafe())
@@ -4083,6 +4117,7 @@ purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
 	gfud->include_headers = include_headers;
 	gfud->fd = -1;
 	gfud->max_len = max_len;
+	gfud->account = account;
 
 	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
