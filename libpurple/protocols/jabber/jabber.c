@@ -543,6 +543,13 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
 {
 	JabberStream *js = purple_connection_get_protocol_data(gc);
+
+	g_return_val_if_fail(js != NULL, -1);
+	/* TODO: It's probably worthwhile to restrict this to when the account
+	 * state is CONNECTED, but I can /almost/ envision reasons for wanting
+	 * to do things during the connection process.
+	 */
+
 	jabber_send_raw(js, buf, len);
 	return len;
 }
