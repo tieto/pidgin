@@ -551,9 +551,9 @@ static int gg_resolver_fork_start(int *fd, void **priv_data, const char *hostnam
 		}
 
 		if (write(pipes[1], &addr, sizeof(addr)) != sizeof(addr))
-			exit(1);
+			_exit(1);
 
-		exit(0);
+		_exit(0);
 	}
 
 	close(pipes[1]);
