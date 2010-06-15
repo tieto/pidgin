@@ -422,7 +422,9 @@ gnt_box_confirm_size(GntWidget *widget, int width, int height)
 
 		gnt_widget_get_size(wid, &w, &h);
 
-		if (wid != last && !child && w > 0 && h > 0 && gnt_widget_confirm_size(wid, w - wchange, h - hchange)) {
+		if (wid != last && !child && w > 0 && h > 0 &&
+				!GNT_WIDGET_IS_FLAG_SET(wid, GNT_WIDGET_INVISIBLE) &&
+				gnt_widget_confirm_size(wid, w - wchange, h - hchange)) {
 			child = wid;
 			break;
 		}
