@@ -54,6 +54,8 @@ MSNSOURCES = \
 	soap.h \
 	state.c \
 	state.h \
+	sbconn.c \
+	sbconn.h \
 	switchboard.c \
 	switchboard.h \
 	table.c \

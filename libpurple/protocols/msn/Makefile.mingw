@@ -62,6 +62,7 @@ C_SRC =			cmdproc.c \
 			slpmsg.c \
 			soap.c\
 			state.c \
+			sbconn.c \
 			switchboard.c \
 			sync.c \
 			table.c \
