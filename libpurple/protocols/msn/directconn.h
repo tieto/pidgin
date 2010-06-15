@@ -36,6 +36,8 @@ typedef struct _MsnDirectConn MsnDirectConn;
 #include "slpmsg.h"
 #include "p2p.h"
 
+#define MSN_DCCONN_MAX_SIZE 1352
+
 typedef enum
 {
 	DC_STATE_CLOSED,            /*< No socket opened yet */

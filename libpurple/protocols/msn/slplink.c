@@ -307,15 +307,15 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		if (slpmsg->slpcall && slpmsg->slpcall->xfer && purple_xfer_get_type(slpmsg->slpcall->xfer) == PURPLE_XFER_SEND &&
 				purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
 		{
-			len = MIN(1202, slpmsg->slpcall->u.outgoing.len);
+			len = MIN(MSN_SBCONN_MAX_SIZE, slpmsg->slpcall->u.outgoing.len);
 			msn_message_set_bin_data(msg, slpmsg->slpcall->u.outgoing.data, len);
 		}
 		else
 		{
 			len = slpmsg->size - slpmsg->offset;
 
-			if (len > 1202)
-				len = 1202;
+			if (len > MSN_SBCONN_MAX_SIZE)
+				len = MSN_SBCONN_MAX_SIZE;
 
 			msn_message_set_bin_data(msg, slpmsg->buffer + slpmsg->offset, len);
 		}
