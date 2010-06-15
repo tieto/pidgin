@@ -109,13 +109,13 @@ const char *invalid_emails[] = {
 	"colonButNoPort@127.0.0.1:",
 	""
 	/* "someone-else@127.0.0.1.26", */
-	/* ".localStartsWithDot@domain.com", */
-	/* "localEndsWithDot.@domain.com", */
-	/* "two..consecutiveDots@domain.com", */
-	/* "domainStartsWithDash@-domain.com", */
+	".localStartsWithDot@domain.com",
+	/* "localEndsWithDot.@domain.com", */ /* I don't think this is invalid -- Stu */
+	/* "two..consecutiveDots@domain.com", */ /* I don't think this is invalid -- Stu */
+	"domainStartsWithDash@-domain.com",
 	"domainEndsWithDash@domain-.com",
 	/* "numbersInTLD@domain.c0m", */
-	/* "missingTLD@domain.", */
+	/* "missingTLD@domain.", */ /* This certainly isn't invalid -- Stu */
 	"! \"#$%(),/;<>[]`|@invalidCharsInLocal.org",
 	"invalidCharsInDomain@! \"#$%(),/;<>_[]`|.org",
 	/* "local@SecondLevelDomainNamesAreInvalidIfTheyAreLongerThan64Charactersss.org" */

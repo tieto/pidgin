@@ -4271,6 +4271,8 @@ purple_email_is_valid(const char *address)
 
 	g_return_val_if_fail(address != NULL, FALSE);
 
+	if (*address == '.') return FALSE;
+
 	/* first we validate the name portion (name@domain) (rfc822)*/
 	for (c = address;  *c;  c++) {
 		if (*c == '\"' && (c == address || *(c - 1) == '.' || *(c - 1) == '\"')) {
@@ -4304,7 +4306,7 @@ purple_email_is_valid(const char *address)
 	do {
 		if (*c == '.' && (c == domain || *(c - 1) == '.' || *(c - 1) == '-'))
 			return FALSE;
-		if (*c == '-' && *(c - 1) == '.') return FALSE;
+		if (*c == '-' && (*(c - 1) == '.' || *(c - 1) == '@')) return FALSE;
 		if ((*c < '0' && *c != '-' && *c != '.') || (*c > '9' && *c < 'A') ||
 			(*c > 'Z' && *c < 'a') || (*c > 'z')) return FALSE;
 	} while (*++c);
