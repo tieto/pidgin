@@ -59,3 +59,18 @@ msn_sbconn_msg_nak(MsnMessage *msg, void *data)
 	msn_message_unref(msg);
 }
 
+void msn_sbconn_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
+{
+	if (slplink->swboard == NULL)
+	{
+		slplink->swboard = msn_session_get_swboard(slplink->session,
+				slplink->remote_user, MSN_SB_FLAG_FT);
+
+		g_return_if_fail(slplink->swboard != NULL);
+
+		/* If swboard is destroyed we will be too */
+		slplink->swboard->slplinks = g_list_prepend(slplink->swboard->slplinks, slplink);
+	}
+
+	msn_switchboard_send_msg(slplink->swboard, msg, TRUE);
+}
