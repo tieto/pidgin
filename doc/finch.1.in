@@ -305,6 +305,13 @@ right = focus-next
 left = focus-prev
 
 .br
+[GntComboBox::binding]
+.br
+down = dropdown
+.br
+up = dropdown
+
+.br
 [GntEntry::binding]
 .br
 c-a = cursor-home

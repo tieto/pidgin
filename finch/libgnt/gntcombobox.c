@@ -25,6 +25,7 @@
 #include "gntcombobox.h"
 #include "gnttree.h"
 #include "gntmarshal.h"
+#include "gntstyle.h"
 #include "gntutils.h"
 
 #include <string.h>
@@ -168,18 +169,6 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 		if (gnt_widget_key_pressed(box->dropdown, text))
 			return TRUE;
 	}
-	else
-	{
-		if (text[0] == 27)
-		{
-			if (strcmp(text, GNT_KEY_UP) == 0 ||
-					strcmp(text, GNT_KEY_DOWN) == 0)
-			{
-				popup_dropdown(box);
-				return TRUE;
-			}
-		}
-	}
 
 	return FALSE;
 }
@@ -229,9 +218,20 @@ gnt_combo_box_size_changed(GntWidget *widget, int oldw, int oldh)
 	gnt_widget_set_size(box->dropdown, widget->priv.width - 1, box->dropdown->priv.height);
 }
 
+static gboolean
+dropdown_menu(GntBindable *b, GList *null)
+{
+	if (GNT_WIDGET_IS_FLAG_SET(GNT_COMBO_BOX(b)->dropdown->parent, GNT_WIDGET_MAPPED))
+		return FALSE;
+	popup_dropdown(GNT_COMBO_BOX(b));
+	return TRUE;
+}
+
 static void
 gnt_combo_box_class_init(GntComboBoxClass *klass)
 {
+	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
+
 	parent_class = GNT_WIDGET_CLASS(klass);
 
 	parent_class->destroy = gnt_combo_box_destroy;
@@ -245,7 +245,7 @@ gnt_combo_box_class_init(GntComboBoxClass *klass)
 	widget_lost_focus = parent_class->lost_focus;
 	parent_class->lost_focus = gnt_combo_box_lost_focus;
 
-	signals[SIG_SELECTION_CHANGED] = 
+	signals[SIG_SELECTION_CHANGED] =
 		g_signal_new("selection-changed",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
@@ -253,6 +253,12 @@ gnt_combo_box_class_init(GntComboBoxClass *klass)
 					 NULL, NULL,
 					 gnt_closure_marshal_VOID__POINTER_POINTER,
 					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
+
+	gnt_bindable_class_register_action(bindable, "dropdown", dropdown_menu,
+			GNT_KEY_DOWN, NULL);
+	gnt_bindable_register_binding(bindable, "dropdown", GNT_KEY_UP, NULL);
+
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), bindable);
 
 	GNTDEBUG;
 }
@@ -272,7 +278,7 @@ gnt_combo_box_init(GTypeInstance *instance, gpointer class)
 	GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_NO_SHADOW | GNT_WIDGET_NO_BORDER | GNT_WIDGET_TRANSIENT);
 	gnt_box_set_pad(GNT_BOX(box), 0);
 	gnt_box_add_widget(GNT_BOX(box), combo->dropdown);
-	
+
 	widget->priv.minw = 4;
 	widget->priv.minh = 3;
 	GNTDEBUG;

@@ -8,8 +8,10 @@ version 2.7.2 (??/??/????):
 	* Re-focus the input area after clicking the attention toolbar button.
 
 	Finch:
-	* Rebindable suggest-next-page and suggest-prev-page actions for
+	* Rebindable 'suggest-next-page' and 'suggest-prev-page' actions for
 	  textboxes (GntEntry) to scroll through list of suggestions.
+	* Rebindable 'dropdown' action for comboboxes (GntComboBox) to show the
+	  dropdown list of options.
 
 	XMPP:
 	* Allow connecting to servers that only advertise GSSAPI and expect
