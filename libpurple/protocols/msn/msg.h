@@ -59,6 +59,7 @@ typedef enum
 #include "transaction.h"
 #include "user.h"
 #include "slpmsg.h"
+#include "slpmsg_part.h"
 
 typedef void (*MsnMsgCb)(MsnMessage *, void *data);
 
@@ -79,6 +80,7 @@ struct _MsnMessage
 
 	gboolean msnslp_message;
 	MsnSlpMessage *slpmsg;
+	MsnSlpMessagePart *part;
 
 	char *remote_user;
 	char flag;
