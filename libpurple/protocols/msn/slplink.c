@@ -27,6 +27,7 @@
 
 #include "msn.h"
 #include "slplink.h"
+#include "slpmsg_part.h"
 
 #include "sbconn.h"
 #include "switchboard.h"
@@ -266,6 +267,18 @@ msn_slplink_find_slp_call_with_session_id(MsnSlpLink *slplink, long id)
 }
 
 void
+msn_slplink_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
+{
+	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABLISHED)
+	{
+		msn_dc_enqueue_part(slplink->dc, part);
+	}
+	else
+	{
+		msn_sbconn_send_part(slplink, part);
+	}
+}
+void
 msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
 	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABLISHED)
@@ -281,13 +294,13 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 void
 msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
-	MsnMessage *msg;
+	MsnSlpMessagePart *part;
 	long long real_size;
 	size_t len = 0;
 
 	/* Maybe we will want to create a new msg for this slpmsg instead of
 	 * reusing the same one all the time. */
-	msg = slpmsg->msg;
+	part = msn_slpmsgpart_new(slpmsg->header, slpmsg->footer);
 
 	real_size = (slpmsg->flags == P2P_ACK) ? 0 : slpmsg->size;
 
@@ -297,7 +310,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 				purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
 		{
 			len = MIN(MSN_SBCONN_MAX_SIZE, slpmsg->slpcall->u.outgoing.len);
-			msn_message_set_bin_data(msg, slpmsg->slpcall->u.outgoing.data, len);
+			msn_slpmsgpart_set_bin_data(part, slpmsg->slpcall->u.outgoing.data, len);
 		}
 		else
 		{
@@ -306,23 +319,25 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			if (len > MSN_SBCONN_MAX_SIZE)
 				len = MSN_SBCONN_MAX_SIZE;
 
-			msn_message_set_bin_data(msg, slpmsg->buffer + slpmsg->offset, len);
+			msn_slpmsgpart_set_bin_data(part, slpmsg->slpcall->u.outgoing.data, len);
 		}
 
 		slpmsg->header->offset = slpmsg->offset;
 		slpmsg->header->length = len;
 	}
 
+#if 0
+	/* TODO: port this function to SlpMessageParts */
 	if (purple_debug_is_verbose())
 		msn_message_show_readable(msg, slpmsg->info, slpmsg->text_body);
+#endif
 
 #ifdef MSN_DEBUG_SLP_FILES
 	debug_msg_to_file(msg, TRUE);
 #endif
 
-	slpmsg->msgs =
-		g_list_append(slpmsg->msgs, msn_message_ref(msg));
-	msn_slplink_send_msg(slplink, msg);
+	slpmsg->parts = g_list_append(slpmsg->parts, part);
+	msn_slplink_send_part(slplink, part);
 
 	if ((slpmsg->flags == P2P_MSN_OBJ_DATA || 
 	     slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
