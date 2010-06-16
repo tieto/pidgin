@@ -259,7 +259,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	if (content_type != NULL &&
 		!strcmp(content_type, "application/x-msnmsgrp2p")) {
 		msg->msnslp_message = TRUE;
-		msg->slpmsg = msn_slpmsg_new_from_data(tmp, payload_len - (tmp - tmp_base));
+		msg->part = msn_slpmsgpart_new_from_data(tmp, payload_len - (tmp - tmp_base));
 	}
 
 	if (payload_len - (tmp - tmp_base) > 0) {
@@ -303,7 +303,7 @@ msn_message_gen_slp_body(MsnMessage *msg, size_t *ret_size)
 {
 	char *tmp;
 
-	tmp = msn_slpmsg_serialize(msg->slpmsg, ret_size);
+	tmp = msn_slpmsgpart_serialize(msg->part, ret_size);
 	return tmp;
 }
 
@@ -362,7 +362,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 		size_t siz;
 		char *body;
 		
-		body = msn_slpmsg_serialize(msg->slpmsg, &siz);
+		body = msn_slpmsgpart_serialize(msg->part, &siz);
 
 		memcpy(n, body, siz);
 		n += siz;
@@ -625,15 +625,15 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 
 	if (msg->msnslp_message)
 	{
-		g_string_append_printf(str, "Session ID: %u\r\n", msg->slpmsg->header->session_id);
-		g_string_append_printf(str, "ID:         %u\r\n", msg->slpmsg->header->id);
-		g_string_append_printf(str, "Offset:     %" G_GUINT64_FORMAT "\r\n", msg->slpmsg->header->offset);
-		g_string_append_printf(str, "Total size: %" G_GUINT64_FORMAT "\r\n", msg->slpmsg->header->total_size);
-		g_string_append_printf(str, "Length:     %u\r\n", msg->slpmsg->header->length);
-		g_string_append_printf(str, "Flags:      0x%x\r\n", msg->slpmsg->header->flags);
-		g_string_append_printf(str, "ACK ID:     %u\r\n", msg->slpmsg->header->ack_id);
-		g_string_append_printf(str, "SUB ID:     %u\r\n", msg->slpmsg->header->ack_sub_id);
-		g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", msg->slpmsg->header->ack_size);
+		g_string_append_printf(str, "Session ID: %u\r\n", msg->part->header->session_id);
+		g_string_append_printf(str, "ID:         %u\r\n", msg->part->header->id);
+		g_string_append_printf(str, "Offset:     %" G_GUINT64_FORMAT "\r\n", msg->part->header->offset);
+		g_string_append_printf(str, "Total size: %" G_GUINT64_FORMAT "\r\n", msg->part->header->total_size);
+		g_string_append_printf(str, "Length:     %u\r\n", msg->part->header->length);
+		g_string_append_printf(str, "Flags:      0x%x\r\n", msg->part->header->flags);
+		g_string_append_printf(str, "ACK ID:     %u\r\n", msg->part->header->ack_id);
+		g_string_append_printf(str, "SUB ID:     %u\r\n", msg->part->header->ack_sub_id);
+		g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", msg->part->header->ack_size);
 
 		if (purple_debug_is_verbose() && body != NULL)
 		{
@@ -660,7 +660,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 			}
 		}
 
-		g_string_append_printf(str, "Footer:     %u\r\n", msg->slpmsg->footer->value);
+		g_string_append_printf(str, "Footer:     %u\r\n", msg->part->footer->value);
 	}
 	else
 	{
