@@ -1,3 +1,6 @@
+#include "internal.h"
+
+#include "msg.h"
 #include "sbconn.h"
 
 /* We have received the message ack */
@@ -61,6 +64,33 @@ msn_sbconn_msg_nak(MsnMessage *msg, void *data)
 
 void msn_sbconn_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
+	if (slplink->swboard == NULL)
+	{
+		slplink->swboard = msn_session_get_swboard(slplink->session,
+				slplink->remote_user, MSN_SB_FLAG_FT);
+
+		g_return_if_fail(slplink->swboard != NULL);
+
+		/* If swboard is destroyed we will be too */
+		slplink->swboard->slplinks = g_list_prepend(slplink->swboard->slplinks, slplink);
+	}
+
+	msn_switchboard_send_msg(slplink->swboard, msg, TRUE);
+}
+
+void msn_sbconn_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
+{
+	MsnMessage *msg;
+	char *data;
+	size_t size;
+
+	msg = msn_message_new_msnslp();
+
+	data = msn_slpmsgpart_serialize(part, &size);
+	msg->part = part;
+
+	msn_message_set_bin_data(msg, data, size);
+
 	if (slplink->swboard == NULL)
 	{
 		slplink->swboard = msn_session_get_swboard(slplink->session,
