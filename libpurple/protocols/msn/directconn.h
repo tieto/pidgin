@@ -34,6 +34,7 @@ typedef struct _MsnDirectConn MsnDirectConn;
 #include "slp.h"
 #include "slplink.h"
 #include "slpmsg.h"
+#include "slpmsg_part.h"
 #include "p2p.h"
 
 #define MSN_DCCONN_MAX_SIZE 1352
@@ -129,6 +130,8 @@ struct _MsnDirectConn
  */
 void
 msn_dc_enqueue_msg(MsnDirectConn *dc, MsnMessage *msg);
+void
+msn_dc_enqueue_part(MsnDirectConn *dc, MsnSlpMessagePart *part);
 
 /*
  * Creates, initializes, and returns a new MsnDirectConn structure.

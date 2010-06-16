@@ -557,6 +557,23 @@ msn_dc_enqueue_msg(MsnDirectConn *dc, MsnMessage *msg)
 	msn_dc_enqueue_packet(dc, p);
 }
 
+void
+msn_dc_enqueue_part(MsnDirectConn *dc, MsnSlpMessagePart *part)
+{
+	MsnDirectConnPacket *p;
+	guint32 length;
+
+	length = part->size + P2P_PACKET_HEADER_SIZE;
+	p = msn_dc_new_packet(length);
+
+	memcpy(p->data, part->header, P2P_PACKET_HEADER_SIZE);
+	memcpy(p->data + P2P_PACKET_HEADER_SIZE, part->buffer, part->size);
+
+	p->sent_cb = msn_dc_send_packet_cb;
+
+	msn_dc_enqueue_packet(dc, p);
+}
+
 static int
 msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 {
