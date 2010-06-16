@@ -50,6 +50,8 @@ MSNSOURCES = \
 	slplink.h \
 	slpmsg.c \
 	slpmsg.h \
+	slpmsg_part.c \
+	slpmsg_part.h \
 	soap.c \
 	soap.h \
 	state.c \

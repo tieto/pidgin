@@ -60,6 +60,7 @@ C_SRC =			cmdproc.c \
 			slpcall.c \
 			slplink.c \
 			slpmsg.c \
+			slpmsg_part.c \
 			soap.c\
 			state.c \
 			sbconn.c \
