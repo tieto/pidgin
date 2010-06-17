@@ -2189,10 +2189,10 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 					g_free(rtfmsg);
 				}
 			}
-		} else if (args->info.rtfmsg.msgtype == 26)
+		} else if (args->info.rtfmsg.msgtype == 26) {
 			purple_debug_info("oscar", "Sending X-Status Reply\n");
 			icq_relay_xstatus(od, userinfo->bn, args->cookie);
-
+		}
 	}
 	else
 	{
