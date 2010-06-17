@@ -43,7 +43,7 @@ jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type
 {
 	JabberData *data;
 	gchar *checksum;
-	gchar cid[256];
+	gchar cid[256]; /* "Big enough" for a SHA1 hex hash value */
 
 	g_return_val_if_fail(rawdata != NULL, NULL);
 	g_return_val_if_fail(size > 0, NULL);
@@ -191,15 +191,17 @@ xmlnode *
 jabber_data_get_xhtml_im(const JabberData *data, const gchar *alt)
 {
 	xmlnode *img;
-	char src[128];
+	char *src;
 
 	g_return_val_if_fail(data != NULL, NULL);
 	g_return_val_if_fail(alt != NULL, NULL);
 
 	img = xmlnode_new("img");
 	xmlnode_set_attrib(img, "alt", alt);
-	g_snprintf(src, sizeof(src), "cid:%s", data->cid);
+
+	src = g_strconcat("cid:", data->cid, NULL);
 	xmlnode_set_attrib(img, "src", src);
+	g_free(src);
 
 	return img;
 }
