@@ -401,15 +401,13 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 	PurpleBuddy *b;
 	PurpleGroup *g;
 	GSList *list, *i;
-	gboolean onlist = 0;
-	char *oname = NULL;
-	char **oname_p = &oname;
-	GSList **list_p = &list;
+	gboolean onlist = FALSE;
+	char *oname;
 
-	if (!g_hash_table_lookup_extended(ht, purple_normalize(account, name), (gpointer *) oname_p, (gpointer *) list_p))
-		list = purple_find_buddies(account, name);
+	if (g_hash_table_lookup_extended(ht, purple_normalize(account, name), (gpointer *)&oname, (gpointer *)&list))
+		g_hash_table_steal(ht, oname);
 	else
-		g_hash_table_steal(ht, name);
+		list = purple_find_buddies(account, name);
 
 	for (i = list; i; i = i->next) {
 		b = i->data;
@@ -418,7 +416,7 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 			purple_debug_misc("yahoo",
 				"Oh good, %s is in the right group (%s).\n", name, group);
 			list = g_slist_delete_link(list, i);
-			onlist = 1;
+			onlist = TRUE;
 			break;
 		}
 	}
@@ -438,7 +436,7 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 		if (!oname)
 			oname = g_strdup(purple_normalize(account, name));
 		g_hash_table_insert(ht, oname, list);
-	} else if (oname)
+	} else
 		g_free(oname);
 }
 
