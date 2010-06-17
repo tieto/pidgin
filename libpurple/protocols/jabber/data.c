@@ -371,7 +371,6 @@ void
 jabber_data_associate_local(JabberData *data, const gchar *alt)
 {
 	g_return_if_fail(data != NULL);
-	g_return_if_fail(alt != NULL);
 
 	purple_debug_info("jabber", "associating local data object\n alt = %s, cid = %s\n",
 		alt , jabber_data_get_cid(data));
