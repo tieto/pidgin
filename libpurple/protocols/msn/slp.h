@@ -25,9 +25,12 @@
 #define MSN_SLP_H
 
 #include "internal.h"
+#include "ft.h"
 
 #include "session.h"
 #include "slpcall.h"
+#include "slplink.h"
+#include "user.h"
 
 #define MAX_FILE_NAME_LEN 260 /* MAX_PATH in Windows */
 
