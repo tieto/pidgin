@@ -73,6 +73,7 @@ struct _MsnDirectConnPacket {
 
 	void        (*sent_cb)(struct _MsnDirectConnPacket*);
 	MsnMessage  *msg;
+	MsnSlpMessagePart *part;
 };
 
 struct _MsnDirectConn
@@ -128,8 +129,10 @@ struct _MsnDirectConn
 /*
  * Queues an MSN message to be sent via direct connection.
  */
+#if 0
 void
 msn_dc_enqueue_msg(MsnDirectConn *dc, MsnMessage *msg);
+#endif
 void
 msn_dc_enqueue_part(MsnDirectConn *dc, MsnSlpMessagePart *part);
 

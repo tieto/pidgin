@@ -343,7 +343,7 @@ msn_dc_fallback_to_sb(MsnDirectConn *dc)
 		if (queue) {
 			while (!g_queue_is_empty(queue)) {
 				MsnDirectConnPacket *p = g_queue_pop_head(queue);
-				msn_slplink_send_msg(slplink, p->msg);
+				msn_slplink_send_msgpart(slplink, p->part);
 				msn_dc_destroy_packet(p);
 			}
 			g_queue_free(queue);
@@ -570,6 +570,7 @@ msn_dc_enqueue_part(MsnDirectConn *dc, MsnSlpMessagePart *part)
 	memcpy(p->data + P2P_PACKET_HEADER_SIZE, part->buffer, part->size);
 
 	p->sent_cb = msn_dc_send_packet_cb;
+	p->part = part;
 
 	msn_dc_enqueue_packet(dc, p);
 }
