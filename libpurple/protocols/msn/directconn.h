@@ -30,7 +30,6 @@ typedef struct _MsnDirectConn MsnDirectConn;
 #include "proxy.h"
 #include "circbuffer.h"
 
-#include "msg.h"
 #include "slp.h"
 #include "slplink.h"
 #include "slpmsg.h"
