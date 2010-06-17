@@ -303,8 +303,10 @@ char *jabber_saslprep(const char *in)
 
 	c = (const guchar *)in;
 	for ( ; *c; ++c) {
-		if (*c > 0x7f ||
+		if (*c > 0x7f || /* Non-ASCII characters */
+				*c == 0x7f || /* ASCII Delete character */
 				(*c < 0x20 && *c != '\t' && *c != '\n' && *c != '\r'))
+					/* ASCII control characters */
 			return NULL;
 	}
 
