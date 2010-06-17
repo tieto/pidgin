@@ -1239,14 +1239,19 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 
 unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 {
+	JabberStream *js;
 	JabberMessage *jm;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	char *resource = jabber_get_resource(who);
+	char *resource;	
 
-	jb = jabber_buddy_find(gc->proto_data, who, TRUE);
+	js = purple_connection_get_protocol_data(gc);
+	jb = jabber_buddy_find(js, who, TRUE);
+	if (!jb)
+		return 0;
+
+	resource = jabber_get_resource(who);
 	jbr = jabber_buddy_find_resource(jb, resource);
-
 	g_free(resource);
 
 	/* We know this entity doesn't support chat states */
@@ -1261,7 +1266,7 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 
 	/* TODO: figure out threading */
 	jm = g_new0(JabberMessage, 1);
-	jm->js = gc->proto_data;
+	jm->js = js;
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);
