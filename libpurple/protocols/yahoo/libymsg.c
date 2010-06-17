@@ -841,12 +841,12 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 			default:
 				break;
 		}
-	
+
 		if (*stat == '1')
 			serv_got_typing(gc, fed_from, 0, PURPLE_TYPING);
 		else
 			serv_got_typing_stopped(gc, fed_from);
-		
+
 		if (fed_from != from)
 			g_free(fed_from);
 	
