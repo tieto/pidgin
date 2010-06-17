@@ -402,10 +402,10 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 	PurpleGroup *g;
 	GSList *list, *i;
 	gboolean onlist = FALSE;
-	char *oname;
+	char *oname = NULL;
 
 	if (g_hash_table_lookup_extended(ht, purple_normalize(account, name), (gpointer *)&oname, (gpointer *)&list))
-		g_hash_table_steal(ht, oname);
+		g_hash_table_steal(ht, name);
 	else
 		list = purple_find_buddies(account, name);
 
@@ -841,15 +841,14 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 			default:
 				break;
 		}
-	
+
 		if (*stat == '1')
 			serv_got_typing(gc, fed_from, 0, PURPLE_TYPING);
 		else
 			serv_got_typing_stopped(gc, fed_from);
-		
+
 		if (fed_from != from)
 			g_free(fed_from);
-	
 	} else if (!g_ascii_strncasecmp(msg, "GAME", strlen("GAME"))) {
 		PurpleBuddy *bud = purple_find_buddy(account, from);
 
@@ -1012,7 +1011,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 						break;
 				}
 				purple_debug_info("yahoo", "Message from federated (%d) buddy %s.\n", im->fed, im->fed_from);
-					
 			}
 			/* peer session id */
 			if (im && (pair->key == 11)) {
