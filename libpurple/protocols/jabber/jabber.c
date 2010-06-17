@@ -218,22 +218,25 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 
 	account = purple_connection_get_account(js->gc);
 
-	if((starttls = xmlnode_get_child(packet, "starttls"))) {
-		if(purple_ssl_is_supported()) {
-			jabber_send_raw(js,
-					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
-			return TRUE;
-		} else if(xmlnode_get_child(starttls, "required")) {
-			purple_connection_error_reason(js->gc,
+	if(purple_ssl_is_supported()) {
+		jabber_send_raw(js,
+				"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
+		return TRUE;
+	}
+
+	starttls = xmlnode_get_child(packet, "starttls");
+	if(xmlnode_get_child(starttls, "required")) {
+		purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("Server requires TLS/SSL, but no TLS/SSL support was found."));
-			return TRUE;
-		} else if(purple_account_get_bool(account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS)) {
-			purple_connection_error_reason(js->gc,
-				 PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+		return TRUE;
+	}
+
+	if(purple_account_get_bool(account, "require_tls", JABBER_DEFAULT_REQUIRE_TLS)) {
+		purple_connection_error_reason(js->gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("You require encryption, but no TLS/SSL support was found."));
-			return TRUE;
-		}
+		return TRUE;
 	}
 
 	return FALSE;
