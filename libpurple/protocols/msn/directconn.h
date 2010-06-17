@@ -72,7 +72,6 @@ struct _MsnDirectConnPacket {
 	guchar      *data;
 
 	void        (*sent_cb)(struct _MsnDirectConnPacket*);
-	MsnMessage  *msg;
 	MsnSlpMessagePart *part;
 };
 

@@ -278,6 +278,7 @@ msn_slplink_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 		msn_sbconn_send_part(slplink, part);
 	}
 }
+#if 0
 void
 msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
@@ -290,6 +291,7 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		msn_sbconn_send_msg(slplink, msg);
 	}
 }
+#endif
 
 void
 msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
@@ -301,6 +303,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	/* Maybe we will want to create a new msg for this slpmsg instead of
 	 * reusing the same one all the time. */
 	part = msn_slpmsgpart_new(slpmsg->header, slpmsg->footer);
+	part->ack_data = slpmsg;
 
 	real_size = (slpmsg->flags == P2P_ACK) ? 0 : slpmsg->size;
 

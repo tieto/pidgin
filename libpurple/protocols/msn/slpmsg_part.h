@@ -13,6 +13,7 @@ struct _MsnSlpMessagePart
 
 	MsnSlpPartCb ack_cb;
 	MsnSlpPartCb nack_cb;
+	void *ack_data;
 
 	guchar *buffer;
 	size_t size;

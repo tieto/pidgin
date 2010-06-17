@@ -111,8 +111,12 @@ msn_dc_destroy_packet(MsnDirectConnPacket *p)
 {
 	g_free(p->data);
 
+#if 0
 	if (p->msg)
 		msn_message_unref(p->msg);
+#endif
+	if (p->part)
+		msn_slpmsgpart_destroy(p->part);
 
 	g_free(p);
 }
@@ -343,7 +347,7 @@ msn_dc_fallback_to_sb(MsnDirectConn *dc)
 		if (queue) {
 			while (!g_queue_is_empty(queue)) {
 				MsnDirectConnPacket *p = g_queue_pop_head(queue);
-				msn_slplink_send_msgpart(slplink, p->part);
+				msn_slplink_send_msgpart(slplink, (MsnSlpMessage*)p->part->ack_data);
 				msn_dc_destroy_packet(p);
 			}
 			g_queue_free(queue);
@@ -535,6 +539,14 @@ msn_dc_verify_handshake(MsnDirectConn *dc, guint32 packet_length)
 static void
 msn_dc_send_packet_cb(MsnDirectConnPacket *p)
 {
+	if (p->part != NULL && p->part->ack_cb != NULL)
+		p->part->ack_cb(p->part, p->part->ack_data);
+}
+
+#if 0
+static void
+msn_dc_send_packet_cb(MsnDirectConnPacket *p)
+{
 	if (p->msg != NULL && p->msg->ack_cb != NULL)
 		p->msg->ack_cb(p->msg, p->msg->ack_data);
 }
@@ -556,6 +568,7 @@ msn_dc_enqueue_msg(MsnDirectConn *dc, MsnMessage *msg)
 
 	msn_dc_enqueue_packet(dc, p);
 }
+#endif
 
 void
 msn_dc_enqueue_part(MsnDirectConn *dc, MsnSlpMessagePart *part)
