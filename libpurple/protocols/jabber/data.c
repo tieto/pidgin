@@ -291,7 +291,7 @@ jabber_data_request_cb(JabberStream *js, const char *from,
 	if (data_element && type == JABBER_IQ_RESULT) {
 		JabberData *data = jabber_data_create_from_xml(data_element);
 
-		if (!ephemeral) {
+		if (data && !ephemeral) {
 			jabber_data_associate_remote(js, from, data);
 		}
 		cb(data, alt, userdata);

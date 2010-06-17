@@ -16,6 +16,8 @@ version 2.7.2 (??/??/????):
 	XMPP:
 	* Allow connecting to servers that only advertise GSSAPI and expect
 	  a fallback to legacy IQ authentication (broken in 2.7.0).
+	* Fix a crash when receiving custom emoticons that don't adhere to
+	  the specification.
 
 	Yahoo/Yahoo JAPAN:
 	* Renamed "Use account proxy for SSL connections" to "Use account proxy
