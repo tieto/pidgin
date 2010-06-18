@@ -1,6 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.2 (??/??/????):
+	libpurple:
+		Fixed:
+		* purple_account_[gs]et_public_alias no longer crash when
+		  called for a protocol that doesn't support the underlying
+		  calls and the caller does not specify a failure callback.
 
 version 2.7.1 (05/29/2010):
 	* No changes
