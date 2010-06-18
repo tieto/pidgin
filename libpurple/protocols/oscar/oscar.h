@@ -1272,6 +1272,7 @@ int aim_bart_request(OscarData *od, const char *bn, guint8 iconcsumtype, const g
 #define AIM_SSI_TYPE_DENY		0x0003
 #define AIM_SSI_TYPE_PDINFO		0x0004
 #define AIM_SSI_TYPE_PRESENCEPREFS	0x0005
+#define AIM_SSI_TYPE_ICQDENY		0x000e
 #define AIM_SSI_TYPE_ICONINFO		0x0014
 
 #define AIM_SSI_ACK_SUCCESS		0x0000
@@ -1340,12 +1341,12 @@ int aim_ssi_editcomment(OscarData *od, const char *gn, const char *bn, const cha
 int aim_ssi_rename_group(OscarData *od, const char *oldgn, const char *newgn);
 int aim_ssi_cleanlist(OscarData *od);
 int aim_ssi_deletelist(OscarData *od);
-int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask);
+int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny);
 int aim_ssi_setpresence(OscarData *od, guint32 presence);
 int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint8 iconsumlen);
 int aim_ssi_delicon(OscarData *od);
 
-
+guint16 aim_ssi_getdenyentrytype(OscarData* od);
 
 /* 0x0015 - family_icq.c */
 #define AIM_ICQ_INFO_SIMPLE	0x001

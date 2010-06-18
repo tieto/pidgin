@@ -4028,9 +4028,17 @@ static void
 oscar_set_status_icq(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
+	OscarData *od = purple_connection_get_protocol_data(gc);
+	gboolean invisible = purple_account_is_status_active(account, OSCAR_STATUS_ID_INVISIBLE);
 
-	/* Our permit/deny setting affects our invisibility */
-	oscar_set_permit_deny(gc);
+	/*
+	 * For ICQ the permit/deny setting controls who can see you
+	 * online. Mimicking the official client's behavior, we use PURPLE_PRIVACY_ALLOW_USERS
+	 * when our status is "invisible" and PURPLE_PRIVACY_DENY_USERS otherwise.
+	 * In the former case, we are visible only to buddies on our "permanently visible" list.
+	 * In the latter, we are invisible only to buddies on our "permanentnly invisible" list.
+	 */
+	aim_ssi_setpermdeny(od, invisible ? PURPLE_PRIVACY_ALLOW_USERS : PURPLE_PRIVACY_DENY_USERS);
 
 	/*
 	 * TODO: I guess we should probably wait and do this after we get
@@ -4284,6 +4292,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	va_list ap;
 	guint16 fmtver, numitems;
 	guint32 timestamp;
+	guint16 deny_entry_type = aim_ssi_getdenyentrytype(od);
 
 	gc = od->gc;
 	od = purple_connection_get_protocol_data(gc);
@@ -4352,8 +4361,8 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			purple_blist_remove_buddy(b);
 		}
 
-		/* Permit list */
-		if (account->permit) {
+		/* Permit list (ICQ doesn't have one) */
+		if (!od->icq && account->permit) {
 			next = account->permit;
 			while (next != NULL) {
 				cur = next;
@@ -4372,7 +4381,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			while (next != NULL) {
 				cur = next;
 				next = next->next;
-				if (!aim_ssi_itemlist_finditem(od->ssi.local, NULL, cur->data, AIM_SSI_TYPE_DENY)) {
+				if (!aim_ssi_itemlist_finditem(od->ssi.local, NULL, cur->data, deny_entry_type)) {
 					purple_debug_info("oscar",
 							"ssi: removing deny %s from local list\n", (const char *)cur->data);
 					purple_privacy_deny_remove(account, cur->data, TRUE);
@@ -4487,8 +4496,8 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				g_free(gname_utf8);
 			} break;
 
-			case AIM_SSI_TYPE_PERMIT: { /* Permit buddy */
-				if (curitem->name) {
+			case AIM_SSI_TYPE_PERMIT: { /* Permit buddy (unless we're on ICQ) */
+				if (!od->icq && curitem->name) {
 					/* if (!find_permdeny_by_name(gc->permit, curitem->name)) { AAA */
 					GSList *list;
 					for (list=account->permit; (list && oscar_util_name_compare(curitem->name, list->data)); list=list->next);
@@ -4500,8 +4509,9 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				}
 			} break;
 
+			case AIM_SSI_TYPE_ICQDENY:
 			case AIM_SSI_TYPE_DENY: { /* Deny buddy */
-				if (curitem->name) {
+				if (curitem->type == deny_entry_type && curitem->name) {
 					GSList *list;
 					for (list=account->deny; (list && oscar_util_name_compare(curitem->name, list->data)); list=list->next);
 					if (!list) {
@@ -5172,28 +5182,6 @@ char *oscar_status_text(PurpleBuddy *b)
 void oscar_set_permit_deny(PurpleConnection *gc) {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	OscarData *od = purple_connection_get_protocol_data(gc);
-	PurplePrivacyType perm_deny;
-
-	/*
-	 * For ICQ the permit/deny setting controls who you can see you
-	 * online when you set your status to "invisible."  If we're ICQ
-	 * and we're invisible then we need to use one of
-	 * PURPLE_PRIVACY_ALLOW_USERS or PURPLE_PRIVACY_ALLOW_BUDDYLIST or
-	 * PURPLE_PRIVACY_DENY_USERS if we actually want to be invisible
-	 * to anyone.
-	 *
-	 * These three permit/deny settings correspond to:
-	 * 1. Invisible to everyone except the people on my "permit" list
-	 * 2. Invisible to everyone except the people on my buddy list
-	 * 3. Invisible only to the people on my "deny" list
-	 *
-	 * It would be nice to allow cases 2 and 3, but our UI doesn't have
-	 * a nice way to do it.  For now we just force case 1.
-	 */
-	if (od->icq && purple_account_is_status_active(account, OSCAR_STATUS_ID_INVISIBLE))
-		perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
-	else
-		perm_deny = account->perm_deny;
 
 	if (od->ssi.received_data)
 		/*
@@ -5201,7 +5189,7 @@ void oscar_set_permit_deny(PurpleConnection *gc) {
 		 * values of libpurple's PurplePrivacyType and the values used
 		 * by the oscar protocol.
 		 */
-		aim_ssi_setpermdeny(od, perm_deny, 0xffffffff);
+		aim_ssi_setpermdeny(od, account->perm_deny);
 }
 
 void oscar_add_permit(PurpleConnection *gc, const char *who) {

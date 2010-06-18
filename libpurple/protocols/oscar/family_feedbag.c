@@ -781,16 +781,16 @@ int aim_ssi_addpermit(OscarData *od, const char *name)
  */
 int aim_ssi_adddeny(OscarData *od, const char *name)
 {
-
+	guint16 deny_entry_type = aim_ssi_getdenyentrytype(od);
 	if (!od || !name || !od->ssi.received_data)
 		return -EINVAL;
 
 	/* Make sure the master group exists */
 	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
-		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, deny_entry_type, NULL);
 
 	/* Add that bad boy */
-	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_DENY, NULL);
+	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, deny_entry_type, NULL);
 
 	/* Sync our local list with the server list */
 	return aim_ssi_sync(od);
@@ -893,13 +893,14 @@ int aim_ssi_delpermit(OscarData *od, const char *name)
  */
 int aim_ssi_deldeny(OscarData *od, const char *name)
 {
+	guint16 deny_entry_type = aim_ssi_getdenyentrytype(od);
 	struct aim_ssi_item *del;
 
 	if (!od)
 		return -EINVAL;
 
 	/* Find the item */
-	if (!(del = aim_ssi_itemlist_finditem(od->ssi.local, NULL, name, AIM_SSI_TYPE_DENY)))
+	if (!(del = aim_ssi_itemlist_finditem(od->ssi.local, NULL, name, deny_entry_type)))
 		return -EINVAL;
 
 	/* Remove the item from the list */
@@ -1030,17 +1031,16 @@ int aim_ssi_rename_group(OscarData *od, const char *oldgn, const char *newgn)
  * Stores your permit/deny setting on the server, and starts using it.
  *
  * @param od The oscar odion.
- * @param permdeny Your permit/deny setting.  Can be one of the following:
+ * @param permdeny Your permit/deny setting. For ICQ accounts, it actually affects your visibility
+ *        and has nothing to do with blocking. Can be one of the following:
  *        1 - Allow all users
  *        2 - Block all users
  *        3 - Allow only the users below
  *        4 - Block only the users below
  *        5 - Allow only users on my buddy list
- * @param vismask A bitmask of the class of users to whom you want to be
- *        visible.  See the AIM_FLAG_BLEH #defines in oscar.h
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
+int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny)
 {
 	struct aim_ssi_item *tmp;
 
@@ -1058,9 +1058,6 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
 
 	/* Need to add the 0x00ca TLV to the TLV chain */
 	aim_tlvlist_replace_8(&tmp->data, 0x00ca, permdeny);
-
-	/* Need to add the 0x00cb TLV to the TLV chain */
-	aim_tlvlist_replace_32(&tmp->data, 0x00cb, vismask);
 
 	/* Sync our local list with the server list */
 	return aim_ssi_sync(od);
@@ -1933,6 +1930,16 @@ static int receiveadded(OscarData *od, FlapConnection *conn, aim_module_t *mod, 
 	g_free(bn);
 
 	return ret;
+}
+
+/*
+ * If we're on ICQ, then AIM_SSI_TYPE_DENY is used for the "permanently invisible" list.
+ * AIM_SSI_TYPE_ICQDENY is used for blocking users instead.
+ */
+guint16
+aim_ssi_getdenyentrytype(OscarData* od)
+{
+	return od->icq ? AIM_SSI_TYPE_ICQDENY : AIM_SSI_TYPE_DENY;
 }
 
 static int

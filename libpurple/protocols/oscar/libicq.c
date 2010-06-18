@@ -63,11 +63,11 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* add_buddies */
 	oscar_remove_buddy,		/* remove_buddy */
 	NULL,					/* remove_buddies */
-	oscar_add_permit,		/* add_permit */
+	NULL,		/* add_permit */
 	oscar_add_deny,			/* add_deny */
-	oscar_rem_permit,		/* rem_permit */
+	NULL,		/* rem_permit */
 	oscar_rem_deny,			/* rem_deny */
-	oscar_set_permit_deny,	/* set_permit_deny */
+	NULL,	/* set_permit_deny */
 	oscar_join_chat,		/* join_chat */
 	NULL,					/* reject_chat */
 	oscar_get_chat_name,	/* get_chat_name */
