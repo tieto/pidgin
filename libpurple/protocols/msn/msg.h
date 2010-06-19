@@ -317,6 +317,10 @@ void msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 void msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
+void msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
+void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
 void msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 void msn_handwritten_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
