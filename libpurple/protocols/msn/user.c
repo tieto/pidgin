@@ -666,6 +666,16 @@ msn_user_is_capable(MsnUser *user, char *endpoint, guint capability, guint extca
  * Utility functions
  **************************************************************************/
 
+int
+msn_user_passport_cmp(MsnUser *user, const char *passport)
+{
+	const char *pass;
+
+	pass = msn_user_get_passport(user);
+
+	return strcmp(pass, passport);
+}
+
 gboolean
 msn_user_is_in_group(MsnUser *user, const char * group_id)
 {

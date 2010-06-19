@@ -490,6 +490,18 @@ void msn_user_set_op(MsnUser *user, MsnListOp list_op);
 void msn_user_unset_op(MsnUser *user, MsnListOp list_op);
 
 /**
+ * Compare the given passport with the one of the user
+ *
+ * @param user 	User to compare.
+ * @oaran passport 	Passport to compare.
+ *
+ * @return Zero if the passport match with the one of the user, otherwise
+ * a positive integer if the user passport is greather than the one given
+ * and a negative integer if it is less.
+ */
+int msn_user_passport_cmp(MsnUser *user, const char *passport);
+
+/**
  * Checks whether a user is capable of some task.
  *
  * @param user       The user.

@@ -228,16 +228,6 @@ send_clientcaps(MsnSwitchBoard *swboard)
 	msn_message_destroy(msg);
 }
 
-static int
-user_passport_cmp(MsnUser *user, const char *passport)
-{
-	const char *pass;
-
-	pass = msn_user_get_passport(user);
-
-	return strcmp(pass, passport);
-}
-
 static void
 msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 {
@@ -264,7 +254,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	msnuser = msn_userlist_find_user(userlist, passport);
 
 	/* Don't add multiple endpoints to the conversation. */
-	if (g_list_find_custom(swboard->users, passport, (GCompareFunc)user_passport_cmp)) {
+	if (g_list_find_custom(swboard->users, passport, (GCompareFunc)msn_user_passport_cmp)) {
 		g_free(passport);
 		return;
 	}
