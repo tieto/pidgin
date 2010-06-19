@@ -78,7 +78,7 @@ struct _MsnSlpMessage
 	GList *msgs; /**< The real messages. */
 	GList *parts; /**< A list with the SlpMsgParts */
 
-#if 1
+#if 0
 	MsnMessage *msg; /**< The temporary real message that will be sent. */
 #endif
 

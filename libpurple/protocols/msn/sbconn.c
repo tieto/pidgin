@@ -81,10 +81,14 @@ void msn_sbconn_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 void msn_sbconn_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 {
 	MsnMessage *msg;
+	const char *passport;
 	char *data;
 	size_t size;
 
 	msg = msn_message_new_msnslp();
+
+	passport = purple_normalize(slplink->session->account, slplink->remote_user);
+	msn_message_set_header(msg, "P2P-Dest", passport);
 
 	data = msn_slpmsgpart_serialize(part, &size);
 	msg->part = part;

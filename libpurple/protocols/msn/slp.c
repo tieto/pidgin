@@ -155,7 +155,6 @@ msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer)
 	slpcall->u.outgoing.len = len;
 	slpcall->u.outgoing.data = data;
 	msn_slplink_send_msgpart(slpcall->slplink, slpcall->xfer_msg);
-	msn_message_unref(slpcall->xfer_msg->msg);
 	return MIN(1202, len);
 }
 

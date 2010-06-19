@@ -34,6 +34,7 @@
 #include "slp.h"
 #include "p2p.h"
 
+#if 0
 #ifdef MSN_DEBUG_SLP_FILES
 static int m_sc = 0;
 static int m_rc = 0;
@@ -58,6 +59,7 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
 	g_free(tmp);
 }
 #endif
+#endif /* 0 */
 
 /**************************************************************************
  * Main
@@ -333,10 +335,10 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	/* TODO: port this function to SlpMessageParts */
 	if (purple_debug_is_verbose())
 		msn_message_show_readable(msg, slpmsg->info, slpmsg->text_body);
-#endif
 
 #ifdef MSN_DEBUG_SLP_FILES
 	debug_msg_to_file(msg, TRUE);
+#endif
 #endif
 
 	slpmsg->parts = g_list_append(slpmsg->parts, part);
@@ -362,26 +364,21 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 static void
 msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
-	MsnMessage *msg;
-	const char *passport;
-
-	slpmsg->msg = msg = msn_message_new_msnslp();
-
-	msg->slpmsg = slpmsg;
-	msg->slpmsg->header = g_new0(MsnP2PHeader, 1);
-	msg->slpmsg->footer = g_new0(MsnP2PFooter, 1);
+	slpmsg = slpmsg;
+	slpmsg->header = g_new0(MsnP2PHeader, 1);
+	slpmsg->footer = g_new0(MsnP2PFooter, 1);
 
 	if (slpmsg->flags == P2P_NO_FLAG)
 	{
-		msg->slpmsg->header->session_id = slpmsg->session_id;
-		msg->slpmsg->header->ack_id = rand() % 0xFFFFFF00;
+		slpmsg->header->session_id = slpmsg->session_id;
+		slpmsg->header->ack_id = rand() % 0xFFFFFF00;
 	}
 	else if (slpmsg->flags == P2P_ACK)
 	{
-		msg->slpmsg->header->session_id = slpmsg->session_id;
-		msg->slpmsg->header->ack_id = slpmsg->ack_id;
-		msg->slpmsg->header->ack_size = slpmsg->ack_size;
-		msg->slpmsg->header->ack_sub_id = slpmsg->ack_sub_id;
+		slpmsg->header->session_id = slpmsg->session_id;
+		slpmsg->header->ack_id = slpmsg->ack_id;
+		slpmsg->header->ack_size = slpmsg->ack_size;
+		slpmsg->header->ack_sub_id = slpmsg->ack_sub_id;
 	}
 	else if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
 	         slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
@@ -391,22 +388,25 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		slpcall = slpmsg->slpcall;
 
 		g_return_if_fail(slpcall != NULL);
-		msg->slpmsg->header->session_id = slpcall->session_id;
-		msg->slpmsg->footer->value = slpcall->app_id;
-		msg->slpmsg->header->ack_id = rand() % 0xFFFFFF00;
+		slpmsg->header->session_id = slpcall->session_id;
+		slpmsg->footer->value = slpcall->app_id;
+		slpmsg->header->ack_id = rand() % 0xFFFFFF00;
 	}
 	else if (slpmsg->flags == 0x100)
 	{
-		msg->slpmsg->header->ack_id     = slpmsg->ack_id;
-		msg->slpmsg->header->ack_sub_id = slpmsg->ack_sub_id;
-		msg->slpmsg->header->ack_size   = slpmsg->ack_size;
+		slpmsg->header->ack_id     = slpmsg->ack_id;
+		slpmsg->header->ack_sub_id = slpmsg->ack_sub_id;
+		slpmsg->header->ack_size   = slpmsg->ack_size;
 	}
 
-	msg->slpmsg->header->id = slpmsg->id;
-	msg->slpmsg->header->flags = (guint32)slpmsg->flags;
+	slpmsg->header->id = slpmsg->id;
+	slpmsg->header->flags = (guint32)slpmsg->flags;
 
-	msg->slpmsg->header->total_size = slpmsg->size;
+	slpmsg->header->total_size = slpmsg->size;
 
+	msn_slplink_send_msgpart(slplink, slpmsg);
+
+#if 0
 	passport = purple_normalize(slplink->session->account, slplink->remote_user);
 	msn_message_set_header(msg, "P2P-Dest", passport);
 
@@ -417,6 +417,7 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	msn_slplink_send_msgpart(slplink, slpmsg);
 
 	msn_message_destroy(msg);
+#endif
 }
 
 void
