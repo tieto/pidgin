@@ -14,6 +14,6 @@ void msn_sbconn_send_msg(MsnSlpLink *slplink, MsnMessage *msg);
 void msn_sbconn_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part);
 
 void msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg,
-						 gboolean queue)
+						 gboolean queue);
 
 #endif /* MSN_SBCONN_H */
