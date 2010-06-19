@@ -155,7 +155,7 @@ msn_xfer_write(const guchar *data, gsize len, PurpleXfer *xfer)
 	slpcall->u.outgoing.len = len;
 	slpcall->u.outgoing.data = data;
 	msn_slplink_send_msgpart(slpcall->slplink, slpcall->xfer_msg);
-	return MIN(1202, len);
+	return MIN(MSN_SBCONN_MAX_SIZE, len);
 }
 
 gssize
