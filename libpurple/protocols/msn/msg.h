@@ -317,11 +317,31 @@ void msn_plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 void msn_control_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
+/**
+ * Processes peer to peer messages.
+ *
+ * @param cmdproc The command processor.
+ * @param msg     The message.
+ */
 void msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
+/**
+ * Processes emoticon messages.
+ *
+ * @param cmdproc The command processor.
+ * @param msg     The message.
+ */
 void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 void msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
+/**
+ * Processes INVITE messages.
+ *
+ * @param cmdproc The command processor.
+ * @param msg     The message.
+ */
+void msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 void msn_handwritten_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
