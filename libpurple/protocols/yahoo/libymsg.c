@@ -404,8 +404,8 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 	gboolean onlist = FALSE;
 	char *oname = NULL;
 
-	if (g_hash_table_lookup_extended(ht, purple_normalize(account, name), (gpointer *)&oname, (gpointer *)&list))
-		g_hash_table_steal(ht, name);
+	if (g_hash_table_lookup_extended(ht, name, (gpointer *)&oname, (gpointer *)&list))
+		g_hash_table_steal(ht, oname);
 	else
 		list = purple_find_buddies(account, name);
 
@@ -434,7 +434,7 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 
 	if (list) {
 		if (!oname)
-			oname = g_strdup(purple_normalize(account, name));
+			oname = g_strdup(name);
 		g_hash_table_insert(ht, oname, list);
 	} else
 		g_free(oname);
