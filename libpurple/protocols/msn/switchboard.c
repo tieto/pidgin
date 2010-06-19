@@ -620,96 +620,6 @@ msg_nak(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 #endif
 
-static void
-release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
-{
-	MsnCmdProc *cmdproc;
-	MsnTransaction *trans;
-	char *payload;
-	gsize payload_len;
-	char flag;
-
-	g_return_if_fail(swboard != NULL);
-	g_return_if_fail(msg     != NULL);
-
-	cmdproc = swboard->cmdproc;
-
-	payload = msn_message_gen_payload(msg, &payload_len);
-
-	if (purple_debug_is_verbose()) {
-		purple_debug_info("msn", "SB length:{%" G_GSIZE_FORMAT "}\n", payload_len);
-		msn_message_show_readable(msg, "SB SEND", FALSE);
-	}
-
-	flag = msn_message_get_flag(msg);
-	trans = msn_transaction_new(cmdproc, "MSG", "%c %" G_GSIZE_FORMAT,
-								flag, payload_len);
-
-	/* Data for callbacks */
-	msn_transaction_set_data(trans, msg);
-
-	if (flag != 'U') {
-		if (msg->type == MSN_MSG_TEXT)
-		{
-			msg->ack_ref = TRUE;
-			msn_message_ref(msg);
-			swboard->ack_list = g_list_append(swboard->ack_list, msg);
-			msn_transaction_set_timeout_cb(trans, msg_timeout);
-		}
-		else if (msg->type == MSN_MSG_SLP)
-		{
-			msg->ack_ref = TRUE;
-			msn_message_ref(msg);
-			swboard->ack_list = g_list_append(swboard->ack_list, msg);
-			msn_transaction_set_timeout_cb(trans, msg_timeout);
-#if 0
-			if (msg->ack_cb != NULL)
-			{
-				msn_transaction_add_cb(trans, "ACK", msg_ack);
-				msn_transaction_add_cb(trans, "NAK", msg_nak);
-			}
-#endif
-		}
-	}
-
-	trans->payload = payload;
-	trans->payload_len = payload_len;
-
-	msg->trans = trans;
-
-	msn_cmdproc_send_trans(cmdproc, trans);
-}
-
-static void
-queue_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
-{
-	g_return_if_fail(swboard != NULL);
-	g_return_if_fail(msg     != NULL);
-
-	purple_debug_info("msn", "Appending message to queue.\n");
-
-	g_queue_push_tail(swboard->msg_queue, msg);
-
-	msn_message_ref(msg);
-}
-
-static void
-process_queue(MsnSwitchBoard *swboard)
-{
-	MsnMessage *msg;
-
-	g_return_if_fail(swboard != NULL);
-
-	purple_debug_info("msn", "Processing queue\n");
-
-	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL)
-	{
-		purple_debug_info("msn", "Sending message\n");
-		release_msg(swboard, msg);
-		msn_message_unref(msg);
-	}
-}
-
 gboolean
 msn_switchboard_can_send(MsnSwitchBoard *swboard)
 {
@@ -719,20 +629,6 @@ msn_switchboard_can_send(MsnSwitchBoard *swboard)
 		return FALSE;
 
 	return TRUE;
-}
-
-void
-msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg,
-						 gboolean queue)
-{
-	g_return_if_fail(swboard != NULL);
-	g_return_if_fail(msg     != NULL);
-
-	purple_debug_info("msn", "switchboard send msg..\n");
-	if (msn_switchboard_can_send(swboard))
-		release_msg(swboard, msg);
-	else if (queue)
-		queue_msg(swboard, msg);
 }
 
 /**************************************************************************
