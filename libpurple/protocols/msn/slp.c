@@ -33,6 +33,7 @@
 #include "object.h"
 #include "user.h"
 #include "switchboard.h"
+#include "sbconn.h"
 #include "directconn.h"
 #include "p2p.h"
 
