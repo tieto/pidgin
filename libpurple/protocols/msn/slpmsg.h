@@ -31,7 +31,6 @@ typedef struct _MsnSlpMessage MsnSlpMessage;
 #include "slpcall.h"
 #include "slplink.h"
 #include "session.h"
-#include "msg.h"
 #include "p2p.h"
 
 #include "slp.h"
@@ -168,7 +167,9 @@ MsnSlpMessage *msn_slpmsg_dataprep_new(MsnSlpCall *slpcall);
  */
 MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, size_t size);
 
+#if 0
 void msn_slpmsg_show(MsnMessage *msg);
+#endif
 
 /**
  * Serialize the MsnSlpMessage in a way it can be used to be transmited

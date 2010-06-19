@@ -172,6 +172,7 @@ msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img)
 	slpmsg->size = purple_imgstore_get_size(img);
 }
 
+#if 0
 void
 msn_slpmsg_show(MsnMessage *msg)
 {
@@ -200,6 +201,7 @@ msn_slpmsg_show(MsnMessage *msg)
 
 	msn_message_show_readable(msg, info, text);
 }
+#endif
 
 MsnSlpMessage *
 msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
