@@ -1,4 +1,5 @@
 #include "internal.h"
+#include "debug.h"
 
 #include "msg.h"
 #include "sbconn.h"
@@ -109,6 +110,17 @@ void msn_sbconn_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 	msn_switchboard_send_msg(slplink->swboard, msg, TRUE);
 }
 
+/** Called when a message times out. */
+static void
+msg_timeout(MsnCmdProc *cmdproc, MsnTransaction *trans)
+{
+	MsnMessage *msg;
+
+	msg = trans->data;
+
+	msg_error_helper(cmdproc, msg, MSN_MSG_ERROR_TIMEOUT);
+}
+
 static void
 release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 {
@@ -182,8 +194,8 @@ queue_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	msn_message_ref(msg);
 }
 
-static void
-process_queue(MsnSwitchBoard *swboard)
+void
+msn_sbconn_process_queue(MsnSwitchBoard *swboard)
 {
 	MsnMessage *msg;
 

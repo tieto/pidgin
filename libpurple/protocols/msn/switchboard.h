@@ -244,6 +244,9 @@ gboolean msn_switchboard_can_send(MsnSwitchBoard *swboard);
 void msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg,
 							  gboolean queue);
 
+void
+msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error);
+
 gboolean msn_switchboard_chat_leave(MsnSwitchBoard *swboard);
 gboolean msn_switchboard_chat_invite(MsnSwitchBoard *swboard, const char *who);
 

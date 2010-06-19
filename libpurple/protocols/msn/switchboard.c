@@ -27,14 +27,12 @@
 
 #include "msnutils.h"
 #include "switchboard.h"
+#include "sbconn.h"
 #include "slplink.h"
 #include "user.h"
 #include "userlist.h"
 
 static MsnTable *cbs_table;
-
-static void msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg,
-							 MsnMsgErrorType error);
 
 /**************************************************************************
  * Main
@@ -428,7 +426,7 @@ msg_resend_cb(gpointer data)
 	return FALSE;
 }
 
-static void
+void
 msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 {
 	MsnSwitchBoard *swboard;
@@ -565,17 +563,6 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
  * Message Stuff
  **************************************************************************/
 
-/** Called when a message times out. */
-static void
-msg_timeout(MsnCmdProc *cmdproc, MsnTransaction *trans)
-{
-	MsnMessage *msg;
-
-	msg = trans->data;
-
-	msg_error_helper(cmdproc, msg, MSN_MSG_ERROR_TIMEOUT);
-}
-
 /** Called when we receive an error of a message. */
 static void
 msg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
@@ -705,7 +692,7 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_switchboard_add_user(swboard, passport);
 
-	process_queue(swboard);
+	msn_sbconn_process_queue(swboard);
 
 	if (!session->http_method)
 		send_clientcaps(swboard);
