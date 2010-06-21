@@ -24,6 +24,7 @@
 
 #include "internal.h"
 #include "debug.h"
+#include "util.h"
 
 #include "user.h"
 #include "slp.h"
@@ -673,7 +674,7 @@ msn_user_passport_cmp(MsnUser *user, const char *passport)
 
 	pass = msn_user_get_passport(user);
 
-	return strcmp(pass, passport);
+	return strcmp(pass, purple_normalize_nocase(NULL, passport));
 }
 
 gboolean
