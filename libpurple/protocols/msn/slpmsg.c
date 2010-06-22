@@ -26,6 +26,7 @@
 #include "debug.h"
 
 #include "slpmsg.h"
+#include "slpmsg_part.h"
 #include "slplink.h"
 
 /**************************************************************************
@@ -120,6 +121,22 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 		msg->nak_cb = NULL;
 		msg->ack_data = NULL;
 		msn_message_unref(msg);
+	}
+
+	slplink->slp_msgs = g_list_remove(slplink->slp_msgs, slpmsg);
+
+	for (cur = slpmsg->parts; cur != NULL; cur = g_list_delete_link(cur, cur))
+	{
+		/* Something is pointing to this slpmsg, so we should remove that
+		 * pointer to prevent a crash. */
+		/* Ex: a user goes offline and after that we receive an ACK */
+
+		MsnSlpMessagePart *part = cur->data;
+
+		part->ack_cb = NULL;
+		part->nak_cb = NULL;
+		part->ack_data = NULL;
+		msn_slpmsgpart_destroy(part);
 	}
 
 	slplink->slp_msgs = g_list_remove(slplink->slp_msgs, slpmsg);
