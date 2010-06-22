@@ -109,6 +109,7 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	if (slpmsg->img == NULL)
 		g_free(slpmsg->buffer);
 
+#if 0
 	for (cur = slpmsg->msgs; cur != NULL; cur = g_list_delete_link(cur, cur))
 	{
 		/* Something is pointing to this slpmsg, so we should remove that
@@ -124,6 +125,7 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	}
 
 	slplink->slp_msgs = g_list_remove(slplink->slp_msgs, slpmsg);
+#endif
 
 	for (cur = slpmsg->parts; cur != NULL; cur = g_list_delete_link(cur, cur))
 	{

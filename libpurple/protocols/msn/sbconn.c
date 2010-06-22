@@ -4,6 +4,7 @@
 #include "msg.h"
 #include "sbconn.h"
 
+#if 0
 /* We have received the message ack */
 void
 msn_sbconn_msg_ack(MsnMessage *msg, void *data)
@@ -62,6 +63,7 @@ msn_sbconn_msg_nak(MsnMessage *msg, void *data)
 	slpmsg->msgs = g_list_remove(slpmsg->msgs, msg);
 	msn_message_unref(msg);
 }
+#endif
 
 void msn_sbconn_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
