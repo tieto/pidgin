@@ -13,6 +13,9 @@ version 2.7.2 (??/??/????):
 	* Rebindable 'dropdown' action for comboboxes (GntComboBox) to show the
 	  dropdown list of options.
 
+	IRC:
+	* Fix non-ASCII arguments to /mode et al.  (thanks to Max Ulidtko)
+
 	XMPP:
 	* Allow connecting to servers that only advertise GSSAPI and expect
 	  a fallback to legacy IQ authentication (broken in 2.7.0).
