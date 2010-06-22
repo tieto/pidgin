@@ -15,7 +15,7 @@ MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PHeader *header, MsnP2PFooter *footer
 		part->footer = g_memdup(footer, P2P_PACKET_FOOTER_SIZE);
 
 	part->ack_cb = msn_slpmsgpart_ack;
-	part->nack_cb = msn_slpmsgpart_nak;
+	part->nak_cb = msn_slpmsgpart_nak;
 
 	return part;
 }

@@ -12,7 +12,7 @@ struct _MsnSlpMessagePart
 	MsnP2PFooter *footer;
 
 	MsnSlpPartCb ack_cb;
-	MsnSlpPartCb nack_cb;
+	MsnSlpPartCb nak_cb;
 	void *ack_data;
 
 	guchar *buffer;
