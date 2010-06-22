@@ -29,6 +29,7 @@
 #include "msg.h"
 #include "msnutils.h"
 #include "slpmsg.h"
+#include "slpmsg_part.h"
 
 MsnMessage *
 msn_message_new(MsnMsgType type)
@@ -71,6 +72,7 @@ msn_message_destroy(MsnMessage *msg)
 
 	g_hash_table_destroy(msg->header_table);
 	g_list_free(msg->header_list);
+	msn_slpmsgpart_destroy(msg->part);
 
 	g_free(msg);
 }
