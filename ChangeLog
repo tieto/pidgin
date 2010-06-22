@@ -32,6 +32,8 @@ version 2.7.2 (??/??/????):
 	* Fall back to connecting to scsa.msg.yahoo.com (not configurable) if the
 	  HTTP-based connect server lookup fails.  This does not work for Yahoo
 	  JAPAN accounts.
+	* Fix file transfers that get stuck with "Waiting for transfer to
+	  begin".
 
 version 2.7.1 (05/29/2010):
 	General:

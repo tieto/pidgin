@@ -983,8 +983,8 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 	struct yahoo_xfer_data *xd;
 	struct sockaddr_in *addr;
 	struct yahoo_packet *pkt;
-	long actaddr;
-	long a,b,c,d;
+	unsigned long actaddr;
+	unsigned char a,b,c,d;
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	YahooData *yd;
@@ -1018,19 +1018,19 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 	/* TODO:actually, u must try with addr no.1 , if its not working addr no.2 ..... */
 	addr = hosts->data;
 	actaddr = addr->sin_addr.s_addr;
-	d = actaddr % 256;
-	actaddr = (actaddr - d) / 256;
-	c = actaddr % 256;
-	actaddr = (actaddr - c) / 256;
-	b = actaddr % 256;
-	actaddr = (actaddr - b) / 256;
-	a = actaddr;
+	d = actaddr & 0xff;
+	actaddr >>= 8;
+	c = actaddr & 0xff;
+	actaddr >>= 8;
+	b = actaddr & 0xff;
+	actaddr >>= 8;
+	a = actaddr & 0xff;
 	if(yd->jp)
 		xd->port = YAHOOJP_XFER_RELAY_PORT;
 	else
 		xd->port = YAHOO_XFER_RELAY_PORT;
 
-	url = g_strdup_printf("%ld.%ld.%ld.%ld", d, c, b, a);
+	url = g_strdup_printf("%u.%u.%u.%u", d, c, b, a);
 
 	/* Free the address... */
 	g_free(hosts->data);
