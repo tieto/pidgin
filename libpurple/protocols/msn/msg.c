@@ -930,7 +930,10 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	data = msn_message_get_bin_data(msg, &len);
 
-	msn_slplink_process_msg(slplink, msg->part->header, data, len);
+	if (msg->part)
+		msn_slplink_process_msg(slplink, msg->part->header, data, len);
+	else /* This should never happen. */
+		purple_debug_fatal("msn", "P2P message without a Part.\n");
 }
 
 static void
