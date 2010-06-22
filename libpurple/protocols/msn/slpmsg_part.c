@@ -57,6 +57,9 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 
 void msn_slpmsgpart_destroy(MsnSlpMessagePart *part)
 {
+	if (!part)
+		return;
+
 	g_free(part->header);
 	g_free(part->footer);
 
