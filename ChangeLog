@@ -25,13 +25,14 @@ version 2.7.2 (??/??/????):
 	Yahoo/Yahoo JAPAN:
 	* Renamed "Use account proxy for SSL connections" to "Use account proxy
 	  for HTTP and HTTPS requests" and tied the option to HTTP requests too.
-	* Properly detect HTTP proxy server use when the HTTP proxy is the global
-	  proxy server, an account-level non-HTTP proxy server is configured, and
-	  the "Use account proxy for HTTP and HTTPS requests" account option is
-	  turned off.  This fixes connecting for some HTTP proxy servers.
-	* Fall back to connecting to scsa.msg.yahoo.com (not configurable) if the
-	  HTTP-based connect server lookup fails.  This does not work for Yahoo
-	  JAPAN accounts.
+	* Properly detect HTTP proxy server use when the HTTP proxy is the
+	  global proxy server, an account-level non-HTTP proxy server is
+	  configured, and the "Use account proxy for HTTP and HTTPS requests"
+	  account option is turned off.  This fixes connecting for some HTTP
+	  proxy servers.
+	* Fall back to connecting to scsa.msg.yahoo.com (not configurable) if
+	  the HTTP-based connect server lookup fails.  This does not work for
+	  Yahoo JAPAN accounts.
 	* Fix file transfers that get stuck with "Waiting for transfer to
 	  begin".
 
