@@ -10,15 +10,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2008-05-14 15:00+0400\n"
 "Last-Translator: Антон Самохвалов <samant.ua@mail.ru>\n"
 "Language-Team: \n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -1356,6 +1357,7 @@ msgstr "Удалить статус"
 msgid "Saved Statuses"
 msgstr "Сохранённые статусы"
 
+#. title
 msgid "Title"
 msgstr "Название"
 
@@ -1916,7 +1918,6 @@ msgstr "Ошибка конвертирования %s в punycode: %d"
 msgid "Thread creation failure: %s"
 msgstr "Ошибка создания нити: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Причина неизвестна"
 
@@ -3197,6 +3198,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Имя"
 
@@ -3943,6 +3947,7 @@ msgstr "Регион"
 msgid "Postal Code"
 msgstr "Почтовый код"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Страна"
 
@@ -3957,8 +3962,6 @@ msgstr "Название организации"
 msgid "Organization Unit"
 msgstr "Отдел"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Название работы"
 
@@ -3966,6 +3969,7 @@ msgid "Role"
 msgstr "Должность"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Дата рождения"
 
@@ -5768,6 +5772,10 @@ msgstr "Сервер методов HTTP"
 msgid "Show custom smileys"
 msgstr "Показать свои смайлики"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Не удаётся создать соединение"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "подталкивание: подтолкнуть пользователя, чтобы привлечь его внимание"
 
@@ -6012,7 +6020,11 @@ msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 "Информация о вашем профиле ещё не получена. Пожалуйста, попробуйте позже."
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -6093,7 +6105,7 @@ msgstr "Введённый ключ SecurID неверный."
 msgid "MXit Login Name"
 msgstr "Имя входа MXit"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "Псевдоним"
 
@@ -6141,7 +6153,7 @@ msgstr "Вы не ввели код безопасности"
 msgid "Security Code"
 msgstr "Код безопасности"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Введите код безопасности"
 
@@ -6167,6 +6179,11 @@ msgstr "Загрузка меню..."
 msgid "Status Message"
 msgstr "Сообщения состояния"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "Полученные сообщения"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "Скрытый номер"
 
@@ -6183,6 +6200,19 @@ msgstr "Соединение через HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Включить контекстное меню экрана-заставки"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Вас выгнали: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Неверный билет"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Комната:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6977,6 +7007,65 @@ msgstr "Не удалось присоединиться к комнате ча�
 msgid "Invalid chat room name"
 msgstr "Неверное имя комнаты чата"
 
+msgid "Invalid error"
+msgstr "Недопустимая ошибка"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "Не могу принять сообщение из-за родительского контроля"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "Не могу отправить SMS без принятия условий"
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Не могу отправить SMS"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Не могу отправить SMS в эту страну"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "Не могу отправить SMS в неизвестную страну"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Учётные записи-боты не могут порождать сообщения"
+
+msgid "Bot account cannot IM this user"
+msgstr "Учётная запись-бот не может слать сообщения этому пользователю"
+
+msgid "Bot account reached IM limit"
+msgstr "Учётная запись-бот достигла предела сообщений"
+
+msgid "Bot account reached daily IM limit"
+msgstr "Учётная запись-бот достигла дневной предел сообщений"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "Учётная запись-бот достигла месячный предел сообщений"
+
+msgid "Unable to receive offline messages"
+msgstr "Не удаётся получить оффлайн-сообщения"
+
+msgid "Offline message store full"
+msgstr "Хранилище оффлайн-сообщений заполнено"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Не удаётся отправить сообщение %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Не удаётся отправить сообщение: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Не удаётся отправить сообщение %s: %s (%s)"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Не удаётся отправить сообщение %s: %s"
+
 msgid "Thinking"
 msgstr "Думаю"
 
@@ -7127,118 +7216,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Файл %s - %s, который больше, чем максимальный размер %s."
-
-msgid "Invalid error"
-msgstr "Недопустимая ошибка"
-
-msgid "Invalid SNAC"
-msgstr "Неверный SNAC"
-
-msgid "Rate to host"
-msgstr "Оценить узел"
-
-msgid "Rate to client"
-msgstr "Оценить клиент"
-
-msgid "Service unavailable"
-msgstr "Служба недоступна"
-
-msgid "Service not defined"
-msgstr "Служба не определена"
-
-msgid "Obsolete SNAC"
-msgstr "Устаревший SNAC"
-
-msgid "Not supported by host"
-msgstr "Не поддерживается узлом"
-
-msgid "Not supported by client"
-msgstr "Не поддерживается клиентом"
-
-msgid "Refused by client"
-msgstr "Отвергнуто клиентом"
-
-msgid "Reply too big"
-msgstr "Ответ слишком велик"
-
-msgid "Responses lost"
-msgstr "Отклики потеряны"
-
-msgid "Request denied"
-msgstr "Запрос отвергнут"
-
-msgid "Busted SNAC payload"
-msgstr "Сломана полезная нагрузка SNAC"
-
-msgid "Insufficient rights"
-msgstr "Недостаточные права"
-
-msgid "In local permit/deny"
-msgstr "В местном разрешении/запрете"
-
-msgid "Warning level too high (sender)"
-msgstr "Уровень предупреждения слишком высок (отправитель)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Уровень предупреждения слишком высок (получатель)"
-
-msgid "User temporarily unavailable"
-msgstr "Пользователь временно недоступен"
-
-msgid "No match"
-msgstr "Нет совпадения"
-
-msgid "List overflow"
-msgstr "Переполнение списка"
-
-msgid "Request ambiguous"
-msgstr "Неясный запрос"
-
-msgid "Queue full"
-msgstr "Очередь полна"
-
-msgid "Not while on AOL"
-msgstr "Не в AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "Не могу принять сообщение из-за родительского контроля"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "Не могу отправить SMS без принятия условий"
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "Не могу отправить SMS"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Не могу отправить SMS в эту страну"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "Не могу отправить SMS в неизвестную страну"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "Учётные записи-боты не могут порождать сообщения"
-
-msgid "Bot account cannot IM this user"
-msgstr "Учётная запись-бот не может слать сообщения этому пользователю"
-
-msgid "Bot account reached IM limit"
-msgstr "Учётная запись-бот достигла предела сообщений"
-
-msgid "Bot account reached daily IM limit"
-msgstr "Учётная запись-бот достигла дневной предел сообщений"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "Учётная запись-бот достигла месячный предел сообщений"
-
-msgid "Unable to receive offline messages"
-msgstr "Не удаётся получить оффлайн-сообщения"
-
-msgid "Offline message store full"
-msgstr "Хранилище оффлайн-сообщений заполнено"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7609,28 +7586,9 @@ msgstr[0] "Вы не получили %hu сообщение от %s по неи
 msgstr[1] "Вы не получили %hu сообщения от %s по неизвестной причине."
 msgstr[2] "Вы не получили %hu сообщений от %s по неизвестной причине."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Не удаётся отправить сообщение %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Не удаётся отправить сообщение: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Не удаётся отправить сообщение %s: %s (%s)"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Не удаётся отправить сообщение %s: %s"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "Пользовательская информация недоступна: %s"
-
-msgid "Unknown reason."
-msgstr "Причина неизвестна."
 
 msgid "Online Since"
 msgstr "В сети с"
@@ -8069,6 +8027,75 @@ msgstr ""
 "Это требует прямого соединения между двумя компьютерами и необходимо для "
 "Картинок IM. Поскольку ваш IP-адрес будет открыт, это может повлечь угрозу "
 "конфиденциальности."
+
+msgid "Invalid SNAC"
+msgstr "Неверный SNAC"
+
+msgid "Rate to host"
+msgstr "Оценить узел"
+
+msgid "Rate to client"
+msgstr "Оценить клиент"
+
+msgid "Service unavailable"
+msgstr "Служба недоступна"
+
+msgid "Service not defined"
+msgstr "Служба не определена"
+
+msgid "Obsolete SNAC"
+msgstr "Устаревший SNAC"
+
+msgid "Not supported by host"
+msgstr "Не поддерживается узлом"
+
+msgid "Not supported by client"
+msgstr "Не поддерживается клиентом"
+
+msgid "Refused by client"
+msgstr "Отвергнуто клиентом"
+
+msgid "Reply too big"
+msgstr "Ответ слишком велик"
+
+msgid "Responses lost"
+msgstr "Отклики потеряны"
+
+msgid "Request denied"
+msgstr "Запрос отвергнут"
+
+msgid "Busted SNAC payload"
+msgstr "Сломана полезная нагрузка SNAC"
+
+msgid "Insufficient rights"
+msgstr "Недостаточные права"
+
+msgid "In local permit/deny"
+msgstr "В местном разрешении/запрете"
+
+msgid "Warning level too high (sender)"
+msgstr "Уровень предупреждения слишком высок (отправитель)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Уровень предупреждения слишком высок (получатель)"
+
+msgid "User temporarily unavailable"
+msgstr "Пользователь временно недоступен"
+
+msgid "No match"
+msgstr "Нет совпадения"
+
+msgid "List overflow"
+msgstr "Переполнение списка"
+
+msgid "Request ambiguous"
+msgstr "Неясный запрос"
+
+msgid "Queue full"
+msgstr "Очередь полна"
+
+msgid "Not while on AOL"
+msgstr "Не в AOL"
 
 msgid "Aquarius"
 msgstr "Водолей"
@@ -8969,8 +8996,8 @@ msgid ""
 "\"Create New Conference\" if you'd like to create a new conference to invite "
 "this user to."
 msgstr ""
-"Выберите конференцию из списка ниже, чтобы послать приглашение пользователю %"
-"s. Выберите \"Создать новую конференцию\" если вы хотите пригасить этого "
+"Выберите конференцию из списка ниже, чтобы послать приглашение пользователю "
+"%s. Выберите \"Создать новую конференцию\" если вы хотите пригасить этого "
 "пользователя в новую конференцию."
 
 msgid "Invite to Conference"
@@ -12594,8 +12621,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s - графический модульный клиент обмена сообщениями, основывающийся на "
 "библиотеке libpurple, позволяющей использовать AIM, MSN, Yahoo!, XMPP, ICQ, "
@@ -13148,21 +13175,21 @@ msgid ""
 "Are you sure you want to permanently delete the log of the conversation with "
 "%s which started at %s?"
 msgstr ""
-"Вы действительно хотите безвозвратно удалить журнал беседы с %s, начатый в %"
-"s?"
+"Вы действительно хотите безвозвратно удалить журнал беседы с %s, начатый в "
+"%s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
-"Вы действительно хотите безвозвратно удалить журнал беседы в %s, начатый в %"
-"s?"
+"Вы действительно хотите безвозвратно удалить журнал беседы в %s, начатый в "
+"%s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "Вы действительно хотите безвозвратно удалить системный журнал, начатый в %s?"
 
@@ -15461,6 +15488,7 @@ msgstr "Отправлять и получать прямые XMPP строфы.
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Этот модуль полезен для отладки XMPP серверов или клиентов."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15468,6 +15496,7 @@ msgstr ""
 "$(^Name) выпущено под лицензией GPL. Лицензия приведена здесь для "
 "ознакомительных целей. $_CLICK"
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "Мультиплатформенный графический инструментарий, используемый Pidgin."
 
@@ -15476,79 +15505,92 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Основная часть Pidgin и библиотеки."
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Desktop"
 msgstr ""
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ окружение для запуска (необходимо)."
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "Местоположение"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "Следующее >"
 
-#. Components Page
+#. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr ""
 "Pidgin - Клиент для мгновенного обмена сообщениями по различным протоколам "
 "(необходимо)."
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "Сочетание клавиш"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "Загрузка"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15556,7 +15598,6 @@ msgstr ""
 msgid "The installer is already running."
 msgstr ""
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
@@ -15564,23 +15605,25 @@ msgstr ""
 "Программа удаления не может найти данные Pidgin в регистре.$\\rВероятно это "
 "приложение установил другой пользователь."
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
 msgstr ""
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 #, fuzzy
 msgid "Visit the Pidgin Web Page"
 msgstr "Посетите веб-страницу Pidgin для пользователей Windows."
 
 msgid "You do not have permission to uninstall this application."
 msgstr "У Вас нет прав на удаление этого приложения."
+
+#~ msgid "Unknown reason."
+#~ msgstr "Причина неизвестна."
 
 #, fuzzy
 #~ msgid "Require STARTTLS"
@@ -15928,8 +15971,8 @@ msgstr "У Вас нет прав на удаление этого прилож�
 #~ msgid ""
 #~ "%s declined your conference invitation to room \"%s\" because \"%s\"."
 #~ msgstr ""
-#~ "%s отклонил ваше приглашение к конференции в комнату \"%s\" потому что \"%"
-#~ "s\"."
+#~ "%s отклонил ваше приглашение к конференции в комнату \"%s\" потому что "
+#~ "\"%s\"."
 
 #~ msgid "Invitation Rejected"
 #~ msgstr "Приглашение отвергнуто"

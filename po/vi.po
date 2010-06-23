@@ -12,10 +12,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CVS Version of Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2010-03-12 17:32+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
+"Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -848,8 +849,8 @@ msgstr ""
 msgid ""
 "Chats will only be logged if the \"Log all chats\" preference is enabled."
 msgstr ""
-"Các cuộc trò chuyện sẽ chỉ được ghi lại nếu mục « Ghi lại tất cả các cuộc trò "
-"chuyện » đã bật."
+"Các cuộc trò chuyện sẽ chỉ được ghi lại nếu mục « Ghi lại tất cả các cuộc "
+"trò chuyện » đã bật."
 
 msgid "No logs were found"
 msgstr "Không tìm thấy sổ theo dõi"
@@ -1350,6 +1351,7 @@ msgstr "Xoá trạng thái"
 msgid "Saved Statuses"
 msgstr "Trạng thái đã lưu"
 
+#. title
 msgid "Title"
 msgstr "Tên"
 
@@ -1910,7 +1912,6 @@ msgstr "Gặp lỗi khi chuyển đổi %s sang punycode: %d"
 msgid "Thread creation failure: %s"
 msgstr "Lỗi tạo mạch: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Lý do không rõ"
 
@@ -2081,57 +2082,57 @@ msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
 "URLs."
 msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu « "
-"aim »."
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« aim »."
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
 "URLs."
 msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu « "
-"gg »."
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« gg »."
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
 "URLs."
 msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu « "
-"icq »."
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« icq »."
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
 "URLs."
 msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu « "
-"irc »."
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« irc »."
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
 "URLs."
 msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu « "
-"msnim »."
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« msnim »."
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
 "URLs."
 msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu « "
-"sip »."
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« sip »."
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
 "URLs."
 msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu « "
-"xmpp »."
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« xmpp »."
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
 "URLs."
 msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu « "
-"ymsgr »."
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« ymsgr »."
 
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
@@ -2963,8 +2964,8 @@ msgid ""
 "Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
 "im/BonjourWindows for more information."
 msgstr ""
-"Không tìm thấy bộ công cụ Apple Bonjour For Windows, xem « http://d.pidgin.im/"
-"BonjourWindows » để tìm thêm thông tin."
+"Không tìm thấy bộ công cụ Apple Bonjour For Windows, xem « http://d.pidgin."
+"im/BonjourWindows » để tìm thêm thông tin."
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "Không thể lắng nghe kết nối tin nhắn gửi đến"
@@ -3193,6 +3194,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Tên"
 
@@ -3939,6 +3943,7 @@ msgstr "Vùng"
 msgid "Postal Code"
 msgstr "Mã vùng"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Quốc gia"
 
@@ -3953,8 +3958,6 @@ msgstr "Tên tổ chức"
 msgid "Organization Unit"
 msgstr "Phòng ban"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Chức danh"
 
@@ -3962,6 +3965,7 @@ msgid "Role"
 msgstr "Vị trí"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Ngày sinh"
 
@@ -5163,8 +5167,8 @@ msgid ""
 "%s on the local list is inside the group \"%s\" but not on the server list. "
 "Do you want this buddy to be added?"
 msgstr ""
-"%s trên danh sách cục bộ nằm trong nhóm « %s » nhưng không có trong danh sách "
-"máy phục vụ. Bạn có muốn thêm bạn chát này không?"
+"%s trên danh sách cục bộ nằm trong nhóm « %s » nhưng không có trong danh "
+"sách máy phục vụ. Bạn có muốn thêm bạn chát này không?"
 
 #, c-format
 msgid ""
@@ -5710,6 +5714,10 @@ msgstr "Máy phục vụ phương thức HTTP"
 msgid "Show custom smileys"
 msgstr "Hiển thị hình cười tự chọn"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Không thể tạo kết nối"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: làm nổi bật một liên lạc để thu hút sự chú ý"
 
@@ -5907,7 +5915,8 @@ msgstr "Bạn đã gõ một tên không đúng."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr "Bạn đã gõ một ngày sinh không hợp lệ. Định dạng đúng là « NNĂM-TH-NG »."
+msgstr ""
+"Bạn đã gõ một ngày sinh không hợp lệ. Định dạng đúng là « NNĂM-TH-NG »."
 
 #. show error to user
 msgid "Profile Update Error"
@@ -5921,7 +5930,11 @@ msgstr "Lý lịch"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Thông tin về hồ sơ của bạn chưa được lấy. Hãy thử lại về sau."
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -5999,7 +6012,7 @@ msgstr "Bạn đã gõ một mã PIN có chiều dài không đúng [7-10]."
 msgid "MXit Login Name"
 msgstr "Tên đăng nhập MXit"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "Tên hiệu"
 
@@ -6046,7 +6059,7 @@ msgstr "Bạn chưa gõ mã bảo mật"
 msgid "Security Code"
 msgstr "Mã bảo mật"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Gõ mã bảo mật"
 
@@ -6072,6 +6085,11 @@ msgstr "Đang nạp trình đơn..."
 msgid "Status Message"
 msgstr "Thông điệp trạng thái"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "Tin nhẳn đã nhận"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "Con số bị ẩn"
 
@@ -6088,6 +6106,19 @@ msgstr "Kết nối qua HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Bật tự mở màn hình giật gân"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Bạn bị đá: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Phiếu sai"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Phòng:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6857,6 +6888,63 @@ msgstr "Không thể tham gia phòng trò chuyện"
 msgid "Invalid chat room name"
 msgstr "Tên phòng trò chuyện không hợp lệ"
 
+msgid "Invalid error"
+msgstr "Lỗi không hợp lệ"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "Không thể nhận tin nhắn do điều khiển cha mẹ"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "Phải đồng ý với điều khoản để gửi SMS"
+
+msgid "Cannot send SMS"
+msgstr "Không thể gửi SMS"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "Không thể gửi SMS cho quốc gia này"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "Không thể gửi SMS cho quốc gia không rõ"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Tài khoản bot không có khả năng sơ khởi tin nhắn"
+
+msgid "Bot account cannot IM this user"
+msgstr "Tài khoản bot không có khả năng gửi tin nhắn cho người dùng này"
+
+msgid "Bot account reached IM limit"
+msgstr "Tài khoản bot đã tới giới hạn tin nhắn"
+
+msgid "Bot account reached daily IM limit"
+msgstr "Tài khoản bot đã tới giới hạn tin nhắn hằng ngày"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "Tài khoản bot đã tới giới hạn tin nhắn hằng tháng"
+
+msgid "Unable to receive offline messages"
+msgstr "Không thể nhận tin nhẳn ngoại tuyến"
+
+msgid "Offline message store full"
+msgstr "Kho tin nhẳn ngoại tuyến đã đầy"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Không thể gửi tin nhắn: %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Không thể gửi tin: %s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Không thể gửi tin nhắn cho %s: %s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Không thể gửi tin nhắn cho %s: %s"
+
 msgid "Thinking"
 msgstr "Đang nghĩ"
 
@@ -7009,116 +7097,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Tập tin %s là %s mà lớn hơn kích cỡ tối đa %s."
-
-msgid "Invalid error"
-msgstr "Lỗi không hợp lệ"
-
-msgid "Invalid SNAC"
-msgstr "SNAC không hợp lệ"
-
-msgid "Rate to host"
-msgstr "Tốc độ tới máy phục vụ"
-
-msgid "Rate to client"
-msgstr "Tốc độ tới trình khách"
-
-msgid "Service unavailable"
-msgstr "Dịch vụ không sẵn sàng"
-
-msgid "Service not defined"
-msgstr "Chưa xác định dịch vụ"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC quá cũ"
-
-msgid "Not supported by host"
-msgstr "Máy không hỗ trợ"
-
-msgid "Not supported by client"
-msgstr "Trình khách không hỗ trợ"
-
-msgid "Refused by client"
-msgstr "Trình khách từ chối"
-
-msgid "Reply too big"
-msgstr "Trả lời lại quá lớn"
-
-msgid "Responses lost"
-msgstr "Mất trả lời"
-
-msgid "Request denied"
-msgstr "Yêu cầu bị từ chối"
-
-msgid "Busted SNAC payload"
-msgstr "Làm mất trọng tải SNAC"
-
-msgid "Insufficient rights"
-msgstr "Không đủ quyền"
-
-msgid "In local permit/deny"
-msgstr "Nằm trong phạm vi bị giới hạn/từ chối cục bộ"
-
-msgid "Warning level too high (sender)"
-msgstr "Cấp cảnh báo quá cao (người gửi)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Cấp cảnh báo quá cao (người nhận)"
-
-msgid "User temporarily unavailable"
-msgstr "Tạm thời không có người dùng"
-
-msgid "No match"
-msgstr "Không tìm thấy"
-
-msgid "List overflow"
-msgstr "Tràn danh sách"
-
-msgid "Request ambiguous"
-msgstr "Yêu cầu không rõ ràng"
-
-msgid "Queue full"
-msgstr "Hàng đợi đã đầy"
-
-msgid "Not while on AOL"
-msgstr "Không phải khi trên AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "Không thể nhận tin nhắn do điều khiển cha mẹ"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "Phải đồng ý với điều khoản để gửi SMS"
-
-msgid "Cannot send SMS"
-msgstr "Không thể gửi SMS"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "Không thể gửi SMS cho quốc gia này"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "Không thể gửi SMS cho quốc gia không rõ"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "Tài khoản bot không có khả năng sơ khởi tin nhắn"
-
-msgid "Bot account cannot IM this user"
-msgstr "Tài khoản bot không có khả năng gửi tin nhắn cho người dùng này"
-
-msgid "Bot account reached IM limit"
-msgstr "Tài khoản bot đã tới giới hạn tin nhắn"
-
-msgid "Bot account reached daily IM limit"
-msgstr "Tài khoản bot đã tới giới hạn tin nhắn hằng ngày"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "Tài khoản bot đã tới giới hạn tin nhắn hằng tháng"
-
-msgid "Unable to receive offline messages"
-msgstr "Không thể nhận tin nhẳn ngoại tuyến"
-
-msgid "Offline message store full"
-msgstr "Kho tin nhẳn ngoại tuyến đã đầy"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7459,27 +7437,8 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Bạn không nhận được %hu tin nhẳn từ %s do lỗi chưa xác định."
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Không thể gửi tin nhắn: %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Không thể gửi tin: %s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Không thể gửi tin nhắn cho %s: %s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Không thể gửi tin nhắn cho %s: %s"
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "Không có sẵn thông tin về người dùng %s:"
-
-msgid "Unknown reason."
-msgstr "Không biết sao."
 
 msgid "Online Since"
 msgstr "Đã kết nối từ"
@@ -7890,6 +7849,75 @@ msgstr ""
 "Điều này đòi hỏi một kết nối trực tiếp giữa hai máy tính và là cần thiết để "
 "dùng nhắn tin nhanh có hình ảnh. Tuy nhiên, người ta sẽ thấy địa chỉ IP của "
 "bạn, là nguy cơ ảnh hưởng đến quyền riêng tư."
+
+msgid "Invalid SNAC"
+msgstr "SNAC không hợp lệ"
+
+msgid "Rate to host"
+msgstr "Tốc độ tới máy phục vụ"
+
+msgid "Rate to client"
+msgstr "Tốc độ tới trình khách"
+
+msgid "Service unavailable"
+msgstr "Dịch vụ không sẵn sàng"
+
+msgid "Service not defined"
+msgstr "Chưa xác định dịch vụ"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC quá cũ"
+
+msgid "Not supported by host"
+msgstr "Máy không hỗ trợ"
+
+msgid "Not supported by client"
+msgstr "Trình khách không hỗ trợ"
+
+msgid "Refused by client"
+msgstr "Trình khách từ chối"
+
+msgid "Reply too big"
+msgstr "Trả lời lại quá lớn"
+
+msgid "Responses lost"
+msgstr "Mất trả lời"
+
+msgid "Request denied"
+msgstr "Yêu cầu bị từ chối"
+
+msgid "Busted SNAC payload"
+msgstr "Làm mất trọng tải SNAC"
+
+msgid "Insufficient rights"
+msgstr "Không đủ quyền"
+
+msgid "In local permit/deny"
+msgstr "Nằm trong phạm vi bị giới hạn/từ chối cục bộ"
+
+msgid "Warning level too high (sender)"
+msgstr "Cấp cảnh báo quá cao (người gửi)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Cấp cảnh báo quá cao (người nhận)"
+
+msgid "User temporarily unavailable"
+msgstr "Tạm thời không có người dùng"
+
+msgid "No match"
+msgstr "Không tìm thấy"
+
+msgid "List overflow"
+msgstr "Tràn danh sách"
+
+msgid "Request ambiguous"
+msgstr "Yêu cầu không rõ ràng"
+
+msgid "Queue full"
+msgstr "Hàng đợi đã đầy"
+
+msgid "Not while on AOL"
+msgstr "Không phải khi trên AOL"
 
 msgid "Aquarius"
 msgstr "Bảo Bình"
@@ -8721,8 +8749,8 @@ msgid ""
 "\"Create New Conference\" if you'd like to create a new conference to invite "
 "this user to."
 msgstr ""
-"Hãy chọn một cuộc hội thảo trong danh sách bên dưới, để gửi cho người dùng %"
-"s một lời mời. Chọn mục « Tạo hội thảo mới » nếu bạn muốn tạo một cuộc hội "
+"Hãy chọn một cuộc hội thảo trong danh sách bên dưới, để gửi cho người dùng "
+"%s một lời mời. Chọn mục « Tạo hội thảo mới » nếu bạn muốn tạo một cuộc hội "
 "thảo mới vào đó cần mời người dùng này."
 
 msgid "Invite to Conference"
@@ -8793,8 +8821,8 @@ msgid ""
 "The identifier '%s' did not match any users in your Sametime community. This "
 "entry has been removed from your buddy list."
 msgstr ""
-"Bộ nhận diện « %s » không tương ứng với bất cứ người dùng nào trong công đồng "
-"Sametime. Mục này đã bị gỡ bỏ khỏi danh sách bạn bè của bạn."
+"Bộ nhận diện « %s » không tương ứng với bất cứ người dùng nào trong công "
+"đồng Sametime. Mục này đã bị gỡ bỏ khỏi danh sách bạn bè của bạn."
 
 #, c-format
 msgid ""
@@ -8903,8 +8931,8 @@ msgstr "Không tìm thấy"
 #, c-format
 msgid "The identifier '%s' did not match any users in your Sametime community."
 msgstr ""
-"Bộ nhận diện « %s » không tương ứng với bất cứ người dùng nào trong công đồng "
-"Sametime."
+"Bộ nhận diện « %s » không tương ứng với bất cứ người dùng nào trong công "
+"đồng Sametime."
 
 msgid "No Matches"
 msgstr "Không tìm thấy"
@@ -9550,8 +9578,8 @@ msgstr "Trao đổi mã khoá thất bại"
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr ""
-"Phục hồi phiên chạy tách rời đã thất bại. Nhấn « Tái kết nối » để tạo kết nối "
-"mới."
+"Phục hồi phiên chạy tách rời đã thất bại. Nhấn « Tái kết nối » để tạo kết "
+"nối mới."
 
 msgid "Performing key exchange"
 msgstr "Đang thực hiện trao đổi mã khoá"
@@ -12293,8 +12321,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s là một ứng dụng khách gửi tin nhắn dựa vào thư viện libpurple mà có khả "
 "năng kết nối cùng lúc tới nhiều dịch vụ tin nhắn khác nhau. %s được ghi bằng "
@@ -12841,16 +12869,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Bạn có chắc muốn xoá hoàn toàn bản ghi của cuộc thoại trong %s mà bắt đầu "
 "vào lúc %s không?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
 "Bạn có chắc muốn xoá hoàn toàn bản ghi hệ thống mà bắt đầu vào lúc %s không"
 
@@ -15121,11 +15149,13 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "Phần bổ sung này có ích để gỡ lỗi máy phục vụ hay trình khách kiểu XMPP."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
@@ -15134,78 +15164,91 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "Mặc định môi trường"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "Nơi ở"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr ""
 
-#. Components Page
+#. Installer Subsection Text
 #, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Tin Nhắn Pidgin"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "Lối tắt"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "Khởi chạy"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15214,29 +15257,30 @@ msgstr ""
 msgid "The installer is already running."
 msgstr "Tên hiệu « %s » đang được dùng."
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. URL Handler section
+#. Installer Subsection Text
 #, fuzzy
 msgid "URI Handlers"
 msgstr "Bộ quản lý URL « myim »"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Unknown reason."
+#~ msgstr "Không biết sao."
 
 #~ msgid "Artist"
 #~ msgstr "Nghệ sĩ"

@@ -25,10 +25,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.5.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:15-0400\n"
 "PO-Revision-Date: 2009-02-23 18:17+0100\n"
 "Last-Translator: Peter Bach <bach.peter@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
+"Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1361,6 +1362,7 @@ msgstr "Slet status"
 msgid "Saved Statuses"
 msgstr "Gemte statuser"
 
+#. title
 msgid "Title"
 msgstr "Titel"
 
@@ -1926,7 +1928,6 @@ msgstr "Fejl ved opløsning af %s: %d"
 msgid "Thread creation failure: %s"
 msgstr "Fejl ved oprettelse af tråd: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Ukendt grund"
 
@@ -3201,6 +3202,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Fornavn"
 
@@ -3961,6 +3965,7 @@ msgstr "Område"
 msgid "Postal Code"
 msgstr "Postnummer"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Land"
 
@@ -3975,8 +3980,6 @@ msgstr "Organisationsnavn"
 msgid "Organization Unit"
 msgstr "Organisatorisk enhed"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Job titel"
 
@@ -3984,6 +3987,7 @@ msgid "Role"
 msgstr "Rolle"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Fødselsdato"
 
@@ -5790,6 +5794,10 @@ msgstr "HTTP-metodeserver"
 msgid "Show custom smileys"
 msgstr "Vis tilpassede smileyer"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Kunne ikke oprette forbindelse"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "vink: vink en bruger for at få deres opmærksomhed"
 
@@ -6020,7 +6028,11 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -6114,7 +6126,7 @@ msgstr "SecurID-nøglen du indtastede er ugyldig."
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 #, fuzzy
 msgid "Nick Name"
 msgstr "Kælenavn"
@@ -6164,7 +6176,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "Sikkerhedsaktiveret"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "Indtast kode"
@@ -6198,6 +6210,11 @@ msgid "Status Message"
 msgstr "Status-besked"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "Modtaget beskeder"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "Mellemnavn"
 
@@ -6217,6 +6234,19 @@ msgstr "Tilslut med TCP"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Du er blevet smidt ud af %s: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Fejl fra server: \"Bad ticket\""
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Rum:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 #, fuzzy
@@ -7003,6 +7033,67 @@ msgstr "Kunne ikke tilslutte samtalerum"
 msgid "Invalid chat room name"
 msgstr "Ugyldigt navn på samtalerum"
 
+msgid "Invalid error"
+msgstr "Ugyldig fejl"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Kan ikke sende fil"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Kan ikke sende en mappe."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Kunne ikke sende besked."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Besked når afkoblet"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Kunne ikke sende besked. (%s)."
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Kunne ikke sende besked: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Kunne ikke sende besked til %s:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Kunne ikke sende besked til %s:"
+
 msgid "Thinking"
 msgstr ""
 
@@ -7170,120 +7261,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Filen %s er %s, som er større end den maksimale størrelse på %s."
-
-msgid "Invalid error"
-msgstr "Ugyldig fejl"
-
-msgid "Invalid SNAC"
-msgstr "Ugyldig SNAC"
-
-msgid "Rate to host"
-msgstr "Grænse til vært"
-
-msgid "Rate to client"
-msgstr "Grænse til klient"
-
-msgid "Service unavailable"
-msgstr "Tjeneste ikke tilgængelig"
-
-msgid "Service not defined"
-msgstr "Tjeneste ikke defineret"
-
-msgid "Obsolete SNAC"
-msgstr "Forældet SNAC"
-
-msgid "Not supported by host"
-msgstr "Ikke understøttet af vært"
-
-msgid "Not supported by client"
-msgstr "Ikke understøttet af klient"
-
-msgid "Refused by client"
-msgstr "Nægtet af klient"
-
-msgid "Reply too big"
-msgstr "Svar for stort"
-
-msgid "Responses lost"
-msgstr "Svar tabt"
-
-msgid "Request denied"
-msgstr "Anmodning nægtet"
-
-msgid "Busted SNAC payload"
-msgstr "Ødelagt SNAC payload"
-
-msgid "Insufficient rights"
-msgstr "Ikke nok rettigheder"
-
-msgid "In local permit/deny"
-msgstr "I den lokale tillad/nægt"
-
-msgid "Warning level too high (sender)"
-msgstr "Advarselsgrænse for høj (sender)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Advarselsgrænse for høj (modtager)"
-
-msgid "User temporarily unavailable"
-msgstr "Bruger midlertidigt utilgængelig"
-
-msgid "No match"
-msgstr "Ingen fundne"
-
-msgid "List overflow"
-msgstr "Liste overløb"
-
-msgid "Request ambiguous"
-msgstr "Anmodning flertydig"
-
-msgid "Queue full"
-msgstr "Kø fuld"
-
-msgid "Not while on AOL"
-msgstr "Ikke samtidig med AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "Kan ikke sende fil"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Kan ikke sende en mappe."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "Kunne ikke sende besked."
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "Besked når afkoblet"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7648,28 +7625,9 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Du har ikke modtaget %hu besked fra %s pga. en ukendt årsag."
 msgstr[1] "Du har ikke modtaget %hu beskeder fra %s pga. en ukendt årsag."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Kunne ikke sende besked. (%s)."
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Kunne ikke sende besked: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Kunne ikke sende besked til %s:"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Kunne ikke sende besked til %s:"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "Bruger oplysninger er ikke tilgængelige: %s"
-
-msgid "Unknown reason."
-msgstr "Ukendt fejl."
 
 msgid "Online Since"
 msgstr "Tilkoblet siden"
@@ -8101,6 +8059,75 @@ msgstr ""
 "Dette kræver en direkte forbindelse imellem to computere og er nødvendigt "
 "for billeder. Fordi din IP-adresse vil blive afsløret, kan det anses som en "
 "privatlivs risiko."
+
+msgid "Invalid SNAC"
+msgstr "Ugyldig SNAC"
+
+msgid "Rate to host"
+msgstr "Grænse til vært"
+
+msgid "Rate to client"
+msgstr "Grænse til klient"
+
+msgid "Service unavailable"
+msgstr "Tjeneste ikke tilgængelig"
+
+msgid "Service not defined"
+msgstr "Tjeneste ikke defineret"
+
+msgid "Obsolete SNAC"
+msgstr "Forældet SNAC"
+
+msgid "Not supported by host"
+msgstr "Ikke understøttet af vært"
+
+msgid "Not supported by client"
+msgstr "Ikke understøttet af klient"
+
+msgid "Refused by client"
+msgstr "Nægtet af klient"
+
+msgid "Reply too big"
+msgstr "Svar for stort"
+
+msgid "Responses lost"
+msgstr "Svar tabt"
+
+msgid "Request denied"
+msgstr "Anmodning nægtet"
+
+msgid "Busted SNAC payload"
+msgstr "Ødelagt SNAC payload"
+
+msgid "Insufficient rights"
+msgstr "Ikke nok rettigheder"
+
+msgid "In local permit/deny"
+msgstr "I den lokale tillad/nægt"
+
+msgid "Warning level too high (sender)"
+msgstr "Advarselsgrænse for høj (sender)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Advarselsgrænse for høj (modtager)"
+
+msgid "User temporarily unavailable"
+msgstr "Bruger midlertidigt utilgængelig"
+
+msgid "No match"
+msgstr "Ingen fundne"
+
+msgid "List overflow"
+msgstr "Liste overløb"
+
+msgid "Request ambiguous"
+msgstr "Anmodning flertydig"
+
+msgid "Queue full"
+msgstr "Kø fuld"
+
+msgid "Not while on AOL"
+msgstr "Ikke samtidig med AOL"
 
 msgid "Aquarius"
 msgstr "Vandmand"
@@ -12572,8 +12599,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s er en grafisk modulær beskedklient baseret på libpurple, der understøtter "
 "AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus "
@@ -13119,19 +13146,19 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Er du sikker på at du permanent vil slette loggen over samtalen i %s som er "
 "startet %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr ""
-"Er du sikker på at du permanent vil slette systemloggen som er startet ved %"
-"s?"
+"Er du sikker på at du permanent vil slette systemloggen som er startet ved "
+"%s?"
 
 msgid "Delete Log?"
 msgstr "Slet log?"
@@ -15491,6 +15518,7 @@ msgstr ""
 "Dette udvidelsesmodul er nyttigt for fejlsøgning af XMPP-servere eller "
 "klienter."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15498,6 +15526,7 @@ msgstr ""
 "$(^Name) er frigivet under GPL licensen. Licensen er kun medtaget her til "
 "generel orientering. $_CLICK"
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 "Et multi-platform grafisk interface udviklingsværktøj, bruges af Pidgin"
@@ -15507,79 +15536,92 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Basale Pidgin filer og biblioteker"
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "Standardskrivebord"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ kørselstidsversion"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "Beliggenhed"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "Næste >"
 
-#. Components Page
+#. Installer Subsection Text
 #, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Pidgin Internet Besked"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "Genvej"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "Opstart"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15587,7 +15629,6 @@ msgstr ""
 msgid "The installer is already running."
 msgstr ""
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
@@ -15595,22 +15636,24 @@ msgstr ""
 "Afinstallationen kunne ikke finde Pidgin i registreringsdatabasen.$"
 "\\rMuligvis har en anden bruger installeret programmet."
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
 msgstr ""
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr "Besøg Pidgin's hjemmeside"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikke tilladelse til at afinstallere dette program."
+
+#~ msgid "Unknown reason."
+#~ msgstr "Ukendt fejl."
 
 #~ msgid "Artist"
 #~ msgstr "Kunstner"

@@ -11,10 +11,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2010-05-05 19:21+0100\n"
 "Last-Translator: loptosko <loptosko@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
+"Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1352,6 +1353,7 @@ msgstr "Odstrániť status"
 msgid "Saved Statuses"
 msgstr "Uložené statusy"
 
+#. title
 msgid "Title"
 msgstr "Nadpis"
 
@@ -1905,7 +1907,6 @@ msgstr "Chyba pri preklade %s na punycode: %d"
 msgid "Thread creation failure: %s"
 msgstr "Nepodarilo sa vytvoriť vlákno: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Neznáma príčina"
 
@@ -3163,6 +3164,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Krstné meno"
 
@@ -3903,6 +3907,7 @@ msgstr "Región"
 msgid "Postal Code"
 msgstr "Poštové smerovacie číslo"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Krajina"
 
@@ -3917,8 +3922,6 @@ msgstr "Meno organizácie"
 msgid "Organization Unit"
 msgstr "Organizačná jednotka"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Názov zamestnania"
 
@@ -3926,6 +3929,7 @@ msgid "Role"
 msgstr "Postavenie"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Dátum narodenia"
 
@@ -5658,6 +5662,10 @@ msgstr "Server HTTP"
 msgid "Show custom smileys"
 msgstr "Zobraziť vlastných smajlíkov"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Nedá sa vytvoriť spojenie"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: postrčte používateľa pre získanie ich pozornosti"
 
@@ -5879,7 +5887,11 @@ msgstr "Profil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Údaje z vášho profilu nie sú načítané. Prosím, skúste to znovu neskôr."
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -5957,7 +5969,7 @@ msgstr "Zadaný PIN má neplatnú dĺžku [7-10]."
 msgid "MXit Login Name"
 msgstr "MXit prihlasovacie meno"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "Prezývka"
 
@@ -6005,7 +6017,7 @@ msgstr "Nezadali ste bezpečnostný kód"
 msgid "Security Code"
 msgstr "Bezpečnostný kód"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Zadajte bezpečnostný kód"
 
@@ -6031,6 +6043,11 @@ msgstr "Načítava sa ponuka..."
 msgid "Status Message"
 msgstr "Správa statusu"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "Prijaté správy"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "Skryté číslo"
 
@@ -6047,6 +6064,19 @@ msgstr "Pripojiť sa cez HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Zapnúť úvodnú vyskakovaciu obrazovku"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Boli ste vykopnutý: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Nesprávny lístok"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Miestnosť:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6821,6 +6851,63 @@ msgstr "Nepodarilo sa pripojiť do miestnosti"
 msgid "Invalid chat room name"
 msgstr "Chybný názov miestnosti"
 
+msgid "Invalid error"
+msgstr "Nesprávna chyba"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "Nie je možné prijať správu kvôli rodičovským obmedzeniam"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "Nie je možné poslať SMS bez odsúhlasenia podmienok"
+
+msgid "Cannot send SMS"
+msgstr "Nepodarilo sa poslať SMS"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "Nie je možné poslať SMS do tejto krajiny."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "Nedá sa odoslať SMS do neznámej krajiny"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Účty robotov nemôžu zakladať rozhovory"
+
+msgid "Bot account cannot IM this user"
+msgstr "Účet robota nemôže komunikovať s týmto používateľom"
+
+msgid "Bot account reached IM limit"
+msgstr "Účet robota dosiahol limit komunikácie"
+
+msgid "Bot account reached daily IM limit"
+msgstr "Účet robota dosiahol denný limit komunikácie"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "Účet robota dosiahol mesačný limit komunikácie"
+
+msgid "Unable to receive offline messages"
+msgstr "Nepodarilo sa prijať offline správy."
+
+msgid "Offline message store full"
+msgstr "Úložisko offline správ je plné"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Nepodarilo sa odoslať správu: %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Nemôžem odoslať správu: %s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Nemôžem poslať správu k %s: %s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Nemôžem poslať správu k %s: %s"
+
 msgid "Thinking"
 msgstr "Rozmýšľa"
 
@@ -6970,116 +7057,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "Súbor %s je %s, ktorý je väčší ako maximálna veľkosť %s."
-
-msgid "Invalid error"
-msgstr "Nesprávna chyba"
-
-msgid "Invalid SNAC"
-msgstr "Chybné SNAC"
-
-msgid "Rate to host"
-msgstr "Hodnotiť hostiteľa"
-
-msgid "Rate to client"
-msgstr "Hodnotiť klienta"
-
-msgid "Service unavailable"
-msgstr "Služba nedostupná"
-
-msgid "Service not defined"
-msgstr "Služba nebola definovaná"
-
-msgid "Obsolete SNAC"
-msgstr "Zastaralé SNAC"
-
-msgid "Not supported by host"
-msgstr "Nepodporované hostiteľom"
-
-msgid "Not supported by client"
-msgstr "Nepodporované klientom"
-
-msgid "Refused by client"
-msgstr "Odmietnuté klientom"
-
-msgid "Reply too big"
-msgstr "Odpoveď je príliš veľká"
-
-msgid "Responses lost"
-msgstr "Odpovede stratené"
-
-msgid "Request denied"
-msgstr "Požiadavka zamietnutá"
-
-msgid "Busted SNAC payload"
-msgstr "Poškodené SNAC údaje"
-
-msgid "Insufficient rights"
-msgstr "Nedostatočné práva"
-
-msgid "In local permit/deny"
-msgstr "V miestne povolených/zakázaných"
-
-msgid "Warning level too high (sender)"
-msgstr "Úroveň upozornenia je príliš vysoká (odosielateľa)"
-
-msgid "Warning level too high (receiver)"
-msgstr "Úroveň upozornenia je príliš vysoká (prijímateľa)"
-
-msgid "User temporarily unavailable"
-msgstr "Používateľ je dočasne nedostupný"
-
-msgid "No match"
-msgstr "Žiadny výskyt"
-
-msgid "List overflow"
-msgstr "Pretečenie zoznamu"
-
-msgid "Request ambiguous"
-msgstr "Nejednoznačná požiadavka"
-
-msgid "Queue full"
-msgstr "Rad je plný"
-
-msgid "Not while on AOL"
-msgstr "Nie, pokým ste na AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "Nie je možné prijať správu kvôli rodičovským obmedzeniam"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "Nie je možné poslať SMS bez odsúhlasenia podmienok"
-
-msgid "Cannot send SMS"
-msgstr "Nepodarilo sa poslať SMS"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "Nie je možné poslať SMS do tejto krajiny."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "Nedá sa odoslať SMS do neznámej krajiny"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "Účty robotov nemôžu zakladať rozhovory"
-
-msgid "Bot account cannot IM this user"
-msgstr "Účet robota nemôže komunikovať s týmto používateľom"
-
-msgid "Bot account reached IM limit"
-msgstr "Účet robota dosiahol limit komunikácie"
-
-msgid "Bot account reached daily IM limit"
-msgstr "Účet robota dosiahol denný limit komunikácie"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "Účet robota dosiahol mesačný limit komunikácie"
-
-msgid "Unable to receive offline messages"
-msgstr "Nepodarilo sa prijať offline správy."
-
-msgid "Offline message store full"
-msgstr "Úložisko offline správ je plné"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7438,27 +7415,8 @@ msgstr[1] "Z neznámeho dôvodu ste prišli o %hu správu od používateľa %s."
 msgstr[2] "Z neznámeho dôvodu ste prišli o %hu správy od používateľa %s."
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Nepodarilo sa odoslať správu: %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Nemôžem odoslať správu: %s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Nemôžem poslať správu k %s: %s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Nemôžem poslať správu k %s: %s"
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "Informácie o používateľovi sú nedostupné: %s"
-
-msgid "Unknown reason."
-msgstr "Neznámy dôvod."
 
 msgid "Online Since"
 msgstr "Prihlásený od"
@@ -7891,6 +7849,75 @@ msgstr ""
 "Na to je potrebné priame pripojenie medzi dvoma počítačmi a je nutné na "
 "prenos obrázkov v správach.  Pretože pri tom bude odhalená vaša IP adresa, "
 "môže to byť hodnotené ako ohrozenie súkromia."
+
+msgid "Invalid SNAC"
+msgstr "Chybné SNAC"
+
+msgid "Rate to host"
+msgstr "Hodnotiť hostiteľa"
+
+msgid "Rate to client"
+msgstr "Hodnotiť klienta"
+
+msgid "Service unavailable"
+msgstr "Služba nedostupná"
+
+msgid "Service not defined"
+msgstr "Služba nebola definovaná"
+
+msgid "Obsolete SNAC"
+msgstr "Zastaralé SNAC"
+
+msgid "Not supported by host"
+msgstr "Nepodporované hostiteľom"
+
+msgid "Not supported by client"
+msgstr "Nepodporované klientom"
+
+msgid "Refused by client"
+msgstr "Odmietnuté klientom"
+
+msgid "Reply too big"
+msgstr "Odpoveď je príliš veľká"
+
+msgid "Responses lost"
+msgstr "Odpovede stratené"
+
+msgid "Request denied"
+msgstr "Požiadavka zamietnutá"
+
+msgid "Busted SNAC payload"
+msgstr "Poškodené SNAC údaje"
+
+msgid "Insufficient rights"
+msgstr "Nedostatočné práva"
+
+msgid "In local permit/deny"
+msgstr "V miestne povolených/zakázaných"
+
+msgid "Warning level too high (sender)"
+msgstr "Úroveň upozornenia je príliš vysoká (odosielateľa)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Úroveň upozornenia je príliš vysoká (prijímateľa)"
+
+msgid "User temporarily unavailable"
+msgstr "Používateľ je dočasne nedostupný"
+
+msgid "No match"
+msgstr "Žiadny výskyt"
+
+msgid "List overflow"
+msgstr "Pretečenie zoznamu"
+
+msgid "Request ambiguous"
+msgstr "Nejednoznačná požiadavka"
+
+msgid "Queue full"
+msgstr "Rad je plný"
+
+msgid "Not while on AOL"
+msgstr "Nie, pokým ste na AOL"
 
 msgid "Aquarius"
 msgstr "Vodnár"
@@ -12297,8 +12324,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "Program %s je komunikačný klient založený na knižnici libpurple, ktorý "
 "podporuje viaceré komunikačné služby súčastne.  Program %s je vytvorený v "
@@ -12850,15 +12877,15 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Naozaj chcete natrvalo odstrániť záznam rozhovoru na %s, ktorá začala %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "Naozaj chcete natrvalo odstrániť systémový záznam, ktorý začal %s?"
 
 msgid "Delete Log?"
@@ -15111,6 +15138,7 @@ msgstr "Odosielanie a prijímanie nespracovaných XMPP slôh."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Tento modul je vhodný na ladenie XMPP serverov alebo klientov."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15118,6 +15146,7 @@ msgstr ""
 "$(^Name) je vydaný pod GPL licenciou. Táto licencia je len pre informačné "
 "účely. $_CLICK"
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "Multiplatformové GUI nástroje, používané Pidgin-om"
 
@@ -15126,75 +15155,88 @@ msgid ""
 "again."
 msgstr "Pidgin je práve spustený. Vypnite ho a skúste znova."
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Jadro Pidgin-u a nevyhnutné DLL súbory"
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr "Vytvoriť odkaz na Pidgin v Štart Menu"
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Vytvoriť zástupcu pre Pidgin na pracovnej ploche"
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Desktop"
 msgstr "Plocha"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ Runtime prostredie (nevyhnutné)"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "Lokalita"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "Ďalej >"
 
-#. Components Page
+#. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Pidgin Instant Messaging Klient (nevyhnutné)"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Shortcuts"
 msgstr "Zástupcovia"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr "Zástupcovia pre Pidgin"
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr "Podpora kontroly pravopisu"
 
+#. Installer Subsection Text
 msgid "Start Menu"
 msgstr "Štart Menu"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "Podpora kontroly pravopisu (Nutné pripojenie k Internetu)"
@@ -15202,7 +15244,6 @@ msgstr "Podpora kontroly pravopisu (Nutné pripojenie k Internetu)"
 msgid "The installer is already running."
 msgstr "Inštalácia je už spustená"
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
@@ -15210,22 +15251,24 @@ msgstr ""
 "Inštalátoru sa nepodarilo nájsť položky v registri pre Pidgin.$\\rJe možné, "
 "že túto aplikáciu nainštaloval iný používateľ."
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
 msgstr ""
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr "Navštíviť webstránku Windows Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
+
+#~ msgid "Unknown reason."
+#~ msgstr "Neznámy dôvod."
 
 #~ msgid "Current Mood"
 #~ msgstr "Aktuálna nálada"
@@ -16033,14 +16076,14 @@ msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
 #~ msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 #~ msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
 #~ msgstr[0] ""
-#~ "Používateľ %s vyžaduje od používateľa %s potvrdenie %d súborov: %s (%.2f %"
-#~ "s)%s%s"
+#~ "Používateľ %s vyžaduje od používateľa %s potvrdenie %d súborov: %s (%.2f "
+#~ "%s)%s%s"
 #~ msgstr[1] ""
-#~ "Používateľ %s vyžaduje od používateľa %s potvrdenie %d súboru: %s (%.2f %"
-#~ "s)%s%s"
+#~ "Používateľ %s vyžaduje od používateľa %s potvrdenie %d súboru: %s (%.2f "
+#~ "%s)%s%s"
 #~ msgstr[2] ""
-#~ "Používateľ %s vyžaduje od používateľa %s potvrdenie %d súborov: %s (%.2f %"
-#~ "s)%s%s"
+#~ "Používateľ %s vyžaduje od používateľa %s potvrdenie %d súborov: %s (%.2f "
+#~ "%s)%s%s"
 
 #~ msgid "%s requests you to send them a file"
 #~ msgstr "%s od vás požaduje súbor"
@@ -16473,8 +16516,8 @@ msgstr "Nemáte oprávnenie na odinštaláciu tejto aplikácie."
 #~ "contact containing %s and %d other buddies from your buddy list.  Do you "
 #~ "want to continue?"
 #~ msgstr ""
-#~ "Z vášho zoznamu priateľov sa chystáte odstrániť kontakt, ktorý obsahuje %"
-#~ "s a %d ďalších priateľov. Chcete pokračovať?Z vášho zoznamu priateľov sa "
+#~ "Z vášho zoznamu priateľov sa chystáte odstrániť kontakt, ktorý obsahuje "
+#~ "%s a %d ďalších priateľov. Chcete pokračovať?Z vášho zoznamu priateľov sa "
 #~ "chystáte odstrániť kontakt, ktorý obsahuje %s a %d ďalšieho priateľa. "
 #~ "Chcete pokračovať?Z vášho zoznamu priateľov sa chystáte odstrániť "
 #~ "kontakt, ktorý obsahuje %s a %d ďalších priateľov. Chcete pokračovať?"

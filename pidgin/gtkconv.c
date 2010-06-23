@@ -282,6 +282,15 @@ default_formatize(PidginConversation *c)
 }
 
 static void
+conversation_entry_clear(PidginConversation *gtkconv)
+{
+	GtkIMHtml *imhtml = GTK_IMHTML(gtkconv->entry);
+	gtk_source_undo_manager_begin_not_undoable_action(imhtml->undo_manager);
+	gtk_imhtml_clear(imhtml);
+	gtk_source_undo_manager_end_not_undoable_action(imhtml->undo_manager);
+}
+
+static void
 clear_formatting_cb(GtkIMHtml *imhtml, PidginConversation *gtkconv)
 {
 	default_formatize(gtkconv);
@@ -557,7 +566,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	account = purple_conversation_get_account(conv);
 
 	if (check_for_and_do_command(conv)) {
-		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+		conversation_entry_clear(gtkconv);
 		return;
 	}
 
@@ -612,7 +621,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	g_free(clean);
 	g_free(buf);
 
-	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+	conversation_entry_clear(gtkconv);
 	gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
 }
 

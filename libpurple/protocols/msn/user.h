@@ -57,8 +57,8 @@ typedef enum
  * put this info in in a separate struct to save memory because we
  * allocate an MsnUser struct for each buddy, but we generally only
  * need this information for a small percentage of our buddies
- * (usually less than 1%).  Putting it in a separate struct saves
- * makes MsnUser smaller by the size of a few pointers.
+ * (usually less than 1%).  Putting it in a separate struct makes
+ * MsnUser smaller by the size of a few pointers.
  */
 typedef struct _MsnUserExtendedInfo
 {

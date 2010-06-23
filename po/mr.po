@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2010-05-03 14:42+0530\n"
 "Last-Translator: Sandeep Shedmake <sshedmak@redhat.com>\n"
 "Language-Team: Marathi <maajhe-sanganak@freelists.org>\n"
+"Language: mr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1323,6 +1324,7 @@ msgstr "सद्यःस्थिती नष्ट करा"
 msgid "Saved Statuses"
 msgstr "जतन केलेली स्थिर उपयुक्तता"
 
+#. title
 msgid "Title"
 msgstr "शीर्षक"
 
@@ -1872,7 +1874,6 @@ msgstr "%s ला पुनीकोड मध्ये रूपांतरी
 msgid "Thread creation failure: %s"
 msgstr "संबद्ध संदेशमालिका निर्मिती  अयशस्वी झाली: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "अपरिचीत कारण"
 
@@ -3128,6 +3129,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "प्रथमनाव"
 
@@ -3862,6 +3866,7 @@ msgstr "प्रदेश"
 msgid "Postal Code"
 msgstr "पोस्टाचा कोड"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "देश"
 
@@ -3876,8 +3881,6 @@ msgstr "संस्थेचे नाव"
 msgid "Organization Unit"
 msgstr "संस्थेचा विभाग"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "कार्याचे शिर्षक"
 
@@ -3885,6 +3888,7 @@ msgid "Role"
 msgstr "भुमिका"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "वाढदिवस"
 
@@ -5597,6 +5601,10 @@ msgstr "HTTP पद्धत सर्व्हर"
 msgid "Show custom smileys"
 msgstr "इच्छित स्माईलीज (हास्य मुद्रा)दाखवा"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "जोडणी निर्माण करण्यात असमर्थ"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "कोपरखळी:वापरकर्ता त्यांचे लक्ष वेधणारी कोपरखळी "
 
@@ -5811,7 +5819,11 @@ msgstr "माहितीलेख"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "प्रोफाइल माहिती अजूनही प्राप्त झाली नाही. कृपया पुढे पुनः प्रयत्न करा."
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -5885,7 +5897,7 @@ msgstr "दिलेल्या PIN ची लांबी अवैध आह�
 msgid "MXit Login Name"
 msgstr "MXit प्रवेश नाव"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "टोपणनाव"
 
@@ -5930,7 +5942,7 @@ msgstr "तुम्ही सुरक्षा कोड दिले ना�
 msgid "Security Code"
 msgstr "सुरक्षा कोड"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "सुरक्षा कोड द्या"
 
@@ -5956,6 +5968,11 @@ msgstr "मेन्यू लोड करत आहे..."
 msgid "Status Message"
 msgstr "स्थिती संदेश"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "प्राप्त झालेले संदेश"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "लपलेले क्रमांक"
 
@@ -5972,6 +5989,19 @@ msgstr "HTTP द्वारे जोडणी करा"
 
 msgid "Enable splash-screen popup"
 msgstr "स्पलॅश-पडदा पॉपअप समर्थीत करा"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "तुम्हाला भहिष्कार केले: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "चुकीचे तिकीट"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "कक्ष (_R):"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6734,6 +6764,63 @@ msgstr "संभाषण रूममध्ये सामिल होणे
 msgid "Invalid chat room name"
 msgstr "संभाषण रूमचे नाव अवैध आहे"
 
+msgid "Invalid error"
+msgstr "अवैध दोष"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "पॅरेंटल कंट्रोलमुळे IM प्राप्त झाले नाही"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "संज्ञा न स्वीकारता SMS पाठवणे अशक्य"
+
+msgid "Cannot send SMS"
+msgstr "SMS पाठवणे अशक्य"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "या देशात SMS पाठवणे अशक्य"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "अपरिचीत देशाकडे SMS पाठवणे अशक्य"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "Bot खाते IMs सुरू करू शकत नाही"
+
+msgid "Bot account cannot IM this user"
+msgstr "Bot खाते या वापरकर्तास IM करू शकत नाही"
+
+msgid "Bot account reached IM limit"
+msgstr "Bot खाते IM मर्यादापर्यंत पोहचले"
+
+msgid "Bot account reached daily IM limit"
+msgstr "Bot खाते रोजच्या IM मर्यादापर्यंत पोहचले"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "Bot खाते महिन्याच्या IM मर्यादापर्यंत पोहचले"
+
+msgid "Unable to receive offline messages"
+msgstr "ऑफलाइन संदेश प्राप्त करण्यास अशक्य"
+
+msgid "Offline message store full"
+msgstr "ऑफलाइन संदेश साठा रिकामा नाही"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "संदेश पाठवणे अशक्य: %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "संदेश पाठवण्यास असमर्थ: %s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%s करीता संदेश पाठवणे अशक्य: %s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "%s करीता संदेश पाठवण्यास अशक्य: %s"
+
 msgid "Thinking"
 msgstr "विचार करत आङे"
 
@@ -6883,116 +6970,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "फाइल %s ही %s आहे जी %s च्या कमाल आकारापेक्षा खूपच मोठी आहे."
-
-msgid "Invalid error"
-msgstr "अवैध दोष"
-
-msgid "Invalid SNAC"
-msgstr "अवैध SNAC"
-
-msgid "Rate to host"
-msgstr "आयोजकाचे प्रमाण"
-
-msgid "Rate to client"
-msgstr "ग्राहकाचे प्रमाण"
-
-msgid "Service unavailable"
-msgstr "सेवा अनुपलब्ध"
-
-msgid "Service not defined"
-msgstr "सेवा व्याख्यित केली नाही "
-
-msgid "Obsolete SNAC"
-msgstr "अप्रचलित  SNAC"
-
-msgid "Not supported by host"
-msgstr "आयोजकाकडून आधार नाही"
-
-msgid "Not supported by client"
-msgstr "ग्राहकाकडून आधार नाही"
-
-msgid "Refused by client"
-msgstr "ग्राहकाकडून स्वीकार केला नाही"
-
-msgid "Reply too big"
-msgstr "उत्तर खूपच मोठे आहे "
-
-msgid "Responses lost"
-msgstr " प्रतिसाद हरवले "
-
-msgid "Request denied"
-msgstr "विनंती नाकारली"
-
-msgid "Busted SNAC payload"
-msgstr " SNAC पेलोडवर तुटले"
-
-msgid "Insufficient rights"
-msgstr "अपूरे अधिकार"
-
-msgid "In local permit/deny"
-msgstr "स्थानिक परवानगी / अमान्य करणे"
-
-msgid "Warning level too high (sender)"
-msgstr "सावधानता स्तर खूप जास्त आहे (प्रेषक)"
-
-msgid "Warning level too high (receiver)"
-msgstr "सावधानता स्तर खूप जास्त आहे (श्रोता)"
-
-msgid "User temporarily unavailable"
-msgstr "वापरकर्ता तात्पूरता उपलब्ध नाही "
-
-msgid "No match"
-msgstr "जुळवणी नाही"
-
-msgid "List overflow"
-msgstr "यादी पूर्ण भरली आहे "
-
-msgid "Request ambiguous"
-msgstr "संदिग्ध विनंती"
-
-msgid "Queue full"
-msgstr "रांग पूर्ण आहे"
-
-msgid "Not while on AOL"
-msgstr "AOL वर जेंव्हा नाही"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "पॅरेंटल कंट्रोलमुळे IM प्राप्त झाले नाही"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "संज्ञा न स्वीकारता SMS पाठवणे अशक्य"
-
-msgid "Cannot send SMS"
-msgstr "SMS पाठवणे अशक्य"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "या देशात SMS पाठवणे अशक्य"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "अपरिचीत देशाकडे SMS पाठवणे अशक्य"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "Bot खाते IMs सुरू करू शकत नाही"
-
-msgid "Bot account cannot IM this user"
-msgstr "Bot खाते या वापरकर्तास IM करू शकत नाही"
-
-msgid "Bot account reached IM limit"
-msgstr "Bot खाते IM मर्यादापर्यंत पोहचले"
-
-msgid "Bot account reached daily IM limit"
-msgstr "Bot खाते रोजच्या IM मर्यादापर्यंत पोहचले"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "Bot खाते महिन्याच्या IM मर्यादापर्यंत पोहचले"
-
-msgid "Unable to receive offline messages"
-msgstr "ऑफलाइन संदेश प्राप्त करण्यास अशक्य"
-
-msgid "Offline message store full"
-msgstr "ऑफलाइन संदेश साठा रिकामा नाही"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7333,27 +7310,8 @@ msgstr[0] "अज्ञात कारणाने %2$s पासून आप�
 msgstr[1] "अज्ञात कारणाने %2$s पासून आपण %1$hu संदेश मुकाल."
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "संदेश पाठवणे अशक्य: %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "संदेश पाठवण्यास असमर्थ: %s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "%s करीता संदेश पाठवणे अशक्य: %s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "%s करीता संदेश पाठवण्यास अशक्य: %s"
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "वापरकर्ता माहिती उपलब्ध नाही: %s"
-
-msgid "Unknown reason."
-msgstr "अज्ञात कारण."
 
 msgid "Online Since"
 msgstr "पासून चालू  आहे"
@@ -7765,6 +7723,75 @@ msgid ""
 msgstr ""
 "याला दोन संगणकामध्ये  आणि  IM चित्राकरता प्रत्यक्ष जुळणी आवश्यक आहे.  कारण आपला  IP "
 "पत्ता दाखवेल, हे कदाचित खाजगी  जोखिम म्हणुन विचारात घेतले जाईल."
+
+msgid "Invalid SNAC"
+msgstr "अवैध SNAC"
+
+msgid "Rate to host"
+msgstr "आयोजकाचे प्रमाण"
+
+msgid "Rate to client"
+msgstr "ग्राहकाचे प्रमाण"
+
+msgid "Service unavailable"
+msgstr "सेवा अनुपलब्ध"
+
+msgid "Service not defined"
+msgstr "सेवा व्याख्यित केली नाही "
+
+msgid "Obsolete SNAC"
+msgstr "अप्रचलित  SNAC"
+
+msgid "Not supported by host"
+msgstr "आयोजकाकडून आधार नाही"
+
+msgid "Not supported by client"
+msgstr "ग्राहकाकडून आधार नाही"
+
+msgid "Refused by client"
+msgstr "ग्राहकाकडून स्वीकार केला नाही"
+
+msgid "Reply too big"
+msgstr "उत्तर खूपच मोठे आहे "
+
+msgid "Responses lost"
+msgstr " प्रतिसाद हरवले "
+
+msgid "Request denied"
+msgstr "विनंती नाकारली"
+
+msgid "Busted SNAC payload"
+msgstr " SNAC पेलोडवर तुटले"
+
+msgid "Insufficient rights"
+msgstr "अपूरे अधिकार"
+
+msgid "In local permit/deny"
+msgstr "स्थानिक परवानगी / अमान्य करणे"
+
+msgid "Warning level too high (sender)"
+msgstr "सावधानता स्तर खूप जास्त आहे (प्रेषक)"
+
+msgid "Warning level too high (receiver)"
+msgstr "सावधानता स्तर खूप जास्त आहे (श्रोता)"
+
+msgid "User temporarily unavailable"
+msgstr "वापरकर्ता तात्पूरता उपलब्ध नाही "
+
+msgid "No match"
+msgstr "जुळवणी नाही"
+
+msgid "List overflow"
+msgstr "यादी पूर्ण भरली आहे "
+
+msgid "Request ambiguous"
+msgstr "संदिग्ध विनंती"
+
+msgid "Queue full"
+msgstr "रांग पूर्ण आहे"
+
+msgid "Not while on AOL"
+msgstr "AOL वर जेंव्हा नाही"
 
 msgid "Aquarius"
 msgstr "कुंभ रास"
@@ -12120,15 +12147,15 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s ग्राफिकल मॉड्यूलर संदेश क्लाएंट, libpurple वर आधारीत आहे एकाचवेळी अनेक संदेशवाहक "
 "सर्व्हिसेस् सह जोडणी करण्यास सक्षम आहे.  %s GTK+ चा वापर करून C मध्ये लिहीले आहे.  %s is "
 "released, and may be modified and redistributed,  under the terms of the GPL "
 "version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 
 #, c-format
 msgid ""
@@ -12664,16 +12691,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "%s वर सुरू झालेल्या %sच्या मधील  संवादाच्या लॉगना कायमस्वरूपी काढण्यास आपण निश्चित आहात "
 "का?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "%s वर सुरू झालेल्या  पद्धती लॉगना कायमस्वरूपी काढण्यास आपण निश्चित आहात का?"
 
 msgid "Delete Log?"
@@ -14909,11 +14936,13 @@ msgstr "कच्चे XMPP कडवी पाठवा आणि मिळव
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "हे प्लगईन XMPP सर्व्हरच्या डिबगिंगसाठी किंवा ग्राहकांसाठी उपयोगी आहे."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
@@ -14922,78 +14951,91 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "डेस्कटॉप पूर्वनिर्धारीत"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "ठिकाण"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr ""
 
-#. Components Page
+#. Installer Subsection Text
 #, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Pidgin इंटरनेट संदेशवाहक"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "शॉर्टकट"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "प्रारंभ"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15002,29 +15044,30 @@ msgstr ""
 msgid "The installer is already running."
 msgstr "टोपणनाव \"%s\" आधिपासूनच वापरले आहे."
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. URL Handler section
+#. Installer Subsection Text
 #, fuzzy
 msgid "URI Handlers"
 msgstr "myim URL हँडलर"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Unknown reason."
+#~ msgstr "अज्ञात कारण."
 
 #~ msgid "Current Mood"
 #~ msgstr "सध्याचा मूड"

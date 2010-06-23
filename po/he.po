@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-20 14:09-0700\n"
-"PO-Revision-Date: 2010-05-10 15:36+0200\n"
+"POT-Creation-Date: 2010-05-30 23:15-0400\n"
+"PO-Revision-Date: 2010-05-24 15:59+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at g mail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "Language: he\n"
@@ -1325,6 +1325,7 @@ msgstr "מחק מצב"
 msgid "Saved Statuses"
 msgstr "סטטוסים נשמרו"
 
+#. title
 msgid "Title"
 msgstr "תואר"
 
@@ -3104,6 +3105,9 @@ msgid "UIN"
 msgstr "מספר זיהוי"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "שם פרטי"
 
@@ -3829,6 +3833,7 @@ msgstr "איזור"
 msgid "Postal Code"
 msgstr "מיקוד"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "מדינה"
 
@@ -3843,8 +3848,6 @@ msgstr "שם האירגון"
 msgid "Organization Unit"
 msgstr "מחלקה"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "תואר"
 
@@ -3852,6 +3855,7 @@ msgid "Role"
 msgstr "תפקיד"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "יום הולדת"
 
@@ -5557,6 +5561,9 @@ msgstr "פעולת שרת-HTTP"
 msgid "Show custom smileys"
 msgstr "הצג סמייליים שלי"
 
+msgid "Allow direct connections"
+msgstr "אפשר חיבורים ישירים"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: שלח דחיפה לאיש קשר כדי להשיג את תשומת ליבם"
 
@@ -5771,7 +5778,11 @@ msgstr "פרופיל"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "פרטי הפרופיל שלך עוד לא התקבלו. יש לנסות שנית מאוחר יותר."
 
+msgid "Your MXitId"
+msgstr "מזהה MXit שלך"
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "מספר זיהוי"
 
@@ -5845,7 +5856,7 @@ msgstr "ה-PIN שהזנת בעל אורך לא-חוקי [7-10[."
 msgid "MXit Login Name"
 msgstr "שם משתמש MXit"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "כינוי"
 
@@ -5890,7 +5901,7 @@ msgstr "לא הזנת את קוד האבטחה"
 msgid "Security Code"
 msgstr "קוד אבטחה"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "הזן קוד אבטחה"
 
@@ -5916,6 +5927,10 @@ msgstr "טוען תפריט..."
 msgid "Status Message"
 msgstr "הודעת מצב"
 
+msgid "Rejection Message"
+msgstr "הודעת דחייה"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "מספר סמוי"
 
@@ -5932,6 +5947,19 @@ msgstr "התחבר בעזרת HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "אפשר פתיחת חלון-הקדמה"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "נבעטת: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "כרטיס לא תקין"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_חדר:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7637,6 +7665,75 @@ msgid ""
 msgstr ""
 "זה דורש חיבור ישיר בין שני המחשבים, ונחוץ עבור תמונות בהודעות. מכיוון שכתובת "
 "ה-IP שלך תיחשף, ייתכן וזה ייחשב כסיכון לפרטיותך."
+
+msgid "Invalid SNAC"
+msgstr "SNAC לא תקף"
+
+msgid "Rate to host"
+msgstr "דירוג למארח"
+
+msgid "Rate to client"
+msgstr "דירוג ללקוח"
+
+msgid "Service unavailable"
+msgstr "השירות אינו זמין"
+
+msgid "Service not defined"
+msgstr "שירות אינו מוגדר"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC מיושן"
+
+msgid "Not supported by host"
+msgstr "לא נתמך על-ידי השרת"
+
+msgid "Not supported by client"
+msgstr "לא נתמך על-ידי הלקוח"
+
+msgid "Refused by client"
+msgstr "החיבור נדחה על ידי הלקוח."
+
+msgid "Reply too big"
+msgstr "המענה גדול מדיי"
+
+msgid "Responses lost"
+msgstr "אבדו המשובים"
+
+msgid "Request denied"
+msgstr "הבקשה נדחית"
+
+msgid "Busted SNAC payload"
+msgstr "מידע פגום ב-SNAC"
+
+msgid "Insufficient rights"
+msgstr "אין די הרשאות"
+
+msgid "In local permit/deny"
+msgstr "באישור/שלילה מקומיים"
+
+msgid "Warning level too high (sender)"
+msgstr "רמת אזהרה גבוהה מדי (שולח("
+
+msgid "Warning level too high (receiver)"
+msgstr "רמת אזהרה גבוהה מדי (מקבל)"
+
+msgid "User temporarily unavailable"
+msgstr "המשתמש אינו זמין כרגע"
+
+msgid "No match"
+msgstr "אין התאמה"
+
+msgid "List overflow"
+msgstr "גלישת מגבולות הרשימה"
+
+msgid "Request ambiguous"
+msgstr "בקשה לא ברורה"
+
+msgid "Queue full"
+msgstr "התור מלא"
+
+msgid "Not while on AOL"
+msgstr "לא בזמן שהות ב-AOL"
 
 msgid "Aquarius"
 msgstr "דלי"
@@ -11722,9 +11819,8 @@ msgstr "אפריקאנס"
 msgid "Arabic"
 msgstr "ערבית"
 
-#, fuzzy
 msgid "Assamese"
-msgstr "מבוייש"
+msgstr "אסאמית"
 
 msgid "Belarusian Latin"
 msgstr "לטינית בלארוסית"
@@ -11852,9 +11948,8 @@ msgstr "לאית"
 msgid "Macedonian"
 msgstr "מקדונית"
 
-#, fuzzy
 msgid "Malayalam"
-msgstr "מאלאית"
+msgstr "מלאיאלאם"
 
 msgid "Mongolian"
 msgstr "מונגולית"
@@ -14744,6 +14839,10 @@ msgid ""
 msgstr ""
 "$(^Name) .הרישיון נמצא כאן בשביל מידע בלבד .GPL משוחרר תחת רישיון $_CLICK"
 
+#. Installer Subsection Detailed Description
+msgid "A multi-platform GUI toolkit, used by Pidgin"
+msgstr "מולטי-פלטפורמי, בו נעזר פידג'ין GUI כלי"
+
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
 "again."
@@ -14763,7 +14862,7 @@ msgstr "צור קיצור-דרך עבור פידג'ין על שולחן העבו
 
 #. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
-msgstr ""
+msgstr "סמלי ניפוי באגים (לדיווח על שגיאות)"
 
 #. Installer Subsection Text
 msgid "Desktop"
@@ -14775,12 +14874,17 @@ msgid ""
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
+"שגיאה בעת הורדת סביבת הריצה של GTK+. ($R2).$\\rרכיב זה נחוץ לפעולת פידג'ין; "
+"אם ניסיון נוסף נכשל, ייתן ונאלץ להשתמש ב'התקנה לא-מקוונת'  מהאתר: from "
+"http://pidgin.im/download/windows/ ."
 
 #. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
+"שגיאה בהתקנת סמלי ניפוי באגים ($R2).$\\rאם ניסיון נוסף נכשל, ייתכן ותיאלצ/י "
+"להשתמש ב'התקנה לא-מקוונת' מהאתר  http://pidgin.im/download/windows/ ."
 
 #. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
@@ -14789,15 +14893,17 @@ msgid ""
 "installation instructions are at: http://developer.pidgin.im/wiki/Installing"
 "%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
+"שגיאה בעת התקנת תיקון שגיאות כתיב ($R3).$\\r אם ניסיון נוסף לא מצליח, יש "
+"למצוא הוראות התקנה ידניות באתר: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 
 #. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
 msgstr "(חובה) .GTK+ סביבת"
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Localizations"
-msgstr "מיקום"
+msgstr "התאמות למקום"
 
 #. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
@@ -14812,6 +14918,8 @@ msgid ""
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
+"לפידג'ין נחוצה סביבת הרצה של GTK+ (אשר ככל הנראה אינה מותקנת).$\\rהאם ברצונך "
+"לדלג על שלב התקנת GTK+?"
 
 #. Installer Subsection Text
 msgid "Shortcuts"
@@ -14862,9 +14970,6 @@ msgstr ".Pidginבקרו באתר של "
 msgid "You do not have permission to uninstall this application."
 msgstr ".אין לך זכות למחוק תוכנה זאת"
 
-#~ msgid "A multi-platform GUI toolkit, used by Pidgin"
-#~ msgstr "מולטי-פלטפורמי, בו נעזר פידג'ין GUI כלי"
-
 #~ msgid "Current Mood"
 #~ msgstr "מצב הרוח הנוכחי"
 
@@ -14879,75 +14984,6 @@ msgstr ".אין לך זכות למחוק תוכנה זאת"
 
 #~ msgid "Change Mood..."
 #~ msgstr "שינוי מצב-רוח..."
-
-#~ msgid "Invalid SNAC"
-#~ msgstr "SNAC לא תקף"
-
-#~ msgid "Rate to host"
-#~ msgstr "דירוג למארח"
-
-#~ msgid "Rate to client"
-#~ msgstr "דירוג ללקוח"
-
-#~ msgid "Service unavailable"
-#~ msgstr "השירות אינו זמין"
-
-#~ msgid "Service not defined"
-#~ msgstr "שירות אינו מוגדר"
-
-#~ msgid "Obsolete SNAC"
-#~ msgstr "SNAC מיושן"
-
-#~ msgid "Not supported by host"
-#~ msgstr "לא נתמך על-ידי השרת"
-
-#~ msgid "Not supported by client"
-#~ msgstr "לא נתמך על-ידי הלקוח"
-
-#~ msgid "Refused by client"
-#~ msgstr "החיבור נדחה על ידי הלקוח."
-
-#~ msgid "Reply too big"
-#~ msgstr "המענה גדול מדיי"
-
-#~ msgid "Responses lost"
-#~ msgstr "אבדו המשובים"
-
-#~ msgid "Request denied"
-#~ msgstr "הבקשה נדחית"
-
-#~ msgid "Busted SNAC payload"
-#~ msgstr "מידע פגום ב-SNAC"
-
-#~ msgid "Insufficient rights"
-#~ msgstr "אין די הרשאות"
-
-#~ msgid "In local permit/deny"
-#~ msgstr "באישור/שלילה מקומיים"
-
-#~ msgid "Warning level too high (sender)"
-#~ msgstr "רמת אזהרה גבוהה מדי (שולח("
-
-#~ msgid "Warning level too high (receiver)"
-#~ msgstr "רמת אזהרה גבוהה מדי (מקבל)"
-
-#~ msgid "User temporarily unavailable"
-#~ msgstr "המשתמש אינו זמין כרגע"
-
-#~ msgid "No match"
-#~ msgstr "אין התאמה"
-
-#~ msgid "List overflow"
-#~ msgstr "גלישת מגבולות הרשימה"
-
-#~ msgid "Request ambiguous"
-#~ msgstr "בקשה לא ברורה"
-
-#~ msgid "Queue full"
-#~ msgstr "התור מלא"
-
-#~ msgid "Not while on AOL"
-#~ msgstr "לא בזמן שהות ב-AOL"
 
 #~ msgid "Unknown reason."
 #~ msgstr "סיבה לא ידועה."

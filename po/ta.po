@@ -10,10 +10,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2010-01-05 14:58+0530\n"
 "Last-Translator: \n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1342,6 +1343,7 @@ msgstr "நிலையை அழி"
 msgid "Saved Statuses"
 msgstr "சேமித்த நிலைகள்"
 
+#. title
 msgid "Title"
 msgstr "தலைப்பு"
 
@@ -1899,7 +1901,6 @@ msgstr "சிறிய குறியீட்டுக்கு %sஐ பி�
 msgid "Thread creation failure: %s"
 msgstr "வரிசையை உருவாக்க முடியவில்லை: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "தெரியாத காரணம்"
 
@@ -3166,6 +3167,9 @@ msgid "UIN"
 msgstr "யுஐஎன்"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "முதற்பெயர்"
 
@@ -3907,6 +3911,7 @@ msgstr "மண்டலம்"
 msgid "Postal Code"
 msgstr "அஞ்சல் குறியீடு"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "நாடு"
 
@@ -3921,8 +3926,6 @@ msgstr "நிறுவன பெயர்"
 msgid "Organization Unit"
 msgstr "நிறுவன பிரிவு"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "வேலையின் தலைப்பு"
 
@@ -3930,6 +3933,7 @@ msgid "Role"
 msgstr "பங்கு"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "பிறந்தநாள்"
 
@@ -5709,6 +5713,10 @@ msgstr "HTTP முறை சேவையகம்"
 msgid "Show custom smileys"
 msgstr "தனிப்பயன் குறு நகையிகளை காட்டுக"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "இணைப்பை உருவாக்க முடியவில்லை"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "சீண்டல்: தொடர்பாளரின் கவனத்தை பெற சீண்டுங்கள்."
 
@@ -5933,7 +5941,11 @@ msgstr ""
 "உங்கள் விவரக்குறிப்பு தகவல் இன்னும் திருப்பி எடுக்க முடியவில்லை. மீண்டும் பின்னர் "
 "முயற்சிக்கவும்."
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "PIN"
 
@@ -6007,7 +6019,7 @@ msgstr "நீங்கள் உள்ளிட்ட PIN ஒரு தவற�
 msgid "MXit Login Name"
 msgstr "MXit உட்புகு பெயர் "
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "புனைப் பெயர்"
 
@@ -6053,7 +6065,7 @@ msgstr "பாதுகாப்பு குறியீட்டை நீங�
 msgid "Security Code"
 msgstr "பாதுகாப்பு குறியீடு"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "பாதுகாப்பு குறியீட்டை உள்ளிடு"
 
@@ -6079,6 +6091,11 @@ msgstr "ஏற்றுகிற மெனு..."
 msgid "Status Message"
 msgstr "நிலை செய்தி"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "பெறப்பட்ட செய்திகள்"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "மறைக்கப்பட்ட எண்"
 
@@ -6095,6 +6112,19 @@ msgstr "HTTP வழியாக இணை"
 
 msgid "Enable splash-screen popup"
 msgstr "ஸ்பாலாஷ்- திரை பாப்அப்பை செயல்படுத்துகிறது"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "நீங்கள் உதைக்கப்பட்டீர்கள்: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "கெட்ட அனுமதிச்சீட்டு"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "அறை:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6699,8 +6729,8 @@ msgid ""
 "Unable to add %s to your buddy list. Error creating folder in server side "
 "list (%s)."
 msgstr ""
-"%s ஐ நண்பர் பட்டியலில் சேர்க்க இயலவில்லை. சேவையகம் பக்க பட்டியலை உருவாக்குவதில் பிழை (%"
-"s)."
+"%s ஐ நண்பர் பட்டியலில் சேர்க்க இயலவில்லை. சேவையகம் பக்க பட்டியலை உருவாக்குவதில் பிழை "
+"(%s)."
 
 #, c-format
 msgid "Could not get details for user %s (%s)."
@@ -6858,6 +6888,63 @@ msgstr "அரட்டை அறையில் சேர்க்க முட
 
 msgid "Invalid chat room name"
 msgstr "தவறான அரட்டை அறைப்பெயர்"
+
+msgid "Invalid error"
+msgstr "செல்லுபடியாகாத பிழை"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "IM ஐ உருக்கமான கட்டுபாடுகளால் பெற முடியவில்லை "
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "ஏற்றக் கொள்ளும் நிபந்தனைகள் இல்லாமல் SMSஐ அனுப்ப முடியவில்லை"
+
+msgid "Cannot send SMS"
+msgstr "SMSஐ அனுப்ப முடியவில்லை"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "இந்த நாட்டிற்கு SMS ஐ அனுப்ப முடியவில்லை"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "தெரியாத நாட்டிற்கு SMS ஐ அனுப்ப முடியவில்லை"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "பாட் கணக்குகளை IMsல் துவக்க முடியவில்லை"
+
+msgid "Bot account cannot IM this user"
+msgstr "பாட் கணக்கை IM இந்த பயனராக்க முடியவில்லை"
+
+msgid "Bot account reached IM limit"
+msgstr "பாட் கணக்கு IM வரம்பை பெற்றது"
+
+msgid "Bot account reached daily IM limit"
+msgstr "தினந்தோறும் IM வரம்பு பாட் கணக்கை பெற்றது"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "மாதந்நோறும் IM வரம்பிற்கு பாட் கணக்கை பெறுகிறது"
+
+msgid "Unable to receive offline messages"
+msgstr "ஆஃப்லைன் செய்திகளை பெற முடியவில்லை"
+
+msgid "Offline message store full"
+msgstr "ஆஃப்லைன் செய்தி சேமிப்பகம் நிரம்பியது"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "செய்தியை அனுப்ப முடியவில்லை: %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "செய்திகளை அனுப்ப முடியவில்லை: %s"
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%sக்கு செய்தியை அனுப்ப முடியவில்லை: %s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "%s க்கு செய்தியை அனுப்ப முடியவில்லை: %s"
 
 msgid "Thinking"
 msgstr ""
@@ -7025,116 +7112,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "%s கோப்பானது %s, அதிகபட்ச அளவான %sஐ விட அதிகமாக உள்ளது."
-
-msgid "Invalid error"
-msgstr "செல்லுபடியாகாத பிழை"
-
-msgid "Invalid SNAC"
-msgstr "செல்லுபடியாகாத எஸ்என்ஏசி"
-
-msgid "Rate to host"
-msgstr "புரவலருக்கு விகிதம்"
-
-msgid "Rate to client"
-msgstr "பயனருக்கு விகிதம்"
-
-msgid "Service unavailable"
-msgstr "சேவை இல்லை"
-
-msgid "Service not defined"
-msgstr "சேவை வரையறுக்கப் படவில்லை"
-
-msgid "Obsolete SNAC"
-msgstr "காலாவதியான எஸ்என்ஏசி"
-
-msgid "Not supported by host"
-msgstr "புரவலனால் ஆதரிக்கப் படவில்லை"
-
-msgid "Not supported by client"
-msgstr "பயனரால் ஆதரிக்கப் படவில்லை"
-
-msgid "Refused by client"
-msgstr "பயனரால் மறுக்கப் பட்டது"
-
-msgid "Reply too big"
-msgstr "பதில் மிகப் பெரியது."
-
-msgid "Responses lost"
-msgstr "பதில்கள் இழக்கப் பட்டன"
-
-msgid "Request denied"
-msgstr "கோரிக்கை நிராகரிக்கப்பட்டது"
-
-msgid "Busted SNAC payload"
-msgstr "உடைந்த எஸ்என்ஏசி (SNAC) பளு"
-
-msgid "Insufficient rights"
-msgstr "உரிமைகள் போதவில்லை"
-
-msgid "In local permit/deny"
-msgstr "உள்ளே அனுமதி /மறு"
-
-msgid "Warning level too high (sender)"
-msgstr "எச்சரிக்கை நிலை மிக அதிகம் (அனுப்புனர்)"
-
-msgid "Warning level too high (receiver)"
-msgstr "எச்சரிக்கை நிலை மிக அதிகம் (பெறுநர்)"
-
-msgid "User temporarily unavailable"
-msgstr "பயனர் தற்காலிகமாக கிடைக்கவில்லை"
-
-msgid "No match"
-msgstr "பொருத்தம் இல்லை"
-
-msgid "List overflow"
-msgstr "பட்டியல்  நிரம்பி வழிகிறது."
-
-msgid "Request ambiguous"
-msgstr "குழப்பமான கோரிக்கை"
-
-msgid "Queue full"
-msgstr "கியூ வரிசை நிறைந்தது"
-
-msgid "Not while on AOL"
-msgstr "ஏஓஎல் இல் உள்ள போது இல்லை"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "IM ஐ உருக்கமான கட்டுபாடுகளால் பெற முடியவில்லை "
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "ஏற்றக் கொள்ளும் நிபந்தனைகள் இல்லாமல் SMSஐ அனுப்ப முடியவில்லை"
-
-msgid "Cannot send SMS"
-msgstr "SMSஐ அனுப்ப முடியவில்லை"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "இந்த நாட்டிற்கு SMS ஐ அனுப்ப முடியவில்லை"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "தெரியாத நாட்டிற்கு SMS ஐ அனுப்ப முடியவில்லை"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "பாட் கணக்குகளை IMsல் துவக்க முடியவில்லை"
-
-msgid "Bot account cannot IM this user"
-msgstr "பாட் கணக்கை IM இந்த பயனராக்க முடியவில்லை"
-
-msgid "Bot account reached IM limit"
-msgstr "பாட் கணக்கு IM வரம்பை பெற்றது"
-
-msgid "Bot account reached daily IM limit"
-msgstr "தினந்தோறும் IM வரம்பு பாட் கணக்கை பெற்றது"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "மாதந்நோறும் IM வரம்பிற்கு பாட் கணக்கை பெறுகிறது"
-
-msgid "Unable to receive offline messages"
-msgstr "ஆஃப்லைன் செய்திகளை பெற முடியவில்லை"
-
-msgid "Offline message store full"
-msgstr "ஆஃப்லைன் செய்தி சேமிப்பகம் நிரம்பியது"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7485,27 +7462,8 @@ msgstr[0] "தெரியாத காரணங்களால் நீங்�
 msgstr[1] "தெரியாத காரணங்களால் நீங்கள் %hu செய்திகளை %s லிருந்து இழந்தீர்கள்"
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "செய்தியை அனுப்ப முடியவில்லை: %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "செய்திகளை அனுப்ப முடியவில்லை: %s"
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "%sக்கு செய்தியை அனுப்ப முடியவில்லை: %s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "%s க்கு செய்தியை அனுப்ப முடியவில்லை: %s"
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "பயனர் பற்றிய விவரங்கள் கிடைக்கவில்லை: %s"
-
-msgid "Unknown reason."
-msgstr "தெரியாத காரணம்."
 
 msgid "Online Since"
 msgstr "இன்னும் இணைப்புடன்"
@@ -7928,6 +7886,75 @@ msgstr ""
 "இதற்கு இரண்டு கணினிகளுடன் நேரடி இணைப்பு தேவைப்படுகிறது மற்றும் ஐஎம் பிம்பங்களுக்கு இது "
 "தேவை. ஏனென்றால் உங்களது ஐபி முகவரி வெளிப்பட்டது, இது ஒரு பாதுகாப்பு பிரச்னையாக "
 "கருதப்படுகிறது."
+
+msgid "Invalid SNAC"
+msgstr "செல்லுபடியாகாத எஸ்என்ஏசி"
+
+msgid "Rate to host"
+msgstr "புரவலருக்கு விகிதம்"
+
+msgid "Rate to client"
+msgstr "பயனருக்கு விகிதம்"
+
+msgid "Service unavailable"
+msgstr "சேவை இல்லை"
+
+msgid "Service not defined"
+msgstr "சேவை வரையறுக்கப் படவில்லை"
+
+msgid "Obsolete SNAC"
+msgstr "காலாவதியான எஸ்என்ஏசி"
+
+msgid "Not supported by host"
+msgstr "புரவலனால் ஆதரிக்கப் படவில்லை"
+
+msgid "Not supported by client"
+msgstr "பயனரால் ஆதரிக்கப் படவில்லை"
+
+msgid "Refused by client"
+msgstr "பயனரால் மறுக்கப் பட்டது"
+
+msgid "Reply too big"
+msgstr "பதில் மிகப் பெரியது."
+
+msgid "Responses lost"
+msgstr "பதில்கள் இழக்கப் பட்டன"
+
+msgid "Request denied"
+msgstr "கோரிக்கை நிராகரிக்கப்பட்டது"
+
+msgid "Busted SNAC payload"
+msgstr "உடைந்த எஸ்என்ஏசி (SNAC) பளு"
+
+msgid "Insufficient rights"
+msgstr "உரிமைகள் போதவில்லை"
+
+msgid "In local permit/deny"
+msgstr "உள்ளே அனுமதி /மறு"
+
+msgid "Warning level too high (sender)"
+msgstr "எச்சரிக்கை நிலை மிக அதிகம் (அனுப்புனர்)"
+
+msgid "Warning level too high (receiver)"
+msgstr "எச்சரிக்கை நிலை மிக அதிகம் (பெறுநர்)"
+
+msgid "User temporarily unavailable"
+msgstr "பயனர் தற்காலிகமாக கிடைக்கவில்லை"
+
+msgid "No match"
+msgstr "பொருத்தம் இல்லை"
+
+msgid "List overflow"
+msgstr "பட்டியல்  நிரம்பி வழிகிறது."
+
+msgid "Request ambiguous"
+msgstr "குழப்பமான கோரிக்கை"
+
+msgid "Queue full"
+msgstr "கியூ வரிசை நிறைந்தது"
+
+msgid "Not while on AOL"
+msgstr "ஏஓஎல் இல் உள்ள போது இல்லை"
 
 msgid "Aquarius"
 msgstr "மீனம்"
@@ -12318,8 +12345,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s is a graphical modular messaging client based on libpurple which is "
 "capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
@@ -12868,15 +12895,15 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "%s இல் துவக்கப்படும் %s உள்ள பதிவு உரையாடலை நிரந்தரமாக நீங்கள் அழிக்க விரும்புகிறீர்களா?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "%s ல் துவக்கப்பட்ட கணினி பதிவை நீங்கள் நிரந்தரமாக அழிக்க விரும்புகிறீர்களா?"
 
 msgid "Delete Log?"
@@ -15136,11 +15163,13 @@ msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 "பிழைதிருத்தி XMPP சேவையகங்கள் அல்லது வாடிக்கையாளருக்காக இந்த செருகி பயன்படுகிறது."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
@@ -15149,79 +15178,92 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "பணிமேடை முன்னிருப்பு"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "ஜிடிகே+ ஒடும் நேரம் பதிப்பு"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "இடம்"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr ""
 
-#. Components Page
+#. Installer Subsection Text
 #, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Pidgin இணையத்தள மேலாளர்"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "குறுக்குவழி"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "ஆரம்பம்"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15230,29 +15272,30 @@ msgstr ""
 msgid "The installer is already running."
 msgstr "புனைப்பெயர் \"%s\" ஏற்கனவே பயன்பாட்டில் உள்ளது."
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. URL Handler section
+#. Installer Subsection Text
 #, fuzzy
 msgid "URI Handlers"
 msgstr "myim URL கையாளுபவர்"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Unknown reason."
+#~ msgstr "தெரியாத காரணம்."
 
 #~ msgid "Artist"
 #~ msgstr "ஆர்டிஸ்ட்"

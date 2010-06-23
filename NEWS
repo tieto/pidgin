@@ -2,6 +2,21 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.7.1 (05/29/2010):
+	Elliott: Hey, I'm first!  How did that happen?!  Maybe because of the
+	interesting changes in this release.  Sure there were quite a few bug
+	fixes, but I know what you've all been waiting for is the direct
+	connections in MSN.  Trust me, it's really really fast!!
+
+	John: Whoa, short turnaround for us.  This is just 17 days after our
+	previous release!  This fixes a number of bugs that you've all been
+	reporting a ton of duplicate tickets about and even gives you the new
+	direct connection file transfer support for MSN.  Enjoy!
+	
+	Marcus: Quite a bit quicker to get this release out, compared with the
+	previous one :).  Fixes a number of bugs, and I'm sure the MSN direct
+	connections will please many users.  Enjoy!
+
 2.7.0 (05/12/2010):
 	John: We FINALLY got the ICQ X-Status stuff merged in!  And a few other
 	patches that have been sitting on Trac forever.  Couple that with some

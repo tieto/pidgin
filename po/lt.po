@@ -10,15 +10,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:16-0400\n"
 "PO-Revision-Date: 2009-08-30 15:07+0200\n"
 "Last-Translator: Laurynas Biveinis <laurynas.biveinis@gmail.com>\n"
 "Language-Team:\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n%"
-"10>=2 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n"
+"%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -1388,6 +1389,7 @@ msgstr "Pašalinti būseną"
 msgid "Saved Statuses"
 msgstr "Išsaugotos būsenos"
 
+#. title
 msgid "Title"
 msgstr "Pavadinimas"
 
@@ -1952,7 +1954,6 @@ msgstr "Klaida keičiant DNS adresą %s: %d"
 msgid "Thread creation failure: %s"
 msgstr "Nepavyko sukurti gijos: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "Nežinoma priežastis"
 
@@ -3282,6 +3283,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "Vardas"
 
@@ -4047,6 +4051,7 @@ msgid "Postal Code"
 msgstr "Pašto indeksas"
 
 #  Country
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "Šalis"
 
@@ -4061,8 +4066,6 @@ msgstr "Organizacijos pavadinimas"
 msgid "Organization Unit"
 msgstr "Organizacijos padalinys"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "Pareigos"
 
@@ -4070,6 +4073,7 @@ msgid "Role"
 msgstr "Pareigos"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Gimtadienis"
 
@@ -5881,6 +5885,10 @@ msgstr "HTTP metodo serveris"
 msgid "Show custom smileys"
 msgstr "Rodyti nestandartines šypsenėles"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "Nepavyko sukurti jungties."
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: bakstelėti vartotojui, kad atkreipti jo dėmesį"
 
@@ -6114,7 +6122,11 @@ msgstr "Profilis"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -6207,7 +6219,7 @@ msgstr "Įvestas SecurID raktas yra neteisingas."
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 #, fuzzy
 msgid "Nick Name"
 msgstr "Vardas"
@@ -6257,7 +6269,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "Su saugumu"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "Įveskite kodą"
@@ -6292,6 +6304,11 @@ msgid "Status Message"
 msgstr "Išsiųstos žinutės"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "Gautos žinutės"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "Antras vardas"
 
@@ -6311,6 +6328,19 @@ msgstr "Prisijungti naudojant TCP"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Tave išspyrė (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Blogas bilietas"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "Kamba_rys:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7106,6 +7136,68 @@ msgstr "Nepavyko prisijungti prie pokalbių kambario"
 msgid "Invalid chat room name"
 msgstr "Neteisingas pokalbių kambario pavadinimas"
 
+msgid "Invalid error"
+msgstr "Neteisinga klaida"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "Negalima išsiųsti failo"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "Negalima siųsti katalogo."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "Negalima išsiųsti žinutės."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "Atjungta žinutė"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "Negalima išsiųsti žinutės (%s)."
+
+#  Data is assumed to be the destination sn
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "Negalima išsiųsti žinutės: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "Negalima išsiųsti žinutės vartotojui %s:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "Negalima išsiųsti žinutės vartotojui %s:"
+
 msgid "Thinking"
 msgstr ""
 
@@ -7293,120 +7385,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr ""
 "Failas „%s“ yra %s dydžio – didesnis nei maksimalus leidžiamas dydis %s."
-
-msgid "Invalid error"
-msgstr "Neteisinga klaida"
-
-msgid "Invalid SNAC"
-msgstr "Neteisingas SNAC"
-
-msgid "Rate to host"
-msgstr "Sparta į mazgą"
-
-msgid "Rate to client"
-msgstr "Sparta į klientą"
-
-msgid "Service unavailable"
-msgstr "Tarnyba neprieinama"
-
-msgid "Service not defined"
-msgstr "Tarnyba neaprašyta"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC pasenęs"
-
-msgid "Not supported by host"
-msgstr "Nepalaikoma mazgo"
-
-msgid "Not supported by client"
-msgstr "Nepalaikoma kliento"
-
-msgid "Refused by client"
-msgstr "Atsisakyta kliento"
-
-msgid "Reply too big"
-msgstr "Atsakas per didelis"
-
-msgid "Responses lost"
-msgstr "Prarasti atsakai"
-
-msgid "Request denied"
-msgstr "Užklausa negalima"
-
-msgid "Busted SNAC payload"
-msgstr "Neteisingas SNAC turinys"
-
-msgid "Insufficient rights"
-msgstr "Nepakankamos teisės"
-
-msgid "In local permit/deny"
-msgstr "Yra vietiniame leidimo ar draudimo sąraše"
-
-msgid "Warning level too high (sender)"
-msgstr "Per aukštas siuntėjo perspėjimo lygis"
-
-msgid "Warning level too high (receiver)"
-msgstr "Per aukštas gavėjo perspėjimo lygis"
-
-msgid "User temporarily unavailable"
-msgstr "Vartotojas laikinai neprieinamas"
-
-msgid "No match"
-msgstr "Nėra atitikmens"
-
-msgid "List overflow"
-msgstr "Sąrašo perpildymas"
-
-msgid "Request ambiguous"
-msgstr "Nevienareikšmė užklausa"
-
-msgid "Queue full"
-msgstr "Eilė pilna"
-
-msgid "Not while on AOL"
-msgstr "Negalima prisijungus per AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "Negalima išsiųsti failo"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "Negalima siųsti katalogo."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "Negalima išsiųsti žinutės."
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "Atjungta žinutė"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7786,29 +7764,9 @@ msgstr[1] ""
 msgstr[2] ""
 "Jūs praleidote %hu pranešimų nuo vartotojo %s dėl nežinomos priežasties."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "Negalima išsiųsti žinutės (%s)."
-
-#  Data is assumed to be the destination sn
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "Negalima išsiųsti žinutės: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "Negalima išsiųsti žinutės vartotojui %s:"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "Negalima išsiųsti žinutės vartotojui %s:"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "Vartotojo informacija neprieinama: %s"
-
-msgid "Unknown reason."
-msgstr "Nežinoma priežastis."
 
 msgid "Online Since"
 msgstr "Prisijungęs nuo"
@@ -8249,6 +8207,75 @@ msgstr ""
 "Tai reikalauja tiesioginės jungties tarp dviejų kompiuterių ir yra būtina IM "
 "vaizdams.  Kadangi Jūsų IP adresas bus atskleistas, tai gali būti privatumo "
 "rizika."
+
+msgid "Invalid SNAC"
+msgstr "Neteisingas SNAC"
+
+msgid "Rate to host"
+msgstr "Sparta į mazgą"
+
+msgid "Rate to client"
+msgstr "Sparta į klientą"
+
+msgid "Service unavailable"
+msgstr "Tarnyba neprieinama"
+
+msgid "Service not defined"
+msgstr "Tarnyba neaprašyta"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC pasenęs"
+
+msgid "Not supported by host"
+msgstr "Nepalaikoma mazgo"
+
+msgid "Not supported by client"
+msgstr "Nepalaikoma kliento"
+
+msgid "Refused by client"
+msgstr "Atsisakyta kliento"
+
+msgid "Reply too big"
+msgstr "Atsakas per didelis"
+
+msgid "Responses lost"
+msgstr "Prarasti atsakai"
+
+msgid "Request denied"
+msgstr "Užklausa negalima"
+
+msgid "Busted SNAC payload"
+msgstr "Neteisingas SNAC turinys"
+
+msgid "Insufficient rights"
+msgstr "Nepakankamos teisės"
+
+msgid "In local permit/deny"
+msgstr "Yra vietiniame leidimo ar draudimo sąraše"
+
+msgid "Warning level too high (sender)"
+msgstr "Per aukštas siuntėjo perspėjimo lygis"
+
+msgid "Warning level too high (receiver)"
+msgstr "Per aukštas gavėjo perspėjimo lygis"
+
+msgid "User temporarily unavailable"
+msgstr "Vartotojas laikinai neprieinamas"
+
+msgid "No match"
+msgstr "Nėra atitikmens"
+
+msgid "List overflow"
+msgstr "Sąrašo perpildymas"
+
+msgid "Request ambiguous"
+msgstr "Nevienareikšmė užklausa"
+
+msgid "Queue full"
+msgstr "Eilė pilna"
+
+msgid "Not while on AOL"
+msgstr "Negalima prisijungus per AOL"
 
 msgid "Aquarius"
 msgstr "Vandenis"
@@ -12774,16 +12801,16 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s yra grafine modulinė pokalbių programa libpurple pagrindu, su kuria "
 "galima bendrauti AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell "
 "GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu ir QQ "
 "tinkluose – visuose vienu metu.  Programa parašyta naudojant GTK+."
 "<br><br>Jūs galite keisti ir platinti šią programą GPL (2-os ar vėlesnės "
-"versijos) sąlygomis.  GPL kopija yra faile „COPYING“, platinamame kartu su %"
-"s.  %s autorinės teisės priklauso programos autoriams.  Faile „COPYRIGHT“ "
+"versijos) sąlygomis.  GPL kopija yra faile „COPYING“, platinamame kartu su "
+"%s.  %s autorinės teisės priklauso programos autoriams.  Faile „COPYRIGHT“ "
 "pateiktas pilnas autorių sąrašas.  Mes neteikiame jokios garantijos šiai "
 "programai.<br><br>"
 
@@ -13330,14 +13357,14 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr "Ar tikrai norite negrįžtamai ištrinti pokalbių %s žurnalą, pradėtą %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "Ar tikrai norite negrįžtamai ištrinti sistemos žurnalą, pradėtą %s?"
 
 msgid "Delete Log?"
@@ -15806,6 +15833,7 @@ msgstr "Siųsti ir gauti neapdorotas XMPP strofas."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "Šis papildinys naudingas XMPP serverių ir klientų derinimui."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15813,6 +15841,7 @@ msgstr ""
 "$(^Name) yra išleistas GNU bendrosios viešosios licenzijos (GPL) sąlygomis.  "
 "Licenzija čia yra pateikta tik susipažinimo tikslams. $_CLICK"
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 "Daugiaplatforminis vartotojo sąsajos priemonių komplektas, naudojamas Pidgin."
@@ -15824,76 +15853,89 @@ msgstr ""
 "Šiuo metu Pidgin yra paleistas. Uždarykite šią programą ir pabandykite iš "
 "naujo."
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr "Pagrindiniai Pidgin failai ir DLL bibliotekos"
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr "Sukurti pradinio meniu įrašą, skirtą Pidgin."
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "Sukurti nuorodą į Pidgin darbastalyje."
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Desktop"
 msgstr "darbalaukyje"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
 msgstr "GTK+ vykdymo meto aplinka (būtina, jeigu nėra)"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "Vietovė"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "Toliau >"
 
-#. Components Page
+#. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "Pidgin pokalbių kliento programa (būtina)"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Shortcuts"
 msgstr "Nuorodos"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr "Pidgin paleidimo nuorodos"
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr "Rašybos tikrinimo palaikymas"
 
 #  Autostart
 #  Autostart
+#. Installer Subsection Text
 msgid "Start Menu"
 msgstr "pradiniame meniu"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "Rašybos tikrinimo palaikymas.  (Diegimui būtina interneto jungtis)"
@@ -15901,7 +15943,6 @@ msgstr "Rašybos tikrinimo palaikymas.  (Diegimui būtina interneto jungtis)"
 msgid "The installer is already running."
 msgstr "Diegimo programa jau paleista."
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
@@ -15909,11 +15950,10 @@ msgstr ""
 "Išdiegimo programa nerado Pidgin registro įrašų.$\\rTikėtina, kad progama "
 "buvo įdiegta kito naudotojo."
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
 msgstr "URI doroklės"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
@@ -15921,12 +15961,15 @@ msgstr ""
 "Nepavyko išdiegti anksčiau įdiegtos Pidgin versijos.  Nauja versija bus "
 "įdiegta neišdiegus senosios."
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr "Aplankyti Pidgin tinklalapį"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Jūs neturite teisių išdiegti šios programos."
+
+#~ msgid "Unknown reason."
+#~ msgstr "Nežinoma priežastis."
 
 #~ msgid "Artist"
 #~ msgstr "Dailininkas"

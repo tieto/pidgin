@@ -67,7 +67,7 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	if (slpmsg->img == NULL)
 		g_free(slpmsg->buffer);
 
-	for (cur = slpmsg->msgs; cur != NULL; cur = cur->next)
+	for (cur = slpmsg->msgs; cur != NULL; cur = g_list_delete_link(cur, cur))
 	{
 		/* Something is pointing to this slpmsg, so we should remove that
 		 * pointer to prevent a crash. */
@@ -78,8 +78,8 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 		msg->ack_cb = NULL;
 		msg->nak_cb = NULL;
 		msg->ack_data = NULL;
+		msn_message_unref(msg);
 	}
-	g_list_free(slpmsg->msgs);
 
 	slplink->slp_msgs = g_list_remove(slplink->slp_msgs, slpmsg);
 

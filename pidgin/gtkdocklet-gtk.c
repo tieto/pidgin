@@ -38,7 +38,13 @@ docklet_gtk_status_activated_cb(GtkStatusIcon *status_icon, gpointer user_data)
 static void
 docklet_gtk_status_clicked_cb(GtkStatusIcon *status_icon, guint button, guint activate_time, gpointer user_data)
 {
-	pidgin_docklet_clicked(button); 
+	purple_debug_info("docklet", "The button is %u\n", button);
+#ifdef GDK_WINDOWING_QUARTZ
+	/* You can only click left mouse button on MacOSX native GTK. Let that be the menu */
+	pidgin_docklet_clicked(3);
+#else
+	pidgin_docklet_clicked(button);
+#endif
 }
 
 static void

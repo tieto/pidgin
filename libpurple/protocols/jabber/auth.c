@@ -158,7 +158,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 
 		if (mech_name && *mech_name)
 			mechanisms = g_slist_prepend(mechanisms, mech_name);
-		else if (mech_name)
+		else
 			g_free(mech_name);
 
 	}

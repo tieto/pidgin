@@ -145,7 +145,7 @@ msn_dc_destroy(MsnDirectConn *dc);
  * create a listening socket.
  */
 void
-msn_dc_fallback_to_p2p(MsnDirectConn *dc);
+msn_dc_fallback_to_sb(MsnDirectConn *dc);
 
 /*
  * Increases the slpcall counter in DC. The direct connection remains open

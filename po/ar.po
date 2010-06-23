@@ -11,10 +11,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:15-0400\n"
 "PO-Revision-Date: 2008-11-01 17:41+0200\n"
 "Last-Translator: Khaled Hosny <khaledhosny@eglug.org>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1340,6 +1341,7 @@ msgstr "احذف الحالة"
 msgid "Saved Statuses"
 msgstr "الحالات المحفوظة"
 
+#. title
 msgid "Title"
 msgstr "العنوان"
 
@@ -1895,7 +1897,6 @@ msgstr "عطل في استجلاء %s: %d"
 msgid "Thread creation failure: %s"
 msgstr "فشل إنشاء الخيط: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "سبب مجهول"
 
@@ -3156,6 +3157,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "الاسم الأول"
 
@@ -3947,6 +3951,7 @@ msgstr "الإقليم"
 msgid "Postal Code"
 msgstr "الرمز البريدي"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "الدولة"
 
@@ -3961,8 +3966,6 @@ msgstr "اسم المنظمة"
 msgid "Organization Unit"
 msgstr "الوحدة التنظيمية"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "المسمّى الوظيفي"
 
@@ -3970,6 +3973,7 @@ msgid "Role"
 msgstr "الدّور"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "تاريخ الميلاد"
 
@@ -5786,6 +5790,10 @@ msgstr "خادوم اختبار  HTTP"
 msgid "Show custom smileys"
 msgstr "اعرض البسمات المخصصة"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "تعذّر إنشاء اتصال"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr ""
 "الكز مستخدما لتستدعي انتباههnudge:\n"
@@ -6031,7 +6039,11 @@ msgstr "لاحة"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "UIN"
@@ -6120,7 +6132,7 @@ msgstr "مفتاح SecurID المدخل غير صالح."
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 #, fuzzy
 msgid "Nick Name"
 msgstr "الاسم المستعار"
@@ -6170,7 +6182,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "الأمن مُفعّل"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "أدخل الرمز"
@@ -6204,6 +6216,11 @@ msgid "Status Message"
 msgstr "الرسائل الصادرة"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "الرسائل الواردة"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "الاسم الأوسط"
 
@@ -6223,6 +6240,19 @@ msgstr "اتّصل باستخدام TCP"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "لقد طردك %s: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "تذكرة سيّئة"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_غرفة:"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7012,6 +7042,67 @@ msgstr "تعذّر الانضمام لقناة الدردشة"
 msgid "Invalid chat room name"
 msgstr "اسم غرفة دردشة غير صالح"
 
+msgid "Invalid error"
+msgstr "عطل غير صحيح"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "تعذّر إرسال الملف"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "لا يمكن إرسال دليل."
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "تعذّر إرسال الرسالة."
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "رسالة بلا اتصال"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "تعذّر إرسال الرسالة (%s)."
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "تعذّر إرسال رسالة: %s"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "تعذّر إرسال رسالة إلى %s:"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "تعذّر إرسال رسالة إلى %s:"
+
 msgid "Thinking"
 msgstr ""
 
@@ -7178,120 +7269,6 @@ msgstr ""
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "الملف %s حجمه %s و هو ما يزيد على الحجم الأقصى %s."
 
-msgid "Invalid error"
-msgstr "عطل غير صحيح"
-
-msgid "Invalid SNAC"
-msgstr "SNAC غير صالح"
-
-msgid "Rate to host"
-msgstr "المنسوب إلى الخادوم"
-
-msgid "Rate to client"
-msgstr "المنسوب إلى العميل"
-
-msgid "Service unavailable"
-msgstr "الخدمة غير متاحة"
-
-msgid "Service not defined"
-msgstr "الخدمة غير معّرفة"
-
-msgid "Obsolete SNAC"
-msgstr "SNAC ملغاة"
-
-msgid "Not supported by host"
-msgstr "لا يدعمه الخادوم"
-
-msgid "Not supported by client"
-msgstr "لا يدعمه العميل"
-
-msgid "Refused by client"
-msgstr "رفضه العميل"
-
-msgid "Reply too big"
-msgstr "الرد أكبر من المتوقع"
-
-msgid "Responses lost"
-msgstr "فقدت الاستجابات"
-
-msgid "Request denied"
-msgstr "مُنِع الطلب"
-
-msgid "Busted SNAC payload"
-msgstr "تلفت حمولة SNAC"
-
-msgid "Insufficient rights"
-msgstr "صلاحيات غير كافية"
-
-msgid "In local permit/deny"
-msgstr "في السماح/المنع المحليين"
-
-msgid "Warning level too high (sender)"
-msgstr "مستوى التحذير عال جدا (مُرسِل)"
-
-msgid "Warning level too high (receiver)"
-msgstr "مستوى التحذير عال جدا (مُستقبِل)"
-
-msgid "User temporarily unavailable"
-msgstr "المستخدم غير متاح مؤقتًا"
-
-msgid "No match"
-msgstr "لا تطابق"
-
-msgid "List overflow"
-msgstr "فاضت القائمة"
-
-msgid "Request ambiguous"
-msgstr "الطلب غامض"
-
-msgid "Queue full"
-msgstr "الطابور ممتليء"
-
-msgid "Not while on AOL"
-msgstr "غير ممكن أثناء التواجد على AOL"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "تعذّر إرسال الملف"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "لا يمكن إرسال دليل."
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "تعذّر إرسال الرسالة."
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "رسالة بلا اتصال"
-
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
 "is probably using a different encoding than expected.  If you know what "
@@ -7307,8 +7284,8 @@ msgid ""
 "(There was an error receiving this message.  Either you and %s have "
 "different encodings selected, or %s has a buggy client.)"
 msgstr ""
-"(حدث عطل في استقبال هذه الرسالة. إما أنك و%s تستخدمان ترميزين مختلفين أو أن %"
-"s يستخدم عميلا به علات.)"
+"(حدث عطل في استقبال هذه الرسالة. إما أنك و%s تستخدمان ترميزين مختلفين أو أن "
+"%s يستخدم عميلا به علات.)"
 
 #. Label
 msgid "Buddy Icon"
@@ -7664,28 +7641,9 @@ msgstr[3] "فقدت %hu رسائل من %s لسبب مجهول."
 msgstr[4] "فقدت %hu رسالة من %s لسبب مجهول."
 msgstr[5] "فقدت %hu رسالة من %s لسبب مجهول."
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "تعذّر إرسال الرسالة (%s)."
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "تعذّر إرسال رسالة: %s"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "تعذّر إرسال رسالة إلى %s:"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "تعذّر إرسال رسالة إلى %s:"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "معلومات المستخدم غير متوفرة: %s"
-
-msgid "Unknown reason."
-msgstr "سبب مجهول"
 
 msgid "Online Since"
 msgstr "متصل منذ"
@@ -8104,6 +8062,75 @@ msgid ""
 msgstr ""
 "هذا يتطلب اتصالا مباشرا بين الحاسوبين و هو ضروري لصور التراسل الفوري. و لأن "
 "IP لحاسوبك سوف يظهر فقد يعتبر هذا مخاطرة أمنية."
+
+msgid "Invalid SNAC"
+msgstr "SNAC غير صالح"
+
+msgid "Rate to host"
+msgstr "المنسوب إلى الخادوم"
+
+msgid "Rate to client"
+msgstr "المنسوب إلى العميل"
+
+msgid "Service unavailable"
+msgstr "الخدمة غير متاحة"
+
+msgid "Service not defined"
+msgstr "الخدمة غير معّرفة"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC ملغاة"
+
+msgid "Not supported by host"
+msgstr "لا يدعمه الخادوم"
+
+msgid "Not supported by client"
+msgstr "لا يدعمه العميل"
+
+msgid "Refused by client"
+msgstr "رفضه العميل"
+
+msgid "Reply too big"
+msgstr "الرد أكبر من المتوقع"
+
+msgid "Responses lost"
+msgstr "فقدت الاستجابات"
+
+msgid "Request denied"
+msgstr "مُنِع الطلب"
+
+msgid "Busted SNAC payload"
+msgstr "تلفت حمولة SNAC"
+
+msgid "Insufficient rights"
+msgstr "صلاحيات غير كافية"
+
+msgid "In local permit/deny"
+msgstr "في السماح/المنع المحليين"
+
+msgid "Warning level too high (sender)"
+msgstr "مستوى التحذير عال جدا (مُرسِل)"
+
+msgid "Warning level too high (receiver)"
+msgstr "مستوى التحذير عال جدا (مُستقبِل)"
+
+msgid "User temporarily unavailable"
+msgstr "المستخدم غير متاح مؤقتًا"
+
+msgid "No match"
+msgstr "لا تطابق"
+
+msgid "List overflow"
+msgstr "فاضت القائمة"
+
+msgid "Request ambiguous"
+msgstr "الطلب غامض"
+
+msgid "Queue full"
+msgstr "الطابور ممتليء"
+
+msgid "Not while on AOL"
+msgstr "غير ممكن أثناء التواجد على AOL"
 
 msgid "Aquarius"
 msgstr "الدّلو"
@@ -12650,8 +12677,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s عميل تراسل رسومي مبني على مكتبة بِرْبِل التي تستطيع الاتصال بكل من AIM، و "
 "MSN، و ياهو!، و XMPP، و ICQ، و IRC، و SILC، و SIP/SIMPLE، و Novell "
@@ -13202,14 +13229,14 @@ msgstr "أواثق أنك تريد حذف سجل المحادثة مع %s الت
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr "أواثق أنك تريد حذف سجل المحادثة في %s التي بدأت في %s نهائيا؟"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "أواثق أنك تريد حذف سجل النظام الذي بدأ في %s نهائيا؟"
 
 msgid "Delete Log?"
@@ -15558,6 +15585,7 @@ msgstr "أرسِل و استقبل أبيات XMPP خام."
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "تفيد هذه الملحقة في تنقيح خواديم و عملاء XMPXMPPP."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
@@ -15565,6 +15593,7 @@ msgstr ""
 "$(^Name) يخضع لرخصة جنو العموميّة العامة (GPL). الرخصة المعطاة هنا لغرض "
 "الإعلام فقط. $_CLICK"
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr "عدّة واجهة رسوميّة متعددة المنصات، يستخدمها بِدْجِن."
 
@@ -15573,74 +15602,87 @@ msgid ""
 "again."
 msgstr "بِدْجِن يعمل حاليا.  من فضلك أغلق بِدْجن ثم أعد المحاولة."
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr " و ملفات لُب بِدْجِن dll"
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr "أنشئ مُدخلة لبدجن في قائمة ابدأ"
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr "أنشئ اختصارا لبِدْجِن على سطح المكتب"
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Desktop"
 msgstr "سطح المكتب"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
 msgstr "بيئة جتك+ (مطلوبة إن لم تكن موجودة)"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "الموضع"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr "التالي >"
 
-#. Components Page
+#. Installer Subsection Text
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "عميل التراسل الفوري بِدْجِن (مطلوب)"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Shortcuts"
 msgstr "الاختصارات"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr "اختصارات لبدأ بِدْجِن"
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr "دعم التدقيق الإملائي"
 
+#. Installer Subsection Text
 msgid "Start Menu"
 msgstr "قائمة ابدأ"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr "دعم التدقيق الإملائي.  (مطلوب اتصال بالإنترنت للتثبيت)"
@@ -15649,7 +15691,6 @@ msgstr "دعم التدقيق الإملائي.  (مطلوب اتصال بالإ
 msgid "The installer is already running."
 msgstr "المثبِّت يعمل بالفعل."
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
@@ -15657,11 +15698,10 @@ msgstr ""
 "لم يُعثر المثبت على خانات السجل الخاصة ببدجن.$\\rغالبا ثبت هذا البرنامج "
 "مستخدم آخر."
 
-#. URL Handler section
+#. Installer Subsection Text
 msgid "URI Handlers"
 msgstr "متعاملات المسارات"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
@@ -15669,12 +15709,15 @@ msgstr ""
 "تعذّر إزالة نسخة بدجن المثبّتة. ثتُثبّت النسخة الحديثة بدون إزالة النسخة المثبّتة "
 "مسبقا."
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr "قم بزيارة صفحة بدجن على الوِب"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "لا تملك الصلاحيات لتثبيت هذا التطبيق."
+
+#~ msgid "Unknown reason."
+#~ msgstr "سبب مجهول"
 
 #~ msgid "Artist"
 #~ msgstr "الفنانون"
@@ -16329,8 +16372,8 @@ msgstr "لا تملك الصلاحيات لتثبيت هذا التطبيق."
 #~ "You may be disconnected shortly.  You may want to use TOC until this is "
 #~ "fixed.  Check %s for updates."
 #~ msgstr ""
-#~ "قد ينقطع اتصالك قريبا. قد ترغب في استخدام TOC إلى أن يتم إصلاح هذا. طالع %"
-#~ "s للتحديثات."
+#~ "قد ينقطع اتصالك قريبا. قد ترغب في استخدام TOC إلى أن يتم إصلاح هذا. طالع "
+#~ "%s للتحديثات."
 
 #~ msgid "Failed change icon"
 #~ msgstr "فشل تغيير الأيقونة"

@@ -21,10 +21,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-22 17:13+0200\n"
+"POT-Creation-Date: 2010-05-30 23:15-0400\n"
 "PO-Revision-Date: 2010-02-22 17:08+0200\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -849,8 +850,8 @@ msgid ""
 "System events will only be logged if the \"Log all status changes to system "
 "log\" preference is enabled."
 msgstr ""
-"Les événements système ne seront archivés que si l'option « Archiver tous les "
-"changements d'état dans les archives système » est activée."
+"Les événements système ne seront archivés que si l'option « Archiver tous "
+"les changements d'état dans les archives système » est activée."
 
 msgid ""
 "Instant messages will only be logged if the \"Log all instant messages\" "
@@ -2741,7 +2742,8 @@ msgid "Offline Message"
 msgstr "Message déconnecté"
 
 msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
-msgstr "Vous pouvez modifier ou supprimer l'alerte dans la fenêtre « Alertes »."
+msgstr ""
+"Vous pouvez modifier ou supprimer l'alerte dans la fenêtre « Alertes »."
 
 msgid "Yes"
 msgstr "Oui"
@@ -3987,6 +3989,7 @@ msgid "Role"
 msgstr "Rôle"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "Date de naissance"
 
@@ -5976,6 +5979,7 @@ msgid "Your MXitId"
 msgstr "Votre MXitId"
 
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "Code"
 
@@ -6053,7 +6057,7 @@ msgstr "Le code d'accès saisi n'a pas la bonne taille [7-10]."
 msgid "MXit Login Name"
 msgstr "Nom d'utilisateur MXit"
 
-#. nick name
+#. nick name (required)
 msgid "Nick Name"
 msgstr "Pseudonyme"
 
@@ -6103,7 +6107,7 @@ msgstr "Vous n'avez pas saisi le code de sécurité"
 msgid "Security Code"
 msgstr "Code de sécurité"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "Saisissez le code de sécurité"
 
@@ -6149,6 +6153,19 @@ msgstr "Connexion par HTTP"
 
 msgid "Enable splash-screen popup"
 msgstr "Activer l'affichage de la bannière"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "Vous avez été expulsé : (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "Mauvais ticket"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_Salon :"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7923,6 +7940,76 @@ msgstr ""
 "Une connexion directe entre les deux machines est nécessaire pour l'envoi "
 "d'images. Votre adresse IP sera révélée et ceci peut être considéré comme "
 "une faille de sécurité."
+
+#, fuzzy
+msgid "Invalid SNAC"
+msgstr "Identifiant non valide"
+
+msgid "Rate to host"
+msgstr "Fréquence vers l'hôte"
+
+msgid "Rate to client"
+msgstr "Fréquence vers le client"
+
+msgid "Service unavailable"
+msgstr "Service non disponible"
+
+msgid "Service not defined"
+msgstr "Service non défini"
+
+msgid "Obsolete SNAC"
+msgstr "SNAC obsolète"
+
+msgid "Not supported by host"
+msgstr "Non supporté par l'hôte"
+
+msgid "Not supported by client"
+msgstr "Non supporté par le client"
+
+msgid "Refused by client"
+msgstr "Refusé par le client"
+
+msgid "Reply too big"
+msgstr "Réponse trop grosse"
+
+msgid "Responses lost"
+msgstr "Réponses perdues"
+
+msgid "Request denied"
+msgstr "Requête refusée"
+
+msgid "Busted SNAC payload"
+msgstr "Charge SNAC incorrecte"
+
+msgid "Insufficient rights"
+msgstr "Droits insuffisants"
+
+msgid "In local permit/deny"
+msgstr "Dans l'autorisation/interdiction locale"
+
+msgid "Warning level too high (sender)"
+msgstr "Niveau d'avertissement trop élevé (émission)"
+
+msgid "Warning level too high (receiver)"
+msgstr "Niveau d'avertissement trop élevé (réception)"
+
+msgid "User temporarily unavailable"
+msgstr "L'utilisateur est temporairement indisponible."
+
+msgid "No match"
+msgstr "Aucun résultat"
+
+msgid "List overflow"
+msgstr "Dépassement de liste"
+
+msgid "Request ambiguous"
+msgstr "Requête ambiguë"
+
+msgid "Queue full"
+msgstr "File d'attente pleine"
+
+msgid "Not while on AOL"
+msgstr "Impossible sur AOL"
 
 msgid "Aquarius"
 msgstr "Verseau"
@@ -10226,8 +10313,8 @@ msgid ""
 msgstr ""
 "Le serveur Yahoo! a demandé une méthode d'authentification non reconnue. "
 "Cette version de l'application n'arrivera probablement pas à se connecter au "
-"service Yahoo!. Vous pouvez vérifier qu'une mise à jour est disponible sur %"
-"s."
+"service Yahoo!. Vous pouvez vérifier qu'une mise à jour est disponible sur "
+"%s."
 
 msgid "Failed Yahoo! Authentication"
 msgstr "Échec de l'authentification Yahoo!"
@@ -12342,8 +12429,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s est un client de messagerie basé sur libpurple capable de se connecter à "
 "de multiples services de messageries instantanées. %s est écrit en C et "
@@ -12898,16 +12985,16 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Êtes-vous sûr de vouloir supprimer les archives de la conversation dans %s "
 "datée du %s ?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "Êtes-vous sûr de vouloir supprimer les archives système datées du %s ?"
 
 msgid "Delete Log?"
@@ -14723,8 +14810,8 @@ msgid ""
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Permet d'envoyer des données brutes aux protocoles en mode texte (XMPP, MSN, "
-"IRC, TOC). Tapez « Entrée » dans la boîte de saisie pour envoyer. Observez le "
-"résultat dans la fenêtre de debug."
+"IRC, TOC). Tapez « Entrée » dans la boîte de saisie pour envoyer. Observez "
+"le résultat dans la fenêtre de debug."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -15249,13 +15336,13 @@ msgstr ""
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 "Erreur lors de l'installation du correcteur orthographique ($R3).$\\rSi une "
 "nouvelle tentative échoue, veuillez suivre les instructions sur http://"
-"developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 
 #. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
@@ -15279,7 +15366,7 @@ msgid ""
 "Runtime?"
 msgstr ""
 "Pidgin a besoin d'une version compatible des bibliothèques GTK+ (qui n'a pas "
-"l'air d'être présente sur votre système).$\\Êtes-vous sûr de ne pas vouloir "
+"l'air d'être présente sur votre système).$\\rÊtes-vous sûr de ne pas vouloir "
 "installer ces bibliothèques ?"
 
 #. Installer Subsection Text
@@ -15333,72 +15420,6 @@ msgstr "Visitez la page web de Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Vous n'avez pas les permissions pour supprimer cette application."
-
-#~ msgid "Rate to host"
-#~ msgstr "Fréquence vers l'hôte"
-
-#~ msgid "Rate to client"
-#~ msgstr "Fréquence vers le client"
-
-#~ msgid "Service unavailable"
-#~ msgstr "Service non disponible"
-
-#~ msgid "Service not defined"
-#~ msgstr "Service non défini"
-
-#~ msgid "Obsolete SNAC"
-#~ msgstr "SNAC obsolète"
-
-#~ msgid "Not supported by host"
-#~ msgstr "Non supporté par l'hôte"
-
-#~ msgid "Not supported by client"
-#~ msgstr "Non supporté par le client"
-
-#~ msgid "Refused by client"
-#~ msgstr "Refusé par le client"
-
-#~ msgid "Reply too big"
-#~ msgstr "Réponse trop grosse"
-
-#~ msgid "Responses lost"
-#~ msgstr "Réponses perdues"
-
-#~ msgid "Request denied"
-#~ msgstr "Requête refusée"
-
-#~ msgid "Busted SNAC payload"
-#~ msgstr "Charge SNAC incorrecte"
-
-#~ msgid "Insufficient rights"
-#~ msgstr "Droits insuffisants"
-
-#~ msgid "In local permit/deny"
-#~ msgstr "Dans l'autorisation/interdiction locale"
-
-#~ msgid "Warning level too high (sender)"
-#~ msgstr "Niveau d'avertissement trop élevé (émission)"
-
-#~ msgid "Warning level too high (receiver)"
-#~ msgstr "Niveau d'avertissement trop élevé (réception)"
-
-#~ msgid "User temporarily unavailable"
-#~ msgstr "L'utilisateur est temporairement indisponible."
-
-#~ msgid "No match"
-#~ msgstr "Aucun résultat"
-
-#~ msgid "List overflow"
-#~ msgstr "Dépassement de liste"
-
-#~ msgid "Request ambiguous"
-#~ msgstr "Requête ambiguë"
-
-#~ msgid "Queue full"
-#~ msgstr "File d'attente pleine"
-
-#~ msgid "Not while on AOL"
-#~ msgstr "Impossible sur AOL"
 
 #~ msgid "Unknown reason."
 #~ msgstr "Erreur inconnue"

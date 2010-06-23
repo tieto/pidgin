@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 23:18-0400\n"
+"POT-Creation-Date: 2010-05-30 23:15-0400\n"
 "PO-Revision-Date: 2006-11-09 17:11+0530\n"
 "Last-Translator: wangmo sherpa <rinwanshe@yahoo.com>\n"
 "Language-Team:  <pgeygel@dit.gov.bt>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1419,6 +1420,7 @@ msgstr "གནས་ཚད་བཏོན་གཏང་།"
 msgid "Saved Statuses"
 msgstr "གནས་ཚད་ཚུ་སྲུངས་བཞག་ཡོདཔ།"
 
+#. title
 msgid "Title"
 msgstr "མགོ་མིང་།"
 
@@ -1975,7 +1977,6 @@ msgstr "%s: %d དོགས་པ་སེལ་ནིའི་འཛོལ་�
 msgid "Thread creation failure: %s"
 msgstr "ཐེ་རེཌི་གསར་བསྐྲུན་འཐུས་ཤོར།: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "མ་ཤེས་པའི་རྒྱུ་མཚན།"
 
@@ -3273,6 +3274,9 @@ msgid "UIN"
 msgstr "ཡུ་ཨའི་ཨེན།"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "འགོ་མིང་།"
 
@@ -4043,6 +4047,7 @@ msgstr "ལུང་ཕྱོགས།"
 msgid "Postal Code"
 msgstr "འགྲེམ་ཨང་།"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "རྒྱལ་ཁབ།"
 
@@ -4057,8 +4062,6 @@ msgstr "ཚོགས་སྡེའི་མིང་།"
 msgid "Organization Unit"
 msgstr "ཚོགས་སྡེའི་ཆ་ཕྲན།"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "ལས་གཡོག་ མགོ་མིང་།"
 
@@ -4066,6 +4069,7 @@ msgid "Role"
 msgstr "ལས་འགན།"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "སྐྱེ་བའི་ཉིནམ།"
 
@@ -5939,6 +5943,10 @@ msgstr "ཨའི་པི་སི་བརྟག་ཞིབ་སར་བར
 msgid "Show custom smileys"
 msgstr "སྲོལ་སྒྲིག་ སི་མའི་ལི་ཚུ་སྟོན།"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "མཐུད་ལམ་གསར་བསྐྲུན་འབད་མ་ཚུགསཔ།"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "ལྷོག་བཀོག: ཁོང་རའི་དྲན་བཏོན་ནིའི་དོན་ལུ་ ལག་ལེན་པ་གཅིག་ལྷོག་བཀོག"
 
@@ -6168,7 +6176,11 @@ msgstr "གསལ་སྡུད།"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
+msgid "Your MXitId"
+msgstr ""
+
 #. pin
+#. pin (required)
 #, fuzzy
 msgid "PIN"
 msgstr "ཡུ་ཨའི་ཨེན།"
@@ -6258,7 +6270,7 @@ msgstr "མཐའ་བཙན་གྱི་ ཨའི་ཌི་ ལྡེ་�
 msgid "MXit Login Name"
 msgstr ""
 
-#. nick name
+#. nick name (required)
 #, fuzzy
 msgid "Nick Name"
 msgstr "སྐྱོན་མིང་།"
@@ -6311,7 +6323,7 @@ msgstr ""
 msgid "Security Code"
 msgstr "མཐའ་བཙན་ལྕོགས་ཅན་བཟོ་ཡི།"
 
-#. ask for input
+#. ask for input (required)
 #, fuzzy
 msgid "Enter Security Code"
 msgstr "ཆོག་ཡིག་བཙུགས།"
@@ -6345,6 +6357,11 @@ msgid "Status Message"
 msgstr "འཕྲིན་དོན་གཏང་།"
 
 #, fuzzy
+msgid "Rejection Message"
+msgstr "འཕྲིན་དོན་གཏང་།"
+
+#. hidden number
+#, fuzzy
 msgid "Hidden Number"
 msgstr "བར་མའི་མིང་།"
 
@@ -6364,6 +6381,19 @@ msgstr "མཐུད་དོ།"
 
 msgid "Enable splash-screen popup"
 msgstr ""
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "ཁྱོད་  %s: (%s)ཀྱིས་བཏོན་བཏང་ནུག"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "ཤོག་འཛིན་བྱང་ཉེས།"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "ཁང་མིག:(_R)"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7179,6 +7209,67 @@ msgstr "མཐུད་མ་ཚུགས།"
 msgid "Invalid chat room name"
 msgstr "ནུས་མེད་ཁང་མིག་གི་མིང་།"
 
+msgid "Invalid error"
+msgstr "ནུས་མེད་ཀྱི་འཛོལ་བ།"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr ""
+
+msgid "Cannot send SMS without accepting terms"
+msgstr ""
+
+#, fuzzy
+msgid "Cannot send SMS"
+msgstr "ཡིག་སྣོད་གཏང་མི་ཚུགས།"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+#, fuzzy
+msgid "Cannot send SMS to this country"
+msgstr "སྣོད་ཐོ་གཏང་མི་ཚུགས།"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr ""
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr ""
+
+msgid "Bot account cannot IM this user"
+msgstr ""
+
+msgid "Bot account reached IM limit"
+msgstr ""
+
+msgid "Bot account reached daily IM limit"
+msgstr ""
+
+msgid "Bot account reached monthly IM limit"
+msgstr ""
+
+#, fuzzy
+msgid "Unable to receive offline messages"
+msgstr "འཕྲིན་དོན་གཏང་མ་ཚུགས།"
+
+#, fuzzy
+msgid "Offline message store full"
+msgstr "ཨོཕ་ལ་ཡིན།"
+
+#, fuzzy, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "འཕྲིན་དོན་གཏང་མ་ཚུགས(%s)།"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "འཕྲིན་དོན%sའདི་གཏང་མ་ཚུགས།"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%sལུ་འཕྲིན་དོན་གཏང་མ་ཚུགས།"
+
+#, fuzzy, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "%sལུ་འཕྲིན་དོན་གཏང་མ་ཚུགས།"
+
 msgid "Thinking"
 msgstr ""
 
@@ -7347,120 +7438,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "ཡིག་སྣོད་ %s འདི་ %s གི་ ཚད་མང་མཐའ་ལས་སྦོམ་མའི་ %s ཨིན།"
-
-msgid "Invalid error"
-msgstr "ནུས་མེད་ཀྱི་འཛོལ་བ།"
-
-msgid "Invalid SNAC"
-msgstr "ནུས་མེད་ ཨེསི་ཨེན་ཨེ་སི།"
-
-msgid "Rate to host"
-msgstr "ཧོསཊི་ལུ་ མགྱོགས་ཚད།"
-
-msgid "Rate to client"
-msgstr "ཞབས་ཏོག་སྤྱོད་མི་ལུ་མགྱོགས་ཚད།"
-
-msgid "Service unavailable"
-msgstr "ཞབས་ཏོག་ཐོབ་མ་ཚུགས།"
-
-msgid "Service not defined"
-msgstr "ཞབས་ཏོག་ངེས་འཛིན་མ་འབད་བས།"
-
-msgid "Obsolete SNAC"
-msgstr "མཁོ་མེད་ཀྱི་ ཨེསི་ཨེན་ཨེ་སི།"
-
-msgid "Not supported by host"
-msgstr "ཧོསཊི་གིས་རྒྱབ་སྐྱོར་འབད་འབདཝ་མེན།"
-
-msgid "Not supported by client"
-msgstr "ཞབས་ཏོག་སྤྱོད་མི་གིས་རྒྱབ་སྐྱོར་འབད་འབདཝ་མེན།"
-
-msgid "Refused by client"
-msgstr "ཞབས་ཏོག་སྤྱོད་མི་གིས་ངོས་ལེན་མ་འབད་མ་བཏུབ།"
-
-msgid "Reply too big"
-msgstr "ལན་རྒྱ་ཆེ་དྲགས་པས།"
-
-msgid "Responses lost"
-msgstr "ལན་ཚུ་བྱང་དའི།"
-
-msgid "Request denied"
-msgstr "ཞུ་བ་ངོས་ལེན་འབད་མ་བཏུབ་པས།"
-
-msgid "Busted SNAC payload"
-msgstr "མེདཔ་འགྱོ་འགྱོཝ་གི་ ཨེསི་ཨེན་ཨེ་སི་འདོད་ཆས།"
-
-msgid "Insufficient rights"
-msgstr "ལངམ་མེད་པའི་བདེན་པ་ཚུ།"
-
-msgid "In local permit/deny"
-msgstr "ཉེ་གནས་ཀྱི་གནང་བ་ནང་/ངོས་ལེན་མི་འབད་ནི།"
-
-msgid "Warning level too high (sender)"
-msgstr ""
-
-msgid "Warning level too high (receiver)"
-msgstr ""
-
-msgid "User temporarily unavailable"
-msgstr "ལག་ལེན་པ་འདི་གནས་སྐབས་ཅིག་ཐོབ་མི་ཚུགས།"
-
-msgid "No match"
-msgstr "མཐུན་སྒྲིག་མེད།"
-
-msgid "List overflow"
-msgstr "ཐོ་ཡིག་ལུད་དོ།"
-
-msgid "Request ambiguous"
-msgstr "ཞུ་བ་ངེས་མེད།"
-
-msgid "Queue full"
-msgstr "གྲལ་རིམ་གང་།"
-
-msgid "Not while on AOL"
-msgstr "ཨེ་ཨོ་ཨེལ་གྱི་སྐབས་སུ་ མེན།"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr ""
-
-msgid "Cannot send SMS without accepting terms"
-msgstr ""
-
-#, fuzzy
-msgid "Cannot send SMS"
-msgstr "ཡིག་སྣོད་གཏང་མི་ཚུགས།"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-#, fuzzy
-msgid "Cannot send SMS to this country"
-msgstr "སྣོད་ཐོ་གཏང་མི་ཚུགས།"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr ""
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr ""
-
-msgid "Bot account cannot IM this user"
-msgstr ""
-
-msgid "Bot account reached IM limit"
-msgstr ""
-
-msgid "Bot account reached daily IM limit"
-msgstr ""
-
-msgid "Bot account reached monthly IM limit"
-msgstr ""
-
-#, fuzzy
-msgid "Unable to receive offline messages"
-msgstr "འཕྲིན་དོན་གཏང་མ་ཚུགས།"
-
-#, fuzzy
-msgid "Offline message store full"
-msgstr "ཨོཕ་ལ་ཡིན།"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7831,28 +7808,9 @@ msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "ངོ་མ་ཤེས་པའི་རྒྱུ་མཚན་གྱི་དོན་ལུ་ %hu འཕྲིན་དོན་འདི་%sལས་ བྱིག་ཡར་སོ་ནུག  "
 msgstr[1] "ངོ་མ་ཤེས་པའི་རྒྱུ་མཚན་གྱི་དོན་ལུ  ཁྱོད་ཀྱིས%huའཕྲིན་དོན་ཚུ %sལས བྱིག་ཡར་སོ་ནུག "
 
-#, fuzzy, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "འཕྲིན་དོན་གཏང་མ་ཚུགས(%s)།"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "འཕྲིན་དོན%sའདི་གཏང་མ་ཚུགས།"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "%sལུ་འཕྲིན་དོན་གཏང་མ་ཚུགས།"
-
-#, fuzzy, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "%sལུ་འཕྲིན་དོན་གཏང་མ་ཚུགས།"
-
 #, c-format
 msgid "User information not available: %s"
 msgstr "ལག་ལེན་པའི་བརྡ་དོན་%sའདི་ཐོབ་མི་ཚུགས།"
-
-msgid "Unknown reason."
-msgstr "ངོ་མ་ཤེས་པའི་རྒྱུ་མཚན།"
 
 msgid "Online Since"
 msgstr "ལས་ཚུར་ གློག་ཐོག"
@@ -8288,6 +8246,75 @@ msgstr ""
 "གློག་རིག་གཉིས་ཀྱི་བར་ན་ལུ་ ཐད་ཀར་གྱི་མཐུད་ལམའདི་ ་དགོཔ་ཨིནམ་དང་ ཨའི་ཨེམ་གཟུགས་བརྙན་ཚུའི་དོན་ལུ་ "
 "འདི་ཉེར་མཁོ་ཡོདཔ་ཨིན་།ག་ཅི་འབད་ཟེར་བ་ཅིན་ ཁྱོད་ཀྱི་ཨའི་པི་ ཁ་བྱང་འདི་ཕྱིར་གསལ་འབད་ཟིན་ནི་ཨིནམ་"
 "དང་  དེ་ཡང་སྒེར་གཙང་གི་ཉེན་ཁ་འབད་ཆ་འཇོག་བསྒྲུབ་འོང་།"
+
+msgid "Invalid SNAC"
+msgstr "ནུས་མེད་ ཨེསི་ཨེན་ཨེ་སི།"
+
+msgid "Rate to host"
+msgstr "ཧོསཊི་ལུ་ མགྱོགས་ཚད།"
+
+msgid "Rate to client"
+msgstr "ཞབས་ཏོག་སྤྱོད་མི་ལུ་མགྱོགས་ཚད།"
+
+msgid "Service unavailable"
+msgstr "ཞབས་ཏོག་ཐོབ་མ་ཚུགས།"
+
+msgid "Service not defined"
+msgstr "ཞབས་ཏོག་ངེས་འཛིན་མ་འབད་བས།"
+
+msgid "Obsolete SNAC"
+msgstr "མཁོ་མེད་ཀྱི་ ཨེསི་ཨེན་ཨེ་སི།"
+
+msgid "Not supported by host"
+msgstr "ཧོསཊི་གིས་རྒྱབ་སྐྱོར་འབད་འབདཝ་མེན།"
+
+msgid "Not supported by client"
+msgstr "ཞབས་ཏོག་སྤྱོད་མི་གིས་རྒྱབ་སྐྱོར་འབད་འབདཝ་མེན།"
+
+msgid "Refused by client"
+msgstr "ཞབས་ཏོག་སྤྱོད་མི་གིས་ངོས་ལེན་མ་འབད་མ་བཏུབ།"
+
+msgid "Reply too big"
+msgstr "ལན་རྒྱ་ཆེ་དྲགས་པས།"
+
+msgid "Responses lost"
+msgstr "ལན་ཚུ་བྱང་དའི།"
+
+msgid "Request denied"
+msgstr "ཞུ་བ་ངོས་ལེན་འབད་མ་བཏུབ་པས།"
+
+msgid "Busted SNAC payload"
+msgstr "མེདཔ་འགྱོ་འགྱོཝ་གི་ ཨེསི་ཨེན་ཨེ་སི་འདོད་ཆས།"
+
+msgid "Insufficient rights"
+msgstr "ལངམ་མེད་པའི་བདེན་པ་ཚུ།"
+
+msgid "In local permit/deny"
+msgstr "ཉེ་གནས་ཀྱི་གནང་བ་ནང་/ངོས་ལེན་མི་འབད་ནི།"
+
+msgid "Warning level too high (sender)"
+msgstr ""
+
+msgid "Warning level too high (receiver)"
+msgstr ""
+
+msgid "User temporarily unavailable"
+msgstr "ལག་ལེན་པ་འདི་གནས་སྐབས་ཅིག་ཐོབ་མི་ཚུགས།"
+
+msgid "No match"
+msgstr "མཐུན་སྒྲིག་མེད།"
+
+msgid "List overflow"
+msgstr "ཐོ་ཡིག་ལུད་དོ།"
+
+msgid "Request ambiguous"
+msgstr "ཞུ་བ་ངེས་མེད།"
+
+msgid "Queue full"
+msgstr "གྲལ་རིམ་གང་།"
+
+msgid "Not while on AOL"
+msgstr "ཨེ་ཨོ་ཨེལ་གྱི་སྐབས་སུ་ མེན།"
 
 msgid "Aquarius"
 msgstr "དུས་སྦྱོར་བུམ་པ།"
@@ -12916,8 +12943,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "གེམ་འདི་ ཨེ་ཨའི་ཨེམ་ ཨེམ་ཨེསི་ཨེན་ ཡ་ཧུ་! ཇེབ་བར་ ཨའི་སི་ཀིའུ་ ཨའི་ཨར་སི་ ཨེསི་ཨའི་ཨེལ་སི་ ནོ་བེལ་སྡེ་"
 "རིམ་ ལོ་ཊསི་དུས་གཅིག་པ་ ཛེ་ཕིའར་ ག་ཌུ་-ག་ཌུ་ དང་ ཀིའུ་ཀིའུ་ཚུ་ཆ་མཉམ་རང་ ཚར་གཅིག་གུ་ལུ་ལག་ལེན་"
@@ -13496,14 +13523,14 @@ msgstr "ཁྱོད་ %s དོན་ལུ་ %s གུ་ལུ་ པའུ
 
 #, fuzzy, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr "ཁྱོད་ %s དོན་ལུ་ %s གུ་ལུ་ པའུནསི་བཏོན་གཏང་ནི་འདི་ངེས་གཏན་ཨིན་ན?"
 
 #, fuzzy, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "ཁྱོད་ %s དོན་ལུ་ %s གུ་ལུ་ པའུནསི་བཏོན་གཏང་ནི་འདི་ངེས་གཏན་ཨིན་ན?"
 
 #, fuzzy
@@ -15929,11 +15956,13 @@ msgstr ""
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr ""
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
@@ -15942,80 +15971,93 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "སྔོན་སྒྲིག་ཚུ་དང་ལེན་འབད།(_A)"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
-"20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "GTK+ Runtime (required if not present)"
 msgstr "ཇི་ཊི་ཀེ་+གཡོག་བཀོད་དུས་ཚོད་ཐོན་རིམ།"
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "གནས་ཁོངས།"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 #, fuzzy
 msgid "Next >"
 msgstr "ཚིག་ཡིག"
 
-#. Components Page
+#. Installer Subsection Text
 #, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "ཨིན་ཊར་ནེཊི་འཕྲིན་སྐྱེལ་པ།"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "མགྱོགས་ཐབས།"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "འགོ་བཙུགས།"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -16024,29 +16066,30 @@ msgstr ""
 msgid "The installer is already running."
 msgstr "འ་ནི་ཁ་སླབ་འདི་ ཧེ་མ་ལས་རང་ལག་ལེན་འཐབ་བཞིན་ཡོད།"
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. URL Handler section
+#. Installer Subsection Text
 #, fuzzy
 msgid "URI Handlers"
 msgstr "བཤེད་བཟུང:(_H)"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#~ msgid "Unknown reason."
+#~ msgstr "ངོ་མ་ཤེས་པའི་རྒྱུ་མཚན།"
 
 #, fuzzy
 #~ msgid "Artist"

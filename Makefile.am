@@ -80,10 +80,13 @@ appsdir = $(datadir)/applications
 apps_in_files = pidgin.desktop.in
 apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
-GTK_DIR=pidgin
 endif #ENABLE_GTK
 
 endif #INSTALL_I18N
+
+if ENABLE_GTK
+GTK_DIR=pidgin
+endif
 
 if ENABLE_GNT
 GNT_DIR=finch

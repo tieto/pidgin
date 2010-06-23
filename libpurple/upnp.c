@@ -919,16 +919,20 @@ void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove *ar)
 	GSList *l;
 
 	/* Remove ar from discovery_callbacks if present; it was inserted after a cb.
-	 * The same cb may be in the list multple times, so be careful to remove the one assocaited with ar. */
-	l  = discovery_callbacks;
+	 * The same cb may be in the list multiple times, so be careful to remove
+	 * the one associated with ar. */
+	l = discovery_callbacks;
 	while (l)
 	{
-		if (l->next && (l->next->data == ar)) {
-			discovery_callbacks = g_slist_delete_link(discovery_callbacks, l->next);
+		GSList *next = l->next;
+
+		if (next && (next->data == ar)) {
+			discovery_callbacks = g_slist_delete_link(discovery_callbacks, next);
+			next = l->next;
 			discovery_callbacks = g_slist_delete_link(discovery_callbacks, l);
 		}
 
-		l = l->next;
+		l = next;
 	}
 
 	if (ar->tima > 0)
