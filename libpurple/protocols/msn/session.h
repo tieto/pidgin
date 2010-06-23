@@ -62,7 +62,6 @@ typedef enum
 #include "nexus.h"
 #include "notification.h"
 #include "oim.h"
-#include "slpcall.h"
 #include "switchboard.h"
 #include "user.h"
 #include "userlist.h"
