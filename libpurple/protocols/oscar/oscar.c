@@ -133,7 +133,7 @@ static void purple_icons_fetch(PurpleConnection *gc);
 
 void oscar_set_info(PurpleConnection *gc, const char *info);
 static void oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, PurpleStatus *status);
-static void oscar_set_extendedstatus(PurpleConnection *gc);
+static void oscar_set_extended_status(PurpleConnection *gc);
 static gboolean purple_ssi_rerequestdata(gpointer data);
 
 void oscar_free_name_data(struct name_data *data) {
@@ -3238,7 +3238,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	PurpleStatus *status;
 	gboolean is_available;
 	PurplePresence *presence;
-	const char *username, *message, *itmsurl;
+	const char *username, *message;
 	char *tmp;
 	va_list ap;
 	guint16 maxpermits, maxdenies;
@@ -3279,15 +3279,14 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	else
 		message = NULL;
 	tmp = purple_markup_strip_html(message);
-	itmsurl = purple_status_get_attr_string(status, "itmsurl");
-	aim_srv_setextrainfo(od, FALSE, 0, is_available, tmp, itmsurl);
+	aim_srv_setextrainfo(od, FALSE, 0, is_available, tmp);
 	g_free(tmp);
 
 	presence = purple_status_get_presence(status);
 	aim_srv_setidle(od, !purple_presence_is_idle(presence) ? 0 : time(NULL) - purple_presence_get_idle_time(presence));
 
 	if (od->icq) {
-		oscar_set_extendedstatus(gc);
+		oscar_set_extended_status(gc);
 		aim_icq_setsecurity(od,
 			purple_account_get_bool(account, "authorization", OSCAR_DEFAULT_AUTHORIZATION),
 			purple_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE));
@@ -3854,8 +3853,8 @@ oscar_set_info(PurpleConnection *gc, const char *rawinfo)
 	oscar_set_info_and_status(account, TRUE, rawinfo, FALSE, status);
 }
 
-static void
-oscar_set_extendedstatus(PurpleConnection *gc)
+static guint32
+oscar_get_extended_status(PurpleConnection *gc)
 {
 	OscarData *od;
 	PurpleAccount *account;
@@ -3899,7 +3898,13 @@ oscar_set_extendedstatus(PurpleConnection *gc)
 	else if (!strcmp(status_id, OSCAR_STATUS_ID_CUSTOM))
 		data |= AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY;
 
-	aim_srv_setextrainfo(od, TRUE, data, FALSE, NULL, NULL);
+	return data;
+}
+
+static void
+oscar_set_extended_status(PurpleConnection *gc)
+{
+	aim_srv_setextrainfo(purple_connection_get_protocol_data(gc), TRUE, oscar_get_extended_status(gc), FALSE, NULL);
 }
 
 static void
@@ -3920,7 +3925,6 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	gsize awaylen = 0;
 
 	char *status_text = NULL;
-	const char *itmsurl = NULL;
 
 	status_type = purple_status_get_type(status);
 	primitive = purple_status_type_get_primitive(status_type);
@@ -4002,8 +4006,6 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		const char *status_html;
 
 		status_html = purple_status_get_attr_string(status, "message");
-		if (od->icq && (status_html == NULL || status_html[0] == '\0'))
-			status_html = purple_status_type_get_name(status_type);
 		if (status_html != NULL)
 		{
 			status_text = purple_markup_strip_html(status_html);
@@ -4015,17 +4017,13 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 			}
 		}
 
-		itmsurl = purple_status_get_attr_string(status, "itmsurl");
-
-		/* TODO: Combine these two calls! */
-		aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text, itmsurl);
-		oscar_set_extendedstatus(gc);
+		aim_srv_setextrainfo(od, TRUE, oscar_get_extended_status(gc), TRUE, status_text);
 		g_free(status_text);
 	}
 }
 
 static void
-oscar_set_status_icq(PurpleAccount *account)
+oscar_set_icq_permdeny(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	OscarData *od = purple_connection_get_protocol_data(gc);
@@ -4036,16 +4034,9 @@ oscar_set_status_icq(PurpleAccount *account)
 	 * online. Mimicking the official client's behavior, we use PURPLE_PRIVACY_ALLOW_USERS
 	 * when our status is "invisible" and PURPLE_PRIVACY_DENY_USERS otherwise.
 	 * In the former case, we are visible only to buddies on our "permanently visible" list.
-	 * In the latter, we are invisible only to buddies on our "permanentnly invisible" list.
+	 * In the latter, we are invisible only to buddies on our "permanently invisible" list.
 	 */
 	aim_ssi_setpermdeny(od, invisible ? PURPLE_PRIVACY_ALLOW_USERS : PURPLE_PRIVACY_DENY_USERS);
-
-	/*
-	 * TODO: I guess we should probably wait and do this after we get
-	 * confirmation from the above SSI call?  Right now other people
-	 * see our status blip to "invisible" before we appear offline.
-	 */
-	oscar_set_extendedstatus(gc);
 }
 
 void
@@ -4071,12 +4062,11 @@ oscar_set_status(PurpleAccount *account, PurpleStatus *status)
 		return;
 	}
 
+	if (od->icq)
+		oscar_set_icq_permdeny(account);
+
 	/* Set the AIM-style away message for both AIM and ICQ accounts */
 	oscar_set_info_and_status(account, FALSE, NULL, TRUE, status);
-
-	/* Set the ICQ status for ICQ accounts only */
-	if (od->icq)
-		oscar_set_status_icq(account);
 }
 
 #ifdef CRAZY_WARN
@@ -4243,8 +4233,6 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 		od->getblisttimer = purple_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
 		return 1;
 	}
-
-	oscar_set_status_icq(purple_connection_get_account(gc));
 
 	return 1;
 }
@@ -4546,7 +4534,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		} /* End of switch on curitem->type */
 	} /* End of for loop */
 
-	oscar_set_status_icq(account);
+	oscar_set_icq_permdeny(account);
 
 	/* Activate SSI */
 	/* Sending the enable causes other people to be able to see you, and you to see them */
@@ -5671,7 +5659,7 @@ oscar_icq_privacy_opts(PurpleConnection *gc, PurpleRequestFields *fields)
 	purple_account_set_bool(account, "authorization", auth);
 	purple_account_set_bool(account, "web_aware", web_aware);
 
-	oscar_set_extendedstatus(gc);
+	oscar_set_extended_status(gc);
 	aim_icq_setsecurity(od, auth, web_aware);
 }
 
