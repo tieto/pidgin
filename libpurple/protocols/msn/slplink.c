@@ -278,20 +278,6 @@ msn_slplink_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 		msn_sbconn_send_part(slplink, part);
 	}
 }
-#if 0
-void
-msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
-{
-	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABLISHED)
-	{
-		msn_dc_enqueue_msg(slplink->dc, msg);
-	}
-	else
-	{
-		msn_sbconn_send_msg(slplink, msg);
-	}
-}
-#endif
 
 void
 msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
@@ -403,19 +389,6 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	slpmsg->header->total_size = slpmsg->size;
 
 	msn_slplink_send_msgpart(slplink, slpmsg);
-
-#if 0
-	passport = purple_normalize(slplink->session->account, slplink->remote_user);
-	msn_message_set_header(msg, "P2P-Dest", passport);
-
-	msg->ack_cb = msn_sbconn_msg_ack;
-	msg->nak_cb = msn_sbconn_msg_nak;
-	msg->ack_data = slpmsg;
-
-	msn_slplink_send_msgpart(slplink, slpmsg);
-
-	msn_message_destroy(msg);
-#endif
 }
 
 void

@@ -76,11 +76,6 @@ struct _MsnSlpMessage
 
 	GList *parts; /**< A list with the SlpMsgParts */
 
-#if 0
-	GList *msgs; /**< The real messages. */
-	MsnMessage *msg; /**< The temporary real message that will be sent. */
-#endif
-
 	const char *info;
 	gboolean text_body;
 };
@@ -166,10 +161,6 @@ MsnSlpMessage *msn_slpmsg_dataprep_new(MsnSlpCall *slpcall);
  * @return A new SlpMessage with the file transfer info.
  */
 MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, size_t size);
-
-#if 0
-void msn_slpmsg_show(MsnMessage *msg);
-#endif
 
 /**
  * Serialize the MsnSlpMessage in a way it can be used to be transmited

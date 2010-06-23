@@ -109,24 +109,6 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	if (slpmsg->img == NULL)
 		g_free(slpmsg->buffer);
 
-#if 0
-	for (cur = slpmsg->msgs; cur != NULL; cur = g_list_delete_link(cur, cur))
-	{
-		/* Something is pointing to this slpmsg, so we should remove that
-		 * pointer to prevent a crash. */
-		/* Ex: a user goes offline and after that we receive an ACK */
-
-		MsnMessage *msg = cur->data;
-
-		msg->ack_cb = NULL;
-		msg->nak_cb = NULL;
-		msg->ack_data = NULL;
-		msn_message_unref(msg);
-	}
-
-	slplink->slp_msgs = g_list_remove(slplink->slp_msgs, slpmsg);
-#endif
-
 	for (cur = slpmsg->parts; cur != NULL; cur = g_list_delete_link(cur, cur))
 	{
 		/* Something is pointing to this slpmsg, so we should remove that
@@ -191,36 +173,6 @@ msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img)
 	slpmsg->size = purple_imgstore_get_size(img);
 }
 
-#if 0
-void
-msn_slpmsg_show(MsnMessage *msg)
-{
-	const char *info;
-	gboolean text;
-	guint32 flags;
-
-	text = FALSE;
-
-	flags = GUINT32_TO_LE(msg->slpmsg->header->flags);
-
-	switch (flags)
-	{
-		case P2P_NO_FLAG :
-			info = "SLP CONTROL";
-			text = TRUE;
-			break;
-		case P2P_ACK:
-			info = "SLP ACK"; break;
-		case P2P_MSN_OBJ_DATA:
-		case P2P_FILE_DATA:
-			info = "SLP DATA"; break;
-		default:
-			info = "SLP UNKNOWN"; break;
-	}
-
-	msn_message_show_readable(msg, info, text);
-}
-#endif
 
 MsnSlpMessage *
 msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
