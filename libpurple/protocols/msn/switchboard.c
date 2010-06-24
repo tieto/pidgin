@@ -90,9 +90,11 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	while (swboard->slplinks != NULL) {
 		MsnSlpLink *slplink = swboard->slplinks->data;
 
+		swboard->slplinks = g_list_remove(swboard->slplinks, slplink);
+
 		/* Destroy only those slplinks which use the switchboard */
 		if (slplink->dc == NULL)
-			msn_slplink_destroy(slplink);
+			msn_slplink_unref(slplink);
 		else {
 			swboard->slplinks = g_list_remove(swboard->slplinks, slplink);
 			slplink->swboard = NULL;

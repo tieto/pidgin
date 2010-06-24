@@ -57,8 +57,6 @@ struct _MsnSlpLink
 MsnSlpLink *msn_slplink_ref(MsnSlpLink *slplink);
 void msn_slplink_unref(MsnSlpLink *slplink);
 
-void msn_slplink_destroy(MsnSlpLink *slplink);
-
 /**
  * @return An MsnSlpLink for the given user, or NULL if there is no
  *         existing MsnSlpLink.

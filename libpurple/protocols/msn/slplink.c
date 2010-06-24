@@ -88,7 +88,7 @@ msn_slplink_new(MsnSession *session, const char *username)
 	return msn_slplink_ref(slplink);
 }
 
-void
+static void
 msn_slplink_destroy(MsnSlpLink *slplink)
 {
 	MsnSession *session;

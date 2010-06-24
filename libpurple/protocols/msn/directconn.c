@@ -185,7 +185,7 @@ msn_dc_destroy(MsnDirectConn *dc)
 	if (slplink) {
 		slplink->dc = NULL;
 		if (slplink->swboard == NULL)
-			msn_slplink_destroy(slplink);
+			msn_slplink_unref(slplink);
 	}
 
 	g_free(dc->msg_body);

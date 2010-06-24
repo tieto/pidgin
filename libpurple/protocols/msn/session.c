@@ -72,7 +72,7 @@ msn_session_destroy(MsnSession *session)
 		g_hash_table_destroy(session->soap_table);
 
 	while (session->slplinks != NULL)
-		msn_slplink_destroy(session->slplinks->data);
+		msn_slplink_unref(session->slplinks->data);
 
 	while (session->switches != NULL)
 		msn_switchboard_destroy(session->switches->data);
