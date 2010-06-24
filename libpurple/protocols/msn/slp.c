@@ -1318,3 +1318,132 @@ request_user_display(MsnUser *user)
 		msn_release_buddy_icon_request(session->userlist);
 	}
 }
+
+static void
+send_file_cb(MsnSlpCall *slpcall)
+{
+	MsnSlpMessage *slpmsg;
+	PurpleXfer *xfer;
+
+	xfer = (PurpleXfer *)slpcall->xfer;
+	if (purple_xfer_get_status(xfer) >= PURPLE_XFER_STATUS_STARTED)
+		return;
+
+	purple_xfer_ref(xfer);
+	purple_xfer_start(xfer, -1, NULL, 0);
+	if (purple_xfer_get_status(xfer) != PURPLE_XFER_STATUS_STARTED) {
+		purple_xfer_unref(xfer);
+		return;
+	}
+	purple_xfer_unref(xfer);
+
+	slpmsg = msn_slpmsg_file_new(slpcall, purple_xfer_get_size(xfer));
+	msn_slpmsg_set_slplink(slpmsg, slpcall->slplink);
+
+	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
+}
+
+static gchar *
+gen_context(PurpleXfer *xfer, const char *file_name, const char *file_path)
+{
+	gsize size = 0;
+	MsnFileContext *header;
+	gchar *u8 = NULL;
+	gchar *ret;
+	gunichar2 *uni = NULL;
+	glong currentChar = 0;
+	glong len = 0;
+	const char *preview;
+	gsize preview_len;
+
+	size = purple_xfer_get_size(xfer);
+
+	purple_xfer_prepare_thumbnail(xfer, "png");
+
+	if (!file_name) {
+		gchar *basename = g_path_get_basename(file_path);
+		u8 = purple_utf8_try_convert(basename);
+		g_free(basename);
+		file_name = u8;
+	}
+
+	uni = g_utf8_to_utf16(file_name, -1, NULL, &len, NULL);
+
+	if (u8) {
+		g_free(u8);
+		file_name = NULL;
+		u8 = NULL;
+	}
+
+	preview = purple_xfer_get_thumbnail(xfer, &preview_len);
+	header = g_malloc(sizeof(MsnFileContext) + preview_len);
+
+	header->length = GUINT32_TO_LE(sizeof(MsnFileContext) - 1);
+	header->version = GUINT32_TO_LE(2); /* V.3 contains additional unnecessary data */
+	header->file_size = GUINT64_TO_LE(size);
+	if (preview)
+		header->type = GUINT32_TO_LE(0);
+	else
+		header->type = GUINT32_TO_LE(1);
+
+	len = MIN(len, MAX_FILE_NAME_LEN);
+	for (currentChar = 0; currentChar < len; currentChar++) {
+		header->file_name[currentChar] = GUINT16_TO_LE(uni[currentChar]);
+	}
+	memset(&header->file_name[currentChar], 0x00, (MAX_FILE_NAME_LEN - currentChar) * 2);
+
+	memset(&header->unknown1, 0, sizeof(header->unknown1));
+	header->unknown2 = GUINT32_TO_LE(0xffffffff);
+	if (preview) {
+		memcpy(&header->preview, preview, preview_len);
+	}
+	header->preview[preview_len] = '\0';
+
+	g_free(uni);
+	ret = purple_base64_encode((const guchar *)header, sizeof(MsnFileContext) + preview_len);
+	g_free(header);
+	return ret;
+}
+
+void
+msn_request_ft(PurpleXfer *xfer)
+{
+	MsnSlpCall *slpcall;
+	MsnSlpLink *slplink;
+	char *context;
+	const char *fn;
+	const char *fp;
+
+	fn = purple_xfer_get_filename(xfer);
+	fp = purple_xfer_get_local_filename(xfer);
+
+	slplink = xfer->data;
+
+	g_return_if_fail(slplink != NULL);
+	g_return_if_fail(fp != NULL);
+
+	slpcall = msn_slpcall_new(slplink);
+	msn_slpcall_init(slpcall, MSN_SLPCALL_DC);
+
+	slpcall->session_init_cb = send_file_cb;
+	slpcall->end_cb = msn_xfer_end_cb;
+	slpcall->cb = msn_xfer_completed_cb;
+	slpcall->xfer = xfer;
+	purple_xfer_ref(slpcall->xfer);
+
+	slpcall->pending = TRUE;
+
+	purple_xfer_set_cancel_send_fnc(xfer, msn_xfer_cancel);
+	purple_xfer_set_read_fnc(xfer, msn_xfer_read);
+	purple_xfer_set_write_fnc(xfer, msn_xfer_write);
+
+	xfer->data = slpcall;
+
+	context = gen_context(xfer, fn, fp);
+
+	msn_slpcall_invite(slpcall, MSN_FT_GUID, 2, context);
+	msn_slplink_unref(slplink);
+
+	g_free(context);
+}
+

@@ -803,9 +803,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 static void
 t_msn_xfer_init(PurpleXfer *xfer)
 {
-	MsnSlpLink *slplink = xfer->data;
-	msn_slplink_request_ft(slplink, xfer);
-	msn_slplink_unref(slplink);
+	msn_request_ft(xfer);
 }
 
 static void

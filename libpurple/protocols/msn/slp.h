@@ -75,4 +75,6 @@ void msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session);
 
 void msn_queue_buddy_icon_request(MsnUser *user);
 
+void msn_request_ft(PurpleXfer *xfer);
+
 #endif /* MSN_SLP_H */
