@@ -3238,7 +3238,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	PurpleStatus *status;
 	gboolean is_available;
 	PurplePresence *presence;
-	const char *username, *message;
+	const char *username, *message, *itmsurl;
 	char *tmp;
 	va_list ap;
 	guint16 maxpermits, maxdenies;
@@ -3279,7 +3279,8 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	else
 		message = NULL;
 	tmp = purple_markup_strip_html(message);
-	aim_srv_setextrainfo(od, FALSE, 0, is_available, tmp);
+	itmsurl = purple_status_get_attr_string(status, "itmsurl");
+	aim_srv_setextrainfo(od, FALSE, 0, is_available, tmp, itmsurl);
 	g_free(tmp);
 
 	presence = purple_status_get_presence(status);
@@ -3904,7 +3905,7 @@ oscar_get_extended_status(PurpleConnection *gc)
 static void
 oscar_set_extended_status(PurpleConnection *gc)
 {
-	aim_srv_setextrainfo(purple_connection_get_protocol_data(gc), TRUE, oscar_get_extended_status(gc), FALSE, NULL);
+	aim_srv_setextrainfo(purple_connection_get_protocol_data(gc), TRUE, oscar_get_extended_status(gc), FALSE, NULL, NULL);
 }
 
 static void
@@ -3925,6 +3926,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	gsize awaylen = 0;
 
 	char *status_text = NULL;
+	const char *itmsurl = NULL;
 
 	status_type = purple_status_get_type(status);
 	primitive = purple_status_type_get_primitive(status_type);
@@ -4017,7 +4019,9 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 			}
 		}
 
-		aim_srv_setextrainfo(od, TRUE, oscar_get_extended_status(gc), TRUE, status_text);
+		itmsurl = purple_status_get_attr_string(status, "itmsurl");
+		
+		aim_srv_setextrainfo(od, TRUE, oscar_get_extended_status(gc), TRUE, status_text, itmsurl);
 		g_free(status_text);
 	}
 }

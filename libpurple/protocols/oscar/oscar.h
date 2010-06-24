@@ -723,7 +723,7 @@ aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 subtype)
 /* 0x0014 */ void aim_srv_setprivacyflags(OscarData *od, FlapConnection *conn, guint32);
 /* 0x0016 */ void aim_srv_nop(OscarData *od, FlapConnection *conn);
 /* 0x0017 */ void aim_srv_setversions(OscarData *od, FlapConnection *conn);
-/* 0x001e */ int aim_srv_setextrainfo(OscarData *od, gboolean seticqstatus, guint32 icqstatus, gboolean setstatusmsg, const char *statusmsg);
+/* 0x001e */ int aim_srv_setextrainfo(OscarData *od, gboolean seticqstatus, guint32 icqstatus, gboolean setstatusmsg, const char *statusmsg, const char *itmsurl);
 
 
 void aim_bos_reqrights(OscarData *od, FlapConnection *conn);
