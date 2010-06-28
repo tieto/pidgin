@@ -660,10 +660,8 @@ int aim_ssi_cleanlist(OscarData *od)
 		if (!cur->name) {
 			if (cur->type == AIM_SSI_TYPE_BUDDY)
 				aim_ssi_delbuddy(od, NULL, NULL);
-			else if (cur->type == AIM_SSI_TYPE_PERMIT)
-				aim_ssi_delpermit(od, NULL);
-			else if (cur->type == AIM_SSI_TYPE_DENY)
-				aim_ssi_deldeny(od, NULL);
+			else if (cur->type == AIM_SSI_TYPE_PERMIT || cur->type == AIM_SSI_TYPE_DENY || cur->type == AIM_SSI_TYPE_ICQDENY)
+				aim_ssi_del_from_private_list(od, NULL, cur->type);
 		} else if ((cur->type == AIM_SSI_TYPE_BUDDY) && ((cur->gid == 0x0000) || (!aim_ssi_itemlist_find(od->ssi.local, cur->gid, 0x0000)))) {
 			char *alias = aim_ssi_getalias(od->ssi.local, NULL, cur->name);
 			aim_ssi_addbuddy(od, cur->name, "orphans", NULL, alias, NULL, NULL, FALSE);
@@ -748,51 +746,31 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, GSList 
 	return aim_ssi_sync(od);
 }
 
-/**
- * Add a permit buddy to the list.
- *
- * @param od The oscar odion.
- * @param name The name of the item..
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_ssi_addpermit(OscarData *od, const char *name)
+int
+aim_ssi_add_to_private_list(OscarData *od, const char* name, guint16 list_type)
 {
-
 	if (!od || !name || !od->ssi.received_data)
 		return -EINVAL;
 
-	/* Make sure the master group exists */
 	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
-		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, list_type, NULL);
 
-	/* Add that bad boy */
-	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_PERMIT, NULL);
-
-	/* Sync our local list with the server list */
+	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, list_type, NULL);
 	return aim_ssi_sync(od);
 }
 
-/**
- * Add a deny buddy to the list.
- *
- * @param od The oscar odion.
- * @param name The name of the item..
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_ssi_adddeny(OscarData *od, const char *name)
+int
+aim_ssi_del_from_private_list(OscarData* od, const char* name, guint16 list_type)
 {
-	guint16 deny_entry_type = aim_ssi_getdenyentrytype(od);
-	if (!od || !name || !od->ssi.received_data)
+	struct aim_ssi_item *del;
+
+	if (!od)
 		return -EINVAL;
 
-	/* Make sure the master group exists */
-	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
-		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, deny_entry_type, NULL);
+	if (!(del = aim_ssi_itemlist_finditem(od->ssi.local, NULL, name, list_type)))
+		return -EINVAL;
 
-	/* Add that bad boy */
-	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, deny_entry_type, NULL);
-
-	/* Sync our local list with the server list */
+	aim_ssi_itemlist_del(&od->ssi.local, del);
 	return aim_ssi_sync(od);
 }
 
@@ -854,57 +832,6 @@ int aim_ssi_delgroup(OscarData *od, const char *group)
 
 	/* Modify the parent group */
 	aim_ssi_itemlist_rebuildgroup(od->ssi.local, group);
-
-	/* Sync our local list with the server list */
-	return aim_ssi_sync(od);
-}
-
-/**
- * Deletes a permit buddy from the list.
- *
- * @param od The oscar odion.
- * @param name The name of the item, or NULL.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_ssi_delpermit(OscarData *od, const char *name)
-{
-	struct aim_ssi_item *del;
-
-	if (!od)
-		return -EINVAL;
-
-	/* Find the item */
-	if (!(del = aim_ssi_itemlist_finditem(od->ssi.local, NULL, name, AIM_SSI_TYPE_PERMIT)))
-		return -EINVAL;
-
-	/* Remove the item from the list */
-	aim_ssi_itemlist_del(&od->ssi.local, del);
-
-	/* Sync our local list with the server list */
-	return aim_ssi_sync(od);
-}
-
-/**
- * Deletes a deny buddy from the list.
- *
- * @param od The oscar odion.
- * @param name The name of the item, or NULL.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_ssi_deldeny(OscarData *od, const char *name)
-{
-	guint16 deny_entry_type = aim_ssi_getdenyentrytype(od);
-	struct aim_ssi_item *del;
-
-	if (!od)
-		return -EINVAL;
-
-	/* Find the item */
-	if (!(del = aim_ssi_itemlist_finditem(od->ssi.local, NULL, name, deny_entry_type)))
-		return -EINVAL;
-
-	/* Remove the item from the list */
-	aim_ssi_itemlist_del(&od->ssi.local, del);
 
 	/* Sync our local list with the server list */
 	return aim_ssi_sync(od);

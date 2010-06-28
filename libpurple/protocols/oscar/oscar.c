@@ -46,6 +46,7 @@
 #include "request.h"
 #include "util.h"
 #include "version.h"
+#include "visibility.h"
 
 #include "oscarcommon.h"
 #include "oscar.h"
@@ -5175,41 +5176,36 @@ void oscar_set_permit_deny(PurpleConnection *gc) {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	OscarData *od = purple_connection_get_protocol_data(gc);
 
-	if (od->ssi.received_data)
-		/*
-		 * Conveniently there is a one-to-one mapping between the
-		 * values of libpurple's PurplePrivacyType and the values used
-		 * by the oscar protocol.
-		 */
-		aim_ssi_setpermdeny(od, account->perm_deny);
+	/*
+	 * Conveniently there is a one-to-one mapping between the
+	 * values of libpurple's PurplePrivacyType and the values used
+	 * by the oscar protocol.
+	 */
+	aim_ssi_setpermdeny(od, account->perm_deny);
 }
 
 void oscar_add_permit(PurpleConnection *gc, const char *who) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	purple_debug_info("oscar", "ssi: About to add a permit\n");
-	if (od->ssi.received_data)
-		aim_ssi_addpermit(od, who);
+	aim_ssi_add_to_private_list(od, who, AIM_SSI_TYPE_PERMIT);
 }
 
 void oscar_add_deny(PurpleConnection *gc, const char *who) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	purple_debug_info("oscar", "ssi: About to add a deny\n");
-	if (od->ssi.received_data)
-		aim_ssi_adddeny(od, who);
+	aim_ssi_add_to_private_list(od, who, aim_ssi_getdenyentrytype(od));
 }
 
 void oscar_rem_permit(PurpleConnection *gc, const char *who) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	purple_debug_info("oscar", "ssi: About to delete a permit\n");
-	if (od->ssi.received_data)
-		aim_ssi_delpermit(od, who);
+	aim_ssi_del_from_private_list(od, who, AIM_SSI_TYPE_PERMIT);
 }
 
 void oscar_rem_deny(PurpleConnection *gc, const char *who) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	purple_debug_info("oscar", "ssi: About to delete a deny\n");
-	if (od->ssi.received_data)
-		aim_ssi_deldeny(od, who);
+	aim_ssi_del_from_private_list(od, who, aim_ssi_getdenyentrytype(od));
 }
 
 GList *
@@ -5541,7 +5537,6 @@ oscar_get_aim_info_cb(PurpleBlistNode *node, gpointer ignore)
 
 static GList *
 oscar_buddy_menu(PurpleBuddy *buddy) {
-
 	PurpleConnection *gc;
 	OscarData *od;
 	GList *menu;
@@ -5579,6 +5574,7 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 		                           PURPLE_CALLBACK(oscar_get_icqxstatusmsg),
 		                           NULL, NULL);
 		menu = g_list_prepend(menu, act);
+		menu = g_list_prepend(menu, create_visibility_menu_item(od, bname));
 	}
 
 	if (userinfo &&

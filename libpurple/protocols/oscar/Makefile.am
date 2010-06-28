@@ -46,7 +46,8 @@ OSCARSOURCES = \
 	snactypes.h         \
 	tlv.c               \
 	userinfo.c          \
-	util.c
+	util.c              \
+	visibility.c
 
 AM_CFLAGS = $(st)
 

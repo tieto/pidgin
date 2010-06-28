@@ -1329,12 +1329,8 @@ gboolean aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const
 
 /* Client functions for changing SSI data */
 int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, GSList *tlvlist, const char *alias, const char *comment, const char *smsnum, gboolean needauth);
-int aim_ssi_addpermit(OscarData *od, const char *name);
-int aim_ssi_adddeny(OscarData *od, const char *name);
 int aim_ssi_delbuddy(OscarData *od, const char *name, const char *group);
 int aim_ssi_delgroup(OscarData *od, const char *group);
-int aim_ssi_delpermit(OscarData *od, const char *name);
-int aim_ssi_deldeny(OscarData *od, const char *name);
 int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const char *bn);
 int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *bn, const char *alias);
 int aim_ssi_editcomment(OscarData *od, const char *gn, const char *bn, const char *alias);
@@ -1345,6 +1341,8 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny);
 int aim_ssi_setpresence(OscarData *od, guint32 presence);
 int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint8 iconsumlen);
 int aim_ssi_delicon(OscarData *od);
+int aim_ssi_add_to_private_list(OscarData *od, const char* name, guint16 list_type);
+int aim_ssi_del_from_private_list(OscarData* od, const char* name, guint16 list_type);
 
 guint16 aim_ssi_getdenyentrytype(OscarData* od);
 
