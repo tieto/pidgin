@@ -3601,11 +3601,12 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 		purple_request_field_list_add_selected(f, _("None"));
 
 	/* TODO: rlaager wants this sorted. */
-	/* The connection is checked for PURPLE_CONNECTION_SUPPORT_MOODS flag before
-	 * this function is called for a non-null account. So using
-	 * PURPLE_PROTOCOL_PLUGIN_HAS_FUNC isn't necessary here */
-	for (mood = account ? prpl_info->get_moods(account) : global_moods;
-	     mood->mood != NULL ; mood++) {
+	/* TODO: darkrain wants it sorted post-translation */
+	if (account && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_moods))
+		mood = prpl_info->get_moods(account);
+	else
+		mood = global_moods;
+	for ( ; mood->mood != NULL ; mood++) {
 		char *path;
 
 		if (mood->mood == NULL || mood->description == NULL)
