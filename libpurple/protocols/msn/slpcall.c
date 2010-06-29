@@ -925,7 +925,7 @@ got_error(MsnSlpCall *slpcall,
 	slpcall->wasted = TRUE;
 }
 
-MsnSlpCall *
+static MsnSlpCall *
 msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 {
 	MsnSlpCall *slpcall;

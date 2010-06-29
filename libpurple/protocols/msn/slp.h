@@ -51,8 +51,6 @@ typedef struct
 } MsnFileContext;
 #pragma pack(pop)
 
-MsnSlpCall * msn_slp_sip_recv(MsnSlpLink *slplink,
-							  const char *body);
 void
 msn_slp_send_ok(MsnSlpCall *slpcall, const char *branch,
 		const char *type, const char *content);
