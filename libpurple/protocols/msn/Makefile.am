@@ -68,6 +68,8 @@ MSNSOURCES = \
 	user.h \
 	userlist.c \
 	userlist.h \
+	xfer.c \
+	xfer.h \
 	msnutils.c \
 	msnutils.h
 
