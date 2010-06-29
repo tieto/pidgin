@@ -40,8 +40,6 @@
 /* seconds to delay between sending buddy icon requests to the server. */
 #define BUDDY_ICON_DELAY 20
 
-static void request_user_display(MsnUser *user);
-
 
 /**************************************************************************
  * SLP Control
@@ -91,72 +89,6 @@ msn_slp_send_decline(MsnSlpCall *slpcall, const char *branch,
  * Msg Callbacks
  **************************************************************************/
 
-static gboolean
-buddy_icon_cached(PurpleConnection *gc, MsnObject *obj)
-{
-	PurpleAccount *account;
-	PurpleBuddy *buddy;
-	const char *old;
-	const char *new;
-
-	g_return_val_if_fail(obj != NULL, FALSE);
-
-	account = purple_connection_get_account(gc);
-
-	buddy = purple_find_buddy(account, msn_object_get_creator(obj));
-	if (buddy == NULL)
-		return FALSE;
-
-	old = purple_buddy_icons_get_checksum_for_user(buddy);
-	new = msn_object_get_sha1(obj);
-
-	if (new == NULL)
-		return FALSE;
-
-	/* If the old and new checksums are the same, and the file actually exists,
-	 * then return TRUE */
-	if (old != NULL && !strcmp(old, new))
-		return TRUE;
-
-	return FALSE;
-}
-
-static void
-msn_release_buddy_icon_request(MsnUserList *userlist)
-{
-	MsnUser *user;
-
-	g_return_if_fail(userlist != NULL);
-
-	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "Releasing buddy icon request\n");
-
-	if (userlist->buddy_icon_window > 0)
-	{
-		GQueue *queue;
-		PurpleAccount *account;
-		const char *username;
-
-		queue = userlist->buddy_icon_requests;
-
-		if (g_queue_is_empty(userlist->buddy_icon_requests))
-			return;
-
-		user = g_queue_pop_head(queue);
-
-		account  = userlist->session->account;
-		username = user->passport;
-
-		userlist->buddy_icon_window--;
-		request_user_display(user);
-
-		if (purple_debug_is_verbose())
-			purple_debug_info("msn",
-			                  "msn_release_buddy_icon_request(): buddy_icon_window-- yields =%d\n",
-			                  userlist->buddy_icon_window);
-	}
-}
-
 /*
  * Called on a timeout from end_user_display(). Frees a buddy icon window slow and dequeues the next
  * buddy icon request if there is one.
@@ -175,43 +107,6 @@ msn_release_buddy_icon_request_timeout(gpointer data)
 	msn_release_buddy_icon_request(userlist);
 
 	return FALSE;
-}
-
-void
-msn_queue_buddy_icon_request(MsnUser *user)
-{
-	PurpleAccount *account;
-	MsnObject *obj;
-	GQueue *queue;
-
-	g_return_if_fail(user != NULL);
-
-	account = user->userlist->session->account;
-
-	obj = msn_user_get_object(user);
-
-	if (obj == NULL)
-	{
-		purple_buddy_icons_set_for_user(account, user->passport, NULL, 0, NULL);
-		return;
-	}
-
-	if (!buddy_icon_cached(account->gc, obj))
-	{
-		MsnUserList *userlist;
-
-		userlist = user->userlist;
-		queue = userlist->buddy_icon_requests;
-
-		if (purple_debug_is_verbose())
-			purple_debug_info("msn", "Queueing buddy icon request for %s (buddy_icon_window = %i)\n",
-			                  user->passport, userlist->buddy_icon_window);
-
-		g_queue_push_tail(queue, user);
-
-		if (userlist->buddy_icon_window > 0)
-			msn_release_buddy_icon_request(userlist);
-	}
 }
 
 static void
@@ -282,7 +177,43 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 }
 
 static void
-request_user_display(MsnUser *user)
+request_own_user_display(MsnUser *user)
+{
+	PurpleAccount *account;
+	MsnSession *session;
+	MsnObject *my_obj = NULL;
+	gconstpointer data = NULL;
+	const char *info;
+	size_t len = 0;
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "Requesting our own user display\n");
+
+	session = user->userlist->session;
+	account = session->account;
+	my_obj = msn_user_get_object(user);
+
+	if (my_obj != NULL) {
+		PurpleStoredImage *img = msn_object_get_image(my_obj);
+		data = purple_imgstore_get_data(img);
+		len = purple_imgstore_get_size(img);
+		info = msn_object_get_sha1(my_obj);
+	}
+
+	purple_buddy_icons_set_for_user(account, user->passport, g_memdup(data, len), len, info);
+
+	/* Free one window slot */
+	session->userlist->buddy_icon_window++;
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "msn_request_user_display(): buddy_icon_window++ yields =%d\n",
+				session->userlist->buddy_icon_window);
+
+	msn_release_buddy_icon_request(session->userlist);
+}
+
+void
+msn_request_user_display(MsnUser *user)
 {
 	PurpleAccount *account;
 	MsnSession *session;
@@ -300,40 +231,11 @@ request_user_display(MsnUser *user)
 	info = msn_object_get_sha1(obj);
 
 	if (g_ascii_strcasecmp(user->passport,
-						   purple_account_get_username(account)))
-	{
+				purple_account_get_username(account)))
 		msn_slplink_request_object(slplink, info, got_user_display,
-								   end_user_display, obj);
-	}
+				end_user_display, obj);
 	else
-	{
-		MsnObject *my_obj = NULL;
-		gconstpointer data = NULL;
-		size_t len = 0;
-
-		if (purple_debug_is_verbose())
-			purple_debug_info("msn", "Requesting our own user display\n");
-
-		my_obj = msn_user_get_object(session->user);
-
-		if (my_obj != NULL)
-		{
-			PurpleStoredImage *img = msn_object_get_image(my_obj);
-			data = purple_imgstore_get_data(img);
-			len = purple_imgstore_get_size(img);
-		}
-
-		purple_buddy_icons_set_for_user(account, user->passport, g_memdup(data, len), len, info);
-
-		/* Free one window slot */
-		session->userlist->buddy_icon_window++;
-
-		if (purple_debug_is_verbose())
-			purple_debug_info("msn", "request_user_display(): buddy_icon_window++ yields =%d\n",
-			                  session->userlist->buddy_icon_window);
-
-		msn_release_buddy_icon_request(session->userlist);
-	}
+		request_own_user_display(user);
 }
 
 static void

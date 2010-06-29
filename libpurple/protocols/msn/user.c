@@ -507,6 +507,71 @@ msn_user_set_network(MsnUser *user, MsnNetwork network)
 	user->networkid = network;
 }
 
+static gboolean
+buddy_icon_cached(PurpleConnection *gc, MsnObject *obj)
+{
+	PurpleAccount *account;
+	PurpleBuddy *buddy;
+	const char *old;
+	const char *new;
+
+	g_return_val_if_fail(obj != NULL, FALSE);
+
+	account = purple_connection_get_account(gc);
+
+	buddy = purple_find_buddy(account, msn_object_get_creator(obj));
+	if (buddy == NULL)
+		return FALSE;
+
+	old = purple_buddy_icons_get_checksum_for_user(buddy);
+	new = msn_object_get_sha1(obj);
+
+	if (new == NULL)
+		return FALSE;
+
+	/* If the old and new checksums are the same, and the file actually exists,
+	 * then return TRUE */
+	if (old != NULL && !strcmp(old, new))
+		return TRUE;
+
+	return FALSE;
+}
+
+static void
+queue_buddy_icon_request(MsnUser *user)
+{
+	PurpleAccount *account;
+	MsnObject *obj;
+	GQueue *queue;
+
+	g_return_if_fail(user != NULL);
+
+	account = user->userlist->session->account;
+
+	obj = msn_user_get_object(user);
+
+	if (obj == NULL) {
+		purple_buddy_icons_set_for_user(account, user->passport, NULL, 0, NULL);
+		return;
+	}
+
+	if (!buddy_icon_cached(account->gc, obj)) {
+		MsnUserList *userlist;
+
+		userlist = user->userlist;
+		queue = userlist->buddy_icon_requests;
+
+		if (purple_debug_is_verbose())
+			purple_debug_info("msn", "Queueing buddy icon request for %s (buddy_icon_window = %i)\n",
+			                  user->passport, userlist->buddy_icon_window);
+
+		g_queue_push_tail(queue, user);
+
+		if (userlist->buddy_icon_window > 0)
+			msn_release_buddy_icon_request(userlist);
+	}
+}
+
 void
 msn_user_set_object(MsnUser *user, MsnObject *obj)
 {
@@ -518,7 +583,7 @@ msn_user_set_object(MsnUser *user, MsnObject *obj)
 	user->msnobj = obj;
 
 	if (user != user->userlist->session->user && user->list_op & MSN_LIST_FL_OP)
-		msn_queue_buddy_icon_request(user);
+		queue_buddy_icon_request(user);
 }
 
 void

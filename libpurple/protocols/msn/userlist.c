@@ -687,6 +687,42 @@ msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 	msn_add_contact_to_group(userlist->session, state, who, new_group_id);
 }
 
+void
+msn_release_buddy_icon_request(MsnUserList *userlist)
+{
+	MsnUser *user;
+
+	g_return_if_fail(userlist != NULL);
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "Releasing buddy icon request\n");
+
+	if (userlist->buddy_icon_window > 0) {
+		GQueue *queue;
+		PurpleAccount *account;
+		const char *username;
+
+		queue = userlist->buddy_icon_requests;
+
+		if (g_queue_is_empty(userlist->buddy_icon_requests))
+			return;
+
+		user = g_queue_pop_head(queue);
+
+		account  = userlist->session->account;
+		username = user->passport;
+
+		userlist->buddy_icon_window--;
+
+		msn_request_user_display(user);
+
+		if (purple_debug_is_verbose())
+			purple_debug_info("msn",
+			                  "msn_release_buddy_icon_request(): buddy_icon_window-- yields =%d\n",
+			                  userlist->buddy_icon_window);
+	}
+}
+
 /*load userlist from the Blist file cache*/
 void
 msn_userlist_load(MsnSession *session)

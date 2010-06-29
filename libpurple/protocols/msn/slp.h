@@ -63,7 +63,7 @@ msn_slp_send_decline(MsnSlpCall *slpcall, const char *branch,
 void send_bye(MsnSlpCall *slpcall, const char *type);
 
 
-void msn_queue_buddy_icon_request(MsnUser *user);
+void msn_request_user_display(MsnUser *user);
 
 void msn_request_ft(PurpleXfer *xfer);
 

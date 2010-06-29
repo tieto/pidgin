@@ -105,6 +105,7 @@ void msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 				    MsnListId list_id);
 void msn_userlist_rem_buddy_from_list(MsnUserList *userlist, const char *who,
 				      MsnListId list_id);
+void msn_release_buddy_icon_request(MsnUserList *userlist);
 
 void msn_userlist_load(MsnSession *session);
 
