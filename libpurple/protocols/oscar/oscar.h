@@ -1572,8 +1572,7 @@ gboolean oscar_util_valid_name_icq(const char *bn);
 gboolean oscar_util_valid_name_sms(const char *bn);
 int oscar_util_name_compare(const char *bn1, const char *bn2);
 gchar *oscar_util_format_string(const char *str, const char *name);
-
-
+gchar *oscar_format_buddies(GSList *buddies, const gchar *no_buddies_message);
 
 typedef struct {
 	guint16 family;

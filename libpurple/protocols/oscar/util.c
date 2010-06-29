@@ -387,3 +387,27 @@ oscar_util_format_string(const char *str, const char *name)
 
 	return g_string_free(cpy, FALSE);
 }
+
+gchar *
+oscar_format_buddies(GSList *buddies, const gchar *no_buddies_message)
+{
+	GSList *cur;
+	gchar *result, *tmp;
+	if (!buddies) {
+		return g_strdup_printf("<i>%s</i>", no_buddies_message);
+	}
+	result = g_strdup("");
+	for (cur = buddies; cur != NULL; cur = cur->next) {
+		PurpleBuddy *buddy = cur->data;
+		const gchar *bname = purple_buddy_get_name(buddy);
+		const gchar *alias = purple_buddy_get_alias_only(buddy);
+		if (alias) {
+			tmp = g_strdup_printf("%s%s (%s)<br>", result, bname, alias);
+		} else {
+			tmp = g_strdup_printf("%s%s<br>", result, bname);
+		}
+		g_free(result);
+		result = tmp;
+	}
+	return result;
+}

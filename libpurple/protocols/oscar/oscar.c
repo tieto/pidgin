@@ -5774,41 +5774,29 @@ static void oscar_show_awaitingauth(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	OscarData *od = purple_connection_get_protocol_data(gc);
-	gchar *text, *tmp;
-	GSList *buddies;
-	PurpleAccount *account;
-	int num=0;
-
-	text = g_strdup("");
-	account = purple_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
+	GSList *buddies, *filtered_buddies, *cur;
+	gchar *text;
 
 	buddies = purple_find_buddies(account, NULL);
-	while (buddies) {
+	filtered_buddies = NULL;
+	for (cur = buddies; cur != NULL; cur = cur->next) {
 		PurpleBuddy *buddy;
 		const gchar *bname, *gname;
 
-		buddy = buddies->data;
+		buddy = cur->data;
 		bname = purple_buddy_get_name(buddy);
 		gname = purple_group_get_name(purple_buddy_get_group(buddy));
 		if (aim_ssi_waitingforauth(od->ssi.local, gname, bname)) {
-			const gchar *alias = purple_buddy_get_alias_only(buddy);
-			if (alias)
-				tmp = g_strdup_printf("%s %s (%s)<br>", text, bname, alias);
-			else
-				tmp = g_strdup_printf("%s %s<br>", text, bname);
-			g_free(text);
-			text = tmp;
-
-			num++;
+			filtered_buddies = g_slist_prepend(filtered_buddies, buddy);
 		}
-
-		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
-	if (!num) {
-		g_free(text);
-		text = g_strdup(_("<i>you are not waiting for authorization</i>"));
-	}
+	g_slist_free(buddies);
+
+	filtered_buddies = g_slist_reverse(filtered_buddies);
+	text = oscar_format_buddies(filtered_buddies, _("you are not waiting for authorization"));
+	g_slist_free(filtered_buddies);
 
 	purple_notify_formatted(gc, NULL, _("You are awaiting authorization from "
 						  "the following buddies"),	_("You can re-request "
@@ -6022,6 +6010,12 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 		/* ICQ actions */
 		act = purple_plugin_action_new(_("Set Privacy Options..."),
 				oscar_show_icq_privacy_opts);
+		menu = g_list_prepend(menu, act);
+
+		act = purple_plugin_action_new("Show Visible List", oscar_show_visible_list);
+		menu = g_list_prepend(menu, act);
+
+		act = purple_plugin_action_new("Show Invisible List", oscar_show_invisible_list);
 		menu = g_list_prepend(menu, act);
 	}
 	else
