@@ -21,6 +21,8 @@ version 2.7.2 (??/??/????):
 	  a fallback to legacy IQ authentication (broken in 2.7.0).
 	* Fix a crash when receiving custom emoticons that don't adhere to
 	  the specification.
+	* When initiating a file transfer, don't show resources that are certain
+	  to not support file transfers in the resource selection dialog.
 
 	Yahoo/Yahoo JAPAN:
 	* Renamed "Use account proxy for SSL connections" to "Use account proxy
