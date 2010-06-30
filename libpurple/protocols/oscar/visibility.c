@@ -20,26 +20,32 @@
 
 #include "visibility.h"
 
-struct visibility_cb_data
+static guint16
+get_buddy_list_type(OscarData *od, const char *bname)
 {
-	guint16 list_type;
-	gboolean add_to_list;
-};
+	PurpleAccount *account = purple_connection_get_account(od->gc);
+	return purple_account_is_status_active(account, OSCAR_STATUS_ID_INVISIBLE) ? AIM_SSI_TYPE_PERMIT : AIM_SSI_TYPE_DENY;
+}
+
+static gboolean
+is_buddy_on_list(OscarData *od, const char *bname)
+{
+	return aim_ssi_itemlist_finditem(od->ssi.local, NULL, bname, get_buddy_list_type(od, bname)) != NULL;
+}
 
 static void
-visibility_cb(PurpleBlistNode *node, struct visibility_cb_data *data)
+visibility_cb(PurpleBlistNode *node, gpointer whatever)
 {
 	PurpleBuddy *buddy = PURPLE_BUDDY(node);
 	const char* bname = purple_buddy_get_name(buddy);
-	OscarData *od = purple_account_get_connection(purple_buddy_get_account(buddy))->proto_data;
+	OscarData *od = purple_connection_get_protocol_data(purple_account_get_connection(purple_buddy_get_account(buddy)));
+	guint16 list_type = get_buddy_list_type(od, bname);
 
-	if (data->add_to_list) {
-		aim_ssi_add_to_private_list(od, bname, data->list_type);
+	if (!is_buddy_on_list(od, bname)) {
+		aim_ssi_add_to_private_list(od, bname, list_type);
 	} else {
-		aim_ssi_del_from_private_list(od, bname, data->list_type);
+		aim_ssi_del_from_private_list(od, bname, list_type);
 	}
-
-	g_free(data);
 }
 
 PurpleMenuAction *
@@ -47,18 +53,12 @@ create_visibility_menu_item(OscarData *od, const char *bname)
 {
 	PurpleAccount *account = purple_connection_get_account(od->gc);
 	gboolean invisible = purple_account_is_status_active(account, OSCAR_STATUS_ID_INVISIBLE);
-	guint16 list_type = invisible ? AIM_SSI_TYPE_PERMIT : AIM_SSI_TYPE_DENY;
-	gboolean on_list = aim_ssi_itemlist_finditem(od->ssi.local, NULL, bname, list_type) != NULL;
+	gboolean on_list = is_buddy_on_list(od, bname);
 	gchar *label;
-	struct visibility_cb_data *data;
 	PurpleMenuAction *result;
 
-	data = g_new0(struct visibility_cb_data, 1);
-	data->list_type = list_type;
-	data->add_to_list = !on_list;
-
-	label = g_strdup_printf("%s %s", on_list ? "Don't appear" : "Appear", invisible ? "Online" : "Offline");
-	result = purple_menu_action_new(label, PURPLE_CALLBACK(visibility_cb), data, NULL);
+	label = g_strdup_printf("%s %s", on_list ? "Don't Appear" : "Appear", invisible ? "Online" : "Offline");
+	result = purple_menu_action_new(label, PURPLE_CALLBACK(visibility_cb), NULL, NULL);
 	g_free(label);
 	return result;
 }
