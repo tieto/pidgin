@@ -516,7 +516,8 @@ purple_connection_disconnect_cb(gpointer data)
 	account = data;
 	gc = purple_account_get_connection(account);
 
-	gc->disconnect_timeout = 0;
+	if (gc != NULL)
+		gc->disconnect_timeout = 0;
 
 	password = g_strdup(purple_account_get_password(account));
 	purple_account_disconnect(account);
