@@ -557,6 +557,9 @@ void mxit_chat_invite(PurpleConnection *gc, int id, const char *msg, const char 
 {
 	struct MXitSession* session = (struct MXitSession*) gc->proto_data;
 	struct multimx* multimx = NULL;
+	PurpleBuddy* buddy;
+	PurpleConversation *convo;
+	char* tmp;
 
 	purple_debug_info(MXIT_PLUGIN_ID, "Groupchat invite to '%s'\n", username);
 
@@ -569,6 +572,24 @@ void mxit_chat_invite(PurpleConnection *gc, int id, const char *msg, const char 
 
 	/* Send invite to MXit */
 	mxit_send_groupchat_invite(session, multimx->roomid, 1, &username);
+
+	/* Find the buddy information for this contact (reference: "libpurple/blist.h") */
+	buddy = purple_find_buddy(session->acc, username);
+	if (!buddy) {
+		purple_debug_warning(MXIT_PLUGIN_ID, "mxit_chat_invite: unable to find the buddy '%s'\n", username);
+		return;
+	}
+
+	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, multimx->roomname, session->acc);
+	if (convo == NULL) {
+		purple_debug_error(MXIT_PLUGIN_ID, "Conversation '%s' not found\n", multimx->roomname);
+		return;
+	}
+
+	/* Display system message in chat window */
+	tmp = g_strdup_printf("%s: %s", _("You have invited"), purple_buddy_get_alias(buddy));
+	purple_conv_chat_write(PURPLE_CONV_CHAT(convo), "MXit", tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+	g_free(tmp);
 }
 
 
