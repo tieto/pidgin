@@ -327,3 +327,35 @@ char *msn_slpmsg_serialize(MsnSlpMessage *slpmsg, size_t *ret_size)
 
 	return base;
 }
+
+void msn_slpmsg_show_readable(MsnSlpMessage *slpmsg)
+{
+	GString *str;
+
+	str = g_string_new(NULL);
+
+	g_string_append_printf(str, "Session ID: %u\r\n", slpmsg->header->session_id);
+	g_string_append_printf(str, "ID:         %u\r\n", slpmsg->header->id);
+	g_string_append_printf(str, "Offset:     %" G_GUINT64_FORMAT "\r\n", slpmsg->header->offset);
+	g_string_append_printf(str, "Total size: %" G_GUINT64_FORMAT "\r\n", slpmsg->header->total_size);
+	g_string_append_printf(str, "Length:     %u\r\n", slpmsg->header->length);
+	g_string_append_printf(str, "Flags:      0x%x\r\n", slpmsg->header->flags);
+	g_string_append_printf(str, "ACK ID:     %u\r\n", slpmsg->header->ack_id);
+	g_string_append_printf(str, "SUB ID:     %u\r\n", slpmsg->header->ack_sub_id);
+	g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", slpmsg->header->ack_size);
+
+	if (purple_debug_is_verbose() && slpmsg->buffer != NULL) {
+		g_string_append_len(str, slpmsg->buffer, slpmsg->size);
+
+		if (slpmsg->buffer[slpmsg->size - 1] == '\0') {
+			str->len--;
+			g_string_append(str, " 0x00");
+		}
+		g_string_append(str, "\r\n");
+
+	}
+
+	g_string_append_printf(str, "Footer:     %u\r\n", slpmsg->footer->value);
+
+	purple_debug_info("msn", "SlpMessage %s:\n{%s}\n", slpmsg->info, str->str);
+}

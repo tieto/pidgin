@@ -172,4 +172,6 @@ MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, size_t size);
  */
 char *msn_slpmsg_serialize(MsnSlpMessage *slpmsg, size_t *ret_size);
 
+void msn_slpmsg_show_readable(MsnSlpMessage *slpmsg);
+
 #endif /* _MSN_SLPMSG_H_ */
