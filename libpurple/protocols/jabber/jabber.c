@@ -3440,8 +3440,7 @@ gboolean jabber_can_receive_file(PurpleConnection *gc, const char *who)
 			for (iter = jb->resources; iter ; iter = g_list_next(iter)) {
 				JabberBuddyResource *jbr = (JabberBuddyResource *) iter->data;
 
-				if (jabber_resource_has_capability(jbr,
-						"http://jabber.org/protocol/si/profile/file-transfer")
+				if (jabber_resource_has_capability(jbr, NS_SI_FILE_TRANSFER)
 			    	&& (jabber_resource_has_capability(jbr,
 			    			NS_BYTESTREAMS)
 			        	|| jabber_resource_has_capability(jbr, NS_IBB))) {
@@ -3743,7 +3742,7 @@ jabber_do_init(void)
 	jabber_add_feature("http://jabber.org/protocol/muc", 0);
 	jabber_add_feature("http://jabber.org/protocol/muc#user", 0);
 	jabber_add_feature("http://jabber.org/protocol/si", 0);
-	jabber_add_feature("http://jabber.org/protocol/si/profile/file-transfer", 0);
+	jabber_add_feature(NS_SI_FILE_TRANSFER, 0);
 	jabber_add_feature(NS_XHTML_IM, 0);
 	jabber_add_feature(NS_PING, 0);
 
