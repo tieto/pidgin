@@ -39,7 +39,7 @@ static const char * const msgerrreason[] = {
 	N_("Invalid error"),
 	N_("Invalid SNAC"),
 	N_("Server rate limit exceeded"),
-	N_("Client rate limet exceeded"),
+	N_("Client rate limit exceeded"),
 	N_("Not logged in"),
 	N_("Service unavailable"),
 	N_("Service not defined"),
