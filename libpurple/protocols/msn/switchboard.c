@@ -757,8 +757,8 @@ ack_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msg = cmd->trans->data;
 
-	if (msg->ack_cb != NULL)
-		msg->ack_cb(msg, msg->ack_data);
+	if (msg->part && msg->part->ack_cb != NULL)
+		msg->part->ack_cb(msg->part, msg->part->ack_data);
 
 	swboard = cmdproc->data;
 	if (swboard)
