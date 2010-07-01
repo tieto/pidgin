@@ -1737,6 +1737,8 @@ void oscar_auth_sendrequest(PurpleConnection *gc, const char *name);
 void oscar_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored);
 void oscar_auth_recvrequest(PurpleConnection *gc, gchar *name, gchar *nick, gchar *reason);
 
+void oscar_set_aim_permdeny(PurpleConnection *gc);
+
 struct buddyinfo
 {
 	gboolean typingnot;

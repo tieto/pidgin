@@ -4067,8 +4067,10 @@ oscar_set_status(PurpleAccount *account, PurpleStatus *status)
 		return;
 	}
 
-	if (od->icq)
+	if (od->icq) {
+		/* Set visibility */
 		oscar_set_icq_permdeny(account);
+	}
 
 	/* Set the AIM-style away message for both AIM and ICQ accounts */
 	oscar_set_info_and_status(account, FALSE, NULL, TRUE, status);
@@ -4539,7 +4541,11 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		} /* End of switch on curitem->type */
 	} /* End of for loop */
 
-	oscar_set_icq_permdeny(account);
+	if (od->icq) {
+		oscar_set_icq_permdeny(account);
+	} else {
+		oscar_set_aim_permdeny(gc);
+	}
 
 	/* Activate SSI */
 	/* Sending the enable causes other people to be able to see you, and you to see them */
@@ -5172,7 +5178,7 @@ char *oscar_status_text(PurpleBuddy *b)
 	return ret;
 }
 
-void oscar_set_permit_deny(PurpleConnection *gc) {
+void oscar_set_aim_permdeny(PurpleConnection *gc) {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	OscarData *od = purple_connection_get_protocol_data(gc);
 
