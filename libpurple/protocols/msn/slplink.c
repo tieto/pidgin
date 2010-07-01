@@ -308,7 +308,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			if (len > MSN_SBCONN_MAX_SIZE)
 				len = MSN_SBCONN_MAX_SIZE;
 
-			msn_slpmsgpart_set_bin_data(part, slpmsg->slpcall->u.outgoing.data, len);
+			msn_slpmsgpart_set_bin_data(part, slpmsg->buffer + slpmsg->offset, len);
 		}
 
 		slpmsg->header->offset = slpmsg->offset;
