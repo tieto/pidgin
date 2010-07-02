@@ -1,6 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.7.2 (??/??/????):
+	General:
+	* Use silent build rules for automake >1.11. You can enable verbose
+	  builds with the --disable-silent-rules configure option, or using
+	  make V=1.
+
 	libpurple:
 	* Fix the TURN server settings (broken in 2.7.0).
 

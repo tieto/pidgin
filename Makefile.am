@@ -100,18 +100,18 @@ endif
 # creates, and also make sure that the shell command exits
 # successfully; the rm -f ensures both
 package_revision_raw.txt:
-	REAL_BLDDIR=$$PWD/$(top_builddir); \
+	$(AM_V_GEN)REAL_BLDDIR=$$PWD/$(top_builddir); \
 	(cd $(srcdir) && $$REAL_BLDDIR/mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
 	|| (cd $(srcdir) && mtn --root=. automate get_base_revision_id) 2>/dev/null >$@ \
 	|| rm -f $@
 package_revision.h: package_revision_raw.txt
-	if test -f $<; then \
+	$(AM_V_GEN)if test -f $<; then \
 	  echo "#define REVISION \"`cat $<`\"" > $@; \
 	fi
-	if test ! -f $@ -a -f $(srcdir)/$@; then \
+	$(AM_V_at)if test ! -f $@ -a -f $(srcdir)/$@; then \
 	  cp $(srcdir)/$@ $@; \
 	fi
-	test -f $@ || echo "#define REVISION \"unknown\"" > $@
+	$(AM_V_at)test -f $@ || echo "#define REVISION \"unknown\"" > $@
 
 # This is a magic directive copy-and-pasted, then modified, from the
 # automake 1.9 manual, section 13.4, "Checking the distribution".
