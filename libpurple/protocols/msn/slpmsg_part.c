@@ -36,6 +36,7 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 
 	/* Extract the binary SLP header */
 	part->header = msn_p2p_header_from_wire((MsnP2PHeader*)tmp);
+	tmp += P2P_PACKET_HEADER_SIZE;
 
 	/* Extract the body */
 	body_len = data_len - (tmp - data);
