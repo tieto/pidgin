@@ -75,6 +75,8 @@ fi
 AC_CANONICAL_HOST
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([1.9 -Wno-portability dist-bzip2])
+dnl TODO: Always use AM_SILENT_RULES when we depend on automake >= 1.11
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
