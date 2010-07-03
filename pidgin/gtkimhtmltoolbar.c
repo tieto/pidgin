@@ -1279,9 +1279,9 @@ static void
 button_visibility_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
 {
 	if (gtk_widget_is_visible(button))
-		gtk_widget_show(item);
-	else
 		gtk_widget_hide(item);
+	else
+		gtk_widget_show(item);
 }
 
 static void
