@@ -1323,6 +1323,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *insert_menu;
 	GtkWidget *menuitem;
 	GtkWidget *sep;
+	GObject *wide_attention_button;
 	int i;
 	struct {
 		const char *label;
@@ -1467,6 +1468,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(sep);
 
 	/* Attention */
+	wide_attention_button = g_object_get_data(G_OBJECT(toolbar), "attention");
+
 	attention_button = gtk_button_new();
 	gtk_button_set_relief(GTK_BUTTON(attention_button), GTK_RELIEF_NONE);
 	bbox = gtk_hbox_new(FALSE, 3);
@@ -1478,17 +1481,15 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), attention_button, FALSE, FALSE, 0);
 	g_signal_connect_swapped(G_OBJECT(attention_button), "clicked", 
-		G_CALLBACK(gtk_button_clicked),
-	    g_object_get_data(G_OBJECT(toolbar), "attention"));
+		G_CALLBACK(gtk_button_clicked), wide_attention_button);
 	gtk_widget_show_all(attention_button);
 	
-	g_signal_connect(G_OBJECT(g_object_get_data(G_OBJECT(toolbar), "attention")),
+	g_signal_connect(wide_attention_button, "attention",
 	        "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), attention_button);
 
 	/* set attention button to be greyed out until we get a conversation */
-	gtk_widget_set_sensitive(g_object_get_data(G_OBJECT(toolbar), "attention"),
-		FALSE);
+	gtk_widget_set_sensitive(wide_attention_button, FALSE);
 	
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
