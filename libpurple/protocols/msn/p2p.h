@@ -17,6 +17,15 @@ typedef struct {
 } MsnP2PHeader;
 #pragma pack(pop)
 
+#pragma pack(push,1)
+typedef struct {
+	guint8  header_len;
+	guint8  opcode;
+	guint32 message_len;
+	guint64 base_id;
+} MsnP2Pv2Header;
+#pragma pack(pop)
+
 typedef struct
 {
 	guint32 value;
