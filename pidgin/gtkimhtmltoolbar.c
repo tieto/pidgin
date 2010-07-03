@@ -1276,6 +1276,15 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 }
 
 static void
+button_visibility_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
+{
+	if (gtk_widget_is_visible(button))
+		gtk_widget_show(item);
+	else
+		gtk_widget_hide(item);
+}
+
+static void
 button_sensitiveness_changed(GtkWidget *button, gpointer dontcare, GtkWidget *item)
 {
 	gtk_widget_set_sensitive(item, GTK_WIDGET_IS_SENSITIVE(button));
@@ -1394,6 +1403,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 		gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), menuitem);
 		g_signal_connect(G_OBJECT(old), "notify::sensitive",
 				G_CALLBACK(button_sensitiveness_changed), menuitem);
+		g_signal_connect(G_OBJECT(old), "notify::visible",
+				G_CALLBACK(button_visibility_changed), menuitem);
 		gtk_container_foreach(GTK_CONTAINER(menuitem), (GtkCallback)enable_markup, NULL);
 	}
 
@@ -1426,12 +1437,16 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
 	g_signal_connect(G_OBJECT(toolbar->image), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->image), "notify::visible",
+			G_CALLBACK(button_visibility_changed), menuitem);
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Link"));
 	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
 	g_signal_connect(G_OBJECT(toolbar->link), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->link), "notify::visible",
+			G_CALLBACK(button_visibility_changed), menuitem);
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Horizontal rule"));
 	g_signal_connect(G_OBJECT(menuitem), "activate"	, G_CALLBACK(insert_hr_cb), toolbar);
@@ -1484,9 +1499,10 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 		G_CALLBACK(gtk_button_clicked), wide_attention_button);
 	gtk_widget_show_all(attention_button);
 	
-	g_signal_connect(wide_attention_button, "attention",
-	        "notify::sensitive",
+	g_signal_connect(wide_attention_button, "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), attention_button);
+	g_signal_connect(wide_attentino_button, "notify::visible",
+			G_CALLBACK(button_visibility_changed), attention_button);
 
 	/* set attention button to be greyed out until we get a conversation */
 	gtk_widget_set_sensitive(wide_attention_button, FALSE);
