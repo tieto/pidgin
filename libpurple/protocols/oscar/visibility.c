@@ -71,7 +71,7 @@ create_visibility_menu_item(OscarData *od, const char *bname)
 }
 
 static void
-show_private_list(PurplePluginAction *action, guint16 list_type, const gchar *list_description, const gchar *menu_action_name)
+show_private_list(PurplePluginAction *action, guint16 list_type, const gchar *title, const gchar *list_description, const gchar *menu_action_name)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	OscarData *od = purple_connection_get_protocol_data(gc);
@@ -101,7 +101,7 @@ show_private_list(PurplePluginAction *action, guint16 list_type, const gchar *li
 	secondary = g_strdup_printf(_("You can add a buddy to this list "
 					"by right-clicking on them and "
 					"selecting \"%s\""), menu_action_name);
-	purple_notify_formatted(gc, NULL, list_description, secondary, text, NULL, NULL);
+	purple_notify_formatted(gc, title, list_description, secondary, text, NULL, NULL);
 	g_free(secondary);
 	g_free(text);
 }
@@ -109,7 +109,8 @@ show_private_list(PurplePluginAction *action, guint16 list_type, const gchar *li
 void
 oscar_show_visible_list(PurplePluginAction *action)
 {
-	show_private_list(action, AIM_SSI_TYPE_PERMIT, _("These buddies will see "
+	show_private_list(action, AIM_SSI_TYPE_PERMIT, _("Visible List"),
+							_("These buddies will see "
 							"your status when you switch "
 							"to \"Invisible\""),
 							_(APPEAR_ONLINE));
@@ -118,5 +119,7 @@ oscar_show_visible_list(PurplePluginAction *action)
 void
 oscar_show_invisible_list(PurplePluginAction *action)
 {
-	show_private_list(action, AIM_SSI_TYPE_DENY, _("These buddies will always see you as offline"), _(APPEAR_OFFLINE));
+	show_private_list(action, AIM_SSI_TYPE_DENY, _("Invisible List"),
+							_("These buddies will always see you as offline"),
+							_(APPEAR_OFFLINE));
 }
