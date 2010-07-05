@@ -150,12 +150,9 @@ static gboolean
 gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 {
 	GntComboBox *box = GNT_COMBO_BOX(widget);
-	if (GNT_WIDGET_IS_FLAG_SET(box->dropdown->parent, GNT_WIDGET_MAPPED))
-	{
-		if (text[1] == 0)
-		{
-			switch (text[0])
-			{
+	if (GNT_WIDGET_IS_FLAG_SET(box->dropdown->parent, GNT_WIDGET_MAPPED)) {
+		if (text[1] == 0) {
+			switch (text[0]) {
 				case '\r':
 				case '\t':
 				case '\n':
@@ -166,8 +163,12 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 					return TRUE;
 			}
 		}
-		if (gnt_widget_key_pressed(box->dropdown, text))
-			return TRUE;
+	}
+
+	if (gnt_widget_key_pressed(box->dropdown, text)) {
+		if (!GNT_WIDGET_IS_FLAG_SET(box->dropdown->parent, GNT_WIDGET_MAPPED))
+			popup_dropdown(box);
+		return TRUE;
 	}
 
 	return FALSE;
