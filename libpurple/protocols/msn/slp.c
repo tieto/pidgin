@@ -360,7 +360,7 @@ msn_request_ft(PurpleXfer *xfer)
 
 	context = gen_context(xfer, fn, fp);
 
-	msn_slpcall_invite(slpcall, MSN_FT_GUID, 2, context);
+	msn_slpcall_invite(slpcall, MSN_FT_GUID, P2P_APPID_FILE, context);
 	msn_slplink_unref(slplink);
 
 	g_free(context);

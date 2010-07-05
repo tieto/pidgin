@@ -146,7 +146,7 @@ msn_slpcall_session_init(MsnSlpCall *slpcall)
 
 void
 msn_slpcall_invite(MsnSlpCall *slpcall, const char *euf_guid,
-					int app_id, const char *context)
+					MsnP2PAppId app_id, const char *context)
 {
 	MsnSlpLink *slplink;
 	MsnSlpMessage *slpmsg;

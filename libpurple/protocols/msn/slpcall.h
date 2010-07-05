@@ -92,7 +92,7 @@ void msn_slpcall_init(MsnSlpCall *slpcall, MsnSlpCallType type);
 void msn_slpcall_session_init(MsnSlpCall *slpcall);
 void msn_slpcall_destroy(MsnSlpCall *slpcall);
 void msn_slpcall_invite(MsnSlpCall *slpcall, const char *euf_guid,
-						 int app_id, const char *context);
+						 MsnP2PAppId app_id, const char *context);
 void msn_slpcall_close(MsnSlpCall *slpcall);
 
 #endif /* MSN_SLPCALL_H */

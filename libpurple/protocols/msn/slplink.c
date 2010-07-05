@@ -656,7 +656,7 @@ msn_slplink_request_object(MsnSlpLink *slplink,
 	slpcall->cb = cb;
 	slpcall->end_cb = end_cb;
 
-	msn_slpcall_invite(slpcall, MSN_OBJ_GUID, 1, msnobj_base64);
+	msn_slpcall_invite(slpcall, MSN_OBJ_GUID, P2P_APPID_OBJ, msnobj_base64);
 
 	g_free(msnobj_base64);
 }

@@ -52,6 +52,15 @@ typedef enum
  * #7180
  */
 
+typedef enum
+{
+	P2P_APPID_SESION    = 0x0,        /**< Negotiating session */
+	P2P_APPID_OBJ       = 0x1,        /**< MsnObject (Display or Emoticon) */
+	P2P_APPID_FILE      = 0x2,        /**< File transfer */
+	P2P_APPID_EMOTE     = 0xB,        /**< CustomEmoticon */
+	P2P_APPID_DISPLAY   = 0xC         /**< Display Image */
+} MsnP2PAppId;
+
 #define P2P_PACKET_HEADER_SIZE sizeof(MsnP2PHeader)
 #define P2P_PACKET_FOOTER_SIZE sizeof(MsnP2PFooter)
 
