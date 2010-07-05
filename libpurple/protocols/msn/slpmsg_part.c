@@ -39,7 +39,7 @@ MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_le
 	tmp += P2P_PACKET_HEADER_SIZE;
 
 	/* Extract the body */
-	body_len = data_len - (tmp - data);
+	body_len = data_len - P2P_PACKET_HEADER_SIZE - P2P_PACKET_FOOTER_SIZE;
 	/* msg->body_len = msg->msnslp_header.length; */
 
 	if (body_len > 0) {
