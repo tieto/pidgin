@@ -1926,3 +1926,33 @@ gpointer gnt_tree_get_parent_key(GntTree *tree, gpointer key)
 	return (row && row->parent) ? row->parent->key : NULL;
 }
 
+gpointer gnt_tree_row_get_key(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->key;
+}
+
+GntTreeRow * gnt_tree_row_get_next(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->next;
+}
+
+GntTreeRow * gnt_tree_row_get_prev(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->prev;
+}
+
+GntTreeRow * gnt_tree_row_get_child(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->child;
+}
+
+GntTreeRow * gnt_tree_row_get_parent(GntTree *tree, GntTreeRow *row)
+{
+	g_return_val_if_fail(row && row->tree == tree, NULL);
+	return row->parent;
+}
+
