@@ -463,6 +463,9 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *d
 	MsnSlpMessage *slpmsg;
 	guint64 offset;
 
+	len -= P2P_PACKET_HEADER_SIZE;
+	len -= P2P_PACKET_FOOTER_SIZE;
+
 	if (header->total_size < header->length)
 	{
 		/* We seem to have received a bad header */
