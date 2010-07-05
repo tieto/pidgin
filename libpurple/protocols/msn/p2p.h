@@ -38,7 +38,11 @@ typedef enum
 	P2P_ACK             = 0x2,        /**< Acknowledgement */
 	P2P_PENDING_INVITE  = 0x4,        /**< There is a pending invite */
 	P2P_BINARY_ERROR    = 0x8,        /**< Error on the binary level */
+	P2P_FILE            = 0x10,       /**< File */
 	P2P_MSN_OBJ_DATA    = 0x20,       /**< MsnObject data */
+	P2P_CLOSE           = 0x40,       /**< Close session */
+	P2P_TLP_ERROR       = 0x80,       /**< Error at transport layer protocol */
+	P2P_DC_HANDSHAKE    = 0x100,      /**< Direct Handshake */
 	P2P_WML2009_COMP    = 0x1000000,  /**< Compatibility with WLM 2009 */
 	P2P_FILE_DATA       = 0x1000030   /**< File transfer data */
 } MsnP2PHeaderFlag;
