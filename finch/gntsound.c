@@ -577,7 +577,8 @@ finch_sound_play_event(PurpleSoundEventID event)
 	if ((event == PURPLE_SOUND_BUDDY_ARRIVE) && mute_login_sounds)
 		return;
 
-	if (event >= PURPLE_NUM_SOUNDS) {
+	if (event >= PURPLE_NUM_SOUNDS ||
+			event >= G_N_ELEMENTS(sounds)) {
 		purple_debug_error("sound", "got request for unknown sound: %d\n", event);
 		return;
 	}
