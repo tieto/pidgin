@@ -116,7 +116,7 @@ msn_dc_destroy_packet(MsnDirectConnPacket *p)
 		msn_message_unref(p->msg);
 #endif
 	if (p->part)
-		msn_slpmsgpart_destroy(p->part);
+		msn_slpmsgpart_unref(p->part);
 
 	g_free(p);
 }

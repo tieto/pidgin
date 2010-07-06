@@ -17,7 +17,7 @@ MsnSlpMessagePart *msn_slpmsgpart_new(MsnP2PHeader *header, MsnP2PFooter *footer
 	part->ack_cb = msn_slpmsgpart_ack;
 	part->nak_cb = msn_slpmsgpart_nak;
 
-	return part;
+	return msn_slpmsgpart_ref(part);
 }
 
 MsnSlpMessagePart *msn_slpmsgpart_new_from_data(const char *data, size_t data_len)
@@ -61,11 +61,41 @@ void msn_slpmsgpart_destroy(MsnSlpMessagePart *part)
 	if (!part)
 		return;
 
+	if (part->ref_count > 0) {
+		msn_slpmsgpart_unref(part);
+		
+		return;
+	}
+
 	g_free(part->header);
 	g_free(part->footer);
 
 	g_free(part);
 
+}
+
+MsnSlpMessagePart *msn_slpmsgpart_ref(MsnSlpMessagePart *part)
+{
+	g_return_val_if_fail(part != NULL, NULL);
+	part->ref_count ++;
+
+	return part;
+}
+
+MsnSlpMessagePart *msn_slpmsgpart_unref(MsnSlpMessagePart *part)
+{
+	g_return_val_if_fail(part != NULL, NULL);
+	g_return_val_if_fail(part->ref_count > 0, NULL);
+
+	part->ref_count--;
+
+	if (part->ref_count == 0) {
+		msn_slpmsgpart_destroy(part);
+
+		 return NULL;
+	}
+
+	return part;
 }
 
 void msn_slpmsgpart_set_bin_data(MsnSlpMessagePart *part, const void *data, size_t len)
