@@ -652,17 +652,27 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 			else
 			{
 				int i;
-				for (i = 0; i < msg->body_len; i++)
+				int bin_len;
+				
+				if (msg->part->footer->value == P2P_APPID_SESION)
+					bin_len = P2P_PACKET_HEADER_SIZE;
+				else
+					bin_len = body_len;
+
+				for (i = 0; i < bin_len; i++)
 				{
 					g_string_append_printf(str, "%.2hhX ", body[i]);
 					if ((i % 16) == 15)
 						g_string_append(str, "\r\n");
 				}
+
+				if (bin_len == P2P_PACKET_HEADER_SIZE)
+					g_string_append_printf(str, "%s ", body + P2P_PACKET_HEADER_SIZE);
 				g_string_append(str, "\r\n");
 			}
 		}
 
-		g_string_append_printf(str, "Footer:     %u\r\n", msg->part->footer->value);
+		g_string_append_printf(str, "Footer:     0x%08X\r\n", msg->part->footer->value);
 	}
 	else
 	{
