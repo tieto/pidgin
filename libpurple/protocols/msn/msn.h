@@ -83,9 +83,9 @@ typedef enum
 #define MSN_SERVER "messenger.hotmail.com"
 #define MSN_HTTPCONN_SERVER "gateway.messenger.hotmail.com"
 #define MSN_PORT 1863
-#define WLM_PROT_VER		16
+#define WLM_PROT_VER		15
 
-#define WLM_MAX_PROTOCOL	16
+#define WLM_MAX_PROTOCOL	15
 #define WLM_MIN_PROTOCOL	15
 
 #define MSN_TYPING_RECV_TIMEOUT 6
