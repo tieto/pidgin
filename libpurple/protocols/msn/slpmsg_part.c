@@ -1,4 +1,5 @@
 #include "internal.h"
+#include "debug.h"
 
 #include "slpmsg.h"
 #include "slpmsg_part.h"
@@ -79,6 +80,9 @@ MsnSlpMessagePart *msn_slpmsgpart_ref(MsnSlpMessagePart *part)
 	g_return_val_if_fail(part != NULL, NULL);
 	part->ref_count ++;
 
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "part ref (%p)[%" G_GSIZE_FORMAT "]\n", part, part->ref_count);
+
 	return part;
 }
 
@@ -88,6 +92,9 @@ MsnSlpMessagePart *msn_slpmsgpart_unref(MsnSlpMessagePart *part)
 	g_return_val_if_fail(part->ref_count > 0, NULL);
 
 	part->ref_count--;
+
+	if (purple_debug_is_verbose())
+		purple_debug_info("msn", "part unref (%p)[%" G_GSIZE_FORMAT "]\n", part, part->ref_count);
 
 	if (part->ref_count == 0) {
 		msn_slpmsgpart_destroy(part);

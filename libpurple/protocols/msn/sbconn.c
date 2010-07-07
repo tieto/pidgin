@@ -17,7 +17,7 @@ void msn_sbconn_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 	msn_message_set_header(msg, "P2P-Dest", passport);
 
 	data = msn_slpmsgpart_serialize(part, &size);
-	msg->part = part;
+	msg->part = msn_slpmsgpart_ref(part);
 
 	msn_message_set_bin_data(msg, data, size);
 
