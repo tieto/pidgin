@@ -150,12 +150,11 @@ static gboolean
 gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 {
 	GntComboBox *box = GNT_COMBO_BOX(widget);
-	if (GNT_WIDGET_IS_FLAG_SET(box->dropdown->parent, GNT_WIDGET_MAPPED))
-	{
-		if (text[1] == 0)
-		{
-			switch (text[0])
-			{
+	gboolean showing = !!GNT_WIDGET_IS_FLAG_SET(box->dropdown->parent, GNT_WIDGET_MAPPED);
+
+	if (showing) {
+		if (text[1] == 0) {
+			switch (text[0]) {
 				case '\r':
 				case '\t':
 				case '\n':
@@ -166,8 +165,42 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 					return TRUE;
 			}
 		}
-		if (gnt_widget_key_pressed(box->dropdown, text))
-			return TRUE;
+	}
+
+	if (gnt_widget_key_pressed(box->dropdown, text)) {
+		if (!showing)
+			popup_dropdown(box);
+		return TRUE;
+	}
+
+	{
+#define SEARCH_IN_RANGE(start, end) do { \
+		GntTreeRow *row; \
+		for (row = start; row != end; \
+				row = gnt_tree_row_get_next(tree, row)) { \
+			gpointer key = gnt_tree_row_get_key(tree, row); \
+			GList *list = gnt_tree_get_row_text_list(tree, key); \
+			gboolean found = FALSE; \
+			found = (list->data && g_ascii_strncasecmp(text, list->data, len) == 0); \
+			g_list_foreach(list, (GFunc)g_free, NULL); \
+			g_list_free(list); \
+			if (found) { \
+				if (!showing) \
+					popup_dropdown(box); \
+				gnt_tree_set_selected(tree, key); \
+				return TRUE; \
+			} \
+		} \
+} while (0)
+
+		int len = strlen(text);
+		GntTree *tree = GNT_TREE(box->dropdown);
+		GntTreeRow *current = tree->current;
+
+		SEARCH_IN_RANGE(gnt_tree_row_get_next(tree, current), NULL);
+		SEARCH_IN_RANGE(tree->top, current);
+
+#undef SEARCH_IN_RANGE
 	}
 
 	return FALSE;
