@@ -21,8 +21,8 @@ typedef struct {
 typedef struct {
 	guint8  header_len;
 	guint8  opcode;
-	guint32 message_len;
-	guint64 base_id;
+	guint16 message_len;
+	guint32 base_id;
 } MsnP2Pv2Header;
 #pragma pack(pop)
 
