@@ -29,6 +29,8 @@ version 2.7.2 (??/??/????):
 	  the specification.
 	* When initiating a file transfer, don't show resources that are certain
 	  to not support file transfers in the resource selection dialog.
+	* Fix connecting to servers using BOSH and authenticating with
+	  DIGEST-MD5 when libpurple was built with Cyrus SASL support.
 
 	Yahoo/Yahoo JAPAN:
 	* Renamed "Use account proxy for SSL connections" to "Use account proxy
