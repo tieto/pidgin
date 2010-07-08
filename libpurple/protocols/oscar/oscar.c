@@ -4281,6 +4281,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	PurpleAccount *account;
 	PurpleGroup *g;
 	PurpleBuddy *b;
+	GSList *cur, *next, *buddies;
 	struct aim_ssi_item *curitem;
 	guint32 tmp;
 	PurpleStoredImage *img;
@@ -4300,110 +4301,109 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	va_end(ap);
 
 	/* Don't attempt to re-request our buddy list later */
-	if (od->getblisttimer != 0)
+	if (od->getblisttimer != 0) {
 		purple_timeout_remove(od->getblisttimer);
-	od->getblisttimer = 0;
+		od->getblisttimer = 0;
+	}
 
-	purple_debug_info("oscar",
-			   "ssi: syncing local list and server list\n");
+	purple_debug_info("oscar", "ssi: syncing local list and server list\n");
 
 	/* Clean the buddy list */
 	aim_ssi_cleanlist(od);
 
-	{ /* If not in server list then prune from local list */
-		GSList *cur, *next;
-		GSList *buddies = purple_find_buddies(account, NULL);
+	/*** Begin code for pruning buddies from local list if they're not in server list ***/
 
-		/* Buddies */
-		cur = NULL;
+	/* Buddies */
+	cur = NULL;
+	for (buddies = purple_find_buddies(account, NULL);
+			buddies;
+			buddies = g_slist_delete_link(buddies, buddies))
+	{
+		PurpleGroup *g;
+		const char *gname;
+		const char *bname;
 
-		while(buddies) {
-			PurpleGroup *g;
-			const char *gname;
-			const char *bname;
+		b = buddies->data;
+		g = purple_buddy_get_group(b);
+		gname = purple_group_get_name(g);
+		bname = purple_buddy_get_name(b);
 
-			b = buddies->data;
-			g = purple_buddy_get_group(b);
-			gname = purple_group_get_name(g);
-			bname = purple_buddy_get_name(b);
+		if (aim_ssi_itemlist_exists(od->ssi.local, bname)) {
+			/* If the buddy is an ICQ user then load his nickname */
+			const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
+			char *alias;
+			const char *balias;
+			if (servernick)
+				serv_got_alias(gc, bname, servernick);
 
-			if (aim_ssi_itemlist_exists(od->ssi.local, bname)) {
-				/* If the buddy is an ICQ user then load his nickname */
-				const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
-				char *alias;
-				const char *balias;
-				if (servernick)
-					serv_got_alias(gc, bname, servernick);
+			/* Store local alias on server */
+			alias = aim_ssi_getalias(od->ssi.local, gname, bname);
+			balias = purple_buddy_get_local_buddy_alias(b);
+			if (!alias && balias && *balias)
+				aim_ssi_aliasbuddy(od, gname, bname, balias);
+			g_free(alias);
+		} else {
+			purple_debug_info("oscar",
+					"ssi: removing buddy %s from local list\n", bname);
+			/* Queue the buddy for removal from the local list */
+			cur = g_slist_prepend(cur, b);
+		}
+	}
+	while (cur != NULL) {
+		purple_blist_remove_buddy(cur->data);
+		cur = g_slist_delete_link(cur, cur);
+	}
 
-				/* Store local alias on server */
-				alias = aim_ssi_getalias(od->ssi.local, gname, bname);
-				balias = purple_buddy_get_local_buddy_alias(b);
-				if (!alias && balias && *balias)
-					aim_ssi_aliasbuddy(od, gname, bname, balias);
-				g_free(alias);
-			} else {
+	/* Permit list (ICQ doesn't have one) */
+	if (!od->icq) {
+		next = account->permit;
+		while (next != NULL) {
+			cur = next;
+			next = next->next;
+			if (!aim_ssi_itemlist_finditem(od->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
 				purple_debug_info("oscar",
-						"ssi: removing buddy %s from local list\n", bname);
-				/* We can't actually remove now because it will screw up our looping */
-				cur = g_slist_prepend(cur, b);
-			}
-			buddies = g_slist_delete_link(buddies, buddies);
-		}
-
-		while (cur != NULL) {
-			b = cur->data;
-			cur = g_slist_remove(cur, b);
-			purple_blist_remove_buddy(b);
-		}
-
-		/* Permit list (ICQ doesn't have one) */
-		if (!od->icq && account->permit) {
-			next = account->permit;
-			while (next != NULL) {
-				cur = next;
-				next = next->next;
-				if (!aim_ssi_itemlist_finditem(od->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
-					purple_debug_info("oscar",
-							"ssi: removing permit %s from local list\n", (const char *)cur->data);
-					purple_privacy_permit_remove(account, cur->data, TRUE);
-				}
+						"ssi: removing permit %s from local list\n", (const char *)cur->data);
+				purple_privacy_permit_remove(account, cur->data, TRUE);
 			}
 		}
+	}
 
-		/* Deny list */
-		if (account->deny) {
-			next = account->deny;
-			while (next != NULL) {
-				cur = next;
-				next = next->next;
-				if (!aim_ssi_itemlist_finditem(od->ssi.local, NULL, cur->data, deny_entry_type)) {
-					purple_debug_info("oscar",
-							"ssi: removing deny %s from local list\n", (const char *)cur->data);
-					purple_privacy_deny_remove(account, cur->data, TRUE);
-				}
-			}
+	/* Deny list */
+	next = account->deny;
+	while (next != NULL) {
+		cur = next;
+		next = next->next;
+		if (!aim_ssi_itemlist_finditem(od->ssi.local, NULL, cur->data, deny_entry_type)) {
+			purple_debug_info("oscar",
+					"ssi: removing deny %s from local list\n", (const char *)cur->data);
+			purple_privacy_deny_remove(account, cur->data, TRUE);
 		}
-		/* Presence settings (idle time visibility) */
-		tmp = aim_ssi_getpresence(od->ssi.local);
-		if (tmp != 0xFFFFFFFF) {
-			const char *idle_reporting_pref;
-			gboolean report_idle;
+	}
 
-			idle_reporting_pref = purple_prefs_get_string("/purple/away/idle_reporting");
-			report_idle = strcmp(idle_reporting_pref, "none") != 0;
+	/* Presence settings (idle time visibility) */
+	tmp = aim_ssi_getpresence(od->ssi.local);
+	if (tmp != 0xFFFFFFFF) {
+		const char *idle_reporting_pref;
+		gboolean report_idle;
 
-			if (report_idle)
-				aim_ssi_setpresence(od, tmp | AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
-			else
-				aim_ssi_setpresence(od, tmp & ~AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
-		}
+		idle_reporting_pref = purple_prefs_get_string("/purple/away/idle_reporting");
+		report_idle = strcmp(idle_reporting_pref, "none") != 0;
 
+		if (report_idle)
+			aim_ssi_setpresence(od, tmp | AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
+		else
+			aim_ssi_setpresence(od, tmp & ~AIM_SSI_PRESENCE_FLAG_SHOWIDLE);
+	}
 
-	} /* end pruning buddies from local list */
+	/*** End code for pruning buddies from local list ***/
 
-	/* Add from server list to local list */
+	/*** Begin code for adding from server list to local list ***/
+
 	for (curitem=od->ssi.local; curitem; curitem=curitem->next) {
-	  if ((curitem->name == NULL) || (g_utf8_validate(curitem->name, -1, NULL)))
+		if (curitem->name && !g_utf8_validate(curitem->name, -1, NULL))
+			/* Got node with invalid UTF-8 in the name.  Skip it. */
+			break;
+
 		switch (curitem->type) {
 			case AIM_SSI_TYPE_BUDDY: { /* Buddy */
 				if (curitem->name) {
@@ -4493,10 +4493,8 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 			case AIM_SSI_TYPE_PERMIT: { /* Permit buddy (unless we're on ICQ) */
 				if (!od->icq && curitem->name) {
-					/* if (!find_permdeny_by_name(gc->permit, curitem->name)) { AAA */
-					GSList *list;
-					for (list=account->permit; (list && oscar_util_name_compare(curitem->name, list->data)); list=list->next);
-					if (!list) {
+					for (cur = account->permit; (cur && oscar_util_name_compare(curitem->name, cur->data)); cur = cur->next);
+					if (!cur) {
 						purple_debug_info("oscar",
 								   "ssi: adding permit buddy %s to local list\n", curitem->name);
 						purple_privacy_permit_add(account, curitem->name, TRUE);
@@ -4507,9 +4505,8 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			case AIM_SSI_TYPE_ICQDENY:
 			case AIM_SSI_TYPE_DENY: { /* Deny buddy */
 				if (curitem->type == deny_entry_type && curitem->name) {
-					GSList *list;
-					for (list=account->deny; (list && oscar_util_name_compare(curitem->name, list->data)); list=list->next);
-					if (!list) {
+					for (cur = account->deny; (cur && oscar_util_name_compare(curitem->name, cur->data)); cur = cur->next);
+					if (!cur) {
 						purple_debug_info("oscar",
 								   "ssi: adding deny buddy %s to local list\n", curitem->name);
 						purple_privacy_deny_add(account, curitem->name, TRUE);
@@ -4540,6 +4537,8 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			} break;
 		} /* End of switch on curitem->type */
 	} /* End of for loop */
+
+	/*** End code for adding from server list to local list ***/
 
 	if (od->icq) {
 		oscar_set_icq_permdeny(account);
