@@ -59,7 +59,7 @@ Offline.
 Display the version information window.
 
 .SH GNT Shortcuts
-You can use the following shortcuts (see the "\*QWidget Actions\*U" section for a more complete list):
+You can use the following shortcuts (see the "Widget Actions" section for a more complete list):
 .TP
 .B Alt \+ a
 Bring up a list of available actions. You can use this list to access the
