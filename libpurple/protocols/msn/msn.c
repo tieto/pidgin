@@ -884,7 +884,6 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		const char *psm, *name;
 		const char *mediatype = NULL;
 		char *currentmedia = NULL;
-		char *tmp;
 
 		psm = purple_status_get_attr_string(status, "message");
 		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
@@ -928,9 +927,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 			}
 
 			if (psm != NULL && *psm) {
-				tmp = g_markup_escape_text(psm, -1);
-				purple_notify_user_info_add_pair(user_info, tmp2, tmp);
-				g_free(tmp);
+				purple_notify_user_info_add_pair_plaintext(user_info, tmp2, psm);
 			} else {
 				purple_notify_user_info_add_pair(user_info, _("Status"), tmp2);
 			}
@@ -938,13 +935,11 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 			g_free(tmp2);
 		} else {
 			if (psm != NULL && *psm) {
-				tmp = g_markup_escape_text(psm, -1);
 				if (purple_presence_is_idle(presence)) {
-					purple_notify_user_info_add_pair(user_info, _("Idle"), tmp);
+					purple_notify_user_info_add_pair_plaintext(user_info, _("Idle"), psm);
 				} else {
-					purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
+					purple_notify_user_info_add_pair_plaintext(user_info, _("Status"), psm);
 				}
-				g_free(tmp);
 			} else {
 				if (purple_presence_is_idle(presence)) {
 					purple_notify_user_info_add_pair(user_info, _("Status"),
@@ -2122,9 +2117,7 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 		alias = purple_buddy_get_local_buddy_alias(b);
 		if (alias && alias[0])
 		{
-			char *aliastext = g_markup_escape_text(alias, -1);
-			purple_notify_user_info_add_pair(user_info, _("Alias"), aliastext);
-			g_free(aliastext);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), alias);
 		}
 
 		if ((alias = purple_buddy_get_server_alias(b)) != NULL)

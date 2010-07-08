@@ -701,14 +701,12 @@ static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooG
 	if (b) {
 		const char *balias = purple_buddy_get_local_buddy_alias(b);
 		if(balias && balias[0]) {
-			char *aliastext = g_markup_escape_text(balias, -1);
-			purple_notify_user_info_add_pair(user_info, _("Alias"), aliastext);
-			g_free(aliastext);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Alias"), balias);
 		}
 		#if 0
 		if (b->idle > 0) {
 			char *idletime = purple_str_seconds_to_string(time(NULL) - b->idle);
-			purple_notify_user_info_add_pair(user_info, _("Idle"), idletime);
+			purple_notify_user_info_add_pair_plaintext(user_info, _("Idle"), idletime);
 			g_free(idletime);
 		}
 		#endif
@@ -719,7 +717,7 @@ static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooG
 		if ((f = yahoo_friend_find(info_data->gc, purple_buddy_get_name(b)))) {
 			const char *ip;
 			if ((ip = yahoo_friend_get_ip(f)))
-				purple_notify_user_info_add_pair(user_info, _("IP Address"), ip);
+				purple_notify_user_info_add_pair_plaintext(user_info, _("IP Address"), ip);
 		}
 	}
 }

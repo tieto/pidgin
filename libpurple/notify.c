@@ -602,6 +602,18 @@ purple_notify_user_info_add_pair(PurpleNotifyUserInfo *user_info, const char *la
 }
 
 void
+purple_notify_user_info_add_pair_plaintext(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
+{
+	gchar *escaped;
+	PurpleNotifyUserInfoEntry *entry;
+
+	escaped = g_markup_escape_text(value, -1);
+	entry = purple_notify_user_info_entry_new(label, escaped);
+	g_free(escaped);
+	user_info->user_info_entries = g_list_append(user_info->user_info_entries, entry);
+}
+
+void
 purple_notify_user_info_prepend_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value)
 {
 	PurpleNotifyUserInfoEntry *entry;
