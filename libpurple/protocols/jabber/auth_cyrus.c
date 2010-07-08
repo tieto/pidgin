@@ -36,7 +36,7 @@ static void disallow_plaintext_auth(PurpleAccount *account)
 {
 	purple_connection_error_reason(purple_account_get_connection(account),
 		PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
-		_("Server requires plaintext authentication over an unencrypted stream"));
+		_("Server may require plaintext authentication over an unencrypted stream"));
 }
 
 static void start_cyrus_wrapper(JabberStream *js)
@@ -240,8 +240,9 @@ jabber_auth_start_cyrus(JabberStream *js, xmlnode **reply, char **error)
 				 * it in plaintext, see if we can turn on
 				 * plaintext auth
 				 */
+				/* XXX Should we just check for PLAIN/LOGIN being offered mechanisms? */
 				} else if (!plaintext) {
-					char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+					char *msg = g_strdup_printf(_("%s may require plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 							purple_account_get_username(account));
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
