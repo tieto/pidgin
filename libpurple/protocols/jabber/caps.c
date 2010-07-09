@@ -841,9 +841,12 @@ static GList* jabber_caps_xdata_get_fields(const xmlnode *x)
 static void 
 append_escaped_string(PurpleCipherContext *context, const gchar *str)
 {
-	char *tmp = g_markup_escape_text(str, -1);
-	purple_cipher_context_append(context, (const guchar *)tmp, strlen(tmp));
-	g_free(tmp);
+	if (str && *str) {
+		char *tmp = g_markup_escape_text(str, -1);
+		purple_cipher_context_append(context, (const guchar *)tmp, strlen(tmp));
+		g_free(tmp);
+	}
+
 	purple_cipher_context_append(context, (const guchar *)"<", 1);
 }
 
