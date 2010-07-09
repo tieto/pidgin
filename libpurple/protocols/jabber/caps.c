@@ -41,14 +41,6 @@ static GHashTable *capstable = NULL; /* JabberCapsTuple -> JabberCapsClientInfo 
 static GHashTable *nodetable = NULL; /* char *node -> JabberCapsNodeExts */
 static guint       save_timer = 0;
 
-/**
- *	Processes a query-node and returns a JabberCapsClientInfo object with all relevant info.
- *
- *	@param 	query 	A query object.
- *	@return 		A JabberCapsClientInfo object.
- */
-static JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query);
-
 /* Free a GList of allocated char* */
 static void
 free_string_glist(GList *list)
@@ -764,13 +756,14 @@ jabber_xdata_compare(gconstpointer a, gconstpointer b)
 	return result;
 }
 
-static JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query)
+JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query)
 {
 	xmlnode *child;
 	JabberCapsClientInfo *info;
 
-	if (!query || strcmp(query->xmlns, NS_DISCO_INFO))
-		return 0;
+	if (!query || !g_str_equal(query->name, "query") ||
+			!purple_strequal(query->xmlns, NS_DISCO_INFO))
+		return NULL;
 
 	info = g_new0(JabberCapsClientInfo, 1);
 
