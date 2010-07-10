@@ -45,8 +45,10 @@ static guint       save_timer = 0;
 static void
 free_string_glist(GList *list)
 {
-	g_list_foreach(list, (GFunc)g_free, NULL);
-	g_list_free(list);
+	while (list) {
+		g_free(list->data);
+		list = g_list_delete_link(list, list);
+	}
 }
 
 static JabberCapsNodeExts*
@@ -230,15 +232,15 @@ jabber_caps_load(void)
 	if(!capsdata)
 		return;
 
-	if (strcmp(capsdata->name, "capabilities") != 0) {
+	if (!g_str_equal(capsdata->name, "capabilities")) {
 		xmlnode_free(capsdata);
 		return;
 	}
 
-	for(client = capsdata->child; client; client = client->next) {
-		if(client->type != XMLNODE_TYPE_TAG)
+	for (client = capsdata->child; client; client = client->next) {
+		if (client->type != XMLNODE_TYPE_TAG)
 			continue;
-		if(!strcmp(client->name, "client")) {
+		if (g_str_equal(client->name, "client")) {
 			JabberCapsClientInfo *value = g_new0(JabberCapsClientInfo, 1);
 			JabberCapsTuple *key = (JabberCapsTuple*)&value->tuple;
 			xmlnode *child;
@@ -251,15 +253,15 @@ jabber_caps_load(void)
 			if (key->hash == NULL)
 				exts = jabber_caps_find_exts_by_node(key->node);
 
-			for(child = client->child; child; child = child->next) {
-				if(child->type != XMLNODE_TYPE_TAG)
+			for (child = client->child; child; child = child->next) {
+				if (child->type != XMLNODE_TYPE_TAG)
 					continue;
-				if(!strcmp(child->name,"feature")) {
+				if (g_str_equal(child->name, "feature")) {
 					const char *var = xmlnode_get_attrib(child, "var");
 					if(!var)
 						continue;
 					value->features = g_list_append(value->features,g_strdup(var));
-				} else if(!strcmp(child->name,"identity")) {
+				} else if (g_str_equal(child->name, "identity")) {
 					const char *category = xmlnode_get_attrib(child, "category");
 					const char *type = xmlnode_get_attrib(child, "type");
 					const char *name = xmlnode_get_attrib(child, "name");
@@ -276,15 +278,15 @@ jabber_caps_load(void)
 					id->lang = g_strdup(lang);
 
 					value->identities = g_list_append(value->identities,id);
-				} else if(!strcmp(child->name,"x")) {
+				} else if (g_str_equal(child->name, "x")) {
 					/* TODO: See #7814 -- this might cause problems if anyone
 					 * ever actually specifies forms. In fact, for this to
 					 * work properly, that bug needs to be fixed in
 					 * xmlnode_from_str, not the output version... */
 					value->forms = g_list_append(value->forms, xmlnode_copy(child));
-				} else if (!strcmp(child->name, "ext") && key->hash != NULL) {
+				} else if (g_str_equal(child->name, "ext") && key->hash != NULL) {
 					purple_debug_warning("jabber", "Ignoring exts when reading new-style caps\n");
-				} else if (!strcmp(child->name, "ext")) {
+				} else if (g_str_equal(child->name, "ext")) {
 					/* TODO: Do we care about reading in the identities listed here? */
 					const char *identifier = xmlnode_get_attrib(child, "identifier");
 					xmlnode *node;
@@ -296,7 +298,7 @@ jabber_caps_load(void)
 					for (node = child->child; node; node = node->next) {
 						if (node->type != XMLNODE_TYPE_TAG)
 							continue;
-						if (!strcmp(node->name, "feature")) {
+						if (g_str_equal(node->name, "feature")) {
 							const char *var = xmlnode_get_attrib(node, "var");
 							if (!var)
 								continue;
@@ -455,13 +457,13 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 		 * size in jabber_caps_calculate_hash is large enough. The cipher API
 		 * doesn't seem to offer a "Get the hash size" function(?).
 		 */
-		if (!strcmp(userdata->hash, "sha-1")) {
+		if (g_str_equal(userdata->hash, "sha-1")) {
 			hash = jabber_caps_calculate_hash(info, "sha1");
-		} else if (!strcmp(userdata->hash, "md5")) {
+		} else if (g_str_equal(userdata->hash, "md5")) {
 			hash = jabber_caps_calculate_hash(info, "md5");
 		}
 
-		if (!hash || strcmp(hash, userdata->ver)) {
+		if (!hash || !g_str_equal(hash, userdata->ver)) {
 			purple_debug_warning("jabber", "Could not validate caps info from "
 			                     "%s. Expected %s, got %s\n",
 			                     xmlnode_get_attrib(packet, "from"),
@@ -770,7 +772,7 @@ JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query)
 	for(child = query->child; child; child = child->next) {
 		if (child->type != XMLNODE_TYPE_TAG)
 			continue;
-		if (!strcmp(child->name,"identity")) {
+		if (g_str_equal(child->name, "identity")) {
 			/* parse identity */
 			const char *category = xmlnode_get_attrib(child, "category");
 			const char *type = xmlnode_get_attrib(child, "type");
@@ -788,13 +790,13 @@ JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query)
 			id->lang = g_strdup(lang);
 
 			info->identities = g_list_append(info->identities, id);
-		} else if (!strcmp(child->name, "feature")) {
+		} else if (g_str_equal(child->name, "feature")) {
 			/* parse feature */
 			const char *var = xmlnode_get_attrib(child, "var");
 			if (var)
 				info->features = g_list_prepend(info->features, g_strdup(var));
-		} else if (!strcmp(child->name, "x")) {
-			if (child->xmlns && !strcmp(child->xmlns, "jabber:x:data")) {
+		} else if (g_str_equal(child->name, "x")) {
+			if (purple_strequal(child->xmlns, "jabber:x:data")) {
 				/* x-data form */
 				xmlnode *dataform = xmlnode_copy(child);
 				info->forms = g_list_append(info->forms, dataform);
@@ -985,7 +987,7 @@ void jabber_caps_broadcast_change()
 	for (node = accounts; node; node = node->next) {
 		PurpleAccount *account = node->data;
 		const char *prpl_id = purple_account_get_protocol_id(account);
-		if (!strcmp("prpl-jabber", prpl_id) && purple_account_is_connected(account)) {
+		if (g_str_equal("prpl-jabber", prpl_id) && purple_account_is_connected(account)) {
 			PurpleConnection *gc = purple_account_get_connection(account);
 			jabber_presence_send(gc->proto_data, TRUE);
 		}
