@@ -507,6 +507,10 @@ a-C = toggle-clipboard
 .br
 a-/ = help-for-widget
 .br
+a-c-j = window-scroll-down
+.br
+a-c-k = window-scroll-up
+.br
 # The following action is still incomplete, and doesn't have a default binding
 .br
 # switch-window-n
