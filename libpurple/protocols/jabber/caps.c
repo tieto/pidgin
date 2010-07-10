@@ -704,36 +704,6 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
 }
 
 static gint
-jabber_identity_compare(gconstpointer a, gconstpointer b)
-{
-	const JabberIdentity *ac;
-	const JabberIdentity *bc;
-	gint cat_cmp;
-	gint typ_cmp;
-
-	ac = a;
-	bc = b;
-
-	if ((cat_cmp = strcmp(ac->category, bc->category)) == 0) {
-		if ((typ_cmp = strcmp(ac->type, bc->type)) == 0) {
-			if (!ac->lang && !bc->lang) {
-				return 0;
-			} else if (ac->lang && !bc->lang) {
-				return 1;
-			} else if (!ac->lang && bc->lang) {
-				return -1;
-			} else {
-				return strcmp(ac->lang, bc->lang);
-			}
-		} else {
-			return typ_cmp;
-		}
-	} else {
-		return cat_cmp;
-	}
-}
-
-static gint
 jabber_xdata_compare(gconstpointer a, gconstpointer b)
 {
 	const xmlnode *aformtypefield = a;
@@ -956,6 +926,10 @@ void jabber_caps_calculate_own_hash(JabberStream *js) {
 	}
 
 	info.features = features;
+	/* TODO: This copy can go away, I think, since jabber_identities
+	 * is pre-sorted, so the sort in calculate_hash should be idempotent.
+	 * However, I want to test that. --darkrain
+	 */
 	info.identities = g_list_copy(jabber_identities);
 	info.forms = NULL;
 
