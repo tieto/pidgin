@@ -29,6 +29,7 @@
 #include "iq.h"
 #include "presence.h"
 #include "util.h"
+#include "xdata.h"
 
 #define JABBER_CAPS_FILENAME "xmpp-caps.xml"
 
@@ -732,14 +733,6 @@ jabber_identity_compare(gconstpointer a, gconstpointer b)
 	}
 }
 
-static gchar *jabber_caps_get_formtype(const xmlnode *x) {
-	xmlnode *formtypefield;
-	formtypefield = xmlnode_get_child(x, "field");
-	while (formtypefield && strcmp(xmlnode_get_attrib(formtypefield, "var"), "FORM_TYPE")) formtypefield = xmlnode_get_next_twin(formtypefield);
-	formtypefield = xmlnode_get_child(formtypefield, "value");
-	return xmlnode_get_data(formtypefield);;
-}
-
 static gint
 jabber_xdata_compare(gconstpointer a, gconstpointer b)
 {
@@ -749,8 +742,8 @@ jabber_xdata_compare(gconstpointer a, gconstpointer b)
 	char *bformtype;
 	int result;
 
-	aformtype = jabber_caps_get_formtype(aformtypefield);
-	bformtype = jabber_caps_get_formtype(bformtypefield);
+	aformtype = jabber_x_data_get_formtype(aformtypefield);
+	bformtype = jabber_x_data_get_formtype(bformtypefield);
 
 	result = strcmp(aformtype, bformtype);
 	g_free(aformtype);
@@ -902,7 +895,7 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 	/* concat x-data forms to the verification string */
 	for(node = info->forms; node; node = node->next) {
 		xmlnode *data = (xmlnode *)node->data;
-		gchar *formtype = jabber_caps_get_formtype(data);
+		gchar *formtype = jabber_x_data_get_formtype(data);
 		GList *fields = jabber_caps_xdata_get_fields(data);
 
 		/* append FORM_TYPE's field value to the verification string */
