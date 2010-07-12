@@ -1962,20 +1962,53 @@ static void jabber_features_destroy(void)
 	}
 }
 
-void jabber_add_identity(const gchar *category, const gchar *type, const gchar *lang, const gchar *name) {
+gint
+jabber_identity_compare(gconstpointer a, gconstpointer b)
+{
+	const JabberIdentity *ac;
+	const JabberIdentity *bc;
+	gint cat_cmp;
+	gint typ_cmp;
+
+	ac = a;
+	bc = b;
+
+	if ((cat_cmp = strcmp(ac->category, bc->category)) == 0) {
+		if ((typ_cmp = strcmp(ac->type, bc->type)) == 0) {
+			if (!ac->lang && !bc->lang) {
+				return 0;
+			} else if (ac->lang && !bc->lang) {
+				return 1;
+			} else if (!ac->lang && bc->lang) {
+				return -1;
+			} else {
+				return strcmp(ac->lang, bc->lang);
+			}
+		} else {
+			return typ_cmp;
+		}
+	} else {
+		return cat_cmp;
+	}
+}
+
+void jabber_add_identity(const gchar *category, const gchar *type,
+                         const gchar *lang, const gchar *name)
+{
 	GList *identity;
 	JabberIdentity *ident;
+
 	/* both required according to XEP-0030 */
 	g_return_if_fail(category != NULL);
 	g_return_if_fail(type != NULL);
 
-	for(identity = jabber_identities; identity; identity = identity->next) {
-		JabberIdentity *ident = (JabberIdentity*)identity->data;
-		if (!strcmp(ident->category, category) &&
-		    !strcmp(ident->type, type) &&
-		    ((!ident->lang && !lang) || (ident->lang && lang && !strcmp(ident->lang, lang)))) {
+	/* Check if this identity is already there... */
+	for (identity = jabber_identities; identity; identity = identity->next) {
+		JabberIdentity *id = identity->data;
+		if (g_str_equal(id->category, category) &&
+			g_str_equal(id->type, type) &&
+			purple_strequal(id->lang, lang))
 			return;
-		}
 	}
 
 	ident = g_new0(JabberIdentity, 1);
@@ -1983,7 +2016,8 @@ void jabber_add_identity(const gchar *category, const gchar *type, const gchar *
 	ident->type = g_strdup(type);
 	ident->lang = g_strdup(lang);
 	ident->name = g_strdup(name);
-	jabber_identities = g_list_prepend(jabber_identities, ident);
+	jabber_identities = g_list_insert_sorted(jabber_identities, ident,
+	                                         jabber_identity_compare);
 }
 
 static void jabber_identities_destroy(void)
