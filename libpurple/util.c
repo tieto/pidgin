@@ -3423,7 +3423,7 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 			   char **ret_path, char **ret_user, char **ret_passwd)
 {
 	gboolean is_https = FALSE;
-	char scan_info[255];
+	const char * scan_info;
 	char port_str[6];
 	int f;
 	const char *at, *slash;
@@ -3431,11 +3431,12 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	char host[256], path[256], user[256], passwd[256];
 	int port = 0;
 	/* hyphen at end includes it in control set */
-	static const char addr_ctrl[] = "A-Za-z0-9.-";
-	static const char port_ctrl[] = "0-9";
-	static const char page_ctrl[] = "A-Za-z0-9.~_/:*!@&%%?=+^-";
-	static const char user_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
-	static const char passwd_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
+
+#define ADDR_CTRL "A-Za-z0-9.-"
+#define PORT_CTRL "0-9"
+#define PAGE_CTRL "A-Za-z0-9.~_/:*!@&%%?=+^-"
+#define USER_CTRL "A-Za-z0-9.~_/*!&%%?=+^-"
+#define PASSWD_CTRL "A-Za-z0-9.~_/*!&%%?=+^-"
 
 	g_return_val_if_fail(url != NULL, FALSE);
 
@@ -3455,37 +3456,32 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	/* Only care about @ char BEFORE the first / */
 	at = strchr(url, '@');
 	slash = strchr(url, '/');
-	if ((at != NULL) &&
-			(((slash != NULL) && (strlen(at) > strlen(slash))) ||
-			(slash == NULL))) {
-		g_snprintf(scan_info, sizeof(scan_info),
-					"%%255[%s]:%%255[%s]^@", user_ctrl, passwd_ctrl);
+	f = 0;
+	if (at && (!slash || at < slash)) {
+		scan_info = "%255[" USER_CTRL "]:%255[" PASSWD_CTRL "]^@";
 		f = sscanf(url, scan_info, user, passwd);
 
-		if (f ==1 ) {
+		if (f == 1) {
 			/* No passwd, possibly just username supplied */
-			g_snprintf(scan_info, sizeof(scan_info),
-						"%%255[%s]^@", user_ctrl);
+			scan_info = "%255[" USER_CTRL "]^@";
 			f = sscanf(url, scan_info, user);
-			*passwd = '\0';
 		}
 
 		url = at+1; /* move pointer after the @ char */
-	} else {
-		*user = '\0';
-		*passwd = '\0';
 	}
 
-	g_snprintf(scan_info, sizeof(scan_info),
-			   "%%255[%s]:%%5[%s]/%%255[%s]", addr_ctrl, port_ctrl, page_ctrl);
+	if (f < 1) {
+		*user = '\0';
+		*passwd = '\0';
+	} else if (f == 1)
+		*passwd = '\0';
 
+	scan_info = "%255[" ADDR_CTRL "]:%5[" PORT_CTRL "]/%255[" PAGE_CTRL "]";
 	f = sscanf(url, scan_info, host, port_str, path);
 
 	if (f == 1)
 	{
-		g_snprintf(scan_info, sizeof(scan_info),
-				   "%%255[%s]/%%255[%s]",
-				   addr_ctrl, page_ctrl);
+		scan_info = "%255[" ADDR_CTRL "]/%255[" PAGE_CTRL "]";
 		f = sscanf(url, scan_info, host, path);
 		/* Use the default port */
 		if (is_https)
@@ -3509,6 +3505,12 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	if (ret_passwd != NULL) *ret_passwd = g_strdup(passwd);
 
 	return ((*host != '\0') ? TRUE : FALSE);
+
+#undef ADDR_CTRL
+#undef PORT_CTRL
+#undef PAGE_CTRL
+#undef USER_CTRL
+#undef PASSWD_CTRL
 }
 
 /**
