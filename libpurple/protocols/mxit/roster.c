@@ -44,12 +44,12 @@ struct contact_invite {
 /* statuses (reference: libpurple/status.h) */
 static struct status
 {
-	PurpleStatusPrimitive	primative;
+	PurpleStatusPrimitive	primitive;
 	int						mxit;
 	const char*				id;
 	const char*				name;
 } const mxit_statuses[] = {
-		/*	primative,						no,							id,			name					*/
+		/*	primitive,						no,							id,			name					*/
 		{	PURPLE_STATUS_OFFLINE,			MXIT_PRESENCE_OFFLINE,		"offline",	N_( "Offline" )			},	/* 0 */
 		{	PURPLE_STATUS_AVAILABLE,		MXIT_PRESENCE_ONLINE,		"online",	N_( "Available" )		},	/* 1 */
 		{	PURPLE_STATUS_AWAY,				MXIT_PRESENCE_AWAY,			"away",		N_( "Away" )			},	/* 2 */
@@ -74,7 +74,7 @@ GList* mxit_status_types( PurpleAccount* account )
 		const struct status* status = &mxit_statuses[i];
 
 		/* add mxit status (reference: "libpurple/status.h") */
-		type = purple_status_type_new_with_attrs( status->primative, status->id, _( status->name ), TRUE, TRUE, FALSE,
+		type = purple_status_type_new_with_attrs( status->primitive, status->id, _( status->name ), TRUE, TRUE, FALSE,
 					"message", _( "Message" ), purple_value_new( PURPLE_TYPE_STRING ),
 					NULL );
 
@@ -292,7 +292,7 @@ static PurpleBuddy* mxit_update_buddy_group( struct MXitSession* session, Purple
 		 * XXX: libPurple does not currently provide an API to change or rename the group name
 		 * for a specific buddy. One option is to remove the buddy from the list and re-adding
 		 * him in the new group, but by doing that makes the buddy go offline and then online
-		 * again. This is really not ideal and very iretating, but how else then?
+		 * again. This is really not ideal and very irritating, but how else then?
 		 */
 
 		/* create new buddy */

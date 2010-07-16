@@ -225,12 +225,14 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	group = purple_request_field_group_new( NULL );
 	purple_request_fields_add_group( fields, group );
 
-	/* mxitId (read-only) */
-	if ( session->mxitId ) {
-		field = purple_request_field_string_new( "mxitid", _( "Your MXitId" ), session->mxitId, FALSE );
+#if	0
+	/* UID (read-only) */
+	if ( session->uid ) {
+		field = purple_request_field_string_new( "mxitid", _( "Your UID" ), session->uid, FALSE );
 		purple_request_field_string_set_editable( field, FALSE );
 		purple_request_field_group_add_field( group, field );
 	}
+#endif
 
 	/* pin */
 	field = purple_request_field_string_new( "pin", _( "PIN" ), session->acc->password, FALSE );

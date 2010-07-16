@@ -145,7 +145,7 @@ void mxit_register_uri_handler(void)
 
 
 /*------------------------------------------------------------------------
- * Unegister MXit from receiving URI click notifications from the UI
+ * Unregister MXit from receiving URI click notifications from the UI
  */
 static void mxit_unregister_uri_handler()
 {
@@ -203,7 +203,7 @@ static void mxit_cb_chat_created( PurpleConversation* conv, struct MXitSession* 
 	if ( find_active_chat( session->active_chats, who ) )
 		return;
 
-	/* determite if this buddy is a MXit service */
+	/* determine if this buddy is a MXit service */
 	switch ( contact->type ) {
 		case MXIT_TYPE_BOT :
 		case MXIT_TYPE_CHATROOM :
@@ -578,7 +578,7 @@ static GHashTable* mxit_get_text_table( PurpleAccount* acc )
 
 	table = g_hash_table_new( g_str_hash, g_str_equal );
 
-	g_hash_table_insert( table, "login_label", (gpointer)_( "Your Mobile Number..." ) );
+	g_hash_table_insert( table, "login_label", (gpointer)_( "Your MXit ID..." ) );
 
 	return table;
 }
@@ -594,7 +594,7 @@ static PurplePluginProtocolInfo proto_info = {
 		32, 32,												/* min width & height */
 		MXIT_AVATAR_SIZE,									/* max width */
 		MXIT_AVATAR_SIZE,									/* max height */
-		100000,												/* max filezize */
+		100000,												/* max filesize */
 		PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY	/* scaling rules */
 	},
 	mxit_list_icon,			/* list_icon */

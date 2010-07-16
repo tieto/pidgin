@@ -120,7 +120,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 		contact = purple_buddy_get_protocol_data(buddy);
 	}
 
-	purple_notify_user_info_add_pair( info, _( "Nick Name" ), profile->nickname );
+	purple_notify_user_info_add_pair( info, _( "Display Name" ), profile->nickname );
 	purple_notify_user_info_add_pair( info, _( "Birthday" ), profile->birthday );
 	purple_notify_user_info_add_pair( info, _( "Gender" ), profile->male ? _( "Male" ) : _( "Female" ) );
 //	purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
