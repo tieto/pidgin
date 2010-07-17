@@ -409,7 +409,7 @@ typedef struct MsnFqyCbData {
 
 /* add contact to xmlnode */
 static void
-msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, MsnListOp list_op, MsnNetwork networkId)
+msn_add_contact_xml(xmlnode *mlNode, const char *passport, MsnListOp list_op, MsnNetwork networkId)
 {
 	xmlnode *d_node,*c_node;
 	char **tokens;
@@ -543,8 +543,8 @@ update_contact_network(MsnSession *session, const char *passport, MsnNetwork net
 
 		adl_node = xmlnode_new("ml");
 		xmlnode_set_attrib(adl_node, "l", "1");
-		msn_add_contact_xml(session, adl_node, passport,
-				user->list_op & MSN_LIST_OP_MASK, network);
+		msn_add_contact_xml(adl_node, passport,
+		                    user->list_op & MSN_LIST_OP_MASK, network);
 		payload = xmlnode_to_str(adl_node, &payload_len);
 		msn_notification_post_adl(session->notification->cmdproc, payload, payload_len);
 		g_free(payload);
@@ -600,8 +600,9 @@ msn_notification_dump_contact(MsnSession *session)
 		}
 
 		if (user->networkid != MSN_NETWORK_UNKNOWN) {
-			msn_add_contact_xml(session, adl_node, user->passport,
-				user->list_op & MSN_LIST_OP_MASK, user->networkid);
+			msn_add_contact_xml(adl_node, user->passport,
+			                    user->list_op & MSN_LIST_OP_MASK,
+			                    user->networkid);
 
 			/* each ADL command may contain up to 150 contacts */
 			if (++adl_count % 150 == 0) {
@@ -630,8 +631,7 @@ msn_notification_dump_contact(MsnSession *session)
 				purple_debug_info("msn", "Adding FQY address, count is %d\n",
 				                  session->adl_fqy);
 
-			msn_add_contact_xml(session, fqy_node, user->passport,
-				0, user->networkid);
+			msn_add_contact_xml(fqy_node, user->passport, 0, user->networkid);
 
 			/* each FQY command may contain up to 150 contacts, probably */
 			if (++fqy_count % 150 == 0) {
@@ -1956,8 +1956,7 @@ modify_unknown_buddy_on_list(MsnSession *session, const char *passport,
 	node = xmlnode_new("ml");
 	node->child = NULL;
 
-	msn_add_contact_xml(session, node, passport,
-	                    addrem->list_op, network);
+	msn_add_contact_xml(node, passport, addrem->list_op, network);
 
 	payload = xmlnode_to_str(node, &payload_len);
 	xmlnode_free(node);
@@ -1987,8 +1986,7 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 
-	msn_add_contact_xml(notification->session, adl_node, user->passport,
-	                    list_op, user->networkid);
+	msn_add_contact_xml(adl_node, user->passport, list_op, user->networkid);
 
 	payload = xmlnode_to_str(adl_node, &payload_len);
 	xmlnode_free(adl_node);
@@ -2026,8 +2024,7 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 	rml_node = xmlnode_new("ml");
 	rml_node->child = NULL;
 
-	msn_add_contact_xml(notification->session, rml_node, user->passport,
-	                    list_op, user->networkid);
+	msn_add_contact_xml(rml_node, user->passport, list_op, user->networkid);
 
 	payload = xmlnode_to_str(rml_node, &payload_len);
 	xmlnode_free(rml_node);
