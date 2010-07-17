@@ -362,6 +362,9 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 			msg = g_strdup_printf(_("Unable to authenticate: %s"),
 								  (info == NULL ) ?
 								  _("Unknown error") : info);
+			/* Clear the password if it isn't being saved */
+			if (!purple_account_get_remember_password(session->account))
+				purple_account_set_password(session->account, NULL);
 			break;
 		case MSN_ERROR_BAD_BLIST:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
