@@ -674,6 +674,8 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode_free(adl_node);
 	xmlnode_free(fqy_node);
 
+	msn_session_activate_login_timeout(session);
+
 	pc = purple_account_get_connection(session->account);
 	display_name = purple_connection_get_display_name(pc);
 	if (display_name

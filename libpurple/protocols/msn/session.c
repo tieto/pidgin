@@ -131,6 +131,11 @@ msn_session_disconnect(MsnSession *session)
 	if (!session->connected)
 		return;
 
+	if (session->login_timeout) {
+		purple_timeout_remove(session->login_timeout);
+		session->login_timeout = 0;
+	}
+
 	session->connected = FALSE;
 
 	while (session->switches != NULL)
@@ -256,6 +261,28 @@ msn_session_get_swboard(MsnSession *session, const char *username,
 	swboard->flag |= flag;
 
 	return swboard;
+}
+
+static gboolean
+msn_login_timeout_cb(gpointer data)
+{
+	MsnSession *session = data;
+	/* This forces the login process to finish, even though we haven't heard
+	   a response for our FQY requests yet. We'll at least end up online to the
+	   people we've already added. The rest will follow later. */
+	msn_session_finish_login(session);
+	session->login_timeout = 0;
+	return FALSE;
+}
+
+void
+msn_session_activate_login_timeout(MsnSession *session)
+{
+	if (!session->logged_in) {
+		session->login_timeout =
+			purple_timeout_add_seconds(MSN_LOGIN_FQY_TIMEOUT,
+			                           msn_login_timeout_cb, session);
+	}
 }
 
 static void
