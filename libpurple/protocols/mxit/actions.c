@@ -113,26 +113,26 @@ out:
 
 		/* update name */
 		g_strlcpy( profile->nickname, name, sizeof( profile->nickname ) );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FULLNAME, CP_PROF_TYPE_UTF8, profile->nickname );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FULLNAME, CP_PROFILE_TYPE_UTF8, profile->nickname );
 		g_string_append( attributes, attrib );
 		acount++;
 
 		/* update hidden */
 		field = purple_request_fields_get_field( fields, "hidden" );
 		profile->hidden = purple_request_field_bool_get_value( field );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_HIDENUMBER, CP_PROF_TYPE_BOOL, ( profile->hidden ) ? "1" : "0" );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_HIDENUMBER, CP_PROFILE_TYPE_BOOL, ( profile->hidden ) ? "1" : "0" );
 		g_string_append( attributes, attrib );
 		acount++;
 
 		/* update birthday */
 		strcpy( profile->birthday, bday );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_BIRTHDATE, CP_PROF_TYPE_UTF8, profile->birthday );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_BIRTHDATE, CP_PROFILE_TYPE_UTF8, profile->birthday );
 		g_string_append( attributes, attrib );
 		acount++;
 
 		/* update gender */
 		profile->male = ( purple_request_fields_get_choice( fields, "male" ) != 0 );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_GENDER, CP_PROF_TYPE_BOOL, ( profile->male ) ? "1" : "0" );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_GENDER, CP_PROFILE_TYPE_BOOL, ( profile->male ) ? "1" : "0" );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -142,7 +142,7 @@ out:
 			profile->title[0] = '\0';
 		else
 			strcpy( profile->title, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_TITLE, CP_PROF_TYPE_UTF8, profile->title );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_TITLE, CP_PROFILE_TYPE_UTF8, profile->title );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -152,7 +152,7 @@ out:
 			profile->firstname[0] = '\0';
 		else
 			strcpy( profile->firstname, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FIRSTNAME, CP_PROF_TYPE_UTF8, profile->firstname );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FIRSTNAME, CP_PROFILE_TYPE_UTF8, profile->firstname );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -162,7 +162,7 @@ out:
 			profile->lastname[0] = '\0';
 		else
 			strcpy( profile->lastname, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_LASTNAME, CP_PROF_TYPE_UTF8, profile->lastname );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_LASTNAME, CP_PROFILE_TYPE_UTF8, profile->lastname );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -172,7 +172,7 @@ out:
 			profile->email[0] = '\0';
 		else
 			strcpy( profile->email, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_EMAIL, CP_PROF_TYPE_UTF8, profile->email );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_EMAIL, CP_PROFILE_TYPE_UTF8, profile->email );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -182,7 +182,7 @@ out:
 			profile->mobilenr[0] = '\0';
 		else
 			strcpy( profile->mobilenr, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_MOBILENR, CP_PROF_TYPE_UTF8, profile->mobilenr );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_MOBILENR, CP_PROFILE_TYPE_UTF8, profile->mobilenr );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -249,6 +249,8 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	/* birthday */
 	field = purple_request_field_string_new( "bday", _( "Birthday" ), profile->birthday, FALSE );
 	purple_request_field_group_add_field( group, field );
+	if ( profile->flags & CP_PROF_DOBLOCKED )
+		purple_request_field_string_set_editable( field, FALSE );
 
 	/* gender */
 	field = purple_request_field_choice_new( "male", _( "Gender" ), ( profile->male ) ? 1 : 0 );

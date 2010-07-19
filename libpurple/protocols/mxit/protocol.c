@@ -1284,7 +1284,7 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	const char*		statusmsg;
 	const char*		profilelist[] = { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_HIDENUMBER, CP_PROFILE_FULLNAME,
 									CP_PROFILE_TITLE, CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_EMAIL,
-									CP_PROFILE_MOBILENR };
+									CP_PROFILE_MOBILENR, CP_PROFILE_FLAGS };
 
 	purple_account_set_int( session->acc, MXIT_CONFIG_STATE, MXIT_STATE_LOGIN );
 
@@ -1669,6 +1669,14 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 		else if ( strcmp( CP_PROFILE_REGCOUNTRY, fname ) == 0 ) {
 			/* registered country */
 			g_strlcpy( profile->regcountry, fvalue, sizeof( profile->regcountry ) );
+		}
+		else if ( strcmp( CP_PROFILE_FLAGS, fname ) == 0 ) {
+			/* profile flags */
+			profile->flags = strtoll( fvalue, NULL, 10 );
+		}
+		else if ( strcmp( CP_PROFILE_LASTSEEN, fname ) == 0 ) {
+			/* last seen online */
+			profile->lastonline = strtoll( fvalue, NULL, 10 );
 		}
 		else {
 			/* invalid profile attribute */

@@ -559,7 +559,8 @@ static void mxit_get_info( PurpleConnection *gc, const char *who )
 {
 	struct MXitSession*		session			= (struct MXitSession*) gc->proto_data;
 	const char*				profilelist[]	= { CP_PROFILE_BIRTHDATE, CP_PROFILE_GENDER, CP_PROFILE_FULLNAME,
-												CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY };
+												CP_PROFILE_FIRSTNAME, CP_PROFILE_LASTNAME, CP_PROFILE_REGCOUNTRY, CP_PROFILE_LASTSEEN,
+												CP_PROFILE_STATUS, CP_PROFILE_AVATAR };
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_info: '%s'\n", who );
 
@@ -583,6 +584,29 @@ static GHashTable* mxit_get_text_table( PurpleAccount* acc )
 	return table;
 }
 
+
+/*------------------------------------------------------------------------
+ * Buddy list menu.
+ *
+ *  @param node		The entry in the buddy list.
+ */
+static GList* mxit_blist_menu( PurpleBlistNode *node )
+{
+	PurpleBuddy*		buddy;
+	struct contact*		contact;
+	GList*				m = NULL;
+
+	if ( !PURPLE_BLIST_NODE_IS_BUDDY( node ) )
+		return NULL;
+
+	buddy = (PurpleBuddy *) node;
+	contact = purple_buddy_get_protocol_data( buddy );
+	if ( !contact )
+		return NULL;
+
+	return m;
+}
+
 /*========================================================================================================================*/
 
 static PurplePluginProtocolInfo proto_info = {
@@ -602,7 +626,7 @@ static PurplePluginProtocolInfo proto_info = {
 	mxit_status_text,		/* status_text */
 	mxit_tooltip,			/* tooltip_text */
 	mxit_status_types,		/* status types				[roster.c] */
-	NULL,					/* blist_node_menu */
+	mxit_blist_menu,		/* blist_node_menu */
 	mxit_chat_info,			/* chat_info				[multimx.c] */
 	NULL,					/* chat_info_defaults */
 	mxit_login,				/* login					[login.c] */
