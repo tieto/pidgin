@@ -358,7 +358,7 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
 	 * So if this MXit contact isn't in a group, pretend it is.
 	 */
 	if ( *contact->groupname == '\0' ) {
-		strcpy( contact->groupname, MXIT_DEFAULT_GROUP );
+		g_strlcpy( contact->groupname, MXIT_DEFAULT_GROUP, sizeof( contact->groupname ) );
 	}
 
 	/* find or create a group for this contact */

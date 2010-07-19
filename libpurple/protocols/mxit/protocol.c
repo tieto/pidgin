@@ -445,7 +445,7 @@ static void mxit_queue_packet( struct MXitSession* session, const char* data, in
 	packet->headerlen = 0;
 
 	/* create generic packet header */
-	hlen = sprintf( header,	"id=%s%c", session->acc->username, CP_REC_TERM );			/* client msisdn */
+	hlen = snprintf( header, sizeof( header ), "id=%s%c", session->acc->username, CP_REC_TERM );			/* client msisdn */
 
 	if ( session->http ) {
 		/* http connection only */
@@ -642,7 +642,8 @@ void mxit_send_register( struct MXitSession* session )
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s%c%s%c%i%c%s%c"		/* "ms"=password\1version\1maxreplyLen\1name\1 */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s%c%s%c%i%c%s%c"		/* "ms"=password\1version\1maxreplyLen\1name\1 */
 								"%s%c%i%c%s%c%s%c"			/* dateOfBirth\1gender\1location\1capabilities\1 */
 								"%s%c%i%c%s%c%s",			/* dc\1features\1dialingcode\1locale */
 								session->encpwd, CP_FLD_TERM, MXIT_CP_VERSION, CP_FLD_TERM, CP_MAX_FILESIZE, CP_FLD_TERM, profile->nickname, CP_FLD_TERM,
@@ -670,7 +671,8 @@ void mxit_send_login( struct MXitSession* session )
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s%c%s%c%i%c"			/* "ms"=password\1version\1getContacts\1 */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s%c%s%c%i%c"			/* "ms"=password\1version\1getContacts\1 */
 								"%s%c%s%c%i%c"				/* capabilities\1dc\1features\1 */
 								"%s%c%s%c"					/* dialingcode\1locale\1 */
 								"%i%c%i%c%i",				/* maxReplyLen\1protocolVer\1lastRosterUpdate */
@@ -711,7 +713,8 @@ void mxit_send_message( struct MXitSession* session, const char* to, const char*
 		markuped_msg = g_strdup( msg );
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s%c%s%c%i%c%i",		/* "ms"=jid\1msg\1type\1flags */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s%c%s%c%i%c%i",		/* "ms"=jid\1msg\1type\1flags */
 								to, CP_FLD_TERM, markuped_msg, CP_FLD_TERM, msgtype, CP_FLD_TERM, CP_MSG_MARKUP | CP_MSG_EMOTICON
 	);
 
@@ -737,7 +740,8 @@ void mxit_send_extprofile_request( struct MXitSession* session, const char* user
 	int				datalen;
 	unsigned int	i;
 
-	datalen = sprintf( data,	"ms=%s%c%i",		/* "ms="mxitid\1nr_attributes */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s%c%i",		/* "ms="mxitid\1nr_attributes */
 								(username ? username : ""), CP_FLD_TERM, nr_attrib);
 
 	/* add attributes */
@@ -767,7 +771,8 @@ void mxit_send_extprofile_update( struct MXitSession* session, const char* passw
 	parts = g_strsplit( attributes, "\01", ( MXIT_MAX_ATTRIBS * 3 ) );
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s%c%i",	/* "ms"=password\1nr_attibutes  */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s%c%i",	/* "ms"=password\1nr_attibutes  */
 								( password ) ? password : "", CP_FLD_TERM, nr_attrib
 	);
 
@@ -797,7 +802,8 @@ void mxit_send_presence( struct MXitSession* session, int presence, const char* 
 	int			datalen;
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%i%c",					/* "ms"=show\1status */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%i%c",					/* "ms"=show\1status */
 								presence, CP_FLD_TERM
 	);
 
@@ -822,7 +828,8 @@ void mxit_send_mood( struct MXitSession* session, int mood )
 	int			datalen;
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%i",	/* "ms"=mood */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%i",	/* "ms"=mood */
 								mood
 	);
 
@@ -845,7 +852,8 @@ void mxit_send_invite( struct MXitSession* session, const char* username, const 
 	int			datalen;
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s%c%s%c%s%c%i%c%s",	/* "ms"=group\1username\1alias\1type\1msg */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s%c%s%c%s%c%i%c%s",	/* "ms"=group\1username\1alias\1type\1msg */
 								groupname, CP_FLD_TERM, username, CP_FLD_TERM, alias,
 								CP_FLD_TERM, MXIT_TYPE_MXIT, CP_FLD_TERM, ""
 	);
@@ -867,7 +875,8 @@ void mxit_send_remove( struct MXitSession* session, const char* username )
 	int			datalen;
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s",	/* "ms"=username */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s",	/* "ms"=username */
 								username
 	);
 
@@ -889,7 +898,8 @@ void mxit_send_allow_sub( struct MXitSession* session, const char* username, con
 	int			datalen;
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s%c%s%c%s",	/* "ms"=username\1group\1alias */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s%c%s%c%s",	/* "ms"=username\1group\1alias */
 								username, CP_FLD_TERM, "", CP_FLD_TERM, alias
 	);
 
@@ -910,7 +920,8 @@ void mxit_send_deny_sub( struct MXitSession* session, const char* username )
 	int			datalen;
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s",	/* "ms"=username */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s",	/* "ms"=username */
 								username
 	);
 
@@ -933,7 +944,8 @@ void mxit_send_update_contact( struct MXitSession* session, const char* username
 	int			datalen;
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s%c%s%c%s",	/* "ms"=groupname\1username\1alias */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s%c%s%c%s",	/* "ms"=groupname\1username\1alias */
 								groupname, CP_FLD_TERM, username, CP_FLD_TERM, alias
 	);
 
@@ -954,7 +966,8 @@ void mxit_send_splashclick( struct MXitSession* session, const char* splashid )
 	int			datalen;
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s",	/* "ms"=splashId */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s",	/* "ms"=splashId */
 								splashid
 	);
 
@@ -979,7 +992,8 @@ void mxit_send_msgevent( struct MXitSession* session, const char* to, const char
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_send_msgevent: to=%s id=%s event=%i\n", to, id, event );
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s%c%s%c%i",		/* "ms"=contactAddress \1 id \1 event */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s%c%s%c%i",		/* "ms"=contactAddress \1 id \1 event */
 								to, CP_FLD_TERM, id, CP_FLD_TERM, event
 	);
 
@@ -1003,7 +1017,8 @@ void mxit_send_groupchat_create( struct MXitSession* session, const char* groupn
 	int			i;
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s%c%i",	/* "ms"=roomname\1nr_jids\1jid0\1..\1jidN */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s%c%i",	/* "ms"=roomname\1nr_jids\1jid0\1..\1jidN */
 								groupname, CP_FLD_TERM, nr_usernames
 	);
 
@@ -1032,7 +1047,8 @@ void mxit_send_groupchat_invite( struct MXitSession* session, const char* roomid
 	int			i;
 
 	/* convert the packet to a byte stream */
-	datalen = sprintf( data,	"ms=%s%c%i",	/* "ms"=roomid\1nr_jids\1jid0\1..\1jidN */
+	datalen = snprintf( data, sizeof( data ),
+								"ms=%s%c%i",	/* "ms"=roomid\1nr_jids\1jid0\1..\1jidN */
 								roomid, CP_FLD_TERM, nr_usernames
 	);
 
@@ -1456,9 +1472,9 @@ static void mxit_parse_cmd_new_sub( struct MXitSession* session, struct record**
 		/* build up a new contact info struct */
 		contact = g_new0( struct contact, 1 );
 
-		strcpy( contact->username, rec->fields[0]->data );
+		g_strlcpy( contact->username, rec->fields[0]->data, sizeof( contact->username ) );
 		mxit_strip_domain( contact->username );				/* remove dummy domain */
-		strcpy( contact->alias, rec->fields[1]->data );
+		g_strlcpy( contact->alias, rec->fields[1]->data, sizeof( contact->alias ) );
 		contact->type = atoi( rec->fields[2]->data );
 
 		if ( rec->fcount >= 5 ) {
@@ -1509,10 +1525,10 @@ static void mxit_parse_cmd_contact( struct MXitSession* session, struct record**
 		/* build up a new contact info struct */
 		contact = g_new0( struct contact, 1 );
 
-		strcpy( contact->groupname, rec->fields[0]->data );
-		strcpy( contact->username, rec->fields[1]->data );
+		g_strlcpy( contact->groupname, rec->fields[0]->data, sizeof( contact->groupname ) );
+		g_strlcpy( contact->username, rec->fields[1]->data, sizeof( contact->username ) );
 		mxit_strip_domain( contact->username );				/* remove dummy domain */
-		strcpy( contact->alias, rec->fields[2]->data );
+		g_strlcpy( contact->alias, rec->fields[2]->data, sizeof( contact->alias ) );
 
 		contact->presence = atoi( rec->fields[3]->data );
 		contact->type = atoi( rec->fields[4]->data );
@@ -2018,12 +2034,12 @@ static int process_error_response( struct MXitSession* session, struct rx_packet
 					return 0;
 				}
 				else {
-					sprintf( errmsg, _( "Login error: %s (%i)" ), errdesc, packet->errcode );
+					snprintf( errmsg, sizeof( errmsg ), _( "Login error: %s (%i)" ), errdesc, packet->errcode );
 					purple_connection_error( session->con, errmsg );
 					return -1;
 				}
 		case CP_CMD_LOGOUT :
-				sprintf( errmsg, _( "Logout error: %s (%i)" ), errdesc, packet->errcode );
+				snprintf( errmsg, sizeof( errmsg ), _( "Logout error: %s (%i)" ), errdesc, packet->errcode );
 				purple_connection_error_reason( session->con, PURPLE_CONNECTION_ERROR_NAME_IN_USE, _( errmsg ) );
 				return -1;
 		case CP_CMD_CONTACT :

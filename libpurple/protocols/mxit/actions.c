@@ -125,7 +125,7 @@ out:
 		acount++;
 
 		/* update birthday */
-		strcpy( profile->birthday, bday );
+		g_strlcpy( profile->birthday, bday, sizeof( profile->birthday ) );
 		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_BIRTHDATE, CP_PROFILE_TYPE_UTF8, profile->birthday );
 		g_string_append( attributes, attrib );
 		acount++;
@@ -141,7 +141,7 @@ out:
 		if ( !name )
 			profile->title[0] = '\0';
 		else
-			strcpy( profile->title, name );
+			g_strlcpy( profile->title, name, sizeof( profile->title ) );
 		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_TITLE, CP_PROFILE_TYPE_UTF8, profile->title );
 		g_string_append( attributes, attrib );
 		acount++;
@@ -151,7 +151,7 @@ out:
 		if ( !name )
 			profile->firstname[0] = '\0';
 		else
-			strcpy( profile->firstname, name );
+			g_strlcpy( profile->firstname, name, sizeof( profile->firstname ) );
 		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FIRSTNAME, CP_PROFILE_TYPE_UTF8, profile->firstname );
 		g_string_append( attributes, attrib );
 		acount++;
@@ -161,7 +161,7 @@ out:
 		if ( !name )
 			profile->lastname[0] = '\0';
 		else
-			strcpy( profile->lastname, name );
+			g_strlcpy( profile->lastname, name, sizeof( profile->lastname ) );
 		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_LASTNAME, CP_PROFILE_TYPE_UTF8, profile->lastname );
 		g_string_append( attributes, attrib );
 		acount++;
@@ -171,7 +171,7 @@ out:
 		if ( !name )
 			profile->email[0] = '\0';
 		else
-			strcpy( profile->email, name );
+			g_strlcpy( profile->email, name, sizeof( profile->email ) );
 		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_EMAIL, CP_PROFILE_TYPE_UTF8, profile->email );
 		g_string_append( attributes, attrib );
 		acount++;
@@ -181,7 +181,7 @@ out:
 		if ( !name )
 			profile->mobilenr[0] = '\0';
 		else
-			strcpy( profile->mobilenr, name );
+			g_strlcpy( profile->mobilenr, name, sizeof( profile->mobilenr ) );
 		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_MOBILENR, CP_PROFILE_TYPE_UTF8, profile->mobilenr );
 		g_string_append( attributes, attrib );
 		acount++;
