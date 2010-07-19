@@ -52,6 +52,7 @@ C_SRC =			cmdproc.c \
 			notification.c \
 			object.c \
 			oim.c\
+			p2p.c \
 			page.c \
 			servconn.c \
 			session.c \
@@ -59,14 +60,17 @@ C_SRC =			cmdproc.c \
 			slpcall.c \
 			slplink.c \
 			slpmsg.c \
+			slpmsg_part.c \
 			soap.c\
 			state.c \
+			sbconn.c \
 			switchboard.c \
 			sync.c \
 			table.c \
 			transaction.c \
 			user.c \
 			userlist.c \
+			xfer.c \
 			msnutils.c
 
 OBJECTS = $(C_SRC:%.c=%.o)

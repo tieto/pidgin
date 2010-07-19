@@ -59,15 +59,10 @@ typedef enum
 
 #define MSN_LOGIN_STEPS MSN_LOGIN_STEP_END
 
-#include "group.h"
-#include "httpconn.h"
 #include "nexus.h"
 #include "notification.h"
 #include "oim.h"
-#include "slpcall.h"
-#include "sslconn.h"
 #include "switchboard.h"
-#include "sync.h"
 #include "user.h"
 #include "userlist.h"
 
@@ -89,7 +84,6 @@ struct _MsnSession
 	MsnNotification *notification;
 	MsnNexus        *nexus;
 	MsnOim          *oim;
-	MsnSync         *sync;
 	MsnUserList     *userlist;
 	char            *abch_cachekey;
 
@@ -119,6 +113,7 @@ struct _MsnSession
 
 	GHashTable *soap_table;
 	guint soap_cleanup_handle;
+	char *guid;
 };
 
 /**

@@ -46,6 +46,7 @@ typedef enum
 	MSN_SERVCONN_SB
 } MsnServConnType;
 
+#include "internal.h"
 #include "proxy.h"
 
 #include "cmdproc.h"

@@ -26,16 +26,6 @@
 
 typedef enum
 {
-	MSN_LIST_FL_OP = 0x01,
-	MSN_LIST_AL_OP = 0x02,
-	MSN_LIST_BL_OP = 0x04,
-	MSN_LIST_RL_OP = 0x08,
-	MSN_LIST_PL_OP = 0x10
-} MsnListOp;
-#define MSN_LIST_OP_MASK	0x07
-
-typedef enum
-{
 	MSN_CLIENT_CAP_WIN_MOBILE = 0x0000001,
 	MSN_CLIENT_CAP_INK_GIF    = 0x0000004,
 	MSN_CLIENT_CAP_INK_ISF    = 0x0000008,
@@ -83,23 +73,7 @@ typedef enum
 
 #include "internal.h"
 
-#include "account.h"
-#include "accountopt.h"
-#include "blist.h"
-#include "connection.h"
-#include "conversation.h"
-#include "debug.h"
-#include "cipher.h"
-#include "notify.h"
-#include "privacy.h"
-#include "proxy.h"
-#include "prpl.h"
-#include "request.h"
-#include "servconn.h"
-#include "sslconn.h"
-#include "util.h"
-
-#include "ft.h"
+#include "session.h"
 
 #include "msg.h"
 
@@ -134,16 +108,14 @@ typedef enum
 /* Index into attention_types */
 #define MSN_NUDGE 0
 
-#define MSN_CLIENT_ID_VERSION      MSN_CLIENT_VER_7_0
+#define MSN_CLIENT_ID_VERSION      MSN_CLIENT_VER_9_0
 #define MSN_CLIENT_ID_CAPABILITIES (MSN_CLIENT_CAP_PACKET|MSN_CLIENT_CAP_INK_GIF|MSN_CLIENT_CAP_VOICEIM)
+#define MSN_CLIENT_ID_EXT_CAPS     (0)
 
 #define MSN_CLIENT_ID \
 	((MSN_CLIENT_ID_VERSION    << 24) | \
 	 (MSN_CLIENT_ID_CAPABILITIES))
 
-#define MSN_CLIENT_EXT_ID 0
-
-gboolean msn_email_is_valid(const char *passport);
 void
 msn_set_public_alias(PurpleConnection *gc, const char *alias,
                      PurpleSetPublicAliasSuccessCallback success_cb,

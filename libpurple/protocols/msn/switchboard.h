@@ -50,12 +50,10 @@ typedef enum
 	MSN_SB_FLAG_FT = 0x02  /**< This switchboard is being used for file transfer. */
 } MsnSBFlag;
 
-#include "conversation.h"
-
+#include "cmdproc.h"
 #include "msg.h"
 #include "servconn.h"
-#include "slplink.h"
-#include "user.h"
+#include "session.h"
 
 /**
  * A switchboard.
@@ -246,35 +244,14 @@ gboolean msn_switchboard_can_send(MsnSwitchBoard *swboard);
 void msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg,
 							  gboolean queue);
 
+void
+msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error);
+
 gboolean msn_switchboard_chat_leave(MsnSwitchBoard *swboard);
 gboolean msn_switchboard_chat_invite(MsnSwitchBoard *swboard, const char *who);
 
 void msn_switchboard_request(MsnSwitchBoard *swboard);
 void msn_switchboard_request_add_user(MsnSwitchBoard *swboard, const char *user);
-
-/**
- * Processes peer to peer messages.
- *
- * @param cmdproc The command processor.
- * @param msg     The message.
- */
-void msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
-
-/**
- * Processes emoticon messages.
- *
- * @param cmdproc The command processor.
- * @param msg     The message.
- */
-void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
-
-/**
- * Processes INVITE messages.
- *
- * @param cmdproc The command processor.
- * @param msg     The message.
- */
-void msn_invite_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 /**
  * Shows an ink message from this switchboard.
