@@ -392,22 +392,20 @@ gchar *
 oscar_format_buddies(GSList *buddies, const gchar *no_buddies_message)
 {
 	GSList *cur;
-	gchar *result, *tmp;
+	GString *result;
 	if (!buddies) {
 		return g_strdup_printf("<i>%s</i>", no_buddies_message);
 	}
-	result = g_strdup("");
+	result = g_string_new("");
 	for (cur = buddies; cur != NULL; cur = cur->next) {
 		PurpleBuddy *buddy = cur->data;
 		const gchar *bname = purple_buddy_get_name(buddy);
 		const gchar *alias = purple_buddy_get_alias_only(buddy);
+		g_string_append(result, bname);
 		if (alias) {
-			tmp = g_strdup_printf("%s%s (%s)<br>", result, bname, alias);
-		} else {
-			tmp = g_strdup_printf("%s%s<br>", result, bname);
+			g_string_append_printf(result, " (%s)", alias);
 		}
-		g_free(result);
-		result = tmp;
+		g_string_append(result, "<br>");
 	}
-	return result;
+	return g_string_free(result, FALSE);
 }
