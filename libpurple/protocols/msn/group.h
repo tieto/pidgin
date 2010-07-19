@@ -26,7 +26,7 @@
 
 typedef struct _MsnGroup  MsnGroup;
 
-#include <stdio.h>
+#include "internal.h"
 
 #include "session.h"
 #include "user.h"

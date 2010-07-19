@@ -23,7 +23,11 @@
  */
 #define PHOTO_SUPPORT 1
 
-#include "msn.h"
+#include "internal.h"
+
+#include "debug.h"
+#include "request.h"
+
 #include "accountopt.h"
 #include "contact.h"
 #include "msg.h"
@@ -40,10 +44,10 @@
 #include "msnutils.h"
 #include "version.h"
 
+#include "error.h"
 #include "msg.h"
 #include "switchboard.h"
 #include "notification.h"
-#include "sync.h"
 #include "slplink.h"
 
 #if PHOTO_SUPPORT
@@ -114,29 +118,6 @@ msn_normalize(const PurpleAccount *account, const char *str)
 	g_free(tmp);
 
 	return buf;
-}
-
-gboolean
-msn_email_is_valid(const char *passport)
-{
-	if (purple_email_is_valid(passport)) {
-		/* Special characters aren't allowed in domains, so only go to '@' */
-		while (*passport != '@') {
-			if (*passport == '/')
-				return FALSE;
-			else if (*passport == '?')
-				return FALSE;
-			else if (*passport == '=')
-				return FALSE;
-			/* MSN also doesn't like colons, but that's checked already */
-
-			passport++;
-		}
-
-		return TRUE;
-	}
-
-	return FALSE;
 }
 
 static gboolean
@@ -267,9 +248,9 @@ msn_set_public_alias(PurpleConnection *pc, const char *alias,
 {
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
+	MsnTransaction *trans;
 	PurpleAccount *account;
 	const char *real_alias;
-	MsnTransaction *trans;
 	struct public_alias_closure *closure;
 
 	session = purple_connection_get_protocol_data(pc);
@@ -360,19 +341,21 @@ msn_set_prp(PurpleConnection *gc, const char *type, const char *entry)
 {
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
+	MsnTransaction *trans;
 
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 
 	if (entry == NULL || *entry == '\0')
 	{
-		msn_cmdproc_send(cmdproc, "PRP", "%s", type);
+		trans = msn_transaction_new(cmdproc, "PRP", "%s", type);
 	}
 	else
 	{
-		msn_cmdproc_send(cmdproc, "PRP", "%s %s", type,
+		trans = msn_transaction_new(cmdproc, "PRP", "%s %s", type,
 						 purple_url_encode(entry));
 	}
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 static void
@@ -478,7 +461,7 @@ msn_show_set_friendly_name(PurplePluginAction *action)
 
 	tmp = g_strdup_printf(_("Set friendly name for %s."),
 	                      purple_account_get_username(account));
-	purple_request_input(gc, _("Set your friendly name."), tmp,
+	purple_request_input(gc, _("Set Friendly Name"), tmp,
 					   _("This is the name that other MSN buddies will "
 						 "see you as."),
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
@@ -487,6 +470,111 @@ msn_show_set_friendly_name(PurplePluginAction *action)
 					   account, NULL, NULL,
 					   gc);
 	g_free(tmp);
+}
+
+typedef struct MsnLocationData {
+	PurpleAccount *account;
+	MsnSession *session;
+	PurpleRequestFieldGroup *group;
+} MsnLocationData;
+
+static void
+update_endpoint_cb(MsnLocationData *data, PurpleRequestFields *fields)
+{
+	PurpleAccount *account;
+	MsnSession *session;
+	const char *old_name;
+	const char *name;
+	GList *others;
+
+	session = data->session;
+	account = data->account;
+
+	/* Update the current location's name */
+	old_name = purple_account_get_string(account, "endpoint-name", NULL);
+	name = purple_request_fields_get_string(fields, "endpoint-name");
+	if (!g_str_equal(old_name, name)) {
+		purple_account_set_string(account, "endpoint-name", name);
+		msn_notification_send_uux_private_endpointdata(session);
+	}
+
+	/* Sign out other locations */
+	for (others = purple_request_field_group_get_fields(data->group);
+	     others;
+	     others = g_list_next(others)) {
+		PurpleRequestField *field = others->data;
+		if (purple_request_field_get_type(field) != PURPLE_REQUEST_FIELD_BOOLEAN)
+			continue;
+		if (purple_request_field_bool_get_value(field)) {
+			const char *id = purple_request_field_get_id(field);
+			char *user;
+			purple_debug_info("msn", "Disconnecting Endpoint %s\n", id);
+
+			user = g_strdup_printf("%s;%s", purple_account_get_username(account), id);
+			msn_notification_send_uun(session, user, MSN_UNIFIED_NOTIFICATION_MPOP, "goawyplzthxbye");
+			g_free(user);
+		}
+	}
+
+	g_free(data);
+}
+
+static void
+msn_show_locations(PurplePluginAction *action)
+{
+	PurpleConnection *pc;
+	PurpleAccount *account;
+	MsnSession *session;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+	GSList *l;
+	MsnLocationData *data;
+
+	pc = (PurpleConnection *)action->context;
+	account = purple_connection_get_account(pc);
+	session = purple_connection_get_protocol_data(pc);
+
+	fields = purple_request_fields_new();
+
+	group = purple_request_field_group_new(_("This Location"));
+	purple_request_fields_add_group(fields, group);
+	field = purple_request_field_label_new("endpoint-label", _("This is the name that identifies this location"));
+	purple_request_field_group_add_field(group, field);
+	field = purple_request_field_string_new("endpoint-name",
+	                                        _("Name"),
+	                                        purple_account_get_string(account, "endpoint-name", NULL),
+	                                        FALSE);
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+
+	group = purple_request_field_group_new(_("Other Locations"));
+	purple_request_fields_add_group(fields, group);
+	field = purple_request_field_label_new("others-label", _("You can sign out from other locations here"));
+	purple_request_field_group_add_field(group, field);
+
+	for (l = session->user->endpoints; l; l = l->next) {
+		MsnUserEndpoint *ep = l->data;
+
+		if (g_str_equal(ep->id, session->guid))
+			/* Don't add myself to the list */
+			continue;
+
+		field = purple_request_field_bool_new(ep->id, ep->name, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+
+	data = g_new0(MsnLocationData, 1);
+	data->account = account;
+	data->session = session;
+	data->group = group;
+
+	purple_request_fields(pc, NULL, NULL, NULL,
+	                      fields,
+	                      _("OK"), G_CALLBACK(update_endpoint_cb),
+	                      _("Cancel"), G_CALLBACK(g_free),
+	                      account, NULL, NULL,
+	                      data);
 }
 
 static void
@@ -659,6 +747,7 @@ msn_send_privacy(PurpleConnection *gc)
 	PurpleAccount *account;
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
+	MsnTransaction *trans;
 
 	account = purple_connection_get_account(gc);
 	session = gc->proto_data;
@@ -666,9 +755,11 @@ msn_send_privacy(PurpleConnection *gc)
 
 	if (account->perm_deny == PURPLE_PRIVACY_ALLOW_ALL ||
 	    account->perm_deny == PURPLE_PRIVACY_DENY_USERS)
-		msn_cmdproc_send(cmdproc, "BLP", "%s", "AL");
+		trans = msn_transaction_new(cmdproc, "BLP", "%s", "AL");
 	else
-		msn_cmdproc_send(cmdproc, "BLP", "%s", "BL");
+		trans = msn_transaction_new(cmdproc, "BLP", "%s", "BL");
+
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 static void
@@ -712,9 +803,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 static void
 t_msn_xfer_init(PurpleXfer *xfer)
 {
-	MsnSlpLink *slplink = xfer->data;
-	msn_slplink_request_ft(slplink, xfer);
-	msn_slplink_unref(slplink);
+	msn_request_ft(xfer);
 }
 
 static void
@@ -1071,6 +1160,11 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
+	act = purple_plugin_action_new(_("View Locations..."),
+	                               msn_show_locations);
+	m = g_list_append(m, act);
+	m = g_list_append(m, NULL);
+
 	act = purple_plugin_action_new(_("Set Home Phone Number..."),
 								 msn_show_set_home_phone);
 	m = g_list_append(m, act);
@@ -1204,6 +1298,13 @@ msn_login(PurpleAccount *account)
 
 	username = purple_account_get_string(account, "display-name", NULL);
 	purple_connection_set_display_name(gc, username);
+
+	if (purple_account_get_string(account, "endpoint-name", NULL) == NULL) {
+		GHashTable *ui_info = purple_core_get_ui_info();
+		const gchar *ui_name = ui_info ? g_hash_table_lookup(ui_info, "name") : NULL;
+		purple_account_set_string(account, "endpoint-name",
+				ui_name && *ui_name ? ui_name : PACKAGE_NAME);
+	}
 
 	if (!msn_session_connect(session, host, port, http_method))
 		purple_connection_error_reason(gc,
@@ -1415,7 +1516,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 
 		msg = msn_message_new_plain(msgtext);
 		msg->remote_user = g_strdup(who);
-		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+		msn_message_set_header(msg, "X-MMS-IM-Format", msgformat);
 
 		g_free(msgformat);
 		g_free(msgtext);
@@ -1448,7 +1549,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			body_enc = g_markup_escape_text(body_str, -1);
 			g_free(body_str);
 
-			format = msn_message_get_attr(msg, "X-MMS-IM-Format");
+			format = msn_message_get_header_value(msg, "X-MMS-IM-Format");
 			msn_parse_format(format, &pre, &post);
 			body_str = g_strdup_printf("%s%s%s", pre ? pre :  "",
 									   body_enc ? body_enc : "", post ? post : "");
@@ -1523,7 +1624,7 @@ msn_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 	msg = msn_message_new(MSN_MSG_TYPING);
 	msn_message_set_content_type(msg, "text/x-msmsgscontrol");
 	msn_message_set_flag(msg, 'U');
-	msn_message_set_attr(msg, "TypingUser",
+	msn_message_set_header(msg, "TypingUser",
 						 purple_account_get_username(account));
 	msn_message_set_bin_data(msg, "\r\n", 2);
 
@@ -1579,7 +1680,7 @@ add_pending_buddy(MsnSession *session,
 		MsnUser *user2 = msn_userlist_find_user(userlist, who);
 		if (user2 != NULL) {
 			/* User already in userlist, so just update it. */
-			msn_user_destroy(user);
+			msn_user_unref(user);
 			user = user2;
 		} else {
 			msn_userlist_add_user(userlist, user);
@@ -1599,7 +1700,7 @@ add_pending_buddy(MsnSession *session,
 
 		/* Remove from local list */
 		purple_blist_remove_buddy(buddy);
-		msn_user_destroy(user);
+		msn_user_unref(user);
 	}
 	g_free(group);
 }
@@ -1930,7 +2031,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	}
 
 	msg = msn_message_new_plain(msgtext);
-	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+	msn_message_set_header(msg, "X-MMS-IM-Format", msgformat);
 
 	smileys = msn_msg_grab_emoticons(msg->body, username);
 	while (smileys) {
@@ -1970,6 +2071,7 @@ static void
 msn_keepalive(PurpleConnection *gc)
 {
 	MsnSession *session;
+	MsnTransaction *trans;
 
 	session = gc->proto_data;
 
@@ -1979,7 +2081,9 @@ msn_keepalive(PurpleConnection *gc)
 
 		cmdproc = session->notification->cmdproc;
 
-		msn_cmdproc_send_quick(cmdproc, "PNG", NULL, NULL);
+		trans = msn_transaction_new(cmdproc, "PNG", NULL);
+		msn_transaction_set_saveable(trans, FALSE);
+		msn_cmdproc_send_trans(cmdproc, trans);
 	}
 }
 
@@ -2717,7 +2821,6 @@ static gboolean msn_load(PurplePlugin *plugin)
 {
 	msn_notification_init();
 	msn_switchboard_init();
-	msn_sync_init();
 
 	return TRUE;
 }
@@ -2726,7 +2829,6 @@ static gboolean msn_unload(PurplePlugin *plugin)
 {
 	msn_notification_end();
 	msn_switchboard_end();
-	msn_sync_end();
 
 	return TRUE;
 }

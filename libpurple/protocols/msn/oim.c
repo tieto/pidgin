@@ -23,7 +23,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
-#include "msn.h"
+
+#include "internal.h"
+#include "debug.h"
+
 #include "soap.h"
 #include "oim.h"
 #include "msnutils.h"
@@ -618,7 +621,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 	                          MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
 	purple_debug_info("msn", "oim body:{%s}\n", message->body);
 
-	boundary = msn_message_get_attr(message, "boundary");
+	boundary = msn_message_get_header_value(message, "boundary");
 
 	if (boundary != NULL) {
 		char *bounds;
@@ -656,7 +659,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 		decode_msg = (char *)purple_base64_decode(message->body, &body_len);
 	}
 
-	from = msn_message_get_attr(message, "X-OIM-originatingSource");
+	from = msn_message_get_header_value(message, "X-OIM-originatingSource");
 
 	/* Match number to user's mobile number, FROM is a phone number
 	   if the other side pages you using your phone number */
@@ -671,7 +674,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 	if (passport == NULL) {
 		char *start, *end;
 
-		from = msn_message_get_attr(message, "From");
+		from = msn_message_get_header_value(message, "From");
 
 		tokens = g_strsplit(from, " ", 2);
 		if (tokens[1] != NULL)
@@ -690,7 +693,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 		g_strfreev(tokens);
 	}
 
-	date = msn_message_get_attr(message, "Date");
+	date = msn_message_get_header_value(message, "Date");
 	stamp = msn_oim_parse_timestamp(date);
 	purple_debug_info("msn", "oim Date:{%s},passport{%s}\n",
 	                  date, passport);

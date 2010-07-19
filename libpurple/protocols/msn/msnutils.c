@@ -21,18 +21,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "internal.h"
+
 #include "msn.h"
 #include "msnutils.h"
 
 #include "cipher.h"
 
-char *rand_guid(void);
-
 /**************************************************************************
  * Util
  **************************************************************************/
 char *
-rand_guid()
+rand_guid(void)
 {
 	return g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
 			rand() % 0xAAFF + 0x1111,
@@ -474,6 +475,29 @@ msn_parse_socket(const char *str, char **ret_host, int *ret_port)
 
 	*ret_host = host;
 	*ret_port = port;
+}
+
+gboolean
+msn_email_is_valid(const char *passport)
+{
+	if (purple_email_is_valid(passport)) {
+		/* Special characters aren't allowed in domains, so only go to '@' */
+		while (*passport != '@') {
+			if (*passport == '/')
+				return FALSE;
+			else if (*passport == '?')
+				return FALSE;
+			else if (*passport == '=')
+				return FALSE;
+			/* MSN also doesn't like colons, but that's checked already */
+
+			passport++;
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /***************************************************************************
