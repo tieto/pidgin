@@ -1592,8 +1592,8 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_parse_cmd_extprofile: profile for '%s'\n", mxitId );
 
-	if ( records[0]->fields[0]->len == 0 ) {
-		/* no MXitId provided, so this must be our own profile information */
+	if ( ( records[0]->fields[0]->len == 0 ) || ( session->uid && ( strcmp( session->uid, records[0]->fields[0]->data ) == 0 ) ) ) {
+		/* No UserId or Our UserId provided, so this must be our own profile information */
 		if ( session->profile == NULL )
 			session->profile = g_new0( struct MXitProfile, 1 );
 		profile = session->profile;
