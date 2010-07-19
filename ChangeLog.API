@@ -7,6 +7,10 @@ version 2.7.2 (??/??/????):
 		  called for a protocol that doesn't support the underlying
 		  calls and the caller does not specify a failure callback.
 
+	Perl:
+		Added:
+		* Exposed log-subsystem signals.
+
 	Pidgin:
 		Changed:
 		* Changing the visibility (gtk_widget_hide/show) of
