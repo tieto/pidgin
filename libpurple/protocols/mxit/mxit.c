@@ -91,6 +91,8 @@ static void* mxit_link_click( const char* link64 )
 	if ( !account )
 		goto skip;
 	con = purple_account_get_connection( account );
+	if ( !con )
+		goto skip;
 
 	/* determine if it's a command-response to send */
 	is_command = g_str_has_prefix( parts[4], "::type=reply|" );
