@@ -1582,12 +1582,13 @@ static void mxit_parse_cmd_presence( struct MXitSession* session, struct record*
 
 		/*
 		 * The format of the record is:
-		 * contactAddressN\1presenceN\1\moodN\1customMoodN\1statusMsgN\1avatarIdN
+		 * contactAddressN\1presenceN\1moodN\1customMoodN\1statusMsgN\1avatarIdN
 		 */
 		mxit_strip_domain( rec->fields[0]->data );		/* contactAddress */
 
 		mxit_update_buddy_presence( session, rec->fields[0]->data, atoi( rec->fields[1]->data ), atoi( rec->fields[2]->data ),
-				rec->fields[3]->data, rec->fields[4]->data, rec->fields[5]->data );
+				rec->fields[3]->data, rec->fields[4]->data );
+		mxit_update_buddy_avatar( session, rec->fields[0]->data, rec->fields[5]->data );
 	}
 }
 
@@ -1605,6 +1606,8 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 	struct MXitProfile*		profile		= NULL;
 	int						count;
 	int						i;
+	const char*				avatarId	= NULL;
+	const char*				statusMsg	= NULL;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_parse_cmd_extprofile: profile for '%s'\n", mxitId );
 
@@ -1659,8 +1662,13 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 			/* nickname */
 			g_strlcpy( profile->nickname, fvalue, sizeof( profile->nickname ) );
 		}
+		else if ( strcmp( CP_PROFILE_STATUS, fname ) == 0 ) {
+			/* status message - just keep a reference to the value */
+			statusMsg = fvalue;
+		}
 		else if ( strcmp( CP_PROFILE_AVATAR, fname ) == 0 ) {
-			/* avatar id, we just ingore it cause we dont need it */
+			/* avatar id - just keep a reference to the value */
+			avatarId = fvalue;
 		}
 		else if ( strcmp( CP_PROFILE_TITLE, fname ) == 0 ) {
 			/* title */
@@ -1700,8 +1708,12 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 		}
 	}
 
-	/* if this is not our profile, just display it */
 	if ( profile != session->profile ) {
+		/* update avatar (if necessary) */
+		if ( avatarId )
+			mxit_update_buddy_avatar( session, mxitId, avatarId );
+
+		/* if this is not our profile, just display it */
 		mxit_show_profile( session, mxitId, profile );
 		g_free( profile );
 	}

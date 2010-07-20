@@ -174,7 +174,6 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 
 		/* hidden number */
 		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), ( contact->flags & MXIT_CFLAG_HIDDEN ) ? _( "Yes" ) : _( "No" ) );
-
 	}
 
 	purple_notify_userinfo( session->con, username, info, NULL, NULL );

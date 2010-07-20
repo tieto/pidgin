@@ -428,15 +428,14 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
  *  @param mood			The new mood for the contact
  *  @param customMood	The custom mood identifier
  *  @param statusMsg	This is the contact's status message
- *  @param avatarId		This is the contact's avatar id
  */
-void mxit_update_buddy_presence( struct MXitSession* session, const char* username, short presence, short mood, const char* customMood, const char* statusMsg, const char* avatarId )
+void mxit_update_buddy_presence( struct MXitSession* session, const char* username, short presence, short mood, const char* customMood, const char* statusMsg )
 {
 	PurpleBuddy*		buddy	= NULL;
 	struct contact*		contact	= NULL;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_update_buddy_presence: user='%s' presence=%i mood=%i customMood='%s' statusMsg='%s' avatar='%s'\n",
-		username, presence, mood, customMood, statusMsg, avatarId );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_update_buddy_presence: user='%s' presence=%i mood=%i customMood='%s' statusMsg='%s'\n",
+		username, presence, mood, customMood, statusMsg );
 
 	if ( ( presence < MXIT_PRESENCE_OFFLINE ) || ( presence > MXIT_PRESENCE_DND ) ) {
 		purple_debug_info( MXIT_PLUGIN_ID, "mxit_update_buddy_presence: invalid presence state %i\n", presence );
@@ -472,7 +471,46 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 	if ( statusMsg[0] != '\0' )
 		contact->statusMsg = g_markup_escape_text( statusMsg, -1 );
 
-	/* update avatarId */
+	/* update the buddy's status (reference: "libpurple/prpl.h") */
+	if ( contact->statusMsg )
+		purple_prpl_got_user_status( session->acc, username, mxit_statuses[contact->presence].id, "message", contact->statusMsg, NULL );
+	else
+		purple_prpl_got_user_status( session->acc, username, mxit_statuses[contact->presence].id, NULL );
+
+	/* update the buddy's mood */
+	if ( contact->mood == MXIT_MOOD_NONE )
+		purple_prpl_got_user_status_deactive( session->acc, username, "mood" );
+	else
+		purple_prpl_got_user_status( session->acc, username, "mood", PURPLE_MOOD_NAME, mxit_moods[contact->mood-1].mood, NULL );
+}
+
+
+/*------------------------------------------------------------------------
+ * Update the buddy's avatar.
+ * Either a presence update packet was received from the MXit server, or a profile response.
+ *
+ *  @param session		The MXit session object
+ *  @param username		The contact which presence to update
+ *  @param avatarId		This is the contact's avatar id
+ */
+void mxit_update_buddy_avatar( struct MXitSession* session, const char* username, const char* avatarId )
+{
+	PurpleBuddy*		buddy	= NULL;
+	struct contact*		contact	= NULL;
+
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_update_buddy_avatar: user='%s' avatar='%s'\n", username, avatarId );
+
+	/* find the buddy information for this contact (reference: "libpurple/blist.h") */
+	buddy = purple_find_buddy( session->acc, username );
+	if ( !buddy ) {
+		purple_debug_warning( MXIT_PLUGIN_ID, "mxit_update_buddy_presence: unable to find the buddy '%s'\n", username );
+		return;
+	}
+
+	contact = purple_buddy_get_protocol_data( buddy );
+	if ( !contact )
+		return;
+
 	if ( ( contact->avatarId ) && ( g_ascii_strcasecmp( contact->avatarId, avatarId ) == 0 ) ) {
 		/*  avatar has not changed - do nothing */
 	}
@@ -486,18 +524,6 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 	}
 	else		/* clear current avatar */
 		purple_buddy_icons_set_for_user( session->acc, username, NULL, 0, NULL );
-
-	/* update the buddy's status (reference: "libpurple/prpl.h") */
-	if ( contact->statusMsg )
-		purple_prpl_got_user_status( session->acc, username, mxit_statuses[contact->presence].id, "message", contact->statusMsg, NULL );
-	else
-		purple_prpl_got_user_status( session->acc, username, mxit_statuses[contact->presence].id, NULL );
-
-	/* update the buddy's mood */
-	if ( contact->mood == MXIT_MOOD_NONE )
-		purple_prpl_got_user_status_deactive( session->acc, username, "mood" );
-	else
-		purple_prpl_got_user_status( session->acc, username, "mood", PURPLE_MOOD_NAME, mxit_moods[contact->mood-1].mood, NULL );
 }
 
 
