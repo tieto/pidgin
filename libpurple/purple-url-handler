@@ -73,7 +73,8 @@ def bring_account_online(account):
 def findaccount(protocolname, accountname="", matcher=None):
     if matcher:
         for account in cpurple.PurpleAccountsGetAll():
-            if accountname != "" and accountname != cpurple.PurpleAccountGetUsername(a):
+            if (protocolname != cpurple.PurpleAccountGetProtocolID(account)) or \
+               (accountname != "" and accountname != cpurple.PurpleAccountGetUsername(account)):
                 continue
             if matcher(account):
                 bring_account_online(account)
@@ -182,7 +183,7 @@ def icq(uri):
 
 def irc(uri):
     protocol = "prpl-irc"
-    match = re.match(r"^irc:(//([^/]*)/)?([^?]*)(\?(.*))?", uri)
+    match = re.match(r"^irc:(//([^/]*))?/?([^?]*)(\?(.*))?", uri)
     if not match:
         print "Invalid irc URI: %s" % uri
         return
@@ -207,7 +208,7 @@ def irc(uri):
 
     def correct_server(account):
         username = cpurple.PurpleAccountGetUsername(account)
-        return ("@" in username) and (server == (username.split("@"))[1])
+        return ((server == "") or ("@" in username) and (server == (username.split("@"))[1]))
 
     account = findaccount(protocol, matcher=correct_server)
 
