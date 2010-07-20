@@ -82,7 +82,11 @@ struct _PidginBuddyList {
 
 	GtkCellRenderer *text_rend;
 
+#if GTK_CHECK_VERSION(2,4,0)
+	GtkUIManager *ui;
+#else
 	GtkItemFactory *ift;
+#endif
 	GtkWidget *menutray;            /**< The menu tray widget. */
 	GtkWidget *menutrayicon;        /**< The menu tray icon. */
 
