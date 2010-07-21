@@ -5,7 +5,7 @@ version 2.7.2 (07/21/2010):
 	* Fix a crash bug related to X-Status messages that can be triggered by
 	  remove users.  This is CVE-2010-2528.
 	* Fix a rare crash bug caused by certain incoming SMS messages
-	  (discovered by Jan Kaluza--thanks Jan!)
+	  (discovered by Jan Kaluza--thanks Jan!).
 	* Change HTML sent from ICQ accounts so that official ICQ clients
 	  hopefully display it correctly.
 
