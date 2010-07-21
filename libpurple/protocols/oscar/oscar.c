@@ -4662,7 +4662,8 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			tmp2 = purple_markup_strip_html(tmp1);
 			is_html = FALSE;
 		} else {
-			tmp2 = g_strdup(tmp1);
+			/* ICQ 6 wants its HTML wrapped in these tags. Oblige it. */
+			tmp2 = g_strdup_printf("<HTML><BODY>%s</BODY></HTML>", tmp1);
 			is_html = TRUE;
 		}
 		g_free(tmp1);
