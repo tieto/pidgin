@@ -48,7 +48,6 @@ struct _MsnSlpMessage
 	MsnP2PHeader *header;
 	MsnP2PFooter *footer;
 
-	long session_id;
 	long id;
 	long ack_id;
 	long ack_sub_id;

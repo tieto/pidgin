@@ -354,17 +354,14 @@ static void
 msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	slpmsg = slpmsg;
-	slpmsg->header = g_new0(MsnP2PHeader, 1);
 	slpmsg->footer = g_new0(MsnP2PFooter, 1);
 
 	if (slpmsg->flags == P2P_NO_FLAG)
 	{
-		slpmsg->header->session_id = slpmsg->session_id;
 		slpmsg->header->ack_id = rand() % 0xFFFFFF00;
 	}
 	else if (slpmsg->flags == P2P_ACK)
 	{
-		slpmsg->header->session_id = slpmsg->session_id;
 		slpmsg->header->ack_id = slpmsg->ack_id;
 		slpmsg->header->ack_size = slpmsg->ack_size;
 		slpmsg->header->ack_sub_id = slpmsg->ack_sub_id;
@@ -455,7 +452,7 @@ msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
 	{
 		MsnSlpMessage *slpmsg = e->data;
 
-		if ((slpmsg->session_id == session_id) && (slpmsg->id == id))
+		if ((slpmsg->header->session_id == session_id) && (slpmsg->id == id))
 			return slpmsg;
 	}
 
@@ -483,13 +480,13 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *d
 	{
 		slpmsg = msn_slpmsg_new(slplink);
 		slpmsg->id = header->id;
-		slpmsg->session_id = header->session_id;
+		slpmsg->header->session_id = header->session_id;
 		slpmsg->size = header->total_size;
 		slpmsg->flags = header->flags;
 
-		if (slpmsg->session_id)
+		if (slpmsg->header->session_id)
 		{
-			slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
+			slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->header->session_id);
 			if (slpmsg->slpcall != NULL)
 			{
 				if (slpmsg->flags == P2P_MSN_OBJ_DATA ||

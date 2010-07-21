@@ -48,7 +48,7 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 	else
 		slpmsg->slplink = NULL;
 
-	slpmsg->header = NULL;
+	slpmsg->header = g_new0(MsnP2PHeader, 1);
 	slpmsg->footer = NULL;
 
 	return slpmsg;
@@ -242,7 +242,7 @@ MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PHeader *header)
 
 	slpmsg = msn_slpmsg_new(NULL);
 
-	slpmsg->session_id = header->session_id;
+	slpmsg->header->session_id = header->session_id;
 	slpmsg->size       = header->total_size;
 	slpmsg->flags      = P2P_ACK;
 	slpmsg->ack_id     = header->id;
@@ -272,8 +272,9 @@ MsnSlpMessage *msn_slpmsg_dataprep_new(MsnSlpCall *slpcall)
 	MsnSlpMessage *slpmsg;
 
 	slpmsg = msn_slpmsg_new(NULL);
+
 	slpmsg->slpcall = slpcall;
-	slpmsg->session_id = slpcall->session_id;
+	slpmsg->header->session_id = slpcall->session_id;
 	msn_slpmsg_set_body(slpmsg, NULL, 4);
 	slpmsg->info = "SLP DATA PREP";
 

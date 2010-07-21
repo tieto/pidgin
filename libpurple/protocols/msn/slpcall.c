@@ -1066,7 +1066,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	{
 		char *body_str;
 
-		if (slpmsg->session_id == 64)
+		if (slpmsg->header->session_id == 64)
 		{
 			/* This is for handwritten messages (Ink) */
 			GError *error = NULL;
@@ -1127,7 +1127,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	         slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
 	         slpmsg->flags == P2P_FILE_DATA)
 	{
-		slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->session_id);
+		slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->header->session_id);
 
 		if (slpcall != NULL)
 		{
