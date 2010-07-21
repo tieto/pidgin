@@ -5,7 +5,7 @@ Our development blog is available at: http://planet.pidgin.im
 2.7.2 (07/21/2010):
 	Mark: We discovered a security issue in Pidgin 2.7.0 and 2.7.1 and
 	decided to release a patched version quickly.  This release contains
-	the fix for that crash, and two other minor fixes.
+	the fix for that crash, and a few other minor fixes.
 
 2.7.1 (05/29/2010):
 	Elliott: Hey, I'm first!  How did that happen?!  Maybe because of the

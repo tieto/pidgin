@@ -9,6 +9,9 @@ version 2.7.2 (07/21/2010):
 	* Change HTML sent from ICQ accounts so that official ICQ clients
 	  hopefully display it correctly.
 
+	MSN:
+	* Fix a crash related to fast buddy icon transfers.
+
 version 2.7.1 (05/29/2010):
 	General:
 	* Build fixes on OpenSolaris.  (Brian Lu)
