@@ -4,6 +4,8 @@ version 2.7.2 (07/21/2010):
 	AIM and ICQ:
 	* Fix a crash bug related to X-Status messages that can be triggered by
 	  remove users.  This is CVE-2010-2528.
+	* Fix a rare crash bug caused by certain incoming SMS messages
+	  (discovered by Jan Kaluza--thanks Jan!)
 
 version 2.7.1 (05/29/2010):
 	General:
