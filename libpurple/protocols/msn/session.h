@@ -59,6 +59,8 @@ typedef enum
 
 #define MSN_LOGIN_STEPS MSN_LOGIN_STEP_END
 
+#define MSN_LOGIN_FQY_TIMEOUT 30
+
 #include "group.h"
 #include "httpconn.h"
 #include "nexus.h"
@@ -83,6 +85,7 @@ struct _MsnSession
 	gboolean connected;
 	gboolean logged_in; /**< A temporal flag to ignore local buddy list adds. */
 	int      adl_fqy; /**< A count of ADL/FQY so status is only changed once. */
+	guint    login_timeout; /**< Timeout to force status change if ADL/FQY fail. */
 	gboolean destroying; /**< A flag that states if the session is being destroyed. */
 	gboolean http_method;
 
@@ -213,7 +216,16 @@ void msn_session_set_error(MsnSession *session, MsnErrorType error,
 						   const char *info);
 
 /**
- * Sets the current step in the login proccess.
+ * Starts a timeout to initiate finishing login. Sometimes the server ignores
+ * our FQY requests, so this forces ourselves online eventually.
+ *
+ * @param session The MSN session.
+ */
+void
+msn_session_activate_login_timeout(MsnSession *session);
+
+/**
+ * Sets the current step in the login process.
  *
  * @param session The MSN session.
  * @param step The current step.

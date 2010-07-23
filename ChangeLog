@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.2 (??/??/????):
+version 2.7.3 (??/??/????):
 	General:
 	* Use silent build rules for automake >1.11. You can enable verbose
 	  builds with the --disable-silent-rules configure option, or using
@@ -45,6 +45,18 @@ version 2.7.2 (??/??/????):
 	  Yahoo JAPAN accounts.
 	* Fix file transfers that get stuck with "Waiting for transfer to
 	  begin".
+
+version 2.7.2 (07/21/2010):
+	AIM and ICQ:
+	* Fix a crash bug related to X-Status messages that can be triggered by
+	  remove users.  This is CVE-2010-2528.
+	* Fix a rare crash bug caused by certain incoming SMS messages
+	  (discovered by Jan Kaluza--thanks Jan!).
+	* Change HTML sent from ICQ accounts so that official ICQ clients
+	  hopefully display it correctly.
+
+	MSN:
+	* Fix a crash related to fast buddy icon transfers.
 
 version 2.7.1 (05/29/2010):
 	General:

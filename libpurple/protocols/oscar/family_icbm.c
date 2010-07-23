@@ -249,9 +249,6 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	}
 	g_free(buf);
 
-
-
-
 	g_free(snac2->data);
 	g_free(snac2);
 
@@ -2687,7 +2684,6 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	guint16 hdrlen;
 	int curpos;
 	guint16 num1, num2;
-	char *desc, *title, *temp;
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
 	PurplePresence *presence;
@@ -2714,33 +2710,41 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 				xml = byte_stream_getstr(bs, bs->len - curpos);
 				purple_debug_misc("oscar", "X-Status: Received XML reply\n");
 				if (xml) {
-				/* purple_debug_misc("oscar", "X-Status: XML reply: %s\n", xml); */
-					desc = strstr(xml, "&lt;desc&gt;");
-					if (desc != NULL) {
-						temp = strstr(xml, "&lt;/desc&gt;");
-						temp[0] = 0;
-						desc = desc + 12;
+					GString *xstatus;
+					char *tmp1, *tmp2;
+
+					/* purple_debug_misc("oscar", "X-Status: XML reply: %s\n", xml); */
+
+					xstatus = g_string_new(NULL);
+
+					tmp1 = strstr(xml, "&lt;title&gt;");
+					if (tmp1 != NULL) {
+						tmp1 += 13;
+						tmp2 = strstr(tmp1, "&lt;/title&gt;");
+						if (tmp2 != NULL)
+							g_string_append_len(xstatus, tmp1, tmp2 - tmp1);
 					}
-					title = strstr(xml, "&lt;title&gt;");
-					if (title != NULL) {
-						temp = strstr(xml, "&lt;/title&gt;");
-						temp[0] = 0;
-						title = title + 13;
-					} else {
-						title = "";
+					tmp1 = strstr(xml, "&lt;desc&gt;");
+					if (tmp1 != NULL) {
+						tmp1 += 12;
+						tmp2 = strstr(tmp1, "&lt;/desc&gt;");
+						if (tmp2 != NULL) {
+							if (xstatus->len > 0)
+								g_string_append(xstatus, " - ");
+							g_string_append_len(xstatus, tmp1, tmp2 - tmp1);
+						}
 					}
-					strcpy(xml,title);
-					if (desc) {
-						strcat(xml, " - ");
-						strcat(xml, desc);
+					if (xstatus->len > 0) {
+						purple_debug_misc("oscar", "X-Status reply: %s\n", xstatus->str);
+						account = purple_connection_get_account(od->gc);
+						buddy = purple_find_buddy(account, bn);
+						presence = purple_buddy_get_presence(buddy);
+						status = purple_presence_get_active_status(presence);
+						purple_prpl_got_user_status(account, bn,
+								purple_status_get_id(status),
+								"message", xstatus->str, NULL);
 					}
-					purple_debug_misc("oscar", "X-Status reply: %s\n", xml);
-					account = purple_connection_get_account(od->gc);
-					buddy = purple_find_buddy(account, bn);
-					presence = purple_buddy_get_presence(buddy);
-					status = purple_presence_get_active_status(presence);
-					purple_prpl_got_user_status(account, bn,
-							purple_status_get_id(status), "message", xml, NULL);
+					g_string_free(xstatus, TRUE);
 				} else {
 					purple_debug_misc("oscar", "X-Status: Can't get XML reply string\n");
 				}
