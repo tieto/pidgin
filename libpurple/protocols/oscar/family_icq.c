@@ -23,6 +23,7 @@
  *
  */
 
+#include "encoding.h"
 #include "oscar.h"
 
 #define AIM_ICQ_INFO_REQUEST 0x04b2

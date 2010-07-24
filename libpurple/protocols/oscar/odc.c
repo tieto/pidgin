@@ -19,6 +19,7 @@
 */
 
 /* From the oscar PRPL */
+#include "encoding.h"
 #include "oscar.h"
 #include "peer.h"
 
@@ -366,7 +367,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 		g_datalist_clear(&attributes);
 
 		/* Append the message up to the tag */
-		utf8 = purple_plugin_oscar_decode_im_part(account, conn->bn,
+		utf8 = oscar_decode_im_part(account, conn->bn,
 				encoding, 0x0000, tmp, start - tmp);
 		if (utf8 != NULL) {
 			g_string_append(newmsg, utf8);
@@ -386,7 +387,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 	/* Append any remaining message data */
 	if (tmp <= msgend)
 	{
-		utf8 = purple_plugin_oscar_decode_im_part(account, conn->bn,
+		utf8 = oscar_decode_im_part(account, conn->bn,
 				encoding, 0x0000, tmp, msgend - tmp);
 		if (utf8 != NULL) {
 			g_string_append(newmsg, utf8);

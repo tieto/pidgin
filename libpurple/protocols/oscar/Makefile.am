@@ -9,6 +9,7 @@ OSCARSOURCES = \
 	authorization.c     \
 	bstream.c           \
 	clientlogin.c       \
+	encoding.c          \
 	family_admin.c      \
 	family_advert.c     \
 	family_alert.c      \

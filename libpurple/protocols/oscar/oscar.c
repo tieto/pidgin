@@ -37,6 +37,7 @@
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
+#include "encoding.h"
 #include "imgstore.h"
 #include "network.h"
 #include "notify.h"
@@ -151,368 +152,6 @@ const char *oscar_get_locale_charset(void) {
 	return charset;
 }
 #endif
-
-/**
- * Determine how we can send this message.  Per the warnings elsewhere
- * in this file, these little checks determine the simplest encoding
- * we can use for a given message send using it.
- */
-static guint32
-oscar_charset_check(const char *utf8)
-{
-	int i = 0;
-	int charset = AIM_CHARSET_ASCII;
-
-	/*
-	 * Can we get away with using our custom encoding?
-	 */
-	while (utf8[i])
-	{
-		if ((unsigned char)utf8[i] > 0x7f) {
-			/* not ASCII! */
-			charset = AIM_CHARSET_LATIN_1;
-			break;
-		}
-		i++;
-	}
-
-	/*
-	 * Must we send this message as UNICODE (in the UTF-16BE encoding)?
-	 */
-	while (utf8[i])
-	{
-		/* ISO-8859-1 is 0x00-0xbf in the first byte
-		 * followed by 0xc0-0xc3 in the second */
-		if ((unsigned char)utf8[i] < 0x80) {
-			i++;
-			continue;
-		} else if (((unsigned char)utf8[i] & 0xfc) == 0xc0 &&
-				   ((unsigned char)utf8[i + 1] & 0xc0) == 0x80) {
-			i += 2;
-			continue;
-		}
-		charset = AIM_CHARSET_UNICODE;
-		break;
-	}
-
-	return charset;
-}
-
-/**
- * Take a string of the form charset="bleh" where bleh is
- * one of us-ascii, utf-8, iso-8859-1, or unicode-2-0, and
- * return a newly allocated string containing bleh.
- */
-gchar *
-oscar_encoding_extract(const char *encoding)
-{
-	gchar *ret = NULL;
-	char *begin, *end;
-
-	g_return_val_if_fail(encoding != NULL, NULL);
-
-	/* Make sure encoding begins with charset= */
-	if (strncmp(encoding, "text/aolrtf; charset=", 21) &&
-		strncmp(encoding, "text/x-aolrtf; charset=", 23) &&
-		strncmp(encoding, "text/plain; charset=", 20))
-	{
-		return NULL;
-	}
-
-	begin = strchr(encoding, '"');
-	end = strrchr(encoding, '"');
-
-	if ((begin == NULL) || (end == NULL) || (begin >= end))
-		return NULL;
-
-	ret = g_strndup(begin+1, (end-1) - begin);
-
-	return ret;
-}
-
-gchar *
-oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char *text, int textlen)
-{
-	gchar *utf8 = NULL;
-
-	if ((encoding == NULL) || encoding[0] == '\0') {
-		purple_debug_info("oscar", "Empty encoding, assuming UTF-8\n");
-	} else if (!g_ascii_strcasecmp(encoding, "iso-8859-1")) {
-		utf8 = g_convert(text, textlen, "UTF-8", "iso-8859-1", NULL, NULL, NULL);
-	} else if (!g_ascii_strcasecmp(encoding, "ISO-8859-1-Windows-3.1-Latin-1") ||
-	           !g_ascii_strcasecmp(encoding, "us-ascii"))
-	{
-		utf8 = g_convert(text, textlen, "UTF-8", "Windows-1252", NULL, NULL, NULL);
-	} else if (!g_ascii_strcasecmp(encoding, "unicode-2-0")) {
-		/* Some official ICQ clients are apparently total crack,
-		 * and have been known to save a UTF-8 string converted
-		 * from the locale character set to UTF-16 (not from UTF-8
-		 * to UTF-16!) in the away message.  This hack should find
-		 * and do something (un)reasonable with that, and not
-		 * mess up too much else. */
-		const gchar *charset = purple_account_get_string(account, "encoding", NULL);
-		if (charset) {
-			gsize len;
-			utf8 = g_convert(text, textlen, charset, "UTF-16BE", &len, NULL, NULL);
-			if (!utf8 || len != textlen || !g_utf8_validate(utf8, -1, NULL)) {
-				g_free(utf8);
-				utf8 = NULL;
-			} else {
-				purple_debug_info("oscar", "Used broken ICQ fallback encoding\n");
-			}
-		}
-		if (!utf8)
-			utf8 = g_convert(text, textlen, "UTF-8", "UTF-16BE", NULL, NULL, NULL);
-	} else if (g_ascii_strcasecmp(encoding, "utf-8")) {
-		purple_debug_warning("oscar", "Unrecognized character encoding \"%s\", "
-						   "attempting to convert to UTF-8 anyway\n", encoding);
-		utf8 = g_convert(text, textlen, "UTF-8", encoding, NULL, NULL, NULL);
-	}
-
-	/*
-	 * If utf8 is still NULL then either the encoding is utf-8 or
-	 * we have been unable to convert the text to utf-8 from the encoding
-	 * that was specified.  So we check if the text is valid utf-8 then
-	 * just copy it.
-	 */
-	if (utf8 == NULL) {
-		if (textlen != 0 && *text != '\0'
-				&& !g_utf8_validate(text, textlen, NULL))
-			utf8 = g_strdup(_("(There was an error receiving this message.  The buddy you are speaking with is probably using a different encoding than expected.  If you know what encoding he is using, you can specify it in the advanced account options for your AIM/ICQ account.)"));
-		else
-			utf8 = g_strndup(text, textlen);
-	}
-
-	return utf8;
-}
-
-gchar *
-oscar_utf8_try_convert(PurpleAccount *account, OscarData *od, const gchar *msg)
-{
-	const char *charset = NULL;
-	char *ret = NULL;
-
-	if (od->icq)
-		charset = purple_account_get_string(account, "encoding", NULL);
-
-	if(charset && *charset)
-		ret = g_convert(msg, -1, "UTF-8", charset, NULL, NULL, NULL);
-
-	if(!ret)
-		ret = purple_utf8_try_convert(msg);
-
-	return ret;
-}
-
-static gchar *
-purple_plugin_oscar_convert_to_utf8(const gchar *data, gsize datalen, const char *charsetstr, gboolean fallback)
-{
-	gchar *ret = NULL;
-	GError *err = NULL;
-
-	if ((charsetstr == NULL) || (*charsetstr == '\0'))
-		return NULL;
-
-	if (g_ascii_strcasecmp("UTF-8", charsetstr)) {
-		if (fallback)
-			ret = g_convert_with_fallback(data, datalen, "UTF-8", charsetstr, "?", NULL, NULL, &err);
-		else
-			ret = g_convert(data, datalen, "UTF-8", charsetstr, NULL, NULL, &err);
-		if (err != NULL) {
-			purple_debug_warning("oscar", "Conversion from %s failed: %s.\n",
-							   charsetstr, err->message);
-			g_error_free(err);
-		}
-	} else {
-		if (g_utf8_validate(data, datalen, NULL))
-			ret = g_strndup(data, datalen);
-		else
-			purple_debug_warning("oscar", "String is not valid UTF-8.\n");
-	}
-
-	return ret;
-}
-
-/**
- * This attemps to decode an incoming IM into a UTF8 string.
- *
- * We try decoding using two different character sets.  The charset
- * specified in the IM determines the order in which we attempt to
- * decode.  We do this because there are lots of broken ICQ clients
- * that don't correctly send non-ASCII messages.  And if Purple isn't
- * able to deal with that crap, then people complain like banshees.
- * charsetstr1 is always set to what the correct encoding should be.
- */
-gchar *
-purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcebn, guint16 charset, guint16 charsubset, const gchar *data, gsize datalen)
-{
-	gchar *ret = NULL;
-	const gchar *charsetstr1, *charsetstr2, *charsetstr3 = NULL;
-
-	if ((datalen == 0) || (data == NULL))
-		return NULL;
-
-	if (charset == AIM_CHARSET_UNICODE) {
-		charsetstr1 = "UTF-16BE";
-		charsetstr2 = "UTF-8";
-	} else if (charset == AIM_CHARSET_LATIN_1) {
-		if ((sourcebn != NULL) && oscar_util_valid_name_icq(sourcebn))
-			charsetstr1 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
-		else
-			charsetstr1 = "ISO-8859-1";
-		charsetstr2 = "UTF-8";
-	} else if (charset == AIM_CHARSET_ASCII) {
-		/* Should just be "ASCII" */
-		charsetstr1 = "ASCII";
-		charsetstr2 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
-	} else if (charset == 0x000d) {
-		/* iChat sending unicode over a Direct IM connection = UTF-8 */
-		/* Mobile AIM client on multiple devices (including Blackberry Tour, Nokia 3100, and LG VX6000) = ISO-8859-1 */
-		charsetstr1 = "UTF-8";
-		charsetstr2 = "ISO-8859-1";
-		charsetstr3 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
-	} else {
-		/* Unknown, hope for valid UTF-8... */
-		charsetstr1 = "UTF-8";
-		charsetstr2 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
-	}
-
-	purple_debug_info("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%" G_GSIZE_FORMAT ", choice1=%s, choice2=%s, choice3=%s\n",
-					  charset, charsubset, datalen, charsetstr1, charsetstr2, (charsetstr3 ? charsetstr3 : ""));
-
-	ret = purple_plugin_oscar_convert_to_utf8(data, datalen, charsetstr1, FALSE);
-	if (ret == NULL) {
-		if (charsetstr3 != NULL) {
-			/* Try charsetstr2 without allowing substitutions, then fall through to charsetstr3 if needed */
-			ret = purple_plugin_oscar_convert_to_utf8(data, datalen, charsetstr2, FALSE);
-			if (ret == NULL)
-				ret = purple_plugin_oscar_convert_to_utf8(data, datalen, charsetstr3, TRUE);
-		} else {
-			/* Try charsetstr2, allowing substitutions */
-			ret = purple_plugin_oscar_convert_to_utf8(data, datalen, charsetstr2, TRUE);
-		}
-	}
-	if (ret == NULL) {
-		char *str, *salvage, *tmp;
-
-		str = g_malloc(datalen + 1);
-		strncpy(str, data, datalen);
-		str[datalen] = '\0';
-		salvage = purple_utf8_salvage(str);
-		tmp = g_strdup_printf(_("(There was an error receiving this message.  Either you and %s have different encodings selected, or %s has a buggy client.)"),
-					  sourcebn, sourcebn);
-		ret = g_strdup_printf("%s %s", salvage, tmp);
-		g_free(tmp);
-		g_free(str);
-		g_free(salvage);
-	}
-
-	return ret;
-}
-
-/**
- * Figure out what encoding to use when sending a given outgoing message.
- */
-static void
-purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
-				const char *destbn, const gchar *from,
-				gchar **msg, int *msglen_int,
-				guint16 *charset, guint16 *charsubset)
-{
-	OscarData *od = purple_connection_get_protocol_data(gc);
-	PurpleAccount *account = purple_connection_get_account(gc);
-	GError *err = NULL;
-	aim_userinfo_t *userinfo = NULL;
-	const gchar *charsetstr;
-	gsize msglen;
-
-	/* Attempt to send as ASCII */
-	if (oscar_charset_check(from) == AIM_CHARSET_ASCII) {
-		*msg = g_convert(from, -1, "ASCII", "UTF-8", NULL, &msglen, NULL);
-		*charset = AIM_CHARSET_ASCII;
-		*charsubset = 0x0000;
-		*msglen_int = msglen;
-		return;
-	}
-
-	/*
-	 * If we're sending to an ICQ user, and they are in our
-	 * buddy list, and they are advertising the Unicode
-	 * capability, and they are online, then attempt to send
-	 * as UTF-16BE.
-	 */
-	if ((destbn != NULL) && oscar_util_valid_name_icq(destbn))
-		userinfo = aim_locate_finduserinfo(od, destbn);
-
-	if ((userinfo != NULL) && (userinfo->capabilities & OSCAR_CAPABILITY_UNICODE))
-	{
-		PurpleBuddy *b;
-		b = purple_find_buddy(account, destbn);
-		if ((b != NULL) && (PURPLE_BUDDY_IS_ONLINE(b)))
-		{
-			*msg = g_convert(from, -1, "UTF-16BE", "UTF-8", NULL, &msglen, &err);
-			if (*msg != NULL)
-			{
-				*charset = AIM_CHARSET_UNICODE;
-				*charsubset = 0x0000;
-				*msglen_int = msglen;
-				return;
-			}
-
-			purple_debug_error("oscar", "Conversion from UTF-8 to UTF-16BE failed: %s.\n",
-							   err->message);
-			g_error_free(err);
-			err = NULL;
-		}
-	}
-
-	/*
-	 * If this is AIM then attempt to send as ISO-8859-1.  If this is
-	 * ICQ then attempt to send as the user specified character encoding.
-	 */
-	charsetstr = "ISO-8859-1";
-	if ((destbn != NULL) && oscar_util_valid_name_icq(destbn))
-		charsetstr = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
-
-	/*
-	 * XXX - We need a way to only attempt to convert if we KNOW "from"
-	 * can be converted to "charsetstr"
-	 */
-	*msg = g_convert(from, -1, charsetstr, "UTF-8", NULL, &msglen, &err);
-	if (*msg != NULL) {
-		*charset = AIM_CHARSET_LATIN_1;
-		*charsubset = 0x0000;
-		*msglen_int = msglen;
-		return;
-	}
-
-	purple_debug_info("oscar", "Conversion from UTF-8 to %s failed (%s). Falling back to unicode.\n",
-					  charsetstr, err->message);
-	g_error_free(err);
-	err = NULL;
-
-	/*
-	 * Nothing else worked, so send as UTF-16BE.
-	 */
-	*msg = g_convert(from, -1, "UTF-16BE", "UTF-8", NULL, &msglen, &err);
-	if (*msg != NULL) {
-		*charset = AIM_CHARSET_UNICODE;
-		*charsubset = 0x0000;
-		*msglen_int = msglen;
-		return;
-	}
-
-	purple_debug_error("oscar", "Error converting a Unicode message: %s\n", err->message);
-	g_error_free(err);
-	err = NULL;
-
-	purple_debug_error("oscar", "This should NEVER happen!  Sending UTF-8 text flagged as ASCII.\n");
-	*msg = g_strdup(from);
-	*msglen_int = strlen(*msg);
-	*charset = AIM_CHARSET_ASCII;
-	*charsubset = 0x0000;
-	return;
-}
 
 static char *oscar_icqstatus(int state) {
 	/* Make a cute little string that shows the status of the dude or dudet */
@@ -1946,7 +1585,7 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	message = g_string_new("");
 	curpart = args->mpmsg.parts;
 	while (curpart != NULL) {
-		tmp = purple_plugin_oscar_decode_im_part(account, userinfo->bn, curpart->charset,
+		tmp = oscar_decode_im_part(account, userinfo->bn, curpart->charset,
 				curpart->charsubset, curpart->data, curpart->datalen);
 		if (tmp != NULL) {
 			g_string_append(message, tmp);
@@ -2249,7 +1888,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 		purple_str_strip_char(msg1[i], '\r');
 		/* TODO: Should use an encoding other than ASCII? */
-		msg2[i] = purple_plugin_oscar_decode_im_part(account, uin, AIM_CHARSET_ASCII, 0x0000, msg1[i], strlen(msg1[i]));
+		msg2[i] = oscar_decode_im_part(account, uin, AIM_CHARSET_ASCII, 0x0000, msg1[i], strlen(msg1[i]));
 		g_free(uin);
 	}
 	msg2[i] = NULL;
@@ -2306,7 +1945,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				gchar *reason = NULL;
 
 				if (msg2[5] != NULL)
-					reason = purple_plugin_oscar_decode_im_part(account, bn, AIM_CHARSET_LATIN_1, 0x0000, msg2[5], strlen(msg2[5]));
+					reason = oscar_decode_im_part(account, bn, AIM_CHARSET_LATIN_1, 0x0000, msg2[5], strlen(msg2[5]));
 
 				purple_debug_info("oscar",
 						   "Received an authorization request from UIN %u\n",
@@ -3606,7 +3245,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	g_string_append(msg, "</BODY></HTML>");
 
 	/* Convert the message to a good encoding */
-	purple_plugin_oscar_convert_to_best_encoding(conn->od->gc,
+	oscar_convert_to_best_encoding(conn->od->gc,
 			conn->bn, msg->str, &tmp, &tmplen, &charset, &charsubset);
 	g_string_free(msg, TRUE);
 	msg = g_string_new_len(tmp, tmplen);
@@ -3756,7 +3395,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		g_free(tmp1);
 		tmp1 = tmp2;
 
-		purple_plugin_oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
+		oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
 		if (is_html && (args.msglen > MAXMSGLEN)) {
 			/* If the length was too long, try stripping the HTML and then running it back through
 			* purple_strdup_withhtml() and the encoding process. The result may be shorter. */
@@ -3773,7 +3412,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			g_free(tmp1);
 			tmp1 = tmp2;
 
-			purple_plugin_oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
+			oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
 
 			purple_debug_info("oscar", "Sending %s as %s because the original was too long.\n",
 								  message, (char *)args.msg);
@@ -4971,7 +4610,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 			  "You cannot send IM Images in AIM chats."),
 			PURPLE_MESSAGE_ERROR, time(NULL));
 
-	purple_plugin_oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
+	oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
 	/*
 	 * Evan S. suggested that maxvis really does mean "number of
 	 * visible characters" and not "number of bytes"
@@ -4987,7 +4626,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		buf = purple_strdup_withhtml(buf3);
 		g_free(buf3);
 
-		purple_plugin_oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
+		oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
 
 		if ((len > c->maxlen) || (len > c->maxvis)) {
 			purple_debug_warning("oscar", "Could not send %s because (%i > maxlen %i) or (%i > maxvis %i)\n",

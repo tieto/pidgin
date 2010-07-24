@@ -22,6 +22,7 @@
  * Displaying various information about buddies.
  */
 
+#include "encoding.h"
 #include "oscar.h"
 
 static gchar *
