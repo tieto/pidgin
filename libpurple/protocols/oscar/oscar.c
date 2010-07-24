@@ -1812,17 +1812,17 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 		if (args->info.rtfmsg.msgtype == 1)
 		{
-			if (args->info.rtfmsg.rtfmsg != NULL)
+			if (args->info.rtfmsg.msg != NULL)
 			{
 				char *rtfmsg = NULL;
 				if (args->encoding != NULL) {
 					char *encoding = oscar_encoding_extract(args->encoding);
 					rtfmsg = oscar_encoding_to_utf8(account, encoding,
-							args->info.rtfmsg.rtfmsg, strlen(args->info.rtfmsg.rtfmsg));
+							args->info.rtfmsg.msg, strlen(args->info.rtfmsg.msg));
 					g_free(encoding);
 				} else {
-					if (g_utf8_validate(args->info.rtfmsg.rtfmsg, strlen(args->info.rtfmsg.rtfmsg), NULL))
-						rtfmsg = g_strdup(args->info.rtfmsg.rtfmsg);
+					if (g_utf8_validate(args->info.rtfmsg.msg, strlen(args->info.rtfmsg.msg), NULL))
+						rtfmsg = g_strdup(args->info.rtfmsg.msg);
 				}
 				if (rtfmsg) {
 					serv_got_im(gc, userinfo->bn, rtfmsg, flags, time(NULL));

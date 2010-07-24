@@ -1966,7 +1966,7 @@ incomingim_ch2_chat(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 static void
 incomingim_ch2_icqserverrelay_free(OscarData *od, IcbmArgsCh2 *args)
 {
-	g_free((char *)args->info.rtfmsg.rtfmsg);
+	g_free((char *)args->info.rtfmsg.msg);
 }
 
 /*
@@ -1980,33 +1980,34 @@ incomingim_ch2_icqserverrelay_free(OscarData *od, IcbmArgsCh2 *args)
 static void
 incomingim_ch2_icqserverrelay(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
 {
-	guint16 hdrlen, anslen, msglen;
-
-	if (byte_stream_empty(servdata) < 24)
-		/* Someone sent us a short server relay ICBM.  Weird.  (Maybe?) */
-		return;
-
-	hdrlen = byte_stream_getle16(servdata);
-	byte_stream_advance(servdata, hdrlen);
-
-	hdrlen = byte_stream_getle16(servdata);
-	byte_stream_advance(servdata, hdrlen);
-
-	args->info.rtfmsg.msgtype = byte_stream_getle16(servdata);
-
-	anslen = byte_stream_getle32(servdata);
-	byte_stream_advance(servdata, anslen);
-
-	msglen = byte_stream_getle16(servdata);
-	args->info.rtfmsg.rtfmsg = byte_stream_getstr(servdata, msglen);
-
-	args->info.rtfmsg.fgcolor = byte_stream_getle32(servdata);
-	args->info.rtfmsg.bgcolor = byte_stream_getle32(servdata);
-
-	hdrlen = byte_stream_getle32(servdata);
-	byte_stream_advance(servdata, hdrlen);
+	guint16 hdrlen, msglen;
 
 	args->destructor = (void *)incomingim_ch2_icqserverrelay_free;
+
+#define SKIP_HEADER(expected_hdrlen) \
+	hdrlen = byte_stream_getle16(servdata); \
+	if (hdrlen != expected_hdrlen) { \
+		purple_debug_warning("oscar", "Expected to find a header with length " #expected_hdrlen "; ignoring message"); \
+		return; \
+	} \
+	byte_stream_advance(servdata, hdrlen);
+
+	SKIP_HEADER(0x001b);
+	SKIP_HEADER(0x000e);
+
+	args->info.rtfmsg.msgtype = byte_stream_get8(servdata);
+	/*
+	 * Copied from http://iserverd.khstu.ru/oscar/message.html:
+	 * xx      byte       message flags
+	 * xx xx   word (LE)  status code
+	 * xx xx   word (LE)  priority code
+	 *
+	 * We don't need any of these, so just skip them.
+	 */
+	byte_stream_advance(servdata, 1 + 2 + 2);
+
+	msglen = byte_stream_getle16(servdata);
+	args->info.rtfmsg.msg = byte_stream_getstr(servdata, msglen);
 }
 
 static void

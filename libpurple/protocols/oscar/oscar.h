@@ -997,10 +997,8 @@ struct _IcbmArgsCh2
 			struct aim_chat_roominfo roominfo;
 		} chat;
 		struct {
-			guint16 msgtype;
-			guint32 fgcolor;
-			guint32 bgcolor;
-			const char *rtfmsg;
+			guint8 msgtype;
+			const char *msg;
 		} rtfmsg;
 		struct {
 			guint16 subtype;
