@@ -913,6 +913,12 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 }
 
 gboolean
+#if GTK_CHECK_VERSION(2,4,0)
+pidgin_check_if_dir(const char *path, gpointer filesel)
+{
+	return FALSE;
+}
+#else
 pidgin_check_if_dir(const char *path, GtkFileSelection *filesel)
 {
 	char *dirname = NULL;
@@ -929,6 +935,7 @@ pidgin_check_if_dir(const char *path, GtkFileSelection *filesel)
 
 	return FALSE;
 }
+#endif
 
 void
 pidgin_setup_gtkspell(GtkTextView *textview)

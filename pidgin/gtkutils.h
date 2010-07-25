@@ -411,7 +411,11 @@ void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, 
  *
  * @return TRUE if given path is a directory, FALSE otherwise.
  */
+#if GTK_CHECK_VERSION(2,4,0)
+gboolean pidgin_check_if_dir(const char *path, gpointer filesel);
+#else
 gboolean pidgin_check_if_dir(const char *path, GtkFileSelection *filesel);
+#endif
 
 /**
  * Sets up GtkSpell for the given GtkTextView, reporting errors
