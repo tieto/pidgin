@@ -18,6 +18,9 @@ version 2.7.3 (??/??/????):
 		  the visibility of the entries in the 'lean' view
 		  (the default toolbar view).
 
+		Deprecated:
+		* pidgin_check_if_dir
+
 	libgnt:
 		Added:
 		* gnt_tree_row_get_key, gnt_tree_row_get_next,
