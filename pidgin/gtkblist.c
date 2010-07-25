@@ -3766,6 +3766,7 @@ static const GtkActionEntry blist_menu_entries[] = {
 	{ "Plugins", PIDGIN_STOCK_TOOLBAR_PLUGINS, N_("Plu_gins"), "<control>U", NULL, pidgin_plugin_dialog_show },
 	{ "Preferences", GTK_STOCK_PREFERENCES, N_("Pr_eferences"), "<control>P", NULL, pidgin_prefs_show },
 	{ "Privacy", NULL, N_("Pr_ivacy"), NULL, NULL, pidgin_privacy_dialog_show },
+	{ "SetMood", NULL, N_("Set _Mood"), "<control>O", NULL, set_mood_show },
 	{ "FileTransfers", PIDGIN_STOCK_TOOLBAR_TRANSFER, N_("_File Transfers"), "<control>T", NULL, G_CALLBACK(gtk_blist_show_xfer_dialog_cb) },
 	{ "RoomList", NULL, N_("R_oom List"), NULL, NULL, pidgin_roomlist_dialog_show },
 	{ "SystemLog", NULL, N_("System _Log"), NULL, NULL, gtk_blist_show_systemlog_cb },
@@ -3826,10 +3827,11 @@ static const char *blist_menu =
 		"<menu action='ToolsMenu'>"
 			"<menuitem action='BuddyPounces'/>"
 			"<menuitem action='Certificates'/>"
+			"<menuitem action='CustomSmileys'/>"
 			"<menuitem action='Plugins'/>"
 			"<menuitem action='Preferences'/>"
 			"<menuitem action='Privacy'/>"
-			"<menuitem action='CustomSmileys'/>"
+			"<menuitem action='SetMood'/>"
 			"<separator/>"
 			"<menuitem action='FileTransfers'/>"
 			"<menuitem action='RoomList'/>"
@@ -7261,7 +7263,7 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	purple_signals_disconnect_by_handle(gtkblist);
 
 	if (gtkblist->headline_close)
-		gdk_pixbuf_unref(gtkblist->headline_close);
+		g_object_unref(G_OBJECT(gtkblist->headline_close));
 
 	gtk_widget_destroy(gtkblist->window);
 
