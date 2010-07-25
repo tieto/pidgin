@@ -113,26 +113,26 @@ out:
 
 		/* update name */
 		g_strlcpy( profile->nickname, name, sizeof( profile->nickname ) );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FULLNAME, CP_PROF_TYPE_UTF8, profile->nickname );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FULLNAME, CP_PROFILE_TYPE_UTF8, profile->nickname );
 		g_string_append( attributes, attrib );
 		acount++;
 
 		/* update hidden */
 		field = purple_request_fields_get_field( fields, "hidden" );
 		profile->hidden = purple_request_field_bool_get_value( field );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_HIDENUMBER, CP_PROF_TYPE_BOOL, ( profile->hidden ) ? "1" : "0" );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_HIDENUMBER, CP_PROFILE_TYPE_BOOL, ( profile->hidden ) ? "1" : "0" );
 		g_string_append( attributes, attrib );
 		acount++;
 
 		/* update birthday */
-		strcpy( profile->birthday, bday );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_BIRTHDATE, CP_PROF_TYPE_UTF8, profile->birthday );
+		g_strlcpy( profile->birthday, bday, sizeof( profile->birthday ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_BIRTHDATE, CP_PROFILE_TYPE_UTF8, profile->birthday );
 		g_string_append( attributes, attrib );
 		acount++;
 
 		/* update gender */
 		profile->male = ( purple_request_fields_get_choice( fields, "male" ) != 0 );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_GENDER, CP_PROF_TYPE_BOOL, ( profile->male ) ? "1" : "0" );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_GENDER, CP_PROFILE_TYPE_BOOL, ( profile->male ) ? "1" : "0" );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -141,8 +141,8 @@ out:
 		if ( !name )
 			profile->title[0] = '\0';
 		else
-			strcpy( profile->title, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_TITLE, CP_PROF_TYPE_UTF8, profile->title );
+			g_strlcpy( profile->title, name, sizeof( profile->title ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_TITLE, CP_PROFILE_TYPE_UTF8, profile->title );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -151,8 +151,8 @@ out:
 		if ( !name )
 			profile->firstname[0] = '\0';
 		else
-			strcpy( profile->firstname, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FIRSTNAME, CP_PROF_TYPE_UTF8, profile->firstname );
+			g_strlcpy( profile->firstname, name, sizeof( profile->firstname ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_FIRSTNAME, CP_PROFILE_TYPE_UTF8, profile->firstname );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -161,8 +161,8 @@ out:
 		if ( !name )
 			profile->lastname[0] = '\0';
 		else
-			strcpy( profile->lastname, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_LASTNAME, CP_PROF_TYPE_UTF8, profile->lastname );
+			g_strlcpy( profile->lastname, name, sizeof( profile->lastname ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_LASTNAME, CP_PROFILE_TYPE_UTF8, profile->lastname );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -171,8 +171,8 @@ out:
 		if ( !name )
 			profile->email[0] = '\0';
 		else
-			strcpy( profile->email, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_EMAIL, CP_PROF_TYPE_UTF8, profile->email );
+			g_strlcpy( profile->email, name, sizeof( profile->email ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_EMAIL, CP_PROFILE_TYPE_UTF8, profile->email );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -181,8 +181,8 @@ out:
 		if ( !name )
 			profile->mobilenr[0] = '\0';
 		else
-			strcpy( profile->mobilenr, name );
-		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_MOBILENR, CP_PROF_TYPE_UTF8, profile->mobilenr );
+			g_strlcpy( profile->mobilenr, name, sizeof( profile->mobilenr ) );
+		g_snprintf( attrib, sizeof( attrib ), "\01%s\01%i\01%s", CP_PROFILE_MOBILENR, CP_PROFILE_TYPE_UTF8, profile->mobilenr );
 		g_string_append( attributes, attrib );
 		acount++;
 
@@ -225,12 +225,14 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	group = purple_request_field_group_new( NULL );
 	purple_request_fields_add_group( fields, group );
 
-	/* mxitId (read-only) */
-	if ( session->mxitId ) {
-		field = purple_request_field_string_new( "mxitid", _( "Your MXitId" ), session->mxitId, FALSE );
+#if	0
+	/* UID (read-only) */
+	if ( session->uid ) {
+		field = purple_request_field_string_new( "mxitid", _( "Your UID" ), session->uid, FALSE );
 		purple_request_field_string_set_editable( field, FALSE );
 		purple_request_field_group_add_field( group, field );
 	}
+#endif
 
 	/* pin */
 	field = purple_request_field_string_new( "pin", _( "PIN" ), session->acc->password, FALSE );
@@ -247,6 +249,8 @@ static void mxit_cb_action_profile( PurplePluginAction* action )
 	/* birthday */
 	field = purple_request_field_string_new( "bday", _( "Birthday" ), profile->birthday, FALSE );
 	purple_request_field_group_add_field( group, field );
+	if ( profile->flags & CP_PROF_DOBLOCKED )
+		purple_request_field_string_set_editable( field, FALSE );
 
 	/* gender */
 	field = purple_request_field_choice_new( "male", _( "Gender" ), ( profile->male ) ? 1 : 0 );

@@ -101,6 +101,23 @@ gboolean validateDate( const char* bday )
 
 
 /*------------------------------------------------------------------------
+ * Returns timestamp field in date & time format (DD-MM-YYYY HH:MM:SS)
+ *
+ * @param msecs		The timestamps (milliseconds since epoch)
+ * @return			Date & Time in a display'able format.
+ */
+static const char* datetime( int64_t msecs )
+{  
+    time_t secs = msecs / 1000;
+
+    struct tm t;
+    localtime_r( &secs, &t );
+
+	return purple_utf8_strftime( "%d-%m-%Y %H:%M:%S", &t );
+}
+
+
+/*------------------------------------------------------------------------
  * Display the profile information.
  *
  *  @param session		The MXit session object
@@ -120,7 +137,7 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 		contact = purple_buddy_get_protocol_data(buddy);
 	}
 
-	purple_notify_user_info_add_pair( info, _( "Nick Name" ), profile->nickname );
+	purple_notify_user_info_add_pair( info, _( "Display Name" ), profile->nickname );
 	purple_notify_user_info_add_pair( info, _( "Birthday" ), profile->birthday );
 	purple_notify_user_info_add_pair( info, _( "Gender" ), profile->male ? _( "Male" ) : _( "Female" ) );
 //	purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
@@ -138,6 +155,10 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 		/* presence */
 		purple_notify_user_info_add_pair( info, _( "Status" ), mxit_convert_presence_to_name( contact->presence ) );
 
+		/* last online */
+		if ( contact->presence == MXIT_PRESENCE_OFFLINE )
+			purple_notify_user_info_add_pair( info, _( "Last Online" ), ( profile->lastonline == 0 ) ? _( "Unknown" ) : datetime( profile->lastonline ) );
+
 		/* mood */
 		if ( contact->mood != MXIT_MOOD_NONE )   
 			purple_notify_user_info_add_pair( info, _( "Mood" ), mxit_convert_mood_to_name( contact->mood ) );
@@ -153,7 +174,6 @@ void mxit_show_profile( struct MXitSession* session, const char* username, struc
 
 		/* hidden number */
 		purple_notify_user_info_add_pair( info, _( "Hidden Number" ), ( contact->flags & MXIT_CFLAG_HIDDEN ) ? _( "Yes" ) : _( "No" ) );
-
 	}
 
 	purple_notify_userinfo( session->con, username, info, NULL, NULL );

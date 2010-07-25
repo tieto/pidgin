@@ -257,7 +257,7 @@ static void mxit_show_split_message( struct RXMsgData* mx )
 	 * all the text as is to the conversation window. this message dump is very
 	 * confusing and makes it totally unusable. to work around this we will count
 	 * the amount of tags and if its more than the pidgin threshold, we will just
-	 * break the message up into smaller parts and send them seperately to pidgin.
+	 * break the message up into smaller parts and send them separately to pidgin.
 	 * to the user it will look like multiple messages, but at least he will be able
 	 * to use and understand it.
 	 */
