@@ -1282,7 +1282,11 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 	g_signal_connect(G_OBJECT(button), "clicked",
 		G_CALLBACK(send_attention_cb), toolbar);
 	g_object_set_data(G_OBJECT(toolbar), "attention", button);
+#if GTK_CHECK_VERSION(2,12,0)
+	gtk_widget_set_tooltip_text(button, _("Send Attention"));
+#else
 	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Send Attention"), NULL);
+#endif
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(toolbar), hbox, FALSE, FALSE, 0);
