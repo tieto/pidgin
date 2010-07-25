@@ -430,7 +430,8 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 
 	/* Insert the logo */
 	logo = gtk_image_new_from_pixbuf(pixbuf);
-	g_object_unref(G_OBJECT(pixbuf));
+	if (pixbuf)
+		g_object_unref(G_OBJECT(pixbuf));
 	obj = gtk_widget_get_accessible(logo);
 	tmp = g_strconcat(PIDGIN_NAME, " " DISPLAY_VERSION, NULL);
 	atk_object_set_description(obj, tmp);
