@@ -1,3 +1,27 @@
+pidgin (2.7.2-1~bpo50+1) lenny-backports; urgency=low
+
+  * Rebuild for lenny-backports.
+  * Changes to Build-Depends:
+    - Lowered cdbs versioned depends to 0.4.52 which is in stable.
+    - Removed versioning from libsilc-dev because the renaming was after that
+      version anyway.
+    - Removed libgstfarsight0.10-dev and call configure with --disable-vv
+      --disable-farsight, the libraries for that are too much to carry.
+  * Converting back to source format 1.0. via debian/source/format
+  * Remove empty "debian/tmp/etc/gconf" from debian/pidgin.install
+
+ -- Jan Wagner <waja@cyconet.org>  Mon, 26 Jul 2010 20:30:55 +0200
+
+pidgin (2.7.2-1) unstable; urgency=medium
+
+  * New upstream release
+    - Fixes a remote crash in AIM/ICQ (CVE-2010-2528)
+  * debian/patches/python26.patch:
+    - don't raise string exceptions, since that's incompatible with python 2.6
+      (Closes: #585242)
+
+ -- Ari Pollak <ari@debian.org>  Thu, 22 Jul 2010 19:00:29 -0400
+
 pidgin (2.7.1-1) unstable; urgency=low
 
   * New upstream release
