@@ -84,11 +84,7 @@ struct _PidginMediaPrivate
 	gchar *screenname;
 	gulong level_handler_id;
 
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkUIManager *ui;
-#else
-	GtkItemFactory *item_factory;
-#endif
 	GtkWidget *menubar;
 	GtkWidget *statusbar;
 
@@ -264,18 +260,13 @@ pidgin_x_error_handler(Display *display, XErrorEvent *event)
 #endif
 
 static void
-#if GTK_CHECK_VERSION(2,4,0)
 menu_hangup(GtkAction *action, gpointer data)
-#else
-menu_hangup(gpointer data, guint action, GtkWidget *item)
-#endif
 {
 	PidginMedia *gtkmedia = PIDGIN_MEDIA(data);
 	purple_media_stream_info(gtkmedia->priv->media,
 			PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
 }
 
-#if GTK_CHECK_VERSION(2,4,0)
 static const GtkActionEntry menu_entries[] = {
 	{ "MediaMenu", NULL, N_("_Media"), NULL, NULL, NULL },
 	{ "Hangup", NULL, N_("_Hangup"), NULL, NULL, G_CALLBACK(menu_hangup) },
@@ -290,32 +281,14 @@ static const char *media_menu =
 	"</menubar>"
 "</ui>";
 
-#else
-static GtkItemFactoryEntry menu_items[] = {
-	{ N_("/_Media"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Media/_Hangup"), NULL, menu_hangup, 0, "<Item>", NULL },
-};
-
-static gint menu_item_count = sizeof(menu_items) / sizeof(menu_items[0]);
-
-static const char *
-item_factory_translate_func (const char *path, gpointer func_data)
-{
-	return _(path);
-}
-#endif
-
 static GtkWidget *
 setup_menubar(PidginMedia *window)
 {
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkActionGroup *action_group;
 	GError *error;
-#endif
 	GtkAccelGroup *accel_group;
 	GtkWidget *menu;
 
-#if GTK_CHECK_VERSION(2,4,0)
 	action_group = gtk_action_group_new("MediaActions");
 	gtk_action_group_add_actions(action_group,
 	                             menu_entries,
@@ -341,26 +314,6 @@ setup_menubar(PidginMedia *window)
 	}
 
 	menu = gtk_ui_manager_get_widget(window->priv->ui, "/Media");
-#else
-	accel_group = gtk_accel_group_new ();
-	gtk_window_add_accel_group(GTK_WINDOW(window), accel_group);
-	g_object_unref(accel_group);
-
-	window->priv->item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
-			"<main>", accel_group);
-
-	gtk_item_factory_set_translate_func(window->priv->item_factory,
-			(GtkTranslateFunc)item_factory_translate_func,
-			NULL, NULL);
-
-	gtk_item_factory_create_items(window->priv->item_factory,
-			menu_item_count, menu_items, window);
-	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
-			G_CALLBACK(pidgin_save_accels_cb), NULL);
-
-	menu = gtk_item_factory_get_widget(
-			window->priv->item_factory, "<main>");
-#endif
 
 	gtk_widget_show(menu);
 	return menu;
@@ -441,17 +394,10 @@ pidgin_media_dispose(GObject *media)
 		gtkmedia->priv->media = NULL;
 	}
 
-#if GTK_CHECK_VERSION(2,4,0)
 	if (gtkmedia->priv->ui) {
 		g_object_unref(gtkmedia->priv->ui);
 		gtkmedia->priv->ui = NULL;
 	}
-#else
-	if (gtkmedia->priv->item_factory) {
-		g_object_unref(gtkmedia->priv->item_factory);
-		gtkmedia->priv->item_factory = NULL;
-	}
-#endif
 
 	G_OBJECT_CLASS(parent_class)->dispose(media);
 }

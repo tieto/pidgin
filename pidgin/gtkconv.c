@@ -160,9 +160,6 @@ static void conv_set_unseen(PurpleConversation *gtkconv, PidginUnseenState state
 static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state);
 static void update_typing_icon(PidginConversation *gtkconv);
 static void update_typing_message(PidginConversation *gtkconv, const char *message);
-#if !GTK_CHECK_VERSION(2,6,0)
-static const char *item_factory_translate_func (const char *path, gpointer func_data);
-#endif
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
 static GdkColor* generate_nick_colors(guint *numcolors, GdkColor background);
 static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
@@ -982,11 +979,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_new_conv_cb(GtkAction *action, gpointer data)
-#else
-menu_new_conv_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	pidgin_dialogs_im();
 }
@@ -1033,11 +1026,7 @@ savelog_writefile_cb(void *user_data, const char *filename)
  * plaintext v. HTML file.
  */
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_save_as_cb(GtkAction *action, gpointer data)
-#else
-menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
@@ -1067,11 +1056,7 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_view_log_cb(GtkAction *action, gpointer data)
-#else
-menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1127,11 +1112,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_clear_cb(GtkAction *action, gpointer data)
-#else
-menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1141,11 +1122,7 @@ menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_find_cb(GtkAction *action, gpointer data)
-#else
-menu_find_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *gtkwin = data;
 	PidginConversation *gtkconv = pidgin_conv_window_get_active_gtkconv(gtkwin);
@@ -1155,7 +1132,6 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 
 #ifdef USE_VV
 static void 
-#if GTK_CHECK_VERSION(2,6,0)
 menu_initiate_media_call_cb(GtkAction *action, gpointer data)
 {
 	PidginWindow *win = (PidginWindow *)data;
@@ -1169,29 +1145,10 @@ menu_initiate_media_call_cb(GtkAction *action, gpointer data)
 			action == win->audio_video_call ? PURPLE_MEDIA_AUDIO |
 			PURPLE_MEDIA_VIDEO : PURPLE_MEDIA_NONE);
 }
-#else
-menu_initiate_media_call_cb(gpointer data, guint action, GtkWidget *widget)
-{
-	PidginWindow *win = (PidginWindow *)data;
-	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
-	PurpleAccount *account = purple_conversation_get_account(conv);
-
-	purple_prpl_initiate_media(account,
-			purple_conversation_get_name(conv),
-			action == 0 ? PURPLE_MEDIA_AUDIO :
-			action == 1 ? PURPLE_MEDIA_VIDEO :
-			action == 2 ? PURPLE_MEDIA_AUDIO |
-			PURPLE_MEDIA_VIDEO : PURPLE_MEDIA_NONE);
-}
-#endif
 #endif
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_send_file_cb(GtkAction *action, gpointer data)
-#else
-menu_send_file_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
@@ -1203,11 +1160,7 @@ menu_send_file_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_get_attention_cb(GtkAction *ation, gpointer data)
-#else
-menu_get_attention_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
@@ -1219,11 +1172,7 @@ menu_get_attention_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_add_pounce_cb(GtkAction *action, gpointer data)
-#else
-menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1235,11 +1184,7 @@ menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_insert_link_cb(GtkAction *action, gpointer data)
-#else
-menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PidginConversation *gtkconv;
@@ -1253,11 +1198,7 @@ menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_insert_image_cb(GtkAction *action, gpointer data)
-#else
-menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1274,11 +1215,7 @@ menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
 
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_alias_cb(GtkAction *action, gpointer data)
-#else
-menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1305,11 +1242,7 @@ menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_get_info_cb(GtkAction *action, gpointer data)
-#else
-menu_get_info_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1320,11 +1253,7 @@ menu_get_info_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_invite_cb(GtkAction *action, gpointer data)
-#else
-menu_invite_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1335,11 +1264,7 @@ menu_invite_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_block_cb(GtkAction *action, gpointer data)
-#else
-menu_block_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1350,11 +1275,7 @@ menu_block_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_unblock_cb(GtkAction *action, gpointer data)
-#else
-menu_unblock_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1365,11 +1286,7 @@ menu_unblock_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_add_remove_cb(GtkAction *action, gpointer data)
-#else
-menu_add_remove_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1414,11 +1331,7 @@ hide_conv(PidginConversation *gtkconv, gboolean closetimer)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_close_conv_cb(GtkAction *action, gpointer data)
-#else
-menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 
@@ -1426,11 +1339,7 @@ menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_logging_cb(GtkAction *action, gpointer data)
-#else
-menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1442,11 +1351,7 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 	if (conv == NULL)
 		return;
 
-#if GTK_CHECK_VERSION(2,6,0)
 	logging = gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
-#else
-	logging = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
-#endif
 
 	if (logging == purple_conversation_is_logging(conv))
 		return;
@@ -1499,26 +1404,14 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_toolbar_cb(GtkAction *action, gpointer data)
 {
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar",
 	                    gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
 }
-#else
-menu_toolbar_cb(gpointer data, guint action, GtkWidget *widget)
-{
-	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar",
-	                    gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
-}
-#endif
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_sounds_cb(GtkAction *action, gpointer data)
-#else
-menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
-#endif
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
@@ -1533,30 +1426,18 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	gtkconv->make_sound =
-#if GTK_CHECK_VERSION(2,6,0)
 		gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
-#else
-		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
-#endif
 	node = get_conversation_blist_node(conv);
 	if (node)
 		purple_blist_node_set_bool(node, "gtk-mute-sound", !gtkconv->make_sound);
 }
 
 static void
-#if GTK_CHECK_VERSION(2,6,0)
 menu_timestamps_cb(GtkAction *action, gpointer data)
 {
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps",
 		gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
 }
-#else
-menu_timestamps_cb(gpointer data, guint action, GtkWidget *widget)
-{
-	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps",
-		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
-}
-#endif
 
 static void
 chat_do_im(PidginConversation *gtkconv, const char *who)
@@ -2363,13 +2244,8 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	purple_conversation_close_logs(old_conv);
 	gtkconv->active_conv = conv;
 
-#if GTK_CHECK_VERSION(2,6,0)
 	purple_conversation_set_logging(conv,
 		gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(gtkconv->win->menu.logging)));
-#else
-	purple_conversation_set_logging(conv,
-		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging)));
-#endif
 
 	entry = GTK_IMHTML(gtkconv->entry);
 	protocol_name = purple_account_get_protocol_name(conv->account);
@@ -3192,7 +3068,7 @@ pidgin_conv_get_window(PidginConversation *gtkconv)
 	return gtkconv->win;
 }
 
-#if GTK_CHECK_VERSION(2,6,0)
+#if 1
 
 static GtkActionEntry menu_entries[] =
 /* TODO: fill out tooltips... */
@@ -3363,16 +3239,6 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Options/Show Formatting _Toolbars"), NULL, menu_toolbar_cb, 0, "<CheckItem>", NULL },
 	{ N_("/Options/Show Ti_mestamps"), NULL, menu_timestamps_cb, 0, "<CheckItem>", NULL },
 };
-
-static const int menu_item_count =
-sizeof(menu_items) / sizeof(*menu_items);
-
-static const char *
-item_factory_translate_func (const char *path, gpointer func_data)
-{
-	return _(path);
-}
-
 #endif
 
 static void
@@ -3384,31 +3250,18 @@ sound_method_pref_changed_cb(const char *name, PurplePrefType type,
 
 	if (!strcmp(method, "none"))
 	{
-#if GTK_CHECK_VERSION(2,6,0)
 		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(win->menu.sounds),
 		                             FALSE);
 		gtk_action_set_sensitive(win->menu.sounds, FALSE);
-#else
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
-		                               FALSE);
-		gtk_widget_set_sensitive(win->menu.sounds, FALSE);
-#endif
 	}
 	else
 	{
 		PidginConversation *gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 
-#if GTK_CHECK_VERSION(2,6,0)
 		if (gtkconv != NULL)
 			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(win->menu.sounds),
 			                             gtkconv->make_sound);
 		gtk_action_set_sensitive(win->menu.sounds, TRUE);
-#else
-		if (gtkconv != NULL)
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
-			                               gtkconv->make_sound);
-		gtk_widget_set_sensitive(win->menu.sounds, TRUE);
-#endif
 	}
 }
 
@@ -3536,7 +3389,6 @@ regenerate_media_items(PidginWindow *win)
 				purple_prpl_get_media_caps(account,
 				purple_conversation_get_name(conv));
 
-#if GTK_CHECK_VERSION(2,6,0)
 		gtk_action_set_sensitive(win->audio_call,
 				caps & PURPLE_MEDIA_CAPS_AUDIO
 				? TRUE : FALSE);
@@ -3546,39 +3398,16 @@ regenerate_media_items(PidginWindow *win)
 		gtk_action_set_sensitive(win->audio_video_call, 
 				caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
 				? TRUE : FALSE);
-#else
-		gtk_widget_set_sensitive(win->audio_call,
-				caps & PURPLE_MEDIA_CAPS_AUDIO
-				? TRUE : FALSE);
-		gtk_widget_set_sensitive(win->video_call,
-				caps & PURPLE_MEDIA_CAPS_VIDEO
-				? TRUE : FALSE);
-		gtk_widget_set_sensitive(win->audio_video_call, 
-				caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO
-				? TRUE : FALSE);
-#endif
 	} else if (purple_conversation_get_type(conv)
 			== PURPLE_CONV_TYPE_CHAT) {
 		/* for now, don't care about chats... */
-#if GTK_CHECK_VERSION(2,6,0)
 		gtk_action_set_sensitive(win->audio_call, FALSE);
 		gtk_action_set_sensitive(win->video_call, FALSE);
 		gtk_action_set_sensitive(win->audio_video_call, FALSE);
-#else
-		gtk_widget_set_sensitive(win->audio_call, FALSE);
-		gtk_widget_set_sensitive(win->video_call, FALSE);
-		gtk_widget_set_sensitive(win->audio_video_call, FALSE);
-#endif
 	} else {
-#if GTK_CHECK_VERSION(2,6,0)
 		gtk_action_set_sensitive(win->audio_call, FALSE);
 		gtk_action_set_sensitive(win->video_call, FALSE);
 		gtk_action_set_sensitive(win->audio_video_call, FALSE);
-#else
-		gtk_widget_set_sensitive(win->audio_call, FALSE);
-		gtk_widget_set_sensitive(win->video_call, FALSE);
-		gtk_widget_set_sensitive(win->audio_video_call, FALSE);
-#endif
 	}							
 #endif
 }
@@ -3671,7 +3500,7 @@ regenerate_plugins_items(PidginWindow *win)
 #endif
 }
 
-#if !GTK_CHECK_VERSION(2,6,0)
+#if 0
 static void menubar_activated(GtkWidget *item, gpointer data)
 {
 	PidginWindow *win = data;
@@ -3702,8 +3531,6 @@ setup_menubar(PidginWindow *win)
 {
 	GtkAccelGroup *accel_group;
 	const char *method;
-
-#if GTK_CHECK_VERSION(2,6,0)
 	GtkActionGroup *action_group;
 	GError *error;
 
@@ -3833,133 +3660,6 @@ setup_menubar(PidginWindow *win)
 		gtk_ui_manager_get_action(win->menu.ui,
 		                          "/Conversation/OptionsMenu/ShowTimestamps");
 	win->menu.show_icon = NULL;
-
-#else
-	GtkWidget *menuitem;
-
-	accel_group = gtk_accel_group_new ();
-	gtk_window_add_accel_group(GTK_WINDOW(win->window), accel_group);
-	g_object_unref(accel_group);
-
-	win->menu.item_factory =
-		gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", accel_group);
-
-	gtk_item_factory_set_translate_func(win->menu.item_factory,
-	                                    (GtkTranslateFunc)item_factory_translate_func,
-	                                    NULL, NULL);
-
-	gtk_item_factory_create_items(win->menu.item_factory, menu_item_count,
-	                              menu_items, win);
-	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
-	                 G_CALLBACK(pidgin_save_accels_cb), NULL);
-
-	/* Make sure the 'Conversation -> More' menuitems are regenerated whenever
-	 * the 'Conversation' menu pops up because the entries can change after the
-	 * conversation is created. */
-	menuitem = gtk_item_factory_get_item(win->menu.item_factory, N_("/Conversation"));
-	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(menubar_activated), win);
-
-	win->menu.menubar =
-		gtk_item_factory_get_widget(win->menu.item_factory, "<main>");
-
-	win->menu.view_log =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Conversation/View Log"));
-
-#ifdef USE_VV
-	win->audio_call =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-					    N_("/Conversation/Media/Audio Call"));
-	win->video_call =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-					    N_("/Conversation/Media/Video Call"));
-	win->audio_video_call =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-					    N_("/Conversation/Media/Audio\\/Video Call"));
-#endif
-	
-	/* --- */
-
-	win->menu.send_file =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Conversation/Send File..."));
-
-	g_object_set_data(G_OBJECT(win->window), "get_attention",
-		gtk_item_factory_get_widget(win->menu.item_factory,
-			                    N_("/Conversation/Get Attention")));
-	win->menu.add_pounce =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Conversation/Add Buddy Pounce..."));
-
-	/* --- */
-
-	win->menu.get_info =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Conversation/Get Info"));
-
-	win->menu.invite =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Conversation/Invite..."));
-
-	/* --- */
-
-	win->menu.alias =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Conversation/Alias..."));
-
-	win->menu.block =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Conversation/Block..."));
-
-	win->menu.unblock =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-					    N_("/Conversation/Unblock..."));
-
-	win->menu.add =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Conversation/Add..."));
-
-	win->menu.remove =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Conversation/Remove..."));
-
-	/* --- */
-
-	win->menu.insert_link =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-				N_("/Conversation/Insert Link..."));
-
-	win->menu.insert_image =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-				N_("/Conversation/Insert Image..."));
-
-	/* --- */
-
-	win->menu.logging =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Options/Enable Logging"));
-	win->menu.sounds =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Options/Enable Sounds"));
-	method = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method");
-	if (method != NULL && !strcmp(method, "none"))
-	{
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
-		                               FALSE);
-		gtk_widget_set_sensitive(win->menu.sounds, FALSE);
-	}
-	purple_prefs_connect_callback(win, PIDGIN_PREFS_ROOT "/sound/method",
-				    sound_method_pref_changed_cb, win);
-
-	win->menu.show_formatting_toolbar =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Options/Show Formatting Toolbars"));
-	win->menu.show_timestamps =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Options/Show Timestamps"));
-	win->menu.show_icon = NULL;
-
-#endif
 
 	win->menu.tray = pidgin_menu_tray_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(win->menu.menubar),
@@ -4142,8 +3842,7 @@ update_send_to_selection(PidginWindow *win)
 	if (!(b = purple_find_buddy(account, conv->name)))
 		return FALSE;
 
-#if GTK_CHECK_VERSION(2,6,0)
-#else
+#if 0 /* TODO */
 	gtk_widget_show(win->menu.send_to);
 
 	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(win->menu.send_to));
@@ -4275,8 +3974,7 @@ compare_buddy_presence(PurplePresence *p1, PurplePresence *p2)
 static void
 generate_send_to_items(PidginWindow *win)
 {
-#if GTK_CHECK_VERSION(2,6,0)
-#else
+#if 0 /* TODO */
 	GtkWidget *menu;
 	GSList *group = NULL;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -6870,16 +6568,6 @@ pidgin_conv_send_confirm(PurpleConversation *conv, const char *message)
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->entry), message, 0);
 }
 
-/* Mask functions with ones from newer GTK+ */
-#if GTK_CHECK_VERSION(2,6,0)
-#define gtk_widget_set_sensitive_ gtk_widget_set_sensitive
-#define gtk_widget_show_ gtk_widget_show
-#define gtk_widget_hide_ gtk_widget_hide
-#define gtk_widget_set_sensitive gtk_action_set_sensitive
-#define gtk_widget_show(x) gtk_action_set_visible((x), TRUE)
-#define gtk_widget_hide(x) gtk_action_set_visible((x), FALSE)
-#endif
-
 /*
  * Makes sure all the menu items and all the buttons are hidden/shown and
  * sensitive/insensitive.  This is called after changing tabs and when an
@@ -6918,57 +6606,57 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* Show stuff that applies to IMs, hide stuff that applies to chats */
 
 		/* Deal with menu items */
-		gtk_widget_show(win->menu.view_log);
-		gtk_widget_show(win->menu.send_file);
-		gtk_widget_show(g_object_get_data(G_OBJECT(win->window), "get_attention"));
-		gtk_widget_show(win->menu.add_pounce);
-		gtk_widget_show(win->menu.get_info);
-		gtk_widget_hide(win->menu.invite);
-		gtk_widget_show(win->menu.alias);
+		gtk_action_set_visible(win->menu.view_log, TRUE);
+		gtk_action_set_visible(win->menu.send_file, TRUE);
+		gtk_action_set_visible(g_object_get_data(G_OBJECT(win->window), "get_attention"), TRUE);
+		gtk_action_set_visible(win->menu.add_pounce, TRUE);
+		gtk_action_set_visible(win->menu.get_info, TRUE);
+		gtk_action_set_visible(win->menu.invite, FALSE);
+		gtk_action_set_visible(win->menu.alias, TRUE);
  		if (purple_privacy_check(account, purple_conversation_get_name(conv))) {
- 			gtk_widget_hide(win->menu.unblock);
- 			gtk_widget_show(win->menu.block);
+ 			gtk_action_set_visible(win->menu.unblock, FALSE);
+ 			gtk_action_set_visible(win->menu.block, TRUE);
  		} else {
- 			gtk_widget_hide(win->menu.block);
- 			gtk_widget_show(win->menu.unblock);
+ 			gtk_action_set_visible(win->menu.block, FALSE);
+ 			gtk_action_set_visible(win->menu.unblock, TRUE);
  		}
 
 		if ((account == NULL) || purple_find_buddy(account, purple_conversation_get_name(conv)) == NULL) {
-			gtk_widget_show(win->menu.add);
-			gtk_widget_hide(win->menu.remove);
+			gtk_action_set_visible(win->menu.add, TRUE);
+			gtk_action_set_visible(win->menu.remove, FALSE);
 		} else {
-			gtk_widget_show(win->menu.remove);
-			gtk_widget_hide(win->menu.add);
+			gtk_action_set_visible(win->menu.remove, TRUE);
+			gtk_action_set_visible(win->menu.add, FALSE);
 		}
 
-		gtk_widget_show(win->menu.insert_link);
-		gtk_widget_show(win->menu.insert_image);
+		gtk_action_set_visible(win->menu.insert_link, TRUE);
+		gtk_action_set_visible(win->menu.insert_image, TRUE);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		/* Show stuff that applies to Chats, hide stuff that applies to IMs */
 
 		/* Deal with menu items */
-		gtk_widget_show(win->menu.view_log);
-		gtk_widget_hide(win->menu.send_file);
-		gtk_widget_hide(g_object_get_data(G_OBJECT(win->window), "get_attention"));
-		gtk_widget_hide(win->menu.add_pounce);
-		gtk_widget_hide(win->menu.get_info);
-		gtk_widget_show(win->menu.invite);
-		gtk_widget_show(win->menu.alias);
-		gtk_widget_hide(win->menu.block);
-		gtk_widget_hide(win->menu.unblock);
+		gtk_action_set_visible(win->menu.view_log, TRUE);
+		gtk_action_set_visible(win->menu.send_file, FALSE);
+		gtk_action_set_visible(g_object_get_data(G_OBJECT(win->window), "get_attention"), FALSE);
+		gtk_action_set_visible(win->menu.add_pounce, FALSE);
+		gtk_action_set_visible(win->menu.get_info, FALSE);
+		gtk_action_set_visible(win->menu.invite, TRUE);
+		gtk_action_set_visible(win->menu.alias, TRUE);
+		gtk_action_set_visible(win->menu.block, FALSE);
+		gtk_action_set_visible(win->menu.unblock, FALSE);
 
 		if ((account == NULL) || purple_blist_find_chat(account, purple_conversation_get_name(conv)) == NULL) {
 			/* If the chat is NOT in the buddy list */
-			gtk_widget_show(win->menu.add);
-			gtk_widget_hide(win->menu.remove);
+			gtk_action_set_visible(win->menu.add, TRUE);
+			gtk_action_set_visible(win->menu.remove, FALSE);
 		} else {
 			/* If the chat IS in the buddy list */
-			gtk_widget_hide(win->menu.add);
-			gtk_widget_show(win->menu.remove);
+			gtk_action_set_visible(win->menu.add, FALSE);
+			gtk_action_set_visible(win->menu.remove, TRUE);
 		}
 
-		gtk_widget_show(win->menu.insert_link);
-		gtk_widget_show(win->menu.insert_image);
+		gtk_action_set_visible(win->menu.insert_link, TRUE);
+		gtk_action_set_visible(win->menu.insert_image, TRUE);
 	}
 
 	/*
@@ -7013,30 +6701,30 @@ gray_stuff_out(PidginConversation *gtkconv)
 			gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), purple_account_get_protocol_id(account));
 
 		/* Deal with menu items */
-		gtk_widget_set_sensitive(win->menu.view_log, TRUE);
-		gtk_widget_set_sensitive(win->menu.add_pounce, TRUE);
-		gtk_widget_set_sensitive(win->menu.get_info, (prpl_info->get_info != NULL));
-		gtk_widget_set_sensitive(win->menu.invite, (prpl_info->chat_invite != NULL));
-		gtk_widget_set_sensitive(win->menu.insert_link, (conv->features & PURPLE_CONNECTION_HTML));
-		gtk_widget_set_sensitive(win->menu.insert_image, !(conv->features & PURPLE_CONNECTION_NO_IMAGES));
+		gtk_action_set_sensitive(win->menu.view_log, TRUE);
+		gtk_action_set_sensitive(win->menu.add_pounce, TRUE);
+		gtk_action_set_sensitive(win->menu.get_info, (prpl_info->get_info != NULL));
+		gtk_action_set_sensitive(win->menu.invite, (prpl_info->chat_invite != NULL));
+		gtk_action_set_sensitive(win->menu.insert_link, (conv->features & PURPLE_CONNECTION_HTML));
+		gtk_action_set_sensitive(win->menu.insert_image, !(conv->features & PURPLE_CONNECTION_NO_IMAGES));
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		{
-			gtk_widget_set_sensitive(win->menu.add, (prpl_info->add_buddy != NULL));
-			gtk_widget_set_sensitive(win->menu.remove, (prpl_info->remove_buddy != NULL));
-			gtk_widget_set_sensitive(win->menu.send_file,
+			gtk_action_set_sensitive(win->menu.add, (prpl_info->add_buddy != NULL));
+			gtk_action_set_sensitive(win->menu.remove, (prpl_info->remove_buddy != NULL));
+			gtk_action_set_sensitive(win->menu.send_file,
 									 (prpl_info->send_file != NULL && (!prpl_info->can_receive_file ||
 									  prpl_info->can_receive_file(gc, purple_conversation_get_name(conv)))));
-			gtk_widget_set_sensitive(g_object_get_data(G_OBJECT(win->window), "get_attention"), (prpl_info->send_attention != NULL));
-			gtk_widget_set_sensitive(win->menu.alias,
+			gtk_action_set_sensitive(g_object_get_data(G_OBJECT(win->window), "get_attention"), (prpl_info->send_attention != NULL));
+			gtk_action_set_sensitive(win->menu.alias,
 									 (account != NULL) &&
 									 (purple_find_buddy(account, purple_conversation_get_name(conv)) != NULL));
 		}
 		else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
 		{
-			gtk_widget_set_sensitive(win->menu.add, (prpl_info->join_chat != NULL));
-			gtk_widget_set_sensitive(win->menu.remove, (prpl_info->join_chat != NULL));
-			gtk_widget_set_sensitive(win->menu.alias,
+			gtk_action_set_sensitive(win->menu.add, (prpl_info->join_chat != NULL));
+			gtk_action_set_sensitive(win->menu.remove, (prpl_info->join_chat != NULL));
+			gtk_action_set_sensitive(win->menu.alias,
 									 (account != NULL) &&
 									 (purple_blist_find_chat(account, purple_conversation_get_name(conv)) != NULL));
 		}
@@ -7046,18 +6734,18 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* Or it's a chat that we've left. */
 
 		/* Then deal with menu items */
-		gtk_widget_set_sensitive(win->menu.view_log, TRUE);
-		gtk_widget_set_sensitive(win->menu.send_file, FALSE);
-		gtk_widget_set_sensitive(g_object_get_data(G_OBJECT(win->window),
+		gtk_action_set_sensitive(win->menu.view_log, TRUE);
+		gtk_action_set_sensitive(win->menu.send_file, FALSE);
+		gtk_action_set_sensitive(g_object_get_data(G_OBJECT(win->window),
 			"get_attention"), FALSE);
-		gtk_widget_set_sensitive(win->menu.add_pounce, TRUE);
-		gtk_widget_set_sensitive(win->menu.get_info, FALSE);
-		gtk_widget_set_sensitive(win->menu.invite, FALSE);
-		gtk_widget_set_sensitive(win->menu.alias, FALSE);
-		gtk_widget_set_sensitive(win->menu.add, FALSE);
-		gtk_widget_set_sensitive(win->menu.remove, FALSE);
-		gtk_widget_set_sensitive(win->menu.insert_link, TRUE);
-		gtk_widget_set_sensitive(win->menu.insert_image, FALSE);
+		gtk_action_set_sensitive(win->menu.add_pounce, TRUE);
+		gtk_action_set_sensitive(win->menu.get_info, FALSE);
+		gtk_action_set_sensitive(win->menu.invite, FALSE);
+		gtk_action_set_sensitive(win->menu.alias, FALSE);
+		gtk_action_set_sensitive(win->menu.add, FALSE);
+		gtk_action_set_sensitive(win->menu.remove, FALSE);
+		gtk_action_set_sensitive(win->menu.insert_link, TRUE);
+		gtk_action_set_sensitive(win->menu.insert_image, FALSE);
 	}
 
 	/*
@@ -7088,17 +6776,6 @@ gray_stuff_out(PidginConversation *gtkconv)
 		}
 	}
 }
-
-/* Restore the functions */
-#if GTK_CHECK_VERSION(2,6,0)
-#undef gtk_widget_set_sensitive
-#undef gtk_widget_show
-#undef gtk_widget_hide
-
-#define gtk_widget_set_sensitive gtk_widget_set_sensitive_
-#define gtk_widget_show gtk_widget_show_
-#define gtk_widget_hide gtk_widget_hide_
-#endif
 
 static void
 pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
@@ -7756,15 +7433,9 @@ show_timestamps_pref_cb(const char *name, PurplePrefType type,
 		gtkconv = PIDGIN_CONVERSATION(conv);
 		win     = gtkconv->win;
 
-#if GTK_CHECK_VERSION(2,6,0)
 		gtk_toggle_action_set_active(
 		        GTK_TOGGLE_ACTION(win->menu.show_timestamps),
 		        (gboolean)GPOINTER_TO_INT(value));
-#else
-		gtk_check_menu_item_set_active(
-		        GTK_CHECK_MENU_ITEM(win->menu.show_timestamps),
-		        (gboolean)GPOINTER_TO_INT(value));
-#endif
 
 		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
 			(gboolean)GPOINTER_TO_INT(value));
@@ -7790,15 +7461,9 @@ show_formatting_toolbar_pref_cb(const char *name, PurplePrefType type,
 		gtkconv = PIDGIN_CONVERSATION(conv);
 		win     = gtkconv->win;
 
-#if GTK_CHECK_VERSION(2,6,0)
 		gtk_toggle_action_set_active(
 		        GTK_TOGGLE_ACTION(win->menu.show_formatting_toolbar),
 		        (gboolean)GPOINTER_TO_INT(value));
-#else
-		gtk_check_menu_item_set_active(
-		        GTK_CHECK_MENU_ITEM(win->menu.show_formatting_toolbar),
-		        (gboolean)GPOINTER_TO_INT(value));
-#endif
 
 		if ((gboolean)GPOINTER_TO_INT(value))
 			gtk_widget_show(gtkconv->toolbar);
@@ -9054,8 +8719,7 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 		/* Right click was pressed. Popup the context menu. */
 		GtkWidget *menu = gtk_menu_new(), *sub;
 		gboolean populated = populate_menu_with_options(menu, gtkconv, TRUE);
-#if GTK_CHECK_VERSION(2,6,0)
-#else
+#if 0 /* TODO */
 		sub = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
 
 		if (sub && GTK_WIDGET_IS_SENSITIVE(gtkconv->win->menu.send_to)) {
@@ -9578,13 +9242,8 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	/* Update the menubar */
 
-#if GTK_CHECK_VERSION(2,6,0)
 	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtkconv->win->menu.logging),
 	                             purple_conversation_is_logging(conv));
-#else
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging),
-	                               purple_conversation_is_logging(conv));
-#endif
 
 	generate_send_to_items(win);
 	regenerate_options_items(win);
@@ -9593,7 +9252,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	pidgin_conv_switch_active_conversation(conv);
 
 	sound_method = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method");
-#if GTK_CHECK_VERSION(2,6,0)
 	if (strcmp(sound_method, "none") != 0)
 		gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(win->menu.sounds),
 		                             gtkconv->make_sound);
@@ -9603,17 +9261,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(win->menu.show_timestamps),
 	                             purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps"));
-#else
-	if (strcmp(sound_method, "none") != 0)
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
-		                               gtkconv->make_sound);
-
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_formatting_toolbar),
-	                               purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar"));
-
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_timestamps),
-	                               purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps"));
-#endif
 
 	/*
 	 * We pause icons when they are not visible.  If this icon should
@@ -9863,11 +9510,7 @@ pidgin_conv_window_destroy(PidginWindow *win)
 	}
 	gtk_widget_destroy(win->window);
 
-#if GTK_CHECK_VERSION(2,6,0)
 	g_object_unref(G_OBJECT(win->menu.ui));
-#else
-	g_object_unref(G_OBJECT(win->menu.item_factory));
-#endif
 
 	purple_notify_close_with_handle(win);
 	purple_signals_disconnect_by_handle(win);

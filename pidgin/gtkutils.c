@@ -912,31 +912,6 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 	return optmenu;
 }
 
-gboolean
-#if GTK_CHECK_VERSION(2,4,0)
-pidgin_check_if_dir(const char *path, gpointer filesel)
-{
-	return FALSE;
-}
-#else
-pidgin_check_if_dir(const char *path, GtkFileSelection *filesel)
-{
-	char *dirname = NULL;
-
-	if (g_file_test(path, G_FILE_TEST_IS_DIR)) {
-		/* append a / if needed */
-		if (path[strlen(path) - 1] != G_DIR_SEPARATOR) {
-			dirname = g_strconcat(path, G_DIR_SEPARATOR_S, NULL);
-		}
-		gtk_file_selection_set_filename(filesel, (dirname != NULL) ? dirname : path);
-		g_free(dirname);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-#endif
-
 void
 pidgin_setup_gtkspell(GtkTextView *textview)
 {
