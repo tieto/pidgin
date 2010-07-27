@@ -1,9 +1,11 @@
+#
+# Yngve Spjeld Landro <l10n@landro.net>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: gtranslator\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:18-0400\n"
-"PO-Revision-Date: 2010-05-27 13:33+0100\n"
+"POT-Creation-Date: 2010-07-27 02:06-0400\n"
+"PO-Revision-Date: 2010-07-21 23:06+0100\n"
 "Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
 "Language-Team: Norwegian Nynorsk <l10n@landro.net>\n"
 "Language: nn\n"
@@ -55,9 +57,8 @@ msgstr ""
 msgid "Error"
 msgstr "Feil"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "Kontoen blei ikkje lagt til"
+msgstr "Kontoen blei ikkje endra"
 
 msgid "Account was not added"
 msgstr "Kontoen blei ikkje lagt til"
@@ -68,10 +69,12 @@ msgstr "Brukarnamnet til ein konto kan ikkje vera tomt."
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
 msgstr ""
+"Protokollen til kontoen kan ikkje endrast så lenge han er kopla til tenaren."
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
 msgstr ""
+"Brukarnamnet til kontoen kan ikkje endrast så lenge han er kopla til tenaren."
 
 msgid "New mail notifications"
 msgstr "Varsling om ny e-post"
@@ -1693,6 +1696,8 @@ msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
 msgstr ""
+"Sertifikatet er enno ikkje gyldig. Sjå til at tenaren nyttar rette dato- og "
+"tidsinnstillingar."
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "Sertifikatet har gått ut og kan ikkje reknast for å vera gyldig."
@@ -3840,17 +3845,17 @@ msgstr "Ugyldig utfordring frå tenaren"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "Tenaren meiner autentiseringa er ferdig, men det gjer ikkje klienten"
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
-msgstr "Tenaren krev autentisering i klartekst over eit ukryptert samband"
+msgstr ""
+"Tenaren krev kanskje autentisering i klartekst over ein ukryptert straum"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
 msgstr ""
-"%s krev autentisering i klartekst over eit ukryptert samband. Vil du tillata "
-"dette og halda fram med autentiseringa?"
+"%s krev kanskje autentisering i klartekst over eit ukryptert samband. Vil du "
+"tillata dette og halda fram med autentiseringa?"
 
 msgid "SASL authentication failed"
 msgstr "SASL-autentiseringa feila"
@@ -4691,7 +4696,7 @@ msgid "ping &lt;jid&gt;:\tPing a user/component/server."
 msgstr "ping &lt;jid&gt;:\tPing ein brukar/komponent/tenar."
 
 msgid "buzz: Buzz a user to get their attention"
-msgstr "buzz: send ein alarm til ein brukar for å merksemda hans"
+msgstr "buzz: send ein alarm til ein brukar for å få merksemda hans"
 
 msgid "mood: Set current user mood"
 msgstr "mood: lagra den noverande brukarsinnsstemninga"
@@ -6116,17 +6121,14 @@ msgid "Enable splash-screen popup"
 msgstr "Bruk oppstartsvindauge"
 
 #. you were kicked
-#, fuzzy
 msgid "You have been kicked from this MultiMX."
-msgstr "Du er blitt sparka ut av: (%s)"
+msgstr "Du er blitt sparka ut frå denne MultiMX-en."
 
-#, fuzzy
 msgid "was kicked"
-msgstr "Ugyldig autentiseringsmelding"
+msgstr "blei sparka ut"
 
-#, fuzzy
 msgid "_Room Name:"
-msgstr "_Rom:"
+msgstr "Rom_namn:"
 
 #. Display system message in chat window
 #, fuzzy
@@ -7889,10 +7891,10 @@ msgid "Invalid SNAC"
 msgstr "Ugyldig SNAC"
 
 msgid "Server rate limit exceeded"
-msgstr ""
+msgstr "Overskriden tenargrense"
 
 msgid "Client rate limit exceeded"
-msgstr ""
+msgstr "Overskriden klientgrense"
 
 msgid "Service unavailable"
 msgstr "Tenesta er utilgjengeleg"
@@ -10164,9 +10166,8 @@ msgstr "Pratero_mslokalitet"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorer konferanse- og prateromsinvitasjonar"
 
-#, fuzzy
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Bruk kontomellomtenar for SSL-sambanda"
+msgstr "Bruk kontomellomtenar for HTTP- og HTTPS-tilkoplingar"
 
 msgid "Chat room list URL"
 msgstr "Prateromslisteadresse"
@@ -10703,7 +10704,7 @@ msgstr "Ber om merksemda til %s…"
 
 #, c-format
 msgid "%s has requested your attention!"
-msgstr "%s har bede om merksemda di!"
+msgstr "%s har bede om å få merksemda di"
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
@@ -11447,7 +11448,7 @@ msgid "/Help/De_veloper Information"
 msgstr "/Hjelp/Ut_viklaropplysningar"
 
 msgid "/Help/_Translator Information"
-msgstr "/Hjelp/_Omsetjaropplysningar"
+msgstr "/Hjelp/Om_setjaropplysningar"
 
 msgid "/Help/_About"
 msgstr "/Hjelp/_Om"
@@ -12400,8 +12401,8 @@ msgstr ""
 "å senda ei e-postmelding til <a href=\"mailto:support@pidgin.im"
 "\">support@pidgin.im</a><br/>Dette er ei <b>open</b> postliste (<a href="
 "\"http://pidgin.im/pipermail/support/\">archive</a>).<br/>Vi kan ikkje "
-"hjelpa med tredjepart-protokollar eller -programtillegg.<br/>Lista sitt "
-"primærspråk er  <b>engelsk</b>. Du kan skriva på eit anna språk, men då vil "
+"hjelpa med tredjepartsprotokollar eller -programtillegg.<br/>Lista sitt "
+"primærspråk er <b>engelsk</b>. Du kan skriva på eit anna språk, men då vil "
 "du kanskje ikkje få den hjelpa du treng.<br/>"
 
 #, c-format
@@ -12641,7 +12642,7 @@ msgstr "_Fjern ferdige overføringar"
 
 #. "Download Details" arrow
 msgid "File transfer _details"
-msgstr "_Filoverføringsdetaljar"
+msgstr "Filoverførings_detaljar"
 
 msgid "Paste as Plain _Text"
 msgstr "_Lim inn som rein tekst"
@@ -12899,8 +12900,9 @@ msgstr "_Horisontal strek"
 msgid "_Smile!"
 msgstr "Smile_fjes"
 
+# var: _NB!
 msgid "_Attention!"
-msgstr "_NB!"
+msgstr "_Merksemd"
 
 msgid "Log Deletion Failed"
 msgstr "Klarte ikkje å sletta loggen"
@@ -15200,6 +15202,8 @@ msgstr ""
 #. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
+"Ei fleirplattform verktøysamling for grafiske brukargrensesnitt,  nytta av "
+"Pidgin"
 
 msgid ""
 "An instance of Pidgin is currently running.  Please exit Pidgin and try "
@@ -15330,9 +15334,6 @@ msgstr "Besøk Pidgin sin nettstad"
 msgid "You do not have permission to uninstall this application."
 msgstr "Du har ikkje rettar til å avinstallera dette programmet."
 
-#~ msgid "The certificate is not valid yet."
-#~ msgstr "Sertifikatet er ikkje gyldig enno."
-
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "Kallenamnet du skreiv er ugyldig."
 
@@ -15345,14 +15346,17 @@ msgstr "Du har ikkje rettar til å avinstallera dette programmet."
 #~ msgid "Your Mobile Number..."
 #~ msgstr "Mobiltelefonnummeret ditt…"
 
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/Media/_Legg på"
+
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "Sertifikatet er ikkje gyldig enno."
+
 #~ msgid "Rate to host"
 #~ msgstr "Fart mot vert"
 
 #~ msgid "Rate to client"
 #~ msgstr "Fart mot klient"
-
-#~ msgid "/Media/_Hangup"
-#~ msgstr "/Media/_Legg på"
 
 #~ msgid "Unknown reason."
 #~ msgstr "Ukjend årsak."
