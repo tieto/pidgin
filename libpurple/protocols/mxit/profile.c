@@ -106,7 +106,7 @@ gboolean validateDate( const char* bday )
  * @param msecs		The timestamps (milliseconds since epoch)
  * @return			Date & Time in a display'able format.
  */
-static const char* datetime( int64_t msecs )
+static const char* datetime( gint64 msecs )
 {  
     time_t secs = msecs / 1000;
 
