@@ -27,7 +27,7 @@
 /**
  * Determine the simplest encoding we can send this message in.
  */
-guint32 oscar_charset_check(const char *utf8);
+guint16 oscar_charset_check(const char *utf8);
 
 /**
  * Take a string of the form charset="bleh" where bleh is
@@ -56,9 +56,6 @@ gchar * oscar_decode_im_part(PurpleAccount *account,
 /**
  * Figure out what encoding to use when sending a given outgoing message.
  */
-void oscar_convert_to_best_encoding(PurpleConnection *gc,
-				const char *destbn, const gchar *from,
-				gchar **msg, int *msglen_int,
-				guint16 *charset, guint16 *charsubset);
+gchar * oscar_convert_to_best_encoding(const gchar *msg, gsize *result_len, guint16 *charset, gchar **charsetstr);
 
 #endif

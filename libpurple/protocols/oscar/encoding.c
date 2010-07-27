@@ -20,45 +20,17 @@
 
 #include "encoding.h"
 
-guint32
+guint16
 oscar_charset_check(const char *utf8)
 {
-	int i = 0;
-	int charset = AIM_CHARSET_ASCII;
-
-	/*
-	 * Can we get away with using our custom encoding?
-	 */
-	while (utf8[i])
+	while (*utf8++)
 	{
-		if ((unsigned char)utf8[i] > 0x7f) {
+		if ((unsigned char)(*utf8) > 0x7f) {
 			/* not ASCII! */
-			charset = AIM_CHARSET_LATIN_1;
-			break;
+			return AIM_CHARSET_UNICODE;
 		}
-		i++;
 	}
-
-	/*
-	 * Must we send this message as UNICODE (in the UTF-16BE encoding)?
-	 */
-	while (utf8[i])
-	{
-		/* ISO-8859-1 is 0x00-0xbf in the first byte
-		 * followed by 0xc0-0xc3 in the second */
-		if ((unsigned char)utf8[i] < 0x80) {
-			i++;
-			continue;
-		} else if (((unsigned char)utf8[i] & 0xfc) == 0xc0 &&
-				   ((unsigned char)utf8[i + 1] & 0xc0) == 0x80) {
-			i += 2;
-			continue;
-		}
-		charset = AIM_CHARSET_UNICODE;
-		break;
-	}
-
-	return charset;
+	return AIM_CHARSET_ASCII;
 }
 
 gchar *
@@ -259,103 +231,15 @@ oscar_decode_im_part(PurpleAccount *account, const char *sourcebn, guint16 chars
 	return ret;
 }
 
-void
-oscar_convert_to_best_encoding(PurpleConnection *gc,
-				const char *destbn, const gchar *from,
-				gchar **msg, int *msglen_int,
-				guint16 *charset, guint16 *charsubset)
+gchar *
+oscar_convert_to_best_encoding(const gchar *msg, gsize *result_len, guint16 *charset, gchar **charsetstr)
 {
-	OscarData *od = purple_connection_get_protocol_data(gc);
-	PurpleAccount *account = purple_connection_get_account(gc);
-	GError *err = NULL;
-	aim_userinfo_t *userinfo = NULL;
-	const gchar *charsetstr;
-	gsize msglen;
-
-	/* Attempt to send as ASCII */
-	if (oscar_charset_check(from) == AIM_CHARSET_ASCII) {
-		*msg = g_convert(from, -1, "ASCII", "UTF-8", NULL, &msglen, NULL);
-		*charset = AIM_CHARSET_ASCII;
-		*charsubset = 0x0000;
-		*msglen_int = msglen;
-		return;
+	guint16 msg_charset = oscar_charset_check(msg);
+	if (charset != NULL) {
+		*charset = msg_charset;
 	}
-
-	/*
-	 * If we're sending to an ICQ user, and they are in our
-	 * buddy list, and they are advertising the Unicode
-	 * capability, and they are online, then attempt to send
-	 * as UTF-16BE.
-	 */
-	if ((destbn != NULL) && oscar_util_valid_name_icq(destbn))
-		userinfo = aim_locate_finduserinfo(od, destbn);
-
-	if ((userinfo != NULL) && (userinfo->capabilities & OSCAR_CAPABILITY_UNICODE))
-	{
-		PurpleBuddy *b;
-		b = purple_find_buddy(account, destbn);
-		if ((b != NULL) && (PURPLE_BUDDY_IS_ONLINE(b)))
-		{
-			*msg = g_convert(from, -1, "UTF-16BE", "UTF-8", NULL, &msglen, &err);
-			if (*msg != NULL)
-			{
-				*charset = AIM_CHARSET_UNICODE;
-				*charsubset = 0x0000;
-				*msglen_int = msglen;
-				return;
-			}
-
-			purple_debug_error("oscar", "Conversion from UTF-8 to UTF-16BE failed: %s.\n",
-							   err->message);
-			g_error_free(err);
-			err = NULL;
-		}
+	if (charsetstr != NULL) {
+		*charsetstr = msg_charset == AIM_CHARSET_ASCII ? "us-ascii" : "unicode-2-0";
 	}
-
-	/*
-	 * If this is AIM then attempt to send as ISO-8859-1.  If this is
-	 * ICQ then attempt to send as the user specified character encoding.
-	 */
-	charsetstr = "ISO-8859-1";
-	if ((destbn != NULL) && oscar_util_valid_name_icq(destbn))
-		charsetstr = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
-
-	/*
-	 * XXX - We need a way to only attempt to convert if we KNOW "from"
-	 * can be converted to "charsetstr"
-	 */
-	*msg = g_convert(from, -1, charsetstr, "UTF-8", NULL, &msglen, &err);
-	if (*msg != NULL) {
-		*charset = AIM_CHARSET_LATIN_1;
-		*charsubset = 0x0000;
-		*msglen_int = msglen;
-		return;
-	}
-
-	purple_debug_info("oscar", "Conversion from UTF-8 to %s failed (%s). Falling back to unicode.\n",
-					  charsetstr, err->message);
-	g_error_free(err);
-	err = NULL;
-
-	/*
-	 * Nothing else worked, so send as UTF-16BE.
-	 */
-	*msg = g_convert(from, -1, "UTF-16BE", "UTF-8", NULL, &msglen, &err);
-	if (*msg != NULL) {
-		*charset = AIM_CHARSET_UNICODE;
-		*charsubset = 0x0000;
-		*msglen_int = msglen;
-		return;
-	}
-
-	purple_debug_error("oscar", "Error converting a Unicode message: %s\n", err->message);
-	g_error_free(err);
-	err = NULL;
-
-	purple_debug_error("oscar", "This should NEVER happen!  Sending UTF-8 text flagged as ASCII.\n");
-	*msg = g_strdup(from);
-	*msglen_int = strlen(*msg);
-	*charset = AIM_CHARSET_ASCII;
-	*charsubset = 0x0000;
-	return;
+	return g_convert(msg, -1, msg_charset == AIM_CHARSET_ASCII ? "ASCII" : "UTF-16BE", "UTF-8", NULL, result_len, NULL);
 }

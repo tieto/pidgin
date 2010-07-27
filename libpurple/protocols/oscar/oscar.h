@@ -845,7 +845,6 @@ void oscar_chat_destroy(struct chat_connection *cc);
 #define AIM_IMFLAGS_CUSTOMFEATURES		0x0080 /* features field present */
 #define AIM_IMFLAGS_EXTDATA				0x0100
 #define AIM_IMFLAGS_X					0x0200
-#define AIM_IMFLAGS_MULTIPART			0x0400 /* ->mpmsg section valid */
 #define AIM_IMFLAGS_OFFLINE				0x0800 /* send to offline user */
 #define AIM_IMFLAGS_TYPINGNOT			0x1000 /* typing notification */
 
@@ -885,30 +884,22 @@ void aim_mpmsg_free(OscarData *od, aim_mpmsg_t *mpm);
  */
 struct aim_sendimext_args
 {
-
 	/* These are _required_ */
 	const char *destbn;
 	guint32 flags; /* often 0 */
 
-	/* Only required if not using multipart messages */
 	const char *msg;
-	int msglen;
-
-	/* Required if ->msg is not provided */
-	aim_mpmsg_t *mpmsg;
+	gsize msglen;
 
 	/* Only used if AIM_IMFLAGS_HASICON is set */
 	guint32 iconlen;
 	time_t iconstamp;
 	guint32 iconsum;
 
-	/* Only used if AIM_IMFLAGS_CUSTOMFEATURES is set */
 	guint16 featureslen;
 	guint8 *features;
 
-	/* Only used if AIM_IMFLAGS_CUSTOMCHARSET is set and mpmsg not used */
 	guint16 charset;
-	guint16 charsubset;
 };
 
 /*
@@ -926,18 +917,12 @@ struct aim_sendrtfmsg_args
  * This information is provided in the Incoming ICBM callback for
  * Channel 1 ICBM's.
  *
- * Note that although CUSTOMFEATURES and CUSTOMCHARSET say they
- * are optional, both are always set by the current libfaim code.
- * That may or may not change in the future.  It is mainly for
- * consistency with aim_sendimext_args.
- *
  * Multipart messages require some explanation. If you want to use them,
  * I suggest you read all the comments in family_icbm.c.
  *
  */
 struct aim_incomingim_ch1_args
 {
-
 	/* Always provided */
 	aim_mpmsg_t mpmsg;
 	guint32 icbmflags; /* some flags apply only to ->msg, not all mpmsg */

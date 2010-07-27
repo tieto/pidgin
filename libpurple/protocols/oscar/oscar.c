@@ -108,7 +108,6 @@ static int purple_conv_chat_info_update (OscarData *, FlapConnection *, FlapFram
 static int purple_conv_chat_incoming_msg(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_email_parseupdate(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_icon_parseicon   (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_parse_msgack     (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_evilnotify (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_searcherror(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_searchreply(OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -666,7 +665,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_MISSEDCALL, purple_parse_misses, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_CLIENTAUTORESP, purple_parse_clientauto, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_MTN, purple_parse_mtn, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_ACK, purple_parse_msgack, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_RIGHTSINFO, purple_parse_locaterights, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x0001, purple_parse_genericerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x000f, purple_selfinfo, 0);
@@ -2724,24 +2722,6 @@ purple_icons_fetch(PurpleConnection *gc)
 	purple_debug_misc("oscar", "no more icons to request\n");
 }
 
-/*
- * Received in response to an IM sent with the AIM_IMFLAGS_ACK option.
- */
-static int purple_parse_msgack(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	va_list ap;
-	guint16 type;
-	char *bn;
-
-	va_start(ap, fr);
-	type = (guint16) va_arg(ap, unsigned int);
-	bn = va_arg(ap, char *);
-	va_end(ap);
-
-	purple_debug_info("oscar", "Sent message to %s.\n", bn);
-
-	return 1;
-}
-
 static int purple_parse_evilnotify(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 #ifdef CRAZY_WARNING
 	va_list ap;
@@ -3183,8 +3163,8 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	GString *msg;
 	GString *data;
 	gchar *tmp;
-	int tmplen;
-	guint16 charset, charsubset;
+	gsize tmplen;
+	guint16 charset;
 	GData *attribs;
 	const char *start, *end, *last;
 	int oscar_id = 0;
@@ -3245,8 +3225,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	g_string_append(msg, "</BODY></HTML>");
 
 	/* Convert the message to a good encoding */
-	oscar_convert_to_best_encoding(conn->od->gc,
-			conn->bn, msg->str, &tmp, &tmplen, &charset, &charsubset);
+	tmp = oscar_convert_to_best_encoding(msg->str, &tmplen, &charset, NULL);
 	g_string_free(msg, TRUE);
 	msg = g_string_new_len(tmp, tmplen);
 	g_free(tmp);
@@ -3326,7 +3305,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			g_hash_table_insert(od->buddyinfo, g_strdup(purple_normalize(account, name)), bi);
 		}
 
-		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
+		args.flags = 0;
 
 		if (!is_sms && (!buddy || !PURPLE_BUDDY_IS_ONLINE(buddy)))
 			args.flags |= AIM_IMFLAGS_OFFLINE;
@@ -3395,7 +3374,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		g_free(tmp1);
 		tmp1 = tmp2;
 
-		oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
+		args.msg = oscar_convert_to_best_encoding(tmp1, &args.msglen, &args.charset, NULL);
 		if (is_html && (args.msglen > MAXMSGLEN)) {
 			/* If the length was too long, try stripping the HTML and then running it back through
 			* purple_strdup_withhtml() and the encoding process. The result may be shorter. */
@@ -3412,14 +3391,12 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			g_free(tmp1);
 			tmp1 = tmp2;
 
-			oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
-
+			args.msg = oscar_convert_to_best_encoding(tmp1, &args.msglen, &args.charset, NULL);
 			purple_debug_info("oscar", "Sending %s as %s because the original was too long.\n",
 								  message, (char *)args.msg);
 		}
 
-		purple_debug_info("oscar", "Sending IM, charset=0x%04hx, charsubset=0x%04hx, length=%d\n",
-						args.charset, args.charsubset, args.msglen);
+		purple_debug_info("oscar", "Sending IM, charset=0x%04hx, length=%" G_GSIZE_FORMAT "\n", args.charset, args.msglen);
 		ret = aim_im_sendch1_ext(od, &args);
 		g_free((char *)args.msg);
 	}
@@ -3459,28 +3436,6 @@ static void oscar_set_dir(PurpleConnection *gc, const char *first, const char *m
 void oscar_set_idle(PurpleConnection *gc, int time) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	aim_srv_setidle(od, time);
-}
-
-static
-gchar *purple_prpl_oscar_convert_to_infotext(const gchar *str, gsize *ret_len, char **encoding)
-{
-	int charset = 0;
-	char *encoded = NULL;
-
-	charset = oscar_charset_check(str);
-	if (charset == AIM_CHARSET_UNICODE) {
-		encoded = g_convert(str, -1, "UTF-16BE", "UTF-8", NULL, ret_len, NULL);
-		*encoding = "unicode-2-0";
-	} else if (charset == AIM_CHARSET_LATIN_1) {
-		encoded = g_convert(str, -1, "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
-		*encoding = "iso-8859-1";
-	} else {
-		encoded = g_strdup(str);
-		*ret_len = strlen(str);
-		*encoding = "us-ascii";
-	}
-
-	return encoded;
 }
 
 void
@@ -3586,7 +3541,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	else if (rawinfo != NULL)
 	{
 		char *htmlinfo = purple_strdup_withhtml(rawinfo);
-		info = purple_prpl_oscar_convert_to_infotext(htmlinfo, &infolen, &info_encoding);
+		info = oscar_convert_to_best_encoding(htmlinfo, &infolen, NULL, &info_encoding);
 		g_free(htmlinfo);
 
 		if (infolen > od->rights.maxsiglen)
@@ -3619,7 +3574,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 
 			/* We do this for icq too so that they work for old third party clients */
 			linkified = purple_markup_linkify(status_html);
-			away = purple_prpl_oscar_convert_to_infotext(linkified, &awaylen, &away_encoding);
+			away = oscar_convert_to_best_encoding(linkified, &awaylen, NULL, &away_encoding);
 			g_free(linkified);
 
 			if (awaylen > od->rights.maxawaymsglen)
@@ -4592,9 +4547,9 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 	PurpleConversation *conv = NULL;
 	struct chat_connection *c = NULL;
 	char *buf, *buf2, *buf3;
-	guint16 charset, charsubset;
-	char *charsetstr = NULL;
-	int len;
+	guint16 charset;
+	char *charsetstr;
+	gsize len;
 
 	if (!(conv = purple_find_chat(gc, id)))
 		return -EINVAL;
@@ -4610,7 +4565,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 			  "You cannot send IM Images in AIM chats."),
 			PURPLE_MESSAGE_ERROR, time(NULL));
 
-	oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
+	buf2 = oscar_convert_to_best_encoding(buf, &len, &charset, &charsetstr);
 	/*
 	 * Evan S. suggested that maxvis really does mean "number of
 	 * visible characters" and not "number of bytes"
@@ -4626,10 +4581,11 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		buf = purple_strdup_withhtml(buf3);
 		g_free(buf3);
 
-		oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
+		buf2 = oscar_convert_to_best_encoding(buf, &len, &charset, &charsetstr);
 
 		if ((len > c->maxlen) || (len > c->maxvis)) {
-			purple_debug_warning("oscar", "Could not send %s because (%i > maxlen %i) or (%i > maxvis %i)\n",
+			purple_debug_warning("oscar",
+					"Could not send %s because (%" G_GSIZE_FORMAT " > maxlen %i) or (%" G_GSIZE_FORMAT " > maxvis %i)\n",
 					buf2, len, c->maxlen, len, c->maxvis);
 			g_free(buf);
 			g_free(buf2);
@@ -4640,12 +4596,6 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 				message, buf2);
 	}
 
-	if (charset == AIM_CHARSET_ASCII)
-		charsetstr = "us-ascii";
-	else if (charset == AIM_CHARSET_UNICODE)
-		charsetstr = "unicode-2-0";
-	else if (charset == AIM_CHARSET_LATIN_1)
-		charsetstr = "iso-8859-1";
 	aim_chat_send_im(od, c->conn, 0, buf2, len, charsetstr, "en");
 	g_free(buf2);
 	g_free(buf);

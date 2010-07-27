@@ -348,30 +348,8 @@ static int aim_im_paraminfo(OscarData *od, FlapConnection *conn, aim_module_t *m
  *
  * Possible flags:
  *   AIM_IMFLAGS_AWAY  -- Marks the message as an autoresponse
- *   AIM_IMFLAGS_ACK   -- Requests that the server send an ack
- *                        when the message is received (of type SNAC_FAMILY_ICBM/0x000c)
  *   AIM_IMFLAGS_OFFLINE--If destination is offline, store it until they are
  *                        online (probably ICQ only).
- *
- * Generally, you should use the lowest encoding possible to send
- * your message.  If you only use basic punctuation and the generic
- * Latin alphabet, use ASCII7 (no flags).  If you happen to use non-ASCII7
- * characters, but they are all clearly defined in ISO-8859-1, then
- * use that.  Keep in mind that not all characters in the PC ASCII8
- * character set are defined in the ISO standard. For those cases (most
- * notably when the (r) symbol is used), you must use the full UNICODE
- * encoding for your message.  In UNICODE mode, _all_ characters must
- * occupy 16bits, including ones that are not special.  (Remember that
- * the first 128 UNICODE symbols are equivalent to ASCII7, however they
- * must be prefixed with a zero high order byte.)
- *
- * I strongly discourage the use of UNICODE mode, mainly because none
- * of the clients I use can parse those messages (and besides that,
- * wchars are difficult and non-portable to handle in most UNIX environments).
- * If you really need to include special characters, use the HTML UNICODE
- * entities.  These are of the form &#2026; where 2026 is the hex
- * representation of the UNICODE index (in this case, UNICODE
- * "Horizontal Ellipsis", or 133 in in ASCII8).
  *
  * Implementation note:  Since this is one of the most-used functions
  * in all of libfaim, it is written with performance in mind.  As such,
@@ -390,7 +368,6 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	ByteStream data;
 	guchar cookie[8];
 	int msgtlvlen;
-	static const guint8 deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM)))
 		return -EINVAL;
@@ -398,37 +375,17 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	if (!args)
 		return -EINVAL;
 
-	if (args->flags & AIM_IMFLAGS_MULTIPART) {
-		if (args->mpmsg->numparts == 0)
-			return -EINVAL;
-	} else {
-		if (!args->msg || (args->msglen <= 0))
-			return -EINVAL;
+	if (!args->msg || (args->msglen <= 0))
+		return -EINVAL;
 
-		if (args->msglen > MAXMSGLEN)
-			return -E2BIG;
-	}
+	if (args->msglen > MAXMSGLEN)
+		return -E2BIG;
 
 	/* Painfully calculate the size of the message TLV */
 	msgtlvlen = 1 + 1; /* 0501 */
-
-	if (args->flags & AIM_IMFLAGS_CUSTOMFEATURES)
-		msgtlvlen += 2 + args->featureslen;
-	else
-		msgtlvlen += 2 + sizeof(deffeatures);
-
-	if (args->flags & AIM_IMFLAGS_MULTIPART) {
-		aim_mpmsg_section_t *sec;
-
-		for (sec = args->mpmsg->parts; sec; sec = sec->next) {
-			msgtlvlen += 2 /* 0101 */ + 2 /* block len */;
-			msgtlvlen += 4 /* charset */ + sec->datalen;
-		}
-
-	} else {
-		msgtlvlen += 2 /* 0101 */ + 2 /* block len */;
-		msgtlvlen += 4 /* charset */ + args->msglen;
-	}
+	msgtlvlen += 2 + args->featureslen;
+	msgtlvlen += 2 /* 0101 */ + 2 /* block len */;
+	msgtlvlen += 4 /* charset */ + args->msglen;
 
 	byte_stream_new(&data, msgtlvlen + 128);
 
@@ -444,52 +401,31 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 
 	/* Features TLV (type 0x0501) */
 	byte_stream_put16(&data, 0x0501);
-	if (args->flags & AIM_IMFLAGS_CUSTOMFEATURES) {
-		byte_stream_put16(&data, args->featureslen);
-		byte_stream_putraw(&data, args->features, args->featureslen);
-	} else {
-		byte_stream_put16(&data, sizeof(deffeatures));
-		byte_stream_putraw(&data, deffeatures, sizeof(deffeatures));
-	}
+	byte_stream_put16(&data, args->featureslen);
+	byte_stream_putraw(&data, args->features, args->featureslen);
 
-	if (args->flags & AIM_IMFLAGS_MULTIPART) {
-		aim_mpmsg_section_t *sec;
+	/* Insert message text in a TLV (type 0x0101) */
+	byte_stream_put16(&data, 0x0101);
 
-		/* Insert each message part in a TLV (type 0x0101) */
-		for (sec = args->mpmsg->parts; sec; sec = sec->next) {
-			byte_stream_put16(&data, 0x0101);
-			byte_stream_put16(&data, sec->datalen + 4);
-			byte_stream_put16(&data, sec->charset);
-			byte_stream_put16(&data, sec->charsubset);
-			byte_stream_putraw(&data, (guchar *)sec->data, sec->datalen);
-		}
+	/* Message block length */
+	byte_stream_put16(&data, args->msglen + 0x04);
 
-	} else {
+	/* Character set */
+	byte_stream_put16(&data, args->charset);
+	/* Character subset -- we always use 0 here */
+	byte_stream_put16(&data, 0x0);
 
-		/* Insert message text in a TLV (type 0x0101) */
-		byte_stream_put16(&data, 0x0101);
-
-		/* Message block length */
-		byte_stream_put16(&data, args->msglen + 0x04);
-
-		/* Character set */
-		byte_stream_put16(&data, args->charset);
-		byte_stream_put16(&data, args->charsubset);
-
-		/* Message.  Not terminated */
-		byte_stream_putraw(&data, (guchar *)args->msg, args->msglen);
-	}
+	/* Message.  Not terminated */
+	byte_stream_putraw(&data, (guchar *)args->msg, args->msglen);
 
 	/* Set the Autoresponse flag */
 	if (args->flags & AIM_IMFLAGS_AWAY) {
 		byte_stream_put16(&data, 0x0004);
 		byte_stream_put16(&data, 0x0000);
 	} else {
-		if (args->flags & AIM_IMFLAGS_ACK) {
-			/* Set the Request Acknowledge flag */
-			byte_stream_put16(&data, 0x0003);
-			byte_stream_put16(&data, 0x0000);
-		}
+		/* Set the Request Acknowledge flag */
+		byte_stream_put16(&data, 0x0003);
+		byte_stream_put16(&data, 0x0000);
 
 		if (args->flags & AIM_IMFLAGS_OFFLINE) {
 			/* Allow this message to be queued as an offline message */
@@ -531,33 +467,6 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	aim_cleansnacs(od, 60);
 
 	return 0;
-}
-
-/*
- * Simple wrapper for aim_im_sendch1_ext()
- *
- * You cannot use aim_send_im if you need the HASICON flag.  You must
- * use aim_im_sendch1_ext directly for that.
- *
- * aim_send_im also cannot be used if you require UNICODE messages, because
- * that requires an explicit message length.  Use aim_im_sendch1_ext().
- *
- */
-int aim_im_sendch1(OscarData *od, const char *bn, guint16 flags, const char *msg)
-{
-	struct aim_sendimext_args args;
-
-	args.destbn = bn;
-	args.flags = flags;
-	args.msg = msg;
-	args.msglen = strlen(msg);
-	args.charset = 0x0000;
-	args.charsubset = 0x0000;
-
-	/* Make these don't get set by accident -- they need aim_im_sendch1_ext */
-	args.flags &= ~(AIM_IMFLAGS_CUSTOMFEATURES | AIM_IMFLAGS_HASICON | AIM_IMFLAGS_MULTIPART);
-
-	return aim_im_sendch1_ext(od, &args);
 }
 
 /*
@@ -1352,75 +1261,6 @@ int aim_im_sendch4(OscarData *od, const char *bn, guint16 type, const char *mess
 }
 
 /*
- * XXX - I don't see when this would ever get called...
- */
-static int outgoingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
-{
-	int ret = 0;
-	aim_rxcallback_t userfunc;
-	guchar cookie[8];
-	guint16 channel;
-	GSList *tlvlist;
-	char *bn;
-	int bnlen;
-	guint16 icbmflags = 0;
-	guint8 flag1 = 0, flag2 = 0;
-	gchar *msg = NULL;
-	aim_tlv_t *msgblock;
-
-	/* ICBM Cookie. */
-	aim_icbm_makecookie(cookie);
-
-	/* Channel ID */
-	channel = byte_stream_get16(bs);
-
-	if (channel != 0x01) {
-		purple_debug_misc("oscar", "icbm: ICBM received on unsupported channel.  Ignoring. (chan = %04x)\n", channel);
-		return 0;
-	}
-
-	bnlen = byte_stream_get8(bs);
-	bn = byte_stream_getstr(bs, bnlen);
-
-	tlvlist = aim_tlvlist_read(bs);
-
-	if (aim_tlv_gettlv(tlvlist, 0x0003, 1))
-		icbmflags |= AIM_IMFLAGS_ACK;
-	if (aim_tlv_gettlv(tlvlist, 0x0004, 1))
-		icbmflags |= AIM_IMFLAGS_AWAY;
-
-	if ((msgblock = aim_tlv_gettlv(tlvlist, 0x0002, 1))) {
-		ByteStream mbs;
-		int featurelen, msglen;
-
-		byte_stream_init(&mbs, msgblock->value, msgblock->length);
-
-		byte_stream_get8(&mbs);
-		byte_stream_get8(&mbs);
-		for (featurelen = byte_stream_get16(&mbs); featurelen; featurelen--)
-			byte_stream_get8(&mbs);
-		byte_stream_get8(&mbs);
-		byte_stream_get8(&mbs);
-
-		msglen = byte_stream_get16(&mbs) - 4; /* final block length */
-
-		flag1 = byte_stream_get16(&mbs);
-		flag2 = byte_stream_get16(&mbs);
-
-		msg = byte_stream_getstr(&mbs, msglen);
-	}
-
-	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, channel, bn, msg, icbmflags, flag1, flag2);
-
-	g_free(bn);
-	g_free(msg);
-	aim_tlvlist_free(tlvlist);
-
-	return ret;
-}
-
-/*
  * Ahh, the joys of nearly ridiculous over-engineering.
  *
  * Not only do AIM ICBM's support multiple channels.  Not only do they
@@ -1623,8 +1463,6 @@ static int incomingim_ch1_parsemsgs(OscarData *od, aim_userinfo_t *userinfo, gui
 		mpmsg_addsection(od, &args->mpmsg, flag1, flag2, msgbuf, msglen);
 
 	} /* while */
-
-	args->icbmflags |= AIM_IMFLAGS_MULTIPART; /* always set */
 
 	/*
 	 * Clients that support multiparts should never use args->msg, as it
@@ -2639,16 +2477,10 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 }
 
 /*
- * Subtype 0x000c - Receive an ack after sending an ICBM.
- *
- * You have to have send the message with the AIM_IMFLAGS_ACK flag set
- * (TLV t(0003)).  The ack contains the ICBM header of the message you
- * sent.
- *
+ * Subtype 0x000c - Receive an ack after sending an ICBM. The ack contains the ICBM header of the message you sent.
  */
 static int msgack(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	aim_rxcallback_t userfunc;
 	guint16 ch;
 	guchar *cookie;
 	char *bn;
@@ -2658,8 +2490,7 @@ static int msgack(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFr
 	ch = byte_stream_get16(bs);
 	bn = byte_stream_getstr(bs, byte_stream_get8(bs));
 
-	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, ch, bn);
+	purple_debug_info("oscar", "Sent message to %s.\n", bn);
 
 	g_free(bn);
 	g_free(cookie);
@@ -2952,8 +2783,6 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 		return error(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0005)
 		return aim_im_paraminfo(od, conn, mod, frame, snac, bs);
-	else if (snac->subtype == 0x0006)
-		return outgoingim(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0007)
 		return incomingim(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x000a)
