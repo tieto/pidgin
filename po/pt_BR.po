@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-30 23:16-0400\n"
+"POT-Creation-Date: 2010-07-27 01:18-0400\n"
 "PO-Revision-Date: 2009-08-29 14:35-0300\n"
 "Last-Translator: Rodrigo Luiz Marques Flores <mail@rodrigoflores.org>\n"
 "Language-Team: Rodrigo Luiz Marques Flores <mail@rodrigoflores.org>\n"
@@ -61,11 +61,23 @@ msgstr ""
 msgid "Error"
 msgstr "Erro"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "A conta não foi adicionada"
+
 msgid "Account was not added"
 msgstr "A conta não foi adicionada"
 
 msgid "Username of an account must be non-empty."
 msgstr "O nome de usuário de uma conta não pode ser vazio."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "Notificar ao receber novos emails"
@@ -1262,6 +1274,10 @@ msgstr "Outros falam no bate-papo"
 msgid "Someone says your username in chat"
 msgstr "Alguém diz seu nome num bate-papo"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "Ativação necessária"
+
 msgid "GStreamer Failure"
 msgstr "Falha no GStreamer"
 
@@ -1557,7 +1573,7 @@ msgstr ""
 msgid "Online"
 msgstr "Conectado"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Desconectado"
 
@@ -1677,8 +1693,10 @@ msgid ""
 "currently trusted."
 msgstr ""
 
-msgid "The certificate is not valid yet."
-msgstr "O certificado ainda não é válido."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "O certificado expirou e não deve ser considerado válido."
@@ -3850,6 +3868,19 @@ msgstr "O servidor retornou uma identificação inválida"
 
 msgid "Server thinks authentication is complete, but client does not"
 msgstr ""
+
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr ""
+"O servidor requer autenticação em texto puro sobre um fluxo não-criptografado"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"%s requer autenticação via texto puro sobre uma conexão não criptografada. "
+"Deseja permitir isso e continuar a autenticação?"
 
 msgid "SASL authentication failed"
 msgstr "Autenticação SASL mal sucedida"
@@ -6034,7 +6065,7 @@ msgstr "Perfil"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
-msgid "Your MXitId"
+msgid "Your UID"
 msgstr ""
 
 #. pin
@@ -6047,6 +6078,7 @@ msgid "Verify PIN"
 msgstr ""
 
 #. display name
+#. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "Sobrenome"
@@ -6120,7 +6152,7 @@ msgid "Connecting..."
 msgstr "Conectando"
 
 #, fuzzy
-msgid "The nick name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "A chave SecurID digitada é inválida"
 
 #, fuzzy
@@ -6128,13 +6160,8 @@ msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "A chave SecurID digitada é inválida"
 
 #. mxit login name
-msgid "MXit Login Name"
+msgid "MXit ID"
 msgstr ""
-
-#. nick name (required)
-#, fuzzy
-msgid "Nick Name"
-msgstr "Apelido"
 
 #. show the form to the user to complete
 #, fuzzy
@@ -6164,10 +6191,10 @@ msgstr ""
 msgid "Invalid country selected. Please try again."
 msgstr ""
 
-msgid "Username is not registered. Please register first."
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
 
-msgid "Username is already registered. Please choose another username."
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 
 #, fuzzy
@@ -6224,8 +6251,8 @@ msgid "Hidden Number"
 msgstr "Nome do meio"
 
 #, fuzzy
-msgid "Your Mobile Number..."
-msgstr "Definir número de telefone móvel..."
+msgid "Your MXit ID..."
+msgstr "ID do Yahoo..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6252,6 +6279,15 @@ msgstr "Bilhete inválido"
 #, fuzzy
 msgid "_Room Name:"
 msgstr "Sa_la:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "Você tem email!"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "Conectado"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -8074,11 +8110,11 @@ msgstr ""
 msgid "Invalid SNAC"
 msgstr "SNAC inválido"
 
-msgid "Rate to host"
-msgstr "Taxa para host"
+msgid "Server rate limit exceeded"
+msgstr ""
 
-msgid "Rate to client"
-msgstr "Taxa para cliente"
+msgid "Client rate limit exceeded"
+msgstr ""
 
 msgid "Service unavailable"
 msgstr "Serviço indisponível"
@@ -10347,7 +10383,8 @@ msgstr "Locale da sala de bate-papo"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorar convites para bate-papos e conferências"
 
-msgid "Use account proxy for SSL connections"
+#, fuzzy
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "Use proxy da conta para conexões SSL"
 
 msgid "Chat room list URL"
@@ -13239,11 +13276,13 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Saindo porque outro cliente libpurple já está sendo executado.\n"
 
-msgid "/_Media"
+#, fuzzy
+msgid "_Media"
 msgstr "/_Mídia"
 
-msgid "/Media/_Hangup"
-msgstr "/Mídia/Colocar no gancho"
+#, fuzzy
+msgid "_Hangup"
+msgstr "Colocar no gancho"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -14072,10 +14111,6 @@ msgstr "Texto de Atalho"
 
 msgid "Custom Smiley Manager"
 msgstr "Gerenciador de emoticons personalizados"
-
-#, fuzzy
-msgid "Attention received"
-msgstr "Ativação necessária"
 
 msgid "Select Buddy Icon"
 msgstr "Selecionar Ícone do amigo"
@@ -15582,6 +15617,30 @@ msgstr "Visite a página da web do Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Você não tem permissão para desinstalar essa aplicação."
+
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "O certificado ainda não é válido."
+
+#, fuzzy
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "A chave SecurID digitada é inválida"
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "Apelido"
+
+#, fuzzy
+#~ msgid "Your Mobile Number..."
+#~ msgstr "Definir número de telefone móvel..."
+
+#~ msgid "Rate to host"
+#~ msgstr "Taxa para host"
+
+#~ msgid "Rate to client"
+#~ msgstr "Taxa para cliente"
+
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/Mídia/Colocar no gancho"
 
 #~ msgid "Unknown reason."
 #~ msgstr "Motivo desconhecido."

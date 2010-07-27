@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin.ml\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-17 20:53-0400\n"
+"POT-Creation-Date: 2010-07-27 01:18-0400\n"
 "PO-Revision-Date: 2010-04-09 11:28+0530\n"
 "Last-Translator: \n"
 "Language-Team:  <en@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -60,11 +61,23 @@ msgstr ""
 msgid "Error"
 msgstr "പിശക്"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "അക്കൌണ്ട് ചേര്‍ത്തിട്ടില്ല"
+
 msgid "Account was not added"
 msgstr "അക്കൌണ്ട് ചേര്‍ത്തിട്ടില്ല"
 
 msgid "Username of an account must be non-empty."
 msgstr "ഒരു അക്കൌണ്ടിന്റെ ഉപയോക്തൃനാമം ശൂന്യമായിരിക്കരുതു്."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "പുതിയ മെയില്‍ അറിയിപ്പുകള്‍"
@@ -1242,6 +1255,10 @@ msgstr "ചാറ്റില്‍ മറ്റുള്ളവരും പങ�
 msgid "Someone says your username in chat"
 msgstr "ആരോ നിങ്ങളുടെ ഉപയോക്തൃനാമം ചാറ്റില്‍ പറയുന്നു"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "ആക്ടിവേഷന്‍ ആവശ്യമുണ്ടു്"
+
 msgid "GStreamer Failure"
 msgstr "GStreamer പരാജയം"
 
@@ -1334,6 +1351,7 @@ msgstr "അവസ്ഥ വെട്ടി നീക്കുക"
 msgid "Saved Statuses"
 msgstr "സൂക്ഷിച്ചിട്ടുള്ള അവസ്ഥകള്‍"
 
+#. title
 msgid "Title"
 msgstr "തലക്കെട്ട്"
 
@@ -1529,7 +1547,7 @@ msgstr "യുആര്‍എല്ലുള്ള ഒരു സന്ദേശ�
 msgid "Online"
 msgstr "ഓണ്‍ലൈന്‍"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "ഓഫ്‌ലൈന്‍"
 
@@ -1649,8 +1667,10 @@ msgstr ""
 "സര്‍ട്ടിഫിക്കേറ്റ് വിശ്വസനീയമല്ല, കാരണം ഇതുറപ്പാക്കുന്ന ഒരു സര്‍ട്ടിഫിക്കേറ്റും ഇപ്പോള്‍ "
 "വിശ്വസനീയമല്ല."
 
-msgid "The certificate is not valid yet."
-msgstr "സര്‍ട്ടിഫിക്കേറ്റ് ഇതു് വരെ സാധുതയുള്ളതല്ല."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "സര്‍ട്ടിഫിക്കേറ്റിന്റെ കാലാവധി കഴിഞ്ഞിരിക്കുന്നു, അതുകൊണ്ടു് സാധുതയുമില്ല."
@@ -1888,7 +1908,6 @@ msgstr "%s പ്യൂണികോഡിലേക്ക് വേര്‍ത�
 msgid "Thread creation failure: %s"
 msgstr "ത്രെഡ് ഉണ്ടാക്കുന്നതില്‍ പരാജയപ്പെട്ടു: %s"
 
-#. Data is assumed to be the destination bn
 msgid "Unknown reason"
 msgstr "അപരിചിതമായ കാരണം"
 
@@ -3153,6 +3172,9 @@ msgid "UIN"
 msgstr "UIN"
 
 #. first name
+#. purple_notify_user_info_add_pair( info, _( "Hidden Number" ), profile->hidden ? _( "Yes" ) : _( "No" ) );
+#. optional information
+#. purple_notify_user_info_add_pair( info, _( "Title" ), profile->title );
 msgid "First Name"
 msgstr "ആദ്യ പേരു്"
 
@@ -3788,6 +3810,20 @@ msgstr "സര്‍വറില്‍ നിന്നും അസാധുവ�
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "ആധികാരികത ഉറപ്പാക്കല്‍ പൂര്‍ത്തിയായതായി സര്‍വര്‍ കരുതുന്നു, പക്ഷേ ക്ലയന്റ് എതിരാണു്"
 
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr ""
+"എന്‍ക്രിപ്റ്റ് ചെയ്തിട്ടില്ലാത്ത ഒരു സ്ട്രീമില്‍ സര്‍വറിനു് പ്ലെയിന്‍ടെക്സ്റ്റ് ആധികാരികത ഉറപ്പാക്കല്‍ "
+"ആവശ്യമുണ്ടു്"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"എന്‍ക്രിപ്റ്റ് ചെയ്യാത്ത ഒരു കണക്ഷനില്‍ %s-നു് പ്ലെയിന്‍ടെക്സ്റ്റ് ആധികാരികത ഉറപ്പാക്കല്‍ മാര്‍ഗ്ഗം "
+"ആവശ്യമുണ്ടു്. ഇതു് അനുവദിച്ചു് മുന്നോട്ട് തുടരണമോ?"
+
 msgid "SASL authentication failed"
 msgstr "SASL ആധികാരികത ഉറപ്പാക്കല്‍ പരാജയപ്പെട്ടു"
 
@@ -3894,6 +3930,7 @@ msgstr "പ്രദേശം"
 msgid "Postal Code"
 msgstr "പോസ്റ്റല്‍ കോഡ്"
 
+#. purple_notify_user_info_add_pair( info, _( "Email" ), profile->email );
 msgid "Country"
 msgstr "രാജ്യം"
 
@@ -3908,8 +3945,6 @@ msgstr "സ്ഥാപനത്തിന്റെ പേരു്"
 msgid "Organization Unit"
 msgstr "ഓര്‍ഗൈനേസേഷന്‍ യൂണിറ്റ്"
 
-#. title
-#. optional information
 msgid "Job Title"
 msgstr "ജോലിയുടെ പേരു്"
 
@@ -3917,6 +3952,7 @@ msgid "Role"
 msgstr "നിയമനം"
 
 #. birthday
+#. birthday (required)
 msgid "Birthday"
 msgstr "പിറന്നാള്‍"
 
@@ -5699,6 +5735,10 @@ msgstr "HTTP മാര്‍ഗ്ഗത്തിനുള്ള സര്‍വ
 msgid "Show custom smileys"
 msgstr "ഇഷ്ടമുള്ള സ്മൈലികള്‍ കാണിക്കുക"
 
+#, fuzzy
+msgid "Allow direct connections"
+msgstr "കണക്ഷന്‍ ഉണ്ടാക്കുവാന്‍ സാധ്യമല്ല"
+
 msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: nudge a user to get their attention"
 
@@ -5912,7 +5952,11 @@ msgstr "പ്രൊഫൈല്‍"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "നിങ്ങളുടെ പ്രൊഫൈല്‍ വിവരം ഇതു് വരെ ലഭ്യമായിട്ടില്ല. ദയവായി പിന്നീടു് വീണ്ടും ശ്രമിക്കുക."
 
+msgid "Your UID"
+msgstr ""
+
 #. pin
+#. pin (required)
 msgid "PIN"
 msgstr "പിന്‍"
 
@@ -5920,6 +5964,7 @@ msgid "Verify PIN"
 msgstr "പിന്‍ ഉറപ്പാക്കുക"
 
 #. display name
+#. nick name (required)
 msgid "Display Name"
 msgstr "കാണിക്കേണ്ട പേരു്"
 
@@ -5980,19 +6025,16 @@ msgstr ""
 msgid "Connecting..."
 msgstr "കണക്ട് ചെയ്യുന്നു..."
 
-msgid "The nick name you entered is invalid."
-msgstr "നിങ്ങള്‍ നല്‍കിയ വിളിപ്പേരു് തെറ്റാണു്."
+#, fuzzy
+msgid "The Display Name you entered is invalid."
+msgstr "നിങ്ങള്‍ നല്‍കിയ പേരു് തെറ്റാണു്."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "നിങ്ങള്‍ നല്‍കിയ പിന്‍ വ്യാപ്തി തെറ്റാണു് [7-10]."
 
 #. mxit login name
-msgid "MXit Login Name"
-msgstr "MXit ലോഗിന്‍ നാമം"
-
-#. nick name
-msgid "Nick Name"
-msgstr "വിളിപ്പേരു്"
+msgid "MXit ID"
+msgstr ""
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6020,10 +6062,12 @@ msgstr "നിങ്ങളുടെ സെഷന്റെ കാലാവധി 
 msgid "Invalid country selected. Please try again."
 msgstr "തെറ്റായ രാജ്യം തെരഞ്ഞെടുത്തിരിക്കുന്നു. ദയവായി പിന്നീടു് ശ്രമിക്കുക."
 
-msgid "Username is not registered. Please register first."
+#, fuzzy
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr "ഉപയോക്തൃനാമം രജിസ്ടര്‍ ചെയ്തിട്ടില്ല. ദയവായി ആദ്യം രജിസ്ടര്‍ ചെയ്യുക."
 
-msgid "Username is already registered. Please choose another username."
+#, fuzzy
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr "ഉപയോക്തൃനാമം നിലവില്‍ രജിസ്ടര്‍ ചെയ്തിരിക്കുന്നു. ദയവായി മറ്റൊരെണ്ണം തെരഞ്ഞെടുക്കുക."
 
 msgid "Internal error. Please try again later."
@@ -6035,7 +6079,7 @@ msgstr "നിങ്ങള്‍ സെക്യൂരിറ്റി കോഡ�
 msgid "Security Code"
 msgstr "സെക്യൂരിറ്റി കോഡ്"
 
-#. ask for input
+#. ask for input (required)
 msgid "Enter Security Code"
 msgstr "സെക്യൂരിറ്റി കോഡ് നല്‍കുക"
 
@@ -6061,11 +6105,17 @@ msgstr "മെനു ലഭ്യമാക്കുന്നു..."
 msgid "Status Message"
 msgstr "അവസ്ഥ സന്ദേശം"
 
+#, fuzzy
+msgid "Rejection Message"
+msgstr "ലഭിച്ച സന്ദേശങ്ങള്‍"
+
+#. hidden number
 msgid "Hidden Number"
 msgstr "അദൃശ്യമായ നംബര്‍"
 
-msgid "Your Mobile Number..."
-msgstr "നിങ്ങളുടെ മൊബൈല്‍ നംബര്‍..."
+#, fuzzy
+msgid "Your MXit ID..."
+msgstr "യാഹൂ വിലാസം..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6077,6 +6127,28 @@ msgstr "HTTP വഴി കണക്ട് ചെയ്യുന്നു"
 
 msgid "Enable splash-screen popup"
 msgstr "സ്പ്ലാഷ്-സ്ക്രീന്‍ പോപ്പപ്പ് പ്രവര്‍ത്തന സജ്ജമാക്കുക"
+
+#. you were kicked
+#, fuzzy
+msgid "You have been kicked from this MultiMX."
+msgstr "നിങ്ങളെ പുറത്തു് കളഞ്ഞിരിക്കുന്നു: (%s)"
+
+#, fuzzy
+msgid "was kicked"
+msgstr "തെറ്റായ ടിക്കറ്റ്"
+
+#, fuzzy
+msgid "_Room Name:"
+msgstr "_റൂം:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "നിങ്ങള്‍ക്കു് മെയിലുണ്ടു്!"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "ഓണ്‍ലൈന്‍"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6836,6 +6908,63 @@ msgstr "ചാറ്റ് റൂമില്‍ ചേരുവാന്‍ സ
 msgid "Invalid chat room name"
 msgstr "ചാറ്റ് റൂമിനു് തെറ്റായ പേരു്"
 
+msgid "Invalid error"
+msgstr "തെറ്റായ പിശക്"
+
+msgid "Cannot receive IM due to parental controls"
+msgstr "ചില നിയന്ത്രണങ്ങള്‍ കാരണം IM ലഭിക്കുവാന്‍ സാധ്യമായില്ല"
+
+msgid "Cannot send SMS without accepting terms"
+msgstr "നിബന്ധനകള്‍ സ്വീകരിക്കാതെ എസ്എംഎസ് അയയ്ക്കുവാന്‍ സാധ്യമല്ല"
+
+msgid "Cannot send SMS"
+msgstr "എസ്എംഎസ് അയയ്ക്കുവാന്‍ സാധ്യമല്ല"
+
+#. SMS_WITHOUT_DISCLAIMER is weird
+msgid "Cannot send SMS to this country"
+msgstr "ഈ രാജ്യത്തേക്കു് എസ്എംഎസ് അയയ്ക്കുവാന്‍ സാധ്യമല്ല"
+
+#. Undocumented
+msgid "Cannot send SMS to unknown country"
+msgstr "അപരിചിതമായ രാജ്യത്തേക്കു് എസ്എംഎസ് അയയ്ക്കുവാന്‍ സാധ്യമല്ല"
+
+msgid "Bot accounts cannot initiate IMs"
+msgstr "ബോട്ട് അക്കൌണ്ടുകള്‍ക്കു് IM ആരംഭിക്കുവാന്‍ സാധ്യമല്ല"
+
+msgid "Bot account cannot IM this user"
+msgstr "ബോട്ട് അക്കൌണ്ടിനു് ഈ ഉപയോക്താവുമായി ചാറ്റ് ചെയ്യുവാന്‍ സാധ്യമല്ല"
+
+msgid "Bot account reached IM limit"
+msgstr "ബോട്ട് അക്കൌണ്ട് IM പരിധി എത്തിയിരിക്കുന്നു"
+
+msgid "Bot account reached daily IM limit"
+msgstr "ബോട്ട് അക്കൌണ്ട് IM-ന്റെ ഓരോ ദിവസമുള്ള പരിധി എത്തിയിരിക്കുന്നു"
+
+msgid "Bot account reached monthly IM limit"
+msgstr "ബോട്ട് അക്കൌണ്ട് IM-ന്റെ ഓരോ മാസമുള്ള പരിധി എത്തിയിരിക്കുന്നു"
+
+msgid "Unable to receive offline messages"
+msgstr "ഓഫ്‌ലൈന്‍ സന്ദേശങ്ങള്‍ ലഭിക്കുവാന്‍ സാധ്യമല്ല"
+
+msgid "Offline message store full"
+msgstr "ഓഫ്‌ലൈന്‍ സന്ദേശത്തിനുള്ള സ്റ്റോര്‍ പൂര്‍ണ്ണം"
+
+#, c-format
+msgid "Unable to send message: %s (%s)"
+msgstr "സന്ദേശം അയ്ക്കുവാന്‍ സാധ്യമല്ല: %s (%s)"
+
+#, c-format
+msgid "Unable to send message: %s"
+msgstr "സന്ദേശം അയ്ക്കുവാന്‍ സാധ്യമല്ല: %s "
+
+#, c-format
+msgid "Unable to send message to %s: %s (%s)"
+msgstr "%s-ലേക്കു് സന്ദേശം അയ്ക്കുവാന്‍ സാധ്യമല്ല: %s (%s)"
+
+#, c-format
+msgid "Unable to send message to %s: %s"
+msgstr "%s-ലേക്കു് സന്ദേശം അയ്ക്കുവാന്‍ സാധ്യമല്ല: %s "
+
 msgid "Thinking"
 msgstr ""
 
@@ -7001,116 +7130,6 @@ msgstr ""
 #, c-format
 msgid "File %s is %s, which is larger than the maximum size of %s."
 msgstr "ഫയല്‍ %s %s ആണു്, ഇതു് ഏറ്റവും വലിയ വ്യാപ്തിയായ %s-നേക്കാള്‍ വലുതാണു്."
-
-msgid "Invalid error"
-msgstr "തെറ്റായ പിശക്"
-
-msgid "Invalid SNAC"
-msgstr "തെറ്റായ SNAC"
-
-msgid "Rate to host"
-msgstr "ഹോസ്റ്റിലേക്കുള്ള റേറ്റ്"
-
-msgid "Rate to client"
-msgstr "ക്ലയന്റിലേക്കുള്ള റേറ്റ്"
-
-msgid "Service unavailable"
-msgstr "സര്‍വീസ് ലഭ്യമല്ല"
-
-msgid "Service not defined"
-msgstr "സര്‍വീസ് നിഷ്കര്‍ഷിച്ചിട്ടില്ല"
-
-msgid "Obsolete SNAC"
-msgstr "നീക്കം ചെയ്ത SNAC"
-
-msgid "Not supported by host"
-msgstr "ഹോസ്റ്റ് പിന്തുണയ്ക്കുന്നില്ല"
-
-msgid "Not supported by client"
-msgstr "ക്ലയന്റ് പിന്തുണയ്ക്കുന്നില്ല"
-
-msgid "Refused by client"
-msgstr "ക്ലയന്റ് നിഷേധിച്ചിരിക്കുന്നു"
-
-msgid "Reply too big"
-msgstr "മറുപടി വളരെ വലുതു്"
-
-msgid "Responses lost"
-msgstr "മറുപടികള്‍ നഷ്ടമായി"
-
-msgid "Request denied"
-msgstr "ആവശ്യം നിഷേധിച്ചിരിക്കുന്നു"
-
-msgid "Busted SNAC payload"
-msgstr "ബസ്റ്റഡ് SNAC പേലോഡ്"
-
-msgid "Insufficient rights"
-msgstr "മതിയായ അനുമതികള്‍ ലഭ്യമല്ല"
-
-msgid "In local permit/deny"
-msgstr "ലോക്കല്‍ permit/deny"
-
-msgid "Warning level too high (sender)"
-msgstr "മുന്നറിയിപ്പു് നിലവാരം വളരെ വലുതു് (അയച്ചയാള്‍)"
-
-msgid "Warning level too high (receiver)"
-msgstr "മുന്നറിയിപ്പു് നിലവാരം വളരെ വലുതു് (ലഭിച്ചയാള്‍)"
-
-msgid "User temporarily unavailable"
-msgstr "ഉപയോക്താവു് തല്‍ക്കാലത്തേക്കു് ലഭ്യമല്ല"
-
-msgid "No match"
-msgstr "പൊരുത്തമില്ല"
-
-msgid "List overflow"
-msgstr "ഓവര്‍ഫ്ലോ ലഭ്യമാക്കുക"
-
-msgid "Request ambiguous"
-msgstr "ആവശ്യം വ്യക്തമല്ല"
-
-msgid "Queue full"
-msgstr "ക്യൂ പൂര്‍ണ്ണം"
-
-msgid "Not while on AOL"
-msgstr "AOL-ല്‍ ഉള്ളപ്പോള്‍ സാധ്യമല്ല"
-
-msgid "Cannot receive IM due to parental controls"
-msgstr "ചില നിയന്ത്രണങ്ങള്‍ കാരണം IM ലഭിക്കുവാന്‍ സാധ്യമായില്ല"
-
-msgid "Cannot send SMS without accepting terms"
-msgstr "നിബന്ധനകള്‍ സ്വീകരിക്കാതെ എസ്എംഎസ് അയയ്ക്കുവാന്‍ സാധ്യമല്ല"
-
-msgid "Cannot send SMS"
-msgstr "എസ്എംഎസ് അയയ്ക്കുവാന്‍ സാധ്യമല്ല"
-
-#. SMS_WITHOUT_DISCLAIMER is weird
-msgid "Cannot send SMS to this country"
-msgstr "ഈ രാജ്യത്തേക്കു് എസ്എംഎസ് അയയ്ക്കുവാന്‍ സാധ്യമല്ല"
-
-#. Undocumented
-msgid "Cannot send SMS to unknown country"
-msgstr "അപരിചിതമായ രാജ്യത്തേക്കു് എസ്എംഎസ് അയയ്ക്കുവാന്‍ സാധ്യമല്ല"
-
-msgid "Bot accounts cannot initiate IMs"
-msgstr "ബോട്ട് അക്കൌണ്ടുകള്‍ക്കു് IM ആരംഭിക്കുവാന്‍ സാധ്യമല്ല"
-
-msgid "Bot account cannot IM this user"
-msgstr "ബോട്ട് അക്കൌണ്ടിനു് ഈ ഉപയോക്താവുമായി ചാറ്റ് ചെയ്യുവാന്‍ സാധ്യമല്ല"
-
-msgid "Bot account reached IM limit"
-msgstr "ബോട്ട് അക്കൌണ്ട് IM പരിധി എത്തിയിരിക്കുന്നു"
-
-msgid "Bot account reached daily IM limit"
-msgstr "ബോട്ട് അക്കൌണ്ട് IM-ന്റെ ഓരോ ദിവസമുള്ള പരിധി എത്തിയിരിക്കുന്നു"
-
-msgid "Bot account reached monthly IM limit"
-msgstr "ബോട്ട് അക്കൌണ്ട് IM-ന്റെ ഓരോ മാസമുള്ള പരിധി എത്തിയിരിക്കുന്നു"
-
-msgid "Unable to receive offline messages"
-msgstr "ഓഫ്‌ലൈന്‍ സന്ദേശങ്ങള്‍ ലഭിക്കുവാന്‍ സാധ്യമല്ല"
-
-msgid "Offline message store full"
-msgstr "ഓഫ്‌ലൈന്‍ സന്ദേശത്തിനുള്ള സ്റ്റോര്‍ പൂര്‍ണ്ണം"
 
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking with "
@@ -7459,8 +7478,8 @@ msgstr[0] ""
 "നിങ്ങള്‍ക്കു് %hu സന്ദേശം നഷ്ടമായി, കാരണം നിങ്ങളുടെ മുന്നറിയിപ്പു് പരിധി വളരെ കൂടുതലാണു്. അതു് %s-"
 "ല്‍ നിന്നുള്ളതാണു്."
 msgstr[1] ""
-"നിങ്ങള്‍ക്കു് %hu സന്ദേശങ്ങള്‍ നഷ്ടമായി, കാരണം നിങ്ങളുടെ മുന്നറിയിപ്പു് പരിധി വളരെ കൂടുതലാണു്. അതു് %"
-"s-ല്‍ നിന്നുള്ളതാണു്."
+"നിങ്ങള്‍ക്കു് %hu സന്ദേശങ്ങള്‍ നഷ്ടമായി, കാരണം നിങ്ങളുടെ മുന്നറിയിപ്പു് പരിധി വളരെ കൂടുതലാണു്. അതു് "
+"%s-ല്‍ നിന്നുള്ളതാണു്."
 
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
@@ -7469,27 +7488,8 @@ msgstr[0] "നിങ്ങള്‍ക്കു് %hu സന്ദേശം ന
 msgstr[1] "നിങ്ങള്‍ക്കു് %hu സന്ദേശങ്ങള്‍ നഷ്ടമായി, അതു് %s-ല്‍ നിന്നുള്ളതാണു്. കാരണം അപരിചിതം."
 
 #, c-format
-msgid "Unable to send message: %s (%s)"
-msgstr "സന്ദേശം അയ്ക്കുവാന്‍ സാധ്യമല്ല: %s (%s)"
-
-#, c-format
-msgid "Unable to send message: %s"
-msgstr "സന്ദേശം അയ്ക്കുവാന്‍ സാധ്യമല്ല: %s "
-
-#, c-format
-msgid "Unable to send message to %s: %s (%s)"
-msgstr "%s-ലേക്കു് സന്ദേശം അയ്ക്കുവാന്‍ സാധ്യമല്ല: %s (%s)"
-
-#, c-format
-msgid "Unable to send message to %s: %s"
-msgstr "%s-ലേക്കു് സന്ദേശം അയ്ക്കുവാന്‍ സാധ്യമല്ല: %s "
-
-#, c-format
 msgid "User information not available: %s"
 msgstr "ഉപയോക്താവിനെപ്പറ്റിയുള്ള വിവരം ലഭ്യമല്ല: %s"
-
-msgid "Unknown reason."
-msgstr "അപരിചിതമായ കാരണം"
 
 msgid "Online Since"
 msgstr "എപ്പോള്‍ മുതല്‍ ഓണ്‍ലൈന്‍"
@@ -7907,6 +7907,75 @@ msgid ""
 msgstr ""
 "ഇതിനു് രണ്ടു കമ്പ്യൂട്ടറുകള്‍ തമ്മില്‍ നേരിട്ടുള്ള കണക്ഷന്‍ ആവശ്യമുണ്ടു്, കൂടാതെ IM ചിത്രങ്ങള്‍ക്കും "
 "ആവശ്യമാണു്. നിങ്ങളുടെ IP വിലാസം കാണിക്കുന്നതാണു്, അതിനാല്‍ പ്രത്യേകം ശ്രദ്ധിക്കുക."
+
+msgid "Invalid SNAC"
+msgstr "തെറ്റായ SNAC"
+
+msgid "Server rate limit exceeded"
+msgstr ""
+
+msgid "Client rate limit exceeded"
+msgstr ""
+
+msgid "Service unavailable"
+msgstr "സര്‍വീസ് ലഭ്യമല്ല"
+
+msgid "Service not defined"
+msgstr "സര്‍വീസ് നിഷ്കര്‍ഷിച്ചിട്ടില്ല"
+
+msgid "Obsolete SNAC"
+msgstr "നീക്കം ചെയ്ത SNAC"
+
+msgid "Not supported by host"
+msgstr "ഹോസ്റ്റ് പിന്തുണയ്ക്കുന്നില്ല"
+
+msgid "Not supported by client"
+msgstr "ക്ലയന്റ് പിന്തുണയ്ക്കുന്നില്ല"
+
+msgid "Refused by client"
+msgstr "ക്ലയന്റ് നിഷേധിച്ചിരിക്കുന്നു"
+
+msgid "Reply too big"
+msgstr "മറുപടി വളരെ വലുതു്"
+
+msgid "Responses lost"
+msgstr "മറുപടികള്‍ നഷ്ടമായി"
+
+msgid "Request denied"
+msgstr "ആവശ്യം നിഷേധിച്ചിരിക്കുന്നു"
+
+msgid "Busted SNAC payload"
+msgstr "ബസ്റ്റഡ് SNAC പേലോഡ്"
+
+msgid "Insufficient rights"
+msgstr "മതിയായ അനുമതികള്‍ ലഭ്യമല്ല"
+
+msgid "In local permit/deny"
+msgstr "ലോക്കല്‍ permit/deny"
+
+msgid "Warning level too high (sender)"
+msgstr "മുന്നറിയിപ്പു് നിലവാരം വളരെ വലുതു് (അയച്ചയാള്‍)"
+
+msgid "Warning level too high (receiver)"
+msgstr "മുന്നറിയിപ്പു് നിലവാരം വളരെ വലുതു് (ലഭിച്ചയാള്‍)"
+
+msgid "User temporarily unavailable"
+msgstr "ഉപയോക്താവു് തല്‍ക്കാലത്തേക്കു് ലഭ്യമല്ല"
+
+msgid "No match"
+msgstr "പൊരുത്തമില്ല"
+
+msgid "List overflow"
+msgstr "ഓവര്‍ഫ്ലോ ലഭ്യമാക്കുക"
+
+msgid "Request ambiguous"
+msgstr "ആവശ്യം വ്യക്തമല്ല"
+
+msgid "Queue full"
+msgstr "ക്യൂ പൂര്‍ണ്ണം"
+
+msgid "Not while on AOL"
+msgstr "AOL-ല്‍ ഉള്ളപ്പോള്‍ സാധ്യമല്ല"
 
 msgid "Aquarius"
 msgstr "അക്വേറിയസ്"
@@ -10103,7 +10172,8 @@ msgstr "ചാറ്റ് റൂമ് ലൊക്കേല്‍"
 msgid "Ignore conference and chatroom invitations"
 msgstr "കോണ്‍ഫറന്‍സും ചാറ്റ് റൂം ക്ഷണങ്ങളും അവഗണിക്കുക"
 
-msgid "Use account proxy for SSL connections"
+#, fuzzy
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "SSL കണക്ഷനുള്ള അക്കൌണ്ട് പ്രോക്സി ഉപയോഗിക്കുക"
 
 msgid "Chat room list URL"
@@ -12297,8 +12367,8 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with %"
-"s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with "
+"%s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s is a graphical modular messaging client based on libpurple which is "
 "capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
@@ -12845,15 +12915,15 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "%s-ലുള്ള സംഭാഷണത്തിന്റെ ലോഗ് എന്നേക്കുമായി വെട്ടി നീക്കണമെന്നുറപ്പാണോ, (ആരംഭിച്ചതു് %s-ല്‍)?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "നിങ്ങള്‍ %s-ല്‍ ആരംഭിച്ച സിസ്റ്റം ലോഗ് എന്നേക്കുമായി വെട്ടി നീക്കണമെന്നുറപ്പാണോ?"
 
 msgid "Delete Log?"
@@ -12958,11 +13028,13 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "മറ്റൊരു libpurple ക്ലയന്റ് പ്രവര്‍ത്തിക്കുന്നുണ്ടു്, അതിനാല്‍ പുറത്തു് കടക്കുന്നു.\n"
 
-msgid "/_Media"
+#, fuzzy
+msgid "_Media"
 msgstr "/_മീഡിയാ"
 
-msgid "/Media/_Hangup"
-msgstr "/മീഡിയാ/_വിഛേദിക്കുക"
+#, fuzzy
+msgid "_Hangup"
+msgstr "വിഛേദിക്കുക"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13757,10 +13829,6 @@ msgstr "എളുപ്പവഴിയ്ക്കുള്ള വാചകം"
 
 msgid "Custom Smiley Manager"
 msgstr "ഇഷ്ടമുള്ള സ്മൈലി നിരീക്ഷകന്‍"
-
-#, fuzzy
-msgid "Attention received"
-msgstr "ആക്ടിവേഷന്‍ ആവശ്യമുണ്ടു്"
 
 msgid "Select Buddy Icon"
 msgstr "സുഹൃത്തിനുള്ള ചിഹ്നം തെരഞ്ഞെടുക്കുക"
@@ -15108,11 +15176,13 @@ msgstr "റോ XMPP സ്റ്റാന്‍സകള്‍ അയയ്ക�
 msgid "This plugin is useful for debugging XMPP servers or clients."
 msgstr "XMPP സര്‍വറുകള്‍ അല്ലെങ്കില്‍ ക്ലയന്റുകള്‍ ഡീബഗ്ഗ് ചെയ്യുന്നതിനായി ഈ പ്ലഗിന്‍ ഉപയോഗപ്പെടുന്നു."
 
+#. $(^Name) is the current Version name (e.g. Pidgin 2.7.0).  $_CLICK will become a translated version of "Click Next to continue."
 msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
 msgstr ""
 
@@ -15121,71 +15191,91 @@ msgid ""
 "again."
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
 msgstr ""
 
+#. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
 msgstr ""
 
+#. Installer Subsection Text
 msgid "Debug Symbols (for reporting crashes)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Desktop"
 msgstr "പണിയിടത്തില്‍ സ്വതവേയുള്ളതു്"
 
+#. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
 "Error Downloading the GTK+ Runtime ($R2).$\\rThis is required for Pidgin to "
 "function; if retrying fails, you may need to use the 'Offline Installer' "
 "from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
 "Error Installing Debug Symbols ($R2).$\\rIf retrying fails, you may need to "
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 
+#. $R3 will display the URL that the Dictionary failed to download from
+#, no-c-format
+msgid ""
+"Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
+"%20Pidgin#manual_win32_spellcheck_installation"
+msgstr ""
+
+#. Installer Subsection Text
 msgid "GTK+ Runtime (required if not present)"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Localizations"
 msgstr "സ്ഥലം"
 
-#. License Page
+#. "Next >" appears on a button on the License Page of the Installer
 msgid "Next >"
 msgstr ""
 
-#. Components Page
+#. Installer Subsection Text
 #, fuzzy
 msgid "Pidgin Instant Messaging Client (required)"
 msgstr "പിഡ്ഗിന്‍ ഇന്റര്‍നെറ്റ് മെസഞ്ചര്‍"
 
-#. GTK+ Section Prompts
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
 "already present).$\\rAre you sure you want to skip installing the GTK+ "
 "Runtime?"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Shortcuts"
 msgstr "എളുപ്പവഴി"
 
+#. Installer Subsection Detailed Description
 msgid "Shortcuts for starting Pidgin"
 msgstr ""
 
-#. Spellcheck Section Prompts
+#. Installer Subsection Text
 msgid "Spellchecking Support"
 msgstr ""
 
+#. Installer Subsection Text
 #, fuzzy
 msgid "Start Menu"
 msgstr "ആരംഭം"
 
+#. Installer Subsection Detailed Description
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
@@ -15194,32 +15284,54 @@ msgstr ""
 msgid "The installer is already running."
 msgstr "\"%s\" എന്ന ചെല്ലപ്പേരു് നിലവില്‍ ഉപയോഗത്തിലുണ്ടു്."
 
-#. Uninstall Section Prompts
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
 
-#. URL Handler section
+#. Installer Subsection Text
 #, fuzzy
 msgid "URI Handlers"
 msgstr "myim URL ഹാന്‍ഡിലര്‍"
 
-#. Pidgin Section Prompts and Texts
 msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
 
-#. Installer Finish Page
+#. Text displayed on Installer Finish Page
 msgid "Visit the Pidgin Web Page"
 msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
-msgid "spellcheck_faq"
-msgstr ""
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "സര്‍ട്ടിഫിക്കേറ്റ് ഇതു് വരെ സാധുതയുള്ളതല്ല."
+
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "നിങ്ങള്‍ നല്‍കിയ വിളിപ്പേരു് തെറ്റാണു്."
+
+#~ msgid "MXit Login Name"
+#~ msgstr "MXit ലോഗിന്‍ നാമം"
+
+#~ msgid "Nick Name"
+#~ msgstr "വിളിപ്പേരു്"
+
+#~ msgid "Your Mobile Number..."
+#~ msgstr "നിങ്ങളുടെ മൊബൈല്‍ നംബര്‍..."
+
+#~ msgid "Rate to host"
+#~ msgstr "ഹോസ്റ്റിലേക്കുള്ള റേറ്റ്"
+
+#~ msgid "Rate to client"
+#~ msgstr "ക്ലയന്റിലേക്കുള്ള റേറ്റ്"
+
+#~ msgid "Unknown reason."
+#~ msgstr "അപരിചിതമായ കാരണം"
+
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/മീഡിയാ/_വിഛേദിക്കുക"
 
 #~ msgid "Error creating conference."
 #~ msgstr "കോണ്‍ഫറന്‍സ് തയ്യാറാക്കുന്നതില്‍ പിശക്."

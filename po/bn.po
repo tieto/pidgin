@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-30 23:15-0400\n"
+"POT-Creation-Date: 2010-07-27 01:17-0400\n"
 "PO-Revision-Date: 2010-05-02 02:20+0600\n"
 "Last-Translator: Israt Jahan <israt@ankur.org.bd>\n"
 "Language-Team: Bengali <ankur-bd-l10n@googlegroups.com>\n"
@@ -68,12 +68,24 @@ msgstr ""
 msgid "Error"
 msgstr "ত্রুটি"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "অ্যাকাউন্ট যোগ করা হয়নি"
+
 msgid "Account was not added"
 msgstr "অ্যাকাউন্ট যোগ করা হয়নি"
 
 # তিথি
 msgid "Username of an account must be non-empty."
 msgstr "অ্যাকাউন্টের ব্যবহারকারীর নাম ফাঁকা রাখা যাবে না।"
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "নতুন মেইলের ঘোষনা"
@@ -1312,6 +1324,10 @@ msgstr "অন্যান্যরা আড্ডায় কথা বলে
 msgid "Someone says your username in chat"
 msgstr "কেউ আড্ডায় আপনার নাম উল্লেখ করে"
 
+# snigdha
+msgid "Attention received"
+msgstr "সতর্কতা গ্রহন"
+
 # tithi
 msgid "GStreamer Failure"
 msgstr "GStreamer ব্যর্থতা"
@@ -1626,7 +1642,7 @@ msgstr ""
 msgid "Online"
 msgstr "অনলাইন"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "অফলাইন "
 
@@ -1753,9 +1769,10 @@ msgstr ""
 "সার্টিফিকেটটি বিশ্বাসযোগ্য নয় কারণ যাচাই করার মত কোন বিশ্বাসযোগ্য সার্টিফিকেট "
 "বর্তমানে নেই।"
 
-# Translated by sadia
-msgid "The certificate is not valid yet."
-msgstr "সার্টিফিকেটটি এখনও কার্যকর করা হয়নি।"
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 # Translated by sadia
 msgid "The certificate has expired and should not be considered valid."
@@ -4027,6 +4044,18 @@ msgstr "সার্ভার থেকে অকার্যকর চ্যা
 # Translated by sadia
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "প্রমাণীকরণ সম্পন্ন হয়েছে বলে সার্ভার মনে করছে, কিন্তু ক্লায়েন্ট মনে করছে না"
+
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr "একটি এনক্রিপশনবিহীন স্ট্রীমে সার্ভারের সরল-টেক্সট প্রমাণীকরণ প্রয়োজন"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"একটি এনক্রিপশনবিহীন সংযোগে %s এর সরল-টেক্সট প্রমাণীকরণ প্রয়োজন। এটি অনুমোদন করে "
+"প্রমাণীকরণ অব্যাহত রাখতে চান?"
 
 # tithi
 msgid "SASL authentication failed"
@@ -6361,7 +6390,7 @@ msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 "আপনার প্রোফাইলের তথ্য এখনও খুঁজে পাওয়া যায়নি। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।"
 
-msgid "Your MXitId"
+msgid "Your UID"
 msgstr ""
 
 # Translated by sadia
@@ -6376,6 +6405,7 @@ msgstr "PIN যাচাই করা হবে"
 
 # Translated by sadia
 #. display name
+#. nick name (required)
 msgid "Display Name"
 msgstr "নাম প্রদর্শন করা হবে"
 
@@ -6453,10 +6483,10 @@ msgstr "সংযুক্ত করা হচ্ছে..."
 # tithi
 #
 #
-#
 # Translated by sadia
-msgid "The nick name you entered is invalid."
-msgstr "আপনি যে ডাকনামটি প্রবেশ করিয়েছেন তা অকার্যকর।"
+#, fuzzy
+msgid "The Display Name you entered is invalid."
+msgstr "আপনি যে নাম প্রবেশ করিয়েছেন তা অকার্যকর।"
 
 # tithi
 #
@@ -6467,15 +6497,9 @@ msgstr "আপনি যে ডাকনামটি প্রবেশ কর�
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "আপনি যে PIN প্রবেশ করিয়েছেন তার দৈর্ঘ্য অকার্যকর [৭-১০]।"
 
-# Translated by sadia
 #. mxit login name
-msgid "MXit Login Name"
-msgstr "MXit-এ লগ ইন করার নাম"
-
-# Translated by sadia
-#. nick name (required)
-msgid "Nick Name"
-msgstr "ডাকনাম "
+msgid "MXit ID"
+msgstr ""
 
 # Translated by sadia
 #. show the form to the user to complete
@@ -6512,11 +6536,13 @@ msgid "Invalid country selected. Please try again."
 msgstr "অকার্যকর দেশ নির্বাচন করা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।"
 
 # Translated by sadia
-msgid "Username is not registered. Please register first."
+#, fuzzy
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr "ব্যবহারকারীর নাম নিবন্ধন করা নেই। অনুগ্রহ করে প্রথমে নিবন্ধন করুন।"
 
 # Translated by sadia
-msgid "Username is already registered. Please choose another username."
+#, fuzzy
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 "ব্যবহারকারীর নাম ইতিমধ্যেই নিবন্ধন করা হয়েছে। অনুগ্রহ করে অন্য ব্যবহারকারী নাম "
 "নির্বাচন করুন।"
@@ -6584,9 +6610,9 @@ msgstr "গৃহীত বার্তা"
 msgid "Hidden Number"
 msgstr "লুকানো সংখ্যা"
 
-# Translated by sadia
-msgid "Your Mobile Number..."
-msgstr "আপনার মোবাইল নাম্বার..."
+#, fuzzy
+msgid "Your MXit ID..."
+msgstr "ইয়াহু ID..."
 
 # Translated by sadia
 #. Configuration options
@@ -6616,6 +6642,15 @@ msgstr "ত্রুটিযুক্ত টিকেট"
 #, fuzzy
 msgid "_Room Name:"
 msgstr "আসর (_R):"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "আপনার মেইল এসেছে!"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "অনলাইন"
 
 # Translated by sadia
 #. we must have lost the connection, so terminate it so that we can reconnect
@@ -8634,13 +8669,11 @@ msgstr ""
 msgid "Invalid SNAC"
 msgstr "অকার্যকর SNAC"
 
-# tithi
-msgid "Rate to host"
-msgstr "হোস্টে পাঠানোর হার"
+msgid "Server rate limit exceeded"
+msgstr ""
 
-# tithi
-msgid "Rate to client"
-msgstr "ক্লায়েন্টে পাঠানোর হার"
+msgid "Client rate limit exceeded"
+msgstr ""
 
 msgid "Service unavailable"
 msgstr "সার্ভিস বিদ্যমান নয়"
@@ -11208,7 +11241,8 @@ msgid "Ignore conference and chatroom invitations"
 msgstr "অধিবেশন এবং আড্ডার আসরের আমন্ত্রন অগ্রাহ্য করা হবে"
 
 # Translated by sadia
-msgid "Use account proxy for SSL connections"
+#, fuzzy
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "SSL সংযোগের ক্ষেত্রে অ্যাকাউন্টের প্রক্সি ব্যবহার করা হবে"
 
 msgid "Chat room list URL"
@@ -14239,11 +14273,13 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "প্রস্থান করছে কারণ আরেকটি libpurple ক্লায়েন্ট ইতিমধ্যে চলছে।\n"
 
-msgid "/_Media"
+#, fuzzy
+msgid "_Media"
 msgstr "/মিডিয়া (_M)"
 
-msgid "/Media/_Hangup"
-msgstr "/মিডিয়া/কল শেষ করুন (_H)"
+#, fuzzy
+msgid "_Hangup"
+msgstr "কল শেষ করুন"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -15109,10 +15145,6 @@ msgstr "শর্টকাট টেক্সট"
 # tithi
 msgid "Custom Smiley Manager"
 msgstr "স্বনির্বাচিত স্মাইলি ব্যবস্থাপক"
-
-# snigdha
-msgid "Attention received"
-msgstr "সতর্কতা গ্রহন"
 
 msgid "Select Buddy Icon"
 msgstr "বন্ধু আইকন নির্বাচন"
@@ -16665,6 +16697,41 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+# Translated by sadia
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "সার্টিফিকেটটি এখনও কার্যকর করা হয়নি।"
+
+# tithi
+#
+#
+#
+# Translated by sadia
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "আপনি যে ডাকনামটি প্রবেশ করিয়েছেন তা অকার্যকর।"
+
+# Translated by sadia
+#~ msgid "MXit Login Name"
+#~ msgstr "MXit-এ লগ ইন করার নাম"
+
+# Translated by sadia
+#~ msgid "Nick Name"
+#~ msgstr "ডাকনাম "
+
+# Translated by sadia
+#~ msgid "Your Mobile Number..."
+#~ msgstr "আপনার মোবাইল নাম্বার..."
+
+# tithi
+#~ msgid "Rate to host"
+#~ msgstr "হোস্টে পাঠানোর হার"
+
+# tithi
+#~ msgid "Rate to client"
+#~ msgstr "ক্লায়েন্টে পাঠানোর হার"
+
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/মিডিয়া/কল শেষ করুন (_H)"
 
 #~ msgid "Unknown reason."
 #~ msgstr "অজ্ঞাত কারণ।"

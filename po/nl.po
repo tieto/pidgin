@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.7.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:09-0400\n"
+"POT-Creation-Date: 2010-07-27 01:18-0400\n"
 "PO-Revision-Date: 2010-07-25 14:26+0100\n"
 "Last-Translator: Gideon van Melle <translations@gvmelle.com>\n"
 "Language-Team: Dutch <translations@gmvelle.com>\n"
@@ -13133,11 +13133,13 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "We sluiten af, omdat een andere libpurple cliënt al actief is.\n"
 
-msgid "/_Media"
+#, fuzzy
+msgid "_Media"
 msgstr "/_Media"
 
-msgid "/Media/_Hangup"
-msgstr "/Media/Op_hangen"
+#, fuzzy
+msgid "_Hangup"
+msgstr "Ophangen"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -15464,6 +15466,9 @@ msgstr "Neem een kijkje op de Pidgin webpagina"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "U mag dit programma niet verwijderen."
+
+#~ msgid "/Media/_Hangup"
+#~ msgstr "/Media/Op_hangen"
 
 #~ msgid "The nick name you entered is invalid."
 #~ msgstr "De bijnaam die u invulde is ongeldig."

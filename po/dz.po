@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-30 23:15-0400\n"
+"POT-Creation-Date: 2010-07-27 01:17-0400\n"
 "PO-Revision-Date: 2006-11-09 17:11+0530\n"
 "Last-Translator: wangmo sherpa <rinwanshe@yahoo.com>\n"
 "Language-Team:  <pgeygel@dit.gov.bt>\n"
@@ -63,12 +63,24 @@ msgstr ""
 msgid "Error"
 msgstr "འཛོལ་བ།"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "རྩིས་ཐོ་འདི་ ཁ་སྐོང་མ་བརྐྱབ་པས།"
+
 msgid "Account was not added"
 msgstr "རྩིས་ཐོ་འདི་ ཁ་སྐོང་མ་བརྐྱབ་པས།"
 
 #, fuzzy
 msgid "Username of an account must be non-empty."
 msgstr "རྩིས་ཐོ་གི་ གསལ་གཞི་མིང་འདི་ སྟོང་པ་མེན་མི་ཅིག་དགོ།"
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "ཡིག་འཕྲིན་གསརཔ་གི་བརྡ་བསྐུལ།"
@@ -1317,6 +1329,10 @@ msgstr "ཁ་སླབ་ནང་གཞན་ཚུ་བློ་སླབ།
 msgid "Someone says your username in chat"
 msgstr "མི་ཅིག་གིས་ ཁ་སླབ་ནང་ ཁྱོད་ཀྱི་མིང་སླབ་མས།"
 
+#, fuzzy
+msgid "Attention received"
+msgstr "ཐོ་བཀོད་དགོཔ།"
+
 msgid "GStreamer Failure"
 msgstr "ཇི་སི་ཊི་མར་ འཐུས་ཤོར་འབྱུང་།"
 
@@ -1619,7 +1635,7 @@ msgstr ""
 msgid "Online"
 msgstr "གློག་ཐོག"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "ཨོཕ་ལ་ཡིན།"
 
@@ -1743,9 +1759,10 @@ msgid ""
 "currently trusted."
 msgstr ""
 
-#, fuzzy
-msgid "The certificate is not valid yet."
-msgstr "གསལ་བཀོད་འབད་འབདཝ་གི་གསལ་གཞི་མིང་འདི་ ནུས་མེད་ཨིན་པས།"
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr ""
@@ -3927,6 +3944,19 @@ msgstr "སར་བར་ལས་ ནུས་མེད་ཀྱི་དོ�
 
 msgid "Server thinks authentication is complete, but client does not"
 msgstr ""
+
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr ""
+"སར་བརའདི་ལུ་ གསང་བ་མ་བཟོ་བའི་རྒྱུན་རིམ་ལྟག་ལས་ ཚིག་ཡིག་ཉག་རྐྱང་གི་བདེན་བཤད་ དགོས་མཁོ་ཡོདཔ་ཨིན།"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"སར་བར་འདི་ལུ་ གསང་བ་མ་བཟོ་བའི་མཐུད་ལམ་ལྟག་ལས་ཚིག་ཡིག་ཉག་རྐྱང་གི་བདེན་བཤད་ དགོས་མཁོ་ཡོདཔ་ཨིན། "
+"འདི་འབད་བཅུག་ཞིན་ན་ བདེན་བཤད་འཕྲོ་མཐུད་དེ་འབད་ནི་ཨིན་ན?"
 
 #, fuzzy
 msgid "SASL authentication failed"
@@ -6176,7 +6206,7 @@ msgstr "གསལ་སྡུད།"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
-msgid "Your MXitId"
+msgid "Your UID"
 msgstr ""
 
 #. pin
@@ -6189,6 +6219,7 @@ msgid "Verify PIN"
 msgstr ""
 
 #. display name
+#. nick name (required)
 #, fuzzy
 msgid "Display Name"
 msgstr "བཀྲམ་སྟོན།"
@@ -6259,7 +6290,7 @@ msgid "Connecting..."
 msgstr "མཐུད་དོ།"
 
 #, fuzzy
-msgid "The nick name you entered is invalid."
+msgid "The Display Name you entered is invalid."
 msgstr "མཐའ་བཙན་གྱི་ ཨའི་ཌི་ ལྡེ་མིག་བཙུགས་མི་འདི་ ནུས་མེད་ཨིན་པས།"
 
 #, fuzzy
@@ -6267,13 +6298,8 @@ msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "མཐའ་བཙན་གྱི་ ཨའི་ཌི་ ལྡེ་མིག་བཙུགས་མི་འདི་ ནུས་མེད་ཨིན་པས།"
 
 #. mxit login name
-msgid "MXit Login Name"
+msgid "MXit ID"
 msgstr ""
-
-#. nick name (required)
-#, fuzzy
-msgid "Nick Name"
-msgstr "སྐྱོན་མིང་།"
 
 #. show the form to the user to complete
 #, fuzzy
@@ -6306,10 +6332,10 @@ msgstr ""
 msgid "Invalid country selected. Please try again."
 msgstr ""
 
-msgid "Username is not registered. Please register first."
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
 
-msgid "Username is already registered. Please choose another username."
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 
 #, fuzzy
@@ -6366,8 +6392,8 @@ msgid "Hidden Number"
 msgstr "བར་མའི་མིང་།"
 
 #, fuzzy
-msgid "Your Mobile Number..."
-msgstr "འགྲུལ་འཕྲིན་ཨང་ གཞི་སྒྲིག་འབད།..."
+msgid "Your MXit ID..."
+msgstr "ཡ་ཧུ!ཨའི་ཌི།"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6394,6 +6420,15 @@ msgstr "ཤོག་འཛིན་བྱང་ཉེས།"
 #, fuzzy
 msgid "_Room Name:"
 msgstr "ཁང་མིག:(_R)"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "ཁྱོད་ལུ་ ཡིག་འཕྲིན་འདུག!"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "གློག་ཐོག"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -8250,11 +8285,11 @@ msgstr ""
 msgid "Invalid SNAC"
 msgstr "ནུས་མེད་ ཨེསི་ཨེན་ཨེ་སི།"
 
-msgid "Rate to host"
-msgstr "ཧོསཊི་ལུ་ མགྱོགས་ཚད།"
+msgid "Server rate limit exceeded"
+msgstr ""
 
-msgid "Rate to client"
-msgstr "ཞབས་ཏོག་སྤྱོད་མི་ལུ་མགྱོགས་ཚད།"
+msgid "Client rate limit exceeded"
+msgstr ""
 
 msgid "Service unavailable"
 msgstr "ཞབས་ཏོག་ཐོབ་མ་ཚུགས།"
@@ -10616,7 +10651,7 @@ msgstr "ཁ་སླབ་ཁང་མིག་ ལོ་ཀེལ།"
 msgid "Ignore conference and chatroom invitations"
 msgstr "གྲོས་ཚོགས་དང་ ཁ་སླབ་ཁང་མིག་མགྲོན་བརྡ་ཚུ་སྣང་མེད་སྦེ་བཞག"
 
-msgid "Use account proxy for SSL connections"
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr ""
 
 msgid "Chat room list URL"
@@ -13637,10 +13672,10 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
 
-msgid "/_Media"
+msgid "_Media"
 msgstr ""
 
-msgid "/Media/_Hangup"
+msgid "_Hangup"
 msgstr ""
 
 #, c-format
@@ -14516,10 +14551,6 @@ msgstr "མགྱོགས་ཐབས།"
 
 msgid "Custom Smiley Manager"
 msgstr ""
-
-#, fuzzy
-msgid "Attention received"
-msgstr "ཐོ་བཀོད་དགོཔ།"
 
 #, fuzzy
 msgid "Select Buddy Icon"
@@ -16087,6 +16118,28 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "གསལ་བཀོད་འབད་འབདཝ་གི་གསལ་གཞི་མིང་འདི་ ནུས་མེད་ཨིན་པས།"
+
+#, fuzzy
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "མཐའ་བཙན་གྱི་ ཨའི་ཌི་ ལྡེ་མིག་བཙུགས་མི་འདི་ ནུས་མེད་ཨིན་པས།"
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "སྐྱོན་མིང་།"
+
+#, fuzzy
+#~ msgid "Your Mobile Number..."
+#~ msgstr "འགྲུལ་འཕྲིན་ཨང་ གཞི་སྒྲིག་འབད།..."
+
+#~ msgid "Rate to host"
+#~ msgstr "ཧོསཊི་ལུ་ མགྱོགས་ཚད།"
+
+#~ msgid "Rate to client"
+#~ msgstr "ཞབས་ཏོག་སྤྱོད་མི་ལུ་མགྱོགས་ཚད།"
 
 #~ msgid "Unknown reason."
 #~ msgstr "ངོ་མ་ཤེས་པའི་རྒྱུ་མཚན།"
