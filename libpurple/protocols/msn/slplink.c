@@ -271,7 +271,7 @@ msn_slplink_find_slp_call_with_session_id(MsnSlpLink *slplink, long id)
 	return NULL;
 }
 
-void
+static void
 msn_slplink_send_part(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 {
 	if (slplink->dc != NULL && slplink->dc->state == DC_STATE_ESTABLISHED)
