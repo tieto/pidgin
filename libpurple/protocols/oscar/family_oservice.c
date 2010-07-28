@@ -449,29 +449,6 @@ aim_srv_rates_addparam(OscarData *od, FlapConnection *conn)
 	byte_stream_destroy(&bs);
 }
 
-/* Subtype 0x0009 - Delete Rate Parameter */
-void
-aim_srv_rates_delparam(OscarData *od, FlapConnection *conn)
-{
-	ByteStream bs;
-	aim_snacid_t snacid;
-	GSList *tmp;
-
-	byte_stream_new(&bs, 502);
-
-	for (tmp = conn->rateclasses; tmp != NULL; tmp = tmp->next)
-	{
-		struct rateclass *rateclass;
-		rateclass = tmp->data;
-		byte_stream_put16(&bs, rateclass->classid);
-	}
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0009, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0009, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-}
-
 /* Subtype 0x000a - Rate Change */
 static int
 ratechange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
@@ -556,40 +533,6 @@ serverpause(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 		ret = userfunc(od, conn, frame);
 
 	return ret;
-}
-
-/*
- * Subtype 0x000c - Service Pause Acknowledgement
- *
- * It is rather important that aim_srv_sendpauseack() gets called for the exact
- * same connection that the Server Pause callback was called for, since
- * libfaim extracts the data for the SNAC from the connection structure.
- *
- * Of course, if you don't do that, more bad things happen than just what
- * libfaim can cause.
- *
- */
-void
-aim_srv_sendpauseack(OscarData *od, FlapConnection *conn)
-{
-	ByteStream bs;
-	aim_snacid_t snacid;
-	GSList *cur;
-
-	byte_stream_new(&bs, 1014);
-
-	/*
-	 * This list should have all the groups that the original
-	 * Host Online / Server Ready said this host supports.  And
-	 * we want them all back after the migration.
-	 */
-	for (cur = conn->groups; cur != NULL; cur = cur->next)
-		byte_stream_put16(&bs, GPOINTER_TO_UINT(cur->data));
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x000c, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x000c, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
 }
 
 /* Subtype 0x000d - Service Resume */
@@ -767,36 +710,6 @@ motd(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, a
 	aim_tlvlist_free(tlvlist);
 
 	return ret;
-}
-
-/*
- * Subtype 0x0014 - Set privacy flags
- *
- * Normally 0x03.
- *
- *  Bit 1:  Allows other AIM users to see how long you've been idle.
- *  Bit 2:  Allows other AIM users to see how long you've been a member.
- *
- */
-void
-aim_srv_setprivacyflags(OscarData *od, FlapConnection *conn, guint32 flags)
-{
-	aim_genericreq_l(od, conn, SNAC_FAMILY_OSERVICE, 0x0014, &flags);
-}
-
-/*
- * Subtype 0x0016 - No-op
- *
- * WinAIM sends these every 4min or so to keep the connection alive.  Its not
- * really necessary.
- *
- * Wha?  No?  Since when?  I think WinAIM sends an empty channel 5
- * FLAP as a no-op...
- */
-void
-aim_srv_nop(OscarData *od, FlapConnection *conn)
-{
-	aim_genericreq_n(od, conn, SNAC_FAMILY_OSERVICE, 0x0016);
 }
 
 /*

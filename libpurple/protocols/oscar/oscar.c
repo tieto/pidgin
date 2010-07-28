@@ -108,7 +108,6 @@ static int purple_conv_chat_info_update (OscarData *, FlapConnection *, FlapFram
 static int purple_conv_chat_incoming_msg(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_email_parseupdate(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_icon_parseicon   (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_parse_evilnotify (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_searcherror(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_searchreply(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_bosrights        (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -671,7 +670,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, 0x001f, purple_memrequest, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_REDIRECT, purple_handle_redirect, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_MOTD, purple_parse_motd, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_OSERVICE, SNAC_SUBTYPE_OSERVICE_EVIL, purple_parse_evilnotify, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_POPUP, 0x0002, purple_popup, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_USERLOOKUP, SNAC_SUBTYPE_USERLOOKUP_ERROR, purple_parse_searcherror, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_USERLOOKUP, 0x0003, purple_parse_searchreply, 0);
@@ -2689,23 +2687,6 @@ purple_icons_fetch(PurpleConnection *gc)
 	purple_debug_misc("oscar", "no more icons to request\n");
 }
 
-static int purple_parse_evilnotify(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-#ifdef CRAZY_WARNING
-	va_list ap;
-	guint16 newevil;
-	aim_userinfo_t *userinfo;
-
-	va_start(ap, fr);
-	newevil = (guint16) va_arg(ap, unsigned int);
-	userinfo = va_arg(ap, aim_userinfo_t *);
-	va_end(ap);
-
-	purple_prpl_got_account_warning_level(account, (userinfo && userinfo->bn) ? userinfo->bn : NULL, (newevil/10.0) + 0.5);
-#endif
-
-	return 1;
-}
-
 static int purple_selfinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	int warning_level;
 	va_list ap;
@@ -2725,10 +2706,6 @@ static int purple_selfinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, .
 	 * truncated.
 	 */
 	warning_level = info->warnlevel/10.0 + 0.5;
-
-#ifdef CRAZY_WARNING
-	purple_presence_set_warning_level(presence, warning_level);
-#endif
 
 	return 1;
 }
@@ -3636,14 +3613,6 @@ oscar_set_status(PurpleAccount *account, PurpleStatus *status)
 	/* Set the AIM-style away message for both AIM and ICQ accounts */
 	oscar_set_info_and_status(account, FALSE, NULL, TRUE, status);
 }
-
-#ifdef CRAZY_WARN
-void
-oscar_warn(PurpleConnection *gc, const char *name, gboolean anonymous) {
-	OscarData *od = purple_connection_get_protocol_data(gc);
-	aim_im_warn(od, od->conn, name, anonymous ? AIM_WARN_ANON : 0);
-}
-#endif
 
 void
 oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {

@@ -47,22 +47,6 @@ flap_connection_destroy_chat(OscarData *od, FlapConnection *conn)
 	return;
 }
 
-char *
-aim_chat_getname(FlapConnection *conn)
-{
-	struct chatconnpriv *ccp;
-
-	if (!conn)
-		return NULL;
-
-	if (conn->type != SNAC_FAMILY_CHAT)
-		return NULL;
-
-	ccp = (struct chatconnpriv *)conn->internal;
-
-	return ccp->name;
-}
-
 /* XXX get this into conn.c -- evil!! */
 FlapConnection *
 aim_chat_getconn(OscarData *od, const char *name)
@@ -94,28 +78,6 @@ aim_chat_getconn(OscarData *od, const char *name)
 }
 
 int
-aim_chat_attachname(FlapConnection *conn, guint16 exchange, const char *roomname, guint16 instance)
-{
-	struct chatconnpriv *ccp;
-
-	if (!conn || !roomname)
-		return -EINVAL;
-
-	if (conn->internal)
-		g_free(conn->internal);
-
-	ccp = g_new(struct chatconnpriv, 1);
-
-	ccp->exchange = exchange;
-	ccp->name = g_strdup(roomname);
-	ccp->instance = instance;
-
-	conn->internal = (void *)ccp;
-
-	return 0;
-}
-
-int
 aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo)
 {
 	if (!bs || !outinfo)
@@ -125,19 +87,6 @@ aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo)
 	outinfo->namelen = byte_stream_get8(bs);
 	outinfo->name = (char *)byte_stream_getraw(bs, outinfo->namelen);
 	outinfo->instance = byte_stream_get16(bs);
-
-	return 0;
-}
-
-int
-aim_chat_leaveroom(OscarData *od, const char *name)
-{
-	FlapConnection *conn;
-
-	if (!(conn = aim_chat_getconn(od, name)))
-		return -ENOENT;
-
-	flap_connection_close(od, conn);
 
 	return 0;
 }

@@ -1155,41 +1155,6 @@ int aim_ssi_reqdata(OscarData *od)
 }
 
 /*
- * Subtype 0x0005 - Request SSI Data when you have a timestamp and revision
- * number.
- *
- * The data will only be sent if it is newer than the posted local
- * timestamp and revision.
- *
- * Note that the client should never increment the revision, only the server.
- *
- */
-int aim_ssi_reqifchanged(OscarData *od, time_t timestamp, guint16 numitems)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)))
-		return -EINVAL;
-
-	byte_stream_new(&bs, 4+2);
-
-	byte_stream_put32(&bs, timestamp);
-	byte_stream_put16(&bs, numitems);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_REQIFCHANGED, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_REQIFCHANGED, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-
-	/* Free any current data, just in case */
-	aim_ssi_freelist(od);
-
-	return 0;
-}
-
-/*
  * Subtype 0x0006 - SSI Data.
  */
 static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
@@ -1597,45 +1562,6 @@ int aim_ssi_modend(OscarData *od)
 		return -EINVAL;
 
 	aim_genericreq_n(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_EDITSTOP);
-
-	return 0;
-}
-
-/*
- * Subtype 0x0014 - Grant authorization
- *
- * Authorizes a contact so they can add you to their contact list.
- *
- */
-int aim_ssi_sendauth(OscarData *od, char *bn, char *msg)
-{
-	FlapConnection *conn;
-	ByteStream bs;
-	aim_snacid_t snacid;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !bn)
-		return -EINVAL;
-
-	byte_stream_new(&bs, 1+strlen(bn) + 2+(msg ? strlen(msg)+1 : 0) + 2);
-
-	/* Username */
-	byte_stream_put8(&bs, strlen(bn));
-	byte_stream_putstr(&bs, bn);
-
-	/* Message (null terminated) */
-	byte_stream_put16(&bs, msg ? strlen(msg) : 0);
-	if (msg) {
-		byte_stream_putstr(&bs, msg);
-		byte_stream_put8(&bs, 0x00);
-	}
-
-	/* Unknown */
-	byte_stream_put16(&bs, 0x0000);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTH, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTH, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
 
 	return 0;
 }

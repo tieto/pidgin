@@ -11,7 +11,6 @@ OSCARSOURCES = \
 	clientlogin.c       \
 	encoding.c          \
 	family_admin.c      \
-	family_advert.c     \
 	family_alert.c      \
 	family_auth.c       \
 	family_bart.c       \
@@ -21,14 +20,11 @@ OSCARSOURCES = \
 	family_chatnav.c    \
 	family_icq.c        \
 	family_icbm.c       \
-	family_invite.c     \
 	family_locate.c     \
-	family_odir.c       \
 	family_oservice.c   \
 	family_popup.c      \
 	family_feedbag.c    \
 	family_stats.c      \
-	family_translate.c  \
 	family_userlookup.c \
 	flap_connection.c   \
 	misc.c         \

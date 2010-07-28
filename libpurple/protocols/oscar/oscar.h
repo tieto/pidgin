@@ -716,19 +716,13 @@ aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 subtype)
 /* 0x0004 */ void aim_srv_requestnew(OscarData *od, guint16 serviceid);
 /* 0x0006 */ void aim_srv_reqrates(OscarData *od, FlapConnection *conn);
 /* 0x0008 */ void aim_srv_rates_addparam(OscarData *od, FlapConnection *conn);
-/* 0x0009 */ void aim_srv_rates_delparam(OscarData *od, FlapConnection *conn);
-/* 0x000c */ void aim_srv_sendpauseack(OscarData *od, FlapConnection *conn);
 /* 0x000e */ void aim_srv_reqpersonalinfo(OscarData *od, FlapConnection *conn);
 /* 0x0011 */ void aim_srv_setidle(OscarData *od, guint32 idletime);
-/* 0x0014 */ void aim_srv_setprivacyflags(OscarData *od, FlapConnection *conn, guint32);
-/* 0x0016 */ void aim_srv_nop(OscarData *od, FlapConnection *conn);
 /* 0x0017 */ void aim_srv_setversions(OscarData *od, FlapConnection *conn);
 /* 0x001e */ int aim_srv_setextrainfo(OscarData *od, gboolean seticqstatus, guint32 icqstatus, gboolean setstatusmsg, const char *statusmsg, const char *itmsurl);
 
 
 void aim_bos_reqrights(OscarData *od, FlapConnection *conn);
-int aim_bos_changevisibility(OscarData *od, FlapConnection *conn, int, const char *);
-void aim_bos_setgroupperm(OscarData *od, FlapConnection *conn, guint32 mask);
 
 
 
@@ -737,13 +731,11 @@ void aim_bos_setgroupperm(OscarData *od, FlapConnection *conn, guint32 mask);
 #define AIM_CLIENTTYPE_WINAIM   0x0002
 #define AIM_CLIENTTYPE_WINAIM41 0x0003
 #define AIM_CLIENTTYPE_AOL_TOC  0x0004
-guint16 aim_im_fingerprint(const guint8 *msghdr, int len);
 
 #define AIM_RATE_CODE_CHANGE     0x0001
 #define AIM_RATE_CODE_WARNING    0x0002
 #define AIM_RATE_CODE_LIMIT      0x0003
 #define AIM_RATE_CODE_CLEARLIMIT 0x0004
-void aim_ads_requestads(OscarData *od, FlapConnection *conn);
 
 
 
@@ -871,9 +863,6 @@ typedef struct aim_mpmsg_s
 } aim_mpmsg_t;
 
 int aim_mpmsg_init(OscarData *od, aim_mpmsg_t *mpm);
-int aim_mpmsg_addraw(OscarData *od, aim_mpmsg_t *mpm, guint16 charset, guint16 charsubset, const gchar *data, guint16 datalen);
-int aim_mpmsg_addascii(OscarData *od, aim_mpmsg_t *mpm, const char *ascii);
-int aim_mpmsg_addunicode(OscarData *od, aim_mpmsg_t *mpm, const guint16 *unicode, guint16 unicodelen);
 void aim_mpmsg_free(OscarData *od, aim_mpmsg_t *mpm);
 
 /*
@@ -1016,7 +1005,6 @@ struct aim_incomingim_ch4_args
 /* 0x0006 */ int aim_im_sendch1(OscarData *, const char *destbn, guint16 flags, const char *msg);
 /* 0x0006 */ int aim_im_sendch2_chatinvite(OscarData *od, const char *bn, const char *msg, guint16 exchange, const char *roomname, guint16 instance);
 /* 0x0006 */ int aim_im_sendch2_icon(OscarData *od, const char *bn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum);
-/* 0x0006 */ int aim_im_sendch2_rtfmsg(OscarData *od, struct aim_sendrtfmsg_args *args);
 
 /* 0x0006 */ void aim_im_sendch2_cancel(PeerConnection *peer_conn);
 /* 0x0006 */ void aim_im_sendch2_connected(PeerConnection *peer_conn);
@@ -1025,9 +1013,6 @@ struct aim_incomingim_ch4_args
 /* 0x0006 */ void aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char *bn, const guint8 *ip, guint16 port, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles);
 /* 0x0006 */ void aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *bn, const guint8 *ip, guint16 pin, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles);
 
-/* 0x0006 */ int aim_im_sendch2_geticqaway(OscarData *od, const char *bn, int type);
-/* 0x0006 */ int aim_im_sendch4(OscarData *od, const char *bn, guint16 type, const char *message);
-/* 0x0008 */ int aim_im_warn(OscarData *od, FlapConnection *conn, const char *destbn, guint32 flags);
 /* 0x000b */ int aim_im_denytransfer(OscarData *od, const char *bn, const guchar *cookie, guint16 code);
 /* 0x0010 */ int aim_im_reqofflinemsgs(OscarData *od);
 /* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2);
@@ -1125,22 +1110,8 @@ struct aim_invite_priv
 	guint16 instance;
 };
 
-#define AIM_COOKIETYPE_UNKNOWN  0x00
-#define AIM_COOKIETYPE_ICBM     0x01
-#define AIM_COOKIETYPE_ADS      0x02
-#define AIM_COOKIETYPE_BOS      0x03
-#define AIM_COOKIETYPE_IM       0x04
-#define AIM_COOKIETYPE_CHAT     0x05
-#define AIM_COOKIETYPE_CHATNAV  0x06
-#define AIM_COOKIETYPE_INVITE   0x07
-/* we'll move OFT up a bit to give breathing room.  not like it really
- * matters. */
-#define AIM_COOKIETYPE_OFTIM    0x10
-#define AIM_COOKIETYPE_OFTGET   0x11
-#define AIM_COOKIETYPE_OFTSEND  0x12
-#define AIM_COOKIETYPE_OFTVOICE 0x13
-#define AIM_COOKIETYPE_OFTIMAGE 0x14
-#define AIM_COOKIETYPE_OFTICON  0x15
+#define AIM_COOKIETYPE_CHAT     0x01
+#define AIM_COOKIETYPE_INVITE   0x02
 
 aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *bn);
 void aim_locate_dorequest(OscarData *od);
@@ -1148,10 +1119,6 @@ void aim_locate_dorequest(OscarData *od);
 /* 0x0002 */ int aim_locate_reqrights(OscarData *od);
 /* 0x0004 */ int aim_locate_setcaps(OscarData *od, guint64 caps);
 /* 0x0004 */ int aim_locate_setprofile(OscarData *od, const char *profile_encoding, const gchar *profile, const int profile_len, const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len);
-/* 0x0005 */ int aim_locate_getinfo(OscarData *od, const char *, guint16);
-/* 0x0009 */ int aim_locate_setdirinfo(OscarData *od, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy);
-/* 0x000b */ int aim_locate_000b(OscarData *od, const char *bn);
-/* 0x000f */ int aim_locate_setinterests(OscarData *od, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy);
 /* 0x0015 */ int aim_locate_getinfoshort(OscarData *od, const char *bn, guint32 flags);
 
 guint64 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len);
@@ -1166,10 +1133,6 @@ int icq_im_xstatus_request(OscarData *od, const char *sn);
 
 /* 0x0003 - family_buddy.c */
 /* 0x0002 */ void aim_buddylist_reqrights(OscarData *, FlapConnection *);
-/* 0x0004 */ int aim_buddylist_set(OscarData *, FlapConnection *, const char *);
-/* 0x0004 */ int aim_buddylist_addbuddy(OscarData *, FlapConnection *, const char *);
-/* 0x0005 */ int aim_buddylist_removebuddy(OscarData *, FlapConnection *, const char *);
-
 
 
 /* 0x000a - family_userlookup.c */
@@ -1200,41 +1163,11 @@ struct aim_chat_exchangeinfo
 #define AIM_CHATFLAGS_AWAY      0x0002
 int aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar *msg, int msglen, const char *encoding, const char *language);
 int aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 instance);
-int aim_chat_attachname(FlapConnection *conn, guint16 exchange, const char *roomname, guint16 instance);
-char *aim_chat_getname(FlapConnection *conn);
 FlapConnection *aim_chat_getconn(OscarData *, const char *name);
 
 void aim_chatnav_reqrights(OscarData *od, FlapConnection *conn);
 
 int aim_chatnav_createroom(OscarData *od, FlapConnection *conn, const char *name, guint16 exchange);
-int aim_chat_leaveroom(OscarData *od, const char *name);
-
-
-
-/* 0x000f - family_odir.c */
-struct aim_odir
-{
-	char *first;
-	char *last;
-	char *middle;
-	char *maiden;
-	char *email;
-	char *country;
-	char *state;
-	char *city;
-	char *bn;
-	char *interest;
-	char *nick;
-	char *zip;
-	char *region;
-	char *address;
-	struct aim_odir *next;
-};
-
-int aim_odir_email(OscarData *, const char *, const char *);
-int aim_odir_name(OscarData *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
-int aim_odir_interest(OscarData *, const char *, const char *);
-
 
 
 /* 0x0010 - family_bart.c */
@@ -1286,11 +1219,9 @@ struct aim_ssi_tmp
 /* These build the actual SNACs and queue them to be sent */
 /* 0x0002 */ int aim_ssi_reqrights(OscarData *od);
 /* 0x0004 */ int aim_ssi_reqdata(OscarData *od);
-/* 0x0005 */ int aim_ssi_reqifchanged(OscarData *od, time_t localstamp, guint16 localrev);
 /* 0x0007 */ int aim_ssi_enable(OscarData *od);
 /* 0x0011 */ int aim_ssi_modbegin(OscarData *od);
 /* 0x0012 */ int aim_ssi_modend(OscarData *od);
-/* 0x0014 */ int aim_ssi_sendauth(OscarData *od, char *bn, char *msg);
 /* 0x0018 */ int aim_ssi_sendauthrequest(OscarData *od, char *bn, const char *msg);
 /* 0x001a */ int aim_ssi_sendauthreply(OscarData *od, char *bn, guint8 reply, const char *msg);
 
@@ -1592,10 +1523,7 @@ int chatnav_modfirst(OscarData *od, aim_module_t *mod);
 int chat_modfirst(OscarData *od, aim_module_t *mod);
 int locate_modfirst(OscarData *od, aim_module_t *mod);
 int service_modfirst(OscarData *od, aim_module_t *mod);
-int invite_modfirst(OscarData *od, aim_module_t *mod);
-int translate_modfirst(OscarData *od, aim_module_t *mod);
 int popups_modfirst(OscarData *od, aim_module_t *mod);
-int adverts_modfirst(OscarData *od, aim_module_t *mod);
 int odir_modfirst(OscarData *od, aim_module_t *mod);
 int bart_modfirst(OscarData *od, aim_module_t *mod);
 int ssi_modfirst(OscarData *od, aim_module_t *mod);
@@ -1605,7 +1533,6 @@ int email_modfirst(OscarData *od, aim_module_t *mod);
 void aim_genericreq_n(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype);
 void aim_genericreq_n_snacid(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype);
 void aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint32 *);
-void aim_genericreq_s(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint16 *);
 
 /* bstream.c */
 int byte_stream_new(ByteStream *bs, guint32 len);
@@ -1695,7 +1622,6 @@ IcbmCookie *aim_uncachecookie(OscarData *od, guint8 *cookie, int type);
 IcbmCookie *aim_mkcookie(guint8 *, int, void *);
 IcbmCookie *aim_checkcookie(OscarData *, const unsigned char *, const int);
 int aim_freecookie(OscarData *od, IcbmCookie *cookie);
-int aim_msgcookie_gettype(guint64 type);
 int aim_cookie_free(OscarData *od, IcbmCookie *cookie);
 
 int aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo);

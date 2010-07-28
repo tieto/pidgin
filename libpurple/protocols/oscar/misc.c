@@ -77,29 +77,6 @@ aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint16 su
 	byte_stream_destroy(&bs);
 }
 
-void
-aim_genericreq_s(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint16 *shortdata)
-{
-	ByteStream bs;
-	aim_snacid_t snacid;
-
-	if (!shortdata)
-	{
-		aim_genericreq_n(od, conn, family, subtype);
-		return;
-	}
-
-	byte_stream_new(&bs, 2);
-
-	snacid = aim_cachesnac(od, family, subtype, 0x0000, NULL, 0);
-
-	byte_stream_put16(&bs, *shortdata);
-
-	flap_connection_send_snac(od, conn, family, subtype, 0x0000, snacid, &bs);
-
-	byte_stream_destroy(&bs);
-}
-
 /*
  * Should be generic enough to handle the errors for all groups.
  *

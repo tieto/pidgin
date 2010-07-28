@@ -53,14 +53,11 @@ oscar_data_new(void)
 	aim__registermodule(od, locate_modfirst);
 	aim__registermodule(od, buddylist_modfirst);
 	aim__registermodule(od, msg_modfirst);
-	/* aim__registermodule(od, adverts_modfirst); */
-	/* aim__registermodule(od, invite_modfirst); */
 	aim__registermodule(od, admin_modfirst);
 	aim__registermodule(od, popups_modfirst);
 	aim__registermodule(od, bos_modfirst);
 	aim__registermodule(od, search_modfirst);
 	aim__registermodule(od, stats_modfirst);
-	/* aim__registermodule(od, translate_modfirst); */
 	aim__registermodule(od, chatnav_modfirst);
 	aim__registermodule(od, chat_modfirst);
 	aim__registermodule(od, odir_modfirst);
