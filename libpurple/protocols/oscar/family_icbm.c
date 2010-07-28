@@ -800,17 +800,6 @@ aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char 
 	aim_tlvlist_add_noval(&inner_tlvlist, 0x000f);
 	/* TODO: Send 0x0016 and 0x0017 */
 
-#if 0
-	/* TODO: If the following is ever enabled, ensure that it is
-	 *       not sent with a receive redirect or stage 3 proxy
-	 *       redirect for a file receive (same conditions for
-	 *       sending 0x000f above)
-	 */
-	aim_tlvlist_add_raw(&inner_tlvlist, 0x000e, 2, "en");
-	aim_tlvlist_add_raw(&inner_tlvlist, 0x000d, 8, "us-ascii");
-	aim_tlvlist_add_raw(&inner_tlvlist, 0x000c, 24, "Please accept this file.");
-#endif
-
 	if (filename != NULL)
 	{
 		ByteStream inner_bs;
@@ -891,17 +880,6 @@ aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *
 	ip_comp[3] = ~ip[3];
 	aim_tlvlist_add_raw(&inner_tlvlist, 0x0016, 4, ip_comp);
 	aim_tlvlist_add_16(&inner_tlvlist, 0x0017, ~pin);
-
-#if 0
-	/* TODO: If the following is ever enabled, ensure that it is
-	 *       not sent with a receive redirect or stage 3 proxy
-	 *       redirect for a file receive (same conditions for
-	 *       sending 0x000f above)
-	 */
-	aim_tlvlist_add_raw(&inner_tlvlist, 0x000e, 2, "en");
-	aim_tlvlist_add_raw(&inner_tlvlist, 0x000d, 8, "us-ascii");
-	aim_tlvlist_add_raw(&inner_tlvlist, 0x000c, 24, "Please accept this file.");
-#endif
 
 	if (filename != NULL)
 	{
@@ -1653,20 +1631,6 @@ static int incomingim_ch2(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	 */
 	if (aim_tlv_gettlv(list2, 0x000e, 1))
 		args.language = aim_tlv_getstr(list2, 0x000e, 1);
-
-#if 0
-	/*
-	 * Unknown -- no value
-	 *
-	 * Maybe means we should connect directly to transfer the file?
-	 * Also used in ICQ Lite Beta 4.0 URLs.  Also empty.
-	 */
-	 /* I don't think this indicates a direct transfer; this flag is
-	  * also present in a stage 1 proxied file send request -- Jonathan */
-	if (aim_tlv_gettlv(list2, 0x000f, 1)) {
-		/* Unhandled */
-	}
-#endif
 
 	/*
 	 * Flag meaning we should proxy the file transfer through an AIM server

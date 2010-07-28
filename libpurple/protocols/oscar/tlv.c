@@ -49,26 +49,6 @@ aim_tlv_read(GSList *list, ByteStream *bs)
 	type = byte_stream_get16(bs);
 	length = byte_stream_get16(bs);
 
-#if 0
-	/*
-	 * This code hasn't been needed in years.  It's been commented
-	 * out since 2003, at the latest.  It seems likely that it was
-	 * just a bug in their server code that has since been fixed.
-	 * In any case, here's the orignal comment, kept for historical
-	 * purposes:
-	 *
-	 * Okay, so now AOL has decided that any TLV of
-	 * type 0x0013 can only be two bytes, despite
-	 * what the actual given length is.  So here
-	 * we dump any invalid TLVs of that sort.  Hopefully
-	 * there's no special cases to this special case.
-	 *   - mid (30jun2000)
-	 */
-	if ((type == 0x0013) && (length != 0x0002)) {
-		length = 0x0002;
-		return list;
-	}
-#endif
 	if (length > byte_stream_empty(bs)) {
 		aim_tlvlist_free(list);
 		return NULL;

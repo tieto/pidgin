@@ -1165,60 +1165,6 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 	return 0;
 }
 
-/* Apparently, this is never called.
- * If you activate it, figure out a way to know what mood to pass to
- * aim_tlvlist_add_caps() below. --rlaager */
-#if 0
-/*
- * Inverse of aim_info_extract()
- */
-int
-aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
-{
-	GSList *tlvlist = NULL;
-
-	if (!bs || !info)
-		return -EINVAL;
-
-	byte_stream_put8(bs, strlen(info->bn));
-	byte_stream_putstr(bs, info->bn);
-
-	byte_stream_put16(bs, info->warnlevel);
-
-	if (info->present & AIM_USERINFO_PRESENT_FLAGS)
-		aim_tlvlist_add_16(&tlvlist, 0x0001, info->flags);
-	if (info->present & AIM_USERINFO_PRESENT_MEMBERSINCE)
-		aim_tlvlist_add_32(&tlvlist, 0x0002, info->membersince);
-	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
-		aim_tlvlist_add_32(&tlvlist, 0x0003, info->onlinesince);
-	if (info->present & AIM_USERINFO_PRESENT_IDLE)
-		aim_tlvlist_add_16(&tlvlist, 0x0004, info->idletime);
-
-/* XXX - So, ICQ_OSCAR_SUPPORT is never defined anywhere... */
-#ifdef ICQ_OSCAR_SUPPORT
-	if (atoi(info->bn) != 0) {
-		if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS)
-			aim_tlvlist_add_16(&tlvlist, 0x0006, info->icqinfo.status);
-		if (info->present & AIM_USERINFO_PRESENT_ICQIPADDR)
-			aim_tlvlist_add_32(&tlvlist, 0x000a, info->icqinfo.ipaddr);
-	}
-#endif
-
-	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES) {
-		aim_tlvlist_add_caps(&tlvlist, 0x000d, info->capabilities, NULL);
-	}
-
-	if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
-		aim_tlvlist_add_32(&tlvlist, (guint16)((info->flags & AIM_FLAG_AOL) ? 0x0010 : 0x000f), info->sessionlen);
-
-	byte_stream_put16(bs, aim_tlvlist_count(tlvlist));
-	aim_tlvlist_write(bs, &tlvlist);
-	aim_tlvlist_free(tlvlist);
-
-	return 0;
-}
-#endif
-
 /*
  * Subtype 0x0001
  */
@@ -1563,15 +1509,6 @@ locate_modfirst(OscarData *od, aim_module_t *mod)
 
 	return 0;
 }
-
-#if 0 //rlaager
-const char* aim_get_custom_icon_mood(gint32 no)
-{
-	if (no >= G_N_ELEMENTS(aim_custom_icons) || no < 1)
-		return NULL;
-	return aim_custom_icons[no].mood.mood;
-}
-#endif
 
 const char*
 icq_get_custom_icon_description(const char *mood)

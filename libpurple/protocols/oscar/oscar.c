@@ -929,34 +929,6 @@ static int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 				AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
 		return 1;
 	}
-	/* uncomment this when you're convinced it's right. remember, it's been wrong before. */
-#if 0
-	if (offset > AIM_MAX_FILE_SIZE || len > AIM_MAX_FILE_SIZE) {
-		char *buf;
-		int i = 8;
-		if (modname)
-			i += strlen(modname);
-		buf = g_malloc(i);
-		i = 0;
-		if (modname) {
-			memcpy(buf, modname, strlen(modname));
-			i += strlen(modname);
-		}
-		buf[i++] = offset & 0xff;
-		buf[i++] = (offset >> 8) & 0xff;
-		buf[i++] = (offset >> 16) & 0xff;
-		buf[i++] = (offset >> 24) & 0xff;
-		buf[i++] = len & 0xff;
-		buf[i++] = (len >> 8) & 0xff;
-		buf[i++] = (len >> 16) & 0xff;
-		buf[i++] = (len >> 24) & 0xff;
-		purple_debug_misc("oscar", "len + offset is invalid, "
-		           "hashing request\n");
-		aim_sendmemblock(od, command->conn, offset, i, buf, AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
-		g_free(buf);
-		return 1;
-	}
-#endif
 
 	pos = g_new0(struct pieceofcrap, 1);
 	pos->gc = od->gc;
@@ -3352,16 +3324,6 @@ void oscar_get_info(PurpleConnection *gc, const char *name) {
 		aim_locate_getinfoshort(od, name, 0x00000003);
 }
 
-#if 0
-static void oscar_set_dir(PurpleConnection *gc, const char *first, const char *middle, const char *last,
-			  const char *maiden, const char *city, const char *state, const char *country, int web) {
-	/* XXX - some of these things are wrong, but i'm lazy */
-	OscarData *od = purple_connection_get_protocol_data(gc);
-	aim_locate_setdirinfo(od, first, middle, last,
-				maiden, NULL, NULL, city, state, NULL, 0, web);
-}
-#endif
-
 void oscar_set_idle(PurpleConnection *gc, int time) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	aim_srv_setidle(od, time);
@@ -5116,15 +5078,6 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 			}
 			menu = g_list_prepend(menu, act);
 		}
-#if 0
-		/* TODO: This menu item should be added by the core */
-		if (userinfo->capabilities & OSCAR_CAPABILITY_GETFILE) {
-			act = purple_menu_action_new(_("Get File"),
-			                           PURPLE_CALLBACK(oscar_ask_getfile),
-			                           NULL, NULL);
-			menu = g_list_prepend(menu, act);
-		}
-#endif
 	}
 
 	if (od->ssi.received_data && purple_buddy_get_group(buddy) != NULL)
@@ -5561,12 +5514,6 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 	act = purple_plugin_action_new(_("Search for Buddy by Email Address..."),
 			oscar_show_find_email);
 	menu = g_list_prepend(menu, act);
-
-#if 0
-	act = purple_plugin_action_new(_("Search for Buddy by Information"),
-			show_find_info);
-	menu = g_list_prepend(menu, act);
-#endif
 
 	menu = g_list_reverse(menu);
 

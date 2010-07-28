@@ -321,16 +321,6 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 		aim_info_extract(od, &tbs, &userinfo);
 	}
 
-#if 0
-	/*
-	 * Type 0x0001: If present, it means it was a message to the
-	 * room (as opposed to a whisper).
-	 */
-	if (aim_tlv_gettlv(tlvlist, 0x0001, 1)) {
-		/* Unhandled */
-	}
-#endif
-
 	/*
 	 * Type 0x0005: Message Block.  Conains more TLVs.
 	 */

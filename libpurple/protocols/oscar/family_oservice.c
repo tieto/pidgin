@@ -812,16 +812,6 @@ aim_srv_setextrainfo(OscarData *od,
 				AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_DIRECTREQUIREAUTH);
 	}
 
-#if 0
-	if (other_stuff_that_isnt_implemented)
-	{
-		aim_tlvlist_add_raw(&tlvlist, 0x000c, 0x0025,
-				chunk_of_x25_bytes_with_ip_address_etc);
-		aim_tlvlist_add_raw(&tlvlist, 0x0011, 0x0005, unknown 0x01 61 10 f6 41);
-		aim_tlvlist_add_16(&tlvlist, 0x0012, unknown 0x00 00);
-	}
-#endif
-
 	if (setstatusmsg)
 	{
 		size_t statusmsglen, itmsurllen;
