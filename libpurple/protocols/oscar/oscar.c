@@ -2512,13 +2512,7 @@ static int purple_conv_chat_leave(OscarData *od, FlapConnection *conn, FlapFrame
 
 static int purple_conv_chat_info_update(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	va_list ap;
-	aim_userinfo_t *userinfo;
-	struct aim_chat_roominfo *roominfo;
-	char *roomname;
-	int usercount;
-	char *roomdesc;
-	guint16 unknown_c9, unknown_d2, unknown_d5, maxmsglen, maxvisiblemsglen;
-	guint32 creationtime;
+	guint16 maxmsglen, maxvisiblemsglen;
 	PurpleConnection *gc = od->gc;
 	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, conn);
 
@@ -2526,16 +2520,7 @@ static int purple_conv_chat_info_update(OscarData *od, FlapConnection *conn, Fla
 		return 1;
 
 	va_start(ap, fr);
-	roominfo = va_arg(ap, struct aim_chat_roominfo *);
-	roomname = va_arg(ap, char *);
-	usercount= va_arg(ap, int);
-	userinfo = va_arg(ap, aim_userinfo_t *);
-	roomdesc = va_arg(ap, char *);
-	unknown_c9 = (guint16)va_arg(ap, unsigned int);
-	creationtime = va_arg(ap, guint32);
 	maxmsglen = (guint16)va_arg(ap, unsigned int);
-	unknown_d2 = (guint16)va_arg(ap, unsigned int);
-	unknown_d5 = (guint16)va_arg(ap, unsigned int);
 	maxvisiblemsglen = (guint16)va_arg(ap, unsigned int);
 	va_end(ap);
 

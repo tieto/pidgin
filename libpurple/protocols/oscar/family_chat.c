@@ -47,36 +47,6 @@ flap_connection_destroy_chat(OscarData *od, FlapConnection *conn)
 	return;
 }
 
-/* XXX get this into conn.c -- evil!! */
-FlapConnection *
-aim_chat_getconn(OscarData *od, const char *name)
-{
-	GSList *cur;
-
-	for (cur = od->oscar_connections; cur; cur = cur->next)
-	{
-		FlapConnection *conn;
-		struct chatconnpriv *ccp;
-
-		conn = cur->data;
-		ccp = (struct chatconnpriv *)conn->internal;
-
-		if (conn->type != SNAC_FAMILY_CHAT)
-			continue;
-		if (!conn->internal)
-		{
-			purple_debug_misc("oscar", "%sfaim: chat: chat connection with no name! (fd = %d)\n",
-					conn->gsc ? "(ssl) " : "", conn->gsc ? conn->gsc->fd : conn->fd);
-			continue;
-		}
-
-		if (strcmp(ccp->name, name) == 0)
-			return conn;
-	}
-
-	return NULL;
-}
-
 int
 aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo)
 {
@@ -102,21 +72,12 @@ aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo)
 static int
 infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	aim_userinfo_t *userinfo = NULL;
 	aim_rxcallback_t userfunc;
 	int ret = 0;
-	int usercount;
 	guint8 detaillevel = 0;
-	char *roomname;
 	struct aim_chat_roominfo roominfo;
-	guint16 tlvcount = 0;
 	GSList *tlvlist;
-	aim_tlv_t *tlv;
-	char *roomdesc;
-	guint16 flags;
-	guint32 creationtime;
 	guint16 maxmsglen, maxvisiblemsglen;
-	guint16 unknown_d2, unknown_d5;
 
 	aim_chat_readroominfo(bs, &roominfo);
 
@@ -127,50 +88,10 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 		return 1;
 	}
 
-	tlvcount = byte_stream_get16(bs);
-
 	/*
 	 * Everything else are TLVs.
 	 */
 	tlvlist = aim_tlvlist_read(bs);
-
-	/*
-	 * TLV type 0x006a is the room name in Human Readable Form.
-	 */
-	roomname = aim_tlv_getstr(tlvlist, 0x006a, 1);
-
-	/*
-	 * Type 0x006f: Number of occupants.
-	 */
-	usercount = aim_tlv_get16(tlvlist, 0x006f, 1);
-
-	/*
-	 * Type 0x0073:  Occupant list.
-	 */
-	tlv = aim_tlv_gettlv(tlvlist, 0x0073, 1);
-	if (tlv != NULL)
-	{
-		int curoccupant = 0;
-		ByteStream occbs;
-
-		/* Allocate enough userinfo structs for all occupants */
-		userinfo = g_new0(aim_userinfo_t, usercount);
-
-		byte_stream_init(&occbs, tlv->value, tlv->length);
-
-		while (curoccupant < usercount)
-			aim_info_extract(od, &occbs, &userinfo[curoccupant++]);
-	}
-
-	/*
-	 * Type 0x00c9: Flags. (AIM_CHATROOM_FLAG)
-	 */
-	flags = aim_tlv_get16(tlvlist, 0x00c9, 1);
-
-	/*
-	 * Type 0x00ca: Creation time (4 bytes)
-	 */
-	creationtime = aim_tlv_get32(tlvlist, 0x00ca, 1);
 
 	/*
 	 * Type 0x00d1: Maximum Message Length
@@ -178,88 +99,16 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	maxmsglen = aim_tlv_get16(tlvlist, 0x00d1, 1);
 
 	/*
-	 * Type 0x00d2: Unknown. (2 bytes)
-	 */
-	unknown_d2 = aim_tlv_get16(tlvlist, 0x00d2, 1);
-
-	/*
-	 * Type 0x00d3: Room Description
-	 */
-	roomdesc = aim_tlv_getstr(tlvlist, 0x00d3, 1);
-
-#if 0
-	/*
-	 * Type 0x000d4: Unknown (flag only)
-	 */
-	if (aim_tlv_gettlv(tlvlist, 0x000d4, 1)) {
-		/* Unhandled */
-	}
-#endif
-
-	/*
-	 * Type 0x00d5: Unknown. (1 byte)
-	 */
-	unknown_d5 = aim_tlv_get8(tlvlist, 0x00d5, 1);
-
-#if 0
-	/*
-	 * Type 0x00d6: Encoding 1 ("us-ascii")
-	 */
-	if (aim_tlv_gettlv(tlvlist, 0x000d6, 1)) {
-		/* Unhandled */
-	}
-
-	/*
-	 * Type 0x00d7: Language 1 ("en")
-	 */
-	if (aim_tlv_gettlv(tlvlist, 0x000d7, 1)) {
-		/* Unhandled */
-	}
-
-	/*
-	 * Type 0x00d8: Encoding 2 ("us-ascii")
-	 */
-	if (aim_tlv_gettlv(tlvlist, 0x000d8, 1)) {
-		/* Unhandled */
-	}
-
-	/*
-	 * Type 0x00d9: Language 2 ("en")
-	 */
-	if (aim_tlv_gettlv(tlvlist, 0x000d9, 1)) {
-		/* Unhandled */
-	}
-#endif
-
-	/*
 	 * Type 0x00da: Maximum visible message length
 	 */
 	maxvisiblemsglen = aim_tlv_get16(tlvlist, 0x00da, 1);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype))) {
-		ret = userfunc(od, conn,
-				frame,
-				&roominfo,
-				roomname,
-				usercount,
-				userinfo,
-				roomdesc,
-				flags,
-				creationtime,
-				maxmsglen,
-				unknown_d2,
-				unknown_d5,
-				maxvisiblemsglen);
+		ret = userfunc(od, conn, frame, maxmsglen, maxvisiblemsglen);
 	}
 
 	g_free(roominfo.name);
 
-	while (usercount > 0)
-		aim_info_free(&userinfo[--usercount]);
-
-	g_free(userinfo);
-	g_free(roomname);
-	g_free(roomdesc);
 	aim_tlvlist_free(tlvlist);
 
 	return ret;

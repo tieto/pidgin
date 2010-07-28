@@ -1138,16 +1138,6 @@ int icq_im_xstatus_request(OscarData *od, const char *sn);
 /* 0x000a - family_userlookup.c */
 int aim_search_address(OscarData *, const char *);
 
-
-
-/* 0x000d - family_chatnav.c */
-/* 0x000e - family_chat.c */
-/* These apply to exchanges as well. */
-#define AIM_CHATROOM_FLAG_EVILABLE 0x0001
-#define AIM_CHATROOM_FLAG_NAV_ONLY 0x0002
-#define AIM_CHATROOM_FLAG_INSTANCING_ALLOWED 0x0004
-#define AIM_CHATROOM_FLAG_OCCUPANT_PEEK_ALLOWED 0x0008
-
 struct aim_chat_exchangeinfo
 {
 	guint16 number;
@@ -1163,7 +1153,6 @@ struct aim_chat_exchangeinfo
 #define AIM_CHATFLAGS_AWAY      0x0002
 int aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar *msg, int msglen, const char *encoding, const char *language);
 int aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 instance);
-FlapConnection *aim_chat_getconn(OscarData *, const char *name);
 
 void aim_chatnav_reqrights(OscarData *od, FlapConnection *conn);
 
@@ -1472,9 +1461,6 @@ const char *oscar_get_ui_info_string(const char *str, const char *default_value)
 gchar *oscar_get_clientstring(void);
 
 guint16 aimutil_iconsum(const guint8 *buf, int buflen);
-int aimutil_tokslen(char *toSearch, int theindex, char dl);
-int aimutil_itemcnt(char *toSearch, char dl);
-char *aimutil_itemindex(char *toSearch, int theindex, char dl);
 
 gboolean oscar_util_valid_name(const char *bn);
 gboolean oscar_util_valid_name_icq(const char *bn);
