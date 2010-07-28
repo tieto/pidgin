@@ -86,7 +86,7 @@ static void mxit_cb_set_profile( PurpleConnection* gc, PurpleRequestFields* fiel
 	/* validate name */
 	name = purple_request_fields_get_string( fields, "name" );
 	if ( ( !name ) || ( strlen( name ) < 3 ) ) {
-		err = _( "The name you entered is invalid." );
+		err = _( "The Display Name you entered is invalid." );
 		goto out;
 	}
 
