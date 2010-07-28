@@ -586,21 +586,13 @@ static void pidgin_whiteboard_draw_brush_point(PurpleWhiteboard *wb, int x, int 
 	GtkWidget *widget = gtkwb->drawing_area;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 
-	GdkRectangle update_rect;
-
-	GdkGC *gfx_con = gdk_gc_new(pixmap);
+	cairo_t *gfx_con = gdk_cairo_create(GDK_DRAWABLE(pixmap));
 	GdkColor col;
-
-	update_rect.x      = x - size / 2;
-	update_rect.y      = y - size / 2;
-	update_rect.width  = size;
-	update_rect.height = size;
 
 	/* Interpret and convert color */
 	pidgin_whiteboard_rgb24_to_rgb48(color, &col);
 
-	gdk_gc_set_rgb_fg_color(gfx_con, &col);
-	/* gdk_gc_set_rgb_bg_color(gfx_con, &col); */
+	gdk_cairo_set_source_color(gfx_con, &col);
 
 	/* NOTE 5 is a size constant for now... this is because of how poorly the
 	 * gdk_draw_arc draws small circles
@@ -608,28 +600,26 @@ static void pidgin_whiteboard_draw_brush_point(PurpleWhiteboard *wb, int x, int 
 	if(size < 5)
 	{
 		/* Draw a rectangle/square */
-		gdk_draw_rectangle(pixmap,
-						   gfx_con,
-						   TRUE,
-						   update_rect.x, update_rect.y,
-						   update_rect.width, update_rect.height);
+		cairo_rectangle(gfx_con,
+		                x - size / 2, y - size / 2,
+		                size, size);
+		cairo_fill(gfx_con);
 	}
 	else
 	{
 		/* Draw a circle */
-		gdk_draw_arc(pixmap,
-					 gfx_con,
-					 TRUE,
-					 update_rect.x, update_rect.y,
-					 update_rect.width, update_rect.height,
-					 0, FULL_CIRCLE_DEGREES);
+		cairo_arc(gfx_con,
+		          x, y,
+		          size / 2.0,
+		          0.0, 2.0 * M_PI);
+		cairo_fill(gfx_con);
 	}
 
 	gtk_widget_queue_draw_area(widget,
-							   update_rect.x, update_rect.y,
-							   update_rect.width, update_rect.height);
+							   x - size / 2, y - size / 2,
+							   size, size);
 
-	g_object_unref(G_OBJECT(gfx_con));
+	cairo_destroy(gfx_con);
 }
 
 /* Uses Bresenham's algorithm (as provided by Wikipedia) */
