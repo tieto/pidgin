@@ -616,27 +616,6 @@ void oscar_chat_destroy(struct chat_connection *cc);
 #define AIM_CHARSET_LATIN_1 0x0003 /* ISO 8859-1 */
 
 /*
- * Multipart message structures.
- */
-typedef struct aim_mpmsg_section_s
-{
-	guint16 charset;
-	guint16 charsubset;
-	gchar *data;
-	guint16 datalen;
-	struct aim_mpmsg_section_s *next;
-} aim_mpmsg_section_t;
-
-typedef struct aim_mpmsg_s
-{
-	unsigned int numparts;
-	aim_mpmsg_section_t *parts;
-} aim_mpmsg_t;
-
-int aim_mpmsg_init(OscarData *od, aim_mpmsg_t *mpm);
-void aim_mpmsg_free(OscarData *od, aim_mpmsg_t *mpm);
-
-/*
  * Arguments to aim_send_im_ext().
  *
  * This is really complicated.  But immensely versatile.
@@ -663,50 +642,20 @@ struct aim_sendimext_args
 };
 
 /*
- * Arguments to aim_send_rtfmsg().
- */
-struct aim_sendrtfmsg_args
-{
-	const char *destbn;
-	guint32 fgcolor;
-	guint32 bgcolor;
-	const char *rtfmsg; /* must be in RTF */
-};
-
-/*
  * This information is provided in the Incoming ICBM callback for
  * Channel 1 ICBM's.
- *
- * Multipart messages require some explanation. If you want to use them,
- * I suggest you read all the comments in family_icbm.c.
- *
  */
 struct aim_incomingim_ch1_args
 {
-	/* Always provided */
-	aim_mpmsg_t mpmsg;
 	guint32 icbmflags; /* some flags apply only to ->msg, not all mpmsg */
 	time_t timestamp; /* Only set for offline messages */
 
-	/* Only provided if message has a human-readable section */
 	gchar *msg;
-	int msglen;
 
 	/* Only provided if AIM_IMFLAGS_HASICON is set */
 	time_t iconstamp;
 	guint32 iconlen;
 	guint16 iconsum;
-
-	/* Only provided if AIM_IMFLAGS_CUSTOMFEATURES is set */
-	guint8 *features;
-	guint8 featureslen;
-
-	guint8 extdatalen;
-	guint8 *extdata;
-
-	/* Only used if AIM_IMFLAGS_CUSTOMCHARSET is set */
-	guint16 charset;
-	guint16 charsubset;
 };
 
 /* Valid values for channel 2 args->status */
@@ -1247,7 +1196,6 @@ int chat_modfirst(OscarData *od, aim_module_t *mod);
 int locate_modfirst(OscarData *od, aim_module_t *mod);
 int service_modfirst(OscarData *od, aim_module_t *mod);
 int popups_modfirst(OscarData *od, aim_module_t *mod);
-int odir_modfirst(OscarData *od, aim_module_t *mod);
 int bart_modfirst(OscarData *od, aim_module_t *mod);
 int ssi_modfirst(OscarData *od, aim_module_t *mod);
 int icq_modfirst(OscarData *od, aim_module_t *mod);

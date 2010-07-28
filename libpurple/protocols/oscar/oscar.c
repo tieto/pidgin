@@ -1500,17 +1500,11 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	PurpleMessageFlags flags = 0;
 	struct buddyinfo *bi;
 	PurpleStoredImage *img;
-	GString *message;
 	gchar *tmp;
-	aim_mpmsg_section_t *curpart;
 	const char *start, *end;
 	GData *attribs;
 
-	purple_debug_misc("oscar", "Received IM from %s with %d parts\n",
-					userinfo->bn, args->mpmsg.numparts);
-
-	if (args->mpmsg.numparts == 0)
-		return 1;
+	purple_debug_misc("oscar", "Received IM from %s\n", userinfo->bn);
 
 	bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, userinfo->bn));
 	if (!bi) {
@@ -1550,19 +1544,7 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	}
 	purple_imgstore_unref(img);
 
-	message = g_string_new("");
-	curpart = args->mpmsg.parts;
-	while (curpart != NULL) {
-		tmp = oscar_decode_im_part(account, userinfo->bn, curpart->charset,
-				curpart->charsubset, curpart->data, curpart->datalen);
-		if (tmp != NULL) {
-			g_string_append(message, tmp);
-			g_free(tmp);
-		}
-
-		curpart = curpart->next;
-	}
-	tmp = g_string_free(message, FALSE);
+	tmp = g_strdup(args->msg);
 
 	/*
 	 * Convert iChat color tags to normal font tags.
@@ -1646,8 +1628,7 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 		tmp = tmp2;
 	}
 
-	serv_got_im(gc, userinfo->bn, tmp, flags,
-			(args->icbmflags & AIM_IMFLAGS_OFFLINE) ? args->timestamp : time(NULL));
+	serv_got_im(gc, userinfo->bn, tmp, flags, (args->icbmflags & AIM_IMFLAGS_OFFLINE) ? args->timestamp : time(NULL));
 	g_free(tmp);
 
 	return 1;
@@ -1827,7 +1808,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 		purple_str_strip_char(msg1[i], '\r');
 		/* TODO: Should use an encoding other than ASCII? */
-		msg2[i] = oscar_decode_im_part(account, uin, AIM_CHARSET_ASCII, 0x0000, msg1[i], strlen(msg1[i]));
+		msg2[i] = oscar_decode_im(account, uin, AIM_CHARSET_ASCII, msg1[i], strlen(msg1[i]));
 		g_free(uin);
 	}
 	msg2[i] = NULL;
@@ -1884,7 +1865,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				gchar *reason = NULL;
 
 				if (msg2[5] != NULL)
-					reason = oscar_decode_im_part(account, bn, AIM_CHARSET_LATIN_1, 0x0000, msg2[5], strlen(msg2[5]));
+					reason = oscar_decode_im(account, bn, AIM_CHARSET_LATIN_1, msg2[5], strlen(msg2[5]));
 
 				purple_debug_info("oscar",
 						   "Received an authorization request from UIN %u\n",

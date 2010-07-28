@@ -60,7 +60,6 @@ oscar_data_new(void)
 	aim__registermodule(od, stats_modfirst);
 	aim__registermodule(od, chatnav_modfirst);
 	aim__registermodule(od, chat_modfirst);
-	aim__registermodule(od, odir_modfirst);
 	aim__registermodule(od, bart_modfirst);
 	/* missing 0x11 - 0x12 */
 	aim__registermodule(od, ssi_modfirst);

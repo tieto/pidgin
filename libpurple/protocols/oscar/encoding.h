@@ -41,10 +41,7 @@ gchar * oscar_utf8_try_convert(PurpleAccount *account, OscarData *od, const gcha
  * that don't correctly send non-ASCII messages.  And if Purple isn't
  * able to deal with that crap, then people complain like banshees.
  */
-gchar * oscar_decode_im_part(PurpleAccount *account,
-			const char *sourcebn,
-			guint16 charset, guint16 charsubset,
-			const gchar *data, gsize datalen);
+gchar * oscar_decode_im(PurpleAccount *account, const char *sourcebn, guint16 charset, const gchar *data, gsize datalen);
 
 /**
  * Figure out what encoding to use when sending a given outgoing message.

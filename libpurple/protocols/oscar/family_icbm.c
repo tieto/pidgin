@@ -44,6 +44,7 @@
  *       Make sure flap_connection_findbygroup is used by all functions.
  */
 
+#include "encoding.h"
 #include "oscar.h"
 #include "peer.h"
 
@@ -293,10 +294,6 @@ static int aim_im_paraminfo(OscarData *od, FlapConnection *conn, aim_module_t *m
  * it is not as clear as it could be in respect to how this message is
  * supposed to be layed out. Most obviously, tlvlists should be used
  * instead of writing out the bytes manually.
- *
- * XXX - more precise verification that we never send SNACs larger than 8192
- * XXX - check SNAC size for multipart
- *
  */
 int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 {
@@ -915,222 +912,40 @@ aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *
 	byte_stream_destroy(&bs);
 }
 
-/*
- * Ahh, the joys of nearly ridiculous over-engineering.
- *
- * Not only do AIM ICBM's support multiple channels.  Not only do they
- * support multiple character sets.  But they support multiple character
- * sets / encodings within the same ICBM.
- *
- * These multipart messages allow for complex space savings techniques, which
- * seem utterly unnecessary by today's standards.  In fact, there is only
- * one client still in popular use that still uses this method: AOL for the
- * Macintosh, Version 5.0.  Obscure, yes, I know.
- *
- * In modern (non-"legacy") clients, if the user tries to send a character
- * that is not ISO-8859-1 or ASCII, the client will send the entire message
- * as UNICODE, meaning that every character in the message will occupy the
- * full 16 bit UNICODE field, even if the high order byte would be zero.
- * Multipart messages prevent this wasted space by allowing the client to
- * only send the characters in UNICODE that need to be sent that way, and
- * the rest of the message can be sent in whatever the native character
- * set is (probably ASCII).
- *
- * An important note is that sections will be displayed in the order that
- * they appear in the ICBM.  There is no facility for merging or rearranging
- * sections at run time.  So if you have, say, ASCII then UNICODE then ASCII,
- * you must supply two ASCII sections with a UNICODE in the middle, and incur
- * the associated overhead.
- *
- * Normally I would have laughed and given a firm 'no' to supporting this
- * seldom-used feature, but something is attracting me to it.  In the future,
- * it may be possible to abuse this to send mixed-media messages to other
- * open source clients (like encryption or something) -- see faimtest for
- * examples of how to do this.
- *
- * I would definitely recommend avoiding this feature unless you really
- * know what you are doing, and/or you have something neat to do with it.
- *
- */
-int aim_mpmsg_init(OscarData *od, aim_mpmsg_t *mpm)
+static void
+incomingim_ch1_parsemsg(OscarData *od, aim_userinfo_t *userinfo, ByteStream *message, struct aim_incomingim_ch1_args *args)
 {
-
-	memset(mpm, 0, sizeof(aim_mpmsg_t));
-
-	return 0;
-}
-
-static int mpmsg_addsection(OscarData *od, aim_mpmsg_t *mpm, guint16 charset, guint16 charsubset, gchar *data, guint16 datalen)
-{
-	aim_mpmsg_section_t *sec;
-
-	sec = g_malloc(sizeof(aim_mpmsg_section_t));
-
-	sec->charset = charset;
-	sec->charsubset = charsubset;
-	sec->data = data;
-	sec->datalen = datalen;
-	sec->next = NULL;
-
-	if (!mpm->parts)
-		mpm->parts = sec;
-	else {
-		aim_mpmsg_section_t *cur;
-
-		for (cur = mpm->parts; cur->next; cur = cur->next)
-			;
-		cur->next = sec;
-	}
-
-	mpm->numparts++;
-
-	return 0;
-}
-
-void aim_mpmsg_free(OscarData *od, aim_mpmsg_t *mpm)
-{
-	aim_mpmsg_section_t *cur;
-
-	for (cur = mpm->parts; cur; ) {
-		aim_mpmsg_section_t *tmp;
-
-		tmp = cur->next;
-		g_free(cur->data);
-		g_free(cur);
-		cur = tmp;
-	}
-
-	mpm->numparts = 0;
-	mpm->parts = NULL;
-
-	return;
-}
-
-/*
- * Start by building the multipart structures, then pick the first
- * human-readable section and stuff it into args->msg so no one gets
- * suspicious.
- */
-static int incomingim_ch1_parsemsgs(OscarData *od, aim_userinfo_t *userinfo, guint8 *data, int len, struct aim_incomingim_ch1_args *args)
-{
-	/* Should this be ASCII -> UNICODE -> Custom */
-	static const guint16 charsetpri[] = {
-		AIM_CHARSET_ASCII, /* ASCII first */
-		AIM_CHARSET_LATIN_1, /* then ISO-8859-1 */
-		AIM_CHARSET_UNICODE, /* UNICODE as last resort */
-	};
-	static const int charsetpricount = 3;
-	int i;
-	ByteStream mbs;
-	aim_mpmsg_section_t *sec;
-
-	byte_stream_init(&mbs, data, len);
-
-	while (byte_stream_empty(&mbs)) {
-		guint16 msglen, flag1, flag2;
-		gchar *msgbuf;
-
-		byte_stream_get8(&mbs); /* 01 */
-		byte_stream_get8(&mbs); /* 01 */
-
-		/* Message string length, including character set info. */
-		msglen = byte_stream_get16(&mbs);
-		if (msglen > byte_stream_empty(&mbs))
-		{
-			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
-			break;
-		}
-
-		/* Character set info */
-		flag1 = byte_stream_get16(&mbs);
-		flag2 = byte_stream_get16(&mbs);
-
-		/* Message. */
-		msglen -= 4;
-
-		/*
-		 * For now, we don't care what the encoding is.  Just copy
-		 * it into a multipart struct and deal with it later. However,
-		 * always pad the ending with a NULL.  This makes it easier
-		 * to treat ASCII sections as strings.  It won't matter for
-		 * UNICODE or binary data, as you should never read past
-		 * the specified data length, which will not include the pad.
-		 *
-		 * XXX - There's an API bug here.  For sending, the UNICODE is
-		 * given in host byte order (aim_mpmsg_addunicode), but here
-		 * the received messages are given in network byte order.
-		 *
-		 */
-		msgbuf = (gchar *)byte_stream_getraw(&mbs, msglen);
-		mpmsg_addsection(od, &args->mpmsg, flag1, flag2, msgbuf, msglen);
-
-	} /* while */
-
+	PurpleAccount *account = purple_connection_get_account(od->gc);
 	/*
-	 * Clients that support multiparts should never use args->msg, as it
-	 * will point to an arbitrary section.
-	 *
-	 * Here, we attempt to provide clients that do not support multipart
-	 * messages with something to look at -- hopefully a human-readable
-	 * string.  But, failing that, a UNICODE message, or nothing at all.
-	 *
-	 * Which means that even if args->msg is NULL, it does not mean the
-	 * message was blank.
-	 *
+	 * We're interested in the inner TLV 0x101, which contains precious, precious message.
 	 */
-	for (i = 0; i < charsetpricount; i++) {
-		for (sec = args->mpmsg.parts; sec; sec = sec->next) {
+	while (byte_stream_empty(message) >= 4) {
+		guint16 type = byte_stream_get16(message);
+		guint16 length = byte_stream_get16(message);
+		if (type == 0x101) {
+			gchar *msg;
+			guint16 msglen = length - 4; /* charset + charsubset */
+			guint16 charset = byte_stream_get16(message);
+			byte_stream_advance(message, 2); /* charsubset */
 
-			if (sec->charset != charsetpri[i])
-				continue;
-
-			/* Great. We found one.  Fill it in. */
-			args->charset = sec->charset;
-			args->charsubset = sec->charsubset;
-
-			/* Set up the simple flags */
-			switch (args->charsubset)
-			{
-				case 0x0000:
-					/* standard subencoding? */
-					break;
-				case 0x000b:
-					args->icbmflags |= AIM_IMFLAGS_SUBENC_MACINTOSH;
-					break;
-				case 0xffff:
-					/* no subencoding */
-					break;
-				default:
-					break;
-			}
-
-			args->msg = sec->data;
-			args->msglen = sec->datalen;
-
-			return 0;
+			msg = byte_stream_getstr(message, msglen);
+			args->msg = oscar_decode_im(account, userinfo->bn, charset, msg, msglen);
+		} else {
+			byte_stream_advance(message, length);
 		}
 	}
-
-	/* No human-readable sections found.  Oh well. */
-	args->charset = args->charsubset = 0xffff;
-	args->msg = NULL;
-	args->msglen = 0;
-
-	return 0;
 }
 
-static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, guint16 channel, aim_userinfo_t *userinfo, ByteStream *bs, guint8 *cookie)
+static int
+incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, guint16 channel, aim_userinfo_t *userinfo, ByteStream *bs, guint8 *cookie)
 {
-	guint16 type, length, magic1, msglen = 0;
+	guint16 type, length;
 	aim_rxcallback_t userfunc;
 	int ret = 0;
-	int rev = 0;
 	struct aim_incomingim_ch1_args args;
 	unsigned int endpos;
 
 	memset(&args, 0, sizeof(args));
-
-	aim_mpmsg_init(od, &args.mpmsg);
 
 	/*
 	 * This used to be done using tlvchains.  For performance reasons,
@@ -1151,93 +966,20 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 		endpos = byte_stream_curpos(bs) + length;
 
 		if (type == 0x0002) { /* Message Block */
-
-			/*
-			 * This TLV consists of the following:
-			 *   - 0501 -- Unknown
-			 *   - Features: Don't know how to interpret these
-			 *   - 0101 -- Unknown
-			 *   - Message
-			 *
-			 * Slick and possible others reverse 'Features' and 'Messages' section.
-			 * Thus, the TLV could have following layout:
-			 *   - 0101 -- Unknown (possibly magic for message section)
-			 *   - Message
-			 *   - 0501 -- Unknown (possibly magic for features section)
-			 *   - Features: Don't know how to interpret these
-			 */
-
-			magic1 = byte_stream_get16(bs); /* 0501 or 0101 */
-			if (magic1 == 0x101) /* Bad, message comes before attributes */
-			{
-				/* Jump to the features section */
-				msglen = byte_stream_get16(bs);
-				bs->offset += msglen;
-				rev = 1;
-
-				magic1 = byte_stream_get16(bs); /* 0501 */
-			}
-
-			if (magic1 != 0x501)
-			{
-				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
-				break;
-			}
-
-			args.featureslen = byte_stream_get16(bs);
-			if (args.featureslen > byte_stream_empty(bs))
-			{
-				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
-				break;
-			}
-			if (args.featureslen == 0)
-			{
-				args.features = NULL;
-			}
-			else
-			{
-				args.features = byte_stream_getraw(bs, args.featureslen);
-				args.icbmflags |= AIM_IMFLAGS_CUSTOMFEATURES;
-			}
-
-			if (rev)
-			{
-				/* Fix buffer back to message */
-				bs->offset -= args.featureslen + 2 + 2 + msglen + 2 + 2;
-			}
-
-			magic1 = byte_stream_get16(bs); /* 01 01 */
-			if (magic1 != 0x101) /* Bad, message comes before attributes */
-			{
-				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
-				break;
-			}
-			msglen = byte_stream_get16(bs);
-
-			/*
-			 * The rest of the TLV contains one or more message
-			 * blocks...
-			 */
-			incomingim_ch1_parsemsgs(od, userinfo, bs->data + bs->offset - 2 - 2 /* XXX evil!!! */, msglen + 2 + 2, &args);
-
+			ByteStream tlv02;
+			byte_stream_init(&tlv02, bs->data + bs->offset, length);
+			incomingim_ch1_parsemsg(od, userinfo, &tlv02, &args);
 		} else if (type == 0x0003) { /* Server Ack Requested */
-
 			args.icbmflags |= AIM_IMFLAGS_ACK;
-
 		} else if (type == 0x0004) { /* Message is Auto Response */
-
 			args.icbmflags |= AIM_IMFLAGS_AWAY;
-
 		} else if (type == 0x0006) { /* Message was received offline. */
-
 			/*
 			 * This flag is set on incoming offline messages for both
 			 * AIM and ICQ accounts.
 			 */
 			args.icbmflags |= AIM_IMFLAGS_OFFLINE;
-
 		} else if (type == 0x0008) { /* I-HAVE-A-REALLY-PURTY-ICON Flag */
-
 			args.iconlen = byte_stream_get32(bs);
 			byte_stream_get16(bs); /* 0x0001 */
 			args.iconsum = byte_stream_get16(bs);
@@ -1255,39 +997,16 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 			 */
 			if (args.iconlen)
 				args.icbmflags |= AIM_IMFLAGS_HASICON;
-
 		} else if (type == 0x0009) {
-
 			args.icbmflags |= AIM_IMFLAGS_BUDDYREQ;
-
 		} else if (type == 0x000b) { /* Non-direct connect typing notification */
-
 			args.icbmflags |= AIM_IMFLAGS_TYPINGNOT;
-
 		} else if (type == 0x0016) {
-
 			/*
 			 * UTC timestamp for when the message was sent.  Only
 			 * provided for offline messages.
 			 */
 			args.timestamp = byte_stream_get32(bs);
-
-		} else if (type == 0x0017) {
-
-			if (length > byte_stream_empty(bs))
-			{
-				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
-				break;
-			}
-			g_free(args.extdata);
-			args.extdatalen = length;
-			if (args.extdatalen == 0)
-				args.extdata = NULL;
-			else
-				args.extdata = byte_stream_getraw(bs, args.extdatalen);
-
-		} else {
-			purple_debug_misc("oscar", "incomingim_ch1: unknown TLV 0x%04x (len %d)\n", type, length);
 		}
 
 		/*
@@ -1305,10 +1024,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, channel, userinfo, &args);
 
-	aim_mpmsg_free(od, &args.mpmsg);
-	g_free(args.features);
-	g_free(args.extdata);
-
+	g_free(args.msg);
 	return ret;
 }
 

@@ -145,7 +145,7 @@ oscar_convert_to_utf8(const gchar *data, gsize datalen, const char *charsetstr, 
 }
 
 gchar *
-oscar_decode_im_part(PurpleAccount *account, const char *sourcebn, guint16 charset, guint16 charsubset, const gchar *data, gsize datalen)
+oscar_decode_im(PurpleAccount *account, const char *sourcebn, guint16 charset, const gchar *data, gsize datalen)
 {
 	gchar *ret = NULL;
 	/* charsetstr1 is always set to what the correct encoding should be. */
@@ -179,8 +179,8 @@ oscar_decode_im_part(PurpleAccount *account, const char *sourcebn, guint16 chars
 		charsetstr2 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	}
 
-	purple_debug_info("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%" G_GSIZE_FORMAT ", choice1=%s, choice2=%s, choice3=%s\n",
-					  charset, charsubset, datalen, charsetstr1, charsetstr2, (charsetstr3 ? charsetstr3 : ""));
+	purple_debug_info("oscar", "Parsing IM, charset=0x%04hx, datalen=%" G_GSIZE_FORMAT ", choice1=%s, choice2=%s, choice3=%s\n",
+					  charset, datalen, charsetstr1, charsetstr2, (charsetstr3 ? charsetstr3 : ""));
 
 	ret = oscar_convert_to_utf8(data, datalen, charsetstr1, FALSE);
 	if (ret == NULL) {
