@@ -38,7 +38,9 @@ encoding_extract(const char *encoding)
 {
 	char *begin, *end;
 
-	g_return_val_if_fail(encoding != NULL, NULL);
+	if (encoding == NULL) {
+		return NULL;
+	}
 
 	if (!g_str_has_prefix(encoding, "text/aolrtf; charset=") &&
 		!g_str_has_prefix(encoding, "text/x-aolrtf; charset=") &&
