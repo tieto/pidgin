@@ -168,7 +168,7 @@ peer_proxy_recv_frame(PeerConnection *conn, ProxyFrame *frame)
 	}
 	else if (frame->type == PEER_PROXY_TYPE_ERROR)
 	{
-		if (byte_stream_empty(&frame->payload) >= 2)
+		if (byte_stream_bytes_left(&frame->payload) >= 2)
 		{
 			guint16 error;
 			const char *msg;

@@ -1170,7 +1170,7 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 	od->ssi.numitems += byte_stream_get16(bs); /* # of items in this SSI SNAC */
 
 	/* Read in the list */
-	while (byte_stream_empty(bs) > 4) { /* last four bytes are timestamp */
+	while (byte_stream_bytes_left(bs) > 4) { /* last four bytes are timestamp */
 		if ((namelen = byte_stream_get16(bs)))
 			name = byte_stream_getstr(bs, namelen);
 		else
@@ -1288,7 +1288,7 @@ static int parseadd(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 	guint16 len, gid, bid, type;
 	GSList *data;
 
-	while (byte_stream_empty(bs)) {
+	while (byte_stream_bytes_left(bs)) {
 		if ((len = byte_stream_get16(bs)))
 			name = byte_stream_getstr(bs, len);
 		else
@@ -1326,7 +1326,7 @@ static int parsemod(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 	GSList *data;
 	struct aim_ssi_item *item;
 
-	while (byte_stream_empty(bs)) {
+	while (byte_stream_bytes_left(bs)) {
 		if ((len = byte_stream_get16(bs)))
 			name = byte_stream_getstr(bs, len);
 		else
@@ -1378,7 +1378,7 @@ static int parsedel(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 	guint16 gid, bid;
 	struct aim_ssi_item *del;
 
-	while (byte_stream_empty(bs)) {
+	while (byte_stream_bytes_left(bs)) {
 		byte_stream_advance(bs, byte_stream_get16(bs));
 		gid = byte_stream_get16(bs);
 		bid = byte_stream_get16(bs);
@@ -1411,7 +1411,7 @@ static int parseack(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 
 	/* Read in the success/failure flags from the ack SNAC */
 	cur = od->ssi.pending;
-	while (cur && (byte_stream_empty(bs)>0)) {
+	while (cur && (byte_stream_bytes_left(bs)>0)) {
 		cur->ack = byte_stream_get16(bs);
 		cur = cur->next;
 	}

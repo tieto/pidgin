@@ -97,7 +97,7 @@ hostonline(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 {
 	int group;
 
-	while (byte_stream_empty(bs))
+	while (byte_stream_bytes_left(bs))
 	{
 		group = byte_stream_get16(bs);
 		conn->groups = g_slist_prepend(conn->groups, GUINT_TO_POINTER(group));
@@ -586,7 +586,7 @@ evilnotify(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 
 	newevil = byte_stream_get16(bs);
 
-	if (byte_stream_empty(bs))
+	if (byte_stream_bytes_left(bs))
 		aim_info_extract(od, bs, &userinfo);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
@@ -763,8 +763,8 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 	guint8 *versions;
 
 	/* This is frivolous. (Thank you SmarterChild.) */
-	vercount = byte_stream_empty(bs)/4;
-	versions = byte_stream_getraw(bs, byte_stream_empty(bs));
+	vercount = byte_stream_bytes_left(bs)/4;
+	versions = byte_stream_getraw(bs, byte_stream_bytes_left(bs));
 	g_free(versions);
 
 	/*

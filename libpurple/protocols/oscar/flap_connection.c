@@ -733,7 +733,7 @@ parse_snac(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 	aim_module_t *cur;
 	aim_modsnac_t snac;
 
-	if (byte_stream_empty(&frame->data) < 10)
+	if (byte_stream_bytes_left(&frame->data) < 10)
 		return;
 
 	snac.family = byte_stream_get16(&frame->data);
@@ -800,7 +800,7 @@ parse_flap_ch4(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 	GSList *tlvlist;
 	char *msg = NULL;
 
-	if (byte_stream_empty(&frame->data) == 0) {
+	if (byte_stream_bytes_left(&frame->data) == 0) {
 		/* XXX should do something with this */
 		return;
 	}
@@ -1062,8 +1062,8 @@ flap_connection_send_byte_stream(ByteStream *bs, FlapConnection *conn, size_t co
 		return;
 
 	/* Make sure we don't send past the end of the bs */
-	if (count > byte_stream_empty(bs))
-		count = byte_stream_empty(bs); /* truncate to remaining space */
+	if (count > byte_stream_bytes_left(bs))
+		count = byte_stream_bytes_left(bs); /* truncate to remaining space */
 
 	if (count == 0)
 		return;

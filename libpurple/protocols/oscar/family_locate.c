@@ -583,7 +583,7 @@ aim_locate_getcaps(OscarData *od, ByteStream *bs, int len)
 	guint64 flags = 0;
 	int offset;
 
-	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x10) {
+	for (offset = 0; byte_stream_bytes_left(bs) && (offset < len); offset += 0x10) {
 		guint8 *cap;
 		int i, identified;
 
@@ -617,7 +617,7 @@ aim_receive_custom_icon(OscarData *od, ByteStream *bs, int len)
 	int offset;
 	const char *result = NULL;
 
-	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x10) {
+	for (offset = 0; byte_stream_bytes_left(bs) && (offset < len); offset += 0x10) {
 		/* check wheather this capability is a custom user icon */
 		guint8 *cap;
 		int i;
@@ -643,7 +643,7 @@ aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len)
 	guint64 flags = 0;
 	int offset;
 
-	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x02) {
+	for (offset = 0; byte_stream_bytes_left(bs) && (offset < len); offset += 0x02) {
 		guint8 *cap;
 		int i, identified;
 
@@ -674,7 +674,7 @@ byte_stream_putcaps(ByteStream *bs, guint64 caps)
 	if (!bs)
 		return -EINVAL;
 
-	for (i = 0; byte_stream_empty(bs); i++) {
+	for (i = 0; byte_stream_bytes_left(bs); i++) {
 
 		if (aim_caps[i].flag == OSCAR_CAPABILITY_LAST)
 			break;
@@ -804,7 +804,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 		type = byte_stream_get16(bs);
 		length = byte_stream_get16(bs);
 		curpos = byte_stream_curpos(bs);
-		endpos = curpos + MIN(length, byte_stream_empty(bs));
+		endpos = curpos + MIN(length, byte_stream_bytes_left(bs));
 
 		if (type == 0x0001) {
 			/*
@@ -1010,7 +1010,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 				number2 = byte_stream_get8(bs);
 				length2 = byte_stream_get8(bs);
 
-				endpos2 = byte_stream_curpos(bs) + MIN(length2, byte_stream_empty(bs));
+				endpos2 = byte_stream_curpos(bs) + MIN(length2, byte_stream_bytes_left(bs));
 
 				switch (type2) {
 					case 0x0000: { /* This is an official buddy icon? */

@@ -91,7 +91,7 @@ generror(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 
 	snac2 = aim_remsnac(od, snac->id);
 
-	if (byte_stream_empty(bs))
+	if (byte_stream_bytes_left(bs))
 		error = byte_stream_get16(bs);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))

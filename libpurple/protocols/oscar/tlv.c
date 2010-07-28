@@ -49,7 +49,7 @@ aim_tlv_read(GSList *list, ByteStream *bs)
 	type = byte_stream_get16(bs);
 	length = byte_stream_get16(bs);
 
-	if (length > byte_stream_empty(bs)) {
+	if (length > byte_stream_bytes_left(bs)) {
 		aim_tlvlist_free(list);
 		return NULL;
 	}
@@ -88,7 +88,7 @@ GSList *aim_tlvlist_read(ByteStream *bs)
 {
 	GSList *list = NULL;
 
-	while (byte_stream_empty(bs) > 0) {
+	while (byte_stream_bytes_left(bs) > 0) {
 		list = aim_tlv_read(list, bs);
 		if (list == NULL)
 			return NULL;
@@ -122,7 +122,7 @@ GSList *aim_tlvlist_readnum(ByteStream *bs, guint16 num)
 {
 	GSList *list = NULL;
 
-	while ((byte_stream_empty(bs) > 0) && (num != 0)) {
+	while ((byte_stream_bytes_left(bs) > 0) && (num != 0)) {
 		list = aim_tlv_read(list, bs);
 		if (list == NULL)
 			return NULL;
@@ -157,7 +157,7 @@ GSList *aim_tlvlist_readlen(ByteStream *bs, guint16 len)
 {
 	GSList *list = NULL;
 
-	while ((byte_stream_empty(bs) > 0) && (len > 0)) {
+	while ((byte_stream_bytes_left(bs) > 0) && (len > 0)) {
 		list = aim_tlv_read(list, bs);
 		if (list == NULL)
 			return NULL;
@@ -648,7 +648,7 @@ int aim_tlvlist_write(ByteStream *bs, GSList **list)
 	/* do an initial run to test total length */
 	goodbuflen = aim_tlvlist_size(*list);
 
-	if (goodbuflen > byte_stream_empty(bs))
+	if (goodbuflen > byte_stream_bytes_left(bs))
 		return 0; /* not enough buffer */
 
 	/* do the real write-out */

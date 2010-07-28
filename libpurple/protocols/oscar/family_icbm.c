@@ -919,7 +919,7 @@ incomingim_ch1_parsemsg(OscarData *od, aim_userinfo_t *userinfo, ByteStream *mes
 	/*
 	 * We're interested in the inner TLV 0x101, which contains precious, precious message.
 	 */
-	while (byte_stream_empty(message) >= 4) {
+	while (byte_stream_bytes_left(message) >= 4) {
 		guint16 type = byte_stream_get16(message);
 		guint16 length = byte_stream_get16(message);
 		if (type == 0x101) {
@@ -952,12 +952,12 @@ incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	 * I've changed it to process the TLVs in-place.  This avoids lots
 	 * of per-IM memory allocations.
 	 */
-	while (byte_stream_empty(bs) >= 4)
+	while (byte_stream_bytes_left(bs) >= 4)
 	{
 		type = byte_stream_get16(bs);
 		length = byte_stream_get16(bs);
 
-		if (length > byte_stream_empty(bs))
+		if (length > byte_stream_bytes_left(bs))
 		{
 			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->bn);
 			break;
@@ -1050,7 +1050,7 @@ incomingim_ch2_buddylist(OscarData *od, FlapConnection *conn, aim_module_t *mod,
 	 *     ...
 	 *   ...
 	 */
-	while (byte_stream_empty(servdata))
+	while (byte_stream_bytes_left(servdata))
 	{
 		guint16 gnlen, numb;
 		int i;
@@ -1550,7 +1550,7 @@ static int missedcall(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 	guint16 channel, nummissed, reason;
 	aim_userinfo_t userinfo;
 
-	while (byte_stream_empty(bs)) {
+	while (byte_stream_bytes_left(bs)) {
 
 		channel = byte_stream_get16(bs);
 		aim_info_extract(od, bs, &userinfo);

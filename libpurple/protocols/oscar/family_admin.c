@@ -68,7 +68,7 @@ infochange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	perms = byte_stream_get16(bs);
 	tlvcount = byte_stream_get16(bs);
 
-	while (tlvcount && byte_stream_empty(bs)) {
+	while (tlvcount && byte_stream_bytes_left(bs)) {
 		guint16 type, length;
 
 		type = byte_stream_get16(bs);

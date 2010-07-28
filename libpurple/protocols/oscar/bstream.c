@@ -34,7 +34,6 @@ int byte_stream_new(ByteStream *bs, guint32 len)
 
 int byte_stream_init(ByteStream *bs, guint8 *data, int len)
 {
-
 	if (bs == NULL)
 		return -1;
 
@@ -50,7 +49,7 @@ void byte_stream_destroy(ByteStream *bs)
 	g_free(bs->data);
 }
 
-int byte_stream_empty(ByteStream *bs)
+int byte_stream_bytes_left(ByteStream *bs)
 {
 	return bs->len - bs->offset;
 }
@@ -62,102 +61,74 @@ int byte_stream_curpos(ByteStream *bs)
 
 int byte_stream_setpos(ByteStream *bs, unsigned int off)
 {
-
-	if (off > bs->len)
-		return -1;
+	g_return_val_if_fail(off <= bs->len, -1);
 
 	bs->offset = off;
-
 	return off;
 }
 
 void byte_stream_rewind(ByteStream *bs)
 {
-
 	byte_stream_setpos(bs, 0);
-
-	return;
 }
 
 /*
  * N can be negative, which can be used for going backwards
- * in a bstream.  I'm not sure if libfaim actually does
- * this anywhere...
+ * in a bstream.
  */
 int byte_stream_advance(ByteStream *bs, int n)
 {
-
-	if ((byte_stream_curpos(bs) + n < 0) || (byte_stream_empty(bs) < n))
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail((byte_stream_curpos(bs) + n >= 0) && (n <= byte_stream_bytes_left(bs)), 0);
 
 	bs->offset += n;
-
 	return n;
 }
 
 guint8 byte_stream_get8(ByteStream *bs)
 {
-
-	if (byte_stream_empty(bs) < 1)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 1, 0);
 
 	bs->offset++;
-
 	return aimutil_get8(bs->data + bs->offset - 1);
 }
 
 guint16 byte_stream_get16(ByteStream *bs)
 {
-
-	if (byte_stream_empty(bs) < 2)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 2, 0);
 
 	bs->offset += 2;
-
 	return aimutil_get16(bs->data + bs->offset - 2);
 }
 
 guint32 byte_stream_get32(ByteStream *bs)
 {
-
-	if (byte_stream_empty(bs) < 4)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 4, 0);
 
 	bs->offset += 4;
-
 	return aimutil_get32(bs->data + bs->offset - 4);
 }
 
 guint8 byte_stream_getle8(ByteStream *bs)
 {
-
-	if (byte_stream_empty(bs) < 1)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 1, 0);
 
 	bs->offset++;
-
 	return aimutil_getle8(bs->data + bs->offset - 1);
 }
 
 guint16 byte_stream_getle16(ByteStream *bs)
 {
-
-	if (byte_stream_empty(bs) < 2)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 2, 0);
 
 	bs->offset += 2;
-
 	return aimutil_getle16(bs->data + bs->offset - 2);
 }
 
 guint32 byte_stream_getle32(ByteStream *bs)
 {
-
-	if (byte_stream_empty(bs) < 4)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 4, 0);
 
 	bs->offset += 4;
-
 	return aimutil_getle32(bs->data + bs->offset - 4);
 }
 
@@ -169,9 +140,7 @@ static void byte_stream_getrawbuf_nocheck(ByteStream *bs, guint8 *buf, int len)
 
 int byte_stream_getrawbuf(ByteStream *bs, guint8 *buf, int len)
 {
-
-	if (byte_stream_empty(bs) < len)
-		return 0;
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= len, 0);
 
 	byte_stream_getrawbuf_nocheck(bs, buf, len);
 	return len;
@@ -181,13 +150,10 @@ guint8 *byte_stream_getraw(ByteStream *bs, int len)
 {
 	guint8 *ob;
 
-	if (byte_stream_empty(bs) < len)
-		return NULL;
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= len, NULL);
 
 	ob = g_malloc(len);
-
 	byte_stream_getrawbuf_nocheck(bs, ob, len);
-
 	return ob;
 }
 
@@ -195,94 +161,69 @@ char *byte_stream_getstr(ByteStream *bs, int len)
 {
 	char *ob;
 
-	if (byte_stream_empty(bs) < len)
-		return NULL;
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= len, NULL);
 
 	ob = g_malloc(len + 1);
-
 	byte_stream_getrawbuf_nocheck(bs, (guint8 *)ob, len);
-
 	ob[len] = '\0';
-
 	return ob;
 }
 
 int byte_stream_put8(ByteStream *bs, guint8 v)
 {
-
-	if (byte_stream_empty(bs) < 1)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 1, 0);
 
 	bs->offset += aimutil_put8(bs->data + bs->offset, v);
-
 	return 1;
 }
 
 int byte_stream_put16(ByteStream *bs, guint16 v)
 {
-
-	if (byte_stream_empty(bs) < 2)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 2, 0);
 
 	bs->offset += aimutil_put16(bs->data + bs->offset, v);
-
 	return 2;
 }
 
 int byte_stream_put32(ByteStream *bs, guint32 v)
 {
-
-	if (byte_stream_empty(bs) < 4)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 4, 0);
 
 	bs->offset += aimutil_put32(bs->data + bs->offset, v);
-
 	return 1;
 }
 
 int byte_stream_putle8(ByteStream *bs, guint8 v)
 {
-
-	if (byte_stream_empty(bs) < 1)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 1, 0);
 
 	bs->offset += aimutil_putle8(bs->data + bs->offset, v);
-
 	return 1;
 }
 
 int byte_stream_putle16(ByteStream *bs, guint16 v)
 {
-
-	if (byte_stream_empty(bs) < 2)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 2, 0);
 
 	bs->offset += aimutil_putle16(bs->data + bs->offset, v);
-
 	return 2;
 }
 
 int byte_stream_putle32(ByteStream *bs, guint32 v)
 {
-
-	if (byte_stream_empty(bs) < 4)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= 4, 0);
 
 	bs->offset += aimutil_putle32(bs->data + bs->offset, v);
-
 	return 1;
 }
 
 
 int byte_stream_putraw(ByteStream *bs, const guint8 *v, int len)
 {
-
-	if (byte_stream_empty(bs) < len)
-		return 0; /* XXX throw an exception */
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= len, 0);
 
 	memcpy(bs->data + bs->offset, v, len);
 	bs->offset += len;
-
 	return len;
 }
 
@@ -293,17 +234,12 @@ int byte_stream_putstr(ByteStream *bs, const char *str)
 
 int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, int len)
 {
-
-	if (byte_stream_empty(srcbs) < len)
-		return 0; /* XXX throw exception (underrun) */
-
-	if (byte_stream_empty(bs) < len)
-		return 0; /* XXX throw exception (overflow) */
+	g_return_val_if_fail(byte_stream_bytes_left(srcbs) >= len, 0);
+	g_return_val_if_fail(byte_stream_bytes_left(bs) >= len, 0);
 
 	memcpy(bs->data + bs->offset, srcbs->data + srcbs->offset, len);
 	bs->offset += len;
 	srcbs->offset += len;
-
 	return len;
 }
 

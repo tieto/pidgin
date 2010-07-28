@@ -1209,7 +1209,7 @@ void aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint
 int byte_stream_new(ByteStream *bs, guint32 len);
 int byte_stream_init(ByteStream *bs, guint8 *data, int len);
 void byte_stream_destroy(ByteStream *bs);
-int byte_stream_empty(ByteStream *bs);
+int byte_stream_bytes_left(ByteStream *bs);
 int byte_stream_curpos(ByteStream *bs);
 int byte_stream_setpos(ByteStream *bs, unsigned int off);
 void byte_stream_rewind(ByteStream *bs);

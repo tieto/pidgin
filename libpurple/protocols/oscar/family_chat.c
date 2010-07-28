@@ -122,7 +122,7 @@ userlistchange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	aim_rxcallback_t userfunc;
 	int curcount = 0, ret = 0;
 
-	while (byte_stream_empty(bs)) {
+	while (byte_stream_bytes_left(bs)) {
 		curcount++;
 		userinfo = g_realloc(userinfo, curcount * sizeof(aim_userinfo_t));
 		aim_info_extract(od, bs, &userinfo[curcount-1]);
