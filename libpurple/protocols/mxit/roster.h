@@ -66,6 +66,11 @@
 #define		MXIT_MOOD_HOT				0x08
 #define		MXIT_MOOD_SICK				0x09
 #define		MXIT_MOOD_SLEEPY			0x0A
+#define		MXIT_MOOD_BORED				0x0B
+#define		MXIT_MOOD_COLD				0x0C
+#define		MXIT_MOOD_CONFUSED			0x0D
+#define		MXIT_MOOD_HUNGRY			0x0E
+#define		MXIT_MOOD_STRESSED			0x0F
 
 
 /* MXit contact flags */
