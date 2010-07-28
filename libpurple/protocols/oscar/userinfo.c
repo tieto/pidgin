@@ -191,30 +191,21 @@ oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_i
 	   the "message" attribute of the status contains only the plaintext
 	   message. */
 	if (userinfo) {
-		if ((userinfo->flags & AIM_FLAG_AWAY)
-				&& userinfo->away_len > 0
-				&& userinfo->away != NULL
-				&& userinfo->away_encoding != NULL)
-		{
+		if ((userinfo->flags & AIM_FLAG_AWAY) && userinfo->away_len > 0 && userinfo->away != NULL && userinfo->away_encoding != NULL) {
 			/* Away message */
-			tmp = oscar_encoding_extract(userinfo->away_encoding);
-			message = oscar_encoding_to_utf8(account,
-					tmp, userinfo->away, userinfo->away_len);
-			g_free(tmp);
+			message = oscar_encoding_to_utf8(userinfo->away_encoding, userinfo->away, userinfo->away_len);
 		} else {
 			/*
 			 * Available message or non-HTML away message (because that's
 			 * all we have right now.
 			 */
 			if ((userinfo->status != NULL) && userinfo->status[0] != '\0') {
-				message = oscar_encoding_to_utf8(account,
-						userinfo->status_encoding, userinfo->status,
-						userinfo->status_len);
+				message = oscar_encoding_to_utf8(userinfo->status_encoding, userinfo->status, userinfo->status_len);
 			}
 #if defined (_WIN32) || defined (__APPLE__)
-			if (userinfo->itmsurl && (userinfo->itmsurl[0] != '\0'))
-				itmsurl = oscar_encoding_to_utf8(account, userinfo->itmsurl_encoding,
-												 userinfo->itmsurl, userinfo->itmsurl_len);
+			if (userinfo->itmsurl && (userinfo->itmsurl[0] != '\0')) {
+				itmsurl = oscar_encoding_to_utf8(userinfo->itmsurl_encoding, userinfo->itmsurl, userinfo->itmsurl_len);
+			}
 #endif
 		}
 	} else {
@@ -552,17 +543,12 @@ oscar_user_info_display_aim(OscarData *od, aim_userinfo_t *userinfo)
 
 	/* Info */
 	if ((userinfo->info_len > 0) && (userinfo->info != NULL) && (userinfo->info_encoding != NULL)) {
-		tmp = oscar_encoding_extract(userinfo->info_encoding);
-		info_utf8 = oscar_encoding_to_utf8(account, tmp, userinfo->info,
-		                                   userinfo->info_len);
+		info_utf8 = oscar_encoding_to_utf8(userinfo->info_encoding, userinfo->info, userinfo->info_len);
+		tmp = oscar_util_format_string(info_utf8, purple_account_get_username(account));
+		purple_notify_user_info_add_section_break(user_info);
+		oscar_user_info_add_pair(user_info, _("Profile"), tmp);
 		g_free(tmp);
-		if (info_utf8 != NULL) {
-			tmp = oscar_util_format_string(info_utf8, purple_account_get_username(account));
-			purple_notify_user_info_add_section_break(user_info);
-			oscar_user_info_add_pair(user_info, _("Profile"), tmp);
-			g_free(tmp);
-			g_free(info_utf8);
-		}
+		g_free(info_utf8);
 	}
 
 	purple_notify_user_info_add_section_break(user_info);

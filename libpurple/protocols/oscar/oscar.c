@@ -1413,18 +1413,18 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->bn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	if (info->status != NULL && info->status[0] != '\0')
+	if (info->status != NULL && info->status[0] != '\0') {
 		/* Grab the available message */
-		message = oscar_encoding_to_utf8(account, info->status_encoding,
-										 info->status, info->status_len);
+		message = oscar_encoding_to_utf8(info->status_encoding, info->status, info->status_len);
+	}
 
 	tmp2 = tmp = (message ? purple_markup_escape_text(message, -1) : NULL);
 
 	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
-		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
+		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len) {
 			/* Grab the iTunes Music Store URL */
-			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
-											 info->itmsurl, info->itmsurl_len);
+			itmsurl = oscar_encoding_to_utf8(info->itmsurl_encoding, info->itmsurl, info->itmsurl_len);
+		}
 
 		if (tmp2 == NULL && itmsurl != NULL)
 			/*
@@ -1705,35 +1705,20 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			G_GUINT64_FORMAT ", user %s, status %hu\n",
 			args->type, userinfo->bn, args->status);
 
-	if (args->msg != NULL)
-	{
-		if (args->encoding != NULL)
-		{
-			char *encoding = NULL;
-			encoding = oscar_encoding_extract(args->encoding);
-			message = oscar_encoding_to_utf8(account, encoding, args->msg,
-			                                 args->msglen);
-			g_free(encoding);
-		} else {
-			if (g_utf8_validate(args->msg, args->msglen, NULL))
-				message = g_strdup(args->msg);
-		}
+	if (args->msg != NULL) {
+		message = oscar_encoding_to_utf8(args->encoding, args->msg, args->msglen);
 	}
 
 	if (args->type & OSCAR_CAPABILITY_CHAT)
 	{
-		char *encoding, *utf8name, *tmp;
+		char *utf8name, *tmp;
 		GHashTable *components;
 
 		if (!args->info.chat.roominfo.name || !args->info.chat.roominfo.exchange) {
 			g_free(message);
 			return 1;
 		}
-		encoding = args->encoding ? oscar_encoding_extract(args->encoding) : NULL;
-		utf8name = oscar_encoding_to_utf8(account, encoding,
-				args->info.chat.roominfo.name,
-				args->info.chat.roominfo.namelen);
-		g_free(encoding);
+		utf8name = oscar_encoding_to_utf8(args->encoding, args->info.chat.roominfo.name, args->info.chat.roominfo.namelen);
 
 		tmp = extract_name(utf8name);
 		if (tmp != NULL)
@@ -1754,8 +1739,7 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				     components);
 	}
 
-	else if ((args->type & OSCAR_CAPABILITY_SENDFILE) ||
-			 (args->type & OSCAR_CAPABILITY_DIRECTIM))
+	else if ((args->type & OSCAR_CAPABILITY_SENDFILE) || (args->type & OSCAR_CAPABILITY_DIRECTIM))
 	{
 		if (args->status == AIM_RENDEZVOUS_PROPOSE)
 		{
@@ -1808,24 +1792,11 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		purple_debug_info("oscar", "Got an ICQ Server Relay message of "
 				"type %d\n", args->info.rtfmsg.msgtype);
 
-		if (args->info.rtfmsg.msgtype == 1)
-		{
-			if (args->info.rtfmsg.msg != NULL)
-			{
-				char *rtfmsg = NULL;
-				if (args->encoding != NULL) {
-					char *encoding = oscar_encoding_extract(args->encoding);
-					rtfmsg = oscar_encoding_to_utf8(account, encoding,
-							args->info.rtfmsg.msg, strlen(args->info.rtfmsg.msg));
-					g_free(encoding);
-				} else {
-					if (g_utf8_validate(args->info.rtfmsg.msg, strlen(args->info.rtfmsg.msg), NULL))
-						rtfmsg = g_strdup(args->info.rtfmsg.msg);
-				}
-				if (rtfmsg) {
-					serv_got_im(gc, userinfo->bn, rtfmsg, flags, time(NULL));
-					g_free(rtfmsg);
-				}
+		if (args->info.rtfmsg.msgtype == 1) {
+			if (args->info.rtfmsg.msg != NULL) {
+				char *rtfmsg = oscar_encoding_to_utf8(args->encoding, args->info.rtfmsg.msg, strlen(args->info.rtfmsg.msg));
+				serv_got_im(gc, userinfo->bn, rtfmsg, flags, time(NULL));
+				g_free(rtfmsg);
 			}
 		} else if (args->info.rtfmsg.msgtype == 26) {
 			purple_debug_info("oscar", "Sending X-Status Reply\n");
@@ -2582,7 +2553,6 @@ static int purple_conv_chat_info_update(OscarData *od, FlapConnection *conn, Fla
 
 static int purple_conv_chat_incoming_msg(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	PurpleConnection *gc = od->gc;
-	PurpleAccount *account = purple_connection_get_account(gc);
 	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, conn);
 	gchar *utf8;
 	va_list ap;
@@ -2601,10 +2571,7 @@ static int purple_conv_chat_incoming_msg(OscarData *od, FlapConnection *conn, Fl
 	charset = va_arg(ap, char *);
 	va_end(ap);
 
-	utf8 = oscar_encoding_to_utf8(account, charset, msg, len);
-	if (utf8 == NULL)
-		/* The conversion failed! */
-		utf8 = g_strdup(_("[Unable to display a message from this user because it contained invalid characters.]"));
+	utf8 = oscar_encoding_to_utf8(charset, msg, len);
 	serv_got_chat_in(gc, ccon->id, info->bn, 0, utf8, time(NULL));
 	g_free(utf8);
 

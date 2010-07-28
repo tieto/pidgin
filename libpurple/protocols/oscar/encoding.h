@@ -29,14 +29,7 @@
  */
 guint16 oscar_charset_check(const char *utf8);
 
-/**
- * Take a string of the form charset="bleh" where bleh is
- * one of us-ascii, utf-8, iso-8859-1, or unicode-2-0, and
- * return a newly allocated string containing bleh.
- */
-gchar * oscar_encoding_extract(const char *encoding);
-
-gchar * oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char *text, int textlen);
+gchar * oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen);
 gchar * oscar_utf8_try_convert(PurpleAccount *account, OscarData *od, const gchar *msg);
 
 /**

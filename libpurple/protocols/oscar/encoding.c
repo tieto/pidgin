@@ -33,70 +33,51 @@ oscar_charset_check(const char *utf8)
 	return AIM_CHARSET_ASCII;
 }
 
-gchar *
-oscar_encoding_extract(const char *encoding)
+static gchar *
+encoding_extract(const char *encoding)
 {
-	gchar *ret = NULL;
 	char *begin, *end;
 
 	g_return_val_if_fail(encoding != NULL, NULL);
 
-	/* Make sure encoding begins with charset= */
-	if (strncmp(encoding, "text/aolrtf; charset=", 21) &&
-		strncmp(encoding, "text/x-aolrtf; charset=", 23) &&
-		strncmp(encoding, "text/plain; charset=", 20))
-	{
-		return NULL;
+	if (!g_str_has_prefix(encoding, "text/aolrtf; charset=") &&
+		!g_str_has_prefix(encoding, "text/x-aolrtf; charset=") &&
+		!g_str_has_prefix(encoding, "text/plain; charset=")) {
+		return g_strdup(encoding);
 	}
 
 	begin = strchr(encoding, '"');
 	end = strrchr(encoding, '"');
 
-	if ((begin == NULL) || (end == NULL) || (begin >= end))
-		return NULL;
+	if ((begin == NULL) || (end == NULL) || (begin >= end)) {
+		return g_strdup(encoding);
+	}
 
-	ret = g_strndup(begin+1, (end-1) - begin);
-
-	return ret;
+	return g_strndup(begin+1, (end-1) - begin);
 }
 
 gchar *
-oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char *text, int textlen)
+oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 {
 	gchar *utf8 = NULL;
-
-	if ((encoding == NULL) || encoding[0] == '\0') {
+	const gchar *glib_encoding = NULL;
+	gchar *extracted_encoding = encoding_extract(encoding);
+	
+	if (extracted_encoding == NULL || *extracted_encoding == '\0') {
 		purple_debug_info("oscar", "Empty encoding, assuming UTF-8\n");
-	} else if (!g_ascii_strcasecmp(encoding, "iso-8859-1")) {
-		utf8 = g_convert(text, textlen, "UTF-8", "iso-8859-1", NULL, NULL, NULL);
-	} else if (!g_ascii_strcasecmp(encoding, "ISO-8859-1-Windows-3.1-Latin-1") ||
-	           !g_ascii_strcasecmp(encoding, "us-ascii"))
-	{
-		utf8 = g_convert(text, textlen, "UTF-8", "Windows-1252", NULL, NULL, NULL);
-	} else if (!g_ascii_strcasecmp(encoding, "unicode-2-0")) {
-		/* Some official ICQ clients are apparently total crack,
-		 * and have been known to save a UTF-8 string converted
-		 * from the locale character set to UTF-16 (not from UTF-8
-		 * to UTF-16!) in the away message.  This hack should find
-		 * and do something (un)reasonable with that, and not
-		 * mess up too much else. */
-		const gchar *charset = purple_account_get_string(account, "encoding", NULL);
-		if (charset) {
-			gsize len;
-			utf8 = g_convert(text, textlen, charset, "UTF-16BE", &len, NULL, NULL);
-			if (!utf8 || len != textlen || !g_utf8_validate(utf8, -1, NULL)) {
-				g_free(utf8);
-				utf8 = NULL;
-			} else {
-				purple_debug_info("oscar", "Used broken ICQ fallback encoding\n");
-			}
-		}
-		if (!utf8)
-			utf8 = g_convert(text, textlen, "UTF-8", "UTF-16BE", NULL, NULL, NULL);
-	} else if (g_ascii_strcasecmp(encoding, "utf-8")) {
-		purple_debug_warning("oscar", "Unrecognized character encoding \"%s\", "
-						   "attempting to convert to UTF-8 anyway\n", encoding);
-		utf8 = g_convert(text, textlen, "UTF-8", encoding, NULL, NULL, NULL);
+	} else if (!g_ascii_strcasecmp(extracted_encoding, "iso-8859-1")) {
+		glib_encoding = "iso-8859-1";
+	} else if (!g_ascii_strcasecmp(extracted_encoding, "ISO-8859-1-Windows-3.1-Latin-1") || !g_ascii_strcasecmp(extracted_encoding, "us-ascii")) {
+		glib_encoding = "Windows-1252";
+	} else if (!g_ascii_strcasecmp(extracted_encoding, "unicode-2-0")) {
+		glib_encoding = "UTF-16BE";
+	} else if (g_ascii_strcasecmp(extracted_encoding, "utf-8")) {
+		purple_debug_warning("oscar", "Unrecognized character encoding \"%s\", attempting to convert to UTF-8 anyway\n", extracted_encoding);
+		glib_encoding = extracted_encoding;
+	}
+
+	if (glib_encoding != NULL) {
+		utf8 = g_convert(text, textlen, "UTF-8", glib_encoding, NULL, NULL, NULL);
 	}
 
 	/*
@@ -106,13 +87,13 @@ oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char 
 	 * just copy it.
 	 */
 	if (utf8 == NULL) {
-		if (textlen != 0 && *text != '\0'
-				&& !g_utf8_validate(text, textlen, NULL))
+		if (textlen != 0 && *text != '\0' && !g_utf8_validate(text, textlen, NULL))
 			utf8 = g_strdup(_("(There was an error receiving this message.  The buddy you are speaking with is probably using a different encoding than expected.  If you know what encoding he is using, you can specify it in the advanced account options for your AIM/ICQ account.)"));
 		else
 			utf8 = g_strndup(text, textlen);
 	}
 
+	g_free(extracted_encoding);
 	return utf8;
 }
 
