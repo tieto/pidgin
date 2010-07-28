@@ -459,6 +459,115 @@ msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
 	return NULL;
 }
 
+static MsnSlpMessage *
+init_first_msg(MsnSlpLink *slplink, MsnP2PHeader *header)
+{
+	MsnSlpMessage *slpmsg;
+
+	slpmsg = msn_slpmsg_new(slplink);
+	slpmsg->id = header->id;
+	slpmsg->header->session_id = header->session_id;
+	slpmsg->size = header->total_size;
+	slpmsg->flags = header->flags;
+
+	if (slpmsg->header->session_id)
+	{
+		slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->header->session_id);
+		if (slpmsg->slpcall != NULL)
+		{
+			if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
+					slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
+					slpmsg->flags == P2P_FILE_DATA)
+			{
+				PurpleXfer *xfer = slpmsg->slpcall->xfer;
+				if (xfer != NULL)
+				{
+					slpmsg->ft = TRUE;
+					slpmsg->slpcall->xfer_msg = slpmsg;
+
+					purple_xfer_ref(xfer);
+					purple_xfer_start(xfer,	-1, NULL, 0);
+
+					if (xfer->data == NULL) {
+						purple_xfer_unref(xfer);
+						msn_slpmsg_destroy(slpmsg);
+						g_return_val_if_reached(NULL);
+					} else {
+						purple_xfer_unref(xfer);
+					}
+				}
+			}
+		}
+	}
+	if (!slpmsg->ft && slpmsg->size)
+	{
+		slpmsg->buffer = g_try_malloc(slpmsg->size);
+		if (slpmsg->buffer == NULL)
+		{
+			purple_debug_error("msn", "Failed to allocate buffer for slpmsg\n");
+			msn_slpmsg_destroy(slpmsg);
+			return NULL;
+		}
+	}
+
+	return slpmsg;
+}
+
+static void
+process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PHeader *header)
+{
+	MsnSlpCall *slpcall;
+
+	slpcall = msn_slp_process_msg(slplink, slpmsg);
+
+	if (slpcall == NULL) {
+		msn_slpmsg_destroy(slpmsg);
+		return;
+	}
+
+	purple_debug_info("msn", "msn_slplink_process_msg: slpmsg complete\n");
+
+	if (/* !slpcall->wasted && */ slpmsg->flags == 0x100)
+	{
+#if 0
+		MsnDirectConn *directconn;
+
+		directconn = slplink->directconn;
+		if (!directconn->acked)
+			msn_directconn_send_handshake(directconn);
+#endif
+	}
+	else if (slpmsg->flags == P2P_NO_FLAG || slpmsg->flags == P2P_WML2009_COMP ||
+			slpmsg->flags == P2P_MSN_OBJ_DATA ||
+			slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
+			slpmsg->flags == P2P_FILE_DATA)
+	{
+		/* Release all the messages and send the ACK */
+
+		if (slpcall->wait_for_socket) {
+			/*
+			 * Save ack for later because we have to send
+			 * a 200 OK message to the previous direct connect
+			 * invitation before ACK but the listening socket isn't
+			 * created yet.
+			 */
+			purple_debug_info("msn", "msn_slplink_process_msg: save ACK\n");
+
+			slpcall->slplink->dc->prev_ack = msn_slplink_create_ack(slplink, header);
+		} else if (!slpcall->wasted) {
+			purple_debug_info("msn", "msn_slplink_process_msg: send ACK\n");
+
+			msn_slplink_send_ack(slplink, header);
+			msn_slplink_send_queued_slpmsgs(slplink);
+		}
+	}
+
+	msn_slpmsg_destroy(slpmsg);
+
+	if (!slpcall->wait_for_socket && slpcall->wasted)
+		msn_slpcall_destroy(slpcall);
+}
+
 void
 msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *data, gsize len)
 {
@@ -477,55 +586,8 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *d
 	offset = header->offset;
 
 	if (offset == 0)
-	{
-		slpmsg = msn_slpmsg_new(slplink);
-		slpmsg->id = header->id;
-		slpmsg->header->session_id = header->session_id;
-		slpmsg->size = header->total_size;
-		slpmsg->flags = header->flags;
-
-		if (slpmsg->header->session_id)
-		{
-			slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->header->session_id);
-			if (slpmsg->slpcall != NULL)
-			{
-				if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
-					slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
-					slpmsg->flags == P2P_FILE_DATA)
-				{
-					PurpleXfer *xfer = slpmsg->slpcall->xfer;
-					if (xfer != NULL)
-					{
-						slpmsg->ft = TRUE;
-						slpmsg->slpcall->xfer_msg = slpmsg;
-
-						purple_xfer_ref(xfer);
-						purple_xfer_start(xfer,	-1, NULL, 0);
-
-						if (xfer->data == NULL) {
-							purple_xfer_unref(xfer);
-							msn_slpmsg_destroy(slpmsg);
-							g_return_if_reached();
-						} else {
-							purple_xfer_unref(xfer);
-						}
-					}
-				}
-			}
-		}
-		if (!slpmsg->ft && slpmsg->size)
-		{
-			slpmsg->buffer = g_try_malloc(slpmsg->size);
-			if (slpmsg->buffer == NULL)
-			{
-				purple_debug_error("msn", "Failed to allocate buffer for slpmsg\n");
-				msn_slpmsg_destroy(slpmsg);
-				return;
-			}
-		}
-	}
-	else
-	{
+		slpmsg = init_first_msg(slplink, header);
+	else {
 		slpmsg = msn_slplink_message_find(slplink, header->session_id, header->id);
 		if (slpmsg == NULL)
 		{
@@ -574,60 +636,9 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *d
 		return;
 #endif
 
+	/* All the pieces of the slpmsg have been received */
 	if (header->offset + header->length >= header->total_size)
-	{
-		/* All the pieces of the slpmsg have been received */
-		MsnSlpCall *slpcall;
-
-		slpcall = msn_slp_process_msg(slplink, slpmsg);
-
-		if (slpcall == NULL) {
-			msn_slpmsg_destroy(slpmsg);
-			return;
-		}
-
-		purple_debug_info("msn", "msn_slplink_process_msg: slpmsg complete\n");
-
-		if (/* !slpcall->wasted && */ slpmsg->flags == 0x100)
-		{
-#if 0
-			MsnDirectConn *directconn;
-
-			directconn = slplink->directconn;
-			if (!directconn->acked)
-				msn_directconn_send_handshake(directconn);
-#endif
-		}
-		else if (slpmsg->flags == P2P_NO_FLAG || slpmsg->flags == P2P_WML2009_COMP ||
-			slpmsg->flags == P2P_MSN_OBJ_DATA ||
-			slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
-			slpmsg->flags == P2P_FILE_DATA)
-		{
-			/* Release all the messages and send the ACK */
-
-			if (slpcall->wait_for_socket) {
-				/*
-				 * Save ack for later because we have to send
-				 * a 200 OK message to the previous direct connect
-				 * invitation before ACK but the listening socket isn't
-				 * created yet.
-				 */
-				purple_debug_info("msn", "msn_slplink_process_msg: save ACK\n");
-
-				slpcall->slplink->dc->prev_ack = msn_slplink_create_ack(slplink, header);
-			} else if (!slpcall->wasted) {
-				purple_debug_info("msn", "msn_slplink_process_msg: send ACK\n");
-
-				msn_slplink_send_ack(slplink, header);
-				msn_slplink_send_queued_slpmsgs(slplink);
-			}
-		}
-
-		msn_slpmsg_destroy(slpmsg);
-
-		if (!slpcall->wait_for_socket && slpcall->wasted)
-			msn_slpcall_destroy(slpcall);
-	}
+		process_complete_msg(slplink, slpmsg, header);
 }
 
 void
