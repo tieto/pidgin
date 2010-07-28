@@ -1890,9 +1890,7 @@ static int missedcall(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
  * Subtype 0x000b
  *
  * Possible codes:
- *    AIM_TRANSFER_DENY_NOTSUPPORTED -- "client does not support"
  *    AIM_TRANSFER_DENY_DECLINE -- "client has declined transfer"
- *    AIM_TRANSFER_DENY_NOTACCEPTING -- "client is not accepting transfers"
  *
  */
 int aim_im_denytransfer(OscarData *od, const char *bn, const guchar *cookie, guint16 code)

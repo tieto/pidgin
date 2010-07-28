@@ -103,16 +103,6 @@ extern "C" {
 #define AIM_ICONIDENT "AVT1picture.id"
 
 /*
- * Current Maximum Length for Chat Room Messages
- *
- * This is actually defined by the protocol to be
- * dynamic, but I have yet to see due cause to
- * define it dynamically here.  Maybe later.
- *
- */
-#define MAXCHATMSGLEN 512
-
-/*
  * Found by trial and error.
  */
 #define MAXAVAILMSGLEN 251
@@ -143,167 +133,6 @@ struct _ClientInfo
 	const char *lang; /* two-letter abbrev */
 };
 
-/* Needs to be checked */
-#define CLIENTINFO_AIM_3_5_1670 { \
-	"AOL Instant Messenger (SM), version 3.5.1670/WIN32", \
-	0x0004, \
-	0x0003, 0x0005, \
-	0x0000, 0x0686, \
-	0x0000002a, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-/* Latest winaim without ssi */
-#define CLIENTINFO_AIM_4_1_2010 { \
-	"AOL Instant Messenger (SM), version 4.1.2010/WIN32", \
-	0x0004, \
-	0x0004, 0x0001, \
-	0x0000, 0x07da, \
-	0x0000004b, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-#define CLIENTINFO_AIM_4_3_2188 { \
-	"AOL Instant Messenger (SM), version 4.3.2188/WIN32", \
-	0x0109, \
-	0x0400, 0x0003, \
-	0x0000, 0x088c, \
-	0x00000086, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-#define CLIENTINFO_AIM_4_8_2540 { \
-	"AOL Instant Messenger (SM), version 4.8.2540/WIN32", \
-	0x0109, \
-	0x0004, 0x0008, \
-	0x0000, 0x09ec, \
-	0x000000af, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-#define CLIENTINFO_AIM_5_0_2938 { \
-	"AOL Instant Messenger, version 5.0.2938/WIN32", \
-	0x0109, \
-	0x0005, 0x0000, \
-	0x0000, 0x0b7a, \
-	0x00000000, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_AIM_5_1_3036 { \
-	"AOL Instant Messenger, version 5.1.3036/WIN32", \
-	0x0109, \
-	0x0005, 0x0001, \
-	0x0000, 0x0bdc, \
-	0x000000d2, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_AIM_5_5_3415 { \
-	"AOL Instant Messenger, version 5.5.3415/WIN32", \
-	0x0109, \
-	0x0005, 0x0005, \
-	0x0000, 0x0057, \
-	0x000000ef, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_AIM_5_9_3702 { \
-	"AOL Instant Messenger, version 5.9.3702/WIN32", \
-	0x0109, \
-	0x0005, 0x0009, \
-	0x0000, 0x0e76, \
-	0x00000111, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICHAT_1_0 { \
-	"Apple iChat", \
-	0x311a, \
-	0x0001, 0x0000, \
-	0x0000, 0x003c, \
-	0x000000c6, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-#define CLIENTINFO_ICQ_4_65_3281 { \
-	"ICQ Inc. - Product of ICQ (TM) 2000b.4.65.1.3281.85", \
-	0x010a, \
-	0x0004, 0x0041, \
-	0x0001, 0x0cd1, \
-	0x00000055, \
-	"us", "en", \
-}
-
-/* Needs to be checked */
-#define CLIENTINFO_ICQ_5_34_3728 { \
-	"ICQ Inc. - Product of ICQ (TM).2002a.5.34.1.3728.85", \
-	0x010a, \
-	0x0005, 0x0022, \
-	0x0001, 0x0e8f, \
-	0x00000055, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICQ_5_45_3777 { \
-	"ICQ Inc. - Product of ICQ (TM).2003a.5.45.1.3777.85", \
-	0x010a, \
-	0x0005, 0x002d, \
-	0x0001, 0x0ec1, \
-	0x00000055, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICQ6_6_0_6059 { \
-	"ICQ Client", \
-	0x010a, \
-	0x0006, 0x0000, \
-	0x0000, 0x17ab, \
-	0x00007535, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICQBASIC_14_3_1068 { \
-	"ICQBasic", \
-	0x010a, \
-	0x0014, 0x0003, \
-	0x0000, 0x042c, \
-	0x0000043d, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICQBASIC_14_34_3000 { \
-	"ICQBasic", \
-	0x010a, \
-	0x0014, 0x0034, \
-	0x0000, 0x0bb8, \
-	0x0000043d, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_ICQBASIC_14_34_3096 { \
-	"ICQBasic", \
-	0x010a, \
-	0x0014, 0x0034, \
-	0x0000, 0x0c18, \
-	0x0000043d, \
-	"us", "en", \
-}
-
-#define CLIENTINFO_NETSCAPE_7_0_1 { \
-	"Netscape 2000 an approved user of AOL Instant Messenger (SM)", \
-	0x1d0d, \
-	0x0007, 0x0000, \
-	0x0001, 0x0000, \
-	0x00000058, \
-	"us", "en", \
-}
-
 /*
  * We need to use the major-minor-micro versions from the official
  * AIM and ICQ programs here or AOL won't let us use certain features.
@@ -328,9 +157,6 @@ struct _ClientInfo
 	0x00000611, \
 	"us", "en", \
 }
-
-#define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_5_1_3036
-#define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQBASIC_14_34_3096
 
 typedef enum
 {
@@ -596,10 +422,8 @@ struct _OscarData
 #define AIM_ICQ_STATE_WEBAWARE          0x00010000
 #define AIM_ICQ_STATE_HIDEIP            0x00020000
 #define AIM_ICQ_STATE_BIRTHDAY          0x00080000
-#define AIM_ICQ_STATE_DIRECTDISABLED    0x00100000
 #define AIM_ICQ_STATE_ICQHOMEPAGE       0x00200000
 #define AIM_ICQ_STATE_DIRECTREQUIREAUTH 0x10000000
-#define AIM_ICQ_STATE_DIRECTCONTACTLIST 0x20000000
 
 /**
  * Only used when connecting with the old-style BUCP login.
@@ -698,19 +522,6 @@ void oscar_data_destroy(OscarData *);
 void oscar_data_addhandler(OscarData *od, guint16 family, guint16 subtype, aim_rxcallback_t newhandler, guint16 flags);
 aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 subtype);
 
-/* misc.c */
-#define AIM_VISIBILITYCHANGE_PERMITADD    0x05
-#define AIM_VISIBILITYCHANGE_PERMITREMOVE 0x06
-#define AIM_VISIBILITYCHANGE_DENYADD      0x07
-#define AIM_VISIBILITYCHANGE_DENYREMOVE   0x08
-
-#define AIM_PRIVFLAGS_ALLOWIDLE           0x01
-#define AIM_PRIVFLAGS_ALLOWMEMBERSINCE    0x02
-
-#define AIM_WARN_ANON                     0x01
-
-
-
 /* 0x0001 - family_oservice.c */
 /* 0x0002 */ void aim_srv_clientready(OscarData *od, FlapConnection *conn);
 /* 0x0004 */ void aim_srv_requestnew(OscarData *od, guint16 serviceid);
@@ -724,30 +535,12 @@ aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 subtype)
 
 void aim_bos_reqrights(OscarData *od, FlapConnection *conn);
 
-
-
-#define AIM_CLIENTTYPE_UNKNOWN  0x0000
-#define AIM_CLIENTTYPE_MC       0x0001
-#define AIM_CLIENTTYPE_WINAIM   0x0002
-#define AIM_CLIENTTYPE_WINAIM41 0x0003
-#define AIM_CLIENTTYPE_AOL_TOC  0x0004
-
-#define AIM_RATE_CODE_CHANGE     0x0001
-#define AIM_RATE_CODE_WARNING    0x0002
 #define AIM_RATE_CODE_LIMIT      0x0003
-#define AIM_RATE_CODE_CLEARLIMIT 0x0004
-
-
 
 /* family_icbm.c */
-#define AIM_OFT_SUBTYPE_SEND_FILE	0x0001
 #define AIM_OFT_SUBTYPE_SEND_DIR	0x0002
-#define AIM_OFT_SUBTYPE_GET_FILE	0x0011
-#define AIM_OFT_SUBTYPE_GET_LIST	0x0012
 
-#define AIM_TRANSFER_DENY_NOTSUPPORTED	0x0000
 #define AIM_TRANSFER_DENY_DECLINE	0x0001
-#define AIM_TRANSFER_DENY_NOTACCEPTING	0x0002
 
 #define AIM_IMPARAM_FLAG_CHANNEL_MSGS_ALLOWED   0x00000001
 #define AIM_IMPARAM_FLAG_MISSED_CALLS_ENABLED   0x00000002
@@ -768,26 +561,6 @@ void aim_bos_reqrights(OscarData *od, FlapConnection *conn);
  * All incoming IMs are treated as HTML.
  */
 #define AIM_IMPARAM_FLAG_USE_HTML_FOR_ICQ       0x00000400
-
-/* This is what the server will give you if you don't set them yourself. */
-/* This is probably out of date. */
-#define AIM_IMPARAM_DEFAULTS { \
-	0, \
-	AIM_IMPARAM_FLAG_CHANNEL_MSGS_ALLOWED | AIM_IMPARAM_FLAG_MISSED_CALLS_ENABLED, \
-	512, /* !! Note how small this is. */ \
-	(99.9)*10, (99.9)*10, \
-	1000 /* !! And how large this is. */ \
-}
-
-/* This is what most AIM versions use. */
-/* This is probably out of date. */
-#define AIM_IMPARAM_REASONABLE { \
-	0, \
-	AIM_IMPARAM_FLAG_CHANNEL_MSGS_ALLOWED | AIM_IMPARAM_FLAG_MISSED_CALLS_ENABLED, \
-	8000, \
-	(99.9)*10, (99.9)*10, \
-	0 \
-}
 
 struct aim_icbmparameters
 {
@@ -835,8 +608,6 @@ void oscar_chat_destroy(struct chat_connection *cc);
 #define AIM_IMFLAGS_HASICON				0x0020 /* already has icon */
 #define AIM_IMFLAGS_SUBENC_MACINTOSH	0x0040 /* damn that Steve Jobs! */
 #define AIM_IMFLAGS_CUSTOMFEATURES		0x0080 /* features field present */
-#define AIM_IMFLAGS_EXTDATA				0x0100
-#define AIM_IMFLAGS_X					0x0200
 #define AIM_IMFLAGS_OFFLINE				0x0800 /* send to offline user */
 #define AIM_IMFLAGS_TYPINGNOT			0x1000 /* typing notification */
 
@@ -930,7 +701,6 @@ struct aim_incomingim_ch1_args
 	guint8 *features;
 	guint8 featureslen;
 
-	/* Only provided if AIM_IMFLAGS_EXTDATA is set */
 	guint8 extdatalen;
 	guint8 *extdata;
 
@@ -984,11 +754,6 @@ struct _IcbmArgsCh2
 	void *destructor; /* used internally only */
 };
 
-/* Valid values for channel 4 args->type */
-#define AIM_ICQMSG_AUTHREQUEST	0x0006
-#define AIM_ICQMSG_AUTHDENIED	0x0007
-#define AIM_ICQMSG_AUTHGRANTED	0x0008
-
 struct aim_incomingim_ch4_args
 {
 	guint32 uin; /* Of the sender of the ICBM */
@@ -1023,21 +788,12 @@ void aim_icbm_makecookie(guchar* cookie);
 /*
  * AIM User Info, Standard Form.
  */
-#define AIM_FLAG_UNCONFIRMED     0x0001 /* "damned transients" */
 #define AIM_FLAG_ADMINISTRATOR   0x0002
 #define AIM_FLAG_AOL             0x0004
-#define AIM_FLAG_OSCAR_PAY       0x0008
-#define AIM_FLAG_FREE            0x0010
 #define AIM_FLAG_AWAY            0x0020
-#define AIM_FLAG_ICQ             0x0040
 #define AIM_FLAG_WIRELESS        0x0080
-#define AIM_FLAG_UNKNOWN100      0x0100
-#define AIM_FLAG_IMFORWARDING    0x0200
+#define AIM_FLAG_ICQ             0x0040
 #define AIM_FLAG_ACTIVEBUDDY     0x0400
-#define AIM_FLAG_UNKNOWN800      0x0800
-#define AIM_FLAG_ONEWAYWIRELESS  0x1000
-#define AIM_FLAG_NOKNOCKKNOCK    0x00040000
-#define AIM_FLAG_FORWARD_MOBILE  0x00080000
 
 #define AIM_USERINFO_PRESENT_FLAGS        0x00000001
 #define AIM_USERINFO_PRESENT_MEMBERSINCE  0x00000002
@@ -1175,13 +931,6 @@ int aim_bart_request(OscarData *od, const char *bn, guint8 iconcsumtype, const g
 #define AIM_SSI_TYPE_ICQDENY		0x000e
 #define AIM_SSI_TYPE_ICONINFO		0x0014
 
-#define AIM_SSI_ACK_SUCCESS		0x0000
-#define AIM_SSI_ACK_ITEMNOTFOUND	0x0002
-#define AIM_SSI_ACK_IDNUMINUSE		0x000a
-#define AIM_SSI_ACK_ATMAX		0x000c
-#define AIM_SSI_ACK_INVALIDNAME		0x000d
-#define AIM_SSI_ACK_AUTHREQUIRED	0x000e
-
 /* These flags are set in the 0x00c9 TLV of SSI type 0x0005 */
 #define AIM_SSI_PRESENCE_FLAG_SHOWIDLE        0x00000400
 #define AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES 0x00020000
@@ -1243,18 +992,6 @@ int aim_ssi_add_to_private_list(OscarData *od, const char* name, guint16 list_ty
 int aim_ssi_del_from_private_list(OscarData* od, const char* name, guint16 list_type);
 
 guint16 aim_ssi_getdenyentrytype(OscarData* od);
-
-/* 0x0015 - family_icq.c */
-#define AIM_ICQ_INFO_SIMPLE	0x001
-#define AIM_ICQ_INFO_SUMMARY	0x002
-#define AIM_ICQ_INFO_EMAIL	0x004
-#define AIM_ICQ_INFO_PERSONAL	0x008
-#define AIM_ICQ_INFO_ADDITIONAL	0x010
-#define AIM_ICQ_INFO_WORK	0x020
-#define AIM_ICQ_INFO_INTERESTS	0x040
-#define AIM_ICQ_INFO_ORGS	0x080
-#define AIM_ICQ_INFO_UNKNOWN	0x100
-#define AIM_ICQ_INFO_HAVEALL	0x1ff
 
 struct aim_icq_info
 {
