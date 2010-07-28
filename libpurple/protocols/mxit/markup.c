@@ -662,7 +662,7 @@ static int mxit_parse_vibe( struct RXMsgData* mx, const char* message )
  *  @param message			The message text
  *  @return					The length of the message to skip
  */
-static int mxit_extract_chatroom_nick( struct RXMsgData* mx, char* message, int len )
+static int mxit_extract_chatroom_nick( struct RXMsgData* mx, char* message, int len, int msgflags )
 {
 	int		i;
 
@@ -673,7 +673,6 @@ static int mxit_extract_chatroom_nick( struct RXMsgData* mx, char* message, int 
 		 * Search for it....
 		 */
 		gboolean	found	= FALSE;
-		gchar*		nickname;
 
 		for ( i = 1; i < len; i++ ) {
 			if ( ( message[i] == '\n' ) && ( message[i-1] == '>' ) ) {
@@ -685,11 +684,29 @@ static int mxit_extract_chatroom_nick( struct RXMsgData* mx, char* message, int 
 		}
 
 		if ( found ) {
+			gchar*		nickname;
+
 			/*
 			 * The message definitely had an embedded nickname - generate a marked-up
 			 * message to be displayed.
 			 */
 			nickname = g_markup_escape_text( &message[1], -1 );
+
+			/* Remove any MXit escaping from nickname ("\X" --> "X") */
+			if ( msgflags & CP_MSG_MARKUP ) {
+				int	nicklen = strlen( nickname );
+				int	j, k;
+
+				for ( j = 0, k = 0; j < nicklen; j++ ) {
+					if ( nickname[j] == '\\' )
+						j++;
+
+					nickname[k] = nickname[j];
+					k++;
+				}
+
+				nickname[k] = '\0';		/* terminate string */
+			}
 
 			/* add nickname within some BOLD markup to the new converted message */
 			g_string_append_printf( mx->msg, "<b>%s:</b> ", nickname );
@@ -747,7 +764,7 @@ void mxit_parse_markup( struct RXMsgData* mx, char* message, int len, short msgt
 	if ( is_mxit_chatroom_contact( mx->session, mx->from ) ) {
 		/* chatroom message, so we need to extract and skip the sender's nickname
 		 * which is embedded inside the message */
-		i = mxit_extract_chatroom_nick( mx, message, len );
+		i = mxit_extract_chatroom_nick( mx, message, len, msgflags );
 	}
 
 	/* run through the message and check for custom emoticons and markup */
