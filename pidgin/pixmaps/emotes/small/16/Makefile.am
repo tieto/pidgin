@@ -25,11 +25,13 @@ SMILEYS = \
     angel.png \
     angry.png \
     beer.png \
+    bored.png \
     camera.png \
     cigarette.png \
     coffee.png \
     confused.png \
     console.png \
+    cold.png \
     cool.png \
     cross.png \
     crying.png \
@@ -40,6 +42,7 @@ SMILEYS = \
     happy.png \
     hug-left.png \
     hug-right.png \
+    hungry.png \
     in_love.png \
     kiss.png \
     meeting.png \
@@ -58,6 +61,7 @@ SMILEYS = \
     silent.png \
     sleeping.png \
     sleepy.png \
+    stressed.png \
     thinking.png \
     tongue.png \
     tv.png \
