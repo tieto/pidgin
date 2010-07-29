@@ -569,10 +569,13 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PHeader *h
 }
 
 void
-msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *data, gsize len)
+msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 {
 	MsnSlpMessage *slpmsg;
+	MsnP2PHeader *header;
 	guint64 offset;
+
+	header = part->header;
 
 	if (header->total_size < header->length)
 	{
@@ -600,20 +603,22 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *d
 	if (slpmsg->ft)
 	{
 		slpmsg->slpcall->u.incoming_data =
-				g_byte_array_append(slpmsg->slpcall->u.incoming_data, (const guchar *)data, len);
+				g_byte_array_append(slpmsg->slpcall->u.incoming_data, (const guchar *)part->buffer, part->size);
 		purple_xfer_prpl_ready(slpmsg->slpcall->xfer);
 	}
 	else if (slpmsg->size && slpmsg->buffer)
 	{
-		if (G_MAXSIZE - len < offset || (offset + len) > slpmsg->size || slpmsg->offset != offset)
+		if (G_MAXSIZE - part->size < offset
+				|| (offset + part->size) > slpmsg->size
+				|| slpmsg->offset != offset)
 		{
 			purple_debug_error("msn",
 				"Oversized slpmsg - msgsize=%lld offset=%" G_GUINT64_FORMAT " len=%" G_GSIZE_FORMAT "\n",
-				slpmsg->size, offset, len);
+				slpmsg->size, offset, part->size);
 			g_return_if_reached();
 		} else {
-			memcpy(slpmsg->buffer + offset, data, len);
-			slpmsg->offset += len;
+			memcpy(slpmsg->buffer + offset, part->buffer, part->size);
+			slpmsg->offset += part->size;
 		}
 	}
 
@@ -627,7 +632,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnP2PHeader *header, const char *d
 		if (slpmsg->slpcall->progress_cb != NULL)
 		{
 			slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size,
-										 len, offset);
+										 part->size, offset);
 		}
 	}
 

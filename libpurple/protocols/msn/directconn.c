@@ -591,6 +591,8 @@ msn_dc_enqueue_part(MsnDirectConn *dc, MsnSlpMessagePart *part)
 static int
 msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 {
+	MsnSlpMessagePart *part;
+
 	g_return_val_if_fail(dc != NULL, DC_PROCESS_ERROR);
 
 	switch (dc->state) {
@@ -627,12 +629,9 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 		break;
 
 	case DC_STATE_ESTABLISHED:
-		msn_slplink_process_msg(
-			dc->slplink,
-			&dc->header,
-			dc->in_buffer + 4 + P2P_PACKET_HEADER_SIZE,
-			dc->header.length
-		);
+
+		part = msn_slpmsgpart_new_from_data(dc->in_buffer, dc->header.length);
+		msn_slplink_process_msg(dc->slplink, part);
 
 		/*
 		if (dc->num_calls == 0) {
