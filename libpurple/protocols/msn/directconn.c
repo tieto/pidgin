@@ -630,7 +630,7 @@ msn_dc_process_packet(MsnDirectConn *dc, guint32 packet_length)
 
 	case DC_STATE_ESTABLISHED:
 
-		part = msn_slpmsgpart_new_from_data(dc->in_buffer, dc->header.length);
+		part = msn_slpmsgpart_new_from_data(dc->in_buffer + 4, dc->header.length);
 		msn_slplink_process_msg(dc->slplink, part);
 
 		/*
