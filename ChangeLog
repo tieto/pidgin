@@ -22,6 +22,20 @@ version 2.7.3 (??/??/????):
 	IRC:
 	* Fix non-ASCII arguments to /mode et al.  (thanks to Max Ulidtko)
 
+	MXit:
+	* Fix filename for the Shocked emoticon. (#12364)
+	* Implement the new naming conventions where possible. (MXitId, etc)
+	* Display a message in the Groupchat window when you invite somebody.
+	* Birthday field in profile cannot be edited when server says it is
+	  locked.
+	* If a buddy is offline, show in their profile when last they were online.
+	* Handle pushed profile update packets (ie, when changing your avatar via
+	  the Gallery bot).
+	* If a buddy is offline and we see from their profile that they have
+	  updated their avatar, request the new avatar image from the server.
+	* Fix a possible crash if a link is clicked while disconnected.
+	* New MXit Moods and Emoticons.
+
 	XMPP:
 	* Allow connecting to servers that only advertise GSSAPI and expect
 	  a fallback to legacy IQ authentication (broken in 2.7.0).
@@ -45,20 +59,6 @@ version 2.7.3 (??/??/????):
 	  Yahoo JAPAN accounts.
 	* Fix file transfers that get stuck with "Waiting for transfer to
 	  begin".
-
-	MXit:
-	* Fix filename for the Shocked emoticon. (#12364)
-	* Implement the new naming conventions where possible. (MXitId, etc)
-	* Display a message in the Groupchat window when you invite somebody.
-	* Birthday field in profile cannot be edited when server says it is
-	  locked.
-	* If a buddy is offline, show in their profile when last they were online.
-	* Handle pushed profile update packets (ie, when changing your avatar via
-	  the Gallery bot).
-	* If a buddy is offline and we see from their profile that they have
-	  updated their avatar, request the new avatar image from the server.
-	* Fix a possible crash if a link is clicked while disconnected.
-    * New MXit Moods and Emoticons.
 
 version 2.7.2 (07/21/2010):
 	AIM and ICQ:
