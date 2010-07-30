@@ -353,8 +353,8 @@ static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data
 static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)data;
-
 	GdkPixmap *pixmap = gtkwb->pixmap;
+	cairo_t *cr;
 
 	if(pixmap)
 		g_object_unref(pixmap);
@@ -363,15 +363,15 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
 							widget->allocation.width,
 							widget->allocation.height,
 							-1);
-
 	gtkwb->pixmap = pixmap;
 
-	gdk_draw_rectangle(pixmap,
-					   widget->style->white_gc,
-					   TRUE,
-					   0, 0,
-					   widget->allocation.width,
-					   widget->allocation.height);
+	cr = gdk_cairo_create(GDK_DRAWABLE(pixmap));
+	gdk_cairo_set_source_color(cr, &widget->style->white);
+	cairo_rectangle(cr,
+	                0, 0,
+	                widget->allocation.width, widget->allocation.height);
+	cairo_fill(cr);
+	cairo_destroy(cr);
 
 	return TRUE;
 }
@@ -380,13 +380,15 @@ static gboolean pidgin_whiteboard_expose_event(GtkWidget *widget, GdkEventExpose
 {
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)(data);
 	GdkPixmap *pixmap = gtkwb->pixmap;
+	cairo_t *cr;
 
-	gdk_draw_drawable(widget->window,
-					  widget->style->fg_gc[GTK_WIDGET_STATE(widget)],
-					  pixmap,
-					  event->area.x, event->area.y,
-					  event->area.x, event->area.y,
-					  event->area.width, event->area.height);
+	cr = gdk_cairo_create(GDK_DRAWABLE(widget->window));
+	gdk_cairo_set_source_pixmap(cr, pixmap, event->area.x, event->area.y);
+	cairo_rectangle(cr,
+	                event->area.x, event->area.y,
+	                event->area.width, event->area.height);
+	cairo_fill(cr);
+	cairo_destroy(cr);
 
 	return FALSE;
 }
@@ -710,13 +712,15 @@ static void pidgin_whiteboard_clear(PurpleWhiteboard *wb)
 	PidginWhiteboard *gtkwb = wb->ui_data;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 	GtkWidget *drawing_area = gtkwb->drawing_area;
+	cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(pixmap));
 
-	gdk_draw_rectangle(pixmap,
-					   drawing_area->style->white_gc,
-					   TRUE,
-					   0, 0,
-					   drawing_area->allocation.width,
-					   drawing_area->allocation.height);
+	gdk_cairo_set_source_color(cr, &drawing_area->style->white);
+	cairo_rectangle(cr,
+	                0, 0,
+	                drawing_area->allocation.width,
+	                drawing_area->allocation.height);
+	cairo_fill(cr);
+	cairo_destroy(cr);
 
 	gtk_widget_queue_draw_area(drawing_area,
 							   0, 0,
