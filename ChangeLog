@@ -58,7 +58,10 @@ version 2.7.3 (??/??/????):
 	* If a buddy is offline and we see from their profile that they have
 	  updated their avatar, request the new avatar image from the server.
 	* Fix a possible crash if a link is clicked while disconnected.
-    * New MXit Moods and Emoticons.
+	* Unescape any escaped characters in a chatroom nickname.
+	* Add the new MXit moods and emoticons.
+	* MXit emoticons added to the small emoticon theme.
+	* Ability to re-invite a contact in Rejected or Deleted state.
 
 version 2.7.2 (07/21/2010):
 	AIM and ICQ:
