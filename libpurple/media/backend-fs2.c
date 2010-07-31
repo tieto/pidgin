@@ -1639,6 +1639,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 		g_value_set_boxed(&_params[_num_params].value,
 			relay_info);
 		g_value_array_free(relay_info);
+		_num_params++;
 	}
 
 	session = get_session(self, sess_id);

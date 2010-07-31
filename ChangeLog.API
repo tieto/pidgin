@@ -1,6 +1,34 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.2 (??/??/????):
+version 2.7.3 (??/??/????):
+	libpurple:
+		Fixed:
+		* purple_account_[gs]et_public_alias no longer crash when
+		  called for a protocol that doesn't support the underlying
+		  calls and the caller does not specify a failure callback.
+
+	Perl:
+		Added:
+		* Exposed log-subsystem signals.
+
+	Pidgin:
+		Changed:
+		* Changing the visibility (gtk_widget_hide/show) of
+		  the widgets in the GtkIMHtmlToolbar should now affect
+		  the visibility of the entries in the 'lean' view
+		  (the default toolbar view).
+
+		Deprecated:
+		* pidgin_check_if_dir
+
+	libgnt:
+		Added:
+		* gnt_tree_row_get_key, gnt_tree_row_get_next,
+		  gnt_tree_row_get_prev, gnt_tree_row_get_child and
+		  gnt_tree_row_get_parent.
+
+version 2.7.2 (07/21/2010):
+	* No changes
 
 version 2.7.1 (05/29/2010):
 	* No changes

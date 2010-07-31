@@ -97,7 +97,6 @@ static SnDisplay *sn_display = NULL;
  */
 static const int catch_sig_list[] = {
 	SIGSEGV,
-	SIGHUP,
 	SIGINT,
 	SIGTERM,
 	SIGQUIT,
@@ -223,9 +222,6 @@ mainloop_sighandler(GIOChannel *source, GIOCondition cond, gpointer data)
 	}
 
 	switch (sig) {
-	case SIGHUP:
-		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
-		break;
 #if defined(USE_GSTREAMER) && !defined(GST_CAN_DISABLE_FORKING)
 /* By default, gstreamer forks when you initialize it, and waitpids for the
  * child.  But if libpurple reaps the child rather than leaving it to
@@ -550,6 +546,7 @@ int main(int argc, char *argv[])
 	gboolean debug_enabled;
 	gboolean migration_failed = FALSE;
 	GList *active_accounts;
+	struct stat st;
 
 	struct option long_options[] = {
 		{"config",       required_argument, NULL, 'c'},
@@ -853,6 +850,8 @@ int main(int argc, char *argv[])
 	 * in user's home directory.
 	 */
 	search_path = g_build_filename(purple_user_dir(), "plugins", NULL);
+	if (!g_stat(search_path, &st))
+		g_mkdir(search_path, S_IRUSR | S_IWUSR | S_IXUSR);
 	purple_plugins_add_search_path(search_path);
 	g_free(search_path);
 	purple_plugins_add_search_path(LIBDIR);

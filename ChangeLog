@@ -1,6 +1,80 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.7.2 (??/??/????):
+version 2.7.3 (??/??/????):
+	General:
+	* Use silent build rules for automake >1.11. You can enable verbose
+	  builds with the --disable-silent-rules configure option, or using
+	  make V=1.
+
+	libpurple:
+	* Fix the TURN server settings (broken in 2.7.0).
+
+	Pidgin:
+	* Re-focus the input area after clicking the attention toolbar button.
+	* Re-arrange media window to make it more netbook-friendly.
+
+	Finch:
+	* Rebindable 'suggest-next-page' and 'suggest-prev-page' actions for
+	  textboxes (GntEntry) to scroll through list of suggestions.
+	* Rebindable 'dropdown' action for comboboxes (GntComboBox) to show the
+	  dropdown list of options.
+
+	IRC:
+	* Fix non-ASCII arguments to /mode et al.  (thanks to Max Ulidtko)
+
+	MSN:
+	* Support for web-based buddy icons, used when a buddy logs in to the
+	  messenger on the Live website.
+
+	MXit:
+	* Fix filename for the Shocked emoticon. (#12364)
+	* Implement the new naming conventions where possible. (MXitId, etc)
+	* Display a message in the Groupchat window when you invite somebody.
+	* Birthday field in profile cannot be edited when server says it is
+	  locked.
+	* If a buddy is offline, show in their profile when last they were online.
+	* Handle pushed profile update packets (ie, when changing your avatar via
+	  the Gallery bot).
+	* If a buddy is offline and we see from their profile that they have
+	  updated their avatar, request the new avatar image from the server.
+	* Fix a possible crash if a link is clicked while disconnected.
+	* New MXit Moods and Emoticons.
+
+	XMPP:
+	* Allow connecting to servers that only advertise GSSAPI and expect
+	  a fallback to legacy IQ authentication (broken in 2.7.0).
+	* Fix a crash when receiving custom emoticons that don't adhere to
+	  the specification.
+	* When initiating a file transfer, don't show resources that are certain
+	  to not support file transfers in the resource selection dialog.
+	* Fix connecting to servers using BOSH and authenticating with
+	  DIGEST-MD5 when libpurple was built with Cyrus SASL support.
+
+	Yahoo/Yahoo JAPAN:
+	* Renamed "Use account proxy for SSL connections" to "Use account proxy
+	  for HTTP and HTTPS requests" and tied the option to HTTP requests too.
+	* Properly detect HTTP proxy server use when the HTTP proxy is the
+	  global proxy server, an account-level non-HTTP proxy server is
+	  configured, and the "Use account proxy for HTTP and HTTPS requests"
+	  account option is turned off.  This fixes connecting for some HTTP
+	  proxy servers.
+	* Fall back to connecting to scsa.msg.yahoo.com (not configurable) if
+	  the HTTP-based connect server lookup fails.  This does not work for
+	  Yahoo JAPAN accounts.
+	* Fix file transfers that get stuck with "Waiting for transfer to
+	  begin".
+
+version 2.7.2 (07/21/2010):
+	AIM and ICQ:
+	* Fix a crash bug related to X-Status messages that can be triggered by
+	  remove users.  This is CVE-2010-2528.
+	* Fix a rare crash bug caused by certain incoming SMS messages
+	  (discovered by Jan Kaluza--thanks Jan!).
+	* Change HTML sent from ICQ accounts so that official ICQ clients
+	  hopefully display it correctly.
+
+	MSN:
+	* Fix a crash related to fast buddy icon transfers.
 
 version 2.7.1 (05/29/2010):
 	General:

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-30 23:16-0400\n"
+"POT-Creation-Date: 2010-07-27 01:18-0400\n"
 "PO-Revision-Date: 2010-05-03 11:41+0200\n"
 "Last-Translator: Besnik Bleta <besnik@programeshqip.org>\n"
 "Language-Team: Albanian <besnik@programeshqip.org>\n"
@@ -65,11 +65,23 @@ msgstr ""
 msgid "Error"
 msgstr "Gabim"
 
+#, fuzzy
+msgid "Account was not modified"
+msgstr "Nuk u shtua llogaria"
+
 msgid "Account was not added"
 msgstr "Nuk u shtua llogaria"
 
 msgid "Username of an account must be non-empty."
 msgstr "Emri i përdoruesit për një llogari nuk mund të jetë bosh."
+
+msgid ""
+"The account's protocol cannot be changed while it is connected to the server."
+msgstr ""
+
+msgid ""
+"The account's username cannot be changed while it is connected to the server."
+msgstr ""
 
 msgid "New mail notifications"
 msgstr "Njoftime poste të re"
@@ -1287,6 +1299,9 @@ msgstr "Të tjerë flasin në fjalosje"
 msgid "Someone says your username in chat"
 msgstr "Dikush thotë emrin tuaj në fjalosje"
 
+msgid "Attention received"
+msgstr ""
+
 msgid "GStreamer Failure"
 msgstr "Dështim i GStreamer-it"
 
@@ -1584,7 +1599,7 @@ msgstr "Kur merret mesazh me URL(ra), përdor TinyURL për kopjim më të lehtë
 msgid "Online"
 msgstr "I lidhur"
 
-#. primative,						no,							id,			name
+#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Jo i lidhur"
 
@@ -1708,8 +1723,10 @@ msgstr ""
 "Dëshmia nuk besohet, ngaqë nuk besohet hëpërhë ndonjë dëshmi që do të mund "
 "ta verifikonte."
 
-msgid "The certificate is not valid yet."
-msgstr "Dëshmia nuk është ende e vlefshme."
+msgid ""
+"The certificate is not valid yet.  Check that your computer's date and time "
+"are accurate."
+msgstr ""
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "Dëshmia ka skaduar dhe nuk duhet marrë si e vlefshme."
@@ -4054,6 +4071,20 @@ msgstr ""
 "Shërbyesi mendon se mirëfilltësimi është i plotë, por klienti nuk mendon "
 "kështu."
 
+#, fuzzy
+msgid "Server may require plaintext authentication over an unencrypted stream"
+msgstr ""
+"karshi një rrjedhe të pakoduar shërbyesi lyp mirëfilltësim me bazë tekst të "
+"thjeshtë"
+
+#, fuzzy, c-format
+msgid ""
+"%s may require plaintext authentication over an unencrypted connection.  "
+"Allow this and continue authentication?"
+msgstr ""
+"%s lyp mirëfilltësim në trajtë teksti të thjeshtë përmes një lidhjeje të "
+"pakoduar. Ta lejojë këtë dhe të vazhdojë me mirëfilltësimin? "
+
 msgid "SASL authentication failed"
 msgstr "Mirëfilltësimi SASL dështoi"
 
@@ -6205,7 +6236,7 @@ msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 "Të dhënat e profilit tuaj nuk janë marrë ende. Ju lutem,, riprovoni më vonë."
 
-msgid "Your MXitId"
+msgid "Your UID"
 msgstr ""
 
 #. pin
@@ -6217,6 +6248,7 @@ msgid "Verify PIN"
 msgstr "Verifikoni PIN-in"
 
 #. display name
+#. nick name (required)
 msgid "Display Name"
 msgstr "Emër në Ekran"
 
@@ -6284,19 +6316,16 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Po lidhet..."
 
-msgid "The nick name you entered is invalid."
-msgstr "Nofka që dhatë është e mangët."
+#, fuzzy
+msgid "The Display Name you entered is invalid."
+msgstr "Emri që dhatë është i pavlefshëm."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "PIN-i që dhatë ka gjatë të pavlefshme [7-10]."
 
 #. mxit login name
-msgid "MXit Login Name"
-msgstr "Emër Hyrjeje MXit"
-
-#. nick name (required)
-msgid "Nick Name"
-msgstr "Nofkë"
+msgid "MXit ID"
+msgstr ""
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6326,12 +6355,14 @@ msgstr "Sesioni juaj ka skaduar. Ju lutem,, riprovoni më vonë."
 msgid "Invalid country selected. Please try again."
 msgstr "U përzgjodh vend i pavlefshëm. Ju lutem,, riprovoni."
 
-msgid "Username is not registered. Please register first."
+#, fuzzy
+msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
 "Emri i përdoruesit nuk është i regjistruar. Ju lutem,, së pari  "
 "regjistrohuni."
 
-msgid "Username is already registered. Please choose another username."
+#, fuzzy
+msgid "The MXit ID you entered is already registered. Please choose another."
 msgstr ""
 "Ky emër përdoruesi është i regjistruar tashmë. Ju lutem,, zgjidhni një emër "
 "tjetër përdoruesi."
@@ -6381,8 +6412,9 @@ msgstr "Mesazhe të Marrë"
 msgid "Hidden Number"
 msgstr "Numër i Fshehur"
 
-msgid "Your Mobile Number..."
-msgstr "Numri i Celularit Tuaj..."
+#, fuzzy
+msgid "Your MXit ID..."
+msgstr "ID Yahoo..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6408,6 +6440,15 @@ msgstr "Biletë e pavlefshme"
 #, fuzzy
 msgid "_Room Name:"
 msgstr "_Dhomë:"
+
+#. Display system message in chat window
+#, fuzzy
+msgid "You have invited"
+msgstr "Ju ka ardhur postë!"
+
+#, fuzzy
+msgid "Last Online"
+msgstr "I lidhur"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -8231,11 +8272,11 @@ msgstr ""
 msgid "Invalid SNAC"
 msgstr "SNAC i pavlefshëm"
 
-msgid "Rate to host"
-msgstr "Klasifiko sipas strehe"
+msgid "Server rate limit exceeded"
+msgstr ""
 
-msgid "Rate to client"
-msgstr "Klasifiko sipas klienti"
+msgid "Client rate limit exceeded"
+msgstr ""
 
 msgid "Service unavailable"
 msgstr "Shërbim i pamundur"
@@ -10566,7 +10607,8 @@ msgstr "Vendore dhome fjalosjeje"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Shpërfill ftesa konferencash dhe dhomash fjalosjeje"
 
-msgid "Use account proxy for SSL connections"
+#, fuzzy
+msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "Përdor ndërmjetës llogarie për lidhje SSL"
 
 msgid "Chat room list URL"
@@ -13495,10 +13537,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "Po dilet, ngaqë ka një tjetër klient libpurple në xhirim e sipër.\n"
 
-msgid "/_Media"
+#, fuzzy
+msgid "_Media"
 msgstr "/_Media"
 
-msgid "/Media/_Hangup"
+msgid "_Hangup"
 msgstr ""
 
 #, c-format
@@ -14308,9 +14351,6 @@ msgstr "Tekst Shkurtoreje"
 
 msgid "Custom Smiley Manager"
 msgstr "Përgjegjës Emotikonesh Vetjake"
-
-msgid "Attention received"
-msgstr ""
 
 msgid "Select Buddy Icon"
 msgstr "Përzgjidhni Ikonë Shoku"
@@ -15972,6 +16012,27 @@ msgstr "Vizitoni Faqen Web të Pidgin-it"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nuk keni leje të çinstaloni këtë zbatim."
+
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "Dëshmia nuk është ende e vlefshme."
+
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "Nofka që dhatë është e mangët."
+
+#~ msgid "MXit Login Name"
+#~ msgstr "Emër Hyrjeje MXit"
+
+#~ msgid "Nick Name"
+#~ msgstr "Nofkë"
+
+#~ msgid "Your Mobile Number..."
+#~ msgstr "Numri i Celularit Tuaj..."
+
+#~ msgid "Rate to host"
+#~ msgstr "Klasifiko sipas strehe"
+
+#~ msgid "Rate to client"
+#~ msgstr "Klasifiko sipas klienti"
 
 #~ msgid "Unknown reason."
 #~ msgstr "Arsye e panjohur."

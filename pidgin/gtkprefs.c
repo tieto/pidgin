@@ -2223,6 +2223,7 @@ sound_changed3_cb(const char *name, PurplePrefType type,
 
 	gtk_widget_set_sensitive(hbox,
 			!strcmp(method, "automatic") ||
+			!strcmp(method, "alsa") ||
 			!strcmp(method, "esd"));
 }
 #endif /* USE_GSTREAMER */

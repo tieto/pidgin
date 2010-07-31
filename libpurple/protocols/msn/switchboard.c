@@ -746,8 +746,13 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else if ((swboard->current_users > 1) ||
 			 (purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
 	{
+		GList *passport;
 		/* This is a switchboard used for a chat */
 		purple_conv_chat_remove_user(PURPLE_CONV_CHAT(swboard->conv), user, NULL);
+
+		passport = g_list_find_custom(swboard->users, user, (GCompareFunc)strcmp);
+		g_free(passport->data);
+		swboard->users = g_list_delete_link(swboard->users, passport);
 		swboard->current_users--;
 		if (swboard->current_users == 0)
 			msn_switchboard_destroy(swboard);

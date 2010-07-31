@@ -1819,7 +1819,7 @@ purple_account_set_public_alias(PurpleAccount *account,
 
 	if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, set_public_alias))
 		prpl_info->set_public_alias(gc, alias, success_cb, failure_cb);
-	else {
+	else if (failure_cb) {
 		struct public_alias_closure *closure =
 				g_new0(struct public_alias_closure, 1);
 		closure->account = account;
@@ -1859,7 +1859,7 @@ purple_account_get_public_alias(PurpleAccount *account,
 
 	if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_public_alias))
 		prpl_info->get_public_alias(gc, success_cb, failure_cb);
-	else {
+	else if (failure_cb) {
 		struct public_alias_closure *closure =
 				g_new0(struct public_alias_closure, 1);
 		closure->account = account;

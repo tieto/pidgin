@@ -195,6 +195,11 @@ jabber_bosh_connection_init(JabberStream *js, const char *url)
 	g_free(path);
 	conn->pipelining = TRUE;
 
+	if (purple_ip_address_is_valid(host))
+		js->serverFQDN = g_strdup(js->user->domain);
+	else
+		js->serverFQDN = g_strdup(host);
+
 	if ((user && user[0] != '\0') || (passwd && passwd[0] != '\0')) {
 		purple_debug_info("jabber", "Ignoring unexpected username and password "
 		                            "in BOSH URL.\n");

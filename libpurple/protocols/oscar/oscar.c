@@ -2667,10 +2667,10 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 					g_free(rtfmsg);
 				}
 			}
-		} else if (args->info.rtfmsg.msgtype == 26)
+		} else if (args->info.rtfmsg.msgtype == 26) {
 			purple_debug_info("oscar", "Sending X-Status Reply\n");
 			icq_relay_xstatus(od, userinfo->bn, args->cookie);
-
+		}
 	}
 	else
 	{
@@ -3028,12 +3028,23 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			if (smstype != 0)
 				break;
 			taglen = byte_stream_getle32(&qbs);
+			if (taglen > 2000) {
+				/* Avoid trying to allocate large amounts of memory, in
+				   case we get something unexpected. */
+				break;
+			}
 			tagstr = byte_stream_getstr(&qbs, taglen);
 			if (tagstr == NULL)
 				break;
 			byte_stream_advance(&qbs, 3);
 			byte_stream_advance(&qbs, 4);
 			smslen = byte_stream_getle32(&qbs);
+			if (smslen > 2000) {
+				/* Avoid trying to allocate large amounts of memory, in
+				   case we get something unexpected. */
+				g_free(tagstr);
+				break;
+			}
 			smsmsg = byte_stream_getstr(&qbs, smslen);
 
 			/* Check if this is an SMS being sent from server */
