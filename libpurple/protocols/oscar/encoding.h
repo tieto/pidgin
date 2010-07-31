@@ -24,11 +24,6 @@
 #include "oscar.h"
 #include "oscarcommon.h"
 
-/**
- * Determine the simplest encoding we can send this message in.
- */
-guint16 oscar_charset_check(const char *utf8);
-
 gchar * oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen);
 gchar * oscar_utf8_try_convert(PurpleAccount *account, OscarData *od, const gchar *msg);
 
@@ -46,6 +41,6 @@ gchar * oscar_decode_im(PurpleAccount *account, const char *sourcebn, guint16 ch
 /**
  * Figure out what encoding to use when sending a given outgoing message.
  */
-gchar * oscar_convert_to_best_encoding(const gchar *msg, gsize *result_len, guint16 *charset, gchar **charsetstr);
+gchar * oscar_encode_im(const gchar *msg, gsize *result_len, guint16 *charset, gchar **charsetstr);
 
 #endif

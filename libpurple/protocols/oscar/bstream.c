@@ -78,7 +78,8 @@ void byte_stream_rewind(ByteStream *bs)
  */
 int byte_stream_advance(ByteStream *bs, int n)
 {
-	g_return_val_if_fail((byte_stream_curpos(bs) + n >= 0) && (n <= byte_stream_bytes_left(bs)), 0);
+	g_return_val_if_fail(byte_stream_curpos(bs) + n >= 0, 0);
+	g_return_val_if_fail(n <= byte_stream_bytes_left(bs), 0);
 
 	bs->offset += n;
 	return n;

@@ -20,19 +20,6 @@
 
 #include "encoding.h"
 
-guint16
-oscar_charset_check(const char *utf8)
-{
-	while (*utf8++)
-	{
-		if ((unsigned char)(*utf8) > 0x7f) {
-			/* not ASCII! */
-			return AIM_CHARSET_UNICODE;
-		}
-	}
-	return AIM_CHARSET_ASCII;
-}
-
 static gchar *
 encoding_extract(const char *encoding)
 {
@@ -214,10 +201,23 @@ oscar_decode_im(PurpleAccount *account, const char *sourcebn, guint16 charset, c
 	return ret;
 }
 
-gchar *
-oscar_convert_to_best_encoding(const gchar *msg, gsize *result_len, guint16 *charset, gchar **charsetstr)
+static guint16
+get_simplest_charset(const char *utf8)
 {
-	guint16 msg_charset = oscar_charset_check(msg);
+	while (*utf8++)
+	{
+		if ((unsigned char)(*utf8) > 0x7f) {
+			/* not ASCII! */
+			return AIM_CHARSET_UNICODE;
+		}
+	}
+	return AIM_CHARSET_ASCII;
+}
+
+gchar *
+oscar_encode_im(const gchar *msg, gsize *result_len, guint16 *charset, gchar **charsetstr)
+{
+	guint16 msg_charset = get_simplest_charset(msg);
 	if (charset != NULL) {
 		*charset = msg_charset;
 	}

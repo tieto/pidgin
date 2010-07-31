@@ -3107,7 +3107,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	g_string_append(msg, "</BODY></HTML>");
 
 	/* Convert the message to a good encoding */
-	tmp = oscar_convert_to_best_encoding(msg->str, &tmplen, &charset, NULL);
+	tmp = oscar_encode_im(msg->str, &tmplen, &charset, NULL);
 	g_string_free(msg, TRUE);
 	msg = g_string_new_len(tmp, tmplen);
 	g_free(tmp);
@@ -3256,7 +3256,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		g_free(tmp1);
 		tmp1 = tmp2;
 
-		args.msg = oscar_convert_to_best_encoding(tmp1, &args.msglen, &args.charset, NULL);
+		args.msg = oscar_encode_im(tmp1, &args.msglen, &args.charset, NULL);
 		if (is_html && (args.msglen > MAXMSGLEN)) {
 			/* If the length was too long, try stripping the HTML and then running it back through
 			* purple_strdup_withhtml() and the encoding process. The result may be shorter. */
@@ -3273,7 +3273,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			g_free(tmp1);
 			tmp1 = tmp2;
 
-			args.msg = oscar_convert_to_best_encoding(tmp1, &args.msglen, &args.charset, NULL);
+			args.msg = oscar_encode_im(tmp1, &args.msglen, &args.charset, NULL);
 			purple_debug_info("oscar", "Sending %s as %s because the original was too long.\n",
 								  message, (char *)args.msg);
 		}
@@ -3413,7 +3413,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	else if (rawinfo != NULL)
 	{
 		char *htmlinfo = purple_strdup_withhtml(rawinfo);
-		info = oscar_convert_to_best_encoding(htmlinfo, &infolen, NULL, &info_encoding);
+		info = oscar_encode_im(htmlinfo, &infolen, NULL, &info_encoding);
 		g_free(htmlinfo);
 
 		if (infolen > od->rights.maxsiglen)
@@ -3446,7 +3446,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 
 			/* We do this for icq too so that they work for old third party clients */
 			linkified = purple_markup_linkify(status_html);
-			away = oscar_convert_to_best_encoding(linkified, &awaylen, NULL, &away_encoding);
+			away = oscar_encode_im(linkified, &awaylen, NULL, &away_encoding);
 			g_free(linkified);
 
 			if (awaylen > od->rights.maxawaymsglen)
@@ -4429,7 +4429,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 			  "You cannot send IM Images in AIM chats."),
 			PURPLE_MESSAGE_ERROR, time(NULL));
 
-	buf2 = oscar_convert_to_best_encoding(buf, &len, &charset, &charsetstr);
+	buf2 = oscar_encode_im(buf, &len, &charset, &charsetstr);
 	/*
 	 * Evan S. suggested that maxvis really does mean "number of
 	 * visible characters" and not "number of bytes"
@@ -4445,7 +4445,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		buf = purple_strdup_withhtml(buf3);
 		g_free(buf3);
 
-		buf2 = oscar_convert_to_best_encoding(buf, &len, &charset, &charsetstr);
+		buf2 = oscar_encode_im(buf, &len, &charset, &charsetstr);
 
 		if ((len > c->maxlen) || (len > c->maxvis)) {
 			purple_debug_warning("oscar",
