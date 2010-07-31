@@ -246,8 +246,6 @@ static void handle_groupchat(JabberMessage *jm)
 		}
 	}
 
-	purple_debug_warning("jabber CHAT", "MUC message: '%s', '%s'\n",
-	                     jm->xhtml, jm->body);
 	if(jm->xhtml || jm->body) {
 		if(jid->resource)
 			serv_got_chat_in(jm->js->gc, chat->id, jid->resource,
@@ -590,7 +588,9 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(child->name, "body") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->body) {
 				char *msg = xmlnode_get_data(child);
-				jm->body = purple_strdup_withhtml(msg);
+				char *escaped = purple_markup_escape_text(msg, -1);
+				jm->body = purple_strdup_withhtml(escaped);
+				g_free(escaped);
 				g_free(msg);
 			}
 		} else if(!strcmp(child->name, "html") && !strcmp(xmlns, NS_XHTML_IM)) {
