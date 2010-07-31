@@ -122,6 +122,8 @@ struct _MsnSession
 
 	GHashTable *soap_table;
 	guint soap_cleanup_handle;
+
+	GSList *url_datas; /**< PurpleUtilFetchUrlData to be cancelled on exit */
 };
 
 /**
