@@ -204,12 +204,13 @@ oscar_decode_im(PurpleAccount *account, const char *sourcebn, guint16 charset, c
 static guint16
 get_simplest_charset(const char *utf8)
 {
-	while (*utf8++)
+	while (*utf8)
 	{
 		if ((unsigned char)(*utf8) > 0x7f) {
 			/* not ASCII! */
 			return AIM_CHARSET_UNICODE;
 		}
+		utf8++;
 	}
 	return AIM_CHARSET_ASCII;
 }
