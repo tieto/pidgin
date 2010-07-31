@@ -22,6 +22,10 @@ version 2.7.3 (??/??/????):
 	IRC:
 	* Fix non-ASCII arguments to /mode et al.  (thanks to Max Ulidtko)
 
+	MSN:
+	* Support for web-based buddy icons, used when a buddy logs in to the
+	  messenger on the Live website.
+
 	MXit:
 	* Fix filename for the Shocked emoticon. (#12364)
 	* Implement the new naming conventions where possible. (MXitId, etc)
