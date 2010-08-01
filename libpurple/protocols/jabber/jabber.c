@@ -567,8 +567,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 	if (NULL == packet)
 		return;
 
-	if (!PURPLE_CONNECTION_IS_VALID(pc))
-		return;
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(pc));
 
 	js = purple_connection_get_protocol_data(pc);
 
@@ -625,7 +624,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	/* TODO: It should be possible to make this check unnecessary */
 	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
 		purple_ssl_close(gsc);
-		return;
+		g_return_if_reached();
 	}
 
 	while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
@@ -660,8 +659,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 	int len;
 	static char buf[4096];
 
-	if(!PURPLE_CONNECTION_IS_VALID(gc))
-		return;
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
 		gc->last_received = time(NULL);
@@ -721,7 +719,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 	/* TODO: It should be possible to make this check unnecessary */
 	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
 		purple_ssl_close(gsc);
-		return;
+		g_return_if_reached();
 	}
 
 	js = gc->proto_data;
@@ -816,8 +814,7 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 	JabberStream *js;
 
 	/* If the connection is already disconnected, we don't need to do anything else */
-	if(!PURPLE_CONNECTION_IS_VALID(gc))
-		return;
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
 	js = gc->proto_data;
 	js->gsc = NULL;
