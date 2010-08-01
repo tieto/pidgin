@@ -1807,7 +1807,10 @@ void msn_notification_send_uux_endpointdata(MsnSession *session)
 	epDataNode = xmlnode_new("EndpointData");
 
 	capNode = xmlnode_new_child(epDataNode, "Capabilities");
-	caps = g_strdup_printf("%d:%02d", MSN_CLIENT_ID_CAPABILITIES, MSN_CLIENT_ID_EXT_CAPS);
+	if (session->protocol_ver >= 16)
+		caps = g_strdup_printf("%d:%02d", MSN_CLIENT_ID_CAPABILITIES, MSN_CLIENT_ID_EXT_CAPS);
+	else
+		caps = g_strdup_printf("%d", MSN_CLIENT_ID_CAPABILITIES);
 	xmlnode_insert_data(capNode, caps, -1);
 	g_free(caps);
 
