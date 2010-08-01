@@ -15325,7 +15325,7 @@ msgid ""
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
 "$(^Naam) is uitgegeven onder de GNU Generale Publieke Licentie (GPL). De "
-"licentie wordt hier slechts gegeven voor informatieve doeleinden. $_KLIK"
+"licentie wordt hier slechts gegeven voor informatieve doeleinden. $_CLICK"
 
 #. Installer Subsection Detailed Description
 msgid "A multi-platform GUI toolkit, used by Pidgin"
