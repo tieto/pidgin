@@ -235,6 +235,8 @@ const char *msn_object_get_sha1(const MsnObject *obj);
  */
 PurpleStoredImage *msn_object_get_image(const MsnObject *obj);
 
+MsnObject * msn_object_find_local(const char *sha1);
+
 void msn_object_set_local(MsnObject *obj);
 
 #endif /* MSN_OBJECT_H */

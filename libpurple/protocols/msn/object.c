@@ -352,7 +352,7 @@ msn_object_get_sha1(const MsnObject *obj)
 	}
 }
 
-static MsnObject *
+MsnObject *
 msn_object_find_local(const char *sha1)
 {
 	GList *l;
