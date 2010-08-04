@@ -167,11 +167,11 @@ msn_slpmsgpart_ack(MsnSlpMessagePart *part, void *data)
 
 	real_size = (slpmsg->flags == P2P_ACK) ? 0 : slpmsg->size;
 
-	slpmsg->offset += part->header->length;
+	slpmsg->header->offset += part->header->length;
 
 	slpmsg->parts = g_list_remove(slpmsg->parts, part);
 
-	if (slpmsg->offset < real_size)
+	if (slpmsg->header->offset < real_size)
 	{
 		if (slpmsg->slpcall->xfer && purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
 		{

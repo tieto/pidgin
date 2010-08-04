@@ -298,7 +298,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	real_size = (slpmsg->flags == P2P_ACK) ? 0 : slpmsg->size;
 
-	if (slpmsg->offset < real_size)
+	if (slpmsg->header->offset < real_size)
 	{
 		if (slpmsg->slpcall && slpmsg->slpcall->xfer && purple_xfer_get_type(slpmsg->slpcall->xfer) == PURPLE_XFER_SEND &&
 				purple_xfer_get_status(slpmsg->slpcall->xfer) == PURPLE_XFER_STATUS_STARTED)
@@ -308,15 +308,14 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		}
 		else
 		{
-			len = slpmsg->size - slpmsg->offset;
+			len = slpmsg->size - slpmsg->header->offset;
 
 			if (len > MSN_SBCONN_MAX_SIZE)
 				len = MSN_SBCONN_MAX_SIZE;
 
-			msn_slpmsgpart_set_bin_data(part, slpmsg->buffer + slpmsg->offset, len);
+			msn_slpmsgpart_set_bin_data(part, slpmsg->buffer + slpmsg->header->offset, len);
 		}
 
-		slpmsg->header->offset = slpmsg->offset;
 		slpmsg->header->length = len;
 	}
 
@@ -343,7 +342,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		if (slpmsg->slpcall->progress_cb != NULL)
 		{
 			slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size,
-										 len, slpmsg->offset);
+										 len, slpmsg->header->offset);
 		}
 	}
 
