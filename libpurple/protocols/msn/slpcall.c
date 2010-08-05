@@ -1123,9 +1123,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		}
 		g_free(body_str);
 	}
-	else if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
-	         slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
-	         slpmsg->flags == P2P_FILE_DATA)
+	 else if (msn_p2p_msg_is_data(slpmsg->flags))
 	{
 		slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->header->session_id);
 

@@ -332,9 +332,8 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	slpmsg->parts = g_list_append(slpmsg->parts, part);
 	msn_slplink_send_part(slplink, part);
 
-	if ((slpmsg->flags == P2P_MSN_OBJ_DATA || 
-	     slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
-	     slpmsg->flags == P2P_FILE_DATA) &&
+
+	if (msn_p2p_msg_is_data(slpmsg->flags) &&
 		(slpmsg->slpcall != NULL))
 	{
 		slpmsg->slpcall->progress = TRUE;
@@ -359,9 +358,7 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	{
 		slpmsg->header->ack_id = rand() % 0xFFFFFF00;
 	}
-	else if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
-	         slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
-	         slpmsg->flags == P2P_FILE_DATA)
+	else if (msn_p2p_msg_is_data(slpmsg->flags))
 	{
 		MsnSlpCall *slpcall;
 		slpcall = slpmsg->slpcall;
@@ -462,9 +459,7 @@ init_first_msg(MsnSlpLink *slplink, MsnP2PHeader *header)
 		slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->header->session_id);
 		if (slpmsg->slpcall != NULL)
 		{
-			if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
-					slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
-					slpmsg->flags == P2P_FILE_DATA)
+			if (msn_p2p_msg_is_data(slpmsg->flags))
 			{
 				PurpleXfer *xfer = slpmsg->slpcall->xfer;
 				if (xfer != NULL)
@@ -525,9 +520,7 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PHeader *h
 #endif
 	}
 	else if (slpmsg->flags == P2P_NO_FLAG || slpmsg->flags == P2P_WML2009_COMP ||
-			slpmsg->flags == P2P_MSN_OBJ_DATA ||
-			slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
-			slpmsg->flags == P2P_FILE_DATA)
+			msn_p2p_msg_is_data(slpmsg->flags))
 	{
 		/* Release all the messages and send the ACK */
 
@@ -612,9 +605,8 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 
 	slpmsg_add_part(slpmsg, part);
 
-	if ((slpmsg->flags == P2P_MSN_OBJ_DATA ||
-		slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
-		slpmsg->flags == P2P_FILE_DATA) &&
+
+	if (msn_p2p_msg_is_data(slpmsg->flags) &&
 		(slpmsg->slpcall != NULL))
 	{
 		slpmsg->slpcall->progress = TRUE;

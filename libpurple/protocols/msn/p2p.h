@@ -82,4 +82,7 @@ msn_p2p_footer_from_wire(MsnP2PFooter *wire);
 MsnP2PFooter *
 msn_p2p_footer_to_wire(MsnP2PFooter *footer);
 
+gboolean
+msn_p2p_msg_is_data(const MsnP2PHeaderFlag flags);
+
 #endif /* MSN_P2P_H */
