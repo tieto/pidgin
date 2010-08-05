@@ -245,7 +245,7 @@ MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PHeader *header)
 	slpmsg->header->session_id = header->session_id;
 	slpmsg->size       = header->total_size;
 	slpmsg->flags      = P2P_ACK;
-	slpmsg->ack_id     = header->id;
+	slpmsg->header->ack_id     = header->id;
 	slpmsg->ack_sub_id = header->ack_id;
 	slpmsg->ack_size   = header->total_size;
 	slpmsg->info = "SLP ACK";
