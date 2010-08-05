@@ -842,6 +842,50 @@ aim_srv_setextrainfo(OscarData *od,
 	return 0;
 }
 
+/* Send dummy DC (direct connect) information to the server.
+ * Direct connect is ICQ's counterpart for AIM's DirectIM,
+ * as far as I can tell. Anyway, we don't support it;
+ * the reason to send this packet is that some clients
+ * (Miranda, QIP) won't send us channel 2 ICBM messages
+ * unless we specify DC version >= 8.
+ *
+ * See #12044 for more information.
+ */
+void
+aim_srv_set_dc_info(OscarData *od)
+{
+	ByteStream bs, tlv0c;
+	aim_snacid_t snacid;
+	GSList *tlvlist = NULL;
+
+	/* http://iserverd.khstu.ru/oscar/snac_01_1e.html has a nice analysis of what goes in 0xc tlv.
+	 * Kopete sends a dummy DC info, too, so I just copied the values from them.
+	 */
+	byte_stream_new(&tlv0c, 4*2 + 1 + 2 + 4*6 + 2);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put8(&tlv0c, 0x0); /* We don't support DC */
+	byte_stream_put16(&tlv0c, 8); /* DC version */
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x50);
+	byte_stream_put32(&tlv0c, 0x3);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put32(&tlv0c, 0x0);
+	byte_stream_put16(&tlv0c, 0x0);
+	aim_tlvlist_add_raw(&tlvlist, 0x000c, byte_stream_curpos(&tlv0c), tlv0c.data);
+	byte_stream_destroy(&tlv0c);
+
+	byte_stream_new(&bs, aim_tlvlist_size(tlvlist));
+	aim_tlvlist_write(&bs, &tlvlist);
+	aim_tlvlist_free(tlvlist);
+
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, flap_connection_findbygroup(od, SNAC_FAMILY_ICBM), SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
+}
+
 /**
  * Starting this past week (26 Mar 2001, say), AOL has started sending
  * this nice little extra SNAC.  AFAIK, it has never been used until now.

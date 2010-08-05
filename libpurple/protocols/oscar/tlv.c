@@ -371,6 +371,17 @@ int aim_tlvlist_add_str(GSList **list, const guint16 type, const char *value)
 	return aim_tlvlist_add_raw(list, type, strlen(value), (guint8 *)value);
 }
 
+static int
+count_caps(guint64 caps)
+{
+	int set_bits = 0;
+	while (caps) {
+		set_bits += caps & 1;
+		caps >>= 1;
+	}
+	return set_bits;
+}
+
 /**
  * Adds a block of capability blocks to a TLV chain. The bitfield
  * passed in should be a bitwise %OR of any of the %AIM_CAPS constants:
@@ -389,23 +400,24 @@ int aim_tlvlist_add_str(GSList **list, const guint16 type, const char *value)
  */
 int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint64 caps, const char *mood)
 {
-	guint8 buf[256]; /* TODO: Don't use a fixed length buffer */
 	ByteStream bs;
+	guint32 bs_size;
 	guint8 *data;
 
 	if (caps == 0)
 		return 0; /* nothing there anyway */
 
-	byte_stream_init(&bs, buf, sizeof(buf));
-
-	byte_stream_putcaps(&bs, caps);
-	
-	/* adding of custom icon GUID */
 	data = icq_get_custom_icon_data(mood);
+	bs_size = 16*(count_caps(caps) + (data != NULL ? 1 : 0));
+
+	byte_stream_new(&bs, bs_size);
+	byte_stream_putcaps(&bs, caps);
+
+	/* adding of custom icon GUID */
 	if (data != NULL)
 		byte_stream_putraw(&bs, data, 16);
 
-	return aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), buf);
+	return aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), bs.data);
 }
 
 /**

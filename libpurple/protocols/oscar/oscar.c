@@ -68,7 +68,8 @@ static guint64 purple_caps =
 		| OSCAR_CAPABILITY_TYPING
 		| OSCAR_CAPABILITY_ICQSERVERRELAY
 		| OSCAR_CAPABILITY_NEWCAPS
-		| OSCAR_CAPABILITY_XTRAZ;
+		| OSCAR_CAPABILITY_XTRAZ
+		| OSCAR_CAPABILITY_HTML_MSGS;
 
 static guint8 features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static guint8 features_icq[] = {0x01};
@@ -1746,8 +1747,18 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		if (args->info.rtfmsg.msgtype == 1) {
 			if (args->info.rtfmsg.msg != NULL) {
 				char *rtfmsg = oscar_encoding_to_utf8(args->encoding, args->info.rtfmsg.msg, strlen(args->info.rtfmsg.msg));
-				serv_got_im(gc, userinfo->bn, rtfmsg, flags, time(NULL));
+				char *tmp, *tmp2;
+
+				/* Channel 2 messages are supposed to be plain-text (never mind the name "rtfmsg", even
+				 * the official client doesn't parse them as RTF). Therefore, we should escape them before
+				 * showing to the user. */
+				tmp = g_markup_escape_text(rtfmsg, -1);
 				g_free(rtfmsg);
+				tmp2 = purple_strreplace(tmp, "\r\n", "<br>");
+				g_free(tmp);
+
+				serv_got_im(gc, userinfo->bn, tmp2, flags, time(NULL));
+				g_free(tmp2);
 			}
 		} else if (args->info.rtfmsg.msgtype == 26) {
 			purple_debug_info("oscar", "Sending X-Status Reply\n");
@@ -2783,6 +2794,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	tmp = purple_markup_strip_html(message);
 	itmsurl = purple_status_get_attr_string(status, "itmsurl");
 	aim_srv_setextrainfo(od, FALSE, 0, is_available, tmp, itmsurl);
+	aim_srv_set_dc_info(od);
 	g_free(tmp);
 
 	presence = purple_status_get_presence(status);

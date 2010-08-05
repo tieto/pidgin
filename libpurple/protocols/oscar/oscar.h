@@ -202,7 +202,8 @@ typedef enum
 #define OSCAR_CAPABILITY_NEWCAPS               0x0000000020000000LL
 #define OSCAR_CAPABILITY_XTRAZ                 0x0000000040000000LL
 #define OSCAR_CAPABILITY_GENERICUNKNOWN        0x0000000080000000LL
-#define OSCAR_CAPABILITY_LAST                  0x0000000100000000LL
+#define OSCAR_CAPABILITY_HTML_MSGS             0x0000000100000000LL
+#define OSCAR_CAPABILITY_LAST                  0x0000000200000000LL
 
 #define OSCAR_STATUS_ID_INVISIBLE   "invisible"
 #define OSCAR_STATUS_ID_OFFLINE     "offline"
@@ -531,6 +532,7 @@ aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 subtype)
 /* 0x0011 */ void aim_srv_setidle(OscarData *od, guint32 idletime);
 /* 0x0017 */ void aim_srv_setversions(OscarData *od, FlapConnection *conn);
 /* 0x001e */ int aim_srv_setextrainfo(OscarData *od, gboolean seticqstatus, guint32 icqstatus, gboolean setstatusmsg, const char *statusmsg, const char *itmsurl);
+void aim_srv_set_dc_info(OscarData *od);
 
 
 void aim_bos_reqrights(OscarData *od, FlapConnection *conn);
