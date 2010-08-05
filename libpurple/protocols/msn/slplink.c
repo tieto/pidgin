@@ -362,7 +362,6 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	else if (slpmsg->flags == P2P_ACK)
 	{
 		slpmsg->header->ack_size = slpmsg->ack_size;
-		slpmsg->header->ack_sub_id = slpmsg->ack_sub_id;
 	}
 	else if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
 	         slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
@@ -378,7 +377,6 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	}
 	else if (slpmsg->flags == 0x100)
 	{
-		slpmsg->header->ack_sub_id = slpmsg->ack_sub_id;
 		slpmsg->header->ack_size   = slpmsg->ack_size;
 	}
 

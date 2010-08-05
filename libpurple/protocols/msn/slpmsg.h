@@ -49,7 +49,6 @@ struct _MsnSlpMessage
 	MsnP2PFooter *footer;
 
 	long id;
-	long ack_sub_id;
 	long long ack_size;
 
 	gboolean sip; /**< A flag that states if this is a SIP slp message. */
