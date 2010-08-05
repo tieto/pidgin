@@ -3883,13 +3883,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 					groupitem = aim_ssi_itemlist_find(od->ssi.local, curitem->gid, 0x0000);
 					gname = groupitem ? groupitem->name : NULL;
-					if (gname != NULL) {
-						if (g_utf8_validate(gname, -1, NULL))
-							gname_utf8 = g_strdup(gname);
-						else
-							gname_utf8 = oscar_utf8_try_convert(account, od, gname);
-					} else
-						gname_utf8 = NULL;
+					gname_utf8 = oscar_utf8_try_convert(account, od, gname);
 
 					g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans"));
 					if (g == NULL) {
@@ -3898,14 +3892,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					}
 
 					alias = aim_ssi_getalias(od->ssi.local, gname, curitem->name);
-					if (alias != NULL) {
-						if (g_utf8_validate(alias, -1, NULL))
-							alias_utf8 = g_strdup(alias);
-						else
-							alias_utf8 = oscar_utf8_try_convert(account, od, alias);
-						g_free(alias);
-					} else
-						alias_utf8 = NULL;
+					alias_utf8 = oscar_utf8_try_convert(account, od, alias);
 
 					b = purple_find_buddy_in_group(account, curitem->name, g);
 					if (b) {
@@ -3947,13 +3934,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				char *gname_utf8;
 
 				gname = curitem->name;
-				if (gname != NULL) {
-					if (g_utf8_validate(gname, -1, NULL))
-						gname_utf8 = g_strdup(gname);
-					else
-						gname_utf8 = oscar_utf8_try_convert(account, od, gname);
-				} else
-					gname_utf8 = NULL;
+				gname_utf8 = oscar_utf8_try_convert(account, od, gname);
 
 				if (gname_utf8 != NULL && purple_find_group(gname_utf8) == NULL) {
 					g = purple_group_new(gname_utf8);
@@ -4126,15 +4107,7 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	gname_utf8 = gname ? oscar_utf8_try_convert(account, od, gname) : NULL;
 
 	alias = aim_ssi_getalias(od->ssi.local, gname, name);
-	if (alias != NULL)
-	{
-		if (g_utf8_validate(alias, -1, NULL))
-			alias_utf8 = g_strdup(alias);
-		else
-			alias_utf8 = oscar_utf8_try_convert(account, od, alias);
-	}
-	else
-		alias_utf8 = NULL;
+	alias_utf8 = oscar_utf8_try_convert(account, od, alias);
 	g_free(alias);
 
 	b = purple_find_buddy(account, name);

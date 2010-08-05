@@ -140,13 +140,27 @@ oscar_user_info_add_pair(PurpleNotifyUserInfo *user_info, const char *name, cons
 
 static void
 oscar_user_info_convert_and_add(PurpleAccount *account, OscarData *od, PurpleNotifyUserInfo *user_info,
-								const char *name, const char *value)
+					const char *name, const char *value)
 {
 	gchar *utf8;
 
 	if (value && value[0] && (utf8 = oscar_utf8_try_convert(account, od, value))) {
 		purple_notify_user_info_add_pair(user_info, name, utf8);
 		g_free(utf8);
+	}
+}
+
+static void
+oscar_user_info_convert_and_add_hyperlink(PurpleAccount *account, OscarData *od, PurpleNotifyUserInfo *user_info,
+						const char *name, const char *value, const char *url_prefix)
+{
+	gchar *utf8;
+
+	if (value && value[0] && (utf8 = oscar_utf8_try_convert(account, od, value))) {
+		gchar *tmp = g_strdup_printf("<a href=\"%s%s\">%s</a>", url_prefix, utf8, utf8);
+		purple_notify_user_info_add_pair(user_info, name, tmp);
+		g_free(utf8);
+		g_free(tmp);
 	}
 }
 
@@ -381,8 +395,6 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 	struct buddyinfo *bi;
 	gchar who[16];
 	PurpleNotifyUserInfo *user_info;
-	gchar *utf8;
-	gchar *buf;
 	const gchar *alias;
 
 	if (!info->uin)
@@ -410,21 +422,11 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 	}
 	oscar_user_info_convert_and_add(account, od, user_info, _("First Name"), info->first);
 	oscar_user_info_convert_and_add(account, od, user_info, _("Last Name"), info->last);
-	if (info->email && info->email[0] && (utf8 = oscar_utf8_try_convert(account, od, info->email))) {
-		buf = g_strdup_printf("<a href=\"mailto:%s\">%s</a>", utf8, utf8);
-		purple_notify_user_info_add_pair(user_info, _("Email Address"), buf);
-		g_free(buf);
-		g_free(utf8);
-	}
+	oscar_user_info_convert_and_add_hyperlink(account, od, user_info, _("Email Address"), info->email, "mailto:");
 	if (info->numaddresses && info->email2) {
 		int i;
 		for (i = 0; i < info->numaddresses; i++) {
-			if (info->email2[i] && info->email2[i][0] && (utf8 = oscar_utf8_try_convert(account, od, info->email2[i]))) {
-				buf = g_strdup_printf("<a href=\"mailto:%s\">%s</a>", utf8, utf8);
-				purple_notify_user_info_add_pair(user_info, _("Email Address"), buf);
-				g_free(buf);
-				g_free(utf8);
-			}
+			oscar_user_info_convert_and_add_hyperlink(account, od, user_info, _("Email Address"), info->email2[i], "mailto:");
 		}
 	}
 	oscar_user_info_convert_and_add(account, od, user_info, _("Mobile Phone"), info->mobile);
@@ -454,13 +456,7 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 		snprintf(age, sizeof(age), "%hhd", info->age);
 		purple_notify_user_info_add_pair(user_info, _("Age"), age);
 	}
-	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = oscar_utf8_try_convert(account, od, info->personalwebpage))) {
-		buf = g_strdup_printf("<a href=\"%s\">%s</a>", utf8, utf8);
-		purple_notify_user_info_add_pair(user_info, _("Personal Web Page"), buf);
-		g_free(buf);
-		g_free(utf8);
-	}
-
+	oscar_user_info_convert_and_add_hyperlink(account, od, user_info, _("Personal Web Page"), info->email, "");
 	if (buddy != NULL)
 		oscar_user_info_append_status(gc, user_info, buddy, /* aim_userinfo_t */ NULL, /* strip_html_tags */ FALSE);
 
@@ -489,13 +485,7 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 		oscar_user_info_convert_and_add(account, od, user_info, _("Company"), info->workcompany);
 		oscar_user_info_convert_and_add(account, od, user_info, _("Division"), info->workdivision);
 		oscar_user_info_convert_and_add(account, od, user_info, _("Position"), info->workposition);
-
-		if (info->workwebpage && info->workwebpage[0] && (utf8 = oscar_utf8_try_convert(account, od, info->workwebpage))) {
-			char *webpage = g_strdup_printf("<a href=\"%s\">%s</a>", utf8, utf8);
-			purple_notify_user_info_add_pair(user_info, _("Web Page"), webpage);
-			g_free(webpage);
-			g_free(utf8);
-		}
+		oscar_user_info_convert_and_add_hyperlink(account, od, user_info, _("Web Page"), info->email, "");
 	}
 
 	if (buddy != NULL)

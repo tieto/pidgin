@@ -92,6 +92,12 @@ oscar_utf8_try_convert(PurpleAccount *account, OscarData *od, const gchar *msg)
 	const char *charset = NULL;
 	char *ret = NULL;
 
+	if (msg == NULL)
+		return NULL;
+
+	if (g_utf8_validate(msg, -1, NULL))
+		return g_strdup(msg);
+
 	if (od->icq)
 		charset = purple_account_get_string(account, "encoding", NULL);
 
