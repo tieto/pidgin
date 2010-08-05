@@ -346,7 +346,7 @@ void msn_slpmsg_show_readable(MsnSlpMessage *slpmsg)
 	g_string_append_printf(str, "ACK Size:   %" G_GUINT64_FORMAT "\r\n", slpmsg->header->ack_size);
 
 	if (purple_debug_is_verbose() && slpmsg->buffer != NULL) {
-		g_string_append_len(str, slpmsg->buffer, slpmsg->size);
+		g_string_append_len(str, (gchar*)slpmsg->buffer, slpmsg->size);
 
 		if (slpmsg->buffer[slpmsg->size - 1] == '\0') {
 			str->len--;
