@@ -73,7 +73,7 @@ aim_srv_clientready(OscarData *od, FlapConnection *conn)
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0002, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0002, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -141,7 +141,7 @@ aim_srv_requestnew(OscarData *od, guint16 serviceid)
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -187,7 +187,7 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, &csi, sizeof(csi));
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -444,7 +444,7 @@ aim_srv_rates_addparam(OscarData *od, FlapConnection *conn)
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0008, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0008, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0008, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -750,7 +750,7 @@ aim_srv_setversions(OscarData *od, FlapConnection *conn)
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0017, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0017, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0017, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -835,7 +835,7 @@ aim_srv_setextrainfo(OscarData *od,
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x001e, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -881,7 +881,7 @@ aim_srv_set_dc_info(OscarData *od)
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, flap_connection_findbygroup(od, SNAC_FAMILY_ICBM), SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, flap_connection_findbygroup(od, SNAC_FAMILY_ICBM), SNAC_FAMILY_OSERVICE, 0x001e, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -1024,7 +1024,7 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0020, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0020, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0020, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 

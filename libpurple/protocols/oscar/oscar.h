@@ -510,8 +510,8 @@ void flap_connection_send(FlapConnection *conn, FlapFrame *frame);
 void flap_connection_send_version(OscarData *od, FlapConnection *conn);
 void flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy);
 void flap_connection_send_version_with_cookie_and_clientinfo(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy, ClientInfo *ci, gboolean allow_multiple_login);
-void flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data);
-void flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data, gboolean high_priority);
+void flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, aim_snacid_t snacid, ByteStream *data);
+void flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, aim_snacid_t snacid, ByteStream *data, gboolean high_priority);
 void flap_connection_send_keepalive(OscarData *od, FlapConnection *conn);
 FlapFrame *flap_frame_new(OscarData *od, guint16 channel, int datalen);
 
@@ -1269,7 +1269,7 @@ aim_snacid_t aim_newsnac(OscarData *, aim_snac_t *newsnac);
 aim_snacid_t aim_cachesnac(OscarData *od, const guint16 family, const guint16 type, const guint16 flags, const void *data, const int datalen);
 aim_snac_t *aim_remsnac(OscarData *, aim_snacid_t id);
 void aim_cleansnacs(OscarData *, int maxage);
-int aim_putsnac(ByteStream *, guint16 family, guint16 type, guint16 flags, aim_snacid_t id);
+int aim_putsnac(ByteStream *, guint16 family, guint16 type, aim_snacid_t id);
 
 struct chatsnacinfo {
 	guint16 exchange;

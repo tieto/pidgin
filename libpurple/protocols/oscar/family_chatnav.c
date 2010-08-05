@@ -139,7 +139,7 @@ int aim_chatnav_createroom(OscarData *od, FlapConnection *conn, const char *name
 
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_CHATNAV, 0x0008, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_CHATNAV, 0x0008, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 

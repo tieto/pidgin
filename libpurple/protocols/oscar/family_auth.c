@@ -227,7 +227,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	frame = flap_frame_new(od, 0x02, 1152);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0002, 0x0000, snacid);
+	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0002, snacid);
 
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 
@@ -476,7 +476,7 @@ aim_request_login(OscarData *od, FlapConnection *conn, const char *sn)
 	frame = flap_frame_new(od, 0x02, 10+2+2+strlen(sn)+8);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0006, 0x0000, snacid);
+	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0006, snacid);
 
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 
@@ -574,7 +574,7 @@ aim_auth_securid_send(OscarData *od, const char *securid)
 	frame = flap_frame_new(od, 0x02, 10+2+len);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, 0);
+	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0);
 
 	byte_stream_put16(&frame->data, len);
 	byte_stream_putstr(&frame->data, securid);

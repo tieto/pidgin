@@ -41,7 +41,7 @@ aim_genericreq_n(OscarData *od, FlapConnection *conn, guint16 family, guint16 su
 {
 	aim_snacid_t snacid = 0x00000000;
 
-	flap_connection_send_snac(od, conn, family, subtype, 0x0000, snacid, NULL);
+	flap_connection_send_snac(od, conn, family, subtype, snacid, NULL);
 }
 
 void
@@ -51,7 +51,7 @@ aim_genericreq_n_snacid(OscarData *od, FlapConnection *conn, guint16 family, gui
 
 	snacid = aim_cachesnac(od, family, subtype, 0x0000, NULL, 0);
 
-	flap_connection_send_snac(od, conn, family, subtype, 0x0000, snacid, NULL);
+	flap_connection_send_snac(od, conn, family, subtype, snacid, NULL);
 }
 
 void
@@ -72,7 +72,7 @@ aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint16 su
 
 	byte_stream_put32(&bs, *longdata);
 
-	flap_connection_send_snac(od, conn, family, subtype, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, family, subtype, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }

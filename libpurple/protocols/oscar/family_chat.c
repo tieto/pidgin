@@ -232,7 +232,7 @@ aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar
 	aim_tlvlist_free(inner_tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_CHAT, 0x0005, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_CHAT, 0x0005, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 

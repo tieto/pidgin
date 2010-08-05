@@ -1267,7 +1267,7 @@ static int aim_ssi_addmoddel(OscarData *od)
 	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, od->ssi.pending->action, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, od->ssi.pending->action, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, od->ssi.pending->action, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1633,7 +1633,7 @@ int aim_ssi_sendauthrequest(OscarData *od, char *bn, const char *msg)
 	byte_stream_put16(&bs, 0x0000);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREQ, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1713,7 +1713,7 @@ int aim_ssi_sendauthreply(OscarData *od, char *bn, guint8 reply, const char *msg
 	byte_stream_put16(&bs, 0x0000);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREP, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 

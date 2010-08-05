@@ -1333,7 +1333,7 @@ aim_locate_setprofile(OscarData *od,
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1367,7 +1367,7 @@ aim_locate_setcaps(OscarData *od, guint64 caps)
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_LOCATE, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1463,7 +1463,7 @@ aim_locate_getinfoshort(OscarData *od, const char *bn, guint32 flags)
 	byte_stream_putstr(&bs, bn);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, bn, strlen(bn)+1);
-	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_LOCATE, 0x0015, 0x0000, snacid, &bs, FALSE);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_LOCATE, 0x0015, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 

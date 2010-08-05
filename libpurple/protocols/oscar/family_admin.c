@@ -47,7 +47,7 @@ aim_admin_getinfo(OscarData *od, FlapConnection *conn, guint16 info)
 	byte_stream_put16(&bs, 0x0000);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ADMIN, 0x0002, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0002, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -127,7 +127,7 @@ aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick)
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -154,7 +154,7 @@ aim_admin_changepasswd(OscarData *od, FlapConnection *conn, const char *newpw, c
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -177,7 +177,7 @@ aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail)
 	aim_tlvlist_free(tlvlist);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0004, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }

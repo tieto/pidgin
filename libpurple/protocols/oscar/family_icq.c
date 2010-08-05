@@ -157,7 +157,7 @@ aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware)
 	byte_stream_putle8(&bs, 0x00);
 	byte_stream_putle8(&bs, !auth_required);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -207,7 +207,7 @@ int aim_icq_changepasswd(OscarData *od, const char *passwd)
 	byte_stream_putraw(&bs, (const guint8 *)passwd, passwdlen);
 	byte_stream_putle8(&bs, '\0');
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -246,7 +246,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	byte_stream_putle16(&bs, request_type); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
-	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -293,7 +293,7 @@ int aim_icq_getalias(OscarData *od, const char *uin, gboolean for_auth_request, 
 	byte_stream_putle16(&bs, request_type); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
-	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -398,7 +398,7 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	byte_stream_putstr(&bs, xml);
 	byte_stream_put8(&bs, 0x00);
 
-	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -728,7 +728,7 @@ icqresponse(OscarData *od, aim_modsnac_t *snac, ByteStream *bs)
 
 				od->icq_info = g_slist_prepend(od->icq_info, info);
 
-				flap_connection_send_snac_with_priority(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs, FALSE);
+				flap_connection_send_snac_with_priority(od, conn, 0x0004, 0x0006, snacid, &bs, FALSE);
 
 				byte_stream_destroy(&bs);
 			}

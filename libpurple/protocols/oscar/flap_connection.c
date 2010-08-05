@@ -212,7 +212,7 @@ static gboolean flap_connection_send_queued(gpointer data)
  *        only if all high priority SNACs have been sent.
  */
 void
-flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data, gboolean high_priority)
+flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, aim_snacid_t snacid, ByteStream *data, gboolean high_priority)
 {
 	FlapFrame *frame;
 	guint32 length;
@@ -222,7 +222,7 @@ flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, gui
 	length = data != NULL ? data->offset : 0;
 
 	frame = flap_frame_new(od, 0x02, 10 + length);
-	aim_putsnac(&frame->data, family, subtype, flags, snacid);
+	aim_putsnac(&frame->data, family, subtype, snacid);
 
 	if (length > 0)
 	{
@@ -284,9 +284,9 @@ flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, gui
 }
 
 void
-flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data)
+flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, aim_snacid_t snacid, ByteStream *data)
 {
-	flap_connection_send_snac_with_priority(od, conn, family, subtype, flags, snacid, data, TRUE);
+	flap_connection_send_snac_with_priority(od, conn, family, subtype, snacid, data, TRUE);
 }
 
 /**
