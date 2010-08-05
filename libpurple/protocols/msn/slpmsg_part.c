@@ -184,9 +184,7 @@ msn_slpmsgpart_ack(MsnSlpMessagePart *part, void *data)
 	else
 	{
 		/* The whole message has been sent */
-		if (slpmsg->flags == P2P_MSN_OBJ_DATA ||
-	        slpmsg->flags == (P2P_WML2009_COMP | P2P_MSN_OBJ_DATA) ||
-	        slpmsg->flags == P2P_FILE_DATA) 
+		if (msn_p2p_msg_is_data(slpmsg->flags))
 		{
 			if (slpmsg->slpcall != NULL)
 			{
