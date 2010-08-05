@@ -1060,7 +1060,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	slpcall = NULL;
 	body = slpmsg->buffer;
-	body_len = slpmsg->offset;
+	body_len = slpmsg->header->offset;
 
 	if (slpmsg->flags == P2P_NO_FLAG || slpmsg->flags == P2P_WML2009_COMP)
 	{

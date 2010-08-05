@@ -6,6 +6,12 @@
 typedef struct {
 	guint32 session_id;
 	guint32 id;
+	/**
+	 * In a MsnSlpMessage:
+	 * For outgoing messages this is the number of bytes from buffer that
+	 * have already been sent out.  For incoming messages this is the
+	 * number of bytes that have been written to buffer.
+	 */
 	guint64 offset;
 	guint64 total_size;
 	guint32 length;
