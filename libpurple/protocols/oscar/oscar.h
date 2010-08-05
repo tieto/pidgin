@@ -734,6 +734,7 @@ struct aim_incomingim_ch4_args
 /* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *bn, guint16 type2);
 /* 0x000b */ int icq_relay_xstatus (OscarData *od, const char *sn, const guchar* cookie);
 void aim_icbm_makecookie(guchar* cookie);
+void aim_im_send_icq_confirmation(OscarData *od, const char *bn, const guchar *cookie);
 
 /* 0x0002 - family_locate.c */
 /*

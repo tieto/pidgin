@@ -1758,6 +1758,7 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				g_free(tmp);
 
 				serv_got_im(gc, userinfo->bn, tmp2, flags, time(NULL));
+				aim_im_send_icq_confirmation(od, userinfo->bn, args->cookie);
 				g_free(tmp2);
 			}
 		} else if (args->info.rtfmsg.msgtype == 26) {

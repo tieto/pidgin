@@ -1605,6 +1605,52 @@ int aim_im_denytransfer(OscarData *od, const char *bn, const guchar *cookie, gui
 }
 
 /*
+ * Subtype 0x000b.
+ * Send confirmation for a channel 2 message (Miranda wants it by default).
+ */
+void
+aim_im_send_icq_confirmation(OscarData *od, const char *bn, const guchar *cookie)
+{
+	ByteStream bs;
+	aim_snacid_t snacid;
+	guint32 header_size, data_size;
+	guint16 cookie2 = (guint16)g_random_int();
+
+	purple_debug_misc("oscar", "Sending message ack to %s\n", bn);
+
+	header_size = 8 + 2 + 1 + strlen(bn) + 2;
+	data_size = 2 + 1 + 16 + 4*2 + 2*3 + 4*3 + 1*2 + 2*3 + 1;
+	byte_stream_new(&bs, header_size + data_size);
+
+	/* The message header. */
+	aim_im_puticbm(&bs, cookie, 0x0002, bn);
+	byte_stream_put16(&bs, 0x0003);	/* reason */
+
+	/* The actual message. */
+	byte_stream_putle16(&bs, 0x1b);	/* subheader #1 length */
+	byte_stream_put8(&bs, 0x08);	/* protocol version */
+	byte_stream_putcaps(&bs, OSCAR_CAPABILITY_EMPTY);
+	byte_stream_put32(&bs, 0x3);	/* client features */
+	byte_stream_put32(&bs, 0x0004);	/* DC type */
+	byte_stream_put16(&bs, cookie2);	/* a cookie, chosen by fair dice roll */
+	byte_stream_putle16(&bs, 0x0e);	/* header #2 len? */
+	byte_stream_put16(&bs, cookie2);	/* the same cookie again */
+	byte_stream_put32(&bs, 0);	/* unknown */
+	byte_stream_put32(&bs, 0);	/* unknown */
+	byte_stream_put32(&bs, 0);	/* unknown */
+	byte_stream_put8(&bs, 0x01);	/* plain text message */
+	byte_stream_put8(&bs, 0x00);	/* no message flags */
+	byte_stream_put16(&bs, 0x0000);	/* no icq status */
+	byte_stream_put16(&bs, 0x0100);	/* priority */
+	byte_stream_putle16(&bs, 1);	/* query message len */
+	byte_stream_put8(&bs, 0x00);	/* empty query message */
+
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICBM, 0x000b, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, flap_connection_findbygroup(od, SNAC_FAMILY_ICBM), SNAC_FAMILY_ICBM, 0x000b, 0x0000, snacid, &bs);
+	byte_stream_destroy(&bs);
+}
+
+/*
  * Subtype 0x000b - Receive the response from an ICQ status message
  * request (in which case this contains the ICQ status message) or
  * a file transfer or direct IM request was declined.
