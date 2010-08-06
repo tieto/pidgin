@@ -1154,7 +1154,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		/* Acknowledgement of previous message. Don't do anything currently. */
 	}
 	else
-		purple_debug_warning("msn", "Unprocessed SLP message with flags 0x%08lx\n",
+		purple_debug_warning("msn", "Unprocessed SLP message with flags 0x%04x\n",
 		                     slpmsg->header->flags);
 
 	return slpcall;
