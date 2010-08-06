@@ -508,7 +508,7 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PHeader *h
 
 	purple_debug_info("msn", "msn_slplink_process_msg: slpmsg complete\n");
 
-	if (/* !slpcall->wasted && */ slpmsg->header->flags == 0x100)
+	if (/* !slpcall->wasted && */ slpmsg->header->flags == P2P_DC_HANDSHAKE)
 	{
 #if 0
 		MsnDirectConn *directconn;
