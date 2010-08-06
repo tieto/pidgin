@@ -296,7 +296,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	part = msn_slpmsgpart_new(slpmsg->header, slpmsg->footer);
 	part->ack_data = slpmsg;
 
-	real_size = (slpmsg->flags == P2P_ACK) ? 0 : slpmsg->size;
+	real_size = (slpmsg->header->flags == P2P_ACK) ? 0 : slpmsg->size;
 
 	if (slpmsg->header->offset < real_size)
 	{
@@ -333,7 +333,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	msn_slplink_send_part(slplink, part);
 
 
-	if (msn_p2p_msg_is_data(slpmsg->flags) &&
+	if (msn_p2p_msg_is_data(slpmsg->header->flags) &&
 		(slpmsg->slpcall != NULL))
 	{
 		slpmsg->slpcall->progress = TRUE;
@@ -354,11 +354,11 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	slpmsg = slpmsg;
 	slpmsg->footer = g_new0(MsnP2PFooter, 1);
 
-	if (slpmsg->flags == P2P_NO_FLAG)
+	if (slpmsg->header->flags == P2P_NO_FLAG)
 	{
 		slpmsg->header->ack_id = rand() % 0xFFFFFF00;
 	}
-	else if (msn_p2p_msg_is_data(slpmsg->flags))
+	else if (msn_p2p_msg_is_data(slpmsg->header->flags))
 	{
 		MsnSlpCall *slpcall;
 		slpcall = slpmsg->slpcall;
@@ -370,7 +370,6 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	}
 
 	slpmsg->header->id = slpmsg->id;
-	slpmsg->header->flags = (guint32)slpmsg->flags;
 
 	slpmsg->header->total_size = slpmsg->size;
 
@@ -452,14 +451,14 @@ init_first_msg(MsnSlpLink *slplink, MsnP2PHeader *header)
 	slpmsg->id = header->id;
 	slpmsg->header->session_id = header->session_id;
 	slpmsg->size = header->total_size;
-	slpmsg->flags = header->flags;
+	slpmsg->header->flags = header->flags;
 
 	if (slpmsg->header->session_id)
 	{
 		slpmsg->slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->header->session_id);
 		if (slpmsg->slpcall != NULL)
 		{
-			if (msn_p2p_msg_is_data(slpmsg->flags))
+			if (msn_p2p_msg_is_data(header->flags))
 			{
 				PurpleXfer *xfer = slpmsg->slpcall->xfer;
 				if (xfer != NULL)
@@ -509,7 +508,7 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PHeader *h
 
 	purple_debug_info("msn", "msn_slplink_process_msg: slpmsg complete\n");
 
-	if (/* !slpcall->wasted && */ slpmsg->flags == 0x100)
+	if (/* !slpcall->wasted && */ slpmsg->header->flags == 0x100)
 	{
 #if 0
 		MsnDirectConn *directconn;
@@ -519,8 +518,8 @@ process_complete_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg, MsnP2PHeader *h
 			msn_directconn_send_handshake(directconn);
 #endif
 	}
-	else if (slpmsg->flags == P2P_NO_FLAG || slpmsg->flags == P2P_WML2009_COMP ||
-			msn_p2p_msg_is_data(slpmsg->flags))
+	else if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WML2009_COMP ||
+			msn_p2p_msg_is_data(slpmsg->header->flags))
 	{
 		/* Release all the messages and send the ACK */
 
@@ -606,7 +605,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnSlpMessagePart *part)
 	slpmsg_add_part(slpmsg, part);
 
 
-	if (msn_p2p_msg_is_data(slpmsg->flags) &&
+	if (msn_p2p_msg_is_data(slpmsg->header->flags) &&
 		(slpmsg->slpcall != NULL))
 	{
 		slpmsg->slpcall->progress = TRUE;

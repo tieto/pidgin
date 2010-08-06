@@ -1062,7 +1062,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	body = slpmsg->buffer;
 	body_len = slpmsg->header->offset;
 
-	if (slpmsg->flags == P2P_NO_FLAG || slpmsg->flags == P2P_WML2009_COMP)
+	if (slpmsg->header->flags == P2P_NO_FLAG || slpmsg->header->flags == P2P_WML2009_COMP)
 	{
 		char *body_str;
 
@@ -1123,7 +1123,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		}
 		g_free(body_str);
 	}
-	 else if (msn_p2p_msg_is_data(slpmsg->flags))
+	 else if (msn_p2p_msg_is_data(slpmsg->header->flags))
 	{
 		slpcall = msn_slplink_find_slp_call_with_session_id(slplink, slpmsg->header->session_id);
 
@@ -1141,7 +1141,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		}
 	}
 #if 0
-	else if (slpmsg->flags == 0x100)
+	else if (slpmsg->header->flags == 0x100)
 	{
 		slpcall = slplink->directconn->initial_call;
 
@@ -1149,13 +1149,13 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			msn_slpcall_session_init(slpcall);
 	}
 #endif
-	else if (slpmsg->flags == P2P_ACK)
+	else if (slpmsg->header->flags == P2P_ACK)
 	{
 		/* Acknowledgement of previous message. Don't do anything currently. */
 	}
 	else
 		purple_debug_warning("msn", "Unprocessed SLP message with flags 0x%08lx\n",
-		                     slpmsg->flags);
+		                     slpmsg->header->flags);
 
 	return slpcall;
 }

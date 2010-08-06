@@ -244,7 +244,7 @@ MsnSlpMessage *msn_slpmsg_ack_new(MsnP2PHeader *header)
 
 	slpmsg->header->session_id = header->session_id;
 	slpmsg->size       = header->total_size;
-	slpmsg->flags      = P2P_ACK;
+	slpmsg->header->flags      = P2P_ACK;
 	slpmsg->header->ack_id     = header->id;
 	slpmsg->header->ack_sub_id = header->ack_id;
 	slpmsg->header->ack_size   = header->total_size;
@@ -259,7 +259,7 @@ MsnSlpMessage *msn_slpmsg_obj_new(MsnSlpCall *slpcall, PurpleStoredImage *img)
 
 	slpmsg = msn_slpmsg_new(NULL);
 	slpmsg->slpcall = slpcall;
-	slpmsg->flags = P2P_MSN_OBJ_DATA;
+	slpmsg->header->flags = P2P_MSN_OBJ_DATA;
 	slpmsg->info = "SLP DATA";
 
 	msn_slpmsg_set_image(slpmsg, img);
@@ -289,7 +289,7 @@ MsnSlpMessage *msn_slpmsg_file_new(MsnSlpCall *slpcall, size_t size)
 	slpmsg = msn_slpmsg_new(NULL);
 
 	slpmsg->slpcall = slpcall;
-	slpmsg->flags = P2P_FILE_DATA;
+	slpmsg->header->flags = P2P_FILE_DATA;
 	slpmsg->info = "SLP FILE";
 	slpmsg->size = size;
 

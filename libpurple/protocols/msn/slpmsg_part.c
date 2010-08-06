@@ -165,7 +165,7 @@ msn_slpmsgpart_ack(MsnSlpMessagePart *part, void *data)
 
 	slpmsg = data;
 
-	real_size = (slpmsg->flags == P2P_ACK) ? 0 : slpmsg->size;
+	real_size = (slpmsg->header->flags == P2P_ACK) ? 0 : slpmsg->size;
 
 	slpmsg->header->offset += part->header->length;
 
@@ -184,7 +184,7 @@ msn_slpmsgpart_ack(MsnSlpMessagePart *part, void *data)
 	else
 	{
 		/* The whole message has been sent */
-		if (msn_p2p_msg_is_data(slpmsg->flags))
+		if (msn_p2p_msg_is_data(slpmsg->header->flags))
 		{
 			if (slpmsg->slpcall != NULL)
 			{
