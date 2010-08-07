@@ -941,7 +941,8 @@ got_error(MsnSlpCall *slpcall,
 	purple_debug_error("msn", "Received non-OK result: %s\n",
 	                   error ? error : "Unknown");
 
-	if (type && !strcmp(type, "application/x-msnmsgr-transreqbody")) {
+	if (type && (!strcmp(type, "application/x-msnmsgr-transreqbody")
+	          || !strcmp(type, "application/x-msnmsgr-transrespbody"))) {
 		MsnDirectConn *dc = slpcall->slplink->dc;
 		if (dc) {
 			msn_dc_fallback_to_sb(dc);
