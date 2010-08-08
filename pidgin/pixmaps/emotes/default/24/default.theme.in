@@ -489,3 +489,9 @@ sleeping.png        :-z     :z
 lying.png           :L)
 glasses-nerdy.png   8-|     8|
 pirate.png          P-)
+### Added in v5.9.7
+bored.png           :-[     :[
+cold.png            :-<     :<
+confused.png        :-,     :,
+hungry.png          :-C     :C
+stressed.png        :-s     :s

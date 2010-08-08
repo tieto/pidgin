@@ -145,6 +145,11 @@ static PurpleMood mxit_moods[] = {
 	{"hot",			N_("Hot"),			NULL},
 	{"sick",		N_("Sick"),			NULL},
 	{"sleepy",		N_("Sleepy"),		NULL},
+	{"bored",		N_("Bored"),		NULL},
+	{"cold",		N_("Cold"),			NULL},
+	{"confused",	N_("Confused"),		NULL},
+	{"hungry",		N_("Hungry"),		NULL},
+	{"stressed",	N_("Stressed"),		NULL},
 	/* Mark the last record. */
 	{ NULL, NULL, NULL }
 };
@@ -213,6 +218,16 @@ const char* mxit_convert_mood_to_name( short id )
 				return _( "Sick" );
 		case MXIT_MOOD_SLEEPY :
 				return _( "Sleepy" );
+		case MXIT_MOOD_BORED :
+				return _( "Bored" );
+		case MXIT_MOOD_COLD :
+				return _( "Cold" );
+		case MXIT_MOOD_CONFUSED :
+				return _( "Confused" );
+		case MXIT_MOOD_HUNGRY :
+				return _( "Hungry" );
+		case MXIT_MOOD_STRESSED :
+				return _( "Stressed" );
 		case MXIT_MOOD_NONE :
 		default :
 				return "";
@@ -457,7 +472,7 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 	contact->mood = mood;
 
 	/* validate mood */
-	if (( contact->mood < MXIT_MOOD_NONE ) || ( contact->mood > MXIT_MOOD_SLEEPY ))
+	if (( contact->mood < MXIT_MOOD_NONE ) || ( contact->mood > MXIT_MOOD_STRESSED ))
 		contact->mood = MXIT_MOOD_NONE;
 
 	g_strlcpy( contact->customMood, customMood, sizeof( contact->customMood ) );

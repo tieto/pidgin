@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin Polish translation\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:18-0400\n"
-"PO-Revision-Date: 2010-05-24 14:19+0200\n"
+"POT-Creation-Date: 2010-08-07 13:11-0400\n"
+"PO-Revision-Date: 2010-08-06 20:24+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
 "Language: pl\n"
@@ -68,9 +68,8 @@ msgstr ""
 msgid "Error"
 msgstr "Błąd"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "Nie dodano konta"
+msgstr "Nie zmodyfikowano konta"
 
 msgid "Account was not added"
 msgstr "Nie dodano konta"
@@ -81,10 +80,13 @@ msgstr "Nazwa użytkownika konta nie może być pusta."
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
 msgstr ""
+"Protokół konta nie może być zmieniany, kiedy jest połączone z serwerem."
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
 msgstr ""
+"Nazwa użytkownika konta nie może być zmieniana, kiedy jest połączone z "
+"serwerem."
 
 msgid "New mail notifications"
 msgstr "Powiadomienia o nowej poczcie"
@@ -1707,6 +1709,8 @@ msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
 msgstr ""
+"Certyfikat nie jest jeszcze prawidłowy. Proszę sprawdzić, czy data i czas "
+"komputera są dokładne."
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "Certyfikat wygasł i nie powinien już być uważany za prawidłowy."
@@ -3392,7 +3396,7 @@ msgid "_Password:"
 msgstr "_Hasło:"
 
 msgid "IRC nick and server may not contain whitespace"
-msgstr "Pseudonimy IRC nie mogą zawierać spacji"
+msgstr "Pseudonimy i serwery IRC nie mogą zawierać spacji"
 
 msgid "SSL support unavailable"
 msgstr "Obsługa SSL jest niedostępna"
@@ -3872,19 +3876,18 @@ msgstr "Nieprawidłowe wyzwanie od serwera"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "Serwer uważa, że uwierzytelnienie zostało ukończone, a klient nie"
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
 msgstr ""
-"Serwer wymaga uwierzytelnienia w zwykłym tekście za pośrednictwem "
-"niezaszyfrowanego strumienia"
+"Serwer może wymagać uwierzytelnienia w zwykłym tekście przez niezaszyfrowany "
+"strumień"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
 msgstr ""
-"%s wymaga uwierzytelnienia w zwykłym tekście za pośrednictwem "
-"niezaszyfrowanego strumienia. Pozwolić i kontynuować uwierzytelnianie?"
+"%s może wymagać uwierzytelnienia w zwykłym tekście przez niezaszyfrowany "
+"strumień. Pozwolić i kontynuować uwierzytelnianie?"
 
 msgid "SASL authentication failed"
 msgstr "Uwierzytelnienie SASL się nie powiodło"
@@ -5974,8 +5977,8 @@ msgstr "Kod PIN jest nieprawidłowy. Powinien składać się tylko z cyfr [0-9].
 msgid "The two PINs you entered do not match."
 msgstr "Oba podane kody PIN nie zgadzają się."
 
-msgid "The name you entered is invalid."
-msgstr "Podana nazwa jest nieprawidłowa."
+msgid "The Display Name you entered is invalid."
+msgstr "Podana wyświetlana nazwa jest nieprawidłowa."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -5995,9 +5998,8 @@ msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 "Nie pobrano jeszcze informacji o profilu. Proszę spróbować ponownie później."
 
-#, fuzzy
 msgid "Your UID"
-msgstr "MXitId użytkownika"
+msgstr "UID użytkownika"
 
 #. pin
 #. pin (required)
@@ -6068,16 +6070,12 @@ msgstr ""
 msgid "Connecting..."
 msgstr "Łączenie..."
 
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Podana nazwa jest nieprawidłowa."
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Podany kod PIN ma nieprawidłową długość [7-10]."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "Identyfikator MXit"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6108,14 +6106,13 @@ msgstr "Sesja wygasła. Proszę spróbować ponownie później."
 msgid "Invalid country selected. Please try again."
 msgstr "Wybrano nieprawidłowy kraj. Proszę spróbować ponownie."
 
-#, fuzzy
 msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
-"Nie zarejestrowano nazwy użytkownika. Proszę najpierw się zarejestrować."
+"Podany identyfikator MXit nie jest zarejestrowany. Proszę najpierw się "
+"zarejestrować."
 
-#, fuzzy
 msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "Nazwa użytkownika jest już zarejestrowana. Proszę wybrać inną nazwę."
+msgstr "Identyfikator MXit jest już zarejestrowany. Proszę wybrać inny."
 
 msgid "Internal error. Please try again later."
 msgstr "Wewnętrzny błąd. Proszę spróbować ponownie później."
@@ -6159,9 +6156,8 @@ msgstr "Wiadomość odrzucenia"
 msgid "Hidden Number"
 msgstr "Ukryty numer"
 
-#, fuzzy
 msgid "Your MXit ID..."
-msgstr "MXitId użytkownika"
+msgstr "Identyfikator MXit użytkownika..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6175,26 +6171,21 @@ msgid "Enable splash-screen popup"
 msgstr "Włączenie wyskakującego ekranu powitalnego"
 
 #. you were kicked
-#, fuzzy
 msgid "You have been kicked from this MultiMX."
-msgstr "Użytkownik został wyrzucony: (%s)"
+msgstr "Użytkownik został wyrzucony z tego MultiMX."
 
-#, fuzzy
 msgid "was kicked"
-msgstr "Błędny bilet"
+msgstr "został wyrzucony"
 
-#, fuzzy
 msgid "_Room Name:"
-msgstr "_Pokój:"
+msgstr "_Nazwa pokoju:"
 
 #. Display system message in chat window
-#, fuzzy
 msgid "You have invited"
-msgstr "Nowa wiadomość."
+msgstr "Zaproszono"
 
-#, fuzzy
 msgid "Last Online"
-msgstr "Online"
+msgstr "Ostatnio online"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7987,85 +7978,74 @@ msgstr ""
 "niezbędne dla obrazów komunikatora. Ponieważ adres IP zostanie ujawniony, "
 "może się to wiązać z zagrożeniem prywatności."
 
-#, fuzzy
 msgid "Invalid SNAC"
-msgstr "Nieprawidłowy identyfikator"
+msgstr "Nieprawidłowe SNAC"
 
 msgid "Server rate limit exceeded"
-msgstr ""
+msgstr "Przekroczono ograniczenie prędkości serwera"
 
 msgid "Client rate limit exceeded"
-msgstr ""
+msgstr "Przekroczono ograniczenie prędkości klienta"
 
-#, fuzzy
 msgid "Service unavailable"
 msgstr "Usługa jest niedostępna"
 
-#, fuzzy
 msgid "Service not defined"
-msgstr "Nie odnaleziono konferencji"
+msgstr "Nie określono usługi"
 
 msgid "Obsolete SNAC"
-msgstr ""
+msgstr "Przestarzałe SNAC"
 
-#, fuzzy
 msgid "Not supported by host"
-msgstr "Nieobsługiwane"
+msgstr "Nieobsługiwane przez serwer"
 
-#, fuzzy
 msgid "Not supported by client"
-msgstr "Nieobsługiwane"
+msgstr "Nieobsługiwane przez klienta"
 
 msgid "Refused by client"
-msgstr ""
+msgstr "Odmowa klienta"
 
 msgid "Reply too big"
-msgstr ""
+msgstr "Odpowiedź jest za duża"
 
-#, fuzzy
 msgid "Responses lost"
-msgstr "Prawdopodobieństwo odpowiedzi:"
+msgstr "Utracono odpowiedzi"
 
-#, fuzzy
 msgid "Request denied"
-msgstr "Wysyłanie prośby"
+msgstr "Odrzucono prośby"
 
 msgid "Busted SNAC payload"
-msgstr ""
+msgstr "Uszkodzone dane SNAC"
 
 msgid "Insufficient rights"
-msgstr ""
+msgstr "Niewystarczające uprawnienia"
 
 msgid "In local permit/deny"
-msgstr ""
+msgstr "W lokalnym pozwoleniu/odmowie"
 
 msgid "Warning level too high (sender)"
-msgstr ""
+msgstr "Poziom ostrzeżenia jest za wysoki (nadawca)"
 
 msgid "Warning level too high (receiver)"
-msgstr ""
+msgstr "Poziom ostrzeżenia jest za wysoki (odbiorca)"
 
-#, fuzzy
 msgid "User temporarily unavailable"
-msgstr "Usługa jest tymczasowo niedostępna"
+msgstr "Użytkownik jest tymczasowo niedostępny"
 
-#, fuzzy
 msgid "No match"
 msgstr "Brak wyników"
 
-#, fuzzy
 msgid "List overflow"
 msgstr "Lista jest pełna"
 
-#, fuzzy
 msgid "Request ambiguous"
-msgstr "Wysyłanie prośby"
+msgstr "Niejednoznaczna prośba"
 
 msgid "Queue full"
-msgstr ""
+msgstr "Kolejka jest pełna"
 
 msgid "Not while on AOL"
-msgstr ""
+msgstr "Nie podczas używania AOL"
 
 msgid "Aquarius"
 msgstr "Wodnik"
@@ -10270,9 +10250,8 @@ msgstr "Lokalizacja pokoju konferencji"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorowanie zaproszeń do konferencji"
 
-#, fuzzy
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Użycie pośrednika konta dla połączeń SSL"
+msgstr "Użycie pośrednika konta dla połączeń HTTP i HTTPS"
 
 msgid "Chat room list URL"
 msgstr "Adres URL listy pokoi konferencji"
@@ -13147,13 +13126,11 @@ msgstr ""
 "Kończenie pracy, ponieważ inny klient biblioteki libpurple jest już "
 "uruchomiony.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_Multimedia"
+msgstr "_Multimedia"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "Rozłącz się"
+msgstr "_Rozłącz się"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -15459,29 +15436,3 @@ msgstr "Odwiedź stronę WWW programu Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Brak uprawnień do odinstalowania tego programu."
-
-#~ msgid "The certificate is not valid yet."
-#~ msgstr "Certyfikat nie jest jeszcze prawidłowy."
-
-#~ msgid "The nick name you entered is invalid."
-#~ msgstr "Podany pseudonim jest nieprawidłowy."
-
-#~ msgid "MXit Login Name"
-#~ msgstr "Login MXit"
-
-#~ msgid "Nick Name"
-#~ msgstr "Pseudonim"
-
-#~ msgid "Your Mobile Number..."
-#~ msgstr "Numer telefonu komórkowego..."
-
-#, fuzzy
-#~ msgid "Rate to host"
-#~ msgstr "Zaproś do konferencji"
-
-#, fuzzy
-#~ msgid "Rate to client"
-#~ msgstr "Ostatni znany klient"
-
-#~ msgid "/Media/_Hangup"
-#~ msgstr "/Multimedia/_Rozłącz się"

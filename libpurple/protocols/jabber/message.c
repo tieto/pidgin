@@ -587,8 +587,10 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				jm->thread_id = xmlnode_get_data(child);
 		} else if(!strcmp(child->name, "body") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->body) {
-				char *msg = xmlnode_to_str(child, NULL);
-				jm->body = purple_strdup_withhtml(msg);
+				char *msg = xmlnode_get_data(child);
+				char *escaped = purple_markup_escape_text(msg, -1);
+				jm->body = purple_strdup_withhtml(escaped);
+				g_free(escaped);
 				g_free(msg);
 			}
 		} else if(!strcmp(child->name, "html") && !strcmp(xmlns, NS_XHTML_IM)) {

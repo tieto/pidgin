@@ -1,5 +1,5 @@
 # Pidgin Hebrew translation
-# Copyright (C) 2005-2009, Shalom Craimer <scraimer at gmail dot com>
+# Copyright (C) 2005-2010, Shalom Craimer <scraimer at gmail dot com>
 # Copyright (C) 2003, Pavel Bibergal cyberkm@barak-online.net
 #
 # This file is distributed under the same license as the Pidgin package.
@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:17-0400\n"
-"PO-Revision-Date: 2010-05-24 15:59+0200\n"
+"POT-Creation-Date: 2010-08-07 13:11-0400\n"
+"PO-Revision-Date: 2010-08-01 09:55+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at g mail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "Language: he\n"
@@ -60,9 +60,8 @@ msgstr ""
 msgid "Error"
 msgstr "שגיאה"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "החשבון לא נוסף"
+msgstr "החשבון לא עודכן"
 
 msgid "Account was not added"
 msgstr "החשבון לא נוסף"
@@ -72,11 +71,11 @@ msgstr "שם המשתמש של החשבון חייב להיות לא-ריק."
 
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "לא ניתן לשנות את הפרוטוקול של החשבון בעודו מחובר."
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "לא ניתן לשנות את שם המשתמש בעודו מחובר לשרת."
 
 msgid "New mail notifications"
 msgstr "הודעה על דואר חדש"
@@ -1652,7 +1651,7 @@ msgstr "לא ניתן לבטוח בתעודה כיוון שאין תעודה מ�
 msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
-msgstr ""
+msgstr "התעודה עוד לא בתוקף.  יש לוודא כי השעה והתאריך של מחשבך מדוייקים."
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "תוקף התעודה פג, ולכן אין להחשיבה כתקפה."
@@ -3747,15 +3746,16 @@ msgstr "תשובת אימות לא תקפה מהשרת"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "השרת סבור שהאימות הסתיים בהצלחה, אבל תוכנת הלקוח לא מסכימה"
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
-msgstr "השרת דורש אימות לא מוצפן מעל תקשורת לא מוצפנת"
+msgstr "ייתכן והשרת דורש אימות לא מוצפן מעל תקשורת לא מוצפנת"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
-msgstr "%s דורש אימות לא מוצפן מעל תקשורת לא מוצפנת. לאפשר ולהמשיך בכל זאת?"
+msgstr ""
+"ייתכן והשרת %s דורש אימות לא מוצפן מעל תקשורת לא מוצפנת. לאפשר ולהמשיך בכל "
+"זאת?"
 
 msgid "SASL authentication failed"
 msgstr "אימות SASL נכשל"
@@ -5786,8 +5786,8 @@ msgstr "ה-PIN אינו חוקי. על הקוד להכיל רק ספרות [0-9]
 msgid "The two PINs you entered do not match."
 msgstr "שני ה-PIN שהזנת אינם זהים."
 
-msgid "The name you entered is invalid."
-msgstr "השם שהזנת אינו חוקי."
+msgid "The Display Name you entered is invalid."
+msgstr "הזנת שם-תצוגה לא תקף."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -5805,9 +5805,8 @@ msgstr "פרופיל"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "פרטי הפרופיל שלך עוד לא התקבלו. יש לנסות שנית מאוחר יותר."
 
-#, fuzzy
 msgid "Your UID"
-msgstr "מזהה MXit שלך"
+msgstr "ה-UID שלך"
 
 #. pin
 #. pin (required)
@@ -5875,16 +5874,12 @@ msgstr "לא ניתן להתחבר לשרת ה-MXit. יש לוודא את הגד
 msgid "Connecting..."
 msgstr "מתחבר..."
 
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "השם שהזנת אינו חוקי."
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "ה-PIN שהזנת בעל אורך לא-חוקי [7-10[."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "מזהה MXit"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -5912,13 +5907,11 @@ msgstr "פג תוקפו של החיבור. יש לנסות בשנית מאוחר
 msgid "Invalid country selected. Please try again."
 msgstr "נבחרה ארץ לא-חוקית. יש לנסות שנית."
 
-#, fuzzy
 msgid "The MXit ID you entered is not registered. Please register first."
-msgstr "שם המשתמש אינו רשום. חובה להירשם קודם."
+msgstr "מזהה ה- Mxit שהוזן אינו רשום. חובה להירשם קודם."
 
-#, fuzzy
 msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "שם המשתמש כבר רשום. יש לבחור שם משתמש אחר."
+msgstr "מזהה MXit זה כבר רשום. יש לבחור שם משתמש אחר."
 
 msgid "Internal error. Please try again later."
 msgstr "שגיאה פנימית. יש לנסות מאוחר יותר."
@@ -5962,9 +5955,8 @@ msgstr "הודעת דחייה"
 msgid "Hidden Number"
 msgstr "מספר סמוי"
 
-#, fuzzy
 msgid "Your MXit ID..."
-msgstr "מזהה MXit שלך"
+msgstr "מזהה MXit שלך.."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -5978,26 +5970,21 @@ msgid "Enable splash-screen popup"
 msgstr "אפשר פתיחת חלון-הקדמה"
 
 #. you were kicked
-#, fuzzy
 msgid "You have been kicked from this MultiMX."
-msgstr "נבעטת: (%s)"
+msgstr "נבעטת מתוך MultiMX זה."
 
-#, fuzzy
 msgid "was kicked"
-msgstr "כרטיס לא תקין"
+msgstr "נבעט/ה"
 
-#, fuzzy
 msgid "_Room Name:"
-msgstr "_חדר:"
+msgstr "שם _חדר:"
 
 #. Display system message in chat window
-#, fuzzy
 msgid "You have invited"
-msgstr "יש לך דואר!"
+msgstr "הוזמנת"
 
-#, fuzzy
 msgid "Last Online"
-msgstr "מחובר"
+msgstr "חיבור אחרון"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7708,10 +7695,10 @@ msgid "Invalid SNAC"
 msgstr "SNAC לא תקף"
 
 msgid "Server rate limit exceeded"
-msgstr ""
+msgstr "הפרזת מעבר למגבלת השרת"
 
 msgid "Client rate limit exceeded"
-msgstr ""
+msgstr "הפרזת מעבר למגבלת הלקוח"
 
 msgid "Service unavailable"
 msgstr "השירות אינו זמין"
@@ -9945,9 +9932,8 @@ msgstr "הגדרה איזורית לחדר צ'אט"
 msgid "Ignore conference and chatroom invitations"
 msgstr "התעלם מהזמנות לשיחות-ועידה ולחדרי-צ'אט"
 
-#, fuzzy
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "השתמש בחשבון שרת-תיווך עבור חיבורי SSL"
+msgstr "התשמש במתווך עבור החשבון בשביל חיבורי HTTP ו-HTTPS"
 
 msgid "Chat room list URL"
 msgstr "מיקום של רשימת חדרי הצ'אט"
@@ -12749,13 +12735,11 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr "מסיים מכיוון שכבר רצה תוכנה אחרת שהמשתמש בספריית libpurple.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_מדיה"
+msgstr "_מדיה"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "התנתק"
+msgstr "הת_נתק"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -15007,6 +14991,9 @@ msgstr ".Pidginבקרו באתר של "
 
 msgid "You do not have permission to uninstall this application."
 msgstr ".אין לך זכות למחוק תוכנה זאת"
+
+#~ msgid "The name you entered is invalid."
+#~ msgstr "השם שהזנת אינו חוקי."
 
 #~ msgid "The certificate is not valid yet."
 #~ msgstr "התעודה עדיין אינה תקפה."

@@ -22,6 +22,28 @@ version 2.7.3 (??/??/????):
 	IRC:
 	* Fix non-ASCII arguments to /mode et al.  (thanks to Max Ulidtko)
 
+	MSN:
+	* Support for web-based buddy icons, used when a buddy logs in to the
+	  messenger on the Live website.
+	* Fix file transfers with some clients that don't support direct
+	  connections (e.g., papyon, telepathy-butterfly, etc.) (#12150)
+
+	MXit:
+	* Fix filename for the Shocked emoticon. (#12364)
+	* Implement the new naming conventions where possible. (MXitId, etc)
+	* Display a message in the Groupchat window when you invite somebody.
+	* Birthday field in profile cannot be edited when server says it is
+	  locked.
+	* If a buddy is offline, show in their profile when last they were online.
+	* Handle pushed profile update packets (ie, when changing your avatar via
+	  the Gallery bot).
+	* If a buddy is offline and we see from their profile that they have
+	  updated their avatar, request the new avatar image from the server.
+	* Fix a possible crash if a link is clicked while disconnected.
+	* Unescape any escaped characters in a chatroom nickname.
+	* Add the new MXit moods and emoticons.
+	* MXit emoticons added to the small emoticon theme.
+
 	XMPP:
 	* Allow connecting to servers that only advertise GSSAPI and expect
 	  a fallback to legacy IQ authentication (broken in 2.7.0).
