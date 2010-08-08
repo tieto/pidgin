@@ -596,26 +596,12 @@ static void pidgin_whiteboard_draw_brush_point(PurpleWhiteboard *wb, int x, int 
 
 	gdk_cairo_set_source_color(gfx_con, &col);
 
-	/* NOTE 5 is a size constant for now... this is because of how poorly the
-	 * gdk_draw_arc draws small circles
-	 */
-	if(size < 5)
-	{
-		/* Draw a rectangle/square */
-		cairo_rectangle(gfx_con,
-		                x - size / 2, y - size / 2,
-		                size, size);
-		cairo_fill(gfx_con);
-	}
-	else
-	{
-		/* Draw a circle */
-		cairo_arc(gfx_con,
-		          x, y,
-		          size / 2.0,
-		          0.0, 2.0 * M_PI);
-		cairo_fill(gfx_con);
-	}
+	/* Draw a circle */
+	cairo_arc(gfx_con,
+	          x, y,
+	          size / 2.0,
+	          0.0, 2.0 * M_PI);
+	cairo_fill(gfx_con);
 
 	gtk_widget_queue_draw_area(widget,
 							   x - size / 2, y - size / 2,
