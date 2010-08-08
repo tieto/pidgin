@@ -383,7 +383,7 @@ static gboolean pidgin_whiteboard_expose_event(GtkWidget *widget, GdkEventExpose
 	cairo_t *cr;
 
 	cr = gdk_cairo_create(GDK_DRAWABLE(widget->window));
-	gdk_cairo_set_source_pixmap(cr, pixmap, event->area.x, event->area.y);
+	gdk_cairo_set_source_pixmap(cr, pixmap, 0, 0);
 	cairo_rectangle(cr,
 	                event->area.x, event->area.y,
 	                event->area.width, event->area.height);
