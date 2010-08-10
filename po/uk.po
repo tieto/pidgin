@@ -15291,7 +15291,7 @@ msgid ""
 msgstr ""
 "Помилка звантаження the GTK+ Runtime ($R2).$\\rЦе необхідно для роботи "
 "Pidgin; якщо спроби будуть марними, можливо, необхідно буде скористатися "
-"встановлювачем \"Offline Installer\" з http://pidgin.im/download/windows/ ."
+"встановлювачем 'Offline Installer' з http://pidgin.im/download/windows/ ."
 
 #. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
@@ -15351,7 +15351,7 @@ msgstr "Підтримка перевірки правопису"
 
 #. Installer Subsection Text
 msgid "Start Menu"
-msgstr "Меню \"Пуск\""
+msgstr "Меню 'Пуск'"
 
 #. Installer Subsection Detailed Description
 msgid ""
