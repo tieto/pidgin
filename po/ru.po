@@ -15600,7 +15600,7 @@ msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
-"Программа удаления не может найти данные Pidgin в реестре.$\\Похоже, это "
+"Программа удаления не может найти данные Pidgin в реестре.$\\rПохоже, это "
 "приложение установил другой пользователь."
 
 #. Installer Subsection Text

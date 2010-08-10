@@ -25,6 +25,8 @@ version 2.7.3 (??/??/????):
 	MSN:
 	* Support for web-based buddy icons, used when a buddy logs in to the
 	  messenger on the Live website.
+	* Fix file transfers with some clients that don't support direct
+	  connections (e.g., papyon, telepathy-butterfly, etc.) (#12150)
 
 	MXit:
 	* Fix filename for the Shocked emoticon. (#12364)
