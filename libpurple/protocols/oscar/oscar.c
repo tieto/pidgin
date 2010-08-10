@@ -1985,7 +1985,8 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 		case 0x1a: { /* Handle SMS or someone has sent you a greeting card or requested buddies? */
 			ByteStream qbs;
-			int smstype, taglen, smslen;
+			guint16 smstype;
+			guint32 taglen, smslen;
 			char *tagstr = NULL, *smsmsg = NULL;
 			xmlnode *xmlroot = NULL, *xmltmp = NULL;
 			gchar *uin = NULL, *message = NULL;
@@ -1999,12 +2000,23 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			if (smstype != 0)
 				break;
 			taglen = byte_stream_getle32(&qbs);
+			if (taglen > 2000) {
+				/* Avoid trying to allocate large amounts of memory, in
+				   case we get something unexpected. */
+				break;
+			}
 			tagstr = byte_stream_getstr(&qbs, taglen);
 			if (tagstr == NULL)
 				break;
 			byte_stream_advance(&qbs, 3);
 			byte_stream_advance(&qbs, 4);
 			smslen = byte_stream_getle32(&qbs);
+			if (smslen > 2000) {
+				/* Avoid trying to allocate large amounts of memory, in
+				   case we get something unexpected. */
+				g_free(tagstr);
+				break;
+			}
 			smsmsg = byte_stream_getstr(&qbs, smslen);
 
 			/* Check if this is an SMS being sent from server */
