@@ -1,5 +1,7 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.7.4 (MM/DD/YYYY):
+
 version 2.7.3 (08/10/2010):
 	General:
 	* Use silent build rules for automake >1.11. You can enable verbose
