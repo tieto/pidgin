@@ -2,6 +2,13 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.7.3 (08/10/2010):
+	Mark: Lots of little incremental[1] bug fixes and enhancements in this
+	release.
+
+	[1] No whales were harmed[2] during the creation of this release.
+	[2] Probably.
+
 2.7.2 (07/21/2010):
 	Mark: We discovered a security issue in Pidgin 2.7.0 and 2.7.1 and
 	decided to release a patched version quickly.  This release contains
