@@ -9,16 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 01:18-0400\n"
-"PO-Revision-Date: 2010-05-24 22:50+0300\n"
+"POT-Creation-Date: 2010-08-09 21:57-0700\n"
+"PO-Revision-Date: 2010-08-09 00:28+0300\n"
 "Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
-"Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: uk\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -63,9 +63,8 @@ msgstr ""
 msgid "Error"
 msgstr "Помилка"
 
-#, fuzzy
 msgid "Account was not modified"
-msgstr "Обліковий запис не був доданий"
+msgstr "Обліковий запис не був змінений"
 
 msgid "Account was not added"
 msgstr "Обліковий запис не був доданий"
@@ -76,10 +75,14 @@ msgstr "Ім'я користувача облікового запису не м
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
 msgstr ""
+"Протокол облікового запису не може бути змінений коли він підключений до "
+"сервера."
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
 msgstr ""
+"Ім'я користувача облікового запису не може бути змінене коли він підключений "
+"до сервера."
 
 msgid "New mail notifications"
 msgstr "Сповіщення про нову пошту"
@@ -91,7 +94,7 @@ msgid "There are no protocol plugins installed."
 msgstr "Не встановлений жодний з додатків протоколів."
 
 msgid "(You probably forgot to 'make install'.)"
-msgstr "(Можливо, ви забули виконати 'make install'.)"
+msgstr "(Можливо, ви забули виконати \"make install\".)"
 
 msgid "Modify Account"
 msgstr "Змінити обліковий запис"
@@ -442,13 +445,13 @@ msgid "By Status"
 msgstr "За станом"
 
 msgid "Alphabetically"
-msgstr "За алфавітом"
+msgstr "За абеткою"
 
 msgid "By Log Size"
 msgstr "За розміром журналу"
 
 msgid "Buddy"
-msgstr "Приятель"
+msgstr "Контакт"
 
 msgid "Chat"
 msgstr "Балачка"
@@ -460,10 +463,10 @@ msgid "Certificate Import"
 msgstr "Імпорт сертифікату"
 
 msgid "Specify a hostname"
-msgstr "Визначити назву вузла"
+msgstr "Вказати назву вузла"
 
 msgid "Type the host name this certificate is for."
-msgstr "Напишіть назву вузла, кому належить цей сертифікат."
+msgstr "Напишіть назву вузла, якому належить цей сертифікат."
 
 #, c-format
 msgid ""
@@ -477,7 +480,7 @@ msgid "Certificate Import Error"
 msgstr "Помилка імпортування сертифікату"
 
 msgid "X.509 certificate import failed"
-msgstr "Помилка імпорту сертифікату X.509"
+msgstr "Помилка імпортування сертифікату X.509"
 
 msgid "Select a PEM certificate"
 msgstr "Вибрати сертифікат PEM"
@@ -497,7 +500,7 @@ msgid "X.509 certificate export failed"
 msgstr "Помилка експорту сертифікату X.509"
 
 msgid "PEM X.509 Certificate Export"
-msgstr "Експорт сертифікату PEM X.509"
+msgstr "Експортування сертифікату PEM X.509"
 
 #, c-format
 msgid "Certificate for %s"
@@ -1694,6 +1697,8 @@ msgid ""
 "The certificate is not valid yet.  Check that your computer's date and time "
 "are accurate."
 msgstr ""
+"Сертифікат ще не дійсний. Перевірте, чи дата та час вашого комп'ютера "
+"правильні."
 
 msgid "The certificate has expired and should not be considered valid."
 msgstr "Термін дії сертифікату закінчився і його не слід вважати дійсним."
@@ -3851,18 +3856,18 @@ msgstr "Неправильний запит з серверу"
 msgid "Server thinks authentication is complete, but client does not"
 msgstr "Сервер вважає, що автентифікація завершена, але клієнт ні"
 
-#, fuzzy
 msgid "Server may require plaintext authentication over an unencrypted stream"
 msgstr ""
-"Сервер вимагає автентифікацію звичайним текстом через нешифрований потік"
+"Сервер може потребувати автентифікацію звичайним текстом через нешифрований "
+"потік"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s may require plaintext authentication over an unencrypted connection.  "
 "Allow this and continue authentication?"
 msgstr ""
-"%s потребує автентифікації відкритим текстом через нешифроване з'єднання. "
-"Дозволити це та продовжити автентифікацію?"
+"%s може потребувати автентифікації відкритим текстом через нешифроване "
+"з'єднання. Дозволити це та продовжити автентифікацію?"
 
 msgid "SASL authentication failed"
 msgstr "Помилка автентифікації SASL"
@@ -5937,8 +5942,8 @@ msgstr "PIN неправильний. Він може складатися ті�
 msgid "The two PINs you entered do not match."
 msgstr "Введені два PIN'и не збігаються."
 
-msgid "The name you entered is invalid."
-msgstr "Введене ім'я неправильне."
+msgid "The Display Name you entered is invalid."
+msgstr "Введене відображуване ім'я неправильне."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
@@ -5957,9 +5962,8 @@ msgstr "Профіль"
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr "Відомості про профіль ще не отримані. Будь ласка, спробуйте пізніше."
 
-#, fuzzy
 msgid "Your UID"
-msgstr "Ваш MXitId"
+msgstr "Ваш UID"
 
 #. pin
 #. pin (required)
@@ -6031,16 +6035,12 @@ msgstr ""
 msgid "Connecting..."
 msgstr "З'єднання..."
 
-#, fuzzy
-msgid "The Display Name you entered is invalid."
-msgstr "Введене ім'я неправильне."
-
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr "Введений PIN має неправильну довжину [7-10]."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "MXit ID"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6068,13 +6068,11 @@ msgstr "Термін дії сеансу добіг кінця. Будь лас�
 msgid "Invalid country selected. Please try again."
 msgstr "Вибрана неправильна країна. Будь ласка, спробуйте ще раз."
 
-#, fuzzy
 msgid "The MXit ID you entered is not registered. Please register first."
-msgstr "Ім'я користувача не зареєстроване. Будь ласка, спершу зареєструйтеся."
+msgstr "Введений MXit ID не зареєстрований. Будь ласка, спершу зареєструйтеся."
 
-#, fuzzy
 msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "Ім'я користувача вже зареєстроване. Будь ласка, виберіть інше."
+msgstr "Введений MXit ID вже зареєстроване. Будь ласка, виберіть інший."
 
 msgid "Internal error. Please try again later."
 msgstr "Внутрішня помилка. Будь ласка, спробуйте пізніше."
@@ -6118,9 +6116,8 @@ msgstr "Повідомлення відмови"
 msgid "Hidden Number"
 msgstr "Схований номер"
 
-#, fuzzy
 msgid "Your MXit ID..."
-msgstr "Ваш MXitId"
+msgstr "Ваш MXit ID..."
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6134,26 +6131,21 @@ msgid "Enable splash-screen popup"
 msgstr "Увімкнути виринаючу екранну заставку"
 
 #. you were kicked
-#, fuzzy
 msgid "You have been kicked from this MultiMX."
-msgstr "Вас викинули: (%s)"
+msgstr "Вас викинули з цього MultiMX."
 
-#, fuzzy
 msgid "was kicked"
-msgstr "Неправильний білет"
+msgstr "був викинутий"
 
-#, fuzzy
 msgid "_Room Name:"
-msgstr "_Кімната:"
+msgstr "_Назва кімнати:"
 
 #. Display system message in chat window
-#, fuzzy
 msgid "You have invited"
-msgstr "Ви маєте лист!"
+msgstr "Вас запросили"
 
-#, fuzzy
 msgid "Last Online"
-msgstr "У мережі"
+msgstr "Востаннє в мережі"
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -7948,85 +7940,74 @@ msgstr ""
 "та є необхідним для передавання зображень. Так як ваша ІР адреса буде "
 "розкрита, це може вважатись загрозою безпеці."
 
-#, fuzzy
 msgid "Invalid SNAC"
-msgstr "Неправильний ID"
+msgstr "Неправильний SNAC"
 
 msgid "Server rate limit exceeded"
-msgstr ""
+msgstr "Досягнуто обмеження швидкості сервера"
 
 msgid "Client rate limit exceeded"
-msgstr ""
+msgstr "Досягнуто обмеження швидкості клієнта"
 
-#, fuzzy
 msgid "Service unavailable"
-msgstr "Служба недоступна"
+msgstr "Послуга недоступна"
 
-#, fuzzy
 msgid "Service not defined"
-msgstr "Конференція не знайдена"
+msgstr "Послуга не визначена"
 
 msgid "Obsolete SNAC"
-msgstr ""
+msgstr "Застарілий SNAC"
 
-#, fuzzy
 msgid "Not supported by host"
-msgstr "Не підтримується"
+msgstr "Не підтримується вузлом"
 
-#, fuzzy
 msgid "Not supported by client"
-msgstr "Не підтримується"
+msgstr "Не підтримується клієнтом"
 
 msgid "Refused by client"
-msgstr ""
+msgstr "Відкинута клієнтом"
 
 msgid "Reply too big"
-msgstr ""
+msgstr "Відповідь завелика"
 
-#, fuzzy
 msgid "Responses lost"
-msgstr "Можливість відповіді:"
+msgstr "Відповіді втрачені"
 
-#, fuzzy
 msgid "Request denied"
-msgstr "Запитується"
+msgstr "Запит відхилений"
 
 msgid "Busted SNAC payload"
-msgstr ""
+msgstr "Зіпсовані дані SNAC"
 
 msgid "Insufficient rights"
-msgstr ""
+msgstr "Недостатньо прав"
 
 msgid "In local permit/deny"
-msgstr ""
+msgstr "В місцевому переліку дозволених/заборонених"
 
 msgid "Warning level too high (sender)"
-msgstr ""
+msgstr "Рівень попередження дуже високий (відправник)"
 
 msgid "Warning level too high (receiver)"
-msgstr ""
+msgstr "Рівень попередження дуже високий (отримувач)"
 
-#, fuzzy
 msgid "User temporarily unavailable"
-msgstr "Послуга тимчасово недоступна"
+msgstr "Користувач тимчасово недоступний"
 
-#, fuzzy
 msgid "No match"
 msgstr "Немає збігів"
 
-#, fuzzy
 msgid "List overflow"
 msgstr "Перелік переповнений"
 
-#, fuzzy
 msgid "Request ambiguous"
-msgstr "Запитується"
+msgstr "Запит незрозумілий"
 
 msgid "Queue full"
-msgstr ""
+msgstr "Черга переповнена"
 
 msgid "Not while on AOL"
-msgstr ""
+msgstr "Не тоді, коли у AOL"
 
 msgid "Aquarius"
 msgstr "Водолій"
@@ -8883,8 +8864,8 @@ msgid ""
 "No host or IP address has been configured for the Meanwhile account %s. "
 "Please enter one below to continue logging in."
 msgstr ""
-"Ні вузол, ні адреса IP не були налаштовані для облікового запису Meanwhile "
-"%s. Будь ласка, введіть якійсь, щоб налаштувати вхід."
+"Ні вузол, ні адреса IP не були налаштовані для облікового запису Meanwhile %"
+"s. Будь ласка, введіть якійсь, щоб налаштувати вхід."
 
 msgid "Meanwhile Connection Setup"
 msgstr "Встановлення з'єднання Meanwhile"
@@ -10236,9 +10217,8 @@ msgstr "Локаль кімнати балачки"
 msgid "Ignore conference and chatroom invitations"
 msgstr "Нехтувати запрошеннями у конференції та кімнати балачок"
 
-#, fuzzy
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Використовувати проксі облікового запису для з'єднань SSL"
+msgstr "Використовувати проксі облікового запису для з'єднань HTTP та HTTPS"
 
 msgid "Chat room list URL"
 msgstr "URL переліку балачок"
@@ -10278,8 +10258,8 @@ msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
 "following reason: %s."
 msgstr ""
-"%s (повторно) заборонив вам додати себе у ваш перелік з наступної причини: "
-"%s."
+"%s (повторно) заборонив вам додати себе у ваш перелік з наступної причини: %"
+"s."
 
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
@@ -12450,12 +12430,12 @@ msgid ""
 "to multiple messaging services at once.  %s is written in C using GTK+.  %s "
 "is released, and may be modified and redistributed,  under the terms of the "
 "GPL version 2 (or later).  A copy of the GPL is distributed with %s.  %s is "
-"copyrighted by its contributors, a list of whom is also distributed with "
-"%s.  There is no warranty for %s.<BR><BR>"
+"copyrighted by its contributors, a list of whom is also distributed with %"
+"s.  There is no warranty for %s.<BR><BR>"
 msgstr ""
 "%s - це клієнт обміну миттєвими повідомленнями, який оснований на libpurple, "
-"що здатна з'єднуватись з багатьма послугами миттєвих повідомлень одночасно. "
-"%s написаний на C, застосовуючи GTK+. %s виданий та може змінюватися і "
+"що здатна з'єднуватись з багатьма послугами миттєвих повідомлень одночасно. %"
+"s написаний на C, застосовуючи GTK+. %s виданий та може змінюватися і "
 "розповсюджуватися у відповідності з ліцензією GPL версії 2 (або новіша).  "
 "Копія GPL постачається з %s.  Авторське право на %s належить його "
 "розробникам, перелік яких теж постачається з %s. Будь-які гарантії на %s не "
@@ -12998,15 +12978,15 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in "
-"%s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in %"
+"s which started at %s?"
 msgstr ""
 "Ви дійсно хочете назавжди видалити журнал розмов у %s, що розпочалися о %s?"
 
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at "
-"%s?"
+"Are you sure you want to permanently delete the system log which started at %"
+"s?"
 msgstr ""
 "Чи дійсно хочете назавжди видалити системний журнал, що розпочатий о %s?"
 
@@ -13112,13 +13092,11 @@ msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
 "Вихід, тому що вже запущений інший клієнт, який використовує libpurple.\n"
 
-#, fuzzy
 msgid "_Media"
-msgstr "/_Медіа"
+msgstr "_Медіа"
 
-#, fuzzy
 msgid "_Hangup"
-msgstr "Завершити"
+msgstr "_Завершити"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -15291,7 +15269,7 @@ msgstr "Основні файли Pidgin та dll"
 
 #. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
-msgstr "Створити запис у меню 'Пуск' для Pidgin"
+msgstr "Створити запис у меню \"Пуск\" для Pidgin"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
@@ -15313,7 +15291,7 @@ msgid ""
 msgstr ""
 "Помилка звантаження the GTK+ Runtime ($R2).$\\rЦе необхідно для роботи "
 "Pidgin; якщо спроби будуть марними, можливо, необхідно буде скористатися "
-"встановлювачем 'Offline Installer' з http://pidgin.im/download/windows/ ."
+"встановлювачем \"Offline Installer\" з http://pidgin.im/download/windows/ ."
 
 #. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
@@ -15328,8 +15306,8 @@ msgstr ""
 #, no-c-format
 msgid ""
 "Error Installing Spellchecking ($R3).$\\rIf retrying fails, manual "
-"installation instructions are at: http://developer.pidgin.im/wiki/Installing"
-"%20Pidgin#manual_win32_spellcheck_installation"
+"installation instructions are at: http://developer.pidgin.im/wiki/Installing%"
+"20Pidgin#manual_win32_spellcheck_installation"
 msgstr ""
 "Помилка встановлення перевірки правопису ($R3).$\\rЯкщо спроби будуть "
 "марними, дивіться довідку по ручному встановленню на http://developer.pidgin."
@@ -15373,7 +15351,7 @@ msgstr "Підтримка перевірки правопису"
 
 #. Installer Subsection Text
 msgid "Start Menu"
-msgstr "Меню 'Пуск'"
+msgstr "Меню \"Пуск\""
 
 #. Installer Subsection Detailed Description
 msgid ""
@@ -15409,29 +15387,3 @@ msgstr "Відвідати сторінку тенет Pidgin"
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Ви не маєте права на видалення цієї програми."
-
-#~ msgid "The certificate is not valid yet."
-#~ msgstr "Сертифікат ще не дійсний."
-
-#~ msgid "The nick name you entered is invalid."
-#~ msgstr "Введене прізвисько неправильне."
-
-#~ msgid "MXit Login Name"
-#~ msgstr "Ім'я входу MXit"
-
-#~ msgid "Nick Name"
-#~ msgstr "Прізвисько"
-
-#~ msgid "Your Mobile Number..."
-#~ msgstr "Номер мобільного телефону..."
-
-#, fuzzy
-#~ msgid "Rate to host"
-#~ msgstr "Запросити до балачки"
-
-#, fuzzy
-#~ msgid "Rate to client"
-#~ msgstr "Останній відомий клієнт"
-
-#~ msgid "/Media/_Hangup"
-#~ msgstr "/Медіа/_Завершити"
