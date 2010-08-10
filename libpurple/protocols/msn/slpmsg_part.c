@@ -81,7 +81,7 @@ MsnSlpMessagePart *msn_slpmsgpart_ref(MsnSlpMessagePart *part)
 	part->ref_count ++;
 
 	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "part ref (%p)[%" G_GSIZE_FORMAT "]\n", part, part->ref_count);
+		purple_debug_info("msn", "part ref (%p)[%d]\n", part, part->ref_count);
 
 	return part;
 }
@@ -94,7 +94,7 @@ MsnSlpMessagePart *msn_slpmsgpart_unref(MsnSlpMessagePart *part)
 	part->ref_count--;
 
 	if (purple_debug_is_verbose())
-		purple_debug_info("msn", "part unref (%p)[%" G_GSIZE_FORMAT "]\n", part, part->ref_count);
+		purple_debug_info("msn", "part unref (%p)[%d]\n", part, part->ref_count);
 
 	if (part->ref_count == 0) {
 		msn_slpmsgpart_destroy(part);
