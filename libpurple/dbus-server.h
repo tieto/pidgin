@@ -22,6 +22,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
+ * @see @ref dbus-server-signals
  */
 
 #ifndef _PURPLE_DBUS_SERVER_H_
@@ -167,6 +168,13 @@ const char *purple_dbus_get_init_error(void);
  * @return The dbus subsystem handle.
  */
 void *purple_dbus_get_handle(void);
+
+/**
+ * Determines whether this instance owns the DBus service name
+ * 
+ * @since 2.1.0
+ */
+gboolean purple_dbus_is_owner(void);
 
 /**
  * Starts Purple's D-BUS server.  It is responsible for handling DBUS

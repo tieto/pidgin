@@ -422,7 +422,7 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 					break;
 				case MSN_SB_ERROR_AUTHFAILED:
 					str_reason = _("Message could not be sent "
-								   "because we wer unable to establish a "
+								   "because we were unable to establish a "
 								   "session with the server. This is "
 								   "likely a server problem, try again in "
 								   "a few minutes:");

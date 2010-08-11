@@ -63,6 +63,10 @@ static PurplePluginInfo info = {
 	NULL,
 	NULL,
 	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 
@@ -86,10 +90,10 @@ PURPLE_INIT_PLUGIN(hello_world, init_plugin, info);
   Our last include is version.h which defines @c PURPLE_MAJOR_VERSION, and
   @c PURPLE_MINOR_VERSION.  There is not much you need to know about these,
   except that they are required and will stop your plugin from crashing Pidgin
-  when something has changed that you plugin does not know about yet.
+  when something has changed that your plugin does not know about yet.
 
-  plugin_load is not required.  It is called when the plugin is loaded so that
-  you can initialize any variables and so on.  But in this plugin we'll just
+  @c plugin_load is not required.  It is called when the plugin is loaded so
+  that you can initialize any variables and so on.  In this plugin we'll just
   use it to display a message.
 
   Next we have the @c PurplePluginInfo structure.  Every plugin MUST have one of
@@ -225,8 +229,7 @@ static PurplePluginInfo info = {
                                    code in:
                                      libpurple/plugins/pluginpref_example.c
                                  */
-	NULL                    /* Finally, the last member of the structure
-                                   is a function pointer where you can define
+	NULL,                   /* This is a function pointer where you can define
                                    "plugin actions".  The UI controls how
                                    they're displayed.  It should be of the
                                    type:
@@ -237,6 +240,22 @@ static PurplePluginInfo info = {
                                     It must return a GList of
                                     PurplePluginActions.
                                  */
+	NULL,                   /* This is a pointer reserved for future use.
+	                               We set it to NULL to indicate we don't
+								   need it.
+								 */
+	NULL,                   /* This is a pointer reserved for future use.
+	                               We set it to NULL to indicate we don't
+								   need it.
+								 */
+	NULL,                   /* This is a pointer reserved for future use.
+	                               We set it to NULL to indicate we don't
+								   need it.
+								 */
+	NULL                    /* This is a pointer reserved for future use.
+	                               We set it to NULL to indicate we don't
+								   need it.
+								 */
 };
   @endcode
 

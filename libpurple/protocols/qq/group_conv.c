@@ -23,11 +23,12 @@
  */
 
 #include <glib.h>
+#include "qq.h"
+
 #include "conversation.h"
 
 #include "buddy_status.h"
 #include "group_conv.h"
-#include "qq.h"
 #include "utils.h"
 
 /* show group conversation window */

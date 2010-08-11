@@ -343,6 +343,17 @@ void purple_pounces_unregister_handler(const char *ui);
 GList *purple_pounces_get_all(void);
 
 /**
+ * Returns a list of registered buddy pounces for the ui-type.
+ *
+ * @param ui  The ID of the UI using the core.
+ *
+ * @return The list of buddy pounces. The list should be freed by
+ *         the caller when it's no longer used.
+ * @since  2.1.0
+ */
+GList *purple_pounces_get_all_for_ui(const char *ui);
+
+/**
  * Returns the buddy pounce subsystem handle.
  *
  * @return The subsystem handle.

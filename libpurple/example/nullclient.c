@@ -20,6 +20,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+
+/* XXX: we probably shouldn't include internal.h in examples */
+#include "internal.h"
+
 #include "account.h"
 #include "conversation.h"
 #include "core.h"
@@ -108,9 +112,13 @@ static PurpleEventLoopUiOps glib_eventloops =
 	glib_input_add,
 	g_source_remove,
 	NULL,
+#if GLIB_CHECK_VERSION(2,14,0)
+	g_timeout_add_seconds,
+#else
+	NULL,
+#endif
 
 	/* padding */
-	NULL,
 	NULL,
 	NULL,
 	NULL

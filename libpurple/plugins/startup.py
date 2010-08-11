@@ -25,6 +25,13 @@ import sys
 import dbus
 import os
 
+if len(sys.argv) == 1:
+	print "Usage:", sys.argv[0], """<purple-client> [arguments]
+
+Example:
+	""", sys.argv[0], "pidgin -d -c /my/home"
+	sys.exit(1)
+
 home = os.path.expanduser('~/.purple/')
 for arg in range(1, len(sys.argv[1:])):
 	if sys.argv[arg] == "-c":

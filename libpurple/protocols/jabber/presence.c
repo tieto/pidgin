@@ -102,6 +102,11 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	JabberBuddyState state;
 	int priority;
 
+	if(NULL == status) {
+		PurplePresence *gpresence = purple_account_get_presence(account);
+		status = purple_presence_get_active_status(gpresence);
+	}
+
 	if(!purple_status_is_active(status))
 		return;
 
@@ -114,6 +119,12 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 
 	gc = purple_account_get_connection(account);
 	js = gc->proto_data;
+
+	/* we don't want to send presence before we've gotten our roster */
+	if(!js->roster_parsed) {
+		purple_debug_info("jabber", "attempt to send presence before roster retrieved\n");
+		return;
+	}
 
 	purple_status_to_jabber(status, &state, &stripped, &priority);
 
@@ -361,6 +372,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
 										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
 						}
+					} else if(code && !strcmp(code, "210")) {
+						/*  server rewrote room-nick */
+						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
+							g_free(chat->handle);
+							chat->handle = g_strdup(jid->resource);
+						}
 					}
 				}
 				if((z = xmlnode_get_child(y, "item"))) {
@@ -504,7 +521,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
 				jid->node ? "@" : "", jid->domain);
 		if((b = purple_find_buddy(js->gc->account, buddy_name)) == NULL) {
-			purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%x)",
+			purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%x)\n",
 				buddy_name, purple_account_get_username(js->gc->account), js->gc->account);
 			jabber_id_free(jid);
 			g_free(avatar_hash);
@@ -554,9 +571,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
-			if(!jbr || jbr == found_jbr) {
-				purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status, NULL);
-			}
+			purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status, NULL);
 		} else {
 			purple_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}

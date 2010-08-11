@@ -22,6 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "finch.h"
+
 #include "account.h"
 #include "core.h"
 #include "connection.h"
@@ -29,7 +31,6 @@
 #include "request.h"
 
 #include "gntconn.h"
-#include "finch.h"
 
 #define INITIAL_RECON_DELAY_MIN  8000
 #define INITIAL_RECON_DELAY_MAX 60000

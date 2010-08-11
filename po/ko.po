@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: gaim 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-10-27 16:12-0400\n"
-"PO-Revision-Date: 2007-05-07 09:18+0900\n"
+"PO-Revision-Date: 2007-06-28 10:48+0900\n"
 "Last-Translator: sushizang <sushizang@empal.com>\n"
 "Language-Team: GTP Korean <gnome-kr-translation@gnome.or.kr>\n"
 "MIME-Version: 1.0\n"
@@ -1388,18 +1388,34 @@ msgstr "일시정지(_P)"
 msgid "Login Options"
 msgstr "로그인 설정"
 
-#: ../gtk/gtkaccount.c:492
-msgid "Local alias:"
-msgstr "별칭:"
+#: ../pidgin/gtkaccount.c:430
+msgid "Pro_tocol:"
+msgstr "프로토콜(_t):"
+
+#: ../pidgin/gtkaccount.c:441
+msgid "Screen _name:"
+msgstr "아이디(_n):"
+
+#: ../pidgin/gtkaccount.c:531
+msgid "_Local alias:"
+msgstr "별칭(_L):"
+
+#: ../pidgin/gtkaccount.c:535
+msgid "Remember pass_word"
+msgstr "비밀번호 저장"
 
 #. Build the user options frame.
 #: ../gtk/gtkaccount.c:554
 msgid "User Options"
 msgstr "사용자 설정"
 
+#: ../pidgin/gtkaccount.c:606
+msgid "New _mail notifications"
+msgstr "새 메일 알림"
+
 #. Buddy icon
-#: ../gtk/gtkaccount.c:572
-msgid "Use this buddy icon for this account:"
+#: ../pidgin/gtkaccount.c:611
+msgid "Use this buddy _icon for this account:"
 msgstr "다음 아이콘 사용:"
 
 #. Build the protocol options frame.
@@ -3906,6 +3922,22 @@ msgstr "부드러운 스크롤 사용"
 msgid "F_lash window when IMs are received"
 msgstr "메시지를 받으면 창을 깜빡거림(_L)"
 
+#: ../pidgin/gtkprefs.c:943
+msgid "Font"
+msgstr "글꼴"
+
+#: ../pidgin/gtkprefs.c:945
+msgid "Use document font from _theme"
+msgstr "테마로부터 문서 글꼴 사용(_t)"
+
+#: ../pidgin/gtkprefs.c:947
+msgid "Use font from _theme"
+msgstr "테마로부터 글꼴 사용(_t)"
+
+#: ../pidgin/gtkprefs.c:949
+msgid "Conversation _font:"
+msgstr "대화창 글꼴(_f):"
+
 #: ../gtk/gtkprefs.c:925
 msgid "Default Formatting"
 msgstr "기본 서식"
@@ -4710,7 +4742,7 @@ msgstr "\"장시간\" 자리 비움 상태의 친구"
 #. Not used yet.
 #: ../gtk/plugins/contact_priority.c:66
 msgid "Buddy is mobile"
-msgstr "이동 중인 친구"
+msgstr "휴대 기기 친구"
 
 #: ../gtk/plugins/contact_priority.c:68
 msgid "Buddy is offline"
@@ -9352,7 +9384,7 @@ msgstr "직장 전화번호를 설정해 주십시오."
 
 #: ../libgaim/protocols/msn/msn.c:291
 msgid "Set your mobile phone number."
-msgstr "이동 전화번호를 설정해 주십시오."
+msgstr "휴대 전화번호를 설정해 주십시오."
 
 #: ../libgaim/protocols/msn/msn.c:304
 msgid "Allow MSN Mobile pages?"
@@ -9360,7 +9392,7 @@ msgstr "MSN 모바일 호출을 허가하시겠습니까?"
 
 #: ../libgaim/protocols/msn/msn.c:305
 msgid "Do you want to allow or disallow people on your buddy list to send you MSN Mobile pages to your cell phone or other mobile device?"
-msgstr "친구가 휴대 전화 등의 모바일 기기에 MSN 모바일 호출을 전송하는 것을 허가하시겠습니까?"
+msgstr "친구가 휴대 전화 등의 휴대용 기기에 MSN 모바일 호출을 전송하는 것을 허가하시겠습니까?"
 
 #: ../libgaim/protocols/msn/msn.c:309
 msgid "Allow"
@@ -9434,11 +9466,11 @@ msgstr "휴대 전화번호 설정..."
 
 #: ../libgaim/protocols/msn/msn.c:638
 msgid "Enable/Disable Mobile Devices..."
-msgstr "모바일 기기 사용/사용 안 함..."
+msgstr "휴대용 기기 사용/사용 안 함..."
 
 #: ../libgaim/protocols/msn/msn.c:643
 msgid "Allow/Disallow Mobile Pages..."
-msgstr "모바일 호출 허가/허가 안 함..."
+msgstr "무선 호출 허가/허가 안 함..."
 
 #: ../libgaim/protocols/msn/msn.c:653
 msgid "Open Hotmail Inbox"
@@ -9446,7 +9478,7 @@ msgstr "Hotmail의 받은 편지함 열기"
 
 #: ../libgaim/protocols/msn/msn.c:677
 msgid "Send to Mobile"
-msgstr "모바일 기기에 전송"
+msgstr "휴대용 기기에 전송"
 
 #: ../libgaim/protocols/msn/msn.c:687
 #: ../libgaim/protocols/novell/novell.c:3443
@@ -9563,11 +9595,11 @@ msgstr "소중한 사람"
 
 #: ../libgaim/protocols/msn/msn.c:1602
 msgid "Home Phone"
-msgstr "자택 전화1"
+msgstr "자택 전화"
 
 #: ../libgaim/protocols/msn/msn.c:1603
 msgid "Home Phone 2"
-msgstr "자택 전화2"
+msgstr "자택 전화 2"
 
 #: ../libgaim/protocols/msn/msn.c:1604
 #: ../libgaim/protocols/oscar/oscar.c:3768
@@ -9576,7 +9608,7 @@ msgstr "자택 주소"
 
 #: ../libgaim/protocols/msn/msn.c:1605
 msgid "Personal Mobile"
-msgstr "휴대 전화"
+msgstr "개인 휴대 기기"
 
 #: ../libgaim/protocols/msn/msn.c:1606
 msgid "Home Fax"
@@ -9620,11 +9652,11 @@ msgstr "직업"
 
 #: ../libgaim/protocols/msn/msn.c:1632
 msgid "Work Phone"
-msgstr "회사 전화1"
+msgstr "회사 전화"
 
 #: ../libgaim/protocols/msn/msn.c:1633
 msgid "Work Phone 2"
-msgstr "회사 전화2"
+msgstr "회사 전화 2"
 
 #: ../libgaim/protocols/msn/msn.c:1634
 #: ../libgaim/protocols/oscar/oscar.c:3781
@@ -9633,7 +9665,7 @@ msgstr "회사 주소"
 
 #: ../libgaim/protocols/msn/msn.c:1635
 msgid "Work Mobile"
-msgstr "회사 휴대 전화"
+msgstr "업무 휴대 기기"
 
 #: ../libgaim/protocols/msn/msn.c:1636
 msgid "Work Pager"
@@ -14816,7 +14848,7 @@ msgstr "이용 불가"
 
 #: ../libgaim/status.c:160
 msgid "Mobile"
-msgstr "이동 중"
+msgstr "휴대 기기"
 
 #: ../libgaim/status.c:611
 #, c-format

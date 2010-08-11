@@ -25,6 +25,8 @@
 
 #include <glib.h>
 #include <stdlib.h>
+#include "internal.h"
+
 #include "util.h"
 #include "ntlm.h"
 #include "cipher.h"

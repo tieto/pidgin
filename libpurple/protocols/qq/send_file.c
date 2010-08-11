@@ -22,6 +22,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "qq.h"
+
 #include "send_file.h"
 #include "debug.h"
 #include "network.h"
@@ -34,7 +36,6 @@
 #include "im.h"
 #include "keep_alive.h"
 #include "packet_parse.h"
-#include "qq.h"
 #include "send_core.h"
 #include "utils.h"
 

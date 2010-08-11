@@ -110,7 +110,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	/* Yahoo IM 6 spits out 0.png as the URL if the buddy icon is not set */
-	if (who && got_icon_info && url && !strncasecmp(url, "http://", 7)) {
+	if (who && got_icon_info && url && !g_ascii_strncasecmp(url, "http://", 7)) {
 		/* TODO: make this work p2p, try p2p before the url */
 		PurpleUtilFetchUrlData *url_data;
 		struct yahoo_fetch_picture_data *data;

@@ -2660,7 +2660,7 @@ static void im_recv_mime(struct mwConversation *conv,
   GString *str;
 
   PurpleMimeDocument *doc;
-  const GList *parts;
+  GList *parts;
 
   img_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
   images = NULL;
@@ -3189,7 +3189,8 @@ static char *mw_prpl_status_text(PurpleBuddy *b) {
   pd = gc->proto_data;
 
   ret = mwServiceAware_getText(pd->srvc_aware, &t);
-  return ret? g_markup_escape_text(ret, -1): NULL;
+  
+  return (ret && g_utf8_validate(ret, -1, NULL)) ? g_markup_escape_text(ret, -1): NULL;
 }
 
 
@@ -3254,7 +3255,7 @@ static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info
   message = mwServiceAware_getText(pd->srvc_aware, &idb);
   status = status_text(b);
 
-  if(message != NULL && purple_utf8_strcasecmp(status, message)) {
+  if(message != NULL && g_utf8_validate(message, -1, NULL) && purple_utf8_strcasecmp(status, message)) {
     tmp = g_markup_escape_text(message, -1);
 	purple_notify_user_info_add_pair(user_info, status, tmp);
     g_free(tmp);
@@ -3401,7 +3402,7 @@ static void conf_select_prompt_cancel(PurpleBuddy *buddy,
 static void conf_select_prompt_invite(PurpleBuddy *buddy,
 				      PurpleRequestFields *fields) {
   PurpleRequestField *f;
-  const GList *l;
+  GList *l;
   const char *msg;
   
   f = purple_request_fields_get_field(fields, CHAT_KEY_INVITE);
@@ -4151,7 +4152,7 @@ static void mw_prpl_get_info(PurpleConnection *gc, const char *who) {
 
 	/* XXX Is this adding a status message in its own section rather than with the "Status" label? */
     tmp2 = mwServiceAware_getText(pd->srvc_aware, &idb);
-    if(tmp2) {
+    if(tmp2 && g_utf8_validate(tmp2, -1, NULL)) {
       tmp = g_markup_escape_text(tmp2, -1);
 	  purple_notify_user_info_add_section_break(user_info);
 	  purple_notify_user_info_add_pair(user_info, NULL, tmp);
@@ -5268,7 +5269,7 @@ static void remote_group_multi_cleanup(gpointer ignore,
 				       PurpleRequestFields *fields) {
   
   PurpleRequestField *f;
-  const GList *l;
+  GList *l;
 
   f = purple_request_fields_get_field(fields, "group");
   l = purple_request_field_list_get_items(f);
@@ -5334,7 +5335,7 @@ static void remote_group_done(struct mwPurplePluginData *pd,
 static void remote_group_multi_cb(struct mwPurplePluginData *pd,
 				  PurpleRequestFields *fields) {
   PurpleRequestField *f;
-  const GList *l;
+  GList *l;
 
   f = purple_request_fields_get_field(fields, "group");
   l = purple_request_field_list_get_selected(f);

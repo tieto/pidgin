@@ -1,7 +1,9 @@
-/** @page conversation-signals Notification Signals
+/** @page notify-signals Notification Signals
 
  @signals
   @signal displaying-userinfo
+  @signal displaying-email-notification
+  @signal displaying-emails-notification
  @endsignals
 
  @signaldef displaying-userinfo
@@ -16,6 +18,38 @@ void (*displaying_userinfo)(PurpleAccount *account, const char *who, PurpleNotif
   @param account   The account on which the info was obtained.
   @param who       The screen name of the user whose info is to be displayed.
   @param user_info The information to be displayed, as PurpleNotifyUserInfoEntry objects
+ @endsignaldef
+
+ @signaldef displaying-email-notification
+  @signalproto
+void (*displaying_email_notification)(const char *subject,
+                                      const char *from,
+                                      const char *to,
+                                      const char *url);
+  @endsignalproto
+  @signaldesc
+   Emitted before email notification is handed to the UI to display.
+  @param subject   Subject of email being notified of.
+  @param from      Who the email is from.
+  @param to        Who the email is to.
+  @param url       A url to view the email.
+ @endsignaldef
+
+ @signaldef displaying-emails-notification
+  @signalproto
+void (*displaying_emails_notification)(const char **subjects,
+                                       const char **froms,
+                                       const char **tos,
+                                       const char **urls,
+                                       guint count);
+  @endsignalproto
+  @signaldesc
+   Emitted before notification of multiple emails is handed to the UI to display.
+  @param subjects   Subjects of emails being notified of.
+  @param froms      Who the emails are from.
+  @param tos        Who the emails are to.
+  @param urls       The urls to view the emails.
+  @param count      Number of emails being notified of.
  @endsignaldef
 
 */

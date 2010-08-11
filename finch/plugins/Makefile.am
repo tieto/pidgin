@@ -28,7 +28,7 @@ gntlastlog_la_LIBADD  = $(GLIB_LIBS)
 
 endif # PLUGINS
 
-EXTRA_DIST = 
+EXTRA_DIST = pietray.py
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \

@@ -45,5 +45,5 @@ void winpidgin_init(HINSTANCE);
 void winpidgin_post_init(void);
 void winpidgin_cleanup(void);
 
-#endif /* _WIN32DEP_H_ */
+#endif /* _GTKWIN32DEP_H_ */
 

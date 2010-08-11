@@ -1,3 +1,29 @@
+/**
+ * @file gntbindable.h Bindable API
+ * @ingroup gnt
+ */
+/*
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #ifndef GNT_BINDABLE_H
 #define GNT_BINDABLE_H
 
@@ -39,6 +65,11 @@ struct _GntBindableClass
 
 G_BEGIN_DECLS
 
+/**
+ * 
+ *
+ * @return
+ */
 GType gnt_bindable_get_gtype(void);
 
 /******************/
@@ -70,18 +101,53 @@ struct _GntBindableActionParam
 	GList *list;
 };
 
-
 /*GntBindableAction *gnt_bindable_action_parse(const char *name);*/
 
+/**
+ * 
+ * @param action
+ */
 void gnt_bindable_action_free(GntBindableAction *action);
+
+/**
+ * 
+ * @param param
+ */
 void gnt_bindable_action_param_free(GntBindableActionParam *param);
 
-void gnt_bindable_class_register_action(GntBindableClass *klass, const char *name,
-			GntBindableActionCallback callback, const char *trigger, ...);
-void gnt_bindable_register_binding(GntBindableClass *klass, const char *name,
-			const char *trigger, ...);
+/**
+ * 
+ * @param klass
+ * @param name
+ * @param callback
+ * @param trigger
+ */
+void gnt_bindable_class_register_action(GntBindableClass *klass, const char *name, GntBindableActionCallback callback, const char *trigger, ...);
 
+/**
+ * 
+ * @param klass
+ * @param name
+ * @param trigger
+ */
+void gnt_bindable_register_binding(GntBindableClass *klass, const char *name, const char *trigger, ...);
+
+/**
+ * 
+ * @param bindable
+ * @param keys
+ *
+ * @return
+ */
 gboolean gnt_bindable_perform_action_key(GntBindable *bindable, const char *keys);
+
+/**
+ * 
+ * @param bindable
+ * @param name
+ *
+ * @return
+ */
 gboolean gnt_bindable_perform_action_named(GntBindable *bindable, const char *name, ...);
 
 G_END_DECLS

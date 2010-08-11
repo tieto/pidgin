@@ -23,6 +23,7 @@
  *
  */
 #include "internal.h"
+#include "dbus-maybe.h"
 #include "ft.h"
 #include "network.h"
 #include "notify.h"
@@ -56,6 +57,7 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 	g_return_val_if_fail(who     != NULL,              NULL);
 
 	xfer = g_new0(PurpleXfer, 1);
+	PURPLE_DBUS_REGISTER_POINTER(xfer, PurpleXfer);
 
 	xfer->ref = 1;
 	xfer->type    = type;
@@ -97,6 +99,7 @@ purple_xfer_destroy(PurpleXfer *xfer)
 	g_free(xfer->remote_ip);
 	g_free(xfer->local_filename);
 
+	PURPLE_DBUS_UNREGISTER_POINTER(xfer);
 	g_free(xfer);
 	xfers = g_list_remove(xfers, xfer);
 }
@@ -549,6 +552,13 @@ purple_xfer_get_account(const PurpleXfer *xfer)
 	g_return_val_if_fail(xfer != NULL, NULL);
 
 	return xfer->account;
+}
+
+const char *
+purple_xfer_get_remote_user(const PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, NULL);
+	return xfer->who;
 }
 
 PurpleXferStatusType

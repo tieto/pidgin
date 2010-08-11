@@ -32,6 +32,7 @@
 
 #include "account.h"
 #include "xmlnode.h"
+#include "notify.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -117,6 +118,21 @@ gchar *purple_base16_encode(const guchar *data, gsize len);
  * @see purple_base16_encode()
  */
 guchar *purple_base16_decode(const char *str, gsize *ret_len);
+
+/**
+ * Converts a chunk of binary data to a chunked base-16 representation
+ * (handy for key fingerprints)
+ *
+ * Example output: 01:23:45:67:89:AB:CD:EF
+ *
+ * @param data The data to convert.
+ * @param len  The length of the data.
+ *
+ * @return The base-16 string in the ASCII chunked encoding.  Must be
+ *         g_free'd when no longer needed.
+ */
+gchar *purple_base16_encode_chunked(const guchar *data, gsize len);
+
 
 /*@}*/
 
@@ -239,6 +255,16 @@ char *purple_mime_decode_field(const char *str);
  *       where the format is provided in the locale charset.
  */
 const char *purple_utf8_strftime(const char *format, const struct tm *tm);
+
+/**
+ * Gets a string representation of the local timezone offset
+ *
+ * @param tm   The time to get the timezone for
+ * @param iso  TRUE to format the offset according to ISO-8601, FALSE to
+ *             not substitute 'Z' for 0 offset, and to not separate
+ *             hours and minutes with a colon.
+ */
+const char *purple_get_tzoff_str(const struct tm *tm, gboolean iso);
 
 /**
  * Formats a time into the user's preferred short date format.
@@ -607,6 +633,12 @@ FILE *purple_mkstemp(char **path, gboolean binary);
  */
 const char *
 purple_util_get_image_extension(gconstpointer data, size_t len);
+
+/**
+ * Returns a SHA-1 hash string of the data passed in with the correct file
+ * extention appended.
+ */
+char *purple_util_get_image_filename(gconstpointer image_data, size_t image_len);
 
 /*@}*/
 
@@ -1073,12 +1105,13 @@ gboolean purple_utf8_has_word(const char *haystack, const char *needle);
 void purple_print_utf8_to_console(FILE *filestream, char *message);
 
 /**
- * Checks for messages starting with "/me "
+ * Checks for messages starting (post-HTML) with "/me ", including the space.
  *
  * @param message The message to check
  * @param len     The message length, or -1
  *
- * @return TRUE if it starts with /me, and it has been removed, otherwise FALSE
+ * @return TRUE if it starts with "/me ", and it has been removed, otherwise
+ *         FALSE
  */
 gboolean purple_message_meify(char *message, size_t len);
 

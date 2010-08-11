@@ -522,6 +522,26 @@ sound_playing_event_cb(PurpleSoundEventID event, const PurpleAccount *account) {
 }
 
 /**************************************************************************
+ * Notify signals callbacks
+ **************************************************************************/
+static void
+notify_email_cb(char *subject, char *from, char *to, char *url) {
+	purple_debug_misc("signals test", "notify email: subject=%s, from=%s, to=%s, url=%s\n",
+					subject, from, to, url);
+}
+
+static void
+notify_emails_cb(char **subjects, char **froms, char **tos, char **urls, guint count) {
+	int i;
+	purple_debug_misc("signals test", "notify emails: count=%d\n", count);
+	for(i=0; i<count && i<5; i++) {
+		if(subjects[i]==NULL || froms[i]==NULL || tos[i]==NULL || urls[i]==NULL) continue;
+		purple_debug_misc("signals test", "notify emails[%d]: subject=%s, from=%s, to=%s, url=%s\n",
+			i, subjects[i], froms[i], tos[i], urls[i]);
+	}
+}
+
+/**************************************************************************
  * Plugin stuff
  **************************************************************************/
 static gboolean
@@ -535,6 +555,7 @@ plugin_load(PurplePlugin *plugin)
 	void *ciphers_handle  = purple_ciphers_get_handle();
 	void *ft_handle       = purple_xfers_get_handle();
 	void *sound_handle    = purple_sounds_get_handle();
+	void *notify_handle   = purple_notify_get_handle();
 
 	/* Accounts subsystem signals */
 	purple_signal_connect(accounts_handle, "account-connecting",
@@ -665,6 +686,12 @@ plugin_load(PurplePlugin *plugin)
 	/* Sound signals */
 	purple_signal_connect(sound_handle, "playing-sound-event", plugin,
 	                    PURPLE_CALLBACK(sound_playing_event_cb), NULL);
+
+	/* Notify signals */
+	purple_signal_connect(notify_handle, "displaying-email-notification",
+						plugin, PURPLE_CALLBACK(notify_email_cb), NULL);
+	purple_signal_connect(notify_handle, "displaying-emails-notification",
+						plugin, PURPLE_CALLBACK(notify_emails_cb), NULL);
 
 	return TRUE;
 }

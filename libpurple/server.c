@@ -92,7 +92,7 @@ get_last_auto_response(PurpleConnection *gc, const char *name)
 
 	/* because we're modifying or creating a lar, schedule the
 	 * function to expire them as the pref dictates */
-	purple_timeout_add((SECS_BEFORE_RESENDING_AUTORESPONSE + 1) * 1000, expire_last_auto_responses, NULL);
+	purple_timeout_add_seconds((SECS_BEFORE_RESENDING_AUTORESPONSE + 1), expire_last_auto_responses, NULL);
 
 	tmp = last_auto_responses;
 
@@ -198,7 +198,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (b != NULL && b->account->gc->prpl != NULL)
+	if (b != NULL && b->account->gc && b->account->gc->prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(b->account->gc->prpl);
 
 	if (b && prpl_info && prpl_info->alias_buddy) {
@@ -233,8 +233,9 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
 										who, alias);
 
-			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM,
-									time(NULL));
+			purple_conversation_write(conv, NULL, tmp,
+					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
+					time(NULL));
 
 			g_free(tmp);
 		}

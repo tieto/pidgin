@@ -36,7 +36,8 @@ Code_t ZFlushMyLocations()
     return (Z_SendLocation(LOGIN_CLASS, LOGIN_USER_FLUSH, ZAUTH, ""));
 }
 
-static char host[MAXHOSTNAMELEN], mytty[MAXPATHLEN];
+static char host[MAXHOSTNAMELEN];
+static char *mytty = NULL;
 static int reenter = 0;
 
 Code_t Z_SendLocation(class, opcode, auth, format)
@@ -87,21 +88,20 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 	    }
 #ifndef X_DISPLAY_MISSING
 	    if ((display = getenv("DISPLAY")) && *display) {
-		    (void) strncpy(mytty, display, sizeof(mytty));
+		    mytty = g_strdup(display);
 	    } else {
 #endif
 #ifdef WIN32
-              	    strncpy(mytty, "WinPurple", sizeof(mytty));
+		    mytty = g_strdup("WinPurple");
 #else
 		    ttyp = ttyname(0);
 		    if (ttyp && *ttyp) {
 			p = strchr(ttyp + 1, '/');
-			strcpy(mytty, (p) ? p + 1 : ttyp);
+			mytty = g_strdup((p) ? p + 1 : ttyp);
 		    } else {
-			strncpy(mytty, "unknown", sizeof(mytty));
+			mytty = g_strdup("unknown");
 		    }
 #endif
-		    mytty[sizeof(mytty)-1] = '\0';
 #ifndef X_DISPLAY_MISSING
 	    }
 #endif
@@ -114,7 +114,6 @@ Code_t Z_SendLocation(class, opcode, auth, format)
     bptr[1][strlen(bptr[1])-1] = '\0';
     bptr[2] = mytty;
 
-	
     if ((retval = ZSendList(&notice, bptr, 3, auth)) != ZERR_NONE)
 	return (retval);
 

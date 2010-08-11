@@ -1,3 +1,25 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 /* Stuff brutally ripped from Gflib */
 
 #include "gntwidget.h"
@@ -52,15 +74,7 @@ static void
 gnt_widget_dispose(GObject *obj)
 {
 	GntWidget *self = GNT_WIDGET(obj);
-
-	if(!(GNT_WIDGET_FLAGS(self) & GNT_WIDGET_DESTROYING)) {
-		GNT_WIDGET_SET_FLAGS(self, GNT_WIDGET_DESTROYING);
-
-		g_signal_emit(self, signals[SIG_DESTROY], 0);
-
-		GNT_WIDGET_UNSET_FLAGS(self, GNT_WIDGET_DESTROYING);
-	}
-
+	g_signal_emit(self, signals[SIG_DESTROY], 0);
 	parent_class->dispose(obj);
 	GNTDEBUG;
 }
@@ -298,10 +312,12 @@ gnt_widget_destroy(GntWidget *obj)
 {
 	g_return_if_fail(GNT_IS_WIDGET(obj));
 
-	gnt_widget_hide(obj);
-	delwin(obj->window);
-	if(!(GNT_WIDGET_FLAGS(obj) & GNT_WIDGET_DESTROYING))
+	if(!(GNT_WIDGET_FLAGS(obj) & GNT_WIDGET_DESTROYING)) {
+		GNT_WIDGET_SET_FLAGS(obj, GNT_WIDGET_DESTROYING);
+		gnt_widget_hide(obj);
+		delwin(obj->window);
 		g_object_run_dispose(G_OBJECT(obj));
+	}
 	GNTDEBUG;
 }
 
@@ -377,7 +393,8 @@ gnt_widget_key_pressed(GntWidget *widget, const char *keys)
 	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
 		return FALSE;
 
-	if (gnt_bindable_perform_action_key(GNT_BINDABLE(widget), keys))
+	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_DISABLE_ACTIONS) &&
+			gnt_bindable_perform_action_key(GNT_BINDABLE(widget), keys))
 		return TRUE;
 
 	keys = gnt_bindable_remap_keys(GNT_BINDABLE(widget), keys);
@@ -554,7 +571,7 @@ gnt_widget_set_focus(GntWidget *widget, gboolean set)
 		GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_HAS_FOCUS);
 		g_signal_emit(widget, signals[SIG_GIVE_FOCUS], 0);
 	}
-	else if (!set)
+	else if (!set && GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_HAS_FOCUS))
 	{
 		GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_HAS_FOCUS);
 		g_signal_emit(widget, signals[SIG_LOST_FOCUS], 0);

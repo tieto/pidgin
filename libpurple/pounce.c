@@ -273,7 +273,7 @@ static void
 schedule_pounces_save(void)
 {
 	if (save_timer == 0)
-		save_timer = purple_timeout_add(5000, save_cb, NULL);
+		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
 
 
@@ -1012,6 +1012,20 @@ GList *
 purple_pounces_get_all(void)
 {
 	return pounces;
+}
+
+GList *purple_pounces_get_all_for_ui(const char *ui)
+{
+	GList *list = NULL, *iter;
+	g_return_val_if_fail(ui != NULL, NULL);
+
+	for (iter = pounces; iter; iter = iter->next) {
+		PurplePounce *pounce = iter->data;
+		if (pounce->ui_type && strcmp(pounce->ui_type, ui) == 0)
+			list = g_list_prepend(list, pounce);
+	}
+	list = g_list_reverse(list);
+	return list;
 }
 
 static void

@@ -26,6 +26,8 @@
 #define random rand
 #endif
 
+#include "internal.h"
+
 #include "debug.h"
 #include "ft.h"
 #include "cipher.h"

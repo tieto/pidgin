@@ -52,6 +52,7 @@ Purple::BuddyList::Contact		T_PurpleObj
 Purple::BuddyList::Group			T_PurpleObj
 Purple::BuddyList::Node			T_PurpleObj
 Purple::BuddyList::NodeFlags		T_IV
+Purple::BuddyList::NodeType		T_IV
 Purple::BuddyList::UiOps			T_PurpleObj
 
 Purple::Cipher				T_PurpleObj

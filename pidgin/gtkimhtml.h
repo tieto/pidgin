@@ -27,6 +27,9 @@
 #include <gtk/gtktextview.h>
 #include <gtk/gtktooltips.h>
 #include <gtk/gtkimage.h>
+#include "gtksourceundomanager.h"
+
+#include "connection.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,6 +46,7 @@ extern "C" {
 #define GTK_IS_IMHTML(obj)         (GTK_CHECK_TYPE ((obj), GTK_TYPE_IMHTML))
 #define GTK_IS_IMHTML_CLASS(klass) (GTK_CHECK_CLASS_TYPE ((klass), GTK_TYPE_IMHTML))
 #define GTK_IMHTML_SCALABLE(obj)   ((GtkIMHtmlScalable *)obj)
+#define GTK_IMHTML_ANIMATION(obj)   ((GtkIMHtmlAnimation *)obj)
 
 typedef struct _GtkIMHtml			GtkIMHtml;
 typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;
@@ -51,6 +55,7 @@ typedef struct _GtkSmileyTree		GtkSmileyTree;
 typedef struct _GtkIMHtmlSmiley		GtkIMHtmlSmiley;
 typedef struct _GtkIMHtmlScalable	GtkIMHtmlScalable;
 typedef struct _GtkIMHtmlImage		GtkIMHtmlImage;
+typedef struct _GtkIMHtmlAnimation	GtkIMHtmlAnimation;
 typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
 typedef struct _GtkIMHtmlFuncs		GtkIMHtmlFuncs;
 
@@ -126,6 +131,7 @@ struct _GtkIMHtml {
 
 	GSList *im_images;
 	GtkIMHtmlFuncs *funcs;
+	GtkSourceUndoManager *undo_manager;
 };
 
 struct _GtkIMHtmlClass {
@@ -137,6 +143,8 @@ struct _GtkIMHtmlClass {
 	void (*clear_format)(GtkIMHtml *);
 	void (*update_format)(GtkIMHtml *);
 	gboolean (*message_send)(GtkIMHtml *);
+	void (*undo)(GtkIMHtml *);
+	void (*redo)(GtkIMHtml *);
 };
 
 struct _GtkIMHtmlFontDetail {
@@ -175,14 +183,21 @@ struct _GtkIMHtmlScalable {
 
 struct _GtkIMHtmlImage {
 	GtkIMHtmlScalable scalable;
-	GtkImage *image;
-	GdkPixbuf *pixbuf;
+	GtkImage *image; /**< Contains the scaled version of this pixbuf. */
+	GdkPixbuf *pixbuf; /**< The original pixbuf, before any scaling. */
 	GtkTextMark *mark;
 	gchar *filename;
 	int width;
 	int height;
 	int id;
 	GtkWidget *filesel;
+};
+
+struct _GtkIMHtmlAnimation {
+	GtkIMHtmlImage imhtmlimage;
+	GdkPixbufAnimation *anim; /**< The original animation, before any scaling. */
+	GdkPixbufAnimationIter *iter;
+	guint timer;
 };
 
 struct _GtkIMHtmlHr {
@@ -405,7 +420,7 @@ void gtk_imhtml_page_down(GtkIMHtml *imhtml);
 GtkIMHtmlScalable *gtk_imhtml_scalable_new(void);
 
 /**
- * Creates and returns an new GTK+ IM/HTML scalable object with an image.
+ * Creates and returns a new GTK+ IM/HTML scalable object with an image.
  *
  * @param img      A GdkPixbuf of the image to add.
  * @param filename The filename to associate with the image.
@@ -416,11 +431,38 @@ GtkIMHtmlScalable *gtk_imhtml_scalable_new(void);
 GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id);
 
 /**
+ * Creates and returns a new GTK+ IM/HTML scalable object with an
+ * animated image.
+ *
+ * @param img      A GdkPixbufAnimation of the image to add.
+ * @param filename The filename to associate with the image.
+ * @param id       The id to associate with the image.
+ *
+ * @return A new IM/HTML Scalable object with an image.
+ */
+/*
+ * TODO: All this animation code could be combined much better with
+ *       the image code.  It couldn't be done when it was written
+ *       because it requires breaking backward compatibility.  It
+ *       would be good to do it for 3.0.0.
+ */
+GtkIMHtmlScalable *gtk_imhtml_animation_new(GdkPixbufAnimation *img, const gchar *filename, int id);
+
+/**
  * Destroys and frees a GTK+ IM/HTML scalable image.
  *
  * @param scale The GTK+ IM/HTML scalable.
  */
+/* TODO: Is there any reason this isn't private? */
 void gtk_imhtml_image_free(GtkIMHtmlScalable *scale);
+
+/**
+ * Destroys and frees a GTK+ IM/HTML scalable animation.
+ *
+ * @param scale The GTK+ IM/HTML scalable.
+ */
+/* TODO: Is there any reason this isn't private? */
+void gtk_imhtml_animation_free(GtkIMHtmlScalable *scale);
 
 /**
  * Rescales a GTK+ IM/HTML scalable image to a given size.
@@ -429,6 +471,7 @@ void gtk_imhtml_image_free(GtkIMHtmlScalable *scale);
  * @param width  The new width.
  * @param height The new height.
  */
+/* TODO: Is there any reason this isn't private? */
 void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height);
 
 /**
@@ -438,6 +481,7 @@ void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height);
  * @param imhtml The GTK+ IM/HTML.
  * @param iter   The GtkTextIter at which to add the scalable.
  */
+/* TODO: Is there any reason this isn't private? */
 void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter);
 
 /**
@@ -785,6 +829,14 @@ char **gtk_imhtml_get_markup_lines(GtkIMHtml *imhtml);
  * @return A string containing the unformatted text.
  */
 char *gtk_imhtml_get_text(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *stop);
+
+/**
+ * Setup formatting for an imhtml depending on the flags specified.
+ *
+ * @param imhtml  The GTK+ IM/HTML.
+ * @param flags   The connection flag which describes the allowed types of formatting.
+ */
+void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags);
 
 /*@}*/
 

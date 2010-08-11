@@ -1,5 +1,37 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.1.0 (07/28/2007):
+	libpurple:
+	* Core changes to allow UIs to use second-granularity for scheduling.
+	  Pidgin and Finch, which use the glib event loop, were changed to use
+	  g_timeout_add_seconds() on glib >= 2.14 when possible.  This allows
+	  glib to better group our longer timers to increase power efficiency.
+	  (Arjan van de Ven with Intel Corporation)
+	* No longer linkifies screennames containing @ signs in join/part
+	  notifications in chats
+	* With the HTML logger, images in conversations are now saved.
+	  NOTE: Saved images are not yet displayed when loading logs.
+	* Added support for QIP logs to the Log Reader plugin (Michael Shkutkov)
+
+	Pidgin:
+	* Ensure only one copy of Pidgin is running with a given configuration
+	  directory.  The net effect of this is that trying to start Pidgin a
+	  second time will raise the buddy list.  (Gabriel Schulhof)
+	* Undo capability in the conversation window
+	* The formatting toolbar has been reorganized to be more concise.
+	* A new status area has been added to the top of conversations to
+	  provide additional detail about the buddy, including buddy icon,
+	  protocol and status message.
+	* Show idle times in the buddy list as days, hours, seconds
+
+	Finch:
+	* There's support for workspaces now (details in the manpage)
+	* There's a new custom window manager, Irssi
+	* Some improvements for tab-completion, tooltip and the password entries
+	* Some bugs regarding search results fixed
+	* A new DBus-script to create a docklet for finch
+	* Support for showing empty groups in the buddy list (Eric Polino)
+
 version 2.0.2 (06/14/2007):
 	Pidgin:
 	* Added a custom conversation font option to preferences

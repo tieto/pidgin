@@ -76,15 +76,6 @@ static BOOL (*MySetLayeredWindowAttributes)(HWND hwnd, COLORREF crKey, BYTE bAlp
 /*
  *  CODE
  */
-static GtkWidget *wpurple_button(const char *text, const char *pref, GtkWidget *page) {
-	GtkWidget *button;
-	button = gtk_check_button_new_with_mnemonic(text);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-		purple_prefs_get_bool(pref));
-	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-	return button;
-}
 
 /* Set window transparency level */
 static void set_wintrans(GtkWidget *window, int alpha, gboolean enabled,
@@ -233,7 +224,8 @@ static void cleanup_conv_window(PidginWindow *win) {
 		G_CALLBACK(focus_conv_win_cb), window);
 }
 
-static void purple_conversation_delete(PurpleConversation *conv) {
+static void
+conversation_delete_cb(PurpleConversation *conv) {
 	PidginWindow *win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
 	/* If it is the last conversation in the window, cleanup */
 	if (pidgin_conv_window_get_gtkconv_count(win) == 1)
@@ -391,12 +383,35 @@ static void update_convs_wintrans(GtkWidget *toggle_btn, const char *pref) {
 		remove_convs_wintrans(FALSE);
 }
 
-static void purple_new_conversation(PurpleConversation *conv) {
+static void
+conv_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type) {
+	PidginConversation *pconv = PIDGIN_CONVERSATION(conv);
+	PidginWindow *win = pidgin_conv_get_window(pconv);
+
+	if (type == PURPLE_CONV_UPDATE_UNSEEN && !pidgin_conv_is_hidden(pconv)
+			&& pconv->unseen_state == PIDGIN_UNSEEN_NONE
+			&& pidgin_conv_window_get_gtkconv_count(win) == 1) {
+		GtkWidget *window = win->window;
+
+		set_conv_window_trans(NULL, win);
+
+		if (g_signal_handler_find(G_OBJECT(window), G_SIGNAL_MATCH_FUNC,
+				0, 0, NULL, G_CALLBACK(focus_conv_win_cb), NULL) == 0) {
+			g_signal_connect(G_OBJECT(window), "focus_in_event",
+				G_CALLBACK(focus_conv_win_cb), window);
+			g_signal_connect(G_OBJECT(window), "focus_out_event",
+				G_CALLBACK(focus_conv_win_cb), window);
+		}
+	}
+}
+
+static void
+new_conversation_cb(PurpleConversation *conv) {
 	PidginWindow *win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
 
 	/* If it is the first conversation in the window,
 	 * add the sliders, and set transparency */
-	if (pidgin_conv_window_get_gtkconv_count(win) == 1) {
+	if (!pidgin_conv_is_hidden(PIDGIN_CONVERSATION(conv)) && pidgin_conv_window_get_gtkconv_count(win) == 1) {
 		GtkWidget *window = win->window;
 
 		set_conv_window_trans(NULL, win);
@@ -408,7 +423,8 @@ static void purple_new_conversation(PurpleConversation *conv) {
 	}
 }
 
-static void blist_created_cb(PurpleBuddyList *purple_blist, gpointer data) {
+static void
+blist_created_cb(PurpleBuddyList *purple_blist, gpointer data) {
 	if (blist) {
 		if (purple_prefs_get_bool(OPT_WINTRANS_BL_ENABLED)) {
 			set_wintrans(blist,
@@ -477,16 +493,20 @@ static gboolean plugin_load(PurplePlugin *plugin) {
 
 	purple_signal_connect(purple_conversations_get_handle(),
 		"conversation-created", plugin,
-		PURPLE_CALLBACK(purple_new_conversation), NULL);
+		PURPLE_CALLBACK(new_conversation_cb), NULL);
 
 	/* Set callback to remove window from the list, if the window is destroyed */
 	purple_signal_connect(purple_conversations_get_handle(),
 		"deleting-conversation", plugin,
-		PURPLE_CALLBACK(purple_conversation_delete), NULL);
+		PURPLE_CALLBACK(conversation_delete_cb), NULL);
 
 	purple_signal_connect(pidgin_conversations_get_handle(),
 		"conversation-dragging", plugin,
 		PURPLE_CALLBACK(set_conv_window_trans), NULL);
+
+	purple_signal_connect(purple_conversations_get_handle(),
+		"conversation-updated", plugin,
+		PURPLE_CALLBACK(conv_updated_cb), NULL);
 
 	update_existing_convs();
 
@@ -531,7 +551,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 
 	/* IM Convo trans options */
 	imtransbox = pidgin_make_frame(ret, _("IM Conversation Windows"));
-	button = wpurple_button(_("_IM window transparency"),
+	button = pidgin_prefs_checkbox(_("_IM window transparency"),
 		OPT_WINTRANS_IM_ENABLED, imtransbox);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
 		GTK_SIGNAL_FUNC(update_convs_wintrans),
@@ -545,7 +565,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	g_signal_connect(GTK_OBJECT(button), "clicked",
 		GTK_SIGNAL_FUNC(pidgin_toggle_sensitive), trans_box);
 
-	button = wpurple_button(_("_Show slider bar in IM window"),
+	button = pidgin_prefs_checkbox(_("_Show slider bar in IM window"),
 		OPT_WINTRANS_IM_SLIDER, trans_box);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
 		GTK_SIGNAL_FUNC(update_convs_wintrans),
@@ -555,7 +575,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 		_("Remove IM window transparency on focus"),
 		OPT_WINTRANS_IM_ONFOCUS, trans_box);
 
-	button = wpurple_button(_("Always on top"), OPT_WINTRANS_IM_ONTOP,
+	button = pidgin_prefs_checkbox(_("Always on top"), OPT_WINTRANS_IM_ONTOP,
 		trans_box);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
 		GTK_SIGNAL_FUNC(update_convs_wintrans),
@@ -588,7 +608,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 
 	/* Buddy List trans options */
 	bltransbox = pidgin_make_frame (ret, _("Buddy List Window"));
-	button = wpurple_button(_("_Buddy List window transparency"),
+	button = pidgin_prefs_checkbox(_("_Buddy List window transparency"),
 		OPT_WINTRANS_BL_ENABLED, bltransbox);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
 		GTK_SIGNAL_FUNC(set_blist_trans),
@@ -603,7 +623,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	button = pidgin_prefs_checkbox(
 		_("Remove Buddy List window transparency on focus"),
 		OPT_WINTRANS_BL_ONFOCUS, trans_box);
-	button = wpurple_button(_("Always on top"), OPT_WINTRANS_BL_ONTOP,
+	button = pidgin_prefs_checkbox(_("Always on top"), OPT_WINTRANS_BL_ONTOP,
 		trans_box);
 	g_signal_connect(GTK_OBJECT(button), "clicked",
 		GTK_SIGNAL_FUNC(set_blist_trans),

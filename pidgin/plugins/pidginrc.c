@@ -27,49 +27,49 @@
 
 static guint pref_callback;
 
-static const char *color_prefs[] = {
+static const gchar *color_prefs[] = {
 	"/plugins/gtk/purplerc/color/GtkWidget::cursor-color",
 	"/plugins/gtk/purplerc/color/GtkWidget::secondary-cursor-color",
 	"/plugins/gtk/purplerc/color/GtkIMHtml::hyperlink-color"
 };
-static const char *color_prefs_set[] = {
+static const gchar *color_prefs_set[] = {
 	"/plugins/gtk/purplerc/set/color/GtkWidget::cursor-color",
 	"/plugins/gtk/purplerc/set/color/GtkWidget::secondary-cursor-color",
 	"/plugins/gtk/purplerc/set/color/GtkIMHtml::hyperlink-color"
 };
-static const char *color_names[] = {
+static const gchar *color_names[] = {
 	N_("Cursor Color"),
 	N_("Secondary Cursor Color"),
 	N_("Hyperlink Color")
 };
 static GtkWidget *color_widgets[G_N_ELEMENTS(color_prefs)];
 
-static const char *widget_size_prefs[] = {
+static const gchar *widget_size_prefs[] = {
 	"/plugins/gtk/purplerc/size/GtkTreeView::horizontal_separator"
 };
-static const char *widget_size_prefs_set[] = {
+static const gchar *widget_size_prefs_set[] = {
 	"/plugins/gtk/purplerc/set/size/GtkTreeView::horizontal_separator"
 };
-static const char *widget_size_names[] = {
+static const gchar *widget_size_names[] = {
 	N_("GtkTreeView Horizontal Separation")
 };
 static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
 
-static const char *font_prefs[] = {
+static const gchar *font_prefs[] = {
 	"/plugins/gtk/purplerc/font/*pidgin_conv_entry",
 	"/plugins/gtk/purplerc/font/*pidgin_conv_imhtml",
 	"/plugins/gtk/purplerc/font/*pidgin_log_imhtml",
 	"/plugins/gtk/purplerc/font/*pidgin_request_imhtml",
 	"/plugins/gtk/purplerc/font/*pidgin_notify_imhtml",
 };
-static const char *font_prefs_set[] = {
+static const gchar *font_prefs_set[] = {
 	"/plugins/gtk/purplerc/set/font/*pidgin_conv_entry",
 	"/plugins/gtk/purplerc/set/font/*pidgin_conv_imhtml",
 	"/plugins/gtk/purplerc/set/font/*pidgin_log_imhtml",
 	"/plugins/gtk/purplerc/set/font/*pidgin_request_imhtml",
 	"/plugins/gtk/purplerc/set/font/*pidgin_notify_imhtml",
 };
-static const char *font_names[] = {
+static const gchar *font_names[] = {
 	N_("Conversation Entry"),
 	N_("Conversation History"),
 	N_("Log Viewer"),
@@ -79,53 +79,56 @@ static const char *font_names[] = {
 static GtkWidget *font_widgets[G_N_ELEMENTS(font_prefs)];
 
 /*
-static const char *widget_bool_prefs[] = {
+static const gchar *widget_bool_prefs[] = {
 };
-static const char *widget_bool_prefs_set[] = {
+static const gchar *widget_bool_prefs_set[] = {
 };
-static const char *widget_bool_names[] = {
+static const gchar *widget_bool_names[] = {
 };
 static GtkWidget *widget_bool_widgets[G_N_ELEMENTS(widget_bool_prefs)];
 */
 
-static void
-purplerc_make_changes()
+static GString *
+make_gtkrc_string()
 {
-	int i;
-	char *prefbase = NULL;
-#if GTK_CHECK_VERSION(2,4,0)
-	GtkSettings *setting = NULL;
-#endif
+	gint i;
+	gchar *prefbase = NULL;
 	GString *style_string = g_string_new("");
 
 	if (purple_prefs_get_bool("/plugins/gtk/purplerc/set/gtk-font-name")) {
-		const char *pref = purple_prefs_get_string("/plugins/gtk/purplerc/gtk-font-name");
+		const gchar *pref = purple_prefs_get_string("/plugins/gtk/purplerc/gtk-font-name");
 
-		if (pref != NULL && strcmp(pref, ""))
-			g_string_append_printf(style_string, "gtk-font-name = \"%s\"\n", pref);
+		if (pref != NULL && strcmp(pref, "")) {
+			g_string_append_printf(style_string,
+			                       "gtk-font-name = \"%s\"\n",
+			                       pref);
+		}
 	}
 
 	if (purple_prefs_get_bool("/plugins/gtk/purplerc/set/gtk-key-theme-name")) {
-		const char *pref = purple_prefs_get_string("/plugins/gtk/purplerc/gtk-key-theme-name");
+		const gchar *pref = purple_prefs_get_string("/plugins/gtk/purplerc/gtk-key-theme-name");
 
-		if (pref != NULL && strcmp(pref, ""))
-			g_string_append_printf(style_string, "gtk-key-theme-name = \"%s\"\n", pref);
+		if (pref != NULL && strcmp(pref, "")) {
+			g_string_append_printf(style_string,
+			                       "gtk-key-theme-name = \"%s\"\n",
+			                       pref);
+		}
 	}
 
-	g_string_append(style_string, "style \"purplerc_style\" {\n");
+	g_string_append(style_string, "style \"purplerc_style\"\n{");
 
 	for (i = 0; i < G_N_ELEMENTS(color_prefs); i++) {
 		if (purple_prefs_get_bool(color_prefs_set[i])) {
-			const char *pref;
+			const gchar *pref;
 
-			prefbase = g_path_get_basename(color_prefs[i]);
 			pref = purple_prefs_get_string(color_prefs[i]);
-
-			if (pref != NULL && strcmp(pref, ""))
-			    g_string_append_printf(style_string,
-			                           "%s = \"%s\"\n",
-			                           prefbase, pref);
-			g_free(prefbase);
+			if (pref != NULL && strcmp(pref, "")) {
+				prefbase = g_path_get_basename(color_prefs[i]);
+				g_string_append_printf(style_string,
+				                       "\n\t%s = \"%s\"",
+				                       prefbase, pref);
+				g_free(prefbase);
+			}
 		}
 	}
 
@@ -133,7 +136,7 @@ purplerc_make_changes()
 		if (purple_prefs_get_bool(widget_size_prefs_set[i])) {
 			prefbase = g_path_get_basename(widget_size_prefs[i]);
 			g_string_append_printf(style_string,
-			                       "%s = %d\n", prefbase,
+			                       "\n\t%s = %d", prefbase,
 			                       purple_prefs_get_int(widget_size_prefs[i]));
 			g_free(prefbase);
 		}
@@ -144,37 +147,47 @@ purplerc_make_changes()
 		if (purple_prefs_get_bool(widget_bool_prefs_set[i])) {
 			prefbase = g_path_get_basename(widget_bool_prefs[i]);
 			g_string_append_printf(style_string,
-			                       "%s = %d\n", prefbase,
+			                       "\t%s = %d\n", prefbase,
 			                       purple_prefs_get_bool(widget_bool_prefs[i]));
 			g_free(prefbase);
 		}
 	}
 	*/
 
-	g_string_append(style_string, "}");
-	g_string_append(style_string, "widget_class \"*\" style \"purplerc_style\"\n");
+	g_string_append(style_string, "\n}\nwidget_class \"*\" style \"purplerc_style\"\n");
 
 	for (i = 0; i < G_N_ELEMENTS(font_prefs); i++) {
 		if (purple_prefs_get_bool(font_prefs_set[i])) {
-			const char *pref;
+			const gchar *pref;
 
-			prefbase = g_path_get_basename(font_prefs[i]);
 			pref = purple_prefs_get_string(font_prefs[i]);
-
-			if (pref != NULL && strcmp(pref, ""))
+			if (pref != NULL && strcmp(pref, "")) {
+				prefbase = g_path_get_basename(font_prefs[i]);
 				g_string_append_printf(style_string,
-				                       "style \"%s_style\"\n"
-				                       "{font_name = \"%s\"}\n"
-				                       "widget \"%s\" "
+				                       "style \"%s_style\"\n{\n"
+				                       "\tfont_name = \"%s\"\n}"
+				                       "\nwidget \"%s\" "
 				                       "style \"%s_style\"\n",
 				                       prefbase, pref,
 				                       prefbase, prefbase);
-			g_free(prefbase);
+				g_free(prefbase);
+			}
 		}
 	}
 
-	gtk_rc_parse_string(style_string->str);
-	g_string_free(style_string, TRUE);
+	return style_string;
+}
+
+static void
+purplerc_make_changes()
+{
+	GString *str = make_gtkrc_string();
+#if GTK_CHECK_VERSION(2,4,0)
+	GtkSettings *setting = NULL;
+#endif
+
+	gtk_rc_parse_string(str->str);
+	g_string_free(str, TRUE);
 
 #if GTK_CHECK_VERSION(2,4,0)
 	setting = gtk_settings_get_default();
@@ -185,92 +198,10 @@ purplerc_make_changes()
 static void
 purplerc_write(GtkWidget *widget, gpointer data)
 {
-	int i;
-	GString *style_string = g_string_new("");
-	char *prefbase = NULL;
-
-	if (purple_prefs_get_bool("/plugins/gtk/purplerc/set/gtk-font-name")) {
-		const char *pref = purple_prefs_get_string("/plugins/gtk/purplerc/gtk-font-name");
-
-		if (pref != NULL && strcmp(pref, ""))
-			g_string_append_printf(style_string,
-			                       "gtk-font-name = \"%s\"\n",
-			                       pref);
-	}
-
-	if (purple_prefs_get_bool("/plugins/gtk/purplerc/set/gtk-key-theme-name")) {
-		const char *pref = purple_prefs_get_string("/plugins/gtk/purplerc/gtk-key-theme-name");
-
-		if (pref != NULL && strcmp(pref, ""))
-			g_string_append_printf(style_string,
-			                       "gtk-key-theme-name = \"%s\"\n",
-			                       pref);
-	}
-
-	g_string_append(style_string, "style \"purplerc_style\" {\n");
-
-	for (i = 0; i < G_N_ELEMENTS(color_prefs); i++) {
-		if (purple_prefs_get_bool(color_prefs_set[i])) {
-			const char *pref;
-
-			prefbase = g_path_get_basename(color_prefs[i]);
-			pref = purple_prefs_get_string(color_prefs[i]);
-
-			if (pref != NULL && strcmp(pref, ""))
-			    g_string_append_printf(style_string,
-			                           "%s = \"%s\"\n",
-			                           prefbase, pref);
-			g_free(prefbase);
-		}
-	}
-
-	for (i = 0; i < G_N_ELEMENTS(widget_size_prefs); i++) {
-		if (purple_prefs_get_bool(widget_size_prefs_set[i])) {
-			prefbase = g_path_get_basename(widget_size_prefs[i]);
-			g_string_append_printf(style_string,
-			                       "%s = %d\n", prefbase,
-			                       purple_prefs_get_int(widget_size_prefs[i]));
-			g_free(prefbase);
-		}
-	}
-
-	/*
-	for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-		if (purple_prefs_get_bool(widget_bool_prefs_set[i])) {
-			prefbase = g_path_get_basename(widget_bool_prefs[i]);
-			g_string_append_printf(style_string,
-			                       "%s = %d\n", prefbase,
-			                       purple_prefs_get_bool(widget_bool_prefs[i]));
-			g_free(prefbase);
-		}
-	}
-	*/
-
-	g_string_append(style_string, "}");
-	g_string_append(style_string, "widget_class \"*\" style \"purplerc_style\"\n");
-
-	for (i = 0; i < G_N_ELEMENTS(font_prefs); i++) {
-		if (purple_prefs_get_bool(font_prefs_set[i])) {
-			const char *pref;
-
-			prefbase = g_path_get_basename(font_prefs[i]);
-			pref = purple_prefs_get_string(font_prefs[i]);
-
-			if (pref != NULL && strcmp(pref, ""))
-				g_string_append_printf(style_string,
-				                       "style \"%s_style\"\n"
-				                       "{font_name = \"%s\"}\n"
-				                       "widget \"%s\" "
-				                       "style \"%s_style\"\n",
-				                       prefbase, pref,
-				                       prefbase, prefbase);
-			g_free(prefbase);
-		}
-	}
-
-	purple_util_write_data_to_file("gtkrc-2.0", style_string->str, -1);
-
-	g_string_free(style_string, TRUE);
+	GString *str = make_gtkrc_string();
+	str = g_string_prepend(str, "# This file automatically written by the Pidgin GTK+ Theme Control plugin.\n# Any changes to this file will be overwritten by the plugin when told to\n# write the settings again.\n# The FAQ (http://developer.pidgin.im/wiki/FAQ) contains some further examples\n# of possible pidgin gtkrc settings.\n");
+	purple_util_write_data_to_file("gtkrc-2.0", str->str, -1);
+	g_string_free(str, TRUE);
 }
 
 static void
@@ -283,7 +214,7 @@ purplerc_reread(GtkWidget *widget, gpointer data)
 
 static void
 purplerc_pref_changed_cb(const char *name, PurplePrefType type,
-                       gconstpointer value, gpointer data)
+                         gconstpointer value, gpointer data)
 {
 	purplerc_make_changes();
 }
@@ -291,12 +222,12 @@ purplerc_pref_changed_cb(const char *name, PurplePrefType type,
 static void
 purplerc_color_response(GtkDialog *color_dialog, gint response, gpointer data)
 {
-	int subscript = GPOINTER_TO_INT(data);
+	gint subscript = GPOINTER_TO_INT(data);
 
 	if (response == GTK_RESPONSE_OK) {
-		GtkWidget *colorsel = GTK_COLOR_SELECTION_DIALOG(color_dialog)->colorsel;
 		GdkColor color;
-		char colorstr[8];
+		gchar colorstr[8];
+		GtkWidget *colorsel = GTK_COLOR_SELECTION_DIALOG(color_dialog)->colorsel;
 
 		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(colorsel), &color);
 
@@ -311,11 +242,11 @@ purplerc_color_response(GtkDialog *color_dialog, gint response, gpointer data)
 static void
 purplerc_set_color(GtkWidget *widget, gpointer data)
 {
-	GtkWidget *color_dialog = NULL;
 	GdkColor color;
-	char title[128];
-	const char *pref = NULL;
-	int subscript = GPOINTER_TO_INT(data);
+	gchar title[128];
+	const gchar *pref = NULL;
+	GtkWidget *color_dialog = NULL;
+	gint subscript = GPOINTER_TO_INT(data);
 
 	g_snprintf(title, sizeof(title), _("Select Color for %s"),
 	           _(color_names[GPOINTER_TO_INT(data)]));
@@ -337,14 +268,21 @@ purplerc_set_color(GtkWidget *widget, gpointer data)
 static void
 purplerc_font_response(GtkDialog *font_dialog, gint response, gpointer data)
 {
-	int subscript = GPOINTER_TO_INT(data);
+	const gchar *prefpath;
+	gint subscript = GPOINTER_TO_INT(data);
 
 	if (response == GTK_RESPONSE_OK) {
-		char *fontname = NULL;
+		gchar *fontname = NULL;
+
+		if (subscript == -1) {
+			prefpath = "/plugins/gtk/purplerc/gtk-font-name";
+		} else {
+			prefpath = font_prefs[subscript];
+		}
 
 		fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(font_dialog));
 
-		purple_prefs_set_string(font_prefs[subscript], fontname);
+		purple_prefs_set_string(prefpath, fontname);
 		g_free(fontname);
 	}
 	gtk_widget_destroy(GTK_WIDGET(font_dialog));
@@ -353,53 +291,25 @@ purplerc_font_response(GtkDialog *font_dialog, gint response, gpointer data)
 static void
 purplerc_set_font(GtkWidget *widget, gpointer data)
 {
+	gchar title[128];
 	GtkWidget *font_dialog = NULL;
-	char title[128];
-	const char *pref = NULL;
-	int subscript = GPOINTER_TO_INT(data);
+	gint subscript = GPOINTER_TO_INT(data);
+	const gchar *pref = NULL, *prefpath = NULL;
 
-	g_snprintf(title, sizeof(title), _("Select Font for %s"),
-	           _(font_names[subscript]));
+	if (subscript == -1) {
+		g_snprintf(title, sizeof(title), _("Select Interface Font"));
+		prefpath = "/plugins/gtk/purplerc/gtk-font-name";
+	} else {
+		g_snprintf(title, sizeof(title), _("Select Font for %s"),
+		           _(font_names[subscript]));
+		prefpath = font_prefs[subscript];
+	}
+
 	font_dialog = gtk_font_selection_dialog_new(title);
 	g_signal_connect(G_OBJECT(font_dialog), "response",
 	                 G_CALLBACK(purplerc_font_response), data);
 
-	pref = purple_prefs_get_string(font_prefs[subscript]);
-
-	if (pref != NULL && strcmp(pref, "")) {
-		gtk_font_selection_set_font_name(GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(font_dialog)->fontsel), pref);
-	}
-
-	gtk_window_present(GTK_WINDOW(font_dialog));
-}
-
-static void
-purplerc_font_response_special(GtkDialog *font_dialog, gint response,
-                             gpointer data)
-{
-	if (response == GTK_RESPONSE_OK) {
-		char *fontname = NULL;
-
-		fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(font_dialog));
-
-		purple_prefs_set_string("/plugins/gtk/purplerc/gtk-font-name",
-		                      fontname);
-		g_free(fontname);
-	}
-	gtk_widget_destroy(GTK_WIDGET(font_dialog));
-}
-
-static void
-purplerc_set_font_special(GtkWidget *widget, gpointer data)
-{
-	GtkWidget *font_dialog = NULL;
-	const char *pref = NULL;
-
-	font_dialog = gtk_font_selection_dialog_new(_("Select Interface Font"));
-	g_signal_connect(G_OBJECT(font_dialog), "response",
-	                 G_CALLBACK(purplerc_font_response_special), NULL);
-
-	pref = purple_prefs_get_string("/plugins/gtk/purplerc/gtk-font-name");
+	pref = purple_prefs_get_string(prefpath);
 
 	if (pref != NULL && strcmp(pref, "")) {
 		gtk_font_selection_set_font_name(GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(font_dialog)->fontsel), pref);
@@ -413,8 +323,10 @@ purplerc_plugin_load(PurplePlugin *plugin)
 {
 	purplerc_make_changes();
 
-	pref_callback = purple_prefs_connect_callback(plugin, "/plugins/gtk/purplerc",
-	                                            purplerc_pref_changed_cb, NULL);
+	pref_callback = purple_prefs_connect_callback(plugin,
+	                                              "/plugins/gtk/purplerc",
+	                                              purplerc_pref_changed_cb,
+	                                              NULL);
 
 	return TRUE;
 }
@@ -433,17 +345,23 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 	/* Note: Intentionally not using the size group argument to the
 	 * pidgin_prefs_labeled_* functions they only add the text label to
 	 * the size group not the whole thing, which isn't what I want. */
-	int i;
-	char *tmp;
+	gint i;
+	gchar *tmp;
 	GtkWidget *check = NULL, *widget = NULL;
-	GtkSizeGroup *labelsg = NULL, *widgetsg = NULL;
-	GtkWidget *ret = NULL, *frame = NULL, *hbox = NULL, *vbox = NULL;
+	GtkWidget *ret = NULL, *hbox = NULL, *frame = NULL;
+	GtkSizeGroup *labelsg = NULL, *widgetsg = NULL, *buttonsg = NULL;
+#ifndef _WIN32
+	const gchar *homepath = "$HOME";
+#else
+	const gchar *homepath = "\%APPDATA\%";
+#endif
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 
 	labelsg  = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	widgetsg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	buttonsg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	frame = pidgin_make_frame(ret, _("General"));
 	/* interface font */
@@ -451,12 +369,12 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 	check = pidgin_prefs_checkbox(_("GTK+ Interface Font"),
-	                                "/plugins/gtk/purplerc/set/gtk-font-name",
-	                                hbox);
+	                              "/plugins/gtk/purplerc/set/gtk-font-name",
+	                              hbox);
 	gtk_size_group_add_widget(labelsg, check);
 
 	widget = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_FONT,
-	                                       PIDGIN_BUTTON_HORIZONTAL);
+	                                         PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(widgetsg, widget);
 	gtk_widget_set_sensitive(widget,
@@ -464,20 +382,20 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 	g_signal_connect(G_OBJECT(check), "toggled",
 	                 G_CALLBACK(pidgin_toggle_sensitive), widget);
 	g_signal_connect(G_OBJECT(widget), "clicked",
-	                 G_CALLBACK(purplerc_set_font_special), NULL);
+	                 G_CALLBACK(purplerc_set_font), GINT_TO_POINTER(-1));
 
 	/* key theme name */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 	check = pidgin_prefs_checkbox(_("GTK+ Text Shortcut Theme"),
-	                                "/plugins/gtk/purplerc/set/gtk-key-theme-name",
-	                                hbox);
+	                              "/plugins/gtk/purplerc/set/gtk-key-theme-name",
+	                              hbox);
 	gtk_size_group_add_widget(labelsg, check);
 
 	widget = pidgin_prefs_labeled_entry(hbox, "",
-	                                      "/plugins/gtk/purplerc/gtk-key-theme-name",
-	                                      NULL);
+	                                    "/plugins/gtk/purplerc/gtk-key-theme-name",
+	                                    NULL);
 	/*
 	gtk_size_group_add_widget(widgetsg, widget);
 	*/
@@ -492,7 +410,7 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 		check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
-		                                widget_bool_prefs_set[i], hbox);
+		                              widget_bool_prefs_set[i], hbox);
 		gtk_size_group_add_widget(labelsg, check);
 
 		widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
@@ -514,7 +432,7 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 		check = pidgin_prefs_checkbox(_(color_names[i]),
-		                                color_prefs_set[i], hbox);
+		                              color_prefs_set[i], hbox);
 		gtk_size_group_add_widget(labelsg, check);
 
 		color_widgets[i] = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_COLOR, PIDGIN_BUTTON_HORIZONTAL);
@@ -538,7 +456,7 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 		check = pidgin_prefs_checkbox(_(widget_size_names[i]),
-		                                widget_size_prefs_set[i], hbox);
+		                              widget_size_prefs_set[i], hbox);
 		gtk_size_group_add_widget(labelsg, check);
 
 		widget_size_widgets[i] = pidgin_prefs_labeled_spin_button(hbox, "", widget_size_prefs[i], 0, 50, NULL);
@@ -559,7 +477,7 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 		check = pidgin_prefs_checkbox(_(font_names[i]),
-		                                font_prefs_set[i], hbox);
+		                              font_prefs_set[i], hbox);
 		gtk_size_group_add_widget(labelsg, check);
 
 		font_widgets[i] = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_FONT, PIDGIN_BUTTON_HORIZONTAL);
@@ -572,27 +490,29 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 		                 G_CALLBACK(pidgin_toggle_sensitive),
 		                 font_widgets[i]);
 		g_signal_connect(G_OBJECT(font_widgets[i]), "clicked",
-		                 G_CALLBACK(purplerc_set_font), GINT_TO_POINTER(i));
+		                 G_CALLBACK(purplerc_set_font),
+		                 GINT_TO_POINTER(i));
 	}
 
-	frame = pidgin_make_frame(ret, _("Tools"));
+	frame = pidgin_make_frame(ret, _("Gtkrc File Tools"));
 
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
-	gtk_box_pack_start(GTK_BOX(frame), vbox, FALSE, FALSE, 0);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
-	tmp = g_strdup_printf(_("Write settings to %s%sgtkrc-2.0"), purple_user_dir(), G_DIR_SEPARATOR_S);
+	tmp = g_strdup_printf(_("Write settings to %s%sgtkrc-2.0"),
+	                      homepath, G_DIR_SEPARATOR_S);
 	check = gtk_button_new_with_label(tmp);
 	g_free(tmp);
-	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(labelsg, check);
-	g_signal_connect(G_OBJECT(check), "clicked", G_CALLBACK(purplerc_write),
-	                 NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), check, FALSE, FALSE, 0);
+	gtk_size_group_add_widget(buttonsg, check);
+	g_signal_connect(G_OBJECT(check), "clicked",
+	                 G_CALLBACK(purplerc_write), NULL);
 
 	check = gtk_button_new_with_label(_("Re-read gtkrc files"));
-	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(labelsg, check);
-	g_signal_connect(G_OBJECT(check), "clicked", G_CALLBACK(purplerc_reread),
-	                 NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), check, FALSE, FALSE, 0);
+	gtk_size_group_add_widget(buttonsg, check);
+	g_signal_connect(G_OBJECT(check), "clicked",
+	                 G_CALLBACK(purplerc_reread), NULL);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -645,7 +565,7 @@ static PurplePluginInfo purplerc_info =
 static void
 purplerc_init(PurplePlugin *plugin)
 {
-	int i;
+	gint i;
 
 	purple_prefs_add_none("/plugins");
 	purple_prefs_add_none("/plugins/gtk");

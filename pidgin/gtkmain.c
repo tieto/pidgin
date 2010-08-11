@@ -316,6 +316,8 @@ pidgin_ui_init(void)
 	pidgin_docklet_init();
 }
 
+static GHashTable *ui_info = NULL;
+
 static void
 pidgin_quit(void)
 {
@@ -337,8 +339,23 @@ pidgin_quit(void)
 	pidgin_xfers_uninit();
 	pidgin_debug_uninit();
 
+	if(NULL != ui_info)
+		g_hash_table_destroy(ui_info);
+
 	/* and end it all... */
 	gtk_main_quit();
+}
+
+static GHashTable *pidgin_ui_get_info()
+{
+	if(NULL == ui_info) {
+		ui_info = g_hash_table_new(g_str_hash, g_str_equal);
+
+		g_hash_table_insert(ui_info, "name", (char*)PIDGIN_NAME);
+		g_hash_table_insert(ui_info, "version", VERSION);
+	}
+
+	return ui_info;
 }
 
 static PurpleCoreUiOps core_ops =
@@ -347,7 +364,7 @@ static PurpleCoreUiOps core_ops =
 	debug_init,
 	pidgin_ui_init,
 	pidgin_quit,
-	NULL,
+	pidgin_ui_get_info,
 	NULL,
 	NULL,
 	NULL
@@ -372,6 +389,7 @@ show_usage(const char *name, gboolean terse)
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
 		       "  -h, --help          display this help and exit\n"
+		       "  -m, --multiple      do not ensure single instance\n"
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use, separated by commas)\n"
@@ -431,6 +449,7 @@ int main(int argc, char *argv[])
 	gboolean opt_login = FALSE;
 	gboolean opt_nologin = FALSE;
 	gboolean opt_version = FALSE;
+	gboolean opt_si = TRUE;     /* Check for single instance? */
 	char *opt_config_dir_arg = NULL;
 	char *opt_login_arg = NULL;
 	char *opt_session_arg = NULL;
@@ -450,12 +469,14 @@ int main(int argc, char *argv[])
 	gboolean gui_check;
 	gboolean debug_enabled;
 	gboolean migration_failed = FALSE;
+	GList *active_accounts;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},
 		{"debug",    no_argument,       NULL, 'd'},
 		{"help",     no_argument,       NULL, 'h'},
 		{"login",    optional_argument, NULL, 'l'},
+		{"multiple", no_argument,       NULL, 'm'},
 		{"nologin",  no_argument,       NULL, 'n'},
 		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
@@ -470,7 +491,7 @@ int main(int argc, char *argv[])
 
 	/* This is the first Glib function call. Make sure to initialize GThread bfeore then */
 	g_thread_init(NULL);
-	
+
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
@@ -492,7 +513,7 @@ int main(int argc, char *argv[])
 			"no fault of your own.\n\n"
 			"If you can reproduce the crash, please notify the developers\n"
 			"by reporting a bug at:\n"
-			"%snewticket/\n\n"
+			"%ssimpleticket/\n\n"
 			"Please make sure to specify what you were doing at the time\n"
 			"and post the backtrace from the core file.  If you do not know\n"
 			"how to get the backtrace, please read the instructions at\n"
@@ -569,7 +590,7 @@ int main(int argc, char *argv[])
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "c:dhnl::s:v",
+				  "c:dhmnl::s:v",
 #else
 				  "c:dhnl::v",
 #endif
@@ -600,6 +621,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'v':	/* version */
 			opt_version = TRUE;
+			break;
+		case 'm':   /* do not ensure single instance. */
+			opt_si = FALSE;
 			break;
 		case '?':	/* show terse help */
 		default:
@@ -670,6 +694,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	g_set_application_name(_("Pidgin"));
+
 #ifdef _WIN32
 	winpidgin_init(hint);
 #endif
@@ -726,6 +752,15 @@ int main(int argc, char *argv[])
 #endif
 		abort();
 	}
+
+	if (opt_si && !purple_core_ensure_single_instance()) {
+		purple_core_quit();
+#ifdef HAVE_SIGNAL_H
+		g_free(segfault_message);
+#endif
+		return 0;
+	}
+		
 
 	/* TODO: Move blist loading into purple_blist_init() */
 	purple_set_blist(purple_blist_new());
@@ -822,13 +857,13 @@ int main(int argc, char *argv[])
 		purple_accounts_restore_current_statuses();
 	}
 
-	if ((accounts = purple_accounts_get_all_active()) == NULL)
+	if ((active_accounts = purple_accounts_get_all_active()) == NULL)
 	{
 		pidgin_accounts_window_show();
 	}
 	else
 	{
-		g_list_free(accounts);
+		g_list_free(active_accounts);
 	}
 
 #ifdef HAVE_STARTUP_NOTIFICATION

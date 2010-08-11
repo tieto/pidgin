@@ -1,3 +1,29 @@
+/**
+ * @file gntmenuitem.h Menuitem API
+ * @ingroup gnt
+ */
+/*
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #ifndef GNT_MENUITEM_H
 #define GNT_MENUITEM_H
 
@@ -26,6 +52,7 @@ struct _GntMenuItemPriv
 	/* These will be used to determine the position of the submenu */
 	int x;
 	int y;
+	char trigger;
 };
 
 typedef void (*GntMenuItemCallback)(GntMenuItem *item, gpointer data);
@@ -58,13 +85,54 @@ struct _GntMenuItemClass
 
 G_BEGIN_DECLS
 
+/**
+ * 
+ *
+ * @return
+ */
 GType gnt_menuitem_get_gtype(void);
 
-GntMenuItem *gnt_menuitem_new(const char *text);
+/**
+ * 
+ * @param text
+ *
+ * @return
+ */
+GntMenuItem * gnt_menuitem_new(const char *text);
 
+/**
+ * 
+ * @param item
+ * @param callback
+ * @param data
+ */
 void gnt_menuitem_set_callback(GntMenuItem *item, GntMenuItemCallback callback, gpointer data);
 
+/**
+ * 
+ * @param item
+ * @param menu
+ */
 void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu);
+
+/**
+ * Set a trigger key for the item.
+ *
+ * @param item     The menuitem
+ * @param trigger  The key that will trigger the item when the parent manu is visible
+ */
+void gnt_menuitem_set_trigger(GntMenuItem *item, char trigger);
+
+/**
+ * Get the trigger key for a menuitem.
+ *
+ * @param item   The menuitem
+ *
+ * @return The trigger key for the menuitem.
+ *
+ * @see gnt_menuitem_set_trigger
+ */
+char gnt_menuitem_get_trigger(GntMenuItem *item);
 
 G_END_DECLS
 

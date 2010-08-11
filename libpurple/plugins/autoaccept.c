@@ -178,7 +178,8 @@ context_menu(PurpleBlistNode *node, GList **menu, gpointer plugin)
 {
 	PurpleMenuAction *action;
 
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node) && !PURPLE_BLIST_NODE_IS_CONTACT(node))
+	if (!PURPLE_BLIST_NODE_IS_BUDDY(node) && !PURPLE_BLIST_NODE_IS_CONTACT(node) &&
+		!(purple_blist_node_get_flags(node) & PURPLE_BLIST_NODE_FLAG_NO_SAVE))
 		return;
 
 	action = purple_menu_action_new(_("Autoaccept File Transfers..."),

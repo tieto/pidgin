@@ -26,12 +26,14 @@ libgnt_la_SOURCES = \
 	gntmenu.c \
 	gntmenuitem.c \
 	gntmenuitemcheck.c \
+	gntslider.c \
 	gntstyle.c \
 	gnttextview.c \
 	gnttree.c \
 	gntutils.c \
 	gntwindow.c \
 	gntwm.c \
+	gntws.c \
 	gntmain.c
 
 libgnt_la_headers = \
@@ -52,12 +54,14 @@ libgnt_la_headers = \
 	gntmenu.h \
 	gntmenuitem.h \
 	gntmenuitemcheck.h \
+	gntslider.h \
 	gntstyle.h \
 	gnttextview.h \
 	gnttree.h \
 	gntutils.h \
 	gntwindow.h \
 	gntwm.h \
+	gntws.h \
 	gnt.h
 
 CLEANFILES = \

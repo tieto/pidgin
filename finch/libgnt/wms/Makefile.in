@@ -57,6 +57,10 @@ am__installdirs = "$(DESTDIR)$(plugindir)"
 pluginLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 am__DEPENDENCIES_1 =
+irssi_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(top_builddir)/finch/libgnt/libgnt.la
+am_irssi_la_OBJECTS = irssi.lo
+irssi_la_OBJECTS = $(am_irssi_la_OBJECTS)
 s_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(top_builddir)/finch/libgnt/libgnt.la \
 	$(top_builddir)/libpurple/libpurple.la
@@ -73,8 +77,8 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(s_la_SOURCES)
-DIST_SOURCES = $(s_la_SOURCES)
+SOURCES = $(irssi_la_SOURCES) $(s_la_SOURCES)
+DIST_SOURCES = $(irssi_la_SOURCES) $(s_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -186,6 +190,7 @@ GNT_MINOR_VERSION = @GNT_MINOR_VERSION@
 GNT_VERSION = @GNT_VERSION@
 GNUTLS_CFLAGS = @GNUTLS_CFLAGS@
 GNUTLS_LIBS = @GNUTLS_LIBS@
+GREP = @GREP@
 GSTREAMER_CFLAGS = @GSTREAMER_CFLAGS@
 GSTREAMER_LIBS = @GSTREAMER_LIBS@
 GTKSPELL_CFLAGS = @GTKSPELL_CFLAGS@
@@ -252,6 +257,7 @@ MKINSTALLDIRS = @MKINSTALLDIRS@
 MONO_CFLAGS = @MONO_CFLAGS@
 MONO_LIBS = @MONO_LIBS@
 MSGFMT = @MSGFMT@
+MSGFMT_OPTS = @MSGFMT_OPTS@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
 OBJEXT = @OBJEXT@
@@ -281,7 +287,6 @@ PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SILC_CFLAGS = @SILC_CFLAGS@
@@ -346,6 +351,7 @@ VERSION = @VERSION@
 X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
 XGETTEXT = @XGETTEXT@
+XMKMF = @XMKMF@
 XSS_LIBS = @XSS_LIBS@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
@@ -354,13 +360,9 @@ X_PRE_LIBS = @X_PRE_LIBS@
 ZEPHYR_CFLAGS = @ZEPHYR_CFLAGS@
 ZEPHYR_LDFLAGS = @ZEPHYR_LDFLAGS@
 ZEPHYR_LIBS = @ZEPHYR_LIBS@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_F77 = @ac_ct_F77@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
-ac_pt_PKG_CONFIG = @ac_pt_PKG_CONFIG@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -377,6 +379,9 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 enable_dbus = @enable_dbus@
 enable_dot = @enable_dot@
 enable_doxygen = @enable_doxygen@
@@ -386,21 +391,25 @@ host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pango_CFLAGS = @pango_CFLAGS@
 pango_LIBS = @pango_LIBS@
+pdfdir = @pdfdir@
 perlpath = @perlpath@
 pidginpath = @pidginpath@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sedpath = @sedpath@
 sharedstatedir = @sharedstatedir@
@@ -411,10 +420,17 @@ target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
 s_la_LDFLAGS = -module -avoid-version
+irssi_la_LDFLAGS = -module -avoid-version
 plugin_LTLIBRARIES = \
-	s.la
+	s.la \
+	irssi.la
 
-plugindir = $(libdir)/finch
+plugindir = $(libdir)/gnt
+irssi_la_SOURCES = irssi.c
+irssi_la_LIBADD = \
+  $(GLIB_LIBS) \
+  $(top_builddir)/finch/libgnt/libgnt.la
+
 s_la_SOURCES = s.c
 s_la_LIBADD = \
   $(GLIB_LIBS) \
@@ -492,6 +508,8 @@ clean-pluginLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
+irssi.la: $(irssi_la_OBJECTS) $(irssi_la_DEPENDENCIES) 
+	$(LINK) -rpath $(plugindir) $(irssi_la_LDFLAGS) $(irssi_la_OBJECTS) $(irssi_la_LIBADD) $(LIBS)
 s.la: $(s_la_OBJECTS) $(s_la_DEPENDENCIES) 
 	$(LINK) -rpath $(plugindir) $(s_la_LDFLAGS) $(s_la_OBJECTS) $(s_la_LIBADD) $(LIBS)
 
@@ -501,6 +519,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/irssi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/s.Plo@am__quote@
 
 .c.o:

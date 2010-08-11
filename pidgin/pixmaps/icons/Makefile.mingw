@@ -11,7 +11,9 @@ install:
 install_real:
 	if test '$(SUBDIRS)'; then \
 	  list='$(SUBDIRS)'; for subdir in $$list; do \
+	  if [ "$$subdir" != "22" ]; then \
 	    $(MAKE) -C $$subdir -f Makefile.mingw install || exit 1; \
+	  fi; \
 	  done; \
 	fi;
 

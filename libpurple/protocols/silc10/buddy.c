@@ -1118,7 +1118,7 @@ static void
 silcpurple_add_buddy_select_cb(SilcPurpleBuddyRes r, PurpleRequestFields *fields)
 {
 	PurpleRequestField *f;
-	const GList *list;
+	GList *list;
 	SilcClientEntry client_entry;
 
 	f = purple_request_fields_get_field(fields, "list");
@@ -1246,7 +1246,7 @@ silcpurple_add_buddy_resolved(SilcClient client,
 			   buddy nickname. */
 			int i;
 			for (i = 0; i < clients_count; i++) {
-				if (!strncasecmp(b->name, clients[i]->nickname,
+				if (!g_ascii_strncasecmp(b->name, clients[i]->nickname,
 						 strlen(b->name))) {
 					clients[0] = clients[i];
 					break;

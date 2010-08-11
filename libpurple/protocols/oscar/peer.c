@@ -1019,7 +1019,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 						PURPLE_DEFAULT_ACTION_NONE,
 						account, sn, NULL,
 						conn, 2,
-						_("_Connect"), G_CALLBACK(peer_connection_got_proposition_yes_cb),
+						_("C_onnect"), G_CALLBACK(peer_connection_got_proposition_yes_cb),
 						_("Cancel"), G_CALLBACK(peer_connection_got_proposition_no_cb));
 	}
 	else if (args->type == OSCAR_CAPABILITY_SENDFILE)

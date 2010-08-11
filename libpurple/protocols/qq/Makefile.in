@@ -59,14 +59,13 @@ am__libqq_a_SOURCES_DIST = buddy_info.c buddy_info.h buddy_list.c \
 	group_conv.h group_find.c group_find.h group_free.c \
 	group_free.h group_internal.c group_internal.h group_im.c \
 	group_im.h group_info.c group_info.h group_join.c group_join.h \
-	group_misc.c group_misc.h group_network.c group_network.h \
-	group_opt.c group_opt.h group_search.c group_search.h \
-	header_info.c header_info.h im.c im.h keep_alive.c \
-	keep_alive.h login_logout.c login_logout.h packet_parse.c \
-	packet_parse.h qq.c qq.h qq_proxy.c qq_proxy.h recv_core.c \
-	recv_core.h send_core.c send_core.h send_file.c send_file.h \
-	sendqueue.c sendqueue.h sys_msg.c sys_msg.h udp_proxy_s5.c \
-	udp_proxy_s5.h utils.c utils.h
+	group_network.c group_network.h group_opt.c group_opt.h \
+	group_search.c group_search.h header_info.c header_info.h im.c \
+	im.h keep_alive.c keep_alive.h login_logout.c login_logout.h \
+	packet_parse.c packet_parse.h qq.c qq.h qq_proxy.c qq_proxy.h \
+	recv_core.c recv_core.h send_core.c send_core.h send_file.c \
+	send_file.h sendqueue.c sendqueue.h sys_msg.c sys_msg.h \
+	udp_proxy_s5.c udp_proxy_s5.h utils.c utils.h
 am__objects_1 = libqq_a-buddy_info.$(OBJEXT) \
 	libqq_a-buddy_list.$(OBJEXT) libqq_a-buddy_opt.$(OBJEXT) \
 	libqq_a-buddy_status.$(OBJEXT) libqq_a-char_conv.$(OBJEXT) \
@@ -75,15 +74,15 @@ am__objects_1 = libqq_a-buddy_info.$(OBJEXT) \
 	libqq_a-group_find.$(OBJEXT) libqq_a-group_free.$(OBJEXT) \
 	libqq_a-group_internal.$(OBJEXT) libqq_a-group_im.$(OBJEXT) \
 	libqq_a-group_info.$(OBJEXT) libqq_a-group_join.$(OBJEXT) \
-	libqq_a-group_misc.$(OBJEXT) libqq_a-group_network.$(OBJEXT) \
-	libqq_a-group_opt.$(OBJEXT) libqq_a-group_search.$(OBJEXT) \
-	libqq_a-header_info.$(OBJEXT) libqq_a-im.$(OBJEXT) \
-	libqq_a-keep_alive.$(OBJEXT) libqq_a-login_logout.$(OBJEXT) \
-	libqq_a-packet_parse.$(OBJEXT) libqq_a-qq.$(OBJEXT) \
-	libqq_a-qq_proxy.$(OBJEXT) libqq_a-recv_core.$(OBJEXT) \
-	libqq_a-send_core.$(OBJEXT) libqq_a-send_file.$(OBJEXT) \
-	libqq_a-sendqueue.$(OBJEXT) libqq_a-sys_msg.$(OBJEXT) \
-	libqq_a-udp_proxy_s5.$(OBJEXT) libqq_a-utils.$(OBJEXT)
+	libqq_a-group_network.$(OBJEXT) libqq_a-group_opt.$(OBJEXT) \
+	libqq_a-group_search.$(OBJEXT) libqq_a-header_info.$(OBJEXT) \
+	libqq_a-im.$(OBJEXT) libqq_a-keep_alive.$(OBJEXT) \
+	libqq_a-login_logout.$(OBJEXT) libqq_a-packet_parse.$(OBJEXT) \
+	libqq_a-qq.$(OBJEXT) libqq_a-qq_proxy.$(OBJEXT) \
+	libqq_a-recv_core.$(OBJEXT) libqq_a-send_core.$(OBJEXT) \
+	libqq_a-send_file.$(OBJEXT) libqq_a-sendqueue.$(OBJEXT) \
+	libqq_a-sys_msg.$(OBJEXT) libqq_a-udp_proxy_s5.$(OBJEXT) \
+	libqq_a-utils.$(OBJEXT)
 @STATIC_QQ_TRUE@am_libqq_a_OBJECTS = $(am__objects_1)
 libqq_a_OBJECTS = $(am_libqq_a_OBJECTS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -104,20 +103,19 @@ am__libqq_la_SOURCES_DIST = buddy_info.c buddy_info.h buddy_list.c \
 	group_conv.h group_find.c group_find.h group_free.c \
 	group_free.h group_internal.c group_internal.h group_im.c \
 	group_im.h group_info.c group_info.h group_join.c group_join.h \
-	group_misc.c group_misc.h group_network.c group_network.h \
-	group_opt.c group_opt.h group_search.c group_search.h \
-	header_info.c header_info.h im.c im.h keep_alive.c \
-	keep_alive.h login_logout.c login_logout.h packet_parse.c \
-	packet_parse.h qq.c qq.h qq_proxy.c qq_proxy.h recv_core.c \
-	recv_core.h send_core.c send_core.h send_file.c send_file.h \
-	sendqueue.c sendqueue.h sys_msg.c sys_msg.h udp_proxy_s5.c \
-	udp_proxy_s5.h utils.c utils.h
+	group_network.c group_network.h group_opt.c group_opt.h \
+	group_search.c group_search.h header_info.c header_info.h im.c \
+	im.h keep_alive.c keep_alive.h login_logout.c login_logout.h \
+	packet_parse.c packet_parse.h qq.c qq.h qq_proxy.c qq_proxy.h \
+	recv_core.c recv_core.h send_core.c send_core.h send_file.c \
+	send_file.h sendqueue.c sendqueue.h sys_msg.c sys_msg.h \
+	udp_proxy_s5.c udp_proxy_s5.h utils.c utils.h
 am__objects_2 = buddy_info.lo buddy_list.lo buddy_opt.lo \
 	buddy_status.lo char_conv.lo crypt.lo file_trans.lo group.lo \
 	group_conv.lo group_find.lo group_free.lo group_internal.lo \
-	group_im.lo group_info.lo group_join.lo group_misc.lo \
-	group_network.lo group_opt.lo group_search.lo header_info.lo \
-	im.lo keep_alive.lo login_logout.lo packet_parse.lo qq.lo \
+	group_im.lo group_info.lo group_join.lo group_network.lo \
+	group_opt.lo group_search.lo header_info.lo im.lo \
+	keep_alive.lo login_logout.lo packet_parse.lo qq.lo \
 	qq_proxy.lo recv_core.lo send_core.lo send_file.lo \
 	sendqueue.lo sys_msg.lo udp_proxy_s5.lo utils.lo
 @STATIC_QQ_FALSE@am_libqq_la_OBJECTS = $(am__objects_2)
@@ -248,6 +246,7 @@ GNT_MINOR_VERSION = @GNT_MINOR_VERSION@
 GNT_VERSION = @GNT_VERSION@
 GNUTLS_CFLAGS = @GNUTLS_CFLAGS@
 GNUTLS_LIBS = @GNUTLS_LIBS@
+GREP = @GREP@
 GSTREAMER_CFLAGS = @GSTREAMER_CFLAGS@
 GSTREAMER_LIBS = @GSTREAMER_LIBS@
 GTKSPELL_CFLAGS = @GTKSPELL_CFLAGS@
@@ -314,6 +313,7 @@ MKINSTALLDIRS = @MKINSTALLDIRS@
 MONO_CFLAGS = @MONO_CFLAGS@
 MONO_LIBS = @MONO_LIBS@
 MSGFMT = @MSGFMT@
+MSGFMT_OPTS = @MSGFMT_OPTS@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
 OBJEXT = @OBJEXT@
@@ -343,7 +343,6 @@ PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SILC_CFLAGS = @SILC_CFLAGS@
@@ -408,6 +407,7 @@ VERSION = @VERSION@
 X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
 XGETTEXT = @XGETTEXT@
+XMKMF = @XMKMF@
 XSS_LIBS = @XSS_LIBS@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
@@ -416,13 +416,9 @@ X_PRE_LIBS = @X_PRE_LIBS@
 ZEPHYR_CFLAGS = @ZEPHYR_CFLAGS@
 ZEPHYR_LDFLAGS = @ZEPHYR_LDFLAGS@
 ZEPHYR_LIBS = @ZEPHYR_LIBS@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_F77 = @ac_ct_F77@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
-ac_pt_PKG_CONFIG = @ac_pt_PKG_CONFIG@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -439,6 +435,9 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 enable_dbus = @enable_dbus@
 enable_dot = @enable_dot@
 enable_doxygen = @enable_doxygen@
@@ -448,21 +447,25 @@ host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pango_CFLAGS = @pango_CFLAGS@
 pango_LIBS = @pango_LIBS@
+pdfdir = @pdfdir@
 perlpath = @perlpath@
 pidginpath = @pidginpath@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sedpath = @sedpath@
 sharedstatedir = @sharedstatedir@
@@ -507,8 +510,6 @@ QQSOURCES = \
 	group_info.h \
 	group_join.c \
 	group_join.h \
-	group_misc.c \
-	group_misc.h \
 	group_network.c \
 	group_network.h \
 	group_opt.c \
@@ -652,7 +653,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_info.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_internal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_join.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_misc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_network.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_opt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_search.Plo@am__quote@
@@ -674,7 +674,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_info.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_internal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_join.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_misc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_network.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_opt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_search.Po@am__quote@
@@ -934,20 +933,6 @@ libqq_a-group_join.obj: group_join.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='group_join.c' object='libqq_a-group_join.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-group_join.obj `if test -f 'group_join.c'; then $(CYGPATH_W) 'group_join.c'; else $(CYGPATH_W) '$(srcdir)/group_join.c'; fi`
-
-libqq_a-group_misc.o: group_misc.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-group_misc.o -MD -MP -MF "$(DEPDIR)/libqq_a-group_misc.Tpo" -c -o libqq_a-group_misc.o `test -f 'group_misc.c' || echo '$(srcdir)/'`group_misc.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libqq_a-group_misc.Tpo" "$(DEPDIR)/libqq_a-group_misc.Po"; else rm -f "$(DEPDIR)/libqq_a-group_misc.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='group_misc.c' object='libqq_a-group_misc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-group_misc.o `test -f 'group_misc.c' || echo '$(srcdir)/'`group_misc.c
-
-libqq_a-group_misc.obj: group_misc.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-group_misc.obj -MD -MP -MF "$(DEPDIR)/libqq_a-group_misc.Tpo" -c -o libqq_a-group_misc.obj `if test -f 'group_misc.c'; then $(CYGPATH_W) 'group_misc.c'; else $(CYGPATH_W) '$(srcdir)/group_misc.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libqq_a-group_misc.Tpo" "$(DEPDIR)/libqq_a-group_misc.Po"; else rm -f "$(DEPDIR)/libqq_a-group_misc.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='group_misc.c' object='libqq_a-group_misc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-group_misc.obj `if test -f 'group_misc.c'; then $(CYGPATH_W) 'group_misc.c'; else $(CYGPATH_W) '$(srcdir)/group_misc.c'; fi`
 
 libqq_a-group_network.o: group_network.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-group_network.o -MD -MP -MF "$(DEPDIR)/libqq_a-group_network.Tpo" -c -o libqq_a-group_network.o `test -f 'group_network.c' || echo '$(srcdir)/'`group_network.c; \

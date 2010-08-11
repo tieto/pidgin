@@ -26,8 +26,8 @@
 #define _QQ_QQ_H_
 
 #include <glib.h>
-#include "ft.h"
 #include "internal.h"
+#include "ft.h"
 #include "proxy.h"
 #include "roomlist.h"
 
