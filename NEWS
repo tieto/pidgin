@@ -2,6 +2,12 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.5.7 (06/19/2009):
+	John:  This release is really just a rushed fix for the broken Yahoo
+	protocol plugin.  I spent way more time on this release than I care
+	to admit, so I hope that time is well spent and this fixes the issues
+	people have been having.
+
 2.5.6 (05/19/2009):
 	Ka-Hing: Many much bugfixes. Hooray. (Paul told me to say that)
 	Oh, no one has met Paul yet? He's awesome, he backported my fixes

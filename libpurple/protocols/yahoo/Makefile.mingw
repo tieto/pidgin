@@ -41,8 +41,6 @@ C_SRC =			util.c \
 			yahoo.c \
 			yahoochat.c \
 			yahoo_aliases.c \
-			yahoo_auth.c \
-			yahoo_crypt.c \
 			yahoo_doodle.c \
 			yahoo_filexfer.c \
 			yahoo_friend.c \

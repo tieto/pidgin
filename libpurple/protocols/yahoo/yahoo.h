@@ -28,8 +28,10 @@
 #include "circbuffer.h"
 #include "prpl.h"
 
-#define YAHOO_PAGER_HOST "scs.msg.yahoo.com"
+#define YAHOO_PAGER_HOST "scsa.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
+#define YAHOO_LOGIN_URL "https://login.yahoo.com/config/pwtoken_login?src=ymsgr&ts=&token=%s"
+#define YAHOO_TOKEN_URL "https://login.yahoo.com/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s"
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 #define YAHOO_MAIL_URL "https://login.yahoo.com/config/login?.src=ym"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
@@ -41,6 +43,8 @@
 /* really we should get the list of servers from
  http://update.messenger.yahoo.co.jp/servers.html */
 #define YAHOOJP_PAGER_HOST "cs.yahoo.co.jp"
+#define YAHOOJP_TOKEN_URL "https://login.yahoo.co.jp/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s"
+#define YAHOOJP_LOGIN_URL "https://login.yahoo.co.jp/config/pwtoken_login?src=ymsgr&ts=&token=%s"
 #define YAHOOJP_PROFILE_URL "http://profiles.yahoo.co.jp/"
 #define YAHOOJP_MAIL_URL "http://mail.yahoo.co.jp/"
 #define YAHOOJP_XFER_HOST "filetransfer.msg.yahoo.co.jp"
@@ -74,12 +78,14 @@
 #define YAHOO_STATUS_TYPE_INVISIBLE "invisible"
 #define YAHOO_STATUS_TYPE_MOBILE "mobile"
 
-#define YAHOO_CLIENT_VERSION_ID "2097087"
-#define YAHOO_CLIENT_VERSION "8.1.0.421"
+#define YAHOO_CLIENT_VERSION_ID "4194239"
+#define YAHOO_CLIENT_VERSION "9.0.0.2152"
 
-#define YAHOOJP_CLIENT_VERSION_ID "524223"
-#define YAHOOJP_CLIENT_VERSION "7,0,1,1"
+#define YAHOOJP_CLIENT_VERSION_ID "4194239"
+#define YAHOOJP_CLIENT_VERSION "9.0.0.2152"
 
+
+#define YAHOO_CLIENT_USERAGENT "Mozilla/4.0 (compatible; MSIE 5.5)"
 
 /* Index into attention types list. */
 #define YAHOO_BUZZ 0
@@ -265,4 +271,9 @@ gchar* yahoo_get_cookies(PurpleConnection *gc);
 gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint type);
 GList *yahoo_attention_types(PurpleAccount *account);
 
+/* This is a hack for 2.5.7 to get the y16 login to work properly with http proxies */
+PurpleUtilFetchUrlData * purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
+		const char *url, gboolean full, const char *user_agent, gboolean http11,
+		const char *request, gboolean include_headers, gssize max_len,
+		PurpleUtilFetchUrlCallback callback, void *user_data);
 #endif /* _YAHOO_H_ */
