@@ -40,5 +40,5 @@ gchar *qq_to_utf8(const gchar *str, const gchar *from_charset);
 gchar *qq_encode_to_purple(guint8 *font_attr_data, gint len, const gchar *msg);
 
 gchar *qq_im_filter_html(const gchar *text);
-
+void qq_filter_str(gchar *str);
 #endif

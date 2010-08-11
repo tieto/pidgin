@@ -5,9 +5,10 @@
 #include "signals.h"
 
 extern PerlInterpreter *my_perl;
-static GList *cmd_handlers = NULL;
-static GList *signal_handlers = NULL;
-static GList *timeout_handlers = NULL;
+static GSList *cmd_handlers = NULL;
+static GSList *signal_handlers = NULL;
+static GSList *timeout_handlers = NULL;
+static GSList *pref_handlers = NULL;
 
 /* perl < 5.8.0 doesn't define PERL_MAGIC_ext */
 #ifndef PERL_MAGIC_ext
@@ -22,7 +23,6 @@ purple_perl_plugin_action_cb(PurplePluginAction *action)
 	gchar *hvname;
 	PurplePlugin *plugin;
 	PurplePerlScript *gps;
-	STRLEN na;
 	dSP;
 
 	plugin = action->plugin;
@@ -53,7 +53,7 @@ purple_perl_plugin_action_cb(PurplePluginAction *action)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl plugin action function exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	PUTBACK;
@@ -67,10 +67,9 @@ purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context)
 	GList *l = NULL;
 	PurplePerlScript *gps;
 	int i = 0, count = 0;
-	STRLEN na;
 	dSP;
 
-	gps = (PurplePerlScript *)plugin->info->extra_info;
+	gps = plugin->info->extra_info;
 
 	ENTER;
 	SAVETMPS;
@@ -93,7 +92,7 @@ purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl plugin actions lookup exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	if (count == 0)
@@ -101,14 +100,10 @@ purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context)
 
 	for (i = 0; i < count; i++) {
 		SV *sv;
-		gchar *label;
-		PurplePluginAction *act = NULL;
+		PurplePluginAction *act;
 
 		sv = POPs;
-		label = SvPV_nolen(sv);
-		/* XXX I think this leaks, but doing it without the strdup
-		 * just showed garbage */
-		act = purple_plugin_action_new(g_strdup(label), purple_perl_plugin_action_cb);
+		act = purple_plugin_action_new(SvPVutf8_nolen(sv), purple_perl_plugin_action_cb);
 		l = g_list_prepend(l, act);
 	}
 
@@ -128,10 +123,9 @@ purple_perl_gtk_get_plugin_frame(PurplePlugin *plugin)
 	MAGIC *mg;
 	GtkWidget *ret;
 	PurplePerlScript *gps;
-	STRLEN na;
 	dSP;
 
-	gps = (PurplePerlScript *)plugin->info->extra_info;
+	gps = plugin->info->extra_info;
 
 	ENTER;
 	SAVETMPS;
@@ -146,7 +140,7 @@ purple_perl_gtk_get_plugin_frame(PurplePlugin *plugin)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl gtk plugin frame init exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	/* We have a Gtk2::Frame on top of the stack */
@@ -172,7 +166,6 @@ purple_perl_get_plugin_frame(PurplePlugin *plugin)
 	int count;
 	PurplePerlScript *gps;
 	PurplePluginPrefFrame *ret_frame;
-	STRLEN na;
 	dSP;
 
 	gps = (PurplePerlScript *)plugin->info->extra_info;
@@ -191,7 +184,7 @@ purple_perl_get_plugin_frame(PurplePlugin *plugin)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl plugin prefs frame init exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	if (count != 1)
@@ -212,7 +205,7 @@ destroy_timeout_handler(PurplePerlTimeoutHandler *handler)
 {
 	gboolean ret = FALSE;
 
-	timeout_handlers = g_list_remove(timeout_handlers, handler);
+	timeout_handlers = g_slist_remove(timeout_handlers, handler);
 
 	if (handler->iotag > 0)
 		ret = purple_timeout_remove(handler->iotag);
@@ -231,7 +224,7 @@ destroy_timeout_handler(PurplePerlTimeoutHandler *handler)
 static void
 destroy_signal_handler(PurplePerlSignalHandler *handler)
 {
-	signal_handlers = g_list_remove(signal_handlers, handler);
+	signal_handlers = g_slist_remove(signal_handlers, handler);
 
 	if (handler->callback != NULL)
 		SvREFCNT_dec(handler->callback);
@@ -246,9 +239,8 @@ destroy_signal_handler(PurplePerlSignalHandler *handler)
 static gboolean
 perl_timeout_cb(gpointer data)
 {
-	PurplePerlTimeoutHandler *handler = (PurplePerlTimeoutHandler *)data;
+	PurplePerlTimeoutHandler *handler = data;
 	gboolean ret = FALSE;
-	STRLEN na;
 
 	dSP;
 	ENTER;
@@ -262,7 +254,7 @@ perl_timeout_cb(gpointer data)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl timeout function exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	ret = POPi;
@@ -282,7 +274,7 @@ typedef void *DATATYPE;
 static void *
 perl_signal_cb(va_list args, void *data)
 {
-	PurplePerlSignalHandler *handler = (PurplePerlSignalHandler *)data;
+	PurplePerlSignalHandler *handler = data;
 	void *ret_val = NULL;
 	int i;
 	int count;
@@ -290,7 +282,6 @@ perl_signal_cb(va_list args, void *data)
 	PurpleValue *ret_value, **values;
 	SV **sv_args;
 	DATATYPE **copy_args;
-	STRLEN na;
 
 	dSP;
 	ENTER;
@@ -333,7 +324,7 @@ perl_signal_cb(va_list args, void *data)
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl function exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	/* See if any parameters changed. */
@@ -372,14 +363,13 @@ perl_signal_cb(va_list args, void *data)
 					if (strcmp(*((char **)copy_args[i]), SvPVX(sv_args[i]))) {
 						g_free(*((char **)copy_args[i]));
 						*((char **)copy_args[i]) =
-							g_strdup(SvPV(sv_args[i], na));
+							g_strdup(SvPVutf8_nolen(sv_args[i]));
 					}
+					/* Clean up sv_args[i] - we're done with it */
+					sv_2mortal(sv_args[i]);
 					break;
 
 				case PURPLE_TYPE_POINTER:
-					*((void **)copy_args[i]) = (void *)SvIV(sv_args[i]);
-					break;
-
 				case PURPLE_TYPE_BOXED:
 					*((void **)copy_args[i]) = (void *)SvIV(sv_args[i]);
 					break;
@@ -390,6 +380,7 @@ perl_signal_cb(va_list args, void *data)
 				default:
 					break;
 			}
+
 
 #if 0
 			*((void **)copy_args[i]) = purple_perl_data_from_sv(values[i],
@@ -414,10 +405,10 @@ static PurplePerlSignalHandler *
 find_signal_handler(PurplePlugin *plugin, void *instance, const char *signal)
 {
 	PurplePerlSignalHandler *handler;
-	GList *l;
+	GSList *l;
 
 	for (l = signal_handlers; l != NULL; l = l->next) {
-		handler = (PurplePerlSignalHandler *)l->data;
+		handler = l->data;
 
 		if (handler->plugin == plugin &&
 			handler->instance == instance &&
@@ -447,9 +438,9 @@ purple_perl_timeout_add(PurplePlugin *plugin, int seconds, SV *callback, SV *dat
 	handler->data     = (data != NULL && data != &PL_sv_undef
 	                     ? newSVsv(data) : NULL);
 
-	timeout_handlers = g_list_append(timeout_handlers, handler);
+	timeout_handlers = g_slist_append(timeout_handlers, handler);
 
-	handler->iotag = purple_timeout_add(seconds * 1000, perl_timeout_cb, handler);
+	handler->iotag = purple_timeout_add_seconds(seconds, perl_timeout_cb, handler);
 
 	return handler->iotag;
 }
@@ -457,14 +448,12 @@ purple_perl_timeout_add(PurplePlugin *plugin, int seconds, SV *callback, SV *dat
 gboolean
 purple_perl_timeout_remove(guint handle)
 {
-	GList *l, *l_next;
+	PurplePerlTimeoutHandler *handler;
+	GSList *l, *l_next;
 
 	for (l = timeout_handlers; l != NULL; l = l_next) {
-		PurplePerlTimeoutHandler *handler;
-
+		handler =  l->data;
 		l_next = l->next;
-
-		handler = (PurplePerlTimeoutHandler *)l->data;
 
 		if (handler->iotag == handle)
 			return destroy_timeout_handler(handler);
@@ -478,14 +467,12 @@ purple_perl_timeout_remove(guint handle)
 void
 purple_perl_timeout_clear_for_plugin(PurplePlugin *plugin)
 {
-	GList *l, *l_next;
+	PurplePerlTimeoutHandler *handler;
+	GSList *l, *l_next;
 
 	for (l = timeout_handlers; l != NULL; l = l_next) {
-		PurplePerlTimeoutHandler *handler;
-
+		handler = l->data;
 		l_next = l->next;
-
-		handler = (PurplePerlTimeoutHandler *)l->data;
 
 		if (handler->plugin == plugin)
 			destroy_timeout_handler(handler);
@@ -516,7 +503,7 @@ purple_perl_signal_connect(PurplePlugin *plugin, void *instance,
 	handler->data     = (data != NULL &&
 	                     data != &PL_sv_undef ? newSVsv(data) : NULL);
 
-	signal_handlers = g_list_append(signal_handlers, handler);
+	signal_handlers = g_slist_append(signal_handlers, handler);
 
 	purple_signal_connect_priority_vargs(instance, signal, plugin,
 	                                   PURPLE_CALLBACK(perl_signal_cb),
@@ -544,12 +531,11 @@ void
 purple_perl_signal_clear_for_plugin(PurplePlugin *plugin)
 {
 	PurplePerlSignalHandler *handler;
-	GList *l, *l_next;
+	GSList *l, *l_next;
 
 	for (l = signal_handlers; l != NULL; l = l_next) {
 		l_next = l->next;
-
-		handler = (PurplePerlSignalHandler *)l->data;
+		handler = l->data;
 
 		if (handler->plugin == plugin)
 			destroy_signal_handler(handler);
@@ -568,9 +554,8 @@ perl_cmd_cb(PurpleConversation *conv, const gchar *command,
             gchar **args, gchar **error, void *data)
 {
 	int i = 0, count, ret_value = PURPLE_CMD_RET_OK;
-	STRLEN na;
 	SV *cmdSV, *tmpSV, *convSV;
-	PurplePerlCmdHandler *handler = (PurplePerlCmdHandler *)data;
+	PurplePerlCmdHandler *handler = data;
 
 	dSP;
 	ENTER;
@@ -608,7 +593,7 @@ perl_cmd_cb(PurpleConversation *conv, const gchar *command,
 	if (SvTRUE(ERRSV)) {
 		purple_debug_error("perl",
 		                 "Perl plugin command function exited abnormally: %s\n",
-		                 SvPV(ERRSV, na));
+		                 SvPVutf8_nolen(ERRSV));
 	}
 
 	SPAGAIN;
@@ -645,7 +630,7 @@ purple_perl_cmd_register(PurplePlugin *plugin, const gchar *command,
 	else
 		handler->data = NULL;
 
-	cmd_handlers = g_list_append(cmd_handlers, handler);
+	cmd_handlers = g_slist_append(cmd_handlers, handler);
 
 	handler->id = purple_cmd_register(command, args, priority, flag, prpl_id,
 	                                PURPLE_CMD_FUNC(perl_cmd_cb), helpstr,
@@ -657,7 +642,7 @@ purple_perl_cmd_register(PurplePlugin *plugin, const gchar *command,
 static void
 destroy_cmd_handler(PurplePerlCmdHandler *handler)
 {
-	cmd_handlers = g_list_remove(cmd_handlers, handler);
+	cmd_handlers = g_slist_remove(cmd_handlers, handler);
 
 	if (handler->callback != NULL)
 		SvREFCNT_dec(handler->callback);
@@ -673,11 +658,11 @@ destroy_cmd_handler(PurplePerlCmdHandler *handler)
 void
 purple_perl_cmd_clear_for_plugin(PurplePlugin *plugin)
 {
-	GList *l, *l_next;
+	PurplePerlCmdHandler *handler;
+	GSList *l, *l_next;
 
 	for (l = cmd_handlers; l != NULL; l = l_next) {
-		PurplePerlCmdHandler *handler = (PurplePerlCmdHandler *)l->data;
-
+		handler = l->data;
 		l_next = l->next;
 
 		if (handler->plugin == plugin)
@@ -688,10 +673,11 @@ purple_perl_cmd_clear_for_plugin(PurplePlugin *plugin)
 static PurplePerlCmdHandler *
 find_cmd_handler(PurpleCmdId id)
 {
-	GList *l;
+	PurplePerlCmdHandler *handler;
+	GSList *l;
 
 	for (l = cmd_handlers; l != NULL; l = l->next) {
-		PurplePerlCmdHandler *handler = (PurplePerlCmdHandler *)l->data;
+		handler = (PurplePerlCmdHandler *)l->data;
 
 		if (handler->id == id)
 			return handler;
@@ -714,4 +700,141 @@ purple_perl_cmd_unregister(PurpleCmdId id)
 
 	purple_cmd_unregister(id);
 	destroy_cmd_handler(handler);
+}
+
+static void
+perl_pref_cb(const char *name, PurplePrefType type, gconstpointer value,
+			 gpointer data)
+{
+	PurplePerlPrefsHandler *handler = data;
+
+	dSP;
+	ENTER;
+	SAVETMPS;
+	PUSHMARK(sp);
+	XPUSHs(sv_2mortal(newSVpv(name, 0)));
+
+	XPUSHs(sv_2mortal(newSViv(type)));
+
+	switch(type) {
+		case PURPLE_PREF_INT:
+			XPUSHs(sv_2mortal(newSViv(GPOINTER_TO_INT(value))));
+			break;
+		case PURPLE_PREF_BOOLEAN:
+			XPUSHs((GPOINTER_TO_INT(value) == FALSE) ? &PL_sv_no : &PL_sv_yes);
+			break;
+		case PURPLE_PREF_STRING:
+		case PURPLE_PREF_PATH:
+			XPUSHs(sv_2mortal(newSVGChar(value)));
+			break;
+		case PURPLE_PREF_STRING_LIST:
+		case PURPLE_PREF_PATH_LIST:
+			{
+				AV* av = newAV();
+				const GList *l = value;
+
+				/* Append stuff backward to preserve order */
+				while (l && l->next) l = l->next;
+				while (l) {
+					av_push(av, sv_2mortal(newSVGChar(l->data)));
+					l = l->prev;
+				}
+				XPUSHs(sv_2mortal(newRV_noinc((SV *) av)));
+			} break;
+		default:
+		case PURPLE_PREF_NONE:
+			XPUSHs(&PL_sv_undef);
+			break;
+	}
+
+	XPUSHs((SV *)handler->data);
+	PUTBACK;
+	call_sv(handler->callback, G_EVAL | G_VOID | G_DISCARD);
+	SPAGAIN;
+
+	if (SvTRUE(ERRSV)) {
+		purple_debug_error("perl",
+		                 "Perl prefs callback function exited abnormally: %s\n",
+		                 SvPVutf8_nolen(ERRSV));
+	}
+
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
+}
+
+guint
+purple_perl_prefs_connect_callback(PurplePlugin *plugin, const char *name,
+								   SV *callback, SV *data)
+{
+	PurplePerlPrefsHandler *handler;
+
+	if (plugin == NULL) {
+		croak("Invalid handle in adding perl prefs handler.\n");
+		return 0;
+	}
+
+	handler = g_new0(PurplePerlPrefsHandler, 1);
+
+	handler->plugin   = plugin;
+	handler->callback = (callback != NULL && callback != &PL_sv_undef
+	                     ? newSVsv(callback) : NULL);
+	handler->data     = (data != NULL && data != &PL_sv_undef
+	                     ? newSVsv(data) : NULL);
+
+	pref_handlers = g_slist_prepend(pref_handlers, handler);
+
+	handler->iotag = purple_prefs_connect_callback(plugin, name, perl_pref_cb, handler);
+
+	return handler->iotag;
+}
+
+static void
+destroy_prefs_handler(PurplePerlPrefsHandler *handler)
+{
+	pref_handlers = g_slist_remove(pref_handlers, handler);
+
+	if (handler->iotag > 0)
+		purple_prefs_disconnect_callback(handler->iotag);
+
+	if (handler->callback != NULL)
+		SvREFCNT_dec(handler->callback);
+
+	if (handler->data != NULL)
+		SvREFCNT_dec(handler->data);
+
+	g_free(handler);
+}
+
+void purple_perl_prefs_disconnect_callback(guint callback_id)
+{
+	GSList *l, *l_next;
+	PurplePerlPrefsHandler *handler;
+
+	for (l = pref_handlers; l != NULL; l = l_next) {
+		l_next = l->next;
+		handler = l->data;
+
+		if (handler->iotag == callback_id) {
+			destroy_prefs_handler(handler);
+			return;
+		}
+	}
+
+	purple_debug_info("perl", "No prefs handler found with handle %u.\n",
+	                  callback_id);
+}
+
+void purple_perl_pref_cb_clear_for_plugin(PurplePlugin *plugin)
+{
+	GSList *l, *l_next;
+	PurplePerlPrefsHandler *handler;
+
+	for (l = pref_handlers; l != NULL; l = l_next) {
+		l_next = l->next;
+		handler = l->data;
+
+		if (handler->plugin == plugin)
+			destroy_prefs_handler(handler);
+	}
 }

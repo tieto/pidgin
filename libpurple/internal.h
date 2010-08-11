@@ -102,7 +102,7 @@
 #include <gmodule.h>
 
 #ifdef PURPLE_PLUGINS
-# ifndef _WIN32
+# ifdef HAVE_DLFCN_H 
 #  include <dlfcn.h>
 # endif
 #endif

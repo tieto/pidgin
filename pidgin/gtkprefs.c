@@ -2001,16 +2001,16 @@ sound_page(void)
 	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 
-	button = gtk_button_new_with_label(_("Test"));
+	button = gtk_button_new_with_mnemonic(_("_Browse..."));
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(select_sound), NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
+
+	button = gtk_button_new_with_mnemonic(_("Pre_view"));
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(test_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 
-	button = gtk_button_new_with_label(_("Reset"));
+	button = gtk_button_new_with_mnemonic(_("_Reset"));
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(reset_sound), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
-
-	button = gtk_button_new_with_label(_("Choose..."));
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(select_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 
 	gtk_widget_show_all(ret);

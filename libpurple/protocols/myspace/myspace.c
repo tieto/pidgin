@@ -1328,7 +1328,10 @@ msim_check_alive(gpointer data)
 	delta = time(NULL) - session->last_comm;
 	/* purple_debug_info("msim", "msim_check_alive: delta=%d\n", delta); */
 	if (delta >= MSIM_KEEPALIVE_INTERVAL) {
-		errmsg = g_strdup_printf(_("Connection to server lost (no data received within %d seconds)"), (int)delta);
+	        errmsg = g_strdup_printf(ngettext("Connection to server lost (no data received within %d second)",
+						  "Connection to server lost (no data received within %d seconds)",
+						  (int)delta),
+					 (int)delta);
 
 		purple_debug_info("msim", "msim_check_alive: %s > interval of %d, presumed dead\n",
 				errmsg, MSIM_KEEPALIVE_INTERVAL);
@@ -2404,7 +2407,7 @@ const char *msim_normalize(const PurpleAccount *account, const char *str) {
 		const char *username;
 
 		/* If the account does not exist, we can't look up the user. */
-		if (!account)
+		if (!account || !account->gc)
 			return str;
 
 		id = atol(str);
@@ -2447,6 +2450,18 @@ const char *msim_normalize(const PurpleAccount *account, const char *str) {
 	 */
 
 	return normalized;
+}
+
+static GHashTable *
+msim_get_account_text_table(PurpleAccount *unused)
+{
+	GHashTable *table;
+
+	table = g_hash_table_new(g_str_hash, g_str_equal);
+
+	g_hash_table_insert(table, "login_label", (gpointer)_("Email Address..."));
+
+	return table;
 }
 
 /** Return whether the buddy can be messaged while offline.
@@ -2934,7 +2949,10 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 
 	switch (GPOINTER_TO_UINT(user_data)) {
 		case MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS:
-			msg = g_strdup_printf(_("%d buddies were added or updated from the server (including buddies already on the server-side list)"), buddy_count);
+		        msg = g_strdup_printf(ngettext("%d buddy was added or updated from the server (including buddies already on the server-side list)",
+						       "%d buddies were added or updated from the server (including buddies already on the server-side list)",
+						       buddy_count),
+					      buddy_count);
 			purple_notify_info(session->account, _("Add contacts from server"), msg, NULL);
 			g_free(msg);
 			break;
@@ -3128,14 +3146,16 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                  /* unregister_user */
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
-	NULL                /* _purple_reserved4 */
+
+	sizeof(PurplePluginProtocolInfo),  /* struct_size */
+	msim_get_account_text_table,              /* get_account_text_table */
 };
 
 
 
 /** Based on MSN's plugin info comments. */
 static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,                                
+	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
 	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */

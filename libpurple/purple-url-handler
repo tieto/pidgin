@@ -6,7 +6,15 @@ import sys
 import time
 import urllib
 
-obj = dbus.SessionBus().get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+bus = dbus.SessionBus()
+obj = None
+try:
+    obj = bus.get_object("im.pidgin.purple.PurpleService",
+                         "/im/pidgin/purple/PurpleObject")
+except dbus.DBusException, e:
+    if e._dbus_error_name == "org.freedesktop.DBus.Error.ServiceUnknown":
+        print "Error: no libpurple-powered client is running. Try starting Pidgin or Finch."
+        sys.exit(1)
 purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
 class CheckedObject:
@@ -50,20 +58,39 @@ def convert(value):
     except:
         return value
 
-def findaccount(protocolname, accountname=""):
+def account_not_found():
+    print "No matching account found."
+    sys.exit(1)
+
+def bring_account_online(account):
+    if not cpurple.PurpleAccountIsConnected(account):
+        # The last argument is meant to be a GList * but the D-Bus binding
+        # generator thing just wants a UInt32, which is pretty failing.
+        # Happily, passing a 0 to mean an empty list turns out to work anyway.
+        purple.PurpleAccountSetStatusList(account, "online", 1, 0)
+        purple.PurpleAccountConnect(account)
+
+def findaccount(protocolname, accountname="", matcher=None):
+    if matcher:
+        for account in cpurple.PurpleAccountsGetAll():
+            if accountname != "" and accountname != cpurple.PurpleAccountGetUsername(a):
+                continue
+            if matcher(account):
+                bring_account_online(account)
+                return account
+        account_not_found()
+
     # prefer connected accounts
     account = cpurple.PurpleAccountsFindConnected(accountname, protocolname)
     if (account != 0):
-	return account
+        return account
 
     # try to get any account and connect it
     account = cpurple.PurpleAccountsFindAny(accountname, protocolname)
     if (account == 0):
-        print "No matching account found."
-	sys.exit(1)
+        account_not_found()
 
-    purple.PurpleAccountSetStatusVargs(account, "online", 1)
-    purple.PurpleAccountConnect(account)
+    bring_account_online(account)
     return account
 
 def goim(account, screenname, message=None):
@@ -178,12 +205,16 @@ def irc(uri):
             key, value = extendlist(param.split("=", 1), 2, "")
             params[key] = urllib.unquote_plus(value)
 
-    account = findaccount(protocol)
+    def correct_server(account):
+        username = cpurple.PurpleAccountGetUsername(account)
+        return (server == (username.split("@"))[1])
+
+    account = findaccount(protocol, matcher=correct_server)
 
     if (target != ""):
         if (isnick):
             goim(account, urllib.unquote_plus(target.split(",")[0]), params.get("msg"))
-	else:
+        else:
             channel = urllib.unquote_plus(target.split(",")[0])
             if channel[0] != "#":
                 channel = "#" + channel
@@ -213,9 +244,9 @@ def msnim(uri):
         addbuddy(account, screenname)
 
 def myim(uri):
-	protocol = "prpl-myspace"
-	print "TODO: send uri: ", uri
-	assert False, "Not implemented"
+        protocol = "prpl-myspace"
+        print "TODO: send uri: ", uri
+        assert False, "Not implemented"
 
 def sip(uri):
     protocol = "prpl-simple"
@@ -295,10 +326,14 @@ def ymsgr(uri):
 
 
 def main(argv=sys.argv):
-    if len(argv) != 2:
+    if len(argv) != 2 or argv[1] == "--help" or argv[1] == "-h":
         print "Usage: %s URI" % argv[0]
         print "Example: %s \"xmpp:romeo@montague.net?message\"" % argv[0]
-        return
+
+        if len(argv) != 2:
+            sys.exit(1)
+        else:
+            return 0
 
     uri = argv[1]
     type = uri.split(":")[0]
@@ -324,9 +359,9 @@ def main(argv=sys.argv):
             ymsgr(uri)
         else:
             print "Unknown protocol: %s" % type
-    except dbus.dbus_bindings.DBusException:
-        print "ERROR: Is there a libpurple-powered client (e.g. Pidgin or Finch) running?"
-
+    except dbus.DBusException, e:
+        print "Error: %s" % (e.message)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

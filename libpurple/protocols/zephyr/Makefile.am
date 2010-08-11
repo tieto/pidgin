@@ -59,9 +59,9 @@ ZEPHYRSOURCES = \
 	mit-copyright.h \
 	mit-sipb-copyright.h \
 	sysdep.h \
-	zephyr.h \
 	zephyr_err.c \
 	zephyr_err.h \
+	zephyr_internal.h \
 	\
 	zephyr.c
 
@@ -104,7 +104,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple/protocols \
-	-DCONFDIR=\"$(confdir)\" \
+	-DCONFDIR=\"$(sysconfdir)\" \
 	$(GLIB_CFLAGS) \
 	$(KRB4_CFLAGS) \
 	$(DEBUG_CFLAGS)

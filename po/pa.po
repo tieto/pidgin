@@ -3564,7 +3564,7 @@ msgstr "ਆਖਰੀ ਨਾਂ"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "ਈਮੇਲ"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:374
@@ -3595,16 +3595,6 @@ msgstr "ਬੋਨਜੁਉਰ ਪਰੋਟੋਕਾਲ ਪਲੱਗਇਨ"
 #: ../libpurple/protocols/bonjour/bonjour.c:624
 msgid "Purple Person"
 msgstr "ਪਰਪਲ ਵਿਅਕਤੀ"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:676
-#: ../libpurple/protocols/gg/gg.c:477
-#: ../libpurple/protocols/jabber/jabber.c:932
-#: ../libpurple/protocols/silc/silc.c:901
-#: ../libpurple/protocols/silc/silc.c:1142
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-msgid "E-mail"
-msgstr "ਈਮੇਲ"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5258,7 +5248,7 @@ msgstr "ਕਿਸੇ ਮਿਲਦੇ XMPP ਯੂਜ਼ਰਾਂ ਦੀ ਖੋਜ
 #: ../libpurple/protocols/novell/novell.c:1490
 #: ../libpurple/protocols/oscar/oscar.c:3729
 #: ../libpurple/protocols/oscar/oscar.c:3738
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "ਈਮੇਲ ਐਡਰੈੱਸ"
 
 #: ../libpurple/protocols/jabber/buddy.c:2423
@@ -6309,7 +6299,7 @@ msgid "Syntax Error (probably a client bug)"
 msgstr "ਸੰਟੈਕਸ ਗਤੀ (ਇੱਕ ਕਲਾਇਟ ਬੱਗ ਹੈ)"
 
 #: ../libpurple/protocols/msn/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "ਗਲਤ ਈਮੇਲ ਐਡਰੈੱਸ"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -6804,7 +6794,7 @@ msgid "Home Fax"
 msgstr "ਘਰ ਫੈਕਸ"
 
 #: ../libpurple/protocols/msn/msn.c:1781
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "ਨਿੱਜੀ ਈਮੇਲ"
 
 #: ../libpurple/protocols/msn/msn.c:1782
@@ -6866,7 +6856,7 @@ msgid "Work Fax"
 msgstr "ਕੰਮ ਫੈਕਸ"
 
 #: ../libpurple/protocols/msn/msn.c:1812
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "ਕੰਮ ਈਮੇਲ"
 
 #: ../libpurple/protocols/msn/msn.c:1813
@@ -8541,7 +8531,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2454
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8724,12 +8714,12 @@ msgstr "ਸਕਰੀਨ ਨਾਂ"
 
 #: ../libpurple/protocols/oscar/oscar.c:3963
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "ਈਮੇਲ ਐਡਰੈੱਸ %s ਲਈ ਕੋਈ ਨਤੀਜਾ ਨਹੀਂ ਮਿਲਿਆ ਹੈ"
 
 #: ../libpurple/protocols/oscar/oscar.c:3984
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "ਤੁਸੀਂ %s ਦੀ ਪੁਸ਼ਟੀ ਕਰਨ ਲਈ ਇੱਕ ਈਮੇਲ ਛੇਤੀ ਹੀ ਪ੍ਰਾਪਤ ਕਰੋਗੇ।"
 
 #: ../libpurple/protocols/oscar/oscar.c:3986
@@ -8762,7 +8752,7 @@ msgstr "ਗਲਤੀ 0x%04x: ਸਕਰੀਨ ਨਾਂ ਫਾਰਮਿਟ ਲਈ
 #: ../libpurple/protocols/oscar/oscar.c:4029
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "ਗਲਤੀ 0x%04x: ਈਮੇਲ ਐਡਰੈੱਸ ਤਬਦੀਲ ਕਰਨ ਲਈ ਅਸਫਲ ਹੈ, ਕਿਉਕਿ ਦਿੱਤਾ ਸਿਰਨਾਵੇਂ ਲਈ ਪਹਿਲਾਂ "
@@ -8771,7 +8761,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4032
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "ਗਲਤੀ 0x%04x: ਈਮੇਲ ਐਡਰੈੱਸ ਤਬਦੀਲ ਕਰਨ ਲਈ ਅਸਫਲ ਹੈ, ਕਿਉਕਿ ਦਿੱਤੇ ਐਡਰੈੱਸ ਨਾਲ ਬਹੁਤ "
@@ -8780,7 +8770,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4035
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr "ਗਲਤੀ 0x%04x: ਈਮੇਲ ਐਡਰੈੱਸ ਤਬਦੀਲ ਕਰਨ ਲਈ ਅਸਫਲ ਹੈ, ਕਿਉਕਿ ਦਿੱਤਾ ਐਡਰੈੱਸ ਗਲਤ ਹੈ।"
 
@@ -8791,7 +8781,7 @@ msgstr "ਗਲਤੀ 0x%04x: ਅਣਜਾਣੀ ਗਲਤੀ ਹੈ।"
 
 #: ../libpurple/protocols/oscar/oscar.c:4048
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "%s ਦਾ ਈਮੇਲ ਐਡਰੈੱਸ %s ਹੈ"
 
 #: ../libpurple/protocols/oscar/oscar.c:4050
@@ -9052,15 +9042,15 @@ msgstr ""
 "ਬੇਨਤੀ ਕਰ ਸਕਦੇ ਹੋ।"
 
 #: ../libpurple/protocols/oscar/oscar.c:6286
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "ਈਮੇਲ ਰਾਹੀਂ ਬੱਡੀ ਖੋਜ"
 
 #: ../libpurple/protocols/oscar/oscar.c:6287
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "ਈਮੇਲ ਐਡਰੈੱਸ ਰਾਹੀਂ ਬੱਡੀ ਖੋਜ"
 
 #: ../libpurple/protocols/oscar/oscar.c:6288
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "ਬੱਡੀ ਖੋਜਣ ਲਈ ਈਮੇਲ ਐਡਰੈੱਸ ਦਿਓ।"
 
 #: ../libpurple/protocols/oscar/oscar.c:6291
@@ -9090,11 +9080,11 @@ msgid "Confirm Account"
 msgstr "ਅਕਾਊਂਟ ਪੁਸ਼ਟੀ"
 
 #: ../libpurple/protocols/oscar/oscar.c:6485
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "ਮੌਜੂਦਾ ਰਜਿਸਟਰ ਹੋਇਆ ਈਮੇਲ ਐਡਰੈੱਸ ਵੇਖੋ"
 
 #: ../libpurple/protocols/oscar/oscar.c:6489
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "ਮੌਜੂਦਾ ਰਜਿਸਟਰ ਹੋਇਆ ਈਮੇਲ ਐਡਰੈੱਸ ਬਦਲੋ..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6496
@@ -9102,7 +9092,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "ਪ੍ਰਮਾਣਿਕਤਾ ਦੀ ਉਡੀਕ ਵਿੱਚ ਬੱਡੀ ਵੇਖੋ"
 
 #: ../libpurple/protocols/oscar/oscar.c:6502
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "ਈ-ਮੇਲ ਰਾਹੀਂ ਬੱਡੀ ਖੋਜ..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6507
@@ -9188,10 +9178,6 @@ msgstr "ਖੂਨ ਕਿਸਮ"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "ਕਾਲਜ"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "ਈਮੇਲ"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -11883,7 +11869,7 @@ msgstr "ਯੂਜ਼ਰ ਨਾਂ: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:366
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "ਈਮੇਲ: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:368
@@ -12207,7 +12193,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "ਡਾਈ ਸਰਵਿਸ ਆਰਜ਼ੀ ਤੌਰ ਤੇ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ।"
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "ਈਮੇਲ ਖੋਜ ਪਾਬੰਦੀ ਹੈ।"
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15079,7 +15065,7 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "ਹਾਇਪਰਲਿੰਕ ਲਈ ਰੰਗ, ਜਦੋਂ ਮਾਊਂਸ ਉਨ੍ਹਾਂ ਉੱਤੇ ਹੋਵੇ।"
 
 #: ../pidgin/gtkimhtml.c:1581
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "ਈਮੇਲ ਐਡਰੈੱਸ ਨਕਲ(_C)"
 
 #: ../pidgin/gtkimhtml.c:1593
@@ -15491,8 +15477,8 @@ msgstr[1] "%s ਨੂੰ %d ਨਵੇਂ ਸੁਨੇਹੇ ਹਨ।"
 
 #: ../pidgin/gtknotify.c:569
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d ਨਵੀਂ ਮੇਲ ਆਈ ਹੈ।</b>"
 msgstr[1] "<b>%d ਨਵੀਂ ਮੇਲਾਂ ਆਈਆਂ ਹਨ।</b>"
 
@@ -16756,7 +16742,7 @@ msgstr "ਸਬੰਧਤ ਬੱਡੀ(_A)"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "ਈ-ਮੇਲ ਭੇਜਣ ਲਈ ਫੇਲ੍ਹ"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -16764,7 +16750,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "ਮਾਰਗ 'ਚ ਈਵੇਲੂਸ਼ਨ ਚੱਲਣਯੋਗ ਨਹੀਂ ਮਿਲਿਆ ਹੈ।"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "ਇਹ ਬੱਡੀ ਲਈ ਇੱਕ ਈਮੇਲ ਐਡਰੈੱਸ ਨਹੀਂ ਲੱਭਿਆ ਹੈ।"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -16772,7 +16758,7 @@ msgid "Add to Address Book"
 msgstr "ਐਡਰੈੱਸ ਕਿਤਾਬ ਵਿੱਚ ਸ਼ਾਮਿਲ"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "ਈ-ਮੇਲ ਭੇਜੋ"
 
 #. Configuration frame
@@ -16830,7 +16816,7 @@ msgid "Last name:"
 msgstr "ਆਖਰੀ ਨਾਂ:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "ਈਮੇਲ:"
 
 #. *< type

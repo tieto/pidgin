@@ -2610,7 +2610,7 @@ msgstr "Pichon nom"
 msgid "Last name"
 msgstr ""
 
-msgid "E-Mail"
+msgid "Email"
 msgstr "Corrièl"
 
 msgid "AIM Account"
@@ -2634,9 +2634,6 @@ msgstr ""
 
 msgid "Purple Person"
 msgstr ""
-
-msgid "E-mail"
-msgstr "Corrièl"
 
 msgid "Bonjour"
 msgstr ""
@@ -3661,7 +3658,7 @@ msgstr ""
 msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Adreça electronica"
 
 msgid "Search for XMPP users"
@@ -4372,7 +4369,7 @@ msgstr ""
 msgid "Syntax Error (probably a client bug)"
 msgstr ""
 
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr ""
 
 msgid "User does not exist"
@@ -4727,7 +4724,7 @@ msgstr ""
 msgid "Home Fax"
 msgstr "Fax personal"
 
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr ""
 
 msgid "Personal IM"
@@ -4770,7 +4767,7 @@ msgstr ""
 msgid "Work Fax"
 msgstr ""
 
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr ""
 
 msgid "Work IM"
@@ -6029,7 +6026,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -6163,11 +6160,11 @@ msgstr[0] ""
 msgstr[1] ""
 
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr ""
 
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr ""
 
 msgid "Account Confirmation Requested"
@@ -6191,19 +6188,19 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 
@@ -6215,7 +6212,7 @@ msgid "Error Changing Account Info"
 msgstr ""
 
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr ""
 
 msgid "Account Info"
@@ -6400,13 +6397,13 @@ msgid ""
 "them and selecting \"Re-request Authorization.\""
 msgstr ""
 
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr ""
 
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr ""
 
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr ""
 
 msgid "_Search"
@@ -6429,16 +6426,16 @@ msgstr ""
 msgid "Confirm Account"
 msgstr ""
 
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr ""
 
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr ""
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr ""
 
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr ""
 
 msgid "Search for Buddy by Information"
@@ -6497,9 +6494,6 @@ msgstr ""
 
 msgid "College"
 msgstr ""
-
-msgid "Email"
-msgstr "Adreça electronica"
 
 msgid "Zipcode"
 msgstr ""
@@ -8161,7 +8155,7 @@ msgid "User Name: \t%s\n"
 msgstr ""
 
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr ""
 
 #, c-format
@@ -8392,7 +8386,7 @@ msgstr ""
 msgid "Dir service temporarily unavailable."
 msgstr ""
 
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr ""
 
 msgid "Keyword ignored."
@@ -10610,7 +10604,7 @@ msgstr ""
 msgid "Enable typing notification"
 msgstr ""
 
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr ""
 
 msgid "_Open Link in Browser"
@@ -10901,8 +10895,8 @@ msgstr[0] ""
 msgstr[1] ""
 
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -11891,19 +11885,19 @@ msgstr ""
 msgid "_Associate Buddy"
 msgstr ""
 
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr ""
 
 msgid "The evolution executable was not found in the PATH."
 msgstr ""
 
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr ""
 
 msgid "Add to Address Book"
 msgstr ""
 
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr ""
 
 #. Configuration frame
@@ -11949,7 +11943,7 @@ msgstr "Pichon nom :"
 msgid "Last name:"
 msgstr "Nom :"
 
-msgid "E-mail:"
+msgid "Email:"
 msgstr ""
 
 #. *< type

@@ -28,7 +28,7 @@
 /*new a user object*/
 MsnUser *
 msn_user_new(MsnUserList *userlist, const char *passport,
-			 const char *store_name)
+			 const char *friendly_name)
 {
 	MsnUser *user;
 
@@ -37,16 +37,7 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	user->userlist = userlist;
 
 	msn_user_set_passport(user, passport);
-	msn_user_set_store_name(user, store_name);
-
-	/*
-	 * XXX This seems to reset the friendly name from what it should be
-	 *     to the passport when moving users. So, screw it :)
-	 */
-#if 0
-	if (name != NULL)
-		msn_user_set_name(user, name);
-#endif
+	msn_user_set_friendly_name(user, friendly_name);
 
 	return user;
 }
@@ -75,7 +66,6 @@ msn_user_destroy(MsnUser *user)
 
 	g_free(user->passport);
 	g_free(user->friendly_name);
-	g_free(user->store_name);
 	g_free(user->uid);
 	g_free(user->phone.home);
 	g_free(user->phone.work);
@@ -92,37 +82,36 @@ void
 msn_user_update(MsnUser *user)
 {
 	PurpleAccount *account;
+	gboolean offline;
 
 	account = user->userlist->session->account;
 
-	if (user->status != NULL) {
-		gboolean offline = (strcmp(user->status, "offline") == 0);
+	offline = (user->status == NULL);
 
-		if (!offline) {
-			purple_prpl_got_user_status(account, user->passport, user->status,
-					"message", user->statusline, NULL);
+	if (!offline) {
+		purple_prpl_got_user_status(account, user->passport, user->status,
+				"message", user->statusline, NULL);
+	} else {
+		if (user->mobile) {
+			purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
+			purple_prpl_got_user_status(account, user->passport, "available", NULL);
 		} else {
-			if (user->mobile) {
-				purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
-				purple_prpl_got_user_status(account, user->passport, "available", NULL);
-			} else {
-				purple_prpl_got_user_status(account, user->passport, user->status, NULL);
-			}
+			purple_prpl_got_user_status(account, user->passport, "offline", NULL);
 		}
+	}
 
-		if (!offline || !user->mobile) {
-			purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
-		}
+	if (!offline || !user->mobile) {
+		purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
+	}
 
-		if (!offline && user->media.title) {
-			purple_prpl_got_user_status(account, user->passport, "tune",
-					PURPLE_TUNE_ARTIST, user->media.artist,
-					PURPLE_TUNE_ALBUM, user->media.album,
-					PURPLE_TUNE_TITLE, user->media.title,
-					NULL);
-		} else {
-			purple_prpl_got_user_status_deactive(account, user->passport, "tune");
-		}			
+	if (!offline && user->media.title) {
+		purple_prpl_got_user_status(account, user->passport, "tune",
+				PURPLE_TUNE_ARTIST, user->media.artist,
+				PURPLE_TUNE_ALBUM, user->media.album,
+				PURPLE_TUNE_TITLE, user->media.title,
+				NULL);
+	} else {
+		purple_prpl_got_user_status_deactive(account, user->passport, "tune");
 	}
 
 	if (user->idle)
@@ -135,6 +124,11 @@ void
 msn_user_set_state(MsnUser *user, const char *state)
 {
 	const char *status;
+
+	if (state == NULL) {
+		user->status = NULL;
+		return;
+	}
 
 	if (!g_ascii_strcasecmp(state, "BSY"))
 		status = "busy";
@@ -199,32 +193,12 @@ msn_user_set_currentmedia(MsnUser *user, const CurrentMedia *media)
 }
 
 void
-msn_user_set_store_name(MsnUser *user, const char *name)
-{
-	g_return_if_fail(user != NULL);
-
-	if (name != NULL)
-	{
-		g_free(user->store_name);
-		user->store_name = g_strdup(name);
-	}
-}
-
-void
 msn_user_set_uid(MsnUser *user, const char *uid)
 {
 	g_return_if_fail(user != NULL);
 
 	g_free(user->uid);
 	user->uid = g_strdup(uid);
-}
-
-void
-msn_user_set_type(MsnUser *user, MsnUserType type)
-{
-	g_return_if_fail(user != NULL);
-
-	user->type = type;
 }
 
 void
@@ -239,95 +213,41 @@ void
 msn_user_unset_op(MsnUser *user, int list_op)
 {
 	g_return_if_fail(user != NULL);
-	
+
 	user->list_op &= ~list_op;
 }
 
 void
 msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
 {
-	MsnObject *msnobj = msn_user_get_object(user);
+	MsnObject *msnobj;
 
 	g_return_if_fail(user != NULL);
 
-	if (img == NULL)
-		msn_user_set_object(user, NULL);
-	else
-	{
-		PurpleCipherContext *ctx;
-		char *buf;
-		gconstpointer data = purple_imgstore_get_data(img);
-		size_t size = purple_imgstore_get_size(img);
-		char *base64;
-		unsigned char digest[20];
+	msnobj = msn_object_new_from_image(img, "TFR2C2.tmp",
+			user->passport, MSN_OBJECT_USERTILE);
 
-		if (msnobj == NULL)
-		{
-			msnobj = msn_object_new();
-			msn_object_set_local(msnobj);
-			msn_object_set_type(msnobj, MSN_OBJECT_USERTILE);
-			msn_object_set_location(msnobj, "TFR2C2.tmp");
-			msn_object_set_creator(msnobj, msn_user_get_passport(user));
+	if (!msnobj)
+		purple_debug_error("msn", "Unable to open buddy icon from %s!\n", user->passport);
 
-			msn_user_set_object(user, msnobj);
-		}
-
-		msn_object_set_image(msnobj, img);
-
-		/* Compute the SHA1D field. */
-		memset(digest, 0, sizeof(digest));
-
-		ctx = purple_cipher_context_new_by_name("sha1", NULL);
-		purple_cipher_context_append(ctx, data, size);
-		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
-
-		base64 = purple_base64_encode(digest, sizeof(digest));
-		msn_object_set_sha1d(msnobj, base64);
-		g_free(base64);
-
-		msn_object_set_size(msnobj, size);
-
-		/* Compute the SHA1C field. */
-		buf = g_strdup_printf(
-			"Creator%sSize%dType%dLocation%sFriendly%sSHA1D%s",
-			msn_object_get_creator(msnobj),
-			msn_object_get_size(msnobj),
-			msn_object_get_type(msnobj),
-			msn_object_get_location(msnobj),
-			msn_object_get_friendly(msnobj),
-			msn_object_get_sha1d(msnobj));
-
-		memset(digest, 0, sizeof(digest));
-
-		purple_cipher_context_reset(ctx, NULL);
-		purple_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
-		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
-		purple_cipher_context_destroy(ctx);
-		g_free(buf);
-
-		base64 = purple_base64_encode(digest, sizeof(digest));
-		msn_object_set_sha1c(msnobj, base64);
-		g_free(base64);
-	}
+	msn_user_set_object(user, msnobj);
 }
 
 /*add group id to User object*/
 void
-msn_user_add_group_id(MsnUser *user, const char* id)
+msn_user_add_group_id(MsnUser *user, const char* group_id)
 {
 	MsnUserList *userlist;
 	PurpleAccount *account;
 	PurpleBuddy *b;
 	PurpleGroup *g;
 	const char *passport;
-	char *group_id;
 	const char *group_name;
 
 	g_return_if_fail(user != NULL);
-	g_return_if_fail(id != NULL);
+	g_return_if_fail(group_id != NULL);
 
-	group_id = g_strdup(id);
-	user->group_ids = g_list_append(user->group_ids, group_id);
+	user->group_ids = g_list_append(user->group_ids, g_strdup(group_id));
 
 	userlist = user->userlist;
 	account = userlist->session->account;
@@ -335,11 +255,11 @@ msn_user_add_group_id(MsnUser *user, const char* id)
 
 	group_name = msn_userlist_find_group_name(userlist, group_id);
 
-	purple_debug_info("User","group id:%s,name:%s,user:%s\n", group_id, group_name, passport);
+	purple_debug_info("msn", "User: group id:%s,name:%s,user:%s\n", group_id, group_name, passport);
 
 	g = purple_find_group(group_name);
 
-	if ((id == NULL) && (g == NULL))
+	if ((group_id == NULL) && (g == NULL))
 	{
 		g = purple_group_new(group_name);
 		purple_blist_add_group(g, NULL);
@@ -377,12 +297,9 @@ msn_user_is_yahoo(PurpleAccount *account, const char *name)
 	if (gc != NULL)
 		session = gc->proto_data;
 
-	if ((session != NULL) && (session->protocol_ver == WLM_PROT_VER))
-		return FALSE;
-
 	if ((session != NULL) && (user = msn_userlist_find_user(session->userlist, name)) != NULL)
 	{
-		return (user->type == MSN_USER_TYPE_YAHOO);
+		return (user->networkid == MSN_NETWORK_YAHOO);
 	}
 	return (strstr(name,"@yahoo.") != NULL);
 }
@@ -432,6 +349,22 @@ msn_user_set_mobile_phone(MsnUser *user, const char *number)
 }
 
 void
+msn_user_set_clientid(MsnUser *user, guint clientid)
+{
+	g_return_if_fail(user != NULL);
+
+	user->clientid = clientid;
+}
+
+void
+msn_user_set_network(MsnUser *user, MsnNetwork network)
+{
+	g_return_if_fail(user != NULL);
+
+	user->networkid = network;
+}
+
+void
 msn_user_set_object(MsnUser *user, MsnObject *obj)
 {
 	g_return_if_fail(user != NULL);
@@ -474,14 +407,6 @@ msn_user_get_friendly_name(const MsnUser *user)
 }
 
 const char *
-msn_user_get_store_name(const MsnUser *user)
-{
-	g_return_val_if_fail(user != NULL, NULL);
-
-	return user->store_name;
-}
-
-const char *
 msn_user_get_home_phone(const MsnUser *user)
 {
 	g_return_val_if_fail(user != NULL, NULL);
@@ -503,6 +428,14 @@ msn_user_get_mobile_phone(const MsnUser *user)
 	g_return_val_if_fail(user != NULL, NULL);
 
 	return user->phone.mobile;
+}
+
+guint
+msn_user_get_clientid(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, 0);
+
+	return user->clientid;
 }
 
 MsnObject *

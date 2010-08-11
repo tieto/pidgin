@@ -27,7 +27,6 @@
 #include "packet_parse.h"
 #include "debug.h"
 
-
 /*------------------------------------------------PUT------------------------------------------------*/
 
 /* note:
@@ -68,7 +67,6 @@ gint qq_get16(guint16 *w, guint8 *buf)
 	return sizeof(w_dest);
 }
 
-
 /* read four bytes as "guint32" from buf, 
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint qq_get32(guint32 *dw, guint8 *buf)
@@ -83,6 +81,11 @@ gint qq_get32(guint32 *dw, guint8 *buf)
 	return sizeof(dw_dest);
 }
 
+gint qq_getIP(struct in_addr *ip, guint8 *buf)
+{
+	memcpy(ip, buf, sizeof(struct in_addr));
+	return sizeof(struct in_addr);
+}
 
 /* read datalen bytes from buf, 
  * return the number of bytes read if succeeds, otherwise return -1 */
@@ -158,6 +161,11 @@ gint qq_put32(guint8 *buf, guint32 dw)
     return sizeof(dw_porter);
 }
 
+gint qq_putIP(guint8* buf, struct in_addr *ip)
+{
+    memcpy(buf, ip, sizeof(struct in_addr));
+    return sizeof(struct in_addr);
+}
 
 /* pack datalen bytes into buf
  * return the number of bytes packed, otherwise return -1 */

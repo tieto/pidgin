@@ -111,6 +111,7 @@ pidgin_SOURCES = \
 	gtksavedstatuses.c \
 	gtkscrollbook.c \
 	gtksession.c \
+	gtksmiley.c \
 	gtksound.c \
 	gtksourceiter.c \
 	gtksourceundomanager.c \
@@ -163,6 +164,7 @@ pidgin_headers = \
 	gtksavedstatuses.h \
 	gtkscrollbook.h \
 	gtksession.h \
+	gtksmiley.h \
 	gtksound.h \
 	gtksourceiter.h \
 	gtksourceundomanager.h \

@@ -33,14 +33,16 @@ int aim_icq_reqofflinemsgs(OscarData *od)
 	aim_snacid_t snacid;
 	int bslen;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
+
+	purple_debug_info("oscar", "Requesting offline messages from %s", od->sn);
 
 	bslen = 2 + 4 + 2 + 2;
 
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
 
 	/* For simplicity, don't bother using a tlvlist */
 	byte_stream_put16(&bs, 0x0001);
@@ -51,7 +53,7 @@ int aim_icq_reqofflinemsgs(OscarData *od)
 	byte_stream_putle16(&bs, 0x003c); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -65,14 +67,16 @@ int aim_icq_ackofflinemsgs(OscarData *od)
 	aim_snacid_t snacid;
 	int bslen;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
+
+	purple_debug_info("oscar", "Acknowledged receipt of offline messages from %s", od->sn);
 
 	bslen = 2 + 4 + 2 + 2;
 
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
 
 	/* For simplicity, don't bother using a tlvlist */
 	byte_stream_put16(&bs, 0x0001);
@@ -83,7 +87,7 @@ int aim_icq_ackofflinemsgs(OscarData *od)
 	byte_stream_putle16(&bs, 0x003e); /* I command thee. */
 	byte_stream_putle16(&bs, snacid); /* eh. */
 
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -99,14 +103,14 @@ aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware)
 	aim_snacid_t snacid;
 	int bslen;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
 	bslen = 2+4+2+2+2+2+2+1+1+1+1+1+1;
 
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
 
 	/* For simplicity, don't bother using a tlvlist */
 	byte_stream_put16(&bs, 0x0001);
@@ -126,7 +130,7 @@ aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware)
 	byte_stream_putle8(&bs, 0x00);
 	byte_stream_putle8(&bs, !auth_required);
 
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -151,7 +155,7 @@ int aim_icq_changepasswd(OscarData *od, const char *passwd)
 	if (!passwd)
 		return -EINVAL;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
 	passwdlen = strlen(passwd);
@@ -161,7 +165,7 @@ int aim_icq_changepasswd(OscarData *od, const char *passwd)
 
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
 
 	/* For simplicity, don't bother using a tlvlist */
 	byte_stream_put16(&bs, 0x0001);
@@ -176,7 +180,7 @@ int aim_icq_changepasswd(OscarData *od, const char *passwd)
 	byte_stream_putstr(&bs, passwd);
 	byte_stream_putle8(&bs, '\0');
 
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -194,14 +198,14 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	if (!uin || uin[0] < '0' || uin[0] > '9')
 		return -EINVAL;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
 
 	/* For simplicity, don't bother using a tlvlist */
 	byte_stream_put16(&bs, 0x0001);
@@ -214,7 +218,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	byte_stream_putle16(&bs, 0x04b2); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -239,14 +243,16 @@ int aim_icq_getalias(OscarData *od, const char *uin)
 	if (!uin || uin[0] < '0' || uin[0] > '9')
 		return -EINVAL;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
+
+	purple_debug_info("oscar", "Requesting ICQ alias for %s", uin);
 
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
 
 	/* For simplicity, don't bother using a tlvlist */
 	byte_stream_put16(&bs, 0x0001);
@@ -259,7 +265,7 @@ int aim_icq_getalias(OscarData *od, const char *uin)
 	byte_stream_putle16(&bs, 0x04ba); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -283,14 +289,14 @@ int aim_icq_getsimpleinfo(OscarData *od, const char *uin)
 	if (!uin || uin[0] < '0' || uin[0] > '9')
 		return -EINVAL;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
 
 	/* For simplicity, don't bother using a tlvlist */
 	byte_stream_put16(&bs, 0x0001);
@@ -303,7 +309,7 @@ int aim_icq_getsimpleinfo(OscarData *od, const char *uin)
 	byte_stream_putle16(&bs, 0x051f); /* shrug. */
 	byte_stream_putle32(&bs, atoi(uin));
 
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -321,14 +327,14 @@ int aim_icq_sendxmlreq(OscarData *od, const char *xml)
 	if (!xml || !strlen(xml))
 		return -EINVAL;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
 	bslen = 2 + 10 + 2 + strlen(xml) + 1;
 
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
 
 	/* For simplicity, don't bother using a tlvlist */
 	byte_stream_put16(&bs, 0x0001);
@@ -342,7 +348,7 @@ int aim_icq_sendxmlreq(OscarData *od, const char *xml)
 	byte_stream_putle16(&bs, strlen(xml) + 1);
 	byte_stream_putraw(&bs, (guint8 *)xml, strlen(xml) + 1);
 
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -380,7 +386,7 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	struct tm *tm;
 	gchar *stripped;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 		return -EINVAL;
 
 	if (!name || !msg || !alias)
@@ -411,7 +417,7 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
 
 	/* For simplicity, don't bother using a tlvlist */
 	byte_stream_put16(&bs, 0x0001);
@@ -436,7 +442,7 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	byte_stream_putstr(&bs, xml);
 	byte_stream_put8(&bs, 0x00);
 
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -460,7 +466,7 @@ int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, gui
 
 	purple_debug_misc("oscar", "aim_icq_getstatusnote: requesting status note for %s.\n", uin);
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICQ)))
 	{
 		purple_debug_misc("oscar", "aim_icq_getstatusnote: no connection.\n");
 		return -EINVAL;
@@ -469,7 +475,7 @@ int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, gui
 	bslen = 2 + 4 + 2 + 2 + 2 + 2 + 58 + strlen(uin);
 	byte_stream_new(&bs, 4 + bslen);
 
-	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ICQ, 0x0002, 0x0000, NULL, 0);
 
 	byte_stream_put16(&bs, 0x0001);
 	byte_stream_put16(&bs, bslen);
@@ -497,7 +503,7 @@ int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, gui
 	byte_stream_put16(&bs, strlen(uin));
 	byte_stream_putstr(&bs, uin);
 
-	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x000, snacid, &bs);
+	flap_connection_send_snac_with_priority(od, conn, SNAC_FAMILY_ICQ, 0x0002, 0x000, snacid, &bs, FALSE);
 
 	byte_stream_destroy(&bs);
 
@@ -541,7 +547,7 @@ static void aim_icq_freeinfo(struct aim_icq_info *info) {
 }
 
 /**
- * Subtype 0x0003 - Response to 0x0015/0x002, contains an ICQesque packet.
+ * Subtype 0x0003 - Response to SNAC_FAMILY_ICQ/0x002, contains an ICQesque packet.
  */
 static int
 icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
@@ -877,7 +883,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 				info->next = od->icq_info;
 				od->icq_info = info;
 
-				flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+				flap_connection_send_snac_with_priority(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs, FALSE);
 
 				byte_stream_destroy(&bs);
 			}
@@ -940,7 +946,7 @@ icq_shutdown(OscarData *od, aim_module_t *mod)
 int
 icq_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x0015;
+	mod->family = SNAC_FAMILY_ICQ;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x047c;

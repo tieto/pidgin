@@ -551,10 +551,10 @@ del_to_end(GntBindable *bind, GList *null)
 	return TRUE;
 }
 
-#define SAME(a,b)    ((g_unichar_isalpha(a) && g_unichar_isalpha(b)) || \
-				(g_unichar_isdigit(a) && g_unichar_isdigit(b)) || \
+#define SAME(a,b)    ((g_unichar_isalnum(a) && g_unichar_isalnum(b)) || \
 				(g_unichar_isspace(a) && g_unichar_isspace(b)) || \
-				(g_unichar_iswide(a) && g_unichar_iswide(b)))
+				(g_unichar_iswide(a) && g_unichar_iswide(b)) || \
+				(g_unichar_ispunct(a) && g_unichar_ispunct(b)))
 
 static const char *
 begin_word(const char *text, const char *begin)
@@ -580,11 +580,13 @@ next_begin_word(const char *text, const char *end)
 	while (text && text < end && g_unichar_isspace(g_utf8_get_char(text)))
 		text = g_utf8_find_next_char(text, end);
 
-	ch = g_utf8_get_char(text);
-	while ((text = g_utf8_find_next_char(text, end)) != NULL && text <= end) {
-		gunichar cur = g_utf8_get_char(text);
-		if (!SAME(ch, cur))
-			break;
+	if (text) {
+		ch = g_utf8_get_char(text);
+		while ((text = g_utf8_find_next_char(text, end)) != NULL && text <= end) {
+			gunichar cur = g_utf8_get_char(text);
+			if (!SAME(ch, cur))
+				break;
+		}
 	}
 	return (text ? text : end);
 }

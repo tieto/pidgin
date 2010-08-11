@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,10 +13,10 @@
    height="24"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.45.1"
+   inkscape:version="0.46"
    version="1.0"
    sodipodi:docbase="/home/hbons/Desktop/untitled folder 1"
-   sodipodi:docname="new-style-meeting.svg"
+   sodipodi:docname="meeting.svg"
    inkscape:export-filename="/home/hbons/Desktop/newstyle.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
@@ -35,40 +35,6 @@
          offset="1"
          id="stop3108" />
     </linearGradient>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3104"
-       id="radialGradient3114"
-       cx="8.3343515"
-       cy="14.186539"
-       fx="8.3343515"
-       fy="14.186539"
-       r="9.975256"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.9327,0.932656,-0.947494,-0.947449,33.02126,11.96667)" />
-    <filter
-       inkscape:collect="always"
-       x="-0.27879594"
-       width="1.5575919"
-       y="-0.78248726"
-       height="2.5649745"
-       id="filter3405">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1.5438116"
-         id="feGaussianBlur3407" />
-    </filter>
-    <radialGradient
-       gradientTransform="matrix(-0.9327,0.932656,-0.947494,-0.947449,33.02126,11.96667)"
-       gradientUnits="userSpaceOnUse"
-       r="9.975256"
-       fy="14.186539"
-       fx="8.3343515"
-       cy="14.186539"
-       cx="8.3343515"
-       id="radialGradient2218"
-       xlink:href="#linearGradient3104"
-       inkscape:collect="always" />
     <linearGradient
        id="linearGradient3150"
        inkscape:collect="always">
@@ -140,61 +106,6 @@
        inkscape:collect="always"
        xlink:href="#linearGradient3104"
        id="radialGradient2282"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.9327,0.932656,-0.947494,-0.947449,33.02126,11.96667)"
-       cx="8.3343515"
-       cy="14.186539"
-       fx="8.3343515"
-       fy="14.186539"
-       r="9.975256" />
-    <radialGradient
-       r="6.6449099"
-       fy="10.457643"
-       fx="10.748654"
-       cy="10.457643"
-       cx="10.748654"
-       gradientTransform="matrix(-0.842757,0,0,-0.35721,19.80716,14.19321)"
-       gradientUnits="userSpaceOnUse"
-       id="radialGradient2275"
-       xlink:href="#linearGradient3150"
-       inkscape:collect="always" />
-    <radialGradient
-       r="9.975256"
-       fy="14.186539"
-       fx="8.3343515"
-       cy="14.186539"
-       cx="8.3343515"
-       gradientTransform="matrix(-0.9327,0.932656,-0.947494,-0.947449,33.02126,11.96667)"
-       gradientUnits="userSpaceOnUse"
-       id="radialGradient2263"
-       xlink:href="#linearGradient3104"
-       inkscape:collect="always" />
-    <radialGradient
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.842757,0,0,-0.35721,19.80716,14.19321)"
-       r="6.6449099"
-       fy="10.457643"
-       fx="10.748654"
-       cy="10.457643"
-       cx="10.748654"
-       id="radialGradient3156"
-       xlink:href="#linearGradient3150"
-       inkscape:collect="always" />
-    <radialGradient
-       gradientTransform="matrix(-0.9327,0.932656,-0.947494,-0.947449,33.02126,11.96667)"
-       gradientUnits="userSpaceOnUse"
-       r="9.975256"
-       fy="14.186539"
-       fx="8.3343515"
-       cy="14.186539"
-       cx="8.3343515"
-       id="radialGradient3332"
-       xlink:href="#linearGradient3104"
-       inkscape:collect="always" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3104"
-       id="radialGradient3363"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(-0.9327,0.932656,-0.947494,-0.947449,33.02126,11.96667)"
        cx="8.3343515"

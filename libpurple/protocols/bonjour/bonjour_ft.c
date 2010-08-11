@@ -300,6 +300,8 @@ bonjour_free_xfer(PurpleXfer *xfer)
 		}
 		if (xf->proxy_connection != NULL)
 			purple_proxy_connect_cancel(xf->proxy_connection);
+		if (xf->proxy_info != NULL)
+			purple_proxy_info_destroy(xf->proxy_info);
 		if (xf->listen_data != NULL)
 			purple_network_listen_cancel(xf->listen_data);
 		g_free(xf->iq_id);
@@ -631,6 +633,9 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 			flags = fcntl(acceptfd, F_GETFL);
 			fcntl(acceptfd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+			fcntl(acceptfd, F_SETFD, FD_CLOEXEC);
+#endif
 
 			purple_input_remove(xfer->watcher);
 			close(source);
@@ -802,6 +807,8 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 	xmlnode *q_node, *tmp_node;
 	BonjourData *bd;
 
+	xf->proxy_connection = NULL;
+
 	if(source < 0) {
 		purple_debug_error("bonjour", "Error connecting via SOCKS5 - %s\n",
 			error_message ? error_message : "(null)");
@@ -815,9 +822,6 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 
 	bd = xf->data;
 
-	purple_proxy_info_destroy(xf->proxy_info);
-	xf->proxy_connection = NULL;
-	xf->proxy_info = NULL;
 	/* Here, start the file transfer.*/
 
 	/* Notify Initiator of Connection */
@@ -871,8 +875,6 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 		xep_ft_si_reject(xf->data, xf->iq_id, xfer->who, "404", "cancel");
 		/* Cancel the connection */
 		purple_xfer_cancel_local(xfer);
-		/*purple_proxy_info_destroy(xf->proxy_info);
-		xf->proxy_info = NULL;*/
 	}
 }
 

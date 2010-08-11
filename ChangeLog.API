@@ -1,5 +1,57 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.0 (08/18/2008):
+	libpurple:
+		Added:
+		* Connection flag PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY to indicate
+		  that the connection supports sending and receiving custom smileys.
+		* PurpleSmiley and the Smiley API.
+		* purple_serv_got_join_chat_failed
+		* chat-join-failed signal (see conversation-signals.dox)
+		* chat-invite-blocked and blocked-im-msg signals (see
+		  converation-signals.dox) (Thanks to Stefan Ott)
+		* purple_blist_update_node_icon
+		* purple_buddy_icons_node_has_custom_icon
+		* purple_buddy_icons_node_find_custom_icon
+		* purple_buddy_icons_node_set_custom_icon
+		* purple_buddy_icons_node_set_custom_icon_from_file
+		* purple_notify_user_info_prepend_section_break
+		* purple_notify_user_info_prepend_section_header
+		* "website" and "dev_website" items to the ui_info hash table
+		* purple_cmds_get_handle, purple_cmds_init, purple_cmds_uninit
+		* cmd-added and cmd-removed signals
+		* purple_get_host_name
+		* purple_util_fetch_url_len (temporary function overload to add max_len param)
+		* purple_util_fetch_url_request_len
+		* purple_prpl_send_attention
+		* purple_prpl_got_attention
+		* purple_prpl_got_attention_in_chat
+
+		Deprecated:
+		* purple_blist_update_buddy_icon
+		* purple_buddy_icons_has_custom_icon
+		* purple_buddy_icons_find_custom_icon
+		* purple_buddy_icons_set_custom_icon
+		* pidgin_set_custom_buddy_icon
+		* purple_util_fetch_url_len
+		* purple_util_fetch_url_request_len
+		* serv_send_attention
+		* serv_got_attention
+
+		Changed:
+		* xmlnode_copy now copies the prefix and namespace map for nodes.
+
+	pidgin:
+		Added:
+		* gtk_imhtml_smiley_create, gtk_imhtml_smiley_reload and
+		  gtk_imhtml_smiley_destroy to deal with GtkIMHtmlSmiley's.
+		* pidgin_pixbuf_from_imgstore to create a GdkPixbuf from a
+		  PurpleStoredImage.
+		* pidgin_themes_smiley_themeize_custom to associate custom smileys to
+		  a GtkIMHtml widget.
+		* GTK_IMHTML_CUSTOM_SMILEY flag for GtkIMHtml.
+		* GTK+ Custom Smiley API.
+
 version 2.4.2 (05/17/2008):
 	perl:
 		Added:

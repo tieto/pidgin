@@ -62,7 +62,7 @@ am__libzephyr_a_SOURCES_DIST = ZAsyncLocate.c ZCkAuth.c ZCkIfNot.c \
 	ZSetSrv.c ZSubs.c ZVariables.c ZWait4Not.c ZhmStat.c \
 	Zinternal.c com_err.h error_message.c error_table.h et_name.c \
 	init_et.c internal.h mit-copyright.h mit-sipb-copyright.h \
-	sysdep.h zephyr.h zephyr_err.c zephyr_err.h zephyr.c
+	sysdep.h zephyr_err.c zephyr_err.h zephyr_internal.h zephyr.c
 am__objects_1 = libzephyr_a-ZAsyncLocate.$(OBJEXT) \
 	libzephyr_a-ZCkAuth.$(OBJEXT) libzephyr_a-ZCkIfNot.$(OBJEXT) \
 	libzephyr_a-ZClosePort.$(OBJEXT) libzephyr_a-ZCmpUID.$(OBJEXT) \
@@ -125,7 +125,7 @@ am__libzephyr_la_SOURCES_DIST = ZAsyncLocate.c ZCkAuth.c ZCkIfNot.c \
 	ZSetSrv.c ZSubs.c ZVariables.c ZWait4Not.c ZhmStat.c \
 	Zinternal.c com_err.h error_message.c error_table.h et_name.c \
 	init_et.c internal.h mit-copyright.h mit-sipb-copyright.h \
-	sysdep.h zephyr.h zephyr_err.c zephyr_err.h zephyr.c
+	sysdep.h zephyr_err.c zephyr_err.h zephyr_internal.h zephyr.c
 am__objects_2 = ZAsyncLocate.lo ZCkAuth.lo ZCkIfNot.lo ZClosePort.lo \
 	ZCmpUID.lo ZCmpUIDP.lo ZFlsLocs.lo ZFlsSubs.lo ZFmtAuth.lo \
 	ZFmtList.lo ZFmtNotice.lo ZFmtRaw.lo ZFmtRawLst.lo \
@@ -165,6 +165,7 @@ ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
+ALLOCA = @ALLOCA@
 ALL_LINGUAS = @ALL_LINGUAS@
 AMTAR = @AMTAR@
 AR = @AR@
@@ -330,6 +331,7 @@ SILC_LIBS = @SILC_LIBS@
 SM_LIBS = @SM_LIBS@
 SQLITE3_CFLAGS = @SQLITE3_CFLAGS@
 SQLITE3_LIBS = @SQLITE3_LIBS@
+SSL_CERTIFICATES_DIR = @SSL_CERTIFICATES_DIR@
 STARTUP_NOTIFICATION_CFLAGS = @STARTUP_NOTIFICATION_CFLAGS@
 STARTUP_NOTIFICATION_LIBS = @STARTUP_NOTIFICATION_LIBS@
 STATIC_LINK_LIBS = @STATIC_LINK_LIBS@
@@ -476,9 +478,9 @@ ZEPHYRSOURCES = \
 	mit-copyright.h \
 	mit-sipb-copyright.h \
 	sysdep.h \
-	zephyr.h \
 	zephyr_err.c \
 	zephyr_err.h \
+	zephyr_internal.h \
 	\
 	zephyr.c
 
@@ -503,7 +505,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple/protocols \
-	-DCONFDIR=\"$(confdir)\" \
+	-DCONFDIR=\"$(sysconfdir)\" \
 	$(GLIB_CFLAGS) \
 	$(KRB4_CFLAGS) \
 	$(DEBUG_CFLAGS)

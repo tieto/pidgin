@@ -81,12 +81,9 @@ aim_encode_password(const char *password, guint8 *encoded)
 static int
 aim_encode_password_md5(const char *password, size_t password_len, const char *key, guint8 *digest)
 {
-	PurpleCipher *cipher;
 	PurpleCipherContext *context;
 
-	cipher = purple_ciphers_find_cipher("md5");
-
-	context = purple_cipher_context_new(cipher, NULL);
+	context = purple_cipher_context_new_by_name("md5", NULL);
 	purple_cipher_context_append(context, (const guchar *)key, strlen(key));
 	purple_cipher_context_append(context, (const guchar *)password, password_len);
 	purple_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
@@ -200,9 +197,13 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
  *        usually happens for AOL accounts.  We are told that we
  *        should truncate it if the 0x0017/0x0007 SNAC contains
  *        a TLV of type 0x0026 with data 0x0000.
+ * @param allow_multiple_logins Allow multiple logins? If TRUE, the AIM
+ *        server will prompt the user when multiple logins occur. If
+ *        FALSE, existing connections (on other clients) will be
+ *        disconnected automatically as we connect.
  */
 int
-aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key)
+aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key, gboolean allow_multiple_logins)
 {
 	FlapFrame *frame;
 	GSList *tlvlist = NULL;
@@ -221,8 +222,8 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 
 	frame = flap_frame_new(od, 0x02, 1152);
 
-	snacid = aim_cachesnac(od, 0x0017, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0017, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0002, 0x0000, snacid);
 
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 
@@ -256,7 +257,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	 * If set, old-fashioned buddy lists will not work. You will need
 	 * to use SSI.
 	 */
-	aim_tlvlist_add_8(&tlvlist, 0x004a, 0x01);
+	aim_tlvlist_add_8(&tlvlist, 0x004a, (allow_multiple_logins ? 0x01 : 0x02));
 
 	aim_tlvlist_write(&frame->data, &tlvlist);
 
@@ -403,7 +404,7 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 
 	od->authinfo = info;
 
-	if ((userfunc = aim_callhandler(od, snac ? snac->family : 0x0017, snac ? snac->subtype : 0x0003)))
+	if ((userfunc = aim_callhandler(od, snac ? snac->family : SNAC_FAMILY_AUTH, snac ? snac->subtype : 0x0003)))
 		ret = userfunc(od, conn, frame, info);
 
 	aim_tlvlist_free(tlvlist);
@@ -449,7 +450,7 @@ goddamnicq(OscarData *od, FlapConnection *conn, const char *sn)
 	FlapFrame frame;
 	aim_rxcallback_t userfunc;
 
-	if ((userfunc = aim_callhandler(od, 0x0017, 0x0007)))
+	if ((userfunc = aim_callhandler(od, SNAC_FAMILY_AUTH, 0x0007)))
 		userfunc(od, conn, &frame, "");
 
 	return 0;
@@ -483,8 +484,8 @@ aim_request_login(OscarData *od, FlapConnection *conn, const char *sn)
 
 	frame = flap_frame_new(od, 0x02, 10+2+2+strlen(sn)+8);
 
-	snacid = aim_cachesnac(od, 0x0017, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0017, 0x0006, 0x0000, snacid);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, 0x0006, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, 0x0006, 0x0000, snacid);
 
 	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 
@@ -628,7 +629,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 int
 auth_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x0017;
+	mod->family = SNAC_FAMILY_AUTH;
 	mod->version = 0x0000;
 	mod->flags = 0;
 	strncpy(mod->name, "auth", sizeof(mod->name));

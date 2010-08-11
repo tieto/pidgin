@@ -2773,7 +2773,7 @@ msgstr "Naam"
 msgid "Last name"
 msgstr "Van"
 
-msgid "E-Mail"
+msgid "Email"
 msgstr "E-pos"
 
 msgid "AIM Account"
@@ -2797,9 +2797,6 @@ msgstr "Bonjour-protokolinprop"
 
 msgid "Purple Person"
 msgstr "Pers persoon"
-
-msgid "E-mail"
-msgstr "E-pos"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3880,7 +3877,7 @@ msgstr "Bedienerinstruksies: %s"
 msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr "Vul een of meer velde in om te soek vir passende XMPP-gebruikers."
 
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "E-posadres"
 
 msgid "Search for XMPP users"
@@ -4614,7 +4611,7 @@ msgstr "Kon nie boodskap ontleed nie"
 msgid "Syntax Error (probably a client bug)"
 msgstr "Sintaksfout (dalk 'n kliëntfout)"
 
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Ongeldige e-posadres"
 
 msgid "User does not exist"
@@ -4971,7 +4968,7 @@ msgstr "Persoonlike sel"
 msgid "Home Fax"
 msgstr "Huisfaks"
 
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Persoonlike e-pos"
 
 msgid "Personal IM"
@@ -5014,7 +5011,7 @@ msgstr "Werkroeper"
 msgid "Work Fax"
 msgstr "Werkfaks"
 
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Werks-e-pos"
 
 msgid "Work IM"
@@ -6357,7 +6354,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -6501,11 +6498,11 @@ msgstr[0] "Die volgende skermnaam word met %s geassosieer"
 msgstr[1] "Die volgende skermname word met %s geassosieer"
 
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "Geen resultate gekry vir e-posadres %s nie"
 
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "U behoort 'n e-pos te ontvang wat vra dat u %s bevestig."
 
 msgid "Account Confirmation Requested"
@@ -6534,7 +6531,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
 "Fout 0x%04x: Kan nie die e-posadres verander nie omdat daar reeds 'n versoek "
@@ -6542,7 +6539,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 "Fout 0x%04x: Kon nie e-posadres verander nie omdat die gegewe adres te veel "
@@ -6550,7 +6547,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Fout 0x%04x: Kon nie e-posadres verander nie omdat die gegewe adres ongeldig "
@@ -6564,7 +6561,7 @@ msgid "Error Changing Account Info"
 msgstr "Kon nie rekeninginligting verander nie"
 
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "Die e-posadres vir %s is %s"
 
 msgid "Account Info"
@@ -6779,13 +6776,13 @@ msgstr ""
 "U kan magtiging van hierdie vriende weer aanvra, deur op hulle te regskliek "
 "en \"Vra weer magtiging aan\" te kies."
 
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Vind vriend volgens e-pos"
 
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Soek vir 'n vriend volgens e-posadres"
 
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Gee die e-posadres van die vriend waarvoor u soek."
 
 msgid "_Search"
@@ -6808,16 +6805,16 @@ msgstr "Stel privaatheidopsies..."
 msgid "Confirm Account"
 msgstr "Bevestig rekening"
 
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Wys e-posadres wat tans geregistreer is"
 
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Verander e-posadres wat tans geregistreer is..."
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Wys vriende wat op magtiging wag"
 
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Soek vir vriend met e-posadres..."
 
 msgid "Search for Buddy by Information"
@@ -6882,9 +6879,6 @@ msgstr "Bloedgroep"
 
 msgid "College"
 msgstr "Kollege"
-
-msgid "Email"
-msgstr "E-pos"
 
 msgid "Zipcode"
 msgstr "Poskode"
@@ -8645,7 +8639,7 @@ msgid "User Name: \t%s\n"
 msgstr "Gebruikernaam: \t%s\n"
 
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "E-pos: \t\t%s\n"
 
 #, c-format
@@ -8883,7 +8877,7 @@ msgstr "Benodig méér kwalifiseerders."
 msgid "Dir service temporarily unavailable."
 msgstr "Gidsdiens is tydelik nie beskikbaar nie."
 
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "E-posopsoek ingeperk."
 
 msgid "Keyword ignored."
@@ -11207,7 +11201,7 @@ msgstr "Die font vir die tikkennisgewing"
 msgid "Enable typing notification"
 msgstr "Aktiveer tikkennisgewings"
 
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Kopieer e-posadres"
 
 msgid "_Open Link in Browser"
@@ -11561,8 +11555,8 @@ msgstr[0] "%s het %d nuwe boodskap."
 msgstr[1] "%s het %d nuwe boodskappe."
 
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d nuwe e-pos.</b>"
 msgstr[1] "<b>%d nuwe e-posse.</b>"
 
@@ -12597,19 +12591,19 @@ msgstr "Gebruiker_details"
 msgid "_Associate Buddy"
 msgstr "_Assosieer vriend"
 
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Kan nie e-pos stuur nie"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr "Die evolution-programlêer is nie in die PATH gevind nie."
 
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "Daar is nie 'n e-posadres vir hierdie vriend gevind nie."
 
 msgid "Add to Address Book"
 msgstr "Voeg by adresboek"
 
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Stuur e-pos"
 
 #. Configuration frame
@@ -12655,7 +12649,7 @@ msgstr "Naam:"
 msgid "Last name:"
 msgstr "Van:"
 
-msgid "E-mail:"
+msgid "Email:"
 msgstr "E-pos:"
 
 #. *< type

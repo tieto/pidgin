@@ -29,7 +29,7 @@
 
 /* Subtype 0x0002 - Client Online */
 void
-aim_clientready(OscarData *od, FlapConnection *conn)
+aim_srv_clientready(OscarData *od, FlapConnection *conn)
 {
 	ByteStream bs;
 	aim_snacid_t snacid;
@@ -54,8 +54,8 @@ aim_clientready(OscarData *od, FlapConnection *conn)
 		}
 	}
 
-	snacid = aim_cachesnac(od, 0x0001, 0x0002, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0001, 0x0002, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0002, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -108,7 +108,7 @@ aim_srv_requestnew(OscarData *od, guint16 serviceid)
 	if(!conn)
 		return;
 
-	aim_genericreq_s(od, conn, 0x0001, 0x0004, &serviceid);
+	aim_genericreq_s(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, &serviceid);
 }
 
 /*
@@ -146,8 +146,8 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	snacid = aim_cachesnac(od, 0x0001, 0x0004, 0x0000, &csi, sizeof(csi));
-	flap_connection_send_snac(od, conn, 0x0001, 0x0004, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, &csi, sizeof(csi));
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -210,7 +210,7 @@ redirect(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 void
 aim_srv_reqrates(OscarData *od, FlapConnection *conn)
 {
-	aim_genericreq_n_snacid(od, conn, 0x0001, 0x0006);
+	aim_genericreq_n_snacid(od, conn, SNAC_FAMILY_OSERVICE, 0x0006);
 }
 
 /*
@@ -389,8 +389,8 @@ aim_srv_rates_addparam(OscarData *od, FlapConnection *conn)
 		byte_stream_put16(&bs, rateclass->classid);
 	}
 
-	snacid = aim_cachesnac(od, 0x0001, 0x0008, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0001, 0x0008, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0008, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0008, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -412,8 +412,8 @@ aim_srv_rates_delparam(OscarData *od, FlapConnection *conn)
 		byte_stream_put16(&bs, rateclass->classid);
 	}
 
-	snacid = aim_cachesnac(od, 0x0001, 0x0009, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0001, 0x0009, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0009, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0009, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -503,8 +503,8 @@ aim_srv_sendpauseack(OscarData *od, FlapConnection *conn)
 	for (cur = conn->groups; cur != NULL; cur = cur->next)
 		byte_stream_put16(&bs, GPOINTER_TO_UINT(cur->data));
 
-	snacid = aim_cachesnac(od, 0x0001, 0x000c, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0001, 0x000c, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x000c, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x000c, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -526,7 +526,7 @@ serverresume(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 void
 aim_srv_reqpersonalinfo(OscarData *od, FlapConnection *conn)
 {
-	aim_genericreq_n_snacid(od, conn, 0x0001, 0x000e);
+	aim_genericreq_n_snacid(od, conn, SNAC_FAMILY_OSERVICE, 0x000e);
 }
 
 /* Subtype 0x000f - Self User Info */
@@ -589,7 +589,7 @@ aim_srv_setidle(OscarData *od, guint32 idletime)
 	if(!conn)
 		return;
 
-	aim_genericreq_l(od, conn, 0x0001, 0x0011, &idletime);
+	aim_genericreq_l(od, conn, SNAC_FAMILY_OSERVICE, 0x0011, &idletime);
 }
 
 /*
@@ -698,7 +698,7 @@ motd(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, a
 void
 aim_srv_setprivacyflags(OscarData *od, FlapConnection *conn, guint32 flags)
 {
-	aim_genericreq_l(od, conn, 0x0001, 0x0014, &flags);
+	aim_genericreq_l(od, conn, SNAC_FAMILY_OSERVICE, 0x0014, &flags);
 }
 
 /*
@@ -713,7 +713,7 @@ aim_srv_setprivacyflags(OscarData *od, FlapConnection *conn, guint32 flags)
 void
 aim_srv_nop(OscarData *od, FlapConnection *conn)
 {
-	aim_genericreq_n(od, conn, 0x0001, 0x0016);
+	aim_genericreq_n(od, conn, SNAC_FAMILY_OSERVICE, 0x0016);
 }
 
 /*
@@ -753,8 +753,8 @@ aim_srv_setversions(OscarData *od, FlapConnection *conn)
 		}
 	}
 
-	snacid = aim_cachesnac(od, 0x0001, 0x0017, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0001, 0x0017, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0017, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0017, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -861,8 +861,8 @@ aim_srv_setextrainfo(OscarData *od,
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	snacid = aim_cachesnac(od, 0x0001, 0x001e, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0001, 0x001e, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x001e, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -952,13 +952,10 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 		byte_stream_putraw(&bs, buf, 0x10);
 
 	} else if (buf && (len > 0)) { /* use input buffer */
-		PurpleCipher *cipher;
 		PurpleCipherContext *context;
 		guchar digest[16];
 
-		cipher = purple_ciphers_find_cipher("md5");
-
-		context = purple_cipher_context_new(cipher, NULL);
+		context = purple_cipher_context_new_by_name("md5", NULL);
 		purple_cipher_context_append(context, buf, len);
 		purple_cipher_context_digest(context, 16, digest, NULL);
 		purple_cipher_context_destroy(context);
@@ -966,7 +963,6 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 		byte_stream_putraw(&bs, digest, 0x10);
 
 	} else if (len == 0) { /* no length, just hash NULL (buf is optional) */
-		PurpleCipher *cipher;
 		PurpleCipherContext *context;
 		guchar digest[16];
 		guint8 nil = '\0';
@@ -975,9 +971,7 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 		 * I'm not sure if we really need the empty append with the
 		 * new MD5 functions, so I'll leave it in, just in case.
 		 */
-		cipher = purple_ciphers_find_cipher("md5");
-
-		context = purple_cipher_context_new(cipher, NULL);
+		context = purple_cipher_context_new_by_name("md5", NULL);
 		purple_cipher_context_append(context, &nil, 0);
 		purple_cipher_context_digest(context, 16, digest, NULL);
 		purple_cipher_context_destroy(context);
@@ -1012,8 +1006,8 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 
 	}
 
-	snacid = aim_cachesnac(od, 0x0001, 0x0020, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0001, 0x0020, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_OSERVICE, 0x0020, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_OSERVICE, 0x0020, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -1100,7 +1094,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 int service_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x0001;
+	mod->family = SNAC_FAMILY_OSERVICE;
 	mod->version = 0x0003;
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x0629;

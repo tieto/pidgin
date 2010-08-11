@@ -5,14 +5,13 @@
 #
 
 PIDGIN_TREE_TOP := ../../../..
+GCCWARNINGS := -Wno-comment -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wpointer-arith -Wundef -Wno-unused
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = Purple
 AUTOSPLIT = lib/auto/Purple/autosplit.ix
 EXTUTILS ?= C:/perl/lib/ExtUtils
 PERL_PLUGIN_TOP := ..
-
-CFLAGS += -Wno-comment -Wno-unused
 
 ##
 ## INCLUDE PATHS
@@ -40,11 +39,13 @@ XS_FILES =		Account.xs \
 				BuddyList.xs \
 				Cipher.xs \
 				Cmds.xs \
+				Certificate.xs \
 				Connection.xs \
 				Conversation.xs \
 				Core.xs \
 				Debug.xs \
 				FT.xs \
+				Idle.xs \
 				Purple.xs \
 				ImgStore.xs \
 				Log.xs \
@@ -61,12 +62,14 @@ XS_FILES =		Account.xs \
 				Roomlist.xs \
 				SSLConn.xs \
 				SavedStatuses.xs \
-				Signal.xs \
 				Server.xs \
+				Signal.xs \
+				Smiley.xs \
 				Sound.xs \
 				Status.xs \
 				Stringref.xs \
 				Util.xs \
+				Whiteboard.xs \
 				XMLNode.xs
 
 #FALLBACKS =	const-c.inc const-xs.inc
@@ -76,7 +79,7 @@ OBJECTS = $(C_FILES:%.c=%.o)
 ##
 ## LIBRARIES
 ##
-LIBS =			-lperl58 \
+LIBS =			-lperl510 \
 			-lperl \
 			-lpurple \
 			-lglib-2.0

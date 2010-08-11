@@ -1,6 +1,7 @@
 /**
  * @file cmds.h Commands API
  * @ingroup core
+ * @see @ref cmd-signals
  */
 
 /* Copyright (C) 2003 Timothy Ringenbach <omarvo@hotmail.com>
@@ -30,6 +31,7 @@
 /**************************************************************************/
 /*@{*/
 
+/** The possible results of running a command with purple_cmd_do_command(). */
 typedef enum _PurpleCmdStatus {
 	PURPLE_CMD_STATUS_OK,
 	PURPLE_CMD_STATUS_FAILED,
@@ -39,16 +41,31 @@ typedef enum _PurpleCmdStatus {
 	PURPLE_CMD_STATUS_WRONG_TYPE,
 } PurpleCmdStatus;
 
+/** Commands registered with the core return one of these values when run.
+ *  Normally, a command will want to return one of the first two; in some
+ *  unusual cases, you might want to have several functions called for a
+ *  particular command; in this case, they should return
+ *  #PURPLE_CMD_RET_CONTINUE to cause the core to fall through to other
+ *  commands with the same name.
+ */
 typedef enum _PurpleCmdRet {
-	PURPLE_CMD_RET_OK,       /**< Everything's okay. Don't look for another command to call. */
+	PURPLE_CMD_RET_OK,       /**< Everything's okay; Don't look for another command to call. */
 	PURPLE_CMD_RET_FAILED,   /**< The command failed, but stop looking.*/
 	PURPLE_CMD_RET_CONTINUE, /**< Continue, looking for other commands with the same name to call. */
 } PurpleCmdRet;
 
 #define PURPLE_CMD_FUNC(func) ((PurpleCmdFunc)func)
 
+/** A function implementing a command, as passed to purple_cmd_register().
+ *
+ *  @todo document the arguments to these functions.
+ * */
 typedef PurpleCmdRet (*PurpleCmdFunc)(PurpleConversation *, const gchar *cmd,
                                   gchar **args, gchar **error, void *data);
+/** A unique integer representing a command registered with
+ *  purple_cmd_register(), which can subsequently be passed to
+ *  purple_cmd_unregister() to unregister that command.
+ */
 typedef guint PurpleCmdId;
 
 typedef enum _PurpleCmdPriority {
@@ -171,7 +188,7 @@ void purple_cmd_unregister(PurpleCmdId id);
  *               include both the default formatting and any extra manual formatting.
  * @param errormsg If the command failed errormsg is filled in with the appropriate error
  *                 message. It must be freed by the caller with g_free().
- * @return A #PurpleCmdStatus indicated if the command succeeded or failed.
+ * @return A #PurpleCmdStatus indicating if the command succeeded or failed.
  */
 PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmdline,
                                   const gchar *markup, gchar **errormsg);
@@ -204,6 +221,25 @@ GList *purple_cmd_list(PurpleConversation *conv);
  *         for that command.
  */
 GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd);
+
+/**
+ * Get the handle for the commands API
+ * @return The handle
+ * @since 2.5.0
+ */
+gpointer purple_cmds_get_handle(void);
+
+/**
+ * Initialize the commands subsystem.
+ * @since 2.5.0
+ */
+void purple_cmds_init(void);
+
+/**
+ * Uninitialize the commands subsystem.
+ * @since 2.5.0
+ */
+void purple_cmds_uninit(void);
 
 /*@}*/
 

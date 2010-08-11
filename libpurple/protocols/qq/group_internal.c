@@ -68,12 +68,12 @@ static void _qq_group_add_to_blist(PurpleConnection *gc, qq_group *group)
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "You have added group \"%s\" to blist locally\n", group->group_name_utf8);
 }
 
-/* Create a dummy qq_group, which includes only internal_id, external_id,
+/* Create a dummy qq_group, which includes only internal_id, ext_id,
  * and potentially group_name_utf8, in case we need to call group_conv_show_window
  * right after creation. All other attributes are set to empty.
  * We need to send a get_group_info to the QQ server to update it right away */
 qq_group *qq_group_create_internal_record(PurpleConnection *gc,
-                guint32 internal_id, guint32 external_id, gchar *group_name_utf8)
+                guint32 internal_id, guint32 ext_id, gchar *group_name_utf8)
 {
         qq_group *group;
         qq_data *qd;
@@ -84,9 +84,9 @@ qq_group *qq_group_create_internal_record(PurpleConnection *gc,
         group = g_new0(qq_group, 1);
         group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
         group->my_status_desc = _qq_group_set_my_status_desc(group);
-        group->internal_group_id = internal_id;
-        group->external_group_id = external_id;
-        group->group_type = 0x01;       /* assume permanent Qun */
+        group->id = internal_id;
+        group->ext_id = ext_id;
+        group->type8 = 0x01;       /* assume permanent Qun */
         group->creator_uid = 10000;     /* assume by QQ admin */
         group->group_category = 0x01;
         group->auth_type = 0x02;        /* assume need auth */
@@ -101,7 +101,7 @@ qq_group *qq_group_create_internal_record(PurpleConnection *gc,
         return group;
 }
 
-void qq_group_delete_internal_record(qq_data *qd, guint32 internal_group_id)
+void qq_group_delete_internal_record(qq_data *qd, guint32 id)
 {
         qq_group *group;
         GList *list;
@@ -109,7 +109,7 @@ void qq_group_delete_internal_record(qq_data *qd, guint32 internal_group_id)
         list = qd->groups;
         while (list != NULL) {
                 group = (qq_group *) qd->groups->data;
-                if (internal_group_id == group->internal_group_id) {
+                if (id == group->id) {
                         qd->groups = g_list_remove(qd->groups, group);
                         qq_group_free(group);
                         break;
@@ -128,10 +128,10 @@ GHashTable *qq_group_to_hashtable(qq_group *group)
 	group->my_status_desc = _qq_group_set_my_status_desc(group);
 
 	g_hash_table_insert(components,
-			    g_strdup(QQ_GROUP_KEY_INTERNAL_ID), g_strdup_printf("%d", group->internal_group_id));
+			    g_strdup(QQ_GROUP_KEY_INTERNAL_ID), g_strdup_printf("%d", group->id));
 	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_EXTERNAL_ID),
-			    g_strdup_printf("%d", group->external_group_id));
-	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_GROUP_TYPE), g_strdup_printf("%d", group->group_type));
+			    g_strdup_printf("%d", group->ext_id));
+	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_TYPE), g_strdup_printf("%d", group->type8));
 	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_CREATOR_UID), g_strdup_printf("%d", group->creator_uid));
 	g_hash_table_insert(components,
 			    g_strdup(QQ_GROUP_KEY_GROUP_CATEGORY), g_strdup_printf("%d", group->group_category));
@@ -157,12 +157,11 @@ qq_group *qq_group_from_hashtable(PurpleConnection *gc, GHashTable *data)
 	    (NULL ==
 	     g_hash_table_lookup(data,
 				 QQ_GROUP_KEY_MEMBER_STATUS) ?
-	     g_strdup_printf("%d",
-			     QQ_GROUP_MEMBER_STATUS_NOT_MEMBER) :
+	     g_strdup_printf("%d", QQ_GROUP_MEMBER_STATUS_NOT_MEMBER) :
 	     g_hash_table_lookup(data, QQ_GROUP_KEY_MEMBER_STATUS));
-	group->internal_group_id = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_INTERNAL_ID));
-	group->external_group_id = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_EXTERNAL_ID));
-	group->group_type = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_GROUP_TYPE));
+	group->id = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_INTERNAL_ID));
+	group->ext_id = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_EXTERNAL_ID));
+	group->type8 = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_TYPE));
 	group->creator_uid = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_CREATOR_UID));
 	group->group_category = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_GROUP_CATEGORY));
 	group->auth_type = qq_string_to_dec_value(g_hash_table_lookup(data, QQ_GROUP_KEY_AUTH_TYPE));
@@ -179,12 +178,12 @@ qq_group *qq_group_from_hashtable(PurpleConnection *gc, GHashTable *data)
 void qq_group_refresh(PurpleConnection *gc, qq_group *group)
 {
 	PurpleChat *chat;
-	gchar *external_group_id;
+	gchar *ext_id;
 	g_return_if_fail(group != NULL);
 
-	external_group_id = g_strdup_printf("%d", group->external_group_id);
-	chat = purple_blist_find_chat(purple_connection_get_account(gc), external_group_id);
-	g_free(external_group_id);
+	ext_id = g_strdup_printf("%d", group->ext_id);
+	chat = purple_blist_find_chat(purple_connection_get_account(gc), ext_id);
+	g_free(ext_id);
 	if (chat == NULL && group->my_status != QQ_GROUP_MEMBER_STATUS_NOT_MEMBER) {
 		_qq_group_add_to_blist(gc, group);
 	} else if (chat != NULL) {	/* we have a local record, update its info */
@@ -198,12 +197,12 @@ void qq_group_refresh(PurpleConnection *gc, qq_group *group)
 				     g_strdup(QQ_GROUP_KEY_MEMBER_STATUS_DESC), g_strdup(group->my_status_desc));
 		g_hash_table_replace(chat->components,
 				     g_strdup(QQ_GROUP_KEY_INTERNAL_ID),
-				     g_strdup_printf("%d", group->internal_group_id));
+				     g_strdup_printf("%d", group->id));
 		g_hash_table_replace(chat->components,
 				     g_strdup(QQ_GROUP_KEY_EXTERNAL_ID),
-				     g_strdup_printf("%d", group->external_group_id));
+				     g_strdup_printf("%d", group->ext_id));
 		g_hash_table_replace(chat->components,
-				     g_strdup(QQ_GROUP_KEY_GROUP_TYPE), g_strdup_printf("%d", group->group_type));
+				     g_strdup(QQ_GROUP_KEY_TYPE), g_strdup_printf("%d", group->type8));
 		g_hash_table_replace(chat->components,
 				     g_strdup(QQ_GROUP_KEY_CREATOR_UID), g_strdup_printf("%d", group->creator_uid));
 		g_hash_table_replace(chat->components,
@@ -230,9 +229,7 @@ void qq_set_pending_id(GSList **list, guint32 id, gboolean pending)
 		*list = g_slist_remove(*list, GINT_TO_POINTER(id));
 }
 
-/**
- * @brief Return the location of id in list, or NULL if not found (返回id在链表中的位置,没有找到则返回NULL)
- */
+/* Return the location of id in list, or NULL if not found */
 GSList *qq_get_pending_id(GSList *list, guint32 id)
 {
         return g_slist_find(list, GINT_TO_POINTER(id));

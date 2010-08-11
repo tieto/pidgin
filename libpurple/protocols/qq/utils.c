@@ -30,6 +30,8 @@
 #include "win32dep.h"
 #endif
 
+#include "cipher.h"
+
 #include "char_conv.h"
 #include "debug.h"
 #include "prefs.h"
@@ -49,6 +51,21 @@
    inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
    }
    */
+
+void qq_get_md5(guint8 *md5, gint md5_len, const guint8* const src, gint src_len)
+{
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
+
+	g_return_if_fail(md5 != NULL && md5_len > 0);
+	g_return_if_fail(src != NULL && src_len > 0);
+
+	cipher = purple_ciphers_find_cipher("md5");
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, src, src_len);
+	purple_cipher_context_digest(context, md5_len, md5, NULL);
+	purple_cipher_context_destroy(context);
+}
 
 gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount)
 {
@@ -97,7 +114,7 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	g_memmove(input, data, len);
 	input[len] = 0x00;
 
-	segments = g_strsplit((gchar *) input, delimit, 0);
+	segments = g_strsplit_set((gchar *) input, delimit, 0);
 	if (expected_fields <= 0)
 		return segments;
 
@@ -123,10 +140,20 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	return segments;
 }
 
-/* given a four-byte ip data, convert it into a human readable ip string
- * the return needs to be freed */
-gchar *gen_ip_str(guint8 *ip)
+/* convert Purple name to original QQ UID */
+guint32 purple_name_to_uid(const gchar *const name)
 {
+	guint32 ret;
+	g_return_val_if_fail(name != NULL, 0);
+
+	ret = strtol(name, NULL, 10);
+	if (errno == ERANGE)
+		return 0;
+	else
+		return ret;
+}
+
+gchar *gen_ip_str(guint8 *ip) {
 	gchar *ret;
 	if (ip == NULL || ip[0] == 0) {
 		ret = g_new(gchar, 1);
@@ -147,19 +174,6 @@ guint8 *str_ip_gen(gchar *str) {
 	ip[2] = c;
 	ip[3] = d;
 	return ip;
-}
-
-/* convert Purple name to original QQ UID */
-guint32 purple_name_to_uid(const gchar *const name)
-{
-	guint32 ret;
-	g_return_val_if_fail(name != NULL, 0);
-
-	ret = strtol(name, NULL, 10);
-	if (errno == ERANGE)
-		return 0;
-	else
-		return ret;
 }
 
 /* convert a QQ UID to a unique name of Purple
@@ -300,7 +314,7 @@ static gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 			if ((i + j) < bytes)
 				g_string_append_printf(str, " %02x", buffer[i + j]);
 			else
-				g_string_append(str, "   ");
+				g_string_append(str, " --");
 		g_string_append(str, "  ");
 
 		/* dump ascii value */

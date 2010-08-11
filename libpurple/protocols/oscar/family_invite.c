@@ -41,7 +41,7 @@
 int invite_modfirst(OscarData *od, aim_module_t *mod)
 {
 
-	mod->family = 0x0006;
+	mod->family = SNAC_FAMILY_INVITE;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x0629;

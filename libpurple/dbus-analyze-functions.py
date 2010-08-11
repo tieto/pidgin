@@ -483,6 +483,7 @@ class BindingSet:
         self.inputiter = iter(inputfile)
         self.functionregexp = \
              re.compile("^%s(\w[^()]*)\(([^()]*)\)\s*;\s*$" % fprefix)    
+        self.typeregexp = re.compile("^\w+\s*\*?\s*$")
 
 
                 
@@ -501,7 +502,7 @@ class BindingSet:
             # accumulate lines until the parentheses are balance or an
             # empty line has been encountered
             myline = line.strip()
-            while myline.count("(") > myline.count(")"):
+            while (myline.count("(") > myline.count(")")) or self.typeregexp.match(myline):
                 newline = self.inputiter.next().strip()
                 if len(newline) == 0:
                     break

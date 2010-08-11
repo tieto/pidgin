@@ -3927,7 +3927,7 @@ msgstr "  آخری نام "
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "ای- میل"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:379
@@ -3960,16 +3960,6 @@ msgstr "Bonjour پروٹوكال پلگ ان"
 #, fuzzy
 msgid "Purple Person"
 msgstr "نیا فرد"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:681
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:959
-#: ../libpurple/protocols/silc/silc.c:913
-#: ../libpurple/protocols/silc/silc.c:1154
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-msgid "E-mail"
-msgstr "E-mail"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5629,7 +5619,7 @@ msgstr "کوئی بھی متماثل بکواس صارف تلاش کرنےکے �
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3724
 #: ../libpurple/protocols/oscar/oscar.c:3733
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "ای میل ایڈریس"
 
 #: ../libpurple/protocols/jabber/buddy.c:2423
@@ -6671,7 +6661,7 @@ msgstr "سیٹیکس خامی (شاید گائم بگ)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "غیرمعتبرe-maiپتہ"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7302,8 +7292,8 @@ msgstr "ہوم فیكس"
 
 #: ../libpurple/protocols/msn/msn.c:1804
 #: ../libpurple/protocols/msnp9/msn.c:1657
-msgid "Personal E-Mail"
-msgstr "ذاتیE-Mail"
+msgid "Personal Email"
+msgstr "ذاتیEmail"
 
 #: ../libpurple/protocols/msn/msn.c:1805
 #: ../libpurple/protocols/msnp9/msn.c:1658
@@ -7378,8 +7368,8 @@ msgstr "ورك فیكس"
 
 #: ../libpurple/protocols/msn/msn.c:1835
 #: ../libpurple/protocols/msnp9/msn.c:1688
-msgid "Work E-Mail"
-msgstr "ورك E-Mail"
+msgid "Work Email"
+msgstr "ورك Email"
 
 #: ../libpurple/protocols/msn/msn.c:1836
 #: ../libpurple/protocols/msnp9/msn.c:1689
@@ -9117,12 +9107,12 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2449
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"آپ نے ICQ e-mailموصول كیاہےسے %s [%s]\n"
+"آپ نے ICQ emailموصول كیاہےسے %s [%s]\n"
 "\n"
 "پیام ہے:\n"
 "%s"
@@ -9298,12 +9288,12 @@ msgstr "اسكرین كا نام"
 
 #: ../libpurple/protocols/oscar/oscar.c:3958
 #, c-format
-msgid "No results found for e-mail address %s"
-msgstr " e-mail address %sكےلیےكوئی نتائج نہیں ملے"
+msgid "No results found for email address %s"
+msgstr " email address %sكےلیےكوئی نتائج نہیں ملے"
 
 #: ../libpurple/protocols/oscar/oscar.c:3979
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "آپ كو%sكی تصدیق كےلیے ای۔میل حاصل كرناچاہیے۔"
 
 #: ../libpurple/protocols/oscar/oscar.c:3981
@@ -9331,17 +9321,17 @@ msgstr "خامی 0x%04x:اسکرین نام فارمیٹ کرنے میں ناق�
 
 #: ../libpurple/protocols/oscar/oscar.c:4024
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because there is already a request pending for this screen name."
+msgid "Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."
 msgstr "Error 0x%04x:ای۔میل ایڈریس تبدیل نہیں كرسكتا كیونكہ اس اسكرین نام كے لیے پہلے ہی سےدرخواست پڑی ہوئی ہے۔"
 
 #: ../libpurple/protocols/oscar/oscar.c:4027
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because the given address has too many screen names associated with it."
+msgid "Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."
 msgstr "Error 0x%04x:ای۔میل ایڈریس تبدیل نہیں كرسكتا كیونكہ دیئےگئے ایڈریسیس كے ساتھ بہت سے اسكرین نام متصل ہے۔"
 
 #: ../libpurple/protocols/oscar/oscar.c:4030
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because the given address is invalid."
+msgid "Error 0x%04x: Unable to change email address because the given address is invalid."
 msgstr "Error 0x%04x:ای۔میل ایڈریس تبدیل نہیں كرسكتا كیونكہ دیئےگئےایڈریسیس غیرمعتبرہے۔"
 
 #: ../libpurple/protocols/oscar/oscar.c:4033
@@ -9351,7 +9341,7 @@ msgstr "خامی 0x%04x: نا معلوم خامی"
 
 #: ../libpurple/protocols/oscar/oscar.c:4043
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr " %s is %sكے لیےای۔میل ایڈریسیس"
 
 #: ../libpurple/protocols/oscar/oscar.c:4045
@@ -9577,15 +9567,15 @@ msgid "You can re-request authorization from these buddies by right-clicking on 
 msgstr "آپ ان بڈیز سے اتھورائزیشن کو دوبارہ - درخواست کر سکتے ہیں ان رائٹ- کلیک کرکےاور منتخب کرکے/\"دوبارہ- درخواست اتھورائزیشن۔/\""
 
 #: ../libpurple/protocols/oscar/oscar.c:6281
-msgid "Find Buddy by E-Mail"
-msgstr "E-Mailكے ذریعے دوست كا نام تلاش كریں"
+msgid "Find Buddy by Email"
+msgstr "Emailكے ذریعے دوست كا نام تلاش كریں"
 
 #: ../libpurple/protocols/oscar/oscar.c:6282
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "ای - میل ایڈریس کے ذریعے بڈی کے لئۓ تلاش کریں"
 
 #: ../libpurple/protocols/oscar/oscar.c:6283
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "بڈی کا ای - میل ایڈریس ٹائپ کریں جس کے لئے آپ تلاش کررہے ہیں۔"
 
 #: ../libpurple/protocols/oscar/oscar.c:6286
@@ -9616,20 +9606,20 @@ msgid "Confirm Account"
 msgstr "اکاؤنٹ کی تصدیق کریں"
 
 #: ../libpurple/protocols/oscar/oscar.c:6480
-msgid "Display Currently Registered E-Mail Address"
-msgstr "حال ہی میں درج كیاگیاE-Mail ایڈریس ڈسپلے كریں"
+msgid "Display Currently Registered Email Address"
+msgstr "حال ہی میں درج كیاگیاEmail ایڈریس ڈسپلے كریں"
 
 #: ../libpurple/protocols/oscar/oscar.c:6484
-msgid "Change Currently Registered E-Mail Address..."
-msgstr "حال ہی میں درج كیاگیاE-Mail ایڈریس تبدیل كریں۔۔۔"
+msgid "Change Currently Registered Email Address..."
+msgstr "حال ہی میں درج كیاگیاEmail ایڈریس تبدیل كریں۔۔۔"
 
 #: ../libpurple/protocols/oscar/oscar.c:6491
 msgid "Show Buddies Awaiting Authorization"
 msgstr "بڈیز انتظار اتھورائزیشن دکھاؤ"
 
 #: ../libpurple/protocols/oscar/oscar.c:6497
-msgid "Search for Buddy by E-Mail Address..."
-msgstr "دوست كے لیے E-Mailایڈریس سے تلاش كریں۔۔۔"
+msgid "Search for Buddy by Email Address..."
+msgstr "دوست كے لیے Emailایڈریس سے تلاش كریں۔۔۔"
 
 #: ../libpurple/protocols/oscar/oscar.c:6502
 msgid "Search for Buddy by Information"
@@ -9710,10 +9700,6 @@ msgstr "بلڈ ٹائپ"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "كولیگ"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "ای میل"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12383,8 +12369,8 @@ msgstr "صارف نام: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:368
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
-msgstr "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
+msgstr "Email: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:370
 #: ../libpurple/protocols/silc10/util.c:361
@@ -12703,8 +12689,8 @@ msgid "Dir service temporarily unavailable."
 msgstr "براہ راست سروس عارضی طور پر غیر دستیاب۔"
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
-msgstr "E-mail پابند دكھائی دیتاہے۔"
+msgid "Email lookup restricted."
+msgstr "Email پابند دكھائی دیتاہے۔"
 
 #: ../libpurple/protocols/toc/toc.c:533
 msgid "Keyword ignored."
@@ -15672,7 +15658,7 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "ہائپر لنکس ڈراؤ کرنے کے لئے رنگ جب ماؤس اس پر ہو۔"
 
 #: ../pidgin/gtkimhtml.c:1581
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_ای -میل ایڈریس نقل کریں"
 
 #: ../pidgin/gtkimhtml.c:1593
@@ -16091,8 +16077,8 @@ msgstr[1] "%sک ےپاس    %dنئے پیامات ہیں۔"
 
 #: ../pidgin/gtknotify.c:570
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -17386,7 +17372,7 @@ msgstr "_متعلقہ بڈی"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "ای - میل بھیجنے میں ناقابل"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -17394,7 +17380,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "ارتقائ کا عمل درآمد  PATHمیں نہیں ملا۔"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "ایك ای  میل ایڈریس  اس بڈی كے لیے استعمال نہیں كیا گیا  تھا۔"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17402,7 +17388,7 @@ msgid "Add to Address Book"
 msgstr "ایڈریس بک میں ملاؤ"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "ای میل بھیجو"
 
 #. Configuration frame
@@ -17460,7 +17446,7 @@ msgid "Last name:"
 msgstr "آخری نام:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "ای -میل:"
 
 #. *< type

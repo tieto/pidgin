@@ -50,30 +50,28 @@ ARFLAGS = cru
 libqq_a_AR = $(AR) $(ARFLAGS)
 libqq_a_LIBADD =
 am__libqq_a_SOURCES_DIST = buddy_info.c buddy_info.h buddy_list.c \
-	buddy_list.h buddy_opt.c buddy_opt.h buddy_status.c \
-	buddy_status.h char_conv.c char_conv.h crypt.c crypt.h \
-	file_trans.c file_trans.h group.c group.h group_conv.c \
-	group_conv.h group_find.c group_find.h group_free.c \
-	group_free.h group_internal.c group_internal.h group_im.c \
-	group_im.h group_info.c group_info.h group_join.c group_join.h \
-	group_network.c group_network.h group_opt.c group_opt.h \
-	group_search.c group_search.h header_info.c header_info.h im.c \
-	im.h keep_alive.c keep_alive.h login_logout.c login_logout.h \
-	packet_parse.c packet_parse.h qq.c qq.h qq_network.c \
-	qq_network.h send_file.c send_file.h qq_trans.c qq_trans.h \
-	sys_msg.c sys_msg.h utils.c utils.h
+	buddy_list.h buddy_opt.c buddy_opt.h char_conv.c char_conv.h \
+	qq_crypt.c qq_crypt.h file_trans.c file_trans.h group.c \
+	group.h group_conv.c group_conv.h group_find.c group_find.h \
+	group_free.c group_free.h group_internal.c group_internal.h \
+	group_im.c group_im.h group_info.c group_info.h group_join.c \
+	group_join.h group_opt.c group_opt.h group_search.c \
+	group_search.h header_info.c header_info.h im.c im.h \
+	qq_process.c qq_process.h qq_base.c qq_base.h packet_parse.c \
+	packet_parse.h qq.c qq.h qq_network.c qq_network.h send_file.c \
+	send_file.h qq_trans.c qq_trans.h sys_msg.c sys_msg.h utils.c \
+	utils.h
 am__objects_1 = libqq_a-buddy_info.$(OBJEXT) \
 	libqq_a-buddy_list.$(OBJEXT) libqq_a-buddy_opt.$(OBJEXT) \
-	libqq_a-buddy_status.$(OBJEXT) libqq_a-char_conv.$(OBJEXT) \
-	libqq_a-crypt.$(OBJEXT) libqq_a-file_trans.$(OBJEXT) \
-	libqq_a-group.$(OBJEXT) libqq_a-group_conv.$(OBJEXT) \
-	libqq_a-group_find.$(OBJEXT) libqq_a-group_free.$(OBJEXT) \
-	libqq_a-group_internal.$(OBJEXT) libqq_a-group_im.$(OBJEXT) \
-	libqq_a-group_info.$(OBJEXT) libqq_a-group_join.$(OBJEXT) \
-	libqq_a-group_network.$(OBJEXT) libqq_a-group_opt.$(OBJEXT) \
+	libqq_a-char_conv.$(OBJEXT) libqq_a-qq_crypt.$(OBJEXT) \
+	libqq_a-file_trans.$(OBJEXT) libqq_a-group.$(OBJEXT) \
+	libqq_a-group_conv.$(OBJEXT) libqq_a-group_find.$(OBJEXT) \
+	libqq_a-group_free.$(OBJEXT) libqq_a-group_internal.$(OBJEXT) \
+	libqq_a-group_im.$(OBJEXT) libqq_a-group_info.$(OBJEXT) \
+	libqq_a-group_join.$(OBJEXT) libqq_a-group_opt.$(OBJEXT) \
 	libqq_a-group_search.$(OBJEXT) libqq_a-header_info.$(OBJEXT) \
-	libqq_a-im.$(OBJEXT) libqq_a-keep_alive.$(OBJEXT) \
-	libqq_a-login_logout.$(OBJEXT) libqq_a-packet_parse.$(OBJEXT) \
+	libqq_a-im.$(OBJEXT) libqq_a-qq_process.$(OBJEXT) \
+	libqq_a-qq_base.$(OBJEXT) libqq_a-packet_parse.$(OBJEXT) \
 	libqq_a-qq.$(OBJEXT) libqq_a-qq_network.$(OBJEXT) \
 	libqq_a-send_file.$(OBJEXT) libqq_a-qq_trans.$(OBJEXT) \
 	libqq_a-sys_msg.$(OBJEXT) libqq_a-utils.$(OBJEXT)
@@ -91,24 +89,22 @@ LTLIBRARIES = $(pkg_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 @STATIC_QQ_FALSE@libqq_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__libqq_la_SOURCES_DIST = buddy_info.c buddy_info.h buddy_list.c \
-	buddy_list.h buddy_opt.c buddy_opt.h buddy_status.c \
-	buddy_status.h char_conv.c char_conv.h crypt.c crypt.h \
-	file_trans.c file_trans.h group.c group.h group_conv.c \
-	group_conv.h group_find.c group_find.h group_free.c \
-	group_free.h group_internal.c group_internal.h group_im.c \
-	group_im.h group_info.c group_info.h group_join.c group_join.h \
-	group_network.c group_network.h group_opt.c group_opt.h \
-	group_search.c group_search.h header_info.c header_info.h im.c \
-	im.h keep_alive.c keep_alive.h login_logout.c login_logout.h \
-	packet_parse.c packet_parse.h qq.c qq.h qq_network.c \
-	qq_network.h send_file.c send_file.h qq_trans.c qq_trans.h \
-	sys_msg.c sys_msg.h utils.c utils.h
-am__objects_2 = buddy_info.lo buddy_list.lo buddy_opt.lo \
-	buddy_status.lo char_conv.lo crypt.lo file_trans.lo group.lo \
-	group_conv.lo group_find.lo group_free.lo group_internal.lo \
-	group_im.lo group_info.lo group_join.lo group_network.lo \
-	group_opt.lo group_search.lo header_info.lo im.lo \
-	keep_alive.lo login_logout.lo packet_parse.lo qq.lo \
+	buddy_list.h buddy_opt.c buddy_opt.h char_conv.c char_conv.h \
+	qq_crypt.c qq_crypt.h file_trans.c file_trans.h group.c \
+	group.h group_conv.c group_conv.h group_find.c group_find.h \
+	group_free.c group_free.h group_internal.c group_internal.h \
+	group_im.c group_im.h group_info.c group_info.h group_join.c \
+	group_join.h group_opt.c group_opt.h group_search.c \
+	group_search.h header_info.c header_info.h im.c im.h \
+	qq_process.c qq_process.h qq_base.c qq_base.h packet_parse.c \
+	packet_parse.h qq.c qq.h qq_network.c qq_network.h send_file.c \
+	send_file.h qq_trans.c qq_trans.h sys_msg.c sys_msg.h utils.c \
+	utils.h
+am__objects_2 = buddy_info.lo buddy_list.lo buddy_opt.lo char_conv.lo \
+	qq_crypt.lo file_trans.lo group.lo group_conv.lo group_find.lo \
+	group_free.lo group_internal.lo group_im.lo group_info.lo \
+	group_join.lo group_opt.lo group_search.lo header_info.lo \
+	im.lo qq_process.lo qq_base.lo packet_parse.lo qq.lo \
 	qq_network.lo send_file.lo qq_trans.lo sys_msg.lo utils.lo
 @STATIC_QQ_FALSE@am_libqq_la_OBJECTS = $(am__objects_2)
 libqq_la_OBJECTS = $(am_libqq_la_OBJECTS)
@@ -135,6 +131,7 @@ ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
+ALLOCA = @ALLOCA@
 ALL_LINGUAS = @ALL_LINGUAS@
 AMTAR = @AMTAR@
 AR = @AR@
@@ -300,6 +297,7 @@ SILC_LIBS = @SILC_LIBS@
 SM_LIBS = @SM_LIBS@
 SQLITE3_CFLAGS = @SQLITE3_CFLAGS@
 SQLITE3_LIBS = @SQLITE3_LIBS@
+SSL_CERTIFICATES_DIR = @SSL_CERTIFICATES_DIR@
 STARTUP_NOTIFICATION_CFLAGS = @STARTUP_NOTIFICATION_CFLAGS@
 STARTUP_NOTIFICATION_LIBS = @STARTUP_NOTIFICATION_LIBS@
 STATIC_LINK_LIBS = @STATIC_LINK_LIBS@
@@ -397,12 +395,10 @@ QQSOURCES = \
 	buddy_list.h \
 	buddy_opt.c \
 	buddy_opt.h \
-	buddy_status.c \
-	buddy_status.h \
 	char_conv.c \
 	char_conv.h \
-	crypt.c \
-	crypt.h \
+	qq_crypt.c \
+	qq_crypt.h \
 	file_trans.c \
 	file_trans.h \
 	group.c \
@@ -421,8 +417,6 @@ QQSOURCES = \
 	group_info.h \
 	group_join.c \
 	group_join.h \
-	group_network.c \
-	group_network.h \
 	group_opt.c \
 	group_opt.h \
 	group_search.c \
@@ -431,10 +425,10 @@ QQSOURCES = \
 	header_info.h \
 	im.c \
 	im.h \
-	keep_alive.c \
-	keep_alive.h \
-	login_logout.c \
-	login_logout.h \
+	qq_process.c \
+	qq_process.h \
+	qq_base.c \
+	qq_base.h \
 	packet_parse.c \
 	packet_parse.h \
 	qq.c \
@@ -546,9 +540,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddy_info.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddy_list.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddy_opt.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddy_status.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/char_conv.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crypt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file_trans.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_conv.Plo@am__quote@
@@ -558,18 +550,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_info.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_internal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_join.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_network.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_opt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group_search.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/header_info.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/im.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/keep_alive.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-buddy_info.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-buddy_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-buddy_opt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-buddy_status.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-char_conv.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-crypt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-file_trans.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_conv.Po@am__quote@
@@ -579,24 +567,26 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_info.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_internal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_join.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_network.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_opt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-group_search.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-header_info.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-im.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-keep_alive.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-login_logout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-packet_parse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-qq.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-qq_base.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-qq_crypt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-qq_network.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-qq_process.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-qq_trans.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-send_file.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-sys_msg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libqq_a-utils.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/login_logout.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/packet_parse.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq_base.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq_crypt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq_network.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq_process.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qq_trans.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_file.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sys_msg.Plo@am__quote@
@@ -665,20 +655,6 @@ libqq_a-buddy_opt.obj: buddy_opt.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-buddy_opt.obj `if test -f 'buddy_opt.c'; then $(CYGPATH_W) 'buddy_opt.c'; else $(CYGPATH_W) '$(srcdir)/buddy_opt.c'; fi`
 
-libqq_a-buddy_status.o: buddy_status.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-buddy_status.o -MD -MP -MF $(DEPDIR)/libqq_a-buddy_status.Tpo -c -o libqq_a-buddy_status.o `test -f 'buddy_status.c' || echo '$(srcdir)/'`buddy_status.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-buddy_status.Tpo $(DEPDIR)/libqq_a-buddy_status.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='buddy_status.c' object='libqq_a-buddy_status.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-buddy_status.o `test -f 'buddy_status.c' || echo '$(srcdir)/'`buddy_status.c
-
-libqq_a-buddy_status.obj: buddy_status.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-buddy_status.obj -MD -MP -MF $(DEPDIR)/libqq_a-buddy_status.Tpo -c -o libqq_a-buddy_status.obj `if test -f 'buddy_status.c'; then $(CYGPATH_W) 'buddy_status.c'; else $(CYGPATH_W) '$(srcdir)/buddy_status.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-buddy_status.Tpo $(DEPDIR)/libqq_a-buddy_status.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='buddy_status.c' object='libqq_a-buddy_status.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-buddy_status.obj `if test -f 'buddy_status.c'; then $(CYGPATH_W) 'buddy_status.c'; else $(CYGPATH_W) '$(srcdir)/buddy_status.c'; fi`
-
 libqq_a-char_conv.o: char_conv.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-char_conv.o -MD -MP -MF $(DEPDIR)/libqq_a-char_conv.Tpo -c -o libqq_a-char_conv.o `test -f 'char_conv.c' || echo '$(srcdir)/'`char_conv.c
 @am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-char_conv.Tpo $(DEPDIR)/libqq_a-char_conv.Po
@@ -693,19 +669,19 @@ libqq_a-char_conv.obj: char_conv.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-char_conv.obj `if test -f 'char_conv.c'; then $(CYGPATH_W) 'char_conv.c'; else $(CYGPATH_W) '$(srcdir)/char_conv.c'; fi`
 
-libqq_a-crypt.o: crypt.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-crypt.o -MD -MP -MF $(DEPDIR)/libqq_a-crypt.Tpo -c -o libqq_a-crypt.o `test -f 'crypt.c' || echo '$(srcdir)/'`crypt.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-crypt.Tpo $(DEPDIR)/libqq_a-crypt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='crypt.c' object='libqq_a-crypt.o' libtool=no @AMDEPBACKSLASH@
+libqq_a-qq_crypt.o: qq_crypt.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-qq_crypt.o -MD -MP -MF $(DEPDIR)/libqq_a-qq_crypt.Tpo -c -o libqq_a-qq_crypt.o `test -f 'qq_crypt.c' || echo '$(srcdir)/'`qq_crypt.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-qq_crypt.Tpo $(DEPDIR)/libqq_a-qq_crypt.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='qq_crypt.c' object='libqq_a-qq_crypt.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-crypt.o `test -f 'crypt.c' || echo '$(srcdir)/'`crypt.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-qq_crypt.o `test -f 'qq_crypt.c' || echo '$(srcdir)/'`qq_crypt.c
 
-libqq_a-crypt.obj: crypt.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-crypt.obj -MD -MP -MF $(DEPDIR)/libqq_a-crypt.Tpo -c -o libqq_a-crypt.obj `if test -f 'crypt.c'; then $(CYGPATH_W) 'crypt.c'; else $(CYGPATH_W) '$(srcdir)/crypt.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-crypt.Tpo $(DEPDIR)/libqq_a-crypt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='crypt.c' object='libqq_a-crypt.obj' libtool=no @AMDEPBACKSLASH@
+libqq_a-qq_crypt.obj: qq_crypt.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-qq_crypt.obj -MD -MP -MF $(DEPDIR)/libqq_a-qq_crypt.Tpo -c -o libqq_a-qq_crypt.obj `if test -f 'qq_crypt.c'; then $(CYGPATH_W) 'qq_crypt.c'; else $(CYGPATH_W) '$(srcdir)/qq_crypt.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-qq_crypt.Tpo $(DEPDIR)/libqq_a-qq_crypt.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='qq_crypt.c' object='libqq_a-qq_crypt.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-crypt.obj `if test -f 'crypt.c'; then $(CYGPATH_W) 'crypt.c'; else $(CYGPATH_W) '$(srcdir)/crypt.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-qq_crypt.obj `if test -f 'qq_crypt.c'; then $(CYGPATH_W) 'qq_crypt.c'; else $(CYGPATH_W) '$(srcdir)/qq_crypt.c'; fi`
 
 libqq_a-file_trans.o: file_trans.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-file_trans.o -MD -MP -MF $(DEPDIR)/libqq_a-file_trans.Tpo -c -o libqq_a-file_trans.o `test -f 'file_trans.c' || echo '$(srcdir)/'`file_trans.c
@@ -833,20 +809,6 @@ libqq_a-group_join.obj: group_join.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-group_join.obj `if test -f 'group_join.c'; then $(CYGPATH_W) 'group_join.c'; else $(CYGPATH_W) '$(srcdir)/group_join.c'; fi`
 
-libqq_a-group_network.o: group_network.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-group_network.o -MD -MP -MF $(DEPDIR)/libqq_a-group_network.Tpo -c -o libqq_a-group_network.o `test -f 'group_network.c' || echo '$(srcdir)/'`group_network.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-group_network.Tpo $(DEPDIR)/libqq_a-group_network.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='group_network.c' object='libqq_a-group_network.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-group_network.o `test -f 'group_network.c' || echo '$(srcdir)/'`group_network.c
-
-libqq_a-group_network.obj: group_network.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-group_network.obj -MD -MP -MF $(DEPDIR)/libqq_a-group_network.Tpo -c -o libqq_a-group_network.obj `if test -f 'group_network.c'; then $(CYGPATH_W) 'group_network.c'; else $(CYGPATH_W) '$(srcdir)/group_network.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-group_network.Tpo $(DEPDIR)/libqq_a-group_network.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='group_network.c' object='libqq_a-group_network.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-group_network.obj `if test -f 'group_network.c'; then $(CYGPATH_W) 'group_network.c'; else $(CYGPATH_W) '$(srcdir)/group_network.c'; fi`
-
 libqq_a-group_opt.o: group_opt.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-group_opt.o -MD -MP -MF $(DEPDIR)/libqq_a-group_opt.Tpo -c -o libqq_a-group_opt.o `test -f 'group_opt.c' || echo '$(srcdir)/'`group_opt.c
 @am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-group_opt.Tpo $(DEPDIR)/libqq_a-group_opt.Po
@@ -903,33 +865,33 @@ libqq_a-im.obj: im.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-im.obj `if test -f 'im.c'; then $(CYGPATH_W) 'im.c'; else $(CYGPATH_W) '$(srcdir)/im.c'; fi`
 
-libqq_a-keep_alive.o: keep_alive.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-keep_alive.o -MD -MP -MF $(DEPDIR)/libqq_a-keep_alive.Tpo -c -o libqq_a-keep_alive.o `test -f 'keep_alive.c' || echo '$(srcdir)/'`keep_alive.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-keep_alive.Tpo $(DEPDIR)/libqq_a-keep_alive.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='keep_alive.c' object='libqq_a-keep_alive.o' libtool=no @AMDEPBACKSLASH@
+libqq_a-qq_process.o: qq_process.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-qq_process.o -MD -MP -MF $(DEPDIR)/libqq_a-qq_process.Tpo -c -o libqq_a-qq_process.o `test -f 'qq_process.c' || echo '$(srcdir)/'`qq_process.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-qq_process.Tpo $(DEPDIR)/libqq_a-qq_process.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='qq_process.c' object='libqq_a-qq_process.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-keep_alive.o `test -f 'keep_alive.c' || echo '$(srcdir)/'`keep_alive.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-qq_process.o `test -f 'qq_process.c' || echo '$(srcdir)/'`qq_process.c
 
-libqq_a-keep_alive.obj: keep_alive.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-keep_alive.obj -MD -MP -MF $(DEPDIR)/libqq_a-keep_alive.Tpo -c -o libqq_a-keep_alive.obj `if test -f 'keep_alive.c'; then $(CYGPATH_W) 'keep_alive.c'; else $(CYGPATH_W) '$(srcdir)/keep_alive.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-keep_alive.Tpo $(DEPDIR)/libqq_a-keep_alive.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='keep_alive.c' object='libqq_a-keep_alive.obj' libtool=no @AMDEPBACKSLASH@
+libqq_a-qq_process.obj: qq_process.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-qq_process.obj -MD -MP -MF $(DEPDIR)/libqq_a-qq_process.Tpo -c -o libqq_a-qq_process.obj `if test -f 'qq_process.c'; then $(CYGPATH_W) 'qq_process.c'; else $(CYGPATH_W) '$(srcdir)/qq_process.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-qq_process.Tpo $(DEPDIR)/libqq_a-qq_process.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='qq_process.c' object='libqq_a-qq_process.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-keep_alive.obj `if test -f 'keep_alive.c'; then $(CYGPATH_W) 'keep_alive.c'; else $(CYGPATH_W) '$(srcdir)/keep_alive.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-qq_process.obj `if test -f 'qq_process.c'; then $(CYGPATH_W) 'qq_process.c'; else $(CYGPATH_W) '$(srcdir)/qq_process.c'; fi`
 
-libqq_a-login_logout.o: login_logout.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-login_logout.o -MD -MP -MF $(DEPDIR)/libqq_a-login_logout.Tpo -c -o libqq_a-login_logout.o `test -f 'login_logout.c' || echo '$(srcdir)/'`login_logout.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-login_logout.Tpo $(DEPDIR)/libqq_a-login_logout.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='login_logout.c' object='libqq_a-login_logout.o' libtool=no @AMDEPBACKSLASH@
+libqq_a-qq_base.o: qq_base.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-qq_base.o -MD -MP -MF $(DEPDIR)/libqq_a-qq_base.Tpo -c -o libqq_a-qq_base.o `test -f 'qq_base.c' || echo '$(srcdir)/'`qq_base.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-qq_base.Tpo $(DEPDIR)/libqq_a-qq_base.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='qq_base.c' object='libqq_a-qq_base.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-login_logout.o `test -f 'login_logout.c' || echo '$(srcdir)/'`login_logout.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-qq_base.o `test -f 'qq_base.c' || echo '$(srcdir)/'`qq_base.c
 
-libqq_a-login_logout.obj: login_logout.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-login_logout.obj -MD -MP -MF $(DEPDIR)/libqq_a-login_logout.Tpo -c -o libqq_a-login_logout.obj `if test -f 'login_logout.c'; then $(CYGPATH_W) 'login_logout.c'; else $(CYGPATH_W) '$(srcdir)/login_logout.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-login_logout.Tpo $(DEPDIR)/libqq_a-login_logout.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='login_logout.c' object='libqq_a-login_logout.obj' libtool=no @AMDEPBACKSLASH@
+libqq_a-qq_base.obj: qq_base.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-qq_base.obj -MD -MP -MF $(DEPDIR)/libqq_a-qq_base.Tpo -c -o libqq_a-qq_base.obj `if test -f 'qq_base.c'; then $(CYGPATH_W) 'qq_base.c'; else $(CYGPATH_W) '$(srcdir)/qq_base.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libqq_a-qq_base.Tpo $(DEPDIR)/libqq_a-qq_base.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='qq_base.c' object='libqq_a-qq_base.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-login_logout.obj `if test -f 'login_logout.c'; then $(CYGPATH_W) 'login_logout.c'; else $(CYGPATH_W) '$(srcdir)/login_logout.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -c -o libqq_a-qq_base.obj `if test -f 'qq_base.c'; then $(CYGPATH_W) 'qq_base.c'; else $(CYGPATH_W) '$(srcdir)/qq_base.c'; fi`
 
 libqq_a-packet_parse.o: packet_parse.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqq_a_CFLAGS) $(CFLAGS) -MT libqq_a-packet_parse.o -MD -MP -MF $(DEPDIR)/libqq_a-packet_parse.Tpo -c -o libqq_a-packet_parse.o `test -f 'packet_parse.c' || echo '$(srcdir)/'`packet_parse.c

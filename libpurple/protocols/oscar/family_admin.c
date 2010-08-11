@@ -47,8 +47,8 @@ aim_admin_getinfo(OscarData *od, FlapConnection *conn, guint16 info)
 	byte_stream_put16(&bs, info);
 	byte_stream_put16(&bs, 0x0000);
 
-	snacid = aim_cachesnac(od, 0x0007, 0x0002, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0007, 0x0002, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ADMIN, 0x0002, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -127,8 +127,8 @@ aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick)
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0007, 0x0004, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -154,8 +154,8 @@ aim_admin_changepasswd(OscarData *od, FlapConnection *conn, const char *newpw, c
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0007, 0x0004, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -177,8 +177,8 @@ aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail)
 	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0007, 0x0004, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_ADMIN, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 }
@@ -194,11 +194,11 @@ aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail)
 void
 aim_admin_reqconfirm(OscarData *od, FlapConnection *conn)
 {
-	aim_genericreq_n(od, conn, 0x0007, 0x0006);
+	aim_genericreq_n(od, conn, SNAC_FAMILY_ADMIN, 0x0006);
 }
 
 /**
- * Subtype 0x0007 - Account confirmation request acknowledgement.
+ * Subtype SNAC_FAMILY_ADMIN - Account confirmation request acknowledgement.
  */
 static int
 accountconfirm(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
@@ -227,7 +227,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	if ((snac->subtype == 0x0003) || (snac->subtype == 0x0005)) {
 		infochange(od, conn, mod, frame, snac, bs);
 		return 1;
-	} else if (snac->subtype == 0x0007)
+	} else if (snac->subtype == SNAC_FAMILY_ADMIN)
 		return accountconfirm(od, conn, mod, frame, snac, bs);
 
 	return 0;
@@ -235,7 +235,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 int admin_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x0007;
+	mod->family = SNAC_FAMILY_ADMIN;
 	mod->version = 0x0001;
 	mod->toolid = 0x0010;
 	mod->toolversion = 0x0629;

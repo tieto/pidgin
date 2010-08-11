@@ -80,8 +80,6 @@ send_typed_cb(gpointer data)
 		purple_conv_im_set_type_again(PURPLE_CONV_IM(conv), 1);
 
 		serv_send_typing(gc, name, PURPLE_TYPED);
-		purple_signal_emit(purple_conversations_get_handle(),
-						 "buddy-typed", conv->account, conv->name);
 
 		purple_debug(PURPLE_DEBUG_MISC, "conversation", "typed...\n");
 	}
@@ -98,7 +96,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	char *displayed = NULL, *sent = NULL;
 	int err = 0;
 
-	if (strlen(message) == 0)
+	if (*message == '\0')
 		return;
 
 	account = purple_conversation_get_account(conv);
@@ -1621,7 +1619,7 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 		}
 
 		quiet = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_conversations_get_handle(),
-						 "chat-buddy-joining", conv, user, flag)) |
+						 "chat-buddy-joining", conv, user, flag)) ||
 				purple_conv_chat_is_user_ignored(chat, user);
 
 		cbuddy = purple_conv_chat_cb_new(user, alias, flag);
@@ -1633,18 +1631,18 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 		cbuddies = g_list_prepend(cbuddies, cbuddy);
 
 		if (!quiet && new_arrivals) {
-			char *escaped = g_markup_escape_text(alias, -1);
+			char *alias_esc = g_markup_escape_text(alias, -1);
 			char *tmp;
 
 			if (extra_msg == NULL)
-				tmp = g_strdup_printf(_("%s entered the room."), escaped);
+				tmp = g_strdup_printf(_("%s entered the room."), alias_esc);
 			else {
-				char *escaped2 = g_markup_escape_text(extra_msg, -1);
+				char *extra_msg_esc = g_markup_escape_text(extra_msg, -1);
 				tmp = g_strdup_printf(_("%s [<I>%s</I>] entered the room."),
-									  escaped, escaped2);
-				g_free(escaped2);
+				                      alias_esc, extra_msg_esc);
+				g_free(extra_msg_esc);
 			}
-			g_free(escaped);
+			g_free(alias_esc);
 
 			purple_conversation_write(conv, NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
@@ -1832,7 +1830,7 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 
 		if (!quiet) {
 			const char *alias = user;
-			char *escaped;
+			char *alias_esc;
 			char *tmp;
 
 			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
@@ -1842,17 +1840,17 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 					alias = purple_buddy_get_contact_alias(buddy);
 			}
 
-			escaped = g_markup_escape_text(alias, -1);
+			alias_esc = g_markup_escape_text(alias, -1);
 
 			if (reason == NULL || !*reason)
-				tmp = g_strdup_printf(_("%s left the room."), escaped);
+				tmp = g_strdup_printf(_("%s left the room."), alias_esc);
 			else {
-				char *escaped2 = g_markup_escape_text(reason, -1);
+				char *reason_esc = g_markup_escape_text(reason, -1);
 				tmp = g_strdup_printf(_("%s left the room (%s)."),
-									  escaped, escaped2);
-				g_free(escaped2);
+				                      alias_esc, reason_esc);
+				g_free(reason_esc);
 			}
-			g_free(escaped);
+			g_free(alias_esc);
 
 			purple_conversation_write(conv, NULL, tmp,
 					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
@@ -2221,6 +2219,16 @@ purple_conversations_init(void)
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_UINT));
 
+	purple_signal_register(handle, "blocked-im-msg",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT,
+						 NULL, 5,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+							 PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_UINT),
+						 purple_value_new(PURPLE_TYPE_UINT));
+
 	purple_signal_register(handle, "writing-chat-msg",
 						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT,
 						 purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
@@ -2376,10 +2384,26 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_POINTER));
 
+	purple_signal_register(handle, "chat-invite-blocked",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_POINTER,
+						 NULL, 5,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+							 PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_BOXED, "GHashTable *"));
+
 	purple_signal_register(handle, "chat-joined",
 						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION));
+
+	purple_signal_register(handle, "chat-join-failed",
+						   purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+						   purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CONNECTION),
+						   purple_value_new(PURPLE_TYPE_POINTER));
 
 	purple_signal_register(handle, "chat-left",
 						 purple_marshal_VOID__POINTER, NULL, 1,

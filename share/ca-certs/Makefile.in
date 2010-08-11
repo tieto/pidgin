@@ -56,6 +56,7 @@ cacertsDATA_INSTALL = $(INSTALL_DATA)
 DATA = $(cacerts_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
+ALLOCA = @ALLOCA@
 ALL_LINGUAS = @ALL_LINGUAS@
 AMTAR = @AMTAR@
 AR = @AR@
@@ -221,6 +222,7 @@ SILC_LIBS = @SILC_LIBS@
 SM_LIBS = @SM_LIBS@
 SQLITE3_CFLAGS = @SQLITE3_CFLAGS@
 SQLITE3_LIBS = @SQLITE3_LIBS@
+SSL_CERTIFICATES_DIR = @SSL_CERTIFICATES_DIR@
 STARTUP_NOTIFICATION_CFLAGS = @STARTUP_NOTIFICATION_CFLAGS@
 STARTUP_NOTIFICATION_LIBS = @STARTUP_NOTIFICATION_LIBS@
 STATIC_LINK_LIBS = @STATIC_LINK_LIBS@
@@ -307,8 +309,9 @@ target_os = @target_os@
 target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-cacertsdir = $(datadir)/purple/ca-certs
-cacerts_DATA = \
+CERTIFICATES = \
+		CAcert_Root.pem \
+		CAcert_Class3.pem \
 		Equifax_Secure_CA.pem \
 		GTE_CyberTrust_Global_Root.pem \
 		Microsoft_Secure_Server_Authority.pem \
@@ -316,9 +319,11 @@ cacerts_DATA = \
 		Verisign_RSA_Secure_Server_CA.pem \
 		Verisign_Class3_Primary_CA.pem
 
+@INSTALL_SSL_CERTIFICATES_TRUE@cacertsdir = $(datadir)/purple/ca-certs
+@INSTALL_SSL_CERTIFICATES_TRUE@cacerts_DATA = $(CERTIFICATES)
 EXTRA_DIST = \
 		Makefile.mingw \
-		$(cacerts_DATA)
+		$(CERTIFICATES)
 
 all: all-am
 

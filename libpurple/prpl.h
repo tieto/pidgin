@@ -31,6 +31,7 @@
 #define _PURPLE_PRPL_H_
 
 typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
+/** @copydoc _PurpleAttentionType */
 typedef struct _PurpleAttentionType PurpleAttentionType;
 
 /**************************************************************************/
@@ -71,16 +72,22 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "status.h"
 #include "whiteboard.h"
 
+
+/** @copydoc PurpleBuddyIconSpec */
 struct _PurpleBuddyIconSpec {
-	char *format;                       /**< This is a comma-delimited list of image formats or NULL if icons are not supported.
-					     * Neither the core nor the prpl will actually check to see if the data it's given matches this; it's
-					     * entirely up to the UI to do what it wants */
-	int min_width;                          /**< The minimum width of this icon  */
-	int min_height;                         /**< The minimum height of this icon */
-	int max_width;                          /**< The maximum width of this icon  */
-	int max_height;                         /**< The maximum height of this icon */
-	size_t max_filesize;                     /**< The maximum number of bytes    */
-	PurpleIconScaleRules scale_rules;		/**< How to stretch this icon */
+	/** This is a comma-delimited list of image formats or @c NULL if icons
+	 *  are not supported.  Neither the core nor the prpl will actually
+	 *  check to see if the data it's given matches this; it's entirely up
+	 *  to the UI to do what it wants
+	 */
+	char *format;
+
+	int min_width;                     /**< Minimum width of this icon  */
+	int min_height;                    /**< Minimum height of this icon */
+	int max_width;                     /**< Maximum width of this icon  */
+	int max_height;                    /**< Maximum height of this icon */
+	size_t max_filesize;               /**< Maximum size in bytes */
+	PurpleIconScaleRules scale_rules;  /**< How to stretch this icon */
 };
 
 struct proto_chat_entry {
@@ -93,6 +100,9 @@ struct proto_chat_entry {
 	gboolean secret;
 };
 
+/** Represents "nudges" and "buzzes" that you may send to a buddy to attract
+ *  their attention (or vice-versa).
+ */
 struct _PurpleAttentionType
 {
 	const char *name;                  /**< Shown in GUI elements */
@@ -399,8 +409,44 @@ struct _PurplePluginProtocolInfo
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
 	GList *(*get_attention_types)(PurpleAccount *acct);
 
-	void (*_purple_reserved4)(void);
+	/**
+	 * The size of the PurplePluginProtocolInfo. This should always be sizeof(PurplePluginProtocolInfo).
+	 * This allows adding more functions to this struct without requiring a major version bump.
+	 */
+	unsigned long struct_size;
+
+	/* NOTE:
+	 * If more functions are added, they should accessed using the following syntax:
+	 *
+	 *		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, new_function))
+	 *			prpl->new_function(...);
+	 *
+	 * instead of
+	 *
+	 *		if (prpl->new_function != NULL)
+	 *			prpl->new_function(...);
+	 *
+	 * The PURPLE_PROTOCOL_PLUGIN_HAS_FUNC macro can be used for the older member
+	 * functions (e.g. login, send_im etc.) too.
+	 */
+
+	/** This allows protocols to specify additional strings to be used for
+	 * various purposes.  The idea is to stuff a bunch of strings in this hash
+	 * table instead of expanding the struct for every addition.  This hash
+	 * table is allocated every call and MUST be unrefed by the caller.
+	 *
+	 * @param account The account to specify.  This can be NULL.
+	 * @return The protocol's string hash table. The hash table should be
+	 *         destroyed by the caller when it's no longer needed.
+	 */
+	GHashTable *(*get_account_text_table)(PurpleAccount *account);
 };
+
+#define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
+	(((G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < G_STRUCT_OFFSET(PurplePluginProtocolInfo, struct_size)) \
+	  || (G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < prpl->struct_size)) && \
+	 prpl->member != NULL)
+
 
 #define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \
 	((plugin)->info->type == PURPLE_PLUGIN_PROTOCOL)
@@ -646,6 +692,41 @@ void purple_prpl_change_account_status(PurpleAccount *account,
  * @return List of statuses
  */
 GList *purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence);
+
+/** Send an attention request message.
+ *
+ * @param gc The connection to send the message on.
+ * @param who Whose attention to request.
+ * @param type_code An index into the prpl's attention_types list determining the type
+ * 	of the attention request command to send. 0 if prpl only defines one
+ * 	(for example, Yahoo and MSN), but some protocols define more (MySpaceIM).
+ *
+ * Note that you can't send arbitrary PurpleAttentionType's, because there is
+ * only a fixed set of attention commands.
+ * @since 2.5.0
+ */
+void purple_prpl_send_attention(PurpleConnection *gc, const char *who, guint type_code);
+
+/** Process an incoming attention message. 
+ *
+ * @param gc The connection that received the attention message.
+ * @param who Who requested your attention.
+ * @param type_code An index into the prpl's attention_types list determining the type
+ * 	of the attention request command to send.
+ * @since 2.5.0
+ */
+void purple_prpl_got_attention(PurpleConnection *gc, const char *who, guint type_code);
+
+/** Process an incoming attention message in a chat. 
+ *
+ * @param gc The connection that received the attention message.
+ * @param id The chat id.
+ * @param who Who requested your attention.
+ * @param type_code An index into the prpl's attention_types list determining the type
+ * 	of the attention request command to send. 
+ * @since 2.5.0
+ */
+void purple_prpl_got_attention_in_chat(PurpleConnection *gc, int id, const char *who, guint type_code);
 
 /*@}*/
 

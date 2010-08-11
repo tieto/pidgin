@@ -123,6 +123,7 @@ static struct _irc_user_cmd {
 } _irc_cmds[] = {
 	{ "action", ":", irc_cmd_ctcp_action, N_("action &lt;action to perform&gt;:  Perform an action.") },
 	{ "away", ":", irc_cmd_away, N_("away [message]:  Set an away message, or use no message to return from being away.") },
+	{ "ctcp", "t:", irc_cmd_ctcp, N_("ctcp <nick> <msg>: sends ctcp msg to nick.") },
 	{ "chanserv", ":", irc_cmd_service, N_("chanserv: Send a command to chanserv") },
 	{ "deop", ":", irc_cmd_op, N_("deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from someone. You must be a channel operator to do this.") },
 	{ "devoice", ":", irc_cmd_op, N_("devoice &lt;nick1&gt; [nick2] ...:  Remove channel voice status from someone, preventing them from speaking if the channel is moderated (+m). You must be a channel operator to do this.") },
@@ -232,7 +233,7 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 
 	if (encodings[0] == NULL || !g_ascii_strcasecmp("UTF-8", encodings[0])) {
 		g_strfreev(encodings);
-		return g_strdup(string);
+		return NULL;
 	}
 
 	utf8 = g_convert(string, strlen(string), encodings[0], "UTF-8", NULL, NULL, &err);
@@ -252,6 +253,7 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 	char *utf8 = NULL;
 	const gchar *charset, *enclist;
 	gchar **encodings;
+	gboolean autodetect;
 	int i;
 
 	enclist = purple_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
@@ -260,6 +262,12 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 	if (encodings[0] == NULL) {
 		g_strfreev(encodings);
 		return purple_utf8_salvage(string);
+	}
+
+	autodetect = purple_account_get_bool(irc->account, "autodetect_utf8", IRC_DEFAULT_AUTODETECT);
+
+	if (autodetect && g_utf8_validate(string, -1, NULL)) {
+		return g_strdup(string);
 	}
 
 	for (i = 0; encodings[i] != NULL; i++) {
@@ -597,7 +605,7 @@ char *irc_format(struct irc_conn *irc, const char *format, ...)
 		case 'n':
 		case 'c':
 			tmp = irc_send_convert(irc, tok);
-			g_string_append(string, tmp);
+			g_string_append(string, tmp ? tmp : tok);
 			g_free(tmp);
 			break;
 		default:

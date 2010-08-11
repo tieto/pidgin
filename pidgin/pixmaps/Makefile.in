@@ -152,25 +152,25 @@ am__nobase_dist_pidginpixmap_DATA_DIST = animations/16/connect0.png \
 	toolbar/16/font-size-up.png toolbar/16/insert.png \
 	toolbar/16/insert-image.png toolbar/16/insert-link.png \
 	toolbar/16/message-new.png toolbar/16/plugins.png \
-	toolbar/16/send-file.png toolbar/16/unblock.png \
-	toolbar/22/select-avatar.png tray/16/tray-away.png \
-	tray/16/tray-busy.png tray/16/tray-invisible.png \
-	tray/16/tray-connecting.png tray/16/tray-extended-away.png \
-	tray/16/tray-message.png tray/16/tray-new-im.png \
-	tray/16/tray-offline.png tray/16/tray-online.png \
-	tray/22/tray-away.png tray/22/tray-busy.png \
-	tray/22/tray-connecting.png tray/22/tray-extended-away.png \
-	tray/22/tray-invisible.png tray/22/tray-message.png \
-	tray/22/tray-new-im.png tray/22/tray-offline.png \
-	tray/22/tray-online.png tray/32/tray-away.png \
-	tray/32/tray-busy.png tray/32/tray-connecting.png \
-	tray/32/tray-extended-away.png tray/32/tray-invisible.png \
-	tray/32/tray-new-im.png tray/32/tray-offline.png \
-	tray/32/tray-online.png tray/48/tray-away.png \
-	tray/48/tray-busy.png tray/48/tray-connecting.png \
-	tray/48/tray-extended-away.png tray/48/tray-invisible.png \
-	tray/48/tray-new-im.png tray/48/tray-offline.png \
-	tray/48/tray-online.png
+	toolbar/16/send-file.png toolbar/16/transfer.png \
+	toolbar/16/unblock.png toolbar/22/select-avatar.png \
+	tray/16/tray-away.png tray/16/tray-busy.png \
+	tray/16/tray-invisible.png tray/16/tray-connecting.png \
+	tray/16/tray-extended-away.png tray/16/tray-message.png \
+	tray/16/tray-new-im.png tray/16/tray-offline.png \
+	tray/16/tray-online.png tray/22/tray-away.png \
+	tray/22/tray-busy.png tray/22/tray-connecting.png \
+	tray/22/tray-extended-away.png tray/22/tray-invisible.png \
+	tray/22/tray-message.png tray/22/tray-new-im.png \
+	tray/22/tray-offline.png tray/22/tray-online.png \
+	tray/32/tray-away.png tray/32/tray-busy.png \
+	tray/32/tray-connecting.png tray/32/tray-extended-away.png \
+	tray/32/tray-invisible.png tray/32/tray-new-im.png \
+	tray/32/tray-offline.png tray/32/tray-online.png \
+	tray/48/tray-away.png tray/48/tray-busy.png \
+	tray/48/tray-connecting.png tray/48/tray-extended-away.png \
+	tray/48/tray-invisible.png tray/48/tray-new-im.png \
+	tray/48/tray-offline.png tray/48/tray-online.png
 nobase_dist_pidginpixmapDATA_INSTALL = $(install_sh_DATA)
 pidginbuttonpixDATA_INSTALL = $(INSTALL_DATA)
 pidgindistpixDATA_INSTALL = $(INSTALL_DATA)
@@ -184,6 +184,7 @@ CTAGS = ctags
 DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
+ALLOCA = @ALLOCA@
 ALL_LINGUAS = @ALL_LINGUAS@
 AMTAR = @AMTAR@
 AR = @AR@
@@ -349,6 +350,7 @@ SILC_LIBS = @SILC_LIBS@
 SM_LIBS = @SM_LIBS@
 SQLITE3_CFLAGS = @SQLITE3_CFLAGS@
 SQLITE3_LIBS = @SQLITE3_LIBS@
+SSL_CERTIFICATES_DIR = @SSL_CERTIFICATES_DIR@
 STARTUP_NOTIFICATION_CFLAGS = @STARTUP_NOTIFICATION_CFLAGS@
 STARTUP_NOTIFICATION_LIBS = @STARTUP_NOTIFICATION_LIBS@
 STATIC_LINK_LIBS = @STATIC_LINK_LIBS@
@@ -559,6 +561,7 @@ SUBDIRS = buddy_icons/qq emotes/default/24 emotes/none
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/car.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/cat.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/chicken.svg \
+@INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/cigarette.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/clap.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/clock.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/cloudy.svg \
@@ -580,7 +583,7 @@ SUBDIRS = buddy_icons/qq emotes/default/24 emotes/none
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/dazed.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/desire.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/devil.svg \
-@INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/disapointed.svg \
+@INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/disappointed.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/disdain.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/doctor.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/dog.svg \
@@ -680,7 +683,6 @@ SUBDIRS = buddy_icons/qq emotes/default/24 emotes/none
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/shut-mouth.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/sick.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/sidefrown.svg \
-@INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/sigarette.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/silly.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/sinister.svg \
 @INSTALL_PIXMAPS_TRUE@		emotes/default/24/scalable/skeleton.svg \
@@ -761,9 +763,6 @@ SUBDIRS = buddy_icons/qq emotes/default/24 emotes/none
 @INSTALL_PIXMAPS_TRUE@		icons/hicolor/16x16/apps/scalable/pidgin.svg
 
 @INSTALL_PIXMAPS_TRUE@ICONS_16 = icons/hicolor/16x16/apps/pidgin.png
-@INSTALL_PIXMAPS_TRUE@ICONS_22_SCALABLE = \
-@INSTALL_PIXMAPS_TRUE@		icons/hicolor/22x22/apps/scalable/pidgin.svg
-
 @INSTALL_PIXMAPS_TRUE@ICONS_22 = icons/hicolor/22x22/apps/pidgin.png
 @INSTALL_PIXMAPS_TRUE@ICONS_24_SCALABLE = \
 @INSTALL_PIXMAPS_TRUE@		icons/hicolor/24x24/apps/scalable/pidgin.svg
@@ -994,6 +993,7 @@ SUBDIRS = buddy_icons/qq emotes/default/24 emotes/none
 @INSTALL_PIXMAPS_TRUE@		toolbar/16/message-new.png \
 @INSTALL_PIXMAPS_TRUE@		toolbar/16/plugins.png \
 @INSTALL_PIXMAPS_TRUE@		toolbar/16/send-file.png \
+@INSTALL_PIXMAPS_TRUE@		toolbar/16/transfer.png \
 @INSTALL_PIXMAPS_TRUE@		toolbar/16/unblock.png
 
 @INSTALL_PIXMAPS_TRUE@TOOLBAR_22_SCALABLE = \

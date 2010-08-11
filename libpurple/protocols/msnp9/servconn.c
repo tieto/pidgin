@@ -251,6 +251,12 @@ msn_servconn_disconnect(MsnServConn *servconn)
 {
 	g_return_if_fail(servconn != NULL);
 
+	if (servconn->connect_data != NULL)
+	{
+		purple_proxy_connect_cancel(servconn->connect_data);
+		servconn->connect_data = NULL;
+	}
+
 	if (!servconn->connected)
 	{
 		/* We could not connect. */
@@ -267,12 +273,6 @@ msn_servconn_disconnect(MsnServConn *servconn)
 			servconn->disconnect_cb(servconn);
 
 		return;
-	}
-
-	if (servconn->connect_data != NULL)
-	{
-		purple_proxy_connect_cancel(servconn->connect_data);
-		servconn->connect_data = NULL;
 	}
 
 	if (servconn->inpa > 0)
@@ -547,6 +547,9 @@ create_listener(int port)
 
 	flags = fcntl(fd, F_GETFL);
 	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(fd, F_SETFD, FD_CLOEXEC);
+#endif
 
 	return fd;
 }

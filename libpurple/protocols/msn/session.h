@@ -38,7 +38,6 @@ typedef struct _MsnSession MsnSession;
 #include "cmdproc.h"
 #include "nexus.h"
 #include "httpconn.h"
-#include "contact.h"
 #include "oim.h"
 
 #include "userlist.h"
@@ -96,7 +95,6 @@ struct _MsnSession
 
 	MsnNotification *notification;
 	MsnNexus *nexus;
-	MsnContact *contact;
 	MsnOim		*oim;
 	MsnSync *sync;
 
@@ -104,25 +102,24 @@ struct _MsnSession
 
 	int servconns_count; /**< The count of server connections. */
 	GList *switches; /**< The list of all the switchboards. */
-	GList *directconns; /**< The list of all the directconnections. */
 	GList *slplinks; /**< The list of all the slplinks. */
 
 	/*psm info*/
 	char *psm;
 
+	char *blocked_text;
+
 	struct
 	{
-		/*t and p, get via USR TWN*/
-		char *t;
-		char *p;
-
 		char *kv;
 		char *sid;
 		char *mspauth;
 		unsigned long sl;
-		char *file;
 		char *client_ip;
 		int client_port;
+		char *mail_url;
+		gulong mail_timestamp;
+		gboolean email_enabled;
 	} passport_info;
 
 	GHashTable *soap_table;
@@ -237,6 +234,6 @@ void msn_session_finish_login(MsnSession *session);
 
 /*post message to User*/
 void msn_session_report_user(MsnSession *session,const char *passport,
-							char *msg,PurpleMessageFlags flags);
+							const char *msg,PurpleMessageFlags flags);
 
 #endif /* _MSN_SESSION_H_ */

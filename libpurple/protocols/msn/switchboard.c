@@ -114,6 +114,11 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	session = swboard->session;
 	session->switches = g_list_remove(session->switches, swboard);
 
+	for (l = session->slplinks; l; l = l->next) {
+		MsnSlpLink *slplink = l->data;
+		if (slplink->swboard == swboard) slplink->swboard = NULL;
+	}
+
 #if 0
 	/* This should never happen or we are in trouble. */
 	if (swboard->servconn != NULL)
@@ -338,7 +343,7 @@ swboard_error_helper(MsnSwitchBoard *swboard, int reason, const char *passport)
 {
 	g_return_if_fail(swboard != NULL);
 
-	purple_debug_warning("msg", "Error: Unable to call the user %s for reason %i\n",
+	purple_debug_warning("msn", "Error: Unable to call the user %s for reason %i\n",
 					   passport ? passport : "(null)", reason);
 
 	/* TODO: if current_users > 0, this is probably a chat and an invite failed,
@@ -540,7 +545,7 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	payload = msn_message_gen_payload(msg, &payload_len);
 
 #ifdef MSN_DEBUG_SB
-	purple_debug_info("MSNP14","SB length:{%d}",payload_len);
+	purple_debug_info("msn", "SB length:{%" G_GSIZE_FORMAT "}", payload_len);
 	msn_message_show_readable(msg, "SB SEND", FALSE);
 #endif
 
@@ -628,7 +633,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg,
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(msg     != NULL);
 
-	purple_debug_info("MSNP14","switchboard send msg..\n");
+	purple_debug_info("msn", "switchboard send msg..\n");
 	if (msn_switchboard_can_send(swboard))
 		release_msg(swboard, msg);
 	else if (queue)
@@ -662,7 +667,7 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	g_return_if_fail(swboard != NULL);
 
 	if (!(swboard->flag & MSN_SB_FLAG_IM) && (swboard->conv != NULL))
-		purple_debug_error("msn_switchboard", "bye_cmd: helper bug\n");
+		purple_debug_error("msn", "bye_cmd: helper bug\n");
 
 	if (swboard->conv == NULL)
 	{
@@ -752,15 +757,15 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 static void
 msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	cmdproc->servconn->payload_len = atoi(cmd->params[2]);
+	cmd->payload_len = atoi(cmd->params[2]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
 
 static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_misc("MSNP14","get UBM...\n");
-	cmdproc->servconn->payload_len = atoi(cmd->params[4]);
+	purple_debug_misc("msn", "get UBM...\n");
+	cmd->payload_len = atoi(cmd->params[4]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
 
@@ -960,17 +965,46 @@ clientcaps_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 }
 
 static void
-nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
-	MsnSwitchBoard *swboard;
-	PurpleAccount *account;
-	const char *user;
+	GHashTable *body;
+	const char *id;
+	body = msn_message_get_hashtable_from_body(msg);
 
-	swboard = cmdproc->data;
-	account = cmdproc->session->account;
-	user = msg->remote_user;
+	id = g_hash_table_lookup(body, "ID");
 
-	serv_got_attention(account->gc, user, MSN_NUDGE);
+	if (!strcmp(id, "1")) {
+		/* Nudge */
+		MsnSwitchBoard *swboard;
+		PurpleAccount *account;
+		const char *user;
+
+		swboard = cmdproc->data;
+		account = cmdproc->session->account;
+		user = msg->remote_user;
+
+		if (swboard->current_users > 1 ||
+			((swboard->conv != NULL) &&
+			 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+			purple_prpl_got_attention_in_chat(account->gc, swboard->chat_id, user, MSN_NUDGE);
+
+		else
+			purple_prpl_got_attention(account->gc, user, MSN_NUDGE);
+
+	} else if (!strcmp(id, "2")) {
+		/* Wink */
+
+	} else if (!strcmp(id, "3")) {
+		/* Voiceclip */
+
+	} else if (!strcmp(id, "4")) {
+		/* Action */
+
+	} else {
+		purple_debug_warning("msn", "Got unknown datacast with ID %s.\n", id);
+	}
+
+	g_hash_table_destroy(body);
 }
 
 /**************************************************************************
@@ -1059,7 +1093,7 @@ msn_switchboard_connect(MsnSwitchBoard *swboard, const char *host, int port)
 	msn_servconn_set_connect_cb(swboard->servconn, connect_cb);
 	msn_servconn_set_disconnect_cb(swboard->servconn, disconnect_cb);
 
-	return msn_servconn_connect(swboard->servconn, host, port);
+	return msn_servconn_connect(swboard->servconn, host, port, FALSE);
 }
 
 void
@@ -1114,18 +1148,13 @@ cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	}
 
 	purple_debug_warning("msn", "cal_error: command %s gave error %i\n", trans->command, error);
-	purple_debug_warning("msn", "Will Use Offline Message to sendit\n");
-
-//	cal_error_helper(trans, reason);
-	/*offline Message send Process*/
 
 	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL){
-		purple_debug_warning("MSNP14","offline msg to send:{%s}\n",msg->body);
+		purple_debug_warning("msn", "Unable to send msg: {%s}\n", msg->body);
 		/* The messages could not be sent due to a switchboard error */
 		swboard->error = MSN_SB_ERROR_USER_OFFLINE;
 		msg_error_helper(swboard->cmdproc, msg,
 							 MSN_MSG_ERROR_SB);
-		msn_message_unref(msg);
 	}
 	cal_error_helper(trans, reason);
 }
@@ -1170,7 +1199,7 @@ got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* The conversation window was closed. */
 		return;
 
-	purple_debug_info("MSNP14","Switchboard:auth:{%s} socket:{%s}\n",cmd->params[4],cmd->params[2]);
+	purple_debug_info("msn", "Switchboard:auth:{%s} socket:{%s}\n", cmd->params[4], cmd->params[2]);
 	msn_switchboard_set_auth_key(swboard, cmd->params[4]);
 
 	msn_parse_socket(cmd->params[2], &host, &port);
@@ -1313,7 +1342,7 @@ msn_switchboard_init(void)
 	msn_table_add_msg_type(cbs_table, "text/x-mms-animemoticon",
 	                                           msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
-						   nudge_msg);
+						   datacast_msg);
 #if 0
 	msn_table_add_msg_type(cbs_table, "text/x-msmmsginvite",
 						   msn_invite_msg);

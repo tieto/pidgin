@@ -2,24 +2,25 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/s odipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="24"
    height="24"
    id="svg1307"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.46"
    sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh/status/22"
    sodipodi:docname="extended-away.svg"
    inkscape:export-filename="/home/hbons/Desktop/Gaim Refresh/status/22/extended-away22.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
-   version="1.0">
+   version="1.0"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs1309">
     <linearGradient
@@ -34,27 +35,6 @@
          offset="1"
          id="stop2446" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient2218">
-      <stop
-         style="stop-color:#ffffff;stop-opacity:1;"
-         offset="0"
-         id="stop2220" />
-      <stop
-         style="stop-color:#ffffff;stop-opacity:0;"
-         offset="1"
-         id="stop2222" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2218"
-       id="linearGradient2224"
-       x1="16.78166"
-       y1="2.2841253"
-       x2="16.78166"
-       y2="31.254913"
-       gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
        id="linearGradient3816">
@@ -119,34 +99,6 @@
        x2="8.2020855"
        y2="10"
        gradientUnits="userSpaceOnUse" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3816"
-       id="radialGradient2407"
-       gradientUnits="userSpaceOnUse"
-       cx="31.112698"
-       cy="19.008621"
-       fx="31.112698"
-       fy="19.008621"
-       r="8.6620579" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2223"
-       id="linearGradient2409"
-       gradientUnits="userSpaceOnUse"
-       x1="12.56203"
-       y1="10"
-       x2="8.2020855"
-       y2="10" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient2215"
-       id="linearGradient2411"
-       gradientUnits="userSpaceOnUse"
-       x1="8.3892212"
-       y1="10"
-       x2="3.5579317"
-       y2="10" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient2442"

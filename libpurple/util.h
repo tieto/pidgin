@@ -229,7 +229,7 @@ guchar *purple_base64_decode(const char *str, gsize *ret_len);
  * Converts a quoted printable string back to its readable equivalent.
  * What is a quoted printable string, you ask?  It's an encoding used
  * to transmit binary data as ASCII.  It's intended purpose is to send
- * e-mails containing non-ASCII characters.  Wikipedia has a pretty good
+ * emails containing non-ASCII characters.  Wikipedia has a pretty good
  * explanation.  Also see RFC 2045.
  *
  * @param str     The quoted printable ASCII string to convert to raw data.
@@ -706,6 +706,11 @@ const char *
 purple_util_get_image_extension(gconstpointer data, size_t len);
 
 /**
+ * Returns a SHA-1 hash string of the data passed in.
+ */
+char *purple_util_get_image_checksum(gconstpointer image_data, size_t image_len);
+
+/**
  * @return A hex encoded version of the SHA-1 hash of the data passed
  *         in with the correct file extention appended.  The file
  *         extension is determined by calling
@@ -1036,6 +1041,23 @@ typedef void (*PurpleUtilFetchUrlCallback)(PurpleUtilFetchUrlData *url_data, gpo
  *                   partial URL.
  * @param user_agent The user agent field to use, or NULL.
  * @param http11     TRUE if HTTP/1.1 should be used to download the file.
+ * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
+ * @param cb         The callback function.
+ * @param data       The user data to pass to the callback function.
+ * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url" and get rid of the old one
+ */
+#define purple_util_fetch_url_len(url, full, user_agent, http11, max_len, cb, data) \
+	purple_util_fetch_url_request_len(url, full, user_agent, http11, NULL, \
+		FALSE, max_len, cb, data);
+
+/**
+ * Fetches the data from a URL, and passes it to a callback function.
+ *
+ * @param url        The URL.
+ * @param full       TRUE if this is the full URL, or FALSE if it's a
+ *                   partial URL.
+ * @param user_agent The user agent field to use, or NULL.
+ * @param http11     TRUE if HTTP/1.1 should be used to download the file.
  * @param request    A HTTP request to send to the server instead of the
  *                   standard GET
  * @param include_headers
@@ -1046,6 +1068,28 @@ typedef void (*PurpleUtilFetchUrlCallback)(PurpleUtilFetchUrlData *url_data, gpo
 PurpleUtilFetchUrlData *purple_util_fetch_url_request(const gchar *url,
 		gboolean full, const gchar *user_agent, gboolean http11,
 		const gchar *request, gboolean include_headers,
+		PurpleUtilFetchUrlCallback callback, gpointer data);
+
+/**
+ * Fetches the data from a URL, and passes it to a callback function.
+ *
+ * @param url        The URL.
+ * @param full       TRUE if this is the full URL, or FALSE if it's a
+ *                   partial URL.
+ * @param user_agent The user agent field to use, or NULL.
+ * @param http11     TRUE if HTTP/1.1 should be used to download the file.
+ * @param request    A HTTP request to send to the server instead of the
+ *                   standard GET
+ * @param include_headers
+ *                   If TRUE, include the HTTP headers in the response.
+ * @param max_len    The maximum number of bytes to retrieve (-1 for unlimited)
+ * @param callback   The callback function.
+ * @param data       The user data to pass to the callback function.
+ * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url_request" and get rid of the old one
+ */
+PurpleUtilFetchUrlData *purple_util_fetch_url_request_len(const gchar *url,
+		gboolean full, const gchar *user_agent, gboolean http11,
+		const gchar *request, gboolean include_headers, gssize max_len,
 		PurpleUtilFetchUrlCallback callback, gpointer data);
 
 /**
@@ -1265,6 +1309,14 @@ const char *_purple_oscar_convert(const char *act, const char *protocol);
  * inherit the handlers of the parent.
  */
 void purple_restore_default_signal_handlers(void);
+
+/**
+ * Gets the host name of the machine. If it not possible to determine the
+ * host name, "localhost" is returned
+ *
+ * @constreturn The hostname
+ */
+const gchar *purple_get_host_name(void);
 
 #ifdef __cplusplus
 }

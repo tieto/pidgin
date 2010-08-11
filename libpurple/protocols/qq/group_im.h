@@ -35,26 +35,26 @@ void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar 
 void qq_process_group_cmd_im(guint8 *data, gint len, PurpleConnection *gc);
 
 /* void qq_process_recv_group_im(guint8 *data, guint8 **cursor, 
- * gint data_len, guint32 internal_group_id, PurpleConnection *gc, guint16 im_type); */
-void qq_process_recv_group_im(guint8 *data, gint data_len, guint32 internal_group_id, PurpleConnection *gc, guint16 im_type);
+ * gint data_len, guint32 id, PurpleConnection *gc, guint16 im_type); */
+void qq_process_recv_group_im(guint8 *data, gint data_len, guint32 id, PurpleConnection *gc, guint16 im_type);
 
 /* void qq_process_recv_group_im_apply_join(guint8 *data, guint8 **cursor, gint len, 
- * guint32 internal_group_id, PurpleConnection *gc); */
-void qq_process_recv_group_im_apply_join(guint8 *data, gint len, guint32 internal_group_id, PurpleConnection *gc);
+ * guint32 id, PurpleConnection *gc); */
+void qq_process_recv_group_im_apply_join(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
 
 /* void qq_process_recv_group_im_been_rejected(guint8 *data, guint8 **cursor, gint len, 
- * guint32 internal_group_id, PurpleConnection *gc); */
-void qq_process_recv_group_im_been_rejected(guint8 *data, gint len, guint32 internal_group_id, PurpleConnection *gc);
+ * guint32 id, PurpleConnection *gc); */
+void qq_process_recv_group_im_been_rejected(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
 
 /* void qq_process_recv_group_im_been_approved(guint8 *data, guint8 **cursor, gint len, 
- * guint32 internal_group_id, PurpleConnection *gc); */
-void qq_process_recv_group_im_been_approved(guint8 *data, gint len, guint32 internal_group_id, PurpleConnection *gc);
+ * guint32 id, PurpleConnection *gc); */
+void qq_process_recv_group_im_been_approved(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
 
 /* void qq_process_recv_group_im_been_removed(guint8 *data, guint8 **cursor, gint len, 
- * guint32 internal_group_id, PurpleConnection *gc); */
-void qq_process_recv_group_im_been_removed(guint8 *data, gint len, guint32 internal_group_id, PurpleConnection *gc);
+ * guint32 id, PurpleConnection *gc); */
+void qq_process_recv_group_im_been_removed(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
 
 /* void qq_process_recv_group_im_been_added(guint8 *data,  guint8 **cursor, gint len, 
- * guint32 internal_group_id, PurpleConnection *gc); */
-void qq_process_recv_group_im_been_added(guint8 *data, gint len, guint32 internal_group_id, PurpleConnection *gc);
+ * guint32 id, PurpleConnection *gc); */
+void qq_process_recv_group_im_been_added(guint8 *data, gint len, guint32 id, PurpleConnection *gc);
 #endif

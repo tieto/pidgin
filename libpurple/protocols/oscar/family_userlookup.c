@@ -74,8 +74,8 @@ int aim_search_address(OscarData *od, const char *address)
 
 	byte_stream_putstr(&bs, address);
 
-	snacid = aim_cachesnac(od, 0x000a, 0x0002, 0x0000, address, strlen(address)+1);
-	flap_connection_send_snac(od, conn, 0x000a, 0x0002, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_USERLOOKUP, 0x0002, 0x0000, address, strlen(address)+1);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_USERLOOKUP, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -145,7 +145,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 int
 search_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x000a;
+	mod->family = SNAC_FAMILY_USERLOOKUP;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x0629;

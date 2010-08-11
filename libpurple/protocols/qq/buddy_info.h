@@ -31,11 +31,34 @@
 #include "buddy_opt.h"
 #include "qq.h"
 
-#define QQ_COMM_FLAG_QQ_MEMBER      0x02
-#define QQ_COMM_FLAG_TCP_MODE       0x10
-#define QQ_COMM_FLAG_MOBILE         0x20
-#define QQ_COMM_FLAG_BIND_MOBILE    0x40
-#define QQ_COMM_FLAG_VIDEO          0x80
+/* use is openq2005
+ * ext_flag: (0-7)
+ *        bit1 => qq space
+ * comm_flag: (0-7)
+ *        bit1 => member
+ *        bit4 => TCP mode
+ *        bit5 => open mobile QQ
+ *        bit6 => bind to mobile
+ *        bit7 => whether having a video
+#define QQ_COMM_FLAG_QQ_MEMBER		0x02
+#define QQ_COMM_FLAG_TCP_MODE    	0x10
+#define QQ_COMM_FLAG_MOBILE       	0x20
+#define QQ_COMM_FLAG_BIND_MOBILE	0x40
+#define QQ_COMM_FLAG_VIDEO          	0x80
+ */
+/* status in eva for qq2006
+#define QQ_FRIEND_FLAG_QQ_MEMBER  0x01
+#define QQ_FRIEND_FLAG_MOBILE           0x10
+#define QQ_FRIEND_FLAG_BIND_MOBILE  0x20
+*/
+#define QQ_COMM_FLAG_QQ_MEMBER		0x02
+#define QQ_COMM_FLAG_QQ_VIP			0x04
+#define QQ_COMM_FLAG_TCP_MODE    	0x10
+#define QQ_COMM_FLAG_MOBILE       	0x20
+#define QQ_COMM_FLAG_BIND_MOBILE	0x40
+#define QQ_COMM_FLAG_VIDEO          	0x80
+
+#define QQ_EXT_FLAG_SPACE				0x02
 
 #define QQ_BUDDY_GENDER_GG          0x00
 #define QQ_BUDDY_GENDER_MM          0x01
@@ -48,11 +71,10 @@ void qq_send_packet_get_info(PurpleConnection *gc, guint32 uid, gboolean show_wi
 void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
 void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const gchar *icon_num, const gchar *iconfile);
 void qq_prepare_modify_info(PurpleConnection *gc);
-void qq_process_modify_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
-void qq_process_get_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_process_modify_info_reply(guint8 *data, gint data_len, PurpleConnection *gc);
+void qq_process_get_info_reply(guint8 *data, gint data_len, PurpleConnection *gc);
 void qq_info_query_free(qq_data *qd);
 void qq_send_packet_get_level(PurpleConnection *gc, guint32 uid);
 void qq_send_packet_get_buddies_levels(PurpleConnection *gc);
 void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
-
 #endif

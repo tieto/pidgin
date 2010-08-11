@@ -283,6 +283,8 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 		do sub = sub->submenu; while (sub->submenu);
 		if (gnt_widget_key_pressed(GNT_WIDGET(sub), text))
 			return TRUE;
+		if (menu->type != GNT_MENU_TOPLEVEL)
+			return FALSE;
 	}
 
 	if ((text[0] == 27 && text[1] == 0) ||
@@ -332,10 +334,12 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 				return TRUE;
 			}
 		}
+		if (gnt_bindable_perform_action_key(GNT_BINDABLE(widget), text))
+			return TRUE;
 		return org_key_pressed(widget, text);
 	}
 
-	return FALSE;
+	return gnt_bindable_perform_action_key(GNT_BINDABLE(widget), text);
 }
 
 static void
@@ -434,7 +438,7 @@ gnt_menu_init(GTypeInstance *instance, gpointer class)
 {
 	GntWidget *widget = GNT_WIDGET(instance);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW | GNT_WIDGET_NO_BORDER |
-			GNT_WIDGET_CAN_TAKE_FOCUS | GNT_WIDGET_TRANSIENT);
+			GNT_WIDGET_CAN_TAKE_FOCUS | GNT_WIDGET_TRANSIENT | GNT_WIDGET_DISABLE_ACTIONS);
 	GNTDEBUG;
 }
 

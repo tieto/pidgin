@@ -43,19 +43,19 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [4])
+m4_define([purple_lt_current], [5])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [4])
-m4_define([purple_micro_version], [3])
+m4_define([purple_minor_version], [5])
+m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [4])
+m4_define([gnt_lt_current], [5])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [4])
-m4_define([gnt_micro_version], [3])
+m4_define([gnt_minor_version], [5])
+m4_define([gnt_micro_version], [0])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -108,13 +108,14 @@ AC_DEFINE_UNQUOTED(CONFIG_ARGS, "$ac_configure_args", [configure arguments])
 
 dnl Checks for programs.
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_DISABLE_STATIC
-AM_PROG_LIBTOOL
+AC_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
 AC_PROG_INTLTOOL
 PKG_PROG_PKG_CONFIG
-
+AC_FUNC_ALLOCA
 GETTEXT_PACKAGE=pidgin
 AC_SUBST(GETTEXT_PACKAGE)
 
@@ -210,7 +211,7 @@ AC_CHECK_FUNC(getaddrinfo,
 		[Define to 1 if you have the getaddrinfo function.])],
 	[AC_CHECK_LIB(socket, getaddrinfo,
 		[AC_DEFINE([HAVE_GETADDRINFO]) LIBS="-lsocket -lsnl $LIBS"], , , -lnsl)])
-
+AC_CHECK_FUNCS(inet_ntop)
 dnl Check for socklen_t (in Unix98)
 AC_MSG_CHECKING(for socklen_t)
 AC_TRY_COMPILE([
@@ -233,6 +234,12 @@ AC_TRY_COMPILE([
 		AC_DEFINE(socklen_t, int, [socklen_t size])
 	])
 ])
+
+dnl Some systems do not have sa_len field for struct sockaddr.
+AC_CHECK_MEMBER([struct sockaddr.sa_len],
+	[AC_DEFINE([HAVE_STRUCT_SOCKADDR_SA_LEN],[1],
+	[Define if struct sockaddr has an sa_len member])],[:],
+	[#include <sys/socket.h>])
 
 dnl to prevent the g_stat()/g_unlink() crash,
 dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
@@ -329,6 +336,10 @@ else
 	AC_DEFINE_UNQUOTED(DISPLAY_VERSION, "$VERSION", [display version info])
 fi
 
+AC_ARG_ENABLE(missing-dependencies, [AC_HELP_STRING([--disable-missing-dependencies],
+		[skip missing dependencies instead of aborting configure])],
+	force_deps="$enableval", force_deps="yes")
+
 AC_ARG_WITH(x, [],
 	with_x="$withval", with_x="yes")
 AC_ARG_ENABLE(gtkui, [AC_HELP_STRING([--disable-gtkui],
@@ -412,10 +423,12 @@ If you want to build only Finch then specify --disable-gtkui when running config
 					X11_LIBS="$x_libpath_add"
 					X11_CFLAGS="$x_incpath_add"
 				else
-					AC_MSG_ERROR([
+					if test "x$force_deps" = "xyes" ; then
+						AC_MSG_ERROR([
 X11 development headers not found.
 Use --without-x if you do not need X11 support.
 ])
+					fi
 				fi
 			])
 		AC_SUBST(X11_LIBS)
@@ -454,11 +467,13 @@ Use --without-x if you do not need X11 support.
 				AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
 				AC_SUBST(XSS_LIBS)
 			else
-				AC_MSG_ERROR([
+				if test "x$force_deps" = "xyes" ; then
+					AC_MSG_ERROR([
 XScreenSaver extension development headers not found.
 Use --disable-screensaver if you do not need XScreenSaver extension support,
 this is required for detecting idle time by mouse and keyboard usage.
 ])
+				fi
 			fi
 		else
 			AC_MSG_ERROR([X support is required to build with XScreenSaver extensions])
@@ -483,10 +498,12 @@ this is required for detecting idle time by mouse and keyboard usage.
 				AC_DEFINE(USE_SM, 1, [Define if we're using X Session Management.])
 				AC_SUBST(SM_LIBS)
 			else
-				AC_MSG_ERROR([
+				if test "x$force_deps" = "xyes" ; then
+					AC_MSG_ERROR([
 X session management development headers not found.
 Use --disable-sm if you do not need session management support.
 ])
+				fi
 			fi
 		else
 			AC_MSG_ERROR([X support is required to build with X session management support])
@@ -508,10 +525,12 @@ Use --disable-sm if you do not need session management support.
 	if test "x$enable_startup_notification" = "xyes"; then
 		PKG_CHECK_MODULES(STARTUP_NOTIFICATION, [libstartup-notification-1.0 >= 0.5], , [
 			AC_MSG_RESULT(no)
-			AC_MSG_ERROR([
+			if test "x$force_deps" = "xyes" ; then
+				AC_MSG_ERROR([
 Startup notification development headers not found.
 Use --disable-startup-notification if you do not need it.
-])])
+])
+			fi])
 
 		if test "x$enable_startup_notification" = "xyes"; then
 			AC_DEFINE(HAVE_STARTUP_NOTIFICATION, 1, [Define if we're using libstartup-notification.])
@@ -526,10 +545,12 @@ Use --disable-startup-notification if you do not need it.
 	if test "x$enable_gtkspell" = "xyes" ; then
 		PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , [
 			AC_MSG_RESULT(no)
-			AC_MSG_ERROR([
+			if test "x$force_deps" = "xyes" ; then
+				AC_MSG_ERROR([
 GtkSpell development headers not found.
 Use --disable-gtkspell if you do not need it.
-])])
+])
+			fi])
 		if test "x$enable_gtkspell" = "xyes" ; then
 			AC_DEFINE(USE_GTKSPELL, 1, [Define if we're using GtkSpell])
 			AC_SUBST(GTKSPELL_CFLAGS)
@@ -559,10 +580,12 @@ Use --disable-gtkspell if you do not need it.
 			AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
 			AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
 		else
-			AC_MSG_ERROR([
+			if test "x$force_deps" = "xyes" ; then
+				AC_MSG_ERROR([
 Evolution development headers not found.
 Use --disable-gevolution if you do not need it.
 ])
+			fi
 		fi
 	fi
 
@@ -572,10 +595,12 @@ Use --disable-gevolution if you do not need it.
 	if test "x$enable_cap" = "xyes"; then
 		PKG_CHECK_MODULES(SQLITE3, sqlite3 >= 3.3,,[
 			AC_MSG_RESULT(no)
-			AC_MSG_ERROR([
+			if test "x$force_deps" = "xyes" ; then
+				AC_MSG_ERROR([
 sqlite3 development headers not found.
 Use --disable-cap if you do not need the Contact Availability Prediction plugin.
-])])
+])
+			fi])
 	fi
         
 
@@ -712,10 +737,12 @@ if test "x$enable_gst" != "xno"; then
 			[], [$GSTREAMER_LIBS])
 	], [
 		AC_MSG_RESULT(no)
-		AC_MSG_ERROR([
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
 GStreamer development headers not found.
 Use --disable-gstreamer if you do not need GStreamer (sound) support.
-])])
+])
+		fi])
 fi
 
 dnl #######################################################################
@@ -730,10 +757,12 @@ if test "x$enable_meanwhile" = "xyes"; then
 		have_meanwhile="yes"
 	], [
 		have_meanwhile="no"
-		AC_MSG_ERROR([
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
 Meanwhile development headers not found.
 Use --disable-meanwhile if you do not need meanwhile (Sametime) support.
-])])
+])
+		fi])
 fi
 AC_SUBST(MEANWHILE_CFLAGS)
 AC_SUBST(MEANWHILE_LIBS)
@@ -776,7 +805,7 @@ if test "$ac_avahi_client_libs" != "no"; then
 fi
 AC_CHECK_LIB(avahi-client, avahi_client_new, [avahilibs=yes], [avahilibs=no], $AVAHI_LIBS)
 
-if test "x$enable_avahi" = "xyes" -a \( "x$avahiincludes" = "xno" -o "x$avahilibs" = "xno" \); then
+if test "x$enable_avahi" = "xyes" -a "x$force_deps" = "xyes" -a \( "x$avahiincludes" = "xno" -o "x$avahilibs" = "xno" \); then
 	AC_MSG_ERROR([
 avahi development headers not found.
 Use --disable-avahi if you do not need avahi (Bonjour) support.
@@ -948,8 +977,8 @@ AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)
 
-# change the next line to make MSNP14 the default (s/enable/disable/; s/no/yes/;)
-AC_ARG_ENABLE(msnp14,[AC_HELP_STRING([--enable-msnp14], [Enable the newer MSNP14 protocol (unsupported)])],,enable_msnp14=no)
+# change the next line to not make MSNP15 the default (s/disable/enable/; s/yes/no/;)
+AC_ARG_ENABLE(msnp15,[AC_HELP_STRING([--disable-msnp15], [Disable the newer MSNP15 protocol])],enable_msnp15=$enableval,enable_msnp15=yes)
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
@@ -968,7 +997,7 @@ fi
 if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
 fi
-if test "x$enable_msnp14" != "xyes" ; then
+if test "x$enable_msnp15" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/msn/msnp9/'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
@@ -1055,7 +1084,7 @@ fi
 if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
 fi
-if test "x$enable_msnp14" != "xyes" ; then
+if test "x$enable_msnp15" != "xyes" ; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/msn/msnp9/'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
@@ -1148,7 +1177,6 @@ if test "x$GCC" = "xyes"; then
 			"-Wmissing-declarations" \
 			"-Wmissing-noreturn" \
 			"-Wmissing-prototypes" \
-			"-Wnested-externs" \
 			"-Wpointer-arith" \
 			"-Wundef" \
 	; do
@@ -1200,8 +1228,8 @@ dnl #######################################################################
 dnl # Check for D-Bus libraries
 dnl #######################################################################
 
-AC_ARG_ENABLE(dbus, [AC_HELP_STRING([--enable-dbus], [enable D-Bus support])], , enable_dbus=yes)
-AC_ARG_ENABLE(nm, [AC_HELP_STRING([--enable-nm], [enable NetworkManager support (requires D-Bus)])], enable_nm=$enableval, enable_nm=yes)
+AC_ARG_ENABLE(dbus, [AC_HELP_STRING([--disable-dbus], [disable D-Bus support])], , enable_dbus=yes)
+AC_ARG_ENABLE(nm, [AC_HELP_STRING([--disable-nm], [disable NetworkManager support (requires D-Bus)])], enable_nm=$enableval, enable_nm=yes)
 
 if test "x$enable_dbus" = "xyes" ; then
 	AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
@@ -1213,10 +1241,12 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_SUBST(DBUS_LIBS)
 		enable_dbus=yes
 	], [
+	if test "x$force_deps" = "xyes" ; then
 		AC_MSG_ERROR([
 D-Bus development headers not found.
 Use --disable-dbus if you do not need D-Bus support.
-])])
+])
+	fi])
 
 dnl Check for NetworkManager.h; if we don't have it, oh well
 	if test "x$enable_nm" = "xyes" ; then
@@ -1225,10 +1255,12 @@ dnl Check for NetworkManager.h; if we don't have it, oh well
 			AC_SUBST(NETWORKMANAGER_LIBS)
 			AC_DEFINE(HAVE_NETWORKMANAGER, 1, [Define if we have NetworkManager.])
 		], [
-			AC_MSG_ERROR([
+			if test "x$force_deps" = "xyes" ; then
+				AC_MSG_ERROR([
 NetworkManager development headers not found.
 Use --disable-nm if you do not need NetworkManager support.
-])])
+])
+			fi])
 	fi
 else
 	enable_nm=no
@@ -1541,7 +1573,7 @@ else
 	AM_CONDITIONAL(USE_PERL, false)
 fi
 
-if test "x$looked_for_perl" = "xyes" -a "x$enable_perl" = "xno"; then
+if test "x$looked_for_perl" = "xyes" -a "x$enable_perl" = "xno" -a "x$force_deps" = "xyes"; then
 	AC_MSG_ERROR([
 Perl development headers not found.
 Use --disable-perl if you do not need Perl scripting support.
@@ -1553,6 +1585,18 @@ dnl # SSL support
 dnl #
 dnl # Thanks go to Evolution for the checks.
 dnl #######################################################################
+
+AC_ARG_WITH(with-system-ssl-certs, [AC_HELP_STRING([--with-system-ssl-certs=<dir>], [directory containing system-wide SSL CA certificates])])
+
+SSL_CERTIFICATES_DIR=""
+if ! test -z "$with_system_ssl_certs" ; then
+	if ! test -d "$with_system_ssl_certs" ; then
+		AC_MSG_ERROR([$with_system_ssl_certs does not exist, if this is the correct location please make sure that it exists.])
+	fi
+	SSL_CERTIFICATES_DIR="$with_system_ssl_certs"
+fi
+AC_SUBST(SSL_CERTIFICATES_DIR)
+AM_CONDITIONAL(INSTALL_SSL_CERTIFICATES, test "x$SSL_CERTIFICATES_DIR" = "x")
 
 dnl These two are inverses of each other <-- stolen from evolution!
 
@@ -1622,14 +1666,14 @@ if test "x$enable_gnutls" != "xno"; then
 			*) with_gnutls_libs="-L$with_gnutls_libs" ;;
 		esac
 
-		AC_CACHE_CHECK([for GnuTLS libraries], gnutls_libs,
+		AC_CACHE_CHECK([for GnuTLS libraries], ac_cv_gnutls_libs,
 		[
 			LIBS="$LIBS $with_gnutls_libs -lgnutls -lgcrypt"
-			AC_TRY_LINK_FUNC(gnutls_init, gnutls_libs="yes", gnutls_libs="no")
+			AC_TRY_LINK_FUNC(gnutls_init, ac_cv_gnutls_libs="yes", ac_cv_gnutls_libs="no")
 			LIBS="$LIBS_save"
 		])
 
-		if test "x$gnutls_libs" != "xno"; then
+		if test "x$ac_cv_gnutls_libs" != "xno"; then
 			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GnuTLS])
 			AC_DEFINE(HAVE_SSL)
 			msg_gnutls="GnuTLS"
@@ -1782,7 +1826,7 @@ if test "x$enable_nss" != "xno"; then
 				nsprlibs="$LIBDL -lplc4 -lplds4 -lnspr4 $PTHREAD_LIB"
 			fi
 
-			AC_CACHE_CHECK([for Mozilla nspr libraries], moz_nspr_libs,
+			AC_CACHE_CHECK([for Mozilla nspr libraries], ac_cv_moz_nspr_libs,
 			[
 				LIBS_save=$LIBS
 				CFLAGS="$CFLAGS $NSPR_CFLAGS"
@@ -1796,15 +1840,15 @@ if test "x$enable_nss" != "xno"; then
 				fi
 
 				AC_TRY_LINK_FUNC(PR_Init,
-					[moz_nspr_libs="yes"],
-					[moz_nspr_libs="no"])
+					[ac_cv_moz_nspr_libs="yes"],
+					[ac_cv_moz_nspr_libs="no"])
 
 				CFLAGS=$CFLAGS_save
 				LDFLAGS=$LDFLAGS_save
 				LIBS=$LIBS_save
 			])
 
-			if test "x$moz_nspr_libs" != "xno"; then
+			if test "x$ac_cv_moz_nspr_libs" != "xno"; then
 				have_nspr_libs="yes"
 				NSPR_LIBS="-L$with_nspr_libs $nsprlibs"
 			else
@@ -1877,30 +1921,30 @@ if test "x$enable_nss" != "xno"; then
 				nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
 			fi
 
-			AC_CACHE_CHECK([for Mozilla nss libraries], moz_nss_libs,
+			AC_CACHE_CHECK([for Mozilla nss libraries], ac_cv_moz_nss_libs,
 			[
 				LIBS_save=$LIBS
 				LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
 				LIBS="$nsslibs $nsprlibs"
 
 				AC_TRY_LINK_FUNC(NSS_Init,
-					[moz_nss_libs="yes"],
-					[moz_nss_libs="no"])
+					[ac_cv_moz_nss_libs="yes"],
+					[ac_cv_moz_nss_libs="no"])
 
-				if test "x$moz_nss_libs" = "xno"; then
+				if test "x$ac_cv_moz_nss_libs" = "xno"; then
 					nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
 					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs" 
 					LIBS="$LIBS $nsslibs"
 					AC_TRY_LINK_FUNC(NSS_Init,
-						[moz_nss_libs="yes"],
-						[moz_nss_libs="no"])
+						[ac_cv_moz_nss_libs="yes"],
+						[ac_cv_moz_nss_libs="no"])
 				fi
 
 				LDFLAGS=$LDFLAGS_save
 				LIBS=$LIBS_save
 			])
 
-			if test "x$moz_nss_libs" != "xno"; then
+			if test "x$ac_cv_moz_nss_libs" != "xno"; then
 				AC_DEFINE(HAVE_NSS)
 				AC_DEFINE(HAVE_SSL)
 
@@ -1940,19 +1984,19 @@ elif test "x$msg_nss" != "x"; then
 	msg_ssl=$msg_nss
 elif test "x$msg_gnutls" != "x"; then
 	msg_ssl=$msg_gnutls
-elif test "x$looked_for_gnutls" = "xyes" -a "x$looked_for_nss" = "xyes"; then
+elif test "x$looked_for_gnutls" = "xyes" -a "x$looked_for_nss" = "xyes" -a "x$force_deps" = "xyes" ; then
 	AC_MSG_ERROR([
 Neither GnuTLS or NSS SSL development headers found.
 Use --disable-nss --disable-gnutls if you do not need SSL support.
 MSN, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
 ])
-elif test "x$looked_for_gnutls" = "xyes"; then
+elif test "x$looked_for_gnutls" = "xyes" -a "x$force_deps" = "xyes" ; then
 	AC_MSG_ERROR([
 GnuTLS SSL development headers not found.
 Use --disable-gnutls if you do not need SSL support.
 MSN, Novell Groupwise and Google Talk will not work without SSL support.
 ])
-elif test "x$looked_for_nss" = "xyes"; then
+elif test "x$looked_for_nss" = "xyes" -a "x$force_deps" = "xyes" ; then
 	AC_MSG_ERROR([
 NSS SSL development headers not found.
 Use --disable-nss if you do not need SSL support.
@@ -1977,9 +2021,12 @@ if test "$enable_tcl" = yes; then
 	TCLCONFIG=no
 	TCLCONFIGDIRS="/usr/lib \
 			/usr/lib64 \
+			/usr/lib/tcl8.5 \
 			/usr/lib/tcl8.4 \
 			/usr/lib/tcl8.3 \
 			/usr/lib/tcl8.2 \
+			/usr/lib64/tcl8.5 \
+			/usr/lib64/tcl8.4 \
 			/System/Library/Tcl/8.3 \
 			/usr/local/lib"
 	for dir in $with_tclconfig $TCLCONFIGDIRS; do
@@ -1991,10 +2038,12 @@ if test "$enable_tcl" = yes; then
 	if test "$TCLCONFIG" = "no"; then
 		AC_MSG_RESULT([no])
 		enable_tcl=no
-		AC_MSG_ERROR([
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
 Tcl development headers not found.
 Use --disable-tcl if you do not need Tcl scripting support.
 ])
+		fi
 	else
 		. $TCLCONFIG
 		AC_MSG_CHECKING([Tcl version compatability])
@@ -2059,10 +2108,12 @@ if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
 	if test "$TKCONFIG" = "no"; then
 		AC_MSG_RESULT([no])
 		enable_tk=no
-		AC_MSG_ERROR([
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
 Tk development headers not found.
 Use --disable-tk if you do not need Tk scripting support.
 ])
+		fi
 	else
 		. $TKCONFIG
 		eval "TK_LIB_SPEC=\"$TK_LIB_SPEC\""
@@ -2204,9 +2255,11 @@ AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
 
 # sys/sysctl.h on OpenBSD 4.2 requires sys/param.h
+# sys/sysctl.h on FreeBSD requires sys/types.h
 AC_CHECK_HEADERS(sys/param.h)
 AC_CHECK_HEADERS(sys/sysctl.h, [], [],
 	[[
+		#include <sys/types.h>
 		#ifdef HAVE_PARAM_H
 		# include <sys/param.h>
 		#endif
@@ -2229,11 +2282,7 @@ fi
 dnl #######################################################################
 dnl # Check for check
 dnl #######################################################################
-PKG_CHECK_MODULES(CHECK,[check >= 0.9.4],:,[
-					ifdef([[AM_PATH_CHECK]],
-					[AM_PATH_CHECK(0.8.2,:,:)],
-					[AC_MSG_RESULT([no, testing is disabled])])
-				  ])
+PKG_CHECK_MODULES(CHECK, [check >= 0.9.4], , [AC_MSG_RESULT([no, testing is disabled])])
 AM_CONDITIONAL(HAVE_CHECK, [test "x$CHECK_LIBS" != "x"])
 AC_SUBST(CHECK_CFLAGS)
 AC_SUBST(CHECK_LIBS)
@@ -2406,6 +2455,9 @@ if test "x$enable_dbus" = "xyes" ; then
 fi
 echo Build with NetworkManager..... : $enable_nm
 echo SSL Library/Libraries......... : $msg_ssl
+if test "x$SSL_CERTIFICATES_DIR" != "x" ; then
+	eval eval echo SSL CA certificates directory. : $SSL_CERTIFICATES_DIR
+fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr

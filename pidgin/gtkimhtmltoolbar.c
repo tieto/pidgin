@@ -36,6 +36,7 @@
 
 #include "gtkdialogs.h"
 #include "gtkimhtmltoolbar.h"
+#include "gtksmiley.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
 
@@ -579,8 +580,7 @@ destroy_smiley_dialog(GtkIMHtmlToolbar *toolbar)
 }
 
 static gboolean
-close_smiley_dialog(GtkWidget *widget, GdkEvent *event,
-					GtkIMHtmlToolbar *toolbar)
+close_smiley_dialog(GtkIMHtmlToolbar *toolbar)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smiley), FALSE);
 	return FALSE;
@@ -601,24 +601,30 @@ insert_smiley_text(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 
 	g_free(escaped_smiley);
 
-	close_smiley_dialog(NULL, NULL, toolbar);
+	close_smiley_dialog(toolbar);
 }
 
 /* smiley buttons list */
 struct smiley_button_list {
 	int width, height;
 	GtkWidget *button;
+	const GtkIMHtmlSmiley *smiley;
 	struct smiley_button_list *next;
 };
 
 static struct smiley_button_list *
-sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *width, char *filename, char *face)
+sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar,
+			 int *width, const GtkIMHtmlSmiley *smiley)
 {
 	GtkWidget *image;
 	GtkWidget *button;
 	GtkRequisition size;
 	struct smiley_button_list *cur;
 	struct smiley_button_list *it, *it_last;
+	const gchar *filename = smiley->file;
+	gchar *face = smiley->smile;
+	PurpleSmiley *psmiley = NULL;
+	gboolean supports_custom = (gtk_imhtml_get_format_functions(GTK_IMHTML(toolbar->imhtml)) & GTK_IMHTML_CUSTOM_SMILEY);
 
 	cur = g_new0(struct smiley_button_list, 1);
 	it = ls;
@@ -626,6 +632,35 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *widt
 	image = gtk_image_new_from_file(filename);
 
 	gtk_widget_size_request(image, &size);
+
+	if (size.width > 24 &&
+			smiley->flags & GTK_IMHTML_SMILEY_CUSTOM) { /* This is a custom smiley, let's scale it */
+		GdkPixbuf *pixbuf = NULL;
+		GtkImageType type;
+
+		type = gtk_image_get_storage_type(GTK_IMAGE(image));
+
+		if (type == GTK_IMAGE_PIXBUF) {
+			pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(image));
+		} else if (type == GTK_IMAGE_ANIMATION) {
+			GdkPixbufAnimation *animation;
+
+			animation = gtk_image_get_animation(GTK_IMAGE(image));
+
+			pixbuf = gdk_pixbuf_animation_get_static_image(animation);
+		}
+
+		if (pixbuf != NULL) {
+			GdkPixbuf *resized;
+			resized = gdk_pixbuf_scale_simple(pixbuf, 24, 24,
+					GDK_INTERP_HYPER);
+
+			gtk_image_set_from_pixbuf(GTK_IMAGE(image), resized); /* This unrefs pixbuf */
+			gtk_widget_size_request(image, &size);
+			g_object_unref(G_OBJECT(resized));
+		}
+	}
+
 	(*width) += size.width;
 
 	button = gtk_button_new();
@@ -639,10 +674,28 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *widt
 	/* these look really weird with borders */
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
+	psmiley = purple_smileys_find_by_shortcut(smiley->smile);
+	/* If this is a "non-custom" smiley, check to see if its shortcut is
+	  "shadowed" by any custom smiley. This can only happen if the connection
+	  is custom smiley-enabled */
+	if (supports_custom && psmiley && !(smiley->flags & GTK_IMHTML_SMILEY_CUSTOM)) {
+		gchar tip[128];
+		g_snprintf(tip, sizeof(tip), 
+			_("This smiley is disabled because a custom smiley exists for this shortcut:\n %s"),
+			face);
+		gtk_tooltips_set_tip(toolbar->tooltips, button, tip, NULL);
+		gtk_widget_set_sensitive(button, FALSE);
+	} else if (psmiley) {
+		/* Remove the button if the smiley is destroyed */
+		g_signal_connect_object(G_OBJECT(psmiley), "destroy", G_CALLBACK(gtk_widget_destroy),
+				button, G_CONNECT_SWAPPED);
+	}
+
 	/* set current element to add */
 	cur->height = size.height;
 	cur->width = size.width;
 	cur->button = button;
+	cur->smiley = smiley;
 	cur->next = ls;
 
 	/* check where to insert by height */
@@ -661,7 +714,7 @@ static gboolean
 smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley)
 {
 	while (list) {
-		GtkIMHtmlSmiley *cur = list->data;
+		GtkIMHtmlSmiley *cur = (GtkIMHtmlSmiley *) list->data;
 		if (!strcmp(cur->file, smiley->file))
 			return FALSE;
 		list = list->next;
@@ -675,7 +728,7 @@ smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event, GtkIMHtmlToolbar *too
 	if ((event->type == GDK_KEY_PRESS && event->key.keyval == GDK_Escape) ||
 	    (event->type == GDK_BUTTON_PRESS && event->button.button == 1))
 	{
-		close_smiley_dialog(NULL, NULL, toolbar);
+		close_smiley_dialog(toolbar);
 		return TRUE;
 	}
 
@@ -683,11 +736,43 @@ smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event, GtkIMHtmlToolbar *too
 }
 
 static void
+add_smiley_list(GtkWidget *container, struct smiley_button_list *list,
+		int max_width, gboolean custom)
+{
+	GtkWidget *line;
+	int line_width = 0;
+
+	if (!list)
+		return;
+
+	line = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(container), line, FALSE, FALSE, 0);
+	for (; list; list = list->next) {
+		if (custom != !!(list->smiley->flags & GTK_IMHTML_SMILEY_CUSTOM))
+			continue;
+		gtk_box_pack_start(GTK_BOX(line), list->button, FALSE, FALSE, 0);
+		gtk_widget_show(list->button);
+		line_width += list->width;
+		if (line_width >= max_width) {
+			if (list->next) {
+				line = gtk_hbox_new(FALSE, 0);
+				gtk_box_pack_start(GTK_BOX(container), line, FALSE, FALSE, 0);
+			}
+			line_width = 0;
+		}
+	}
+}
+
+static void
 insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 {
-	GtkWidget *dialog;
+	GtkWidget *dialog, *vbox;
 	GtkWidget *smiley_table = NULL;
 	GSList *smileys, *unique_smileys = NULL;
+	const GSList *custom_smileys = NULL;
+	gboolean supports_custom = FALSE;
+	GtkRequisition req;
+	GtkWidget *scrolled, *viewport;
 
 	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smiley))) {
 		destroy_smiley_dialog(toolbar);
@@ -700,62 +785,81 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	else
 		smileys = pidgin_themes_get_proto_smileys(NULL);
 
+	/* Note: prepend smileys to list to avoid O(n^2) overhead when there is
+	  a large number of smileys... need to revers the list after for the dialog
+	  work... */
 	while(smileys) {
-		GtkIMHtmlSmiley *smiley = smileys->data;
+		GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) smileys->data;
 		if(!smiley->hidden) {
-			if(smiley_is_unique(unique_smileys, smiley))
-				unique_smileys = g_slist_append(unique_smileys, smiley);
+			if(smiley_is_unique(unique_smileys, smiley)) {
+				unique_smileys = g_slist_prepend(unique_smileys, smiley);
+			}
 		}
 		smileys = smileys->next;
 	}
+	supports_custom = (gtk_imhtml_get_format_functions(GTK_IMHTML(toolbar->imhtml)) & GTK_IMHTML_CUSTOM_SMILEY);
+	if (toolbar->imhtml && supports_custom) {
+		const GSList *iterator = NULL;
+		custom_smileys = pidgin_smileys_get_all();
+
+		for (iterator = custom_smileys ; iterator ;
+			 iterator = g_slist_next(iterator)) {
+			GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) iterator->data;
+			unique_smileys = g_slist_prepend(unique_smileys, smiley);
+		}
+	}
+	
+	/* we need to reverse the list to get the smileys in the correct order */
+	unique_smileys = g_slist_reverse(unique_smileys);
 
 	dialog = pidgin_create_dialog(_("Smile!"), 0, "smiley_dialog", FALSE);
-
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(dialog), FALSE, 0);
 
 	if (unique_smileys != NULL) {
-		struct smiley_button_list *ls, *it, *it_tmp;
-		GtkWidget *line;
-		int line_width = 0;
-		int max_line_width, num_lines;
-		int col=0;
+		struct smiley_button_list *ls;
+		int max_line_width, num_lines, button_width = 0;
 
 		/* We use hboxes packed in a vbox */
 		ls = NULL;
-		line = gtk_hbox_new(FALSE, 0);
-		line_width = 0;
 		max_line_width = 0;
 		num_lines = floor(sqrt(g_slist_length(unique_smileys)));
 		smiley_table = gtk_vbox_new(FALSE, 0);
 
+		if (supports_custom) {
+			GtkWidget *manage = gtk_button_new_with_mnemonic(_("_Manage custom smileys"));
+			GtkRequisition req;
+			g_signal_connect(G_OBJECT(manage), "clicked",
+					G_CALLBACK(pidgin_smiley_manager_show), NULL);
+			g_signal_connect_swapped(G_OBJECT(manage), "clicked",
+					G_CALLBACK(gtk_widget_destroy), dialog);
+			gtk_box_pack_end(GTK_BOX(vbox), manage, FALSE, TRUE, 0);
+			gtk_widget_size_request(manage, &req);
+			button_width = req.width;
+		}
+
 		/* create list of smileys sorted by height */
 		while (unique_smileys) {
-			GtkIMHtmlSmiley *smiley = unique_smileys->data;
+			GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) unique_smileys->data;
 			if (!smiley->hidden) {
-				ls = sort_smileys(ls, toolbar, &max_line_width, smiley->file, smiley->smile);
+				ls = sort_smileys(ls, toolbar, &max_line_width, smiley);
 			}
 			unique_smileys = g_slist_delete_link(unique_smileys, unique_smileys);
 		}
+		/* The window will be at least as wide as the 'Manage ..' button */
+		max_line_width = MAX(button_width, max_line_width / num_lines);
+
 		/* pack buttons of the list */
-		max_line_width = max_line_width / num_lines;
-		it = ls;
-		while (it != NULL)
-		{
-			it_tmp = it;
-			gtk_box_pack_start(GTK_BOX(line), it->button, FALSE, FALSE, 0);
-			gtk_widget_show(it->button);
-			line_width += it->width;
-			if (line_width >= max_line_width) {
-				gtk_box_pack_start(GTK_BOX(smiley_table), line, FALSE, FALSE, 0);
-				line = gtk_hbox_new(FALSE, 0);
-				line_width = 0;
-				col = 0;
-			}
-			col++;
-			it = it->next;
-			g_free(it_tmp);
+		add_smiley_list(smiley_table, ls, max_line_width, FALSE);
+		if (supports_custom) {
+			gtk_box_pack_start(GTK_BOX(smiley_table), gtk_hseparator_new(), TRUE, FALSE, 0);
+			add_smiley_list(smiley_table, ls, max_line_width, TRUE);
 		}
-		gtk_box_pack_start(GTK_BOX(smiley_table), line, FALSE, TRUE, 0);
+		while (ls) {
+			struct smiley_button_list *tmp = ls->next;
+			g_free(ls);
+			ls = tmp;
+		}
 
 		gtk_widget_add_events(dialog, GDK_KEY_PRESS_MASK);
 	}
@@ -765,19 +869,41 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		g_signal_connect(G_OBJECT(dialog), "button-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
 	}
 
-	g_signal_connect(G_OBJECT(dialog), "key-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
-	gtk_container_add(GTK_CONTAINER(pidgin_dialog_get_vbox(GTK_DIALOG(dialog))), smiley_table);
+	scrolled = gtk_scrolled_window_new (NULL, NULL);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (scrolled), GTK_SHADOW_NONE);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled),
+			GTK_POLICY_NEVER, GTK_POLICY_NEVER);
+	gtk_box_pack_start(GTK_BOX(vbox), scrolled, TRUE, TRUE, 0);
+	gtk_widget_show(scrolled);
 
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled), smiley_table);
 	gtk_widget_show(smiley_table);
 
+	viewport = gtk_widget_get_parent(smiley_table);
+	gtk_viewport_set_shadow_type(GTK_VIEWPORT(viewport), GTK_SHADOW_NONE);
+
 	/* connect signals */
-	g_signal_connect(G_OBJECT(dialog), "delete_event",
-					 G_CALLBACK(close_smiley_dialog), toolbar);
+	g_signal_connect_swapped(G_OBJECT(dialog), "destroy", G_CALLBACK(close_smiley_dialog), toolbar);
+	g_signal_connect(G_OBJECT(dialog), "key-press-event", G_CALLBACK(smiley_dialog_input_cb), toolbar);
+
+	gtk_window_set_transient_for(GTK_WINDOW(dialog),
+			GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar))));
 
 	/* show everything */
 	gtk_widget_show_all(dialog);
-	gtk_window_set_transient_for(GTK_WINDOW(dialog),
-			GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar))));
+
+	gtk_widget_size_request(viewport, &req);
+	gtk_widget_set_size_request(scrolled, MIN(300, req.width), MIN(290, req.height));
+
+	/* The window has to be made resizable, and the scrollbars in the scrolled window
+	 * enabled only after setting the desired size of the window. If we do either of
+	 * these tasks before now, GTK+ miscalculates the required size, and erronously
+	 * makes one or both scrollbars visible (sometimes).
+	 * I too think this hack is gross. But I couldn't find a better way -- sadrul */
+	gtk_window_set_resizable(GTK_WINDOW(dialog), TRUE);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
 #ifdef _WIN32
 	winpidgin_ensure_onscreen(dialog);
 #endif

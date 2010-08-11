@@ -30,6 +30,7 @@
 typedef struct _PurpleRoomlist PurpleRoomlist;
 typedef struct _PurpleRoomlistRoom PurpleRoomlistRoom;
 typedef struct _PurpleRoomlistField PurpleRoomlistField;
+/** @copydoc _PurpleRoomlistUiOps */
 typedef struct _PurpleRoomlistUiOps PurpleRoomlistUiOps;
 
 /**

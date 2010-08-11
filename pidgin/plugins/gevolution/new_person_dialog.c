@@ -375,9 +375,9 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 						 G_CALLBACK(person_info_changed_cb), dialog);
 	}
 
-	/* E-Mail address field */
+	/* Email address field */
 	dialog->email = gtk_entry_new();
-	add_pref_box(sg2, vbox2, _("E-mail:"), dialog->email);
+	add_pref_box(sg2, vbox2, _("Email:"), dialog->email);
 
 	if (contact != NULL)
 	{

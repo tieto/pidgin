@@ -67,6 +67,7 @@ common_sources = \
 	common/SavedStatuses.xs \
 	common/Server.xs \
 	common/Signal.xs \
+	common/Smiley.xs \
 	common/Sound.xs \
 	common/Status.xs \
 	common/Stringref.xs \

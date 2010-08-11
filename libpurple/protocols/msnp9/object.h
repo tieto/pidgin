@@ -71,6 +71,19 @@ MsnObject *msn_object_new(void);
 MsnObject *msn_object_new_from_string(const char *str);
 
 /**
+ * Creates a MsnObject structure from a stored image
+ *
+ * @param img		The image associated to object
+ * @param location	The object location as stored in MsnObject
+ * @param creator	The creator of the object
+ * @param type		The type of the object
+ *
+ * @return A new MsnObject structure
+ */
+MsnObject *msn_object_new_from_image(PurpleStoredImage *img,
+		const char *location, const char *creator, MsnObjectType type);
+
+/**
  * Destroys an MsnObject structure.
  *
  * @param obj The object structure.

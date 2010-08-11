@@ -23,8 +23,8 @@
  */
 #include "msn.h"
 #include "msnutils.h"
-#include "time.h"
-//#include <openssl/md5.h>
+
+#include "cipher.h"
 
 char *rand_guid(void);
 
@@ -169,7 +169,7 @@ msn_encode_mime(const char *str)
 	gchar *base64, *retval;
 
 	g_return_val_if_fail(str != NULL, NULL);
-	
+
 	base64 = purple_base64_encode((guchar *)str, strlen(str));
 	retval = g_strdup_printf("=?utf-8?B?%s?=", base64);
 	g_free(base64);
@@ -465,132 +465,118 @@ msn_parse_socket(const char *str, char **ret_host, int *ret_port)
 
 	host = g_strdup(str);
 
-	if ((c = strchr(host, ':')) != NULL){
+	if ((c = strchr(host, ':')) != NULL) {
 		*c = '\0';
 		port = atoi(c + 1);
-	}else{
+	} else {
 		port = 1863;
 	}
 
 	*ret_host = host;
 	*ret_port = port;
 }
-/***************************************************************************
- * MSN Time Related Funciton
- ***************************************************************************/
-#if 0
-int
-msn_convert_iso8601(const char *timestr,struct tm tm_time)
-{
-	char temp[64];
-	struct tm ctime;
-	time_t ts;
-
-	purple_debug_info("MSNP14","convert string is{%s}\n",timestr);
-	tzset();
-	/*copy string first*/
-	memset(temp, 0, sizeof(temp));
-	strncpy(temp, timestr, strlen(timestr));
-
-	/*convert via strptime()*/
-	memset(&ctime, 0, sizeof(struct tm));
-	strptime(temp, "%d %b %Y %T %Z", &ctime);
-	ts = mktime(&ctime) - timezone;
-	localtime_r(&ts, tm_time);
-}
-#endif
 
 /***************************************************************************
  * MSN Challenge Computing Function
  ***************************************************************************/
 
 /*
- * Handle MSN Chanllege computation
- *This algorithm reference with http://msnpiki.msnfanatic.com/index.php/MSNP11:Challenges
+ * Handle MSN Challenge computation
+ * This algorithm references
+ *  http://imfreedom.org/wiki/index.php/MSN:NS/Challenges
  */
 #define BUFSIZE	256
-void 
+void
 msn_handle_chl(char *input, char *output)
 {
-		PurpleCipher *cipher;
-		PurpleCipherContext *context;
-		char *productKey = MSNP13_WLM_PRODUCT_KEY,
-			 *productID  = MSNP13_WLM_PRODUCT_ID,
-			 *hexChars   = "0123456789abcdef",
-			 buf[BUFSIZE];
-		unsigned char md5Hash[16], *newHash;
-		unsigned int *md5Parts, *chlStringParts, newHashParts[5];
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
+	const guchar productKey[] = MSNP15_WLM_PRODUCT_KEY;
+	const guchar productID[]  = MSNP15_WLM_PRODUCT_ID;
+	const char hexChars[]     = "0123456789abcdef";
+	char buf[BUFSIZE];
+	unsigned char md5Hash[16];
+	unsigned char *newHash;
+	unsigned int *md5Parts;
+	unsigned int *chlStringParts;
+	unsigned int newHashParts[5];
 
-		long long nHigh=0, nLow=0;
+	long long nHigh = 0, nLow = 0;
 
-		int i;
+	int len;
+	int i;
 
-		/* Create the MD5 hash by using Purple MD5 algorithm*/
-		cipher = purple_ciphers_find_cipher("md5");
-		context = purple_cipher_context_new(cipher, NULL);
+	/* Create the MD5 hash by using Purple MD5 algorithm */
+	cipher = purple_ciphers_find_cipher("md5");
+	context = purple_cipher_context_new(cipher, NULL);
 
-		purple_cipher_context_append(context, (const guchar *)input,
-						strlen(input));
-		purple_cipher_context_append(context, (const guchar *)productKey,
-						strlen(productKey));
-		purple_cipher_context_digest(context, sizeof(md5Hash), md5Hash, NULL);
-		purple_cipher_context_destroy(context);
+	purple_cipher_context_append(context, (guchar *)input, strlen(input));
+	purple_cipher_context_append(context, productKey, sizeof(productKey) - 1);
+	purple_cipher_context_digest(context, sizeof(md5Hash), md5Hash, NULL);
+	purple_cipher_context_destroy(context);
 
-		/* Split it into four integers */
-		md5Parts = (unsigned int *)md5Hash;
-		for(i=0; i<4; i++){  
-				/* adjust endianess */
-				md5Parts[i] = GUINT_TO_LE(md5Parts[i]);
+	/* Split it into four integers */
+	md5Parts = (unsigned int *)md5Hash;
+	for (i = 0; i < 4; i++) {
+		/* adjust endianess */
+		md5Parts[i] = GUINT_TO_LE(md5Parts[i]);
 
-				/* & each integer with 0x7FFFFFFF          */
-				/* and save one unmodified array for later */
-				newHashParts[i] = md5Parts[i];
-				md5Parts[i] &= 0x7FFFFFFF;
-		}
+		/* & each integer with 0x7FFFFFFF          */
+		/* and save one unmodified array for later */
+		newHashParts[i] = md5Parts[i];
+		md5Parts[i] &= 0x7FFFFFFF;
+	}
 
-		/* make a new string and pad with '0' */
-		snprintf(buf, BUFSIZE-5, "%s%s", input, productID);
-		i = strlen(buf);
-		memset(&buf[i], '0', 8 - (i % 8));
-		buf[i + (8 - (i % 8))]='\0';
+	/* make a new string and pad with '0' to length that's a multiple of 8 */
+	snprintf(buf, BUFSIZE - 5, "%s%s", input, productID);
+	len = strlen(buf);
+	if ((len % 8) != 0) {
+		int fix = 8 - (len % 8);
+		memset(&buf[len], '0', fix);
+		buf[len + fix] = '\0';
+		len += fix;
+	}
 
-		/* split into integers */
-		chlStringParts = (unsigned int *)buf;
+	/* split into integers */
+	chlStringParts = (unsigned int *)buf;
 
-		/* this is magic */
-		for (i=0; i<(strlen(buf)/4)-1; i+=2){
-				long long temp;
+	/* this is magic */
+	for (i = 0; i < (strlen(buf) / 4); i += 2) {
+		long long temp;
 
-				chlStringParts[i]   = GUINT_TO_LE(chlStringParts[i]);
-				chlStringParts[i+1] = GUINT_TO_LE(chlStringParts[i+1]);
+		chlStringParts[i] = GUINT_TO_LE(chlStringParts[i]);
+		chlStringParts[i + 1] = GUINT_TO_LE(chlStringParts[i + 1]);
 
-				temp=(md5Parts[0] * (((0x0E79A9C1 * (long long)chlStringParts[i]) % 0x7FFFFFFF)+nHigh) + md5Parts[1])%0x7FFFFFFF;
-				nHigh=(md5Parts[2] * (((long long)chlStringParts[i+1]+temp) % 0x7FFFFFFF) + md5Parts[3]) % 0x7FFFFFFF;
-				nLow=nLow + nHigh + temp;
-		}
-		nHigh=(nHigh+md5Parts[1]) % 0x7FFFFFFF;
-		nLow=(nLow+md5Parts[3]) % 0x7FFFFFFF;
+		temp = (0x0E79A9C1 * (long long)chlStringParts[i]) % 0x7FFFFFFF;
+		temp = (md5Parts[0] * (temp + nLow) + md5Parts[1]) % 0x7FFFFFFF;
+		nHigh += temp;
 
-		newHashParts[0]^=nHigh;
-		newHashParts[1]^=nLow;
-		newHashParts[2]^=nHigh;
-		newHashParts[3]^=nLow;
+		temp = ((long long)chlStringParts[i + 1] + temp) % 0x7FFFFFFF;
+		nLow = (md5Parts[2] * temp + md5Parts[3]) % 0x7FFFFFFF;
+		nHigh += nLow;
+	}
+	nLow = (nLow + md5Parts[1]) % 0x7FFFFFFF;
+	nHigh = (nHigh + md5Parts[3]) % 0x7FFFFFFF;
 
-		/* adjust endianness */
-		for(i=0; i<4; i++)
-				newHashParts[i] = GUINT_TO_LE(newHashParts[i]); 
+	newHashParts[0] ^= nLow;
+	newHashParts[1] ^= nHigh;
+	newHashParts[2] ^= nLow;
+	newHashParts[3] ^= nHigh;
 
-		/* make a string of the parts */
-		newHash = (unsigned char *)newHashParts;
+	/* adjust endianness */
+	for(i = 0; i < 4; i++)
+		newHashParts[i] = GUINT_TO_LE(newHashParts[i]);
 
-		/* convert to hexadecimal */
-		for (i=0; i<16; i++)
-		{
-				output[i*2]=hexChars[(newHash[i]>>4)&0xF];
-				output[(i*2)+1]=hexChars[newHash[i]&0xF];
-		}
+	/* make a string of the parts */
+	newHash = (unsigned char *)newHashParts;
 
-		output[32]='\0';
+	/* convert to hexadecimal */
+	for (i = 0; i < 16; i++)
+	{
+		output[i * 2] = hexChars[(newHash[i] >> 4) & 0xF];
+		output[(i * 2) + 1] = hexChars[newHash[i] & 0xF];
+	}
 
-//		purple_debug_info("MSNP14","chl output{%s}\n",output);
+	output[32] = '\0';
 }
+

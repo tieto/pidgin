@@ -2804,7 +2804,7 @@ msgstr "Nom"
 msgid "Last name"
 msgstr "Cognoms"
 
-msgid "E-Mail"
+msgid "Email"
 msgstr "Correu electrònic"
 
 msgid "AIM Account"
@@ -2829,9 +2829,6 @@ msgstr "Connector per al protocol Bonjour"
 # FIXME
 msgid "Purple Person"
 msgstr "Persona porpra"
-
-msgid "E-mail"
-msgstr "Correu electrònic"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3924,7 +3921,7 @@ msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 "Introduïu un o més camps per cercar usuaris de XMPP que hi coincideixin."
 
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Adreça de correu electrònic"
 
 msgid "Search for XMPP users"
@@ -4662,7 +4659,7 @@ msgid "Syntax Error (probably a client bug)"
 msgstr "Error de sintaxi (probablement errada del client)"
 
 #, c-format
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "L'adreça de correu no és vàlida"
 
 #, c-format
@@ -5068,7 +5065,7 @@ msgstr "Mòbil personal"
 msgid "Home Fax"
 msgstr "Fax de casa"
 
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Correu electrònic personal"
 
 msgid "Personal IM"
@@ -5112,7 +5109,7 @@ msgstr "Cercapersones de la feina"
 msgid "Work Fax"
 msgstr "Fax de la feina"
 
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Correu electrònic de la feina"
 
 msgid "Work IM"
@@ -6497,7 +6494,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -6640,11 +6637,11 @@ msgstr[0] "El següent nom d'usuari està associat amb %s"
 msgstr[1] "Els següents noms d'usuari estan associats amb %s"
 
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "No s'han obtingut resultats per a l'adreça de correu %s"
 
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Hauríeu de rebre un correu demanant-vos confirmar %s."
 
 msgid "Account Confirmation Requested"
@@ -6673,7 +6670,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
 "Error 0x%04x: no s'ha pogut canviar l'adreça de correu electrònic perquè ja "
@@ -6681,7 +6678,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 "Error 0x%04x: no s'ha pogut canviar l'adreça de correu electrònic perquè "
@@ -6689,7 +6686,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Error 0x%04x: No s'ha pogut canviar l'adreça de correu perquè l'adreça "
@@ -6703,7 +6700,7 @@ msgid "Error Changing Account Info"
 msgstr "S'ha produït un error en canviar la informació del compte"
 
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "L'adreça de correu per a %s és %s"
 
 msgid "Account Info"
@@ -6918,13 +6915,13 @@ msgstr ""
 "Podeu tornar a demanar l'autorització d'aquests amics fent-hi clic a sobre "
 "amb el botó dret del ratolí, i seleccionant «Torna a demanar l'autorització»."
 
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Troba un amic per l'adreça de correu"
 
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Cerca un amic per l'adreça de correu"
 
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Escriviu l'adreça de correu de l'amic que estigueu cercant."
 
 msgid "_Search"
@@ -6947,16 +6944,16 @@ msgstr "Estableix les opcions de privadesa..."
 msgid "Confirm Account"
 msgstr "Confirma el compte"
 
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Mostra l'adreça actualment registrada"
 
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Canvia l'adreça actualment registrada..."
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Mostra els amics pendents d'autorització"
 
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Cerca un amic per l'adreça de correu..."
 
 msgid "Search for Buddy by Information"
@@ -7023,9 +7020,6 @@ msgstr "Tipus de sang"
 
 msgid "College"
 msgstr "Col·legi"
-
-msgid "Email"
-msgstr "Correu electrònic"
 
 msgid "Zipcode"
 msgstr "Codi postal"
@@ -8789,7 +8783,7 @@ msgid "User Name: \t%s\n"
 msgstr "Nom d'usuari: \t%s\n"
 
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "Correu electrònic: \t\t%s\n"
 
 #, c-format
@@ -9048,7 +9042,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Servei de directori no disponible temporalment."
 
 #, c-format
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "Recerca per adreça de correu electrònic restringida."
 
 #, c-format
@@ -11433,7 +11427,7 @@ msgstr ""
 msgid "Enable typing notification"
 msgstr "Habilita les notificacions de que s'està escrivint"
 
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Copia l'adreça de correu"
 
 msgid "_Open Link in Browser"
@@ -11796,8 +11790,8 @@ msgstr[0] "%s té %d missatge nou."
 msgstr[1] "%s té %d missatges nous."
 
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>Teniu %d correu electrònic.</b>"
 msgstr[1] "<b>Teniu %d correus electrònics.</b>"
 
@@ -12845,20 +12839,20 @@ msgstr "Detalls de l'_usuari"
 msgid "_Associate Buddy"
 msgstr "_Associa l'amic"
 
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "No s'ha pogut enviar el correu electrònic."
 
 msgid "The evolution executable was not found in the PATH."
 msgstr ""
 "No s'ha trobat l'executable de l'Evolution a la variable d'entorn PATH."
 
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "No s'ha trobat cap adreça de correu electrònic per a aquest amic."
 
 msgid "Add to Address Book"
 msgstr "Afegeix a la llibreta d'adreces"
 
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Envia un correu"
 
 #. Configuration frame
@@ -12906,7 +12900,7 @@ msgstr "Nom:"
 msgid "Last name:"
 msgstr "Cognoms:"
 
-msgid "E-mail:"
+msgid "Email:"
 msgstr "Correu electrònic:"
 
 #. *< type
@@ -14971,7 +14965,7 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 #~ msgid "Check Mail"
 #~ msgstr "Comprova el correu"
 
-#~ msgid "Check e-mail every X seconds.\n"
+#~ msgid "Check email every X seconds.\n"
 #~ msgstr "Comprova el correu electrònic cada X segons.\n"
 
 #~ msgid "Auto-login"

@@ -45,11 +45,8 @@ struct _MsnUserList
 {
 	MsnSession *session;
 
-	/* MsnUsers *users; */
-	/* MsnGroups *groups; */
-
-	GList *users;
-	GList *groups;
+	GList *users; /* Contains MsnUsers */
+	GList *groups; /* Contains MsnGroups */
 
 	GQueue *buddy_icon_requests;
 	int buddy_icon_window;
@@ -94,7 +91,7 @@ void msn_userlist_rename_group_id(MsnUserList *userlist, const char *group_id,
 void msn_userlist_remove_group_id(MsnUserList *userlist, const char *group_id);
 
 void msn_userlist_rem_buddy(MsnUserList *userlist, const char *who);
-void msn_userlist_add_buddy(MsnUserList *userlist, 
+void msn_userlist_add_buddy(MsnUserList *userlist,
 			    const char *who, const char *group_name);
 void msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 						    const char *old_group_name,
@@ -106,7 +103,7 @@ gboolean msn_userlist_rem_buddy_from_group(MsnUserList *userlist,
 					   const char *who,
 					   const char *group_name);
 
-void msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who, 
+void msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 				    MsnListId list_id);
 void msn_userlist_rem_buddy_from_list(MsnUserList *userlist, const char *who,
 				      MsnListId list_id);

@@ -150,9 +150,3 @@ PPCODE:
 
 Purple::Handle
 purple_savedstatuses_get_handle()
-
-void
-purple_savedstatuses_init()
-
-void
-purple_savedstatuses_uninit()
