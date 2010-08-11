@@ -1,8 +1,10 @@
 pidgin (2.7.3-1) unstable; urgency=low
 
   * Imported Upstream version 2.7.3
+  * Fix lintian weak-library-dev-dependency error
+  * Move package VCS to git
 
- -- Ari Pollak <ari@debian.org>  Tue, 10 Aug 2010 23:10:12 -0400
+ -- Ari Pollak <ari@debian.org>  Wed, 11 Aug 2010 00:42:09 -0400
 
 pidgin (2.7.2-1) unstable; urgency=medium
 
