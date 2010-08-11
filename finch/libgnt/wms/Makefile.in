@@ -61,11 +61,13 @@ irssi_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(top_builddir)/finch/libgnt/libgnt.la
 am_irssi_la_OBJECTS = irssi.lo
 irssi_la_OBJECTS = $(am_irssi_la_OBJECTS)
+@PURPLE_AVAILABLE_TRUE@am_irssi_la_rpath = -rpath $(plugindir)
 s_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(top_builddir)/finch/libgnt/libgnt.la \
 	$(top_builddir)/libpurple/libpurple.la
 am_s_la_OBJECTS = s.lo
 s_la_OBJECTS = $(am_s_la_OBJECTS)
+@PURPLE_AVAILABLE_TRUE@am_s_la_rpath = -rpath $(plugindir)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -91,6 +93,8 @@ AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
+AVAHI_CFLAGS = @AVAHI_CFLAGS@
+AVAHI_LIBS = @AVAHI_LIBS@
 AWK = @AWK@
 BUILD_GEVOLUTION_FALSE = @BUILD_GEVOLUTION_FALSE@
 BUILD_GEVOLUTION_TRUE = @BUILD_GEVOLUTION_TRUE@
@@ -251,6 +255,10 @@ LIBXML_LIBS = @LIBXML_LIBS@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MDNS_AVAHI_FALSE = @MDNS_AVAHI_FALSE@
+MDNS_AVAHI_TRUE = @MDNS_AVAHI_TRUE@
+MDNS_HOWL_FALSE = @MDNS_HOWL_FALSE@
+MDNS_HOWL_TRUE = @MDNS_HOWL_TRUE@
 MEANWHILE_CFLAGS = @MEANWHILE_CFLAGS@
 MEANWHILE_LIBS = @MEANWHILE_LIBS@
 MKINSTALLDIRS = @MKINSTALLDIRS@
@@ -279,6 +287,8 @@ POFILES = @POFILES@
 POSUB = @POSUB@
 PO_IN_DATADIR_FALSE = @PO_IN_DATADIR_FALSE@
 PO_IN_DATADIR_TRUE = @PO_IN_DATADIR_TRUE@
+PURPLE_AVAILABLE_FALSE = @PURPLE_AVAILABLE_FALSE@
+PURPLE_AVAILABLE_TRUE = @PURPLE_AVAILABLE_TRUE@
 PURPLE_LT_VERSION_INFO = @PURPLE_LT_VERSION_INFO@
 PURPLE_MAJOR_VERSION = @PURPLE_MAJOR_VERSION@
 PURPLE_MICRO_VERSION = @PURPLE_MICRO_VERSION@
@@ -419,11 +429,13 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
+@PURPLE_AVAILABLE_FALSE@purple_wms = 
+# These custom wms depend on libpurple
+@PURPLE_AVAILABLE_TRUE@purple_wms = s.la irssi.la
 s_la_LDFLAGS = -module -avoid-version
 irssi_la_LDFLAGS = -module -avoid-version
 plugin_LTLIBRARIES = \
-	s.la \
-	irssi.la
+	$(purple_wms)
 
 plugindir = $(libdir)/gnt
 irssi_la_SOURCES = irssi.c
@@ -509,9 +521,9 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 irssi.la: $(irssi_la_OBJECTS) $(irssi_la_DEPENDENCIES) 
-	$(LINK) -rpath $(plugindir) $(irssi_la_LDFLAGS) $(irssi_la_OBJECTS) $(irssi_la_LIBADD) $(LIBS)
+	$(LINK) $(am_irssi_la_rpath) $(irssi_la_LDFLAGS) $(irssi_la_OBJECTS) $(irssi_la_LIBADD) $(LIBS)
 s.la: $(s_la_OBJECTS) $(s_la_DEPENDENCIES) 
-	$(LINK) -rpath $(plugindir) $(s_la_LDFLAGS) $(s_la_OBJECTS) $(s_la_LIBADD) $(LIBS)
+	$(LINK) $(am_s_la_rpath) $(s_la_LDFLAGS) $(s_la_OBJECTS) $(s_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

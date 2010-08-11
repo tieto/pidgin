@@ -53,13 +53,15 @@ ARFLAGS = cru
 libyahoo_a_AR = $(AR) $(ARFLAGS)
 libyahoo_a_LIBADD =
 am__libyahoo_a_SOURCES_DIST = util.c yahoo.c yahoo.h yahoochat.h \
-	yahoochat.c yahoo_auth.c yahoo_auth.h yahoo_crypt.h \
-	yahoo_crypt.c yahoo_doodle.h yahoo_doodle.c yahoo_filexfer.h \
-	yahoo_filexfer.c yahoo_friend.h yahoo_friend.c yahoo_packet.h \
-	yahoo_packet.c yahoo_picture.c yahoo_picture.h yahoo_profile.c \
-	ycht.c ycht.h
+	yahoochat.c yahoo_aliases.c yahoo_aliases.h yahoo_auth.c \
+	yahoo_auth.h yahoo_crypt.h yahoo_crypt.c yahoo_doodle.h \
+	yahoo_doodle.c yahoo_filexfer.h yahoo_filexfer.c \
+	yahoo_friend.h yahoo_friend.c yahoo_packet.h yahoo_packet.c \
+	yahoo_picture.c yahoo_picture.h yahoo_profile.c ycht.c ycht.h
 am__objects_1 = libyahoo_a-util.$(OBJEXT) libyahoo_a-yahoo.$(OBJEXT) \
-	libyahoo_a-yahoochat.$(OBJEXT) libyahoo_a-yahoo_auth.$(OBJEXT) \
+	libyahoo_a-yahoochat.$(OBJEXT) \
+	libyahoo_a-yahoo_aliases.$(OBJEXT) \
+	libyahoo_a-yahoo_auth.$(OBJEXT) \
 	libyahoo_a-yahoo_crypt.$(OBJEXT) \
 	libyahoo_a-yahoo_doodle.$(OBJEXT) \
 	libyahoo_a-yahoo_filexfer.$(OBJEXT) \
@@ -81,13 +83,13 @@ LTLIBRARIES = $(pkg_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 @STATIC_YAHOO_FALSE@libyahoo_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__libyahoo_la_SOURCES_DIST = util.c yahoo.c yahoo.h yahoochat.h \
-	yahoochat.c yahoo_auth.c yahoo_auth.h yahoo_crypt.h \
-	yahoo_crypt.c yahoo_doodle.h yahoo_doodle.c yahoo_filexfer.h \
-	yahoo_filexfer.c yahoo_friend.h yahoo_friend.c yahoo_packet.h \
-	yahoo_packet.c yahoo_picture.c yahoo_picture.h yahoo_profile.c \
-	ycht.c ycht.h
-am__objects_2 = util.lo yahoo.lo yahoochat.lo yahoo_auth.lo \
-	yahoo_crypt.lo yahoo_doodle.lo yahoo_filexfer.lo \
+	yahoochat.c yahoo_aliases.c yahoo_aliases.h yahoo_auth.c \
+	yahoo_auth.h yahoo_crypt.h yahoo_crypt.c yahoo_doodle.h \
+	yahoo_doodle.c yahoo_filexfer.h yahoo_filexfer.c \
+	yahoo_friend.h yahoo_friend.c yahoo_packet.h yahoo_packet.c \
+	yahoo_picture.c yahoo_picture.h yahoo_profile.c ycht.c ycht.h
+am__objects_2 = util.lo yahoo.lo yahoochat.lo yahoo_aliases.lo \
+	yahoo_auth.lo yahoo_crypt.lo yahoo_doodle.lo yahoo_filexfer.lo \
 	yahoo_friend.lo yahoo_packet.lo yahoo_picture.lo \
 	yahoo_profile.lo ycht.lo
 @STATIC_YAHOO_FALSE@am_libyahoo_la_OBJECTS = $(am__objects_2)
@@ -119,6 +121,8 @@ AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
+AVAHI_CFLAGS = @AVAHI_CFLAGS@
+AVAHI_LIBS = @AVAHI_LIBS@
 AWK = @AWK@
 BUILD_GEVOLUTION_FALSE = @BUILD_GEVOLUTION_FALSE@
 BUILD_GEVOLUTION_TRUE = @BUILD_GEVOLUTION_TRUE@
@@ -279,6 +283,10 @@ LIBXML_LIBS = @LIBXML_LIBS@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MDNS_AVAHI_FALSE = @MDNS_AVAHI_FALSE@
+MDNS_AVAHI_TRUE = @MDNS_AVAHI_TRUE@
+MDNS_HOWL_FALSE = @MDNS_HOWL_FALSE@
+MDNS_HOWL_TRUE = @MDNS_HOWL_TRUE@
 MEANWHILE_CFLAGS = @MEANWHILE_CFLAGS@
 MEANWHILE_LIBS = @MEANWHILE_LIBS@
 MKINSTALLDIRS = @MKINSTALLDIRS@
@@ -307,6 +315,8 @@ POFILES = @POFILES@
 POSUB = @POSUB@
 PO_IN_DATADIR_FALSE = @PO_IN_DATADIR_FALSE@
 PO_IN_DATADIR_TRUE = @PO_IN_DATADIR_TRUE@
+PURPLE_AVAILABLE_FALSE = @PURPLE_AVAILABLE_FALSE@
+PURPLE_AVAILABLE_TRUE = @PURPLE_AVAILABLE_TRUE@
 PURPLE_LT_VERSION_INFO = @PURPLE_LT_VERSION_INFO@
 PURPLE_MAJOR_VERSION = @PURPLE_MAJOR_VERSION@
 PURPLE_MICRO_VERSION = @PURPLE_MICRO_VERSION@
@@ -457,6 +467,8 @@ YAHOOSOURCES = \
 	yahoo.h \
 	yahoochat.h \
 	yahoochat.c \
+	yahoo_aliases.c \
+	yahoo_aliases.h \
 	yahoo_auth.c \
 	yahoo_auth.h \
 	yahoo_crypt.h \
@@ -569,6 +581,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libyahoo_a-util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libyahoo_a-yahoo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libyahoo_a-yahoo_aliases.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libyahoo_a-yahoo_auth.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libyahoo_a-yahoo_crypt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libyahoo_a-yahoo_doodle.Po@am__quote@
@@ -581,6 +594,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libyahoo_a-ycht.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yahoo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yahoo_aliases.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yahoo_auth.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yahoo_crypt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yahoo_doodle.Plo@am__quote@
@@ -654,6 +668,20 @@ libyahoo_a-yahoochat.obj: yahoochat.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yahoochat.c' object='libyahoo_a-yahoochat.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libyahoo_a_CFLAGS) $(CFLAGS) -c -o libyahoo_a-yahoochat.obj `if test -f 'yahoochat.c'; then $(CYGPATH_W) 'yahoochat.c'; else $(CYGPATH_W) '$(srcdir)/yahoochat.c'; fi`
+
+libyahoo_a-yahoo_aliases.o: yahoo_aliases.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libyahoo_a_CFLAGS) $(CFLAGS) -MT libyahoo_a-yahoo_aliases.o -MD -MP -MF "$(DEPDIR)/libyahoo_a-yahoo_aliases.Tpo" -c -o libyahoo_a-yahoo_aliases.o `test -f 'yahoo_aliases.c' || echo '$(srcdir)/'`yahoo_aliases.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libyahoo_a-yahoo_aliases.Tpo" "$(DEPDIR)/libyahoo_a-yahoo_aliases.Po"; else rm -f "$(DEPDIR)/libyahoo_a-yahoo_aliases.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yahoo_aliases.c' object='libyahoo_a-yahoo_aliases.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libyahoo_a_CFLAGS) $(CFLAGS) -c -o libyahoo_a-yahoo_aliases.o `test -f 'yahoo_aliases.c' || echo '$(srcdir)/'`yahoo_aliases.c
+
+libyahoo_a-yahoo_aliases.obj: yahoo_aliases.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libyahoo_a_CFLAGS) $(CFLAGS) -MT libyahoo_a-yahoo_aliases.obj -MD -MP -MF "$(DEPDIR)/libyahoo_a-yahoo_aliases.Tpo" -c -o libyahoo_a-yahoo_aliases.obj `if test -f 'yahoo_aliases.c'; then $(CYGPATH_W) 'yahoo_aliases.c'; else $(CYGPATH_W) '$(srcdir)/yahoo_aliases.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libyahoo_a-yahoo_aliases.Tpo" "$(DEPDIR)/libyahoo_a-yahoo_aliases.Po"; else rm -f "$(DEPDIR)/libyahoo_a-yahoo_aliases.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='yahoo_aliases.c' object='libyahoo_a-yahoo_aliases.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libyahoo_a_CFLAGS) $(CFLAGS) -c -o libyahoo_a-yahoo_aliases.obj `if test -f 'yahoo_aliases.c'; then $(CYGPATH_W) 'yahoo_aliases.c'; else $(CYGPATH_W) '$(srcdir)/yahoo_aliases.c'; fi`
 
 libyahoo_a-yahoo_auth.o: yahoo_auth.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libyahoo_a_CFLAGS) $(CFLAGS) -MT libyahoo_a-yahoo_auth.o -MD -MP -MF "$(DEPDIR)/libyahoo_a-yahoo_auth.Tpo" -c -o libyahoo_a-yahoo_auth.o `test -f 'yahoo_auth.c' || echo '$(srcdir)/'`yahoo_auth.c; \

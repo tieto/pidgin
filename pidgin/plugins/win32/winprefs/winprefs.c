@@ -92,11 +92,7 @@ static void blist_set_ontop(gboolean val) {
 	if(!blist)
 		return;
 
-	if(val)
-		SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-	else
-		SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-
+	gtk_window_set_keep_above(GTK_WINDOW(PIDGIN_BLIST(purple_get_blist())->window), val);
 }
 
 static void blist_dock_cb(gboolean val) {

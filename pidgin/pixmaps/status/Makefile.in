@@ -67,6 +67,8 @@ AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
+AVAHI_CFLAGS = @AVAHI_CFLAGS@
+AVAHI_LIBS = @AVAHI_LIBS@
 AWK = @AWK@
 BUILD_GEVOLUTION_FALSE = @BUILD_GEVOLUTION_FALSE@
 BUILD_GEVOLUTION_TRUE = @BUILD_GEVOLUTION_TRUE@
@@ -227,6 +229,10 @@ LIBXML_LIBS = @LIBXML_LIBS@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MDNS_AVAHI_FALSE = @MDNS_AVAHI_FALSE@
+MDNS_AVAHI_TRUE = @MDNS_AVAHI_TRUE@
+MDNS_HOWL_FALSE = @MDNS_HOWL_FALSE@
+MDNS_HOWL_TRUE = @MDNS_HOWL_TRUE@
 MEANWHILE_CFLAGS = @MEANWHILE_CFLAGS@
 MEANWHILE_LIBS = @MEANWHILE_LIBS@
 MKINSTALLDIRS = @MKINSTALLDIRS@
@@ -255,6 +261,8 @@ POFILES = @POFILES@
 POSUB = @POSUB@
 PO_IN_DATADIR_FALSE = @PO_IN_DATADIR_FALSE@
 PO_IN_DATADIR_TRUE = @PO_IN_DATADIR_TRUE@
+PURPLE_AVAILABLE_FALSE = @PURPLE_AVAILABLE_FALSE@
+PURPLE_AVAILABLE_TRUE = @PURPLE_AVAILABLE_TRUE@
 PURPLE_LT_VERSION_INFO = @PURPLE_LT_VERSION_INFO@
 PURPLE_MAJOR_VERSION = @PURPLE_MAJOR_VERSION@
 PURPLE_MICRO_VERSION = @PURPLE_MICRO_VERSION@
@@ -395,9 +403,10 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-SUBDIRS = 16 22 32 48
+SUBDIRS = 11 16 22 32 48
 EXTRA_DIST = \
 	Makefile.mingw \
+	11/Makefile.mingw \
 	16/Makefile.mingw \
 	16/rtl/Makefile.mingw \
 	22/Makefile.mingw \
@@ -583,7 +592,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/16 $(distdir)/16/rtl $(distdir)/22 $(distdir)/22/rtl $(distdir)/32 $(distdir)/32/rtl $(distdir)/48 $(distdir)/48/rtl
+	$(mkdir_p) $(distdir)/11 $(distdir)/16 $(distdir)/16/rtl $(distdir)/22 $(distdir)/22/rtl $(distdir)/32 $(distdir)/32/rtl $(distdir)/48 $(distdir)/48/rtl
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

@@ -1151,7 +1151,7 @@ static gint check_notify_tzc(gpointer data)
 				size_t bufsize = strlen(msg) + 3;
 				char *buf = g_new0(char,bufsize);
 				g_snprintf(buf,1+strlen(msg)+2," %c%s",'\0',msg);
-				bzero((char *)&notice, sizeof(notice));
+				memset((char *)&notice, 0, sizeof(notice));
 				notice.z_kind = ACKED;
 				notice.z_port = 0;
 				notice.z_opcode = tree_child(find_node(newparsetree,"opcode"),2)->contents;
@@ -2205,7 +2205,7 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 	} else if (use_zeph02(zephyr)) {
 		ZNotice_t notice;
 		char *buf = g_strdup_printf("%s%c%s", sig, '\0', html_buf2);
-		bzero((char *)&notice, sizeof(notice));
+		memset((char *)&notice, 0, sizeof(notice));
 		
 		notice.z_kind = ACKED;
 		notice.z_port = 0;

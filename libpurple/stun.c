@@ -429,5 +429,4 @@ PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
 
 void purple_stun_init() {
 	purple_prefs_add_string("/purple/network/stun_server", "");
-	purple_stun_discover(NULL);
 }

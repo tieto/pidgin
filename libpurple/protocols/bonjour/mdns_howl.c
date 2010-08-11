@@ -14,12 +14,22 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "mdns_howl.h"
+#include "internal.h"
 
+#include "mdns_interface.h"
 #include "debug.h"
 #include "buddy.h"
 
-sw_result HOWL_API
+#include <howl.h>
+
+/* data used by howl bonjour implementation */
+typedef struct _howl_impl_data {
+	sw_discovery session;
+	sw_discovery_oid session_id;
+	guint session_handler;
+} HowlSessionImplData;
+
+static sw_result HOWL_API
 _publish_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_discovery_publish_status status, sw_opaque extra)
 {
@@ -45,7 +55,7 @@ _publish_reply(sw_discovery discovery, sw_discovery_oid oid,
 	return SW_OKAY;
 }
 
-sw_result HOWL_API
+static sw_result HOWL_API
 _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_uint32 interface_index, sw_const_string name,
 			   sw_const_string type, sw_const_string domain,
@@ -75,6 +85,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 	/* Obtain the parameters from the text_record */
 	if ((text_record_len > 0) && (text_record) && (*text_record != '\0'))
 	{
+		clear_bonjour_buddy_values(buddy);
 		sw_text_record_iterator_init(&iterator, text_record, text_record_len);
 		while (sw_text_record_iterator_next(iterator, key, (sw_octet *)value, &value_length) == SW_OKAY)
 			set_bonjour_buddy_value(buddy, key, value, value_length);
@@ -94,7 +105,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 	return SW_OKAY;
 }
 
-sw_result HOWL_API
+static sw_result HOWL_API
 _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_discovery_browse_status status,
 			   sw_uint32 interface_index, sw_const_string name,
@@ -136,7 +147,7 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 			break;
 		case SW_DISCOVERY_BROWSE_REMOVE_SERVICE:
 			purple_debug_info("bonjour", "_browser_reply --> Remove service\n");
-			gb = purple_find_buddy((PurpleAccount*)extra, name);
+			gb = purple_find_buddy(account, name);
 			if (gb != NULL)
 			{
 				bonjour_buddy_delete(gb->proto_data);
@@ -153,86 +164,125 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 	return SW_OKAY;
 }
 
-int
-_mdns_publish(BonjourDnsSd *data, PublishType type)
+static void
+_mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition)
 {
+	sw_discovery_read_socket((sw_discovery)data);
+}
+
+/****************************
+ * mdns_interface functions *
+ ****************************/
+
+gboolean _mdns_init_session(BonjourDnsSd *data) {
+	HowlSessionImplData *idata = g_new0(HowlSessionImplData, 1);
+
+	if (sw_discovery_init(&idata->session) != SW_OKAY) {
+		purple_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
+
+		/* In Avahi, sw_discovery_init frees data->session but doesn't clear it */
+		idata->session = NULL;
+
+		g_free(idata);
+
+		return FALSE;
+	}
+
+	data->mdns_impl_data = idata;
+
+	return TRUE;
+}
+
+
+gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 	sw_text_record dns_data;
 	sw_result publish_result = SW_OKAY;
-	char portstring[6];
-	const char *jid, *aim, *email;
+	HowlSessionImplData *idata = data->mdns_impl_data;
+
+	g_return_val_if_fail(idata != NULL, FALSE);
 
 	/* Fill the data for the service */
-	if (sw_text_record_init(&dns_data) != SW_OKAY)
-	{
+	if (sw_text_record_init(&dns_data) != SW_OKAY) {
 		purple_debug_error("bonjour", "Unable to initialize the data for the mDNS.\n");
-		return -1;
+		return FALSE;
 	}
 
-	/* Convert the port to a string */
-	snprintf(portstring, sizeof(portstring), "%d", data->port_p2pj);
-
-	jid = purple_account_get_string(data->account, "jid", NULL);
-	aim = purple_account_get_string(data->account, "AIM", NULL);
-	email = purple_account_get_string(data->account, "email", NULL);
-
-	/* We should try to follow XEP-0174, but some clients have "issues", so we humor them.
-	 * See http://telepathy.freedesktop.org/wiki/SalutInteroperability
-	 */
-
-	/* Needed by iChat */
-	sw_text_record_add_key_and_string_value(dns_data, "txtvers", "1");
-	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
-	sw_text_record_add_key_and_string_value(dns_data, "1st", data->first);
-	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
-	sw_text_record_add_key_and_string_value(dns_data, "last", data->last);
-	/* Needed by Adium */
-	sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", portstring);
-	/* Needed by iChat, Gaim/Pidgin <= 2.0.1 */
-	sw_text_record_add_key_and_string_value(dns_data, "status", data->status);
-	/* Currently always set to "!" since we don't support AV and wont ever be in a conference */
-	sw_text_record_add_key_and_string_value(dns_data, "vc", data->vc);
-	sw_text_record_add_key_and_string_value(dns_data, "ver", VERSION);
-	if (email != NULL && *email != '\0')
-		sw_text_record_add_key_and_string_value(dns_data, "email", email);
-	if (jid != NULL && *jid != '\0')
-		sw_text_record_add_key_and_string_value(dns_data, "jid", jid);
-	/* Nonstandard, but used by iChat */
-	if (aim != NULL && *aim != '\0')
-		sw_text_record_add_key_and_string_value(dns_data, "AIM", aim);
-	if (data->msg != NULL && *data->msg != '\0')
-		sw_text_record_add_key_and_string_value(dns_data, "msg", data->msg);
-	if (data->phsh != NULL && *data->phsh != '\0')
-		sw_text_record_add_key_and_string_value(dns_data, "phsh", data->phsh);
-
-	/* TODO: ext, nick, node */
+	while (records) {
+		PurpleKeyValuePair *kvp = records->data;
+		sw_text_record_add_key_and_string_value(dns_data, kvp->key, kvp->value);
+		records = records->next;
+	}
 
 	/* Publish the service */
-	switch (type)
-	{
+	switch (type) {
 		case PUBLISH_START:
-			publish_result = sw_discovery_publish(data->session, 0, purple_account_get_username(data->account), ICHAT_SERVICE, NULL,
+			publish_result = sw_discovery_publish(idata->session, 0, purple_account_get_username(data->account), ICHAT_SERVICE, NULL,
 								NULL, data->port_p2pj, sw_text_record_bytes(dns_data), sw_text_record_len(dns_data),
-								_publish_reply, NULL, &data->session_id);
+								_publish_reply, NULL, &idata->session_id);
 			break;
 		case PUBLISH_UPDATE:
-			publish_result = sw_discovery_publish_update(data->session, data->session_id,
+			publish_result = sw_discovery_publish_update(idata->session, idata->session_id,
 								sw_text_record_bytes(dns_data), sw_text_record_len(dns_data));
 			break;
-	}
-	if (publish_result != SW_OKAY)
-	{
-		purple_debug_error("bonjour", "Unable to publish or change the status of the _presence._tcp service.\n");
-		return -1;
 	}
 
 	/* Free the memory used by temp data */
 	sw_text_record_fina(dns_data);
 
-	return 0;
+	if (publish_result != SW_OKAY) {
+		purple_debug_error("bonjour", "Unable to publish or change the status of the " ICHAT_SERVICE " service.\n");
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
-void
-_mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition)
-{
-	sw_discovery_read_socket((sw_discovery)data);
+gboolean _mdns_browse(BonjourDnsSd *data) {
+	HowlSessionImplData *idata = data->mdns_impl_data;
+	/* TODO: don't we need to hang onto this to cancel later? */
+	sw_discovery_oid session_id;
+
+	g_return_val_if_fail(idata != NULL, FALSE);
+
+	if (sw_discovery_browse(idata->session, 0, ICHAT_SERVICE, NULL, _browser_reply,
+				    data->account, &session_id) == SW_OKAY) {
+		idata->session_handler = purple_input_add(sw_discovery_socket(idata->session),
+				PURPLE_INPUT_READ, _mdns_handle_event, idata->session);
+		return TRUE;
+	}
+
+	return FALSE;
 }
+
+gboolean _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data, gsize avatar_len) {
+	return FALSE;
+}
+
+void _mdns_stop(BonjourDnsSd *data) {
+	HowlSessionImplData *idata = data->mdns_impl_data;
+
+	if (idata == NULL || idata->session == NULL)
+		return;
+
+	sw_discovery_cancel(idata->session, idata->session_id);
+
+	purple_input_remove(idata->session_handler);
+
+	/* TODO: should this really be g_free()'d ??? */
+	g_free(idata->session);
+
+	g_free(idata);
+
+	data->mdns_impl_data = NULL;
+}
+
+void _mdns_init_buddy(BonjourBuddy *buddy) {
+}
+
+void _mdns_delete_buddy(BonjourBuddy *buddy) {
+}
+
+void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
+}
+
+

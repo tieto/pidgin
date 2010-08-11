@@ -84,7 +84,7 @@ void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, PurpleConnection *gc
 		/* segments[0] and segment[1] are all 0x30 ("0") */
 		qd->all_online = strtol(segments[2], NULL, 10);
 		if(0 == qd->all_online)
-			purple_connection_error(gc, _("Keep alive error, seems connection lost!"));
+			purple_connection_error(gc, _("Keep alive error"));
 		g_free(qd->my_ip);
 		qd->my_ip = g_strdup(segments[3]);
 		qd->my_port = strtol(segments[4], NULL, 10);

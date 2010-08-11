@@ -2047,11 +2047,11 @@ add_completion_list(PidginCompletionData *data)
 														entry.entry.buddy->account,
 														entry.entry.buddy->name
 													 );
-				}
 #else
-				item->data = g_strdup(buddy->name);
-				g_completion_add_items(data->completion, item);
+					item->data = g_strdup(entry.entry.buddy->name);
+					g_completion_add_items(data->completion, item);
 #endif /* NEW_STYLE_COMPLETION */
+				}
 			}
 		}
 	}

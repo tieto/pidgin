@@ -493,13 +493,8 @@ gint qq_proxy_write(qq_data *qd, guint8 *data, gint len)
 		errno = 0;
 		ret = send(qd->fd, data, len, 0);
 	}
-	if (ret == -1) {
-		purple_connection_error(qd->gc, _("Socket send error"));
-		return ret;
-	} else if (errno == ECONNREFUSED) {
-		purple_connection_error(qd->gc, _("Connection refused"));
-		return ret;
-	}
+	if (ret == -1)
+		purple_connection_error(qd->gc, strerror(errno));
 
 	return ret;
 }

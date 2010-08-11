@@ -31,6 +31,7 @@
 #include "eventloop.h"
 #include "ft.h"
 #include "log.h"
+#include "network.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
@@ -694,7 +695,9 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+#if GLIB_CHECK_VERSION(2,2,0)
 	g_set_application_name(_("Pidgin"));
+#endif /* glib-2.0 >= 2.2.0 */
 
 #ifdef _WIN32
 	winpidgin_init(hint);
@@ -760,7 +763,6 @@ int main(int argc, char *argv[])
 #endif
 		return 0;
 	}
-		
 
 	/* TODO: Move blist loading into purple_blist_init() */
 	purple_set_blist(purple_blist_new());
@@ -777,6 +779,10 @@ int main(int argc, char *argv[])
 	/* TODO: Move pounces loading into purple_pounces_init() */
 	purple_pounces_load();
 
+	/* Call this early on to try to auto-detect our IP address and
+	 * hopefully save some time later.
+	 * TODO: move this (back) into purple_core_init() when purple_prefs_load() is in purple_prefs_init() */
+	 purple_network_get_my_ip(-1);
 
 	/* HACK BY SEANEGAN:
 	 * We've renamed prpl-oscar to prpl-aim and prpl-icq, accordingly.

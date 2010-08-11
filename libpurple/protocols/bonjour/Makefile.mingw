@@ -30,12 +30,14 @@ INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(BONJOUR_TOP)/include \
+			-I$(LIBXML2_TOP)/include \
 			-I$(PURPLE_TOP) \
 			-I$(PURPLE_TOP)/win32 \
 			-I$(PIDGIN_TREE_TOP)
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(BONJOUR_TOP)/lib \
+			-L$(LIBXML2_TOP)/lib \
 			-L$(PURPLE_TOP)
 
 ##
@@ -45,6 +47,7 @@ C_SRC =			bonjour.c \
 			buddy.c \
 			mdns_common.c \
 			mdns_win32.c \
+			parser.c \
 			jabber.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
@@ -58,6 +61,7 @@ LIBS =	\
 			-lintl \
 			-ldnssd \
 			-lnetapi32 \
+			-lxml2 \
 			-lpurple
 
 include $(PIDGIN_COMMON_RULES)

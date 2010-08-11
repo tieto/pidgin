@@ -1292,8 +1292,11 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 	account = purple_buddy_get_account(buddy);
 	presence = purple_buddy_get_presence(buddy);
 
-	if (!full || g_utf8_collate(purple_buddy_get_name(buddy), alias))
-		purple_notify_user_info_add_pair(user_info, _("Nickname"), alias);
+	if (!full || g_utf8_collate(purple_buddy_get_name(buddy), alias)) {
+		char *esc = g_markup_escape_text(alias, -1);
+		purple_notify_user_info_add_pair(user_info, _("Nickname"), esc);
+		g_free(esc);
+	}
 
 	tmp = g_strdup_printf("%s (%s)",
 			purple_account_get_username(account),
