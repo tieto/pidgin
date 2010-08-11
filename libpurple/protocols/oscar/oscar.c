@@ -3028,12 +3028,23 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			if (smstype != 0)
 				break;
 			taglen = byte_stream_getle32(&qbs);
+			if (taglen > 2000) {
+				/* Avoid trying to allocate large amounts of memory, in
+				   case we get something unexpected. */
+				break;
+			}
 			tagstr = byte_stream_getstr(&qbs, taglen);
 			if (tagstr == NULL)
 				break;
 			byte_stream_advance(&qbs, 3);
 			byte_stream_advance(&qbs, 4);
 			smslen = byte_stream_getle32(&qbs);
+			if (smslen > 2000) {
+				/* Avoid trying to allocate large amounts of memory, in
+				   case we get something unexpected. */
+				g_free(tagstr);
+				break;
+			}
 			smsmsg = byte_stream_getstr(&qbs, smslen);
 
 			/* Check if this is an SMS being sent from server */
@@ -4651,7 +4662,8 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			tmp2 = purple_markup_strip_html(tmp1);
 			is_html = FALSE;
 		} else {
-			tmp2 = g_strdup(tmp1);
+			/* ICQ 6 wants its HTML wrapped in these tags. Oblige it. */
+			tmp2 = g_strdup_printf("<HTML><BODY>%s</BODY></HTML>", tmp1);
 			is_html = TRUE;
 		}
 		g_free(tmp1);

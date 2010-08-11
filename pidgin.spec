@@ -9,13 +9,13 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.7.1"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.7.2"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.7.1
+%define pidginver 2.7.2
 %endif
 
 # define the minimum API version required, so we can use it for plugin deps
-%define apiver %(echo "2.7.1"|awk -F. '{print $1"."$2}')
+%define apiver %(echo "2.7.2"|awk -F. '{print $1"."$2}')
 
 Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       pidgin
@@ -24,7 +24,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.7.1.tar.bz2
+Source:     %{name}-2.7.2.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -219,7 +219,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.7.1
+%setup -q -n %{name}-2.7.2
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -241,7 +241,8 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_with_mono:--enable-mono} \
                                     %{?_with_sasl:--enable-cyrus-sasl} \
                                     %{?_without_tcl:--disable-tcl} \
-                                    %{?_without_text:--disable-consoleui}
+                                    %{?_without_text:--disable-consoleui} \
+                                    %{?_with_trayiconcompat:--enable-trayicon-compat}
 
 make %{?_smp_mflags} LIBTOOL=/usr/bin/libtool
 
@@ -470,6 +471,10 @@ fi
 %endif
 
 %changelog
+* Wed Jun 02 2010 Stu Tomlinson <stu@nosnilmot.com>
+- add an option to build RPMs using --enable-trayicon-compat
+  (--with trayiconcompat)
+
 * Thu May 13 2010 Stu Tomlinson <stu@nosnilmot.com>
 - Include all libpurple headers in libpurple-devel
 
