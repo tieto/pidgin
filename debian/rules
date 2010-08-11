@@ -55,12 +55,10 @@ common-install-impl::
 	debian/copyright.in > debian/copyright
 
 cleanbuilddir/pidgin::
-	rm -f doc/TracHeader.html doc/TracFooter.html
 	rm -rf $(DEB_SRCDIR)/build
 
 build/pidgin-dev::
 	pod2man debian/dh_pidgin > debian/dh_pidgin.1
-	touch doc/TracHeader.html doc/TracFooter.html
 	cd build; make docs
 
 binary-install/pidgin-dev::
