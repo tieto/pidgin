@@ -1455,10 +1455,13 @@ static void do_buddy_avatar_update_data(JabberStream *js, const char *from, xmln
 		return;
 	
 	img = purple_base64_decode(b64data, &size);
-	if(!img)
+	if(!img) {
+		g_free(b64data);
 		return;
+	}
 	
 	purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, img, size, checksum);
+	g_free(b64data);
 }
 
 void jabber_buddy_avatar_update_metadata(JabberStream *js, const char *from, xmlnode *items) {
@@ -1653,8 +1656,10 @@ static gboolean _client_is_blacklisted(JabberBuddyResource *jbr, const char *ns)
 
 	if(!strcmp(ns, "jabber:iq:last")) {
 		if(!strcmp(jbr->client.name, "Trillian")) {
-			if(!strcmp(jbr->client.version, "3.1.0.121")) {
-				/* verified by nwalp 2007/05/09 */
+			/* verified by nwalp 2007/05/09 */
+			if(!strcmp(jbr->client.version, "3.1.0.121") ||
+					/* verified by nwalp 2007/09/19 */
+					!strcmp(jbr->client.version, "3.1.7.0")) {
 				return TRUE;
 			}
 		}

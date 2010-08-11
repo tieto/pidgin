@@ -457,6 +457,11 @@ for the preferences window.
 .B status
 for the status window.
 
+.SH FAQ
+FAQ for \fBfinch\fR is located at
+.br
+\fIhttp://developer.pidgin.im/wiki/Using%20Finch\fR
+
 .SH BUGS
 Known bugs are listed at
 .br

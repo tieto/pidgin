@@ -947,25 +947,14 @@ static void
 nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSwitchBoard *swboard;
-	char *username, *str;
 	PurpleAccount *account;
-	PurpleBuddy *buddy;
 	const char *user;
-
-	str = NULL;
 
 	swboard = cmdproc->data;
 	account = cmdproc->session->account;
 	user = msg->remote_user;
 
-	if ((buddy = purple_find_buddy(account, user)) != NULL)
-		username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
-	else
-		username = g_markup_escape_text(user, -1);
-
-	serv_got_attention(account->gc, buddy->name, MSN_NUDGE);
-	g_free(username);
-	g_free(str);
+	serv_got_attention(account->gc, user, MSN_NUDGE);
 }
 
 /**************************************************************************

@@ -80,7 +80,7 @@ msim_escape(const gchar *msg)
 	purple_debug_info("msim", "msim_escape: msg=%s, ret=%s\n", msg, gs->str);
 #endif
 
-	return gs->str;
+	return g_string_free(gs, FALSE);
 }
 
 /**
@@ -120,7 +120,7 @@ msim_unescape(const gchar *msg)
 	purple_debug_info("msim", "msim_unescape: msg=%s, ret=%s\n", msg, gs->str);
 #endif
 
-	return gs->str;
+	return g_string_free(gs, FALSE);
 }
 
 /** Create a new MsimMessage. 
@@ -691,7 +691,7 @@ msim_msg_debug_string_element(gpointer data, gpointer user_data)
 				++i;
 			}
 			
-			string = gs->str;
+			string = g_string_free(gs, FALSE);
 			break;
 
 		default:
@@ -798,7 +798,7 @@ msim_msg_pack_element_data(MsimMessageElement *elem)
 					g_string_append(gs, "|");
 			}
 			
-			return gs->str;
+			return g_string_free(gs, FALSE);
 
 		default:
 			purple_debug_info("msim", "field %s, unknown type %d\n", 
@@ -1337,9 +1337,7 @@ msim_msg_get_binary_from_element(MsimMessageElement *elem, gchar **binary_data, 
 			gs = (GString *)elem->data;
 
 			/* Duplicate data, so caller can g_free() it. */
-			*binary_data = g_new0(char, gs->len);
-			memcpy(*binary_data, gs->str, gs->len);
-
+			*binary_data = g_memdup(gs->str, gs->len);
 			*binary_length = gs->len;
 
 			return TRUE;

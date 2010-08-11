@@ -1,8 +1,9 @@
 /**
  * @file account.c Account API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -916,7 +917,7 @@ void
 purple_account_set_register_callback(PurpleAccount *account, PurpleAccountRegistrationCb cb, void *user_data)
 {
 	g_return_if_fail(account != NULL);
-	
+
 	account->registration_cb = cb;
 	account->registration_cb_user_data = user_data;
 }
@@ -936,10 +937,10 @@ void
 purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data)
 {
 	g_return_if_fail(account != NULL);
-	
+
 	purple_debug_info("account", "Unregistering account %s\n",
 					  purple_account_get_username(account));
-	
+
 	purple_connection_new_unregister(account, purple_account_get_password(account), cb, user_data);
 }
 
@@ -959,12 +960,20 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 	}
 
 	if(remember)
-	  purple_account_set_remember_password(account, TRUE);
+		purple_account_set_remember_password(account, TRUE);
 
 	purple_account_set_password(account, entry);
 
 	purple_connection_new(account, FALSE, entry);
 }
+
+static void
+request_password_cancel_cb(PurpleAccount *account, PurpleRequestFields *fields)
+{
+	/* Disable the account as the user has canceled connecting */
+	purple_account_set_enabled(account, purple_core_get_ui(), FALSE);
+}
+
 
 void
 purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
@@ -1039,7 +1048,7 @@ purple_account_connect(PurpleAccount *account)
 	if ((password == NULL) &&
 		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
-		purple_account_request_password(account, G_CALLBACK(request_password_ok_cb), NULL, account);
+		purple_account_request_password(account, G_CALLBACK(request_password_ok_cb), G_CALLBACK(request_password_cancel_cb), account);
 	else
 		purple_connection_new(account, FALSE, password);
 }
@@ -1110,18 +1119,18 @@ purple_account_request_close_info(PurpleAccountRequestInfo *info)
 	g_free(info);
 }
 
-void 
+void
 purple_account_request_close_with_account(PurpleAccount *account)
 {
 	GList *l, *l_next;
-	
+
 	g_return_if_fail(account != NULL);
-	
+
 	for (l = handles; l != NULL; l = l_next) {
 		PurpleAccountRequestInfo *info = l->data;
-		
+
 		l_next = l->next;
-		
+
 		if (info->account == account) {
 			handles = g_list_remove(handles, info);
 			purple_account_request_close_info(info);
@@ -1129,18 +1138,18 @@ purple_account_request_close_with_account(PurpleAccount *account)
 	}
 }
 
-void 
+void
 purple_account_request_close(void *ui_handle)
 {
 	GList *l, *l_next;
-	
+
 	g_return_if_fail(ui_handle != NULL);
-	
+
 	for (l = handles; l != NULL; l = l_next) {
 		PurpleAccountRequestInfo *info = l->data;
-		
+
 		l_next = l->next;
-		
+
 		if (info->ui_handle == ui_handle) {
 			handles = g_list_remove(handles, info);
 			purple_account_request_close_info(info);
@@ -1171,7 +1180,7 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 		handles = g_list_append(handles, info);
 		return info->ui_handle;
 	}
-	
+
 	return NULL;
 }
 
@@ -2442,7 +2451,7 @@ purple_accounts_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 							 			PURPLE_SUBTYPE_ACCOUNT),
 						 purple_value_new(PURPLE_TYPE_STRING));
-	
+
 	load_accounts();
 
 }

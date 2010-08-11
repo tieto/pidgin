@@ -1,7 +1,8 @@
 /**
  * @file ft.c File Transfer API
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -66,6 +67,7 @@ purple_xfer_new(PurpleAccount *account, PurpleXferType type, const char *who)
 	xfer->ui_ops  = purple_xfers_get_ui_ops();
 	xfer->message = NULL;
 	xfer->current_buffer_size = FT_INITIAL_BUFFER_SIZE;
+	xfer->fd = -1;
 
 	ui_ops = purple_xfer_get_ui_ops(xfer);
 

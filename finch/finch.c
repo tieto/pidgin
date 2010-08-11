@@ -297,6 +297,7 @@ init_libpurple(int argc, char **argv)
 	if (opt_version) {
 		/* Translators may want to transliterate the name.
 		 It is not to be translated. */
+		gnt_quit();
 		printf("%s %s\n", _("Finch"), VERSION);
 		return 0;
 	}
@@ -419,13 +420,13 @@ int main(int argc, char *argv[])
 
 	gnt_init();
 
-	gnt_start(&argc, &argv);
-
-	gnt_main();
+	if (gnt_start(&argc, &argv)) {
+		gnt_main();
 
 #ifdef STANDALONE
-	purple_core_quit();
+		purple_core_quit();
 #endif
+	}
 
 	return 0;
 }

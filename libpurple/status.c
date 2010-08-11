@@ -1,8 +1,9 @@
 /**
  * @file status.c Status API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -1668,6 +1669,14 @@ purple_status_init(void)
 	purple_prefs_connect_callback(handle, "/purple/status/scores/offline_msg",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(SCORE_OFFLINE_MESSAGE));
+
+	purple_prefs_trigger_callback("/purple/status/scores/offline");
+	purple_prefs_trigger_callback("/purple/status/scores/available");
+	purple_prefs_trigger_callback("/purple/status/scores/invisible");
+	purple_prefs_trigger_callback("/purple/status/scores/away");
+	purple_prefs_trigger_callback("/purple/status/scores/extended_away");
+	purple_prefs_trigger_callback("/purple/status/scores/idle");
+	purple_prefs_trigger_callback("/purple/status/scores/offline_msg");
 }
 
 void

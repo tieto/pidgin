@@ -1,8 +1,9 @@
 /**
  * @file upnp.c UPnP Implementation
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -552,7 +553,7 @@ purple_upnp_discover_udp_read(gpointer data, gint sock, PurpleInputCondition con
 	dd->inpa = 0;
 
 	close(dd->fd);
-	dd->fd = 0;
+	dd->fd = -1;
 
 	/* parse the response, and see if it was a success */
 	purple_upnp_parse_discover_response(buf, len, dd);

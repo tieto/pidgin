@@ -1,5 +1,30 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+Version 2.2.1 (09/29/2007):
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
+		NOTE: Due to the backporting that happened for the actual
+		      release, it is possible bugs marked as fixed in 2.2.1
+		      will not be fixed until 2.2.2.
+
+	libpurple:
+	* A few build issues on Solaris were fixed.
+	* Cancelling the password prompt for an account will no longer leave
+	  it in an ambiguous state.  (It will be disabled.)
+	* Fixed an erroneous size display for MSN file transfers. (galt)
+	* Fixed multiple memory leaks, particularly in XMPP and MySpace
+	  protocols
+	* Fixed remembering proxy preferences and status scores
+	* Gmail notifications are better tracked
+
+	Pidgin:
+	* Fixed keyboard tab reordering to move tabs one step instead of two.
+	* You should no longer lose proxy settings when Pidgin is restarted.
+	* Fixed detection of X11 when compiling
+
+	Finch:
+	* Pressing 'Insert' in the buddylist will bring up the 'Add Buddy'
+	  dialog.
+
 Version 2.2.0 (09/13/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
 
@@ -7,7 +32,7 @@ Version 2.2.0 (09/13/2007):
 	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
 	  Code)
 	* XMPP enhancements. See
- 	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas 
+	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas 
 	  Monitzer, Google Summer of Code for Adium)
 	* Certificate management. Libpurple will validate certificates on
 	  SSL-encrypted protocols (William Ehlhardt, Google Summer of Code)

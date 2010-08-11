@@ -1,8 +1,9 @@
 /**
  * @file gtkpounce.c GTK+ Buddy Pounce API
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -304,6 +305,13 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 	}
 	if (*command == '\0') command = NULL;
 	if (*sound   == '\0') sound   = NULL;
+
+	/* If the pounce has already been triggered, let's pretend it is a new one */
+	if (dialog->pounce != NULL
+			&& g_list_find(purple_pounces_get_all(), dialog->pounce) == NULL) {
+		purple_debug_info("gtkpounce", "Saving pounce that no longer exists; creating new pounce.\n");
+		dialog->pounce = NULL;
+	}
 
 	if (dialog->pounce == NULL)
 	{

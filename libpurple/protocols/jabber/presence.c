@@ -192,16 +192,11 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 		jabber_tune_set(js->gc, &tuneinfo);
 		
 		/* update old values */
-		if(js->old_artist)
-			g_free(js->old_artist);
-		if(js->old_title)
-			g_free(js->old_title);
-		if(js->old_source)
-			g_free(js->old_source);
-		if(js->old_uri)
-			g_free(js->old_uri);
-		if(js->old_track)
-			g_free(js->old_track);
+		g_free(js->old_artist);
+		g_free(js->old_title);
+		g_free(js->old_source);
+		g_free(js->old_uri);
+		g_free(js->old_track);
 		js->old_artist = g_strdup(artist);
 		js->old_title = g_strdup(title);
 		js->old_source = g_strdup(source);

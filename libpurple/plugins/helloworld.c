@@ -33,6 +33,16 @@
 
 #include <glib.h>
 
+/* This will prevent compiler errors in some instances and is better explained in the
+ * how-to documents on the wiki */
+#ifndef G_GNUC_NULL_TERMINATED
+# if __GNUC__ >= 4
+#  define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
+# else
+#  define G_GNUC_NULL_TERMINATED
+# endif
+#endif
+
 #include <notify.h>
 #include <plugin.h>
 #include <version.h>

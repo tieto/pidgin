@@ -540,7 +540,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 
 	/* Determine whether the name matches */
 	if (purple_certificate_check_subject_name(crt, vrq->subject_name)) {
-		cn_match = _("");
+		cn_match = "";
 	} else {
 		cn_match = _("(DOES NOT MATCH)");
 	}
@@ -1460,15 +1460,14 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 	
 	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,tls_peers_name);
 
-	/* TODO: This should probably just prompt the user instead of throwing
-	   an angry fit */
 	if (!tls_peers) {
 		purple_debug_error("certificate/x509/tls_cached",
-				   "Couldn't find local peers cache %s\nReturning INVALID to callback\n",
+				   "Couldn't find local peers cache %s\nPrompting the user\n",
 				   tls_peers_name);
 
-		purple_certificate_verify_complete(vrq,
-						   PURPLE_CERTIFICATE_INVALID);
+
+		/* vrq now becomes the problem of unknown_peer */
+		x509_tls_cached_unknown_peer(vrq);
 		return;
 	}
 	

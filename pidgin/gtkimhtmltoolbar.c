@@ -1,8 +1,9 @@
 /*
  * @file gtkimhtmltoolbar.c GTK+ IMHtml Toolbar
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -739,11 +740,11 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		while (it != NULL)
 		{
 			it_tmp = it;
-			gtk_box_pack_start(GTK_BOX(line), it->button, TRUE, TRUE, 0);
+			gtk_box_pack_start(GTK_BOX(line), it->button, FALSE, FALSE, 0);
 			gtk_widget_show(it->button);
 			line_width += it->width;
 			if (line_width >= max_line_width) {
-				gtk_box_pack_start(GTK_BOX(smiley_table), line, FALSE, TRUE, 0);
+				gtk_box_pack_start(GTK_BOX(smiley_table), line, FALSE, FALSE, 0);
 				line = gtk_hbox_new(FALSE, 0);
 				line_width = 0;
 				col = 0;
@@ -776,6 +777,9 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	/* show everything */
 	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
 	gtk_widget_show_all(dialog);
+#ifdef _WIN32
+	winpidgin_ensure_onscreen(dialog);
+#endif
 
 	toolbar->smiley_dialog = dialog;
 

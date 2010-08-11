@@ -1,8 +1,9 @@
 /**
  * @file pidgin.h UI definitions and includes
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -26,11 +27,11 @@
 #ifndef _PIDGIN_H_
 #define _PIDGIN_H_
 
+#include <gtk/gtk.h>
+
 #ifdef GDK_WINDOWING_X11
 # include <gdk/gdkx.h>
 #endif
-
-#include <gtk/gtk.h>
 
 #ifdef _WIN32
 # include "gtkwin32dep.h"

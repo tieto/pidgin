@@ -45,7 +45,7 @@ void yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias
  */
 struct callback_data {
 	PurpleConnection *gc;
-	const char *id;
+	char *id;
 };
 
 
@@ -56,11 +56,16 @@ struct callback_data {
 static void
 yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,const gchar *url_text, size_t len, const gchar *error_message)
 {
+	struct callback_data *cb = user_data;
+	PurpleConnection *gc = cb->gc;
+	struct yahoo_data *yd = gc->proto_data;
+
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+
 	if (len == 0) {
 		purple_debug_info("yahoo","No Aliases to process\n");
 	} else {
 		const char *yid, *full_name, *nick_name, *alias, *id, *fn, *ln, *nn;
-		struct callback_data *cb = user_data;
 		PurpleBuddy *b = NULL;
 		xmlnode *item, *contacts;
 
@@ -123,8 +128,9 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 			}
 		}
 		xmlnode_free(contacts);
-		g_free(cb);
 	}
+	g_free(cb->id);
+	g_free(cb);
 }
 
 void
@@ -134,6 +140,7 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	struct callback_data *cb;
 	char *url, *request, *webpage, *webaddress, *strtmp;
 	int inttmp;
+	PurpleUtilFetchUrlData *url_data;
 
 	/* Using callback_data so I have access to gc in the callback function */
 	cb = g_new0(struct callback_data, 1);
@@ -150,7 +157,12 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 				 webpage, yd->cookie_t,yd->cookie_y, webaddress);
 
 	/* We have a URL and some header information, let's connect and get some aliases  */
-	purple_util_fetch_url_request(url, FALSE, NULL, TRUE, request, FALSE, yahoo_fetch_aliases_cb, cb);
+	url_data = purple_util_fetch_url_request(url, FALSE, NULL, TRUE, request, FALSE, yahoo_fetch_aliases_cb, cb);
+	if (url_data != NULL) {
+		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+	} else {
+		g_free(cb);
+	}
 
 	g_free(url);
 	g_free(request);
@@ -165,6 +177,11 @@ yahoo_update_alias_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,const
 {
 	xmlnode *node, *result;
 	struct callback_data *cb = user_data;
+	PurpleConnection *gc = cb->gc;
+	struct yahoo_data *yd;
+
+	yd = gc->proto_data;
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	result = xmlnode_from_str(url_text, -1);
 
@@ -184,6 +201,7 @@ yahoo_update_alias_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,const
 		purple_debug_info("yahoo", "Alias update failed (No contact record returned)\n");
 	}
 
+	g_free(cb->id);
 	g_free(cb);
 	xmlnode_free(result);
 }
@@ -197,6 +215,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	int inttmp;
 	struct callback_data *cb;
 	PurpleBuddy *buddy;
+	PurpleUtilFetchUrlData *url_data;
    
 	g_return_if_fail(alias!= NULL);
 	g_return_if_fail(who!=NULL);
@@ -216,6 +235,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	/* Using callback_data so I have access to gc in the callback function */
 	cb = g_new0(struct callback_data, 1);
 	cb->id = g_strdup(yu->id);
+	cb->gc = gc;
 
 	/*  Build all the info to make the web request */
 	url = g_strdup(YAHOO_ALIAS_UPDATE_URL);
@@ -236,7 +256,13 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 			 	  strlen(content), content);
 
 	/* We have a URL and some header information, let's connect and update the alias  */
-	purple_util_fetch_url_request(url, FALSE, NULL, TRUE, request, FALSE, yahoo_update_alias_cb, cb);
+	url_data = purple_util_fetch_url_request(url, FALSE, NULL, TRUE, request, FALSE, yahoo_update_alias_cb, cb);
+	if (url_data != NULL) {
+		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+	} else {
+		g_free(cb->id);
+		g_free(cb);
+	}
 
 	g_free(content);
 	g_free(url);
