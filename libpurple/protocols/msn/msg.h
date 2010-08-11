@@ -21,24 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_MSG_H_
-#define _MSN_MSG_H_
+#ifndef MSN_MSG_H
+#define MSN_MSG_H
 
 typedef struct _MsnMessage MsnMessage;
-
-#include "session.h"
-#include "user.h"
-
-#include "command.h"
-#include "transaction.h"
-
-typedef void (*MsnMsgCb)(MsnMessage *, void *data);
-
-#define MSG_BODY_DEM	"\r\n\r\n"
-#define MSG_LINE_DEM	"\r\n"
-
-#define MSG_OIM_BODY_DEM	"\n\n"
-#define MSG_OIM_LINE_DEM	"\n"
 
 /*
 typedef enum
@@ -46,7 +32,6 @@ typedef enum
 	MSN_MSG_NORMAL,
 	MSN_MSG_SLP_SB,
 	MSN_MSG_SLP_DC
-
 } MsnMsgType;
 */
 
@@ -58,7 +43,6 @@ typedef enum
 	MSN_MSG_CAPS,
 	MSN_MSG_SLP,
 	MSN_MSG_NUDGE
-
 } MsnMsgType;
 
 typedef enum
@@ -68,8 +52,20 @@ typedef enum
 	MSN_MSG_ERROR_NAK, /**< The message could not be sent. */
 	MSN_MSG_ERROR_SB, /**< The error comes from the switchboard. */
 	MSN_MSG_ERROR_UNKNOWN /**< An unknown error occurred. */
-
 } MsnMsgErrorType;
+
+#include "command.h"
+#include "session.h"
+#include "transaction.h"
+#include "user.h"
+
+typedef void (*MsnMsgCb)(MsnMessage *, void *data);
+
+#define MSG_BODY_DEM	"\r\n\r\n"
+#define MSG_LINE_DEM	"\r\n"
+
+#define MSG_OIM_BODY_DEM	"\n\n"
+#define MSG_OIM_LINE_DEM	"\n"
 
 typedef struct
 {
@@ -82,13 +78,11 @@ typedef struct
 	guint32 ack_id;
 	guint32 ack_sub_id;
 	guint64 ack_size;
-
 } MsnSlpHeader;
 
 typedef struct
 {
 	guint32 value;
-
 } MsnSlpFooter;
 
 /**
@@ -347,4 +341,4 @@ void msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 void msn_handwritten_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
-#endif /* _MSN_MSG_H_ */
+#endif /* MSN_MSG_H */

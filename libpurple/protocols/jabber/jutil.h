@@ -35,9 +35,12 @@ typedef struct _JabberID {
 JabberID* jabber_id_new(const char *str);
 void jabber_id_free(JabberID *jid);
 
+char *jabber_get_domain(const char *jid);
 char *jabber_get_resource(const char *jid);
 char *jabber_get_bare_jid(const char *jid);
 char *jabber_id_get_bare_jid(const JabberID *jid);
+
+gboolean jabber_jid_is_domain(const char *jid);
 
 const char *jabber_normalize(const PurpleAccount *account, const char *in);
 
@@ -51,7 +54,14 @@ gboolean jabber_nodeprep_validate(const char *);
 gboolean jabber_domain_validate(const char *);
 gboolean jabber_resourceprep_validate(const char *);
 
-PurpleConversation *jabber_find_unnormalized_conv(const char *name, PurpleAccount *account);
+/**
+ * Apply the SASLprep profile of stringprep to the string passed in.
+ *
+ * @returns A newly allocated string containing the normalized version
+ *          of the input, or NULL if an error occurred (the string could
+ *          not be normalized)
+ */
+char *jabber_saslprep(const char *);
 
 char *jabber_calculate_data_sha1sum(gconstpointer data, size_t len);
 #endif /* PURPLE_JABBER_JUTIL_H_ */

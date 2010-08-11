@@ -2315,7 +2315,7 @@ purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy)
 
 	gc = purple_account_get_connection(account);
 	if (gc != NULL)
-	        prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_prpl(gc);
 
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -2332,7 +2332,7 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies)
 	PurplePlugin *prpl = NULL;
 
 	if (gc != NULL)
-	        prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_prpl(gc);
 
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -2371,7 +2371,7 @@ purple_account_remove_buddy(PurpleAccount *account, PurpleBuddy *buddy,
 	PurplePlugin *prpl = NULL;
 
 	if (gc != NULL)
-	        prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_prpl(gc);
 
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -2388,7 +2388,7 @@ purple_account_remove_buddies(PurpleAccount *account, GList *buddies, GList *gro
 	PurplePlugin *prpl = NULL;
 
 	if (gc != NULL)
-	        prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_prpl(gc);
 
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -2416,7 +2416,7 @@ purple_account_remove_group(PurpleAccount *account, PurpleGroup *group)
 	PurplePlugin *prpl = NULL;
 
 	if (gc != NULL)
-	        prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_prpl(gc);
 
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -2436,7 +2436,7 @@ purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 	purple_account_set_password(account, new_pw);
 
 	if (gc != NULL)
-	        prpl = purple_connection_get_prpl(gc);
+		prpl = purple_connection_get_prpl(gc);
 
 	if (prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);

@@ -26,6 +26,8 @@
 
 #include <glib.h>
 
+#define JABBER_DATA_MAX_SIZE 8192
+
 typedef struct {
 	char *cid;
 	char *type;

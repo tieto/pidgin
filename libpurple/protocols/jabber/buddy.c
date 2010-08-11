@@ -815,20 +815,33 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 	if (!jbi->jb->resources) {
 		/* the buddy is offline */
-		gchar *status =
-			g_strdup_printf("%s%s%s",	_("Offline"),
-			                jbi->last_message ? ": " : "",
-			                jbi->last_message ? jbi->last_message : "");
+		gboolean is_domain = jabber_jid_is_domain(jbi->jid);
+
 		if (jbi->last_seconds > 0) {
 			char *last = purple_str_seconds_to_string(jbi->last_seconds);
-			gchar *message = g_strdup_printf(_("%s ago"), last);
-			purple_notify_user_info_prepend_pair(user_info,
-				_("Logged Off"), message);
+			gchar *message = NULL;
+			const gchar *title = NULL;
+			if (is_domain) {
+				title = _("Uptime");
+				message = last;
+				last = NULL;
+			} else {
+				title = _("Logged Off");
+				message = g_strdup_printf(_("%s ago"), last);
+			}
+			purple_notify_user_info_prepend_pair(user_info, title, message);
 			g_free(last);
 			g_free(message);
 		}
-		purple_notify_user_info_prepend_pair(user_info, _("Status"), status);
-		g_free(status);
+
+		if (!is_domain) {
+			gchar *status =
+				g_strdup_printf("%s%s%s",	_("Offline"),
+				                jbi->last_message ? ": " : "",
+				                jbi->last_message ? jbi->last_message : "");
+			purple_notify_user_info_prepend_pair(user_info, _("Status"), status);
+			g_free(status);
+		}
 	}
 
 	g_free(resource_name);
@@ -967,28 +980,25 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 	char *text;
 	char *serverside_alias = NULL;
 	xmlnode *vcard;
-	PurpleBuddy *b;
+	PurpleAccount *account;
 	JabberBuddyInfo *jbi = data;
 	PurpleNotifyUserInfo *user_info;
 
-	if(!jbi)
-		return;
+	g_return_if_fail(jbi != NULL);
 
 	jabber_buddy_info_remove_id(jbi, id);
 
-	if(!from)
+	if (type == JABBER_IQ_ERROR) {
+		purple_debug_info("jabber", "Got error response for vCard\n");
+		jabber_buddy_info_show_if_ready(jbi);
 		return;
-
-	if(!jabber_buddy_find(js, from, FALSE))
-		return;
-
-	/* XXX: handle the error case */
+	}
 
 	user_info = jbi->user_info;
-	bare_jid = jabber_get_bare_jid(from);
+	account = purple_connection_get_account(js->gc);
+	bare_jid = jabber_get_bare_jid(from ? from : purple_account_get_username(account));
 
-	b = purple_find_buddy(js->gc->account, bare_jid);
-
+	/* TODO: Is the query xmlns='vcard-temp' version of this still necessary? */
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp"))) {
 		xmlnode *child;
@@ -1170,8 +1180,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 						purple_notify_user_info_add_pair(user_info, (photo ? _("Photo") : _("Logo")), img_text);
 
 						hash = jabber_calculate_data_sha1sum(data, size);
-						purple_buddy_icons_set_for_user(js->gc->account, bare_jid,
-								data, size, hash);
+						purple_buddy_icons_set_for_user(account, bare_jid, data, size, hash);
 						g_free(hash);
 						g_free(img_text);
 					}
@@ -1183,8 +1192,10 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 	}
 
 	if (serverside_alias) {
+		PurpleBuddy *b;
 		/* If we found a serverside alias, set it and tell the core */
-		serv_got_alias(js->gc, from, serverside_alias);
+		serv_got_alias(js->gc, bare_jid, serverside_alias);
+		b = purple_find_buddy(account, bare_jid);
 		if (b) {
 			purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", serverside_alias);
 		}
@@ -1349,9 +1360,6 @@ static void jabber_last_offline_parse(JabberStream *js, const char *from,
 	g_return_if_fail(jbi != NULL);
 
 	jabber_buddy_info_remove_id(jbi, id);
-
-	if(!from)
-		return;
 
 	if (type == JABBER_IQ_RESULT) {
 		if((query = xmlnode_get_child(packet, "query"))) {
@@ -1574,9 +1582,18 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 	jabber_iq_send(iq);
 
 	if (is_bare_jid) {
-		for(resources = jb->resources; resources; resources = resources->next) {
-			JabberBuddyResource *jbr = resources->data;
-			dispatch_queries_for_resource(js, jbi, is_bare_jid, jid, jbr);
+		if (jb->resources) {
+			for(resources = jb->resources; resources; resources = resources->next) {
+				JabberBuddyResource *jbr = resources->data;
+				dispatch_queries_for_resource(js, jbi, is_bare_jid, jid, jbr);
+			}
+		} else {
+			/* user is offline, send a jabber:iq:last to find out last time online */
+			iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_LAST_ACTIVITY);
+			xmlnode_set_attrib(iq->node, "to", jid);
+			jabber_iq_set_callback(iq, jabber_last_offline_parse, jbi);
+			jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
+			jabber_iq_send(iq);
 		}
 	} else {
 		JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, slash + 1);
@@ -1586,15 +1603,6 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 			purple_debug_warning("jabber", "jabber_buddy_get_info_for_jid() "
 					"was passed JID %s, but there is no corresponding "
 					"JabberBuddyResource!\n", jid);
-	}
-
-	if (!jb->resources && is_bare_jid) {
-		/* user is offline, send a jabber:iq:last to find out last time online */
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET, NS_LAST_ACTIVITY);
-		xmlnode_set_attrib(iq->node, "to", jid);
-		jabber_iq_set_callback(iq, jabber_last_offline_parse, jbi);
-		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
-		jabber_iq_send(iq);
 	}
 
 	js->pending_buddy_info_requests = g_slist_prepend(js->pending_buddy_info_requests, jbi);
@@ -1860,8 +1868,10 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 	 * However, since the gateway might appear offline to us, we cannot get that information. Therefore, I just assume
 	 * that gateways on the roster can be identified by having no '@' in their jid. This is a faily safe assumption, since
 	 * people don't tend to have a server or other service there.
+	 *
+	 * TODO: Use disco#info...
 	 */
-	if (g_utf8_strchr(name, -1, '@') == NULL) {
+	if (strchr(name, '@') == NULL) {
 		act = purple_menu_action_new(_("Log In"),
 									 PURPLE_CALLBACK(jabber_buddy_login),
 									 NULL, NULL);

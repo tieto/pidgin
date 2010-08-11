@@ -31,6 +31,31 @@
 #include "util.h"
 #include "xmlnode.h"
 
+static char *purple_unescape_text(const char *in)
+{
+    GString *ret;
+    const char *c = in;
+
+    if (in == NULL)
+        return NULL;
+
+    ret = g_string_new("");
+    while (*c) {
+        int len;
+        const char *ent;
+
+        if ((ent = purple_markup_unescape_entity(c, &len)) != NULL) {
+            g_string_append(ret, ent);
+            c += len;
+        } else {
+            g_string_append_c(ret, *c);
+            c++;
+        }
+    }
+
+    return g_string_free(ret, FALSE);
+}
+
 static void
 jabber_parser_element_start_libxml(void *user_data,
 				   const xmlChar *element_name, const xmlChar *prefix, const xmlChar *namespace,
@@ -47,9 +72,7 @@ jabber_parser_element_start_libxml(void *user_data,
 		js->protocol_version = JABBER_PROTO_0_9;
 		for(i=0; i < nb_attributes * 5; i += 5) {
 			int attrib_len = attributes[i+4] - attributes[i+3];
-			char *attrib = g_malloc(attrib_len + 1);
-			memcpy(attrib, attributes[i+3], attrib_len);
-			attrib[attrib_len] = '\0';
+			char *attrib = g_strndup((gchar *)attributes[i+3], attrib_len);
 
 			if(!xmlStrcmp(attributes[i], (xmlChar*) "version")
 					&& !strcmp(attrib, "1.0")) {
@@ -88,13 +111,10 @@ jabber_parser_element_start_libxml(void *user_data,
 			const char *attrib_ns = (const char *)attributes[i+2];
 			char *txt;
 			int attrib_len = attributes[i+4] - attributes[i+3];
-			char *attrib = g_malloc(attrib_len + 1);
-
-			memcpy(attrib, attributes[i+3], attrib_len);
-			attrib[attrib_len] = '\0';
+			char *attrib = g_strndup((gchar *)attributes[i+3], attrib_len);
 
 			txt = attrib;
-			attrib = purple_unescape_html(txt);
+			attrib = purple_unescape_text(txt);
 			g_free(txt);
 			xmlnode_set_attrib_full(node, name, attrib_ns, prefix, attrib);
 			g_free(attrib);
@@ -152,8 +172,7 @@ jabber_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
 		 */
 		return;
 
-	if (error->level == XML_ERR_FATAL && error->message != NULL
-			&& g_str_equal(error->message, "Extra content at the end of the document\n"))
+	if (error->level == XML_ERR_FATAL && error->code == XML_ERR_DOCUMENT_END)
 		/*
 		 * This is probably more annoying than the vcard-temp error; it occurs
 		 * because we disconnect in most cases without waiting for the receiving
@@ -269,8 +288,8 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 		 * the opening <stream:stream> and there was no version, we need to
 		 * immediately start legacy IQ auth.
 		 */
-		js->auth_type = JABBER_AUTH_IQ_AUTH;
 		jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
+		jabber_auth_start_old(js);
 	}
 }
 

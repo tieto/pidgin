@@ -113,6 +113,11 @@ START_TEST(test_markup_html_to_xhtml)
 	purple_markup_html_to_xhtml("<a>", &xhtml, &plaintext);
 	assert_string_equal_free("<a href=\"\"></a>", xhtml);
 	assert_string_equal_free("", plaintext);
+
+
+	purple_markup_html_to_xhtml("<FONT>x</FONT>", &xhtml, &plaintext);
+	assert_string_equal_free("x", xhtml);
+	assert_string_equal_free("x", plaintext);
 }
 END_TEST
 

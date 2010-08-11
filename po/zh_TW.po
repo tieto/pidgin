@@ -1,12 +1,12 @@
 # Pidgin's Traditional Chinese translation
-# Copyright (C) 2002-2009, Paladin R. Liu <paladin@ms1.hinet.net>
-# Copyright (C) 2003-2009, Ambrose C. Li <ambrose.li@gmail.com>
+# Copyright (C) 2002-2010, Paladin R. Liu <paladin@ms1.hinet.net>
+# Copyright (C) 2003-2010, Ambrose C. Li <ambrose.li@gmail.com>
 #
 # PLEASE DO NOT ATTEMPT TO UPDATE THIS FILE IF THERE ARE NO
 # LINE NUMBERS (LINES BEGINNING WITH #:) IN THIS FILE.
 #
 # This file is distributed under the same license as the "Pidgin" package.
-# $InternalId: zh_TW.po,v 1.615 2009/11/29 00:48:50 acli Exp $
+# $InternalId: zh_TW.po,v 1.619 2010/02/15 23:14:17 acli Exp $
 #
 # ----------------------------------------------------------
 # For internal use only:
@@ -58,10 +58,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.6.4\n"
+"Project-Id-Version: Pidgin 2.6.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-29 20:30-0500\n"
-"PO-Revision-Date: 2009-09-03 06:04-0400\n"
+"POT-Creation-Date: 2010-02-15 18:33-0800\n"
+"PO-Revision-Date: 2010-02-14 03:06-0400\n"
 "Last-Translator: Ambrose Li <ambrose.li@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
 "MIME-Version: 1.0\n"
@@ -1650,11 +1650,13 @@ msgstr "Meebo"
 msgid "No Grouping"
 msgstr "不分組"
 
+# XXX 暫譯 20100215/acli
 msgid "Nested Subgroup"
-msgstr ""
+msgstr "巢狀子群組"
 
+# XXX 暫譯 20100215/acli
 msgid "Nested Grouping (experimental)"
-msgstr ""
+msgstr "巢狀分組（實驗性功能）"
 
 #  *< name
 #  *< version
@@ -2034,6 +2036,9 @@ msgstr "無法傳送目錄。"
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s 不是一般檔案，因此不會覆蓋它。\n"
+
+msgid "File is not readable."
+msgstr "無法讀取檔案。"
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
@@ -3900,6 +3905,13 @@ msgstr "您要求加密，但找不到 TLS/SSL 支援。"
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "伺服器需要經由未經加密的串流進行明文認證"
 
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "伺服器送來了無效的回應"
+
+msgid "Server does not use any supported authentication method"
+msgstr "伺服器並不提供任何一種被支援的認證方式"
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3909,15 +3921,6 @@ msgstr "%s 需要經由未經加密的串流進行明文認證。允許並繼續
 msgid "Plaintext Authentication"
 msgstr "明文認證"
 
-msgid "SASL authentication failed"
-msgstr "SASL 認證失敗"
-
-msgid "Invalid response from server"
-msgstr "伺服器送來了無效的回應"
-
-msgid "Server does not use any supported authentication method"
-msgstr "伺服器並不提供任何一種被支援的認證方式"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr "您要求加密，但這伺服器沒有加密功能。"
 
@@ -3925,9 +3928,27 @@ msgstr "您要求加密，但這伺服器沒有加密功能。"
 msgid "Invalid challenge from server"
 msgstr "伺服器送來了無效的驗證挑戰"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr "伺服器認為驗證程序已經完畢，但用戶端不認同"
+
+msgid "SASL authentication failed"
+msgstr "SASL 認證失敗"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "SASL 錯誤：%s"
+
+msgid "Unable to canonicalize username"
+msgstr "無法把帳號轉成正準形式"
+
+msgid "Unable to canonicalize password"
+msgstr "無法把密碼轉成正準形式"
+
+msgid "Malicious challenge from server"
+msgstr "伺服器送來了惡意的驗證挑戰"
+
+msgid "Unexpected response from server"
+msgstr "伺服器發出了奇怪的回應"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "BOSH 連線管理員中斷了您的工作階段。"
@@ -4035,12 +4056,16 @@ msgstr "優先次序"
 msgid "Resource"
 msgstr ""
 
-#, c-format
-msgid "%s ago"
-msgstr "%s前"
+# NOTE 好像有點怪，但這是標準譯文 20100214
+msgid "Uptime"
+msgstr "工作時間"
 
 msgid "Logged Off"
 msgstr "已登出"
+
+#, c-format
+msgid "%s ago"
+msgstr "%s前"
 
 # NOTE: 法、德文均譯「第二個名」，芬蘭文譯「其他名」，日文音譯了事
 # NOTE: 在網上幾間台灣大學寫「英文別名」，現套用，也跟芬蘭文PO檔處理手法相同
@@ -4243,11 +4268,6 @@ msgstr "身份："
 
 msgid "Ping timed out"
 msgstr "Ping逾時"
-
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr "無法直接連線，但無法找到其他的 XMPP 連線方法。"
 
 msgid "Invalid XMPP ID"
 msgstr "XMPP 帳號無效"
@@ -4879,6 +4899,9 @@ msgstr "XMPP 訊息錯誤"
 msgid "(Code %s)"
 msgstr "(代碼 %s)"
 
+msgid "A custom smiley in the message is too large to send."
+msgstr "訊息中含有一個因檔案大小超過上限而無法送出的自訂表情。"
+
 msgid "XML Parse error"
 msgstr "XML 分析錯誤"
 
@@ -5302,6 +5325,10 @@ msgstr "電子郵件..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "您的新 MSN 暱稱太長。"
+
+#, c-format
+msgid "Set friendly name for %s."
+msgstr "設定 %s 的暱稱。"
 
 msgid "Set your friendly name."
 msgstr "設定您的暱稱。"
@@ -6912,7 +6939,11 @@ msgid "Server port"
 msgstr "伺服器通訊埠"
 
 # NOTE 參見 http://pidgin.im/pipermail/translators/2009-July/000394.html
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "%s 發出了奇怪的回應：%s"
+
+# NOTE 參見 http://pidgin.im/pipermail/translators/2009-July/000394.html
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "%s 發出了奇怪的回應"
@@ -6930,6 +6961,11 @@ msgstr ""
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "要求讀取 %s 途中發生了錯誤：%s"
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr "伺服器表示登入前必須完成圖片驗證，但這用戶端尚未支援圖片驗證。"
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL 不允許您的帳號在這裏登入"
@@ -7500,13 +7536,6 @@ msgid ""
 "[Unable to display a message from this user because it contained invalid "
 "characters.]"
 msgstr "（無法顯示來自這個使用者的訊息，因為它包含了無效字元。）"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"您最近做的一個動作無法完成，因為您已經達到這個動作的速率的上限。請等待十秒後"
-"再試一次。\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -12287,15 +12316,16 @@ msgstr "庫德文"
 msgid "Lao"
 msgstr "寮國文"
 
-msgid "Lithuanian"
-msgstr "立陶宛文"
-
 #  NOTE「馬其頓文」是一種東歐語文，跟希臘的馬其頓並無關係
 msgid "Macedonian"
 msgstr "馬其頓文"
 
 msgid "Mongolian"
 msgstr "蒙古文"
+
+#  NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?keyword=marathi&qrytype=en&x=15&y=4
+msgid "Marathi"
+msgstr "馬拉提文"
 
 msgid "Malay"
 msgstr "馬來文"
@@ -12321,6 +12351,10 @@ msgstr "新挪威文"
 
 msgid "Occitan"
 msgstr "奧西坦文"
+
+# NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?keyword=oriya&qrytype=en&x=33&y=10
+msgid "Oriya"
+msgstr "奧里亞文"
 
 msgid "Punjabi"
 msgstr "旁遮普文"
@@ -12412,6 +12446,9 @@ msgstr "正體中文"
 # NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=A
 msgid "Amharic"
 msgstr "阿姆哈拉文"
+
+msgid "Lithuanian"
+msgstr "立陶宛文"
 
 #, c-format
 msgid "About %s"
@@ -14061,6 +14098,9 @@ msgstr "播放音效(_P)"
 msgid "_Save File"
 msgstr "儲存檔案(_S)"
 
+msgid "Do you really want to clear?"
+msgstr "您確定要清除？"
+
 msgid "Select color"
 msgstr "選擇顏色"
 
@@ -15311,6 +15351,18 @@ msgstr "送出、讀取未加工的 XMPP 段落。"
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
+
+#~ msgid ""
+#~ "Unable to find alternative XMPP connection methods after failing to "
+#~ "connect directly."
+#~ msgstr "無法直接連線，但無法找到其他的 XMPP 連線方法。"
+
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "您最近做的一個動作無法完成，因為您已經達到這個動作的速率的上限。請等待十秒"
+#~ "後再試一次。\n"
 
 #~ msgid ""
 #~ "The root certificate this one claims to be issued by is unknown to Pidgin."

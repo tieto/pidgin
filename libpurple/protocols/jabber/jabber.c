@@ -229,13 +229,15 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		jabber_iq_set_callback(iq, jabber_bind_result_cb, NULL);
 
 		jabber_iq_send(iq);
+	} else if (xmlnode_get_child_with_namespace(packet, "ver", NS_ROSTER_VERSIONING)) {
+		js->server_caps |= JABBER_CAP_ROSTER_VERSIONING;
 	} else /* if(xmlnode_get_child_with_namespace(packet, "auth")) */ {
 		/* If we get an empty stream:features packet, or we explicitly get
 		 * an auth feature with namespace http://jabber.org/features/iq-auth
 		 * we should revert back to iq:auth authentication, even though we're
 		 * connecting to an XMPP server.  */
-		js->auth_type = JABBER_AUTH_IQ_AUTH;
 		jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
+		jabber_auth_start_old(js);
 	}
 }
 
@@ -354,11 +356,20 @@ static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 	}
 
 	if (ret < 0 && errno != EAGAIN) {
-		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
-				g_strerror(errno));
-		purple_connection_error_reason(js->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
-		g_free(tmp);
+		PurpleAccount *account = purple_connection_get_account(js->gc);
+		/*
+		 * The server may have closed the socket (on a stream error), so if
+		 * we're disconnecting, don't generate (possibly another) error that
+		 * (for some UIs) would mask the first.
+		 */
+		if (!account->disconnecting) {
+			gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+					g_strerror(errno));
+			purple_connection_error_reason(js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+			g_free(tmp);
+		}
+
 		success = FALSE;
 	} else if (ret < len) {
 		if (ret < 0)
@@ -416,13 +427,12 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		g_free(text);
 	}
 
-	/* If we've got a security layer, we need to encode the data,
-	 * splitting it on the maximum buffer length negotiated */
-
 	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-sending-text", js->gc, &data);
 	if (data == NULL)
 		return;
 
+	/* If we've got a security layer, we need to encode the data,
+	 * splitting it on the maximum buffer length negotiated */
 #ifdef HAVE_CYRUS_SASL
 	if (js->sasl_maxbuf>0) {
 		int pos = 0;
@@ -637,10 +647,11 @@ txt_resolved_cb(GList *responses, gpointer data)
 	js->srv_query_data = NULL;
 
 	if (responses == NULL) {
+		purple_debug_warning("jabber", "Unable to find alternative XMPP connection "
+				  "methods after failing to connect directly.\n");
 		purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unable to find alternative XMPP connection "
-				  "methods after failing to connect directly."));
+				_("Unable to connect"));
 		return;
 	}
 
@@ -675,14 +686,14 @@ static void
 jabber_login_callback(gpointer data, gint source, const gchar *error)
 {
 	PurpleConnection *gc = data;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 
 	if (source < 0) {
 		if (js->srv_rec != NULL) {
-			purple_debug_error("jabber", "Unable to connect to server: %s.  Trying next SRV record.\n", error);
+			purple_debug_error("jabber", "Unable to connect to server: %s.  Trying next SRV record or connecting directly.\n", error);
 			try_srv_connect(js);
 		} else {
-			purple_debug_info("jabber","Couldn't connect directly to %s. Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
+			purple_debug_info("jabber","Couldn't connect directly to %s.  Trying to find alternative connection methods, like BOSH.\n", js->user->domain);
 			js->srv_query_data = purple_txt_resolve("_xmppconnect",
 					js->user->domain, txt_resolved_cb, js);
 		}
@@ -939,6 +950,10 @@ jabber_login(PurpleAccount *account)
 	js = jabber_stream_new(account);
 	if (js == NULL)
 		return;
+
+	/* TODO: Remove this at some point.  Added 2010-02-14 (v2.6.6) */
+	if (g_str_equal("proxy.jabber.org", purple_account_get_string(account, "ft_proxies", "")))
+		purple_account_set_string(account, "ft_proxies", JABBER_DEFAULT_FT_PROXIES);
 
 	/*
 	 * Calculate the avatar hash for our current image so we know (when we
@@ -1432,30 +1447,21 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
  */
 void jabber_close(PurpleConnection *gc)
 {
-	JabberStream *js = gc->proto_data;
+	JabberStream *js = purple_connection_get_protocol_data(gc);
 
 	/* Close all of the open Jingle sessions on this stream */
 	jingle_terminate_sessions(js);
 
-	/* Don't perform any actions on the ssl connection
-	 * if we were forcibly disconnected because it will crash
-	 * on some SSL backends.
-	 */
-	if (!gc->disconnect_timeout) {
-		if (js->bosh)
-			jabber_bosh_connection_close(js->bosh);
-		else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
-			jabber_send_raw(js, "</stream:stream>", -1);
-	}
+	if (js->bosh)
+		jabber_bosh_connection_close(js->bosh);
+	else if ((js->gsc && js->gsc->fd > 0) || js->fd > 0)
+		jabber_send_raw(js, "</stream:stream>", -1);
 
 	if (js->srv_query_data)
 		purple_srv_cancel(js->srv_query_data);
 
 	if(js->gsc) {
-#ifdef HAVE_OPENSSL
-		if (!gc->disconnect_timeout)
-#endif
-			purple_ssl_close(js->gsc);
+		purple_ssl_close(js->gsc);
 	} else if (js->fd > 0) {
 		if(js->gc->inpa)
 			purple_input_remove(js->gc->inpa);
@@ -1510,6 +1516,8 @@ void jabber_close(PurpleConnection *gc)
 	purple_circ_buffer_destroy(js->write_buffer);
 	if(js->writeh)
 		purple_input_remove(js->writeh);
+	if (js->auth_mech && js->auth_mech->dispose)
+		js->auth_mech->dispose(js);
 #ifdef HAVE_CYRUS_SASL
 	if(js->sasl)
 		sasl_dispose(&js->sasl);
@@ -1586,11 +1594,6 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_AUTHENTICATING:
 			purple_connection_update_progress(js->gc, _("Authenticating"),
 					js->gsc ? 7 : 3, JABBER_CONNECT_STEPS);
-			if(js->protocol_version == JABBER_PROTO_0_9 && js->registration) {
-				jabber_register_start(js);
-			} else if(js->auth_type == JABBER_AUTH_IQ_AUTH) {
-				jabber_auth_start_old(js);
-			}
 			break;
 		case JABBER_STREAM_POST_AUTH:
 			purple_connection_update_progress(js->gc, _("Re-initializing Stream"),
@@ -1745,13 +1748,15 @@ void jabber_add_deny(PurpleConnection *gc, const char *who)
 	JabberIq *iq;
 	xmlnode *block, *item;
 
-	js = gc->proto_data;
+	g_return_if_fail(who != NULL && *who != '\0');
+
+	js = purple_connection_get_protocol_data(gc);
 	if (js == NULL)
 		return;
 
 	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 	{
-		jabber_google_roster_add_deny(gc, who);
+		jabber_google_roster_add_deny(js, who);
 		return;
 	}
 
@@ -1779,13 +1784,15 @@ void jabber_rem_deny(PurpleConnection *gc, const char *who)
 	JabberIq *iq;
 	xmlnode *unblock, *item;
 
-	js = gc->proto_data;
+	g_return_if_fail(who != NULL && *who != '\0');
+
+	js = purple_connection_get_protocol_data(gc);
 	if (js == NULL)
 		return;
 
 	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 	{
-		jabber_google_roster_rem_deny(gc, who);
+		jabber_google_roster_rem_deny(js, who);
 		return;
 	}
 
@@ -3143,8 +3150,9 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 			purple_account_get_connection(account)->proto_data;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-	PurpleMediaCaps caps = PURPLE_MEDIA_CAPS_NONE;
+	PurpleMediaCaps total = PURPLE_MEDIA_CAPS_NONE;
 	gchar *resource;
+	GList *specific = NULL, *l;
 
 	if (!js) {
 		purple_debug_info("jabber",
@@ -3152,19 +3160,36 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 		return FALSE;
 	}
 
-	if ((resource = jabber_get_resource(who)) != NULL) {
+	jb = jabber_buddy_find(js, who, FALSE);
+
+	if (!jb || !jb->resources) {
+		/* no resources online, we're trying to get caps for someone
+		 * whose presence we're not subscribed to, or
+		 * someone who is offline. */
+		return total;
+
+	} else if ((resource = jabber_get_resource(who)) != NULL) {
 		/* they've specified a resource, no need to ask or
 		 * default or anything, just do it */
-
-		jb = jabber_buddy_find(js, who, FALSE);
 		jbr = jabber_buddy_find_resource(jb, resource);
 		g_free(resource);
 
 		if (!jbr) {
 			purple_debug_error("jabber", "jabber_get_media_caps:"
 					" Can't find resource %s\n", who);
-			return caps;
+			return total;
 		}
+
+		l = specific = g_list_prepend(specific, jbr);
+
+	} else {
+		/* we've got multiple resources, combine their caps */
+		l = jb->resources;
+	}
+
+	for (; l; l = l->next) {
+		PurpleMediaCaps caps = PURPLE_MEDIA_CAPS_NONE;
+		jbr = l->data;
 
 		if (jabber_resource_has_capability(jbr,
 				JINGLE_APP_RTP_SUPPORT_AUDIO))
@@ -3194,38 +3219,15 @@ PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 			if (jabber_resource_has_capability(jbr, NS_GOOGLE_VIDEO))
 				caps |= PURPLE_MEDIA_CAPS_AUDIO_VIDEO;
 		}
-		return caps;
+
+		total |= caps;
 	}
 
-	jb = jabber_buddy_find(js, who, FALSE);
-
-	if(!jb || !jb->resources) {
-		/* no resources online, we're trying to get caps for someone
-		 * whose presence we're not subscribed to, or
-		 * someone who is offline. */
-		return caps;
-	} else if(!jb->resources->next) {
-		/* only 1 resource online (probably our most common case) */
-		gchar *name;
-		jbr = jb->resources->data;
-		name = g_strdup_printf("%s/%s", who, jbr->name);
-		caps = jabber_get_media_caps(account, name);
-		g_free(name);
-	} else {
-		/* we've got multiple resources, combine their caps */
-		GList *l;
-
-		for(l = jb->resources; l; l = l->next)
-		{
-			gchar *name;
-			jbr = l->data;
-			name = g_strdup_printf("%s/%s", who, jbr->name);
-			caps |= jabber_get_media_caps(account, name);
-			g_free(name);
-		}
+	if (specific) {
+		g_list_free(specific);
 	}
 
-	return caps;
+	return total;
 #else
 	return PURPLE_MEDIA_CAPS_NONE;
 #endif
@@ -3519,6 +3521,8 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
 #endif
 
+	jabber_auth_init();
+
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
 							 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
@@ -3553,6 +3557,7 @@ jabber_uninit_plugin(PurplePlugin *plugin)
 {
 	purple_plugin_ipc_unregister_all(plugin);
 
+	jabber_auth_uninit();
 	jabber_features_destroy();
 	jabber_identities_destroy();
 }

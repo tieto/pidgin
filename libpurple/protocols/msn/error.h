@@ -21,8 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_ERROR_H_
-#define _MSN_ERROR_H_
+#ifndef MSN_ERROR_H
+#define MSN_ERROR_H
 
 #include "session.h"
 
@@ -44,4 +44,4 @@ const char *msn_error_get_text(unsigned int type, gboolean *debug);
  */
 void msn_error_handle(MsnSession *session, unsigned int type);
 
-#endif /* _MSN_ERROR_H_ */
+#endif /* MSN_ERROR_H */

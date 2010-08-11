@@ -21,8 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_TABLE_H_
-#define _MSN_TABLE_H_
+#ifndef MSN_TABLE_H
+#define MSN_TABLE_H
 
 typedef struct _MsnTable MsnTable;
 
@@ -50,4 +50,4 @@ void msn_table_add_cmd(MsnTable *table, char *command, char *answer,
 void msn_table_add_error(MsnTable *table, char *answer, MsnErrorCb cb);
 void msn_table_add_msg_type(MsnTable *table, char *type, MsnMsgTypeCb cb);
 
-#endif /* _MSN_TABLE_H_ */
+#endif /* MSN_TABLE_H */

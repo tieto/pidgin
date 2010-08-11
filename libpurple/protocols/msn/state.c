@@ -23,6 +23,7 @@
  */
 
 #include "internal.h"
+
 #include "core.h"
 
 #include "msn.h"
@@ -84,78 +85,6 @@ msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
 	result = xmlnode_to_str(dataNode, &length);
 	xmlnode_free(dataNode);
 	return result;
-}
-
-/* parse CurrentMedia string */
-gboolean
-msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
-{
-	char **cmedia_array;
-	int strings = 0;
-	gboolean parsed = FALSE;
-
-	if ((cmedia == NULL) || (*cmedia == '\0')) {
-		purple_debug_info("msn", "No currentmedia string\n");
-		return FALSE;
-	}
-
-	purple_debug_info("msn", "Parsing currentmedia string: \"%s\"\n", cmedia);
-
-	cmedia_array = g_strsplit(cmedia, "\\0", 0);
-
-	/*
-	 * 0: Application
-	 * 1: 'Music'/'Games'/'Office'
-	 * 2: '1' if enabled, '0' if not
-	 * 3: Format (eg. {0} by {1})
-	 * 4: Title
-	 * If 'Music':
-	 *  5: Artist
-	 *  6: Album
-	 *  7: ?
-	 */
-#if GLIB_CHECK_VERSION(2,6,0)
-	strings  = g_strv_length(cmedia_array);
-#else
-	while (cmedia_array[++strings] != NULL);
-#endif
-
-	if (strings >= 4 && !strcmp(cmedia_array[2], "1")) {
-		parsed = TRUE;
-
-		if (!strcmp(cmedia_array[1], "Music"))
-			media->type = CURRENT_MEDIA_MUSIC;
-		else if (!strcmp(cmedia_array[1], "Games"))
-			media->type = CURRENT_MEDIA_GAMES;
-		else if (!strcmp(cmedia_array[1], "Office"))
-			media->type = CURRENT_MEDIA_OFFICE;
-		else
-			media->type = CURRENT_MEDIA_UNKNOWN;
-
-		g_free(media->title);
-		if (strings == 4) {
-			media->title = g_strdup(cmedia_array[3]);
-		} else {
-			media->title = g_strdup(cmedia_array[4]);
-		}
-
-		g_free(media->artist);
-		if (strings > 5)
-			media->artist = g_strdup(cmedia_array[5]);
-		else
-			media->artist = NULL;
-
-		g_free(media->album);
-		if (strings > 6)
-			media->album = g_strdup(cmedia_array[6]);
-		else
-			media->album = NULL;
-
-	}
-
-	g_strfreev(cmedia_array);
-
-	return parsed;
 }
 
 /* get the CurrentMedia info from the XML string */

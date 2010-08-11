@@ -22,6 +22,7 @@
  */
 
 #include "internal.h"
+#include "network.h"
 #include "prefs.h"
 #include "debug.h"
 #include "request.h"
@@ -370,10 +371,8 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 	if (js->pep)
 		jabber_avatar_fetch_mine(js);
 
-	if (!(js->server_caps & JABBER_CAP_GOOGLE_ROSTER)) {
-		/* If the server supports JABBER_CAP_GOOGLE_ROSTER; we will have already requested it */
-		jabber_roster_request(js);
-	}
+	/* Yes, please! */
+	jabber_roster_request(js);
 
 	if (js->server_caps & JABBER_CAP_ADHOC) {
 		/* The server supports ad-hoc commands, so let's request the list */
@@ -536,8 +535,12 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 			js->googletalk = TRUE;
 
 			/* autodiscover stun and relays */
-			jabber_google_send_jingle_info(js);
-		} else {
+			if (purple_network_get_stun_ip() == NULL ||
+		    	purple_strequal(purple_network_get_stun_ip(), "")) {
+				jabber_google_send_jingle_info(js);
+			}
+		} else if (purple_network_get_stun_ip() == NULL ||
+		    purple_strequal(purple_network_get_stun_ip(), "")) {
 			js->srv_query_data = 
 				purple_srv_resolve("stun", "udp", js->user->domain,
 					jabber_disco_stun_srv_resolve_cb, js);
@@ -555,9 +558,8 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 		if (!strcmp(NS_GOOGLE_MAIL_NOTIFY, var)) {
 			js->server_caps |= JABBER_CAP_GMAIL_NOTIFY;
 			jabber_gmail_init(js);
-		} else if (!strcmp("google:roster", var)) {
+		} else if (!strcmp(NS_GOOGLE_ROSTER, var)) {
 			js->server_caps |= JABBER_CAP_GOOGLE_ROSTER;
-			jabber_google_roster_init(js);
 		} else if (!strcmp("http://jabber.org/protocol/commands", var)) {
 			js->server_caps |= JABBER_CAP_ADHOC;
 		} else if (!strcmp(NS_SIMPLE_BLOCKING, var)) {

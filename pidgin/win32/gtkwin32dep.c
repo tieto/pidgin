@@ -157,6 +157,7 @@ void winpidgin_shell_execute(const char *target, const char *verb, const char *c
 		wsinfo.lpVerb = w_verb;
 		wsinfo.lpFile = w_uri;
 		wsinfo.nShow = SW_SHOWNORMAL;
+		wsinfo.fMask |= SEE_MASK_FLAG_NO_UI;
 		if (clazz != NULL) {
 			w_clazz = g_utf8_to_utf16(clazz, -1, NULL, NULL, NULL);
 			wsinfo.fMask |= SEE_MASK_CLASSNAME;
@@ -181,6 +182,7 @@ void winpidgin_shell_execute(const char *target, const char *verb, const char *c
 		sinfo.lpVerb = verb;
 		sinfo.lpFile = locale_uri;
 		sinfo.nShow = SW_SHOWNORMAL;
+		sinfo.fMask |= SEE_MASK_FLAG_NO_UI;
 		if (clazz != NULL) {
 			sinfo.fMask |= SEE_MASK_CLASSNAME;
 			sinfo.lpClass = clazz;

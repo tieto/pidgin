@@ -4,7 +4,7 @@
 # Copyright (C) 2002, Stéphane Pontier <stephane.pontier@free.fr>
 # Copyright (C) 2002, Stéphane Wirtel <stephane.wirtel@belgacom.net>
 # Copyright (C) 2002, Loïc Jeannin <loic.jeannin@free.fr>
-# Copyright (C) 2002-2009, Éric Boumaour <zongo_fr@users.sourceforge.net>
+# Copyright (C) 2002-2010, Éric Boumaour <zongo_fr@users.sourceforge.net>
 #
 # This file is distributed under the same license as the Pidgin package.
 #
@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-28 15:44+0100\n"
-"PO-Revision-Date: 2009-11-28 15:03+0100\n"
+"POT-Creation-Date: 2010-02-11 19:11+0100\n"
+"PO-Revision-Date: 2010-02-11 19:10+0100\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1961,6 +1961,9 @@ msgstr ""
 "« %s » n'est pas un fichier régulier. Je refuse lâchement d'écraser ce "
 "fichier.\n"
 
+msgid "File is not readable."
+msgstr "Impossible de lire le fichier."
+
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s veut vous envoyer %s (%s)"
@@ -3838,6 +3841,13 @@ msgstr ""
 "Le serveur demande une authentification en texte non chiffré au travers d'un "
 "flux crypté."
 
+#. This should never happen!
+msgid "Invalid response from server"
+msgstr "Réponse non valide du serveur"
+
+msgid "Server does not use any supported authentication method"
+msgstr "Le serveur utilise une méthode d'authentification non supportée"
+
 #, c-format
 msgid ""
 "%s requires plaintext authentication over an unencrypted connection.  Allow "
@@ -3849,15 +3859,6 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Authentification en texte non chiffré"
 
-msgid "SASL authentication failed"
-msgstr "Échec de l'authentification SASL"
-
-msgid "Invalid response from server"
-msgstr "Réponse non valide du serveur"
-
-msgid "Server does not use any supported authentication method"
-msgstr "Le serveur utilise une méthode d'authentification non supportée"
-
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
 "Vous voulez un chiffrement, mais il n'est pas disponible sur ce serveur."
@@ -3865,9 +3866,28 @@ msgstr ""
 msgid "Invalid challenge from server"
 msgstr "Demande d'accès non valide du serveur"
 
+msgid "Server thinks authentication is complete, but client does not"
+msgstr ""
+"Le serveur pense que l'authentification est terminée, et le client non."
+
+msgid "SASL authentication failed"
+msgstr "Échec de l'authentification SASL"
+
 #, c-format
 msgid "SASL error: %s"
 msgstr "Erreur SASL : %s"
+
+msgid "Unable to canonicalize username"
+msgstr "Impossible de normaliser le nom d'utilisateur"
+
+msgid "Unable to canonicalize password"
+msgstr "Impossible de normaliser le mot de passe"
+
+msgid "Malicious challenge from server"
+msgstr "Challenge malicieux du serveur"
+
+msgid "Unexpected response from server"
+msgstr "Réponse non attendue du serveur"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "Le gestionnaire de connexion BOSH a interrompu votre session."
@@ -3969,12 +3989,15 @@ msgstr "Priorité"
 msgid "Resource"
 msgstr "Ressource"
 
-#, c-format
-msgid "%s ago"
-msgstr "il y a %s"
+msgid "Uptime"
+msgstr "Connecté depuis"
 
 msgid "Logged Off"
 msgstr "Deconnecté"
+
+#, c-format
+msgid "%s ago"
+msgstr "il y a %s"
 
 msgid "Middle Name"
 msgstr "Deuxième prénom"
@@ -4166,13 +4189,6 @@ msgstr "Rôles :"
 
 msgid "Ping timed out"
 msgstr "Pas de réponse au ping"
-
-msgid ""
-"Unable to find alternative XMPP connection methods after failing to connect "
-"directly."
-msgstr ""
-"Impossible de trouver une autre méthode de connexion XMPP après l'échec de "
-"connexion directe."
 
 msgid "Invalid XMPP ID"
 msgstr "Identifiant XMPP non valide."
@@ -4732,6 +4748,11 @@ msgstr "Erreur message XMPP"
 msgid "(Code %s)"
 msgstr "(Code %s)"
 
+msgid "A custom smiley in the message is too large to send."
+msgstr ""
+"Une frimousse personnalisée dans le message est trop grosse pour être "
+"envoyée."
+
 msgid "XML Parse error"
 msgstr "Erreur de lecture du XML"
 
@@ -5147,6 +5168,10 @@ msgstr "Adresse électronique..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Le nouvel alias MSN est trop long"
+
+#, c-format
+msgid "Set friendly name for %s."
+msgstr "Changer l'alias pour %s."
 
 msgid "Set your friendly name."
 msgstr "Changer l'alias"
@@ -6746,7 +6771,10 @@ msgstr "Hôte du serveur"
 msgid "Server port"
 msgstr "Port du serveur"
 
-#. Note to translators: %s in this string is a URL
+#, c-format
+msgid "Received unexpected response from %s: %s"
+msgstr "Réception d'une réponse non attendue de %s : %s"
+
 #, c-format
 msgid "Received unexpected response from %s"
 msgstr "Réception d'une réponse non attendue de %s"
@@ -6764,6 +6792,13 @@ msgstr ""
 #, c-format
 msgid "Error requesting %s: %s"
 msgstr "Erreur à la demande de %s : %s"
+
+msgid ""
+"Server requested that you fill out a CAPTCHA in order to sign in, but this "
+"client does not currently support CAPTCHAs."
+msgstr ""
+"Le serveur s'attend à ce que vous répondiez à un CAPTCHA pour vous "
+"connecter, mais ce client ne les supporte pas encore."
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL n'autorise pas votre nom d'utilisateur pour authentification ici."
@@ -7334,13 +7369,6 @@ msgid ""
 msgstr ""
 "[Impossible d'afficher un message de cet utilisateur car il contient des "
 "caractères non valides.]"
-
-msgid ""
-"The last action you attempted could not be performed because you are over "
-"the rate limit. Please wait 10 seconds and try again.\n"
-msgstr ""
-"La dernière action n'a pas pu être effectuée car vous avez dépassé le quota "
-"limite. Veuillez attendre 10 secondes et réessayer.\n"
 
 #, c-format
 msgid "You have been disconnected from chat room %s."
@@ -12011,14 +12039,14 @@ msgstr "Kurde"
 msgid "Lao"
 msgstr "Lao"
 
-msgid "Lithuanian"
-msgstr "Lituanien"
-
 msgid "Macedonian"
 msgstr "Macédonien"
 
 msgid "Mongolian"
 msgstr "Mongol"
+
+msgid "Marathi"
+msgstr "Marâthî"
 
 msgid "Malay"
 msgstr "Malaisien"
@@ -12037,6 +12065,9 @@ msgstr "Norvégien (nynorsk)"
 
 msgid "Occitan"
 msgstr "Occitan"
+
+msgid "Oriya"
+msgstr "Oriya"
 
 msgid "Punjabi"
 msgstr "Panjâbî"
@@ -12115,6 +12146,9 @@ msgstr "Chinois traditionnel"
 
 msgid "Amharic"
 msgstr "Amharique"
+
+msgid "Lithuanian"
+msgstr "Lituanien"
 
 #, c-format
 msgid "About %s"
@@ -13761,6 +13795,9 @@ msgstr "_Jouer le son"
 msgid "_Save File"
 msgstr "_Sauver le fichier"
 
+msgid "Do you really want to clear?"
+msgstr "Êtes-vous sûr de vouloir l'effacer ?"
+
 msgid "Select color"
 msgstr "Choisir la couleur"
 
@@ -14978,9 +15015,19 @@ msgstr "Envoyer et recevoir des blocs XMPP."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
-#, fuzzy
-#~ msgid "(Default)"
-#~ msgstr "(défaut)"
+#~ msgid ""
+#~ "Unable to find alternative XMPP connection methods after failing to "
+#~ "connect directly."
+#~ msgstr ""
+#~ "Impossible de trouver une autre méthode de connexion XMPP après l'échec "
+#~ "de connexion directe."
+
+#~ msgid ""
+#~ "The last action you attempted could not be performed because you are over "
+#~ "the rate limit. Please wait 10 seconds and try again.\n"
+#~ msgstr ""
+#~ "La dernière action n'a pas pu être effectuée car vous avez dépassé le "
+#~ "quota limite. Veuillez attendre 10 secondes et réessayer.\n"
 
 #~ msgid "Install Theme"
 #~ msgstr "Installer un thème"
@@ -14993,12 +15040,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "Change _status to:"
 #~ msgstr "_Changer l'état en :"
-
-#, fuzzy
-#~ msgid "The root certificate this one claims to be issued by is unknown."
-#~ msgstr ""
-#~ "Le certificat racine dont est prétendu issu ce certificat est inconnu de "
-#~ "Pidgin."
 
 #~ msgid "Send instant messages over multiple protocols"
 #~ msgstr "Envoie des messages instantanés en utilisant divers protocoles"

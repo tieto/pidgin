@@ -22,8 +22,38 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
-#ifndef _MSN_CONTACT_H_
-#define _MSN_CONTACT_H_
+#ifndef MSN_CONTACT_H
+#define MSN_CONTACT_H
+
+typedef struct _MsnCallbackState MsnCallbackState;
+
+typedef enum
+{
+	MSN_ADD_BUDDY       = 0x01,
+	MSN_MOVE_BUDDY      = 0x02,
+	MSN_ACCEPTED_BUDDY  = 0x04,
+	MSN_DENIED_BUDDY    = 0x08,
+	MSN_ADD_GROUP       = 0x10,
+	MSN_DEL_GROUP       = 0x20,
+	MSN_RENAME_GROUP    = 0x40,
+	MSN_UPDATE_INFO     = 0x80
+} MsnCallbackAction;
+
+typedef enum
+{
+	MSN_UPDATE_DISPLAY,	/* Real display name */
+	MSN_UPDATE_ALIAS,	/* Aliased display name */
+	MSN_UPDATE_COMMENT
+} MsnContactUpdateType;
+
+typedef enum
+{
+	MSN_PS_INITIAL,
+	MSN_PS_SAVE_CONTACT,
+	MSN_PS_PENDING_LIST,
+	MSN_PS_CONTACT_API,
+	MSN_PS_BLOCK_UNBLOCK
+} MsnSoapPartnerScenario;
 
 #include "session.h"
 #include "soap.h"
@@ -609,29 +639,6 @@
 	"</soap:Body>"\
 "</soap:Envelope>"
 
-typedef enum
-{
-	MSN_ADD_BUDDY       = 0x01,
-	MSN_MOVE_BUDDY      = 0x02,
-	MSN_ACCEPTED_BUDDY  = 0x04,
-	MSN_DENIED_BUDDY    = 0x08,
-	MSN_ADD_GROUP       = 0x10,
-	MSN_DEL_GROUP       = 0x20,
-	MSN_RENAME_GROUP    = 0x40,
-	MSN_UPDATE_INFO     = 0x80
-} MsnCallbackAction;
-
-typedef enum
-{
-	MSN_PS_INITIAL,
-	MSN_PS_SAVE_CONTACT,
-	MSN_PS_PENDING_LIST,
-	MSN_PS_CONTACT_API,
-	MSN_PS_BLOCK_UNBLOCK
-} MsnSoapPartnerScenario;
-
-typedef struct _MsnCallbackState MsnCallbackState;
-
 struct _MsnCallbackState
 {
 	gchar * who;
@@ -650,13 +657,6 @@ struct _MsnCallbackState
 	/* For msn_get_contact_list only */
 	MsnSoapPartnerScenario partner_scenario;
 };
-
-typedef enum
-{
-	MSN_UPDATE_DISPLAY,	/* Real display name */
-	MSN_UPDATE_ALIAS,	/* Aliased display name */
-	MSN_UPDATE_COMMENT
-} MsnContactUpdateType;
 
 /************************************************
  * function prototype
@@ -707,5 +707,4 @@ void msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 void msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 			       const gchar *passport, const MsnListId list);
 
-#endif /* _MSN_CONTACT_H_ */
-
+#endif /* MSN_CONTACT_H */

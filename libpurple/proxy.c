@@ -2100,8 +2100,12 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 	addr = connect_data->hosts->data;
 	connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
 #ifdef HAVE_INET_NTOP
-	inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
-			ipaddr, sizeof(ipaddr));
+	if (addr->sa_family == AF_INET)
+		inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
+				ipaddr, sizeof(ipaddr));
+	else if (addr->sa_family == AF_INET6)
+		inet_ntop(addr->sa_family, &((struct sockaddr_in6 *)addr)->sin6_addr,
+				ipaddr, sizeof(ipaddr));
 #else
 	memcpy(ipaddr, inet_ntoa(((struct sockaddr_in *)addr)->sin_addr),
 			sizeof(ipaddr));

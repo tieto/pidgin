@@ -76,8 +76,6 @@ msim_session_new(PurpleAccount *acct)
 void
 msim_session_destroy(MsimSession *session)
 {
-	g_return_if_fail(MSIM_SESSION_VALID(session));
-
 	session->magic = -1;
 
 	g_free(session->rxbuf);

@@ -21,8 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_COMMAND_H
-#define _MSN_COMMAND_H
+#ifndef MSN_COMMAND_H
+#define MSN_COMMAND_H
 
 typedef struct _MsnCommand MsnCommand;
 
@@ -59,4 +59,4 @@ void msn_command_destroy(MsnCommand *cmd);
 MsnCommand *msn_command_ref(MsnCommand *cmd);
 MsnCommand *msn_command_unref(MsnCommand *cmd);
 
-#endif /* _MSN_COMMAND_H */
+#endif /* MSN_COMMAND_H */

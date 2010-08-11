@@ -21,17 +21,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _MSN_CMDPROC_H_
-#define _MSN_CMDPROC_H_
+#ifndef MSN_CMDPROC_H
+#define MSN_CMDPROC_H
 
 typedef struct _MsnCmdProc MsnCmdProc;
 
-#include "session.h"
-#include "servconn.h"
-#include "error.h"
 #include "command.h"
-#include "table.h"
+#include "error.h"
 #include "history.h"
+#include "servconn.h"
+#include "session.h"
+#include "table.h"
 
 struct _MsnCmdProc
 {
@@ -71,4 +71,4 @@ void msn_cmdproc_process_cmd_text(MsnCmdProc *cmdproc, const char *command);
 void msn_cmdproc_process_payload(MsnCmdProc *cmdproc,
 								 char *payload, int payload_len);
 
-#endif /* _MSN_CMDPROC_H_ */
+#endif /* MSN_CMDPROC_H */

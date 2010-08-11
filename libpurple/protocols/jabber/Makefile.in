@@ -37,6 +37,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
+@USE_CYRUS_SASL_TRUE@am__append_1 = auth_cyrus.c
 subdir = libpurple/protocols/jabber
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -63,9 +64,10 @@ am__DEPENDENCIES_1 =
 @STATIC_JABBER_FALSE@	$(am__DEPENDENCIES_1) \
 @STATIC_JABBER_FALSE@	$(am__DEPENDENCIES_1)
 am__libjabber_la_SOURCES_DIST = adhoccommands.c adhoccommands.h auth.c \
-	auth.h buddy.c buddy.h bosh.c bosh.h caps.c caps.h chat.c \
-	chat.h data.c data.h disco.c disco.h google.c google.h ibb.c \
-	ibb.h iq.c iq.h jabber.c jabber.h jingle/jingle.c \
+	auth.h auth_digest_md5.c auth_plain.c auth_scram.c \
+	auth_scram.h buddy.c buddy.h bosh.c bosh.h caps.c caps.h \
+	chat.c chat.h data.c data.h disco.c disco.h google.c google.h \
+	ibb.c ibb.h iq.c iq.h jabber.c jabber.h jingle/jingle.c \
 	jingle/jingle.h jingle/content.c jingle/content.h \
 	jingle/iceudp.c jingle/iceudp.h jingle/rawudp.c \
 	jingle/rawudp.h jingle/rtp.c jingle/rtp.h jingle/session.c \
@@ -74,25 +76,27 @@ am__libjabber_la_SOURCES_DIST = adhoccommands.c adhoccommands.h auth.c \
 	parser.h pep.c pep.h ping.c ping.h presence.c presence.h \
 	roster.c roster.h si.c si.h useravatar.c useravatar.h \
 	usermood.c usermood.h usernick.c usernick.h usertune.c \
-	usertune.h xdata.c xdata.h libxmpp.c
-am__objects_1 = libjabber_la-adhoccommands.lo libjabber_la-auth.lo \
-	libjabber_la-buddy.lo libjabber_la-bosh.lo \
-	libjabber_la-caps.lo libjabber_la-chat.lo libjabber_la-data.lo \
-	libjabber_la-disco.lo libjabber_la-google.lo \
-	libjabber_la-ibb.lo libjabber_la-iq.lo libjabber_la-jabber.lo \
-	libjabber_la-jingle.lo libjabber_la-content.lo \
-	libjabber_la-iceudp.lo libjabber_la-rawudp.lo \
-	libjabber_la-rtp.lo libjabber_la-session.lo \
-	libjabber_la-transport.lo libjabber_la-jutil.lo \
-	libjabber_la-message.lo libjabber_la-oob.lo \
-	libjabber_la-parser.lo libjabber_la-pep.lo \
+	usertune.h xdata.c xdata.h auth_cyrus.c libxmpp.c
+@USE_CYRUS_SASL_TRUE@am__objects_1 = libjabber_la-auth_cyrus.lo
+am__objects_2 = libjabber_la-adhoccommands.lo libjabber_la-auth.lo \
+	libjabber_la-auth_digest_md5.lo libjabber_la-auth_plain.lo \
+	libjabber_la-auth_scram.lo libjabber_la-buddy.lo \
+	libjabber_la-bosh.lo libjabber_la-caps.lo libjabber_la-chat.lo \
+	libjabber_la-data.lo libjabber_la-disco.lo \
+	libjabber_la-google.lo libjabber_la-ibb.lo libjabber_la-iq.lo \
+	libjabber_la-jabber.lo libjabber_la-jingle.lo \
+	libjabber_la-content.lo libjabber_la-iceudp.lo \
+	libjabber_la-rawudp.lo libjabber_la-rtp.lo \
+	libjabber_la-session.lo libjabber_la-transport.lo \
+	libjabber_la-jutil.lo libjabber_la-message.lo \
+	libjabber_la-oob.lo libjabber_la-parser.lo libjabber_la-pep.lo \
 	libjabber_la-ping.lo libjabber_la-presence.lo \
 	libjabber_la-roster.lo libjabber_la-si.lo \
 	libjabber_la-useravatar.lo libjabber_la-usermood.lo \
 	libjabber_la-usernick.lo libjabber_la-usertune.lo \
-	libjabber_la-xdata.lo
-@STATIC_JABBER_FALSE@am_libjabber_la_OBJECTS = $(am__objects_1)
-@STATIC_JABBER_TRUE@am_libjabber_la_OBJECTS = $(am__objects_1) \
+	libjabber_la-xdata.lo $(am__objects_1)
+@STATIC_JABBER_FALSE@am_libjabber_la_OBJECTS = $(am__objects_2)
+@STATIC_JABBER_TRUE@am_libjabber_la_OBJECTS = $(am__objects_2) \
 @STATIC_JABBER_TRUE@	libjabber_la-libxmpp.lo
 libjabber_la_OBJECTS = $(am_libjabber_la_OBJECTS)
 @STATIC_JABBER_FALSE@am_libjabber_la_rpath = -rpath $(pkgdir)
@@ -143,10 +147,6 @@ CHECK_CFLAGS = @CHECK_CFLAGS@
 CHECK_LIBS = @CHECK_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
 DBUS_CFLAGS = @DBUS_CFLAGS@
@@ -160,9 +160,9 @@ DISTRIB_TRUE = @DISTRIB_TRUE@
 DOT = @DOT@
 DOXYGEN = @DOXYGEN@
 DSYMUTIL = @DSYMUTIL@
+DUMPBIN = @DUMPBIN@
 DYNALOADER_A = @DYNALOADER_A@
 DYNAMIC_PRPLS = @DYNAMIC_PRPLS@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -182,10 +182,9 @@ EVOLUTION_ADDRESSBOOK_LIBS = @EVOLUTION_ADDRESSBOOK_LIBS@
 EXEEXT = @EXEEXT@
 EXTERNAL_LIBZEPHYR_FALSE = @EXTERNAL_LIBZEPHYR_FALSE@
 EXTERNAL_LIBZEPHYR_TRUE = @EXTERNAL_LIBZEPHYR_TRUE@
-F77 = @F77@
 FARSIGHT_CFLAGS = @FARSIGHT_CFLAGS@
 FARSIGHT_LIBS = @FARSIGHT_LIBS@
-FFLAGS = @FFLAGS@
+FGREP = @FGREP@
 GADU_CFLAGS = @GADU_CFLAGS@
 GADU_LIBS = @GADU_LIBS@
 GCONFTOOL = @GCONFTOOL@
@@ -263,6 +262,7 @@ INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
 KRB4_LDFLAGS = @KRB4_LDFLAGS@
 KRB4_LIBS = @KRB4_LIBS@
+LD = @LD@
 LDADD = @LDADD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -271,6 +271,7 @@ LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBXML_CFLAGS = @LIBXML_CFLAGS@
 LIBXML_LIBS = @LIBXML_LIBS@
+LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
@@ -284,15 +285,20 @@ MSGFMT_OPTS = @MSGFMT_OPTS@
 MSGMERGE = @MSGMERGE@
 NETWORKMANAGER_CFLAGS = @NETWORKMANAGER_CFLAGS@
 NETWORKMANAGER_LIBS = @NETWORKMANAGER_LIBS@
+NM = @NM@
 NMEDIT = @NMEDIT@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
+OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+OTOOL = @OTOOL@
+OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PANGO_CFLAGS = @PANGO_CFLAGS@
 PANGO_LIBS = @PANGO_LIBS@
@@ -367,6 +373,8 @@ STRIP = @STRIP@
 TCL_CFLAGS = @TCL_CFLAGS@
 TCL_LIBS = @TCL_LIBS@
 TK_LIBS = @TK_LIBS@
+USE_CYRUS_SASL_FALSE = @USE_CYRUS_SASL_FALSE@
+USE_CYRUS_SASL_TRUE = @USE_CYRUS_SASL_TRUE@
 USE_GCONFTOOL_FALSE = @USE_GCONFTOOL_FALSE@
 USE_GCONFTOOL_TRUE = @USE_GCONFTOOL_TRUE@
 USE_GNUTLS_FALSE = @USE_GNUTLS_FALSE@
@@ -401,12 +409,9 @@ ZEPHYR_CFLAGS = @ZEPHYR_CFLAGS@
 ZEPHYR_LDFLAGS = @ZEPHYR_LDFLAGS@
 ZEPHYR_LIBS = @ZEPHYR_LIBS@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
+ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -440,6 +445,7 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
+lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -465,75 +471,20 @@ EXTRA_DIST = \
 	win32/utsname.h
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
-JABBERSOURCES = \
-			  adhoccommands.c \
-			  adhoccommands.h \
-			  auth.c \
-			  auth.h \
-			  buddy.c \
-			  buddy.h \
-			  bosh.c \
-			  bosh.h \
-			  caps.c \
-			  caps.h \
-			  chat.c \
-			  chat.h \
-			  data.c \
-			  data.h \
-			  disco.c \
-			  disco.h \
-			  google.c \
-			  google.h \
-			  ibb.c \
-			  ibb.h \
-			  iq.c \
-			  iq.h \
-			  jabber.c \
-			  jabber.h \
-			  jingle/jingle.c \
-			  jingle/jingle.h \
-			  jingle/content.c \
-			  jingle/content.h \
-			  jingle/iceudp.c \
-			  jingle/iceudp.h \
-			  jingle/rawudp.c \
-			  jingle/rawudp.h \
-			  jingle/rtp.c \
-			  jingle/rtp.h \
-			  jingle/session.c \
-			  jingle/session.h \
-			  jingle/transport.c \
-			  jingle/transport.h \
-			  jutil.c \
-			  jutil.h \
-			  message.c \
-			  message.h \
-			  namespaces.h \
-			  oob.c \
-			  oob.h \
-			  parser.c \
-			  parser.h \
-			  pep.c \
-			  pep.h \
-			  ping.c \
-			  ping.h \
-			  presence.c \
-			  presence.h \
-			  roster.c \
-			  roster.h \
-			  si.c \
-			  si.h \
-			  useravatar.c \
-			  useravatar.h \
-			  usermood.c \
-			  usermood.h \
-			  usernick.c \
-			  usernick.h \
-			  usertune.c \
-			  usertune.h \
-			  xdata.c \
-			  xdata.h
-
+JABBERSOURCES = adhoccommands.c adhoccommands.h auth.c auth.h \
+	auth_digest_md5.c auth_plain.c auth_scram.c auth_scram.h \
+	buddy.c buddy.h bosh.c bosh.h caps.c caps.h chat.c chat.h \
+	data.c data.h disco.c disco.h google.c google.h ibb.c ibb.h \
+	iq.c iq.h jabber.c jabber.h jingle/jingle.c jingle/jingle.h \
+	jingle/content.c jingle/content.h jingle/iceudp.c \
+	jingle/iceudp.h jingle/rawudp.c jingle/rawudp.h jingle/rtp.c \
+	jingle/rtp.h jingle/session.c jingle/session.h \
+	jingle/transport.c jingle/transport.h jutil.c jutil.h \
+	message.c message.h namespaces.h oob.c oob.h parser.c parser.h \
+	pep.c pep.h ping.c ping.h presence.c presence.h roster.c \
+	roster.h si.c si.h useravatar.c useravatar.h usermood.c \
+	usermood.h usernick.c usernick.h usertune.c usertune.h xdata.c \
+	xdata.h $(am__append_1)
 AM_CFLAGS = $(st)
 libxmpp_la_LDFLAGS = -module -avoid-version
 @STATIC_JABBER_FALSE@st = 
@@ -636,6 +587,10 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_la-adhoccommands.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_la-auth.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_la-auth_cyrus.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_la-auth_digest_md5.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_la-auth_plain.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_la-auth_scram.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_la-bosh.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_la-buddy.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_la-caps.Plo@am__quote@
@@ -704,6 +659,27 @@ libjabber_la-auth.lo: auth.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='auth.c' object='libjabber_la-auth.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -c -o libjabber_la-auth.lo `test -f 'auth.c' || echo '$(srcdir)/'`auth.c
+
+libjabber_la-auth_digest_md5.lo: auth_digest_md5.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -MT libjabber_la-auth_digest_md5.lo -MD -MP -MF "$(DEPDIR)/libjabber_la-auth_digest_md5.Tpo" -c -o libjabber_la-auth_digest_md5.lo `test -f 'auth_digest_md5.c' || echo '$(srcdir)/'`auth_digest_md5.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_la-auth_digest_md5.Tpo" "$(DEPDIR)/libjabber_la-auth_digest_md5.Plo"; else rm -f "$(DEPDIR)/libjabber_la-auth_digest_md5.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='auth_digest_md5.c' object='libjabber_la-auth_digest_md5.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -c -o libjabber_la-auth_digest_md5.lo `test -f 'auth_digest_md5.c' || echo '$(srcdir)/'`auth_digest_md5.c
+
+libjabber_la-auth_plain.lo: auth_plain.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -MT libjabber_la-auth_plain.lo -MD -MP -MF "$(DEPDIR)/libjabber_la-auth_plain.Tpo" -c -o libjabber_la-auth_plain.lo `test -f 'auth_plain.c' || echo '$(srcdir)/'`auth_plain.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_la-auth_plain.Tpo" "$(DEPDIR)/libjabber_la-auth_plain.Plo"; else rm -f "$(DEPDIR)/libjabber_la-auth_plain.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='auth_plain.c' object='libjabber_la-auth_plain.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -c -o libjabber_la-auth_plain.lo `test -f 'auth_plain.c' || echo '$(srcdir)/'`auth_plain.c
+
+libjabber_la-auth_scram.lo: auth_scram.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -MT libjabber_la-auth_scram.lo -MD -MP -MF "$(DEPDIR)/libjabber_la-auth_scram.Tpo" -c -o libjabber_la-auth_scram.lo `test -f 'auth_scram.c' || echo '$(srcdir)/'`auth_scram.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_la-auth_scram.Tpo" "$(DEPDIR)/libjabber_la-auth_scram.Plo"; else rm -f "$(DEPDIR)/libjabber_la-auth_scram.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='auth_scram.c' object='libjabber_la-auth_scram.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -c -o libjabber_la-auth_scram.lo `test -f 'auth_scram.c' || echo '$(srcdir)/'`auth_scram.c
 
 libjabber_la-buddy.lo: buddy.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -MT libjabber_la-buddy.lo -MD -MP -MF "$(DEPDIR)/libjabber_la-buddy.Tpo" -c -o libjabber_la-buddy.lo `test -f 'buddy.c' || echo '$(srcdir)/'`buddy.c; \
@@ -921,6 +897,13 @@ libjabber_la-xdata.lo: xdata.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xdata.c' object='libjabber_la-xdata.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -c -o libjabber_la-xdata.lo `test -f 'xdata.c' || echo '$(srcdir)/'`xdata.c
+
+libjabber_la-auth_cyrus.lo: auth_cyrus.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -MT libjabber_la-auth_cyrus.lo -MD -MP -MF "$(DEPDIR)/libjabber_la-auth_cyrus.Tpo" -c -o libjabber_la-auth_cyrus.lo `test -f 'auth_cyrus.c' || echo '$(srcdir)/'`auth_cyrus.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_la-auth_cyrus.Tpo" "$(DEPDIR)/libjabber_la-auth_cyrus.Plo"; else rm -f "$(DEPDIR)/libjabber_la-auth_cyrus.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='auth_cyrus.c' object='libjabber_la-auth_cyrus.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -c -o libjabber_la-auth_cyrus.lo `test -f 'auth_cyrus.c' || echo '$(srcdir)/'`auth_cyrus.c
 
 libjabber_la-libxmpp.lo: libxmpp.c
 @am__fastdepCC_TRUE@	if $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_la_CFLAGS) $(CFLAGS) -MT libjabber_la-libxmpp.lo -MD -MP -MF "$(DEPDIR)/libjabber_la-libxmpp.Tpo" -c -o libjabber_la-libxmpp.lo `test -f 'libxmpp.c' || echo '$(srcdir)/'`libxmpp.c; \

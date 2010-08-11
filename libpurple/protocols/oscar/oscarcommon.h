@@ -24,8 +24,9 @@
  * and libicq.c
  */
 
-#include "accountopt.h"
 #include "internal.h"
+
+#include "accountopt.h"
 #include "prpl.h"
 #include "version.h"
 #include "notify.h"

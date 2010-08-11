@@ -47,6 +47,7 @@ typedef enum {
 	JABBER_CAP_BLOCKING       = 1 << 13,
 
 	JABBER_CAP_ITEMS          = 1 << 14,
+	JABBER_CAP_ROSTER_VERSIONING = 1 << 15,
 
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;
@@ -66,6 +67,7 @@ typedef struct _JabberStream JabberStream;
 
 #include "namespaces.h"
 
+#include "auth.h"
 #include "iq.h"
 #include "jutil.h"
 #include "xmlnode.h"
@@ -79,6 +81,7 @@ typedef struct _JabberStream JabberStream;
 #define CAPS0115_NODE "http://pidgin.im/"
 
 #define JABBER_DEFAULT_REQUIRE_TLS    TRUE
+#define JABBER_DEFAULT_FT_PROXIES     "proxy.eu.jabber.org"
 
 /* Index into attention_types list */
 #define JABBER_BUZZ 0
@@ -106,13 +109,9 @@ struct _JabberStream
 		JABBER_PROTO_0_9,
 		JABBER_PROTO_1_0
 	} protocol_version;
-	enum {
-		JABBER_AUTH_UNKNOWN,
-		JABBER_AUTH_DIGEST_MD5,
-		JABBER_AUTH_PLAIN,
-		JABBER_AUTH_IQ_AUTH,
-		JABBER_AUTH_CYRUS
-	} auth_type;
+
+	JabberSaslMech *auth_mech;
+	gpointer auth_mech_data;
 	char *stream_id;
 	JabberStreamState state;
 

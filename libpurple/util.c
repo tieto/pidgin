@@ -1519,7 +1519,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				if(tag) {
 					while(tags) {
 						struct purple_parse_tag *pt = tags->data;
-						if(xhtml)
+						if(xhtml && !pt->ignore)
 							g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
 						if(plain && purple_strequal(pt->src_tag, "a")) {
 							/* if this is a link, we have to add the url to the plaintext, too */

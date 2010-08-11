@@ -23,9 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <string.h>
-#include <errno.h>
-
+#include "internal.h"
 #include "purple.h"
 #include "prpl.h"
 

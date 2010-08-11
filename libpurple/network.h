@@ -252,7 +252,7 @@ const gchar *purple_network_get_stun_ip(void);
 void purple_network_set_turn_server(const gchar *turn_server);
 	
 /**
- * Get the IP address of the STUN server as a string representation
+ * Get the IP address of the TURN server as a string representation
  *
  * @return the IP address
  * @since 2.6.0
