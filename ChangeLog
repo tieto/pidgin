@@ -1,5 +1,35 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.4 (01/12/2009):
+	libpurple:
+	* Fix a connection timeout with empty Gadu-Gady buddy lists. (Martin
+	  Rosinski)
+	* Don't ignore namespace information when parsing XMPP data. (Michal
+	  Witkowski)
+	* Fix a crash that occurred when retrieving certain Offline Messages
+	  on MSN.
+	* Extended purple-url-handler to handle "gtalk" URI's. (Paul Aurich)
+	* Fix the hang on exit in Network Location Awareness for Windows XP
+	  and Windows Vista. (Paul Aurich)
+
+	MSN:
+	* Change Contact Server to temporarily fix connection problems.
+	  (Thanks to Youness Alaoui)
+
+	XMPP:
+	* Support for XEP-0191 blocking.  (Vijay Raghunathan)
+	* Don't put SASL PLAIN or IQ Auth passwords in debug logs. (Paul Aurich)
+	* Fix removal of avatars (both PEP and vCard), we weren't removing
+	  them correctly before. (Paul Aurich)
+
+	Pidgin:
+	* Fix a crash in the Add Account dialog when changing protocols under
+	  certain circumstances.
+
+	Finch:
+	* Redirect stderr outputs to the debug window.
+	* Fix rebinding actions with the arrow-keys and tab.
+
 version 2.5.3 (12/20/2008):
 	libpurple:
 	* The Buddy State Notification plugin no longer prints duplicate
@@ -27,7 +57,7 @@ version 2.5.3 (12/20/2008):
 	* Fix a crash caused by authorization requests. (Florian Quèze)
 
 	Gadu-Gadu:
-	* Add support for IM images. (Adam Strzelecki)
+	* Add support for IM images. (Tomasz Sałaciński, Adam Strzelecki)
 	* Gadu-Gadu now checks that UID's are valid. (Adam Strzelecki)
 	* Gadu-Gadu now does proper charset translations where needed. (Adam
 	  Strzelecki)
@@ -120,7 +150,7 @@ version 2.5.3 (12/20/2008):
 	  if no custom smilies have previously been added using the smiley
 	  manager.
 	* Improved support for some message formatting in conversations.
-	* Allow focusing the coversation history or userlist with F6.
+	* Allow focusing the conversation history or userlist with F6.
 	* Fixed the Send Button plugin to avoid duplicate buttons in a single
 	  conversation.
 	* Double-clicking a saved status will now activate it and close the

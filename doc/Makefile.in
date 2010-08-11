@@ -36,6 +36,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
+@ENABLE_GTK_TRUE@am__append_1 = pidgin.1
+@ENABLE_GNT_TRUE@am__append_2 = finch.1
 subdir = doc
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/finch.1.in $(srcdir)/pidgin.1.in
@@ -414,7 +416,7 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-man_MANS = pidgin.1 finch.1
+man_MANS = $(am__append_1) $(am__append_2)
 EXTRA_DIST = \
 	C-HOWTO.dox \
 	PERL-HOWTO.dox \

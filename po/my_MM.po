@@ -1,11 +1,11 @@
-# Gaim Myanmar (Burmese) (my_MM) translations
+# Pidgin Myanmar (Burmese) (my_MM) translations
 # Copyright (C) 2004 Minn Myat Soe <mmyatsoe@gmail.com>
 #
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gaim 1.1.1\n"
+"Project-Id-Version: Pidgin 1.1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2004-01-14 12:26+0000\n"
@@ -24,7 +24,7 @@ msgstr "Finch"
 
 #, fuzzy, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Try `%s -h' for more information.\n"
+msgstr "Pidgin %s. Try `%s -h' for more information.\n"
 
 #, c-format
 msgid ""
@@ -2240,7 +2240,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to load the plugin"
-msgstr "Gaim was unable to load your plugin."
+msgstr "Pidgin was unable to load your plugin."
 
 #, c-format
 msgid "The required plugin %s was unable to load."
@@ -2248,7 +2248,7 @@ msgstr "The required plugin %s was unable to load."
 
 #, fuzzy
 msgid "Unable to load your plugin."
-msgstr "Gaim was unable to load your plugin."
+msgstr "Pidgin was unable to load your plugin."
 
 #, fuzzy, c-format
 msgid "%s requires %s, but it failed to unload."
@@ -2388,7 +2388,7 @@ msgstr ""
 #. *< id
 #, fuzzy
 msgid "File Control"
-msgstr "Gaim File Control"
+msgstr "Pidgin File Control"
 
 #. *< name
 #. *< version
@@ -2396,7 +2396,7 @@ msgstr "Gaim File Control"
 #. *  description
 #, fuzzy
 msgid "Allows control by entering commands in a file."
-msgstr "Allows you to control Gaim by entering commands in a file."
+msgstr "Allows you to control Pidgin by entering commands in a file."
 
 msgid "Minutes"
 msgstr "မိနစ္‌မ္ယား"
@@ -3283,7 +3283,7 @@ msgstr "File transfer already started"
 
 #, fuzzy
 msgid "Could not open a listening port."
-msgstr "Gaim could not open a listening port."
+msgstr "Pidgin could not open a listening port."
 
 msgid "Error displaying MOTD"
 msgstr "Error displaying MOTD"
@@ -3450,7 +3450,7 @@ msgstr "Unknown message"
 
 #, fuzzy
 msgid "The IRC server received a message it did not understand."
-msgstr "Gaim has sent a message the IRC server did not understand."
+msgstr "Pidgin has sent a message the IRC server did not understand."
 
 #, c-format
 msgid "Users on %s: %s"
@@ -4908,7 +4908,7 @@ msgstr "Unable to parse message"
 
 #, fuzzy, c-format
 msgid "Syntax Error (probably a client bug)"
-msgstr "Syntax Error (probably a Gaim bug)"
+msgstr "Syntax Error (probably a Pidgin bug)"
 
 #, c-format
 msgid "Invalid email address"
@@ -5286,7 +5286,7 @@ msgstr "Initiate _Chat"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "SSL support is needed for MSN. Please install a supported SSL library. See "
-"http://gaim.sf.net/faq-ssl.php for more information."
+"http://Pidgin.sf.net/faq-ssl.php for more information."
 
 #, fuzzy
 msgid "Failed to connect to server."
@@ -5464,7 +5464,7 @@ msgid ""
 "Could not find any information in the user's profile. The user most likely "
 "does not exist."
 msgstr ""
-"Gaim could not find any information in the user's profile. The user most "
+"Pidgin could not find any information in the user's profile. The user most "
 "likely does not exist."
 
 msgid "Profile URL"
@@ -6781,7 +6781,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to get a valid AIM login hash."
-msgstr "Gaim was unable to get a valid AIM login hash."
+msgstr "Pidgin was unable to get a valid AIM login hash."
 
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  Check %s for updates."
@@ -6791,7 +6791,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to get a valid login hash."
-msgstr "Gaim was unable to get a valid login hash."
+msgstr "Pidgin was unable to get a valid login hash."
 
 msgid "Password sent"
 msgstr "Password sent"
@@ -7102,10 +7102,10 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
+"The maximum profile length of %d byte has been exceeded.  Pidgin has truncated "
 "it for you."
 msgstr[1] ""
-"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"The maximum profile length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 
 msgid "Profile too long."
@@ -7119,10 +7119,10 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"The maximum away message length of %d byte has been exceeded.  Gaim has "
+"The maximum away message length of %d byte has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[1] ""
-"The maximum away message length of %d bytes has been exceeded.  Gaim has "
+"The maximum away message length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 
 msgid "Away message too long."
@@ -7151,7 +7151,7 @@ msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
 "list is not lost, and will probably become available in a few minutes."
 msgstr ""
-"Gaim was temporarily unable to retrieve your buddy list from the AIM "
+"Pidgin was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
 "a few hours."
 
@@ -7692,7 +7692,7 @@ msgstr "Close"
 
 #, fuzzy
 msgid "About me"
-msgstr "About Gaim"
+msgstr "About Pidgin"
 
 #, fuzzy
 msgid "Category"
@@ -7911,7 +7911,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About OpenQ r%s"
-msgstr "About Gaim"
+msgstr "About Pidgin"
 
 #, fuzzy
 msgid "Change Icon"
@@ -7929,7 +7929,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About OpenQ"
-msgstr "About Gaim"
+msgstr "About Pidgin"
 
 #. *< type
 #. *< ui_requirement
@@ -9354,7 +9354,7 @@ msgstr "Failed to set cmodes for %s"
 
 #, fuzzy, c-format
 msgid "Unknown command: %s, (may be a client bug)"
-msgstr "Unknown command: %s, (may be a Gaim bug)"
+msgstr "Unknown command: %s, (may be a Pidgin bug)"
 
 msgid "part [channel]:  Leave the chat"
 msgstr "part [channel]:  Leave the chat"
@@ -9940,7 +9940,7 @@ msgid ""
 "Check %s for updates."
 msgstr ""
 "The Yahoo server has requested the use of an unrecognised authentication "
-"method.  This version of Gaim will likely not be able to successfully sign "
+"method.  This version of Pidgin will likely not be able to successfully sign "
 "on to Yahoo.  Check %s for updates."
 
 msgid "Failed Yahoo! Authentication"
@@ -11093,7 +11093,7 @@ msgid "/Help/_Debug Window"
 msgstr "/Help/_Debug Window"
 
 msgid "/Help/_About"
-msgstr "/Help/(_A) Gaim အက္ရောင္း"
+msgstr "/Help/(_A) Pidgin အက္ရောင္း"
 
 #, fuzzy, c-format
 msgid "<b>Account:</b> %s"
@@ -12013,7 +12013,7 @@ msgstr "Amharic"
 
 #, fuzzy, c-format
 msgid "About %s"
-msgstr "About Gaim"
+msgstr "About Pidgin"
 
 #, c-format
 msgid ""
@@ -12030,7 +12030,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
 
 #, fuzzy
 msgid "Current Developers"
@@ -12544,7 +12544,7 @@ msgstr ""
 
 #, fuzzy
 msgid "<span size='larger'>_Larger</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 
 #, fuzzy
 msgid "_Normal"
@@ -12636,7 +12636,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Try `%s -h' for more information.\n"
+msgstr "Pidgin %s. Try `%s -h' for more information.\n"
 
 #, c-format
 msgid ""
@@ -14194,7 +14194,7 @@ msgstr "Provides a variety of ways of notifying you of unread messages."
 #. *< id
 #, fuzzy
 msgid "Pidgin Demonstration Plugin"
-msgstr "Gaim Demonstration Plugin"
+msgstr "Pidgin Demonstration Plugin"
 
 #. *< name
 #. *< version
@@ -14299,7 +14299,7 @@ msgstr "Accounts"
 
 #, fuzzy
 msgid "Gtkrc File Tools"
-msgstr "Gaim File Control"
+msgstr "Pidgin File Control"
 
 #, c-format
 msgid "Write settings to %s%sgtkrc-2.0"
@@ -14310,7 +14310,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Pidgin GTK+ Theme Control"
-msgstr "Gaim File Control"
+msgstr "Pidgin File Control"
 
 msgid "Provides access to commonly used gtkrc settings."
 msgstr ""
@@ -14598,7 +14598,7 @@ msgstr "Startup"
 
 #, fuzzy, c-format
 msgid "_Start %s on Windows startup"
-msgstr "_Start Gaim on Windows startup"
+msgstr "_Start Pidgin on Windows startup"
 
 msgid "_Dockable Buddy List"
 msgstr "_Dockable Buddy List"
@@ -14622,7 +14622,7 @@ msgstr "Login Options"
 
 #, fuzzy
 msgid "Options specific to Pidgin for Windows."
-msgstr "Options specific to Windows Gaim."
+msgstr "Options specific to Windows Pidgin."
 
 msgid ""
 "Provides options specific to Pidgin for Windows , such as buddy list docking."
@@ -14823,7 +14823,7 @@ msgstr ""
 #~ msgid ""
 #~ "You are using %s version %s.  The current version is %s.  You can get it "
 #~ "from <a href=\"%s\">%s</a><hr>"
-#~ msgstr "You are using Gaim version %s.  The current version is %s.<hr>"
+#~ msgstr "You are using Pidgin version %s.  The current version is %s.<hr>"
 
 #, fuzzy
 #~ msgid "<b>ChangeLog:</b><br>%s"
@@ -15119,26 +15119,23 @@ msgstr ""
 #~ "will use what used to be the built-in order active->idle->away->away+idle-"
 #~ ">offline."
 
-#~ msgid "Gaim"
-#~ msgstr "Gaim"
+#~ msgid "Pidgin - Signed off"
+#~ msgstr "Pidgin - Signed off"
 
-#~ msgid "Gaim - Signed off"
-#~ msgstr "Gaim - Signed off"
+#~ msgid "Pidgin - Away"
+#~ msgstr "Pidgin - Away"
 
-#~ msgid "Gaim - Away"
-#~ msgstr "Gaim - Away"
-
-#~ msgid "Displays an icon for Gaim in the system tray."
-#~ msgstr "Displays an icon for Gaim in the system tray."
+#~ msgid "Displays an icon for Pidgin in the system tray."
+#~ msgstr "Displays an icon for Pidgin in the system tray."
 
 #~ msgid ""
 #~ "Displays a system tray icon (in GNOME, KDE or Windows for example) to "
-#~ "show the current status of Gaim, allow fast access to commonly used "
+#~ "show the current status of Pidgin, allow fast access to commonly used "
 #~ "functions, and to toggle display of the buddy list or login window. Also "
 #~ "allows messages to be queued until the icon is clicked, similar to ICQ."
 #~ msgstr ""
 #~ "Displays a system tray icon (in GNOME, KDE or Windows for example) to "
-#~ "show the current status of Gaim, allow fast access to commonly used "
+#~ "show the current status of Pidgin, allow fast access to commonly used "
 #~ "functions, and to toggle display of the buddy list or login window. Also "
 #~ "allows messages to be queued until the icon is clicked, similar to ICQ."
 
@@ -15147,17 +15144,17 @@ msgstr ""
 #~ msgstr "Expander Size"
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 
 #~ msgid "Delay"
 #~ msgstr "Delay"
 
-#~ msgid "WinGaim Options"
-#~ msgstr "WinGaim Options"
+#~ msgid "WinPidgin Options"
+#~ msgstr "WinPidgin Options"
 
 #~ msgid ""
 #~ "%d buddy from group %s was not removed because its account was not logged "
@@ -15276,8 +15273,8 @@ msgstr ""
 #~ msgid "/Tools/Account Actions"
 #~ msgstr "/Tools/Account Actions"
 
-#~ msgid "me is using Gaim v%s."
-#~ msgstr "me is using Gaim v%s."
+#~ msgid "me is using Pidgin v%s."
+#~ msgstr "me is using Pidgin v%s."
 
 #, fuzzy
 #~ msgid "/Options/Show Buddy _Icon"
@@ -15302,19 +15299,19 @@ msgstr ""
 
 #, fuzzy
 #~ msgid ""
-#~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+#~ "Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 #~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 #~ "all at once.  It is written using GTK+ and is licensed under the GNU GPL."
 #~ "<BR><BR>"
 #~ msgstr ""
-#~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+#~ "Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 #~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 #~ "all at once.  It is written using Gtk+ and is licensed under the GPL."
 #~ "<BR><BR>"
 
 #, fuzzy
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
 
 #~ msgid "Active Developers"
 #~ msgstr "Active Developers"
@@ -15649,15 +15646,15 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 
-#~ msgid "Gaim - Save As..."
-#~ msgstr "Gaim - Save As..."
+#~ msgid "Pidgin - Save As..."
+#~ msgstr "Pidgin - Save As..."
 
 #~ msgid "TOC host"
 #~ msgstr "TOC host"
@@ -15668,12 +15665,12 @@ msgstr ""
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
 #~ "will result in reduced functionality and features."
 #~ msgstr ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, will "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, will "
 #~ "which result in reduced functionality and features."
 
 #~ msgid "Unable to read"
@@ -15760,15 +15757,15 @@ msgstr ""
 #~ msgid "Remote Control"
 #~ msgstr "Remote Control"
 
-#~ msgid "Provides remote control for gaim applications."
-#~ msgstr "Provides remote control for gaim applications."
+#~ msgid "Provides remote control for Pidgin applications."
+#~ msgstr "Provides remote control for Pidgin applications."
 
 #~ msgid ""
-#~ "Gives Gaim the ability to be remote-controlled through third-party "
-#~ "applications or through the gaim-remote tool."
+#~ "Gives Pidgin the ability to be remote-controlled through third-party "
+#~ "applications or through the Pidgin-remote tool."
 #~ msgstr ""
-#~ "Gives Gaim the ability to be remote-controlled through third-party "
-#~ "applications or through the gaim-remote tool."
+#~ "Gives Pidgin the ability to be remote-controlled through third-party "
+#~ "applications or through the Pidgin-remote tool."
 
 #~ msgid "Docked _Buddy List is always on top"
 #~ msgstr "Docked _Buddy List is always on top"
@@ -15816,7 +15813,7 @@ msgstr ""
 #~ "       away                     Popup the away dialog with the default "
 #~ "message\n"
 #~ "       back                     Remove the away dialog\n"
-#~ "       quit                     Close running copy of Gaim\n"
+#~ "       quit                     Close running copy of Pidgin\n"
 #~ "\n"
 #~ "    OPTIONS:\n"
 #~ "       -h, --help [command]     Show help for command\n"
@@ -15828,23 +15825,23 @@ msgstr ""
 #~ "       away                     Popup the away dialog with the default "
 #~ "message\n"
 #~ "       back                     Remove the away dialog\n"
-#~ "       quit                     Close running copy of Gaim\n"
+#~ "       quit                     Close running copy of Pidgin\n"
 #~ "\n"
 #~ "    OPTIONS:\n"
 #~ "       -h, --help [command]     Show help for command\n"
 
 #~ msgid ""
-#~ "Gaim not running (on session 0)\n"
+#~ "Pidgin not running (on session 0)\n"
 #~ "Is the \"Remote Control\" plugin loaded?\n"
 #~ msgstr ""
-#~ "Gaim not running (on session 0)\n"
+#~ "Pidgin not running (on session 0)\n"
 #~ "Is the \"Remote Control\" plugin loaded?\n"
 
 #~ msgid ""
 #~ "\n"
 #~ "Using AIM: URIs:\n"
 #~ "Sending an IM to a screen name:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 #~ "In this case, 'Penguin' is the screen name we wish to IM, and 'hello "
 #~ "world'\n"
 #~ "is the message to be sent.  '+' must be used in place of spaces.\n"
@@ -15854,20 +15851,20 @@ msgstr ""
 #~ "Also,the following will just open a conversation window to a screen "
 #~ "name,\n"
 #~ "with no message:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "Joining a chat:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "...joins the 'PenguinLounge' chat room.\n"
 #~ "\n"
 #~ "Adding a buddy to your buddy list:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "...prompts you to add 'Penguin' to your buddy list.\n"
 #~ msgstr ""
 #~ "\n"
 #~ "Using AIM: URIs:\n"
 #~ "Sending an IM to a screen name:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 #~ "In this case, 'Penguin' is the screen name we wish to IM, and 'hello "
 #~ "world'\n"
 #~ "is the message to be sent.  '+' must be used in place of spaces.\n"
@@ -15877,22 +15874,22 @@ msgstr ""
 #~ "Also,the following will just open a conversation window to a screen "
 #~ "name,\n"
 #~ "with no message:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "Joining a chat:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "...joins the 'PenguinLounge' chat room.\n"
 #~ "\n"
 #~ "Adding a buddy to your buddy list:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "...prompts you to add 'Penguin' to your buddy list.\n"
 
 #~ msgid ""
 #~ "\n"
-#~ "Close running copy of Gaim\n"
+#~ "Close running copy of Pidgin\n"
 #~ msgstr ""
 #~ "\n"
-#~ "Close running copy of Gaim\n"
+#~ "Close running copy of Pidgin\n"
 
 #~ msgid ""
 #~ "\n"
@@ -16116,8 +16113,8 @@ msgstr ""
 #~ msgid "Idle _time reporting:"
 #~ msgstr "Idle _time reporting:"
 
-#~ msgid "Gaim usage"
-#~ msgstr "Gaim usage"
+#~ msgid "Pidgin usage"
+#~ msgstr "Pidgin usage"
 
 #~ msgid "X usage"
 #~ msgstr "X usage"
@@ -16163,7 +16160,7 @@ msgstr ""
 #~ msgstr "_Sign on"
 
 #~ msgid ""
-#~ "Gaim %s\n"
+#~ "Pidgin %s\n"
 #~ "Usage: %s [OPTION]...\n"
 #~ "\n"
 #~ "  -a, --acct          display account editor window\n"
@@ -16180,7 +16177,7 @@ msgstr ""
 #~ "  -v, --version       display the current version and exit\n"
 #~ "  -h, --help          display this help and exit\n"
 #~ msgstr ""
-#~ "Gaim %s\n"
+#~ "Pidgin %s\n"
 #~ "Usage: %s [OPTION]...\n"
 #~ "\n"
 #~ "  -a, --acct          display account editor window\n"
@@ -16201,11 +16198,11 @@ msgstr ""
 #~ msgstr "Unable to load preferences"
 
 #~ msgid ""
-#~ "Gaim was not able to load your preferences because they are stored in an "
+#~ "Pidgin was not able to load your preferences because they are stored in an "
 #~ "old format that is no longer used.  Please reconfigure your settings "
 #~ "using the Preferences window."
 #~ msgstr ""
-#~ "Gaim was not able to load your preferences because they are stored in an "
+#~ "Pidgin was not able to load your preferences because they are stored in an "
 #~ "old format that is no longer used.  Please reconfigure your settings "
 #~ "using the Preferences window."
 
@@ -16282,27 +16279,27 @@ msgstr ""
 #~ msgstr "Error communicating with Gadu-Gadu server"
 
 #~ msgid ""
-#~ "Gaim was unable to complete your request due to a problem communicating "
+#~ "Pidgin was unable to complete your request due to a problem communicating "
 #~ "with the Gadu-Gadu HTTP server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim was unable to complete your request due to a problem communicating "
+#~ "Pidgin was unable to complete your request due to a problem communicating "
 #~ "with the Gadu-Gadu HTTP server.  Please try again later."
 
 #~ msgid "Unable to import Gadu-Gadu buddy list"
 #~ msgstr "Unable to import Gadu-Gadu buddy list"
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please "
+#~ "Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please "
 #~ "try again later."
 #~ msgstr ""
-#~ "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please "
+#~ "Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please "
 #~ "try again later."
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the buddy list server.  Please try again "
+#~ "Pidgin was unable to connect to the buddy list server.  Please try again "
 #~ "later."
 #~ msgstr ""
-#~ "Gaim was unable to connect to the buddy list server.  Please try again "
+#~ "Pidgin was unable to connect to the buddy list server.  Please try again "
 #~ "later."
 
 #~ msgid "Unable to delete Gadu-Gadu buddy list"
@@ -16312,17 +16309,17 @@ msgstr ""
 #~ msgstr "Unable to access directory"
 
 #~ msgid ""
-#~ "Gaim was unable to search the Directory because it was unable to connect "
+#~ "Pidgin was unable to search the Directory because it was unable to connect "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim was unable to search the Directory because it was unable to connect "
+#~ "Pidgin was unable to search the Directory because it was unable to connect "
 #~ "to the directory server.  Please try again later."
 
 #~ msgid ""
-#~ "Gaim was unable to change your password due to an error connecting to the "
+#~ "Pidgin was unable to change your password due to an error connecting to the "
 #~ "Gadu-Gadu server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim was unable to change your password due to an error connecting to the "
+#~ "Pidgin was unable to change your password due to an error connecting to the "
 #~ "Gadu-Gadu server.  Please try again later."
 
 #~ msgid "Directory Search"
@@ -16332,14 +16329,14 @@ msgstr ""
 #~ msgstr "Unable to access user profile."
 
 #~ msgid ""
-#~ "Gaim was unable to access this user's profile due to an error connecting "
+#~ "Pidgin was unable to access this user's profile due to an error connecting "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim was unable to access this user's profile due to an error connecting "
+#~ "Pidgin was unable to access this user's profile due to an error connecting "
 #~ "to the directory server.  Please try again later."
 
-#~ msgid "Gaim encountered an error communicating with the ICQ server."
-#~ msgstr "Gaim encountered an error communicating with the ICQ server."
+#~ msgid "Pidgin encountered an error communicating with the ICQ server."
+#~ msgstr "Pidgin encountered an error communicating with the ICQ server."
 
 #~ msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 #~ msgstr "The user %s (%s%s%s%s%s) wants you to authorise them."
@@ -16350,8 +16347,8 @@ msgstr ""
 #~ msgid "Nick:"
 #~ msgstr "Nick:"
 
-#~ msgid "Gaim User"
-#~ msgstr "Gaim User"
+#~ msgid "Pidgin User"
+#~ msgstr "Pidgin User"
 
 #~ msgid "File Transfer Aborted"
 #~ msgstr "File Transfer Aborted"
@@ -16526,17 +16523,17 @@ msgstr ""
 #~ msgstr "Received HTTP error. Please report this."
 
 #~ msgid ""
-#~ "Gaim cannot send files over Yahoo! that are bigger than One Megabyte "
+#~ "Pidgin cannot send files over Yahoo! that are bigger than One Megabyte "
 #~ "(1,048,576 bytes)."
 #~ msgstr ""
-#~ "Gaim cannot send files over Yahoo! that are bigger than One Megabyte "
+#~ "Pidgin cannot send files over Yahoo! that are bigger than One Megabyte "
 #~ "(1,048,576 bytes)."
 
-#~ msgid "Moving Gaim Settings.."
-#~ msgstr "Moving Gaim Settings.."
+#~ msgid "Moving Pidgin Settings.."
+#~ msgstr "Moving Pidgin Settings.."
 
-#~ msgid "Moving Gaim user settings to: "
-#~ msgstr "Moving Gaim user settings to: "
+#~ msgid "Moving Pidgin user settings to: "
+#~ msgstr "Moving Pidgin user settings to: "
 
 #~ msgid "Notification"
 #~ msgstr "Notification"

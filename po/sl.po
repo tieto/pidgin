@@ -1,5 +1,5 @@
 # Copyright (C) 2004.
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 # Jure Čuhalev <gandalf@owca.info>, 2003.
 # Matjaž Horvat <matjaz@owca.info>, 2004.
 # Martin Srebotnjak <miles@filmsi.net>, 2006.
@@ -12621,7 +12621,7 @@ msgid "Re-read gtkrc files"
 msgstr "Ponovno preberi datoteke gtkrc"
 
 msgid "Pidgin GTK+ Theme Control"
-msgstr "Nadzor teme Gaim GTK+ v Pidginu"
+msgstr "Nadzor teme Pidgin GTK+ v Pidginu"
 
 msgid "Provides access to commonly used gtkrc settings."
 msgstr "Omogoča dostop do pogosto uporabljenih nastavitev gtkrc."

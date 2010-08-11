@@ -31,13 +31,7 @@
 #include "config.h"
 #include "debug.h"
 #include "libc_internal.h"
-#if GLIB_CHECK_VERSION(2,6,0)
-# include <glib/gstdio.h>
-#else
-#define g_remove remove
-#define g_rename rename
-#define g_stat stat
-#endif
+#include <glib/gstdio.h>
 
 #ifdef ENABLE_NLS
 #  include <locale.h>
@@ -58,6 +52,9 @@
 #  define dngettext(Domain, Singular, Plural, Number) ((Number == 1) ? ((const char *)Singular) : ((const char *)Plural))
 #endif
 
+#ifndef S_ISDIR
+# define S_ISDIR(m) (((m)&S_IFDIR)==S_IFDIR)
+#endif
 
 static char errbuf[1024];
 

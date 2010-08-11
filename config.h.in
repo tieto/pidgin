@@ -441,6 +441,9 @@
 /* Define if we're using X Session Management. */
 #undef USE_SM
 
+/* 'va_lists' cannot be copied as values */
+#undef VA_COPY_AS_ARRAY
+
 /* Version number of package */
 #undef VERSION
 

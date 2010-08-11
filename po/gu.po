@@ -1,11 +1,11 @@
-# translation of gaim_gu.po to Gujarati
+# translation of Pidgin_gu.po to Gujarati
 # translation of gu.po to Gujarati
-# translation of gaim.po to Gujarati
+# translation of Pidgin.po to Gujarati
 # Ankit Patel <ankit644@yahoo.com>, 2005, 2006.
 # Kartik Mistry <kartik.mistry@gmail.com>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim_gu\n"
+"Project-Id-Version: Pidgin_gu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2006-07-03 11:31+0530\n"
@@ -28,7 +28,7 @@ msgstr "ફ્રેંચ"
 
 #, fuzzy, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. વધુ જાણકારી માટે `%s -h' નો પ્રયાસ કરે છે.\n"
+msgstr "Pidgin %s. વધુ જાણકારી માટે `%s -h' નો પ્રયાસ કરે છે.\n"
 
 #, fuzzy, c-format
 msgid ""
@@ -41,7 +41,7 @@ msgid ""
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "વપરાશ: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    રૂપરેખા ફાઈલો માટે DIR વાપરે છે\n"
@@ -2244,7 +2244,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to load the plugin"
-msgstr "Gaim તમારું પ્લગઈન લાવવામાં અસમર્થ હતું."
+msgstr "Pidgin તમારું પ્લગઈન લાવવામાં અસમર્થ હતું."
 
 #, c-format
 msgid "The required plugin %s was unable to load."
@@ -2252,7 +2252,7 @@ msgstr "જરૂરી પ્લગઈન %s લાવવા માટે અ�
 
 #, fuzzy
 msgid "Unable to load your plugin."
-msgstr "Gaim તમારું પ્લગઈન લાવવામાં અસમર્થ હતું."
+msgstr "Pidgin તમારું પ્લગઈન લાવવામાં અસમર્થ હતું."
 
 #, fuzzy, c-format
 msgid "%s requires %s, but it failed to unload."
@@ -2393,7 +2393,7 @@ msgstr ""
 #. *< id
 #, fuzzy
 msgid "File Control"
-msgstr "Gaim ફાઈલ નિયંત્રણ"
+msgstr "Pidgin ફાઈલ નિયંત્રણ"
 
 #. *< name
 #. *< version
@@ -2401,7 +2401,7 @@ msgstr "Gaim ફાઈલ નિયંત્રણ"
 #. *  description
 #, fuzzy
 msgid "Allows control by entering commands in a file."
-msgstr "તમને ફાઈલમાં આદેશો દાખલ કરીને Gaim નિયંત્રિત કરવા માટે પરવાનગી આપે છે."
+msgstr "તમને ફાઈલમાં આદેશો દાખલ કરીને Pidgin નિયંત્રિત કરવા માટે પરવાનગી આપે છે."
 
 msgid "Minutes"
 msgstr "મિનિટો"
@@ -3248,7 +3248,7 @@ msgstr "ફાઈલ પરિવહન રદ થઈ ગયું"
 
 #, fuzzy
 msgid "Could not open a listening port."
-msgstr "Gaim સાંભળનાર પોર્ટ ખોલી શક્યું નહિં."
+msgstr "Pidgin સાંભળનાર પોર્ટ ખોલી શક્યું નહિં."
 
 msgid "Error displaying MOTD"
 msgstr "MOTD દર્શાવવામાં ક્ષતિ"
@@ -3413,7 +3413,7 @@ msgstr "અજ્ઞાત સંદેશો"
 
 #, fuzzy
 msgid "The IRC server received a message it did not understand."
-msgstr "Gaim એ સંદેશો મોકલ્યો જે IRC સર્વર સમજ્યું નહિં."
+msgstr "Pidgin એ સંદેશો મોકલ્યો જે IRC સર્વર સમજ્યું નહિં."
 
 #, c-format
 msgid "Users on %s: %s"
@@ -4864,7 +4864,7 @@ msgstr "સંદેશાનું પદચ્છેદન કરવામા�
 
 #, fuzzy, c-format
 msgid "Syntax Error (probably a client bug)"
-msgstr "વાક્યરચના ક્ષતિ (સંભવિત રીતે Gaim ત્રુટિ)"
+msgstr "વાક્યરચના ક્ષતિ (સંભવિત રીતે Pidgin ત્રુટિ)"
 
 #, c-format
 msgid "Invalid email address"
@@ -5243,7 +5243,7 @@ msgstr "સંવાદનો પ્રારંભ કરો (_C)"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "SSL આધાર એ MSN માટે જરૂરી છે. મહેરબાની કરીને આધારભૂત SSL લાઈબ્રેરી સ્થાપિત કરો. વધુ "
-"જાણકારી માટે http://gaim.sf.net/faq-ssl.php જુઓ."
+"જાણકારી માટે http://Pidgin.sf.net/faq-ssl.php જુઓ."
 
 msgid "Failed to connect to server."
 msgstr "સર્વર સાથે જોડાવામાં નિષ્ફળ."
@@ -5420,7 +5420,7 @@ msgid ""
 "Could not find any information in the user's profile. The user most likely "
 "does not exist."
 msgstr ""
-"Gaim વપરાશકર્તાની રૂપરેખામાં કોઈપણ જાણકારી શોધી શક્યું નહિં. વપરાશકર્તા મોટે ભાગે "
+"Pidgin વપરાશકર્તાની રૂપરેખામાં કોઈપણ જાણકારી શોધી શક્યું નહિં. વપરાશકર્તા મોટે ભાગે "
 "અસ્તિત્વમાં નહિં હોય."
 
 msgid "Profile URL"
@@ -6728,7 +6728,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to get a valid AIM login hash."
-msgstr "Gaim એ માન્ય AIM પ્રવેશ હેશ મેળવવામાં અસમર્થ હતું."
+msgstr "Pidgin એ માન્ય AIM પ્રવેશ હેશ મેળવવામાં અસમર્થ હતું."
 
 #, fuzzy, c-format
 msgid "You may be disconnected shortly.  Check %s for updates."
@@ -6738,7 +6738,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to get a valid login hash."
-msgstr "Gaim એ માન્ય પ્રવેશ હેશ મેળવવામાં અસમર્થ હતું."
+msgstr "Pidgin એ માન્ય પ્રવેશ હેશ મેળવવામાં અસમર્થ હતું."
 
 msgid "Password sent"
 msgstr "પાસવર્ડ મોકલાઈ ગયો"
@@ -7044,9 +7044,9 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"%d બાઈટની મહત્તમ રૂપરેખા લંબાઈ ઓળંગી ગયા.  Gaim એ તેને તમારી માટે છોડી દીધું છે."
+"%d બાઈટની મહત્તમ રૂપરેખા લંબાઈ ઓળંગી ગયા.  Pidgin એ તેને તમારી માટે છોડી દીધું છે."
 msgstr[1] ""
-"%d બાઈટોની મહત્તમ રૂપરેખા લંબાઈ ઓળંગી ગયા.  Gaim એ તેને તમારી માટે છોડી દીધું છે."
+"%d બાઈટોની મહત્તમ રૂપરેખા લંબાઈ ઓળંગી ગયા.  Pidgin એ તેને તમારી માટે છોડી દીધું છે."
 
 msgid "Profile too long."
 msgstr "રૂપરેખા ખૂબ લાંબી છે."
@@ -7059,10 +7059,10 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"દૂર જવાના સંદેશાની મહત્તમ લંબાઈ %d બાઈટ ઓળંગી ગયા છો.  Gaim એ તેને તમારા માટે છોડી "
+"દૂર જવાના સંદેશાની મહત્તમ લંબાઈ %d બાઈટ ઓળંગી ગયા છો.  Pidgin એ તેને તમારા માટે છોડી "
 "દીધું છે."
 msgstr[1] ""
-"દૂર જવાના સંદેશાની મહત્તમ લંબાઈ %d બાઈટો ઓળંગી ગયા છો.  Gaim એ તેને તમારા માટે છોડી "
+"દૂર જવાના સંદેશાની મહત્તમ લંબાઈ %d બાઈટો ઓળંગી ગયા છો.  Pidgin એ તેને તમારા માટે છોડી "
 "દીધું છે."
 
 msgid "Away message too long."
@@ -7091,7 +7091,7 @@ msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
 "list is not lost, and will probably become available in a few minutes."
 msgstr ""
-"Gaim એ AIM સર્વરોમાંથી વ્યક્તિ યાદી મેળવવામાં થોડી વાર માટે અસમર્થ હતું.  તમારી વ્યક્તિ "
+"Pidgin એ AIM સર્વરોમાંથી વ્યક્તિ યાદી મેળવવામાં થોડી વાર માટે અસમર્થ હતું.  તમારી વ્યક્તિ "
 "યાદી એ ખોવાયેલ નથી, અને કદાચ થોડા કલાકોમાં ઉપલબ્ધ હશે."
 
 msgid "Orphans"
@@ -7631,7 +7631,7 @@ msgstr "બંધ કરો"
 
 #, fuzzy
 msgid "About me"
-msgstr "Gaim વિશે"
+msgstr "Pidgin વિશે"
 
 #, fuzzy
 msgid "Category"
@@ -7849,7 +7849,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About OpenQ r%s"
-msgstr "Gaim વિશે"
+msgstr "Pidgin વિશે"
 
 #, fuzzy
 msgid "Change Icon"
@@ -7867,7 +7867,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About OpenQ"
-msgstr "Gaim વિશે"
+msgstr "Pidgin વિશે"
 
 #. *< type
 #. *< ui_requirement
@@ -9283,7 +9283,7 @@ msgstr "%s માટે cmodes સુયોજિત કરવામાં ન�
 
 #, fuzzy, c-format
 msgid "Unknown command: %s, (may be a client bug)"
-msgstr "અજ્ઞાત આદેશ: %s, (કદાચ Gaim ક્ષતિ હોઈ શકે)"
+msgstr "અજ્ઞાત આદેશ: %s, (કદાચ Pidgin ક્ષતિ હોઈ શકે)"
 
 msgid "part [channel]:  Leave the chat"
 msgstr "part [channel]:  સંવાદ છોડો"
@@ -9859,7 +9859,7 @@ msgid ""
 "method.  You will probably not be able to successfully sign on to Yahoo.  "
 "Check %s for updates."
 msgstr ""
-"Yahoo સર્વરે નહિં ઓળખાયેલ સત્તાધિકરણ પદ્ધતિનો વપરાશ નામંજૂર કર્યો છે.  Gaim ની આ આવૃત્તિ "
+"Yahoo સર્વરે નહિં ઓળખાયેલ સત્તાધિકરણ પદ્ધતિનો વપરાશ નામંજૂર કર્યો છે.  Pidgin ની આ આવૃત્તિ "
 "Yahoo પર સફળતાપૂર્વક પ્રવેશ કરવામાં સમર્થ હશે નહિં.  સુધારાઓ માટે %s ચકાસો."
 
 msgid "Failed Yahoo! Authentication"
@@ -11888,7 +11888,7 @@ msgstr "અમહારિક"
 
 #, fuzzy, c-format
 msgid "About %s"
-msgstr "Gaim વિશે"
+msgstr "Pidgin વિશે"
 
 #, c-format
 msgid ""
@@ -11905,7 +11905,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
 
 #, fuzzy
 msgid "Current Developers"
@@ -12419,7 +12419,7 @@ msgstr ""
 
 #, fuzzy
 msgid "<span size='larger'>_Larger</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 
 #, fuzzy
 msgid "_Normal"
@@ -12511,7 +12511,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. વધુ જાણકારી માટે `%s -h' નો પ્રયાસ કરે છે.\n"
+msgstr "Pidgin %s. વધુ જાણકારી માટે `%s -h' નો પ્રયાસ કરે છે.\n"
 
 #, fuzzy, c-format
 msgid ""
@@ -12529,7 +12529,7 @@ msgid ""
 "  --display=DISPLAY   X display to use\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "વપરાશ: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    રૂપરેખા ફાઈલો માટે DIR વાપરે છે\n"
@@ -12556,7 +12556,7 @@ msgid ""
 "                      Without this only the first account will be enabled).\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "વપરાશ: %s [OPTION]...\n"
 "\n"
 "  -c, --config=DIR    રૂપરેખા ફાઈલો માટે DIR વાપરે છે\n"
@@ -14071,7 +14071,7 @@ msgstr "તમને નહિં વંચાયેલ સંદેશાઓ �
 #. *< id
 #, fuzzy
 msgid "Pidgin Demonstration Plugin"
-msgstr "Gaim રજૂઆત પ્લગઈન"
+msgstr "Pidgin રજૂઆત પ્લગઈન"
 
 #. *< name
 #. *< version
@@ -14170,7 +14170,7 @@ msgstr "ખાતાઓ"
 
 #, fuzzy
 msgid "Gtkrc File Tools"
-msgstr "Gaim ફાઈલ નિયંત્રણ"
+msgstr "Pidgin ફાઈલ નિયંત્રણ"
 
 #, c-format
 msgid "Write settings to %s%sgtkrc-2.0"
@@ -14181,7 +14181,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Pidgin GTK+ Theme Control"
-msgstr "Gaim GTK+ થીમ નિયંત્રણ"
+msgstr "Pidgin GTK+ થીમ નિયંત્રણ"
 
 msgid "Provides access to commonly used gtkrc settings."
 msgstr "સામાન્ય રીતે વપરાતી gtkrc ગોઠવણીઓ પૂરી પાડે છે."
@@ -14462,7 +14462,7 @@ msgstr "શરૂઆત"
 
 #, fuzzy, c-format
 msgid "_Start %s on Windows startup"
-msgstr "વિન્ડોઝ શરૂ કરવા પર Gaim શરૂ કરો (_S)"
+msgstr "વિન્ડોઝ શરૂ કરવા પર Pidgin શરૂ કરો (_S)"
 
 msgid "_Dockable Buddy List"
 msgstr "ડોક કરી શકાય તેવી વ્યક્તિ યાદી (_D)"
@@ -14485,13 +14485,13 @@ msgstr "પ્રવેશ વિકલ્પો"
 
 #, fuzzy
 msgid "Options specific to Pidgin for Windows."
-msgstr "વિન્ડોઝ Gaim માટે વિશિષ્ટ વિકલ્પો."
+msgstr "વિન્ડોઝ Pidgin માટે વિશિષ્ટ વિકલ્પો."
 
 #, fuzzy
 msgid ""
 "Provides options specific to Pidgin for Windows , such as buddy list docking."
 msgstr ""
-"Provides options specific to Windows Gaim, such as buddy list docking and "
+"Provides options specific to Windows Pidgin, such as buddy list docking and "
 "conversation flashing."
 
 msgid "<font color='#777777'>Logged out.</font>"
@@ -14691,7 +14691,7 @@ msgstr ""
 #~ msgid ""
 #~ "You are using %s version %s.  The current version is %s.  You can get it "
 #~ "from <a href=\"%s\">%s</a><hr>"
-#~ msgstr "તમે Gaim આવૃત્તિ %s વાપરી રહ્યા છો.  વર્તમાન આવૃત્તિ %s છે.<hr>"
+#~ msgstr "તમે Pidgin આવૃત્તિ %s વાપરી રહ્યા છો.  વર્તમાન આવૃત્તિ %s છે.<hr>"
 
 #, fuzzy
 #~ msgid "<b>ChangeLog:</b><br>%s"
@@ -14988,25 +14988,22 @@ msgstr ""
 #~ "મૂળભુત કિંમતો (ઓફલાઈન = ૪, દૂર = ૨, અને નિષ્ક્રિય = ૧)\n"
 #~ "આંતરિક ક્રમમાં વપરાયેલ ક્રમ સક્રિય->નિષ્ક્રિય->દૂર->દૂર+નિષ્ક્રિય->ઓફલાઈન વાપરશે."
 
-#~ msgid "Gaim"
-#~ msgstr "Gaim"
+#~ msgid "Pidgin - Signed off"
+#~ msgstr "Pidgin - પ્રવેશ બહાર"
 
-#~ msgid "Gaim - Signed off"
-#~ msgstr "Gaim - પ્રવેશ બહાર"
+#~ msgid "Pidgin - Away"
+#~ msgstr "Pidgin - દૂર"
 
-#~ msgid "Gaim - Away"
-#~ msgstr "Gaim - દૂર"
-
-#~ msgid "Displays an icon for Gaim in the system tray."
-#~ msgstr "સિસ્ટમ ટ્રેમાં Gaim માટે ચિહ્ન દર્શાવે છે."
+#~ msgid "Displays an icon for Pidgin in the system tray."
+#~ msgstr "સિસ્ટમ ટ્રેમાં Pidgin માટે ચિહ્ન દર્શાવે છે."
 
 #~ msgid ""
 #~ "Displays a system tray icon (in GNOME, KDE or Windows for example) to "
-#~ "show the current status of Gaim, allow fast access to commonly used "
+#~ "show the current status of Pidgin, allow fast access to commonly used "
 #~ "functions, and to toggle display of the buddy list or login window. Also "
 #~ "allows messages to be queued until the icon is clicked, similar to ICQ."
 #~ msgstr ""
-#~ "Gaim ની વર્તમાન પરિસ્થિતિ બતાવવા માટે સિસ્ટમ ટ્રે ચિહ્ન (ઉદાહરણ તરીકે GNOME, KDE "
+#~ "Pidgin ની વર્તમાન પરિસ્થિતિ બતાવવા માટે સિસ્ટમ ટ્રે ચિહ્ન (ઉદાહરણ તરીકે GNOME, KDE "
 #~ "અથવા Windows માં) દર્શાવે છે, સામાન્ય રીતે વપરાતા વિધેયો વાપરવા માટે ઝડપી વપરાશની "
 #~ "પરવાનગી આપે છે, અને વ્યક્તિ યાદી અથવા પ્રવેશ વિન્ડોનું દ્રશ્ય બદલે છે. સંદેશાઓને જ્યાં સુધી "
 #~ "ચિહ્ન ક્લિક નહિં થાય ત્યાં સુધી કતારમાં રાખવા માટે પરવાનગી પણ આપે છે, ICQ ની જેમ જ."
@@ -15033,17 +15030,17 @@ msgstr ""
 #~ "and/or chats will activate history for the same conversation type(s)."
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "તમે આવૃત્તિ %s અંહિથી મેળવી શકો છો:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "તમે આવૃત્તિ %s અંહિથી મેળવી શકો છો:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 
 #~ msgid "Delay"
 #~ msgstr "વિલંબ"
 
-#~ msgid "WinGaim Options"
-#~ msgstr "WinGaim વિકલ્પો"
+#~ msgid "WinPidgin Options"
+#~ msgstr "WinPidgin વિકલ્પો"
 
 #~ msgid ""
 #~ "%d buddy from group %s was not removed because its account was not logged "
@@ -15156,8 +15153,8 @@ msgstr ""
 #~ msgid "/Tools/Account Actions"
 #~ msgstr "/સાધનો/ખાતા ક્રિયાઓ"
 
-#~ msgid "me is using Gaim v%s."
-#~ msgstr "હું Gaim v%s વાપરી રહ્યો છું."
+#~ msgid "me is using Pidgin v%s."
+#~ msgstr "હું Pidgin v%s વાપરી રહ્યો છું."
 
 #~ msgid "/Options/Show Buddy _Icon"
 #~ msgstr "/વિકલ્પો/વ્યક્તિ ચિહ્નો બતાવો (_I)"
@@ -15178,17 +15175,17 @@ msgstr ""
 #~ msgstr "Jabber વિકાસકર્તા"
 
 #~ msgid ""
-#~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+#~ "Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 #~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 #~ "all at once.  It is written using GTK+ and is licensed under the GNU GPL."
 #~ "<BR><BR>"
 #~ msgstr ""
-#~ "Gaim એ મોડ્યુલ સંદેશાવ્યવહાર ક્લાઈન્ટ છે જે AIM, MSN, Yahoo!, Jabber, ICQ, IRC, "
+#~ "Pidgin એ મોડ્યુલ સંદેશાવ્યવહાર ક્લાઈન્ટ છે જે AIM, MSN, Yahoo!, Jabber, ICQ, IRC, "
 #~ "SILC, Novell GroupWise, Napster, Zephyr, અને Gadu-Gadu બધા એક સાથે વાપરવા "
 #~ "માટે સમર્થ છે.  તે Gtk+ ની મદદથી લખાયેલ છે અને GPL હેઠળ લાઈસન્સ અપાયેલ છે.<BR><BR>"
 
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
 
 #~ msgid "Active Developers"
 #~ msgstr "સક્રિય વિકાસકર્તાઓ"
@@ -15546,15 +15543,15 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "જ્યારે આ થાય છે, ત્યારે TOC તેને મોકલાયેલ કોઈપણ સંદેશાઓ અવગણે છે, અને તે તમને લાત મારી "
-#~ "દેશે જો તમે સંદેશો મોકલો. Gaim કંઈમાં પણ જવાથી બચાવશે. આ માત્ર કામચલાઉ જ છે, "
+#~ "દેશે જો તમે સંદેશો મોકલો. Pidgin કંઈમાં પણ જવાથી બચાવશે. આ માત્ર કામચલાઉ જ છે, "
 #~ "મહેરબાની કરીને શાંતિ દાખવો."
 
-#~ msgid "Gaim - Save As..."
-#~ msgstr "Gaim - આ રીતે સંગ્રહો..."
+#~ msgid "Pidgin - Save As..."
+#~ msgstr "Pidgin - આ રીતે સંગ્રહો..."
 
 #~ msgid "TOC host"
 #~ msgstr "TOC યજમાન"
@@ -15565,11 +15562,11 @@ msgstr ""
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
 #~ "will result in reduced functionality and features."
 #~ msgstr ""
 #~ "સામાન્ય સત્તાધિકરણ પદ્ધતિ નિષ્ફળ ગઈ છે. આનો અર્થ એ થાય કે ક્યાં તો તમારો પાસવર્ડ "
-#~ "અયોગ્ય છે, અથવા Yahoo! ની સત્તાધિકરણ પદ્ધતિ બદલાઈ ગયેલ છે. Gaim હવે વેબ સંદેશાવાહક "
+#~ "અયોગ્ય છે, અથવા Yahoo! ની સત્તાધિકરણ પદ્ધતિ બદલાઈ ગયેલ છે. Pidgin હવે વેબ સંદેશાવાહક "
 #~ "સત્તાધિકરણ પદ્ધતિની મદદથી પ્રવેશ કરવાનું શરૂ કરશે, કે જે ઘટાડાયેલ વિધેયો અને લક્ષણોમાં "
 #~ "પરિણમશે."
 
@@ -15657,14 +15654,14 @@ msgstr ""
 #~ msgid "Remote Control"
 #~ msgstr "દૂરસ્થ નિયંત્રણ"
 
-#~ msgid "Provides remote control for gaim applications."
-#~ msgstr "gaim કાર્યક્રમો માટે દૂરસ્થ નિયંત્રણ પૂરું પાડે છે."
+#~ msgid "Provides remote control for Pidgin applications."
+#~ msgstr "Pidgin કાર્યક્રમો માટે દૂરસ્થ નિયંત્રણ પૂરું પાડે છે."
 
 #~ msgid ""
-#~ "Gives Gaim the ability to be remote-controlled through third-party "
-#~ "applications or through the gaim-remote tool."
+#~ "Gives Pidgin the ability to be remote-controlled through third-party "
+#~ "applications or through the Pidgin-remote tool."
 #~ msgstr ""
-#~ "Gaim ને ત્રીજી-વ્યક્તિ કાર્યક્રમો મારફતે અથવા gaim-remote સાધન મારફતે દૂરસ્થ-"
+#~ "Pidgin ને ત્રીજી-વ્યક્તિ કાર્યક્રમો મારફતે અથવા Pidgin-remote સાધન મારફતે દૂરસ્થ-"
 #~ "નિયંત્રણની સક્ષમતા આપે છે."
 
 #~ msgid "Docked _Buddy List is always on top"
@@ -15714,7 +15711,7 @@ msgstr ""
 #~ "       away                     Popup the away dialog with the default "
 #~ "message\n"
 #~ "       back                     Remove the away dialog\n"
-#~ "       quit                     Close running copy of Gaim\n"
+#~ "       quit                     Close running copy of Pidgin\n"
 #~ "\n"
 #~ "    OPTIONS:\n"
 #~ "       -h, --help [command]     Show help for command\n"
@@ -15725,23 +15722,23 @@ msgstr ""
 #~ "       uri                      હેન્ડલ AIM: URI\n"
 #~ "       away                     મૂળભુત સંદેશા સાથે દૂર જવાનો સંદેશો પોપઅપ કરે છે\n"
 #~ "       back                     દૂર જવાનો સંદેશો દૂર કરે છે\n"
-#~ "       quit                     Gaim ની ચાલી રહેલ નકલ બંધ કરે છે\n"
+#~ "       quit                     Pidgin ની ચાલી રહેલ નકલ બંધ કરે છે\n"
 #~ "\n"
 #~ "    OPTIONS:\n"
 #~ "       -h, --help [command]     આદેશ માટે મદદ બતાવે છે\n"
 
 #~ msgid ""
-#~ "Gaim not running (on session 0)\n"
+#~ "Pidgin not running (on session 0)\n"
 #~ "Is the \"Remote Control\" plugin loaded?\n"
 #~ msgstr ""
-#~ "Gaim ચાલી રહ્યું નથી (સત્ર ૦ પર)\n"
+#~ "Pidgin ચાલી રહ્યું નથી (સત્ર ૦ પર)\n"
 #~ "શું \"દૂરસ્થ નિયંત્રણ\" પ્લગઈન લોડ થયલે છે?\n"
 
 #~ msgid ""
 #~ "\n"
 #~ "Using AIM: URIs:\n"
 #~ "Sending an IM to a screen name:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 #~ "In this case, 'Penguin' is the screen name we wish to IM, and 'hello "
 #~ "world'\n"
 #~ "is the message to be sent.  '+' must be used in place of spaces.\n"
@@ -15751,42 +15748,42 @@ msgstr ""
 #~ "Also,the following will just open a conversation window to a screen "
 #~ "name,\n"
 #~ "with no message:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "Joining a chat:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "...joins the 'PenguinLounge' chat room.\n"
 #~ "\n"
 #~ "Adding a buddy to your buddy list:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "...prompts you to add 'Penguin' to your buddy list.\n"
 #~ msgstr ""
 #~ "\n"
 #~ "AIM વાપરીને: URIs:\n"
 #~ "સ્ક્રીન નામને IM મોકલીને:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=કેમ+છો'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=કેમ+છો'\n"
 #~ "આ કિસ્સામાં, 'Penguin' એ સ્ક્રીન નામ છે જે અમે IM ને કહીએ છીએ, અને 'કેમ છો'\n"
 #~ "એ મોકલવા માટેનો સંદેશો છે.  '+' એ ખાલી જગ્યાઓની જગ્યાએ વપરાવો જ જોઈએ.\n"
 #~ "મહેરબાની કરીને ઉપર વપરાયેલ અવતરણોની નોંધ કરો -જો તમે આને શેલમાંથી ચલાવો તો '&'\n"
 #~ "ને રદ કરવાની જરૂર છે, અથવા આદેશ આ બિંદુએ અટકી જશે.\n"
 #~ "અને, નીચેનું ખાલી સ્ક્રીન નામ માટે વાર્તાલાપ વિન્ડો જ ખોલશે,\n"
 #~ "કોઈપણ જાતના સંદેશા વિના:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "સંવાદમાં જોડાવા માટે:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "...'PenguinLounge' સંવાદ કક્ષમાં જોડાય છે.\n"
 #~ "\n"
 #~ "તમારી વ્યક્તિ યાદીમાં વ્યક્તિ ઉમેરીને:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "...તમને 'Penguin' ને તમારી વ્યક્તિ યાદીમાં ઉમેરવા માટે પૂછે છે.\n"
 
 #~ msgid ""
 #~ "\n"
-#~ "Close running copy of Gaim\n"
+#~ "Close running copy of Pidgin\n"
 #~ msgstr ""
 #~ "\n"
-#~ "Gaim ની ચાલી રહેલ નકલ બંધ કરો\n"
+#~ "Pidgin ની ચાલી રહેલ નકલ બંધ કરો\n"
 
 #~ msgid ""
 #~ "\n"
@@ -16014,8 +16011,8 @@ msgstr ""
 #~ msgid "Idle _time reporting:"
 #~ msgstr "નિષ્ક્રિય સમય અહેવાલીકરણ (_t):"
 
-#~ msgid "Gaim usage"
-#~ msgstr "Gaim વપરાશ"
+#~ msgid "Pidgin usage"
+#~ msgstr "Pidgin વપરાશ"
 
 #~ msgid "X usage"
 #~ msgstr "X વપરાશ"
@@ -16061,7 +16058,7 @@ msgstr ""
 #~ msgstr "પ્રવેશ કરો (_S)"
 
 #~ msgid ""
-#~ "Gaim %s\n"
+#~ "Pidgin %s\n"
 #~ "Usage: %s [OPTION]...\n"
 #~ "\n"
 #~ "  -a, --acct          display account editor window\n"
@@ -16078,7 +16075,7 @@ msgstr ""
 #~ "  -v, --version       display the current version and exit\n"
 #~ "  -h, --help          display this help and exit\n"
 #~ msgstr ""
-#~ "Gaim %s\n"
+#~ "Pidgin %s\n"
 #~ "વપરાશ: %s [OPTION]...\n"
 #~ "\n"
 #~ "  -a, --acct          ખાતા સંપાદક વિન્ડો દર્શાવે છે\n"
@@ -16097,11 +16094,11 @@ msgstr ""
 #~ msgstr "પસંદગીઓ લાવવામાં અસમર્થ"
 
 #~ msgid ""
-#~ "Gaim was not able to load your preferences because they are stored in an "
+#~ "Pidgin was not able to load your preferences because they are stored in an "
 #~ "old format that is no longer used.  Please reconfigure your settings "
 #~ "using the Preferences window."
 #~ msgstr ""
-#~ "Gaim તમારી પસંદગીઓ લાવવામાં સમર્થ હતું નહિં કારણ કે તેઓ જૂના બંધારણમાં સંગ્રહાયેલ હતા કે "
+#~ "Pidgin તમારી પસંદગીઓ લાવવામાં સમર્થ હતું નહિં કારણ કે તેઓ જૂના બંધારણમાં સંગ્રહાયેલ હતા કે "
 #~ "જેઓ લાંબા સમય સુધી વાપરવાના નથી.  મહેરબાની કરીને પસંદગીઓ વિન્ડોની મદદથી તમારા "
 #~ "સુયોજનો પુનઃરૂપરેખાંકિત કરો."
 
@@ -16178,27 +16175,27 @@ msgstr ""
 #~ msgstr "Gadu-Gadu સર્વર સાથે સંપર્કવ્યવહાર કરવામાં ક્ષતિ"
 
 #~ msgid ""
-#~ "Gaim was unable to complete your request due to a problem communicating "
+#~ "Pidgin was unable to complete your request due to a problem communicating "
 #~ "with the Gadu-Gadu HTTP server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim એ Gadu-Gadu HTTP સર્વર સાથેની સંપર્કવ્યવહાર સમસ્યાને કારણે તમારી અરજી પૂર્ણ "
+#~ "Pidgin એ Gadu-Gadu HTTP સર્વર સાથેની સંપર્કવ્યવહાર સમસ્યાને કારણે તમારી અરજી પૂર્ણ "
 #~ "કરવામાં અસમર્થ હતું.  પછી મહેરબાની કરીને ફરી પ્રયત્ન કરો."
 
 #~ msgid "Unable to import Gadu-Gadu buddy list"
 #~ msgstr "Gadu-Gadu buddy યાદી આયાત કરવામાં અસમર્થ"
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please "
+#~ "Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please "
 #~ "try again later."
 #~ msgstr ""
-#~ "Gaim એ Gadu-Gadu વ્યક્તિ યાદી સર્વર સાથે જોડાવા માટે અસમર્થ હતું.  મહેરબાની કરીને "
+#~ "Pidgin એ Gadu-Gadu વ્યક્તિ યાદી સર્વર સાથે જોડાવા માટે અસમર્થ હતું.  મહેરબાની કરીને "
 #~ "પછી ફરીથી પ્રયત્ન કરો."
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the buddy list server.  Please try again "
+#~ "Pidgin was unable to connect to the buddy list server.  Please try again "
 #~ "later."
 #~ msgstr ""
-#~ "Gaim વ્યક્તિ યાદી સર્વર સાથે જોડાવા માટે અસમર્થ હતું.  મહેરબાની કરીને પછી ફરીથી "
+#~ "Pidgin વ્યક્તિ યાદી સર્વર સાથે જોડાવા માટે અસમર્થ હતું.  મહેરબાની કરીને પછી ફરીથી "
 #~ "પ્રયત્ન કરો."
 
 #~ msgid "Unable to delete Gadu-Gadu buddy list"
@@ -16208,17 +16205,17 @@ msgstr ""
 #~ msgstr "ડિરેક્ટરી વાપરવામાં અસમર્થ"
 
 #~ msgid ""
-#~ "Gaim was unable to search the Directory because it was unable to connect "
+#~ "Pidgin was unable to search the Directory because it was unable to connect "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim ડિરેક્ટરી શોધવા માટે અસમર્થ હતું કારણ કે તે ડિરેક્ટરી સર્વર સાથે જોડાવા માટે "
+#~ "Pidgin ડિરેક્ટરી શોધવા માટે અસમર્થ હતું કારણ કે તે ડિરેક્ટરી સર્વર સાથે જોડાવા માટે "
 #~ "અસમર્થ હતું.  મહેરબાની કરીને પછી ફરીથી પ્રયત્ન કરો."
 
 #~ msgid ""
-#~ "Gaim was unable to change your password due to an error connecting to the "
+#~ "Pidgin was unable to change your password due to an error connecting to the "
 #~ "Gadu-Gadu server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim એ Gadu-Gadu સર્વર સાથે જોડાવામાં ક્ષતિને કારણે તમારો પાસવર્ડ બદલવામાં અસમર્થ "
+#~ "Pidgin એ Gadu-Gadu સર્વર સાથે જોડાવામાં ક્ષતિને કારણે તમારો પાસવર્ડ બદલવામાં અસમર્થ "
 #~ "હતું.  મહેરબાની કરીને પછી ફરીથી પ્રયત્ન કરો."
 
 #~ msgid "Directory Search"
@@ -16228,14 +16225,14 @@ msgstr ""
 #~ msgstr "વપરાશકર્તા રૂપરેખા વાપરવામાં અસમર્થ."
 
 #~ msgid ""
-#~ "Gaim was unable to access this user's profile due to an error connecting "
+#~ "Pidgin was unable to access this user's profile due to an error connecting "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
-#~ "Gaim ડિરેક્ટરી સર્વર સાથે જોડાવામાં ક્ષતિને કારણે વપરાશકર્તાની રૂપરેખા વાપરવામાં "
+#~ "Pidgin ડિરેક્ટરી સર્વર સાથે જોડાવામાં ક્ષતિને કારણે વપરાશકર્તાની રૂપરેખા વાપરવામાં "
 #~ "અસમર્થ હતું.  મહેરબાની કરીને પછી ફરીથી પ્રયત્ન કરો."
 
-#~ msgid "Gaim encountered an error communicating with the ICQ server."
-#~ msgstr "Gaim ને ICQ સર્વર સાથે સંપર્કવ્યવહાર કરવામાં ક્ષતિ આવી."
+#~ msgid "Pidgin encountered an error communicating with the ICQ server."
+#~ msgstr "Pidgin ને ICQ સર્વર સાથે સંપર્કવ્યવહાર કરવામાં ક્ષતિ આવી."
 
 #~ msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 #~ msgstr "વપરાશકર્તા %s (%s%s%s%s%s) તમને તેમને સત્તાધિકારીત કરવા માંગે છે."
@@ -16246,8 +16243,8 @@ msgstr ""
 #~ msgid "Nick:"
 #~ msgstr "ખોટું નામ:"
 
-#~ msgid "Gaim User"
-#~ msgstr "Gaim વપરાશકર્તા"
+#~ msgid "Pidgin User"
+#~ msgstr "Pidgin વપરાશકર્તા"
 
 #~ msgid "File Transfer Aborted"
 #~ msgstr "ફાઈલ પરિવહન અડધેથી બંધ થઈ ગયું"

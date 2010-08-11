@@ -1,4 +1,4 @@
-# translation of gaimta.po to tamil
+# translation of Pidginta.po to tamil
 # translation of 20060218-ta.po to
 # translation of 20060201-ta.po to
 # This file is distributed under the same license as the PACKAGE package.
@@ -5223,7 +5223,7 @@ msgstr "அரட்டையை தொடங்கு"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "எம்எஸ்என் க்கு எஸ்எஸ்எல் ஆதரவு தேவைப்படுகிறது. எஸ்எஸ்எல் ஆதரவுள்ள நூலகத்தை தயவுசெய்து "
-"நிறுவவும். மேலும் தகவலுக்கு http://gaim.sf.net/faq-ssl.php யை காணவும்."
+"நிறுவவும். மேலும் தகவலுக்கு http://Pidgin.sf.net/faq-ssl.php யை காணவும்."
 
 msgid "Failed to connect to server."
 msgstr "சேவையகத்துடன் இணைக்க தவறியது."
@@ -11809,7 +11809,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #Pidgin on irc.freenode.net<BR><BR>"
 
 msgid "Current Developers"
 msgstr "நடப்பு உருவாக்கியவர்கள்"
@@ -14821,9 +14821,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "கணக்கு:"
 
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "கெய்ம் இணையதள தூதுவர்"
-
 #~ msgid "DBus"
 #~ msgstr "டிபஸ் (DBus)"
 
@@ -14839,12 +14836,12 @@ msgstr ""
 #~ msgid "When my nick is said"
 #~ msgstr "என் செல்லப் பெயர் சொல்லப் பட்ட போது"
 
-#~ msgid "Displays an icon for Gaim in the system tray."
+#~ msgid "Displays an icon for Pidgin in the system tray."
 #~ msgstr "கணினி தட்டில் கெய்மின் குறும்படத்தை காட்டுகிறது."
 
 #~ msgid ""
 #~ "Displays a system tray icon (in GNOME, KDE, or Windows for example) to "
-#~ "show the current status of Gaim, allow fast access to commonly used "
+#~ "show the current status of Pidgin, allow fast access to commonly used "
 #~ "functions, and to toggle display of the buddy list. Also provides options "
 #~ "to blink for unread messages."
 #~ msgstr ""
@@ -14866,16 +14863,16 @@ msgstr ""
 #~ msgstr "எவல்யுஷன் முகவரிகளில், குறிப்பிடப்பட்ட நண்பர் காணப்படவில்லை."
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "நீங்கள் பதிப்பு %s ஐ இங்கே பெறலாம்:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "நீங்கள் பதிப்பு %s ஐ இங்கே பெறலாம்:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 
 #~ msgid "Delay"
 #~ msgstr "தாமதம்"
 
-#~ msgid "WinGaim Options"
+#~ msgid "WinPidgin Options"
 #~ msgstr "விண்கெய்ம் விருப்பங்கள்"
 
 #~ msgid ""
@@ -14975,8 +14972,8 @@ msgstr ""
 #~ msgid "Jabber developer"
 #~ msgstr "ஜாப்பர் உருவாக்குபவர்"
 
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
 
 #~ msgid "Smaller font size"
 #~ msgstr "சிறிய எழுத்துரு அளவு"
@@ -15027,7 +15024,7 @@ msgstr ""
 #~ "நீங்கள் இந்த படத்தை கோப்பு பரிமாற்றத்தில் அனுப்பலாம் அல்லது இந்த தகவலில் கோர்க்கலாம், "
 #~ "அல்லது இந்த பயனாளருக்கான நண்பர் குறும்படமாக பயன்படுத்தலாம்."
 
-#~ msgid "Old Gaim"
+#~ msgid "Old Pidgin"
 #~ msgstr "பழைய கெய்ம்"
 
 #~ msgid ""
@@ -15044,7 +15041,7 @@ msgstr ""
 #~ "\n"
 #~ "<b>தகவல்:</b> %s"
 
-#~ msgid "Gaim User"
+#~ msgid "Pidgin User"
 #~ msgstr "கெய்ம் பயனாளர்"
 
 #~ msgid "Unable to initiate a new search"
@@ -15279,14 +15276,14 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "இம்மாதிரி நிகழும்பொழுது, டிஓசி எந்த செய்தியையும் தவிர்த்துவிடும், மற்றும் நீங்கள் தகவல் "
 #~ "அனுப்பினால் உங்களை உதைத்து தள்ளிவிடும். கெய்ம், எது சென்றாலும் தடுக்கவும்த்துவிடும். "
 #~ "இது தற்போதைக்கே, தயவுசெய்து பொறுமை கொள்ளவும்."
 
-#~ msgid "Gaim - Save As..."
+#~ msgid "Pidgin - Save As..."
 #~ msgstr "கெய்ம் - இப்படிச்சேமி..."
 
 #~ msgid "TOC host"
@@ -15298,7 +15295,7 @@ msgstr ""
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
 #~ "will result in reduced functionality and features."
 #~ msgstr ""
 #~ "சாதாரண அனுமதிக்கும் முறை செயலிலந்தது. உங்களது கடவுச்சொல்லோ அல்லது யாகூ! வின் "

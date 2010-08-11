@@ -374,7 +374,7 @@ purple_plugin_probe(const char *filename)
 	 */
 	if (plugin->info->id == NULL || *plugin->info->id == '\0')
 	{
-		plugin->error = g_strdup_printf(_("This plugin has not defined an ID."));
+		plugin->error = g_strdup(_("This plugin has not defined an ID."));
 		purple_debug_error("plugins", "%s is not loadable: info->id is not defined.\n", plugin->path);
 		plugin->unloadable = TRUE;
 		return plugin;

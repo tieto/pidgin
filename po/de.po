@@ -1,6 +1,6 @@
 # translation of de.po to Deutsch
 # Pidgin German translation
-# Copyright (C) 2001, Daniel Seifert <gaim-translation@dseifert.de>
+# Copyright (C) 2001, Daniel Seifert <Pidgin-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
 # Copyright (C) 2002-2008, Björn Voigt <bjoern@cs.tu-berlin.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-18 23:08+0100\n"
-"PO-Revision-Date: 2008-12-18 20:11+0100\n"
+"POT-Creation-Date: 2009-01-09 00:39+0100\n"
+"PO-Revision-Date: 2009-01-09 00:38+0100\n"
 "Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -4168,6 +4168,9 @@ msgstr "Authentifizierung"
 msgid "Re-initializing Stream"
 msgstr "Initialisiere Stream nochmal"
 
+msgid "Server doesn't support blocking"
+msgstr "Server unterstützt kein Blockieren"
+
 msgid "Not Authorized"
 msgstr "Nicht autorisiert"
 
@@ -6487,12 +6490,10 @@ msgid "_OK"
 msgstr "_OK"
 
 #, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
+msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
-"Die Verbindung kann schnell unterbrochen werden. Vielleicht wollen Sie TOC "
-"benutzen bis dieser Fehler behoben wurde. Suchen Sie auf %s nach Updates."
+"Sie werden eventuell gleich abgemeldet. In diesem Fall, überprüfen Sie %s "
+"auf Updates."
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "Konnte keinen gültigen AIM Login-Hash bekommen."
@@ -7200,7 +7201,7 @@ msgid "Phone Number"
 msgstr "Telefonnummer"
 
 msgid "Authorize adding"
-msgstr "Hinzufügen autorisieren?"
+msgstr "Hinzufügen autorisieren"
 
 msgid "Cellphone Number"
 msgstr "Handy-Telefonnummer"
@@ -9262,6 +9263,9 @@ msgstr "Konnte den Hostnamen nicht auflösen"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "SIP-Benutzernamen dürfen keine Leerzeichen oder @-Symbole enthalten"
+
+msgid "SIP connect server not specified"
+msgstr "SIP-Verbindungsserver nicht angegeben"
 
 #. *< type
 #. *< ui_requirement

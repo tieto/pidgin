@@ -1,11 +1,11 @@
-# Gaim Amharic translation
+# Pidgin Amharic translation
 # Copyright (C) 2003, Daniel Yacob, Ge'ez Frontier Foundation <locales@geez.org>
 #
-# This file is distributed under the same license as the gaim package.
+# This file is distributed under the same license as the Pidgin package.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 0.60 \n"
+"Project-Id-Version: Pidgin 0.60 \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2003-04-08 09:23:11+EDT\n"
@@ -14360,19 +14360,15 @@ msgstr ""
 #~ msgstr "ተገናኝቷል"
 
 #, fuzzy
-#~ msgid "Gaim"
-#~ msgstr "ጨዋታዎች"
-
-#, fuzzy
-#~ msgid "Gaim - Signed off"
+#~ msgid "Pidgin - Signed off"
 #~ msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #, fuzzy
-#~ msgid "Gaim - Away"
+#~ msgid "Pidgin - Away"
 #~ msgstr "ጌም - አዲስ እሜይል"
 
-#~ msgid "WinGaim Options"
-#~ msgstr "የWinGaim ምርጫዎች"
+#~ msgid "WinPidgin Options"
+#~ msgstr "የWinPidgin ምርጫዎች"
 
 #, fuzzy
 #~ msgid "(+%d more)"
@@ -14572,7 +14568,7 @@ msgstr ""
 #~ msgid "Insertions"
 #~ msgstr "አያያዝ አስገባ"
 
-#~ msgid "Gaim usage"
+#~ msgid "Pidgin usage"
 #~ msgstr "የጌም አጠቃቀም"
 
 #~ msgid "X usage"
@@ -14663,10 +14659,10 @@ msgstr ""
 #~ msgid "_Screenname:"
 #~ msgstr "እስክሪን ስም፦ (_S)"
 
-#~ msgid "Gaim - Information"
+#~ msgid "Pidgin - Information"
 #~ msgstr "ጌም - መረጃ"
 
-#~ msgid "Gaim - Insert Image"
+#~ msgid "Pidgin - Insert Image"
 #~ msgstr "ጌም - ምስል አስገባ"
 
 #~ msgid "_Host"
@@ -14678,7 +14674,7 @@ msgstr ""
 #~ msgid "Browser Options"
 #~ msgstr "የመቃኛ ምርጫዎች"
 
-#~ msgid "Gaim - Save Icon"
+#~ msgid "Pidgin - Save Icon"
 #~ msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #, fuzzy
@@ -14732,7 +14728,7 @@ msgstr ""
 #~ msgstr "ሁኔታ፦"
 
 #, fuzzy
-#~ msgid "Gaim - Popup"
+#~ msgid "Pidgin - Popup"
 #~ msgstr "ጌም - ክፈት..."
 
 #~ msgid "Preferences..."
@@ -14744,7 +14740,7 @@ msgstr ""
 #~ msgid "%dm"
 #~ msgstr "%dm"
 
-#~ msgid "Gaim - Save Image"
+#~ msgid "Pidgin - Save Image"
 #~ msgstr "ጌም - ምስሉን አስቀምት"
 
 #~ msgid "IM Tabs"

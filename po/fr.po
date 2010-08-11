@@ -4,7 +4,7 @@
 # Copyright (C) 2002, Stéphane Pontier <stephane.pontier@free.fr>
 # Copyright (C) 2002, Stéphane Wirtel <stephane.wirtel@belgacom.net>
 # Copyright (C) 2002, Loïc Jeannin <loic.jeannin@free.fr>
-# Copyright (C) 2002-2008, Éric Boumaour <zongo_fr@users.sourceforge.net>
+# Copyright (C) 2002-2009, Éric Boumaour <zongo_fr@users.sourceforge.net>
 #
 # This file is distributed under the same license as the Pidgin package.
 #
@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-16 10:10+0100\n"
-"PO-Revision-Date: 2008-12-16 10:09+0100\n"
+"POT-Creation-Date: 2009-01-05 10:49+0100\n"
+"PO-Revision-Date: 2009-01-05 10:48+0100\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -4191,6 +4191,9 @@ msgstr "Authentification"
 msgid "Re-initializing Stream"
 msgstr "Réinitialisation du flux"
 
+msgid "Server doesn't support blocking"
+msgstr "Le serveur ne supporte pas le blocage"
+
 msgid "Not Authorized"
 msgstr "Non autorisé"
 
@@ -4947,7 +4950,6 @@ msgstr "Passeport pour enfant sans accord parental"
 msgid "Passport account not yet verified"
 msgstr "Le compte Passeport n'est pas encore validé"
 
-#, c-format
 msgid "Passport account suspended"
 msgstr "Le compte Passeport est suspendu"
 
@@ -4964,7 +4966,7 @@ msgid "MSN Error: %s\n"
 msgstr "Erreur MSN : %s\n"
 
 msgid "Other Contacts"
-msgstr "AUtres contacts"
+msgstr "Autres contacts"
 
 msgid "Non-IM Contacts"
 msgstr "Contacts non instantanés"
@@ -6548,12 +6550,10 @@ msgid "_OK"
 msgstr "_OK"
 
 #, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
+msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
-"Vous risquez d'être déconnecté sous peu. Veuillez essayer d'utiliser TOC "
-"entre-temps si cela arrive. Visitez %s pour plus d'informations."
+"Vous risquez d'être déconnecté sous peu. Si c'est le cas, consultez %s pour "
+"plus d'informations."
 
 msgid "Unable to get a valid AIM login hash."
 msgstr "Impossible de récupérer un code de connexion AIM valide."
@@ -9309,6 +9309,9 @@ msgstr "Impossible de résoudre le nom de l'hôte."
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
 "Les noms d'utilisateur SIP ne peuvent pas avoir d'espace ou de symbole @."
+
+msgid "SIP connect server not specified"
+msgstr "Serveur de connexion SIP non spécifié"
 
 #. *< type
 #. *< ui_requirement
@@ -14053,41 +14056,8 @@ msgstr "Envoyer et recevoir des blocs XMPP."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
-#~ msgid "Connection to server lost (no data received within %d second)"
-#~ msgid_plural ""
-#~ "Connection to server lost (no data received within %d seconds)"
-#~ msgstr[0] ""
-#~ "Connexion avec le serveur perdue (aucune donnée depuis %d seconde)."
-#~ msgstr[1] ""
-#~ "Connexion avec le serveur perdue (aucune donnée depuis %d secondes)."
-
-#~ msgid "%d needs Q&A"
-#~ msgstr "%d a besoin d'une réponse"
-
-#~ msgid "Add buddy Q&A"
-#~ msgstr "Ajouter une réponse de contact"
-
-#~ msgid "Can not decrypt get server reply"
-#~ msgstr "Impossible de récupérer la réponse du serveur"
-
-#~ msgid "Keep alive error"
-#~ msgstr "Erreur de Keep alive"
-
-#~ msgid ""
-#~ "Lost connection with server:\n"
-#~ "%d, %s"
-#~ msgstr ""
-#~ "Connexion perdue avec le serveur :\n"
-#~ "%d, %s"
-
-#~ msgid "Connecting server ..."
-#~ msgstr "Connexion au serveur..."
-
 #~ msgid "Failed to send IM."
 #~ msgstr "Impossible d'envoyer le message."
-
-#~ msgid "Not a member of room \"%s\"\n"
-#~ msgstr "Vous n'êtes pas membre du groupe « %s ».\n"
 
 #~ msgid "User information for %s unavailable"
 #~ msgstr "Les informations sur %s ne sont pas disponibles"

@@ -1667,7 +1667,7 @@ msgid "SSL Certificate Verification"
 msgstr "Verifikim Dëshmie SSL"
 
 #  *
-#  * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
+#  * A wrapper for Pidgin_request_action() that uses Accept and Cancel buttons.
 #. Number of actions
 msgid "Accept"
 msgstr "Prano"
@@ -2227,7 +2227,7 @@ msgid "%s requires %s, but it failed to unload."
 msgstr "%s lyp %s, por ky nuk arriti të çshkarkohej."
 
 #  *
-#  * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
+#  * A wrapper for Pidgin_request_action() that uses Accept and Cancel buttons.
 msgid "Autoaccept"
 msgstr "Vetëprano"
 
@@ -2260,7 +2260,7 @@ msgid "Ask"
 msgstr "Pyet"
 
 #  *
-#  * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
+#  * A wrapper for Pidgin_request_action() that uses Accept and Cancel buttons.
 msgid "Auto Accept"
 msgstr "Vetëprano"
 
@@ -2713,7 +2713,7 @@ msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
 msgstr "Mund ta përpunoni/fshini cytjen përmes dialogut  `Cytje Shoku'."
 
 #  *
-#  * A wrapper for gaim_request_action() that uses Yes and No buttons.
+#  * A wrapper for Pidgin_request_action() that uses Yes and No buttons.
 msgid "Yes"
 msgstr "Po"
 
@@ -6409,7 +6409,7 @@ msgstr ""
 "%s duket se është i palidhur dhe nuk e mori mesazhin që sapo i dërguat."
 
 #  TODO: Would be nice to prompt if not set!
-#  *  gaim_request_fields(gc, _("Server Address"),...);
+#  *  Pidgin_request_fields(gc, _("Server Address"),...);
 #  ...but for now just error out with a nice message.
 msgid ""
 "Unable to connect to server. Please enter the address of the server you wish "
@@ -10440,7 +10440,7 @@ msgstr "Nuk u përtyp dot përgjigjja prej ndërmjetësit HTTP: %s\n"
 msgid "HTTP proxy connection error %d"
 msgstr "Gabim lidhjeje i shërbyesit HTTP %d"
 
-#  XXX: why in the hell are we calling gaim_connection_error() here?
+#  XXX: why in the hell are we calling Pidgin_connection_error() here?
 #  Forbidden
 #, c-format
 msgid "Access denied: HTTP proxy server forbids port %d tunneling."
@@ -10464,7 +10464,7 @@ msgid "%s has requested your attention!"
 msgstr "%s ka kërkuar vëmendjen tuaj!"
 
 #  *
-#  * A wrapper for gaim_request_action() that uses Yes and No buttons.
+#  * A wrapper for Pidgin_request_action() that uses Yes and No buttons.
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
 #.
@@ -10475,7 +10475,7 @@ msgid "_No"
 msgstr "_Jo"
 
 #  *
-#  * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
+#  * A wrapper for Pidgin_request_action() that uses Accept and Cancel buttons.
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
 #.

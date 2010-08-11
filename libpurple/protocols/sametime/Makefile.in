@@ -61,10 +61,8 @@ LTLIBRARIES = $(noinst_LTLIBRARIES) $(pkg_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libsametime_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
-am__libsametime_la_SOURCES_DIST = sametime.c
 am__objects_1 = libsametime_la-sametime.lo
-@STATIC_SAMETIME_FALSE@am_libsametime_la_OBJECTS = $(am__objects_1)
-@STATIC_SAMETIME_TRUE@am_libsametime_la_OBJECTS = $(am__objects_1)
+am_libsametime_la_OBJECTS = $(am__objects_1)
 libsametime_la_OBJECTS = $(am_libsametime_la_OBJECTS)
 @STATIC_SAMETIME_FALSE@am_libsametime_la_rpath = -rpath $(pkgdir)
 @STATIC_SAMETIME_TRUE@am_libsametime_la_rpath =
@@ -80,7 +78,7 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libsametime_la_SOURCES)
-DIST_SOURCES = $(am__libsametime_la_SOURCES_DIST)
+DIST_SOURCES = $(libsametime_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -452,16 +450,14 @@ pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 noinst_HEADERS = sametime.h
 SAMETIMESOURCES = sametime.c
 AM_CFLAGS = \
-	$(st) \
-	-DG_LOG_DOMAIN=\"sametime\"
+	$(st)
 
 @STATIC_SAMETIME_FALSE@st = 
 @STATIC_SAMETIME_TRUE@st = -DPURPLE_STATIC_PRPL
 @STATIC_SAMETIME_TRUE@noinst_LTLIBRARIES = libsametime.la
-@STATIC_SAMETIME_FALSE@libsametime_la_SOURCES = $(SAMETIMESOURCES)
-@STATIC_SAMETIME_TRUE@libsametime_la_SOURCES = $(SAMETIMESOURCES)
 @STATIC_SAMETIME_TRUE@libsametime_la_CFLAGS = $(AM_CFLAGS)
 @STATIC_SAMETIME_FALSE@pkg_LTLIBRARIES = libsametime.la
+libsametime_la_SOURCES = $(SAMETIMESOURCES)
 libsametime_la_LDFLAGS = -module -avoid-version
 libsametime_la_LIBADD = $(GLIB_LIBS) $(MEANWHILE_LIBS)
 AM_CPPFLAGS = \
@@ -469,7 +465,8 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
-	$(MEANWHILE_CFLAGS)
+	$(MEANWHILE_CFLAGS) \
+	-DG_LOG_DOMAIN=\"sametime\"
 
 all: all-am
 

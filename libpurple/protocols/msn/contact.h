@@ -30,7 +30,7 @@
 
 #define MSN_APPLICATION_ID "CFE80F9D-180F-4399-82AB-413F33A1FA11"
 
-#define MSN_CONTACT_SERVER	"contacts.msn.com"
+#define MSN_CONTACT_SERVER	"omega.contacts.msn.com"
 
 /* Get Contact List */
 

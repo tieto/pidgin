@@ -120,7 +120,7 @@ msn_message_new_plain(const char *message)
 	msn_message_set_charset(msg, "UTF-8");
 	msn_message_set_flag(msg, 'A');
 	msn_message_set_attr(msg, "X-MMS-IM-Format",
-						 "FN=MS%20Sans%20Serif; EF=; CO=0; CS=86;PF=0");
+						 "FN=Segoe%20UI; EF=; CO=0; CS=1;PF=0");
 
 	message_cr = purple_str_add_cr(message);
 	msn_message_set_bin_data(msg, message_cr, strlen(message_cr));

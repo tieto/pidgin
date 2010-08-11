@@ -1,12 +1,12 @@
-# Xhosa translation of gaim
+# Xhosa translation of Pidgin
 # Copyright (C) 2005 Canonical Ltd.
-# This file is distributed under the same license as the gaim package.
+# This file is distributed under the same license as the Pidgin package.
 # Translation by Canonical Ltd <translations@canonical.com> with thanks to
 # Translation World CC in South Africa, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2005-03-23 12:21+0200\n"
@@ -25,7 +25,7 @@ msgstr "IsiFrentshi"
 
 #, fuzzy, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Zama `%s -h' ulwazi olongezelelweyo.\n"
+msgstr "Pidgin %s. Zama `%s -h' ulwazi olongezelelweyo.\n"
 
 #, c-format
 msgid ""
@@ -2250,7 +2250,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to load the plugin"
-msgstr "I-Gaim ayikwazanga ukufakela ungeniso lwakho."
+msgstr "I-Pidgin ayikwazanga ukufakela ungeniso lwakho."
 
 #, c-format
 msgid "The required plugin %s was unable to load."
@@ -2258,7 +2258,7 @@ msgstr "I-%s efunekayo ukungenisa ayikwazanga ukufakela inkqubo."
 
 #, fuzzy
 msgid "Unable to load your plugin."
-msgstr "I-Gaim ayikwazanga ukufakela ungeniso lwakho."
+msgstr "I-Pidgin ayikwazanga ukufakela ungeniso lwakho."
 
 #, fuzzy, c-format
 msgid "%s requires %s, but it failed to unload."
@@ -2398,7 +2398,7 @@ msgstr ""
 #. *< id
 #, fuzzy
 msgid "File Control"
-msgstr "Ulawulo lweFayile yeGaim"
+msgstr "Ulawulo lweFayile yePidgin"
 
 #. *< name
 #. *< version
@@ -2406,7 +2406,7 @@ msgstr "Ulawulo lweFayile yeGaim"
 #. *  description
 #, fuzzy
 msgid "Allows control by entering commands in a file."
-msgstr "Ikuvumela ukulawula iGaim ngokufaka imiyalelo efayilini."
+msgstr "Ikuvumela ukulawula iPidgin ngokufaka imiyalelo efayilini."
 
 msgid "Minutes"
 msgstr "Imizuzu"
@@ -3296,7 +3296,7 @@ msgstr "Udluliso lwefayili seluqalile"
 
 #, fuzzy
 msgid "Could not open a listening port."
-msgstr "I-Gaim ayikwazanga ukuvula isiqhagamsheli esimiselweyo."
+msgstr "I-Pidgin ayikwazanga ukuvula isiqhagamsheli esimiselweyo."
 
 msgid "Error displaying MOTD"
 msgstr "Impazamo yokubonisa iMOTD"
@@ -3462,7 +3462,7 @@ msgstr "UmYalezo ongaziwayo"
 
 #, fuzzy
 msgid "The IRC server received a message it did not understand."
-msgstr "U-Gaim uthumele umyalezo ongakhange uqondwe yiseva yeIRC."
+msgstr "U-Pidgin uthumele umyalezo ongakhange uqondwe yiseva yeIRC."
 
 #, c-format
 msgid "Users on %s: %s"
@@ -4941,7 +4941,7 @@ msgstr "Akukwazeki ukwahlula umyalezo ngezijungqe"
 
 #, fuzzy, c-format
 msgid "Syntax Error (probably a client bug)"
-msgstr "Impazamo yokwakheka kwezivakalisi (mhlawumbi sisiphene sikaGaim)"
+msgstr "Impazamo yokwakheka kwezivakalisi (mhlawumbi sisiphene sikaPidgin)"
 
 #, c-format
 msgid "Invalid email address"
@@ -5320,7 +5320,7 @@ msgstr "Ukuqalisa _inCoko"
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Kufuneka inkxaso yeSSL malunga neMSN. Nceda ufakele i-library exhaswayo "
-"yeSSL. Jonga kwi-http://gaim.sf.net/faq-ssl.php ukuzuza iinkcukacha ezithe "
+"yeSSL. Jonga kwi-http://Pidgin.sf.net/faq-ssl.php ukuzuza iinkcukacha ezithe "
 "vetshe."
 
 #, fuzzy
@@ -5499,7 +5499,7 @@ msgid ""
 "Could not find any information in the user's profile. The user most likely "
 "does not exist."
 msgstr ""
-"U-Gaim akalufumananga ulwazi kwifayili yomsebenzisi. Mhlawumbi umsebenzisi "
+"U-Pidgin akalufumananga ulwazi kwifayili yomsebenzisi. Mhlawumbi umsebenzisi "
 "akakho."
 
 msgid "Profile URL"
@@ -6836,7 +6836,7 @@ msgstr ""
 #, fuzzy
 msgid "Unable to get a valid AIM login hash."
 msgstr ""
-"U-Gaim akakwazanga ukufumana iqhosha elisebenzayo le-hesh yokungena lakwa-"
+"U-Pidgin akakwazanga ukufumana iqhosha elisebenzayo le-hesh yokungena lakwa-"
 "AIM."
 
 #, fuzzy, c-format
@@ -6847,7 +6847,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Unable to get a valid login hash."
-msgstr "U-Gaim akakwazanga ukufumana ihesh yokungena esebenzayo."
+msgstr "U-Pidgin akakwazanga ukufumana ihesh yokungena esebenzayo."
 
 msgid "Password sent"
 msgstr "Ukuthunyelwa kwepassword"
@@ -7162,10 +7162,10 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Obona bude bugqibeleleyo benkangeleko bee-byte ezi %d bugqithiwe.  U-Gaim "
+"Obona bude bugqibeleleyo benkangeleko bee-byte ezi %d bugqithiwe.  U-Pidgin "
 "ukushunqulele bona."
 msgstr[1] ""
-"Obona bude bugqibeleleyo bee-byte ezi %d bugqithiwe.  U-Gaim unishunqulele "
+"Obona bude bugqibeleleyo bee-byte ezi %d bugqithiwe.  U-Pidgin unishunqulele "
 "bona."
 
 msgid "Profile too long."
@@ -7180,10 +7180,10 @@ msgid_plural ""
 "truncated for you."
 msgstr[0] ""
 "Obona bude bugqibeleleyo bomyalezo wokungabikho bee-byte ezi %d bugqithiwe.  "
-"U-Gaim ukushunqulele bona."
+"U-Pidgin ukushunqulele bona."
 msgstr[1] ""
 "Obona bude bugqibeleleyo bomyalezo wokungabikho bee-byte ezi %d bugqithiwe.  "
-"U-Gaim unishunqulele bona."
+"U-Pidgin unishunqulele bona."
 
 msgid "Away message too long."
 msgstr "Umyalezo wokungabikho mde kakhulu."
@@ -7211,7 +7211,7 @@ msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
 "list is not lost, and will probably become available in a few minutes."
 msgstr ""
-"U-Gaim akakwazanga okwethutyana ukukhupha uluhlu lwakho lobuhlobo kwiiseva "
+"U-Pidgin akakwazanga okwethutyana ukukhupha uluhlu lwakho lobuhlobo kwiiseva "
 "zeAIM.  Uluhlu lwakho lomhlobo alulahlekanga, yaye mhlawube luya kufumaneka "
 "kwithuba leeyure ezimbalwa."
 
@@ -7759,7 +7759,7 @@ msgstr "Vala"
 
 #, fuzzy
 msgid "About me"
-msgstr "Malunga neGaim"
+msgstr "Malunga nePidgin"
 
 #, fuzzy
 msgid "Category"
@@ -7978,7 +7978,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "About OpenQ r%s"
-msgstr "Malunga neGaim"
+msgstr "Malunga nePidgin"
 
 #, fuzzy
 msgid "Change Icon"
@@ -7996,7 +7996,7 @@ msgstr ""
 
 #, fuzzy
 msgid "About OpenQ"
-msgstr "Malunga neGaim"
+msgstr "Malunga nePidgin"
 
 #. *< type
 #. *< ui_requirement
@@ -9430,7 +9430,7 @@ msgstr "Akukwazekanga ukuseka ii-cmodes ze %s"
 
 #, fuzzy, c-format
 msgid "Unknown command: %s, (may be a client bug)"
-msgstr "Imiyalelo engaziwayo: %s, (kunokuba sisiphene seGaim)"
+msgstr "Imiyalelo engaziwayo: %s, (kunokuba sisiphene sePidgin)"
 
 msgid "part [channel]:  Leave the chat"
 msgstr "part [isiqhagamshelanisi]:  Shiya incoko"
@@ -10038,7 +10038,7 @@ msgid ""
 "Check %s for updates."
 msgstr ""
 "Iseva yeYahoo icele ukusebenzisa indlela engaqaphelekiyo yokuqinisekisa.  Le "
-"nguqulelo yeGaim kukho amathuba amaninzi okuba ingaphumeleli ukungena ku "
+"nguqulelo yePidgin kukho amathuba amaninzi okuba ingaphumeleli ukungena ku "
 "Yahoo.  Khangela %s iindlela zokuhlaziya."
 
 msgid "Failed Yahoo! Authentication"
@@ -12118,7 +12118,7 @@ msgstr "IsiAmharic"
 
 #, fuzzy, c-format
 msgid "About %s"
-msgstr "Malunga neGaim"
+msgstr "Malunga nePidgin"
 
 #, c-format
 msgid ""
@@ -12135,7 +12135,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">:</FONT> #gaim kwi- irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">:</FONT> #Pidgin kwi- irc.freenode.net<BR><BR>"
 
 #, fuzzy
 msgid "Current Developers"
@@ -12648,7 +12648,7 @@ msgstr ""
 
 #, fuzzy
 msgid "<span size='larger'>_Larger</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">I-Gaim v%s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">I-Pidgin v%s</span>"
 
 #, fuzzy
 msgid "_Normal"
@@ -12740,7 +12740,7 @@ msgstr ""
 
 #, fuzzy, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Zama `%s -h' ulwazi olongezelelweyo.\n"
+msgstr "Pidgin %s. Zama `%s -h' ulwazi olongezelelweyo.\n"
 
 #, c-format
 msgid ""
@@ -14306,7 +14306,7 @@ msgstr ""
 #. *< id
 #, fuzzy
 msgid "Pidgin Demonstration Plugin"
-msgstr "Umboniso wokuNgenisa iGaim"
+msgstr "Umboniso wokuNgenisa iPidgin"
 
 #. *< name
 #. *< version
@@ -14411,7 +14411,7 @@ msgstr "Ii-Akhawunti"
 
 #, fuzzy
 msgid "Gtkrc File Tools"
-msgstr "Ulawulo lweFayile yeGaim"
+msgstr "Ulawulo lweFayile yePidgin"
 
 #, c-format
 msgid "Write settings to %s%sgtkrc-2.0"
@@ -14422,7 +14422,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Pidgin GTK+ Theme Control"
-msgstr "Ulawulo lweFayile yeGaim"
+msgstr "Ulawulo lweFayile yePidgin"
 
 msgid "Provides access to commonly used gtkrc settings."
 msgstr ""
@@ -14715,7 +14715,7 @@ msgstr "Ukuvula"
 
 #, fuzzy, c-format
 msgid "_Start %s on Windows startup"
-msgstr "_Qala iGaim kwinkqubo yokuvula yeWindows"
+msgstr "_Qala iPidgin kwinkqubo yokuvula yeWindows"
 
 msgid "_Dockable Buddy List"
 msgstr "_Uludwe lomHlobo olunokufakwa kwiDokisi"
@@ -14739,7 +14739,7 @@ msgstr "IinDlela zokuKhetha zokuNgena"
 
 #, fuzzy
 msgid "Options specific to Pidgin for Windows."
-msgstr "Izinto ezizodwa okunokukhethwa kuzo kwiiFestile zeGaim."
+msgstr "Izinto ezizodwa okunokukhethwa kuzo kwiiFestile zePidgin."
 
 msgid ""
 "Provides options specific to Pidgin for Windows , such as buddy list docking."
@@ -14941,7 +14941,7 @@ msgstr ""
 #~ "You are using %s version %s.  The current version is %s.  You can get it "
 #~ "from <a href=\"%s\">%s</a><hr>"
 #~ msgstr ""
-#~ "Ngoku usebenza ngenguqulelo ye %s yeGaim.  Inguqulelo yangoku yi %s.<hr>"
+#~ "Ngoku usebenza ngenguqulelo ye %s yePidgin.  Inguqulelo yangoku yi %s.<hr>"
 
 #, fuzzy
 #~ msgid "<b>ChangeLog:</b><br>%s"
@@ -15239,26 +15239,23 @@ msgstr ""
 #~ "aya kusebenzisa okwakufudula kululandelelwano olwakhelweyo lokusebenza-"
 #~ ">ukulalela->ukungabikho->ukungabikho+nokulalela->konxibelelwano."
 
-#~ msgid "Gaim"
-#~ msgstr "I-Gaim"
+#~ msgid "Pidgin - Signed off"
+#~ msgstr "I-Pidgin - YokuPhuma"
 
-#~ msgid "Gaim - Signed off"
-#~ msgstr "I-Gaim - YokuPhuma"
+#~ msgid "Pidgin - Away"
+#~ msgstr "I-Pidgin - eNgekhoyo"
 
-#~ msgid "Gaim - Away"
-#~ msgstr "I-Gaim - eNgekhoyo"
-
-#~ msgid "Displays an icon for Gaim in the system tray."
-#~ msgstr "Ibonisa umfanekiso womqondiso weGaim kwinkqubo yetreyi."
+#~ msgid "Displays an icon for Pidgin in the system tray."
+#~ msgstr "Ibonisa umfanekiso womqondiso wePidgin kwinkqubo yetreyi."
 
 #~ msgid ""
 #~ "Displays a system tray icon (in GNOME, KDE or Windows for example) to "
-#~ "show the current status of Gaim, allow fast access to commonly used "
+#~ "show the current status of Pidgin, allow fast access to commonly used "
 #~ "functions, and to toggle display of the buddy list or login window. Also "
 #~ "allows messages to be queued until the icon is clicked, similar to ICQ."
 #~ msgstr ""
 #~ "Ibonisa inkqubo yetreyi yomfanekiso womqondiso (kwiGNOME, KDE okanye i-"
-#~ "Windows ukwenza umzekelo) ukubonisa imo yangoku yeGaim, ivumela "
+#~ "Windows ukwenza umzekelo) ukubonisa imo yangoku yePidgin, ivumela "
 #~ "ukufikelela ngokukhawuleza kwimisebenzi esetyenziswa ngesiqhelo, "
 #~ "nokuhambisa iqhosha ukubonisa uluhlu lomhlobo okanye ifestile yokungena. "
 #~ "Kananjalo ivumela ukuba imiyalezo ikroze de uchokozwe umfanekiso "
@@ -15269,17 +15266,17 @@ msgstr ""
 #~ msgstr "Ubukhulu beSandisi"
 
 #~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "You can get version %s from:<br><a href=\"http://Pidgin.sourceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 #~ msgstr ""
-#~ "Ungafumana inguqulelo ye%s ivela:<br><ahref=\"http://gaim.souceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
+#~ "Ungafumana inguqulelo ye%s ivela:<br><ahref=\"http://Pidgin.souceforge.net/"
+#~ "\">http://Pidgin.sourceforge.net</a>."
 
 #~ msgid "Delay"
 #~ msgstr "Ukubambezela"
 
-#~ msgid "WinGaim Options"
-#~ msgstr "Iindlela zoKhetho zeWinGaim"
+#~ msgid "WinPidgin Options"
+#~ msgstr "Iindlela zoKhetho zeWinPidgin"
 
 #~ msgid ""
 #~ "%d buddy from group %s was not removed because its account was not logged "
@@ -15398,8 +15395,8 @@ msgstr ""
 #~ msgid "/Tools/Account Actions"
 #~ msgstr "/Izixhobo/iiNtshukumo ze-Akhawunti"
 
-#~ msgid "me is using Gaim v%s."
-#~ msgstr "I-me isebenzisa uGaim v%s."
+#~ msgid "me is using Pidgin v%s."
+#~ msgstr "I-me isebenzisa uPidgin v%s."
 
 #, fuzzy
 #~ msgid "/Options/Show Buddy _Icon"
@@ -15424,19 +15421,19 @@ msgstr ""
 
 #, fuzzy
 #~ msgid ""
-#~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+#~ "Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 #~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 #~ "all at once.  It is written using GTK+ and is licensed under the GNU GPL."
 #~ "<BR><BR>"
 #~ msgstr ""
-#~ "I-Gaim ngumxhasi omiselweyo wemiyalezo okwaziyo ukusebenzisa iAIM, iMSN, "
+#~ "I-Pidgin ngumxhasi omiselweyo wemiyalezo okwaziyo ukusebenzisa iAIM, iMSN, "
 #~ "iYahoo!, iJabber, iICQ, iSILC, iNovell GroupWise, iNapster, iZephyr, "
 #~ "neGadu-Gadu zonke ngexexha elinye.  Ibhalwa kusetyenziswa iGtk+ yaye "
 #~ "inelayisensi ngaphantsi kweGPL.<BR><BR>"
 
 #, fuzzy
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">:</FONT> #gaim kwi- irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
+#~ msgstr "<FONT SIZE=\"4\">:</FONT> #Pidgin kwi- irc.freenode.net<BR><BR>"
 
 #~ msgid "Active Developers"
 #~ msgstr "AbaPhuhlisi abaSebenzayo"
@@ -15773,15 +15770,15 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "Xa oku kusenzeka, iTOC ayithatheli ngqalelo nayiphi na imiyalezo "
-#~ "ethunyelwa kuyo, yaye inokukukhupha xa uthumela umyalezo. U-Gaim uya "
+#~ "ethunyelwa kuyo, yaye inokukukhupha xa uthumela umyalezo. U-Pidgin uya "
 #~ "kuthintela nantoni na ukuba igqithe. Oku kokwethutyana, nceda ube nomonde."
 
-#~ msgid "Gaim - Save As..."
-#~ msgstr "IGaim - Yigcine Njeng..."
+#~ msgid "Pidgin - Save As..."
+#~ msgstr "IPidgin - Yigcine Njeng..."
 
 #~ msgid "TOC host"
 #~ msgstr "Umququzeleli weTOC"
@@ -15792,12 +15789,12 @@ msgstr ""
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
 #~ "will result in reduced functionality and features."
 #~ msgstr ""
 #~ "Indlela eqhelekileyo yokuqinisekisa ayiphumelelanga. Oku kuthetha ukuthi "
 #~ "mhlawumbi i-password iphosakele, okanye inkqubo yokuqinisekisa kaYahoo! "
-#~ "itshintshile. U-Gaim ngoku uya kuzama ukungena esebenzisa ukuqinisekisa "
+#~ "itshintshile. U-Pidgin ngoku uya kuzama ukungena esebenzisa ukuqinisekisa "
 #~ "kwe Web Messenger, nto leyo iya kuba neziphumo eziphungula ukubanakho "
 #~ "ukusebenza kwakunye neempawu."
 
@@ -15885,15 +15882,15 @@ msgstr ""
 #~ msgid "Remote Control"
 #~ msgstr "Ukulawula Ukwenye Indawo"
 
-#~ msgid "Provides remote control for gaim applications."
-#~ msgstr "Ibonelela ngolawulo lwemisebenzi ye-gaim ukwenye indawo."
+#~ msgid "Provides remote control for Pidgin applications."
+#~ msgstr "Ibonelela ngolawulo lwemisebenzi ye-Pidgin ukwenye indawo."
 
 #~ msgid ""
-#~ "Gives Gaim the ability to be remote-controlled through third-party "
-#~ "applications or through the gaim-remote tool."
+#~ "Gives Pidgin the ability to be remote-controlled through third-party "
+#~ "applications or through the Pidgin-remote tool."
 #~ msgstr ""
-#~ "Inika iGaim ukubanakho ukulawulwa kwenye indawo okanye yimisebenzi yeqela "
-#~ "lesithathu okanye ngesixhobo se-gaim esikwenye indawo."
+#~ "Inika iPidgin ukubanakho ukulawulwa kwenye indawo okanye yimisebenzi yeqela "
+#~ "lesithathu okanye ngesixhobo se-Pidgin esikwenye indawo."
 
 #~ msgid "Docked _Buddy List is always on top"
 #~ msgstr "ULuhlu oluShunquliweyo _lomHlobo lungaphezulu ngamaxa onke"
@@ -15942,7 +15939,7 @@ msgstr ""
 #~ "       away                     Popup the away dialog with the default "
 #~ "message\n"
 #~ "       back                     Remove the away dialog\n"
-#~ "       quit                     Close running copy of Gaim\n"
+#~ "       quit                     Close running copy of Pidgin\n"
 #~ "\n"
 #~ "    OPTIONS:\n"
 #~ "       -h, --help [command]     Show help for command\n"
@@ -15954,23 +15951,23 @@ msgstr ""
 #~ "       away                     Ukuxhuma kwencoko yokungabikho ngomyalezo "
 #~ "omiselweyo\n"
 #~ "       back                     Susa incoko yokungabikho\n"
-#~ "       quit                     Vala ikopi esebenzayo yeGaim\n"
+#~ "       quit                     Vala ikopi esebenzayo yePidgin\n"
 #~ "\n"
 #~ "    OKUNGAKHETHWA KUZO:\n"
 #~ "       -h, --help [umyalelo]    Bonisa uncedo malunga nomyalelo\n"
 
 #~ msgid ""
-#~ "Gaim not running (on session 0)\n"
+#~ "Pidgin not running (on session 0)\n"
 #~ "Is the \"Remote Control\" plugin loaded?\n"
 #~ msgstr ""
-#~ "I-Gaim ayisebenzi (kwindibano 0)\n"
+#~ "I-Pidgin ayisebenzi (kwindibano 0)\n"
 #~ "Ingaba \"iRemote Control\"ungeniso lufakelwe?\n"
 
 #~ msgid ""
 #~ "\n"
 #~ "Using AIM: URIs:\n"
 #~ "Sending an IM to a screen name:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 #~ "In this case, 'Penguin' is the screen name we wish to IM, and 'hello "
 #~ "world'\n"
 #~ "is the message to be sent.  '+' must be used in place of spaces.\n"
@@ -15980,20 +15977,20 @@ msgstr ""
 #~ "Also,the following will just open a conversation window to a screen "
 #~ "name,\n"
 #~ "with no message:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "Joining a chat:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "...joins the 'PenguinLounge' chat room.\n"
 #~ "\n"
 #~ "Adding a buddy to your buddy list:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "...prompts you to add 'Penguin' to your buddy list.\n"
 #~ msgstr ""
 #~ "\n"
 #~ "Ukusebenzisa iAIM: iiURI:\n"
 #~ "Ukuthumela i-IM kwigama leskrini:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world\"\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin&message=hello+world\"\n"
 #~ "Kule meko, 'iPenguin' ligama leskrini esinqwenela ukusenza i-IM, yaye "
 #~ "u'hello world'\n"
 #~ "ngumyalezo othunyelwayo. '+' kufuneka asetyenziswe endaweni yezithuba.\n"
@@ -16003,22 +16000,22 @@ msgstr ""
 #~ "Kananjalo, okulandelayo kuya kusuka kuvule ifestile yencoko kwigama "
 #~ "leskrini,\n"
 #~ "kungekho myalezo:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:goim?screenname=Penguin'\n"
 #~ "\n"
 #~ "Ukungenela incoko:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+#~ "\tPidgin-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 #~ "...lidibana ne- 'PenguinLounge' kwigumbi lencoko.\n"
 #~ "\n"
 #~ "Lisongeza umhlobo kuluhlu lwakho lomhlobo:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+#~ "\tPidgin-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 #~ "...likhuthaza ukuba wongeze i-'Penguin' kuluhlu lwakho lomhlobo.\n"
 
 #~ msgid ""
 #~ "\n"
-#~ "Close running copy of Gaim\n"
+#~ "Close running copy of Pidgin\n"
 #~ msgstr ""
 #~ "\n"
-#~ "Vala ikopi esebenzayo yeGaim\n"
+#~ "Vala ikopi esebenzayo yePidgin\n"
 
 #~ msgid ""
 #~ "\n"
@@ -16245,8 +16242,8 @@ msgstr ""
 #~ msgid "Idle _time reporting:"
 #~ msgstr "Ingxelo _yexesha lokulalela:"
 
-#~ msgid "Gaim usage"
-#~ msgstr "Intsebenziso yeGaim"
+#~ msgid "Pidgin usage"
+#~ msgstr "Intsebenziso yePidgin"
 
 #~ msgid "X usage"
 #~ msgstr "Intsebenziso kaX"
@@ -16292,7 +16289,7 @@ msgstr ""
 #~ msgstr "_Ukubhalisa"
 
 #~ msgid ""
-#~ "Gaim %s\n"
+#~ "Pidgin %s\n"
 #~ "Usage: %s [OPTION]...\n"
 #~ "\n"
 #~ "  -a, --acct          display account editor window\n"
@@ -16309,7 +16306,7 @@ msgstr ""
 #~ "  -v, --version       display the current version and exit\n"
 #~ "  -h, --help          display this help and exit\n"
 #~ msgstr ""
-#~ "Gaim %s\n"
+#~ "Pidgin %s\n"
 #~ "Usage: %s [OKUNOKUKHETHWA KUYO]...\n"
 #~ "\n"
 #~ "  -a, --acct          bonisa ifestile ye-akhawunti yomhleli\n"
@@ -16332,11 +16329,11 @@ msgstr ""
 #~ msgstr "Akukwazeki ukufaka ezithandwayo"
 
 #~ msgid ""
-#~ "Gaim was not able to load your preferences because they are stored in an "
+#~ "Pidgin was not able to load your preferences because they are stored in an "
 #~ "old format that is no longer used.  Please reconfigure your settings "
 #~ "using the Preferences window."
 #~ msgstr ""
-#~ "U-Gaim akakwazanga ukufakela izinto ezikhethwayo ngenxa yokuba zigcinwa "
+#~ "U-Pidgin akakwazanga ukufakela izinto ezikhethwayo ngenxa yokuba zigcinwa "
 #~ "kwisakhelo esidala esingasasetyenziswayo.  Nceda uyile kwakhona isimo "
 #~ "semimiselo usebenzisa ifestile yezinto eziKhethwayo."
 
@@ -16413,27 +16410,27 @@ msgstr ""
 #~ msgstr "Impazamo yokunxibelelana neseva yeGadu-Gadu"
 
 #~ msgid ""
-#~ "Gaim was unable to complete your request due to a problem communicating "
+#~ "Pidgin was unable to complete your request due to a problem communicating "
 #~ "with the Gadu-Gadu HTTP server.  Please try again later."
 #~ msgstr ""
-#~ "U-Gaim akakwazanga ukuphumeza isicelo sakho ngenxa yengxaki "
+#~ "U-Pidgin akakwazanga ukuphumeza isicelo sakho ngenxa yengxaki "
 #~ "yonxibelelwano neseva yeGadu-Gadu HTTP.  Nceda uzame emva kwethutyana."
 
 #~ msgid "Unable to import Gadu-Gadu buddy list"
 #~ msgstr "Akukwazeki ukungenisa uluhlu lomhlobo kwiGadu-Gadu"
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please "
+#~ "Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please "
 #~ "try again later."
 #~ msgstr ""
-#~ "U-Gaim akakwazanga ukunxibelelana noluhlu lomhlobo kwiseva yeGadu-Gadu. "
+#~ "U-Pidgin akakwazanga ukunxibelelana noluhlu lomhlobo kwiseva yeGadu-Gadu. "
 #~ "Nceda uzame emva kwethutyana."
 
 #~ msgid ""
-#~ "Gaim was unable to connect to the buddy list server.  Please try again "
+#~ "Pidgin was unable to connect to the buddy list server.  Please try again "
 #~ "later."
 #~ msgstr ""
-#~ "U-Gaim akakwazanga ukunxibelelana noluhlu lomhlobo kwiseva. Nceda uzame "
+#~ "U-Pidgin akakwazanga ukunxibelelana noluhlu lomhlobo kwiseva. Nceda uzame "
 #~ "emva kwethutyana."
 
 #~ msgid "Unable to delete Gadu-Gadu buddy list"
@@ -16443,18 +16440,18 @@ msgstr ""
 #~ msgstr "Akukwazeki ukufikelela kuvimba weefayili"
 
 #~ msgid ""
-#~ "Gaim was unable to search the Directory because it was unable to connect "
+#~ "Pidgin was unable to search the Directory because it was unable to connect "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
-#~ "U-Gaim akakwazanga ukukhangela uVimba weefayili ngenxa yokuba "
+#~ "U-Pidgin akakwazanga ukukhangela uVimba weefayili ngenxa yokuba "
 #~ "kungakwazeki ukunxibelelana neseva yovimba weefayili.  Nceda uzama emva "
 #~ "kwethutyana."
 
 #~ msgid ""
-#~ "Gaim was unable to change your password due to an error connecting to the "
+#~ "Pidgin was unable to change your password due to an error connecting to the "
 #~ "Gadu-Gadu server.  Please try again later."
 #~ msgstr ""
-#~ "U-Gaim akakwazanga ukutshintsha ipassword yakho ngenxa yempazamo "
+#~ "U-Pidgin akakwazanga ukutshintsha ipassword yakho ngenxa yempazamo "
 #~ "kunxibelelwano neseva yeGadu-Gadu.  Nceda uzame emva kwethutyana."
 
 #~ msgid "Directory Search"
@@ -16464,15 +16461,15 @@ msgstr ""
 #~ msgstr "Akukwazeki ukufikelela kwinkangeleko yomsebenzisi."
 
 #~ msgid ""
-#~ "Gaim was unable to access this user's profile due to an error connecting "
+#~ "Pidgin was unable to access this user's profile due to an error connecting "
 #~ "to the directory server.  Please try again later."
 #~ msgstr ""
-#~ "U-Gaim akakwazanga ukufikelela kwinkangeleko yomsebenzisi ngenxa "
+#~ "U-Pidgin akakwazanga ukufikelela kwinkangeleko yomsebenzisi ngenxa "
 #~ "yempazamo yonxibelelwano novimba weefayili kwiseva.  Nceda uzame kwakhona "
 #~ "emva kwethutyana."
 
-#~ msgid "Gaim encountered an error communicating with the ICQ server."
-#~ msgstr "U-Gaim ugagene nempazamo yonxibelelwano kwiseva yeICQ."
+#~ msgid "Pidgin encountered an error communicating with the ICQ server."
+#~ msgstr "U-Pidgin ugagene nempazamo yonxibelelwano kwiseva yeICQ."
 
 #~ msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 #~ msgstr "Umsebenzisi %s (%s%s%s%s%s) ufuna ubagunyazise."
@@ -16483,8 +16480,8 @@ msgstr ""
 #~ msgid "Nick:"
 #~ msgstr "Isikhewu:"
 
-#~ msgid "Gaim User"
-#~ msgstr "Umsebenzisi weGaim"
+#~ msgid "Pidgin User"
+#~ msgstr "Umsebenzisi wePidgin"
 
 #~ msgid "File Transfer Aborted"
 #~ msgstr "UkuDluliswa kweFayili eyekiweyo"

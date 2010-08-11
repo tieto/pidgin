@@ -1,3 +1,16 @@
+2008.12.28 - flos <lonicerae(at)gmail.com>
+	* Fixes #7908
+
+2008.12.28 - flos <lonicerae(at)gmail.com>
+	* References #7908
+
+2008.12.25 - flos <lonicerae(at)gmail.com>
+	* References #7821
+	* Updated authors
+
+2008.12.17 - flos <lonicerae(at)gmail.com>
+	* Minor fixed in buddy_info.c
+
 2008.12.06 - flos <lonicerae(at)gmail.com>
 	* Removed version checking script in Makefiles since our developers all migrated to monotone
 	* Use our development revision as OPENQ_VERSION in qq.c

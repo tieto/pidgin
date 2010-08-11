@@ -31,6 +31,7 @@
 #include "message.h"
 #include "notify.h"
 #include "pluginpref.h"
+#include "privacy.h"
 #include "proxy.h"
 #include "prpl.h"
 #include "request.h"
@@ -150,7 +151,7 @@ static char *jabber_prep_resource(char *input) {
 	char hostname[256]; /* current hostname */
 
 	/* Empty resource == don't send any */
-	if (*input == '\0')
+	if (input == NULL || *input == '\0')
 		return NULL;
 
 	if (strstr(input, "__HOSTNAME__") == NULL)
@@ -350,9 +351,33 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 {
 
 	/* because printing a tab to debug every minute gets old */
-	if(strcmp(data, "\t"))
-		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s\n",
-				js->gsc ? " (ssl)" : "", data);
+	if(strcmp(data, "\t")) {
+		char *text = NULL, *last_part = NULL, *tag_start = NULL;
+
+		/* Because debug logs with plaintext passwords make me sad */
+		if(js->state != JABBER_STREAM_CONNECTED &&
+				/* Either <auth> or <query><password>... */
+				(((tag_start = strstr(data, "<auth ")) &&
+					strstr(data, "xmlns='urn:ietf:params:xml:ns:xmpp-sasl'")) ||
+				((tag_start = strstr(data, "<query ")) &&
+					strstr(data, "xmlns='jabber:iq:auth'>") &&
+					(tag_start = strstr(tag_start, "<password>"))))) {
+			char *data_start, *tag_end = strchr(tag_start, '>');
+			text = g_strdup(data);
+
+			data_start = text + (tag_end - data) + 1;
+
+			last_part = strchr(data_start, '<');
+			*data_start = '\0';
+		}
+
+		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s%s%s\n",
+				js->gsc ? " (ssl)" : "", text ? text : data,
+				last_part ? "password removed" : "",
+				last_part ? last_part : "");
+
+		g_free(text);
+	}
 
 	/* If we've got a security layer, we need to encode the data,
 	 * splitting it on the maximum buffer length negotiated */
@@ -1452,6 +1477,106 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	JabberStream *js = gc->proto_data;
 
 	js->idle = idle ? time(NULL) - idle : idle;
+}
+
+static void jabber_blocklist_parse(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	xmlnode *blocklist, *item;
+	PurpleAccount *account;
+
+	blocklist = xmlnode_get_child_with_namespace(packet,
+			"blocklist", "urn:xmpp:blocking");
+	account = purple_connection_get_account(js->gc);
+
+	if (blocklist == NULL)
+		return;
+
+	item = xmlnode_get_child(blocklist, "item");
+	while (item != NULL) {
+		const char *jid = xmlnode_get_attrib(item, "jid");
+
+		purple_privacy_deny_add(account, jid, TRUE);
+		item = xmlnode_get_next_twin(item);
+	}
+}
+
+void jabber_request_block_list(JabberStream *js)
+{
+	JabberIq *iq;
+	xmlnode *blocklist;
+
+	iq = jabber_iq_new(js, JABBER_IQ_GET);
+
+	blocklist = xmlnode_new_child(iq->node, "blocklist");
+	xmlnode_set_namespace(blocklist, "urn:xmpp:blocking");
+
+	jabber_iq_set_callback(iq, jabber_blocklist_parse, NULL);
+
+	jabber_iq_send(iq);
+}
+
+void jabber_add_deny(PurpleConnection *gc, const char *who)
+{
+	JabberStream *js;
+	JabberIq *iq;
+	xmlnode *block, *item;
+
+	js = gc->proto_data;
+	if (js == NULL)
+		return;
+
+	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
+	{
+		jabber_google_roster_add_deny(gc, who);
+		return;
+	}
+
+	if (!(js->server_caps & JABBER_CAP_BLOCKING))
+	{
+		purple_notify_error(NULL, _("Server doesn't support blocking"),
+							_("Server doesn't support blocking"), NULL);
+		return;
+	}
+
+	iq = jabber_iq_new(js, JABBER_IQ_SET);
+
+	block = xmlnode_new_child(iq->node, "block");
+	xmlnode_set_namespace(block, "urn:xmpp:blocking");
+
+	item = xmlnode_new_child(block, "item");
+	xmlnode_set_attrib(item, "jid", who);
+
+	jabber_iq_send(iq);
+}
+
+void jabber_rem_deny(PurpleConnection *gc, const char *who)
+{
+	JabberStream *js;
+	JabberIq *iq;
+	xmlnode *unblock, *item;
+
+	js = gc->proto_data;
+	if (js == NULL)
+		return;
+
+	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
+	{
+		jabber_google_roster_rem_deny(gc, who);
+		return;
+	}
+
+	if (!(js->server_caps & JABBER_CAP_BLOCKING))
+		return;
+
+	iq = jabber_iq_new(js, JABBER_IQ_SET);
+
+	unblock = xmlnode_new_child(iq->node, "unblock");
+	xmlnode_set_namespace(unblock, "urn:xmpp:blocking");
+
+	item = xmlnode_new_child(unblock, "item");
+	xmlnode_set_attrib(item, "jid", who);
+
+	jabber_iq_send(iq);
 }
 
 void jabber_add_feature(const char *shortname, const char *namespace, JabberFeatureEnabled cb) {

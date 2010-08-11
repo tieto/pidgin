@@ -2,6 +2,18 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Our development blog is available at: http://planet.pidgin.im
 
+2.5.4 (01/12/2009):
+	John: Well, we fixed a few bugs for you this time around, I applied
+	a few patches, and we've dealt with what feels like a TON of tickets
+	about two very common issues.  Feels like time for a release to me.
+
+	Etan: My first NEWS in quite a while and I don't have much to say. I
+	haven't been too active lately and I'm hoping that won't be the case
+	going forward. I managed to get in a few perl fixes and some UI
+	language tweaks this release. My plan is to work on some of the
+	issues pointed out by mpt (during his expert review of pidgin a little
+	while back) in the near future.
+
 2.5.3 (12/18/2008):
 	Mark: It's been about two months and woo-boy have we been fixing
 	bugs.  Enjoy!

@@ -299,6 +299,31 @@ def xmpp(uri):
     else:
         goim(account, screenname)
 
+def gtalk(uri):
+    protocol = "prpl-jabber"
+    match = re.match(r"^gtalk:([^?]*)(\?(.*))", uri)
+    if not match:
+        print "Invalid gtalk URI: %s" % uri
+        return
+
+    command = urllib.unquote_plus(match.group(1))
+    paramstring = match.group(3)
+    params = {}
+    if paramstring:
+        for param in paramstring.split("&"):
+            key, value = extendlist(param.split("=", 1), 2, "")
+            params[key] = urllib.unquote_plus(value)
+    accountname = params.get("from_jid", "")
+    jid = params.get("jid", "")
+
+    account = findaccount(protocol, accountname)
+
+    if command.lower() == "chat":
+        goim(account, jid)
+    elif command.lower() == "call":
+        # XXX V&V prompt to establish call
+        goim(account, jid)
+
 def ymsgr(uri):
     protocol = "prpl-yahoo"
     match = re.match(r"^ymsgr:([^?]*)(\?([^&]*)(&(.*))?)", uri)
@@ -355,6 +380,8 @@ def main(argv=sys.argv):
             sip(uri)
         elif type == "xmpp":
             xmpp(uri)
+        elif type == "gtalk":
+            gtalk(uri)
         elif type == "ymsgr":
             ymsgr(uri)
         else:

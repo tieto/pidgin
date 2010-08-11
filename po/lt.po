@@ -1,6 +1,6 @@
-# Gaim eilučių vertimai į lietuvių kalbą
-# Copyright (C) 2004, 2005, 2006, 2007, 2008 Gaim authors
-# This file is distributed under the same license as the Gaim package.
+# Pidgin eilučių vertimai į lietuvių kalbą
+# Copyright (C) 2004, 2005, 2006, 2007, 2008 Pidgin authors
+# This file is distributed under the same license as the Pidgin package.
 # Laurynas Biveinis <laurynas.biveinis@gmail.com>, 2005, 2006, 2007, 2008.
 # Marius Karnauskas <marius@akl.lt>, 2005.
 # Gediminas Čičinskas. <gediminas@parok.lt>, 2004, 2005.
@@ -8,7 +8,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Gaim 2.0.0\n"
+"Project-Id-Version: Pidgin 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2008-10-02 08:52+0200\n"
@@ -2665,7 +2665,7 @@ msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
 msgstr "Galite keisti arba ištrinti reakciją dialoge „Reakcijos į bičiulius“."
 
 #  *
-#  * A wrapper for gaim_request_action() that uses Yes and No buttons.
+#  * A wrapper for Pidgin_request_action() that uses Yes and No buttons.
 msgid "Yes"
 msgstr "Taip"
 
@@ -3738,7 +3738,7 @@ msgid "Invalid response from server."
 msgstr "Neteisingas atsakas iš serverio."
 
 msgid "Server does not use any supported authentication method"
-msgstr "Serveris nenaudoja jokio Gaim palaikomo tapatybės nustatymo metodo"
+msgstr "Serveris nenaudoja jokio Pidgin palaikomo tapatybės nustatymo metodo"
 
 msgid "Invalid challenge from server"
 msgstr "Neteisingas serverio iššūkis"
@@ -4808,7 +4808,7 @@ msgstr "Negalima išanalizuoti pranešimo"
 
 #, c-format
 msgid "Syntax Error (probably a client bug)"
-msgstr "Sintaksės klaida (greičiausiai Gaim riktas)"
+msgstr "Sintaksės klaida (greičiausiai Pidgin riktas)"
 
 #, c-format
 msgid "Invalid email address"
@@ -10298,7 +10298,7 @@ msgid "%s has requested your attention!"
 msgstr "%s paprašė jūsų dėmesio!"
 
 #  *
-#  * A wrapper for gaim_request_action() that uses Yes and No buttons.
+#  * A wrapper for Pidgin_request_action() that uses Yes and No buttons.
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
 #.

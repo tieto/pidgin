@@ -1029,7 +1029,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *new_name)
 		return;
 
 	dest = purple_find_group(new_name);
-	if (dest != NULL) {
+	if (dest != NULL && purple_utf8_strcasecmp(source->name, dest->name) != 0) {
 		/* We're merging two groups */
 		PurpleBlistNode *prev, *child, *next;
 

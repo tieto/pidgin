@@ -1,8 +1,8 @@
 # translation of kn.po to Kannada
 # Kannada Localization Team <translation@sampada.info>, 2007.
-# Gaim Kannada Translation
+# Pidgin Kannada Translation
 # Copyright (C) 2007 Translation Team <translation@sampada.info>
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 msgid ""
 msgstr ""
 "Project-Id-Version: kn\n"
@@ -1497,7 +1497,7 @@ msgstr "GntGf ಪ್ಲಗ್ಗಿನ್ನು"
 
 #, fuzzy
 msgid "Toaster plugin"
-msgstr "GntGaim ಗೆಂದು ಟೋಸ್ಟರ್ ಪ್ಲಗ್ಗಿನ್ನು."
+msgstr "GntPidgin ಗೆಂದು ಟೋಸ್ಟರ್ ಪ್ಲಗ್ಗಿನ್ನು."
 
 #, c-format
 msgid "<b>Conversation with %s on %s:</b><br>"
@@ -14165,9 +14165,6 @@ msgstr ""
 #~ msgid "A_ccount:"
 #~ msgstr "ಖಾತೆ:"
 
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "ಗೈಮ್ ಇಂಟರ್ನೆಟ್ ಮೆಸ್ಸೆಂಜರ್"
-
 #~ msgid ""
 #~ "\n"
 #~ "Idle: %s"
@@ -14306,13 +14303,13 @@ msgstr ""
 #~ msgid "minutes."
 #~ msgstr "ನಿಮಿಷಗಳು"
 
-#~ msgid "WinGaim Options"
+#~ msgid "WinPidgin Options"
 #~ msgstr "ವಿನ್‍ಗೈಮ್ ಆಯ್ಕೆಗಳು"
 
 #~ msgid "Group not removed"
 #~ msgstr "ಗುಂಪು ಅಳಿಸಿಹಾಕಿಲ್ಲ"
 
-#~ msgid "Old Gaim"
+#~ msgid "Old Pidgin"
 #~ msgstr "ಹಳೆಯ ಗೈಮ್"
 
 #~ msgid ""
@@ -14329,7 +14326,7 @@ msgstr ""
 #~ "\n"
 #~ "<b>ಸಂದೇಶ:</b> %s"
 
-#~ msgid "Gaim User"
+#~ msgid "Pidgin User"
 #~ msgstr "ಗೈಮ್ ಬಳಕೆದಾರ"
 
 #~ msgid "<b>%s:</b> %s"
@@ -14446,7 +14443,7 @@ msgstr ""
 #~ msgid "Wrong Password"
 #~ msgstr "ತಪ್ಪು ಪ್ರವೇಶಪದ"
 
-#~ msgid "Gaim - Save As..."
+#~ msgid "Pidgin - Save As..."
 #~ msgstr "ಗೈಮ್ - ಉಳಿಸಿ ಈ ಹೆಸರಿನಲ್ಲಿ-> ..."
 
 #~ msgid "Unable to read"

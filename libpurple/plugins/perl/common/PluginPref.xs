@@ -70,10 +70,16 @@ purple_plugin_pref_destroy(pref)
 
 
 void
-purple_plugin_pref_get_bounds(pref, min, max)
+purple_plugin_pref_get_bounds(pref, OUTLIST int min, OUTLIST int max)
 	Purple::PluginPref pref
-	int *min
-	int *max
+	# According to the perlxs manual page we shouldn't need to specify a
+	# prototype here because "[p]arameters preceded by OUTLIST keyword do
+	# not appear in the usage signature of the generated Perl function."
+	# however that appears to only work for the usage error message and
+	# not for the call to newXSproto. Since I can't find any documentation
+	# for newXSproto at the moment I have no idea if that matters so
+	# override the prototype here.
+	PROTOTYPE: $
 
 void
 purple_plugin_pref_get_choices(pref)

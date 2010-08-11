@@ -33,8 +33,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-19 17:53+0100\n"
-"PO-Revision-Date: 2008-12-20 17:15+0100\n"
+"POT-Creation-Date: 2009-01-05 01:42+0100\n"
+"PO-Revision-Date: 2009-01-05 20:36+0100\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -4196,6 +4196,9 @@ msgstr "S'està autenticant"
 msgid "Re-initializing Stream"
 msgstr "S'està reinicialitzant el flux"
 
+msgid "Server doesn't support blocking"
+msgstr "El servidor no permet blocar"
+
 msgid "Not Authorized"
 msgstr "No autoritzat"
 
@@ -4954,7 +4957,6 @@ msgstr "Passaport per als nens sense consentiment patern"
 msgid "Passport account not yet verified"
 msgstr "El compte de passaport encara no està verificat"
 
-#, c-format
 msgid "Passport account suspended"
 msgstr "El compte de passaport s'ha suspès"
 
@@ -6576,12 +6578,10 @@ msgid "_OK"
 msgstr "_D'acord"
 
 #, c-format
-msgid ""
-"You may be disconnected shortly.  You may want to use TOC until this is "
-"fixed.  Check %s for updates."
+msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
-"Se us pot desconnectar d'aquí a poc temps. Si voleu, podeu emprar TOC fins "
-"que això es resolgui. Comproveu si hi ha actualitzacions a %s."
+"Pot ser que es desconnecti d'aquí a poc. Si això passés, comproveu si hi ha "
+"actualitzacions a %s."
 
 # FIXME: hash (josep)
 msgid "Unable to get a valid AIM login hash."
@@ -7535,13 +7535,11 @@ msgstr " VIP"
 msgid " TCP"
 msgstr " TCP"
 
-#, fuzzy
 msgid " FromMobile"
-msgstr "Mòbil"
+msgstr " FromMobile"
 
-#, fuzzy
 msgid " BindMobile"
-msgstr "Mòbil"
+msgstr " BindMobile"
 
 msgid " Video"
 msgstr " Vídeo"
@@ -9334,6 +9332,9 @@ msgstr "No s'ha pogut resoltre el nom de l'ordinador"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Els noms d'usuari SIP no poden contenir espais en blanc ni @"
+
+msgid "SIP connect server not specified"
+msgstr "No s'ha especificat el servidor SIP al qual connectar-se"
 
 #. *< type
 #. *< ui_requirement
@@ -14102,6 +14103,13 @@ msgstr "Envia i rep blocs XMPP en brut."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 
+#~ msgid ""
+#~ "You may be disconnected shortly.  You may want to use TOC until this is "
+#~ "fixed.  Check %s for updates."
+#~ msgstr ""
+#~ "Se us pot desconnectar d'aquí a poc temps. Si voleu, podeu emprar TOC "
+#~ "fins que això es resolgui. Comproveu si hi ha actualitzacions a %s."
+
 #~ msgid "Connection to server lost (no data received within %d second)"
 #~ msgid_plural ""
 #~ "Connection to server lost (no data received within %d seconds)"
@@ -14747,9 +14755,6 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 #~ msgstr ""
 #~ "Podeu obtenir la versió %s de:<br><a href=\"http://pidgin.im/\">http://"
 #~ "pidgin.im</a>."
-
-#~ msgid "WinGaim Options"
-#~ msgstr "Opcions del WinGaim"
 
 #~ msgid ""
 #~ "%d buddy from group %s was not removed because it belongs to an account "
@@ -16010,30 +16015,8 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 #~ msgid "Error communicating with Gadu-Gadu server"
 #~ msgstr "S'ha produït un error en comunicar amb el servidor Gadu-Gadu"
 
-#~ msgid ""
-#~ "Gaim was unable to complete your request due to a problem communicating "
-#~ "with the Gadu-Gadu HTTP server.  Please try again later."
-#~ msgstr ""
-#~ "El Gaim no ha pogut completar la vostra petició perquè hi ha hagut un "
-#~ "problema en la comunicació amb el servidor HTTP Gadu-Gadu. Torneu-ho a "
-#~ "intentar més tard."
-
 #~ msgid "Unable to import Gadu-Gadu buddy list"
 #~ msgstr "No s'ha pogut importar la llista d'amics de Gadu-Gadu"
-
-#~ msgid ""
-#~ "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please "
-#~ "try again later."
-#~ msgstr ""
-#~ "El Gaim no ha pogut connectar-se al servidor de llistes d'amics del Gadu-"
-#~ "Gadu. Torneu-ho a intentar més tard."
-
-#~ msgid ""
-#~ "Gaim was unable to connect to the buddy list server.  Please try again "
-#~ "later."
-#~ msgstr ""
-#~ "El Gaim no s'ha pogut connectar al servidor de llistes d'amics. Torneu-ho "
-#~ "a intentar més tard."
 
 #~ msgid "Unable to delete Gadu-Gadu buddy list"
 #~ msgstr "No s'ha pogut suprimir la llista d'amics de Gadu-Gadu"
@@ -16041,30 +16024,8 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 #~ msgid "Unable to access directory"
 #~ msgstr "No s'ha pogut accedir al directori"
 
-#~ msgid ""
-#~ "Gaim was unable to search the Directory because it was unable to connect "
-#~ "to the directory server.  Please try again later."
-#~ msgstr ""
-#~ "El Gaim no ha pogut cercar al directori perquè no s'hi ha pogut "
-#~ "connectar. Torneu-ho a intentar més tard."
-
-#~ msgid ""
-#~ "Gaim was unable to change your password due to an error connecting to the "
-#~ "Gadu-Gadu server.  Please try again later."
-#~ msgstr ""
-#~ "El Gaim no ha pogut canviar la contrasenya a causa d'un error mentre es "
-#~ "comunicava amb el servidor Gadu-Gadu. Torneu-ho a intentar més tard."
-
 #~ msgid "Unable to access user profile."
 #~ msgstr "No s'ha pogut accedir al perfil de l'usuari."
-
-#~ msgid ""
-#~ "Gaim was unable to access this user's profile due to an error connecting "
-#~ "to the directory server.  Please try again later."
-#~ msgstr ""
-#~ "El Gaim no ha pogut accedir al perfil de l'usuari atès que s'ha produït "
-#~ "un error en connectar-se al servidor de directori. Torneu-ho a intentar "
-#~ "més tard."
 
 #~ msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 #~ msgstr "L'usuari %s (%s%s%s%s%s) vol que l'autoritzeu."
@@ -16207,13 +16168,6 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 #~ msgid "/Buddies/Log Out"
 #~ msgstr "/Amics/Desconnecta"
 
-#~ msgid ""
-#~ "Gaim cannot send files over Yahoo! that are bigger than One Megabyte "
-#~ "(1,048,576 bytes)."
-#~ msgstr ""
-#~ "El Gaim no pot enviar fitxer a través de Yahoo! que siguin més grans d'un "
-#~ "Megabyte (1.048.576 bytes)."
-
 #~ msgid "Miscellaneous error"
 #~ msgstr "Error miscel·lani"
 
@@ -16240,12 +16194,6 @@ msgstr "Aquest connector és útil per a depurar servidors i clients XMPP."
 
 #~ msgid "MSN error for account %s"
 #~ msgstr "S'ha produït un error MSN per al compte %s"
-
-#~ msgid "Moving Gaim Settings.."
-#~ msgstr "S'està movent les opcions del Gaim..."
-
-#~ msgid "Moving Gaim user settings to: "
-#~ msgstr "S'està movent les opcions d'usuaris del Gaim a: "
 
 #~ msgid "Notification"
 #~ msgstr "Notificació"

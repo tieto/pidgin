@@ -1,3 +1,7 @@
+version 2.5.4 (01/12/2009):
+	* Fix the "Hang on Exit" issue that a number of users encountered.
+	* Updated GTK+ to 2.14.6
+
 version 2.5.3 (12/20/2008):
 	* Upgrade SILC to use the 1.1.8 toolkit
 	* Updated included Meanwhile library to include patch referenced in #7563

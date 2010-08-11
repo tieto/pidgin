@@ -1,14 +1,14 @@
-# Gaim Korean translation
+# Pidgin Korean translation
 # Copyright (C) YYYY, Sang-hyun S <artsilly@kuls.korea.ac.kr>
 # Copyright (C) YYYY, A Ho-seok Lee <alee@debian.org>
 # Copyright (C) 2003, Kyeong-uk Son <hey@gnome.or.kr>
 # Copyright (C) 2007, sushizang <sushizang@empal.com>
 #
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 2.0\n"
+"Project-Id-Version: Pidgin 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-12-01 15:52-0800\n"
 "PO-Revision-Date: 2007-10-01 16:15+0900\n"
@@ -14498,9 +14498,9 @@ msgstr ""
 #~ msgid "Jabber developer"
 #~ msgstr "Jabber 개발자"
 
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
+#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #winPidgin on irc.freenode.net<BR><BR>"
 #~ msgstr ""
-#~ "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net の #wingaim 채널<BR><BR>"
+#~ "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net の #winPidgin 채널<BR><BR>"
 
 #~ msgid "Insert link"
 #~ msgstr "링크 삽입"
@@ -14896,7 +14896,7 @@ msgstr ""
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
+#~ "off if you send a message. Pidgin will prevent anything from going through. "
 #~ "This is only temporary, please be patient."
 #~ msgstr ""
 #~ "이것이 발생한 경우, TOC 는 메시지 송신을 무시하기 때문에 메시지를 보낼 수 "
@@ -14909,7 +14909,7 @@ msgstr ""
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
 #~ "will result in reduced functionality and features."
 #~ msgstr ""
 #~ "표준 인증 방식으로 실패했습니다. 이것은 사용 중인 비밀번호가 틀리거나 혹"
