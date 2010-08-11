@@ -1,5 +1,19 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.3.1 (12/7/2007):
+	Stu: I'm sorry for the MSN problems and the plugin crashes in 2.3.0.
+	Hopefully this will redeem us. This fixes a number of bugs. I'm a
+	bit late but I'd like to welcome John to the team. Enjoy!
+
+	Luke: I've done absolutely nothing in the last 2 weeks, except watch
+	others commit bug and, more, leak fixes.  People should be noticing
+	remarkably fewer memory leaks now than 2 or more releases ago.
+
+	Kevin: I'm not quite sure what happened to our MySpaceIM Summer of
+	Code student, but I fixed a few MySpace bugs with idle and status.
+	I will try to fix some of the other more significant bugs, after I
+	figure out the protocol, especially including grouping issues.
+
 2.3.0 (11/20/2007):
 	Luke: While this does not have the new MSN code, rest assured that
 	we are working on it and that it is nearing release.  This contains

@@ -1,5 +1,28 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.3.1 (12/7/2007):
+	http://developer.pidgin.im/query?status=closed&milestone=2.3.1
+		NOTE: Due to the way this release was made, it is possible that
+			  bugs marked as fixed in 2.3.1 will not be fixed until the
+			  next release.
+
+	libpurple:
+	* Fixed a number of MSN bugs introduced in 2.3.0, resolving problems
+	  connecting to MSN and random local display name changes
+	* Going idle on MySpaceIM will no longer clear your status and message.
+	* Idle MySpaceIM buddies should now appear online at login.
+	* Fixed crashes in XMPP when discovering a client's capabilities
+	* Don't set the current tune title if it's NULL (XMPP/Google Talk)
+	* Don't allow buddies to be manually added to Bonjour
+	* Don't advertise IPv6 on Bonjour because we don't support it
+	* Compile fixes for FreeBSD and Solaris
+	* Update QQ client version so some accounts can connect again
+	* Do not allow ISON requests to stack in IRC, preventing flooding IRC
+	  servers when temporary network outages are restored
+	* Plug several leaks in the perl plugin loader
+	* Prevent autoaccept plugin overwriting existing files
+
+
 version 2.3.0 (11/24/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.3.0
 		NOTE: Some bugs marked fixed in 2.2.1, 2.2.2 or 2.2.3 may not

@@ -140,11 +140,13 @@ void
 purple_savedstatuses_get_popular(how_many)
 	unsigned int how_many
 PREINIT:
-	GList *l;
+	GList *l, *ll;
 PPCODE:
-	for (l = purple_savedstatuses_get_popular(how_many); l != NULL; l = l->next) {
+	ll = purple_savedstatuses_get_popular(how_many);
+	for (l = ll; l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::SavedStatus")));
 	}
+	g_list_free(ll);
 
 Purple::Handle
 purple_savedstatuses_get_handle()

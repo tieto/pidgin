@@ -65,11 +65,15 @@ purple_log_get_logs(type, name, account)
 	const char *name
 	Purple::Account account
 PREINIT:
-	GList *l;
+	GList *l, *ll;
 PPCODE:
-	for (l = purple_log_get_logs(type, name, account); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListEntry")));
+	ll = purple_log_get_logs(type, name, account);
+	for (l = ll; l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Log")));
 	}
+	/* We can free the list here but the script needs to free the
+	 * Purple::Log 'objects' itself. */
+	g_list_free(ll);
 
 int
 purple_log_get_size(log)
@@ -79,11 +83,15 @@ void
 purple_log_get_system_logs(account)
 	Purple::Account account
 PREINIT:
-	GList *l;
+	GList *l, *ll;
 PPCODE:
-	for (l = purple_log_get_system_logs(account); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListEntry")));
+	ll = purple_log_get_system_logs(account);
+	for (l = ll; l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Log")));
 	}
+	/* We can free the list here but the script needs to free the
+	 * Purple::Log 'objects' itself. */
+	g_list_free(ll);
 
 int
 purple_log_get_total_size(type, name, account)
@@ -101,11 +109,14 @@ purple_log_logger_free(logger)
 void
 purple_log_logger_get_options()
 PREINIT:
-	GList *l;
+	GList *l, *ll;
 PPCODE:
-	for (l = purple_log_logger_get_options(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListEntry")));
+	/* This might want to be massaged to a hash, since that's essentially
+	 * what the key/value list is emulating. */
+	for (l = ll = purple_log_logger_get_options(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
+	g_list_free(ll);
 
 gchar_own *
 purple_log_read(log, flags)

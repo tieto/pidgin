@@ -9,10 +9,13 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.3.0"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.3.1"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.3.0
+%define pidginver 2.3.1
 %endif
+
+# define the minimum API version required, so we can use it for plugin deps
+%define apiver %(echo "2.3.1"|awk -F. '{print $1"."$2}')
 
 Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       pidgin
@@ -21,7 +24,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.3.0.tar.bz2
+Source:     %{name}-2.3.1.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -29,7 +32,7 @@ BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
 BuildRequires: gtk2-devel
 
 %{!?_without_startupnotification:BuildRequires: startup-notification-devel}
-%{?_with_avahi:BuildRequires: avahi-compat-howl-devel}
+%{?_with_avahi:BuildRequires: avahi-glib-devel}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
 %{?_with_howl:BuildRequires: howl-devel}
 %{?_with_meanwhile:BuildRequires: meanwhile-devel}
@@ -118,21 +121,21 @@ Requires:   pkgconfig
 %package -n libpurple-bonjour
 Summary:    Bonjour plugin for Pidgin
 Group:      Applications/Internet
-Requires:   libpurple = %{version}
+Requires:   libpurple >= %{apiver}
 %endif
 
 %if 0%{?_with_meanwhile:1}
 %package -n libpurple-meanwhile
 Summary:    Lotus Sametime plugin for Pidgin using the Meanwhile library
 Group:      Applications/Internet
-Requires:   libpurple = %{version}
+Requires:   libpurple >= %{apiver}
 %endif
 
 %if 0%{?_with_mono:1}
 %package -n libpurple-mono
 Summary:    Mono .NET plugin support for Pidgin
 Group:      Applications/Internet
-Requires:   libpurple = %{version}
+Requires:   libpurple >= %{apiver}
 %endif
 
 %if 0%{!?_without_text:1}
@@ -211,7 +214,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.3.0
+%setup -q -n %{name}-2.3.1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -462,6 +465,12 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %changelog
+* Wed Dec  5 2007 Stu Tomlinson <stu@nosnilmot.com>
+- When building with avahi, use native avahi instead of howl compatability
+  headers
+- Make the split out plugins depend only on the minimum necessary API
+  version of libpurple
+
 * Tue Oct 23 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Add finch.pc to finch-devel
 

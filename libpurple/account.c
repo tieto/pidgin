@@ -741,7 +741,7 @@ parse_current_error(xmlnode *node, PurpleAccount *account)
 
 	current_error = g_new0(PurpleConnectionErrorInfo, 1);
 	current_error->type = type;
-	current_error->description = description;
+	current_error->description = g_strdup(description);
 
 	set_current_error(account, current_error);
 }

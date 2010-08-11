@@ -851,8 +851,14 @@ void gnt_box_move_focus(GntBox *box, int dir)
 
 void gnt_box_give_focus_to_child(GntBox *box, GntWidget *widget)
 {
-	GList *find = g_list_find(box->focus, widget);
-	gpointer now = box->active;
+	GList *find;
+	gpointer now;
+
+	while (GNT_WIDGET(box)->parent)
+		box = GNT_BOX(GNT_WIDGET(box)->parent);
+
+	find = g_list_find(box->focus, widget);
+	now = box->active;
 	if (find)
 		box->active = widget;
 	if (now && now != box->active)

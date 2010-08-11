@@ -125,6 +125,7 @@ typedef struct {
 static GtkWidget *invite_dialog = NULL;
 static GtkWidget *warn_close_dialog = NULL;
 
+static PidginWindow *hidden_convwin = NULL;
 static GList *window_list = NULL;
 
 /* Lists of status icons at all available sizes for use as window icons */
@@ -1378,7 +1379,13 @@ hide_conv(PidginConversation *gtkconv, gboolean closetimer)
 			timer = purple_timeout_add_seconds(CLOSE_CONV_TIMEOUT_SECS, close_already, conv);
 			purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(timer));
 		}
+#if 0
+		/* I will miss you */
 		purple_conversation_set_ui_ops(conv, NULL);
+#else
+		pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
+		pidgin_conv_window_add_gtkconv(hidden_convwin, gtkconv);
+#endif
 	}
 }
 
@@ -2816,9 +2823,9 @@ pidgin_conv_present_conversation(PurpleConversation *conv)
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 	GdkModifierType state;
 
-	if (gtkconv == NULL) {
-		pidgin_conv_attach_to_conversation(conv);
-		gtkconv = PIDGIN_CONVERSATION(conv);
+	if(gtkconv->win==hidden_convwin) {
+		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
+		pidgin_conv_placement_place(gtkconv);
 	}
 
 	pidgin_conv_switch_active_conversation(conv);
@@ -2851,20 +2858,15 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 		PurpleConversation *conv = (PurpleConversation*)l->data;
 		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 
-		if (gtkconv != NULL && gtkconv->active_conv != conv)
+		if(gtkconv == NULL || gtkconv->active_conv != conv)
 			continue;
-		if (gtkconv == NULL) {
-			if (!purple_conversation_get_data(conv, "unseen-count") ||
-				!purple_conversation_get_data(conv, "unseen-state") ||
-				GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-state"))<min_state)
-				continue;
+
+		if (gtkconv->unseen_state >= min_state
+				&& (!hidden_only ||
+					(hidden_only && gtkconv->win == hidden_convwin))) {
+
 			r = g_list_prepend(r, conv);
 			c++;
-		} else {
-			if (gtkconv->unseen_state >= min_state && !hidden_only) {
-				r = g_list_prepend(r, conv);
-				c++;
-			}
 		}
 	}
 
@@ -3169,7 +3171,7 @@ regenerate_plugins_items(PidginWindow *win)
 	PurpleConversation *conv;
 	GtkWidget *item;
 
-	if (win->window == NULL)
+	if (win->window == NULL || win == hidden_convwin)
 		return;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
@@ -5025,9 +5027,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	GtkWidget *tab_cont;
 	PurpleBlistNode *convnode;
 
-	if (hidden)
-		return;
-
 	if (conv_type == PURPLE_CONV_TYPE_IM && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
 		conv->ui_data = gtkconv;
 		if (!g_list_find(gtkconv->convs, conv))
@@ -5126,7 +5125,10 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	                         G_CALLBACK(gtk_widget_grab_focus),
 	                         gtkconv->entry);
 
-	pidgin_conv_placement_place(gtkconv);
+	if (hidden)
+		pidgin_conv_window_add_gtkconv(hidden_convwin, gtkconv);
+	else
+		pidgin_conv_placement_place(gtkconv);
 
 	if (nick_colors == NULL) {
 		nbr_nick_colors = NUM_NICK_COLORS;
@@ -5134,13 +5136,11 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	}
 }
 
-#if 0
 static void
 pidgin_conv_new_hidden(PurpleConversation *conv)
 {
 	private_gtkconv_new(conv, TRUE);
 }
-#endif
 
 void
 pidgin_conv_new(PurpleConversation *conv)
@@ -5156,24 +5156,30 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 				   PurpleConversation *conv, PurpleMessageFlags flags)
 {
 	PurpleConversationUiOps *ui_ops = pidgin_conversations_get_conv_ui_ops();
+	gboolean hide = FALSE;
 
 	/* create hidden conv if hide_new pref is always */
-	/* or if hide_new pref is away and account is away */
-	if ((strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always") == 0) ||
-		(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away") == 0 &&
-		 !purple_status_is_available(purple_account_get_active_status(account)))) {
-		if (!conv) {
-			ui_ops->create_conversation = NULL;
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
-			purple_conversation_set_ui_ops(conv, NULL);
-			ui_ops->create_conversation = pidgin_conv_new;
-		} else {
-			/* TODO: update the unseen_state data on the conv here */
+	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always") == 0)
+		hide = TRUE;
+
+	/* create hidden conv if hide_new pref is away and account is away */
+	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away") == 0 &&
+	    !purple_status_is_available(purple_account_get_active_status(account)))
+		hide = TRUE;
+
+	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv) && !hide) {
+		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+		if (gtkconv->win == hidden_convwin) {
+			pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
+			pidgin_conv_placement_place(gtkconv);
 		}
-	} else {
-		/* new message for an IM */
-		if (conv && conv->type == PURPLE_CONV_TYPE_IM)
-			pidgin_conv_attach_to_conversation(conv);
+		return;
+	}
+
+	if (hide) {
+		ui_ops->create_conversation = pidgin_conv_new_hidden;
+		purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
+		ui_ops->create_conversation = pidgin_conv_new;
 	}
 }
 
@@ -6549,7 +6555,28 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			}
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 			const char *topic = gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text));
-			char *esc = topic ? g_markup_escape_text(topic, -1) : NULL;
+			char *esc = NULL;
+#if GTK_CHECK_VERSION(2,6,0)
+			esc = topic ? g_markup_escape_text(topic, -1) : NULL;
+#else
+			/* GTK < 2.6 doesn't have auto ellipsization, so we do a crude
+			 * trucation to prevent forcing the window to be as wide as the topic */
+			int len = 0;
+			char *c, *tmp = g_strdup(topic);
+			c = tmp;
+			while(*c && len < 72) {
+				c = g_utf8_next_char(c);
+				len++;
+			}
+			if (len == 72) {
+				*c = '\0';
+				c = g_strdup_printf("%s...", tmp);
+				g_free(tmp);
+				tmp = c;
+			}
+			esc = tmp ? g_markup_escape_text(tmp, -1) : NULL;
+			g_free(tmp);
+#endif
 			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",
 						purple_conversation_get_title(conv),
 						esc  && *esc ? "\n" : "",
@@ -7196,7 +7223,6 @@ static void
 account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
                           PurpleStatus *newstatus)
 {
-#if 0
 	GList *l;
 	PurpleConversation *conv = NULL;
 	PidginConversation *gtkconv;
@@ -7206,7 +7232,27 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
 
 	if(purple_status_is_available(oldstatus) || !purple_status_is_available(newstatus))
 		return;
-#endif
+
+	while ((l = hidden_convwin->gtkconvs) != NULL)
+	{
+		gtkconv = l->data;
+
+		conv = gtkconv->active_conv;
+
+		while(l && !purple_status_is_available(
+					purple_account_get_active_status(
+					purple_conversation_get_account(conv))))
+			l = l->next;
+		if (!l)
+			break;
+
+		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
+		pidgin_conv_placement_place(gtkconv);
+
+		/* TODO: do we need to do anything for any other conversations that are in the same gtkconv here?
+		 * I'm a little concerned that not doing so will cause the "pending" indicator in the gtkblist not to be cleared. -DAA*/
+		purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
+	}
 }
 
 static void
@@ -7214,7 +7260,12 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 				 gconstpointer value, gpointer data)
 {
 	GList *l;
+	PurpleConversation *conv = NULL;
+	PidginConversation *gtkconv;
 	gboolean when_away = FALSE;
+
+	if(!hidden_convwin)
+		return;
 
 	if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always")==0)
 		return;
@@ -7222,17 +7273,22 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 	if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away")==0)
 		when_away = TRUE;
 
-	for (l = purple_get_conversations(); l; l = l->next)
+	for (l = hidden_convwin->gtkconvs; l; )
 	{
-		PurpleConversation *conv = l->data;
-		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-		if (gtkconv)
-			continue;
-		if(when_away && !purple_status_is_available(
+		gtkconv = l->data;
+		l = l->next;
+
+		conv = gtkconv->active_conv;
+
+		if (conv->type == PURPLE_CONV_TYPE_CHAT ||
+				gtkconv->unseen_count == 0 ||
+				(when_away && !purple_status_is_available(
 							purple_account_get_active_status(
-							purple_conversation_get_account(conv))))
+							purple_conversation_get_account(conv)))))
 			continue;
-		pidgin_conv_attach_to_conversation(conv);
+
+		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
+		pidgin_conv_placement_place(gtkconv);
 	}
 }
 
@@ -7513,8 +7569,14 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 	GList *list;
 	PidginConversation *gtkconv;
 
-	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
-		return FALSE;
+	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
+		gtkconv = PIDGIN_CONVERSATION(conv);
+		if (gtkconv->win != hidden_convwin)
+			return FALSE;
+		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
+		pidgin_conv_placement_place(gtkconv);
+		return TRUE;
+	}
 
 	pidgin_conv_attach(conv);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -7785,6 +7847,9 @@ pidgin_conversations_init(void)
 
 	purple_conversations_set_ui_ops(&conversation_ui_ops);
 
+	hidden_convwin = pidgin_conv_window_new();
+	window_list = g_list_remove(window_list, hidden_convwin);
+
 	purple_signal_connect(purple_accounts_get_handle(), "account-status-changed",
                         handle, PURPLE_CALLBACK(account_status_changed_cb), NULL);
 
@@ -7832,6 +7897,8 @@ pidgin_conversations_uninit(void)
 	purple_prefs_disconnect_by_handle(pidgin_conversations_get_handle());
 	purple_signals_disconnect_by_handle(pidgin_conversations_get_handle());
 	purple_signals_unregister_by_instance(pidgin_conversations_get_handle());
+	pidgin_conv_window_destroy(hidden_convwin);
+	hidden_convwin=NULL;
 }
 
 
@@ -8999,8 +9066,6 @@ pidgin_conv_window_destroy(PidginWindow *win)
 	if (win->dialogs.search)
 		gtk_widget_destroy(win->dialogs.search);
 
-	gtk_widget_hide_all(win->window);
-
 	if (win->gtkconvs) {
 		while (win->gtkconvs) {
 			gboolean last = (win->gtkconvs->next == NULL);
@@ -9285,7 +9350,7 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 	if (win->gtkconvs && win->gtkconvs->next == NULL)
 		pidgin_conv_tab_pack(win, win->gtkconvs->data);
 
-	if (!win->gtkconvs)
+	if (!win->gtkconvs && win != hidden_convwin)
 		pidgin_conv_window_destroy(win);
 }
 
@@ -9824,7 +9889,9 @@ pidgin_conv_placement_place(PidginConversation *gtkconv)
 gboolean
 pidgin_conv_is_hidden(PidginConversation *gtkconv)
 {
-	return (gtkconv == NULL);
+	g_return_val_if_fail(gtkconv != NULL, FALSE);
+
+	return (gtkconv->win == hidden_convwin);
 }
 
 

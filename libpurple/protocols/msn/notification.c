@@ -1181,14 +1181,27 @@ not_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 rea_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	/* TODO: This might be for us too */
-
 	MsnSession *session;
+	PurpleAccount *account;
 	PurpleConnection *gc;
 	const char *friendly;
+	char *username;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	account = session->account;
+	username = g_strdup(purple_normalize(account,
+						purple_account_get_username(account)));
+
+	/* Only set display name if our *own* friendly name changed! */
+	if (strcmp(username, purple_normalize(account, cmd->params[2])))
+	{
+		g_free(username);
+		return;
+	}
+
+	g_free(username);
+
+	gc = account->gc;
 	friendly = purple_url_decode(cmd->params[3]);
 
 	purple_connection_set_display_name(gc, friendly);
