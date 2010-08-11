@@ -321,7 +321,7 @@ login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 {
 	MsnNexus *nexus;
 	MsnSession *session;
-	char *username, *password;
+	char *username, *password, *encpass;
 	char *request_str, *head, *tail;
 	char *buffer = NULL;
 	guint32 ctint;
@@ -337,8 +337,9 @@ login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	username =
 		g_strdup(purple_url_encode(purple_account_get_username(session->account)));
 
-	password =
-		g_strdup(purple_url_encode(purple_connection_get_password(session->account->gc)));
+	password = g_strndup(purple_connection_get_password(session->account->gc), 16);
+	encpass = g_strdup(purple_url_encode(password));
+	g_free(password);
 
 	ctint = strtoul((char *)g_hash_table_lookup(nexus->challenge_data, "ct"), NULL, 10) + 200;
 
@@ -368,7 +369,7 @@ login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 		nexus->login_host);
 
 	buffer = g_strdup_printf("%s,pwd=XXXXXXXX,%s\r\n", head, tail);
-	request_str = g_strdup_printf("%s,pwd=%s,%s\r\n", head, password, tail);
+	request_str = g_strdup_printf("%s,pwd=%s,%s\r\n", head, encpass, tail);
 
 	purple_debug_misc("msn", "Sending: {%s}\n", buffer);
 
@@ -376,7 +377,7 @@ login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	g_free(head);
 	g_free(tail);
 	g_free(username);
-	g_free(password);
+	g_free(encpass);
 
 	nexus->write_buf = request_str;
 	nexus->written_len = 0;

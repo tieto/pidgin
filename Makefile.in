@@ -375,7 +375,8 @@ noinst_HEADERS = config.h
 @ENABLE_GTK_TRUE@apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @ENABLE_GTK_TRUE@GTK_DIR = pidgin
 @ENABLE_GNT_TRUE@GNT_DIR = finch
-SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros po share/ca-certs share/sounds
+@INSTALL_I18N_TRUE@PO_DIR = po
+SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros $(PO_DIR) share/ca-certs share/sounds
 
 # perl's MakeMaker uninstall foo doesn't work well with DESTDIR set, which
 # breaks "make distcheck" unless we ignore perl things

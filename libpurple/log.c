@@ -1666,6 +1666,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 					}
 				}
 				fclose(index);
+				purple_stringref_unref(pathref);
 
 				return list;
 			}
@@ -1829,11 +1830,11 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			purple_debug_warning("log", "Failed to rename index temp file \"%s\" to \"%s\": %s\n",
 			                   index_tmp, pathstr, g_strerror(errno));
 			g_unlink(index_tmp);
-			g_free(index_tmp);
 		}
 		else
 			purple_debug_info("log", "Built index: %s\n", pathstr);
 
+		g_free(index_tmp);
 		g_free(pathstr);
 	}
 	return list;

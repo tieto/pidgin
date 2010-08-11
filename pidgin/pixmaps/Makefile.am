@@ -3,6 +3,7 @@ pidginiconsdir = $(datadir)
 
 SUBDIRS = buddy_icons/qq emotes/default/24 emotes/none
 
+if INSTALL_PIXMAPS
 MAKEFILE_MINGW = \
 		buddy_icons/qq/Makefile.mingw \
 		emotes/default/24/Makefile.mingw \
@@ -707,3 +708,4 @@ nobase_dist_pidginicons_DATA = \
 		$(ICONS_24) \
 		$(ICONS_32) \
 		$(ICONS_48)
+endif

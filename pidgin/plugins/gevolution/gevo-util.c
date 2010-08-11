@@ -109,6 +109,10 @@ gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy)
 		else
 			protocol_field = E_CONTACT_IM_ICQ;
 	}
+	else if (!strcmp(protocol_id, "prpl-aim"))
+		protocol_field = E_CONTACT_IM_AIM;
+	else if (!strcmp(protocol_id, "prpl-icq"))
+		protocol_field = E_CONTACT_IM_ICQ;
 	else if (!strcmp(protocol_id, "prpl-msn"))
 		protocol_field = E_CONTACT_IM_MSN;
 	else if (!strcmp(protocol_id, "prpl-yahoo"))

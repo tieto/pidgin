@@ -450,7 +450,7 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 	/* Send the data structure to the child */
 	rc = write(resolver->fd_in, &dns_params, sizeof(dns_params));
 	if (rc < 0) {
-		purple_debug_error("dns", "Unable to write to DNS child %d: %d\n",
+		purple_debug_error("dns", "Unable to write to DNS child %d: %s\n",
 				resolver->dns_pid, g_strerror(errno));
 		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;

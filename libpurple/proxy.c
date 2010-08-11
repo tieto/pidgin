@@ -211,67 +211,92 @@ static PurpleProxyInfo *
 purple_gnome_proxy_get_info(void)
 {
 	static PurpleProxyInfo info = {0, NULL, 0, NULL, NULL};
-	gchar *path;
-	if ((path = g_find_program_in_path("gconftool-2"))) {
-		gchar *tmp;
+	gchar *tmp;
 
-		g_free(path);
+	tmp = g_find_program_in_path("gconftool-2");
+	if (tmp == NULL)
+		return purple_global_proxy_get_info();
 
-		/* See whether to use a proxy. */
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/mode", &tmp,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		if (!strcmp(tmp, "none\n")) {
-			info.type = PURPLE_PROXY_NONE;
-			g_free(tmp);
-			return &info;
-		} else if (strcmp(tmp, "manual\n")) {
-			g_free(tmp);
-			return purple_global_proxy_get_info();
-		}
+	g_free(tmp);
 
+	/* Check whether to use a proxy. */
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/mode",
+			&tmp, NULL, NULL, NULL))
+		return purple_global_proxy_get_info();
+
+	if (!strcmp(tmp, "none\n")) {
+		info.type = PURPLE_PROXY_NONE;
 		g_free(tmp);
-		info.type = PURPLE_PROXY_HTTP;
-
-		/* Free the old fields */
-		if (info.host) {
-			g_free(info.host);
-			info.host = NULL;
-		}
-		if (info.username) {
-			g_free(info.username);
-			info.username = NULL;
-		}
-		if (info.password) {
-			g_free(info.password);
-			info.password = NULL;
-		}
-
-		/* Get the new ones */
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host", &info.host,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		g_strchomp(info.host);
-
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user", &info.username,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		g_strchomp(info.username);
-
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password", &info.password,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		g_strchomp(info.password);
-
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port", &tmp,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		info.port = atoi(tmp);
-		g_free(tmp);
-
 		return &info;
 	}
-	return purple_global_proxy_get_info();
+
+	if (strcmp(tmp, "manual\n")) {
+		/* Unknown setting.  Fallback to using our global proxy settings. */
+		g_free(tmp);
+		return purple_global_proxy_get_info();
+	}
+
+	g_free(tmp);
+
+	/* If we get this far then we know we're using an HTTP proxy */
+	info.type = PURPLE_PROXY_HTTP;
+
+	/* Free the old fields */
+	if (info.host) {
+		g_free(info.host);
+		info.host = NULL;
+	}
+	if (info.username) {
+		g_free(info.username);
+		info.username = NULL;
+	}
+	if (info.password) {
+		g_free(info.password);
+		info.password = NULL;
+	}
+
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host",
+			&info.host, NULL, NULL, NULL))
+		return purple_global_proxy_get_info();
+	g_strchomp(info.host);
+	if (*info.host == '\0')
+	{
+		purple_debug_info("proxy", "Gnome proxy settings are set to "
+				"'manual' but no proxy server is specified.  Using "
+				"Pidgin's proxy settings instead.\n");
+		g_free(info.host);
+		return purple_global_proxy_get_info();
+	}
+
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user",
+			&info.username, NULL, NULL, NULL))
+	{
+		g_free(info.host);
+		return purple_global_proxy_get_info();
+	}
+	g_strchomp(info.username);
+
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password",
+			&info.password, NULL, NULL, NULL))
+	{
+		g_free(info.host);
+		g_free(info.username);
+		return purple_global_proxy_get_info();
+	}
+	g_strchomp(info.password);
+
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port",
+			&tmp, NULL, NULL, NULL))
+	{
+		g_free(info.host);
+		g_free(info.username);
+		g_free(info.password);
+		return purple_global_proxy_get_info();
+	}
+	info.port = atoi(tmp);
+	g_free(tmp);
+
+	return &info;
 }
 /**************************************************************************
  * Proxy API
@@ -1101,7 +1126,8 @@ s5_ensure_buffer_length(PurpleProxyConnectData *connect_data, int len)
 	if(connect_data->read_len < len) {
 		if(connect_data->read_buf_len < len) {
 			/* it's not just that we haven't read enough, it's that we haven't tried to read enough yet */
-			purple_debug_info("s5", "reallocing from %d to %d\n", connect_data->read_buf_len, len);
+			purple_debug_info("s5", "reallocing from %" G_GSIZE_FORMAT
+					" to %d\n", connect_data->read_buf_len, len);
 			connect_data->read_buf_len = len;
 			connect_data->read_buffer = g_realloc(connect_data->read_buffer, connect_data->read_buf_len);
 		}
@@ -1330,9 +1356,15 @@ s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 	purple_debug(PURPLE_DEBUG_INFO, "socks5 proxy", "Got CHAP response.\n");
 
 	if (connect_data->read_buffer == NULL) {
-		connect_data->read_buf_len = 20;
+		/* A big enough butfer to read the message header (2 bytes) and at least one complete attribute and value (1 + 1 + 255). */
+		connect_data->read_buf_len = 259;
 		connect_data->read_buffer = g_malloc(connect_data->read_buf_len);
 		connect_data->read_len = 0;
+	}
+
+	if (connect_data->read_buf_len - connect_data->read_len == 0) {
+		/*If the stuff below is right, this shouldn't be possible. */
+		purple_debug_error("socks5 proxy", "This is about to suck because the read buffer is full (shouldn't happen).\n");
 	}
 
 	len = read(connect_data->fd, connect_data->read_buffer + connect_data->read_len,
@@ -1374,13 +1406,31 @@ s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 	cmdbuf++;
 
 	for (currentav = 0; currentav < navas; currentav++) {
-		if (connect_data->read_len - (cmdbuf - connect_data->read_buffer) < 2)
+
+		len = connect_data->read_len - (cmdbuf - connect_data->read_buffer);
+		/* We don't have enough data to even know how long the next attribute is,
+		 * or we don't have the full length of the next attribute. */
+		if (len < 2 || len < (cmdbuf[1] + 2)) {
+			/* Clear out the attributes that have been read - decrease the attribute count */
+			connect_data->read_buffer[1] = navas - currentav;
+			/* Move the unprocessed data into the first attribute position */
+			memmove((connect_data->read_buffer + 2), cmdbuf, len);
+			/* Decrease the read count accordingly */
+			connect_data->read_len = len + 2;
 			return;
-		if (connect_data->read_len - (cmdbuf - connect_data->read_buffer) < cmdbuf[1])
-			return;
+		}
+
 		buf = cmdbuf + 2;
+
+		if (cmdbuf[1] == 0) {
+			purple_debug_error("socks5 proxy", "Attribute %x Value length of 0; ignoring.\n", cmdbuf[0]);
+			cmdbuf = buf;
+			continue;
+		}
+
 		switch (cmdbuf[0]) {
 			case 0x00:
+				purple_debug_info("socks5 proxy", "Received STATUS of %x\n", buf[0]);
 				/* Did auth work? */
 				if (buf[0] == 0x00) {
 					purple_input_remove(connect_data->inpa);
@@ -1389,7 +1439,6 @@ s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 					connect_data->read_buffer = NULL;
 					/* Success */
 					s5_sendconnect(connect_data, connect_data->fd);
-					return;
 				} else {
 					/* Failure */
 					purple_debug_warning("proxy",
@@ -1397,10 +1446,10 @@ s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 						"failed.  Disconnecting...");
 					purple_proxy_connect_data_disconnect(connect_data,
 							_("Authentication failed"));
-					return;
 				}
-				break;
+				return;
 			case 0x03:
+				purple_debug_info("socks5 proxy", "Received CHALLENGE\n");
 				/* Server wants our credentials */
 
 				connect_data->write_buf_len = 16 + 4;
@@ -1425,8 +1474,9 @@ s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 					PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
 
 				proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
-				break;
+				return;
 			case 0x11:
+				purple_debug_info("socks5 proxy", "Received ALGORIGTHMS of %x\n", buf[0]);
 				/* Server wants to select an algorithm */
 				if (buf[0] != 0x85) {
 					/* Only currently support HMAC-MD5 */
@@ -1441,12 +1491,19 @@ s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 					return;
 				}
 				break;
+			default:
+				purple_debug_info("socks5 proxy", "Received unused command %x, length=%d\n", cmdbuf[0], cmdbuf[1]);
 		}
 		cmdbuf = buf + cmdbuf[1];
 	}
+
 	/* Fell through.  We ran out of CHAP events to process, but haven't
 	 * succeeded or failed authentication - there may be more to come.
 	 * If this is the case, come straight back here. */
+
+	/* We've processed all the available attributes, so get ready for a whole new message */
+ 	g_free(connect_data->read_buffer);
+	connect_data->read_buffer = NULL;
 }
 
 static void

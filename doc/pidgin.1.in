@@ -57,9 +57,9 @@ Don't automatically login when Pidgin starts.  Sets the global status to
 \fBOffline\fR.
 .TP
 .B \-l, \-\-login[=\fINAME\fR,\fINAME\fR,...]
-Sign in the comma-separated list of accounts provided, in addition to the
-accounts that would be logged in anyway.  If the user does not specify such a
-comma-separated list, the first account in accounts.xml will be signed in.
+Enable the comma-separated list of accounts provided, disabling all other
+accounts.  If the user does not specify such a comma-separated list, the
+first account in accounts.xml will be enabled.
 .TP
 .B \-v, \-\-version
 Print the current version and exit.

@@ -182,11 +182,27 @@
 #	endif
 #endif
 
+#ifndef G_GSIZE_MODIFIER
+#	if GLIB_SIZEOF_LONG == 8
+#		define G_GSIZE_MODIFIER "l"
+#	else
+#		define G_GSIZE_MODIFIER ""
+#	endif
+#endif
+
 #ifndef G_GSIZE_FORMAT
 #	if GLIB_SIZEOF_LONG == 8
 #		define G_GSIZE_FORMAT "lu"
 #	else
 #		define G_GSIZE_FORMAT "u"
+#	endif
+#endif
+
+#ifndef G_GSSIZE_FORMAT
+#	if GLIB_SIZEOF_LONG == 8
+#		define G_GSSIZE_FORMAT "li"
+#	else
+#		define G_GSSIZE_FORMAT "i"
 #	endif
 #endif
 

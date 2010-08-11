@@ -300,7 +300,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	body_len = GUINT32_FROM_LE(body_len);
 
-	purple_debug_info("msn", "body_len=%d\n", body_len);
+	purple_debug_info("msn", "body_len=%" G_GSIZE_FORMAT "\n", body_len);
 
 	if (body_len <= 0)
 	{
@@ -324,7 +324,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		/* Let's read the data. */
 		len = read(directconn->fd, body, body_len);
 
-		purple_debug_info("msn", "len=%d\n", len);
+		purple_debug_info("msn", "len=%" G_GSIZE_FORMAT "\n", len);
 	}
 	else
 	{

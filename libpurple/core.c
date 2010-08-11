@@ -50,7 +50,9 @@
 #include "util.h"
 
 #ifdef HAVE_DBUS
-#  define DBUS_API_SUBJECT_TO_CHANGE
+#  ifndef DBUS_API_SUBJECT_TO_CHANGE
+#    define DBUS_API_SUBJECT_TO_CHANGE
+#  endif
 #  include <dbus/dbus.h>
 #  include "dbus-purple.h"
 #  include "dbus-server.h"

@@ -190,8 +190,10 @@ SMILEYS = 	act-up.png \
     yin-yang.png
 
 
-pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/default
 pidginsmileypix_in_files = default.theme.in
+
+if INSTALL_PIXMAPS
+pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/default
 pidginsmileypix_DATA = \
         $(SMILEYS) \
         theme
@@ -201,5 +203,6 @@ theme: default.theme.in
 	    -e 's/^_Description=/Description=/' \
 	    -e 's/^_Author=/Author=/' \
 	$< > $@
+endif
 
-EXTRA_DIST = $(pidginsmileypix_DATA) $(pidginsmileypix_in_files)
+EXTRA_DIST = $(SMILEYS) $(pidginsmileypix_in_files) theme

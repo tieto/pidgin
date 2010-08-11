@@ -568,7 +568,7 @@ void qq_process_send_im_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		cursor = data;
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_SEND_IM_REPLY_OK) {
@@ -597,7 +597,7 @@ void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		if (len < 16) {	/* we need to ack with the first 16 bytes */
 			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "IM is too short\n");
 			return;

@@ -842,8 +842,6 @@ plugin_load(PurplePlugin *plugin)
 	                    PURPLE_CALLBACK(chat_sent_im), NULL);
 	purple_signal_connect(conv_handle, "conversation-created", plugin,
 	                    PURPLE_CALLBACK(conv_created), NULL);
-	purple_signal_connect(conv_handle, "chat-joined", plugin,
-	                    PURPLE_CALLBACK(conv_created), NULL);
 	purple_signal_connect(conv_handle, "deleting-conversation", plugin,
 	                    PURPLE_CALLBACK(deleting_conv), NULL);
 #if 0

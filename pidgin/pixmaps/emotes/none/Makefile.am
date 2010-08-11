@@ -1,5 +1,7 @@
-pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/none
 pidginsmileypix_in_files = none.theme.in
+
+if INSTALL_PIXMAPS
+pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/none
 pidginsmileypix_DATA = theme
 
 theme: none.theme.in
@@ -7,7 +9,9 @@ theme: none.theme.in
 	    -e 's/^_Description=/Description=/' \
 	    -e 's/^_Author=/Author=/' \
 	$< > $@
+endif
 
-EXTRA_DIST = $(pidginsmileypix_DATA) \
+EXTRA_DIST = \
 	$(pidginsmileypix_in_files) \
-	Makefile.mingw
+	Makefile.mingw \
+	theme

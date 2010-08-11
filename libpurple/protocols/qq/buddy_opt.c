@@ -267,7 +267,7 @@ void qq_process_add_buddy_auth_reply(guint8 *buf, gint buf_len, PurpleConnection
 	data = g_newa(guint8, len);
 	cursor = data;
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_ADD_BUDDY_AUTH_REPLY_OK) {
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Add buddy with auth request failed\n");
@@ -297,7 +297,7 @@ void qq_process_remove_buddy_reply(guint8 *buf, gint buf_len, PurpleConnection *
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		cursor = data;
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_REMOVE_BUDDY_REPLY_OK) {
@@ -326,7 +326,7 @@ void qq_process_remove_self_reply(guint8 *buf, gint buf_len, PurpleConnection *g
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		cursor = data;
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_REMOVE_SELF_REPLY_OK)
@@ -381,7 +381,7 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 
 	data = g_newa(guint8, len);
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		if (NULL == (segments = split_data(data, len, "\x1f", 2)))
 			return;
 		uid = segments[0];

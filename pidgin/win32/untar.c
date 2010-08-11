@@ -92,7 +92,7 @@
 #define untar_error( error, args... )      purple_debug(PURPLE_DEBUG_ERROR, "untar", error, ## args )
 #define untar_warning( warning, args... )  purple_debug(PURPLE_DEBUG_WARNING, "untar", warning, ## args )
 #define untar_verbose( args... )           purple_debug(PURPLE_DEBUG_INFO, "untar", ## args )
- 
+
 #define WSIZE	32768	/* size of decompression buffer */
 #define TSIZE	512	/* size of a "tape" block */
 #define CR	13	/* carriage-return character */
@@ -376,7 +376,7 @@ static int untar_block(Uchar_t *blk) {
 	else
 	{
 		/* file header */
-	
+
 		/* half-assed verification -- does it look like header? */
 		if ((tblk)->filename[99] != '\0'
 		 || ((tblk)->size[0] < '0'
@@ -593,15 +593,15 @@ int untar(const char *filename, const char* destdir, untar_opt options) {
 		untar_error("Error opening: %s\n", filename);
 		return 0;
 	}
-	
+
 	/* Set current directory */
 	if(!GetCurrentDirectory(_MAX_PATH, curdir)) {
-		untar_error("Could not get current directory (error %d).\n", GetLastError());
+		untar_error("Could not get current directory (error %lu).\n", GetLastError());
 		fclose(infp);
 		return 0;
 	}
 	if(!SetCurrentDirectory(destdir)) {
-		untar_error("Could not set current directory to (error %d): %s\n", GetLastError(), destdir);
+		untar_error("Could not set current directory to (error %lu): %s\n", GetLastError(), destdir);
 		fclose(infp);
 		return 0;
 	} else {
@@ -620,7 +620,7 @@ int untar(const char *filename, const char* destdir, untar_opt options) {
 			outfp = NULL;
 		}
 		if(!SetCurrentDirectory(curdir)) {
-			untar_error("Could not set current dir back to original (error %d).\n", GetLastError());
+			untar_error("Could not set current dir back to original (error %lu).\n", GetLastError());
 			ret=0;
 		}
 	}

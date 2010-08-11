@@ -99,7 +99,7 @@ static void encrypt_block(guint8 *plain, guint8 *plain_pre_8, guint8 **crypted,
 	*is_header = 0;			/* and exit header */
 }					/* encrypt_block */
 
-static void qq_encrypt(const guint8 *const instr, gint instrlen, 
+void qq_encrypt(const guint8 *const instr, gint instrlen, 
 		const guint8 *const key, 
 		guint8 *outstr, gint *outstrlen_ptr)
 {
@@ -211,7 +211,7 @@ static gint decrypt_block(const guint8 **crypt_buff, const gint instrlen,
 }
 
 /* return 0 if failed, 1 otherwise */
-static gint qq_decrypt(const guint8 *const instr, gint instrlen, 
+gint qq_decrypt(const guint8 *const instr, gint instrlen, 
 		const guint8 *const key,
 		guint8 *outstr, gint *outstrlen_ptr)
 {
@@ -294,21 +294,5 @@ static gint qq_decrypt(const guint8 *const instr, gint instrlen,
 			}
 		}
 	}
-	return 1;
-}
-
-/* return 1 is succeed, otherwise return 0 */
-gint qq_crypt(gint flag,
-		const guint8 *const instr, gint instrlen, 
-		const guint8 *const key, 
-		guint8 *outstr, gint *outstrlen_ptr)
-{
-	if (flag == DECRYPT)
-		return qq_decrypt(instr, instrlen, key, outstr, outstrlen_ptr);
-	else if (flag == ENCRYPT)
-		qq_encrypt(instr, instrlen, key, outstr, outstrlen_ptr);
-	else 
-		return 0;
-
 	return 1;
 }

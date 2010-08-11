@@ -565,7 +565,7 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 		for (l = account->deny; l != NULL; l = l->next) {
 			for (roomies = members; roomies; roomies = roomies->next) {
 				if (!purple_utf8_strcasecmp((char *)l->data, roomies->data)) {
-					purple_debug_info("yahoo", "Ignoring room member %s in room %s\n" , roomies->data, room ? room : "");
+					purple_debug_info("yahoo", "Ignoring room member %s in room %s\n" , (char *)roomies->data, room ? room : "");
 					purple_conv_chat_ignore(PURPLE_CONV_CHAT(c),roomies->data);
 					ops->chat_update_user(c, roomies->data);
 				}

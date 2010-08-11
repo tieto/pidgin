@@ -166,6 +166,7 @@ version 2.3.0 (11/24/2007):
 		* purple_connection_error()
 		* pidgin_blist_update_account_error_state()
 		* PidginBuddyList.connection_errors
+		* purple_network_listen_map_external()
 
 		MSN:
 		* A new independant status type with PURPLE_STATUS_TUNE primitive, and

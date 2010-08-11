@@ -74,7 +74,7 @@ extern "C" {
  * @param format   The format string.
  */
 void purple_debug(PurpleDebugLevel level, const char *category,
-				const char *format, ...);
+				const char *format, ...) G_GNUC_PRINTF(3, 4);
 
 /**
  * Outputs misc. level debug information.
@@ -87,7 +87,7 @@ void purple_debug(PurpleDebugLevel level, const char *category,
  *
  * @see purple_debug()
  */
-void purple_debug_misc(const char *category, const char *format, ...);
+void purple_debug_misc(const char *category, const char *format, ...) G_GNUC_PRINTF(2, 3);
 
 /**
  * Outputs info level debug information.
@@ -100,7 +100,7 @@ void purple_debug_misc(const char *category, const char *format, ...);
  *
  * @see purple_debug()
  */
-void purple_debug_info(const char *category, const char *format, ...);
+void purple_debug_info(const char *category, const char *format, ...) G_GNUC_PRINTF(2, 3);
 
 /**
  * Outputs warning level debug information.
@@ -113,7 +113,7 @@ void purple_debug_info(const char *category, const char *format, ...);
  *
  * @see purple_debug()
  */
-void purple_debug_warning(const char *category, const char *format, ...);
+void purple_debug_warning(const char *category, const char *format, ...) G_GNUC_PRINTF(2, 3);
 
 /**
  * Outputs error level debug information.
@@ -126,7 +126,7 @@ void purple_debug_warning(const char *category, const char *format, ...);
  *
  * @see purple_debug()
  */
-void purple_debug_error(const char *category, const char *format, ...);
+void purple_debug_error(const char *category, const char *format, ...) G_GNUC_PRINTF(2, 3);
 
 /**
  * Outputs fatal error level debug information.
@@ -139,7 +139,7 @@ void purple_debug_error(const char *category, const char *format, ...);
  *
  * @see purple_debug()
  */
-void purple_debug_fatal(const char *category, const char *format, ...);
+void purple_debug_fatal(const char *category, const char *format, ...) G_GNUC_PRINTF(2, 3);
 
 /**
  * Enable or disable printing debug output to the console.

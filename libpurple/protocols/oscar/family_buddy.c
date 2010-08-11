@@ -139,7 +139,8 @@ aim_buddylist_set(OscarData *od, FlapConnection *conn, const char *buddy_list)
 		return -EINVAL;
 
 	for (tmpptr = strtok(localcpy, "&"); tmpptr; ) {
-		purple_debug_misc("oscar", "---adding: %s (%d)\n", tmpptr, strlen(tmpptr));
+		purple_debug_misc("oscar", "---adding: %s (%" G_GSIZE_FORMAT
+				")\n", tmpptr, strlen(tmpptr));
 		len += 1 + strlen(tmpptr);
 		tmpptr = strtok(NULL, "&");
 	}
@@ -153,7 +154,8 @@ aim_buddylist_set(OscarData *od, FlapConnection *conn, const char *buddy_list)
 
 	for (tmpptr = strtok(localcpy, "&"); tmpptr; ) {
 
-		purple_debug_misc("oscar", "---adding: %s (%d)\n", tmpptr, strlen(tmpptr));
+		purple_debug_misc("oscar", "---adding: %s (%" G_GSIZE_FORMAT
+				")\n", tmpptr, strlen(tmpptr));
 
 		byte_stream_put8(&frame->data, strlen(tmpptr));
 		byte_stream_putstr(&frame->data, tmpptr);

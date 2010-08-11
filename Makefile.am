@@ -35,9 +35,6 @@ appsdir = $(datadir)/applications
 apps_in_files = pidgin.desktop.in
 apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
-endif
-
-if ENABLE_GTK
 GTK_DIR=pidgin
 endif
 
@@ -45,7 +42,11 @@ if ENABLE_GNT
 GNT_DIR=finch
 endif
 
-SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros po share/ca-certs share/sounds
+if INSTALL_I18N
+PO_DIR=po
+endif
+
+SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros $(PO_DIR) share/ca-certs share/sounds
 
 docs: Doxyfile
 if HAVE_DOXYGEN

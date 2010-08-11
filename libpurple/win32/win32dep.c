@@ -125,10 +125,10 @@ FARPROC wpurple_find_and_loadproc(const char *dllname, const char *procedure) {
 /* Determine Purple Paths during Runtime */
 
 /* Get paths to special Windows folders. */
-char *wpurple_get_special_folder(int folder_type) {
+gchar *wpurple_get_special_folder(int folder_type) {
 	static LPFNSHGETFOLDERPATHA MySHGetFolderPathA = NULL;
 	static LPFNSHGETFOLDERPATHW MySHGetFolderPathW = NULL;
-	char *retval = NULL;
+	gchar *retval = NULL;
 
 	if (!MySHGetFolderPathW) {
 		MySHGetFolderPathW = (LPFNSHGETFOLDERPATHW)
@@ -464,7 +464,7 @@ gboolean wpurple_check_for_proxy_changes(void) {
 
 	ZeroMemory(&ie_proxy_config, sizeof(ie_proxy_config));
 	if (!MyWinHttpGetIEProxyConfig(&ie_proxy_config)) {
-		purple_debug_error("wpurple", "Error reading Windows Proxy Settings(%u).\n", GetLastError());
+		purple_debug_error("wpurple", "Error reading Windows Proxy Settings(%lu).\n", GetLastError());
 		return FALSE;
 	}
 

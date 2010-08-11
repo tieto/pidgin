@@ -87,7 +87,7 @@ gint _qq_send_packet(PurpleConnection *gc, guint8 *buf, gint len, guint16 cmd)
 		if (len > MAX_PACKET_SIZE) {
 			purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 				   "xxx [%05d] %s, %d bytes is too large, do not send\n",
-				   qq_get_cmd_desc(cmd), qd->send_seq, len);
+				   qd->send_seq, qq_get_cmd_desc(cmd), len);
 			return -1;
 		} else {	/* I update the len for TCP packet */
 			cursor = buf;
@@ -132,7 +132,7 @@ gint qq_send_cmd(PurpleConnection *gc, guint16 cmd,
 	cursor = buf;
 	bytes_written = 0;
 
-	qq_crypt(ENCRYPT, data, len, qd->session_key, encrypted_data, &encrypted_len);
+	qq_encrypt(data, len, qd->session_key, encrypted_data, &encrypted_len);
 
 	seq_ret = seq;
 	if (_create_packet_head_seq(buf, &cursor, gc, cmd, is_auto_seq, &seq_ret) >= 0) {

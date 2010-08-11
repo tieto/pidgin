@@ -135,7 +135,7 @@ void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg) {
 		
 		purple_xfer_set_end_fnc(xfer, irc_dccsend_recv_destroy);
 		purple_xfer_set_request_denied_fnc(xfer, irc_dccsend_recv_destroy);
-		purple_xfer_set_cancel_send_fnc(xfer, irc_dccsend_recv_destroy);
+		purple_xfer_set_cancel_recv_fnc(xfer, irc_dccsend_recv_destroy);
 		
 		purple_xfer_request(xfer);
 	}
@@ -179,7 +179,7 @@ static void irc_dccsend_send_read(gpointer data, int source, PurpleInputConditio
 {
 	PurpleXfer *xfer = data;
 	struct irc_xfer_send_data *xd = xfer->data;
-	char *buffer[16];
+	char buffer[64];
 	int len;
 
 	len = read(source, buffer, sizeof(buffer));

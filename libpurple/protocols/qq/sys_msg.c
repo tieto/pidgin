@@ -288,7 +288,7 @@ void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		if (NULL == (segments = split_data(data, len, "\x1f", 4)))
 			return;
 		code = segments[0];

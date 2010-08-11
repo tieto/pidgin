@@ -149,7 +149,7 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 		return;
 	}
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		if (len <= 2) {
 			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Group cmd reply is too short, only %d bytes\n", len);
 			return;

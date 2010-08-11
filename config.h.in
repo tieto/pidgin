@@ -15,6 +15,9 @@
 /* always defined to indicate that i18n is enabled */
 #undef ENABLE_NLS
 
+/* Define if gst_registry_fork_set_enabled exists */
+#undef GST_CAN_DISABLE_FORKING
+
 /* Define if you have the external 'altzone' variable. */
 #undef HAVE_ALTZONE
 
@@ -273,6 +276,9 @@
 
 /* Define to 1 if you have the <sys/msgbuf.h> header file. */
 #undef HAVE_SYS_MSGBUF_H
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#undef HAVE_SYS_PARAM_H
 
 /* Define to 1 if you have the <sys/select.h> header file. */
 #undef HAVE_SYS_SELECT_H
